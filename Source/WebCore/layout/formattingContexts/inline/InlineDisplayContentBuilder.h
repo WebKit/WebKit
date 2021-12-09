@@ -49,7 +49,7 @@ private:
     void processNonBidiContent(const LineBuilder::LineContent&, const LineBox&, const InlineLayoutPoint& lineBoxLogicalTopLeft, DisplayBoxes&);
     void processBidiContent(const LineBuilder::LineContent&, const LineBox&, const InlineLayoutPoint& lineBoxLogicalTopLeft, DisplayBoxes&);
     void processOverflownRunsForEllipsis(DisplayBoxes&, InlineLayoutUnit lineBoxLogicalRight);
-    void collectInkOverflowForInlineBoxes(const LineBox&, DisplayBoxes&);
+    void collectInkOverflowForInlineBoxes(DisplayBoxes&);
 
     void appendTextDisplayBox(const Line::Run&, const InlineRect&, DisplayBoxes&);
     void appendSoftLineBreakDisplayBox(const Line::Run&, const InlineRect&, DisplayBoxes&);
@@ -67,8 +67,8 @@ private:
 
     const ContainerBox& m_formattingContextRoot;
     InlineFormattingState& m_formattingState;
-    HashMap<const Box*, size_t> m_inlineBoxIndexMap;
     size_t m_lineIndex { 0 };
+    bool m_contentHasInkOverflow { false };
 };
 
 }

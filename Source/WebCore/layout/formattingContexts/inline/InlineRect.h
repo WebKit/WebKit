@@ -71,6 +71,8 @@ public:
     void inflate(InlineLayoutUnit);
     void inflate(InlineLayoutUnit top, InlineLayoutUnit right, InlineLayoutUnit bottom, InlineLayoutUnit left);
 
+    bool isEmpty() const;
+
     operator InlineLayoutRect() const;
 
 private:
@@ -306,6 +308,12 @@ inline void InlineRect::inflate(InlineLayoutUnit top, InlineLayoutUnit right, In
     m_rect.setY(m_rect.y() - top);
     m_rect.setWidth(m_rect.width() + left + right);
     m_rect.setHeight(m_rect.height() + top + bottom);
+}
+
+inline bool InlineRect::isEmpty() const
+{
+    ASSERT(hasValidGeometry());
+    return m_rect.isEmpty();
 }
 
 inline InlineRect::operator InlineLayoutRect() const

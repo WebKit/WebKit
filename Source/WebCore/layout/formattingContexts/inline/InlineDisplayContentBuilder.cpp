@@ -74,11 +74,11 @@ DisplayBoxes InlineDisplayContentBuilder::build(const LineBuilder::LineContent& 
     else
         processNonBidiContent(lineContent, lineBox, lineBoxLogicalRect.topLeft(), boxes);
     processOverflownRunsForEllipsis(boxes, lineBoxLogicalRect.right());
-    collectInkOverflowForInlineBoxes(lineBox, boxes);
+    collectInkOverflowForInlineBoxes(boxes);
     return boxes;
 }
 
-static inline void addBoxShadowInkOverflow(const RenderStyle& style, InlineRect& inkOverflow)
+static inline bool computeBoxShadowInkOverflow(const RenderStyle& style, InlineRect& inkOverflow)
 {
     auto topBoxShadow = LayoutUnit { };
     auto bottomBoxShadow = LayoutUnit { };
@@ -87,7 +87,10 @@ static inline void addBoxShadowInkOverflow(const RenderStyle& style, InlineRect&
     auto leftBoxShadow = LayoutUnit { };
     auto rightBoxShadow = LayoutUnit { };
     style.getBoxShadowInlineDirectionExtent(leftBoxShadow, rightBoxShadow);
+    if (!topBoxShadow && !bottomBoxShadow && !leftBoxShadow && !rightBoxShadow)
+        return false;
     inkOverflow.inflate(InlineLayoutUnit { topBoxShadow }, InlineLayoutUnit { rightBoxShadow }, InlineLayoutUnit { bottomBoxShadow }, InlineLayoutUnit { leftBoxShadow });
+    return true;
 }
 
 void InlineDisplayContentBuilder::appendTextDisplayBox(const Line::Run& lineRun, const InlineRect& textRunRect, DisplayBoxes& boxes)
@@ -168,34 +171,24 @@ void InlineDisplayContentBuilder::appendAtomicInlineLevelDisplayBox(const Line::
     ASSERT(lineRun.layoutBox().isAtomicInlineLevelBox());
 
     auto& layoutBox = lineRun.layoutBox();
-    // FIXME: Add ink overflow support for atomic inline level boxes (e.g. box shadow).
+    auto inkOverflow = [&] {
+        auto inkOverflow = borderBoxRect;
+        computeBoxShadowInkOverflow(!m_lineIndex ? layoutBox.firstLineStyle() : layoutBox.style(), inkOverflow);
+        // Atomic inline box contribute to their inline box parents ink overflow at all times (e.g. <span><img></span>).
+        m_contentHasInkOverflow = m_contentHasInkOverflow || &layoutBox.parent() != &root();
+        return inkOverflow;
+    };
     boxes.append({ m_lineIndex
         , InlineDisplay::Box::Type::AtomicInlineLevelBox
         , layoutBox
         , lineRun.bidiLevel()
         , borderBoxRect
-        , borderBoxRect
+        , inkOverflow()
         , lineRun.expansion()
         , { } });
-
     // Note that inline boxes are relative to the line and their top position can be negative.
     // Atomic inline boxes are all set. Their margin/border/content box geometries are already computed. We just have to position them here.
-    auto& boxGeometry = formattingState().boxGeometry(layoutBox);
-    boxGeometry.setLogicalTopLeft(toLayoutPoint(borderBoxRect.topLeft()));
-
-    auto adjustParentInlineBoxInkOverflow = [&] {
-        auto& parentInlineBox = layoutBox.parent();
-        if (&parentInlineBox == &root()) {
-            // We don't collect ink overflow for the root inline box.
-            return;
-        }
-        RELEASE_ASSERT(m_inlineBoxIndexMap.contains(&parentInlineBox));
-
-        auto boxInkOverflow = borderBoxRect;
-        addBoxShadowInkOverflow(!m_lineIndex ? layoutBox.firstLineStyle() : layoutBox.style(), boxInkOverflow);
-        boxes[m_inlineBoxIndexMap.get(&parentInlineBox)].adjustInkOverflow(boxInkOverflow);
-    };
-    adjustParentInlineBoxInkOverflow();
+    formattingState().boxGeometry(layoutBox).setLogicalTopLeft(toLayoutPoint(borderBoxRect.topLeft()));
 }
 
 void InlineDisplayContentBuilder::setInlineBoxGeometry(const Box& layoutBox, const InlineRect& rect, bool isFirstInlineBoxFragment)
@@ -220,29 +213,30 @@ void InlineDisplayContentBuilder::appendInlineBoxDisplayBox(const Line::Run& lin
     ASSERT(lineRun.layoutBox().isInlineBox());
 
     auto& layoutBox = lineRun.layoutBox();
-    if (linehasContent) {
-        auto inkOverflow = [&] {
-            auto inkOverflow = inlineBoxBorderBox;
-            addBoxShadowInkOverflow(!m_lineIndex ? layoutBox.firstLineStyle() : layoutBox.style(), inkOverflow);
-            return inkOverflow;
-        };
-        // FIXME: It's expected to not have any boxes on empty lines. We should reconsider this.
-        m_inlineBoxIndexMap.add(&layoutBox, boxes.size());
 
-        ASSERT(inlineBox.isInlineBox());
-        ASSERT(inlineBox.isFirstBox());
-        boxes.append({ m_lineIndex
-            , InlineDisplay::Box::Type::NonRootInlineBox
-            , layoutBox
-            , lineRun.bidiLevel()
-            , inlineBoxBorderBox
-            , inkOverflow()
-            , { }
-            , { }
-            , inlineBox.hasContent()
-            , isFirstLastBox(inlineBox) });
+    if (!linehasContent) {
+        // FIXME: It's expected to not have any boxes on empty lines. We should reconsider this.
+        setInlineBoxGeometry(layoutBox, inlineBoxBorderBox, true);
+        return;
     }
 
+    auto inkOverflow = [&] {
+        auto inkOverflow = inlineBoxBorderBox;
+        m_contentHasInkOverflow = computeBoxShadowInkOverflow(!m_lineIndex ? layoutBox.firstLineStyle() : layoutBox.style(), inkOverflow) || m_contentHasInkOverflow;
+        return inkOverflow;
+    };
+    ASSERT(inlineBox.isInlineBox());
+    ASSERT(inlineBox.isFirstBox());
+    boxes.append({ m_lineIndex
+        , InlineDisplay::Box::Type::NonRootInlineBox
+        , layoutBox
+        , lineRun.bidiLevel()
+        , inlineBoxBorderBox
+        , inkOverflow()
+        , { }
+        , { }
+        , inlineBox.hasContent()
+        , isFirstLastBox(inlineBox) });
     // This inline box showed up first on this line.
     setInlineBoxGeometry(layoutBox, inlineBoxBorderBox, true);
 }
@@ -252,11 +246,9 @@ void InlineDisplayContentBuilder::appendSpanningInlineBoxDisplayBox(const Line::
     ASSERT(lineRun.layoutBox().isInlineBox());
 
     auto& layoutBox = lineRun.layoutBox();
-    m_inlineBoxIndexMap.add(&layoutBox, boxes.size());
-
     auto inkOverflow = [&] {
         auto inkOverflow = inlineBoxBorderBox;
-        addBoxShadowInkOverflow(!m_lineIndex ? layoutBox.firstLineStyle() : layoutBox.style(), inkOverflow);
+        m_contentHasInkOverflow = computeBoxShadowInkOverflow(!m_lineIndex ? layoutBox.firstLineStyle() : layoutBox.style(), inkOverflow) || m_contentHasInkOverflow;
         return inkOverflow;
     };
     ASSERT(!inlineBox.isFirstBox());
@@ -270,7 +262,6 @@ void InlineDisplayContentBuilder::appendSpanningInlineBoxDisplayBox(const Line::
         , { }
         , inlineBox.hasContent()
         , isFirstLastBox(inlineBox) });
-
     // Middle or end of the inline box. Let's stretch the box as needed.
     setInlineBoxGeometry(layoutBox, inlineBoxBorderBox, false);
 }
@@ -627,27 +618,30 @@ void InlineDisplayContentBuilder::processOverflownRunsForEllipsis(DisplayBoxes& 
         , InlineDisplay::Box::Text { 0, 1, ellipsisStr->string() } });
 }
 
-void InlineDisplayContentBuilder::collectInkOverflowForInlineBoxes(const LineBox& lineBox, DisplayBoxes& boxes)
+void InlineDisplayContentBuilder::collectInkOverflowForInlineBoxes(DisplayBoxes& boxes)
 {
-    if (m_inlineBoxIndexMap.isEmpty() || !lineBox.hasContent()) {
-        // This line has no inline box (only root, but we don't collect ink overflow for the root inline box atm)
+    if (!m_contentHasInkOverflow)
         return;
-    }
-
-    auto& nonRootInlineLevelBoxes = lineBox.nonRootInlineLevelBoxes();
     // Visit the inline boxes and propagate ink overflow to their parents -except to the root inline box.
     // (e.g. <span style="font-size: 10px;">Small font size<span style="font-size: 300px;">Larger font size. This overflows the top most span.</span></span>).
-    for (size_t index = nonRootInlineLevelBoxes.size(); index--;) {
-        if (!nonRootInlineLevelBoxes[index].isInlineBox())
+    auto accumulatedInkOverflowRect = InlineRect { { }, { } };
+    for (size_t index = boxes.size(); index--;) {
+        auto& displayBox = boxes[index];
+
+        auto mayHaveInkOverflow = displayBox.isAtomicInlineLevelBox() || displayBox.isGenericInlineLevelBox() || displayBox.isNonRootInlineBox();
+        if (!mayHaveInkOverflow)
             continue;
-        auto& inlineBox = nonRootInlineLevelBoxes[index].layoutBox();
-        auto& parentInlineBox = inlineBox.parent();
-        if (&parentInlineBox == &root())
-            continue;
-        RELEASE_ASSERT(m_inlineBoxIndexMap.contains(&inlineBox) && m_inlineBoxIndexMap.contains(&parentInlineBox));
-        auto& inkOverflow = boxes[m_inlineBoxIndexMap.get(&inlineBox)].inkOverflow();
-        auto& parentDisplayBox = boxes[m_inlineBoxIndexMap.get(&parentInlineBox)];
-        parentDisplayBox.adjustInkOverflow(inkOverflow);
+        if (displayBox.isNonRootInlineBox() && !accumulatedInkOverflowRect.isEmpty())
+            displayBox.adjustInkOverflow(accumulatedInkOverflowRect);
+
+        // We stop collecting ink overflow for at root inline box (i.e. don't inflate the root inline box with the inline content here).
+        auto parentBoxIsRoot = &displayBox.layoutBox().parent() == &root();
+        if (parentBoxIsRoot)
+            accumulatedInkOverflowRect = InlineRect { { }, { } };
+        else if (accumulatedInkOverflowRect.isEmpty())
+            accumulatedInkOverflowRect = displayBox.inkOverflow();
+        else
+            accumulatedInkOverflowRect.expandToContain(displayBox.inkOverflow());
     }
 }
 
