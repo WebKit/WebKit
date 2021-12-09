@@ -1,3 +1,14 @@
+2021-12-09  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [WebGPU] Fix WebGPU build in Apple's internal build system
+        https://bugs.webkit.org/show_bug.cgi?id=234070
+
+        Unreviewed.
+
+        The PAL headers get put in a different place.
+
+        * Configurations/WebKitLegacy.xcconfig:
+
 2021-12-08  Truitt Savell  <tsavell@apple.com>
 
         Unreviewed, reverting r286632.
