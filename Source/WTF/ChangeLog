@@ -1,3 +1,23 @@
+2021-12-09  Antti Koivisto  <antti@apple.com>
+
+        Enable :focus-visible pseudo-class by default
+        https://bugs.webkit.org/show_bug.cgi?id=234019
+        <rdar://problem/86218583>
+
+        Reviewed by Brent Fulgham.
+
+        This enables :focus-visible pseudo-class for authors.
+
+        It also changes :focus-visible behavior in the user agent stylesheet so that
+
+        - <div tabindex> (or any element with 'tabindex' attribute that is not focusable otherwise) will not show focus
+          indicator when focused via click/tap/script.
+        - <details> element will not show focus indicator when focused via click/tap/script.
+
+        Both still show focus indicator when focused via keyboard (tab) navigation.
+
+        * Scripts/Preferences/WebPreferencesExperimental.yaml:
+
 2021-12-09  Myles C. Maxfield  <mmaxfield@apple.com> and Don Olmstead  <don.olmstead@sony.com>
 
         Move TextCodec files from WebCore/platform/text to WebCore/PAL/text
