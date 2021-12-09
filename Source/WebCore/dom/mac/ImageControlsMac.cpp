@@ -130,7 +130,7 @@ bool handleEvent(HTMLElement& element, Event& event)
         if (!imageElement)
             return false;
         if (auto* image = imageFromImageElementNode(*imageElement)) {
-            page->chrome().client().handleImageServiceClick(roundedIntPoint(mouseEvent.absoluteLocation()), *image, imageElement->isContentEditable());
+            page->chrome().client().handleImageServiceClick(roundedIntPoint(mouseEvent.absoluteLocation()), *image, imageElement->isContentEditable(), imageElement->renderBox()->absoluteContentQuad().enclosingBoundingBox());
             event.setDefaultHandled();
             return true;
         }

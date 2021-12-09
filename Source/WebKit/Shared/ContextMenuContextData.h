@@ -64,7 +64,7 @@ public:
     {
     }
     
-    ContextMenuContextData(const WebCore::IntPoint& menuLocation, WebCore::Image&, bool isEditable);
+    ContextMenuContextData(const WebCore::IntPoint& menuLocation, WebCore::Image&, bool isEditable, const WebCore::IntRect& imageRect);
 
     ShareableBitmap* controlledImage() const { return m_controlledImage.get(); }
     const Vector<uint8_t>& controlledSelectionData() const { return m_controlledSelectionData; }
@@ -72,6 +72,7 @@ public:
 
     bool isServicesMenu() const { return m_type == ContextMenuContextData::Type::ServicesMenu; }
     bool controlledDataIsEditable() const;
+    WebCore::IntRect controlledImageBounds() const { return m_controlledImageBounds; };
 #endif
 
     void encode(IPC::Encoder&) const;
@@ -93,6 +94,7 @@ private:
     Vector<uint8_t> m_controlledSelectionData;
     Vector<String> m_selectedTelephoneNumbers;
     bool m_selectionIsEditable;
+    WebCore::IntRect m_controlledImageBounds;
 #endif
 };
 

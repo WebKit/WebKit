@@ -828,9 +828,9 @@ void WebPage::handleSelectionServiceClick(FrameSelection& selection, const Vecto
     send(Messages::WebPageProxy::ShowContextMenu(ContextMenuContextData(point, selectionDataVector, phoneNumbers, selection.selection().isContentEditable()), UserData()));
 }
 
-void WebPage::handleImageServiceClick(const IntPoint& point, Image& image, bool isEditable)
+void WebPage::handleImageServiceClick(const IntPoint& point, Image& image, bool isEditable, const IntRect& imageRect)
 {
-    send(Messages::WebPageProxy::ShowContextMenu(ContextMenuContextData(point, image, isEditable), UserData()));
+    send(Messages::WebPageProxy::ShowContextMenu(ContextMenuContextData(point, image, isEditable, imageRect), UserData()));
 }
 
 #endif

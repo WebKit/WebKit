@@ -38,6 +38,7 @@ class WebContextMenuProxyMac;
     RetainPtr<NSSharingServicePicker> _picker;
     BOOL _filterEditingServices;
     BOOL _handleEditingReplacement;
+    NSRect _sourceFrame;
 }
 
 + (WKSharingServicePickerDelegate *)sharedSharingServicePickerDelegate;
@@ -46,6 +47,8 @@ class WebContextMenuProxyMac;
 - (void)setPicker:(NSSharingServicePicker *)picker;
 - (void)setFiltersEditingServices:(BOOL)filtersEditingServices;
 - (void)setHandlesEditingReplacement:(BOOL)handlesEditingReplacement;
+- (void)setSourceFrame:(NSRect)sourceFrame;
+
 @end
 
 #endif // ENABLE(SERVICE_CONTROLS)

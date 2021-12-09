@@ -1,3 +1,36 @@
+2021-12-09  Megan Gardner  <megan_gardner@apple.com>
+
+        Markup Pane not displaying.
+        https://bugs.webkit.org/show_bug.cgi?id=234089
+
+        Reviewed by Tim Horton.
+
+        An optional method on NSSharingServiceDelegate was not implemented, meaning
+        that the markup pane did not know where to present, and would assert and fail to
+        show up. Make sure this is implemented for the image controls menu and also 
+        give it the correct location to present form.
+
+        * Shared/ContextMenuContextData.cpp:
+        (WebKit::ContextMenuContextData::ContextMenuContextData):
+        (WebKit::ContextMenuContextData::encode const):
+        (WebKit::ContextMenuContextData::decode):
+        * Shared/ContextMenuContextData.h:
+        (WebKit::ContextMenuContextData::controlledImageFrame const):
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+        (-[WKWebViewConfiguration init]):
+        * UIProcess/mac/WKSharingServicePickerDelegate.h:
+        * UIProcess/mac/WKSharingServicePickerDelegate.mm:
+        (-[WKSharingServicePickerDelegate setSourceFrame:]):
+        (-[WKSharingServicePickerDelegate sharingService:sourceFrameOnScreenForShareItem:]):
+        * UIProcess/mac/WebContextMenuProxyMac.mm:
+        (WebKit::WebContextMenuProxyMac::setupServicesMenu):
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::handleImageServiceClick):
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::handleImageServiceClick):
+
 2021-12-09  Tim Horton  <timothy_horton@apple.com>
 
         Momentum Generator: Scroll tail hiccup only when scrolling up on 60Hz displays

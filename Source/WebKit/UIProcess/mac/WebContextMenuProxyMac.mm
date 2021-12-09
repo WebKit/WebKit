@@ -238,6 +238,11 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     [[WKSharingServicePickerDelegate sharedSharingServicePickerDelegate] setPicker:picker.get()];
     [[WKSharingServicePickerDelegate sharedSharingServicePickerDelegate] setFiltersEditingServices:!includeEditorServices];
     [[WKSharingServicePickerDelegate sharedSharingServicePickerDelegate] setHandlesEditingReplacement:includeEditorServices];
+    
+    NSRect imageRect = m_context.controlledImageBounds();
+    imageRect = [m_webView convertRect:imageRect toView:nil];
+    imageRect = [[m_webView window] convertRectToScreen:imageRect];
+    [[WKSharingServicePickerDelegate sharedSharingServicePickerDelegate] setSourceFrame:imageRect];
 
     m_menu = adoptNS([[picker menu] copy]);
 

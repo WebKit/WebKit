@@ -67,10 +67,11 @@ ContextMenuContextData::ContextMenuContextData(const WebCore::IntPoint& menuLoca
 }
 
 #if ENABLE(SERVICE_CONTROLS)
-ContextMenuContextData::ContextMenuContextData(const WebCore::IntPoint& menuLocation, WebCore::Image& image, bool isEditable)
+ContextMenuContextData::ContextMenuContextData(const WebCore::IntPoint& menuLocation, WebCore::Image& image, bool isEditable, const WebCore::IntRect& imageRect)
     : m_type(Type::ServicesMenu)
     , m_menuLocation(menuLocation)
     , m_selectionIsEditable(isEditable)
+    , m_controlledImageBounds(imageRect)
 {
     setImage(&image);
 }
@@ -102,6 +103,7 @@ void ContextMenuContextData::encode(IPC::Encoder& encoder) const
     encoder << m_controlledSelectionData;
     encoder << m_selectedTelephoneNumbers;
     encoder << m_selectionIsEditable;
+    encoder << m_controlledImageBounds;
 #endif
 }
 
@@ -135,6 +137,8 @@ bool ContextMenuContextData::decode(IPC::Decoder& decoder, ContextMenuContextDat
     if (!decoder.decode(result.m_selectedTelephoneNumbers))
         return false;
     if (!decoder.decode(result.m_selectionIsEditable))
+        return false;
+    if (!decoder.decode(result.m_controlledImageBounds))
         return false;
 #endif
 

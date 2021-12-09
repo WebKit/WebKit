@@ -70,6 +70,11 @@
     _handleEditingReplacement = handlesEditingReplacement;
 }
 
+- (void)setSourceFrame:(NSRect)sourceFrame
+{
+    _sourceFrame = sourceFrame;
+}
+
 - (NSArray *)sharingServicePicker:(NSSharingServicePicker *)sharingServicePicker sharingServicesForItems:(NSArray *)items mask:(NSSharingServiceMask)mask proposedSharingServices:(NSArray *)proposedServices
 {
     if (!_filterEditingServices)
@@ -88,6 +93,11 @@
 - (id <NSSharingServiceDelegate>)sharingServicePicker:(NSSharingServicePicker *)sharingServicePicker delegateForSharingService:(NSSharingService *)sharingService
 {
     return self;
+}
+
+- (NSRect)sharingService:(NSSharingService *)sharingService sourceFrameOnScreenForShareItem:(id <NSPasteboardWriting>)item
+{
+    return _sourceFrame;
 }
 
 - (void)sharingService:(NSSharingService *)sharingService willShareItems:(NSArray *)items
