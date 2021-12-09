@@ -1,3 +1,9 @@
+2021-12-09  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed fix after r286778 to address WebContent crashes on launch
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2021-12-09  Per Arne Vollan  <pvollan@apple.com>
 
         [macOS][WP] Block access to unused system calls

@@ -2207,6 +2207,7 @@
             (machtrap-number MSC_mach_msg2_trap)
         )
     )
+)
 #endif // HAVE(SANDBOX_MESSAGE_FILTERING)
 
 (if (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES")
