@@ -1,5 +1,25 @@
 2021-12-09  Saam Barati  <sbarati@apple.com>
 
+        Procedure::setNeedsPCToOriginMap should call Code::forcePreservationOfB3Origins
+        https://bugs.webkit.org/show_bug.cgi?id=234093
+
+        Reviewed by Yusuke Suzuki.
+
+        We need to do this to ensure the sampling profiler works in FTL.
+        The reason this was sometimes working was Air::Code's constructor
+        was looking at Procedure's m_needsPCToOriginMap before it was initialized,
+        in its constructor. This is because Procedure was constructing Code
+        before all its fields were initialized. This patch fixes that bug to
+        construct Code after Procedure has all its fields initialized.
+
+        * b3/B3Procedure.cpp:
+        (JSC::B3::Procedure::Procedure):
+        (JSC::B3::Procedure::setNeedsPCToOriginMap):
+        * b3/B3Procedure.h:
+        (JSC::B3::Procedure::setNeedsPCToOriginMap): Deleted.
+
+2021-12-09  Saam Barati  <sbarati@apple.com>
+
         Add an option to dump the B3 IR for an allowlist of Wasm function indices
         https://bugs.webkit.org/show_bug.cgi?id=234028
 
