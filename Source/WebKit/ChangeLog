@@ -1,3 +1,27 @@
+2021-12-09  Chris Dumez  <cdumez@apple.com>
+
+        [WPE] Crash under WebProcessProxy::setIsInProcessCache when closing web view in debug builds
+        https://bugs.webkit.org/show_bug.cgi?id=233933
+
+        Reviewed by Geoffrey Garen.
+
+        The crash would occur because the WebProcessPool destructor would call WebProcessCache::clear()
+        which would destroy WebProcessCache::CachedProcess objects, causing
+        WebProcessProxy::setIsInProcessCache(false) to get called. Previously, this call to
+        setIsInProcessCache() would convert the WeakPtr the WebProcessProxy held to its process pool
+        into a RefPtr, thus causing the WebProcessPool to get ref'd while in the middle of destruction.
+
+        To address the issue, the setIsInProcessCache() setter now takes a WillShutDown flag that gets
+        set in the CachedProcess destructor and which causes setIsInProcessCache() to return early
+        right after setting the m_isInProcessCache flag, without trying to send IPC to the WebProcess
+        or trying to ref the WebProcessPool.
+
+        * UIProcess/WebProcessCache.cpp:
+        (WebKit::WebProcessCache::CachedProcess::~CachedProcess):
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::setIsInProcessCache):
+        * UIProcess/WebProcessProxy.h:
+
 2021-12-08  BJ Burg  <bburg@apple.com>
 
         [Cocoa] Web Inspector: provide a way for _WKInspectorExtension clients to be to notified when an extension tab navigates
