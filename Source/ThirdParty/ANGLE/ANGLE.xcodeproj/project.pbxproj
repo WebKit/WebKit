@@ -3513,7 +3513,6 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = FFDA50CB269F845100AE11E2 /* Build configuration list for PBXNativeTarget "ANGLEMetalLib" */;
 			buildPhases = (
-				FF194FF827443BDF006A97A3 /* ShellScript */,
 				FFDA50C3269F845100AE11E2 /* Sources */,
 			);
 			buildRules = (
@@ -3585,23 +3584,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "if [ \"${XCODE_VERSION_ACTUAL}\" -ge \"1140\" -a \"${WK_USE_NEW_BUILD_SYSTEM}\" = \"YES\" ]; then\n    # In this configuration, post-processing is performed at the same time as copying in the postprocess-header-rule script, so there's no need for this separate step.\n    exit 0\nfi\n\nexec \"$SRCROOT/adjust-angle-include-paths.py\"\n";
-		};
-		FF194FF827443BDF006A97A3 /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "python scripts/run_code_generation.py -g \"Metal default shaders\"\nexit 0\n";
 		};
 		FFDA50D5269F895400AE11E2 /* Bake Metal Library to NSData */ = {
 			isa = PBXShellScriptBuildPhase;

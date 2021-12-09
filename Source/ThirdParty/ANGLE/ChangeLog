@@ -1,3 +1,20 @@
+2021-12-09  Dean Jackson  <dino@apple.com>
+
+        [ANGLE] Code generation happens on each build and produces SCM diffs
+        https://bugs.webkit.org/show_bug.cgi?id=234025
+
+        Reviewed by Kimmo Kinnunen.
+
+        Temporarily remove the build phase that generates the
+        mtl_default_shaders_src_autogen files because they are producing
+        diffs.
+
+        We either need to generate these manually, or fix the Xcode project
+        to generate them into Derived Sources so they don't appear in our
+        repository.
+
+        * ANGLE.xcodeproj/project.pbxproj:
+
 2021-12-08  Kyle Piddington  <kpiddington@apple.com>
 
         Update ANGLE changes.diff with new roll.
