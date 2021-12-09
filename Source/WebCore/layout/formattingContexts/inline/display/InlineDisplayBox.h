@@ -118,7 +118,24 @@ struct Box {
     }
     void adjustInkOverflow(const Layout::InlineRect& childBorderBox) { return m_inkOverflow.expandToContain(childBorderBox); }
     void truncate(Layout::InlineLayoutUnit truncatedwidth = 0.f);
-    void setLogicalRight(Layout::InlineLayoutUnit right) { m_logicalRect.setRight(right); }
+    void setLogicalLeft(Layout::InlineLayoutUnit left)
+    {
+        auto offset = left - logicalLeft();
+        m_logicalRect.setLeft(left);
+        m_inkOverflow.setLeft(m_inkOverflow.left() + offset);
+    }
+    void setLogicalRight(Layout::InlineLayoutUnit right)
+    {
+        auto offset = right - logicalRight();
+        m_logicalRect.setRight(right);
+        m_inkOverflow.setRight(m_inkOverflow.right() + offset);
+    }
+    void setLogicalRect(const Layout::InlineRect& rect, const Layout::InlineRect& inkOverflow)
+    {
+        m_logicalRect = rect;
+        m_inkOverflow = inkOverflow;
+    }
+    void setHasContent() { m_hasContent = true; }
 
     std::optional<Text>& text() { return m_text; }
     const std::optional<Text>& text() const { return m_text; }

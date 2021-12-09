@@ -33,7 +33,9 @@
 namespace WebCore {
 namespace Layout {
 
+struct AncestorStack;
 class ContainerBox;
+struct DisplayBoxNode;
 class InlineFormattingState;
 class LineBox;
 
@@ -57,10 +59,10 @@ private:
     void appendAtomicInlineLevelDisplayBox(const Line::Run&, const InlineRect& , DisplayBoxes&);
     void appendInlineBoxDisplayBox(const Line::Run&, const InlineLevelBox&, const InlineRect&, bool linehasContent, DisplayBoxes&);
     void appendSpanningInlineBoxDisplayBox(const Line::Run&, const InlineLevelBox&, const InlineRect&, DisplayBoxes&);
-    void insertInlineBoxDisplayBoxForBidiBoundary(const InlineLevelBox&, const InlineRect&, bool isFirstInlineBoxFragment, size_t insertionPoint, DisplayBoxes&);
-    void adjustInlineBoxDisplayBoxForBidiBoundary(InlineDisplay::Box&, const InlineRect&);
 
     void setInlineBoxGeometry(const Box&, const InlineRect&, bool isFirstInlineBoxFragment);
+    void adjustVisualGeometryForChildNode(const DisplayBoxNode&, InlineLayoutUnit& accumulatedOffset, InlineLayoutUnit lineBoxLogicalTop, DisplayBoxes&, const LineBox&);
+    DisplayBoxNode& ensureDisplayBoxForContainer(const ContainerBox&, AncestorStack&, DisplayBoxes&);
 
     const ContainerBox& root() const { return m_formattingContextRoot; }
     InlineFormattingState& formattingState() const { return m_formattingState; } 
