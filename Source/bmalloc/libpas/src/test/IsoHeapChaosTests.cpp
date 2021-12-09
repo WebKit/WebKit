@@ -40,10 +40,10 @@
 #include "iso_test_heap_config.h"
 #include "jit_heap.h"
 #include "jit_heap_config.h"
-#include <mach/thread_act.h>
 #include <map>
 #include "minalign32_heap.h"
 #include "minalign32_heap_config.h"
+#include <mutex>
 #include "pagesize64k_heap.h"
 #include "pagesize64k_heap_config.h"
 #include "pas_all_heaps.h"
@@ -62,6 +62,10 @@
 #include <sys/mman.h>
 #include <vector>
 #include <thread>
+
+#if PAS_OS(DARWIN)
+#include <mach/thread_act.h>
+#endif
 
 using namespace std;
 
@@ -610,10 +614,12 @@ void testAllocationChaos(unsigned numThreads, unsigned numIsolatedHeaps,
                 }
             }
             
+#if PAS_OS(DARWIN)
             for (pthread_t thread : runningThreads) {
                 kern_return_t result = thread_suspend(pthread_mach_thread_np(thread));
                 PAS_ASSERT(result == KERN_SUCCESS);
             }
+#endif
 
             pageRanges.clear();
             readerCache.clear();
@@ -806,10 +812,12 @@ void testAllocationChaos(unsigned numThreads, unsigned numIsolatedHeaps,
             if (!(numEnumerations % 50))
                 cout << "    Did " << numEnumerations << " enumerations.\n";
             
+#if PAS_OS(DARWIN)
             for (pthread_t thread : runningThreads) {
                 kern_return_t result = thread_resume(pthread_mach_thread_np(thread));
                 PAS_ASSERT(result == KERN_SUCCESS);
             }
+#endif
 
             lock.unlock();
         };
@@ -927,6 +935,12 @@ void testAllocationChaos(unsigned numThreads, unsigned numIsolatedHeaps,
 
 void addTheTests(unsigned multiplier, bool testEnumerator)
 {
+#if PAS_OS(LINUX)
+    // FIXME: thread suspension/resume in libpas, required for enumerator tests, is missing on Linux
+    // http://webkit.org/b/234071
+    testEnumerator = false;
+#endif
+
     ADD_TEST(testAllocationChaos(1, 0, 1000 * multiplier, 1000000 * multiplier, uniformlyRandomUpTo5000, 10000000 * multiplier, false));
     ADD_TEST(testAllocationChaos(1, 10, 1000 * multiplier, 500000 * multiplier, sometimesSmallSometimesBig, 10000000 * multiplier, false));
     ADD_TEST(testAllocationChaos(10, 0, 1000 * multiplier, 200000 * multiplier, sometimesSmallSometimesBig, 10000000 * multiplier, false));

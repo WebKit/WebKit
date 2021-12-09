@@ -32,6 +32,7 @@
 #include "iso_heap_config.h"
 #include "iso_test_heap.h"
 #include "iso_test_heap_config.h"
+#include <mutex>
 #include "pas_baseline_allocator_table.h"
 #include "pas_heap.h"
 #include "pas_random.h"

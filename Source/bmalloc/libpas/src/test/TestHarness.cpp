@@ -26,6 +26,7 @@
 #include "TestHarness.h"
 
 #include "Verifier.h"
+#include <atomic>
 #include "iso_heap_config.h"
 #include "iso_test_heap_config.h"
 #include "jit_heap.h"

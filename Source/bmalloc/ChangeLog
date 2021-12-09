@@ -1,3 +1,27 @@
+2021-12-09  Zan Dobersek  <zdobersek@igalia.com>
+
+        [libpas] Fix up missing header includes and build guards in unit tests
+        https://bugs.webkit.org/show_bug.cgi?id=234007
+
+        Reviewed by Yusuke Suzuki.
+
+        Add missing header inclusions in different libpas unit test sources
+        to avoid build problems.
+
+        In IsoHeapChaosTests.cpp, Mach-specific thread-related header inclusion
+        and usage is put inside PAS_OS(DARWIN) build guards. On Linux, the
+        enumerator sub-tests that utilize this thread suspension and resuming
+        functionality are disabled.
+
+        * libpas/src/test/ExpendableMemoryTests.cpp:
+        * libpas/src/test/IsoHeapChaosTests.cpp:
+        (std::testAllocationChaos):
+        * libpas/src/test/IsoHeapPageSharingTests.cpp:
+        * libpas/src/test/IsoHeapPartialAndBaselineTests.cpp:
+        * libpas/src/test/RaceTests.cpp:
+        * libpas/src/test/TestHarness.cpp:
+        * libpas/src/test/ThingyAndUtilityHeapAllocationTests.cpp:
+
 2021-12-08  Zan Dobersek  <zdobersek@igalia.com>
 
         [libpas] Guard Darwin-specific malloc zone usage in mbmalloc sources

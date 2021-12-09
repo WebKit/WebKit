@@ -29,10 +29,12 @@
 
 #include "HeapLocker.h"
 #include "LargeSharingPoolDump.h"
+#include <condition_variable>
 #include <functional>
 #include "iso_heap.h"
 #include "iso_heap_config.h"
 #include "iso_heap_innards.h"
+#include <mutex>
 #include "pas_all_heaps.h"
 #include "pas_baseline_allocator_table.h"
 #include "pas_heap.h"

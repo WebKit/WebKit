@@ -24,6 +24,7 @@
  */
 
 #include "TestHarness.h"
+#include <condition_variable>
 #include <functional>
 #include "iso_heap.h"
 #include "iso_heap_config.h"

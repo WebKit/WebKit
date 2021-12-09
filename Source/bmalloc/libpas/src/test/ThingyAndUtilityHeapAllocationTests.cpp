@@ -32,6 +32,7 @@
 #include "thingy_heap_config.h"
 #include <functional>
 #include <map>
+#include <mutex>
 #include "pas_all_heaps.h"
 #include "pas_baseline_allocator_table.h"
 #include "pas_bootstrap_free_heap.h"

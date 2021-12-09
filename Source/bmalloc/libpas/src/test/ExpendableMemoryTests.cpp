@@ -28,6 +28,8 @@
 #if PAS_ENABLE_BMALLOC
 
 #include "bmalloc_heap.h"
+#include <condition_variable>
+#include <mutex>
 #include "pas_compact_expendable_memory.h"
 #include "pas_large_expendable_memory.h"
 #include "pas_segregated_heap.h"
