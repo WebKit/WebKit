@@ -21,15 +21,24 @@
 #include "config.h"
 #include "SourceAlpha.h"
 
-#include "Filter.h"
 #include "SourceAlphaSoftwareApplier.h"
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
 
+Ref<SourceAlpha> SourceAlpha::create()
+{
+    return adoptRef(*new SourceAlpha());
+}
+
 Ref<SourceAlpha> SourceAlpha::create(FilterEffect& sourceEffect)
 {
     return adoptRef(*new SourceAlpha(sourceEffect));
+}
+
+SourceAlpha::SourceAlpha()
+    : FilterEffect(FilterEffect::Type::SourceAlpha)
+{
 }
 
 SourceAlpha::SourceAlpha(FilterEffect& sourceEffect)

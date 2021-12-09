@@ -45,6 +45,7 @@
 #include <WebCore/Filter.h>
 #include <WebCore/FilterEffectVector.h>
 #include <WebCore/SVGFilter.h>
+#include <WebCore/SourceAlpha.h>
 #include <WebCore/SourceGraphic.h>
 
 namespace IPC {
@@ -62,8 +63,20 @@ public:
     template<class Decoder> static std::optional<FilterReference> decode(Decoder&);
 
 private:
+    struct ExpressionReferenceTerm {
+        unsigned index;
+        std::optional<WebCore::FilterEffectGeometry> geometry;
+        unsigned level;
+    
+        template<class Encoder> void encode(Encoder&) const;
+        template<class Decoder> static std::optional<ExpressionReferenceTerm> decode(Decoder&);
+    };
+    
+    using ExpressionReference = Vector<ExpressionReferenceTerm>;
+
     template<class Encoder> static void encodeFilterEffect(const WebCore::FilterEffect&, Encoder&);
     template<class Decoder> static RefPtr<WebCore::FilterEffect> decodeFilterEffect(Decoder&, WebCore::FilterFunction::Type);
+    template<class Decoder> static RefPtr<WebCore::FilterEffect> decodeFilterEffect(Decoder&);
 
     template<class Encoder> static void encodeSVGFilter(const WebCore::SVGFilter&, Encoder&);
     template<class Decoder> static RefPtr<WebCore::SVGFilter> decodeSVGFilter(Decoder&);
@@ -243,11 +256,14 @@ RefPtr<WebCore::FilterEffect> FilterReference::decodeFilterEffect(Decoder& decod
         effect = WebCore::FETurbulence::decode(decoder);
         break;
 
+    case WebCore::FilterEffect::Type::SourceAlpha:
+        effect = WebCore::SourceAlpha::create();
+        break;
+
     case WebCore::FilterEffect::Type::SourceGraphic:
         effect = WebCore::SourceGraphic::create();
         break;
 
-    case WebCore::FilterEffect::Type::SourceAlpha:
     default:
         ASSERT_NOT_REACHED();
     }
@@ -260,17 +276,121 @@ RefPtr<WebCore::FilterEffect> FilterReference::decodeFilterEffect(Decoder& decod
     return nullptr;
 }
 
+template<class Decoder>
+RefPtr<WebCore::FilterEffect> FilterReference::decodeFilterEffect(Decoder& decoder)
+{
+    std::optional<WebCore::FilterFunction::Type> filterType;
+    decoder >> filterType;
+    if (!filterType)
+        return nullptr;
+
+    return decodeFilterEffect(decoder, *filterType);
+}
+
+template<class Encoder>
+void FilterReference::ExpressionReferenceTerm::encode(Encoder& encoder) const
+{
+    encoder << index;
+    encoder << geometry;
+    encoder << level;
+}
+
+template<class Decoder>
+std::optional<FilterReference::ExpressionReferenceTerm> FilterReference::ExpressionReferenceTerm::decode(Decoder& decoder)
+{
+    std::optional<unsigned> index;
+    decoder >> index;
+    if (!index)
+        return std::nullopt;
+
+    std::optional<std::optional<WebCore::FilterEffectGeometry>> geometry;
+    decoder >> geometry;
+    if (!geometry)
+        return std::nullopt;
+
+    std::optional<unsigned> level;
+    decoder >> level;
+    if (!level)
+        return std::nullopt;
+
+    return { { *index, *geometry, *level } };
+}
+
 template<class Encoder>
 void FilterReference::encodeSVGFilter(const WebCore::SVGFilter& filter, Encoder& encoder)
 {
-    // FIXME: Encode the SVGFilter.
+    HashMap<Ref<WebCore::FilterEffect>, unsigned> indicies;
+    Vector<Ref<WebCore::FilterEffect>> effects;
+
+    // Get the individual FilterEffects in filter.expression().
+    for (auto& term : filter.expression()) {
+        if (indicies.contains(term.effect))
+            continue;
+        indicies.add(term.effect, effects.size());
+        effects.append(term.effect);
+    }
+
+    // Replace the Ref<FilterEffect> in SVGExpressionTerm with its index in indicies.
+    auto expressionReference = WTF::map(filter.expression(), [&indicies] (auto&& term) -> ExpressionReferenceTerm {
+        ASSERT(indicies.contains(term.effect));
+        unsigned index = indicies.get(term.effect);
+        return { index, term.geometry, term.level };
+    });
+
+    encoder << filter.targetBoundingBox();
+    encoder << filter.primitiveUnits();
+    
+    encoder << effects.size();
+    for (auto& effect : effects)
+        encodeFilterEffect(effect, encoder);
+
+    encoder << expressionReference;
 }
 
 template<class Decoder>
 RefPtr<WebCore::SVGFilter> FilterReference::decodeSVGFilter(Decoder& decoder)
 {
-    // FIXME: Decode the SVGFilter.
-    return nullptr;
+    std::optional<WebCore::FloatRect> targetBoundingBox;
+    decoder >> targetBoundingBox;
+    if (!targetBoundingBox)
+        return nullptr;
+
+    std::optional<WebCore::SVGUnitTypes::SVGUnitType> primitiveUnits;
+    decoder >> primitiveUnits;
+    if (!primitiveUnits)
+        return nullptr;
+
+    std::optional<size_t> effectsSize;
+    decoder >> effectsSize;
+    if (!effectsSize || !*effectsSize)
+        return nullptr;
+
+    Vector<Ref<WebCore::FilterEffect>> effects;
+
+    for (size_t i = 0; i < *effectsSize; ++i) {
+        auto effect = decodeFilterEffect(decoder);
+        if (!effect)
+            return nullptr;
+
+        effects.append(effect.releaseNonNull());
+    }
+
+    std::optional<ExpressionReference> expressionReference;
+    decoder >> expressionReference;
+    if (!expressionReference || expressionReference->isEmpty())
+        return nullptr;
+
+    WebCore::SVGFilterExpression expression;
+    expression.reserveInitialCapacity(expressionReference->size());
+
+    // Replace the index in ExpressionReferenceTerm with its Ref<FilterEffect> in effects.
+    for (auto& term : *expressionReference) {
+        if (term.index >= effects.size())
+            return nullptr;
+        expression.uncheckedAppend({ effects[term.index], term.geometry, term.level });
+    }
+    
+    return WebCore::SVGFilter::create(*targetBoundingBox, *primitiveUnits, WTFMove(expression));
 }
 
 template<class Encoder>

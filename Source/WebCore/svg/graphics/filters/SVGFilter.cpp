@@ -69,10 +69,23 @@ RefPtr<SVGFilter> SVGFilter::create(SVGFilterElement& filterElement, SVGFilterBu
     return filter;
 }
 
+RefPtr<SVGFilter> SVGFilter::create(const FloatRect& targetBoundingBox, SVGUnitTypes::SVGUnitType primitiveUnits, SVGFilterExpression&& expression)
+{
+    return adoptRef(*new SVGFilter(targetBoundingBox, primitiveUnits, WTFMove(expression)));
+}
+
 SVGFilter::SVGFilter(RenderingMode renderingMode, const FloatSize& filterScale, ClipOperation clipOperation, const FloatRect& filterRegion, const FloatRect& targetBoundingBox, SVGUnitTypes::SVGUnitType primitiveUnits)
     : Filter(Filter::Type::SVGFilter, renderingMode, filterScale, clipOperation, filterRegion)
     , m_targetBoundingBox(targetBoundingBox)
     , m_primitiveUnits(primitiveUnits)
+{
+}
+
+SVGFilter::SVGFilter(const FloatRect& targetBoundingBox, SVGUnitTypes::SVGUnitType primitiveUnits, SVGFilterExpression&& expression)
+    : Filter(Filter::Type::SVGFilter)
+    , m_targetBoundingBox(targetBoundingBox)
+    , m_primitiveUnits(primitiveUnits)
+    , m_expression(WTFMove(expression))
 {
 }
 

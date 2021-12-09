@@ -1,3 +1,25 @@
+2021-12-08  Said Abou-Hallawa  <said@apple.com>
+
+        [GPU Process] [Filters] Add the encoding and decoding for SVGFilter
+        https://bugs.webkit.org/show_bug.cgi?id=234024
+
+        Reviewed by Wenson Hsieh.
+
+        When encoding the SVGFilter we need to encode the individual FilterEffects
+        in filter.expression(). And for every SVGFilterExpressionTerm we need to
+        encode the index of its Ref<FilterEffect> in the individual FilterEffects.
+
+        When decoding the SVGFilter we do the opposite. We get the Ref<FilterEffect>
+        which corresponds to index of ExpressionReferenceTerm. We send the decoded
+        expression to the constructor of SVGFilter.
+
+        * Platform/IPC/FilterReference.h:
+        (IPC::FilterReference::decodeFilterEffect):
+        (IPC::FilterReference::ExpressionReferenceTerm::encode const):
+        (IPC::FilterReference::ExpressionReferenceTerm::decode):
+        (IPC::FilterReference::encodeSVGFilter):
+        (IPC::FilterReference::decodeSVGFilter):
+
 2021-12-08  Alex Christensen  <achristensen@webkit.org>
 
         Add SPI to load a resource in the context of a page

@@ -1597,6 +1597,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/filters/FilterOperation.h
     platform/graphics/filters/FilterOperations.h
     platform/graphics/filters/LightSource.h
+    platform/graphics/filters/SourceAlpha.h
     platform/graphics/filters/SourceGraphic.h
 
     platform/graphics/iso/ISOBox.h

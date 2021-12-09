@@ -39,9 +39,13 @@ public:
     static RefPtr<SVGFilter> create(SVGFilterElement&, SVGFilterBuilder&, RenderingMode, const FloatSize& filterScale, ClipOperation, const FloatRect& targetBoundingBox, FilterEffect& previousEffect);
     static RefPtr<SVGFilter> create(SVGFilterElement&, SVGFilterBuilder&, RenderingMode, const FloatSize& filterScale, const FloatRect& filterRegion, const FloatRect& targetBoundingBox);
     static RefPtr<SVGFilter> create(SVGFilterElement&, SVGFilterBuilder&, RenderingMode, const FloatSize& filterScale, ClipOperation, const FloatRect& filterRegion, const FloatRect& targetBoundingBox, FilterEffect* previousEffect);
+    WEBCORE_EXPORT static RefPtr<SVGFilter> create(const FloatRect& targetBoundingBox, SVGUnitTypes::SVGUnitType primitiveUnits, SVGFilterExpression&&);
 
     FloatRect targetBoundingBox() const { return m_targetBoundingBox; }
+    SVGUnitTypes::SVGUnitType primitiveUnits() const { return m_primitiveUnits; }
 
+    const SVGFilterExpression& expression() const { return m_expression; }
+    
     RefPtr<FilterEffect> lastEffect() const final;
 
     RefPtr<FilterImage> apply() final;
@@ -50,6 +54,7 @@ public:
 
 private:
     SVGFilter(RenderingMode, const FloatSize& filterScale, ClipOperation, const FloatRect& filterRegion, const FloatRect& targetBoundingBox, SVGUnitTypes::SVGUnitType primitiveUnits);
+    SVGFilter(const FloatRect& targetBoundingBox, SVGUnitTypes::SVGUnitType primitiveUnits, SVGFilterExpression&&);
 
     void setExpression(SVGFilterExpression&& expression) { m_expression = WTFMove(expression); }
 
