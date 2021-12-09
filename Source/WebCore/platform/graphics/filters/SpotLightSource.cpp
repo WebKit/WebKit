@@ -43,6 +43,20 @@ namespace WebCore {
 // according to the SVG 1.1 SE light regression tests
 static const float antialiasThreshold = 0.016f;
 
+Ref<SpotLightSource> SpotLightSource::create(const FloatPoint3D& position, const FloatPoint3D& direction, float specularExponent, float limitingConeAngle)
+{
+    return adoptRef(*new SpotLightSource(position, direction, specularExponent, limitingConeAngle));
+}
+
+SpotLightSource::SpotLightSource(const FloatPoint3D& position, const FloatPoint3D& direction, float specularExponent, float limitingConeAngle)
+    : LightSource(LS_SPOT)
+    , m_userSpacePosition(position)
+    , m_userSpacePointsAt(direction)
+    , m_specularExponent(specularExponent)
+    , m_limitingConeAngle(limitingConeAngle)
+{
+}
+
 void SpotLightSource::initPaintingData(const Filter& filter, const FilterImage& result, PaintingData& paintingData) const
 {
     auto absolutePosition = filter.scaledByFilterScale(m_userSpacePosition.xy());

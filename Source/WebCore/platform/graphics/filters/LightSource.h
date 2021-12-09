@@ -93,6 +93,20 @@ private:
 
 } // namespace WebCore
 
+namespace WTF {
+
+template<> struct EnumTraits<WebCore::LightType> {
+    using values = EnumValues<
+        WebCore::LightType,
+
+        WebCore::LS_DISTANT,
+        WebCore::LS_POINT,
+        WebCore::LS_SPOT
+    >;
+};
+
+} // namespace WTF
+
 #define SPECIALIZE_TYPE_TRAITS_LIGHTSOURCE(ClassName, Type) \
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::ClassName) \
     static bool isType(const WebCore::LightSource& source) { return source.type() == WebCore::Type; } \

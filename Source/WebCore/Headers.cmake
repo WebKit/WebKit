@@ -1574,6 +1574,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
 
     platform/graphics/cv/ImageTransferSessionVT.h
 
+    platform/graphics/filters/DistantLightSource.h
     platform/graphics/filters/FEBlend.h
     platform/graphics/filters/FEColorMatrix.h
     platform/graphics/filters/FEComponentTransfer.h
@@ -1601,8 +1602,10 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/filters/FilterOperation.h
     platform/graphics/filters/FilterOperations.h
     platform/graphics/filters/LightSource.h
+    platform/graphics/filters/PointLightSource.h
     platform/graphics/filters/SourceAlpha.h
     platform/graphics/filters/SourceGraphic.h
+    platform/graphics/filters/SpotLightSource.h
 
     platform/graphics/iso/ISOBox.h
     platform/graphics/iso/ISOOriginalFormatBox.h

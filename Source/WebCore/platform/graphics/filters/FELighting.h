@@ -28,8 +28,10 @@
 #pragma once
 
 #include "Color.h"
+#include "DistantLightSource.h"
 #include "FilterEffect.h"
-#include "LightSource.h"
+#include "PointLightSource.h"
+#include "SpotLightSource.h"
 
 namespace WebCore {
 
@@ -90,7 +92,19 @@ void FELighting::encode(Encoder& encoder) const
     encoder << m_specularExponent;
     encoder << m_kernelUnitLengthX;
     encoder << m_kernelUnitLengthY;
-    // FIXME: encode m_lightSource.
+    
+    encoder << m_lightSource->type();
+    switch (m_lightSource->type()) {
+    case LS_DISTANT:
+        downcast<DistantLightSource>(m_lightSource.get()).encode(encoder);
+        break;
+    case LS_POINT:
+        downcast<PointLightSource>(m_lightSource.get()).encode(encoder);
+        break;
+    case LS_SPOT:
+        downcast<SpotLightSource>(m_lightSource.get()).encode(encoder);
+        break;
+    }
 }
 
 template<class Decoder, class ClassName>
@@ -131,8 +145,28 @@ std::optional<Ref<ClassName>> FELighting::decode(Decoder& decoder)
     if (!kernelUnitLengthY)
         return std::nullopt;
 
-    // FIXME: decode m_lightSource.
-    return std::nullopt;
+    std::optional<LightType> lightSourceType;
+    decoder >> lightSourceType;
+    if (!lightSourceType)
+        return std::nullopt;
+
+    std::optional<Ref<LightSource>> lightSource;
+    switch (*lightSourceType) {
+    case LS_DISTANT:
+        lightSource = DistantLightSource::decode(decoder);
+        break;
+    case LS_POINT:
+        lightSource = PointLightSource::decode(decoder);
+        break;
+    case LS_SPOT:
+        lightSource = SpotLightSource::decode(decoder);
+        break;
+    }
+
+    if (!lightSource)
+        return std::nullopt;
+
+    return ClassName::create(*lightingColor, *surfaceScale, *diffuseConstant, *specularConstant, *specularExponent, *kernelUnitLengthX, *kernelUnitLengthY, WTFMove(*lightSource));
 }
 
 } // namespace WebCore

@@ -30,6 +30,7 @@ class LightSource;
 
 class FEDiffuseLighting : public FELighting {
 public:
+    WEBCORE_EXPORT static Ref<FEDiffuseLighting> create(const Color& lightingColor, float surfaceScale, float diffuseConstant, float, float, float kernelUnitLengthX, float kernelUnitLengthY, Ref<LightSource>&&);
     static Ref<FEDiffuseLighting> create(const Color& lightingColor, float surfaceScale, float diffuseConstant, float kernelUnitLengthX, float kernelUnitLengthY, Ref<LightSource>&&);
 
     float diffuseConstant() const { return m_diffuseConstant; }

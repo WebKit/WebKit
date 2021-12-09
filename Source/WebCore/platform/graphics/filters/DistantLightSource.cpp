@@ -35,6 +35,18 @@
 
 namespace WebCore {
 
+Ref<DistantLightSource> DistantLightSource::create(float azimuth, float elevation)
+{
+    return adoptRef(*new DistantLightSource(azimuth, elevation));
+}
+
+DistantLightSource::DistantLightSource(float azimuth, float elevation)
+    : LightSource(LS_DISTANT)
+    , m_azimuth(azimuth)
+    , m_elevation(elevation)
+{
+}
+
 void DistantLightSource::initPaintingData(const Filter&, const FilterImage&, PaintingData& paintingData) const
 {
     float azimuth = deg2rad(m_azimuth);

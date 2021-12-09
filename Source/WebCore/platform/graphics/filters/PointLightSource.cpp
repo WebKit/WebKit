@@ -38,6 +38,17 @@
 
 namespace WebCore {
 
+Ref<PointLightSource> PointLightSource::create(const FloatPoint3D& position)
+{
+    return adoptRef(*new PointLightSource(position));
+}
+
+PointLightSource::PointLightSource(const FloatPoint3D& position)
+    : LightSource(LS_POINT)
+    , m_userSpacePosition(position)
+{
+}
+
 void PointLightSource::initPaintingData(const Filter& filter, const FilterImage& result, PaintingData&) const
 {
     auto absolutePosition = filter.scaledByFilterScale(m_userSpacePosition.xy());
