@@ -1,8 +1,8 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x510
-  RenderBlock {HTML} at (0,0) size 800x510
-    RenderBody {BODY} at (8,21) size 784x473
+layer at (0,0) size 800x511
+  RenderBlock {HTML} at (0,0) size 800x511
+    RenderBody {BODY} at (8,21) size 784x474
       RenderBlock {H1} at (0,0) size 784x38
         RenderText {#text} at (0,1) size 579x36
           text run at (0,1) width 579: "Bidirectional Text Test 2 - HTML"
@@ -28,7 +28,7 @@ layer at (0,0) size 800x510
       RenderBlock {P} at (0,94) size 784x20
         RenderText {#text} at (0,1) size 360x17
           text run at (0,1) width 360: "In each box, all the lines should be the same."
-      RenderBlock (anonymous) at (0,129) size 784x229
+      RenderBlock (anonymous) at (0,129) size 784x230
         RenderBlock {DIV} at (3,3) size 101x171 [border: (1px solid #008000)]
           RenderBlock {P} at (4,4) size 93x19
             RenderText {#text} at (0,1) size 93x17
@@ -113,7 +113,7 @@ layer at (0,0) size 800x510
               text run at (0,0) width 27: "\x{5D2}\x{5D1}\x{5D0}"
         RenderText {#text} at (152,79) size 4x17
           text run at (152,79) width 4: " "
-        RenderBlock {DIV} at (159,57) size 101x63 [border: (1px solid #008000)]
+        RenderBlock {DIV} at (159,57) size 101x64 [border: (1px solid #008000)]
           RenderTable {TABLE} at (4,4) size 93x19
             RenderTableSection {TBODY} at (0,0) size 93x19
               RenderTableRow {TR} at (0,0) size 93x19
@@ -150,19 +150,19 @@ layer at (0,0) size 800x510
                 RenderTableCell {TD} at (84,0) size 9x19 [r=0 c=10 rs=1 cs=1]
                   RenderText {#text} at (0,-1) size 9x19
                     text run at (0,0) width 9 RTL: "\x{5D3}"
-          RenderBlock {P} at (4,23) size 93x18
-            RenderText {#text} at (0,0) size 93x17
-              text run at (0,0) width 27 RTL: "\x{5D0}\x{5D1}\x{5D2}"
-              text run at (27,0) width 43: " ABC "
-              text run at (70,0) width 23 RTL: "\x{5D3}\x{5D4}\x{5D5}"
-          RenderBlock {P} at (4,41) size 93x18
+          RenderBlock {P} at (4,23) size 93x19
+            RenderText {#text} at (0,1) size 93x17
+              text run at (0,1) width 28 RTL: "\x{5D0}\x{5D1}\x{5D2}"
+              text run at (28,1) width 42: " ABC "
+              text run at (70,1) width 23 RTL: "\x{5D3}\x{5D4}\x{5D5}"
+          RenderBlock {P} at (4,42) size 93x18
             RenderText {#text} at (0,0) size 93x17
               text run at (0,0) width 32 RTL: " \x{5D0}\x{5D1}\x{5D2}"
               text run at (32,0) width 33: "ABC"
               text run at (65,0) width 28 RTL: "\x{5D3}\x{5D4}\x{5D5} "
         RenderText {#text} at (263,79) size 4x17
           text run at (263,79) width 4: " "
-        RenderBlock {DIV} at (270,3) size 168x171 [border: (1px solid #008000)]
+        RenderBlock {DIV} at (270,3) size 168x172 [border: (1px solid #008000)]
           RenderTable {TABLE} at (4,4) size 160x19
             RenderTableSection {TBODY} at (0,0) size 160x19
               RenderTableRow {TR} at (0,0) size 160x19
@@ -223,14 +223,14 @@ layer at (0,0) size 800x510
                 RenderTableCell {TD} at (155,0) size 5x19 [r=0 c=18 rs=1 cs=1]
                   RenderText {#text} at (0,-1) size 5x19
                     text run at (0,0) width 5 RTL: "\x{5D6}"
-          RenderBlock {P} at (4,23) size 160x18
-            RenderText {#text} at (0,0) size 160x17
-              text run at (0,0) width 27 RTL: "\x{5D0}\x{5D1}\x{5D2}"
-              text run at (27,0) width 43: " ABC "
-              text run at (70,0) width 23 RTL: "\x{5D3}\x{5D4}\x{5D5}"
-              text run at (93,0) width 41: " DEF "
-              text run at (134,0) width 26 RTL: "\x{5D6}\x{5D7}\x{5D8}"
-          RenderBlock {P} at (4,41) size 160x18
+          RenderBlock {P} at (4,23) size 160x19
+            RenderText {#text} at (0,1) size 160x17
+              text run at (0,1) width 28 RTL: "\x{5D0}\x{5D1}\x{5D2}"
+              text run at (28,1) width 42: " ABC "
+              text run at (70,1) width 24 RTL: "\x{5D3}\x{5D4}\x{5D5}"
+              text run at (94,1) width 40: " DEF "
+              text run at (134,1) width 26 RTL: "\x{5D6}\x{5D7}\x{5D8}"
+          RenderBlock {P} at (4,42) size 160x18
             RenderText {#text} at (0,0) size 32x17
               text run at (0,0) width 27 RTL: "\x{5D0}\x{5D1}\x{5D2}"
               text run at (27,0) width 5: " "
@@ -241,7 +241,7 @@ layer at (0,0) size 800x510
             RenderText {#text} at (93,0) size 67x17
               text run at (93,0) width 41: " DEF "
               text run at (134,0) width 26 RTL: "\x{5D6}\x{5D7}\x{5D8}"
-          RenderBlock {P} at (4,59) size 160x18
+          RenderBlock {P} at (4,60) size 160x18
             RenderText {#text} at (0,0) size 32x17
               text run at (0,0) width 27 RTL: "\x{5D0}\x{5D1}\x{5D2}"
               text run at (27,0) width 5: " "
@@ -253,7 +253,7 @@ layer at (0,0) size 800x510
             RenderText {#text} at (129,0) size 31x17
               text run at (129,0) width 5: " "
               text run at (134,0) width 26 RTL: "\x{5D6}\x{5D7}\x{5D8}"
-          RenderBlock {P} at (4,77) size 160x18
+          RenderBlock {P} at (4,78) size 160x18
             RenderText {#text} at (129,0) size 31x17
               text run at (129,0) width 31 RTL: "\x{5D6}\x{5D7}\x{5D8} "
             RenderInline {SPAN} at (0,0) size 97x17
@@ -263,7 +263,7 @@ layer at (0,0) size 800x510
                 text run at (98,0) width 31: "DEF"
             RenderText {#text} at (0,0) size 32x17
               text run at (0,0) width 32 RTL: " \x{5D0}\x{5D1}\x{5D2}"
-          RenderBlock {P} at (4,95) size 160x18
+          RenderBlock {P} at (4,96) size 160x18
             RenderText {#text} at (65,0) size 28x17
               text run at (65,0) width 28 RTL: "\x{5D3}\x{5D4}\x{5D5} "
             RenderInline {SPAN} at (0,0) size 65x17
@@ -273,7 +273,7 @@ layer at (0,0) size 800x510
             RenderText {#text} at (93,0) size 67x17
               text run at (93,0) width 41: " DEF "
               text run at (134,0) width 26 RTL: "\x{5D6}\x{5D7}\x{5D8}"
-          RenderBlock {P} at (4,113) size 160x18
+          RenderBlock {P} at (4,114) size 160x18
             RenderText {#text} at (65,0) size 28x17
               text run at (65,0) width 28 RTL: "\x{5D3}\x{5D4}\x{5D5} "
             RenderInline {BDO} at (0,0) size 65x17
@@ -282,7 +282,7 @@ layer at (0,0) size 800x510
             RenderText {#text} at (93,0) size 67x17
               text run at (93,0) width 41: " DEF "
               text run at (134,0) width 26 RTL: "\x{5D6}\x{5D7}\x{5D8}"
-          RenderBlock {P} at (4,131) size 160x18
+          RenderBlock {P} at (4,132) size 160x18
             RenderText {#text} at (0,0) size 32x17
               text run at (0,0) width 27 RTL: "\x{5D0}\x{5D1}\x{5D2}"
               text run at (27,0) width 5: " "
@@ -292,7 +292,7 @@ layer at (0,0) size 800x510
             RenderText {#text} at (93,0) size 67x17
               text run at (93,0) width 41: " DEF "
               text run at (134,0) width 26 RTL: "\x{5D6}\x{5D7}\x{5D8}"
-          RenderBlock {P} at (4,149) size 160x18
+          RenderBlock {P} at (4,150) size 160x18
             RenderText {#text} at (129,0) size 31x17
               text run at (129,0) width 31 RTL: "\x{5D6}\x{5D7}\x{5D8} "
             RenderInline {BDO} at (0,0) size 61x17
@@ -303,7 +303,7 @@ layer at (0,0) size 800x510
               text run at (93,0) width 36: " DEF"
         RenderText {#text} at (441,79) size 4x17
           text run at (441,79) width 4: " "
-        RenderBlock {DIV} at (448,66) size 202x45 [border: (1px solid #008000)]
+        RenderBlock {DIV} at (448,66) size 202x46 [border: (1px solid #008000)]
           RenderTable {TABLE} at (4,4) size 194x19
             RenderTableSection {TBODY} at (0,0) size 194x19
               RenderTableRow {TR} at (0,0) size 194x19
@@ -376,17 +376,17 @@ layer at (0,0) size 800x510
                 RenderTableCell {TD} at (189,0) size 5x19 [r=0 c=22 rs=1 cs=1]
                   RenderText {#text} at (0,-1) size 5x19
                     text run at (0,0) width 5 RTL: "\x{5D6}"
-          RenderBlock {P} at (4,23) size 194x18
-            RenderText {#text} at (0,0) size 194x17
-              text run at (0,0) width 27 RTL: "\x{5D0}\x{5D1}\x{5D2}"
-              text run at (27,0) width 43: " ABC "
-              text run at (70,0) width 23 RTL: "\x{5D3}\x{5D4}\x{5D5}"
-              text run at (93,0) width 75: " DEF GHI "
-              text run at (168,0) width 26 RTL: "\x{5D6}\x{5D7}\x{5D8}"
+          RenderBlock {P} at (4,23) size 194x19
+            RenderText {#text} at (0,1) size 194x17
+              text run at (0,1) width 28 RTL: "\x{5D0}\x{5D1}\x{5D2}"
+              text run at (28,1) width 42: " ABC "
+              text run at (70,1) width 24 RTL: "\x{5D3}\x{5D4}\x{5D5}"
+              text run at (94,1) width 74: " DEF GHI "
+              text run at (168,1) width 26 RTL: "\x{5D6}\x{5D7}\x{5D8}"
         RenderText {#text} at (653,79) size 4x17
           text run at (653,79) width 4: " "
         RenderBR {BR} at (657,79) size 0x17
-        RenderBlock {DIV} at (3,180) size 202x45 [border: (1px solid #008000)]
+        RenderBlock {DIV} at (3,181) size 202x45 [border: (1px solid #008000)]
           RenderTable {TABLE} at (4,4) size 194x19
             RenderTableSection {TBODY} at (0,0) size 194x19
               RenderTableRow {TR} at (0,0) size 194x19
@@ -468,9 +468,9 @@ layer at (0,0) size 800x510
             RenderText {#text} at (129,0) size 65x17
               text run at (129,0) width 39: " GHI "
               text run at (168,0) width 26 RTL: "\x{5D6}\x{5D7}\x{5D8}"
-        RenderText {#text} at (208,193) size 4x17
-          text run at (208,193) width 4: " "
-        RenderBlock {DIV} at (215,180) size 202x45 [border: (1px solid #008000)]
+        RenderText {#text} at (208,194) size 4x17
+          text run at (208,194) width 4: " "
+        RenderBlock {DIV} at (215,181) size 202x45 [border: (1px solid #008000)]
           RenderTable {TABLE} at (4,4) size 194x19
             RenderTableSection {TBODY} at (0,0) size 194x19
               RenderTableRow {TR} at (0,0) size 194x19
@@ -554,8 +554,8 @@ layer at (0,0) size 800x510
               text run at (129,0) width 39: " GHI "
               text run at (168,0) width 26 RTL: "\x{5D6}\x{5D7}\x{5D8}"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {HR} at (0,365) size 784x3 [border: (1px inset #000000)]
-      RenderBlock {P} at (0,383) size 784x20
+      RenderBlock {HR} at (0,366) size 784x3 [border: (1px inset #000000)]
+      RenderBlock {P} at (0,384) size 784x20
         RenderText {#text} at (0,1) size 70x17
           text run at (0,1) width 70: "(Back to "
         RenderInline {A} at (0,0) size 193x17 [color=#0000EE]
@@ -568,7 +568,7 @@ layer at (0,0) size 800x510
             text run at (272,1) width 98: "David Baron"
         RenderText {#text} at (370,1) size 6x17
           text run at (370,1) width 6: ")"
-      RenderBlock {P} at (0,418) size 784x20
+      RenderBlock {P} at (0,419) size 784x20
         RenderInline {A} at (0,0) size 32x17 [color=#0000EE]
           RenderText {#text} at (0,1) size 32x17
             text run at (0,1) width 32: "LDB"
@@ -579,6 +579,6 @@ layer at (0,0) size 800x510
             text run at (41,1) width 162: "dbaron@dbaron.org"
         RenderText {#text} at (203,1) size 102x17
           text run at (203,1) width 102: ", 2001-06-05"
-      RenderBlock {P} at (0,453) size 784x20
+      RenderBlock {P} at (0,454) size 784x20
         RenderText {#text} at (0,1) size 383x17
           text run at (0,1) width 383: "Modified and used with the author\x{2019}s permission."

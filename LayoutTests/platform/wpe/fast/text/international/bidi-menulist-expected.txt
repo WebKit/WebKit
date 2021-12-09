@@ -20,39 +20,39 @@ layer at (0,0) size 800x600
               text run at (5,5) width 59 RTL: "\x{5D0}\x{5E4}\x{5E8}\x{5E1}\x{5DE}\x{5D5}\x{5DF}"
               text run at (64,5) width 29: "abc"
         RenderBR {BR} at (100,26) size 0x17
-      RenderBlock {DIV} at (0,125) size 100x18
-        RenderText {#text} at (0,0) size 88x17
-          text run at (0,0) width 29: "abc"
-          text run at (29,0) width 59 RTL: "\x{5D0}\x{5E4}\x{5E8}\x{5E1}\x{5DE}\x{5D5}\x{5DF}"
-      RenderBlock (anonymous) at (0,143) size 784x70
+      RenderBlock {DIV} at (0,125) size 100x19
+        RenderText {#text} at (0,1) size 88x17
+          text run at (0,1) width 29: "abc"
+          text run at (29,1) width 59 RTL: "\x{5D0}\x{5E4}\x{5E8}\x{5E1}\x{5DE}\x{5D5}\x{5DF}"
+      RenderBlock (anonymous) at (0,144) size 784x71
         RenderBR {BR} at (0,0) size 0x17
         RenderText {#text} at (0,18) size 143x17
           text run at (0,18) width 143: "2) text-align: right"
         RenderBR {BR} at (143,18) size 0x17
-        RenderMenuList {SELECT} at (0,38) size 200x30 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
-          RenderBlock (anonymous) at (1,1) size 198x28
-            RenderText at (5,5) size 88x17
-              text run at (5,5) width 29: "abc"
-              text run at (34,5) width 59 RTL: "\x{5D0}\x{5E4}\x{5E8}\x{5E1}\x{5DE}\x{5D5}\x{5DF}"
-        RenderBR {BR} at (200,44) size 0x17
-      RenderBlock {DIV} at (0,213) size 200x18
-        RenderText {#text} at (0,0) size 88x17
-          text run at (0,0) width 29: "abc"
-          text run at (29,0) width 59 RTL: "\x{5D0}\x{5E4}\x{5E8}\x{5E1}\x{5DE}\x{5D5}\x{5DF}"
-      RenderBlock (anonymous) at (0,231) size 784x70
+        RenderMenuList {SELECT} at (0,38) size 200x31 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+          RenderBlock (anonymous) at (1,1) size 198x29
+            RenderText at (5,6) size 88x17
+              text run at (5,6) width 29: "abc"
+              text run at (34,6) width 59 RTL: "\x{5D0}\x{5E4}\x{5E8}\x{5E1}\x{5DE}\x{5D5}\x{5DF}"
+        RenderBR {BR} at (200,45) size 0x17
+      RenderBlock {DIV} at (0,215) size 200x19
+        RenderText {#text} at (0,1) size 88x17
+          text run at (0,1) width 29: "abc"
+          text run at (29,1) width 59 RTL: "\x{5D0}\x{5E4}\x{5E8}\x{5E1}\x{5DE}\x{5D5}\x{5DF}"
+      RenderBlock (anonymous) at (0,234) size 784x71
         RenderBR {BR} at (0,0) size 0x17
         RenderText {#text} at (0,18) size 85x17
           text run at (0,18) width 85: "3) No style"
         RenderBR {BR} at (85,18) size 0x17
-        RenderMenuList {SELECT} at (0,38) size 100x30 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
-          RenderBlock (anonymous) at (1,1) size 98x28
-            RenderText at (5,5) size 88x17
-              text run at (5,5) width 29: "abc"
-              text run at (34,5) width 59 RTL: "\x{5D0}\x{5E4}\x{5E8}\x{5E1}\x{5DE}\x{5D5}\x{5DF}"
-        RenderBR {BR} at (100,44) size 0x17
-      RenderBlock {DIV} at (0,301) size 100x18
-        RenderText {#text} at (0,0) size 88x17
-          text run at (0,0) width 29: "abc"
-          text run at (29,0) width 59 RTL: "\x{5D0}\x{5E4}\x{5E8}\x{5E1}\x{5DE}\x{5D5}\x{5DF}"
-      RenderBlock (anonymous) at (0,319) size 784x18
+        RenderMenuList {SELECT} at (0,38) size 100x31 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+          RenderBlock (anonymous) at (1,1) size 98x29
+            RenderText at (5,6) size 88x17
+              text run at (5,6) width 29: "abc"
+              text run at (34,6) width 59 RTL: "\x{5D0}\x{5E4}\x{5E8}\x{5E1}\x{5DE}\x{5D5}\x{5DF}"
+        RenderBR {BR} at (100,45) size 0x17
+      RenderBlock {DIV} at (0,305) size 100x19
+        RenderText {#text} at (0,1) size 88x17
+          text run at (0,1) width 29: "abc"
+          text run at (29,1) width 59 RTL: "\x{5D0}\x{5E4}\x{5E8}\x{5E1}\x{5DE}\x{5D5}\x{5DF}"
+      RenderBlock (anonymous) at (0,324) size 784x18
         RenderBR {BR} at (0,0) size 0x17

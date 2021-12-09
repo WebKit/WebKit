@@ -1,3 +1,32 @@
+2021-12-08  Arcady Goldmints-Orlov  <agoldmints@igalia.com>
+
+        [WPE] Update test baselines after r283875, r284194, and r286107
+        https://bugs.webkit.org/show_bug.cgi?id=234038
+
+        Unreviewed test gardening.
+
+        * platform/wpe/fast/dom/52776-expected.txt:
+        * platform/wpe/fast/text/basic/014-expected.txt:
+        * platform/wpe/fast/text/basic/015-expected.txt:
+        * platform/wpe/fast/text/international/bidi-LDB-2-CSS-expected.txt:
+        * platform/wpe/fast/text/international/bidi-LDB-2-HTML-expected.txt:
+        * platform/wpe/fast/text/international/bidi-LDB-2-formatting-characters-expected.txt:
+        * platform/wpe/fast/text/international/bidi-european-terminators-expected.txt:
+        * platform/wpe/fast/text/international/bidi-ignored-for-first-child-inline-expected.txt:
+        * platform/wpe/fast/text/international/bidi-innertext-expected.txt:
+        * platform/wpe/fast/text/international/bidi-listbox-expected.txt:
+        * platform/wpe/fast/text/international/bidi-menulist-expected.txt:
+        * platform/wpe/fast/text/international/bidi-neutral-run-expected.txt:
+        * platform/wpe/fast/text/international/bidi-override-expected.txt:
+        * platform/wpe/fast/text/whitespace/004-expected.txt:
+        * platform/wpe/fast/text/whitespace/005-expected.txt:
+        * platform/wpe/fast/text/whitespace/006-expected.txt:
+        * platform/wpe/fast/text/whitespace/007-expected.txt:
+        * platform/wpe/fast/text/whitespace/010-expected.txt:
+        * platform/wpe/fast/text/whitespace/011-expected.txt:
+        * platform/wpe/fast/text/whitespace/015-expected.txt:
+        * platform/wpe/fast/text/whitespace/016-expected.txt:
+
 2021-12-08  Jer Noble  <jer.noble@apple.com>
 
         [VTT] Fix various issues with complicated rendering of VTT cues
