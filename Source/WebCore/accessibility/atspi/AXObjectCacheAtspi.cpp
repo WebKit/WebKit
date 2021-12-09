@@ -35,12 +35,19 @@ namespace WebCore {
 
 void AXObjectCache::attachWrapper(AXCoreObject* axObject)
 {
-    auto wrapper = AccessibilityObjectAtspi::create(axObject);
+    auto* rootWrapper = document().page()->accessibilityRootObject();
+    if (!rootWrapper)
+        return;
+
+    auto wrapper = AccessibilityObjectAtspi::create(axObject, *rootWrapper);
     axObject->setWrapper(wrapper.ptr());
 
     auto* axParent = axObject->parentObjectUnignored();
-    if (!axParent)
+    if (!axParent) {
+        if (axObject->isScrollView() && axObject->scrollView() == document().view())
+            wrapper->setParent(nullptr); // nullptr parent means root.
         return;
+    }
 
     auto* axParentWrapper = axParent->wrapper();
     if (!axParentWrapper)

@@ -177,7 +177,6 @@ void AccessibilityAtspi::childrenChanged(AccessibilityObjectAtspi& atspiObject, 
         if (!m_connection)
             return;
 
-        child->setRoot(atspiObject->root());
         g_dbus_connection_emit_signal(m_connection.get(), nullptr, atspiObject->path().utf8().data(), "org.a11y.atspi.Event.Object", "ChildrenChanged",
             g_variant_new("(siiv(so))", change == ChildrenChanged::Added ? "add" : "remove", child->indexInParentForChildrenChanged(change),
             0, g_variant_new("(so)", uniqueName(), child->path().utf8().data()), uniqueName(), atspiObject->path().utf8().data()), nullptr);

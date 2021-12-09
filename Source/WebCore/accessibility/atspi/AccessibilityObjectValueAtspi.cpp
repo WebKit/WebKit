@@ -137,7 +137,7 @@ void AccessibilityObjectAtspi::valueChanged(double value)
     if (!m_isRegistered.load())
         return;
 
-    root()->atspi().valueChanged(*this, value);
+    m_root.atspi().valueChanged(*this, value);
 }
 
 } // namespace WebCore

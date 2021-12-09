@@ -42,7 +42,7 @@ GDBusInterfaceVTable AccessibilityObjectAtspi::s_tableFunctions = {
             int row, column;
             g_variant_get(parameters, "(ii)", &row, &column);
             auto* cell = row >= 0 && column >= 0 ? atspiObject->cell(row, column) : nullptr;
-            g_dbus_method_invocation_return_value(invocation, g_variant_new("(@(so))", cell ? cell->reference() : atspiObject->root()->atspi().nullReference()));
+            g_dbus_method_invocation_return_value(invocation, g_variant_new("(@(so))", cell ? cell->reference() : atspiObject->m_root.atspi().nullReference()));
         } else if (!g_strcmp0(methodName, "GetIndexAt")) {
             int row, column;
             g_variant_get(parameters, "(ii)", &row, &column);
@@ -75,12 +75,12 @@ GDBusInterfaceVTable AccessibilityObjectAtspi::s_tableFunctions = {
             int row;
             g_variant_get(parameters, "(i)", &row);
             auto* header = row >= 0 ? atspiObject->rowHeader(row) : nullptr;
-            g_dbus_method_invocation_return_value(invocation, g_variant_new("(@(so))", header ? header->reference() : atspiObject->root()->atspi().nullReference()));
+            g_dbus_method_invocation_return_value(invocation, g_variant_new("(@(so))", header ? header->reference() : atspiObject->m_root.atspi().nullReference()));
         } else if (!g_strcmp0(methodName, "GetColumnHeader")) {
             int column;
             g_variant_get(parameters, "(i)", &column);
             auto* header = column >= 0 ? atspiObject->columnHeader(column) : nullptr;
-            g_dbus_method_invocation_return_value(invocation, g_variant_new("(@(so))", header ? header->reference() : atspiObject->root()->atspi().nullReference()));
+            g_dbus_method_invocation_return_value(invocation, g_variant_new("(@(so))", header ? header->reference() : atspiObject->m_root.atspi().nullReference()));
         } else if (!g_strcmp0(methodName, "GetRowColumnExtentsAtIndex")) {
             int index;
             g_variant_get(parameters, "(i)", &index);
@@ -118,10 +118,10 @@ GDBusInterfaceVTable AccessibilityObjectAtspi::s_tableFunctions = {
             return g_variant_new_int32(atspiObject->columnCount());
         if (!g_strcmp0(propertyName, "Caption")) {
             auto* caption = atspiObject->tableCaption();
-            return caption ? caption->reference() : atspiObject->root()->atspi().nullReference();
+            return caption ? caption->reference() : atspiObject->m_root.atspi().nullReference();
         }
         if (!g_strcmp0(propertyName, "Summary"))
-            return atspiObject->root()->atspi().nullReference();
+            return atspiObject->m_root.atspi().nullReference();
         if (!g_strcmp0(propertyName, "NSelectedRows"))
             return g_variant_new_int32(0);
         if (!g_strcmp0(propertyName, "NSelectedColumns"))
@@ -160,12 +160,8 @@ AccessibilityObjectAtspi* AccessibilityObjectAtspi::cell(unsigned row, unsigned 
     if (!m_axObject)
         return nullptr;
 
-    if (auto* tableCell = m_axObject->cellForColumnAndRow(column, row)) {
-        if (auto* wrapper = tableCell->wrapper()) {
-            wrapper->setRoot(root());
-            return wrapper;
-        }
-    }
+    if (auto* tableCell = m_axObject->cellForColumnAndRow(column, row))
+        return tableCell->wrapper();
 
     return nullptr;
 }
@@ -185,12 +181,8 @@ AccessibilityObjectAtspi* AccessibilityObjectAtspi::tableCaption() const
 
             if (auto caption = downcast<HTMLTableElement>(*node).caption()) {
                 if (auto* renderer = caption->renderer()) {
-                    if (auto* element = AccessibilityObject::firstAccessibleObjectFromNode(renderer->element())) {
-                        if (auto* wrapper = element->wrapper()) {
-                            wrapper->setRoot(root());
-                            return wrapper;
-                        }
-                    }
+                    if (auto* element = AccessibilityObject::firstAccessibleObjectFromNode(renderer->element()))
+                        return element->wrapper();
                 }
             }
         }
@@ -253,10 +245,8 @@ AccessibilityObjectAtspi* AccessibilityObjectAtspi::rowHeader(unsigned row) cons
     for (const auto& header : headers) {
         auto range = header->rowIndexRange();
         if (range.first <= row && row < range.first + range.second) {
-            if (auto* wrapper = header->wrapper()) {
-                wrapper->setRoot(root());
+            if (auto* wrapper = header->wrapper())
                 return wrapper;
-            }
         }
     }
 
@@ -273,10 +263,8 @@ AccessibilityObjectAtspi* AccessibilityObjectAtspi::columnHeader(unsigned column
     for (const auto& header : headers) {
         auto range = header->columnIndexRange();
         if (range.first <= column && column < range.first + range.second) {
-            if (auto* wrapper = header->wrapper()) {
-                wrapper->setRoot(root());
+            if (auto* wrapper = header->wrapper())
                 return wrapper;
-            }
         }
     }
 

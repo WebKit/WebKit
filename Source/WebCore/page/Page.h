@@ -91,6 +91,7 @@ namespace IDBClient {
 class IDBConnectionToServer;
 }
 
+class AccessibilityRootAtspi;
 class ApplePayAMSUIPaymentHandler;
 class ActivityStateChangeObserver;
 class AlternativeTextClient;
@@ -916,6 +917,11 @@ public:
 
     ModelPlayerProvider& modelPlayerProvider();
 
+#if ENABLE(ACCESSIBILITY) && USE(ATSPI)
+    AccessibilityRootAtspi* accessibilityRootObject() const { return m_accessibilityRootObject; }
+    void setAccessibilityRootObject(AccessibilityRootAtspi* rootObject) { m_accessibilityRootObject = rootObject; }
+#endif
+
 private:
     struct Navigation {
         RegistrableDomain domain;
@@ -1262,6 +1268,10 @@ private:
 #if ENABLE(IMAGE_ANALYSIS)
     using CachedTextRecognitionResult = std::pair<TextRecognitionResult, IntRect>;
     WeakHashMap<HTMLElement, CachedTextRecognitionResult> m_textRecognitionResults;
+#endif
+
+#if ENABLE(ACCESSIBILITY) && USE(ATSPI)
+    AccessibilityRootAtspi* m_accessibilityRootObject { nullptr };
 #endif
 };
 

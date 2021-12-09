@@ -123,7 +123,7 @@ RunLoop& AccessibilityController::axRunLoop()
         WKBundlePageRef page = InjectedBundle::singleton().page()->page();
         auto* element = static_cast<WebCore::AccessibilityObjectAtspi*>(WKAccessibilityRootObject(page));
         RELEASE_ASSERT(element);
-        m_axRunLoop = &element->root()->atspi().runLoop();
+        m_axRunLoop = &element->root().atspi().runLoop();
     }
 
     return *m_axRunLoop;

@@ -157,6 +157,9 @@ GDBusInterfaceVTable AccessibilityRootAtspi::s_accessibleFunctions = {
 void AccessibilityRootAtspi::registerObject(CompletionHandler<void(const String&)>&& completionHandler)
 {
     RELEASE_ASSERT(isMainThread());
+    if (m_page)
+        m_page->setAccessibilityRootObject(this);
+
     Vector<std::pair<GDBusInterfaceInfo*, GDBusInterfaceVTable*>> interfaces;
     interfaces.append({ const_cast<GDBusInterfaceInfo*>(&webkit_accessible_interface), &s_accessibleFunctions });
     interfaces.append({ const_cast<GDBusInterfaceInfo*>(&webkit_component_interface), &s_componentFunctions });
@@ -167,6 +170,9 @@ void AccessibilityRootAtspi::unregisterObject()
 {
     RELEASE_ASSERT(isMainThread());
     m_atspi.unregisterRoot(*this);
+
+    if (m_page)
+        m_page->setAccessibilityRootObject(nullptr);
 }
 
 void AccessibilityRootAtspi::setPath(String&& path)
@@ -198,9 +204,6 @@ GVariant* AccessibilityRootAtspi::reference() const
 AccessibilityObjectAtspi* AccessibilityRootAtspi::child() const
 {
     RELEASE_ASSERT(isMainThread());
-    if (!AXObjectCache::accessibilityEnabled())
-        AXObjectCache::enableAccessibility();
-
     if (!m_page)
         return nullptr;
 
@@ -208,52 +211,13 @@ AccessibilityObjectAtspi* AccessibilityRootAtspi::child() const
     if (!frame.document())
         return nullptr;
 
+    AXObjectCache::enableAccessibility();
     AXObjectCache* cache = frame.document()->axObjectCache();
     if (!cache)
         return nullptr;
 
     AXCoreObject* rootObject = cache->rootObject();
-    if (!rootObject)
-        return nullptr;
-
-    auto* wrapper = rootObject->wrapper();
-    if (!wrapper)
-        return nullptr;
-
-    wrapper->setRoot(const_cast<AccessibilityRootAtspi*>(this));
-    wrapper->setParent(nullptr); // nullptr parent means root.
-
-    return wrapper;
-}
-
-AccessibilityObjectAtspi* AccessibilityRootAtspi::focusedObject() const
-{
-    RELEASE_ASSERT(isMainThread());
-    if (!AXObjectCache::accessibilityEnabled())
-        AXObjectCache::enableAccessibility();
-
-    if (!m_page)
-        return nullptr;
-
-    auto* focusedDocument = m_page->focusController().focusedOrMainFrame().document();
-    if (!focusedDocument)
-        return nullptr;
-
-    auto* cache = focusedDocument->axObjectCache();
-    if (!cache)
-        return nullptr;
-
-    auto* focusedObject = cache->focusedObjectForPage(m_page.get());
-    if (!focusedObject)
-        return nullptr;
-
-    auto* wrapper = focusedObject->wrapper();
-    if (!wrapper)
-        return nullptr;
-
-    wrapper->setRoot(const_cast<AccessibilityRootAtspi*>(this));
-
-    return wrapper;
+    return rootObject ? rootObject->wrapper() : nullptr;
 }
 
 void AccessibilityRootAtspi::serialize(GVariantBuilder* builder) const

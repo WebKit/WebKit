@@ -1497,10 +1497,6 @@ public:
 
     void prepareToRunModalJavaScriptDialog();
 
-#if USE(ATSPI)
-    const WebCore::AccessibilityRootAtspi& accessibilityRootObject() const { return *m_accessibilityRootObject; }
-#endif
-
 #if ENABLE(ARKIT_INLINE_PREVIEW)
     bool useARKitForModel() const { return m_useARKitForModel; };
 #endif

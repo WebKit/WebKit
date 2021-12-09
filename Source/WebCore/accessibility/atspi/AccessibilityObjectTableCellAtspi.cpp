@@ -67,7 +67,7 @@ GDBusInterfaceVTable AccessibilityObjectAtspi::s_tableCellFunctions = {
         if (!g_strcmp0(propertyName, "Table")) {
             auto* axObject = atspiObject->m_axObject;
             if (!axObject || !axObject->isTableCell())
-                return atspiObject->root()->atspi().nullReference();
+                return atspiObject->m_root.atspi().nullReference();
 
             AccessibilityObjectAtspi* wrapper = atspiObject.ptr();
             while (auto parent = wrapper->parent()) {
@@ -80,7 +80,7 @@ GDBusInterfaceVTable AccessibilityObjectAtspi::s_tableCellFunctions = {
                 if (axObject && axObject->isTable())
                     break;
             }
-            return wrapper ? wrapper->reference() : atspiObject->root()->atspi().nullReference();
+            return wrapper ? wrapper->reference() : atspiObject->m_root.atspi().nullReference();
         }
 
         g_set_error(error, G_IO_ERROR, G_IO_ERROR_NOT_SUPPORTED, "Unknown property '%s'", propertyName);
@@ -102,17 +102,7 @@ Vector<RefPtr<AccessibilityObjectAtspi>> AccessibilityObjectAtspi::cellRowHeader
     if (role() != Atspi::Role::TableCell)
         return { };
 
-    auto headers = m_axObject->rowHeaders();
-    Vector<RefPtr<AccessibilityObjectAtspi>> wrappers;
-    wrappers.reserveInitialCapacity(headers.size());
-    auto* root = this->root();
-    for (const auto& header : headers) {
-        if (auto* wrapper = header->wrapper()) {
-            wrapper->setRoot(root);
-            wrappers.uncheckedAppend(wrapper);
-        }
-    }
-    return wrappers;
+    return wrapperVector(m_axObject->rowHeaders());
 }
 
 Vector<RefPtr<AccessibilityObjectAtspi>> AccessibilityObjectAtspi::cellColumnHeaders() const
@@ -125,17 +115,7 @@ Vector<RefPtr<AccessibilityObjectAtspi>> AccessibilityObjectAtspi::cellColumnHea
     if (role() != Atspi::Role::TableCell)
         return { };
 
-    auto headers = m_axObject->columnHeaders();
-    Vector<RefPtr<AccessibilityObjectAtspi>> wrappers;
-    wrappers.reserveInitialCapacity(headers.size());
-    auto* root = this->root();
-    for (const auto& header : headers) {
-        if (auto* wrapper = header->wrapper()) {
-            wrapper->setRoot(root);
-            wrappers.uncheckedAppend(wrapper);
-        }
-    }
-    return wrappers;
+    return wrapperVector(m_axObject->columnHeaders());
 }
 
 unsigned AccessibilityObjectAtspi::rowSpan() const

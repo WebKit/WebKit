@@ -39,7 +39,7 @@ GDBusInterfaceVTable AccessibilityObjectAtspi::s_hyperlinkFunctions = {
         if (!g_strcmp0(methodName, "GetObject")) {
             int index;
             g_variant_get(parameters, "(i)", &index);
-            g_dbus_method_invocation_return_value(invocation, g_variant_new("(@(so))", !index ? atspiObject->reference() : atspiObject->root()->atspi().nullReference()));
+            g_dbus_method_invocation_return_value(invocation, g_variant_new("(@(so))", !index ? atspiObject->reference() : atspiObject->m_root.atspi().nullReference()));
         } else if (!g_strcmp0(methodName, "GetURI")) {
             int index;
             g_variant_get(parameters, "(i)", &index);

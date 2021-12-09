@@ -37,7 +37,7 @@ GDBusInterfaceVTable AccessibilityObjectAtspi::s_selectionFunctions = {
             int index;
             g_variant_get(parameters, "(i)", &index);
             auto* child = index >= 0 ? atspiObject->selectedChild(index) : nullptr;
-            g_dbus_method_invocation_return_value(invocation, g_variant_new("(@(so))", child ? child->reference() : atspiObject->root()->atspi().nullReference()));
+            g_dbus_method_invocation_return_value(invocation, g_variant_new("(@(so))", child ? child->reference() : atspiObject->m_root.atspi().nullReference()));
         } else if (!g_strcmp0(methodName, "SelectChild")) {
             int index;
             g_variant_get(parameters, "(i)", &index);
@@ -109,9 +109,6 @@ AccessibilityObjectAtspi* AccessibilityObjectAtspi::selectedChild(unsigned index
 
         return selectedItems[index]->wrapper();
     });
-
-    if (wrapper)
-        wrapper->setRoot(root());
 
     return wrapper;
 }
@@ -230,7 +227,7 @@ void AccessibilityObjectAtspi::selectionChanged()
     if (!m_isRegistered.load())
         return;
 
-    root()->atspi().selectionChanged(*this);
+    m_root.atspi().selectionChanged(*this);
 }
 
 } // namespace WebCore
