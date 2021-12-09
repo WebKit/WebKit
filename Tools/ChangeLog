@@ -1,3 +1,15 @@
+2021-12-09  Lauro Moura  <lmoura@igalia.com>
+
+        [WebXR][WPE] Build fails without openxr installed
+        https://bugs.webkit.org/show_bug.cgi?id=220250
+
+        Reviewed by Adrian Perez de Castro.
+
+        Based on original patch by Yury Semikhatsky. Rebased and installed
+        only for WPE, as GTK's module set does not declare openxr.
+
+        * wpe/dependencies/apt: Install libxcb-glx0-dev
+
 2021-12-09  Ryan Haddad  <ryanhaddad@apple.com>
 
         Bring up another iOS GPU Processes tester

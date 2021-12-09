@@ -32,6 +32,7 @@ PACKAGES+=(
     libtheora-dev
     libvorbis-dev
     libvpx-dev
+    libxcb-glx0-dev
     libxcb-xkb-dev
     libxkbcommon-dev
     libxrandr-dev
