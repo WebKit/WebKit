@@ -37,7 +37,6 @@
 
 #import <AVFoundation/AVAssetCache_Private.h>
 #import <AVFoundation/AVCaptureSession_Private.h>
-#import <AVFoundation/AVMediaSelectionGroup_Private.h>
 #import <AVFoundation/AVOutputContext_Private.h>
 #import <AVFoundation/AVOutputDevice.h>
 #import <AVFoundation/AVPlayer_Private.h>
@@ -204,13 +203,6 @@ NS_ASSUME_NONNULL_END
 #endif
 
 #endif // ENABLE(MEDIA_SOURCE)
-
-#import <AVFoundation/AVMediaSelectionGroup.h>
-NS_ASSUME_NONNULL_BEGIN
-@interface AVMediaSelectionOption (AVMediaSelectionOption_Private)
-@property (nonatomic, readonly) AVAssetTrack *track;
-@end
-NS_ASSUME_NONNULL_END
 
 #endif // USE(APPLE_INTERNAL_SDK)
 

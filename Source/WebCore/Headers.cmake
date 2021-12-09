@@ -1524,10 +1524,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/PlatformMediaResourceLoader.h
     platform/graphics/PlatformTextTrack.h
     platform/graphics/PlatformTimeRanges.h
-    platform/graphics/PlatformVideoColorPrimaries.h
-    platform/graphics/PlatformVideoColorSpace.h
-    platform/graphics/PlatformVideoMatrixCoefficients.h
-    platform/graphics/PlatformVideoTransferCharacteristics.h
     platform/graphics/Region.h
     platform/graphics/RemoteGraphicsContextGLProxyBase.h
     platform/graphics/RemoteVideoSample.h

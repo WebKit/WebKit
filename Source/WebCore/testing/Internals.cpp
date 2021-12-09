@@ -5937,11 +5937,6 @@ auto Internals::parseHEVCCodecParameters(StringView string) -> std::optional<HEV
     return WebCore::parseHEVCCodecParameters(string);
 }
 
-String Internals::createHEVCCodecParametersString(const HEVCParameterSet& parameters)
-{
-    return WebCore::createHEVCCodecParametersString(parameters);
-}
-
 auto Internals::parseDoViCodecParameters(StringView string) -> std::optional<DoViParameterSet>
 {
     auto parseResult = WebCore::parseDoViCodecParameters(string);
@@ -5965,23 +5960,6 @@ auto Internals::parseDoViCodecParameters(StringView string) -> std::optional<DoV
     convertedResult.bitstreamProfileID = parseResult->bitstreamProfileID;
     convertedResult.bitstreamLevelID = parseResult->bitstreamLevelID;
     return convertedResult;
-}
-
-String Internals::createDoViCodecParametersString(const DoViParameterSet& parameterSet)
-{
-    DoViParameters::Codec codec;
-    if (parameterSet.codecName == "avc1"_s)
-        codec = DoViParameters::Codec::AVC1;
-    else if (parameterSet.codecName == "avc3"_s)
-        codec = DoViParameters::Codec::AVC3;
-    else if (parameterSet.codecName == "hev1"_s)
-        codec = DoViParameters::Codec::HEV1;
-    else if (parameterSet.codecName == "hvc1"_s)
-        codec = DoViParameters::Codec::HVC1;
-    else
-        return emptyString();
-
-    return WebCore::createDoViCodecParametersString({ codec, parameterSet.bitstreamProfileID, parameterSet.bitstreamLevelID });
 }
 
 std::optional<VPCodecConfigurationRecord> Internals::parseVPCodecParameters(StringView string)

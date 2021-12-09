@@ -35,7 +35,6 @@
 #if ENABLE(VIDEO)
 
 #include "AudioTrackClient.h"
-#include "AudioTrackConfiguration.h"
 #include "AudioTrackList.h"
 #include "AudioTrackPrivate.h"
 #include <wtf/NeverDestroyed.h>
@@ -82,11 +81,9 @@ AudioTrack::AudioTrack(ScriptExecutionContext* context, AudioTrackPrivate& track
     : MediaTrackBase(context, MediaTrackBase::AudioTrack, trackPrivate.id(), trackPrivate.label(), trackPrivate.language())
     , m_private(trackPrivate)
     , m_enabled(trackPrivate.enabled())
-    , m_configuration(AudioTrackConfiguration::create())
 {
     m_private->setClient(*this);
     updateKindFromPrivate();
-    updateConfigurationFromPrivate();
 }
 
 AudioTrack::~AudioTrack()
@@ -108,7 +105,6 @@ void AudioTrack::setPrivate(AudioTrackPrivate& trackPrivate)
 #endif
 
     updateKindFromPrivate();
-    updateConfigurationFromPrivate();
     setId(m_private->id());
 }
 
@@ -227,14 +223,6 @@ void AudioTrack::updateKindFromPrivate()
         ASSERT_NOT_REACHED();
         break;
     }
-}
-
-void AudioTrack::updateConfigurationFromPrivate()
-{
-    m_configuration->setCodec(m_private->codec());
-    m_configuration->setSampleRate(m_private->sampleRate());
-    m_configuration->setNumberOfChannels(m_private->numberOfChannels());
-    m_configuration->setBitrate(m_private->bitrate());
 }
 
 #if !RELEASE_LOG_DISABLED

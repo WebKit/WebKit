@@ -1349,18 +1349,6 @@ ThirdPartyIframeRedirectBlockingEnabled:
     WebCore:
       default: true
 
-TrackConfigurationEnabled:
-  type: bool
-  humanReadableName: "Track Configuration API"
-  humanReadableDescription: "Track Configuration API"
-  defaultValue:
-    WebKitLegacy:
-      default: false
-    WebKit:
-      default: false
-    WebCore:
-      default: false
-
 TransformStreamAPIEnabled:
   type: bool
   humanReadableName: "TransformStream API"

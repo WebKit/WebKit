@@ -1,3 +1,16 @@
+2021-12-09  Robert Jenner  <Jenner@apple.com>
+
+        Unreviewed, reverting r286754.
+
+        Broke 2 tests on all mac an iOS
+
+        Reverted changeset:
+
+        "Add an experimental trackConfiguration accessor on AudioTrack
+        & VideoTrack."
+        https://bugs.webkit.org/show_bug.cgi?id=230841
+        https://commits.webkit.org/r286754
+
 2021-12-09  Matt Woodrow  <matt.woodrow@gmail.com>
 
         Unprefix -webkit-mask

@@ -35,7 +35,6 @@
 #if ENABLE(VIDEO)
 
 #include "VideoTrackClient.h"
-#include "VideoTrackConfiguration.h"
 #include "VideoTrackList.h"
 #include "VideoTrackPrivate.h"
 #include <wtf/NeverDestroyed.h>
@@ -85,12 +84,10 @@ const AtomString& VideoTrack::commentaryKeyword()
 VideoTrack::VideoTrack(ScriptExecutionContext* context, VideoTrackPrivate& trackPrivate)
     : MediaTrackBase(context, MediaTrackBase::VideoTrack, trackPrivate.id(), trackPrivate.label(), trackPrivate.language())
     , m_private(trackPrivate)
-    , m_configuration(VideoTrackConfiguration::create())
     , m_selected(trackPrivate.selected())
 {
     m_private->setClient(*this);
     updateKindFromPrivate();
-    updateConfigurationFromPrivate();
 }
 
 VideoTrack::~VideoTrack()
@@ -112,7 +109,6 @@ void VideoTrack::setPrivate(VideoTrackPrivate& trackPrivate)
 
     m_private->setSelected(m_selected);
     updateKindFromPrivate();
-    updateConfigurationFromPrivate();
     setId(m_private->id());
 }
 
@@ -258,16 +254,6 @@ void VideoTrack::updateKindFromPrivate()
         return;
     }
     ASSERT_NOT_REACHED();
-}
-
-void VideoTrack::updateConfigurationFromPrivate()
-{
-    m_configuration->setCodec(m_private->codec());
-    m_configuration->setWidth(m_private->width());
-    m_configuration->setHeight(m_private->height());
-    m_configuration->setColorSpace(VideoColorSpace::create(m_private->colorSpace()));
-    m_configuration->setFramerate(m_private->framerate());
-    m_configuration->setBitrate(m_private->bitrate());
 }
 
 #if !RELEASE_LOG_DISABLED

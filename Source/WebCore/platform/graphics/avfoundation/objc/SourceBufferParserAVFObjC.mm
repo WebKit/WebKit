@@ -171,7 +171,7 @@ private:
         if (description) {
             m_originalCodec = PAL::softLink_CoreMedia_CMFormatDescriptionGetMediaSubType(description);
             CFStringRef originalFormatKey = PAL::canLoad_CoreMedia_kCMFormatDescriptionExtension_ProtectedContentOriginalFormat() ? PAL::get_CoreMedia_kCMFormatDescriptionExtension_ProtectedContentOriginalFormat() : CFSTR("CommonEncryptionOriginalFormat");
-            if (auto originalFormat = dynamic_cf_cast<CFNumberRef>(PAL::CMFormatDescriptionGetExtension(description, originalFormatKey)))
+            if (auto originalFormat = dynamic_cf_cast<CFNumberRef>(CMFormatDescriptionGetExtension(description, originalFormatKey)))
                 CFNumberGetValue(originalFormat, kCFNumberSInt32Type, &m_originalCodec);
         }
     }

@@ -2873,7 +2873,6 @@ JSAudioProcessingEventInit.cpp
 JSAudioScheduledSourceNode.cpp
 JSAudioTimestamp.cpp
 JSAudioTrack.cpp
-JSAudioTrackConfiguration.cpp
 JSAudioTrackList.cpp
 JSAudioWorklet.cpp
 JSAudioWorkletGlobalScope.cpp
@@ -3941,18 +3940,12 @@ JSVTTCue.cpp
 JSVTTRegion.cpp
 JSVTTRegionList.cpp
 JSValidityState.cpp
-JSVideoColorPrimaries.cpp
-JSVideoColorSpace.cpp
-JSVideoColorSpaceInit.cpp
 JSVideoConfiguration.cpp
 JSVideoFrameMetadata.cpp
 JSVideoFrameRequestCallback.cpp
-JSVideoMatrixCoefficients.cpp
 JSVideoPlaybackQuality.cpp
 JSVideoTrack.cpp
-JSVideoTrackConfiguration.cpp
 JSVideoTrackList.cpp
-JSVideoTransferCharacteristics.cpp
 JSVisibilityState.cpp
 JSVisualViewport.cpp
 JSVoidCallback.cpp

@@ -289,7 +289,6 @@ platform/graphics/MediaPlaybackTargetPicker.cpp
 platform/graphics/avfoundation/AVTrackPrivateAVFObjCImpl.mm @no-unify
 platform/graphics/avfoundation/AudioSourceProviderAVFObjC.mm @no-unify
 platform/graphics/avfoundation/CDMPrivateMediaSourceAVFObjC.mm
-platform/graphics/avfoundation/FormatDescriptionUtilities.cpp
 platform/graphics/avfoundation/ISOFairPlayStreamingPsshBox.cpp
 platform/graphics/avfoundation/InbandMetadataTextTrackPrivateAVF.cpp
 platform/graphics/avfoundation/InbandTextTrackPrivateAVF.cpp

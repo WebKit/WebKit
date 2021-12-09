@@ -31,7 +31,6 @@ PASS video.videoTracks[0].language is ""
 PASS video.videoTracks[0].kind is "main"
 
 video.videoTracks[0] properties:
-  configuration = [object VideoTrackConfiguration]
   id = <UUID>
   kind = main
   label = Mock video device 1
@@ -45,7 +44,6 @@ PASS video.audioTracks[0].language is ""
 PASS video.audioTracks[0].kind is "main"
 
 video.audioTracks[0] properties:
-  configuration = [object AudioTrackConfiguration]
   enabled = true
   id = <UUID>
   kind = main

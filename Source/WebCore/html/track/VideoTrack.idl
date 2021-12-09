@@ -35,5 +35,4 @@
 
     attribute boolean selected;
 
-    [EnabledBySetting=TrackConfigurationEnabled] readonly attribute VideoTrackConfiguration configuration;
 };

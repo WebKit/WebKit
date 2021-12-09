@@ -69,7 +69,6 @@ private:
 
     // VideoTrackPrivateClient
     void selectedChanged(bool) final;
-    void configurationChanged() final { updateConfiguration(); }
 
     // TrackPrivateBaseClient
     void idChanged(const AtomString&) final;
@@ -77,8 +76,8 @@ private:
     void languageChanged(const AtomString&) final;
     void willRemove() final;
 
-    TrackPrivateRemoteConfiguration configuration();
-    void updateConfiguration();
+    TrackPrivateRemoteConfiguration& configuration();
+    void configurationChanged();
 
     WeakPtr<GPUConnectionToWebProcess> m_connectionToWebProcess;
     TrackPrivateRemoteIdentifier m_identifier;
