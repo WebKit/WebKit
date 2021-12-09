@@ -171,7 +171,7 @@ void AudioSessionIOS::setHostProcessAttribution(audit_token_t auditToken)
 void AudioSessionIOS::setPresentingProcesses(Vector<audit_token_t>&& auditTokens)
 {
 #if HAVE(AUDIOSESSION_PROCESSASSERTION)
-    AVAudioSession session = [PAL::getAVAudioSessionClass() sharedInstance];
+    AVAudioSession *session = [PAL::getAVAudioSessionClass() sharedInstance];
     if (![session respondsToSelector:@selector(setAuditTokensForProcessAssertion:error:)])
         return;
 
