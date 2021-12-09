@@ -23,59 +23,39 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#import "config.h"
+#import "WebPushMessage.h"
 
-#include "PushMessageForTesting.h"
-#include <memory>
-#include <wtf/RetainPtr.h>
-#include <wtf/URL.h>
-#include <wtf/WeakPtr.h>
-#include <wtf/spi/darwin/XPCSPI.h>
+#import <wtf/RetainPtr.h>
 
-using WebKit::WebPushD::PushMessageForTesting;
+namespace WebKit {
 
-namespace WebPushTool {
+#define WebKitPushDataKey @"WebKitPushData"
+#define WebKitPushRegistrationURLKey @"WebKitPushRegistrationURL"
 
-enum class Action {
-    StreamDebugMessages,
-};
+std::optional<WebPushMessage> WebPushMessage::fromDictionary(NSDictionary *dictionary)
+{
+    NSURL *url = [dictionary objectForKey:WebKitPushRegistrationURLKey];
+    if (!url || ![url isKindOfClass:[NSURL class]])
+        return std::nullopt;
 
-enum class PreferTestService : bool {
-    Yes,
-    No,
-};
+    NSData *pushData = [dictionary objectForKey:WebKitPushDataKey];
+    if (!pushData || ![pushData isKindOfClass:[NSData class]])
+        return std::nullopt;
 
-enum class Reconnect : bool {
-    Yes,
-    No,
-};
+    return { {
+        Vector<uint8_t> { static_cast<const uint8_t*>(pushData.bytes), pushData.length },
+        URL { url }
+    } };
+}
 
-class Connection : public CanMakeWeakPtr<Connection> {
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    static std::unique_ptr<Connection> create(Action, PreferTestService, Reconnect);
-    Connection(Action, PreferTestService, Reconnect);
+NSDictionary *WebPushMessage::toDictionary() const
+{
+    auto nsData = adoptNS([[NSData alloc] initWithBytes:pushData.data() length:pushData.size()]);
+    return @{
+        WebKitPushDataKey : nsData.get(),
+        WebKitPushRegistrationURLKey : (NSURL *)registrationURL
+    };
+}
 
-    void connectToService();
-
-    void setPushMessage(std::unique_ptr<PushMessageForTesting>&& message) { m_pushMessage = WTFMove(message); }
-
-private:
-    void messageReceived(xpc_object_t);
-    void connectionDropped();
-
-    void startAction();
-    void startDebugStreamAction();
-    void sendPushMessage();
-
-    void sendAuditToken();
-
-    Action m_action;
-    bool m_reconnect { false };
-    RetainPtr<xpc_connection_t> m_connection;
-    const char* m_serviceName;
-
-    std::unique_ptr<PushMessageForTesting> m_pushMessage;
-};
-
-} // namespace WebPushTool
+} // namespace WebKit

@@ -39,6 +39,7 @@
 #import "WKWebViewInternal.h"
 #import "WKWebsiteDataRecordInternal.h"
 #import "WebPageProxy.h"
+#import "WebPushMessage.h"
 #import "WebResourceLoadStatisticsStore.h"
 #import "WebsiteDataFetchOption.h"
 #import "_WKResourceLoadStatisticsThirdPartyInternal.h"
@@ -761,13 +762,29 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
     return _websiteDataStore->hasServiceWorkerBackgroundActivityForTesting();
 }
 
--(void)_processPushMessage:(NSData*) message registration:(NSURL *)registration completionHandler:(void(^)(bool wasProcessed))completionHandler
+-(void)_getPendingPushMessages:(void(^)(NSArray<NSDictionary *> *))completionHandler
 {
 #if ENABLE(SERVICE_WORKER)
-    std::optional<Span<const uint8_t>> data;
-    if (message)
-        data = Span<const uint8_t> { reinterpret_cast<const uint8_t*>(message.bytes), message.length };
-    _websiteDataStore->networkProcess().processPushMessage(_websiteDataStore->sessionID(), data, registration, [completionHandler = makeBlockPtr(completionHandler)] (bool wasProcessed) {
+    _websiteDataStore->networkProcess().getPendingPushMessages(_websiteDataStore->sessionID(), [completionHandler = makeBlockPtr(completionHandler)] (const Vector<WebKit::WebPushMessage>& messages) {
+        auto result = adoptNS([[NSMutableArray alloc] initWithCapacity:messages.size()]);
+        for (auto& message : messages)
+            [result addObject:message.toDictionary()];
+
+        completionHandler(result.get());
+    });
+#endif
+}
+
+-(void)_processPushMessage:(NSDictionary *)pushMessageDictionary completionHandler:(void(^)(bool wasProcessed))completionHandler
+{
+#if ENABLE(SERVICE_WORKER)
+    auto pushMessage = WebKit::WebPushMessage::fromDictionary(pushMessageDictionary);
+    if (!pushMessage) {
+        completionHandler(false);
+        return;
+    }
+
+    _websiteDataStore->networkProcess().processPushMessage(_websiteDataStore->sessionID(), *pushMessage, [completionHandler = makeBlockPtr(completionHandler)] (bool wasProcessed) {
         completionHandler(wasProcessed);
     });
 #endif

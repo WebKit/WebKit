@@ -1,3 +1,28 @@
+2021-12-09  Brady Eidson  <beidson@apple.com>
+
+        Add ability to inject messages into webpushd
+        https://bugs.webkit.org/show_bug.cgi?id=233988
+
+        Reviewed by Alex Christensen.
+
+        * TestWebKitAPI/Configurations/TestWebKitAPI-iOS.entitlements:
+        * TestWebKitAPI/Configurations/TestWebKitAPI-macOS-internal.entitlements:
+        * TestWebKitAPI/Configurations/TestWebKitAPI-macOS.entitlements:
+
+        * TestWebKitAPI/Tests/WebKitCocoa/PushAPI.mm:
+        (messageDictionary):
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WebPushDaemon.mm:
+        (TestWebKitAPI::createMessageDictionary):
+        (TestWebKitAPI::sendMessageToDaemon):
+        (TestWebKitAPI::sendMessageToDaemonWaitingForReply):
+        (TestWebKitAPI::sendConfigurationWithAuditToken):
+        (TestWebKitAPI::createAndConfigureConnectionToService):
+        (TestWebKitAPI::encodeString):
+        (TestWebKitAPI::TEST):
+        (TestWebKitAPI::function):
+        * TestWebKitAPI/cocoa/TestWKWebView.h:
+
 2021-12-09  J Pascoe  <j_pascoe@apple.com>
 
         [WebAuthn] Remove user gesture requirement for using platform authenticator on the web

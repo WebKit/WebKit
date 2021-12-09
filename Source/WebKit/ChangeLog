@@ -1,3 +1,87 @@
+2021-12-09  Brady Eidson  <beidson@apple.com>
+
+        Add ability to inject messages into webpushd
+        https://bugs.webkit.org/show_bug.cgi?id=233988
+
+        Reviewed by Alex Christensen.
+
+        Covered by API tests.
+
+        This patch:
+         - Adds WKWebsiteDataStore SPI to fetch pending push messages for the embedding application
+         - Gives webpushd code to inject a push message for a given bundle identifier
+         - Gives webpushtool the ability to send one of these fake messages
+         - Gives webpushtool the ability to reconnect to the next daemon instance after the current connection is dropped
+         - Tests the injection and fetching of push messages via TestWebKitAPI
+
+        * Configurations/webpushtool.xcconfig:
+        * WebKit.xcodeproj/project.pbxproj:
+        * Resources/webpushtool.entitlements:
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::getPendingPushMessages):
+        (WebKit::NetworkProcess::processPushMessage):
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+
+        * NetworkProcess/Notifications/NetworkNotificationManager.cpp:
+        (WebKit::NetworkNotificationManager::getPendingPushMessages):
+        (WebKit::ReplyCaller<Vector<WebPushMessage>::callReply):
+        * NetworkProcess/Notifications/NetworkNotificationManager.h:
+
+        * Shared/Cocoa/WebPushMessageCocoa.mm: Copied from Source/WebKit/webpushd/webpushtool/WebPushToolConnection.h.
+        (WebKit::WebPushMessage::fromDictionary):
+        (WebKit::WebPushMessage::toDictionary const):
+
+        * Shared/PushMessageForTesting.h: Copied from Source/WebKit/Shared/WebPushDaemonConstants.h.
+        (WebKit::WebPushD::PushMessageForTesting::encode const):
+        (WebKit::WebPushD::PushMessageForTesting::decode):
+
+        * Shared/WebPushDaemonConstants.h:
+        (WebKit::WebPushD::messageTypeSendsReply):
+
+        * Shared/WebPushMessage.h: Copied from Source/WebKit/webpushd/webpushtool/WebPushToolConnection.h.
+        (WebKit::WebPushMessage::encode const):
+        (WebKit::WebPushMessage::decode):
+
+        * UIProcess/API/Cocoa/WKWebsiteDataStore.mm:
+        (-[WKWebsiteDataStore _getPendingPushMessages:]):
+        (-[WKWebsiteDataStore _processPushMessage:completionHandler:]):
+        (-[WKWebsiteDataStore _processPushMessage:registration:completionHandler:]): Deleted.
+        * UIProcess/API/Cocoa/WKWebsiteDataStorePrivate.h:
+
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::getPendingPushMessages):
+        (WebKit::NetworkProcessProxy::processPushMessage):
+        * UIProcess/Network/NetworkProcessProxy.h:
+
+        * webpushd/PushClientConnection.h:
+        * webpushd/PushClientConnection.mm:
+        (WebPushD::ClientConnection::hostAppHasPushEntitlement):
+        (WebPushD::ClientConnection::hostAppHasPushInjectEntitlement):
+        (WebPushD::ClientConnection::hostHasEntitlement):
+        (WebPushD::ClientConnection::broadcastDebugMessage):
+
+        * webpushd/WebPushDaemon.h:
+        * webpushd/WebPushDaemon.mm:
+        (WebPushD::MessageInfo::injectPushMessageForTesting::encodeReply):
+        (WebPushD::MessageInfo::getPendingPushMessages::encodeReply):
+        (WebPushD::Daemon::decodeAndHandleMessage):
+        (WebPushD::Daemon::injectPushMessageForTesting):
+        (WebPushD::Daemon::getPendingPushMessages):
+
+        * webpushd/webpushtool/WebPushToolConnection.h:
+        (WebPushTool::Connection::setPushMessage):
+
+        * webpushd/webpushtool/WebPushToolConnection.mm:
+        (WebPushTool::Connection::startAction):
+        (WebPushTool::Connection::sendPushMessage):
+
+        * webpushd/webpushtool/WebPushToolMain.mm:
+        (printUsageAndTerminate):
+        (pushMessageFromArguments):
+        (main):
+
 2021-12-09  J Pascoe  <j_pascoe@apple.com>
 
         [WebAuthn] Remove user gesture requirement for using platform authenticator on the web

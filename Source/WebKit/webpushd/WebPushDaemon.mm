@@ -70,12 +70,22 @@ ARGUMENTS(String)
 REPLY(bool)
 END
 
+FUNCTION(getPendingPushMessages)
+ARGUMENTS()
+REPLY(const Vector<WebKit::WebPushMessage>&)
+END
+
 FUNCTION(setDebugModeIsEnabled)
 ARGUMENTS(bool)
 END
 
 FUNCTION(updateConnectionConfiguration)
 ARGUMENTS(WebPushDaemonConnectionConfiguration)
+END
+
+FUNCTION(injectPushMessageForTesting)
+ARGUMENTS(PushMessageForTesting)
+REPLY(bool)
 END
 
 #undef FUNCTION
@@ -105,6 +115,20 @@ WebPushD::EncodedMessage deletePushAndNotificationRegistration::encodeReply(Stri
 }
 
 WebPushD::EncodedMessage requestSystemNotificationPermission::encodeReply(bool reply)
+{
+    WebKit::Daemon::Encoder encoder;
+    encoder << reply;
+    return encoder.takeBuffer();
+}
+
+WebPushD::EncodedMessage injectPushMessageForTesting::encodeReply(bool reply)
+{
+    WebKit::Daemon::Encoder encoder;
+    encoder << reply;
+    return encoder.takeBuffer();
+}
+
+WebPushD::EncodedMessage getPendingPushMessages::encodeReply(const Vector<WebKit::WebPushMessage>& reply)
 {
     WebKit::Daemon::Encoder encoder;
     encoder << reply;
@@ -233,6 +257,12 @@ void Daemon::decodeAndHandleMessage(xpc_connection_t connection, MessageType mes
     case MessageType::UpdateConnectionConfiguration:
         handleWebPushDMessage<MessageInfo::updateConnectionConfiguration>(clientConnection, encodedMessage);
         break;
+    case MessageType::InjectPushMessageForTesting:
+        handleWebPushDMessageWithReply<MessageInfo::injectPushMessageForTesting>(clientConnection, encodedMessage, WTFMove(replySender));
+        break;
+    case MessageType::GetPendingPushMessages:
+        handleWebPushDMessageWithReply<MessageInfo::getPendingPushMessages>(clientConnection, encodedMessage, WTFMove(replySender));
+        break;
     }
 }
 
@@ -295,6 +325,55 @@ void Daemon::setDebugModeIsEnabled(ClientConnection* clientConnection, bool enab
 void Daemon::updateConnectionConfiguration(ClientConnection* clientConnection, const WebPushDaemonConnectionConfiguration& configuration)
 {
     clientConnection->updateConnectionConfiguration(configuration);
+}
+
+void Daemon::injectPushMessageForTesting(ClientConnection* connection, const PushMessageForTesting& message, CompletionHandler<void(bool)>&& replySender)
+{
+    if (!connection->hostAppHasPushInjectEntitlement()) {
+        connection->broadcastDebugMessage("Attempting to inject a push message from an unentitled process");
+        replySender(false);
+        return;
+    }
+
+    if (message.targetAppCodeSigningIdentifier.isEmpty() || !message.registrationURL.isValid()) {
+        connection->broadcastDebugMessage("Attempting to inject an invalid push message");
+        replySender(false);
+        return;
+    }
+
+    connection->broadcastDebugMessage(makeString("Injected a test push messasge for ", message.targetAppCodeSigningIdentifier, " at ", message.registrationURL.string()));
+    connection->broadcastDebugMessage(message.message);
+
+    auto addResult = m_testingPushMessages.ensure(message.targetAppCodeSigningIdentifier, [] {
+        return Deque<PushMessageForTesting> { };
+    });
+    addResult.iterator->value.append(message);
+
+    replySender(true);
+}
+
+void Daemon::getPendingPushMessages(ClientConnection* connection, CompletionHandler<void(const Vector<WebKit::WebPushMessage>&)>&& replySender)
+{
+    auto hostAppCodeSigningIdentifier = connection->hostAppCodeSigningIdentifier();
+    if (hostAppCodeSigningIdentifier.isEmpty()) {
+        replySender({ });
+        return;
+    }
+
+    Vector<WebKit::WebPushMessage> resultMessages;
+
+    auto iterator = m_testingPushMessages.find(hostAppCodeSigningIdentifier);
+    if (iterator != m_testingPushMessages.end()) {
+        for (auto& message : iterator->value) {
+            auto data = message.message.utf8();
+            resultMessages.append(WebKit::WebPushMessage { Vector<uint8_t> { reinterpret_cast<const uint8_t*>(data.data()), data.length() }, message.registrationURL });
+        }
+        m_testingPushMessages.remove(iterator);
+    }
+
+    connection->broadcastDebugMessage(makeString("Fetching ", String::number(resultMessages.size()), " pending push messages"));
+
+    replySender(WTFMove(resultMessages));
 }
 
 ClientConnection* Daemon::toClientConnection(xpc_connection_t connection)
