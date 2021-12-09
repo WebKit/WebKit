@@ -34,8 +34,7 @@
 #include "WebsiteDataType.h"
 #include <pal/crypto/CryptoDigest.h>
 #include <wtf/Scope.h>
-#include <wtf/persistence/PersistentDecoder.h>
-#include <wtf/persistence/PersistentEncoder.h>
+#include <wtf/persistence/PersistentCoders.h>
 #include <wtf/text/Base64.h>
 
 namespace WebKit {

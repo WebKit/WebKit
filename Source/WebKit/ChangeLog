@@ -1,3 +1,14 @@
+2021-12-09  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix GTK build.
+
+        WebKitBuild/Release/WTF/Headers/wtf/persistence/PersistentCoder.h:40:11: error: ‘const class WTF::String’ has no member named ‘encode’
+   40 |         t.encode(encoder);
+      |         ~~^~~~~~
+
+
+        * NetworkProcess/storage/NetworkStorageManager.cpp: Include wtf/persistence/PersistentCoders.h
+
 2021-12-09  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [WebGPU] [MacCatalyst] Fix WebGPU Mac Catalyst build in Apple's internal build system
