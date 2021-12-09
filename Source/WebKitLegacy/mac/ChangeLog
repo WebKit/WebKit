@@ -1,5 +1,14 @@
 2021-12-09  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        [WebGPU] [MacCatalyst] Fix WebGPU Mac Catalyst build in Apple's internal build system
+        https://bugs.webkit.org/show_bug.cgi?id=234072
+
+        Unreviewed.
+
+        * Configurations/WebKitLegacy.xcconfig:
+
+2021-12-09  Myles C. Maxfield  <mmaxfield@apple.com>
+
         [WebGPU] Fix WebGPU build in Apple's internal build system
         https://bugs.webkit.org/show_bug.cgi?id=234070
 
