@@ -6,6 +6,8 @@
 	<string>TestWebKitAPI</string>
 	<key>com.apple.private.webkit.webpush</key>
 	<true/>
+	<key>com.apple.private.webkit.webpush.inject</key>
+	<true/>
 	<key>com.apple.hid.manager.user-access-device</key>
 	<true/>
 	<key>com.apple.private.hid.client.event-filter</key>

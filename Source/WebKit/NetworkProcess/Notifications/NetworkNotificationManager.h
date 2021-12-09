@@ -29,6 +29,7 @@
 
 #include "NotificationManagerMessageHandler.h"
 #include "WebPushDaemonConnection.h"
+#include "WebPushMessage.h"
 #include <WebCore/NotificationDirection.h>
 #include <wtf/text/WTFString.h>
 
@@ -52,6 +53,7 @@ public:
 
     void deletePushAndNotificationRegistration(const WebCore::SecurityOriginData&, CompletionHandler<void(const String&)>&&);
     void getOriginsWithPushAndNotificationPermissions(CompletionHandler<void(const Vector<WebCore::SecurityOriginData>&)>&&);
+    void getPendingPushMessages(CompletionHandler<void(const Vector<WebPushMessage>&)>&&);
 
 private:
     NetworkNotificationManager(NetworkSession&, const String& webPushMachServiceName);

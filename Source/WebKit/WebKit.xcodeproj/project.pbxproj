@@ -1034,6 +1034,12 @@
 		517B5F84275E97B6002DC22D /* MockAppBundleForTesting.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51F7BB74274498BA00C45A72 /* MockAppBundleForTesting.mm */; };
 		517B5F85275E97B6002DC22D /* AppBundleRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 5160E954274B887100567388 /* AppBundleRequest.h */; };
 		517B5F86275E97B6002DC22D /* MockAppBundleRegistry.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5160E95F274C2A3F00567388 /* MockAppBundleRegistry.mm */; };
+		517B5F95275EBA63002DC22D /* PushMessageForTesting.h in Headers */ = {isa = PBXBuildFile; fileRef = 517B5F94275EBA62002DC22D /* PushMessageForTesting.h */; };
+		517B5F97275EC5E5002DC22D /* WebPushMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = 517B5F96275EC5E5002DC22D /* WebPushMessage.h */; };
+		517B5F99275EC601002DC22D /* WebPushMessageCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 517B5F98275EC600002DC22D /* WebPushMessageCocoa.mm */; };
+		517B5F9A275F3A86002DC22D /* ArgumentCoders.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3D610413A7F03A00F95D4E /* ArgumentCoders.cpp */; };
+		517B5F9B275F3A98002DC22D /* DaemonUtilities.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C1579F92717AF5000ED5280 /* DaemonUtilities.mm */; };
+		517B5F9C275F3C37002DC22D /* DaemonEncoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C1579E827172A8A00ED5280 /* DaemonEncoder.cpp */; };
 		517CF0E3163A486C00C2950E /* NetworkProcessConnectionMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 517CF0E1163A486C00C2950E /* NetworkProcessConnectionMessageReceiver.cpp */; };
 		517CF0E3163A486C00C2950F /* CacheStorageEngineConnectionMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 517CF0E1163A486C00C2950F /* CacheStorageEngineConnectionMessageReceiver.cpp */; };
 		517CF0E4163A486C00C2950E /* NetworkProcessConnectionMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 517CF0E2163A486C00C2950E /* NetworkProcessConnectionMessages.h */; };
@@ -4409,6 +4415,9 @@
 		517B5F6B275AE50B002DC22D /* webpushtool.entitlements */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.entitlements; name = webpushtool.entitlements; path = Resources/webpushtool.entitlements; sourceTree = "<group>"; };
 		517B5F72275E9609002DC22D /* WebPushDaemonMain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebPushDaemonMain.h; sourceTree = "<group>"; };
 		517B5F77275E9795002DC22D /* webpushd.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = webpushd.cpp; sourceTree = "<group>"; };
+		517B5F94275EBA62002DC22D /* PushMessageForTesting.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PushMessageForTesting.h; sourceTree = "<group>"; };
+		517B5F96275EC5E5002DC22D /* WebPushMessage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebPushMessage.h; sourceTree = "<group>"; };
+		517B5F98275EC600002DC22D /* WebPushMessageCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebPushMessageCocoa.mm; sourceTree = "<group>"; };
 		517CF0E1163A486C00C2950E /* NetworkProcessConnectionMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = NetworkProcessConnectionMessageReceiver.cpp; path = DerivedSources/WebKit/NetworkProcessConnectionMessageReceiver.cpp; sourceTree = BUILT_PRODUCTS_DIR; };
 		517CF0E1163A486C00C2950F /* CacheStorageEngineConnectionMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CacheStorageEngineConnectionMessageReceiver.cpp; path = DerivedSources/WebKit/CacheStorageEngineConnectionMessageReceiver.cpp; sourceTree = BUILT_PRODUCTS_DIR; };
 		517CF0E2163A486C00C2950E /* NetworkProcessConnectionMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NetworkProcessConnectionMessages.h; path = DerivedSources/WebKit/NetworkProcessConnectionMessages.h; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -6475,6 +6484,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				517B5F9E275F3F54002DC22D /* libicucore.tbd in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -7136,6 +7146,7 @@
 				E18C92F312DB9E7100CF2AEB /* PrintInfo.cpp */,
 				E1CC1B8E12D7EADF00625838 /* PrintInfo.h */,
 				463FD4811EB94EAD00A2982C /* ProcessTerminationReason.h */,
+				517B5F94275EBA62002DC22D /* PushMessageForTesting.h */,
 				9B1229D023FF2A5E008CA751 /* RemoteAudioDestinationIdentifier.h */,
 				7203449B26A6C476000A5F54 /* RenderingUpdateID.h */,
 				5CB7AFE623C681B000E49CF3 /* ResourceLoadInfo.h */,
@@ -7242,6 +7253,7 @@
 				467E43E72243FF6D00B13924 /* WebProcessDataStoreParameters.h */,
 				517B5F2D2757382A002DC22D /* WebPushDaemonConnectionConfiguration.h */,
 				512CD6992721F04900F7F8EC /* WebPushDaemonConstants.h */,
+				517B5F96275EC5E5002DC22D /* WebPushMessage.h */,
 				5C8DD37F1FE4519200F2A556 /* WebsiteAutoplayPolicy.h */,
 				5C8DD3811FE455CA00F2A556 /* WebsiteAutoplayQuirk.h */,
 				511F7D3F1EB1BCEE00E47B83 /* WebsiteDataStoreParameters.cpp */,
@@ -8938,6 +8950,7 @@
 				7AF236221E79A43100438A05 /* WebErrorsCocoa.mm */,
 				465250E51ECF52CD002025CB /* WebKit2InitializeCocoa.mm */,
 				1DE076D92460CCBD00B211E8 /* WebPreferencesDefaultValuesCocoa.mm */,
+				517B5F98275EC600002DC22D /* WebPushMessageCocoa.mm */,
 				37C4C0921814B3AF003688B9 /* WKNSArray.h */,
 				37C4C0911814B3AF003688B9 /* WKNSArray.mm */,
 				373CEAD4185417AE008C363D /* WKNSData.h */,
@@ -9700,6 +9713,7 @@
 		5750F3292032D4E300389347 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				517B5F9D275F3F54002DC22D /* libicucore.tbd */,
 				57A9FF15252C6AEF006A2040 /* libWTF.a */,
 				5750F32A2032D4E500389347 /* LocalAuthentication.framework */,
 				570DAAB0230273D200E8FC04 /* NearField.framework */,
@@ -13013,6 +13027,7 @@
 				532159561DBAE72D0054AA3C /* NetworkDataTaskCocoa.h in Headers */,
 				839902031BE9A02B000F3653 /* NetworkLoad.h in Headers */,
 				83D454D71BE9D3C4006C93BD /* NetworkLoadClient.h in Headers */,
+				517B5F97275EC5E5002DC22D /* WebPushMessage.h in Headers */,
 				839149651BEA838500D2D953 /* NetworkLoadParameters.h in Headers */,
 				E47FC8A025B8331C005495FC /* NetworkLoadScheduler.h in Headers */,
 				514526ED271E1647000467B6 /* NetworkNotificationManager.h in Headers */,
@@ -13520,6 +13535,7 @@
 				9356F2DC2152B6B500E6D5DF /* WebSWClientConnection.h in Headers */,
 				517A53101F47A86200DCDC0A /* WebSWClientConnectionMessages.h in Headers */,
 				466BC03C1FA266DA002FA9C1 /* WebSWContextManagerConnection.h in Headers */,
+				517B5F95275EBA63002DC22D /* PushMessageForTesting.h in Headers */,
 				460F48901F996F7100CF4B87 /* WebSWContextManagerConnectionMessages.h in Headers */,
 				C11A9ECC214035F800CFB20A /* WebSwitchingGPUClient.h in Headers */,
 				9356F2DE2152B71000E6D5DF /* WebSWOriginStore.h in Headers */,
@@ -15085,7 +15101,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				517B5F9A275F3A86002DC22D /* ArgumentCoders.cpp in Sources */,
 				517B5F68275A9A78002DC22D /* WebPushToolConnection.mm in Sources */,
+				517B5F9B275F3A98002DC22D /* DaemonUtilities.mm in Sources */,
+				517B5F9C275F3C37002DC22D /* DaemonEncoder.cpp in Sources */,
 				517B5F65275A8D7F002DC22D /* WebPushToolMain.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -15181,6 +15200,7 @@
 				CDA93DB122F8BCF400490A69 /* FullscreenTouchSecheuristicParameters.cpp in Sources */,
 				C1A152D724E5A29A00978C8B /* HandleXPCEndpointMessages.mm in Sources */,
 				2749F6442146561B008380BF /* InjectedBundleNodeHandle.cpp in Sources */,
+				517B5F99275EC601002DC22D /* WebPushMessageCocoa.mm in Sources */,
 				2749F6452146561E008380BF /* InjectedBundleRangeHandle.cpp in Sources */,
 				9BF5EC642541145600984E77 /* JSIPCBinding.cpp in Sources */,
 				C14D37FE24ACE086007FF014 /* LaunchServicesDatabaseManager.mm in Sources */,

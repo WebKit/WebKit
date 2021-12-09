@@ -25,43 +25,50 @@
 
 #pragma once
 
-namespace WebKit::WebPushD {
+#include <optional>
+#include <wtf/URL.h>
+#include <wtf/Vector.h>
 
-constexpr const char* protocolVersionKey = "protocol version";
-constexpr uint64_t protocolVersionValue = 1;
-constexpr const char* protocolEncodedMessageKey = "encoded message";
+OBJC_CLASS NSDictionary;
 
-constexpr const char* protocolDebugMessageKey { "debug message" };
-constexpr const char* protocolDebugMessageLevelKey { "debug message level" };
+namespace WebKit {
 
-constexpr const char* protocolMessageTypeKey { "message type" };
-enum class MessageType : uint8_t {
-    EchoTwice = 1,
-    RequestSystemNotificationPermission,
-    DeletePushAndNotificationRegistration,
-    GetOriginsWithPushAndNotificationPermissions,
-    SetDebugModeIsEnabled,
-    UpdateConnectionConfiguration,
-    InjectPushMessageForTesting,
-    GetPendingPushMessages,
+struct WebPushMessage {
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static std::optional<WebPushMessage> decode(Decoder&);
+
+    Vector<uint8_t> pushData;
+    URL registrationURL;
+
+#if PLATFORM(COCOA)
+    static std::optional<WebPushMessage> fromDictionary(NSDictionary *);
+    NSDictionary *toDictionary() const;
+#endif
 };
 
-inline bool messageTypeSendsReply(MessageType messageType)
+template<class Encoder>
+void WebPushMessage::encode(Encoder& encoder) const
 {
-    switch (messageType) {
-    case MessageType::EchoTwice:
-    case MessageType::GetOriginsWithPushAndNotificationPermissions:
-    case MessageType::DeletePushAndNotificationRegistration:
-    case MessageType::RequestSystemNotificationPermission:
-    case MessageType::GetPendingPushMessages:
-    case MessageType::InjectPushMessageForTesting:
-        return true;
-    case MessageType::SetDebugModeIsEnabled:
-    case MessageType::UpdateConnectionConfiguration:
-        return false;
-    }
-    ASSERT_NOT_REACHED();
-    return false;
+    encoder << pushData << registrationURL;
 }
 
-} // namespace WebKit::WebPushD
+template<class Decoder>
+std::optional<WebPushMessage> WebPushMessage::decode(Decoder& decoder)
+{
+    std::optional<Vector<uint8_t>> pushData;
+    decoder >> pushData;
+    if (!pushData)
+        return std::nullopt;
+
+    std::optional<URL> registrationURL;
+    decoder >> registrationURL;
+    if (!registrationURL)
+        return std::nullopt;
+
+    return { {
+        WTFMove(*pushData),
+        WTFMove(*registrationURL)
+    } };
+}
+
+} // namespace WebKit

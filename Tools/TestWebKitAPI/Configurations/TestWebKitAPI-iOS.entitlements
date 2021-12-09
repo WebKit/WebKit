@@ -12,6 +12,8 @@
 	<true/>
 	<key>com.apple.private.webkit.webpush</key>
 	<true/>
+	<key>com.apple.private.webkit.webpush.inject</key>
+	<true/>
 	<key>com.apple.private.xpc.launchd.job-manager</key>
 	<string>TestWebKitAPI</string>
 </dict>

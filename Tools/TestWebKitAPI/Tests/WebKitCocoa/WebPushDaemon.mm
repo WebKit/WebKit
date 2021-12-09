@@ -26,6 +26,7 @@
 #import "config.h"
 
 #import "DaemonTestUtilities.h"
+#import "HTTPServer.h"
 #import "Test.h"
 #import "TestURLSchemeHandler.h"
 #import "TestWKWebView.h"
@@ -35,7 +36,6 @@
 #import <WebKit/WKWebsiteDataStorePrivate.h>
 #import <WebKit/_WKExperimentalFeature.h>
 #import <WebKit/_WKWebsiteDataStoreConfiguration.h>
-#import <array>
 #import <mach/mach_init.h>
 #import <mach/task.h>
 
@@ -162,6 +162,85 @@ static void cleanUpTestWebPushD(NSURL *tempDir)
     EXPECT_NULL(error);
 }
 
+static RetainPtr<xpc_object_t> createMessageDictionary(uint8_t messageType, const Vector<uint8_t>& message)
+{
+    auto dictionary = adoptNS(xpc_dictionary_create(nullptr, nullptr, 0));
+    xpc_dictionary_set_uint64(dictionary.get(), "protocol version", 1);
+    xpc_dictionary_set_uint64(dictionary.get(), "message type", messageType);
+    xpc_dictionary_set_data(dictionary.get(), "encoded message", message.data(), message.size());
+    return WTFMove(dictionary);
+}
+
+// Uses an existing connection to the daemon for a one-off message
+void sendMessageToDaemon(xpc_connection_t connection, uint8_t messageType, const Vector<uint8_t>& message)
+{
+    auto dictionary = createMessageDictionary(messageType, message);
+    xpc_connection_send_message(connection, dictionary.get());
+}
+
+// Uses an existing connection to the daemon for a one-off message, waiting for the reply
+void sendMessageToDaemonWaitingForReply(xpc_connection_t connection, uint8_t messageType, const Vector<uint8_t>& message)
+{
+    auto dictionary = createMessageDictionary(messageType, message);
+
+    __block bool done = false;
+    xpc_connection_send_message_with_reply(connection, dictionary.get(), dispatch_get_main_queue(), ^(xpc_object_t request) {
+        done = true;
+    });
+
+    TestWebKitAPI::Util::run(&done);
+}
+
+static void sendConfigurationWithAuditToken(xpc_connection_t connection)
+{
+    audit_token_t token = { 0, 0, 0, 0, 0, 0, 0, 0 };
+    mach_msg_type_number_t auditTokenCount = TASK_AUDIT_TOKEN_COUNT;
+    kern_return_t result = task_info(mach_task_self(), TASK_AUDIT_TOKEN, (task_info_t)(&token), &auditTokenCount);
+    if (result != KERN_SUCCESS) {
+        EXPECT_TRUE(false);
+        return;
+    }
+
+    // Send configuration with audit token
+    {
+        Vector<uint8_t> encodedMessage(42);
+        encodedMessage.fill(0);
+        encodedMessage[1] = 1;
+        encodedMessage[2] = 32;
+        memcpy(&encodedMessage[10], &token, sizeof(token));
+        sendMessageToDaemon(connection, 6, encodedMessage);
+    }
+}
+
+RetainPtr<xpc_connection_t> createAndConfigureConnectionToService(const char* serviceName)
+{
+    auto connection = adoptNS(xpc_connection_create_mach_service(serviceName, dispatch_get_main_queue(), 0));
+    xpc_connection_set_event_handler(connection.get(), ^(xpc_object_t) { });
+    xpc_connection_activate(connection.get());
+    sendConfigurationWithAuditToken(connection.get());
+
+    return WTFMove(connection);
+}
+
+static Vector<uint8_t> encodeString(const String& message)
+{
+    ASSERT(message.is8Bit());
+    auto utf8 = message.utf8();
+
+    Vector<uint8_t> result(utf8.length() + 5);
+    result[0] = static_cast<uint8_t>(utf8.length());
+    result[1] = static_cast<uint8_t>(utf8.length() >> 8);
+    result[2] = static_cast<uint8_t>(utf8.length() >> 16);
+    result[3] = static_cast<uint8_t>(utf8.length() >> 24);
+    result[4] = 0x01;
+
+    auto data = utf8.data();
+    for (size_t i = 0; i < utf8.length(); ++i)
+        result[5 + i] = data[i];
+
+    return result;
+}
+
 // FIXME: Re-enable this test on Mac once webkit.org/232857 is resolved.
 #if PLATFORM(MAC)
 TEST(WebPushD, DISABLED_BasicCommunication)
@@ -196,44 +275,20 @@ TEST(WebPushD, BasicCommunication)
     });
 
     xpc_connection_activate(connection.get());
-
-    audit_token_t token = { 0, 0, 0, 0, 0, 0, 0, 0 };
-    mach_msg_type_number_t auditTokenCount = TASK_AUDIT_TOKEN_COUNT;
-    kern_return_t result = task_info(mach_task_self(), TASK_AUDIT_TOKEN, (task_info_t)(&token), &auditTokenCount);
-    if (result != KERN_SUCCESS) {
-        EXPECT_TRUE(false);
-        return;
-    }
-
-    // Send configuration with audit token
-    {
-        std::array<uint8_t, 42> encodedMessage;
-        encodedMessage.fill(0);
-        encodedMessage[1] = 1;
-        encodedMessage[2] = 32;
-        memcpy(&encodedMessage[10], &token, sizeof(token));
-        auto dictionary = adoptNS(xpc_dictionary_create(nullptr, nullptr, 0));
-        xpc_dictionary_set_uint64(dictionary.get(), "protocol version", 1);
-        xpc_dictionary_set_uint64(dictionary.get(), "message type", 6);
-        xpc_dictionary_set_data(dictionary.get(), "encoded message", encodedMessage.data(), encodedMessage.size());
-        xpc_connection_send_message(connection.get(), dictionary.get());
-    }
+    sendConfigurationWithAuditToken(connection.get());
 
     // Enable debug messages, and wait for the resulting debug message
     {
         auto dictionary = adoptNS(xpc_dictionary_create(nullptr, nullptr, 0));
-        std::array<uint8_t, 1> encodedMessage { 1 };
-        xpc_dictionary_set_uint64(dictionary.get(), "protocol version", 1);
-        xpc_dictionary_set_uint64(dictionary.get(), "message type", 5);
-        xpc_dictionary_set_data(dictionary.get(), "encoded message", encodedMessage.data(), encodedMessage.size());
-
-        xpc_connection_send_message(connection.get(), dictionary.get());
+        Vector<uint8_t> encodedMessage(1);
+        encodedMessage[0] = 1;
+        sendMessageToDaemon(connection.get(), 5, encodedMessage);
         TestWebKitAPI::Util::run(&done);
     }
 
     // Echo and wait for a reply
     auto dictionary = adoptNS(xpc_dictionary_create(nullptr, nullptr, 0));
-    std::array<uint8_t, 10> encodedString { 5, 0, 0, 0, 1, 'h', 'e', 'l', 'l', 'o' };
+    auto encodedString = encodeString("hello");
     xpc_dictionary_set_uint64(dictionary.get(), "protocol version", 1);
     xpc_dictionary_set_uint64(dictionary.get(), "message type", 1);
     xpc_dictionary_set_data(dictionary.get(), "encoded message", encodedString.data(), encodedString.size());
@@ -337,6 +392,140 @@ TEST(WebPushD, PermissionManagement)
         originOperationDone = true;
     }];
     TestWebKitAPI::Util::run(&originOperationDone);
+
+    cleanUpTestWebPushD(tempDirectory);
+}
+
+static const char* mainSWBytes = R"SWRESOURCE(
+<script>
+function log(msg)
+{
+    window.webkit.messageHandlers.sw.postMessage(msg);
+}
+
+const channel = new MessageChannel();
+channel.port1.onmessage = (event) => log(event.data);
+
+navigator.serviceWorker.register('/sw.js').then((registration) => {
+    if (registration.active) {
+        registration.active.postMessage({port: channel.port2}, [channel.port2]);
+        return;
+    }
+    worker = registration.installing;
+    worker.addEventListener('statechange', function() {
+        if (worker.state == 'activated')
+            worker.postMessage({port: channel.port2}, [channel.port2]);
+    });
+}).catch(function(error) {
+    log("Registration failed with: " + error);
+});
+</script>
+)SWRESOURCE";
+
+static const char* scriptBytes = R"SWRESOURCE(
+let port;
+self.addEventListener("message", (event) => {
+    port = event.data.port;
+    port.postMessage("Ready");
+});
+self.addEventListener("push", (event) => {
+    try {
+        if (!event.data) {
+            port.postMessage("Received: null data");
+            return;
+        }
+        const value = event.data.text();
+        port.postMessage("Received: " + value);
+        if (value != 'Sweet Potatoes')
+            event.waitUntil(Promise.reject('I want sweet potatoes'));
+    } catch (e) {
+        port.postMessage("Got exception " + e);
+    }
+});
+)SWRESOURCE";
+
+static void clearWebsiteDataStore(WKWebsiteDataStore *store)
+{
+    __block bool clearedStore = false;
+    [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
+        clearedStore = true;
+    }];
+    TestWebKitAPI::Util::run(&clearedStore);
+}
+
+// FIXME: Re-enable this test on Mac once webkit.org/232857 is resolved.
+#if PLATFORM(MAC)
+TEST(WebPushD, DISABLED_HandleInjectedPush)
+#else
+TEST(WebPushD, HandleInjectedPush)
+#endif
+{
+    [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
+
+    NSURL *tempDirectory = setUpTestWebPushD();
+
+    auto dataStoreConfiguration = adoptNS([_WKWebsiteDataStoreConfiguration new]);
+    dataStoreConfiguration.get().webPushMachServiceName = @"org.webkit.webpushtestdaemon.service";
+    dataStoreConfiguration.get().webPushDaemonUsesMockBundlesForTesting = YES;
+    auto dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:dataStoreConfiguration.get()]);
+
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    configuration.get().websiteDataStore = dataStore.get();
+    clearWebsiteDataStore([configuration websiteDataStore]);
+
+    [configuration.get().preferences _setNotificationsEnabled:YES];
+    for (_WKExperimentalFeature *feature in [WKPreferences _experimentalFeatures]) {
+        if ([feature.key isEqualToString:@"BuiltInNotificationsEnabled"])
+            [[configuration preferences] _setEnabled:YES forFeature:feature];
+    }
+
+    auto messageHandler = adoptNS([[TestMessageHandler alloc] init]);
+    [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sw"];
+    __block bool done = false;
+    [messageHandler addMessage:@"Ready" withHandler:^{
+        done = true;
+    }];
+    [messageHandler addMessage:@"Received: Hello World" withHandler:^{
+        done = true;
+    }];
+
+    TestWebKitAPI::HTTPServer server({
+        { "/", { mainSWBytes } },
+        { "/sw.js", { { { "Content-Type", "application/javascript" } }, scriptBytes } }
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    [webView loadRequest:server.request()];
+
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    // Inject push message
+    auto encodedMessage = encodeString("com.apple.WebKit.TestWebKitAPI");
+    encodedMessage.appendVector(encodeString(server.request().URL.absoluteString));
+    encodedMessage.appendVector(encodeString("Hello World"));
+
+    auto utilityConnection = createAndConfigureConnectionToService("org.webkit.webpushtestdaemon.service");
+    sendMessageToDaemonWaitingForReply(utilityConnection.get(), 7, encodedMessage);
+
+    // Fetch push messages
+    __block RetainPtr<NSArray<NSDictionary *>> messages;
+    [dataStore _getPendingPushMessages:^(NSArray<NSDictionary *> *rawMessages) {
+        messages = rawMessages;
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    EXPECT_EQ([messages count], 1u);
+
+    // Handle push message
+    __block bool pushMessageProcessed = false;
+    [dataStore _processPushMessage:[messages firstObject] completionHandler:^(bool result) {
+        pushMessageProcessed = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    TestWebKitAPI::Util::run(&pushMessageProcessed);
 
     cleanUpTestWebPushD(tempDirectory);
 }

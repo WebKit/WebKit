@@ -34,6 +34,14 @@
 #import <WebKit/WKWebsiteDataStorePrivate.h>
 #import <WebKit/_WKWebsiteDataStoreConfiguration.h>
 
+static NSDictionary *messageDictionary(NSData *data, NSURL *registration)
+{
+    return @{
+        @"WebKitPushData" : data,
+        @"WebKitPushRegistrationURL" : registration
+    };
+}
+
 static String expectedMessage;
 
 @interface PushAPIMessageHandlerWithExpectedMessage : NSObject <WKScriptMessageHandler>
@@ -146,7 +154,8 @@ TEST(PushAPI, firePushEvent)
     pushMessageSuccessful = false;
     NSString *message = @"Sweet Potatoes";
     expectedMessage = "Received: Sweet Potatoes";
-    [[configuration websiteDataStore] _processPushMessage:[message dataUsingEncoding:NSUTF8StringEncoding] registration:[server.request() URL] completionHandler:^(bool result) {
+
+    [[configuration websiteDataStore] _processPushMessage:messageDictionary([message dataUsingEncoding:NSUTF8StringEncoding], [server.request() URL]) completionHandler:^(bool result) {
         pushMessageSuccessful = result;
         pushMessageProcessed = true;
     }];
@@ -160,7 +169,7 @@ TEST(PushAPI, firePushEvent)
     pushMessageSuccessful = false;
     message = @"Rotten Potatoes";
     expectedMessage = "Received: Rotten Potatoes";
-    [[configuration websiteDataStore] _processPushMessage:[message dataUsingEncoding:NSUTF8StringEncoding] registration:[server.request() URL] completionHandler:^(bool result) {
+    [[configuration websiteDataStore] _processPushMessage:messageDictionary([message dataUsingEncoding:NSUTF8StringEncoding], [server.request() URL]) completionHandler:^(bool result) {
         pushMessageSuccessful = result;
         pushMessageProcessed = true;
     }];
@@ -234,7 +243,7 @@ TEST(PushAPI, firePushEventWithNoPagesSuccessful)
     pushMessageProcessed = false;
     pushMessageSuccessful = false;
     NSString *message = @"Sweet Potatoes";
-    [[configuration websiteDataStore] _processPushMessage:[message dataUsingEncoding:NSUTF8StringEncoding] registration:[server.request() URL] completionHandler:^(bool result) {
+    [[configuration websiteDataStore] _processPushMessage:messageDictionary([message dataUsingEncoding:NSUTF8StringEncoding], [server.request() URL]) completionHandler:^(bool result) {
         pushMessageSuccessful = result;
         pushMessageProcessed = true;
     }];
@@ -279,7 +288,7 @@ TEST(PushAPI, firePushEventWithNoPagesFail)
     pushMessageProcessed = false;
     pushMessageSuccessful = false;
     NSString *message = @"Rotten Potatoes";
-    [[configuration websiteDataStore] _processPushMessage:[message dataUsingEncoding:NSUTF8StringEncoding] registration:[server.request() URL] completionHandler:^(bool result) {
+    [[configuration websiteDataStore] _processPushMessage:messageDictionary([message dataUsingEncoding:NSUTF8StringEncoding], [server.request() URL]) completionHandler:^(bool result) {
         pushMessageSuccessful = result;
         pushMessageProcessed = true;
     }];
@@ -332,7 +341,7 @@ TEST(PushAPI, firePushEventWithNoPagesTimeout)
     pushMessageProcessed = false;
     pushMessageSuccessful = false;
     NSString *message = @"Timeless Potatoes";
-    [[configuration websiteDataStore] _processPushMessage:[message dataUsingEncoding:NSUTF8StringEncoding] registration:[server.request() URL] completionHandler:^(bool result) {
+    [[configuration websiteDataStore] _processPushMessage:messageDictionary([message dataUsingEncoding:NSUTF8StringEncoding], [server.request() URL]) completionHandler:^(bool result) {
         pushMessageSuccessful = result;
         pushMessageProcessed = true;
     }];

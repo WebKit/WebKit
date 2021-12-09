@@ -25,43 +25,49 @@
 
 #pragma once
 
+#include <wtf/URL.h>
+#include <wtf/text/WTFString.h>
+
 namespace WebKit::WebPushD {
 
-constexpr const char* protocolVersionKey = "protocol version";
-constexpr uint64_t protocolVersionValue = 1;
-constexpr const char* protocolEncodedMessageKey = "encoded message";
+struct PushMessageForTesting {
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static std::optional<PushMessageForTesting> decode(Decoder&);
 
-constexpr const char* protocolDebugMessageKey { "debug message" };
-constexpr const char* protocolDebugMessageLevelKey { "debug message level" };
-
-constexpr const char* protocolMessageTypeKey { "message type" };
-enum class MessageType : uint8_t {
-    EchoTwice = 1,
-    RequestSystemNotificationPermission,
-    DeletePushAndNotificationRegistration,
-    GetOriginsWithPushAndNotificationPermissions,
-    SetDebugModeIsEnabled,
-    UpdateConnectionConfiguration,
-    InjectPushMessageForTesting,
-    GetPendingPushMessages,
+    String targetAppCodeSigningIdentifier;
+    URL registrationURL;
+    String message;
 };
 
-inline bool messageTypeSendsReply(MessageType messageType)
+template<class Encoder>
+void PushMessageForTesting::encode(Encoder& encoder) const
 {
-    switch (messageType) {
-    case MessageType::EchoTwice:
-    case MessageType::GetOriginsWithPushAndNotificationPermissions:
-    case MessageType::DeletePushAndNotificationRegistration:
-    case MessageType::RequestSystemNotificationPermission:
-    case MessageType::GetPendingPushMessages:
-    case MessageType::InjectPushMessageForTesting:
-        return true;
-    case MessageType::SetDebugModeIsEnabled:
-    case MessageType::UpdateConnectionConfiguration:
-        return false;
-    }
-    ASSERT_NOT_REACHED();
-    return false;
+    encoder << targetAppCodeSigningIdentifier << registrationURL << message;
+}
+
+template<class Decoder>
+std::optional<PushMessageForTesting> PushMessageForTesting::decode(Decoder& decoder)
+{
+    std::optional<String> targetAppCodeSigningIdentifier;
+    decoder >> targetAppCodeSigningIdentifier;
+    if (!targetAppCodeSigningIdentifier)
+        return std::nullopt;
+
+    std::optional<URL> registrationURL;
+    decoder >> registrationURL;
+    if (!registrationURL)
+        return std::nullopt;
+
+    std::optional<String> message;
+    decoder >> message;
+    if (!message)
+        return std::nullopt;
+
+    return { {
+        WTFMove(*targetAppCodeSigningIdentifier),
+        WTFMove(*registrationURL),
+        WTFMove(*message),
+    } };
 }
 
 } // namespace WebKit::WebPushD

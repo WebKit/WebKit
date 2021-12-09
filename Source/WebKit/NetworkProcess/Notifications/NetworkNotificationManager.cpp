@@ -32,6 +32,7 @@
 #include "DaemonEncoder.h"
 #include "NetworkSession.h"
 #include "WebPushDaemonConnectionConfiguration.h"
+#include "WebPushMessage.h"
 #include <WebCore/SecurityOriginData.h>
 
 namespace WebKit {
@@ -86,6 +87,15 @@ void NetworkNotificationManager::getOriginsWithPushAndNotificationPermissions(Co
     };
 
     sendMessageWithReply<WebPushD::MessageType::GetOriginsWithPushAndNotificationPermissions>(WTFMove(replyHandler));
+}
+
+void NetworkNotificationManager::getPendingPushMessages(CompletionHandler<void(const Vector<WebPushMessage>&)>&& completionHandler)
+{
+    CompletionHandler<void(Vector<WebPushMessage>&&)> replyHandler = [completionHandler = WTFMove(completionHandler)] (Vector<WebPushMessage>&& messages) mutable {
+        completionHandler(WTFMove(messages));
+    };
+
+    sendMessageWithReply<WebPushD::MessageType::GetPendingPushMessages>(WTFMove(replyHandler));
 }
 
 void NetworkNotificationManager::showNotification(const String&, const String&, const String&, const String&, const String&, WebCore::NotificationDirection, const String&, uint64_t)
@@ -183,6 +193,17 @@ template<> struct ReplyCaller<Vector<String>&&> {
         if (!strings)
             return completionHandler({ });
         completionHandler(WTFMove(*strings));
+    }
+};
+
+template<> struct ReplyCaller<Vector<WebPushMessage>&&> {
+    static void callReply(Daemon::Decoder&& decoder, CompletionHandler<void(Vector<WebPushMessage>&&)>&& completionHandler)
+    {
+        std::optional<Vector<WebPushMessage>> messages;
+        decoder >> messages;
+        if (!messages)
+            return completionHandler({ });
+        completionHandler(WTFMove(*messages));
     }
 };
 
