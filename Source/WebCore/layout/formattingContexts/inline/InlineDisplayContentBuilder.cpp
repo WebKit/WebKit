@@ -128,7 +128,8 @@ void InlineDisplayContentBuilder::appendTextDisplayBox(const Line::Run& lineRun,
         , lineRun.expansion()
         , InlineDisplay::Box::Text { text->start, text->length, content, adjustedContentToRender(), text->needsHyphen }
         , true
-        , { } });
+        , { }
+    });
 }
 
 void InlineDisplayContentBuilder::appendSoftLineBreakDisplayBox(const Line::Run& lineRun, const InlineRect& softLineBreakRunRect, DisplayBoxes& boxes)
@@ -145,7 +146,8 @@ void InlineDisplayContentBuilder::appendSoftLineBreakDisplayBox(const Line::Run&
         , softLineBreakRunRect
         , softLineBreakRunRect
         , lineRun.expansion()
-        , InlineDisplay::Box::Text { text->start, text->length, downcast<InlineTextBox>(layoutBox).content() } });
+        , InlineDisplay::Box::Text { text->start, text->length, downcast<InlineTextBox>(layoutBox).content() }
+    });
 }
 
 void InlineDisplayContentBuilder::appendHardLineBreakDisplayBox(const Line::Run& lineRun, const InlineRect& lineBreakBoxRect, DisplayBoxes& boxes)
@@ -159,7 +161,8 @@ void InlineDisplayContentBuilder::appendHardLineBreakDisplayBox(const Line::Run&
         , lineBreakBoxRect
         , lineBreakBoxRect
         , lineRun.expansion()
-        , { } });
+        , { }
+    });
 
     auto& boxGeometry = formattingState().boxGeometry(layoutBox);
     boxGeometry.setLogicalTopLeft(toLayoutPoint(lineBreakBoxRect.topLeft()));
@@ -185,7 +188,8 @@ void InlineDisplayContentBuilder::appendAtomicInlineLevelDisplayBox(const Line::
         , borderBoxRect
         , inkOverflow()
         , lineRun.expansion()
-        , { } });
+        , { }
+    });
     // Note that inline boxes are relative to the line and their top position can be negative.
     // Atomic inline boxes are all set. Their margin/border/content box geometries are already computed. We just have to position them here.
     formattingState().boxGeometry(layoutBox).setLogicalTopLeft(toLayoutPoint(borderBoxRect.topLeft()));
@@ -236,7 +240,8 @@ void InlineDisplayContentBuilder::appendInlineBoxDisplayBox(const Line::Run& lin
         , { }
         , { }
         , inlineBox.hasContent()
-        , isFirstLastBox(inlineBox) });
+        , isFirstLastBox(inlineBox)
+    });
     // This inline box showed up first on this line.
     setInlineBoxGeometry(layoutBox, inlineBoxBorderBox, true);
 }
@@ -261,9 +266,24 @@ void InlineDisplayContentBuilder::appendSpanningInlineBoxDisplayBox(const Line::
         , { }
         , { }
         , inlineBox.hasContent()
-        , isFirstLastBox(inlineBox) });
+        , isFirstLastBox(inlineBox)
+    });
     // Middle or end of the inline box. Let's stretch the box as needed.
     setInlineBoxGeometry(layoutBox, inlineBoxBorderBox, false);
+}
+
+void InlineDisplayContentBuilder::appendInlineDisplayBoxAtBidiBoundary(const Box& layoutBox, DisplayBoxes& boxes)
+{
+    // Geometries for inline boxes at bidi boundaries are computed at a post-process step.
+    boxes.append({ m_lineIndex
+        , InlineDisplay::Box::Type::NonRootInlineBox
+        , layoutBox
+        , UBIDI_DEFAULT_LTR
+        , { }
+        , { }
+        , { }
+        , { }
+    });
 }
 
 void InlineDisplayContentBuilder::processNonBidiContent(const LineBuilder::LineContent& lineContent, const LineBox& lineBox, const InlineLayoutPoint& lineBoxLogicalTopLeft, DisplayBoxes& boxes)
@@ -377,7 +397,7 @@ DisplayBoxNode& InlineDisplayContentBuilder::ensureDisplayBoxForContainer(const 
     if (auto* lowestCommonAncestor = ancestorStack.unwind(containerBox))
         return *lowestCommonAncestor;
     auto& enclosingDisplayBoxNodeForContainer = ensureDisplayBoxForContainer(containerBox.parent(), ancestorStack, boxes);
-    boxes.append({ m_lineIndex, InlineDisplay::Box::Type::NonRootInlineBox, containerBox, UBIDI_DEFAULT_LTR, { }, { }, { }, { }, true, { } });
+    appendInlineDisplayBoxAtBidiBoundary(containerBox, boxes);
     return createdDisplayBoxNodeForContainerBoxAndPushToAncestorStack(containerBox, boxes.size() - 1, enclosingDisplayBoxNodeForContainer, ancestorStack);
 }
 
@@ -403,7 +423,6 @@ void InlineDisplayContentBuilder::adjustVisualGeometryForChildNode(const Display
     auto beforeInlineBoxContent = [&] {
         auto logicalRect = lineBox.logicalBorderBoxForInlineBox(layoutBox, boxGeometry);
         auto visualRect = InlineRect { lineBoxLogicalTop + logicalRect.top(), contentRightInVisualOrder, { }, logicalRect.height() };
-        // FIXME: Add support for ink overflow.
         if (!displayBox.isFirstForLayoutBox())
             return displayBox.setLogicalRect(visualRect, visualRect);
 
@@ -426,6 +445,13 @@ void InlineDisplayContentBuilder::adjustVisualGeometryForChildNode(const Display
         contentRightInVisualOrder += boxGeometry.marginEnd();
     };
     afterInlineBoxContent();
+
+    auto computeInkOverflow = [&] {
+        auto inkOverflow = displayBox.logicalRect();
+        m_contentHasInkOverflow = computeBoxShadowInkOverflow(!m_lineIndex ? layoutBox.firstLineStyle() : layoutBox.style(), inkOverflow) || m_contentHasInkOverflow;
+        displayBox.adjustInkOverflow(inkOverflow);
+    };
+    computeInkOverflow();
 
     setInlineBoxGeometry(layoutBox, displayBox.logicalRect(), displayBox.isFirstForLayoutBox());
     if (lineBox.inlineLevelBoxForLayoutBox(layoutBox).hasContent())
@@ -498,7 +524,7 @@ void InlineDisplayContentBuilder::processBidiContent(const LineBuilder::LineCont
                 continue;
             }
             if (lineRun.isInlineBoxStart() || lineRun.isLineSpanningInlineBoxStart()) {
-                boxes.append({ m_lineIndex, InlineDisplay::Box::Type::NonRootInlineBox, layoutBox, UBIDI_DEFAULT_LTR, { }, { }, { }, { }, true, { } });
+                appendInlineDisplayBoxAtBidiBoundary(layoutBox, boxes);
                 createdDisplayBoxNodeForContainerBoxAndPushToAncestorStack(downcast<ContainerBox>(layoutBox), boxes.size() - 1, parentDisplayBoxNode, ancestorStack);
                 continue;
             }
