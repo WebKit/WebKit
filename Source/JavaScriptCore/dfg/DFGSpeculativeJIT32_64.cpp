@@ -786,7 +786,7 @@ void SpeculativeJIT::emitCall(Node* node)
         isEmulatedTail ? *staticInlineCallFrame->getCallerSkippingTailCalls() : staticOrigin;
     CallSiteIndex callSite = m_jit.recordCallSiteAndGenerateExceptionHandlingOSRExitIfNeeded(dynamicOrigin, m_stream->size());
     
-    CallLinkInfo* info = m_jit.jitCode()->common.addCallLinkInfo(node->origin.semantic);
+    auto* info = m_jit.jitCode()->common.addCallLinkInfo(node->origin.semantic);
     info->setUpCall(callType, calleePayloadGPR);
     
     auto setResultAndResetStack = [&] () {

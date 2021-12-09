@@ -105,7 +105,7 @@ unsigned PolymorphicAccessJITStubRoutine::computeHash(const FixedVector<RefPtr<A
 
 MarkingGCAwareJITStubRoutine::MarkingGCAwareJITStubRoutine(
     const MacroAssemblerCodeRef<JITStubRoutinePtrTag>& code, VM& vm, FixedVector<RefPtr<AccessCase>>&& cases, FixedVector<StructureID>&& weakStructures, const JSCell* owner,
-    const Vector<JSCell*>& cells, Bag<CallLinkInfo>&& callLinkInfos)
+    const Vector<JSCell*>& cells, Bag<OptimizingCallLinkInfo>&& callLinkInfos)
     : PolymorphicAccessJITStubRoutine(code, vm, WTFMove(cases), WTFMove(weakStructures))
     , m_cells(cells.size())
     , m_callLinkInfos(WTFMove(callLinkInfos))
@@ -135,7 +135,7 @@ void MarkingGCAwareJITStubRoutine::markRequiredObjectsInternal(SlotVisitor& visi
 }
 
 GCAwareJITStubRoutineWithExceptionHandler::GCAwareJITStubRoutineWithExceptionHandler(
-    const MacroAssemblerCodeRef<JITStubRoutinePtrTag>& code, VM& vm, FixedVector<RefPtr<AccessCase>>&& cases, FixedVector<StructureID>&& weakStructures, const JSCell* owner, const Vector<JSCell*>& cells, Bag<CallLinkInfo>&& callLinkInfos,
+    const MacroAssemblerCodeRef<JITStubRoutinePtrTag>& code, VM& vm, FixedVector<RefPtr<AccessCase>>&& cases, FixedVector<StructureID>&& weakStructures, const JSCell* owner, const Vector<JSCell*>& cells, Bag<OptimizingCallLinkInfo>&& callLinkInfos,
     CodeBlock* codeBlockForExceptionHandlers, DisposableCallSiteIndex exceptionHandlerCallSiteIndex)
     : MarkingGCAwareJITStubRoutine(code, vm, WTFMove(cases), WTFMove(weakStructures), owner, cells, WTFMove(callLinkInfos))
     , m_codeBlockWithExceptionHandler(codeBlockForExceptionHandlers)
@@ -189,7 +189,7 @@ Ref<PolymorphicAccessJITStubRoutine> createICJITStubRoutine(
     const JSCell* owner,
     bool makesCalls,
     const Vector<JSCell*>& cells,
-    Bag<CallLinkInfo>&& callLinkInfos,
+    Bag<OptimizingCallLinkInfo>&& callLinkInfos,
     CodeBlock* codeBlockForExceptionHandlers,
     DisposableCallSiteIndex exceptionHandlerCallSiteIndex)
 {

@@ -44,7 +44,7 @@ public:
     // PolymorphicAccess can be destroyed while GCAwareJITStubRoutine is alive if we are destroying PolymorphicAccess
     // while we are executing GCAwareJITStubRoutine. It is not possible that GetterSetterAccessCase is alive while
     // GCAwareJITStubRoutine is destroyed.
-    CallLinkInfo* callLinkInfo() const { return m_callLinkInfo; }
+    OptimizingCallLinkInfo* callLinkInfo() const { return m_callLinkInfo; }
     JSObject* customSlotBase() const { return m_customSlotBase.get(); }
     std::optional<DOMAttributeAnnotation> domAttribute() const { return m_domAttribute; }
 
@@ -75,7 +75,7 @@ private:
     GetterSetterAccessCase(const GetterSetterAccessCase&);
 
     WriteBarrier<JSObject> m_customSlotBase;
-    CallLinkInfo* m_callLinkInfo { nullptr };
+    OptimizingCallLinkInfo* m_callLinkInfo { nullptr };
     FunctionPtr<CustomAccessorPtrTag> m_customAccessor;
     std::optional<DOMAttributeAnnotation> m_domAttribute;
 };

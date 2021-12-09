@@ -42,10 +42,6 @@
 
 namespace JSC {
 
-namespace {
-    constexpr JSValueRegs calleeJSR = JSRInfo::jsRegT10;
-}
-
 void JIT::emit_op_ret(const Instruction* currentInstruction)
 {
     static_assert(noOverlap(returnValueJSR, callFrameRegister));
@@ -200,11 +196,11 @@ void JIT::compileCallEvalSlowCase(const Instruction* instruction, Vector<SlowCas
 
     addPtr(TrustedImm32(registerOffset * sizeof(Register) + sizeof(CallerFrameAndPC)), callFrameRegister, stackPointerRegister);
 
-    loadValue(Address(stackPointerRegister, sizeof(Register) * CallFrameSlot::callee - sizeof(CallerFrameAndPC)), calleeJSR);
+    static_assert(noOverlap(BaselineCallRegisters::calleeJSR, BaselineCallRegisters::callLinkInfoGPR, regT3));
+    loadValue(Address(stackPointerRegister, sizeof(Register) * CallFrameSlot::callee - sizeof(CallerFrameAndPC)), BaselineCallRegisters::calleeJSR);
     loadGlobalObject(regT3);
-    constexpr GPRReg callLinkInfoGPR = regT2;
-    materializePointerIntoMetadata(bytecode, OpCallEval::Metadata::offsetOfCallLinkInfo(), callLinkInfoGPR);
-    emitVirtualCallWithoutMovingGlobalObject(*m_vm, callLinkInfoGPR, CallMode::Regular);
+    materializePointerIntoMetadata(bytecode, OpCallEval::Metadata::offsetOfCallLinkInfo(), BaselineCallRegisters::callLinkInfoGPR);
+    emitVirtualCallWithoutMovingGlobalObject(*m_vm, BaselineCallRegisters::callLinkInfoGPR, CallMode::Regular);
     resetSP();
 }
 
@@ -217,12 +213,11 @@ bool JIT::compileTailCall(const Op&, UnlinkedCallLinkInfo*, unsigned)
 template<>
 bool JIT::compileTailCall(const OpTailCall& bytecode, UnlinkedCallLinkInfo*, unsigned callLinkInfoIndex)
 {
-    constexpr GPRReg callLinkInfoGPR = regT2;
-    materializePointerIntoMetadata(bytecode, OpTailCall::Metadata::offsetOfCallLinkInfo(), callLinkInfoGPR);
-    JumpList slowPaths = CallLinkInfo::emitTailCallDataICFastPath(*this, calleeJSR.payloadGPR(), callLinkInfoGPR, scopedLambda<void()>([&]{
+    materializePointerIntoMetadata(bytecode, OpTailCall::Metadata::offsetOfCallLinkInfo(), BaselineCallRegisters::callLinkInfoGPR);
+    JumpList slowPaths = CallLinkInfo::emitTailCallDataICFastPath(*this, BaselineCallRegisters::calleeJSR.payloadGPR(), BaselineCallRegisters::callLinkInfoGPR, scopedLambda<void()>([&] {
         CallFrameShuffleData shuffleData = CallFrameShuffleData::createForBaselineOrLLIntTailCall(bytecode, m_unlinkedCodeBlock->numParameters());
         CallFrameShuffler shuffler { *this, shuffleData };
-        shuffler.lockGPR(callLinkInfoGPR);
+        shuffler.lockGPR(BaselineCallRegisters::callLinkInfoGPR);
         shuffler.prepareForTailCall();
     }));
     addSlowCase(slowPaths);
@@ -267,8 +262,8 @@ void JIT::compileOpCall(const Instruction* instruction, unsigned callLinkInfoInd
     uint32_t locationBits = CallSiteIndex(m_bytecodeIndex).bits();
     store32(TrustedImm32(locationBits), Address(callFrameRegister, CallFrameSlot::argumentCountIncludingThis * static_cast<int>(sizeof(Register)) + TagOffset));
 
-    emitGetVirtualRegister(callee, calleeJSR);
-    storeValue(calleeJSR, Address(stackPointerRegister, CallFrameSlot::callee * static_cast<int>(sizeof(Register)) - sizeof(CallerFrameAndPC)));
+    emitGetVirtualRegister(callee, BaselineCallRegisters::calleeJSR);
+    storeValue(BaselineCallRegisters::calleeJSR, Address(stackPointerRegister, CallFrameSlot::callee * static_cast<int>(sizeof(Register)) - sizeof(CallerFrameAndPC)));
 
     if (compileCallEval(bytecode))
         return;
@@ -276,18 +271,17 @@ void JIT::compileOpCall(const Instruction* instruction, unsigned callLinkInfoInd
 #if USE(JSVALUE32_64)
     // We need this on JSVALUE32_64 only as on JSVALUE64 a pointer comparison in the DataIC fast
     // path catches this.
-    addSlowCase(branchIfNotCell(calleeJSR));
+    addSlowCase(branchIfNotCell(BaselineCallRegisters::calleeJSR));
 #endif
 
     if (compileTailCall(bytecode, info, callLinkInfoIndex))
         return;
 
-    constexpr GPRReg callLinkInfoGPR = regT2;
-    materializePointerIntoMetadata(bytecode, Op::Metadata::offsetOfCallLinkInfo(), callLinkInfoGPR);
+    materializePointerIntoMetadata(bytecode, Op::Metadata::offsetOfCallLinkInfo(), BaselineCallRegisters::callLinkInfoGPR);
     if (opcodeID == op_tail_call_varargs || opcodeID == op_tail_call_forward_arguments) {
-        auto slowPaths = CallLinkInfo::emitTailCallDataICFastPath(*this, calleeJSR.payloadGPR(), callLinkInfoGPR, scopedLambda<void()>([&]{
+        auto slowPaths = CallLinkInfo::emitTailCallDataICFastPath(*this, BaselineCallRegisters::calleeJSR.payloadGPR(), BaselineCallRegisters::callLinkInfoGPR, scopedLambda<void()>([&] {
             emitRestoreCalleeSaves();
-            prepareForTailCallSlow(callLinkInfoGPR);
+            prepareForTailCallSlow(BaselineCallRegisters::callLinkInfoGPR);
         }));
         addSlowCase(slowPaths);
         auto doneLocation = label();
@@ -295,7 +289,7 @@ void JIT::compileOpCall(const Instruction* instruction, unsigned callLinkInfoInd
         return;
     }
 
-    auto slowPaths = CallLinkInfo::emitDataICFastPath(*this, calleeJSR.payloadGPR(), callLinkInfoGPR);
+    auto slowPaths = CallLinkInfo::emitDataICFastPath(*this, BaselineCallRegisters::calleeJSR.payloadGPR(), BaselineCallRegisters::callLinkInfoGPR);
     auto doneLocation = label();
     addSlowCase(slowPaths);
 

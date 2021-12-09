@@ -90,7 +90,7 @@ private:
 
     Ref<Wasm::CodeBlock> m_codeBlock;
     Vector<MacroAssemblerCodeRef<WasmEntryPtrTag>> m_wasmToJSExitStubs;
-    Bag<CallLinkInfo> m_callLinkInfos;
+    Bag<OptimizingCallLinkInfo> m_callLinkInfos;
     String m_errorMessage;
 };
 

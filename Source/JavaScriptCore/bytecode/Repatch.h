@@ -32,6 +32,7 @@
 namespace JSC {
 
 class CallLinkInfo;
+class OptimizingCallLinkInfo;
 class StructureStubInfo;
 
 enum class GetByKind {
@@ -71,7 +72,7 @@ void repatchCheckPrivateBrand(JSGlobalObject*, CodeBlock*, JSObject*, CacheableI
 void repatchSetPrivateBrand(JSGlobalObject*, CodeBlock*, JSObject*, Structure*, CacheableIdentifier, StructureStubInfo&);
 void repatchInstanceOf(JSGlobalObject*, CodeBlock*, JSValue, JSValue prototype, StructureStubInfo&, bool wasFound);
 void linkMonomorphicCall(VM&, CallFrame*, CallLinkInfo&, CodeBlock*, JSObject* callee, MacroAssemblerCodePtr<JSEntryPtrTag>);
-void linkDirectCall(CallFrame*, CallLinkInfo&, CodeBlock*, MacroAssemblerCodePtr<JSEntryPtrTag>);
+void linkDirectCall(CallFrame*, OptimizingCallLinkInfo&, CodeBlock*, MacroAssemblerCodePtr<JSEntryPtrTag>);
 void linkSlowFor(CallFrame*, CallLinkInfo&);
 void unlinkCall(VM&, CallLinkInfo&);
 void linkPolymorphicCall(JSGlobalObject*, CallFrame*, CallLinkInfo&, CallVariant);

@@ -1,3 +1,103 @@
+2021-12-09  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Introduce BaselineCallLinkInfo and OptimizingCallLinkInfo to shrink sizeof(BaselineCallLinkInfo)
+        https://bugs.webkit.org/show_bug.cgi?id=233985
+
+        Reviewed by Mark Lam.
+
+        This patch introduces BaselineCallLinkInfo and OptimizingCallLinkInfo to shrink sizeof(BaselineCallLinkInfo).
+        BaselineCallLinkInfo is included in metadata, and allocated for LLInt and Baseline. So shrinking it can make
+        metadata small for LLInt and Baseline, which exists for all live functions.
+
+        We also reorder OpIteratorOpen::Metadata and OpIteratorNext::Metadata to shrink sizes.
+
+        sizeof(BaselineCallLinkInfo) becomes 88, while the old sizeof(CallLinkInfo) was 120.
+
+        * bytecode/AccessCase.cpp:
+        (JSC::AccessCase::generateImpl):
+        * bytecode/BytecodeList.rb:
+        * bytecode/CallLinkInfo.cpp:
+        (JSC::CallLinkInfo::setMonomorphicCallee):
+        (JSC::CallLinkInfo::emitFastPathImpl):
+        (JSC::OptimizingCallLinkInfo::emitFastPath):
+        (JSC::OptimizingCallLinkInfo::emitTailCallFastPath):
+        (JSC::OptimizingCallLinkInfo::emitSlowPath):
+        (JSC::CallLinkInfo::emitDataICSlowPath):
+        (JSC::OptimizingCallLinkInfo::slowPathStart):
+        (JSC::OptimizingCallLinkInfo::fastPathStart):
+        (JSC::OptimizingCallLinkInfo::emitDirectFastPath):
+        (JSC::OptimizingCallLinkInfo::emitDirectTailCallFastPath):
+        (JSC::OptimizingCallLinkInfo::initializeDirectCall):
+        (JSC::OptimizingCallLinkInfo::setDirectCallTarget):
+        (JSC::BaselineCallLinkInfo::initialize):
+        (JSC::CallLinkInfo::slowPathStart): Deleted.
+        (JSC::CallLinkInfo::fastPathStart): Deleted.
+        (JSC::CallLinkInfo::emitFastPath): Deleted.
+        (JSC::CallLinkInfo::emitTailCallFastPath): Deleted.
+        (JSC::CallLinkInfo::emitSlowPath): Deleted.
+        (JSC::CallLinkInfo::initializeDataIC): Deleted.
+        (JSC::CallLinkInfo::emitDirectFastPath): Deleted.
+        (JSC::CallLinkInfo::emitDirectTailCallFastPath): Deleted.
+        (JSC::CallLinkInfo::initializeDirectCall): Deleted.
+        (JSC::CallLinkInfo::setDirectCallTarget): Deleted.
+        * bytecode/CallLinkInfo.h:
+        (JSC::CallLinkInfo::type const):
+        (JSC::CallLinkInfo::CallLinkInfo):
+        (JSC::CallLinkInfo::calleeGPR const):
+        (JSC::CallLinkInfo::callLinkInfoGPR const):
+        (JSC::CallLinkInfo::setCallLinkInfoGPR):
+        (JSC::CallLinkInfo::setUpCall): Deleted.
+        (JSC::CallLinkInfo::setCodeLocations): Deleted.
+        (JSC::CallLinkInfo::calleeGPR): Deleted.
+        * bytecode/CallLinkStatus.cpp:
+        (JSC::CallLinkStatus::computeFor):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::finishCreation):
+        (JSC::CodeBlock::setupWithUnlinkedBaselineCode):
+        (JSC::CodeBlock::finalizeUnconditionally):
+        (JSC::CodeBlock::getICStatusMap):
+        (JSC::CodeBlock::jettison):
+        * bytecode/GetterSetterAccessCase.h:
+        * bytecode/PolymorphicAccess.h:
+        * bytecode/Repatch.cpp:
+        (JSC::revertCall):
+        (JSC::linkDirectCall):
+        * bytecode/Repatch.h:
+        * dfg/DFGCommonData.h:
+        (JSC::DFG::CommonData::addCallLinkInfo):
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::link):
+        * dfg/DFGJITCompiler.h:
+        (JSC::DFG::JITCompiler::addJSCall):
+        (JSC::DFG::JITCompiler::addJSDirectCall):
+        (JSC::DFG::JITCompiler::JSCallRecord::JSCallRecord):
+        (JSC::DFG::JITCompiler::JSDirectCallRecord::JSDirectCallRecord):
+        * dfg/DFGOperations.cpp:
+        (JSC::DFG::JSC_DEFINE_JIT_OPERATION):
+        * dfg/DFGOperations.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::emitCall):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::emitCall):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileCompareStrictEq):
+        * jit/CallFrameShuffleData.cpp:
+        (JSC::CallFrameShuffleData::createForBaselineOrLLIntTailCall):
+        * jit/GCAwareJITStubRoutine.cpp:
+        (JSC::MarkingGCAwareJITStubRoutine::MarkingGCAwareJITStubRoutine):
+        (JSC::GCAwareJITStubRoutineWithExceptionHandler::GCAwareJITStubRoutineWithExceptionHandler):
+        (JSC::createICJITStubRoutine):
+        * jit/GCAwareJITStubRoutine.h:
+        * jit/JITCall.cpp:
+        (JSC::JIT::compileCallEvalSlowCase):
+        (JSC::JIT::compileTailCall):
+        (JSC::JIT::compileOpCall):
+        (): Deleted.
+        * wasm/js/JSWebAssemblyCodeBlock.h:
+        * wasm/js/WasmToJS.cpp:
+        (JSC::Wasm::wasmToJS):
+        * wasm/js/WasmToJS.h:
+
 2021-12-08  Asumu Takikawa  <asumu@igalia.com>
 
         Support WebAssembly.Memory imports in Wasm/ESM modules.

@@ -224,7 +224,7 @@ struct AccessGenerationState {
     ECMAMode m_ecmaMode { ECMAMode::sloppy() };
     std::unique_ptr<WatchpointsOnStructureStubInfo> watchpoints;
     Vector<StructureID> weakStructures;
-    Bag<CallLinkInfo> m_callLinkInfos;
+    Bag<OptimizingCallLinkInfo> m_callLinkInfos;
     bool m_doesJSGetterSetterCalls : 1;
     bool m_doesCalls : 1;
 

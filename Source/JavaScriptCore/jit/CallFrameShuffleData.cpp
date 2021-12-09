@@ -85,11 +85,6 @@ void CallFrameShuffleData::setupCalleeSaveRegisters(const RegisterAtOffsetList* 
 
 CallFrameShuffleData CallFrameShuffleData::createForBaselineOrLLIntTailCall(const OpTailCall& bytecode, unsigned numParameters)
 {
-#if USE(JSVALUE64)
-    constexpr JSValueRegs calleeJSR { GPRInfo::regT0 };
-#elif USE(JSVALUE32_64)
-    constexpr JSValueRegs calleeJSR { GPRInfo::regT1, GPRInfo::regT0 };
-#endif
     CallFrameShuffleData shuffleData;
     shuffleData.numPassedArgs = bytecode.m_argc;
     shuffleData.numParameters = numParameters;
@@ -105,9 +100,9 @@ CallFrameShuffleData CallFrameShuffleData::createForBaselineOrLLIntTailCall(cons
                 DataFormatJS);
     }
 #if USE(JSVALUE64)
-    shuffleData.callee = ValueRecovery::inGPR(calleeJSR.payloadGPR(), DataFormatJS);
+    shuffleData.callee = ValueRecovery::inGPR(BaselineCallRegisters::calleeJSR.payloadGPR(), DataFormatJS);
 #elif USE(JSVALUE32_64)
-    shuffleData.callee = ValueRecovery::inPair(calleeJSR.tagGPR(), calleeJSR.payloadGPR());
+    shuffleData.callee = ValueRecovery::inPair(BaselineCallRegisters::calleeJSR.tagGPR(), BaselineCallRegisters::calleeJSR.payloadGPR());
 #endif
     shuffleData.setupCalleeSaveRegisters(&RegisterAtOffsetList::llintBaselineCalleeSaveRegisters());
     shuffleData.shrinkToFit();

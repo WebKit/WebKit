@@ -35,8 +35,9 @@ namespace JSC {
 
 class DateInstance;
 class JSBigInt;
-struct UnlinkedStringJumpTable;
 class JSPropertyNameEnumerator;
+class OptimizingCallLinkInfo;
+struct UnlinkedStringJumpTable;
 
 namespace DFG {
 
@@ -314,7 +315,7 @@ JSC_DECLARE_JIT_OPERATION(operationNewRawObject, char*, (VM*, Structure*, int32_
 JSC_DECLARE_JIT_OPERATION(operationNewObjectWithButterfly, JSCell*, (VM*, Structure*, Butterfly*));
 JSC_DECLARE_JIT_OPERATION(operationNewObjectWithButterflyWithIndexingHeaderAndVectorLength, JSCell*, (VM*, Structure*, unsigned length, Butterfly*));
 
-JSC_DECLARE_JIT_OPERATION(operationLinkDirectCall, void, (CallLinkInfo*, JSFunction*));
+JSC_DECLARE_JIT_OPERATION(operationLinkDirectCall, void, (OptimizingCallLinkInfo*, JSFunction*));
 
 JSC_DECLARE_JIT_OPERATION(operationDateGetFullYear, EncodedJSValue, (VM*, DateInstance*));
 JSC_DECLARE_JIT_OPERATION(operationDateGetUTCFullYear, EncodedJSValue, (VM*, DateInstance*));

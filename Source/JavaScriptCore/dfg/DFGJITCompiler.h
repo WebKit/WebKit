@@ -234,12 +234,12 @@ public:
         m_privateBrandAccesses.append(InlineCacheWrapper<JITPrivateBrandAccessGenerator>(gen, slowPath));
     }
 
-    void addJSCall(Label slowPathStart, Label doneLocation, CallLinkInfo* info)
+    void addJSCall(Label slowPathStart, Label doneLocation, OptimizingCallLinkInfo* info)
     {
         m_jsCalls.append(JSCallRecord(slowPathStart, doneLocation, info));
     }
     
-    void addJSDirectCall(Label slowPath, CallLinkInfo* info)
+    void addJSDirectCall(Label slowPath, OptimizingCallLinkInfo* info)
     {
         m_jsDirectCalls.append(JSDirectCallRecord(slowPath, info));
     }
@@ -338,7 +338,7 @@ private:
 
 
     struct JSCallRecord {
-        JSCallRecord(Label slowPathStart, Label doneLocation, CallLinkInfo* info)
+        JSCallRecord(Label slowPathStart, Label doneLocation, OptimizingCallLinkInfo* info)
             : slowPathStart(slowPathStart)
             , doneLocation(doneLocation)
             , info(info)
@@ -347,18 +347,18 @@ private:
         
         Label slowPathStart;
         Label doneLocation;
-        CallLinkInfo* info;
+        OptimizingCallLinkInfo* info;
     };
     
     struct JSDirectCallRecord {
-        JSDirectCallRecord(Label slowPath, CallLinkInfo* info)
+        JSDirectCallRecord(Label slowPath, OptimizingCallLinkInfo* info)
             : slowPath(slowPath)
             , info(info)
         {
         }
         
         Label slowPath;
-        CallLinkInfo* info;
+        OptimizingCallLinkInfo* info;
     };
     
     Vector<InlineCacheWrapper<JITGetByIdGenerator>, 4> m_getByIds;

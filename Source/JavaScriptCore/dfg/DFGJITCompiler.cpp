@@ -260,14 +260,14 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
     finalizeInlineCaches(m_privateBrandAccesses, linkBuffer);
 
     for (auto& record : m_jsCalls) {
-        CallLinkInfo& info = *record.info;
+        auto& info = *record.info;
         info.setCodeLocations(
             linkBuffer.locationOf<JSInternalPtrTag>(record.slowPathStart),
             linkBuffer.locationOf<JSInternalPtrTag>(record.doneLocation));
     }
     
     for (auto& record : m_jsDirectCalls) {
-        CallLinkInfo& info = *record.info;
+        auto& info = *record.info;
         info.setCodeLocations(
             linkBuffer.locationOf<JSInternalPtrTag>(record.slowPath),
             CodeLocationLabel<JSInternalPtrTag>());

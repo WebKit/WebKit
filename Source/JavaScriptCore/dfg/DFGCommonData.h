@@ -111,7 +111,7 @@ public:
     
     void clearWatchpoints();
 
-    CallLinkInfo* addCallLinkInfo(CodeOrigin codeOrigin)
+    OptimizingCallLinkInfo* addCallLinkInfo(CodeOrigin codeOrigin)
     {
         return m_callLinkInfos.add(codeOrigin);
     }
@@ -131,7 +131,7 @@ public:
     RecordedStatuses recordedStatuses;
     Vector<JumpReplacement> m_jumpReplacements;
     Bag<StructureStubInfo> m_stubInfos;
-    Bag<CallLinkInfo> m_callLinkInfos;
+    Bag<OptimizingCallLinkInfo> m_callLinkInfos;
     Yarr::YarrBoyerMoyerData m_boyerMooreData;
     
     ScratchBuffer* catchOSREntryBuffer;

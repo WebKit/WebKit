@@ -324,8 +324,7 @@ CallLinkStatus CallLinkStatus::computeFor(
             if (!status.callLinkInfo)
                 return CallLinkStatus();
             
-            if (CallLinkStatusInternal::verbose)
-                dataLog("Have CallLinkInfo with CodeOrigin = ", status.callLinkInfo->codeOrigin(), "\n");
+            dataLogLnIf(CallLinkStatusInternal::verbose, "Have CallLinkInfo with CodeOrigin = ", codeOrigin, "\n");
             CallLinkStatus result;
             {
                 ConcurrentJSLocker locker(context->optimizedCodeBlock->m_lock);

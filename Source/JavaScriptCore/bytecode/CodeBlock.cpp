@@ -445,11 +445,11 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
 #if ENABLE(JIT)
         if constexpr (decltype(bytecode)::opcodeID == op_tail_call) {
             CallFrameShuffleData shuffleData = CallFrameShuffleData::createForBaselineOrLLIntTailCall(bytecode, numParameters());
-            metadata.m_callLinkInfo.initializeDataIC(vm, CallLinkInfo::callTypeFor(decltype(bytecode)::opcodeID), instruction.index(), &shuffleData);
+            metadata.m_callLinkInfo.initialize(vm, CallLinkInfo::callTypeFor(decltype(bytecode)::opcodeID), instruction.index(), &shuffleData);
             return;
         }
 #endif
-        metadata.m_callLinkInfo.initializeDataIC(vm, CallLinkInfo::callTypeFor(decltype(bytecode)::opcodeID), instruction.index(), nullptr);
+        metadata.m_callLinkInfo.initialize(vm, CallLinkInfo::callTypeFor(decltype(bytecode)::opcodeID), instruction.index(), nullptr);
     };
 
 #define LINK_FIELD(__field) \
@@ -792,7 +792,7 @@ void CodeBlock::setupWithUnlinkedBaselineCode(Ref<BaselineJITCode> jitCode)
         for (auto& unlinkedCallLinkInfo : jitCode->m_unlinkedCalls) {
             CallLinkInfo* callLinkInfo = getCallLinkInfoForBytecodeIndex(locker, unlinkedCallLinkInfo.bytecodeIndex);
             ASSERT(callLinkInfo);
-            callLinkInfo->setCodeLocations({ }, unlinkedCallLinkInfo.doneLocation);
+            static_cast<BaselineCallLinkInfo*>(callLinkInfo)->setCodeLocations(unlinkedCallLinkInfo.doneLocation);
         }
 
         for (size_t i = 0; i < jitCode->m_constantPool.size(); ++i) {
@@ -1625,7 +1625,7 @@ void CodeBlock::finalizeUnconditionally(VM& vm)
     if (JITCode::couldBeInterpreted(jitType())) {
         finalizeLLIntInlineCaches();
         // If the CodeBlock is DFG or FTL, CallLinkInfo in metadata is not related.
-        forEachLLIntOrBaselineCallLinkInfo([&](CallLinkInfo& callLinkInfo) {
+        forEachLLIntOrBaselineCallLinkInfo([&](BaselineCallLinkInfo& callLinkInfo) {
             callLinkInfo.visitWeak(vm);
         });
     }
@@ -1693,7 +1693,7 @@ void CodeBlock::destroy(JSCell* cell)
 void CodeBlock::getICStatusMap(const ConcurrentJSLocker&, ICStatusMap& result)
 {
     if (JITCode::couldBeInterpreted(jitType())) {
-        forEachLLIntOrBaselineCallLinkInfo([&](CallLinkInfo& callLinkInfo) {
+        forEachLLIntOrBaselineCallLinkInfo([&](BaselineCallLinkInfo& callLinkInfo) {
             result.add(callLinkInfo.codeOrigin(), ICStatus()).iterator->value.callLinkInfo = &callLinkInfo;
         });
     }
@@ -2324,7 +2324,7 @@ void CodeBlock::jettison(Profiler::JettisonReason reason, ReoptimizationMode mod
                 callLinkInfo->setClearedByJettison();
 #endif
         } else {
-            forEachLLIntOrBaselineCallLinkInfo([&](CallLinkInfo& callLinkInfo) {
+            forEachLLIntOrBaselineCallLinkInfo([&](BaselineCallLinkInfo& callLinkInfo) {
                 callLinkInfo.setClearedByJettison();
             });
         }
