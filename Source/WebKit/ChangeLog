@@ -1,3 +1,22 @@
+2021-12-08  BJ Burg  <bburg@apple.com>
+
+        Web Inspector: evaluateScriptForExtension() incorrectly unwraps internal errors, causing an ASSERT
+        https://bugs.webkit.org/show_bug.cgi?id=233961
+        <rdar://86123763>
+
+        Reviewed by Patrick Angle.
+
+        Standardize the unwrapping code based on the evaluateScriptInExtensionTab version, which
+        correctly handles the case where an internal error is returned by the evaluation.
+        This happens, for example, when NotImplemented is returned for unsupported evaluation
+        options.
+
+        This particular issue was caused by a lack of support for the 'frameURL' option.
+        The fix for that is tracked by https://webkit.org/b/222568/.
+
+        * WebProcess/Inspector/WebInspectorUIExtensionController.cpp:
+        (WebKit::WebInspectorUIExtensionController::evaluateScriptForExtension):
+
 2021-12-08  J Pascoe  <j_pascoe@apple.com>
 
         [WebAuthn] Consider support for the displayName for FIDO authenticator

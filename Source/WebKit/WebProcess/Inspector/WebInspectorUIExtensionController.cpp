@@ -250,8 +250,12 @@ void WebInspectorUIExtensionController::evaluateScriptForExtension(const Inspect
         JSC::JSLockHolder lock(frontendGlobalObject);
 
         if (auto parsedError = weakThis->parseExtensionErrorFromEvaluationResult(result)) {
-            auto exceptionDetails = result.value().error();
-            LOG(Inspector, "Internal error encountered while evaluating upon the frontend: at %s:%d:%d: %s", exceptionDetails.sourceURL.utf8().data(), exceptionDetails.lineNumber, exceptionDetails.columnNumber, exceptionDetails.message.utf8().data());
+            if (!result.value().has_value()) {
+                auto exceptionDetails = result.value().error();
+                LOG(Inspector, "Internal error encountered while evaluating upon the frontend at %s:%d:%d: %s", exceptionDetails.sourceURL.utf8().data(), exceptionDetails.lineNumber, exceptionDetails.columnNumber, exceptionDetails.message.utf8().data());
+            } else
+                LOG(Inspector, "Internal error encountered while evaluating upon the frontend: %s", extensionErrorToString(parsedError.value()).utf8().data());
+
             completionHandler({ }, std::nullopt, parsedError);
             return;
         }
@@ -259,7 +263,7 @@ void WebInspectorUIExtensionController::evaluateScriptForExtension(const Inspect
         // Expected result is either an ErrorString or {result: <any>}.
         auto objectResult = weakThis->unwrapEvaluationResultAsObject(result);
         if (!objectResult) {
-            LOG(Inspector, "Unexpected non-object value returned from InspectorFrontendAPI.createTabForExtension().");
+            LOG(Inspector, "Unexpected non-object value returned from InspectorFrontendAPI.evaluateScriptForExtension().");
             completionHandler({ }, std::nullopt, Inspector::ExtensionError::InternalError);
             return;
         }
