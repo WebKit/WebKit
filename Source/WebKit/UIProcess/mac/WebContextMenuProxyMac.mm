@@ -309,7 +309,8 @@ static void getStandardShareMenuItem(NSArray *items, void (^completionHandler)(N
 
 void WebContextMenuProxyMac::getShareMenuItem(CompletionHandler<void(NSMenuItem *)>&& completionHandler)
 {
-    const WebHitTestResultData& hitTestData = m_context.webHitTestResultData();
+    ASSERT(m_context.webHitTestResultData());
+    auto hitTestData = m_context.webHitTestResultData().value();
 
     auto items = adoptNS([[NSMutableArray alloc] init]);
 
@@ -533,8 +534,11 @@ void WebContextMenuProxyMac::getContextMenuFromItems(const Vector<WebContextMenu
     }
 #endif
 
-    auto imageURL = URL { URL { }, m_context.webHitTestResultData().absoluteImageURL };
-    auto imageBitmap = m_context.webHitTestResultData().imageBitmap;
+    ASSERT(m_context.webHitTestResultData());
+    auto hitTestData = m_context.webHitTestResultData().value();
+    
+    auto imageURL = URL { URL { }, hitTestData.absoluteImageURL };
+    auto imageBitmap = hitTestData.imageBitmap;
 
     auto sparseMenuItems = retainPtr([NSPointerArray strongObjectsPointerArray]);
     auto insertMenuItem = makeBlockPtr([protectedThis = Ref { *this }, weakPage = WeakPtr { page() }, imageURL = WTFMove(imageURL), imageBitmap = WTFMove(imageBitmap), shouldUpdateQuickLookItemTitle, quickLookItemToInsertIfNeeded = WTFMove(quickLookItemToInsertIfNeeded), completionHandler = WTFMove(completionHandler), itemsRemaining = filteredItems.size(), menu = WTFMove(menu), sparseMenuItems](NSMenuItem *item, NSUInteger index) mutable {
@@ -715,8 +719,9 @@ void WebContextMenuProxyMac::useContextMenuItems(Vector<Ref<WebContextMenuItem>>
             menuFromProposedMenu(menu);
             return;
         }
-
-        page()->contextMenuClient().menuFromProposedMenu(*page(), menu, m_context.webHitTestResultData(), m_userData.object(), WTFMove(menuFromProposedMenu));
+        
+        ASSERT(m_context.webHitTestResultData());
+        page()->contextMenuClient().menuFromProposedMenu(*page(), menu, m_context.webHitTestResultData().value(), m_userData.object(), WTFMove(menuFromProposedMenu));
     });
 }
 

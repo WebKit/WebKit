@@ -26,9 +26,14 @@
 #include "config.h"
 #include "ImageControlsMac.h"
 
+#include "Chrome.h"
+#include "ChromeClient.h"
+#include "ContextMenuController.h"
 #include "ElementInlines.h"
+#include "EventHandler.h"
 #include "HTMLButtonElement.h"
 #include "HTMLDivElement.h"
+#include "HTMLImageElement.h"
 #include "HTMLNames.h"
 #include "HTMLStyleElement.h"
 #include "RenderImage.h"
@@ -62,26 +67,9 @@ bool hasControls(const HTMLElement& element)
     return shadowRoot->hasElementWithId(*imageControlsElementIdentifier().impl());
 }
 
-static RefPtr<HTMLElement> imageControlHost(const Node& node)
-{
-    auto host = node.shadowHost();
-    if (!is<HTMLElement>(host))
-        return nullptr;
-
-    RefPtr element { &downcast<HTMLElement>(*host) };
-    return hasControls(*element) ? element : nullptr;
-}
-
 bool isImageControlsButtonElement(const Node& node)
 {
-    auto host = imageControlHost(node);
-    if (!host)
-        return false;
-
-    if (RefPtr controlRoot = static_cast<TreeScope&>(*host->userAgentShadowRoot()).getElementById(imageControlsButtonIdentifier()))
-        return node.isDescendantOf(*controlRoot);
-
-    return false;
+    return is<Element>(node) && downcast<Element>(node).getIdAttribute() == imageControlsButtonIdentifier();
 }
 
 void createImageControls(HTMLElement& element)
@@ -103,6 +91,51 @@ void createImageControls(HTMLElement& element)
     
     if (auto* renderObject = element.renderer(); is<RenderImage>(renderObject))
         downcast<RenderImage>(*renderObject).setHasShadowControls(true);
+}
+
+static Image* imageFromImageElementNode(Node& node)
+{
+    auto* renderer = node.renderer();
+    if (!is<RenderImage>(renderer))
+        return nullptr;
+    auto* image = downcast<RenderImage>(*renderer).cachedImage();
+    if (!image || image->errorOccurred())
+        return nullptr;
+    return image->imageForRenderer(renderer);
+}
+
+bool handleEvent(HTMLElement& element, Event& event)
+{
+    if (event.type() != eventNames().clickEvent)
+        return false;
+    
+    RefPtr frame = element.document().frame();
+    if (!frame)
+        return false;
+
+    Page* page = element.document().page();
+    if (!page)
+        return false;
+    
+    if (!is<MouseEvent>(event))
+        return false;
+    
+    auto& mouseEvent = downcast<MouseEvent>(event);
+    if (!is<Node>(mouseEvent.target()))
+        return false;
+    auto& node = downcast<Node>(*mouseEvent.target());
+
+    if (ImageControlsMac::isImageControlsButtonElement(node)) {
+        auto imageElement = node.shadowHost();
+        if (!imageElement)
+            return false;
+        if (auto* image = imageFromImageElementNode(*imageElement)) {
+            page->chrome().client().handleImageServiceClick(roundedIntPoint(mouseEvent.absoluteLocation()), *image, imageElement->isContentEditable());
+            event.setDefaultHandled();
+            return true;
+        }
+    }
+    return false;
 }
 
 #endif // ENABLE(SERVICE_CONTROLS)

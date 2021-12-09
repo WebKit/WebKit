@@ -39,6 +39,7 @@ namespace ImageControlsMac {
 bool hasControls(const HTMLElement&);
 bool isImageControlsButtonElement(const Node&);
 void createImageControls(HTMLElement&);
+bool handleEvent(HTMLElement&, Event&);
 
 #endif // ENABLE(SERVICE_CONTROLS)
 

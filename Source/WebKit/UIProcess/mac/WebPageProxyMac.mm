@@ -751,7 +751,9 @@ void WebPageProxy::closeSharedPreviewPanelIfNecessary()
 
 void WebPageProxy::handleContextMenuQuickLookImage(QuickLookPreviewActivity activity)
 {
-    auto& result = m_activeContextMenuContextData.webHitTestResultData();
+    ASSERT(m_activeContextMenuContextData.webHitTestResultData());
+    
+    auto result = m_activeContextMenuContextData.webHitTestResultData().value();
     if (!result.imageBitmap)
         return;
 

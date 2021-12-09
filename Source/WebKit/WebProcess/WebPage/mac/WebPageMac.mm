@@ -828,6 +828,11 @@ void WebPage::handleSelectionServiceClick(FrameSelection& selection, const Vecto
     send(Messages::WebPageProxy::ShowContextMenu(ContextMenuContextData(point, selectionDataVector, phoneNumbers, selection.selection().isContentEditable()), UserData()));
 }
 
+void WebPage::handleImageServiceClick(const IntPoint& point, Image& image, bool isEditable)
+{
+    send(Messages::WebPageProxy::ShowContextMenu(ContextMenuContextData(point, image, isEditable), UserData()));
+}
+
 #endif
 
 String WebPage::platformUserAgent(const URL&) const

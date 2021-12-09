@@ -6930,6 +6930,10 @@ void WebPageProxy::contextMenuItemSelected(const WebContextMenuItemData& item)
         String suggestedFilename;
     };
     std::optional<DownloadInfo> downloadInfo;
+    
+    ASSERT(m_activeContextMenuContextData.webHitTestResultData());
+    
+    auto hitTestData = m_activeContextMenuContextData.webHitTestResultData().value();
 
     switch (item.action()) {
 #if PLATFORM(COCOA)
@@ -6968,17 +6972,16 @@ void WebPageProxy::contextMenuItemSelected(const WebContextMenuItemData& item)
 #endif
 
     case ContextMenuItemTagDownloadImageToDisk:
-        downloadInfo = {{ m_activeContextMenuContextData.webHitTestResultData().absoluteImageURL, { } }};
+        downloadInfo = { { hitTestData.absoluteImageURL, { } } };
         break;
 
     case ContextMenuItemTagDownloadLinkToDisk: {
-        auto& hitTestResult = m_activeContextMenuContextData.webHitTestResultData();
-        downloadInfo = {{ hitTestResult.absoluteLinkURL, hitTestResult.linkSuggestedFilename }};
+        downloadInfo = { { hitTestData.absoluteLinkURL, hitTestData.linkSuggestedFilename } };
         break;
     }
 
     case ContextMenuItemTagDownloadMediaToDisk:
-        downloadInfo = {{ m_activeContextMenuContextData.webHitTestResultData().absoluteMediaURL, { } }};
+        downloadInfo = { { hitTestData.absoluteMediaURL, { } } };
         break;
 
     case ContextMenuItemTagCheckSpellingWhileTyping:

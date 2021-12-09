@@ -532,6 +532,7 @@ public:
 #if ENABLE(SERVICE_CONTROLS)
     virtual void handleSelectionServiceClick(FrameSelection&, const Vector<String>&, const IntPoint&) { }
     virtual bool hasRelevantSelectionServices(bool /*isTextOnly*/) const { return false; }
+    virtual void handleImageServiceClick(const IntPoint&, Image&, bool /*isEditable*/) { }
 #endif
 
     virtual bool shouldDispatchFakeMouseMoveEvents() const { return true; }
