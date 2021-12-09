@@ -36,7 +36,7 @@ namespace WebCore {
 
 CachedApplicationManifest::CachedApplicationManifest(CachedResourceRequest&& request, PAL::SessionID sessionID, const CookieJar* cookieJar)
     : CachedResource(WTFMove(request), Type::ApplicationManifest, sessionID, cookieJar)
-    , m_decoder(TextResourceDecoder::create("application/manifest+json", UTF8Encoding()))
+    , m_decoder(TextResourceDecoder::create("application/manifest+json", PAL::UTF8Encoding()))
 {
 }
 

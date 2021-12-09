@@ -38,11 +38,11 @@
 #import <WebCore/ArchiveResource.h>
 #import <WebCore/LegacyWebArchive.h>
 #import <WebCore/RuntimeApplicationChecks.h>
-#import <WebCore/TextEncoding.h>
 #import <WebCore/ThreadCheck.h>
 #import <WebCore/WebCoreJITOperations.h>
 #import <WebCore/WebCoreObjCExtras.h>
 #import <WebCore/WebCoreURLResponse.h>
+#import <pal/text/TextEncoding.h>
 #import <wtf/MainThread.h>
 #import <wtf/RefPtr.h>
 #import <wtf/RunLoop.h>
@@ -361,11 +361,11 @@ static NSString * const WebResourceResponseKey =          @"WebResourceResponse"
 {
     WebCoreThreadViolationCheckRoundTwo();
 
-    WebCore::TextEncoding encoding;
+    PAL::TextEncoding encoding;
     if (_private->coreResource)
         encoding = _private->coreResource->textEncoding();
     if (!encoding.isValid())
-        encoding = WindowsLatin1Encoding();
+        encoding = PAL::WindowsLatin1Encoding();
     
     SharedBuffer* coreData = _private->coreResource ? &_private->coreResource->data() : nullptr;
     return encoding.decode(reinterpret_cast<const char*>(coreData ? coreData->data() : nullptr), coreData ? coreData->size() : 0);

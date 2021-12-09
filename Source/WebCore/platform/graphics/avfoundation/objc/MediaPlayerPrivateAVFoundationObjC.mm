@@ -64,7 +64,6 @@
 #import "SerializedPlatformDataCueMac.h"
 #import "SharedBuffer.h"
 #import "SourceBufferParserWebM.h"
-#import "TextEncoding.h"
 #import "TextTrackRepresentation.h"
 #import "VideoLayerManagerObjC.h"
 #import "VideoTrackPrivateAVFObjC.h"
@@ -96,6 +95,7 @@
 #import <pal/avfoundation/OutputContext.h>
 #import <pal/spi/cocoa/AVFoundationSPI.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
+#import <pal/text/TextEncoding.h>
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/FileSystem.h>
 #import <wtf/ListHashSet.h>
@@ -2061,7 +2061,7 @@ bool MediaPlayerPrivateAVFoundationObjC::shouldWaitForLoadingOfResource(AVAssetR
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
     if (scheme == "clearkey") {
         String keyID = [[[avRequest request] URL] resourceSpecifier];
-        auto encodedKeyId = UTF8Encoding().encode(keyID, UnencodableHandling::URLEncodedEntities);
+        auto encodedKeyId = PAL::UTF8Encoding().encode(keyID, PAL::UnencodableHandling::URLEncodedEntities);
 
         auto initData = Uint8Array::create(encodedKeyId.size());
         initData->setRange(encodedKeyId.data(), encodedKeyId.size(), 0);

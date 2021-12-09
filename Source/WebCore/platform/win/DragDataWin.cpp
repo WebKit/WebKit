@@ -29,8 +29,8 @@
 
 #include "COMPtr.h"
 #include "ClipboardUtilitiesWin.h"
-#include "TextEncoding.h"
 #include <objidl.h>
+#include <pal/text/TextEncoding.h>
 #include <shlwapi.h>
 #include <wininet.h>
 #include <wtf/Forward.h>

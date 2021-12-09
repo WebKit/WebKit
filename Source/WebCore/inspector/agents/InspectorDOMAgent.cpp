@@ -1692,9 +1692,9 @@ static String computeContentSecurityPolicySHA256Hash(const Element& element)
 {
     // FIXME: Compute the digest with respect to the raw bytes received from the page.
     // See <https://bugs.webkit.org/show_bug.cgi?id=155184>.
-    TextEncoding documentEncoding = element.document().textEncoding();
-    const TextEncoding& encodingToUse = documentEncoding.isValid() ? documentEncoding : UTF8Encoding();
-    auto content = encodingToUse.encode(TextNodeTraversal::contentsAsString(element), UnencodableHandling::Entities);
+    PAL::TextEncoding documentEncoding = element.document().textEncoding();
+    const PAL::TextEncoding& encodingToUse = documentEncoding.isValid() ? documentEncoding : PAL::UTF8Encoding();
+    auto content = encodingToUse.encode(TextNodeTraversal::contentsAsString(element), PAL::UnencodableHandling::Entities);
     auto cryptoDigest = PAL::CryptoDigest::create(PAL::CryptoDigest::Algorithm::SHA_256);
     cryptoDigest->addBytes(content.data(), content.size());
     auto digest = cryptoDigest->computeHash();

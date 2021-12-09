@@ -111,6 +111,7 @@
 #import <WebCore/VisibleUnits.h>
 #import <WebCore/markup.h>
 #import <pal/spi/cg/CoreGraphicsSPI.h>
+#import <pal/text/TextEncoding.h>
 #import <wtf/cocoa/VectorCocoa.h>
 
 #if PLATFORM(IOS_FAMILY)
@@ -1756,9 +1757,9 @@ static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frameLoadType)
 
 + (NSString *)stringWithData:(NSData *)data textEncodingName:(NSString *)textEncodingName
 {
-    WebCore::TextEncoding encoding(textEncodingName);
+    PAL::TextEncoding encoding(textEncodingName);
     if (!encoding.isValid())
-        encoding = WebCore::WindowsLatin1Encoding();
+        encoding = PAL::WindowsLatin1Encoding();
     return encoding.decode(reinterpret_cast<const char*>([data bytes]), [data length]);
 }
 

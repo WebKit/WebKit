@@ -63,7 +63,7 @@
 #include "SecurityOrigin.h"
 #include "Settings.h"
 #include "StyleScope.h"
-#include "TextEncoding.h"
+#include <pal/text/TextEncoding.h>
 #include "UserGestureIndicator.h"
 #include <JavaScriptCore/ContentSearchUtilities.h>
 #include <JavaScriptCore/IdentifiersFactory.h>
@@ -89,9 +89,9 @@ using namespace Inspector;
 static bool decodeBuffer(const uint8_t* buffer, unsigned size, const String& textEncodingName, String* result)
 {
     if (buffer) {
-        TextEncoding encoding(textEncodingName);
+        PAL::TextEncoding encoding(textEncodingName);
         if (!encoding.isValid())
-            encoding = WindowsLatin1Encoding();
+            encoding = PAL::WindowsLatin1Encoding();
         *result = encoding.decode(buffer, size);
         return true;
     }

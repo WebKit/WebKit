@@ -60,7 +60,7 @@ StringView CachedScript::script()
         return emptyString();
 
     if (m_decodingState == NeverDecoded
-        && TextEncoding(encoding()).isByteBasedEncoding()
+        && PAL::TextEncoding(encoding()).isByteBasedEncoding()
         && m_data->size()
         && charactersAreAllASCII(m_data->data(), m_data->size())) {
 

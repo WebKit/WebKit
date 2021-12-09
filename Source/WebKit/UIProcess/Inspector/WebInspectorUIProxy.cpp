@@ -48,7 +48,7 @@
 #include <WebCore/CertificateInfo.h>
 #include <WebCore/MockRealtimeMediaSourceCenter.h>
 #include <WebCore/NotImplemented.h>
-#include <WebCore/TextEncoding.h>
+#include <pal/text/TextEncoding.h>
 #include <wtf/SetForScope.h>
 
 #if PLATFORM(GTK)
@@ -394,7 +394,7 @@ bool WebInspectorUIProxy::isMainOrTestInspectorPage(const URL& url)
 {
     // Use URL so we can compare the paths and protocols.
     URL mainPageURL(URL(), WebInspectorUIProxy::inspectorPageURL());
-    if (url.protocol() == mainPageURL.protocol() && decodeURLEscapeSequences(url.path()) == decodeURLEscapeSequences(mainPageURL.path()))
+    if (url.protocol() == mainPageURL.protocol() && PAL::decodeURLEscapeSequences(url.path()) == PAL::decodeURLEscapeSequences(mainPageURL.path()))
         return true;
 
     // We might not have a Test URL in Production builds.
@@ -403,7 +403,7 @@ bool WebInspectorUIProxy::isMainOrTestInspectorPage(const URL& url)
         return false;
 
     URL testPageURL(URL(), testPageURLString);
-    return url.protocol() == testPageURL.protocol() && decodeURLEscapeSequences(url.path()) == decodeURLEscapeSequences(testPageURL.path());
+    return url.protocol() == testPageURL.protocol() && PAL::decodeURLEscapeSequences(url.path()) == PAL::decodeURLEscapeSequences(testPageURL.path());
 }
 
 void WebInspectorUIProxy::createFrontendPage()

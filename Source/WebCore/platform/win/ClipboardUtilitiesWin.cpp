@@ -27,8 +27,8 @@
 #include "ClipboardUtilitiesWin.h"
 
 #include "DocumentFragment.h"
-#include "TextEncoding.h"
 #include "markup.h"
+#include <pal/text/TextEncoding.h>
 #include <shlobj.h>
 #include <shlwapi.h>
 #include <wininet.h> // for INTERNET_MAX_URL_LENGTH
@@ -203,7 +203,7 @@ static String getFullCFHTML(IDataObject* data)
         // MS HTML Format parsing
         char* data = static_cast<char*>(GlobalLock(store.hGlobal));
         SIZE_T dataSize = ::GlobalSize(store.hGlobal);
-        String cfhtml(UTF8Encoding().decode(data, dataSize));
+        String cfhtml(PAL::UTF8Encoding().decode(data, dataSize));
         GlobalUnlock(store.hGlobal);
         ReleaseStgMedium(&store);
         return cfhtml;
@@ -701,7 +701,7 @@ void getUtf8Data(IDataObject* data, FORMATETC* format, Vector<String>& dataStrin
     STGMEDIUM store;
     if (FAILED(data->GetData(format, &store)))
         return;
-    dataStrings.append(String(UTF8Encoding().decode(static_cast<char*>(GlobalLock(store.hGlobal)), GlobalSize(store.hGlobal))));
+    dataStrings.append(String(PAL::UTF8Encoding().decode(static_cast<char*>(GlobalLock(store.hGlobal)), GlobalSize(store.hGlobal))));
     GlobalUnlock(store.hGlobal);
     ReleaseStgMedium(&store);
 }

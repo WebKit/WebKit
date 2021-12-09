@@ -26,10 +26,10 @@
 #include "config.h"
 #include "DataURLDecoder.h"
 
-#include "DecodeEscapeSequences.h"
 #include "HTTPParsers.h"
 #include "ParsedContentType.h"
-#include "TextEncoding.h"
+#include <pal/text/DecodeEscapeSequences.h>
+#include <pal/text/TextEncoding.h>
 #include <wtf/MainThread.h>
 #include <wtf/RunLoop.h>
 #include <wtf/URL.h>
@@ -151,14 +151,14 @@ static std::optional<Vector<uint8_t>> decodeBase64(const DecodeTask& task, Mode 
 {
     switch (mode) {
     case Mode::ForgivingBase64:
-        return base64Decode(decodeURLEscapeSequences(task.encodedData), { Base64DecodeOptions::ValidatePadding, Base64DecodeOptions::IgnoreSpacesAndNewLines, Base64DecodeOptions::DiscardVerticalTab});
+        return base64Decode(PAL::decodeURLEscapeSequences(task.encodedData), { Base64DecodeOptions::ValidatePadding, Base64DecodeOptions::IgnoreSpacesAndNewLines, Base64DecodeOptions::DiscardVerticalTab });
 
     case Mode::Legacy:
         // First try base64url.
         if (auto decodedData = base64URLDecode(task.encodedData))
             return decodedData;
         // Didn't work, try unescaping and decoding as base64.
-        return base64Decode(decodeURLEscapeSequences(task.encodedData), { Base64DecodeOptions::IgnoreSpacesAndNewLines, Base64DecodeOptions::DiscardVerticalTab });
+        return base64Decode(PAL::decodeURLEscapeSequences(task.encodedData), { Base64DecodeOptions::IgnoreSpacesAndNewLines, Base64DecodeOptions::DiscardVerticalTab });
     }
 
     RELEASE_ASSERT_NOT_REACHED();
@@ -166,9 +166,9 @@ static std::optional<Vector<uint8_t>> decodeBase64(const DecodeTask& task, Mode 
 
 static Vector<uint8_t> decodeEscaped(const DecodeTask& task)
 {
-    TextEncoding encodingFromCharset(task.result.charset);
-    auto& encoding = encodingFromCharset.isValid() ? encodingFromCharset : UTF8Encoding();
-    return decodeURLEscapeSequencesAsData(task.encodedData, encoding);
+    PAL::TextEncoding encodingFromCharset(task.result.charset);
+    auto& encoding = encodingFromCharset.isValid() ? encodingFromCharset : PAL::UTF8Encoding();
+    return PAL::decodeURLEscapeSequencesAsData(task.encodedData, encoding);
 }
 
 static std::optional<Result> decodeSynchronously(DecodeTask& task, Mode mode)

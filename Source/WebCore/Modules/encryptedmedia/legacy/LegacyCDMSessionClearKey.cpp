@@ -28,7 +28,7 @@
 
 #include "JSExecState.h"
 #include "Logging.h"
-#include "TextEncoding.h"
+#include <pal/text/TextEncoding.h>
 #include "WebKitMediaKeyError.h"
 #include <JavaScriptCore/JSGlobalObjectInlines.h>
 #include <JavaScriptCore/JSLock.h>
@@ -70,7 +70,7 @@ RefPtr<Uint8Array> CDMSessionClearKey::generateKeyRequest(const String& mimeType
     m_initData = initData;
 
     bool sawError = false;
-    String keyID = UTF8Encoding().decode(static_cast<char*>(m_initData->baseAddress()), m_initData->byteLength(), true, sawError);
+    String keyID = PAL::UTF8Encoding().decode(static_cast<char*>(m_initData->baseAddress()), m_initData->byteLength(), true, sawError);
     if (sawError) {
         errorCode = WebKitMediaKeyError::MEDIA_KEYERR_CLIENT;
         return nullptr;

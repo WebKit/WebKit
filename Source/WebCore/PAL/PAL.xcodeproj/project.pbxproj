@@ -136,6 +136,22 @@
 		1C36C52F2743011A006DA4C1 /* WebGPUDowncastConvertToBackingContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C36C52D2743011A006DA4C1 /* WebGPUDowncastConvertToBackingContext.h */; };
 		1C4876D81F8D7F4E00CCEEBD /* Logging.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C4876D61F8D7F4E00CCEEBD /* Logging.cpp */; };
 		1C4876D91F8D7F4E00CCEEBD /* Logging.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C4876D71F8D7F4E00CCEEBD /* Logging.h */; };
+		1C5C57C927571531003B540D /* TextCodecICU.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C5C57BD27571524003B540D /* TextCodecICU.cpp */; };
+		1C5C57CA27571531003B540D /* TextCodecUserDefined.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C5C57B72757151E003B540D /* TextCodecUserDefined.cpp */; };
+		1C5C57CB27571531003B540D /* TextCodecUTF16.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C5C57BE27571525003B540D /* TextCodecUTF16.cpp */; };
+		1C5C57CC27571531003B540D /* TextCodecCJK.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C5C57C027571527003B540D /* TextCodecCJK.cpp */; };
+		1C5C57CD27571531003B540D /* TextCodecSingleByte.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C5C57C227571529003B540D /* TextCodecSingleByte.cpp */; };
+		1C5C57CE27571531003B540D /* TextCodecUTF8.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C5C57C32757152A003B540D /* TextCodecUTF8.cpp */; };
+		1C5C57CF27571531003B540D /* TextCodec.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C5C57B52757151D003B540D /* TextCodec.cpp */; };
+		1C5C57D027571531003B540D /* TextCodecReplacement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C5C57BB27571522003B540D /* TextCodecReplacement.cpp */; };
+		1C5C57D127571531003B540D /* TextCodecLatin1.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C5C57C72757152F003B540D /* TextCodecLatin1.cpp */; };
+		1C5C57D427571626003B540D /* EncodingTables.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C5C57D227571622003B540D /* EncodingTables.cpp */; };
+		1C5C57DB2757168F003B540D /* TextEncodingRegistry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C5C57D627571683003B540D /* TextEncodingRegistry.cpp */; };
+		1C5C57DC2757168F003B540D /* TextEncodingDetectorICU.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C5C57D527571681003B540D /* TextEncodingDetectorICU.cpp */; };
+		1C5C57DD2757168F003B540D /* TextEncoding.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C5C57DA2757168E003B540D /* TextEncoding.cpp */; };
+		1C5C57E027571A25003B540D /* ThreadGlobalData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C5C57DF27571A25003B540D /* ThreadGlobalData.cpp */; };
+		1C5C57E727573142003B540D /* TextEncodingRegistryIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1C5C57E627573142003B540D /* TextEncodingRegistryIOS.mm */; };
+		1C5C57E92757318E003B540D /* TextEncodingRegistryMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1C5C57E82757318D003B540D /* TextEncodingRegistryMac.mm */; };
 		1C77C8C925D7972000635E0C /* CoreTextSoftLink.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C77C8C725D7972000635E0C /* CoreTextSoftLink.cpp */; };
 		1C77C8CE25D7A4A300635E0C /* OTSVGTable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C77C8CD25D7A4A300635E0C /* OTSVGTable.cpp */; };
 		1CC3ACE822BD7EC500F360F0 /* MetalSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 1CC3ACE722BD7EB800F360F0 /* MetalSPI.h */; };
@@ -535,6 +551,38 @@
 		1C36C52D2743011A006DA4C1 /* WebGPUDowncastConvertToBackingContext.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebGPUDowncastConvertToBackingContext.h; sourceTree = "<group>"; };
 		1C4876D61F8D7F4E00CCEEBD /* Logging.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Logging.cpp; sourceTree = "<group>"; };
 		1C4876D71F8D7F4E00CCEEBD /* Logging.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Logging.h; sourceTree = "<group>"; };
+		1C5C57B52757151D003B540D /* TextCodec.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = TextCodec.cpp; sourceTree = "<group>"; };
+		1C5C57B72757151E003B540D /* TextCodecUserDefined.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = TextCodecUserDefined.cpp; sourceTree = "<group>"; };
+		1C5C57B82757151F003B540D /* TextCodecICU.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = TextCodecICU.h; sourceTree = "<group>"; };
+		1C5C57B927571520003B540D /* TextCodecLatin1.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = TextCodecLatin1.h; sourceTree = "<group>"; };
+		1C5C57BA27571521003B540D /* TextCodec.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = TextCodec.h; sourceTree = "<group>"; };
+		1C5C57BB27571522003B540D /* TextCodecReplacement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextCodecReplacement.cpp; sourceTree = "<group>"; };
+		1C5C57BC27571523003B540D /* TextCodecSingleByte.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextCodecSingleByte.h; sourceTree = "<group>"; };
+		1C5C57BD27571524003B540D /* TextCodecICU.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = TextCodecICU.cpp; sourceTree = "<group>"; };
+		1C5C57BE27571525003B540D /* TextCodecUTF16.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = TextCodecUTF16.cpp; sourceTree = "<group>"; };
+		1C5C57BF27571526003B540D /* TextCodecCJK.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextCodecCJK.h; sourceTree = "<group>"; };
+		1C5C57C027571527003B540D /* TextCodecCJK.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextCodecCJK.cpp; sourceTree = "<group>"; };
+		1C5C57C127571528003B540D /* TextCodecReplacement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextCodecReplacement.h; sourceTree = "<group>"; };
+		1C5C57C227571529003B540D /* TextCodecSingleByte.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextCodecSingleByte.cpp; sourceTree = "<group>"; };
+		1C5C57C32757152A003B540D /* TextCodecUTF8.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextCodecUTF8.cpp; sourceTree = "<group>"; };
+		1C5C57C42757152C003B540D /* TextCodecUTF16.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = TextCodecUTF16.h; sourceTree = "<group>"; };
+		1C5C57C52757152D003B540D /* TextCodecUserDefined.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = TextCodecUserDefined.h; sourceTree = "<group>"; };
+		1C5C57C62757152E003B540D /* TextCodecASCIIFastPath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextCodecASCIIFastPath.h; sourceTree = "<group>"; };
+		1C5C57C72757152F003B540D /* TextCodecLatin1.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = TextCodecLatin1.cpp; sourceTree = "<group>"; };
+		1C5C57C827571531003B540D /* TextCodecUTF8.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextCodecUTF8.h; sourceTree = "<group>"; };
+		1C5C57D227571622003B540D /* EncodingTables.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EncodingTables.cpp; sourceTree = "<group>"; };
+		1C5C57D327571625003B540D /* EncodingTables.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EncodingTables.h; sourceTree = "<group>"; };
+		1C5C57D527571681003B540D /* TextEncodingDetectorICU.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextEncodingDetectorICU.cpp; sourceTree = "<group>"; };
+		1C5C57D627571683003B540D /* TextEncodingRegistry.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = TextEncodingRegistry.cpp; sourceTree = "<group>"; };
+		1C5C57D727571685003B540D /* TextEncodingRegistry.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = TextEncodingRegistry.h; sourceTree = "<group>"; };
+		1C5C57D827571688003B540D /* TextEncoding.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = TextEncoding.h; sourceTree = "<group>"; };
+		1C5C57D92757168B003B540D /* TextEncodingDetector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextEncodingDetector.h; sourceTree = "<group>"; };
+		1C5C57DA2757168E003B540D /* TextEncoding.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = TextEncoding.cpp; sourceTree = "<group>"; };
+		1C5C57DE275719F4003B540D /* ThreadGlobalData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ThreadGlobalData.h; sourceTree = "<group>"; };
+		1C5C57DF27571A25003B540D /* ThreadGlobalData.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ThreadGlobalData.cpp; sourceTree = "<group>"; };
+		1C5C57E127571CB1003B540D /* DecodeEscapeSequences.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DecodeEscapeSequences.h; sourceTree = "<group>"; };
+		1C5C57E627573142003B540D /* TextEncodingRegistryIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = TextEncodingRegistryIOS.mm; sourceTree = "<group>"; };
+		1C5C57E82757318D003B540D /* TextEncodingRegistryMac.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = TextEncodingRegistryMac.mm; sourceTree = "<group>"; };
 		1C67CEA21E32EE2600F80F2E /* Version.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Version.xcconfig; sourceTree = "<group>"; };
 		1C77C8C725D7972000635E0C /* CoreTextSoftLink.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CoreTextSoftLink.cpp; sourceTree = "<group>"; };
 		1C77C8C825D7972000635E0C /* CoreTextSoftLink.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CoreTextSoftLink.h; sourceTree = "<group>"; };
@@ -1042,6 +1090,8 @@
 				1C4876D71F8D7F4E00CCEEBD /* Logging.h */,
 				A3C66CDA1F462D6A009E6EE9 /* SessionID.cpp */,
 				A3C66CDB1F462D6A009E6EE9 /* SessionID.h */,
+				1C5C57DF27571A25003B540D /* ThreadGlobalData.cpp */,
+				1C5C57DE275719F4003B540D /* ThreadGlobalData.h */,
 			);
 			path = pal;
 			sourceTree = "<group>";
@@ -1160,6 +1210,14 @@
 				F46B8C4C26740918007A6554 /* VisionKitCoreSoftLink.mm */,
 			);
 			path = cocoa;
+			sourceTree = "<group>";
+		};
+		1C5C57E527573105003B540D /* ios */ = {
+			isa = PBXGroup;
+			children = (
+				1C5C57E627573142003B540D /* TextEncodingRegistryIOS.mm */,
+			);
+			path = ios;
 			sourceTree = "<group>";
 		};
 		1CC5E3C12737457D006F6FF4 /* graphics */ = {
@@ -1339,9 +1397,38 @@
 		A30D411D1F0DD0AC00B71954 /* text */ = {
 			isa = PBXGroup;
 			children = (
+				1C5C57E527573105003B540D /* ios */,
 				A30D41231F0DD10500B71954 /* mac */,
+				1C5C57E127571CB1003B540D /* DecodeEscapeSequences.h */,
+				1C5C57D227571622003B540D /* EncodingTables.cpp */,
+				1C5C57D327571625003B540D /* EncodingTables.h */,
 				A30D411F1F0DD0EA00B71954 /* KillRing.cpp */,
 				A30D411E1F0DD0EA00B71954 /* KillRing.h */,
+				1C5C57B52757151D003B540D /* TextCodec.cpp */,
+				1C5C57BA27571521003B540D /* TextCodec.h */,
+				1C5C57C62757152E003B540D /* TextCodecASCIIFastPath.h */,
+				1C5C57C027571527003B540D /* TextCodecCJK.cpp */,
+				1C5C57BF27571526003B540D /* TextCodecCJK.h */,
+				1C5C57BD27571524003B540D /* TextCodecICU.cpp */,
+				1C5C57B82757151F003B540D /* TextCodecICU.h */,
+				1C5C57C72757152F003B540D /* TextCodecLatin1.cpp */,
+				1C5C57B927571520003B540D /* TextCodecLatin1.h */,
+				1C5C57BB27571522003B540D /* TextCodecReplacement.cpp */,
+				1C5C57C127571528003B540D /* TextCodecReplacement.h */,
+				1C5C57C227571529003B540D /* TextCodecSingleByte.cpp */,
+				1C5C57BC27571523003B540D /* TextCodecSingleByte.h */,
+				1C5C57B72757151E003B540D /* TextCodecUserDefined.cpp */,
+				1C5C57C52757152D003B540D /* TextCodecUserDefined.h */,
+				1C5C57BE27571525003B540D /* TextCodecUTF16.cpp */,
+				1C5C57C42757152C003B540D /* TextCodecUTF16.h */,
+				1C5C57C32757152A003B540D /* TextCodecUTF8.cpp */,
+				1C5C57C827571531003B540D /* TextCodecUTF8.h */,
+				1C5C57DA2757168E003B540D /* TextEncoding.cpp */,
+				1C5C57D827571688003B540D /* TextEncoding.h */,
+				1C5C57D92757168B003B540D /* TextEncodingDetector.h */,
+				1C5C57D527571681003B540D /* TextEncodingDetectorICU.cpp */,
+				1C5C57D627571683003B540D /* TextEncodingRegistry.cpp */,
+				1C5C57D727571685003B540D /* TextEncodingRegistry.h */,
 				93E5909C1F93BF1E0067F8CF /* UnencodableHandling.h */,
 			);
 			path = text;
@@ -1351,6 +1438,7 @@
 			isa = PBXGroup;
 			children = (
 				A30D41241F0DD12D00B71954 /* KillRingMac.mm */,
+				1C5C57E82757318D003B540D /* TextEncodingRegistryMac.mm */,
 			);
 			path = mac;
 			sourceTree = "<group>";
@@ -1795,6 +1883,7 @@
 				F4DDD01B264DC69E00EF1B91 /* DataDetectorsCoreSoftLink.mm in Sources */,
 				F4E0875C266ACA53000F814A /* DataDetectorsSoftLink.mm in Sources */,
 				A1175B581F6B470500C4B9F0 /* DefaultSearchProvider.cpp in Sources */,
+				1C5C57D427571626003B540D /* EncodingTables.cpp in Sources */,
 				F44291641FA52670002CC93E /* FileSizeFormatter.cpp in Sources */,
 				F44291681FA52705002CC93E /* FileSizeFormatterCocoa.mm in Sources */,
 				1C022EFE22CFE8E1006DF01B /* Gunzip.cpp in Sources */,
@@ -1824,6 +1913,21 @@
 				A3AB6E571F3D1DDB009C14B1 /* SystemSleepListener.cpp in Sources */,
 				A3AB6E651F3D217F009C14B1 /* SystemSleepListenerMac.mm in Sources */,
 				079D1D9826950DD700883577 /* SystemStatusSoftLink.mm in Sources */,
+				1C5C57CF27571531003B540D /* TextCodec.cpp in Sources */,
+				1C5C57CC27571531003B540D /* TextCodecCJK.cpp in Sources */,
+				1C5C57C927571531003B540D /* TextCodecICU.cpp in Sources */,
+				1C5C57D127571531003B540D /* TextCodecLatin1.cpp in Sources */,
+				1C5C57D027571531003B540D /* TextCodecReplacement.cpp in Sources */,
+				1C5C57CD27571531003B540D /* TextCodecSingleByte.cpp in Sources */,
+				1C5C57CA27571531003B540D /* TextCodecUserDefined.cpp in Sources */,
+				1C5C57CB27571531003B540D /* TextCodecUTF16.cpp in Sources */,
+				1C5C57CE27571531003B540D /* TextCodecUTF8.cpp in Sources */,
+				1C5C57DD2757168F003B540D /* TextEncoding.cpp in Sources */,
+				1C5C57DC2757168F003B540D /* TextEncodingDetectorICU.cpp in Sources */,
+				1C5C57DB2757168F003B540D /* TextEncodingRegistry.cpp in Sources */,
+				1C5C57E727573142003B540D /* TextEncodingRegistryIOS.mm in Sources */,
+				1C5C57E92757318E003B540D /* TextEncodingRegistryMac.mm in Sources */,
+				1C5C57E027571A25003B540D /* ThreadGlobalData.cpp in Sources */,
 				2E1342CD215AA10A007199D2 /* UIKitSoftLink.mm in Sources */,
 				07611DB7243FA5BF00D80704 /* UsageTrackingSoftLink.mm in Sources */,
 				41E1F344248A6A000022D5DE /* VideoToolboxSoftLink.cpp in Sources */,

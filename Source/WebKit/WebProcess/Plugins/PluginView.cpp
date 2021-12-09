@@ -68,8 +68,8 @@
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/SecurityPolicy.h>
 #include <WebCore/Settings.h>
-#include <WebCore/TextEncoding.h>
 #include <WebCore/UserGestureIndicator.h>
+#include <pal/text/TextEncoding.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/text/StringBuilder.h>
 
@@ -1169,7 +1169,7 @@ void PluginView::performJavaScriptURLRequest(URLRequest* request)
     if (!frame)
         return;
     
-    String jsString = decodeURLEscapeSequences(request->request().url().string().substring(sizeof("javascript:") - 1));
+    String jsString = PAL::decodeURLEscapeSequences(request->request().url().string().substring(sizeof("javascript:") - 1));
 
     if (!request->target().isNull()) {
         // For security reasons, only allow JS requests to be made on the frame that contains the plug-in.

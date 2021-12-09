@@ -41,6 +41,10 @@ class CallFrame;
 class JSGlobalObject;
 }
 
+namespace PAL {
+class TextEncoding;
+}
+
 namespace WTF {
 class OrdinalNumber;
 }
@@ -57,7 +61,6 @@ class JSWindowProxy;
 class ResourceRequest;
 class ScriptExecutionContext;
 class SecurityOrigin;
-class TextEncoding;
 struct ContentSecurityPolicyClient;
 
 enum class ParserInserted : bool { No, Yes };
@@ -194,7 +197,7 @@ private:
 
     String createURLForReporting(const URL&, const String&) const;
 
-    const TextEncoding& documentEncoding() const;
+    const PAL::TextEncoding documentEncoding() const;
 
     enum class Disposition {
         Enforce,

@@ -32,10 +32,10 @@
 
 #include "BlobResourceHandle.h"
 #include "ExceptionCode.h"
-#include <wtf/URL.h>
-#include "TextEncoding.h"
 #include "ThreadableLoaderClient.h"
+#include <pal/text/TextEncoding.h>
 #include <wtf/Forward.h>
+#include <wtf/URL.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
@@ -99,7 +99,7 @@ private:
 
     ReadType m_readType;
     WeakPtr<FileReaderLoaderClient> m_client;
-    TextEncoding m_encoding;
+    PAL::TextEncoding m_encoding;
     String m_dataType;
 
     URL m_urlForReading;

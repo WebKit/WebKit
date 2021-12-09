@@ -168,7 +168,7 @@ void ImageDocument::finishedParsing()
         if (size.width()) {
             // Compute the title. We use the decoded filename of the resource, falling
             // back on the hostname if there is no path.
-            String name = decodeURLEscapeSequences(url().lastPathComponent());
+            String name = PAL::decodeURLEscapeSequences(url().lastPathComponent());
             if (name.isEmpty())
                 name = url().host().toString();
             setTitle(imageTitle(name, size));

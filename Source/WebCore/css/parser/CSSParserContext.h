@@ -28,7 +28,7 @@
 #include "CSSParserMode.h"
 #include "CSSPropertyNames.h"
 #include "StyleRuleType.h"
-#include "TextEncoding.h"
+#include <pal/text/TextEncoding.h>
 #include <wtf/HashFunctions.h>
 #include <wtf/Hasher.h>
 #include <wtf/URL.h>

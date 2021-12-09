@@ -29,7 +29,7 @@
 #include "Logging.h"
 #include <WebCore/SQLiteFileSystem.h>
 #include <WebCore/SQLiteStatement.h>
-#include <WebCore/TextEncoding.h>
+#include <pal/text/TextEncoding.h>
 #include <wtf/CrossThreadCopier.h>
 #include <wtf/FileSystem.h>
 #include <wtf/MainThread.h>

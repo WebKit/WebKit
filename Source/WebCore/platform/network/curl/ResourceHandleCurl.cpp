@@ -46,7 +46,7 @@
 #include "SecurityOrigin.h"
 #include "SharedBuffer.h"
 #include "SynchronousLoaderClient.h"
-#include "TextEncoding.h"
+#include <pal/text/TextEncoding.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/FileSystem.h>
 #include <wtf/text/Base64.h>
@@ -549,7 +549,7 @@ void ResourceHandle::handleDataURL()
     response.setURL(d->m_firstRequest.url());
 
     if (base64) {
-        data = decodeURLEscapeSequences(data);
+        data = PAL::decodeURLEscapeSequences(data);
         didReceiveResponse(WTFMove(response), [this, protectedThis = Ref { *this }] {
             continueAfterDidReceiveResponse();
         });
@@ -561,15 +561,15 @@ void ResourceHandle::handleDataURL()
                 client()->didReceiveBuffer(this, SharedBuffer::create(decodedData->data(), decodedData->size()), originalSize);
         }
     } else {
-        TextEncoding encoding(charset);
-        data = decodeURLEscapeSequences(data, encoding);
+        PAL::TextEncoding encoding(charset);
+        data = PAL::decodeURLEscapeSequences(data, encoding);
         didReceiveResponse(WTFMove(response), [this, protectedThis = Ref { *this }] {
             continueAfterDidReceiveResponse();
         });
 
         // didReceiveResponse might cause the client to be deleted.
         if (client()) {
-            auto encodedData = encoding.encode(data, UnencodableHandling::URLEncodedEntities);
+            auto encodedData = encoding.encode(data, PAL::UnencodableHandling::URLEncodedEntities);
             if (encodedData.size())
                 client()->didReceiveBuffer(this, SharedBuffer::create(WTFMove(encodedData)), originalSize);
         }

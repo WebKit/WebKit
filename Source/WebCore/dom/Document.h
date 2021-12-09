@@ -87,6 +87,7 @@ class TextStream;
 
 namespace PAL {
 class SessionID;
+class TextEncoding;
 }
 
 namespace WebCore {
@@ -221,7 +222,6 @@ class StyleSheetContents;
 class StyleSheetList;
 class Text;
 class TextAutoSizing;
-class TextEncoding;
 class TextManipulationController;
 class TextResourceDecoder;
 class TransformSource;
@@ -455,7 +455,7 @@ public:
 
     inline String charset() const;
     WEBCORE_EXPORT String characterSetWithUTF8Fallback() const;
-    inline TextEncoding textEncoding() const;
+    inline PAL::TextEncoding textEncoding() const;
 
     inline AtomString encoding() const;
 

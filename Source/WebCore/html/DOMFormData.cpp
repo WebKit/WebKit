@@ -37,7 +37,7 @@
 
 namespace WebCore {
 
-DOMFormData::DOMFormData(const TextEncoding& encoding)
+DOMFormData::DOMFormData(const PAL::TextEncoding& encoding)
     : m_encoding(encoding)
 {
 }
@@ -56,7 +56,7 @@ ExceptionOr<Ref<DOMFormData>> DOMFormData::create(HTMLFormElement* form)
     return result.releaseNonNull();
 }
 
-Ref<DOMFormData> DOMFormData::create(const TextEncoding& encoding)
+Ref<DOMFormData> DOMFormData::create(const PAL::TextEncoding& encoding)
 {
     return adoptRef(*new DOMFormData(encoding));
 }

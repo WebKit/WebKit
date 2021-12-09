@@ -99,7 +99,7 @@ Ref<Document> XSLTProcessor::createDocumentFromSource(const String& sourceString
     }
 
     auto decoder = TextResourceDecoder::create(sourceMIMEType);
-    decoder->setEncoding(sourceEncoding.isEmpty() ? UTF8Encoding() : TextEncoding(sourceEncoding), TextResourceDecoder::EncodingFromXMLHeader);
+    decoder->setEncoding(sourceEncoding.isEmpty() ? PAL::UTF8Encoding() : PAL::TextEncoding(sourceEncoding), TextResourceDecoder::EncodingFromXMLHeader);
     result->setDecoder(WTFMove(decoder));
 
     result->setContent(documentSource);

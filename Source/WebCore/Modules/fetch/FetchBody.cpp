@@ -185,11 +185,11 @@ void FetchBody::consumeAsStream(FetchBodyOwner& owner, FetchBodySource& source)
         closeStream = source.enqueue(ArrayBuffer::tryCreate(arrayBufferViewBody().baseAddress(), arrayBufferViewBody().byteLength()));
         m_data = nullptr;
     } else if (isText()) {
-        auto data = UTF8Encoding().encode(textBody(), UnencodableHandling::Entities);
+        auto data = PAL::UTF8Encoding().encode(textBody(), PAL::UnencodableHandling::Entities);
         closeStream = source.enqueue(ArrayBuffer::tryCreate(data.data(), data.size()));
         m_data = nullptr;
     } else if (isURLSearchParams()) {
-        auto data = UTF8Encoding().encode(urlSearchParamsBody().toString(), UnencodableHandling::Entities);
+        auto data = PAL::UTF8Encoding().encode(urlSearchParamsBody().toString(), PAL::UnencodableHandling::Entities);
         closeStream = source.enqueue(ArrayBuffer::tryCreate(data.data(), data.size()));
         m_data = nullptr;
     } else if (isBlob()) {
@@ -220,7 +220,7 @@ void FetchBody::consumeArrayBufferView(FetchBodyOwner& owner, Ref<DeferredPromis
 
 void FetchBody::consumeText(FetchBodyOwner& owner, Ref<DeferredPromise>&& promise, const String& text)
 {
-    auto data = UTF8Encoding().encode(text, UnencodableHandling::Entities);
+    auto data = PAL::UTF8Encoding().encode(text, PAL::UnencodableHandling::Entities);
     m_consumer.resolveWithData(WTFMove(promise), owner.contentType(), data.data(), data.size());
     m_data = nullptr;
 }
@@ -257,9 +257,9 @@ void FetchBody::loadingSucceeded(const String& contentType)
 RefPtr<FormData> FetchBody::bodyAsFormData() const
 {
     if (isText())
-        return FormData::create(UTF8Encoding().encode(textBody(), UnencodableHandling::Entities));
+        return FormData::create(PAL::UTF8Encoding().encode(textBody(), PAL::UnencodableHandling::Entities));
     if (isURLSearchParams())
-        return FormData::create(UTF8Encoding().encode(urlSearchParamsBody().toString(), UnencodableHandling::Entities));
+        return FormData::create(PAL::UTF8Encoding().encode(urlSearchParamsBody().toString(), PAL::UnencodableHandling::Entities));
     if (isBlob()) {
         auto body = FormData::create();
         body->appendBlob(blobBody().url());
@@ -297,9 +297,9 @@ FetchBody::TakenData FetchBody::take()
         return formDataBody();
 
     if (isText())
-        return SharedBuffer::create(UTF8Encoding().encode(textBody(), UnencodableHandling::Entities));
+        return SharedBuffer::create(PAL::UTF8Encoding().encode(textBody(), PAL::UnencodableHandling::Entities));
     if (isURLSearchParams())
-        return SharedBuffer::create(UTF8Encoding().encode(urlSearchParamsBody().toString(), UnencodableHandling::Entities));
+        return SharedBuffer::create(PAL::UTF8Encoding().encode(urlSearchParamsBody().toString(), PAL::UnencodableHandling::Entities));
 
     if (isArrayBuffer())
         return SharedBuffer::create(static_cast<const char*>(arrayBufferBody().data()), arrayBufferBody().byteLength());

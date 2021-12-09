@@ -45,9 +45,9 @@
 #include "Range.h"
 #include "RenderImage.h"
 #include "SharedBuffer.h"
-#include "TextEncoding.h"
 #include "WebCoreInstanceHandle.h"
 #include "markup.h"
+#include <pal/text/TextEncoding.h>
 #include <wtf/URL.h>
 #include <wtf/WindowsExtras.h>
 #include <wtf/text/CString.h>
@@ -858,7 +858,7 @@ RefPtr<DocumentFragment> Pasteboard::documentFragment(Frame& frame, const Simple
         HANDLE cbData = ::GetClipboardData(HTMLClipboardFormat);
         if (cbData) {
             SIZE_T dataSize = ::GlobalSize(cbData);
-            String cfhtml(UTF8Encoding().decode(static_cast<char*>(GlobalLock(cbData)), dataSize));
+            String cfhtml(PAL::UTF8Encoding().decode(static_cast<char*>(GlobalLock(cbData)), dataSize));
             GlobalUnlock(cbData);
             ::CloseClipboard();
 
@@ -994,7 +994,7 @@ static HGLOBAL createGlobalHDropContent(const URL& url, String& fileName, Shared
     WCHAR filePath[MAX_PATH];
 
     if (url.isLocalFile()) {
-        String localPath = decodeURLEscapeSequences(url.path());
+        String localPath = PAL::decodeURLEscapeSequences(url.path());
         // windows does not enjoy a leading slash on paths
         if (localPath[0] == '/')
             localPath = localPath.substring(1);

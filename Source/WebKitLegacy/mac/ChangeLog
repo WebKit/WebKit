@@ -1,3 +1,22 @@
+2021-12-09  Myles C. Maxfield  <mmaxfield@apple.com> and Don Olmstead  <don.olmstead@sony.com>
+
+        Move TextCodec files from WebCore/platform/text to WebCore/PAL/text
+        https://bugs.webkit.org/show_bug.cgi?id=233683
+
+        Reviewed by Yusuke Suzuki.
+
+        Update to use the new PAL files.
+
+        * Misc/WebNSURLExtras.mm:
+        (-[NSString _webkit_stringByReplacingValidPercentEscapes]):
+        * WebView/WebFrame.mm:
+        (+[WebFrame stringWithData:textEncodingName:]):
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences _systemCFStringEncoding]):
+        (+[WebPreferences _setInitialDefaultTextEncodingToSystemEncoding]):
+        * WebView/WebResource.mm:
+        (-[WebResource _stringValue]):
+
 2021-12-09  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [WebGPU] [MacCatalyst] Fix WebGPU Mac Catalyst build in Apple's internal build system

@@ -58,7 +58,7 @@
 #include "StyleRule.h"
 #include "StyleSheetContents.h"
 #include "Text.h"
-#include "TextEncoding.h"
+#include <pal/text/TextEncoding.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/WTFString.h>
@@ -189,14 +189,14 @@ void PageSerializer::serializeFrame(Frame* frame)
 
     Vector<Node*> nodes;
     SerializerMarkupAccumulator accumulator(*this, *document, &nodes);
-    TextEncoding textEncoding(document->charset());
+    PAL::TextEncoding textEncoding(document->charset());
     CString data;
     if (!textEncoding.isValid()) {
         // FIXME: iframes used as images trigger this. We should deal with them correctly.
         return;
     }
     String text = accumulator.serializeNodes(*document->documentElement(), SerializedNodes::SubtreeIncludingNode);
-    m_resources.append({ url, document->suggestedMIMEType(), SharedBuffer::create(textEncoding.encode(text, UnencodableHandling::Entities)) });
+    m_resources.append({ url, document->suggestedMIMEType(), SharedBuffer::create(textEncoding.encode(text, PAL::UnencodableHandling::Entities)) });
     m_resourceURLs.add(url);
 
     for (auto& node : nodes) {
@@ -258,9 +258,9 @@ void PageSerializer::serializeCSSStyleSheet(CSSStyleSheet* styleSheet, const URL
 
     if (url.isValid() && !m_resourceURLs.contains(url)) {
         // FIXME: We should check whether a charset has been specified and if none was found add one.
-        TextEncoding textEncoding(styleSheet->contents().charset());
+        PAL::TextEncoding textEncoding(styleSheet->contents().charset());
         ASSERT(textEncoding.isValid());
-        m_resources.append({ url, "text/css"_s, SharedBuffer::create(textEncoding.encode(cssText.toString(), UnencodableHandling::Entities)) });
+        m_resources.append({ url, "text/css"_s, SharedBuffer::create(textEncoding.encode(cssText.toString(), PAL::UnencodableHandling::Entities)) });
         m_resourceURLs.add(url);
     }
 }

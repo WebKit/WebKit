@@ -26,8 +26,8 @@
 #include "FormDataBuilder.h"
 
 #include "Blob.h"
-#include "TextEncoding.h"
 #include <limits>
+#include <pal/text/TextEncoding.h>
 #include <wtf/Assertions.h>
 #include <wtf/HexNumber.h>
 #include <wtf/RandomNumber.h>
@@ -174,10 +174,10 @@ void addBoundaryToMultiPartHeader(Vector<char>& buffer, const CString& boundary,
     append(buffer, "\r\n");
 }
 
-void addFilenameToMultiPartHeader(Vector<char>& buffer, const TextEncoding& encoding, const String& filename)
+void addFilenameToMultiPartHeader(Vector<char>& buffer, const PAL::TextEncoding& encoding, const String& filename)
 {
     append(buffer, "; filename=\"");
-    appendQuoted(buffer, encoding.encode(filename, UnencodableHandling::Entities));
+    appendQuoted(buffer, encoding.encode(filename, PAL::UnencodableHandling::Entities));
     append(buffer, '"');
 }
 

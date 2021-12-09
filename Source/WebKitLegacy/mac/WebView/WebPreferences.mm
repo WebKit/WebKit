@@ -49,9 +49,9 @@
 #import <WebCore/NetworkStorageSession.h>
 #import <WebCore/RuntimeApplicationChecks.h>
 #import <WebCore/Settings.h>
-#import <WebCore/TextEncodingRegistry.h>
 #import <WebCore/WebCoreJITOperations.h>
 #import <pal/spi/cf/CFNetworkSPI.h>
+#import <pal/text/TextEncodingRegistry.h>
 #import <wtf/Compiler.h>
 #import <wtf/MainThread.h>
 #import <wtf/OptionSet.h>
@@ -1676,13 +1676,13 @@ public:
 
 + (CFStringEncoding)_systemCFStringEncoding
 {
-    return webDefaultCFStringEncoding();
+    return PAL::webDefaultCFStringEncoding();
 }
 
 + (void)_setInitialDefaultTextEncodingToSystemEncoding
 {
     [[NSUserDefaults standardUserDefaults] registerDefaults:
-        @{ WebKitDefaultTextEncodingNamePreferenceKey: defaultTextEncodingNameForSystemLanguage() }];
+        @{ WebKitDefaultTextEncodingNamePreferenceKey: PAL::defaultTextEncodingNameForSystemLanguage() }];
 }
 
 static RetainPtr<NSString>& classIBCreatorID()

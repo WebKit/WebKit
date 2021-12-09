@@ -143,7 +143,7 @@ private:
     // EventTarget.
     void eventListenersDidChange() final;
 
-    TextEncoding finalResponseCharset() const;
+    PAL::TextEncoding finalResponseCharset() const;
 
     // ActiveDOMObject
     void contextDestroyed() override;

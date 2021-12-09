@@ -29,7 +29,7 @@
 #include "StorageArea.h"
 #include "StorageAreaMapMessages.h"
 #include "StorageManagerSetMessages.h"
-#include <WebCore/TextEncoding.h>
+#include <pal/text/TextEncoding.h>
 #include <wtf/CrossThreadCopier.h>
 #include <wtf/threads/BinarySemaphore.h>
 
@@ -46,7 +46,7 @@ StorageManagerSet::StorageManagerSet()
     ASSERT(RunLoop::isMain());
 
     // Make sure the encoding is initialized before we start dispatching things to the queue.
-    WebCore::UTF8Encoding();
+    PAL::UTF8Encoding();
 }
 
 StorageManagerSet::~StorageManagerSet()

@@ -1753,10 +1753,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/text/TextBoundaries.h
     platform/text/TextCheckerClient.h
     platform/text/TextChecking.h
-    platform/text/TextCodec.h
     platform/text/TextDirection.h
-    platform/text/TextEncoding.h
-    platform/text/TextEncodingRegistry.h
     platform/text/TextFlags.h
     platform/text/UnicodeBidi.h
     platform/text/WritingMode.h

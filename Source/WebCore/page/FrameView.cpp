@@ -2239,7 +2239,7 @@ bool FrameView::scrollToFragment(const URL& url)
     if (scrollToFragmentInternal(fragmentIdentifier))
         return true;
 
-    if (scrollToFragmentInternal(decodeURLEscapeSequences(fragmentIdentifier)))
+    if (scrollToFragmentInternal(PAL::decodeURLEscapeSequences(fragmentIdentifier)))
         return true;
 
     resetScrollAnchor();

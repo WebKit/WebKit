@@ -254,8 +254,8 @@ ResolvedURL CSSParserContext::completeURL(const String& string) const
 
         if (charset.isEmpty())
             return { string, { baseURL, string } };
-        auto encodingForURLParsing = TextEncoding { charset }.encodingForFormSubmissionOrURLParsing();
-        return { string, { baseURL, string, encodingForURLParsing == UTF8Encoding() ? nullptr : &encodingForURLParsing } };
+        auto encodingForURLParsing = PAL::TextEncoding { charset }.encodingForFormSubmissionOrURLParsing();
+        return { string, { baseURL, string, encodingForURLParsing == PAL::UTF8Encoding() ? nullptr : &encodingForURLParsing } };
     }();
 
     if (mode == WebVTTMode && !result.resolvedURL.protocolIsData())

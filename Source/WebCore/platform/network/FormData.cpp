@@ -31,7 +31,7 @@
 #include "MIMETypeRegistry.h"
 #include "Page.h"
 #include "SharedBuffer.h"
-#include "TextEncoding.h"
+#include <pal/text/TextEncoding.h>
 #include "ThreadableBlobRegistry.h"
 #include <wtf/FileSystem.h>
 #include <wtf/text/LineEnding.h>
@@ -203,12 +203,12 @@ void FormData::appendBlob(const URL& blobURL)
     m_lengthInBytes = std::nullopt;
 }
 
-static Vector<uint8_t> normalizeStringData(TextEncoding& encoding, const String& value)
+static Vector<uint8_t> normalizeStringData(PAL::TextEncoding& encoding, const String& value)
 {
-    return normalizeLineEndingsToCRLF(encoding.encode(value, UnencodableHandling::Entities, NFCNormalize::No));
+    return normalizeLineEndingsToCRLF(encoding.encode(value, PAL::UnencodableHandling::Entities, PAL::NFCNormalize::No));
 }
 
-void FormData::appendMultiPartFileValue(const File& file, Vector<char>& header, TextEncoding& encoding)
+void FormData::appendMultiPartFileValue(const File& file, Vector<char>& header, PAL::TextEncoding& encoding)
 {
     auto name = file.name();
 
@@ -232,7 +232,7 @@ void FormData::appendMultiPartFileValue(const File& file, Vector<char>& header, 
         appendBlob(file.url());
 }
 
-void FormData::appendMultiPartStringValue(const String& string, Vector<char>& header, TextEncoding& encoding)
+void FormData::appendMultiPartStringValue(const String& string, Vector<char>& header, PAL::TextEncoding& encoding)
 {
     FormDataBuilder::finishMultiPartHeader(header);
     appendData(header.data(), header.size());
@@ -303,7 +303,7 @@ Vector<uint8_t> FormData::flatten() const
 String FormData::flattenToString() const
 {
     auto bytes = flatten();
-    return Latin1Encoding().decode(bytes.data(), bytes.size());
+    return PAL::Latin1Encoding().decode(bytes.data(), bytes.size());
 }
 
 static void appendBlobResolved(BlobRegistryImpl* blobRegistry, FormData& formData, const URL& url)

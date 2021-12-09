@@ -185,7 +185,10 @@ list(APPEND PAL_SOURCES
     system/mac/SystemSleepListenerMac.mm
     system/mac/WebPanel.mm
 
+    text/ios/TextEncodingRegistryIOS.mm
+
     text/mac/KillRingMac.mm
+    text/mac/TextEncodingRegistryMac.mm
 )
 
 list(APPEND PAL_PRIVATE_INCLUDE_DIRECTORIES

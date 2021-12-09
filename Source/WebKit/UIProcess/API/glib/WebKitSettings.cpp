@@ -38,10 +38,10 @@
 #include "WebPreferences.h"
 #include <WebCore/HTTPParsers.h>
 #include <WebCore/PlatformScreen.h>
-#include <WebCore/TextEncodingRegistry.h>
 #include <WebCore/UserAgent.h>
 #include <cmath>
 #include <glib/gi18n-lib.h>
+#include <pal/text/TextEncodingRegistry.h>
 #include <wtf/glib/WTFGType.h>
 #include <wtf/text/CString.h>
 

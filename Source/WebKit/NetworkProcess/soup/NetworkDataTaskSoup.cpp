@@ -44,8 +44,8 @@
 #include <WebCore/ShouldRelaxThirdPartyCookieBlocking.h>
 #include <WebCore/SoupNetworkSession.h>
 #include <WebCore/SoupVersioning.h>
-#include <WebCore/TextEncoding.h>
 #include <WebCore/TimingAllowOrigin.h>
+#include <pal/text/TextEncoding.h>
 #include <wtf/MainThread.h>
 #include <wtf/glib/RunLoopSourcePriority.h>
 
@@ -103,7 +103,7 @@ String NetworkDataTaskSoup::suggestedFilename() const
     if (!suggestedFilename.isEmpty())
         return suggestedFilename;
 
-    return decodeURLEscapeSequences(m_response.url().lastPathComponent());
+    return PAL::decodeURLEscapeSequences(m_response.url().lastPathComponent());
 }
 
 void NetworkDataTaskSoup::setPriority(ResourceLoadPriority priority)

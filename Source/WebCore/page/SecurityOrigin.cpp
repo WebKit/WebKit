@@ -35,7 +35,7 @@
 #include "PublicSuffix.h"
 #include "RuntimeApplicationChecks.h"
 #include "SecurityPolicy.h"
-#include "TextEncoding.h"
+#include <pal/text/TextEncoding.h>
 #include "ThreadableBlobRegistry.h"
 #include <wtf/FileSystem.h>
 #include <wtf/MainThread.h>
@@ -81,7 +81,7 @@ URL SecurityOrigin::extractInnerURL(const URL& url)
 {
     // FIXME: Update this callsite to use the innerURL member function when
     // we finish implementing it.
-    return { URL(), decodeURLEscapeSequences(url.path()) };
+    return { URL(), PAL::decodeURLEscapeSequences(url.path()) };
 }
 
 static RefPtr<SecurityOrigin> getCachedOrigin(const URL& url)
@@ -590,7 +590,7 @@ Ref<SecurityOrigin> SecurityOrigin::createFromString(const String& originString)
 
 Ref<SecurityOrigin> SecurityOrigin::create(const String& protocol, const String& host, std::optional<uint16_t> port)
 {
-    String decodedHost = decodeURLEscapeSequences(host);
+    String decodedHost = PAL::decodeURLEscapeSequences(host);
     auto origin = create(URL(URL(), protocol + "://" + host + "/"));
     if (port && !WTF::isDefaultPortForProtocol(*port, protocol))
         origin->m_data.port = port;

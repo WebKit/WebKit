@@ -32,11 +32,11 @@
 
 namespace WebCore {
 
-inline TextEncoding Document::textEncoding() const
+inline PAL::TextEncoding Document::textEncoding() const
 {
     if (auto* decoder = this->decoder())
         return decoder->encoding();
-    return TextEncoding();
+    return PAL::TextEncoding();
 }
 
 inline AtomString Document::encoding() const { return textEncoding().domName(); }

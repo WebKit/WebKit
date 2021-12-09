@@ -29,7 +29,7 @@
 
 #include "ContentSecurityPolicy.h"
 #include "SecurityOriginData.h"
-#include "TextEncoding.h"
+#include <pal/text/TextEncoding.h>
 #include <wtf/URL.h>
 
 namespace WebCore {
@@ -83,7 +83,7 @@ bool ContentSecurityPolicySource::pathMatches(const URL& url) const
     if (m_path.isEmpty())
         return true;
 
-    auto path = decodeURLEscapeSequences(url.path());
+    auto path = PAL::decodeURLEscapeSequences(url.path());
 
     if (m_path.endsWith("/"))
         return path.startsWith(m_path);

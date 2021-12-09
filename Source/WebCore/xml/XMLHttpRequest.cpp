@@ -485,7 +485,7 @@ ExceptionOr<void> XMLHttpRequest::send(Document& document)
         // https://xhr.spec.whatwg.org/#dom-xmlhttprequest-send Step 4.2.
         auto serialized = serializeFragment(document, SerializedNodes::SubtreeIncludingNode);
         auto converted = replaceUnpairedSurrogatesWithReplacementCharacter(WTFMove(serialized));
-        auto encoded = UTF8Encoding().encode(WTFMove(converted), UnencodableHandling::Entities);
+        auto encoded = PAL::UTF8Encoding().encode(WTFMove(converted), PAL::UnencodableHandling::Entities);
         m_requestEntityBody = FormData::create(WTFMove(encoded));
         if (m_upload)
             m_requestEntityBody->setAlwaysStream(true);
@@ -508,7 +508,7 @@ ExceptionOr<void> XMLHttpRequest::send(const String& body)
             m_requestHeaders.set(HTTPHeaderName::ContentType, contentType);
         }
 
-        m_requestEntityBody = FormData::create(UTF8Encoding().encode(body, UnencodableHandling::Entities));
+        m_requestEntityBody = FormData::create(PAL::UTF8Encoding().encode(body, PAL::UnencodableHandling::Entities));
         if (m_upload)
             m_requestEntityBody->setAlwaysStream(true);
     }
@@ -992,7 +992,7 @@ static inline bool shouldDecodeResponse(XMLHttpRequest::ResponseType type)
 }
 
 // https://xhr.spec.whatwg.org/#final-charset
-TextEncoding XMLHttpRequest::finalResponseCharset() const
+PAL::TextEncoding XMLHttpRequest::finalResponseCharset() const
 {
     String label = m_responseEncoding;
 
@@ -1000,12 +1000,12 @@ TextEncoding XMLHttpRequest::finalResponseCharset() const
     if (!overrideResponseCharset.isEmpty())
         label = overrideResponseCharset;
 
-    return TextEncoding(label);
+    return PAL::TextEncoding(label);
 }
 
 Ref<TextResourceDecoder> XMLHttpRequest::createDecoder() const
 {
-    TextEncoding finalResponseCharset = this->finalResponseCharset();
+    PAL::TextEncoding finalResponseCharset = this->finalResponseCharset();
     if (finalResponseCharset.isValid())
         return TextResourceDecoder::create("text/plain", finalResponseCharset);
 

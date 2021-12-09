@@ -631,7 +631,7 @@ DefaultTextEncodingName:
     WebKitLegacy:
       default: '"ISO-8859-1"'
     WebKit:
-      default: WebCore::defaultTextEncodingNameForSystemLanguage()
+      default: PAL::defaultTextEncodingNameForSystemLanguage()
     WebCore:
       default: '{ }'
 

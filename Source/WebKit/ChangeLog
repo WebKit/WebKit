@@ -1,3 +1,30 @@
+2021-12-09  Myles C. Maxfield  <mmaxfield@apple.com> and Don Olmstead  <don.olmstead@sony.com>
+
+        Move TextCodec files from WebCore/platform/text to WebCore/PAL/text
+        https://bugs.webkit.org/show_bug.cgi?id=233683
+
+        Reviewed by Yusuke Suzuki.
+
+        Update to use the new PAL files.
+
+        * NetworkProcess/CustomProtocols/Cocoa/LegacyCustomProtocolManagerCocoa.mm:
+        * NetworkProcess/WebStorage/LocalStorageDatabaseTracker.cpp:
+        * NetworkProcess/WebStorage/StorageManager.cpp:
+        * NetworkProcess/WebStorage/StorageManagerSet.cpp:
+        (WebKit::StorageManagerSet::StorageManagerSet):
+        * NetworkProcess/curl/NetworkDataTaskCurl.cpp:
+        (WebKit::NetworkDataTaskCurl::suggestedFilename const):
+        * NetworkProcess/soup/NetworkDataTaskSoup.cpp:
+        (WebKit::NetworkDataTaskSoup::suggestedFilename const):
+        * Scripts/PreferencesTemplates/WebPreferencesStoreDefaultsMap.cpp.erb:
+        * UIProcess/API/glib/WebKitFileChooserRequest.cpp:
+        (webkit_file_chooser_request_select_files):
+        * UIProcess/API/glib/WebKitSettings.cpp:
+        * UIProcess/Inspector/WebInspectorUIProxy.cpp:
+        (WebKit::WebInspectorUIProxy::isMainOrTestInspectorPage):
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::performJavaScriptURLRequest):
+
 2021-12-09  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix GTK build.

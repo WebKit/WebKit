@@ -46,11 +46,11 @@
 #include "RenderListItem.h"
 #include "RenderListMarker.h"
 #include "RenderText.h"
-#include "TextEncoding.h"
 #include "TextIterator.h"
 #include "VisibleUnits.h"
 #include "WebKitAccessible.h"
 #include "WebKitAccessibleUtil.h"
+#include <pal/text/TextEncoding.h>
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/text/CString.h>
 

@@ -32,7 +32,6 @@
 #include "FontCache.h"
 #include "MIMETypeRegistry.h"
 #include "QualifiedNameCache.h"
-#include "TextCodecICU.h"
 #include "ThreadTimers.h"
 #include <wtf/MainThread.h>
 #include <wtf/ThreadSpecific.h>
@@ -43,16 +42,10 @@ namespace WebCore {
 
 ThreadGlobalData::ThreadGlobalData()
     : m_threadTimers(makeUnique<ThreadTimers>())
-    , m_cachedConverterICU(makeUnique<ICUConverterWrapper>())
 #ifndef NDEBUG
     , m_isMainThread(isMainThread())
 #endif
 {
-    // This constructor will have been called on the main thread before being called on
-    // any other thread, and is only called once per thread - this makes this a convenient
-    // point to call methods that internally perform a one-time initialization that is not
-    // threadsafe.
-    Thread::current();
 }
 
 ThreadGlobalData::~ThreadGlobalData() = default;
@@ -61,7 +54,7 @@ void ThreadGlobalData::destroy()
 {
     m_destroyed = true;
 
-    m_cachedConverterICU = nullptr;
+    PAL::ThreadGlobalData::destroy();
 
     // The ThreadGlobalData destructor is called under the TLS destruction
     // callback, which is later than when the static atom table is destroyed.
@@ -154,3 +147,12 @@ void ThreadGlobalData::initializeFontCache()
 }
 
 } // namespace WebCore
+
+namespace PAL {
+
+ThreadGlobalData& threadGlobalData()
+{
+    return WebCore::threadGlobalData();
+}
+
+} // namespace PAL

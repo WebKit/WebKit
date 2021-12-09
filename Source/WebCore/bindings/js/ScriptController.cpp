@@ -792,7 +792,7 @@ void ScriptController::executeJavaScriptURL(const URL& url, RefPtr<SecurityOrigi
     VM& vm = globalObject->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
-    String decodedURL = decodeURLEscapeSequences(url.string());
+    String decodedURL = PAL::decodeURLEscapeSequences(url.string());
     auto result = executeScriptIgnoringException(decodedURL.substring(javascriptSchemeLength));
     RELEASE_ASSERT(&vm == &jsWindowProxy(mainThreadNormalWorld()).window()->vm());
 

@@ -1,3 +1,73 @@
+2021-12-09  Myles C. Maxfield  <mmaxfield@apple.com> and Don Olmstead  <don.olmstead@sony.com>
+
+        Move TextCodec files from WebCore/platform/text to WebCore/PAL/text
+        https://bugs.webkit.org/show_bug.cgi?id=233683
+
+        Reviewed by Yusuke Suzuki.
+
+        This is a purely mechanical move. The TextCodec files don't have any dependencies
+        except for ICU, so they're good candidates to move.
+
+        * PAL.xcodeproj/project.pbxproj:
+        * pal/CMakeLists.txt:
+        * pal/PlatformMac.cmake:
+        * pal/ThreadGlobalData.cpp: Copied from Source/WebCore/PAL/pal/text/UnencodableHandling.h.
+        (PAL::ThreadGlobalData::ThreadGlobalData):
+        (PAL::ThreadGlobalData::destroy):
+        * pal/ThreadGlobalData.h: Copied from Source/WebCore/html/parser/HTMLMetaCharsetParser.h.
+        (PAL::ThreadGlobalData::ThreadGlobalData::cachedConverterICU):
+        * pal/text/DecodeEscapeSequences.h: Renamed from Source/WebCore/platform/text/DecodeEscapeSequences.h.
+        (PAL::Unicode16BitEscapeSequence::findEndOfRun):
+        (PAL::Unicode16BitEscapeSequence::decodeRun):
+        (PAL::URLEscapeSequence::findEndOfRun):
+        (PAL::URLEscapeSequence::decodeRun):
+        (PAL::decodeURLEscapeSequencesAsData):
+        * pal/text/EncodingTables.cpp: Renamed from Source/WebCore/platform/text/EncodingTables.cpp.
+        (PAL::big5):
+        (PAL::eucKR):
+        * pal/text/EncodingTables.h: Renamed from Source/WebCore/platform/text/EncodingTables.h.
+        (PAL::findInSortedPairs):
+        * pal/text/TextCodec.cpp: Renamed from Source/WebCore/platform/text/TextCodec.cpp.
+        * pal/text/TextCodec.h: Renamed from Source/WebCore/platform/text/TextCodec.h.
+        * pal/text/TextCodecASCIIFastPath.h: Renamed from Source/WebCore/platform/text/TextCodecASCIIFastPath.h.
+        * pal/text/TextCodecCJK.cpp: Renamed from Source/WebCore/platform/text/TextCodecCJK.cpp.
+        (PAL::gb18030Ranges):
+        * pal/text/TextCodecCJK.h: Renamed from Source/WebCore/platform/text/TextCodecCJK.h.
+        * pal/text/TextCodecICU.cpp: Renamed from Source/WebCore/platform/text/TextCodecICU.cpp.
+        (PAL::TextCodecICU::decode):
+        * pal/text/TextCodecICU.h: Renamed from Source/WebCore/platform/text/TextCodecICU.h.
+        * pal/text/TextCodecLatin1.cpp: Renamed from Source/WebCore/platform/text/TextCodecLatin1.cpp.
+        * pal/text/TextCodecLatin1.h: Renamed from Source/WebCore/platform/text/TextCodecLatin1.h.
+        * pal/text/TextCodecReplacement.cpp: Renamed from Source/WebCore/platform/text/TextCodecReplacement.cpp.
+        * pal/text/TextCodecReplacement.h: Renamed from Source/WebCore/platform/text/TextCodecReplacement.h.
+        * pal/text/TextCodecSingleByte.cpp: Renamed from Source/WebCore/platform/text/TextCodecSingleByte.cpp.
+        (PAL::TextCodecSingleByte::encode const):
+        (PAL::TextCodecSingleByte::decode):
+        * pal/text/TextCodecSingleByte.h: Renamed from Source/WebCore/platform/text/TextCodecSingleByte.h.
+        * pal/text/TextCodecUTF16.cpp: Renamed from Source/WebCore/platform/text/TextCodecUTF16.cpp.
+        * pal/text/TextCodecUTF16.h: Renamed from Source/WebCore/platform/text/TextCodecUTF16.h.
+        * pal/text/TextCodecUTF8.cpp: Renamed from Source/WebCore/platform/text/TextCodecUTF8.cpp.
+        (PAL::TextCodecUTF8::decode):
+        * pal/text/TextCodecUTF8.h: Renamed from Source/WebCore/platform/text/TextCodecUTF8.h.
+        * pal/text/TextCodecUserDefined.cpp: Renamed from Source/WebCore/platform/text/TextCodecUserDefined.cpp.
+        * pal/text/TextCodecUserDefined.h: Renamed from Source/WebCore/platform/text/TextCodecUserDefined.h.
+        * pal/text/TextEncoding.cpp: Renamed from Source/WebCore/platform/text/TextEncoding.cpp.
+        (PAL::TextEncoding::encode const):
+        * pal/text/TextEncoding.h: Renamed from Source/WebCore/platform/text/TextEncoding.h.
+        * pal/text/TextEncodingDetector.h: Renamed from Source/WebCore/platform/text/TextEncodingDetector.h.
+        * pal/text/TextEncodingDetectorICU.cpp: Renamed from Source/WebCore/platform/text/TextEncodingDetectorICU.cpp.
+        (PAL::detectTextEncoding):
+        * pal/text/TextEncodingRegistry.cpp: Renamed from Source/WebCore/platform/text/TextEncodingRegistry.cpp.
+        (PAL::isUndesiredAlias):
+        * pal/text/TextEncodingRegistry.h: Renamed from Source/WebCore/platform/text/TextEncodingRegistry.h.
+        * pal/text/UnencodableHandling.h:
+        * pal/text/ios/TextEncodingRegistryIOS.mm: Renamed from Source/WebCore/platform/text/ios/TextEncodingRegistryIOS.mm.
+        (PAL::webDefaultCFStringEncoding):
+        * pal/text/mac/TextEncodingRegistryMac.mm: Renamed from Source/WebCore/platform/text/mac/TextEncodingRegistryMac.mm.
+        * pal/text/win/TextCodecWin.cpp: Renamed from Source/WebCore/platform/text/win/TextCodecWin.cpp.
+        (PAL::getCodePageFlags):
+        * pal/text/win/TextCodecWin.h: Renamed from Source/WebCore/platform/text/win/TextCodecWin.h.
+
 2021-12-08  Jer Noble  <jer.noble@apple.com>
 
         Add an experimental trackConfiguration accessor on AudioTrack & VideoTrack.

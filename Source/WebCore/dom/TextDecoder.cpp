@@ -26,8 +26,8 @@
 #include "TextDecoder.h"
 
 #include "HTMLParserIdioms.h"
-#include "TextCodec.h"
-#include "TextEncodingRegistry.h"
+#include <pal/text/TextCodec.h>
+#include <pal/text/TextEncodingRegistry.h>
 
 namespace WebCore {
 

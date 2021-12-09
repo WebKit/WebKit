@@ -324,7 +324,7 @@ void FileReaderLoader::convertToText()
     // provided encoding.     
     // FIXME: consider supporting incremental decoding to improve the perf.
     if (!m_decoder)
-        m_decoder = TextResourceDecoder::create("text/plain", m_encoding.isValid() ? m_encoding : UTF8Encoding());
+        m_decoder = TextResourceDecoder::create("text/plain", m_encoding.isValid() ? m_encoding : PAL::UTF8Encoding());
     if (isCompleted())
         m_stringResult = m_decoder->decodeAndFlush(static_cast<const char*>(m_rawData->data()), m_bytesLoaded);
     else
@@ -349,7 +349,7 @@ bool FileReaderLoader::isCompleted() const
 void FileReaderLoader::setEncoding(const String& encoding)
 {
     if (!encoding.isEmpty())
-        m_encoding = TextEncoding(encoding);
+        m_encoding = PAL::TextEncoding(encoding);
 }
 
 } // namespace WebCore

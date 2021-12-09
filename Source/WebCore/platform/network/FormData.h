@@ -27,13 +27,16 @@
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
+namespace PAL {
+class TextEncoding;
+}
+
 namespace WebCore {
 
 class BlobRegistryImpl;
 class DOMFormData;
 class File;
 class SharedBuffer;
-class TextEncoding;
 
 struct FormDataElement {
     struct EncodedFileData;
@@ -258,8 +261,8 @@ private:
     FormData();
     FormData(const FormData&);
 
-    void appendMultiPartFileValue(const File&, Vector<char>& header, TextEncoding&);
-    void appendMultiPartStringValue(const String&, Vector<char>& header, TextEncoding&);
+    void appendMultiPartFileValue(const File&, Vector<char>& header, PAL::TextEncoding&);
+    void appendMultiPartStringValue(const String&, Vector<char>& header, PAL::TextEncoding&);
     void appendMultiPartKeyValuePairItems(const DOMFormData&);
     void appendNonMultiPartKeyValuePairItems(const DOMFormData&, EncodingType);
 
