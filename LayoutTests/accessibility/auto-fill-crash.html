@@ -1,44 +1,38 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<meta charset="utf-8">
-<script src="../resources/js-test-pre.js"></script>
+<script src="../resources/js-test.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
 </head>
-<body id="body">
+<body>
 
 <input type="text" value="hello" id="textfield">
 
-<p id="description"></p>
-<div id="console"></div>
-
 <script>
-
     description("This tests that when an auto fill element is removed we won't crash accessing an old value.");
 
     if (window.accessibilityController) {
+        window.jsTestIsAsync = true;
+
+        var platformName = accessibilityController.platformName;
         var axTextField = accessibilityController.accessibleElementById("textfield");
-        var childrenCountExpected = accessibilityController.platformName == "atk" ? "1" : "2";
-        window.internals.setShowAutoFillButton(document.getElementById("textfield"), "Contacts");
-        var textFieldAxObject = accessibilityController.accessibleElementById('textfield');
-        shouldBe("textFieldAxObject.childrenCount", childrenCountExpected);
-        // Verify the autofill button is represented in the accessibility tree.
-        shouldBe("textFieldAxObject.childAtIndex(childrenCountExpected - 1).description", "'AXDescription: contact info AutoFill'");
+        var domTextField = document.getElementById("textfield");
 
-        var platform = accessibilityController.platformName;
-        // Windows expects 2 children.
-        childrenCountExpected = "2";
-        if (platform == "mac" || platform == "ios")
-            childrenCountExpected = "1"
-        else if (platform == "atk")
-            childrenCountExpected = "0"
+        window.internals.setShowAutoFillButton(domTextField, "Contacts");
+        var expectedChildrenCount = platformName == "atk" ? "1" : "2";
+        setTimeout(async function() {
+            await expectAsyncExpression("axTextField.childrenCount", expectedChildrenCount);
+            // Verify the autofill button is represented in the accessibility tree.
+            await expectAsyncExpression("axTextField.childAtIndex(expectedChildrenCount - 1).description", "'AXDescription: contact info AutoFill'");
 
-        // Don't crash!
-        window.internals.setShowAutoFillButton(document.getElementById("textfield"), "None");
-        shouldBe("textFieldAxObject.childrenCount", childrenCountExpected);
+            // Don't crash!
+            window.internals.setShowAutoFillButton(domTextField, "None");
+            await expectAsyncExpression("axTextField.childrenCount", platformName == "atk" ? "0" : "1");
+
+            finishJSTest();
+        }, 0);
     }
-
 </script>
-
-<script src="../resources/js-test-post.js"></script>
 </body>
 </html>
+
