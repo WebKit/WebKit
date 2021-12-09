@@ -414,6 +414,8 @@ void MomentumEventDispatcher::equalizeTailGaps()
 
     auto& table = m_currentGesture.tailDeltaTable;
     size_t initialTableSize = table.size();
+    if (!initialTableSize)
+        return;
 
     enum Axis { Horizontal, Vertical };
     Vector<float> deltas[2];
@@ -429,11 +431,19 @@ void MomentumEventDispatcher::equalizeTailGaps()
         if (!firstZeroIndex[Vertical] && !table[i].height())
             firstZeroIndex[Vertical] = i;
     }
-    
-    if (auto index = firstZeroIndex[Horizontal])
-        std::sort(deltas[Horizontal].begin(), std::next(deltas[Horizontal].begin(), index));
-    if (auto index = firstZeroIndex[Vertical])
-        std::sort(deltas[Vertical].begin(), std::next(deltas[Vertical].begin(), index));
+
+    auto sortDeltas = [&] (Axis axis) {
+        if (!firstZeroIndex[axis])
+            return;
+
+        if (deltas[axis][0] > 0)
+            std::sort(deltas[axis].begin(), std::next(deltas[axis].begin(), firstZeroIndex[axis]), std::greater<float>());
+        else
+            std::sort(deltas[axis].begin(), std::next(deltas[axis].begin(), firstZeroIndex[axis]), std::less<float>());
+    };
+
+    sortDeltas(Horizontal);
+    sortDeltas(Vertical);
 
     // GapSize is a count of contiguous frames with zero deltas.
     typedef unsigned GapSize[2];
