@@ -1,3 +1,13 @@
+2021-12-09  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [selectors] Match :focus-visible on <select> elements
+        https://bugs.webkit.org/show_bug.cgi?id=233924
+
+        Reviewed by Antti Koivisto.
+
+        * fast/forms/select-listbox-focusring-expected.html: Added.
+        * fast/forms/select-listbox-focusring.html: Added.
+
 2021-12-08  Patrick Griffis  <pgriffis@igalia.com>
 
         CSP: Skip whitespace at beginning of policy header

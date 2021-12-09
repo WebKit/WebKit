@@ -807,7 +807,7 @@ void Element::setActive(bool flag, bool pause, Style::InvalidationScope invalida
 
 static bool shouldAlwaysHaveFocusVisibleWhenFocused(const Element& element)
 {
-    return element.isTextField() || element.isContentEditable();
+    return element.isTextField() || element.isContentEditable() || is<HTMLSelectElement>(element);
 }
 
 void Element::setFocus(bool flag, FocusVisibility visibility)
