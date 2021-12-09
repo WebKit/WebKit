@@ -1,3 +1,14 @@
+2021-12-08  Patrick Griffis  <pgriffis@igalia.com>
+
+        CSP: Skip whitespace at beginning of policy header
+        https://bugs.webkit.org/show_bug.cgi?id=233951
+
+        Reviewed by Kate Cheney.
+
+        Update expectations as passing.
+
+        * web-platform-tests/content-security-policy/script-src/script-src-strict_dynamic_double_policy_honor_source_expressions.sub-expected.txt:
+
 2021-12-08  Antti Koivisto  <antti@apple.com>
 
         [CSS Cascade Layers] CSSImportRule.cssText doesn't include layer parameter

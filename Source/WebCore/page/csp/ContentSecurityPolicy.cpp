@@ -204,8 +204,9 @@ void ContentSecurityPolicy::didReceiveHeader(const String& header, ContentSecuri
     // be combined with a comma. Walk the header string, and parse each comma
     // separated chunk as a separate header.
     readCharactersForParsing(header, [&](auto buffer) {
+        skipWhile<isASCIISpace>(buffer);
         auto begin = buffer.position();
-    
+
         while (buffer.hasCharactersRemaining()) {
             skipUntil(buffer, ',');
 

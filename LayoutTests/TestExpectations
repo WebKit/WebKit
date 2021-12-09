@@ -980,7 +980,6 @@ imported/w3c/web-platform-tests/content-security-policy/securitypolicyviolation/
 imported/w3c/web-platform-tests/content-security-policy/securitypolicyviolation/targeting.html [ Skip ]
 imported/w3c/web-platform-tests/content-security-policy/frame-src/frame-src-cross-origin-load.sub.html [ Skip ]
 imported/w3c/web-platform-tests/content-security-policy/generic/304-response-should-update-csp.sub.html [ Skip ]
-imported/w3c/web-platform-tests/content-security-policy/script-src/script-src-strict_dynamic_double_policy_honor_source_expressions.sub.html [ Skip ]
 imported/w3c/web-platform-tests/content-security-policy/unsafe-hashes/javascript_src_allowed-href_blank.html [ Skip ]
 
 # FIXME: Skip Content Security Policy tests whose output is non-deterministic
