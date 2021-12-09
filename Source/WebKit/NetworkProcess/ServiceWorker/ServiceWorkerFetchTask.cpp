@@ -364,7 +364,8 @@ void ServiceWorkerFetchTask::loadResponseFromPreloader()
             return;
 
         if (!m_preloader->error().isNull()) {
-            didFail(m_preloader->error());
+            // Let's copy the error as calling didFail might destroy m_preloader.
+            didFail(ResourceError { m_preloader->error() });
             return;
         }
 
@@ -388,7 +389,8 @@ void ServiceWorkerFetchTask::loadBodyFromPreloader()
         if (!weakThis)
             return;
         if (!m_preloader->error().isNull()) {
-            didFail(m_preloader->error());
+            // Let's copy the error as calling didFail might destroy m_preloader.
+            didFail(ResourceError { m_preloader->error() });
             return;
         }
         if (!chunk) {
