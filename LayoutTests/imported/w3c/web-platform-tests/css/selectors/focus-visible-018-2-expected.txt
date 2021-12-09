@@ -33,41 +33,41 @@ ul
 u
 
 PASS ":focus-visible" should be a valid selector
-FAIL Mouse focus does not show a focus ring by default in element ABBR assert_equals: outline-style for ABBR should be none expected "none" but got "auto"
-FAIL Mouse focus does not show a focus ring by default in element ADDRESS assert_equals: outline-style for ADDRESS should be none expected "none" but got "auto"
-FAIL Mouse focus does not show a focus ring by default in element BDI assert_equals: outline-style for BDI should be none expected "none" but got "auto"
-FAIL Mouse focus does not show a focus ring by default in element BLOCKQUOTE assert_equals: outline-style for BLOCKQUOTE should be none expected "none" but got "auto"
-FAIL Mouse focus does not show a focus ring by default in element CODE assert_equals: outline-style for CODE should be none expected "none" but got "auto"
-FAIL Mouse focus does not show a focus ring by default in element DD assert_equals: outline-style for DD should be none expected "none" but got "auto"
-FAIL Mouse focus does not show a focus ring by default in element SUMMARY assert_equals: outline-style for SUMMARY should be none expected "none" but got "auto"
+PASS Mouse focus does not show a focus ring by default in element ABBR
+PASS Mouse focus does not show a focus ring by default in element ADDRESS
+PASS Mouse focus does not show a focus ring by default in element BDI
+PASS Mouse focus does not show a focus ring by default in element BLOCKQUOTE
+PASS Mouse focus does not show a focus ring by default in element CODE
+PASS Mouse focus does not show a focus ring by default in element DD
+PASS Mouse focus does not show a focus ring by default in element SUMMARY
 PASS Mouse focus does not show a focus ring by default in element DETAILS
-FAIL Mouse focus does not show a focus ring by default in element DIV assert_equals: outline-style for DIV should be none expected "none" but got "auto"
-FAIL Mouse focus does not show a focus ring by default in element DL assert_equals: outline-style for DL should be none expected "none" but got "auto"
-FAIL Mouse focus does not show a focus ring by default in element DT assert_equals: outline-style for DT should be none expected "none" but got "auto"
-FAIL Mouse focus does not show a focus ring by default in element EM assert_equals: outline-style for EM should be none expected "none" but got "auto"
-FAIL Mouse focus does not show a focus ring by default in element LEGEND assert_equals: outline-style for LEGEND should be none expected "none" but got "auto"
-FAIL Mouse focus does not show a focus ring by default in element FIGCAPTION assert_equals: outline-style for FIGCAPTION should be none expected "none" but got "auto"
-FAIL Mouse focus does not show a focus ring by default in element FIGURE assert_equals: outline-style for FIGURE should be none expected "none" but got "auto"
-FAIL Mouse focus does not show a focus ring by default in element FORM assert_equals: outline-style for FORM should be none expected "none" but got "auto"
-FAIL Mouse focus does not show a focus ring by default in element HR assert_equals: outline-style for HR should be none expected "none" but got "auto"
+PASS Mouse focus does not show a focus ring by default in element DIV
+PASS Mouse focus does not show a focus ring by default in element DL
+PASS Mouse focus does not show a focus ring by default in element DT
+PASS Mouse focus does not show a focus ring by default in element EM
+PASS Mouse focus does not show a focus ring by default in element LEGEND
+PASS Mouse focus does not show a focus ring by default in element FIGCAPTION
+PASS Mouse focus does not show a focus ring by default in element FIGURE
+PASS Mouse focus does not show a focus ring by default in element FORM
+PASS Mouse focus does not show a focus ring by default in element HR
 PASS Mouse focus does not show a focus ring by default in element IMG
-FAIL Mouse focus does not show a focus ring by default in element LABEL assert_equals: outline-style for LABEL should be none expected "none" but got "auto"
-FAIL Mouse focus does not show a focus ring by default in element LI assert_equals: outline-style for LI should be none expected "none" but got "auto"
-FAIL Mouse focus does not show a focus ring by default in element MARK assert_equals: outline-style for MARK should be none expected "none" but got "auto"
-FAIL Mouse focus does not show a focus ring by default in element METER assert_equals: outline-style for METER should be none expected "none" but got "auto"
-FAIL Mouse focus does not show a focus ring by default in element OL assert_equals: outline-style for OL should be none expected "none" but got "auto"
-FAIL Mouse focus does not show a focus ring by default in element PRE assert_equals: outline-style for PRE should be none expected "none" but got "auto"
-FAIL Mouse focus does not show a focus ring by default in element PROGRESS assert_equals: outline-style for PROGRESS should be none expected "none" but got "auto"
-FAIL Mouse focus does not show a focus ring by default in element P assert_equals: outline-style for P should be none expected "none" but got "auto"
-FAIL Mouse focus does not show a focus ring by default in element SMALL assert_equals: outline-style for SMALL should be none expected "none" but got "auto"
-FAIL Mouse focus does not show a focus ring by default in element S assert_equals: outline-style for S should be none expected "none" but got "auto"
-FAIL Mouse focus does not show a focus ring by default in element STRONG assert_equals: outline-style for STRONG should be none expected "none" but got "auto"
-FAIL Mouse focus does not show a focus ring by default in element SUB assert_equals: outline-style for SUB should be none expected "none" but got "auto"
-FAIL Mouse focus does not show a focus ring by default in element SUP assert_equals: outline-style for SUP should be none expected "none" but got "auto"
-FAIL Mouse focus does not show a focus ring by default in element CAPTION assert_equals: outline-style for CAPTION should be none expected "none" but got "auto"
-FAIL Mouse focus does not show a focus ring by default in element TABLE assert_equals: outline-style for TABLE should be none expected "none" but got "auto"
-FAIL Mouse focus does not show a focus ring by default in element TD assert_equals: outline-style for TD should be none expected "none" but got "auto"
-FAIL Mouse focus does not show a focus ring by default in element TIME assert_equals: outline-style for TIME should be none expected "none" but got "auto"
-FAIL Mouse focus does not show a focus ring by default in element UL assert_equals: outline-style for UL should be none expected "none" but got "auto"
-FAIL Mouse focus does not show a focus ring by default in element U assert_equals: outline-style for U should be none expected "none" but got "auto"
+PASS Mouse focus does not show a focus ring by default in element LABEL
+PASS Mouse focus does not show a focus ring by default in element LI
+PASS Mouse focus does not show a focus ring by default in element MARK
+PASS Mouse focus does not show a focus ring by default in element METER
+PASS Mouse focus does not show a focus ring by default in element OL
+PASS Mouse focus does not show a focus ring by default in element PRE
+PASS Mouse focus does not show a focus ring by default in element PROGRESS
+PASS Mouse focus does not show a focus ring by default in element P
+PASS Mouse focus does not show a focus ring by default in element SMALL
+PASS Mouse focus does not show a focus ring by default in element S
+PASS Mouse focus does not show a focus ring by default in element STRONG
+PASS Mouse focus does not show a focus ring by default in element SUB
+PASS Mouse focus does not show a focus ring by default in element SUP
+PASS Mouse focus does not show a focus ring by default in element CAPTION
+PASS Mouse focus does not show a focus ring by default in element TABLE
+PASS Mouse focus does not show a focus ring by default in element TD
+PASS Mouse focus does not show a focus ring by default in element TIME
+PASS Mouse focus does not show a focus ring by default in element UL
+PASS Mouse focus does not show a focus ring by default in element U
 

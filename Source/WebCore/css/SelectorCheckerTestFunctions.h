@@ -39,6 +39,7 @@
 #include "InspectorInstrumentation.h"
 #include "Page.h"
 #include "SelectorChecker.h"
+#include "Settings.h"
 #include "ShadowRoot.h"
 #include <wtf/Compiler.h>
 
@@ -515,6 +516,9 @@ ALWAYS_INLINE bool matchesFocusPseudoClass(const Element& element)
 
 ALWAYS_INLINE bool matchesFocusVisiblePseudoClass(const Element& element)
 {
+    if (!element.document().settings().focusVisibleEnabled())
+        return matchesDirectFocusPseudoClass(element);
+
     if (InspectorInstrumentation::forcePseudoState(element, CSSSelector::PseudoClassFocusVisible))
         return true;
 
