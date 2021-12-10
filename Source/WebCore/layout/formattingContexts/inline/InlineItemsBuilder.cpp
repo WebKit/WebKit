@@ -288,16 +288,17 @@ void InlineItemsBuilder::breakAndComputeBidiLevels(InlineItems& inlineItems)
             // Start of the range is always where we left off (bidi ranges do not have gaps).
             for (; inlineItemIndex < inlineItemOffsets.size(); ++inlineItemIndex) {
                 auto offset = inlineItemOffsets[inlineItemIndex];
+                auto& inlineItem = inlineItems[inlineItemIndex];
                 if (!offset) {
                     // This is an opaque item. Let's post-process it.
                     hasSeenOpaqueItem = true;
+                    inlineItem.setBidiLevel(bidiLevelForRange);
                     continue;
                 }
                 if (*offset >= bidiEnd) {
                     // This inline item is outside of the bidi range.
                     break;
                 }
-                auto& inlineItem = inlineItems[inlineItemIndex];
                 inlineItem.setBidiLevel(bidiLevelForRange);
                 if (!inlineItem.isText())
                     continue;
@@ -324,18 +325,17 @@ void InlineItemsBuilder::breakAndComputeBidiLevels(InlineItems& inlineItems)
         enum class InlineBoxHasContent : bool { No, Yes };
         Vector<InlineBoxHasContent> inlineBoxContentFlagStack;
         inlineBoxContentFlagStack.reserveInitialCapacity(inlineItems.size());
-        auto lastBidiLevel = rootBidiLevel;
         for (auto index = inlineItems.size(); index--;) {
             auto& inlineItem = inlineItems[index];
             if (inlineItemOffsets[index]) {
-                lastBidiLevel = inlineItem.bidiLevel();
                 inlineBoxContentFlagStack.fill(InlineBoxHasContent::Yes);
                 continue;
             }
             if (inlineItem.isInlineBoxStart()) {
                 ASSERT(!inlineBoxContentFlagStack.isEmpty());
                 // Inline box start (e.g <span>) uses its content bidi level (next inline item).
-                inlineItems[index].setBidiLevel(inlineBoxContentFlagStack.takeLast() == InlineBoxHasContent::Yes ? InlineItem::opaqueBidiLevel : lastBidiLevel);
+                if (inlineBoxContentFlagStack.takeLast() == InlineBoxHasContent::Yes)
+                    inlineItems[index].setBidiLevel(InlineItem::opaqueBidiLevel);
                 continue;
             }
             if (inlineItem.isInlineBoxEnd()) {
