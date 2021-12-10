@@ -298,6 +298,20 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     writeFileWrapperAsRTFDAttachment(fileWrapper(pasteboardImage), m_pasteboardName, m_changeCount, context());
 }
 
+void Pasteboard::write(const PasteboardBuffer& pasteboardBuffer)
+{
+    ASSERT(!pasteboardBuffer.type.isEmpty());
+    ASSERT(pasteboardBuffer.data);
+
+    m_changeCount = platformStrategies()->pasteboardStrategy()->setTypes({ pasteboardBuffer.type, PasteboardCustomData::cocoaType() }, m_pasteboardName, context());
+
+    m_changeCount = platformStrategies()->pasteboardStrategy()->setBufferForType(pasteboardBuffer.data.get(), pasteboardBuffer.type, m_pasteboardName, context());
+
+    PasteboardCustomData pasteboardCustomData;
+    pasteboardCustomData.setOrigin(pasteboardBuffer.contentOrigin);
+    m_changeCount = platformStrategies()->pasteboardStrategy()->setBufferForType(pasteboardCustomData.createSharedBuffer().ptr(), PasteboardCustomData::cocoaType(), m_pasteboardName, context());
+}
+
 bool Pasteboard::canSmartReplace()
 {
     Vector<String> types;

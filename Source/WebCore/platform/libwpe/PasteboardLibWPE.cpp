@@ -123,6 +123,10 @@ void Pasteboard::write(const PasteboardImage&)
 {
 }
 
+void Pasteboard::write(const PasteboardBuffer&)
+{
+}
+
 void Pasteboard::write(const PasteboardWebContent& content)
 {
     platformStrategies()->pasteboardStrategy()->writeToPasteboard(content);

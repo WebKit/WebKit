@@ -183,6 +183,10 @@ void Pasteboard::write(const PasteboardImage& pasteboardImage)
     }
 }
 
+void Pasteboard::write(const PasteboardBuffer&)
+{
+}
+
 void Pasteboard::write(const PasteboardWebContent& pasteboardContent)
 {
     if (m_selectionData) {

@@ -1118,6 +1118,10 @@ void Pasteboard::write(const PasteboardImage&)
 {
 }
 
+void Pasteboard::write(const PasteboardBuffer&)
+{
+}
+
 void Pasteboard::writeCustomData(const Vector<PasteboardCustomData>& data)
 {
     if (data.isEmpty() || data.size() > 1) {

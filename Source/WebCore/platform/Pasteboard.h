@@ -135,6 +135,17 @@ struct PasteboardImage {
     FloatSize imageSize;
 };
 
+struct PasteboardBuffer {
+    WEBCORE_EXPORT PasteboardBuffer();
+    WEBCORE_EXPORT ~PasteboardBuffer();
+
+#if PLATFORM(COCOA)
+    String contentOrigin;
+#endif
+    String type;
+    RefPtr<SharedBuffer> data;
+};
+
 // For reading from the pasteboard.
 
 class PasteboardWebContentReader {
@@ -223,6 +234,7 @@ public:
     virtual WEBCORE_EXPORT void write(const PasteboardURL&);
     virtual WEBCORE_EXPORT void writeTrustworthyWebURLsPboardType(const PasteboardURL&);
     virtual WEBCORE_EXPORT void write(const PasteboardImage&);
+    virtual WEBCORE_EXPORT void write(const PasteboardBuffer&);
     virtual WEBCORE_EXPORT void write(const PasteboardWebContent&);
 
     virtual WEBCORE_EXPORT void writeCustomData(const Vector<PasteboardCustomData>&);
