@@ -1519,9 +1519,9 @@ static WebCore::EditableLinkBehavior toEditableLinkBehavior(_WKEditableLinkBehav
     return _preferences->requiresPageVisibilityToPlayAudio();
 }
 
-- (void)_setRequiresPageVisibilityToPlayAudio:(BOOL)requires
+- (void)_setRequiresPageVisibilityToPlayAudio:(BOOL)requiresVisibility
 {
-    _preferences->setRequiresPageVisibilityToPlayAudio(requires);
+    _preferences->setRequiresPageVisibilityToPlayAudio(requiresVisibility);
 }
 
 - (BOOL)_fileSystemAccessEnabled

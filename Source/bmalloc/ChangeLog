@@ -1,3 +1,14 @@
+2021-12-09  Alex Christensen  <achristensen@webkit.org>
+
+        Prepare for transition to C++20
+        https://bugs.webkit.org/show_bug.cgi?id=234022
+
+        Reviewed by Yusuke Suzuki.
+
+        * bmalloc/List.h:
+        (bmalloc::List::iterator::operator!= const):
+        (bmalloc::List::iterator::operator!=): Deleted.
+
 2021-12-09  Zan Dobersek  <zdobersek@igalia.com>
 
         [libpas] Fix up missing header includes and build guards in unit tests

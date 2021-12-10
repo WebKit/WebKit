@@ -512,7 +512,7 @@ TEST(GPUProcess, CanvasBasicCrashHandling)
         NSInteger viewHeightInPixels = viewHeight * backingScaleFactor;
 
         uint8_t *rgba = (unsigned char *)calloc(viewWidthInPixels * viewHeightInPixels * 4, sizeof(unsigned char));
-        auto context = adoptCF(CGBitmapContextCreate(rgba, viewWidthInPixels, viewHeightInPixels, 8, 4 * viewWidthInPixels, colorSpace.get(), kCGImageAlphaPremultipliedLast | kCGBitmapByteOrder32Big));
+        auto context = adoptCF(CGBitmapContextCreate(rgba, viewWidthInPixels, viewHeightInPixels, 8, 4 * viewWidthInPixels, colorSpace.get(), static_cast<uint32_t>(kCGImageAlphaPremultipliedLast) | static_cast<uint32_t>(kCGBitmapByteOrder32Big)));
         CGContextDrawImage(context.get(), CGRectMake(0, 0, viewWidthInPixels, viewHeightInPixels), cgImage.get());
 
         NSInteger pixelIndex = getPixelIndex(50, 50, viewWidthInPixels);
@@ -567,7 +567,7 @@ TEST(GPUProcess, CanvasBasicCrashHandling)
         NSInteger viewHeightInPixels = viewHeight * backingScaleFactor;
 
         uint8_t *rgba = (unsigned char *)calloc(viewWidthInPixels * viewHeightInPixels * 4, sizeof(unsigned char));
-        auto context = adoptCF(CGBitmapContextCreate(rgba, viewWidthInPixels, viewHeightInPixels, 8, 4 * viewWidthInPixels, colorSpace.get(), kCGImageAlphaPremultipliedLast | kCGBitmapByteOrder32Big));
+        auto context = adoptCF(CGBitmapContextCreate(rgba, viewWidthInPixels, viewHeightInPixels, 8, 4 * viewWidthInPixels, colorSpace.get(), static_cast<uint32_t>(kCGImageAlphaPremultipliedLast) | static_cast<uint32_t>(kCGBitmapByteOrder32Big)));
         CGContextDrawImage(context.get(), CGRectMake(0, 0, viewWidthInPixels, viewHeightInPixels), cgImage.get());
 
         NSInteger pixelIndex = getPixelIndex(50, 50, viewWidthInPixels);

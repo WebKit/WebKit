@@ -66,7 +66,6 @@ private:
     DisplayRefreshMonitor* ensureMonitorForDisplayID(PlatformDisplayID, DisplayRefreshMonitorFactory*);
 
     struct DisplayRefreshMonitorWrapper {
-        DisplayRefreshMonitorWrapper(DisplayRefreshMonitorWrapper&&) = default;
         ~DisplayRefreshMonitorWrapper()
         {
             if (monitor)

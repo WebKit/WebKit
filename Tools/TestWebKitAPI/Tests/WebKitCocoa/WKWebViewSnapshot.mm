@@ -279,7 +279,7 @@ TEST(WKWebView, SnapshotImageBaseCase)
         NSInteger viewHeightInPixels = viewHeight * backingScaleFactor;
 
         uint8_t *rgba = (unsigned char *)calloc(viewWidthInPixels * viewHeightInPixels * 4, sizeof(unsigned char));
-        auto context = adoptCF(CGBitmapContextCreate(rgba, viewWidthInPixels, viewHeightInPixels, 8, 4 * viewWidthInPixels, colorSpace.get(), kCGImageAlphaPremultipliedLast | kCGBitmapByteOrder32Big));
+        auto context = adoptCF(CGBitmapContextCreate(rgba, viewWidthInPixels, viewHeightInPixels, 8, 4 * viewWidthInPixels, colorSpace.get(), static_cast<uint32_t>(kCGImageAlphaPremultipliedLast) | static_cast<uint32_t>(kCGBitmapByteOrder32Big)));
         CGContextDrawImage(context.get(), CGRectMake(0, 0, viewWidthInPixels, viewHeightInPixels), cgImage.get());
 
         NSInteger pixelIndex = getPixelIndex(0, 0, viewWidthInPixels);
@@ -425,7 +425,7 @@ TEST(WKWebView, SnapshotImageLargeAsyncDecoding)
         RetainPtr<CGColorSpaceRef> colorSpace = adoptCF(CGColorSpaceCreateDeviceRGB());
 
         uint8_t *rgba = (unsigned char *)calloc(viewWidth * viewHeight * 4, sizeof(unsigned char));
-        auto context = adoptCF(CGBitmapContextCreate(rgba, viewWidth, viewHeight, 8, 4 * viewWidth, colorSpace.get(), kCGImageAlphaPremultipliedLast | kCGBitmapByteOrder32Big));
+        auto context = adoptCF(CGBitmapContextCreate(rgba, viewWidth, viewHeight, 8, 4 * viewWidth, colorSpace.get(), static_cast<uint32_t>(kCGImageAlphaPremultipliedLast) | static_cast<uint32_t>(kCGBitmapByteOrder32Big)));
         CGContextDrawImage(context.get(), CGRectMake(0, 0, viewWidth, viewHeight), cgImage.get());
 
         // Top-left corner of the div (0, 0, 100, 100)
@@ -500,7 +500,7 @@ TEST(WKWebView, SnapshotAfterScreenUpdates)
         NSInteger viewHeightInPixels = viewHeight * backingScaleFactor;
         
         uint8_t *rgba = (unsigned char *)calloc(viewWidthInPixels * viewHeightInPixels * 4, sizeof(unsigned char));
-        auto context = adoptCF(CGBitmapContextCreate(rgba, viewWidthInPixels, viewHeightInPixels, 8, 4 * viewWidthInPixels, colorSpace.get(), kCGImageAlphaPremultipliedLast | kCGBitmapByteOrder32Big));
+        auto context = adoptCF(CGBitmapContextCreate(rgba, viewWidthInPixels, viewHeightInPixels, 8, 4 * viewWidthInPixels, colorSpace.get(), static_cast<uint32_t>(kCGImageAlphaPremultipliedLast) | static_cast<uint32_t>(kCGBitmapByteOrder32Big)));
         CGContextDrawImage(context.get(), CGRectMake(0, 0, viewWidthInPixels, viewHeightInPixels), cgImage.get());
         
         NSInteger pixelIndex = getPixelIndex(0, 0, viewWidthInPixels);
@@ -563,7 +563,7 @@ TEST(WKWebView, SnapshotWithoutAfterScreenUpdates)
         NSInteger viewHeightInPixels = viewHeight * backingScaleFactor;
         
         uint8_t *rgba = (unsigned char *)calloc(viewWidthInPixels * viewHeightInPixels * 4, sizeof(unsigned char));
-        auto context = adoptCF(CGBitmapContextCreate(rgba, viewWidthInPixels, viewHeightInPixels, 8, 4 * viewWidthInPixels, colorSpace.get(), kCGImageAlphaPremultipliedLast | kCGBitmapByteOrder32Big));
+        auto context = adoptCF(CGBitmapContextCreate(rgba, viewWidthInPixels, viewHeightInPixels, 8, 4 * viewWidthInPixels, colorSpace.get(), static_cast<uint32_t>(kCGImageAlphaPremultipliedLast) | static_cast<uint32_t>(kCGBitmapByteOrder32Big)));
         CGContextDrawImage(context.get(), CGRectMake(0, 0, viewWidthInPixels, viewHeightInPixels), cgImage.get());
 
         NSInteger pixelIndex = getPixelIndex(0, 0, viewWidthInPixels);
@@ -621,7 +621,7 @@ TEST(WKWebView, SnapshotWebGL)
         NSInteger viewHeightInPixels = viewHeight * backingScaleFactor;
 
         uint8_t *rgba = (unsigned char *)calloc(viewWidthInPixels * viewHeightInPixels * 4, sizeof(unsigned char));
-        auto context = adoptCF(CGBitmapContextCreate(rgba, viewWidthInPixels, viewHeightInPixels, 8, 4 * viewWidthInPixels, colorSpace.get(), kCGImageAlphaPremultipliedLast | kCGBitmapByteOrder32Big));
+        auto context = adoptCF(CGBitmapContextCreate(rgba, viewWidthInPixels, viewHeightInPixels, 8, 4 * viewWidthInPixels, colorSpace.get(), static_cast<uint32_t>(kCGImageAlphaPremultipliedLast) | static_cast<uint32_t>(kCGBitmapByteOrder32Big)));
         CGContextDrawImage(context.get(), CGRectMake(0, 0, viewWidthInPixels, viewHeightInPixels), cgImage.get());
 
         NSInteger pixelIndex = getPixelIndex(0, 0, viewWidthInPixels);

@@ -63,12 +63,12 @@ public:
     UChar current() const { return (*m_textRun)[m_offset]; }
     UCharDirection direction() const { return atEnd() ? U_OTHER_NEUTRAL : u_charDirection(current()); }
 
-    bool operator==(const TextBoxIterator& other)
+    bool operator==(const TextBoxIterator& other) const
     {
         return m_offset == other.m_offset && m_textRun == other.m_textRun;
     }
 
-    bool operator!=(const TextBoxIterator& other) { return !operator==(other); }
+    bool operator!=(const TextBoxIterator& other) const { return !operator==(other); }
 
 private:
     const TextRun* m_textRun;

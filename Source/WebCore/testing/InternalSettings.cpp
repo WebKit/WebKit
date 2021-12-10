@@ -566,13 +566,13 @@ ExceptionOr<void>  InternalSettings::setShouldDeactivateAudioSession(bool should
     return { };
 }
 
-ExceptionOr<void> InternalSettings::setShouldMockBoldSystemFontForAccessibility(bool requires)
+ExceptionOr<void> InternalSettings::setShouldMockBoldSystemFontForAccessibility(bool should)
 {
     if (!m_page)
         return Exception { InvalidAccessError };
-    RenderTheme::singleton().setShouldMockBoldSystemFontForAccessibility(requires);
+    RenderTheme::singleton().setShouldMockBoldSystemFontForAccessibility(should);
     // FIXME: Call setShouldMockBoldSystemFontForAccessibility() on all workers.
-    FontCache::forCurrentThread().setShouldMockBoldSystemFontForAccessibility(requires);
+    FontCache::forCurrentThread().setShouldMockBoldSystemFontForAccessibility(should);
     return { };
 }
 

@@ -100,7 +100,7 @@ static RefPtr<Image> createBitmapImageAfterScalingIfNeeded(RefPtr<NativeImage>&&
     if (resolutionScale == 1 || preserveResolution == PreserveResolution::Yes)
         image = NativeImage::create(createCroppedImageIfNecessary(image->platformImage().get(), backendSize));
     else {
-        auto context = adoptCF(CGBitmapContextCreate(0, logicalSize.width(), logicalSize.height(), 8, 4 * logicalSize.width(), colorSpaceForBitmap(image->colorSpace()), kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Host));
+        auto context = adoptCF(CGBitmapContextCreate(0, logicalSize.width(), logicalSize.height(), 8, 4 * logicalSize.width(), colorSpaceForBitmap(image->colorSpace()), static_cast<uint32_t>(kCGImageAlphaPremultipliedFirst) | static_cast<uint32_t>(kCGBitmapByteOrder32Host)));
         CGContextSetBlendMode(context.get(), kCGBlendModeCopy);
         CGContextClipToRect(context.get(), FloatRect(FloatPoint::zero(), logicalSize));
         FloatSize imageSizeInUserSpace = logicalSize;
@@ -194,7 +194,7 @@ RetainPtr<CGImageRef> ImageBufferCGBackend::copyCGImageForEncoding(CFStringRef d
             return nullptr;
 
         auto imageSize = pixelBuffer->size();
-        return adoptCF(CGImageCreate(imageSize.width(), imageSize.height(), 8, 32, 4 * imageSize.width(), pixelBuffer->format().colorSpace.platformColorSpace(), kCGBitmapByteOrderDefault | kCGImageAlphaNoneSkipLast, dataProvider.get(), 0, false, kCGRenderingIntentDefault));
+        return adoptCF(CGImageCreate(imageSize.width(), imageSize.height(), 8, 32, 4 * imageSize.width(), pixelBuffer->format().colorSpace.platformColorSpace(), static_cast<uint32_t>(kCGBitmapByteOrderDefault) | static_cast<uint32_t>(kCGImageAlphaNoneSkipLast), dataProvider.get(), 0, false, kCGRenderingIntentDefault));
     }
 
     if (resolutionScale() == 1 || preserveResolution == PreserveResolution::Yes) {
@@ -208,7 +208,7 @@ RetainPtr<CGImageRef> ImageBufferCGBackend::copyCGImageForEncoding(CFStringRef d
     if (!nativeImage)
         return nullptr;
     auto image = nativeImage->platformImage();
-    auto context = adoptCF(CGBitmapContextCreate(0, backendSize().width(), backendSize().height(), 8, 4 * backendSize().width(), colorSpaceForBitmap(colorSpace()), kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Host));
+    auto context = adoptCF(CGBitmapContextCreate(0, backendSize().width(), backendSize().height(), 8, 4 * backendSize().width(), colorSpaceForBitmap(colorSpace()), static_cast<uint32_t>(kCGImageAlphaPremultipliedFirst) | static_cast<uint32_t>(kCGBitmapByteOrder32Host)));
     CGContextSetBlendMode(context.get(), kCGBlendModeCopy);
     CGContextClipToRect(context.get(), CGRectMake(0, 0, backendSize().width(), backendSize().height()));
     CGContextDrawImage(context.get(), CGRectMake(0, 0, backendSize().width(), backendSize().height()), image.get());

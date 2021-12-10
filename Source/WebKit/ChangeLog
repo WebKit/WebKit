@@ -1,5 +1,23 @@
 2021-12-09  Alex Christensen  <achristensen@webkit.org>
 
+        Prepare for transition to C++20
+        https://bugs.webkit.org/show_bug.cgi?id=234022
+
+        Reviewed by Yusuke Suzuki.
+
+        * Shared/mac/MediaFormatReader/MediaFormatReader.cpp:
+        (WebKit::MediaFormatReader::didParseTracks):
+        * Shared/mac/MediaFormatReader/MediaSampleCursor.cpp:
+        (WebKit::MediaSampleCursor::getSampleMap const):
+        * UIProcess/API/Cocoa/WKPreferences.mm:
+        (-[WKPreferences _setRequiresPageVisibilityToPlayAudio:]):
+        * UIProcess/API/Cocoa/_WKWebsiteDataStoreConfiguration.mm:
+        (-[_WKWebsiteDataStoreConfiguration setRequiresSecureHTTPSProxyConnection:]):
+        * UIProcess/WebsiteData/WebsiteDataStoreConfiguration.h:
+        (WebKit::WebsiteDataStoreConfiguration::setRequiresSecureHTTPSProxyConnection):
+
+2021-12-09  Alex Christensen  <achristensen@webkit.org>
+
         Use Span for IPC::ArrayReference and DataReference
         https://bugs.webkit.org/show_bug.cgi?id=233931
 

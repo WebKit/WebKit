@@ -25,11 +25,13 @@
 
 #pragma once
 
+#include <atomic>
+
 namespace JSC {
 
 class MacroAssembler;
 
-extern JS_EXPORT_PRIVATE volatile uint32_t g_superSamplerCount;
+extern JS_EXPORT_PRIVATE std::atomic<uint32_t> g_superSamplerCount;
 
 void initializeSuperSampler();
 
@@ -39,19 +41,19 @@ public:
         : m_doSample(doSample)
     {
         if (m_doSample)
-            g_superSamplerCount++;
+            ++g_superSamplerCount;
     }
 
     ~SuperSamplerScope()
     {
         if (m_doSample)
-            g_superSamplerCount--;
+            --g_superSamplerCount;
     }
 
     void release()
     {
         ASSERT(m_doSample);
-        g_superSamplerCount--;
+        --g_superSamplerCount;
         m_doSample = false;
     }
 

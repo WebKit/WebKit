@@ -481,9 +481,9 @@ static void checkURLArgument(NSURL *url)
     return _configuration->requiresSecureHTTPSProxyConnection();
 }
 
-- (void)setRequiresSecureHTTPSProxyConnection:(BOOL)requires
+- (void)setRequiresSecureHTTPSProxyConnection:(BOOL)requiresSecureProxy
 {
-    _configuration->setRequiresSecureHTTPSProxyConnection(requires);
+    _configuration->setRequiresSecureHTTPSProxyConnection(requiresSecureProxy);
 }
 
 - (BOOL)shouldRunServiceWorkersOnMainThreadForTesting

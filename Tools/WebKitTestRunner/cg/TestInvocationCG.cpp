@@ -53,7 +53,7 @@ static RetainPtr<CGContextRef> createCGContextFromCGImage(CGImageRef image)
 
     // Creating this bitmap in the device color space should prevent any color conversion when the image of the web view is drawn into it.
     auto colorSpace = adoptCF(CGColorSpaceCreateDeviceRGB());
-    auto context = adoptCF(CGBitmapContextCreate(0, pixelsWide, pixelsHigh, 8, rowBytes, colorSpace.get(), kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Host));
+    auto context = adoptCF(CGBitmapContextCreate(0, pixelsWide, pixelsHigh, 8, rowBytes, colorSpace.get(), static_cast<uint32_t>(kCGImageAlphaPremultipliedFirst) | static_cast<uint32_t>(kCGBitmapByteOrder32Host)));
     if (!context)
         return nullptr;
 

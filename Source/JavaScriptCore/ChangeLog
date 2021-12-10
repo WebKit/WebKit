@@ -1,3 +1,37 @@
+2021-12-09  Alex Christensen  <achristensen@webkit.org>
+
+        Prepare for transition to C++20
+        https://bugs.webkit.org/show_bug.cgi?id=234022
+
+        Reviewed by Yusuke Suzuki.
+
+        * bytecode/SuperSampler.cpp:
+        * bytecode/SuperSampler.h:
+        * heap/GCSegmentedArray.h:
+        (JSC::GCSegmentedArrayIterator::operator== const):
+        (JSC::GCSegmentedArrayIterator::operator!= const):
+        (JSC::GCSegmentedArrayIterator::operator==): Deleted.
+        (JSC::GCSegmentedArrayIterator::operator!=): Deleted.
+        * jit/RegisterSet.h:
+        (JSC::RegisterSet::iterator::operator== const):
+        (JSC::RegisterSet::iterator::operator!= const):
+        (JSC::RegisterSet::iterator::operator==): Deleted.
+        (JSC::RegisterSet::iterator::operator!=): Deleted.
+        * parser/Parser.h:
+        (JSC::ScopeRef::operator== const):
+        (JSC::ScopeRef::operator!= const):
+        (JSC::ScopeRef::operator==): Deleted.
+        (JSC::ScopeRef::operator!=): Deleted.
+        * parser/ParserTokens.h:
+        * runtime/GenericOffset.h:
+        (JSC::GenericOffset::operator== const):
+        (JSC::GenericOffset::operator!= const):
+        (JSC::GenericOffset::operator< const):
+        (JSC::GenericOffset::operator> const):
+        (JSC::GenericOffset::operator<= const):
+        (JSC::GenericOffset::operator>= const):
+        * runtime/PropertyTable.h:
+
 2021-12-09  Saam Barati  <sbarati@apple.com>
 
         Procedure::setNeedsPCToOriginMap should call Code::forcePreservationOfB3Origins

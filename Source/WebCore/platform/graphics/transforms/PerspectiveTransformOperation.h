@@ -54,6 +54,7 @@ private:
     bool isAffectedByTransformOrigin() const override { return !isIdentity(); }
     bool isRepresentableIn2D() const final { return false; }
 
+    bool operator==(const PerspectiveTransformOperation& other) const { return operator==(static_cast<const TransformOperation&>(other)); }
     bool operator==(const TransformOperation&) const override;
 
     std::optional<float> floatValue() const

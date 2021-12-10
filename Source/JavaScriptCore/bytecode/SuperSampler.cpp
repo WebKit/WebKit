@@ -33,8 +33,8 @@
 
 namespace JSC {
 
-volatile uint32_t g_superSamplerCount;
-volatile bool g_superSamplerEnabled;
+std::atomic<uint32_t> g_superSamplerCount;
+std::atomic<bool> g_superSamplerEnabled;
 
 static Lock lock;
 static double in WTF_GUARDED_BY_LOCK(lock);

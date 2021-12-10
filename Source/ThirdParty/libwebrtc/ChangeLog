@@ -1,3 +1,25 @@
+2021-12-09  Alex Christensen  <achristensen@webkit.org>
+
+        Prepare for transition to C++20
+        https://bugs.webkit.org/show_bug.cgi?id=234022
+
+        Reviewed by Yusuke Suzuki.
+
+        * Source/webrtc/common_audio/wav_header.cc:
+        * Source/webrtc/modules/audio_processing/include/aec_dump.cc:
+        * Source/webrtc/modules/audio_processing/include/aec_dump.h:
+        * Source/webrtc/modules/audio_processing/utility/delay_estimator_wrapper.cc:
+        * Source/webrtc/modules/audio_processing/vad/vad_audio_proc.h:
+        * Source/webrtc/modules/video_coding/media_opt_util.h:
+        * Source/webrtc/rtc_base/race_checker.h:
+        * Source/webrtc/rtc_base/units/unit_base.h:
+        (webrtc::rtc_units_impl::UnitBase::operator== const):
+        (webrtc::rtc_units_impl::UnitBase::operator!= const):
+        (webrtc::rtc_units_impl::UnitBase::operator<= const):
+        (webrtc::rtc_units_impl::UnitBase::operator>= const):
+        (webrtc::rtc_units_impl::UnitBase::operator> const):
+        (webrtc::rtc_units_impl::UnitBase::operator< const):
+
 2021-12-06  Youenn Fablet  <youenn@apple.com>
 
         Close WebRTC allocation sequence shared socket in case of sequence network failure

@@ -158,7 +158,7 @@ RetainPtr<CGImageRef> PixelBufferConformerCV::createImageFromPixelBuffer(CVPixel
         buffer = adoptCF(outputBuffer);
     }
 
-    CGBitmapInfo bitmapInfo = kCGBitmapByteOrder32Little | kCGImageAlphaFirst;
+    CGBitmapInfo bitmapInfo = static_cast<CGBitmapInfo>(kCGBitmapByteOrder32Little) | static_cast<CGBitmapInfo>(kCGImageAlphaFirst);
     size_t bytesPerRow = CVPixelBufferGetBytesPerRow(buffer.get());
     size_t byteLength = bytesPerRow * height;
 

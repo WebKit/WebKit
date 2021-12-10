@@ -14,6 +14,7 @@
 #include "rtc_base/checks.h"
 #include "rtc_base/platform_thread_types.h"
 #include "rtc_base/thread_annotations.h"
+#include <atomic>
 
 namespace rtc {
 
@@ -33,7 +34,7 @@ class RTC_LOCKABLE RaceChecker {
   void Release() const RTC_UNLOCK_FUNCTION();
 
   // Volatile to prevent code being optimized away in Acquire()/Release().
-  mutable volatile int access_count_ = 0;
+  mutable std::atomic<int> access_count_ = 0;
   mutable volatile PlatformThreadRef accessing_thread_;
 };
 

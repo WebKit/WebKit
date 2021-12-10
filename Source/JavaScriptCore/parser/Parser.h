@@ -950,13 +950,13 @@ struct ScopeRef {
         return ScopeRef(m_scopeStack, m_index - 1);
     }
 
-    bool operator==(const ScopeRef& other)
+    bool operator==(const ScopeRef& other) const
     {
         ASSERT(other.m_scopeStack == m_scopeStack);
         return m_index == other.m_index;
     }
 
-    bool operator!=(const ScopeRef& other)
+    bool operator!=(const ScopeRef& other) const
     {
         return !(*this == other);
     }

@@ -21,8 +21,7 @@ namespace webrtc {
 
 // Only bit `kBandFirst` through bit `kBandLast` are processed and
 // `kBandFirst` - `kBandLast` must be < 32.
-enum { kBandFirst = 12 };
-enum { kBandLast = 43 };
+enum { kBandFirst = 12, kBandLast = 43 };
 
 static __inline uint32_t SetBit(uint32_t in, int pos) {
   uint32_t mask = (1 << pos);

@@ -299,7 +299,7 @@ CGContextRef IOSurface::ensurePlatformContext(const HostWindow* hostWindow)
     if (m_cgContext)
         return m_cgContext.get();
 
-    CGBitmapInfo bitmapInfo = kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Host;
+    CGBitmapInfo bitmapInfo = static_cast<CGBitmapInfo>(kCGImageAlphaPremultipliedFirst) | static_cast<CGBitmapInfo>(kCGBitmapByteOrder32Host);
 
     size_t bitsPerComponent = 8;
     size_t bitsPerPixel = 32;

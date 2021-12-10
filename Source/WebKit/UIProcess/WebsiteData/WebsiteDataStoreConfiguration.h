@@ -177,7 +177,7 @@ public:
     void setPreventsSystemHTTPProxyAuthentication(bool prevents) { m_preventsSystemHTTPProxyAuthentication = prevents; }
 
     bool requiresSecureHTTPSProxyConnection() const { return m_requiresSecureHTTPSProxyConnection; };
-    void setRequiresSecureHTTPSProxyConnection(bool requires) { m_requiresSecureHTTPSProxyConnection = requires; }
+    void setRequiresSecureHTTPSProxyConnection(bool requiresSecureProxy) { m_requiresSecureHTTPSProxyConnection = requiresSecureProxy; }
 
     bool shouldRunServiceWorkersOnMainThreadForTesting() const { return m_shouldRunServiceWorkersOnMainThreadForTesting; }
     void setShouldRunServiceWorkersOnMainThreadForTesting(bool shouldRunOnMainThread) { m_shouldRunServiceWorkersOnMainThreadForTesting = shouldRunOnMainThread; }

@@ -84,32 +84,32 @@ public:
         return Seconds(m_value - other.m_value);
     }
 
-    constexpr bool operator==(DerivedTime other) const
+    constexpr bool operator==(const GenericTimeMixin& other) const
     {
         return m_value == other.m_value;
     }
 
-    constexpr bool operator!=(DerivedTime other) const
+    constexpr bool operator!=(const GenericTimeMixin& other) const
     {
         return m_value != other.m_value;
     }
 
-    constexpr bool operator<(DerivedTime other) const
+    constexpr bool operator<(const GenericTimeMixin& other) const
     {
         return m_value < other.m_value;
     }
 
-    constexpr bool operator>(DerivedTime other) const
+    constexpr bool operator>(const GenericTimeMixin& other) const
     {
         return m_value > other.m_value;
     }
 
-    constexpr bool operator<=(DerivedTime other) const
+    constexpr bool operator<=(const GenericTimeMixin& other) const
     {
         return m_value <= other.m_value;
     }
 
-    constexpr bool operator>=(DerivedTime other) const
+    constexpr bool operator>=(const GenericTimeMixin& other) const
     {
         return m_value >= other.m_value;
     }

@@ -136,8 +136,8 @@ const String& ResourceError::getCFErrorDomainCFNetwork() const
 
 void ResourceError::mapPlatformError()
 {
-    static_assert(NSURLErrorTimedOut == kCFURLErrorTimedOut, "NSURLErrorTimedOut needs to equal kCFURLErrorTimedOut");
-    static_assert(NSURLErrorCancelled == kCFURLErrorCancelled, "NSURLErrorCancelled needs to equal kCFURLErrorCancelled");
+    static_assert(static_cast<NSInteger>(NSURLErrorTimedOut) == static_cast<NSInteger>(kCFURLErrorTimedOut), "NSURLErrorTimedOut needs to equal kCFURLErrorTimedOut");
+    static_assert(static_cast<NSInteger>(NSURLErrorCancelled) == static_cast<NSInteger>(kCFURLErrorCancelled), "NSURLErrorCancelled needs to equal kCFURLErrorCancelled");
 
     if (!m_platformError)
         return;

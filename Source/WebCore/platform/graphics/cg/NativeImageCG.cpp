@@ -50,7 +50,7 @@ Color NativeImage::singlePixelSolidColor() const
         return Color();
 
     unsigned char pixel[4]; // RGBA
-    auto bitmapContext = adoptCF(CGBitmapContextCreate(pixel, 1, 1, 8, sizeof(pixel), sRGBColorSpaceRef(), kCGImageAlphaPremultipliedLast | kCGBitmapByteOrder32Big));
+    auto bitmapContext = adoptCF(CGBitmapContextCreate(pixel, 1, 1, 8, sizeof(pixel), sRGBColorSpaceRef(), static_cast<uint32_t>(kCGImageAlphaPremultipliedLast) | static_cast<uint32_t>(kCGBitmapByteOrder32Big)));
 
     if (!bitmapContext)
         return Color();

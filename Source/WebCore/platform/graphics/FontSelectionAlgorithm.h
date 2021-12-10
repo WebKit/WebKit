@@ -426,10 +426,6 @@ inline void add(Hasher& hasher, const FontSelectionRequest& request)
 struct FontSelectionCapabilities {
     using Range = FontSelectionRange;
 
-    FontSelectionCapabilities() = default;
-    FontSelectionCapabilities(const FontSelectionCapabilities&) = default;
-    FontSelectionCapabilities& operator=(const FontSelectionCapabilities&) = default;
-
     constexpr std::tuple<Range, Range, Range> tied() const
     {
         return WTF::tie(weight, width, slope);

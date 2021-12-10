@@ -31,7 +31,7 @@ struct InternalAPMConfig {
   InternalAPMConfig& operator=(const InternalAPMConfig&);
   InternalAPMConfig& operator=(InternalAPMConfig&&) = delete;
 
-  bool operator==(const InternalAPMConfig& other);
+  bool operator==(const InternalAPMConfig& other) const;
 
   bool aec_enabled = false;
   bool aec_delay_agnostic_enabled = false;

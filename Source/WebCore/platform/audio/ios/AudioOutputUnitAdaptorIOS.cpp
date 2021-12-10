@@ -86,7 +86,7 @@ void AudioOutputUnitAdaptor::configure(float hardwareSampleRate, unsigned number
     constexpr int bitsPerByte = 8;
     streamFormat.mSampleRate = hardwareSampleRate;
     streamFormat.mFormatID = kAudioFormatLinearPCM;
-    streamFormat.mFormatFlags = kAudioFormatFlagsNativeFloatPacked | kAudioFormatFlagIsNonInterleaved;
+    streamFormat.mFormatFlags = static_cast<AudioFormatFlags>(kAudioFormatFlagsNativeFloatPacked) | static_cast<AudioFormatFlags>(kAudioFormatFlagIsNonInterleaved);
     streamFormat.mBytesPerPacket = bytesPerFloat;
     streamFormat.mFramesPerPacket = 1;
     streamFormat.mBytesPerFrame = bytesPerFloat;

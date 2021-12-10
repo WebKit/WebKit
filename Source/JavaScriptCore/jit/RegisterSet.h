@@ -166,12 +166,12 @@ public:
             return *this;
         }
         
-        bool operator==(const iterator& other)
+        bool operator==(const iterator& other) const
         {
             return m_iter == other.m_iter;
         }
         
-        bool operator!=(const iterator& other)
+        bool operator!=(const iterator& other) const
         {
             return !(*this == other);
         }

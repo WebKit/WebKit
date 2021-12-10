@@ -91,12 +91,12 @@ class PropertyTable final : public JSCell {
             return *this;
         }
 
-        bool operator==(const ordered_iterator<T>& other)
+        bool operator==(const ordered_iterator<T>& other) const
         {
             return m_valuePtr == other.m_valuePtr;
         }
 
-        bool operator!=(const ordered_iterator<T>& other)
+        bool operator!=(const ordered_iterator<T>& other) const
         {
             return m_valuePtr != other.m_valuePtr;
         }

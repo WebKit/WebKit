@@ -88,7 +88,7 @@ TEST(WebKitLegacy, RenderInContextSnapshot)
     unsigned char* pixelBuffer = static_cast<unsigned char*>(calloc(width * height, 4));
     
     RetainPtr<CGColorSpaceRef> colorSpace = adoptCF(CGColorSpaceCreateDeviceRGB());
-    auto context = adoptCF(CGBitmapContextCreate(pixelBuffer, width, height, 8, 4 * width, colorSpace.get(), kCGImageAlphaPremultipliedLast | kCGBitmapByteOrder32Big));
+    auto context = adoptCF(CGBitmapContextCreate(pixelBuffer, width, height, 8, 4 * width, colorSpace.get(), static_cast<uint32_t>(kCGImageAlphaPremultipliedLast) | static_cast<uint32_t>(kCGBitmapByteOrder32Big)));
     
     // Flip the context
     CGContextScaleCTM(context.get(), 1, -1);

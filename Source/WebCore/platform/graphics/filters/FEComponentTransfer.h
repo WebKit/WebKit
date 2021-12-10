@@ -37,8 +37,6 @@ enum ComponentTransferType {
 };
 
 struct ComponentTransferFunction {
-    ComponentTransferFunction() = default;
-
     ComponentTransferType type { FECOMPONENTTRANSFER_TYPE_UNKNOWN };
 
     float slope { 0 };

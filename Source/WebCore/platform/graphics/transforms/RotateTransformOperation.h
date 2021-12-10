@@ -53,6 +53,7 @@ public:
     double z() const { return m_z; }
     double angle() const { return m_angle; }
 
+    bool operator==(const RotateTransformOperation& other) const { return operator==(static_cast<const TransformOperation&>(other)); }
     bool operator==(const TransformOperation&) const override;
 
     Ref<TransformOperation> blend(const TransformOperation* from, const BlendingContext&, bool blendToIdentity = false) final;

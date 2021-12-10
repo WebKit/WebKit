@@ -50,6 +50,7 @@ private:
     bool isIdentity() const override { return m_angleX == 0 && m_angleY == 0; }
     bool isAffectedByTransformOrigin() const override { return !isIdentity(); }
 
+    bool operator==(const SkewTransformOperation& other) const { return operator==(static_cast<const TransformOperation&>(other)); }
     bool operator==(const TransformOperation&) const override;
 
     bool apply(TransformationMatrix& transform, const FloatSize&) const override

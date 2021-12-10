@@ -50,22 +50,22 @@ class UnitBase {
     return value_ == MinusInfinityVal();
   }
 
-  constexpr bool operator==(const Unit_T& other) const {
+  constexpr bool operator==(const UnitBase& other) const {
     return value_ == other.value_;
   }
-  constexpr bool operator!=(const Unit_T& other) const {
+  constexpr bool operator!=(const UnitBase& other) const {
     return value_ != other.value_;
   }
-  constexpr bool operator<=(const Unit_T& other) const {
+  constexpr bool operator<=(const UnitBase& other) const {
     return value_ <= other.value_;
   }
-  constexpr bool operator>=(const Unit_T& other) const {
+  constexpr bool operator>=(const UnitBase& other) const {
     return value_ >= other.value_;
   }
-  constexpr bool operator>(const Unit_T& other) const {
+  constexpr bool operator>(const UnitBase& other) const {
     return value_ > other.value_;
   }
-  constexpr bool operator<(const Unit_T& other) const {
+  constexpr bool operator<(const UnitBase& other) const {
     return value_ < other.value_;
   }
   constexpr Unit_T RoundTo(const Unit_T& resolution) const {

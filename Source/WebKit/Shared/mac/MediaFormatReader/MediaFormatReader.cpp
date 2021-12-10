@@ -193,7 +193,7 @@ void MediaFormatReader::didParseTracks(SourceBufferPrivateClient::Initialization
     if (errorCode)
         ERROR_LOG_IF_POSSIBLE(LOGIDENTIFIER, errorCode);
 
-    m_parseTracksStatus = errorCode ? kMTPluginFormatReaderError_ParsingFailure : noErr;
+    m_parseTracksStatus = errorCode ? static_cast<OSStatus>(kMTPluginFormatReaderError_ParsingFailure) : noErr;
     m_duration = WTFMove(segment.duration);
 
     for (auto& videoTrack : segment.videoTracks) {

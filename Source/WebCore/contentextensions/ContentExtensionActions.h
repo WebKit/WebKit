@@ -67,7 +67,7 @@ using SerializedActionByte = uint8_t;
 
 template<typename T> struct ActionWithoutMetadata {
     T isolatedCopy() const { return { }; }
-    bool operator==(const T&) const { return true; }
+    bool operator==(const ActionWithoutMetadata&) const { return true; }
     void serialize(Vector<uint8_t>&) const { }
     static T deserialize(Span<const uint8_t>) { return { }; }
     static size_t serializedLength(Span<const uint8_t>) { return 0; }
@@ -76,7 +76,7 @@ template<typename T> struct ActionWithoutMetadata {
 template<typename T> struct ActionWithStringMetadata {
     const String string;
     T isolatedCopy() const { return { { string.isolatedCopy() } }; }
-    bool operator==(const T& other) const { return other.string == this->string; }
+    bool operator==(const ActionWithStringMetadata& other) const { return other.string == this->string; }
     void serialize(Vector<uint8_t>& vector) const { serializeString(vector, string); }
     static T deserialize(Span<const uint8_t> span) { return { { deserializeString(span) } }; }
     static size_t serializedLength(Span<const uint8_t> span) { return stringSerializedLength(span); }

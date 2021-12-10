@@ -91,11 +91,11 @@ public:
         CharacterType first() const { return range.first; }
         CharacterType last() const { return range.last; }
         uint32_t data() const { return targetId; }
-        bool operator==(const FakeRangeIterator& other)
+        bool operator==(const FakeRangeIterator& other) const
         {
             return this->isEnd == other.isEnd;
         }
-        bool operator!=(const FakeRangeIterator& other) { return !(*this == other); }
+        bool operator!=(const FakeRangeIterator& other) const { return !(*this == other); }
         FakeRangeIterator operator++()
         {
             isEnd = true;

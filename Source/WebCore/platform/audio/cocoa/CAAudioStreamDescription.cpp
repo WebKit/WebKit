@@ -48,7 +48,7 @@ CAAudioStreamDescription::CAAudioStreamDescription(double sampleRate, uint32_t n
     m_streamDescription.mChannelsPerFrame = numChannels;
     m_streamDescription.mBytesPerFrame = 0;
     m_streamDescription.mBytesPerPacket = 0;
-    m_streamDescription.mFormatFlags = kAudioFormatFlagsNativeEndian | kAudioFormatFlagIsPacked;
+    m_streamDescription.mFormatFlags = static_cast<AudioFormatFlags>(kAudioFormatFlagsNativeEndian) | static_cast<AudioFormatFlags>(kAudioFormatFlagIsPacked);
     m_streamDescription.mReserved = 0;
 
     int wordsize;

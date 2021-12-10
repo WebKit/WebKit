@@ -1,5 +1,42 @@
 2021-12-09  Alex Christensen  <achristensen@webkit.org>
 
+        Prepare for transition to C++20
+        https://bugs.webkit.org/show_bug.cgi?id=234022
+
+        Reviewed by Yusuke Suzuki.
+
+        In C++20, volitile is deprecated, operator== is stricter (related to the introduction of operator <=>),
+        and operations on enums of different types are stricter too.  This does the changes we can do before
+        the transition, which will be done in bug 233963.
+
+        * wtf/DateMath.h:
+        (WTF::LocalTimeOffset::operator== const):
+        (WTF::LocalTimeOffset::operator!= const):
+        (WTF::LocalTimeOffset::operator==): Deleted.
+        (WTF::LocalTimeOffset::operator!=): Deleted.
+        * wtf/FastBitVector.h:
+        (WTF::FastBitVectorImpl::operator== const):
+        (WTF::FastBitVectorImpl::operator!= const):
+        * wtf/GenericTimeMixin.h:
+        (WTF::GenericTimeMixin::operator== const):
+        (WTF::GenericTimeMixin::operator!= const):
+        (WTF::GenericTimeMixin::operator< const):
+        (WTF::GenericTimeMixin::operator> const):
+        (WTF::GenericTimeMixin::operator<= const):
+        (WTF::GenericTimeMixin::operator>= const):
+        * wtf/IteratorAdaptors.h:
+        (WTF::FilterIterator::operator== const):
+        (WTF::FilterIterator::operator!= const):
+        (WTF::TransformIterator::operator== const):
+        (WTF::TransformIterator::operator!= const):
+        * wtf/Liveness.h:
+        (WTF::Liveness::LocalCalc::Iterable::iterator::operator== const):
+        (WTF::Liveness::LocalCalc::Iterable::iterator::operator!= const):
+        (WTF::Liveness::LocalCalc::Iterable::iterator::operator==): Deleted.
+        (WTF::Liveness::LocalCalc::Iterable::iterator::operator!=): Deleted.
+
+2021-12-09  Alex Christensen  <achristensen@webkit.org>
+
         Use Span for IPC::ArrayReference and DataReference
         https://bugs.webkit.org/show_bug.cgi?id=233931
 

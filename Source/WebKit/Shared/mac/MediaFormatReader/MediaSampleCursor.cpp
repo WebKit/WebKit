@@ -240,7 +240,7 @@ OSStatus MediaSampleCursor::getSampleMap(Function&& function) const
     m_trackReader->waitForSample([&](SampleMap& samples, bool hasAllSamples) {
         if (!samples.size())
             ERROR_LOG(LOGIDENTIFIER, "track ", m_trackReader->trackID(), " finished parsing with no samples.");
-        status = samples.size() ? function(samples, hasAllSamples) : kMTPluginSampleCursorError_NoSamples;
+        status = samples.size() ? function(samples, hasAllSamples) : static_cast<OSStatus>(kMTPluginSampleCursorError_NoSamples);
         return true;
     });
     return status;

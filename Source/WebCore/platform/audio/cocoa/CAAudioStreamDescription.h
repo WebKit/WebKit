@@ -60,6 +60,7 @@ public:
     uint32_t bytesPerPacket() const;
     uint32_t formatFlags() const;
 
+    bool operator==(const CAAudioStreamDescription& other) const { return operator==(static_cast<const AudioStreamDescription&>(other)); }
     bool operator==(const AudioStreamBasicDescription& other) const;
     bool operator!=(const AudioStreamBasicDescription& other) const;
     bool operator==(const AudioStreamDescription& other) const;
