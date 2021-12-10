@@ -108,7 +108,7 @@ bool RenderSVGResourceFilter::applyResource(RenderElement& renderer, const Rende
     }
 
     // Determine absolute transformation matrix for filter. 
-    AffineTransform absoluteTransform = SVGRenderingContext::calculateTransformationToOutermostCoordinateSystem(renderer);
+    auto absoluteTransform = SVGRenderingContext::calculateTransformationToOutermostCoordinateSystem(renderer);
     if (!absoluteTransform.isInvertible()) {
         m_rendererFilterDataMap.remove(&renderer);
         return false;
@@ -147,7 +147,7 @@ bool RenderSVGResourceFilter::applyResource(RenderElement& renderer, const Rende
     }
 
     // Change the coordinate transformation applied to the filtered element to reflect the resolution of the filter.
-    AffineTransform effectiveTransform = AffineTransform(filterScale.width(), 0, 0, filterScale.height(), 0, 0);
+    auto effectiveTransform = AffineTransform(filterScale.width(), 0, 0, filterScale.height(), 0, 0);
 
 #if ENABLE(DESTINATION_COLOR_SPACE_LINEAR_SRGB)
     auto colorSpace = DestinationColorSpace::LinearSRGB();
@@ -161,7 +161,7 @@ bool RenderSVGResourceFilter::applyResource(RenderElement& renderer, const Rende
         return false;
     }
     
-    GraphicsContext& sourceGraphicContext = sourceGraphic->context();
+    auto& sourceGraphicContext = sourceGraphic->context();
   
     filterData->sourceGraphicBuffer = WTFMove(sourceGraphic);
     filterData->savedContext = context;

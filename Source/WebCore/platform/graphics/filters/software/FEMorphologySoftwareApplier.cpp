@@ -182,10 +182,10 @@ bool FEMorphologySoftwareApplier::apply(const Filter& filter, const FilterImageV
     paintingData.type = m_effect.morphologyOperator();
     paintingData.srcPixelArray = &sourcePixelArray;
     paintingData.dstPixelArray = &destinationPixelArray;
-    paintingData.width = ceilf(effectDrawingRect.width());
-    paintingData.height = ceilf(effectDrawingRect.height());
-    paintingData.radiusX = ceilf(radiusX);
-    paintingData.radiusY = ceilf(radiusY);
+    paintingData.width = effectDrawingRect.width();
+    paintingData.height = effectDrawingRect.height();
+    paintingData.radiusX = radiusX;
+    paintingData.radiusY = radiusY;
 
     applyPlatform(paintingData);
     return true;

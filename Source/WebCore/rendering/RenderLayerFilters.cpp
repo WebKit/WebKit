@@ -120,7 +120,7 @@ void RenderLayerFilters::buildFilter(RenderElement& renderer, float scaleFactor,
 {
     // If the filter fails to build, remove it from the layer. It will still attempt to
     // go through regular processing (e.g. compositing), but never apply anything.
-    // FIXME: this rebuilds the entire effects chain even if the filter style didn't change.
+    // FIXME: This rebuilds the entire effects chain even if the filter style didn't change.
     m_filter = CSSFilter::create(renderer, renderer.style().filter(), renderingMode, FloatSize { scaleFactor, scaleFactor }, Filter::ClipOperation::Unite, m_targetBoundingBox);
 }
 
@@ -158,7 +158,7 @@ GraphicsContext* RenderLayerFilters::beginFilterEffect(GraphicsContext& destinat
 
     if (m_targetBoundingBox != targetBoundingBox) {
         m_targetBoundingBox = targetBoundingBox;
-        // FIXME: this rebuilds the entire effects chain even if the filter style didn't change.
+        // FIXME: This rebuilds the entire effects chain even if the filter style didn't change.
         m_filter = CSSFilter::create(renderer, renderer.style().filter(), m_filter->renderingMode(), m_filter->filterScale(), Filter::ClipOperation::Unite, m_targetBoundingBox);
     }
 
