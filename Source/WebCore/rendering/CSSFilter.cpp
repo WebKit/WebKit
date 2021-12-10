@@ -347,6 +347,25 @@ RefPtr<FilterEffect> CSSFilter::lastEffect() const
     return downcast<FilterEffect>(function.ptr());
 }
 
+FilterEffectVector CSSFilter::effectsOfType(FilterFunction::Type filterType) const
+{
+    FilterEffectVector effects;
+
+    for (auto& function : m_functions) {
+        if (function->filterType() == filterType) {
+            effects.append({ downcast<FilterEffect>(function.ptr()) });
+            continue;
+        }
+
+        if (function->isSVGFilter()) {
+            auto& filter = downcast<SVGFilter>(function.get());
+            effects.appendVector(filter.effectsOfType(filterType));
+        }
+    }
+
+    return effects;
+}
+
 #if USE(CORE_IMAGE)
 bool CSSFilter::supportsCoreImageRendering() const
 {

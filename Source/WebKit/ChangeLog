@@ -1,3 +1,22 @@
+2021-12-09  Said Abou-Hallawa  <said@apple.com>
+
+        [GPU Process] [Filters] Add the encoding and decoding for FEImage
+        https://bugs.webkit.org/show_bug.cgi?id=234099
+
+        Reviewed by Wenson Hsieh.
+
+        Add the support to encode and decode the FEImage through FilterReference.
+        The RenderingResourceIdentifier of the Image or the ImageBuffer will be
+        used while encoding and decoding the FEImage. Resolving the decoded
+        RenderingResourceIdentifier back to an Image or ImageBuffer will happen
+        in RemoteDisplayListRecorder::drawFilteredImageBuffer).
+
+        * GPUProcess/graphics/RemoteDisplayListRecorder.cpp:
+        (WebKit::RemoteDisplayListRecorder::drawFilteredImageBuffer):
+        * Platform/IPC/FilterReference.h:
+        (IPC::FilterReference::encodeFilterEffect):
+        (IPC::FilterReference::decodeFilterEffect):
+
 2021-12-09  Aditya Keerthi  <akeerthi@apple.com>
 
         [iOS] Add SPI to enable find interactions on WKWebView

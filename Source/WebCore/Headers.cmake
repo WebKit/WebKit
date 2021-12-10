@@ -1906,12 +1906,14 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     svg/SVGLengthValue.h
     svg/SVGParserUtilities.h
     svg/SVGParsingError.h
+    svg/SVGPreserveAspectRatioValue.h
     svg/SVGStringList.h
     svg/SVGTests.h
     svg/SVGUnitTypes.h
 
     svg/graphics/SVGImageCache.h
 
+    svg/graphics/filters/SVGFEImage.h
     svg/graphics/filters/SVGFilter.h
     svg/graphics/filters/SVGFilterExpression.h
 

@@ -44,6 +44,7 @@
 #include <WebCore/FETurbulence.h>
 #include <WebCore/Filter.h>
 #include <WebCore/FilterEffectVector.h>
+#include <WebCore/SVGFEImage.h>
 #include <WebCore/SVGFilter.h>
 #include <WebCore/SourceAlpha.h>
 #include <WebCore/SourceGraphic.h>
@@ -139,7 +140,7 @@ void FilterReference::encodeFilterEffect(const WebCore::FilterEffect& effect, En
         break;
 
     case WebCore::FilterEffect::Type::FEImage:
-        // FIXME: encode FEImage.
+        downcast<WebCore::FEImage>(effect).encode(encoder);
         break;
 
     case WebCore::FilterEffect::Type::FEMerge:
@@ -229,7 +230,7 @@ RefPtr<WebCore::FilterEffect> FilterReference::decodeFilterEffect(Decoder& decod
         break;
 
     case WebCore::FilterEffect::Type::FEImage:
-        // FIXME: decode FEImage.
+        effect = WebCore::FEImage::decode(decoder);
         break;
 
     case WebCore::FilterEffect::Type::FEMerge:

@@ -53,6 +53,8 @@ public:
     bool hasFilterThatShouldBeRestrictedBySecurityOrigin() const { return m_hasFilterThatShouldBeRestrictedBySecurityOrigin; }
 
     RefPtr<FilterEffect> lastEffect() const final;
+    FilterEffectVector effectsOfType(FilterFunction::Type) const final;
+
     IntOutsets outsets() const final;
 
     void clearIntermediateResults();

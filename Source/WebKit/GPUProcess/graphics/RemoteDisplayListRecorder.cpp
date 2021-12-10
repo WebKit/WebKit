@@ -29,6 +29,7 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "RemoteDisplayListRecorderMessages.h"
+#include <WebCore/BitmapImage.h>
 
 namespace WebKit {
 using namespace WebCore;
@@ -233,6 +234,26 @@ void RemoteDisplayListRecorder::drawFilteredImageBuffer(std::optional<RenderingR
     }
 
     auto filter = filterReference.takeFilter();
+
+    for (auto& effect : filter->effectsOfType(FilterEffect::Type::FEImage)) {
+        auto& feImage = *downcast<FEImage>(effect.get());
+
+        const auto* resourceIdentifier = std::get_if<RenderingResourceIdentifier>(&feImage.sourceImage());
+        if (!resourceIdentifier) {
+            ASSERT_NOT_REACHED();
+            return;
+        }
+
+        if (auto nativeImage = resourceCache().cachedNativeImage({ *resourceIdentifier, m_webProcessIdentifier })) {
+            feImage.setImageSource(Ref<Image> { BitmapImage::create(nativeImage) });
+            continue;
+        }
+
+        if (auto imageBuffer = resourceCache().cachedImageBuffer({ *resourceIdentifier, m_webProcessIdentifier })) {
+            feImage.setImageSource({ *imageBuffer });
+            continue;
+        }
+    }
 
     handleItem(DisplayList::DrawFilteredImageBuffer(sourceImageIdentifier, sourceImageRect, WTFMove(filter)), sourceImage.get());
 }

@@ -21,6 +21,7 @@
 
 #pragma once
 
+#include "FilterEffectVector.h"
 #include "FilterFunction.h"
 #include "FloatRect.h"
 #include "GraphicsTypes.h"
@@ -60,6 +61,7 @@ public:
     FloatRect clipToMaxEffectRect(const FloatRect& imageRect, const FloatRect& primitiveSubregion) const;
 
     virtual RefPtr<FilterEffect> lastEffect() const = 0;
+    virtual FilterEffectVector effectsOfType(FilterFunction::Type) const = 0;
 
     bool clampFilterRegionIfNeeded();
 

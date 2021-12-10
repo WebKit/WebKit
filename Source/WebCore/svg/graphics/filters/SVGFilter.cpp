@@ -117,6 +117,19 @@ RefPtr<FilterEffect> SVGFilter::lastEffect() const
     return m_expression.last().effect.ptr();
 }
 
+FilterEffectVector SVGFilter::effectsOfType(FilterFunction::Type filterType) const
+{
+    HashSet<RefPtr<FilterEffect>> effects;
+
+    for (auto& term : m_expression) {
+        auto& effect = term.effect;
+        if (effect->filterType() == filterType)
+            effects.add({ effect.ptr() });
+    }
+
+    return copyToVector(effects);
+}
+
 RefPtr<FilterImage> SVGFilter::apply(const Filter&, FilterImage& sourceImage)
 {
     return apply(&sourceImage);

@@ -47,6 +47,7 @@ public:
     const SVGFilterExpression& expression() const { return m_expression; }
     
     RefPtr<FilterEffect> lastEffect() const final;
+    FilterEffectVector effectsOfType(FilterFunction::Type) const final;
 
     RefPtr<FilterImage> apply(FilterImage* sourceImage) final;
 

@@ -31,15 +31,15 @@
 
 namespace WebCore {
 
-SVGPreserveAspectRatioValue::SVGPreserveAspectRatioValue()
-    : m_align(SVG_PRESERVEASPECTRATIO_XMIDYMID)
-    , m_meetOrSlice(SVG_MEETORSLICE_MEET)
-{
-}
-
 SVGPreserveAspectRatioValue::SVGPreserveAspectRatioValue(StringView value)
 {
     parse(value);
+}
+
+SVGPreserveAspectRatioValue::SVGPreserveAspectRatioValue(SVGPreserveAspectRatioType align, SVGMeetOrSliceType meetOrSlice)
+    : m_align(align)
+    , m_meetOrSlice(meetOrSlice)
+{
 }
 
 ExceptionOr<void> SVGPreserveAspectRatioValue::setAlign(unsigned short align)

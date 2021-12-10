@@ -61,6 +61,10 @@ FloatRect FEImage::calculateImageRect(const Filter& filter, const FilterImageVec
         },
         [&] (const Ref<ImageBuffer>&) {
             return primitiveSubregion;
+        },
+        [&] (RenderingResourceIdentifier) {
+            ASSERT_NOT_REACHED();
+            return FloatRect();
         }
     );
     return filter.clipToMaxEffectRect(imageRect, primitiveSubregion);
@@ -101,6 +105,9 @@ bool FEImageSoftwareApplier::apply(const Filter& filter, const FilterImageVector
             imageRect.scale(filter.filterScale());
             imageRect = IntRect(imageRect) - result.absoluteImageRect().location();
             context.drawImageBuffer(imageBuffer, imageRect.location());
+        },
+        [&] (RenderingResourceIdentifier) {
+            ASSERT_NOT_REACHED();
         }
     );
 
