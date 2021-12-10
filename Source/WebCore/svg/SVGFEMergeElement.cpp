@@ -53,7 +53,7 @@ RefPtr<FilterEffect> SVGFEMergeElement::build(SVGFilterBuilder& filterBuilder) c
         auto mergeEffect = filterBuilder.getEffectById(mergeNode.in1());
         if (!mergeEffect)
             return nullptr;
-        mergeInputs.append(WTFMove(mergeEffect));
+        mergeInputs.append(mergeEffect.releaseNonNull());
     }
 
     mergeInputs.shrinkToFit();

@@ -155,7 +155,7 @@ void Recorder::drawFilteredImageBuffer(ImageBuffer* sourceImage, const FloatRect
     }
 
     for (auto& effect : filter.effectsOfType(FilterEffect::Type::FEImage)) {
-        bool isRecorded = WTF::switchOn(downcast<FEImage>(effect.get())->sourceImage(),
+        bool isRecorded = WTF::switchOn(downcast<FEImage>(effect.get()).sourceImage(),
             [&] (const Ref<Image>& image) {
                 if (auto nativeImage = image->nativeImage()) {
                     recordResourceUse(*nativeImage);

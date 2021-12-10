@@ -105,7 +105,7 @@ RefPtr<FilterEffect> SVGFEGaussianBlurElement::build(SVGFilterBuilder& filterBui
         return nullptr;
 
     auto effect = FEGaussianBlur::create(stdDeviationX(), stdDeviationY(), edgeMode());
-    effect->inputEffects() = { WTFMove(input1) };
+    effect->inputEffects() = { input1.releaseNonNull() };
     return effect;
 }
 

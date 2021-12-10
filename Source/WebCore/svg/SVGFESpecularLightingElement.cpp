@@ -179,7 +179,7 @@ RefPtr<FilterEffect> SVGFESpecularLightingElement::build(SVGFilterBuilder& filte
     Color color = renderer->style().colorByApplyingColorFilter(renderer->style().svgStyle().lightingColor());
 
     auto effect = FESpecularLighting::create(color, surfaceScale(), specularConstant(), specularExponent(), kernelUnitLengthX(), kernelUnitLengthY(), WTFMove(lightSource));
-    effect->inputEffects() = { WTFMove(input1) };
+    effect->inputEffects() = { input1.releaseNonNull() };
     return effect;
 }
 

@@ -77,7 +77,7 @@ RefPtr<FilterEffect> SVGFETileElement::build(SVGFilterBuilder& filterBuilder) co
         return nullptr;
 
     auto effect = FETile::create();
-    effect->inputEffects() = { WTFMove(input1) };
+    effect->inputEffects() = { input1.releaseNonNull() };
     return effect;
 }
 

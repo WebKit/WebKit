@@ -140,7 +140,7 @@ RefPtr<FilterEffect> SVGFECompositeElement::build(SVGFilterBuilder& filterBuilde
         return nullptr;
 
     auto effect = FEComposite::create(svgOperator(), k1(), k2(), k3(), k4());
-    effect->inputEffects() = { WTFMove(input1), WTFMove(input2) };
+    effect->inputEffects() = { input1.releaseNonNull(), input2.releaseNonNull() };
     return effect;
 }
 

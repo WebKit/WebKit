@@ -51,7 +51,7 @@ public:
     FilterImageVector takeImageInputs(FilterImageVector& stack) const;
 
     FilterEffectVector& inputEffects() { return m_inputEffects; }
-    FilterEffect* inputEffect(unsigned) const;
+    FilterEffect& inputEffect(unsigned) const;
 
     RefPtr<FilterImage> apply(const Filter&, const FilterImageVector& inputs, const std::optional<FilterEffectGeometry>& = std::nullopt);
 

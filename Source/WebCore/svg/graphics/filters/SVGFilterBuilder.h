@@ -54,18 +54,18 @@ public:
 
     void appendEffectToEffectReferences(RefPtr<FilterEffect>&&, RenderObject*);
 
-    inline FilterEffectSet& effectReferences(FilterEffect* effect)
+    inline FilterEffectSet& effectReferences(FilterEffect& effect)
     {
         // Only allowed for effects belongs to this builder.
-        ASSERT(m_effectReferences.contains(effect));
-        return m_effectReferences.find(effect)->value;
+        ASSERT(m_effectReferences.contains(&effect));
+        return m_effectReferences.find(&effect)->value;
     }
 
     // Required to change the attributes of a filter during an svgAttributeChanged.
     inline FilterEffect* effectByRenderer(RenderObject* object) { return m_effectRenderer.get(object); }
 
     void clearEffects();
-    void clearResultsRecursive(FilterEffect*);
+    void clearResultsRecursive(FilterEffect&);
 
     void setupBuiltinEffects(Ref<FilterEffect> sourceGraphic);
     RefPtr<FilterEffect> buildFilterEffects(SVGFilterElement&);
@@ -79,7 +79,7 @@ private:
     }
 
     std::optional<FilterEffectGeometry> effectGeometry(FilterEffect&) const;
-    bool buildEffectExpression(const RefPtr<FilterEffect>&, FilterEffectVector& stack, unsigned level, SVGFilterExpression&) const;
+    bool buildEffectExpression(FilterEffect&, FilterEffectVector& stack, unsigned level, SVGFilterExpression&) const;
 
     HashMap<AtomString, RefPtr<FilterEffect>> m_builtinEffects;
     HashMap<AtomString, RefPtr<FilterEffect>> m_namedEffects;

@@ -147,10 +147,10 @@ RefPtr<FilterImage> FilterEffect::apply(const Filter& filter, const FilterImageV
     return m_filterImage;
 }
 
-FilterEffect* FilterEffect::inputEffect(unsigned number) const
+FilterEffect& FilterEffect::inputEffect(unsigned number) const
 {
     ASSERT_WITH_SECURITY_IMPLICATION(number < m_inputEffects.size());
-    return m_inputEffects.at(number).get();
+    return m_inputEffects.at(number);
 }
 
 void FilterEffect::clearResult()

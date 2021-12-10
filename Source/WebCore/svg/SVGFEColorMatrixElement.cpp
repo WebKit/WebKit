@@ -142,7 +142,7 @@ RefPtr<FilterEffect> SVGFEColorMatrixElement::build(SVGFilterBuilder& filterBuil
     }
 
     auto effect = FEColorMatrix::create(filterType, WTFMove(filterValues));
-    effect->inputEffects() = { WTFMove(input1) };
+    effect->inputEffects() = { input1.releaseNonNull() };
     return effect;
 }
 

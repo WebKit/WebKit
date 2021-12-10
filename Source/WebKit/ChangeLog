@@ -1,3 +1,13 @@
+2021-12-10  Said Abou-Hallawa  <said@apple.com>
+
+        [GPU Process] [Filters] Make FilterEffectVector a Vector of Ref<FilterEffect>
+        https://bugs.webkit.org/show_bug.cgi?id=234108
+
+        Reviewed by Cameron McCormack.
+
+        * GPUProcess/graphics/RemoteDisplayListRecorder.cpp:
+        (WebKit::RemoteDisplayListRecorder::drawFilteredImageBuffer):
+
 2021-12-10  Per Arne Vollan  <pvollan@apple.com>
 
         [WP][macOS] Add required system call

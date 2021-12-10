@@ -315,7 +315,7 @@ bool CSSFilter::buildFilterFunctions(RenderElement& renderer, const FilterOperat
 
         if (effect) {
             effect->setOperatingColorSpace(DestinationColorSpace::SRGB());
-            effect->inputEffects() = { WTFMove(previousEffect) };
+            effect->inputEffects() = { previousEffect.releaseNonNull() };
             m_functions.append({ *effect });
             previousEffect = WTFMove(effect);
         }
@@ -353,7 +353,7 @@ FilterEffectVector CSSFilter::effectsOfType(FilterFunction::Type filterType) con
 
     for (auto& function : m_functions) {
         if (function->filterType() == filterType) {
-            effects.append({ downcast<FilterEffect>(function.ptr()) });
+            effects.append({ downcast<FilterEffect>(function.get()) });
             continue;
         }
 

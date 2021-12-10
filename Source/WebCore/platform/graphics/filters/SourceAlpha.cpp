@@ -46,7 +46,7 @@ SourceAlpha::SourceAlpha(FilterEffect& sourceEffect)
     : FilterEffect(FilterEffect::Type::SourceAlpha)
 {
     setOperatingColorSpace(sourceEffect.operatingColorSpace());
-    inputEffects().append(&sourceEffect);
+    inputEffects().append(sourceEffect);
 }
 
 std::unique_ptr<FilterEffectApplier> SourceAlpha::createApplier(const Filter&) const

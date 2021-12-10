@@ -119,12 +119,12 @@ RefPtr<FilterEffect> SVGFilter::lastEffect() const
 
 FilterEffectVector SVGFilter::effectsOfType(FilterFunction::Type filterType) const
 {
-    HashSet<RefPtr<FilterEffect>> effects;
+    HashSet<Ref<FilterEffect>> effects;
 
     for (auto& term : m_expression) {
         auto& effect = term.effect;
         if (effect->filterType() == filterType)
-            effects.add({ effect.ptr() });
+            effects.add(effect);
     }
 
     return copyToVector(effects);

@@ -31,6 +31,6 @@ namespace WebCore {
 
 class FilterEffect;
 
-using FilterEffectVector = Vector<RefPtr<FilterEffect>>;
+using FilterEffectVector = Vector<Ref<FilterEffect>>;
 
 } // namespace WebCore

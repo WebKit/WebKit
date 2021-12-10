@@ -109,7 +109,7 @@ RefPtr<FilterEffect> SVGFEBlendElement::build(SVGFilterBuilder& filterBuilder) c
         return nullptr;
 
     auto effect = FEBlend::create(mode());
-    effect->inputEffects() = { WTFMove(input1), WTFMove(input2) };
+    effect->inputEffects() = { input1.releaseNonNull(), input2.releaseNonNull() };
     return effect;
 }
 

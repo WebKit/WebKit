@@ -247,7 +247,7 @@ RefPtr<FilterEffect> SVGFEConvolveMatrixElement::build(SVGFilterBuilder& filterB
     }
 
     auto effect = FEConvolveMatrix::create(IntSize(orderXValue, orderYValue), divisorValue, bias(), IntPoint(targetXValue, targetYValue), edgeMode(), FloatPoint(kernelUnitLengthXValue, kernelUnitLengthYValue), preserveAlpha(), kernelMatrix);
-    effect->inputEffects() = { WTFMove(input1) };
+    effect->inputEffects() = { input1.releaseNonNull() };
     return effect;
 }
 

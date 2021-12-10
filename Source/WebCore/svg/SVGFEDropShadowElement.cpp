@@ -116,7 +116,7 @@ RefPtr<FilterEffect> SVGFEDropShadowElement::build(SVGFilterBuilder& filterBuild
     float opacity = svgStyle.floodOpacity();
 
     auto effect = FEDropShadow::create(stdDeviationX(), stdDeviationY(), dx(), dy(), color, opacity);
-    effect->inputEffects() = { WTFMove(input1) };
+    effect->inputEffects() = { input1.releaseNonNull() };
     return effect;
 }
 

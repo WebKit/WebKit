@@ -126,7 +126,7 @@ RefPtr<FilterEffect> SVGFEMorphologyElement::build(SVGFilterBuilder& filterBuild
         return nullptr;
 
     auto effect = FEMorphology::create(svgOperator(), xRadius, yRadius);
-    effect->inputEffects() = { WTFMove(input1) };
+    effect->inputEffects() = { input1.releaseNonNull() };
     return effect;
 }
 

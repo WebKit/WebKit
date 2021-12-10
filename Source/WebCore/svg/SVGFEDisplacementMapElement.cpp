@@ -124,7 +124,7 @@ RefPtr<FilterEffect> SVGFEDisplacementMapElement::build(SVGFilterBuilder& filter
         return nullptr;
 
     auto effect = FEDisplacementMap::create(xChannelSelector(), yChannelSelector(), scale());
-    effect->inputEffects() = { WTFMove(input1), WTFMove(input2) };
+    effect->inputEffects() = { input1.releaseNonNull(), input2.releaseNonNull() };
     return effect;
 }
 

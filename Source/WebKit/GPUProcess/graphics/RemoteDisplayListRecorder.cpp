@@ -236,7 +236,7 @@ void RemoteDisplayListRecorder::drawFilteredImageBuffer(std::optional<RenderingR
     auto filter = filterReference.takeFilter();
 
     for (auto& effect : filter->effectsOfType(FilterEffect::Type::FEImage)) {
-        auto& feImage = *downcast<FEImage>(effect.get());
+        auto& feImage = downcast<FEImage>(effect.get());
 
         const auto* resourceIdentifier = std::get_if<RenderingResourceIdentifier>(&feImage.sourceImage());
         if (!resourceIdentifier) {

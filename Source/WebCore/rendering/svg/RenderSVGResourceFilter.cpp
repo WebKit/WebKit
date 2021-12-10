@@ -245,7 +245,7 @@ void RenderSVGResourceFilter::primitiveAttributeChanged(RenderObject* object, co
         // or none of them will be changed.
         if (!primitve->setFilterEffectAttribute(effect, attribute))
             return;
-        builder->clearResultsRecursive(effect);
+        builder->clearResultsRecursive(*effect);
 
         // Repaint the image on the screen.
         markClientForInvalidation(*objectFilterDataPair.key, RepaintInvalidation);

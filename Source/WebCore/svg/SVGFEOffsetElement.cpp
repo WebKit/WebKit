@@ -88,7 +88,7 @@ RefPtr<FilterEffect> SVGFEOffsetElement::build(SVGFilterBuilder& filterBuilder) 
         return nullptr;
 
     auto effect = FEOffset::create(dx(), dy());
-    effect->inputEffects() = { WTFMove(input1) };
+    effect->inputEffects() = { input1.releaseNonNull() };
     return effect;
 }
 
