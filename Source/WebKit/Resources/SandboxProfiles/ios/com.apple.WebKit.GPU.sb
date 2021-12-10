@@ -808,7 +808,7 @@
         SYS_writev)))
 
 (when (defined? 'SYS__map_with_linking_np)
-    (allow syscall-unix SYS__map_with_linking_np))
+    (allow syscall-unix (syscall-number SYS__map_with_linking_np)))
 
 (when (defined? 'syscall-mach)
     (allow syscall-mach (with telemetry))
