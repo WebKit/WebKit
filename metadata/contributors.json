@@ -4899,6 +4899,18 @@
    },
    {
       "emails" : [
+         "mikhail@igalia.com",
+         "mikhail.ramalho@gmail.com"
+      ],
+      "github" : "mikhailramalho",
+      "name" : "Mikhail R. Gadelha",
+      "nicks" : [
+         "mgadelha"
+      ],
+      "status" : "committer"
+   },
+   {
+      "emails" : [
          "qinmin@chromium.org"
       ],
       "name" : "Min Qin"
