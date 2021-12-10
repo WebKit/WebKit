@@ -1,3 +1,20 @@
+2021-12-10  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [WPT] Import resources/accesskey.js
+        https://bugs.webkit.org/show_bug.cgi?id=234137
+
+        Reviewed by Rob Buis.
+
+        This just imports the changes from this WPT PR:
+        https://github.com/web-platform-tests/wpt/pull/32000
+
+        Which will allow to write other WPT tests using pressAccessKey() method.
+
+        * web-platform-tests/resources/accesskey.js: Added.
+        (pressAccessKey):
+        * web-platform-tests/resources/w3c-import.log:
+        * web-platform-tests/shadow-dom/accesskey.tentative.html:
+
 2021-12-09  Chris Dumez  <cdumez@apple.com>
 
         Add basic support for launching a SharedWorker
