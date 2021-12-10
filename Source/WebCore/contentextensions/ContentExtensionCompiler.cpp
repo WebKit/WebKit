@@ -279,25 +279,6 @@ std::error_code compileRuleList(ContentExtensionCompilationClient& client, Strin
     });
 #endif
 
-    bool domainConditionSeen = false;
-    bool topURLConditionSeen = false;
-    for (const auto& rule : parsedRuleList) {
-        switch (rule.trigger().conditionType) {
-        case Trigger::ConditionType::None:
-            break;
-        case Trigger::ConditionType::IfDomain:
-        case Trigger::ConditionType::UnlessDomain:
-            domainConditionSeen = true;
-            break;
-        case Trigger::ConditionType::IfTopURL:
-        case Trigger::ConditionType::UnlessTopURL:
-            topURLConditionSeen = true;
-            break;
-        }
-    }
-    if (topURLConditionSeen && domainConditionSeen)
-        return ContentExtensionError::JSONTopURLAndDomainConditions;
-
 #if CONTENT_EXTENSIONS_PERFORMANCE_REPORTING
     MonotonicTime patternPartitioningStart = MonotonicTime::now();
 #endif
@@ -307,7 +288,7 @@ std::error_code compileRuleList(ContentExtensionCompilationClient& client, Strin
     Vector<SerializedActionByte> actions;
     Vector<unsigned> actionLocations = serializeActions(parsedRuleList, actions);
     LOG_LARGE_STRUCTURES(actions, actions.capacity() * sizeof(SerializedActionByte));
-    client.writeActions(WTFMove(actions), domainConditionSeen);
+    client.writeActions(WTFMove(actions));
 
     UniversalActionSet universalActionsWithoutConditions;
     UniversalActionSet universalActionsWithConditions;
@@ -344,12 +325,10 @@ std::error_code compileRuleList(ContentExtensionCompilationClient& client, Strin
             }
         } else {
             switch (trigger.conditionType) {
-            case Trigger::ConditionType::IfDomain:
             case Trigger::ConditionType::IfTopURL:
                 actionLocationAndFlags |= IfConditionFlag;
                 break;
             case Trigger::ConditionType::None:
-            case Trigger::ConditionType::UnlessDomain:
             case Trigger::ConditionType::UnlessTopURL:
                 ASSERT(!(actionLocationAndFlags & IfConditionFlag));
                 break;
@@ -365,20 +344,14 @@ std::error_code compileRuleList(ContentExtensionCompilationClient& client, Strin
                 return ContentExtensionError::JSONInvalidRegex;
             }
             for (const String& condition : trigger.conditions) {
-                if (domainConditionSeen) {
-                    ASSERT(!topURLConditionSeen);
-                    topURLFilters.addDomain(actionLocationAndFlags, condition);
-                } else {
-                    ASSERT(topURLConditionSeen);
-                    status = topURLFilterParser.addPattern(condition, trigger.topURLConditionIsCaseSensitive, actionLocationAndFlags);
-                    if (status == URLFilterParser::MatchesEverything) {
-                        universalTopURLActions.add(actionLocationAndFlags);
-                        status = URLFilterParser::Ok;
-                    }
-                    if (status != URLFilterParser::Ok) {
-                        dataLogF("Error while parsing %s: %s\n", condition.utf8().data(), URLFilterParser::statusString(status).utf8().data());
-                        return ContentExtensionError::JSONInvalidRegex;
-                    }
+                status = topURLFilterParser.addPattern(condition, trigger.topURLConditionIsCaseSensitive, actionLocationAndFlags);
+                if (status == URLFilterParser::MatchesEverything) {
+                    universalTopURLActions.add(actionLocationAndFlags);
+                    status = URLFilterParser::Ok;
+                }
+                if (status != URLFilterParser::Ok) {
+                    dataLogF("Error while parsing %s: %s\n", condition.utf8().data(), URLFilterParser::statusString(status).utf8().data());
+                    return ContentExtensionError::JSONInvalidRegex;
                 }
             }
         }

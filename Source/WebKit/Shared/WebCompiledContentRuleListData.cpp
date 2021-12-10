@@ -49,7 +49,6 @@ void WebCompiledContentRuleListData::encode(IPC::Encoder& encoder) const
 #endif
     encoder << SharedMemory::IPCHandle { WTFMove(handle), dataSize };
 
-    encoder << conditionsApplyOnlyToDomain;
     encoder << actionsOffset;
     encoder << actionsSize;
     encoder << filtersWithoutConditionsBytecodeOffset;
@@ -74,11 +73,6 @@ std::optional<WebCompiledContentRuleListData> WebCompiledContentRuleListData::de
         return std::nullopt;
     auto data = SharedMemory::map(ipcHandle.handle, SharedMemory::Protection::ReadOnly);
     if (!data)
-        return std::nullopt;
-
-    std::optional<bool> conditionsApplyOnlyToDomain;
-    decoder >> conditionsApplyOnlyToDomain;
-    if (!conditionsApplyOnlyToDomain)
         return std::nullopt;
 
     std::optional<size_t> actionsOffset;
@@ -134,7 +128,6 @@ std::optional<WebCompiledContentRuleListData> WebCompiledContentRuleListData::de
     return {{
         WTFMove(*identifier),
         data.releaseNonNull(),
-        WTFMove(*conditionsApplyOnlyToDomain),
         WTFMove(*actionsOffset),
         WTFMove(*actionsSize),
         WTFMove(*filtersWithoutConditionsBytecodeOffset),

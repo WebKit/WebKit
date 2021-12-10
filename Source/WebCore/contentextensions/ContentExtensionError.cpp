@@ -81,8 +81,6 @@ const std::error_category& contentExtensionErrorCategory()
                 return "Domains must be lower case ASCII. Use punycode to encode non-ASCII characters.";
             case ContentExtensionError::JSONMultipleConditions:
                 return "A trigger cannot have more than one condition (if-domain, unless-domain, if-top-url, or unless-top-url)";
-            case ContentExtensionError::JSONTopURLAndDomainConditions:
-                return "A list cannot have if-domain and unless-domain mixed with if-top-url and unless-top-url";
             case ContentExtensionError::JSONInvalidNotification:
                 return "A notify action must have a string notification";
             case ContentExtensionError::ErrorWritingSerializedNFA:

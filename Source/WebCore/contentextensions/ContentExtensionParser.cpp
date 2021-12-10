@@ -38,9 +38,7 @@
 #include <wtf/JSONValues.h>
 #include <wtf/text/WTFString.h>
 
-namespace WebCore {
-
-namespace ContentExtensions {
+namespace WebCore::ContentExtensions {
     
 static bool containsOnlyASCIIWithNoUppercase(const String& domain)
 {
@@ -66,15 +64,42 @@ static Expected<Vector<String>, std::error_code> getStringList(const JSON::Array
 
 static Expected<Vector<String>, std::error_code> getDomainList(const JSON::Array& arrayObject)
 {
-    auto strings = getStringList(arrayObject);
-    if (!strings.has_value())
-        return strings;
-    for (auto& domain : strings.value()) {
+    auto domains = getStringList(arrayObject);
+    if (!domains)
+        return domains;
+    
+    Vector<String> regexes;
+    regexes.reserveInitialCapacity(domains->size());
+    for (auto& domain : *domains) {
         // Domains should be punycode encoded lower case.
         if (!containsOnlyASCIIWithNoUppercase(domain))
             return makeUnexpected(ContentExtensionError::JSONDomainNotLowerCaseASCII);
+
+        bool allowSubdomains = false;
+        if (domain.startsWith('*')) {
+            allowSubdomains = true;
+            domain = domain.substring(1);
+        }
+
+        std::array<std::pair<UChar, const char*>, 9> escapeTable { {
+            { '\\', "\\\\" },
+            { '{', "\\{" },
+            { '}', "\\}" },
+            { '[', "\\[" },
+            { '[', "\\[" },
+            { '.', "\\." },
+            { '?', "\\?" },
+            { '*', "\\*" },
+            { '$', "\\$" }
+        } };
+        for (auto& pair : escapeTable)
+            domain = domain.replace(pair.first, pair.second);
+
+        const char* protocolRegex = "[a-z][a-z+.-]*:\\/\\/";
+        const char* allowSubdomainsRegex = "(.*\\.)*";
+        regexes.uncheckedAppend(makeString(protocolRegex, allowSubdomains ? allowSubdomainsRegex : "", domain, "[:/]"));
     }
-    return strings;
+    return regexes;
 }
 
 template<typename T>
@@ -154,10 +179,10 @@ static Expected<Trigger, std::error_code> loadTrigger(const JSON::Object& ruleOb
         return { };
     };
 
-    if (auto error = checkCondition("if-domain"_s, getDomainList, Trigger::ConditionType::IfDomain))
+    if (auto error = checkCondition("if-domain"_s, getDomainList, Trigger::ConditionType::IfTopURL))
         return makeUnexpected(error);
 
-    if (auto error = checkCondition("unless-domain"_s, getDomainList, Trigger::ConditionType::UnlessDomain))
+    if (auto error = checkCondition("unless-domain"_s, getDomainList, Trigger::ConditionType::UnlessTopURL))
         return makeUnexpected(error);
 
     if (auto error = checkCondition("if-top-url"_s, getStringList, Trigger::ConditionType::IfTopURL))
@@ -294,7 +319,6 @@ Expected<Vector<ContentExtensionRule>, std::error_code> parseRuleList(const Stri
     return ruleList;
 }
 
-} // namespace ContentExtensions
-} // namespace WebCore
+} // namespace WebCore::ContentExtensions
 
 #endif // ENABLE(CONTENT_EXTENSIONS)

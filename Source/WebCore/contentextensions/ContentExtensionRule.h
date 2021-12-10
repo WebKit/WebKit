@@ -47,10 +47,8 @@ struct Trigger {
     bool topURLConditionIsCaseSensitive { false };
     ResourceFlags flags { 0 };
     Vector<String> conditions;
-    enum class ConditionType {
+    enum class ConditionType : uint8_t {
         None,
-        IfDomain,
-        UnlessDomain,
         IfTopURL,
         UnlessTopURL,
     } conditionType { ConditionType::None };

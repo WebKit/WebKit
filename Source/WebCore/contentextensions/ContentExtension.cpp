@@ -121,7 +121,7 @@ void ContentExtension::populateConditionCacheIfNeeded(const URL& topURL)
     if (m_cachedTopURL != topURL) {
         DFABytecodeInterpreter interpreter(m_compiledExtension->topURLFiltersBytecode());
         constexpr ResourceFlags allLoadTypesAndResourceTypes = LoadTypeMask | ResourceTypeMask | LoadContextMask;
-        String string = m_compiledExtension->conditionsApplyOnlyToDomain() ? topURL.host().toString() : topURL.string();
+        String string = topURL.string();
         auto topURLActions = interpreter.interpret(string.utf8(), allLoadTypesAndResourceTypes);
         
         m_cachedTopURLActions.clear();

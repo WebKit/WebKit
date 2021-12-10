@@ -67,7 +67,6 @@ struct CompiledContentExtensionData {
     Vector<ContentExtensions::DFABytecode> filtersWithConditions;
     Vector<ContentExtensions::DFABytecode> topURLFilters;
     Vector<ContentExtensions::DFABytecode> frameURLFilters;
-    bool conditionsApplyOnlyToDomain { false };
 };
 
 class InMemoryContentExtensionCompilationClient final : public ContentExtensions::ContentExtensionCompilationClient {
@@ -84,7 +83,7 @@ public:
 private:
     void writeSource(String&&) final { }
 
-    void writeActions(Vector<ContentExtensions::SerializedActionByte>&& actions, bool conditionsApplyOnlyToDomain) final
+    void writeActions(Vector<ContentExtensions::SerializedActionByte>&& actions) final
     {
         EXPECT_FALSE(finalized);
         EXPECT_EQ(m_data.actions.size(), 0ull);
@@ -93,7 +92,6 @@ private:
         EXPECT_EQ(m_data.topURLFilters.size(), 0ull);
         EXPECT_EQ(m_data.actions.size(), 0ull);
         m_data.actions.appendVector(actions);
-        m_data.conditionsApplyOnlyToDomain = conditionsApplyOnlyToDomain;
     }
     
     void writeFiltersWithoutConditionsBytecode(Vector<ContentExtensions::DFABytecode>&& bytecode) final
@@ -149,7 +147,6 @@ private:
     Span<const uint8_t> filtersWithConditionsBytecode() const final { return { m_data.filtersWithConditions.data(), m_data.filtersWithConditions.size() }; }
     Span<const uint8_t> topURLFiltersBytecode() const final { return { m_data.topURLFilters.data(), m_data.topURLFilters.size() }; }
     Span<const uint8_t> frameURLFiltersBytecode() const final { return { m_data.frameURLFilters.data(), m_data.frameURLFilters.size() }; }
-    bool conditionsApplyOnlyToDomain() const final { return m_data.conditionsApplyOnlyToDomain; }
 
     InMemoryCompiledContentExtension(CompiledContentExtensionData&& data)
         : m_data(WTFMove(data))
@@ -171,13 +168,17 @@ static std::pair<Vector<WebCore::ContentExtensions::Action>, Vector<String>> all
     return { WTFMove(actions), WTFMove(identifiersApplyingStylesheets) };
 }
 
-void static testRequest(const ContentExtensions::ContentExtensionsBackend& contentExtensionsBackend, const ResourceLoadInfo& resourceLoadInfo, Vector<size_t> expectedActions, size_t stylesheets = 1)
+#define testRequest(...) testRequestImpl(__LINE__, __VA_ARGS__)
+
+void static testRequestImpl(int line, const ContentExtensions::ContentExtensionsBackend& contentExtensionsBackend, const ResourceLoadInfo& resourceLoadInfo, Vector<size_t> expectedActions, size_t stylesheets = 1)
 {
     auto actions = allActionsForResourceLoad(contentExtensionsBackend, resourceLoadInfo);
     unsigned expectedSize = actions.first.size();
     EXPECT_EQ(expectedActions.size(), expectedSize);
-    if (expectedActions.size() != expectedSize)
+    if (expectedActions.size() != expectedSize) {
+        WTFLogAlways("Test failure at line %d", line);
         return;
+    }
 
     for (unsigned i = 0; i < expectedActions.size(); ++i)
         EXPECT_EQ(expectedActions[i], actions.first[i].data().index());
@@ -972,7 +973,6 @@ TEST_F(ContentExtensionTest, StringCombining)
     ASSERT_EQ(data.filtersWithoutConditions.size(), 288u);
     ASSERT_EQ(data.filtersWithConditions.size(), 5u);
     ASSERT_EQ(data.topURLFilters.size(), 5u);
-    ASSERT_FALSE(data.conditionsApplyOnlyToDomain);
 
     auto extensionWithFlags = InMemoryCompiledContentExtension::create("["
         "{\"action\":{\"type\":\"notify\",\"notification\":\"AAA\"},\"trigger\":{\"url-filter\":\"A\"}},"
@@ -1544,8 +1544,8 @@ TEST_F(ContentExtensionTest, InvalidJSON)
     checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-domain\":[\"a\"],\"if-top-url\":[\"a\"]}}]", ContentExtensionError::JSONMultipleConditions);
     checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-top-url\":[],\"unless-domain\":[\"a\"]}}]", ContentExtensionError::JSONMultipleConditions);
     checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-top-url\":[\"a\"],\"if-domain\":[\"a\"]}}]", ContentExtensionError::JSONMultipleConditions);
-    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-top-url\":[\"a\"]}}, {\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-domain\":[\"a\"]}}]", ContentExtensionError::JSONTopURLAndDomainConditions);
-    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-top-url\":[\"a\"]}}, {\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"unless-domain\":[\"a\"]}}]", ContentExtensionError::JSONTopURLAndDomainConditions);
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-top-url\":[\"a\"]}}, {\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-domain\":[\"a\"]}}]", { });
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-top-url\":[\"a\"]}}, {\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"unless-domain\":[\"a\"]}}]", { });
     checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"test\\\\.html\", \"unless-top-url\":[\"[\"]}}]", ContentExtensionError::JSONInvalidRegex);
     checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\", \"unexpected-identifier-should-be-ignored\":5}}]", { });
 

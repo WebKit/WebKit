@@ -112,9 +112,9 @@ struct ContentRuleListMetaData {
     uint64_t filtersWithoutConditionsBytecodeSize { 0 };
     uint64_t filtersWithConditionsBytecodeSize { 0 };
     uint64_t conditionedFiltersBytecodeSize { 0 };
-    uint32_t conditionsApplyOnlyToDomain { false };
+    uint32_t unused32bits { false };
     uint64_t frameURLFiltersBytecodeSize { 0 };
-    uint64_t unused { 0 }; // Additional space on disk reserved so we can add something without incrementing the version number.
+    uint64_t unused64bits { 0 }; // Additional space on disk reserved so we can add something without incrementing the version number.
     
     size_t fileSize() const
     {
@@ -138,9 +138,9 @@ static WebKit::NetworkCache::Data encodeContentRuleListMetaData(const ContentRul
     encoder << metaData.filtersWithoutConditionsBytecodeSize;
     encoder << metaData.filtersWithConditionsBytecodeSize;
     encoder << metaData.conditionedFiltersBytecodeSize;
-    encoder << metaData.conditionsApplyOnlyToDomain;
+    encoder << metaData.unused32bits;
     encoder << metaData.frameURLFiltersBytecodeSize;
-    encoder << metaData.unused;
+    encoder << metaData.unused64bits;
 
     ASSERT(encoder.bufferSize() == CurrentVersionFileHeaderSize);
     return WebKit::NetworkCache::Data(encoder.buffer(), encoder.bufferSize());
@@ -199,11 +199,11 @@ static std::optional<ContentRuleListMetaData> decodeContentRuleListMetaData(cons
         return std::nullopt;
     metaData.conditionedFiltersBytecodeSize = WTFMove(*conditionedFiltersBytecodeSize);
 
-    std::optional<uint32_t> conditionsApplyOnlyToDomain;
-    decoder >> conditionsApplyOnlyToDomain;
-    if (!conditionsApplyOnlyToDomain)
+    std::optional<uint32_t> unused32bits;
+    decoder >> unused32bits;
+    if (!unused32bits)
         return std::nullopt;
-    metaData.conditionsApplyOnlyToDomain = WTFMove(*conditionsApplyOnlyToDomain);
+    metaData.unused32bits = 0;
 
     if (metaData.version < 12)
         return metaData;
@@ -218,7 +218,7 @@ static std::optional<ContentRuleListMetaData> decodeContentRuleListMetaData(cons
     decoder >> unused;
     if (!unused)
         return std::nullopt;
-    metaData.unused = 0;
+    metaData.unused64bits = 0;
 
     return metaData;
 }
@@ -269,7 +269,6 @@ static Expected<MappedData, std::error_code> compiledToFile(WTF::String&& json, 
             ASSERT(!metaData.filtersWithoutConditionsBytecodeSize);
             ASSERT(!metaData.filtersWithConditionsBytecodeSize);
             ASSERT(!metaData.conditionedFiltersBytecodeSize);
-            ASSERT(!metaData.conditionsApplyOnlyToDomain);
         }
         
         void writeSource(WTF::String&& sourceJSON) final
@@ -313,14 +312,13 @@ static Expected<MappedData, std::error_code> compiledToFile(WTF::String&& json, 
             writeToFile(WebKit::NetworkCache::Data(bytecode.data(), bytecode.size()));
         }
 
-        void writeActions(Vector<SerializedActionByte>&& actions, bool conditionsApplyOnlyToDomain) final
+        void writeActions(Vector<SerializedActionByte>&& actions) final
         {
             ASSERT(!m_filtersWithoutConditionsBytecodeWritten);
             ASSERT(!m_filtersWithConditionBytecodeWritten);
             ASSERT(!m_conditionFiltersBytecodeWritten);
             ASSERT(!m_actionsWritten);
             m_actionsWritten += actions.size();
-            m_conditionsApplyOnlyToDomain = conditionsApplyOnlyToDomain;
             writeToFile(WebKit::NetworkCache::Data(actions.data(), actions.size()));
         }
         
@@ -331,7 +329,6 @@ static Expected<MappedData, std::error_code> compiledToFile(WTF::String&& json, 
             m_metaData.filtersWithoutConditionsBytecodeSize = m_filtersWithoutConditionsBytecodeWritten;
             m_metaData.filtersWithConditionsBytecodeSize = m_filtersWithConditionBytecodeWritten;
             m_metaData.conditionedFiltersBytecodeSize = m_conditionFiltersBytecodeWritten;
-            m_metaData.conditionsApplyOnlyToDomain = m_conditionsApplyOnlyToDomain;
             
             WebKit::NetworkCache::Data header = encodeContentRuleListMetaData(m_metaData);
             if (!m_fileError && seekFile(m_fileHandle, 0ll, FileSeekOrigin::Beginning) == -1) {
@@ -363,7 +360,6 @@ static Expected<MappedData, std::error_code> compiledToFile(WTF::String&& json, 
         size_t m_conditionFiltersBytecodeWritten { 0 };
         size_t m_actionsWritten { 0 };
         size_t m_sourceWritten { 0 };
-        bool m_conditionsApplyOnlyToDomain { false };
         bool m_fileError { false };
     };
 
@@ -429,7 +425,6 @@ static Ref<API::ContentRuleList> createExtension(const WTF::String& identifier, 
     auto compiledContentRuleListData = WebKit::WebCompiledContentRuleListData(
         WTF::String(identifier),
         sharedMemory.releaseNonNull(),
-        data.metaData.conditionsApplyOnlyToDomain,
         headerAndSourceSize,
         data.metaData.actionsSize,
         headerAndSourceSize
@@ -464,6 +459,7 @@ static WTF::String getContentRuleListSourceFromMappedFile(const MappedData& mapp
     case 10:
     case 11:
     case 12:
+    case 13:
         if (!mappedData.metaData.sourceSize)
             return { };
             

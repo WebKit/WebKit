@@ -43,7 +43,6 @@ public:
     virtual Span<const uint8_t> topURLFiltersBytecode() const = 0;
     virtual Span<const uint8_t> frameURLFiltersBytecode() const = 0;
     virtual Span<const uint8_t> serializedActions() const = 0;
-    virtual bool conditionsApplyOnlyToDomain() const = 0;
 };
 
 } // namespace WebCore::ContentExtensions

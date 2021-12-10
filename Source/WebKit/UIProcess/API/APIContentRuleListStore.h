@@ -56,7 +56,7 @@ public:
     // to prevent crashing while loading old data.
     // Also update getContentRuleListSourceFromMappedFile to be able to find the original JSON
     // source from old versions.
-    static constexpr uint32_t CurrentContentRuleListFileVersion = 12;
+    static constexpr uint32_t CurrentContentRuleListFileVersion = 13;
 
     static ContentRuleListStore& defaultStore();
     static Ref<ContentRuleListStore> storeWithPath(const WTF::String& storePath);

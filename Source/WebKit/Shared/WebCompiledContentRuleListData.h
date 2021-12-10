@@ -41,10 +41,9 @@ namespace WebKit {
 
 class WebCompiledContentRuleListData {
 public:
-    WebCompiledContentRuleListData(String&& identifier, Ref<SharedMemory>&& data, bool conditionsApplyOnlyToDomain, size_t actionsOffset, size_t actionsSize, size_t filtersWithoutConditionsBytecodeOffset, size_t filtersWithoutConditionsBytecodeSize, size_t filtersWithConditionsBytecodeOffset, size_t filtersWithConditionsBytecodeSize, size_t topURLFiltersBytecodeOffset, size_t topURLFiltersBytecodeSize, size_t frameURLFiltersBytecodeOffset, size_t frameURLFiltersBytecodeSize)
+    WebCompiledContentRuleListData(String&& identifier, Ref<SharedMemory>&& data, size_t actionsOffset, size_t actionsSize, size_t filtersWithoutConditionsBytecodeOffset, size_t filtersWithoutConditionsBytecodeSize, size_t filtersWithConditionsBytecodeOffset, size_t filtersWithConditionsBytecodeSize, size_t topURLFiltersBytecodeOffset, size_t topURLFiltersBytecodeSize, size_t frameURLFiltersBytecodeOffset, size_t frameURLFiltersBytecodeSize)
         : identifier(WTFMove(identifier))
         , data(WTFMove(data))
-        , conditionsApplyOnlyToDomain(conditionsApplyOnlyToDomain)
         , actionsOffset(actionsOffset)
         , actionsSize(actionsSize)
         , filtersWithoutConditionsBytecodeOffset(filtersWithoutConditionsBytecodeOffset)
@@ -63,7 +62,6 @@ public:
 
     String identifier;
     Ref<SharedMemory> data;
-    bool conditionsApplyOnlyToDomain { 0 };
     size_t actionsOffset { 0 };
     size_t actionsSize { 0 };
     size_t filtersWithoutConditionsBytecodeOffset { 0 };

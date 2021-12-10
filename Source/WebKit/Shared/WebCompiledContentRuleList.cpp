@@ -44,11 +44,6 @@ WebCompiledContentRuleList::~WebCompiledContentRuleList()
 {
 }
 
-bool WebCompiledContentRuleList::conditionsApplyOnlyToDomain() const
-{
-    return m_data.conditionsApplyOnlyToDomain;
-}
-
 Span<const uint8_t> WebCompiledContentRuleList::filtersWithoutConditionsBytecode() const
 {
     return spanWithOffsetAndLength(m_data.filtersWithoutConditionsBytecodeOffset, m_data.filtersWithoutConditionsBytecodeSize);

@@ -1,3 +1,26 @@
+2021-12-10  Alex Christensen  <achristensen@webkit.org>
+
+        Move if-domain and unless-domain conversion to WKContentRuleList parsing
+        https://bugs.webkit.org/show_bug.cgi?id=234126
+
+        Reviewed by Tim Hatcher.
+
+        * Shared/WebCompiledContentRuleList.cpp:
+        (WebKit::WebCompiledContentRuleList::conditionsApplyOnlyToDomain const): Deleted.
+        * Shared/WebCompiledContentRuleList.h:
+        * Shared/WebCompiledContentRuleListData.cpp:
+        (WebKit::WebCompiledContentRuleListData::encode const):
+        (WebKit::WebCompiledContentRuleListData::decode):
+        * Shared/WebCompiledContentRuleListData.h:
+        (WebKit::WebCompiledContentRuleListData::WebCompiledContentRuleListData):
+        * UIProcess/API/APIContentRuleListStore.cpp:
+        (API::encodeContentRuleListMetaData):
+        (API::decodeContentRuleListMetaData):
+        (API::compiledToFile):
+        (API::createExtension):
+        (API::getContentRuleListSourceFromMappedFile):
+        * UIProcess/API/APIContentRuleListStore.h:
+
 2021-12-10  Per Arne Vollan  <pvollan@apple.com>
 
         [WP] Block access to container manager service for Mail

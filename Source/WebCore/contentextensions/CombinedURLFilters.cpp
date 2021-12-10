@@ -142,48 +142,6 @@ bool CombinedURLFilters::isEmpty() const
     return m_prefixTreeRoot->edges.isEmpty();
 }
 
-void CombinedURLFilters::addDomain(uint64_t actionId, const String& domain)
-{
-    unsigned domainLength = domain.length();
-    if (domainLength && domain[0] == '*') {
-        // If domain starts with a '*' then it means match domain and its subdomains, like (^|.)domain$
-        // This way a domain of "*webkit.org" will match "bugs.webkit.org" and "webkit.org".
-        Vector<Term> prependDot;
-        Vector<Term> prependBeginningOfLine;
-        prependDot.reserveInitialCapacity(domainLength + 2);
-        prependBeginningOfLine.reserveInitialCapacity(domainLength); // This is just no .* at the beginning.
-        
-        Term canonicalDotStar(Term::UniversalTransition);
-        canonicalDotStar.quantify(AtomQuantifier::ZeroOrMore);
-        prependDot.uncheckedAppend(canonicalDotStar);
-        prependDot.uncheckedAppend(Term('.', true));
-        
-        for (unsigned i = 1; i < domainLength; i++) {
-            ASSERT(isASCII(domain[i]));
-            ASSERT(!isASCIIUpper(domain[i]));
-            prependDot.uncheckedAppend(Term(domain[i], true));
-            prependBeginningOfLine.uncheckedAppend(Term(domain[i], true));
-        }
-        prependDot.uncheckedAppend(Term::EndOfLineAssertionTerm);
-        prependBeginningOfLine.uncheckedAppend(Term::EndOfLineAssertionTerm);
-        
-        addPattern(actionId, prependDot);
-        addPattern(actionId, prependBeginningOfLine);
-    } else {
-        // This is like adding ^domain$, but interpreting domain as a series of characters, not a regular expression.
-        // "webkit.org" will match "webkit.org" but not "bugs.webkit.org".
-        Vector<Term> prependBeginningOfLine;
-        prependBeginningOfLine.reserveInitialCapacity(domainLength + 1); // This is just no .* at the beginning.
-        for (unsigned i = 0; i < domainLength; i++) {
-            ASSERT(isASCII(domain[i]));
-            ASSERT(!isASCIIUpper(domain[i]));
-            prependBeginningOfLine.uncheckedAppend(Term(domain[i], true));
-        }
-        prependBeginningOfLine.uncheckedAppend(Term::EndOfLineAssertionTerm);
-        addPattern(actionId, prependBeginningOfLine);
-    }
-}
-
 void CombinedURLFilters::addPattern(uint64_t actionId, const Vector<Term>& pattern)
 {
     ASSERT_WITH_MESSAGE(!pattern.isEmpty(), "The parser should have excluded empty patterns before reaching CombinedURLFilters.");
