@@ -343,12 +343,12 @@ void WebUserContentControllerProxy::didPostMessage(WebPageProxyIdentifier pagePr
         return;
 
     if (!handler->client().supportsAsyncReply()) {
-        handler->client().didPostMessage(*page, WTFMove(frameInfoData), handler->world(),  WebCore::SerializedScriptValue::adopt(dataReference.vector()));
+        handler->client().didPostMessage(*page, WTFMove(frameInfoData), handler->world(),  WebCore::SerializedScriptValue::adopt({ dataReference }));
         reply({ }, { });
         return;
     }
 
-    handler->client().didPostMessageWithAsyncReply(*page, WTFMove(frameInfoData), handler->world(),  WebCore::SerializedScriptValue::adopt(dataReference.vector()), [reply = WTFMove(reply)](API::SerializedScriptValue* value, const String& errorMessage) mutable {
+    handler->client().didPostMessageWithAsyncReply(*page, WTFMove(frameInfoData), handler->world(),  WebCore::SerializedScriptValue::adopt({ dataReference }), [reply = WTFMove(reply)](API::SerializedScriptValue* value, const String& errorMessage) mutable {
         if (errorMessage.isNull()) {
             ASSERT(value);
             reply({ value->internalRepresentation().toWireBytes() }, { });

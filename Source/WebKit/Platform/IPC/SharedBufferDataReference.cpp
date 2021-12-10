@@ -33,7 +33,7 @@ namespace IPC {
 
 void SharedBufferDataReference::encode(Encoder& encoder) const
 {
-    if (m_data.isEmpty()) {
+    if (m_data.empty()) {
         SharedBufferCopy::encode(encoder);
         return;
     }

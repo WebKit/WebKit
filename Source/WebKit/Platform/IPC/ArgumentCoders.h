@@ -57,46 +57,28 @@ template<typename T> struct SimpleArgumentCoder {
     }
 };
 
-template<typename T, size_t Extent> struct ArgumentCoder<ArrayReference<T, Extent>> {
-    using ArrayReferenceType = ArrayReference<T, Extent>;
+template<typename T, size_t Extent> struct ArgumentCoder<Span<T, Extent>> {
     template<typename Encoder>
-    static void encode(Encoder& encoder, const ArrayReferenceType& arrayReference)
+    static void encode(Encoder& encoder, const Span<T, Extent>& span)
     {
-        if (!Extent)
-            return;
-        encoder.encodeFixedLengthData(reinterpret_cast<const uint8_t*>(arrayReference.data()), arrayReference.size() * sizeof(T), alignof(T));
+        if constexpr (Extent == WTF::dynamic_extent)
+            encoder << static_cast<uint64_t>(span.size());
+        encoder.encodeFixedLengthData(reinterpret_cast<const uint8_t*>(span.data()), span.size() * sizeof(T), alignof(T));
     }
     template<typename Decoder>
-    static std::optional<ArrayReferenceType> decode(Decoder& decoder)
-    {
-        if (!Extent)
-            return ArrayReferenceType();
-        const uint8_t* data = decoder.decodeFixedLengthReference(Extent * sizeof(T), alignof(T));
-        if (!data)
-            return std::nullopt;
-        return ArrayReferenceType(reinterpret_cast<const T*>(data), Extent);
-    }
-};
-
-template<typename T> struct ArgumentCoder<ArrayReference<T, arrayReferenceDynamicExtent>> {
-    using ArrayReferenceType = ArrayReference<T, arrayReferenceDynamicExtent>;
-    template<typename Encoder>
-    static void encode(Encoder& encoder, const ArrayReferenceType& arrayReference)
-    {
-        encoder << static_cast<uint64_t>(arrayReference.size());
-        if (!arrayReference.size())
-            return;
-        encoder.encodeFixedLengthData(reinterpret_cast<const uint8_t*>(arrayReference.data()), arrayReference.size() * sizeof(T), alignof(T));
-    }
-    template<typename Decoder>
-    static std::optional<ArrayReferenceType> decode(Decoder& decoder)
+    static std::optional<Span<T, Extent>> decode(Decoder& decoder)
     {
         std::optional<uint64_t> size;
-        decoder >> size;
-        if (!size)
-            return std::nullopt;
-        if (!*size)
-            return ArrayReferenceType();
+        if constexpr (Extent == WTF::dynamic_extent) {
+            decoder >> size;
+            if (!size)
+                return std::nullopt;
+            if (!*size)
+                return Span<T, Extent>();
+        } else {
+            size = Extent;
+            static_assert(Extent, "Can't decode a fixed size of 0");
+        }
 
         auto dataSize = CheckedSize { *size } * sizeof(T);
         if (UNLIKELY(dataSize.hasOverflowed()))
@@ -105,7 +87,7 @@ template<typename T> struct ArgumentCoder<ArrayReference<T, arrayReferenceDynami
         const uint8_t* data = decoder.decodeFixedLengthReference(dataSize, alignof(T));
         if (!data)
             return std::nullopt;
-        return ArrayReferenceType(reinterpret_cast<const T*>(data), static_cast<size_t>(*size));
+        return Span<T, Extent>(reinterpret_cast<const T*>(data), static_cast<size_t>(*size));
     }
 };
 

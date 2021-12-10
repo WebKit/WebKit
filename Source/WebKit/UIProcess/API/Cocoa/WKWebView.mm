@@ -1640,7 +1640,7 @@ inline OptionSet<WebKit::FindOptions> toFindOptions(WKFindConfiguration *configu
         floatRect = WebCore::FloatRect(pdfConfiguration.rect);
 
     _page->drawToPDF(frameID, floatRect, [handler = makeBlockPtr(completionHandler)](const IPC::DataReference& pdfData) {
-        if (pdfData.isEmpty()) {
+        if (pdfData.empty()) {
             handler(nil, createNSError(WKErrorUnknown).get());
             return;
         }

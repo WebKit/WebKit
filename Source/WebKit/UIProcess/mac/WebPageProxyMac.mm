@@ -460,7 +460,7 @@ static NSString *pathToPDFOnDisk(const String& suggestedFilename)
 
 void WebPageProxy::savePDFToTemporaryFolderAndOpenWithNativeApplication(const String& suggestedFilename, FrameInfoData&& frameInfo, const IPC::DataReference& data, const String& pdfUUID)
 {
-    if (data.isEmpty()) {
+    if (data.empty()) {
         WTFLogAlways("Cannot save empty PDF file to the temporary directory.");
         return;
     }

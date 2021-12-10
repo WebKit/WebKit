@@ -654,6 +654,9 @@ public:
             TypeOperations::uninitializedCopy(data, data + dataSize, begin());
     }
 
+    Vector(Span<const T> span)
+        : Vector(span.data(), span.size()) { }
+
     Vector(std::initializer_list<T> initializerList)
     {
         reserveInitialCapacity(initializerList.size());
@@ -707,6 +710,7 @@ public:
     static ptrdiff_t sizeMemoryOffset() { return OBJECT_OFFSETOF(Vector, m_size); }
     size_t capacity() const { return Base::capacity(); }
     bool isEmpty() const { return !size(); }
+    Span<const T> span() const { return { data(), size() }; }
 
     T& at(size_t i)
     {

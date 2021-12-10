@@ -274,7 +274,7 @@ private:
                 return;
             }
 
-            auto value = SerializedScriptValue::createFromWireBytes(resultValue.vector());
+            auto value = SerializedScriptValue::createFromWireBytes({ resultValue });
             completionHandler(value.ptr(), { });
         };
 

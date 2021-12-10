@@ -509,7 +509,7 @@ static String& replaceSelectionPasteboardName()
 void WebPage::replaceSelectionWithPasteboardData(const Vector<String>& types, const IPC::DataReference& data)
 {
     for (auto& type : types)
-        WebPasteboardOverrides::sharedPasteboardOverrides().addOverride(replaceSelectionPasteboardName(), type, data.vector());
+        WebPasteboardOverrides::sharedPasteboardOverrides().addOverride(replaceSelectionPasteboardName(), type, { data });
 
     readSelectionFromPasteboard(replaceSelectionPasteboardName(), [](bool) { });
 

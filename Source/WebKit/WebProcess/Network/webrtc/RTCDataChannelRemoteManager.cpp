@@ -146,7 +146,7 @@ void RTCDataChannelRemoteManager::receiveData(WebCore::RTCDataChannelIdentifier 
     Vector<uint8_t> buffer;
     String text;
     if (isRaw)
-        buffer = data.vector();
+        buffer = Vector(data);
     else
         text = String::fromUTF8(data.data(), data.size());
 

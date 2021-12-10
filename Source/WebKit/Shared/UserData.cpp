@@ -440,7 +440,7 @@ bool UserData::decode(IPC::Decoder& decoder, RefPtr<API::Object>& result)
         if (!decoder.decode(dataReference))
             return false;
 
-        result = API::SerializedScriptValue::adopt(dataReference.vector());
+        result = API::SerializedScriptValue::adopt({ dataReference });
         break;
     }
 

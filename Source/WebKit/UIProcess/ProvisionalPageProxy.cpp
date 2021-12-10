@@ -439,7 +439,7 @@ void ProvisionalPageProxy::requestPasswordForQuickLookDocumentInMainFrame(const 
 #if PLATFORM(COCOA)
 void ProvisionalPageProxy::registerWebProcessAccessibilityToken(const IPC::DataReference& data)
 {
-    m_accessibilityToken = data.vector();
+    m_accessibilityToken = Vector(data);
 }
 #endif
 

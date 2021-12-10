@@ -167,7 +167,7 @@ auto SandboxExtension::Handle::decode(IPC::Decoder& decoder) -> std::optional<Ha
     if (!decoder.decode(dataReference))
         return std::nullopt;
 
-    if (dataReference.isEmpty())
+    if (dataReference.empty())
         return {{ }};
 
     Handle handle;

@@ -67,7 +67,7 @@ DownloadProxy::~DownloadProxy()
 
 static RefPtr<API::Data> createData(const IPC::DataReference& data)
 {
-    if (data.isEmpty())
+    if (data.empty())
         return nullptr;
     return API::Data::create(data.data(), data.size());
 }

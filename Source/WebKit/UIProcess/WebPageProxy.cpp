@@ -1522,7 +1522,7 @@ RefPtr<API::Navigation> WebPageProxy::loadData(const IPC::DataReference& data, c
     if (!hasRunningProcess())
         launchProcess({ }, ProcessLaunchReason::InitialProcess);
 
-    auto navigation = m_navigationState->createLoadDataNavigation(makeUnique<API::SubstituteData>(data.vector(), MIMEType, encoding, baseURL, userData));
+    auto navigation = m_navigationState->createLoadDataNavigation(makeUnique<API::SubstituteData>(Vector(data), MIMEType, encoding, baseURL, userData));
 
     if (shouldForceForegroundPriorityForClientNavigation())
         navigation->setClientNavigationActivity(process().throttler().foregroundActivity("Client navigation"_s));
@@ -1583,7 +1583,7 @@ RefPtr<API::Navigation> WebPageProxy::loadSimulatedRequest(WebCore::ResourceRequ
     if (!hasRunningProcess())
         launchProcess(RegistrableDomain { simulatedRequest.url() }, ProcessLaunchReason::InitialProcess);
 
-    auto navigation = m_navigationState->createSimulatedLoadWithDataNavigation(ResourceRequest(simulatedRequest), makeUnique<API::SubstituteData>(data.vector(), ResourceResponse(simulatedResponse), WebCore::SubstituteData::SessionHistoryVisibility::Visible), m_backForwardList->currentItem());
+    auto navigation = m_navigationState->createSimulatedLoadWithDataNavigation(ResourceRequest(simulatedRequest), makeUnique<API::SubstituteData>(Vector(data), ResourceResponse(simulatedResponse), WebCore::SubstituteData::SessionHistoryVisibility::Visible), m_backForwardList->currentItem());
 
     if (shouldForceForegroundPriorityForClientNavigation())
         navigation->setClientNavigationActivity(process().throttler().foregroundActivity("Client navigation"_s));
@@ -4339,7 +4339,7 @@ void WebPageProxy::runJavaScriptInFrameInScriptWorld(RunJavaScriptParameters&& p
     sendWithAsyncReply(Messages::WebPage::RunJavaScriptInFrameInScriptWorld(parameters, frameID, world.worldData()), [activity = WTFMove(activity), callbackFunction = WTFMove(callbackFunction)] (const IPC::DataReference& dataReference, std::optional<ExceptionDetails>&& details) mutable {
         if (details)
             return callbackFunction(makeUnexpected(WTFMove(*details)));
-        if (dataReference.isEmpty())
+        if (dataReference.empty())
             return callbackFunction({ nullptr });
         Vector<uint8_t> data;
         data.reserveInitialCapacity(dataReference.size());
@@ -9250,7 +9250,7 @@ void WebPageProxy::wrapCryptoKey(const Vector<uint8_t>& key, CompletionHandler<v
     Vector<uint8_t> masterKey;
 
     if (auto keyData = m_navigationClient->webCryptoMasterKey(*this))
-        masterKey = keyData->dataReference().vector();
+        masterKey = Vector(keyData->dataReference());
 
     Vector<uint8_t> wrappedKey;
     bool succeeded = wrapSerializedCryptoKey(masterKey, key, wrappedKey);
@@ -9264,7 +9264,7 @@ void WebPageProxy::unwrapCryptoKey(const Vector<uint8_t>& wrappedKey, Completion
     Vector<uint8_t> masterKey;
 
     if (auto keyData = m_navigationClient->webCryptoMasterKey(*this))
-        masterKey = keyData->dataReference().vector();
+        masterKey = Vector(keyData->dataReference());
 
     Vector<uint8_t> key;
     bool succeeded = unwrapSerializedCryptoKey(masterKey, wrappedKey, key);

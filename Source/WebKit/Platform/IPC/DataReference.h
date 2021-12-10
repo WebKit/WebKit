@@ -29,6 +29,6 @@
 
 namespace IPC {
 
-using DataReference = ArrayReference<uint8_t, arrayReferenceDynamicExtent>;
+using DataReference = Span<const uint8_t>;
 
 } // namespace IPC

@@ -672,7 +672,7 @@ std::optional<RetainPtr<CFURLRef>> ArgumentCoder<RetainPtr<CFURLRef>>::decode(De
 #if USE(FOUNDATION)
     // FIXME: Move this to ArgumentCodersCFMac.mm and change this file back to be C++
     // instead of Objective-C++.
-    if (urlBytes->isEmpty()) {
+    if (urlBytes->empty()) {
         // CFURL can't hold an empty URL, unlike NSURL.
         // FIXME: This discards base URL, which seems incorrect.
         return {{ (__bridge CFURLRef)[NSURL URLWithString:@""] }};
@@ -685,7 +685,7 @@ std::optional<RetainPtr<CFURLRef>> ArgumentCoder<RetainPtr<CFURLRef>>::decode(De
     return WTFMove(result);
 }
 
-enum class CGColorSpaceEncodingScheme { Name, PropertyList };
+enum class CGColorSpaceEncodingScheme : bool { Name, PropertyList };
 
 template<typename Encoder>
 void ArgumentCoder<CGColorSpaceRef>::encode(Encoder& encoder, CGColorSpaceRef colorSpace)
@@ -897,14 +897,6 @@ template<> struct EnumTraits<IPC::CFType> {
         IPC::CFType::CGColorSpace,
         IPC::CFType::Nullptr,
         IPC::CFType::Unknown
-    >;
-};
-
-template<> struct EnumTraits<IPC::CGColorSpaceEncodingScheme> {
-    using values = EnumValues<
-        IPC::CGColorSpaceEncodingScheme,
-        IPC::CGColorSpaceEncodingScheme::Name,
-        IPC::CGColorSpaceEncodingScheme::PropertyList
     >;
 };
 

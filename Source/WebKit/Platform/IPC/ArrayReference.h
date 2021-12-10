@@ -26,95 +26,11 @@
 #pragma once
 
 #include <limits>
+#include <wtf/Span.h>
 #include <wtf/Vector.h>
 
 namespace IPC {
 
-inline constexpr size_t arrayReferenceDynamicExtent = std::numeric_limits<size_t>::max();
-
-template <typename T, size_t Extent = arrayReferenceDynamicExtent>
-class ArrayReference;
-
-template <typename T>
-class ArrayReference<T, arrayReferenceDynamicExtent> {
-public:
-    ArrayReference() = default;
-
-    ArrayReference(const T* data, size_t size)
-        : m_data(data)
-        , m_size(size)
-    {
-    }
-
-    template <size_t inlineCapacity>
-    ArrayReference(const Vector<T, inlineCapacity>& vector)
-        : m_data(vector.data())
-        , m_size(vector.size())
-    {
-    }
-
-    bool isEmpty() const { return !m_size; }
-
-    size_t size() const { return m_size; }
-    const T* data() const
-    {
-        if (isEmpty())
-            return nullptr;
-        return m_data;
-    }
-
-    Vector<T> vector() const
-    {
-        Vector<T> result;
-        result.append(m_data, m_size);
-
-        return result;
-    }
-
-private:
-    const T* m_data { nullptr };
-    size_t m_size { 0 };
-};
-
-template <typename T, size_t Extent>
-class ArrayReference {
-public:
-    ArrayReference() = default;
-
-    ArrayReference(const T* data, size_t size)
-        : m_data(data)
-    {
-        ASSERT_UNUSED(size, size == Extent);
-    }
-
-    template <size_t inlineCapacity>
-    ArrayReference(const Vector<T, inlineCapacity>& vector)
-        : m_data(vector.data())
-    {
-        ASSERT(vector.size() == Extent);
-    }
-
-    constexpr bool isEmpty() const { return !Extent; }
-
-    constexpr size_t size() const { return Extent; }
-
-    const T* data() const
-    {
-        if (isEmpty())
-            return nullptr;
-        return m_data;
-    }
-
-    Vector<T> vector() const
-    {
-        return { m_data, Extent };
-    }
-
-private:
-    const T* m_data { nullptr };
-};
-
-template<typename T, size_t inlineCapacity>
-ArrayReference(const WTF::Vector<T, inlineCapacity>&) -> ArrayReference<T>;
+template <typename T, size_t Extent = WTF::dynamic_extent> using ArrayReference = Span<const T, Extent>;
 
 } // namespace IPC

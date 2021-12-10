@@ -899,7 +899,7 @@ static void storeAccessibilityRemoteConnectionInformation(id element, pid_t pid,
     auto retainedSelf = retainPtr(self);
     auto pair = _page->computePagesForPrintingAndDrawToPDF(frameID, printInfo, [retainedSelf](const IPC::DataReference& pdfData) {
         retainedSelf->_pdfPrintCallbackID = 0;
-        if (pdfData.isEmpty())
+        if (pdfData.empty())
             return;
 
         auto data = adoptCF(CFDataCreate(kCFAllocatorDefault, pdfData.data(), pdfData.size()));

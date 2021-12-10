@@ -294,7 +294,7 @@ void WebSocketChannel::didReceiveBinaryData(IPC::DataReference&& data)
 
     m_inspector.didReceiveWebSocketFrame(m_document.get(), createWebSocketFrameForWebInspector(data.data(), data.size(), WebSocketFrame::OpCode::OpCodeBinary));
 
-    m_client->didReceiveBinaryData(data.vector());
+    m_client->didReceiveBinaryData({ data });
 }
 
 void WebSocketChannel::didClose(unsigned short code, String&& reason)
