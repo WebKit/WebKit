@@ -159,8 +159,18 @@ typedef std::pair<WebKit::InteractionInformationRequest, InteractionInformationC
 #define FOR_EACH_INSERT_TEXT_FROM_CAMERA_WKCONTENTVIEW_ACTION(M)
 #endif
 
+#if HAVE(UIFINDINTERACTION)
+#define FOR_EACH_FIND_WKCONTENTVIEW_ACTION(M) \
+    M(find) \
+    M(findNext) \
+    M(findPrevious)
+#else
+#define FOR_EACH_FIND_WKCONTENTVIEW_ACTION(M)
+#endif
+
 #define FOR_EACH_WKCONTENTVIEW_ACTION(M) \
     FOR_EACH_INSERT_TEXT_FROM_CAMERA_WKCONTENTVIEW_ACTION(M) \
+    FOR_EACH_FIND_WKCONTENTVIEW_ACTION(M) \
     M(_addShortcut) \
     M(_define) \
     M(_lookup) \

@@ -122,6 +122,12 @@ enum class TapHandlingResult : uint8_t;
 - (void)replace:(id)sender;
 - (void)_translate:(id)sender;
 
+#if HAVE(UIFINDINTERACTION)
+- (void)find:(id)sender;
+- (void)findNext:(id)sender;
+- (void)findPrevious:(id)sender;
+#endif
+
 - (void)_nextAccessoryTab:(id)sender;
 - (void)_previousAccessoryTab:(id)sender;
 

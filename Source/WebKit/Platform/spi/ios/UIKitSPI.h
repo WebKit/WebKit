@@ -1521,6 +1521,19 @@ typedef NS_ENUM(NSUInteger, _UIContextMenuLayout) {
 @end
 #endif
 
+#if HAVE(UIFINDINTERACTION)
+
+@interface _UIFindInteraction (Staging_84486967)
+
+- (void)presentFindNavigatorShowingReplace:(BOOL)replaceVisible;
+
+- (void)findNext;
+- (void)findPrevious;
+
+@end
+
+#endif
+
 WTF_EXTERN_C_BEGIN
 
 BOOL UIKeyboardEnabledInputModesAllowOneToManyShortcuts(void);

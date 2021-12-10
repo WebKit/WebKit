@@ -3969,6 +3969,11 @@ WEBCORE_COMMAND_FOR_WEBVIEW(pasteAndMatchStyle);
     }
 #endif // ENABLE(IMAGE_ANALYSIS)
 
+#if HAVE(UIFINDINTERACTION)
+    if (action == @selector(find:) || action == @selector(findNext:) || action == @selector(findPrevious:))
+        return self.webView._findInteractionEnabled;
+#endif
+
     return [super canPerformAction:action withSender:sender];
 }
 
@@ -9975,6 +9980,21 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
 }
 
 #if HAVE(UIFINDINTERACTION)
+
+- (void)findForWebView:(id)sender
+{
+    [self.webView._findInteraction presentFindNavigatorShowingReplace:NO];
+}
+
+- (void)findNextForWebView:(id)sender
+{
+    [self.webView._findInteraction findNext];
+}
+
+- (void)findPreviousForWebView:(id)sender
+{
+    [self.webView._findInteraction findPrevious];
+}
 
 - (void)performTextSearchWithQueryString:(NSString *)string usingOptions:(_UITextSearchOptions *)options resultAggregator:(id<_UITextSearchAggregator>)aggregator
 {
