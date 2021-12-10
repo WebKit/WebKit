@@ -1,3 +1,25 @@
+2021-12-10  Chris Dumez  <cdumez@apple.com>
+
+        Improve <type="datetime-local"> value parsing and sanitization
+        https://bugs.webkit.org/show_bug.cgi?id=234039
+
+        Reviewed by Darin Adler.
+
+        * fast/forms/datetimelocal/ValidityState-typeMismatch-datetimelocal-expected.txt:
+        * fast/forms/datetimelocal/ValidityState-typeMismatch-datetimelocal.html:
+        * fast/forms/datetimelocal/input-valueasnumber-datetimelocal-expected.txt:
+        * fast/forms/datetimelocal/input-valueasnumber-datetimelocal.html:
+        Update a couple of existing tests to reflect behavior change.
+
+        * fast/forms/datetimelocal/datetime-local-value-sanitization-expected.txt: Added.
+        * fast/forms/datetimelocal/datetime-local-value-sanitization.html: Added.
+        Improve test coverage for datetime-local value sanitization.
+
+        * platform/mac-wk2/imported/w3c/web-platform-tests/html/semantics/forms/constraints/form-validation-validity-valueMissing-expected.txt:
+        * platform/mac-wk2/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/datetime-local-expected.txt:
+        * platform/mac-wk2/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/time-2-expected.txt:
+        Rebaseline WPT tests now that more checks are passing.
+
 2021-12-10  Gabriel Nava Marino  <gnavamarino@apple.com>
 
         nullptr deref in ComputeFloatOffsetForLineLayoutAdapter<FloatingObject::FloatLeft>::updateOffsetIfNeeded

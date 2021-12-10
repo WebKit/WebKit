@@ -26,7 +26,7 @@ PASS input.valueAsNumber = Number.POSITIVE_INFINITY threw exception NotSupported
 PASS input.valueAsNumber = Number.NEGATIVE_INFINITY threw exception NotSupportedError: The operation is not supported..
 Step attribute value and string representation:
 PASS input.step = "1"; setValueAsNumberAndGetValue(0, 0, 0, 0) is "00:00:00"
-PASS input.step = "0.001"; setValueAsNumberAndGetValue(0, 0, 0, 0) is "00:00:00.000"
+PASS input.step = "0.001"; setValueAsNumberAndGetValue(0, 0, 0, 0) is "00:00:00.0"
 PASS successfullyParsed is true
 
 TEST COMPLETE

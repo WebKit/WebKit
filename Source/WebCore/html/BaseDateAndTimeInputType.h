@@ -100,7 +100,7 @@ private:
 
     // InputType functions:
     String visibleValue() const final;
-    String sanitizeValue(const String&) const final;
+    String sanitizeValue(const String&) const override;
     void setValue(const String&, bool valueChanged, TextFieldEventBehavior) final;
     WallTime valueAsDate() const override;
     ExceptionOr<void> setValueAsDate(WallTime) const override;

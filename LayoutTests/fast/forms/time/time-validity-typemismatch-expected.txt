@@ -10,8 +10,6 @@ PASS "23:59:59" is a correct valid time string.
 PASS "23:59:59.1" is a correct valid time string.
 PASS "23:59:59.12" is a correct valid time string.
 PASS "23:59:59.123" is a correct valid time string.
-PASS "23:59:59.1234567890" is a correct valid time string.
-PASS "00:00:00.0000000000" is a correct valid time string.
 PASS " 00:00 " is an invalid time string and was sanitized.
 PASS "1:23" is an invalid time string and was sanitized.
 PASS "011:11" is an invalid time string and was sanitized.
@@ -33,6 +31,8 @@ PASS "23:45:zz" is an invalid time string and was sanitized.
 PASS "23:45:06." is an invalid time string and was sanitized.
 PASS "23:45:06.abc" is an invalid time string and was sanitized.
 PASS "23:45:06.789abc" is an invalid time string and was sanitized.
+PASS "23:59:59.1234567890" is an invalid time string and was sanitized.
+PASS "00:00:00.0000000000" is an invalid time string and was sanitized.
 PASS "invalid" is an invalid time string and was sanitized while disabled.
 PASS successfullyParsed is true
 

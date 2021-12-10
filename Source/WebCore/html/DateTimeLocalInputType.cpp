@@ -99,6 +99,15 @@ bool DateTimeLocalInputType::isValidFormat(OptionSet<DateTimeFormatValidationRes
     return results.containsAll({ DateTimeFormatValidationResults::HasYear, DateTimeFormatValidationResults::HasMonth, DateTimeFormatValidationResults::HasDay, DateTimeFormatValidationResults::HasHour, DateTimeFormatValidationResults::HasMinute, DateTimeFormatValidationResults::HasMeridiem });
 }
 
+String DateTimeLocalInputType::sanitizeValue(const String& proposedValue) const
+{
+    if (proposedValue.isEmpty())
+        return proposedValue;
+
+    auto components = DateComponents::fromParsingDateTimeLocal(proposedValue);
+    return components ? components->toString() : emptyString();
+}
+
 String DateTimeLocalInputType::formatDateTimeFieldsState(const DateTimeFieldsState& state) const
 {
     if (!state.year || !state.month || !state.dayOfMonth || !state.hour || !state.minute || !state.meridiem)
