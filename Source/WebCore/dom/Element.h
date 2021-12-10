@@ -652,6 +652,9 @@ public:
     String description() const override;
     String debugDescription() const override;
 
+    bool hasDuplicateAttribute() const { return m_hasDuplicateAttribute; };
+    void setHasDuplicateAttribute(bool hasDuplicateAttribute) { m_hasDuplicateAttribute = hasDuplicateAttribute; };
+
 protected:
     Element(const QualifiedName&, Document&, ConstructionType);
 
@@ -687,6 +690,8 @@ private:
     bool isUserActionElementDragged() const;
     bool isUserActionElementHasFocusVisible() const;
     bool isUserActionElementHasFocusWithin() const;
+
+    bool isNonceable() const;
 
     virtual void didAddUserAgentShadowRoot(ShadowRoot&) { }
 
@@ -765,6 +770,8 @@ private:
 
     QualifiedName m_tagName;
     RefPtr<ElementData> m_elementData;
+
+    bool m_hasDuplicateAttribute { false };
 };
 
 void invalidateForSiblingCombinators(Element* sibling);

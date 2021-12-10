@@ -31,6 +31,8 @@
 
 namespace WebCore {
 
+enum class HasDuplicateAttribute : bool { No, Yes };
+
 class AtomHTMLToken {
 public:
     explicit AtomHTMLToken(HTMLToken&);
@@ -70,6 +72,8 @@ public:
 
     const String& comment() const;
 
+    HasDuplicateAttribute hasDuplicateAttribute() const { return m_hasDuplicateAttribute; };
+
 private:
     HTMLToken::Type m_type;
 
@@ -90,6 +94,8 @@ private:
 
     bool m_selfClosing; // StartTag, EndTag.
     Vector<Attribute> m_attributes; // StartTag, EndTag.
+
+    HasDuplicateAttribute m_hasDuplicateAttribute { HasDuplicateAttribute::No };
 };
 
 const Attribute* findAttribute(const Vector<Attribute>&, const QualifiedName&);
@@ -208,6 +214,8 @@ inline void AtomHTMLToken::initializeAttributes(const HTMLToken::AttributeList& 
         // FIXME: This is N^2 for the number of attributes.
         if (!hasAttribute(m_attributes, localName))
             m_attributes.uncheckedAppend(Attribute(QualifiedName(nullAtom(), localName, nullAtom()), HTMLAtomStringCache::makeAttributeValue(attribute.value)));
+        else
+            m_hasDuplicateAttribute = HasDuplicateAttribute::Yes;
     }
 }
 

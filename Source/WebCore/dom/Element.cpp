@@ -74,6 +74,7 @@
 #include "HTMLOptGroupElement.h"
 #include "HTMLOptionElement.h"
 #include "HTMLParserIdioms.h"
+#include "HTMLScriptElement.h"
 #include "HTMLSelectElement.h"
 #include "HTMLTemplateElement.h"
 #include "IdChangeInvalidation.h"
@@ -109,6 +110,7 @@
 #include "SVGElementTypeHelpers.h"
 #include "SVGNames.h"
 #include "SVGSVGElement.h"
+#include "SVGScriptElement.h"
 #include "ScriptDisallowedScope.h"
 #include "ScrollIntoViewOptions.h"
 #include "ScrollLatchingController.h"
@@ -318,9 +320,40 @@ int Element::defaultTabIndex() const
     return -1;
 }
 
+bool Element::isNonceable() const
+{
+    // https://www.w3.org/TR/CSP3/#is-element-nonceable
+    if (elementRareData()->nonce().isNull())
+        return false;
+
+    if (hasDuplicateAttribute())
+        return false;
+
+    if (hasAttributes()
+        && (is<HTMLScriptElement>(*this) || is<SVGScriptElement>(*this))) {
+        static const char scriptString[] = "<script";
+        static const char styleString[] = "<style";
+
+        for (const auto& attribute : attributesIterator()) {
+            auto name = attribute.localName().convertToASCIILowercase();
+            auto value = attribute.value().convertToASCIILowercase();
+            if (name.contains(scriptString)
+                || name.contains(styleString)
+                || value.contains(scriptString)
+                || value.contains(styleString))
+                return false;
+        }
+    }
+
+    return true;
+}
+
 const AtomString& Element::nonce() const
 {
-    return hasRareData() ? elementRareData()->nonce() : emptyAtom();
+    if (hasRareData() && isNonceable())
+        return elementRareData()->nonce();
+
+    return emptyAtom();
 }
 
 void Element::setNonce(const AtomString& newValue)
