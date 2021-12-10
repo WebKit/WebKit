@@ -774,9 +774,6 @@ input[type="file"] {
 
 input:-webkit-autofill-and-obscured {
     -webkit-text-security: disc !important;
-    -webkit-user-select: none !important;
-    pointer-events: none !important;
-    cursor: default !important;
 }
 
 input:-webkit-autofill-strong-password {
