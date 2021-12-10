@@ -31,8 +31,11 @@
 #include "config.h"
 #include "RenderSVGModelObject.h"
 
+#include "NotImplemented.h"
+#include "RenderLayer.h"
 #include "RenderLayerModelObject.h"
 #include "RenderSVGResource.h"
+#include "RenderView.h"
 #include "SVGElementInlines.h"
 #include "SVGNames.h"
 #include "SVGResourcesCache.h"
@@ -48,8 +51,20 @@ RenderSVGModelObject::RenderSVGModelObject(SVGElement& element, RenderStyle&& st
 {
 }
 
-LayoutRect RenderSVGModelObject::clippedOverflowRect(const RenderLayerModelObject* repaintContainer, VisibleRectContext) const
+LayoutRect RenderSVGModelObject::clippedOverflowRect(const RenderLayerModelObject* repaintContainer, VisibleRectContext context) const
 {
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+    if (document().settings().layerBasedSVGEngineEnabled()) {
+        if (style().visibility() != Visibility::Visible && !enclosingLayer()->hasVisibleContent())
+            return LayoutRect();
+
+        ASSERT(!view().frameView().layoutContext().isPaintOffsetCacheEnabled());
+        return computeRect(visualOverflowRectEquivalent(), repaintContainer, context);
+    }
+#else
+    UNUSED_PARAM(context);
+#endif
+
     return SVGRenderSupport::clippedOverflowRectForRepaint(*this, repaintContainer);
 }
 
@@ -111,6 +126,14 @@ void RenderSVGModelObject::styleDidChange(StyleDifference diff, const RenderStyl
 
 bool RenderSVGModelObject::nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation&, const LayoutPoint&, HitTestAction)
 {
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+    if (document().settings().layerBasedSVGEngineEnabled()) {
+        // FIXME: [LBSE] Upstream RenderSVGModelObject inheritance changes (should inherit from RenderLayerModelObject).
+        notImplemented();
+        return false;
+    }
+#endif
+
     ASSERT_NOT_REACHED();
     return false;
 }

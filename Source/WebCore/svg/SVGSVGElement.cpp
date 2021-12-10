@@ -398,8 +398,13 @@ bool SVGSVGElement::rendererIsNeeded(const RenderStyle& style)
 
 RenderPtr<RenderElement> SVGSVGElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
-    if (isOutermostSVGSVGElement())
+    if (isOutermostSVGSVGElement()) {
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+        if (document().settings().layerBasedSVGEngineEnabled())
+            return createRenderer<RenderSVGRoot>(*this, WTFMove(style));
+#endif
         return createRenderer<LegacyRenderSVGRoot>(*this, WTFMove(style));
+    }
     return createRenderer<RenderSVGViewportContainer>(*this, WTFMove(style));
 }
 
