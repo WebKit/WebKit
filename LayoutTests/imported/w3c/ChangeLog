@@ -1,3 +1,15 @@
+2021-12-10  Alexey Shvayka  <ashvayka@apple.com>
+
+        JSErrorHandler should not set window.event if invocation target is in shadow tree
+        https://bugs.webkit.org/show_bug.cgi?id=233834
+
+        Reviewed by Ryosuke Niwa.
+
+        Update the test per https://github.com/web-platform-tests/wpt/pull/31893 as well as its expectations.
+
+        * web-platform-tests/dom/events/event-global-expected.txt:
+        * web-platform-tests/dom/events/event-global.html:
+
 2021-12-10  Patrick Griffis  <pgriffis@igalia.com>
 
         CSP: Implement protections against nonce-hijacking
