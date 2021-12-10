@@ -340,28 +340,45 @@ void InlineDisplayContentBuilder::processNonBidiContent(const LineBuilder::LineC
     }
 }
 
-struct DisplayBoxNode {
-    WTF_MAKE_STRUCT_FAST_ALLOCATED;
-    DisplayBoxNode() = default;
-    DisplayBoxNode(size_t index, DisplayBoxNode* parent)
-        : index(index)
-        , parent(parent)
-        {
-        }
+struct DisplayBoxTree {
+public:
+    struct Node {
+        // Node's parent index in m_displayBoxNodes.
+        std::optional<size_t> parentIndex;
+        // Associated display box index in DisplayBoxes.
+        size_t displayBoxIndex { 0 };
+        // Child indexes in m_displayBoxNodes.
+        Vector<size_t> children { };
+    };
 
-    void appendChild(size_t childIndex) { children.append(makeUnique<DisplayBoxNode>(childIndex, this)); }
+    DisplayBoxTree()
+    {
+        m_displayBoxNodes.append({ });
+    }
 
-    size_t index { 0 };
-    DisplayBoxNode* parent { nullptr };
-    Vector<std::unique_ptr<DisplayBoxNode>> children;
+    bool hasInlineBox() const { return m_displayBoxNodes.size() > 1; }
+    const Node& root() const { return m_displayBoxNodes.first(); }
+    Node& at(size_t index) { return m_displayBoxNodes[index]; }
+    const Node& at(size_t index) const { return m_displayBoxNodes[index]; }
+
+    size_t append(size_t parentNodeIndex, size_t childDisplayBoxIndex)
+    {
+        auto childDisplayBoxNodeIndex = m_displayBoxNodes.size();
+        m_displayBoxNodes.append({ parentNodeIndex, childDisplayBoxIndex });
+        at(parentNodeIndex).children.append(childDisplayBoxNodeIndex);
+        return childDisplayBoxNodeIndex;
+    }
+
+private:
+    Vector<Node, 10> m_displayBoxNodes;
 };
 
 struct AncestorStack {
-    DisplayBoxNode* unwind(const ContainerBox& containerBox)
+    std::optional<size_t> unwind(const ContainerBox& containerBox)
     {
         // Unwind the stack all the way to container box.
         if (!m_set.contains(&containerBox))
-            return nullptr;
+            return { };
         while (m_set.last() != &containerBox) {
             m_stack.removeLast();
             m_set.removeLast();
@@ -371,44 +388,42 @@ struct AncestorStack {
         return m_stack.last();
     }
 
-    void push(DisplayBoxNode& displayBoxNode, const ContainerBox& containerBox)
+    void push(size_t displayBoxNodeIndexForContainerBox, const ContainerBox& containerBox)
     {
-        m_stack.append(&displayBoxNode);
+        m_stack.append(displayBoxNodeIndexForContainerBox);
         ASSERT(!m_set.contains(&containerBox));
         m_set.add(&containerBox);
     }
 
 private:
-    Vector<DisplayBoxNode*> m_stack;
+    Vector<size_t> m_stack;
     ListHashSet<const ContainerBox*> m_set;
 };
 
-static inline DisplayBoxNode& createdDisplayBoxNodeForContainerBoxAndPushToAncestorStack(const ContainerBox& containerBox, size_t displayBoxIndex, DisplayBoxNode& parentDisplayBoxNode, AncestorStack& ancestorStack)
+static inline size_t createdDisplayBoxNodeForContainerBoxAndPushToAncestorStack(const ContainerBox& containerBox, size_t displayBoxIndex, size_t parentDisplayBoxNodeIndex, DisplayBoxTree& displayBoxTree, AncestorStack& ancestorStack)
 {
-    parentDisplayBoxNode.appendChild(displayBoxIndex);
-    auto& displayBoxNode = *parentDisplayBoxNode.children.last();
-    ancestorStack.push(displayBoxNode, containerBox);
-    return displayBoxNode;
+    auto displayBoxNodeIndex = displayBoxTree.append(parentDisplayBoxNodeIndex, displayBoxIndex);
+    ancestorStack.push(displayBoxNodeIndex, containerBox);
+    return displayBoxNodeIndex;
 }
 
-DisplayBoxNode& InlineDisplayContentBuilder::ensureDisplayBoxForContainer(const ContainerBox& containerBox, AncestorStack& ancestorStack, DisplayBoxes& boxes)
+size_t InlineDisplayContentBuilder::ensureDisplayBoxForContainer(const ContainerBox& containerBox, DisplayBoxTree& displayBoxTree, AncestorStack& ancestorStack, DisplayBoxes& boxes)
 {
     ASSERT(containerBox.isInlineBox() || &containerBox == &root());
-    if (auto* lowestCommonAncestor = ancestorStack.unwind(containerBox))
-        return *lowestCommonAncestor;
-    auto& enclosingDisplayBoxNodeForContainer = ensureDisplayBoxForContainer(containerBox.parent(), ancestorStack, boxes);
+    if (auto lowestCommonAncestorIndex = ancestorStack.unwind(containerBox))
+        return *lowestCommonAncestorIndex;
+    auto enclosingDisplayBoxNodeIndexForContainer = ensureDisplayBoxForContainer(containerBox.parent(), displayBoxTree, ancestorStack, boxes);
     appendInlineDisplayBoxAtBidiBoundary(containerBox, boxes);
-    return createdDisplayBoxNodeForContainerBoxAndPushToAncestorStack(containerBox, boxes.size() - 1, enclosingDisplayBoxNodeForContainer, ancestorStack);
+    return createdDisplayBoxNodeForContainerBoxAndPushToAncestorStack(containerBox, boxes.size() - 1, enclosingDisplayBoxNodeIndexForContainer, displayBoxTree, ancestorStack);
 }
 
-void InlineDisplayContentBuilder::adjustVisualGeometryForChildNode(const DisplayBoxNode& displayBoxNode, InlineLayoutUnit& contentRightInVisualOrder, InlineLayoutUnit lineBoxLogicalTop, DisplayBoxes& boxes, const LineBox& lineBox)
+void InlineDisplayContentBuilder::adjustVisualGeometryForDisplayBox(size_t displayBoxNodeIndex, InlineLayoutUnit& contentRightInVisualOrder, InlineLayoutUnit lineBoxLogicalTop, const DisplayBoxTree& displayBoxTree, DisplayBoxes& boxes, const LineBox& lineBox)
 {
     // Non-inline box display boxes just need a horizontal adjustment while
     // inline box type of display boxes need
     // 1. horizontal adjustment and margin/border/padding start offsetting on the first box
     // 2. right edge computation including descendant content width and margin/border/padding end offsetting on the last box
-    ASSERT(displayBoxNode.index);
-    auto& displayBox = boxes[displayBoxNode.index];
+    auto& displayBox = boxes[displayBoxTree.at(displayBoxNodeIndex).displayBoxIndex];
     auto& layoutBox = displayBox.layoutBox();
 
     if (!displayBox.isNonRootInlineBox()) {
@@ -433,8 +448,8 @@ void InlineDisplayContentBuilder::adjustVisualGeometryForChildNode(const Display
     };
     beforeInlineBoxContent();
 
-    for (auto& childDisplayBoxNode : displayBoxNode.children)
-        adjustVisualGeometryForChildNode(*childDisplayBoxNode, contentRightInVisualOrder, lineBoxLogicalTop, boxes, lineBox);
+    for (auto childDisplayBoxNodeIndex : displayBoxTree.at(displayBoxNodeIndex).children)
+        adjustVisualGeometryForDisplayBox(childDisplayBoxNodeIndex, contentRightInVisualOrder, lineBoxLogicalTop, displayBoxTree, boxes, lineBox);
 
     auto afterInlineBoxContent = [&] {
         if (!displayBox.isLastForLayoutBox())
@@ -463,8 +478,8 @@ void InlineDisplayContentBuilder::processBidiContent(const LineBuilder::LineCont
     ASSERT(lineContent.visualOrderList.size() <= lineContent.runs.size());
 
     AncestorStack ancestorStack;
-    DisplayBoxNode rootDisplayBoxNode = { };
-    ancestorStack.push(rootDisplayBoxNode, root());
+    auto displayBoxTree = DisplayBoxTree { };
+    ancestorStack.push({ }, root());
 
     auto contentStartInVisualOrder = InlineLayoutUnit { };
     auto createDisplayBoxesInVisualOrder = [&] {
@@ -495,24 +510,24 @@ void InlineDisplayContentBuilder::processBidiContent(const LineBuilder::LineCont
                 return logicallRect;
             };
 
-            auto& parentDisplayBoxNode = ensureDisplayBoxForContainer(layoutBox.parent(), ancestorStack, boxes);
+            auto parentDisplayBoxNodeIndex = ensureDisplayBoxForContainer(layoutBox.parent(), displayBoxTree, ancestorStack, boxes);
             if (lineRun.isText()) {
                 auto visualRect = visualRectRelativeToRoot(lineBox.logicalRectForTextRun(lineRun));
                 appendTextDisplayBox(lineRun, visualRect, boxes);
                 contentRightInVisualOrder += visualRect.width();
-                parentDisplayBoxNode.appendChild(boxes.size() - 1);
+                displayBoxTree.append(parentDisplayBoxNodeIndex, boxes.size() - 1);
                 continue;
             }
             if (lineRun.isSoftLineBreak()) {
                 ASSERT(!visualRectRelativeToRoot(lineBox.logicalRectForTextRun(lineRun)).width());
                 appendSoftLineBreakDisplayBox(lineRun, visualRectRelativeToRoot(lineBox.logicalRectForTextRun(lineRun)), boxes);
-                parentDisplayBoxNode.appendChild(boxes.size() - 1);
+                displayBoxTree.append(parentDisplayBoxNodeIndex, boxes.size() - 1);
                 continue;
             }
             if (lineRun.isHardLineBreak()) {
                 ASSERT(!visualRectRelativeToRoot(lineBox.logicalRectForLineBreakBox(layoutBox)).width());
                 appendHardLineBreakDisplayBox(lineRun, visualRectRelativeToRoot(lineBox.logicalRectForLineBreakBox(layoutBox)), boxes);
-                parentDisplayBoxNode.appendChild(boxes.size() - 1);
+                displayBoxTree.append(parentDisplayBoxNodeIndex, boxes.size() - 1);
                 continue;
             }
             if (lineRun.isBox()) {
@@ -521,12 +536,12 @@ void InlineDisplayContentBuilder::processBidiContent(const LineBuilder::LineCont
                 visualRect.moveHorizontally(boxGeometry.marginStart());
                 appendAtomicInlineLevelDisplayBox(lineRun, visualRect, boxes);
                 contentRightInVisualOrder += boxGeometry.marginStart() + visualRect.width() + boxGeometry.marginEnd();
-                parentDisplayBoxNode.appendChild(boxes.size() - 1);
+                displayBoxTree.append(parentDisplayBoxNodeIndex, boxes.size() - 1);
                 continue;
             }
             if (lineRun.isInlineBoxStart() || lineRun.isLineSpanningInlineBoxStart()) {
                 appendInlineDisplayBoxAtBidiBoundary(layoutBox, boxes);
-                createdDisplayBoxNodeForContainerBoxAndPushToAncestorStack(downcast<ContainerBox>(layoutBox), boxes.size() - 1, parentDisplayBoxNode, ancestorStack);
+                createdDisplayBoxNodeForContainerBoxAndPushToAncestorStack(downcast<ContainerBox>(layoutBox), boxes.size() - 1, parentDisplayBoxNodeIndex, displayBoxTree, ancestorStack);
                 continue;
             }
             ASSERT_NOT_REACHED();
@@ -534,7 +549,7 @@ void InlineDisplayContentBuilder::processBidiContent(const LineBuilder::LineCont
     };
     createDisplayBoxesInVisualOrder();
 
-    if (!rootDisplayBoxNode.children.isEmpty()) {
+    if (displayBoxTree.hasInlineBox()) {
         auto computeIsFirstIsLastBox = [&] {
             HashMap<const Box*, size_t> lastDisplayBoxIndexes;
             ASSERT(boxes[0].isRootInlineBox());
@@ -556,8 +571,9 @@ void InlineDisplayContentBuilder::processBidiContent(const LineBuilder::LineCont
 
         auto adjustVisualGeometryWithInlineBoxes = [&] {
             auto contentRightInVisualOrder = lineBoxLogicalTopLeft.x() + contentStartInVisualOrder;
-            for (auto& childDisplayBoxNode : rootDisplayBoxNode.children)
-                adjustVisualGeometryForChildNode(*childDisplayBoxNode, contentRightInVisualOrder, lineBoxLogicalTopLeft.y(), boxes, lineBox);
+
+            for (auto childDisplayBoxNodeIndex : displayBoxTree.root().children)
+                adjustVisualGeometryForDisplayBox(childDisplayBoxNodeIndex, contentRightInVisualOrder, lineBoxLogicalTopLeft.y(), displayBoxTree, boxes, lineBox);
         };
         adjustVisualGeometryWithInlineBoxes();
     }
