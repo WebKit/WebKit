@@ -244,6 +244,8 @@ localizedStrings["Bubbling"] = "Bubbling";
 localizedStrings["Busy"] = "Busy";
 localizedStrings["By Path"] = "By Path";
 localizedStrings["By Type"] = "By Type";
+/* Label for button to show CSS variables grouped by type */
+localizedStrings["By Type @ Computed Style variables grouping mode"] = "By Type";
 localizedStrings["Byte Range %s\u2013%s"] = "Byte Range %s\u2013%s";
 localizedStrings["Bytes Received"] = "Bytes Received";
 localizedStrings["Bytes Sent"] = "Bytes Sent";
@@ -340,6 +342,8 @@ localizedStrings["Collapse All"] = "Collapse All";
 localizedStrings["Collapse blackboxed call frames @ Experimental Settings"] = "Collapse blackboxed call frames";
 localizedStrings["Collapse columns"] = "Collapse columns";
 localizedStrings["Collect garbage"] = "Collect garbage";
+/* Section header for the group of CSS variables with colors as values */
+localizedStrings["Colors @ Computed Style variables section"] = "Colors";
 localizedStrings["Comment"] = "Comment";
 /* Property value for `font-variant-ligatures: common-ligatures`. */
 localizedStrings["Common @ Font Details Sidebar Property Value"] = "Common";
@@ -469,6 +473,8 @@ localizedStrings["Diagnostics: @ Experimental Settings"] = "Diagnostics:";
 /* Property value for `font-variant-numeric: diagonal-fractions`. */
 localizedStrings["Diagonal Fractions @ Font Details Sidebar Property Value"] = "Diagonal Fractions";
 localizedStrings["Dimensions"] = "Dimensions";
+/* Section header for the group of CSS variables with dimensions as values */
+localizedStrings["Dimensions @ Computed style variables section"] = "Dimensions";
 localizedStrings["Disable Audit"] = "Disable Audit";
 localizedStrings["Disable Breakpoint"] = "Disable Breakpoint";
 localizedStrings["Disable Breakpoints"] = "Disable Breakpoints";
@@ -1007,6 +1013,8 @@ localizedStrings["Normal @ Font Details Sidebar Property Value"] = "Normal";
 localizedStrings["Not found"] = "Not found";
 /* Title of icon indicating that the selected audit has not been run yet. */
 localizedStrings["Not yet run @ Audit Tab - Test Case"] = "Not yet run";
+/* Section header for the group of CSS variables with numbers as values */
+localizedStrings["Numbers @ Computed Style variables section"] = "Numbers";
 /* Property title for `font-variant-numeric`. */
 localizedStrings["Numeric @ Font Details Sidebar Property"] = "Numeric";
 localizedStrings["Object Graph"] = "Object Graph";
@@ -1041,6 +1049,8 @@ localizedStrings["Original formatting"] = "Original formatting";
 localizedStrings["Originally %s"] = "Originally %s";
 localizedStrings["Originator"] = "Originator";
 localizedStrings["Other"] = "Other";
+/* Section header for the generic group of CSS variables */
+localizedStrings["Other @ Computed Style variables section"] = "Other";
 localizedStrings["Other Issue"] = "Other Issue";
 localizedStrings["Other Threads"] = "Other Threads";
 localizedStrings["Other: %s"] = "Other: %s";
@@ -1589,6 +1599,10 @@ localizedStrings["Unblackbox script to include it when debugging"] = "Unblackbox
 /* Break (pause) on uncaught (unhandled) exceptions */
 localizedStrings["Uncaught Exceptions @ JavaScript Breakpoint"] = "Uncaught Exceptions";
 localizedStrings["Undefined custom element"] = "Undefined custom element";
+/* Label for button to show CSS variables ungrouped */
+localizedStrings["Ungrouped @ Computed Style variables grouping mode"] = "Ungrouped";
+/* Section header for ungrouped CSS variables */
+localizedStrings["Ungrouped @ Computed Style variables section"] = "Ungrouped";
 /* Property value for `font-variant-capitals: unicase`. */
 localizedStrings["Unicase @ Font Details Sidebar Property Value"] = "Unicase";
 localizedStrings["Unique"] = "Unique";

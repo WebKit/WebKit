@@ -1,3 +1,16 @@
+2021-12-10  Razvan Caliman  <rcaliman@apple.com>
+
+        Web Inspector: Computed Panel: Group CSS variables by value type
+        https://bugs.webkit.org/show_bug.cgi?id=233563
+        <rdar://82978905>
+
+        Reviewed by Devin Rousso and Patrick Angle.
+
+        Check logic for grouping CSS variables by value type in Web Inspector.
+
+        * inspector/css/variableStylesByType-expected.txt: Added.
+        * inspector/css/variableStylesByType.html: Added.
+
 2021-12-10  Chris Dumez  <cdumez@apple.com>
 
         Improve <type="datetime-local"> value parsing and sanitization

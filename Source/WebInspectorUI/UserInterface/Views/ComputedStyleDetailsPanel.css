@@ -32,7 +32,8 @@
     background-color: var(--background-color);
 }
 
-.sidebar > .panel.details.css-style > .content > .computed > .details-section > .content {
+/* Ensure that font is overwritten for both top-level and nested details sections. */
+.sidebar > .panel.details.css-style > .content > .computed .details-section > .content {
     font: 12px -webkit-system-font, sans-serif;
 }
 
@@ -45,8 +46,7 @@
     padding-bottom: 3px;
 }
 
-.sidebar > .panel.details.css-style > .content > .computed .property {
-    position: relative;
+.sidebar > .panel.details.css-style > .content > .computed .details-section.computed-style-variables .computed-property-item {
     text-indent: -13px; /* width of "--" in `11px Menlo` */
 }
 
@@ -58,4 +58,19 @@
 
 .sidebar > .panel.details.css-style > .content > .computed > .details-section.computed-style-variables .property:not(:hover) .go-to-arrow {
     display: none;
+}
+
+.sidebar > .panel.details.css-style > .content > .computed > .details-section.computed-style-variables .scope-bar.computed-style-variables-grouping-mode {
+    margin-top: -1px;
+    font-weight: normal;
+}
+
+.sidebar > .panel.details.css-style > .content > .computed > .details-section.computed-style-variables .scope-bar.computed-style-variables-grouping-mode.default-item-selected:not(:hover) {
+    --scope-bar-text-color-override: var(--text-color);
+    --scope-bar-background-color-override: transparent;
+    --scope-bar-border-color-override: transparent;
+}
+
+.sidebar > .panel.details.css-style > .content > .computed > .details-section.computed-style-variables .scope-bar.computed-style-variables-grouping-mode.default-item-selected:hover {
+    --scope-bar-background-opacity-override: 0.5;
 }

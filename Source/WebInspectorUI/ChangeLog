@@ -1,3 +1,87 @@
+2021-12-10  Razvan Caliman  <rcaliman@apple.com>
+
+        Web Inspector: Computed Panel: Group CSS variables by value type
+        https://bugs.webkit.org/show_bug.cgi?id=233563
+        <rdar://82978905>
+
+        Reviewed by Devin Rousso and Patrick Angle.
+
+        Add the ability to view CSS variables in the Computed styles details sidebar panel
+        groupped by value type in a few sections: "colors", "dimensions", "numbers" and a
+        catch-all group of "other".
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Models/DOMNodeStyles.js:
+        (WI.DOMNodeStyles):
+        (WI.DOMNodeStyles.prototype.variableStylesByType):
+        Iterate on-demand over all CSS variables found in the node's computed styles
+        and assign each to a group depending on its value type:
+        - color
+        - dimension (number followed by a CSS unit-like string)
+        - number
+        - other
+
+        Additional groups and refinements will come in follow-up patches.
+
+        (WI.DOMNodeStyles.prototype.refresh.fetchedComputedStyle):
+        The map of CSS variable groups gets invalidated when there's a significant
+        change in the node's computed style. This supports the use case where previously
+        empty groups become populated or, conversely, become empty.
+
+        * UserInterface/Views/ComputedStyleDetailsPanel.js:
+        (WI.ComputedStyleDetailsPanel):
+        (WI.ComputedStyleDetailsPanel.prototype.refresh):
+        (WI.ComputedStyleDetailsPanel.prototype.applyFilter):
+        (WI.ComputedStyleDetailsPanel.prototype.initialLayout):
+        No longer generate the elements for laying out CSS variables during `initialLayout()`
+        but handle them during `layout()`. This support mutating the DOM for laying out
+        either one top-level list of CSS variables (ungrouped) or multiple lists of CSS variable
+        groups depeding on the grouping mode selected at runtime.
+
+        * UserInterface/Views/ComputedStyleDetailsPanel.css:
+        (.sidebar > .panel.details.css-style > .content > .computed .details-section > .content):
+        Ensure both top-level and nested details sections overwrite styles. CSS variables groups are in nested details sections.
+
+        (.sidebar > .panel.details.css-style > .content > .computed .details-section.computed-style-variables .computed-property-item):
+        Adapt stylesheet to account for using `WI.ComputedStyleSection` instead of `WI.SpreadsheetCSSStyleDeclarationEditor`
+
+        (.sidebar > .panel.details.css-style > .content > .computed > .details-section.computed-style-variables .scope-bar.computed-style-variables-grouping-mode):
+        (.sidebar > .panel.details.css-style > .content > .computed > .details-section.computed-style-variables .scope-bar.computed-style-variables-grouping-mode.default-item-selected:not(:hover)):
+        (.sidebar > .panel.details.css-style > .content > .computed > .details-section.computed-style-variables .scope-bar.computed-style-variables-grouping-mode.default-item-selected:hover):
+        Reuse the visual treatment from SourcesNavigationSidebarPanel.css to avoid highlighting the default grouping mode scope bar item.
+
+        (.sidebar > .panel.details.css-style > .content > .computed > .details-section > .content): Deleted.
+        (.sidebar > .panel.details.css-style > .content > .computed .property): Deleted.
+
+        (WI.ComputedStyleDetailsPanel.prototype.layout):
+        Skip destroying and rebuilding sections whose data sources change during
+        `WI.ComputedStyleDetailsPanel.refresh()` and which handle layout internally.
+        We need to remove and rebuild just the sections for CSS variables because
+        layout is requested in response to changing the CSS variables grouping mode.
+
+        (WI.ComputedStyleDetailsPanel.prototype._createVariablesStyleSection):
+        Replaces the use of `WI.SpreadsheetCSSStyleDeclarationEditor` for rendering CSS variables with
+        `WI.ComputedStyleSection` which is already used for rendering CSS properties.
+        It's a lighter-weight View that's fit for purpose.
+
+        (WI.ComputedStyleDetailsPanel.prototype._renderVariablesStyleSectionGroup):
+        Use a generic renderer for CSS variable sections that can be reused for any group type.
+
+        (WI.ComputedStyleDetailsPanel.prototype._handleDetailsSectionCollapsedStateChanged):
+        Generalize handling collapsed state change events for all sections, current and future.
+
+        (WI.ComputedStyleDetailsPanel.prototype._handleEditorFilterApplied):
+        Generalize handling filtering events for all sections, current and future.
+
+        (WI.ComputedStyleDetailsPanel.prototype._handleVariablesGroupingModeScopeBarSelectionChanged):
+        (WI.ComputedStyleDetailsPanel.prototype._handleVariablesGroupingSettingChanged):
+        (WI.ComputedStyleDetailsPanel.prototype._handlePropertiesSectionCollapsedStateChanged): Deleted.
+        (WI.ComputedStyleDetailsPanel.prototype._handleVariablesSectionCollapsedStateChanged): Deleted.
+        * UserInterface/Views/ComputedStyleSection.js:
+        (WI.ComputedStyleSection):
+        Change the default value of `_styleTraces` to null instead of an empty array so that
+        `WI.ComputedStyleSection.layout()` doesn't attempt to access it like a `Map`.
+
 2021-12-10  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Add a swatch for align-items and align-self
