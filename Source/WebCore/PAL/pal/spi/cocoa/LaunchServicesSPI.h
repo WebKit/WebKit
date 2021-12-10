@@ -50,6 +50,9 @@ CFDictionaryRef _LSApplicationCheckIn(LSSessionID, CFDictionaryRef applicationIn
 WTF_EXTERN_C_END
 #endif // PLATFORM(MACCATALYST)
 #else // USE(APPLE_INTERNAL_SDK)
+
+const uint8_t kLSOpenRunningInstanceBehaviorUseRunningProcess = 1;
+
 @interface LSResourceProxy : NSObject <NSCopying, NSSecureCoding>
 @property (nonatomic, copy, readonly) NSString *localizedName;
 @end
@@ -130,6 +133,11 @@ typedef struct ProcessSerialNumber ProcessSerialNumber;
 WTF_EXTERN_C_BEGIN
 
 extern const CFStringRef _kLSDisplayNameKey;
+extern const CFStringRef _kLSOpenOptionActivateKey;
+extern const CFStringRef _kLSOpenOptionAddToRecentsKey;
+extern const CFStringRef _kLSOpenOptionBackgroundLaunchKey;
+extern const CFStringRef _kLSOpenOptionHideKey;
+extern const CFStringRef _kLSOpenOptionPreferRunningInstanceKey;
 extern const CFStringRef _kLSPersistenceSuppressRelaunchAtLoginKey;
 
 LSASNRef _LSGetCurrentApplicationASN();
@@ -138,6 +146,9 @@ OSStatus _LSSetApplicationInformationItem(LSSessionID, LSASNRef, CFStringRef key
 CFTypeRef _LSCopyApplicationInformationItem(LSSessionID, LSASNRef, CFTypeRef);
 
 OSStatus _RegisterApplication(CFDictionaryRef, ProcessSerialNumber*);
+
+typedef void (^ _LSOpenCompletionHandler)(LSASNRef, Boolean, CFErrorRef);
+void _LSOpenURLsUsingBundleIdentifierWithCompletionHandler(CFArrayRef, CFStringRef, CFDictionaryRef, _LSOpenCompletionHandler);
 
 WTF_EXTERN_C_END
 

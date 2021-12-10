@@ -1,3 +1,20 @@
+2021-12-10  Brady Eidson  <beidson@apple.com>
+
+        Teach webpushd to launch an app in response to an injected message.
+        https://bugs.webkit.org/show_bug.cgi?id=234122
+
+        Reviewed by Alex Christensen.
+
+        To by covered by future API test.
+
+        When a message comes in, webpushd knows which code signing identifier it was targetted for.
+        It launches that app in a special mode so the app can then "take it from there"
+        
+        * webpushd/WebPushDaemon.h:
+        * webpushd/WebPushDaemon.mm:
+        (WebPushD::Daemon::injectPushMessageForTesting):
+        (WebPushD::Daemon::notifyClientPushMessageIsAvailable):
+        
 2021-12-10  Antoine Quint  <graouts@webkit.org>
 
         Expose the maximum device frame rate to the Web Animations model

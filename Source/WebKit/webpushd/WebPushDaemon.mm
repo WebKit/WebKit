@@ -33,6 +33,7 @@
 #import "HandleMessage.h"
 #import "MockAppBundleRegistry.h"
 
+#import <pal/spi/cocoa/LaunchServicesSPI.h>
 #import <wtf/CompletionHandler.h>
 #import <wtf/HexNumber.h>
 #import <wtf/NeverDestroyed.h>
@@ -349,7 +350,30 @@ void Daemon::injectPushMessageForTesting(ClientConnection* connection, const Pus
     });
     addResult.iterator->value.append(message);
 
+    notifyClientPushMessageIsAvailable(message.targetAppCodeSigningIdentifier);
+
     replySender(true);
+}
+
+void Daemon::notifyClientPushMessageIsAvailable(const String& clientCodeSigningIdentifier)
+{
+#if PLATFORM(MAC)
+    CFArrayRef urls = (__bridge CFArrayRef)@[ [NSURL URLWithString:@"webkit-app-launch://1"] ];
+    CFStringRef identifier = (__bridge CFStringRef)((NSString *)clientCodeSigningIdentifier);
+
+    CFDictionaryRef options = (__bridge CFDictionaryRef)@{
+        (id)_kLSOpenOptionPreferRunningInstanceKey: @(kLSOpenRunningInstanceBehaviorUseRunningProcess),
+        (id)_kLSOpenOptionActivateKey: @NO,
+        (id)_kLSOpenOptionAddToRecentsKey: @NO,
+        (id)_kLSOpenOptionBackgroundLaunchKey: @YES,
+        (id)_kLSOpenOptionHideKey: @YES,
+    };
+
+    _LSOpenURLsUsingBundleIdentifierWithCompletionHandler(urls, identifier, options, ^(LSASNRef newProcessSerialNumber, Boolean processWasLaunched, CFErrorRef cfError) { });
+#else
+    // FIXME: Figure out equivalent iOS code here
+    UNUSED_PARAM(clientCodeSigningIdentifier);
+#endif // PLATFORM(MAC)
 }
 
 void Daemon::getPendingPushMessages(ClientConnection* connection, CompletionHandler<void(const Vector<WebKit::WebPushMessage>&)>&& replySender)

@@ -79,6 +79,8 @@ private:
 
     bool canRegisterForNotifications(ClientConnection&);
 
+    void notifyClientPushMessageIsAvailable(const String& clientCodeSigningIdentifier);
+
     ClientConnection* toClientConnection(xpc_connection_t);
     HashMap<xpc_connection_t, Ref<ClientConnection>> m_connectionMap;
 
