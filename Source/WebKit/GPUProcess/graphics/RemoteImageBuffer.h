@@ -69,13 +69,11 @@ public:
             context().restore();
     }
 
-#if HAVE(IOSURFACE_SET_OWNERSHIP_IDENTITY)
-    void setProcessOwnership(task_id_token_t newOwner)
+    void setOwnershipIdentity(const WebCore::ProcessIdentity& resourceOwner)
     {
         if (m_backend)
-            m_backend->setProcessOwnership(newOwner);
+            m_backend->setOwnershipIdentity(resourceOwner);
     }
-#endif
 
 private:
     friend class RemoteRenderingBackend;

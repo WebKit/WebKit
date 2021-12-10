@@ -32,6 +32,7 @@
 #import <Metal/Metal.h>
 #import <WebCore/Color.h>
 #import <WebCore/GraphicsContextGLCocoa.h>
+#import <WebCore/ProcessIdentity.h>
 #import <optional>
 #import <wtf/HashSet.h>
 #import <wtf/MemoryFootprint.h>
@@ -67,7 +68,7 @@ static RefPtr<WebCore::GraphicsContextGLCocoa> createDefaultTestContext(WebCore:
     attributes.stencil = false;
     attributes.alpha = true;
     attributes.preserveDrawingBuffer = false;
-    auto context = WebCore::GraphicsContextGLCocoa::create(WTFMove(attributes));
+    auto context = WebCore::GraphicsContextGLCocoa::create(WTFMove(attributes), { });
     if (!context)
         return nullptr;
     context->reshape(contextSize.width(), contextSize.height());
@@ -119,15 +120,15 @@ TEST_F(GraphicsContextGLCocoaTest, MAYBE_MultipleGPUsDifferentPowerPreferenceMet
     WebCore::GraphicsContextGLAttributes attributes;
     attributes.useMetal = true;
     EXPECT_EQ(attributes.powerPreference, WebCore::GraphicsContextGLPowerPreference::Default);
-    auto defaultContext = WebCore::GraphicsContextGLCocoa::create(WebCore::GraphicsContextGLAttributes { attributes });
+    auto defaultContext = WebCore::GraphicsContextGLCocoa::create(WebCore::GraphicsContextGLAttributes { attributes }, { });
     ASSERT_NE(defaultContext, nullptr);
 
     attributes.powerPreference = WebCore::GraphicsContextGLPowerPreference::LowPower;
-    auto lowPowerContext = WebCore::GraphicsContextGLCocoa::create(WebCore::GraphicsContextGLAttributes { attributes });
+    auto lowPowerContext = WebCore::GraphicsContextGLCocoa::create(WebCore::GraphicsContextGLAttributes { attributes }, { });
     ASSERT_NE(lowPowerContext, nullptr);
 
     attributes.powerPreference = WebCore::GraphicsContextGLPowerPreference::HighPerformance;
-    auto highPerformanceContext = WebCore::GraphicsContextGLCocoa::create(WebCore::GraphicsContextGLAttributes { attributes });
+    auto highPerformanceContext = WebCore::GraphicsContextGLCocoa::create(WebCore::GraphicsContextGLAttributes { attributes }, { });
     ASSERT_NE(highPerformanceContext, nullptr);
 
     EXPECT_NE(lowPowerContext->getString(WebCore::GraphicsContextGL::RENDERER), highPerformanceContext->getString(WebCore::GraphicsContextGL::RENDERER));

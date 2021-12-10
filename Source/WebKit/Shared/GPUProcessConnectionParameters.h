@@ -28,14 +28,13 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "WebCoreArgumentCoders.h"
+#include <WebCore/ProcessIdentity.h>
 #include <wtf/MachSendRight.h>
 
 namespace WebKit {
 
 struct GPUProcessConnectionParameters {
-#if HAVE(TASK_IDENTITY_TOKEN)
-    MachSendRight webProcessIdentityToken;
-#endif
+    WebCore::ProcessIdentity webProcessIdentity;
     Vector<String> overrideLanguages;
 #if ENABLE(IPC_TESTING_API)
     bool ignoreInvalidMessageForTesting { false };
@@ -46,9 +45,7 @@ struct GPUProcessConnectionParameters {
 
     void encode(IPC::Encoder& encoder) const
     {
-#if HAVE(TASK_IDENTITY_TOKEN)
-        encoder << webProcessIdentityToken;
-#endif
+        encoder << webProcessIdentity;
         encoder << overrideLanguages;
 #if ENABLE(IPC_TESTING_API)
         encoder << ignoreInvalidMessageForTesting;
@@ -60,12 +57,10 @@ struct GPUProcessConnectionParameters {
 
     static std::optional<GPUProcessConnectionParameters> decode(IPC::Decoder& decoder)
     {
-#if HAVE(TASK_IDENTITY_TOKEN)
-        std::optional<MachSendRight> webProcessIdentityToken;
-        decoder >> webProcessIdentityToken;
-        if (!webProcessIdentityToken)
+        std::optional<WebCore::ProcessIdentity> webProcessIdentity;
+        decoder >> webProcessIdentity;
+        if (!webProcessIdentity)
             return std::nullopt;
-#endif
 
         std::optional<Vector<String>> overrideLanguages;
         decoder >> overrideLanguages;
@@ -86,9 +81,7 @@ struct GPUProcessConnectionParameters {
 #endif
 
         return GPUProcessConnectionParameters {
-#if HAVE(TASK_IDENTITY_TOKEN)
-            WTFMove(*webProcessIdentityToken),
-#endif
+            WTFMove(*webProcessIdentity),
             WTFMove(*overrideLanguages),
 #if ENABLE(IPC_TESTING_API)
             *ignoreInvalidMessageForTesting,

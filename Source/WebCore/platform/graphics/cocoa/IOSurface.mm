@@ -34,6 +34,7 @@
 #import "ImageBuffer.h"
 #import "Logging.h"
 #import "PlatformScreen.h"
+#import "ProcessIdentity.h"
 #import <pal/spi/cg/CoreGraphicsSPI.h>
 #import <wtf/Assertions.h>
 #import <wtf/MachSendRight.h>
@@ -484,14 +485,18 @@ void IOSurface::convertToFormat(std::unique_ptr<IOSurface>&& inSurface, Format f
 
 #endif // HAVE(IOSURFACE_ACCELERATOR)
 
-#if HAVE(IOSURFACE_SET_OWNERSHIP_IDENTITY)
-void IOSurface::setOwnershipIdentity(task_id_token_t newOwner)
+void IOSurface::setOwnershipIdentity(const ProcessIdentity& resourceOwner)
 {
-    auto result = IOSurfaceSetOwnershipIdentity(m_surface.get(), newOwner, kIOSurfaceMemoryLedgerTagGraphics, 0);
+#if HAVE(IOSURFACE_SET_OWNERSHIP_IDENTITY) && HAVE(TASK_IDENTITY_TOKEN)
+    ASSERT(resourceOwner);
+    task_id_token_t ownerTaskIdToken = resourceOwner.taskIdToken();
+    auto result = IOSurfaceSetOwnershipIdentity(m_surface.get(), ownerTaskIdToken, kIOSurfaceMemoryLedgerTagGraphics, 0);
     if (result != kIOReturnSuccess)
-        RELEASE_LOG_ERROR(IOSurface, "IOSurface::setOwnershipIdentity: Failed to claim ownership of IOSurface %p, newOwner: %d, error: %d", m_surface.get(), (int)newOwner, result);
-}
+        RELEASE_LOG_ERROR(IOSurface, "IOSurface::setOwnershipIdentity: Failed to claim ownership of IOSurface %p, task id token: %d, error: %d", m_surface.get(), (int)ownerTaskIdToken, result);
+#else
+    UNUSED_PARAM(resourceOwner);
 #endif
+}
 
 void IOSurface::migrateColorSpaceToProperties()
 {

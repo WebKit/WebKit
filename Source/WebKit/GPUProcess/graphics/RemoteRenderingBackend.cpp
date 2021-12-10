@@ -85,6 +85,7 @@ RemoteRenderingBackend::RemoteRenderingBackend(GPUConnectionToWebProcess& gpuCon
     , m_streamConnection(IPC::StreamServerConnection::create(gpuConnectionToWebProcess.connection(), WTFMove(streamBuffer), m_workQueue.get()))
     , m_remoteResourceCache(gpuConnectionToWebProcess.webProcessIdentifier())
     , m_gpuConnectionToWebProcess(gpuConnectionToWebProcess)
+    , m_resourceOwner(gpuConnectionToWebProcess.webProcessIdentity())
     , m_renderingBackendIdentifier(creationParameters.identifier)
 {
     ASSERT(RunLoop::isMain());
@@ -174,10 +175,9 @@ void RemoteRenderingBackend::createImageBufferWithQualifiedIdentifier(const Floa
 
     if (renderingMode == RenderingMode::Accelerated) {
         if (auto acceleratedImageBuffer = AcceleratedRemoteImageBuffer::create(logicalSize, resolutionScale, colorSpace, pixelFormat, *this, imageBufferResourceIdentifier)) {
-#if HAVE(IOSURFACE_SET_OWNERSHIP_IDENTITY)
             // Mark the IOSurface as being owned by the WebProcess even though it was constructed by the GPUProcess so that Jetsam knows which process to kill.
-            acceleratedImageBuffer->setProcessOwnership(m_gpuConnectionToWebProcess->webProcessIdentityToken());
-#endif
+            if (m_resourceOwner)
+                acceleratedImageBuffer->setOwnershipIdentity(m_resourceOwner);
             imageBuffer = WTFMove(acceleratedImageBuffer);
         }
     }

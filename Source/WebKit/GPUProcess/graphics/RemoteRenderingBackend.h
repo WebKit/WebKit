@@ -46,6 +46,7 @@
 #include <WebCore/DisplayListItems.h>
 #include <WebCore/DisplayListReplayer.h>
 #include <WebCore/ProcessIdentifier.h>
+#include <WebCore/ProcessIdentity.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -133,6 +134,7 @@ private:
     Ref<IPC::StreamServerConnection> m_streamConnection;
     RemoteResourceCache m_remoteResourceCache;
     Ref<GPUConnectionToWebProcess> m_gpuConnectionToWebProcess;
+    WebCore::ProcessIdentity m_resourceOwner;
     RenderingBackendIdentifier m_renderingBackendIdentifier;
     IPC::Semaphore m_getPixelBufferSemaphore;
     RefPtr<SharedMemory> m_getPixelBufferSharedMemory;

@@ -46,6 +46,7 @@ namespace WebCore {
 class GraphicsContext;
 class HostWindow;
 class ImageBuffer;
+class ProcessIdentity;
 
 enum class PixelFormat : uint8_t;
 enum class VolatilityState : uint8_t;
@@ -159,9 +160,7 @@ public:
     WEBCORE_EXPORT static void convertToFormat(std::unique_ptr<WebCore::IOSurface>&& inSurface, Format, Function<void(std::unique_ptr<WebCore::IOSurface>)>&&);
 #endif // HAVE(IOSURFACE_ACCELERATOR)
 
-#if HAVE(IOSURFACE_SET_OWNERSHIP_IDENTITY)
-    WEBCORE_EXPORT void setOwnershipIdentity(task_id_token_t newOwner);
-#endif
+    WEBCORE_EXPORT void setOwnershipIdentity(const ProcessIdentity&);
 
     void migrateColorSpaceToProperties();
 

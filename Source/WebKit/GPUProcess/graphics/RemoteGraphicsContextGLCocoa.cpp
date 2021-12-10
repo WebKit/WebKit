@@ -29,6 +29,7 @@
 #if ENABLE(GPU_PROCESS) && ENABLE(WEBGL) && PLATFORM(COCOA)
 
 #include "GPUConnectionToWebProcess.h"
+#include <WebCore/ProcessIdentity.h>
 #include <wtf/MachSendRight.h>
 
 namespace WebKit {
@@ -45,9 +46,7 @@ public:
     void platformWorkQueueInitialize(WebCore::GraphicsContextGLAttributes&&) final;
     void prepareForDisplay(CompletionHandler<void(WTF::MachSendRight&&)>&&) final;
 private:
-#if HAVE(IOSURFACE_SET_OWNERSHIP_IDENTITY)
-    task_id_token_t m_webProcessIdentityToken;
-#endif
+    const ProcessIdentity m_resourceOwner;
 };
 
 }
@@ -61,9 +60,7 @@ Ref<RemoteGraphicsContextGL> RemoteGraphicsContextGL::create(GPUConnectionToWebP
 
 RemoteGraphicsContextGLCocoa::RemoteGraphicsContextGLCocoa(GPUConnectionToWebProcess& gpuConnectionToWebProcess, GraphicsContextGLIdentifier graphicsContextGLIdentifier, RemoteRenderingBackend& renderingBackend, IPC::StreamConnectionBuffer&& stream)
     : RemoteGraphicsContextGL(gpuConnectionToWebProcess, graphicsContextGLIdentifier, renderingBackend, WTFMove(stream))
-#if HAVE(IOSURFACE_SET_OWNERSHIP_IDENTITY)
-    , m_webProcessIdentityToken(gpuConnectionToWebProcess.webProcessIdentityToken())
-#endif
+    , m_resourceOwner(gpuConnectionToWebProcess.webProcessIdentity())
 {
 
 }
@@ -71,7 +68,7 @@ RemoteGraphicsContextGLCocoa::RemoteGraphicsContextGLCocoa(GPUConnectionToWebPro
 void RemoteGraphicsContextGLCocoa::platformWorkQueueInitialize(WebCore::GraphicsContextGLAttributes&& attributes)
 {
     assertIsCurrent(m_streamThread);
-    m_context = GraphicsContextGLCocoa::create(WTFMove(attributes));
+    m_context = GraphicsContextGLCocoa::create(WTFMove(attributes), ProcessIdentity { m_resourceOwner });
 }
 
 void RemoteGraphicsContextGLCocoa::prepareForDisplay(CompletionHandler<void(WTF::MachSendRight&&)>&& completionHandler)
@@ -82,10 +79,6 @@ void RemoteGraphicsContextGLCocoa::prepareForDisplay(CompletionHandler<void(WTF:
     MachSendRight sendRight;
     if (displayBuffer) {
         m_context->markDisplayBufferInUse();
-#if HAVE(IOSURFACE_SET_OWNERSHIP_IDENTITY)
-        // Mark the IOSurface as being owned by the WebProcess even though it was constructed by the GPUProcess so that Jetsam knows which process to kill.
-        displayBuffer->setOwnershipIdentity(m_webProcessIdentityToken);
-#endif
         sendRight = displayBuffer->createSendRight();
     }
     completionHandler(WTFMove(sendRight));

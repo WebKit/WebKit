@@ -29,6 +29,7 @@
 #if ENABLE(WEBGL)
 #import "GraphicsContextGLCocoa.h" // NOLINT
 #import "GraphicsContextGLOpenGLManager.h"
+#import "ProcessIdentity.h"
 #import "WebGLLayer.h"
 #import <wtf/BlockObjCExceptions.h>
 
@@ -77,7 +78,7 @@ private:
 };
 
 WebProcessGraphicsContextGLCocoa::WebProcessGraphicsContextGLCocoa(GraphicsContextGLAttributes&& attributes)
-    : GraphicsContextGLCocoa(WTFMove(attributes))
+    : GraphicsContextGLCocoa(WTFMove(attributes), { })
     , m_webGLLayer(createWebGLLayer(contextAttributes()))
 {
 #if PLATFORM(MAC)

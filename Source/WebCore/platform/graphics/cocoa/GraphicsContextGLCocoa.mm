@@ -35,6 +35,7 @@
 #import "GraphicsContextGLIOSurfaceSwapChain.h"
 #import "GraphicsContextGLOpenGLManager.h"
 #import "Logging.h"
+#import "ProcessIdentity.h"
 #import "RuntimeApplicationChecks.h"
 #import <CoreGraphics/CGBitmapContext.h>
 #import <Metal/Metal.h>
@@ -192,19 +193,22 @@ static bool needsEAGLOnMac()
 }
 #endif
 
-RefPtr<GraphicsContextGLCocoa> GraphicsContextGLCocoa::create(GraphicsContextGLAttributes&& attributes)
+RefPtr<GraphicsContextGLCocoa> GraphicsContextGLCocoa::create(GraphicsContextGLAttributes&& attributes, ProcessIdentity&& resourceOwner)
 {
-    auto context = adoptRef(*new GraphicsContextGLCocoa(WTFMove(attributes)));
+    auto context = adoptRef(*new GraphicsContextGLCocoa(WTFMove(attributes), WTFMove(resourceOwner)));
     if (!context->isValid())
         return nullptr;
     return context;
 }
 
-GraphicsContextGLCocoa::GraphicsContextGLCocoa(GraphicsContextGLAttributes&& creationAttributes)
+GraphicsContextGLCocoa::GraphicsContextGLCocoa(GraphicsContextGLAttributes&& creationAttributes, ProcessIdentity&& resourceOwner)
     : GraphicsContextGLANGLE(WTFMove(creationAttributes))
 {
     if (!isValid())
         return;
+    // FIXME: Move this to initializer list once m_resourceOwner moves to GraphicsContextGLCocoa.
+    m_resourceOwner = WTFMove(resourceOwner);
+
 #if PLATFORM(MAC)
     auto attributes = contextAttributes();
     if (!attributes.useMetal && attributes.effectivePowerPreference() == GraphicsContextGLPowerPreference::HighPerformance)
@@ -557,7 +561,8 @@ bool GraphicsContextGLANGLE::allocateAndBindDisplayBufferBacking()
     auto backing = IOSurface::create(getInternalFramebufferSize(), DestinationColorSpace::SRGB());
     if (!backing)
         return false;
-
+    if (m_resourceOwner)
+        backing->setOwnershipIdentity(m_resourceOwner);
     backing->migrateColorSpaceToProperties();
 
     const bool usingAlpha = contextAttributes().alpha;

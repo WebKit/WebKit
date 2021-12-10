@@ -1,3 +1,54 @@
+2021-12-10  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        IOSurface memory attribution is hard to use in constructors
+        https://bugs.webkit.org/show_bug.cgi?id=232988
+        <rdar://problem/85541918>
+
+        Reviewed by Chris Dumez.
+
+        Remove ifdefs and direct use of task_id_token_t.
+        Instead, use WebCore::ProcessIdentifier. This way the
+        cross-platform code is easier to author.
+
+        * GPUProcess/GPUConnectionToWebProcess.cpp:
+        (WebKit::GPUConnectionToWebProcess::GPUConnectionToWebProcess):
+        * GPUProcess/GPUConnectionToWebProcess.h:
+        (WebKit::GPUConnectionToWebProcess::webProcessIdentity const):
+        (WebKit::GPUConnectionToWebProcess::webProcessIdentityToken const): Deleted.
+        * GPUProcess/graphics/RemoteGraphicsContextGLCocoa.cpp:
+        (WebKit::RemoteGraphicsContextGLCocoa::RemoteGraphicsContextGLCocoa):
+        (WebKit::RemoteGraphicsContextGLCocoa::platformWorkQueueInitialize):
+        (WebKit::RemoteGraphicsContextGLCocoa::prepareForDisplay):
+        * GPUProcess/graphics/RemoteImageBuffer.h:
+        (WebKit::RemoteImageBuffer::setOwnershipIdentity):
+        (WebKit::RemoteImageBuffer::setProcessOwnership): Deleted.
+        * GPUProcess/graphics/RemoteRenderingBackend.cpp:
+        (WebKit::RemoteRenderingBackend::RemoteRenderingBackend):
+        (WebKit::RemoteRenderingBackend::createImageBufferWithQualifiedIdentifier):
+        * GPUProcess/graphics/RemoteRenderingBackend.h:
+        * GPUProcess/webrtc/LibWebRTCCodecsProxy.mm:
+        (WebKit::Function<void):
+        * Shared/GPUProcessConnectionParameters.h:
+        (WebKit::GPUProcessConnectionParameters::encode const):
+        (WebKit::GPUProcessConnectionParameters::decode):
+        * UIProcess/Cocoa/UserMediaCaptureManagerProxy.cpp:
+        (WebKit::UserMediaCaptureManagerProxy::SourceProxy::SourceProxy):
+        (WebKit::UserMediaCaptureManagerProxy::SourceProxy::setShouldApplyRotation):
+        (WebKit::UserMediaCaptureManagerProxy::createMediaSourceForCaptureDeviceWithConstraints):
+        (WebKit::UserMediaCaptureManagerProxy::clone):
+        (WebKit::UserMediaCaptureManagerProxy::SourceProxy::setWebProcessIdentityToken): Deleted.
+        * UIProcess/Cocoa/UserMediaCaptureManagerProxy.h:
+        (WebKit::UserMediaCaptureManagerProxy::ConnectionProxy::webProcessIdentityToken const): Deleted.
+        * UIProcess/WebProcessProxy.cpp:
+        * WebProcess/GPU/graphics/ImageBufferShareableBitmapBackend.h:
+        (WebKit::ImageBufferShareableBitmapBackend::setOwnershipIdentity):
+        * WebProcess/GPU/graphics/cocoa/ImageBufferShareableMappedIOSurfaceBackend.cpp:
+        (WebKit::ImageBufferShareableMappedIOSurfaceBackend::setOwnershipIdentity):
+        (WebKit::ImageBufferShareableMappedIOSurfaceBackend::setProcessOwnership): Deleted.
+        * WebProcess/GPU/graphics/cocoa/ImageBufferShareableMappedIOSurfaceBackend.h:
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::platformInitializeGPUProcessConnectionParameters):
+
 2021-12-10  Adrian Perez de Castro  <aperez@igalia.com>
 
         Non-unified build fixes, mid December 2021 edition

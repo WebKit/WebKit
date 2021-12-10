@@ -1,3 +1,16 @@
+2021-12-10  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        IOSurface memory attribution is hard to use in constructors
+        https://bugs.webkit.org/show_bug.cgi?id=232988
+        <rdar://problem/85541918>
+
+        Reviewed by Chris Dumez.
+
+        Update constructor calling base class constructor, add empty
+        ProcesseIdentity.
+
+        * TestWebKitAPI/Tests/WebCore/cocoa/TestGraphicsContextGLCocoa.mm:
+
 2021-12-09  Antoine Quint  <graouts@webkit.org>
 
         [Model] Add load and error events to distinguish resource load from model readiness

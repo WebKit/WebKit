@@ -216,6 +216,13 @@ private:
         return true;
     }
 
+    const WebCore::ProcessIdentity& resourceOwner() const final
+    {
+        // FIXME: should obtain WebContent process identity from WebContent.
+        static NeverDestroyed<WebCore::ProcessIdentity> dummy;
+        return dummy.get();
+    }
+
     RefPtr<Logger> m_logger;
     WebProcessProxy& m_process;
 };

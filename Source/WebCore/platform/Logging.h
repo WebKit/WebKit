@@ -94,6 +94,7 @@ namespace WebCore {
     M(Plugins) \
     M(PopupBlocking) \
     M(PrivateClickMeasurement) \
+    M(Process) \
     M(Progress) \
     M(RemoteInspector) \
     M(RequestAnimationFrame) \

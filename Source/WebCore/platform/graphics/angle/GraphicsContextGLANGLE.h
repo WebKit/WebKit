@@ -36,6 +36,7 @@
 #if PLATFORM(COCOA)
 #include "GraphicsContextGLIOSurfaceSwapChain.h"
 #include "IOSurface.h"
+#include "ProcessIdentity.h"
 #endif
 
 
@@ -427,6 +428,7 @@ protected:
     std::unique_ptr<ExtensionsGLANGLE> m_extensions;
 
 #if PLATFORM(COCOA)
+    // FIXME: Move these to GraphicsContextGLCocoa.
     GraphicsContextGLIOSurfaceSwapChain m_swapChain;
     EGLDisplay m_displayObj { nullptr };
     PlatformGraphicsContextGL m_contextObj { nullptr };
@@ -436,6 +438,7 @@ protected:
     // When preserveDrawingBuffer == true, this is blitted to during display prepare.
     std::unique_ptr<IOSurface> m_displayBufferBacking;
     void* m_displayBufferPbuffer { nullptr };
+    ProcessIdentity m_resourceOwner;
 #endif
 #if USE(COORDINATED_GRAPHICS)
     GCGLuint m_compositorTexture { 0 };

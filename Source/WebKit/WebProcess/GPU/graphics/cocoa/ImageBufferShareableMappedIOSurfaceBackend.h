@@ -31,6 +31,10 @@
 #include <WebCore/ImageBufferIOSurfaceBackend.h>
 #include <wtf/IsoMalloc.h>
 
+namespace WebCore {
+class ProcessIdentity;
+}
+
 namespace WebKit {
 
 class ShareableBitmap;
@@ -46,9 +50,7 @@ public:
 
     ImageBufferBackendHandle createImageBufferBackendHandle() const;
 
-#if HAVE(IOSURFACE_SET_OWNERSHIP_IDENTITY)
-    void setProcessOwnership(task_id_token_t);
-#endif
+    void setOwnershipIdentity(const WebCore::ProcessIdentity&);
 };
 
 } // namespace WebKit

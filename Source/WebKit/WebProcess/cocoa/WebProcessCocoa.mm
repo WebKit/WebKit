@@ -1226,14 +1226,7 @@ void WebProcess::waitForPendingPasteboardWritesToFinish(const String& pasteboard
 #if ENABLE(GPU_PROCESS)
 void WebProcess::platformInitializeGPUProcessConnectionParameters(GPUProcessConnectionParameters& parameters)
 {
-#if HAVE(TASK_IDENTITY_TOKEN)
-    task_id_token_t identityToken;
-    kern_return_t kr = task_create_identity_token(mach_task_self(), &identityToken);
-    if (kr == KERN_SUCCESS)
-        parameters.webProcessIdentityToken = MachSendRight::adopt(identityToken);
-    else
-        RELEASE_LOG_ERROR(Process, "Call to task_create_identity_token() failed: %{private}s (%x)", mach_error_string(kr), kr);
-#endif
+    parameters.webProcessIdentity = ProcessIdentity { ProcessIdentity::CurrentProcess };
 
     parameters.overrideLanguages = userPreferredLanguagesOverride();
 }

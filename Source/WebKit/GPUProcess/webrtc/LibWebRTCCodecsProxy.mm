@@ -76,15 +76,10 @@ void LibWebRTCCodecsProxy::close()
 
 static Function<void(CVPixelBufferRef pixelBuffer, uint32_t timeStampNs, uint32_t timeStamp)> createDecoderCallback(RTCDecoderIdentifier identifier, GPUConnectionToWebProcess& gpuConnectionToWebProcess)
 {
-    return [connection = Ref { gpuConnectionToWebProcess.connection() },
-#if HAVE(IOSURFACE_SET_OWNERSHIP_IDENTITY)
-        token = gpuConnectionToWebProcess.webProcessIdentityToken(),
-#endif
-        identifier](CVPixelBufferRef pixelBuffer, uint32_t timeStampNs, uint32_t timeStamp) {
+    return [connection = Ref { gpuConnectionToWebProcess.connection() }, resourceOwner = gpuConnectionToWebProcess.webProcessIdentity(), identifier] (CVPixelBufferRef pixelBuffer, uint32_t timeStampNs, uint32_t timeStamp) {
         if (auto sample = WebCore::RemoteVideoSample::create(pixelBuffer, MediaTime(timeStampNs, 1))) {
-#if HAVE(IOSURFACE_SET_OWNERSHIP_IDENTITY)
-            sample->setOwnershipIdentity(token);
-#endif
+            if (resourceOwner)
+                sample->setOwnershipIdentity(resourceOwner);
             connection->send(Messages::LibWebRTCCodecs::CompletedDecoding { identifier, timeStamp, *sample }, 0);
         }
     };

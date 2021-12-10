@@ -57,9 +57,10 @@ class UserMediaCaptureManagerProxy::SourceProxy
     , private RealtimeMediaSource::VideoSampleObserver {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    SourceProxy(RealtimeMediaSourceIdentifier id, Ref<IPC::Connection>&& connection, Ref<RealtimeMediaSource>&& source)
+    SourceProxy(RealtimeMediaSourceIdentifier id, Ref<IPC::Connection>&& connection, ProcessIdentity&& resourceOwner, Ref<RealtimeMediaSource>&& source)
         : m_id(id)
         , m_connection(WTFMove(connection))
+        , m_resourceOwner(WTFMove(resourceOwner))
         , m_source(WTFMove(source))
     {
         m_source->addObserver(*this);
@@ -125,9 +126,6 @@ public:
     }
 
     void setShouldApplyRotation(bool shouldApplyRotation) { m_shouldApplyRotation = true; }
-#if HAVE(IOSURFACE_SET_OWNERSHIP_IDENTITY)
-    void setWebProcessIdentityToken(std::optional<task_id_token_t> token) { m_webProcessIdentityToken = token;}
-#endif
 
 private:
     void sourceStopped() final {
@@ -188,10 +186,8 @@ private:
         } else
             remoteSample = RemoteVideoSample::create(sample);
         if (remoteSample) {
-#if HAVE(IOSURFACE_SET_OWNERSHIP_IDENTITY)
-            if (m_webProcessIdentityToken)
-                remoteSample->setOwnershipIdentity(*m_webProcessIdentityToken);
-#endif
+            if (m_resourceOwner)
+                remoteSample->setOwnershipIdentity(m_resourceOwner);
             m_connection->send(Messages::RemoteCaptureSampleManager::VideoSampleAvailable(m_id, WTFMove(*remoteSample), metadata), 0);
         }
     }
@@ -244,6 +240,7 @@ private:
     RealtimeMediaSourceIdentifier m_id;
     WeakPtr<PlatformMediaSessionManager> m_sessionManager;
     Ref<IPC::Connection> m_connection;
+    ProcessIdentity m_resourceOwner;
     Ref<RealtimeMediaSource> m_source;
     std::unique_ptr<CARingBuffer> m_ringBuffer;
     CAAudioStreamDescription m_description { };
@@ -257,9 +254,6 @@ private:
     size_t m_frameChunkSize { 0 };
     MediaTime m_startTime;
     bool m_shouldReset { false };
-#if HAVE(TASK_IDENTITY_TOKEN)
-    std::optional<task_id_token_t> m_webProcessIdentityToken;
-#endif
 };
 
 UserMediaCaptureManagerProxy::UserMediaCaptureManagerProxy(UniqueRef<ConnectionProxy>&& connectionProxy)
@@ -323,12 +317,7 @@ void UserMediaCaptureManagerProxy::createMediaSourceForCaptureDeviceWithConstrai
         }
 
         ASSERT(!m_proxies.contains(id));
-        auto proxy = makeUnique<SourceProxy>(id, m_connectionProxy->connection(), WTFMove(source));
-#if HAVE(IOSURFACE_SET_OWNERSHIP_IDENTITY)
-        if (device.type() != WebCore::CaptureDevice::DeviceType::Microphone)
-            proxy->setWebProcessIdentityToken(m_connectionProxy->webProcessIdentityToken());
-#endif
-
+        auto proxy = makeUnique<SourceProxy>(id, m_connectionProxy->connection(), ProcessIdentity { m_connectionProxy->resourceOwner() }, WTFMove(source));
         m_proxies.add(id, WTFMove(proxy));
     } else
         invalidConstraints = WTFMove(sourceOrError.errorMessage);
@@ -394,7 +383,7 @@ void UserMediaCaptureManagerProxy::clone(RealtimeMediaSourceIdentifier clonedID,
     MESSAGE_CHECK(m_proxies.contains(clonedID));
     MESSAGE_CHECK(!m_proxies.contains(newSourceID));
     if (auto* proxy = m_proxies.get(clonedID))
-        m_proxies.add(newSourceID, makeUnique<SourceProxy>(newSourceID, m_connectionProxy->connection(), proxy->source().clone()));
+        m_proxies.add(newSourceID, makeUnique<SourceProxy>(newSourceID, m_connectionProxy->connection(), ProcessIdentity { m_connectionProxy->resourceOwner() }, proxy->source().clone()));
 }
 
 void UserMediaCaptureManagerProxy::requestToEnd(RealtimeMediaSourceIdentifier sourceID)

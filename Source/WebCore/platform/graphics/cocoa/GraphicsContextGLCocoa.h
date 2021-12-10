@@ -42,9 +42,11 @@ class GraphicsContextGLCVCocoa;
 
 namespace WebCore {
 
+class ProcessIdentity;
+
 class WEBCORE_EXPORT GraphicsContextGLCocoa : public GraphicsContextGLANGLE {
 public:
-    static RefPtr<GraphicsContextGLCocoa> create(WebCore::GraphicsContextGLAttributes&&);
+    static RefPtr<GraphicsContextGLCocoa> create(WebCore::GraphicsContextGLAttributes&&, ProcessIdentity&& resourceOwner);
     ~GraphicsContextGLCocoa();
     IOSurface* displayBuffer();
     void markDisplayBufferInUse();
@@ -76,9 +78,8 @@ public:
     void updateContextOnDisplayReconfiguration();
 #endif
 protected:
-    GraphicsContextGLCocoa(WebCore::GraphicsContextGLAttributes&&);
+    GraphicsContextGLCocoa(WebCore::GraphicsContextGLAttributes&&, ProcessIdentity&& resourceOwner);
     bool isValid() const;
-
 #if ENABLE(VIDEO)
     std::unique_ptr<GraphicsContextGLCVCocoa> m_cv;
 #endif

@@ -77,13 +77,11 @@ ImageBufferBackendHandle ImageBufferShareableMappedIOSurfaceBackend::createImage
     return ImageBufferBackendHandle(m_surface->createSendRight());
 }
 
-#if HAVE(IOSURFACE_SET_OWNERSHIP_IDENTITY)
-void ImageBufferShareableMappedIOSurfaceBackend::setProcessOwnership(task_id_token_t processIdentityToken)
+void ImageBufferShareableMappedIOSurfaceBackend::setOwnershipIdentity(const WebCore::ProcessIdentity& resourceOwner)
 {
     ASSERT(surface());
-    surface()->setOwnershipIdentity(processIdentityToken);
+    surface()->setOwnershipIdentity(resourceOwner);
 }
-#endif
 
 } // namespace WebKit
 

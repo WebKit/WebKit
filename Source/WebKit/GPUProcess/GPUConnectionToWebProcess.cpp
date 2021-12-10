@@ -207,12 +207,11 @@ private:
         m_process.startCapturingAudio();
     }
 #endif
-#if HAVE(IOSURFACE_SET_OWNERSHIP_IDENTITY)
-    std::optional<task_id_token_t> webProcessIdentityToken() const final
+
+    const ProcessIdentity& resourceOwner() const final
     {
-        return m_process.webProcessIdentityToken();
+        return m_process.webProcessIdentity();
     }
-#endif
 
     GPUConnectionToWebProcess& m_process;
 };
@@ -228,9 +227,7 @@ GPUConnectionToWebProcess::GPUConnectionToWebProcess(GPUProcess& gpuProcess, Web
     : m_connection(IPC::Connection::createServerConnection(connectionIdentifier, *this))
     , m_gpuProcess(gpuProcess)
     , m_webProcessIdentifier(webProcessIdentifier)
-#if HAVE(TASK_IDENTITY_TOKEN)
-    , m_webProcessIdentityToken(WTFMove(parameters.webProcessIdentityToken))
-#endif
+    , m_webProcessIdentity(WTFMove(parameters.webProcessIdentity))
     , m_remoteMediaPlayerManagerProxy(makeUniqueRef<RemoteMediaPlayerManagerProxy>(*this))
     , m_sessionID(sessionID)
 #if PLATFORM(COCOA) && USE(LIBWEBRTC)

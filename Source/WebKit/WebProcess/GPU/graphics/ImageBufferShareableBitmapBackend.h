@@ -31,6 +31,10 @@
 #include <WebCore/PlatformImageBufferBackend.h>
 #include <wtf/IsoMalloc.h>
 
+namespace WebCore {
+class ProcessIdentity;
+}
+
 namespace WebKit {
 
 class ShareableBitmap;
@@ -61,6 +65,7 @@ public:
     std::optional<WebCore::PixelBuffer> getPixelBuffer(const WebCore::PixelBufferFormat& outputFormat, const WebCore::IntRect&) const override;
     void putPixelBuffer(const WebCore::PixelBuffer&, const WebCore::IntRect& srcRect, const WebCore::IntPoint& destPoint, WebCore::AlphaPremultiplication destFormat) override;
 
+    void setOwnershipIdentity(const WebCore::ProcessIdentity&) { }
 private:
     unsigned bytesPerRow() const override;
 

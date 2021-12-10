@@ -32,6 +32,7 @@
 #include "UserMediaCaptureManager.h"
 #include <WebCore/CaptureDevice.h>
 #include <WebCore/OrientationNotifier.h>
+#include <WebCore/ProcessIdentity.h>
 #include <WebCore/RealtimeMediaSource.h>
 #include <WebCore/RealtimeMediaSourceIdentifier.h>
 #include <pal/spi/cocoa/TCCSPI.h>
@@ -59,9 +60,7 @@ public:
         virtual bool willStartCapture(WebCore::CaptureDevice::DeviceType) const = 0;
         virtual Logger& logger() = 0;
         virtual bool setCaptureAttributionString() { return true; }
-#if HAVE(IOSURFACE_SET_OWNERSHIP_IDENTITY)
-        virtual std::optional<task_id_token_t> webProcessIdentityToken() const { return { }; };
-#endif
+        virtual const WebCore::ProcessIdentity& resourceOwner() const = 0;
 #if ENABLE(APP_PRIVACY_REPORT)
         virtual void setTCCIdentity() { }
 #endif
