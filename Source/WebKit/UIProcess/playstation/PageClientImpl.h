@@ -149,7 +149,7 @@ private:
 
     WebCore::UserInterfaceLayoutDirection userInterfaceLayoutDirection() override;
 
-    void requestDOMPasteAccess(const WebCore::IntRect&, const String&, CompletionHandler<void(WebCore::DOMPasteAccessResponse)>&&) override;
+    void requestDOMPasteAccess(WebCore::DOMPasteAccessCategory, const WebCore::IntRect&, const String&, CompletionHandler<void(WebCore::DOMPasteAccessResponse)>&&) override;
 
     PlayStationWebView& m_view;
 };

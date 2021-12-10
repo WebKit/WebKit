@@ -110,6 +110,7 @@ enum class RouteSharingPolicy : uint8_t;
 enum class ScrollbarStyle : uint8_t;
 enum class TextIndicatorLifetime : uint8_t;
 enum class TextIndicatorDismissalAnimation : uint8_t;
+enum class DOMPasteAccessCategory : uint8_t;
 enum class DOMPasteAccessResponse : uint8_t;
 enum class ScrollIsAnimated : uint8_t;
 
@@ -599,7 +600,7 @@ public:
     virtual void didChangeDragCaretRect(const WebCore::IntRect& previousCaretRect, const WebCore::IntRect& caretRect) = 0;
 #endif
 
-    virtual void requestDOMPasteAccess(const WebCore::IntRect& elementRect, const String& originIdentifier, CompletionHandler<void(WebCore::DOMPasteAccessResponse)>&&) = 0;
+    virtual void requestDOMPasteAccess(WebCore::DOMPasteAccessCategory, const WebCore::IntRect& elementRect, const String& originIdentifier, CompletionHandler<void(WebCore::DOMPasteAccessResponse)>&&) = 0;
 
 #if ENABLE(ATTACHMENT_ELEMENT)
     virtual void didInsertAttachment(API::Attachment&, const String& source) { }

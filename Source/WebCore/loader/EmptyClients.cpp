@@ -286,7 +286,7 @@ private:
     void registerRedoStep(UndoStep&) final;
     void clearUndoRedoOperations() final { }
 
-    DOMPasteAccessResponse requestDOMPasteAccess(const String&) final { return DOMPasteAccessResponse::DeniedForGesture; }
+    DOMPasteAccessResponse requestDOMPasteAccess(DOMPasteAccessCategory, const String&) final { return DOMPasteAccessResponse::DeniedForGesture; }
 
     bool canCopyCut(Frame*, bool defaultValue) const final { return defaultValue; }
     bool canPaste(Frame*, bool defaultValue) const final { return defaultValue; }

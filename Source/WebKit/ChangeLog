@@ -1,3 +1,90 @@
+2021-12-09  Devin Rousso  <drousso@apple.com>
+
+        Add a `DOMPasteAccessCategory` to control which pasteboard the WebProcess is granted access to when pasting
+        https://bugs.webkit.org/show_bug.cgi?id=233939
+
+        Reviewed by Wenson Hsieh.
+
+        Implementing `-pasteFont:` <https://webkit.org/b/191379> requires that we read from the font
+        pasteboard instead of the general pasteboard. In order to allow web content to trigger this
+        (e.g. `document.execCommand("PasteFont"))`) we must have a way for the WebProcess to signal
+        that it wishes to read from the font pasteboard instead of the general pasteboard. As such,
+        create and pass along a `DOMPasteAccessCategory` to `requestDOMPasteAccess`.
+
+        No change in behavior.
+
+        * Scripts/webkit/messages.py:
+        (headers_for_type):
+        Indicate which header is associated with `DOMPasteAccessCategory`.
+
+        * UIProcess/Cocoa/WebViewImpl.h:
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (-[WKDOMPasteMenuDelegate initWithWebViewImpl:pasteAccessCategory:]): Added.
+        (-[WKDOMPasteMenuDelegate menuDidClose:]):
+        (-[WKDOMPasteMenuDelegate _web_grantDOMPasteAccess]): Added.
+        (WebKit::WebViewImpl::handleProcessSwapOrExit):
+        (WebKit::pasteboardNameForAccessCategory): Added.
+        (WebKit::pasteboardForAccessCategory): Added.
+        (WebKit::WebViewImpl::requestDOMPasteAccess):
+        (WebKit::WebViewImpl::handleDOMPasteRequestForCategoryWithResult):
+        (WebKit::WebViewImpl::hideDOMPasteMenuWithResult): Added.
+        (-[WKDOMPasteMenuDelegate initWithWebViewImpl:]): Deleted.
+        (WebKit::WebViewImpl::handleDOMPasteRequestWithResult): Deleted.
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView _web_grantDOMPasteAccess]): Deleted.
+        * UIProcess/API/mac/WKWebViewMac.mm:
+        (-[WKWebView _web_grantDOMPasteAccess]): Deleted.
+        Pass the `DOMPasteAccessCategory` to the `WKDOMPasteMenuDelegate` and use it as the `target`
+        of the `NSMenuItem` so that we can pass along the `DOMPasteAccessCategory` in the `action`.
+
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (pasteboardNameForAccessCategory): Added.
+        (pasteboardForAccessCategory): Added.
+        (-[WKContentView _handleDOMPasteRequestWithResult:]):
+        (-[WKContentView _requestDOMPasteAccessForCategory:elementRect:originIdentifier:completionHandler:]): Added.
+        (-[WKContentView _requestDOMPasteAccessWithElementRect:originIdentifier:completionHandler:]): Deleted.
+        * UIProcess/PageClient.h:
+        * UIProcess/API/gtk/PageClientImpl.h:
+        * UIProcess/API/gtk/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::requestDOMPasteAccess):
+        * UIProcess/API/wpe/PageClientImpl.h:
+        * UIProcess/API/wpe/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::requestDOMPasteAccess):
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::requestDOMPasteAccess):
+        * UIProcess/mac/PageClientImplMac.h:
+        * UIProcess/mac/PageClientImplMac.mm:
+        (WebKit::PageClientImpl::requestDOMPasteAccess):
+        * UIProcess/playstation/PageClientImpl.h:
+        * UIProcess/playstation/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::requestDOMPasteAccess):
+        * UIProcess/win/PageClientImpl.h:
+        * UIProcess/win/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::requestDOMPasteAccess):
+        * WebProcess/WebCoreSupport/WebEditorClient.h:
+        * WebProcess/WebCoreSupport/WebEditorClient.cpp:
+        (WebKit::WebEditorClient::requestDOMPasteAccess):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::requestDOMPasteAccess):
+        Pass along the `DOMPasteAccessCategory`.
+
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::pasteAccessCategoryForCommand): Added.
+        (WebKit::WebPageProxy::executeEditCommand):
+        (WebKit::WebPageProxy::requestDOMPasteAccess):
+        (WebKit::WebPageProxy::willPerformPasteCommand):
+        (WebKit::isPasteCommandName): Deleted.
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::willPerformPasteCommand):
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::willPerformPasteCommand)
+        Create a mapping between paste command name and `DOMPasteAccessCategory`.
+
 2021-12-09  Said Abou-Hallawa  <said@apple.com>
 
         [GPU Process] [Filters] Add the encoding and decoding for FEImage

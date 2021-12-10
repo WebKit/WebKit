@@ -332,9 +332,9 @@ void WebEditorClient::redo()
     m_page->sendSync(Messages::WebPageProxy::ExecuteUndoRedo(UndoOrRedo::Redo), Messages::WebPageProxy::ExecuteUndoRedo::Reply());
 }
 
-WebCore::DOMPasteAccessResponse WebEditorClient::requestDOMPasteAccess(const String& originIdentifier)
+WebCore::DOMPasteAccessResponse WebEditorClient::requestDOMPasteAccess(WebCore::DOMPasteAccessCategory pasteAccessCategory, const String& originIdentifier)
 {
-    return m_page->requestDOMPasteAccess(originIdentifier);
+    return m_page->requestDOMPasteAccess(pasteAccessCategory, originIdentifier);
 }
 
 #if !PLATFORM(COCOA) && !USE(GLIB)

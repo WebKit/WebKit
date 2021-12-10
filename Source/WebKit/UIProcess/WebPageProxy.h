@@ -267,6 +267,7 @@ class ValidationBubble;
 enum class AutoplayEvent : uint8_t;
 enum class CookieConsentDecisionResult : uint8_t;
 enum class CreateNewGroupForHighlight : bool;
+enum class DOMPasteAccessCategory : uint8_t;
 enum class DOMPasteAccessResponse : uint8_t;
 enum class EventMakesGamepadsVisible : bool;
 enum class LockBackForwardList : bool;
@@ -2261,8 +2262,8 @@ private:
     void setIsNeverRichlyEditableForTouchBar(bool);
 #endif
 
-    void requestDOMPasteAccess(const WebCore::IntRect&, const String&, CompletionHandler<void(WebCore::DOMPasteAccessResponse)>&&);
-    void willPerformPasteCommand();
+    void requestDOMPasteAccess(WebCore::DOMPasteAccessCategory, const WebCore::IntRect&, const String&, CompletionHandler<void(WebCore::DOMPasteAccessResponse)>&&);
+    void willPerformPasteCommand(WebCore::DOMPasteAccessCategory);
 
     // Back/Forward list management
     void backForwardAddItem(BackForwardListItemState&&);

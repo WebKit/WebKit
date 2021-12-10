@@ -83,7 +83,7 @@ private:
     void getClientPasteboardData(const std::optional<WebCore::SimpleRange>&, Vector<String>& pasteboardTypes, Vector<RefPtr<WebCore::SharedBuffer>>& pasteboardData) final;
 
     void setInsertionPasteboard(const String&) final;
-    WebCore::DOMPasteAccessResponse requestDOMPasteAccess(const String&) final { return WebCore::DOMPasteAccessResponse::DeniedForGesture; }
+    WebCore::DOMPasteAccessResponse requestDOMPasteAccess(WebCore::DOMPasteAccessCategory, const String&) final { return WebCore::DOMPasteAccessResponse::DeniedForGesture; }
 
 #if USE(APPKIT)
     void uppercaseWord() final;

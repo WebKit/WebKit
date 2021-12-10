@@ -4164,10 +4164,28 @@ WEBCORE_COMMAND_FOR_WEBVIEW(pasteAndMatchStyle);
     _page->storeSelectionForAccessibility(false);
 }
 
+static UIPasteboardName pasteboardNameForAccessCategory(WebCore::DOMPasteAccessCategory pasteAccessCategory)
+{
+    switch (pasteAccessCategory) {
+    case WebCore::DOMPasteAccessCategory::General:
+        return UIPasteboardNameGeneral;
+    }
+}
+
+static UIPasteboard *pasteboardForAccessCategory(WebCore::DOMPasteAccessCategory pasteAccessCategory)
+{
+    switch (pasteAccessCategory) {
+    case WebCore::DOMPasteAccessCategory::General:
+        return UIPasteboard.generalPasteboard;
+    }
+}
+
 - (BOOL)_handleDOMPasteRequestWithResult:(WebCore::DOMPasteAccessResponse)response
 {
-    if (response == WebCore::DOMPasteAccessResponse::GrantedForCommand || response == WebCore::DOMPasteAccessResponse::GrantedForGesture)
-        _page->grantAccessToCurrentPasteboardData(UIPasteboardNameGeneral);
+    if (auto pasteAccessCategory = std::exchange(_domPasteRequestCategory, std::nullopt)) {
+        if (response == WebCore::DOMPasteAccessResponse::GrantedForCommand || response == WebCore::DOMPasteAccessResponse::GrantedForGesture)
+            _page->grantAccessToCurrentPasteboardData(pasteboardNameForAccessCategory(*pasteAccessCategory));
+    }
 
     if (auto pasteHandler = WTFMove(_domPasteRequestHandler)) {
         [UIMenuController.sharedMenuController hideMenuFromView:self];
@@ -6635,14 +6653,16 @@ static BOOL allPasteboardItemOriginsMatchOrigin(UIPasteboard *pasteboard, const 
     return foundAtLeastOneMatchingIdentifier;
 }
 
-- (void)_requestDOMPasteAccessWithElementRect:(const WebCore::IntRect&)elementRect originIdentifier:(const String&)originIdentifier completionHandler:(CompletionHandler<void(WebCore::DOMPasteAccessResponse)>&&)completionHandler
+- (void)_requestDOMPasteAccessForCategory:(WebCore::DOMPasteAccessCategory)pasteAccessCategory elementRect:(const WebCore::IntRect&)elementRect originIdentifier:(const String&)originIdentifier completionHandler:(CompletionHandler<void(WebCore::DOMPasteAccessResponse)>&&)completionHandler
 {
     if (auto existingCompletionHandler = std::exchange(_domPasteRequestHandler, WTFMove(completionHandler))) {
         ASSERT_NOT_REACHED();
         existingCompletionHandler(WebCore::DOMPasteAccessResponse::DeniedForGesture);
     }
 
-    if (allPasteboardItemOriginsMatchOrigin(UIPasteboard.generalPasteboard, originIdentifier)) {
+    _domPasteRequestCategory = pasteAccessCategory;
+
+    if (allPasteboardItemOriginsMatchOrigin(pasteboardForAccessCategory(pasteAccessCategory), originIdentifier)) {
         [self _handleDOMPasteRequestWithResult:WebCore::DOMPasteAccessResponse::GrantedForCommand];
         return;
     }

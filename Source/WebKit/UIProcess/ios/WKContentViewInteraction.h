@@ -90,6 +90,7 @@ struct ContactsRequestData;
 struct PromisedAttachmentInfo;
 struct ShareDataWithParsedURL;
 struct TextRecognitionResult;
+enum class DOMPasteAccessCategory : uint8_t;
 enum class DOMPasteAccessResponse : uint8_t;
 enum class MouseEventPolicy : uint8_t;
 enum class RouteSharingPolicy : uint8_t;
@@ -459,6 +460,7 @@ using ImageAnalysisRequestIdentifier = ObjectIdentifier<ImageAnalysisRequestIden
     NSUInteger _activeTextInteractionCount;
     NSInteger _suppressNonEditableSingleTapTextInteractionCount;
     CompletionHandler<void(WebCore::DOMPasteAccessResponse)> _domPasteRequestHandler;
+    std::optional<WebCore::DOMPasteAccessCategory> _domPasteRequestCategory;
     BlockPtr<void(UIWKAutocorrectionContext *)> _pendingAutocorrectionContextHandler;
     CompletionHandler<void()> _pendingRunModalJavaScriptDialogCallback;
 
@@ -678,7 +680,7 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(DECLARE_WKCONTENTVIEW_ACTION_FOR_WEB_VIEW)
 - (void)updateFocusedElementSelectedIndex:(uint32_t)index allowsMultipleSelection:(bool)allowsMultipleSelection;
 - (void)updateFocusedElementFocusedWithDataListDropdown:(BOOL)value;
 
-- (void)_requestDOMPasteAccessWithElementRect:(const WebCore::IntRect&)elementRect originIdentifier:(const String&)originIdentifier completionHandler:(CompletionHandler<void(WebCore::DOMPasteAccessResponse)>&&)completionHandler;
+- (void)_requestDOMPasteAccessForCategory:(WebCore::DOMPasteAccessCategory)pasteAccessCategory elementRect:(const WebCore::IntRect&)elementRect originIdentifier:(const String&)originIdentifier completionHandler:(CompletionHandler<void(WebCore::DOMPasteAccessResponse)>&&)completionHandler;
 
 - (void)doAfterPositionInformationUpdate:(void (^)(WebKit::InteractionInformationAtPosition))action forRequest:(WebKit::InteractionInformationRequest)request;
 - (BOOL)ensurePositionInformationIsUpToDate:(WebKit::InteractionInformationRequest)request;
