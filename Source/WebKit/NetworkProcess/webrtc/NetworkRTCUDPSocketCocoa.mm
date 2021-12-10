@@ -288,10 +288,8 @@ static inline void processUDPData(RetainPtr<nw_connection_t>&& nwConnection, Fun
         }
         if (isComplete && context && nw_content_context_get_is_final(context))
             return;
-        if (error) {
-            RELEASE_LOG_ERROR(WebRTC, "NetworkRTCUDPSocketCocoaConnections failed processing UDP data with error %d", nw_error_get_error_code(error));
-            return;
-        }
+
+        RELEASE_LOG_ERROR_IF(!!error, WebRTC, "NetworkRTCUDPSocketCocoaConnections failed processing UDP data with error %d", nw_error_get_error_code(error));
         processUDPData(WTFMove(nwConnection), WTFMove(processData));
     }).get());
 }
