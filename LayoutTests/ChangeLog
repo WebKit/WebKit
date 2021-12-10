@@ -1,3 +1,16 @@
+2021-12-10  Alan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Enable bidi handling for content with inline boxes
+        https://bugs.webkit.org/show_bug.cgi?id=234055
+
+        Reviewed by Antti Koivisto.
+
+        Progressions.
+
+        * platform/mac/fast/borders/bidi-002-expected.txt:
+        * platform/mac/fast/borders/bidi-012-expected.txt:
+        * platform/mac/fast/borders/rtl-border-05-expected.txt:
+
 2021-12-10  Frederic Wang  <fwang@igalia.com>
 
         Handle TerminationException in WebCore::ReadableStream::create()

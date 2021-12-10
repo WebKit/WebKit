@@ -33,9 +33,10 @@ layer at (0,0) size 800x448
               text run at (30,25) width 26: "aaa "
               text run at (55,25) width 29: "bbb "
               text run at (83,25) width 26: "ccc "
-              text run at (108,25) width 29 RTL: "ddd "
-              text run at (136,25) width 30 RTL: "\x{202E} eee "
-            RenderBR {BR} at (0,0) size 0x0
+              text run at (108,25) width 25 RTL: "ddd"
+              text run at (132,25) width 30 RTL: "\x{202E} eee "
+              text run at (161,25) width 5: " "
+            RenderBR {BR} at (165,25) size 1x19
             RenderText {#text} at (11,73) size 20x19
               text run at (11,73) width 20: "fff "
           RenderText {#text} at (49,73) size 74x19
@@ -45,7 +46,7 @@ layer at (0,0) size 800x448
           RenderInline {SPAN} at (0,0) size 162x87 [color=#FFA500] [border: (3px solid #FFA500)]
             RenderText {#text} at (141,73) size 19x19
               text run at (141,73) width 19: "jjj "
-            RenderBR {BR} at (0,0) size 0x0
+            RenderBR {BR} at (159,73) size 1x19
             RenderText {#text} at (11,121) size 143x19
               text run at (11,121) width 28: "kkk "
               text run at (39,121) width 63: "lll \x{202C} mmm "

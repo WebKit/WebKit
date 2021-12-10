@@ -14,9 +14,9 @@ layer at (0,0) size 800x564
             text run at (0,39) width 74 RTL: "\x{5E2}\x{5E9}\x{5D9}\x{5EA}\x{5D9} \x{5D6}\x{5D0}\x{5EA}"
             text run at (73,39) width 5: " "
             text run at (77,39) width 17: "gg"
-          RenderInline {SPAN} at (0,0) size 183x53 [border: (1px solid #0000FF) (10px solid #FFA500) (1px solid #0000FF) (10px solid #008000)]
-            RenderText {#text} at (138,39) size 45x18
-              text run at (138,39) width 45: " dgnjk "
+          RenderInline {SPAN} at (0,0) size 179x53 [border: (1px solid #0000FF) (10px solid #FFA500) (1px solid #0000FF) (10px solid #008000)]
+            RenderText {#text} at (138,39) size 41x18
+              text run at (138,39) width 41: " dgnjk"
             RenderImage {IMG} at (0,64) size 22x22 [border: (1px solid #0000FF)]
             RenderText {#text} at (22,72) size 41x18
               text run at (22,72) width 41: "njkng "
