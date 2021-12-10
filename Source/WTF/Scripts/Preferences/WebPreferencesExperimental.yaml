@@ -224,6 +224,18 @@ CSSColorMixEnabled:
     WebCore:
       default: false
 
+CSSContainerQueriesEnabled:
+  type: bool
+  humanReadableName: "CSS Container Queries"
+  humanReadableDescription: "Enable CSS Container Queries"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 CSSContainmentEnabled:
   type: bool
   humanReadableName: "CSS Containment"

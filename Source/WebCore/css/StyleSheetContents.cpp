@@ -458,7 +458,8 @@ static bool traverseRulesInVector(const Vector<RefPtr<StyleRuleBase>>& rules, co
         switch (rule->type()) {
         case StyleRuleType::Media:
         case StyleRuleType::Supports:
-        case StyleRuleType::LayerBlock: {
+        case StyleRuleType::LayerBlock:
+        case StyleRuleType::Container: {
             auto* childRules = downcast<StyleRuleGroup>(*rule).childRulesWithoutDeferredParsing();
             if (childRules && traverseRulesInVector(*childRules, handler))
                 return true;
@@ -522,6 +523,7 @@ bool StyleSheetContents::traverseSubresources(const Function<bool(const CachedRe
         case StyleRuleType::Supports:
         case StyleRuleType::LayerBlock:
         case StyleRuleType::LayerStatement:
+        case StyleRuleType::Container:
         case StyleRuleType::FontPaletteValues:
             return false;
         };

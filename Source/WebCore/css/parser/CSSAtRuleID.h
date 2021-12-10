@@ -35,22 +35,22 @@ namespace WebCore {
 enum CSSAtRuleID {
     CSSAtRuleInvalid = 0,
 
-    CSSAtRuleCharset = 1,
-    CSSAtRuleFontFace = 2,
-    CSSAtRuleImport = 3,
-    CSSAtRuleKeyframes = 4,
-    CSSAtRuleMedia = 5,
-    CSSAtRuleNamespace = 6,
-    CSSAtRulePage = 7,
-    CSSAtRuleSupports = 8,
-    CSSAtRuleViewport = 9,
+    CSSAtRuleCharset,
+    CSSAtRuleFontFace,
+    CSSAtRuleImport,
+    CSSAtRuleKeyframes,
+    CSSAtRuleMedia,
+    CSSAtRuleNamespace,
+    CSSAtRulePage,
+    CSSAtRuleSupports,
+    CSSAtRuleViewport,
 
-    CSSAtRuleWebkitKeyframes = 10,
-    CSSAtRuleApply = 11,
-    CSSAtRuleCounterStyle = 12,
-    CSSAtRuleLayer = 13,
+    CSSAtRuleWebkitKeyframes,
+    CSSAtRuleCounterStyle,
+    CSSAtRuleLayer,
+    CSSAtRuleContainer,
 
-    CSSAtRuleFontPaletteValues = 14,
+    CSSAtRuleFontPaletteValues,
 };
 
 CSSAtRuleID cssAtRuleID(StringView name);

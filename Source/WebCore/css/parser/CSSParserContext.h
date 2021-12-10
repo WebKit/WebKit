@@ -84,6 +84,7 @@ struct CSSParserContext {
     bool focusVisibleEnabled { false };
     bool hasPseudoClassEnabled { false };
     bool cascadeLayersEnabled { false };
+    bool containerQueriesEnabled { false };
 
     // RuntimeEnabledFeatures.
 #if ENABLE(ATTACHMENT_ELEMENT)

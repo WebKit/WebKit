@@ -56,12 +56,12 @@ CSSAtRuleID cssAtRuleID(StringView name)
         return CSSAtRuleViewport;
     if (equalIgnoringASCIICase(name, "-webkit-keyframes"))
         return CSSAtRuleWebkitKeyframes;
-    if (equalIgnoringASCIICase(name, "apply"))
-        return CSSAtRuleApply;
     if (equalIgnoringASCIICase(name, "counter-style"))
         return CSSAtRuleCounterStyle;
     if (equalIgnoringASCIICase(name, "layer"))
         return CSSAtRuleLayer;
+    if (equalIgnoringASCIICase(name, "container"))
+        return CSSAtRuleContainer;
     return CSSAtRuleInvalid;
 }
 

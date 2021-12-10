@@ -42,6 +42,7 @@ enum class StyleRuleType : uint8_t {
     Supports = 12,
     LayerBlock = 16,
     LayerStatement = 17,
+    Container = 18,
     FontPaletteValues = 19,
 };
 

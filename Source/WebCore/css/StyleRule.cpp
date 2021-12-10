@@ -104,6 +104,9 @@ void StyleRuleBase::destroy()
     case StyleRuleType::LayerStatement:
         delete downcast<StyleRuleLayer>(this);
         return;
+    case StyleRuleType::Container:
+        delete downcast<StyleRuleContainer>(this);
+        return;
     case StyleRuleType::Unknown:
         ASSERT_NOT_REACHED();
         return;
@@ -133,6 +136,8 @@ Ref<StyleRuleBase> StyleRuleBase::copy() const
     case StyleRuleType::LayerBlock:
     case StyleRuleType::LayerStatement:
         return downcast<StyleRuleLayer>(*this).copy();
+    case StyleRuleType::Container:
+        return downcast<StyleRuleContainer>(*this).copy();
     case StyleRuleType::Import:
     case StyleRuleType::Namespace:
         // FIXME: Copy import and namespace rules.
@@ -185,6 +190,9 @@ Ref<CSSRule> StyleRuleBase::createCSSOMWrapper(CSSStyleSheet* parentSheet, CSSRu
         break;
     case StyleRuleType::LayerStatement:
         rule = CSSLayerStatementRule::create(downcast<StyleRuleLayer>(self), parentSheet);
+        break;
+    case StyleRuleType::Container:
+        // FIXME: Implement CSSOM.
         break;
     case StyleRuleType::Unknown:
     case StyleRuleType::Charset:
@@ -362,6 +370,8 @@ DeferredStyleGroupRuleList::DeferredStyleGroupRuleList(const CSSParserTokenRange
     m_tokens.append(range.begin(), length);
 }
 
+DeferredStyleGroupRuleList::~DeferredStyleGroupRuleList() = default;
+
 void DeferredStyleGroupRuleList::parseDeferredRules(Vector<RefPtr<StyleRuleBase>>& childRules)
 {
     m_parser->parseRuleList(m_tokens, childRules);
@@ -521,6 +531,34 @@ Ref<StyleRuleLayer> StyleRuleLayer::createBlock(CascadeLayerName&& name, Vector<
 Ref<StyleRuleLayer> StyleRuleLayer::createBlock(CascadeLayerName&& name, std::unique_ptr<DeferredStyleGroupRuleList>&& rules)
 {
     return adoptRef(*new StyleRuleLayer(WTFMove(name), WTFMove(rules)));
+}
+
+StyleRuleContainer::StyleRuleContainer(ContainerQuery&& query, Vector<RefPtr<StyleRuleBase>>&& rules)
+    : StyleRuleGroup(StyleRuleType::Container, WTFMove(rules))
+    , m_query(WTFMove(query))
+{
+}
+
+StyleRuleContainer::StyleRuleContainer(ContainerQuery&& query, std::unique_ptr<DeferredStyleGroupRuleList>&& rules)
+    : StyleRuleGroup(StyleRuleType::Container, WTFMove(rules))
+    , m_query(WTFMove(query))
+{
+}
+
+StyleRuleContainer::StyleRuleContainer(const StyleRuleContainer& other)
+    : StyleRuleGroup(other)
+    , m_query(other.m_query)
+{
+}
+
+Ref<StyleRuleContainer> StyleRuleContainer::create(ContainerQuery&& query, Vector<RefPtr<StyleRuleBase>>&& rules)
+{
+    return adoptRef(*new StyleRuleContainer(WTFMove(query), WTFMove(rules)));
+}
+
+Ref<StyleRuleContainer> StyleRuleContainer::create(ContainerQuery&& query, std::unique_ptr<DeferredStyleGroupRuleList>&& rules)
+{
+    return adoptRef(*new StyleRuleContainer(WTFMove(query), WTFMove(rules)));
 }
 
 StyleRuleCharset::StyleRuleCharset()

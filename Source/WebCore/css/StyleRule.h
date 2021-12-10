@@ -60,10 +60,11 @@ public:
     bool isMediaRule() const { return type() == StyleRuleType::Media; }
     bool isPageRule() const { return type() == StyleRuleType::Page; }
     bool isStyleRule() const { return type() == StyleRuleType::Style; }
-    bool isGroupRule() const { return type() == StyleRuleType::Media || type() == StyleRuleType::Supports || type() == StyleRuleType::LayerBlock; }
+    bool isGroupRule() const { return type() == StyleRuleType::Media || type() == StyleRuleType::Supports || type() == StyleRuleType::LayerBlock || type() == StyleRuleType::Container; }
     bool isSupportsRule() const { return type() == StyleRuleType::Supports; }
     bool isImportRule() const { return type() == StyleRuleType::Import; }
     bool isLayerRule() const { return type() == StyleRuleType::LayerBlock || type() == StyleRuleType::LayerStatement; }
+    bool isContainerRule() const { return type() == StyleRuleType::Container; }
 
     Ref<StyleRuleBase> copy() const;
 
@@ -228,6 +229,7 @@ class DeferredStyleGroupRuleList final {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     DeferredStyleGroupRuleList(const CSSParserTokenRange&, CSSDeferredParser&);
+    ~DeferredStyleGroupRuleList();
     
     void parseDeferredRules(Vector<RefPtr<StyleRuleBase>>&);
     void parseDeferredKeyframes(StyleRuleKeyframes&);
@@ -310,6 +312,24 @@ private:
     StyleRuleLayer(const StyleRuleLayer&);
 
     std::variant<CascadeLayerName, Vector<CascadeLayerName>> m_nameVariant;
+};
+
+struct ContainerQuery { };
+
+class StyleRuleContainer final : public StyleRuleGroup {
+public:
+    static Ref<StyleRuleContainer> create(ContainerQuery&&, Vector<RefPtr<StyleRuleBase>>&&);
+    static Ref<StyleRuleContainer> create(ContainerQuery&&, std::unique_ptr<DeferredStyleGroupRuleList>&&);
+    Ref<StyleRuleContainer> copy() const { return adoptRef(*new StyleRuleContainer(*this)); }
+
+    const ContainerQuery& query() const { return m_query; }
+
+private:
+    StyleRuleContainer(ContainerQuery&&, Vector<RefPtr<StyleRuleBase>>&&);
+    StyleRuleContainer(ContainerQuery&&, std::unique_ptr<DeferredStyleGroupRuleList>&&);
+    StyleRuleContainer(const StyleRuleContainer&);
+
+    ContainerQuery m_query;
 };
 
 // This is only used by the CSS parser.
@@ -434,4 +454,8 @@ SPECIALIZE_TYPE_TRAITS_END()
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::StyleRuleLayer)
     static bool isType(const WebCore::StyleRuleBase& rule) { return rule.isLayerRule(); }
+SPECIALIZE_TYPE_TRAITS_END()
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::StyleRuleContainer)
+    static bool isType(const WebCore::StyleRuleBase& rule) { return rule.isContainerRule(); }
 SPECIALIZE_TYPE_TRAITS_END()

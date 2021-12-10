@@ -105,6 +105,7 @@ CSSParserContext::CSSParserContext(const Document& document, const URL& sheetBas
     , focusVisibleEnabled { document.settings().focusVisibleEnabled() }
     , hasPseudoClassEnabled { document.settings().hasPseudoClassEnabled() }
     , cascadeLayersEnabled { document.settings().cssCascadeLayersEnabled() }
+    , containerQueriesEnabled { document.settings().cssContainerQueriesEnabled() }
 #if ENABLE(ATTACHMENT_ELEMENT)
     , attachmentEnabled { RuntimeEnabledFeatures::sharedFeatures().attachmentElementEnabled() }
 #endif
@@ -151,6 +152,7 @@ bool operator==(const CSSParserContext& a, const CSSParserContext& b)
         && a.focusVisibleEnabled == b.focusVisibleEnabled
         && a.hasPseudoClassEnabled == b.hasPseudoClassEnabled
         && a.cascadeLayersEnabled == b.cascadeLayersEnabled
+        && a.containerQueriesEnabled == b.containerQueriesEnabled
 #if ENABLE(ATTACHMENT_ELEMENT)
         && a.attachmentEnabled == b.attachmentEnabled
 #endif
@@ -190,12 +192,13 @@ void add(Hasher& hasher, const CSSParserContext& context)
         | context.focusVisibleEnabled                       << 21
         | context.hasPseudoClassEnabled                     << 22
         | context.cascadeLayersEnabled                      << 23
+        | context.containerQueriesEnabled                   << 24
 #if ENABLE(ATTACHMENT_ELEMENT)
-        | context.attachmentEnabled                         << 24
+        | context.attachmentEnabled                         << 25
 #endif
-        | context.overflowClipEnabled                       << 25
-        | context.accentColorEnabled                        << 26
-        | context.mode                                      << 27; // This is multiple bits, so keep it last.
+        | context.overflowClipEnabled                       << 26
+        | context.accentColorEnabled                        << 27
+        | context.mode                                      << 28; // This is multiple bits, so keep it last.
     add(hasher, context.baseURL, context.charset, bits);
 }
 
