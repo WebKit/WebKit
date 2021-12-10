@@ -1,3 +1,13 @@
+2021-12-10  Adrian Perez de Castro  <aperez@igalia.com>
+
+        Non-unified build fixes, mid December 2021 edition
+        https://bugs.webkit.org/show_bug.cgi?id=234106
+
+        Unreviewed non-unified build fixes.
+
+        * NetworkProcess/storage/OriginStorageManager.cpp: Add missing WebsiteDataType.h and
+        wtf/FileSystem.h headers.
+
 2021-12-09  Simon Fraser  <simon.fraser@apple.com>
 
         Inspector "composite" events are all very short

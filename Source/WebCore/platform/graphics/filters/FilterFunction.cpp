@@ -26,6 +26,7 @@
 #include "config.h"
 #include "FilterFunction.h"
 
+#include "ImageBuffer.h"
 #include <wtf/SortedArrayMap.h>
 
 namespace WebCore {

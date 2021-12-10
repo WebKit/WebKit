@@ -28,6 +28,7 @@
 
 #include "DisplayListItemBufferIdentifier.h"
 #include "DisplayListItems.h"
+#include "Filter.h"
 #include <wtf/FastMalloc.h>
 
 namespace WebCore {

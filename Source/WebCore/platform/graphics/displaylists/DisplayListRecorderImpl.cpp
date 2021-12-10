@@ -29,6 +29,7 @@
 #include "DisplayList.h"
 #include "DisplayListDrawingContext.h"
 #include "DisplayListItems.h"
+#include "Filter.h"
 #include "GraphicsContext.h"
 #include "ImageBuffer.h"
 #include "Logging.h"

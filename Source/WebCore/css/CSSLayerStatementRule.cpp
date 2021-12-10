@@ -30,6 +30,7 @@
 #include "config.h"
 #include "CSSLayerStatementRule.h"
 
+#include "CSSLayerBlockRule.h"
 #include "CSSStyleSheet.h"
 #include "StyleRule.h"
 #include <wtf/text/StringBuilder.h>

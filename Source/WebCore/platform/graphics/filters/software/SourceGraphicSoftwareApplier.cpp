@@ -21,6 +21,7 @@
 #include "config.h"
 #include "SourceGraphicSoftwareApplier.h"
 
+#include "FilterImage.h"
 #include "GraphicsContext.h"
 #include "ImageBuffer.h"
 

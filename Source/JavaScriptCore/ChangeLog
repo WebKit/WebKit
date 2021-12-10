@@ -1,3 +1,13 @@
+2021-12-10  Adrian Perez de Castro  <aperez@igalia.com>
+
+        Non-unified build fixes, mid December 2021 edition
+        https://bugs.webkit.org/show_bug.cgi?id=234106
+
+        Unreviewed non-unified build fixes.
+
+        * wasm/js/WasmToJS.h: Remove unneeded forward declaration of CallLinkInfo, add forward
+        declaration of OptimizingCallLinkInfo.
+
 2021-12-09  Alex Christensen  <achristensen@webkit.org>
 
         Prepare for transition to C++20

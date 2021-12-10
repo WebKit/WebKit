@@ -28,6 +28,8 @@
 
 #include "FileSystemStorageHandleRegistry.h"
 #include "FileSystemStorageManager.h"
+#include "WebsiteDataType.h"
+#include <wtf/FileSystem.h>
 
 namespace WebKit {
 

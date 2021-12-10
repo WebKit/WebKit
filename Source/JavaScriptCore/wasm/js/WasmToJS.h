@@ -35,7 +35,7 @@
 
 namespace JSC {
 
-class CallLinkInfo;
+class OptimizingCallLinkInfo;
 class VM;
 
 namespace Wasm {

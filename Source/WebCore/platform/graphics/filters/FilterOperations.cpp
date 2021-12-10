@@ -27,6 +27,7 @@
 #include "FilterOperations.h"
 
 #include "FEGaussianBlur.h"
+#include "ImageBuffer.h"
 #include "IntSize.h"
 #include "LengthFunctions.h"
 #include <wtf/text/TextStream.h>

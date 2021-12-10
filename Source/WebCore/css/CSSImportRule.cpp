@@ -23,6 +23,7 @@
 #include "CSSImportRule.h"
 
 #include "CSSLayerBlockRule.h"
+#include "CSSMarkup.h"
 #include "CSSStyleSheet.h"
 #include "MediaList.h"
 #include "StyleRuleImport.h"

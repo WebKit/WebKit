@@ -21,6 +21,7 @@
 #include "SVGFEPointLightElement.h"
 
 #include "GeometryUtilities.h"
+#include "ImageBuffer.h"
 #include "PointLightSource.h"
 #include "SVGFilterBuilder.h"
 #include "SVGNames.h"

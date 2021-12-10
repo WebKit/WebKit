@@ -21,6 +21,7 @@
 #include "config.h"
 #include "SVGFEFuncBElement.h"
 
+#include "ImageBuffer.h"
 #include "SVGNames.h"
 
 namespace WebCore {

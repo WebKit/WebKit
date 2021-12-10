@@ -28,6 +28,7 @@
 #include "AlphaPremultiplication.h"
 #include "ColorTypes.h"
 #include "ColorNormalization.h"
+#include <optional>
 #include <variant>
 #include <wtf/EnumTraits.h>
 

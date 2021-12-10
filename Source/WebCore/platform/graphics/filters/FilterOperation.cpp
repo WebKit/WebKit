@@ -34,6 +34,7 @@
 #include "ColorMatrix.h"
 #include "ColorTypes.h"
 #include "FilterEffect.h"
+#include "ImageBuffer.h"
 #include "SVGURIReference.h"
 #include <wtf/text/TextStream.h>
 
