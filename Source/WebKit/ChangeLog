@@ -1,3 +1,19 @@
+2021-12-09  Simon Fraser  <simon.fraser@apple.com>
+
+        Inspector "composite" events are all very short
+        https://bugs.webkit.org/show_bug.cgi?id=234114
+        <rdar://86299391>
+
+        Reviewed by Tim Horton.
+
+        The kCATransactionPhasePreCommit callbacks fire after painting, but we want the composite
+        time to include painting so use kCATransactionPhasePreLayout.
+
+        * WebProcess/WebPage/RemoteLayerTree/RemoteLayerTreeDrawingArea.mm:
+        (WebKit::RemoteLayerTreeDrawingArea::addCommitHandlers):
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::addCommitHandlers):
+
 2021-12-09  Aditya Keerthi  <akeerthi@apple.com>
 
         Fix the tvOS and watchOS builds after r286641

@@ -418,7 +418,7 @@ void TiledCoreAnimationDrawingArea::addCommitHandlers()
             if (Frame* coreFrame = retainedPage->mainFrame())
                 corePage->inspectorController().willComposite(*coreFrame);
         }
-    } forPhase:kCATransactionPhasePreCommit];
+    } forPhase:kCATransactionPhasePreLayout];
 
     [CATransaction addCommitHandler:[retainedPage = Ref { m_webPage }] {
         if (Page* corePage = retainedPage->corePage()) {
