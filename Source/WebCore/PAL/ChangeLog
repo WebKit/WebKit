@@ -1,3 +1,15 @@
+2021-12-10  Antoine Quint  <graouts@webkit.org>
+
+        Expose the maximum device frame rate to the Web Animations model
+        https://bugs.webkit.org/show_bug.cgi?id=234161
+        rdar://85983792
+
+        Reviewed by Simon Fraser.
+
+        Add a newly-used CADisplayLink SPI.
+
+        * pal/spi/cocoa/QuartzCoreSPI.h:
+
 2021-12-09  Robert Jenner  <Jenner@apple.com>
 
         Unreviewed, reverting r286754.

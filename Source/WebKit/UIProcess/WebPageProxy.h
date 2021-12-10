@@ -1105,6 +1105,7 @@ public:
     void setIntrinsicDeviceScaleFactor(float);
     void setCustomDeviceScaleFactor(float);
     void windowScreenDidChange(WebCore::PlatformDisplayID, std::optional<unsigned> nominalFramesPerSecond);
+    std::optional<WebCore::PlatformDisplayID> displayId() const { return m_displayID; }
     void accessibilitySettingsDidChange();
 
     void setUseFixedLayout(bool);

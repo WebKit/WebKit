@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "AnimationFrameRate.h"
 #include "AnimationTimeline.h"
 #include "DocumentTimelineOptions.h"
 #include "Timer.h"
@@ -84,6 +85,8 @@ public:
     WEBCORE_EXPORT unsigned numberOfActiveAnimationsForTesting() const;
     WEBCORE_EXPORT Vector<std::pair<String, double>> acceleratedAnimationsForElement(Element&) const;    
     WEBCORE_EXPORT unsigned numberOfAnimationTimelineInvalidationsForTesting() const;
+
+    std::optional<FramesPerSecond> maximumFrameRate() const;
 
 private:
     DocumentTimeline(Document&, Seconds);

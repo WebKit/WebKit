@@ -34,9 +34,11 @@
 #import "WebPageProxy.h"
 #import "WebProcessProxy.h"
 #import <QuartzCore/QuartzCore.h>
+#import <WebCore/AnimationFrameRate.h>
 #import <WebCore/GraphicsContextCG.h>
 #import <WebCore/IOSurfacePool.h>
 #import <WebCore/WebActionDisablingCALayerDelegate.h>
+#import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <wtf/MachSendRight.h>
 #import <wtf/SystemTracing.h>
 
@@ -67,6 +69,17 @@
         [_displayLink addToRunLoop:[NSRunLoop mainRunLoop] forMode:NSRunLoopCommonModes];
         _displayLink.paused = YES;
         _displayLink.preferredFramesPerSecond = 60;
+
+        if (drawingAreaProxy) {
+            auto minimumRefreshInterval = _displayLink.maximumRefreshRate;
+            if (minimumRefreshInterval > 0) {
+                auto& page = drawingAreaProxy->page();
+                if (auto displayId = page.displayId()) {
+                    WebCore::FramesPerSecond frameRate = std::round(1.0 / minimumRefreshInterval);
+                    page.windowScreenDidChange(*displayId, frameRate);
+                }
+            }
+        }
     }
     return self;
 }

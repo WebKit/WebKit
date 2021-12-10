@@ -530,4 +530,11 @@ ExceptionOr<Ref<WebAnimation>> DocumentTimeline::animate(Ref<CustomEffectCallbac
     return animation;
 }
 
+std::optional<FramesPerSecond> DocumentTimeline::maximumFrameRate() const
+{
+    if (!m_document || !m_document->page())
+        return std::nullopt;
+    return m_document->page()->displayNominalFramesPerSecond();
+}
+
 } // namespace WebCore

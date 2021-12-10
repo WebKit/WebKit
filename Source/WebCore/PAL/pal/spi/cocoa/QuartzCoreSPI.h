@@ -48,12 +48,22 @@
 #import <QuartzCore/CARenderCG.h>
 #endif
 
+#if PLATFORM(IOS_FAMILY)
+#import <QuartzCore/CADisplayLinkPrivate.h>
+#endif
+
 #endif // __OBJC__
 
 #else
 
 #ifdef __OBJC__
 typedef struct _CARenderContext CARenderContext;
+
+#if PLATFORM(IOS_FAMILY)
+@interface CADisplayLink ()
+@property (readonly, nonatomic) CFTimeInterval maximumRefreshRate;
+@end
+#endif
 
 #if ENABLE(ARKIT_INLINE_PREVIEW_IOS)
 @class CAFenceHandle;
