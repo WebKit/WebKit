@@ -54,6 +54,7 @@ namespace WebCore {
 class CertificateInfo;
 class NetworkStorageSession;
 class ResourceRequest;
+class ResourceError;
 enum class IncludeHttpOnlyCookies : bool;
 enum class ShouldSample : bool;
 struct SecurityOriginData;
