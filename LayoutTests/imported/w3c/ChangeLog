@@ -1,5 +1,21 @@
 2021-12-10  Alexey Shvayka  <ashvayka@apple.com>
 
+        Extend the scope where the Window's current event is set
+        https://bugs.webkit.org/show_bug.cgi?id=233833
+
+        Reviewed by Ryosuke Niwa.
+
+        Import WPT tests from https://github.com/web-platform-tests/wpt/pull/31894.
+
+        * web-platform-tests/dom/events/event-global-is-still-set-when-coercing-beforeunload-result-expected.txt: Added.
+        * web-platform-tests/dom/events/event-global-is-still-set-when-coercing-beforeunload-result.html: Added.
+        * web-platform-tests/dom/events/event-global-set-before-handleEvent-lookup.any-expected.txt: Added.
+        * web-platform-tests/dom/events/event-global-set-before-handleEvent-lookup.any.html: Added.
+        * web-platform-tests/dom/events/event-global-set-before-handleEvent-lookup.any.js: Added.
+        * web-platform-tests/dom/events/resources/event-global-is-still-set-when-coercing-beforeunload-result-frame.html: Added.
+
+2021-12-10  Alexey Shvayka  <ashvayka@apple.com>
+
         JSErrorHandler should not set window.event if invocation target is in shadow tree
         https://bugs.webkit.org/show_bug.cgi?id=233834
 

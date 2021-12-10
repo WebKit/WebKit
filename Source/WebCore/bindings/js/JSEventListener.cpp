@@ -41,6 +41,7 @@
 #include <JavaScriptCore/VMEntryScope.h>
 #include <JavaScriptCore/Watchdog.h>
 #include <wtf/Ref.h>
+#include <wtf/Scope.h>
 
 namespace WebCore {
 using namespace JSC;
@@ -137,6 +138,21 @@ void JSEventListener::handleEvent(ScriptExecutionContext& scriptExecutionContext
             return;
     }
 
+    RefPtr<Event> savedEvent;
+    auto* jsFunctionWindow = jsDynamicCast<JSDOMWindow*>(vm, jsFunction->globalObject(vm));
+    if (jsFunctionWindow) {
+        savedEvent = jsFunctionWindow->currentEvent();
+
+        // window.event should not be set when the target is inside a shadow tree, as per the DOM specification.
+        if (!event.currentTargetIsInShadowTree())
+            jsFunctionWindow->setCurrentEvent(&event);
+    }
+
+    auto restoreCurrentEventOnExit = makeScopeExit([&] {
+        if (jsFunctionWindow)
+            jsFunctionWindow->setCurrentEvent(savedEvent.get());
+    });
+
     JSGlobalObject* lexicalGlobalObject = jsFunction->globalObject();
 
     JSValue handleEventFunction = jsFunction;
@@ -170,16 +186,6 @@ void JSEventListener::handleEvent(ScriptExecutionContext& scriptExecutionContext
     args.append(toJS(lexicalGlobalObject, globalObject, &event));
     ASSERT(!args.hasOverflowed());
 
-    RefPtr<Event> savedEvent;
-    auto* jsFunctionWindow = jsDynamicCast<JSDOMWindow*>(vm, jsFunction->globalObject());
-    if (jsFunctionWindow) {
-        savedEvent = jsFunctionWindow->currentEvent();
-
-        // window.event should not be set when the target is inside a shadow tree, as per the DOM specification.
-        if (!event.currentTargetIsInShadowTree())
-            jsFunctionWindow->setCurrentEvent(&event);
-    }
-
     VMEntryScope entryScope(vm, vm.entryScope ? vm.entryScope->globalObject() : lexicalGlobalObject);
 
     JSExecState::instrumentFunction(&scriptExecutionContext, callData);
@@ -189,9 +195,6 @@ void JSEventListener::handleEvent(ScriptExecutionContext& scriptExecutionContext
     JSValue retval = JSExecState::profiledCall(lexicalGlobalObject, JSC::ProfilingReason::Other, handleEventFunction, callData, thisValue, args, uncaughtException);
 
     InspectorInstrumentation::didCallFunction(&scriptExecutionContext);
-
-    if (jsFunctionWindow)
-        jsFunctionWindow->setCurrentEvent(savedEvent.get());
 
     auto handleExceptionIfNeeded = [&] (JSC::Exception* exception) -> bool {
         if (is<WorkerGlobalScope>(scriptExecutionContext)) {
