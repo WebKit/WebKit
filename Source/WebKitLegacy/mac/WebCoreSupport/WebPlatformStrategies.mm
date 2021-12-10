@@ -209,7 +209,7 @@ int WebPlatformStrategies::getPasteboardItemsCount(const String& pasteboardName,
     return PlatformPasteboard(pasteboardName).count();
 }
 
-RefPtr<WebCore::SharedBuffer> WebPlatformStrategies::readBufferFromPasteboard(size_t index, const String& type, const String& pasteboardName, const PasteboardContext*)
+RefPtr<WebCore::SharedBuffer> WebPlatformStrategies::readBufferFromPasteboard(std::optional<size_t> index, const String& type, const String& pasteboardName, const PasteboardContext*)
 {
     return PlatformPasteboard(pasteboardName).readBuffer(index, type);
 }

@@ -36,7 +36,7 @@ messages -> WebPasteboardProxy NotRefCounted {
     GetPasteboardItemsCount(String pasteboardName, std::optional<WebCore::PageIdentifier> pageID) -> (uint64_t itemsCount) Synchronous WantsConnection
     ReadStringFromPasteboard(uint64_t index, String pasteboardType, String pasteboardName, std::optional<WebCore::PageIdentifier> pageID) -> (String string) Synchronous WantsConnection
     ReadURLFromPasteboard(uint64_t index, String pasteboardName, std::optional<WebCore::PageIdentifier> pageID) -> (String url, String title) Synchronous WantsConnection
-    ReadBufferFromPasteboard(uint64_t index, String pasteboardType, String pasteboardName, std::optional<WebCore::PageIdentifier> pageID) -> (WebKit::SharedMemory::IPCHandle handle) Synchronous WantsConnection
+    ReadBufferFromPasteboard(std::optional<uint64_t> index, String pasteboardType, String pasteboardName, std::optional<WebCore::PageIdentifier> pageID) -> (WebKit::SharedMemory::IPCHandle handle) Synchronous WantsConnection
     ContainsStringSafeForDOMToReadForType(String type, String pasteboardName, std::optional<WebCore::PageIdentifier> pageID) -> (bool result) Synchronous WantsConnection
 
 #if PLATFORM(COCOA)

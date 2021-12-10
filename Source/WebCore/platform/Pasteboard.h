@@ -308,7 +308,7 @@ public:
     std::optional<PasteboardItemInfo> pasteboardItemInfo(size_t index) const;
 
     String readString(size_t index, const String& type);
-    RefPtr<WebCore::SharedBuffer> readBuffer(size_t index, const String& type);
+    RefPtr<WebCore::SharedBuffer> readBuffer(std::optional<size_t> index, const String& type);
     URL readURL(size_t index, String& title);
 
     const PasteboardContext* context() const { return m_context.get(); }

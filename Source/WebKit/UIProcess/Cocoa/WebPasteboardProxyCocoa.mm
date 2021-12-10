@@ -538,7 +538,7 @@ void WebPasteboardProxy::readURLFromPasteboard(IPC::Connection& connection, size
     });
 }
 
-void WebPasteboardProxy::readBufferFromPasteboard(IPC::Connection& connection, size_t index, const String& pasteboardType, const String& pasteboardName, std::optional<PageIdentifier> pageID, CompletionHandler<void(SharedMemory::IPCHandle&&)>&& completionHandler)
+void WebPasteboardProxy::readBufferFromPasteboard(IPC::Connection& connection, std::optional<size_t> index, const String& pasteboardType, const String& pasteboardName, std::optional<PageIdentifier> pageID, CompletionHandler<void(SharedMemory::IPCHandle&&)>&& completionHandler)
 {
     MESSAGE_CHECK_COMPLETION(!pasteboardType.isEmpty(), completionHandler({ }));
 

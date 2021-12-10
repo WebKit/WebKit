@@ -63,12 +63,12 @@ PlatformPasteboard::PlatformPasteboard(const String& pasteboardName)
     ASSERT(pasteboardName);
 }
 
-void PlatformPasteboard::getTypes(Vector<String>& types)
+void PlatformPasteboard::getTypes(Vector<String>& types) const
 {
     types = makeVector<String>([m_pasteboard types]);
 }
 
-RefPtr<SharedBuffer> PlatformPasteboard::bufferForType(const String& pasteboardType)
+RefPtr<SharedBuffer> PlatformPasteboard::bufferForType(const String& pasteboardType) const
 {
     NSData *data = [m_pasteboard dataForType:pasteboardType];
     if (!data)
@@ -446,9 +446,12 @@ static String webSafeMIMETypeForModernPasteboardType(NSPasteboardType platformTy
     return { };
 }
 
-RefPtr<SharedBuffer> PlatformPasteboard::readBuffer(size_t index, const String& type) const
+RefPtr<SharedBuffer> PlatformPasteboard::readBuffer(std::optional<size_t> index, const String& type) const
 {
-    NSPasteboardItem *item = itemAtIndex(index);
+    if (!index)
+        return bufferForType(type);
+
+    NSPasteboardItem *item = itemAtIndex(*index);
     if (!item)
         return { };
 

@@ -406,7 +406,7 @@ std::optional<PasteboardItemInfo> WebPlatformStrategies::informationForItemAtInd
     return info;
 }
 
-RefPtr<WebCore::SharedBuffer> WebPlatformStrategies::readBufferFromPasteboard(size_t index, const String& pasteboardType, const String& pasteboardName, const PasteboardContext* context)
+RefPtr<WebCore::SharedBuffer> WebPlatformStrategies::readBufferFromPasteboard(std::optional<size_t> index, const String& pasteboardType, const String& pasteboardName, const PasteboardContext* context)
 {
     SharedMemory::IPCHandle ipcHandle;
     WebProcess::singleton().parentProcessConnection()->sendSync(Messages::WebPasteboardProxy::ReadBufferFromPasteboard(index, pasteboardType, pasteboardName, pageIdentifier(context)), Messages::WebPasteboardProxy::ReadBufferFromPasteboard::Reply(ipcHandle), 0);

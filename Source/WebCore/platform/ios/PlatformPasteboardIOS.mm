@@ -74,12 +74,12 @@ PlatformPasteboard::PlatformPasteboard(const String&)
 }
 #endif
 
-void PlatformPasteboard::getTypes(Vector<String>& types)
+void PlatformPasteboard::getTypes(Vector<String>& types) const
 {
     types = makeVector<String>([m_pasteboard pasteboardTypes]);
 }
 
-RefPtr<SharedBuffer> PlatformPasteboard::bufferForType(const String& type)
+RefPtr<SharedBuffer> PlatformPasteboard::bufferForType(const String& type) const
 {
     if (NSData *data = [m_pasteboard dataForPasteboardType:type])
         return SharedBuffer::create(data);
@@ -746,12 +746,16 @@ Vector<String> PlatformPasteboard::allStringsForType(const String& type) const
     return strings;
 }
 
-RefPtr<SharedBuffer> PlatformPasteboard::readBuffer(size_t index, const String& type) const
+RefPtr<SharedBuffer> PlatformPasteboard::readBuffer(std::optional<size_t> index, const String& type) const
 {
-    if ((NSInteger)index < 0 || (NSInteger)index >= [m_pasteboard numberOfItems])
+    if (!index)
+        return bufferForType(type);
+
+    NSInteger integerIndex = *index;
+    if (integerIndex < 0 || integerIndex >= [m_pasteboard numberOfItems])
         return nullptr;
 
-    NSIndexSet *indexSet = [NSIndexSet indexSetWithIndex:index];
+    NSIndexSet *indexSet = [NSIndexSet indexSetWithIndex:integerIndex];
 
     RetainPtr<NSArray> pasteboardItem = [m_pasteboard dataForPasteboardType:type inItemSet:indexSet];
 

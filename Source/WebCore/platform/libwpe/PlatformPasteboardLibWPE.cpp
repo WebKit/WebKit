@@ -52,7 +52,7 @@ void PlatformPasteboard::performAsDataOwner(DataOwnerType, Function<void()>&& ac
     actions();
 }
 
-void PlatformPasteboard::getTypes(Vector<String>& types)
+void PlatformPasteboard::getTypes(Vector<String>& types) const
 {
     struct wpe_pasteboard_string_vector pasteboardTypes = { nullptr, 0 };
     wpe_pasteboard_get_types(m_pasteboard, &pasteboardTypes);

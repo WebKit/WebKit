@@ -1,3 +1,26 @@
+2021-12-10  Devin Rousso  <drousso@apple.com>
+
+        Allow `Pasteboard::readBuffer` to read from the pasteboard as a whole instead of a specific item
+        https://bugs.webkit.org/show_bug.cgi?id=233940
+
+        Reviewed by Wenson Hsieh.
+
+        In order to match the WK1 implementation of `-pasteFont:` <https://webkit.org/b/191379>, we
+        need to read from the font pasteboard as a whole, not a specific item. Make the `index` into
+        an `std::optional` so that we can have this behavior without needing to have a new method.
+
+        No change in behavior.
+
+        * UIProcess/WebPasteboardProxy.messages.in:
+        * UIProcess/WebPasteboardProxy.h:
+        * UIProcess/WebPasteboardProxy.cpp:
+        (WebKit::WebPasteboardProxy::readBufferFromPasteboard):
+        * UIProcess/Cocoa/WebPasteboardProxyCocoa.mm:
+        (WebKit::WebPasteboardProxy::readBufferFromPasteboard):
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.h:
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.cpp:
+        (WebKit::WebPlatformStrategies::readBufferFromPasteboard):
+
 2021-12-10  Alex Christensen  <achristensen@webkit.org>
 
         Move if-domain and unless-domain conversion to WKContentRuleList parsing
