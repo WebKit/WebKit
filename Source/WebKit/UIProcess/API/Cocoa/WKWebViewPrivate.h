@@ -431,7 +431,7 @@ for this property.
 
 #if TARGET_OS_IPHONE
 
-#if __has_include(<UIKit/_UITextSearching.h>)
+#if !TARGET_OS_TV && !TARGET_OS_WATCH && __has_include(<UIKit/_UITextSearching.h>)
 @interface WKWebView (WKPrivateIOS) <_UITextSearching>
 #else
 @interface WKWebView (WKPrivateIOS)

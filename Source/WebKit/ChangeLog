@@ -1,3 +1,14 @@
+2021-12-09  Aditya Keerthi  <akeerthi@apple.com>
+
+        Fix the tvOS and watchOS builds after r286641
+        https://bugs.webkit.org/show_bug.cgi?id=234124
+
+        Unreviewed build fix.
+
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+
+        WKWebView does not conform to the protocol on watchOS/tvOS.
+
 2021-12-09  Ryan Haddad  <ryanhaddad@apple.com>
 
         Add ability to inject messages into webpushd
