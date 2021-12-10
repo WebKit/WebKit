@@ -1,3 +1,12 @@
+2021-12-09  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Add ability to inject messages into webpushd
+        https://bugs.webkit.org/show_bug.cgi?id=233988
+
+        Unreviewed attempt to fix some builds.
+
+        * Configurations/webpushtool.xcconfig:
+
 2021-12-09  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Add a new WKWebpagePreferences SPI for modal container observation policies

@@ -29,7 +29,7 @@ SKIP_INSTALL = YES;
 EXCLUDED_SOURCE_FILE_NAMES[sdk=appletv*] = *;
 EXCLUDED_SOURCE_FILE_NAMES[sdk=watch*] = *;
 
-OTHER_LDFLAGS = -framework WebKit -framework JavaScriptCore
+OTHER_LDFLAGS = -framework Foundation -framework CoreFoundation -framework WebKit -framework JavaScriptCore
 LIBRARY_SEARCH_PATHS = $(BUILT_PRODUCTS_DIR);
 
 CODE_SIGN_ENTITLEMENTS = Resources/webpushtool.entitlements;
