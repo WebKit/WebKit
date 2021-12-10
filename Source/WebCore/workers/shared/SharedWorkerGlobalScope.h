@@ -26,25 +26,32 @@
 #pragma once
 
 #include "WorkerGlobalScope.h"
+#include <wtf/IsoMalloc.h>
 
 namespace WebCore {
+
+struct WorkerParameters;
 
 class SharedWorkerGlobalScope final : public WorkerGlobalScope {
     WTF_MAKE_ISO_ALLOCATED(SharedWorkerGlobalScope);
 public:
-    const String& name() const;
-    void close();
+    template<typename... Args> static Ref<SharedWorkerGlobalScope> create(Args&&... args) { return adoptRef(*new SharedWorkerGlobalScope(std::forward<Args>(args)...)); }
 
-private:
     Type type() const final { return Type::SharedWorker; }
+    const String& name() const { return m_name; }
+    void close();
+private:
+    SharedWorkerGlobalScope(const String& name, const WorkerParameters&, Ref<SecurityOrigin>&&, WorkerThread&, Ref<SecurityOrigin>&& topOrigin, IDBClient::IDBConnectionProxy*, SocketProvider*);
 
-    EventTargetInterface eventTargetInterface() const final;
-    FetchOptions::Destination destination() const final;
+    EventTargetInterface eventTargetInterface() const final { return SharedWorkerGlobalScopeEventTargetInterfaceType; }
+    FetchOptions::Destination destination() const final { return FetchOptions::Destination::Sharedworker; }
+
+    String m_name;
 };
 
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::SharedWorkerGlobalScope)
-    static bool isType(const WebCore::ScriptExecutionContext& context) { return is<WebCore::WorkerGlobalScope>(context) && downcast<WebCore::WorkerGlobalScope>(context).type() == WebCore::WorkerGlobalScope::Type::SharedWorker; }
-    static bool isType(const WebCore::WorkerGlobalScope& context) { return context.type() == WebCore::WorkerGlobalScope::Type::SharedWorker; }
+static bool isType(const WebCore::ScriptExecutionContext& context) { return is<WebCore::WorkerGlobalScope>(context) && downcast<WebCore::WorkerGlobalScope>(context).type() == WebCore::WorkerGlobalScope::Type::SharedWorker; }
+static bool isType(const WebCore::WorkerGlobalScope& context) { return context.type() == WebCore::WorkerGlobalScope::Type::SharedWorker; }
 SPECIALIZE_TYPE_TRAITS_END()

@@ -1,7 +1,7 @@
 
-FAIL Test worker construction with the default worker type. promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'worker.port.onmessage = resolve')"
-FAIL Test worker construction with the "classic" worker type. promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'worker.port.onmessage = resolve')"
-FAIL Test worker construction with the "module" worker type. promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'worker.port.onmessage = resolve')"
+PASS Test worker construction with the default worker type.
+PASS Test worker construction with the "classic" worker type.
+PASS Test worker construction with the "module" worker type.
 PASS Test worker construction with an empty worker type.
 PASS Test worker construction with an unknown worker type.
 

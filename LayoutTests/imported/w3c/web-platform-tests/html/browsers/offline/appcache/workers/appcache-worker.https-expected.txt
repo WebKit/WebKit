@@ -1,12 +1,11 @@
 CONSOLE MESSAGE: ApplicationCache is deprecated. Please use ServiceWorkers instead.
-CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: null is not an object (evaluating 'worker.port.onmessage = r')
-CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: null is not an object (evaluating 'worker.port.onmessage = r')
-CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: null is not an object (evaluating 'worker.port.onmessage = r')
+
+Harness Error (TIMEOUT), message = null
 
 PASS Dedicated worker of the cached script
 PASS Dedicated worker of the fallbacked script
 PASS Dedicated worker of the not-in-cache script
-FAIL Shared worker of the cached script promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'worker.port.start')"
-FAIL Shared worker of the fallbacked script promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'worker.port.start')"
-FAIL Shared worker of the not-in-cache script promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'worker.port.start')"
+PASS Shared worker of the cached script
+PASS Shared worker of the fallbacked script
+TIMEOUT Shared worker of the not-in-cache script Test timed out
 

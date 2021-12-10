@@ -1,7 +1,5 @@
 
-Harness Error (FAIL), message = Unhandled rejection: null is not an object (evaluating 'obj.addEventListener')
-
 PASS Dedicated worker is allowed via 'strict-dynamic'
-FAIL Shared worker is allowed via 'strict-dynamic' null is not an object (evaluating 'w.port.start')
+PASS Shared worker is allowed via 'strict-dynamic'
 PASS Service worker is allowed via 'strict-dynamic'
 

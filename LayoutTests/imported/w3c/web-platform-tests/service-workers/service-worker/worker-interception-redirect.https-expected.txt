@@ -1,8 +1,11 @@
 
+
+Harness Error (TIMEOUT), message = null
+
 PASS initialize global state
-FAIL request to sw1 scope gets network redirect to sw2 scope promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'w.port.start')"
-FAIL request to sw1 scope gets network redirect to out-of-scope promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'w.port.start')"
-FAIL request to sw1 scope gets service-worker redirect to sw2 scope promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'w.port.start')"
-FAIL request to sw1 scope gets service-worker redirect to out-of-scope promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'w.port.start')"
-PASS cleanup global state
+FAIL request to sw1 scope gets network redirect to sw2 scope assert_equals: expected "sw1 saw importScripts from the worker" but got "importScripts: served from network"
+FAIL request to sw1 scope gets network redirect to out-of-scope assert_equals: expected "sw1 saw importScripts from the worker" but got "importScripts: served from network"
+TIMEOUT request to sw1 scope gets service-worker redirect to sw2 scope Test timed out
+NOTRUN request to sw1 scope gets service-worker redirect to out-of-scope
+NOTRUN cleanup global state
 

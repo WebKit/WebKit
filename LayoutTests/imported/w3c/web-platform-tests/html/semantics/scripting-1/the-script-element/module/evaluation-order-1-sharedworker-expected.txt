@@ -1,5 +1,3 @@
-CONSOLE MESSAGE: TypeError: null is not an object (evaluating 'message_port.start')
 
-Harness Error (FAIL), message = TypeError: null is not an object (evaluating 'message_port.start')
-
+FAIL Test evaluation order of modules assert_array_equals: lengths differ, expected array ["step-1-1", "step-1-2", "microtask", "global-error", "error"] length 5, got ["step-1-1", "step-1-2", "microtask"] length 3
 

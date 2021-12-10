@@ -1,7 +1,4 @@
 
 PASS dedicated
-FAIL shared null is not an object (evaluating 'shared.port.onmessage = this.step_func(function(e) {
-    assert_equals(e.data, 'shared');
-    this.done();
-  })')
+PASS shared
 

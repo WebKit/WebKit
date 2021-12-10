@@ -1,5 +1,7 @@
 
-FAIL Creating a shared worker from a blob URL works. promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'port.onmessage = e => resolve(e.data)')"
-FAIL Creating a shared worker from a blob URL works immediately before revoking. promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'port.onmessage = e => resolve(e.data)')"
-FAIL Connecting to a shared worker on a revoked blob URL works. promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'port.onmessage = e => resolve(e.data)')"
+Harness Error (TIMEOUT), message = null
+
+FAIL Creating a shared worker from a blob URL works. assert_equals: expected "worker_OK_2" but got "worker_OK_1"
+PASS Creating a shared worker from a blob URL works immediately before revoking.
+TIMEOUT Connecting to a shared worker on a revoked blob URL works. Test timed out
 

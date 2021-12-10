@@ -1,5 +1,4 @@
-CONSOLE MESSAGE: TypeError: null is not an object (evaluating 'message_port.start')
 
-Harness Error (FAIL), message = TypeError: null is not an object (evaluating 'message_port.start')
-
+PASS self.applicationCache must not exist
+PASS ApplicationCache must not be exposed
 

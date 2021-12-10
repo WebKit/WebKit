@@ -7,5 +7,5 @@ PASS import.meta's properties are writable, configurable, and enumerable
 PASS import.meta.url when importing the module with different fragments
 PASS import.meta.url in a root inline script
 PASS import.meta.url at top-level module DedicatedWorker
-FAIL import.meta.url at top-level module SharedWorker promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'w.port.start')"
+PASS import.meta.url at top-level module SharedWorker
 

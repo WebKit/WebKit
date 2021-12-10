@@ -1,5 +1,3 @@
-CONSOLE MESSAGE: TypeError: null is not an object (evaluating 'message_port.start')
 
-Harness Error (FAIL), message = TypeError: null is not an object (evaluating 'message_port.start')
-
+FAIL redirect assert_equals: expected "/workers/interfaces/WorkerGlobalScope/location/redirect.js" but got "/common/redirect.py"
 

@@ -1,5 +1,3 @@
 
-FAIL sandbox directive for SharedWorker null is not an object (evaluating 'worker.port.onmessage = t.step_func_done(e => {
-    assert_equals(e.data, location.origin, "Origin should not be sandboxed");
-  })')
+PASS sandbox directive for SharedWorker
 

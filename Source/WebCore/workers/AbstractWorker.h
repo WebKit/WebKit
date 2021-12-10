@@ -32,6 +32,7 @@
 
 #include "EventTarget.h"
 #include "ExceptionOr.h"
+#include "FetchOptions.h"
 
 namespace WebCore {
 
@@ -44,7 +45,7 @@ public:
     using RefCounted::ref;
     using RefCounted::deref;
 
-    static FetchOptions workerFetchOptions(const WorkerOptions&);
+    static FetchOptions workerFetchOptions(const WorkerOptions&, FetchOptions::Destination);
 
 protected:
     AbstractWorker() = default;

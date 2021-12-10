@@ -53,7 +53,7 @@ WorkerParameters WorkerParameters::isolatedCopy() const
         inspectorIdentifier.isolatedCopy(),
         userAgent.isolatedCopy(),
         isOnline,
-        contentSecurityPolicyResponseHeaders,
+        contentSecurityPolicyResponseHeaders.isolatedCopy(),
         shouldBypassMainWorldContentSecurityPolicy,
         crossOriginEmbedderPolicy.isolatedCopy(),
         timeOrigin,

@@ -32,6 +32,7 @@ enum class WorkerThreadType : uint8_t {
     Worklet,
     DedicatedWorker,
     ServiceWorker,
+    SharedWorker
 };
 
 } // namespace WebCore

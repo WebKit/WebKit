@@ -1,8 +1,8 @@
 
 PASS Same Origin Worker
-FAIL Same Origin SharedWorker null is not an object (evaluating 'w.port.start')
+PASS Same Origin SharedWorker
 PASS Data Url Worker
-FAIL Data Url SharedWorker null is not an object (evaluating 'w.port.start')
+PASS Data Url SharedWorker
 PASS Blob Url Worker
-FAIL Blob Url SharedWorker null is not an object (evaluating 'w.port.start')
+PASS Blob Url SharedWorker
 

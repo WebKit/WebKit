@@ -1,5 +1,3 @@
 
-FAIL Test Clients.get() with window and worker clients promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'w.port.onmessage = function(e) {
-                resolve(e.data.clientId);
-              }')"
+FAIL Test Clients.get() with window and worker clients assert_not_equals: Shared worker client should not be undefined got disallowed value undefined
 

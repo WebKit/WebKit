@@ -1,5 +1,5 @@
 
 FAIL Send and receive messages using a message port in a dedicated worker. promise_test: Unhandled rejection with value: object "TypeError: handle.createWritable is not a function. (In 'handle.createWritable()', 'handle.createWritable' is undefined)"
 FAIL Send and receive messages using a message port in a service worker. promise_test: Unhandled rejection with value: object "TypeError: handle.createWritable is not a function. (In 'handle.createWritable()', 'handle.createWritable' is undefined)"
-FAIL Send and receive messages using a message port in a shared  worker. promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'shared_worker.port.start')"
+FAIL Send and receive messages using a message port in a shared  worker. promise_test: Unhandled rejection with value: object "TypeError: handle.createWritable is not a function. (In 'handle.createWritable()', 'handle.createWritable' is undefined)"
 

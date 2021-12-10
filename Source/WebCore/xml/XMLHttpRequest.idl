@@ -41,7 +41,7 @@ enum XMLHttpRequestResponseType {
 [
     ActiveDOMObject,
     ExportMacro=WEBCORE_EXPORT,
-    Exposed=(Window,DedicatedWorker),
+    Exposed=(Window,DedicatedWorker,SharedWorker),
     JSCustomMarkFunction,
     JSGenerateToJSObject,
     JSGenerateToNativeObject,

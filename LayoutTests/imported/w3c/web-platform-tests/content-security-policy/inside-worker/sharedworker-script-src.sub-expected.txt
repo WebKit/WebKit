@@ -1,3 +1,13 @@
 
-FAIL sharedworker-script-src promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'message_port.start')"
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT sharedworker-script-src Test timed out
+FAIL Cross-origin `importScripts()` not blocked in http: withour CSP  A network error occurred.
+FAIL `eval()` not blocked in http: without CSP Refused to evaluate a string as JavaScript because 'unsafe-eval' is not an allowed source of script in the following Content Security Policy directive: "script-src 'self' 'nonce-a' blob: filesystem:".
+
+FAIL `setTimeout([string])` not blocked in http: without CSP assert_unreached: callback not called. Reached unreachable code
+TIMEOUT Cross-origin `importScripts()` blocked in http: with script-src 'self' Test timed out
+NOTRUN `eval()` blocked in http: with script-src 'self'
+NOTRUN `setTimeout([string])` blocked in http: with script-src 'self'
+NOTRUN Reports are sent for http: with script-src 'self'
 

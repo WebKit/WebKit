@@ -32,7 +32,6 @@
 #include "AbstractWorker.h"
 
 #include "ContentSecurityPolicy.h"
-#include "FetchOptions.h"
 #include "ScriptExecutionContext.h"
 #include "SecurityOrigin.h"
 #include "WorkerOptions.h"
@@ -42,7 +41,7 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(AbstractWorker);
 
-FetchOptions AbstractWorker::workerFetchOptions(const WorkerOptions& options)
+FetchOptions AbstractWorker::workerFetchOptions(const WorkerOptions& options, FetchOptions::Destination destination)
 {
     FetchOptions fetchOptions;
     fetchOptions.mode = FetchOptions::Mode::SameOrigin;
@@ -52,7 +51,7 @@ FetchOptions AbstractWorker::workerFetchOptions(const WorkerOptions& options)
         fetchOptions.credentials = FetchOptions::Credentials::SameOrigin;
     fetchOptions.cache = FetchOptions::Cache::Default;
     fetchOptions.redirect = FetchOptions::Redirect::Follow;
-    fetchOptions.destination = FetchOptions::Destination::Worker;
+    fetchOptions.destination = destination;
     return fetchOptions;
 }
 

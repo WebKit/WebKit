@@ -1,6 +1,6 @@
 
 PASS BroadcastChannel works in workers
-FAIL BroadcastChannel works in shared workers null is not an object (evaluating 'worker.port')
+PASS BroadcastChannel works in shared workers
 PASS Closing and re-opening a channel works.
 PASS BroadcastChannel created after a worker self.close()
 PASS BroadcastChannel messages from closed worker to parent should be ignored (BC created before closing)

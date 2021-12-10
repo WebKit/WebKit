@@ -26,23 +26,56 @@
 #pragma once
 
 #include "AbstractWorker.h"
-#include "WorkerOptions.h"
+#include "ActiveDOMObject.h"
+#include <JavaScriptCore/RuntimeFlags.h>
+#include <wtf/MonotonicTime.h>
 
 namespace WebCore {
 
 class MessagePort;
+class SharedWorkerProxy;
 
-class SharedWorker final : public AbstractWorker {
+struct WorkerOptions;
+
+class SharedWorker final : public AbstractWorker, public ActiveDOMObject {
     WTF_MAKE_ISO_ALLOCATED(SharedWorker);
 public:
-    static Ref<SharedWorker> create(String&& scriptURL, std::optional<std::variant<String, WorkerOptions>>&& options) { return adoptRef(*new SharedWorker(WTFMove(scriptURL), WTFMove(options))); }
+    static ExceptionOr<Ref<SharedWorker>> create(Document&, JSC::RuntimeFlags, String&& scriptURL, std::optional<std::variant<String, WorkerOptions>>&&);
+    ~SharedWorker();
 
-    MessagePort* port() const;
-private:
-    SharedWorker(String&&, std::optional<std::variant<String, WorkerOptions>>&&);
+    MessagePort& port() const { return m_port.get(); }
+    JSC::RuntimeFlags runtimeFlags() { return m_runtimeFlags; }
 
-    EventTargetInterface eventTargetInterface() const final;
+    const String& identifierForInspector() const { return m_identifierForInspector; }
+    MonotonicTime creationTime() const { return m_creationTime; }
+
+    SharedWorkerProxy& proxy() { return m_proxy; }
+
+    void setIsLoading(bool isLoading) { m_isLoading = isLoading; }
+
+    // EventTarget.
     ScriptExecutionContext* scriptExecutionContext() const final;
+
+private:
+    SharedWorker(Document&, Ref<MessagePort>&&, JSC::RuntimeFlags);
+
+    void terminate();
+
+    // EventTarget.
+    EventTargetInterface eventTargetInterface() const final;
+
+    // ActiveDOMObject.
+    const char* activeDOMObjectName() const final;
+    void stop() final;
+    bool virtualHasPendingActivity() const final;
+
+
+    Ref<MessagePort> m_port;
+    String m_identifierForInspector;
+    JSC::RuntimeFlags m_runtimeFlags;
+    MonotonicTime m_creationTime;
+    SharedWorkerProxy& m_proxy; // The proxy outlives the worker to perform thread shutdown.
+    bool m_isLoading { false };
 };
 
 } // namespace WebCore

@@ -1,6 +1,5 @@
-CONSOLE MESSAGE: TypeError: null is not an object (evaluating 'w1.port.onmessage = function(e) {
-  e.ports[0].postMessage(2);
-}')
 
-FAIL messagechannel in shared worker null is not an object (evaluating 'w1.port')
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT messagechannel in shared worker Test timed out
 

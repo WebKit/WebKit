@@ -1,3 +1,14 @@
+2021-12-09  Chris Dumez  <cdumez@apple.com>
+
+        Add basic support for launching a SharedWorker
+        https://bugs.webkit.org/show_bug.cgi?id=233895
+
+        Reviewed by Alex Christensen.
+
+        Update test expectations now that tests involving Shared Workers are actually running.
+
+        * TestExpectations:
+
 2021-12-09  Robert Jenner  <Jenner@apple.com>
 
         Unreviewed, reverting r286754.

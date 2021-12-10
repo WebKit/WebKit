@@ -26,21 +26,24 @@
 #include "config.h"
 #include "SharedWorkerGlobalScope.h"
 
+#include "WorkerThread.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(SharedWorkerGlobalScope);
 
-const String& SharedWorkerGlobalScope::name() const
+SharedWorkerGlobalScope::SharedWorkerGlobalScope(const String& name, const WorkerParameters& params, Ref<SecurityOrigin>&& origin, WorkerThread& thread, Ref<SecurityOrigin>&& topOrigin, IDBClient::IDBConnectionProxy* connectionProxy, SocketProvider* socketProvider)
+    : WorkerGlobalScope(WorkerThreadType::SharedWorker, params, WTFMove(origin), thread, WTFMove(topOrigin), connectionProxy, socketProvider)
+    , m_name(name)
 {
-    // FIXME: Implement.
-    return emptyString();
+    relaxAdoptionRequirement();
+    applyContentSecurityPolicyResponseHeaders(params.contentSecurityPolicyResponseHeaders);
 }
 
 void SharedWorkerGlobalScope::close()
 {
-    // FIXME: Implement.
+    thread().stop(nullptr);
 }
 
 } // namespace WebCore
