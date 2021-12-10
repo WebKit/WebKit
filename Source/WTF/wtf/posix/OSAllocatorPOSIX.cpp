@@ -44,6 +44,10 @@
 #endif // OS(DARWIN)
 #endif // ENABLE(JIT_CAGE)
 
+#if OS(DARWIN)
+#include <wtf/spi/cocoa/MachVMSPI.h>
+#endif
+
 namespace WTF {
 
 void* OSAllocator::reserveUncommitted(size_t bytes, Usage usage, bool writable, bool executable, bool jitCageEnabled, bool includesGuardPages)
@@ -73,11 +77,36 @@ void* OSAllocator::reserveUncommitted(size_t bytes, Usage usage, bool writable, 
     return result;
 }
 
-
-// FIXME: Make a smarter version of this for Linux flavors that have aligned mmap.
 void* OSAllocator::reserveUncommittedAligned(size_t bytes, Usage usage, bool writable, bool executable, bool jitCageEnabled, bool includesGuardPages)
 {
     ASSERT(hasOneBitSet(bytes) && bytes >= pageSize());
+
+#if PLATFORM(MAC) || USE(APPLE_INTERNAL_SDK)
+    UNUSED_PARAM(usage); // Not supported for mach API.
+    ASSERT_UNUSED(includesGuardPages, !includesGuardPages);
+    ASSERT_UNUSED(jitCageEnabled, !jitCageEnabled); // Not supported for mach API.
+    vm_prot_t protections = VM_PROT_READ;
+    if (writable)
+        protections |= VM_PROT_WRITE;
+    if (executable)
+        protections |= VM_PROT_EXECUTE;
+
+    const vm_inherit_t childProcessInheritance = VM_INHERIT_DEFAULT;
+    const bool copy = false;
+    const int flags = VM_FLAGS_ANYWHERE;
+
+    void* aligned = nullptr;
+    kern_return_t result = mach_vm_map(mach_task_self(), reinterpret_cast<mach_vm_address_t*>(&aligned), bytes, bytes - 1, flags, MEMORY_OBJECT_NULL, 0, copy, protections, protections, childProcessInheritance);
+    RELEASE_ASSERT(result == KERN_SUCCESS, result, bytes);
+#if HAVE(MADV_FREE_REUSE)
+    if (aligned) {
+        // To support the "reserve then commit" model, we have to initially decommit.
+        while (madvise(aligned, bytes, MADV_FREE_REUSABLE) == -1 && errno == EAGAIN) { }
+    }
+#endif
+
+    return aligned;
+#else
     // Double the size so we can ensure enough mapped memory to get an aligned start.
     size_t mappedSize = bytes * 2;
     char* mapped = reinterpret_cast<char*>(reserveUncommitted(mappedSize, usage, writable, executable, jitCageEnabled, includesGuardPages));
@@ -95,6 +124,7 @@ void* OSAllocator::reserveUncommittedAligned(size_t bytes, Usage usage, bool wri
         releaseDecommitted(alignedEnd, rightExtra);
 
     return aligned;
+#endif
 }
 
 void* OSAllocator::reserveAndCommit(size_t bytes, Usage usage, bool writable, bool executable, bool jitCageEnabled, bool includesGuardPages)

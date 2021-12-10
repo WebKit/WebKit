@@ -1,3 +1,16 @@
+2021-12-10  Keith Miller  <keith_miller@apple.com>
+
+        Reduce maximum mmap size for Structure regions to help placate ios
+        https://bugs.webkit.org/show_bug.cgi?id=234091
+
+        Reviewed by Saam Barati.
+
+        Use mach_vm_map since that supports memory alignement so we don't have to map 2x desired address space then free then trim.
+
+        * wtf/PlatformHave.h:
+        * wtf/posix/OSAllocatorPOSIX.cpp:
+        (WTF::OSAllocator::reserveUncommittedAligned):
+
 2021-12-10  Antti Koivisto  <antti@apple.com>
 
         [CSS Container Queries] Basic @container at-rule parsing support
