@@ -1,3 +1,13 @@
+2021-12-09  Cathie Chen  <cathiechen@igalia.com>
+
+        Stack-overflow crash in WebCore::RenderBox::computeLogicalHeight()
+        https://bugs.webkit.org/show_bug.cgi?id=233460
+
+        Reviewed by Sergio Villar Senin and Darin Adler.
+
+        * fast/css/deprecated-flex-box-with-min-content-crashes-expected.txt: Added.
+        * fast/css/deprecated-flex-box-with-min-content-crashes.html: Added.
+
 2021-12-09  Chris Dumez  <cdumez@apple.com>
 
         Add basic support for launching a SharedWorker

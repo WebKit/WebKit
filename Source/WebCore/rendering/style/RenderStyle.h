@@ -1517,6 +1517,7 @@ public:
     bool isDisplayInlineType() const { return isDisplayInlineType(display()); }
     bool isOriginalDisplayInlineType() const { return isDisplayInlineType(originalDisplay()); }
     bool isDisplayFlexibleOrGridBox() const { return isDisplayFlexibleOrGridBox(display()); }
+    bool isDisplayFlexibleBoxIncludingDeprecatedOrGridBox() const { return isDisplayFlexibleOrGridBox() || isDisplayDeprecatedFlexibleBox(display()); }
     bool isDisplayRegionType() const;
     bool isDisplayTableOrTablePart() const { return isDisplayTableOrTablePart(display()); }
     bool isOriginalDisplayListItemType() const { return isDisplayListItemType(originalDisplay()); }
@@ -2006,6 +2007,7 @@ private:
     static bool isDisplayFlexibleBox(DisplayType);
     static bool isDisplayGridBox(DisplayType);
     static bool isDisplayFlexibleOrGridBox(DisplayType);
+    static bool isDisplayDeprecatedFlexibleBox(DisplayType);
     static bool isDisplayListItemType(DisplayType);
     static bool isDisplayTableOrTablePart(DisplayType);
 
@@ -2422,6 +2424,11 @@ inline bool RenderStyle::isDisplayGridBox(DisplayType display)
 inline bool RenderStyle::isDisplayFlexibleOrGridBox(DisplayType display)
 {
     return isDisplayFlexibleBox(display) || isDisplayGridBox(display);
+}
+
+inline bool RenderStyle::isDisplayDeprecatedFlexibleBox(DisplayType display)
+{
+    return display == DisplayType::Box || display == DisplayType::InlineBox;
 }
 
 inline bool RenderStyle::isDisplayListItemType(DisplayType display)
