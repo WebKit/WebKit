@@ -1,3 +1,12 @@
+2021-12-09  Robert Jenner  <Jenner@apple.com>
+
+        REGRESSION(r285452-r285595):[ Monterey Release ] 2 accessibility (layout-tests) are constant text failures
+        <rdar://problem/86302643>
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2021-12-02  Alan Coon  <alancoon@apple.com>
 
         Revert r286394. rdar://problem/83070565

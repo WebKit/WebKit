@@ -1603,3 +1603,8 @@ webkit.org/b/229532 fast/loader/reload-zero-byte-plugin.html [ Skip ]
 
 # rdar://82002352 ([ Monterey wk2 Release ] css3/blending/background-blend-mode-background-clip-content-box.html is flaky image failing)
 [ Monterey Release ] css3/blending/background-blend-mode-background-clip-content-box.html [ Pass ImageOnlyFailure ]
+
+
+# rdar://86302643 REGRESSION(r285452-r285595):[ Monterey Release ] 2 accessibility (layout-tests) are constant text failures
+[ Monterey Release ] accessibility/lists.html [ Failure ]
+[ Monterey Release ] accessibility/plugin.html [ Failure ]
