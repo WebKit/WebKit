@@ -68,6 +68,7 @@
 #include "StepRange.h"
 #include "StyleGeneratedImage.h"
 #include "TextControlInnerElements.h"
+#include "TypedElementDescendantIterator.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/Language.h>
 #include <wtf/MathExtras.h>
@@ -979,6 +980,8 @@ void HTMLInputElement::setChecked(bool nowChecked)
     if (checked() == nowChecked)
         return;
 
+    m_inputType->willUpdateCheckedness(nowChecked);
+
     m_dirtyCheckednessFlag = true;
     m_isChecked = nowChecked;
     invalidateStyleForSubtree();
@@ -1576,12 +1579,14 @@ void HTMLInputElement::willChangeForm()
 
 void HTMLInputElement::didChangeForm()
 {
-    HTMLTextFormControlElement::didChangeForm();
     addToRadioButtonGroup();
+    HTMLTextFormControlElement::didChangeForm();
 }
 
 Node::InsertedIntoAncestorResult HTMLInputElement::insertedIntoAncestor(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
 {
+    if (isRadioButton())
+        updateValidity();
     HTMLTextFormControlElement::insertedIntoAncestor(insertionType, parentOfInsertedTree);
 #if ENABLE(DATALIST_ELEMENT)
     resetListAttributeTargetObserver();
@@ -1608,6 +1613,8 @@ void HTMLInputElement::removedFromAncestor(RemovalType removalType, ContainerNod
         removeFromRadioButtonGroup();
     HTMLTextFormControlElement::removedFromAncestor(removalType, oldParentOfRemovedTree);
     ASSERT(!isConnected());
+    if (removalType.disconnectedFromDocument && !form() && isRadioButton())
+        updateValidity();
 #if ENABLE(DATALIST_ELEMENT)
     resetListAttributeTargetObserver();
 #endif
@@ -1956,8 +1963,21 @@ Vector<Ref<HTMLInputElement>> HTMLInputElement::radioButtonGroup() const
 
 RefPtr<HTMLInputElement> HTMLInputElement::checkedRadioButtonForGroup() const
 {
+    if (checked())
+        return const_cast<HTMLInputElement*>(this);
+
+    auto& name = this->name();
     if (RadioButtonGroups* buttons = radioButtonGroups())
-        return buttons->checkedButtonForGroup(name());
+        return buttons->checkedButtonForGroup(name);
+
+    if (name.isEmpty())
+        return nullptr;
+
+    // The input is not managed by a RadioButtonGroups, we'll need to traverse the tree.
+    for (auto& descendant : descendantsOfType<HTMLInputElement>(rootNode())) {
+        if (descendant.checked() && descendant.isRadioButton() && !descendant.form() && name == descendant.name())
+            return &descendant;
+    }
     return nullptr;
 }
 

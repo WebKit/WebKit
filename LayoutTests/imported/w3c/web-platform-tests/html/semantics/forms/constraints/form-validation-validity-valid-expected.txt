@@ -23,7 +23,7 @@ PASS [INPUT in NUMBER status] validity.valid must be false if validity.rangeUnde
 PASS [INPUT in NUMBER status] validity.valid must be false if validity.stepMismatch is true
 PASS [INPUT in NUMBER status] validity.valid must be false if validity.valueMissing is true
 PASS [INPUT in CHECKBOX status] validity.valid must be false if validity.valueMissing is true
-FAIL [INPUT in RADIO status] validity.valid must be false if validity.valueMissing is true assert_false: The validity.valid should be false. expected false got true
+PASS [INPUT in RADIO status] validity.valid must be false if validity.valueMissing is true
 PASS [INPUT in FILE status] validity.valid must be false if validity.valueMissing is true
 PASS [select]  validity.valid must be false if validity.valueMissing is true
 PASS [textarea]  validity.valid must be false if validity.valueMissing is true

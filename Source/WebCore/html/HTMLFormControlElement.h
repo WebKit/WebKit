@@ -76,7 +76,7 @@ public:
 
     bool isEnumeratable() const override { return false; }
 
-    bool isRequired() const;
+    bool isRequired() const { return m_isRequired; }
 
     const AtomString& type() const { return formControlType(); }
 

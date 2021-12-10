@@ -60,6 +60,8 @@ public:
     void stringReplaceAll(const String&);
     void replaceAll(Node*);
 
+    ContainerNode& rootNode() const { return downcast<ContainerNode>(Node::rootNode()); }
+
     // These methods are only used during parsing.
     // They don't send DOM mutation events or handle reparenting.
     // However, arbitrary code may be run by beforeload handlers.

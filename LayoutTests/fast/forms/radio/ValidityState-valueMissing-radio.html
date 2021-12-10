@@ -71,7 +71,7 @@ var requiredButton = document.createElement('input');
 requiredButton.type = 'radio';
 requiredButton.name = 'victim';
 requiredButton.required = true;
-shouldBeFalse('requiredButton.validity.valueMissing');
+shouldBeTrue('requiredButton.validity.valueMissing');
 
 parent.innerHTML = '<input name=victim type=radio required><input name=victim type=radio>';
 requiredButton = document.getElementsByName('victim')[0];
@@ -81,7 +81,7 @@ shouldBeTrue('button.validity.valueMissing');
 parent.removeChild(button);
 shouldBeFalse('button.validity.valueMissing');
 parent.removeChild(requiredButton);
-shouldBeFalse('requiredButton.validity.valueMissing');
+shouldBeTrue('requiredButton.validity.valueMissing');
 
 </script>
 <script src="../../../resources/js-test-post.js"></script>

@@ -301,11 +301,6 @@ void HTMLFormControlElement::dispatchFormControlInputEvent()
     dispatchInputEvent();
 }
 
-bool HTMLFormControlElement::isRequired() const
-{
-    return m_isRequired;
-}
-
 void HTMLFormControlElement::didRecalcStyle(Style::Change)
 {
     // updateFromElement() can cause the selection to change, and in turn
