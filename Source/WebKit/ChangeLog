@@ -1,3 +1,32 @@
+2021-12-10  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r286805. rdar://problem/86331680
+
+    Momentum Generator: Scroll tail hiccup only when scrolling up on 60Hz displays
+    https://bugs.webkit.org/show_bug.cgi?id=234104
+    <rdar://problem/86291413>
+    
+    Reviewed by Simon Fraser.
+    
+    * WebProcess/WebPage/MomentumEventDispatcher.cpp:
+    (WebKit::MomentumEventDispatcher::equalizeTailGaps):
+    Sort in the correct direction based on the sign of the first delta...
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@286805 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-12-09  Tim Horton  <timothy_horton@apple.com>
+
+            Momentum Generator: Scroll tail hiccup only when scrolling up on 60Hz displays
+            https://bugs.webkit.org/show_bug.cgi?id=234104
+            <rdar://problem/86291413>
+
+            Reviewed by Simon Fraser.
+
+            * WebProcess/WebPage/MomentumEventDispatcher.cpp:
+            (WebKit::MomentumEventDispatcher::equalizeTailGaps):
+            Sort in the correct direction based on the sign of the first delta...
+
 2021-12-08  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r286671. rdar://problem/86226565
