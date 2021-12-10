@@ -368,6 +368,7 @@ _NEVER_SKIPPED_JS_FILES = [
 
 _NEVER_SKIPPED_FILES = _NEVER_SKIPPED_JS_FILES + [
     'TestExpectations',
+    'TestExpectations.json',
     '.py'
 ]
 

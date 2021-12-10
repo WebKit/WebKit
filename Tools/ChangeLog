@@ -1,3 +1,20 @@
+2021-12-09  Lauro Moura  <lmoura@igalia.com>
+
+        [webkitpy] Make check-webkit-style check WebDriverTests/TestExpectations.json
+        https://bugs.webkit.org/show_bug.cgi?id=213453
+
+        Reviewed by Adrian Perez de Castro.
+
+        While the WebDriver tests are imported and mostly ignored by
+        check-webkit-style, the script must check TestExpectations.json
+        to avoid commiting invalid json data and breaking the bots.
+
+        * Scripts/webkitpy/style/checker.py:
+        * Scripts/webkitpy/style/checker_unittest.py:
+        (CheckerDispatcherSkipTest._assert_should_skip_without_warning): Pass
+        a valid error handler so the JSONChecker can be instantiated.
+        (CheckerDispatcherSkipTest.test_should_skip_without_warning__false):
+
 2021-12-09  Alex Christensen  <achristensen@webkit.org>
 
         Prepare for transition to C++20

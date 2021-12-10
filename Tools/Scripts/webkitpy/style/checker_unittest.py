@@ -319,7 +319,7 @@ class CheckerDispatcherSkipTest(unittest.TestCase):
                                             expected):
         # Check the file type before asserting the return value.
         checker = self._dispatcher.dispatch(file_path=path,
-                                            handle_style_error=None,
+                                            handle_style_error=DefaultStyleErrorHandler('', None, None, []),
                                             min_confidence=3,
                                             commit_queue=False)
         message = 'while checking: %s' % path
@@ -348,6 +348,8 @@ class CheckerDispatcherSkipTest(unittest.TestCase):
         paths = ['foo.txt',
                  os.path.join('LayoutTests', 'ChangeLog'),
                  os.path.join('LayoutTests', 'foo.py'),
+                 os.path.join('WebDriverTests', 'ChangeLog'),
+                 os.path.join('WebDriverTests', 'TestExpectations.json'),
         ]
 
         for path in paths:
