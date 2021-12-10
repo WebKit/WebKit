@@ -154,7 +154,7 @@ bool RenderSVGResourceClipper::applyClippingToContext(GraphicsContext& context, 
     AffineTransform absoluteTransform = SVGRenderingContext::calculateTransformationToOutermostCoordinateSystem(renderer);
     if (!clipperData.isValidForGeometry(objectBoundingBox, clippedContentBounds, absoluteTransform)) {
         // FIXME (149469): This image buffer should not be unconditionally unaccelerated. Making it match the context breaks nested clipping, though.
-        auto maskImage = SVGRenderingContext::createImageBuffer(clippedContentBounds, absoluteTransform, DestinationColorSpace::SRGB(), RenderingMode::Unaccelerated, &context);
+        auto maskImage = SVGRenderingContext::createImageBuffer(clippedContentBounds, absoluteTransform, DestinationColorSpace::SRGB(), RenderingMode::Unaccelerated, nullptr, &context);
         if (!maskImage)
             return false;
 

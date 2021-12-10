@@ -54,6 +54,7 @@ class DocumentTimeline;
 class HitTestLocation;
 class HitTestRequest;
 class HitTestResult;
+class HostWindow;
 class LegacyInlineBox;
 class Path;
 class Position;
@@ -452,6 +453,7 @@ public:
     inline bool preservesNewline() const;
 
     RenderView& view() const { return *document().renderView(); };
+    HostWindow* hostWindow() const;
 
     // Returns true if this renderer is rooted.
     bool isRooted() const;

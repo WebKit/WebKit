@@ -139,7 +139,7 @@ void RenderLayerFilters::allocateBackingStoreIfNeeded(const GraphicsContext& tar
         m_sourceImage = ImageBuffer::create(logicalSize, filter.renderingMode(), &targetContext, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
 #else
         UNUSED_PARAM(targetContext);
-        m_sourceImage = ImageBuffer::create(logicalSize, filter.renderingMode(), 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
+        m_sourceImage = ImageBuffer::create(logicalSize, filter.renderingMode(), ShouldUseDisplayList::No, RenderingPurpose::DOM, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8, m_layer.renderer().hostWindow());
 #endif
         if (auto context = inputContext())
             context->scale(filter.filterScale());

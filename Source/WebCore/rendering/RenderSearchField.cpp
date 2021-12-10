@@ -355,7 +355,7 @@ FontSelector* RenderSearchField::fontSelector() const
 
 HostWindow* RenderSearchField::hostWindow() const
 {
-    return view().frameView().hostWindow();
+    return RenderTextControlSingleLine::hostWindow();
 }
 
 Ref<Scrollbar> RenderSearchField::createScrollbar(ScrollableArea& scrollableArea, ScrollbarOrientation orientation, ScrollbarControlSize controlSize)

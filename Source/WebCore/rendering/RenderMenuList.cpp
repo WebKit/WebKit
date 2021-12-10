@@ -549,7 +549,7 @@ PopupMenuStyle RenderMenuList::menuStyle() const
 
 HostWindow* RenderMenuList::hostWindow() const
 {
-    return view().frameView().hostWindow();
+    return RenderFlexibleBox::hostWindow();
 }
 
 Ref<Scrollbar> RenderMenuList::createScrollbar(ScrollableArea& scrollableArea, ScrollbarOrientation orientation, ScrollbarControlSize controlSize)

@@ -1454,6 +1454,11 @@ LayoutSize RenderObject::offsetFromAncestorContainer(RenderElement& container) c
     return offset;
 }
 
+HostWindow* RenderObject::hostWindow() const
+{
+    return view().frameView().root() ? view().frameView().root()->hostWindow() : nullptr;
+}
+
 bool RenderObject::isRooted() const
 {
     return isDescendantOf(&view());
