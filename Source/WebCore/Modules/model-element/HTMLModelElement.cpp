@@ -65,8 +65,10 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLModelElement);
 
 HTMLModelElement::HTMLModelElement(const QualifiedName& tagName, Document& document)
     : HTMLElement(tagName, document)
+    , ActiveDOMObject(document)
     , m_readyPromise { makeUniqueRef<ReadyPromise>(*this, &HTMLModelElement::readyPromiseResolve) }
 {
+    setHasCustomStyleResolveCallbacks();
 }
 
 HTMLModelElement::~HTMLModelElement()
@@ -79,7 +81,9 @@ HTMLModelElement::~HTMLModelElement()
 
 Ref<HTMLModelElement> HTMLModelElement::create(const QualifiedName& tagName, Document& document)
 {
-    return adoptRef(*new HTMLModelElement(tagName, document));
+    auto model = adoptRef(*new HTMLModelElement(tagName, document));
+    model->suspendIfNeeded();
+    return model;
 }
 
 RefPtr<Model> HTMLModelElement::model() const
@@ -131,9 +135,12 @@ void HTMLModelElement::setSourceURL(const URL& url)
         m_readyPromise->reject(Exception { AbortError });
 
     m_readyPromise = makeUniqueRef<ReadyPromise>(*this, &HTMLModelElement::readyPromiseResolve);
+    m_shouldCreateModelPlayerUponRendererAttachment = false;
 
-    if (m_sourceURL.isEmpty())
+    if (m_sourceURL.isEmpty()) {
+        queueTaskToDispatchEvent(*this, TaskSource::DOMManipulation, Event::create(eventNames().errorEvent, Event::CanBubble::No, Event::IsCancelable::No));
         return;
+    }
 
     ResourceLoaderOptions options = CachedResourceLoader::defaultCachedResourceOptions();
     options.destination = FetchOptions::Destination::Model;
@@ -145,6 +152,7 @@ void HTMLModelElement::setSourceURL(const URL& url)
 
     auto resource = document().cachedResourceLoader().requestModelResource(WTFMove(request));
     if (!resource.has_value()) {
+        queueTaskToDispatchEvent(*this, TaskSource::DOMManipulation, Event::create(eventNames().errorEvent, Event::CanBubble::No, Event::IsCancelable::No));
         m_readyPromise->reject(Exception { NetworkError });
         return;
     }
@@ -175,6 +183,15 @@ RenderPtr<RenderElement> HTMLModelElement::createElementRenderer(RenderStyle&& s
     return createRenderer<RenderModel>(*this, WTFMove(style));
 }
 
+void HTMLModelElement::didAttachRenderers()
+{
+    if (!m_shouldCreateModelPlayerUponRendererAttachment)
+        return;
+
+    m_shouldCreateModelPlayerUponRendererAttachment = false;
+    createModelPlayer();
+}
+
 // MARK: - CachedRawResourceClient
 
 void HTMLModelElement::dataReceived(CachedResource& resource, const uint8_t* data, int dataLength)
@@ -197,6 +214,8 @@ void HTMLModelElement::notifyFinished(CachedResource& resource, const NetworkLoa
     if (resource.loadFailedOrCanceled()) {
         m_data = nullptr;
 
+        queueTaskToDispatchEvent(*this, TaskSource::DOMManipulation, Event::create(eventNames().errorEvent, Event::CanBubble::No, Event::IsCancelable::No));
+
         invalidateResourceHandleAndUpdateRenderer();
 
         m_readyPromise->reject(Exception { NetworkError });
@@ -206,9 +225,9 @@ void HTMLModelElement::notifyFinished(CachedResource& resource, const NetworkLoa
     m_dataComplete = true;
     m_model = Model::create(m_data.releaseNonNull().get(), resource.mimeType(), resource.url());
 
-    invalidateResourceHandleAndUpdateRenderer();
+    queueTaskToDispatchEvent(*this, TaskSource::DOMManipulation, Event::create(eventNames().loadEvent, Event::CanBubble::No, Event::IsCancelable::No));
 
-    m_readyPromise->resolve(*this);
+    invalidateResourceHandleAndUpdateRenderer();
 
     modelDidChange();
 }
@@ -217,25 +236,34 @@ void HTMLModelElement::notifyFinished(CachedResource& resource, const NetworkLoa
 
 void HTMLModelElement::modelDidChange()
 {
-    // FIXME: For the early returns here, we should probably inform the page that things have
-    // failed to render. For the case of no-renderer, we should probably also build the model
-    // when/if a renderer is created.
-
-    auto page = document().page();
-    if (!page)
+    auto* page = document().page();
+    if (!page) {
+        m_readyPromise->reject(Exception { AbortError });
         return;
+    }
 
     auto* renderer = this->renderer();
-    if (!renderer)
+    if (!renderer) {
+        m_shouldCreateModelPlayerUponRendererAttachment = true;
         return;
+    }
 
-    m_modelPlayer = page->modelPlayerProvider().createModelPlayer(*this);
-    if (!m_modelPlayer)
+    createModelPlayer();
+}
+
+void HTMLModelElement::createModelPlayer()
+{
+    ASSERT(document().page());
+    m_modelPlayer = document().page()->modelPlayerProvider().createModelPlayer(*this);
+    if (!m_modelPlayer) {
+        m_readyPromise->reject(Exception { AbortError });
         return;
+    }
 
     // FIXME: We need to tell the player if the size changes as well, so passing this
     // in with load probably doesn't make sense.
-    auto size = renderer->absoluteBoundingBoxRect(false).size();
+    ASSERT(renderer());
+    auto size = renderer()->absoluteBoundingBoxRect(false).size();
     m_modelPlayer->load(*m_model, size);
 }
 
@@ -255,11 +283,14 @@ void HTMLModelElement::didFinishLoading(ModelPlayer& modelPlayer)
 
     if (auto* renderer = this->renderer())
         renderer->updateFromElement();
+
+    m_readyPromise->resolve(*this);
 }
 
 void HTMLModelElement::didFailLoading(ModelPlayer& modelPlayer, const ResourceError&)
 {
     ASSERT_UNUSED(modelPlayer, &modelPlayer == m_modelPlayer);
+    m_readyPromise->reject(Exception { AbortError });
 }
 
 GraphicsLayer::PlatformLayerID HTMLModelElement::platformLayerID()
@@ -550,6 +581,18 @@ void HTMLModelElement::setIsMuted(bool isMuted, DOMPromiseDeferred<void>&& promi
         else
             promise.reject();
     });
+}
+
+const char* HTMLModelElement::activeDOMObjectName() const
+{
+    return "HTMLModelElement";
+}
+
+bool HTMLModelElement::virtualHasPendingActivity() const
+{
+    // We need to ensure the JS wrapper is kept alive if a load is in progress and we may yet dispatch
+    // "load" or "error" events, ie. as long as we have a resource, meaning we are in the process of loading.
+    return m_resource;
 }
 
 #if PLATFORM(COCOA)

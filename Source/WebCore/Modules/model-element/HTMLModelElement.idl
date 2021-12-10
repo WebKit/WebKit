@@ -30,6 +30,7 @@
 ] interface HTMLModelElement : HTMLElement {
     [URL] readonly attribute USVString currentSrc;
 
+    readonly attribute boolean complete;
     readonly attribute Promise<HTMLModelElement> ready;
 
     undefined enterFullscreen();

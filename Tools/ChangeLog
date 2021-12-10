@@ -1,3 +1,17 @@
+2021-12-09  Antoine Quint  <graouts@webkit.org>
+
+        [Model] Add load and error events to distinguish resource load from model readiness
+        https://bugs.webkit.org/show_bug.cgi?id=233706
+        rdar://85922697
+
+        Reviewed by Chris Dumez and Dean Jackson.
+
+        Use the "load" event instead of the "ready" promise for this test which only requires monitoring
+        the <model> resource being loaded.
+
+        * TestWebKitAPI/Tests/ios/DragAndDropTestsIOS.mm:
+        (TestWebKitAPI::TEST):
+
 2021-12-09  Aditya Keerthi  <akeerthi@apple.com>
 
         [iOS] Add SPI to enable find interactions on WKWebView

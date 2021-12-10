@@ -1,3 +1,34 @@
+2021-12-09  Antoine Quint  <graouts@webkit.org>
+
+        [Model] Add load and error events to distinguish resource load from model readiness
+        https://bugs.webkit.org/show_bug.cgi?id=233706
+        rdar://85922697
+
+        Reviewed by Chris Dumez and Dean Jackson.
+
+        Remove existing tests around resource loading and recreate them in terms of "load" and "error"
+        events in model-element/model-element-error-and-load-events.html and in terms of the ready
+        promise in model-element/model-element-ready.html.
+
+        Other tests using model.ready for other purposes are also rewritten using events. 
+
+        * model-element/model-element-contents-layer-updates-with-clipping.html:
+        * model-element/model-element-contents-layer-updates.html:
+        * model-element/model-element-error-and-load-events-expected.txt: Added.
+        * model-element/model-element-error-and-load-events.html: Added.
+        * model-element/model-element-graphics-layers-opacity.html:
+        * model-element/model-element-graphics-layers.html:
+        * model-element/model-element-ready-expected.txt:
+        * model-element/model-element-ready-load-aborted-expected.txt: Removed.
+        * model-element/model-element-ready-load-aborted.html: Removed.
+        * model-element/model-element-ready-load-failed-expected.txt: Removed.
+        * model-element/model-element-ready-load-failed.html: Removed.
+        * model-element/model-element-ready.html:
+        * model-element/resources/model-element-test-utils.js: Added.
+        (const.createModelAndSource):
+        * platform/ios-simulator/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2021-12-09  Arcady Goldmints-Orlov  <agoldmints@igalia.com>
 
         [GLIB] Update test expectations and baselines. Unreviewed test gardening.
