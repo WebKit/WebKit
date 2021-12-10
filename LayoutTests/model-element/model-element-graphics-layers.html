@@ -6,27 +6,26 @@
 </model>
 <pre id="layers"></pre>
 <script>
-    window.testRunner?.waitUntilDone();
-    window.testRunner?.dumpAsText();
+    let layers = document.getElementById("layers");
 
-    const layers = document.getElementById("layers");
-    const model = document.getElementById("model");
+    if (window.testRunner) {
+        testRunner.waitUntilDone();
+        testRunner.dumpAsText();
+    } else
+        layers.textContent = "This test requires testRunner.";
 
-    const modelDidLoad = () => {
-        layers.innerText = window.internals?.layerTreeAsText(document) ?? "This test requires testRunner.";
+    let model = document.getElementById("model");
+
+    model.ready.then(value => {
+        if (window.testRunner)
+            layers.innerText = window.internals.layerTreeAsText(document);
         model.remove();
-        window.testRunner?.notifyDone();
-    }
-
-    if (model.complete)
-        modelDidLoad();
-    else {
-        model.addEventListener("load", modelDidLoad);
-        model.addEventListener("error", event => {
-            layers.textContent = `Failed. Model did not load.`;
-            window.testRunner?.notifyDone();
-        });
-    }
+    }, reason => {
+        layers.textContent = `Failed. Model did not load: ${reason}`;
+    }).finally(() => { 
+        if (window.testRunner)
+            testRunner.notifyDone();
+    });
 </script>
 </body>
 </html>

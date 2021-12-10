@@ -1,5 +1,3 @@
+This test passes if you see the word "Passed" below:
 
-PASS <model> rejects the ready promise when provided with an unknown resoure.
-PASS <model> rejects the ready promise when its resource load is aborted.
-PASS <model> resolves the ready promise when provided with a known resource.
-
+Passed
