@@ -185,7 +185,6 @@ webkit.org/b/232745 fast/animation/request-animation-frame-throttling-lowPowerMo
 
 # Complex Text Path: Tests passing with --complex-text
 webkit.org/b/215355 fonts/ligature.html [ ImageOnlyFailure ]
-webkit.org/b/215421 fast/encoding/denormalised-voiced-japanese-chars.html [ ImageOnlyFailure ]
 
 # CSS counter styles
 webkit.org/b/223412 imported/w3c/web-platform-tests/css/css-counter-styles/lower-greek/css3-counter-styles-028.html [ ImageOnlyFailure ]

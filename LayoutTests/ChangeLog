@@ -1,3 +1,21 @@
+2021-12-09  Arcady Goldmints-Orlov  <agoldmints@igalia.com>
+
+        [GLIB] Update test expectations and baselines. Unreviewed test gardening.
+        https://bugs.webkit.org/show_bug.cgi?id=234120
+
+        * platform/glib/TestExpectations:
+        * platform/glib/fast/css/getComputedStyle/computed-style-expected.txt:
+        * platform/glib/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+        * platform/glib/imported/w3c/web-platform-tests/css/cssom-view/cssom-getBoundingClientRect-003-expected.txt:
+        * platform/gtk/imported/w3c/web-platform-tests/html/semantics/forms/constraints/form-validation-validity-rangeOverflow-expected.txt:
+        * platform/gtk/imported/w3c/web-platform-tests/html/semantics/forms/constraints/form-validation-validity-rangeUnderflow-expected.txt:
+        * platform/wpe/TestExpectations:
+        * platform/wpe/imported/w3c/web-platform-tests/css/cssom/getComputedStyle-detached-subtree-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/html/dom/reflection-embedded-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/html/dom/reflection-forms-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/html/dom/reflection-text-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-stretchy-001-expected.txt: Removed.
+
 2021-12-09  Cathie Chen  <cathiechen@igalia.com>
 
         Stack-overflow crash in WebCore::RenderBox::computeLogicalHeight()

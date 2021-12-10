@@ -795,6 +795,10 @@ webkit.org/b/233731 fast/mediastream/getDisplayMedia-size.html [ Failure ]
 
 webkit.org/b/233836 http/tests/media/media-blocked-by-willsendrequest.html [ Timeout ]
 
+webkit.org/b/234083 media/track/track-webvtt-no-snap-to-lines-overlap.html [ ImageOnlyFailure ]
+webkit.org/b/234083 media/track/track-webvtt-snap-to-lines-inline-style.html [ ImageOnlyFailure ]
+webkit.org/b/234083 media/track/track-webvtt-snap-to-lines-left-right.html [ ImageOnlyFailure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of GStreamer-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -1153,6 +1157,18 @@ webkit.org/b/112228 svg/custom/resources-css-scaled.html [ ImageOnlyFailure ]
 webkit.org/b/141831 svg/animations/animate-text-nested-transforms.html [ Failure ]
 
 webkit.org/b/98653  svg/text/lengthAdjust-text-metrics.html [ Failure ]
+
+webkit.org/b/234118 fast/filter-image/filter-image-blur.html [ ImageOnlyFailure ]
+webkit.org/b/234118 imported/blink/svg/filters/big-viewbox.svg [ ImageOnlyFailure ]
+webkit.org/b/234118 imported/blink/svg/filters/feColorMatrix-subregion.html [ ImageOnlyFailure ]
+webkit.org/b/234118 imported/blink/svg/filters/feDropShadow-flood-opacity-1.svg [ ImageOnlyFailure ]
+webkit.org/b/234118 imported/blink/svg/filters/feOffset-nonuniform-scale.svg [ ImageOnlyFailure ]
+webkit.org/b/234118 imported/blink/svg/filters/filter-huge-clamping.svg [ ImageOnlyFailure ]
+webkit.org/b/234118 imported/mozilla/svg/filter-scaled-02.html [ ImageOnlyFailure ]
+webkit.org/b/234118 imported/mozilla/svg/image/image-filter-01.svg [ ImageOnlyFailure ]
+webkit.org/b/234118 svg/custom/filter-update-different-root.html [ ImageOnlyFailure ]
+webkit.org/b/234118 svg/filters/color-space-conversion.svg [ ImageOnlyFailure ]
+webkit.org/b/234118 svg/filters/container-with-filters.svg [ ImageOnlyFailure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of SVG-related bugs
