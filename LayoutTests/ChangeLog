@@ -1,3 +1,16 @@
+2021-12-10  Youenn Fablet  <youenn@apple.com>
+
+        [ Monterey ] http/tests/workers/service/serviceworker-websocket.https.html (layout-test) is constant text failure
+        https://bugs.webkit.org/show_bug.cgi?id=233665
+        <rdar://problem/85888177>
+
+        Reviewed by Alex Christensen.
+
+        Allow all SSL certificates.
+
+        * http/tests/workers/service/serviceworker-websocket.https.html:
+        * platform/mac-wk2/TestExpectations:
+
 2021-12-10  Patrick Griffis  <pgriffis@igalia.com>
 
         CSP: Allow external scripts with SRI hashes matching CSP
