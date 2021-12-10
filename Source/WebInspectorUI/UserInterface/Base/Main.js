@@ -623,7 +623,7 @@ WI.performOneTimeFrontendInitializationsUsingTarget = function(target)
 
     if (!WI.__didPerformCSSInitialization && target.hasDomain("CSS")) {
         WI.__didPerformCSSInitialization = true;
-        WI.CSSCompletions.initializeCSSCompletions(target);
+        WI.cssManager.initializeCSSPropertyNameCompletions(target);
     }
 };
 
@@ -810,7 +810,7 @@ WI.activateExtraDomains = function(domains)
             WI.pageTarget = WI.mainTarget;
 
         if (WI.mainTarget.hasDomain("CSS"))
-            WI.CSSCompletions.initializeCSSCompletions(WI.assumingMainTarget());
+            WI.cssManager.initializeCSSPropertyNameCompletions(WI.assumingMainTarget());
 
         if (WI.mainTarget.hasDomain("DOM"))
             WI.domManager.ensureDocument();

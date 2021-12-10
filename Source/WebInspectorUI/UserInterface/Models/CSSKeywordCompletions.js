@@ -41,13 +41,13 @@ WI.CSSKeywordCompletions.forPartialPropertyName = function(text, {caretPosition,
         return {prefix: text, completions: []};
 
     if (!text.length && allowEmptyPrefix)
-        return {prefix: text, completions: WI.CSSCompletions.cssNameCompletions.values};
+        return {prefix: text, completions: WI.cssManager.propertyNameCompletions.values};
 
     let completions;
     if (useFuzzyMatching)
-        completions = WI.CSSCompletions.cssNameCompletions.executeQuery(text);
+        completions = WI.cssManager.propertyNameCompletions.executeQuery(text);
     else
-        completions = WI.CSSCompletions.cssNameCompletions.startsWith(text);
+        completions = WI.cssManager.propertyNameCompletions.startsWith(text);
 
     return {prefix: text, completions};
 };
@@ -170,12 +170,12 @@ WI.CSSKeywordCompletions.forProperty = function(propertyName)
             addKeywordsForName(longhandName);
     }
 
-    if (acceptedKeywords.includes(WI.CSSKeywordCompletions.AllPropertyNamesPlaceholder) && WI.CSSCompletions.cssNameCompletions) {
+    if (acceptedKeywords.includes(WI.CSSKeywordCompletions.AllPropertyNamesPlaceholder) && WI.cssManager.propertyNameCompletions) {
         acceptedKeywords.remove(WI.CSSKeywordCompletions.AllPropertyNamesPlaceholder);
-        acceptedKeywords.pushAll(WI.CSSCompletions.cssNameCompletions.values);
+        acceptedKeywords.pushAll(WI.cssManager.propertyNameCompletions.values);
     }
 
-    return new WI.CSSCompletions(Array.from(new Set(acceptedKeywords)), true);
+    return new WI.CSSCompletions(Array.from(new Set(acceptedKeywords)), {acceptEmptyPrefix: true});
 };
 
 WI.CSSKeywordCompletions.isColorAwareProperty = function(name)
@@ -226,7 +226,7 @@ WI.CSSKeywordCompletions.forFunction = function(functionName)
         suggestions.pushAll(WI.CSSKeywordCompletions._colors);
     }
 
-    return new WI.CSSCompletions(suggestions, true);
+    return new WI.CSSCompletions(suggestions, {acceptEmptyPrefix: true});
 };
 
 WI.CSSKeywordCompletions.addCustomCompletions = function(properties)

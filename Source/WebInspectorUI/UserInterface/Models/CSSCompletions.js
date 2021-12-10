@@ -33,126 +33,18 @@
 
 WI.CSSCompletions = class CSSCompletions
 {
-    constructor(properties, acceptEmptyPrefix)
+    constructor(values, {acceptEmptyPrefix} = {})
     {
-        this._values = [];
+        console.assert(Array.isArray(values), values);
+        console.assert(typeof values[0] === "string", "Expect an array of string values", values);
 
-        // The `properties` parameter can be either a list of objects with 'name' / 'longhand'
-        // properties when initialized from the protocol for CSSCompletions.cssNameCompletions.
-        // Or it may just a list of strings when quickly initialized for other completion purposes.
-        if (properties.length && typeof properties[0] === "string")
-            this._values.pushAll(properties);
-        else {
-            for (var property of properties) {
-                var propertyName = property.name;
-                console.assert(propertyName);
-
-                this._values.push(propertyName);
-
-                let aliases = property.aliases;
-                if (aliases)
-                    this._values.pushAll(aliases);
-            }
-        }
-
+        this._values = values.slice();
         this._values.sort();
-
-        this._acceptEmptyPrefix = acceptEmptyPrefix;
+        this._acceptEmptyPrefix = !!acceptEmptyPrefix;
         this._queryController = null;
     }
 
     // Static
-
-    static initializeCSSCompletions(target)
-    {
-        console.assert(target.hasDomain("CSS"));
-
-        if (WI.CSSCompletions.cssNameCompletions)
-            return;
-
-        function propertiesCallback(error, cssProperties)
-        {
-            if (error)
-                return;
-
-            WI.CSSCompletions.cssNameCompletions = new WI.CSSCompletions(cssProperties, false);
-
-            WI.CSSKeywordCompletions.addCustomCompletions(cssProperties);
-
-            // CodeMirror is not included by tests so we shouldn't assume it always exists.
-            // If it isn't available we skip MIME type associations.
-            if (!window.CodeMirror)
-                return;
-
-            var propertyNamesForCodeMirror = {};
-            var valueKeywordsForCodeMirror = {"inherit": true, "initial": true, "unset": true, "revert": true, "var": true, "env": true};
-            var colorKeywordsForCodeMirror = {};
-
-            function nameForCodeMirror(name)
-            {
-                // CodeMirror parses the vendor prefix separate from the property or keyword name,
-                // so we need to strip vendor prefixes from our names. Also strip function parenthesis.
-                return name.replace(/^-[^-]+-/, "").replace(/\(\)$/, "").toLowerCase();
-            }
-
-            function collectPropertyNameForCodeMirror(propertyName)
-            {
-                // Properties can also be value keywords, like when used in a transition.
-                // So we add them to both lists.
-                var codeMirrorPropertyName = nameForCodeMirror(propertyName);
-                propertyNamesForCodeMirror[codeMirrorPropertyName] = true;
-                valueKeywordsForCodeMirror[codeMirrorPropertyName] = true;
-            }
-
-            for (var property of cssProperties)
-                collectPropertyNameForCodeMirror(property.name);
-
-            for (var propertyName in WI.CSSKeywordCompletions._propertyKeywordMap) {
-                var keywords = WI.CSSKeywordCompletions._propertyKeywordMap[propertyName];
-                for (var i = 0; i < keywords.length; ++i) {
-                    // Skip numbers, like the ones defined for font-weight.
-                    if (keywords[i] === WI.CSSKeywordCompletions.AllPropertyNamesPlaceholder || !isNaN(Number(keywords[i])))
-                        continue;
-                    valueKeywordsForCodeMirror[nameForCodeMirror(keywords[i])] = true;
-                }
-            }
-
-            WI.CSSKeywordCompletions._colors.forEach(function(colorName) {
-                colorKeywordsForCodeMirror[nameForCodeMirror(colorName)] = true;
-            });
-
-            function updateCodeMirrorCSSMode(mimeType)
-            {
-                var modeSpec = CodeMirror.resolveMode(mimeType);
-
-                console.assert(modeSpec.propertyKeywords);
-                console.assert(modeSpec.valueKeywords);
-                console.assert(modeSpec.colorKeywords);
-
-                modeSpec.propertyKeywords = propertyNamesForCodeMirror;
-                modeSpec.valueKeywords = valueKeywordsForCodeMirror;
-                modeSpec.colorKeywords = colorKeywordsForCodeMirror;
-
-                CodeMirror.defineMIME(mimeType, modeSpec);
-            }
-
-            updateCodeMirrorCSSMode("text/css");
-            updateCodeMirrorCSSMode("text/x-scss");
-        }
-
-        function fontFamilyNamesCallback(error, fontFamilyNames)
-        {
-            if (error)
-                return;
-
-            WI.CSSKeywordCompletions.addPropertyCompletionValues("font-family", fontFamilyNames);
-            WI.CSSKeywordCompletions.addPropertyCompletionValues("font", fontFamilyNames);
-        }
-
-        target.CSSAgent.getSupportedCSSProperties(propertiesCallback);
-        if (target.hasCommand("CSS.getSupportedSystemFontFamilyNames"))
-            target.CSSAgent.getSupportedSystemFontFamilyNames(fontFamilyNamesCallback);
-    }
 
     static completeUnbalancedValue(value)
     {
@@ -311,44 +203,7 @@ WI.CSSCompletions = class CSSCompletions
 
         return foundIndex;
     }
-
-    next(str, prefix)
-    {
-        return this._closest(str, prefix, 1);
-    }
-
-    previous(str, prefix)
-    {
-        return this._closest(str, prefix, -1);
-    }
-
-    _closest(str, prefix, shift)
-    {
-        if (!str)
-            return "";
-
-        var index = this._values.indexOf(str);
-        if (index === -1)
-            return "";
-
-        if (!prefix) {
-            index = (index + this._values.length + shift) % this._values.length;
-            return this._values[index];
-        }
-
-        var propertiesWithPrefix = this.startsWith(prefix);
-        var j = propertiesWithPrefix.indexOf(str);
-        j = (j + propertiesWithPrefix.length + shift) % propertiesWithPrefix.length;
-        return propertiesWithPrefix[j];
-    }
-
-    isValidPropertyName(name)
-    {
-        return this._values.includes(name);
-    }
 };
-
-WI.CSSCompletions.cssNameCompletions = null;
 
 WI.CSSCompletions.lengthUnits = new Set([
     "ch",

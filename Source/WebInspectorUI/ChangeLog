@@ -1,3 +1,75 @@
+2021-12-10  Razvan Caliman  <rcaliman@apple.com>
+
+        Web Inspector: Extract a specialized CSSNameCompletions from CSSCompletions
+        https://bugs.webkit.org/show_bug.cgi?id=233369
+        <rdar://83206520>
+
+        Reviewed by Devin Rousso.
+
+        `WI.CSSPropertyNameCompletions` is a long-lived object that holds the list of all CSS properties
+        supported by the target. It is instantiated only once on Web Inspector startup.
+
+        By contrast, `WI.CSSCompletions` is an object instantiated as often as needed with
+        lists of property values, CSS function values, etc. It holds the generic logic for
+        matching values against a given query.
+
+        The specialized logic for CSS property names was mixed-in with the generic logic in `WI.CSSCompletions`.
+        The main difference is in the format of the payload provided:
+        - an array of objects with key/value pairs for `WI.CSSPropertyNameCompletions`.
+        - an array of strings for general purpose `WI.CSSCompletions`.
+
+        This patch reduces the complexity in `WI.Completions`:
+        - moves the one-time initialization method to `WI.cssManager.initializeCSSCompletions`.
+        - simplifies `WI.Completions` constructor to expect just an array of strings.
+        - introduces `WI.CSSPropertyNameCompletions` as a sub-class of `WI.CSSCompletions` where its constructor
+          is specialized to handle the payload received from the backend.
+        - moves the `WI.CSSPropertyNameCompletions` instance to `WI.cssManager.cssPropertyNameCompletions`.
+        - removes unused accessors for navigating the list of matched completions.
+
+        * UserInterface/Base/Main.js:
+        (WI.performOneTimeFrontendInitializationsUsingTarget):
+        * UserInterface/Controllers/CSSManager.js:
+        (WI.CSSManager):
+        (WI.CSSManager.prototype.initializeCSSPropertyNameCompletions.):
+        (WI.CSSManager.prototype.initializeCSSPropertyNameCompletions):
+        Moved the initializiation method for objects used to get CSS completions
+        from `WI.CSSCompletions` with data from the backed to a more appropriate place.
+
+        (WI.CSSManager.prototype.get propertyNameCompletions):
+        * UserInterface/Controllers/CodeMirrorCompletionController.js:
+        (WI.CodeMirrorCompletionController.prototype._generateCSSCompletions):
+        * UserInterface/Main.html:
+        * UserInterface/Models/CSSCompletions.js:
+        (WI.CSSCompletions.prototype._firstIndexOfPrefix):
+        (WI.CSSCompletions):
+        (WI.CSSCompletions.initializeCSSCompletions.): Deleted.
+        (WI.CSSCompletions.initializeCSSCompletions.collectPropertyNameForCodeMirror): Deleted.
+        (WI.CSSCompletions.initializeCSSCompletions.propertiesCallback): Deleted.
+        (WI.CSSCompletions.initializeCSSCompletions.fontFamilyNamesCallback): Deleted.
+        (WI.CSSCompletions.initializeCSSCompletions): Deleted.
+        Moved to `WI.CSSManager`.
+
+        (WI.CSSCompletions.prototype.next): Deleted.
+        (WI.CSSCompletions.prototype.previous): Deleted.
+        (WI.CSSCompletions.prototype._closest): Deleted.
+        Removed unused methods for navigating the completions list.
+        This behavior is encapsulated in `WI.CompletionSuggestionsView`.
+
+        (WI.CSSCompletions.prototype.isValidPropertyName): Deleted.
+        Moved to `WI.CSSPropertyNameCompletions`.
+
+        * UserInterface/Models/CSSKeywordCompletions.js:
+        (WI.CSSKeywordCompletions.forPartialPropertyName):
+        * UserInterface/Models/CSSPropertyNameCompletions.js: Added.
+        (WI.CSSPropertyNameCompletions.prototype.isValidPropertyName):
+        (WI.CSSPropertyNameCompletions):
+        * UserInterface/Test.html:
+        * UserInterface/Test/Test.js:
+        (WI.performOneTimeFrontendInitializationsUsingTarget):
+        * UserInterface/Views/SpreadsheetStyleProperty.js:
+        (WI.SpreadsheetStyleProperty.prototype.updateStatus):
+        (WI.SpreadsheetStyleProperty.prototype._addCSSDocumentationButton):
+
 2021-12-09  Brent Fulgham  <bfulgham@apple.com>
 
         Unprefix CSS value text-align: -webkit-match-parent
