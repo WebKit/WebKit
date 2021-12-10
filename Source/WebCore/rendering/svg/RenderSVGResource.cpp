@@ -30,6 +30,7 @@
 #include "RenderSVGResourceFilter.h"
 #include "RenderSVGResourceMasker.h"
 #include "RenderSVGResourceSolidColor.h"
+#include "RenderSVGRoot.h"
 #include "RenderView.h"
 #include "SVGResourceElementClient.h"
 #include "SVGResources.h"
@@ -202,6 +203,10 @@ void RenderSVGResource::markForLayoutAndParentResourceInvalidation(RenderObject&
         // invalidate the ancestor renderer because it may have finished its layout already.
         if (is<LegacyRenderSVGRoot>(object) && downcast<LegacyRenderSVGRoot>(object).isInLayout())
             object.setNeedsLayout(MarkOnlyThis);
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+        else if (is<RenderSVGRoot>(object) && downcast<RenderSVGRoot>(object).isInLayout())
+            object.setNeedsLayout(MarkOnlyThis);
+#endif
         else
             object.setNeedsLayout(MarkContainingBlockChain);
     }

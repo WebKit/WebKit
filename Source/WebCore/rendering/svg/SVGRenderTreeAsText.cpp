@@ -47,6 +47,7 @@
 #include "RenderSVGResourcePattern.h"
 #include "RenderSVGResourceRadialGradientInlines.h"
 #include "RenderSVGResourceSolidColor.h"
+#include "RenderSVGRoot.h"
 #include "RenderSVGShapeInlines.h"
 #include "RenderSVGText.h"
 #include "SVGCircleElement.h"
@@ -506,6 +507,16 @@ void writeSVGContainer(TextStream& ts, const RenderSVGContainer& container, Opti
     writeResources(ts, container, behavior);
     writeChildren(ts, container, behavior);
 }
+
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+void write(TextStream& ts, const RenderSVGRoot& root, OptionSet<RenderAsTextFlag> behavior)
+{
+    writeStandardPrefix(ts, root, behavior);
+    writePositionAndStyle(ts, root, behavior);
+    ts << "\n";
+    writeChildren(ts, root, behavior);
+}
+#endif
 
 void write(TextStream& ts, const LegacyRenderSVGRoot& root, OptionSet<RenderAsTextFlag> behavior)
 {

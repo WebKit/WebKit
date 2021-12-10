@@ -63,6 +63,7 @@
 #include "RenderSVGInlineText.h"
 #include "RenderSVGPath.h"
 #include "RenderSVGResourceContainer.h"
+#include "RenderSVGRoot.h"
 #include "RenderSVGText.h"
 #include "RenderTableCell.h"
 #include "RenderView.h"
@@ -573,6 +574,12 @@ void write(TextStream& ts, const RenderObject& o, OptionSet<RenderAsTextFlag> be
         writeSVGContainer(ts, downcast<RenderSVGContainer>(o), behavior);
         return;
     }
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+    if (is<RenderSVGRoot>(o)) {
+        write(ts, downcast<RenderSVGRoot>(o), behavior);
+        return;
+    }
+#endif
     if (is<LegacyRenderSVGRoot>(o)) {
         write(ts, downcast<LegacyRenderSVGRoot>(o), behavior);
         return;

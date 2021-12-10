@@ -530,6 +530,14 @@ bool SVGElement::childShouldCreateRenderer(const Node& child) const
         return false;
     auto& svgChild = downcast<SVGElement>(child);
 
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+    // If the layer based SVG engine is enabled, all renderers that do not support the
+    // RenderLayer aware layout / painting / hit-testing mode ('LBSE-mode') have to be skipped.
+    // Currently all renderers are skipped.
+    if (document().settings().layerBasedSVGEngineEnabled())
+        return false;
+#endif
+
     static const QualifiedName* const invalidTextContent[] {
         &SVGNames::altGlyphTag.get(),
         &SVGNames::textPathTag.get(),

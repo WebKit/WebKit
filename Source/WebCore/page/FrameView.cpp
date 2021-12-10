@@ -87,6 +87,7 @@
 #include "RenderLayerBacking.h"
 #include "RenderLayerCompositor.h"
 #include "RenderLayerScrollableArea.h"
+#include "RenderSVGRoot.h"
 #include "RenderScrollbar.h"
 #include "RenderScrollbarPart.h"
 #include "RenderStyle.h"
@@ -646,6 +647,17 @@ void FrameView::applyOverflowToViewport(const RenderElement& renderer, Scrollbar
 
     Overflow overflowX = renderer.effectiveOverflowX();
     Overflow overflowY = renderer.effectiveOverflowY();
+
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+    if (is<RenderSVGRoot>(renderer)) {
+        // FIXME: evaluate if we can allow overflow for these cases too.
+        // Overflow is always hidden when stand-alone SVG documents are embedded.
+        if (downcast<RenderSVGRoot>(renderer).isEmbeddedThroughFrameContainingSVGDocument()) {
+            overflowX = Overflow::Hidden;
+            overflowY = Overflow::Hidden;
+        }
+    }
+#endif
 
     if (is<LegacyRenderSVGRoot>(renderer)) {
         // FIXME: evaluate if we can allow overflow for these cases too.

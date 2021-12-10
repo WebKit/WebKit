@@ -50,6 +50,7 @@
 #include "RenderRubyRun.h"
 #include "RenderSVGContainer.h"
 #include "RenderSVGInline.h"
+#include "RenderSVGRoot.h"
 #include "RenderSVGText.h"
 #include "RenderTable.h"
 #include "RenderTableCell.h"
@@ -290,6 +291,13 @@ void RenderTreeBuilder::attachInternal(RenderElement& parent, RenderPtr<RenderOb
         return;
     }
 
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+    if (is<RenderSVGRoot>(parent)) {
+        svgBuilder().attach(downcast<RenderSVGRoot>(parent), WTFMove(child), beforeChild);
+        return;
+    }
+#endif
+
     if (is<LegacyRenderSVGRoot>(parent)) {
         svgBuilder().attach(downcast<LegacyRenderSVGRoot>(parent), WTFMove(child), beforeChild);
         return;
@@ -373,6 +381,11 @@ RenderPtr<RenderObject> RenderTreeBuilder::detach(RenderElement& parent, RenderO
 
     if (is<RenderSVGContainer>(parent))
         return svgBuilder().detach(downcast<RenderSVGContainer>(parent), child);
+
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+    if (is<RenderSVGRoot>(parent))
+        return svgBuilder().detach(downcast<RenderSVGRoot>(parent), child);
+#endif
 
     if (is<LegacyRenderSVGRoot>(parent))
         return svgBuilder().detach(downcast<LegacyRenderSVGRoot>(parent), child);
