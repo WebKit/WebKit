@@ -1,3 +1,12 @@
+2021-12-10  Per Arne Vollan  <pvollan@apple.com>
+
+        [WP][macOS] Add required system call
+        https://bugs.webkit.org/show_bug.cgi?id=234129
+
+        Reviewed by Brent Fulgham.
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2021-12-09  Darin Adler  <darin@apple.com>
 
         Use simpler idioms for std::less and std::greater possible in modern C++

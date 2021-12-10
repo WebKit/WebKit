@@ -2048,6 +2048,9 @@
         (allow syscall-unix (syscall-number SYS__map_with_linking_np)))
 )
 
+(with-filter (uid 0)
+    (allow syscall-unix (syscall-number SYS_gettid))) ;; Needed for base system, see <rdar://problem/48651255>
+
 #if USE(APPLE_INTERNAL_SDK)
 #include <WebKitAdditions/WebContentSandboxAdditionsMac.sb>
 #endif
