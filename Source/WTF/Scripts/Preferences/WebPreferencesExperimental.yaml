@@ -230,11 +230,11 @@ CSSContainmentEnabled:
   humanReadableDescription: "Enable contain CSS property"
   defaultValue:
     WebKitLegacy:
-      default: false
+      default: true
     WebKit:
-      default: false
+      default: true
     WebCore:
-      default: false
+      default: true
 
 CSSCounterStyleAtRuleImageSymbolsEnabled:
   type: bool

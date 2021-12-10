@@ -1,3 +1,13 @@
+2021-12-09  Alan Bujtas  <zalan@apple.com>
+
+        Enable the CSS Contain property by default
+        https://bugs.webkit.org/show_bug.cgi?id=234020
+        <rdar://problem/86218835>
+
+        Reviewed by Brent Fulgham.
+
+        * Scripts/Preferences/WebPreferencesExperimental.yaml:
+
 2021-12-09  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, reverting r286804.
