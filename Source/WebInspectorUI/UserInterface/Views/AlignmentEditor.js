@@ -29,73 +29,101 @@ WI.AlignmentEditor = class AlignmentEditor extends WI.Object
     {
         super();
 
-        this._value = null;
+        this._alignment = null;
         this._valueToGlyphElement = new Map;
 
         this._element = document.createElement("div");
         this._element.className = "alignment-editor";
-
-        // FIXME: <https://webkit.org/b/233053> Web Inspector: mirror/rotate alignment icons when flex-direction/grid-auto-flow/RTL affect axis or direction
-        for (let [value, path] of Object.entries(WI.AlignmentEditor.ValueGlyphs)) {
-            let glyphElement = WI.ImageUtilities.useSVGSymbol(path, "glyph", value);
-            this._element.append(glyphElement);
-            glyphElement.addEventListener("click", () => {
-                this.dispatchEventToListeners(WI.AlignmentEditor.Event.ValueChanged, {value});
-                this.value = value;
-            });
-            this._valueToGlyphElement.set(value, glyphElement);
-        }
-        this._updateSelected();
     }
 
     // Static
 
-    static isAlignContentValue(value)
+    static glyphPath(alignment)
     {
-        return WI.AlignmentEditor.ValueGlyphs.hasOwnProperty(value);
+        let glyphs = WI.AlignmentEditor._glyphsForType(alignment.type);
+        console.assert(glyphs, `No glyphs found for propertyName: ${alignment.type}`);
+        return glyphs?.[alignment.text] || WI.AlignmentEditor.UnknownValueGlyph;
+    }
+
+    static _glyphsForType(type)
+    {
+        switch (type) {
+        case WI.AlignmentData.Type.AlignContent:
+            return WI.AlignmentEditor.AlignContentGlyphs;
+        case WI.AlignmentData.Type.AlignItems:
+        case WI.AlignmentData.Type.AlignSelf:
+            return WI.AlignmentEditor.AlignItemsGlyphs;
+        }
+        return null;
     }
 
     // Public
 
     get element() { return this._element; }
 
-    get value()
+    get alignment()
     {
-        return this._value;
+        return this._alignment;
     }
 
-    set value(value)
+    set alignment(alignment)
     {
-        if (this._value && WI.AlignmentEditor.isAlignContentValue(this._value)) {
-            let previousGlyphElement = this._valueToGlyphElement.get(this._value);
-            previousGlyphElement.classList.remove("selected");
-        }
-        this._value = value;
+        console.assert(alignment instanceof WI.AlignmentData);
+
+        if (this._alignment?.type !== alignment.type) {
+            this._valueToGlyphElement.clear();
+            this._element.removeChildren();
+
+            // FIXME: <https://webkit.org/b/233053> Web Inspector: mirror/rotate alignment icons when flex-direction/grid-auto-flow/RTL affect axis or direction
+            for (let [value, path] of Object.entries(WI.AlignmentEditor._glyphsForType(alignment.type))) {
+                let glyphElement = WI.ImageUtilities.useSVGSymbol(path, "glyph", value);
+                this._element.append(glyphElement);
+                glyphElement.addEventListener("click", () => {
+                    this._removePreviouslySelected();
+                    this._alignment.text = value;
+                    this._updateSelected();
+                    this.dispatchEventToListeners(WI.AlignmentEditor.Event.ValueChanged, {alignment: this._alignment});
+                });
+                this._valueToGlyphElement.set(value, glyphElement);
+            }
+        } else
+            this._removePreviouslySelected();
+
+        this._alignment = alignment;
         this._updateSelected();
     }
 
     // Private
 
+    _removePreviouslySelected()
+    {
+        let previousGlyphElement = this._valueToGlyphElement.get(this._alignment.text);
+        previousGlyphElement?.classList.remove("selected");
+    }
+
     _updateSelected()
     {
-        if (!this._value || !WI.AlignmentEditor.isAlignContentValue(this._value))
-            return;
-
-        let glyphElement = this._valueToGlyphElement.get(this._value);
-        glyphElement.classList.add("selected");
+        let glyphElement = this._valueToGlyphElement.get(this._alignment.text);
+        glyphElement?.classList.add("selected");
     }
 };
 
-// FIXME: <https://webkit.org/b/233054> Web Inspector: Add a swatch for align-items and align-self
 // FIXME: <https://webkit.org/b/233055> Web Inspector: Add a swatch for justify-content, justify-items, and justify-self
-WI.AlignmentEditor.ValueGlyphs = {
-    "start": "Images/AlignmentStart.svg",
-    "center": "Images/AlignmentCenter.svg",
-    "end": "Images/AlignmentEnd.svg",
-    "space-between": "Images/AlignmentSpaceBetween.svg",
-    "space-around": "Images/AlignmentSpaceAround.svg",
-    "space-evenly": "Images/AlignmentSpaceEvenly.svg",
-    "stretch": "Images/AlignmentStretch.svg",
+WI.AlignmentEditor.AlignContentGlyphs = {
+    "start": "Images/AlignContentStart.svg",
+    "center": "Images/AlignContentCenter.svg",
+    "end": "Images/AlignContentEnd.svg",
+    "space-between": "Images/AlignContentSpaceBetween.svg",
+    "space-around": "Images/AlignContentSpaceAround.svg",
+    "space-evenly": "Images/AlignContentSpaceEvenly.svg",
+    "stretch": "Images/AlignContentStretch.svg",
+};
+
+WI.AlignmentEditor.AlignItemsGlyphs = {
+    "start": "Images/AlignItemsStart.svg",
+    "center": "Images/AlignItemsCenter.svg",
+    "end": "Images/AlignItemsEnd.svg",
+    "stretch": "Images/AlignItemsStretch.svg",
 };
 
 WI.AlignmentEditor.UnknownValueGlyph = "Images/AlignmentUnknown.svg";

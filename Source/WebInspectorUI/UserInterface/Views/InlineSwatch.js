@@ -204,8 +204,7 @@ WI.InlineSwatch = class InlineSwatch extends WI.Object
             break;
 
         case WI.InlineSwatch.Type.Alignment:
-            let glyphPath = WI.AlignmentEditor.ValueGlyphs[value] || WI.AlignmentEditor.UnknownValueGlyph;
-            this._swatchInnerElement.style.backgroundImage = `url(${glyphPath})`;
+            this._swatchInnerElement.style.backgroundImage = `url(${WI.AlignmentEditor.glyphPath(value)})`;
             break;
         }
 
@@ -302,9 +301,9 @@ WI.InlineSwatch = class InlineSwatch extends WI.Object
             break;
 
         case WI.InlineSwatch.Type.Alignment:
-            // FIXME: <https://webkit.org/b/233054> Web Inspector: Add a swatch for align-items and align-self
             // FIXME: <https://webkit.org/b/233055> Web Inspector: Add a swatch for justify-content, justify-items, and justify-self
             this._valueEditor = new WI.AlignmentEditor;
+            this._valueEditor.alignment = value;
             this._valueEditor.addEventListener(WI.AlignmentEditor.Event.ValueChanged, this._valueEditorValueDidChange, this);
             break;
 
@@ -354,10 +353,6 @@ WI.InlineSwatch = class InlineSwatch extends WI.Object
             this._valueEditor.spring = value;
             break;
 
-        case WI.InlineSwatch.Type.Alignment:
-            this._valueEditor.value = value;
-            break;
-
         case WI.InlineSwatch.Type.Variable: {
             let codeMirror = this._valueEditor.codeMirror;
             codeMirror.setValue(value);
@@ -405,7 +400,7 @@ WI.InlineSwatch = class InlineSwatch extends WI.Object
             break;
 
         case WI.InlineSwatch.Type.Alignment:
-            this._value = event.data.value;
+            this._value = event.data.alignment;
             break;
         }
 

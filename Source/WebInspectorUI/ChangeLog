@@ -1,3 +1,61 @@
+2021-12-10  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Add a swatch for align-items and align-self
+        https://bugs.webkit.org/show_bug.cgi?id=233054
+        <rdar://problem/85613199>
+
+        Reviewed by Devin Rousso.
+
+        Introduce inline swatches for `align-items` and `align-self`, that shows icons for common values:
+        start, center, end, and stretch.
+
+        * UserInterface/Images/AlignContentCenter.svg: Renamed from Source/WebInspectorUI/UserInterface/Images/AlignmentCenter.svg.
+        * UserInterface/Images/AlignContentEnd.svg: Renamed from Source/WebInspectorUI/UserInterface/Images/AlignmentEnd.svg.
+        * UserInterface/Images/AlignContentSpaceAround.svg: Renamed from Source/WebInspectorUI/UserInterface/Images/AlignmentSpaceAround.svg.
+        * UserInterface/Images/AlignContentSpaceBetween.svg: Renamed from Source/WebInspectorUI/UserInterface/Images/AlignmentSpaceBetween.svg.
+        * UserInterface/Images/AlignContentSpaceEvenly.svg: Renamed from Source/WebInspectorUI/UserInterface/Images/AlignmentSpaceEvenly.svg.
+        * UserInterface/Images/AlignContentStart.svg: Renamed from Source/WebInspectorUI/UserInterface/Images/AlignmentStart.svg.
+        * UserInterface/Images/AlignContentStretch.svg: Renamed from Source/WebInspectorUI/UserInterface/Images/AlignmentStretch.svg.
+        Rename icons from Alignment to AlignContent since they are only used for `align-content` CSS property now.
+
+        * UserInterface/Images/AlignItemsCenter.svg: Added.
+        * UserInterface/Images/AlignItemsEnd.svg: Added.
+        * UserInterface/Images/AlignItemsStart.svg: Added.
+        * UserInterface/Images/AlignItemsStretch.svg: Added.
+        * UserInterface/Main.html:
+        * UserInterface/Models/AlignmentData.js: Added.
+
+        (WI.AlignmentData):
+        (WI.AlignmentData.isAlignmentAwarePropertyName):
+        (WI.AlignmentData._propertyNameToType):
+        (WI.AlignmentData.prototype.get type):
+        (WI.AlignmentData.prototype.get text):
+        (WI.AlignmentData.prototype.set text):
+        (WI.AlignmentData.prototype.toString):
+        Introduce a model object to be more consistent with the rest of the inline swatches.
+
+        * UserInterface/Views/AlignmentEditor.js:
+        (WI.AlignmentEditor):
+        Allow AlignmentEditor to work with more than one CSS property (i.e. align-content), by introducing propertyName argument.
+
+        (WI.AlignmentEditor.glyphPath):
+        (WI.AlignmentEditor._glyphsForType):
+        (WI.AlignmentEditor.prototype.get alignment):
+        (WI.AlignmentEditor.prototype.set alignment):
+        Rename `value` to `alignment` to be more consistent with the rest of the editors.
+
+        (WI.AlignmentEditor.prototype._removePreviouslySelected):
+        (WI.AlignmentEditor.prototype._updateSelected):
+        (WI.AlignmentEditor.isAlignContentValue): Deleted.
+        (WI.AlignmentEditor.prototype.get value): Deleted.
+        (WI.AlignmentEditor.prototype.set value): Deleted.
+        * UserInterface/Views/InlineSwatch.js:
+        (WI.InlineSwatch.prototype._updateSwatch):
+        (WI.InlineSwatch.prototype._valueEditorValueDidChange):
+        * UserInterface/Views/SpreadsheetStyleProperty.js:
+        (WI.SpreadsheetStyleProperty.prototype._replaceSpecialTokens):
+        (WI.SpreadsheetStyleProperty.prototype._addAlignmentTokens):
+
 2021-12-10  Razvan Caliman  <rcaliman@apple.com>
 
         Web Inspector: Extract a specialized CSSNameCompletions from CSSCompletions
