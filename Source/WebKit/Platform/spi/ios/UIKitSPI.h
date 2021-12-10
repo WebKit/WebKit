@@ -131,6 +131,7 @@
 #endif
 
 #if HAVE(UIFINDINTERACTION)
+#import <UIKit/_UIFindInteraction.h>
 #import <UIKit/_UITextSearching.h>
 #endif
 
@@ -326,6 +327,10 @@ typedef id<NSCoding, NSCopying> _UITextSearchDocumentIdentifier;
 
 - (void)clearAllDecoratedFoundText;
 
+@end
+
+@interface _UIFindInteraction : NSObject <UIInteraction>
+@property (nonatomic, strong) id<_UITextSearching> searchableObject;
 @end
 
 #endif // HAVE(UIFINDINTERACTION)

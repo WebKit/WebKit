@@ -1,3 +1,16 @@
+2021-12-09  Aditya Keerthi  <akeerthi@apple.com>
+
+        [iOS] Add SPI to enable find interactions on WKWebView
+        https://bugs.webkit.org/show_bug.cgi?id=234017
+        rdar://86140542
+
+        Reviewed by Wenson Hsieh.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/FindInPage.mm:
+        (TEST):
+
+        Test that the new SPI installs a _UIFindInteraction on the web view.
+
 2021-12-09  Lauro Moura  <lmoura@igalia.com>
 
         [webkitpy] Make check-webkit-style check WebDriverTests/TestExpectations.json

@@ -151,6 +151,11 @@ class ViewGestureController;
     RetainPtr<WKFullScreenWindowController> _fullScreenWindowController;
 #endif
 
+#if HAVE(UIFINDINTERACTION)
+    RetainPtr<_UIFindInteraction> _findInteraction;
+    BOOL _findInteractionEnabled;
+#endif
+
     RetainPtr<_WKRemoteObjectRegistry> _remoteObjectRegistry;
 
     std::optional<CGSize> _viewLayoutSizeOverride;

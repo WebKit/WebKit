@@ -1,3 +1,36 @@
+2021-12-09  Aditya Keerthi  <akeerthi@apple.com>
+
+        [iOS] Add SPI to enable find interactions on WKWebView
+        https://bugs.webkit.org/show_bug.cgi?id=234017
+        rdar://86140542
+
+        Reviewed by Wenson Hsieh.
+
+        * Platform/spi/ios/UIKitSPI.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _initializeWithConfiguration:]):
+        * UIProcess/API/Cocoa/WKWebViewInternal.h:
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/API/ios/WKWebViewIOS.mm:
+        (-[WKWebView _findInteractionEnabled]):
+        (-[WKWebView _setFindInteractionEnabled:]):
+
+        Make the contentView the searchableObject, rather than self (the WKWebView)
+        to avoid a retain cycle.
+
+        (-[WKWebView _findInteraction]):
+        (-[WKWebView offsetFromPosition:toPosition:inDocument:]):
+        (-[WKWebView decorateFoundTextRange:inDocument:usingStyle:]):
+        * UIProcess/ios/WKContentViewInteraction.h:
+
+        Make WKContentView conform to _UITextSearching so that it can be set as
+        the interaction's searchableObject.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView decorateFoundTextRange:inDocument:usingStyle:]):
+        (-[WKContentView offsetFromPosition:toPosition:inDocument:]):
+        (-[WKContentView decorateFoundTextRange:usingStyle:]): Deleted.
+
 2021-12-09  Alex Christensen  <achristensen@webkit.org>
 
         Prepare for transition to C++20

@@ -24,6 +24,9 @@
  */
 
 #if TARGET_OS_IPHONE
+#if __has_include(<UIKit/_UIFindInteraction.h>)
+#import <UIKit/_UIFindInteraction.h>
+#endif
 #if __has_include(<UIKit/_UITextSearching.h>)
 #import <UIKit/_UITextSearching.h>
 #endif
@@ -438,6 +441,12 @@ for this property.
 @property (nonatomic, copy, setter=_setUIEventAttribution:) UIEventAttribution *_uiEventAttribution WK_API_AVAILABLE(ios(15.0));
 @property (nonatomic, copy, setter=_setEphemeralUIEventAttribution:) UIEventAttribution *_ephemeralUIEventAttribution WK_API_AVAILABLE(ios(WK_IOS_TBA));
 - (void)_setEphemeralUIEventAttribution:(UIEventAttribution *)attribution forApplicationWithBundleID:(NSString *)bundleID WK_API_AVAILABLE(ios(WK_IOS_TBA));
+
+#if __has_include(<UIKit/_UIFindInteraction.h>)
+@property (nonatomic, readonly) _UIFindInteraction *_findInteraction WK_API_AVAILABLE(ios(WK_IOS_TBA));
+@property (nonatomic, readwrite, setter=_setFindInteractionEnabled:) BOOL _findInteractionEnabled WK_API_AVAILABLE(ios(WK_IOS_TBA));
+#endif
+
 #endif
 
 @property (nonatomic, readonly) CGRect _contentVisibleRect WK_API_AVAILABLE(ios(10.0));

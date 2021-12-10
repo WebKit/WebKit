@@ -367,6 +367,10 @@ static void hardwareKeyboardAvailabilityChangedCallback(CFNotificationCenterRef,
     _allowsViewportShrinkToFit = defaultAllowsViewportShrinkToFit;
     _allowsLinkPreview = linkedOnOrAfter(WebCore::SDKVersion::FirstWithLinkPreviewEnabledByDefault);
 
+#if HAVE(UIFINDINTERACTION)
+    _findInteractionEnabled = NO;
+#endif
+
     auto fastClickingEnabled = []() {
         if (NSNumber *enabledValue = [[NSUserDefaults standardUserDefaults] objectForKey:@"WebKitFastClickingDisabled"])
             return enabledValue.boolValue;

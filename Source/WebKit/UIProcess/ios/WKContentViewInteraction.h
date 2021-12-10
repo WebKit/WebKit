@@ -537,6 +537,9 @@ using ImageAnalysisRequestIdentifier = ObjectIdentifier<ImageAnalysisRequestIden
 #if HAVE(UIKIT_WITH_MOUSE_SUPPORT) || ENABLE(HOVER_GESTURE_RECOGNIZER)
     , WKHoverPlatterDelegate
 #endif
+#if HAVE(UIFINDINTERACTION)
+    , _UITextSearching
+#endif
 >
 
 @property (nonatomic, readonly) CGPoint lastInteractionLocation;
@@ -713,12 +716,6 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(DECLARE_WKCONTENTVIEW_ACTION_FOR_WEB_VIEW)
 - (void)setUpTextIndicator:(Ref<WebCore::TextIndicator>)textIndicator;
 - (void)setTextIndicatorAnimationProgress:(float)NSAnimationProgress;
 - (void)clearTextIndicator:(WebCore::TextIndicatorDismissalAnimation)animation;
-
-#if HAVE(UIFINDINTERACTION)
-- (void)performTextSearchWithQueryString:(NSString *)string usingOptions:(_UITextSearchOptions *)options resultAggregator:(id<_UITextSearchAggregator>)aggregator;
-- (void)decorateFoundTextRange:(UITextRange *)range usingStyle:(_UIFoundTextStyle)style;
-- (void)clearAllDecoratedFoundText;
-#endif
 
 @property (nonatomic, readonly) BOOL _shouldUseContextMenus;
 @property (nonatomic, readonly) BOOL _shouldUseContextMenusForFormControls;

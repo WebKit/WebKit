@@ -452,4 +452,17 @@ TEST(WebKit, FindInPageFullWord)
     testPerformTextSearchWithQueryStringInWebView(webView.get(), @"Birth", searchOptions.get(), 0UL);
 }
 
+TEST(WebKit, FindInteraction)
+{
+    RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 200, 200)]);
+
+    EXPECT_NULL([webView _findInteraction]);
+
+    [webView _setFindInteractionEnabled:YES];
+    EXPECT_NOT_NULL([webView _findInteraction]);
+
+    [webView _setFindInteractionEnabled:NO];
+    EXPECT_NULL([webView _findInteraction]);
+}
+
 #endif // HAVE(UIFINDINTERACTION)

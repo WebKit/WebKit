@@ -3483,6 +3483,35 @@ static std::optional<WebCore::ViewportArguments> viewportArgumentsFromDictionary
 
 #if HAVE(UIFINDINTERACTION)
 
+- (BOOL)_findInteractionEnabled
+{
+    return _findInteractionEnabled;
+}
+
+- (void)_setFindInteractionEnabled:(BOOL)enabled
+{
+    if (_findInteractionEnabled != enabled) {
+        _findInteractionEnabled = enabled;
+
+        if (enabled) {
+            if (!_findInteraction) {
+                _findInteraction = adoptNS([[_UIFindInteraction alloc] init]);
+                [_findInteraction setSearchableObject:_contentView.get()];
+            }
+
+            [self addInteraction:_findInteraction.get()];
+        } else {
+            [self removeInteraction:_findInteraction.get()];
+            _findInteraction = nil;
+        }
+    }
+}
+
+- (_UIFindInteraction *)_findInteraction
+{
+    return _findInteraction.get();
+}
+
 - (UITextRange *)selectedTextRange
 {
     return nil;
@@ -3490,7 +3519,7 @@ static std::optional<WebCore::ViewportArguments> viewportArgumentsFromDictionary
 
 - (NSInteger)offsetFromPosition:(UITextPosition *)from toPosition:(UITextPosition *)toPosition inDocument:(_UITextSearchDocumentIdentifier)document
 {
-    return [_contentView offsetFromPosition:from toPosition:toPosition];
+    return [_contentView offsetFromPosition:from toPosition:toPosition inDocument:document];
 }
 
 - (void)performTextSearchWithQueryString:(NSString *)string usingOptions:(_UITextSearchOptions *)options resultAggregator:(id<_UITextSearchAggregator>)aggregator
@@ -3500,7 +3529,7 @@ static std::optional<WebCore::ViewportArguments> viewportArgumentsFromDictionary
 
 - (void)decorateFoundTextRange:(UITextRange *)range inDocument:(_UITextSearchDocumentIdentifier)document usingStyle:(_UIFoundTextStyle)style
 {
-    [_contentView decorateFoundTextRange:range usingStyle:style];
+    [_contentView decorateFoundTextRange:range inDocument:document usingStyle:style];
 }
 
 - (void)clearAllDecoratedFoundText

@@ -9987,7 +9987,7 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
     });
 }
 
-- (void)decorateFoundTextRange:(UITextRange *)range usingStyle:(_UIFoundTextStyle)style
+- (void)decorateFoundTextRange:(UITextRange *)range inDocument:(_UITextSearchDocumentIdentifier)document usingStyle:(_UIFoundTextStyle)style
 {
     if (![range isKindOfClass:[WKFoundTextRange class]])
         return;
@@ -10004,6 +10004,11 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
 {
     _foundHighlightedTextRange = nil;
     _page->hideFindUI();
+}
+
+- (NSInteger)offsetFromPosition:(UITextPosition *)from toPosition:(UITextPosition *)toPosition inDocument:(_UITextSearchDocumentIdentifier)document
+{
+    return [self offsetFromPosition:from toPosition:toPosition];
 }
 
 #endif // HAVE(UIFINDINTERACTION)
