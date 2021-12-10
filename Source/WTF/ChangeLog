@@ -1,3 +1,16 @@
+2021-12-09  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, reverting r286804.
+
+        Breaks internal builds.
+
+        Reverted changeset:
+
+        "Reduce maximum mmap size for Structure regions to help
+        placate ios"
+        https://bugs.webkit.org/show_bug.cgi?id=234091
+        https://commits.webkit.org/r286804
+
 2021-12-09  Alex Christensen  <achristensen@webkit.org>
 
         Prepare for transition to C++20
