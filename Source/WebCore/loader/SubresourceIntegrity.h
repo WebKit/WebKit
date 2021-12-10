@@ -33,5 +33,6 @@ class CachedResource;
 
 bool matchIntegrityMetadata(const CachedResource&, const String& integrityMetadata);
 String integrityMismatchDescription(const CachedResource&, const String& integrityMetadata);
+std::optional<Vector<EncodedResourceCryptographicDigest>> parseIntegrityMetadata(const String& integrityMetadata);
 
 }

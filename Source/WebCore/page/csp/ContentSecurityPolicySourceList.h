@@ -45,6 +45,7 @@ public:
 
     bool matches(const URL&, bool didReceiveRedirectResponse) const;
     bool matches(const Vector<ContentSecurityPolicyHash>&) const;
+    bool matchesAll(const Vector<ContentSecurityPolicyHash>&) const;
     bool matches(const String& nonce) const;
 
     OptionSet<ContentSecurityPolicyHashAlgorithm> hashAlgorithmsUsed() const { return m_hashAlgorithmsUsed; }

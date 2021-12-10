@@ -1,3 +1,15 @@
+2021-12-10  Patrick Griffis  <pgriffis@igalia.com>
+
+        CSP: Allow external scripts with SRI hashes matching CSP
+        https://bugs.webkit.org/show_bug.cgi?id=233911
+
+        Reviewed by Kate Cheney.
+
+        Update expectations with more passes.
+
+        * web-platform-tests/content-security-policy/script-src/script-src-report-only-policy-works-with-external-hash-policy-expected.txt:
+        * web-platform-tests/content-security-policy/script-src/script-src-sri_hash.sub-expected.txt:
+
 2021-12-10  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [WPT] Import resources/accesskey.js

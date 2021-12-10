@@ -40,6 +40,7 @@ public:
     enum class ShouldAllowEmptyURLIfSourceListIsNotNone { No, Yes };
     bool allows(const URL&, bool didReceiveRedirectResponse, ShouldAllowEmptyURLIfSourceListIsNotNone);
     bool allows(const Vector<ContentSecurityPolicyHash>&) const;
+    bool containsAllHashes(const Vector<ContentSecurityPolicyHash>&) const;
     bool allowUnsafeHashes(const Vector<ContentSecurityPolicyHash>&) const;
     bool allows(const String& nonce) const;
     bool allowInline() const { return m_sourceList.allowInline(); }

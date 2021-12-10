@@ -52,6 +52,11 @@ bool ContentSecurityPolicySourceListDirective::allows(const String& nonce) const
     return m_sourceList.matches(nonce);
 }
 
+bool ContentSecurityPolicySourceListDirective::containsAllHashes(const Vector<ContentSecurityPolicyHash>& hashes) const
+{
+    return m_sourceList.matchesAll(hashes);
+}
+
 bool ContentSecurityPolicySourceListDirective::allows(const Vector<ContentSecurityPolicyHash>& hashes) const
 {
     return m_sourceList.matches(hashes);

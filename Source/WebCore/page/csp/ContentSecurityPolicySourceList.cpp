@@ -155,6 +155,19 @@ bool ContentSecurityPolicySourceList::matches(const Vector<ContentSecurityPolicy
     return false;
 }
 
+bool ContentSecurityPolicySourceList::matchesAll(const Vector<ContentSecurityPolicyHash>& hashes) const
+{
+    if (hashes.isEmpty())
+        return false;
+
+    for (auto& hash : hashes) {
+        if (!m_hashes.contains(hash))
+            return false;
+    }
+
+    return true;
+}
+
 bool ContentSecurityPolicySourceList::matches(const String& nonce) const
 {
     if (nonce.isEmpty())

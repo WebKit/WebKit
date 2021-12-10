@@ -12,8 +12,6 @@ CONSOLE MESSAGE: Refused to execute a script because its hash, its nonce, or 'un
 CONSOLE MESSAGE: Refused to execute a script because its hash, its nonce, or 'unsafe-inline' does not appear in the script-src directive of the Content Security Policy.
 CONSOLE MESSAGE: The source list for Content Security Policy directive 'script-src' contains an invalid source: ''sha256-/Vet2Rva6wwsny8xybL+=bQal0Gtf0FZW7EOVqqg+Hna=''. It will be ignored.
 CONSOLE MESSAGE: Refused to execute a script because its hash, its nonce, or 'unsafe-inline' does not appear in the script-src directive of the Content Security Policy.
-CONSOLE MESSAGE: The source list for Content Security Policy directive 'script-src' contains an invalid source: ''sha256-/vET2rVA6WWSNY8XYBl+BqAL0gTF0fzw7eovQQG+hNA==''. It will be ignored.
-CONSOLE MESSAGE: Refused to execute a script because its hash, its nonce, or 'unsafe-inline' does not appear in the script-src directive of the Content Security Policy.
 CONSOLE MESSAGE: The source list for Content Security Policy directive 'script-src' contains an invalid source: ''sha256-/vET2rVA6WWSNY8XYBl+BqAL0gTF0fzw7eovQQG+hNA===''. It will be ignored.
 CONSOLE MESSAGE: Refused to execute a script because its hash, its nonce, or 'unsafe-inline' does not appear in the script-src directive of the Content Security Policy.
 CONSOLE MESSAGE: The source list for Content Security Policy directive 'script-src' contains an invalid source: ''sha256-'. It will be ignored.
@@ -53,7 +51,7 @@ PASS "Hash without prefix" did not run inline script.
 PASS "SHA-256 hash with SHA-384 prefix" did not run inline script.
 PASS "SHA-256 hash with SHA-512 prefix" did not run inline script.
 PASS "Malformed SHA-256 hash (equal sign in disallowed position)" did not run inline script.
-PASS "SHA-256 hash with one extraneous equal sign" did not run inline script.
+PASS "SHA-256 hash with one extraneous equal sign" did run inline script.
 PASS "SHA-256 hash with two extraneous equal signs" did not run inline script.
 PASS "Malformed hash source" did not run inline script.
 PASS "Hash source without hash" did not run inline script.

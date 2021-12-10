@@ -52,6 +52,7 @@
 #include "SecurityOrigin.h"
 #include "SecurityPolicyViolationEvent.h"
 #include "Settings.h"
+#include "SubresourceIntegrity.h"
 #include <JavaScriptCore/ScriptCallStack.h>
 #include <JavaScriptCore/ScriptCallStackFactory.h>
 #include <pal/crypto/CryptoDigest.h>
@@ -339,7 +340,7 @@ bool ContentSecurityPolicy::allScriptPoliciesAllow(ViolatedDirectiveCallback&& c
     for (auto& policy : m_policies) {
         auto violatedDirectiveForNonParserInsertedScript = policy.get()->violatedDirectiveForParserInsertedScript(parserInserted);
         auto violatedDirectiveForScriptNonce = policy.get()->violatedDirectiveForScriptNonce(nonce);
-        auto violatedDirectiveForScriptSrc = policy.get()->violatedDirectiveForScript(url, false);
+        auto violatedDirectiveForScriptSrc = policy.get()->violatedDirectiveForScript(url, false, { });
         auto [foundHashInEnforcedPolicies, foundHashInReportOnlyPolicies] = findHashOfContentInPolicies(&ContentSecurityPolicyDirectiveList::violatedDirectiveForScriptHash, scriptContent, m_hashAlgorithmsForInlineScripts);
 
         if (violatedDirectiveForNonParserInsertedScript && violatedDirectiveForScriptNonce && violatedDirectiveForScriptSrc && !foundHashInEnforcedPolicies) {
@@ -640,12 +641,40 @@ bool ContentSecurityPolicy::allowChildContextFromSource(const URL& url, Redirect
     return allowResourceFromSource(url, redirectResponseReceived, ContentSecurityPolicyDirectiveNames::childSrc, &ContentSecurityPolicyDirectiveList::violatedDirectiveForChildContext, preRedirectURL);
 }
 
-bool ContentSecurityPolicy::allowScriptFromSource(const URL& url, RedirectResponseReceived redirectResponseReceived, const URL& preRedirectURL) const
+static Vector<ResourceCryptographicDigest> parseSubResourceIntegrityIntoDigests(const String& subResourceIntegrity)
+{
+    auto encodedDigests = parseIntegrityMetadata(subResourceIntegrity);
+    Vector<ResourceCryptographicDigest> decodedDigests;
+
+    if (!encodedDigests.has_value())
+        return { };
+
+    for (const auto& encodedDigest : encodedDigests.value()) {
+        auto decodedDigest = decodeEncodedResourceCryptographicDigest(encodedDigest);
+        if (decodedDigest.has_value())
+            decodedDigests.append(decodedDigest.value());
+    }
+
+    return decodedDigests;
+}
+
+bool ContentSecurityPolicy::allowScriptFromSource(const URL& url, RedirectResponseReceived redirectResponseReceived, const URL& preRedirectURL, const String& subResourceIntegrity) const
 {
     if (shouldPerformEarlyCSPCheck())
         return true;
+    if (LegacySchemeRegistry::schemeShouldBypassContentSecurityPolicy(url.protocol().toStringWithoutCopying()))
+        return true;
 
-    return allowResourceFromSource(url, redirectResponseReceived, ContentSecurityPolicyDirectiveNames::scriptSrc, &ContentSecurityPolicyDirectiveList::violatedDirectiveForScript, preRedirectURL);
+    String sourceURL;
+    const auto& blockedURL = !preRedirectURL.isNull() ? preRedirectURL : url;
+    TextPosition sourcePosition(OrdinalNumber::beforeFirst(), OrdinalNumber());
+    auto handleViolatedDirective = [&] (const ContentSecurityPolicyDirective& violatedDirective) {
+        String consoleMessage = consoleMessageForViolation(ContentSecurityPolicyDirectiveNames::scriptSrc, violatedDirective, blockedURL, "Refused to load");
+        reportViolation(ContentSecurityPolicyDirectiveNames::scriptSrc, violatedDirective, blockedURL.string(), consoleMessage, sourceURL, StringView(), sourcePosition);
+    };
+
+    auto subResourceIntegrityDigests = parseSubResourceIntegrityIntoDigests(subResourceIntegrity);
+    return allPoliciesAllow(WTFMove(handleViolatedDirective), &ContentSecurityPolicyDirectiveList::violatedDirectiveForScript, url, redirectResponseReceived == RedirectResponseReceived::Yes, subResourceIntegrityDigests);
 }
 
 bool ContentSecurityPolicy::allowImageFromSource(const URL& url, RedirectResponseReceived redirectResponseReceived, const URL& preRedirectURL) const
