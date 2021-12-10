@@ -121,7 +121,7 @@ CString sortedListDump(const T& list, const Comparator& comparator, const char* 
 template<typename T>
 CString sortedListDump(const T& list, const char* comma = ", ")
 {
-    return sortedListDump(list, std::less<typename T::ValueType>(), comma);
+    return sortedListDump(list, std::less<>(), comma);
 }
 
 template<typename T>

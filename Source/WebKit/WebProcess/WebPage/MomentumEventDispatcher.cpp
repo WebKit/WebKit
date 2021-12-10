@@ -437,9 +437,9 @@ void MomentumEventDispatcher::equalizeTailGaps()
             return;
 
         if (deltas[axis][0] > 0)
-            std::sort(deltas[axis].begin(), std::next(deltas[axis].begin(), firstZeroIndex[axis]), std::greater<float>());
+            std::sort(deltas[axis].begin(), std::next(deltas[axis].begin(), firstZeroIndex[axis]), std::greater());
         else
-            std::sort(deltas[axis].begin(), std::next(deltas[axis].begin(), firstZeroIndex[axis]), std::less<float>());
+            std::sort(deltas[axis].begin(), std::next(deltas[axis].begin(), firstZeroIndex[axis]));
     };
 
     sortDeltas(Horizontal);
