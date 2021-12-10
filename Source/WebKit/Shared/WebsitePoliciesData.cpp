@@ -54,6 +54,7 @@ void WebsitePoliciesData::encode(IPC::Encoder& encoder) const
     encoder << allowContentChangeObserverQuirk;
     encoder << allowsContentJavaScript;
     encoder << mouseEventPolicy;
+    encoder << modalContainerObservationPolicy;
     encoder << idempotentModeAutosizingOnlyHonorsPercentages;
 }
 
@@ -146,6 +147,11 @@ std::optional<WebsitePoliciesData> WebsitePoliciesData::decode(IPC::Decoder& dec
     if (!mouseEventPolicy)
         return std::nullopt;
 
+    std::optional<WebCore::ModalContainerObservationPolicy> modalContainerObservationPolicy;
+    decoder >> modalContainerObservationPolicy;
+    if (!modalContainerObservationPolicy)
+        return std::nullopt;
+
     std::optional<bool> idempotentModeAutosizingOnlyHonorsPercentages;
     decoder >> idempotentModeAutosizingOnlyHonorsPercentages;
     if (!idempotentModeAutosizingOnlyHonorsPercentages)
@@ -171,6 +177,7 @@ std::optional<WebsitePoliciesData> WebsitePoliciesData::decode(IPC::Decoder& dec
         WTFMove(*allowContentChangeObserverQuirk),
         WTFMove(*allowsContentJavaScript),
         WTFMove(*mouseEventPolicy),
+        WTFMove(*modalContainerObservationPolicy),
         WTFMove(*idempotentModeAutosizingOnlyHonorsPercentages),
     } };
 }
@@ -295,6 +302,7 @@ void WebsitePoliciesData::applyToDocumentLoader(WebsitePoliciesData&& websitePol
 #endif
     }
 
+    documentLoader.setModalContainerObservationPolicy(websitePolicies.modalContainerObservationPolicy);
     documentLoader.setAllowContentChangeObserverQuirk(websitePolicies.allowContentChangeObserverQuirk);
     documentLoader.setIdempotentModeAutosizingOnlyHonorsPercentages(websitePolicies.idempotentModeAutosizingOnlyHonorsPercentages);
 

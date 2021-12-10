@@ -104,6 +104,38 @@ static WebCore::MouseEventPolicy coreMouseEventPolicy(_WKWebsiteMouseEventPolicy
     return WebCore::MouseEventPolicy::Default;
 }
 
+static _WKWebsiteModalContainerObservationPolicy modalContainerObservationPolicy(WebCore::ModalContainerObservationPolicy policy)
+{
+    switch (policy) {
+    case WebCore::ModalContainerObservationPolicy::Disabled:
+        return _WKWebsiteModalContainerObservationPolicyDisabled;
+    case WebCore::ModalContainerObservationPolicy::Prompt:
+        return _WKWebsiteModalContainerObservationPolicyPrompt;
+    case WebCore::ModalContainerObservationPolicy::Allow:
+        return _WKWebsiteModalContainerObservationPolicyAllow;
+    case WebCore::ModalContainerObservationPolicy::Disallow:
+        return _WKWebsiteModalContainerObservationPolicyDisallow;
+    }
+    ASSERT_NOT_REACHED();
+    return _WKWebsiteModalContainerObservationPolicyDisabled;
+}
+
+static WebCore::ModalContainerObservationPolicy coreModalContainerObservationPolicy(_WKWebsiteModalContainerObservationPolicy policy)
+{
+    switch (policy) {
+    case _WKWebsiteModalContainerObservationPolicyDisabled:
+        return WebCore::ModalContainerObservationPolicy::Disabled;
+    case _WKWebsiteModalContainerObservationPolicyPrompt:
+        return WebCore::ModalContainerObservationPolicy::Prompt;
+    case _WKWebsiteModalContainerObservationPolicyAllow:
+        return WebCore::ModalContainerObservationPolicy::Allow;
+    case _WKWebsiteModalContainerObservationPolicyDisallow:
+        return WebCore::ModalContainerObservationPolicy::Disallow;
+    }
+    ASSERT_NOT_REACHED();
+    return WebCore::ModalContainerObservationPolicy::Disabled;
+}
+
 class WebPagePreferencesCaptivePortalModeObserver final : public CaptivePortalModeObserver {
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -491,6 +523,16 @@ static _WKWebsiteDeviceOrientationAndMotionAccessPolicy toWKWebsiteDeviceOrienta
 - (_WKWebsiteMouseEventPolicy)_mouseEventPolicy
 {
     return WebKit::mouseEventPolicy(_websitePolicies->mouseEventPolicy());
+}
+
+- (void)_setModalContainerObservationPolicy:(_WKWebsiteModalContainerObservationPolicy)policy
+{
+    _websitePolicies->setModalContainerObservationPolicy(WebKit::coreModalContainerObservationPolicy(policy));
+}
+
+- (_WKWebsiteModalContainerObservationPolicy)_modalContainerObservationPolicy
+{
+    return WebKit::modalContainerObservationPolicy(_websitePolicies->modalContainerObservationPolicy());
 }
 
 #if USE(APPLE_INTERNAL_SDK)

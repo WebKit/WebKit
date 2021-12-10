@@ -76,6 +76,7 @@ Ref<WebsitePolicies> WebsitePolicies::copy() const
     policies->setAllowsContentJavaScript(m_allowsContentJavaScript);
     policies->setCaptivePortalModeEnabled(m_captivePortalModeEnabled);
     policies->setMouseEventPolicy(m_mouseEventPolicy);
+    policies->setModalContainerObservationPolicy(m_modalContainerObservationPolicy);
     return policies;
 }
 
@@ -121,6 +122,7 @@ WebKit::WebsitePoliciesData WebsitePolicies::data()
         m_allowContentChangeObserverQuirk,
         m_allowsContentJavaScript,
         m_mouseEventPolicy,
+        m_modalContainerObservationPolicy,
         m_idempotentModeAutosizingOnlyHonorsPercentages
     };
 }

@@ -144,6 +144,13 @@ enum class MouseEventPolicy : uint8_t {
 #endif
 };
 
+enum class ModalContainerObservationPolicy : uint8_t {
+    Disabled,
+    Prompt,
+    Allow,
+    Disallow,
+};
+
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(DocumentLoader);
 class DocumentLoader
     : public RefCounted<DocumentLoader>
@@ -342,6 +349,9 @@ public:
 
     WEBCORE_EXPORT MouseEventPolicy mouseEventPolicy() const;
     void setMouseEventPolicy(MouseEventPolicy policy) { m_mouseEventPolicy = policy; }
+
+    ModalContainerObservationPolicy modalContainerObservationPolicy() const { return m_modalContainerObservationPolicy; }
+    void setModalContainerObservationPolicy(ModalContainerObservationPolicy policy) { m_modalContainerObservationPolicy = policy; }
 
     void addSubresourceLoader(ResourceLoader&);
     void removeSubresourceLoader(LoadCompletionType, ResourceLoader*);
@@ -667,6 +677,7 @@ private:
     SimulatedMouseEventsDispatchPolicy m_simulatedMouseEventsDispatchPolicy { SimulatedMouseEventsDispatchPolicy::Default };
     LegacyOverflowScrollingTouchPolicy m_legacyOverflowScrollingTouchPolicy { LegacyOverflowScrollingTouchPolicy::Default };
     MouseEventPolicy m_mouseEventPolicy { MouseEventPolicy::Default };
+    ModalContainerObservationPolicy m_modalContainerObservationPolicy { ModalContainerObservationPolicy::Disabled };
 
 #if ENABLE(SERVICE_WORKER)
     std::optional<ServiceWorkerRegistrationData> m_serviceWorkerRegistrationData;
@@ -779,6 +790,16 @@ template<> struct EnumTraits<WebCore::MouseEventPolicy> {
 #if ENABLE(IOS_TOUCH_EVENTS)
         , WebCore::MouseEventPolicy::SynthesizeTouchEvents
 #endif
+    >;
+};
+
+template<> struct EnumTraits<WebCore::ModalContainerObservationPolicy> {
+    using values = EnumValues<
+        WebCore::ModalContainerObservationPolicy,
+        WebCore::ModalContainerObservationPolicy::Disabled,
+        WebCore::ModalContainerObservationPolicy::Prompt,
+        WebCore::ModalContainerObservationPolicy::Allow,
+        WebCore::ModalContainerObservationPolicy::Disallow
     >;
 };
 

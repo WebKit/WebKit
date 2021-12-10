@@ -135,6 +135,9 @@ public:
     WebCore::MouseEventPolicy mouseEventPolicy() const { return m_mouseEventPolicy; }
     void setMouseEventPolicy(WebCore::MouseEventPolicy policy) { m_mouseEventPolicy = policy; }
 
+    WebCore::ModalContainerObservationPolicy modalContainerObservationPolicy() const { return m_modalContainerObservationPolicy; }
+    void setModalContainerObservationPolicy(WebCore::ModalContainerObservationPolicy policy) { m_modalContainerObservationPolicy = policy; }
+
     bool idempotentModeAutosizingOnlyHonorsPercentages() const { return m_idempotentModeAutosizingOnlyHonorsPercentages; }
     void setIdempotentModeAutosizingOnlyHonorsPercentages(bool idempotentModeAutosizingOnlyHonorsPercentages) { m_idempotentModeAutosizingOnlyHonorsPercentages = idempotentModeAutosizingOnlyHonorsPercentages; }
 
@@ -165,6 +168,7 @@ private:
     bool m_allowContentChangeObserverQuirk { false };
     WebCore::AllowsContentJavaScript m_allowsContentJavaScript { WebCore::AllowsContentJavaScript::Yes };
     WebCore::MouseEventPolicy m_mouseEventPolicy { WebCore::MouseEventPolicy::Default };
+    WebCore::ModalContainerObservationPolicy m_modalContainerObservationPolicy { WebCore::ModalContainerObservationPolicy::Disabled };
     bool m_idempotentModeAutosizingOnlyHonorsPercentages { false };
     std::optional<bool> m_captivePortalModeEnabled;
 };
