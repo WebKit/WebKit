@@ -291,17 +291,6 @@ void WebProcessPool::platformResolvePathsForSandboxExtensions()
 #endif
 }
 
-static bool requiresContainerManagerAccess()
-{
-#if PLATFORM(MAC)
-    return WebCore::MacApplication::isAppleMail();
-#elif PLATFORM(IOS)
-    return WebCore::IOSApplication::isMobileMail();
-#else
-    return false;
-#endif
-}
-
 void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process, WebProcessCreationParameters& parameters)
 {
     parameters.mediaMIMETypes = process.mediaMIMETypes();
@@ -426,11 +415,6 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
 
     parameters.systemHasBattery = systemHasBattery();
     parameters.systemHasAC = cachedSystemHasAC().value_or(true);
-
-    if (requiresContainerManagerAccess()) {
-        if (auto handle = SandboxExtension::createHandleForMachLookup("com.apple.containermanagerd"_s, std::nullopt))
-            parameters.containerManagerExtensionHandle = WTFMove(*handle);
-    }
 
 #if PLATFORM(IOS_FAMILY)
     parameters.currentUserInterfaceIdiomIsSmallScreen = currentUserInterfaceIdiomIsSmallScreen();

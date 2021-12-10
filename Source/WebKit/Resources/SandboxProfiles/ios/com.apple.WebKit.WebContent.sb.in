@@ -644,7 +644,7 @@
 (allow iokit-get-properties
        (iokit-property "IORegistryEntryPropertyKeys"))
 
-(allow ipc-posix-sem-open
+(allow ipc-posix-sem-open (with telemetry)
        (ipc-posix-name "containermanagerd.fb_check"))
 
 (with-filter (ipc-posix-name "purplebuddy.sentinel")
@@ -1084,7 +1084,6 @@
         (global-name
             "com.apple.cfprefsd.agent"
             "com.apple.cfprefsd.daemon"
-            "com.apple.containermanagerd"
             "com.apple.iphone.axserver-systemwide"
             "com.apple.mobileassetd.v2"
             "com.apple.mobilegestalt.xpc"

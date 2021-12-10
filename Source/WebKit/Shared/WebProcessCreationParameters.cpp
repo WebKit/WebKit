@@ -162,7 +162,6 @@ void WebProcessCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << compilerServiceExtensionHandles;
 #endif
 
-    encoder << containerManagerExtensionHandle;
     encoder << mobileGestaltExtensionHandle;
     encoder << launchServicesExtensionHandle;
 
@@ -456,12 +455,6 @@ bool WebProcessCreationParameters::decode(IPC::Decoder& decoder, WebProcessCreat
         return false;
     parameters.compilerServiceExtensionHandles = WTFMove(*compilerServiceExtensionHandles);
 #endif
-
-    std::optional<std::optional<SandboxExtension::Handle>> containerManagerExtensionHandle;
-    decoder >> containerManagerExtensionHandle;
-    if (!containerManagerExtensionHandle)
-        return false;
-    parameters.containerManagerExtensionHandle = WTFMove(*containerManagerExtensionHandle);
 
     std::optional<std::optional<SandboxExtension::Handle>> mobileGestaltExtensionHandle;
     decoder >> mobileGestaltExtensionHandle;

@@ -201,7 +201,6 @@ struct WebProcessCreationParameters {
     Vector<SandboxExtension::Handle> compilerServiceExtensionHandles;
 #endif
 
-    std::optional<SandboxExtension::Handle> containerManagerExtensionHandle;
     std::optional<SandboxExtension::Handle> mobileGestaltExtensionHandle;
     std::optional<SandboxExtension::Handle> launchServicesExtensionHandle;
 #if HAVE(VIDEO_RESTRICTED_DECODING)
