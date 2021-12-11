@@ -28,7 +28,9 @@
 
 #include "EventNames.h"
 #include "InspectorInstrumentation.h"
+#include "SharedWorker.h"
 #include "SharedWorkerManager.h"
+#include "WorkerRunLoop.h"
 #include "WorkerScriptLoader.h"
 
 namespace WebCore {

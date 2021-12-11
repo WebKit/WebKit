@@ -28,9 +28,15 @@
 
 #include "CacheStorageProvider.h"
 #include "ErrorEvent.h"
+#include "EventNames.h"
 #include "LibWebRTCProvider.h"
+#include "MessageEvent.h"
+#include "MessagePort.h"
 #include "Page.h"
 #include "RTCDataChannelRemoteHandlerConnection.h"
+#include "SharedWorker.h"
+#include "SharedWorkerGlobalScope.h"
+#include "SharedWorkerThread.h"
 
 namespace WebCore {
 

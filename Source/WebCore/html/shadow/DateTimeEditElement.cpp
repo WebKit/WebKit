@@ -34,6 +34,8 @@
 #include "DateTimeFieldsState.h"
 #include "DateTimeFormat.h"
 #include "DateTimeSymbolicFieldElement.h"
+#include "Document.h"
+#include "Event.h"
 #include "HTMLNames.h"
 #include "PlatformLocale.h"
 #include "ShadowPseudoIds.h"

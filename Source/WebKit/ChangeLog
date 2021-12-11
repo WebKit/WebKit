@@ -1,3 +1,23 @@
+2021-12-11  Lauro Moura  <lmoura@igalia.com>
+
+        Non-unified build fixes, mid mid December 2021 edition
+        https://bugs.webkit.org/show_bug.cgi?id=234191
+
+        Unreviewed build fix.
+
+        A few more fixes already a couple of days after the last fix.
+
+        Full build still failing due to the issue discussed on bug226088.
+
+        All changes are inclusion of missing headers.
+
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLDListElement.cpp:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLDirectoryElement.cpp:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLMenuElement.cpp:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLOptionElement.cpp:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLPreElement.cpp:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLTextAreaElement.cpp:
+
 2021-12-11  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r286893.
