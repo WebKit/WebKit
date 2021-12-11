@@ -39,7 +39,7 @@ struct StructuredSerializeOptions;
 class WindowOrWorkerGlobalScope {
 public:
     static void reportError(JSDOMGlobalObject&, JSC::JSValue);
-    static ExceptionOr<JSC::JSValue> structuredClone(JSDOMGlobalObject&, JSC::JSValue, StructuredSerializeOptions&&);
+    static ExceptionOr<JSC::JSValue> structuredClone(JSDOMGlobalObject& lexicalGlobalObject, JSDOMGlobalObject& relevantGlobalObject, JSC::JSValue, StructuredSerializeOptions&&);
 };
 
 } // namespace WebCore

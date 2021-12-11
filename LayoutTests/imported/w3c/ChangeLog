@@ -1,5 +1,29 @@
 2021-12-10  Alexey Shvayka  <ashvayka@apple.com>
 
+        Some WebIDL operations / attributes incorrectly use _current_ realm instead of _relevant_
+        https://bugs.webkit.org/show_bug.cgi?id=230941
+
+        Reviewed by Sam Weinig.
+
+        Import WPT tests from https://github.com/web-platform-tests/wpt/pull/32012.
+
+        * web-platform-tests/dom/events/Event-timestamp-cross-realm-getter-expected.txt: Added.
+        * web-platform-tests/dom/events/Event-timestamp-cross-realm-getter.html: Added.
+        * web-platform-tests/html/browsers/history/the-history-interface/history_back_cross_realm_method-expected.txt: Added.
+        * web-platform-tests/html/browsers/history/the-history-interface/history_back_cross_realm_method.html: Added.
+        * web-platform-tests/html/browsers/history/the-history-interface/history_forward_cross_realm_method-expected.txt: Added.
+        * web-platform-tests/html/browsers/history/the-history-interface/history_forward_cross_realm_method.html: Added.
+        * web-platform-tests/html/browsers/history/the-history-interface/history_go_cross_realm_method-expected.txt: Added.
+        * web-platform-tests/html/browsers/history/the-history-interface/history_go_cross_realm_method.html: Added.
+        * web-platform-tests/html/webappapis/scripting/reporterror-cross-realm-method-expected.txt: Added.
+        * web-platform-tests/html/webappapis/scripting/reporterror-cross-realm-method.html: Added.
+        * web-platform-tests/html/webappapis/structured-clone/structured-clone-cross-realm-method-expected.txt: Added.
+        * web-platform-tests/html/webappapis/structured-clone/structured-clone-cross-realm-method.html: Added.
+        * web-platform-tests/requestidlecallback/callback-timeRemaining-cross-realm-method-expected.txt: Added.
+        * web-platform-tests/requestidlecallback/callback-timeRemaining-cross-realm-method.html: Added.
+
+2021-12-10  Alexey Shvayka  <ashvayka@apple.com>
+
         Extend the scope where the Window's current event is set
         https://bugs.webkit.org/show_bug.cgi?id=233833
 

@@ -1794,7 +1794,7 @@ void DOMWindow::resizeTo(float width, float height) const
     page->chrome().setWindowRect(adjustWindowRect(*page, update));
 }
 
-ExceptionOr<int> DOMWindow::setTimeout(JSC::JSGlobalObject& state, std::unique_ptr<ScheduledAction> action, int timeout, Vector<JSC::Strong<JSC::Unknown>>&& arguments)
+ExceptionOr<int> DOMWindow::setTimeout(std::unique_ptr<ScheduledAction> action, int timeout, Vector<JSC::Strong<JSC::Unknown>>&& arguments)
 {
     RefPtr context = scriptExecutionContext();
     if (!context)
@@ -1802,7 +1802,7 @@ ExceptionOr<int> DOMWindow::setTimeout(JSC::JSGlobalObject& state, std::unique_p
 
     // FIXME: Should this check really happen here? Or should it happen when code is about to eval?
     if (action->type() == ScheduledAction::Type::Code) {
-        if (!context->contentSecurityPolicy()->allowEval(&state, LogToConsole::Yes))
+        if (!context->contentSecurityPolicy()->allowEval(context->globalObject(), LogToConsole::Yes))
             return 0;
     }
 
@@ -1819,7 +1819,7 @@ void DOMWindow::clearTimeout(int timeoutId)
     DOMTimer::removeById(*context, timeoutId);
 }
 
-ExceptionOr<int> DOMWindow::setInterval(JSC::JSGlobalObject& state, std::unique_ptr<ScheduledAction> action, int timeout, Vector<JSC::Strong<JSC::Unknown>>&& arguments)
+ExceptionOr<int> DOMWindow::setInterval(std::unique_ptr<ScheduledAction> action, int timeout, Vector<JSC::Strong<JSC::Unknown>>&& arguments)
 {
     RefPtr context = scriptExecutionContext();
     if (!context)
@@ -1827,7 +1827,7 @@ ExceptionOr<int> DOMWindow::setInterval(JSC::JSGlobalObject& state, std::unique_
 
     // FIXME: Should this check really happen here? Or should it happen when code is about to eval?
     if (action->type() == ScheduledAction::Type::Code) {
-        if (!context->contentSecurityPolicy()->allowEval(&state, LogToConsole::Yes))
+        if (!context->contentSecurityPolicy()->allowEval(context->globalObject(), LogToConsole::Yes))
             return 0;
     }
 

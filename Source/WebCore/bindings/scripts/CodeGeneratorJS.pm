@@ -5936,18 +5936,43 @@ sub GenerateCallWith
         push(@callWithArgs, "*${globalObject}");
         push(@callWithArgs, $callFrameReference);
     }
+    # Global object of current realm (https://html.spec.whatwg.org/multipage/webappapis.html#concept-current-everything)
     if ($codeGenerator->ExtendedAttributeContains($callWith, "GlobalObject")) {
         push(@callWithArgs, "*${globalObject}");
     }
+    my $relevantGlobalObjectPointer = "(${thisReference}).globalObject()";
+    # Global object of relevant realm (https://html.spec.whatwg.org/multipage/webappapis.html#concept-relevant-everything)
+    if ($codeGenerator->ExtendedAttributeContains($callWith, "RelevantGlobalObject")) {
+        push(@callWithArgs, "*${relevantGlobalObjectPointer}");
+    }
+    # Script execution context of current realm (https://html.spec.whatwg.org/multipage/webappapis.html#concept-current-everything)
     if ($codeGenerator->ExtendedAttributeContains($callWith, "ScriptExecutionContext")) {
         push(@$outputArray, $indent . "auto* context = ${scriptExecutionContextAccessor}->scriptExecutionContext();\n");
         push(@$outputArray, $indent . "if (UNLIKELY(!context))\n");
         push(@$outputArray, $indent . "    return" . ($contextMissing ? " " . $contextMissing : "") . ";\n");
         push(@callWithArgs, "*context");
     }
+    # Script execution context of relevant realm (https://html.spec.whatwg.org/multipage/webappapis.html#concept-relevant-everything)
+    if ($codeGenerator->ExtendedAttributeContains($callWith, "RelevantScriptExecutionContext")) {
+        push(@$outputArray, $indent . "auto* context = ${relevantGlobalObjectPointer}->scriptExecutionContext();\n");
+        push(@$outputArray, $indent . "if (UNLIKELY(!context))\n");
+        push(@$outputArray, $indent . "    return" . ($contextMissing ? " " . $contextMissing : "") . ";\n");
+        push(@callWithArgs, "*context");
+    }
+    # Document of current realm (https://html.spec.whatwg.org/multipage/webappapis.html#concept-current-everything)
     if ($codeGenerator->ExtendedAttributeContains($callWith, "Document")) {
         AddToImplIncludes("Document.h");
         push(@$outputArray, $indent . "auto* context = ${scriptExecutionContextAccessor}->scriptExecutionContext();\n");
+        push(@$outputArray, $indent . "if (UNLIKELY(!context))\n");
+        push(@$outputArray, $indent . "    return" . ($contextMissing ? " " . $contextMissing : "") . ";\n");
+        push(@$outputArray, $indent . "ASSERT(context->isDocument());\n");
+        push(@$outputArray, $indent . "auto& document = downcast<Document>(*context);\n");
+        push(@callWithArgs, "document");
+    }
+    # Document of relevant realm (https://html.spec.whatwg.org/multipage/webappapis.html#concept-relevant-everything)
+    if ($codeGenerator->ExtendedAttributeContains($callWith, "RelevantDocument")) {
+        AddToImplIncludes("Document.h");
+        push(@$outputArray, $indent . "auto* context = ${relevantGlobalObjectPointer}->scriptExecutionContext();\n");
         push(@$outputArray, $indent . "if (UNLIKELY(!context))\n");
         push(@$outputArray, $indent . "    return" . ($contextMissing ? " " . $contextMissing : "") . ";\n");
         push(@$outputArray, $indent . "ASSERT(context->isDocument());\n");

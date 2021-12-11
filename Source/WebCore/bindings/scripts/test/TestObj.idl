@@ -190,11 +190,14 @@ enum TestConfidence { "high", "kinda-low" };
 
     // 'CallWith' extended attribute
     [CallWith=GlobalObject] undefined withExecStateVoid();
+    [CallWith=RelevantGlobalObject] undefined withRelevantGlobalObjectVoid();
     [CallWith=GlobalObject] TestObj withExecStateObj();
     [CallWith=ScriptExecutionContext] undefined withScriptExecutionContext();
+    [CallWith=RelevantScriptExecutionContext] undefined withRelevantScriptExecutionContext();
     [CallWith=ScriptExecutionContext&ExecState] undefined withScriptExecutionContextAndExecState();
     [CallWith=  ScriptExecutionContext  &  ExecState  ] TestObj withScriptExecutionContextAndExecStateWithSpaces();
     [CallWith=Document] undefined withDocumentArgument();
+    [CallWith=RelevantDocument] undefined withRelevantDocumentArgument();
     [CallWith=IncumbentDocument] undefined withCallerDocumentArgument();
     [CallWith=IncumbentWindow] undefined withCallerWindowArgument();
 

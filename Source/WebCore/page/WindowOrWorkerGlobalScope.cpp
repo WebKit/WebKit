@@ -46,10 +46,10 @@ void WindowOrWorkerGlobalScope::reportError(JSDOMGlobalObject& globalObject, JSC
     reportException(&globalObject, exception);
 }
 
-ExceptionOr<JSC::JSValue> WindowOrWorkerGlobalScope::structuredClone(JSDOMGlobalObject& globalObject, JSC::JSValue value, StructuredSerializeOptions&& options)
+ExceptionOr<JSC::JSValue> WindowOrWorkerGlobalScope::structuredClone(JSDOMGlobalObject& lexicalGlobalObject, JSDOMGlobalObject& relevantGlobalObject, JSC::JSValue value, StructuredSerializeOptions&& options)
 {
     Vector<RefPtr<MessagePort>> ports;
-    auto messageData = SerializedScriptValue::create(globalObject, value, WTFMove(options.transfer), ports, SerializationContext::WindowPostMessage);
+    auto messageData = SerializedScriptValue::create(lexicalGlobalObject, value, WTFMove(options.transfer), ports, SerializationContext::WindowPostMessage);
     if (messageData.hasException())
         return messageData.releaseException();
 
@@ -58,10 +58,10 @@ ExceptionOr<JSC::JSValue> WindowOrWorkerGlobalScope::structuredClone(JSDOMGlobal
         return disentangledPorts.releaseException();
 
     Vector<RefPtr<MessagePort>> entangledPorts;
-    if (auto* scriptExecutionContext = globalObject.scriptExecutionContext())
+    if (auto* scriptExecutionContext = relevantGlobalObject.scriptExecutionContext())
         entangledPorts = MessagePort::entanglePorts(*scriptExecutionContext, disentangledPorts.releaseReturnValue());
 
-    return messageData.returnValue()->deserialize(globalObject, &globalObject, WTFMove(entangledPorts));
+    return messageData.returnValue()->deserialize(lexicalGlobalObject, &relevantGlobalObject, WTFMove(entangledPorts));
 }
 
 } // namespace WebCore
