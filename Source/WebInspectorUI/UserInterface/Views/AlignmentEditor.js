@@ -45,13 +45,33 @@ WI.AlignmentEditor = class AlignmentEditor extends WI.Object
         return glyphs?.[alignment.text] || WI.AlignmentEditor.UnknownValueGlyph;
     }
 
+    static shouldRotateGlyph(type)
+    {
+        // FIXME: <https://webkit.org/b/233053> Web Inspector: mirror/rotate alignment icons when flex-direction/grid-auto-flow/RTL affect axis or direction
+        switch (type) {
+        case WI.AlignmentData.Type.JustifyContent:
+        case WI.AlignmentData.Type.JustifyItems:
+        case WI.AlignmentData.Type.JustifySelf:
+            return true;
+        case WI.AlignmentData.Type.AlignContent:
+        case WI.AlignmentData.Type.AlignItems:
+        case WI.AlignmentData.Type.AlignSelf:
+            return false;
+        }
+        console.assert(false, "Unsupported type", type);
+        return false;
+    }
+
     static _glyphsForType(type)
     {
         switch (type) {
         case WI.AlignmentData.Type.AlignContent:
+        case WI.AlignmentData.Type.JustifyContent:
             return WI.AlignmentEditor.AlignContentGlyphs;
         case WI.AlignmentData.Type.AlignItems:
         case WI.AlignmentData.Type.AlignSelf:
+        case WI.AlignmentData.Type.JustifyItems:
+        case WI.AlignmentData.Type.JustifySelf:
             return WI.AlignmentEditor.AlignItemsGlyphs;
         }
         return null;
@@ -75,9 +95,12 @@ WI.AlignmentEditor = class AlignmentEditor extends WI.Object
             this._element.removeChildren();
 
             // FIXME: <https://webkit.org/b/233053> Web Inspector: mirror/rotate alignment icons when flex-direction/grid-auto-flow/RTL affect axis or direction
+            let shouldRotate = WI.AlignmentEditor.shouldRotateGlyph(alignment.type)
+
             for (let [value, path] of Object.entries(WI.AlignmentEditor._glyphsForType(alignment.type))) {
                 let glyphElement = WI.ImageUtilities.useSVGSymbol(path, "glyph", value);
                 this._element.append(glyphElement);
+                glyphElement.classList.toggle("rotate-left", shouldRotate);
                 glyphElement.addEventListener("click", () => {
                     this._removePreviouslySelected();
                     this._alignment.text = value;

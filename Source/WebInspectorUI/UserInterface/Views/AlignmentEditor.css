@@ -54,3 +54,7 @@
     color: var(--glyph-color-active-pressed);
     outline-color: var(--glyph-color-active-pressed);
 }
+
+.alignment-editor .glyph.rotate-left > svg {
+    rotate: -90deg;
+}

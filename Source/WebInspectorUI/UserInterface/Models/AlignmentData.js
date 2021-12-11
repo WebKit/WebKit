@@ -50,6 +50,12 @@ WI.AlignmentData = class AlignmentData
             return WI.AlignmentData.Type.AlignItems;
         case "align-self":
             return WI.AlignmentData.Type.AlignSelf;
+        case "justify-content":
+            return WI.AlignmentData.Type.JustifyContent;
+        case "justify-items":
+            return WI.AlignmentData.Type.JustifyItems;
+        case "justify-self":
+            return WI.AlignmentData.Type.JustifySelf;
         }
         return null;
     }
@@ -72,4 +78,7 @@ WI.AlignmentData.Type = {
     AlignContent: "align-content",
     AlignItems: "align-items",
     AlignSelf: "align-self",
+    JustifyContent: "justify-content",
+    JustifyItems: "justify-items",
+    JustifySelf: "justify-self",
 };

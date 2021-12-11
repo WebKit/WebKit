@@ -205,6 +205,7 @@ WI.InlineSwatch = class InlineSwatch extends WI.Object
 
         case WI.InlineSwatch.Type.Alignment:
             this._swatchInnerElement.style.backgroundImage = `url(${WI.AlignmentEditor.glyphPath(value)})`;
+            this._swatchInnerElement.classList.toggle("rotate-left", WI.AlignmentEditor.shouldRotateGlyph(value.type));
             break;
         }
 
