@@ -172,6 +172,22 @@ WI.CSSCompletions = class CSSCompletions
         return results;
     }
 
+    // Protected
+
+    replaceValues(values)
+    {
+        console.assert(Array.isArray(values), values);
+        console.assert(typeof values[0] === "string", "Expect an array of string values", values);
+
+        this._values = values;
+        this._values.sort();
+
+        this._queryController?.reset();
+        this._queryController?.addValues(values);
+    }
+
+    // Private
+
     _firstIndexOfPrefix(prefix)
     {
         if (!this._values.length)

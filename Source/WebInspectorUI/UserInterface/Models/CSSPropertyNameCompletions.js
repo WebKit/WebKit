@@ -40,6 +40,11 @@ WI.CSSPropertyNameCompletions = class CSSPropertyNameCompletions extends WI.CSSC
         }
 
         super(values, options);
+
+        this._cachedSortedPropertyNames = this.values.slice();
+        this._needsVariablesFromInspectedNode = true;
+
+        WI.domManager.addEventListener(WI.DOMManager.Event.InspectedNodeChanged, this._handleInspectedNodeChanged, this);
     }
 
     // Public
@@ -47,5 +52,63 @@ WI.CSSPropertyNameCompletions = class CSSPropertyNameCompletions extends WI.CSSC
     isValidPropertyName(name)
     {
         return this.values.includes(name);
+    }
+
+    executeQuery(query)
+    {
+        this._updateValuesWithLatestCSSVariablesIfNeeded();
+
+        return super.executeQuery(query);
+    }
+
+    startsWith(prefix)
+    {
+        this._updateValuesWithLatestCSSVariablesIfNeeded();
+
+        return super.startsWith(prefix);
+    }
+
+    addValues()
+    {
+        console.assert(false, "Adding values will overwrite the list of supported CSS property names.");
+    }
+
+    // Private
+
+    _updateValuesWithLatestCSSVariablesIfNeeded()
+    {
+        if (!this._needsVariablesFromInspectedNode)
+            return;
+
+        // An inspected node is not guaranteed to exist when unit testing.
+        if (!WI.domManager.inspectedNode) {
+            this._needsVariablesFromInspectedNode = false;
+            return;
+        }
+
+        let nodeStyles = WI.cssManager.stylesForNode(WI.domManager.inspectedNode);
+        nodeStyles.addEventListener(WI.DOMNodeStyles.Event.NeedsRefresh, this._handleNodesStylesNeedsRefresh, this);
+
+        let values = Array.from(nodeStyles.allCSSVariables);
+        values.pushAll(this._cachedSortedPropertyNames);
+        this.replaceValues(values);
+
+        this._needsVariablesFromInspectedNode = false;
+    }
+
+    _handleInspectedNodeChanged(event)
+    {
+        if (this._needsVariablesFromInspectedNode || !event.data.lastInspectedNode)
+            return;
+
+        this._needsVariablesFromInspectedNode = true;
+
+        let nodeStyles = WI.cssManager.stylesForNode(event.data.lastInspectedNode);
+        nodeStyles.removeEventListener(WI.DOMNodeStyles.Event.NeedsRefresh, this._handleNodesStylesNeedsRefresh, this);
+    }
+
+    _handleNodesStylesNeedsRefresh(event)
+    {
+        this._needsVariablesFromInspectedNode = true;
     }
 };

@@ -1,3 +1,48 @@
+2021-12-10  Razvan Caliman  <rcaliman@apple.com>
+
+        Web Inspector: Add CSS variable names to property name completion list
+        https://bugs.webkit.org/show_bug.cgi?id=233372
+        <rdar://83205968>
+
+        Reviewed by Devin Rousso.
+
+        Add the list of applicable CSS variables to the list of CSS property name completions.
+
+        `WI.CSSPropertyNameCompletions` is a long-lived object that holds all supported property names.
+        It doesn't need to change over time in a Web Inspector session. But the list of applicable
+        CSS variables depends on the selected node.
+
+        To avoid thrashing the long list of values in `WI.CSSPropertyNameCompletions` we don't proactively collect
+        CSS variables. Instead, we introduce a flag to indicate that the list of CSS variables may
+        be stale whenever the inspected node changes. Only when completions are requested do we check
+        this flag and augment the list of CSS property names with the latest list of CSS variables.
+
+        * UserInterface/Models/CSSCompletions.js:
+        (WI.CSSCompletions.prototype.replaceValues):
+        Allow a sub-class to replace the list of values in one go.
+        If a `WI.CSSQueryController` was used, reset it and provide it the new list of values.
+
+        * UserInterface/Models/CSSPropertyNameCompletions.js:
+        (WI.CSSPropertyNameCompletions):
+        (WI.CSSPropertyNameCompletions.prototype.executeQuery):
+        (WI.CSSPropertyNameCompletions.prototype.startsWith):
+        (WI.CSSPropertyNameCompletions.prototype._updateValuesWithLatestCSSVariablesIfNeeded):
+        Holding a copy of the original list of CSS property names in order to create a new list
+        agumented with variables on demand.
+
+        (WI.CSSPropertyNameCompletions.prototype.addValues):
+        Warn when trying to add new property values which would overwrite the cached and sorted list of CSS property names.
+
+        (WI.CSSPropertyNameCompletions.prototype._handleInspectedNodeChanged):
+        Consider changing of the inspected node as an indicator that the list of variables is stale.
+        That may not necessarily be true for web pages with all CSS variables declared on :root or <html>,
+        but iterating over them to verify is needlessly expensive especially if completions were not even requested.
+
+        (WI.CSSPropertyNameCompletions.prototype._handleNodesStylesNeedsRefresh):
+        Consider any change to the styles of the inspected node as a potential change to the list of applicable variables.
+
+        (WI.CSSPropertyNameCompletions):
+
 2021-12-10  BJ Burg  <bburg@apple.com>
 
         Web Inspector: save and restore extension tab positions
