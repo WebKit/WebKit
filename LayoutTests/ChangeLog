@@ -1,3 +1,12 @@
+2021-12-10  Alexey Shvayka  <ashvayka@apple.com>
+
+        Setting "onselectionchange" content attribute should add an event listener
+        https://bugs.webkit.org/show_bug.cgi?id=234167
+
+        Reviewed by Darin Adler.
+
+        * fast/dom/event-handler-attributes-expected.txt:
+
 2021-12-10  Joonghun Park  <jh718.park@samsung.com>
 
         Don't do simplification for percentage comparison resolution against negative reference values.
