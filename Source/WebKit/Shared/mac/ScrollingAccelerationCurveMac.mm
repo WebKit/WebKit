@@ -116,33 +116,44 @@ static std::optional<ScrollingAccelerationCurve> fromIOHIDDevice(IOHIDEventSende
         return std::nullopt;
     }
 
-    // FIXME: There is some additional fallback to implement here, though this seems usually sufficient.
-    auto scrollAccelerationType = adoptCF(dynamic_cf_cast<CFStringRef>(IOHIDServiceClientCopyProperty(ioHIDService.get(), CFSTR("HIDScrollAccelerationType"))));
-    if (!scrollAccelerationType) {
-        RELEASE_LOG(ScrollAnimations, "ScrollingAccelerationCurve::fromIOHIDDevice failed to look up acceleration type");
+    auto readFixedPointServiceKey = [&] (CFStringRef key) -> std::optional<float> {
+        auto valueCF = adoptCF(dynamic_cf_cast<CFNumberRef>(IOHIDServiceClientCopyProperty(ioHIDService.get(), key)));
+        if (!valueCF)
+            return std::nullopt;
+        return fromFixedPoint([(NSNumber *)valueCF.get() floatValue]);
+    };
+
+    auto scrollAcceleration = [&] () -> std::optional<float> {
+        if (auto scrollAccelerationType = adoptCF(dynamic_cf_cast<CFStringRef>(IOHIDServiceClientCopyProperty(ioHIDService.get(), CFSTR("HIDScrollAccelerationType"))))) {
+            if (auto acceleration = readFixedPointServiceKey(scrollAccelerationType.get()))
+                return acceleration;
+        }
+
+        if (auto acceleration = readFixedPointServiceKey(CFSTR(kIOHIDMouseScrollAccelerationKey)))
+            return acceleration;
+
+        if (auto acceleration = readFixedPointServiceKey(CFSTR(kIOHIDScrollAccelerationKey)))
+            return acceleration;
+
+        return std::nullopt;
+    }();
+    if (!scrollAcceleration) {
+        RELEASE_LOG(ScrollAnimations, "ScrollingAccelerationCurve::fromIOHIDDevice failed to look up acceleration");
         return std::nullopt;
     }
 
-    auto scrollAccelerationCF = adoptCF(dynamic_cf_cast<CFNumberRef>(IOHIDServiceClientCopyProperty(ioHIDService.get(), scrollAccelerationType.get())));
-    if (!scrollAccelerationCF) {
-        RELEASE_LOG(ScrollAnimations, "ScrollingAccelerationCurve::fromIOHIDDevice failed to look up acceleration value");
-        return std::nullopt;
-    }
-    auto scrollAcceleration = fromFixedPoint(fromCFNumber(scrollAccelerationCF.get()));
-
-    auto resolutionCF = adoptCF(dynamic_cf_cast<CFNumberRef>(IOHIDServiceClientCopyProperty(ioHIDService.get(), CFSTR(kIOHIDScrollResolutionKey))));
-    if (!resolutionCF) {
+    auto resolution = readFixedPointServiceKey(CFSTR(kIOHIDScrollResolutionKey));
+    if (!resolution) {
         RELEASE_LOG(ScrollAnimations, "ScrollingAccelerationCurve::fromIOHIDDevice failed to look up resolution");
         return std::nullopt;
     }
-    auto resolution = fromFixedPoint([(NSNumber *)resolutionCF.get() floatValue]);
 
     static CFStringRef dispatchFrameRateKey = CFSTR("ScrollMomentumDispatchRate");
     static constexpr float defaultDispatchFrameRate = 60;
     auto frameRateCF = adoptCF(dynamic_cf_cast<CFNumberRef>(IOHIDServiceClientCopyProperty(ioHIDService.get(), dispatchFrameRateKey)));
     float frameRate = frameRateCF ? fromCFNumber(frameRateCF.get()) : defaultDispatchFrameRate;
 
-    return fromIOHIDCurveArrayWithAcceleration((NSArray *)curves.get(), scrollAcceleration, resolution, frameRate);
+    return fromIOHIDCurveArrayWithAcceleration((NSArray *)curves.get(), *scrollAcceleration, *resolution, frameRate);
 }
 
 std::optional<ScrollingAccelerationCurve> ScrollingAccelerationCurve::fromNativeWheelEvent(const NativeWebWheelEvent& nativeWebWheelEvent)
