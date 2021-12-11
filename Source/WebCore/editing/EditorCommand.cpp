@@ -242,6 +242,12 @@ static bool executeCopy(Frame& frame, Event*, EditorCommandSource source, const 
     return true;
 }
 
+static bool executeCopyFont(Frame& frame, Event*, EditorCommandSource source, const String&)
+{
+    frame.editor().copyFont(source == CommandFromMenuOrKeyBinding ? Editor::FromMenuOrKeyBinding::Yes : Editor::FromMenuOrKeyBinding::No);
+    return true;
+}
+
 static bool executeCreateLink(Frame& frame, Event*, EditorCommandSource, const String& value)
 {
     // FIXME: If userInterface is true, we should display a dialog box to let the user enter a URL.
@@ -903,6 +909,21 @@ static bool executePaste(Frame& frame, Event*, EditorCommandSource source, const
         return false;
 
     frame.editor().paste();
+    return true;
+}
+
+static bool executePasteFont(Frame& frame, Event*, EditorCommandSource source, const String&)
+{
+    if (source == CommandFromMenuOrKeyBinding) {
+        UserTypingGestureIndicator typingGestureIndicator(frame);
+        frame.editor().pasteFont(Editor::FromMenuOrKeyBinding::Yes);
+        return true;
+    }
+
+    if (!frame.requestDOMPasteAccess(DOMPasteAccessCategory::Fonts))
+        return false;
+
+    frame.editor().pasteFont();
     return true;
 }
 
@@ -1614,6 +1635,7 @@ static const CommandMap& createCommandMap()
         { "Bold"_s, { executeToggleBold, supported, enabledInRichlyEditableText, stateBold, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
         { "ClearText"_s, { executeClearText, supported, enabledClearText, stateNone, valueNull, notTextInsertion, allowExecutionWhenDisabled } },
         { "Copy"_s, { executeCopy, supportedCopyCut, enabledCopy, stateNone, valueNull, notTextInsertion, allowExecutionWhenDisabledCopyCut } },
+        { "CopyFont"_s, { executeCopyFont, supportedCopyCut, enabledCopy, stateNone, valueNull, notTextInsertion, allowExecutionWhenDisabledCopyCut } },
         { "CreateLink"_s, { executeCreateLink, supported, enabledInRichlyEditableText, stateNone, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
         { "Cut"_s, { executeCut, supportedCopyCut, enabledCut, stateNone, valueNull, notTextInsertion, allowExecutionWhenDisabledCopyCut } },
         { "DefaultParagraphSeparator"_s, { executeDefaultParagraphSeparator, supported, enabled, stateNone, valueDefaultParagraphSeparator, notTextInsertion, doNotAllowExecutionWhenDisabled} },
@@ -1713,6 +1735,7 @@ static const CommandMap& createCommandMap()
         { "PasteAndMatchStyle"_s, { executePasteAndMatchStyle, supportedPaste, enabledPaste, stateNone, valueNull, notTextInsertion, allowExecutionWhenDisabledPaste } },
         { "PasteAsPlainText"_s, { executePasteAsPlainText, supportedPaste, enabledPaste, stateNone, valueNull, notTextInsertion, allowExecutionWhenDisabledPaste } },
         { "PasteAsQuotation"_s, { executePasteAsQuotation, supportedPaste, enabledPaste, stateNone, valueNull, notTextInsertion, allowExecutionWhenDisabledPaste } },
+        { "PasteFont"_s, { executePasteFont, supportedPaste, enabledPaste, stateNone, valueNull, notTextInsertion, allowExecutionWhenDisabledPaste } },
         { "Print"_s, { executePrint, supported, enabled, stateNone, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
         { "Redo"_s, { executeRedo, supported, enabledRedo, stateNone, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
         { "RemoveFormat"_s, { executeRemoveFormat, supported, enabledRangeInEditableText, stateNone, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },

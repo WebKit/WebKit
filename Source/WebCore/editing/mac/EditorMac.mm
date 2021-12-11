@@ -31,10 +31,15 @@
 #import "Blob.h"
 #import "CSSPrimitiveValueMappings.h"
 #import "CSSValuePool.h"
+#import "Color.h"
+#import "ColorCocoa.h"
+#import "ColorSerialization.h"
 #import "DataTransfer.h"
 #import "DocumentFragment.h"
 #import "Editing.h"
 #import "EditorClient.h"
+#import "FontAttributes.h"
+#import "FontShadow.h"
 #import "Frame.h"
 #import "FrameView.h"
 #import "HTMLConverter.h"
@@ -50,11 +55,13 @@
 #import "RenderImage.h"
 #import "RuntimeApplicationChecks.h"
 #import "RuntimeEnabledFeatures.h"
+#import "SharedBuffer.h"
 #import "StyleProperties.h"
 #import "WebContentReader.h"
 #import "WebNSAttributedStringExtras.h"
 #import "markup.h"
 #import <AppKit/AppKit.h>
+#import <wtf/RetainPtr.h>
 #import <wtf/cocoa/NSURLExtras.h>
 
 namespace WebCore {
@@ -95,6 +102,83 @@ void Editor::pasteWithPasteboard(Pasteboard* pasteboard, OptionSet<PasteOption> 
 
     if (fragment && shouldInsertFragment(*fragment, range, EditorInsertAction::Pasted))
         pasteAsFragment(fragment.releaseNonNull(), canSmartReplaceWithPasteboard(*pasteboard), false, options.contains(PasteOption::IgnoreMailBlockquote) ? MailBlockquoteHandling::IgnoreBlockquote : MailBlockquoteHandling::RespectBlockquote );
+
+    client()->setInsertionPasteboard(String());
+}
+
+void Editor::platformCopyFont()
+{
+    Pasteboard pasteboard(PagePasteboardContext::create(m_document.pageID()), NSPasteboardNameFont);
+
+    auto fontSampleString = adoptNS([[NSAttributedString alloc] initWithString:@"x" attributes:fontAttributesAtSelectionStart().createDictionary().get()]);
+    auto fontData = RetainPtr([fontSampleString RTFFromRange:NSMakeRange(0, [fontSampleString length]) documentAttributes:@{ }]);
+
+    PasteboardBuffer pasteboardBuffer;
+    pasteboardBuffer.contentOrigin = m_document.originIdentifierForPasteboard();
+    pasteboardBuffer.type = legacyFontPasteboardType();
+    pasteboardBuffer.data = SharedBuffer::create(fontData.get());
+    pasteboard.write(pasteboardBuffer);
+}
+
+void Editor::platformPasteFont()
+{
+    Pasteboard pasteboard(PagePasteboardContext::create(m_document.pageID()), NSPasteboardNameFont);
+
+    client()->setInsertionPasteboard(pasteboard.name());
+
+    RetainPtr<NSData> fontData;
+    if (auto buffer = pasteboard.readBuffer(std::nullopt, legacyFontPasteboardType()))
+        fontData = buffer->createNSData();
+    auto fontSampleString = adoptNS([[NSAttributedString alloc] initWithRTF:fontData.get() documentAttributes:nil]);
+    auto fontAttributes = RetainPtr([fontSampleString fontAttributesInRange:NSMakeRange(0, 1)]);
+
+    auto style = MutableStyleProperties::create();
+
+    Color backgroundColor;
+    if (NSColor *nsBackgroundColor = dynamic_objc_cast<NSColor>([fontAttributes objectForKey:NSBackgroundColorAttributeName]))
+        backgroundColor = colorFromCocoaColor(nsBackgroundColor);
+    if (!backgroundColor.isValid())
+        backgroundColor = Color::transparentBlack;
+    style->setProperty(CSSPropertyBackgroundColor, CSSPrimitiveValue::create(backgroundColor));
+
+    if (NSFont *font = dynamic_objc_cast<NSFont>([fontAttributes objectForKey:NSFontAttributeName])) {
+        // FIXME: Need more sophisticated escaping code if we want to handle family names
+        // with characters like single quote or backslash in their names.
+        style->setProperty(CSSPropertyFontFamily, [NSString stringWithFormat:@"'%@'", [font familyName]]);
+        style->setProperty(CSSPropertyFontSize, CSSPrimitiveValue::create([font pointSize], CSSUnitType::CSS_PX));
+        // FIXME: Map to the entire range of CSS weight values.
+        style->setProperty(CSSPropertyFontWeight, ([NSFontManager.sharedFontManager weightOfFont:font] >= 7) ? CSSValueBold : CSSValueNormal);
+        style->setProperty(CSSPropertyFontStyle, ([NSFontManager.sharedFontManager traitsOfFont:font] & NSItalicFontMask) ? CSSValueItalic : CSSValueNormal);
+    } else {
+        style->setProperty(CSSPropertyFontFamily, "Helvetica"_s);
+        style->setProperty(CSSPropertyFontSize, CSSPrimitiveValue::create(12, CSSUnitType::CSS_PX));
+        style->setProperty(CSSPropertyFontWeight, CSSValueNormal);
+        style->setProperty(CSSPropertyFontStyle, CSSValueNormal);
+    }
+
+    Color foregroundColor;
+    if (NSColor *nsForegroundColor = dynamic_objc_cast<NSColor>([fontAttributes objectForKey:NSForegroundColorAttributeName])) {
+        foregroundColor = colorFromCocoaColor(nsForegroundColor);
+        if (!foregroundColor.isValid())
+            foregroundColor = Color::transparentBlack;
+    } else
+        foregroundColor = Color::black;
+    style->setProperty(CSSPropertyColor, CSSPrimitiveValue::create(foregroundColor));
+
+    FontShadow fontShadow;
+    if (NSShadow *nsFontShadow = dynamic_objc_cast<NSShadow>([fontAttributes objectForKey:NSShadowAttributeName]))
+        fontShadow = fontShadowFromNSShadow(nsFontShadow);
+    style->setProperty(CSSPropertyTextShadow, serializationForCSS(fontShadow));
+
+    auto superscriptStyle = [[fontAttributes objectForKey:NSSuperscriptAttributeName] intValue];
+    style->setProperty(CSSPropertyVerticalAlign, (superscriptStyle > 0) ? CSSValueSuper : ((superscriptStyle < 0) ? CSSValueSub : CSSValueBaseline));
+
+    // FIXME: Underline wins here if we have both (see bug 3790443).
+    auto underlineStyle = [[fontAttributes objectForKey:NSUnderlineStyleAttributeName] intValue];
+    auto strikethroughStyle = [[fontAttributes objectForKey:NSStrikethroughStyleAttributeName] intValue];
+    style->setProperty(CSSPropertyWebkitTextDecorationsInEffect, (underlineStyle != NSUnderlineStyleNone) ? CSSValueUnderline : ((strikethroughStyle != NSUnderlineStyleNone) ? CSSValueLineThrough : CSSValueNone));
+
+    applyStyleToSelection(style.ptr(), EditAction::PasteFont);
 
     client()->setInsertionPasteboard(String());
 }

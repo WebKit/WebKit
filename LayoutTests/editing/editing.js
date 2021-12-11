@@ -811,6 +811,34 @@ function pasteCommand() {
 
 //-------------------------------------------------------------------------------------------------------
 
+function execCopyFontCommand() {
+    document.execCommand("CopyFont");
+    debugForDumpAsText("execCopyFontCommand");
+}
+function copyFontCommand() {
+    if (commandDelay > 0) {
+        queueCommand(execCopyFontCommand, commandCount * commandDelay);
+        commandCount++;
+    } else
+        execCopyFontCommand();
+}
+
+//-------------------------------------------------------------------------------------------------------
+
+function execPasteFontCommand() {
+    document.execCommand("PasteFont");
+    debugForDumpAsText("execPasteFontCommand");
+}
+function pasteFontCommand() {
+    if (commandDelay > 0) {
+        queueCommand(execPasteFontCommand, commandCount * commandDelay);
+        commandCount++;
+    } else
+        execPasteFontCommand();
+}
+
+//-------------------------------------------------------------------------------------------------------
+
 function execCreateLinkCommand(url) {
     document.execCommand("CreateLink", false, url);
     debugForDumpAsText("execCreateLinkCommand");

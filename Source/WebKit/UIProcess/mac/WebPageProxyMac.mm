@@ -657,6 +657,10 @@ void WebPageProxy::willPerformPasteCommand(DOMPasteAccessCategory pasteAccessCat
     case DOMPasteAccessCategory::General:
         grantAccessToCurrentPasteboardData(NSPasteboardNameGeneral);
         return;
+
+    case DOMPasteAccessCategory::Fonts:
+        grantAccessToCurrentPasteboardData(NSPasteboardNameFont);
+        return;
     }
 }
 

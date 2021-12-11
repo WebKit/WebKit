@@ -372,8 +372,10 @@ bool Editor::canEditRichly() const
 
 enum class ClipboardEventKind {
     Copy,
+    CopyFont,
     Cut,
     Paste,
+    PasteFont,
     PasteAsPlainText,
     PasteAsQuotation,
     BeforeCopy,
@@ -385,12 +387,14 @@ static AtomString eventNameForClipboardEvent(ClipboardEventKind kind)
 {
     switch (kind) {
     case ClipboardEventKind::Copy:
+    case ClipboardEventKind::CopyFont:
         return eventNames().copyEvent;
     case ClipboardEventKind::Cut:
         return eventNames().cutEvent;
     case ClipboardEventKind::Paste:
     case ClipboardEventKind::PasteAsPlainText:
     case ClipboardEventKind::PasteAsQuotation:
+    case ClipboardEventKind::PasteFont:
         return eventNames().pasteEvent;
     case ClipboardEventKind::BeforeCopy:
         return eventNames().beforecopyEvent;
@@ -407,6 +411,7 @@ static Ref<DataTransfer> createDataTransferForClipboardEvent(Document& document,
 {
     switch (kind) {
     case ClipboardEventKind::Copy:
+    case ClipboardEventKind::CopyFont:
     case ClipboardEventKind::Cut:
         return DataTransfer::createForCopyAndPaste(document, DataTransfer::StoreMode::ReadWrite, makeUnique<StaticPasteboard>());
     case ClipboardEventKind::PasteAsPlainText:
@@ -420,6 +425,7 @@ static Ref<DataTransfer> createDataTransferForClipboardEvent(Document& document,
         FALLTHROUGH;
     case ClipboardEventKind::Paste:
     case ClipboardEventKind::PasteAsQuotation:
+    case ClipboardEventKind::PasteFont:
         return DataTransfer::createForCopyAndPaste(document, DataTransfer::StoreMode::Readonly, Pasteboard::createForCopyAndPaste(PagePasteboardContext::create(document.pageID())));
     case ClipboardEventKind::BeforeCopy:
     case ClipboardEventKind::BeforeCut:
@@ -1404,6 +1410,21 @@ void Editor::copy(FromMenuOrKeyBinding fromMenuOrKeyBinding)
     performCutOrCopy(CopyAction);
 }
 
+void Editor::copyFont(FromMenuOrKeyBinding fromMenuOrKeyBinding)
+{
+    SetForScope<bool> copyScope { m_copyingFromMenuOrKeyBinding, fromMenuOrKeyBinding == FromMenuOrKeyBinding::Yes };
+    if (tryDHTMLCopy())
+        return; // DHTML did the whole operation
+    if (!canCopy()) {
+        SystemSoundManager::singleton().systemBeep();
+        return;
+    }
+
+    willWriteSelectionToPasteboard(selectedRange());
+    platformCopyFont();
+    didWriteSelectionToPasteboard();
+}
+
 void Editor::postTextStateChangeNotificationForCut(const String& text, const VisibleSelection& selection)
 {
     if (!AXObjectCache::accessibilityEnabled())
@@ -1510,6 +1531,19 @@ void Editor::pasteAsQuotation(FromMenuOrKeyBinding fromMenuOrKeyBinding)
         pasteWithPasteboard(pasteboard.get(), { PasteOption::AllowPlainText, PasteOption::AsQuotation });
     else
         pasteAsPlainTextWithPasteboard(*pasteboard);
+}
+
+void Editor::pasteFont(FromMenuOrKeyBinding fromMenuOrKeyBinding)
+{
+    SetForScope<bool> pasteScope { m_pastingFromMenuOrKeyBinding, fromMenuOrKeyBinding == FromMenuOrKeyBinding::Yes };
+
+    if (!dispatchClipboardEvent(findEventTargetFromSelection(), ClipboardEventKind::PasteFont))
+        return;
+    if (!canPaste())
+        return;
+    updateMarkersForWordsAffectedByEditing(false);
+    ResourceCacheValidationSuppressor validationSuppressor(document().cachedResourceLoader());
+    platformPasteFont();
 }
 
 void Editor::quoteFragmentForPasting(DocumentFragment& fragment)

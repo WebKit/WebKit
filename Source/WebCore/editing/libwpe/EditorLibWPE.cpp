@@ -91,6 +91,14 @@ void Editor::pasteWithPasteboard(Pasteboard* pasteboard, OptionSet<PasteOption> 
         pasteAsFragment(*fragment, canSmartReplaceWithPasteboard(*pasteboard), chosePlainText, options.contains(PasteOption::IgnoreMailBlockquote) ? MailBlockquoteHandling::IgnoreBlockquote : MailBlockquoteHandling::RespectBlockquote);
 }
 
+void Editor::platformCopyFont()
+{
+}
+
+void Editor::platformPasteFont()
+{
+}
+
 } // namespace WebCore
 
 #endif // USE(LIBWPE)

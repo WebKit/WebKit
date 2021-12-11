@@ -197,11 +197,13 @@ public:
     enum class FromMenuOrKeyBinding : bool { No, Yes };
     WEBCORE_EXPORT void cut(FromMenuOrKeyBinding = FromMenuOrKeyBinding::No);
     WEBCORE_EXPORT void copy(FromMenuOrKeyBinding = FromMenuOrKeyBinding::No);
+    void copyFont(FromMenuOrKeyBinding = FromMenuOrKeyBinding::No);
 
     WEBCORE_EXPORT void paste(FromMenuOrKeyBinding = FromMenuOrKeyBinding::No);
     void paste(Pasteboard&, FromMenuOrKeyBinding = FromMenuOrKeyBinding::No);
     WEBCORE_EXPORT void pasteAsPlainText(FromMenuOrKeyBinding = FromMenuOrKeyBinding::No);
     void pasteAsQuotation(FromMenuOrKeyBinding = FromMenuOrKeyBinding::No);
+    void pasteFont(FromMenuOrKeyBinding = FromMenuOrKeyBinding::No);
     WEBCORE_EXPORT void performDelete();
 
     WEBCORE_EXPORT void copyURL(const URL&, const String& title);
@@ -591,6 +593,9 @@ private:
     void pasteAsPlainTextWithPasteboard(Pasteboard&);
     void pasteWithPasteboard(Pasteboard*, OptionSet<PasteOption>);
     String plainTextFromPasteboard(const PasteboardPlainText&);
+
+    void platformCopyFont();
+    void platformPasteFont();
 
     void quoteFragmentForPasting(DocumentFragment&);
 

@@ -1548,6 +1548,7 @@ void WebPageProxy::willPerformPasteCommand(DOMPasteAccessCategory pasteAccessCat
 {
     switch (pasteAccessCategory) {
     case DOMPasteAccessCategory::General:
+    case DOMPasteAccessCategory::Fonts:
         grantAccessToCurrentPasteboardData(UIPasteboardNameGeneral);
         return;
     }

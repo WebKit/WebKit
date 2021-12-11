@@ -4590,6 +4590,9 @@ static NSPasteboardName pasteboardNameForAccessCategory(WebCore::DOMPasteAccessC
     switch (pasteAccessCategory) {
     case WebCore::DOMPasteAccessCategory::General:
         return NSPasteboardNameGeneral;
+
+    case WebCore::DOMPasteAccessCategory::Fonts:
+        return NSPasteboardNameFont;
     }
 }
 
@@ -4598,6 +4601,9 @@ static NSPasteboard *pasteboardForAccessCategory(WebCore::DOMPasteAccessCategory
     switch (pasteAccessCategory) {
     case WebCore::DOMPasteAccessCategory::General:
         return NSPasteboard.generalPasteboard;
+
+    case WebCore::DOMPasteAccessCategory::Fonts:
+        return [NSPasteboard pasteboardWithName:NSPasteboardNameFont];
     }
 }
 

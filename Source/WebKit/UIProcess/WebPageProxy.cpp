@@ -2521,6 +2521,7 @@ static std::optional<DOMPasteAccessCategory> pasteAccessCategoryForCommand(const
         { "PasteAndMatchStyle", DOMPasteAccessCategory::General },
         { "PasteAsQuotation", DOMPasteAccessCategory::General },
         { "PasteAsPlainText", DOMPasteAccessCategory::General },
+        { "PasteFont", DOMPasteAccessCategory::Fonts },
     };
 
     auto it = pasteCommandNames->find(commandName);
