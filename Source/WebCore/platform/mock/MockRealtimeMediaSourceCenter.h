@@ -28,7 +28,7 @@
 
 #if ENABLE(MEDIA_STREAM)
 
-#include "DisplayCaptureManager.h"
+#include "CaptureDeviceManager.h"
 #include "MockMediaDevice.h"
 #include "MockRealtimeAudioSource.h"
 #include "MockRealtimeVideoSource.h"
@@ -56,14 +56,14 @@ public:
     static Vector<CaptureDevice>& microphoneDevices();
     static Vector<CaptureDevice>& speakerDevices();
     static Vector<CaptureDevice>& videoDevices();
-    WEBCORE_EXPORT static Vector<CaptureDevice>& displayDevices();
+    static Vector<CaptureDevice>& displayDevices();
 
     static std::optional<MockMediaDevice> mockDeviceWithPersistentID(const String&);
     static std::optional<CaptureDevice> captureDeviceWithPersistentID(CaptureDevice::DeviceType, const String&);
 
     CaptureDeviceManager& audioCaptureDeviceManager() { return m_audioCaptureDeviceManager; }
     CaptureDeviceManager& videoCaptureDeviceManager() { return m_videoCaptureDeviceManager; }
-    DisplayCaptureManager& displayCaptureDeviceManager() { return m_displayCaptureDeviceManager; }
+    CaptureDeviceManager& displayCaptureDeviceManager() { return m_displayCaptureDeviceManager; }
 
 private:
     MockRealtimeMediaSourceCenter() = default;
@@ -83,11 +83,10 @@ private:
         const Vector<CaptureDevice>& captureDevices() final { return MockRealtimeMediaSourceCenter::videoDevices(); }
         std::optional<CaptureDevice> captureDeviceWithPersistentID(CaptureDevice::DeviceType type, const String& id) final { return MockRealtimeMediaSourceCenter::captureDeviceWithPersistentID(type, id); }
     };
-    class MockDisplayCaptureDeviceManager final : public DisplayCaptureManager {
+    class MockDisplayCaptureDeviceManager final : public CaptureDeviceManager {
     private:
         const Vector<CaptureDevice>& captureDevices() final { return MockRealtimeMediaSourceCenter::displayDevices(); }
         std::optional<CaptureDevice> captureDeviceWithPersistentID(CaptureDevice::DeviceType type, const String& id) final { return MockRealtimeMediaSourceCenter::captureDeviceWithPersistentID(type, id); }
-        void windowDevices(Vector<DisplayCaptureManager::WindowCaptureDevice>&) final;
     };
 
     MockAudioCaptureDeviceManager m_audioCaptureDeviceManager;

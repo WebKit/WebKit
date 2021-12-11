@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -168,14 +168,14 @@ struct MockMediaDevice {
     CaptureDevice captureDevice() const
     {
         if (isMicrophone())
-            return CaptureDevice { persistentId, CaptureDevice::DeviceType::Microphone, label, persistentId, true };
+            return CaptureDevice { persistentId, CaptureDevice::DeviceType::Microphone, label, persistentId };
         if (isSpeaker())
-            return CaptureDevice { persistentId, CaptureDevice::DeviceType::Speaker, label, speakerProperties()->relatedMicrophoneId, true };
+            return CaptureDevice { persistentId, CaptureDevice::DeviceType::Speaker, label, speakerProperties()->relatedMicrophoneId };
         if (isCamera())
-            return CaptureDevice { persistentId, CaptureDevice::DeviceType::Camera, label, persistentId, true };
+            return CaptureDevice { persistentId, CaptureDevice::DeviceType::Camera, label, persistentId };
 
         ASSERT(isDisplay());
-        return CaptureDevice { persistentId, std::get<MockDisplayProperties>(properties).type, label, emptyString(), true };
+        return CaptureDevice { persistentId, CaptureDevice::DeviceType::Screen, label, persistentId };
     }
 
     CaptureDevice::DeviceType type() const

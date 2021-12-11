@@ -23,7 +23,7 @@
 
 #if ENABLE(MEDIA_STREAM) && USE(GSTREAMER)
 
-#include "DisplayCaptureManager.h"
+#include "CaptureDeviceManager.h"
 #include "GRefPtrGStreamer.h"
 #include "GStreamerCaptureDevice.h"
 #include "RealtimeMediaSourceFactory.h"
@@ -66,7 +66,7 @@ private:
     GStreamerVideoCaptureDeviceManager() = default;
 };
 
-class GStreamerDisplayCaptureDeviceManager final : public DisplayCaptureManager {
+class GStreamerDisplayCaptureDeviceManager final : public CaptureDeviceManager {
     friend class NeverDestroyed<GStreamerDisplayCaptureDeviceManager>;
 public:
     static GStreamerDisplayCaptureDeviceManager& singleton();

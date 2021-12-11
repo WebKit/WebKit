@@ -94,8 +94,8 @@ static inline Vector<MockMediaDevice> defaultDevices()
         MockMediaDevice { "SCREEN-1"_s, "Mock screen device 1"_s, MockDisplayProperties { CaptureDevice::DeviceType::Screen, Color::lightGray, { 1920, 1080 } } },
         MockMediaDevice { "SCREEN-2"_s, "Mock screen device 2"_s, MockDisplayProperties { CaptureDevice::DeviceType::Screen, Color::yellow, { 3840, 2160 } } },
 
-        MockMediaDevice { "WINDOW-1"_s, "Mock window device 1"_s, MockDisplayProperties { CaptureDevice::DeviceType::Window, SRGBA<uint8_t> { 255, 241, 181 }, { 640, 480 } } },
-        MockMediaDevice { "WINDOW-2"_s, "Mock window device 2"_s, MockDisplayProperties { CaptureDevice::DeviceType::Window, SRGBA<uint8_t> { 255, 208, 181 }, { 1280, 600 } } },
+        MockMediaDevice { "WINDOW-2"_s, "Mock window 1"_s, MockDisplayProperties { CaptureDevice::DeviceType::Screen, SRGBA<uint8_t> { 255, 241, 181 }, { 640, 480 } } },
+        MockMediaDevice { "WINDOW-2"_s, "Mock window 2"_s, MockDisplayProperties { CaptureDevice::DeviceType::Screen, SRGBA<uint8_t> { 255, 208, 181 }, { 1280, 600 } } },
     };
 }
 
@@ -203,9 +203,8 @@ public:
 
         return { };
     }
-
 private:
-    DisplayCaptureManager& displayCaptureDeviceManager() final { return MockRealtimeMediaSourceCenter::singleton().displayCaptureDeviceManager(); }
+    CaptureDeviceManager& displayCaptureDeviceManager() final { return MockRealtimeMediaSourceCenter::singleton().displayCaptureDeviceManager(); }
 };
 
 class MockRealtimeAudioSourceFactory final : public AudioCaptureFactory {
@@ -443,7 +442,7 @@ Vector<CaptureDevice>& MockRealtimeMediaSourceCenter::displayDevices()
         Vector<CaptureDevice> displayDevices;
         for (const auto& device : devices()) {
             if (device.isDisplay())
-                displayDevices.append(device.captureDevice());
+                displayDevices.append(captureDeviceWithPersistentID(CaptureDevice::DeviceType::Screen, device.persistentId).value());
         }
         return displayDevices;
     }());
@@ -467,17 +466,6 @@ DisplayCaptureFactory& MockRealtimeMediaSourceCenter::displayCaptureFactory()
 {
     static NeverDestroyed<MockRealtimeDisplaySourceFactory> factory;
     return factory.get();
-}
-
-void MockRealtimeMediaSourceCenter::MockDisplayCaptureDeviceManager::windowDevices(Vector<DisplayCaptureManager::WindowCaptureDevice>& windowDevices)
-{
-    auto devices = MockRealtimeMediaSourceCenter::displayDevices();
-    for (auto device : devices) {
-        if (!device.enabled() || device.type() != CaptureDevice::DeviceType::Window)
-            continue;
-
-        windowDevices.append({ WTFMove(device), "Mock Application"_s });
-    }
 }
 
 } // namespace WebCore

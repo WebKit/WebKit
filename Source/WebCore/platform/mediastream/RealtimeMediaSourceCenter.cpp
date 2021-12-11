@@ -35,7 +35,7 @@
 
 #if ENABLE(MEDIA_STREAM)
 
-#include "DisplayCaptureManager.h"
+#include "CaptureDeviceManager.h"
 #include "Logging.h"
 #include "MediaStreamPrivate.h"
 #include <wtf/CallbackAggregator.h>

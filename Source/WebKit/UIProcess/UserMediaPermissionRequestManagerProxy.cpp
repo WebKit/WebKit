@@ -45,10 +45,6 @@
 #include "GPUProcessProxy.h"
 #endif
 
-#if HAVE(SCREEN_CAPTURE_KIT)
-#include <WebCore/ScreenCaptureKitCaptureSource.h>
-#endif
-
 namespace WebKit {
 using namespace WebCore;
 
@@ -859,10 +855,6 @@ void UserMediaPermissionRequestManagerProxy::syncWithWebCorePrefs() const
 #if ENABLE(GPU_PROCESS)
     if (m_page.preferences().captureAudioInGPUProcessEnabled() || m_page.preferences().captureVideoInGPUProcessEnabled())
         m_page.process().processPool().ensureGPUProcess().setUseMockCaptureDevices(mockDevicesEnabled);
-#endif
-
-#if HAVE(SCREEN_CAPTURE_KIT)
-    WebCore::ScreenCaptureKitCaptureSource::setEnabled(m_page.preferences().useScreenCaptureKit());
 #endif
 
     if (MockRealtimeMediaSourceCenter::mockRealtimeMediaSourceCenterEnabled() == mockDevicesEnabled)

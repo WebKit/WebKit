@@ -1,3 +1,16 @@
+2021-12-11  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, reverting r286893.
+        https://bugs.webkit.org/show_bug.cgi?id=234197
+
+        Breaks the build
+
+        Reverted changeset:
+
+        "[macOS] Add new screen and window capture backend"
+        https://bugs.webkit.org/show_bug.cgi?id=234029
+        https://commits.webkit.org/r286893
+
 2021-12-11  Jer Noble  <jer.noble@apple.com>
 
         Add an experimental VideoTrackConfiguration class and accessor on VideoTrack

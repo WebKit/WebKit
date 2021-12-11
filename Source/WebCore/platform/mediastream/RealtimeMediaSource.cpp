@@ -489,7 +489,6 @@ double RealtimeMediaSource::fitnessDistance(const MediaConstraint& constraint)
     }
 
     case MediaConstraintType::DeviceId:
-        ASSERT(constraint.isString());
         ASSERT(!m_hashedID.isEmpty());
         return downcast<StringConstraint>(constraint).fitnessDistance(m_hashedID);
         break;

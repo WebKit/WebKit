@@ -260,20 +260,6 @@
 #endif
 }
 
-- (void)_setIndexOfGetDisplayMediaDeviceSelectedForTesting:(NSNumber *)nsIndex
-{
-#if HAVE(SCREEN_CAPTURE_KIT)
-    if (!_page)
-        return;
-
-    std::optional<unsigned> index;
-    if (nsIndex)
-        index = nsIndex.unsignedIntValue;
-
-    _page->setIndexOfGetDisplayMediaDeviceSelectedForTesting(index);
-#endif
-}
-
 - (double)_mediaCaptureReportingDelayForTesting
 {
     return _page->mediaCaptureReportingDelay().value();

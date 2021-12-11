@@ -32,7 +32,6 @@
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/WebKit.h>
-#import <wtf/RetainPtr.h>
 
 TEST(WebKit, WebProcessTerminate)
 {

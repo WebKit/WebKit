@@ -27,11 +27,11 @@
 
 #if ENABLE(MEDIA_STREAM)
 
-#include "DisplayCaptureManager.h"
+#include "CaptureDeviceManager.h"
 
 namespace WebCore {
 
-class DisplayCaptureManagerCocoa final : public DisplayCaptureManager {
+class DisplayCaptureManagerCocoa final : public CaptureDeviceManager {
 public:
     static DisplayCaptureManagerCocoa& singleton();
 
@@ -48,8 +48,6 @@ private:
     std::optional<CaptureDevice> captureDeviceWithPersistentID(CaptureDevice::DeviceType, const String&) final;
     std::optional<CaptureDevice> screenCaptureDeviceWithPersistentID(const String&);
     std::optional<CaptureDevice> windowCaptureDeviceWithPersistentID(const String&);
-
-    void windowDevices(Vector<WindowCaptureDevice>&) final;
 
     Vector<CaptureDevice> m_devices;
 };
