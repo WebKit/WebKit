@@ -140,6 +140,10 @@ void reportCurrentException(JSGlobalObject* lexicalGlobalObject)
 
 JSValue createDOMException(JSGlobalObject* lexicalGlobalObject, ExceptionCode ec, const String& message)
 {
+    VM& vm = lexicalGlobalObject->vm();
+    if (UNLIKELY(vm.hasPendingTerminationException()))
+        return jsUndefined();
+
     switch (ec) {
     case ExistingExceptionError:
         return jsUndefined();
