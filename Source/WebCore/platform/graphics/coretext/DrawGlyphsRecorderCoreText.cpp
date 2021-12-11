@@ -34,6 +34,7 @@
 #include "FontPlatformData.h"
 #include "GlyphBuffer.h"
 #include "GraphicsContextCG.h"
+#include "ImageBuffer.h"
 
 #include <CoreText/CoreText.h>
 #include <wtf/Vector.h>
@@ -370,53 +371,65 @@ void DrawGlyphsRecorder::recordDrawImage(CGRenderingStateRef, CGGStateRef gstate
     m_owner.translate(0, -(rect.size.height + 2 * rect.origin.y));
 }
 
-struct GlyphsAndAdvancesStorage {
-    Vector<GlyphBufferGlyph> glyphs;
-    Vector<GlyphBufferAdvance> advances;
-};
+void DrawGlyphsRecorder::drawOTSVGRun(const Font& font, const GlyphBufferGlyph* glyphs, const GlyphBufferAdvance* advances, unsigned numGlyphs, const FloatPoint& startPoint, FontSmoothingMode smoothingMode)
+{
+    FloatPoint penPosition = startPoint;
+    for (unsigned i = 0; i < numGlyphs; ++i) {
+        auto bounds = font.boundsForGlyph(glyphs[i]);
+        if (auto imageBufferDescription = ImageBuffer::createCompatibleBuffer(bounds, m_owner)) {
+            FontCascade::drawGlyphs(imageBufferDescription->imageBuffer->context(), font, glyphs + i, advances + i, 1, FloatPoint(), smoothingMode);
+            auto destinationRect = imageBufferDescription->inflatedRectInUserCoordinates;
+            destinationRect.moveBy(penPosition);
+            m_owner.drawImageBuffer(imageBufferDescription->imageBuffer, destinationRect);
+        }
+        penPosition.move(size(advances[i]));
+    }
+}
 
-struct GlyphsAndAdvances {
-    const GlyphBufferGlyph* glyphs;
-    const GlyphBufferAdvance* advances;
-    unsigned numGlyphs;
-    GlyphBufferAdvance initialAdvance;
-    std::optional<GlyphsAndAdvancesStorage> storage;
-};
+void DrawGlyphsRecorder::drawNonOTSVGRun(const Font& font, const GlyphBufferGlyph* glyphs, const GlyphBufferAdvance* advances, unsigned numGlyphs, const FloatPoint& startPoint, FontSmoothingMode smoothingMode)
+{
+    prepareInternalContext(font, smoothingMode);
+    FontCascade::drawGlyphs(m_internalContext, font, glyphs, advances, numGlyphs, startPoint, smoothingMode);
+    concludeInternalContext();
+}
 
-static GlyphsAndAdvances filterOutOTSVGGlyphs(const Font& font, const GlyphBufferGlyph* glyphs, const GlyphBufferAdvance* advances, unsigned numGlyphs)
+void DrawGlyphsRecorder::drawBySplittingIntoOTSVGAndNonOTSVGRuns(const Font& font, const GlyphBufferGlyph* glyphs, const GlyphBufferAdvance* advances, unsigned numGlyphs, const FloatPoint& startPoint, FontSmoothingMode smoothingMode)
 {
     auto otsvgGlyphs = font.findOTSVGGlyphs(glyphs, numGlyphs);
-    if (!otsvgGlyphs)
-        return { glyphs, advances, numGlyphs, makeGlyphBufferAdvance(), { }};
+    if (!otsvgGlyphs) {
+        drawNonOTSVGRun(font, glyphs, advances, numGlyphs, startPoint, smoothingMode);
+        return;
+    }
 
     ASSERT(otsvgGlyphs->size() >= numGlyphs);
 
-    GlyphsAndAdvances result;
-    result.initialAdvance = makeGlyphBufferAdvance();
-    result.storage = GlyphsAndAdvancesStorage();
-
-    result.storage->glyphs.reserveInitialCapacity(numGlyphs);
-    result.storage->advances.reserveInitialCapacity(numGlyphs);
-
-    for (unsigned i = 0; i < numGlyphs; ++i) {
-        ASSERT(result.storage->glyphs.size() == result.storage->advances.size());
-        if (otsvgGlyphs->quickGet(i)) {
-            if (result.storage->advances.isEmpty())
-                result.initialAdvance = makeGlyphBufferAdvance(size(result.initialAdvance) + size(advances[i]));
-            else
-                result.storage->advances.last() = makeGlyphBufferAdvance(size(result.storage->advances.last()) + size(advances[i]));
-        } else {
-            result.storage->glyphs.uncheckedAppend(glyphs[i]);
-            result.storage->advances.uncheckedAppend(advances[i]);
+    // We can't just partition the glyphs into OT-SVG glyphs and non-OT-SVG glyphs because glyphs are allowed to draw outside of their layout boxes.
+    // This means that glyphs can overlap, which means we have to get the z-order correct. We can't have an earlier run be drawn on top of a later run.
+    FloatPoint runOrigin = startPoint;
+    FloatPoint penPosition = startPoint;
+    size_t glyphCountInRun = 0;
+    bool isOTSVGRun = false;
+    unsigned i;
+    auto draw = [&] () {
+        if (!glyphCountInRun)
+            return;
+        if (isOTSVGRun)
+            drawOTSVGRun(font, glyphs + i - glyphCountInRun, advances + i - glyphCountInRun, glyphCountInRun, runOrigin, smoothingMode);
+        else
+            drawNonOTSVGRun(font, glyphs + i - glyphCountInRun, advances + i - glyphCountInRun, glyphCountInRun, runOrigin, smoothingMode);
+    };
+    for (i = 0; i < numGlyphs; ++i) {
+        bool isOTSVGGlyph = otsvgGlyphs->quickGet(i);
+        if (isOTSVGGlyph != isOTSVGRun) {
+            draw();
+            isOTSVGRun = isOTSVGGlyph;
+            glyphCountInRun = 0;
+            runOrigin = penPosition;
         }
-        ASSERT(result.storage->glyphs.size() == result.storage->advances.size());
+        ++glyphCountInRun;
+        penPosition.move(size(advances[i]));
     }
-
-    result.glyphs = result.storage->glyphs.data();
-    result.advances = result.storage->advances.data();
-    result.numGlyphs = result.storage->glyphs.size();
-
-    return result;
+    draw();
 }
 
 void DrawGlyphsRecorder::drawGlyphs(const Font& font, const GlyphBufferGlyph* glyphs, const GlyphBufferAdvance* advances, unsigned numGlyphs, const FloatPoint& startPoint, FontSmoothingMode smoothingMode)
@@ -428,14 +441,7 @@ void DrawGlyphsRecorder::drawGlyphs(const Font& font, const GlyphBufferGlyph* gl
 
     ASSERT(m_deconstructDrawGlyphs == DeconstructDrawGlyphs::Yes);
 
-    // FIXME: <rdar://problem/70166552> Record OTSVG glyphs.
-    GlyphsAndAdvances glyphsAndAdvancesWithoutOTSVGGlyphs = filterOutOTSVGGlyphs(font, glyphs, advances, numGlyphs);
-    ASSERT(glyphsAndAdvancesWithoutOTSVGGlyphs.glyphs == glyphs || glyphsAndAdvancesWithoutOTSVGGlyphs.glyphs == glyphsAndAdvancesWithoutOTSVGGlyphs.storage->glyphs.data());
-    ASSERT(glyphsAndAdvancesWithoutOTSVGGlyphs.advances == advances || glyphsAndAdvancesWithoutOTSVGGlyphs.advances == glyphsAndAdvancesWithoutOTSVGGlyphs.storage->advances.data());
-
-    prepareInternalContext(font, smoothingMode);
-    FontCascade::drawGlyphs(m_internalContext, font, glyphsAndAdvancesWithoutOTSVGGlyphs.glyphs, glyphsAndAdvancesWithoutOTSVGGlyphs.advances, glyphsAndAdvancesWithoutOTSVGGlyphs.numGlyphs, startPoint + size(glyphsAndAdvancesWithoutOTSVGGlyphs.initialAdvance), smoothingMode);
-    concludeInternalContext();
+    drawBySplittingIntoOTSVGAndNonOTSVGRuns(font, glyphs, advances, numGlyphs, startPoint, smoothingMode);
 }
 
 void DrawGlyphsRecorder::drawNativeText(CTFontRef font, CGFloat fontSize, CTLineRef line, CGRect lineRect)

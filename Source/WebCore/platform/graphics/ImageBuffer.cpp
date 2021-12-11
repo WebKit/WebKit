@@ -90,9 +90,35 @@ RefPtr<ImageBuffer> ImageBuffer::createCompatibleBuffer(const FloatSize& size, c
     if (!imageBuffer)
         return nullptr;
 
-    // Set up a corresponding scale factor on the graphics context.
     imageBuffer->context().scale(scaledSize / size);
     return imageBuffer;
+}
+
+// This is useful when you need to make sure the pixel grid of the ImageBuffer aligns with the pixel grid of the context.
+// Simply saying createCompatibleBuffer(rect.size(), context) isn't sufficient in this situation, because rect.location() may not lie on a pixel boundary.
+// In this situation, we have to inflate both the left side and the right side, which can lead to different results than
+// createCompatibleBuffer(rect.size(), context) would have produced.
+auto ImageBuffer::createCompatibleBuffer(const FloatRect& rect, const GraphicsContext& context) -> std::optional<CompatibleBufferDescription>
+{
+    if (rect.isEmpty())
+        return std::nullopt;
+
+    auto info = ImageBuffer::compatibleBufferInfo(rect, context);
+
+    RefPtr<ImageBuffer> imageBuffer;
+
+    if (context.renderingMode() == RenderingMode::Accelerated)
+        imageBuffer = AcceleratedImageBuffer::create(info.physicalSizeInDeviceCoordinates, context);
+    
+    if (!imageBuffer)
+        imageBuffer = UnacceleratedImageBuffer::create(info.physicalSizeInDeviceCoordinates, context);
+
+    if (!imageBuffer)
+        return std::nullopt;
+
+    imageBuffer->context().scale(info.scale);
+    imageBuffer->context().translate(-info.inflatedRectInUserCoordinates.location());
+    return { { imageBuffer.releaseNonNull(), info.inflatedRectInUserCoordinates } };
 }
 
 RefPtr<ImageBuffer> ImageBuffer::createCompatibleBuffer(const FloatSize& size, const DestinationColorSpace& colorSpace, const GraphicsContext& context)
@@ -106,7 +132,6 @@ RefPtr<ImageBuffer> ImageBuffer::createCompatibleBuffer(const FloatSize& size, c
     if (!imageBuffer)
         return nullptr;
 
-    // Set up a corresponding scale factor on the graphics context.
     imageBuffer->context().scale(scaledSize / size);
     return imageBuffer;
 }
@@ -165,6 +190,36 @@ IntSize ImageBuffer::compatibleBufferSize(const FloatSize& size, const GraphicsC
     // Enlarge the buffer size if the context's transform is scaling it so we need a higher
     // resolution than one pixel per unit.
     return expandedIntSize(size * context.scaleFactor());
+}
+
+auto ImageBuffer::compatibleBufferInfo(const FloatRect& rect, const GraphicsContext& context) -> CompatibleBufferInfo
+{
+    auto scaleFactor = context.scaleFactor();
+    auto scaledRect = rect;
+    scaledRect.scale(scaleFactor);
+    auto inflatedScaledRect = enclosingIntRect(scaledRect);
+    auto inflatedRectInUserCoordinates = FloatRect(inflatedScaledRect);
+
+    // We don't want to allocate huge ImageBuffers because they can take a lot of memory,
+    // so if the size would have been too big, decrease resolution and scale the resulting context.
+    // This will mean that the ImageBuffer will lose quality, but will still generally look correct.
+    constexpr int maxDimension = 4096;
+    if (inflatedScaledRect.width() > maxDimension) {
+        // The pixel grids won't align any more, so there's no need to try to handle fractions of pixels.
+        inflatedScaledRect.setWidth(maxDimension);
+        inflatedRectInUserCoordinates.scale(maxDimension / inflatedRectInUserCoordinates.width(), 1);
+        scaleFactor.setWidth(maxDimension / rect.width());
+    }
+    if (inflatedScaledRect.height() > maxDimension) {
+        // The pixel grids won't align any more, so there's no need to try to handle fractions of pixels.
+        inflatedScaledRect.setHeight(maxDimension);
+        inflatedRectInUserCoordinates.scale(1, maxDimension / inflatedRectInUserCoordinates.height());
+        scaleFactor.setHeight(maxDimension / rect.height());
+    }
+
+    auto physicalSizeInDeviceCoordinates = inflatedScaledRect.size();
+    inflatedRectInUserCoordinates.scale(1.0f / scaleFactor);
+    return { WTFMove(physicalSizeInDeviceCoordinates), WTFMove(inflatedRectInUserCoordinates), scaleFactor };
 }
 
 RefPtr<ImageBuffer> ImageBuffer::copyRectToBuffer(const FloatRect& rect, const DestinationColorSpace& colorSpace, const GraphicsContext& context)

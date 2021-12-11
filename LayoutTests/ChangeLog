@@ -1,3 +1,14 @@
+2021-12-10  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Cocoa] OT-SVG glyphs don't draw into canvases (because of the GPU process)
+        https://bugs.webkit.org/show_bug.cgi?id=234171
+        <rdar://problem/70166552>
+
+        Reviewed by Devin Rousso.
+
+        * fast/text/otsvg-canvas-expected.html: Added.
+        * fast/text/otsvg-canvas.html: Added.
+
 2021-12-10  Robert Jenner  <Jenner@apple.com>
 
         REGRESSION(r286795):REBASELINE [ iOS EWS ] 4X CSS (layout-tests) are constant text failures

@@ -52,6 +52,11 @@ public:
 
     // Create an image buffer compatible with the context, with suitable resolution for drawing into the buffer and then into this context.
     static RefPtr<ImageBuffer> createCompatibleBuffer(const FloatSize&, const GraphicsContext&);
+    struct CompatibleBufferDescription {
+        Ref<ImageBuffer> imageBuffer;
+        FloatRect inflatedRectInUserCoordinates;
+    };
+    static std::optional<CompatibleBufferDescription> createCompatibleBuffer(const FloatRect& rectInUserCoordinates, const GraphicsContext&);
     WEBCORE_EXPORT static RefPtr<ImageBuffer> createCompatibleBuffer(const FloatSize&, const DestinationColorSpace&, const GraphicsContext&);
     static RefPtr<ImageBuffer> createCompatibleBuffer(const FloatSize&, float resolutionScale, const DestinationColorSpace&, const GraphicsContext&);
 
@@ -63,6 +68,12 @@ public:
     static FloatRect clampedRect(const FloatRect&);
 
     static IntSize compatibleBufferSize(const FloatSize&, const GraphicsContext&);
+    struct CompatibleBufferInfo {
+        IntSize physicalSizeInDeviceCoordinates;
+        FloatRect inflatedRectInUserCoordinates;
+        FloatSize scale;
+    };
+    static CompatibleBufferInfo compatibleBufferInfo(const FloatRect&, const GraphicsContext&);
     
     WEBCORE_EXPORT virtual ~ImageBuffer() = default;
 

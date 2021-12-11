@@ -75,6 +75,10 @@ private:
     UniqueRef<GraphicsContext> createInternalContext();
 #endif
 
+    void drawBySplittingIntoOTSVGAndNonOTSVGRuns(const Font&, const GlyphBufferGlyph*, const GlyphBufferAdvance*, unsigned numGlyphs, const FloatPoint& anchorPoint, FontSmoothingMode);
+    void drawOTSVGRun(const Font&, const GlyphBufferGlyph*, const GlyphBufferAdvance*, unsigned numGlyphs, const FloatPoint& anchorPoint, FontSmoothingMode);
+    void drawNonOTSVGRun(const Font&, const GlyphBufferGlyph*, const GlyphBufferAdvance*, unsigned numGlyphs, const FloatPoint& anchorPoint, FontSmoothingMode);
+
     void populateInternalState(const GraphicsContextState&);
     void populateInternalContext(const GraphicsContextState&);
     void prepareInternalContext(const Font&, FontSmoothingMode);
