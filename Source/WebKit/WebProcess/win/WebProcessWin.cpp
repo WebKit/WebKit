@@ -30,7 +30,7 @@
 
 RefPtr<WebCore::SharedBuffer> loadResourceIntoBuffer(const char* name)
 {
-    return 0;
+    return nullptr;
 }
 
 namespace WebKit {

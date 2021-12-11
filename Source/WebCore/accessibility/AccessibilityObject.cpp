@@ -4157,7 +4157,7 @@ void findMatchingObjects(AccessibilitySearchCriteria const& criteria, AXCoreObje
                 break;
 
             if (!criteria.immediateDescendantsOnly)
-                appendChildrenToArray(searchObject, isForward, 0, searchStack);
+                appendChildrenToArray(searchObject, isForward, nullptr, searchStack);
         }
 
         if (results.size() >= criteria.resultsLimit)

@@ -485,7 +485,7 @@ void TextureMapperGL::drawTexture(GLuint texture, Flags flags, const IntSize& te
     if (wrapMode() == RepeatWrap && !m_contextAttributes.supportsNPOTTextures)
         options |= TextureMapperShaderProgram::ManualRepeat;
 
-    RefPtr<FilterOperation> filter = data().filterInfo ? data().filterInfo->filter: 0;
+    RefPtr<FilterOperation> filter = data().filterInfo ? data().filterInfo->filter: nullptr;
     GLuint filterContentTextureID = 0;
 
     if (filter) {
@@ -559,7 +559,7 @@ void TextureMapperGL::drawTexturePlanarYUV(const std::array<GLuint, 3>& textures
     if (wrapMode() == RepeatWrap && !m_contextAttributes.supportsNPOTTextures)
         options |= TextureMapperShaderProgram::ManualRepeat;
 
-    RefPtr<FilterOperation> filter = data().filterInfo ? data().filterInfo->filter: 0;
+    RefPtr<FilterOperation> filter = data().filterInfo ? data().filterInfo->filter: nullptr;
     GLuint filterContentTextureID = 0;
 
     if (filter) {
@@ -623,7 +623,7 @@ void TextureMapperGL::drawTextureSemiPlanarYUV(const std::array<GLuint, 2>& text
     if (wrapMode() == RepeatWrap && !m_contextAttributes.supportsNPOTTextures)
         options |= TextureMapperShaderProgram::ManualRepeat;
 
-    RefPtr<FilterOperation> filter = data().filterInfo ? data().filterInfo->filter: 0;
+    RefPtr<FilterOperation> filter = data().filterInfo ? data().filterInfo->filter: nullptr;
     GLuint filterContentTextureID = 0;
 
     if (filter) {
@@ -679,7 +679,7 @@ void TextureMapperGL::drawTexturePackedYUV(GLuint texture, const std::array<GLfl
     if (wrapMode() == RepeatWrap && !m_contextAttributes.supportsNPOTTextures)
         options |= TextureMapperShaderProgram::ManualRepeat;
 
-    RefPtr<FilterOperation> filter = data().filterInfo ? data().filterInfo->filter: 0;
+    RefPtr<FilterOperation> filter = data().filterInfo ? data().filterInfo->filter: nullptr;
     GLuint filterContentTextureID = 0;
 
     if (filter) {

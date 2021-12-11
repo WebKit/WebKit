@@ -525,7 +525,7 @@ void FullscreenVideoController::draw()
 
     desc.setComputedSize(textSize);
     FontCascade font = FontCascade(WTFMove(desc), 0, 0);
-    font.update(0);
+    font.update();
 
     String s;
 

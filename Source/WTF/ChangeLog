@@ -1,3 +1,18 @@
+2021-12-11  Don Olmstead  <don.olmstead@sony.com>
+
+        Add a std::nullptr_t constructor for RefPtr
+        https://bugs.webkit.org/show_bug.cgi?id=234192
+
+        Reviewed by Yusuke Suzuki.
+
+        Add the constexpr constructor RefPtr(std::nullptr_t) with the same behavior as the default
+        constructor. Both std::unique_ptr and std::shared_ptr have this same overload to optimize
+        for the nullptr case. As an added bonus this also makes it so `0` can't fill in as a
+        nullptr since the ambiguity will cause a compilation error.
+
+        * wtf/RefPtr.h:
+        (WTF::RefPtr::RefPtr):
+
 2021-12-11  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r286893.

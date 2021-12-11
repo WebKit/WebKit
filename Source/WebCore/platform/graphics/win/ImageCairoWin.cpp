@@ -40,15 +40,15 @@ RefPtr<BitmapImage> BitmapImage::create(HBITMAP hBitmap)
 {
     DIBSECTION dibSection;
     if (!GetObject(hBitmap, sizeof(DIBSECTION), &dibSection))
-        return 0;
+        return nullptr;
 
     ASSERT(dibSection.dsBm.bmBitsPixel == 32);
     if (dibSection.dsBm.bmBitsPixel != 32)
-        return 0;
+        return nullptr;
 
     ASSERT(dibSection.dsBm.bmBits);
     if (!dibSection.dsBm.bmBits)
-        return 0;
+        return nullptr;
 
     RefPtr<cairo_surface_t> surface = adoptRef(cairo_win32_surface_create_with_dib(CAIRO_FORMAT_ARGB32, dibSection.dsBm.bmWidth, dibSection.dsBm.bmHeight));
 
