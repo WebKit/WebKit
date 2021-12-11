@@ -89,7 +89,6 @@ private:
     ResourceHandle* m_job;
 
     void generateBaseFilename(const CString& url);
-    bool loadFileToBuffer(const String& filepath, Vector<uint8_t>& buffer);
     bool loadResponseHeaders();
 
     bool openContentFile();

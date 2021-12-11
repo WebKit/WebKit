@@ -148,6 +148,7 @@ inline bool isHandleValid(const PlatformFileHandle& handle) { return handle != i
 using Salt = std::array<uint8_t, 8>;
 WTF_EXPORT_PRIVATE std::optional<Salt> readOrMakeSalt(const String& path);
 WTF_EXPORT_PRIVATE std::optional<Vector<uint8_t>> readEntireFile(PlatformFileHandle);
+WTF_EXPORT_PRIVATE std::optional<Vector<uint8_t>> readEntireFile(const String& path);
 
 // Prefix is what the filename should be prefixed with, not the full path.
 WTF_EXPORT_PRIVATE String openTemporaryFile(const String& prefix, PlatformFileHandle&, const String& suffix = { });

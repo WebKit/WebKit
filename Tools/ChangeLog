@@ -1,3 +1,15 @@
+2021-12-10  Don Olmstead  <don.olmstead@sony.com>
+
+        Add FileSystem function to read a file at a path
+        https://bugs.webkit.org/show_bug.cgi?id=234103
+
+        Reviewed by Alex Christensen.
+
+        Add tests for readEntireFile.
+
+        * TestWebKitAPI/Tests/WTF/FileSystem.cpp:
+        (TestWebKitAPI::TEST_F):
+
 2021-12-10  Alex Christensen  <achristensen@webkit.org>
 
         Move if-domain and unless-domain conversion to WKContentRuleList parsing

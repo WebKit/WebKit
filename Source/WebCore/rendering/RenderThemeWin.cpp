@@ -1020,30 +1020,6 @@ Color RenderThemeWin::systemColor(CSSValueID cssValueId, OptionSet<StyleColorOpt
 }
 
 #if ENABLE(VIDEO)
-static void fillBufferWithContentsOfFile(FileSystem::PlatformFileHandle file, long long filesize, Vector<uint8_t>& buffer)
-{
-    // Load the file content into buffer
-    buffer.resize(filesize + 1);
-
-    int bufferPosition = 0;
-    int bufferReadSize = 4096;
-    int bytesRead = 0;
-    while (filesize > bufferPosition) {
-        if (filesize - bufferPosition < bufferReadSize)
-            bufferReadSize = filesize - bufferPosition;
-
-        bytesRead = FileSystem::readFromFile(file, buffer.data() + bufferPosition, bufferReadSize);
-        if (bytesRead != bufferReadSize) {
-            buffer.clear();
-            return;
-        }
-
-        bufferPosition += bufferReadSize;
-    }
-
-    buffer[filesize] = 0;
-}
-
 String RenderThemeWin::stringWithContentsOfFile(const String& name, const String& type)
 {
 #if USE(CF)
@@ -1055,21 +1031,9 @@ String RenderThemeWin::stringWithContentsOfFile(const String& name, const String
     if (!CFURLGetFileSystemRepresentation(requestedURLRef.get(), false, requestedFilePath, MAX_PATH))
         return String();
 
-    FileSystem::PlatformFileHandle requestedFileHandle = FileSystem::openFile(requestedFilePath, FileSystem::FileOpenMode::Read);
-    if (!FileSystem::isHandleValid(requestedFileHandle))
-        return String();
+    auto contents = FileSystem::readEntireFile(requestedFilePath);
 
-    auto filesize = FileSystem::fileSize(requestedFileHandle);
-    if (!filesize) {
-        FileSystem::closeFile(requestedFileHandle);
-        return String();
-    }
-
-    Vector<uint8_t> fileContents;
-    fillBufferWithContentsOfFile(requestedFileHandle, *filesize, fileContents);
-    FileSystem::closeFile(requestedFileHandle);
-
-    return String(fileContents.data(), *filesize);
+    return contents ? String::adopt(WTFMove(*contents)) : String();
 #else
     return emptyString();
 #endif

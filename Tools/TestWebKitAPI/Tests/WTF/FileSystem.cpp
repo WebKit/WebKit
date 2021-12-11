@@ -819,4 +819,17 @@ TEST_F(FileSystemTest, realPath)
     EXPECT_STREQ(FileSystem::realPath(FileSystem::pathByAppendingComponents(subFolderPath, { "..", ".", ".", "subfolder" })).utf8().data(), resolvedSubFolderPath.utf8().data()); // Should resolve ".." and "."
 }
 
+TEST_F(FileSystemTest, readEntireFile)
+{
+    EXPECT_FALSE(FileSystem::readEntireFile(FileSystem::invalidPlatformFileHandle));
+    EXPECT_FALSE(FileSystem::readEntireFile(emptyString()));
+    EXPECT_FALSE(FileSystem::readEntireFile(FileSystem::pathByAppendingComponent(tempEmptyFolderPath(), "does-not-exist")));
+    EXPECT_FALSE(FileSystem::readEntireFile(tempEmptyFilePath()));
+
+    auto buffer = FileSystem::readEntireFile(tempFilePath());
+    EXPECT_TRUE(buffer);
+    auto contents = String::adopt(WTFMove(buffer.value()));
+    EXPECT_STREQ(contents.utf8().data(), FileSystemTestData);
+}
+
 } // namespace TestWebKitAPI

@@ -101,40 +101,16 @@ void CurlCacheManager::loadIndex()
     if (m_disabled)
         return;
 
-    String indexFilePath(m_cacheDir);
-    indexFilePath.append("index.dat");
-
-    FileSystem::PlatformFileHandle indexFile = FileSystem::openFile(indexFilePath, FileSystem::FileOpenMode::Read);
-    if (!FileSystem::isHandleValid(indexFile)) {
-        LOG(Network, "Cache Warning: Could not open %s for read\n", indexFilePath.latin1().data());
+    String indexFilePath = FileSystem::pathByAppendingComponent(m_cacheDir, "index.dat"_s);
+    auto buffer = FileSystem::readEntireFile(indexFilePath);
+    if (!buffer) {
+        LOG(Network, "Cache Error: Could not read %s\n", indexFilePath.latin1().data());
         return;
     }
-
-    auto filesize = FileSystem::fileSize(indexFilePath);
-    if (!filesize) {
-        LOG(Network, "Cache Error: Could not get file size of %s\n", indexFilePath.latin1().data());
-        FileSystem::closeFile(indexFile);
-        return;
-    }
-
-    // Load the file content into buffer
-    Vector<char> buffer;
-    buffer.resize(*filesize);
-    int bufferPosition = 0;
-    int bufferReadSize = IO_BUFFERSIZE;
-    while (*filesize > bufferPosition) {
-        if (*filesize - bufferPosition < bufferReadSize)
-            bufferReadSize = *filesize - bufferPosition;
-
-        FileSystem::readFromFile(indexFile, buffer.data() + bufferPosition, bufferReadSize);
-        bufferPosition += bufferReadSize;
-    }
-    FileSystem::closeFile(indexFile);
 
     // Create strings from buffer
-    String headerContent = String(buffer.data(), buffer.size());
+    auto headerContent = String::adopt(WTFMove(*buffer));
     Vector<String> indexURLs = headerContent.split('\n');
-    buffer.clear();
 
     // Add entries to index
     Vector<String>::const_iterator it = indexURLs.begin();

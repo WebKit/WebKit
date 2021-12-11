@@ -523,16 +523,30 @@ std::optional<Vector<uint8_t>> readEntireFile(PlatformFileHandle handle)
     if (!size)
         return std::nullopt;
 
-    unsigned bytesToRead;
+    size_t bytesToRead;
     if (!WTF::convertSafely(size, bytesToRead))
         return std::nullopt;
 
     Vector<uint8_t> buffer(bytesToRead);
-    unsigned totalBytesRead = FileSystem::readFromFile(handle, buffer.data(), buffer.size());
+    size_t totalBytesRead = 0;
+    int bytesRead;
+
+    while ((bytesRead = FileSystem::readFromFile(handle, buffer.data() + totalBytesRead, bytesToRead - totalBytesRead)) > 0)
+        totalBytesRead += bytesRead;
+
     if (totalBytesRead != bytesToRead)
         return std::nullopt;
 
     return buffer;
+}
+
+std::optional<Vector<uint8_t>> readEntireFile(const String& path)
+{
+    auto handle = FileSystem::openFile(path, FileSystem::FileOpenMode::Read);
+    auto contents = readEntireFile(handle);
+    FileSystem::closeFile(handle);
+
+    return contents;
 }
 
 void deleteAllFilesModifiedSince(const String& directory, WallTime time)

@@ -1,3 +1,23 @@
+2021-12-10  Don Olmstead  <don.olmstead@sony.com>
+
+        Add FileSystem function to read a file at a path
+        https://bugs.webkit.org/show_bug.cgi?id=234103
+
+        Reviewed by Alex Christensen.
+
+        Add FileSystem::readEntireFile which takes a path and attempts to read the whole contents
+        of the file into a Vector<uint8_t>. If the file is not found or is empty then it returns
+        nullopt. Internally it manages the opening and closing of the file to prevent file handles
+        from leaking.
+
+        Modify FileSystem::readEntireFile which takes a handle to continue reading until the entire
+        file has been read. Previously it could've just done a partial read as
+        FileSystem::readFromFile does not guarantee it will read all the bytes requested.
+
+        * wtf/FileSystem.cpp:
+        (WTF::FileSystemImpl::readEntireFile):
+        * wtf/FileSystem.h:
+
 2021-12-10  Antoine Quint  <graouts@webkit.org>
 
         Expose the maximum device frame rate to the Web Animations model

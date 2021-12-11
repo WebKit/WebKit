@@ -263,19 +263,9 @@ String RemoteInspector::backendCommands() const
     if (m_backendCommandsPath.isEmpty())
         return { };
 
-    auto handle = FileSystem::openFile(m_backendCommandsPath, FileSystem::FileOpenMode::Read);
-    if (!FileSystem::isHandleValid(handle))
-        return { };
+    auto contents = FileSystem::readEntireFile(m_backendCommandsPath);
 
-    String result;
-    if (auto size = FileSystem::fileSize(handle)) {
-        Vector<LChar> buffer(*size);
-        int bytesRead = FileSystem::readFromFile(handle, buffer.data(), *size);
-        if (bytesRead >= 0 && static_cast<uint64_t>(bytesRead) == *size)
-            result = String::adopt(WTFMove(buffer));
-    }
-    FileSystem::closeFile(handle);
-    return result;
+    return contents ? String::adopt(WTFMove(*contents)) : emptyString();
 }
 
 // RemoteInspectorConnectionClient handlers

@@ -114,12 +114,14 @@ bool CurlCacheEntry::readCachedData(ResourceHandle* job)
 {
     ASSERT(job->client());
 
-    Vector<uint8_t> buffer;
-    if (!loadFileToBuffer(m_contentFilename, buffer))
+    auto buffer = FileSystem::readEntireFile(m_contentFilename);
+    if (!buffer) {
+        LOG(Network, "Cache Error: Could not open %s to read cached content\n", m_contentFilename.latin1().data());
         return false;
+    }
 
-    if (auto bufferSize = buffer.size())
-        job->getInternal()->client()->didReceiveBuffer(job, SharedBuffer::create(WTFMove(buffer)), bufferSize);
+    if (auto bufferSize = buffer->size())
+        job->getInternal()->client()->didReceiveBuffer(job, SharedBuffer::create(WTFMove(*buffer)), bufferSize);
 
     return true;
 }
@@ -152,11 +154,13 @@ bool CurlCacheEntry::saveResponseHeaders(const ResourceResponse& response)
 
 bool CurlCacheEntry::loadResponseHeaders()
 {
-    Vector<uint8_t> buffer;
-    if (!loadFileToBuffer(m_headerFilename, buffer))
+    auto buffer = FileSystem::readEntireFile(m_headerFilename);
+    if (!buffer) {
+        LOG(Network, "Cache Error: Could not open %s to read cached headers\n", m_headerFilename.latin1().data());
         return false;
+    }
 
-    String headerContent = String(buffer.data(), buffer.size());
+    String headerContent = String::adopt(WTFMove(*buffer));
     Vector<String> headerFields = headerContent.split('\n');
 
     Vector<String>::const_iterator it = headerFields.begin();
@@ -222,44 +226,6 @@ void CurlCacheEntry::generateBaseFilename(const CString& url)
     for (size_t i = 0; i < 16; i++)
         baseNameBuilder.append(hex(rawdata[i], Lowercase));
     m_basename = baseNameBuilder.toString();
-}
-
-bool CurlCacheEntry::loadFileToBuffer(const String& filepath, Vector<uint8_t>& buffer)
-{
-    // Open the file
-    FileSystem::PlatformFileHandle inputFile = FileSystem::openFile(filepath, FileSystem::FileOpenMode::Read);
-    if (!FileSystem::isHandleValid(inputFile)) {
-        LOG(Network, "Cache Error: Could not open %s for read\n", filepath.latin1().data());
-        return false;
-    }
-
-    auto filesize = FileSystem::fileSize(filepath);
-    if (!filesize) {
-        LOG(Network, "Cache Error: Could not get file size of %s\n", filepath.latin1().data());
-        FileSystem::closeFile(inputFile);
-        return false;
-    }
-
-    // Load the file content into buffer
-    buffer.resize(*filesize);
-    int bufferPosition = 0;
-    int bufferReadSize = 4096;
-    int bytesRead = 0;
-    while (*filesize > bufferPosition) {
-        if (*filesize - bufferPosition < bufferReadSize)
-            bufferReadSize = *filesize - bufferPosition;
-
-        bytesRead = FileSystem::readFromFile(inputFile, buffer.data() + bufferPosition, bufferReadSize);
-        if (bytesRead != bufferReadSize) {
-            LOG(Network, "Cache Error: Could not read from %s\n", filepath.latin1().data());
-            FileSystem::closeFile(inputFile);
-            return false;
-        }
-
-        bufferPosition += bufferReadSize;
-    }
-    FileSystem::closeFile(inputFile);
-    return true;
 }
 
 void CurlCacheEntry::invalidate()
