@@ -62,7 +62,7 @@ public:
         return DisplayCaptureSourceCocoa::create(device, WTFMove(hashSalt), constraints);
     }
 private:
-    CaptureDeviceManager& displayCaptureDeviceManager() { return DisplayCaptureManagerCocoa::singleton(); }
+    DisplayCaptureManager& displayCaptureDeviceManager() { return DisplayCaptureManagerCocoa::singleton(); }
 };
 
 AudioCaptureFactory& RealtimeMediaSourceCenter::defaultAudioCaptureFactory()

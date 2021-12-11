@@ -31,6 +31,13 @@
 namespace WebKit {
 using namespace WebCore;
 
+#if !PLATFORM(COCOA)
+Ref<UserMediaPermissionRequestProxy> UserMediaPermissionRequestProxy::create(UserMediaPermissionRequestManagerProxy& manager, WebCore::UserMediaRequestIdentifier userMediaID, WebCore::FrameIdentifier mainFrameID, WebCore::FrameIdentifier frameID, Ref<WebCore::SecurityOrigin>&& userMediaDocumentOrigin, Ref<WebCore::SecurityOrigin>&& topLevelDocumentOrigin, Vector<WebCore::CaptureDevice>&& audioDevices, Vector<WebCore::CaptureDevice>&& videoDevices, WebCore::MediaStreamRequest&& request, CompletionHandler<void(bool)>&& decisionCompletionHandler)
+{
+    return adoptRef(*new UserMediaPermissionRequestProxy(manager, userMediaID, mainFrameID, frameID, WTFMove(userMediaDocumentOrigin), WTFMove(topLevelDocumentOrigin), WTFMove(audioDevices), WTFMove(videoDevices), WTFMove(request), WTFMove(decisionCompletionHandler)));
+}
+#endif
+
 UserMediaPermissionRequestProxy::UserMediaPermissionRequestProxy(UserMediaPermissionRequestManagerProxy& manager, UserMediaRequestIdentifier userMediaID, FrameIdentifier mainFrameID, FrameIdentifier frameID, Ref<WebCore::SecurityOrigin>&& userMediaDocumentOrigin, Ref<WebCore::SecurityOrigin>&& topLevelDocumentOrigin, Vector<WebCore::CaptureDevice>&& audioDevices, Vector<WebCore::CaptureDevice>&& videoDevices, WebCore::MediaStreamRequest&& request, CompletionHandler<void(bool)>&& decisionCompletionHandler)
     : m_manager(&manager)
     , m_userMediaID(userMediaID)
@@ -140,11 +147,11 @@ String convertEnumerationToString(UserMediaPermissionRequestProxy::UserMediaAcce
     return values[static_cast<size_t>(enumerationValue)];
 }
 
-void UserMediaPermissionRequestProxy::promptForGetDisplayMedia()
+void UserMediaPermissionRequestProxy::promptForGetDisplayMedia(UserMediaDisplayCapturePromptType promptType)
 {
 #if ENABLE(MEDIA_STREAM) && PLATFORM(COCOA)
-    ASSERT(m_manager && canPromptForGetDisplayMedia());
-    if (!m_manager || !canPromptForGetDisplayMedia()) {
+    ASSERT(m_manager && canPromptForGetDisplayMedia() && promptType != UserMediaDisplayCapturePromptType::UserChoose);
+    if (!m_manager || !canPromptForGetDisplayMedia() || promptType != UserMediaDisplayCapturePromptType::UserChoose) {
         deny(UserMediaAccessDenialReason::PermissionDenied);
         return;
     }

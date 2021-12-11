@@ -30,7 +30,7 @@
 #include "RemoteCaptureSampleManager.h"
 #include "SharedMemory.h"
 #include "WebProcessSupplement.h"
-#include <WebCore/CaptureDeviceManager.h>
+#include <WebCore/DisplayCaptureManager.h>
 #include <WebCore/RealtimeMediaSource.h>
 #include <WebCore/RealtimeMediaSourceFactory.h>
 #include <WebCore/RealtimeMediaSourceIdentifier.h>
@@ -100,12 +100,12 @@ private:
 
     private:
         WebCore::CaptureSourceOrError createDisplayCaptureSource(const WebCore::CaptureDevice&, String&&, const WebCore::MediaConstraints*) final;
-        WebCore::CaptureDeviceManager& displayCaptureDeviceManager() final { return m_manager.m_noOpCaptureDeviceManager; }
+        WebCore::DisplayCaptureManager& displayCaptureDeviceManager() final { return m_manager.m_noOpCaptureDeviceManager; }
 
         UserMediaCaptureManager& m_manager;
     };
 
-    class NoOpCaptureDeviceManager : public WebCore::CaptureDeviceManager {
+    class NoOpCaptureDeviceManager : public WebCore::DisplayCaptureManager {
     public:
         NoOpCaptureDeviceManager() = default;
 

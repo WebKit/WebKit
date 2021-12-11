@@ -189,7 +189,7 @@ void ReplayKitCaptureSource::captureStateDidChange()
 
         m_isRunning = isRecording && !m_interrupted;
         ALWAYS_LOG_IF(loggerPtr(), identifier, m_isRunning);
-        capturerIsRunningChanged(m_isRunning);
+        isRunningChanged(m_isRunning);
     });
 }
 

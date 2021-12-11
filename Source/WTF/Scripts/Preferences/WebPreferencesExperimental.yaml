@@ -1395,6 +1395,19 @@ UseGPUProcessForWebGLEnabled:
     WebKit:
       default: defaultUseGPUProcessForWebGLEnabled()
 
+UseScreenCaptureKit:
+  type: bool
+  condition: HAVE(SCREEN_CAPTURE_KIT)
+  humanReadableName: "Use ScreenCaptureKit"
+  humanReadableDescription: "Use ScreenCaptureKit when available"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 UserGesturePromisePropagationEnabled:
   type: bool
   humanReadableName: "UserGesture Promise Propagation"

@@ -2515,6 +2515,10 @@
 		07E19F0723D4DC880094FFB4 /* RemoteTextTrackProxy.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteTextTrackProxy.cpp; sourceTree = "<group>"; };
 		07E19F0823D533B90094FFB4 /* TextTrackPrivateRemote.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TextTrackPrivateRemote.cpp; sourceTree = "<group>"; };
 		07E19F0923D533BA0094FFB4 /* TextTrackPrivateRemote.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TextTrackPrivateRemote.h; sourceTree = "<group>"; };
+		07EF0751274593FA0066EA04 /* UserMediaPermissionRequestProxyMac.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = UserMediaPermissionRequestProxyMac.mm; sourceTree = "<group>"; };
+		07EF0752274593FA0066EA04 /* UserMediaPermissionRequestProxyMac.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UserMediaPermissionRequestProxyMac.h; sourceTree = "<group>"; };
+		07EF07582745A8160066EA04 /* DisplayCaptureSessionManager.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = DisplayCaptureSessionManager.mm; sourceTree = "<group>"; };
+		07EF07592745A8160066EA04 /* DisplayCaptureSessionManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DisplayCaptureSessionManager.h; sourceTree = "<group>"; };
 		0867D6A5FE840307C02AAC07 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		089C1667FE841158C02AAC07 /* en */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		0DCBF4D926E2ED3200EA0E07 /* WebAuthenticatorCoordinatorProxy.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WebAuthenticatorCoordinatorProxy.mm; sourceTree = "<group>"; };
@@ -11669,6 +11673,8 @@
 			children = (
 				B878B613133428DC006888E9 /* CorrectionPanel.h */,
 				B878B614133428DC006888E9 /* CorrectionPanel.mm */,
+				07EF07592745A8160066EA04 /* DisplayCaptureSessionManager.h */,
+				07EF07582745A8160066EA04 /* DisplayCaptureSessionManager.mm */,
 				C1817362205844A900DFDA65 /* DisplayLink.cpp */,
 				C18173602058424700DFDA65 /* DisplayLink.h */,
 				31ABA79C215AF9E000C90E31 /* HighPerformanceGPUManager.h */,
@@ -11687,6 +11693,8 @@
 				CD491B101E73482100009066 /* UserMediaCaptureManagerProxy.cpp */,
 				CD491B111E73482100009066 /* UserMediaCaptureManagerProxy.h */,
 				CD491B141E7349F300009066 /* UserMediaCaptureManagerProxy.messages.in */,
+				07EF0752274593FA0066EA04 /* UserMediaPermissionRequestProxyMac.h */,
+				07EF0751274593FA0066EA04 /* UserMediaPermissionRequestProxyMac.mm */,
 				2D125C5D1857EA05003BA3CB /* ViewGestureControllerMac.mm */,
 				2D6CD118189058A500E5A4A0 /* ViewSnapshotStoreMac.mm */,
 				728E86EF1795188C0087879E /* WebColorPickerMac.h */,

@@ -690,6 +690,16 @@ static _WKStorageBlockingPolicy toAPI(WebCore::StorageBlockingPolicy policy)
     _preferences->setMediaCaptureRequiresSecureConnection(requiresSecureConnection);
 }
 
+- (BOOL)_useScreenCaptureKit
+{
+    return _preferences->useScreenCaptureKit();
+}
+
+- (void)_setUseScreenCaptureKit:(BOOL)useScreenCaptureKit
+{
+    _preferences->setUseScreenCaptureKit(useScreenCaptureKit);
+}
+
 - (double)_inactiveMediaCaptureSteamRepromptIntervalInMinutes
 {
     return _preferences->inactiveMediaCaptureSteamRepromptIntervalInMinutes();

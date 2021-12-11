@@ -145,6 +145,12 @@
 /* Undo action name */
 "Align Right (Undo action name)" = "Align Right";
 
+/* Allow screen button title in window and screen sharing prompt */
+"Allow Observing a Screen" = "Allow Observing a Screen";
+
+/* Allow window button title in window and screen sharing prompt */
+"Allow Observing a Window" = "Allow Observing a Window";
+
 /* Button title in Storage Access API prompt */
 "Allow (cross-site cookie and website data access)" = "Allow";
 
@@ -163,11 +169,17 @@
 /* Allow button title in user media prompt */
 "Allow (usermedia)" = "Allow";
 
+/* Allow button title in window sharing prompt */
+"Allow (window sharing)" = "Allow";
+
 /* Message for requesting cross-site cookie and website data access. */
 "Allow “%@” and “%@” to use cookies and website data while browsing “%@”?" = "Allow “%@” and “%@” to use cookies and website data while browsing “%@”?";
 
 /* Message for spechrecognition prompt */
 "Allow “%@” to capture your audio and use it for speech recognition?" = "Allow “%@” to capture your audio and use it for speech recognition?";
+
+/* Message for window and screen sharing prompt */
+"Allow “%@” to observe one of your windows or screens?" = "Allow “%@” to observe one of your windows or screens?";
 
 /* Message for screen sharing prompt */
 "Allow “%@” to observe your screen?" = "Allow “%@” to observe your screen?";
@@ -267,6 +279,9 @@
 
 /* Label for the check out with Apple Pay button. */
 "Check out with Apple Pay" = "Check out with Apple Pay";
+
+/* Message for window sharing prompt */
+"Choose a window to share" = "Choose a window to share";
 
 /* title for a single file chooser button used in HTML forms */
 "Choose File" = "Choose File";
@@ -396,6 +411,12 @@
 
 /* Disallow button title in user media prompt */
 "Don’t Allow (usermedia)" = "Don’t Allow";
+
+/* Disallow button title in window and screen sharing prompt */
+"Don’t Allow (window and screen sharing)" = "Don’t Allow";
+
+/* Disallow button title in window sharing prompt */
+"Don’t Allow (window sharing)" = "Don’t Allow";
 
 /* Download Audio To Disk context menu item */
 "Download Audio" = "Download Audio";
@@ -1161,6 +1182,9 @@
 
 /* Unwanted software warning title */
 "Website With Harmful Software Warning" = "Website With Harmful Software Warning";
+
+/* Label for window sharing menu */
+"Window: " = "Window: ";
 
 /* Year label in date picker */
 "YEAR (Date picker for extra zoom mode)" = "YEAR";

@@ -1974,6 +1974,10 @@ public:
     WebCore::CaptureSourceOrError createRealtimeMediaSourceForSpeechRecognition();
 #endif
 
+#if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
+    void setIndexOfGetDisplayMediaDeviceSelectedForTesting(std::optional<unsigned>);
+#endif
+
 #if PLATFORM(MAC)
     void changeUniversalAccessZoomFocus(const WebCore::IntRect&, const WebCore::IntRect&);
 

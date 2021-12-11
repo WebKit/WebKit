@@ -573,7 +573,7 @@ public:
 
     bool getExact(Vector<String>& exact) const
     {
-        if (!m_exact.isEmpty())
+        if (m_exact.isEmpty())
             return false;
 
         exact = m_exact;
@@ -582,7 +582,7 @@ public:
 
     bool getIdeal(Vector<String>& ideal) const
     {
-        if (!m_ideal.isEmpty())
+        if (m_ideal.isEmpty())
             return false;
 
         ideal = m_ideal;
