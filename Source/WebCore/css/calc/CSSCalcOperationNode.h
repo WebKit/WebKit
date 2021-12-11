@@ -73,7 +73,7 @@ public:
     
     bool canCombineAllChildren() const;
 
-    bool allowsNegativePercentageReference() { return m_allowsNegativePercentageReference; }
+    bool allowsNegativePercentageReference() const { return m_allowsNegativePercentageReference; }
     void setAllowsNegativePercentageReference() { m_allowsNegativePercentageReference = true; }
 
     bool isIdentity() const { return m_children.size() == 1 && (m_operator == CalcOperator::Min || m_operator == CalcOperator::Max || m_operator == CalcOperator::Add || m_operator == CalcOperator::Multiply); }
