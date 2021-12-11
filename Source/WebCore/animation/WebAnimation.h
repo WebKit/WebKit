@@ -26,6 +26,8 @@
 #pragma once
 
 #include "ActiveDOMObject.h"
+#include "AnimationFrameRate.h"
+#include "AnimationFrameRatePreset.h"
 #include "EventTarget.h"
 #include "ExceptionOr.h"
 #include "IDLTypes.h"
@@ -120,6 +122,10 @@ public:
     virtual ExceptionOr<void> bindingsPlay() { return play(); }
     virtual ExceptionOr<void> bindingsPause() { return pause(); }
 
+    virtual std::variant<FramesPerSecond, AnimationFrameRatePreset> bindingsFrameRate() const { return m_bindingsFrameRate; }
+    virtual void setBindingsFrameRate(std::variant<FramesPerSecond, AnimationFrameRatePreset>&&);
+    std::optional<FramesPerSecond> frameRate() const { return m_effectiveFrameRate; }
+
     bool needsTick() const;
     virtual void tick();
     WEBCORE_EXPORT Seconds timeToNextTick() const;
@@ -187,6 +193,7 @@ private:
     void invalidateEffect();
     double effectivePlaybackRate() const;
     void applyPendingPlaybackRate();
+    void setEffectiveFrameRate(std::optional<FramesPerSecond>);
 
     RefPtr<AnimationEffect> m_effect;
     RefPtr<AnimationTimeline> m_timeline;
@@ -197,6 +204,8 @@ private:
     Markable<Seconds, Seconds::MarkableTraits> m_holdTime;
     MarkableDouble m_pendingPlaybackRate;
     double m_playbackRate { 1 };
+    std::variant<FramesPerSecond, AnimationFrameRatePreset> m_bindingsFrameRate { AnimationFrameRatePreset::Auto };
+    std::optional<FramesPerSecond> m_effectiveFrameRate;
     String m_id;
 
     int m_suspendCount { 0 };

@@ -1,0 +1,4 @@
+
+PASS Valid animation.frameRate values
+PASS Invalid animation.frameRate values
+

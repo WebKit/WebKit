@@ -690,6 +690,7 @@ set(WebCore_NON_SVG_IDL_FILES
     animation/Animatable.idl
     animation/AnimationEffect.idl
     animation/AnimationFrameProvider.idl
+    animation/AnimationFrameRatePreset.idl
     animation/AnimationPlaybackEvent.idl
     animation/AnimationPlaybackEventInit.idl
     animation/AnimationTimeline.idl

@@ -702,6 +702,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/animation/Animatable.idl \
     $(WebCore)/animation/AnimationEffect.idl \
     $(WebCore)/animation/AnimationFrameProvider.idl \
+    $(WebCore)/animation/AnimationFrameRatePreset.idl \
     $(WebCore)/animation/AnimationPlaybackEvent.idl \
     $(WebCore)/animation/AnimationPlaybackEventInit.idl \
     $(WebCore)/animation/AnimationTimeline.idl \

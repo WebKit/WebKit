@@ -2852,6 +2852,7 @@ JSAnalyserNode.cpp
 JSAnalyserOptions.cpp
 JSAnimationEffect.cpp
 JSAnimationEvent.cpp
+JSAnimationFrameRatePreset.cpp
 JSAnimationPlaybackEvent.cpp
 JSAnimationPlaybackEventInit.cpp
 JSAnimationTimeline.cpp

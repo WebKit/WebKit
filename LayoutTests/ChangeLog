@@ -1,3 +1,17 @@
+2021-12-11  Antoine Quint  <graouts@webkit.org>
+
+        Expose a frameRate property to Web Animations
+        https://bugs.webkit.org/show_bug.cgi?id=234174
+        rdar://86338983
+
+        Reviewed by Dean Jackson.
+
+        Add a new test checking whether valid values are accepted and invalid values
+        rejected without effect.
+
+        * webanimations/frame-rate/animation-frame-rate-expected.txt: Added.
+        * webanimations/frame-rate/animation-frame-rate.html: Added.
+
 2021-12-11  Jer Noble  <jer.noble@apple.com>
 
         Add an experimental trackConfiguration accessor on AudioTrack & VideoTrack.

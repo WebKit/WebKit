@@ -385,6 +385,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     accessibility/isolatedtree/AXIsolatedObject.h
     accessibility/isolatedtree/AXIsolatedTree.h
 
+    animation/AnimationFrameRatePreset.h
     animation/CSSPropertyBlendingClient.h
     animation/CustomAnimationOptions.h
     animation/CompositeOperation.h
