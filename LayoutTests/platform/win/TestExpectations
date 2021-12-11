@@ -4762,3 +4762,6 @@ webkit.org/b/232321 imported/mozilla/svg/viewBox-and-pattern-03.svg [ Pass Crash
 webkit.org/b/232703 webanimations/no-style-updates-for-animated-sibling-elements-accelerated.html [ Failure ]
 
 webkit.org/b/233887 webanimations/custom-effect [ Failure ]
+
+# OT-SVG is not implemented on Windows.
+fast/text/otsvg-canvas.html [ ImageOnlyFailure ]
