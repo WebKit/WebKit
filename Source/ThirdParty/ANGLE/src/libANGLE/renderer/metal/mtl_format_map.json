@@ -700,7 +700,7 @@
                 "filterable": "true"
             }
         },
-        "caps_ios": {
+        "caps_ios_platform": {
             "MTLPixelFormatR8Unorm_sRGB":{
                 "filterable": "display->supportsAppleGPUFamily(1)",
                 "writable": "display->supportsAppleGPUFamily(2)",
@@ -886,7 +886,10 @@
             },
             "MTLPixelFormatASTC_12x12_sRGB":{
                 "filterable": "display->supportsAppleGPUFamily(2)"
-            },
+            }
+        },
+        "caps_ios_spcific" :
+        {
             "MTLPixelFormatASTC_4x4_HDR":{
                 "filterable": "display->supportsAppleGPUFamily(6)"
             },
