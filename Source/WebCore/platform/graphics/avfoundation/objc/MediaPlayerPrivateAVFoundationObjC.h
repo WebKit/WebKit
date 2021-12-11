@@ -53,6 +53,7 @@ OBJC_CLASS WebCoreAVFPullDelegate;
 typedef struct CGImage *CGImageRef;
 typedef struct __CVBuffer *CVPixelBufferRef;
 typedef NSString *AVMediaCharacteristic;
+typedef double NSTimeInterval;
 
 namespace WebCore {
 
@@ -101,7 +102,7 @@ public:
     void playbackBufferFullWillChange();
     void playbackBufferFullDidChange(bool);
     void loadedTimeRangesDidChange(RetainPtr<NSArray>&&);
-    void seekableTimeRangesDidChange(RetainPtr<NSArray>&&);
+    void seekableTimeRangesDidChange(RetainPtr<NSArray>&&, NSTimeInterval, NSTimeInterval);
     void tracksDidChange(const RetainPtr<NSArray>&);
     void hasEnabledAudioDidChange(bool);
     void presentationSizeDidChange(FloatSize);
@@ -461,6 +462,8 @@ private:
     RetainPtr<id> m_videoFrameMetadataGatheringObserver;
     bool m_isGatheringVideoFrameMetadata { false };
     std::optional<VideoFrameMetadata> m_videoFrameMetadata;
+    mutable std::optional<NSTimeInterval> m_cachedSeekableTimeRangesLastModifiedTime;
+    mutable std::optional<NSTimeInterval> m_cachedLiveUpdateInterval;
 };
 
 }
