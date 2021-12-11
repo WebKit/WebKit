@@ -839,6 +839,7 @@ void VM::clearException()
 
 void VM::setException(Exception* exception)
 {
+    ASSERT(!exception || !isTerminationException(exception) || terminationInProgress());
     m_exception = exception;
     m_lastException = exception;
     if (exception)
@@ -847,8 +848,11 @@ void VM::setException(Exception* exception)
 
 void VM::throwTerminationException()
 {
+    ASSERT(terminationInProgress());
     ASSERT(!m_traps.isDeferringTermination());
     setException(terminationException());
+    if (m_executionForbiddenOnTermination)
+        setExecutionForbidden();
 }
 
 Exception* VM::throwException(JSGlobalObject* globalObject, Exception* exceptionToThrow)

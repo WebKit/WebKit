@@ -77,6 +77,7 @@ WorkerOrWorkletScriptController::WorkerOrWorkletScriptController(WorkerThreadTyp
         {
             JSLockHolder lock(m_vm.get());
             m_vm->ensureTerminationException();
+            m_vm->forbidExecutionOnTermination();
         }
 
         JSVMClientData::initNormalWorld(m_vm.get(), type);

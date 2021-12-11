@@ -294,6 +294,13 @@ public:
     bool executionForbidden() const { return m_executionForbidden; }
     void setExecutionForbidden() { m_executionForbidden = true; }
 
+    // Setting this means that the VM can never recover from a TerminationException.
+    // Currently, we'll only set this for worker threads. Ideally, we want this
+    // to always be true. However, we're only limiting it to workers for now until
+    // we can be sure that clients using the JSC watchdog (which uses termination)
+    // isn't broken by this change.
+    void forbidExecutionOnTermination() { m_executionForbiddenOnTermination = true; }
+
     JS_EXPORT_PRIVATE Exception* ensureTerminationException();
     Exception* terminationException() const
     {
@@ -1113,6 +1120,7 @@ private:
 
     bool m_terminationInProgress { false };
     bool m_executionForbidden { false };
+    bool m_executionForbiddenOnTermination { false };
 
     Lock m_loopHintExecutionCountLock;
     HashMap<const Instruction*, std::pair<unsigned, std::unique_ptr<uintptr_t>>> m_loopHintExecutionCounts;

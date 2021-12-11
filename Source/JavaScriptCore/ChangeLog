@@ -1,3 +1,46 @@
+2021-12-11  Mark Lam  <mark.lam@apple.com>
+
+        Automatically forbid JS execution when we throw a TerminationException.
+        https://bugs.webkit.org/show_bug.cgi?id=234188
+
+        Reviewed by Yusuke Suzuki.
+
+        For Worker threads, we throw a TerminationException when Worker.terminate() is
+        called.  Once the TerminationException is thrown, we expect to completely unwind
+        out of any JS frames on the stack, and we also expect the client to never call
+        into JS again.  Previously, WebCore will call VM:setExecutionForbidden() to flag
+        that we should not re-enter the VM anymore.  On JSC side, this executionForbidden()
+        is used to prevent micro-tasks from firing.  On WebCore side, it is used to prevent
+        many things from running, including firing events.
+
+        Previously, we reply on WebCore side to catch the TerminationException, determine
+        that it is the TerminationException, and then call VM:setExecutionForbidden().
+        This is tedious and error prone as there may be places in WebCore that should call
+        VM:setExecutionForbidden() but is missed.  This has been the source of some bugs
+        with the handling of the Worker termination in the past.
+
+        In this patch, we change VM to setExecutionForbidden() immediately when we throw
+        the TerminationException, but only if VM::m_executionForbiddenOnTermination is set.
+        Currently, we'll only set VM:m_executionForbiddenOnTermination for Workers because
+        for legacy reasons, other clients of JSC has the ability to re-enter the VM after
+        a TerminationException unwinds out (which is ok to do when used under some
+        controlled conditions).  Until we can determine that it is safe to adopt this
+        "execution forbidden on termination" behavior universally, we'll adopt it only for
+        workers.
+
+        In a subsequent patch, we can also look into removing all the places in WebCore
+        that checks for TerminationException in order to call VM:setExecutionForbidden().
+        We'll leave those in place for now though they should be redundant after this patch.
+
+        Also add some ASSERTs to document invariants regarding states used in the handing
+        of TerminationException.
+
+        * runtime/VM.cpp:
+        (JSC::VM::setException):
+        (JSC::VM::throwTerminationException):
+        * runtime/VM.h:
+        (JSC::VM::forbidExecutionOnTermination):
+
 2021-12-10  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Wasm catch thunk should be JIT code to use ExceptionHandlerPtrTag
