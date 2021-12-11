@@ -213,7 +213,7 @@ RegisterSet RegisterSet::llintBaselineCalleeSaveRegisters()
     result.set(GPRInfo::regCS5);
     result.set(GPRInfo::regCS6);
 #endif
-#elif CPU(ARM_THUMB2)
+#elif CPU(ARM_THUMB2) || CPU(MIPS)
     result.set(GPRInfo::regCS0);
     result.set(GPRInfo::regCS1);
 #elif CPU(ARM64) || CPU(RISCV64)
@@ -223,9 +223,6 @@ RegisterSet RegisterSet::llintBaselineCalleeSaveRegisters()
     static_assert(GPRInfo::regCS9 == GPRInfo::notCellMaskRegister, "");
     result.set(GPRInfo::regCS8);
     result.set(GPRInfo::regCS9);
-#elif CPU(MIPS)
-    result.set(GPRInfo::regCS0);
-    result.set(GPRInfo::regCS1);
 #else
     UNREACHABLE_FOR_PLATFORM();
 #endif
@@ -253,7 +250,7 @@ RegisterSet RegisterSet::dfgCalleeSaveRegisters()
     result.set(GPRInfo::regCS5);
     result.set(GPRInfo::regCS6);
 #endif
-#elif CPU(ARM_THUMB2)
+#elif CPU(ARM_THUMB2) || CPU(MIPS)
     result.set(GPRInfo::regCS0);
     result.set(GPRInfo::regCS1);
 #elif CPU(ARM64)
@@ -261,7 +258,6 @@ RegisterSet RegisterSet::dfgCalleeSaveRegisters()
     static_assert(GPRInfo::regCS9 == GPRInfo::notCellMaskRegister, "");
     result.set(GPRInfo::regCS8);
     result.set(GPRInfo::regCS9);
-#elif CPU(MIPS)
 #else
     UNREACHABLE_FOR_PLATFORM();
 #endif

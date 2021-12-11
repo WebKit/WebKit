@@ -1,3 +1,19 @@
+2021-12-10  Mikhail R. Gadelha  <mikhail@igalia.com>
+
+        [JSC][32bit] Add callee save registers for MIPS
+        https://bugs.webkit.org/show_bug.cgi?id=233766
+
+        Reviewed by Mark Lam.
+
+        This patch enables callee save registers for mips, which fixes an
+        assertion violation from the call frame shufflers in some tests if
+        jsc was built with assertions enabled (either debug or release+assert
+        mode).
+
+        * jit/RegisterSet.cpp:
+        (JSC::RegisterSet::llintBaselineCalleeSaveRegisters):
+        (JSC::RegisterSet::dfgCalleeSaveRegisters):
+
 2021-12-10  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] isTaggedJSCCodePtrImpl does not have proper implementation for JITCage & JITCode combination
