@@ -54,6 +54,7 @@ public:
     int index() const;
 
     AVMediaSelectionOption *avMediaSelectionOption() const { return m_mediaSelectionOption.get(); }
+    AVAssetTrack *assetTrack() const;
 
 private:
     friend class MediaSelectionGroupAVFObjC;

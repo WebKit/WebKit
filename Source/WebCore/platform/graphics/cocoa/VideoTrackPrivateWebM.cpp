@@ -86,6 +86,65 @@ int VideoTrackPrivateWebM::trackIndex() const
     return 0;
 }
 
+String VideoTrackPrivateWebM::codec() const
+{
+    if (!m_track.codec_id.is_present())
+        return emptyString();
+
+    StringView codecID { m_track.codec_id.value().data(), (unsigned)m_track.codec_id.value().length() };
+
+    // TODO: Specific codec parameters are parsed out of the sample header; they aren't typically contained in the WebM Track element.
+    if (codecID == "V_VP9")
+        return "vp09";
+
+    if (codecID == "V_VP8")
+        return "vp08";
+
+    return emptyString();
+}
+
+uint32_t VideoTrackPrivateWebM::width() const
+{
+    if (!m_track.video.is_present())
+        return 0;
+
+    auto& video = m_track.video.value();
+    if (video.display_width.is_present())
+        return video.display_width.value();
+
+    if (video.pixel_width.is_present())
+        return video.pixel_width.value();
+
+    return 0;
+}
+
+uint32_t VideoTrackPrivateWebM::height() const
+{
+    if (!m_track.video.is_present())
+        return 0;
+
+    auto& video = m_track.video.value();
+    if (video.display_height.is_present())
+        return video.display_height.value();
+
+    if (video.pixel_height.is_present())
+        return video.pixel_height.value();
+
+    return 0;
+}
+
+double VideoTrackPrivateWebM::framerate() const
+{
+    if (!m_track.video.is_present())
+        return 0;
+
+    auto& video = m_track.video.value();
+    if (video.frame_rate.is_present())
+        return video.frame_rate.value();
+
+    return 0;
+}
+
 }
 
 #endif // ENABLE(MEDIA_SOURCE)

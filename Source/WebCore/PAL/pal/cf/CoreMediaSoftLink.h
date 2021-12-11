@@ -56,6 +56,8 @@ SOFT_LINK_FUNCTION_FOR_HEADER(PAL, CoreMedia, CMBlockBufferReplaceDataBytes, OSS
 #define CMBlockBufferReplaceDataBytes softLink_CoreMedia_CMBlockBufferReplaceDataBytes
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, CoreMedia, CMFormatDescriptionGetExtensions, CFDictionaryRef, (CMFormatDescriptionRef desc), (desc))
 #define CMFormatDescriptionGetExtensions softLink_CoreMedia_CMFormatDescriptionGetExtensions
+SOFT_LINK_FUNCTION_FOR_HEADER(PAL, CoreMedia, CMFormatDescriptionGetExtension, CFPropertyListRef, (CMFormatDescriptionRef desc, CFStringRef extensionKey), (desc, extensionKey))
+#define CMFormatDescriptionGetExtension softLink_CoreMedia_CMFormatDescriptionGetExtension
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, CoreMedia, CMSampleBufferGetTypeID, CFTypeID, (void), ())
 #define CMSampleBufferGetTypeID softLink_CoreMedia_CMSampleBufferGetTypeID
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, CoreMedia, CMSampleBufferGetDataBuffer, CMBlockBufferRef, (CMSampleBufferRef sbuf), (sbuf))
@@ -111,6 +113,7 @@ SOFT_LINK_CONSTANT_FOR_HEADER(PAL, CoreMedia, kCMTimeIndefinite, CMTime)
 
 SOFT_LINK_CONSTANT_FOR_HEADER(PAL, CoreMedia, kCMFormatDescriptionExtension_SampleDescriptionExtensionAtoms, CFStringRef)
 #define kCMFormatDescriptionExtension_SampleDescriptionExtensionAtoms get_CoreMedia_kCMFormatDescriptionExtension_SampleDescriptionExtensionAtoms()
+SOFT_LINK_CONSTANT_FOR_HEADER(PAL, CoreMedia, kCMFormatDescriptionExtension_ColorPrimaries, CFStringRef)
 SOFT_LINK_CONSTANT_FOR_HEADER(PAL, CoreMedia, kCMFormatDescriptionColorPrimaries_DCI_P3, CFStringRef)
 #define kCMFormatDescriptionColorPrimaries_DCI_P3 get_CoreMedia_kCMFormatDescriptionColorPrimaries_DCI_P3()
 SOFT_LINK_CONSTANT_FOR_HEADER(PAL, CoreMedia, kCMFormatDescriptionColorPrimaries_ITU_R_2020, CFStringRef)
@@ -131,6 +134,15 @@ SOFT_LINK_CONSTANT_FOR_HEADER(PAL, CoreMedia, kCMFormatDescriptionTransferFuncti
 #define kCMFormatDescriptionTransferFunction_SMPTE_ST_428_1 get_CoreMedia_kCMFormatDescriptionTransferFunction_SMPTE_ST_428_1()
 SOFT_LINK_CONSTANT_FOR_HEADER(PAL, CoreMedia, kCMFormatDescriptionYCbCrMatrix_ITU_R_2020, CFStringRef)
 #define kCMFormatDescriptionYCbCrMatrix_ITU_R_2020 get_CoreMedia_kCMFormatDescriptionYCbCrMatrix_ITU_R_2020()
+SOFT_LINK_CONSTANT_FOR_HEADER(PAL, CoreMedia, kCMFormatDescriptionColorPrimaries_ITU_R_709_2, CFStringRef)
+SOFT_LINK_CONSTANT_FOR_HEADER(PAL, CoreMedia, kCMFormatDescriptionColorPrimaries_EBU_3213, CFStringRef)
+SOFT_LINK_CONSTANT_FOR_HEADER(PAL, CoreMedia, kCMFormatDescriptionColorPrimaries_SMPTE_C, CFStringRef)
+SOFT_LINK_CONSTANT_FOR_HEADER(PAL, CoreMedia, kCMFormatDescriptionExtension_TransferFunction, CFStringRef)
+SOFT_LINK_CONSTANT_FOR_HEADER(PAL, CoreMedia, kCMFormatDescriptionTransferFunction_ITU_R_709_2, CFStringRef)
+SOFT_LINK_CONSTANT_FOR_HEADER(PAL, CoreMedia, kCMFormatDescriptionExtension_YCbCrMatrix, CFStringRef)
+SOFT_LINK_CONSTANT_FOR_HEADER(PAL, CoreMedia, kCVImageBufferYCbCrMatrix_ITU_R_709_2, CFStringRef)
+SOFT_LINK_CONSTANT_FOR_HEADER(PAL, CoreMedia, kCVImageBufferYCbCrMatrix_ITU_R_601_4, CFStringRef)
+SOFT_LINK_CONSTANT_FOR_HEADER(PAL, CoreMedia, kCMFormatDescriptionYCbCrMatrix_SMPTE_240M_1995, CFStringRef)
 
 SOFT_LINK_CONSTANT_FOR_HEADER(PAL, CoreMedia, kCMTextMarkupAlignmentType_End, CFStringRef)
 #define kCMTextMarkupAlignmentType_End get_CoreMedia_kCMTextMarkupAlignmentType_End()

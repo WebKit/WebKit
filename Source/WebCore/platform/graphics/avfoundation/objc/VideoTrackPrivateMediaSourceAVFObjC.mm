@@ -50,6 +50,12 @@ void VideoTrackPrivateMediaSourceAVFObjC::resetPropertiesFromTrack()
     setId(m_impl->id());
     setLabel(m_impl->label());
     setLanguage(m_impl->language());
+    setCodec(m_impl->codec());
+    setWidth(m_impl->width());
+    setHeight(m_impl->height());
+    setColorSpace(m_impl->colorSpace());
+    setFramerate(m_impl->framerate());
+    setBitrate(m_impl->bitrate());
 }
 
 void VideoTrackPrivateMediaSourceAVFObjC::setAssetTrack(AVAssetTrack *track)

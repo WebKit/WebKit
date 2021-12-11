@@ -46,6 +46,15 @@ struct TrackPrivateRemoteConfiguration {
     bool selected;
     WebCore::VideoTrackPrivate::Kind videoKind { WebCore::VideoTrackPrivate::Kind::None };
 
+    String codec;
+    uint32_t width;
+    uint32_t height;
+    WebCore::PlatformVideoColorSpace colorSpace;
+    double framerate;
+    uint64_t bitrate;
+    uint32_t sampleRate;
+    uint32_t numberOfChannels;
+
     template<class Encoder>
     void encode(Encoder& encoder) const
     {
@@ -58,6 +67,14 @@ struct TrackPrivateRemoteConfiguration {
         encoder << audioKind;
         encoder << selected;
         encoder << videoKind;
+        encoder << codec;
+        encoder << width;
+        encoder << height;
+        encoder << colorSpace;
+        encoder << framerate;
+        encoder << bitrate;
+        encoder << sampleRate;
+        encoder << numberOfChannels;
     }
 
     template <class Decoder>
@@ -108,6 +125,46 @@ struct TrackPrivateRemoteConfiguration {
         if (!videoKind)
             return std::nullopt;
 
+        std::optional<String> codec;
+        decoder >> codec;
+        if (!codec)
+            return std::nullopt;
+
+        std::optional<uint32_t> width;
+        decoder >> width;
+        if (!width)
+            return std::nullopt;
+
+        std::optional<uint32_t> height;
+        decoder >> height;
+        if (!height)
+            return std::nullopt;
+
+        std::optional<WebCore::PlatformVideoColorSpace> colorSpace;
+        decoder >> colorSpace;
+        if (!colorSpace)
+            return std::nullopt;
+
+        std::optional<double> framerate;
+        decoder >> framerate;
+        if (!framerate)
+            return std::nullopt;
+
+        std::optional<uint64_t> bitrate;
+        decoder >> bitrate;
+        if (!bitrate)
+            return std::nullopt;
+        
+        std::optional<uint32_t> sampleRate;
+        decoder >> sampleRate;
+        if (!sampleRate)
+            return std::nullopt;
+
+        std::optional<uint32_t> numberOfChannels;
+        decoder >> numberOfChannels;
+        if (!numberOfChannels)
+            return std::nullopt;
+
         return {{
             WTFMove(*trackId),
             WTFMove(*label),
@@ -118,6 +175,14 @@ struct TrackPrivateRemoteConfiguration {
             *audioKind,
             *selected,
             *videoKind,
+            WTFMove(*codec),
+            *width,
+            *height,
+            WTFMove(*colorSpace),
+            *framerate,
+            *bitrate,
+            *sampleRate,
+            *numberOfChannels,
         }};
     }
 };

@@ -29,6 +29,7 @@
 #if ENABLE(VIDEO)
 
 #include "AudioTrackPrivate.h"
+#include "PlatformVideoColorSpace.h"
 #include "VideoTrackPrivate.h"
 #include <wtf/Ref.h>
 #include <wtf/RetainPtr.h>
@@ -38,6 +39,8 @@ OBJC_CLASS AVPlayerItem;
 OBJC_CLASS AVPlayerItemTrack;
 OBJC_CLASS AVMediaSelectionGroup;
 OBJC_CLASS AVMediaSelectionOption;
+
+typedef const struct opaqueCMFormatDescription* CMFormatDescriptionRef;
 
 namespace WebCore {
 
@@ -68,6 +71,14 @@ public:
 
     int trackID() const;
 
+    String codec() const;
+    uint32_t width() const;
+    uint32_t height() const;
+    PlatformVideoColorSpace colorSpace() const;
+    double framerate() const;
+    uint64_t bitrate() const;
+    uint32_t sampleRate() const;
+    uint32_t numberOfChannels() const;
     static String languageForAVAssetTrack(AVAssetTrack*);
     static String languageForAVMediaSelectionOption(AVMediaSelectionOption *);
 

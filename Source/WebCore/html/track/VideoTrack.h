@@ -37,6 +37,7 @@ namespace WebCore {
 class MediaDescription;
 class VideoTrack;
 class VideoTrackClient;
+class VideoTrackConfiguration;
 class VideoTrackList;
 class VideoTrackPrivate;
 
@@ -68,6 +69,8 @@ public:
 
     const MediaDescription& description() const;
 
+    VideoTrackConfiguration& configuration() const { return m_configuration; }
+
     void setPrivate(VideoTrackPrivate&);
 #if !RELEASE_LOG_DISABLED
     void setLogger(const Logger&, const void*) final;
@@ -80,6 +83,7 @@ private:
 
     // VideoTrackPrivateClient
     void selectedChanged(bool) final;
+    void configurationChanged() final { updateConfigurationFromPrivate(); }
 
     // TrackPrivateBaseClient
     void idChanged(const AtomString&) final;
@@ -90,6 +94,7 @@ private:
     bool enabled() const final { return selected(); }
 
     void updateKindFromPrivate();
+    void updateConfigurationFromPrivate();
 
 #if !RELEASE_LOG_DISABLED
     const char* logClassName() const final { return "VideoTrack"; }
@@ -98,6 +103,7 @@ private:
     WeakPtr<VideoTrackList> m_videoTrackList;
     WeakHashSet<VideoTrackClient> m_clients;
     Ref<VideoTrackPrivate> m_private;
+    Ref<VideoTrackConfiguration> m_configuration;
     bool m_selected { false };
 };
 

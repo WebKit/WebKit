@@ -47,6 +47,7 @@ protected:
     void setLanguage(const AtomString& language) { m_language = language; }
     void setTrackIndex(int index) { m_index = index; }
 
+
     Kind m_kind { None };
     AtomString m_id;
     AtomString m_label;

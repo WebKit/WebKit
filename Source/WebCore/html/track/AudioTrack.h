@@ -35,6 +35,7 @@
 namespace WebCore {
 
 class AudioTrackClient;
+class AudioTrackConfiguration;
 class AudioTrackList;
 
 class AudioTrack final : public MediaTrackBase, private AudioTrackPrivateClient {
@@ -65,6 +66,8 @@ public:
 
     void setLanguage(const AtomString&) final;
 
+    AudioTrackConfiguration& configuration() const { return m_configuration; }
+
 #if !RELEASE_LOG_DISABLED
     void setLogger(const Logger&, const void*) final;
 #endif
@@ -84,6 +87,7 @@ private:
     void willRemove() final;
 
     void updateKindFromPrivate();
+    void updateConfigurationFromPrivate();
 
 #if !RELEASE_LOG_DISABLED
     const char* logClassName() const final { return "AudioTrack"; }
@@ -93,6 +97,8 @@ private:
     WeakHashSet<AudioTrackClient> m_clients;
     Ref<AudioTrackPrivate> m_private;
     bool m_enabled { false };
+    
+    Ref<AudioTrackConfiguration> m_configuration;
 };
 
 } // namespace WebCore

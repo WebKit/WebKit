@@ -1,3 +1,14 @@
+2021-12-11  Jer Noble  <jer.noble@apple.com>
+
+        Add an experimental trackConfiguration accessor on AudioTrack & VideoTrack.
+        https://bugs.webkit.org/show_bug.cgi?id=230841
+
+        Reviewed by Eric Carlson.
+
+        * pal/cf/CoreMediaSoftLink.cpp:
+        * pal/cf/CoreMediaSoftLink.h:
+        * pal/spi/cocoa/AVFoundationSPI.h:
+
 2021-12-10  Eric Carlson  <eric.carlson@apple.com>
 
         [macOS] Add new screen and window capture backend

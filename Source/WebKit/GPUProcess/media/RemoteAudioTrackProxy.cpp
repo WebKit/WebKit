@@ -54,19 +54,27 @@ RemoteAudioTrackProxy::~RemoteAudioTrackProxy()
     m_trackPrivate->clearClient();
 }
 
-TrackPrivateRemoteConfiguration& RemoteAudioTrackProxy::configuration()
+TrackPrivateRemoteConfiguration RemoteAudioTrackProxy::configuration()
 {
-    static NeverDestroyed<TrackPrivateRemoteConfiguration> configuration;
-
-    configuration->trackId = m_trackPrivate->id();
-    configuration->label = m_trackPrivate->label();
-    configuration->language = m_trackPrivate->language();
-    configuration->trackIndex = m_trackPrivate->trackIndex();
-    configuration->startTimeVariance = m_trackPrivate->startTimeVariance();
-    configuration->enabled = m_trackPrivate->enabled();
-    configuration->audioKind = m_trackPrivate->kind();
-
-    return configuration.get();
+    return {
+        m_trackPrivate->id(),
+        m_trackPrivate->label(),
+        m_trackPrivate->language(),
+        m_trackPrivate->startTimeVariance(),
+        m_trackPrivate->trackIndex(),
+        m_trackPrivate->enabled(),
+        m_trackPrivate->kind(),
+        false,
+        WebCore::VideoTrackPrivate::Kind::None,
+        m_trackPrivate->codec(),
+        0,
+        0,
+        { },
+        0,
+        m_trackPrivate->bitrate(),
+        m_trackPrivate->sampleRate(),
+        m_trackPrivate->numberOfChannels(),
+    };
 }
 
 void RemoteAudioTrackProxy::configurationChanged()

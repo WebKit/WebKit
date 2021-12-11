@@ -180,13 +180,21 @@ enum AutoplayPolicy {
     double right;
 };
 
+enum HEVCParameterCodec {
+    "hev1",
+    "hvc1"
+};
+
 [
     ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
     JSGenerateToJSObject,
 ] dictionary HEVCParameterSet {
+    HEVCParameterCodec codec;
     unsigned short generalProfileSpace;
     unsigned short generalProfileIDC;
     unsigned long generalProfileCompatibilityFlags;
+    octet generalTierFlag;
+    required FrozenArray<octet> generalConstraintIndicatorFlags;
     unsigned short generalLevelIDC;
 };
 
@@ -995,7 +1003,9 @@ enum AutoplayPolicy {
     boolean capsLockIsOn();
 
     HEVCParameterSet? parseHEVCCodecParameters(DOMString codecParameters);
+    DOMString createHEVCCodecParametersString(HEVCParameterSet parameters);
     DoViParameterSet? parseDoViCodecParameters(DOMString codecParameters);
+    DOMString createDoViCodecParametersString(DoViParameterSet parameters);
     VPCodecConfigurationRecord? parseVPCodecParameters(DOMString codecParameters);
 
     sequence<CookieData> getCookies();

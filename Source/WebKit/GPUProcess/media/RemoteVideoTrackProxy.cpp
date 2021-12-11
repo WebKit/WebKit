@@ -54,22 +54,26 @@ RemoteVideoTrackProxy::~RemoteVideoTrackProxy()
     m_trackPrivate->clearClient();
 }
 
-TrackPrivateRemoteConfiguration& RemoteVideoTrackProxy::configuration()
+TrackPrivateRemoteConfiguration RemoteVideoTrackProxy::configuration()
 {
-    static NeverDestroyed<TrackPrivateRemoteConfiguration> configuration;
-
-    configuration->trackId = m_trackPrivate->id();
-    configuration->label = m_trackPrivate->label();
-    configuration->language = m_trackPrivate->language();
-    configuration->trackIndex = m_trackPrivate->trackIndex();
-    configuration->startTimeVariance = m_trackPrivate->startTimeVariance();
-    configuration->selected = m_trackPrivate->selected();
-    configuration->videoKind = m_trackPrivate->kind();
-
-    return configuration.get();
+    TrackPrivateRemoteConfiguration configuration { };
+    configuration.trackId = m_trackPrivate->id();
+    configuration.label = m_trackPrivate->label();
+    configuration.language = m_trackPrivate->language();
+    configuration.trackIndex = m_trackPrivate->trackIndex();
+    configuration.startTimeVariance = m_trackPrivate->startTimeVariance();
+    configuration.selected = m_trackPrivate->selected();
+    configuration.videoKind = m_trackPrivate->kind();
+    configuration.codec = m_trackPrivate->codec();
+    configuration.width = m_trackPrivate->width();
+    configuration.height = m_trackPrivate->height();
+    configuration.colorSpace = m_trackPrivate->colorSpace();
+    configuration.framerate = m_trackPrivate->framerate();
+    configuration.bitrate = m_trackPrivate->bitrate();
+    return configuration;
 }
 
-void RemoteVideoTrackProxy::configurationChanged()
+void RemoteVideoTrackProxy::updateConfiguration()
 {
     if (!m_connectionToWebProcess)
         return;
@@ -87,22 +91,22 @@ void RemoteVideoTrackProxy::selectedChanged(bool selected)
     if (m_selected == selected)
         return;
     m_selected = selected;
-    configurationChanged();
+    updateConfiguration();
 }
 
 void RemoteVideoTrackProxy::idChanged(const AtomString&)
 {
-    configurationChanged();
+    updateConfiguration();
 }
 
 void RemoteVideoTrackProxy::labelChanged(const AtomString&)
 {
-    configurationChanged();
+    updateConfiguration();
 }
 
 void RemoteVideoTrackProxy::languageChanged(const AtomString&)
 {
-    configurationChanged();
+    updateConfiguration();
 }
 
 } // namespace WebKit
