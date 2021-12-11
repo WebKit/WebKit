@@ -50,7 +50,7 @@ public:
 private:
     CSSFontPaletteValuesRule(StyleRuleFontPaletteValues&, CSSStyleSheet* parent);
 
-    CSSRule::Type type() const final { return FONT_PALETTE_VALUES_RULE; }
+    StyleRuleType styleRuleType() const final { return StyleRuleType::FontPaletteValues; }
     String cssText() const final;
     void reattach(StyleRuleBase&) final;
 
@@ -59,4 +59,4 @@ private:
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_CSS_RULE(CSSFontPaletteValuesRule, CSSRule::FONT_PALETTE_VALUES_RULE)
+SPECIALIZE_TYPE_TRAITS_CSS_RULE(CSSFontPaletteValuesRule, StyleRuleType::FontPaletteValues)

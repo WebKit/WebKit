@@ -69,36 +69,37 @@ DEFINE_VISIT_ADDITIONAL_CHILDREN(JSCSSRule);
 
 JSValue toJSNewlyCreated(JSGlobalObject*, JSDOMGlobalObject* globalObject, Ref<CSSRule>&& rule)
 {
-    switch (rule->type()) {
-    case CSSRule::STYLE_RULE:
+    switch (rule->styleRuleType()) {
+    case StyleRuleType::Style:
         return createWrapper<CSSStyleRule>(globalObject, WTFMove(rule));
-    case CSSRule::MEDIA_RULE:
+    case StyleRuleType::Media:
         return createWrapper<CSSMediaRule>(globalObject, WTFMove(rule));
-    case CSSRule::FONT_FACE_RULE:
+    case StyleRuleType::FontFace:
         return createWrapper<CSSFontFaceRule>(globalObject, WTFMove(rule));
-    case CSSRule::FONT_PALETTE_VALUES_RULE:
+    case StyleRuleType::FontPaletteValues:
         return createWrapper<CSSFontPaletteValuesRule>(globalObject, WTFMove(rule));
-    case CSSRule::PAGE_RULE:
+    case StyleRuleType::Page:
         return createWrapper<CSSPageRule>(globalObject, WTFMove(rule));
-    case CSSRule::IMPORT_RULE:
+    case StyleRuleType::Import:
         return createWrapper<CSSImportRule>(globalObject, WTFMove(rule));
-    case CSSRule::NAMESPACE_RULE:
+    case StyleRuleType::Namespace:
         return createWrapper<CSSNamespaceRule>(globalObject, WTFMove(rule));
-    case CSSRule::KEYFRAME_RULE:
+    case StyleRuleType::Keyframe:
         return createWrapper<CSSKeyframeRule>(globalObject, WTFMove(rule));
-    case CSSRule::KEYFRAMES_RULE:
+    case StyleRuleType::Keyframes:
         return createWrapper<CSSKeyframesRule>(globalObject, WTFMove(rule));
-    case CSSRule::SUPPORTS_RULE:
+    case StyleRuleType::Supports:
         return createWrapper<CSSSupportsRule>(globalObject, WTFMove(rule));
-    case CSSRule::COUNTER_STYLE_RULE:
+    case StyleRuleType::CounterStyle:
         return createWrapper<CSSCounterStyleRule>(globalObject, WTFMove(rule));
-    case CSSRule::LAYER_BLOCK_RULE:
+    case StyleRuleType::LayerBlock:
         return createWrapper<CSSLayerBlockRule>(globalObject, WTFMove(rule));
-    case CSSRule::LAYER_STATEMENT_RULE:
+    case StyleRuleType::LayerStatement:
         return createWrapper<CSSLayerStatementRule>(globalObject, WTFMove(rule));
-    case CSSRule::UNKNOWN_RULE:
-    case CSSRule::CHARSET_RULE:
-    case CSSRule::MARGIN_RULE:
+    case StyleRuleType::Container:
+    case StyleRuleType::Unknown:
+    case StyleRuleType::Charset:
+    case StyleRuleType::Margin:
         return createWrapper<CSSRule>(globalObject, WTFMove(rule));
     }
 }

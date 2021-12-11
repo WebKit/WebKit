@@ -455,32 +455,11 @@ static bool traverseRulesInVector(const Vector<RefPtr<StyleRuleBase>>& rules, co
     for (auto& rule : rules) {
         if (handler(*rule))
             return true;
-        switch (rule->type()) {
-        case StyleRuleType::Media:
-        case StyleRuleType::Supports:
-        case StyleRuleType::LayerBlock:
-        case StyleRuleType::Container: {
-            auto* childRules = downcast<StyleRuleGroup>(*rule).childRulesWithoutDeferredParsing();
-            if (childRules && traverseRulesInVector(*childRules, handler))
-                return true;
-            break;
-        }
-        case StyleRuleType::Import:
-            ASSERT_NOT_REACHED();
-            break;
-        case StyleRuleType::Style:
-        case StyleRuleType::FontFace:
-        case StyleRuleType::FontPaletteValues:
-        case StyleRuleType::Page:
-        case StyleRuleType::Keyframes:
-        case StyleRuleType::Namespace:
-        case StyleRuleType::Unknown:
-        case StyleRuleType::Charset:
-        case StyleRuleType::CounterStyle:
-        case StyleRuleType::Keyframe:
-        case StyleRuleType::LayerStatement:
-            break;
-        }
+        if (!rule->isGroupRule())
+            continue;
+        auto* childRules = downcast<StyleRuleGroup>(*rule).childRulesWithoutDeferredParsing();
+        if (childRules && traverseRulesInVector(*childRules, handler))
+            return true;
     }
     return false;
 }
@@ -525,6 +504,7 @@ bool StyleSheetContents::traverseSubresources(const Function<bool(const CachedRe
         case StyleRuleType::LayerStatement:
         case StyleRuleType::Container:
         case StyleRuleType::FontPaletteValues:
+        case StyleRuleType::Margin:
             return false;
         };
         ASSERT_NOT_REACHED();

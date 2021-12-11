@@ -43,7 +43,7 @@ public:
 private:
     CSSNamespaceRule(StyleRuleNamespace&, CSSStyleSheet*);
 
-    CSSRule::Type type() const final { return NAMESPACE_RULE; }
+    StyleRuleType styleRuleType() const final { return StyleRuleType::Namespace; }
     String cssText() const final;
     void reattach(StyleRuleBase&) final;
 
@@ -52,4 +52,4 @@ private:
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_CSS_RULE(CSSNamespaceRule, CSSRule::NAMESPACE_RULE)
+SPECIALIZE_TYPE_TRAITS_CSS_RULE(CSSNamespaceRule, StyleRuleType::Namespace)

@@ -82,7 +82,7 @@ public:
 
     String cssText() const final;
     void reattach(StyleRuleBase&) final;
-    CSSRule::Type type() const final { return COUNTER_STYLE_RULE; }
+    StyleRuleType styleRuleType() const final { return StyleRuleType::CounterStyle; }
 
     String name() const { return m_counterStyleRule->name(); }
     String system() const { return m_counterStyleRule->system(); }
@@ -118,7 +118,7 @@ private:
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_CSS_RULE(CSSCounterStyleRule, CSSRule::COUNTER_STYLE_RULE)
+SPECIALIZE_TYPE_TRAITS_CSS_RULE(CSSCounterStyleRule, StyleRuleType::CounterStyle)
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::StyleRuleCounterStyle)
 static bool isType(const WebCore::StyleRuleBase& rule) { return rule.isCounterStyleRule(); }

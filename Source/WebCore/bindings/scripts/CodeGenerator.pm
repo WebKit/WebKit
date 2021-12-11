@@ -1422,13 +1422,14 @@ sub GenerateCompileTimeCheckForEnumsIfNeeded
 
     return () if $interface->extendedAttributes->{"DoNotCheckConstants"} || !@{$interface->constants};
 
-    my $baseScope = $interface->extendedAttributes->{"ConstantsScope"} || $interface->type->name;
+    my $enum = $interface->extendedAttributes->{"ConstantsEnum"};
+    my $baseScope = $enum || $interface->extendedAttributes->{"ConstantsScope"} || $interface->type->name;
 
     my @checks = ();
     foreach my $constant (@{$interface->constants}) {
         my $scope = $constant->extendedAttributes->{"ImplementedBy"} || $baseScope;
         my $name = $constant->extendedAttributes->{"ImplementedAs"} || $constant->name;
-        my $value = $constant->value;
+        my $value = $enum ? "static_cast<" . $enum . ">(" . $constant->value . ")" : $constant->value;
         my $conditional = $constant->extendedAttributes->{"Conditional"};
         push(@checks, "#if " . $generator->GenerateConditionalStringFromAttributeValue($conditional) . "\n") if $conditional;
         push(@checks, "static_assert(${scope}::${name} == ${value}, \"${name} in ${scope} does not match value from IDL\");\n");

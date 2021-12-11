@@ -107,6 +107,7 @@ void StyleRuleBase::destroy()
     case StyleRuleType::Container:
         delete downcast<StyleRuleContainer>(this);
         return;
+    case StyleRuleType::Margin:
     case StyleRuleType::Unknown:
         ASSERT_NOT_REACHED();
         return;
@@ -145,6 +146,7 @@ Ref<StyleRuleBase> StyleRuleBase::copy() const
     case StyleRuleType::Unknown:
     case StyleRuleType::Charset:
     case StyleRuleType::Keyframe:
+    case StyleRuleType::Margin:
         break;
     }
     CRASH();
@@ -197,6 +199,7 @@ Ref<CSSRule> StyleRuleBase::createCSSOMWrapper(CSSStyleSheet* parentSheet, CSSRu
     case StyleRuleType::Unknown:
     case StyleRuleType::Charset:
     case StyleRuleType::Keyframe:
+    case StyleRuleType::Margin:
         ASSERT_NOT_REACHED();
         break;
     }

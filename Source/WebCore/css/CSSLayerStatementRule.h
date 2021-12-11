@@ -43,7 +43,7 @@ public:
 
 private:
     CSSLayerStatementRule(StyleRuleLayer&, CSSStyleSheet*);
-    CSSRule::Type type() const final { return LAYER_STATEMENT_RULE; }
+    StyleRuleType styleRuleType() const final { return StyleRuleType::LayerStatement; }
     void reattach(StyleRuleBase&) final;
 
     Ref<StyleRuleLayer> m_layerRule;
@@ -51,4 +51,4 @@ private:
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_CSS_RULE(CSSLayerStatementRule, CSSRule::LAYER_STATEMENT_RULE)
+SPECIALIZE_TYPE_TRAITS_CSS_RULE(CSSLayerStatementRule, StyleRuleType::LayerStatement)

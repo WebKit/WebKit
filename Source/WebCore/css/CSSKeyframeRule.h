@@ -80,7 +80,7 @@ public:
 private:
     CSSKeyframeRule(StyleRuleKeyframe&, CSSKeyframesRule* parent);
 
-    CSSRule::Type type() const final { return KEYFRAME_RULE; }
+    StyleRuleType styleRuleType() const final { return StyleRuleType::Keyframe; }
 
     Ref<StyleRuleKeyframe> m_keyframe;
     mutable RefPtr<StyleRuleCSSStyleDeclaration> m_propertiesCSSOMWrapper;

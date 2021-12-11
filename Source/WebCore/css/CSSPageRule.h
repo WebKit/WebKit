@@ -44,7 +44,7 @@ public:
 private:
     CSSPageRule(StyleRulePage&, CSSStyleSheet*);
 
-    CSSRule::Type type() const final { return PAGE_RULE; }
+    StyleRuleType styleRuleType() const final { return StyleRuleType::Page; }
     String cssText() const final;
     void reattach(StyleRuleBase&) final;
 

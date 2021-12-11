@@ -43,7 +43,7 @@ public:
 private:
     CSSImportRule(StyleRuleImport&, CSSStyleSheet*);
 
-    CSSRule::Type type() const final { return IMPORT_RULE; }
+    StyleRuleType styleRuleType() const final { return StyleRuleType::Import; }
     String cssText() const final;
     void reattach(StyleRuleBase&) final;
 
@@ -54,4 +54,4 @@ private:
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_CSS_RULE(CSSImportRule, CSSRule::IMPORT_RULE)
+SPECIALIZE_TYPE_TRAITS_CSS_RULE(CSSImportRule, StyleRuleType::Import)

@@ -43,11 +43,11 @@ public:
 
 private:
     CSSLayerBlockRule(StyleRuleLayer&, CSSStyleSheet*);
-    CSSRule::Type type() const final { return LAYER_BLOCK_RULE; }
+    StyleRuleType styleRuleType() const final { return StyleRuleType::LayerBlock; }
 };
 
 String stringFromCascadeLayerName(const CascadeLayerName&);
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_CSS_RULE(CSSLayerBlockRule, CSSRule::LAYER_BLOCK_RULE)
+SPECIALIZE_TYPE_TRAITS_CSS_RULE(CSSLayerBlockRule, StyleRuleType::LayerBlock)

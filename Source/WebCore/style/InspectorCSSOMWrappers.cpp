@@ -59,20 +59,20 @@ void InspectorCSSOMWrappers::collect(ListType* listType)
     unsigned size = listType->length();
     for (unsigned i = 0; i < size; ++i) {
         CSSRule* cssRule = listType->item(i);
-        switch (cssRule->type()) {
-        case CSSRule::IMPORT_RULE:
+        switch (cssRule->styleRuleType()) {
+        case StyleRuleType::Import:
             collect(downcast<CSSImportRule>(*cssRule).styleSheet());
             break;
-        case CSSRule::LAYER_BLOCK_RULE:
+        case StyleRuleType::LayerBlock:
             collect(downcast<CSSLayerBlockRule>(cssRule));
             break;
-        case CSSRule::MEDIA_RULE:
+        case StyleRuleType::Media:
             collect(downcast<CSSMediaRule>(cssRule));
             break;
-        case CSSRule::SUPPORTS_RULE:
+        case StyleRuleType::Supports:
             collect(downcast<CSSSupportsRule>(cssRule));
             break;
-        case CSSRule::STYLE_RULE:
+        case StyleRuleType::Style:
             m_styleRuleToCSSOMWrapperMap.add(&downcast<CSSStyleRule>(*cssRule).styleRule(), downcast<CSSStyleRule>(cssRule));
             break;
         default:

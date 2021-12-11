@@ -1,3 +1,15 @@
+2021-12-11  Antti Koivisto  <antti@apple.com>
+
+        Remove redundant StyleRule::Type enum
+        https://bugs.webkit.org/show_bug.cgi?id=234156
+
+        Reviewed by Alan Bujtas.
+
+        * DOM/DOMCSS.mm:
+        (kitClass):
+        * DOM/DOMCSSRule.mm:
+        (-[DOMCSSRule type]):
+
 2021-12-10  Michael Saboff  <msaboff@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=234173

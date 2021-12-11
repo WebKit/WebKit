@@ -23,6 +23,7 @@
 #pragma once
 
 #include "ExceptionOr.h"
+#include "StyleRuleType.h"
 #include <wtf/TypeCasts.h>
 
 namespace WebCore {
@@ -36,32 +37,9 @@ class CSSRule : public RefCounted<CSSRule> {
 public:
     virtual ~CSSRule() = default;
 
-    // FIXME: Remove pointless duplication by replacing with StyleRuleType.
-    enum Type {
-        UNKNOWN_RULE = 0,
-        STYLE_RULE = 1,
-        CHARSET_RULE = 2,
-        IMPORT_RULE = 3,
-        MEDIA_RULE = 4,
-        FONT_FACE_RULE = 5,
-        PAGE_RULE = 6,
-        KEYFRAMES_RULE = 7,
-        KEYFRAME_RULE = 8,
-        MARGIN_RULE = 9,
-        NAMESPACE_RULE = 10,
-        COUNTER_STYLE_RULE = 11,
-        SUPPORTS_RULE = 12,
-        LAYER_BLOCK_RULE = 16,
-        LAYER_STATEMENT_RULE = 17,
-        FONT_PALETTE_VALUES_RULE = 19,
-    };
+    unsigned short type() const { return static_cast<unsigned short>(styleRuleType()); }
 
-    enum DeprecatedType {
-        WEBKIT_KEYFRAMES_RULE = KEYFRAMES_RULE,
-        WEBKIT_KEYFRAME_RULE = KEYFRAME_RULE
-    };
-
-    virtual Type type() const = 0;
+    virtual StyleRuleType styleRuleType() const = 0;
     virtual String cssText() const = 0;
     virtual void reattach(StyleRuleBase&) = 0;
 
@@ -119,5 +97,5 @@ inline CSSStyleSheet* CSSRule::parentStyleSheet() const
 
 #define SPECIALIZE_TYPE_TRAITS_CSS_RULE(ToValueTypeName, predicate) \
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::ToValueTypeName) \
-    static bool isType(const WebCore::CSSRule& rule) { return rule.type() == WebCore::predicate; } \
+    static bool isType(const WebCore::CSSRule& rule) { return rule.styleRuleType() == WebCore::predicate; } \
 SPECIALIZE_TYPE_TRAITS_END()

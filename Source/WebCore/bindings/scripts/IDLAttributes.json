@@ -89,6 +89,10 @@
             "contextsAllowed": ["interface"],
             "values": ["*"]
         },
+        "ConstantsEnum": {
+            "contextsAllowed": ["interface"],
+            "values": ["*"]
+        },
         "ContextAllowsMediaDevices": {
             "contextsAllowed": ["attribute"]
         },

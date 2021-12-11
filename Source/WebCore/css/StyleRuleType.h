@@ -28,15 +28,16 @@
 namespace WebCore {
 
 enum class StyleRuleType : uint8_t {
-    Unknown = 0, // Not used.
+    Unknown = 0,
     Style = 1,
-    Charset = 2, // Not used. These are internally strings owned by the style sheet.
+    Charset = 2,
     Import = 3,
     Media = 4,
     FontFace = 5,
     Page = 6,
     Keyframes = 7,
-    Keyframe = 8, // Not used. These are internally non-rule StyleRuleKeyframe objects.
+    Keyframe = 8,
+    Margin = 9,
     Namespace = 10,
     CounterStyle = 11,
     Supports = 12,
