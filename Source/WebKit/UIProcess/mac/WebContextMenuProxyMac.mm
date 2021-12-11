@@ -28,6 +28,7 @@
 
 #if PLATFORM(MAC)
 
+#import "APIAttachment.h"
 #import "APIContextMenuClient.h"
 #import "MenuUtilities.h"
 #import "PageClientImplMac.h"
@@ -243,6 +244,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     imageRect = [m_webView convertRect:imageRect toView:nil];
     imageRect = [[m_webView window] convertRectToScreen:imageRect];
     [[WKSharingServicePickerDelegate sharedSharingServicePickerDelegate] setSourceFrame:imageRect];
+    [[WKSharingServicePickerDelegate sharedSharingServicePickerDelegate] setAttachmentID:m_context.controlledImageAttachmentID()];
 
     m_menu = adoptNS([[picker menu] copy]);
 

@@ -1347,9 +1347,9 @@ bool WebChromeClient::hasRelevantSelectionServices(bool isTextOnly) const
     return (isTextOnly && WebProcess::singleton().hasSelectionServices()) || WebProcess::singleton().hasRichContentServices();
 }
 
-void WebChromeClient::handleImageServiceClick(const IntPoint& point, Image& image, bool isEditable, const IntRect& imageRect)
+void WebChromeClient::handleImageServiceClick(const IntPoint& point, Image& image, bool isEditable, const IntRect& imageRect, const String& attachmentID)
 {
-    m_page.handleImageServiceClick(point, image, isEditable, imageRect);
+    m_page.handleImageServiceClick(point, image, isEditable, imageRect, attachmentID);
 }
 
 #endif

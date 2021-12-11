@@ -39,6 +39,7 @@ class WebContextMenuProxyMac;
     BOOL _filterEditingServices;
     BOOL _handleEditingReplacement;
     NSRect _sourceFrame;
+    String _attachmentID;
 }
 
 + (WKSharingServicePickerDelegate *)sharedSharingServicePickerDelegate;
@@ -48,6 +49,7 @@ class WebContextMenuProxyMac;
 - (void)setFiltersEditingServices:(BOOL)filtersEditingServices;
 - (void)setHandlesEditingReplacement:(BOOL)handlesEditingReplacement;
 - (void)setSourceFrame:(NSRect)sourceFrame;
+- (void)setAttachmentID:(String)attachmentID;
 
 @end
 

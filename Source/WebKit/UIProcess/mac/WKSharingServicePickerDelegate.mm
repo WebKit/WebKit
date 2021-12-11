@@ -28,9 +28,12 @@
 
 #if ENABLE(SERVICE_CONTROLS)
 
+#import "APIAttachment.h"
 #import "DataReference.h"
+#import "WKObject.h"
 #import "WebContextMenuProxyMac.h"
 #import "WebPageProxy.h"
+#import "_WKAttachmentInternal.h"
 #import <WebCore/LegacyNSPasteboardTypes.h>
 #import <pal/spi/mac/NSSharingServicePickerSPI.h>
 #import <pal/spi/mac/NSSharingServiceSPI.h>
@@ -75,6 +78,11 @@
     _sourceFrame = sourceFrame;
 }
 
+- (void)setAttachmentID:(String)attachmentID
+{
+    _attachmentID = attachmentID;
+}
+
 - (NSArray *)sharingServicePicker:(NSSharingServicePicker *)sharingServicePicker sharingServicesForItems:(NSArray *)items mask:(NSSharingServiceMask)mask proposedSharingServices:(NSArray *)proposedServices
 {
     if (!_filterEditingServices)
@@ -108,7 +116,7 @@
 - (void)sharingService:(NSSharingService *)sharingService didShareItems:(NSArray *)items
 {
     // We only care about what item was shared if we were interested in editor services
-    // (i.e., if we plan on replacing the selection with the returned item)
+    // (i.e., if we plan on replacing the selection or controlled image with the returned item)
     if (!_handleEditingReplacement)
         return;
 
@@ -136,6 +144,20 @@
 
         dataReference = IPC::DataReference(static_cast<const uint8_t*>([data bytes]), [data length]);
         types.append(NSPasteboardTypeTIFF);
+    } else if ([item isKindOfClass:[NSItemProvider class]]) {
+        NSItemProvider *itemProvider = (NSItemProvider *)item;
+        
+        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+        [itemProvider loadDataRepresentationForTypeIdentifier:(NSString *)kUTTypeData completionHandler:^(NSData *data, NSError *error) {
+            if (error)
+                return;
+            
+            auto apiAttachment = _menuProxy->page()->attachmentForIdentifier(_attachmentID);
+            auto attachment = wrapper(apiAttachment);
+            [attachment setData:data newContentType:String(NSPasteboardTypeTIFF)];
+        }];
+        ALLOW_DEPRECATED_DECLARATIONS_END
+        return;
     } else {
         LOG_ERROR("sharingService:didShareItems: - Unknown item type returned\n");
         return;

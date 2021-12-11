@@ -150,6 +150,12 @@ static const NSInteger InvalidAttachmentErrorCode = 2;
     });
 }
 
+- (void)setData:(NSData *)data newContentType:(NSString *)newContentType
+{
+    auto fileWrapper = adoptNS([[NSFileWrapper alloc] initRegularFileWithContents:data]);
+    [self setFileWrapper:fileWrapper.get() contentType:newContentType completion:nil];
+}
+
 - (void)setData:(NSData *)data newContentType:(NSString *)newContentType newFilename:(NSString *)newFilename completion:(void(^)(NSError *))completionHandler
 {
     auto fileWrapper = adoptNS([[NSFileWrapper alloc] initRegularFileWithContents:data]);

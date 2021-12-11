@@ -1,3 +1,40 @@
+2021-12-10  Megan Gardner  <megan_gardner@apple.com>
+
+        Image does not update after Markup Pane is dismissed.
+        https://bugs.webkit.org/show_bug.cgi?id=234162
+
+        Reviewed by Devin Rousso.
+
+        Once the item is retured from the Sharing Service, we need to pipe the information
+        back to the attachement element so that it can be properly updated.
+        This includes holding onto the attachment ID of the controlled image so that it 
+        can later be found and updated.
+
+        * Shared/ContextMenuContextData.cpp:
+        (WebKit::ContextMenuContextData::ContextMenuContextData):
+        (WebKit::ContextMenuContextData::encode const):
+        (WebKit::ContextMenuContextData::decode):
+        * Shared/ContextMenuContextData.h:
+        (WebKit::ContextMenuContextData::controlledImageAttachmentID const):
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+        (-[WKWebViewConfiguration init]):
+        * UIProcess/API/Cocoa/_WKAttachment.h:
+        * UIProcess/API/Cocoa/_WKAttachment.mm:
+        (-[_WKAttachment setData:newContentType:]):
+        * UIProcess/API/Cocoa/_WKAttachmentInternal.h:
+        * UIProcess/mac/WKSharingServicePickerDelegate.h:
+        * UIProcess/mac/WKSharingServicePickerDelegate.mm:
+        (-[WKSharingServicePickerDelegate setAttachmentID:]):
+        (-[WKSharingServicePickerDelegate sharingService:didShareItems:]):
+        * UIProcess/mac/WebContextMenuProxyMac.mm:
+        (WebKit::WebContextMenuProxyMac::setupServicesMenu):
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::handleImageServiceClick):
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::handleImageServiceClick):
+
 2021-12-10  Aditya Keerthi  <akeerthi@apple.com>
 
         [iOS] Support find-in-page keyboard shortcuts

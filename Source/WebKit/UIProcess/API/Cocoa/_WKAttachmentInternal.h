@@ -38,4 +38,6 @@ template<> struct WrapperTraits<API::Attachment> {
 @package
     API::ObjectStorage<API::Attachment> _attachment;
 }
+
+- (void)setData:(NSData *)data newContentType:(NSString *)newContentType;
 @end

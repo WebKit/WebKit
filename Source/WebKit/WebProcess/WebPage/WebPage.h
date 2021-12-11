@@ -1204,7 +1204,7 @@ public:
 #if ENABLE(SERVICE_CONTROLS) || ENABLE(TELEPHONE_NUMBER_DETECTION)
     void handleTelephoneNumberClick(const String& number, const WebCore::IntPoint&);
     void handleSelectionServiceClick(WebCore::FrameSelection&, const Vector<String>& telephoneNumbers, const WebCore::IntPoint&);
-    void handleImageServiceClick(const WebCore::IntPoint&, WebCore::Image&, bool isEditable, const WebCore::IntRect&);
+    void handleImageServiceClick(const WebCore::IntPoint&, WebCore::Image&, bool isEditable, const WebCore::IntRect&, const String& attachmentID);
 #endif
 
     void didChangeScrollOffsetForFrame(WebCore::Frame*);

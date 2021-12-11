@@ -743,6 +743,7 @@ void HTMLImageElement::setAttachmentElement(Ref<HTMLAttachmentElement>&& attachm
 
     attachment->setInlineStyleProperty(CSSPropertyDisplay, CSSValueNone, true);
     ensureUserAgentShadowRoot().appendChild(WTFMove(attachment));
+    setAttributeWithoutSynchronization(webkitimagemenuAttr, emptyString());
 }
 
 RefPtr<HTMLAttachmentElement> HTMLImageElement::attachmentElement() const

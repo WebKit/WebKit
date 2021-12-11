@@ -31,6 +31,7 @@
 #include "ContextMenuController.h"
 #include "ElementInlines.h"
 #include "EventHandler.h"
+#include "HTMLAttachmentElement.h"
 #include "HTMLButtonElement.h"
 #include "HTMLDivElement.h"
 #include "HTMLImageElement.h"
@@ -126,11 +127,13 @@ bool handleEvent(HTMLElement& element, Event& event)
     auto& node = downcast<Node>(*mouseEvent.target());
 
     if (ImageControlsMac::isImageControlsButtonElement(node)) {
-        auto imageElement = node.shadowHost();
-        if (!imageElement)
+        auto shadowHost = node.shadowHost();
+        if (!is<HTMLImageElement>(*shadowHost))
             return false;
-        if (auto* image = imageFromImageElementNode(*imageElement)) {
-            page->chrome().client().handleImageServiceClick(roundedIntPoint(mouseEvent.absoluteLocation()), *image, imageElement->isContentEditable(), imageElement->renderBox()->absoluteContentQuad().enclosingBoundingBox());
+        if (auto* image = imageFromImageElementNode(*shadowHost)) {
+            HTMLImageElement& imageElement = downcast<HTMLImageElement>(*shadowHost);
+            auto attachmentID = HTMLAttachmentElement::getAttachmentIdentifier(imageElement);
+            page->chrome().client().handleImageServiceClick(roundedIntPoint(mouseEvent.absoluteLocation()), *image, imageElement.isContentEditable(), imageElement.renderBox()->absoluteContentQuad().enclosingBoundingBox(), attachmentID);
             event.setDefaultHandled();
             return true;
         }
