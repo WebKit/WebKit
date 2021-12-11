@@ -81,6 +81,11 @@ MacroAssemblerCodeRef<ExceptionHandlerPtrTag> callToThrowThunk();
 MacroAssemblerCodeRef<ExceptionHandlerPtrTag> handleUncaughtExceptionThunk();
 MacroAssemblerCodeRef<ExceptionHandlerPtrTag> handleCatchThunk(OpcodeSize);
 
+#if ENABLE(WEBASSEMBLY)
+MacroAssemblerCodeRef<ExceptionHandlerPtrTag> handleWasmCatchThunk(OpcodeSize);
+MacroAssemblerCodeRef<ExceptionHandlerPtrTag> handleWasmCatchAllThunk(OpcodeSize);
+#endif
+
 #if ENABLE(JIT_CAGE)
 MacroAssemblerCodeRef<NativeToJITGatePtrTag> jitCagePtrThunk();
 #endif

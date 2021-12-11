@@ -108,6 +108,10 @@ MacroAssemblerCodeRef<ExceptionHandlerPtrTag> handleCatch(OpcodeSize size)
 #if ENABLE(WEBASSEMBLY)
 MacroAssemblerCodeRef<ExceptionHandlerPtrTag> handleWasmCatch(OpcodeSize size)
 {
+#if ENABLE(JIT)
+    if (Options::useJIT())
+        return handleWasmCatchThunk(size);
+#endif
     WasmOpcodeID opcode = Wasm::Context::useFastTLS() ? wasm_catch : wasm_catch_no_tls;
     switch (size) {
     case OpcodeSize::Narrow:
@@ -123,6 +127,10 @@ MacroAssemblerCodeRef<ExceptionHandlerPtrTag> handleWasmCatch(OpcodeSize size)
 
 MacroAssemblerCodeRef<ExceptionHandlerPtrTag> handleWasmCatchAll(OpcodeSize size)
 {
+#if ENABLE(JIT)
+    if (Options::useJIT())
+        return handleWasmCatchAllThunk(size);
+#endif
     WasmOpcodeID opcode = Wasm::Context::useFastTLS() ? wasm_catch_all : wasm_catch_all_no_tls;
     switch (size) {
     case OpcodeSize::Narrow:

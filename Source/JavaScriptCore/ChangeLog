@@ -1,3 +1,23 @@
+2021-12-10  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Wasm catch thunk should be JIT code to use ExceptionHandlerPtrTag
+        https://bugs.webkit.org/show_bug.cgi?id=234183
+
+        Reviewed by Tadeu Zagallo.
+
+        ExceptionHandlerPtrTag is only usable for JITCode. Thus, we should not tag wasm catch LLInt code with it.
+        This patch fixes it by using trampoline. This is the same to normal LLInt's handleCatchThunk.
+
+        * assembler/JITOperationList.cpp:
+        (JSC::JITOperationList::populatePointersInJavaScriptCoreForLLInt):
+        * llint/LLIntExceptions.cpp:
+        (JSC::LLInt::handleWasmCatch):
+        (JSC::LLInt::handleWasmCatchAll):
+        * llint/LLIntThunks.cpp:
+        (JSC::LLInt::handleWasmCatchThunk):
+        (JSC::LLInt::handleWasmCatchAllThunk):
+        * llint/LLIntThunks.h:
+
 2021-12-10  Michael Saboff  <msaboff@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=234173

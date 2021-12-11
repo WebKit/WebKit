@@ -298,6 +298,74 @@ MacroAssemblerCodeRef<ExceptionHandlerPtrTag> handleCatchThunk(OpcodeSize size)
     return { };
 }
 
+#if ENABLE(WEBASSEMBLY)
+MacroAssemblerCodeRef<ExceptionHandlerPtrTag> handleWasmCatchThunk(OpcodeSize size)
+{
+    WasmOpcodeID opcode = Wasm::Context::useFastTLS() ? wasm_catch : wasm_catch_no_tls;
+    switch (size) {
+    case OpcodeSize::Narrow: {
+        static LazyNeverDestroyed<MacroAssemblerCodeRef<ExceptionHandlerPtrTag>> codeRef;
+        static std::once_flag onceKey;
+        std::call_once(onceKey, [&] {
+            codeRef.construct(generateThunkWithJumpTo<ExceptionHandlerPtrTag>(LLInt::getCodeFunctionPtr<OperationPtrTag>(opcode), "wasm_catch"));
+        });
+        return codeRef;
+    }
+    case OpcodeSize::Wide16: {
+        static LazyNeverDestroyed<MacroAssemblerCodeRef<ExceptionHandlerPtrTag>> codeRef;
+        static std::once_flag onceKey;
+        std::call_once(onceKey, [&] {
+            codeRef.construct(generateThunkWithJumpTo<ExceptionHandlerPtrTag>(LLInt::getWide16CodeFunctionPtr<OperationPtrTag>(opcode), "wasm_catch16"));
+        });
+        return codeRef;
+    }
+    case OpcodeSize::Wide32: {
+        static LazyNeverDestroyed<MacroAssemblerCodeRef<ExceptionHandlerPtrTag>> codeRef;
+        static std::once_flag onceKey;
+        std::call_once(onceKey, [&] {
+            codeRef.construct(generateThunkWithJumpTo<ExceptionHandlerPtrTag>(LLInt::getWide32CodeFunctionPtr<OperationPtrTag>(opcode), "wasm_catch32"));
+        });
+        return codeRef;
+    }
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+    return { };
+}
+
+MacroAssemblerCodeRef<ExceptionHandlerPtrTag> handleWasmCatchAllThunk(OpcodeSize size)
+{
+    WasmOpcodeID opcode = Wasm::Context::useFastTLS() ? wasm_catch_all : wasm_catch_all_no_tls;
+    switch (size) {
+    case OpcodeSize::Narrow: {
+        static LazyNeverDestroyed<MacroAssemblerCodeRef<ExceptionHandlerPtrTag>> codeRef;
+        static std::once_flag onceKey;
+        std::call_once(onceKey, [&] {
+            codeRef.construct(generateThunkWithJumpTo<ExceptionHandlerPtrTag>(LLInt::getCodeFunctionPtr<OperationPtrTag>(opcode), "wasm_catch_all"));
+        });
+        return codeRef;
+    }
+    case OpcodeSize::Wide16: {
+        static LazyNeverDestroyed<MacroAssemblerCodeRef<ExceptionHandlerPtrTag>> codeRef;
+        static std::once_flag onceKey;
+        std::call_once(onceKey, [&] {
+            codeRef.construct(generateThunkWithJumpTo<ExceptionHandlerPtrTag>(LLInt::getWide16CodeFunctionPtr<OperationPtrTag>(opcode), "wasm_catch_all16"));
+        });
+        return codeRef;
+    }
+    case OpcodeSize::Wide32: {
+        static LazyNeverDestroyed<MacroAssemblerCodeRef<ExceptionHandlerPtrTag>> codeRef;
+        static std::once_flag onceKey;
+        std::call_once(onceKey, [&] {
+            codeRef.construct(generateThunkWithJumpTo<ExceptionHandlerPtrTag>(LLInt::getWide32CodeFunctionPtr<OperationPtrTag>(opcode), "wasm_catch_all32"));
+        });
+        return codeRef;
+    }
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+    return { };
+}
+#endif
+
 MacroAssemblerCodeRef<JSEntryPtrTag> genericReturnPointThunk(OpcodeSize size)
 {
     switch (size) {
