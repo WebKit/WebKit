@@ -1,3 +1,30 @@
+2021-12-10  Joonghun Park  <jh718.park@samsung.com>
+
+        Don't do simplification for percentage comparison resolution against negative reference values.
+        https://bugs.webkit.org/show_bug.cgi?id=233987
+
+        Reviewed by Darin Adler.
+
+        A percentage may be resolved against a negative value, which is allowed only in 'background-position' property.
+
+        Currently in CSSCalcExpressionNodeParser::parseCalc,
+        it creates CSSCalcExpressionNode tree result and does simplification for it.
+        But during it, e.g. min(50%, 10%) is simplified to min(10%) and max(50%, 10%) is simplified to max(50%),
+        which is the opposite result what should be done against negative basis.
+
+        With this patch, the percentage comparison resolution against nagative basis is done correctly.
+
+        The corresponding spec is step 4's note described below in
+        https://drafts.csswg.org/css-values-4/#simplify-a-calculation-tree.
+
+        'If a percentage is left at this point, it will usually block simplification of the node,
+        since it needs to be resolved against another value using information not currently available.
+        (Otherwise, it would have been converted to a different value in an earlier step.)
+        This includes operations such as "min", since percentages might resolve against a negative basis,
+        and thus end up with an opposite comparative relationship than the raw percentage value would seem to indicate.'
+
+        * TestExpectations:
+
 2021-12-10  Devin Rousso  <drousso@apple.com>
 
         WKWebView doesn’t respond to -copyFont: and -pasteFont:

@@ -390,10 +390,10 @@ void CSSCalcValue::dump(TextStream& ts) const
     ts << ")\n";
 }
 
-RefPtr<CSSCalcValue> CSSCalcValue::create(CSSValueID function, const CSSParserTokenRange& tokens, CalculationCategory destinationCategory, ValueRange range, const CSSCalcSymbolTable& symbolTable)
+RefPtr<CSSCalcValue> CSSCalcValue::create(CSSValueID function, const CSSParserTokenRange& tokens, CalculationCategory destinationCategory, ValueRange range, const CSSCalcSymbolTable& symbolTable, bool allowsNegativePercentage)
 {
     CSSCalcExpressionNodeParser parser(destinationCategory, symbolTable);
-    auto expression = parser.parseCalc(tokens, function);
+    auto expression = parser.parseCalc(tokens, function, allowsNegativePercentage);
     if (!expression)
         return nullptr;
     auto result = adoptRef(new CSSCalcValue(expression.releaseNonNull(), range != ValueRange::All));

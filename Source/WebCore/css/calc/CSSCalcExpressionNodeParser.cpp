@@ -61,8 +61,19 @@ static constexpr int maxExpressionDepth = 100;
 // <calc-sum> = <calc-product> [ [ '+' | '-' ] <calc-product> ]*
 // <calc-product> = <calc-value> [ [ '*' | '/' ] <calc-value> ]*
 // <calc-value> = <number> | <dimension> | <percentage> | ( <calc-sum> )
-RefPtr<CSSCalcExpressionNode> CSSCalcExpressionNodeParser::parseCalc(CSSParserTokenRange tokens, CSSValueID function)
+RefPtr<CSSCalcExpressionNode> CSSCalcExpressionNodeParser::parseCalc(CSSParserTokenRange tokens, CSSValueID function, bool allowsNegativePercentage)
 {
+    std::function<void(CSSCalcExpressionNode&)> setAllowsNegativePercentageReferenceIfNeeded = [&](CSSCalcExpressionNode& expression) {
+        if (is<CSSCalcOperationNode>(expression)) {
+            auto& operationNode = downcast<CSSCalcOperationNode>(expression);
+            if (operationNode.isMinOrMaxNode())
+                operationNode.setAllowsNegativePercentageReference();
+
+            for (auto& child : operationNode.children())
+                setAllowsNegativePercentageReferenceIfNeeded(child);
+        }
+    };
+
     tokens.consumeWhitespace();
 
     RefPtr<CSSCalcExpressionNode> result;
@@ -74,6 +85,9 @@ RefPtr<CSSCalcExpressionNode> CSSCalcExpressionNodeParser::parseCalc(CSSParserTo
         return nullptr;
 
     LOG_WITH_STREAM(Calc, stream << "CSSCalcExpressionNodeParser::parseCalc " << prettyPrintNode(*result));
+
+    if (allowsNegativePercentage)
+        setAllowsNegativePercentageReferenceIfNeeded(*result);
 
     result = CSSCalcOperationNode::simplify(result.releaseNonNull());
 

@@ -44,7 +44,7 @@ public:
     {
     }
 
-    RefPtr<CSSCalcExpressionNode> parseCalc(CSSParserTokenRange, CSSValueID function);
+    RefPtr<CSSCalcExpressionNode> parseCalc(CSSParserTokenRange, CSSValueID function, bool allowsNegativePercentage);
     
 private:
     char operatorValue(const CSSParserToken&);

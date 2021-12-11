@@ -828,6 +828,13 @@ void CSSCalcOperationNode::combineChildren()
 
     if ((isMinOrMaxNode() || isHypotNode()) && canCombineAllChildren()) {
         auto combinedUnitType = m_children[0]->primitiveType();
+        auto involvesPercentageComparisons = [&]() {
+            return combinedUnitType == CSSUnitType::CSS_PERCENTAGE && m_children.size() > 1;
+        };
+
+        if (isMinOrMaxNode() && allowsNegativePercentageReference() && involvesPercentageComparisons())
+            return;
+
         auto category = calculationCategoryForCombination(combinedUnitType);
         if (category != CalculationCategory::Other)
             combinedUnitType = canonicalUnitTypeForCalculationCategory(category);
