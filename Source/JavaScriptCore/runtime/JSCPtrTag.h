@@ -185,6 +185,9 @@ ALWAYS_INLINE static bool isTaggedJSCCodePtrImpl(PtrType ptr)
             RELEASE_ASSERT_NOT_REACHED();
 #endif
         }
+    } else {
+        if (Options::useJITCage())
+            return ptr == tagJSCCodePtrImpl<tag, calleeType, callerType>(removeCodePtrTag(ptr));
 #endif // ENABLE(JIT_CAGE)
     }
     return WTF::isTaggedNativeCodePtrImpl<tag>(ptr);

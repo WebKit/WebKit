@@ -1,3 +1,15 @@
+2021-12-10  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] isTaggedJSCCodePtrImpl does not have proper implementation for JITCage & JITCode combination
+        https://bugs.webkit.org/show_bug.cgi?id=234186
+
+        Reviewed by Mark Lam.
+
+        If JITCage is enabled and target code is JITCode, we should use tagJSCCodePtrImpl.
+
+        * runtime/JSCPtrTag.h:
+        (JSC::isTaggedJSCCodePtrImpl):
+
 2021-12-10  Don Olmstead  <don.olmstead@sony.com>
 
         Add FileSystem function to read a file at a path
