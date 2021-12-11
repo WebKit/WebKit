@@ -35,6 +35,7 @@
     [NewObject, CallWith=ScriptExecutionContext&GlobalObject] static AbortSignal abort(optional any reason);
     readonly attribute boolean aborted;
     readonly attribute any reason;
+    [CallWith=GlobalObject] undefined throwIfAborted();
 
     attribute EventHandler onabort;
 };

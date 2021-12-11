@@ -32,6 +32,7 @@
 #include "EventNames.h"
 #include "JSDOMException.h"
 #include "ScriptExecutionContext.h"
+#include <JavaScriptCore/Exception.h>
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -113,4 +114,14 @@ bool AbortSignal::whenSignalAborted(AbortSignal& signal, Ref<AbortAlgorithm>&& a
     return false;
 }
 
+void AbortSignal::throwIfAborted(JSC::JSGlobalObject& lexicalGlobalObject)
+{
+    if (!aborted())
+        return;
+
+    auto& vm = lexicalGlobalObject.vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    throwException(&lexicalGlobalObject, scope, m_reason);
 }
+
+} // namespace WebCore

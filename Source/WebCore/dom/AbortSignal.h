@@ -62,6 +62,8 @@ public:
 
     bool isFollowingSignal() const { return !!m_followingSignal; }
 
+    void throwIfAborted(JSC::JSGlobalObject&);
+
 private:
     enum class Aborted : bool { No, Yes };
     explicit AbortSignal(ScriptExecutionContext&, Aborted = Aborted::No, JSC::JSValue reason = JSC::jsUndefined());
