@@ -407,6 +407,11 @@ WI.TabBar = class TabBar extends WI.View
         return this._tabBarItems;
     }
 
+    get visibleTabBarItemsFromLeftToRight()
+    {
+         return this._tabBarItemsFromLeftToRight().filter((item) => !item.hidden);
+    }
+
     get tabCount()
     {
         return this._tabBarItems.filter((item) => item.representedObject instanceof WI.TabContentView).length;

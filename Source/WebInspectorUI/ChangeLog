@@ -1,3 +1,67 @@
+2021-12-10  BJ Burg  <bburg@apple.com>
+
+        Web Inspector: save and restore extension tab positions
+        https://bugs.webkit.org/show_bug.cgi?id=234115
+        <rdar://85560636>
+
+        Reviewed by Devin Rousso and Patrick Angle.
+
+        The existing tab state restoration system works by saving or loading tab positions
+        from persistent storage and saving or restoring each tab's state using one cookie per tab type.
+
+        With extension tabs, it is now possible to have more than one tab per tab type.
+        Additionally, extension tabs can be added at any time via InspectorFrontendAPI.
+        Given these challenges, we need a different system for saving and restoring extension tabs.
+
+        Extension tab restoration is now handled by WI.WebInspectorExtensionController.
+        We consider a tab to be an 'anchor' tab if it is saveable, visible, and not pinnable.
+        In other words, an anchor tab is one of the built-in singleton tabs like Console, Elements, etc.
+
+        When the tab bar item list is modified, for each extension tab, we save the observed
+        'anchor' tab's type and a distance from that anchor tab's insertion index.
+        Updates to extension tab positions are saved to persistent storage at most every 5 seconds.
+
+        When it is time to place an extension tab with createTabForExtension() or showExtensionTab(),
+        perform the reverse operation of computing an insertion index from a anchorTabType and distanceFromAnchorTab.
+
+        This patch was tested with one extension, multiple extensions, showing/hiding extension tabs,
+        remote inspecting a JSContext, and remote inspecting a WKWebView.
+
+        * UserInterface/Views/TabBar.js:
+        (WI.TabBar.prototype.get visibleTabBarItemsFromLeftToRight): Added.
+
+        * UserInterface/Controllers/WebInspectorExtensionController.js:
+        (WI.WebInspectorExtensionController):
+        (WI.WebInspectorExtensionController.get extensionTabPositionsObjectStoreKey): Added.
+
+        (WI.WebInspectorExtensionController.prototype.registerExtension):
+        (WI.WebInspectorExtensionController.prototype.unregisterExtension):
+        Add and remove WI.TabBar event listeners that notify us of changes to the tab bar.
+
+        (WI.WebInspectorExtensionController.prototype.createTabForExtension): Deleted.
+        (WI.WebInspectorExtensionController.prototype.async createTabForExtension): Renamed.
+        Load saved tab positions from persistent storage if needed. Compute the insertion index for the new tab.
+        This method is already expected to return a promise, so make it `async` to allow using `await`.
+
+        (WI.WebInspectorExtensionController.prototype.showExtensionTab):
+        Compute the insertion index for the new tab.
+
+        (WI.WebInspectorExtensionController.prototype.async _loadExtensionTabPositions):
+        Load saved tab positions from persistent storage, allowing for the case where nothing has been saved yet.
+
+        (WI.WebInspectorExtensionController.prototype.async _saveExtensionTabPositions):
+        Recompute and save tab positions for all extension tabs. Then write to persistent storage
+        at most every 5 seconds using a WI.Debouncer.
+
+        (WI.WebInspectorExtensionController.prototype._insertionIndexForExtensionTab): Added, wrapper method.
+        (WI.WebInspectorExtensionController.prototype._computeIndicesForExtensionTab):
+        Compute the anchorTabType, distanceFromAnchorTab, and insertionIndex for the extension tab.
+        If saving tab positions, pass `options.recomputePositions` to ignore saved positions
+        and recompute these fields based on what is currently visible in the tab bar.
+
+        * UserInterface/Views/WebInspectorExtensionTabContentView.js:
+        (WI.WebInspectorExtensionTabContentView.prototype.get savedTabPositionKey): Added.
+
 2021-12-10  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Add a swatch for justify-content, justify-items, and justify-self

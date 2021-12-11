@@ -73,6 +73,11 @@ WI.WebInspectorExtensionTabContentView = class WebInspectorExtensionTabContentVi
         return true;
     }
 
+    get savedTabPositionKey()
+    {
+        return `ExtensionTab-${this._extension.extensionBundleIdentifier}-${this._tabInfo.displayName}`;
+    }
+
     whenPageAvailable()
     {
         return this._whenPageAvailablePromise.promise;
