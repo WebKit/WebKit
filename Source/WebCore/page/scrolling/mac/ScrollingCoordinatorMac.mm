@@ -142,6 +142,11 @@ void ScrollingCoordinatorMac::didCompleteRenderingUpdate()
         scheduleRenderingUpdate();
 }
 
+void ScrollingCoordinatorMac::didCompletePlatformRenderingUpdate()
+{
+    downcast<ThreadedScrollingTree>(scrollingTree())->didCompletePlatformRenderingUpdate();
+}
+
 void ScrollingCoordinatorMac::hasNodeWithAnimatedScrollChanged(bool hasAnimatingNode)
 {
     // This is necessary to trigger a rendering update, after which the code in

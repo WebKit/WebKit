@@ -104,6 +104,9 @@ public:
     virtual void willStartRenderingUpdate() { }
     virtual void didCompleteRenderingUpdate() { }
 
+    virtual void willStartPlatformRenderingUpdate() { }
+    virtual void didCompletePlatformRenderingUpdate() { }
+
 #if ENABLE(KINETIC_SCROLLING)
     // Dispatched by the scrolling tree during handleWheelEvent. This is required as long as scrollbars are painted on the main thread.
     virtual void handleWheelEventPhase(ScrollingNodeID, PlatformWheelEventPhase) { }

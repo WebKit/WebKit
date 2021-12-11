@@ -1792,6 +1792,24 @@ void Page::renderingUpdateCompleted()
     }
 }
 
+void Page::willStartPlatformRenderingUpdate()
+{
+    // Inspector's use of "composite" is rather innacurate. On Apple platforms, the "composite" step happens
+    // in another process; these hooks wrap the non-WebKit CA commit time which is mostly painting-related.
+    m_inspectorController->willComposite(mainFrame());
+
+    if (m_scrollingCoordinator)
+        m_scrollingCoordinator->willStartPlatformRenderingUpdate();
+}
+
+void Page::didCompletePlatformRenderingUpdate()
+{
+    if (m_scrollingCoordinator)
+        m_scrollingCoordinator->didCompletePlatformRenderingUpdate();
+
+    m_inspectorController->didComposite(mainFrame());
+}
+
 void Page::prioritizeVisibleResources()
 {
     if (loadSchedulingMode() == LoadSchedulingMode::Direct)

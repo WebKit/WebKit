@@ -414,20 +414,15 @@ void TiledCoreAnimationDrawingArea::addCommitHandlers()
         return;
 
     [CATransaction addCommitHandler:[retainedPage = Ref { m_webPage }] {
-        if (Page* corePage = retainedPage->corePage()) {
-            if (Frame* coreFrame = retainedPage->mainFrame())
-                corePage->inspectorController().willComposite(*coreFrame);
-        }
+        retainedPage->willStartPlatformRenderingUpdate();
     } forPhase:kCATransactionPhasePreLayout];
 
     [CATransaction addCommitHandler:[retainedPage = Ref { m_webPage }] {
-        if (Page* corePage = retainedPage->corePage()) {
-            if (Frame* coreFrame = retainedPage->mainFrame())
-                corePage->inspectorController().didComposite(*coreFrame);
-        }
         if (auto drawingArea = static_cast<TiledCoreAnimationDrawingArea*>(retainedPage->drawingArea()))
             drawingArea->sendPendingNewlyReachedPaintingMilestones();
+
         retainedPage->setFirstFlushAfterCommit(false);
+        retainedPage->didCompletePlatformRenderingUpdate();
     } forPhase:kCATransactionPhasePostCommit];
     
     m_webPage.setFirstFlushAfterCommit(true);
