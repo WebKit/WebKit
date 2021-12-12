@@ -248,8 +248,6 @@ private:
 
     const DataSegmentVectorEntry* getSegmentForPosition(size_t positition) const;
 
-    static RefPtr<SharedBuffer> createFromReadingFile(const String& filePath);
-
     size_t m_size { 0 };
     mutable DataSegmentVector m_segments;
 

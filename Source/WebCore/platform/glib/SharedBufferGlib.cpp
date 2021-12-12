@@ -47,21 +47,4 @@ GRefPtr<GBytes> SharedBuffer::createGBytes() const
     return bytes;
 }
 
-RefPtr<SharedBuffer> SharedBuffer::createFromReadingFile(const String& filePath)
-{
-    if (filePath.isEmpty())
-        return nullptr;
-
-    CString filename = FileSystem::fileSystemRepresentation(filePath);
-    GUniqueOutPtr<gchar> contents;
-    gsize size;
-    GUniqueOutPtr<GError> error;
-    if (!g_file_get_contents(filename.data(), &contents.outPtr(), &size, &error.outPtr())) {
-        LOG_ERROR("Failed to fully read contents of file %s - %s", FileSystem::filenameForDisplay(filePath).utf8().data(), error->message);
-        return nullptr;
-    }
-
-    return SharedBuffer::create(contents.get(), size);
-}
-
 } // namespace WebCore

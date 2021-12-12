@@ -85,7 +85,12 @@ RefPtr<SharedBuffer> SharedBuffer::createWithContentsOfFile(const String& filePa
         if (mappingSuccess)
             return adoptRef(new SharedBuffer(WTFMove(mappedFileData)));
     }
-    return SharedBuffer::createFromReadingFile(filePath);
+
+    auto buffer = FileSystem::readEntireFile(filePath);
+    if (!buffer)
+        return nullptr;
+
+    return SharedBuffer::create(WTFMove(*buffer));
 }
 
 Ref<SharedBuffer> SharedBuffer::create(Vector<uint8_t>&& vector)

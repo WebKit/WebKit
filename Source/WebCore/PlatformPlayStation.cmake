@@ -58,8 +58,6 @@ list(APPEND WebCore_SOURCES
     platform/playstation/UserAgentPlayStation.cpp
     platform/playstation/WidgetPlayStation.cpp
 
-    platform/posix/SharedBufferPOSIX.cpp
-
     platform/text/Hyphenation.cpp
     platform/text/LocaleICU.cpp
 

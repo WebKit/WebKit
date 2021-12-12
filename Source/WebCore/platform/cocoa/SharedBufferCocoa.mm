@@ -112,13 +112,6 @@ RetainPtr<CFDataRef> SharedBuffer::createCFData() const
     return bridge_cast(m_segments[0].segment->createNSData());
 }
 
-RefPtr<SharedBuffer> SharedBuffer::createFromReadingFile(const String& filePath)
-{
-    if (auto resourceData = [NSData dataWithContentsOfFile:filePath])
-        return SharedBuffer::create(resourceData);
-    return nullptr;
-}
-
 RetainPtr<NSArray> SharedBuffer::createNSDataArray() const
 {
     return createNSArray(m_segments, [] (auto& segment) {
