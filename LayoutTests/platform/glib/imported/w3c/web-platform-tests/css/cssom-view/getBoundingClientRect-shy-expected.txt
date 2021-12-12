@@ -14,5 +14,5 @@ FAIL Range 0-8 should include only the first hyphen. assert_equals: expected 70 
 PASS Collapsed soft-hyphen should be 0 width.
 FAIL Rendered soft-hyphen should have a width. assert_equals: expected 10 but got 3
 PASS Collapsed soft-hyphen in a span should be 0 width.
-FAIL Rendered soft-hyphen in a span should have a width. assert_equals: expected 10 but got 0
+FAIL Rendered soft-hyphen in a span should have a width. assert_equals: expected 10 but got 3
 

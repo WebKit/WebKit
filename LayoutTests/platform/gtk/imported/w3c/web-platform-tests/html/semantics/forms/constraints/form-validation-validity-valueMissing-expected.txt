@@ -19,12 +19,12 @@ PASS [INPUT in PASSWORD status] The value is not empty and required is true
 PASS [INPUT in PASSWORD status] The value is empty and required is true
 PASS [INPUT in DATETIME-LOCAL status] The required attribute is not set
 PASS [INPUT in DATETIME-LOCAL status] Valid local date and time string(2000-12-10T12:00:00)
-FAIL [INPUT in DATETIME-LOCAL status] Valid local date and time string(2000-12-10 12:00) assert_false: The validity.valueMissing should be false. expected false got true
+PASS [INPUT in DATETIME-LOCAL status] Valid local date and time string(2000-12-10 12:00)
 PASS [INPUT in DATETIME-LOCAL status] Valid local date and time string(1979-10-14T12:00:00.001)
 PASS [INPUT in DATETIME-LOCAL status] The value attribute is a number(1234567)
 PASS [INPUT in DATETIME-LOCAL status] The value attribute is a Date object
 PASS [INPUT in DATETIME-LOCAL status] Invalid local date and time string(1979-10-99 99:99)
-FAIL [INPUT in DATETIME-LOCAL status] Valid local date and time string(1979-10-14 12:00:00) assert_false: The validity.valueMissing should be false. expected false got true
+PASS [INPUT in DATETIME-LOCAL status] Valid local date and time string(1979-10-14 12:00:00)
 PASS [INPUT in DATETIME-LOCAL status] Invalid local date and time string(2001-12-21  12:00)-two white space
 PASS [INPUT in DATETIME-LOCAL status] the value attribute is a string(abc)
 PASS [INPUT in DATETIME-LOCAL status] The value attribute is empty string
@@ -84,7 +84,7 @@ PASS [INPUT in CHECKBOX status] The checked attribute is true
 PASS [INPUT in CHECKBOX status] The checked attribute is false
 PASS [INPUT in RADIO status] The required attribute is not set
 PASS [INPUT in RADIO status] The checked attribute is true
-FAIL [INPUT in RADIO status] The checked attribute is false assert_true: The validity.valueMissing should be true. expected true got false
+PASS [INPUT in RADIO status] The checked attribute is false
 PASS [INPUT in RADIO status] The checked attribute is false and the name attribute is empty
 PASS [INPUT in FILE status] The required attribute is not set
 PASS [INPUT in FILE status] The Files attribute is null

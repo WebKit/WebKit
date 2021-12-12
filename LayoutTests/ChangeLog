@@ -1,3 +1,25 @@
+2021-12-12  Arcady Goldmints-Orlov  <agoldmints@igalia.com>
+
+        [GLIB] Update test expectations and baselines. Unreviewed test gardening.
+        https://bugs.webkit.org/show_bug.cgi?id=234209
+
+        * platform/glib/TestExpectations:
+        * platform/glib/imported/w3c/web-platform-tests/css/cssom-view/getBoundingClientRect-shy-expected.txt:
+        * platform/glib/svg/css/getComputedStyle-basic-expected.txt:
+        * platform/glib/webgl/1.0.3/conformance/glsl/misc/shaders-with-name-conflicts-expected.txt:
+        * platform/gtk/TestExpectations:
+        * platform/gtk/imported/w3c/web-platform-tests/css/cssom/getComputedStyle-detached-subtree-expected.txt:
+        * platform/gtk/imported/w3c/web-platform-tests/html/semantics/forms/constraints/form-validation-validity-valid-expected.txt:
+        * platform/gtk/imported/w3c/web-platform-tests/html/semantics/forms/constraints/form-validation-validity-valueMissing-expected.txt:
+        * platform/gtk/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/datetime-local-expected.txt:
+        * platform/gtk/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/time-2-expected.txt:
+        * platform/wpe/css2.1/t0805-c5518-brdr-t-01-e-expected.txt:
+        * platform/wpe/css2.1/t0805-c5519-brdr-r-01-e-expected.txt:
+        * platform/wpe/css2.1/t0805-c5520-brdr-b-01-e-expected.txt:
+        * platform/wpe/css2.1/t0805-c5521-brdr-l-01-e-expected.txt:
+        * platform/wpe/css2.1/t0805-c5521-ibrdr-l-00-a-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/selection/selection-select-all-move-input-crash-expected.txt:
+
 2021-12-12  Alan Bujtas  <zalan@apple.com>
 
         IFC progression after r286121.

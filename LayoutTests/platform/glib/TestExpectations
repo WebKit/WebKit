@@ -799,6 +799,9 @@ webkit.org/b/234083 media/track/track-webvtt-no-snap-to-lines-overlap.html [ Ima
 webkit.org/b/234083 media/track/track-webvtt-snap-to-lines-inline-style.html [ ImageOnlyFailure ]
 webkit.org/b/234083 media/track/track-webvtt-snap-to-lines-left-right.html [ ImageOnlyFailure ]
 
+webkit.org/b/234084 media/track/audio-track-configuration.html [ Failure ]
+webkit.org/b/234084 media/track/video-track-configuration.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of GStreamer-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
