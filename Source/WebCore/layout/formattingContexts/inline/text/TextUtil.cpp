@@ -100,7 +100,7 @@ static void fallbackFontsForRunWithIterator(HashSet<const Font*>& fallbackFonts,
                 character = u_toupper(character);
 
             auto glyphData = fontCascade.glyphDataForCharacter(character, isRTL);
-            if (glyphData.glyph && glyphData.font && glyphData.font != &primaryFont)
+            if (glyphData.glyph && glyphData.font && glyphData.font != &primaryFont && glyphData.font->widthForGlyph(glyphData.glyph))
                 fallbackFonts.add(glyphData.font);
         };
         addFallbackFontForCharacterIfApplicable(currentCharacter);
