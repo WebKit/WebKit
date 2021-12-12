@@ -34,6 +34,7 @@
 #include "WasmAirIRGenerator.h"
 #include "WasmB3IRGenerator.h"
 #include "WasmCallee.h"
+#include "WasmCalleeRegistry.h"
 #include "WasmCodeBlock.h"
 #include "WasmSignatureInlines.h"
 #include "WasmTierUpCount.h"
@@ -113,6 +114,8 @@ void BBQPlan::work(CompilationEffort effort)
     Vector<CodeLocationLabel<ExceptionHandlerPtrTag>> exceptionHandlerLocations;
     computeExceptionHandlerLocations(exceptionHandlerLocations, function.get(), context, linkBuffer);
 
+    computePCToCodeOriginMap(context, linkBuffer);
+
     size_t functionIndexSpace = m_functionIndex + m_moduleInformation->importFunctionCount();
     SignatureIndex signatureIndex = m_moduleInformation->internalFunctionSignatureIndices[m_functionIndex];
     const Signature& signature = SignatureInformation::get(signatureIndex);
@@ -126,6 +129,9 @@ void BBQPlan::work(CompilationEffort effort)
         MacroAssembler::repatchPointer(function->calleeMoveLocation, CalleeBits::boxWasm(callee.ptr()));
         ASSERT(!m_codeBlock->m_bbqCallees[m_functionIndex]);
         entrypoint = callee->entrypoint();
+
+        if (context.pcToCodeOriginMap)
+            CalleeRegistry::singleton().addPCToCodeOriginMap(callee.ptr(), WTFMove(context.pcToCodeOriginMap));
 
         // We want to make sure we publish our callee at the same time as we link our callsites. This enables us to ensure we
         // always call the fastest code. Any function linked after us will see our new code and the new callsites, which they
@@ -238,6 +244,9 @@ void BBQPlan::didCompleteCompilation()
             }
 
             computeExceptionHandlerLocations(m_exceptionHandlerLocations[functionIndex], function, context, linkBuffer);
+
+            computePCToCodeOriginMap(context, linkBuffer);
+
             function->entrypoint.compilation = makeUnique<Compilation>(
                 FINALIZE_CODE(linkBuffer, JITCompilationPtrTag, "WebAssembly BBQ function[%i] %s name %s", functionIndex, signature.toString().ascii().data(), makeString(IndexOrName(functionIndexSpace, m_moduleInformation->nameSection->get(functionIndexSpace))).ascii().data()),
                 WTFMove(context.wasmEntrypointByproducts));
@@ -284,6 +293,9 @@ void BBQPlan::initializeCallees(const CalleeInitializer& callback)
         size_t functionIndexSpace = internalFunctionIndex + m_moduleInformation->importFunctionCount();
         Ref<BBQCallee> wasmEntrypointCallee = BBQCallee::create(WTFMove(function->entrypoint), functionIndexSpace, m_moduleInformation->nameSection->get(functionIndexSpace), WTFMove(m_tierUpCounts[internalFunctionIndex]), WTFMove(m_unlinkedWasmToWasmCalls[internalFunctionIndex]), WTFMove(function->stackmaps), WTFMove(function->exceptionHandlers), WTFMove(m_exceptionHandlerLocations[internalFunctionIndex]));
         MacroAssembler::repatchPointer(function->calleeMoveLocation, CalleeBits::boxWasm(wasmEntrypointCallee.ptr()));
+
+        if (m_compilationContexts[internalFunctionIndex].pcToCodeOriginMap)
+            CalleeRegistry::singleton().addPCToCodeOriginMap(wasmEntrypointCallee.ptr(), WTFMove(m_compilationContexts[internalFunctionIndex].pcToCodeOriginMap));
 
         callback(internalFunctionIndex, WTFMove(embedderEntrypointCallee), WTFMove(wasmEntrypointCallee));
     }

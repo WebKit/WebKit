@@ -3580,7 +3580,8 @@ void AirIRGenerator::dump(const ControlStack& controlStack, const Stack* stack)
 
 auto AirIRGenerator::origin() -> B3::Origin
 {
-    // FIXME: We should implement a way to give Inst's an origin.
+    // FIXME: We should implement a way to give Inst's an origin, and pipe that
+    // information into the sampling profiler: https://bugs.webkit.org/show_bug.cgi?id=234182
     return B3::Origin();
 }
 
@@ -3596,7 +3597,7 @@ Expected<std::unique_ptr<InternalFunction>, String> parseAndCompileAir(Compilati
 
     procedure.setOriginPrinter([] (PrintStream& out, B3::Origin origin) {
         if (origin.data())
-            out.print("Wasm: ", bitwise_cast<OpcodeOrigin>(origin));
+            out.print("Wasm: ", OpcodeOrigin(origin));
     });
     
     // This means we cannot use either StackmapGenerationParams::usedRegisters() or

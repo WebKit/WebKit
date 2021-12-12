@@ -1,3 +1,66 @@
+2021-12-11  Saam Barati  <sbarati@apple.com>
+
+        Teach the sampling profiler how to display origin data for B3 Wasm
+        https://bugs.webkit.org/show_bug.cgi?id=234097
+
+        Reviewed by Yusuke Suzuki.
+
+        This teaches the SamplingProfiler how to gather origin data for
+        Wasm. We reuse the PCToCodeOriginMap from JS, and store the wasm
+        function offset data inside of CodeOrigin's BytecodeIndex.
+        
+        For now, this patch is only doing this for B3, because the Air backend
+        doesn't currently generate filled in OpcodeOrigin data. We'll fix that
+        in: https://bugs.webkit.org/show_bug.cgi?id=234182
+        
+        Also, this capability isn't yet supported in Web Inspector. We'll want
+        to do that in a future change as we improve Web Inspector's ability to
+        debug Wasm code. When that time comes, we'll have to generate the
+        PCToCodeOriginMap based on debugging info, and not just 'useSamplingProfiler'
+        JSC option.
+        
+        The data now shows up like this for hottest bytecodes:
+        
+        Hottest bytecodes as <numSamples   'functionName#hash:JITType:bytecodeIndex'>
+           524    '<?>.wasm-function[2373]:OMG:0x21a'
+           414    '<?>.wasm-function[2363]:OMG:0x1ae'
+           395    '<?>.wasm-function[2373]:OMG:0x418'
+           354    '<?>.wasm-function[2373]:OMG:0x34f'
+           270    '<?>.wasm-function[2373]:OMG:0x352'
+           256    '<?>.wasm-function[2363]:OMG:0x152'
+
+
+        * ftl/FTLCompile.cpp:
+        (JSC::FTL::compile):
+        * jit/PCToCodeOriginMap.cpp:
+        (JSC::PCToCodeOriginMapBuilder::PCToCodeOriginMapBuilder):
+        * jit/PCToCodeOriginMap.h:
+        * runtime/SamplingProfiler.cpp:
+        (JSC::FrameWalker::recordJITFrame):
+        (JSC::SamplingProfiler::processUnverifiedStackTraces):
+        (JSC::SamplingProfiler::reportTopBytecodes):
+        * runtime/SamplingProfiler.h:
+        * wasm/WasmAirIRGenerator.cpp:
+        (JSC::Wasm::AirIRGenerator::origin):
+        (JSC::Wasm::parseAndCompileAir):
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::parseAndCompile):
+        (JSC::Wasm::computePCToCodeOriginMap):
+        * wasm/WasmB3IRGenerator.h:
+        (): Deleted.
+        * wasm/WasmBBQPlan.cpp:
+        (JSC::Wasm::BBQPlan::work):
+        (JSC::Wasm::BBQPlan::didCompleteCompilation):
+        (JSC::Wasm::BBQPlan::initializeCallees):
+        * wasm/WasmCalleeRegistry.h:
+        (JSC::Wasm::CalleeRegistry::unregisterCallee):
+        (JSC::Wasm::CalleeRegistry::addPCToCodeOriginMap):
+        (JSC::Wasm::CalleeRegistry::WTF_REQUIRES_LOCK):
+        * wasm/WasmOMGPlan.cpp:
+        (JSC::Wasm::OMGPlan::work):
+        * wasm/WasmOpcodeOrigin.h:
+        (JSC::Wasm::OpcodeOrigin::OpcodeOrigin):
+
 2021-12-11  Mark Lam  <mark.lam@apple.com>
 
         Automatically forbid JS execution when we throw a TerminationException.

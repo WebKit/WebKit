@@ -31,8 +31,10 @@
 #include "CodeBlockHash.h"
 #include "JITCode.h"
 #include "MachineStackMarker.h"
+#include "PCToCodeOriginMap.h"
 #include "WasmCompilationMode.h"
 #include "WasmIndexOrName.h"
+#include <wtf/Box.h>
 #include <wtf/HashSet.h>
 #include <wtf/Lock.h>
 #include <wtf/Stopwatch.h>
@@ -69,6 +71,9 @@ public:
         std::optional<Wasm::IndexOrName> wasmIndexOrName;
 #endif
         std::optional<Wasm::CompilationMode> wasmCompilationMode;
+#if ENABLE(JIT)
+        Box<PCToCodeOriginMap> wasmPCMap;
+#endif
     };
 
     enum class FrameType { 
@@ -98,6 +103,7 @@ public:
         std::optional<Wasm::IndexOrName> wasmIndexOrName;
 #endif
         std::optional<Wasm::CompilationMode> wasmCompilationMode;
+        BytecodeIndex wasmOffset;
 
         struct CodeLocation {
             bool hasCodeBlockHash() const

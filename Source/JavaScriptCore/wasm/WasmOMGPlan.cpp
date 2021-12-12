@@ -32,6 +32,7 @@
 #include "LinkBuffer.h"
 #include "WasmB3IRGenerator.h"
 #include "WasmCallee.h"
+#include "WasmCalleeRegistry.h"
 #include "WasmNameSection.h"
 #include "WasmSignatureInlines.h"
 #include <wtf/DataLog.h>
@@ -92,6 +93,8 @@ void OMGPlan::work(CompilationEffort)
     Vector<CodeLocationLabel<ExceptionHandlerPtrTag>> exceptionHandlerLocations;
     computeExceptionHandlerLocations(exceptionHandlerLocations, internalFunction, context, linkBuffer);
 
+    computePCToCodeOriginMap(context, linkBuffer);
+
     omgEntrypoint.compilation = makeUnique<Compilation>(
         FINALIZE_CODE_IF(context.procedure->shouldDumpIR() || shouldDumpDisassemblyFor(CompilationMode::OMGMode), linkBuffer, JITCompilationPtrTag, "WebAssembly OMG function[%i] %s name %s", m_functionIndex, signature.toString().ascii().data(), makeString(IndexOrName(functionIndexSpace, m_moduleInformation->nameSection->get(functionIndexSpace))).ascii().data()),
         WTFMove(context.wasmEntrypointByproducts));
@@ -105,6 +108,9 @@ void OMGPlan::work(CompilationEffort)
         MacroAssembler::repatchPointer(internalFunction->calleeMoveLocation, CalleeBits::boxWasm(callee.ptr()));
         ASSERT(!m_codeBlock->m_omgCallees[m_functionIndex]);
         entrypoint = callee->entrypoint();
+
+        if (context.pcToCodeOriginMap)
+            CalleeRegistry::singleton().addPCToCodeOriginMap(callee.ptr(), WTFMove(context.pcToCodeOriginMap));
 
         // We want to make sure we publish our callee at the same time as we link our callsites. This enables us to ensure we
         // always call the fastest code. Any function linked after us will see our new code and the new callsites, which they

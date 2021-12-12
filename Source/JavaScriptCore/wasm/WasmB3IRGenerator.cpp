@@ -3254,9 +3254,17 @@ Expected<std::unique_ptr<InternalFunction>, String> parseAndCompile(CompilationC
 
     compilationContext.wasmEntrypointJIT = makeUnique<CCallHelpers>();
 
+    if (Options::useSamplingProfiler()) {
+        // FIXME: We should do this based on VM relevant info.
+        // But this is good enough for our own profiling for now.
+        // When we start to show this data in web inspector, we'll
+        // need other hooks into this besides the JSC option.
+        procedure.setNeedsPCToOriginMap();
+    }
+
     procedure.setOriginPrinter([] (PrintStream& out, Origin origin) {
         if (origin.data())
-            out.print("Wasm: ", bitwise_cast<OpcodeOrigin>(origin));
+            out.print("Wasm: ", OpcodeOrigin(origin));
     });
     
     // This means we cannot use either StackmapGenerationParams::usedRegisters() or
@@ -3297,6 +3305,14 @@ Expected<std::unique_ptr<InternalFunction>, String> parseAndCompile(CompilationC
     result->exceptionHandlers = irGenerator.takeExceptionHandlers();
 
     return result;
+}
+
+void computePCToCodeOriginMap(CompilationContext& context, LinkBuffer& linkBuffer)
+{
+    if (context.procedure && context.procedure->needsPCToOriginMap()) {
+        B3::PCToOriginMap originMap = context.procedure->releasePCToOriginMap();
+        context.pcToCodeOriginMap = Box<PCToCodeOriginMap>::create(PCToCodeOriginMapBuilder(PCToCodeOriginMapBuilder::WasmCodeOriginMap, WTFMove(originMap)), linkBuffer);
+    }
 }
 
 void computeExceptionHandlerLocations(Vector<CodeLocationLabel<ExceptionHandlerPtrTag>>& handlers, const InternalFunction* function, const CompilationContext& context, LinkBuffer& linkBuffer)

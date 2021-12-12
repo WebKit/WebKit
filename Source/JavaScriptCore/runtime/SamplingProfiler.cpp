@@ -130,6 +130,9 @@ protected:
                 // And we can safely copy Wasm::IndexOrName even when any lock is held by suspended threads.
                 stackTrace[m_depth].wasmIndexOrName = wasmCallee->indexOrName();
                 stackTrace[m_depth].wasmCompilationMode = wasmCallee->compilationMode();
+#if ENABLE(JIT)
+                stackTrace[m_depth].wasmPCMap = Wasm::CalleeRegistry::singleton().codeOriginMap(wasmCallee);
+#endif
             }
         }
 #endif
@@ -496,6 +499,25 @@ void SamplingProfiler::processUnverifiedStackTraces()
             stackTrace.frames.append(StackFrame());
         };
 
+#if ENABLE(WEBASSEMBLY)
+        auto storeWasmCalleeIntoLastFrame = [&] (UnprocessedStackFrame& unprocessedStackFrame, void* pc) {
+            CalleeBits calleeBits = unprocessedStackFrame.unverifiedCallee;
+            ASSERT_UNUSED(calleeBits, calleeBits.isWasm());
+            StackFrame& stackFrame = stackTrace.frames.last();
+            stackFrame.frameType = FrameType::Wasm;
+            stackFrame.wasmIndexOrName = unprocessedStackFrame.wasmIndexOrName;
+            stackFrame.wasmCompilationMode = unprocessedStackFrame.wasmCompilationMode;
+#if ENABLE(JIT)
+            if (pc && unprocessedStackFrame.wasmPCMap) {
+                if (std::optional<CodeOrigin> codeOrigin = unprocessedStackFrame.wasmPCMap->findPC(pc))
+                    stackFrame.wasmOffset = codeOrigin->bytecodeIndex();
+            }
+#else
+            UNUSED_PARAM(pc);
+#endif
+        };
+#endif
+
         auto storeCalleeIntoLastFrame = [&] (UnprocessedStackFrame& unprocessedStackFrame) {
             assertIsHeld(m_lock);
             // Set the callee if it's a valid GC object.
@@ -504,9 +526,7 @@ void SamplingProfiler::processUnverifiedStackTraces()
             bool alreadyHasExecutable = !!stackFrame.executable;
 #if ENABLE(WEBASSEMBLY)
             if (calleeBits.isWasm()) {
-                stackFrame.frameType = FrameType::Wasm;
-                stackFrame.wasmIndexOrName = unprocessedStackFrame.wasmIndexOrName;
-                stackFrame.wasmCompilationMode = unprocessedStackFrame.wasmCompilationMode;
+                storeWasmCalleeIntoLastFrame(unprocessedStackFrame, nullptr);
                 return;
             }
 #endif
@@ -631,6 +651,13 @@ void SamplingProfiler::processUnverifiedStackTraces()
                 UNUSED_PARAM(appendCodeOrigin);
             }
         }
+#if ENABLE(WEBASSEMBLY)
+        else if (!unprocessedStackTrace.frames.isEmpty() && unprocessedStackTrace.frames[0].unverifiedCallee.isWasm()) {
+            appendEmptyFrame();
+            storeWasmCalleeIntoLastFrame(unprocessedStackTrace.frames[0], unprocessedStackTrace.topPC);
+            startIndex = 1;
+        }
+#endif
 
         for (size_t i = startIndex; i < unprocessedStackTrace.frames.size(); i++) {
             UnprocessedStackFrame& unprocessedStackFrame = unprocessedStackTrace.frames[i];
@@ -1160,7 +1187,20 @@ void SamplingProfiler::reportTopBytecodes(PrintStream& out)
         if (!stackTrace.frames.size())
             continue;
 
-        auto descriptionForLocation = [&] (StackFrame::CodeLocation location, std::optional<Wasm::CompilationMode> wasmCompilationMode) -> String {
+        auto descriptionForLocation = [&] (StackFrame::CodeLocation location, std::optional<Wasm::CompilationMode> wasmCompilationMode, BytecodeIndex wasmOffset) -> String {
+            if (wasmCompilationMode) {
+                StringPrintStream description;
+                description.print(":");
+                description.print(Wasm::makeString(wasmCompilationMode.value()));
+                description.print(":");
+                if (wasmOffset) {
+                    uintptr_t offset = wasmOffset.offset();
+                    description.print(RawPointer(bitwise_cast<void*>(offset)));
+                } else
+                    description.print("nil");
+                return description.toString();
+            }
+
             String bytecodeIndex;
             String codeBlockHash;
             String jitType;
@@ -1176,9 +1216,7 @@ void SamplingProfiler::reportTopBytecodes(PrintStream& out)
             } else
                 codeBlockHash = "<nil>"_s;
 
-            if (wasmCompilationMode)
-                jitType = Wasm::makeString(wasmCompilationMode.value());
-            else if (location.isRegExp)
+            if (location.isRegExp)
                 jitType = "RegExp"_s;
             else
                 jitType = JITCode::typeName(location.jitType);
@@ -1187,10 +1225,10 @@ void SamplingProfiler::reportTopBytecodes(PrintStream& out)
         };
 
         StackFrame& frame = stackTrace.frames.first();
-        auto frameDescription = makeString(frame.displayName(m_vm), descriptionForLocation(frame.semanticLocation, frame.wasmCompilationMode));
+        auto frameDescription = makeString(frame.displayName(m_vm), descriptionForLocation(frame.semanticLocation, frame.wasmCompilationMode, frame.wasmOffset));
         if (std::optional<std::pair<StackFrame::CodeLocation, CodeBlock*>> machineLocation = frame.machineLocation) {
             frameDescription = makeString(frameDescription, " <-- ",
-                machineLocation->second->inferredName().data(), descriptionForLocation(machineLocation->first, std::nullopt));
+                machineLocation->second->inferredName().data(), descriptionForLocation(machineLocation->first, std::nullopt, BytecodeIndex()));
         }
         bytecodeCounts.add(frameDescription, 0).iterator->value++;
         
