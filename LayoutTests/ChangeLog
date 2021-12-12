@@ -1,3 +1,13 @@
+2021-12-11  Alan Bujtas  <zalan@apple.com>
+
+        fast/borders/bidi-002.html is failing on Monterey bots.
+        https://bugs.webkit.org/show_bug.cgi?id=234204
+
+        Unreviewed gardening.
+
+        * platform/mac-bigsur/fast/borders/bidi-002-expected.txt: Copied from LayoutTests/platform/mac/fast/borders/bidi-002-expected.txt.
+        * platform/mac/fast/borders/bidi-002-expected.txt:
+
 2021-12-11  Antoine Quint  <graouts@webkit.org>
 
         Expose a frameRate property to Web Animations
