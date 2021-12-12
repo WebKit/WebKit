@@ -657,7 +657,8 @@ bool CSSGradientValue::equals(const CSSGradientValue& other) const
         && compareCSSValuePtr(m_secondY, other.m_secondY)
         && m_stops == other.m_stops
         && m_gradientType == other.m_gradientType
-        && m_repeating == other.m_repeating;
+        && m_repeating == other.m_repeating
+        && m_colorInterpolationMethod == other.m_colorInterpolationMethod;
 }
 
 static void appendGradientStops(StringBuilder& builder, const Vector<CSSGradientColorStop, 2>& stops)
@@ -871,7 +872,7 @@ Ref<Gradient> CSSLinearGradientValue::createGradient(RenderElement& renderer, co
     LinearGradientAdapter adapter { data };
     auto stops = computeStops(adapter, conversionData, renderer.style(), 1);
 
-    auto gradient = Gradient::create(WTFMove(data));
+    auto gradient = Gradient::create(WTFMove(data), colorInterpolationMethod());
     gradient->setSortedColorStops(WTFMove(stops));
     return gradient;
 }
@@ -1205,7 +1206,7 @@ Ref<Gradient> CSSRadialGradientValue::createGradient(RenderElement& renderer, co
     RadialGradientAdapter adapter { data };
     auto stops = computeStops(adapter, conversionData, renderer.style(), maxExtent);
 
-    auto gradient = Gradient::create(WTFMove(data));
+    auto gradient = Gradient::create(WTFMove(data), colorInterpolationMethod());
     gradient->setSortedColorStops(WTFMove(stops));
     return gradient;
 }
@@ -1279,7 +1280,7 @@ Ref<Gradient> CSSConicGradientValue::createGradient(RenderElement& renderer, con
     ConicGradientAdapter adapter;
     auto stops = computeStops(adapter, conversionData, renderer.style(), 1);
 
-    auto gradient = Gradient::create(WTFMove(data));
+    auto gradient = Gradient::create(WTFMove(data), colorInterpolationMethod());
     gradient->setSortedColorStops(WTFMove(stops));
     return gradient;
 }

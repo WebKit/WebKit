@@ -139,7 +139,7 @@ TEST(BifurcatedGraphicsContextTests, DrawTiledGradientImage)
     GraphicsContextCG secondaryContext(secondaryCGContext.get());
     BifurcatedGraphicsContext ctx(primaryContext, secondaryContext);
 
-    auto gradient = Gradient::create(Gradient::LinearData { { 0, 0 }, { 1, 1 } });
+    auto gradient = Gradient::create(Gradient::LinearData { { 0, 0 }, { 1, 1 } }, { ColorInterpolationMethod::SRGB { }, AlphaPremultiplication::Unpremultiplied });
     gradient->addColorStop({ 0, Color::red });
 
     auto gradientImage = GradientImage::create(gradient, FloatSize { 1, 1 });
@@ -171,7 +171,7 @@ TEST(BifurcatedGraphicsContextTests, DrawGradientImage)
     GraphicsContextCG secondaryContext(secondaryCGContext.get());
     BifurcatedGraphicsContext ctx(primaryContext, secondaryContext);
 
-    auto gradient = Gradient::create(Gradient::LinearData { { 0, 0 }, { 1, 1 } });
+    auto gradient = Gradient::create(Gradient::LinearData { { 0, 0 }, { 1, 1 } }, { ColorInterpolationMethod::SRGB { }, AlphaPremultiplication::Unpremultiplied });
     gradient->addColorStop({ 0, Color::red });
 
     auto gradientImage = GradientImage::create(gradient, FloatSize { 1, 1 });

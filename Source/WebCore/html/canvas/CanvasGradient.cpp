@@ -34,19 +34,19 @@
 namespace WebCore {
 
 CanvasGradient::CanvasGradient(const FloatPoint& p0, const FloatPoint& p1, CanvasBase& canvasBase)
-    : m_gradient(Gradient::create(Gradient::LinearData { p0, p1 }))
+    : m_gradient(Gradient::create(Gradient::LinearData { p0, p1 }, { ColorInterpolationMethod::SRGB { }, AlphaPremultiplication::Unpremultiplied }))
     , m_canvas(canvasBase)
 {
 }
 
 CanvasGradient::CanvasGradient(const FloatPoint& p0, float r0, const FloatPoint& p1, float r1, CanvasBase& canvasBase)
-    : m_gradient(Gradient::create(Gradient::RadialData { p0, p1, r0, r1, 1 }))
+    : m_gradient(Gradient::create(Gradient::RadialData { p0, p1, r0, r1, 1 }, { ColorInterpolationMethod::SRGB { }, AlphaPremultiplication::Unpremultiplied }))
     , m_canvas(canvasBase)
 {
 }
 
 CanvasGradient::CanvasGradient(const FloatPoint& centerPoint, float angleInRadians, CanvasBase& canvasBase)
-    : m_gradient(Gradient::create(Gradient::ConicData { centerPoint, angleInRadians }))
+    : m_gradient(Gradient::create(Gradient::ConicData { centerPoint, angleInRadians }, { ColorInterpolationMethod::SRGB { }, AlphaPremultiplication::Unpremultiplied }))
     , m_canvas(canvasBase)
 {
 }

@@ -2139,7 +2139,7 @@ static Ref<CSSLinearGradientValue> autoFillStrongPasswordMaskImage()
     secondStop.color = CSSValuePool::singleton().createColorValue(Color::transparentBlack);
     secondStop.position = CSSValuePool::singleton().createValue(100, CSSUnitType::CSS_PERCENTAGE);
 
-    auto gradient = CSSLinearGradientValue::create(CSSGradientRepeat::NonRepeating, CSSGradientType::CSSLinearGradient);
+    auto gradient = CSSLinearGradientValue::create(CSSGradientRepeat::NonRepeating, CSSGradientType::CSSLinearGradient, { ColorInterpolationMethod::SRGB { }, AlphaPremultiplication::Unpremultiplied });
     gradient->setAngle(CSSValuePool::singleton().createValue(90, CSSUnitType::CSS_DEG));
     gradient->addStop(WTFMove(firstStop));
     gradient->addStop(WTFMove(secondStop));

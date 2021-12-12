@@ -1400,6 +1400,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/ColorConversion.h
     platform/graphics/ColorHash.h
     platform/graphics/ColorInterpolation.h
+    platform/graphics/ColorInterpolationMethod.h
     platform/graphics/ColorLuminance.h
     platform/graphics/ColorMatrix.h
     platform/graphics/ColorModels.h

@@ -34,13 +34,14 @@
 
 namespace WebCore {
 
-Ref<Gradient> Gradient::create(Data&& data)
+Ref<Gradient> Gradient::create(Data&& data, ColorInterpolationMethod colorInterpolationMethod)
 {
-    return adoptRef(*new Gradient(WTFMove(data)));
+    return adoptRef(*new Gradient(WTFMove(data), colorInterpolationMethod));
 }
 
-Gradient::Gradient(Data&& data)
-    : m_data(WTFMove(data))
+Gradient::Gradient(Data&& data, ColorInterpolationMethod colorInterpolationMethod)
+    : m_data { WTFMove(data) }
+    , m_colorInterpolationMethod { colorInterpolationMethod }
 {
 }
 
@@ -154,7 +155,7 @@ unsigned Gradient::hash() const
 {
     if (!m_cachedHash) {
         sortStops();
-        m_cachedHash = computeHash(m_data, m_spreadMethod, m_stops);
+        m_cachedHash = computeHash(m_data, m_colorInterpolationMethod, m_spreadMethod, m_stops);
     }
     return m_cachedHash;
 }

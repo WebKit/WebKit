@@ -1121,7 +1121,7 @@ bool RenderThemeIOS::paintProgressBar(const RenderObject& renderer, const PaintI
     context.setStrokeStyle(SolidStroke);
 
     const float verticalRenderingPosition = rect.y() + verticalOffset;
-    auto strokeGradient = Gradient::create(Gradient::LinearData { FloatPoint(rect.x(), verticalRenderingPosition), FloatPoint(rect.x(), verticalRenderingPosition + progressBarHeight - 1) });
+    auto strokeGradient = Gradient::create(Gradient::LinearData { FloatPoint(rect.x(), verticalRenderingPosition), FloatPoint(rect.x(), verticalRenderingPosition + progressBarHeight - 1) }, { ColorInterpolationMethod::SRGB { }, AlphaPremultiplication::Unpremultiplied });
     strokeGradient->addColorStop({ 0.0f, SRGBA<uint8_t> { 141, 141, 141 } });
     strokeGradient->addColorStop({ 0.45f, SRGBA<uint8_t> { 238, 238, 238 } });
     strokeGradient->addColorStop({ 0.55f, SRGBA<uint8_t> { 238, 238, 238 } });
@@ -1141,7 +1141,7 @@ bool RenderThemeIOS::paintProgressBar(const RenderObject& renderer, const PaintI
     paintInfo.context().clipRoundedRect(FloatRoundedRect(border, roundedCornerRadius, roundedCornerRadius, roundedCornerRadius, roundedCornerRadius));
 
     float upperGradientHeight = progressBarHeight / 2.;
-    auto upperGradient = Gradient::create(Gradient::LinearData { FloatPoint(rect.x(), verticalRenderingPosition + 0.5f), FloatPoint(rect.x(), verticalRenderingPosition + upperGradientHeight - 1.5) });
+    auto upperGradient = Gradient::create(Gradient::LinearData { FloatPoint(rect.x(), verticalRenderingPosition + 0.5f), FloatPoint(rect.x(), verticalRenderingPosition + upperGradientHeight - 1.5) }, { ColorInterpolationMethod::SRGB { }, AlphaPremultiplication::Unpremultiplied });
     upperGradient->addColorStop({ 0.0f, SRGBA<uint8_t> { 133, 133, 133, 188 } });
     upperGradient->addColorStop({ 1.0f, SRGBA<uint8_t> { 18, 18, 18, 51 } });
     context.setFillGradient(WTFMove(upperGradient));
@@ -1153,7 +1153,7 @@ bool RenderThemeIOS::paintProgressBar(const RenderObject& renderer, const PaintI
         // 2) Draw the progress bar.
         double position = clampTo(renderProgress.position(), 0.0, 1.0);
         float barWidth = position * rect.width();
-        auto barGradient = Gradient::create(Gradient::LinearData { FloatPoint(rect.x(), verticalRenderingPosition + 0.5f), FloatPoint(rect.x(), verticalRenderingPosition + progressBarHeight - 1) });
+        auto barGradient = Gradient::create(Gradient::LinearData { FloatPoint(rect.x(), verticalRenderingPosition + 0.5f), FloatPoint(rect.x(), verticalRenderingPosition + progressBarHeight - 1) }, { ColorInterpolationMethod::SRGB { }, AlphaPremultiplication::Unpremultiplied });
         barGradient->addColorStop({ 0.0f, SRGBA<uint8_t> { 195, 217, 247 } });
         barGradient->addColorStop({ 0.45f, SRGBA<uint8_t> { 118, 164, 228 } });
         barGradient->addColorStop({ 0.49f, SRGBA<uint8_t> { 118, 164, 228 } });
@@ -1162,7 +1162,7 @@ bool RenderThemeIOS::paintProgressBar(const RenderObject& renderer, const PaintI
         barGradient->addColorStop({ 1.0f, SRGBA<uint8_t> { 57, 142, 244 } });
         context.setFillGradient(WTFMove(barGradient));
 
-        auto barStrokeGradient = Gradient::create(Gradient::LinearData { FloatPoint(rect.x(), verticalRenderingPosition), FloatPoint(rect.x(), verticalRenderingPosition + progressBarHeight - 1) });
+        auto barStrokeGradient = Gradient::create(Gradient::LinearData { FloatPoint(rect.x(), verticalRenderingPosition), FloatPoint(rect.x(), verticalRenderingPosition + progressBarHeight - 1) }, { ColorInterpolationMethod::SRGB { }, AlphaPremultiplication::Unpremultiplied });
         barStrokeGradient->addColorStop({ 0.0f, SRGBA<uint8_t> { 95, 107, 183 } });
         barStrokeGradient->addColorStop({ 0.5f, SRGBA<uint8_t> { 66, 106, 174, 240 } });
         barStrokeGradient->addColorStop({ 1.0f, SRGBA<uint8_t> { 38, 104, 166 } });
@@ -2243,7 +2243,7 @@ RefPtr<Gradient> RenderThemeIOS::checkboxRadioBackgroundGradient(const FloatRect
         return nullptr;
 
     bool isEmpty = !states.containsAny({ ControlStates::States::Checked, ControlStates::States::Indeterminate });
-    auto gradient = Gradient::create(Gradient::LinearData { rect.minXMinYCorner(), rect.maxXMaxYCorner() });
+    auto gradient = Gradient::create(Gradient::LinearData { rect.minXMinYCorner(), rect.maxXMaxYCorner() }, { ColorInterpolationMethod::SRGB { }, AlphaPremultiplication::Unpremultiplied });
     gradient->addColorStop({ 0.0f, DisplayP3<float> { 0, 0, 0, isEmpty ? 0.05f : 0.125f }});
     gradient->addColorStop({ 1.0f, DisplayP3<float> { 0, 0, 0, 0 }});
     return gradient;
@@ -2816,7 +2816,7 @@ void RenderThemeIOS::paintColorWellDecorations(const RenderObject& box, const Pa
     };
     constexpr int numColorStops = std::size(colorStops);
 
-    auto gradient = Gradient::create(Gradient::ConicData { rect.center(), 0 });
+    auto gradient = Gradient::create(Gradient::ConicData { rect.center(), 0 }, { ColorInterpolationMethod::SRGB { }, AlphaPremultiplication::Unpremultiplied });
     for (int i = 0; i < numColorStops; ++i)
         gradient->addColorStop({ i * 1.0f / (numColorStops - 1), colorStops[i] });
 

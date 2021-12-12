@@ -29,6 +29,7 @@
 
 #include "AffineTransform.h"
 #include "Color.h"
+#include "ColorInterpolationMethod.h"
 #include "FloatPoint.h"
 #include "GraphicsTypes.h"
 #include <variant>
@@ -102,7 +103,7 @@ public:
 
     using Data = std::variant<LinearData, RadialData, ConicData>;
 
-    WEBCORE_EXPORT static Ref<Gradient> create(Data&&);
+    WEBCORE_EXPORT static Ref<Gradient> create(Data&&, ColorInterpolationMethod);
 
     bool isZeroSize() const;
 
@@ -138,7 +139,7 @@ public:
     template<typename Decoder> static std::optional<Ref<Gradient>> decode(Decoder&);
 
 private:
-    explicit Gradient(Data&&);
+    explicit Gradient(Data&&, ColorInterpolationMethod);
 
     void sortStops() const;
     void stopsChanged();
@@ -149,6 +150,7 @@ private:
 #endif
 
     Data m_data;
+    ColorInterpolationMethod m_colorInterpolationMethod;
     mutable ColorStopVector m_stops;
     mutable bool m_stopsSorted { false };
     GradientSpreadMethod m_spreadMethod { GradientSpreadMethod::Pad };
@@ -268,6 +270,7 @@ template<typename Decoder> std::optional<Gradient::ConicData> Gradient::ConicDat
 template<typename Encoder> void Gradient::encode(Encoder& encoder) const
 {
     encoder << m_data;
+    encoder << m_colorInterpolationMethod;
     encoder << m_stops;
     encoder << m_stopsSorted;
     encoder << m_spreadMethod;
@@ -279,7 +282,13 @@ template<typename Decoder> std::optional<Ref<Gradient>> Gradient::decode(Decoder
     decoder >> data;
     if (!data)
         return std::nullopt;
-    auto gradient = Gradient::create(WTFMove(*data));
+
+    std::optional<ColorInterpolationMethod> colorInterpolationMethod;
+    decoder >> colorInterpolationMethod;
+    if (!colorInterpolationMethod)
+        return std::nullopt;
+
+    auto gradient = Gradient::create(WTFMove(*data), *colorInterpolationMethod);
 
     std::optional<ColorStopVector> stops;
     decoder >> stops;

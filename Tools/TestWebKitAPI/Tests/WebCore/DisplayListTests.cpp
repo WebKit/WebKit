@@ -42,7 +42,7 @@ static uint8_t globalItemBuffer[globalItemBufferCapacity];
 
 static Ref<Gradient> createGradient()
 {
-    auto gradient = Gradient::create(Gradient::ConicData { { 0., 0. }, 1.25 });
+    auto gradient = Gradient::create(Gradient::ConicData { { 0., 0. }, 1.25 }, { ColorInterpolationMethod::SRGB { }, AlphaPremultiplication::Unpremultiplied });
     gradient->addColorStop({ 0.1, Color::red });
     gradient->addColorStop({ 0.5, Color::green });
     gradient->addColorStop({ 0.9, Color::blue });

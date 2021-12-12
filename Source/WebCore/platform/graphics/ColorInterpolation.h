@@ -26,87 +26,13 @@
 #pragma once
 
 #include "AlphaPremultiplication.h"
-#include "ColorTypes.h"
+#include "ColorInterpolationMethod.h"
 #include "ColorNormalization.h"
-#include <optional>
-#include <variant>
-#include <wtf/EnumTraits.h>
+#include "ColorTypes.h"
 
 namespace WebCore {
 
-enum class HueInterpolationMethod : uint8_t {
-    Shorter,
-    Longer,
-    Increasing,
-    Decreasing,
-    Specified
-};
-
-enum class ColorInterpolationColorSpace : uint8_t {
-    HSL,
-    HWB,
-    LCH,
-    Lab,
-    OKLCH,
-    OKLab,
-    SRGB,
-    SRGBLinear,
-    XYZD50,
-    XYZD65
-};
-    
-struct ColorInterpolationMethod {
-    struct HSL {
-        static constexpr auto interpolationColorSpace = ColorInterpolationColorSpace::HSL;
-        using ColorType = WebCore::HSLA<float>;
-        HueInterpolationMethod hueInterpolationMethod = HueInterpolationMethod::Shorter;
-    };
-    struct HWB {
-        static constexpr auto interpolationColorSpace = ColorInterpolationColorSpace::HWB;
-        using ColorType = WebCore::HWBA<float>;
-        HueInterpolationMethod hueInterpolationMethod = HueInterpolationMethod::Shorter;
-    };
-    struct LCH {
-        static constexpr auto interpolationColorSpace = ColorInterpolationColorSpace::LCH;
-        using ColorType = WebCore::LCHA<float>;
-        HueInterpolationMethod hueInterpolationMethod = HueInterpolationMethod::Shorter;
-    };
-    struct Lab {
-        static constexpr auto interpolationColorSpace = ColorInterpolationColorSpace::Lab;
-        using ColorType = WebCore::Lab<float>;
-    };
-    struct OKLCH {
-        static constexpr auto interpolationColorSpace = ColorInterpolationColorSpace::OKLCH;
-        using ColorType = WebCore::OKLCHA<float>;
-        HueInterpolationMethod hueInterpolationMethod = HueInterpolationMethod::Shorter;
-    };
-    struct OKLab {
-        static constexpr auto interpolationColorSpace = ColorInterpolationColorSpace::OKLab;
-        using ColorType = WebCore::OKLab<float>;
-    };
-    struct SRGB {
-        static constexpr auto interpolationColorSpace = ColorInterpolationColorSpace::SRGB;
-        using ColorType = WebCore::SRGBA<float>;
-    };
-    struct SRGBLinear {
-        static constexpr auto interpolationColorSpace = ColorInterpolationColorSpace::SRGBLinear;
-        using ColorType = WebCore::LinearSRGBA<float>;
-    };
-    struct XYZD50 {
-        static constexpr auto interpolationColorSpace = ColorInterpolationColorSpace::XYZD50;
-        using ColorType = WebCore::XYZA<float, WhitePoint::D50>;
-    };
-    struct XYZD65 {
-        static constexpr auto interpolationColorSpace = ColorInterpolationColorSpace::XYZD65;
-        using ColorType = WebCore::XYZA<float, WhitePoint::D65>;
-    };
-
-    template<typename Encoder> void encode(Encoder&) const;
-    template<typename Decoder> static std::optional<ColorInterpolationMethod> decode(Decoder&);
-
-    std::variant<HSL, HWB, LCH, Lab, OKLCH, OKLab, SRGB, SRGBLinear, XYZD50, XYZD65> colorSpace;
-    AlphaPremultiplication alphaPremultiplication;
-};
+// MARK: - Pre-interpolation normalization/fixup
 
 std::pair<float, float> fixupHueComponentsPriorToInterpolation(HueInterpolationMethod, float, float);
 
@@ -139,6 +65,9 @@ std::pair<ColorComponents<float, 4>, ColorComponents<float, 4>> preInterpolation
     };
 }
 
+
+// MARK: - Post-interpolation normalization/fixup
+
 template<size_t I, AlphaPremultiplication alphaPremultiplication, typename InterpolationMethod>
 float postInterpolationNormalizationForComponent(InterpolationMethod, ColorComponents<float, 4> colorComponents)
 {
@@ -164,126 +93,25 @@ ColorComponents<float, 4> postInterpolationNormalization(InterpolationMethod int
     };
  }
 
+
+// MARK: - Interpolation
+
 template<AlphaPremultiplication alphaPremultiplication, typename InterpolationMethod>
 typename InterpolationMethod::ColorType interpolateColorComponents(InterpolationMethod interpolationMethod, typename InterpolationMethod::ColorType color1, double color1Multiplier, typename InterpolationMethod::ColorType color2, double color2Multiplier)
 {
+    // 1. Apply pre-interpolation transforms (hue fixup for polar color spaces, alpha premultiplication if required).
     auto [normalizedColorComponents1, normalizedColorComponents2] = preInterpolationNormalization<alphaPremultiplication>(interpolationMethod, asColorComponents(color1), asColorComponents(color2));
 
+    // 2. Interpolate using the normalized components.
     auto interpolatedColorComponents = mapColorComponents([&] (auto componentFromColor1, auto componentFromColor2) -> float {
         return (componentFromColor1 * color1Multiplier) + (componentFromColor2 * color2Multiplier);
     }, normalizedColorComponents1, normalizedColorComponents2);
 
+    // 3. Apply post-interpolation trasforms (alpha un-premultiplication if required).
     auto normalizedInterpolatedColorComponents = postInterpolationNormalization<alphaPremultiplication>(interpolationMethod, interpolatedColorComponents);
 
+    // 4. Create color type from components, normalizing any components that may be out of range.
     return makeColorTypeByNormalizingComponents<typename InterpolationMethod::ColorType>(normalizedInterpolatedColorComponents);
 }
-
-template<typename Encoder> void ColorInterpolationMethod::encode(Encoder& encoder) const
-{
-    encoder << alphaPremultiplication;
-
-    WTF::switchOn(colorSpace,
-        [&] (auto& type) {
-            encoder << type.interpolationColorSpace;
-            if constexpr (decltype(type)::ColorType::Model::coordinateSystem == ColorSpaceCoordinateSystem::CylindricalPolar) {
-                encoder << type.hueInterpolationMethod;
-            }
-        }
-    );
-}
-
-template<typename Decoder> std::optional<ColorInterpolationMethod> ColorInterpolationMethod::decode(Decoder& decoder)
-{
-    std::optional<AlphaPremultiplication> alphaPremultiplication;
-    decoder >> alphaPremultiplication;
-    if (!alphaPremultiplication)
-        return std::nullopt;
-
-    std::optional<ColorInterpolationColorSpace> interpolationColorSpace;
-    decoder >> interpolationColorSpace;
-    if (!interpolationColorSpace)
-        return std::nullopt;
-
-    switch (*interpolationColorSpace) {
-    case ColorInterpolationColorSpace::HSL: {
-        std::optional<HueInterpolationMethod> hueInterpolationMethod;
-        decoder >> hueInterpolationMethod;
-        if (!hueInterpolationMethod)
-            return std::nullopt;
-
-        return ColorInterpolationMethod { ColorInterpolationMethod::HSL { *hueInterpolationMethod }, *alphaPremultiplication };
-    }
-    case ColorInterpolationColorSpace::HWB: {
-        std::optional<HueInterpolationMethod> hueInterpolationMethod;
-        decoder >> hueInterpolationMethod;
-        if (!hueInterpolationMethod)
-            return std::nullopt;
-
-        return ColorInterpolationMethod { ColorInterpolationMethod::HWB { *hueInterpolationMethod }, *alphaPremultiplication };
-    }
-    case ColorInterpolationColorSpace::LCH: {
-        std::optional<HueInterpolationMethod> hueInterpolationMethod;
-        decoder >> hueInterpolationMethod;
-        if (!hueInterpolationMethod)
-            return std::nullopt;
-
-        return ColorInterpolationMethod { ColorInterpolationMethod::LCH { *hueInterpolationMethod }, *alphaPremultiplication };
-    }
-    case ColorInterpolationColorSpace::OKLCH: {
-        std::optional<HueInterpolationMethod> hueInterpolationMethod;
-        decoder >> hueInterpolationMethod;
-        if (!hueInterpolationMethod)
-            return std::nullopt;
-
-        return ColorInterpolationMethod { ColorInterpolationMethod::OKLCH { *hueInterpolationMethod }, *alphaPremultiplication };
-    }
-    case ColorInterpolationColorSpace::Lab:
-        return ColorInterpolationMethod { ColorInterpolationMethod::Lab { }, *alphaPremultiplication };
-    case ColorInterpolationColorSpace::OKLab:
-        return ColorInterpolationMethod { ColorInterpolationMethod::OKLab { }, *alphaPremultiplication };
-    case ColorInterpolationColorSpace::SRGB:
-        return ColorInterpolationMethod { ColorInterpolationMethod::SRGB { }, *alphaPremultiplication };
-    case ColorInterpolationColorSpace::SRGBLinear:
-        return ColorInterpolationMethod { ColorInterpolationMethod::SRGBLinear { }, *alphaPremultiplication };
-    case ColorInterpolationColorSpace::XYZD50:
-        return ColorInterpolationMethod { ColorInterpolationMethod::XYZD50 { }, *alphaPremultiplication };
-    case ColorInterpolationColorSpace::XYZD65:
-        return ColorInterpolationMethod { ColorInterpolationMethod::XYZD65 { }, *alphaPremultiplication };
-    }
-
-    RELEASE_ASSERT_NOT_REACHED();
-    return std::nullopt;
-}
-
-}
-
-namespace WTF {
-
-template<> struct EnumTraits<WebCore::HueInterpolationMethod> {
-    using values = EnumValues<
-        WebCore::HueInterpolationMethod,
-        WebCore::HueInterpolationMethod::Shorter,
-        WebCore::HueInterpolationMethod::Longer,
-        WebCore::HueInterpolationMethod::Increasing,
-        WebCore::HueInterpolationMethod::Decreasing,
-        WebCore::HueInterpolationMethod::Specified
-    >;
-};
-
-template<> struct EnumTraits<WebCore::ColorInterpolationColorSpace> {
-    using values = EnumValues<
-        WebCore::ColorInterpolationColorSpace,
-        WebCore::ColorInterpolationColorSpace::HSL,
-        WebCore::ColorInterpolationColorSpace::HWB,
-        WebCore::ColorInterpolationColorSpace::LCH,
-        WebCore::ColorInterpolationColorSpace::Lab,
-        WebCore::ColorInterpolationColorSpace::OKLCH,
-        WebCore::ColorInterpolationColorSpace::OKLab,
-        WebCore::ColorInterpolationColorSpace::SRGB,
-        WebCore::ColorInterpolationColorSpace::SRGBLinear,
-        WebCore::ColorInterpolationColorSpace::XYZD50,
-        WebCore::ColorInterpolationColorSpace::XYZD65
-    >;
-};
 
 }
