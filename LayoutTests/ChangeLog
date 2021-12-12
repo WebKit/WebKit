@@ -1,3 +1,18 @@
+2021-12-12  Antoine Quint  <graouts@webkit.org>
+
+        Add a test for document.timeline.maximumFrameRate
+        https://bugs.webkit.org/show_bug.cgi?id=234200
+
+        Reviewed by Dean Jackson.
+
+        Bug 234161 added a new document.timeline.maximumFrameRate property but didn't feature
+        a test. This new test checks that we have a minimum of 60fps reported.
+
+        * platform/mac-wk1/TestExpectations:
+        * platform/win/TestExpectations:
+        * webanimations/frame-rate/document-timeline-maximum-frame-rate-expected.txt: Added.
+        * webanimations/frame-rate/document-timeline-maximum-frame-rate.html: Added.
+
 2021-12-11  Alan Bujtas  <zalan@apple.com>
 
         fast/borders/bidi-002.html is failing on Monterey bots.
