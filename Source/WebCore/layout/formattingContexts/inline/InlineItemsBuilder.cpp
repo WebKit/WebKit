@@ -170,9 +170,44 @@ static void replaceNonPreservedNewLineCharactersAndAppend(const InlineTextBox& i
         paragraphContentBuilder.append(textContent.right(contentLength - nonReplacedContentStartPosition));
 }
 
-using InlineItemOffsetList = Vector<std::optional<size_t>>;
-static inline void buildBidiParagraph(const InlineItems& inlineItems,  StringBuilder& paragraphContentBuilder, InlineItemOffsetList& inlineItemOffsetList)
+static inline void handleEnterExitBidiContext(StringBuilder& paragraphContentBuilder, EUnicodeBidi unicodeBidi, bool isLTR, bool isEnteringBidi)
 {
+    switch (unicodeBidi) {
+    case EUnicodeBidi::UBNormal:
+        // The box does not open an additional level of embedding with respect to the bidirectional algorithm.
+        // For inline boxes, implicit reordering works across box boundaries.
+        break;
+    case EUnicodeBidi::Embed:
+        paragraphContentBuilder.append(isEnteringBidi ? (isLTR ? leftToRightEmbed : rightToLeftEmbed) : popDirectionalFormatting);
+        break;
+    case EUnicodeBidi::Override:
+        paragraphContentBuilder.append(isEnteringBidi ? (isLTR ? leftToRightOverride : rightToLeftOverride) : popDirectionalFormatting);
+        break;
+    case EUnicodeBidi::Isolate:
+        paragraphContentBuilder.append(isEnteringBidi ? (isLTR ? leftToRightIsolate : rightToLeftIsolate) : popDirectionalIsolate);
+        break;
+    case EUnicodeBidi::Plaintext:
+        paragraphContentBuilder.append(isEnteringBidi ? firstStrongIsolate : popDirectionalIsolate);
+        break;
+    case EUnicodeBidi::IsolateOverride:
+        if (isEnteringBidi) {
+            paragraphContentBuilder.append(firstStrongIsolate);
+            paragraphContentBuilder.append(isLTR ? leftToRightOverride : rightToLeftOverride);
+        } else {
+            paragraphContentBuilder.append(popDirectionalFormatting);
+            paragraphContentBuilder.append(popDirectionalIsolate);
+        }
+        break;
+    default:
+        ASSERT_NOT_REACHED();
+    }
+}
+
+using InlineItemOffsetList = Vector<std::optional<size_t>>;
+static inline void buildBidiParagraph(const RenderStyle& rootStyle, const InlineItems& inlineItems,  StringBuilder& paragraphContentBuilder, InlineItemOffsetList& inlineItemOffsetList)
+{
+    handleEnterExitBidiContext(paragraphContentBuilder, rootStyle.unicodeBidi(), rootStyle.isLeftToRightDirection(), true);
+
     const Box* lastInlineTextBox = nullptr;
     size_t inlineTextBoxOffset = 0;
     for (size_t index = 0; index < inlineItems.size(); ++index) {
@@ -201,36 +236,7 @@ static inline void buildBidiParagraph(const InlineItems& inlineItems,  StringBui
             }
             inlineItemOffsetList.uncheckedAppend({ paragraphContentBuilder.length() });
             auto isEnteringBidi = inlineItem.isInlineBoxStart();
-            switch (style.unicodeBidi()) {
-            case EUnicodeBidi::UBNormal:
-                // The box does not open an additional level of embedding with respect to the bidirectional algorithm.
-                // For inline boxes, implicit reordering works across box boundaries.
-                ASSERT_NOT_REACHED();
-                break;
-            case EUnicodeBidi::Embed:
-                paragraphContentBuilder.append(isEnteringBidi ? (style.isLeftToRightDirection() ? leftToRightEmbed : rightToLeftEmbed) : popDirectionalFormatting);
-                break;
-            case EUnicodeBidi::Override:
-                paragraphContentBuilder.append(isEnteringBidi ? (style.isLeftToRightDirection() ? leftToRightOverride : rightToLeftOverride) : popDirectionalFormatting);
-                break;
-            case EUnicodeBidi::Isolate:
-                paragraphContentBuilder.append(isEnteringBidi ? (style.isLeftToRightDirection() ? leftToRightIsolate : rightToLeftIsolate) : popDirectionalIsolate);
-                break;
-            case EUnicodeBidi::Plaintext:
-                paragraphContentBuilder.append(isEnteringBidi ? firstStrongIsolate : popDirectionalIsolate);
-                break;
-            case EUnicodeBidi::IsolateOverride:
-                if (isEnteringBidi) {
-                    paragraphContentBuilder.append(firstStrongIsolate);
-                    paragraphContentBuilder.append(style.isLeftToRightDirection() ? leftToRightOverride : rightToLeftOverride);
-                } else {
-                    paragraphContentBuilder.append(popDirectionalFormatting);
-                    paragraphContentBuilder.append(popDirectionalIsolate);
-                }
-                break;
-            default:
-                ASSERT_NOT_REACHED();
-            }
+            handleEnterExitBidiContext(paragraphContentBuilder, style.unicodeBidi(), style.isLeftToRightDirection(), isEnteringBidi);
         } else if (inlineItem.isLineBreak()) {
             inlineItemOffsetList.uncheckedAppend({ paragraphContentBuilder.length() });
             paragraphContentBuilder.append(newlineCharacter);
@@ -250,7 +256,7 @@ void InlineItemsBuilder::breakAndComputeBidiLevels(InlineItems& inlineItems)
     StringBuilder paragraphContentBuilder;
     InlineItemOffsetList inlineItemOffsets;
     inlineItemOffsets.reserveInitialCapacity(inlineItems.size());
-    buildBidiParagraph(inlineItems, paragraphContentBuilder, inlineItemOffsets);
+    buildBidiParagraph(root().style(), inlineItems, paragraphContentBuilder, inlineItemOffsets);
     ASSERT(inlineItemOffsets.size() == inlineItems.size());
 
     // 1. Setup the bidi boundary loop by calling ubidi_setPara with the paragraph text.
