@@ -323,10 +323,10 @@ void EventDispatcher::displayWasRefreshed(PlatformDisplayID displayID, const Dis
 }
 #endif
 
-void EventDispatcher::pageScreenDidChange(PageIdentifier pageID, PlatformDisplayID displayID)
+void EventDispatcher::pageScreenDidChange(PageIdentifier pageID, PlatformDisplayID displayID, std::optional<unsigned> nominalFramesPerSecond)
 {
 #if ENABLE(MOMENTUM_EVENT_DISPATCHER)
-    m_momentumEventDispatcher->pageScreenDidChange(pageID, displayID);
+    m_momentumEventDispatcher->pageScreenDidChange(pageID, displayID, nominalFramesPerSecond);
 #else
     UNUSED_PARAM(pageID);
     UNUSED_PARAM(displayID);

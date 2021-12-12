@@ -125,7 +125,7 @@ private:
     void displayDidRefreshOnScrollingThread(WebCore::PlatformDisplayID);
 #endif
 
-    void pageScreenDidChange(WebCore::PageIdentifier, WebCore::PlatformDisplayID);
+    void pageScreenDidChange(WebCore::PageIdentifier, WebCore::PlatformDisplayID, std::optional<unsigned> nominalFramesPerSecond);
 
     Ref<WorkQueue> m_queue;
 

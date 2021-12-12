@@ -40,7 +40,7 @@ namespace WebKit {
 
 static constexpr Seconds deltaHistoryMaximumAge = 500_ms;
 static constexpr Seconds deltaHistoryMaximumInterval = 150_ms;
-static constexpr float idealCurveFrameRate = 60;
+static constexpr WebCore::FramesPerSecond idealCurveFrameRate = 60;
 static constexpr Seconds idealCurveFrameInterval = 1_s / idealCurveFrameRate;
 
 MomentumEventDispatcher::MomentumEventDispatcher(EventDispatcher& dispatcher)
@@ -184,6 +184,10 @@ void MomentumEventDispatcher::dispatchSyntheticMomentumEvent(WebWheelEvent::Phas
 
 void MomentumEventDispatcher::didStartMomentumPhase(WebCore::PageIdentifier pageIdentifier, const WebWheelEvent& event)
 {
+    auto displayProperties = this->displayProperties(pageIdentifier);
+    if (!displayProperties)
+        return;
+
     tracePoint(SyntheticMomentumStart);
 
     auto momentumStartInterval = event.ioHIDEventTimestamp() - m_lastEndedEventTimestamp;
@@ -193,6 +197,7 @@ void MomentumEventDispatcher::didStartMomentumPhase(WebCore::PageIdentifier page
     m_currentGesture.initiatingEvent = event;
     m_currentGesture.currentOffset = { };
     m_currentGesture.startTime = MonotonicTime::now() - momentumStartInterval;
+    m_currentGesture.displayNominalFrameRate = displayProperties->nominalFrameRate;
     m_currentGesture.accelerationCurve = [&] () -> std::optional<ScrollingAccelerationCurve> {
         auto curveIterator = m_accelerationCurves.find(m_currentGesture.pageIdentifier);
         if (curveIterator == m_accelerationCurves.end())
@@ -241,51 +246,54 @@ void MomentumEventDispatcher::setScrollingAccelerationCurve(WebCore::PageIdentif
 #endif
 }
 
-WebCore::PlatformDisplayID MomentumEventDispatcher::displayID() const
+std::optional<MomentumEventDispatcher::DisplayProperties> MomentumEventDispatcher::displayProperties(WebCore::PageIdentifier pageIdentifier) const
 {
-    ASSERT(m_currentGesture.pageIdentifier);
-    auto displayIDIterator = m_displayIDs.find(m_currentGesture.pageIdentifier);
-    if (displayIDIterator == m_displayIDs.end())
-        return { };
-    return displayIDIterator->value;
+    ASSERT(pageIdentifier);
+    auto displayPropertiesIterator = m_displayProperties.find(pageIdentifier);
+    if (displayPropertiesIterator == m_displayProperties.end())
+        return std::nullopt;
+    return { displayPropertiesIterator->value };
 }
 
 void MomentumEventDispatcher::startDisplayLink()
 {
-    auto displayID = this->displayID();
-    if (!displayID) {
+    auto displayProperties = this->displayProperties(m_currentGesture.pageIdentifier);
+    if (!displayProperties) {
         RELEASE_LOG(ScrollAnimations, "MomentumEventDispatcher failed to start display link");
         return;
     }
 
     // FIXME: Switch down to lower-than-full-speed frame rates for the tail end of the curve.
-    WebProcess::singleton().parentProcessConnection()->send(Messages::WebProcessProxy::StartDisplayLink(m_observerID, displayID, WebCore::FullSpeedFramesPerSecond), 0);
+    WebProcess::singleton().parentProcessConnection()->send(Messages::WebProcessProxy::StartDisplayLink(m_observerID, displayProperties->displayID, WebCore::FullSpeedFramesPerSecond), 0);
 #if ENABLE(MOMENTUM_EVENT_DISPATCHER_TEMPORARY_LOGGING)
-    RELEASE_LOG(ScrollAnimations, "MomentumEventDispatcher starting display link for display %d", displayID);
+    RELEASE_LOG(ScrollAnimations, "MomentumEventDispatcher starting display link for display %d", displayProperties->displayID);
 #endif
 }
 
 void MomentumEventDispatcher::stopDisplayLink()
 {
-    auto displayID = this->displayID();
-    if (!displayID) {
+    auto displayProperties = this->displayProperties(m_currentGesture.pageIdentifier);
+    if (!displayProperties) {
         RELEASE_LOG(ScrollAnimations, "MomentumEventDispatcher failed to stop display link");
         return;
     }
 
-    WebProcess::singleton().parentProcessConnection()->send(Messages::WebProcessProxy::StopDisplayLink(m_observerID, displayID), 0);
+    WebProcess::singleton().parentProcessConnection()->send(Messages::WebProcessProxy::StopDisplayLink(m_observerID, displayProperties->displayID), 0);
 #if ENABLE(MOMENTUM_EVENT_DISPATCHER_TEMPORARY_LOGGING)
-    RELEASE_LOG(ScrollAnimations, "MomentumEventDispatcher stopping display link for display %d", displayID);
+    RELEASE_LOG(ScrollAnimations, "MomentumEventDispatcher stopping display link for display %d", displayProperties->displayID);
 #endif
 }
 
-void MomentumEventDispatcher::pageScreenDidChange(WebCore::PageIdentifier pageID, WebCore::PlatformDisplayID displayID)
+void MomentumEventDispatcher::pageScreenDidChange(WebCore::PageIdentifier pageID, WebCore::PlatformDisplayID displayID, std::optional<unsigned> nominalFramesPerSecond)
 {
     bool affectsCurrentGesture = (pageID == m_currentGesture.pageIdentifier);
     if (affectsCurrentGesture)
         stopDisplayLink();
 
-    m_displayIDs.set(pageID, displayID);
+    DisplayProperties properties;
+    properties.displayID = displayID;
+    properties.nominalFrameRate = nominalFramesPerSecond.value_or(WebCore::FullSpeedFramesPerSecond);
+    m_displayProperties.set(pageID, WTFMove(properties));
 
     if (affectsCurrentGesture)
         startDisplayLink();
@@ -319,7 +327,8 @@ void MomentumEventDispatcher::displayWasRefreshed(WebCore::PlatformDisplayID dis
     if (!m_currentGesture.active)
         return;
 
-    if (displayID != this->displayID())
+    auto displayProperties = this->displayProperties(m_currentGesture.pageIdentifier);
+    if (!displayProperties || displayID != displayProperties->displayID)
         return;
 
     dispatchSyntheticMomentumEvent(WebWheelEvent::PhaseChanged, consumeDeltaForCurrentTime());
@@ -370,7 +379,9 @@ void MomentumEventDispatcher::buildOffsetTableWithInitialDelta(WebCore::FloatSiz
     WebCore::FloatSize accumulatedOffset;
     WebCore::FloatSize unacceleratedDelta = initialUnacceleratedDelta;
 
-    float physicalCurveMultiplier = idealCurveFrameRate / m_currentGesture.accelerationCurve->frameRate();
+    // Tail deltas will be dispatched at the screen refresh rate, not the momentum
+    // dispatch rate, so we need to scale from 60Hz into screen refresh rate.
+    float tailCurveMultiplier = static_cast<float>(idealCurveFrameRate) / m_currentGesture.displayNominalFrameRate;
     bool inTail = false;
     WebCore::FloatSize tailCarry;
 
@@ -385,7 +396,7 @@ void MomentumEventDispatcher::buildOffsetTableWithInitialDelta(WebCore::FloatSiz
         }
 
         if (inTail) {
-            auto tailDelta = acceleratedDelta * physicalCurveMultiplier;
+            auto tailDelta = acceleratedDelta * tailCurveMultiplier;
             auto deltaWithCarry = tailDelta + tailCarry;
             auto quantizedDelta = roundedIntSize(deltaWithCarry);
             tailCarry = deltaWithCarry - quantizedDelta;

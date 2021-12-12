@@ -36,5 +36,5 @@ messages -> EventDispatcher {
 #if ENABLE(MOMENTUM_EVENT_DISPATCHER)
     SetScrollingAccelerationCurve(WebCore::PageIdentifier pageID, std::optional<WebKit::ScrollingAccelerationCurve> curve)
 #endif
-    PageScreenDidChange(WebCore::PageIdentifier pageID, uint32_t displayID)
+    PageScreenDidChange(WebCore::PageIdentifier pageID, uint32_t displayID, std::optional<unsigned> nominalFramesPerSecond)
 }
