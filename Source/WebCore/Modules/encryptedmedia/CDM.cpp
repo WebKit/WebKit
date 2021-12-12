@@ -90,7 +90,7 @@ void CDM::getSupportedConfiguration(MediaKeySystemConfiguration&& candidateConfi
     // W3C Editor's Draft 09 November 2016
     // Implemented in CDMPrivate::getSupportedConfiguration()
 
-    Document* document = downcast<Document>(m_scriptExecutionContext);
+    Document* document = downcast<Document>(scriptExecutionContext());
     if (!document || !m_private) {
         callback(std::nullopt);
         return;

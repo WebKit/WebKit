@@ -262,7 +262,7 @@ void BaseAudioContext::stop()
 
 Document* BaseAudioContext::document() const
 {
-    return downcast<Document>(m_scriptExecutionContext);
+    return downcast<Document>(scriptExecutionContext());
 }
 
 bool BaseAudioContext::wouldTaintOrigin(const URL& url) const
@@ -868,13 +868,14 @@ void BaseAudioContext::postTask(Function<void()>&& task)
 
 const SecurityOrigin* BaseAudioContext::origin() const
 {
-    return m_scriptExecutionContext ? m_scriptExecutionContext->securityOrigin() : nullptr;
+    auto* context = scriptExecutionContext();
+    return context ? context->securityOrigin() : nullptr;
 }
 
 void BaseAudioContext::addConsoleMessage(MessageSource source, MessageLevel level, const String& message)
 {
-    if (m_scriptExecutionContext)
-        m_scriptExecutionContext->addConsoleMessage(source, level, message);
+    if (auto* context = scriptExecutionContext())
+        context->addConsoleMessage(source, level, message);
 }
 
 PeriodicWave& BaseAudioContext::periodicWave(OscillatorType type)

@@ -476,7 +476,7 @@ void AudioContext::suspendPlayback()
 
 MediaSessionGroupIdentifier AudioContext::mediaSessionGroupIdentifier() const
 {
-    auto* document = downcast<Document>(m_scriptExecutionContext);
+    auto* document = downcast<Document>(scriptExecutionContext());
     return document && document->page() ? document->page()->mediaSessionGroupIdentifier() : MediaSessionGroupIdentifier { };
 }
 

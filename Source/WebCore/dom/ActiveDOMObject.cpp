@@ -76,12 +76,13 @@ ActiveDOMObject::~ActiveDOMObject()
     // ContextDestructionObserver::contextDestroyed() (which we implement /
     // inherit). Hence, we should ensure that this is not 0 before use it
     // here.
-    if (!m_scriptExecutionContext)
+    auto* context = scriptExecutionContext();
+    if (!context)
         return;
 
     ASSERT(m_suspendIfNeededWasCalled);
-    ASSERT(m_scriptExecutionContext->isContextThread());
-    m_scriptExecutionContext->willDestroyActiveDOMObject(*this);
+    ASSERT(context->isContextThread());
+    context->willDestroyActiveDOMObject(*this);
 }
 
 void ActiveDOMObject::suspendIfNeeded()
@@ -90,10 +91,8 @@ void ActiveDOMObject::suspendIfNeeded()
     ASSERT(!m_suspendIfNeededWasCalled);
     m_suspendIfNeededWasCalled = true;
 #endif
-    if (!m_scriptExecutionContext)
-        return;
-
-    m_scriptExecutionContext->suspendActiveDOMObjectIfNeeded(*this);
+    if (auto* context = scriptExecutionContext())
+        context->suspendActiveDOMObjectIfNeeded(*this);
 }
 
 #if ASSERT_ENABLED

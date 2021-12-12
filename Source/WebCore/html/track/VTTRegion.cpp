@@ -328,7 +328,7 @@ void VTTRegion::willRemoveTextTrackCueBox(VTTCueBox* box)
 HTMLDivElement& VTTRegion::getDisplayTree()
 {
     if (!m_regionDisplayTree) {
-        m_regionDisplayTree = HTMLDivElement::create(downcast<Document>(*m_scriptExecutionContext));
+        m_regionDisplayTree = HTMLDivElement::create(downcast<Document>(*scriptExecutionContext()));
         m_regionDisplayTree->setPseudo(ShadowPseudoIds::webkitMediaTextTrackRegion());
         m_recalculateStyles = true;
     }
@@ -375,7 +375,7 @@ void VTTRegion::prepareRegionDisplayTree()
     // The cue container is used to wrap the cues and it is the object which is
     // gradually scrolled out as multiple cues are appended to the region.
     if (!m_cueContainer) {
-        m_cueContainer = HTMLDivElement::create(downcast<Document>(*m_scriptExecutionContext));
+        m_cueContainer = HTMLDivElement::create(downcast<Document>(*scriptExecutionContext()));
         m_cueContainer->setPseudo(ShadowPseudoIds::webkitMediaTextTrackRegionContainer());
         m_regionDisplayTree->appendChild(*m_cueContainer);
     }

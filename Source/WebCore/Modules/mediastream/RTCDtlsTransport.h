@@ -59,7 +59,7 @@ private:
 
     // EventTargetWithInlineData
     EventTargetInterface eventTargetInterface() const final { return RTCDtlsTransportEventTargetInterfaceType; }
-    ScriptExecutionContext* scriptExecutionContext() const final { return m_scriptExecutionContext; }
+    ScriptExecutionContext* scriptExecutionContext() const final { return ActiveDOMObject::scriptExecutionContext(); }
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }
 

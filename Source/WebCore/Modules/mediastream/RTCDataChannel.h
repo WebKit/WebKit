@@ -99,7 +99,7 @@ private:
     void removeFromDataChannelLocalMapIfNeeded();
 
     EventTargetInterface eventTargetInterface() const final { return RTCDataChannelEventTargetInterfaceType; }
-    ScriptExecutionContext* scriptExecutionContext() const final { return m_scriptExecutionContext; }
+    ScriptExecutionContext* scriptExecutionContext() const final { return ActiveDOMObject::scriptExecutionContext(); }
 
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }

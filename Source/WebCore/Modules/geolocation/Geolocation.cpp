@@ -332,7 +332,7 @@ int Geolocation::watchPosition(Ref<PositionCallback>&& successCallback, RefPtr<P
     int watchID;
     // Keep asking for the next id until we're given one that we don't already have.
     do {
-        watchID = m_scriptExecutionContext->circularSequentialID();
+        watchID = scriptExecutionContext()->circularSequentialID();
     } while (!m_watchers.add(watchID, notifier.copyRef()));
     return watchID;
 }

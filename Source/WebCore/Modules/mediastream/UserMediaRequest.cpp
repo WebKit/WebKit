@@ -75,16 +75,14 @@ UserMediaRequest::~UserMediaRequest()
 
 SecurityOrigin* UserMediaRequest::userMediaDocumentOrigin() const
 {
-    if (!m_scriptExecutionContext)
-        return nullptr;
-    return m_scriptExecutionContext->securityOrigin();
+    auto* context = scriptExecutionContext();
+    return context ? context->securityOrigin() : nullptr;
 }
 
 SecurityOrigin* UserMediaRequest::topLevelDocumentOrigin() const
 {
-    if (!m_scriptExecutionContext)
-        return nullptr;
-    return &m_scriptExecutionContext->topOrigin();
+    auto* context = scriptExecutionContext();
+    return context ? &context->topOrigin() : nullptr;
 }
 
 static bool hasInvalidGetDisplayMediaConstraint(const MediaConstraints& constraints)
@@ -157,8 +155,9 @@ static bool hasInvalidGetDisplayMediaConstraint(const MediaConstraints& constrai
 
 void UserMediaRequest::start()
 {
-    ASSERT(m_scriptExecutionContext);
-    if (!m_scriptExecutionContext) {
+    auto* context = scriptExecutionContext();
+    ASSERT(context);
+    if (!context) {
         deny(MediaAccessDenialReason::UserMediaDisabled);
         return;
     }
@@ -185,7 +184,7 @@ void UserMediaRequest::start()
     // 4. If the current settings object's responsible document is NOT allowed to use the feature indicated by
     //    attribute name allowusermedia, return a promise rejected with a DOMException object whose name
     //    attribute has the value SecurityError.
-    auto& document = downcast<Document>(*m_scriptExecutionContext);
+    auto& document = downcast<Document>(*context);
     auto* controller = UserMediaController::from(document.page());
     if (!controller) {
         deny(MediaAccessDenialReason::UserMediaDisabled);
@@ -254,7 +253,7 @@ void UserMediaRequest::allow(CaptureDevice&& audioDevice, CaptureDevice&& videoD
             }
             auto privateStream = WTFMove(privateStreamOrError).value();
 
-            auto& document = downcast<Document>(*m_scriptExecutionContext);
+            auto& document = downcast<Document>(*scriptExecutionContext());
             privateStream->monitorOrientation(document.orientationNotifier());
 
             auto stream = MediaStream::create(document, WTFMove(privateStream));
@@ -273,7 +272,7 @@ void UserMediaRequest::allow(CaptureDevice&& audioDevice, CaptureDevice&& videoD
         auto& document = downcast<Document>(*scriptExecutionContext());
         RealtimeMediaSourceCenter::singleton().createMediaStream(document.logger(), WTFMove(callback), WTFMove(deviceIdentifierHashSalt), WTFMove(audioDevice), WTFMove(videoDevice), m_request);
 
-        if (!m_scriptExecutionContext)
+        if (!scriptExecutionContext())
             return;
 
 #if ENABLE(WEB_RTC)
@@ -285,7 +284,7 @@ void UserMediaRequest::allow(CaptureDevice&& audioDevice, CaptureDevice&& videoD
 
 void UserMediaRequest::deny(MediaAccessDenialReason reason, const String& message)
 {
-    if (!m_scriptExecutionContext)
+    if (!scriptExecutionContext())
         return;
 
     ExceptionCode code;
@@ -336,7 +335,7 @@ void UserMediaRequest::deny(MediaAccessDenialReason reason, const String& messag
 
 void UserMediaRequest::stop()
 {
-    auto& document = downcast<Document>(*m_scriptExecutionContext);
+    auto& document = downcast<Document>(*scriptExecutionContext());
     if (auto* controller = UserMediaController::from(document.page()))
         controller->cancelUserMediaAccessRequest(*this);
 }
@@ -348,7 +347,7 @@ const char* UserMediaRequest::activeDOMObjectName() const
 
 Document* UserMediaRequest::document() const
 {
-    return downcast<Document>(m_scriptExecutionContext);
+    return downcast<Document>(scriptExecutionContext());
 }
 
 void UserMediaRequest::mediaStreamDidFail(RealtimeMediaSource::Type type)
