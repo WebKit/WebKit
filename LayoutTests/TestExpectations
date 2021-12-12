@@ -2741,7 +2741,6 @@ webkit.org/b/195275 imported/w3c/web-platform-tests/css/css-text/white-space/tab
 webkit.org/b/195275 imported/w3c/web-platform-tests/css/css-text/white-space/tab-stop-threshold-002.html [ ImageOnlyFailure ]
 webkit.org/b/195275 imported/w3c/web-platform-tests/css/css-text/white-space/tab-stop-threshold-006.html [ ImageOnlyFailure ]
 webkit.org/b/195275 imported/w3c/web-platform-tests/css/css-text/white-space/control-chars-000.html [ ImageOnlyFailure ]
-webkit.org/b/195275 imported/w3c/web-platform-tests/css/css-text/white-space/white-space-intrinsic-size-001.html [ ImageOnlyFailure ]
 webkit.org/b/195275 imported/w3c/web-platform-tests/css/css-text/white-space/text-space-collapse-preserve-breaks-001.xht [ ImageOnlyFailure ]
 webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/white-space/eol-spaces-bidi-001.html [ ImageOnlyFailure ]
 webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/white-space/seg-break-transformation-018.html [ ImageOnlyFailure ]

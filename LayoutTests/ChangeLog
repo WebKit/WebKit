@@ -1,3 +1,11 @@
+2021-12-12  Alan Bujtas  <zalan@apple.com>
+
+        IFC progression after r286121.
+
+        Unreviewed gardening.
+
+        * TestExpectations:
+
 2021-12-12  Antoine Quint  <graouts@webkit.org>
 
         Add a test for document.timeline.maximumFrameRate
