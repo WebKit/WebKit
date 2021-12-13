@@ -86,7 +86,7 @@ InlineItems InlineItemsBuilder::build()
 {
     InlineItems inlineItems;
     collectInlineItems(inlineItems);
-    if (hasSeenBidiContent())
+    if (needsVisualReordeering())
         breakAndComputeBidiLevels(inlineItems);
     computeInlineTextItemWidths(inlineItems);
     return inlineItems;
@@ -250,7 +250,7 @@ static inline void buildBidiParagraph(const RenderStyle& rootStyle, const Inline
 
 void InlineItemsBuilder::breakAndComputeBidiLevels(InlineItems& inlineItems)
 {
-    ASSERT(hasSeenBidiContent());
+    ASSERT(needsVisualReordeering());
     ASSERT(!inlineItems.isEmpty());
 
     StringBuilder paragraphContentBuilder;
