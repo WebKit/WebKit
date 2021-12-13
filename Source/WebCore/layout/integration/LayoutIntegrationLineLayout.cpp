@@ -447,7 +447,7 @@ LayoutRect LineLayout::firstInlineBoxRect(const RenderInline& renderInline) cons
     auto& layoutBox = m_boxTree.layoutBoxForRenderer(renderInline);
 
     if (auto* box = m_inlineContent->firstBoxForLayoutBox(layoutBox))
-        return Layout::toLayoutRect(box->logicalRect());
+        return Layout::toLayoutRect(box->rect());
 
     return { };
 }
@@ -485,7 +485,7 @@ Vector<FloatRect> LineLayout::collectInlineBoxRects(const RenderInline& renderIn
 
     Vector<FloatRect> result;
     m_inlineContent->traverseNonRootInlineBoxes(layoutBox, [&](auto& inlineBox) {
-        result.append(inlineBox.logicalRect());
+        result.append(inlineBox.rect());
     });
 
     return result;
@@ -580,7 +580,7 @@ bool LineLayout::hitTest(const HitTestRequest& request, HitTestResult& result, c
             continue;
         }
 
-        auto boxRect = Layout::toLayoutRect(box.logicalRect());
+        auto boxRect = Layout::toLayoutRect(box.rect());
         boxRect.moveBy(accumulatedOffset);
 
         if (!locationInContainer.intersects(boxRect))

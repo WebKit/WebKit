@@ -95,44 +95,44 @@ struct Box {
 
     bool hasContent() const { return m_hasContent; }
 
-    const Layout::InlineRect& logicalRect() const { return m_logicalRect; }
+    const Layout::InlineRect& rect() const { return m_physicalRect; }
     const Layout::InlineRect& inkOverflow() const { return m_inkOverflow; }
 
-    Layout::InlineLayoutUnit logicalTop() const { return logicalRect().top(); }
-    Layout::InlineLayoutUnit logicalBottom() const { return logicalRect().bottom(); }
-    Layout::InlineLayoutUnit logicalLeft() const { return logicalRect().left(); }
-    Layout::InlineLayoutUnit logicalRight() const { return logicalRect().right(); }
+    Layout::InlineLayoutUnit top() const { return rect().top(); }
+    Layout::InlineLayoutUnit bottom() const { return rect().bottom(); }
+    Layout::InlineLayoutUnit left() const { return rect().left(); }
+    Layout::InlineLayoutUnit right() const { return rect().right(); }
 
-    Layout::InlineLayoutUnit logicalWidth() const { return logicalRect().width(); }
-    Layout::InlineLayoutUnit logicalHeight() const { return logicalRect().height(); }
+    Layout::InlineLayoutUnit width() const { return rect().width(); }
+    Layout::InlineLayoutUnit height() const { return rect().height(); }
 
     void moveVertically(Layout::InlineLayoutUnit offset)
     {
-        m_logicalRect.moveVertically(offset);
+        m_physicalRect.moveVertically(offset);
         m_inkOverflow.moveVertically(offset);
     }
     void moveHorizontally(Layout::InlineLayoutUnit offset)
     {
-        m_logicalRect.moveHorizontally(offset);
+        m_physicalRect.moveHorizontally(offset);
         m_inkOverflow.moveHorizontally(offset);
     }
     void adjustInkOverflow(const Layout::InlineRect& childBorderBox) { return m_inkOverflow.expandToContain(childBorderBox); }
     void truncate(Layout::InlineLayoutUnit truncatedwidth = 0.f);
-    void setLogicalLeft(Layout::InlineLayoutUnit left)
+    void setLeft(Layout::InlineLayoutUnit pysicalLeft)
     {
-        auto offset = left - logicalLeft();
-        m_logicalRect.setLeft(left);
+        auto offset = pysicalLeft - left();
+        m_physicalRect.setLeft(pysicalLeft);
         m_inkOverflow.setLeft(m_inkOverflow.left() + offset);
     }
-    void setLogicalRight(Layout::InlineLayoutUnit right)
+    void setRight(Layout::InlineLayoutUnit physicalRight)
     {
-        auto offset = right - logicalRight();
-        m_logicalRect.setRight(right);
+        auto offset = physicalRight - right();
+        m_physicalRect.setRight(physicalRight);
         m_inkOverflow.setRight(m_inkOverflow.right() + offset);
     }
-    void setLogicalRect(const Layout::InlineRect& rect, const Layout::InlineRect& inkOverflow)
+    void setRect(const Layout::InlineRect& rect, const Layout::InlineRect& inkOverflow)
     {
-        m_logicalRect = rect;
+        m_physicalRect = rect;
         m_inkOverflow = inkOverflow;
     }
     void setHasContent() { m_hasContent = true; }
@@ -163,7 +163,7 @@ private:
     const Type m_type { Type::GenericInlineLevelBox };
     CheckedRef<const Layout::Box> m_layoutBox;
     UBiDiLevel m_bidiLevel { UBIDI_DEFAULT_LTR };
-    Layout::InlineRect m_logicalRect;
+    Layout::InlineRect m_physicalRect;
     Layout::InlineRect m_inkOverflow;
     bool m_hasContent : 1;
     bool m_isFirstForLayoutBox : 1;
@@ -172,12 +172,12 @@ private:
     std::optional<Text> m_text;
 };
 
-inline Box::Box(size_t lineIndex, Type type, const Layout::Box& layoutBox, UBiDiLevel bidiLevel, const Layout::InlineRect& logicalRect, const Layout::InlineRect& inkOverflow, Expansion expansion, std::optional<Text> text, bool hasContent, OptionSet<PositionWithinInlineLevelBox> positionWithinInlineLevelBox)
+inline Box::Box(size_t lineIndex, Type type, const Layout::Box& layoutBox, UBiDiLevel bidiLevel, const Layout::InlineRect& physicalRect, const Layout::InlineRect& inkOverflow, Expansion expansion, std::optional<Text> text, bool hasContent, OptionSet<PositionWithinInlineLevelBox> positionWithinInlineLevelBox)
     : m_lineIndex(lineIndex)
     , m_type(type)
     , m_layoutBox(layoutBox)
     , m_bidiLevel(bidiLevel)
-    , m_logicalRect(logicalRect)
+    , m_physicalRect(physicalRect)
     , m_inkOverflow(inkOverflow)
     , m_hasContent(hasContent)
     , m_isFirstForLayoutBox(positionWithinInlineLevelBox.contains(PositionWithinInlineLevelBox::First))
@@ -198,8 +198,8 @@ inline Box::Text::Text(size_t start, size_t length, const String& originalConten
 
 inline void Box::truncate(Layout::InlineLayoutUnit truncatedwidth)
 {
-    m_logicalRect.setWidth(truncatedwidth);
-    m_inkOverflow.setRight(m_logicalRect.right());
+    m_physicalRect.setWidth(truncatedwidth);
+    m_inkOverflow.setRight(m_physicalRect.right());
 }
 
 }

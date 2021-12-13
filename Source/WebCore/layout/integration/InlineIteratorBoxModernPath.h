@@ -52,7 +52,7 @@ public:
     bool isInlineBox() const { return box().isInlineBox(); }
     bool isRootInlineBox() const { return box().isRootInlineBox(); }
 
-    FloatRect rect() const { return box().logicalRect(); }
+    FloatRect rect() const { return box().rect(); }
 
     bool isHorizontal() const { return true; }
     bool isLineBreak() const { return box().isLineBreak(); }

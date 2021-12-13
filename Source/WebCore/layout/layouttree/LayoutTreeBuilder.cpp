@@ -386,7 +386,7 @@ void showInlineTreeAndRuns(TextStream& stream, const LayoutState& layoutState, c
         auto outputInlineLevelBox = [&](const auto& inlineLevelBox) {
             addSpacing();
             stream << "    ";
-            auto logicalRect = inlineLevelBox.logicalRect();
+            auto rect = inlineLevelBox.rect();
             auto& layoutBox = inlineLevelBox.layoutBox();
             if (layoutBox.isAtomicInlineLevelBox())
                 stream << "Atomic inline level box";
@@ -397,8 +397,8 @@ void showInlineTreeAndRuns(TextStream& stream, const LayoutState& layoutState, c
             else
                 stream << "Generic inline level box";
             stream
-                << " at (" << logicalRect.left() << "," << logicalRect.top() << ")"
-                << " size (" << logicalRect.width() << "x" << logicalRect.height() << ")";
+                << " at (" << rect.left() << "," << rect.top() << ")"
+                << " size (" << rect.width() << "x" << rect.height() << ")";
             stream.nextLine();
         };
         for (auto& box : boxes) {
@@ -421,7 +421,7 @@ void showInlineTreeAndRuns(TextStream& stream, const LayoutState& layoutState, c
                 stream << "text box";
             else
                 stream << "box box";
-            stream << " at (" << box.logicalLeft() << "," << box.logicalTop() << ") size " << box.logicalWidth() << "x" << box.logicalHeight();
+            stream << " at (" << box.left() << "," << box.top() << ") size " << box.width() << "x" << box.height();
             if (box.text())
                 stream << " box(" << box.text()->start() << ", " << box.text()->end() << ")";
             stream.nextLine();

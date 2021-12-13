@@ -72,10 +72,10 @@ static bool areEssentiallyEqual(LayoutRect a, LayoutRect b)
 
 static bool checkForMatchingNonTextRuns(const InlineDisplay::Box& box, const WebCore::LegacyInlineBox& inlineBox)
 {
-    return areEssentiallyEqual(inlineBox.left(), box.logicalLeft())
-        && areEssentiallyEqual(inlineBox.right(), box.logicalRight())
-        && areEssentiallyEqual(inlineBox.top(), box.logicalTop())
-        && areEssentiallyEqual(inlineBox.bottom(), box.logicalBottom());
+    return areEssentiallyEqual(inlineBox.left(), box.left())
+        && areEssentiallyEqual(inlineBox.right(), box.right())
+        && areEssentiallyEqual(inlineBox.top(), box.top())
+        && areEssentiallyEqual(inlineBox.bottom(), box.bottom());
 }
 
 
@@ -83,10 +83,10 @@ static bool checkForMatchingTextRuns(InlineDisplay::Box& box, const WebCore::Leg
 {
     if (!box.text())
         return false;
-    return areEssentiallyEqual(inlineTextBox.left(), box.logicalLeft())
-        && areEssentiallyEqual(inlineTextBox.right(), box.logicalRight())
-        && areEssentiallyEqual(inlineTextBox.top(), box.logicalTop())
-        && areEssentiallyEqual(inlineTextBox.bottom(), box.logicalBottom())
+    return areEssentiallyEqual(inlineTextBox.left(), box.left())
+        && areEssentiallyEqual(inlineTextBox.right(), box.right())
+        && areEssentiallyEqual(inlineTextBox.top(), box.top())
+        && areEssentiallyEqual(inlineTextBox.bottom(), box.bottom())
         && (inlineTextBox.isLineBreak() || (inlineTextBox.start() == box.text()->start() && inlineTextBox.end() == box.text()->end()));
 }
 
@@ -155,7 +155,7 @@ static bool outputMismatchingComplexLineInformationIfNeeded(TextStream& stream, 
             stream << " inline box";
             if (box.text())
                 stream << " (" << box.text()->start() << ", " << box.text()->end() << ")";
-            stream << " (" << box.logicalLeft() << ", " << box.logicalTop() << ") (" << box.logicalWidth() << "x" << box.logicalHeight() << ")";
+            stream << " (" << box.left() << ", " << box.top() << ") (" << box.width() << "x" << box.height() << ")";
             stream.nextLine();
             mismatched = true;
         }

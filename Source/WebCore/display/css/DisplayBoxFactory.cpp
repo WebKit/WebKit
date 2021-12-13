@@ -148,7 +148,7 @@ std::unique_ptr<Box> BoxFactory::displayBoxForTextRun(const InlineDisplay::Box& 
     UNUSED_PARAM(line);
     ASSERT(box.text());
 
-    auto boxRect = LayoutRect { box.logicalLeft(), box.logicalTop(), box.logicalWidth(), box.logicalHeight() };
+    auto boxRect = LayoutRect { box.left(), box.top(), box.width(), box.height() };
     boxRect.move(containingBlockContext.offsetFromRoot);
 
     auto style = Style { box.layoutBox().style() };

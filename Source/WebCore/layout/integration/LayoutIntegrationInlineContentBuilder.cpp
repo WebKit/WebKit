@@ -94,14 +94,14 @@ void InlineContentBuilder::createDisplayLines(Layout::InlineFormattingState& inl
             if (layoutBox.isReplacedBox()) {
                 // Similar to LegacyInlineFlowBox::addReplacedChildOverflow.
                 auto& renderer = downcast<RenderBox>(m_boxTree.rendererForLayoutBox(layoutBox));
-                auto boxLogicalRect = box.logicalRect();
+                auto boxRect = box.rect();
                 if (!renderer.hasSelfPaintingLayer()) {
                     auto childInkOverflow = renderer.logicalVisualOverflowRectForPropagation(&renderer.parent()->style());
-                    childInkOverflow.move(boxLogicalRect.left(), boxLogicalRect.top());
+                    childInkOverflow.move(boxRect.left(), boxRect.top());
                     lineInkOverflowRect.unite(childInkOverflow);
                 }
                 auto childScrollableOverflow = renderer.logicalLayoutOverflowRectForPropagation(&renderer.parent()->style());
-                childScrollableOverflow.move(boxLogicalRect.left(), boxLogicalRect.top());
+                childScrollableOverflow.move(boxRect.left(), boxRect.top());
                 scrollableOverflowRect.unite(childScrollableOverflow);
             }
         }

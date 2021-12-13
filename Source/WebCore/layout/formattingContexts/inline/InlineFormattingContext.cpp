@@ -305,7 +305,7 @@ void InlineFormattingContext::computeStaticPositionForOutOfFlowContent(const For
             // This is the first (non-float)child. Let's place it to the left of the first box.
             // <div><img style="position: absolute">text content</div>
             ASSERT(boxes.size());
-            outOfFlowGeometry.setLogicalTopLeft({ boxes[0].logicalLeft(), lines[0].lineBoxLogicalRect().top() });
+            outOfFlowGeometry.setLogicalTopLeft({ boxes[0].left(), lines[0].lineBoxLogicalRect().top() });
             continue;
         }
 
@@ -336,24 +336,24 @@ void InlineFormattingContext::computeStaticPositionForOutOfFlowContent(const For
             if (nextBox && nextBox->lineIndex() == previousBox.lineIndex()) {
                 // Previous and next boxes are on the same line. The out-of-flow box is right at the previous box's logical right.
                 // <div>text<img style="position: absolute">content</div>
-                auto logicalLeft = previousBox.logicalRight();
+                auto left = previousBox.right();
                 if (previousContentSkippingFloats->isInlineBox() && !previousContentSkippingFloats->isAnonymous()) {
                     // <div>text<span><img style="position: absolute">content</span></div>
                     // or
                     // <div>text<span>content</span><img style="position: absolute"></div>
                     auto& inlineBoxBoxGeometry = geometryForBox(*previousContentSkippingFloats);
-                    logicalLeft = previousContentSkippingFloats == &outOfFlowBox->parent()
+                    left = previousContentSkippingFloats == &outOfFlowBox->parent()
                         ? BoxGeometry::borderBoxLeft(inlineBoxBoxGeometry) + inlineBoxBoxGeometry.contentBoxLeft()
                         : BoxGeometry::borderBoxRect(inlineBoxBoxGeometry).right();
                 }
-                outOfFlowGeometry.setLogicalTopLeft({ logicalLeft, lines[previousBox.lineIndex()].lineBoxLogicalRect().top() });
+                outOfFlowGeometry.setLogicalTopLeft({ left, lines[previousBox.lineIndex()].lineBoxLogicalRect().top() });
                 return;
             }
 
             if (nextBox) {
                 // The out of flow box is placed at the beginning of the next line (where the first box on the line is).
                 // <div>text<br><img style="position: absolute"><img style="position: absolute">content</div>
-                outOfFlowGeometry.setLogicalTopLeft({ nextBox->logicalLeft(), lines[nextBox->lineIndex()].lineBoxLogicalRect().top() });
+                outOfFlowGeometry.setLogicalTopLeft({ nextBox->left(), lines[nextBox->lineIndex()].lineBoxLogicalRect().top() });
                 return;
             }
 
@@ -366,7 +366,7 @@ void InlineFormattingContext::computeStaticPositionForOutOfFlowContent(const For
                 return;
             }
             // FIXME: We may need to check if this box actually fits the last line and move it over to the "next" line.
-            outOfFlowGeometry.setLogicalTopLeft({ previousBox.logicalRight(), lastLineLogicalRect.top() });
+            outOfFlowGeometry.setLogicalTopLeft({ previousBox.right(), lastLineLogicalRect.top() });
         };
         placeOutOfFlowBoxAfterPreviousInFlowBox();
     }

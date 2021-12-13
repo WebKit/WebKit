@@ -427,8 +427,8 @@ void InlineDisplayContentBuilder::adjustVisualGeometryForDisplayBox(size_t displ
     auto& layoutBox = displayBox.layoutBox();
 
     if (!displayBox.isNonRootInlineBox()) {
-        displayBox.setLogicalLeft(contentRightInVisualOrder);
-        contentRightInVisualOrder += displayBox.logicalWidth();
+        displayBox.setLeft(contentRightInVisualOrder);
+        contentRightInVisualOrder += displayBox.width();
         if (displayBox.isAtomicInlineLevelBox() || displayBox.isGenericInlineLevelBox())
             contentRightInVisualOrder += formattingState().boxGeometry(layoutBox).marginEnd();
         return;
@@ -439,11 +439,11 @@ void InlineDisplayContentBuilder::adjustVisualGeometryForDisplayBox(size_t displ
         auto logicalRect = lineBox.logicalBorderBoxForInlineBox(layoutBox, boxGeometry);
         auto visualRect = InlineRect { lineBoxLogicalTop + logicalRect.top(), contentRightInVisualOrder, { }, logicalRect.height() };
         if (!displayBox.isFirstForLayoutBox())
-            return displayBox.setLogicalRect(visualRect, visualRect);
+            return displayBox.setRect(visualRect, visualRect);
 
         contentRightInVisualOrder += boxGeometry.marginStart();
         auto visualRectWithMarginStart = InlineRect { visualRect.top(), contentRightInVisualOrder, visualRect.width(), visualRect.height() };
-        displayBox.setLogicalRect(visualRectWithMarginStart, visualRectWithMarginStart);
+        displayBox.setRect(visualRectWithMarginStart, visualRectWithMarginStart);
         contentRightInVisualOrder += boxGeometry.borderAndPaddingStart();
     };
     beforeInlineBoxContent();
@@ -453,22 +453,22 @@ void InlineDisplayContentBuilder::adjustVisualGeometryForDisplayBox(size_t displ
 
     auto afterInlineBoxContent = [&] {
         if (!displayBox.isLastForLayoutBox())
-            return displayBox.setLogicalRight(contentRightInVisualOrder);
+            return displayBox.setRight(contentRightInVisualOrder);
 
         contentRightInVisualOrder += boxGeometry.borderAndPaddingEnd();
-        displayBox.setLogicalRight(contentRightInVisualOrder);
+        displayBox.setRight(contentRightInVisualOrder);
         contentRightInVisualOrder += boxGeometry.marginEnd();
     };
     afterInlineBoxContent();
 
     auto computeInkOverflow = [&] {
-        auto inkOverflow = displayBox.logicalRect();
+        auto inkOverflow = displayBox.rect();
         m_contentHasInkOverflow = computeBoxShadowInkOverflow(!m_lineIndex ? layoutBox.firstLineStyle() : layoutBox.style(), inkOverflow) || m_contentHasInkOverflow;
         displayBox.adjustInkOverflow(inkOverflow);
     };
     computeInkOverflow();
 
-    setInlineBoxGeometry(layoutBox, displayBox.logicalRect(), displayBox.isFirstForLayoutBox());
+    setInlineBoxGeometry(layoutBox, displayBox.rect(), displayBox.isFirstForLayoutBox());
     if (lineBox.inlineLevelBoxForLayoutBox(layoutBox).hasContent())
         displayBox.setHasContent();
 }
@@ -586,9 +586,9 @@ void InlineDisplayContentBuilder::processOverflownRunsForEllipsis(DisplayBoxes& 
     auto& rootInlineBox = boxes[0];
     ASSERT(rootInlineBox.isRootInlineBox());
 
-    auto rootInlineBoxRect = rootInlineBox.logicalRect();
+    auto rootInlineBoxRect = rootInlineBox.rect();
     if (rootInlineBoxRect.right() <= lineBoxLogicalRight) {
-        ASSERT(boxes.last().logicalRight() <= lineBoxLogicalRight);
+        ASSERT(boxes.last().right() <= lineBoxLogicalRight);
         return;
     }
 
@@ -600,7 +600,7 @@ void InlineDisplayContentBuilder::processOverflownRunsForEllipsis(DisplayBoxes& 
     for (auto index = boxes.size(); index--;) {
         auto& displayBox = boxes[index];
 
-        if (displayBox.logicalLeft() >= lineBoxLogicalRight) {
+        if (displayBox.left() >= lineBoxLogicalRight) {
             // Fully overflown boxes are collapsed.
             displayBox.truncate();
             continue;
@@ -609,7 +609,7 @@ void InlineDisplayContentBuilder::processOverflownRunsForEllipsis(DisplayBoxes& 
         // We keep truncating content until after we can accommodate the ellipsis content
         // 1. fully truncate in case of inline level boxes (ie non-text content) or if ellipsis content is wider than the overflowing one.
         // 2. partially truncated to make room for the ellipsis box.
-        auto availableRoomForEllipsis = lineBoxLogicalRight - displayBox.logicalLeft();
+        auto availableRoomForEllipsis = lineBoxLogicalRight - displayBox.left();
         if (availableRoomForEllipsis <= ellipsisWidth) {
             // Can't accommodate the ellipsis content here. We need to truncate non-overflowing boxes too.
             displayBox.truncate();
@@ -620,7 +620,7 @@ void InlineDisplayContentBuilder::processOverflownRunsForEllipsis(DisplayBoxes& 
         if (displayBox.isText()) {
             auto text = *displayBox.text();
             // FIXME: Check if it needs adjustment for RTL direction.
-            truncatedWidth = TextUtil::breakWord(downcast<InlineTextBox>(displayBox.layoutBox()), text.start(), text.length(), displayBox.logicalWidth(), availableRoomForEllipsis - ellipsisWidth, { }, displayBox.style().fontCascade()).logicalWidth;
+            truncatedWidth = TextUtil::breakWord(downcast<InlineTextBox>(displayBox.layoutBox()), text.start(), text.length(), displayBox.width(), availableRoomForEllipsis - ellipsisWidth, { }, displayBox.style().fontCascade()).logicalWidth;
         }
         displayBox.truncate(truncatedWidth);
         firstTruncatedBoxIndex = index;
@@ -628,9 +628,9 @@ void InlineDisplayContentBuilder::processOverflownRunsForEllipsis(DisplayBoxes& 
     }
     ASSERT(firstTruncatedBoxIndex < boxes.size());
     // Collapse truncated runs.
-    auto contentRight = boxes[firstTruncatedBoxIndex].logicalRight();
+    auto contentRight = boxes[firstTruncatedBoxIndex].right();
     for (auto index = firstTruncatedBoxIndex + 1; index < boxes.size(); ++index)
-        boxes[index].moveHorizontally(contentRight - boxes[index].logicalLeft());
+        boxes[index].moveHorizontally(contentRight - boxes[index].left());
     // And append the ellipsis box as the trailing item.
     auto ellispisBoxRect = InlineRect { rootInlineBoxRect.top(), contentRight, ellipsisWidth, rootInlineBoxRect.height() };
     boxes.append({ m_lineIndex
