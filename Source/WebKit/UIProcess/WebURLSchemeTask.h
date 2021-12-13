@@ -43,7 +43,6 @@ class FrameInfo;
 namespace WebCore {
 class ResourceError;
 class ResourceResponse;
-class SharedBuffer;
 }
 
 namespace WebKit {
@@ -115,7 +114,7 @@ private:
 
     SyncLoadCompletionHandler m_syncCompletionHandler;
     WebCore::ResourceResponse m_syncResponse;
-    RefPtr<WebCore::SharedBuffer> m_syncData;
+    WebCore::SharedBufferBuilder m_syncData;
 
     bool m_waitingForRedirectCompletionHandlerCallback { false };
 };

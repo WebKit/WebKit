@@ -74,7 +74,7 @@ private:
     NO_RETURN_DUE_TO_ASSERT void setBodyDataFrom(const CachedResource&) final { ASSERT_NOT_REACHED(); }
 
     void didAddClient(CachedResourceClient&) override;
-    void finishLoading(SharedBuffer*, const NetworkLoadMetrics&) override;
+    void finishLoading(const SharedBuffer*, const NetworkLoadMetrics&) override;
 
     void allClientsRemoved() override;
 

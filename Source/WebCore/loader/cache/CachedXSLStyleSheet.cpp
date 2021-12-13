@@ -61,7 +61,7 @@ String CachedXSLStyleSheet::encoding() const
     return m_decoder->encoding().name();
 }
 
-void CachedXSLStyleSheet::finishLoading(SharedBuffer* data, const NetworkLoadMetrics& metrics)
+void CachedXSLStyleSheet::finishLoading(const SharedBuffer* data, const NetworkLoadMetrics& metrics)
 {
     if (data) {
         m_data = data->makeContiguous();

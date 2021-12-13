@@ -35,6 +35,7 @@
 #include "ResourceLoaderTypes.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
+#include "SharedBuffer.h"
 #include <wtf/Forward.h>
 #include <wtf/WeakPtr.h>
 
@@ -98,7 +99,7 @@ public:
     virtual void releaseResources();
     const ResourceResponse& response() const { return m_response; }
 
-    SharedBuffer* resourceData() const { return m_resourceData.get(); }
+    const SharedBuffer* resourceData() const;
     void clearResourceData();
     
     virtual bool isSubresourceLoader() const;
@@ -227,7 +228,7 @@ private:
 
     ResourceRequest m_request;
     ResourceRequest m_originalRequest; // Before redirects.
-    RefPtr<SharedBuffer> m_resourceData;
+    SharedBufferBuilder m_resourceData;
     
     ResourceLoaderIdentifier m_identifier;
 

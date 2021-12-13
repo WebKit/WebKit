@@ -30,6 +30,7 @@
 #pragma once
 
 #include "InspectorPageAgent.h"
+#include "SharedBuffer.h"
 #include <wtf/Deque.h>
 #include <wtf/HashMap.h>
 #include <wtf/WallTime.h>
@@ -103,10 +104,10 @@ public:
         WallTime responseTimestamp() const { return m_responseTimestamp; }
         void setResponseTimestamp(WallTime time) { m_responseTimestamp = time; }
 
-        bool hasBufferedData() const { return m_dataBuffer; }
+        bool hasBufferedData() const { return hasData(); }
 
     private:
-        bool hasData() const { return m_dataBuffer; }
+        bool hasData() const;
         size_t dataLength() const;
         void appendData(const uint8_t* data, size_t dataLength);
         unsigned decodeDataToContent();
@@ -119,7 +120,7 @@ public:
         String m_textEncodingName;
         String m_mimeType;
         RefPtr<TextResourceDecoder> m_decoder;
-        RefPtr<SharedBuffer> m_dataBuffer;
+        SharedBufferBuilder m_dataBuffer;
         RefPtr<SharedBuffer> m_buffer;
         std::optional<CertificateInfo> m_certificateInfo;
         CachedResource* m_cachedResource { nullptr };

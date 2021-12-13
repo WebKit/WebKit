@@ -30,7 +30,6 @@
 
 #include "PreviewConverterClient.h"
 #include "PreviewConverterProvider.h"
-#include "SharedBuffer.h"
 #include <wtf/RunLoop.h>
 #include <wtf/SetForScope.h>
 
@@ -65,7 +64,7 @@ const ResourceError& PreviewConverter::previewError() const
 
 const SharedBuffer& PreviewConverter::previewData() const
 {
-    return m_previewData.get();
+    return *m_previewData.get();
 }
 
 void PreviewConverter::updateMainResource()
@@ -221,8 +220,8 @@ void PreviewConverter::replayToClient(PreviewConverterClient& client)
     ASSERT(m_state >= State::Converting);
     client.previewConverterDidStartConverting(*this);
 
-    if (!m_previewData->isEmpty() && hasClient(client))
-        client.previewConverterDidReceiveData(*this, m_previewData.get());
+    if (!m_previewData.isEmpty() && hasClient(client))
+        client.previewConverterDidReceiveData(*this, *m_previewData.get());
 
     if (m_state == State::Converting || !hasClient(client))
         return;
@@ -234,7 +233,7 @@ void PreviewConverter::replayToClient(PreviewConverterClient& client)
     }
 
     ASSERT(m_state == State::FinishedConverting);
-    ASSERT(!m_previewData->isEmpty());
+    ASSERT(!m_previewData.isEmpty());
     ASSERT(m_previewError.isNull());
     client.previewConverterDidFinishConverting(*this);
 }
@@ -256,7 +255,7 @@ void PreviewConverter::delegateDidReceiveData(const SharedBuffer& data)
     if (data.isEmpty())
         return;
 
-    m_previewData->append(data);
+    m_previewData.append(data);
 
     iterateClients([&](auto& client) {
         client.previewConverterDidReceiveData(*this, data);

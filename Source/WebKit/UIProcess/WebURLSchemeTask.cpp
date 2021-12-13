@@ -187,10 +187,7 @@ auto WebURLSchemeTask::didReceiveData(Ref<SharedBuffer>&& buffer) -> ExceptionTy
     m_dataSent = true;
 
     if (isSync()) {
-        if (m_syncData)
-            m_syncData->append(WTFMove(buffer));
-        else
-            m_syncData = WTFMove(buffer);
+        m_syncData.append(WTFMove(buffer));
         return ExceptionType::None;
     }
 
@@ -215,14 +212,11 @@ auto WebURLSchemeTask::didComplete(const ResourceError& error) -> ExceptionType
         return ExceptionType::WaitingForRedirectCompletionHandler;
 
     m_completed = true;
-    
-    if (isSync()) {
-        Vector<uint8_t> data;
-        if (m_syncData)
-            data = { m_syncData->makeContiguous()->data(), m_syncData->size() };
 
+    if (isSync()) {
+        size_t size = m_syncData.size();
+        Vector<uint8_t> data = { m_syncData.takeAsContiguous()->data(), size };
         m_syncCompletionHandler(m_syncResponse, error, WTFMove(data));
-        m_syncData = nullptr;
     }
 
     m_process->send(Messages::WebPage::URLSchemeTaskDidComplete(m_urlSchemeHandler->identifier(), m_resourceLoaderID, error), m_webPageID);

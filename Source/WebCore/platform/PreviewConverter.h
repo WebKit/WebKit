@@ -29,6 +29,7 @@
 
 #include "ResourceError.h"
 #include "ResourceResponse.h"
+#include "SharedBuffer.h"
 #include <wtf/RefCounted.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/WeakPtr.h>
@@ -41,8 +42,6 @@ namespace WebCore {
 
 class ResourceError;
 class ResourceRequest;
-class SharedBuffer;
-class SharedBufferDataView;
 struct PreviewConverterClient;
 struct PreviewConverterProvider;
 
@@ -118,7 +117,7 @@ private:
         FinishedConverting,
     };
 
-    Ref<SharedBuffer> m_previewData;
+    SharedBufferBuilder m_previewData;
     ResourceError m_previewError;
     ResourceResponse m_originalResponse;
     State m_state { State::Updating };

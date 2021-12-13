@@ -48,7 +48,6 @@
 #include "RuntimeApplicationChecks.h"
 #include "SecurityOriginPolicy.h"
 #include "Settings.h"
-#include "SharedBuffer.h"
 #include "StringAdaptors.h"
 #include "TextResourceDecoder.h"
 #include "ThreadableLoader.h"
@@ -208,7 +207,7 @@ Ref<Blob> XMLHttpRequest::createResponseBlob()
     // FIXME: We just received the data from NetworkProcess, and are sending it back. This is inefficient.
     Vector<uint8_t> data;
     if (m_binaryResponseBuilder)
-        data = std::exchange(m_binaryResponseBuilder, nullptr)->extractData();
+        data = m_binaryResponseBuilder.take()->extractData();
     String normalizedContentType = Blob::normalizedContentType(responseMIMEType(FinalMIMEType::Yes)); // responseMIMEType defaults to text/xml which may be incorrect.
     return Blob::create(scriptExecutionContext(), WTFMove(data), normalizedContentType);
 }
@@ -218,9 +217,7 @@ RefPtr<ArrayBuffer> XMLHttpRequest::createResponseArrayBuffer()
     ASSERT(responseType() == ResponseType::Arraybuffer);
     ASSERT(doneWithoutErrors());
 
-    auto result = m_binaryResponseBuilder ? m_binaryResponseBuilder->tryCreateArrayBuffer() : ArrayBuffer::create(nullptr, 0);
-    m_binaryResponseBuilder = nullptr;
-    return result;
+    return m_binaryResponseBuilder.takeAsArrayBuffer();
 }
 
 ExceptionOr<void> XMLHttpRequest::setTimeout(unsigned timeout)
@@ -741,7 +738,7 @@ void XMLHttpRequest::clearResponseBuffers()
     m_responseEncoding = String();
     m_createdDocument = false;
     m_responseDocument = nullptr;
-    m_binaryResponseBuilder = nullptr;
+    m_binaryResponseBuilder.reset();
     m_responseCacheIsValid = false;
 }
 
@@ -1065,9 +1062,7 @@ void XMLHttpRequest::didReceiveData(const uint8_t* data, int len)
         m_responseBuilder.append(m_decoder->decode(data, len));
     else {
         // Buffer binary data.
-        if (!m_binaryResponseBuilder)
-            m_binaryResponseBuilder = SharedBuffer::create();
-        m_binaryResponseBuilder->append(data, len);
+        m_binaryResponseBuilder.append(data, len);
     }
 
     if (!m_error) {

@@ -37,9 +37,11 @@ public:
 
     const URL& url() const { return m_url; }
     const ResourceResponse& response() const { return m_response; }
-    SharedBuffer& data() const { return static_reference_cast<SharedBuffer>(m_data); }
+    SharedBuffer& data() const { return static_reference_cast<SharedBuffer>(Ref { *m_data.get() }); }
+    void append(const uint8_t* data, int length) { m_data.append(data, length); }
+    void clear() { m_data.empty(); }
 
-    virtual void deliver(ResourceLoader& loader) { loader.deliverResponseAndData(m_response, m_data->copy()); }
+    virtual void deliver(ResourceLoader& loader) { loader.deliverResponseAndData(m_response, m_data.copy()); }
 
 protected:
     SubstituteResource(URL&& url, ResourceResponse&& response, Ref<SharedBuffer>&& data)
@@ -52,7 +54,7 @@ protected:
 private:
     URL m_url;
     ResourceResponse m_response;
-    Ref<SharedBuffer> m_data;
+    SharedBufferBuilder m_data;
 };
 
 } // namespace WebCore

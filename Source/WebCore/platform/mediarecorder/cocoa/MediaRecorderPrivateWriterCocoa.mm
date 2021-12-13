@@ -137,10 +137,8 @@ MediaRecorderPrivateWriter::~MediaRecorderPrivateWriter()
         m_writer.clear();
     }
 
-    // At this pointer, we should no longer be writing any data, so it should be safe to close and nullify m_data without locking.
     if (m_writerDelegate)
         [m_writerDelegate close];
-    m_data = nullptr;
 
     if (auto completionHandler = WTFMove(m_fetchDataCompletionHandler))
         completionHandler(nullptr, 0);
@@ -537,18 +535,13 @@ void MediaRecorderPrivateWriter::completeFetchData()
 void MediaRecorderPrivateWriter::appendData(const uint8_t* data, size_t size)
 {
     Locker locker { m_dataLock };
-    if (!m_data) {
-        m_data = SharedBuffer::create(data, size);
-        return;
-    }
-    m_data->append(data, size);
+    m_data.append(data, size);
 }
 
 RefPtr<SharedBuffer> MediaRecorderPrivateWriter::takeData()
 {
     Locker locker { m_dataLock };
-    auto data = WTFMove(m_data);
-    return data;
+    return m_data.take();
 }
 
 void MediaRecorderPrivateWriter::pause()

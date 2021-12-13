@@ -52,7 +52,7 @@ String CachedSVGDocument::encoding() const
     return m_decoder->encoding().name();
 }
 
-void CachedSVGDocument::finishLoading(SharedBuffer* data, const NetworkLoadMetrics& metrics)
+void CachedSVGDocument::finishLoading(const SharedBuffer* data, const NetworkLoadMetrics& metrics)
 {
     if (data) {
         // We don't need to create a new frame because the new document belongs to the parent UseElement.

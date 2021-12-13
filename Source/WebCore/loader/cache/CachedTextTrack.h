@@ -35,10 +35,10 @@ public:
 
 private:
     bool mayTryReplaceEncodedData() const override { return true; }
-    void updateBuffer(SharedBuffer&) override;
-    void finishLoading(SharedBuffer*, const NetworkLoadMetrics&) override;
+    void updateBuffer(const SharedBuffer&) override;
+    void finishLoading(const SharedBuffer*, const NetworkLoadMetrics&) override;
 
-    void doUpdateBuffer(SharedBuffer*);
+    void doUpdateBuffer(const SharedBuffer*);
 };
 
 } // namespace WebCore

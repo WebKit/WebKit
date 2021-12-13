@@ -64,7 +64,7 @@ void CachedFont::didAddClient(CachedResourceClient& client)
         static_cast<CachedFontClient&>(client).fontLoaded(*this);
 }
 
-void CachedFont::finishLoading(SharedBuffer* data, const NetworkLoadMetrics& metrics)
+void CachedFont::finishLoading(const SharedBuffer* data, const NetworkLoadMetrics& metrics)
 {
     if (data) {
         m_data = data->makeContiguous();

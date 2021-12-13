@@ -116,7 +116,7 @@ void HTMLModelElement::setSourceURL(const URL& url)
 
     m_sourceURL = url;
 
-    m_data = nullptr;
+    m_data.reset();
     m_dataComplete = false;
 
     if (m_resource) {
@@ -149,7 +149,7 @@ void HTMLModelElement::setSourceURL(const URL& url)
         return;
     }
 
-    m_data = SharedBuffer::create();
+    m_data.empty();
 
     m_resource = resource.value();
     m_resource->addClient(*this);
@@ -180,8 +180,7 @@ RenderPtr<RenderElement> HTMLModelElement::createElementRenderer(RenderStyle&& s
 void HTMLModelElement::dataReceived(CachedResource& resource, const uint8_t* data, int dataLength)
 {
     ASSERT_UNUSED(resource, &resource == m_resource);
-    ASSERT(m_data);
-    m_data->append(data, dataLength);
+    m_data.append(data, dataLength);
 }
 
 void HTMLModelElement::notifyFinished(CachedResource& resource, const NetworkLoadMetrics&)
@@ -195,7 +194,7 @@ void HTMLModelElement::notifyFinished(CachedResource& resource, const NetworkLoa
     };
 
     if (resource.loadFailedOrCanceled()) {
-        m_data = nullptr;
+        m_data.reset();
 
         invalidateResourceHandleAndUpdateRenderer();
 
@@ -204,7 +203,7 @@ void HTMLModelElement::notifyFinished(CachedResource& resource, const NetworkLoa
     }
 
     m_dataComplete = true;
-    m_model = Model::create(m_data.releaseNonNull()->makeContiguous().get(), resource.mimeType(), resource.url());
+    m_model = Model::create(m_data.takeAsContiguous().get(), resource.mimeType(), resource.url());
 
     invalidateResourceHandleAndUpdateRenderer();
 

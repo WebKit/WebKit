@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2021 Apple Inc. All rights reserved.
  * Copyright (C) 2015 Canon Inc. All rights reserved.
  * Copyright (C) 2013 Google Inc. All rights reserved.
  *
@@ -74,24 +74,16 @@ TEST_F(SharedBufferTest, copyBufferCreatedWithContentsOfExistingFile)
     EXPECT_TRUE(!memcmp(buffer->data(), copy->makeContiguous()->data(), buffer->size()));
 }
 
-TEST_F(SharedBufferTest, clearBufferCreatedWithContentsOfExistingFile)
-{
-    auto buffer = ContiguousSharedBuffer::createWithContentsOfFile(tempFilePath());
-    ASSERT_NOT_NULL(buffer);
-    buffer->clear();
-    EXPECT_TRUE(!buffer->size());
-    EXPECT_TRUE(!buffer->data());
-}
-
 TEST_F(SharedBufferTest, appendBufferCreatedWithContentsOfExistingFile)
 {
-    auto contiguousBuffer = ContiguousSharedBuffer::createWithContentsOfFile(tempFilePath());
-    ASSERT_NOT_NULL(contiguousBuffer);
-    auto buffer = SharedBuffer::create(contiguousBuffer.releaseNonNull());
-    buffer->append("a", 1);
-    EXPECT_TRUE(buffer->size() == (strlen(SharedBufferTest::testData()) + 1));
-    EXPECT_TRUE(!memcmp(buffer->makeContiguous()->data(), SharedBufferTest::testData(), strlen(SharedBufferTest::testData())));
-    EXPECT_EQ('a', buffer->makeContiguous()->data()[strlen(SharedBufferTest::testData())]);
+    RefPtr<SharedBuffer> buffer = ContiguousSharedBuffer::createWithContentsOfFile(tempFilePath());
+    ASSERT_NOT_NULL(buffer);
+    SharedBufferBuilder builder;
+    builder.append(*buffer);
+    builder.append("a", 1);
+    EXPECT_TRUE(builder.size() == (strlen(SharedBufferTest::testData()) + 1));
+    EXPECT_TRUE(!memcmp(builder.get()->makeContiguous()->data(), SharedBufferTest::testData(), strlen(SharedBufferTest::testData())));
+    EXPECT_EQ('a', builder.get()->makeContiguous()->data()[strlen(SharedBufferTest::testData())]);
 }
 
 TEST_F(SharedBufferTest, tryCreateArrayBuffer)
@@ -99,10 +91,10 @@ TEST_F(SharedBufferTest, tryCreateArrayBuffer)
     char testData0[] = "Hello";
     char testData1[] = "World";
     char testData2[] = "Goodbye";
-    auto sharedBuffer = SharedBuffer::create(testData0, strlen(testData0));
-    sharedBuffer->append(testData1, strlen(testData1));
-    sharedBuffer->append(testData2, strlen(testData2));
-    RefPtr<ArrayBuffer> arrayBuffer = sharedBuffer->tryCreateArrayBuffer();
+    SharedBufferBuilder builder(std::in_place, testData0, strlen(testData0));
+    builder.append(testData1, strlen(testData1));
+    builder.append(testData2, strlen(testData2));
+    RefPtr<ArrayBuffer> arrayBuffer = builder.get()->tryCreateArrayBuffer();
     char expectedConcatenation[] = "HelloWorldGoodbye";
     ASSERT_EQ(strlen(expectedConcatenation), arrayBuffer->byteLength());
     EXPECT_EQ(0, memcmp(expectedConcatenation, arrayBuffer->data(), strlen(expectedConcatenation)));
@@ -114,10 +106,10 @@ TEST_F(SharedBufferTest, tryCreateArrayBufferLargeSegments)
     Vector<uint8_t> vector1(0x4000, 'b');
     Vector<uint8_t> vector2(0x4000, 'c');
 
-    auto sharedBuffer = SharedBuffer::create(WTFMove(vector0));
-    sharedBuffer->append(WTFMove(vector1));
-    sharedBuffer->append(WTFMove(vector2));
-    RefPtr<ArrayBuffer> arrayBuffer = sharedBuffer->tryCreateArrayBuffer();
+    SharedBufferBuilder builder(std::in_place, WTFMove(vector0));
+    builder.append(WTFMove(vector1));
+    builder.append(WTFMove(vector2));
+    RefPtr<ArrayBuffer> arrayBuffer = builder.get()->tryCreateArrayBuffer();
     ASSERT_EQ(0x4000U + 0x4000U + 0x4000U, arrayBuffer->byteLength());
     int position = 0;
     for (int i = 0; i < 0x4000; ++i) {
@@ -154,17 +146,53 @@ TEST_F(SharedBufferTest, copy)
     "mattis dignissim massa ac pulvinar urna, nunc ut. Sagittis, aliquet penatibus proin lorem, pulvinar lectus,"
     "augue proin! Ac, arcu quis. Placerat habitasse, ridiculus ridiculus.";
     unsigned length = strlen(testData);
-    auto sharedBuffer = SharedBuffer::create(testData, length);
-    sharedBuffer->append(testData, length);
-    sharedBuffer->append(testData, length);
-    sharedBuffer->append(testData, length);
+    SharedBufferBuilder builder1(std::in_place, testData, length);
+    builder1.append(testData, length);
+    builder1.append(testData, length);
+    builder1.append(testData, length);
     // sharedBuffer must contain data more than segmentSize (= 0x1000) to check copy().
-    ASSERT_EQ(length * 4, sharedBuffer->size());
-    auto clone = sharedBuffer->copy();
-    ASSERT_EQ(length * 4, clone->size());
-    ASSERT_EQ(0, memcmp(clone->makeContiguous()->data(), sharedBuffer->makeContiguous()->data(), clone->size()));
-    clone->append(testData, length);
-    ASSERT_EQ(length * 5, clone->size());
+    EXPECT_EQ(length * 4, builder1.size());
+    RefPtr<SharedBuffer> clone = builder1.copy();
+    EXPECT_EQ(length * 4, clone->size());
+    EXPECT_EQ(0, memcmp(clone->makeContiguous()->data(), builder1.get()->makeContiguous()->data(), clone->size()));
+
+    SharedBufferBuilder builder2;
+    builder2.append(*clone);
+    builder2.append(testData, length);
+    EXPECT_EQ(length * 5, builder2.size());
+    auto buffer = builder2.take();
+    EXPECT_EQ(length * 5, buffer->size());
+    // builder is now empty.
+    EXPECT_EQ(0U, builder2.size());
+    EXPECT_TRUE(builder2.isNull());
+    EXPECT_TRUE(builder2.isEmpty());
+}
+
+TEST_F(SharedBufferTest, builder)
+{
+    char testData0[] = "Hello";
+    SharedBufferBuilder builder1(std::in_place, testData0, strlen(testData0));
+    EXPECT_FALSE(builder1.isNull());
+    EXPECT_FALSE(builder1.isEmpty());
+    auto copy = builder1.copy();
+    auto buffer = builder1.take();
+    EXPECT_TRUE(builder1.isNull());
+    EXPECT_TRUE(builder1.isEmpty());
+    EXPECT_NE(copy.ptr(), buffer.ptr()); // We have different SharedBuffer
+    EXPECT_EQ(copy.get(), buffer.get()); // But their content is identical
+
+    SharedBufferBuilder builder2;
+    EXPECT_TRUE(builder2.isNull());
+    EXPECT_TRUE(builder2.isEmpty());
+    builder2.append(testData0, strlen(testData0));
+    EXPECT_FALSE(builder2.isNull());
+    EXPECT_FALSE(builder2.isEmpty());
+    builder2.reset();
+    EXPECT_TRUE(builder2.isNull());
+    EXPECT_TRUE(builder2.isEmpty());
+    builder2.empty();
+    EXPECT_FALSE(builder2.isNull());
+    EXPECT_TRUE(builder2.isEmpty());
 }
 
 static void checkBuffer(const uint8_t* buffer, size_t bufferLength, const char* expected)
@@ -182,19 +210,21 @@ TEST_F(SharedBufferTest, getSomeData)
     Vector<uint8_t> s2 = { 'e', 'f', 'g', 'h' };
     Vector<uint8_t> s3 = { 'i', 'j', 'k', 'l' };
 
-    auto buffer = SharedBuffer::create();
-    buffer->append(WTFMove(s1));
-    buffer->append(WTFMove(s2));
-    buffer->append(WTFMove(s3));
-    auto contiguousBuffer = buffer->makeContiguous();
+    SharedBufferBuilder builder;
+    builder.append(WTFMove(s1));
+    builder.append(WTFMove(s2));
+    builder.append(WTFMove(s3));
+    auto buffer = builder.take();
     
     auto abcd = buffer->getSomeData(0);
     auto gh1 = buffer->getSomeData(6);
     auto h = buffer->getSomeData(7);
     auto ijkl = buffer->getSomeData(8);
     auto kl = buffer->getSomeData(10);
+    auto contiguousBuffer = buffer->makeContiguous();
     auto abcdefghijkl = contiguousBuffer->data();
     auto gh2 = buffer->getSomeData(6);
+    auto ghijkl = contiguousBuffer->getSomeData(6);
     auto l = buffer->getSomeData(11);
     checkBuffer(abcd.data(), abcd.size(), "abcd");
     checkBuffer(gh1.data(), gh1.size(), "gh");
@@ -203,6 +233,7 @@ TEST_F(SharedBufferTest, getSomeData)
     checkBuffer(kl.data(), kl.size(), "kl");
     checkBuffer(abcdefghijkl, buffer->size(), "abcdefghijkl");
     checkBuffer(gh2.data(), gh2.size(), "gh");
+    checkBuffer(ghijkl.data(), ghijkl.size(), "ghijkl");
     EXPECT_EQ(gh1.size(), gh2.size());
     checkBuffer(gh1.data(), gh1.size(), gh2.dataAsCharPtr());
     checkBuffer(l.data(), l.size(), "l");
@@ -211,16 +242,18 @@ TEST_F(SharedBufferTest, getSomeData)
 TEST_F(SharedBufferTest, isEqualTo)
 {
     auto makeBuffer = [] (Vector<Vector<uint8_t>>&& contents) {
-        auto buffer = SharedBuffer::create();
+        SharedBufferBuilder builder;
         for (auto& content : contents)
-            buffer->append(WTFMove(content));
-        return buffer;
+            builder.append(WTFMove(content));
+        return builder.take();
     };
     auto buffer1 = makeBuffer({ { 'a', 'b', 'c', 'd' } });
     EXPECT_EQ(buffer1.get(), buffer1.get());
 
-    buffer1->append(Vector<uint8_t>({'a', 'b', 'c', 'd'}));
-    EXPECT_EQ(buffer1.get(), makeBuffer({{'a', 'b', 'c', 'd', 'a', 'b', 'c', 'd'}}).get());
+    SharedBufferBuilder builder(WTFMove(buffer1));
+    builder.append(Vector<uint8_t>({ 'a', 'b', 'c', 'd' }));
+    EXPECT_EQ(*builder.get(), makeBuffer({ { 'a', 'b', 'c', 'd', 'a', 'b', 'c', 'd' } }).get());
+
     EXPECT_EQ(makeBuffer({ { 'a' }, { 'b', 'c' }, { 'd' } }).get(), makeBuffer({ { 'a', 'b' }, { 'c', 'd' } }).get());
     EXPECT_NE(makeBuffer({ { 'a', 'b' } }).get(), makeBuffer({ { 'a', 'b', 'c' } }).get());
     EXPECT_NE(makeBuffer({ { 'a', 'b' } }).get(), makeBuffer({ { 'b', 'c' } }).get());
@@ -230,11 +263,13 @@ TEST_F(SharedBufferTest, isEqualTo)
 TEST_F(SharedBufferTest, toHexString)
 {
     Vector<uint8_t> t1 = {0x11, 0x5, 0x12};
-    auto buffer = SharedBuffer::create();
-    buffer->append(WTFMove(t1));
+    SharedBufferBuilder builder;
+    builder.append(WTFMove(t1));
+    auto buffer = builder.take();
     String result = buffer->toHexString();
     EXPECT_EQ(result, "110512");
-    buffer->clear();
+    builder.reset();
+    buffer = builder.take();
     EXPECT_EQ(buffer->toHexString(), "");
 }
 
@@ -255,16 +290,17 @@ TEST_F(SharedBufferTest, read)
     auto sharedBuffer = SharedBuffer::create(simpleText, strlen(simpleText));
     check(sharedBuffer);
 
-    sharedBuffer = SharedBuffer::create();
+    SharedBufferBuilder builder;
     for (size_t i = 0; i < strlen(simpleText); i++)
-        sharedBuffer->append(&simpleText[i], 1);
-    check(sharedBuffer);
+        builder.append(&simpleText[i], 1);
+    check(builder.take());
+    EXPECT_TRUE(builder.isNull() && !builder);
+    EXPECT_EQ(builder.size(), 0u);
 
-    sharedBuffer = SharedBuffer::create();
     for (size_t i = 0; i < strlen(simpleText); i += 2)
-        sharedBuffer->append(&simpleText[i], 2);
-    EXPECT_EQ(sharedBuffer->size(), strlen(simpleText));
-    check(sharedBuffer);
+        builder.append(&simpleText[i], 2);
+    EXPECT_EQ(builder.size(), strlen(simpleText));
+    check(builder.take());
 }
 
 #if ENABLE(MHTML)
@@ -319,15 +355,17 @@ TEST_F(SharedBufferChunkReaderTest, includeSeparator)
     uint8_t data[256];
     for (size_t i = 0; i < 256; ++i)
         data[i] = i;
-
     auto sharedBuffer = SharedBuffer::create(data, 256);
     check(sharedBuffer);
-    sharedBuffer = SharedBuffer::create();
+
+    SharedBufferBuilder builder(std::in_place, data, 256);
+    check(builder.take());
+
     for (size_t i = 0; i < 256; ++i) {
         char c = i;
-        sharedBuffer->append(&c, 1);
+        builder.append(&c, 1);
     }
-    check(sharedBuffer);
+    check(builder.take());
 }
 
 TEST_F(SharedBufferChunkReaderTest, peekData)
@@ -364,16 +402,17 @@ TEST_F(SharedBufferChunkReaderTest, peekData)
     auto sharedBuffer = SharedBuffer::create(simpleText, strlen(simpleText));
     check(sharedBuffer);
 
-    sharedBuffer = SharedBuffer::create();
-    for (size_t i = 0; i < strlen(simpleText); i++)
-        sharedBuffer->append(&simpleText[i], 1);
-    check(sharedBuffer);
+    SharedBufferBuilder builder(std::in_place, simpleText, strlen(simpleText));
+    check(builder.take());
 
-    sharedBuffer = SharedBuffer::create();
+    for (size_t i = 0; i < strlen(simpleText); i++)
+        builder.append(&simpleText[i], 1);
+    check(builder.take());
+
     for (size_t i = 0; i < strlen(simpleText); i += 2)
-        sharedBuffer->append(&simpleText[i], 2);
-    EXPECT_EQ(sharedBuffer->size(), strlen(simpleText));
-    check(sharedBuffer);
+        builder.append(&simpleText[i], 2);
+    EXPECT_EQ(builder.size(), strlen(simpleText));
+    check(builder.take());
 }
 
 TEST_F(SharedBufferChunkReaderTest, readAllChunksInMultiSegment)
@@ -412,17 +451,19 @@ TEST_F(SharedBufferChunkReaderTest, readAllChunksInMultiSegment)
     };
     auto sharedBuffer = SharedBuffer::create(simpleText, strlen(simpleText));
     check(sharedBuffer);
-    sharedBuffer = SharedBuffer::create();
-    for (size_t i = 0; i < strlen(simpleText); i++)
-        sharedBuffer->append(&simpleText[i], 1);
-    EXPECT_EQ(sharedBuffer->size(), strlen(simpleText));
-    check(sharedBuffer);
 
-    sharedBuffer = SharedBuffer::create();
+    SharedBufferBuilder builder(std::in_place, simpleText, strlen(simpleText));
+    check(builder.take());
+
+    for (size_t i = 0; i < strlen(simpleText); i++)
+        builder.append(&simpleText[i], 1);
+    EXPECT_EQ(builder.size(), strlen(simpleText));
+    check(builder.take());
+
     for (size_t i = 0; i < strlen(simpleText); i += 5)
-        sharedBuffer->append(&simpleText[i], 5);
-    EXPECT_EQ(sharedBuffer->size(), strlen(simpleText));
-    check(sharedBuffer);
+        builder.append(&simpleText[i], 5);
+    EXPECT_EQ(builder.size(), strlen(simpleText));
+    check(builder.take());
 }
 
 TEST_F(SharedBufferChunkReaderTest, changingIterator)

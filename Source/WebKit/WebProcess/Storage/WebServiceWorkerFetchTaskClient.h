@@ -33,6 +33,7 @@
 #include <WebCore/FetchLoaderClient.h>
 #include <WebCore/ServiceWorkerFetch.h>
 #include <WebCore/ServiceWorkerTypes.h>
+#include <WebCore/SharedBuffer.h>
 #include <wtf/UniqueRef.h>
 
 namespace WebKit {
@@ -83,7 +84,7 @@ private:
     std::optional<BlobLoader> m_blobLoader;
     bool m_needsContinueDidReceiveResponseMessage { false };
     bool m_waitingForContinueDidReceiveResponseMessage { false };
-    std::variant<std::nullptr_t, Ref<WebCore::SharedBuffer>, Ref<WebCore::FormData>, UniqueRef<WebCore::ResourceError>> m_responseData;
+    std::variant<std::nullptr_t, WebCore::SharedBufferBuilder, Ref<WebCore::FormData>, UniqueRef<WebCore::ResourceError>> m_responseData;
     bool m_didFinish { false };
     bool m_isDownload { false };
 };

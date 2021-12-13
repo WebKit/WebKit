@@ -163,7 +163,7 @@ private:
 
     WebCoreAVFResourceLoader& m_parent;
     RefPtr<PlatformMediaResource> m_resource;
-    RefPtr<SharedBuffer> m_buffer;
+    SharedBufferBuilder m_buffer;
 };
 
 WeakPtr<PlatformResourceMediaLoader> PlatformResourceMediaLoader::create(WebCoreAVFResourceLoader& parent, PlatformMediaResourceLoader& loader, ResourceRequest&& request)
@@ -213,10 +213,8 @@ void PlatformResourceMediaLoader::loadFinished()
 
 void PlatformResourceMediaLoader::dataReceived(PlatformMediaResource&, Ref<SharedBuffer>&& buffer)
 {
-    if (!m_buffer)
-        m_buffer = SharedBuffer::create();
-    m_buffer->append(buffer.get());
-    m_parent.newDataStoredInSharedBuffer(*m_buffer);
+    m_buffer.append(WTFMove(buffer));
+    m_parent.newDataStoredInSharedBuffer(*m_buffer.get());
 }
 
 class DataURLResourceMediaLoader : public CanMakeWeakPtr<DataURLResourceMediaLoader> {
@@ -387,7 +385,7 @@ void WebCoreAVFResourceLoader::loadFinished()
     stopLoading();
 }
 
-void WebCoreAVFResourceLoader::newDataStoredInSharedBuffer(SharedBuffer& data)
+void WebCoreAVFResourceLoader::newDataStoredInSharedBuffer(const SharedBuffer& data)
 {
     AVAssetResourceLoadingDataRequest* dataRequest = [m_avRequest dataRequest];
     if (!dataRequest)

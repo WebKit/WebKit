@@ -69,8 +69,8 @@ public:
     bool imageHasRelativeWidth() const { return m_image && m_image->hasRelativeWidth(); }
     bool imageHasRelativeHeight() const { return m_image && m_image->hasRelativeHeight(); }
 
-    void updateBuffer(SharedBuffer&) override;
-    void finishLoading(SharedBuffer*, const NetworkLoadMetrics&) override;
+    void updateBuffer(const SharedBuffer&) override;
+    void finishLoading(const SharedBuffer*, const NetworkLoadMetrics&) override;
 
     enum SizeType {
         UsedSize,
@@ -125,7 +125,7 @@ private:
     void destroyDecodedData() override;
 
     bool shouldDeferUpdateImageData() const;
-    RefPtr<ContiguousSharedBuffer> convertedDataIfNeeded(SharedBuffer* data) const;
+    RefPtr<ContiguousSharedBuffer> convertedDataIfNeeded(const SharedBuffer* data) const;
     void didUpdateImageData();
     EncodedDataStatus updateImageData(bool allDataReceived);
     void updateData(const uint8_t* data, unsigned length) override;
@@ -169,7 +169,7 @@ private:
     void changedInRect(const Image&, const IntRect*);
     void scheduleRenderingUpdate(const Image&);
 
-    void updateBufferInternal(SharedBuffer&);
+    void updateBufferInternal(const SharedBuffer&);
 
     void didReplaceSharedBufferContents() override;
 

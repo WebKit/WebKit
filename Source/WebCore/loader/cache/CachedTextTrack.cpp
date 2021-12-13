@@ -40,7 +40,7 @@ CachedTextTrack::CachedTextTrack(CachedResourceRequest&& request, PAL::SessionID
 {
 }
 
-void CachedTextTrack::doUpdateBuffer(SharedBuffer* data)
+void CachedTextTrack::doUpdateBuffer(const SharedBuffer* data)
 {
     ASSERT(dataBufferingPolicy() == DataBufferingPolicy::BufferData);
     m_data = data ? data->makeContiguous() : RefPtr<ContiguousSharedBuffer>();
@@ -51,13 +51,13 @@ void CachedTextTrack::doUpdateBuffer(SharedBuffer* data)
         client->deprecatedDidReceiveCachedResource(*this);
 }
 
-void CachedTextTrack::updateBuffer(SharedBuffer& data)
+void CachedTextTrack::updateBuffer(const SharedBuffer& data)
 {
     doUpdateBuffer(&data);
     CachedResource::updateBuffer(data);
 }
 
-void CachedTextTrack::finishLoading(SharedBuffer* data, const NetworkLoadMetrics& metrics)
+void CachedTextTrack::finishLoading(const SharedBuffer* data, const NetworkLoadMetrics& metrics)
 {
     doUpdateBuffer(data);
     CachedResource::finishLoading(data, metrics);

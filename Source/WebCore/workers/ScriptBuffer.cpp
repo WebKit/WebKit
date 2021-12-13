@@ -38,7 +38,7 @@ namespace WebCore {
 ScriptBuffer::ScriptBuffer(const String& string)
 {
     auto utf8 = string.utf8();
-    m_buffer = SharedBuffer::create(utf8.data(), utf8.length());
+    m_buffer.append(utf8.data(), utf8.length());
 }
 
 ScriptBuffer ScriptBuffer::empty()
@@ -46,14 +46,13 @@ ScriptBuffer ScriptBuffer::empty()
     return ScriptBuffer { SharedBuffer::create() };
 }
 
-
 String ScriptBuffer::toString() const
 {
     if (!m_buffer)
         return String();
 
     StringBuilder builder;
-    m_buffer->forEachSegment([&](auto& segment) {
+    m_buffer.get()->forEachSegment([&](auto& segment) {
         builder.append(String::fromUTF8(segment.data(), segment.size()));
     });
     return builder.toString();
@@ -61,15 +60,13 @@ String ScriptBuffer::toString() const
 
 bool ScriptBuffer::containsSingleFileMappedSegment() const
 {
-    return m_buffer && m_buffer->hasOneSegment() && m_buffer->begin()->segment->containsMappedFileData();
+    return m_buffer && m_buffer.get()->hasOneSegment() && m_buffer.get()->begin()->segment->containsMappedFileData();
 }
 
 void ScriptBuffer::append(const String& string)
 {
-    if (!m_buffer)
-        m_buffer = SharedBuffer::create();
     auto utf8 = string.utf8();
-    m_buffer->append(utf8.data(), utf8.length());
+    m_buffer.append(utf8.data(), utf8.length());
 }
 
 bool operator==(const ScriptBuffer& a, const ScriptBuffer& b)

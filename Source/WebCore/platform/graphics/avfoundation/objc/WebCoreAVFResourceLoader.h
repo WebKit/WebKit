@@ -65,7 +65,7 @@ private:
     void responseReceived(const ResourceResponse&);
     void loadFailed(const ResourceError&);
     void loadFinished();
-    void newDataStoredInSharedBuffer(SharedBuffer&);
+    void newDataStoredInSharedBuffer(const SharedBuffer&);
 
     MediaPlayerPrivateAVFoundationObjC* m_parent;
     RetainPtr<AVAssetResourceLoadingRequest> m_avRequest;

@@ -50,13 +50,17 @@ public:
             GST_CAT_LEVEL_LOG(webkit_media_common_encryption_decrypt_debug_category, GST_LEVEL_ERROR, nullptr, "cannot map %s protection data", systemId.utf8().data());
             ASSERT_NOT_REACHED();
         }
-        m_payload = extractCencIfNeeded(mappedInitData->createSharedBuffer());
+        if (auto parsedPayload = extractCencIfNeeded(mappedInitData->createSharedBuffer()))
+            m_payload.append(parsedPayload.releaseNonNull());
     }
 
     InitData(const String& systemId, RefPtr<SharedBuffer>&& payload)
         : m_systemId(systemId)
-        , m_payload(extractCencIfNeeded(payload ? payload->makeContiguous() : RefPtr<ContiguousSharedBuffer>()))
     {
+        if (payload) {
+            if (auto parsedPayload = extractCencIfNeeded(payload->makeContiguous()))
+                m_payload.append(parsedPayload.releaseNonNull());
+        }
     }
 
     void append(InitData&& initData)
@@ -72,10 +76,10 @@ public:
         // it's not very robust, so be careful here!
         m_systemId = initData.m_systemId;
 
-        m_payload->append(*initData.payload());
+        m_payload.append(*initData.payload());
     }
 
-    const RefPtr<SharedBuffer>& payload() const { return m_payload; }
+    RefPtr<SharedBuffer> payload() const { return m_payload.get(); }
     const String& systemId() const { return m_systemId; }
     String payloadContainerType() const
     {
@@ -90,7 +94,7 @@ public:
 
 private:
     String m_systemId;
-    RefPtr<SharedBuffer> m_payload;
+    SharedBufferBuilder m_payload;
 };
 
 class ProtectionSystemEvents {

@@ -133,7 +133,7 @@ private:
 
     URL m_sourceURL;
     CachedResourceHandle<CachedRawResource> m_resource;
-    RefPtr<SharedBuffer> m_data;
+    SharedBufferBuilder m_data;
     RefPtr<Model> m_model;
     UniqueRef<ReadyPromise> m_readyPromise;
     bool m_dataComplete { false };

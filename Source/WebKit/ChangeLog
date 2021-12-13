@@ -1,3 +1,46 @@
+2021-12-13  Jean-Yves Avenard  <jya@apple.com>
+
+        Add SharedBufferBuilder class
+        https://bugs.webkit.org/show_bug.cgi?id=233442
+        rdar://85693939
+
+        Reviewed by Youenn Fablet.
+
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::startNetworkLoad):
+        (WebKit::NetworkResourceLoader::didReceiveResponse):
+        (WebKit::NetworkResourceLoader::didReceiveBuffer):
+        (WebKit::NetworkResourceLoader::didFinishLoading):
+        (WebKit::NetworkResourceLoader::bufferingTimerFired):
+        (WebKit::NetworkResourceLoader::tryStoreAsCacheEntry):
+        * NetworkProcess/NetworkResourceLoader.h:
+        * NetworkProcess/cache/NetworkCacheSpeculativeLoad.cpp:
+        (WebKit::NetworkCache::SpeculativeLoad::SpeculativeLoad):
+        (WebKit::NetworkCache::SpeculativeLoad::didReceiveResponse):
+        (WebKit::NetworkCache::SpeculativeLoad::didReceiveBuffer):
+        (WebKit::NetworkCache::SpeculativeLoad::didFinishLoading):
+        * NetworkProcess/cache/NetworkCacheSpeculativeLoad.h:
+        * UIProcess/WebURLSchemeTask.cpp:
+        (WebKit::WebURLSchemeTask::WebURLSchemeTask):
+        (WebKit::WebURLSchemeTask::didReceiveData):
+        (WebKit::WebURLSchemeTask::didComplete):
+        * UIProcess/WebURLSchemeTask.h:
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::PluginView):
+        (WebKit::PluginView::manualLoadDidReceiveData):
+        (WebKit::PluginView::manualLoadDidFail):
+        (WebKit::PluginView::liveResourceData const):
+        (WebKit::PluginView::redeliverManualStream):
+        * WebProcess/Plugins/PluginView.h:
+        * WebProcess/Storage/WebServiceWorkerFetchTaskClient.cpp:
+        (WebKit::WebServiceWorkerFetchTaskClient::didReceiveData):
+        (WebKit::WebServiceWorkerFetchTaskClient::continueDidReceiveResponse):
+        * WebProcess/Storage/WebServiceWorkerFetchTaskClient.h:
+        * WebProcess/WebCoreSupport/ios/WebPreviewLoaderClient.cpp:
+        (WebKit::WebPreviewLoaderClient::didFinishLoading):
+        (WebKit::WebPreviewLoaderClient::didFail):
+        * WebProcess/WebCoreSupport/ios/WebPreviewLoaderClient.h:
+
 2021-12-13  Per Arne Vollan  <pvollan@apple.com>
 
         [WP][iOS] Add access to required system call

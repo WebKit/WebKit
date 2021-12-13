@@ -197,7 +197,7 @@ static bool isCencInitData(const SharedBuffer& initData)
 
 static Ref<SharedBuffer> extractKeyidsFromCencInitData(const SharedBuffer& initData)
 {
-    Ref<SharedBuffer> keyIds = SharedBuffer::create();
+    SharedBufferBuilder keyIds;
 
     std::pair<unsigned, unsigned> keyIdsMap = extractKeyidsLocationFromCencInitData(initData);
     unsigned keyIdCount = keyIdsMap.first;
@@ -205,7 +205,7 @@ static Ref<SharedBuffer> extractKeyidsFromCencInitData(const SharedBuffer& initD
 
     // Check if initData is a valid CENC initData.
     if (!keyIdCount || !index)
-        return keyIds;
+        return keyIds.take();
 
     auto contiguousInitData = initData.makeContiguous();
     auto* data = contiguousInitData->data();
@@ -226,17 +226,17 @@ static Ref<SharedBuffer> extractKeyidsFromCencInitData(const SharedBuffer& initD
 
     object->setArray("kids", WTFMove(keyIdsArray));
     CString jsonData = object->toJSONString().utf8();
-    keyIds->append(jsonData.data(), jsonData.length());
-    return keyIds;
+    keyIds.append(jsonData.data(), jsonData.length());
+    return keyIds.take();
 }
 
 static Ref<SharedBuffer> extractKeyIdFromWebMInitData(const SharedBuffer& initData)
 {
-    Ref<SharedBuffer> keyIds = SharedBuffer::create();
+    SharedBufferBuilder keyIds;
 
     // Check if initData is a valid WebM initData.
     if (initData.isEmpty() || initData.size() > std::numeric_limits<unsigned>::max())
-        return keyIds;
+        return keyIds.take();
 
     auto object = JSON::Object::create();
     auto keyIdsArray = JSON::Array::create();
@@ -251,8 +251,8 @@ static Ref<SharedBuffer> extractKeyIdFromWebMInitData(const SharedBuffer& initDa
 
     object->setArray("kids", WTFMove(keyIdsArray));
     CString jsonData = object->toJSONString().utf8();
-    keyIds->append(jsonData.data(), jsonData.length());
-    return keyIds;
+    keyIds.append(jsonData.data(), jsonData.length());
+    return keyIds.take();
 }
 
 CDMFactoryClearKey& CDMFactoryClearKey::singleton()

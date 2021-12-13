@@ -33,7 +33,6 @@
 #include "CachedResource.h"
 #include "InspectorNetworkAgent.h"
 #include "ResourceResponse.h"
-#include "SharedBuffer.h"
 #include "TextResourceDecoder.h"
 #include <wtf/text/Base64.h>
 
@@ -63,8 +62,8 @@ unsigned NetworkResourcesData::ResourceData::removeContent()
     unsigned result = 0;
     if (hasData()) {
         ASSERT(!hasContent());
-        result = m_dataBuffer->size();
-        m_dataBuffer = nullptr;
+        result = m_dataBuffer.size();
+        m_dataBuffer.reset();
     }
 
     if (hasContent()) {
@@ -81,35 +80,36 @@ unsigned NetworkResourcesData::ResourceData::evictContent()
     return removeContent();
 }
 
+bool NetworkResourcesData::ResourceData::hasData() const
+{
+    return !!m_dataBuffer;
+}
+
 size_t NetworkResourcesData::ResourceData::dataLength() const
 {
-    return m_dataBuffer ? m_dataBuffer->size() : 0;
+    return m_dataBuffer.size();
 }
 
 void NetworkResourcesData::ResourceData::appendData(const uint8_t* data, size_t dataLength)
 {
     ASSERT(!hasContent());
-    if (!m_dataBuffer)
-        m_dataBuffer = SharedBuffer::create(data, dataLength);
-    else
-        m_dataBuffer->append(data, dataLength);
+    m_dataBuffer.append(data, dataLength);
 }
 
 unsigned NetworkResourcesData::ResourceData::decodeDataToContent()
 {
     ASSERT(!hasContent());
 
-    size_t dataLength = m_dataBuffer->size();
+    auto buffer = m_dataBuffer.takeAsContiguous();
+    size_t dataLength = buffer->size();
 
     if (m_decoder) {
         m_base64Encoded = false;
-        m_content = m_decoder->decodeAndFlush(m_dataBuffer->makeContiguous()->data(), dataLength);
+        m_content = m_decoder->decodeAndFlush(buffer->data(), dataLength);
     } else {
         m_base64Encoded = true;
-        m_content = base64EncodeToString(m_dataBuffer->makeContiguous()->data(), dataLength);
+        m_content = base64EncodeToString(buffer->data(), dataLength);
     }
-
-    m_dataBuffer = nullptr;
 
     return m_content.sizeInBytes() - dataLength;
 }

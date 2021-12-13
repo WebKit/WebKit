@@ -51,9 +51,9 @@ public:
 
 private:
     void didAddClient(CachedResourceClient&) final;
-    void updateBuffer(SharedBuffer&) final;
+    void updateBuffer(const SharedBuffer&) final;
     void updateData(const uint8_t* data, unsigned length) final;
-    void finishLoading(SharedBuffer*, const NetworkLoadMetrics&) final;
+    void finishLoading(const SharedBuffer*, const NetworkLoadMetrics&) final;
 
     bool shouldIgnoreHTTPStatusCodeErrors() const override { return true; }
     void allClientsRemoved() override;
@@ -92,7 +92,7 @@ private:
     Vector<RedirectPair, 0, CrashOnOverflow, 0> m_redirectChain;
 
     struct DelayedFinishLoading {
-        RefPtr<SharedBuffer> buffer;
+        RefPtr<const SharedBuffer> buffer;
     };
     std::optional<DelayedFinishLoading> m_delayedFinishLoading;
 };

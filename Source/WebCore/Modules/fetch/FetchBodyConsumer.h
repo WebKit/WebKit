@@ -50,8 +50,8 @@ public:
     void append(const uint8_t* data, unsigned);
 
     bool hasData() const { return !!m_buffer; }
-    const SharedBuffer* data() const { return m_buffer.get(); }
-    void setData(Ref<SharedBuffer>&& data) { m_buffer = WTFMove(data); }
+    const SharedBuffer* data() const { return m_buffer.get().get(); }
+    void setData(Ref<SharedBuffer>&&);
 
     RefPtr<SharedBuffer> takeData();
     RefPtr<JSC::ArrayBuffer> takeAsArrayBuffer();
@@ -82,7 +82,7 @@ private:
 
     Type m_type;
     String m_contentType;
-    RefPtr<SharedBuffer> m_buffer;
+    SharedBufferBuilder m_buffer;
     RefPtr<DeferredPromise> m_consumePromise;
     RefPtr<ReadableStreamToSharedBufferSink> m_sink;
     RefPtr<FetchBodySource> m_source;

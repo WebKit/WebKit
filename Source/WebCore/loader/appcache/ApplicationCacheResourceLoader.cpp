@@ -101,7 +101,7 @@ void ApplicationCacheResourceLoader::responseReceived(CachedResource& resource, 
 
 void ApplicationCacheResourceLoader::dataReceived(CachedResource&, const uint8_t* data, int length)
 {
-    m_applicationCacheResource->data().append(data, length);
+    m_applicationCacheResource->append(data, length);
 }
 
 void ApplicationCacheResourceLoader::redirectReceived(CachedResource&, ResourceRequest&& newRequest, const ResourceResponse&, CompletionHandler<void(ResourceRequest&&)>&& callback)

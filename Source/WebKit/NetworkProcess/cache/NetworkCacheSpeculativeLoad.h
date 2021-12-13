@@ -75,7 +75,7 @@ private:
 
     WebCore::ResourceResponse m_response;
 
-    RefPtr<WebCore::SharedBuffer> m_bufferedDataForCache;
+    WebCore::SharedBufferBuilder m_bufferedDataForCache;
     std::unique_ptr<NetworkCache::Entry> m_cacheEntry;
     bool m_didComplete { false };
 };

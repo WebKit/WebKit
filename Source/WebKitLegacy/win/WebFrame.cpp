@@ -585,7 +585,7 @@ void WebFrame::loadData(Ref<WebCore::SharedBuffer>&& data, BSTR mimeType, BSTR t
 
 HRESULT WebFrame::loadData(_In_opt_ IStream* data, _In_ BSTR mimeType, _In_ BSTR textEncodingName, _In_ BSTR url)
 {
-    auto sharedBuffer = SharedBuffer::create();
+    SharedBufferBuilder sharedBuffer;
 
     STATSTG stat;
     if (SUCCEEDED(data->Stat(&stat, STATFLAG_NONAME))) {
@@ -595,11 +595,11 @@ HRESULT WebFrame::loadData(_In_opt_ IStream* data, _In_ BSTR mimeType, _In_ BSTR
             // FIXME: this does a needless copy, would be better to read right into the SharedBuffer
             // or adopt the Vector or something.
             if (SUCCEEDED(data->Read(dataBuffer.data(), static_cast<ULONG>(dataBuffer.size()), &read)))
-                sharedBuffer->append(dataBuffer.data(), static_cast<int>(dataBuffer.size()));
+                sharedBuffer.append(dataBuffer.data(), static_cast<int>(dataBuffer.size()));
         }
     }
 
-    loadData(WTFMove(sharedBuffer), mimeType, textEncodingName, url, nullptr);
+    loadData(sharedBuffer.take(), mimeType, textEncodingName, url, nullptr);
     return S_OK;
 }
 

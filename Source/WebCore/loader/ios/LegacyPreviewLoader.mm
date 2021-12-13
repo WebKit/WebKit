@@ -69,7 +69,7 @@ bool LegacyPreviewLoader::didReceiveBuffer(const SharedBuffer& buffer)
         return false;
 
     LOG(Network, "LegacyPreviewLoader appending buffer with size %ld.", buffer.size());
-    m_originalData->append(buffer);
+    m_originalData.append(buffer);
     m_converter->updateMainResource();
     m_client->didReceiveBuffer(buffer);
     return true;
@@ -109,7 +109,7 @@ void LegacyPreviewLoader::previewConverterDidStartConverting(PreviewConverter& c
         return;
 
     ASSERT(!m_hasProcessedResponse);
-    m_originalData->clear();
+    m_originalData.empty();
     resourceLoader->documentLoader()->setPreviewConverter(WTFMove(m_converter));
     auto response { converter.previewResponse() };
 
@@ -227,7 +227,7 @@ void LegacyPreviewLoader::providePasswordForPreviewConverter(PreviewConverter& c
 void LegacyPreviewLoader::provideMainResourceForPreviewConverter(PreviewConverter& converter, CompletionHandler<void(const SharedBuffer*)>&& completionHandler)
 {
     ASSERT_UNUSED(converter, &converter == m_converter);
-    completionHandler(m_originalData.ptr());
+    completionHandler(m_originalData.get().get());
 }
 
 LegacyPreviewLoader::~LegacyPreviewLoader() = default;

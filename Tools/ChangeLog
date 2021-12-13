@@ -1,3 +1,18 @@
+2021-12-13  Jean-Yves Avenard  <jya@apple.com>
+
+        Add SharedBufferBuilder class
+        https://bugs.webkit.org/show_bug.cgi?id=233442
+        rdar://85693939
+
+        Reviewed by Youenn Fablet.
+
+        Update API tests.
+
+        * TestWebKitAPI/Tests/WebCore/SharedBuffer.cpp:
+        (TestWebKitAPI::TEST_F):
+        * TestWebKitAPI/Tests/WebCore/cocoa/SharedBuffer.mm:
+        (TestWebKitAPI::TEST_F):
+
 2021-12-13  Angelos Oikonomopoulos  <angelos@igalia.com>
 
         [JSC] Unify default/noisy tests definition

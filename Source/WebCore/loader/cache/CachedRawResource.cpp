@@ -56,7 +56,7 @@ std::optional<SharedBufferDataView> CachedRawResource::calculateIncrementalDataC
     return data->getSomeData(previousDataLength);
 }
 
-void CachedRawResource::updateBuffer(SharedBuffer& data)
+void CachedRawResource::updateBuffer(const SharedBuffer& data)
 {
     // Skip any updateBuffers triggered from nested runloops. We'll have the complete buffer in finishLoading.
     if (m_inIncrementalDataNotify)
@@ -96,7 +96,7 @@ void CachedRawResource::updateData(const uint8_t* data, unsigned length)
     CachedResource::updateData(data, length);
 }
 
-void CachedRawResource::finishLoading(SharedBuffer* data, const NetworkLoadMetrics& metrics)
+void CachedRawResource::finishLoading(const SharedBuffer* data, const NetworkLoadMetrics& metrics)
 {
     if (m_inIncrementalDataNotify) {
         // We may get here synchronously from updateBuffer() if the callback there ends up spinning a runloop.

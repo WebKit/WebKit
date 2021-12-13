@@ -96,7 +96,7 @@ unsigned CachedScript::scriptHash()
     return m_scriptHash;
 }
 
-void CachedScript::finishLoading(SharedBuffer* data, const NetworkLoadMetrics& metrics)
+void CachedScript::finishLoading(const SharedBuffer* data, const NetworkLoadMetrics& metrics)
 {
     if (data) {
         m_data = data->makeContiguous();

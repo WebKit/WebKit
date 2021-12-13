@@ -543,6 +543,59 @@ size_t DataSegment::size() const
     return std::visit(visitor, m_immutableData);
 }
 
+SharedBufferBuilder::SharedBufferBuilder(RefPtr<SharedBuffer>&& buffer)
+{
+    if (!buffer)
+        return;
+    initialize(buffer.releaseNonNull());
+}
+
+SharedBufferBuilder& SharedBufferBuilder::operator=(RefPtr<SharedBuffer>&& buffer)
+{
+    if (!buffer) {
+        m_buffer = nullptr;
+        return *this;
+    }
+    m_buffer = nullptr;
+    initialize(buffer.releaseNonNull());
+    return *this;
+}
+
+void SharedBufferBuilder::initialize(Ref<SharedBuffer>&& buffer)
+{
+    ASSERT(!m_buffer);
+    // We do not want to take a reference to the SharedBuffer as all SharedBuffer should be immutable
+    // once created.
+    if (buffer->hasOneRef() && !buffer->isContiguous()) {
+        m_buffer = WTFMove(buffer);
+        return;
+    }
+    append(buffer);
+}
+
+Ref<SharedBuffer> SharedBufferBuilder::take()
+{
+    return m_buffer ? m_buffer.releaseNonNull() : SharedBuffer::create();
+}
+
+Ref<ContiguousSharedBuffer> SharedBufferBuilder::takeAsContiguous()
+{
+    return take()->makeContiguous();
+}
+
+RefPtr<ArrayBuffer> SharedBufferBuilder::takeAsArrayBuffer()
+{
+    if (!m_buffer)
+        return ArrayBuffer::tryCreate(nullptr, 0);
+    return take()->tryCreateArrayBuffer();
+}
+
+void SharedBufferBuilder::ensureBuffer()
+{
+    if (!m_buffer)
+        m_buffer = SharedBuffer::create();
+}
+
 SharedBufferDataView::SharedBufferDataView(Ref<DataSegment>&& segment, size_t positionWithinSegment, std::optional<size_t> size)
     : m_segment(WTFMove(segment))
     , m_positionWithinSegment(positionWithinSegment)

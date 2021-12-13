@@ -41,8 +41,7 @@ namespace WebCore {
 struct RangeResponseGenerator::Data {
     WTF_MAKE_STRUCT_FAST_ALLOCATED;
     Data(const ResourceResponse& response, PlatformMediaResource& resource)
-        : buffer(SharedBuffer::create())
-        , originalResponse(response)
+        : originalResponse(response)
         , resource(&resource) { }
 
     struct TaskData : public CanMakeWeakPtr<TaskData> {
@@ -55,9 +54,9 @@ struct RangeResponseGenerator::Data {
         size_t nextByteToGiveBufferIndex { 0 };
         enum class ResponseState : uint8_t { NotSynthesizedYet, WaitingForSession, SessionCalledCompletionHandler } responseState { ResponseState::NotSynthesizedYet };
     };
-    
+
     HashMap<RetainPtr<WebCoreNSURLSessionDataTask>, std::unique_ptr<TaskData>> taskData;
-    Ref<SharedBuffer> buffer;
+    SharedBufferBuilder buffer;
     ResourceResponse originalResponse;
     enum class SuccessfullyFinishedLoading : bool { No, Yes } successfullyFinishedLoading { SuccessfullyFinishedLoading::No };
     RefPtr<PlatformMediaResource> resource;
@@ -106,22 +105,22 @@ void RangeResponseGenerator::removeTask(WebCoreNSURLSessionDataTask *task)
 void RangeResponseGenerator::giveResponseToTaskIfBytesInRangeReceived(WebCoreNSURLSessionDataTask *task, const ParsedRequestRange& range, std::optional<size_t> expectedContentLength, const Data& data)
 {
     ASSERT(isMainThread());
-    auto buffer = data.buffer;
-    auto bufferSize = buffer->size();
 
     // FIXME: We ought to be able to just make a range with a * after the / but AVFoundation doesn't accept such ranges.
     // Instead, we just wait until the load has completed, at which time we will know the content length from the buffer length.
     if (!expectedContentLength)
         return;
 
+    auto bufferSize = data.buffer.size();
     if (bufferSize < range.begin)
         return;
-    
+
+    auto buffer = data.buffer.get();
     auto* taskData = data.taskData.get(task);
     if (!taskData)
         return;
-    
-    auto giveBytesToTask = [task = retainPtr(task), buffer, taskData = WeakPtr { *taskData }, generator = WeakPtr { *this }] {
+
+    auto giveBytesToTask = [task = retainPtr(task), buffer, bufferSize, taskData = WeakPtr { *taskData }, generator = WeakPtr { *this }] {
         ASSERT(isMainThread());
         if ([task state] != NSURLSessionTaskStateRunning)
             return;
@@ -130,7 +129,7 @@ void RangeResponseGenerator::giveResponseToTaskIfBytesInRangeReceived(WebCoreNSU
         auto& range = taskData->range;
         auto& byteIndex = taskData->nextByteToGiveBufferIndex;
         while (true) {
-            if (byteIndex >= buffer->size())
+            if (byteIndex >= bufferSize)
                 break;
             auto bufferView = buffer->getSomeData(byteIndex);
             if (!bufferView.size() || byteIndex > range.end)
@@ -175,7 +174,7 @@ std::optional<size_t> RangeResponseGenerator::expectedContentLengthFromData(cons
 {
     ASSERT(isMainThread());
     if (data.successfullyFinishedLoading == Data::SuccessfullyFinishedLoading::Yes)
-        return data.buffer->size();
+        return data.buffer.size();
 
     // FIXME: ResourceResponseBase::expectedContentLength() should return std::optional<size_t> instead of us doing this check here.
     auto expectedContentLength = data.originalResponse.expectedContentLength();
@@ -252,7 +251,7 @@ private:
         auto* data = m_generator->m_map.get(m_urlString);
         if (!data)
             return;
-        data->buffer->append(WTFMove(buffer));
+        data->buffer.append(WTFMove(buffer));
         m_generator->giveResponseToTasksWithFinishedRanges(*data);
     }
 

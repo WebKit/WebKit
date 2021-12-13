@@ -78,10 +78,9 @@ void WebServiceWorkerFetchTaskClient::didReceiveData(Ref<SharedBuffer>&& buffer)
         return;
 
     if (m_waitingForContinueDidReceiveResponseMessage) {
-        if (!std::holds_alternative<Ref<SharedBuffer>>(m_responseData))
-            m_responseData = buffer->copy();
-        else
-            std::get<Ref<SharedBuffer>>(m_responseData)->append(WTFMove(buffer));
+        if (!std::holds_alternative<SharedBufferBuilder>(m_responseData))
+            m_responseData = SharedBufferBuilder();
+        std::get<SharedBufferBuilder>(m_responseData).append(WTFMove(buffer));
         return;
     }
 
@@ -228,8 +227,8 @@ void WebServiceWorkerFetchTaskClient::continueDidReceiveResponse()
     switchOn(m_responseData, [this](std::nullptr_t&) {
         if (m_didFinish)
             didFinish();
-    }, [this](Ref<SharedBuffer>& buffer) {
-        didReceiveData(WTFMove(buffer));
+    }, [this](const SharedBufferBuilder& buffer) {
+        didReceiveData(*buffer.get());
         if (m_didFinish)
             didFinish();
     }, [this](Ref<FormData>& formData) {

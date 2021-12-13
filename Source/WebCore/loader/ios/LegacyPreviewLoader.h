@@ -27,6 +27,7 @@
 
 #include "PreviewConverterClient.h"
 #include "PreviewConverterProvider.h"
+#include "SharedBuffer.h"
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/RetainPtr.h>
@@ -37,7 +38,6 @@ namespace WebCore {
 class LegacyPreviewLoaderClient;
 class ResourceLoader;
 class ResourceResponse;
-class SharedBuffer;
 
 class LegacyPreviewLoader final : private PreviewConverterClient, private PreviewConverterProvider {
     WTF_MAKE_FAST_ALLOCATED;
@@ -70,7 +70,7 @@ private:
 
     RefPtr<PreviewConverter> m_converter;
     Ref<LegacyPreviewLoaderClient> m_client;
-    Ref<SharedBuffer> m_originalData;
+    SharedBufferBuilder m_originalData;
     WeakPtr<ResourceLoader> m_resourceLoader;
     bool m_finishedLoadingDataIntoConverter { false };
     bool m_hasProcessedResponse { false };

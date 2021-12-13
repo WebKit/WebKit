@@ -336,7 +336,7 @@ void CachedResource::checkNotify(const NetworkLoadMetrics& metrics)
         client->notifyFinished(*this, metrics);
 }
 
-void CachedResource::updateBuffer(SharedBuffer&)
+void CachedResource::updateBuffer(const SharedBuffer&)
 {
     ASSERT(dataBufferingPolicy() == DataBufferingPolicy::BufferData);
 }
@@ -346,7 +346,7 @@ void CachedResource::updateData(const uint8_t*, unsigned)
     ASSERT(dataBufferingPolicy() == DataBufferingPolicy::DoNotBufferData);
 }
 
-void CachedResource::finishLoading(SharedBuffer*, const NetworkLoadMetrics& metrics)
+void CachedResource::finishLoading(const SharedBuffer*, const NetworkLoadMetrics& metrics)
 {
     setLoading(false);
     checkNotify(metrics);

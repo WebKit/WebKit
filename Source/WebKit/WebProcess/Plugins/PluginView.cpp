@@ -403,10 +403,7 @@ void PluginView::manualLoadDidReceiveData(const uint8_t* bytes, int length)
 
     if (!m_isInitialized) {
         ASSERT(m_manualStreamState == ManualStreamState::HasReceivedResponse);
-        if (!m_manualStreamData)
-            m_manualStreamData = SharedBuffer::create();
-
-        m_manualStreamData->append(bytes, length);
+        m_manualStreamData.append(bytes, length);
         return;
     }
 
@@ -437,7 +434,7 @@ void PluginView::manualLoadDidFail(const ResourceError& error)
     if (!m_isInitialized) {
         m_manualStreamState = ManualStreamState::Finished;
         m_manualStreamError = error;
-        m_manualStreamData = nullptr;
+        m_manualStreamData.reset();
         return;
     }
 
@@ -929,8 +926,8 @@ void PluginView::willDetachRenderer()
 RefPtr<SharedBuffer> PluginView::liveResourceData() const
 {
     if (!m_isInitialized || !m_plugin) {
-        if (m_manualStreamData && m_manualStreamState == ManualStreamState::Finished)
-            return m_manualStreamData;
+        if (m_manualStreamState == ManualStreamState::Finished)
+            return m_manualStreamData.get();
 
         return nullptr;
     }
@@ -1243,9 +1240,9 @@ void PluginView::redeliverManualStream()
 
     // Deliver the data.
     if (m_manualStreamData) {
-        for (const auto& element : *m_manualStreamData)
+        auto buffer = m_manualStreamData.take();
+        for (const auto& element : buffer.get())
             manualLoadDidReceiveData(element.segment->data(), element.segment->size());
-        m_manualStreamData = nullptr;
     }
 
     if (m_manualStreamState == ManualStreamState::Finished)

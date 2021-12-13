@@ -40,7 +40,7 @@ CachedApplicationManifest::CachedApplicationManifest(CachedResourceRequest&& req
 {
 }
 
-void CachedApplicationManifest::finishLoading(SharedBuffer* data, const NetworkLoadMetrics& metrics)
+void CachedApplicationManifest::finishLoading(const SharedBuffer* data, const NetworkLoadMetrics& metrics)
 {
     if (data) {
         m_data = data->makeContiguous();

@@ -289,7 +289,7 @@ void DOMCache::addAll(Vector<RequestInfo>&& infos, DOMPromiseDeferred<void>&& pr
             }
             size_t recordPosition = taskHandler->addRecord(toConnectionRecord(request.get(), response, nullptr));
 
-            response.consumeBodyReceivedByChunk([taskHandler = WTFMove(taskHandler), recordPosition, data = SharedBuffer::create(), response = Ref { response }] (auto&& result) mutable {
+            response.consumeBodyReceivedByChunk([taskHandler = WTFMove(taskHandler), recordPosition, data = SharedBufferBuilder(), response = Ref { response }] (auto&& result) mutable {
                 if (taskHandler->isDone())
                     return;
 
@@ -299,9 +299,9 @@ void DOMCache::addAll(Vector<RequestInfo>&& infos, DOMPromiseDeferred<void>&& pr
                 }
 
                 if (auto* chunk = result.returnValue())
-                    data->append(chunk->data(), chunk->size());
+                    data.append(chunk->data(), chunk->size());
                 else
-                    taskHandler->addResponseBody(recordPosition, response, data->makeContiguous());
+                    taskHandler->addResponseBody(recordPosition, response, data.takeAsContiguous());
             });
         }, cachedResourceRequestInitiators().fetch);
     }
@@ -375,7 +375,7 @@ void DOMCache::put(RequestInfo&& info, Ref<FetchResponse>&& response, DOMPromise
 
     if (response->isBodyReceivedByChunk()) {
         auto& responseRef = response.get();
-        responseRef.consumeBodyReceivedByChunk([promise = WTFMove(promise), request = WTFMove(request), response = WTFMove(response), data = SharedBuffer::create(), pendingActivity = makePendingActivity(*this), this](auto&& result) mutable {
+        responseRef.consumeBodyReceivedByChunk([promise = WTFMove(promise), request = WTFMove(request), response = WTFMove(response), data = SharedBufferBuilder(), pendingActivity = makePendingActivity(*this), this](auto&& result) mutable {
 
             if (result.hasException()) {
                 this->putWithResponseData(WTFMove(promise), WTFMove(request), WTFMove(response), result.releaseException().isolatedCopy());
@@ -383,9 +383,9 @@ void DOMCache::put(RequestInfo&& info, Ref<FetchResponse>&& response, DOMPromise
             }
 
             if (auto* chunk = result.returnValue())
-                data->append(chunk->data(), chunk->size());
+                data.append(chunk->data(), chunk->size());
             else
-                this->putWithResponseData(WTFMove(promise), WTFMove(request), WTFMove(response), RefPtr<ContiguousSharedBuffer> { data->makeContiguous() });
+                this->putWithResponseData(WTFMove(promise), WTFMove(request), WTFMove(response), RefPtr<ContiguousSharedBuffer> { data.takeAsContiguous() });
         });
         return;
     }

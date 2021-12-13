@@ -468,7 +468,7 @@ inline void CachedImage::clearImage()
     m_updateImageDataCount = 0;
 }
 
-void CachedImage::updateBufferInternal(SharedBuffer& data)
+void CachedImage::updateBufferInternal(const SharedBuffer& data)
 {
     m_data = data.makeContiguous();
     setEncodedSize(m_data->size());
@@ -523,7 +523,7 @@ bool CachedImage::shouldDeferUpdateImageData() const
     return (MonotonicTime::now() - m_lastUpdateImageDataTime).seconds() < updateImageDataBackoffIntervals[interval];
 }
 
-RefPtr<ContiguousSharedBuffer> CachedImage::convertedDataIfNeeded(SharedBuffer* data) const
+RefPtr<ContiguousSharedBuffer> CachedImage::convertedDataIfNeeded(const SharedBuffer* data) const
 {
     if (!data)
         return nullptr;
@@ -555,7 +555,7 @@ EncodedDataStatus CachedImage::updateImageData(bool allDataReceived)
     return result;
 }
 
-void CachedImage::updateBuffer(SharedBuffer& data)
+void CachedImage::updateBuffer(const SharedBuffer& data)
 {
     ASSERT(dataBufferingPolicy() == DataBufferingPolicy::BufferData);
     updateBufferInternal(data);
@@ -569,7 +569,7 @@ void CachedImage::updateData(const uint8_t* data, unsigned length)
     CachedResource::updateData(data, length);
 }
 
-void CachedImage::finishLoading(SharedBuffer* data, const NetworkLoadMetrics& metrics)
+void CachedImage::finishLoading(const SharedBuffer* data, const NetworkLoadMetrics& metrics)
 {
     m_data = convertedDataIfNeeded(data);
     if (m_data) {

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2021 Apple Inc. All rights reserved.
  * Copyright (C) Research In Motion Limited 2009-2010. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,6 +27,7 @@
 #pragma once
 
 #include <JavaScriptCore/Forward.h>
+#include <utility>
 #include <variant>
 #include <wtf/FileSystem.h>
 #include <wtf/Forward.h>
@@ -173,19 +174,6 @@ public:
     bool isEmpty() const { return !size(); }
     bool isContiguous() const { return m_contiguous; }
 
-    WEBCORE_EXPORT void append(const SharedBuffer&);
-    WEBCORE_EXPORT void append(const uint8_t*, size_t);
-    void append(const char* data, size_t length) { append(reinterpret_cast<const uint8_t*>(data), length); }
-    WEBCORE_EXPORT void append(Vector<uint8_t>&&);
-#if USE(FOUNDATION)
-    WEBCORE_EXPORT void append(NSData *);
-#endif
-#if USE(CF)
-    WEBCORE_EXPORT void append(CFDataRef);
-#endif
-
-    WEBCORE_EXPORT void clear();
-
     WEBCORE_EXPORT Ref<SharedBuffer> copy() const;
     WEBCORE_EXPORT void copyTo(void* destination, size_t length) const;
     WEBCORE_EXPORT void copyTo(void* destination, size_t offset, size_t length) const;
@@ -241,6 +229,20 @@ protected:
     size_t m_size { 0 };
 
 private:
+    friend class SharedBufferBuilder;
+    WEBCORE_EXPORT void append(const SharedBuffer&);
+    WEBCORE_EXPORT void append(const uint8_t*, size_t);
+    void append(const char* data, size_t length) { append(reinterpret_cast<const uint8_t*>(data), length); }
+    WEBCORE_EXPORT void append(Vector<uint8_t>&&);
+#if USE(FOUNDATION)
+    WEBCORE_EXPORT void append(NSData *);
+#endif
+#if USE(CF)
+    WEBCORE_EXPORT void append(CFDataRef);
+#endif
+
+    WEBCORE_EXPORT void clear();
+
     // Combines all the segments into a Vector and returns that vector after clearing the SharedBuffer.
     WEBCORE_EXPORT Vector<uint8_t> takeData();
     const DataSegmentVectorEntry* getSegmentForPosition(size_t positition) const;
@@ -267,11 +269,6 @@ public:
         }
     }
 
-    // Ensure that you can't call append on a ContiguousSharedBuffer directly.
-    // When called from the base class, it will assert.
-    template <typename... Args>
-    void append(Args&&...) = delete;
-
     WEBCORE_EXPORT const uint8_t* data() const;
     const char* dataAsCharPtr() const { return reinterpret_cast<const char*>(data()); }
     WTF::Persistence::Decoder decoder() const;
@@ -296,6 +293,58 @@ private:
     WEBCORE_EXPORT explicit ContiguousSharedBuffer(Ref<SharedBuffer>&&);
 
     WEBCORE_EXPORT static RefPtr<ContiguousSharedBuffer> createFromReadingFile(const String& filePath);
+};
+
+class SharedBufferBuilder {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    SharedBufferBuilder() = default;
+    SharedBufferBuilder(SharedBufferBuilder&&) = default;
+    WEBCORE_EXPORT explicit SharedBufferBuilder(RefPtr<SharedBuffer>&&);
+    explicit SharedBufferBuilder(Ref<SharedBuffer>&& buffer) { initialize(WTFMove(buffer)); }
+
+    template <typename... Args>
+    SharedBufferBuilder(std::in_place_t, Args&&... args)
+        : m_buffer(SharedBuffer::create(std::forward<Args>(args)...)) { }
+
+    SharedBufferBuilder& operator=(SharedBufferBuilder&&) = default;
+    WEBCORE_EXPORT SharedBufferBuilder& operator=(RefPtr<SharedBuffer>&&);
+
+    template <typename... Args>
+    void append(Args&&... args)
+    {
+        ensureBuffer();
+        m_buffer->append(std::forward<Args>(args)...);
+    }
+
+    explicit operator bool() const { return !isNull(); }
+    bool isNull() const { return !m_buffer; }
+    bool isEmpty() const { return m_buffer ? m_buffer->isEmpty() : true; }
+
+    size_t size() const { return m_buffer ? m_buffer->size() : 0; }
+
+    void reset() { m_buffer = nullptr; }
+    void empty() { m_buffer = SharedBuffer::create(); }
+
+    RefPtr<SharedBuffer> get() const { return m_buffer; }
+    Ref<SharedBuffer> copy() const { return m_buffer ? m_buffer->copy() : SharedBuffer::create(); }
+    WEBCORE_EXPORT Ref<SharedBuffer> take();
+    WEBCORE_EXPORT Ref<ContiguousSharedBuffer> takeAsContiguous();
+    WEBCORE_EXPORT RefPtr<ArrayBuffer> takeAsArrayBuffer();
+
+private:
+    friend class ScriptBuffer;
+    friend class FetchBodyConsumer;
+    // Copy constructor should make a copy of the underlying SharedBuffer
+    // This is prevented by ScriptBuffer and FetchBodyConsumer classes (bug 234215)
+    // For now let the default constructor/operator take a reference to the
+    // SharedBuffer.
+    SharedBufferBuilder(const SharedBufferBuilder&) = default;
+    SharedBufferBuilder& operator=(const SharedBufferBuilder&) = default;
+
+    WEBCORE_EXPORT void initialize(Ref<SharedBuffer>&&);
+    WEBCORE_EXPORT void ensureBuffer();
+    RefPtr<SharedBuffer> m_buffer;
 };
 
 inline Vector<uint8_t> SharedBuffer::extractData()

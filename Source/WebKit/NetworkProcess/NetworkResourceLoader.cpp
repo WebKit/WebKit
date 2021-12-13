@@ -306,10 +306,10 @@ void NetworkResourceLoader::startNetworkLoad(ResourceRequest&& request, FirstLoa
         consumeSandboxExtensions();
 
         if (isSynchronous() || m_parameters.maximumBufferingTime > 0_s)
-            m_bufferedData = SharedBuffer::create();
+            m_bufferedData.empty();
 
         if (canUseCache(request))
-            m_bufferedDataForCache = SharedBuffer::create();
+            m_bufferedDataForCache.empty();
     }
 
     NetworkLoadParameters parameters = m_parameters;
@@ -739,16 +739,16 @@ void NetworkResourceLoader::didReceiveResponse(ResourceResponse&& receivedRespon
         && m_response.expectedContentLength() > static_cast<long long>(1 * MB)
         && isFetchOrXHR(resourceLoadInfo)
         && isMediaMIMEType(m_response.mimeType())) {
-        m_bufferedData = SharedBuffer::create();
+        m_bufferedData.empty();
         m_parameters.maximumBufferingTime = WebLoaderStrategy::mediaMaximumBufferingTime;
     }
 
     // For multipart/x-mixed-replace didReceiveResponseAsync gets called multiple times and buffering would require special handling.
     if (!isSynchronous() && m_response.isMultipart())
-        m_bufferedData = nullptr;
+        m_bufferedData.reset();
 
     if (m_response.isMultipart())
-        m_bufferedDataForCache = nullptr;
+        m_bufferedDataForCache.reset();
 
     if (m_cacheEntryForValidation) {
         bool validationSucceeded = m_response.httpStatusCode() == 304; // 304 Not Modified
@@ -874,10 +874,10 @@ void NetworkResourceLoader::didReceiveBuffer(Ref<SharedBuffer>&& buffer, int rep
     if (m_bufferedDataForCache) {
         // Prevent memory growth in case of streaming data and limit size of entries in the cache.
         const size_t maximumCacheBufferSize = m_cache->capacity() / 8;
-        if (m_bufferedDataForCache->size() + buffer->size() <= maximumCacheBufferSize)
-            m_bufferedDataForCache->append(buffer.get());
+        if (m_bufferedDataForCache.size() + buffer->size() <= maximumCacheBufferSize)
+            m_bufferedDataForCache.append(buffer.get());
         else
-            m_bufferedDataForCache = nullptr;
+            m_bufferedDataForCache.reset();
     }
     if (isCrossOriginPrefetch())
         return;
@@ -885,7 +885,7 @@ void NetworkResourceLoader::didReceiveBuffer(Ref<SharedBuffer>&& buffer, int rep
     unsigned encodedDataLength = reportedEncodedDataLength >= 0 ? reportedEncodedDataLength : buffer->size();
 
     if (m_bufferedData) {
-        m_bufferedData->append(buffer.get());
+        m_bufferedData.append(buffer.get());
         m_bufferedDataEncodedDataLength += encodedDataLength;
         startBufferingTimerIfNeeded();
         return;
@@ -914,11 +914,11 @@ void NetworkResourceLoader::didFinishLoading(const NetworkLoadMetrics& networkLo
 #endif
 
     if (isSynchronous())
-        sendReplyToSynchronousRequest(*m_synchronousLoadData, m_bufferedData.get(), networkLoadMetrics);
+        sendReplyToSynchronousRequest(*m_synchronousLoadData, m_bufferedData.get().get(), networkLoadMetrics);
     else {
-        if (m_bufferedData && !m_bufferedData->isEmpty()) {
+        if (!m_bufferedData.isEmpty()) {
             // FIXME: Pass a real value or remove the encoded data size feature.
-            sendBuffer(*m_bufferedData, -1);
+            sendBuffer(*m_bufferedData.get(), -1);
         }
         send(Messages::WebResourceLoader::DidFinishResourceLoad(networkLoadMetrics));
     }
@@ -1264,12 +1264,12 @@ void NetworkResourceLoader::bufferingTimerFired()
     ASSERT(m_bufferedData);
     ASSERT(m_networkLoad);
 
-    if (m_bufferedData->isEmpty())
+    if (m_bufferedData.isEmpty())
         return;
 
-    send(Messages::WebResourceLoader::DidReceiveData({ *m_bufferedData }, m_bufferedDataEncodedDataLength));
+    send(Messages::WebResourceLoader::DidReceiveData({ *m_bufferedData.get() }, m_bufferedDataEncodedDataLength));
 
-    m_bufferedData = SharedBuffer::create();
+    m_bufferedData.empty();
     m_bufferedDataEncodedDataLength = 0;
 }
 
@@ -1294,12 +1294,12 @@ void NetworkResourceLoader::tryStoreAsCacheEntry()
     if (isCrossOriginPrefetch()) {
         if (auto* session = m_connection->networkProcess().networkSession(sessionID())) {
             LOADER_RELEASE_LOG("tryStoreAsCacheEntry: Storing entry in prefetch cache");
-            session->prefetchCache().store(m_networkLoad->currentRequest().url(), WTFMove(m_response), WTFMove(m_bufferedDataForCache));
+            session->prefetchCache().store(m_networkLoad->currentRequest().url(), WTFMove(m_response), m_bufferedDataForCache.take());
         }
         return;
     }
     LOADER_RELEASE_LOG("tryStoreAsCacheEntry: Storing entry in HTTP disk cache");
-    m_cache->store(m_networkLoad->currentRequest(), m_response, WTFMove(m_bufferedDataForCache), [loader = Ref { *this }](auto& mappedBody) mutable {
+    m_cache->store(m_networkLoad->currentRequest(), m_response, m_bufferedDataForCache.take(), [loader = Ref { *this }](auto& mappedBody) mutable {
 #if ENABLE(SHAREABLE_RESOURCE)
         if (mappedBody.shareableResourceHandle.isNull())
             return;

@@ -783,7 +783,6 @@ bool ApplicationCacheStorage::store(ApplicationCacheResource* resource, unsigned
     auto dataStatement = m_database.prepareStatement("INSERT INTO CacheResourceData (data, path) VALUES (?, ?)"_s);
     if (!dataStatement)
         return false;
-    
 
     String fullPath;
     if (!resource->path().isEmpty())
@@ -873,12 +872,12 @@ bool ApplicationCacheStorage::store(ApplicationCacheResource* resource, unsigned
     
     if (!executeStatement(entryStatement.value()))
         return false;
-    
+
     // Did we successfully write the resource data to a file? If so,
     // release the resource's data and free up a potentially large amount
     // of memory:
     if (!fullPath.isEmpty())
-        resource->data().clear();
+        resource->clear();
 
     resource->setStorageID(resourceId);
     return true;

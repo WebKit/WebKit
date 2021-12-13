@@ -1,5 +1,16 @@
 2021-12-13  Jean-Yves Avenard  <jya@apple.com>
 
+        Add SharedBufferBuilder class
+        https://bugs.webkit.org/show_bug.cgi?id=233442
+        rdar://85693939
+
+        Reviewed by Youenn Fablet.
+
+        * WebFrame.cpp:
+        (WebFrame::loadData):
+
+2021-12-13  Jean-Yves Avenard  <jya@apple.com>
+
         Distinguish contiguous SharedBuffer from non-contiguous one and guarantee immutability
         https://bugs.webkit.org/show_bug.cgi?id=233030
         rdar://85333814

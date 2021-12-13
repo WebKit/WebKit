@@ -117,7 +117,7 @@ private:
     RetainPtr<AVAssetWriter> m_writer;
 
     Lock m_dataLock;
-    RefPtr<SharedBuffer> m_data WTF_GUARDED_BY_LOCK(m_dataLock);
+    SharedBufferBuilder m_data WTF_GUARDED_BY_LOCK(m_dataLock);
     CompletionHandler<void(RefPtr<SharedBuffer>&&, double)> m_fetchDataCompletionHandler;
 
     RetainPtr<CMFormatDescriptionRef> m_audioFormatDescription;

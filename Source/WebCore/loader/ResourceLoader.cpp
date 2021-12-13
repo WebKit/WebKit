@@ -50,7 +50,6 @@
 #include "ResourceError.h"
 #include "ResourceHandle.h"
 #include "SecurityOrigin.h"
-#include "SharedBuffer.h"
 #include "SubresourceLoader.h"
 #include <wtf/CompletionHandler.h>
 #include <wtf/Ref.h>
@@ -118,7 +117,7 @@ void ResourceLoader::releaseResources()
 
     m_identifier = { };
 
-    m_resourceData = nullptr;
+    m_resourceData.reset();
     m_deferredRequest = ResourceRequest();
 }
 
@@ -318,7 +317,7 @@ void ResourceLoader::setDataBufferingPolicy(DataBufferingPolicy dataBufferingPol
 
     // Reset any already buffered data
     if (dataBufferingPolicy == DataBufferingPolicy::DoNotBufferData)
-        m_resourceData = nullptr;
+        m_resourceData.reset();
 }
 
 void ResourceLoader::willSwitchToSubstituteResource()
@@ -334,19 +333,24 @@ void ResourceLoader::addDataOrBuffer(const uint8_t* data, unsigned length, Share
     if (m_options.dataBufferingPolicy == DataBufferingPolicy::DoNotBufferData)
         return;
 
-    if (!m_resourceData || dataPayloadType == DataPayloadWholeResource)
-        m_resourceData = SharedBuffer::create();
-    
+    if (dataPayloadType == DataPayloadWholeResource)
+        m_resourceData.reset();
+
     if (buffer)
-        m_resourceData->append(*buffer);
+        m_resourceData.append(*buffer);
     else
-        m_resourceData->append(data, length);
+        m_resourceData.append(data, length);
+}
+
+const SharedBuffer* ResourceLoader::resourceData() const
+{
+    return m_resourceData.get().get();
 }
 
 void ResourceLoader::clearResourceData()
 {
     if (m_resourceData)
-        m_resourceData->clear();
+        m_resourceData.empty();
 }
 
 bool ResourceLoader::isSubresourceLoader() const
