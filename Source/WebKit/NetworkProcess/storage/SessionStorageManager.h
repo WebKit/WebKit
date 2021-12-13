@@ -30,7 +30,7 @@
 #include "StorageNamespaceIdentifier.h"
 
 namespace WebCore {
-class ClientOrigin;
+struct ClientOrigin;
 } // namespace WebCore
 
 namespace WebKit {
