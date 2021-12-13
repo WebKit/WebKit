@@ -89,7 +89,7 @@ private:
     DECLARE_VISIT_CHILDREN;
 
     Ref<Wasm::CodeBlock> m_codeBlock;
-    Vector<MacroAssemblerCodeRef<WasmEntryPtrTag>> m_wasmToJSExitStubs;
+    FixedVector<MacroAssemblerCodeRef<WasmEntryPtrTag>> m_wasmToJSExitStubs;
     Bag<OptimizingCallLinkInfo> m_callLinkInfos;
     String m_errorMessage;
 };

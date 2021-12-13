@@ -33,8 +33,9 @@
 
 namespace JSC { namespace Wasm {
 
-class OSREntryValue : public B3::ValueRep {
+class OSREntryValue final : public B3::ValueRep {
 public:
+    OSREntryValue() = default;
     OSREntryValue(const B3::ValueRep& valueRep, B3::Type type)
         : B3::ValueRep(valueRep)
         , m_type(type)
@@ -44,25 +45,26 @@ public:
     B3::Type type() const { return m_type; }
 
 private:
-    B3::Type m_type;
+    B3::Type m_type { };
 };
 
-using StackMap = Vector<OSREntryValue>;
+using StackMap = FixedVector<OSREntryValue>;
 using StackMaps = HashMap<CallSiteIndex, StackMap>;
 
 class OSREntryData {
     WTF_MAKE_NONCOPYABLE(OSREntryData);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    OSREntryData(uint32_t functionIndex, uint32_t loopIndex)
+    OSREntryData(uint32_t functionIndex, uint32_t loopIndex, StackMap&& stackMap)
         : m_functionIndex(functionIndex)
         , m_loopIndex(loopIndex)
+        , m_values(WTFMove(stackMap))
     {
     }
 
     uint32_t functionIndex() const { return m_functionIndex; }
     uint32_t loopIndex() const { return m_loopIndex; }
-    StackMap& values() { return m_values; }
+    const StackMap& values() { return m_values; }
 
 private:
     uint32_t m_functionIndex;

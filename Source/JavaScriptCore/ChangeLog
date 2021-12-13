@@ -1,3 +1,45 @@
+2021-12-12  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Use FixedVector to shrink some of Wasm data structures
+        https://bugs.webkit.org/show_bug.cgi?id=234206
+
+        Reviewed by Saam Barati.
+
+        We can use FixedVector to shrink some of Wasm data structures including Wasm::Callee.
+
+        * wasm/WasmAirIRGenerator.cpp:
+        (JSC::Wasm::AirIRGenerator::emitLoopTierUpCheck):
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::PatchpointExceptionHandle::generate const):
+        (JSC::Wasm::B3IRGenerator::emitLoopTierUpCheck):
+        * wasm/WasmCallee.cpp:
+        (JSC::Wasm::LLIntCallee::linkExceptionHandlers):
+        (JSC::Wasm::OptimizingJITCallee::linkExceptionHandlers):
+        (JSC::Wasm::OptimizingJITCallee::stackmap const):
+        * wasm/WasmCallee.h:
+        (JSC::Wasm::Callee::hasExceptionHandlers const):
+        (JSC::Wasm::JITCallee::wasmToWasmCallsites):
+        (JSC::Wasm::OptimizingJITCallee::OptimizingJITCallee):
+        * wasm/WasmCodeBlock.cpp:
+        (JSC::Wasm::CodeBlock::CodeBlock):
+        * wasm/WasmCodeBlock.h:
+        * wasm/WasmHandlerInfo.cpp:
+        (JSC::Wasm::HandlerInfo::handlerForIndex):
+        * wasm/WasmHandlerInfo.h:
+        * wasm/WasmOSREntryData.h:
+        (JSC::Wasm::OSREntryData::OSREntryData):
+        (JSC::Wasm::OSREntryData::values):
+        (JSC::Wasm::OSREntryValue::OSREntryValue): Deleted.
+        (JSC::Wasm::OSREntryValue::type const): Deleted.
+        * wasm/WasmPlan.cpp:
+        (JSC::Wasm::Plan::updateCallSitesToCallUs):
+        * wasm/WasmTierUpCount.cpp:
+        (JSC::Wasm::TierUpCount::addOSREntryData):
+        * wasm/WasmTierUpCount.h:
+        * wasm/js/JSWebAssemblyCodeBlock.cpp:
+        (JSC::JSWebAssemblyCodeBlock::JSWebAssemblyCodeBlock):
+        * wasm/js/JSWebAssemblyCodeBlock.h:
+
 2021-12-11  Saam Barati  <sbarati@apple.com>
 
         Teach the sampling profiler how to display origin data for B3 Wasm

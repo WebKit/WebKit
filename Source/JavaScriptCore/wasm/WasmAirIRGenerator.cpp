@@ -2924,10 +2924,13 @@ void AirIRGenerator::emitLoopTierUpCheck(uint32_t loopIndex, const Stack& enclos
         CCallHelpers::Jump tierUp = jit.branchAdd32(CCallHelpers::PositiveOrZero, CCallHelpers::TrustedImm32(TierUpCount::loopIncrement()), CCallHelpers::Address(params[0].gpr()));
         MacroAssembler::Label tierUpResume = jit.label();
 
-        OSREntryData& osrEntryData = m_tierUp->addOSREntryData(m_functionIndex, loopIndex);
         // First argument is the countdown location.
-        for (unsigned index = 1; index < params.value()->numChildren(); ++index)
-            osrEntryData.values().constructAndAppend(params[index], params.value()->child(index)->type());
+        ASSERT(params.value()->numChildren() >= 1);
+        StackMap values(params.value()->numChildren() - 1);
+        for (unsigned i = 1; i < params.value()->numChildren(); ++i)
+            values[i - 1] = OSREntryValue(params[i], params.value()->child(i)->type());
+
+        OSREntryData& osrEntryData = m_tierUp->addOSREntryData(m_functionIndex, loopIndex, WTFMove(values));
         OSREntryData* osrEntryDataPtr = &osrEntryData;
 
         params.addLatePath([=] (CCallHelpers& jit) {

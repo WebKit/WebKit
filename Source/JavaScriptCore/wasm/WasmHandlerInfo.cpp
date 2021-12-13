@@ -57,7 +57,7 @@ void HandlerInfo::initialize(const UnlinkedHandlerInfo& unlinkedInfo, MacroAssem
     }
 }
 
-const HandlerInfo* HandlerInfo::handlerForIndex(Instance& instance, const Vector<HandlerInfo>& exeptionHandlers, unsigned index, const Wasm::Tag* exceptionTag)
+const HandlerInfo* HandlerInfo::handlerForIndex(Instance& instance, const FixedVector<HandlerInfo>& exeptionHandlers, unsigned index, const Wasm::Tag* exceptionTag)
 {
     bool delegating = false;
     unsigned delegateTarget = 0;

@@ -47,10 +47,10 @@ JSWebAssemblyCodeBlock* JSWebAssemblyCodeBlock::create(VM& vm, Ref<Wasm::CodeBlo
 JSWebAssemblyCodeBlock::JSWebAssemblyCodeBlock(VM& vm, Ref<Wasm::CodeBlock>&& codeBlock, const Wasm::ModuleInformation& moduleInformation)
     : Base(vm, vm.webAssemblyCodeBlockStructure.get())
     , m_codeBlock(WTFMove(codeBlock))
+    , m_wasmToJSExitStubs(m_codeBlock->functionImportCount())
 {
     // FIXME: We should not need to do this synchronously.
     // https://bugs.webkit.org/show_bug.cgi?id=170567
-    m_wasmToJSExitStubs.reserveCapacity(m_codeBlock->functionImportCount());
     for (unsigned importIndex = 0; importIndex < m_codeBlock->functionImportCount(); ++importIndex) {
         Wasm::SignatureIndex signatureIndex = moduleInformation.importFunctionSignatureIndices.at(importIndex);
         auto binding = Wasm::wasmToJS(vm, m_callLinkInfos, signatureIndex, importIndex);
@@ -62,7 +62,7 @@ JSWebAssemblyCodeBlock::JSWebAssemblyCodeBlock(VM& vm, Ref<Wasm::CodeBlock>&& co
             }
             RELEASE_ASSERT_NOT_REACHED();
         }
-        m_wasmToJSExitStubs.uncheckedAppend(binding.value());
+        m_wasmToJSExitStubs[importIndex] = binding.value();
     }
 }
 

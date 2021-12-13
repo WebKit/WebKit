@@ -39,9 +39,9 @@ TierUpCount::TierUpCount()
 
 TierUpCount::~TierUpCount() = default;
 
-OSREntryData& TierUpCount::addOSREntryData(uint32_t functionIndex, uint32_t loopIndex)
+OSREntryData& TierUpCount::addOSREntryData(uint32_t functionIndex, uint32_t loopIndex, StackMap&& stackMap)
 {
-    m_osrEntryData.append(makeUnique<OSREntryData>(functionIndex, loopIndex));
+    m_osrEntryData.append(makeUnique<OSREntryData>(functionIndex, loopIndex, WTFMove(stackMap)));
     return *m_osrEntryData.last().get();
 }
 

@@ -127,7 +127,7 @@ void Plan::fail(String&& errorMessage)
 void Plan::updateCallSitesToCallUs(CodeBlock& codeBlock, CodeLocationLabel<WasmEntryPtrTag> entrypoint, uint32_t functionIndex, uint32_t functionIndexSpace)
 {
     HashMap<void*, CodeLocationLabel<WasmEntryPtrTag>> stagedCalls;
-    auto stageRepatch = [&] (const Vector<UnlinkedWasmToWasmCall>& callsites) {
+    auto stageRepatch = [&] (const auto& callsites) {
         for (auto& call : callsites) {
             if (call.functionIndexSpace == functionIndexSpace) {
                 CodeLocationLabel<WasmEntryPtrTag> target = MacroAssembler::prepareForAtomicRepatchNearCallConcurrently(call.callLocation, entrypoint);
@@ -160,7 +160,7 @@ void Plan::updateCallSitesToCallUs(CodeBlock& codeBlock, CodeLocationLabel<WasmE
 
     codeBlock.m_wasmIndirectCallEntryPoints[functionIndex] = entrypoint;
 
-    auto repatchCalls = [&] (const Vector<UnlinkedWasmToWasmCall>& callsites) {
+    auto repatchCalls = [&] (const auto& callsites) {
         for (auto& call : callsites) {
             dataLogLnIf(WasmPlanInternal::verbose, "Considering repatching call at: ", RawPointer(call.callLocation.dataLocation()), " that targets ", call.functionIndexSpace);
             if (call.functionIndexSpace == functionIndexSpace) {

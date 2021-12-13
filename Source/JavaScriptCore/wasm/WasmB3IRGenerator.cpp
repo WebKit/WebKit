@@ -583,8 +583,11 @@ void PatchpointExceptionHandle::generate(CCallHelpers& jit, const B3::StackmapGe
         return;
 
     StackMap values;
-    for (unsigned i = m_offset; i < params.value()->numChildren(); ++i)
-        values.constructAndAppend(params[i], params.value()->child(i)->type());
+    if (params.value()->numChildren() >= m_offset) {
+        values = StackMap(params.value()->numChildren() - m_offset);
+        for (unsigned i = m_offset; i < params.value()->numChildren(); ++i)
+            values[i - m_offset] = OSREntryValue(params[i], params.value()->child(i)->type());
+    }
     generator->addStackMap(m_callSiteIndex, WTFMove(values));
     jit.store32(CCallHelpers::TrustedImm32(m_callSiteIndex), CCallHelpers::tagFor(CallFrameSlot::argumentCountIncludingThis));
 }
@@ -2426,10 +2429,13 @@ void B3IRGenerator::emitLoopTierUpCheck(uint32_t loopIndex, const Stack& enclosi
         CCallHelpers::Jump tierUp = jit.branchAdd32(CCallHelpers::PositiveOrZero, CCallHelpers::TrustedImm32(TierUpCount::loopIncrement()), CCallHelpers::Address(params[0].gpr()));
         MacroAssembler::Label tierUpResume = jit.label();
 
-        OSREntryData& osrEntryData = m_tierUp->addOSREntryData(m_functionIndex, loopIndex);
         // First argument is the countdown location.
+        ASSERT(params.value()->numChildren() >= 1);
+        StackMap values(params.value()->numChildren() - 1);
         for (unsigned i = 1; i < params.value()->numChildren(); ++i)
-            osrEntryData.values().constructAndAppend(params[i], params.value()->child(i)->type());
+            values[i - 1] = OSREntryValue(params[i], params.value()->child(i)->type());
+
+        OSREntryData& osrEntryData = m_tierUp->addOSREntryData(m_functionIndex, loopIndex, WTFMove(values));
         OSREntryData* osrEntryDataPtr = &osrEntryData;
 
         params.addLatePath([=] (CCallHelpers& jit) {
