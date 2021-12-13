@@ -1,3 +1,12 @@
+2021-12-13  Andreu Botella  <andreu@andreubotella.com>
+
+        A FormData constructed in the form's submit event listener shouldn't include the submitter
+        https://bugs.webkit.org/show_bug.cgi?id=234069
+
+        Reviewed by Chris Dumez.
+
+        * web-platform-tests/html/semantics/forms/form-submission-0/constructing-form-data-set-expected.txt:
+
 2021-12-13  Antti Koivisto  <antti@apple.com>
 
         [CSS Cascade Layers] Layers specified in import rules can not be reordered on media query evaluation
