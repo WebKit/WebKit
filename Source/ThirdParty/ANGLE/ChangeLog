@@ -1,3 +1,34 @@
+2021-12-13  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        REGRESSION(Safari 15, BigSur): Poor video texture upload performance with MacBook M1, ANGLE OpenGL backend 
+        https://bugs.webkit.org/show_bug.cgi?id=232235
+        <rdar://problem/84878815>
+        Reviewed by Dean Jackson.
+
+        Remove validation for IOSurface element size when a IOSurface is bound
+        to a pbuffer. The IOSurfaceGetBytesPerElementOfPlane is not valid for some internal formats
+        that might be compressed.
+
+        Will add a WebKit level test in subsequent fix.
+        Will add an ANGLE level test during upstreaming of the patch.
+
+        Same as "Textures Fail to Render in WebGL from HLS Stream on iPhone 12 [iOS 14.2]"
+        but this time for CGL.
+        https://webkit.org/b/218637  rdar://problem/71102126
+
+        Remove incorrect validation that IOSurface pixel format matches
+        the pixel format of the texture image being specified.
+
+        The "Element" in IOSurface is a block of pixels, while the validation assumed
+        it means one pixel. The validation failed for a compressed format.
+
+        Currently we map non-public YUV formats, to which there is no elequent way
+        of implementing the validation.
+
+
+        * src/libANGLE/renderer/gl/cgl/IOSurfaceSurfaceCGL.cpp:
+        (rx::IOSurfaceSurfaceCGL::validateAttributes):
+
 2021-12-10  Kyle Piddington  <kpiddington@apple.com>
 
         [ANGLE] ASTC-HDR is unavailable on some platforms
