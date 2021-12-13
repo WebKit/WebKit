@@ -1,3 +1,17 @@
+2021-12-13  Adrian Perez de Castro  <aperez@igalia.com>
+
+        Unreviewed build fix after r286936
+
+        No new tests needed.
+
+        * NetworkProcess/storage/OriginStorageManager.cpp: Add missing inclusion of
+        MemoryStorageArea.h, which broke non-unified builds.
+        * NetworkProcess/storage/SQLiteStorageArea.cpp: Add missing inclusion of Logging.h, broke
+        the build in some configurations.
+        * NetworkProcess/storage/SessionStorageManager.h: Add missing inclusion of Connection.h, and
+        add missing forward declaration for WebCore::ClientOrigin, which broke the build for
+        non-Apple ports.
+
 2021-12-13  Youenn Fablet  <youenn@apple.com>
 
         Fix ServiceWorker downloads

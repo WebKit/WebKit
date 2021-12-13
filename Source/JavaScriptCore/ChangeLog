@@ -1,3 +1,11 @@
+2021-12-13  Adrian Perez de Castro  <aperez@igalia.com>
+
+        Unreviewed build fix after r286936
+
+        * wasm/WasmOSREntryData.h: Replace wrong inclusion of wtf/Vector.h (unused) with the correct
+        wtf/FixedVector.h one.
+        * wasm/WasmTierUpCount.h: Add missing WasmOSREntryData.h inclusion.
+
 2021-12-13  Zan Dobersek  <zdobersek@igalia.com>
 
         [RISCV64] Add MacroAssemblerRISCV64 implementations for trivial floating-point-register operations

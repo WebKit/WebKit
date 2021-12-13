@@ -25,8 +25,13 @@
 
 #pragma once
 
+#include "Connection.h"
 #include "StorageAreaIdentifier.h"
 #include "StorageNamespaceIdentifier.h"
+
+namespace WebCore {
+class ClientOrigin;
+} // namespace WebCore
 
 namespace WebKit {
 

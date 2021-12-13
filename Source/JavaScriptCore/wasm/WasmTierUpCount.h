@@ -30,6 +30,7 @@
 #include "CompilationResult.h"
 #include "ExecutionCounter.h"
 #include "Options.h"
+#include "WasmOSREntryData.h"
 #include <wtf/Atomics.h>
 #include <wtf/SegmentedVector.h>
 #include <wtf/StdLibExtras.h>

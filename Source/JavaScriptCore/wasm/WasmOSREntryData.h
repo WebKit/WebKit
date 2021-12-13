@@ -29,7 +29,7 @@
 
 #include "B3Type.h"
 #include "B3ValueRep.h"
-#include <wtf/Vector.h>
+#include <wtf/FixedVector.h>
 
 namespace JSC { namespace Wasm {
 

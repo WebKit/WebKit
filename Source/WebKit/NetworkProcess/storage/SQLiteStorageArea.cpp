@@ -26,6 +26,7 @@
 #include "config.h"
 #include "SQLiteStorageArea.h"
 
+#include "Logging.h"
 #include <WebCore/SQLiteFileSystem.h>
 #include <WebCore/SQLiteStatement.h>
 #include <WebCore/SQLiteTransaction.h>

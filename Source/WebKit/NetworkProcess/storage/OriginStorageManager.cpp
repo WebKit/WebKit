@@ -29,6 +29,7 @@
 #include "FileSystemStorageHandleRegistry.h"
 #include "FileSystemStorageManager.h"
 #include "LocalStorageManager.h"
+#include "MemoryStorageArea.h"
 #include "SessionStorageManager.h"
 #include "StorageAreaRegistry.h"
 #include "WebsiteDataType.h"
