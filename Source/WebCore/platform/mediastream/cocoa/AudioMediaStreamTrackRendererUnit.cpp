@@ -50,13 +50,13 @@ static UniqueRef<AudioMediaStreamTrackRendererInternalUnit> createInternalUnit(A
         unit.render(sampleCount, list, sampleTime, hostTime, flags);
         return 0;
     };
-    AudioMediaStreamTrackRendererInternalUnit::ResetCallback startCallback = [&unit]() { unit.reset(); };
+    AudioMediaStreamTrackRendererInternalUnit::ResetCallback resetCallback = [&unit]() { unit.reset(); };
 
     auto& function = getCreateInternalUnitFunction();
     if (function)
-        return function(WTFMove(renderCallback), WTFMove(startCallback));
+        return function(WTFMove(renderCallback), WTFMove(resetCallback));
 
-    return AudioMediaStreamTrackRendererInternalUnit::createLocalInternalUnit(WTFMove(renderCallback), WTFMove(startCallback));
+    return AudioMediaStreamTrackRendererInternalUnit::createLocalInternalUnit(WTFMove(renderCallback), WTFMove(resetCallback));
 }
 
 AudioMediaStreamTrackRendererUnit& AudioMediaStreamTrackRendererUnit::singleton()
