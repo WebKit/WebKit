@@ -43,8 +43,8 @@ namespace WebCore {
 
 class SVGElement;
 
-class RenderSVGModelObject : public RenderElement {
-    WTF_MAKE_ISO_ALLOCATED(RenderSVGModelObject);
+class LegacyRenderSVGModelObject : public RenderElement {
+    WTF_MAKE_ISO_ALLOCATED(LegacyRenderSVGModelObject);
 public:
     LayoutRect clippedOverflowRect(const RenderLayerModelObject* repaintContainer, VisibleRectContext) const override;
     std::optional<FloatRect> computeFloatVisibleRectInContainer(const FloatRect&, const RenderLayerModelObject* container, VisibleRectContext) const final;
@@ -67,12 +67,12 @@ public:
     LayoutRect visualOverflowRectEquivalent() const { return LayoutRect(); }
 
 protected:
-    RenderSVGModelObject(SVGElement&, RenderStyle&&);
+    LegacyRenderSVGModelObject(SVGElement&, RenderStyle&&);
 
     void willBeDestroyed() override;
 
 private:
-    bool isRenderSVGModelObject() const final { return true; }
+    bool isLegacyRenderSVGModelObject() const final { return true; }
 
     // This method should never be called, SVG uses a different nodeAtPoint method
     bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) override;
@@ -81,4 +81,4 @@ private:
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderSVGModelObject, isRenderSVGModelObject())
+SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(LegacyRenderSVGModelObject, isLegacyRenderSVGModelObject())

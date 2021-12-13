@@ -22,13 +22,13 @@
 
 #pragma once
 
-#include "RenderSVGModelObject.h"
+#include "LegacyRenderSVGModelObject.h"
 
 namespace WebCore {
 
 class SVGElement;
 
-class RenderSVGContainer : public RenderSVGModelObject {
+class RenderSVGContainer : public LegacyRenderSVGModelObject {
     WTF_MAKE_ISO_ALLOCATED(RenderSVGContainer);
 public:
     virtual ~RenderSVGContainer();

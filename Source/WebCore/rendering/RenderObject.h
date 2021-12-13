@@ -324,8 +324,7 @@ public:
     virtual bool isRenderMathMLUnderOver() const { return false; }
 #endif // ENABLE(MATHML)
 
-    // FIXME: Until all SVG renders can be subclasses of RenderSVGModelObject we have
-    // to add SVG renderer methods to RenderObject with an ASSERT_NOT_REACHED() default implementation.
+    virtual bool isLegacyRenderSVGModelObject() const { return false; }
     virtual bool isRenderSVGModelObject() const { return false; }
     virtual bool isRenderSVGBlock() const { return false; };
     virtual bool isLegacySVGRoot() const { return false; }
@@ -349,6 +348,7 @@ public:
     virtual bool isSVGResourceClipper() const { return false; }
     virtual bool isSVGResourceFilterPrimitive() const { return false; }
     bool isSVGRootOrLegacySVGRoot() const { return isSVGRoot() || isLegacySVGRoot(); }
+    bool isRenderOrLegacyRenderSVGModelObject() const { return isRenderSVGModelObject() || isLegacyRenderSVGModelObject(); }
 
     // FIXME: Those belong into a SVG specific base-class for all renderers (see above)
     // Unfortunately we don't have such a class yet, because it's not possible for all renderers

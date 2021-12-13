@@ -2257,7 +2257,7 @@ static bool isLayoutDependent(CSSPropertyID propertyID, const RenderStyle* style
     case CSSPropertyHeight:
     case CSSPropertyInlineSize:
     case CSSPropertyBlockSize:
-        return renderer && !renderer->isRenderSVGModelObject() && !isNonReplacedInline(*renderer);
+        return renderer && !renderer->isRenderOrLegacyRenderSVGModelObject() && !isNonReplacedInline(*renderer);
     case CSSPropertyPerspectiveOrigin:
     case CSSPropertyTransformOrigin:
     case CSSPropertyTransform:
@@ -3134,7 +3134,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         case CSSPropertyGap:
             return getCSSPropertyValuesForShorthandProperties(gapShorthand());
         case CSSPropertyHeight:
-            if (renderer && !renderer->isRenderSVGModelObject()) {
+            if (renderer && !renderer->isRenderOrLegacyRenderSVGModelObject()) {
                 // According to http://www.w3.org/TR/CSS2/visudet.html#the-height-property,
                 // the "height" property does not apply for non-replaced inline elements.
                 if (!isNonReplacedInline(*renderer))
@@ -3460,7 +3460,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
                 return cssValuePool.createIdentifierValue(CSSValueAuto);
             return cssValuePool.createValue(style.widows(), CSSUnitType::CSS_NUMBER);
         case CSSPropertyWidth:
-            if (renderer && !renderer->isRenderSVGModelObject()) {
+            if (renderer && !renderer->isRenderOrLegacyRenderSVGModelObject()) {
                 // According to http://www.w3.org/TR/CSS2/visudet.html#the-width-property,
                 // the "width" property does not apply for non-replaced inline elements.
                 if (!isNonReplacedInline(*renderer))

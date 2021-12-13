@@ -52,7 +52,7 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(RenderSVGShape);
 
 RenderSVGShape::RenderSVGShape(SVGGraphicsElement& element, RenderStyle&& style)
-    : RenderSVGModelObject(element, WTFMove(style))
+    : LegacyRenderSVGModelObject(element, WTFMove(style))
     , m_needsBoundariesUpdate(false) // Default is false, the cached rects are empty from the beginning.
     , m_needsShapeUpdate(true) // Default is true, so we grab a Path object once from SVGGraphicsElement.
     , m_needsTransformUpdate(true) // Default is true, so we grab a AffineTransform object once from SVGGraphicsElement.
@@ -168,7 +168,7 @@ void RenderSVGShape::layout()
 
     // If our bounds changed, notify the parents.
     if (updateCachedBoundariesInParents)
-        RenderSVGModelObject::setNeedsBoundariesUpdate();
+        LegacyRenderSVGModelObject::setNeedsBoundariesUpdate();
 
     repainter.repaintAfterLayout();
     clearNeedsLayout();

@@ -43,7 +43,7 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(RenderSVGContainer);
 
 RenderSVGContainer::RenderSVGContainer(SVGElement& element, RenderStyle&& style)
-    : RenderSVGModelObject(element, WTFMove(style))
+    : LegacyRenderSVGModelObject(element, WTFMove(style))
 {
 }
 
@@ -81,7 +81,7 @@ void RenderSVGContainer::layout()
         m_needsBoundariesUpdate = false;
     
         // If our bounds changed, notify the parents.
-        RenderSVGModelObject::setNeedsBoundariesUpdate();
+        LegacyRenderSVGModelObject::setNeedsBoundariesUpdate();
     }
 
     repainter.repaintAfterLayout();

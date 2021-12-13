@@ -29,7 +29,7 @@
  */
 
 #include "config.h"
-#include "RenderSVGModelObject.h"
+#include "LegacyRenderSVGModelObject.h"
 
 #include "NotImplemented.h"
 #include "RenderLayer.h"
@@ -44,14 +44,14 @@
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(RenderSVGModelObject);
+WTF_MAKE_ISO_ALLOCATED_IMPL(LegacyRenderSVGModelObject);
 
-RenderSVGModelObject::RenderSVGModelObject(SVGElement& element, RenderStyle&& style)
+LegacyRenderSVGModelObject::LegacyRenderSVGModelObject(SVGElement& element, RenderStyle&& style)
     : RenderElement(element, WTFMove(style), 0)
 {
 }
 
-LayoutRect RenderSVGModelObject::clippedOverflowRect(const RenderLayerModelObject* repaintContainer, VisibleRectContext context) const
+LayoutRect LegacyRenderSVGModelObject::clippedOverflowRect(const RenderLayerModelObject* repaintContainer, VisibleRectContext context) const
 {
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
     if (document().settings().layerBasedSVGEngineEnabled()) {
@@ -68,17 +68,17 @@ LayoutRect RenderSVGModelObject::clippedOverflowRect(const RenderLayerModelObjec
     return SVGRenderSupport::clippedOverflowRectForRepaint(*this, repaintContainer);
 }
 
-std::optional<FloatRect> RenderSVGModelObject::computeFloatVisibleRectInContainer(const FloatRect& rect, const RenderLayerModelObject* container, VisibleRectContext context) const
+std::optional<FloatRect> LegacyRenderSVGModelObject::computeFloatVisibleRectInContainer(const FloatRect& rect, const RenderLayerModelObject* container, VisibleRectContext context) const
 {
     return SVGRenderSupport::computeFloatVisibleRectInContainer(*this, rect, container, context);
 }
 
-void RenderSVGModelObject::mapLocalToContainer(const RenderLayerModelObject* ancestorContainer, TransformState& transformState, OptionSet<MapCoordinatesMode>, bool* wasFixed) const
+void LegacyRenderSVGModelObject::mapLocalToContainer(const RenderLayerModelObject* ancestorContainer, TransformState& transformState, OptionSet<MapCoordinatesMode>, bool* wasFixed) const
 {
     SVGRenderSupport::mapLocalToContainer(*this, ancestorContainer, transformState, wasFixed);
 }
 
-const RenderObject* RenderSVGModelObject::pushMappingToContainer(const RenderLayerModelObject* ancestorToStopAt, RenderGeometryMap& geometryMap) const
+const RenderObject* LegacyRenderSVGModelObject::pushMappingToContainer(const RenderLayerModelObject* ancestorToStopAt, RenderGeometryMap& geometryMap) const
 {
     return SVGRenderSupport::pushMappingToContainer(*this, ancestorToStopAt, geometryMap);
 }
@@ -86,7 +86,7 @@ const RenderObject* RenderSVGModelObject::pushMappingToContainer(const RenderLay
 // Copied from RenderBox, this method likely requires further refactoring to work easily for both SVG and CSS Box Model content.
 // FIXME: This may also need to move into SVGRenderSupport as the RenderBox version depends
 // on borderBoundingBox() which SVG RenderBox subclases (like SVGRenderBlock) do not implement.
-LayoutRect RenderSVGModelObject::outlineBoundsForRepaint(const RenderLayerModelObject* repaintContainer, const RenderGeometryMap*) const
+LayoutRect LegacyRenderSVGModelObject::outlineBoundsForRepaint(const RenderLayerModelObject* repaintContainer, const RenderGeometryMap*) const
 {
     LayoutRect box = enclosingLayoutRect(repaintRectInLocalCoordinates());
     adjustRectForOutlineAndShadow(box);
@@ -95,25 +95,25 @@ LayoutRect RenderSVGModelObject::outlineBoundsForRepaint(const RenderLayerModelO
     return LayoutRect(snapRectToDevicePixels(LayoutRect(containerRelativeQuad.boundingBox()), document().deviceScaleFactor()));
 }
 
-void RenderSVGModelObject::absoluteRects(Vector<IntRect>& rects, const LayoutPoint& accumulatedOffset) const
+void LegacyRenderSVGModelObject::absoluteRects(Vector<IntRect>& rects, const LayoutPoint& accumulatedOffset) const
 {
     IntRect rect = enclosingIntRect(strokeBoundingBox());
     rect.moveBy(roundedIntPoint(accumulatedOffset));
     rects.append(rect);
 }
 
-void RenderSVGModelObject::absoluteQuads(Vector<FloatQuad>& quads, bool* wasFixed) const
+void LegacyRenderSVGModelObject::absoluteQuads(Vector<FloatQuad>& quads, bool* wasFixed) const
 {
     quads.append(localToAbsoluteQuad(strokeBoundingBox(), UseTransforms, wasFixed));
 }
 
-void RenderSVGModelObject::willBeDestroyed()
+void LegacyRenderSVGModelObject::willBeDestroyed()
 {
     SVGResourcesCache::clientDestroyed(*this);
     RenderElement::willBeDestroyed();
 }
 
-void RenderSVGModelObject::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
+void LegacyRenderSVGModelObject::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
 {
     if (diff == StyleDifference::Layout) {
         setNeedsBoundariesUpdate();
@@ -124,11 +124,11 @@ void RenderSVGModelObject::styleDidChange(StyleDifference diff, const RenderStyl
     SVGResourcesCache::clientStyleChanged(*this, diff, style());
 }
 
-bool RenderSVGModelObject::nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation&, const LayoutPoint&, HitTestAction)
+bool LegacyRenderSVGModelObject::nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation&, const LayoutPoint&, HitTestAction)
 {
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
     if (document().settings().layerBasedSVGEngineEnabled()) {
-        // FIXME: [LBSE] Upstream RenderSVGModelObject inheritance changes (should inherit from RenderLayerModelObject).
+        // FIXME: [LBSE] Upstream LegacyRenderSVGModelObject inheritance changes (should inherit from RenderLayerModelObject).
         notImplemented();
         return false;
     }
@@ -166,10 +166,8 @@ static bool intersectsAllowingEmpty(const FloatRect& r, const FloatRect& other)
 {
     if (r.isEmpty() && other.isEmpty())
         return false;
-    if (r.isEmpty() && !other.isEmpty()) {
-        return (other.contains(r.x(), r.y()) && !other.contains(r.maxX(), r.maxY()))
-               || (!other.contains(r.x(), r.y()) && other.contains(r.maxX(), r.maxY()));
-    }
+    if (r.isEmpty() && !other.isEmpty())
+        return (other.contains(r.x(), r.y()) && !other.contains(r.maxX(), r.maxY())) || (!other.contains(r.x(), r.y()) && other.contains(r.maxX(), r.maxY()));
     if (other.isEmpty() && !r.isEmpty())
         return intersectsAllowingEmpty(other, r);
     return r.intersects(other);
@@ -184,12 +182,12 @@ static bool isGraphicsElement(const RenderElement& renderer)
 
 // The SVG addFocusRingRects() method adds rects in local coordinates so the default absoluteFocusRingQuads
 // returns incorrect values for SVG objects. Overriding this method provides access to the absolute bounds.
-void RenderSVGModelObject::absoluteFocusRingQuads(Vector<FloatQuad>& quads)
+void LegacyRenderSVGModelObject::absoluteFocusRingQuads(Vector<FloatQuad>& quads)
 {
     quads.append(localToAbsoluteQuad(FloatQuad(repaintRectInLocalCoordinates())));
 }
     
-bool RenderSVGModelObject::checkIntersection(RenderElement* renderer, const FloatRect& rect)
+bool LegacyRenderSVGModelObject::checkIntersection(RenderElement* renderer, const FloatRect& rect)
 {
     if (!renderer || renderer->style().pointerEvents() == PointerEvents::None)
         return false;
@@ -202,7 +200,7 @@ bool RenderSVGModelObject::checkIntersection(RenderElement* renderer, const Floa
     return intersectsAllowingEmpty(rect, ctm.mapRect(svgElement->renderer()->repaintRectInLocalCoordinates()));
 }
 
-bool RenderSVGModelObject::checkEnclosure(RenderElement* renderer, const FloatRect& rect)
+bool LegacyRenderSVGModelObject::checkEnclosure(RenderElement* renderer, const FloatRect& rect)
 {
     if (!renderer || renderer->style().pointerEvents() == PointerEvents::None)
         return false;

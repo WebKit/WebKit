@@ -27,7 +27,7 @@
 
 #include "AffineTransform.h"
 #include "FloatRect.h"
-#include "RenderSVGModelObject.h"
+#include "LegacyRenderSVGModelObject.h"
 #include "SVGMarkerData.h"
 #include <memory>
 #include <wtf/Vector.h>
@@ -41,7 +41,7 @@ class RenderSVGPath;
 class RenderSVGResource;
 class SVGGraphicsElement;
 
-class RenderSVGShape : public RenderSVGModelObject {
+class RenderSVGShape : public LegacyRenderSVGModelObject {
     WTF_MAKE_ISO_ALLOCATED(RenderSVGShape);
 public:
     enum PointCoordinateSpace {

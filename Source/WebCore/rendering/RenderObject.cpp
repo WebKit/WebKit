@@ -43,6 +43,7 @@
 #include "HTMLTableElement.h"
 #include "HitTestResult.h"
 #include "LayoutIntegrationLineLayout.h"
+#include "LegacyRenderSVGModelObject.h"
 #include "LegacyRenderSVGRoot.h"
 #include "LogicalSelectionOffsetCaches.h"
 #include "Page.h"
@@ -63,7 +64,6 @@
 #include "RenderRuby.h"
 #include "RenderSVGBlock.h"
 #include "RenderSVGInline.h"
-#include "RenderSVGModelObject.h"
 #include "RenderSVGResourceContainer.h"
 #include "RenderScrollbarPart.h"
 #include "RenderTableRow.h"
@@ -238,7 +238,7 @@ RenderObject::FragmentedFlowState RenderObject::computedFragmentedFlowState(cons
     auto inheritedFlowState = RenderObject::NotInsideFragmentedFlow;
     if (is<RenderText>(renderer))
         inheritedFlowState = renderer.parent()->fragmentedFlowState();
-    else if (is<RenderSVGBlock>(renderer) || is<RenderSVGInline>(renderer) || is<RenderSVGModelObject>(renderer)) {
+    else if (is<RenderSVGBlock>(renderer) || is<RenderSVGInline>(renderer) || is<LegacyRenderSVGModelObject>(renderer)) {
         // containingBlock() skips svg boundary (SVG root is a RenderReplaced).
         if (auto* svgRoot = SVGRenderSupport::findTreeRootObject(downcast<RenderElement>(renderer)))
             inheritedFlowState = svgRoot->fragmentedFlowState();

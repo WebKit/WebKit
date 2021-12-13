@@ -32,7 +32,7 @@ namespace WebCore {
 
 inline SVGGraphicsElement& RenderSVGShape::graphicsElement() const
 {
-    return downcast<SVGGraphicsElement>(RenderSVGModelObject::element());
+    return downcast<SVGGraphicsElement>(LegacyRenderSVGModelObject::element());
 }
 
 } // namespace WebCore

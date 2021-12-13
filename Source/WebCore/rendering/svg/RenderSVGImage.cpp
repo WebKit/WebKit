@@ -48,7 +48,7 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(RenderSVGImage);
 
 RenderSVGImage::RenderSVGImage(SVGImageElement& element, RenderStyle&& style)
-    : RenderSVGModelObject(element, WTFMove(style))
+    : LegacyRenderSVGModelObject(element, WTFMove(style))
     , m_needsBoundariesUpdate(true)
     , m_needsTransformUpdate(true)
     , m_imageResource(makeUnique<RenderImageResource>())
@@ -61,12 +61,12 @@ RenderSVGImage::~RenderSVGImage() = default;
 void RenderSVGImage::willBeDestroyed()
 {
     imageResource().shutdown();
-    RenderSVGModelObject::willBeDestroyed();
+    LegacyRenderSVGModelObject::willBeDestroyed();
 }
 
 SVGImageElement& RenderSVGImage::imageElement() const
 {
-    return downcast<SVGImageElement>(RenderSVGModelObject::element());
+    return downcast<SVGImageElement>(LegacyRenderSVGModelObject::element());
 }
 
 FloatRect RenderSVGImage::calculateObjectBoundingBox() const
@@ -156,7 +156,7 @@ void RenderSVGImage::layout()
 
     // If our bounds changed, notify the parents.
     if (transformOrBoundariesUpdate)
-        RenderSVGModelObject::setNeedsBoundariesUpdate();
+        LegacyRenderSVGModelObject::setNeedsBoundariesUpdate();
 
     repainter.repaintAfterLayout();
     clearNeedsLayout();
