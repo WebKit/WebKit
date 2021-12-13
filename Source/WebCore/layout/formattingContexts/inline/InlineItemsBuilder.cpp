@@ -86,7 +86,7 @@ InlineItems InlineItemsBuilder::build()
 {
     InlineItems inlineItems;
     collectInlineItems(inlineItems);
-    if (needsVisualReordeering())
+    if (needsVisualReordering())
         breakAndComputeBidiLevels(inlineItems);
     computeInlineTextItemWidths(inlineItems);
     return inlineItems;
@@ -250,7 +250,7 @@ static inline void buildBidiParagraph(const RenderStyle& rootStyle, const Inline
 
 void InlineItemsBuilder::breakAndComputeBidiLevels(InlineItems& inlineItems)
 {
-    ASSERT(needsVisualReordeering());
+    ASSERT(needsVisualReordering());
     ASSERT(!inlineItems.isEmpty());
 
     StringBuilder paragraphContentBuilder;
@@ -258,6 +258,13 @@ void InlineItemsBuilder::breakAndComputeBidiLevels(InlineItems& inlineItems)
     inlineItemOffsets.reserveInitialCapacity(inlineItems.size());
     buildBidiParagraph(root().style(), inlineItems, paragraphContentBuilder, inlineItemOffsets);
     ASSERT(inlineItemOffsets.size() == inlineItems.size());
+    if (paragraphContentBuilder.is8Bit()) {
+        // Simple content with RTL inline base direction could just follow the logical order.
+        // Note that inline level elements produce 16bit paragraph content by appending objectReplacementCharacter.
+        // e.g. <div dir=rtl>this initiates 8bit paragraph builder</div> while
+        //      <div dir=rtl><img> <- turns the paragraph builder to 16bit</div> 
+        return;
+    }
 
     // 1. Setup the bidi boundary loop by calling ubidi_setPara with the paragraph text.
     // 2. Call ubidi_getLogicalRun to advance to the next bidi boundary until we hit the end of the content.

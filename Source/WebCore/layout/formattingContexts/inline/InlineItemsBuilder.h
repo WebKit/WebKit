@@ -50,7 +50,7 @@ private:
     void handleInlineBoxEnd(const Box&, InlineItems&);
     void handleInlineLevelBox(const Box&, InlineItems&);
     
-    bool needsVisualReordeering() const { return hasSeenBidiContent() || !root().style().isLeftToRightDirection(); }
+    bool needsVisualReordering() const { return hasSeenBidiContent() || !root().style().isLeftToRightDirection(); }
     bool hasSeenBidiContent() const { return m_hasSeenBidiContent; }
 
     const ContainerBox& root() const { return m_root; }
