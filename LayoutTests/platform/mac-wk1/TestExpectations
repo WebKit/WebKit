@@ -1301,10 +1301,6 @@ webkit.org/b/223944 [ BigSur Debug ] imported/w3c/web-platform-tests/xhr/event-u
 [ BigSur ] transforms/2d/rotate-change-composited.html [ Pass ImageOnlyFailure ]
 [ BigSur ] transforms/2d/rotate-composited.html [ Pass ImageOnlyFailure ]
 
-# rdar://80334322 (REGRESSION: [ Monterey wk1 ] fast/events/wheel/wheelevent-in-horizontal-scrollbar-in-rtl.html and fast/events/wheel/wheelevent-in-vertical-scrollbar-in-rtl.html are constant failures)
-[ Monterey ] fast/events/wheel/wheelevent-in-horizontal-scrollbar-in-rtl.html [ Failure ]
-[ Monterey ] fast/events/wheel/wheelevent-in-vertical-scrollbar-in-rtl.html [ Failure ]
-
 # rdar://80332264 ([ Monterey wk1 ] compositing/fixed-with-main-thread-scrolling.html has multiple failures)
 [ Monterey ] compositing/fixed-with-main-thread-scrolling.html [ Skip ]
 
