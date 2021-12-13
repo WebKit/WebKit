@@ -500,7 +500,7 @@ void InlineDisplayContentBuilder::processBidiContent(const LineBuilder::LineCont
             auto& lineRun = runs[visualOrder];
             auto& layoutBox = lineRun.layoutBox();
 
-            auto needsDisplayBox = !lineRun.isWordBreakOpportunity();
+            auto needsDisplayBox = !lineRun.isWordBreakOpportunity() && !lineRun.isInlineBoxEnd();
             if (!needsDisplayBox)
                 continue;
 

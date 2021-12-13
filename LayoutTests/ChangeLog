@@ -1,5 +1,14 @@
 2021-12-12  Alan Bujtas  <zalan@apple.com>
 
+        [LFC][IFC] Add partial unicode-bidi support on inline level boxes
+        https://bugs.webkit.org/show_bug.cgi?id=234196
+
+        Reviewed by Antti Koivisto.
+
+        * platform/mac/fast/text/international/bidi-ignored-for-first-child-inline-expected.txt: Progression.
+
+2021-12-12  Alan Bujtas  <zalan@apple.com>
+
         [LFC][IFC] Ignore zero width glyphs while collecting fallback fonts
         https://bugs.webkit.org/show_bug.cgi?id=234210
 

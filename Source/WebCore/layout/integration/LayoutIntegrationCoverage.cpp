@@ -442,9 +442,10 @@ static OptionSet<AvoidanceReason> canUseForStyle(const RenderElement& renderer, 
     if (style.writingMode() != WritingMode::TopToBottom)
         SET_REASON_AND_RETURN_IF_NEEDED(FlowIsNotTopToBottom, reasons, includeReasons);
     if (style.unicodeBidi() != UBNormal) {
-        if (!is<RenderBlockFlow>(renderer))
+        auto unicodeBidi = style.unicodeBidi();
+        if (unicodeBidi == EUnicodeBidi::Plaintext)
             SET_REASON_AND_RETURN_IF_NEEDED(FlowHasNonNormalUnicodeBiDi, reasons, includeReasons);
-        if (style.unicodeBidi() == EUnicodeBidi::Plaintext)
+        if (!is<RenderBlockFlow>(renderer) && unicodeBidi == EUnicodeBidi::IsolateOverride)
             SET_REASON_AND_RETURN_IF_NEEDED(FlowHasNonNormalUnicodeBiDi, reasons, includeReasons);
     }
     if (style.rtlOrdering() != Order::Logical)
