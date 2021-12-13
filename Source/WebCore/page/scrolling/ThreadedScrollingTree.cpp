@@ -406,6 +406,8 @@ void ThreadedScrollingTree::displayDidRefreshOnScrollingThread()
     case SynchronizationState::Desynchronized:
         break;
     }
+    
+    storeScrollPositionsAtLastDisplayRefresh();
 }
 
 void ThreadedScrollingTree::displayDidRefresh(PlatformDisplayID displayID)
@@ -426,6 +428,14 @@ void ThreadedScrollingTree::displayDidRefresh(PlatformDisplayID displayID)
     ScrollingThread::dispatch([protectedThis = makeRef(*this)]() {
         protectedThis->displayDidRefreshOnScrollingThread();
     });
+}
+
+void ThreadedScrollingTree::storeScrollPositionsAtLastDisplayRefresh()
+{
+    // Ideally this would be a tree walk for every scrolling node, but scrolling trees can get big so for now just do this for the root;
+    // ScrollingTreeFrameScrollingNodeMac::repositionScrollingLayers() uses the state to know whether it should force a commit.
+    if (auto* rootNode = this->rootNode())
+        rootNode->updateScrollPositionAtLastDisplayRefresh();
 }
 
 } // namespace WebCore

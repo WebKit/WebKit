@@ -94,6 +94,8 @@ private:
     void scheduleDelayedRenderingUpdateDetectionTimer(Seconds) WTF_REQUIRES_LOCK(m_treeLock);
     void delayedRenderingUpdateDetectionTimerFired();
 
+    void storeScrollPositionsAtLastDisplayRefresh() WTF_REQUIRES_LOCK(m_treeLock);
+    
     Seconds frameDuration();
     Seconds maxAllowableRenderingUpdateDurationForSynchronization();
 

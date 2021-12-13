@@ -128,6 +128,9 @@ protected:
 
     virtual void repositionScrollingLayers() { }
     virtual void repositionRelatedLayers() { }
+    
+    void updateScrollPositionAtLastDisplayRefresh();
+    std::optional<FloatPoint> scrollPositionAtLastDisplayRefresh() { return m_scrollPositionAtLastDisplayRefresh; };
 
     void applyLayerPositions() override;
 
@@ -161,6 +164,7 @@ private:
     std::optional<unsigned> m_currentHorizontalSnapPointIndex;
     std::optional<unsigned> m_currentVerticalSnapPointIndex;
     ScrollableAreaParameters m_scrollableAreaParameters;
+    std::optional<FloatPoint> m_scrollPositionAtLastDisplayRefresh;
 #if ENABLE(SCROLLING_THREAD)
     OptionSet<SynchronousScrollingReason> m_synchronousScrollingReasons;
 #endif

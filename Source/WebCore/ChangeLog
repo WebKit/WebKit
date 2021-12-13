@@ -1,5 +1,69 @@
 2021-12-13  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r286932. rdar://problem/86385697
+
+    Ensure that the scrolling thread always commits layer position changes to reduce scrolling stutters
+    https://bugs.webkit.org/show_bug.cgi?id=234213
+    
+    Reviewed by Tim Horton.
+    
+    On a page where CA commits on the main thread take a long time (e.g. because of expensive
+    painting), it's possible that the main thread has updated the scrolling layer position, and
+    then the scrolling thread detects that the commit is taking a long time and attempts to
+    trigger its own commit, but because the layer position property doesn't change, no commit
+    occurs.
+    
+    Work around this by setting the layer position to 0,0 and back when we're on the scrolling
+    thread. Only do this if the scroll position changed since the last display refresh to avoid
+    triggering redundant commits.
+    
+    Ideally we'd traverse the scrolling tree and do this for every scrolling node, but scrolling
+    trees can get large so for now just apply this to the root node.
+    
+    * page/scrolling/ScrollingTreeScrollingNode.cpp:
+    (WebCore::ScrollingTreeScrollingNode::updateScrollPositionAtLastDisplayRefresh):
+    * page/scrolling/ScrollingTreeScrollingNode.h:
+    * page/scrolling/ThreadedScrollingTree.cpp:
+    (WebCore::ThreadedScrollingTree::displayDidRefreshOnScrollingThread):
+    (WebCore::ThreadedScrollingTree::storeScrollPositionsAtLastDisplayRefresh):
+    * page/scrolling/ThreadedScrollingTree.h:
+    * page/scrolling/mac/ScrollingTreeFrameScrollingNodeMac.mm:
+    (WebCore::ScrollingTreeFrameScrollingNodeMac::repositionScrollingLayers):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@286932 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-12-12  Simon Fraser  <simon.fraser@apple.com>
+
+            Ensure that the scrolling thread always commits layer position changes to reduce scrolling stutters
+            https://bugs.webkit.org/show_bug.cgi?id=234213
+
+            Reviewed by Tim Horton.
+
+            On a page where CA commits on the main thread take a long time (e.g. because of expensive
+            painting), it's possible that the main thread has updated the scrolling layer position, and
+            then the scrolling thread detects that the commit is taking a long time and attempts to
+            trigger its own commit, but because the layer position property doesn't change, no commit
+            occurs.
+
+            Work around this by setting the layer position to 0,0 and back when we're on the scrolling
+            thread. Only do this if the scroll position changed since the last display refresh to avoid
+            triggering redundant commits.
+
+            Ideally we'd traverse the scrolling tree and do this for every scrolling node, but scrolling
+            trees can get large so for now just apply this to the root node.
+
+            * page/scrolling/ScrollingTreeScrollingNode.cpp:
+            (WebCore::ScrollingTreeScrollingNode::updateScrollPositionAtLastDisplayRefresh):
+            * page/scrolling/ScrollingTreeScrollingNode.h:
+            * page/scrolling/ThreadedScrollingTree.cpp:
+            (WebCore::ThreadedScrollingTree::displayDidRefreshOnScrollingThread):
+            (WebCore::ThreadedScrollingTree::storeScrollPositionsAtLastDisplayRefresh):
+            * page/scrolling/ThreadedScrollingTree.h:
+            * page/scrolling/mac/ScrollingTreeFrameScrollingNodeMac.mm:
+            (WebCore::ScrollingTreeFrameScrollingNodeMac::repositionScrollingLayers):
+
+2021-12-13  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r286858. rdar://problem/86423741
 
     Use simpler idioms for std::less and std::greater possible in modern C++
