@@ -456,6 +456,14 @@ typedef NS_ENUM(NSInteger, PKPaymentButtonType) {
     PKPaymentButtonTypeCheckout,
     PKPaymentButtonTypeBook,
     PKPaymentButtonTypeSubscribe,
+    PKPaymentButtonTypeReload,
+    PKPaymentButtonTypeAddMoney,
+    PKPaymentButtonTypeTopUp,
+    PKPaymentButtonTypeOrder,
+    PKPaymentButtonTypeRent,
+    PKPaymentButtonTypeSupport,
+    PKPaymentButtonTypeContribute,
+    PKPaymentButtonTypeTip,
 };
 #endif // !HAVE(PASSKIT_RECURRING_SUMMARY_ITEM)
 
