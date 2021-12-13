@@ -778,16 +778,23 @@ def baseOutputName(kind)
     "#{$collectionName}/#{$benchmark}.#{kind}"
 end
 
-def addRunCommand(kind, command, outputHandler, errorHandler, *additionalEnv)
+def addRunCommandCfg(cfg, *additionalEnv)
+    [:kind, :command, :outputHandler, :errorHandler].each { |key|
+        if not cfg.has_key?(key)
+            raise "Missing #{key} in #{cfg}"
+        end
+    }
     $didAddRunCommand = true
-    name = baseOutputName(kind)
+    name = baseOutputName(cfg[:kind])
     if $filter and name !~ $filter
         return
     end
     plan = Plan.create(
-        $benchmarkDirectory, command, "#{$collectionName}/#{$benchmark}", name, outputHandler,
-        errorHandler)
-    plan.additionalEnv.push(*additionalEnv)
+        $benchmarkDirectory, cfg[:command], "#{$collectionName}/#{$benchmark}", name, cfg[:outputHandler],
+        cfg[:errorHandler])
+    if cfg.has_key?(:additionalEnv)
+        plan.additionalEnv.push(*(cfg[:additionalEnv]))
+    end
     if $runCommandOptions[:serial]
         # Add this to the list of tests to be run on their own, so
         # that we can treat them specially when scheduling, but keep
@@ -801,6 +808,17 @@ def addRunCommand(kind, command, outputHandler, errorHandler, *additionalEnv)
     else
         $runlist << plan
     end
+end
+
+def addRunCommand(kind, command, outputHandler, errorHandler, *additionalEnv)
+    cfg = {
+        :kind => kind,
+        :command => command,
+        :outputHandler => outputHandler,
+        :errorHandler => errorHandler,
+        :additionalEnv => additionalEnv,
+    }
+    addRunCommandCfg(cfg)
 end
 
 # Returns true if there were run commands found in the file ($benchmarkDirectory +
@@ -900,28 +918,62 @@ def requireOptions(*options)
     $testSpecificRequiredOptions += options
 end
 
+def runWithOptions(cfg, *options)
+    baseOptions = BASE_OPTIONS
+    if cfg.has_key?(:no_base_options)
+        baseOptions = []
+    end
+    commandPrefix = cfg.fetch(:command_prefix, [])
+    if cfg.has_key?(:place_benchmark_early)
+        cfg[:command] = commandPrefix + vmCommand + [$benchmark.to_s] + baseOptions + options + $testSpecificRequiredOptions
+    else
+        cfg[:command] = commandPrefix + vmCommand + baseOptions + options + $testSpecificRequiredOptions + [$benchmark.to_s]
+    end
+    addRunCommandCfg(cfg)
+end
+
 def runWithOutputHandler(kind, outputHandler, *options)
-    addRunCommand(kind, vmCommand + BASE_OPTIONS + options + $testSpecificRequiredOptions + [$benchmark.to_s], outputHandler, simpleErrorHandler)
+    cfg = {
+        :kind => kind,
+        :outputHandler => outputHandler,
+        :errorHandler => simpleErrorHandler,
+    }
+    runWithOptions(cfg, *options)
 end
 
 def runWithOutputHandlerWithoutBaseOption(kind, outputHandler, *options)
-    addRunCommand(kind, vmCommand + options + $testSpecificRequiredOptions + [$benchmark.to_s], outputHandler, simpleErrorHandler)
+    cfg = {
+        :kind => kind,
+        :outputHandler => outputHandler,
+        :errorHandler => simpleErrorHandler,
+        :no_base_options => true,
+    }
+    runWithOptions(cfg, *options)
 end
 
 def run(kind, *options)
     runWithOutputHandler(kind, silentOutputHandler, *options)
 end
 
+def runInner(cfg, *options)
+    cfg = cfg.dup
+    if not cfg.has_key?(:outputHandler)
+        cfg[:outputHandler] = silentOutputHandler
+    end
+    if not cfg.has_key?(:errorHandler)
+        cfg[:errorHandler] = simpleErrorHandler
+    end
+    runWithOptions(cfg, *options)
+end
+
+def runWithoutBaseOptionCfg(cfg, *options)
+    cfg = cfg.dup
+    cfg[:no_base_options] = true
+    runWithOptions(cfg, *options)
+end
+
 def runWithoutBaseOption(kind, *options)
     runWithOutputHandlerWithoutBaseOption(kind, silentOutputHandler, *options)
-end
-
-def runNoFTL(*optionalTestSpecificOptions)
-    run("no-ftl", *optionalTestSpecificOptions)
-end
-
-def runWithRAMSize(size, *optionalTestSpecificOptions)
-    run("ram-size-#{size}", "--forceRAMSize=#{size}", *optionalTestSpecificOptions)
 end
 
 def runOneLargeHeap(*optionalTestSpecificOptions)
@@ -933,178 +985,515 @@ def runOneLargeHeap(*optionalTestSpecificOptions)
     end
 end
 
-def runNoJIT(*optionalTestSpecificOptions)
-    run("no-jit", "--useJIT=false", *optionalTestSpecificOptions)
-end
-
-def runNoLLInt(*optionalTestSpecificOptions)
-    if $jitTests
-        run("no-llint", "--useLLInt=false", *optionalTestSpecificOptions)
-    end
-end
-
-# NOTE: Tests rely on this using scribbleFreeCells.
-def runNoCJITValidate(*optionalTestSpecificOptions)
-    run("no-cjit", "--validateBytecode=true", "--validateGraph=true", *(NO_CJIT_OPTIONS + optionalTestSpecificOptions))
-end
-
-def runNoCJITValidatePhases(*optionalTestSpecificOptions)
-    run("no-cjit-validate-phases", "--validateBytecode=true", "--validateGraphAtEachPhase=true", "--useSourceProviderCache=false", "--useRandomizingExecutableIslandAllocation=true", *(NO_CJIT_OPTIONS + optionalTestSpecificOptions))
-end
-
-def runNoCJITCollectContinuously(*optionalTestSpecificOptions)
-    run("no-cjit-collect-continuously", *(NO_CJIT_OPTIONS + COLLECT_CONTINUOUSLY_OPTIONS + optionalTestSpecificOptions))
-end
-
-def runDefault(*optionalTestSpecificOptions)
-    run("default", *(FTL_OPTIONS + optionalTestSpecificOptions))
-end
-
-# FIXME: need to fix https://bugs.webkit.org/show_bug.cgi?id=218703 to enable this on Linux/MIPS.
-def runBytecodeCacheImpl(optionalTestSpecificOptions, *additionalEnv)
+def bytecodeCacheTemplate
     if ($hostOS == "darwin")
-        fileTemplate = "bytecode-cache"
+        return "bytecode-cache"
     elsif ($hostOS == "linux" && $architecture != "mips")
-        fileTemplate = "bytecode-cacheXXXXXX"
-    else
-        skip
-        return
+        # FIXME: need to fix https://bugs.webkit.org/show_bug.cgi?id=218703 to enable this on Linux/MIPS.
+        return "bytecode-cacheXXXXXX"
     end
-
-    options = BASE_OPTIONS + FTL_OPTIONS + optionalTestSpecificOptions + $testSpecificRequiredOptions
-    addRunCommand("bytecode-cache", ["sh", (pathToHelpers + "bytecode-cache-test-helper.sh").to_s, fileTemplate.to_s, *vmCommand, $benchmark.to_s] + options, silentOutputHandler, simpleErrorHandler, *additionalEnv)
+    nil
 end
 
-def runBytecodeCache(*optionalTestSpecificOptions)
-    runBytecodeCacheImpl(optionalTestSpecificOptions)
+def runBytecodeCacheImpl(optionalTestSpecificOptions, *additionalEnv)
+    fileTemplate = bytecodeCacheTemplate
+    if fileTemplate.nil?
+        return nil
+    end
+    {
+        :cfg => {
+            :command_prefix => [
+                "sh",
+                (pathToHelpers + "bytecode-cache-test-helper.sh").to_s,
+                fileTemplate.to_s,
+            ],
+            :place_benchmark_early => true,
+            :additionalEnv => additionalEnv,
+        },
+        :testSpecificOptions => FTL_OPTIONS + optionalTestSpecificOptions,
+    }
 end
 
-def runBytecodeCacheNoAssertion(*optionalTestSpecificOptions)
-    runBytecodeCacheImpl(optionalTestSpecificOptions, "JSC_forceDiskCache=false")
+
+def cfgInitializerPlain
+    Proc.new { |cfg, kind|
+        { :kind => kind}
+    }
 end
 
-def runFTLNoCJIT(*optionalTestSpecificOptions)
-    run("misc-ftl-no-cjit", "--useDataIC=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS + optionalTestSpecificOptions))
+def cfgInitializerCfg
+    Proc.new { |cfg, kind|
+        cfg = cfg.dup
+        cfg[:kind] = kind
+        cfg
+    }
 end
 
-def runFTLNoCJITB3O0(*optionalTestSpecificOptions)
-    run("ftl-no-cjit-b3o0", "--useArrayAllocationProfiling=false", "--forcePolyProto=true", "--useRandomizingExecutableIslandAllocation=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS + B3O0_OPTIONS + FORCE_LLINT_EXIT_OPTIONS + optionalTestSpecificOptions))
-end
+# For each base mode (defined below) we generate two kinds of functions:
+#
+# - a version which takes a cfg argument and passes it along, only
+#   setting the kind field
+# - a "plain" version which starts out with an empty cfg
+#
+# The plain  version is intended  for use in the  testcase definitions
+# (in `//@` comments and the like).
+#
+# The former version is used for plumbing. The caller may set various
+# fields in the cfg which will be respected.
+#
+# This way, we can
+# - define a set of test modes in defaultRunCfg
+# - have defaultRunCfg propagate the cfg argument to the run*Cfg
+#   functions it calls
+# - call defaultRunCfg from e.g. defaultRunNoisyTest with the output
+#   handlers appropriately set, in order to make sure we're running
+#   the exact same of tests.
+CfgKind = Struct.new(:extension, :expectCfg, :initializer)
+cfgKinds = [
+    CfgKind.new("", false, cfgInitializerPlain),
+    CfgKind.new("Cfg", true, cfgInitializerCfg),
+]
 
-def runFTLNoCJITValidate(*optionalTestSpecificOptions)
-    run("ftl-no-cjit-validate-sampling-profiler", "--validateGraph=true", "--validateBCE=true", "--useSamplingProfiler=true", "--airForceIRCAllocator=true", "--useDataIC=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS + optionalTestSpecificOptions))
-end
+# Define base test modes. Each mode is an array of [name, kind,
+# options]. The name is used to derive the ruby method names, the kind
+# is used for reporting (i.e. what you'd see in this script's
+# output). In the common case, options is a static array; if not, it's
+# a Proc that returns a dict that needs to be unpacked (see its use
+# site for a more detailed description).
+BASE_MODES = [
+    [
+        "NoCJIT",
+        "ftl-no-cjit",
+        [
+            "--validateBytecode=true", "--validateGraphAtEachPhase=true"
+        ] +
+        FTL_OPTIONS +
+        NO_CJIT_OPTIONS +
+        COLLECT_CONTINUOUSLY_OPTIONS
+    ],
+    [
+        "FTLNoCJIT",
+        "misc-ftl-no-cjit",
+        [
+            "--useDataIC=true",
+        ] +
+        FTL_OPTIONS +
+        NO_CJIT_OPTIONS
+    ],
+    [
+        "FTLNoCJITB3O0",
+        "ftl-no-cjit-b3o0",
+        [
+            "--useArrayAllocationProfiling=false",
+            "--forcePolyProto=true",
+            "--useRandomizingExecutableIslandAllocation=true",
+        ] +
+        FTL_OPTIONS +
+        NO_CJIT_OPTIONS +
+        B3O0_OPTIONS +
+        FORCE_LLINT_EXIT_OPTIONS
+    ],
+    [
+        "FTLNoCJITValidate",
+        "ftl-no-cjit-validate-sampling-profiler",
+        [
+            "--validateGraph=true",
+            "--validateBCE=true",
+            "--useSamplingProfiler=true",
+            "--airForceIRCAllocator=true",
+            "--useDataIC=true",
+        ] +
+        FTL_OPTIONS +
+        NO_CJIT_OPTIONS
+    ],
+    [
+        "FTLNoCJITNoPutStackValidate",
+        "ftl-no-cjit-no-put-stack-validate",
+        [
+            "--validateGraph=true",
+            "--usePutStackSinking=false",
+            "--airForceIRCAllocator=true",
+        ] +
+        FTL_OPTIONS +
+        NO_CJIT_OPTIONS
+    ],
+    [
+        "FTLNoCJITNoInlineValidate",
+        "ftl-no-cjit-no-inline-validate",
+        [
+            "--validateGraph=true",
+            "--maximumInliningDepth=1",
+            "--airForceBriggsAllocator=true",
+            "--useB3HoistLoopInvariantValues=true",
+        ] +
+        FTL_OPTIONS +
+        NO_CJIT_OPTIONS
+    ],
+    [
+        "FTLNoCJITOSRValidation",
+        "ftl-no-cjit-osr-validation",
+        [
+            "--validateFTLOSRExitLiveness=true",
+        ] +
+        FTL_OPTIONS +
+        NO_CJIT_OPTIONS
+    ],
+    [
+        "DFGEager",
+        "dfg-eager",
+        EAGER_OPTIONS +
+        COLLECT_CONTINUOUSLY_OPTIONS +
+        FORCE_LLINT_EXIT_OPTIONS
+    ],
+    [
+        "DFGEagerNoCJITValidate",
+        "dfg-eager-no-cjit-validate",
+        [
+            "--validateGraph=true",
+        ] +
+        NO_CJIT_OPTIONS +
+        EAGER_OPTIONS +
+        COLLECT_CONTINUOUSLY_OPTIONS
+    ],
+    [
+        "FTLEager",
+        "ftl-eager",
+        [
+            "--airForceBriggsAllocator=true",
+            "--useRandomizingExecutableIslandAllocation=true",
+            "--forcePolyProto=true",
+            "--useDataIC=true",
+        ] +
+        FTL_OPTIONS +
+        EAGER_OPTIONS +
+        COLLECT_CONTINUOUSLY_OPTIONS
+    ],
+    [
+        "FTLEagerNoCJITValidate",
+        "ftl-eager-no-cjit",
+        [
+            "--validateGraph=true",
+            "--validateBCE=true",
+            "--airForceIRCAllocator=true",
+        ] +
+        FTL_OPTIONS +
+        NO_CJIT_OPTIONS +
+        EAGER_OPTIONS +
+        COLLECT_CONTINUOUSLY_OPTIONS +
+        FORCE_LLINT_EXIT_OPTIONS +
+        EXECUTABLE_FUZZER_OPTIONS
+    ],
+    [
+        "FTLEagerNoCJITB3O1",
+        "ftl-eager-no-cjit-b3o1",
+        [
+            "--validateGraph=true",
+        ] +
+        FTL_OPTIONS +
+        NO_CJIT_OPTIONS +
+        EAGER_OPTIONS +
+        B3O1_OPTIONS
+    ],
+    [
+        "FTLEagerNoCJITOSRValidation",
+        "ftl-eager-no-cjit-osr-validation",
+        [
+            "--validateFTLOSRExitLiveness=true",
+        ] +
+        FTL_OPTIONS +
+        NO_CJIT_OPTIONS +
+        EAGER_OPTIONS +
+        COLLECT_CONTINUOUSLY_OPTIONS
+    ],
+    [
+        "NoCJITNoASO",
+        "no-cjit-no-aso",
+        [
+            "--useArchitectureSpecificOptimizations=false",
+        ] +
+        NO_CJIT_OPTIONS
+    ],
+    [
+        "NoCJITNoAccessInlining",
+        "no-cjit-no-access-inlining",
+        [
+            "--useAccessInlining=false",
+        ] +
+        NO_CJIT_OPTIONS
+    ],
+    [
+        "FTLNoCJITNoAccessInlining",
+        "ftl-no-cjit-no-access-inlining",
+        [
+            "--useAccessInlining=false",
+        ] +
+        FTL_OPTIONS +
+        NO_CJIT_OPTIONS
+    ],
+    [
+        "FTLNoCJITSmallPool",
+        "ftl-no-cjit-small-pool",
+        [
+            "--jitMemoryReservationSize=202400",
+        ] +
+        FTL_OPTIONS +
+        NO_CJIT_OPTIONS
+    ],
+    [
+        "NoCJIT",
+        "no-cjit",
+        NO_CJIT_OPTIONS
+    ],
+    [
+        "EagerJettisonNoCJIT",
+        "eager-jettison-no-cjit",
+        [
+            "--useRandomizingExecutableIslandAllocation=true",
+            "--forceCodeBlockToJettisonDueToOldAge=true",
+            "--verifyGC=true",
+        ] +
+        NO_CJIT_OPTIONS
+    ],
+    [
+        "ShadowChicken",
+        "shadow-chicken",
+        [
+            "--useDFGJIT=false",
+            "--alwaysUseShadowChicken=true",
+        ]
+    ],
+    [
+        "MiniMode",
+        "mini-mode",
+        [
+            "--forceMiniVMMode=true",
+        ]
+    ],
+    [
+        "LogicalAssignmentOperatorsEnabled",
+        "logical-assignment-operators-enabled",
+        [
+            "--useLogicalAssignmentOperators=true",
+        ] +
+        FTL_OPTIONS
+    ],
+    [
+        "NoJIT",
+        "no-jit",
+        [
+            "--useJIT=false",
+        ]
+    ],
+    [
+        # NOTE: Tests rely on this using scribbleFreeCells.
+        "NoCJITValidate",
+        "no-cjit",
+        [
+            "--validateBytecode=true",
+            "--validateGraph=true",
+        ] +
+        NO_CJIT_OPTIONS
+    ],
+    [
+        "NoCJITValidatePhases",
+        "no-cjit-validate-phases",
+        [
+            "--validateBytecode=true",
+            "--validateGraphAtEachPhase=true",
+            "--useSourceProviderCache=false",
+            "--useRandomizingExecutableIslandAllocation=true",
+        ] +
+        NO_CJIT_OPTIONS
+    ],
+    [
+        "NoCJITCollectContinuously",
+        "no-cjit-collect-continuously",
+        NO_CJIT_OPTIONS +
+        COLLECT_CONTINUOUSLY_OPTIONS
+    ],
+    [
+        "Default",
+        "default",
+        FTL_OPTIONS
+    ],
+    [
+        "NoFTL",
+        "no-ftl",
+        []
+    ],
+    [
+        "WithRAMSize",
+        nil, # Not used
+        Proc.new { |size, *optionalTestSpecificOptions|
+            {
+                :cfg => {
+                    :kind => "ram-size-#{size}",
+                },
+                :testSpecificOptions => [
+                    "--forceRAMSize=#{size}",
+                ] + optionalTestSpecificOptions
+            }
+        }
+    ],
+    [
+        "BytecodeCache",
+        "bytecode-cache",
+        Proc.new { |*optionalTestSpecificOptions|
+            runBytecodeCacheImpl(optionalTestSpecificOptions)
+        }
+    ],
+    [
+        "BytecodeCacheNoAssertion",
+        "bytecode-cache",
+        Proc.new { |*optionalTestSpecificOptions|
+            runBytecodeCacheImpl(optionalTestSpecificOptions, "JSC_forceDiskCache=false")
+        }
+    ],
+    [
+        "FTLEagerWatchdog",
+        nil,
+        Proc.new { |*optionalTestSpecificOptions|
+            timeout = rand(100)
+            {
+                :cfg => {
+                    :kind => "ftl-eager-watchdog-#{timeout}",
+                },
+                :testSpecificOptions => [
+                    "--watchdog=#{timeout}",
+                    "--watchdog-exception-ok",
+                ] +
+                FTL_OPTIONS +
+                EAGER_OPTIONS +
+                COLLECT_CONTINUOUSLY_OPTIONS +
+                optionalTestSpecificOptions
+            }
+        }
+    ],
+    [
+        "NoLLInt",
+        "no-llint",
+        Proc.new { |*optionalTestSpecificOptions|
+            return nil unless $jitTests
+            {
+                :cfg => {
+                },
+                :testSpecificOptions => [
+                    "--useLLInt=false",
+                ] + optionalTestSpecificOptions
+            }
+        }
+    ],
+    [
+        "OneLangeHeap",
+        "default",
+        Proc.new { |*optionalTestSpecificOptions|
+            if $memoryLimited
+                return nil
+            end
+            {
+                :testSpecificOptions => optionalTestSpecificOptions
+            }
+        }
+    ]
+]
 
-def runFTLNoCJITNoPutStackValidate(*optionalTestSpecificOptions)
-    run("ftl-no-cjit-no-put-stack-validate", "--validateGraph=true", "--usePutStackSinking=false", "--airForceIRCAllocator=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS + optionalTestSpecificOptions))
-end
+BASE_MODES.each { |mode|
+    name = "run#{mode[0]}"
+    kind = mode[1]
+    options = mode[2]
 
-def runFTLNoCJITNoInlineValidate(*optionalTestSpecificOptions)
-    run("ftl-no-cjit-no-inline-validate", "--validateGraph=true", "--maximumInliningDepth=1", "--airForceBriggsAllocator=true", "--useB3HoistLoopInvariantValues=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS + optionalTestSpecificOptions))
-end
+    # We need to define two variants, one expecting a cfg as the first
+    # argument, one not.
+    cfgKinds.each { |cfgKind|
+        methodName = "#{name}#{cfgKind.extension}".to_sym
+        define_method(methodName) { |*args|
+            cfg = nil
+            if cfgKind.expectCfg
+                # If we're defining a method that expects a cfg
+                # argument, pick it out of the args to pass to the
+                # initializer.
+                cfg = args.shift
+            end
+            # The cfg is initialized differently depending on whether
+            # we're in a run*Cfg method or not.
+            cfg = cfgKind.initializer.call(cfg, kind)
+            finalOptions = nil
+            if options.respond_to?(:call)
+                dynamicOptions = options.call(*args)
+                if dynamicOptions.nil?
+                    skip
+                    return
+                end
+                # The Proc object may override any cfg option passed
+                # in. This is used e.g. for dynamic test names as used
+                # by WithRAMSize and FTLEagerWatchdog.
+                cfg.merge!(dynamicOptions[:cfg])
+                # As the Proc may consume arguments, it's responsible
+                # for returning the final option list. Needed e.g. by
+                # WithRAMSize.
+                finalOptions = dynamicOptions[:testSpecificOptions]
+            else
+                finalOptions = options + args
+            end
+            runInner(cfg, *finalOptions)
+        }
+    }
+}
 
-def runFTLNoCJITOSRValidation(*optionalTestSpecificOptions)
-    run("ftl-no-cjit-osr-validation", "--validateFTLOSRExitLiveness=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS + optionalTestSpecificOptions))
-end
+CFG_NOISY = {
+            :outputHandler => noisyOutputHandler,
+            :errorHandler => noisyErrorHandler,
+}.freeze
 
-def runDFGEager(*optionalTestSpecificOptions)
-    run("dfg-eager", *(EAGER_OPTIONS + COLLECT_CONTINUOUSLY_OPTIONS + FORCE_LLINT_EXIT_OPTIONS + optionalTestSpecificOptions))
-end
+BASE_MODES.each { |mode|
+    name = "runNoisyTest#{mode[0]}".to_sym
+    define_method(name) { |*args|
+        # For each base mode, define the "noisy" variant which simply
+        # calls the respective run#{name}Cfg, passing in the "noisy"
+        # cfg.
+        send("run#{mode[0]}Cfg", CFG_NOISY, "--validateBytecode=true", "--validateGraphAtEachPhase=true", *args)
+    }
+}
 
-def runDFGEagerNoCJITValidate(*optionalTestSpecificOptions)
-    run("dfg-eager-no-cjit-validate", "--validateGraph=true", *(NO_CJIT_OPTIONS + EAGER_OPTIONS + COLLECT_CONTINUOUSLY_OPTIONS + optionalTestSpecificOptions))
-end
-
-def runFTLEager(*optionalTestSpecificOptions)
-    run("ftl-eager", "--airForceBriggsAllocator=true", "--useRandomizingExecutableIslandAllocation=true", "--forcePolyProto=true", "--useDataIC=true", *(FTL_OPTIONS + EAGER_OPTIONS + COLLECT_CONTINUOUSLY_OPTIONS + optionalTestSpecificOptions))
-end
-
-def runFTLEagerWatchdog(*optionalTestSpecificOptions)
-    timeout = rand(100)
-    run("ftl-eager-watchdog-#{timeout}", "--watchdog=#{timeout}", "--watchdog-exception-ok", *(FTL_OPTIONS + EAGER_OPTIONS + COLLECT_CONTINUOUSLY_OPTIONS + optionalTestSpecificOptions))
-end
-
-def runFTLEagerNoCJITValidate(*optionalTestSpecificOptions)
-    run("ftl-eager-no-cjit", "--validateGraph=true", "--validateBCE=true", "--airForceIRCAllocator=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS + EAGER_OPTIONS + COLLECT_CONTINUOUSLY_OPTIONS + FORCE_LLINT_EXIT_OPTIONS + EXECUTABLE_FUZZER_OPTIONS + optionalTestSpecificOptions))
-end
-
-def runFTLEagerNoCJITB3O1(*optionalTestSpecificOptions)
-    run("ftl-eager-no-cjit-b3o1", "--validateGraph=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS + EAGER_OPTIONS + B3O1_OPTIONS + optionalTestSpecificOptions))
-end
-
-def runFTLEagerNoCJITOSRValidation(*optionalTestSpecificOptions)
-    run("ftl-eager-no-cjit-osr-validation", "--validateFTLOSRExitLiveness=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS + EAGER_OPTIONS + COLLECT_CONTINUOUSLY_OPTIONS + optionalTestSpecificOptions))
-end
-
-def runNoCJITNoASO(*optionalTestSpecificOptions)
-    run("no-cjit-no-aso", "--useArchitectureSpecificOptimizations=false", *(NO_CJIT_OPTIONS + optionalTestSpecificOptions))
-end
-
-def runNoCJITNoAccessInlining(*optionalTestSpecificOptions)
-    run("no-cjit-no-access-inlining", "--useAccessInlining=false", *(NO_CJIT_OPTIONS + optionalTestSpecificOptions))
-end
-
-def runFTLNoCJITNoAccessInlining(*optionalTestSpecificOptions)
-    run("ftl-no-cjit-no-access-inlining", "--useAccessInlining=false", *(FTL_OPTIONS + NO_CJIT_OPTIONS + optionalTestSpecificOptions))
-end
-
-def runFTLNoCJITSmallPool(*optionalTestSpecificOptions)
-    run("ftl-no-cjit-small-pool", "--jitMemoryReservationSize=202400", *(FTL_OPTIONS + NO_CJIT_OPTIONS + optionalTestSpecificOptions))
-end
-
-def runNoCJIT(*optionalTestSpecificOptions)
-    run("no-cjit", *(NO_CJIT_OPTIONS + optionalTestSpecificOptions))
-end
-
-def runEagerJettisonNoCJIT(*optionalTestSpecificOptions)
-    run("eager-jettison-no-cjit", "--useRandomizingExecutableIslandAllocation=true", "--forceCodeBlockToJettisonDueToOldAge=true", "--verifyGC=true", *(NO_CJIT_OPTIONS + optionalTestSpecificOptions))
-end
-
-def runShadowChicken(*optionalTestSpecificOptions)
-    run("shadow-chicken", "--useDFGJIT=false", "--alwaysUseShadowChicken=true", *optionalTestSpecificOptions)
-end
-
-def runMiniMode(*optionalTestSpecificOptions)
-    run("mini-mode", "--forceMiniVMMode=true", *optionalTestSpecificOptions)
-end
-
-def runLogicalAssignmentOperatorsEnabled(*optionalTestSpecificOptions)
-    run("logical-assignment-operators-enabled", "--useLogicalAssignmentOperators=true" , *(FTL_OPTIONS + optionalTestSpecificOptions))
-end
-
-def defaultRun
+# Default set of tests to run; propagates the cfg to every callee.
+def defaultRunCfg(cfg)
+    cfg.freeze
     if $mode == "quick"
-        defaultQuickRun
+        defaultQuickRunCfg(cfg)
     else
-        runDefault
-        runBytecodeCache
-        runMiniMode
+        runDefaultCfg(cfg)
+        runBytecodeCacheCfg(cfg)
+        runMiniModeCfg(cfg)
         if $jitTests
-            runNoLLInt
-            runNoCJITValidatePhases
-            runNoCJITCollectContinuously if shouldCollectContinuously?
-            runDFGEager
+            runNoLLIntCfg(cfg)
+            runNoCJITValidatePhasesCfg(cfg)
+            runNoCJITCollectContinuouslyCfg(cfg) if shouldCollectContinuously?
+            runDFGEagerCfg(cfg)
             if $mode != "basic"
-                runDFGEagerNoCJITValidate
-                runEagerJettisonNoCJIT
+                runDFGEagerNoCJITValidateCfg(cfg)
+                runEagerJettisonNoCJITCfg(cfg)
             end
 
             return if !$isFTLPlatform
 
-            runNoFTL
-            runFTLEager
-            runFTLEagerNoCJITValidate if $buildType == "release"
-            runFTLNoCJITSmallPool
+            runNoFTLCfg(cfg)
+            runFTLEagerCfg(cfg)
+            runFTLEagerNoCJITValidateCfg(cfg) if $buildType == "release"
+            runFTLNoCJITSmallPoolCfg(cfg)
 
             return if $mode == "basic"
 
-            runFTLNoCJITValidate
-            runFTLNoCJITB3O0
-            runFTLNoCJITNoPutStackValidate
-            runFTLNoCJITNoInlineValidate
-            runFTLEagerNoCJITB3O1
+            runFTLNoCJITValidateCfg(cfg)
+            runFTLNoCJITB3O0Cfg(cfg)
+            runFTLNoCJITNoPutStackValidateCfg(cfg)
+            runFTLNoCJITNoInlineValidateCfg(cfg)
+            runFTLEagerNoCJITB3O1Cfg(cfg)
         end
     end
+end
+
+def defaultRun
+    defaultRunCfg({})
 end
 
 def defaultNoNoLLIntRun
@@ -1138,16 +1527,20 @@ def defaultNoNoLLIntRun
     end
 end
 
-def defaultQuickRun
-    runDefault
+def defaultQuickRunCfg(cfg)
+    runDefaultCfg(cfg)
     if $jitTests
-        runNoCJITValidate
+        runNoCJITValidateCfg(cfg)
 
         return if !$isFTLPlatform
 
-        runNoFTL
-        runFTLNoCJITValidate
+        runNoFTLCfg(cfg)
+        runFTLNoCJITValidateCfg(cfg)
     end
+end
+
+def defaultQuickRun
+    defaultQuickRunCfg({})
 end
 
 def defaultSpotCheckNoMaximalFlush
@@ -1800,46 +2193,19 @@ def defaultRunMozillaTest(mode, *extraFiles)
     end
 end
 
-def runNoisyTestImpl(kind, options, additionalEnv)
-    addRunCommand(kind, vmCommand + BASE_OPTIONS + options + $testSpecificRequiredOptions + [$benchmark.to_s], noisyOutputHandler, noisyErrorHandler, *additionalEnv)
-end
-
-def runNoisyTest(kind, *options)
-    runNoisyTestImpl(kind, options, [])
-end
-
 def runNoisyTestWithEnv(kind, *additionalEnv)
-    runNoisyTestImpl(kind, [], additionalEnv)
-end
-
-def runNoisyTestDefault
-    runNoisyTest("default", *FTL_OPTIONS)
-end
-
-def runNoisyTestNoFTL
-    runNoisyTest("no-ftl")
-end
-
-def runNoisyTestNoCJIT
-    runNoisyTest("ftl-no-cjit", "--validateBytecode=true", "--validateGraphAtEachPhase=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS + COLLECT_CONTINUOUSLY_OPTIONS))
-end
-
-def runNoisyTestNoCJITB3O1
-    runNoisyTest("ftl-no-cjit-b3o1", "--validateBytecode=true", "--validateGraphAtEachPhase=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS + B3O1_OPTIONS))
-end
-
-def runNoisyTestEagerNoCJIT
-    runNoisyTest("ftl-eager-no-cjit", "--validateBytecode=true", "--validateGraphAtEachPhase=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS + EAGER_OPTIONS + COLLECT_CONTINUOUSLY_OPTIONS))
+    cfg = CFG_NOISY.dup
+    cfg[:kind] = kind
+    cfg[:additionalEnv] = additionalEnv
+    runDefaultCfg(cfg)
 end
 
 def defaultRunNoisyTest
-    runNoisyTestDefault
-    if $jitTests and $isFTLPlatform
-        runNoisyTestNoFTL
-        runNoisyTestNoCJIT
-        runNoisyTestNoCJITB3O1
-        runNoisyTestEagerNoCJIT
-    end
+    cfg = {
+        :outputHandler => noisyOutputHandler,
+        :errorHandler => noisyErrorHandler,
+    }
+    defaultRunCfg(cfg)
 end
 
 def skip

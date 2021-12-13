@@ -1,3 +1,29 @@
+2021-12-13  Angelos Oikonomopoulos  <angelos@igalia.com>
+
+        [JSC] Unify default/noisy tests definition
+        https://bugs.webkit.org/show_bug.cgi?id=233926
+
+        Reviewed by Yusuke Suzuki.
+
+        Currently, changing a test to be noisy (i.e. using
+        defaultRunNoisyTest) results in only a subset of the tests being
+        run.
+
+        Instead of manually changing the noisy test test handler, this
+        patch makes the mode definitions table-driven. However, for
+        compatibility with the existing code, it uses the table to define
+        the ruby methods that the testcase definitions (//@ comments,
+        yaml) and other callers in run-jsc-stress-tests (e.g. all
+        default*Run methods) expect.
+
+        Note that this slightly increases the number of tests executed (as
+        more test modes are enabled for the noisy tests).
+
+        This is an exploratory first step; other callers in
+        run-jsc-stress-tests could be simplified in the same way.
+
+        * Scripts/run-jsc-stress-tests:
+
 2021-12-13  Youenn Fablet  <youenn@apple.com>
 
         Start websocket server for tests in http/tests that have websocket in their name
