@@ -762,10 +762,10 @@ void CoreAudioCaptureSource::initializeToStartProducingData()
     unit.setSampleRate(sampleRate());
     unit.setVolume(volume());
 
+    unit.addClient(*this);
+
     if (shouldReconfigure)
         unit.reconfigure();
-
-    unit.addClient(*this);
 }
 
 CoreAudioCaptureSource::~CoreAudioCaptureSource()
