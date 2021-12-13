@@ -1,5 +1,49 @@
 2021-12-13  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r286907. rdar://problem/86307593
+
+    [Cocoa] -[AVPlayerItem liveUpdateInterval] can hang the main thread for ~60ms
+    https://bugs.webkit.org/show_bug.cgi?id=234131
+    
+    Reviewed by Eric Carlson.
+    
+    Direct property access of AVFoundation objects can take tens of milliseconds to return
+    a value, even for simple properties. This impacts scrolling responsiveness.
+    
+    -liveUpdateInterval is not KVO-observable, but only changes when -seekableTimeRanges does
+    as well. Query and cache that property during KVO of -seekableTimeRanges.
+    
+    * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.h:
+    * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+    (WebCore::MediaPlayerPrivateAVFoundationObjC::seekableTimeRangesLastModifiedTime const):
+    (WebCore::MediaPlayerPrivateAVFoundationObjC::liveUpdateInterval const):
+    (WebCore::MediaPlayerPrivateAVFoundationObjC::seekableTimeRangesDidChange):
+    (-[WebCoreAVFMovieObserver observeValueForKeyPath:ofObject:change:context:]):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@286907 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-12-11  Jer Noble  <jer.noble@apple.com>
+
+            [Cocoa] -[AVPlayerItem liveUpdateInterval] can hang the main thread for ~60ms
+            https://bugs.webkit.org/show_bug.cgi?id=234131
+
+            Reviewed by Eric Carlson.
+
+            Direct property access of AVFoundation objects can take tens of milliseconds to return
+            a value, even for simple properties. This impacts scrolling responsiveness.
+
+            -liveUpdateInterval is not KVO-observable, but only changes when -seekableTimeRanges does
+            as well. Query and cache that property during KVO of -seekableTimeRanges.
+
+            * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.h:
+            * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+            (WebCore::MediaPlayerPrivateAVFoundationObjC::seekableTimeRangesLastModifiedTime const):
+            (WebCore::MediaPlayerPrivateAVFoundationObjC::liveUpdateInterval const):
+            (WebCore::MediaPlayerPrivateAVFoundationObjC::seekableTimeRangesDidChange):
+            (-[WebCoreAVFMovieObserver observeValueForKeyPath:ofObject:change:context:]):
+
+2021-12-13  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r286905. rdar://problem/86235740
 
     Scrolling can drop frames when CoreAnimation commits take a long time
