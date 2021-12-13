@@ -106,6 +106,8 @@ private:
     void setUserAgent(String&& userAgent);
     void close();
     void setThrottleState(bool isThrottleable);
+    void convertFetchToDownload(WebCore::SWServerConnectionIdentifier, WebCore::ServiceWorkerIdentifier, WebCore::FetchIdentifier);
+    void cancelFetchDownload(WebCore::ServiceWorkerIdentifier, WebCore::FetchIdentifier);
 
     Ref<IPC::Connection> m_connectionToNetworkProcess;
     WebCore::RegistrableDomain m_registrableDomain;

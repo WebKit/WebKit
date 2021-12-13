@@ -25,7 +25,9 @@
 
 #pragma once
 
+#include "Connection.h"
 #include "StorageAreaIdentifier.h"
+#include <wtf/WorkQueue.h>
 
 namespace WebCore {
 struct ClientOrigin;

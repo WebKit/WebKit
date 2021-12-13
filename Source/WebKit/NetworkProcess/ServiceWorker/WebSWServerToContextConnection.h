@@ -29,6 +29,7 @@
 
 #include "MessageReceiver.h"
 #include "MessageSender.h"
+#include "ServiceWorkerDownloadTask.h"
 #include "ServiceWorkerFetchTask.h"
 #include "WebPageProxyIdentifier.h"
 #include <WebCore/SWServerToContextConnection.h>
@@ -74,8 +75,11 @@ public:
 
     void registerFetch(ServiceWorkerFetchTask&);
     void unregisterFetch(ServiceWorkerFetchTask&);
+    void registerDownload(ServiceWorkerDownloadTask&);
+    void unregisterDownload(ServiceWorkerDownloadTask&);
 
     WebCore::ProcessIdentifier webProcessIdentifier() const;
+    NetworkProcess& networkProcess() { return m_connection.networkProcess(); }
 
 private:
     // IPC::MessageSender
@@ -103,6 +107,7 @@ private:
     NetworkConnectionToWebProcess& m_connection;
     WeakPtr<WebCore::SWServer> m_server;
     HashMap<WebCore::FetchIdentifier, WeakPtr<ServiceWorkerFetchTask>> m_ongoingFetches;
+    HashMap<WebCore::FetchIdentifier, WeakPtr<ServiceWorkerDownloadTask>> m_ongoingDownloads;
     bool m_isThrottleable { true };
     WebPageProxyIdentifier m_webPageProxyID;
     size_t m_processingPushEventsCount { 0 };

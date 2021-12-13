@@ -395,6 +395,9 @@
 		1CA8B946127C882A00576C2B /* WebInspectorUIProxyMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 1CA8B944127C882A00576C2B /* WebInspectorUIProxyMessages.h */; };
 		1CAECB6527465AE400AB78D0 /* UnifiedSource109.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1CAECB5D27465AE300AB78D0 /* UnifiedSource109.cpp */; };
 		1CAECB6627465AE400AB78D0 /* UnifiedSource111.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1CAECB5E27465AE300AB78D0 /* UnifiedSource111.cpp */; };
+		3CAECB6627465AE400AB78D0 /* UnifiedSource113.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3CAECB5E27465AE300AB78D0 /* UnifiedSource113.cpp */; };
+		4CAECB6627465AE400AB78D0 /* UnifiedSource114.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CAECB5E27465AE300AB78D0 /* UnifiedSource114.cpp */; };
+		5CAECB6627465AE400AB78D0 /* UnifiedSource115.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CAECB5E27465AE300AB78D0 /* UnifiedSource115.cpp */; };
 		1CAECB6727465AE400AB78D0 /* UnifiedSource108.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1CAECB5F27465AE300AB78D0 /* UnifiedSource108.cpp */; };
 		1CAECB6827465AE400AB78D0 /* UnifiedSource110.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1CAECB6027465AE300AB78D0 /* UnifiedSource110.cpp */; };
 		1CAECB6927465AE400AB78D0 /* UnifiedSource104.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1CAECB6127465AE300AB78D0 /* UnifiedSource104.cpp */; };
@@ -881,7 +884,6 @@
 		41DC45961E3D6E2200B11F51 /* NetworkRTCProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 41DC45941E3D6E1E00B11F51 /* NetworkRTCProvider.h */; };
 		41DC459C1E3DBB2800B11F51 /* LibWebRTCSocketClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 41DC459A1E3DBB2400B11F51 /* LibWebRTCSocketClient.h */; };
 		41DD72AB2682167300A90C71 /* NWSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 41DD72AA2682167300A90C71 /* NWSPI.h */; };
-		41DE7C6C22278F1E00532B65 /* ServiceWorkerFetchTask.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41518536222704F6005430C6 /* ServiceWorkerFetchTask.cpp */; };
 		41E0A7CB23B645CD00561060 /* WebSocketChannel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 417915AC2256BB7400D6F97E /* WebSocketChannel.cpp */; };
 		41E242E026E0C908009A8C64 /* NetworkRTCUtilitiesCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 41E242DF26E0C904009A8C64 /* NetworkRTCUtilitiesCocoa.mm */; };
 		41F060E11654318500F3281C /* WebSocketChannelMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41F060DD1654317500F3281C /* WebSocketChannelMessageReceiver.cpp */; };
@@ -3216,6 +3218,9 @@
 		1CA8B944127C882A00576C2B /* WebInspectorUIProxyMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebInspectorUIProxyMessages.h; path = DerivedSources/WebKit/WebInspectorUIProxyMessages.h; sourceTree = BUILT_PRODUCTS_DIR; };
 		1CAECB5D27465AE300AB78D0 /* UnifiedSource109.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = UnifiedSource109.cpp; path = "DerivedSources/WebKit/unified-sources/UnifiedSource109.cpp"; sourceTree = BUILT_PRODUCTS_DIR; };
 		1CAECB5E27465AE300AB78D0 /* UnifiedSource111.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = UnifiedSource111.cpp; path = "DerivedSources/WebKit/unified-sources/UnifiedSource111.cpp"; sourceTree = BUILT_PRODUCTS_DIR; };
+		3CAECB5E27465AE300AB78D0 /* UnifiedSource113.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = UnifiedSource113.cpp; path = "DerivedSources/WebKit/unified-sources/UnifiedSource113.cpp"; sourceTree = BUILT_PRODUCTS_DIR; };
+		4CAECB5E27465AE300AB78D0 /* UnifiedSource114.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = UnifiedSource114.cpp; path = "DerivedSources/WebKit/unified-sources/UnifiedSource114.cpp"; sourceTree = BUILT_PRODUCTS_DIR; };
+		5CAECB5E27465AE300AB78D0 /* UnifiedSource115.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = UnifiedSource115.cpp; path = "DerivedSources/WebKit/unified-sources/UnifiedSource115.cpp"; sourceTree = BUILT_PRODUCTS_DIR; };
 		1CAECB5F27465AE300AB78D0 /* UnifiedSource108.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = UnifiedSource108.cpp; path = "DerivedSources/WebKit/unified-sources/UnifiedSource108.cpp"; sourceTree = BUILT_PRODUCTS_DIR; };
 		1CAECB6027465AE300AB78D0 /* UnifiedSource110.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = UnifiedSource110.cpp; path = "DerivedSources/WebKit/unified-sources/UnifiedSource110.cpp"; sourceTree = BUILT_PRODUCTS_DIR; };
 		1CAECB6127465AE300AB78D0 /* UnifiedSource104.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = UnifiedSource104.cpp; path = "DerivedSources/WebKit/unified-sources/UnifiedSource104.cpp"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -4188,6 +4193,9 @@
 		41FCD6BD23CE043F00C62567 /* RemoteSampleBufferDisplayLayerManager.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = RemoteSampleBufferDisplayLayerManager.messages.in; sourceTree = "<group>"; };
 		41FCD6BE23CE044000C62567 /* RemoteSampleBufferDisplayLayerManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteSampleBufferDisplayLayerManager.cpp; sourceTree = "<group>"; };
 		41FCD6BF23CE044000C62567 /* RemoteSampleBufferDisplayLayerManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteSampleBufferDisplayLayerManager.h; sourceTree = "<group>"; };
+		41FFD2DA275A560B00501BBF /* ServiceWorkerDownloadTask.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ServiceWorkerDownloadTask.cpp; sourceTree = "<group>"; };
+		41FFD2DB275A560C00501BBF /* ServiceWorkerDownloadTask.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ServiceWorkerDownloadTask.h; sourceTree = "<group>"; };
+		41FFD2DC275A6A9400501BBF /* ServiceWorkerDownloadTask.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = ServiceWorkerDownloadTask.messages.in; sourceTree = "<group>"; };
 		4450AEBF1DC3FAE5009943F2 /* SharedMemoryCocoa.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SharedMemoryCocoa.cpp; sourceTree = "<group>"; };
 		4459984122833E6000E61373 /* SyntheticEditingCommandType.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SyntheticEditingCommandType.h; sourceTree = "<group>"; };
 		446DC64B24A2D8AD0061F390 /* PlaybackSessionContextIdentifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlaybackSessionContextIdentifier.h; sourceTree = "<group>"; };
@@ -8256,6 +8264,9 @@
 				1CAECB6027465AE300AB78D0 /* UnifiedSource110.cpp */,
 				1CAECB5E27465AE300AB78D0 /* UnifiedSource111.cpp */,
 				93E799D12760AA5A0074008A /* UnifiedSource112.cpp */,
+				3CAECB5E27465AE300AB78D0 /* UnifiedSource113.cpp */,
+				4CAECB5E27465AE300AB78D0 /* UnifiedSource114.cpp */,
+				5CAECB5E27465AE300AB78D0 /* UnifiedSource115.cpp */,
 			);
 			name = "unified-sources";
 			path = "DerivedSources/WebKit/unified-sources";
@@ -10421,6 +10432,9 @@
 		93BA04D92151ADCD007F455F /* ServiceWorker */ = {
 			isa = PBXGroup;
 			children = (
+				41FFD2DA275A560B00501BBF /* ServiceWorkerDownloadTask.cpp */,
+				41FFD2DB275A560C00501BBF /* ServiceWorkerDownloadTask.h */,
+				41FFD2DC275A6A9400501BBF /* ServiceWorkerDownloadTask.messages.in */,
 				41518536222704F6005430C6 /* ServiceWorkerFetchTask.cpp */,
 				41518535222704F5005430C6 /* ServiceWorkerFetchTask.h */,
 				4151853822270F53005430C6 /* ServiceWorkerFetchTask.messages.in */,
@@ -15331,7 +15345,6 @@
 				A55BA8261BA25CFD007CD33D /* RemoteWebInspectorUIProxyMessageReceiver.cpp in Sources */,
 				7BCF70DE2615D06E00E4FB70 /* ScopedRenderingResourcesRequestCocoa.mm in Sources */,
 				E18E6917169B667B009B6670 /* SecItemShimProxyMessageReceiver.cpp in Sources */,
-				41DE7C6C22278F1E00532B65 /* ServiceWorkerFetchTask.cpp in Sources */,
 				2D92A787212B6AB100F493FD /* ShareableBitmap.cpp in Sources */,
 				2DC18FEBF337B9671C88E3CD /* SharedBufferCopy.cpp in Sources */,
 				2DC181245B549343BC98164C /* SharedBufferDataReference.cpp in Sources */,
@@ -15543,6 +15556,9 @@
 				1CAECB6827465AE400AB78D0 /* UnifiedSource110.cpp in Sources */,
 				1CAECB6627465AE400AB78D0 /* UnifiedSource111.cpp in Sources */,
 				93E799D22760AA5B0074008A /* UnifiedSource112.cpp in Sources */,
+				3CAECB6627465AE400AB78D0 /* UnifiedSource113.cpp in Sources */,
+				4CAECB6627465AE400AB78D0 /* UnifiedSource114.cpp in Sources */,
+				5CAECB6627465AE400AB78D0 /* UnifiedSource115.cpp in Sources */,
 				E38A1FC023A551BF00D2374F /* UserInterfaceIdiom.mm in Sources */,
 				CD491B0D1E732E4D00009066 /* UserMediaCaptureManagerMessageReceiver.cpp in Sources */,
 				CD491B171E73525500009066 /* UserMediaCaptureManagerProxyMessageReceiver.cpp in Sources */,

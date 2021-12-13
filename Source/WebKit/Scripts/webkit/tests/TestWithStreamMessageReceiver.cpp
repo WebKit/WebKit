@@ -60,7 +60,7 @@ void TestWithStream::didReceiveStreamMessage(IPC::StreamServerConnectionBase& co
     if (connection.connection().ignoreInvalidMessageForTesting())
         return;
 #endif // ENABLE(IPC_TESTING_API)
-    ASSERT_NOT_REACHED_WITH_MESSAGE("Unhandled stream message %s to %" PRIu64, description(decoder.messageName()), decoder.destinationID());
+    ASSERT_NOT_REACHED_WITH_MESSAGE("Unhandled stream message %s to %" PRIu64, IPC::description(decoder.messageName()), decoder.destinationID());
 }
 
 } // namespace WebKit

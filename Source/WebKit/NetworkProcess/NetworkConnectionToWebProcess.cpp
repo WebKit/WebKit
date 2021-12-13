@@ -695,8 +695,7 @@ void NetworkConnectionToWebProcess::convertMainResourceLoadToDownload(std::optio
 {
     RELEASE_ASSERT(RunLoop::isMain());
 
-    // In case a response is served from service worker, we do not have yet the ability to convert the load.
-    if (!mainResourceLoadIdentifier || response.source() == ResourceResponse::Source::ServiceWorker) {
+    if (!mainResourceLoadIdentifier) {
         m_networkProcess->downloadManager().startDownload(m_sessionID, downloadID, request, isNavigatingToAppBoundDomain);
         return;
     }

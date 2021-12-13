@@ -537,6 +537,11 @@ void TestInvocation::didReceiveMessageFromInjectedBundle(WKStringRef messageName
         return;
     }
 
+    if (WKStringIsEqualToUTF8CString(messageName, "SetShouldLogDownloadSize")) {
+        TestController::singleton().setShouldLogDownloadSize(booleanValue(messageBody));
+        return;
+    }
+
     if (WKStringIsEqualToUTF8CString(messageName, "SetAuthenticationUsername")) {
         WKStringRef username = stringValue(messageBody);
         TestController::singleton().setAuthenticationUsername(toWTFString(username));

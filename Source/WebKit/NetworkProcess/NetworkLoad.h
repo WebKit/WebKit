@@ -46,6 +46,7 @@ class NetworkLoad final : private NetworkDataTaskClient {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     NetworkLoad(NetworkLoadClient&, WebCore::BlobRegistryImpl*, NetworkLoadParameters&&, NetworkSession&);
+    NetworkLoad(NetworkLoadClient&, NetworkSession&, const Function<RefPtr<NetworkDataTask>(NetworkDataTaskClient&)>&);
     ~NetworkLoad();
 
     void start();

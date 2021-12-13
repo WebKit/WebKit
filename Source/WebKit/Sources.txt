@@ -133,7 +133,8 @@ NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementConnection.cpp
 NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementDaemonClient.cpp
 NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementManagerProxy.cpp
 
-NetworkProcess/ServiceWorker/ServiceWorkerFetchTask.cpp @no-unify
+NetworkProcess/ServiceWorker/ServiceWorkerDownloadTask.cpp
+NetworkProcess/ServiceWorker/ServiceWorkerFetchTask.cpp
 NetworkProcess/ServiceWorker/ServiceWorkerNavigationPreloader.cpp
 NetworkProcess/ServiceWorker/ServiceWorkerSoftUpdateLoader.cpp
 NetworkProcess/ServiceWorker/WebSWOriginStore.cpp @no-unify
@@ -880,5 +881,6 @@ RemoteShaderModuleMessageReceiver.cpp
 RemoteTextureMessageReceiver.cpp
 RemoteTextureViewMessageReceiver.cpp
 RemoteWebLockRegistryMessageReceiver.cpp
+ServiceWorkerDownloadTaskMessageReceiver.cpp
 WebBroadcastChannelRegistryMessageReceiver.cpp
 WebLockRegistryProxyMessageReceiver.cpp

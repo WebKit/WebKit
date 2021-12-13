@@ -27,6 +27,7 @@
 
 #if ENABLE(SERVICE_WORKER)
 
+#include "DownloadID.h"
 #include "NetworkCacheEntry.h"
 #include "NetworkLoadClient.h"
 #include "NetworkLoadParameters.h"
@@ -39,6 +40,7 @@ class NetworkLoadMetrics;
 
 namespace WebKit {
 
+class DownloadManager;
 class NetworkLoad;
 class NetworkSession;
 
@@ -59,6 +61,8 @@ public:
     const WebCore::ResourceResponse& response() const { return m_response; }
     const WebCore::NetworkLoadMetrics& networkLoadMetrics() const { return m_networkLoadMetrics; }
     bool isServiceWorkerNavigationPreloadEnabled() const { return m_state.enabled; }
+
+    bool convertToDownload(DownloadManager&, DownloadID, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&);
 
 private:
     // NetworkLoadClient.

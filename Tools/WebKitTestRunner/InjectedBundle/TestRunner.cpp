@@ -1008,6 +1008,11 @@ void TestRunner::setShouldLogDownloadCallbacks(bool value)
     postPageMessage("SetShouldLogDownloadCallbacks", value);
 }
 
+void TestRunner::setShouldLogDownloadSize(bool value)
+{
+    postPageMessage("SetShouldLogDownloadSize", value);
+}
+
 void TestRunner::setAuthenticationUsername(JSStringRef username)
 {
     postPageMessage("SetAuthenticationUsername", toWK(username));

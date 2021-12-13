@@ -146,7 +146,7 @@ void TestController::navigationDidBecomeDownloadShared(WKDownloadRef download, c
         TestController::downloadDidReceiveServerRedirectToURL,
         TestController::downloadDidReceiveAuthenticationChallenge,
         TestController::decideDestinationWithSuggestedFilename,
-        nullptr, // didWriteData
+        TestController::downloadDidWriteData,
         TestController::downloadDidFinish,
         TestController::downloadDidFail
     };
@@ -1107,6 +1107,8 @@ bool TestController::resetStateToConsistentValues(const TestOptions& options, Re
 #endif
         clearBundleIdentifierInNetworkProcess();
     }
+
+    m_downloadTotalBytesWritten = { };
 
     return m_doneResetting;
 }
@@ -2237,6 +2239,8 @@ WKStringRef TestController::decideDestinationWithSuggestedFilename(WKDownloadRef
 
 void TestController::downloadDidFinish(WKDownloadRef)
 {
+    if (m_shouldLogDownloadSize)
+        m_currentInvocation->outputText(makeString("Download size: ", m_downloadTotalBytesWritten.value_or(0), ".\n"));
     if (m_shouldLogDownloadCallbacks)
         m_currentInvocation->outputText("Download completed.\n");
     m_currentInvocation->notifyDownloadDone();
@@ -2267,6 +2271,18 @@ void TestController::downloadDidFail(WKDownloadRef, WKErrorRef error)
 void TestController::downloadDidReceiveAuthenticationChallenge(WKDownloadRef, WKAuthenticationChallengeRef authenticationChallenge, const void *clientInfo)
 {
     static_cast<TestController*>(const_cast<void*>(clientInfo))->didReceiveAuthenticationChallenge(nullptr, authenticationChallenge);
+}
+
+void TestController::downloadDidWriteData(long long totalBytesWritten)
+{
+    if (!m_shouldLogDownloadCallbacks)
+        return;
+    m_downloadTotalBytesWritten = totalBytesWritten;
+}
+
+void TestController::downloadDidWriteData(WKDownloadRef download, long long bytesWritten, long long totalBytesWritten, long long totalBytesExpectedToWrite, const void* clientInfo)
+{
+    static_cast<TestController*>(const_cast<void*>(clientInfo))->downloadDidWriteData(totalBytesWritten);
 }
 
 void TestController::webProcessDidTerminate(WKProcessTerminationReason reason)

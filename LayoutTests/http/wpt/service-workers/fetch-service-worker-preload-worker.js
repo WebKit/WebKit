@@ -23,5 +23,7 @@ onactivate = (event) => {
 }
 
 self.addEventListener('fetch', (event) => {
+    if (event.request.url.includes("no-fetch-event-handling"))
+        return;
     event.respondWith(fetch(event.request));
 });

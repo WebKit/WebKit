@@ -58,6 +58,7 @@ public:
     virtual void didNotHandle() = 0;
     virtual void cancel() = 0;
     virtual void continueDidReceiveResponse() = 0;
+    virtual void convertFetchToDownload() = 0;
 };
 
 void dispatchFetchEvent(Ref<Client>&&, ServiceWorkerGlobalScope&, std::optional<ScriptExecutionContextIdentifier>, ResourceRequest&&, String&& referrer, FetchOptions&&, FetchIdentifier, bool isServiceWorkerNavigationPreloadEnabled);

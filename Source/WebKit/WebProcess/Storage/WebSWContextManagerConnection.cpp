@@ -393,6 +393,12 @@ bool WebSWContextManagerConnection::isThrottleable() const
     return m_isThrottleable;
 }
 
+void WebSWContextManagerConnection::convertFetchToDownload(SWServerConnectionIdentifier serverConnectionIdentifier, ServiceWorkerIdentifier serviceWorkerIdentifier, FetchIdentifier fetchIdentifier)
+{
+    if (auto* serviceWorkerThreadProxy = SWContextManager::singleton().serviceWorkerThreadProxy(serviceWorkerIdentifier))
+        serviceWorkerThreadProxy->convertFetchToDownload(serverConnectionIdentifier, fetchIdentifier);
+}
+
 void WebSWContextManagerConnection::didFailHeartBeatCheck(ServiceWorkerIdentifier serviceWorkerIdentifier)
 {
     m_connectionToNetworkProcess->send(Messages::WebSWServerToContextConnection::DidFailHeartBeatCheck { serviceWorkerIdentifier }, 0);

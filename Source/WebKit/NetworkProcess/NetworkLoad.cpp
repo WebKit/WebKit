@@ -56,6 +56,13 @@ NetworkLoad::NetworkLoad(NetworkLoadClient& client, BlobRegistryImpl* blobRegist
         m_task = NetworkDataTask::create(networkSession, *this, m_parameters);
 }
 
+NetworkLoad::NetworkLoad(NetworkLoadClient& client, NetworkSession& networkSession, const Function<RefPtr<NetworkDataTask>(NetworkDataTaskClient&)>& createTask)
+    : m_client(client)
+    , m_networkProcess(networkSession.networkProcess())
+    , m_task(createTask(*this))
+{
+}
+
 void NetworkLoad::start()
 {
     if (!m_task)

@@ -132,6 +132,7 @@ MESSAGE_RECEIVERS = \
 	NetworkProcess/CustomProtocols/LegacyCustomProtocolManager \
 	NetworkProcess/NetworkSocketChannel \
 	NetworkProcess/ServiceWorker/WebSWServerConnection \
+	NetworkProcess/ServiceWorker/ServiceWorkerDownloadTask \
 	NetworkProcess/ServiceWorker/ServiceWorkerFetchTask \
 	NetworkProcess/ServiceWorker/WebSWServerToContextConnection \
 	NetworkProcess/NetworkSocketStream \

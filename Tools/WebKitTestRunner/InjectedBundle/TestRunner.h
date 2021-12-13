@@ -215,6 +215,7 @@ public:
     // Downloads
     bool shouldFinishAfterDownload() const { return m_shouldFinishAfterDownload; }
     void setShouldLogDownloadCallbacks(bool);
+    void setShouldLogDownloadSize(bool);
 
     bool shouldAllowEditing() const { return m_shouldAllowEditing; }
 

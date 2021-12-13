@@ -1,3 +1,72 @@
+2021-12-13  Youenn Fablet  <youenn@apple.com>
+
+        Fix ServiceWorker downloads
+        https://bugs.webkit.org/show_bug.cgi?id=202142
+        <rdar://problem/55721934>
+
+        Reviewed by Alex Christensen.
+
+        Add ServiceWorkerDownloadTask class as a NetworkDataTask whose purpose is to download the content of a response given from service worker.
+        Add a way to convert ServiceWorkerFetchTask into downloads:
+        - If a preload is ongoing and can be used for navigation, use this preload as the download NetworkLoad.
+        - If a preload does not exist, create a ServiceWorkerDownloadTask and a corresponding NetworkLoad to start downloading the service worker response data.
+        When creating a ServiceWorkerDownloadTask, the WebServiceWorkerFetchTaskClient will be notified to start sending response data using ServiceWorkerDownloadTask
+        instead of ServiceWorkerFetchTask messages. This allows cancelling the ServiceWorkerFetchTask without any issue.
+
+        Note that the service worker lifetime is not augmented: if the service worker exits due to all its clients being closed, the download will fail.
+
+        Increase unified build files to 112.
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        * NetworkProcess/NetworkLoad.cpp:
+        * NetworkProcess/NetworkLoad.h:
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        * NetworkProcess/ServiceWorker/ServiceWorkerDownloadTask.cpp: Added.
+        * NetworkProcess/ServiceWorker/ServiceWorkerDownloadTask.h: Added.
+        * NetworkProcess/ServiceWorker/ServiceWorkerDownloadTask.messages.in: Added.
+        * NetworkProcess/ServiceWorker/ServiceWorkerFetchTask.cpp:
+        * NetworkProcess/ServiceWorker/ServiceWorkerFetchTask.h:
+        * NetworkProcess/ServiceWorker/ServiceWorkerNavigationPreloader.cpp:
+        * NetworkProcess/ServiceWorker/ServiceWorkerNavigationPreloader.h:
+        * NetworkProcess/ServiceWorker/WebSWServerToContextConnection.cpp:
+        * NetworkProcess/ServiceWorker/WebSWServerToContextConnection.h:
+        * NetworkProcess/storage/NetworkStorageManager.cpp:
+        * Scripts/generate-unified-sources.sh:
+        * Scripts/webkit/messages.py:
+        * Scripts/webkit/tests/TestWithCVPixelBufferMessageReceiver.cpp:
+        (WebKit::TestWithCVPixelBuffer::didReceiveMessage):
+        * Scripts/webkit/tests/TestWithIfMessageMessageReceiver.cpp:
+        (WebKit::TestWithIfMessage::didReceiveMessage):
+        * Scripts/webkit/tests/TestWithImageDataMessageReceiver.cpp:
+        (WebKit::TestWithImageData::didReceiveMessage):
+        * Scripts/webkit/tests/TestWithLegacyReceiverMessageReceiver.cpp:
+        (WebKit::TestWithLegacyReceiver::didReceiveTestWithLegacyReceiverMessage):
+        * Scripts/webkit/tests/TestWithSemaphoreMessageReceiver.cpp:
+        (WebKit::TestWithSemaphore::didReceiveMessage):
+        * Scripts/webkit/tests/TestWithStreamBufferMessageReceiver.cpp:
+        (WebKit::TestWithStreamBuffer::didReceiveMessage):
+        * Scripts/webkit/tests/TestWithStreamMessageReceiver.cpp:
+        (WebKit::TestWithStream::didReceiveStreamMessage):
+        * Scripts/webkit/tests/TestWithoutAttributesMessageReceiver.cpp:
+        (WebKit::TestWithoutAttributes::didReceiveMessage):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::receivedPolicyDecision):
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::download):
+        (WebKit::WebProcessPool::createDownloadProxy):
+        * Sources.txt:
+        * UnifiedSources-output.xcfilelist:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/Storage/WebSWContextManagerConnection.cpp:
+        * WebProcess/Storage/WebSWContextManagerConnection.h:
+        * WebProcess/Storage/WebSWContextManagerConnection.messages.in:
+        * WebProcess/Storage/WebServiceWorkerFetchTaskClient.cpp:
+        * WebProcess/Storage/WebServiceWorkerFetchTaskClient.h:
+
 2021-12-13  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         Cocoa WebGL should support UI side compositing

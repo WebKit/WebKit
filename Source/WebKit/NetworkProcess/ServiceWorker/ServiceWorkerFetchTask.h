@@ -28,6 +28,7 @@
 #if ENABLE(SERVICE_WORKER)
 
 #include "DataReference.h"
+#include "DownloadID.h"
 #include <WebCore/FetchIdentifier.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/ScriptExecutionContextIdentifier.h>
@@ -54,6 +55,7 @@ class NetworkLoadMetrics;
 }
 
 namespace WebKit {
+class DownloadManager;
 class NetworkResourceLoader;
 class NetworkSession;
 class ServiceWorkerNavigationPreloader;
@@ -84,6 +86,8 @@ public:
 
     void cannotHandle();
     void contextClosed();
+
+    bool convertToDownload(DownloadManager&, DownloadID, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&);
 
 private:
     enum class ShouldSetSource : bool { No, Yes };

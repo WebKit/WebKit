@@ -28,6 +28,7 @@
 
 #if ENABLE(SERVICE_WORKER)
 
+#include "DownloadManager.h"
 #include "Logging.h"
 #include "NetworkCache.h"
 #include "NetworkLoad.h"
@@ -240,6 +241,15 @@ void ServiceWorkerNavigationPreloader::waitForBody(BodyCallback&& callback)
     if (m_responseCompletionHandler)
         m_responseCompletionHandler(PolicyAction::Use);
     m_bodyCallback = WTFMove(callback);
+}
+
+bool ServiceWorkerNavigationPreloader::convertToDownload(DownloadManager& manager, DownloadID downloadID, const WebCore::ResourceRequest& request, const WebCore::ResourceResponse& response)
+{
+    if (!m_networkLoad)
+        return false;
+
+    manager.convertNetworkLoadToDownload(downloadID, std::exchange(m_networkLoad, nullptr), WTFMove(m_responseCompletionHandler), { }, request, response);
+    return true;
 }
 
 } // namespace WebKit

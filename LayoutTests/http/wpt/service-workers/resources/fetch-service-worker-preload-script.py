@@ -31,5 +31,10 @@ def main(request, response):
     if not value:
         value = b"nothing"
     response.headers.set(b"Cache-Control", b"no-cache")
+
+    if b"download" in request.GET:
+        response.headers.set(b"Content-Type", b"text/vcard")
+        return value.decode()
+
     response.headers.set(b"Content-Type", b"text/html")
     return "<html><body><script>window.value = '%s';</script></body></html>" % value.decode()

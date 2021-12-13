@@ -56,6 +56,7 @@ private:
     void didNotHandle() final;
     void cancel() final;
     void continueDidReceiveResponse() final;
+    void convertFetchToDownload() final;
 
     void cleanup();
     
@@ -84,6 +85,7 @@ private:
     bool m_waitingForContinueDidReceiveResponseMessage { false };
     std::variant<std::nullptr_t, Ref<WebCore::SharedBuffer>, Ref<WebCore::FormData>, UniqueRef<WebCore::ResourceError>> m_responseData;
     bool m_didFinish { false };
+    bool m_isDownload { false };
 };
 
 } // namespace WebKit

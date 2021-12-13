@@ -484,6 +484,11 @@ void NetworkResourceLoader::convertToDownload(DownloadID downloadID, const Resou
 {
     LOADER_RELEASE_LOG("convertToDownload: (downloadID=%" PRIu64 ", hasNetworkLoad=%d, hasResponseCompletionHandler=%d)", downloadID.toUInt64(), !!m_networkLoad, !!m_responseCompletionHandler);
 
+#if ENABLE(SERVICE_WORKER)
+    if (m_serviceWorkerFetchTask && m_serviceWorkerFetchTask->convertToDownload(m_connection->networkProcess().downloadManager(), downloadID, request, response))
+        return;
+#endif
+
     // This can happen if the resource came from the disk cache.
     if (!m_networkLoad) {
         m_connection->networkProcess().downloadManager().startDownload(sessionID(), downloadID, request, m_parameters.isNavigatingToAppBoundDomain);

@@ -31,6 +31,7 @@
 #include "Connection.h"
 #include "FormDataReference.h"
 #include "Logging.h"
+#include "NetworkLoad.h"
 #include "NetworkProcess.h"
 #include "NetworkResourceLoader.h"
 #include "NetworkSession.h"
@@ -302,7 +303,10 @@ void ServiceWorkerFetchTask::cannotHandle()
 
 void ServiceWorkerFetchTask::cancelFromClient()
 {
-    SWFETCH_RELEASE_LOG("cancelFromClient:");
+    SWFETCH_RELEASE_LOG("cancelFromClient: isDone=%d", m_isDone);
+    if (m_isDone)
+        return;
+
     sendToServiceWorker(Messages::WebSWContextManagerConnection::CancelFetch { m_serverConnectionIdentifier, m_serviceWorkerIdentifier, m_fetchIdentifier });
 }
 
@@ -416,6 +420,36 @@ void ServiceWorkerFetchTask::cancelPreloadIfNecessary()
 NetworkSession* ServiceWorkerFetchTask::session()
 {
     return m_swServerConnection ? m_swServerConnection->session() : nullptr;
+}
+
+bool ServiceWorkerFetchTask::convertToDownload(DownloadManager& manager, DownloadID downloadID, const ResourceRequest& request, const ResourceResponse& response)
+{
+    if (m_preloader  && !m_preloader->isServiceWorkerNavigationPreloadEnabled())
+        return m_preloader->convertToDownload(manager, downloadID, request, response);
+
+    auto* session = this->session();
+    if (!session || !m_serviceWorkerConnection)
+        return false;
+
+    m_isDone = true;
+
+    // FIXME: We might want to keep the service worker alive until the download ends.
+    RefPtr<ServiceWorkerDownloadTask> serviceWorkerDownloadTask;
+    auto serviceWorkerDownloadLoad = makeUnique<NetworkLoad>(m_loader, *session, [&](auto& client) {
+        serviceWorkerDownloadTask =  ServiceWorkerDownloadTask::create(*session, client, *m_serviceWorkerConnection, m_serviceWorkerIdentifier, m_serverConnectionIdentifier, m_fetchIdentifier, request, downloadID);
+        return serviceWorkerDownloadTask.copyRef();
+    });
+
+    ResponseCompletionHandler completionHandler = [serviceWorkerDownloadTask = WTFMove(serviceWorkerDownloadTask)](auto policy) {
+        if (policy != PolicyAction::Download) {
+            serviceWorkerDownloadTask->stop();
+            return;
+        }
+        serviceWorkerDownloadTask->start();
+    };
+
+    manager.convertNetworkLoadToDownload(downloadID, WTFMove(serviceWorkerDownloadLoad), WTFMove(completionHandler), { }, request, response);
+    return true;
 }
 
 } // namespace WebKit

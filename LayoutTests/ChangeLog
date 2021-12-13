@@ -1,3 +1,27 @@
+2021-12-13  Youenn Fablet  <youenn@apple.com>
+
+        Fix ServiceWorker downloads
+        https://bugs.webkit.org/show_bug.cgi?id=202142
+        <rdar://problem/55721934>
+
+        Reviewed by Alex Christensen.
+
+        * http/tests/workers/service/resources/service-worker-download-worker.js:
+        * http/tests/workers/service/service-worker-download-body.https-expected.txt: Added.
+        * http/tests/workers/service/service-worker-download-body.https.html: Added.
+        * http/tests/workers/service/service-worker-download-stream.https-expected.txt: Added.
+        * http/tests/workers/service/service-worker-download-stream.https.html: Added.
+        * http/tests/workers/service/service-worker-download.https-expected.txt:
+        * http/tests/workers/service/service-worker-download.https.html:
+        * http/wpt/service-workers/fetch-service-worker-preload-download-through-direct-preload.https-expected.txt: Added.
+        * http/wpt/service-workers/fetch-service-worker-preload-download-through-direct-preload.https.html: Added.
+        * http/wpt/service-workers/fetch-service-worker-preload-download.https-expected.txt: Added.
+        * http/wpt/service-workers/fetch-service-worker-preload-download.https.html: Added.
+        * http/wpt/service-workers/fetch-service-worker-preload-worker.js:
+        * http/wpt/service-workers/resources/fetch-service-worker-preload-script.py:
+        * platform/ios/http/wpt/service-workers/fetch-service-worker-preload-download-through-direct-preload.https-expected.txt: Added.
+        * platform/ios/http/wpt/service-workers/fetch-service-worker-preload-download.https-expected.txt: Added.
+
 2021-12-13  Martin Robinson  <mrobinson@webkit.org>
 
         `transform-origin` on SVG elements does not take into account the transform reference box origin

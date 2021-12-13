@@ -396,6 +396,9 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/SampleBufferDisplayLayerMessagesRepl
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/SecItemShimProxyMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/SecItemShimProxyMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/SecItemShimProxyMessagesReplies.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/ServiceWorkerDownloadTaskMessageReceiver.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/ServiceWorkerDownloadTaskMessages.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/ServiceWorkerDownloadTaskMessagesReplies.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/ServiceWorkerFetchTaskMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/ServiceWorkerFetchTaskMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/ServiceWorkerFetchTaskMessagesReplies.h

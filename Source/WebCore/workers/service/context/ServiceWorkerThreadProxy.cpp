@@ -242,6 +242,20 @@ void ServiceWorkerThreadProxy::cancelFetch(SWServerConnectionIdentifier connecti
     }, WorkerRunLoop::defaultMode());
 }
 
+
+void ServiceWorkerThreadProxy::convertFetchToDownload(SWServerConnectionIdentifier connectionIdentifier, FetchIdentifier fetchIdentifier)
+{
+    RELEASE_LOG(ServiceWorker, "ServiceWorkerThreadProxy::convertFetchToDownload %llu", fetchIdentifier.toUInt64());
+
+    auto client = m_ongoingFetchTasks.take(std::make_pair(connectionIdentifier, fetchIdentifier));
+    if (!client)
+        return;
+
+    postTaskForModeToWorkerOrWorkletGlobalScope([client = Ref { *client }] (auto&) {
+        client->convertFetchToDownload();
+    }, WorkerRunLoop::defaultMode());
+}
+
 void ServiceWorkerThreadProxy::continueDidReceiveFetchResponse(SWServerConnectionIdentifier connectionIdentifier, FetchIdentifier fetchIdentifier)
 {
     auto client = m_ongoingFetchTasks.get(std::make_pair(connectionIdentifier, fetchIdentifier));

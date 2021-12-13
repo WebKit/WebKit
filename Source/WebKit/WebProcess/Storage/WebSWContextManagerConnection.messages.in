@@ -43,6 +43,8 @@ messages -> WebSWContextManagerConnection NotRefCounted {
     UpdatePreferencesStore(struct WebKit::WebPreferencesStore store)
     Close()
     SetThrottleState(bool isThrottleable)
+
+    ConvertFetchToDownload(WebCore::SWServerConnectionIdentifier serverConnectionIdentifier, WebCore::ServiceWorkerIdentifier serviceWorkerIdentifier, WebCore::FetchIdentifier identifier)
 }
 
 #endif
