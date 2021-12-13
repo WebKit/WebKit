@@ -1,3 +1,20 @@
+2021-12-13  waddlesplash  <waddlesplash@gmail.com>
+
+        ExecutableAllocator: Do not store things in g_config when USE(SYSTEM_MALLOC).
+        https://bugs.webkit.org/show_bug.cgi?id=232165
+
+        Reviewed by Yusuke Suzuki.
+
+        Following r281910 two additional slots were added
+        to g_config in order to store these pointers for use in bmalloc and Gigacage. However, when
+        USE(SYSTEM_MALLOC) is enabled, there are no slots reserved for Gigacage, and so this collided
+        with g_wtfConfig and overwrote data there instead.
+
+        This should fix crashes seen on Haiku, which enables USE(SYSTEM_MALLOC).
+
+        * jit/ExecutableAllocator.cpp:
+        (JSC::initializeJITPageReservation):
+
 2021-12-13  Elliott Williams  <emw@apple.com>
 
         Deployment target for macOS 11+ does not follow minor version bumps
