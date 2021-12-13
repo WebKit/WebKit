@@ -50,6 +50,8 @@ private:
     void willStartRenderingUpdate() final;
     void didCompleteRenderingUpdate() final;
 
+    void didCompletePlatformRenderingUpdate() final;
+
     void updateTiledScrollingIndicator();
 
     void startMonitoringWheelEvents(bool clearLatchingState) final;

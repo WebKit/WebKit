@@ -659,6 +659,11 @@ public:
 
     void didUpdateRendering();
 
+    // A "platform rendering update" here describes the work done by the system graphics framework before work is submitted to the system compositor.
+    // On macOS, this is a CoreAnimation commit.
+    void willStartPlatformRenderingUpdate();
+    void didCompletePlatformRenderingUpdate();
+
 #if PLATFORM(MAC)
     void setTopOverhangImage(WebImage*);
     void setBottomOverhangImage(WebImage*);

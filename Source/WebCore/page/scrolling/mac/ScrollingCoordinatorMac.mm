@@ -135,6 +135,11 @@ void ScrollingCoordinatorMac::didCompleteRenderingUpdate()
     downcast<ThreadedScrollingTree>(scrollingTree())->didCompleteRenderingUpdate();
 }
 
+void ScrollingCoordinatorMac::didCompletePlatformRenderingUpdate()
+{
+    downcast<ThreadedScrollingTree>(scrollingTree())->didCompletePlatformRenderingUpdate();
+}
+
 void ScrollingCoordinatorMac::updateTiledScrollingIndicator()
 {
     FrameView* frameView = m_page->mainFrame().view();

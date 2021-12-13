@@ -4244,6 +4244,20 @@ void WebPage::finalizeRenderingUpdate(OptionSet<FinalizeRenderingUpdateFlags> fl
 #endif
 }
 
+void WebPage::willStartPlatformRenderingUpdate()
+{
+    if (m_isClosed)
+        return;
+    m_page->willStartPlatformRenderingUpdate();
+}
+
+void WebPage::didCompletePlatformRenderingUpdate()
+{
+    if (m_isClosed)
+        return;
+    m_page->didCompletePlatformRenderingUpdate();
+}
+
 void WebPage::releaseMemory(Critical)
 {
 #if ENABLE(GPU_PROCESS)

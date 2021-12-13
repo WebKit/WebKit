@@ -1,5 +1,99 @@
 2021-12-13  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r286905. rdar://problem/86235740
+
+    Scrolling can drop frames when CoreAnimation commits take a long time
+    https://bugs.webkit.org/show_bug.cgi?id=234160
+    <rdar://86235740>
+    
+    Reviewed by Tim Horton.
+    
+    In r261985 I added a mechanism that has the scrolling thread wait for the main thread to
+    finish a rendering update, and, if the main thread fails to complete in time, then the
+    scrolling thread commits. This allows for scrolling synchronization when the main thread is
+    responsive, but smooth scrolling when the main thread is busy.
+    
+    However, r261985 only waits for WebKit work to finish; what we really care about is whether
+    the main thread completes its CA commit in time (because that determines whether the scroll
+    shows on the screen).
+    
+    So plumb through pre-/post-commit hooks from TiledCoreAnimationDrawingArea, which already
+    had them for inspector instrumentation. Then have ThreadedScrollingTree notify
+    m_stateCondition in didCompletePlatformRenderingUpdate(), instead of
+    didCompleteRenderingUpdate().
+    Source/WebCore:
+    
+    Also, now we can call the inspector hooks from Page, rather than out in TiledCoreAnimationDrawingArea.
+    
+    * page/Page.cpp:
+    (WebCore::Page::willStartPlatformRenderingUpdate):
+    (WebCore::Page::didCompletePlatformRenderingUpdate):
+    * page/Page.h:
+    * page/scrolling/ScrollingCoordinator.h:
+    (WebCore::ScrollingCoordinator::willStartPlatformRenderingUpdate):
+    (WebCore::ScrollingCoordinator::didCompletePlatformRenderingUpdate):
+    * page/scrolling/ThreadedScrollingTree.cpp:
+    (WebCore::ThreadedScrollingTree::didCompletePlatformRenderingUpdate):
+    (WebCore::ThreadedScrollingTree::didCompleteRenderingUpdate): Deleted.
+    * page/scrolling/ThreadedScrollingTree.h:
+    * page/scrolling/mac/ScrollingCoordinatorMac.h:
+    * page/scrolling/mac/ScrollingCoordinatorMac.mm:
+    (WebCore::ScrollingCoordinatorMac::didCompletePlatformRenderingUpdate):
+    
+    Source/WebKit:
+    
+    Also, now we can call the inspector hooks from Page, rather than out in TiledCoreAnimationDrawingArea.
+    
+    * WebProcess/WebPage/WebPage.cpp:
+    (WebKit::WebPage::willStartPlatformRenderingUpdate):
+    (WebKit::WebPage::didCompletePlatformRenderingUpdate):
+    * WebProcess/WebPage/WebPage.h:
+    * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+    (WebKit::TiledCoreAnimationDrawingArea::addCommitHandlers):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@286905 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-12-10  Simon Fraser  <simon.fraser@apple.com>
+
+            Scrolling can drop frames when CoreAnimation commits take a long time
+            https://bugs.webkit.org/show_bug.cgi?id=234160
+            <rdar://86235740>
+
+            Reviewed by Tim Horton.
+
+            In r261985 I added a mechanism that has the scrolling thread wait for the main thread to
+            finish a rendering update, and, if the main thread fails to complete in time, then the
+            scrolling thread commits. This allows for scrolling synchronization when the main thread is
+            responsive, but smooth scrolling when the main thread is busy.
+
+            However, r261985 only waits for WebKit work to finish; what we really care about is whether
+            the main thread completes its CA commit in time (because that determines whether the scroll
+            shows on the screen).
+
+            So plumb through pre-/post-commit hooks from TiledCoreAnimationDrawingArea, which already
+            had them for inspector instrumentation. Then have ThreadedScrollingTree notify
+            m_stateCondition in didCompletePlatformRenderingUpdate(), instead of
+            didCompleteRenderingUpdate().
+
+            Also, now we can call the inspector hooks from Page, rather than out in TiledCoreAnimationDrawingArea.
+
+            * page/Page.cpp:
+            (WebCore::Page::willStartPlatformRenderingUpdate):
+            (WebCore::Page::didCompletePlatformRenderingUpdate):
+            * page/Page.h:
+            * page/scrolling/ScrollingCoordinator.h:
+            (WebCore::ScrollingCoordinator::willStartPlatformRenderingUpdate):
+            (WebCore::ScrollingCoordinator::didCompletePlatformRenderingUpdate):
+            * page/scrolling/ThreadedScrollingTree.cpp:
+            (WebCore::ThreadedScrollingTree::didCompletePlatformRenderingUpdate):
+            (WebCore::ThreadedScrollingTree::didCompleteRenderingUpdate): Deleted.
+            * page/scrolling/ThreadedScrollingTree.h:
+            * page/scrolling/mac/ScrollingCoordinatorMac.h:
+            * page/scrolling/mac/ScrollingCoordinatorMac.mm:
+            (WebCore::ScrollingCoordinatorMac::didCompletePlatformRenderingUpdate):
+
+2021-12-13  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r286932. rdar://problem/86385697
 
     Ensure that the scrolling thread always commits layer position changes to reduce scrolling stutters
