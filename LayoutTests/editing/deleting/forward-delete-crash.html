@@ -18,8 +18,6 @@
     let img0 = document.createElement('img');
     img0.onerror = () => {
       document.execCommand('ForwardDelete');
-      setTimeout(function() { window.testRunner.notifyDone(); }, 0);
-      document.write("Test passes if it does not crash.");
     };
     let datalist0 = document.createElement('datalist');
     document.head.appendChild(datalist0);
@@ -39,5 +37,6 @@
     else
       await document.fonts.load("80px Ahem");
     document.execCommand('Delete');
+    setTimeout(function() { document.write("Test passes if it does not crash."); window.testRunner.notifyDone(); }, 0);
   };
 </script>

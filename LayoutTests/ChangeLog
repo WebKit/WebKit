@@ -1,3 +1,17 @@
+2021-12-13  Rob Buis  <rbuis@igalia.com>
+
+        [ macOS and iOS ] editing/deleting/forward-delete-crash.html is timing out
+        https://bugs.webkit.org/show_bug.cgi?id=230047
+
+        Reviewed by Wenson Hsieh.
+
+        Rewrite forward-delete-crash.html to avoid the timeouts on
+        macOS and iOS.
+
+        * editing/deleting/forward-delete-crash.html:
+        * platform/ipad/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2021-12-13  Tim Nguyen  <ntim@apple.com>
 
         Fix paint order of CSS text decorations
