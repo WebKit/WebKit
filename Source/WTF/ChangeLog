@@ -1,3 +1,42 @@
+2021-12-13  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r286858. rdar://problem/86423741
+
+    Use simpler idioms for std::less and std::greater possible in modern C++
+    https://bugs.webkit.org/show_bug.cgi?id=234117
+    
+    Reviewed by Anders Carlsson.
+    
+    Source/WebCore:
+    
+    * testing/InternalsMapLike.cpp:
+    (WebCore::InternalsMapLike::inspectValues const): Remove unneeded explicit
+    use of std:less, because this is what std::sort by default.
+    
+    Source/WebKit:
+    
+    * WebProcess/WebPage/MomentumEventDispatcher.cpp:
+    (WebKit::MomentumEventDispatcher::equalizeTailGaps): Removed unneeded
+    template arguments for std::greater, and removed explicit use of std::less,
+    since that's what std::sort does by default.
+    
+    Source/WTF:
+    
+    * wtf/ListDump.h:
+    (WTF::sortedListDump): Removed unnecessary template arguments to std::less.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@286858 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-12-09  Darin Adler  <darin@apple.com>
+
+            Use simpler idioms for std::less and std::greater possible in modern C++
+            https://bugs.webkit.org/show_bug.cgi?id=234117
+
+            Reviewed by Anders Carlsson.
+
+            * wtf/ListDump.h:
+            (WTF::sortedListDump): Removed unnecessary template arguments to std::less.
+
 2021-12-06  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r286537. rdar://problem/85928816
