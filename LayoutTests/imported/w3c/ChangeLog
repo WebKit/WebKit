@@ -1,3 +1,13 @@
+2021-12-13  Youenn Fablet  <youenn@apple.com>
+
+        Implement step 17 of main fetch algorithm
+        https://bugs.webkit.org/show_bug.cgi?id=234140
+
+        Reviewed by Brent Fulgham.
+
+        * web-platform-tests/service-workers/service-worker/fetch-csp.https.html:
+        * web-platform-tests/service-workers/service-worker/resources/fetch-csp-iframe.html.sub.headers:
+
 2021-12-11  Antoine Quint  <graouts@webkit.org>
 
         Expose a frameRate property to Web Animations
