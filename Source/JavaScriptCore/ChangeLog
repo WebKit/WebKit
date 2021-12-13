@@ -1,3 +1,37 @@
+2021-12-13  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Use FixedVector for wasm exception in Wasm::Instance
+        https://bugs.webkit.org/show_bug.cgi?id=234224
+
+        Reviewed by Saam Barati.
+
+        Since we know # of exception tags when instantiating Wasm::Instance,
+        we can use FixedVector instead of Vector. This is the same to Table,
+        Functions etc.
+
+        We also remove Wasm::Tag::m_id. Since we do not copy Wasm::Tag and
+        we always allocate Wasm::Tag from heap, we can just use pointer
+        comparison. Then, we do not need to have this m_id.
+
+        * wasm/WasmInstance.cpp:
+        (JSC::Wasm::Instance::Instance):
+        (JSC::Wasm::Instance::setTag):
+        (JSC::Wasm::Instance::addTag): Deleted.
+        * wasm/WasmInstance.h:
+        * wasm/WasmModuleInformation.h:
+        (JSC::Wasm::ModuleInformation::internalExceptionCount const):
+        * wasm/WasmTag.cpp:
+        * wasm/WasmTag.h:
+        (JSC::Wasm::Tag::create): Deleted.
+        (JSC::Wasm::Tag::parameterCount const): Deleted.
+        (JSC::Wasm::Tag::parameter const): Deleted.
+        (JSC::Wasm::Tag::operator== const): Deleted.
+        (JSC::Wasm::Tag::operator!= const): Deleted.
+        (JSC::Wasm::Tag::signature const): Deleted.
+        (JSC::Wasm::Tag::Tag): Deleted.
+        * wasm/js/WebAssemblyModuleRecord.cpp:
+        (JSC::WebAssemblyModuleRecord::initializeImportsAndExports):
+
 2021-12-13  waddlesplash  <waddlesplash@gmail.com>
 
         ExecutableAllocator: Do not store things in g_config when USE(SYSTEM_MALLOC).

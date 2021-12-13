@@ -31,7 +31,7 @@
 
 namespace JSC { namespace Wasm {
 
-class Tag : public ThreadSafeRefCounted<Tag> {
+class Tag final : public ThreadSafeRefCounted<Tag> {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(Tag);
 public:
@@ -40,20 +40,19 @@ public:
     SignatureArgCount parameterCount() const { return m_signature->argumentCount(); }
     Type parameter(SignatureArgCount i) const { return m_signature->argument(i); }
 
-    bool operator==(const Tag& other) const { return m_id == other.m_id; }
-    bool operator!=(const Tag& other) const { return m_id != other.m_id; }
+    // Since (1) we do not copy Wasm::Tag and (2) we always allocate Wasm::Tag from heap, we can use
+    // pointer comparison for identity check.
+    bool operator==(const Tag& other) const { return this == &other; }
+    bool operator!=(const Tag& other) const { return this != &other; }
 
     const Signature& signature() const { return m_signature.get(); }
 
 private:
     Tag(const Signature& signature)
-        : m_id(++s_id)
-        , m_signature(Ref { signature })
+        : m_signature(Ref { signature })
     {
     }
 
-    static std::atomic<uint32_t> s_id;
-    uint32_t m_id;
     Ref<const Signature> m_signature;
 };
 

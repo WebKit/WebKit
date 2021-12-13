@@ -405,7 +405,7 @@ void WebAssemblyModuleRecord::initializeImportsAndExports(JSGlobalObject* global
             if (expectedSignatureIndex != tag->tag().signature().index())
                 return exception(createJSWebAssemblyLinkError(globalObject, vm, importFailMessage(import, "imported Tag", "signature doesn't match the imported WebAssembly Tag's signature")));
 
-            m_instance->instance().addTag(tag->tag());
+            m_instance->instance().setTag(import.kindIndex, tag->tag());
             break;
         }
 
@@ -478,8 +478,10 @@ void WebAssemblyModuleRecord::initializeImportsAndExports(JSGlobalObject* global
     // This needs to be looked up after the memory is initialized, as the codeBlock depends on the memory mode.
     Wasm::CodeBlock* codeBlock = m_instance->instance().codeBlock();
 
-    for (Wasm::SignatureIndex signatureIndex : moduleInformation.internalExceptionSignatureIndices)
-        m_instance->instance().addTag(Wasm::Tag::create(Wasm::SignatureInformation::get(signatureIndex)));
+    for (unsigned index = 0; index < moduleInformation.internalExceptionSignatureIndices.size(); ++index) {
+        Wasm::SignatureIndex signatureIndex = moduleInformation.internalExceptionSignatureIndices[index];
+        m_instance->instance().setTag(moduleInformation.importExceptionCount() + index, Wasm::Tag::create(Wasm::SignatureInformation::get(signatureIndex)));
+    }
 
     unsigned functionImportCount = codeBlock->functionImportCount();
     auto makeFunctionWrapper = [&] (uint32_t index) -> JSValue {

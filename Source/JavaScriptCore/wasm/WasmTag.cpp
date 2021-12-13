@@ -31,8 +31,6 @@
 namespace JSC {
 namespace Wasm {
 
-std::atomic<uint32_t> Tag::s_id = 0;
-
 } } // namespace JSC::Wasm
 
 #endif

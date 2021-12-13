@@ -209,9 +209,8 @@ public:
         m_storeTopCallFrame(callFrame);
     }
 
-    void addTag(const Tag&);
-    void addTag(Ref<Tag>&&);
     const Tag& tag(unsigned i) const { return *m_tags[i]; }
+    void setTag(unsigned, Ref<const Tag>&&);
 
 private:
     Instance(Context*, Ref<Module>&&, EntryFrame**, void**, StoreTopCallFrameCallback&&);
@@ -239,7 +238,7 @@ private:
     HashMap<uint32_t, Ref<Global>, IntHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> m_linkedGlobals;
     BitVector m_passiveElements;
     BitVector m_passiveDataSegments;
-    Vector<RefPtr<const Tag>> m_tags;
+    FixedVector<RefPtr<const Tag>> m_tags;
 };
 
 } } // namespace JSC::Wasm
