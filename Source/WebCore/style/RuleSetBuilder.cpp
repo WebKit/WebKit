@@ -110,8 +110,7 @@ void RuleSetBuilder::addChildRules(const Vector<RefPtr<StyleRuleBase>>& rules)
             continue;
         }
         if (is<StyleRuleLayer>(*rule)) {
-            if (!m_ruleSet && !m_mediaQueryCollector.dynamicContextStack.isEmpty())
-                requiresStaticMediaQueryEvaluation = true;
+            disallowDynamicMediaQueryEvaluationIfNeeded();
 
             auto& layerRule = downcast<StyleRuleLayer>(*rule);
             if (layerRule.isStatement()) {
@@ -126,8 +125,7 @@ void RuleSetBuilder::addChildRules(const Vector<RefPtr<StyleRuleBase>>& rules)
             continue;
         }
         if (is<StyleRuleFontFace>(*rule) || is<StyleRuleFontPaletteValues>(*rule) || is<StyleRuleKeyframes>(*rule)) {
-            if (!m_ruleSet && !m_mediaQueryCollector.dynamicContextStack.isEmpty())
-                requiresStaticMediaQueryEvaluation = true;
+            disallowDynamicMediaQueryEvaluationIfNeeded();
 
             if (m_resolver)
                 m_collectedResolverMutatingRules.append({ *rule, m_currentCascadeLayerIdentifier });
@@ -151,8 +149,10 @@ void RuleSetBuilder::addRulesFromSheetContents(const StyleSheetContents& sheet)
 
         if (m_mediaQueryCollector.pushAndEvaluate(rule->mediaQueries())) {
             auto& cascadeLayerName = rule->cascadeLayerName();
-            if (cascadeLayerName)
+            if (cascadeLayerName) {
+                disallowDynamicMediaQueryEvaluationIfNeeded();
                 pushCascadeLayer(*cascadeLayerName);
+            }
 
             addRulesFromSheetContents(*rule->styleSheet());
 
@@ -179,6 +179,13 @@ void RuleSetBuilder::addStyleRule(const StyleRule& rule)
 
         ++selectorListIndex;
     }
+}
+
+void RuleSetBuilder::disallowDynamicMediaQueryEvaluationIfNeeded()
+{
+    bool isScanningForDynamicEvaluation = !m_ruleSet;
+    if (isScanningForDynamicEvaluation && !m_mediaQueryCollector.dynamicContextStack.isEmpty())
+        requiresStaticMediaQueryEvaluation = true;
 }
 
 void RuleSetBuilder::registerLayers(const Vector<CascadeLayerName>& names)

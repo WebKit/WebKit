@@ -40,6 +40,7 @@ private:
     void addRulesFromSheetContents(const StyleSheetContents&);
     void addChildRules(const Vector<RefPtr<StyleRuleBase>>&);
     void addStyleRule(const StyleRule&);
+    void disallowDynamicMediaQueryEvaluationIfNeeded();
 
     void registerLayers(const Vector<CascadeLayerName>&);
     void pushCascadeLayer(const CascadeLayerName&);
