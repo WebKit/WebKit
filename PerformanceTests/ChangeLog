@@ -1,3 +1,18 @@
+2021-12-13  Cathie Chen  <cathiechen@igalia.com>
+
+        [Performance test] Add test lots-of-self-painting-layers.html
+        https://bugs.webkit.org/show_bug.cgi?id=233684
+
+        Reviewed by Rob Buis.
+
+        This test is a transform of the test [1] in blink. It uses position: relative to create
+        lots of self-painting layers. By changing the first layer's height, it tracks the repaint
+        performance of these self-painting layers.
+
+        [1] third_party/blink/perf_tests/layout/contain-content-style-change.html
+
+        * Paint/lots-of-self-painting-layers.html: Added.
+
 2021-12-08  Alan Bujtas  <zalan@apple.com>
 
         Add layout performance test for simple bidi content with inline boxes
