@@ -1307,6 +1307,7 @@
         SYS_socket
         SYS_thread_selfusage
         SYS_unlink
+        SYS_write
         SYS_writev))
 
 (define (syscall-unix-rarely-in-use-need-backtrace)
