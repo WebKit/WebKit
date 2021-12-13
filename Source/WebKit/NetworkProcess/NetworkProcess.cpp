@@ -158,7 +158,6 @@ static inline MessagePortChannelRegistry createMessagePortChannelRegistry(Networ
 
 NetworkProcess::NetworkProcess(AuxiliaryProcessInitializationParameters&& parameters)
     : m_downloadManager(*this)
-    , m_storageManagerSet(StorageManagerSet::create())
 #if ENABLE(CONTENT_EXTENSIONS)
     , m_networkContentRuleListManager(*this)
 #endif
@@ -314,12 +313,13 @@ void NetworkProcess::lowMemoryHandler(Critical critical)
         networkSession.clearPrefetchCache();
     });
 
-    m_storageManagerSet->handleLowMemoryWarning();
-
 #if ENABLE(SERVICE_WORKER)
     for (auto& swServer : m_swServers.values())
         swServer->handleLowMemoryWarning();
 #endif
+
+    for (auto& manager : m_storageManagers.values())
+        manager->handleLowMemoryWarning();
 }
 
 void NetworkProcess::initializeNetworkProcess(NetworkProcessCreationParameters&& parameters)
@@ -402,7 +402,6 @@ void NetworkProcess::createNetworkConnectionToWebProcess(ProcessIdentifier ident
 
     connection.setOnLineState(NetworkStateNotifier::singleton().onLine());
 
-    m_storageManagerSet->addConnection(connection.connection());
     webIDBServer(sessionID).addConnection(connection.connection(), identifier);
     if (auto manager = m_storageManagers.get(sessionID))
         manager->startReceivingMessageFromConnection(connection.connection());
@@ -421,7 +420,7 @@ void NetworkProcess::addWebsiteDataStore(WebsiteDataStoreParameters&& parameters
 {
     auto sessionID = parameters.networkSessionParameters.sessionID;
 
-    addStorageManagerForSession(sessionID, parameters.generalStorageDirectory, parameters.generalStorageDirectoryHandle);
+    addStorageManagerForSession(sessionID, parameters.generalStorageDirectory, parameters.generalStorageDirectoryHandle, parameters.localStorageDirectory, parameters.localStorageDirectoryExtensionHandle);
     addSessionStorageQuotaManager(sessionID, parameters.perOriginStorageQuota, parameters.perThirdPartyOriginStorageQuota, parameters.cacheStorageDirectory, parameters.cacheStorageDirectoryExtensionHandle);
 
     addIndexedDatabaseSession(sessionID, parameters.indexedDatabaseDirectory, parameters.indexedDatabaseDirectoryExtensionHandle);
@@ -429,8 +428,6 @@ void NetworkProcess::addWebsiteDataStore(WebsiteDataStoreParameters&& parameters
 #if ENABLE(SERVICE_WORKER)
     addServiceWorkerSession(sessionID, parameters.serviceWorkerProcessTerminationDelayEnabled, WTFMove(parameters.serviceWorkerRegistrationDirectory), parameters.serviceWorkerRegistrationDirectoryExtensionHandle);
 #endif
-
-    m_storageManagerSet->add(sessionID, parameters.localStorageDirectory, parameters.localStorageDirectoryExtensionHandle);
 
     RemoteNetworkingContext::ensureWebsiteDataStoreSession(*this, WTFMove(parameters));
 }
@@ -454,11 +451,12 @@ void NetworkProcess::removeSessionStorageQuotaManager(PAL::SessionID sessionID)
     m_sessionStorageQuotaManagers.remove(sessionID);
 }
 
-void NetworkProcess::addStorageManagerForSession(PAL::SessionID sessionID, const String& generalStoragePath, SandboxExtension::Handle& generalStoragePathHandle)
+void NetworkProcess::addStorageManagerForSession(PAL::SessionID sessionID, const String& generalStoragePath, SandboxExtension::Handle& generalStoragePathHandle, const String& localStoragePath, SandboxExtension::Handle& localStoragePathHandle)
 {
     m_storageManagers.ensure(sessionID, [&] {
         SandboxExtension::consumePermanently(generalStoragePathHandle);
-        return NetworkStorageManager::create(sessionID, generalStoragePath);
+        SandboxExtension::consumePermanently(localStoragePathHandle);
+        return NetworkStorageManager::create(sessionID, generalStoragePath, localStoragePath);
     });
 }
 
@@ -575,7 +573,6 @@ void NetworkProcess::destroySession(PAL::SessionID sessionID)
     m_serviceWorkerInfo.remove(sessionID);
 #endif
 
-    m_storageManagerSet->remove(sessionID);
     if (auto server = m_webIDBServers.take(sessionID))
         server->close();
     removeStorageManagerForSession(sessionID);
@@ -1065,15 +1062,16 @@ void NetworkProcess::clearUserInteraction(PAL::SessionID sessionID, const Regist
 
 void NetworkProcess::hasLocalStorage(PAL::SessionID sessionID, const RegistrableDomain& domain, CompletionHandler<void(bool)>&& completionHandler)
 {
-    if (m_storageManagerSet->contains(sessionID)) {
-        m_storageManagerSet->getLocalStorageOrigins(sessionID, [domain, completionHandler = WTFMove(completionHandler)](auto&& origins) mutable {
-            completionHandler(WTF::anyOf(origins, [&domain](auto& origin) {
-                return domain.matches(origin);
-            }));
-        });
-        return;
-    }
-    completionHandler(false);
+    auto iterator = m_storageManagers.find(sessionID);
+    if (iterator == m_storageManagers.end())
+        return completionHandler(false);
+
+    auto types = OptionSet<WebsiteDataType> { WebsiteDataType::LocalStorage };
+    iterator->value->fetchData(types, [domain, completionHandler = WTFMove(completionHandler)](auto entries) mutable {
+        completionHandler(WTF::anyOf(entries, [&domain](auto& entry) {
+            return domain.matches(entry.origin);
+        }));
+    });
 }
 
 void NetworkProcess::setCacheMaxAgeCapForPrevalentResources(PAL::SessionID sessionID, Seconds seconds, CompletionHandler<void()>&& completionHandler)
@@ -1491,20 +1489,6 @@ void NetworkProcess::fetchWebsiteData(PAL::SessionID sessionID, OptionSet<Websit
         });
     }
 
-    if (websiteDataTypes.contains(WebsiteDataType::SessionStorage) && m_storageManagerSet->contains(sessionID)) {
-        m_storageManagerSet->getSessionStorageOrigins(sessionID, [callbackAggregator](auto&& origins) {
-            while (!origins.isEmpty())
-                callbackAggregator->m_websiteData.entries.append(WebsiteData::Entry { origins.takeAny(), WebsiteDataType::SessionStorage, 0 });
-        });
-    }
-
-    if (websiteDataTypes.contains(WebsiteDataType::LocalStorage) && m_storageManagerSet->contains(sessionID)) {
-        m_storageManagerSet->getLocalStorageOrigins(sessionID, [callbackAggregator](auto&& origins) {
-            while (!origins.isEmpty())
-                callbackAggregator->m_websiteData.entries.append(WebsiteData::Entry { origins.takeAny(), WebsiteDataType::LocalStorage, 0 });
-        });
-    }
-
 #if PLATFORM(COCOA) || USE(SOUP)
     if (websiteDataTypes.contains(WebsiteDataType::HSTSCache))
         callbackAggregator->m_websiteData.hostNamesWithHSTSCache = hostNamesWithHSTSCache(sessionID);
@@ -1557,10 +1541,12 @@ void NetworkProcess::fetchWebsiteData(PAL::SessionID sessionID, OptionSet<Websit
     }
 #endif
 
-    if (auto iterator = m_storageManagers.find(sessionID); iterator != m_storageManagers.end()) {
-        iterator->value->fetchData(websiteDataTypes, [callbackAggregator](auto entries) mutable {
-            callbackAggregator->m_websiteData.entries.appendVector(WTFMove(entries));
-        });
+    if (NetworkStorageManager::canHandleTypes(websiteDataTypes)) {
+        if (auto iterator = m_storageManagers.find(sessionID); iterator != m_storageManagers.end()) {
+            iterator->value->fetchData(websiteDataTypes, [callbackAggregator](auto entries) mutable {
+                callbackAggregator->m_websiteData.entries.appendVector(WTFMove(entries));
+            });
+        }
     }
 }
 
@@ -1586,12 +1572,6 @@ void NetworkProcess::deleteWebsiteData(PAL::SessionID sessionID, OptionSet<Websi
 
     if (websiteDataTypes.contains(WebsiteDataType::DOMCache))
         CacheStorage::Engine::clearAllCaches(*this, sessionID, [clearTasksHandler] { });
-
-    if (websiteDataTypes.contains(WebsiteDataType::SessionStorage) && m_storageManagerSet->contains(sessionID))
-        m_storageManagerSet->deleteSessionStorage(sessionID, [clearTasksHandler] { });
-
-    if (websiteDataTypes.contains(WebsiteDataType::LocalStorage) && m_storageManagerSet->contains(sessionID))
-        m_storageManagerSet->deleteLocalStorageModifiedSince(sessionID, modifiedSince, [clearTasksHandler] { });
 
     if (websiteDataTypes.contains(WebsiteDataType::IndexedDBDatabases) && !sessionID.isEphemeral())
         webIDBServer(sessionID).closeAndDeleteDatabasesModifiedSince(modifiedSince, [clearTasksHandler] { });
@@ -1637,8 +1617,10 @@ void NetworkProcess::deleteWebsiteData(PAL::SessionID sessionID, OptionSet<Websi
     }
 #endif
 
-    if (auto iterator = m_storageManagers.find(sessionID); iterator != m_storageManagers.end())
-        iterator->value->deleteDataModifiedSince(websiteDataTypes, modifiedSince, [clearTasksHandler] { });
+    if (NetworkStorageManager::canHandleTypes(websiteDataTypes)) {
+        if (auto iterator = m_storageManagers.find(sessionID); iterator != m_storageManagers.end())
+            iterator->value->deleteDataModifiedSince(websiteDataTypes, modifiedSince, [clearTasksHandler] { });
+    }
 }
 
 static void clearDiskCacheEntries(NetworkCache::Cache* cache, const Vector<SecurityOriginData>& origins, CompletionHandler<void()>&& completionHandler)
@@ -1703,12 +1685,6 @@ void NetworkProcess::deleteWebsiteDataForOrigins(PAL::SessionID sessionID, Optio
             CacheStorage::Engine::clearCachesForOrigin(*this, sessionID, SecurityOriginData { originData }, [clearTasksHandler] { });
     }
 
-    if (websiteDataTypes.contains(WebsiteDataType::SessionStorage) && m_storageManagerSet->contains(sessionID))
-        m_storageManagerSet->deleteSessionStorageForOrigins(sessionID, originDatas, [clearTasksHandler] { });
-
-    if (websiteDataTypes.contains(WebsiteDataType::LocalStorage) && m_storageManagerSet->contains(sessionID))
-        m_storageManagerSet->deleteLocalStorageForOrigins(sessionID, originDatas, [clearTasksHandler] { });
-
     if (websiteDataTypes.contains(WebsiteDataType::IndexedDBDatabases) && !sessionID.isEphemeral())
         webIDBServer(sessionID).closeAndDeleteDatabasesForOrigins(originDatas, [clearTasksHandler] { });
 
@@ -1746,8 +1722,10 @@ void NetworkProcess::deleteWebsiteDataForOrigins(PAL::SessionID sessionID, Optio
     }
 #endif
 
-    if (auto iterator = m_storageManagers.find(sessionID); iterator != m_storageManagers.end())
-        iterator->value->deleteData(websiteDataTypes, originDatas, [clearTasksHandler] { });
+    if (NetworkStorageManager::canHandleTypes(websiteDataTypes)) {
+        if (auto iterator = m_storageManagers.find(sessionID); iterator != m_storageManagers.end())
+            iterator->value->deleteData(websiteDataTypes, originDatas, [clearTasksHandler] { });
+    }
 
     if (auto* networkSession = this->networkSession(sessionID)) {
         HashSet<WebCore::RegistrableDomain> domainsToDeleteNetworkDataFor;
@@ -1904,28 +1882,6 @@ void NetworkProcess::deleteAndRestrictWebsiteDataForRegistrableDomains(PAL::Sess
         });
     }
 
-    if (m_storageManagerSet->contains(sessionID)) {
-        if (websiteDataTypes.contains(WebsiteDataType::SessionStorage)) {
-            m_storageManagerSet->getSessionStorageOrigins(sessionID, [protectedThis = Ref { *this }, this, sessionID, callbackAggregator, domainsToDeleteAllNonCookieWebsiteDataFor](auto&& origins) {
-                if (!m_storageManagerSet->contains(sessionID))
-                    return;
-
-                auto originsToDelete = filterForRegistrableDomains(origins, domainsToDeleteAllNonCookieWebsiteDataFor, callbackAggregator->m_domains);
-                m_storageManagerSet->deleteSessionStorageForOrigins(sessionID, originsToDelete, [callbackAggregator] { });
-            });
-        }
-
-        if (websiteDataTypes.contains(WebsiteDataType::LocalStorage)) {
-            m_storageManagerSet->getLocalStorageOrigins(sessionID, [protectedThis = Ref { *this }, this, sessionID, callbackAggregator, domainsToDeleteAllNonCookieWebsiteDataFor](auto&& origins) {
-                if (!m_storageManagerSet->contains(sessionID))
-                    return;
-
-                auto originsToDelete = filterForRegistrableDomains(origins, domainsToDeleteAllNonCookieWebsiteDataFor, callbackAggregator->m_domains);
-                m_storageManagerSet->deleteLocalStorageForOrigins(sessionID, originsToDelete, [callbackAggregator] { });
-            });
-        }
-    }
-
     auto path = m_idbDatabasePaths.get(sessionID);
     if (!path.isEmpty() && websiteDataTypes.contains(WebsiteDataType::IndexedDBDatabases)) {
         webIDBServer(sessionID).getOrigins([this, protectedThis = Ref { *this }, sessionID, callbackAggregator, domainsToDeleteAllNonCookieWebsiteDataFor](auto&& origins) {
@@ -1972,11 +1928,13 @@ void NetworkProcess::deleteAndRestrictWebsiteDataForRegistrableDomains(PAL::Sess
         });
     }
 
-    if (auto iterator = m_storageManagers.find(sessionID); iterator != m_storageManagers.end()) {
-        iterator->value->deleteDataForRegistrableDomains(websiteDataTypes, domainsToDeleteAllNonCookieWebsiteDataFor, [callbackAggregator](auto deletedDomains) mutable {
-            for (auto domain : deletedDomains)
-                callbackAggregator->m_domains.add(WTFMove(domain));
-        });
+    if (NetworkStorageManager::canHandleTypes(websiteDataTypes)) {
+        if (auto iterator = m_storageManagers.find(sessionID); iterator != m_storageManagers.end()) {
+            iterator->value->deleteDataForRegistrableDomains(websiteDataTypes, domainsToDeleteAllNonCookieWebsiteDataFor, [callbackAggregator](auto&& deletedDomains) mutable {
+                for (auto domain : deletedDomains)
+                    callbackAggregator->m_domains.add(WTFMove(domain));
+            });
+        }
     }
 
     auto dataTypesForUIProcess = WebsiteData::filter(websiteDataTypes, WebsiteDataProcessType::UI);
@@ -2307,7 +2265,8 @@ void NetworkProcess::prepareToSuspend(bool isSuspensionImminent, CompletionHandl
     }
 #endif
 
-    m_storageManagerSet->suspend([callbackAggregator] { });
+    for (auto& manager : m_storageManagers.values())
+        manager->suspend([callbackAggregator] { });
 }
 
 void NetworkProcess::applicationDidEnterBackground()
@@ -2346,7 +2305,8 @@ void NetworkProcess::resume()
     m_shouldSuspendIDBServers = false;
 #endif
 
-    m_storageManagerSet->resume();
+    for (auto& manager : m_storageManagers.values())
+        manager->resume();
 }
 
 void NetworkProcess::prefetchDNS(const String& hostname)
@@ -2442,8 +2402,9 @@ void NetworkProcess::setSessionStorageQuotaManagerIDBRootPath(PAL::SessionID ses
 
 void NetworkProcess::syncLocalStorage(CompletionHandler<void()>&& completionHandler)
 {
-    m_storageManagerSet->waitUntilSyncingLocalStorageFinished();
-    completionHandler();
+    auto aggregator = CallbackAggregator::create(WTFMove(completionHandler));
+    for (auto& manager : m_storageManagers.values())
+        manager->syncLocalStorage([aggregator] { });
 }
 
 void NetworkProcess::resetQuota(PAL::SessionID sessionID, CompletionHandler<void()>&& completionHandler)
@@ -2473,10 +2434,8 @@ void NetworkProcess::renameOriginInWebsiteData(PAL::SessionID sessionID, const U
     if (oldOrigin.isEmpty() || newOrigin.isEmpty())
         return;
 
-    if (dataTypes.contains(WebsiteDataType::LocalStorage)) {
-        if (m_storageManagerSet->contains(sessionID))
-            m_storageManagerSet->renameOrigin(sessionID, oldName, newName, [aggregator] { });
-    }
+    if (auto iterator = m_storageManagers.find(sessionID); iterator != m_storageManagers.end())
+        iterator->value->moveData(oldOrigin, newOrigin, [aggregator] { });
 
     if (dataTypes.contains(WebsiteDataType::IndexedDBDatabases)) {
         auto path = m_idbDatabasePaths.get(sessionID);
@@ -2771,21 +2730,8 @@ void NetworkProcess::removeKeptAliveLoad(NetworkResourceLoader& loader)
         session->removeKeptAliveLoad(loader);
 }
 
-void NetworkProcess::getLocalStorageOriginDetails(PAL::SessionID sessionID, CompletionHandler<void(Vector<LocalStorageDatabaseTracker::OriginDetails>&&)>&& completionHandler)
-{
-    if (!m_storageManagerSet->contains(sessionID)) {
-        LOG_ERROR("Cannot get local storage information for an unknown session");
-        completionHandler({ });
-        return;
-    }
-
-    m_storageManagerSet->getLocalStorageOriginDetails(sessionID, WTFMove(completionHandler));
-}
-
 void NetworkProcess::connectionToWebProcessClosed(IPC::Connection& connection, PAL::SessionID sessionID)
 {
-    m_storageManagerSet->removeConnection(connection);
-
     if (auto* server = m_webIDBServers.get(sessionID))
         server->removeConnection(connection);
 

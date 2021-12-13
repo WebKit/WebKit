@@ -1,3 +1,217 @@
+2021-12-12  Sihui Liu  <sihui_liu@apple.com>
+
+        Merge StorageManager with NetworkStorageManager to manage WebStorage by origin
+        https://bugs.webkit.org/show_bug.cgi?id=234087
+
+        Reviewed by Chris Dumez.
+
+        In network process, WebStorage data is managed by WebKit::StorageManager class. Each StorageManager owns one or
+        many StorageNameSpaces, and each StorageNamespace owns one or more StorageAreas. Each StorageArea correponds
+        to one storage map (one localStorage or sessionStorage object), using either a SQLite database or a in-memory
+        map as backend. Now that we have NetworkStorageManager, which manages storage by origin. We can merge
+        StorageManager with NetworkStorageManager, since localStorage and sessionStorage are not shared between 
+        different origins.
+
+        The new structure is:
+        NetworkStorageManager (manage storage for a session, owns one or more OriginStorageManagers)
+        OriginStorageManager (manage storage for an origin, owns one LocalStorageManager and one SessionStorageManager)
+        LocalStorageManager / SessionStorageManager (manage LocalStorage and SessionStorage, owns one or more 
+        StorageAreaBases)
+        MemoryStorageArea / SQLiteStorageArea (inherits StorageAreaBases; manage one local or session storage, like 
+        Webkit::StorageArea)
+
+        StorageNamespace layer is removed. For SessionStorage, different StorageNamespaces means different web pages, 
+        and same origin can have different sessionStorages on different pages, so we keep a StorageNamespace <=>
+        StorageArea map in SessionStorageManager. For LocalStorage, differnt StorageNamespaces means different page 
+        groups. Our original plan was the same origin can have different localStorages in different page groups, but our
+        old implementation actually made all page groups point to the same database file. To keep existing behavior 
+        that all page groups with same origin share the storage, we now keep one local StorageArea and one transient
+        StorageArea per LocalStorageManager.
+
+        Mostly refactoring and covered by existing tests.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::NetworkProcess):
+        (WebKit::NetworkProcess::lowMemoryHandler):
+        (WebKit::NetworkProcess::createNetworkConnectionToWebProcess):
+        (WebKit::NetworkProcess::addWebsiteDataStore):
+        (WebKit::NetworkProcess::addStorageManagerForSession):
+        (WebKit::NetworkProcess::destroySession):
+        (WebKit::NetworkProcess::hasLocalStorage):
+        (WebKit::NetworkProcess::fetchWebsiteData):
+        (WebKit::NetworkProcess::deleteWebsiteData):
+        (WebKit::NetworkProcess::deleteWebsiteDataForOrigins):
+        (WebKit::NetworkProcess::deleteAndRestrictWebsiteDataForRegistrableDomains):
+        (WebKit::NetworkProcess::prepareToSuspend):
+        (WebKit::NetworkProcess::resume):
+        (WebKit::NetworkProcess::syncLocalStorage):
+        (WebKit::NetworkProcess::renameOriginInWebsiteData):
+        (WebKit::NetworkProcess::connectionToWebProcessClosed):
+        (WebKit::NetworkProcess::getLocalStorageOriginDetails): Deleted.
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * NetworkProcess/storage/LocalStorageManager.cpp: Added.
+        (WebKit::fileNameToOrigin):
+        (WebKit::originToFileName):
+        (WebKit::LocalStorageManager::originsOfLocalStorageData):
+        (WebKit::LocalStorageManager::localStorageFilePath):
+        (WebKit::LocalStorageManager::LocalStorageManager):
+        (WebKit::LocalStorageManager::isActive const):
+        (WebKit::LocalStorageManager::hasDataInMemory const):
+        (WebKit::LocalStorageManager::clearDataInMemory):
+        (WebKit::LocalStorageManager::clearDataOnDisk):
+        (WebKit::LocalStorageManager::close):
+        (WebKit::LocalStorageManager::handleLowMemoryWarning):
+        (WebKit::LocalStorageManager::syncLocalStorage):
+        (WebKit::LocalStorageManager::connectionClosed):
+        (WebKit::LocalStorageManager::connectionClosedForLocalStorageArea):
+        (WebKit::LocalStorageManager::connectionClosedForTransientStorageArea):
+        (WebKit::LocalStorageManager::connectToLocalStorageArea):
+        (WebKit::LocalStorageManager::connectToTransientLocalStorageArea):
+        (WebKit::LocalStorageManager::disconnectFromStorageArea):
+        * NetworkProcess/storage/LocalStorageManager.h: Added.
+        * NetworkProcess/storage/MemoryStorageArea.cpp: Added.
+        (WebKit::MemoryStorageArea::MemoryStorageArea):
+        (WebKit::MemoryStorageArea::isEmpty):
+        (WebKit::MemoryStorageArea::clear):
+        (WebKit::MemoryStorageArea::allItems):
+        (WebKit::MemoryStorageArea::setItem):
+        (WebKit::MemoryStorageArea::removeItem):
+        (WebKit::MemoryStorageArea::clone const):
+        * NetworkProcess/storage/MemoryStorageArea.h: Added.
+        (isType):
+        * NetworkProcess/storage/NetworkStorageManager.cpp:
+        (WebKit::readOriginFromFile):
+        (WebKit::writeOriginToFileIfNecessary):
+        (WebKit::NetworkStorageManager::create):
+        (WebKit::NetworkStorageManager::NetworkStorageManager):
+        (WebKit::NetworkStorageManager::canHandleTypes):
+        (WebKit::NetworkStorageManager::close):
+        (WebKit::originDirectoryPath):
+        (WebKit::originFilePath):
+        (WebKit::NetworkStorageManager::localOriginStorageManager):
+        (WebKit::NetworkStorageManager::removeOriginStorageManagerIfPossible):
+        (WebKit::NetworkStorageManager::deleteOriginDirectoryIfPossible):
+        (WebKit::NetworkStorageManager::clearStorageForTesting):
+        (WebKit::NetworkStorageManager::forEachOriginDirectory):
+        (WebKit::NetworkStorageManager::getAllOrigins):
+        (WebKit::NetworkStorageManager::fetchDataFromDisk):
+        (WebKit::NetworkStorageManager::deleteDataOnDisk):
+        (WebKit::NetworkStorageManager::moveData):
+        (WebKit::NetworkStorageManager::suspend):
+        (WebKit::NetworkStorageManager::resume):
+        (WebKit::NetworkStorageManager::handleLowMemoryWarning):
+        (WebKit::NetworkStorageManager::syncLocalStorage):
+        (WebKit::NetworkStorageManager::connectToLocalStorageArea):
+        (WebKit::NetworkStorageManager::connectToTransientLocalStorageArea):
+        (WebKit::NetworkStorageManager::connectToSessionStorageArea):
+        (WebKit::NetworkStorageManager::disconnectFromStorageArea):
+        (WebKit::NetworkStorageManager::cloneSessionStorageNamespace):
+        (WebKit::NetworkStorageManager::getValues):
+        (WebKit::NetworkStorageManager::setItem):
+        (WebKit::NetworkStorageManager::removeItem):
+        (WebKit::NetworkStorageManager::clear):
+        (WebKit::toWebsiteDataType): Deleted.
+        * NetworkProcess/storage/NetworkStorageManager.h:
+        * NetworkProcess/storage/NetworkStorageManager.messages.in:
+        * NetworkProcess/storage/OriginStorageManager.cpp:
+        (WebKit::OriginStorageManager::StorageBucket::StorageBucket):
+        (WebKit::OriginStorageManager::StorageBucket::toWebsiteDataType):
+        (WebKit::OriginStorageManager::StorageBucket::toStorageIdentifier):
+        (WebKit::OriginStorageManager::StorageBucket::localStorageManager):
+        (WebKit::OriginStorageManager::StorageBucket::existingLocalStorageManager):
+        (WebKit::OriginStorageManager::StorageBucket::sessionStorageManager):
+        (WebKit::OriginStorageManager::StorageBucket::existingSessionStorageManager):
+        (WebKit::OriginStorageManager::StorageBucket::isActive const):
+        (WebKit::OriginStorageManager::StorageBucket::isEmpty const):
+        (WebKit::OriginStorageManager::StorageBucket::fetchDataTypesInList):
+        (WebKit::OriginStorageManager::StorageBucket::deleteData):
+        (WebKit::OriginStorageManager::StorageBucket::moveData):
+        (WebKit::OriginStorageManager::StorageBucket::fetchDataTypesInListFromMemory):
+        (WebKit::OriginStorageManager::StorageBucket::fetchDataTypesInListFromDisk):
+        (WebKit::OriginStorageManager::StorageBucket::deleteLocalStorageData):
+        (WebKit::OriginStorageManager::StorageBucket::deleteSessionStorageData):
+        (WebKit::OriginStorageManager::OriginStorageManager):
+        (WebKit::OriginStorageManager::defaultBucket):
+        (WebKit::OriginStorageManager::localStorageManager):
+        (WebKit::OriginStorageManager::existingLocalStorageManager):
+        (WebKit::OriginStorageManager::sessionStorageManager):
+        (WebKit::OriginStorageManager::existingSessionStorageManager):
+        (WebKit::OriginStorageManager::isEmpty):
+        (WebKit::OriginStorageManager::fetchDataTypesInList):
+        (WebKit::OriginStorageManager::deleteData):
+        (WebKit::OriginStorageManager::moveData):
+        (WebKit::OriginStorageManager::StorageBucket::isActive): Deleted.
+        * NetworkProcess/storage/OriginStorageManager.h:
+        * NetworkProcess/storage/SQLiteStorageArea.cpp: Added.
+        (WebKit::SQLiteStorageArea::statementString const):
+        (WebKit::SQLiteStorageArea::SQLiteStorageArea):
+        (WebKit::SQLiteStorageArea::close):
+        (WebKit::SQLiteStorageArea::~SQLiteStorageArea):
+        (WebKit::SQLiteStorageArea::isEmpty):
+        (WebKit::SQLiteStorageArea::clear):
+        (WebKit::SQLiteStorageArea::createTableIfNecessary):
+        (WebKit::SQLiteStorageArea::prepareDatabase):
+        (WebKit::SQLiteStorageArea::startTransactionIfNecessary):
+        (WebKit::SQLiteStorageArea::cachedStatement):
+        (WebKit::SQLiteStorageArea::getItem):
+        (WebKit::SQLiteStorageArea::getItemFromDatabase):
+        (WebKit::SQLiteStorageArea::allItems):
+        (WebKit::SQLiteStorageArea::setItem):
+        (WebKit::SQLiteStorageArea::removeItem):
+        (WebKit::SQLiteStorageArea::commitTransactionIfNecessary):
+        (WebKit::SQLiteStorageArea::handleLowMemoryWarning):
+        * NetworkProcess/storage/SQLiteStorageArea.h: Added.
+        (isType):
+        * NetworkProcess/storage/SessionStorageManager.cpp: Added.
+        (WebKit::SessionStorageManager::SessionStorageManager):
+        (WebKit::SessionStorageManager::isActive const):
+        (WebKit::SessionStorageManager::hasDataInMemory const):
+        (WebKit::SessionStorageManager::clearData):
+        (WebKit::SessionStorageManager::connectionClosed):
+        (WebKit::SessionStorageManager::addStorageArea):
+        (WebKit::SessionStorageManager::connectToSessionStorageArea):
+        (WebKit::SessionStorageManager::disconnectFromStorageArea):
+        (WebKit::SessionStorageManager::cloneStorageArea):
+        * NetworkProcess/storage/SessionStorageManager.h: Added.
+        * NetworkProcess/storage/StorageAreaBase.cpp: Added. Some code is moved from NetworkProcess/WebStoreage/StorageArea.cpp.
+        (WebKit::StorageAreaBase::StorageAreaBase):
+        (WebKit::StorageAreaBase::addListener):
+        (WebKit::StorageAreaBase::removeListener):
+        (WebKit::StorageAreaBase::hasListeners const):
+        (WebKit::StorageAreaBase::notifyListenersAboutClear):
+        (WebKit::StorageAreaBase::dispatchEvents const):
+        * NetworkProcess/storage/StorageAreaBase.h: Added. Some code is moved from NetworkProcess/WebStoreage/StorageArea.h.
+        (WebKit::StorageAreaBase::identifier const):
+        (WebKit::StorageAreaBase::origin const):
+        (WebKit::StorageAreaBase::quota const):
+        * NetworkProcess/storage/StorageAreaRegistry.cpp: Added.
+        (WebKit::StorageAreaRegistry::registerStorageArea):
+        (WebKit::StorageAreaRegistry::unregisterStorageArea):
+        (WebKit::StorageAreaRegistry::getStorageArea):
+        * NetworkProcess/storage/StorageAreaRegistry.h: Added.
+        * Scripts/generate-unified-sources.sh:
+        * Sources.txt:
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::getLocalStorageDetails): Deleted.
+        * UIProcess/WebsiteData/Cocoa/WebsiteDataStoreCocoa.mm:
+        (WebKit::WebsiteDataStore::excludeDirectoryFromBackup):
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::parameters):
+        (WebKit::WebsiteDataStore::getLocalStorageDetails): Deleted.
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+        * UnifiedSources-output.xcfilelist:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/WebStorage/StorageAreaMap.cpp:
+        (WebKit::StorageAreaMap::setItem):
+        (WebKit::StorageAreaMap::removeItem):
+        (WebKit::StorageAreaMap::clear):
+        (WebKit::StorageAreaMap::ensureMap):
+        (WebKit::StorageAreaMap::connect):
+        (WebKit::StorageAreaMap::disconnect):
+        * WebProcess/WebStorage/StorageNamespaceImpl.cpp:
+        (WebKit::StorageNamespaceImpl::copy):
+
 2021-12-11  Tim Horton  <timothy_horton@apple.com>
 
         Momentum Event Dispatcher: Tail frames are the wrong velocity if momentum event dispatch rate doesn't match screen refresh rate

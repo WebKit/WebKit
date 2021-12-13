@@ -36,20 +36,30 @@ namespace WebKit {
 
 class FileSystemStorageHandleRegistry;
 class FileSystemStorageManager;
+class LocalStorageManager;
+class SessionStorageManager;
+class StorageAreaRegistry;
 enum class WebsiteDataType : uint32_t;
 
 class OriginStorageManager {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    explicit OriginStorageManager(String&& path);
+    OriginStorageManager(String&& path, String&& localStoragePath);
     ~OriginStorageManager();
 
     void connectionClosed(IPC::Connection::UniqueID);
     bool persisted() const { return m_persisted; }
     void setPersisted(bool value);
     FileSystemStorageManager& fileSystemStorageManager(FileSystemStorageHandleRegistry&);
+    LocalStorageManager& localStorageManager(StorageAreaRegistry&);
+    LocalStorageManager* existingLocalStorageManager();
+    SessionStorageManager& sessionStorageManager(StorageAreaRegistry&);
+    SessionStorageManager* existingSessionStorageManager();
     bool isActive();
+    bool isEmpty();
+    OptionSet<WebsiteDataType> fetchDataTypesInList(OptionSet<WebsiteDataType>);
     void deleteData(OptionSet<WebsiteDataType>, WallTime);
+    void moveData(const String& newPath, const String& localStoragePath);
 
 private:
     enum class StorageBucketMode : bool;
@@ -62,6 +72,7 @@ private:
     std::unique_ptr<StorageBucket> m_defaultBucket;
     String m_path;
     bool m_persisted { false };
+    String m_localStoragePath;
 };
 
 } // namespace WebKit

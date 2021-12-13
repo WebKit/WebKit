@@ -28,12 +28,19 @@
 
 #include "FileSystemStorageHandleRegistry.h"
 #include "FileSystemStorageManager.h"
+#include "LocalStorageManager.h"
 #include "Logging.h"
 #include "NetworkStorageManagerMessages.h"
 #include "OriginStorageManager.h"
+#include "SessionStorageManager.h"
+#include "StorageAreaBase.h"
+#include "StorageAreaMapMessages.h"
+#include "StorageAreaRegistry.h"
 #include "WebsiteDataType.h"
+#include <WebCore/SecurityOriginData.h>
 #include <pal/crypto/CryptoDigest.h>
 #include <wtf/Scope.h>
+#include <wtf/SuspendableWorkQueue.h>
 #include <wtf/persistence/PersistentCoders.h>
 #include <wtf/text/Base64.h>
 
@@ -43,7 +50,7 @@ static std::optional<WebCore::ClientOrigin> readOriginFromFile(const String& fil
 {
     ASSERT(!RunLoop::isMain());
 
-    if (!FileSystem::fileExists(filePath))
+    if (filePath.isEmpty() || !FileSystem::fileExists(filePath))
         return std::nullopt;
 
     auto originFileHandle = FileSystem::openFile(filePath, FileSystem::FileOpenMode::Read);
@@ -66,7 +73,7 @@ static std::optional<WebCore::ClientOrigin> readOriginFromFile(const String& fil
 
 static void writeOriginToFileIfNecessary(const String& filePath, const WebCore::ClientOrigin& origin)
 {
-    if (FileSystem::fileExists(filePath))
+    if (filePath.isEmpty() || FileSystem::fileExists(filePath))
         return;
 
     FileSystem::makeAllDirectories(FileSystem::parentPath(filePath));
@@ -76,7 +83,7 @@ static void writeOriginToFileIfNecessary(const String& filePath, const WebCore::
     });
 
     if (!FileSystem::isHandleValid(originFileHandle)) {
-        LOG_ERROR("writeOriginToFileIfNecessary: Failed to open origin file");
+        LOG_ERROR("writeOriginToFileIfNecessary: Failed to open origin file '%s'", filePath.utf8().data());
         return;
     }
 
@@ -93,20 +100,22 @@ static void deleteOriginFileIfNecessary(const String& filePath)
         FileSystem::deleteFile(filePath);
 }
 
-Ref<NetworkStorageManager> NetworkStorageManager::create(PAL::SessionID sessionID, const String& path)
+Ref<NetworkStorageManager> NetworkStorageManager::create(PAL::SessionID sessionID, const String& path, const String& customLocalStoragePath)
 {
-    return adoptRef(*new NetworkStorageManager(sessionID, path));
+    return adoptRef(*new NetworkStorageManager(sessionID, path, customLocalStoragePath));
 }
 
-NetworkStorageManager::NetworkStorageManager(PAL::SessionID sessionID, const String& path)
+NetworkStorageManager::NetworkStorageManager(PAL::SessionID sessionID, const String& path, const String& customLocalStoragePath)
     : m_sessionID(sessionID)
-    , m_queue(WorkQueue::create("com.apple.WebKit.Storage"))
+    , m_queue(SuspendableWorkQueue::create("com.apple.WebKit.Storage"))
 {
     ASSERT(RunLoop::isMain());
 
-    m_queue->dispatch([this, protectedThis = Ref { *this }, path = path.isolatedCopy()]() mutable {
+    m_queue->dispatch([this, protectedThis = Ref { *this }, path = path.isolatedCopy(), customLocalStoragePath = crossThreadCopy(customLocalStoragePath)]() mutable {
         m_fileSystemStorageHandleRegistry = makeUnique<FileSystemStorageHandleRegistry>();
+        m_storageAreaRegistry = makeUnique<StorageAreaRegistry>();
         m_path = path;
+        m_customLocalStoragePath = customLocalStoragePath;
         if (!m_path.isEmpty()) {
             auto saltPath = FileSystem::pathByAppendingComponent(m_path, "salt");
             m_salt = FileSystem::readOrMakeSalt(saltPath).value_or(FileSystem::Salt());
@@ -118,6 +127,11 @@ NetworkStorageManager::~NetworkStorageManager()
 {
     ASSERT(RunLoop::isMain());
     ASSERT(m_closed);
+}
+
+bool NetworkStorageManager::canHandleTypes(OptionSet<WebsiteDataType> types)
+{
+    return types.contains(WebsiteDataType::LocalStorage) || types.contains(WebsiteDataType::SessionStorage) || types.contains(WebsiteDataType::FileSystem);
 }
 
 void NetworkStorageManager::close()
@@ -133,7 +147,6 @@ void NetworkStorageManager::close()
 
     m_queue->dispatch([this, protectedThis = Ref { *this }]() mutable {
         m_localOriginStorageManagers.clear();
-        m_sessionOriginStorageManagers.clear();
         m_fileSystemStorageHandleRegistry = nullptr;
 
         RunLoop::main().dispatch([protectedThis = WTFMove(protectedThis)] { });
@@ -177,7 +190,7 @@ static String encode(const String& string, FileSystem::Salt salt)
 static String originDirectoryPath(const String& rootPath, const WebCore::ClientOrigin& origin, FileSystem::Salt salt)
 {
     if (rootPath.isEmpty())
-        return rootPath;
+        return String { };
 
     auto encodedTopOrigin = encode(origin.topOrigin.toString(), salt);
     auto encodedOpeningOrigin = encode(origin.clientOrigin.toString(), salt);
@@ -186,6 +199,8 @@ static String originDirectoryPath(const String& rootPath, const WebCore::ClientO
 
 static String originFilePath(const String& directory)
 {
+    if (directory.isEmpty())
+        return String { };
     return FileSystem::pathByAppendingComponent(directory, "origin"_s);
 }
 
@@ -196,16 +211,34 @@ OriginStorageManager& NetworkStorageManager::localOriginStorageManager(const Web
     return *m_localOriginStorageManagers.ensure(origin, [&] {
         auto originDirectory = originDirectoryPath(m_path, origin, m_salt);
         writeOriginToFileIfNecessary(originFilePath(originDirectory), origin);
-        return makeUnique<OriginStorageManager>(WTFMove(originDirectory));
+        return makeUnique<OriginStorageManager>(WTFMove(originDirectory), LocalStorageManager::localStorageFilePath(m_customLocalStoragePath, origin));
     }).iterator->value;
 }
 
-void NetworkStorageManager::removeOriginStorageManagerIfPossible(const WebCore::ClientOrigin& origin)
+bool NetworkStorageManager::removeOriginStorageManagerIfPossible(const WebCore::ClientOrigin& origin)
 {
-    if (auto iterator = m_localOriginStorageManagers.find(origin); iterator != m_localOriginStorageManagers.end()) {
-        if (!iterator->value->isActive())
-            m_localOriginStorageManagers.remove(iterator);
-    }
+    auto iterator = m_localOriginStorageManagers.find(origin);
+    if (iterator == m_localOriginStorageManagers.end())
+        return true;
+
+    if (iterator->value->isActive())
+        return false;
+
+    m_localOriginStorageManagers.remove(iterator);
+    return true;
+}
+
+void NetworkStorageManager::deleteOriginDirectoryIfPossible(const WebCore::ClientOrigin& origin)
+{
+    bool isEmpty = localOriginStorageManager(origin).isEmpty();
+    bool removed = removeOriginStorageManagerIfPossible(origin);
+    if (!removed || !isEmpty)
+        return;
+
+    auto originDirectory = originDirectoryPath(m_path, origin, m_salt);
+    auto filePath = originFilePath(originDirectory);
+    deleteOriginFileIfNecessary(filePath);
+    FileSystem::deleteEmptyDirectory(originDirectory);
 }
 
 void NetworkStorageManager::persisted(const WebCore::ClientOrigin& origin, CompletionHandler<void(bool)>&& completionHandler)
@@ -230,9 +263,6 @@ void NetworkStorageManager::clearStorageForTesting(CompletionHandler<void()>&& c
     m_queue->dispatch([this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)]() mutable {
         // Reset persisted value.
         for (auto& manager : m_localOriginStorageManagers.values())
-            manager->setPersisted(false);
-
-        for (auto& manager : m_sessionOriginStorageManagers.values())
             manager->setPersisted(false);
 
         RunLoop::main().dispatch([protectedThis = WTFMove(protectedThis), completionHandler = WTFMove(completionHandler)]() mutable {
@@ -382,14 +412,6 @@ void NetworkStorageManager::getHandle(IPC::Connection& connection, WebCore::File
     completionHandler(handle->getHandle(connection.uniqueID(), WTFMove(name)));
 }
 
-static std::optional<WebsiteDataType> toWebsiteDataType(const String& storageType)
-{
-    if (storageType == "FileSystem")
-        return WebsiteDataType::FileSystem;
-
-    return std::nullopt;
-}
-
 void NetworkStorageManager::forEachOriginDirectory(const Function<void(const String&)>& apply)
 {
     for (auto& topOrigin : FileSystem::listDirectory(m_path)) {
@@ -401,10 +423,30 @@ void NetworkStorageManager::forEachOriginDirectory(const Function<void(const Str
         }
 
         for (auto& openingOrigin : openingOrigins) {
+            if (openingOrigin.startsWith('.'))
+                continue;
+
             auto openingOriginDirectory = FileSystem::pathByAppendingComponent(topOriginDirectory, openingOrigin);
             apply(openingOriginDirectory);
         }
     }
+}
+
+HashSet<WebCore::ClientOrigin> NetworkStorageManager::getAllOrigins()
+{
+    HashSet<WebCore::ClientOrigin> allOrigins;
+    for (auto& origin : m_localOriginStorageManagers.keys())
+        allOrigins.add(origin);
+
+    forEachOriginDirectory([&](auto directory) {
+        if (auto origin = readOriginFromFile(originFilePath(directory)))
+            allOrigins.add(*origin);
+    });
+
+    for (auto& origin : LocalStorageManager::originsOfLocalStorageData(m_customLocalStoragePath))
+        allOrigins.add(WebCore::ClientOrigin { origin, origin });
+
+    return allOrigins;
 }
 
 Vector<WebsiteData::Entry> NetworkStorageManager::fetchDataFromDisk(OptionSet<WebsiteDataType> targetTypes)
@@ -412,19 +454,12 @@ Vector<WebsiteData::Entry> NetworkStorageManager::fetchDataFromDisk(OptionSet<We
     ASSERT(!RunLoop::isMain());
 
     HashMap<WebCore::SecurityOriginData, OptionSet<WebsiteDataType>> originTypes;
-    forEachOriginDirectory([&](auto directory) mutable {
-        auto origin = readOriginFromFile(originFilePath(directory));
-        if (!origin)
-            return;
-
-        for (auto& storageType : FileSystem::listDirectory(directory)) {
-            if (auto type = toWebsiteDataType(storageType); type && targetTypes.contains(*type)) {
-                // Return both top origin and opening origin for this data.
-                originTypes.add(origin->clientOrigin, OptionSet<WebsiteDataType> { }).iterator->value.add(*type);
-                originTypes.add(origin->topOrigin, OptionSet<WebsiteDataType> { }).iterator->value.add(*type);
-            }
-        }
-    });
+    for (auto& origin : getAllOrigins()) {
+        auto types = localOriginStorageManager(origin).fetchDataTypesInList(targetTypes);
+        originTypes.add(origin.clientOrigin, OptionSet<WebsiteDataType> { }).iterator->value.add(types);
+        originTypes.add(origin.topOrigin, OptionSet<WebsiteDataType> { }).iterator->value.add(types);
+        removeOriginStorageManagerIfPossible(origin);
+    }
 
     Vector<WebsiteData::Entry> entries;
     for (auto [origin, types] : originTypes) {
@@ -448,35 +483,22 @@ void NetworkStorageManager::fetchData(OptionSet<WebsiteDataType> types, Completi
     });
 }
 
-Vector<WebCore::ClientOrigin> NetworkStorageManager::deleteDataOnDisk(OptionSet<WebsiteDataType> types, WallTime modifiedSinceTime, const Function<bool(const WebCore::ClientOrigin&)>& filter)
+HashSet<WebCore::ClientOrigin> NetworkStorageManager::deleteDataOnDisk(OptionSet<WebsiteDataType> types, WallTime modifiedSinceTime, const Function<bool(const WebCore::ClientOrigin&)>& filter)
 {
     ASSERT(!RunLoop::isMain());
 
-    Vector<WebCore::ClientOrigin> deletedOrigins;
-    forEachOriginDirectory([&](auto directory) mutable {
-        auto filePath = originFilePath(directory);
-        auto origin = readOriginFromFile(filePath);
-        if (!origin) {
-            // If origin cannot be retrieved, but we are asked to remove data for all origins, remove it.
-            RELEASE_LOG_ERROR(Storage, "NetworkStorageManager::deleteDataOnDisk failed to read origin from '%s'", filePath.utf8().data());
-            if (filter(WebCore::ClientOrigin { })) {
-                auto tempOriginStorageManager = makeUnique<OriginStorageManager>(String { directory });
-                tempOriginStorageManager->deleteData(types, modifiedSinceTime);
-                deleteOriginFileIfNecessary(filePath);
-                FileSystem::deleteEmptyDirectory(directory);
-            }
-            return;
+    HashSet<WebCore::ClientOrigin> deletedOrigins;
+    for (auto& origin : getAllOrigins()) {
+        if (!filter(origin))
+            continue;
+
+        auto existingDataTypes = localOriginStorageManager(origin).fetchDataTypesInList(types);
+        if (!existingDataTypes.isEmpty()) {
+            deletedOrigins.add(origin);
+            localOriginStorageManager(origin).deleteData(types, modifiedSinceTime);
         }
-
-        if (!filter(*origin))
-            return;
-
-        deletedOrigins.append(*origin);
-        localOriginStorageManager(*origin).deleteData(types, modifiedSinceTime);
-        removeOriginStorageManagerIfPossible(*origin);
-        deleteOriginFileIfNecessary(filePath);
-        FileSystem::deleteEmptyDirectory(directory);
-    });
+        deleteOriginDirectoryIfPossible(origin);
+    }
 
     return deletedOrigins;
 }
@@ -539,6 +561,161 @@ void NetworkStorageManager::deleteDataForRegistrableDomains(OptionSet<WebsiteDat
             completionHandler(WTFMove(domains));
         });
     });
+}
+
+void NetworkStorageManager::moveData(const WebCore::SecurityOriginData& source, const WebCore::SecurityOriginData& target, CompletionHandler<void()>&& completionHandler)
+{
+    ASSERT(RunLoop::isMain());
+    ASSERT(!m_closed);
+
+    m_queue->dispatch([this, protectedThis = Ref { *this }, source = crossThreadCopy(source), target = crossThreadCopy(target), completionHandler = WTFMove(completionHandler)]() mutable {
+        auto sourceOrigin = WebCore::ClientOrigin { source, source };
+        auto targetOrigin = WebCore::ClientOrigin { target, target };
+        
+        // Clear existing data of target origin.
+        OptionSet<WebsiteDataType> types = { WebsiteDataType::FileSystem, WebsiteDataType::LocalStorage, WebsiteDataType::SessionStorage  };
+        localOriginStorageManager(targetOrigin).deleteData(types, -WallTime::infinity());
+        removeOriginStorageManagerIfPossible(targetOrigin);
+
+        // Move data from source origin to target origin.
+        localOriginStorageManager(sourceOrigin).moveData(originDirectoryPath(m_path, targetOrigin, m_salt), LocalStorageManager::localStorageFilePath(m_customLocalStoragePath, targetOrigin));
+        removeOriginStorageManagerIfPossible(sourceOrigin);
+
+        RunLoop::main().dispatch(WTFMove(completionHandler));
+    });
+}
+
+void NetworkStorageManager::suspend(CompletionHandler<void()>&& completionHandler)
+{
+    ASSERT(RunLoop::isMain());
+
+    m_queue->suspend([this, protectedThis = Ref { *this }] {
+        for (auto& manager : m_localOriginStorageManagers.values()) {
+            if (auto localStorageManager = manager->existingLocalStorageManager())
+                localStorageManager->syncLocalStorage();
+        }
+    }, WTFMove(completionHandler));
+}
+
+void NetworkStorageManager::resume()
+{
+    ASSERT(RunLoop::isMain());
+
+    m_queue->resume();
+}
+
+void NetworkStorageManager::handleLowMemoryWarning()
+{
+    ASSERT(RunLoop::isMain());
+
+    m_queue->dispatch([this, protectedThis = Ref { *this }] {
+        for (auto& manager : m_localOriginStorageManagers.values()) {
+            if (auto localStorageManager = manager->existingLocalStorageManager())
+                localStorageManager->handleLowMemoryWarning();
+        }
+    });
+}
+
+void NetworkStorageManager::syncLocalStorage(CompletionHandler<void()>&& completionHandler)
+{
+    ASSERT(RunLoop::isMain());
+
+    m_queue->dispatch([this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)]() mutable {
+        for (auto& manager : m_localOriginStorageManagers.values()) {
+            if (auto localStorageManager = manager->existingLocalStorageManager())
+                localStorageManager->syncLocalStorage();
+        }
+
+        RunLoop::main().dispatch(WTFMove(completionHandler));
+    });
+}
+
+void NetworkStorageManager::connectToLocalStorageArea(IPC::Connection& connection, StorageNamespaceIdentifier, WebCore::SecurityOriginData&& topOrigin, CompletionHandler<void(StorageAreaIdentifier)>&& completionHandler)
+{
+    ASSERT(!RunLoop::isMain());
+
+    WebCore::ClientOrigin origin = { topOrigin, topOrigin };
+    completionHandler(localOriginStorageManager(origin).localStorageManager(*m_storageAreaRegistry).connectToLocalStorageArea(connection.uniqueID(), origin, m_queue.copyRef()));
+}
+
+void NetworkStorageManager::connectToTransientLocalStorageArea(IPC::Connection& connection, StorageNamespaceIdentifier, WebCore::SecurityOriginData&& topOrigin, WebCore::SecurityOriginData&& openingOrigin, CompletionHandler<void(StorageAreaIdentifier)>&& completionHandler)
+{
+    WebCore::ClientOrigin origin = { topOrigin, openingOrigin };
+    completionHandler(localOriginStorageManager(origin).localStorageManager(*m_storageAreaRegistry).connectToTransientLocalStorageArea(connection.uniqueID(), origin));
+}
+
+void NetworkStorageManager::connectToSessionStorageArea(IPC::Connection& connection, StorageNamespaceIdentifier identifier, WebCore::SecurityOriginData&& topOrigin, CompletionHandler<void(StorageAreaIdentifier)>&& completionHandler)
+{
+    WebCore::ClientOrigin origin = { topOrigin, topOrigin };
+    completionHandler(localOriginStorageManager(origin).sessionStorageManager(*m_storageAreaRegistry).connectToSessionStorageArea(connection.uniqueID(), origin, identifier));
+}
+
+void NetworkStorageManager::disconnectFromStorageArea(IPC::Connection& connection, StorageAreaIdentifier identifier)
+{
+    ASSERT(!RunLoop::isMain());
+
+    auto storageArea = m_storageAreaRegistry->getStorageArea(identifier);
+    if (!storageArea)
+        return;
+
+    if (storageArea->storageType() == StorageAreaBase::StorageType::Local)
+        localOriginStorageManager(storageArea->origin()).localStorageManager(*m_storageAreaRegistry).disconnectFromStorageArea(connection.uniqueID(), identifier);
+    else
+        localOriginStorageManager(storageArea->origin()).sessionStorageManager(*m_storageAreaRegistry).disconnectFromStorageArea(connection.uniqueID(), identifier);
+}
+
+void NetworkStorageManager::cloneSessionStorageNamespace(IPC::Connection& connection, StorageNamespaceIdentifier fromIdentifier, StorageNamespaceIdentifier toIdentifier)
+{
+    ASSERT(!RunLoop::isMain());
+
+    for (auto& manager : m_localOriginStorageManagers.values()) {
+        if (auto* sessionStorageManager = manager->existingSessionStorageManager())
+            sessionStorageManager->cloneStorageArea(connection.uniqueID(), fromIdentifier, toIdentifier);
+    }
+}
+
+void NetworkStorageManager::getValues(StorageAreaIdentifier identifier, CompletionHandler<void(const HashMap<String, String>&)>&& completionHandler)
+{
+    ASSERT(!RunLoop::isMain());
+
+    if (auto storageArea = m_storageAreaRegistry->getStorageArea(identifier))
+        return completionHandler(storageArea->allItems());
+    
+    return completionHandler({ });
+}
+
+void NetworkStorageManager::setItem(IPC::Connection& connection, StorageAreaIdentifier identifier, StorageAreaImplIdentifier implIdentifier, uint64_t storageMapSeed, String&& key, String&& value, String&& urlString)
+{
+    ASSERT(!RunLoop::isMain());
+
+    bool hasQuotaError = false;
+    if (auto storageArea = m_storageAreaRegistry->getStorageArea(identifier)) {
+        auto result = storageArea->setItem(connection.uniqueID(), implIdentifier, String { key }, WTFMove(value), WTFMove(urlString));
+        if (!result)
+            hasQuotaError = (result.error() == StorageError::QuotaExceeded);
+    }
+
+    connection.send(Messages::StorageAreaMap::DidSetItem(storageMapSeed, key, hasQuotaError), identifier);
+}
+
+void NetworkStorageManager::removeItem(IPC::Connection& connection, StorageAreaIdentifier identifier, StorageAreaImplIdentifier implIdentifier, uint64_t storageMapSeed, String&& key, String&& urlString)
+{
+    ASSERT(!RunLoop::isMain());
+
+    if (auto storageArea = m_storageAreaRegistry->getStorageArea(identifier))
+        storageArea->removeItem(connection.uniqueID(), implIdentifier, key, WTFMove(urlString));
+
+    connection.send(Messages::StorageAreaMap::DidRemoveItem(storageMapSeed, WTFMove(key)), identifier);
+}
+
+void NetworkStorageManager::clear(IPC::Connection& connection, StorageAreaIdentifier identifier, StorageAreaImplIdentifier implIdentifier, uint64_t storageMapSeed, String&& urlString)
+{
+    ASSERT(!RunLoop::isMain());
+
+    if (auto storageArea = m_storageAreaRegistry->getStorageArea(identifier))
+        storageArea->clear(connection.uniqueID(), implIdentifier, WTFMove(urlString));
+
+    connection.send(Messages::StorageAreaMap::DidClear(storageMapSeed), identifier);
 }
 
 } // namespace WebKit

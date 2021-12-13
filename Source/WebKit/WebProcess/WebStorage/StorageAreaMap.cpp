@@ -28,6 +28,7 @@
 
 #include "Logging.h"
 #include "NetworkProcessConnection.h"
+#include "NetworkStorageManagerMessages.h"
 #include "StorageAreaImpl.h"
 #include "StorageAreaMapMessages.h"
 #include "StorageManagerSetMessages.h"
@@ -95,7 +96,7 @@ void StorageAreaMap::setItem(Frame* sourceFrame, StorageAreaImpl* sourceArea, co
     m_pendingValueChanges.add(key);
 
     if (m_mapID)
-        WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::StorageManagerSet::SetItem(*m_mapID, sourceArea->identifier(), m_currentSeed, key, value, sourceFrame->document()->url().string()), 0);
+        WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::NetworkStorageManager::SetItem(*m_mapID, sourceArea->identifier(), m_currentSeed, key, value, sourceFrame->document()->url().string()), 0);
     else
         RELEASE_LOG_ERROR(Storage, "StorageAreaMap::setItem failed because storage map ID is invalid");
 }
@@ -114,7 +115,7 @@ void StorageAreaMap::removeItem(WebCore::Frame* sourceFrame, StorageAreaImpl* so
     m_pendingValueChanges.add(key);
 
     if (m_mapID)
-        WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::StorageManagerSet::RemoveItem(*m_mapID, sourceArea->identifier(), m_currentSeed, key, sourceFrame->document()->url().string()), 0);
+        WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::NetworkStorageManager::RemoveItem(*m_mapID, sourceArea->identifier(), m_currentSeed, key, sourceFrame->document()->url().string()), 0);
     else
         RELEASE_LOG_ERROR(Storage, "StorageAreaMap::removeItem failed because storage map ID is invalid");
 }
@@ -129,7 +130,7 @@ void StorageAreaMap::clear(WebCore::Frame* sourceFrame, StorageAreaImpl* sourceA
     m_map = makeUnique<StorageMap>(m_quotaInBytes);
 
     if (m_mapID)
-        WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::StorageManagerSet::Clear(*m_mapID, sourceArea->identifier(), m_currentSeed, sourceFrame->document()->url().string()), 0);
+        WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::NetworkStorageManager::Clear(*m_mapID, sourceArea->identifier(), m_currentSeed, sourceFrame->document()->url().string()), 0);
     else
         RELEASE_LOG_ERROR(Storage, "StorageAreaMap::clear failed because storage map ID is invalid");
 }
@@ -160,7 +161,7 @@ StorageMap& StorageAreaMap::ensureMap()
             // from our StorageManagerSet::GetValues() IPC. This IPC may be very slow because it may need to fetch the values from disk and there may be a lot of data.
             IPC::UnboundedSynchronousIPCScope unboundedSynchronousIPCScope;
             HashMap<String, String> values;
-            WebProcess::singleton().ensureNetworkProcessConnection().connection().sendSync(Messages::StorageManagerSet::GetValues(*m_mapID), Messages::StorageManagerSet::GetValues::Reply(values), 0);
+            WebProcess::singleton().ensureNetworkProcessConnection().connection().sendSync(Messages::NetworkStorageManager::GetValues(*m_mapID), Messages::StorageManagerSet::GetValues::Reply(values), 0);
             m_map->importItems(WTFMove(values));
         } else
             RELEASE_LOG_ERROR(Storage, "StorageAreaMap::ensureMap failed to load from network process because storage map ID is invalid");
@@ -348,20 +349,23 @@ void StorageAreaMap::connect()
     if (m_mapID)
         return;
 
+    StorageAreaIdentifier mapID;
     switch (m_type) {
     case StorageType::Local:
     case StorageType::TransientLocal:
         if (SecurityOrigin* topLevelOrigin = m_namespace.topLevelOrigin())
-            WebProcess::singleton().ensureNetworkProcessConnection().connection().sendSync(Messages::StorageManagerSet::ConnectToTransientLocalStorageArea(WebProcess::singleton().sessionID(), m_namespace.storageNamespaceID(), topLevelOrigin->data(), m_securityOrigin->data()), Messages::StorageManagerSet::ConnectToTransientLocalStorageArea::Reply(m_mapID), 0);
+            WebProcess::singleton().ensureNetworkProcessConnection().connection().sendSync(Messages::NetworkStorageManager::ConnectToTransientLocalStorageArea(m_namespace.storageNamespaceID(), topLevelOrigin->data(), m_securityOrigin->data()), Messages::NetworkStorageManager::ConnectToTransientLocalStorageArea::Reply(mapID), 0);
         else
-            WebProcess::singleton().ensureNetworkProcessConnection().connection().sendSync(Messages::StorageManagerSet::ConnectToLocalStorageArea(WebProcess::singleton().sessionID(), m_namespace.storageNamespaceID(), m_securityOrigin->data()), Messages::StorageManagerSet::ConnectToLocalStorageArea::Reply(m_mapID), 0);
+            WebProcess::singleton().ensureNetworkProcessConnection().connection().sendSync(Messages::NetworkStorageManager::ConnectToLocalStorageArea(m_namespace.storageNamespaceID(), m_securityOrigin->data()), Messages::NetworkStorageManager::ConnectToLocalStorageArea::Reply(mapID), 0);
         break;
     case StorageType::Session:
-        WebProcess::singleton().ensureNetworkProcessConnection().connection().sendSync(Messages::StorageManagerSet::ConnectToSessionStorageArea(WebProcess::singleton().sessionID(), m_namespace.storageNamespaceID(), m_securityOrigin->data()), Messages::StorageManagerSet::ConnectToSessionStorageArea::Reply(m_mapID), 0);
+        WebProcess::singleton().ensureNetworkProcessConnection().connection().sendSync(Messages::NetworkStorageManager::ConnectToSessionStorageArea(m_namespace.storageNamespaceID(), m_securityOrigin->data()), Messages::NetworkStorageManager::ConnectToSessionStorageArea::Reply(mapID), 0);
     }
 
-    if (m_mapID)
+    if (mapID.isValid()) {
+        m_mapID = mapID;
         WebProcess::singleton().registerStorageAreaMap(*this);
+    }
 }
 
 void StorageAreaMap::disconnect()
@@ -373,7 +377,7 @@ void StorageAreaMap::disconnect()
     WebProcess::singleton().unregisterStorageAreaMap(*this);
 
     if (auto* networkProcessConnection = WebProcess::singleton().existingNetworkProcessConnection())
-        networkProcessConnection->connection().send(Messages::StorageManagerSet::DisconnectFromStorageArea(*m_mapID), 0);
+        networkProcessConnection->connection().send(Messages::NetworkStorageManager::DisconnectFromStorageArea(*m_mapID), 0);
 
     m_mapID = { };
 }

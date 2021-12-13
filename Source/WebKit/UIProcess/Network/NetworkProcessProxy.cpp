@@ -1572,16 +1572,6 @@ void NetworkProcessProxy::createSymLinkForFileUpgrade(const String& indexedDatab
         FileSystem::createSymbolicLink(indexedDatabaseDirectory, oldVersionDirectory);
 }
 
-void NetworkProcessProxy::getLocalStorageDetails(PAL::SessionID sessionID, CompletionHandler<void(Vector<LocalStorageDatabaseTracker::OriginDetails>&&)>&& completionHandler)
-{
-    if (!canSendMessage()) {
-        completionHandler({ });
-        return;
-    }
-
-    sendWithAsyncReply(Messages::NetworkProcess::GetLocalStorageOriginDetails(sessionID), WTFMove(completionHandler));
-}
-
 void NetworkProcessProxy::preconnectTo(PAL::SessionID sessionID, WebPageProxyIdentifier webPageProxyID, WebCore::PageIdentifier webPageID, const URL& url, const String& userAgent, WebCore::StoredCredentialsPolicy storedCredentialsPolicy, std::optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain, LastNavigationWasAppInitiated lastNavigationWasAppInitiated)
 {
     if (!url.isValid() || !url.protocolIsInHTTPFamily())

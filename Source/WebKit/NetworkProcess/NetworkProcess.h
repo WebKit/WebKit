@@ -107,7 +107,6 @@ class NetworkProximityManager;
 class NetworkResourceLoader;
 class NetworkStorageManager;
 class ProcessAssertion;
-class StorageManagerSet;
 class WebPageNetworkParameters;
 class WebSWServerConnection;
 class WebSWServerToContextConnection;
@@ -296,7 +295,6 @@ public:
     bool sessionIsControlledByAutomation(PAL::SessionID) const;
 
     void connectionToWebProcessClosed(IPC::Connection&, PAL::SessionID);
-    void getLocalStorageOriginDetails(PAL::SessionID, CompletionHandler<void(Vector<LocalStorageDatabaseTracker::OriginDetails>&&)>&&);
 
 #if ENABLE(CONTENT_EXTENSIONS)
     NetworkContentRuleListManager& networkContentRuleListManager() { return m_networkContentRuleListManager; }
@@ -554,7 +552,7 @@ private:
     void addSessionStorageQuotaManager(PAL::SessionID, uint64_t defaultQuota, uint64_t defaultThirdPartyQuota, const String& cacheRootPath, SandboxExtension::Handle&);
     void removeSessionStorageQuotaManager(PAL::SessionID);
 
-    void addStorageManagerForSession(PAL::SessionID, const String& path, SandboxExtension::Handle&);
+    void addStorageManagerForSession(PAL::SessionID, const String& path, SandboxExtension::Handle&, const String& localStoragePath, SandboxExtension::Handle&);
     void removeStorageManagerForSession(PAL::SessionID);
 
     // Connections to WebProcesses.
@@ -576,8 +574,6 @@ private:
 
     HashMap<PAL::SessionID, std::unique_ptr<NetworkSession>> m_networkSessions;
     HashMap<PAL::SessionID, std::unique_ptr<WebCore::NetworkStorageSession>> m_networkStorageSessions;
-
-    Ref<StorageManagerSet> m_storageManagerSet;
 
 #if PLATFORM(COCOA)
     void platformInitializeNetworkProcessCocoa(const NetworkProcessCreationParameters&);

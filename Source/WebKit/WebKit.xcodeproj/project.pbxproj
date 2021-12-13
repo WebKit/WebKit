@@ -1514,6 +1514,13 @@
 		93E799852756FA550074008A /* WebFileSystemStorageConnectionMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93E799822756FA540074008A /* WebFileSystemStorageConnectionMessageReceiver.cpp */; };
 		93E799872756FAB40074008A /* WebFileSystemStorageConnectionMessagesReplies.h in Headers */ = {isa = PBXBuildFile; fileRef = 93E799832756FA540074008A /* WebFileSystemStorageConnectionMessagesReplies.h */; };
 		93E799882756FAC20074008A /* WebFileSystemStorageConnectionMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 93E799812756FA530074008A /* WebFileSystemStorageConnectionMessages.h */; };
+		93E799C7276027460074008A /* StorageAreaRegistry.h in Headers */ = {isa = PBXBuildFile; fileRef = 93E799C6276027370074008A /* StorageAreaRegistry.h */; };
+		93E799CE2760497B0074008A /* SessionStorageManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 93E799CA2760497A0074008A /* SessionStorageManager.h */; };
+		93E799CF2760497B0074008A /* LocalStorageManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 93E799CB2760497A0074008A /* LocalStorageManager.h */; };
+		93E799D22760AA5B0074008A /* UnifiedSource112.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93E799D12760AA5A0074008A /* UnifiedSource112.cpp */; };
+		93E799DA276121080074008A /* SQLiteStorageArea.h in Headers */ = {isa = PBXBuildFile; fileRef = 93E799D4276121070074008A /* SQLiteStorageArea.h */; };
+		93E799DB276121080074008A /* MemoryStorageArea.h in Headers */ = {isa = PBXBuildFile; fileRef = 93E799D5276121070074008A /* MemoryStorageArea.h */; };
+		93E799DC276121080074008A /* StorageAreaBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 93E799D6276121080074008A /* StorageAreaBase.h */; };
 		93F549B41E3174B7000E7239 /* WKSnapshotConfiguration.h in Headers */ = {isa = PBXBuildFile; fileRef = 93F549B31E3174B7000E7239 /* WKSnapshotConfiguration.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		950F2880252414EA00B74F1C /* WKMouseDeviceObserver.h in Headers */ = {isa = PBXBuildFile; fileRef = 950F287E252414E900B74F1C /* WKMouseDeviceObserver.h */; };
 		9565083926D87A2B00E15CB7 /* AppleMediaServicesSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 9565083726D87A2B00E15CB7 /* AppleMediaServicesSPI.h */; };
@@ -5353,6 +5360,19 @@
 		93E799812756FA530074008A /* WebFileSystemStorageConnectionMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebFileSystemStorageConnectionMessages.h; sourceTree = "<group>"; };
 		93E799822756FA540074008A /* WebFileSystemStorageConnectionMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebFileSystemStorageConnectionMessageReceiver.cpp; sourceTree = "<group>"; };
 		93E799832756FA540074008A /* WebFileSystemStorageConnectionMessagesReplies.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebFileSystemStorageConnectionMessagesReplies.h; sourceTree = "<group>"; };
+		93E799C5276027360074008A /* StorageAreaRegistry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StorageAreaRegistry.cpp; sourceTree = "<group>"; };
+		93E799C6276027370074008A /* StorageAreaRegistry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StorageAreaRegistry.h; sourceTree = "<group>"; };
+		93E799C92760497A0074008A /* LocalStorageManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LocalStorageManager.cpp; sourceTree = "<group>"; };
+		93E799CA2760497A0074008A /* SessionStorageManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SessionStorageManager.h; sourceTree = "<group>"; };
+		93E799CB2760497A0074008A /* LocalStorageManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocalStorageManager.h; sourceTree = "<group>"; };
+		93E799CC2760497B0074008A /* SessionStorageManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SessionStorageManager.cpp; sourceTree = "<group>"; };
+		93E799D12760AA5A0074008A /* UnifiedSource112.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UnifiedSource112.cpp; sourceTree = "<group>"; };
+		93E799D3276121070074008A /* SQLiteStorageArea.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SQLiteStorageArea.cpp; sourceTree = "<group>"; };
+		93E799D4276121070074008A /* SQLiteStorageArea.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SQLiteStorageArea.h; sourceTree = "<group>"; };
+		93E799D5276121070074008A /* MemoryStorageArea.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MemoryStorageArea.h; sourceTree = "<group>"; };
+		93E799D6276121080074008A /* StorageAreaBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StorageAreaBase.h; sourceTree = "<group>"; };
+		93E799D7276121080074008A /* StorageAreaBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StorageAreaBase.cpp; sourceTree = "<group>"; };
+		93E799D8276121080074008A /* MemoryStorageArea.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MemoryStorageArea.cpp; sourceTree = "<group>"; };
 		93F549B31E3174B7000E7239 /* WKSnapshotConfiguration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKSnapshotConfiguration.h; sourceTree = "<group>"; };
 		93F549B51E3174DA000E7239 /* WKSnapshotConfiguration.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKSnapshotConfiguration.mm; sourceTree = "<group>"; };
 		950F287E252414E900B74F1C /* WKMouseDeviceObserver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKMouseDeviceObserver.h; path = ios/WKMouseDeviceObserver.h; sourceTree = "<group>"; };
@@ -8234,6 +8254,7 @@
 				1CAECB5D27465AE300AB78D0 /* UnifiedSource109.cpp */,
 				1CAECB6027465AE300AB78D0 /* UnifiedSource110.cpp */,
 				1CAECB5E27465AE300AB78D0 /* UnifiedSource111.cpp */,
+				93E799D12760AA5A0074008A /* UnifiedSource112.cpp */,
 			);
 			name = "unified-sources";
 			path = "DerivedSources/WebKit/unified-sources";
@@ -10314,11 +10335,23 @@
 				935B579826F51270008B48AC /* FileSystemStorageHandleRegistry.h */,
 				931A075126F06310004474CD /* FileSystemStorageManager.cpp */,
 				931A075026F06310004474CD /* FileSystemStorageManager.h */,
+				93E799C92760497A0074008A /* LocalStorageManager.cpp */,
+				93E799CB2760497A0074008A /* LocalStorageManager.h */,
+				93E799D8276121080074008A /* MemoryStorageArea.cpp */,
+				93E799D5276121070074008A /* MemoryStorageArea.h */,
 				93085DC326E1BBBD000EC6A7 /* NetworkStorageManager.cpp */,
 				93085DC426E1BBBD000EC6A7 /* NetworkStorageManager.h */,
 				93085DC726E1C6EE000EC6A7 /* NetworkStorageManager.messages.in */,
 				93085DC526E1C6CF000EC6A7 /* OriginStorageManager.cpp */,
 				93085DC626E1C6CF000EC6A7 /* OriginStorageManager.h */,
+				93E799CC2760497B0074008A /* SessionStorageManager.cpp */,
+				93E799CA2760497A0074008A /* SessionStorageManager.h */,
+				93E799D3276121070074008A /* SQLiteStorageArea.cpp */,
+				93E799D4276121070074008A /* SQLiteStorageArea.h */,
+				93E799D7276121080074008A /* StorageAreaBase.cpp */,
+				93E799D6276121080074008A /* StorageAreaBase.h */,
+				93E799C5276027360074008A /* StorageAreaRegistry.cpp */,
+				93E799C6276027370074008A /* StorageAreaRegistry.h */,
 			);
 			path = storage;
 			sourceTree = "<group>";
@@ -12973,6 +13006,7 @@
 				57DCEDAE214C60330016B847 /* LocalService.h in Headers */,
 				93B2614E227D14B100B97A76 /* LocalStorageDatabase.h in Headers */,
 				93B2614F227D14B100B97A76 /* LocalStorageDatabaseTracker.h in Headers */,
+				93E799CF2760497B0074008A /* LocalStorageManager.h in Headers */,
 				46BEB6DB22FB9D4800269867 /* LocalStorageNamespace.h in Headers */,
 				51A7F2F3125BF820008AEB1D /* Logging.h in Headers */,
 				0FDCD7F71D47E92A009F08BC /* LogInitialization.h in Headers */,
@@ -12991,6 +13025,7 @@
 				A15799BD2584433200528236 /* MediaSampleCursor.h in Headers */,
 				075A9CF326169BAB006DFA3A /* MediaSessionCoordinatorProxyPrivate.h in Headers */,
 				A15799B72584433200528236 /* MediaTrackReader.h in Headers */,
+				93E799DB276121080074008A /* MemoryStorageArea.h in Headers */,
 				51933DEF1965EB31008AC3EA /* MenuUtilities.h in Headers */,
 				9B47908D25314D8300EC11AB /* MessageArgumentDescriptions.h in Headers */,
 				1AC4C82916B876A90069DCCD /* MessageFlags.h in Headers */,
@@ -13039,7 +13074,6 @@
 				532159561DBAE72D0054AA3C /* NetworkDataTaskCocoa.h in Headers */,
 				839902031BE9A02B000F3653 /* NetworkLoad.h in Headers */,
 				83D454D71BE9D3C4006C93BD /* NetworkLoadClient.h in Headers */,
-				517B5F97275EC5E5002DC22D /* WebPushMessage.h in Headers */,
 				839149651BEA838500D2D953 /* NetworkLoadParameters.h in Headers */,
 				E47FC8A025B8331C005495FC /* NetworkLoadScheduler.h in Headers */,
 				514526ED271E1647000467B6 /* NetworkNotificationManager.h in Headers */,
@@ -13127,6 +13161,7 @@
 				2D279E1926955768004B3EEB /* PrototypeToolsSPI.h in Headers */,
 				517B5F81275E97B6002DC22D /* PushAppBundle.h in Headers */,
 				517B5F7D275E97B6002DC22D /* PushClientConnection.h in Headers */,
+				517B5F95275EBA63002DC22D /* PushMessageForTesting.h in Headers */,
 				A1E688701F6E2BAB007006A6 /* QuarantineSPI.h in Headers */,
 				1A0C227E2451130A00ED614D /* QuickLookThumbnailingSoftLink.h in Headers */,
 				1AEE57252409F142002005D6 /* QuickLookThumbnailLoader.h in Headers */,
@@ -13211,6 +13246,7 @@
 				514D9F5719119D35000063A7 /* ServicesController.h in Headers */,
 				1AFDE65A1954A42B00C48FFA /* SessionState.h in Headers */,
 				1A002D49196B345D00B9AD44 /* SessionStateCoding.h in Headers */,
+				93E799CE2760497B0074008A /* SessionStorageManager.h in Headers */,
 				46BEB6DF22FBB16B00269867 /* SessionStorageNamespace.h in Headers */,
 				1A6420E512DCE2FF00CAAE2C /* ShareableBitmap.h in Headers */,
 				F43A9CE025D72F1C00990E26 /* ShareableBitmapUtilities.h in Headers */,
@@ -13239,11 +13275,14 @@
 				93D6B772254BB5190058DD3A /* SpeechRecognitionServer.h in Headers */,
 				93D6B784254CCD0E0058DD3A /* SpeechRecognitionServerMessages.h in Headers */,
 				93D6B785254CCD430058DD3A /* SpeechRecognitionServerMessagesReplies.h in Headers */,
+				93E799DA276121080074008A /* SQLiteStorageArea.h in Headers */,
 				7A3FECA221F7C09700F267CD /* StorageAccessStatus.h in Headers */,
 				46BEB6D722FB9BD700269867 /* StorageArea.h in Headers */,
+				93E799DC276121080074008A /* StorageAreaBase.h in Headers */,
 				1AD3306F16B1D991004F60E7 /* StorageAreaImpl.h in Headers */,
 				1ACECD2517162DB1001FC9EF /* StorageAreaMap.h in Headers */,
 				1A334DEE16DE8F88006A8E38 /* StorageAreaMapMessages.h in Headers */,
+				93E799C7276027460074008A /* StorageAreaRegistry.h in Headers */,
 				93B2614D227D149E00B97A76 /* StorageManager.h in Headers */,
 				936B059823039097002FC06B /* StorageManagerSet.h in Headers */,
 				9368EEDF2303A9ED00BDB11A /* StorageManagerSetMessages.h in Headers */,
@@ -13513,6 +13552,7 @@
 				517B5F2E2757382A002DC22D /* WebPushDaemonConnectionConfiguration.h in Headers */,
 				512CD69A2721F0A900F7F8EC /* WebPushDaemonConstants.h in Headers */,
 				517B5F73275E9609002DC22D /* WebPushDaemonMain.h in Headers */,
+				517B5F97275EC5E5002DC22D /* WebPushMessage.h in Headers */,
 				461CCCA6231485AA00B659B9 /* WebRemoteObjectRegistry.h in Headers */,
 				A5860E71230F67FC00461AAE /* WebResourceInterceptController.h in Headers */,
 				510AFFBA16542048001BA05E /* WebResourceLoader.h in Headers */,
@@ -13547,7 +13587,6 @@
 				9356F2DC2152B6B500E6D5DF /* WebSWClientConnection.h in Headers */,
 				517A53101F47A86200DCDC0A /* WebSWClientConnectionMessages.h in Headers */,
 				466BC03C1FA266DA002FA9C1 /* WebSWContextManagerConnection.h in Headers */,
-				517B5F95275EBA63002DC22D /* PushMessageForTesting.h in Headers */,
 				460F48901F996F7100CF4B87 /* WebSWContextManagerConnectionMessages.h in Headers */,
 				C11A9ECC214035F800CFB20A /* WebSwitchingGPUClient.h in Headers */,
 				9356F2DE2152B71000E6D5DF /* WebSWOriginStore.h in Headers */,
@@ -15116,9 +15155,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				517B5F9A275F3A86002DC22D /* ArgumentCoders.cpp in Sources */,
-				517B5F68275A9A78002DC22D /* WebPushToolConnection.mm in Sources */,
-				517B5F9B275F3A98002DC22D /* DaemonUtilities.mm in Sources */,
 				517B5F9C275F3C37002DC22D /* DaemonEncoder.cpp in Sources */,
+				517B5F9B275F3A98002DC22D /* DaemonUtilities.mm in Sources */,
+				517B5F68275A9A78002DC22D /* WebPushToolConnection.mm in Sources */,
 				517B5F65275A8D7F002DC22D /* WebPushToolMain.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -15214,7 +15253,6 @@
 				CDA93DB122F8BCF400490A69 /* FullscreenTouchSecheuristicParameters.cpp in Sources */,
 				C1A152D724E5A29A00978C8B /* HandleXPCEndpointMessages.mm in Sources */,
 				2749F6442146561B008380BF /* InjectedBundleNodeHandle.cpp in Sources */,
-				517B5F99275EC601002DC22D /* WebPushMessageCocoa.mm in Sources */,
 				2749F6452146561E008380BF /* InjectedBundleRangeHandle.cpp in Sources */,
 				9BF5EC642541145600984E77 /* JSIPCBinding.cpp in Sources */,
 				C14D37FE24ACE086007FF014 /* LaunchServicesDatabaseManager.mm in Sources */,
@@ -15503,6 +15541,7 @@
 				1CAECB6527465AE400AB78D0 /* UnifiedSource109.cpp in Sources */,
 				1CAECB6827465AE400AB78D0 /* UnifiedSource110.cpp in Sources */,
 				1CAECB6627465AE400AB78D0 /* UnifiedSource111.cpp in Sources */,
+				93E799D22760AA5B0074008A /* UnifiedSource112.cpp in Sources */,
 				E38A1FC023A551BF00D2374F /* UserInterfaceIdiom.mm in Sources */,
 				CD491B0D1E732E4D00009066 /* UserMediaCaptureManagerMessageReceiver.cpp in Sources */,
 				CD491B171E73525500009066 /* UserMediaCaptureManagerProxyMessageReceiver.cpp in Sources */,
@@ -15574,6 +15613,7 @@
 				BCEE7AD012817988009827DA /* WebProcessProxyMessageReceiver.cpp in Sources */,
 				517B5F7A275E97A4002DC22D /* WebPushDaemon.mm in Sources */,
 				517B5F79275E97A1002DC22D /* WebPushDaemonMain.mm in Sources */,
+				517B5F99275EC601002DC22D /* WebPushMessageCocoa.mm in Sources */,
 				51F060E11654318500F3281B /* WebResourceLoaderMessageReceiver.cpp in Sources */,
 				51F060E11654318500F3281F /* WebRTCMonitorMessageReceiver.cpp in Sources */,
 				51F060E11654318500F3282C /* WebRTCResolverMessageReceiver.cpp in Sources */,

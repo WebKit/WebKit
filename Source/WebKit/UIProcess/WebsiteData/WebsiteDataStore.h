@@ -167,7 +167,6 @@ public:
     void removeData(OptionSet<WebsiteDataType>, WallTime modifiedSince, Function<void()>&& completionHandler);
     void removeData(OptionSet<WebsiteDataType>, const Vector<WebsiteDataRecord>&, Function<void()>&& completionHandler);
 
-    void getLocalStorageDetails(Function<void(Vector<LocalStorageDatabaseTracker::OriginDetails>&&)>&&);
     void setCacheModelSynchronouslyForTesting(CacheModel);
     void setServiceWorkerTimeoutForTesting(Seconds);
     void resetServiceWorkerTimeoutForTesting();
@@ -371,6 +370,10 @@ public:
     void clearBundleIdentifierInNetworkProcess(CompletionHandler<void()>&&);
 
     void countNonDefaultSessionSets(CompletionHandler<void(size_t)>&&);
+
+#if PLATFORM(IOS_FAMILY)
+    void excludeDirectoryFromBackup(const String& directory);
+#endif
 
 private:
     enum class ForceReinitialization : bool { No, Yes };

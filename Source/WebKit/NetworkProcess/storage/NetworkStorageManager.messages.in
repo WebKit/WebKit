@@ -35,9 +35,18 @@
     Resolve(WebCore::FileSystemHandleIdentifier identifier, WebCore::FileSystemHandleIdentifier targetIdentifier) -> (Expected<Vector<String>, WebKit::FileSystemStorageError> result) Async
     Move(WebCore::FileSystemHandleIdentifier identifier, WebCore::FileSystemHandleIdentifier destinationIdentifier, String newName) -> (std::optional<WebKit::FileSystemStorageError> result) Async
     GetFile(WebCore::FileSystemHandleIdentifier identifier) -> (Expected<String, WebKit::FileSystemStorageError> result) Async
-
     CreateSyncAccessHandle(WebCore::FileSystemHandleIdentifier identifier) -> (Expected<std::pair<WebCore::FileSystemSyncAccessHandleIdentifier, IPC::SharedFileHandle>, WebKit::FileSystemStorageError> result) Async
     CloseAccessHandle(WebCore::FileSystemHandleIdentifier identifier, WebCore::FileSystemSyncAccessHandleIdentifier accessHandleIdentifier) -> (std::optional<WebKit::FileSystemStorageError> result) Async
     GetHandleNames(WebCore::FileSystemHandleIdentifier identifier) -> (Expected<Vector<String>, WebKit::FileSystemStorageError> result) Async
     GetHandle(WebCore::FileSystemHandleIdentifier identifier, String name) -> (Expected<std::pair<WebCore::FileSystemHandleIdentifier, bool>, WebKit::FileSystemStorageError> result) Async WantsConnection
+
+    ConnectToLocalStorageArea(WebKit::StorageNamespaceIdentifier storageNamespaceID, struct WebCore::SecurityOriginData securityOriginData) -> (WebKit::StorageAreaIdentifier identifier) Synchronous WantsConnection
+    ConnectToTransientLocalStorageArea(WebKit::StorageNamespaceIdentifier storageNamespaceID, struct WebCore::SecurityOriginData topLevelSecurityOriginData, struct WebCore::SecurityOriginData securityOriginData) -> (WebKit::StorageAreaIdentifier identifier) Synchronous WantsConnection
+    ConnectToSessionStorageArea(WebKit::StorageNamespaceIdentifier storageNamespaceID, struct WebCore::SecurityOriginData securityOriginData) -> (WebKit::StorageAreaIdentifier identifier) Synchronous WantsConnection
+    DisconnectFromStorageArea(WebKit::StorageAreaIdentifier identifier) WantsConnection
+    CloneSessionStorageNamespace(WebKit::StorageNamespaceIdentifier fromStorageNamespaceID, WebKit::StorageNamespaceIdentifier toStorageNamespaceID) WantsConnection
+    GetValues(WebKit::StorageAreaIdentifier identifier) -> (HashMap<String, String> values) Synchronous
+    SetItem(WebKit::StorageAreaIdentifier identifier, WebKit::StorageAreaImplIdentifier implIdentifier, uint64_t storageMapSeed, String key, String value, String urlString) WantsConnection
+    RemoveItem(WebKit::StorageAreaIdentifier identifier, WebKit::StorageAreaImplIdentifier implIdentifier, uint64_t storageMapSeed, String key, String urlString) WantsConnection
+    Clear(WebKit::StorageAreaIdentifier identifier, WebKit::StorageAreaImplIdentifier implIdentifier, uint64_t storageMapSeed, String urlString) WantsConnection
 }

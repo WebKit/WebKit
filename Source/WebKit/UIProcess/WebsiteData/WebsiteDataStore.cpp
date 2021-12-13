@@ -1903,6 +1903,9 @@ WebsiteDataStoreParameters WebsiteDataStore::parameters()
     auto localStorageDirectory = resolvedLocalStorageDirectory();
     if (!localStorageDirectory.isEmpty()) {
         parameters.localStorageDirectory = localStorageDirectory;
+#if PLATFORM(IOS_FAMILY)
+        excludeDirectoryFromBackup(localStorageDirectory);
+#endif
         // FIXME: SandboxExtension::createHandleForReadWriteDirectory resolves the directory, but that has already been done. Remove this duplicate work.
         if (auto handle = SandboxExtension::createHandleForReadWriteDirectory(localStorageDirectory))
             parameters.localStorageDirectoryExtensionHandle = WTFMove(*handle);
@@ -1967,18 +1970,6 @@ API::HTTPCookieStore& WebsiteDataStore::cookieStore()
         m_cookieStore = API::HTTPCookieStore::create(*this);
 
     return *m_cookieStore;
-}
-
-void WebsiteDataStore::getLocalStorageDetails(Function<void(Vector<LocalStorageDatabaseTracker::OriginDetails>&&)>&& completionHandler)
-{
-    if (!isPersistent()) {
-        completionHandler({ });
-        return;
-    }
-
-    networkProcess().getLocalStorageDetails(m_sessionID, [completionHandler = WTFMove(completionHandler)](auto&& details) {
-        completionHandler(WTFMove(details));
-    });
 }
 
 void WebsiteDataStore::resetQuota(CompletionHandler<void()>&& completionHandler)

@@ -43,6 +43,8 @@
 
 namespace WebCore {
 
+static constexpr std::array<const char *, 3> databaseFileSuffixes { "", "-shm", "-wal" };
+
 SQLiteFileSystem::SQLiteFileSystem()
 {
 }
@@ -77,18 +79,22 @@ bool SQLiteFileSystem::deleteEmptyDatabaseDirectory(const String& path)
     return FileSystem::deleteEmptyDirectory(path);
 }
 
-bool SQLiteFileSystem::deleteDatabaseFile(const String& fileName)
+bool SQLiteFileSystem::deleteDatabaseFile(const String& filePath)
 {
-    auto walFileName = makeString(fileName, "-wal"_s);
-    auto shmFileName = makeString(fileName, "-shm"_s);
+    bool fileExists = false;
+    for (const auto* suffix : databaseFileSuffixes) {
+        String path = filePath + suffix;
+        FileSystem::deleteFile(path);
+        fileExists |= FileSystem::fileExists(path);
+    }
 
-    // Try to delete all three files whether or not they are there.
-    FileSystem::deleteFile(fileName);
-    FileSystem::deleteFile(walFileName);
-    FileSystem::deleteFile(shmFileName);
+    return !fileExists;
+}
 
-    // If any of the wal or shm files remain after the delete attempt, the overall delete operation failed.
-    return !FileSystem::fileExists(fileName) && !FileSystem::fileExists(walFileName) && !FileSystem::fileExists(shmFileName);
+void SQLiteFileSystem::moveDatabaseFile(const String& oldFilePath, const String& newFilePath)
+{
+    for (const auto* suffix : databaseFileSuffixes)
+        FileSystem::moveFile(makeString(oldFilePath, suffix), makeString(newFilePath, suffix));
 }
 
 #if PLATFORM(IOS_FAMILY)
@@ -98,18 +104,13 @@ bool SQLiteFileSystem::truncateDatabaseFile(sqlite3* database)
 }
 #endif
     
-uint64_t SQLiteFileSystem::databaseFileSize(const String& fileName)
-{        
+uint64_t SQLiteFileSystem::databaseFileSize(const String& filePath)
+{
     uint64_t totalSize = 0;
-
-    if (auto fileSize = FileSystem::fileSize(fileName))
-        totalSize += *fileSize;
-
-    if (auto fileSize = FileSystem::fileSize(makeString(fileName, "-wal"_s)))
-        totalSize += *fileSize;
-
-    if (auto fileSize = FileSystem::fileSize(makeString(fileName, "-shm"_s)))
-        totalSize += *fileSize;
+    for (const auto* suffix : databaseFileSuffixes) {
+        if (auto fileSize = FileSystem::fileSize(filePath + suffix))
+            totalSize += *fileSize;
+    }
 
     return totalSize;
 }
