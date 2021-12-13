@@ -116,17 +116,14 @@ static void printReason(AvoidanceReason reason, TextStream& stream)
     case AvoidanceReason::FlowHasOverflowNotVisible:
         stream << "overflow: hidden | scroll | auto";
         break;
-    case AvoidanceReason::FlowIsNotLTR:
-        stream << "dir is not LTR";
+    case AvoidanceReason::FlowMayNotBeLTR:
+        stream << "dir may not be LTR";
         break;
     case AvoidanceReason::FlowHasLineBoxContainProperty:
         stream << "line-box-contain value indicates variable line height";
         break;
     case AvoidanceReason::FlowIsNotTopToBottom:
         stream << "non top-to-bottom flow";
-        break;
-    case AvoidanceReason::FlowHasNonNormalUnicodeBiDi:
-        stream << "non-normal Unicode bidi";
         break;
     case AvoidanceReason::FlowHasRTLOrdering:
         stream << "-webkit-rtl-ordering";
@@ -437,17 +434,10 @@ static OptionSet<AvoidanceReason> canUseForStyle(const RenderElement& renderer, 
         SET_REASON_AND_RETURN_IF_NEEDED(FlowHasOverflowNotVisible, reasons, includeReasons);
     if (style.textOverflow() == TextOverflow::Ellipsis)
         SET_REASON_AND_RETURN_IF_NEEDED(FlowHasTextOverflow, reasons, includeReasons);
-    if (!style.isLeftToRightDirection())
-        SET_REASON_AND_RETURN_IF_NEEDED(FlowIsNotLTR, reasons, includeReasons);
+    if (!style.isLeftToRightDirection() || (is<RenderBlockFlow>(renderer) && style.unicodeBidi() == EUnicodeBidi::Plaintext))
+        SET_REASON_AND_RETURN_IF_NEEDED(FlowMayNotBeLTR, reasons, includeReasons);
     if (style.writingMode() != WritingMode::TopToBottom)
         SET_REASON_AND_RETURN_IF_NEEDED(FlowIsNotTopToBottom, reasons, includeReasons);
-    if (style.unicodeBidi() != UBNormal) {
-        auto unicodeBidi = style.unicodeBidi();
-        if (unicodeBidi == EUnicodeBidi::Plaintext)
-            SET_REASON_AND_RETURN_IF_NEEDED(FlowHasNonNormalUnicodeBiDi, reasons, includeReasons);
-        if (!is<RenderBlockFlow>(renderer) && unicodeBidi == EUnicodeBidi::IsolateOverride)
-            SET_REASON_AND_RETURN_IF_NEEDED(FlowHasNonNormalUnicodeBiDi, reasons, includeReasons);
-    }
     if (style.rtlOrdering() != Order::Logical)
         SET_REASON_AND_RETURN_IF_NEEDED(FlowHasRTLOrdering, reasons, includeReasons);
     if (style.textEmphasisFill() != TextEmphasisFill::Filled || style.textEmphasisMark() != TextEmphasisMark::None)
