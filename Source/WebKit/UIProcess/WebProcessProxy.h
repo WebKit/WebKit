@@ -155,7 +155,9 @@ public:
     bool isMatchingRegistrableDomain(const WebCore::RegistrableDomain& domain) const { return m_registrableDomain ? *m_registrableDomain == domain : false; }
     WebCore::RegistrableDomain registrableDomain() const { return m_registrableDomain.value_or(WebCore::RegistrableDomain { }); }
     const std::optional<WebCore::RegistrableDomain>& optionalRegistrableDomain() const { return m_registrableDomain; }
-    void setIsInProcessCache(bool);
+
+    enum class WillShutDown : bool { No, Yes };
+    void setIsInProcessCache(bool, WillShutDown = WillShutDown::No);
     bool isInProcessCache() const { return m_isInProcessCache; }
 
     void enableServiceWorkers(const UserContentControllerIdentifier&);

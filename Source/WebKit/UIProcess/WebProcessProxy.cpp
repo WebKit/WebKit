@@ -278,7 +278,7 @@ void WebProcessProxy::platformDestroy()
 }
 #endif
 
-void WebProcessProxy::setIsInProcessCache(bool value)
+void WebProcessProxy::setIsInProcessCache(bool value, WillShutDown willShutDown)
 {
     WEBPROCESSPROXY_RELEASE_LOG(Process, "setIsInProcessCache(%d)", value);
     if (value) {
@@ -289,6 +289,11 @@ void WebProcessProxy::setIsInProcessCache(bool value)
 
     ASSERT(m_isInProcessCache != value);
     m_isInProcessCache = value;
+
+    // No point in doing anything else if the process is about to shut down.
+    ASSERT(willShutDown == WillShutDown::No || !value);
+    if (willShutDown == WillShutDown::Yes)
+        return;
 
     send(Messages::WebProcess::SetIsInProcessCache(m_isInProcessCache), 0);
 

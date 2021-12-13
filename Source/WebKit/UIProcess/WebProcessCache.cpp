@@ -286,7 +286,7 @@ WebProcessCache::CachedProcess::~CachedProcess()
     if (isSuspended())
         m_process->platformResumeProcess();
 #endif
-    m_process->setIsInProcessCache(false);
+    m_process->setIsInProcessCache(false, WebProcessProxy::WillShutDown::Yes);
     m_process->shutDown();
 }
 
