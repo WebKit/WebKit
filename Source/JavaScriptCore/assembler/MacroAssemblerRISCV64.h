@@ -47,6 +47,9 @@ public:
     static constexpr RegisterID dataTempRegister = RISCV64Registers::x30;
     static constexpr RegisterID memoryTempRegister = RISCV64Registers::x31;
 
+    static constexpr FPRegisterID fpTempRegister = RISCV64Registers::f30;
+    static constexpr FPRegisterID fpTempRegister2 = RISCV64Registers::f31;
+
     static constexpr RegisterID InvalidGPRReg = RISCV64Registers::InvalidGPRReg;
 
     RegisterID scratchRegister()
@@ -1493,18 +1496,52 @@ public:
         move(temp.data(), reg2);
     }
 
-    void swap(FPRegisterID, FPRegisterID)
+    void swap(FPRegisterID reg1, FPRegisterID reg2)
     {
-        // TODO
+        moveDouble(reg1, fpTempRegister);
+        moveDouble(reg2, reg1);
+        moveDouble(fpTempRegister, reg2);
     }
 
-    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(moveZeroToDouble);
-    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(moveFloatTo32);
-    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(move32ToFloat);
+    void moveZeroToFloat(FPRegisterID dest)
+    {
+        m_assembler.fcvtInsn<RISCV64Assembler::FCVTType::S, RISCV64Assembler::FCVTType::W>(dest, RISCV64Registers::zero);
+    }
 
-    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(moveDouble);
-    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(moveDoubleTo64);
-    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(move64ToDouble);
+    void moveZeroToDouble(FPRegisterID dest)
+    {
+        m_assembler.fcvtInsn<RISCV64Assembler::FCVTType::D, RISCV64Assembler::FCVTType::L>(dest, RISCV64Registers::zero);
+    }
+
+    void moveFloat(FPRegisterID src, FPRegisterID dest)
+    {
+        m_assembler.fsgnjInsn<32>(dest, src, src);
+    }
+
+    void moveFloatTo32(FPRegisterID src, RegisterID dest)
+    {
+        m_assembler.fmvInsn<RISCV64Assembler::FMVType::X, RISCV64Assembler::FMVType::W>(dest, src);
+    }
+
+    void move32ToFloat(RegisterID src, FPRegisterID dest)
+    {
+        m_assembler.fmvInsn<RISCV64Assembler::FMVType::W, RISCV64Assembler::FMVType::X>(dest, src);
+    }
+
+    void moveDouble(FPRegisterID src, FPRegisterID dest)
+    {
+        m_assembler.fsgnjInsn<64>(dest, src, src);
+    }
+
+    void moveDoubleTo64(FPRegisterID src, RegisterID dest)
+    {
+        m_assembler.fmvInsn<RISCV64Assembler::FMVType::X, RISCV64Assembler::FMVType::D>(dest, src);
+    }
+
+    void move64ToDouble(RegisterID src, FPRegisterID dest)
+    {
+        m_assembler.fmvInsn<RISCV64Assembler::FMVType::D, RISCV64Assembler::FMVType::X>(dest, src);
+    }
 
     MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(compare8);
     MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(compare32);
@@ -1624,29 +1661,183 @@ public:
         m_assembler.addiInsn(dest, resolution.base, Imm::I(resolution.offset));
     }
 
-    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(loadFloat);
-    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(loadDouble);
+    void loadFloat(Address address, FPRegisterID dest)
+    {
+        auto resolution = resolveAddress(address, lazyTemp<Memory>());
+        m_assembler.flwInsn(dest, resolution.base, Imm::I(resolution.offset));
+    }
 
-    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(storeFloat);
-    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(storeDouble);
+    void loadFloat(BaseIndex address, FPRegisterID dest)
+    {
+        auto resolution = resolveAddress(address, lazyTemp<Memory>());
+        m_assembler.flwInsn(dest, resolution.base, Imm::I(resolution.offset));
+    }
 
-    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(addFloat);
-    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(addDouble);
+    void loadFloat(TrustedImmPtr address, FPRegisterID dest)
+    {
+        auto temp = temps<Memory>();
+        loadImmediate(address, temp.memory());
+        m_assembler.flwInsn(dest, temp.memory(), Imm::I<0>());
+    }
 
-    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(subFloat);
-    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(subDouble);
+    void loadDouble(Address address, FPRegisterID dest)
+    {
+        auto resolution = resolveAddress(address, lazyTemp<Memory>());
+        m_assembler.fldInsn(dest, resolution.base, Imm::I(resolution.offset));
+    }
 
-    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(mulFloat);
-    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(mulDouble);
+    void loadDouble(BaseIndex address, FPRegisterID dest)
+    {
+        auto resolution = resolveAddress(address, lazyTemp<Memory>());
+        m_assembler.fldInsn(dest, resolution.base, Imm::I(resolution.offset));
+    }
 
-    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(divFloat);
-    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(divDouble);
+    void loadDouble(TrustedImmPtr address, FPRegisterID dest)
+    {
+        auto temp = temps<Memory>();
+        loadImmediate(address, temp.memory());
+        m_assembler.fldInsn(dest, temp.memory(), Imm::I<0>());
+    }
 
-    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(sqrtFloat);
-    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(sqrtDouble);
+    void storeFloat(FPRegisterID src, Address address)
+    {
+        auto resolution = resolveAddress(address, lazyTemp<Memory>());
+        m_assembler.fswInsn(resolution.base, src, Imm::S(resolution.offset));
+    }
 
-    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(absFloat);
-    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(absDouble);
+    void storeFloat(FPRegisterID src, BaseIndex address)
+    {
+        auto resolution = resolveAddress(address, lazyTemp<Memory>());
+        m_assembler.fswInsn(resolution.base, src, Imm::S(resolution.offset));
+    }
+
+    void storeFloat(FPRegisterID src, TrustedImmPtr address)
+    {
+        auto temp = temps<Memory>();
+        loadImmediate(address, temp.memory());
+        m_assembler.fswInsn(temp.memory(), src, Imm::S<0>());
+    }
+
+    void storeDouble(FPRegisterID src, Address address)
+    {
+        auto resolution = resolveAddress(address, lazyTemp<Memory>());
+        m_assembler.fsdInsn(resolution.base, src, Imm::S(resolution.offset));
+    }
+
+    void storeDouble(FPRegisterID src, BaseIndex address)
+    {
+        auto resolution = resolveAddress(address, lazyTemp<Memory>());
+        m_assembler.fsdInsn(resolution.base, src, Imm::S(resolution.offset));
+    }
+
+    void storeDouble(FPRegisterID src, TrustedImmPtr address)
+    {
+        auto temp = temps<Memory>();
+        loadImmediate(address, temp.memory());
+        m_assembler.fsdInsn(temp.memory(), src, Imm::S<0>());
+    }
+
+    void addFloat(FPRegisterID op1, FPRegisterID op2, FPRegisterID dest)
+    {
+        m_assembler.faddInsn<32>(dest, op1, op2);
+    }
+
+    void addDouble(FPRegisterID src, FPRegisterID dest)
+    {
+        addDouble(src, dest, dest);
+    }
+
+    void addDouble(FPRegisterID op1, FPRegisterID op2, FPRegisterID dest)
+    {
+        m_assembler.faddInsn<64>(dest, op1, op2);
+    }
+
+    void addDouble(AbsoluteAddress address, FPRegisterID dest)
+    {
+        loadDouble(TrustedImmPtr(address.m_ptr), fpTempRegister);
+        m_assembler.faddInsn<64>(dest, fpTempRegister, dest);
+    }
+
+    void subFloat(FPRegisterID op1, FPRegisterID op2, FPRegisterID dest)
+    {
+        m_assembler.fsubInsn<32>(dest, op1, op2);
+    }
+
+    void subDouble(FPRegisterID src, FPRegisterID dest)
+    {
+        subDouble(dest, src, dest);
+    }
+
+    void subDouble(FPRegisterID op1, FPRegisterID op2, FPRegisterID dest)
+    {
+        m_assembler.fsubInsn<64>(dest, op1, op2);
+    }
+
+    void mulFloat(FPRegisterID src, FPRegisterID dest)
+    {
+        mulFloat(src, dest, dest);
+    }
+
+    void mulFloat(FPRegisterID op1, FPRegisterID op2, FPRegisterID dest)
+    {
+        m_assembler.fmulInsn<32>(dest, op1, op2);
+    }
+
+    void mulDouble(FPRegisterID src, FPRegisterID dest)
+    {
+        mulDouble(src, dest, dest);
+    }
+
+    void mulDouble(FPRegisterID op1, FPRegisterID op2, FPRegisterID dest)
+    {
+        m_assembler.fmulInsn<64>(dest, op1, op2);
+    }
+
+    void mulDouble(Address address, FPRegisterID dest)
+    {
+        loadDouble(address, fpTempRegister);
+        mulDouble(fpTempRegister, dest, dest);
+    }
+
+    void divFloat(FPRegisterID src, FPRegisterID dest)
+    {
+        divFloat(dest, src, dest);
+    }
+
+    void divFloat(FPRegisterID op1, FPRegisterID op2, FPRegisterID dest)
+    {
+        m_assembler.fdivInsn<32>(dest, op1, op2);
+    }
+
+    void divDouble(FPRegisterID src, FPRegisterID dest)
+    {
+        divDouble(dest, src, dest);
+    }
+
+    void divDouble(FPRegisterID op1, FPRegisterID op2, FPRegisterID dest)
+    {
+        m_assembler.fdivInsn<64>(dest, op1, op2);
+    }
+
+    void sqrtFloat(FPRegisterID src, FPRegisterID dest)
+    {
+        m_assembler.fsqrtInsn<32>(dest, src);
+    }
+
+    void sqrtDouble(FPRegisterID src, FPRegisterID dest)
+    {
+        m_assembler.fsqrtInsn<64>(dest, src);
+    }
+
+    void absFloat(FPRegisterID src, FPRegisterID dest)
+    {
+        m_assembler.fsgnjxInsn<32>(dest, src, src);
+    }
+
+    void absDouble(FPRegisterID src, FPRegisterID dest)
+    {
+        m_assembler.fsgnjxInsn<64>(dest, src, src);
+    }
 
     MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(ceilFloat);
     MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(ceilDouble);
@@ -1654,14 +1845,51 @@ public:
     MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(floorFloat);
     MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(floorDouble);
 
-    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(andFloat);
-    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(andDouble);
+    void andFloat(FPRegisterID op1, FPRegisterID op2, FPRegisterID dest)
+    {
+        auto temp = temps<Data, Memory>();
+        m_assembler.fmvInsn<RISCV64Assembler::FMVType::X, RISCV64Assembler::FMVType::W>(temp.data(), op1);
+        m_assembler.fmvInsn<RISCV64Assembler::FMVType::X, RISCV64Assembler::FMVType::W>(temp.memory(), op2);
+        m_assembler.andInsn(temp.data(), temp.data(), temp.memory());
+        m_assembler.fmvInsn<RISCV64Assembler::FMVType::W, RISCV64Assembler::FMVType::X>(dest, temp.data());
+    }
 
-    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(orFloat);
-    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(orDouble);
+    void andDouble(FPRegisterID op1, FPRegisterID op2, FPRegisterID dest)
+    {
+        auto temp = temps<Data, Memory>();
+        m_assembler.fmvInsn<RISCV64Assembler::FMVType::X, RISCV64Assembler::FMVType::D>(temp.data(), op1);
+        m_assembler.fmvInsn<RISCV64Assembler::FMVType::X, RISCV64Assembler::FMVType::D>(temp.memory(), op2);
+        m_assembler.andInsn(temp.data(), temp.data(), temp.memory());
+        m_assembler.fmvInsn<RISCV64Assembler::FMVType::D, RISCV64Assembler::FMVType::X>(dest, temp.data());
+    }
 
-    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(negateFloat);
-    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(negateDouble);
+    void orFloat(FPRegisterID op1, FPRegisterID op2, FPRegisterID dest)
+    {
+        auto temp = temps<Data, Memory>();
+        m_assembler.fmvInsn<RISCV64Assembler::FMVType::X, RISCV64Assembler::FMVType::W>(temp.data(), op1);
+        m_assembler.fmvInsn<RISCV64Assembler::FMVType::X, RISCV64Assembler::FMVType::W>(temp.memory(), op2);
+        m_assembler.orInsn(temp.data(), temp.data(), temp.memory());
+        m_assembler.fmvInsn<RISCV64Assembler::FMVType::W, RISCV64Assembler::FMVType::X>(dest, temp.data());
+    }
+
+    void orDouble(FPRegisterID op1, FPRegisterID op2, FPRegisterID dest)
+    {
+        auto temp = temps<Data, Memory>();
+        m_assembler.fmvInsn<RISCV64Assembler::FMVType::X, RISCV64Assembler::FMVType::D>(temp.data(), op1);
+        m_assembler.fmvInsn<RISCV64Assembler::FMVType::X, RISCV64Assembler::FMVType::D>(temp.memory(), op2);
+        m_assembler.orInsn(temp.data(), temp.data(), temp.memory());
+        m_assembler.fmvInsn<RISCV64Assembler::FMVType::D, RISCV64Assembler::FMVType::X>(dest, temp.data());
+    }
+
+    void negateFloat(FPRegisterID src, FPRegisterID dest)
+    {
+        m_assembler.fsgnjnInsn<32>(dest, src, src);
+    }
+
+    void negateDouble(FPRegisterID src, FPRegisterID dest)
+    {
+        m_assembler.fsgnjnInsn<64>(dest, src, src);
+    }
 
     MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(roundTowardNearestIntFloat);
     MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(roundTowardNearestIntDouble);
@@ -1671,22 +1899,109 @@ public:
     MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD_WITH_RETURN(compareFloat, Jump);
     MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD_WITH_RETURN(compareDouble, Jump);
 
-    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(convertInt32ToFloat);
-    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(convertInt32ToDouble);
-    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(convertInt64ToFloat);
-    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(convertInt64ToDouble);
+    void convertInt32ToFloat(RegisterID src, FPRegisterID dest)
+    {
+        m_assembler.fcvtInsn<RISCV64Assembler::FCVTType::S, RISCV64Assembler::FCVTType::W>(dest, src);
+    }
 
-    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(convertFloatToDouble);
-    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(convertDoubleToFloat);
+    void convertInt32ToDouble(RegisterID src, FPRegisterID dest)
+    {
+        m_assembler.fcvtInsn<RISCV64Assembler::FCVTType::D, RISCV64Assembler::FCVTType::W>(dest, src);
+    }
 
-    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(truncateFloatToInt32);
-    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(truncateFloatToUint32);
-    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(truncateFloatToInt64);
-    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(truncateFloatToUint64);
-    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(truncateDoubleToInt32);
-    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(truncateDoubleToUint32);
-    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(truncateDoubleToInt64);
-    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(truncateDoubleToUint64);
+    void convertInt32ToDouble(TrustedImm32 imm, FPRegisterID dest)
+    {
+        auto temp = temps<Data>();
+        loadImmediate(imm, temp.data());
+        convertInt32ToDouble(temp.data(), dest);
+    }
+
+    void convertInt64ToFloat(RegisterID src, FPRegisterID dest)
+    {
+        m_assembler.fcvtInsn<RISCV64Assembler::FCVTType::S, RISCV64Assembler::FCVTType::L>(dest, src);
+    }
+
+    void convertInt64ToDouble(RegisterID src, FPRegisterID dest)
+    {
+        m_assembler.fcvtInsn<RISCV64Assembler::FCVTType::D, RISCV64Assembler::FCVTType::L>(dest, src);
+    }
+
+    void convertUInt64ToFloat(RegisterID src, FPRegisterID dest)
+    {
+        m_assembler.fcvtInsn<RISCV64Assembler::FCVTType::S, RISCV64Assembler::FCVTType::LU>(dest, src);
+    }
+
+    void convertUInt64ToDouble(RegisterID src, FPRegisterID dest)
+    {
+        m_assembler.fcvtInsn<RISCV64Assembler::FCVTType::D, RISCV64Assembler::FCVTType::LU>(dest, src);
+    }
+
+    void convertFloatToDouble(FPRegisterID src, FPRegisterID dest)
+    {
+        auto temp = temps<Data>();
+        m_assembler.fmvInsn<RISCV64Assembler::FMVType::X, RISCV64Assembler::FMVType::W>(temp.data(), src);
+        m_assembler.fmvInsn<RISCV64Assembler::FMVType::W, RISCV64Assembler::FMVType::X>(dest, temp.data());
+        m_assembler.fcvtInsn<RISCV64Assembler::FCVTType::D, RISCV64Assembler::FCVTType::S>(dest, dest);
+    }
+
+    void convertDoubleToFloat(FPRegisterID src, FPRegisterID dest)
+    {
+        m_assembler.fcvtInsn<RISCV64Assembler::FCVTType::S, RISCV64Assembler::FCVTType::D>(dest, src);
+    }
+
+    void truncateFloatToInt32(FPRegisterID src, RegisterID dest)
+    {
+        m_assembler.fcvtInsn<RISCV64Assembler::FPRoundingMode::RTZ, RISCV64Assembler::FCVTType::W, RISCV64Assembler::FCVTType::S>(dest, src);
+        m_assembler.maskRegister<32>(dest);
+    }
+
+    void truncateFloatToUint32(FPRegisterID src, RegisterID dest)
+    {
+        m_assembler.fcvtInsn<RISCV64Assembler::FPRoundingMode::RTZ, RISCV64Assembler::FCVTType::WU, RISCV64Assembler::FCVTType::S>(dest, src);
+        m_assembler.maskRegister<32>(dest);
+    }
+
+    void truncateFloatToInt64(FPRegisterID src, RegisterID dest)
+    {
+        m_assembler.fcvtInsn<RISCV64Assembler::FPRoundingMode::RTZ, RISCV64Assembler::FCVTType::L, RISCV64Assembler::FCVTType::S>(dest, src);
+    }
+
+    void truncateFloatToUint64(FPRegisterID src, RegisterID dest)
+    {
+        m_assembler.fcvtInsn<RISCV64Assembler::FPRoundingMode::RTZ, RISCV64Assembler::FCVTType::LU, RISCV64Assembler::FCVTType::S>(dest, src);
+    }
+
+    void truncateFloatToUint64(FPRegisterID src, RegisterID dest, FPRegisterID, FPRegisterID)
+    {
+        truncateFloatToUint64(src, dest);
+    }
+
+    void truncateDoubleToInt32(FPRegisterID src, RegisterID dest)
+    {
+        m_assembler.fcvtInsn<RISCV64Assembler::FPRoundingMode::RTZ, RISCV64Assembler::FCVTType::W, RISCV64Assembler::FCVTType::D>(dest, src);
+        m_assembler.maskRegister<32>(dest);
+    }
+
+    void truncateDoubleToUint32(FPRegisterID src, RegisterID dest)
+    {
+        m_assembler.fcvtInsn<RISCV64Assembler::FPRoundingMode::RTZ, RISCV64Assembler::FCVTType::WU, RISCV64Assembler::FCVTType::D>(dest, src);
+        m_assembler.maskRegister<32>(dest);
+    }
+
+    void truncateDoubleToInt64(FPRegisterID src, RegisterID dest)
+    {
+        m_assembler.fcvtInsn<RISCV64Assembler::FPRoundingMode::RTZ, RISCV64Assembler::FCVTType::L, RISCV64Assembler::FCVTType::D>(dest, src);
+    }
+
+    void truncateDoubleToUint64(FPRegisterID src, RegisterID dest)
+    {
+        m_assembler.fcvtInsn<RISCV64Assembler::FPRoundingMode::RTZ, RISCV64Assembler::FCVTType::LU, RISCV64Assembler::FCVTType::D>(dest, src);
+    }
+
+    void truncateDoubleToUint64(FPRegisterID src, RegisterID dest, FPRegisterID, FPRegisterID)
+    {
+        truncateDoubleToUint64(src, dest);
+    }
 
     void push(RegisterID src)
     {

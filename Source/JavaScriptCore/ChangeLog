@@ -1,3 +1,68 @@
+2021-12-13  Zan Dobersek  <zdobersek@igalia.com>
+
+        [RISCV64] Add MacroAssemblerRISCV64 implementations for trivial floating-point-register operations
+        https://bugs.webkit.org/show_bug.cgi?id=234223
+
+        Reviewed by Yusuke Suzuki.
+
+        Add implementations for the trivial floating-point register operations
+        in MacroAssemblerRISCV64. This covers moves, loads, stores, arithmetics,
+        basic conversion and truncation and the lightweight logical operations.
+
+        The two floating-point temporary registers needed in some operations are
+        listed. The rounding and comparison operations are left for later as
+        they require a more complex implementation due to the necessary manual
+        NaN checks.
+
+        * assembler/MacroAssemblerRISCV64.h:
+        (JSC::MacroAssemblerRISCV64::swap):
+        (JSC::MacroAssemblerRISCV64::moveZeroToFloat):
+        (JSC::MacroAssemblerRISCV64::moveZeroToDouble):
+        (JSC::MacroAssemblerRISCV64::moveFloat):
+        (JSC::MacroAssemblerRISCV64::moveFloatTo32):
+        (JSC::MacroAssemblerRISCV64::move32ToFloat):
+        (JSC::MacroAssemblerRISCV64::moveDouble):
+        (JSC::MacroAssemblerRISCV64::moveDoubleTo64):
+        (JSC::MacroAssemblerRISCV64::move64ToDouble):
+        (JSC::MacroAssemblerRISCV64::loadFloat):
+        (JSC::MacroAssemblerRISCV64::loadDouble):
+        (JSC::MacroAssemblerRISCV64::storeFloat):
+        (JSC::MacroAssemblerRISCV64::storeDouble):
+        (JSC::MacroAssemblerRISCV64::addFloat):
+        (JSC::MacroAssemblerRISCV64::addDouble):
+        (JSC::MacroAssemblerRISCV64::subFloat):
+        (JSC::MacroAssemblerRISCV64::subDouble):
+        (JSC::MacroAssemblerRISCV64::mulFloat):
+        (JSC::MacroAssemblerRISCV64::mulDouble):
+        (JSC::MacroAssemblerRISCV64::divFloat):
+        (JSC::MacroAssemblerRISCV64::divDouble):
+        (JSC::MacroAssemblerRISCV64::sqrtFloat):
+        (JSC::MacroAssemblerRISCV64::sqrtDouble):
+        (JSC::MacroAssemblerRISCV64::absFloat):
+        (JSC::MacroAssemblerRISCV64::absDouble):
+        (JSC::MacroAssemblerRISCV64::andFloat):
+        (JSC::MacroAssemblerRISCV64::andDouble):
+        (JSC::MacroAssemblerRISCV64::orFloat):
+        (JSC::MacroAssemblerRISCV64::orDouble):
+        (JSC::MacroAssemblerRISCV64::negateFloat):
+        (JSC::MacroAssemblerRISCV64::negateDouble):
+        (JSC::MacroAssemblerRISCV64::convertInt32ToFloat):
+        (JSC::MacroAssemblerRISCV64::convertInt32ToDouble):
+        (JSC::MacroAssemblerRISCV64::convertInt64ToFloat):
+        (JSC::MacroAssemblerRISCV64::convertInt64ToDouble):
+        (JSC::MacroAssemblerRISCV64::convertUInt64ToFloat):
+        (JSC::MacroAssemblerRISCV64::convertUInt64ToDouble):
+        (JSC::MacroAssemblerRISCV64::convertFloatToDouble):
+        (JSC::MacroAssemblerRISCV64::convertDoubleToFloat):
+        (JSC::MacroAssemblerRISCV64::truncateFloatToInt32):
+        (JSC::MacroAssemblerRISCV64::truncateFloatToUint32):
+        (JSC::MacroAssemblerRISCV64::truncateFloatToInt64):
+        (JSC::MacroAssemblerRISCV64::truncateFloatToUint64):
+        (JSC::MacroAssemblerRISCV64::truncateDoubleToInt32):
+        (JSC::MacroAssemblerRISCV64::truncateDoubleToUint32):
+        (JSC::MacroAssemblerRISCV64::truncateDoubleToInt64):
+        (JSC::MacroAssemblerRISCV64::truncateDoubleToUint64):
+
 2021-12-12  Zan Dobersek  <zdobersek@igalia.com>
 
         [RISCV64] Add MacroAssemblerRISCV64 implementations for trivial general-purpose-register operations
