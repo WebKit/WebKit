@@ -86,9 +86,6 @@ void GCGLLayer::swapBuffersIfNeeded()
         return;
 
     m_context.paintRenderingResultsToCanvas(*imageBuffer.get());
-    RefPtr<Image> image = imageBuffer->copyImage(DontCopyBackingStore);
-    if (!image)
-        return;
 #else
     flags |= TextureMapperGL::ShouldFlipTexture;
 #endif
@@ -96,17 +93,34 @@ void GCGLLayer::swapBuffersIfNeeded()
     {
         auto& proxy = downcast<Nicosia::ContentLayerTextureMapperImpl>(m_contentLayer->impl()).proxy();
 #if USE(ANGLE)
-        std::unique_ptr<TextureMapperPlatformLayerBuffer> layerBuffer;
-        layerBuffer = proxy.getAvailableBuffer(textureSize, m_context.m_internalColorFormat);
-        if (!layerBuffer) {
-            auto texture = BitmapTextureGL::create(TextureMapperContextAttributes::get(), flags, m_context.m_internalColorFormat);
-            static_cast<BitmapTextureGL&>(texture.get()).setPendingContents(WTFMove(image));
-            layerBuffer = makeUnique<TextureMapperPlatformLayerBuffer>(WTFMove(texture), flags);
-        } else
-            layerBuffer->textureGL().setPendingContents(WTFMove(image));
+        auto proxyOperation =
+            [this, textureSize, flags, imageBuffer = WTFMove(imageBuffer)] () {
+                RefPtr<Image> image = imageBuffer->copyImage(DontCopyBackingStore);
+                if (!image)
+                    return;
 
-        Locker locker { proxy.lock() };
-        proxy.pushNextBuffer(WTFMove(layerBuffer));
+                std::unique_ptr<TextureMapperPlatformLayerBuffer> layerBuffer;
+                auto& proxy = downcast<Nicosia::ContentLayerTextureMapperImpl>(m_contentLayer->impl()).proxy();
+                Locker locker { proxy.lock() };
+                layerBuffer = proxy.getAvailableBuffer(textureSize, m_context.m_internalColorFormat);
+
+                if (!layerBuffer) {
+                    auto texture = BitmapTextureGL::create(TextureMapperContextAttributes::get(), flags, m_context.m_internalColorFormat);
+                    static_cast<BitmapTextureGL&>(texture.get()).setPendingContents(WTFMove(image));
+                    layerBuffer = makeUnique<TextureMapperPlatformLayerBuffer>(WTFMove(texture), flags);
+                } else
+                    layerBuffer->textureGL().setPendingContents(WTFMove(image));
+
+                proxy.pushNextBuffer(WTFMove(layerBuffer));
+
+                m_context.markLayerComposited();
+            };
+
+        proxy.scheduleUpdateOnCompositorThread([proxyOperation] {
+            proxyOperation();
+        });
+
+        return;
 #else
         Locker locker { proxy.lock() };
         proxy.pushNextBuffer(makeUnique<TextureMapperPlatformLayerBuffer>(m_context.m_compositorTexture, textureSize, flags, m_context.m_internalColorFormat));

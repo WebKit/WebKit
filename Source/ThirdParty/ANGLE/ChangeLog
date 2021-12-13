@@ -1,3 +1,15 @@
+2021-12-13  Alejandro G. Castro  <alex@igalia.com>
+
+        [GTK] Fix ANGLE compilation
+        https://bugs.webkit.org/show_bug.cgi?id=233327
+
+        Reviewed by Kenneth Russell.
+
+        There is a define with a typo in the name and activating EGL and
+        X11 does not work at the same time.
+
+        * PlatformGTK.cmake:
+
 2021-12-13  Kyle Piddington  <kpiddington@apple.com>
 
         [MacCatalyst] fix iOSMac after refactor in r286899

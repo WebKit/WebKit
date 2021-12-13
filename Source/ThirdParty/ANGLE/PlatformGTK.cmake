@@ -48,10 +48,6 @@ if (USE_ANGLE_EGL OR USE_ANGLE_WEBGL)
         list(APPEND GTK_ANGLE_DEFINITIONS ANGLE_USE_X11)
     endif ()
 
-    if (ENABLE_WAYLAND_TARGET)
-        list(APPEND GKT_ANGLE_DEFINITIONS WL_EGL_PLATFORM)
-    endif ()
-
     # Allow building ANGLE on platforms which may not provide X11 headers.
     if (NOT GTK_ANGLE_DEFINITIONS)
         list(APPEND GTK_ANGLE_DEFINITIONS USE_SYSTEM_EGL)

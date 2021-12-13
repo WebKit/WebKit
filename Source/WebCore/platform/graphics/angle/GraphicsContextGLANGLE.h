@@ -42,6 +42,7 @@
 
 #if USE(NICOSIA)
 namespace Nicosia {
+class GCGLANGLELayer;
 class GCGLLayer;
 }
 #endif
@@ -445,7 +446,7 @@ protected:
     GCGLuint m_intermediateTexture { 0 };
 #endif
 #if USE(NICOSIA)
-    std::unique_ptr<Nicosia::GCGLLayer> m_nicosiaLayer;
+    std::unique_ptr<Nicosia::GCGLANGLELayer> m_nicosiaLayer;
 #elif USE(TEXTURE_MAPPER)
     std::unique_ptr<TextureMapperGCGLPlatformLayer> m_texmapLayer;
 #endif

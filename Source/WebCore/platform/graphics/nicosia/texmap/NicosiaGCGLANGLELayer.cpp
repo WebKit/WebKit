@@ -144,7 +144,7 @@ GCGLANGLELayer::ANGLEContext::ANGLEContext(EGLDisplay display, EGLConfig config,
 GCGLANGLELayer::ANGLEContext::~ANGLEContext()
 {
     if (m_context) {
-        gl::BindFramebuffer(GL_FRAMEBUFFER, 0);
+        GL_BindFramebuffer(GL_FRAMEBUFFER, 0);
         EGL_MakeCurrent(m_display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
         EGL_DestroyContext(m_display, m_context);
     }
