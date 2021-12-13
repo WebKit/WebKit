@@ -1,3 +1,22 @@
+2021-12-13  Youenn Fablet  <youenn@apple.com>
+
+        REGRESSION (r286841): [ iOS ] Many webrtc tests flaky failing on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=234181
+        <rdar://problem/86343642>
+
+        Reviewed by Eric Carlson.
+
+        Use network connection state change callback to know when connection fails or is cancelled.
+        Introduce ConnectionStateTracker to know when to stop reading new UDP packets.
+        ConnectionStateTracker will be stopped when state is changed to failed or cancelled as well as when the whole connection is closed.
+        Renaming m_nwConnections to m_connections as m_nwConnections name was already used.
+        Reduce error logging to only new error codes or when connectino enters unrecoverable failure (hence changing to failed state).
+
+        Covered by existing tests.
+
+        * NetworkProcess/webrtc/NetworkRTCUDPSocketCocoa.h:
+        * NetworkProcess/webrtc/NetworkRTCUDPSocketCocoa.mm:
+
 2021-12-13  Elliott Williams  <emw@apple.com>
 
         Deployment target for macOS 11+ does not follow minor version bumps
