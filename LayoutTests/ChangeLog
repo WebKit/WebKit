@@ -1,3 +1,12 @@
+2021-12-13  Tim Nguyen  <ntim@apple.com>
+
+        Fix paint order of CSS text decorations
+        https://bugs.webkit.org/show_bug.cgi?id=227445
+
+        Reviewed by Simon Fraser.
+
+        * TestExpectations:
+
 2021-12-13  Sergio Villar Senin  <svillar@igalia.com>
 
         [css-writing-modes] Use the correct margins in computeInlinePreferredLogicalWidths in orthogonal flows

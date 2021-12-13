@@ -52,7 +52,9 @@ public:
     void setTextShadow(const ShadowData* textShadow) { m_shadow = textShadow; }
     void setShadowColorFilter(const FilterOperations* colorFilter) { m_shadowColorFilter = colorFilter; }
 
-    void paintTextDecoration(const TextRun&, const FloatPoint& textOrigin, const FloatPoint& boxOrigin);
+    void paintBackgroundDecorations(const TextRun&, const FloatPoint& textOrigin, const FloatPoint& boxOrigin);
+    void paintForegroundDecorations(const FloatPoint& boxOrigin);
+    void paintLineThrough(const Color&, float thickness, const FloatPoint& localOrigin);
 
     struct Styles {
         bool operator==(const Styles&) const;

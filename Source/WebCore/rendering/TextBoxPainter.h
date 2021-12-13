@@ -39,6 +39,7 @@ class RenderCombineText;
 class RenderStyle;
 class RenderText;
 class ShadowData;
+class TextDecorationPainter;
 struct CompositionUnderline;
 struct MarkedText;
 struct PaintInfo;
@@ -71,7 +72,9 @@ private:
     void paintBackground(unsigned startOffset, unsigned endOffset, const Color&, BackgroundStyle = BackgroundStyle::Normal);
     void paintBackground(const StyledMarkedText&);
     void paintForeground(const StyledMarkedText&);
-    void paintDecoration(const StyledMarkedText&, const FloatRect& clipOutRect);
+    TextDecorationPainter createDecorationPainter(const StyledMarkedText&, const FloatRect&, const FloatRect&);
+    void paintBackgroundDecorations(TextDecorationPainter&, const StyledMarkedText&, const FloatRect&);
+    void paintForegroundDecorations(TextDecorationPainter&, const FloatRect&);
     void paintCompositionUnderline(const CompositionUnderline&);
     void paintPlatformDocumentMarker(const MarkedText&);
 

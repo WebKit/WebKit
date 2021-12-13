@@ -3431,7 +3431,6 @@ webkit.org/b/203583 imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio-
 webkit.org/b/230041 imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-color-selection-001.html [ ImageOnlyFailure ]
 webkit.org/b/230041 imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-color-selection-pseudo-01.html [ ImageOnlyFailure ]
 webkit.org/b/203530 imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-line-recalc.html [ ImageOnlyFailure ]
-webkit.org/b/203531 imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-propagation-shadow.html [ ImageOnlyFailure ]
 webkit.org/b/203528 imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-thickness-linethrough-001.html [ ImageOnlyFailure ]
 webkit.org/b/203528 imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-thickness-overline-001.html [ ImageOnlyFailure ]
 webkit.org/b/203528 imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-thickness-scroll-001.html [ ImageOnlyFailure ]
@@ -3471,7 +3470,6 @@ imported/w3c/web-platform-tests/css/css-text-decor/text-emphasis-style-open-001.
 imported/w3c/web-platform-tests/css/css-text-decor/text-emphasis-style-shape-001.xht [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-text-decor/text-emphasis-style-string-001.xht [ ImageOnlyFailure ]
 webkit.org/b/230083 imported/w3c/web-platform-tests/css/css-text-decor/text-underline-offset-001.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-text-decor/text-underline-offset-zero-position.html [ ImageOnlyFailure ]
 
 # wpt css-position failures
 webkit.org/b/203445 [ Debug ] imported/w3c/web-platform-tests/css/css-position/position-absolute-container-dynamic-002.html [ Skip ]

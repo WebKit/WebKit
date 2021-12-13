@@ -201,7 +201,8 @@ TextDecorationPainter::TextDecorationPainter(GraphicsContext& context, OptionSet
 {
 }
 
-void TextDecorationPainter::paintTextDecoration(const TextRun& textRun, const FloatPoint& textOrigin, const FloatPoint& boxOrigin)
+// Paint text-shadow, underline, overline
+void TextDecorationPainter::paintBackgroundDecorations(const TextRun& textRun, const FloatPoint& textOrigin, const FloatPoint& boxOrigin)
 {
     const auto& fontMetrics = m_lineStyle.fontMetrics();
     float textDecorationThickness = m_lineStyle.textDecorationThickness().resolve(m_lineStyle.computedFontSize(), fontMetrics);
@@ -228,10 +229,8 @@ void TextDecorationPainter::paintTextDecoration(const TextRun& textRun, const Fl
                 // FIXME: Need to support text-decoration-skip: none.
                 m_context.drawLineForText(rect, m_isPrinting, style == TextDecorationStyle::Double, strokeStyle);
             }
-        } else {
-            ASSERT(decoration == TextDecorationLine::LineThrough);
-            m_context.drawLineForText(rect, m_isPrinting, style == TextDecorationStyle::Double, strokeStyle);
-        }
+        } else
+            ASSERT_NOT_REACHED();
     };
 
     bool areLinesOpaque = !m_isPrinting && (!m_decorations.contains(TextDecorationLine::Underline) || m_styles.underlineColor.isOpaque())
@@ -293,19 +292,45 @@ void TextDecorationPainter::paintTextDecoration(const TextRun& textRun, const Fl
             rect.move(0, autoTextDecorationThickness - textDecorationThickness - wavyOffset);
             paintDecoration(TextDecorationLine::Overline, m_styles.overlineStyle, m_styles.overlineColor, rect);
         }
-        if (m_decorations.contains(TextDecorationLine::LineThrough)) {
-            FloatRect rect(localOrigin, FloatSize(m_width, textDecorationThickness));
-            float autoTextDecorationThickness = TextDecorationThickness::createWithAuto().resolve(m_lineStyle.computedFontSize(), fontMetrics);
-            auto center = 2 * fontMetrics.floatAscent() / 3 + autoTextDecorationThickness / 2;
-            rect.move(0, center - textDecorationThickness / 2);
-            paintDecoration(TextDecorationLine::LineThrough, m_styles.linethroughStyle, m_styles.linethroughColor, rect);
-        }
+
+        // We only want to paint the shadow, hence the transparent color, not the actual line-through,
+        // which will be painted in paintForegroundDecorations().
+        if (shadow && m_decorations.contains(TextDecorationLine::LineThrough))
+            paintLineThrough(Color::transparentBlack, textDecorationThickness, localOrigin);
     } while (shadow);
 
     if (clipping)
         m_context.restore();
     else if (m_shadow)
         m_context.clearShadow();
+}
+
+void TextDecorationPainter::paintForegroundDecorations(const FloatPoint& boxOrigin)
+{
+    if (!m_decorations.contains(TextDecorationLine::LineThrough))
+        return;
+
+    float textDecorationThickness = m_lineStyle.textDecorationThickness().resolve(m_lineStyle.computedFontSize(), m_lineStyle.fontMetrics());
+    paintLineThrough(m_styles.linethroughColor, textDecorationThickness, boxOrigin);
+}
+
+void TextDecorationPainter::paintLineThrough(const Color& color, float thickness, const FloatPoint& localOrigin)
+{
+    const auto& fontMetrics = m_lineStyle.fontMetrics();
+    FloatRect rect(localOrigin, FloatSize(m_width, thickness));
+    float autoTextDecorationThickness = TextDecorationThickness::createWithAuto().resolve(m_lineStyle.computedFontSize(), fontMetrics);
+    auto center = 2 * fontMetrics.floatAscent() / 3 + autoTextDecorationThickness / 2;
+    rect.move(0, center - thickness / 2);
+
+    m_context.setStrokeColor(color);
+
+    TextDecorationStyle style = m_styles.linethroughStyle;
+    auto strokeStyle = textDecorationStyleToStrokeStyle(style);
+
+    if (style == TextDecorationStyle::Wavy)
+        strokeWavyTextDecoration(m_context, rect, m_lineStyle.computedFontPixelSize());
+    else
+        m_context.drawLineForText(rect, m_isPrinting, style == TextDecorationStyle::Double, strokeStyle);
 }
 
 static void collectStylesForRenderer(TextDecorationPainter::Styles& result, const RenderObject& renderer, OptionSet<TextDecorationLine> remainingDecorations, bool firstLineStyle, PseudoId pseudoId)

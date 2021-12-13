@@ -188,9 +188,6 @@ void TextBoxPainter::paintForegroundAndDecorations()
     // Coalesce styles of adjacent marked texts to minimize the number of drawing commands.
     auto coalescedStyledMarkedTexts = StyledMarkedText::coalesceAdjacentWithEqualForeground(styledMarkedTexts);
 
-    for (auto& markedText : coalescedStyledMarkedTexts)
-        paintForeground(markedText);
-
     auto textDecorations = m_style.textDecorationsInEffect();
     bool highlightDecorations = !MarkedText::collectForHighlights(m_renderer, m_selectableRange, MarkedText::PaintPhase::Decoration).isEmpty();
     bool lineDecorations = !textDecorations.isEmpty();
@@ -224,8 +221,27 @@ void TextBoxPainter::paintForegroundAndDecorations()
         // Coalesce styles of adjacent marked texts to minimize the number of drawing commands.
         auto coalescedStyledMarkedTexts = StyledMarkedText::coalesceAdjacentWithEqualDecorations(styledMarkedTexts);
 
+        for (auto& markedText : coalescedStyledMarkedTexts) {
+            unsigned startOffset = markedText.startOffset;
+            unsigned endOffset = markedText.endOffset;
+            if (startOffset < endOffset) {
+                // Avoid measuring the text when the entire line box is selected as an optimization.
+                FloatRect snappedSelectionRect = m_paintRect;
+                if (startOffset || endOffset != m_paintTextRun.length()) {
+                    LayoutRect selectionRect = { m_paintRect.x(), m_paintRect.y(), m_paintRect.width(), m_paintRect.height() };
+                    fontCascade().adjustSelectionRectForText(m_paintTextRun, selectionRect, startOffset, endOffset);
+                    snappedSelectionRect = snapRectToDevicePixelsWithWritingDirection(selectionRect, m_document.deviceScaleFactor(), m_paintTextRun.ltr());
+                }
+
+                TextDecorationPainter decorationPainter = createDecorationPainter(markedText, textDecorationSelectionClipOutRect, snappedSelectionRect);
+                paintBackgroundDecorations(decorationPainter, markedText, snappedSelectionRect);
+                paintForeground(markedText);
+                paintForegroundDecorations(decorationPainter, snappedSelectionRect);
+            }
+        }
+    } else {
         for (auto& markedText : coalescedStyledMarkedTexts)
-            paintDecoration(markedText, textDecorationSelectionClipOutRect);
+            paintForeground(markedText);
     }
 }
 
@@ -339,16 +355,9 @@ void TextBoxPainter::paintForeground(const StyledMarkedText& markedText)
     textPainter.paintRange(m_paintTextRun, m_paintRect, textOriginFromPaintRect(m_paintRect), markedText.startOffset, markedText.endOffset);
 }
 
-void TextBoxPainter::paintDecoration(const StyledMarkedText& markedText, const FloatRect& clipOutRect)
+TextDecorationPainter TextBoxPainter::createDecorationPainter(const StyledMarkedText& markedText, const FloatRect& clipOutRect, const FloatRect& snappedSelectionRect)
 {
-    // 1. Compute text selection
-    unsigned startOffset = markedText.startOffset;
-    unsigned endOffset = markedText.endOffset;
-    if (startOffset >= endOffset)
-        return;
-
     GraphicsContext& context = m_paintInfo.context();
-    const FontCascade& font = fontCascade();
 
     updateGraphicsContext(context, markedText.style.textStyles);
 
@@ -358,16 +367,18 @@ void TextBoxPainter::paintDecoration(const StyledMarkedText& markedText, const F
 
     // Note that if the text is truncated, we let the thing being painted in the truncation
     // draw its own decoration.
-
-    // Avoid measuring the text when the entire line box is selected as an optimization.
-    FloatRect snappedSelectionRect = m_paintRect;
-    if (startOffset || endOffset != m_paintTextRun.length()) {
-        LayoutRect selectionRect = { m_paintRect.x(), m_paintRect.y(), m_paintRect.width(), m_paintRect.height() };
-        font.adjustSelectionRectForText(m_paintTextRun, selectionRect, startOffset, endOffset);
-        snappedSelectionRect = snapRectToDevicePixelsWithWritingDirection(selectionRect, m_document.deviceScaleFactor(), m_paintTextRun.ltr());
+    GraphicsContextStateSaver stateSaver { context, false };
+    bool isDraggedContent = markedText.type == MarkedText::DraggedContent;
+    if (isDraggedContent || !clipOutRect.isEmpty()) {
+        stateSaver.save();
+        if (isDraggedContent)
+            context.setAlpha(markedText.style.alpha);
+        if (!clipOutRect.isEmpty())
+            context.clipOut(clipOutRect);
     }
 
-    // 2. Paint
+    // Create painter
+    const FontCascade& font = fontCascade();
     auto textDecorations = m_style.textDecorationsInEffect();
     textDecorations.add(TextDecorationPainter::textDecorationsInEffectForStyle(markedText.style.textDecorationStyles));
     TextDecorationPainter decorationPainter { context, textDecorations, m_renderer, m_isFirstLine, font, markedText.style.textDecorationStyles };
@@ -380,21 +391,27 @@ void TextBoxPainter::paintDecoration(const StyledMarkedText& markedText, const F
             decorationPainter.setShadowColorFilter(&m_style.appleColorFilter());
     }
 
-    {
-        GraphicsContextStateSaver stateSaver { context, false };
-        bool isDraggedContent = markedText.type == MarkedText::DraggedContent;
-        if (isDraggedContent || !clipOutRect.isEmpty()) {
-            stateSaver.save();
-            if (isDraggedContent)
-                context.setAlpha(markedText.style.alpha);
-            if (!clipOutRect.isEmpty())
-                context.clipOut(clipOutRect);
-        }
-        decorationPainter.paintTextDecoration(m_paintTextRun.subRun(startOffset, endOffset - startOffset), textOriginFromPaintRect(snappedSelectionRect), snappedSelectionRect.location());
-    }
+    return decorationPainter;
+}
 
-    if (isCombinedText)
+void TextBoxPainter::paintBackgroundDecorations(TextDecorationPainter& decorationPainter, const StyledMarkedText& markedText, const FloatRect& snappedSelectionRect)
+{
+    decorationPainter.paintBackgroundDecorations(m_paintTextRun.subRun(markedText.startOffset, markedText.endOffset - markedText.startOffset), textOriginFromPaintRect(snappedSelectionRect), snappedSelectionRect.location());
+
+    if (textBox().isCombinedText()) {
+        GraphicsContext& context = m_paintInfo.context();
         context.concatCTM(rotation(m_paintRect, Counterclockwise));
+    }
+}
+
+void TextBoxPainter::paintForegroundDecorations(TextDecorationPainter& decorationPainter, const FloatRect& snappedSelectionRect)
+{
+    decorationPainter.paintForegroundDecorations(snappedSelectionRect.location());
+
+    if (textBox().isCombinedText()) {
+        GraphicsContext& context = m_paintInfo.context();
+        context.concatCTM(rotation(m_paintRect, Counterclockwise));
+    }
 }
 
 void TextBoxPainter::paintCompositionUnderlines()

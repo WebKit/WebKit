@@ -189,7 +189,7 @@ GlyphOverflow visualOverflowForDecorations(const RenderStyle& lineStyle, const I
     }
 
     // These metrics must match where underlines get drawn.
-    // FIXME: Share the code in TextDecorationPainter::paintTextDecoration() so we can just query it for the painted geometry.
+    // FIXME: Share the code in TextDecorationPainter::paintBackgroundDecorations() so we can just query it for the painted geometry.
     if (decoration & TextDecorationLine::Underline) {
         // Compensate for the integral ceiling in GraphicsContext::computeLineBoundsAndAntialiasingModeForText()
         int underlineOffset = 1;
