@@ -1,3 +1,15 @@
+2021-12-13  Chris Dumez  <cdumez@apple.com>
+
+        Regression(r283565) Unable to report private messages as Spam in Twitter app
+        https://bugs.webkit.org/show_bug.cgi?id=234253
+        <rdar://86043227>
+
+        Reviewed by Alex Christensen.
+
+        Add some new iOS / macOS versions.
+
+        * wtf/spi/darwin/dyldSPI.h:
+
 2021-12-13  Elliott Williams  <emw@apple.com>
 
         Deployment target for macOS 11+ does not follow minor version bumps

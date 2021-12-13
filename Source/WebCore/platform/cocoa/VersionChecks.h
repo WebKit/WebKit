@@ -72,6 +72,7 @@ enum class SDKVersion : uint32_t {
     FirstWithDOMWindowReuseRestriction  = DYLD_IOS_VERSION_15_0,
     FirstWithApplicationCacheDisabledByDefault = DYLD_IOS_VERSION_15_0,
     FirstWithoutExpandoIndexedPropertiesOnWindow = DYLD_IOS_VERSION_15_0,
+    FirstWithAuthorizationHeaderOnSameOriginRedirects = DYLD_IOS_VERSION_15_4,
     FirstForbiddingDotPrefixedFonts = DYLD_IOS_VERSION_16_0,
 #elif PLATFORM(MAC)
     FirstThatConvertsInvalidURLsToBlank = DYLD_MACOSX_VERSION_10_12,
@@ -99,6 +100,7 @@ enum class SDKVersion : uint32_t {
     FirstThatAllowsWheelEventGesturesToBecomeNonBlocking = DYLD_MACOSX_VERSION_11_3,
     FirstWithApplicationCacheDisabledByDefault = DYLD_MACOSX_VERSION_12_00,
     FirstWithoutExpandoIndexedPropertiesOnWindow = DYLD_MACOSX_VERSION_12_00,
+    FirstWithAuthorizationHeaderOnSameOriginRedirects = DYLD_MACOSX_VERSION_12_3,
     FirstForbiddingDotPrefixedFonts = DYLD_MACOSX_VERSION_13_0,
 #endif
 };
