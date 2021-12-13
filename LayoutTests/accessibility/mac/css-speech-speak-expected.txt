@@ -12,15 +12,24 @@ This tests that using the CSS3-speech property 'speak-as' works as from a WebCor
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS accessibilityController.focusedElement.childAtIndex(0).speakAs is 'normal'
-PASS accessibilityController.focusedElement.childAtIndex(0).speakAs is 'normal'
-PASS accessibilityController.focusedElement.childAtIndex(0).speakAs is 'spell-out'
-PASS accessibilityController.focusedElement.childAtIndex(0).speakAs is 'normal, digits'
-PASS accessibilityController.focusedElement.childAtIndex(0).speakAs is 'normal, literal-punctuation'
-PASS accessibilityController.focusedElement.childAtIndex(0).speakAs is 'normal, no-punctuation'
-PASS accessibilityController.focusedElement.childAtIndex(0).speakAs is 'normal, digits, literal-punctuation'
-PASS accessibilityController.focusedElement.childAtIndex(0).speakAs is 'spell-out, literal-punctuation'
-PASS accessibilityController.focusedElement.childAtIndex(0).speakAs is 'normal, digits'
+Testing #initial
+PASS element.childAtIndex(0).speakAs is "normal"
+Testing #speech-normal
+PASS element.childAtIndex(0).speakAs is "normal"
+Testing #speech-spellout
+PASS element.childAtIndex(0).speakAs is "spell-out"
+Testing #speech-digits
+PASS element.childAtIndex(0).speakAs is "normal, digits"
+Testing #speech-literalpunc
+PASS element.childAtIndex(0).speakAs is "normal, literal-punctuation"
+Testing #speech-nopunc
+PASS element.childAtIndex(0).speakAs is "normal, no-punctuation"
+Testing #speech-digits-and-literal
+PASS element.childAtIndex(0).speakAs is "normal, digits, literal-punctuation"
+Testing #speech-spell-and-literal
+PASS element.childAtIndex(0).speakAs is "spell-out, literal-punctuation"
+Testing #testlink
+PASS element.childAtIndex(0).speakAs is "normal, digits"
 PASS successfullyParsed is true
 
 TEST COMPLETE

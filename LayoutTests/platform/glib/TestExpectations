@@ -307,6 +307,9 @@ fast/css/accent-color/text.html [ Pass ]
 # AccessibilityUIElement::isInCell().
 accessibility/ancestor-computation.html [ Skip ]
 
+# Need to implement AccessibilityUIElement::domIdentifier() for this test to pass after webkit.org/b/234198.
+accessibility/focusable-div.html [ Skip ]
+
 webkit.org/b/212805 accessibility/svg-text.html [ Failure ]
 
 # Added in r263823. Both tests are timing out.

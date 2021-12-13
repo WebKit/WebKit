@@ -1570,7 +1570,11 @@ webkit.org/b/140867 [ Debug ] accessibility/canvas-fallback-content-2.html [ Ski
 [ Release ] accessibility/element-haspopup.html [ Failure ]
 [ Debug ] accessibility/element-haspopup.html [ Skip ] # Crash (Debug Assertion)
 [ Debug ] accessibility/first-letter-text-transform-causes-crash.html [ Skip ] # Crash (Debug Assertion)
-webkit.org/b/140867 [ Debug ] accessibility/focusable-div.html [ Skip ]
+
+# In addition to the issues raised in the associated bug, also need to implement
+# AccessibilityUIElement::domIdentifier() for this test to pass due to webkit.org/b/234198.
+webkit.org/b/140867 accessibility/focusable-div.html [ Skip ]
+
 [ Release ] accessibility/frame-disconnect-textmarker-cache-crash.html [ Failure ]
 [ Debug ] accessibility/frame-disconnect-textmarker-cache-crash.html [ Skip ] # Crash (Debug Assertion)
 [ Debug ] accessibility/hang-in-isignored.html [ Skip ] # Crash (Debug Assertion)

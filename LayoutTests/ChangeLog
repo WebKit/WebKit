@@ -1,3 +1,32 @@
+2021-12-13  Tyler Wilcock  <tyler_w@apple.com>
+
+        AX: Make aria-hidden-update.html, focusable-div.html, mac/invalid-status-for-input-types.html, and mac/css-speech-speak.html pass in --release isolated tree mode
+        https://bugs.webkit.org/show_bug.cgi?id=234198
+
+        Reviewed by Chris Fleizach.
+
+        Make the following tests async or otherwise isolated-tree friendly
+        (i.e. by using accessibleElementById instead of document.getElementById().focus() +
+        accessibilityController.focusedElement to get a JS reference to an AX object).
+
+        * accessibility/aria-hidden-update-expected.txt:
+        * accessibility/aria-hidden-update.html:
+        * accessibility/focusable-div-expected.txt:
+        * accessibility/focusable-div.html:
+        * accessibility/mac/invalid-status-for-input-types-expected.txt:
+        * accessibility/mac/invalid-status-for-input-types.html:
+        Make these tests async. These tests must be async to pass in isolated
+        tree mode because they use JS to dynamically change the page.
+        * accessibility/mac/css-speech-speak-expected.txt:
+        * accessibility/mac/css-speech-speak.html:
+        Use accessibleElementById instead of document.getElementById().focus() +
+        accessibilityController.focusedElement to get references to JS AX objects.
+
+        * platform/glib/TestExpectations:
+        * platform/win/TestExpectations:
+        Skip accessibility/focusable-div.html due to lack of
+        AccessibilityUIElement::domIdentifier implementation.
+
 2021-12-13  Youenn Fablet  <youenn@apple.com>
 
         Fix ServiceWorker downloads
