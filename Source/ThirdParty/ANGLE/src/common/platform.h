@@ -132,7 +132,6 @@
 #        endif
 #        if TARGET_OS_MACCATALYST
 #            define ANGLE_PLATFORM_MACCATALYST 1
-#            undef TARGET_OS_IOS
 #        endif
 #    endif
 #    // This might be useful globally. At the moment it is used

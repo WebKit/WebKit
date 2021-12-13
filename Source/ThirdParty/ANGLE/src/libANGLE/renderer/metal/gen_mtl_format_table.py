@@ -471,7 +471,7 @@ def gen_image_map_switch_string(image_table, angle_to_gl):
         switch_data += gen_image_map_switch_astc_case_watchos(angle_format, angle_to_gl, astc_tpl_map)
     switch_data += "#endif // TARGET_OS_IOS || TARGET_OS_TV \n "
     # iOS specific
-    switch_data += "#elif TARGET_OS_IPHONE\n"
+    switch_data += "#elif TARGET_OS_IPHONE && !TARGET_OS_MACCATALYST\n"
     for angle_format in sorted(ios_specific_map.keys()):
         switch_data += gen_image_map_switch_simple_case(angle_format, angle_format, angle_to_gl,
                                                         ios_specific_map)

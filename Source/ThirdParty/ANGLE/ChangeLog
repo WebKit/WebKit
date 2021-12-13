@@ -1,3 +1,21 @@
+2021-12-13  Kyle Piddington  <kpiddington@apple.com>
+
+        [MacCatalyst] fix iOSMac after refactor in r286899
+        https://bugs.webkit.org/show_bug.cgi?id=234250
+
+        Reviewed by Dean Jackson.
+
+        Also includes a longer term fix for 
+        https://bugs.webkit.org/show_bug.cgi?id=233977
+
+        Tested builds on mac, iOS, TV SDKs, plus iOSMac
+
+        * src/common/platform.h:
+        * src/libANGLE/renderer/metal/gen_mtl_format_table.py:
+        (gen_image_map_switch_string):
+        * src/libANGLE/renderer/metal/mtl_format_table_autogen.mm:
+        (rx::mtl::Format::init):
+
 2021-12-13  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         REGRESSION(Safari 15, BigSur): Poor video texture upload performance with MacBook M1, ANGLE OpenGL backend 
