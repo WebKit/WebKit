@@ -1,3 +1,12 @@
+2021-12-13  Antti Koivisto  <antti@apple.com>
+
+        [CSS Cascade Layers] Unflake and fix web-platform-tests/css/css-cascade/layer-statement-before-import.html
+        https://bugs.webkit.org/show_bug.cgi?id=233944
+
+        Reviewed by Simon Fraser.
+
+        * TestExpectations:
+
 2021-12-13  Tyler Wilcock  <tyler_w@apple.com>
 
         AX: Make aria-hidden-update.html, focusable-div.html, mac/invalid-status-for-input-types.html, and mac/css-speech-speak.html pass in --release isolated tree mode

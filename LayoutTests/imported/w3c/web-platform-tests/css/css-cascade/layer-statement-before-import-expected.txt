@@ -1,12 +1,10 @@
-CONSOLE MESSAGE: TypeError: Illegal constructor
 
-Harness Error (FAIL), message = TypeError: Illegal constructor
-
-FAIL length and item assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
-FAIL insertRule before imports assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
-FAIL insertRule after imports assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
-FAIL insert other rules to pre-import layer statements fails assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
-FAIL insert other rules before the first layer statement without imports The operation would yield an incorrect node tree.
-FAIL deleteRule before imports assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
-FAIL deleteRule after imports assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
+PASS length and item
+PASS insertRule before imports
+PASS insertRule after imports
+PASS insert other rules to pre-import layer statements fails
+PASS insert other rules before the first layer statement without imports
+PASS deleteRule before imports
+PASS deleteRule after imports
+FAIL replaceSync clears stale layer statements promise_test: Unhandled rejection with value: object "TypeError: Illegal constructor"
 

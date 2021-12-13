@@ -237,7 +237,20 @@ bool StyleSheetContents::wrapperInsertRule(Ref<StyleRuleBase>&& rule, unsigned i
     ASSERT_WITH_SECURITY_IMPLICATION(index <= ruleCount());
     // Parser::parseRule doesn't currently allow @charset so we don't need to deal with it.
     ASSERT(!rule->isCharsetRule());
-    
+
+    // Maybe the insert will be legal if we treat early layer statement rules as normal child rules?
+    auto shouldMoveLayerRulesBeforeImportToNormalChildRules = [&] {
+        if (index >= m_layerRulesBeforeImportRules.size())
+            return false;
+        if (!m_importRules.isEmpty() || !m_namespaceRules.isEmpty())
+            return false;
+        bool isLayerStatement = is<StyleRuleLayer>(rule) && downcast<StyleRuleLayer>(rule.get()).isStatement();
+        return !rule->isImportRule() && !rule->isNamespaceRule() && !isLayerStatement;
+    };
+
+    if (shouldMoveLayerRulesBeforeImportToNormalChildRules())
+        m_childRules.insertVector(0, std::exchange(m_layerRulesBeforeImportRules, { }));
+
     unsigned childVectorIndex = index;
     if (childVectorIndex < m_layerRulesBeforeImportRules.size() || (childVectorIndex == m_layerRulesBeforeImportRules.size() && is<StyleRuleLayer>(rule))) {
         if (!is<StyleRuleLayer>(rule))
@@ -268,7 +281,7 @@ bool StyleSheetContents::wrapperInsertRule(Ref<StyleRuleBase>&& rule, unsigned i
     childVectorIndex -= m_importRules.size();
 
     if (childVectorIndex < m_namespaceRules.size() || (childVectorIndex == m_namespaceRules.size() && rule->isNamespaceRule())) {
-        // Inserting non-namespace rules other than import rule before @namespace is
+        // Inserting non-namespace rules other than import and layer statement rules before @namespace is
         // not allowed.
         if (!is<StyleRuleNamespace>(rule))
             return false;

@@ -1,3 +1,16 @@
+2021-12-13  Antti Koivisto  <antti@apple.com>
+
+        [CSS Cascade Layers] Unflake and fix web-platform-tests/css/css-cascade/layer-statement-before-import.html
+        https://bugs.webkit.org/show_bug.cgi?id=233944
+
+        Reviewed by Simon Fraser.
+
+        * web-platform-tests/css/css-cascade/layer-statement-before-import-expected.txt:
+        * web-platform-tests/css/css-cascade/layer-statement-before-import.html:
+
+        Data URLs in @imports are not guaranteed to decode synchronously so make the test async.
+        Also catch exceptions from asserts for cleanup so failures don't affect other subtests.
+
 2021-12-13  Youenn Fablet  <youenn@apple.com>
 
         Implement step 17 of main fetch algorithm
