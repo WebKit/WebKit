@@ -79,6 +79,7 @@ public:
 
     bool texImage2DResourceSafe(GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, GCGLint border, GCGLenum format, GCGLenum type, GCGLint alignment = 4);
 
+    // GraphicsContextGL overrides.
     bool isGLES2Compliant() const final;
     //----------------------------------------------------------------------
     // Entry points for WebGL.

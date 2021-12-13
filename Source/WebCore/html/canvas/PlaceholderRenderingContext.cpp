@@ -51,10 +51,10 @@ HTMLCanvasElement* PlaceholderRenderingContext::canvas() const
     return &downcast<HTMLCanvasElement>(base);
 }
 
-PlatformLayer* PlaceholderRenderingContext::platformLayer() const
+RefPtr<GraphicsLayerContentsDisplayDelegate> PlaceholderRenderingContext::layerContentsDisplayDelegate()
 {
     if (m_imageBufferPipe)
-        return m_imageBufferPipe->platformLayer();
+        return m_imageBufferPipe->layerContentsDisplayDelegate();
 
     return nullptr;
 }

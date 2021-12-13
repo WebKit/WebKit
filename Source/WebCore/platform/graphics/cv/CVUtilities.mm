@@ -28,6 +28,7 @@
 
 #import "ColorSpaceCG.h"
 #import <wtf/StdLibExtras.h>
+#import <wtf/cf/TypeCastsCF.h>
 #import "CoreVideoSoftLink.h"
 
 namespace WebCore {

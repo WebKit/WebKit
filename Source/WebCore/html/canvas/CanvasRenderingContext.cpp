@@ -29,6 +29,7 @@
 #include "CachedImage.h"
 #include "CanvasPattern.h"
 #include "DestinationColorSpace.h"
+#include "GraphicsLayerContentsDisplayDelegate.h"
 #include "HTMLCanvasElement.h"
 #include "HTMLImageElement.h"
 #include "HTMLVideoElement.h"
@@ -81,6 +82,11 @@ void CanvasRenderingContext::ref()
 void CanvasRenderingContext::deref()
 {
     m_canvas.derefCanvasBase();
+}
+
+RefPtr<GraphicsLayerContentsDisplayDelegate> CanvasRenderingContext::layerContentsDisplayDelegate()
+{
+    return nullptr;
 }
 
 PixelFormat CanvasRenderingContext::pixelFormat() const

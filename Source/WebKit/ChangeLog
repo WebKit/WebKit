@@ -1,3 +1,65 @@
+2021-12-13  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        Cocoa WebGL should support UI side compositing
+        https://bugs.webkit.org/show_bug.cgi?id=231009
+        <rdar://83437059>
+
+        Reviewed by Simon Fraser.
+
+        Implement the capability to assign IOSurfaces
+        to PlatformCALayerRemote contents.
+
+        Make RemoteGraphicsContextGLProxyCocoa use the added
+        GraphicsLayerContentsDisplayDelegate.
+
+        Second try, previous was reverted due to a test failure.
+        The test failure happened due to RemoteLayerBackingStore
+        sending the same drawn backing store with different
+        properties but same image. The original patch tried
+        to use RemoteLayerBackingStore::m_bufferHandle also
+        on the send side to store the handle. This handle
+        was encoded multiple times. The underlying
+        ShareableBitmap::Handle IPC encoding destroys the
+        underlying mach send right even though the encoding
+        API signature would signify that the Handle stays
+        intact. ShareableBitmap, SharedMemory will be fixed in
+        future commits.
+
+        * GPUProcess/graphics/GPUProcessGraphicsContextGL.h:
+        * GPUProcess/graphics/RemoteGraphicsContextGLCocoa.cpp:
+        (WebKit::RemoteGraphicsContextGLCocoa::prepareForDisplay):
+        * Shared/RemoteLayerTree/RemoteLayerBackingStore.h:
+        (WebKit::RemoteLayerBackingStore::hasFrontBuffer const):
+        * Shared/RemoteLayerTree/RemoteLayerBackingStore.mm:
+        (WebKit::RemoteLayerBackingStore::clearBackingStore):
+        (WebKit::RemoteLayerBackingStore::encode const):
+        (WebKit::RemoteLayerBackingStore::swapToValidFrontBuffer):
+        (WebKit::RemoteLayerBackingStore::setContents):
+        (WebKit::RemoteLayerBackingStore::display):
+        * Shared/RemoteLayerTree/RemoteLayerTreeTransaction.mm:
+        (WebKit::RemoteLayerTreeTransaction::description const):
+        * UIProcess/RemoteLayerTree/RemoteLayerTreeHost.mm:
+        (WebKit::RemoteLayerTreeHost::makeNode):
+        * UIProcess/RemoteLayerTree/ios/RemoteLayerTreeHostIOS.mm:
+        (WebKit::RemoteLayerTreeHost::makeNode):
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/GPU/graphics/cocoa/RemoteGraphicsContextGLProxyCocoa.mm:
+        (WebKit::RemoteGraphicsContextGLProxy::create):
+        * WebProcess/GPU/graphics/wc/RemoteGraphicsContextGLProxyWC.cpp:
+        (WebKit::RemoteGraphicsContextGLProxy::create): Deleted.
+        * WebProcess/WebPage/RemoteLayerTree/PlatformCALayerRemote.cpp:
+        (WebKit::PlatformCALayerRemote::recursiveBuildTransaction):
+        (WebKit::PlatformCALayerRemote::setContents):
+        * WebProcess/WebPage/RemoteLayerTree/PlatformCALayerRemote.h:
+        * WebProcess/WebPage/RemoteLayerTree/PlatformCALayerRemoteCustom.h:
+        * WebProcess/WebPage/RemoteLayerTree/PlatformCALayerRemoteCustom.mm:
+        (WebKit::PlatformCALayerRemoteCustom::PlatformCALayerRemoteCustom):
+        (WebKit::PlatformCALayerRemoteCustom::clone const):
+        (WebKit::PlatformCALayerRemoteCustom::setNeedsDisplayInRect):
+        (WebKit::PlatformCALayerRemoteCustom::setNeedsDisplay):
+        * WebProcess/WebPage/wc/GraphicsLayerWC.cpp:
+        (WebKit::GraphicsLayerWC::setContentsDisplayDelegate):
+
 2021-12-13  Jean-Yves Avenard  <jya@apple.com>
 
         Distinguish contiguous SharedBuffer from non-contiguous one and guarantee immutability

@@ -103,6 +103,7 @@ void RemoteLayerBackingStore::clearBackingStore()
     m_frontBuffer.discard();
     m_backBuffer.discard();
     m_secondaryBackBuffer.discard();
+    m_contentsBufferHandle = std::nullopt;
 }
 
 void RemoteLayerBackingStore::encode(IPC::Encoder& encoder) const
@@ -112,9 +113,13 @@ void RemoteLayerBackingStore::encode(IPC::Encoder& encoder) const
     encoder << m_scale;
     encoder << m_isOpaque;
     encoder << m_includeDisplayList;
-
+    // FIXME: For simplicity this should be moved to the end of display() once the buffer handles can be created once
+    // and stored in m_bufferHandle. http://webkit.org/b/234169
     std::optional<ImageBufferBackendHandle> handle;
-    if (m_frontBuffer.imageBuffer) {
+    if (m_contentsBufferHandle) {
+        ASSERT(m_type == Type::IOSurface);
+        handle = m_contentsBufferHandle;
+    } else if (m_frontBuffer.imageBuffer) {
         switch (m_type) {
         case Type::IOSurface:
             if (auto* backend = m_frontBuffer.imageBuffer->ensureBackendCreated()) {
@@ -220,6 +225,7 @@ void RemoteLayerBackingStore::swapToValidFrontBuffer()
         }
     }
 
+    m_contentsBufferHandle = std::nullopt;
     std::swap(m_frontBuffer, m_backBuffer);
 
     if (m_frontBuffer.imageBuffer) {
@@ -257,6 +263,13 @@ bool RemoteLayerBackingStore::supportsPartialRepaint()
     return m_includeDisplayList == IncludeDisplayList::No;
 }
 
+void RemoteLayerBackingStore::setContents(WTF::MachSendRight&& contents)
+{
+    m_contentsBufferHandle = WTFMove(contents);
+    m_dirtyRegion = WebCore::Region();
+    m_paintingRects.clear();
+}
+
 bool RemoteLayerBackingStore::display()
 {
     ASSERT(!m_frontBufferFlushers.size());
@@ -266,6 +279,12 @@ bool RemoteLayerBackingStore::display()
     bool needToEncodeBackingStore = false;
     if (RemoteLayerTreeContext* context = m_layer->context())
         needToEncodeBackingStore = context->backingStoreWillBeDisplayed(*this);
+
+    if (m_layer->owner()->platformCALayerDelegatesDisplay(m_layer)) {
+        m_layer->owner()->platformCALayerLayerDisplay(m_layer);
+        m_layer->owner()->platformCALayerLayerDidDisplay(m_layer);
+        return true;
+    }
 
     // Make the previous front buffer non-volatile early, so that we can dirty the whole layer if it comes back empty.
     setBufferVolatility(BufferType::Front, false);

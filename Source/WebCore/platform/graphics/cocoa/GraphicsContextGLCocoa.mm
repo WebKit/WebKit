@@ -470,11 +470,6 @@ bool GraphicsContextGLCocoa::isValid() const
     return m_texture;
 }
 
-PlatformLayer* GraphicsContextGLCocoa::platformLayer() const
-{
-    return nullptr;
-}
-
 bool GraphicsContextGLANGLE::makeContextCurrent()
 {
     if (!m_contextObj)
@@ -801,6 +796,11 @@ PlatformGraphicsContextGLDisplay GraphicsContextGLANGLE::platformDisplay() const
 PlatformGraphicsContextGLConfig GraphicsContextGLANGLE::platformConfig() const
 {
     return m_configObj;
+}
+
+RefPtr<GraphicsLayerContentsDisplayDelegate> GraphicsContextGLCocoa::layerContentsDisplayDelegate()
+{
+    return nullptr;
 }
 
 }

@@ -74,7 +74,8 @@ public:
 #endif
 
 #if USE(GRAPHICS_LAYER_WC)
-    PlatformLayer* platformLayer() const { return m_context->platformLayer(); }
+    // FIXME: This is layering violation and should be removed.
+    PlatformLayer* platformLayer() const;
 #endif
 
 protected:

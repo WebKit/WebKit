@@ -55,6 +55,7 @@ std::unique_ptr<RemoteLayerTreeNode> RemoteLayerTreeHost::makeNode(const RemoteL
     case PlatformCALayer::LayerTypeSimpleLayer:
     case PlatformCALayer::LayerTypeTiledBackingLayer:
     case PlatformCALayer::LayerTypePageTiledBackingLayer:
+    case PlatformCALayer::LayerTypeContentsProvidedLayer:
         return makeWithView(adoptNS([[WKCompositingView alloc] init]));
 
     case PlatformCALayer::LayerTypeTiledBackingTileLayer:
@@ -74,7 +75,6 @@ std::unique_ptr<RemoteLayerTreeNode> RemoteLayerTreeHost::makeNode(const RemoteL
 
     case PlatformCALayer::LayerTypeCustom:
     case PlatformCALayer::LayerTypeAVPlayerLayer:
-    case PlatformCALayer::LayerTypeContentsProvidedLayer:
         if (!m_isDebugLayerTreeHost) {
             auto view = adoptNS([[WKUIRemoteView alloc] initWithFrame:CGRectZero
                 pid:m_drawingArea->page().processIdentifier() contextID:properties.hostingContextID]);

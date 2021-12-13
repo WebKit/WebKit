@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,15 +23,33 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <QuartzCore/QuartzCore.h>
+#pragma once
 
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+#include "GraphicsLayer.h"
+#include <wtf/RefCounted.h>
 
-// A layer class showing one IOSurface.
-WEBCORE_EXPORT @interface WebGLLayer : CALayer
+#if !USE(CA)
+#include "PlatformLayer.h"
+#endif
+namespace WebCore {
+#if USE(CA)
+class PlatformCALayer;
+#endif
 
-- (id)initWithDevicePixelRatio:(float)devicePixelRatio contentsOpaque:(bool)contentsOpaque;
+// Platform specific interface for attaching contents to GraphicsLayer.
+// Responsible for creating compositor resources to show the particular contents
+// in the platform specific GraphicsLayer.
+class WEBCORE_EXPORT GraphicsLayerContentsDisplayDelegate : public RefCounted<GraphicsLayerContentsDisplayDelegate> {
+public:
+    virtual ~GraphicsLayerContentsDisplayDelegate();
 
-@end
+#if USE(CA)
+    virtual void prepareToDelegateDisplay(PlatformCALayer&);
+    virtual void display(PlatformCALayer&) = 0;
+    virtual GraphicsLayer::CompositingCoordinatesOrientation orientation() const;
+#else
+    virtual PlatformLayer* platformLayer() const = 0;
+#endif
+};
 
-ALLOW_DEPRECATED_DECLARATIONS_END
+}

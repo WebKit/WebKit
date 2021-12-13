@@ -290,6 +290,12 @@ void GraphicsLayerWC::setContentsToPlatformLayer(PlatformLayer* platformLayer, C
     updateDebugIndicators();
 }
 
+void GraphicsLayerWC::setContentsDisplayDelegate(RefPtr<WebCore::GraphicsLayerContentsDisplayDelegate>&& displayDelegate, ContentsLayerPurpose purpose)
+{
+    auto platformLayer = displayDelegate ? displayDelegate->platformLayer() : nullptr;
+    setContentsToPlatformLayer(platformLayer, purpose);
+}
+
 bool GraphicsLayerWC::usesContentsLayer() const
 {
     return m_platformLayer;

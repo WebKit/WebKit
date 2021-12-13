@@ -46,7 +46,7 @@ public:
 private:
     bool isPlaceholder() const final { return true; }
 
-    PlatformLayer* platformLayer() const final;
+    RefPtr<GraphicsLayerContentsDisplayDelegate> layerContentsDisplayDelegate() final;
 
     bool isAccelerated() const final { return !!m_imageBufferPipe; }
     bool isGPUBased() const final { return !!m_imageBufferPipe; }

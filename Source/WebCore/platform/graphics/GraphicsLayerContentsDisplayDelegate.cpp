@@ -23,46 +23,26 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "GraphicsLayerContentsDisplayDelegate.h"
 
-#if ENABLE(WEBGL)
-
-#if USE(ANGLE)
-#include "GraphicsContextGLANGLE.h"
-#else
-#include "GraphicsContextGLOpenGL.h"
+#if USE(CA)
+#include "GraphicsLayerCA.h"
 #endif
 
 namespace WebCore {
 
-#if USE(ANGLE)
-using GraphicsContextGLTextureMapperBase = GraphicsContextGLANGLE;
-#else
-using GraphicsContextGLTextureMapperBase = GraphicsContextGLOpenGL;
-#endif
+GraphicsLayerContentsDisplayDelegate::~GraphicsLayerContentsDisplayDelegate() = default;
 
-class WEBCORE_EXPORT GraphicsContextGLTextureMapper : public GraphicsContextGLTextureMapperBase {
-public:
-    static RefPtr<GraphicsContextGLTextureMapper> create(WebCore::GraphicsContextGLAttributes&&);
-    ~GraphicsContextGLTextureMapper();
-
-    // GraphicsContextGLTextureMapperBase overrides.
-    RefPtr<GraphicsLayerContentsDisplayDelegate> layerContentsDisplayDelegate() final;
-#if ENABLE(VIDEO)
-    bool copyTextureFromMedia(MediaPlayer&, PlatformGLObject texture, GCGLenum target, GCGLint level, GCGLenum internalFormat, GCGLenum format, GCGLenum type, bool premultiplyAlpha, bool flipY) final;
-#endif
-#if ENABLE(MEDIA_STREAM)
-    RefPtr<MediaSample> paintCompositedResultsToMediaSample() final;
-#endif
-#if USE(ANGLE)
-    void setContextVisibility(bool) final;
-#endif
-
-protected:
-    GraphicsContextGLTextureMapper(WebCore::GraphicsContextGLAttributes&&);
-    Ref<GraphicsLayerContentsDisplayDelegate> m_layerContentsDisplayDelegate;
-};
-
+#if USE(CA)
+void GraphicsLayerContentsDisplayDelegate::prepareToDelegateDisplay(PlatformCALayer&)
+{
 }
 
+GraphicsLayer::CompositingCoordinatesOrientation GraphicsLayerContentsDisplayDelegate::orientation() const
+{
+    return GraphicsLayerCA::defaultContentsOrientation;
+}
 #endif
+
+}

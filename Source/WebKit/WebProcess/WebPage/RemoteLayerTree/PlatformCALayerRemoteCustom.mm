@@ -34,6 +34,7 @@
 #import <WebCore/GraphicsLayerCA.h>
 #import <WebCore/PlatformCALayerCocoa.h>
 #import <WebCore/WebCoreCALayerExtras.h>
+#import <WebCore/WebLayer.h>
 #import <wtf/RetainPtr.h>
 
 #import <pal/cocoa/AVFoundationSoftLink.h>
@@ -82,8 +83,6 @@ PlatformCALayerRemoteCustom::PlatformCALayerRemoteCustom(LayerType layerType, Pl
     m_platformLayer = customLayer;
     [customLayer web_disableAllActions];
 
-    m_providesContents = layerType == LayerTypeContentsProvidedLayer;
-
     properties().position = FloatPoint3D(customLayer.position.x, customLayer.position.y, customLayer.zPosition);
     properties().anchorPoint = FloatPoint3D(customLayer.anchorPoint.x, customLayer.anchorPoint.y, customLayer.anchorPointZ);
     properties().bounds = customLayer.bounds;
@@ -128,10 +127,6 @@ Ref<WebCore::PlatformCALayer> PlatformCALayerRemoteCustom::clone(PlatformCALayer
         }
 
         copyContents = false;
-    } else if (layerType() == LayerTypeContentsProvidedLayer) {
-        clonedLayer = adoptNS([[CALayer alloc] init]);
-        // FIXME: currently copying WebGL contents breaks the original layer.
-        copyContents = false;
     }
 
     auto clone = adoptRef(*new PlatformCALayerRemoteCustom(layerType(), clonedLayer.get(), owner, *context()));
@@ -155,18 +150,12 @@ void PlatformCALayerRemoteCustom::setContents(CFTypeRef contents)
 
 void PlatformCALayerRemoteCustom::setNeedsDisplayInRect(const FloatRect& rect)
 {
-    if (m_providesContents)
-        [m_platformLayer setNeedsDisplayInRect:rect];
-    else
-        PlatformCALayerRemote::setNeedsDisplayInRect(rect);
+    PlatformCALayerRemote::setNeedsDisplayInRect(rect);
 }
 
 void PlatformCALayerRemoteCustom::setNeedsDisplay()
 {
-    if (m_providesContents)
-        [m_platformLayer setNeedsDisplay];
-    else
-        PlatformCALayerRemote::setNeedsDisplay();
+    PlatformCALayerRemote::setNeedsDisplay();
 }
 
 } // namespace WebKit

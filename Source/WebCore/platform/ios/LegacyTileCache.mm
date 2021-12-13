@@ -28,6 +28,7 @@
 
 #if PLATFORM(IOS_FAMILY)
 
+#import "Color.h"
 #import "FontAntialiasingStateSaver.h"
 #import "LegacyTileGrid.h"
 #import "LegacyTileGridTile.h"

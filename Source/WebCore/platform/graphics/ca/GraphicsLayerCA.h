@@ -150,6 +150,8 @@ public:
     WEBCORE_EXPORT PlatformLayer* contentsLayerForMedia() const override;
 #endif
     WEBCORE_EXPORT void setContentsToPlatformLayer(PlatformLayer*, ContentsLayerPurpose) override;
+    WEBCORE_EXPORT void setContentsDisplayDelegate(RefPtr<GraphicsLayerContentsDisplayDelegate>&&, ContentsLayerPurpose) override;
+
     WEBCORE_EXPORT void setContentsToSolidColor(const Color&) override;
 #if ENABLE(MODEL_ELEMENT)
     WEBCORE_EXPORT void setContentsToModel(RefPtr<Model>&&) override;
@@ -193,6 +195,8 @@ public:
 
     WEBCORE_EXPORT Vector<std::pair<String, double>> acceleratedAnimationsForTesting() const final;
 
+    constexpr static CompositingCoordinatesOrientation defaultContentsOrientation = CompositingCoordinatesOrientation::TopDown;
+
 private:
     bool isGraphicsLayerCA() const override { return true; }
 
@@ -212,6 +216,8 @@ private:
 
     bool platformCALayerContentsOpaque() const override { return contentsOpaque(); }
     bool platformCALayerDrawsContent() const override { return drawsContent(); }
+    WEBCORE_EXPORT bool platformCALayerDelegatesDisplay(PlatformCALayer*) const override;
+    WEBCORE_EXPORT void platformCALayerLayerDisplay(PlatformCALayer*) override;
     void platformCALayerLayerDidDisplay(PlatformCALayer* layer) override { return layerDidDisplay(layer); }
     WEBCORE_EXPORT void platformCALayerSetNeedsToRevalidateTiles() override;
     WEBCORE_EXPORT float platformCALayerDeviceScaleFactor() const override;
@@ -300,10 +306,7 @@ private:
 
     bool requiresTiledLayer(float pageScaleFactor) const;
     void changeLayerTypeTo(PlatformCALayer::LayerType);
-
-    CompositingCoordinatesOrientation defaultContentsOrientation() const;
-
-    void setupContentsLayer(PlatformCALayer*);
+    void setupContentsLayer(PlatformCALayer*, CompositingCoordinatesOrientation = defaultContentsOrientation);
     PlatformCALayer* contentsLayer() const { return m_contentsLayer.get(); }
 
     void updateClippingStrategy(PlatformCALayer&, RefPtr<PlatformCALayer>& shapeMaskLayer, const FloatRoundedRect&);
@@ -644,6 +647,7 @@ private:
 #if ENABLE(MODEL_ELEMENT)
     RefPtr<Model> m_contentsModel;
 #endif
+    RefPtr<GraphicsLayerContentsDisplayDelegate> m_contentsDisplayDelegate;
 
     Vector<LayerPropertyAnimation> m_animations;
     Vector<LayerPropertyAnimation> m_baseValueTransformAnimations;

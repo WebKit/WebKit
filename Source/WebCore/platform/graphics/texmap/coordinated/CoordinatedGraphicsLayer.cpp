@@ -29,6 +29,7 @@
 #include "FloatQuad.h"
 #include "GraphicsContext.h"
 #include "GraphicsLayer.h"
+#include "GraphicsLayerContentsDisplayDelegate.h"
 #include "GraphicsLayerFactory.h"
 #include "NicosiaBackingStoreTextureMapperImpl.h"
 #include "NicosiaCompositionLayerTextureMapperImpl.h"
@@ -497,6 +498,12 @@ void CoordinatedGraphicsLayer::setContentsToPlatformLayer(PlatformLayer* platfor
 #else
     UNUSED_PARAM(platformLayer);
 #endif
+}
+
+void CoordinatedGraphicsLayer::setContentsDisplayDelegate(RefPtr<GraphicsLayerContentsDisplayDelegate>&& displayDelegate, ContentsLayerPurpose purpose)
+{
+    PlatformLayer* platformLayer = displayDelegate ? displayDelegate->platformLayer() : nullptr;
+    setContentsToPlatformLayer(platformLayer, purpose);
 }
 
 bool CoordinatedGraphicsLayer::filtersCanBeComposited(const FilterOperations& filters) const
