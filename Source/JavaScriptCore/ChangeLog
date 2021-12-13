@@ -1,3 +1,75 @@
+2021-12-12  Zan Dobersek  <zdobersek@igalia.com>
+
+        [RISCV64] Add MacroAssemblerRISCV64 implementations for trivial general-purpose-register operations
+        https://bugs.webkit.org/show_bug.cgi?id=233992
+
+        Reviewed by Yusuke Suzuki.
+
+        Add implementations for the trivial general-purpose-register operations
+        in MacroAssemblerRISCV64. This covers non-patchable loads and stores,
+        shifts, logical operations, zero- and sign-extensions, moves and swaps,
+        stack operations as well as miscellaneous operations like aborts,
+        breakpoints and nops.
+
+        The loadImmediate helper methods are added to handle loading of
+        different types of immediate values. This should replace move() calls
+        when a sign-extended immediate load is desired, whereas move() for
+        a 32-bit immediate is expected to perform no sign extension.
+
+        * assembler/MacroAssemblerRISCV64.h:
+        (JSC::MacroAssemblerRISCV64::add32):
+        (JSC::MacroAssemblerRISCV64::add64):
+        (JSC::MacroAssemblerRISCV64::sub32):
+        (JSC::MacroAssemblerRISCV64::mul32):
+        (JSC::MacroAssemblerRISCV64::lshift32):
+        (JSC::MacroAssemblerRISCV64::lshift64):
+        (JSC::MacroAssemblerRISCV64::rshift32):
+        (JSC::MacroAssemblerRISCV64::rshift64):
+        (JSC::MacroAssemblerRISCV64::urshift32):
+        (JSC::MacroAssemblerRISCV64::urshift64):
+        (JSC::MacroAssemblerRISCV64::load8):
+        (JSC::MacroAssemblerRISCV64::load8SignedExtendTo32):
+        (JSC::MacroAssemblerRISCV64::load16):
+        (JSC::MacroAssemblerRISCV64::load16Unaligned):
+        (JSC::MacroAssemblerRISCV64::load16SignedExtendTo32):
+        (JSC::MacroAssemblerRISCV64::load32):
+        (JSC::MacroAssemblerRISCV64::load32WithUnalignedHalfWords):
+        (JSC::MacroAssemblerRISCV64::load64):
+        (JSC::MacroAssemblerRISCV64::loadPair32):
+        (JSC::MacroAssemblerRISCV64::store8):
+        (JSC::MacroAssemblerRISCV64::store16):
+        (JSC::MacroAssemblerRISCV64::store32):
+        (JSC::MacroAssemblerRISCV64::store64):
+        (JSC::MacroAssemblerRISCV64::storePair32):
+        (JSC::MacroAssemblerRISCV64::zeroExtend8To32):
+        (JSC::MacroAssemblerRISCV64::zeroExtend16To32):
+        (JSC::MacroAssemblerRISCV64::zeroExtend32ToWord):
+        (JSC::MacroAssemblerRISCV64::signExtend8To32):
+        (JSC::MacroAssemblerRISCV64::signExtend16To32):
+        (JSC::MacroAssemblerRISCV64::signExtend32ToPtr):
+        (JSC::MacroAssemblerRISCV64::and32):
+        (JSC::MacroAssemblerRISCV64::and64):
+        (JSC::MacroAssemblerRISCV64::or8):
+        (JSC::MacroAssemblerRISCV64::or16):
+        (JSC::MacroAssemblerRISCV64::or32):
+        (JSC::MacroAssemblerRISCV64::or64):
+        (JSC::MacroAssemblerRISCV64::xor32):
+        (JSC::MacroAssemblerRISCV64::xor64):
+        (JSC::MacroAssemblerRISCV64::not32):
+        (JSC::MacroAssemblerRISCV64::not64):
+        (JSC::MacroAssemblerRISCV64::neg32):
+        (JSC::MacroAssemblerRISCV64::neg64):
+        (JSC::MacroAssemblerRISCV64::move):
+        (JSC::MacroAssemblerRISCV64::swap):
+        (JSC::MacroAssemblerRISCV64::push):
+        (JSC::MacroAssemblerRISCV64::pushPair):
+        (JSC::MacroAssemblerRISCV64::pop):
+        (JSC::MacroAssemblerRISCV64::popPair):
+        (JSC::MacroAssemblerRISCV64::abortWithReason):
+        (JSC::MacroAssemblerRISCV64::breakpoint):
+        (JSC::MacroAssemblerRISCV64::nop):
+        (JSC::MacroAssemblerRISCV64::loadImmediate):
+
 2021-12-12  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Use FixedVector to shrink some of Wasm data structures
