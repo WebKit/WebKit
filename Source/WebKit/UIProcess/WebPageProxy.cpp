@@ -2942,7 +2942,7 @@ void WebPageProxy::sendWheelEvent(const WebWheelEvent& event)
 
 #if ENABLE(MOMENTUM_EVENT_DISPATCHER)
     if (event.momentumPhase() == WebWheelEvent::PhaseBegan && m_scrollingAccelerationCurve != m_lastSentScrollingAccelerationCurve) {
-        connection->send(Messages::EventDispatcher::SetScrollingAccelerationCurve(m_webPageID, *m_scrollingAccelerationCurve), 0, { }, Thread::QOS::UserInteractive);
+        connection->send(Messages::EventDispatcher::SetScrollingAccelerationCurve(m_webPageID, m_scrollingAccelerationCurve), 0, { }, Thread::QOS::UserInteractive);
         m_lastSentScrollingAccelerationCurve = m_scrollingAccelerationCurve;
     }
 #endif

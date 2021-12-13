@@ -1,3 +1,58 @@
+2021-12-13  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r286900. rdar://problem/86344954
+
+    Momentum Event Dispatcher: Magic Mouse doesn't use momentum event dispatcher
+    https://bugs.webkit.org/show_bug.cgi?id=234189
+    <rdar://problem/86344954>
+    
+    Reviewed by Simon Fraser.
+    
+    * Shared/mac/ScrollingAccelerationCurveMac.mm:
+    (WebKit::fromIOHIDDevice):
+    Fix the FIXME here about the additional fallback values; it turns out
+    Magic Mouse is one device that does not have a value for
+    kIOHIDScrollAccelerationTypeKey, so we need the full fallback chain to support it.
+    
+    * UIProcess/WebPageProxy.cpp:
+    (WebKit::WebPageProxy::sendWheelEvent):
+    Un-wrapping this optional results in losing the engaged state, and sending
+    a garbage ScrollingAccelerationCurve across the wire.
+    The message argument is also an optional, so just pass it along.
+    
+    The result of this bug was that if you had ever used a device with a curve
+    for a given page, and then used a device with no curve, MomentumEventDispatcher
+    would have a garbage curve (from this message trying to "unset" the optional),
+    and a garbage curve results in chaotic scrolling.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@286900 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-12-10  Tim Horton  <timothy_horton@apple.com>
+
+            Momentum Event Dispatcher: Magic Mouse doesn't use momentum event dispatcher
+            https://bugs.webkit.org/show_bug.cgi?id=234189
+            <rdar://problem/86344954>
+
+            Reviewed by Simon Fraser.
+
+            * Shared/mac/ScrollingAccelerationCurveMac.mm:
+            (WebKit::fromIOHIDDevice):
+            Fix the FIXME here about the additional fallback values; it turns out
+            Magic Mouse is one device that does not have a value for
+            kIOHIDScrollAccelerationTypeKey, so we need the full fallback chain to support it.
+
+            * UIProcess/WebPageProxy.cpp:
+            (WebKit::WebPageProxy::sendWheelEvent):
+            Un-wrapping this optional results in losing the engaged state, and sending
+            a garbage ScrollingAccelerationCurve across the wire.
+            The message argument is also an optional, so just pass it along.
+
+            The result of this bug was that if you had ever used a device with a curve
+            for a given page, and then used a device with no curve, MomentumEventDispatcher
+            would have a garbage curve (from this message trying to "unset" the optional),
+            and a garbage curve results in chaotic scrolling.
+
 2021-12-09  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r286805. rdar://problem/86291413
