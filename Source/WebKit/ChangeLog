@@ -1,3 +1,30 @@
+2021-12-13  J Pascoe  <j_pascoe@apple.com>
+
+        [WebAuthn] Allow same-site, cross-origin iframe get()
+        https://bugs.webkit.org/show_bug.cgi?id=234180
+        rdar://85161142
+
+        Reviewed by Brent Fulgham.
+
+        The Web Authentication level 2 specifies a feature policy to allow get calls in
+        cross-origin i-frames. This patch implements this feature policy partially. Only
+        same-site, cross-origin i-frames are supported instead. This is for tracking prevention
+        purposes. https://w3c.github.io/webauthn/#sctn-iframe-guidance
+
+        This patch also starts passing ClientDataJSON hashes to ASC to avoid the situation
+        where WebKit includes crossOrigin or other fields in ClientDataJSON that ASC is
+        unaware of when generating ClientDataJSON.
+
+        Added layout test cases for same-site, cross-origin get calls.
+
+        * Platform/spi/Cocoa/AuthenticationServicesCoreSPI.h:
+        * UIProcess/API/Cocoa/_WKWebAuthenticationPanel.mm:
+        (produceClientDataJson):
+        * UIProcess/WebAuthentication/Cocoa/WebAuthenticatorCoordinatorProxy.mm:
+        (WebKit::configureRegistrationRequestContext):
+        (WebKit::configurationAssertionRequestContext):
+        (WebKit::WebAuthenticatorCoordinatorProxy::contextForRequest):
+
 2021-12-13  Jean-Yves Avenard  <jya@apple.com>
 
         Add SharedBufferBuilder class

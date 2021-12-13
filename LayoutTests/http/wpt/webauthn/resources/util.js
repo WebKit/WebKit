@@ -304,15 +304,30 @@ function waitForLoad()
     });
 }
 
-function withCrossOriginIframe(resourceFile)
+function withCrossOriginIframe(resourceFile, allow = "")
 {
     return new Promise((resolve) => {
         waitForLoad().then((message) => {
             resolve(message);
         });
         const frame = document.createElement("iframe");
+        frame.allow = allow;
         frame.src = get_host_info().HTTPS_REMOTE_ORIGIN + RESOURCES_DIR + resourceFile;
         document.body.appendChild(frame);
+    });
+}
+
+function withSameSiteIframe(resourceFile, allow = "")
+{
+    return new Promise((resolve) => {
+        waitForLoad().then((message) => {
+            resolve(message);
+       });
+       const frame = document.createElement("iframe");
+       const host = get_host_info();
+       frame.allow = allow;
+       frame.src = "https://" + host.ORIGINAL_HOST + ":" + host.HTTPS_PORT2 + RESOURCES_DIR + resourceFile;
+       document.body.appendChild(frame);
     });
 }
 

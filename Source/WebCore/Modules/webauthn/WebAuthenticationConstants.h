@@ -80,3 +80,13 @@ enum class ClientDataType : bool {
 const char LocalAuthenticatiorAccessGroup[] = "com.apple.webkit.webauthn";
 
 } // namespace WebCore
+
+namespace WebAuthn {
+
+enum class Scope {
+    CrossOrigin,
+    SameOrigin,
+    SameSite
+};
+
+} // namespace WebAuthn

@@ -67,6 +67,10 @@ static const char* policyTypeName(FeaturePolicy::Type type)
     case FeaturePolicy::Type::Magnetometer:
         return "Magnetometer";
 #endif
+#if ENABLE(WEB_AUTHN)
+    case FeaturePolicy::Type::PublickeyCredentialsGetRule:
+        return "PublickeyCredentialsGet";
+#endif
 #if ENABLE(WEBXR)
     case FeaturePolicy::Type::XRSpatialTracking:
         return "XRSpatialTracking";
@@ -184,6 +188,9 @@ FeaturePolicy FeaturePolicy::parse(Document& document, const HTMLIFrameElement& 
     bool isAccelerometerInitialized = false;
     bool isMagnetometerInitialized = false;
 #endif
+#if ENABLE(WEB_AUTHN)
+    bool isPublickeyCredentialsGetInitialized = false;
+#endif
 #if ENABLE(WEBXR)
     bool isXRSpatialTrackingInitialized = false;
 #endif
@@ -251,6 +258,13 @@ FeaturePolicy FeaturePolicy::parse(Document& document, const HTMLIFrameElement& 
             continue;
         }
 #endif
+#if ENABLE(WEB_AUTHN)
+        if (item.startsWith("publickey-credentials-get")) {
+            isPublickeyCredentialsGetInitialized = true;
+            updateList(document, policy.m_publickeyCredentialsGetRule, item.substring(26));
+            continue;
+        }
+#endif
 #if ENABLE(WEBXR)
         if (item.startsWith("xr-spatial-tracking")) {
             isXRSpatialTrackingInitialized = true;
@@ -282,6 +296,10 @@ FeaturePolicy FeaturePolicy::parse(Document& document, const HTMLIFrameElement& 
         policy.m_accelerometerRule.allowedList.add(document.securityOrigin().data());
     if (!isMagnetometerInitialized)
         policy.m_magnetometerRule.allowedList.add(document.securityOrigin().data());
+#endif
+#if ENABLE(WEB_AUTHN)
+    if (!isPublickeyCredentialsGetInitialized)
+        policy.m_publickeyCredentialsGetRule.allowedList.add(document.securityOrigin().data());
 #endif
 #if ENABLE(WEBXR)
     if (!isXRSpatialTrackingInitialized)
@@ -337,6 +355,10 @@ bool FeaturePolicy::allows(Type type, const SecurityOriginData& origin) const
         return isAllowedByFeaturePolicy(m_accelerometerRule, origin);
     case Type::Magnetometer:
         return isAllowedByFeaturePolicy(m_magnetometerRule, origin);
+#endif
+#if ENABLE(WEB_AUTHN)
+    case Type::PublickeyCredentialsGetRule:
+        return isAllowedByFeaturePolicy(m_publickeyCredentialsGetRule, origin);
 #endif
 #if ENABLE(WEBXR)
     case Type::XRSpatialTracking:
