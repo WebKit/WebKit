@@ -1,3 +1,25 @@
+2021-12-12  Zan Dobersek  <zdobersek@igalia.com>
+
+        [libpas] make build.sh, test.sh, build_and_test.sh, and clean.sh work on Linux
+        https://bugs.webkit.org/show_bug.cgi?id=233821
+
+        Reviewed by Yusuke Suzuki.
+
+        Adjust and enhance the shell scripts for building and testing CMake
+        builds of libpas. In build.sh, the 'cmake' SDK option handling is added,
+        invoking CMake to produce a libpas build of the desired variant and
+        configuration. The Debug and Release configuration possibilities map
+        exactly to the CMAKE_BUILD_TYPE option. The ENABLE_PAS_TESTING option
+        used for the testing variant is converted into a macro definition that's
+        passed to both CMAKE_C_FLAGS and CMAKE_CXX_FLAGS.
+
+        The function declarations are adjusted to use the "fname()" form, making
+        things runnable on shells that don't support the "function" keyword.
+
+        * libpas/build.sh:
+        * libpas/common.sh:
+        * libpas/test.sh:
+
 2021-12-09  Alex Christensen  <achristensen@webkit.org>
 
         Prepare for transition to C++20

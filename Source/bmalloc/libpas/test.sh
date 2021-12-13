@@ -24,7 +24,7 @@
 
 . common.sh
 
-function copy_variant {
+copy_variant() {
     variant=$1
     
     tar -czvf /dev/stdout build-$sdk-$variant/$configdir test-impl.sh common.sh | \
