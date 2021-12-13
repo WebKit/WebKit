@@ -45,6 +45,7 @@ class WEBCORE_EXPORT ScrollingTreeScrollingNode : public ScrollingTreeNode {
     friend class ScrollingTreeScrollingNodeDelegateMac;
 #endif
     friend class ScrollingTree;
+    friend class ThreadedScrollingTree;
 
 public:
     virtual ~ScrollingTreeScrollingNode();
