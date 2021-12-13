@@ -110,7 +110,7 @@ class LayoutTestFinder(object):
             Test(
                 test_file,
                 is_http_test=self.http_subdir in test_file,
-                is_websocket_test=self.websocket_subdir in test_file,
+                is_websocket_test=self.websocket_subdir in test_file or (self.http_subdir in test_file and 'websocket' in test_file),
                 is_wpt_test=(
                     self.web_platform_test_subdir in test_file
                     or self.webkit_specific_web_platform_test_subdir in test_file
