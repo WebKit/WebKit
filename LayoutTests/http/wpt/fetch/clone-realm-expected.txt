@@ -1,0 +1,3 @@
+
+PASS Cloning a response fails when its frame is detached
+

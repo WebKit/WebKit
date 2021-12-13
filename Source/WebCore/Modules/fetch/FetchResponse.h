@@ -79,7 +79,7 @@ public:
 
     const FetchHeaders& headers() const { return m_headers; }
     FetchHeaders& headers() { return m_headers; }
-    ExceptionOr<Ref<FetchResponse>> clone(ScriptExecutionContext&);
+    ExceptionOr<Ref<FetchResponse>> clone();
 
     void consumeBodyAsStream() final;
     void feedStream() final;

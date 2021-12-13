@@ -57,7 +57,7 @@ dictionary FetchResponseInit {
     readonly attribute ByteString statusText;
     [SameObject] readonly attribute FetchHeaders headers;
 
-    [CallWith=ScriptExecutionContext, NewObject] FetchResponse clone();
+    [NewObject] FetchResponse clone();
 };
 
 FetchResponse includes FetchBody;

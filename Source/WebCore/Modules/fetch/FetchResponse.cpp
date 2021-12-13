@@ -169,12 +169,16 @@ FetchResponse::FetchResponse(ScriptExecutionContext& context, std::optional<Fetc
 {
 }
 
-ExceptionOr<Ref<FetchResponse>> FetchResponse::clone(ScriptExecutionContext& context)
+ExceptionOr<Ref<FetchResponse>> FetchResponse::clone()
 {
+    if (isContextStopped())
+        return Exception { InvalidStateError, "Context is stopped"_s };
+
     if (isDisturbedOrLocked())
         return Exception { TypeError, "Body is disturbed or locked"_s };
 
     ASSERT(scriptExecutionContext());
+    auto& context = *scriptExecutionContext();
 
     // If loading, let's create a stream so that data is teed on both clones.
     if (isLoading() && !m_readableStreamSource) {

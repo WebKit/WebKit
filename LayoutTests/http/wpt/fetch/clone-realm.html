@@ -1,0 +1,32 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <script src="/resources/testharness.js"></script>
+        <script src="/resources/testharnessreport.js"></script>
+    </head>
+    <body>
+<script>
+function with_iframe(url) {
+  return new Promise(function(resolve) {
+      var frame = document.createElement('iframe');
+      frame.src = url;
+      frame.onload = function() { resolve(frame); };
+      document.body.appendChild(frame);
+    });
+}
+promise_test(async (t) => {
+    const frame = await with_iframe('/');
+    const response = await frame.contentWindow.fetch('/');
+    await response.clone().text();
+    frame.remove();
+    try {
+        response.clone();
+        assert_not_reached();
+    } catch (e) {
+        assert_equals(e.name, 'InvalidStateError');
+    }
+}, "Cloning a response fails when its frame is detached");
+</script>
+    </body>
+</html>

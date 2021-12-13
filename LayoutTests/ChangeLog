@@ -1,3 +1,13 @@
+2021-12-13  Youenn Fablet  <youenn@apple.com>
+
+        FetchResponse::clone should use the relevant realm for the cloned response
+        https://bugs.webkit.org/show_bug.cgi?id=234238
+
+        Reviewed by Alexey Shvayka.
+
+        * http/wpt/fetch/clone-realm-expected.txt: Added.
+        * http/wpt/fetch/clone-realm.html: Added.
+
 2021-12-13  Rob Buis  <rbuis@igalia.com>
 
         [ macOS and iOS ] editing/deleting/forward-delete-crash.html is timing out
