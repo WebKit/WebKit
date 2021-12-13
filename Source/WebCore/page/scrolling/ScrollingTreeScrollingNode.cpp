@@ -303,6 +303,11 @@ void ScrollingTreeScrollingNode::currentScrollPositionChanged(ScrollType, Scroll
     scrollingTree().scrollingTreeNodeDidScroll(*this, action);
 }
 
+void ScrollingTreeScrollingNode::updateScrollPositionAtLastDisplayRefresh()
+{
+    m_scrollPositionAtLastDisplayRefresh = m_currentScrollPosition;
+}
+
 bool ScrollingTreeScrollingNode::scrollPositionAndLayoutViewportMatch(const FloatPoint& position, std::optional<FloatRect>)
 {
     return position == m_currentScrollPosition;

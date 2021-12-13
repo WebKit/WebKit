@@ -107,6 +107,8 @@ private:
 
     void hasNodeWithAnimatedScrollChanged(bool) final;
     
+    void storeScrollPositionsAtLastDisplayRefresh() WTF_REQUIRES_LOCK(m_treeLock);
+    
     void serviceScrollAnimations(MonotonicTime) WTF_REQUIRES_LOCK(m_treeLock);
 
     Seconds frameDuration();
