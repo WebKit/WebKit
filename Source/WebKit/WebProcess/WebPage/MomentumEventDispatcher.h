@@ -42,6 +42,7 @@
 
 namespace WebCore {
 struct DisplayUpdate;
+using FramesPerSecond = unsigned;
 using PlatformDisplayID = uint32_t;
 }
 
@@ -62,7 +63,7 @@ public:
 
     void displayWasRefreshed(WebCore::PlatformDisplayID, const WebCore::DisplayUpdate&);
 
-    void pageScreenDidChange(WebCore::PageIdentifier, WebCore::PlatformDisplayID);
+    void pageScreenDidChange(WebCore::PageIdentifier, WebCore::PlatformDisplayID, std::optional<unsigned> nominalFramesPerSecond);
 
 private:
     void didStartMomentumPhase(WebCore::PageIdentifier, const WebWheelEvent&);
@@ -73,7 +74,11 @@ private:
     void startDisplayLink();
     void stopDisplayLink();
 
-    WebCore::PlatformDisplayID displayID() const;
+    struct DisplayProperties {
+        WebCore::PlatformDisplayID displayID;
+        WebCore::FramesPerSecond nominalFrameRate;
+    };
+    std::optional<DisplayProperties> displayProperties(WebCore::PageIdentifier) const;
 
     void dispatchSyntheticMomentumEvent(WebWheelEvent::Phase, WebCore::FloatSize delta);
 
@@ -137,6 +142,8 @@ private:
         Seconds tailStartDelay;
         unsigned currentTailDeltaIndex { 0 };
 
+        WebCore::FramesPerSecond displayNominalFrameRate { 0 };
+
 #if ENABLE(MOMENTUM_EVENT_DISPATCHER_TEMPORARY_LOGGING)
         WebCore::FloatSize accumulatedEventOffset;
         bool didLogInitialQueueState { false };
@@ -148,7 +155,8 @@ private:
     } m_currentGesture;
 
     DisplayLinkObserverID m_observerID;
-    HashMap<WebCore::PageIdentifier, WebCore::PlatformDisplayID> m_displayIDs;
+
+    HashMap<WebCore::PageIdentifier, DisplayProperties> m_displayProperties;
     HashMap<WebCore::PageIdentifier, std::optional<ScrollingAccelerationCurve>> m_accelerationCurves;
     EventDispatcher& m_dispatcher;
 };

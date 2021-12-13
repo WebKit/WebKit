@@ -4016,7 +4016,7 @@ void WebPageProxy::windowScreenDidChange(PlatformDisplayID displayID, std::optio
     if (!hasRunningProcess())
         return;
 
-    send(Messages::EventDispatcher::PageScreenDidChange(m_webPageID, displayID));
+    send(Messages::EventDispatcher::PageScreenDidChange(m_webPageID, displayID, nominalFramesPerSecond));
     send(Messages::WebPage::WindowScreenDidChange(displayID, nominalFramesPerSecond));
 #if HAVE(CVDISPLAYLINK)
     updateDisplayLinkFrequency();
