@@ -919,7 +919,7 @@ void WebCoreNSURLSessionDataTaskClient::loadFinished(PlatformMediaResource& reso
 {
     ASSERT_UNUSED(resource, !resource || resource == _resource);
     [self.session addDelegateOperation:[strongSelf = RetainPtr { self }, data = WTFMove(data)] {
-        auto nsData = data->createNSData();
+        auto nsData = data->makeContiguous()->createNSData();
         strongSelf.get().countOfBytesReceived += data->size();
         id<NSURLSessionDataDelegate> dataDelegate = (id<NSURLSessionDataDelegate>)strongSelf.get().session.delegate;
         if ([dataDelegate respondsToSelector:@selector(URLSession:dataTask:didReceiveData:)])

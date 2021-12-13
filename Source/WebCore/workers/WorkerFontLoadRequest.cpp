@@ -78,11 +78,15 @@ void WorkerFontLoadRequest::load(WorkerGlobalScope& workerGlobalScope)
 bool WorkerFontLoadRequest::ensureCustomFontData(const AtomString&)
 {
     if (!m_fontCustomPlatformData && !m_errorOccurred && !m_isLoading) {
-        convertWOFFToSfntIfNecessary(m_data);
         if (m_data) {
-            m_fontCustomPlatformData = createFontCustomPlatformData(*m_data, m_url.fragmentIdentifier().toString());
-            if (!m_fontCustomPlatformData)
-                m_errorOccurred = true;
+            RefPtr<ContiguousSharedBuffer> contiguousData = m_data->makeContiguous();
+            convertWOFFToSfntIfNecessary(contiguousData);
+            m_data = contiguousData;
+            if (contiguousData) {
+                m_fontCustomPlatformData = createFontCustomPlatformData(*contiguousData, m_url.fragmentIdentifier().toString());
+                if (!m_fontCustomPlatformData)
+                    m_errorOccurred = true;
+            }
         }
     }
 

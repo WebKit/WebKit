@@ -36,7 +36,7 @@
 
 class WebResource final : public IWebResource {
 public:
-    static WebResource* createInstance(RefPtr<WebCore::SharedBuffer>&&, const WebCore::ResourceResponse&);
+    static WebResource* createInstance(RefPtr<WebCore::ContiguousSharedBuffer>&&, const WebCore::ResourceResponse&);
 
     // IUnknown
     virtual HRESULT STDMETHODCALLTYPE QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject);

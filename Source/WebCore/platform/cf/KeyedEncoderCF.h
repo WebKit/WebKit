@@ -37,7 +37,7 @@ public:
     ~KeyedEncoderCF();
 
 private:
-    RefPtr<WebCore::SharedBuffer> finishEncoding() final;
+    RefPtr<WebCore::ContiguousSharedBuffer> finishEncoding() final;
 
     void encodeBytes(const String& key, const uint8_t*, size_t) final;
     void encodeBool(const String& key, bool) final;

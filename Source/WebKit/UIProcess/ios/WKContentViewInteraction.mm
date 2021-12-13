@@ -3842,7 +3842,7 @@ WEBCORE_COMMAND_FOR_WEBVIEW(pasteAndMatchStyle);
 
         NSArray *allCustomPasteboardData = [pasteboard dataForPasteboardType:@(WebCore::PasteboardCustomData::cocoaType()) inItemSet:indices];
         for (NSData *data in allCustomPasteboardData) {
-            auto buffer = WebCore::SharedBuffer::create(data);
+            auto buffer = WebCore::ContiguousSharedBuffer::create(data);
             if (WebCore::PasteboardCustomData::fromSharedBuffer(buffer.get()).origin() == focusedDocumentOrigin)
                 return YES;
         }
@@ -6650,7 +6650,7 @@ static BOOL allPasteboardItemOriginsMatchOrigin(UIPasteboard *pasteboard, const 
         if (!data.length)
             continue;
 
-        auto buffer = WebCore::SharedBuffer::create(data);
+        auto buffer = WebCore::ContiguousSharedBuffer::create(data);
         if (WebCore::PasteboardCustomData::fromSharedBuffer(buffer.get()).origin() != originIdentifier)
             return NO;
 
@@ -7623,7 +7623,7 @@ static bool canUseQuickboardControllerFor(UITextContentType type)
 {
     WebCore::ShareDataWithParsedURL shareData;
     NSString* fileName = [NSString stringWithFormat:@"%@.png", (NSString*)WEB_UI_STRING("Shared Image", "Default name for the file created for a shared image with no explicit name.")];
-    shareData.files = { { fileName, WebCore::SharedBuffer::create(UIImagePNGRepresentation(image)) } };
+    shareData.files = { { fileName, WebCore::ContiguousSharedBuffer::create(UIImagePNGRepresentation(image)) } };
     [self _showShareSheet:shareData inRect: { [self convertRect:boundingRect toView:self.webView] } completionHandler:nil];
 }
 

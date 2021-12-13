@@ -59,18 +59,18 @@ FontPlatformData::FontPlatformData(GDIObject<HFONT> font, float size, bool bold,
     RestoreDC(hdc, -1);
 }
 
-RefPtr<SharedBuffer> FontPlatformData::platformOpenTypeTable(uint32_t table) const
+RefPtr<ContiguousSharedBuffer> FontPlatformData::platformOpenTypeTable(uint32_t table) const
 {
     HWndDC hdc(0);
     HGDIOBJ oldFont = SelectObject(hdc, hfont());
 
     DWORD size = GetFontData(hdc, table, 0, 0, 0);
-    RefPtr<SharedBuffer> buffer;
+    RefPtr<ContiguousSharedBuffer> buffer;
     if (size != GDI_ERROR) {
         Vector<uint8_t> data(size);
         DWORD result = GetFontData(hdc, table, 0, (PVOID)data.data(), size);
         ASSERT_UNUSED(result, result == size);
-        buffer = SharedBuffer::create(WTFMove(data));
+        buffer = ContiguousSharedBuffer::create(WTFMove(data));
     }
 
     SelectObject(hdc, oldFont);

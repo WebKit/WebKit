@@ -177,7 +177,7 @@ void ServiceWorkerNavigationPreloader::didReceiveResponse(ResourceResponse&& res
 void ServiceWorkerNavigationPreloader::didReceiveBuffer(Ref<SharedBuffer>&& buffer, int reportedEncodedDataLength)
 {
     if (m_bodyCallback)
-        m_bodyCallback(WTFMove(buffer), reportedEncodedDataLength);
+        m_bodyCallback(buffer->makeContiguous(), reportedEncodedDataLength);
 }
 
 void ServiceWorkerNavigationPreloader::didFinishLoading(const NetworkLoadMetrics& networkLoadMetrics)

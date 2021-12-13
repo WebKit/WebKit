@@ -33,12 +33,12 @@
 
 namespace WebCore {
 
-class SharedBuffer;
+class ContiguousSharedBuffer;
 
 struct SerializedAttachmentData {
     String identifier;
     String mimeType;
-    Ref<SharedBuffer> data;
+    Ref<ContiguousSharedBuffer> data;
 };
 
 } // namespace WebKit

@@ -211,11 +211,11 @@ Vector<String> Pasteboard::typesForLegacyUnsafeBindings()
 }
 
 #if PLATFORM(MAC)
-static Ref<SharedBuffer> convertTIFFToPNG(SharedBuffer& tiffBuffer)
+static Ref<ContiguousSharedBuffer> convertTIFFToPNG(SharedBuffer& tiffBuffer)
 {
-    auto image = adoptNS([[NSBitmapImageRep alloc] initWithData: tiffBuffer.createNSData().get()]);
+    auto image = adoptNS([[NSBitmapImageRep alloc] initWithData: tiffBuffer.makeContiguous()->createNSData().get()]);
     NSData *pngData = [image representationUsingType:bitmapPNGFileType() properties:@{ }];
-    return SharedBuffer::create(pngData);
+    return ContiguousSharedBuffer::create(pngData);
 }
 #endif
 
@@ -316,7 +316,7 @@ Vector<String> Pasteboard::readTypesWithSecurityCheck()
     return cocoaTypes;
 }
 
-RefPtr<SharedBuffer> Pasteboard::readBufferForTypeWithSecurityCheck(const String& type)
+RefPtr<ContiguousSharedBuffer> Pasteboard::readBufferForTypeWithSecurityCheck(const String& type)
 {
     auto buffer = platformStrategies()->pasteboardStrategy()->bufferForType(type, m_pasteboardName, context());
 

@@ -65,7 +65,7 @@ struct MathItalicsCorrectionInfo : TableWithCoverage {
     OpenType::UInt16 italicsCorrectionCount;
     OpenType::MathValueRecord italicsCorrection[1]; // There are italicsCorrectionCount italic correction values.
 
-    int16_t getItalicCorrection(const SharedBuffer& buffer, Glyph glyph) const
+    int16_t getItalicCorrection(const ContiguousSharedBuffer& buffer, Glyph glyph) const
     {
         uint16_t count = uint16_t(italicsCorrectionCount);
         if (!isValidEnd(buffer, &italicsCorrection[count]))
@@ -93,7 +93,7 @@ struct MathGlyphInfo : TableWithCoverage {
     OpenType::Offset extendedShapeCoverageOffset;
     OpenType::Offset mathKernInfoOffset;
 
-    const MathItalicsCorrectionInfo* mathItalicsCorrectionInfo(const SharedBuffer& buffer) const
+    const MathItalicsCorrectionInfo* mathItalicsCorrectionInfo(const ContiguousSharedBuffer& buffer) const
     {
         uint16_t offset = mathItalicsCorrectionInfoOffset;
         if (offset)
@@ -120,7 +120,7 @@ struct GlyphAssembly : TableBase {
         PartFlagsExtender = 0x01
     };
 
-    void getAssemblyParts(const SharedBuffer& buffer, Vector<OpenTypeMathData::AssemblyPart>& assemblyParts) const
+    void getAssemblyParts(const ContiguousSharedBuffer& buffer, Vector<OpenTypeMathData::AssemblyPart>& assemblyParts) const
     {
         uint16_t count = partCount;
         if (!isValidEnd(buffer, &partRecords[count]))
@@ -143,7 +143,7 @@ struct MathGlyphConstruction : TableBase {
         OpenType::UInt16 advanceMeasurement;
     } mathGlyphVariantRecords[1]; // There are variantCount MathGlyphVariantRecord's.
 
-    void getSizeVariants(const SharedBuffer& buffer, Vector<Glyph>& variants) const
+    void getSizeVariants(const ContiguousSharedBuffer& buffer, Vector<Glyph>& variants) const
     {
         uint16_t count = variantCount;
         if (!isValidEnd(buffer, &mathGlyphVariantRecords[count]))
@@ -153,7 +153,7 @@ struct MathGlyphConstruction : TableBase {
             variants[i] = mathGlyphVariantRecords[i].variantGlyph;
     }
 
-    void getAssemblyParts(const SharedBuffer& buffer, Vector<OpenTypeMathData::AssemblyPart>& assemblyParts) const
+    void getAssemblyParts(const ContiguousSharedBuffer& buffer, Vector<OpenTypeMathData::AssemblyPart>& assemblyParts) const
     {
         uint16_t offset = glyphAssemblyOffset;
         const GlyphAssembly* glyphAssembly = validateOffset<GlyphAssembly>(buffer, offset);
@@ -170,7 +170,7 @@ struct MathVariants : TableWithCoverage {
     OpenType::UInt16 horizontalGlyphCount;
     OpenType::Offset mathGlyphConstructionsOffset[1]; // There are verticalGlyphCount vertical glyph contructions and horizontalGlyphCount vertical glyph contructions.
 
-    const MathGlyphConstruction* mathGlyphConstruction(const SharedBuffer& buffer, Glyph glyph, bool isVertical) const
+    const MathGlyphConstruction* mathGlyphConstruction(const ContiguousSharedBuffer& buffer, Glyph glyph, bool isVertical) const
     {
         uint32_t count = uint16_t(verticalGlyphCount) + uint16_t(horizontalGlyphCount);
         if (!isValidEnd(buffer, &mathGlyphConstructionsOffset[count]))
@@ -204,7 +204,7 @@ struct MATHTable : TableBase {
     OpenType::Offset mathGlyphInfoOffset;
     OpenType::Offset mathVariantsOffset;
 
-    const MathConstants* mathConstants(const SharedBuffer& buffer) const
+    const MathConstants* mathConstants(const ContiguousSharedBuffer& buffer) const
     {
         uint16_t offset = mathConstantsOffset;
         if (offset)
@@ -212,7 +212,7 @@ struct MATHTable : TableBase {
         return nullptr;
     }
 
-    const MathGlyphInfo* mathGlyphInfo(const SharedBuffer& buffer) const
+    const MathGlyphInfo* mathGlyphInfo(const ContiguousSharedBuffer& buffer) const
     {
         uint16_t offset = mathGlyphInfoOffset;
         if (offset)
@@ -220,7 +220,7 @@ struct MATHTable : TableBase {
         return nullptr;
     }
 
-    const MathVariants* mathVariants(const SharedBuffer& buffer) const
+    const MathVariants* mathVariants(const ContiguousSharedBuffer& buffer) const
     {
         uint16_t offset = mathVariantsOffset;
         if (offset)

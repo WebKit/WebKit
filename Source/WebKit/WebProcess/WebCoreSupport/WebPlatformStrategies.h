@@ -56,7 +56,7 @@ private:
 #if PLATFORM(COCOA)
     int getNumberOfFiles(const String& pasteboardName, const WebCore::PasteboardContext*) override;
     void getTypes(Vector<String>& types, const String& pasteboardName, const WebCore::PasteboardContext*) override;
-    RefPtr<WebCore::SharedBuffer> bufferForType(const String& pasteboardType, const String& pasteboardName, const WebCore::PasteboardContext*) override;
+    RefPtr<WebCore::ContiguousSharedBuffer> bufferForType(const String& pasteboardType, const String& pasteboardName, const WebCore::PasteboardContext*) override;
     void getPathnamesForType(Vector<String>& pathnames, const String& pasteboardType, const String& pasteboardName, const WebCore::PasteboardContext*) override;
     String stringForType(const String& pasteboardType, const String& pasteboardName, const WebCore::PasteboardContext*) override;
     Vector<String> allStringsForType(const String& pasteboardType, const String& pasteboardName, const WebCore::PasteboardContext*) override;
@@ -66,7 +66,7 @@ private:
 
     int64_t addTypes(const Vector<String>& pasteboardTypes, const String& pasteboardName, const WebCore::PasteboardContext*) override;
     int64_t setTypes(const Vector<String>& pasteboardTypes, const String& pasteboardName, const WebCore::PasteboardContext*) override;
-    int64_t setBufferForType(WebCore::SharedBuffer*, const String& pasteboardType, const String& pasteboardName, const WebCore::PasteboardContext*) override;
+    int64_t setBufferForType(WebCore::ContiguousSharedBuffer*, const String& pasteboardType, const String& pasteboardName, const WebCore::PasteboardContext*) override;
     int64_t setURL(const WebCore::PasteboardURL&, const String& pasteboardName, const WebCore::PasteboardContext*) override;
     int64_t setColor(const WebCore::Color&, const String& pasteboardName, const WebCore::PasteboardContext*) override;
     int64_t setStringForType(const String&, const String& pasteboardType, const String& pasteboardName, const WebCore::PasteboardContext*) override;
@@ -78,7 +78,7 @@ private:
     Vector<String> types(const String& pasteboardName) override;
     String readTextFromClipboard(const String& pasteboardName) override;
     Vector<String> readFilePathsFromClipboard(const String& pasteboardName) override;
-    RefPtr<WebCore::SharedBuffer> readBufferFromClipboard(const String& pasteboardName, const String& pasteboardType) override;
+    RefPtr<WebCore::ContiguousSharedBuffer> readBufferFromClipboard(const String& pasteboardName, const String& pasteboardType) override;
     void writeToClipboard(const String& pasteboardName, WebCore::SelectionData&&) override;
     void clearClipboard(const String& pasteboardName) override;
 #endif
@@ -89,7 +89,7 @@ private:
 #endif
 
     String readStringFromPasteboard(size_t index, const String& pasteboardType, const String& pasteboardName, const WebCore::PasteboardContext*) override;
-    RefPtr<WebCore::SharedBuffer> readBufferFromPasteboard(std::optional<size_t> index, const String& pasteboardType, const String& pasteboardName, const WebCore::PasteboardContext*) override;
+    RefPtr<WebCore::ContiguousSharedBuffer> readBufferFromPasteboard(std::optional<size_t> index, const String& pasteboardType, const String& pasteboardName, const WebCore::PasteboardContext*) override;
     URL readURLFromPasteboard(size_t index, const String& pasteboardName, String& title, const WebCore::PasteboardContext*) override;
     int getPasteboardItemsCount(const String& pasteboardName, const WebCore::PasteboardContext*) override;
     std::optional<WebCore::PasteboardItemInfo> informationForItemAtIndex(size_t index, const String& pasteboardName, int64_t changeCount, const WebCore::PasteboardContext*) override;

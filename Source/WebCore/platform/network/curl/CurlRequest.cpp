@@ -790,7 +790,7 @@ void CurlRequest::writeDataToDownloadFileIfEnabled(const SharedBuffer& buffer)
     }
 
     if (m_downloadFileHandle != FileSystem::invalidPlatformFileHandle)
-        FileSystem::writeToFile(m_downloadFileHandle, buffer.data(), buffer.size());
+        FileSystem::writeToFile(m_downloadFileHandle, buffer.makeContiguous()->data(), buffer.size());
 }
 
 void CurlRequest::closeDownloadFile()

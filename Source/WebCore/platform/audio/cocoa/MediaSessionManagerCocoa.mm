@@ -341,7 +341,7 @@ void MediaSessionManagerCocoa::setNowPlayingInfo(bool setAsNowPlayingApplication
         CFDictionarySetValue(info.get(), kMRMediaRemoteNowPlayingInfoElapsedTime, cfCurrentTime.get());
     }
     if (nowPlayingInfo.artwork && nowPlayingInfo.artwork->imageData) {
-        auto nsArtwork = nowPlayingInfo.artwork->imageData->createNSData();
+        auto nsArtwork = nowPlayingInfo.artwork->imageData->makeContiguous()->createNSData();
         CFDictionarySetValue(info.get(), kMRMediaRemoteNowPlayingInfoArtworkData, nsArtwork.get());
         CFDictionarySetValue(info.get(), kMRMediaRemoteNowPlayingInfoArtworkMIMEType, nowPlayingInfo.artwork->mimeType.createCFString().get());
         CFDictionarySetValue(info.get(), kMRMediaRemoteNowPlayingInfoArtworkIdentifier, String::number(nowPlayingInfo.artwork->src.hash()).createCFString().get());

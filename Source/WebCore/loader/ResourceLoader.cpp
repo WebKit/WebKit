@@ -334,13 +334,8 @@ void ResourceLoader::addDataOrBuffer(const uint8_t* data, unsigned length, Share
     if (m_options.dataBufferingPolicy == DataBufferingPolicy::DoNotBufferData)
         return;
 
-    if (!m_resourceData || dataPayloadType == DataPayloadWholeResource) {
-        if (buffer)
-            m_resourceData = buffer;
-        else
-            m_resourceData = SharedBuffer::create(data, length);
-        return;
-    }
+    if (!m_resourceData || dataPayloadType == DataPayloadWholeResource)
+        m_resourceData = SharedBuffer::create();
     
     if (buffer)
         m_resourceData->append(*buffer);
@@ -571,7 +566,7 @@ void ResourceLoader::didReceiveDataOrBuffer(const uint8_t* data, unsigned length
     // However, with today's computers and networking speeds, this won't happen in practice.
     // Could be an issue with a giant local file.
     if (m_options.sendLoadCallbacks == SendCallbackPolicy::SendCallbacks && m_frame)
-        frameLoader()->notifier().didReceiveData(this, buffer ? buffer->data() : data, buffer ? buffer->size() : length, static_cast<int>(encodedDataLength));
+        frameLoader()->notifier().didReceiveData(this, buffer ? buffer->makeContiguous()->data() : data, buffer ? buffer->size() : length, static_cast<int>(encodedDataLength));
 }
 
 void ResourceLoader::didFinishLoading(const NetworkLoadMetrics& networkLoadMetrics)

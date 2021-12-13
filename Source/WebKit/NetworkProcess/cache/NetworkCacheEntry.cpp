@@ -101,8 +101,10 @@ Storage::Record Entry::encodeAsStorageRecord() const
 
     Data header(encoder.buffer(), encoder.bufferSize());
     Data body;
-    if (m_buffer)
-        body = { m_buffer->data(), m_buffer->size() };
+    if (m_buffer) {
+        m_buffer = m_buffer->makeContiguous();
+        body = { static_cast<WebCore::ContiguousSharedBuffer*>(m_buffer.get())->data(), m_buffer->size() };
+    }
 
     return { m_key, m_timeStamp, header, body, { } };
 }

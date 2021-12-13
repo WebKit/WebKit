@@ -470,7 +470,7 @@ inline void CachedImage::clearImage()
 
 void CachedImage::updateBufferInternal(SharedBuffer& data)
 {
-    m_data = &data;
+    m_data = data.makeContiguous();
     setEncodedSize(m_data->size());
     createImage();
 
@@ -523,12 +523,14 @@ bool CachedImage::shouldDeferUpdateImageData() const
     return (MonotonicTime::now() - m_lastUpdateImageDataTime).seconds() < updateImageDataBackoffIntervals[interval];
 }
 
-RefPtr<SharedBuffer> CachedImage::convertedDataIfNeeded(SharedBuffer* data) const
+RefPtr<ContiguousSharedBuffer> CachedImage::convertedDataIfNeeded(SharedBuffer* data) const
 {
-    if (!data || !isPostScriptResource())
-        return data;
+    if (!data)
+        return nullptr;
+    if (!isPostScriptResource())
+        return data->makeContiguous();
 #if PLATFORM(MAC) && !USE(WEBKIT_IMAGE_DECODERS)
-    return SharedBuffer::create(PDFDocumentImage::convertPostScriptDataToPDF(data->createCFData()).get());
+    return ContiguousSharedBuffer::create(PDFDocumentImage::convertPostScriptDataToPDF(data->makeContiguous()->createCFData()).get());
 #else
     // Loading the image should have been canceled if the system does not support converting PostScript to PDF.
     ASSERT_NOT_REACHED();

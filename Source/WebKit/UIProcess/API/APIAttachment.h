@@ -38,6 +38,7 @@ OBJC_CLASS NSFileWrapper;
 OBJC_CLASS NSString;
 
 namespace WebCore {
+class ContiguousSharedBuffer;
 class SharedBuffer;
 }
 
@@ -88,8 +89,8 @@ public:
     void setHasEnclosingImage(bool hasEnclosingImage) { m_hasEnclosingImage = hasEnclosingImage; }
     bool hasEnclosingImage() const { return m_hasEnclosingImage; }
 
-    RefPtr<WebCore::SharedBuffer> createSerializedRepresentation() const;
-    void updateFromSerializedRepresentation(Ref<WebCore::SharedBuffer>&&, const WTF::String& contentType);
+    RefPtr<WebCore::ContiguousSharedBuffer> createSerializedRepresentation() const;
+    void updateFromSerializedRepresentation(Ref<WebCore::ContiguousSharedBuffer>&&, const WTF::String& contentType);
 
 private:
     explicit Attachment(const WTF::String& identifier, WebKit::WebPageProxy&);

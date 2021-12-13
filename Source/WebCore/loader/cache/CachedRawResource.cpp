@@ -64,24 +64,24 @@ void CachedRawResource::updateBuffer(SharedBuffer& data)
 
     CachedResourceHandle<CachedRawResource> protectedThis(this);
     ASSERT(dataBufferingPolicy() == DataBufferingPolicy::BufferData);
-    m_data = &data;
+    m_data = data.makeContiguous();
 
     auto previousDataSize = encodedSize();
-    while (data.size() > previousDataSize) {
-        auto incrementalData = data.getSomeData(previousDataSize);
+    while (m_data->size() > previousDataSize) {
+        auto incrementalData = m_data->getSomeData(previousDataSize);
         previousDataSize += incrementalData.size();
 
         SetForScope<bool> notifyScope(m_inIncrementalDataNotify, true);
         notifyClientsDataWasReceived(incrementalData.data(), incrementalData.size());
     }
-    setEncodedSize(data.size());
+    setEncodedSize(m_data->size());
 
     if (dataBufferingPolicy() == DataBufferingPolicy::DoNotBufferData) {
         if (m_loader)
             m_loader->setDataBufferingPolicy(DataBufferingPolicy::DoNotBufferData);
         clear();
     } else
-        CachedResource::updateBuffer(data);
+        CachedResource::updateBuffer(*m_data);
 
     if (m_delayedFinishLoading) {
         auto delayedFinishLoading = std::exchange(m_delayedFinishLoading, std::nullopt);
@@ -107,12 +107,15 @@ void CachedRawResource::finishLoading(SharedBuffer* data, const NetworkLoadMetri
     CachedResourceHandle<CachedRawResource> protectedThis(this);
     DataBufferingPolicy dataBufferingPolicy = this->dataBufferingPolicy();
     if (dataBufferingPolicy == DataBufferingPolicy::BufferData) {
-        m_data = data;
-
-        if (auto incrementalData = calculateIncrementalDataChunk(data)) {
-            setEncodedSize(data->size());
-            notifyClientsDataWasReceived(incrementalData->data(), incrementalData->size());
-        }
+        if (data) {
+            if (data != m_data.get())
+                m_data = data->makeContiguous();
+            if (auto incrementalData = calculateIncrementalDataChunk(data)) {
+                setEncodedSize(data->size());
+                notifyClientsDataWasReceived(incrementalData->data(), incrementalData->size());
+            }
+        } else
+            m_data = nullptr;
     }
 
 #if USE(QUICK_LOOK)

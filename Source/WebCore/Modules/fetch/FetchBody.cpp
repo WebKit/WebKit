@@ -235,7 +235,7 @@ void FetchBody::consumeBlob(FetchBodyOwner& owner, Ref<DeferredPromise>&& promis
 void FetchBody::consumeFormData(FetchBodyOwner& owner, Ref<DeferredPromise>&& promise)
 {
     if (auto sharedBuffer = formDataBody().asSharedBuffer()) {
-        m_consumer.resolveWithData(WTFMove(promise), owner.contentType(), sharedBuffer->data(), sharedBuffer->size());
+        m_consumer.resolveWithData(WTFMove(promise), owner.contentType(), sharedBuffer->makeContiguous()->data(), sharedBuffer->size());
         m_data = nullptr;
     } else {
         // FIXME: If the form data contains blobs, load them like we do other blobs.
@@ -272,7 +272,7 @@ RefPtr<FormData> FetchBody::bodyAsFormData() const
     if (isFormData())
         return &const_cast<FormData&>(formDataBody());
     if (auto* data = m_consumer.data())
-        return FormData::create(data->data(), data->size());
+        return FormData::create(data->makeContiguous()->data(), data->size());
 
     ASSERT_NOT_REACHED();
     return nullptr;
@@ -284,7 +284,7 @@ FetchBody::TakenData FetchBody::take()
         auto buffer = m_consumer.takeData();
         if (!buffer)
             return nullptr;
-        return buffer.releaseNonNull();
+        return buffer->makeContiguous();
     }
 
     if (isBlob()) {
@@ -297,14 +297,14 @@ FetchBody::TakenData FetchBody::take()
         return formDataBody();
 
     if (isText())
-        return SharedBuffer::create(PAL::UTF8Encoding().encode(textBody(), PAL::UnencodableHandling::Entities));
+        return ContiguousSharedBuffer::create(PAL::UTF8Encoding().encode(textBody(), PAL::UnencodableHandling::Entities));
     if (isURLSearchParams())
-        return SharedBuffer::create(PAL::UTF8Encoding().encode(urlSearchParamsBody().toString(), PAL::UnencodableHandling::Entities));
+        return ContiguousSharedBuffer::create(PAL::UTF8Encoding().encode(urlSearchParamsBody().toString(), PAL::UnencodableHandling::Entities));
 
     if (isArrayBuffer())
-        return SharedBuffer::create(static_cast<const char*>(arrayBufferBody().data()), arrayBufferBody().byteLength());
+        return ContiguousSharedBuffer::create(static_cast<const char*>(arrayBufferBody().data()), arrayBufferBody().byteLength());
     if (isArrayBufferView())
-        return SharedBuffer::create(static_cast<const uint8_t*>(arrayBufferViewBody().baseAddress()), arrayBufferViewBody().byteLength());
+        return ContiguousSharedBuffer::create(static_cast<const uint8_t*>(arrayBufferViewBody().baseAddress()), arrayBufferViewBody().byteLength());
 
     return nullptr;
 }

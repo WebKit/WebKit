@@ -302,12 +302,12 @@ void WebProcessProxy::sendAudioComponentRegistrations()
         if (noErr != AudioComponentFetchServerRegistrations(&registrations) || !registrations)
             return;
 
-        RunLoop::main().dispatch([weakThis = WTFMove(weakThis), registrations = adoptCF(registrations)] () mutable {
+        RunLoop::main().dispatch([weakThis = WTFMove(weakThis), registrations = adoptCF(registrations)] () {
             if (!weakThis)
                 return;
 
-            auto registrationData = WebCore::SharedBuffer::create(registrations.get());
-            weakThis->send(Messages::WebProcess::ConsumeAudioComponentRegistrations({ registrationData }), 0);
+            auto registrationData = WebCore::ContiguousSharedBuffer::create(registrations.get());
+            weakThis->send(Messages::WebProcess::ConsumeAudioComponentRegistrations({ WTFMove(registrationData) }), 0);
         });
     });
 }

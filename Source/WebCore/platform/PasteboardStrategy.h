@@ -31,6 +31,7 @@
 namespace WebCore {
 
 class Color;
+class ContiguousSharedBuffer;
 class PasteboardContext;
 class PasteboardCustomData;
 class SelectionData;
@@ -51,7 +52,7 @@ public:
 #endif // PLATFORM(IOS_FAMILY)
 #if PLATFORM(COCOA)
     virtual void getTypes(Vector<String>& types, const String& pasteboardName, const PasteboardContext*) = 0;
-    virtual RefPtr<SharedBuffer> bufferForType(const String& pasteboardType, const String& pasteboardName, const PasteboardContext*) = 0;
+    virtual RefPtr<ContiguousSharedBuffer> bufferForType(const String& pasteboardType, const String& pasteboardName, const PasteboardContext*) = 0;
     virtual void getPathnamesForType(Vector<String>& pathnames, const String& pasteboardType, const String& pasteboardName, const PasteboardContext*) = 0;
     virtual String stringForType(const String& pasteboardType, const String& pasteboardName, const PasteboardContext*) = 0;
     virtual Vector<String> allStringsForType(const String& pasteboardType, const String& pasteboardName, const PasteboardContext*) = 0;
@@ -62,7 +63,7 @@ public:
 
     virtual int64_t addTypes(const Vector<String>& pasteboardTypes, const String& pasteboardName, const PasteboardContext*) = 0;
     virtual int64_t setTypes(const Vector<String>& pasteboardTypes, const String& pasteboardName, const PasteboardContext*) = 0;
-    virtual int64_t setBufferForType(SharedBuffer*, const String& pasteboardType, const String& pasteboardName, const PasteboardContext*) = 0;
+    virtual int64_t setBufferForType(ContiguousSharedBuffer*, const String& pasteboardType, const String& pasteboardName, const PasteboardContext*) = 0;
     virtual int64_t setURL(const PasteboardURL&, const String& pasteboardName, const PasteboardContext*) = 0;
     virtual int64_t setColor(const Color&, const String& pasteboardName, const PasteboardContext*) = 0;
     virtual int64_t setStringForType(const String&, const String& pasteboardType, const String& pasteboardName, const PasteboardContext*) = 0;
@@ -71,7 +72,7 @@ public:
     virtual String urlStringSuitableForLoading(const String& pasteboardName, String& title, const PasteboardContext*) = 0;
 #endif
     virtual String readStringFromPasteboard(size_t index, const String& pasteboardType, const String& pasteboardName, const PasteboardContext*) = 0;
-    virtual RefPtr<SharedBuffer> readBufferFromPasteboard(std::optional<size_t> index, const String& pasteboardType, const String& pasteboardName, const PasteboardContext*) = 0;
+    virtual RefPtr<ContiguousSharedBuffer> readBufferFromPasteboard(std::optional<size_t> index, const String& pasteboardType, const String& pasteboardName, const PasteboardContext*) = 0;
     virtual URL readURLFromPasteboard(size_t index, const String& pasteboardName, String& title, const PasteboardContext*) = 0;
     virtual std::optional<PasteboardItemInfo> informationForItemAtIndex(size_t index, const String& pasteboardName, int64_t changeCount, const PasteboardContext*) = 0;
     virtual std::optional<Vector<PasteboardItemInfo>> allPasteboardItemInfo(const String& pasteboardName, int64_t changeCount, const PasteboardContext*) = 0;
@@ -85,7 +86,7 @@ public:
     virtual Vector<String> types(const String& pasteboardName) = 0;
     virtual String readTextFromClipboard(const String& pasteboardName) = 0;
     virtual Vector<String> readFilePathsFromClipboard(const String& pasteboardName) = 0;
-    virtual RefPtr<SharedBuffer> readBufferFromClipboard(const String& pasteboardName, const String& pasteboardType) = 0;
+    virtual RefPtr<ContiguousSharedBuffer> readBufferFromClipboard(const String& pasteboardName, const String& pasteboardType) = 0;
     virtual void writeToClipboard(const String& pasteboardName, SelectionData&&) = 0;
     virtual void clearClipboard(const String& pasteboardName) = 0;
 #endif // PLATFORM(GTK)

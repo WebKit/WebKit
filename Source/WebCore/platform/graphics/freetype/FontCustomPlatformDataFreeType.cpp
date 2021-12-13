@@ -129,7 +129,7 @@ static bool initializeFreeTypeLibrary(FT_Library& library)
     return true;
 }
 
-std::unique_ptr<FontCustomPlatformData> createFontCustomPlatformData(SharedBuffer& buffer, const String&)
+std::unique_ptr<FontCustomPlatformData> createFontCustomPlatformData(ContiguousSharedBuffer& buffer, const String&)
 {
     static FT_Library library;
     if (!library && !initializeFreeTypeLibrary(library)) {

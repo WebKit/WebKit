@@ -57,7 +57,7 @@ public:
     };
 
 private:
-    RefPtr<SharedBuffer> finishEncoding() override;
+    RefPtr<ContiguousSharedBuffer> finishEncoding() override;
 
     void encodeBytes(const String& key, const uint8_t*, size_t) override;
     void encodeBool(const String& key, bool) override;

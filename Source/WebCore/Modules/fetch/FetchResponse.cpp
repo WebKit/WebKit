@@ -400,7 +400,8 @@ void FetchResponse::BodyLoader::consumeDataByChunk(ConsumeDataByChunkCallback&& 
     if (!data)
         return;
 
-    Span chunk { data->data(), data->size() };
+    auto contiguousBuffer = data->makeContiguous();
+    Span chunk { contiguousBuffer->data(), data->size() };
     m_consumeDataCallback(&chunk);
 }
 
@@ -441,7 +442,7 @@ void FetchResponse::setBodyData(ResponseData&& data, uint64_t bodySizeWithPaddin
                 setBody({ });
             body().setAsFormData(WTFMove(formData));
         },
-        [this](Ref<SharedBuffer>& buffer) {
+        [this](Ref<ContiguousSharedBuffer>& buffer) {
             if (isBodyNull())
                 setBody({ });
             body().consumer().setData(WTFMove(buffer));

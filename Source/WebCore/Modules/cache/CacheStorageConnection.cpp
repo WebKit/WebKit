@@ -50,7 +50,7 @@ uint64_t CacheStorageConnection::computeRealBodySize(const DOMCacheEngine::Respo
     uint64_t result = 0;
     WTF::switchOn(body, [&] (const Ref<FormData>& formData) {
         result = formDataSize(formData);
-    }, [&] (const Ref<SharedBuffer>& buffer) {
+    }, [&] (const Ref<ContiguousSharedBuffer>& buffer) {
         result = buffer->size();
     }, [] (const std::nullptr_t&) {
     });

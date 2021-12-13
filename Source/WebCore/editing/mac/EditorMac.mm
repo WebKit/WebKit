@@ -116,7 +116,7 @@ void Editor::platformCopyFont()
     PasteboardBuffer pasteboardBuffer;
     pasteboardBuffer.contentOrigin = m_document.originIdentifierForPasteboard();
     pasteboardBuffer.type = legacyFontPasteboardType();
-    pasteboardBuffer.data = SharedBuffer::create(fontData.get());
+    pasteboardBuffer.data = ContiguousSharedBuffer::create(fontData.get());
     pasteboard.write(pasteboardBuffer);
 }
 
@@ -250,15 +250,15 @@ void Editor::replaceNodeFromPasteboard(Node* node, const String& pasteboardName)
     client()->setInsertionPasteboard(String());
 }
 
-RefPtr<SharedBuffer> Editor::imageInWebArchiveFormat(Element& imageElement)
+RefPtr<ContiguousSharedBuffer> Editor::imageInWebArchiveFormat(Element& imageElement)
 {
     auto archive = LegacyWebArchive::create(imageElement);
     if (!archive)
         return nullptr;
-    return SharedBuffer::create(archive->rawDataRepresentation().get());
+    return ContiguousSharedBuffer::create(archive->rawDataRepresentation().get());
 }
 
-RefPtr<SharedBuffer> Editor::dataSelectionForPasteboard(const String& pasteboardType)
+RefPtr<ContiguousSharedBuffer> Editor::dataSelectionForPasteboard(const String& pasteboardType)
 {
     // FIXME: The interface to this function is awkward. We'd probably be better off with three separate functions. As of this writing, this is only used in WebKit2 to implement the method -[WKView writeSelectionToPasteboard:types:], which is only used to support OS X services.
 

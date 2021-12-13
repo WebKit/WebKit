@@ -230,7 +230,7 @@ static RetainPtr<NSArray> createNSArray(const HashSet<String, ASCIICaseInsensiti
 - (NSString *)documentSource
 {
     if ([self _isDisplayingWebArchive]) {            
-        SharedBuffer *parsedArchiveData = [_private->dataSource _documentLoader]->parsedArchiveData();
+        auto *parsedArchiveData = [_private->dataSource _documentLoader]->parsedArchiveData();
         return adoptNS([[NSString alloc] initWithData:parsedArchiveData ? parsedArchiveData->createNSData().get() : nil encoding:NSUTF8StringEncoding]).autorelease();
     }
 

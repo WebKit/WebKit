@@ -357,7 +357,7 @@ void PageClientImpl::positionInformationDidChange(const InteractionInformationAt
     [m_contentView _positionInformationDidChange:info];
 }
 
-void PageClientImpl::saveImageToLibrary(Ref<SharedBuffer>&& imageBuffer)
+void PageClientImpl::saveImageToLibrary(Ref<ContiguousSharedBuffer>&& imageBuffer)
 {
     RetainPtr<NSData> imageData = imageBuffer->createNSData();
     UIImageDataWriteToSavedPhotosAlbum(imageData.get(), nil, NULL, NULL);

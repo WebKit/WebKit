@@ -367,7 +367,7 @@ public:
 
     static void FreeDataSegment(void* refcon, void*, size_t)
     {
-        auto* buffer = reinterpret_cast<SharedBuffer::DataSegment*>(refcon);
+        auto* buffer = reinterpret_cast<DataSegment*>(refcon);
         buffer->deref();
     }
 

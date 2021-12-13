@@ -55,7 +55,7 @@ private:
     void didEndEditing() final;
     void willWriteSelectionToPasteboard(const std::optional<WebCore::SimpleRange>&) final;
     void didWriteSelectionToPasteboard() final;
-    void getClientPasteboardData(const std::optional<WebCore::SimpleRange>&, Vector<String>& pasteboardTypes, Vector<RefPtr<WebCore::SharedBuffer>>& pasteboardData) final;
+    void getClientPasteboardData(const std::optional<WebCore::SimpleRange>&, Vector<String>& pasteboardTypes, Vector<RefPtr<WebCore::ContiguousSharedBuffer>>& pasteboardData) final;
 
     void didEndUserTriggeredSelectionChanges() final { }
     void respondToChangedContents() final;

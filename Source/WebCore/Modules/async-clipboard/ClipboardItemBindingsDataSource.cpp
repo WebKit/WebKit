@@ -216,8 +216,8 @@ void ClipboardItemBindingsDataSource::invokeCompletionHandler()
         auto& data = itemTypeLoader->data();
         if (std::holds_alternative<String>(data) && !!std::get<String>(data))
             customData.writeString(type, std::get<String>(data));
-        else if (std::holds_alternative<Ref<SharedBuffer>>(data))
-            customData.writeData(type, std::get<Ref<SharedBuffer>>(data).copyRef());
+        else if (std::holds_alternative<Ref<ContiguousSharedBuffer>>(data))
+            customData.writeData(type, std::get<Ref<ContiguousSharedBuffer>>(data).copyRef());
         else {
             completionHandler(std::nullopt);
             return;
@@ -249,7 +249,7 @@ void ClipboardItemBindingsDataSource::ClipboardItemTypeLoader::didFinishLoading(
     if (!stringResult.isNull())
         m_data = { stringResult };
     else if (auto arrayBuffer = m_blobLoader->arrayBufferResult())
-        m_data = { SharedBuffer::create(static_cast<const char*>(arrayBuffer->data()), arrayBuffer->byteLength()) };
+        m_data = { ContiguousSharedBuffer::create(static_cast<const char*>(arrayBuffer->data()), arrayBuffer->byteLength()) };
     m_blobLoader = nullptr;
     invokeCompletionHandler();
 }
@@ -265,8 +265,8 @@ void ClipboardItemBindingsDataSource::ClipboardItemTypeLoader::sanitizeDataIfNee
 {
     if (m_type == "text/html"_s) {
         String markupToSanitize;
-        if (std::holds_alternative<Ref<SharedBuffer>>(m_data)) {
-            auto& buffer = std::get<Ref<SharedBuffer>>(m_data);
+        if (std::holds_alternative<Ref<ContiguousSharedBuffer>>(m_data)) {
+            auto& buffer = std::get<Ref<ContiguousSharedBuffer>>(m_data);
             markupToSanitize = String::fromUTF8(buffer->data(), buffer->size());
         } else if (std::holds_alternative<String>(m_data))
             markupToSanitize = std::get<String>(m_data);
@@ -278,9 +278,9 @@ void ClipboardItemBindingsDataSource::ClipboardItemTypeLoader::sanitizeDataIfNee
     }
 
     if (m_type == "image/png"_s) {
-        RefPtr<SharedBuffer> bufferToSanitize;
-        if (std::holds_alternative<Ref<SharedBuffer>>(m_data))
-            bufferToSanitize = std::get<Ref<SharedBuffer>>(m_data).ptr();
+        RefPtr<ContiguousSharedBuffer> bufferToSanitize;
+        if (std::holds_alternative<Ref<ContiguousSharedBuffer>>(m_data))
+            bufferToSanitize = std::get<Ref<ContiguousSharedBuffer>>(m_data).ptr();
         else if (std::holds_alternative<String>(m_data))
             bufferToSanitize = utf8Buffer(std::get<String>(m_data));
 
@@ -296,7 +296,7 @@ void ClipboardItemBindingsDataSource::ClipboardItemTypeLoader::sanitizeDataIfNee
         }
 
         imageBuffer->context().drawImage(bitmapImage.get(), FloatPoint::zero());
-        m_data = { SharedBuffer::create(imageBuffer->toData("image/png"_s)) };
+        m_data = { ContiguousSharedBuffer::create(imageBuffer->toData("image/png"_s)) };
     }
 }
 

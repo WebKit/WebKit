@@ -139,7 +139,7 @@ void CrossOriginPreflightChecker::doPreflight(DocumentThreadableLoader& loader, 
     ResourceRequest preflightRequest = createAccessControlPreflightRequest(request, loader.securityOrigin(), loader.referrer());
     ResourceError error;
     ResourceResponse response;
-    RefPtr<SharedBuffer> data;
+    RefPtr<ContiguousSharedBuffer> data;
 
     auto identifier = loader.document().frame()->loader().loadResourceSynchronously(preflightRequest, ClientCredentialPolicy::CannotAskClientForCredentials, FetchOptions { }, { }, error, response, data);
 

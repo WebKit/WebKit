@@ -75,6 +75,7 @@ class ArchiveResourceCollection;
 class CachedRawResource;
 class CachedResourceLoader;
 class ContentFilter;
+class ContiguousSharedBuffer;
 struct CustomHeaderFields;
 class FormState;
 class Frame;
@@ -235,7 +236,7 @@ public:
     WEBCORE_EXPORT void addAllArchiveResources(Archive&);
     WEBCORE_EXPORT void addArchiveResource(Ref<ArchiveResource>&&);
     RefPtr<Archive> popArchiveForSubframe(const String& frameName, const URL&);
-    WEBCORE_EXPORT SharedBuffer* parsedArchiveData() const;
+    WEBCORE_EXPORT ContiguousSharedBuffer* parsedArchiveData() const;
 
     WEBCORE_EXPORT bool scheduleArchiveLoad(ResourceLoader&, const ResourceRequest&);
 #endif
@@ -612,7 +613,7 @@ private:
     std::unique_ptr<ArchiveResourceCollection> m_archiveResourceCollection;
 #if ENABLE(WEB_ARCHIVE) || ENABLE(MHTML)
     RefPtr<Archive> m_archive;
-    RefPtr<SharedBuffer> m_parsedArchiveData;
+    RefPtr<ContiguousSharedBuffer> m_parsedArchiveData;
 #endif
 
     HashSet<String> m_resourcesClientKnowsAbout;

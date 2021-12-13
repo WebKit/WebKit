@@ -48,7 +48,7 @@ namespace WebCore {
 
 void PDFDocumentImage::createPDFDocument()
 {
-    m_document = adoptNS([allocPDFDocumentInstance() initWithData:data()->createNSData().get()]);
+    m_document = adoptNS([allocPDFDocumentInstance() initWithData:data()->makeContiguous()->createNSData().get()]);
 }
 
 void PDFDocumentImage::computeBoundsForCurrentPage()

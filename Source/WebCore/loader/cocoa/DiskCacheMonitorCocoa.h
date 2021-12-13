@@ -32,17 +32,17 @@ typedef const struct _CFCachedURLResponse* CFCachedURLResponseRef;
 
 namespace WebCore {
 
-class SharedBuffer;
+class ContiguousSharedBuffer;
 
 class DiskCacheMonitor {
 public:
     static void monitorFileBackingStoreCreation(const ResourceRequest&, PAL::SessionID, CFCachedURLResponseRef);
-    static RefPtr<SharedBuffer> tryGetFileBackedSharedBufferFromCFURLCachedResponse(CFCachedURLResponseRef);
+    static RefPtr<ContiguousSharedBuffer> tryGetFileBackedSharedBufferFromCFURLCachedResponse(CFCachedURLResponseRef);
 
 private:
     DiskCacheMonitor(const ResourceRequest&, PAL::SessionID, CFCachedURLResponseRef);
 
-    void resourceBecameFileBacked(SharedBuffer&);
+    void resourceBecameFileBacked(ContiguousSharedBuffer&);
 
     const ResourceRequest& resourceRequest() const { return m_resourceRequest; }
     PAL::SessionID sessionID() const { return m_sessionID; }

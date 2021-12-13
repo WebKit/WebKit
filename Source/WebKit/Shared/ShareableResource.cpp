@@ -55,15 +55,15 @@ bool ShareableResource::Handle::decode(IPC::Decoder& decoder, Handle& handle)
     return true;
 }
 
-RefPtr<SharedBuffer> ShareableResource::wrapInSharedBuffer()
+RefPtr<ContiguousSharedBuffer> ShareableResource::wrapInSharedBuffer()
 {
-    return SharedBuffer::create(SharedBuffer::DataSegment::Provider {
+    return ContiguousSharedBuffer::create(DataSegment::Provider {
         [self = Ref { *this }]() { return self->data(); },
         [self = Ref { *this }]() { return self->size(); }
     });
 }
 
-RefPtr<SharedBuffer> ShareableResource::Handle::tryWrapInSharedBuffer() const
+RefPtr<ContiguousSharedBuffer> ShareableResource::Handle::tryWrapInSharedBuffer() const
 {
     RefPtr<ShareableResource> resource = ShareableResource::map(*this);
     if (!resource) {

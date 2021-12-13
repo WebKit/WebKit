@@ -428,8 +428,9 @@ EncodedDataStatus ImageDecoderGStreamer::InnerDecoder::encodedDataStatus() const
 
 void ImageDecoderGStreamer::pushEncodedData(const SharedBuffer& buffer)
 {
+    auto contiguousBuffer = buffer.makeContiguous();
     m_eos = false;
-    auto thread = Thread::create("ImageDecoderGStreamer", [this, data = buffer.data(), size = buffer.size()] {
+    auto thread = Thread::create("ImageDecoderGStreamer", [this, data = contiguousBuffer->data(), size = buffer.size()] {
         m_innerDecoder = ImageDecoderGStreamer::InnerDecoder::create(*this, data, size);
         m_innerDecoder->run();
     }, ThreadType::Graphics);

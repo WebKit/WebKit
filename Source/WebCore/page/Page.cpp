@@ -1973,7 +1973,7 @@ const String& Page::userStyleSheet() const
     // and what should happen when it finishes loading, especially with respect
     // to when the load event fires, when Document::close is called, and when
     // layout/paint are allowed to happen.
-    auto data = SharedBuffer::createWithContentsOfFile(m_userStyleSheetPath);
+    auto data = ContiguousSharedBuffer::createWithContentsOfFile(m_userStyleSheetPath);
     if (!data)
         return m_userStyleSheet;
 

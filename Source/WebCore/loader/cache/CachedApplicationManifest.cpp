@@ -42,10 +42,14 @@ CachedApplicationManifest::CachedApplicationManifest(CachedResourceRequest&& req
 
 void CachedApplicationManifest::finishLoading(SharedBuffer* data, const NetworkLoadMetrics& metrics)
 {
-    m_data = data;
-    setEncodedSize(data ? data->size() : 0);
-    if (data)
-        m_text = m_decoder->decodeAndFlush(data->data(), data->size());
+    if (data) {
+        m_data = data->makeContiguous();
+        setEncodedSize(data->size());
+        m_text = m_decoder->decodeAndFlush(m_data->data(), data->size());
+    } else {
+        m_data = nullptr;
+        setEncodedSize(0);
+    }
     CachedResource::finishLoading(data, metrics);
 }
 

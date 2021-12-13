@@ -31,6 +31,7 @@ typedef struct FT_FaceRec_*  FT_Face;
 
 namespace WebCore {
 
+class ContiguousSharedBuffer;
 class FontCreationContext;
 class FontDescription;
 class FontPlatformData;
@@ -54,7 +55,7 @@ private:
     RefPtr<cairo_font_face_t> m_fontFace;
 };
 
-std::unique_ptr<FontCustomPlatformData> createFontCustomPlatformData(SharedBuffer&, const String&);
+std::unique_ptr<FontCustomPlatformData> createFontCustomPlatformData(ContiguousSharedBuffer&, const String&);
 
 } // namespace WebCore
 

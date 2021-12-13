@@ -74,7 +74,6 @@ interface IDWriteFontFace;
 namespace WebCore {
 
 class FontDescription;
-class SharedBuffer;
 
 // This class is conceptually immutable. Once created, no instances should ever change (in an observable way).
 class FontPlatformData {
@@ -224,13 +223,13 @@ public:
 #endif
     }
 
-    RefPtr<SharedBuffer> openTypeTable(uint32_t table) const;
-    RefPtr<SharedBuffer> platformOpenTypeTable(uint32_t table) const;
+    RefPtr<ContiguousSharedBuffer> openTypeTable(uint32_t table) const;
+    RefPtr<ContiguousSharedBuffer> platformOpenTypeTable(uint32_t table) const;
 
     String description() const;
 
     struct CreationData {
-        Ref<SharedBuffer> fontFaceData;
+        Ref<ContiguousSharedBuffer> fontFaceData;
         String itemInCollection;
 #if PLATFORM(WIN)
         Ref<FontMemoryResource> m_fontResource;

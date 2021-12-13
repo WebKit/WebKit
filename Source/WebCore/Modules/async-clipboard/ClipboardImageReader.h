@@ -47,7 +47,7 @@ private:
     void readFilename(const String&) final { ASSERT_NOT_REACHED(); }
 
     bool shouldReadBuffer(const String&) const final;
-    void readBuffer(const String& filename, const String& type, Ref<SharedBuffer>&&) final;
+    void readBuffer(const String& filename, const String& type, Ref<ContiguousSharedBuffer>&&) final;
 
     RefPtr<Document> m_document;
     String m_mimeType;

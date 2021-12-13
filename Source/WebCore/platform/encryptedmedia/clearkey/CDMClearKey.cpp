@@ -138,7 +138,8 @@ static std::pair<unsigned, unsigned> extractKeyidsLocationFromCencInitData(const
     if (initData.isEmpty() || initData.size() > std::numeric_limits<unsigned>::max())
         return keyIdsMap;
 
-    auto* data = initData.data();
+    auto contiguousInitData = initData.makeContiguous();
+    auto* data = contiguousInitData->data();
     unsigned initDataSize = initData.size();
     unsigned index = 0;
     unsigned psshSize = 0;
@@ -206,7 +207,8 @@ static Ref<SharedBuffer> extractKeyidsFromCencInitData(const SharedBuffer& initD
     if (!keyIdCount || !index)
         return keyIds;
 
-    auto* data = initData.data();
+    auto contiguousInitData = initData.makeContiguous();
+    auto* data = contiguousInitData->data();
 
     auto object = JSON::Object::create();
     auto keyIdsArray = JSON::Array::create();
@@ -245,7 +247,7 @@ static Ref<SharedBuffer> extractKeyIdFromWebMInitData(const SharedBuffer& initDa
     // The format is a JSON object containing the following members:
     // "kids"
     // An array of key IDs. Each element of the array is the base64url encoding of the octet sequence containing the key ID value.
-    keyIdsArray->pushString(base64URLEncodeToString(initData.data(), initData.size()));
+    keyIdsArray->pushString(base64URLEncodeToString(initData.makeContiguous()->data(), initData.size()));
 
     object->setArray("kids", WTFMove(keyIdsArray));
     CString jsonData = object->toJSONString().utf8();

@@ -87,7 +87,7 @@ static String createUniqueFontName()
     return fontName;
 }
 
-std::unique_ptr<FontCustomPlatformData> createFontCustomPlatformData(SharedBuffer& buffer, const String& itemInCollection)
+std::unique_ptr<FontCustomPlatformData> createFontCustomPlatformData(ContiguousSharedBuffer& buffer, const String& itemInCollection)
 {
     String fontName = createUniqueFontName();
     auto fontResource = renameAndActivateFont(buffer, fontName);

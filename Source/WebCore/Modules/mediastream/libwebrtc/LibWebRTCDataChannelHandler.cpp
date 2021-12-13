@@ -98,7 +98,7 @@ void LibWebRTCDataChannelHandler::setClient(RTCDataChannelHandlerClient& client,
 
     for (auto& message : m_bufferedMessages) {
         switchOn(message, [&](Ref<SharedBuffer>& data) {
-            client.didReceiveRawData(data->data(), data->size());
+            client.didReceiveRawData(data->makeContiguous()->data(), data->size());
         }, [&](String& text) {
             client.didReceiveStringData(text);
         }, [&](StateChange stateChange) {

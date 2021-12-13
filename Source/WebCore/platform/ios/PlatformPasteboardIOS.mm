@@ -79,10 +79,10 @@ void PlatformPasteboard::getTypes(Vector<String>& types) const
     types = makeVector<String>([m_pasteboard pasteboardTypes]);
 }
 
-RefPtr<SharedBuffer> PlatformPasteboard::bufferForType(const String& type) const
+RefPtr<ContiguousSharedBuffer> PlatformPasteboard::bufferForType(const String& type) const
 {
     if (NSData *data = [m_pasteboard dataForPasteboardType:type])
-        return SharedBuffer::create(data);
+        return ContiguousSharedBuffer::create(data);
     return nullptr;
 }
 
@@ -338,7 +338,7 @@ int64_t PlatformPasteboard::setTypes(const Vector<String>&)
     return 0;
 }
 
-int64_t PlatformPasteboard::setBufferForType(SharedBuffer*, const String&)
+int64_t PlatformPasteboard::setBufferForType(ContiguousSharedBuffer*, const String&)
 {
     return 0;
 }
@@ -463,7 +463,7 @@ void PlatformPasteboard::write(const PasteboardWebContent& content)
 
     ASSERT(content.clientTypes.size() == content.clientData.size());
     for (size_t i = 0, size = content.clientTypes.size(); i < size; ++i)
-        [representationsToRegister addData:content.clientData[i]->createNSData().get() forType:content.clientTypes[i]];
+        [representationsToRegister addData:content.clientData[i]->makeContiguous()->createNSData().get() forType:content.clientTypes[i]];
 
     if (content.dataInWebArchiveFormat) {
         auto webArchiveData = content.dataInWebArchiveFormat->createNSData();
@@ -479,7 +479,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     }
 
     if (content.dataInAttributedStringFormat) {
-        if (NSAttributedString *attributedString = [NSKeyedUnarchiver unarchivedObjectOfClasses:[NSSet setWithObject:NSAttributedString.class] fromData:content.dataInAttributedStringFormat->createNSData().get() error:nullptr])
+        if (NSAttributedString *attributedString = [NSKeyedUnarchiver unarchivedObjectOfClasses:[NSSet setWithObject:NSAttributedString.class] fromData:content.dataInAttributedStringFormat->makeContiguous()->createNSData().get() error:nullptr])
             [representationsToRegister addRepresentingObject:attributedString];
     }
 
@@ -521,7 +521,7 @@ void PlatformPasteboard::write(const PasteboardImage& pasteboardImage)
         if (!isDeclaredUTI(utiOrMIMEType))
             utiOrMIMEType = UTIFromMIMEType(utiOrMIMEType);
 
-        auto imageData = pasteboardImage.resourceData->createNSData();
+        auto imageData = pasteboardImage.resourceData->makeContiguous()->createNSData();
         [representationsToRegister addData:imageData.get() forType:(NSString *)utiOrMIMEType];
         [representationsToRegister setPreferredPresentationSize:pasteboardImage.imageSize];
         [representationsToRegister setSuggestedName:pasteboardImage.suggestedName];
@@ -609,7 +609,7 @@ Vector<String> PlatformPasteboard::typesSafeForDOMToReadAndWrite(const String& o
 #endif // PASTEBOARD_SUPPORTS_PRESENTATION_STYLE_AND_TEAM_DATA
 
     if (NSData *serializedCustomData = [m_pasteboard dataForPasteboardType:@(PasteboardCustomData::cocoaType())]) {
-        auto data = PasteboardCustomData::fromSharedBuffer(SharedBuffer::create(serializedCustomData).get());
+        auto data = PasteboardCustomData::fromSharedBuffer(ContiguousSharedBuffer::create(serializedCustomData).get());
         if (data.origin() == origin) {
             for (auto& type : data.orderedTypes())
                 domPasteboardTypes.add(type);
@@ -672,7 +672,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
             return;
         }
 
-        auto buffer = std::get<Ref<SharedBuffer>>(value);
+        auto buffer = std::get<Ref<ContiguousSharedBuffer>>(value);
         [representationsToRegister addData:buffer->createNSData().get() forType:(NSString *)cocoaType];
     });
 
@@ -746,7 +746,7 @@ Vector<String> PlatformPasteboard::allStringsForType(const String& type) const
     return strings;
 }
 
-RefPtr<SharedBuffer> PlatformPasteboard::readBuffer(std::optional<size_t> index, const String& type) const
+RefPtr<ContiguousSharedBuffer> PlatformPasteboard::readBuffer(std::optional<size_t> index, const String& type) const
 {
     if (!index)
         return bufferForType(type);
@@ -761,7 +761,7 @@ RefPtr<SharedBuffer> PlatformPasteboard::readBuffer(std::optional<size_t> index,
 
     if (![pasteboardItem count])
         return nullptr;
-    return SharedBuffer::create([pasteboardItem objectAtIndex:0]);
+    return ContiguousSharedBuffer::create([pasteboardItem objectAtIndex:0]);
 }
 
 String PlatformPasteboard::readString(size_t index, const String& type) const

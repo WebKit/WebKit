@@ -167,7 +167,7 @@ void CSSFontFaceSource::load(Document* document)
                 ASSERT(!m_inDocumentCustomPlatformData);
                 SVGFontElement& fontElement = downcast<SVGFontElement>(*m_svgFontFaceElement->parentNode());
                 if (auto otfFont = convertSVGToOTFFont(fontElement))
-                    m_generatedOTFBuffer = SharedBuffer::create(WTFMove(otfFont.value()));
+                    m_generatedOTFBuffer = ContiguousSharedBuffer::create(WTFMove(otfFont.value()));
                 if (m_generatedOTFBuffer) {
                     m_inDocumentCustomPlatformData = createFontCustomPlatformData(*m_generatedOTFBuffer, String());
                     success = static_cast<bool>(m_inDocumentCustomPlatformData);
@@ -176,7 +176,7 @@ void CSSFontFaceSource::load(Document* document)
         } else if (m_immediateSource) {
             ASSERT(!m_immediateFontCustomPlatformData);
             bool wrapping;
-            auto buffer = SharedBuffer::create(static_cast<const char*>(m_immediateSource->baseAddress()), m_immediateSource->byteLength());
+            auto buffer = ContiguousSharedBuffer::create(static_cast<const char*>(m_immediateSource->baseAddress()), m_immediateSource->byteLength());
             m_immediateFontCustomPlatformData = CachedFont::createCustomFontData(buffer.get(), String(), wrapping);
             success = static_cast<bool>(m_immediateFontCustomPlatformData);
         } else {

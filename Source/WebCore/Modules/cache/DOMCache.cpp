@@ -301,13 +301,13 @@ void DOMCache::addAll(Vector<RequestInfo>&& infos, DOMPromiseDeferred<void>&& pr
                 if (auto* chunk = result.returnValue())
                     data->append(chunk->data(), chunk->size());
                 else
-                    taskHandler->addResponseBody(recordPosition, response, WTFMove(data));
+                    taskHandler->addResponseBody(recordPosition, response, data->makeContiguous());
             });
         }, cachedResourceRequestInitiators().fetch);
     }
 }
 
-void DOMCache::putWithResponseData(DOMPromiseDeferred<void>&& promise, Ref<FetchRequest>&& request, Ref<FetchResponse>&& response, ExceptionOr<RefPtr<SharedBuffer>>&& responseBody)
+void DOMCache::putWithResponseData(DOMPromiseDeferred<void>&& promise, Ref<FetchRequest>&& request, Ref<FetchResponse>&& response, ExceptionOr<RefPtr<ContiguousSharedBuffer>>&& responseBody)
 {
     if (responseBody.hasException()) {
         queueTaskKeepingObjectAlive(*this, TaskSource::DOMManipulation, [promise = WTFMove(promise), exception = responseBody.releaseException()]() mutable {
@@ -318,7 +318,7 @@ void DOMCache::putWithResponseData(DOMPromiseDeferred<void>&& promise, Ref<Fetch
 
     DOMCacheEngine::ResponseBody body;
     if (auto buffer = responseBody.releaseReturnValue())
-        body = buffer.releaseNonNull();
+        body = buffer->makeContiguous();
     batchPutOperation(request.get(), response.get(), WTFMove(body), [this, protectedThis = Ref { *this }, promise = WTFMove(promise)](ExceptionOr<void>&& result) mutable {
         queueTaskKeepingObjectAlive(*this, TaskSource::DOMManipulation, [promise = WTFMove(promise), result = WTFMove(result)]() mutable {
             promise.settle(WTFMove(result));
@@ -385,7 +385,7 @@ void DOMCache::put(RequestInfo&& info, Ref<FetchResponse>&& response, DOMPromise
             if (auto* chunk = result.returnValue())
                 data->append(chunk->data(), chunk->size());
             else
-                this->putWithResponseData(WTFMove(promise), WTFMove(request), WTFMove(response), RefPtr<SharedBuffer> { WTFMove(data) });
+                this->putWithResponseData(WTFMove(promise), WTFMove(request), WTFMove(response), RefPtr<ContiguousSharedBuffer> { data->makeContiguous() });
         });
         return;
     }

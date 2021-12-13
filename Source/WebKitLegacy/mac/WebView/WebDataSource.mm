@@ -463,7 +463,7 @@ void addTypesFromClass(NSMutableDictionary *allTypes, Class objCClass, NSArray *
     RefPtr<WebCore::SharedBuffer> mainResourceData = toPrivate(_private)->loader->mainResourceData();
     if (!mainResourceData)
         return nil;
-    return mainResourceData->createNSData().autorelease();
+    return mainResourceData->makeContiguous()->createNSData().autorelease();
 }
 
 - (id <WebDocumentRepresentation>)representation

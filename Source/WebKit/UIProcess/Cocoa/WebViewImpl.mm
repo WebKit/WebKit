@@ -2983,7 +2983,7 @@ bool WebViewImpl::writeSelectionToPasteboard(NSPasteboard *pasteboard, NSArray *
         if ([[types objectAtIndex:i] isEqualTo:WebCore::legacyStringPasteboardType()])
             [pasteboard setString:m_page->stringSelectionForPasteboard() forType:WebCore::legacyStringPasteboardType()];
         else {
-            RefPtr<WebCore::SharedBuffer> buffer = m_page->dataSelectionForPasteboard([types objectAtIndex:i]);
+            RefPtr<WebCore::ContiguousSharedBuffer> buffer = m_page->dataSelectionForPasteboard([types objectAtIndex:i]);
             [pasteboard setData:buffer ? buffer->createNSData().get() : nil forType:[types objectAtIndex:i]];
         }
     }
@@ -4477,7 +4477,7 @@ void WebViewImpl::setPromisedDataForImage(WebCore::Image* image, NSString *filen
     setFileAndURLTypes(filename, extension, title, url, visibleURL, pasteboard);
 
     if (archiveBuffer) {
-        auto nsData = archiveBuffer->createNSData();
+        auto nsData = archiveBuffer->makeContiguous()->createNSData();
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         [pasteboard setData:nsData.get() forType:(__bridge NSString *)kUTTypeWebArchive];
 ALLOW_DEPRECATED_DECLARATIONS_END
@@ -4508,7 +4508,7 @@ void WebViewImpl::provideDataForPasteboard(NSPasteboard *pasteboard, NSString *t
         return;
 
     if ([type isEqual:m_promisedImage->uti()] && m_promisedImage->data()) {
-        if (auto platformData = m_promisedImage->data()->createNSData())
+        if (auto platformData = m_promisedImage->data()->makeContiguous()->createNSData())
             [pasteboard setData:(__bridge NSData *)platformData.get() forType:type];
     }
 
@@ -4561,7 +4561,7 @@ NSArray *WebViewImpl::namesOfPromisedFilesDroppedAtDestination(NSURL *dropDestin
     RetainPtr<NSData> data;
 
     if (m_promisedImage) {
-        data = m_promisedImage->data()->createNSData();
+        data = m_promisedImage->data()->makeContiguous()->createNSData();
         wrapper = adoptNS([[NSFileWrapper alloc] initRegularFileWithContents:data.get()]);
     } else
         wrapper = adoptNS([[NSFileWrapper alloc] initWithURL:[NSURL URLWithString:m_promisedURL] options:NSFileWrapperReadingImmediate error:nil]);
@@ -4613,7 +4613,7 @@ void WebViewImpl::requestDOMPasteAccess(WebCore::DOMPasteAccessCategory pasteAcc
     hideDOMPasteMenuWithResult(WebCore::DOMPasteAccessResponse::DeniedForGesture);
 
     NSData *data = [pasteboardForAccessCategory(pasteAccessCategory) dataForType:@(WebCore::PasteboardCustomData::cocoaType())];
-    auto buffer = WebCore::SharedBuffer::create(data);
+    auto buffer = WebCore::ContiguousSharedBuffer::create(data);
     if (WebCore::PasteboardCustomData::fromSharedBuffer(buffer.get()).origin() == originIdentifier) {
         m_page->grantAccessToCurrentPasteboardData(pasteboardNameForAccessCategory(pasteAccessCategory));
         completion(WebCore::DOMPasteAccessResponse::GrantedForGesture);

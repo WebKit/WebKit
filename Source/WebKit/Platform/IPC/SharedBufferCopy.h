@@ -39,18 +39,19 @@ class SharedBufferCopy {
 public:
     SharedBufferCopy() = default;
 
+    SharedBufferCopy(RefPtr<WebCore::ContiguousSharedBuffer>&& buffer)
+        : m_buffer(WTFMove(buffer)) { }
+    SharedBufferCopy(Ref<WebCore::ContiguousSharedBuffer>&& buffer)
+        : m_buffer(WTFMove(buffer)) { }
     SharedBufferCopy(RefPtr<WebCore::SharedBuffer>&& buffer)
-        : m_buffer(WTFMove(buffer)) { }
+        : m_buffer(buffer ? buffer->makeContiguous() : RefPtr<WebCore::ContiguousSharedBuffer>()) { }
     SharedBufferCopy(Ref<WebCore::SharedBuffer>&& buffer)
-        : m_buffer(WTFMove(buffer)) { }
+        : m_buffer(buffer->makeContiguous()) { }
     SharedBufferCopy(const WebCore::SharedBuffer& buffer)
-        : m_buffer(WebCore::SharedBuffer::create())
-    {
-        m_buffer->append(buffer);
-    }
+        : m_buffer(buffer.makeContiguous()) { }
 
-    RefPtr<WebCore::SharedBuffer>& buffer() { return m_buffer; }
-    const RefPtr<WebCore::SharedBuffer>& buffer() const { return m_buffer; }
+    RefPtr<WebCore::ContiguousSharedBuffer>& buffer() { return m_buffer; }
+    const RefPtr<WebCore::ContiguousSharedBuffer>& buffer() const { return m_buffer; }
 
     const uint8_t* data() const { return m_buffer ? m_buffer->data() : nullptr; }
     size_t size() const { return m_buffer ? m_buffer->size() : 0; }
@@ -60,7 +61,7 @@ public:
     static WARN_UNUSED_RETURN std::optional<SharedBufferCopy> decode(Decoder&);
 
 private:
-    RefPtr<WebCore::SharedBuffer> m_buffer;
+    RefPtr<WebCore::ContiguousSharedBuffer> m_buffer;
 };
 
 } // namespace IPC

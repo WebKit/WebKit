@@ -231,7 +231,7 @@ static std::optional<IntSize> densityCorrectedSizeFromProperties(CFDictionaryRef
 #if !PLATFORM(COCOA)
 size_t sharedBufferGetBytesAtPosition(void* info, void* buffer, off_t position, size_t count)
 {
-    SharedBuffer* sharedBuffer = static_cast<SharedBuffer*>(info);
+    ContiguousSharedBuffer* sharedBuffer = static_cast<ContiguousSharedBuffer*>(info);
     size_t sourceSize = sharedBuffer->size();
     if (position >= sourceSize)
         return 0;
@@ -253,7 +253,7 @@ ImageDecoderCG::ImageDecoderCG(SharedBuffer& data, AlphaOption, GammaAndColorPro
 {
     RetainPtr<CFStringRef> utiHint;
     if (data.size() >= 32)
-        utiHint = adoptCF(CGImageSourceGetTypeWithData(data.createCFData().get(), nullptr, nullptr));
+        utiHint = adoptCF(CGImageSourceGetTypeWithData(data.makeContiguous()->createCFData().get(), nullptr, nullptr));
     
     if (utiHint) {
         const void* key = kCGImageSourceTypeIdentifierHint;
@@ -570,15 +570,16 @@ void ImageDecoderCG::setData(SharedBuffer& data, bool allDataReceived)
     // On Mac the NSData inside the SharedBuffer can be secretly appended to without the SharedBuffer's knowledge.
     // We use SharedBuffer's ability to wrap itself inside CFData to get around this, ensuring that ImageIO is
     // really looking at the SharedBuffer.
-    CGImageSourceUpdateData(m_nativeDecoder.get(), data.createCFData().get(), allDataReceived);
+    CGImageSourceUpdateData(m_nativeDecoder.get(), data.makeContiguous()->createCFData().get(), allDataReceived);
 #else
     // Create a CGDataProvider to wrap the SharedBuffer.
-    data.ref();
+    auto contiguousData = data.makeContiguous();
+    contiguousData.get().ref();
     // We use the GetBytesAtPosition callback rather than the GetBytePointer one because SharedBuffer
     // does not provide a way to lock down the byte pointer and guarantee that it won't move, which
     // is a requirement for using the GetBytePointer callback.
     CGDataProviderDirectCallbacks providerCallbacks = { 0, 0, 0, sharedBufferGetBytesAtPosition, sharedBufferRelease };
-    RetainPtr<CGDataProviderRef> dataProvider = adoptCF(CGDataProviderCreateDirect(&data, data.size(), &providerCallbacks));
+    RetainPtr<CGDataProviderRef> dataProvider = adoptCF(CGDataProviderCreateDirect(contiguousData.ptr(), data.size(), &providerCallbacks));
     CGImageSourceUpdateDataProvider(m_nativeDecoder.get(), dataProvider.get(), allDataReceived);
 #endif
 }

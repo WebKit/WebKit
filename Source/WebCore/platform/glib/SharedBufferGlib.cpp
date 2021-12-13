@@ -38,12 +38,12 @@ Ref<SharedBuffer> SharedBuffer::create(GBytes* bytes)
     return adoptRef(*new SharedBuffer(bytes));
 }
 
-GRefPtr<GBytes> SharedBuffer::createGBytes() const
+GRefPtr<GBytes> ContiguousSharedBuffer::createGBytes() const
 {
     ref();
     GRefPtr<GBytes> bytes = adoptGRef(g_bytes_new_with_free_func(data(), size(), [](gpointer data) {
-        static_cast<SharedBuffer*>(data)->deref();
-    }, const_cast<SharedBuffer*>(this)));
+        static_cast<ContiguousSharedBuffer*>(data)->deref();
+    }, const_cast<ContiguousSharedBuffer*>(this)));
     return bytes;
 }
 

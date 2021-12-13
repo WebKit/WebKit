@@ -78,10 +78,10 @@ private:
 #endif
 
 #if PLATFORM(COCOA)
-    bool readWebArchive(SharedBuffer&) override;
-    bool readRTFD(SharedBuffer&) override;
-    bool readRTF(SharedBuffer&) override;
-    bool readDataBuffer(SharedBuffer&, const String& type, const String& name, PresentationSize preferredPresentationSize = { }) override;
+    bool readWebArchive(ContiguousSharedBuffer&) override;
+    bool readRTFD(ContiguousSharedBuffer&) override;
+    bool readRTF(ContiguousSharedBuffer&) override;
+    bool readDataBuffer(ContiguousSharedBuffer&, const String& type, const String& name, PresentationSize preferredPresentationSize = { }) override;
 #endif
 };
 
@@ -105,10 +105,10 @@ private:
 #endif
 
 #if PLATFORM(COCOA)
-    bool readWebArchive(SharedBuffer&) override;
-    bool readRTFD(SharedBuffer&) override;
-    bool readRTF(SharedBuffer&) override;
-    bool readDataBuffer(SharedBuffer&, const String&, const String&, PresentationSize = { }) override { return false; }
+    bool readWebArchive(ContiguousSharedBuffer&) override;
+    bool readRTFD(ContiguousSharedBuffer&) override;
+    bool readRTF(ContiguousSharedBuffer&) override;
+    bool readDataBuffer(ContiguousSharedBuffer&, const String&, const String&, PresentationSize = { }) override { return false; }
 #endif
 };
 

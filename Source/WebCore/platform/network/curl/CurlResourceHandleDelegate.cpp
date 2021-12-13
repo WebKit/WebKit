@@ -149,8 +149,9 @@ void CurlResourceHandleDelegate::curlDidReceiveBuffer(CurlRequest&, Ref<SharedBu
     if (cancelledOrClientless())
         return;
 
-    CurlCacheManager::singleton().didReceiveData(m_handle, buffer->data(), buffer->size());
-    client()->didReceiveBuffer(&m_handle, WTFMove(buffer), buffer->size());
+    auto contiguousBuffer = buffer->makeContiguous();
+    CurlCacheManager::singleton().didReceiveData(m_handle, contiguousBuffer->data(), buffer->size());
+    client()->didReceiveBuffer(&m_handle, WTFMove(contiguousBuffer), buffer->size());
 }
 
 void CurlResourceHandleDelegate::curlDidComplete(CurlRequest&, NetworkLoadMetrics&& metrics)

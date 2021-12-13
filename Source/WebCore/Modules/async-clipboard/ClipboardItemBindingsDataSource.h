@@ -34,11 +34,11 @@
 namespace WebCore {
 
 class Blob;
+class ContiguousSharedBuffer;
 class DOMPromise;
 class FileReaderLoader;
 class PasteboardCustomData;
 class ScriptExecutionContext;
-class SharedBuffer;
 
 class ClipboardItemBindingsDataSource : public ClipboardItemDataSource {
     WTF_MAKE_FAST_ALLOCATED;
@@ -53,7 +53,7 @@ private:
 
     void invokeCompletionHandler();
 
-    using BufferOrString = std::variant<String, Ref<SharedBuffer>>;
+    using BufferOrString = std::variant<String, Ref<ContiguousSharedBuffer>>;
     class ClipboardItemTypeLoader : public FileReaderLoaderClient, public RefCounted<ClipboardItemTypeLoader> {
     public:
         static Ref<ClipboardItemTypeLoader> create(const String& type, CompletionHandler<void()>&& completionHandler)

@@ -1407,12 +1407,12 @@ bool InspectorNetworkAgent::cachedResourceContent(CachedResource& resource, Stri
         if (InspectorNetworkAgent::shouldTreatAsText(resource.mimeType())) {
             auto decoder = InspectorNetworkAgent::createTextDecoder(resource.mimeType(), resource.response().textEncodingName());
             *base64Encoded = false;
-            *result = decoder->decodeAndFlush(buffer->data(), buffer->size());
+            *result = decoder->decodeAndFlush(buffer->makeContiguous()->data(), buffer->size());
             return true;
         }
 
         *base64Encoded = true;
-        *result = base64EncodeToString(buffer->data(), buffer->size());
+        *result = base64EncodeToString(buffer->makeContiguous()->data(), buffer->size());
         return true;
     }
 }

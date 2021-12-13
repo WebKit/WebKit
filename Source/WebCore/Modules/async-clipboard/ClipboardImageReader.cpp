@@ -33,7 +33,7 @@ namespace WebCore {
 
 #if !PLATFORM(COCOA)
 
-void ClipboardImageReader::readBuffer(const String&, const String&, Ref<SharedBuffer>&&)
+void ClipboardImageReader::readBuffer(const String&, const String&, Ref<ContiguousSharedBuffer>&&)
 {
     notImplemented();
 }

@@ -33,7 +33,7 @@
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
-class SharedBuffer;
+class ContiguousSharedBuffer;
 }
 
 namespace WebKit {
@@ -54,7 +54,7 @@ public:
         void encode(IPC::Encoder&) const;
         static WARN_UNUSED_RETURN bool decode(IPC::Decoder&, Handle&);
 
-        RefPtr<WebCore::SharedBuffer> tryWrapInSharedBuffer() const;
+        RefPtr<WebCore::ContiguousSharedBuffer> tryWrapInSharedBuffer() const;
 
     private:
         friend class ShareableResource;
@@ -80,7 +80,7 @@ public:
     
 private:
     ShareableResource(Ref<SharedMemory>&&, unsigned offset, unsigned size);
-    RefPtr<WebCore::SharedBuffer> wrapInSharedBuffer();
+    RefPtr<WebCore::ContiguousSharedBuffer> wrapInSharedBuffer();
 
     Ref<SharedMemory> m_sharedMemory;
 

@@ -48,10 +48,10 @@ RefPtr<SharedMemory> SharedMemory::copyBuffer(const SharedBuffer& buffer)
     return sharedMemory;
 }
 
-Ref<SharedBuffer> SharedMemory::createSharedBuffer(size_t dataSize) const
+Ref<ContiguousSharedBuffer> SharedMemory::createSharedBuffer(size_t dataSize) const
 {
     ASSERT(dataSize <= size());
-    return SharedBuffer::create({
+    return ContiguousSharedBuffer::create(DataSegment::Provider {
         [protectedThis = Ref { *this }] () -> const uint8_t* {
             return static_cast<const uint8_t*>(protectedThis->data());
         },

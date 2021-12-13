@@ -581,7 +581,7 @@ Storage::Record Cache::encode(const RecordInformation& recordInformation, const 
     Data body;
     WTF::switchOn(record.responseBody, [](const Ref<WebCore::FormData>& formData) {
         // FIXME: Store form data body.
-    }, [&](const Ref<WebCore::SharedBuffer>& buffer) {
+    }, [&](const Ref<WebCore::ContiguousSharedBuffer>& buffer) {
         body = { buffer->data(), buffer->size() };
     }, [](const std::nullptr_t&) {
     });
@@ -673,7 +673,7 @@ std::optional<Record> Cache::decode(const Storage::Record& storage)
         return std::nullopt;
 
     auto record = WTFMove(result->record);
-    record.responseBody = WebCore::SharedBuffer::create(storage.body.data(), storage.body.size());
+    record.responseBody = WebCore::ContiguousSharedBuffer::create(storage.body.data(), storage.body.size());
 
     return record;
 }

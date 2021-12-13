@@ -269,7 +269,7 @@ bool SQLiteIDBCursor::bindArguments()
         return false;
     }
 
-    RefPtr<SharedBuffer> buffer = serializeIDBKeyData(m_currentLowerKey);
+    auto buffer = serializeIDBKeyData(m_currentLowerKey);
     if (m_statement->bindBlob(currentBindArgument++, *buffer) != SQLITE_OK) {
         LOG_ERROR("Could not create cursor statement (lower key)");
         return false;
@@ -315,7 +315,7 @@ bool SQLiteIDBCursor::resetAndRebindPreIndexStatementIfNecessary()
         return false;
     }
 
-    RefPtr<SharedBuffer> buffer = serializeIDBKeyData(key);
+    auto buffer = serializeIDBKeyData(key);
     if (m_preIndexStatement->bindBlob(currentBindArgument++, *buffer) != SQLITE_OK) {
         LOG_ERROR("Could not bind id argument to pre statement (key)");
         return false;

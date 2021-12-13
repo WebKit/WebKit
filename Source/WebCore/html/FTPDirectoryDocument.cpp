@@ -276,9 +276,9 @@ void FTPDirectoryDocumentParser::parseAndAppendOneLine(const String& inputLine)
     appendEntry(filename, processFilesizeString(result.fileSize, result.type == FTPDirectoryEntry), processFileDateString(result.modifiedTime), result.type == FTPDirectoryEntry);
 }
 
-static inline RefPtr<SharedBuffer> createTemplateDocumentData(const Settings& settings)
+static inline RefPtr<ContiguousSharedBuffer> createTemplateDocumentData(const Settings& settings)
 {
-    auto buffer = SharedBuffer::createWithContentsOfFile(settings.ftpDirectoryTemplatePath());
+    auto buffer = ContiguousSharedBuffer::createWithContentsOfFile(settings.ftpDirectoryTemplatePath());
     if (buffer)
         LOG(FTP, "Loaded FTPDirectoryTemplate of length %zu\n", buffer->size());
     return buffer;
@@ -286,7 +286,7 @@ static inline RefPtr<SharedBuffer> createTemplateDocumentData(const Settings& se
     
 bool FTPDirectoryDocumentParser::loadDocumentTemplate()
 {
-    static SharedBuffer* templateDocumentData = createTemplateDocumentData(document()->settings()).leakRef();
+    static ContiguousSharedBuffer* templateDocumentData = createTemplateDocumentData(document()->settings()).leakRef();
     // FIXME: Instead of storing the data, it would be more efficient if we could parse the template data into the
     // template Document once, store that document, then "copy" it whenever we get an FTP directory listing.
     

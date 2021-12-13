@@ -285,7 +285,7 @@ static void replaceRichContentWithAttachments(Frame& frame, DocumentFragment& fr
     struct AttachmentInsertionInfo {
         String fileName;
         String contentType;
-        Ref<SharedBuffer> data;
+        Ref<ContiguousSharedBuffer> data;
         Ref<Element> originalElement;
     };
 
@@ -309,7 +309,7 @@ static void replaceRichContentWithAttachments(Frame& frame, DocumentFragment& fr
             continue;
 
         auto& resource = resourceEntry->value;
-        serializedAttachmentData.append({ attachment.uniqueIdentifier(), resource->mimeType(), resource->data() });
+        serializedAttachmentData.append({ attachment.uniqueIdentifier(), resource->mimeType(), resource->data().makeContiguous() });
     }
 
     if (!serializedAttachmentData.isEmpty())
@@ -332,7 +332,7 @@ static void replaceRichContentWithAttachments(Frame& frame, DocumentFragment& fr
         if (name.isEmpty())
             name = "media"_s;
 
-        attachmentInsertionInfo.append({ WTFMove(name), resource->value->mimeType(), resource->value->data(), image });
+        attachmentInsertionInfo.append({ WTFMove(name), resource->value->mimeType(), resource->value->data().makeContiguous(), image });
     }
 
     for (auto& object : descendantsOfType<HTMLObjectElement>(fragment)) {
@@ -350,7 +350,7 @@ static void replaceRichContentWithAttachments(Frame& frame, DocumentFragment& fr
         if (name.isEmpty())
             name = "file"_s;
 
-        attachmentInsertionInfo.append({ WTFMove(name), resource->value->mimeType(), resource->value->data(), object });
+        attachmentInsertionInfo.append({ WTFMove(name), resource->value->mimeType(), resource->value->data().makeContiguous(), object });
     }
 
     for (auto& info : attachmentInsertionInfo) {
@@ -428,7 +428,7 @@ struct MarkupAndArchive {
     Ref<Archive> archive;
 };
 
-static std::optional<MarkupAndArchive> extractMarkupAndArchive(SharedBuffer& buffer, const std::function<bool(const String)>& canShowMIMETypeAsHTML)
+static std::optional<MarkupAndArchive> extractMarkupAndArchive(ContiguousSharedBuffer& buffer, const std::function<bool(const String)>& canShowMIMETypeAsHTML)
 {
     auto archive = LegacyWebArchive::create(URL(), buffer);
     if (!archive)
@@ -442,7 +442,7 @@ static std::optional<MarkupAndArchive> extractMarkupAndArchive(SharedBuffer& buf
     if (!canShowMIMETypeAsHTML(type))
         return std::nullopt;
 
-    return MarkupAndArchive { String::fromUTF8(mainResource->data().data(), mainResource->data().size()), mainResource.releaseNonNull(), archive.releaseNonNull() };
+    return MarkupAndArchive { String::fromUTF8(mainResource->data().makeContiguous()->data(), mainResource->data().size()), mainResource.releaseNonNull(), archive.releaseNonNull() };
 }
 
 static String sanitizeMarkupWithArchive(Frame& frame, Document& destinationDocument, MarkupAndArchive& markupAndArchive, MSOListQuirks msoListQuirks, const std::function<bool(const String)>& canShowMIMETypeAsHTML)
@@ -481,7 +481,7 @@ static String sanitizeMarkupWithArchive(Frame& frame, Document& destinationDocum
         if (!shouldReplaceSubresourceURL(subframeURL))
             continue;
 
-        MarkupAndArchive subframeContent = { String::fromUTF8(subframeMainResource->data().data(), subframeMainResource->data().size()),
+        MarkupAndArchive subframeContent = { String::fromUTF8(subframeMainResource->data().makeContiguous()->data(), subframeMainResource->data().size()),
             subframeMainResource.releaseNonNull(), subframeArchive.copyRef() };
         auto subframeMarkup = sanitizeMarkupWithArchive(frame, destinationDocument, subframeContent, MSOListQuirks::Disabled, canShowMIMETypeAsHTML);
 
@@ -497,7 +497,7 @@ static String sanitizeMarkupWithArchive(Frame& frame, Document& destinationDocum
     return sanitizedMarkupForFragmentInDocument(WTFMove(fragment), *stagingDocument, msoListQuirks, markupAndArchive.markup);
 }
 
-bool WebContentReader::readWebArchive(SharedBuffer& buffer)
+bool WebContentReader::readWebArchive(ContiguousSharedBuffer& buffer)
 {
     if (frame.settings().preferMIMETypeForImages() || !frame.document())
         return false;
@@ -532,7 +532,7 @@ bool WebContentReader::readWebArchive(SharedBuffer& buffer)
     return true;
 }
 
-bool WebContentMarkupReader::readWebArchive(SharedBuffer& buffer)
+bool WebContentMarkupReader::readWebArchive(ContiguousSharedBuffer& buffer)
 {
     if (!frame.document())
         return false;
@@ -612,7 +612,7 @@ bool WebContentMarkupReader::readHTML(const String& string)
     return !markup.isEmpty();
 }
 
-bool WebContentReader::readRTFD(SharedBuffer& buffer)
+bool WebContentReader::readRTFD(ContiguousSharedBuffer& buffer)
 {
     if (frame.settings().preferMIMETypeForImages() || !frame.document())
         return false;
@@ -626,7 +626,7 @@ bool WebContentReader::readRTFD(SharedBuffer& buffer)
     return true;
 }
 
-bool WebContentMarkupReader::readRTFD(SharedBuffer& buffer)
+bool WebContentMarkupReader::readRTFD(ContiguousSharedBuffer& buffer)
 {
     if (!frame.document())
         return false;
@@ -639,7 +639,7 @@ bool WebContentMarkupReader::readRTFD(SharedBuffer& buffer)
     return true;
 }
 
-bool WebContentReader::readRTF(SharedBuffer& buffer)
+bool WebContentReader::readRTF(ContiguousSharedBuffer& buffer)
 {
     if (frame.settings().preferMIMETypeForImages())
         return false;
@@ -653,7 +653,7 @@ bool WebContentReader::readRTF(SharedBuffer& buffer)
     return true;
 }
 
-bool WebContentMarkupReader::readRTF(SharedBuffer& buffer)
+bool WebContentMarkupReader::readRTF(ContiguousSharedBuffer& buffer)
 {
     if (!frame.document())
         return false;
@@ -833,7 +833,7 @@ bool WebContentReader::readURL(const URL& url, const String& title)
     return true;
 }
 
-bool WebContentReader::readDataBuffer(SharedBuffer& buffer, const String& type, const String& name, PresentationSize preferredPresentationSize)
+bool WebContentReader::readDataBuffer(ContiguousSharedBuffer& buffer, const String& type, const String& name, PresentationSize preferredPresentationSize)
 {
     if (buffer.isEmpty())
         return false;

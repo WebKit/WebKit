@@ -32,7 +32,7 @@ namespace WebCore {
 
 struct GMarkupParseContextUserData {
     bool isParsingPssh { false };
-    RefPtr<SharedBuffer> pssh;
+    RefPtr<ContiguousSharedBuffer> pssh;
 };
 
 static void markupStartElement(GMarkupParseContext*, const gchar* elementName, const gchar**, const gchar**, gpointer userDataPtr, GError**)
@@ -57,7 +57,7 @@ static void markupText(GMarkupParseContext*, const gchar* text, gsize textLength
     if (userData->isParsingPssh) {
         std::optional<Vector<uint8_t>> pssh = base64Decode(text, textLength);
         if (pssh.has_value())
-            userData->pssh = SharedBuffer::create(WTFMove(*pssh));
+            userData->pssh = ContiguousSharedBuffer::create(WTFMove(*pssh));
     }
 }
 
@@ -71,9 +71,9 @@ static void markupError(GMarkupParseContext*, GError*, gpointer)
 
 static GMarkupParser markupParser { markupStartElement, markupEndElement, markupText, markupPassthrough, markupError };
 
-RefPtr<SharedBuffer> InitData::extractCencIfNeeded(RefPtr<SharedBuffer>&& unparsedPayload)
+RefPtr<SharedBuffer> InitData::extractCencIfNeeded(RefPtr<ContiguousSharedBuffer>&& unparsedPayload)
 {
-    RefPtr<SharedBuffer> payload = WTFMove(unparsedPayload);
+    RefPtr<ContiguousSharedBuffer> payload = WTFMove(unparsedPayload);
     if (!payload || !payload->size())
         return payload;
 

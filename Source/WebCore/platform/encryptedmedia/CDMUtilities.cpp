@@ -46,7 +46,7 @@ RefPtr<JSON::Object> parseJSONObject(const SharedBuffer& buffer)
         return nullptr;
 
     // Parse the buffer contents as JSON, returning the root object (if any).
-    String json { buffer.data(), static_cast<unsigned>(size) };
+    String json { buffer.makeContiguous()->data(), static_cast<unsigned>(size) };
 
     auto value = JSON::Value::parseJSON(json);
     if (!value)

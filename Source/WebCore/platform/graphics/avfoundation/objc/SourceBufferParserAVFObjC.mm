@@ -213,7 +213,7 @@ SourceBufferParserAVFObjC::~SourceBufferParserAVFObjC()
 void SourceBufferParserAVFObjC::appendData(Segment&& segment, CompletionHandler<void()>&& completionHandler, AppendFlags flags)
 {
     auto sharedBuffer = segment.takeSharedBuffer();
-    auto nsData = sharedBuffer->createNSData();
+    auto nsData = sharedBuffer->makeContiguous()->createNSData();
     if (m_parserStateWasReset || flags == AppendFlags::Discontinuity)
         [m_parser appendStreamData:nsData.get() withFlags:AVStreamDataParserStreamDataDiscontinuity];
     else

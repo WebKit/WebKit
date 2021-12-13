@@ -125,7 +125,7 @@ private:
     void destroyDecodedData() override;
 
     bool shouldDeferUpdateImageData() const;
-    RefPtr<SharedBuffer> convertedDataIfNeeded(SharedBuffer* data) const;
+    RefPtr<ContiguousSharedBuffer> convertedDataIfNeeded(SharedBuffer* data) const;
     void didUpdateImageData();
     EncodedDataStatus updateImageData(bool allDataReceived);
     void updateData(const uint8_t* data, unsigned length) override;

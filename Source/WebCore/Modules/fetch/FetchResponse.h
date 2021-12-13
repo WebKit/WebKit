@@ -85,7 +85,7 @@ public:
     void feedStream() final;
     void cancel() final;
 
-    using ResponseData = std::variant<std::nullptr_t, Ref<FormData>, Ref<SharedBuffer>>;
+    using ResponseData = std::variant<std::nullptr_t, Ref<FormData>, Ref<ContiguousSharedBuffer>>;
     ResponseData consumeBody();
     void setBodyData(ResponseData&&, uint64_t bodySizeWithPadding);
 

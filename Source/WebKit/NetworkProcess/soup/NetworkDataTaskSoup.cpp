@@ -1761,7 +1761,7 @@ void NetworkDataTaskSoup::didReadDataURL(std::optional<DataURLDecoder::Result>&&
     }
 
     m_response = ResourceResponse::dataURLResponse(m_currentRequest.url(), result.value());
-    auto bytes = SharedBuffer::create(WTFMove(result->data))->createGBytes();
+    auto bytes = ContiguousSharedBuffer::create(WTFMove(result->data))->createGBytes();
     m_inputStream = adoptGRef(g_memory_input_stream_new_from_bytes(bytes.get()));
     dispatchDidReceiveResponse();
 }

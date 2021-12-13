@@ -213,10 +213,11 @@ bool MockCDM::supportsInitData(const AtomString& initDataType, const SharedBuffe
 
 RefPtr<SharedBuffer> MockCDM::sanitizeResponse(const SharedBuffer& response) const
 {
-    if (!charactersAreAllASCII(response.data(), response.size()))
+    auto buffer = response.makeContiguous();
+    if (!charactersAreAllASCII(buffer->data(), response.size()))
         return nullptr;
 
-    Vector<String> responseArray = String(response.data(), response.size()).split(' ');
+    Vector<String> responseArray = String(buffer->data(), response.size()).split(' ');
 
     if (!responseArray.contains(String("valid-response"_s)))
         return nullptr;
@@ -271,7 +272,7 @@ void MockCDMInstance::initializeWithConfiguration(const MediaKeySystemConfigurat
 
 void MockCDMInstance::setServerCertificate(Ref<SharedBuffer>&& certificate, SuccessCallback&& callback)
 {
-    StringView certificateStringView(certificate->data(), certificate->size());
+    StringView certificateStringView(certificate->makeContiguous()->data(), certificate->size());
 
     callback(equalIgnoringASCIICase(certificateStringView, "valid") ? Succeeded : Failed);
 }
@@ -331,7 +332,7 @@ void MockCDMInstanceSession::updateLicense(const String& sessionID, LicenseType,
         return;
     }
 
-    Vector<String> responseVector = String(response->data(), response->size()).split(' ');
+    Vector<String> responseVector = String(response->makeContiguous()->data(), response->size()).split(' ');
 
     if (responseVector.contains(String("invalid-format"_s))) {
         callback(false, std::nullopt, std::nullopt, std::nullopt, SuccessValue::Failed);

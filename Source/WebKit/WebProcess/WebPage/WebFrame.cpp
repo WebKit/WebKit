@@ -343,7 +343,7 @@ String WebFrame::source() const
     RefPtr<SharedBuffer> mainResourceData = documentLoader->mainResourceData();
     if (!mainResourceData)
         return String();
-    return decoder->encoding().decode(mainResourceData->data(), mainResourceData->size());
+    return decoder->encoding().decode(mainResourceData->makeContiguous()->data(), mainResourceData->size());
 }
 
 String WebFrame::contentsAsString() const 

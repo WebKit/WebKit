@@ -52,7 +52,7 @@ public:
 
     using ResponseCallback = Function<void()>;
     void waitForResponse(ResponseCallback&&);
-    using BodyCallback = Function<void(RefPtr<WebCore::SharedBuffer>&&, int reportedEncodedDataLength)>;
+    using BodyCallback = Function<void(RefPtr<WebCore::ContiguousSharedBuffer>&&, int reportedEncodedDataLength)>;
     void waitForBody(BodyCallback&&);
 
     const WebCore::ResourceError& error() const { return m_error; }

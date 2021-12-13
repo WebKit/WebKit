@@ -44,6 +44,7 @@ class Encoder;
 }
 
 namespace WebCore {
+class ContiguousSharedBuffer;
 class SharedBuffer;
 }
 
@@ -153,7 +154,7 @@ public:
     // Return the system page size in bytes.
     static unsigned systemPageSize();
 
-    Ref<WebCore::SharedBuffer> createSharedBuffer(size_t) const;
+    Ref<WebCore::ContiguousSharedBuffer> createSharedBuffer(size_t) const;
 
 private:
 #if OS(DARWIN)

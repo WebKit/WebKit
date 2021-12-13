@@ -275,7 +275,7 @@ void FetchBodyConsumer::resolve(Ref<DeferredPromise>&& promise, const String& co
             if (auto* chunk = result.returnValue())
                 data->append(chunk->data(), chunk->size());
             else
-                resolveWithTypeAndData(WTFMove(promise), type, contentType, data->data(), data->size());
+                resolveWithTypeAndData(WTFMove(promise), type, contentType, data->makeContiguous()->data(), data->size());
         });
         m_sink->pipeFrom(*stream);
         return;
@@ -306,7 +306,7 @@ void FetchBodyConsumer::resolve(Ref<DeferredPromise>&& promise, const String& co
         return;
     case FetchBodyConsumer::Type::FormData: {
         auto buffer = takeData();
-        if (auto formData = packageFormData(context, contentType, buffer ? buffer->data() : nullptr, buffer ? buffer->size() : 0))
+        if (auto formData = packageFormData(context, contentType, buffer ? buffer->makeContiguous()->data() : nullptr, buffer ? buffer->size() : 0))
             promise->resolve<IDLInterface<DOMFormData>>(*formData);
         else
             promise->reject(TypeError);
@@ -362,7 +362,7 @@ String FetchBodyConsumer::takeAsText()
     if (!m_buffer)
         return String();
 
-    auto text = TextResourceDecoder::textFromUTF8(m_buffer->data(), m_buffer->size());
+    auto text = TextResourceDecoder::textFromUTF8(m_buffer->makeContiguous()->data(), m_buffer->size());
     m_buffer = nullptr;
     return text;
 }

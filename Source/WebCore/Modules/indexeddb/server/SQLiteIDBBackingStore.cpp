@@ -686,7 +686,7 @@ bool SQLiteIDBBackingStore::addExistingIndex(IDBObjectStoreInfo& objectStoreInfo
     SQLiteTransaction transaction(*m_sqliteDB);
     transaction.begin();
 
-    RefPtr<SharedBuffer> keyPathBlob = serializeIDBKeyPath(info.keyPath());
+    auto keyPathBlob = serializeIDBKeyPath(info.keyPath());
     if (!keyPathBlob) {
         LOG_ERROR("Unable to serialize IDBKeyPath to save in database");
         return false;
@@ -1174,7 +1174,7 @@ IDBError SQLiteIDBBackingStore::createObjectStore(const IDBResourceIdentifier& t
         return IDBError { UnknownError, "Attempt to create an object store in a non-version-change transaction"_s };
     }
 
-    RefPtr<SharedBuffer> keyPathBlob = serializeIDBKeyPath(info.keyPath());
+    auto keyPathBlob = serializeIDBKeyPath(info.keyPath());
     if (!keyPathBlob) {
         LOG_ERROR("Unable to serialize IDBKeyPath to save in database for new object store");
         return IDBError { UnknownError, "Unable to serialize IDBKeyPath to save in database for new object store"_s };
@@ -1387,7 +1387,7 @@ IDBError SQLiteIDBBackingStore::createIndex(const IDBResourceIdentifier& transac
         return IDBError { UnknownError, "Attempt to create an index in a non-version-change transaction"_s };
     }
 
-    RefPtr<SharedBuffer> keyPathBlob = serializeIDBKeyPath(info.keyPath());
+    auto keyPathBlob = serializeIDBKeyPath(info.keyPath());
     if (!keyPathBlob) {
         LOG_ERROR("Unable to serialize IDBKeyPath to save in database");
         return IDBError { UnknownError, "Unable to serialize IDBKeyPath to create index in database"_s };
@@ -1464,7 +1464,7 @@ IDBError SQLiteIDBBackingStore::uncheckedHasIndexRecord(const IDBIndexInfo& info
 {
     hasRecord = false;
 
-    RefPtr<SharedBuffer> indexKeyBuffer = serializeIDBKeyData(indexKey);
+    auto indexKeyBuffer = serializeIDBKeyData(indexKey);
     if (!indexKeyBuffer) {
         LOG_ERROR("Unable to serialize index key to be stored in the database");
         return IDBError { UnknownError, "Unable to serialize IDBKey to check for index record in database"_s };
@@ -1533,13 +1533,13 @@ IDBError SQLiteIDBBackingStore::uncheckedPutIndexRecord(int64_t objectStoreID, i
 {
     LOG(IndexedDB, "SQLiteIDBBackingStore::uncheckedPutIndexRecord - %s, %s", keyValue.loggingString().utf8().data(), indexKey.loggingString().utf8().data());
 
-    RefPtr<SharedBuffer> indexKeyBuffer = serializeIDBKeyData(indexKey);
+    auto indexKeyBuffer = serializeIDBKeyData(indexKey);
     if (!indexKeyBuffer) {
         LOG_ERROR("Unable to serialize index key to be stored in the database");
         return IDBError { UnknownError, "Unable to serialize index key to be stored in the database"_s };
     }
 
-    RefPtr<SharedBuffer> valueBuffer = serializeIDBKeyData(keyValue);
+    auto valueBuffer = serializeIDBKeyData(keyValue);
     if (!valueBuffer) {
         LOG_ERROR("Unable to serialize the value to be stored in the database");
         return IDBError { UnknownError, "Unable to serialize value to be stored in the database"_s };
@@ -1661,7 +1661,7 @@ IDBError SQLiteIDBBackingStore::keyExistsInObjectStore(const IDBResourceIdentifi
     if (!transaction || !transaction->inProgress())
         return IDBError { UnknownError, "Attempt to see if key exists in objectstore without an in-progress transaction"_s };
 
-    RefPtr<SharedBuffer> keyBuffer = serializeIDBKeyData(keyData);
+    auto keyBuffer = serializeIDBKeyData(keyData);
     if (!keyBuffer) {
         LOG_ERROR("Unable to serialize IDBKey to check for existence in object store");
         return IDBError { UnknownError, "Unable to serialize IDBKey to check for existence in object store"_s };
@@ -1741,7 +1741,7 @@ IDBError SQLiteIDBBackingStore::deleteRecord(SQLiteIDBTransaction& transaction, 
     ASSERT(transaction.mode() != IDBTransactionMode::Readonly);
     UNUSED_PARAM(transaction);
 
-    RefPtr<SharedBuffer> keyBuffer = serializeIDBKeyData(keyData);
+    auto keyBuffer = serializeIDBKeyData(keyData);
     if (!keyBuffer) {
         LOG_ERROR("Unable to serialize IDBKeyData to be removed from the database");
         return IDBError { UnknownError, "Unable to serialize IDBKeyData to be removed from the database"_s };
@@ -1962,7 +1962,7 @@ IDBError SQLiteIDBBackingStore::addRecord(const IDBResourceIdentifier& transacti
         return IDBError { UnknownError, "Attempt to store a record in an object store in a read-only transaction"_s };
     }
 
-    RefPtr<SharedBuffer> keyBuffer = serializeIDBKeyData(keyData);
+    auto keyBuffer = serializeIDBKeyData(keyData);
     if (!keyBuffer) {
         LOG_ERROR("Unable to serialize IDBKey to be stored in an object store");
         return IDBError { UnknownError, "Unable to serialize IDBKey to be stored in an object store"_s };
@@ -2124,7 +2124,7 @@ IDBError SQLiteIDBBackingStore::getRecord(const IDBResourceIdentifier& transacti
     auto key = keyRange.lowerKey;
     if (key.isNull())
         key = IDBKeyData::minimum();
-    RefPtr<SharedBuffer> lowerBuffer = serializeIDBKeyData(key);
+    auto lowerBuffer = serializeIDBKeyData(key);
     if (!lowerBuffer) {
         LOG_ERROR("Unable to serialize lower IDBKey in lookup range");
         return IDBError { UnknownError, "Unable to serialize lower IDBKey in lookup range"_s };
@@ -2133,7 +2133,7 @@ IDBError SQLiteIDBBackingStore::getRecord(const IDBResourceIdentifier& transacti
     key = keyRange.upperKey;
     if (key.isNull())
         key = IDBKeyData::maximum();
-    RefPtr<SharedBuffer> upperBuffer = serializeIDBKeyData(key);
+    auto upperBuffer = serializeIDBKeyData(key);
     if (!upperBuffer) {
         LOG_ERROR("Unable to serialize upper IDBKey in lookup range");
         return IDBError { UnknownError, "Unable to serialize upper IDBKey in lookup range"_s };
@@ -2443,7 +2443,7 @@ IDBError SQLiteIDBBackingStore::uncheckedGetIndexRecordForOneKey(int64_t indexID
 
     ASSERT(key.isValid() && key.type() != IndexedDB::KeyType::Max && key.type() != IndexedDB::KeyType::Min);
 
-    RefPtr<SharedBuffer> buffer = serializeIDBKeyData(key);
+    auto buffer = serializeIDBKeyData(key);
     if (!buffer) {
         LOG_ERROR("Unable to serialize IDBKey to look up one index record");
         return IDBError { UnknownError, "Unable to serialize IDBKey to look up one index record"_s };
@@ -2508,14 +2508,14 @@ IDBError SQLiteIDBBackingStore::getCount(const IDBResourceIdentifier& transactio
     outCount = 0;
 
     auto lowerKey = range.lowerKey.isNull() ? IDBKeyData::minimum() : range.lowerKey;
-    RefPtr<SharedBuffer> lowerBuffer = serializeIDBKeyData(lowerKey);
+    auto lowerBuffer = serializeIDBKeyData(lowerKey);
     if (!lowerBuffer) {
         LOG_ERROR("Unable to serialize lower IDBKey in lookup range");
         return IDBError { UnknownError, "Unable to serialize lower IDBKey in lookup range for count operation"_s };
     }
 
     auto upperKey = range.upperKey.isNull() ? IDBKeyData::maximum() : range.upperKey;
-    RefPtr<SharedBuffer> upperBuffer = serializeIDBKeyData(upperKey);
+    auto upperBuffer = serializeIDBKeyData(upperKey);
     if (!upperBuffer) {
         LOG_ERROR("Unable to serialize upper IDBKey in lookup range");
         return IDBError { UnknownError, "Unable to serialize upper IDBKey in lookup range for count operation"_s };

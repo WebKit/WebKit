@@ -187,7 +187,7 @@ void ServiceWorkerSoftUpdateLoader::didReceiveBuffer(Ref<SharedBuffer>&& buffer,
     }
 
     if (auto size = buffer->size())
-        m_script.append(m_decoder->decode(buffer->data(), size));
+        m_script.append(m_decoder->decode(buffer->makeContiguous()->data(), size));
 }
 
 void ServiceWorkerSoftUpdateLoader::didFinishLoading(const WebCore::NetworkLoadMetrics&)

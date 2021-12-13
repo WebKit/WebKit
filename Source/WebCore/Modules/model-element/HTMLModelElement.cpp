@@ -204,7 +204,7 @@ void HTMLModelElement::notifyFinished(CachedResource& resource, const NetworkLoa
     }
 
     m_dataComplete = true;
-    m_model = Model::create(m_data.releaseNonNull().get(), resource.mimeType(), resource.url());
+    m_model = Model::create(m_data.releaseNonNull()->makeContiguous().get(), resource.mimeType(), resource.url());
 
     invalidateResourceHandleAndUpdateRenderer();
 

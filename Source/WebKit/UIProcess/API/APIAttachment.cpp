@@ -103,12 +103,12 @@ RefPtr<WebCore::SharedBuffer> Attachment::enclosingImageData() const
     return nullptr;
 }
 
-RefPtr<WebCore::SharedBuffer> Attachment::createSerializedRepresentation() const
+RefPtr<WebCore::ContiguousSharedBuffer> Attachment::createSerializedRepresentation() const
 {
     return nullptr;
 }
 
-void Attachment::updateFromSerializedRepresentation(Ref<WebCore::SharedBuffer>&&, const WTF::String&)
+void Attachment::updateFromSerializedRepresentation(Ref<WebCore::ContiguousSharedBuffer>&&, const WTF::String&)
 {
 }
 

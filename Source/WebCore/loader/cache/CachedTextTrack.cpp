@@ -43,7 +43,7 @@ CachedTextTrack::CachedTextTrack(CachedResourceRequest&& request, PAL::SessionID
 void CachedTextTrack::doUpdateBuffer(SharedBuffer* data)
 {
     ASSERT(dataBufferingPolicy() == DataBufferingPolicy::BufferData);
-    m_data = data;
+    m_data = data ? data->makeContiguous() : RefPtr<ContiguousSharedBuffer>();
     setEncodedSize(data ? data->size() : 0);
 
     CachedResourceClientWalker<CachedResourceClient> walker(m_clients);

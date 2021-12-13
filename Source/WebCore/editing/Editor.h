@@ -57,9 +57,10 @@ namespace WebCore {
 
 class AlternativeTextController;
 class ArchiveResource;
-class DataTransfer;
 class CompositeEditCommand;
+class ContiguousSharedBuffer;
 class CustomUndoStep;
+class DataTransfer;
 class DeleteButtonController;
 class EditCommand;
 class EditCommandComposition;
@@ -538,7 +539,7 @@ public:
 #if PLATFORM(MAC)
     WEBCORE_EXPORT void readSelectionFromPasteboard(const String& pasteboardName);
     WEBCORE_EXPORT void replaceNodeFromPasteboard(Node*, const String& pasteboardName);
-    WEBCORE_EXPORT RefPtr<SharedBuffer> dataSelectionForPasteboard(const String& pasteboardName);
+    WEBCORE_EXPORT RefPtr<ContiguousSharedBuffer> dataSelectionForPasteboard(const String& pasteboardName);
 #endif
 
     bool canCopyExcludingStandaloneImages() const;
@@ -575,7 +576,7 @@ public:
 
     WEBCORE_EXPORT PromisedAttachmentInfo promisedAttachmentInfo(Element&);
 #if PLATFORM(COCOA)
-    void getPasteboardTypesAndDataForAttachment(Element&, Vector<String>& outTypes, Vector<RefPtr<SharedBuffer>>& outData);
+    void getPasteboardTypesAndDataForAttachment(Element&, Vector<String>& outTypes, Vector<RefPtr<ContiguousSharedBuffer>>& outData);
 #endif
 #endif
 
@@ -623,12 +624,12 @@ private:
     std::optional<SimpleRange> adjustedSelectionRange();
 
 #if PLATFORM(COCOA)
-    RefPtr<SharedBuffer> selectionInWebArchiveFormat();
+    RefPtr<ContiguousSharedBuffer> selectionInWebArchiveFormat();
     String selectionInHTMLFormat();
-    RefPtr<SharedBuffer> imageInWebArchiveFormat(Element&);
+    RefPtr<ContiguousSharedBuffer> imageInWebArchiveFormat(Element&);
     static String userVisibleString(const URL&);
-    static RefPtr<SharedBuffer> dataInRTFDFormat(NSAttributedString *);
-    static RefPtr<SharedBuffer> dataInRTFFormat(NSAttributedString *);
+    static RefPtr<ContiguousSharedBuffer> dataInRTFDFormat(NSAttributedString *);
+    static RefPtr<ContiguousSharedBuffer> dataInRTFFormat(NSAttributedString *);
 #endif
     void platformFontAttributesAtSelectionStart(FontAttributes&, const RenderStyle&) const;
 

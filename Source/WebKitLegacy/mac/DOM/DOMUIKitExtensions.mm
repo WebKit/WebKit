@@ -388,7 +388,7 @@ static WebCore::Node* firstNodeAfter(const WebCore::BoundaryPoint& point)
     auto* data = rawImageData ? cachedImage->resourceBuffer() : image->data();
     if (!data)
         return nil;
-    return data->createNSData().autorelease();
+    return data->makeContiguous()->createNSData().autorelease();
 }
 
 - (NSString *)mimeType

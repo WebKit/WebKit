@@ -159,7 +159,7 @@ bool Attachment::isEmpty() const
     return !m_fileWrapper && !m_fileWrapperGenerator;
 }
 
-RefPtr<WebCore::SharedBuffer> Attachment::createSerializedRepresentation() const
+RefPtr<WebCore::ContiguousSharedBuffer> Attachment::createSerializedRepresentation() const
 {
     auto fileWrapper = this->fileWrapper();
 
@@ -170,10 +170,10 @@ RefPtr<WebCore::SharedBuffer> Attachment::createSerializedRepresentation() const
     if (!serializedData)
         return nullptr;
 
-    return WebCore::SharedBuffer::create(serializedData);
+    return WebCore::ContiguousSharedBuffer::create(serializedData);
 }
 
-void Attachment::updateFromSerializedRepresentation(Ref<WebCore::SharedBuffer>&& serializedRepresentation, const WTF::String& contentType)
+void Attachment::updateFromSerializedRepresentation(Ref<WebCore::ContiguousSharedBuffer>&& serializedRepresentation, const WTF::String& contentType)
 {
     if (!m_webPage)
         return;

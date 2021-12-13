@@ -60,7 +60,7 @@ static std::optional<Vector<Ref<SharedBuffer>>> extractKeyIDsKeyids(const Shared
     // https://w3c.github.io/encrypted-media/format-registry/initdata/keyids.html#format
     if (buffer.size() > std::numeric_limits<unsigned>::max())
         return std::nullopt;
-    String json { buffer.data(), static_cast<unsigned>(buffer.size()) };
+    String json { buffer.makeContiguous()->data(), static_cast<unsigned>(buffer.size()) };
 
     auto value = JSON::Value::parseJSON(json);
     if (!value)
@@ -104,7 +104,7 @@ static RefPtr<SharedBuffer> sanitizeKeyids(const SharedBuffer& buffer)
     auto object = JSON::Object::create();
     auto kidsArray = JSON::Array::create();
     for (auto& buffer : keyIDBuffer.value())
-        kidsArray->pushString(base64URLEncodeToString(buffer->data(), buffer->size()));
+        kidsArray->pushString(base64URLEncodeToString(buffer->makeContiguous()->data(), buffer->size()));
     object->setArray("kids", WTFMove(kidsArray));
 
     CString jsonData = object->toJSONString().utf8();

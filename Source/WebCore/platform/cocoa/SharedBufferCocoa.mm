@@ -35,11 +35,11 @@
 #import <wtf/cocoa/VectorCocoa.h>
 
 @interface WebCoreSharedBufferData : NSData
-- (instancetype)initWithDataSegment:(const WebCore::SharedBuffer::DataSegment&)dataSegment position:(NSUInteger)position size:(NSUInteger)size;
+- (instancetype)initWithDataSegment:(const WebCore::DataSegment&)dataSegment position:(NSUInteger)position size:(NSUInteger)size;
 @end
 
 @implementation WebCoreSharedBufferData {
-    RefPtr<const WebCore::SharedBuffer::DataSegment> _dataSegment;
+    RefPtr<const WebCore::DataSegment> _dataSegment;
     NSUInteger _position;
     NSUInteger _size;
 }
@@ -61,7 +61,7 @@
     [super dealloc];
 }
 
-- (instancetype)initWithDataSegment:(const WebCore::SharedBuffer::DataSegment&)dataSegment position:(NSUInteger)position size:(NSUInteger)size
+- (instancetype)initWithDataSegment:(const WebCore::DataSegment&)dataSegment position:(NSUInteger)position size:(NSUInteger)size
 {
     if (!(self = [super init]))
         return nil;
@@ -95,20 +95,19 @@ Ref<SharedBuffer> SharedBuffer::create(NSData *data)
 
 void SharedBuffer::append(NSData *data)
 {
+    ASSERT(!m_contiguous);
     return append(bridge_cast(data));
 }
 
-RetainPtr<NSData> SharedBuffer::createNSData() const
+RetainPtr<NSData> ContiguousSharedBuffer::createNSData() const
 {
     return bridge_cast(createCFData());
 }
 
-RetainPtr<CFDataRef> SharedBuffer::createCFData() const
+RetainPtr<CFDataRef> ContiguousSharedBuffer::createCFData() const
 {
-    combineIntoOneSegment();
     if (!m_segments.size())
         return adoptCF(CFDataCreate(nullptr, nullptr, 0));
-    ASSERT(m_segments.size() == 1);
     return bridge_cast(m_segments[0].segment->createNSData());
 }
 
@@ -119,7 +118,7 @@ RetainPtr<NSArray> SharedBuffer::createNSDataArray() const
     });
 }
 
-RetainPtr<NSData> SharedBuffer::DataSegment::createNSData() const
+RetainPtr<NSData> DataSegment::createNSData() const
 {
     return adoptNS([[WebCoreSharedBufferData alloc] initWithDataSegment:*this position:0 size:size()]);
 }

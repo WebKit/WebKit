@@ -71,12 +71,12 @@ void Editor::platformFontAttributesAtSelectionStart(FontAttributes& attributes, 
         attributes.font = (__bridge id)ctFont;
 }
 
-static RefPtr<SharedBuffer> archivedDataForAttributedString(NSAttributedString *attributedString)
+static RefPtr<ContiguousSharedBuffer> archivedDataForAttributedString(NSAttributedString *attributedString)
 {
     if (!attributedString.length)
         return nullptr;
 
-    return SharedBuffer::create([NSKeyedArchiver archivedDataWithRootObject:attributedString requiringSecureCoding:YES error:nullptr]);
+    return ContiguousSharedBuffer::create([NSKeyedArchiver archivedDataWithRootObject:attributedString requiringSecureCoding:YES error:nullptr]);
 }
 
 String Editor::selectionInHTMLFormat()
@@ -87,7 +87,7 @@ String Editor::selectionInHTMLFormat()
 
 #if ENABLE(ATTACHMENT_ELEMENT)
 
-void Editor::getPasteboardTypesAndDataForAttachment(Element& element, Vector<String>& outTypes, Vector<RefPtr<SharedBuffer>>& outData)
+void Editor::getPasteboardTypesAndDataForAttachment(Element& element, Vector<String>& outTypes, Vector<RefPtr<ContiguousSharedBuffer>>& outData)
 {
     auto elementRange = makeRangeSelectingNode(element);
     client()->getClientPasteboardData(elementRange, outTypes, outData);
@@ -99,7 +99,7 @@ void Editor::getPasteboardTypesAndDataForAttachment(Element& element, Vector<Str
         if (auto archive = LegacyWebArchive::create(*elementRange)) {
             if (auto data = archive->rawDataRepresentation()) {
                 outTypes.append(WebArchivePboardType);
-                outData.append(SharedBuffer::create(data.get()));
+                outData.append(ContiguousSharedBuffer::create(data.get()));
             }
         }
     }
@@ -151,12 +151,12 @@ void Editor::writeSelection(PasteboardWriterData& pasteboardWriterData)
     pasteboardWriterData.setWebContent(WTFMove(webContent));
 }
 
-RefPtr<SharedBuffer> Editor::selectionInWebArchiveFormat()
+RefPtr<ContiguousSharedBuffer> Editor::selectionInWebArchiveFormat()
 {
     auto archive = LegacyWebArchive::createFromSelection(m_document.frame());
     if (!archive)
         return nullptr;
-    return SharedBuffer::create(archive->rawDataRepresentation().get());
+    return ContiguousSharedBuffer::create(archive->rawDataRepresentation().get());
 }
 
 // FIXME: Makes no sense that selectedTextForDataTransfer always includes alt text, but stringSelectionForPasteboard does not.
@@ -201,27 +201,27 @@ String Editor::userVisibleString(const URL& url)
     return WTF::userVisibleString(url);
 }
 
-RefPtr<SharedBuffer> Editor::dataInRTFDFormat(NSAttributedString *string)
+RefPtr<ContiguousSharedBuffer> Editor::dataInRTFDFormat(NSAttributedString *string)
 {
     NSUInteger length = string.length;
     if (!length)
         return nullptr;
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS
-    return SharedBuffer::create([string RTFDFromRange:NSMakeRange(0, length) documentAttributes:@{ }]);
+    return ContiguousSharedBuffer::create([string RTFDFromRange:NSMakeRange(0, length) documentAttributes:@{ }]);
     END_BLOCK_OBJC_EXCEPTIONS
 
     return nullptr;
 }
 
-RefPtr<SharedBuffer> Editor::dataInRTFFormat(NSAttributedString *string)
+RefPtr<ContiguousSharedBuffer> Editor::dataInRTFFormat(NSAttributedString *string)
 {
     NSUInteger length = string.length;
     if (!length)
         return nullptr;
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS
-    return SharedBuffer::create([string RTFFromRange:NSMakeRange(0, length) documentAttributes:@{ }]);
+    return ContiguousSharedBuffer::create([string RTFFromRange:NSMakeRange(0, length) documentAttributes:@{ }]);
     END_BLOCK_OBJC_EXCEPTIONS
 
     return nullptr;

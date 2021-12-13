@@ -188,7 +188,7 @@ private:
     void selectionDidChange() override;
     bool interpretKeyEvent(const NativeWebKeyboardEvent&, bool isCharEvent) override;
     void positionInformationDidChange(const InteractionInformationAtPosition&) override;
-    void saveImageToLibrary(Ref<WebCore::SharedBuffer>&&) override;
+    void saveImageToLibrary(Ref<WebCore::ContiguousSharedBuffer>&&) override;
     void showPlaybackTargetPicker(bool hasVideo, const WebCore::IntRect& elementRect, WebCore::RouteSharingPolicy, const String&) override;
     void showDataDetectorsUIForPositionInformation(const InteractionInformationAtPosition&) override;
 

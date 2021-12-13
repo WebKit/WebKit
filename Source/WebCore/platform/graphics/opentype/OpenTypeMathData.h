@@ -40,7 +40,7 @@
 namespace WebCore {
 
 class FontPlatformData;
-class SharedBuffer;
+class ContiguousSharedBuffer;
 class Font;
 
 class OpenTypeMathData : public RefCounted<OpenTypeMathData> {
@@ -133,7 +133,7 @@ private:
     explicit OpenTypeMathData(const FontPlatformData&);
 
 #if ENABLE(OPENTYPE_MATH)
-    RefPtr<SharedBuffer> m_mathBuffer;
+    RefPtr<ContiguousSharedBuffer> m_mathBuffer;
 #elif USE(HARFBUZZ)
     HbUniquePtr<hb_font_t> m_mathFont;
 #endif

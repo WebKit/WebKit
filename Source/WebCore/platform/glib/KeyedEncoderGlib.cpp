@@ -132,12 +132,12 @@ void KeyedEncoderGlib::endArray()
     m_arrayStack.removeLast();
 }
 
-RefPtr<SharedBuffer> KeyedEncoderGlib::finishEncoding()
+RefPtr<ContiguousSharedBuffer> KeyedEncoderGlib::finishEncoding()
 {
     g_assert(m_variantBuilderStack.last() == &m_variantBuilder);
     GRefPtr<GVariant> variant = g_variant_builder_end(&m_variantBuilder);
     GRefPtr<GBytes> data = g_variant_get_data_as_bytes(variant.get());
-    return SharedBuffer::create(static_cast<const unsigned char*>(g_bytes_get_data(data.get(), nullptr)), static_cast<unsigned>(g_bytes_get_size(data.get())));
+    return ContiguousSharedBuffer::create(static_cast<const unsigned char*>(g_bytes_get_data(data.get(), nullptr)), static_cast<unsigned>(g_bytes_get_size(data.get())));
 }
 
 } // namespace WebCore

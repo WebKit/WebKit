@@ -68,7 +68,7 @@ namespace WebCore {
 
         void setOrientation(ImageOrientation orientation) { m_orientation = orientation; }
 #if USE(LCMS)
-        void setICCProfile(RefPtr<SharedBuffer>&&);
+        void setICCProfile(RefPtr<ContiguousSharedBuffer>&&);
 #endif
 
     private:

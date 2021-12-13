@@ -475,7 +475,7 @@ static JSC::JSPromise* handleResponseOnStreamingAction(JSC::JSGlobalObject* glob
         // FIXME: Support FormData loading.
         // https://bugs.webkit.org/show_bug.cgi?id=221248
         compiler->fail(globalObject, createDOMException(*globalObject, Exception { NotSupportedError, "Not implemented"_s  }));
-    }, [&](Ref<SharedBuffer>& buffer) {
+    }, [&](Ref<ContiguousSharedBuffer>& buffer) {
         compiler->addBytes(buffer->data(), buffer->size());
         compiler->finalize(globalObject);
     }, [&](std::nullptr_t&) {

@@ -815,7 +815,7 @@ bool ApplicationCacheStorage::store(ApplicationCacheResource* resource, unsigned
         dataStatement->bindText(2, path);
     } else {
         if (resource->data().size())
-            dataStatement->bindBlob(1, resource->data());
+            dataStatement->bindBlob(1, resource->data().makeContiguous().get());
     }
     
     if (!dataStatement->executeCommand()) {
@@ -1113,7 +1113,7 @@ RefPtr<ApplicationCache> ApplicationCacheStorage::loadCache(unsigned storageID)
         int httpStatusCode = cacheStatement->columnInt(1);
 
         unsigned type = static_cast<unsigned>(cacheStatement->columnInt64(2));
-        auto data = SharedBuffer::create(cacheStatement->columnBlob(6));
+        auto data = ContiguousSharedBuffer::create(cacheStatement->columnBlob(6));
         
         String path = cacheStatement->columnText(7);
         long long size = 0;

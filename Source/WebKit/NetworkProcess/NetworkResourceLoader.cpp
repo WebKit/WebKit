@@ -94,7 +94,7 @@ static void sendReplyToSynchronousRequest(NetworkResourceLoader::SynchronousLoad
 
     Vector<uint8_t> responseBuffer;
     if (buffer && buffer->size())
-        responseBuffer.append(buffer->data(), buffer->size());
+        responseBuffer.append(buffer->makeContiguous()->data(), buffer->size());
 
     data.response.setDeprecatedNetworkLoadMetrics(Box<NetworkLoadMetrics>::create(metrics));
 

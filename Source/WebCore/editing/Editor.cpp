@@ -4159,7 +4159,7 @@ PromisedAttachmentInfo Editor::promisedAttachmentInfo(Element& element)
         return { };
 
     Vector<String> additionalTypes;
-    Vector<RefPtr<SharedBuffer>> additionalData;
+    Vector<RefPtr<ContiguousSharedBuffer>> additionalData;
 #if PLATFORM(COCOA)
     getPasteboardTypesAndDataForAttachment(element, additionalTypes, additionalData);
 #endif

@@ -31,7 +31,7 @@ using namespace WebCore;
 
 // MemoryStream ---------------------------------------------------------------
 
-MemoryStream::MemoryStream(RefPtr<SharedBuffer>&& buffer)
+MemoryStream::MemoryStream(RefPtr<ContiguousSharedBuffer>&& buffer)
     : m_buffer(WTFMove(buffer))
 {
     gClassCount++;
@@ -44,7 +44,7 @@ MemoryStream::~MemoryStream()
     gClassNameCount().remove("MemoryStream");
 }
 
-COMPtr<MemoryStream> MemoryStream::createInstance(RefPtr<SharedBuffer>&& buffer)
+COMPtr<MemoryStream> MemoryStream::createInstance(RefPtr<ContiguousSharedBuffer>&& buffer)
 {
     return new MemoryStream(WTFMove(buffer));
 }

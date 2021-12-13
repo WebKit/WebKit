@@ -98,8 +98,13 @@ unsigned CachedScript::scriptHash()
 
 void CachedScript::finishLoading(SharedBuffer* data, const NetworkLoadMetrics& metrics)
 {
-    m_data = data;
-    setEncodedSize(data ? data->size() : 0);
+    if (data) {
+        m_data = data->makeContiguous();
+        setEncodedSize(data->size());
+    } else {
+        m_data = nullptr;
+        setEncodedSize(0);
+    }
     CachedResource::finishLoading(data, metrics);
 }
 

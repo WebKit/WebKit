@@ -214,9 +214,8 @@ void PlatformResourceMediaLoader::loadFinished()
 void PlatformResourceMediaLoader::dataReceived(PlatformMediaResource&, Ref<SharedBuffer>&& buffer)
 {
     if (!m_buffer)
-        m_buffer = WTFMove(buffer);
-    else
-        m_buffer->append(WTFMove(buffer));
+        m_buffer = SharedBuffer::create();
+    m_buffer->append(buffer.get());
     m_parent.newDataStoredInSharedBuffer(*m_buffer);
 }
 
@@ -228,7 +227,7 @@ public:
 private:
     WebCoreAVFResourceLoader& m_parent;
     ResourceResponse m_response;
-    RefPtr<SharedBuffer> m_buffer;
+    RefPtr<ContiguousSharedBuffer> m_buffer;
 };
 
 DataURLResourceMediaLoader::DataURLResourceMediaLoader(WebCoreAVFResourceLoader& parent, ResourceRequest&& request)
@@ -238,7 +237,7 @@ DataURLResourceMediaLoader::DataURLResourceMediaLoader(WebCoreAVFResourceLoader&
 
     if (auto result = DataURLDecoder::decode(request.url(), DataURLDecoder::Mode::ForgivingBase64)) {
         m_response = ResourceResponse::dataURLResponse(request.url(), *result);
-        m_buffer = SharedBuffer::create(WTFMove(result->data));
+        m_buffer = ContiguousSharedBuffer::create(WTFMove(result->data));
     }
 
     callOnMainThread([this, weakThis = WeakPtr { *this }] {

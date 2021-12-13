@@ -163,21 +163,21 @@ static NSString * const WebResourceResponseKey =          @"WebResourceResponse"
 - (void)encodeWithCoder:(NSCoder *)encoder
 {
     auto* resource = _private->coreResource.get();
-    
-    NSData *data = nil;
+
+    RetainPtr<NSData> data;
     NSURL *url = nil;
     NSString *mimeType = nil, *textEncoding = nil, *frameName = nil;
     NSURLResponse *response = nil;
-    
+
     if (resource) {
-        data = resource->data().createNSData().get();
+        data = resource->data().makeContiguous()->createNSData();
         url = resource->url();
         mimeType = resource->mimeType();
         textEncoding = resource->textEncoding();
         frameName = resource->frameName();
         response = resource->response().nsURLResponse();
     }
-    [encoder encodeObject:data forKey:WebResourceDataKey];
+    [encoder encodeObject:data.get() forKey:WebResourceDataKey];
     [encoder encodeObject:url forKey:WebResourceURLKey];
     [encoder encodeObject:mimeType forKey:WebResourceMIMETypeKey];
     [encoder encodeObject:textEncoding forKey:WebResourceTextEncodingNameKey];
@@ -202,7 +202,7 @@ static NSString * const WebResourceResponseKey =          @"WebResourceResponse"
 
     if (!_private->coreResource)
         return nil;
-    return _private->coreResource->data().createNSData().autorelease();
+    return _private->coreResource->data().makeContiguous()->createNSData().autorelease();
 }
 
 - (NSURL *)URL
@@ -368,7 +368,7 @@ static NSString * const WebResourceResponseKey =          @"WebResourceResponse"
         encoding = PAL::WindowsLatin1Encoding();
     
     SharedBuffer* coreData = _private->coreResource ? &_private->coreResource->data() : nullptr;
-    return encoding.decode(reinterpret_cast<const char*>(coreData ? coreData->data() : nullptr), coreData ? coreData->size() : 0);
+    return encoding.decode(reinterpret_cast<const char*>(coreData ? coreData->makeContiguous()->data() : nullptr), coreData ? coreData->size() : 0);
 }
 
 @end

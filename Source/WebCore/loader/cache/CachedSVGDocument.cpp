@@ -57,7 +57,7 @@ void CachedSVGDocument::finishLoading(SharedBuffer* data, const NetworkLoadMetri
     if (data) {
         // We don't need to create a new frame because the new document belongs to the parent UseElement.
         m_document = SVGDocument::create(nullptr, m_settings, response().url());
-        m_document->setContent(m_decoder->decodeAndFlush(data->data(), data->size()));
+        m_document->setContent(m_decoder->decodeAndFlush(data->makeContiguous()->data(), data->size()));
     }
     CachedResource::finishLoading(data, metrics);
 }

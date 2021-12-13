@@ -93,7 +93,7 @@ String Pasteboard::readString(size_t index, const String& type)
     return { };
 }
 
-RefPtr<WebCore::SharedBuffer> Pasteboard::readBuffer(std::optional<size_t> index, const String& type)
+RefPtr<WebCore::ContiguousSharedBuffer> Pasteboard::readBuffer(std::optional<size_t> index, const String& type)
 {
     if (auto* strategy = platformStrategies()->pasteboardStrategy())
         return strategy->readBufferFromPasteboard(index, type, name(), context());

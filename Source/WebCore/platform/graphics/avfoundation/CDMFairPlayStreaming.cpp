@@ -91,7 +91,7 @@ static Vector<Ref<SharedBuffer>> extractSinfData(const SharedBuffer& buffer)
     // JSON of the format: "{ sinf: [ <base64-encoded-string> ] }"
     if (buffer.size() > std::numeric_limits<unsigned>::max())
         return { };
-    String json { buffer.data(), static_cast<unsigned>(buffer.size()) };
+    String json { buffer.makeContiguous()->data(), static_cast<unsigned>(buffer.size()) };
 
     auto value = JSON::Value::parseJSON(json);
     if (!value)

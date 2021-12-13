@@ -595,7 +595,7 @@ void DocumentThreadableLoader::loadRequest(ResourceRequest&& request, SecurityCh
     loadTiming.markStartTime();
 
     // FIXME: ThreadableLoaderOptions.sniffContent is not supported for synchronous requests.
-    RefPtr<SharedBuffer> data;
+    RefPtr<ContiguousSharedBuffer> data;
     ResourceError error;
     ResourceResponse response;
     auto identifier = makeObjectIdentifier<ResourceLoader>(std::numeric_limits<uint64_t>::max());

@@ -54,7 +54,7 @@ public:
     bool stillNeedsLoad() const override { return !m_loadInitiated; }
 
     virtual bool ensureCustomFontData(const AtomString& remoteURI);
-    static std::unique_ptr<FontCustomPlatformData> createCustomFontData(SharedBuffer&, const String& itemInCollection, bool& wrapping);
+    static std::unique_ptr<FontCustomPlatformData> createCustomFontData(ContiguousSharedBuffer&, const String& itemInCollection, bool& wrapping);
     static FontPlatformData platformDataFromCustomData(FontCustomPlatformData&, const FontDescription&, bool bold, bool italic, const FontCreationContext&);
 
     virtual RefPtr<Font> createFont(const FontDescription&, const AtomString& remoteURI, bool syntheticBold, bool syntheticItalic, const FontCreationContext&);
@@ -62,7 +62,7 @@ public:
 protected:
     FontPlatformData platformDataFromCustomData(const FontDescription&, bool bold, bool italic, const FontCreationContext&);
 
-    bool ensureCustomFontData(SharedBuffer* data);
+    bool ensureCustomFontData(ContiguousSharedBuffer* data);
 
 private:
     String calculateItemInCollection() const;

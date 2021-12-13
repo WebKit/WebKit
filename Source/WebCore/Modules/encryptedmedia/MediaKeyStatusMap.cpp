@@ -61,7 +61,7 @@ static bool keyIdsMatch(const SharedBuffer& a, const BufferSource& b)
     auto length = a.size();
     if (!length || length != b.length())
         return false;
-    return !std::memcmp(a.data(), b.data(), length);
+    return !std::memcmp(a.makeContiguous()->data(), b.data(), length);
 }
 
 bool MediaKeyStatusMap::has(const BufferSource& keyId)
@@ -103,7 +103,7 @@ std::optional<KeyValuePair<BufferSource::VariantType, MediaKeyStatus>> MediaKeyS
         return std::nullopt;
 
     auto& pair = statuses[m_index++];
-    auto buffer = ArrayBuffer::create(pair.first->data(), pair.first->size());
+    auto buffer = ArrayBuffer::create(pair.first->makeContiguous()->data(), pair.first->size());
     return KeyValuePair<BufferSource::VariantType, MediaKeyStatus> { RefPtr<ArrayBuffer>(WTFMove(buffer)), pair.second };
 }
 

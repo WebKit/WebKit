@@ -98,7 +98,7 @@ bool FontPlatformData::platformIsEqual(const FontPlatformData& other) const
         && m_useGDI == other.m_useGDI;
 }
 
-RefPtr<SharedBuffer> FontPlatformData::openTypeTable(uint32_t table) const
+RefPtr<ContiguousSharedBuffer> FontPlatformData::openTypeTable(uint32_t table) const
 {
     return platformOpenTypeTable(table);
 }

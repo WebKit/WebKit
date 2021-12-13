@@ -1232,7 +1232,7 @@ void NavigationState::NavigationClient::didFinishLoadForQuickLookDocumentInMainF
     if (!navigationDelegate)
         return;
 
-    [static_cast<id <WKNavigationDelegatePrivate>>(navigationDelegate.get()) _webView:m_navigationState->m_webView didFinishLoadForQuickLookDocumentInMainFrame:buffer.createNSData().get()];
+    [static_cast<id <WKNavigationDelegatePrivate>>(navigationDelegate.get()) _webView:m_navigationState->m_webView didFinishLoadForQuickLookDocumentInMainFrame:buffer.makeContiguous()->createNSData().get()];
 }
 #endif
 

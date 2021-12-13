@@ -249,7 +249,7 @@ bool FontPlatformData::hasCompatibleCharmap() const
         && FT_Select_Charmap(freeTypeFace, ft_encoding_apple_roman));
 }
 
-RefPtr<SharedBuffer> FontPlatformData::openTypeTable(uint32_t table) const
+RefPtr<ContiguousSharedBuffer> FontPlatformData::openTypeTable(uint32_t table) const
 {
     CairoFtFaceLocker cairoFtFaceLocker(m_scaledFont.get());
     FT_Face freeTypeFace = cairoFtFaceLocker.ftFace();
@@ -268,7 +268,7 @@ RefPtr<SharedBuffer> FontPlatformData::openTypeTable(uint32_t table) const
     if (error || tableSize != expectedTableSize)
         return nullptr;
 
-    return SharedBuffer::create(WTFMove(data));
+    return ContiguousSharedBuffer::create(WTFMove(data));
 }
 
 #if USE(HARFBUZZ) && !ENABLE(OPENTYPE_MATH)

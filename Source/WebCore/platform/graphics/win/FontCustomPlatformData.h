@@ -36,12 +36,13 @@ typedef struct CGFont* CGFontRef;
 
 namespace WebCore {
 
+class ContiguousSharedBuffer;
 class FontCreationContext;
 class FontDescription;
 class FontMemoryResource;
-class SharedBuffer;
 struct FontSelectionSpecifiedCapabilities;
 struct FontVariantSettings;
+class SharedBuffer;
 
 template <typename T> class FontTaggedSettings;
 typedef FontTaggedSettings<int> FontFeatureSettings;
@@ -64,7 +65,7 @@ public:
     FontPlatformData::CreationData creationData;
 };
 
-std::unique_ptr<FontCustomPlatformData> createFontCustomPlatformData(SharedBuffer&, const String&);
+std::unique_ptr<FontCustomPlatformData> createFontCustomPlatformData(ContiguousSharedBuffer&, const String&);
 
 }
 

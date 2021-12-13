@@ -175,7 +175,7 @@ HRESULT WebDataSource::data(_COM_Outptr_opt_ IStream** stream)
     if (!m_loader)
         return E_UNEXPECTED;
 
-    return MemoryStream::createInstance(m_loader->mainResourceData()).copyRefTo(stream);
+    return MemoryStream::createInstance(m_loader->mainResourceData()->makeContiguous()).copyRefTo(stream);
 }
 
 HRESULT WebDataSource::representation(_COM_Outptr_opt_ IWebDocumentRepresentation** rep)

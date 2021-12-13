@@ -1189,7 +1189,7 @@ void WebFrameLoaderClient::finishedLoading(DocumentLoader* loader)
                 return;
 
             RefPtr<SharedBuffer> mainResourceData = loader->mainResourceData();
-            IPC::DataReference dataReference(mainResourceData ? mainResourceData->data() : nullptr, mainResourceData ? mainResourceData->size() : 0);
+            IPC::DataReference dataReference(mainResourceData ? mainResourceData->makeContiguous()->data() : nullptr, mainResourceData ? mainResourceData->size() : 0);
             webPage->send(Messages::WebPageProxy::DidFinishLoadingDataForCustomContentProvider(loader->response().suggestedFilename(), dataReference));
         }
 
