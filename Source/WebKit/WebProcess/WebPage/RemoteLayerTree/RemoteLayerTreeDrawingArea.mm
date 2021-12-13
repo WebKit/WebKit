@@ -293,7 +293,7 @@ void RemoteLayerTreeDrawingArea::addCommitHandlers()
             if (Frame* coreFrame = retainedPage->mainFrame())
                 corePage->inspectorController().willComposite(*coreFrame);
         }
-    } forPhase:kCATransactionPhasePreCommit];
+    } forPhase:kCATransactionPhasePreLayout];
     
     [CATransaction addCommitHandler:[retainedPage = makeRefPtr(&m_webPage)] {
         if (Page* corePage = retainedPage->corePage()) {
