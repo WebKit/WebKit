@@ -142,7 +142,7 @@ bool WebEditorClient::shouldApplyStyle(const StyleProperties& style, const std::
 
 #if ENABLE(ATTACHMENT_ELEMENT)
 
-void WebEditorClient::registerAttachmentIdentifier(const String& identifier, const String& contentType, const String& preferredFileName, Ref<SharedBuffer>&& data)
+void WebEditorClient::registerAttachmentIdentifier(const String& identifier, const String& contentType, const String& preferredFileName, Ref<FragmentedSharedBuffer>&& data)
 {
     m_page->send(Messages::WebPageProxy::RegisterAttachmentIdentifierFromData(identifier, contentType, preferredFileName, data.get()));
 }
@@ -265,7 +265,7 @@ void WebEditorClient::willWriteSelectionToPasteboard(const std::optional<SimpleR
     m_page->injectedBundleEditorClient().willWriteToPasteboard(*m_page, range);
 }
 
-void WebEditorClient::getClientPasteboardData(const std::optional<SimpleRange>& range, Vector<String>& pasteboardTypes, Vector<RefPtr<ContiguousSharedBuffer>>& pasteboardData)
+void WebEditorClient::getClientPasteboardData(const std::optional<SimpleRange>& range, Vector<String>& pasteboardTypes, Vector<RefPtr<SharedBuffer>>& pasteboardData)
 {
     m_page->injectedBundleEditorClient().getPasteboardDataForRange(*m_page, range, pasteboardTypes, pasteboardData);
 }

@@ -33,12 +33,12 @@ namespace WebCore {
 
 #if ENABLE(APP_HIGHLIGHTS)
 
-class SharedBuffer;
+class FragmentedSharedBuffer;
 
 class AppHighlightRangeData {
 WTF_MAKE_FAST_ALLOCATED;
 public:
-    WEBCORE_EXPORT static std::optional<AppHighlightRangeData> create(const SharedBuffer&);
+    WEBCORE_EXPORT static std::optional<AppHighlightRangeData> create(const FragmentedSharedBuffer&);
     struct NodePathComponent {
         String identifier;
         String nodeName;
@@ -111,7 +111,7 @@ public:
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static std::optional<AppHighlightRangeData> decode(Decoder&);
 
-    Ref<SharedBuffer> toSharedBuffer() const;
+    Ref<FragmentedSharedBuffer> toSharedBuffer() const;
 
 private:
     String m_identifier;

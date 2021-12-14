@@ -61,7 +61,7 @@ RemoteCDMInstanceProxy::~RemoteCDMInstanceProxy()
     m_instance->clearClient();
 }
 
-void RemoteCDMInstanceProxy::unrequestedInitializationDataReceived(const String& type, Ref<SharedBuffer>&& initData)
+void RemoteCDMInstanceProxy::unrequestedInitializationDataReceived(const String& type, Ref<FragmentedSharedBuffer>&& initData)
 {
     if (!m_cdm)
         return;

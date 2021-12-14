@@ -1318,7 +1318,7 @@ void SourceBufferPrivate::didReceiveSample(Ref<MediaSample>&& originalSample)
     updateHighestPresentationTimestamp();
 }
 
-void SourceBufferPrivate::append(Ref<SharedBuffer>&& buffer)
+void SourceBufferPrivate::append(Ref<FragmentedSharedBuffer>&& buffer)
 {
     append(buffer->extractData());
 }

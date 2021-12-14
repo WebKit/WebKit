@@ -47,7 +47,7 @@ struct ContentRuleListResults;
 class ResourceError;
 class ResourceRequest;
 class ResourceResponse;
-class SharedBuffer;
+class FragmentedSharedBuffer;
 struct SecurityOriginData;
 }
 
@@ -119,7 +119,7 @@ public:
 
 #if USE(QUICK_LOOK)
     virtual void didStartLoadForQuickLookDocumentInMainFrame(const WTF::String& fileName, const WTF::String& uti) { }
-    virtual void didFinishLoadForQuickLookDocumentInMainFrame(const WebCore::SharedBuffer&) { }
+    virtual void didFinishLoadForQuickLookDocumentInMainFrame(const WebCore::FragmentedSharedBuffer&) { }
 #endif
 
     virtual void decidePolicyForNavigationAction(WebKit::WebPageProxy&, Ref<NavigationAction>&&, Ref<WebKit::WebFramePolicyListenerProxy>&& listener, Object*)

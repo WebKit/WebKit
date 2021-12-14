@@ -356,7 +356,7 @@ String Pasteboard::readStringInCustomData(const String& type)
 
 struct PasteboardFileCounter final : PasteboardFileReader {
     void readFilename(const String&) final { ++count; }
-    void readBuffer(const String&, const String&, Ref<ContiguousSharedBuffer>&&) final { ++count; }
+    void readBuffer(const String&, const String&, Ref<SharedBuffer>&&) final { ++count; }
 
     unsigned count { 0 };
 };
@@ -966,7 +966,7 @@ static HGLOBAL createGlobalImageFileDescriptor(const String& url, const String& 
     return memObj;
 }
 
-static HGLOBAL createGlobalImageFileContent(SharedBuffer* data)
+static HGLOBAL createGlobalImageFileContent(FragmentedSharedBuffer* data)
 {
     HGLOBAL memObj = GlobalAlloc(GPTR, data->size());
     if (!memObj) 
@@ -986,7 +986,7 @@ static HGLOBAL createGlobalImageFileContent(SharedBuffer* data)
     return memObj;
 }
 
-static HGLOBAL createGlobalHDropContent(const URL& url, String& fileName, SharedBuffer* data)
+static HGLOBAL createGlobalHDropContent(const URL& url, String& fileName, FragmentedSharedBuffer* data)
 {
     if (fileName.isEmpty() || !data)
         return 0;
@@ -1063,7 +1063,7 @@ void Pasteboard::writeImageToDataObject(Element& element, const URL& url)
     if (!cachedImage || !cachedImage->imageForRenderer(element.renderer()) || !cachedImage->isLoaded())
         return;
 
-    SharedBuffer* imageBuffer = cachedImage->imageForRenderer(element.renderer())->data();
+    FragmentedSharedBuffer* imageBuffer = cachedImage->imageForRenderer(element.renderer())->data();
     if (!imageBuffer || !imageBuffer->size())
         return;
 

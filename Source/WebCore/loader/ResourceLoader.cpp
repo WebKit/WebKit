@@ -188,7 +188,7 @@ void ResourceLoader::init(ResourceRequest&& clientRequest, CompletionHandler<voi
     });
 }
 
-void ResourceLoader::deliverResponseAndData(const ResourceResponse& response, RefPtr<SharedBuffer>&& buffer)
+void ResourceLoader::deliverResponseAndData(const ResourceResponse& response, RefPtr<FragmentedSharedBuffer>&& buffer)
 {
     didReceiveResponse(response, [this, protectedThis = Ref { *this }, buffer = WTFMove(buffer)]() mutable {
         if (reachedTerminalState())
@@ -328,7 +328,7 @@ void ResourceLoader::willSwitchToSubstituteResource()
         m_handle->cancel();
 }
 
-void ResourceLoader::addDataOrBuffer(const uint8_t* data, unsigned length, SharedBuffer* buffer, DataPayloadType dataPayloadType)
+void ResourceLoader::addDataOrBuffer(const uint8_t* data, unsigned length, FragmentedSharedBuffer* buffer, DataPayloadType dataPayloadType)
 {
     if (m_options.dataBufferingPolicy == DataBufferingPolicy::DoNotBufferData)
         return;
@@ -342,7 +342,7 @@ void ResourceLoader::addDataOrBuffer(const uint8_t* data, unsigned length, Share
         m_resourceData.append(data, length);
 }
 
-const SharedBuffer* ResourceLoader::resourceData() const
+const FragmentedSharedBuffer* ResourceLoader::resourceData() const
 {
     return m_resourceData.get().get();
 }
@@ -550,14 +550,14 @@ void ResourceLoader::didReceiveData(const uint8_t* data, unsigned length, long l
     didReceiveDataOrBuffer(data, length, nullptr, encodedDataLength, dataPayloadType);
 }
 
-void ResourceLoader::didReceiveBuffer(Ref<SharedBuffer>&& buffer, long long encodedDataLength, DataPayloadType dataPayloadType)
+void ResourceLoader::didReceiveBuffer(Ref<FragmentedSharedBuffer>&& buffer, long long encodedDataLength, DataPayloadType dataPayloadType)
 {
     didReceiveDataOrBuffer(nullptr, 0, WTFMove(buffer), encodedDataLength, dataPayloadType);
 }
 
-void ResourceLoader::didReceiveDataOrBuffer(const uint8_t* data, unsigned length, RefPtr<SharedBuffer>&& buffer, long long encodedDataLength, DataPayloadType dataPayloadType)
+void ResourceLoader::didReceiveDataOrBuffer(const uint8_t* data, unsigned length, RefPtr<FragmentedSharedBuffer>&& buffer, long long encodedDataLength, DataPayloadType dataPayloadType)
 {
-    // This method should only get data+length *OR* a SharedBuffer.
+    // This method should only get data+length *OR* a FragmentedSharedBuffer.
     ASSERT(!buffer || (!data && !length));
 
     // Protect this in this delegate method since the additional processing can do
@@ -734,7 +734,7 @@ void ResourceLoader::didReceiveData(ResourceHandle*, const uint8_t* data, unsign
     didReceiveData(data, length, encodedDataLength, DataPayloadBytes);
 }
 
-void ResourceLoader::didReceiveBuffer(ResourceHandle*, Ref<SharedBuffer>&& buffer, int encodedDataLength)
+void ResourceLoader::didReceiveBuffer(ResourceHandle*, Ref<FragmentedSharedBuffer>&& buffer, int encodedDataLength)
 {
     didReceiveBuffer(WTFMove(buffer), encodedDataLength, DataPayloadBytes);
 }

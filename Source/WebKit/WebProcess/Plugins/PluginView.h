@@ -116,7 +116,7 @@ public:
 
     bool shouldAllowScripting();
 
-    RefPtr<WebCore::SharedBuffer> liveResourceData() const;
+    RefPtr<WebCore::FragmentedSharedBuffer> liveResourceData() const;
     bool performDictionaryLookupAtLocation(const WebCore::FloatPoint&);
     String getSelectionForWordAtPoint(const WebCore::FloatPoint&) const;
     bool existingSelectionContainsPoint(const WebCore::FloatPoint&) const;

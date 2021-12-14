@@ -36,7 +36,7 @@ typedef struct _GtkClipboard GtkClipboard;
 
 namespace WebCore {
 class SelectionData;
-class SharedBuffer;
+class FragmentedSharedBuffer;
 }
 
 namespace WebKit {
@@ -55,7 +55,7 @@ public:
     void formats(CompletionHandler<void(Vector<String>&&)>&&);
     void readText(CompletionHandler<void(String&&)>&&);
     void readFilePaths(CompletionHandler<void(Vector<String>&&)>&&);
-    void readBuffer(const char*, CompletionHandler<void(Ref<WebCore::SharedBuffer>&&)>&&);
+    void readBuffer(const char*, CompletionHandler<void(Ref<WebCore::FragmentedSharedBuffer>&&)>&&);
     void write(WebCore::SelectionData&&);
     void clear();
 

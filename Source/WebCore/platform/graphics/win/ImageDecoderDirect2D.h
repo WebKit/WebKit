@@ -41,7 +41,7 @@ class ImageDecoderDirect2D final : public ImageDecoder {
 public:
     ImageDecoderDirect2D();
 
-    static Ref<ImageDecoderDirect2D> create(SharedBuffer&, AlphaOption, GammaAndColorProfileOption)
+    static Ref<ImageDecoderDirect2D> create(FragmentedSharedBuffer&, AlphaOption, GammaAndColorProfileOption)
     {
         return adoptRef(*new ImageDecoderDirect2D());
     }
@@ -72,7 +72,7 @@ public:
 
     PlatformImagePtr createFrameImageAtIndex(size_t, SubsamplingLevel = SubsamplingLevel::Default, const DecodingOptions& = DecodingOptions(DecodingMode::Synchronous)) final;
 
-    void setData(SharedBuffer&, bool allDataReceived) final;
+    void setData(FragmentedSharedBuffer&, bool allDataReceived) final;
     bool isAllDataReceived() const final { return m_isAllDataReceived; }
     void clearFrameBufferCache(size_t) final { }
 

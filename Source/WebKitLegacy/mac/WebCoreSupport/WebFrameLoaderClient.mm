@@ -2012,7 +2012,7 @@ RefPtr<WebCore::LegacyPreviewLoaderClient> WebFrameLoaderClient::createPreviewLo
         RetainPtr<NSString> m_filePath;
         RetainPtr<NSFileHandle> m_fileHandle;
 
-        void didReceiveBuffer(const WebCore::SharedBuffer& buffer) override
+        void didReceiveBuffer(const WebCore::FragmentedSharedBuffer& buffer) override
         {
             auto dataArray = buffer.createNSDataArray();
             for (NSData *data in dataArray.get())
@@ -2094,7 +2094,7 @@ void WebFrameLoaderClient::getLoadDecisionForIcons(const Vector<std::pair<WebCor
         }
 
         m_loadingIcon = true;
-        documentLoader->didGetLoadDecisionForIcon(true, icon->second, [this, weakThis = WeakPtr { *this }] (WebCore::SharedBuffer* buffer) {
+        documentLoader->didGetLoadDecisionForIcon(true, icon->second, [this, weakThis = WeakPtr { *this }] (WebCore::FragmentedSharedBuffer* buffer) {
             if (!weakThis)
                 return;
             finishedLoadingIcon(buffer);
@@ -2131,7 +2131,7 @@ static NSImage *webGetNSImage(WebCore::Image* image, NSSize size)
 }
 #endif // !PLATFORM(IOS_FAMILY)
 
-void WebFrameLoaderClient::finishedLoadingIcon(WebCore::SharedBuffer* iconData)
+void WebFrameLoaderClient::finishedLoadingIcon(WebCore::FragmentedSharedBuffer* iconData)
 {
 #if !PLATFORM(IOS_FAMILY)
     ASSERT(m_loadingIcon);

@@ -34,7 +34,7 @@ namespace WebCore {
 class ContentFilterUnblockHandler;
 class ResourceRequest;
 class ResourceResponse;
-class SharedBuffer;
+class FragmentedSharedBuffer;
 
 class PlatformContentFilter {
     WTF_MAKE_FAST_ALLOCATED;
@@ -56,7 +56,7 @@ public:
     virtual void responseReceived(const ResourceResponse&) = 0;
     virtual void addData(const uint8_t* data, int length) = 0;
     virtual void finishedAddingData() = 0;
-    virtual Ref<SharedBuffer> replacementData() const = 0;
+    virtual Ref<FragmentedSharedBuffer> replacementData() const = 0;
 #if ENABLE(CONTENT_FILTERING)
     virtual ContentFilterUnblockHandler unblockHandler() const = 0;
 #endif

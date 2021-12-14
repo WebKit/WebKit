@@ -45,7 +45,7 @@ static void expectDataArraysEqual(NSArray<NSData *> *expected, NSArray<NSData *>
     }
 }
 
-TEST_F(SharedBufferTest, createNSDataArray)
+TEST_F(FragmentedSharedBufferTest, createNSDataArray)
 {
     @autoreleasepool {
         SharedBufferBuilder builder;
@@ -63,11 +63,11 @@ TEST_F(SharedBufferTest, createNSDataArray)
         expectDataArraysEqual(@[ helloData ], SharedBuffer::create(helloData)->createNSDataArray().get());
         expectDataArraysEqual(@[ worldData ], SharedBuffer::create((__bridge CFDataRef)worldData)->createNSDataArray().get());
 
-        expectDataArraysEqual(@[ [NSData dataWithContentsOfFile:tempFilePath()] ], ContiguousSharedBuffer::createWithContentsOfFile(tempFilePath())->createNSDataArray().get());
+        expectDataArraysEqual(@[ [NSData dataWithContentsOfFile:tempFilePath()] ], SharedBuffer::createWithContentsOfFile(tempFilePath())->createNSDataArray().get());
     }
 }
 
-TEST_F(SharedBufferTest, createNSDataForDataSegment)
+TEST_F(FragmentedSharedBufferTest, createNSDataForDataSegment)
 {
     @autoreleasepool {
         SharedBufferBuilder builder;

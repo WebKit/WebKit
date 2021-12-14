@@ -396,7 +396,7 @@ size_t CurlRequest::didReceiveHeader(String&& header)
 
 // called with data after all headers have been processed via headerCallback
 
-size_t CurlRequest::didReceiveData(Ref<SharedBuffer>&& buffer)
+size_t CurlRequest::didReceiveData(Ref<FragmentedSharedBuffer>&& buffer)
 {
     if (isCompletedOrCancelled())
         return 0;
@@ -444,7 +444,7 @@ void CurlRequest::didReceiveHeaderFromMultipart(const Vector<String>& headers)
     invokeDidReceiveResponse(response, Action::None);
 }
 
-void CurlRequest::didReceiveDataFromMultipart(Ref<SharedBuffer>&& buffer)
+void CurlRequest::didReceiveDataFromMultipart(Ref<FragmentedSharedBuffer>&& buffer)
 {
     if (isCompletedOrCancelled())
         return;
@@ -777,7 +777,7 @@ const String& CurlRequest::getDownloadedFilePath()
     return m_downloadFilePath;
 }
 
-void CurlRequest::writeDataToDownloadFileIfEnabled(const SharedBuffer& buffer)
+void CurlRequest::writeDataToDownloadFileIfEnabled(const FragmentedSharedBuffer& buffer)
 {
     {
         Locker locker { m_downloadMutex };

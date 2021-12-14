@@ -59,7 +59,7 @@ namespace WebCore {
 class FontCache;
 class FontDescription;
 class GlyphPage;
-class SharedBuffer;
+class FragmentedSharedBuffer;
 
 struct GlyphData;
 
@@ -82,7 +82,7 @@ public:
     enum class Visibility : bool { Visible, Invisible };
     enum class OrientationFallback : bool { No, Yes };
     WEBCORE_EXPORT static Ref<Font> create(const FontPlatformData&, Origin = Origin::Local, Interstitial = Interstitial::No, Visibility = Visibility::Visible, OrientationFallback = OrientationFallback::No, std::optional<RenderingResourceIdentifier> = std::nullopt);
-    WEBCORE_EXPORT static Ref<Font> create(Ref<ContiguousSharedBuffer>&& fontFaceData, Font::Origin, float fontSize, bool syntheticBold, bool syntheticItalic);
+    WEBCORE_EXPORT static Ref<Font> create(Ref<SharedBuffer>&& fontFaceData, Font::Origin, float fontSize, bool syntheticBold, bool syntheticItalic);
 
     WEBCORE_EXPORT ~Font();
 

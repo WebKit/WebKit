@@ -77,7 +77,7 @@ void WorkerFontLoadRequest::load(WorkerGlobalScope& workerGlobalScope)
 bool WorkerFontLoadRequest::ensureCustomFontData(const AtomString&)
 {
     if (!m_fontCustomPlatformData && !m_errorOccurred && !m_isLoading) {
-        RefPtr<ContiguousSharedBuffer> contiguousData;
+        RefPtr<SharedBuffer> contiguousData;
         if (m_data)
             contiguousData = m_data.takeAsContiguous();
         convertWOFFToSfntIfNecessary(contiguousData);

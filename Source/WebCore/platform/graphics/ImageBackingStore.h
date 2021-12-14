@@ -66,7 +66,7 @@ public:
             return false;
 
         buffer.grow(bufferSize);
-        m_pixels = SharedBuffer::DataSegment::create(WTFMove(buffer));
+        m_pixels = FragmentedSharedBuffer::DataSegment::create(WTFMove(buffer));
         m_pixelsPtr = reinterpret_cast<uint32_t*>(const_cast<uint8_t*>(m_pixels->data()));
         m_size = size;
         m_frameRect = IntRect(IntPoint(), m_size);
@@ -206,7 +206,7 @@ private:
     {
         ASSERT(!m_size.isEmpty() && !isOverSize(m_size));
         Vector<uint8_t> buffer { other.m_pixels->data(), other.m_pixels->size() };
-        m_pixels = SharedBuffer::DataSegment::create(WTFMove(buffer));
+        m_pixels = FragmentedSharedBuffer::DataSegment::create(WTFMove(buffer));
         m_pixelsPtr = reinterpret_cast<uint32_t*>(const_cast<uint8_t*>(m_pixels->data()));
     }
 
@@ -233,7 +233,7 @@ private:
         return PackedColor::ARGB { result }.value;
     }
 
-    RefPtr<SharedBuffer::DataSegment> m_pixels;
+    RefPtr<FragmentedSharedBuffer::DataSegment> m_pixels;
     uint32_t* m_pixelsPtr { nullptr };
     IntSize m_size;
     IntRect m_frameRect; // This will always just be the entire buffer except for GIF and PNG frames

@@ -75,7 +75,7 @@ class ArchiveResourceCollection;
 class CachedRawResource;
 class CachedResourceLoader;
 class ContentFilter;
-class ContiguousSharedBuffer;
+class SharedBuffer;
 struct CustomHeaderFields;
 class FormState;
 class Frame;
@@ -84,7 +84,7 @@ class IconLoader;
 class Page;
 class PreviewConverter;
 class ResourceLoader;
-class SharedBuffer;
+class FragmentedSharedBuffer;
 class SWClientConnection;
 class SubresourceLoader;
 class SubstituteResource;
@@ -179,7 +179,7 @@ public:
 
     WEBCORE_EXPORT FrameLoader* frameLoader() const;
     WEBCORE_EXPORT SubresourceLoader* mainResourceLoader() const;
-    WEBCORE_EXPORT RefPtr<SharedBuffer> mainResourceData() const;
+    WEBCORE_EXPORT RefPtr<FragmentedSharedBuffer> mainResourceData() const;
     
     DocumentWriter& writer() const { return m_writer; }
 
@@ -236,7 +236,7 @@ public:
     WEBCORE_EXPORT void addAllArchiveResources(Archive&);
     WEBCORE_EXPORT void addArchiveResource(Ref<ArchiveResource>&&);
     RefPtr<Archive> popArchiveForSubframe(const String& frameName, const URL&);
-    WEBCORE_EXPORT ContiguousSharedBuffer* parsedArchiveData() const;
+    WEBCORE_EXPORT SharedBuffer* parsedArchiveData() const;
 
     WEBCORE_EXPORT bool scheduleArchiveLoad(ResourceLoader&, const ResourceRequest&);
 #endif
@@ -403,8 +403,8 @@ public:
 #endif
 
     void startIconLoading();
-    WEBCORE_EXPORT void didGetLoadDecisionForIcon(bool decision, uint64_t loadIdentifier, CompletionHandler<void(SharedBuffer*)>&&);
-    void finishedLoadingIcon(IconLoader&, SharedBuffer*);
+    WEBCORE_EXPORT void didGetLoadDecisionForIcon(bool decision, uint64_t loadIdentifier, CompletionHandler<void(FragmentedSharedBuffer*)>&&);
+    void finishedLoadingIcon(IconLoader&, FragmentedSharedBuffer*);
 
     const Vector<LinkIcon>& linkIcons() const { return m_linkIcons; }
 
@@ -613,7 +613,7 @@ private:
     std::unique_ptr<ArchiveResourceCollection> m_archiveResourceCollection;
 #if ENABLE(WEB_ARCHIVE) || ENABLE(MHTML)
     RefPtr<Archive> m_archive;
-    RefPtr<ContiguousSharedBuffer> m_parsedArchiveData;
+    RefPtr<SharedBuffer> m_parsedArchiveData;
 #endif
 
     HashSet<String> m_resourcesClientKnowsAbout;
@@ -632,7 +632,7 @@ private:
     bool m_waitingForNavigationPolicy { false };
 
     HashMap<uint64_t, LinkIcon> m_iconsPendingLoadDecision;
-    HashMap<std::unique_ptr<IconLoader>, CompletionHandler<void(SharedBuffer*)>> m_iconLoaders;
+    HashMap<std::unique_ptr<IconLoader>, CompletionHandler<void(FragmentedSharedBuffer*)>> m_iconLoaders;
     Vector<LinkIcon> m_linkIcons;
 
 #if ENABLE(APPLICATION_MANIFEST)

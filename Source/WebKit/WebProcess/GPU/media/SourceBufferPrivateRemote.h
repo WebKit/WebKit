@@ -72,7 +72,7 @@ private:
 
     // SourceBufferPrivate overrides
     void setActive(bool) final;
-    void append(Ref<WebCore::SharedBuffer>&&) final;
+    void append(Ref<WebCore::FragmentedSharedBuffer>&&) final;
     void abort() final;
     void resetParserState() final;
     void removedFromMediaSource() final;

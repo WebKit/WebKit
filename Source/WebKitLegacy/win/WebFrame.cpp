@@ -559,7 +559,7 @@ HRESULT WebFrame::loadRequest(_In_opt_ IWebURLRequest* request)
     return S_OK;
 }
 
-void WebFrame::loadData(Ref<WebCore::SharedBuffer>&& data, BSTR mimeType, BSTR textEncodingName, BSTR baseURL, BSTR failingURL)
+void WebFrame::loadData(Ref<WebCore::FragmentedSharedBuffer>&& data, BSTR mimeType, BSTR textEncodingName, BSTR baseURL, BSTR failingURL)
 {
     String mimeTypeString(mimeType, SysStringLen(mimeType));
     if (!mimeType)
@@ -592,7 +592,7 @@ HRESULT WebFrame::loadData(_In_opt_ IStream* data, _In_ BSTR mimeType, _In_ BSTR
         if (!stat.cbSize.HighPart && stat.cbSize.LowPart) {
             Vector<char> dataBuffer(stat.cbSize.LowPart);
             ULONG read;
-            // FIXME: this does a needless copy, would be better to read right into the SharedBuffer
+            // FIXME: this does a needless copy, would be better to read right into the FragmentedSharedBuffer
             // or adopt the Vector or something.
             if (SUCCEEDED(data->Read(dataBuffer.data(), static_cast<ULONG>(dataBuffer.size()), &read)))
                 sharedBuffer.append(dataBuffer.data(), static_cast<int>(dataBuffer.size()));

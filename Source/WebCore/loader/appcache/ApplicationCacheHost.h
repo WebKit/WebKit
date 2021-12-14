@@ -42,7 +42,7 @@ class ApplicationCache;
 class ApplicationCacheGroup;
 class ApplicationCacheResource;
 class ApplicationCacheStorage;
-class ContiguousSharedBuffer;
+class SharedBuffer;
 class DOMApplicationCache;
 class DocumentLoader;
 class Frame;
@@ -104,8 +104,8 @@ public:
     WEBCORE_EXPORT bool maybeLoadFallbackForResponse(ResourceLoader*, const ResourceResponse&);
     WEBCORE_EXPORT bool maybeLoadFallbackForError(ResourceLoader*, const ResourceError&);
 
-    bool maybeLoadSynchronously(ResourceRequest&, ResourceError&, ResourceResponse&, RefPtr<ContiguousSharedBuffer>&);
-    void maybeLoadFallbackSynchronously(const ResourceRequest&, ResourceError&, ResourceResponse&, RefPtr<ContiguousSharedBuffer>&);
+    bool maybeLoadSynchronously(ResourceRequest&, ResourceError&, ResourceResponse&, RefPtr<SharedBuffer>&);
+    void maybeLoadFallbackSynchronously(const ResourceRequest&, ResourceError&, ResourceResponse&, RefPtr<SharedBuffer>&);
 
     bool canCacheInBackForwardCache();
 

@@ -306,7 +306,7 @@ void WebProcessProxy::sendAudioComponentRegistrations()
             if (!weakThis)
                 return;
 
-            auto registrationData = WebCore::ContiguousSharedBuffer::create(registrations.get());
+            auto registrationData = WebCore::SharedBuffer::create(registrations.get());
             weakThis->send(Messages::WebProcess::ConsumeAudioComponentRegistrations({ WTFMove(registrationData) }), 0);
         });
     });

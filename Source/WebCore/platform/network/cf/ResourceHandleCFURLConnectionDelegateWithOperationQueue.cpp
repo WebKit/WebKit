@@ -219,7 +219,7 @@ void ResourceHandleCFURLConnectionDelegateWithOperationQueue::didReceiveData(CFD
         
         LOG(Network, "CFNet - ResourceHandleCFURLConnectionDelegateWithOperationQueue::didReceiveData(handle=%p) (%s)", handle, handle->firstRequest().url().string().utf8().data());
 
-        handle->client()->didReceiveBuffer(handle, ContiguousSharedBuffer::create(data.get()), originalLength);
+        handle->client()->didReceiveBuffer(handle, SharedBuffer::create(data.get()), originalLength);
     };
     
     if (m_messageQueue)

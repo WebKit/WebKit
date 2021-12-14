@@ -155,7 +155,7 @@ ResourceCryptographicDigest cryptographicDigestForBytes(ResourceCryptographicDig
     return { algorithm, cryptoDigest->computeHash() };
 }
 
-ResourceCryptographicDigest cryptographicDigestForSharedBuffer(ResourceCryptographicDigest::Algorithm algorithm, const SharedBuffer* buffer)
+ResourceCryptographicDigest cryptographicDigestForSharedBuffer(ResourceCryptographicDigest::Algorithm algorithm, const FragmentedSharedBuffer* buffer)
 {
     auto cryptoDigest = PAL::CryptoDigest::create(toCryptoDigestAlgorithm(algorithm));
     if (buffer) {

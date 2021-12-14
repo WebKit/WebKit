@@ -36,7 +36,7 @@ namespace WebCore {
 
 #if ENABLE(MHTML)
 
-SharedBufferChunkReader::SharedBufferChunkReader(SharedBuffer* buffer, const Vector<char>& separator)
+SharedBufferChunkReader::SharedBufferChunkReader(FragmentedSharedBuffer* buffer, const Vector<char>& separator)
     : m_iteratorCurrent(buffer->begin())
     , m_iteratorEnd(buffer->end())
     , m_segment(m_iteratorCurrent != m_iteratorEnd ? m_iteratorCurrent->segment->data() : nullptr)
@@ -44,7 +44,7 @@ SharedBufferChunkReader::SharedBufferChunkReader(SharedBuffer* buffer, const Vec
 {
 }
 
-SharedBufferChunkReader::SharedBufferChunkReader(SharedBuffer* buffer, const char* separator)
+SharedBufferChunkReader::SharedBufferChunkReader(FragmentedSharedBuffer* buffer, const char* separator)
     : m_iteratorCurrent(buffer->begin())
     , m_iteratorEnd(buffer->end())
     , m_segment(m_iteratorCurrent != m_iteratorEnd ? m_iteratorCurrent->segment->data() : nullptr)

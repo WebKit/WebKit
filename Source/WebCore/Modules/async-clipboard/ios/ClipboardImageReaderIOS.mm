@@ -34,7 +34,7 @@
 
 namespace WebCore {
 
-void ClipboardImageReader::readBuffer(const String&, const String&, Ref<ContiguousSharedBuffer>&& buffer)
+void ClipboardImageReader::readBuffer(const String&, const String&, Ref<SharedBuffer>&& buffer)
 {
     if (m_mimeType == "image/png") {
         auto image = adoptNS([PAL::allocUIImageInstance() initWithData:buffer->createNSData().get()]);

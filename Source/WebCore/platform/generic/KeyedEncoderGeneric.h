@@ -33,7 +33,7 @@
 
 namespace WebCore {
 
-class SharedBuffer;
+class FragmentedSharedBuffer;
 
 class KeyedEncoderGeneric final : public KeyedEncoder {
 public:
@@ -57,7 +57,7 @@ public:
     };
 
 private:
-    RefPtr<ContiguousSharedBuffer> finishEncoding() override;
+    RefPtr<SharedBuffer> finishEncoding() override;
 
     void encodeBytes(const String& key, const uint8_t*, size_t) override;
     void encodeBool(const String& key, bool) override;

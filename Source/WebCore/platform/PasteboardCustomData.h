@@ -34,7 +34,7 @@
 
 namespace WebCore {
 
-class ContiguousSharedBuffer;
+class SharedBuffer;
 
 class PasteboardCustomData {
 public:
@@ -48,7 +48,7 @@ public:
 
         String type;
         String customData;
-        std::variant<String, Ref<ContiguousSharedBuffer>> platformData;
+        std::variant<String, Ref<SharedBuffer>> platformData;
     };
 
     WEBCORE_EXPORT PasteboardCustomData();
@@ -60,16 +60,16 @@ public:
     const String& origin() const { return m_origin; }
     void setOrigin(const String& origin) { m_origin = origin; }
 
-    WEBCORE_EXPORT Ref<ContiguousSharedBuffer> createSharedBuffer() const;
-    WEBCORE_EXPORT static PasteboardCustomData fromSharedBuffer(const ContiguousSharedBuffer&);
+    WEBCORE_EXPORT Ref<SharedBuffer> createSharedBuffer() const;
+    WEBCORE_EXPORT static PasteboardCustomData fromSharedBuffer(const SharedBuffer&);
     WEBCORE_EXPORT static PasteboardCustomData fromPersistenceDecoder(WTF::Persistence::Decoder&&);
 
     String readString(const String& type) const;
-    RefPtr<ContiguousSharedBuffer> readBuffer(const String& type) const;
+    RefPtr<SharedBuffer> readBuffer(const String& type) const;
     String readStringInCustomData(const String& type) const;
 
     void writeString(const String& type, const String& value);
-    void writeData(const String& type, Ref<ContiguousSharedBuffer>&& data);
+    void writeData(const String& type, Ref<SharedBuffer>&& data);
     void writeStringInCustomData(const String& type, const String& value);
 
     void clear();
@@ -83,7 +83,7 @@ public:
 
     void forEachType(Function<void(const String&)>&&) const;
     void forEachPlatformString(Function<void(const String& type, const String& data)>&&) const;
-    void forEachPlatformStringOrBuffer(Function<void(const String& type, const std::variant<String, Ref<ContiguousSharedBuffer>>& data)>&&) const;
+    void forEachPlatformStringOrBuffer(Function<void(const String& type, const std::variant<String, Ref<SharedBuffer>>& data)>&&) const;
     void forEachCustomString(Function<void(const String& type, const String& data)>&&) const;
 
     bool hasData() const;

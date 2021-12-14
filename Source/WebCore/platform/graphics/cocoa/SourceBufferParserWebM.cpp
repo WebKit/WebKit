@@ -388,7 +388,7 @@ public:
                 advanceToNextSegment();
                 continue;
             }
-            RefPtr<SharedBuffer> sharedBuffer = currentSegment.getSharedBuffer();
+            RefPtr<FragmentedSharedBuffer> sharedBuffer = currentSegment.getSharedBuffer();
             CMBlockBufferRef rawBlockBuffer = nullptr;
             uint64_t lastRead = 0;
             size_t destinationOffset = m_positionWithinSegment;
@@ -409,7 +409,7 @@ public:
                 destinationOffset = 0;
             } else {
                 ASSERT(sharedBuffer->hasOneSegment(), "Can only deal with sharedBuffer containing a single DataSegment");
-                // A SharedBuffer doesn't have thread-safe refcounting, as such we must keep a reference to the DataSegment instead.
+                // A FragmentedSharedBuffer doesn't have thread-safe refcounting, as such we must keep a reference to the DataSegment instead.
                 // TODO: could we only create a new CMBlockBuffer if the backend memory changed since the previous one?
                 auto firstSegment = sharedBuffer->begin()->segment;
                 size_t canRead = std::min<size_t>(numToRead, firstSegment->size() - m_positionWithinSegment);

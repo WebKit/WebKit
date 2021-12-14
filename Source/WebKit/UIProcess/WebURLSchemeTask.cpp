@@ -168,7 +168,7 @@ auto WebURLSchemeTask::didReceiveResponse(const ResourceResponse& response) -> E
     return ExceptionType::None;
 }
 
-auto WebURLSchemeTask::didReceiveData(Ref<SharedBuffer>&& buffer) -> ExceptionType
+auto WebURLSchemeTask::didReceiveData(Ref<FragmentedSharedBuffer>&& buffer) -> ExceptionType
 {
     ASSERT(RunLoop::isMain());
 

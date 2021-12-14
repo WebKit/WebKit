@@ -175,7 +175,7 @@ void NetworkExtensionContentFilter::finishedAddingData()
     semaphore.wait();
 }
 
-Ref<SharedBuffer> NetworkExtensionContentFilter::replacementData() const
+Ref<FragmentedSharedBuffer> NetworkExtensionContentFilter::replacementData() const
 {
     ASSERT(didBlockData());
     return SharedBuffer::create(m_replacementData.get());

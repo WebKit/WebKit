@@ -56,7 +56,7 @@ unsigned long MediaKeyStatusMap::size()
     return m_session->statuses().size();
 }
 
-static bool keyIdsMatch(const SharedBuffer& a, const BufferSource& b)
+static bool keyIdsMatch(const FragmentedSharedBuffer& a, const BufferSource& b)
 {
     auto length = a.size();
     if (!length || length != b.length())

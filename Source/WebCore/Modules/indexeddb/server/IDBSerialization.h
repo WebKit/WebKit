@@ -32,10 +32,10 @@ namespace WebCore {
 
 class IDBKeyData;
 
-RefPtr<ContiguousSharedBuffer> serializeIDBKeyPath(const std::optional<IDBKeyPath>&);
+RefPtr<SharedBuffer> serializeIDBKeyPath(const std::optional<IDBKeyPath>&);
 bool deserializeIDBKeyPath(const uint8_t* buffer, size_t bufferSize, std::optional<IDBKeyPath>&);
 
-RefPtr<ContiguousSharedBuffer> serializeIDBKeyData(const IDBKeyData&);
+RefPtr<SharedBuffer> serializeIDBKeyData(const IDBKeyData&);
 bool deserializeIDBKeyData(const uint8_t* buffer, size_t bufferSize, IDBKeyData&);
 
 } // namespace WebCore

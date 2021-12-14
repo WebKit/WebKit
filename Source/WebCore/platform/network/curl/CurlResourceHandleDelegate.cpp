@@ -142,7 +142,7 @@ void CurlResourceHandleDelegate::curlDidReceiveResponse(CurlRequest& request, Cu
     });
 }
 
-void CurlResourceHandleDelegate::curlDidReceiveBuffer(CurlRequest&, Ref<SharedBuffer>&& buffer)
+void CurlResourceHandleDelegate::curlDidReceiveBuffer(CurlRequest&, Ref<FragmentedSharedBuffer>&& buffer)
 {
     ASSERT(isMainThread());
 

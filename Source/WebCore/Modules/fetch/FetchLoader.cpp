@@ -135,7 +135,7 @@ void FetchLoader::stop()
         m_loader->cancel();
 }
 
-RefPtr<SharedBuffer> FetchLoader::startStreaming()
+RefPtr<FragmentedSharedBuffer> FetchLoader::startStreaming()
 {
     ASSERT(m_consumer);
     auto firstChunk = m_consumer->takeData();

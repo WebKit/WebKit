@@ -2223,7 +2223,7 @@ static RetainPtr<NSArray> wkTextManipulationErrors(NSArray<_WKTextManipulationIt
 
 - (void)_requestResource:(NSURLRequest *)request completionHandler:(void(^)(NSData *, NSURLResponse *, NSError *))completionHandler
 {
-    _page->requestResource(request, [completionHandler = makeBlockPtr(completionHandler)] (Ref<WebCore::ContiguousSharedBuffer>&& buffer, WebCore::ResourceResponse&& response, WebCore::ResourceError&& error) {
+    _page->requestResource(request, [completionHandler = makeBlockPtr(completionHandler)] (Ref<WebCore::SharedBuffer>&& buffer, WebCore::ResourceResponse&& response, WebCore::ResourceError&& error) {
         if (error.isNull())
             return completionHandler(buffer->createNSData().get(), response.nsURLResponse(), nil);
         completionHandler(nil, nil, error.nsError());

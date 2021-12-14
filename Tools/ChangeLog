@@ -1,3 +1,24 @@
+2021-12-14  Jean-Yves Avenard  <jya@apple.com>
+
+        Rename SharedBuffer classes.
+        https://bugs.webkit.org/show_bug.cgi?id=233677
+        rdar://problem/85963900
+
+        Reviewed by Youenn Fablet.
+
+        SharedBuffer are renamed FragmentedSharedBuffer and
+        ContiguousSharedBuffer to SharedBuffer to better reflect their actual
+        types.
+
+        * TestWebKitAPI/Tests/WTF/FileSystem.cpp:
+        * TestWebKitAPI/Tests/WebCore/DisplayListTests.cpp:
+        * TestWebKitAPI/Tests/WebCore/SharedBuffer.cpp:
+        * TestWebKitAPI/Tests/WebCore/SharedBufferTest.cpp:
+        * TestWebKitAPI/Tests/WebCore/SharedBufferTest.h:
+        * TestWebKitAPI/Tests/WebCore/cg/DisplayListTestsCG.cpp:
+        * TestWebKitAPI/Tests/WebCore/cocoa/SharedBuffer.mm:
+        * TestWebKitAPI/win/TestWebCoreStubs.cpp:
+
 2021-12-13  John Wilander  <wilander@apple.com>
 
         PCM: Remove old DB update and migration code, and add a unit test for destination token DB columns

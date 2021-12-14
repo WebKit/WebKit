@@ -123,7 +123,7 @@ public:
     bool willIntercept(const ResourceRequest&);
     bool shouldInterceptRequest(const ResourceRequest&);
     bool shouldInterceptResponse(const ResourceResponse&);
-    void interceptResponse(const ResourceResponse&, ResourceLoaderIdentifier, CompletionHandler<void(const ResourceResponse&, RefPtr<SharedBuffer>)>&&);
+    void interceptResponse(const ResourceResponse&, ResourceLoaderIdentifier, CompletionHandler<void(const ResourceResponse&, RefPtr<FragmentedSharedBuffer>)>&&);
     void interceptRequest(ResourceLoader&, Function<void(const ResourceRequest&)>&&);
 
     void searchOtherRequests(const JSC::Yarr::RegularExpression&, Ref<JSON::ArrayOf<Inspector::Protocol::Page::SearchResult>>&);
@@ -185,7 +185,7 @@ private:
         WTF_MAKE_NONCOPYABLE(PendingInterceptResponse);
         WTF_MAKE_FAST_ALLOCATED;
     public:
-        PendingInterceptResponse(const ResourceResponse& originalResponse, CompletionHandler<void(const ResourceResponse&, RefPtr<SharedBuffer>)>&& completionHandler)
+        PendingInterceptResponse(const ResourceResponse& originalResponse, CompletionHandler<void(const ResourceResponse&, RefPtr<FragmentedSharedBuffer>)>&& completionHandler)
             : m_originalResponse(originalResponse)
             , m_completionHandler(WTFMove(completionHandler))
         { }
@@ -202,7 +202,7 @@ private:
             respond(m_originalResponse, nullptr);
         }
 
-        void respond(const ResourceResponse& response, RefPtr<SharedBuffer> data)
+        void respond(const ResourceResponse& response, RefPtr<FragmentedSharedBuffer> data)
         {
             ASSERT(!m_responded);
             if (m_responded)
@@ -215,7 +215,7 @@ private:
 
     private:
         ResourceResponse m_originalResponse;
-        CompletionHandler<void(const ResourceResponse&, RefPtr<SharedBuffer>)> m_completionHandler;
+        CompletionHandler<void(const ResourceResponse&, RefPtr<FragmentedSharedBuffer>)> m_completionHandler;
         bool m_responded { false };
     };
 

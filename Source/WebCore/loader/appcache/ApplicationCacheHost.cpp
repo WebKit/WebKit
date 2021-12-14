@@ -253,14 +253,14 @@ URL ApplicationCacheHost::createFileURL(const String& path)
 #endif
 }
 
-static inline RefPtr<ContiguousSharedBuffer> bufferFromResource(ApplicationCacheResource& resource)
+static inline RefPtr<SharedBuffer> bufferFromResource(ApplicationCacheResource& resource)
 {
     if (resource.path().isEmpty())
         return resource.data().makeContiguous();
-    return ContiguousSharedBuffer::createWithContentsOfFile(resource.path());
+    return SharedBuffer::createWithContentsOfFile(resource.path());
 }
 
-bool ApplicationCacheHost::maybeLoadSynchronously(ResourceRequest& request, ResourceError& error, ResourceResponse& response, RefPtr<ContiguousSharedBuffer>& data)
+bool ApplicationCacheHost::maybeLoadSynchronously(ResourceRequest& request, ResourceError& error, ResourceResponse& response, RefPtr<SharedBuffer>& data)
 {
     ApplicationCacheResource* resource;
     if (!shouldLoadResourceFromApplicationCache(request, resource))
@@ -277,7 +277,7 @@ bool ApplicationCacheHost::maybeLoadSynchronously(ResourceRequest& request, Reso
     return true;
 }
 
-void ApplicationCacheHost::maybeLoadFallbackSynchronously(const ResourceRequest& request, ResourceError& error, ResourceResponse& response, RefPtr<ContiguousSharedBuffer>& data)
+void ApplicationCacheHost::maybeLoadFallbackSynchronously(const ResourceRequest& request, ResourceError& error, ResourceResponse& response, RefPtr<SharedBuffer>& data)
 {
     // If normal loading results in a redirect to a resource with another origin (indicative of a captive portal), or a 4xx or 5xx status code or equivalent,
     // or if there were network errors (but not if the user canceled the download), then instead get, from the cache, the resource of the fallback entry

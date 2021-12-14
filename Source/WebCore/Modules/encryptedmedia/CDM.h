@@ -52,7 +52,7 @@ class CDMInstance;
 class CDMPrivate;
 class Document;
 class ScriptExecutionContext;
-class SharedBuffer;
+class FragmentedSharedBuffer;
 
 class CDM : public RefCounted<CDM>, public CanMakeWeakPtr<CDM>, private ContextDestructionObserver {
 public:
@@ -73,10 +73,10 @@ public:
     bool supportsSessions() const;
     bool supportsInitDataType(const AtomString&) const;
 
-    RefPtr<SharedBuffer> sanitizeInitData(const AtomString& initDataType, const SharedBuffer&);
-    bool supportsInitData(const AtomString& initDataType, const SharedBuffer&);
+    RefPtr<FragmentedSharedBuffer> sanitizeInitData(const AtomString& initDataType, const FragmentedSharedBuffer&);
+    bool supportsInitData(const AtomString& initDataType, const FragmentedSharedBuffer&);
 
-    RefPtr<SharedBuffer> sanitizeResponse(const SharedBuffer&);
+    RefPtr<FragmentedSharedBuffer> sanitizeResponse(const FragmentedSharedBuffer&);
 
     std::optional<String> sanitizeSessionId(const String& sessionId);
 

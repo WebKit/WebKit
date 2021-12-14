@@ -34,7 +34,7 @@ class CurlRequest;
 class CurlResponse;
 class NetworkLoadMetrics;
 class ResourceError;
-class SharedBuffer;
+class FragmentedSharedBuffer;
 
 class CurlRequestClient {
 public:
@@ -43,7 +43,7 @@ public:
 
     virtual void curlDidSendData(CurlRequest&, unsigned long long bytesSent, unsigned long long totalBytesToBeSent) = 0;
     virtual void curlDidReceiveResponse(CurlRequest&, CurlResponse&&) = 0;
-    virtual void curlDidReceiveBuffer(CurlRequest&, Ref<SharedBuffer>&&) = 0;
+    virtual void curlDidReceiveBuffer(CurlRequest&, Ref<FragmentedSharedBuffer>&&) = 0;
     virtual void curlDidComplete(CurlRequest&, NetworkLoadMetrics&&) = 0;
     virtual void curlDidFailWithError(CurlRequest&, ResourceError&&, CertificateInfo&&) = 0;
 };

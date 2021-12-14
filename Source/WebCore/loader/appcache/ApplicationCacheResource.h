@@ -40,7 +40,7 @@ public:
         Fallback = 1 << 4
     };
 
-    static Ref<ApplicationCacheResource> create(const URL&, const ResourceResponse&, unsigned type, RefPtr<SharedBuffer>&& = SharedBuffer::create(), const String& path = String());
+    static Ref<ApplicationCacheResource> create(const URL&, const ResourceResponse&, unsigned type, RefPtr<FragmentedSharedBuffer>&& = SharedBuffer::create(), const String& path = String());
 
     unsigned type() const { return m_type; }
     void addType(unsigned type);
@@ -58,7 +58,7 @@ public:
 #endif
     
 private:
-    ApplicationCacheResource(URL&&, ResourceResponse&&, unsigned type, Ref<SharedBuffer>&&, const String& path);
+    ApplicationCacheResource(URL&&, ResourceResponse&&, unsigned type, Ref<FragmentedSharedBuffer>&&, const String& path);
 
     void deliver(ResourceLoader&) override;
 

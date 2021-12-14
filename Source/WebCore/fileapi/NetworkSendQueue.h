@@ -43,7 +43,7 @@ namespace WebCore {
 
 class Blob;
 class BlobLoader;
-class SharedBuffer;
+class FragmentedSharedBuffer;
 
 class WEBCORE_EXPORT NetworkSendQueue : public ContextDestructionObserver {
 public:
@@ -63,7 +63,7 @@ public:
 private:
     void processMessages();
 
-    using Message = std::variant<CString, Ref<SharedBuffer>, UniqueRef<BlobLoader>>;
+    using Message = std::variant<CString, Ref<FragmentedSharedBuffer>, UniqueRef<BlobLoader>>;
     Deque<Message> m_queue;
 
     WriteString m_writeString;

@@ -53,7 +53,7 @@ class WebCoreDecompressionSession;
 
 class ImageDecoderAVFObjC : public ImageDecoder {
 public:
-    WEBCORE_EXPORT static RefPtr<ImageDecoderAVFObjC> create(SharedBuffer&, const String& mimeType, AlphaOption, GammaAndColorProfileOption);
+    WEBCORE_EXPORT static RefPtr<ImageDecoderAVFObjC> create(FragmentedSharedBuffer&, const String& mimeType, AlphaOption, GammaAndColorProfileOption);
     virtual ~ImageDecoderAVFObjC();
 
     WEBCORE_EXPORT static bool supportsMediaType(MediaType);
@@ -86,7 +86,7 @@ public:
     WEBCORE_EXPORT PlatformImagePtr createFrameImageAtIndex(size_t, SubsamplingLevel = SubsamplingLevel::Default, const DecodingOptions& = DecodingOptions(DecodingMode::Synchronous)) final;
 
     WEBCORE_EXPORT void setExpectedContentSize(long long) final;
-    WEBCORE_EXPORT void setData(SharedBuffer&, bool allDataReceived) final;
+    WEBCORE_EXPORT void setData(FragmentedSharedBuffer&, bool allDataReceived) final;
     bool isAllDataReceived() const final { return m_isAllDataReceived; }
     WEBCORE_EXPORT void clearFrameBufferCache(size_t) final;
 
@@ -94,7 +94,7 @@ public:
     WEBCORE_EXPORT Vector<ImageDecoder::FrameInfo> frameInfos() const;
 
 private:
-    ImageDecoderAVFObjC(SharedBuffer&, const String& mimeType, AlphaOption, GammaAndColorProfileOption);
+    ImageDecoderAVFObjC(FragmentedSharedBuffer&, const String& mimeType, AlphaOption, GammaAndColorProfileOption);
 
     AVAssetTrack *firstEnabledTrack();
     void readSamples();

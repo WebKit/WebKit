@@ -37,7 +37,7 @@
 namespace WebKit {
 namespace NetworkCache {
 
-Entry::Entry(const Key& key, const WebCore::ResourceResponse& response, RefPtr<WebCore::SharedBuffer>&& buffer, const Vector<std::pair<String, String>>& varyingRequestHeaders)
+Entry::Entry(const Key& key, const WebCore::ResourceResponse& response, RefPtr<WebCore::FragmentedSharedBuffer>&& buffer, const Vector<std::pair<String, String>>& varyingRequestHeaders)
     : m_key(key)
     , m_timeStamp(WallTime::now())
     , m_response(response)
@@ -103,7 +103,7 @@ Storage::Record Entry::encodeAsStorageRecord() const
     Data body;
     if (m_buffer) {
         m_buffer = m_buffer->makeContiguous();
-        body = { static_cast<WebCore::ContiguousSharedBuffer*>(m_buffer.get())->data(), m_buffer->size() };
+        body = { static_cast<WebCore::SharedBuffer*>(m_buffer.get())->data(), m_buffer->size() };
     }
 
     return { m_key, m_timeStamp, header, body, { } };
@@ -196,7 +196,7 @@ void Entry::initializeBufferFromStorageRecord() const
     m_buffer = WebCore::SharedBuffer::create(m_sourceStorageRecord.body.data(), m_sourceStorageRecord.body.size());
 }
 
-WebCore::SharedBuffer* Entry::buffer() const
+WebCore::FragmentedSharedBuffer* Entry::buffer() const
 {
     if (!m_buffer)
         initializeBufferFromStorageRecord();

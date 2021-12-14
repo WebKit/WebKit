@@ -79,10 +79,10 @@ void PlatformPasteboard::getTypes(Vector<String>& types) const
     types = makeVector<String>([m_pasteboard pasteboardTypes]);
 }
 
-RefPtr<ContiguousSharedBuffer> PlatformPasteboard::bufferForType(const String& type) const
+RefPtr<SharedBuffer> PlatformPasteboard::bufferForType(const String& type) const
 {
     if (NSData *data = [m_pasteboard dataForPasteboardType:type])
-        return ContiguousSharedBuffer::create(data);
+        return SharedBuffer::create(data);
     return nullptr;
 }
 
@@ -338,7 +338,7 @@ int64_t PlatformPasteboard::setTypes(const Vector<String>&)
     return 0;
 }
 
-int64_t PlatformPasteboard::setBufferForType(ContiguousSharedBuffer*, const String&)
+int64_t PlatformPasteboard::setBufferForType(SharedBuffer*, const String&)
 {
     return 0;
 }
@@ -609,7 +609,7 @@ Vector<String> PlatformPasteboard::typesSafeForDOMToReadAndWrite(const String& o
 #endif // PASTEBOARD_SUPPORTS_PRESENTATION_STYLE_AND_TEAM_DATA
 
     if (NSData *serializedCustomData = [m_pasteboard dataForPasteboardType:@(PasteboardCustomData::cocoaType())]) {
-        auto data = PasteboardCustomData::fromSharedBuffer(ContiguousSharedBuffer::create(serializedCustomData).get());
+        auto data = PasteboardCustomData::fromSharedBuffer(SharedBuffer::create(serializedCustomData).get());
         if (data.origin() == origin) {
             for (auto& type : data.orderedTypes())
                 domPasteboardTypes.add(type);
@@ -672,7 +672,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
             return;
         }
 
-        auto buffer = std::get<Ref<ContiguousSharedBuffer>>(value);
+        auto buffer = std::get<Ref<SharedBuffer>>(value);
         [representationsToRegister addData:buffer->createNSData().get() forType:(NSString *)cocoaType];
     });
 
@@ -746,7 +746,7 @@ Vector<String> PlatformPasteboard::allStringsForType(const String& type) const
     return strings;
 }
 
-RefPtr<ContiguousSharedBuffer> PlatformPasteboard::readBuffer(std::optional<size_t> index, const String& type) const
+RefPtr<SharedBuffer> PlatformPasteboard::readBuffer(std::optional<size_t> index, const String& type) const
 {
     if (!index)
         return bufferForType(type);
@@ -761,7 +761,7 @@ RefPtr<ContiguousSharedBuffer> PlatformPasteboard::readBuffer(std::optional<size
 
     if (![pasteboardItem count])
         return nullptr;
-    return ContiguousSharedBuffer::create([pasteboardItem objectAtIndex:0]);
+    return SharedBuffer::create([pasteboardItem objectAtIndex:0]);
 }
 
 String PlatformPasteboard::readString(size_t index, const String& type) const

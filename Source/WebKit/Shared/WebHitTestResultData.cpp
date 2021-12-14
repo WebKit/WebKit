@@ -85,7 +85,7 @@ WebHitTestResultData::WebHitTestResultData(const WebCore::HitTestResult& hitTest
         return;
 
     if (Image* image = hitTestResult.image()) {
-        RefPtr<SharedBuffer> buffer = image->data();
+        RefPtr<FragmentedSharedBuffer> buffer = image->data();
         if (buffer) {
             imageSharedMemory = WebKit::SharedMemory::copyBuffer(*buffer);
             imageSize = buffer->size();

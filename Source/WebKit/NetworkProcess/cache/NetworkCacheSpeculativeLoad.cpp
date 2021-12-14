@@ -46,7 +46,7 @@ SpeculativeLoad::SpeculativeLoad(Cache& cache, const GlobalFrameID& globalFrameI
     : m_cache(cache)
     , m_completionHandler(WTFMove(completionHandler))
     , m_originalRequest(request)
-    , m_bufferedDataForCache(SharedBuffer::create())
+    , m_bufferedDataForCache(FragmentedSharedBuffer::create())
     , m_cacheEntry(WTFMove(cacheEntryForValidation))
 {
     ASSERT(!m_cacheEntry || m_cacheEntry->needsValidation());
@@ -120,7 +120,7 @@ void SpeculativeLoad::didReceiveResponse(ResourceResponse&& receivedResponse, Re
     completionHandler(PolicyAction::Use);
 }
 
-void SpeculativeLoad::didReceiveBuffer(Ref<SharedBuffer>&& buffer, int reportedEncodedDataLength)
+void SpeculativeLoad::didReceiveBuffer(Ref<FragmentedSharedBuffer>&& buffer, int reportedEncodedDataLength)
 {
     ASSERT(!m_cacheEntry);
 

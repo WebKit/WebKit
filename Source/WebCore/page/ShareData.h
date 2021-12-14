@@ -39,7 +39,7 @@ struct ShareData {
 
 struct RawFile {
     String fileName;
-    RefPtr<ContiguousSharedBuffer> fileData;
+    RefPtr<SharedBuffer> fileData;
 };
     
 struct ShareDataWithParsedURL {

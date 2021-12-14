@@ -493,7 +493,7 @@ void MediaRecorderPrivateWriter::stopRecording()
     });
 }
 
-void MediaRecorderPrivateWriter::fetchData(CompletionHandler<void(RefPtr<SharedBuffer>&&, double)>&& completionHandler)
+void MediaRecorderPrivateWriter::fetchData(CompletionHandler<void(RefPtr<FragmentedSharedBuffer>&&, double)>&& completionHandler)
 {
     m_fetchDataCompletionHandler = WTFMove(completionHandler);
 
@@ -538,7 +538,7 @@ void MediaRecorderPrivateWriter::appendData(const uint8_t* data, size_t size)
     m_data.append(data, size);
 }
 
-RefPtr<SharedBuffer> MediaRecorderPrivateWriter::takeData()
+RefPtr<FragmentedSharedBuffer> MediaRecorderPrivateWriter::takeData()
 {
     Locker locker { m_dataLock };
     return m_data.take();

@@ -73,7 +73,7 @@ class VideoTrackPrivate;
 class AudioTrackPrivateMediaSourceAVFObjC;
 class VideoTrackPrivateMediaSourceAVFObjC;
 class WebCoreDecompressionSession;
-class SharedBuffer;
+class FragmentedSharedBuffer;
 
 class SourceBufferPrivateAVFObjCErrorClient {
 public:
@@ -153,7 +153,7 @@ private:
     void didProvideMediaDataForTrackId(Ref<MediaSample>&&, uint64_t trackId, const String& mediaType);
 
     // SourceBufferPrivate overrides
-    void append(Ref<SharedBuffer>&&) final;
+    void append(Ref<FragmentedSharedBuffer>&&) final;
     void abort() final;
     void resetParserState() final;
     void removedFromMediaSource() final;
@@ -221,7 +221,7 @@ private:
 #endif
 #if ENABLE(ENCRYPTED_MEDIA) && HAVE(AVCONTENTKEYSESSION)
     RefPtr<CDMInstanceFairPlayStreamingAVFObjC> m_cdmInstance;
-    Vector<Ref<SharedBuffer>> m_keyIDs;
+    Vector<Ref<FragmentedSharedBuffer>> m_keyIDs;
 #endif
 
     std::optional<FloatSize> m_cachedSize;

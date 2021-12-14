@@ -152,7 +152,7 @@ public:
         m_readOffset = 0;
     }
 
-    bool decode(const SharedBuffer::DataSegment& data, bool sizeOnly, unsigned haltAtFrame)
+    bool decode(const FragmentedSharedBuffer::DataSegment& data, bool sizeOnly, unsigned haltAtFrame)
     {
         m_decodingSizeOnly = sizeOnly;
         PNGImageDecoder* decoder = static_cast<PNGImageDecoder*>(png_get_progressive_ptr(m_png));

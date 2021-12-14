@@ -237,7 +237,7 @@ void AppHighlightStorage::storeAppHighlight(Ref<StaticRange>&& range)
     m_document->page()->chrome().storeAppHighlight(WTFMove(highlight));
 }
 
-void AppHighlightStorage::restoreAndScrollToAppHighlight(Ref<SharedBuffer>&& buffer, ScrollToHighlight scroll)
+void AppHighlightStorage::restoreAndScrollToAppHighlight(Ref<FragmentedSharedBuffer>&& buffer, ScrollToHighlight scroll)
 {
     auto appHighlightRangeData = AppHighlightRangeData::create(buffer);
     if (!appHighlightRangeData)

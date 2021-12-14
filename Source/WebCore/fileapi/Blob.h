@@ -53,7 +53,7 @@ class BlobLoader;
 class DeferredPromise;
 class ReadableStream;
 class ScriptExecutionContext;
-class SharedBuffer;
+class FragmentedSharedBuffer;
 
 template<typename> class ExceptionOr;
 

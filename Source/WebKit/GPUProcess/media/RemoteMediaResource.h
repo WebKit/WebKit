@@ -34,7 +34,7 @@
 
 namespace WebCore {
 class NetworkLoadMetrics;
-class SharedBuffer;
+class FragmentedSharedBuffer;
 }
 
 namespace WebKit {
@@ -57,7 +57,7 @@ public:
     void responseReceived(const WebCore::ResourceResponse&, bool, CompletionHandler<void(WebCore::ShouldContinuePolicyCheck)>&&);
     void redirectReceived(WebCore::ResourceRequest&&, const WebCore::ResourceResponse&, CompletionHandler<void(WebCore::ResourceRequest&&)>&&);
     void dataSent(uint64_t, uint64_t);
-    void dataReceived(Ref<WebCore::SharedBuffer>&&);
+    void dataReceived(Ref<WebCore::FragmentedSharedBuffer>&&);
     void accessControlCheckFailed(const WebCore::ResourceError&);
     void loadFailed(const WebCore::ResourceError&);
     void loadFinished(const WebCore::NetworkLoadMetrics&);

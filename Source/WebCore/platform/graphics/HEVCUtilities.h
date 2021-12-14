@@ -31,7 +31,7 @@
 
 namespace WebCore {
 
-class ContiguousSharedBuffer;
+class SharedBuffer;
 struct FourCC;
 
 struct AVCParameters {
@@ -41,7 +41,7 @@ struct AVCParameters {
 };
 
 WEBCORE_EXPORT std::optional<AVCParameters> parseAVCCodecParameters(StringView);
-WEBCORE_EXPORT std::optional<AVCParameters> parseAVCDecoderConfigurationRecord(const ContiguousSharedBuffer&);
+WEBCORE_EXPORT std::optional<AVCParameters> parseAVCDecoderConfigurationRecord(const SharedBuffer&);
 WEBCORE_EXPORT String createAVCCodecParametersString(const AVCParameters&);
 
 struct HEVCParameters {
@@ -55,7 +55,7 @@ struct HEVCParameters {
 };
 
 WEBCORE_EXPORT std::optional<HEVCParameters> parseHEVCCodecParameters(StringView);
-WEBCORE_EXPORT std::optional<HEVCParameters> parseHEVCDecoderConfigurationRecord(const FourCC&, const ContiguousSharedBuffer&);
+WEBCORE_EXPORT std::optional<HEVCParameters> parseHEVCDecoderConfigurationRecord(const FourCC&, const SharedBuffer&);
 WEBCORE_EXPORT String createHEVCCodecParametersString(const HEVCParameters&);
 
 struct DoViParameters {
@@ -65,7 +65,7 @@ struct DoViParameters {
 };
 
 WEBCORE_EXPORT std::optional<DoViParameters> parseDoViCodecParameters(StringView);
-WEBCORE_EXPORT std::optional<DoViParameters> parseDoViDecoderConfigurationRecord(const ContiguousSharedBuffer&);
+WEBCORE_EXPORT std::optional<DoViParameters> parseDoViDecoderConfigurationRecord(const SharedBuffer&);
 WEBCORE_EXPORT String createDoViCodecParametersString(const DoViParameters&);
 
 }

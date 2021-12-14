@@ -60,7 +60,7 @@ public:
 
     // Returns nullptr if we can't sniff a supported type from the provided data (possibly
     // because there isn't enough data yet).
-    static RefPtr<ScalableImageDecoder> create(SharedBuffer& data, AlphaOption, GammaAndColorProfileOption);
+    static RefPtr<ScalableImageDecoder> create(FragmentedSharedBuffer& data, AlphaOption, GammaAndColorProfileOption);
 
     bool premultiplyAlpha() const { return m_premultiplyAlpha; }
 
@@ -70,7 +70,7 @@ public:
         return m_encodedDataStatus == EncodedDataStatus::Complete;
     }
 
-    void setData(SharedBuffer& data, bool allDataReceived) override
+    void setData(FragmentedSharedBuffer& data, bool allDataReceived) override
     {
         Locker locker { m_lock };
         if (m_encodedDataStatus == EncodedDataStatus::Error)
@@ -194,7 +194,7 @@ public:
     std::optional<IntPoint> hotSpot() const override { return std::nullopt; }
 
 protected:
-    RefPtr<SharedBuffer::DataSegment> m_data;
+    RefPtr<FragmentedSharedBuffer::DataSegment> m_data;
     Vector<ScalableImageDecoderFrame, 1> m_frameBufferCache WTF_GUARDED_BY_LOCK(m_lock);
     mutable Lock m_lock;
     bool m_premultiplyAlpha;

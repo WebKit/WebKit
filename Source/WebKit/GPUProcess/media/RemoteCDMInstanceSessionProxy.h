@@ -77,7 +77,7 @@ private:
 
     // CDMInstanceSessionClient
     void updateKeyStatuses(KeyStatusVector&&) final;
-    void sendMessage(WebCore::CDMMessageType, Ref<WebCore::SharedBuffer>&& message) final;
+    void sendMessage(WebCore::CDMMessageType, Ref<WebCore::FragmentedSharedBuffer>&& message) final;
     void sessionIdChanged(const String&) final;
     PlatformDisplayID displayID() final { return m_displayID; }
 

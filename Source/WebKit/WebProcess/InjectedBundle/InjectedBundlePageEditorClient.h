@@ -64,7 +64,7 @@ private:
     void didChange(WebPage&, const String& notificationName) final;
     void didChangeSelection(WebPage&, const String& notificationName) final;
     void willWriteToPasteboard(WebPage&, const std::optional<WebCore::SimpleRange>&) final;
-    void getPasteboardDataForRange(WebPage&, const std::optional<WebCore::SimpleRange>&, Vector<String>& pasteboardTypes, Vector<RefPtr<WebCore::ContiguousSharedBuffer>>& pasteboardData) final;
+    void getPasteboardDataForRange(WebPage&, const std::optional<WebCore::SimpleRange>&, Vector<String>& pasteboardTypes, Vector<RefPtr<WebCore::SharedBuffer>>& pasteboardData) final;
     void didWriteToPasteboard(WebPage&) final;
     bool performTwoStepDrop(WebPage&, WebCore::DocumentFragment&, const WebCore::SimpleRange& destination, bool isMove) final;
 };

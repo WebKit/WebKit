@@ -283,7 +283,7 @@ void NetworkProcessConnection::didCacheResource(const ResourceRequest& request, 
     
     auto buffer = handle.tryWrapInSharedBuffer();
     if (!buffer) {
-        LOG_ERROR("Unable to create SharedBuffer from ShareableResource handle for resource url %s", request.url().string().utf8().data());
+        LOG_ERROR("Unable to create FragmentedSharedBuffer from ShareableResource handle for resource url %s", request.url().string().utf8().data());
         return;
     }
 

@@ -32,7 +32,7 @@
 namespace WebCore {
 class AuthenticationChallenge;
 class NetworkLoadMetrics;
-class SharedBuffer;
+class FragmentedSharedBuffer;
 enum class PolicyAction : uint8_t;
 }
 
@@ -51,7 +51,7 @@ public:
     virtual void didSendData(unsigned long long bytesSent, unsigned long long totalBytesToBeSent) = 0;
     virtual void willSendRedirectedRequest(WebCore::ResourceRequest&&, WebCore::ResourceRequest&& redirectRequest, WebCore::ResourceResponse&& redirectResponse) = 0;
     virtual void didReceiveResponse(WebCore::ResourceResponse&&, ResponseCompletionHandler&&) = 0;
-    virtual void didReceiveBuffer(Ref<WebCore::SharedBuffer>&&, int reportedEncodedDataLength) = 0;
+    virtual void didReceiveBuffer(Ref<WebCore::FragmentedSharedBuffer>&&, int reportedEncodedDataLength) = 0;
     virtual void didFinishLoading(const WebCore::NetworkLoadMetrics&) = 0;
     virtual void didFailLoading(const WebCore::ResourceError&) = 0;
     virtual void didBlockAuthenticationChallenge() { };

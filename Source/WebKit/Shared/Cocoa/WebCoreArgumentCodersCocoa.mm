@@ -564,7 +564,7 @@ std::optional<WebCore::FontPlatformData> ArgumentCoder<Ref<WebCore::Font>>::deco
         return std::nullopt;
 
     if (*includesCreationData) {
-        std::optional<Ref<WebCore::SharedBuffer>> fontFaceData;
+        std::optional<Ref<WebCore::FragmentedSharedBuffer>> fontFaceData;
         decoder >> fontFaceData;
         if (!fontFaceData)
             return std::nullopt;

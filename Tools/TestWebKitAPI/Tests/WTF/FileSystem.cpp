@@ -44,7 +44,7 @@ static void createTestFile(const String& path)
     FileSystem::closeFile(fileHandle);
 };
 
-// FIXME: Refactor FileSystemTest and SharedBufferTest as a single class.
+// FIXME: Refactor FileSystemTest and FragmentedSharedBufferTest as a single class.
 class FileSystemTest : public testing::Test {
 public:
     void SetUp() override

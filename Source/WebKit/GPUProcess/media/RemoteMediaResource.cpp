@@ -96,7 +96,7 @@ void RemoteMediaResource::dataSent(uint64_t bytesSent, uint64_t totalBytesToBeSe
         m_client->dataSent(*this, bytesSent, totalBytesToBeSent);
 }
 
-void RemoteMediaResource::dataReceived(Ref<SharedBuffer>&& data)
+void RemoteMediaResource::dataReceived(Ref<FragmentedSharedBuffer>&& data)
 {
     if (m_client)
         m_client->dataReceived(*this, WTFMove(data));

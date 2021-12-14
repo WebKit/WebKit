@@ -70,7 +70,7 @@ public:
     void appendVideoSampleBuffer(MediaSample&);
     void appendAudioSampleBuffer(const PlatformAudioData&, const AudioStreamDescription&, const WTF::MediaTime&, size_t);
     void stopRecording();
-    void fetchData(CompletionHandler<void(RefPtr<SharedBuffer>&&, double)>&&);
+    void fetchData(CompletionHandler<void(RefPtr<FragmentedSharedBuffer>&&, double)>&&);
 
     void pause();
     void resume();
@@ -105,7 +105,7 @@ private:
 
     void finishedFlushingSamples();
     void completeFetchData();
-    RefPtr<SharedBuffer> takeData();
+    RefPtr<FragmentedSharedBuffer> takeData();
 
     bool m_hasAudio { false };
     bool m_hasVideo { false };
@@ -118,7 +118,7 @@ private:
 
     Lock m_dataLock;
     SharedBufferBuilder m_data WTF_GUARDED_BY_LOCK(m_dataLock);
-    CompletionHandler<void(RefPtr<SharedBuffer>&&, double)> m_fetchDataCompletionHandler;
+    CompletionHandler<void(RefPtr<FragmentedSharedBuffer>&&, double)> m_fetchDataCompletionHandler;
 
     RetainPtr<CMFormatDescriptionRef> m_audioFormatDescription;
     std::unique_ptr<AudioSampleBufferCompressor> m_audioCompressor;

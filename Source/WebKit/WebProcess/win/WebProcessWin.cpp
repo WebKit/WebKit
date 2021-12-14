@@ -28,7 +28,7 @@
 
 #include <WebCore/SharedBuffer.h>
 
-RefPtr<WebCore::SharedBuffer> loadResourceIntoBuffer(const char* name)
+RefPtr<WebCore::FragmentedSharedBuffer> loadResourceIntoBuffer(const char* name)
 {
     return nullptr;
 }

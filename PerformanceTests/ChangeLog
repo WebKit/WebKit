@@ -1,3 +1,13 @@
+2021-12-14  Jean-Yves Avenard  <jya@apple.com>
+
+        Distinguish contiguous SharedBuffer from non-contiguous one and guarantee immutability: part 3
+        https://bugs.webkit.org/show_bug.cgi?id=233677
+
+        Reviewed by Youenn Fablet.
+
+        * DecoderTest/DecoderTest/main.mm:
+        (main):
+
 2021-12-13  Cathie Chen  <cathiechen@igalia.com>
 
         [Performance test] Add test lots-of-self-painting-layers.html

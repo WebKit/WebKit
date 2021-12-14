@@ -634,7 +634,7 @@ static inline WKEditorInsertAction toWK(WebCore::EditorInsertAction action)
             [m_controller->_editingDelegate.get() _webProcessPlugInBrowserContextController:m_controller willWriteRangeToPasteboard:wrapper(WebKit::createHandle(range).get())];
         }
 
-        void getPasteboardDataForRange(WebKit::WebPage&, const std::optional<WebCore::SimpleRange>& range, Vector<String>& pasteboardTypes, Vector<RefPtr<WebCore::ContiguousSharedBuffer>>& pasteboardData) final
+        void getPasteboardDataForRange(WebKit::WebPage&, const std::optional<WebCore::SimpleRange>& range, Vector<String>& pasteboardTypes, Vector<RefPtr<WebCore::SharedBuffer>>& pasteboardData) final
         {
             if (!m_delegateMethods.getPasteboardDataForRange)
                 return;
@@ -642,7 +642,7 @@ static inline WKEditorInsertAction toWK(WebCore::EditorInsertAction action)
             auto dataByType = [m_controller->_editingDelegate.get() _webProcessPlugInBrowserContextController:m_controller pasteboardDataForRange:wrapper(WebKit::createHandle(range).get())];
             for (NSString *type in dataByType) {
                 pasteboardTypes.append(type);
-                pasteboardData.append(WebCore::ContiguousSharedBuffer::create(dataByType[type]));
+                pasteboardData.append(WebCore::SharedBuffer::create(dataByType[type]));
             };
         }
 

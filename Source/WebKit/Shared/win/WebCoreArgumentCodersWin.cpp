@@ -107,7 +107,7 @@ std::optional<FontPlatformData> ArgumentCoder<Ref<Font>>::decodePlatformData(Dec
     FontPlatformData::CreationData* creationData = nullptr;
 
     if (includesCreationData.value()) {
-        std::optional<Ref<ContiguousSharedBuffer>> fontFaceData;
+        std::optional<Ref<SharedBuffer>> fontFaceData;
         decoder >> fontFaceData;
         if (!fontFaceData)
             return std::nullopt;

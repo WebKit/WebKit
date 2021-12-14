@@ -39,13 +39,13 @@ namespace WebCore {
 enum class DOMPasteAccessCategory : uint8_t;
 enum class DOMPasteAccessResponse : uint8_t;
 
-class ContiguousSharedBuffer;
+class SharedBuffer;
 class DocumentFragment;
 class Element;
 class Frame;
 class KeyboardEvent;
 class Node;
-class SharedBuffer;
+class FragmentedSharedBuffer;
 class StyleProperties;
 class TextCheckerClient;
 class VisibleSelection;
@@ -80,7 +80,7 @@ public:
     virtual bool shouldMoveRangeAfterDelete(const SimpleRange&, const SimpleRange&) = 0;
 
 #if ENABLE(ATTACHMENT_ELEMENT)
-    virtual void registerAttachmentIdentifier(const String& /* identifier */, const String& /* contentType */, const String& /* preferredFileName */, Ref<SharedBuffer>&&) { }
+    virtual void registerAttachmentIdentifier(const String& /* identifier */, const String& /* contentType */, const String& /* preferredFileName */, Ref<FragmentedSharedBuffer>&&) { }
     virtual void registerAttachmentIdentifier(const String& /* identifier */, const String& /* contentType */, const String& /* filePath */) { }
     virtual void registerAttachments(Vector<SerializedAttachmentData>&&) { }
     virtual void registerAttachmentIdentifier(const String& /* identifier */) { }
@@ -99,7 +99,7 @@ public:
     virtual void didEndEditing() = 0;
     virtual void willWriteSelectionToPasteboard(const std::optional<SimpleRange>&) = 0;
     virtual void didWriteSelectionToPasteboard() = 0;
-    virtual void getClientPasteboardData(const std::optional<SimpleRange>&, Vector<String>& pasteboardTypes, Vector<RefPtr<ContiguousSharedBuffer>>& pasteboardData) = 0;
+    virtual void getClientPasteboardData(const std::optional<SimpleRange>&, Vector<String>& pasteboardTypes, Vector<RefPtr<SharedBuffer>>& pasteboardData) = 0;
     virtual void requestCandidatesForSelection(const VisibleSelection&) { }
     virtual void handleAcceptedCandidateWithSoftSpaces(TextCheckingResult) { }
 

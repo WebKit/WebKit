@@ -49,7 +49,7 @@ RemoteCDMInstanceSession::RemoteCDMInstanceSession(WeakPtr<RemoteCDMFactory>&& f
 {
 }
 
-void RemoteCDMInstanceSession::requestLicense(LicenseType type, const AtomString& initDataType, Ref<SharedBuffer>&& initData, LicenseCallback&& callback)
+void RemoteCDMInstanceSession::requestLicense(LicenseType type, const AtomString& initDataType, Ref<FragmentedSharedBuffer>&& initData, LicenseCallback&& callback)
 {
     if (!m_factory) {
         callback(SharedBuffer::create(), emptyString(), false, Failed);
@@ -65,7 +65,7 @@ void RemoteCDMInstanceSession::requestLicense(LicenseType type, const AtomString
     }, m_identifier);
 }
 
-void RemoteCDMInstanceSession::updateLicense(const String& sessionId, LicenseType type, Ref<SharedBuffer>&& response, LicenseUpdateCallback&& callback)
+void RemoteCDMInstanceSession::updateLicense(const String& sessionId, LicenseType type, Ref<FragmentedSharedBuffer>&& response, LicenseUpdateCallback&& callback)
 {
     if (!m_factory) {
         callback(false, std::nullopt, std::nullopt, std::nullopt, Failed);
@@ -109,7 +109,7 @@ void RemoteCDMInstanceSession::removeSessionData(const String& sessionId, Licens
     }
 
     m_factory->gpuProcessConnection().connection().sendWithAsyncReply(Messages::RemoteCDMInstanceSessionProxy::RemoveSessionData(sessionId, type), [callback = WTFMove(callback)] (KeyStatusVector&& changedKeys, std::optional<IPC::SharedBufferCopy>&& message, bool succeeded) mutable {
-        std::optional<Ref<SharedBuffer>> realMessage = std::nullopt;
+        std::optional<Ref<FragmentedSharedBuffer>> realMessage = std::nullopt;
         if (message && message.value().buffer())
             realMessage = message.value().buffer().releaseNonNull();
         callback(WTFMove(changedKeys), WTFMove(realMessage), succeeded ? Succeeded : Failed);

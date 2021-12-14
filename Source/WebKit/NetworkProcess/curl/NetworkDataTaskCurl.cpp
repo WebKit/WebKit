@@ -172,7 +172,7 @@ void NetworkDataTaskCurl::curlDidReceiveResponse(CurlRequest& request, CurlRespo
     invokeDidReceiveResponse();
 }
 
-void NetworkDataTaskCurl::curlDidReceiveBuffer(CurlRequest&, Ref<SharedBuffer>&& buffer)
+void NetworkDataTaskCurl::curlDidReceiveBuffer(CurlRequest&, Ref<FragmentedSharedBuffer>&& buffer)
 {
     Ref protectedThis { *this };
     if (state() == State::Canceling || state() == State::Completed || (!m_client && !isDownload()))

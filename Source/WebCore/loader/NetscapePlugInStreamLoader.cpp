@@ -146,12 +146,12 @@ void NetscapePlugInStreamLoader::didReceiveData(const uint8_t* data, unsigned le
     didReceiveDataOrBuffer(data, length, nullptr, encodedDataLength, dataPayloadType);
 }
 
-void NetscapePlugInStreamLoader::didReceiveBuffer(Ref<SharedBuffer>&& buffer, long long encodedDataLength, DataPayloadType dataPayloadType)
+void NetscapePlugInStreamLoader::didReceiveBuffer(Ref<FragmentedSharedBuffer>&& buffer, long long encodedDataLength, DataPayloadType dataPayloadType)
 {
     didReceiveDataOrBuffer(nullptr, 0, WTFMove(buffer), encodedDataLength, dataPayloadType);
 }
 
-void NetscapePlugInStreamLoader::didReceiveDataOrBuffer(const uint8_t* data, int length, RefPtr<SharedBuffer>&& buffer, long long encodedDataLength, DataPayloadType dataPayloadType)
+void NetscapePlugInStreamLoader::didReceiveDataOrBuffer(const uint8_t* data, int length, RefPtr<FragmentedSharedBuffer>&& buffer, long long encodedDataLength, DataPayloadType dataPayloadType)
 {
     Ref<NetscapePlugInStreamLoader> protectedThis(*this);
 

@@ -82,7 +82,7 @@ private:
         RTCDataChannelState state;
         std::optional<webrtc::RTCError> error;
     };
-    using Message = std::variant<StateChange, String, Ref<SharedBuffer>>;
+    using Message = std::variant<StateChange, String, Ref<FragmentedSharedBuffer>>;
     using PendingMessages = Vector<Message>;
     void storeMessage(PendingMessages&, const webrtc::DataBuffer&);
     void processMessage(const webrtc::DataBuffer&);

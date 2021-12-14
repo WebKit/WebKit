@@ -42,7 +42,7 @@ public:
     void responseReceived(const ResourceResponse&) override;
     void addData(const uint8_t* data, int length) override;
     void finishedAddingData() override;
-    Ref<SharedBuffer> replacementData() const override;
+    Ref<FragmentedSharedBuffer> replacementData() const override;
 #if ENABLE(CONTENT_FILTERING)
     ContentFilterUnblockHandler unblockHandler() const override;
 #endif

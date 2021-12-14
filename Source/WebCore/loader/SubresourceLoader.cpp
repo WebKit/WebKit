@@ -530,7 +530,7 @@ void SubresourceLoader::didReceiveData(const uint8_t* data, unsigned length, lon
     didReceiveDataOrBuffer(data, length, nullptr, encodedDataLength, dataPayloadType);
 }
 
-void SubresourceLoader::didReceiveBuffer(Ref<SharedBuffer>&& buffer, long long encodedDataLength, DataPayloadType dataPayloadType)
+void SubresourceLoader::didReceiveBuffer(Ref<FragmentedSharedBuffer>&& buffer, long long encodedDataLength, DataPayloadType dataPayloadType)
 {
 #if USE(QUICK_LOOK)
     if (auto previewLoader = m_previewLoader.get()) {
@@ -542,7 +542,7 @@ void SubresourceLoader::didReceiveBuffer(Ref<SharedBuffer>&& buffer, long long e
     didReceiveDataOrBuffer(nullptr, 0, WTFMove(buffer), encodedDataLength, dataPayloadType);
 }
 
-void SubresourceLoader::didReceiveDataOrBuffer(const uint8_t* data, int length, RefPtr<SharedBuffer>&& buffer, long long encodedDataLength, DataPayloadType dataPayloadType)
+void SubresourceLoader::didReceiveDataOrBuffer(const uint8_t* data, int length, RefPtr<FragmentedSharedBuffer>&& buffer, long long encodedDataLength, DataPayloadType dataPayloadType)
 {
     ASSERT(m_resource);
 

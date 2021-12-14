@@ -336,7 +336,7 @@ void CachedResource::checkNotify(const NetworkLoadMetrics& metrics)
         client->notifyFinished(*this, metrics);
 }
 
-void CachedResource::updateBuffer(const SharedBuffer&)
+void CachedResource::updateBuffer(const FragmentedSharedBuffer&)
 {
     ASSERT(dataBufferingPolicy() == DataBufferingPolicy::BufferData);
 }
@@ -346,7 +346,7 @@ void CachedResource::updateData(const uint8_t*, unsigned)
     ASSERT(dataBufferingPolicy() == DataBufferingPolicy::DoNotBufferData);
 }
 
-void CachedResource::finishLoading(const SharedBuffer*, const NetworkLoadMetrics& metrics)
+void CachedResource::finishLoading(const FragmentedSharedBuffer*, const NetworkLoadMetrics& metrics)
 {
     setLoading(false);
     checkNotify(metrics);
@@ -915,7 +915,7 @@ void CachedResource::Callback::timerFired()
 
 #if ENABLE(SHAREABLE_RESOURCE)
 
-void CachedResource::tryReplaceEncodedData(ContiguousSharedBuffer& newBuffer)
+void CachedResource::tryReplaceEncodedData(SharedBuffer& newBuffer)
 {
     if (!m_data)
         return;

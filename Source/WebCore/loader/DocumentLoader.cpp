@@ -208,7 +208,7 @@ DocumentLoader::~DocumentLoader()
 #endif
 }
 
-RefPtr<SharedBuffer> DocumentLoader::mainResourceData() const
+RefPtr<FragmentedSharedBuffer> DocumentLoader::mainResourceData() const
 {
     if (m_substituteData.isValid())
         return m_substituteData.content()->copy();
@@ -1649,7 +1649,7 @@ void DocumentLoader::clearArchiveResources()
     m_substituteResourceDeliveryTimer.stop();
 }
 
-ContiguousSharedBuffer* DocumentLoader::parsedArchiveData() const
+SharedBuffer* DocumentLoader::parsedArchiveData() const
 {
     return m_parsedArchiveData.get();
 }
@@ -1668,7 +1668,7 @@ ArchiveResource* DocumentLoader::archiveResourceForURL(const URL& url) const
 
 RefPtr<ArchiveResource> DocumentLoader::mainResource() const
 {
-    RefPtr<SharedBuffer> data = mainResourceData();
+    RefPtr<FragmentedSharedBuffer> data = mainResourceData();
     if (!data)
         data = SharedBuffer::create();
     auto& response = this->response();
@@ -2252,7 +2252,7 @@ void DocumentLoader::maybeFinishLoadingMultipartContent()
 
     frameLoader()->setupForReplace();
     m_committed = false;
-    RefPtr<SharedBuffer> resourceData = mainResourceData();
+    RefPtr<FragmentedSharedBuffer> resourceData = mainResourceData();
     commitLoad(resourceData->makeContiguous()->data(), resourceData->size());
 }
 
@@ -2289,7 +2289,7 @@ void DocumentLoader::startIconLoading()
     m_frame->loader().client().getLoadDecisionForIcons(iconDecisions);
 }
 
-void DocumentLoader::didGetLoadDecisionForIcon(bool decision, uint64_t loadIdentifier, CompletionHandler<void(SharedBuffer*)>&& completionHandler)
+void DocumentLoader::didGetLoadDecisionForIcon(bool decision, uint64_t loadIdentifier, CompletionHandler<void(FragmentedSharedBuffer*)>&& completionHandler)
 {
     auto icon = m_iconsPendingLoadDecision.take(loadIdentifier);
 
@@ -2310,7 +2310,7 @@ void DocumentLoader::didGetLoadDecisionForIcon(bool decision, uint64_t loadIdent
     rawIconLoader->startLoading();
 }
 
-void DocumentLoader::finishedLoadingIcon(IconLoader& loader, SharedBuffer* buffer)
+void DocumentLoader::finishedLoadingIcon(IconLoader& loader, FragmentedSharedBuffer* buffer)
 {
     // If the DocumentLoader has detached from its frame, all icon loads should have already been cancelled.
     ASSERT(m_frame);

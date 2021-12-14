@@ -608,7 +608,7 @@ public:
     void redirectReceived(PlatformMediaResource&, ResourceRequest&&, const ResourceResponse&, CompletionHandler<void(ResourceRequest&&)>&&) override;
     bool shouldCacheResponse(PlatformMediaResource&, const ResourceResponse&) override;
     void dataSent(PlatformMediaResource&, unsigned long long, unsigned long long) override;
-    void dataReceived(PlatformMediaResource&, Ref<SharedBuffer>&&) override;
+    void dataReceived(PlatformMediaResource&, Ref<FragmentedSharedBuffer>&&) override;
     void accessControlCheckFailed(PlatformMediaResource&, const ResourceError&) override;
     void loadFailed(PlatformMediaResource&, const ResourceError&) override;
     void loadFinished(PlatformMediaResource&, const NetworkLoadMetrics&) override;
@@ -652,7 +652,7 @@ bool WebCoreNSURLSessionDataTaskClient::shouldCacheResponse(PlatformMediaResourc
     return [m_task resource:&resource shouldCacheResponse:response];
 }
 
-void WebCoreNSURLSessionDataTaskClient::dataReceived(PlatformMediaResource& resource, Ref<SharedBuffer>&& buffer)
+void WebCoreNSURLSessionDataTaskClient::dataReceived(PlatformMediaResource& resource, Ref<FragmentedSharedBuffer>&& buffer)
 {
     Locker locker { m_taskLock };
     if (!m_task)
@@ -915,7 +915,7 @@ void WebCoreNSURLSessionDataTaskClient::loadFinished(PlatformMediaResource& reso
     return response.httpHeaderField(HTTPHeaderName::ContentRange).isEmpty();
 }
 
-- (void)resource:(PlatformMediaResource*)resource receivedData:(Ref<WebCore::SharedBuffer>&&)data
+- (void)resource:(PlatformMediaResource*)resource receivedData:(Ref<WebCore::FragmentedSharedBuffer>&&)data
 {
     ASSERT_UNUSED(resource, !resource || resource == _resource);
     [self.session addDelegateOperation:[strongSelf = RetainPtr { self }, data = WTFMove(data)] {

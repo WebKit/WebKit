@@ -39,7 +39,7 @@ namespace WebCore {
 class RTCDataChannelHandlerClient;
 class RTCDataChannelRemoteHandlerConnection;
 class RTCError;
-class SharedBuffer;
+class FragmentedSharedBuffer;
 
 class RTCDataChannelRemoteHandler final : public RTCDataChannelHandler, public CanMakeWeakPtr<RTCDataChannelRemoteHandler> {
     WTF_MAKE_FAST_ALLOCATED;
@@ -73,7 +73,7 @@ private:
 
     struct Message {
         bool isRaw { false };
-        Ref<SharedBuffer> buffer;
+        Ref<FragmentedSharedBuffer> buffer;
     };
     Vector<Message> m_pendingMessages;
     bool m_isPendingClose { false };

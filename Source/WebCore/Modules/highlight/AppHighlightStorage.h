@@ -39,7 +39,7 @@ namespace WebCore {
 #if ENABLE(APP_HIGHLIGHTS)
 
 class Document;
-class SharedBuffer;
+class FragmentedSharedBuffer;
 class StaticRange;
 class Highlight;
 
@@ -54,7 +54,7 @@ public:
     ~AppHighlightStorage();
 
     WEBCORE_EXPORT void storeAppHighlight(Ref<StaticRange>&&);
-    WEBCORE_EXPORT void restoreAndScrollToAppHighlight(Ref<SharedBuffer>&&, ScrollToHighlight);
+    WEBCORE_EXPORT void restoreAndScrollToAppHighlight(Ref<FragmentedSharedBuffer>&&, ScrollToHighlight);
     void restoreUnrestoredAppHighlights();
     MonotonicTime lastRangeSearchTime() const { return m_timeAtLastRangeSearch; }
     void resetLastRangeSearchTime() { m_timeAtLastRangeSearch = MonotonicTime::now(); }

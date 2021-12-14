@@ -93,7 +93,7 @@ void MediaRecorderPrivateMock::generateMockCounterString()
 
 void MediaRecorderPrivateMock::fetchData(FetchDataCallback&& completionHandler)
 {
-    RefPtr<SharedBuffer> buffer;
+    RefPtr<FragmentedSharedBuffer> buffer;
     {
         Locker locker { m_bufferLock };
         Vector<uint8_t> value { m_buffer.characters8(), m_buffer.length() };

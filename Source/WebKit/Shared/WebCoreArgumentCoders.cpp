@@ -164,7 +164,7 @@ DEFINE_SIMPLE_ARGUMENT_CODER_FOR_SOURCE(DisplayList::SetInlineStrokeColor)
 
 #undef DEFINE_SIMPLE_ARGUMENT_CODER_FOR_SOURCE
 
-static void encodeSharedBuffer(Encoder& encoder, const SharedBuffer* buffer)
+static void encodeSharedBuffer(Encoder& encoder, const FragmentedSharedBuffer* buffer)
 {
     bool isNull = !buffer;
     encoder << isNull;
@@ -177,7 +177,7 @@ static void encodeSharedBuffer(Encoder& encoder, const SharedBuffer* buffer)
         return;
 
 #if USE(UNIX_DOMAIN_SOCKETS)
-    // Do not use shared memory for SharedBuffer encoding in Unix, because it's easy to reach the
+    // Do not use shared memory for FragmentedSharedBuffer encoding in Unix, because it's easy to reach the
     // maximum number of file descriptors open per process when sending large data in small chunks
     // over the IPC. ConnectionUnix.cpp already uses shared memory to send any IPC message that is
     // too large. See https://bugs.webkit.org/show_bug.cgi?id=208571.
@@ -191,7 +191,7 @@ static void encodeSharedBuffer(Encoder& encoder, const SharedBuffer* buffer)
 #endif
 }
 
-static WARN_UNUSED_RETURN bool decodeSharedBuffer(Decoder& decoder, RefPtr<ContiguousSharedBuffer>& buffer)
+static WARN_UNUSED_RETURN bool decodeSharedBuffer(Decoder& decoder, RefPtr<SharedBuffer>& buffer)
 {
     std::optional<bool> isNull;
     decoder >> isNull;
@@ -208,7 +208,7 @@ static WARN_UNUSED_RETURN bool decodeSharedBuffer(Decoder& decoder, RefPtr<Conti
         return false;
 
     if (!bufferSize) {
-        buffer = ContiguousSharedBuffer::create();
+        buffer = SharedBuffer::create();
         return true;
     }
 
@@ -221,7 +221,7 @@ static WARN_UNUSED_RETURN bool decodeSharedBuffer(Decoder& decoder, RefPtr<Conti
     if (!decoder.decodeFixedLengthData(data.data(), data.size(), 1))
         return false;
 
-    buffer = ContiguousSharedBuffer::create(WTFMove(data));
+    buffer = SharedBuffer::create(WTFMove(data));
 #else
     SharedMemory::IPCHandle ipcHandle;
     if (!decoder.decode(ipcHandle))
@@ -240,7 +240,7 @@ static WARN_UNUSED_RETURN bool decodeSharedBuffer(Decoder& decoder, RefPtr<Conti
     return true;
 }
 
-static void encodeTypesAndData(Encoder& encoder, const Vector<String>& types, const Vector<RefPtr<ContiguousSharedBuffer>>& data)
+static void encodeTypesAndData(Encoder& encoder, const Vector<String>& types, const Vector<RefPtr<SharedBuffer>>& data)
 {
     ASSERT(types.size() == data.size());
     encoder << types;
@@ -249,7 +249,7 @@ static void encodeTypesAndData(Encoder& encoder, const Vector<String>& types, co
         encodeSharedBuffer(encoder, buffer.get());
 }
 
-static WARN_UNUSED_RETURN bool decodeTypesAndData(Decoder& decoder, Vector<String>& types, Vector<RefPtr<ContiguousSharedBuffer>>& data)
+static WARN_UNUSED_RETURN bool decodeTypesAndData(Decoder& decoder, Vector<String>& types, Vector<RefPtr<SharedBuffer>>& data)
 {
     if (!decoder.decode(types))
         return false;
@@ -261,7 +261,7 @@ static WARN_UNUSED_RETURN bool decodeTypesAndData(Decoder& decoder, Vector<Strin
     ASSERT(dataSize == types.size());
 
     for (uint64_t i = 0; i < dataSize; i++) {
-        RefPtr<ContiguousSharedBuffer> buffer;
+        RefPtr<SharedBuffer> buffer;
         if (!decodeSharedBuffer(decoder, buffer))
             return false;
         data.append(buffer);
@@ -356,7 +356,7 @@ void ArgumentCoder<DOMCacheEngine::Record>::encode(Encoder& encoder, const DOMCa
     encoder << record.updateResponseCounter;
     encoder << record.responseBodySize;
 
-    WTF::switchOn(record.responseBody, [&](const Ref<ContiguousSharedBuffer>& buffer) {
+    WTF::switchOn(record.responseBody, [&](const Ref<SharedBuffer>& buffer) {
         encoder << true;
         encodeSharedBuffer(encoder, buffer.ptr());
     }, [&](const Ref<FormData>& formData) {
@@ -414,7 +414,7 @@ std::optional<DOMCacheEngine::Record> ArgumentCoder<DOMCacheEngine::Record>::dec
         return std::nullopt;
 
     if (hasSharedBufferBody) {
-        RefPtr<ContiguousSharedBuffer> buffer;
+        RefPtr<SharedBuffer> buffer;
         if (!decodeSharedBuffer(decoder, buffer))
             return std::nullopt;
         if (buffer)
@@ -1550,10 +1550,10 @@ void ArgumentCoder<PasteboardCustomData::Entry>::encode(Encoder& encoder, const 
     if (hasString)
         encoder << std::get<String>(platformData);
 
-    bool hasBuffer = std::holds_alternative<Ref<ContiguousSharedBuffer>>(platformData);
+    bool hasBuffer = std::holds_alternative<Ref<SharedBuffer>>(platformData);
     encoder << hasBuffer;
     if (hasBuffer)
-        encodeSharedBuffer(encoder, std::get<Ref<ContiguousSharedBuffer>>(platformData).ptr());
+        encodeSharedBuffer(encoder, std::get<Ref<SharedBuffer>>(platformData).ptr());
 }
 
 bool ArgumentCoder<PasteboardCustomData::Entry>::decode(Decoder& decoder, PasteboardCustomData::Entry& data)
@@ -1583,7 +1583,7 @@ bool ArgumentCoder<PasteboardCustomData::Entry>::decode(Decoder& decoder, Pasteb
         return false;
 
     if (hasBuffer) {
-        RefPtr<ContiguousSharedBuffer> value;
+        RefPtr<SharedBuffer> value;
         if (!decodeSharedBuffer(decoder, value) || !value)
             return false;
         data.platformData = { value.releaseNonNull() };
@@ -2976,7 +2976,7 @@ std::optional<SerializedAttachmentData> ArgumentCoder<WebCore::SerializedAttachm
     if (!decoder.decode(data))
         return std::nullopt;
 
-    return { { WTFMove(identifier), WTFMove(mimeType), WebCore::ContiguousSharedBuffer::create(data.data(), data.size()) } };
+    return { { WTFMove(identifier), WTFMove(mimeType), WebCore::SharedBuffer::create(data.data(), data.size()) } };
 }
 
 #endif // ENABLE(ATTACHMENT_ELEMENT)
@@ -3010,6 +3010,34 @@ std::optional<SerializedPlatformDataCueValue> ArgumentCoder<WebCore::SerializedP
 }
 #endif
 
+void ArgumentCoder<RefPtr<WebCore::FragmentedSharedBuffer>>::encode(Encoder& encoder, const RefPtr<WebCore::FragmentedSharedBuffer>& buffer)
+{
+    encodeSharedBuffer(encoder, buffer.get());
+}
+
+std::optional<RefPtr<FragmentedSharedBuffer>> ArgumentCoder<RefPtr<WebCore::FragmentedSharedBuffer>>::decode(Decoder& decoder)
+{
+    RefPtr<SharedBuffer> buffer;
+    if (!decodeSharedBuffer(decoder, buffer))
+        return std::nullopt;
+
+    return buffer;
+}
+
+void ArgumentCoder<Ref<WebCore::FragmentedSharedBuffer>>::encode(Encoder& encoder, const Ref<WebCore::FragmentedSharedBuffer>& buffer)
+{
+    encodeSharedBuffer(encoder, buffer.ptr());
+}
+
+std::optional<Ref<FragmentedSharedBuffer>> ArgumentCoder<Ref<WebCore::FragmentedSharedBuffer>>::decode(Decoder& decoder)
+{
+    RefPtr<SharedBuffer> buffer;
+    if (!decodeSharedBuffer(decoder, buffer) || !buffer)
+        return std::nullopt;
+
+    return buffer.releaseNonNull();
+}
+
 void ArgumentCoder<RefPtr<WebCore::SharedBuffer>>::encode(Encoder& encoder, const RefPtr<WebCore::SharedBuffer>& buffer)
 {
     encodeSharedBuffer(encoder, buffer.get());
@@ -3017,7 +3045,7 @@ void ArgumentCoder<RefPtr<WebCore::SharedBuffer>>::encode(Encoder& encoder, cons
 
 std::optional<RefPtr<SharedBuffer>> ArgumentCoder<RefPtr<WebCore::SharedBuffer>>::decode(Decoder& decoder)
 {
-    RefPtr<ContiguousSharedBuffer> buffer;
+    RefPtr<SharedBuffer> buffer;
     if (!decodeSharedBuffer(decoder, buffer))
         return std::nullopt;
 
@@ -3031,35 +3059,7 @@ void ArgumentCoder<Ref<WebCore::SharedBuffer>>::encode(Encoder& encoder, const R
 
 std::optional<Ref<SharedBuffer>> ArgumentCoder<Ref<WebCore::SharedBuffer>>::decode(Decoder& decoder)
 {
-    RefPtr<ContiguousSharedBuffer> buffer;
-    if (!decodeSharedBuffer(decoder, buffer) || !buffer)
-        return std::nullopt;
-
-    return buffer.releaseNonNull();
-}
-
-void ArgumentCoder<RefPtr<WebCore::ContiguousSharedBuffer>>::encode(Encoder& encoder, const RefPtr<WebCore::ContiguousSharedBuffer>& buffer)
-{
-    encodeSharedBuffer(encoder, buffer.get());
-}
-
-std::optional<RefPtr<ContiguousSharedBuffer>> ArgumentCoder<RefPtr<WebCore::ContiguousSharedBuffer>>::decode(Decoder& decoder)
-{
-    RefPtr<ContiguousSharedBuffer> buffer;
-    if (!decodeSharedBuffer(decoder, buffer))
-        return std::nullopt;
-
-    return buffer;
-}
-
-void ArgumentCoder<Ref<WebCore::ContiguousSharedBuffer>>::encode(Encoder& encoder, const Ref<WebCore::ContiguousSharedBuffer>& buffer)
-{
-    encodeSharedBuffer(encoder, buffer.ptr());
-}
-
-std::optional<Ref<ContiguousSharedBuffer>> ArgumentCoder<Ref<WebCore::ContiguousSharedBuffer>>::decode(Decoder& decoder)
-{
-    RefPtr<ContiguousSharedBuffer> buffer;
+    RefPtr<SharedBuffer> buffer;
     if (!decodeSharedBuffer(decoder, buffer) || !buffer)
         return std::nullopt;
 
@@ -3123,7 +3123,7 @@ std::optional<WebCore::ScriptBuffer> ArgumentCoder<WebCore::ScriptBuffer>::decod
         return decodeScriptBufferAsShareableResourceHandle(decoder);
 #endif
 
-    RefPtr<ContiguousSharedBuffer> buffer;
+    RefPtr<SharedBuffer> buffer;
     if (!decodeSharedBuffer(decoder, buffer))
         return std::nullopt;
 
@@ -3135,7 +3135,7 @@ void ArgumentCoder<WebCore::CDMInstanceSession::Message>::encode(Encoder& encode
 {
     encoder << message.first;
 
-    RefPtr<SharedBuffer> messageData = message.second.copyRef();
+    RefPtr<FragmentedSharedBuffer> messageData = message.second.copyRef();
     encoder << messageData;
 }
 
@@ -3145,7 +3145,7 @@ std::optional<WebCore::CDMInstanceSession::Message>  ArgumentCoder<WebCore::CDMI
     if (!decoder.decode(type))
         return std::nullopt;
 
-    RefPtr<SharedBuffer> buffer;
+    RefPtr<FragmentedSharedBuffer> buffer;
     if (!decoder.decode(buffer) || !buffer)
         return std::nullopt;
 

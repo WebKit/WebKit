@@ -109,7 +109,7 @@ void ParentalControlsContentFilter::finishedAddingData()
     updateFilterState();
 }
 
-Ref<SharedBuffer> ParentalControlsContentFilter::replacementData() const
+Ref<FragmentedSharedBuffer> ParentalControlsContentFilter::replacementData() const
 {
     ASSERT(didBlockData());
     return SharedBuffer::create(m_replacementData.get());

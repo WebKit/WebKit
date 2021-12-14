@@ -36,7 +36,7 @@ namespace WebCore {
 class FontCreationContext;
 class FontDescription;
 struct FontSelectionSpecifiedCapabilities;
-class SharedBuffer;
+class FragmentedSharedBuffer;
 
 template <typename T> class FontTaggedSettings;
 typedef FontTaggedSettings<int> FontFeatureSettings;
@@ -60,7 +60,7 @@ public:
     FontPlatformData::CreationData creationData;
 };
 
-WEBCORE_EXPORT std::unique_ptr<FontCustomPlatformData> createFontCustomPlatformData(ContiguousSharedBuffer&, const String&);
+WEBCORE_EXPORT std::unique_ptr<FontCustomPlatformData> createFontCustomPlatformData(SharedBuffer&, const String&);
 
 }
 

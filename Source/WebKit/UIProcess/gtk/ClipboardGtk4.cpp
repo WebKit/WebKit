@@ -120,15 +120,15 @@ void Clipboard::readFilePaths(CompletionHandler<void(Vector<String>&&)>&& comple
 struct ReadBufferAsyncData {
     WTF_MAKE_STRUCT_FAST_ALLOCATED;
 
-    explicit ReadBufferAsyncData(CompletionHandler<void(Ref<WebCore::SharedBuffer>&&)>&& handler)
+    explicit ReadBufferAsyncData(CompletionHandler<void(Ref<WebCore::FragmentedSharedBuffer>&&)>&& handler)
         : completionHandler(WTFMove(handler))
     {
     }
 
-    CompletionHandler<void(Ref<WebCore::SharedBuffer>&&)> completionHandler;
+    CompletionHandler<void(Ref<WebCore::FragmentedSharedBuffer>&&)> completionHandler;
 };
 
-void Clipboard::readBuffer(const char* format, CompletionHandler<void(Ref<WebCore::SharedBuffer>&&)>&& completionHandler)
+void Clipboard::readBuffer(const char* format, CompletionHandler<void(Ref<WebCore::FragmentedSharedBuffer>&&)>&& completionHandler)
 {
     const char* mimeTypes[] = { format, nullptr };
     gdk_clipboard_read_async(m_clipboard, mimeTypes, G_PRIORITY_DEFAULT, nullptr, [](GObject* clipboard, GAsyncResult* result, gpointer userData) {

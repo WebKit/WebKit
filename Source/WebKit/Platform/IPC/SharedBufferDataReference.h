@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// Encodes a SharedBuffer or DataReference that is received as a DataReference to the decoded data.
+// Encodes a FragmentedSharedBuffer or DataReference that is received as a DataReference to the decoded data.
 
 #pragma once
 

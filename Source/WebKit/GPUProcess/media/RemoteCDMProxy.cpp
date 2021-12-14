@@ -63,12 +63,12 @@ RemoteCDMProxy::RemoteCDMProxy(WeakPtr<RemoteCDMFactoryProxy>&& factory, std::un
 
 RemoteCDMProxy::~RemoteCDMProxy() = default;
 
-bool RemoteCDMProxy::supportsInitData(const AtomString& type, const SharedBuffer& data)
+bool RemoteCDMProxy::supportsInitData(const AtomString& type, const FragmentedSharedBuffer& data)
 {
     return m_private->supportsInitData(type, data);
 }
 
-RefPtr<SharedBuffer> RemoteCDMProxy::sanitizeResponse(const SharedBuffer& response)
+RefPtr<FragmentedSharedBuffer> RemoteCDMProxy::sanitizeResponse(const FragmentedSharedBuffer& response)
 {
     return m_private->sanitizeResponse(response);
 }

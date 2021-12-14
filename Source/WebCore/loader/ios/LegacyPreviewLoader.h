@@ -48,7 +48,7 @@ public:
 
     bool didReceiveResponse(const ResourceResponse&);
     bool didReceiveData(const uint8_t* data, unsigned length);
-    bool didReceiveBuffer(const SharedBuffer&);
+    bool didReceiveBuffer(const FragmentedSharedBuffer&);
     bool didFinishLoading();
     void didFail();
 
@@ -60,12 +60,12 @@ private:
     void previewConverterDidFinishUpdating(PreviewConverter&) final { };
     void previewConverterDidFailUpdating(PreviewConverter&) final;
     void previewConverterDidStartConverting(PreviewConverter&) final;
-    void previewConverterDidReceiveData(PreviewConverter&, const SharedBuffer&) final;
+    void previewConverterDidReceiveData(PreviewConverter&, const FragmentedSharedBuffer&) final;
     void previewConverterDidFinishConverting(PreviewConverter&) final;
     void previewConverterDidFailConverting(PreviewConverter&) final;
 
     // PreviewConverterProvider
-    void provideMainResourceForPreviewConverter(PreviewConverter&, CompletionHandler<void(const SharedBuffer*)>&&) final;
+    void provideMainResourceForPreviewConverter(PreviewConverter&, CompletionHandler<void(const FragmentedSharedBuffer*)>&&) final;
     void providePasswordForPreviewConverter(PreviewConverter&, CompletionHandler<void(const String&)>&&) final;
 
     RefPtr<PreviewConverter> m_converter;

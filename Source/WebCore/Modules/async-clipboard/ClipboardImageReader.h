@@ -31,7 +31,7 @@
 namespace WebCore {
 
 class Document;
-class SharedBuffer;
+class FragmentedSharedBuffer;
 
 struct ClipboardImageReader : PasteboardFileReader {
     ClipboardImageReader(Document* document, const String& mimeType)
@@ -47,7 +47,7 @@ private:
     void readFilename(const String&) final { ASSERT_NOT_REACHED(); }
 
     bool shouldReadBuffer(const String&) const final;
-    void readBuffer(const String& filename, const String& type, Ref<ContiguousSharedBuffer>&&) final;
+    void readBuffer(const String& filename, const String& type, Ref<SharedBuffer>&&) final;
 
     RefPtr<Document> m_document;
     String m_mimeType;

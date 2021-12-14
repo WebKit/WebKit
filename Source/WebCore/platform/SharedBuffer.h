@@ -63,7 +63,7 @@ class Decoder;
 
 namespace WebCore {
 
-class ContiguousSharedBuffer;
+class SharedBuffer;
 class SharedBufferDataView;
 
 // Data wrapped by a DataSegment should be immutable because it can be referenced by other objects.
@@ -131,57 +131,55 @@ private:
 #endif
         FileSystem::MappedFileData,
         Provider> m_immutableData;
-    friend class SharedBuffer;
-    friend class ContiguousSharedBuffer; // For createCFData
+    friend class FragmentedSharedBuffer;
+    friend class SharedBuffer; // For createCFData
 };
 
-class SharedBuffer : public ThreadSafeRefCounted<SharedBuffer> {
+class FragmentedSharedBuffer : public ThreadSafeRefCounted<FragmentedSharedBuffer> {
 public:
-    WEBCORE_EXPORT static Ref<SharedBuffer> create();
-    WEBCORE_EXPORT static Ref<SharedBuffer> create(const uint8_t*, size_t);
-    static Ref<SharedBuffer> create(const char* data, size_t size) { return create(reinterpret_cast<const uint8_t*>(data), size); }
-    WEBCORE_EXPORT static Ref<SharedBuffer> create(FileSystem::MappedFileData&&);
-    WEBCORE_EXPORT static Ref<SharedBuffer> create(Ref<ContiguousSharedBuffer>&&);
-    WEBCORE_EXPORT static Ref<SharedBuffer> create(Vector<uint8_t>&&);
-    WEBCORE_EXPORT static Ref<SharedBuffer> create(DataSegment::Provider&&);
+    WEBCORE_EXPORT static Ref<FragmentedSharedBuffer> create();
+    WEBCORE_EXPORT static Ref<FragmentedSharedBuffer> create(const uint8_t*, size_t);
+    static Ref<FragmentedSharedBuffer> create(const char* data, size_t size) { return create(reinterpret_cast<const uint8_t*>(data), size); }
+    WEBCORE_EXPORT static Ref<FragmentedSharedBuffer> create(FileSystem::MappedFileData&&);
+    WEBCORE_EXPORT static Ref<FragmentedSharedBuffer> create(Ref<SharedBuffer>&&);
+    WEBCORE_EXPORT static Ref<FragmentedSharedBuffer> create(Vector<uint8_t>&&);
+    WEBCORE_EXPORT static Ref<FragmentedSharedBuffer> create(DataSegment::Provider&&);
 
 #if USE(FOUNDATION)
     WEBCORE_EXPORT RetainPtr<NSArray> createNSDataArray() const;
-    WEBCORE_EXPORT static Ref<SharedBuffer> create(NSData*);
+    WEBCORE_EXPORT static Ref<FragmentedSharedBuffer> create(NSData*);
 #endif
 #if USE(CF)
-    WEBCORE_EXPORT static Ref<SharedBuffer> create(CFDataRef);
+    WEBCORE_EXPORT static Ref<FragmentedSharedBuffer> create(CFDataRef);
 #endif
 
 #if USE(GLIB)
-    WEBCORE_EXPORT static Ref<SharedBuffer> create(GBytes*);
+    WEBCORE_EXPORT static Ref<FragmentedSharedBuffer> create(GBytes*);
 #endif
 
 #if USE(GSTREAMER)
-    WEBCORE_EXPORT static Ref<SharedBuffer> create(GstMappedOwnedBuffer&);
+    WEBCORE_EXPORT static Ref<FragmentedSharedBuffer> create(GstMappedOwnedBuffer&);
 #endif
     WEBCORE_EXPORT Vector<uint8_t> copyData() const;
     WEBCORE_EXPORT Vector<uint8_t> read(size_t offset, size_t length) const;
 
-    // Similar to copyData() but avoids copying and will take the data instead when it is safe (The SharedBuffer is not shared).
+    // Similar to copyData() but avoids copying and will take the data instead when it is safe (The FragmentedSharedBuffer is not shared).
     Vector<uint8_t> extractData();
 
-    // Creates an ArrayBuffer and copies this SharedBuffer's contents to that
-    // ArrayBuffer without merging segmented buffers into a flat buffer.
     WEBCORE_EXPORT RefPtr<ArrayBuffer> tryCreateArrayBuffer() const;
 
     size_t size() const { return m_size; }
     bool isEmpty() const { return !size(); }
     bool isContiguous() const { return m_contiguous; }
 
-    WEBCORE_EXPORT Ref<SharedBuffer> copy() const;
+    WEBCORE_EXPORT Ref<FragmentedSharedBuffer> copy() const;
     WEBCORE_EXPORT void copyTo(void* destination, size_t length) const;
     WEBCORE_EXPORT void copyTo(void* destination, size_t offset, size_t length) const;
 
     WEBCORE_EXPORT void forEachSegment(const Function<void(const Span<const uint8_t>&)>&) const;
     WEBCORE_EXPORT bool startsWith(const Span<const uint8_t>& prefix) const;
 
-    using DataSegment = WebCore::DataSegment; // To keep backward compatibility when using SharedBuffer::DataSegment
+    using DataSegment = WebCore::DataSegment; // To keep backward compatibility when using FragmentedSharedBuffer::DataSegment
 
     struct DataSegmentVectorEntry {
         size_t beginPosition;
@@ -199,38 +197,38 @@ public:
 
     void hintMemoryNotNeededSoon() const;
 
-    WEBCORE_EXPORT bool operator==(const SharedBuffer&) const;
-    bool operator!=(const SharedBuffer& other) const { return !operator==(other); }
+    WEBCORE_EXPORT bool operator==(const FragmentedSharedBuffer&) const;
+    bool operator!=(const FragmentedSharedBuffer& other) const { return !operator==(other); }
 
-    WEBCORE_EXPORT Ref<ContiguousSharedBuffer> makeContiguous() const;
+    WEBCORE_EXPORT Ref<SharedBuffer> makeContiguous() const;
 
 protected:
-    friend class ContiguousSharedBuffer;
+    friend class SharedBuffer;
 
     DataSegmentVector m_segments;
     bool m_contiguous { false };
 
-    WEBCORE_EXPORT SharedBuffer();
-    explicit SharedBuffer(const uint8_t* data, size_t size) { append(data, size); }
-    explicit SharedBuffer(const char* data, size_t size) { append(data, size); }
-    explicit SharedBuffer(Vector<uint8_t>&& data) { append(WTFMove(data)); }
-    WEBCORE_EXPORT explicit SharedBuffer(FileSystem::MappedFileData&&);
-    WEBCORE_EXPORT explicit SharedBuffer(DataSegment::Provider&&);
-    WEBCORE_EXPORT explicit SharedBuffer(Ref<ContiguousSharedBuffer>&&);
+    WEBCORE_EXPORT FragmentedSharedBuffer();
+    explicit FragmentedSharedBuffer(const uint8_t* data, size_t size) { append(data, size); }
+    explicit FragmentedSharedBuffer(const char* data, size_t size) { append(data, size); }
+    explicit FragmentedSharedBuffer(Vector<uint8_t>&& data) { append(WTFMove(data)); }
+    WEBCORE_EXPORT explicit FragmentedSharedBuffer(FileSystem::MappedFileData&&);
+    WEBCORE_EXPORT explicit FragmentedSharedBuffer(DataSegment::Provider&&);
+    WEBCORE_EXPORT explicit FragmentedSharedBuffer(Ref<SharedBuffer>&&);
 #if USE(CF)
-    WEBCORE_EXPORT explicit SharedBuffer(CFDataRef);
+    WEBCORE_EXPORT explicit FragmentedSharedBuffer(CFDataRef);
 #endif
 #if USE(GLIB)
-    WEBCORE_EXPORT explicit SharedBuffer(GBytes*);
+    WEBCORE_EXPORT explicit FragmentedSharedBuffer(GBytes*);
 #endif
 #if USE(GSTREAMER)
-    WEBCORE_EXPORT explicit SharedBuffer(GstMappedOwnedBuffer&);
+    WEBCORE_EXPORT explicit FragmentedSharedBuffer(GstMappedOwnedBuffer&);
 #endif
     size_t m_size { 0 };
 
 private:
     friend class SharedBufferBuilder;
-    WEBCORE_EXPORT void append(const SharedBuffer&);
+    WEBCORE_EXPORT void append(const FragmentedSharedBuffer&);
     WEBCORE_EXPORT void append(const uint8_t*, size_t);
     void append(const char* data, size_t length) { append(reinterpret_cast<const uint8_t*>(data), length); }
     WEBCORE_EXPORT void append(Vector<uint8_t>&&);
@@ -243,7 +241,7 @@ private:
 
     WEBCORE_EXPORT void clear();
 
-    // Combines all the segments into a Vector and returns that vector after clearing the SharedBuffer.
+    // Combines all the segments into a Vector and returns that vector after clearing the FragmentedSharedBuffer.
     WEBCORE_EXPORT Vector<uint8_t> takeData();
     const DataSegmentVectorEntry* getSegmentForPosition(size_t positition) const;
 
@@ -252,20 +250,20 @@ private:
 #endif
 };
 
-// A ContiguousSharedBuffer is a SharedBuffer that allows to directly access its content via the data() and related methods.
-class ContiguousSharedBuffer : public SharedBuffer {
+// A SharedBuffer is a FragmentedSharedBuffer that allows to directly access its content via the data() and related methods.
+class SharedBuffer : public FragmentedSharedBuffer {
 public:
     template <typename... Args>
-    static Ref<ContiguousSharedBuffer> create(Args&&... args)
+    static Ref<SharedBuffer> create(Args&&... args)
     {
         if constexpr (!sizeof...(Args))
-            return adoptRef(*new ContiguousSharedBuffer());
+            return adoptRef(*new SharedBuffer());
         else if constexpr (sizeof...(Args) == 1
             && (std::is_same_v<Args, Ref<DataSegment>> &&...))
-            return adoptRef(*new ContiguousSharedBuffer(std::forward<Args>(args)...));
+            return adoptRef(*new SharedBuffer(std::forward<Args>(args)...));
         else {
-            auto buffer = SharedBuffer::create(std::forward<Args>(args)...);
-            return adoptRef(*new ContiguousSharedBuffer(WTFMove(buffer)));
+            auto buffer = FragmentedSharedBuffer::create(std::forward<Args>(args)...);
+            return adoptRef(*new SharedBuffer(WTFMove(buffer)));
         }
     }
 
@@ -274,7 +272,7 @@ public:
     WTF::Persistence::Decoder decoder() const;
 
     enum class MayUseFileMapping : bool { No, Yes };
-    WEBCORE_EXPORT static RefPtr<ContiguousSharedBuffer> createWithContentsOfFile(const String& filePath, FileSystem::MappedFileMode = FileSystem::MappedFileMode::Shared, MayUseFileMapping = MayUseFileMapping::Yes);
+    WEBCORE_EXPORT static RefPtr<SharedBuffer> createWithContentsOfFile(const String& filePath, FileSystem::MappedFileMode = FileSystem::MappedFileMode::Shared, MayUseFileMapping = MayUseFileMapping::Yes);
 
 #if USE(FOUNDATION)
     WEBCORE_EXPORT RetainPtr<NSData> createNSData() const;
@@ -287,12 +285,12 @@ public:
 #endif
 
 private:
-    WEBCORE_EXPORT ContiguousSharedBuffer();
-    WEBCORE_EXPORT explicit ContiguousSharedBuffer(FileSystem::MappedFileData&&);
-    WEBCORE_EXPORT explicit ContiguousSharedBuffer(Ref<DataSegment>&&);
-    WEBCORE_EXPORT explicit ContiguousSharedBuffer(Ref<SharedBuffer>&&);
+    WEBCORE_EXPORT SharedBuffer();
+    WEBCORE_EXPORT explicit SharedBuffer(FileSystem::MappedFileData&&);
+    WEBCORE_EXPORT explicit SharedBuffer(Ref<DataSegment>&&);
+    WEBCORE_EXPORT explicit SharedBuffer(Ref<FragmentedSharedBuffer>&&);
 
-    WEBCORE_EXPORT static RefPtr<ContiguousSharedBuffer> createFromReadingFile(const String& filePath);
+    WEBCORE_EXPORT static RefPtr<SharedBuffer> createFromReadingFile(const String& filePath);
 };
 
 class SharedBufferBuilder {
@@ -300,15 +298,18 @@ class SharedBufferBuilder {
 public:
     SharedBufferBuilder() = default;
     SharedBufferBuilder(SharedBufferBuilder&&) = default;
-    WEBCORE_EXPORT explicit SharedBufferBuilder(RefPtr<SharedBuffer>&&);
+    WEBCORE_EXPORT explicit SharedBufferBuilder(RefPtr<FragmentedSharedBuffer>&&);
+    explicit SharedBufferBuilder(Ref<FragmentedSharedBuffer>&& buffer) { initialize(WTFMove(buffer)); }
+    explicit SharedBufferBuilder(RefPtr<SharedBuffer>&& buffer)
+        : SharedBufferBuilder(RefPtr<FragmentedSharedBuffer>{ WTFMove(buffer) }) { }
     explicit SharedBufferBuilder(Ref<SharedBuffer>&& buffer) { initialize(WTFMove(buffer)); }
 
     template <typename... Args>
     SharedBufferBuilder(std::in_place_t, Args&&... args)
-        : m_buffer(SharedBuffer::create(std::forward<Args>(args)...)) { }
+        : m_buffer(FragmentedSharedBuffer::create(std::forward<Args>(args)...)) { }
 
     SharedBufferBuilder& operator=(SharedBufferBuilder&&) = default;
-    WEBCORE_EXPORT SharedBufferBuilder& operator=(RefPtr<SharedBuffer>&&);
+    WEBCORE_EXPORT SharedBufferBuilder& operator=(RefPtr<FragmentedSharedBuffer>&&);
 
     template <typename... Args>
     void append(Args&&... args)
@@ -324,12 +325,14 @@ public:
     size_t size() const { return m_buffer ? m_buffer->size() : 0; }
 
     void reset() { m_buffer = nullptr; }
-    void empty() { m_buffer = SharedBuffer::create(); }
+    void empty() { m_buffer = FragmentedSharedBuffer::create(); }
 
-    RefPtr<SharedBuffer> get() const { return m_buffer; }
-    Ref<SharedBuffer> copy() const { return m_buffer ? m_buffer->copy() : SharedBuffer::create(); }
-    WEBCORE_EXPORT Ref<SharedBuffer> take();
-    WEBCORE_EXPORT Ref<ContiguousSharedBuffer> takeAsContiguous();
+    RefPtr<FragmentedSharedBuffer> get() const { return m_buffer; }
+    Ref<FragmentedSharedBuffer> copy() const { return m_buffer ? m_buffer->copy() : FragmentedSharedBuffer::create(); }
+    WEBCORE_EXPORT RefPtr<ArrayBuffer> tryCreateArrayBuffer() const;
+
+    WEBCORE_EXPORT Ref<FragmentedSharedBuffer> take();
+    WEBCORE_EXPORT Ref<SharedBuffer> takeAsContiguous();
     WEBCORE_EXPORT RefPtr<ArrayBuffer> takeAsArrayBuffer();
 
 private:
@@ -342,12 +345,12 @@ private:
     SharedBufferBuilder(const SharedBufferBuilder&) = default;
     SharedBufferBuilder& operator=(const SharedBufferBuilder&) = default;
 
-    WEBCORE_EXPORT void initialize(Ref<SharedBuffer>&&);
+    WEBCORE_EXPORT void initialize(Ref<FragmentedSharedBuffer>&&);
     WEBCORE_EXPORT void ensureBuffer();
-    RefPtr<SharedBuffer> m_buffer;
+    RefPtr<FragmentedSharedBuffer> m_buffer;
 };
 
-inline Vector<uint8_t> SharedBuffer::extractData()
+inline Vector<uint8_t> FragmentedSharedBuffer::extractData()
 {
     if (hasOneRef())
         return takeData();
@@ -362,7 +365,7 @@ public:
     const uint8_t* data() const { return m_segment->data() + m_positionWithinSegment; }
     const char* dataAsCharPtr() const { return reinterpret_cast<const char*>(data()); }
 
-    WEBCORE_EXPORT Ref<ContiguousSharedBuffer> createSharedBuffer() const;
+    WEBCORE_EXPORT Ref<SharedBuffer> createSharedBuffer() const;
 #if USE(FOUNDATION)
     WEBCORE_EXPORT RetainPtr<NSData> createNSData() const;
 #endif
@@ -372,6 +375,6 @@ private:
     const size_t m_size;
 };
 
-RefPtr<ContiguousSharedBuffer> utf8Buffer(const String&);
+RefPtr<SharedBuffer> utf8Buffer(const String&);
 
 } // namespace WebCore

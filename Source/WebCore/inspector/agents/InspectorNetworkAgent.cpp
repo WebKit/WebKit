@@ -1140,7 +1140,7 @@ void InspectorNetworkAgent::interceptRequest(ResourceLoader& loader, Function<vo
     m_frontendDispatcher->requestIntercepted(requestId, buildObjectForResourceRequest(loader.request()));
 }
 
-void InspectorNetworkAgent::interceptResponse(const ResourceResponse& response, ResourceLoaderIdentifier identifier, CompletionHandler<void(const ResourceResponse&, RefPtr<SharedBuffer>)>&& handler)
+void InspectorNetworkAgent::interceptResponse(const ResourceResponse& response, ResourceLoaderIdentifier identifier, CompletionHandler<void(const ResourceResponse&, RefPtr<FragmentedSharedBuffer>)>&& handler)
 {
     ASSERT(m_enabled);
     ASSERT(m_interceptionEnabled);
@@ -1243,7 +1243,7 @@ Protocol::ErrorStringOr<void> InspectorNetworkAgent::interceptWithResponse(const
         overrideResponse.setHTTPHeaderField(HTTPHeaderName::ContentType, overrideResponse.mimeType());
     }
 
-    RefPtr<SharedBuffer> overrideData;
+    RefPtr<FragmentedSharedBuffer> overrideData;
     if (base64Encoded) {
         auto buffer = base64Decode(content);
         if (!buffer)
@@ -1271,7 +1271,7 @@ Protocol::ErrorStringOr<void> InspectorNetworkAgent::interceptRequestWithRespons
     if (loader->reachedTerminalState())
         return makeUnexpected("Unable to fulfill request, it has already been processed"_s);
 
-    RefPtr<SharedBuffer> data;
+    RefPtr<FragmentedSharedBuffer> data;
     if (base64Encoded) {
         auto buffer = base64Decode(content);
         if (!buffer)

@@ -33,7 +33,7 @@
 
 namespace WebCore {
 
-class SharedBuffer;
+class FragmentedSharedBuffer;
 
 namespace DataURLDecoder {
 

@@ -1,3 +1,145 @@
+2021-12-14  Jean-Yves Avenard  <jya@apple.com>
+
+        Rename SharedBuffer classes.
+        https://bugs.webkit.org/show_bug.cgi?id=233677
+        rdar://problem/85963900
+
+        Reviewed by Youenn Fablet.
+
+        SharedBuffer are renamed FragmentedSharedBuffer and
+        ContiguousSharedBuffer to SharedBuffer to better reflect their actual
+        types.
+
+        * GPUProcess/media/RemoteCDMInstanceProxy.cpp:
+        * GPUProcess/media/RemoteCDMInstanceProxy.h:
+        * GPUProcess/media/RemoteCDMInstanceSessionProxy.cpp:
+        * GPUProcess/media/RemoteCDMInstanceSessionProxy.h:
+        * GPUProcess/media/RemoteCDMProxy.cpp:
+        * GPUProcess/media/RemoteCDMProxy.h:
+        * GPUProcess/media/RemoteLegacyCDMProxy.h:
+        * GPUProcess/media/RemoteLegacyCDMSessionProxy.cpp:
+        * GPUProcess/media/RemoteLegacyCDMSessionProxy.h:
+        * GPUProcess/media/RemoteMediaResource.cpp:
+        * GPUProcess/media/RemoteMediaResource.h:
+        * GPUProcess/webrtc/RemoteMediaRecorder.cpp:
+        * NetworkProcess/Downloads/PendingDownload.h:
+        * NetworkProcess/NetworkCORSPreflightChecker.cpp:
+        * NetworkProcess/NetworkCORSPreflightChecker.h:
+        * NetworkProcess/NetworkDataTask.h:
+        * NetworkProcess/NetworkLoad.cpp:
+        * NetworkProcess/NetworkLoad.h:
+        * NetworkProcess/NetworkLoadClient.h:
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        * NetworkProcess/NetworkResourceLoader.h:
+        * NetworkProcess/PingLoad.cpp:
+        * NetworkProcess/PingLoad.h:
+        * NetworkProcess/PreconnectTask.cpp:
+        * NetworkProcess/PreconnectTask.h:
+        * NetworkProcess/ServiceWorker/ServiceWorkerNavigationPreloader.cpp:
+        * NetworkProcess/ServiceWorker/ServiceWorkerNavigationPreloader.h:
+        * NetworkProcess/ServiceWorker/ServiceWorkerSoftUpdateLoader.cpp:
+        * NetworkProcess/ServiceWorker/ServiceWorkerSoftUpdateLoader.h:
+        * NetworkProcess/cache/CacheStorageEngineCache.cpp:
+        * NetworkProcess/cache/NetworkCache.cpp:
+        * NetworkProcess/cache/NetworkCache.h:
+        * NetworkProcess/cache/NetworkCacheEntry.cpp:
+        * NetworkProcess/cache/NetworkCacheEntry.h:
+        * NetworkProcess/cache/NetworkCacheSpeculativeLoad.cpp:
+        * NetworkProcess/cache/NetworkCacheSpeculativeLoad.h:
+        * NetworkProcess/cache/PrefetchCache.cpp:
+        * NetworkProcess/cache/PrefetchCache.h:
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.h:
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.mm:
+        * NetworkProcess/curl/NetworkDataTaskCurl.cpp:
+        * NetworkProcess/curl/NetworkDataTaskCurl.h:
+        * NetworkProcess/soup/NetworkDataTaskSoup.cpp:
+        * NetworkProcess/webrtc/NetworkRTCProvider.h:
+        * Platform/IPC/SharedBufferCopy.cpp:
+        * Platform/IPC/SharedBufferCopy.h:
+        * Platform/IPC/SharedBufferDataReference.h:
+        * Platform/SharedMemory.cpp:
+        * Platform/SharedMemory.h:
+        * Shared/Cocoa/WebCoreArgumentCodersCocoa.mm:
+        * Shared/RemoteLayerTree/CGDisplayListImageBufferBackend.cpp:
+        * Shared/ShareableResource.cpp:
+        * Shared/ShareableResource.h:
+        * Shared/WebCoreArgumentCoders.cpp:
+        * Shared/WebCoreArgumentCoders.h:
+        * Shared/WebHitTestResultData.cpp:
+        * Shared/gtk/ArgumentCodersGtk.cpp:
+        * Shared/win/WebCoreArgumentCodersWin.cpp:
+        * UIProcess/API/APIAttachment.cpp:
+        * UIProcess/API/APIAttachment.h:
+        * UIProcess/API/APIContentRuleListStore.cpp:
+        * UIProcess/API/APIContentRuleListStore.h:
+        * UIProcess/API/APINavigationClient.h:
+        * UIProcess/API/Cocoa/APIAttachmentCocoa.mm:
+        * UIProcess/API/gtk/DropTargetGtk3.cpp:
+        * UIProcess/Cocoa/NavigationState.h:
+        * UIProcess/Cocoa/NavigationState.mm:
+        * UIProcess/Cocoa/WebProcessProxyCocoa.mm:
+        * UIProcess/Cocoa/WebViewImpl.h:
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebURLSchemeTask.cpp:
+        * UIProcess/WebURLSchemeTask.h:
+        * UIProcess/gtk/Clipboard.h:
+        * UIProcess/gtk/ClipboardGtk3.cpp:
+        * UIProcess/gtk/ClipboardGtk4.cpp:
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        * UIProcess/mac/PageClientImplMac.h:
+        * UIProcess/mac/PageClientImplMac.mm:
+        * UIProcess/mac/WebPageProxyMac.mm:
+        * WebProcess/GPU/media/RemoteCDM.cpp:
+        * WebProcess/GPU/media/RemoteCDM.h:
+        * WebProcess/GPU/media/RemoteCDMInstance.cpp:
+        * WebProcess/GPU/media/RemoteCDMInstance.h:
+        * WebProcess/GPU/media/RemoteCDMInstanceSession.cpp:
+        * WebProcess/GPU/media/RemoteCDMInstanceSession.h:
+        * WebProcess/GPU/media/RemoteImageDecoderAVF.cpp:
+        * WebProcess/GPU/media/RemoteImageDecoderAVF.h:
+        * WebProcess/GPU/media/RemoteImageDecoderAVFManager.cpp:
+        * WebProcess/GPU/media/RemoteImageDecoderAVFManager.h:
+        * WebProcess/GPU/media/RemoteLegacyCDMSession.cpp:
+        * WebProcess/GPU/media/SourceBufferPrivateRemote.cpp:
+        * WebProcess/GPU/media/SourceBufferPrivateRemote.h:
+        * WebProcess/GPU/webrtc/MediaRecorderPrivate.cpp:
+        * WebProcess/GPU/webrtc/MediaRecorderPrivate.h:
+        * WebProcess/InjectedBundle/API/APIInjectedBundleEditorClient.h:
+        * WebProcess/InjectedBundle/API/APIInjectedBundlePageLoaderClient.h:
+        * WebProcess/InjectedBundle/API/mac/WKWebProcessPlugInBrowserContextController.mm:
+        * WebProcess/InjectedBundle/InjectedBundlePageEditorClient.cpp:
+        * WebProcess/InjectedBundle/InjectedBundlePageEditorClient.h:
+        * WebProcess/InjectedBundle/InjectedBundlePageLoaderClient.cpp:
+        * WebProcess/InjectedBundle/InjectedBundlePageLoaderClient.h:
+        * WebProcess/Network/NetworkProcessConnection.cpp:
+        * WebProcess/Network/WebResourceLoader.cpp:
+        * WebProcess/Plugins/PDF/PDFPlugin.h:
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        * WebProcess/Plugins/Plugin.h:
+        * WebProcess/Plugins/PluginView.cpp:
+        * WebProcess/Plugins/PluginView.h:
+        * WebProcess/Storage/WebServiceWorkerFetchTaskClient.cpp:
+        * WebProcess/Storage/WebServiceWorkerFetchTaskClient.h:
+        * WebProcess/WebCoreSupport/WebEditorClient.cpp:
+        * WebProcess/WebCoreSupport/WebEditorClient.h:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.cpp:
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.h:
+        * WebProcess/WebCoreSupport/ios/WebPreviewLoaderClient.cpp:
+        * WebProcess/WebCoreSupport/ios/WebPreviewLoaderClient.h:
+        * WebProcess/WebCoreSupport/mac/WebDragClientMac.mm:
+        * WebProcess/WebPage/WebFrame.cpp:
+        * WebProcess/WebPage/WebPage.cpp:
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        * WebProcess/win/WebProcessWin.cpp:
+
 2021-12-13  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][a11y] Handle the Embedded method sent by AtkSocket from AccessibilityRootAtspi

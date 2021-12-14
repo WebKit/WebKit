@@ -62,7 +62,7 @@ public:
     void didNegotiateModernTLS(const URL&);
     void didCompleteWithError(const WebCore::ResourceError&, const WebCore::NetworkLoadMetrics&);
     void didReceiveResponse(WebCore::ResourceResponse&&, NegotiatedLegacyTLS, ResponseCompletionHandler&&);
-    void didReceiveData(Ref<WebCore::SharedBuffer>&&);
+    void didReceiveData(Ref<WebCore::FragmentedSharedBuffer>&&);
 
     void willPerformHTTPRedirection(WebCore::ResourceResponse&&, WebCore::ResourceRequest&&, RedirectCompletionHandler&&);
     void transferSandboxExtensionToDownload(Download&);

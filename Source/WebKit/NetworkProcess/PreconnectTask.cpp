@@ -79,7 +79,7 @@ void PreconnectTask::didReceiveResponse(ResourceResponse&& response, ResponseCom
     completionHandler(PolicyAction::Ignore);
 }
 
-void PreconnectTask::didReceiveBuffer(Ref<SharedBuffer>&&, int reportedEncodedDataLength)
+void PreconnectTask::didReceiveBuffer(Ref<FragmentedSharedBuffer>&&, int reportedEncodedDataLength)
 {
     ASSERT_NOT_REACHED();
 }

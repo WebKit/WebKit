@@ -243,7 +243,7 @@ private:
         return false;
     }
 
-    void dataReceived(PlatformMediaResource&, Ref<SharedBuffer>&& buffer) final
+    void dataReceived(PlatformMediaResource&, Ref<FragmentedSharedBuffer>&& buffer) final
     {
         ASSERT(isMainThread());
         if (!m_generator)

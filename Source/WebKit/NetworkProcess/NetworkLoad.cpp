@@ -263,7 +263,7 @@ void NetworkLoad::notifyDidReceiveResponse(ResourceResponse&& response, Negotiat
     m_client.get().didReceiveResponse(WTFMove(response), WTFMove(completionHandler));
 }
 
-void NetworkLoad::didReceiveData(Ref<SharedBuffer>&& buffer)
+void NetworkLoad::didReceiveData(Ref<FragmentedSharedBuffer>&& buffer)
 {
     // FIXME: This should be the encoded data length, not the decoded data length.
     auto size = buffer->size();

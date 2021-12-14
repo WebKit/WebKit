@@ -272,7 +272,7 @@ PlatformImagePtr ImageDecoderDirect2D::createFrameImageAtIndex(size_t index, Sub
     return bitmap;
 }
 
-void ImageDecoderDirect2D::setData(SharedBuffer& data, bool allDataReceived)
+void ImageDecoderDirect2D::setData(FragmentedSharedBuffer& data, bool allDataReceived)
 {
     if (!allDataReceived)
         return;

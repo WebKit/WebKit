@@ -47,18 +47,18 @@ public:
 
     struct Entry {
         WTF_MAKE_STRUCT_FAST_ALLOCATED;
-        Entry(WebCore::ResourceResponse&&, RefPtr<WebCore::SharedBuffer>&&);
+        Entry(WebCore::ResourceResponse&&, RefPtr<WebCore::FragmentedSharedBuffer>&&);
         Entry(WebCore::ResourceResponse&&, WebCore::ResourceRequest&&);
 
-        Ref<WebCore::SharedBuffer> releaseBuffer() { return buffer.releaseNonNull(); }
+        Ref<WebCore::FragmentedSharedBuffer> releaseBuffer() { return buffer.releaseNonNull(); }
 
         WebCore::ResourceResponse response;
-        RefPtr<WebCore::SharedBuffer> buffer;
+        RefPtr<WebCore::FragmentedSharedBuffer> buffer;
         WebCore::ResourceRequest redirectRequest;
     };
 
     std::unique_ptr<Entry> take(const URL&);
-    void store(const URL&, WebCore::ResourceResponse&&, RefPtr<WebCore::SharedBuffer>&&);
+    void store(const URL&, WebCore::ResourceResponse&&, RefPtr<WebCore::FragmentedSharedBuffer>&&);
     void storeRedirect(const URL&, WebCore::ResourceResponse&&, WebCore::ResourceRequest&&);
 
 private:

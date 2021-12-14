@@ -62,11 +62,11 @@ public:
     CDMProxyClearKey() = default;
     virtual ~CDMProxyClearKey();
 
-    // FIXME: There's a lack of consistency between SharedBuffers,
+    // FIXME: There's a lack of consistency between FragmentedSharedBuffers,
     // Vector<char>'s and {uint8_t*,size_t} idioms for representing a chunk of
-    // bytes. Fix that somehow. Note SharedBuffers are dangerous since
+    // bytes. Fix that somehow. Note FragmentedSharedBuffers are dangerous since
     // they're not thread-safe and this class must maintain
-    // thread-safety, but maybe SharedBuffer::DataSegment could be
+    // thread-safety, but maybe FragmentedSharedBuffer::DataSegment could be
     // made to work, however that has zero helpers for dropping into
     // iterator-aware / comparator-aware containers...
     struct cencDecryptContext {

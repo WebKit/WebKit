@@ -55,7 +55,7 @@ struct PacketOptions;
 
 namespace WebCore {
 class RegistrableDomain;
-class SharedBuffer;
+class FragmentedSharedBuffer;
 }
 
 namespace WebKit {

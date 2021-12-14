@@ -103,7 +103,7 @@ private:
     void dispatchError(Exception&&);
 
     enum class TakePrivateRecorder { No, Yes };
-    using FetchDataCallback = Function<void(RefPtr<SharedBuffer>&&, const String& mimeType, double)>;
+    using FetchDataCallback = Function<void(RefPtr<FragmentedSharedBuffer>&&, const String& mimeType, double)>;
     void fetchData(FetchDataCallback&&, TakePrivateRecorder);
 
     // MediaStream::Observer

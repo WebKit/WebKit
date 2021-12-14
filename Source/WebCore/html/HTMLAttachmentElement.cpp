@@ -227,7 +227,7 @@ static bool mimeTypeIsSuitableForInlineImageAttachment(const String& mimeType)
     return MIMETypeRegistry::isSupportedImageMIMEType(mimeType) || MIMETypeRegistry::isPDFMIMEType(mimeType);
 }
 
-void HTMLAttachmentElement::updateEnclosingImageWithData(const String& contentType, Ref<SharedBuffer>&& buffer)
+void HTMLAttachmentElement::updateEnclosingImageWithData(const String& contentType, Ref<FragmentedSharedBuffer>&& buffer)
 {
     auto* hostElement = shadowHost();
     if (!is<HTMLImageElement>(hostElement) || !buffer->size())

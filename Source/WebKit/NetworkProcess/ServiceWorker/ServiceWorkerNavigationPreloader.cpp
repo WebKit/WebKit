@@ -175,7 +175,7 @@ void ServiceWorkerNavigationPreloader::didReceiveResponse(ResourceResponse&& res
         callback();
 }
 
-void ServiceWorkerNavigationPreloader::didReceiveBuffer(Ref<SharedBuffer>&& buffer, int reportedEncodedDataLength)
+void ServiceWorkerNavigationPreloader::didReceiveBuffer(Ref<FragmentedSharedBuffer>&& buffer, int reportedEncodedDataLength)
 {
     if (m_bodyCallback)
         m_bodyCallback(buffer->makeContiguous(), reportedEncodedDataLength);

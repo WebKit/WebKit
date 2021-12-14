@@ -85,7 +85,7 @@ public:
     void feedStream() final;
     void cancel() final;
 
-    using ResponseData = std::variant<std::nullptr_t, Ref<FormData>, Ref<ContiguousSharedBuffer>>;
+    using ResponseData = std::variant<std::nullptr_t, Ref<FormData>, Ref<SharedBuffer>>;
     ResponseData consumeBody();
     void setBodyData(ResponseData&&, uint64_t bodySizeWithPadding);
 
@@ -134,7 +134,7 @@ private:
 
         void consumeDataByChunk(ConsumeDataByChunkCallback&&);
 
-        RefPtr<SharedBuffer> startStreaming();
+        RefPtr<FragmentedSharedBuffer> startStreaming();
         NotificationCallback takeNotificationCallback() { return WTFMove(m_responseCallback); }
         ConsumeDataByChunkCallback takeConsumeDataCallback() { return WTFMove(m_consumeDataCallback); }
 

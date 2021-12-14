@@ -32,9 +32,9 @@ namespace WebCore {
 class ImageDecoderCG final : public ImageDecoder {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    ImageDecoderCG(SharedBuffer& data, AlphaOption, GammaAndColorProfileOption);
+    ImageDecoderCG(FragmentedSharedBuffer& data, AlphaOption, GammaAndColorProfileOption);
 
-    static Ref<ImageDecoderCG> create(SharedBuffer& data, AlphaOption alphaOption, GammaAndColorProfileOption gammaAndColorProfileOption)
+    static Ref<ImageDecoderCG> create(FragmentedSharedBuffer& data, AlphaOption alphaOption, GammaAndColorProfileOption gammaAndColorProfileOption)
     {
         return adoptRef(*new ImageDecoderCG(data, alphaOption, gammaAndColorProfileOption));
     }
@@ -64,7 +64,7 @@ public:
 
     PlatformImagePtr createFrameImageAtIndex(size_t, SubsamplingLevel = SubsamplingLevel::Default, const DecodingOptions& = DecodingOptions(DecodingMode::Synchronous)) final;
 
-    void setData(SharedBuffer&, bool allDataReceived) final;
+    void setData(FragmentedSharedBuffer&, bool allDataReceived) final;
     bool isAllDataReceived() const final { return m_isAllDataReceived; }
     void clearFrameBufferCache(size_t) final { }
 

@@ -119,7 +119,7 @@ CurlMultipartHandle::CurlMultipartHandle(CurlMultipartHandleClient& client, cons
 
 }
 
-void CurlMultipartHandle::didReceiveData(const SharedBuffer& buffer)
+void CurlMultipartHandle::didReceiveData(const FragmentedSharedBuffer& buffer)
 {
     if (m_state == State::End)
         return; // The handler is closed down so ignore everything.
@@ -137,7 +137,7 @@ void CurlMultipartHandle::didComplete()
     if (m_state != State::End) {
         // It seems we are still not at the end of the processing.
         // Push out the remaining data.
-        m_client.didReceiveDataFromMultipart(ContiguousSharedBuffer::create(WTFMove(m_buffer)));
+        m_client.didReceiveDataFromMultipart(SharedBuffer::create(WTFMove(m_buffer)));
         m_state = State::End;
     }
 
@@ -234,13 +234,13 @@ bool CurlMultipartHandle::processContent()
 
         if (!checkForBoundary(boundaryStart, lastPartialMatch) && boundaryStart == notFound) {
             // Did not find the boundary start, all data up to the lastPartialMatch is ok.
-            m_client.didReceiveDataFromMultipart(ContiguousSharedBuffer::create(m_buffer.data(), lastPartialMatch));
+            m_client.didReceiveDataFromMultipart(SharedBuffer::create(m_buffer.data(), lastPartialMatch));
             m_buffer.remove(0, lastPartialMatch);
             return false;
         }
 
         // There was a boundary start (or end we'll check that later), push out part of the data.
-        m_client.didReceiveDataFromMultipart(ContiguousSharedBuffer::create(m_buffer.data(), boundaryStart));
+        m_client.didReceiveDataFromMultipart(SharedBuffer::create(m_buffer.data(), boundaryStart));
         m_buffer.remove(0, boundaryStart + m_boundary.length());
         m_state = State::EndBoundary;
     }

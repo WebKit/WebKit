@@ -259,7 +259,7 @@ class IntSize;
 class ProtectionSpace;
 class RunLoopObserver;
 class SelectionData;
-class ContiguousSharedBuffer;
+class SharedBuffer;
 class SpeechRecognitionRequest;
 class TextIndicator;
 class ValidationBubble;
@@ -1183,7 +1183,7 @@ public:
     void registerUIProcessAccessibilityTokens(const IPC::DataReference& elemenToken, const IPC::DataReference& windowToken);
     bool readSelectionFromPasteboard(const String& pasteboardName);
     String stringSelectionForPasteboard();
-    RefPtr<WebCore::ContiguousSharedBuffer> dataSelectionForPasteboard(const String& pasteboardType);
+    RefPtr<WebCore::SharedBuffer> dataSelectionForPasteboard(const String& pasteboardType);
     void makeFirstResponder();
     void assistiveTechnologyMakeFirstResponder();
 
@@ -1375,7 +1375,7 @@ public:
     void handleDownloadRequest(DownloadProxy&);
     void resumeDownload(const API::Data& resumeData, const String& path, CompletionHandler<void(DownloadProxy*)>&&);
     void downloadRequest(WebCore::ResourceRequest&&, CompletionHandler<void(DownloadProxy*)>&&);
-    void requestResource(WebCore::ResourceRequest&&, CompletionHandler<void(Ref<WebCore::ContiguousSharedBuffer>&&, WebCore::ResourceResponse&&, WebCore::ResourceError&&)>&&);
+    void requestResource(WebCore::ResourceRequest&&, CompletionHandler<void(Ref<WebCore::SharedBuffer>&&, WebCore::ResourceResponse&&, WebCore::ResourceError&&)>&&);
 
     void advanceToNextMisspelling(bool startBeforeSelection);
     void changeSpellingToWord(const String& word);

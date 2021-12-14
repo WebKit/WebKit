@@ -2322,7 +2322,7 @@ static RetainPtr<NSFileWrapper> fileWrapperForURL(DocumentLoader* dataSource, NS
 static RetainPtr<NSFileWrapper> fileWrapperForElement(HTMLImageElement& element)
 {
     if (CachedImage* cachedImage = element.cachedImage()) {
-        if (SharedBuffer* sharedBuffer = cachedImage->resourceBuffer())
+        if (FragmentedSharedBuffer* sharedBuffer = cachedImage->resourceBuffer())
             return adoptNS([[NSFileWrapper alloc] initRegularFileWithContents:sharedBuffer->makeContiguous()->createNSData().get()]);
     }
 

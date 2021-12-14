@@ -63,7 +63,7 @@ static Ref<LegacyPreviewLoaderClient> makeClient(const ResourceLoader& loader, c
     return emptyClient();
 }
 
-bool LegacyPreviewLoader::didReceiveBuffer(const SharedBuffer& buffer)
+bool LegacyPreviewLoader::didReceiveBuffer(const FragmentedSharedBuffer& buffer)
 {
     if (m_finishedLoadingDataIntoConverter)
         return false;
@@ -147,7 +147,7 @@ void LegacyPreviewLoader::previewConverterDidStartConverting(PreviewConverter& c
     });
 }
 
-void LegacyPreviewLoader::previewConverterDidReceiveData(PreviewConverter&, const SharedBuffer& data)
+void LegacyPreviewLoader::previewConverterDidReceiveData(PreviewConverter&, const FragmentedSharedBuffer& data)
 {
     auto resourceLoader = m_resourceLoader.get();
     if (!resourceLoader)
@@ -224,7 +224,7 @@ void LegacyPreviewLoader::providePasswordForPreviewConverter(PreviewConverter& c
     m_client->didRequestPassword(WTFMove(completionHandler));
 }
 
-void LegacyPreviewLoader::provideMainResourceForPreviewConverter(PreviewConverter& converter, CompletionHandler<void(const SharedBuffer*)>&& completionHandler)
+void LegacyPreviewLoader::provideMainResourceForPreviewConverter(PreviewConverter& converter, CompletionHandler<void(const FragmentedSharedBuffer*)>&& completionHandler)
 {
     ASSERT_UNUSED(converter, &converter == m_converter);
     completionHandler(m_originalData.get().get());
@@ -235,7 +235,7 @@ LegacyPreviewLoader::~LegacyPreviewLoader() = default;
 LegacyPreviewLoader::LegacyPreviewLoader(ResourceLoader& loader, const ResourceResponse& response)
     : m_converter { PreviewConverter::create(response, *this) }
     , m_client { makeClient(loader, m_converter->previewFileName(), m_converter->previewUTI()) }
-    , m_originalData { SharedBuffer::create() }
+    , m_originalData { FragmentedSharedBuffer::create() }
     , m_resourceLoader { loader }
     , m_shouldDecidePolicyBeforeLoading { loader.frame()->settings().shouldDecidePolicyBeforeLoadingQuickLookPreview() }
 {

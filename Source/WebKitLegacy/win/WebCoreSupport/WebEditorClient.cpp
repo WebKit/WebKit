@@ -261,7 +261,7 @@ void WebEditorClient::willWriteSelectionToPasteboard(const std::optional<WebCore
 {
 }
 
-void WebEditorClient::getClientPasteboardData(const std::optional<WebCore::SimpleRange>&, Vector<String>&, Vector<RefPtr<WebCore::ContiguousSharedBuffer> >&)
+void WebEditorClient::getClientPasteboardData(const std::optional<WebCore::SimpleRange>&, Vector<String>&, Vector<RefPtr<WebCore::SharedBuffer> >&)
 {
     notImplemented();
 }

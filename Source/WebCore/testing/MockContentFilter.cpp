@@ -110,7 +110,7 @@ void MockContentFilter::finishedAddingData()
     maybeDetermineStatus(DecisionPoint::AfterFinishedAddingData);
 }
 
-Ref<SharedBuffer> MockContentFilter::replacementData() const
+Ref<FragmentedSharedBuffer> MockContentFilter::replacementData() const
 {
     ASSERT(didBlockData());
     return SharedBuffer::create(m_replacementData.data(), m_replacementData.size());

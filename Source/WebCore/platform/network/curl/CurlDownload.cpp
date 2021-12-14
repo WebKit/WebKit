@@ -103,7 +103,7 @@ void CurlDownload::curlDidReceiveResponse(CurlRequest& request, CurlResponse&& r
 }
 
 
-void CurlDownload::curlDidReceiveBuffer(CurlRequest&, Ref<SharedBuffer>&& buffer)
+void CurlDownload::curlDidReceiveBuffer(CurlRequest&, Ref<FragmentedSharedBuffer>&& buffer)
 {
     ASSERT(isMainThread());
 

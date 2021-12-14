@@ -38,7 +38,7 @@ namespace WebCore {
 
 namespace CDMUtilities {
 
-RefPtr<JSON::Object> parseJSONObject(const SharedBuffer& buffer)
+RefPtr<JSON::Object> parseJSONObject(const FragmentedSharedBuffer& buffer)
 {
     // Fail on large buffers whose size doesn't fit into a 32-bit unsigned integer.
     size_t size = buffer.size();

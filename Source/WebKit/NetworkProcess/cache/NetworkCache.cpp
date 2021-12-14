@@ -454,7 +454,7 @@ void Cache::completeRetrieve(RetrieveCompletionHandler&& handler, std::unique_pt
     handler(WTFMove(entry), info);
 }
     
-std::unique_ptr<Entry> Cache::makeEntry(const WebCore::ResourceRequest& request, const WebCore::ResourceResponse& response, RefPtr<WebCore::SharedBuffer>&& responseData)
+std::unique_ptr<Entry> Cache::makeEntry(const WebCore::ResourceRequest& request, const WebCore::ResourceResponse& response, RefPtr<WebCore::FragmentedSharedBuffer>&& responseData)
 {
     return makeUnique<Entry>(makeCacheKey(request), response, WTFMove(responseData), WebCore::collectVaryingRequestHeaders(networkProcess().storageSession(m_sessionID), request, response));
 }
@@ -464,7 +464,7 @@ std::unique_ptr<Entry> Cache::makeRedirectEntry(const WebCore::ResourceRequest& 
     return makeUnique<Entry>(makeCacheKey(request), response, redirectRequest, WebCore::collectVaryingRequestHeaders(networkProcess().storageSession(m_sessionID), request, response));
 }
 
-std::unique_ptr<Entry> Cache::store(const WebCore::ResourceRequest& request, const WebCore::ResourceResponse& response, RefPtr<WebCore::SharedBuffer>&& responseData, Function<void(MappedBody&)>&& completionHandler)
+std::unique_ptr<Entry> Cache::store(const WebCore::ResourceRequest& request, const WebCore::ResourceResponse& response, RefPtr<WebCore::FragmentedSharedBuffer>&& responseData, Function<void(MappedBody&)>&& completionHandler)
 {
     ASSERT(responseData);
 

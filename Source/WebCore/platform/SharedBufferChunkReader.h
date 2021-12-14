@@ -41,8 +41,8 @@ namespace WebCore {
 
 class WEBCORE_EXPORT SharedBufferChunkReader {
 public:
-    SharedBufferChunkReader(SharedBuffer*, const Vector<char>& separator);
-    SharedBufferChunkReader(SharedBuffer*, const char* separator);
+    SharedBufferChunkReader(FragmentedSharedBuffer*, const Vector<char>& separator);
+    SharedBufferChunkReader(FragmentedSharedBuffer*, const char* separator);
 
     void setSeparator(const Vector<char>&);
     void setSeparator(const char*);
@@ -58,8 +58,8 @@ public:
     size_t peek(Vector<uint8_t>&, size_t);
 
 private:
-    SharedBuffer::DataSegmentVector::const_iterator m_iteratorCurrent;
-    const SharedBuffer::DataSegmentVector::const_iterator m_iteratorEnd;
+    FragmentedSharedBuffer::DataSegmentVector::const_iterator m_iteratorCurrent;
+    const FragmentedSharedBuffer::DataSegmentVector::const_iterator m_iteratorEnd;
     const uint8_t* m_segment { nullptr };
     size_t m_segmentIndex { 0 };
     Vector<char> m_separator { false };

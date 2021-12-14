@@ -35,10 +35,10 @@
 namespace WebCore {
 
 struct BigEndianUShort;
-class ContiguousSharedBuffer;
+class SharedBuffer;
 struct EOTPrefix;
 class FontMemoryResource;
-class SharedBuffer;
+class FragmentedSharedBuffer;
 
 struct EOTHeader {
     EOTHeader();
@@ -55,8 +55,8 @@ private:
     Vector<uint8_t, 512> m_buffer;
 };
 
-bool renameFont(const ContiguousSharedBuffer&, const String&, Vector<uint8_t>&);
-RefPtr<FontMemoryResource> renameAndActivateFont(const ContiguousSharedBuffer&, const String&);
+bool renameFont(const SharedBuffer&, const String&, Vector<uint8_t>&);
+RefPtr<FontMemoryResource> renameAndActivateFont(const SharedBuffer&, const String&);
 
 } // namespace WebCore
 

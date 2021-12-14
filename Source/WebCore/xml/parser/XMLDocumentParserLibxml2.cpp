@@ -464,7 +464,7 @@ static void* openFunc(const char* uri)
         return &globalDescriptor;
 
     ResourceResponse response;
-    RefPtr<ContiguousSharedBuffer> data;
+    RefPtr<SharedBuffer> data;
 
     {
         ResourceError error;

@@ -98,17 +98,17 @@ std::optional<uint64_t> Attachment::fileSizeForDisplay() const
     return std::nullopt;
 }
 
-RefPtr<WebCore::SharedBuffer> Attachment::enclosingImageData() const
+RefPtr<WebCore::FragmentedSharedBuffer> Attachment::enclosingImageData() const
 {
     return nullptr;
 }
 
-RefPtr<WebCore::ContiguousSharedBuffer> Attachment::createSerializedRepresentation() const
+RefPtr<WebCore::SharedBuffer> Attachment::createSerializedRepresentation() const
 {
     return nullptr;
 }
 
-void Attachment::updateFromSerializedRepresentation(Ref<WebCore::ContiguousSharedBuffer>&&, const WTF::String&)
+void Attachment::updateFromSerializedRepresentation(Ref<WebCore::SharedBuffer>&&, const WTF::String&)
 {
 }
 

@@ -563,7 +563,7 @@ void SourceBufferPrivateAVFObjC::didProvideContentKeyRequestInitializationDataFo
     UNUSED_PARAM(hasSessionSemaphore);
 }
 
-void SourceBufferPrivateAVFObjC::append(Ref<SharedBuffer>&& data)
+void SourceBufferPrivateAVFObjC::append(Ref<FragmentedSharedBuffer>&& data)
 {
     ALWAYS_LOG(LOGIDENTIFIER, "data length = ", data->size());
 

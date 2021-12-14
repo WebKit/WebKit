@@ -3663,6 +3663,11 @@ void MediaPlayerPrivateGStreamer::initializationDataEncountered(InitData&& initD
 {
     ASSERT(!isMainThread());
 
+    if (!initData.payload()) {
+        GST_DEBUG("initializationDataEncountered No payload");
+        return;
+    }
+
     RunLoop::main().dispatch([weakThis = WeakPtr { *this }, initData = WTFMove(initData)] {
         if (!weakThis)
             return;

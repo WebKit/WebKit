@@ -64,7 +64,7 @@ void CachedFont::didAddClient(CachedResourceClient& client)
         static_cast<CachedFontClient&>(client).fontLoaded(*this);
 }
 
-void CachedFont::finishLoading(const SharedBuffer* data, const NetworkLoadMetrics& metrics)
+void CachedFont::finishLoading(const FragmentedSharedBuffer* data, const NetworkLoadMetrics& metrics)
 {
     if (data) {
         m_data = data->makeContiguous();
@@ -95,7 +95,7 @@ String CachedFont::calculateItemInCollection() const
     return url().fragmentIdentifier().toString();
 }
 
-bool CachedFont::ensureCustomFontData(ContiguousSharedBuffer* data)
+bool CachedFont::ensureCustomFontData(SharedBuffer* data)
 {
     if (!m_fontCustomPlatformData && !errorOccurred() && !isLoading() && data) {
         bool wrapping;
@@ -108,7 +108,7 @@ bool CachedFont::ensureCustomFontData(ContiguousSharedBuffer* data)
     return m_fontCustomPlatformData.get();
 }
 
-std::unique_ptr<FontCustomPlatformData> CachedFont::createCustomFontData(ContiguousSharedBuffer& bytes, const String& itemInCollection, bool& wrapping)
+std::unique_ptr<FontCustomPlatformData> CachedFont::createCustomFontData(SharedBuffer& bytes, const String& itemInCollection, bool& wrapping)
 {
     RefPtr buffer = { &bytes };
     wrapping = !convertWOFFToSfntIfNecessary(buffer);

@@ -245,7 +245,7 @@ static bool supportsClientSideAttachmentData(const Frame& frame)
 
 #endif
 
-static Ref<DocumentFragment> createFragmentForImageAttachment(Frame& frame, Document& document, Ref<SharedBuffer>&& buffer, const String& contentType, PresentationSize preferredSize)
+static Ref<DocumentFragment> createFragmentForImageAttachment(Frame& frame, Document& document, Ref<FragmentedSharedBuffer>&& buffer, const String& contentType, PresentationSize preferredSize)
 {
 #if ENABLE(ATTACHMENT_ELEMENT)
     auto attachment = HTMLAttachmentElement::create(HTMLNames::attachmentTag, document);
@@ -285,7 +285,7 @@ static void replaceRichContentWithAttachments(Frame& frame, DocumentFragment& fr
     struct AttachmentInsertionInfo {
         String fileName;
         String contentType;
-        Ref<ContiguousSharedBuffer> data;
+        Ref<SharedBuffer> data;
         Ref<Element> originalElement;
     };
 
@@ -428,7 +428,7 @@ struct MarkupAndArchive {
     Ref<Archive> archive;
 };
 
-static std::optional<MarkupAndArchive> extractMarkupAndArchive(ContiguousSharedBuffer& buffer, const std::function<bool(const String)>& canShowMIMETypeAsHTML)
+static std::optional<MarkupAndArchive> extractMarkupAndArchive(SharedBuffer& buffer, const std::function<bool(const String)>& canShowMIMETypeAsHTML)
 {
     auto archive = LegacyWebArchive::create(URL(), buffer);
     if (!archive)
@@ -497,7 +497,7 @@ static String sanitizeMarkupWithArchive(Frame& frame, Document& destinationDocum
     return sanitizedMarkupForFragmentInDocument(WTFMove(fragment), *stagingDocument, msoListQuirks, markupAndArchive.markup);
 }
 
-bool WebContentReader::readWebArchive(ContiguousSharedBuffer& buffer)
+bool WebContentReader::readWebArchive(SharedBuffer& buffer)
 {
     if (frame.settings().preferMIMETypeForImages() || !frame.document())
         return false;
@@ -532,7 +532,7 @@ bool WebContentReader::readWebArchive(ContiguousSharedBuffer& buffer)
     return true;
 }
 
-bool WebContentMarkupReader::readWebArchive(ContiguousSharedBuffer& buffer)
+bool WebContentMarkupReader::readWebArchive(SharedBuffer& buffer)
 {
     if (!frame.document())
         return false;
@@ -612,7 +612,7 @@ bool WebContentMarkupReader::readHTML(const String& string)
     return !markup.isEmpty();
 }
 
-bool WebContentReader::readRTFD(ContiguousSharedBuffer& buffer)
+bool WebContentReader::readRTFD(SharedBuffer& buffer)
 {
     if (frame.settings().preferMIMETypeForImages() || !frame.document())
         return false;
@@ -626,7 +626,7 @@ bool WebContentReader::readRTFD(ContiguousSharedBuffer& buffer)
     return true;
 }
 
-bool WebContentMarkupReader::readRTFD(ContiguousSharedBuffer& buffer)
+bool WebContentMarkupReader::readRTFD(SharedBuffer& buffer)
 {
     if (!frame.document())
         return false;
@@ -639,7 +639,7 @@ bool WebContentMarkupReader::readRTFD(ContiguousSharedBuffer& buffer)
     return true;
 }
 
-bool WebContentReader::readRTF(ContiguousSharedBuffer& buffer)
+bool WebContentReader::readRTF(SharedBuffer& buffer)
 {
     if (frame.settings().preferMIMETypeForImages())
         return false;
@@ -653,7 +653,7 @@ bool WebContentReader::readRTF(ContiguousSharedBuffer& buffer)
     return true;
 }
 
-bool WebContentMarkupReader::readRTF(ContiguousSharedBuffer& buffer)
+bool WebContentMarkupReader::readRTF(SharedBuffer& buffer)
 {
     if (!frame.document())
         return false;
@@ -676,7 +676,7 @@ bool WebContentReader::readPlainText(const String& text)
     return true;
 }
 
-bool WebContentReader::readImage(Ref<SharedBuffer>&& buffer, const String& type, PresentationSize preferredPresentationSize)
+bool WebContentReader::readImage(Ref<FragmentedSharedBuffer>&& buffer, const String& type, PresentationSize preferredPresentationSize)
 {
     ASSERT(frame.document());
     auto& document = *frame.document();
@@ -746,7 +746,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     return attachment;
 }
 
-static Ref<HTMLElement> attachmentForData(Frame& frame, SharedBuffer& buffer, const String& contentType, const String& name, PresentationSize preferredSize)
+static Ref<HTMLElement> attachmentForData(Frame& frame, FragmentedSharedBuffer& buffer, const String& contentType, const String& name, PresentationSize preferredSize)
 {
     Ref document = *frame.document();
     auto attachment = HTMLAttachmentElement::create(HTMLNames::attachmentTag, document);
@@ -833,7 +833,7 @@ bool WebContentReader::readURL(const URL& url, const String& title)
     return true;
 }
 
-bool WebContentReader::readDataBuffer(ContiguousSharedBuffer& buffer, const String& type, const String& name, PresentationSize preferredPresentationSize)
+bool WebContentReader::readDataBuffer(SharedBuffer& buffer, const String& type, const String& name, PresentationSize preferredPresentationSize)
 {
     if (buffer.isEmpty())
         return false;

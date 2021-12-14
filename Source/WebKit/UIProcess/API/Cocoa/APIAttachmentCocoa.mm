@@ -137,7 +137,7 @@ std::optional<uint64_t> Attachment::fileSizeForDisplay() const
     return [fileWrapper regularFileContents].length;
 }
 
-RefPtr<WebCore::SharedBuffer> Attachment::enclosingImageData() const
+RefPtr<WebCore::FragmentedSharedBuffer> Attachment::enclosingImageData() const
 {
     if (!m_hasEnclosingImage)
         return nullptr;
@@ -159,7 +159,7 @@ bool Attachment::isEmpty() const
     return !m_fileWrapper && !m_fileWrapperGenerator;
 }
 
-RefPtr<WebCore::ContiguousSharedBuffer> Attachment::createSerializedRepresentation() const
+RefPtr<WebCore::SharedBuffer> Attachment::createSerializedRepresentation() const
 {
     auto fileWrapper = this->fileWrapper();
 
@@ -170,10 +170,10 @@ RefPtr<WebCore::ContiguousSharedBuffer> Attachment::createSerializedRepresentati
     if (!serializedData)
         return nullptr;
 
-    return WebCore::ContiguousSharedBuffer::create(serializedData);
+    return WebCore::SharedBuffer::create(serializedData);
 }
 
-void Attachment::updateFromSerializedRepresentation(Ref<WebCore::ContiguousSharedBuffer>&& serializedRepresentation, const WTF::String& contentType)
+void Attachment::updateFromSerializedRepresentation(Ref<WebCore::SharedBuffer>&& serializedRepresentation, const WTF::String& contentType)
 {
     if (!m_webPage)
         return;

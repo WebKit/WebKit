@@ -106,7 +106,7 @@ Ref<MHTMLArchive> MHTMLArchive::create()
     return adoptRef(*new MHTMLArchive);
 }
 
-RefPtr<MHTMLArchive> MHTMLArchive::create(const URL& url, SharedBuffer& data)
+RefPtr<MHTMLArchive> MHTMLArchive::create(const URL& url, FragmentedSharedBuffer& data)
 {
     // For security reasons we only load MHTML pages from local URLs.
     if (!LegacySchemeRegistry::shouldTreatURLSchemeAsLocal(url.protocol().toString()))
@@ -130,7 +130,7 @@ RefPtr<MHTMLArchive> MHTMLArchive::create(const URL& url, SharedBuffer& data)
     return mainArchive;
 }
 
-Ref<SharedBuffer> MHTMLArchive::generateMHTMLData(Page* page)
+Ref<FragmentedSharedBuffer> MHTMLArchive::generateMHTMLData(Page* page)
 {
     Vector<PageSerializer::Resource> resources;
     PageSerializer pageSerializer(resources);

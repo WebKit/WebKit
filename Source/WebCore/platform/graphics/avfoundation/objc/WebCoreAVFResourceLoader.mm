@@ -156,7 +156,7 @@ private:
     void redirectReceived(PlatformMediaResource&, ResourceRequest&& request, const ResourceResponse&, CompletionHandler<void(ResourceRequest&&)>&& completionHandler) final { completionHandler(WTFMove(request)); }
     bool shouldCacheResponse(PlatformMediaResource&, const ResourceResponse&) final { return false; }
     void dataSent(PlatformMediaResource&, unsigned long long, unsigned long long) final { }
-    void dataReceived(PlatformMediaResource&, Ref<SharedBuffer>&&) final;
+    void dataReceived(PlatformMediaResource&, Ref<FragmentedSharedBuffer>&&) final;
     void accessControlCheckFailed(PlatformMediaResource&, const ResourceError& error) final { loadFailed(error); }
     void loadFailed(PlatformMediaResource&, const ResourceError& error) final { loadFailed(error); }
     void loadFinished(PlatformMediaResource&, const NetworkLoadMetrics&) final { loadFinished(); }
@@ -211,7 +211,7 @@ void PlatformResourceMediaLoader::loadFinished()
     m_parent.loadFinished();
 }
 
-void PlatformResourceMediaLoader::dataReceived(PlatformMediaResource&, Ref<SharedBuffer>&& buffer)
+void PlatformResourceMediaLoader::dataReceived(PlatformMediaResource&, Ref<FragmentedSharedBuffer>&& buffer)
 {
     m_buffer.append(WTFMove(buffer));
     m_parent.newDataStoredInSharedBuffer(*m_buffer.get());
@@ -225,7 +225,7 @@ public:
 private:
     WebCoreAVFResourceLoader& m_parent;
     ResourceResponse m_response;
-    RefPtr<ContiguousSharedBuffer> m_buffer;
+    RefPtr<SharedBuffer> m_buffer;
 };
 
 DataURLResourceMediaLoader::DataURLResourceMediaLoader(WebCoreAVFResourceLoader& parent, ResourceRequest&& request)
@@ -235,7 +235,7 @@ DataURLResourceMediaLoader::DataURLResourceMediaLoader(WebCoreAVFResourceLoader&
 
     if (auto result = DataURLDecoder::decode(request.url(), DataURLDecoder::Mode::ForgivingBase64)) {
         m_response = ResourceResponse::dataURLResponse(request.url(), *result);
-        m_buffer = ContiguousSharedBuffer::create(WTFMove(result->data));
+        m_buffer = SharedBuffer::create(WTFMove(result->data));
     }
 
     callOnMainThread([this, weakThis = WeakPtr { *this }] {
@@ -385,7 +385,7 @@ void WebCoreAVFResourceLoader::loadFinished()
     stopLoading();
 }
 
-void WebCoreAVFResourceLoader::newDataStoredInSharedBuffer(const SharedBuffer& data)
+void WebCoreAVFResourceLoader::newDataStoredInSharedBuffer(const FragmentedSharedBuffer& data)
 {
     AVAssetResourceLoadingDataRequest* dataRequest = [m_avRequest dataRequest];
     if (!dataRequest)

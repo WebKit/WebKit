@@ -59,7 +59,7 @@ public:
     GPUProcessConnection& ensureGPUProcessConnection();
 
 private:
-    RefPtr<RemoteImageDecoderAVF> createImageDecoder(WebCore::SharedBuffer& data, const String& mimeType, WebCore::AlphaOption, WebCore::GammaAndColorProfileOption);
+    RefPtr<RemoteImageDecoderAVF> createImageDecoder(WebCore::FragmentedSharedBuffer& data, const String& mimeType, WebCore::AlphaOption, WebCore::GammaAndColorProfileOption);
 
     // GPUProcessConnection::Client.
     void gpuProcessConnectionDidClose(GPUProcessConnection&) final;

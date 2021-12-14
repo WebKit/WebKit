@@ -84,7 +84,7 @@ class NetworkLoadMetrics;
 class ResourceRequest;
 class ResourceResponse;
 class SecurityOrigin;
-class SharedBuffer;
+class FragmentedSharedBuffer;
 class SynchronousLoaderMessageQueue;
 class Timer;
 

@@ -114,7 +114,7 @@ class AuthenticationChallenge;
 class BlobPart;
 class CertificateInfo;
 class Color;
-class ContiguousSharedBuffer;
+class SharedBuffer;
 class Credential;
 class CubicBezierTimingFunction;
 class Cursor;
@@ -139,7 +139,7 @@ class ResourceRequest;
 class ResourceResponse;
 class ScriptBuffer;
 class SecurityOrigin;
-class SharedBuffer;
+class FragmentedSharedBuffer;
 class SpringTimingFunction;
 class StepsTimingFunction;
 class StickyPositionViewportConstraints;
@@ -752,6 +752,16 @@ template<> struct ArgumentCoder<WebCore::SerializedPlatformDataCueValue> {
 };
 #endif
 
+template<> struct ArgumentCoder<RefPtr<WebCore::FragmentedSharedBuffer>> {
+    static void encode(Encoder&, const RefPtr<WebCore::FragmentedSharedBuffer>&);
+    static std::optional<RefPtr<WebCore::FragmentedSharedBuffer>> decode(Decoder&);
+};
+
+template<> struct ArgumentCoder<Ref<WebCore::FragmentedSharedBuffer>> {
+    static void encode(Encoder&, const Ref<WebCore::FragmentedSharedBuffer>&);
+    static std::optional<Ref<WebCore::FragmentedSharedBuffer>> decode(Decoder&);
+};
+
 template<> struct ArgumentCoder<RefPtr<WebCore::SharedBuffer>> {
     static void encode(Encoder&, const RefPtr<WebCore::SharedBuffer>&);
     static std::optional<RefPtr<WebCore::SharedBuffer>> decode(Decoder&);
@@ -760,16 +770,6 @@ template<> struct ArgumentCoder<RefPtr<WebCore::SharedBuffer>> {
 template<> struct ArgumentCoder<Ref<WebCore::SharedBuffer>> {
     static void encode(Encoder&, const Ref<WebCore::SharedBuffer>&);
     static std::optional<Ref<WebCore::SharedBuffer>> decode(Decoder&);
-};
-
-template<> struct ArgumentCoder<RefPtr<WebCore::ContiguousSharedBuffer>> {
-    static void encode(Encoder&, const RefPtr<WebCore::ContiguousSharedBuffer>&);
-    static std::optional<RefPtr<WebCore::ContiguousSharedBuffer>> decode(Decoder&);
-};
-
-template<> struct ArgumentCoder<Ref<WebCore::ContiguousSharedBuffer>> {
-    static void encode(Encoder&, const Ref<WebCore::ContiguousSharedBuffer>&);
-    static std::optional<Ref<WebCore::ContiguousSharedBuffer>> decode(Decoder&);
 };
 
 template<> struct ArgumentCoder<WebCore::ScriptBuffer> {

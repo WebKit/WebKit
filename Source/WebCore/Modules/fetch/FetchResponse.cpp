@@ -450,7 +450,7 @@ void FetchResponse::setBodyData(ResponseData&& data, uint64_t bodySizeWithPaddin
                 setBody({ });
             body().setAsFormData(WTFMove(formData));
         },
-        [this](Ref<ContiguousSharedBuffer>& buffer) {
+        [this](Ref<SharedBuffer>& buffer) {
             if (isBodyNull())
                 setBody({ });
             body().consumer().setData(WTFMove(buffer));
@@ -512,7 +512,7 @@ void FetchResponse::feedStream()
     closeStream();
 }
 
-RefPtr<SharedBuffer> FetchResponse::BodyLoader::startStreaming()
+RefPtr<FragmentedSharedBuffer> FetchResponse::BodyLoader::startStreaming()
 {
     ASSERT(m_loader);
     return m_loader->startStreaming();

@@ -367,7 +367,7 @@ static NSString * const WebResourceResponseKey =          @"WebResourceResponse"
     if (!encoding.isValid())
         encoding = PAL::WindowsLatin1Encoding();
     
-    SharedBuffer* coreData = _private->coreResource ? &_private->coreResource->data() : nullptr;
+    FragmentedSharedBuffer* coreData = _private->coreResource ? &_private->coreResource->data() : nullptr;
     return encoding.decode(reinterpret_cast<const char*>(coreData ? coreData->makeContiguous()->data() : nullptr), coreData ? coreData->size() : 0);
 }
 

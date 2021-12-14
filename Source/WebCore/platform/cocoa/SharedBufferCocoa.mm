@@ -88,30 +88,30 @@
 
 namespace WebCore {
 
-Ref<SharedBuffer> SharedBuffer::create(NSData *data)
+Ref<FragmentedSharedBuffer> FragmentedSharedBuffer::create(NSData *data)
 {
-    return adoptRef(*new SharedBuffer(bridge_cast(data)));
+    return adoptRef(*new FragmentedSharedBuffer(bridge_cast(data)));
 }
 
-void SharedBuffer::append(NSData *data)
+void FragmentedSharedBuffer::append(NSData *data)
 {
     ASSERT(!m_contiguous);
     return append(bridge_cast(data));
 }
 
-RetainPtr<NSData> ContiguousSharedBuffer::createNSData() const
+RetainPtr<NSData> SharedBuffer::createNSData() const
 {
     return bridge_cast(createCFData());
 }
 
-RetainPtr<CFDataRef> ContiguousSharedBuffer::createCFData() const
+RetainPtr<CFDataRef> SharedBuffer::createCFData() const
 {
     if (!m_segments.size())
         return adoptCF(CFDataCreate(nullptr, nullptr, 0));
     return bridge_cast(m_segments[0].segment->createNSData());
 }
 
-RetainPtr<NSArray> SharedBuffer::createNSDataArray() const
+RetainPtr<NSArray> FragmentedSharedBuffer::createNSDataArray() const
 {
     return createNSArray(m_segments, [] (auto& segment) {
         return segment.segment->createNSData();

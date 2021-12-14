@@ -39,7 +39,7 @@ namespace WebKit {
 
 using namespace WebCore;
 
-RefPtr<RemoteImageDecoderAVF> RemoteImageDecoderAVFManager::createImageDecoder(SharedBuffer& data, const String& mimeType, AlphaOption alphaOption, GammaAndColorProfileOption gammaAndColorProfileOption)
+RefPtr<RemoteImageDecoderAVF> RemoteImageDecoderAVFManager::createImageDecoder(FragmentedSharedBuffer& data, const String& mimeType, AlphaOption alphaOption, GammaAndColorProfileOption gammaAndColorProfileOption)
 {
     std::optional<ImageDecoderIdentifier> imageDecoderIdentifier;
     IPC::SharedBufferDataReference dataReference { data };
@@ -108,7 +108,7 @@ void RemoteImageDecoderAVFManager::setUseGPUProcess(bool useGPUProcess)
     ImageDecoder::installFactory({
         RemoteImageDecoderAVF::supportsMediaType,
         RemoteImageDecoderAVF::canDecodeType,
-        [this](SharedBuffer& data, const String& mimeType, AlphaOption alphaOption, GammaAndColorProfileOption gammaAndColorProfileOption) {
+        [this](FragmentedSharedBuffer& data, const String& mimeType, AlphaOption alphaOption, GammaAndColorProfileOption gammaAndColorProfileOption) {
             return createImageDecoder(data, mimeType, alphaOption, gammaAndColorProfileOption);
         }
     });

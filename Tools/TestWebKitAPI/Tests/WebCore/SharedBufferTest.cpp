@@ -31,7 +31,7 @@
 
 namespace TestWebKitAPI {
 
-void SharedBufferTest::SetUp()
+void FragmentedSharedBufferTest::SetUp()
 {
     WTF::initializeMainThread();
 
@@ -45,7 +45,7 @@ void SharedBufferTest::SetUp()
     FileSystem::closeFile(handle);
 }
 
-void SharedBufferTest::TearDown()
+void FragmentedSharedBufferTest::TearDown()
 {
     FileSystem::deleteFile(m_tempFilePath);
     FileSystem::deleteFile(m_tempEmptyFilePath);

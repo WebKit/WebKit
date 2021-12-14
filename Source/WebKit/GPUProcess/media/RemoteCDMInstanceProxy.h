@@ -66,7 +66,7 @@ private:
     RemoteCDMInstanceProxy(WeakPtr<RemoteCDMProxy>&&, Ref<WebCore::CDMInstance>&&, UniqueRef<RemoteCDMInstanceConfiguration>&&, RemoteCDMInstanceIdentifier);
 
     // CDMInstanceClient
-    void unrequestedInitializationDataReceived(const String&, Ref<WebCore::SharedBuffer>&&) final;
+    void unrequestedInitializationDataReceived(const String&, Ref<WebCore::FragmentedSharedBuffer>&&) final;
 
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;

@@ -29,7 +29,7 @@
 
 namespace TestWebKitAPI {
 
-class SharedBufferTest : public testing::Test {
+class FragmentedSharedBufferTest : public testing::Test {
 public:
     void SetUp() override;
     void TearDown() override;

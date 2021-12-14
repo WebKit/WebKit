@@ -64,7 +64,7 @@ public:
 
     RefPtr<FormData> bodyAsFormData() const;
 
-    using TakenData = std::variant<std::nullptr_t, Ref<FormData>, Ref<ContiguousSharedBuffer>>;
+    using TakenData = std::variant<std::nullptr_t, Ref<FormData>, Ref<SharedBuffer>>;
     TakenData take();
 
     void setAsFormData(Ref<FormData>&& data) { m_data = WTFMove(data); }

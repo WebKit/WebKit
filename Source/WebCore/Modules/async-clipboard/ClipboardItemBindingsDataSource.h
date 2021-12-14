@@ -34,7 +34,7 @@
 namespace WebCore {
 
 class Blob;
-class ContiguousSharedBuffer;
+class SharedBuffer;
 class DOMPromise;
 class FileReaderLoader;
 class PasteboardCustomData;
@@ -53,7 +53,7 @@ private:
 
     void invokeCompletionHandler();
 
-    using BufferOrString = std::variant<String, Ref<ContiguousSharedBuffer>>;
+    using BufferOrString = std::variant<String, Ref<SharedBuffer>>;
     class ClipboardItemTypeLoader : public FileReaderLoaderClient, public RefCounted<ClipboardItemTypeLoader> {
     public:
         static Ref<ClipboardItemTypeLoader> create(const String& type, CompletionHandler<void()>&& completionHandler)

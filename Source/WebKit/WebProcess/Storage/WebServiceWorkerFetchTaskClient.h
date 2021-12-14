@@ -50,7 +50,7 @@ private:
 
     void didReceiveResponse(const WebCore::ResourceResponse&) final;
     void didReceiveRedirection(const WebCore::ResourceResponse&) final;
-    void didReceiveData(Ref<WebCore::SharedBuffer>&&) final;
+    void didReceiveData(Ref<WebCore::FragmentedSharedBuffer>&&) final;
     void didReceiveFormDataAndFinish(Ref<WebCore::FormData>&&) final;
     void didFail(const WebCore::ResourceError&) final;
     void didFinish() final;

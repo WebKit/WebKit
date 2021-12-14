@@ -248,12 +248,12 @@ Ref<LegacyWebArchive> LegacyWebArchive::create(Ref<ArchiveResource>&& mainResour
     return archive;
 }
 
-RefPtr<LegacyWebArchive> LegacyWebArchive::create(SharedBuffer& data)
+RefPtr<LegacyWebArchive> LegacyWebArchive::create(FragmentedSharedBuffer& data)
 {
     return create(URL(), data);
 }
 
-RefPtr<LegacyWebArchive> LegacyWebArchive::create(const URL&, SharedBuffer& data)
+RefPtr<LegacyWebArchive> LegacyWebArchive::create(const URL&, FragmentedSharedBuffer& data)
 {
     LOG(Archives, "LegacyWebArchive - Creating from raw data");
 

@@ -34,7 +34,7 @@ namespace WebCore {
 
 class CurlMultipartHandleClient;
 class CurlResponse;
-class SharedBuffer;
+class FragmentedSharedBuffer;
 
 class CurlMultipartHandle {
     WTF_MAKE_FAST_ALLOCATED;
@@ -44,7 +44,7 @@ public:
     CurlMultipartHandle(CurlMultipartHandleClient&, const String&);
     ~CurlMultipartHandle() { }
 
-    void didReceiveData(const SharedBuffer&);
+    void didReceiveData(const FragmentedSharedBuffer&);
     void didComplete();
 
 private:

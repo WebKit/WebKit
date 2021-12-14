@@ -329,12 +329,12 @@ void FetchBodyConsumer::append(const uint8_t* data, unsigned size)
     m_buffer.append(data, size);
 }
 
-void FetchBodyConsumer::setData(Ref<SharedBuffer>&& data)
+void FetchBodyConsumer::setData(Ref<FragmentedSharedBuffer>&& data)
 {
     m_buffer = WTFMove(data);
 }
 
-RefPtr<SharedBuffer> FetchBodyConsumer::takeData()
+RefPtr<FragmentedSharedBuffer> FetchBodyConsumer::takeData()
 {
     if (!m_buffer)
         return nullptr;

@@ -35,7 +35,7 @@
 class MemoryStream final : public IStream
 {
 public:
-    static COMPtr<MemoryStream> createInstance(RefPtr<WebCore::ContiguousSharedBuffer>&&);
+    static COMPtr<MemoryStream> createInstance(RefPtr<WebCore::SharedBuffer>&&);
 
     // IUnknown
     virtual HRESULT STDMETHODCALLTYPE QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject);
@@ -75,10 +75,10 @@ public:
     virtual HRESULT STDMETHODCALLTYPE Clone(_COM_Outptr_ IStream** ppstm);
 
 private:
-    MemoryStream(RefPtr<WebCore::ContiguousSharedBuffer>&&);
+    MemoryStream(RefPtr<WebCore::SharedBuffer>&&);
     ~MemoryStream();
 
-    RefPtr<WebCore::ContiguousSharedBuffer> m_buffer;
+    RefPtr<WebCore::SharedBuffer> m_buffer;
     size_t m_pos { 0 };
     ULONG m_refCount { 0 };
 };

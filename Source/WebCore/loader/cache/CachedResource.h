@@ -49,7 +49,7 @@ class CookieJar;
 class MemoryCache;
 class NetworkLoadMetrics;
 class SecurityOrigin;
-class SharedBuffer;
+class FragmentedSharedBuffer;
 class SubresourceLoader;
 class TextResourceDecoder;
 
@@ -112,9 +112,9 @@ public:
     virtual void setEncoding(const String&) { }
     virtual String encoding() const { return String(); }
     virtual const TextResourceDecoder* textResourceDecoder() const { return nullptr; }
-    virtual void updateBuffer(const SharedBuffer&);
+    virtual void updateBuffer(const FragmentedSharedBuffer&);
     virtual void updateData(const uint8_t* data, unsigned length);
-    virtual void finishLoading(const SharedBuffer*, const NetworkLoadMetrics&);
+    virtual void finishLoading(const FragmentedSharedBuffer*, const NetworkLoadMetrics&);
     virtual void error(CachedResource::Status);
 
     void setResourceError(const ResourceError& error) { m_error = error; }
@@ -213,7 +213,7 @@ public:
 
     void clearLoader();
 
-    ContiguousSharedBuffer* resourceBuffer() const { return m_data.get(); }
+    SharedBuffer* resourceBuffer() const { return m_data.get(); }
 
     virtual void redirectReceived(ResourceRequest&&, const ResourceResponse&, CompletionHandler<void(ResourceRequest&&)>&&);
     virtual void responseReceived(const ResourceResponse&);
@@ -284,7 +284,7 @@ public:
     virtual void didSendData(unsigned long long /* bytesSent */, unsigned long long /* totalBytesToBeSent */) { }
 
 #if ENABLE(SHAREABLE_RESOURCE)
-    WEBCORE_EXPORT void tryReplaceEncodedData(ContiguousSharedBuffer&);
+    WEBCORE_EXPORT void tryReplaceEncodedData(SharedBuffer&);
 #endif
 
     ResourceLoaderIdentifier identifierForLoadWithoutResourceLoader() const { return m_identifierForLoadWithoutResourceLoader; }
@@ -336,7 +336,7 @@ protected:
     HashCountedSet<CachedResourceClient*> m_clients;
     std::unique_ptr<ResourceRequest> m_originalRequest; // Needed by Ping loads.
     RefPtr<SubresourceLoader> m_loader;
-    RefPtr<ContiguousSharedBuffer> m_data;
+    RefPtr<SharedBuffer> m_data;
 
 private:
     MonotonicTime m_lastDecodedAccessTime; // Used as a "thrash guard" in the cache

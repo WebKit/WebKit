@@ -50,10 +50,10 @@ public:
     void append(const uint8_t* data, unsigned);
 
     bool hasData() const { return !!m_buffer; }
-    const SharedBuffer* data() const { return m_buffer.get().get(); }
-    void setData(Ref<SharedBuffer>&&);
+    const FragmentedSharedBuffer* data() const { return m_buffer.get().get(); }
+    void setData(Ref<FragmentedSharedBuffer>&&);
 
-    RefPtr<SharedBuffer> takeData();
+    RefPtr<FragmentedSharedBuffer> takeData();
     RefPtr<JSC::ArrayBuffer> takeAsArrayBuffer();
     String takeAsText();
 

@@ -35,7 +35,7 @@ namespace WebCore {
 
 class BufferSource;
 class ReadableStream;
-class SharedBuffer;
+class FragmentedSharedBuffer;
 
 class ReadableStreamSink : public RefCounted<ReadableStreamSink> {
 public:

@@ -196,7 +196,7 @@ ExceptionOr<void> MediaRecorder::startRecording(std::optional<unsigned> timeSlic
     return { };
 }
 
-static inline Ref<BlobEvent> createDataAvailableEvent(ScriptExecutionContext* context, RefPtr<SharedBuffer>&& buffer, const String& mimeType, double timeCode)
+static inline Ref<BlobEvent> createDataAvailableEvent(ScriptExecutionContext* context, RefPtr<FragmentedSharedBuffer>&& buffer, const String& mimeType, double timeCode)
 {
     auto blob = buffer ? Blob::create(context, buffer->extractData(), mimeType) : Blob::create(context);
     return BlobEvent::create(eventNames().dataavailableEvent, BlobEvent::Init { { false, false, false }, WTFMove(blob), timeCode }, BlobEvent::IsTrusted::Yes);

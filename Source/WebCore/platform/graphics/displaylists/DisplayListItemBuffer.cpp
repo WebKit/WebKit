@@ -738,7 +738,7 @@ DidChangeItemBuffer ItemBuffer::swapWritableBufferIfNeeded(size_t numberOfBytes)
 void ItemBuffer::append(const DisplayListItem& temporaryItem)
 {
     auto requiredSizeForItem = m_writingClient->requiredSizeForItem(temporaryItem);
-    RefPtr<SharedBuffer> outOfLineItem;
+    RefPtr<FragmentedSharedBuffer> outOfLineItem;
     if (!requiredSizeForItem) {
         outOfLineItem = m_writingClient->encodeItemOutOfLine(temporaryItem);
         if (!outOfLineItem)

@@ -94,7 +94,7 @@ void NetworkSendQueue::processMessages()
         bool shouldStopProcessing = false;
         switchOn(m_queue.first(), [this](const CString& utf8) {
             m_writeString(utf8);
-        }, [this](Ref<SharedBuffer>& data) {
+        }, [this](Ref<FragmentedSharedBuffer>& data) {
             data->forEachSegment(m_writeRawData);
         }, [this, &shouldStopProcessing](UniqueRef<BlobLoader>& loader) {
             auto errorCode = loader->errorCode();

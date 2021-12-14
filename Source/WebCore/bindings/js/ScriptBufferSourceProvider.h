@@ -94,7 +94,7 @@ private:
     }
 
     ScriptBuffer m_scriptBuffer;
-    mutable RefPtr<ContiguousSharedBuffer> m_contiguousBuffer;
+    mutable RefPtr<SharedBuffer> m_contiguousBuffer;
     mutable unsigned m_scriptHash { 0 };
     mutable String m_cachedScriptString;
     mutable std::optional<bool> m_containsOnlyASCII;

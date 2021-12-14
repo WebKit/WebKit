@@ -81,12 +81,12 @@ ImageDecoderGStreamerSample* toSample(Iterator iter)
     return (ImageDecoderGStreamerSample*)iter->second.get();
 }
 
-RefPtr<ImageDecoderGStreamer> ImageDecoderGStreamer::create(SharedBuffer& data, const String& mimeType, AlphaOption alphaOption, GammaAndColorProfileOption gammaAndColorProfileOption)
+RefPtr<ImageDecoderGStreamer> ImageDecoderGStreamer::create(FragmentedSharedBuffer& data, const String& mimeType, AlphaOption alphaOption, GammaAndColorProfileOption gammaAndColorProfileOption)
 {
     return adoptRef(*new ImageDecoderGStreamer(data, mimeType, alphaOption, gammaAndColorProfileOption));
 }
 
-ImageDecoderGStreamer::ImageDecoderGStreamer(SharedBuffer& data, const String& mimeType, AlphaOption, GammaAndColorProfileOption)
+ImageDecoderGStreamer::ImageDecoderGStreamer(FragmentedSharedBuffer& data, const String& mimeType, AlphaOption, GammaAndColorProfileOption)
     : m_mimeType(mimeType)
 {
     static std::once_flag onceFlag;
@@ -199,7 +199,7 @@ PlatformImagePtr ImageDecoderGStreamer::createFrameImageAtIndex(size_t index, Su
     return nullptr;
 }
 
-void ImageDecoderGStreamer::setData(SharedBuffer& data, bool)
+void ImageDecoderGStreamer::setData(FragmentedSharedBuffer& data, bool)
 {
     pushEncodedData(data);
 }
@@ -426,7 +426,7 @@ EncodedDataStatus ImageDecoderGStreamer::InnerDecoder::encodedDataStatus() const
     return EncodedDataStatus::Unknown;
 }
 
-void ImageDecoderGStreamer::pushEncodedData(const SharedBuffer& buffer)
+void ImageDecoderGStreamer::pushEncodedData(const FragmentedSharedBuffer& buffer)
 {
     auto contiguousBuffer = buffer.makeContiguous();
     m_eos = false;

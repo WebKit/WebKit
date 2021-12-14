@@ -61,7 +61,7 @@ class IntPoint;
 class IntRect;
 class IntSize;
 class Scrollbar;
-class SharedBuffer;
+class FragmentedSharedBuffer;
 }
 
 namespace WebKit {
@@ -288,7 +288,7 @@ public:
 
     virtual WebCore::IntPoint convertToRootView(const WebCore::IntPoint& pointInLocalCoordinates) const;
 
-    virtual RefPtr<WebCore::SharedBuffer> liveResourceData() const = 0;
+    virtual RefPtr<WebCore::FragmentedSharedBuffer> liveResourceData() const = 0;
 
     virtual bool performDictionaryLookupAtLocation(const WebCore::FloatPoint&) = 0;
 

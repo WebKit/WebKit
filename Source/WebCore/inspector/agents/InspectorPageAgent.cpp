@@ -100,13 +100,13 @@ static bool decodeBuffer(const uint8_t* buffer, unsigned size, const String& tex
 
 bool InspectorPageAgent::mainResourceContent(Frame* frame, bool withBase64Encode, String* result)
 {
-    RefPtr<SharedBuffer> buffer = frame->loader().documentLoader()->mainResourceData();
+    RefPtr<FragmentedSharedBuffer> buffer = frame->loader().documentLoader()->mainResourceData();
     if (!buffer)
         return false;
     return InspectorPageAgent::dataContent(buffer->makeContiguous()->data(), buffer->size(), frame->document()->encoding(), withBase64Encode, result);
 }
 
-bool InspectorPageAgent::sharedBufferContent(RefPtr<SharedBuffer>&& buffer, const String& textEncodingName, bool withBase64Encode, String* result)
+bool InspectorPageAgent::sharedBufferContent(RefPtr<FragmentedSharedBuffer>&& buffer, const String& textEncodingName, bool withBase64Encode, String* result)
 {
     return dataContent(buffer ? buffer->makeContiguous()->data() : nullptr, buffer ? buffer->size() : 0, textEncodingName, withBase64Encode, result);
 }
@@ -156,7 +156,7 @@ void InspectorPageAgent::resourceContent(Protocol::ErrorString& errorString, Fra
     if (!loader)
         return;
 
-    RefPtr<SharedBuffer> buffer;
+    RefPtr<FragmentedSharedBuffer> buffer;
     bool success = false;
     if (equalIgnoringFragmentIdentifier(url, loader->url())) {
         *base64Encoded = false;

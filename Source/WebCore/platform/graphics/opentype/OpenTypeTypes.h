@@ -73,7 +73,7 @@ typedef UInt16 GlyphID;
 typedef uint32_t Tag;
 #define OT_MAKE_TAG(ch1, ch2, ch3, ch4) ((((uint32_t)(ch4)) << 24) | (((uint32_t)(ch3)) << 16) | (((uint32_t)(ch2)) << 8) | ((uint32_t)(ch1)))
 
-template <typename T> static const T* validateTable(const RefPtr<ContiguousSharedBuffer>& buffer, size_t count = 1)
+template <typename T> static const T* validateTable(const RefPtr<SharedBuffer>& buffer, size_t count = 1)
 {
     if (!buffer || buffer->size() < sizeof(T) * count)
         return 0;
@@ -82,7 +82,7 @@ template <typename T> static const T* validateTable(const RefPtr<ContiguousShare
 
 struct TableBase {
 protected:
-    static bool isValidEnd(const ContiguousSharedBuffer& buffer, const void* position)
+    static bool isValidEnd(const SharedBuffer& buffer, const void* position)
     {
         if (position < buffer.data())
             return false;
@@ -90,7 +90,7 @@ protected:
         return offset <= buffer.size(); // "<=" because end is included as valid
     }
 
-    template <typename T> static const T* validatePtr(const ContiguousSharedBuffer& buffer, const void* position)
+    template <typename T> static const T* validatePtr(const SharedBuffer& buffer, const void* position)
     {
         const T* casted = reinterpret_cast<const T*>(position);
         if (!isValidEnd(buffer, &casted[1]))
@@ -98,7 +98,7 @@ protected:
         return casted;
     }
 
-    template <typename T> const T* validateOffset(const ContiguousSharedBuffer& buffer, uint16_t offset) const
+    template <typename T> const T* validateOffset(const SharedBuffer& buffer, uint16_t offset) const
     {
         return validatePtr<T>(buffer, reinterpret_cast<const int8_t*>(this) + offset);
     }
@@ -127,7 +127,7 @@ struct Coverage2Table : CoverageTable {
 #if ENABLE(OPENTYPE_MATH)
 struct TableWithCoverage : TableBase {
 protected:
-    bool getCoverageIndex(const ContiguousSharedBuffer& buffer, const CoverageTable* coverage, Glyph glyph, uint32_t& coverageIndex) const
+    bool getCoverageIndex(const SharedBuffer& buffer, const CoverageTable* coverage, Glyph glyph, uint32_t& coverageIndex) const
     {
         switch (coverage->coverageFormat) {
         case 1: { // Coverage Format 1

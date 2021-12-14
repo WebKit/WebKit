@@ -109,7 +109,7 @@ void WebPlatformStrategies::getTypes(Vector<String>& types, const String& pasteb
     PlatformPasteboard(pasteboardName).getTypes(types);
 }
 
-RefPtr<ContiguousSharedBuffer> WebPlatformStrategies::bufferForType(const String& pasteboardType, const String& pasteboardName, const PasteboardContext*)
+RefPtr<SharedBuffer> WebPlatformStrategies::bufferForType(const String& pasteboardType, const String& pasteboardName, const PasteboardContext*)
 {
     return PlatformPasteboard(pasteboardName).bufferForType(pasteboardType);
 }
@@ -154,7 +154,7 @@ int64_t WebPlatformStrategies::setTypes(const Vector<String>& pasteboardTypes, c
     return PlatformPasteboard(pasteboardName).setTypes(pasteboardTypes);
 }
 
-int64_t WebPlatformStrategies::setBufferForType(ContiguousSharedBuffer* buffer, const String& pasteboardType, const String& pasteboardName, const PasteboardContext*)
+int64_t WebPlatformStrategies::setBufferForType(SharedBuffer* buffer, const String& pasteboardType, const String& pasteboardName, const PasteboardContext*)
 {
     return PlatformPasteboard(pasteboardName).setBufferForType(buffer, pasteboardType);
 }
@@ -209,7 +209,7 @@ int WebPlatformStrategies::getPasteboardItemsCount(const String& pasteboardName,
     return PlatformPasteboard(pasteboardName).count();
 }
 
-RefPtr<WebCore::ContiguousSharedBuffer> WebPlatformStrategies::readBufferFromPasteboard(std::optional<size_t> index, const String& type, const String& pasteboardName, const PasteboardContext*)
+RefPtr<WebCore::SharedBuffer> WebPlatformStrategies::readBufferFromPasteboard(std::optional<size_t> index, const String& type, const String& pasteboardName, const PasteboardContext*)
 {
     return PlatformPasteboard(pasteboardName).readBuffer(index, type);
 }

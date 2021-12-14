@@ -413,7 +413,7 @@ void WebEditorClient::willWriteSelectionToPasteboard(const std::optional<SimpleR
     // Not implemented WebKit, only WebKit2.
 }
 
-void WebEditorClient::getClientPasteboardData(const std::optional<SimpleRange>&, Vector<String>& pasteboardTypes, Vector<RefPtr<WebCore::ContiguousSharedBuffer>>& pasteboardData)
+void WebEditorClient::getClientPasteboardData(const std::optional<SimpleRange>&, Vector<String>& pasteboardTypes, Vector<RefPtr<WebCore::SharedBuffer>>& pasteboardData)
 {
     // Not implemented WebKit, only WebKit2.
 }

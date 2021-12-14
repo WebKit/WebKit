@@ -200,7 +200,7 @@ void RemoteImageDecoderAVF::setExpectedContentSize(long long expectedContentSize
 
 // If allDataReceived is true, the caller expects encodedDataStatus() to be >= EncodedDataStatus::SizeAvailable
 // after this function returns (in the same run loop).
-void RemoteImageDecoderAVF::setData(SharedBuffer& data, bool allDataReceived)
+void RemoteImageDecoderAVF::setData(FragmentedSharedBuffer& data, bool allDataReceived)
 {
     if (!m_gpuProcessConnection)
         return;

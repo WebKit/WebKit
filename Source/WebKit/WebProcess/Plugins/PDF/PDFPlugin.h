@@ -207,7 +207,7 @@ private:
     void privateBrowsingStateChanged(bool) final { }
     bool getFormValue(String& formValue) final { return false; }
     bool handleScroll(WebCore::ScrollDirection, WebCore::ScrollGranularity) final;
-    RefPtr<WebCore::SharedBuffer> liveResourceData() const final;
+    RefPtr<WebCore::FragmentedSharedBuffer> liveResourceData() const final;
     void willDetachRenderer() final;
     bool pluginHandlesContentOffsetForAccessibilityHitTest() const final;
     

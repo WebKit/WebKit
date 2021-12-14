@@ -78,7 +78,7 @@ void RemoteCDMInstance::initializeWithConfiguration(const WebCore::CDMKeySystemC
     m_factory->gpuProcessConnection().connection().sendWithAsyncReply(Messages::RemoteCDMInstanceProxy::InitializeWithConfiguration(configuration, distinctiveIdentifiers, persistentState), WTFMove(callback), m_identifier);
 }
 
-void RemoteCDMInstance::setServerCertificate(Ref<WebCore::SharedBuffer>&& certificate, SuccessCallback&& callback)
+void RemoteCDMInstance::setServerCertificate(Ref<WebCore::FragmentedSharedBuffer>&& certificate, SuccessCallback&& callback)
 {
     if (!m_factory) {
         callback(Failed);

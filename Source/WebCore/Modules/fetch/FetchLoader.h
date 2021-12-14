@@ -39,14 +39,14 @@ class FetchBodyConsumer;
 class FetchLoaderClient;
 class FetchRequest;
 class ScriptExecutionContext;
-class SharedBuffer;
+class FragmentedSharedBuffer;
 
 class FetchLoader final : public ThreadableLoaderClient {
 public:
     FetchLoader(FetchLoaderClient&, FetchBodyConsumer*);
     WEBCORE_EXPORT ~FetchLoader();
 
-    RefPtr<SharedBuffer> startStreaming();
+    RefPtr<FragmentedSharedBuffer> startStreaming();
 
     void start(ScriptExecutionContext&, const FetchRequest&, const String&);
     void start(ScriptExecutionContext&, const Blob&);

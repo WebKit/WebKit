@@ -61,7 +61,7 @@ public:
     {
         return adoptRef(*new KeyHandle(status, WTFMove(keyID), WTFMove(keyHandleValue)));
     }
-    Ref<SharedBuffer> idAsSharedBuffer() const { return SharedBuffer::create(m_id.data(), m_id.size()); }
+    Ref<FragmentedSharedBuffer> idAsSharedBuffer() const { return SharedBuffer::create(m_id.data(), m_id.size()); }
 
     bool takeValueIfDifferent(KeyHandleValueVariant&&);
 

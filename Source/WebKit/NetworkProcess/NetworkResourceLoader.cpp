@@ -87,7 +87,7 @@ struct NetworkResourceLoader::SynchronousLoadData {
     ResourceError error;
 };
 
-static void sendReplyToSynchronousRequest(NetworkResourceLoader::SynchronousLoadData& data, const SharedBuffer* buffer, const NetworkLoadMetrics& metrics)
+static void sendReplyToSynchronousRequest(NetworkResourceLoader::SynchronousLoadData& data, const FragmentedSharedBuffer* buffer, const NetworkLoadMetrics& metrics)
 {
     ASSERT(data.delayedReply);
     ASSERT(!data.response.isNull() || !data.error.isNull());
@@ -863,7 +863,7 @@ void NetworkResourceLoader::sendDidReceiveResponsePotentiallyInNewBrowsingContex
     });
 }
 
-void NetworkResourceLoader::didReceiveBuffer(Ref<SharedBuffer>&& buffer, int reportedEncodedDataLength)
+void NetworkResourceLoader::didReceiveBuffer(Ref<FragmentedSharedBuffer>&& buffer, int reportedEncodedDataLength)
 {
     if (!m_numBytesReceived)
         LOADER_RELEASE_LOG("didReceiveBuffer: Started receiving data (reportedEncodedDataLength=%d)", reportedEncodedDataLength);
@@ -1273,7 +1273,7 @@ void NetworkResourceLoader::bufferingTimerFired()
     m_bufferedDataEncodedDataLength = 0;
 }
 
-void NetworkResourceLoader::sendBuffer(SharedBuffer& buffer, size_t encodedDataLength)
+void NetworkResourceLoader::sendBuffer(FragmentedSharedBuffer& buffer, size_t encodedDataLength)
 {
     ASSERT(!isSynchronous());
 

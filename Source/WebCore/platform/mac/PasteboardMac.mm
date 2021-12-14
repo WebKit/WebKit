@@ -263,7 +263,7 @@ static void writeFileWrapperAsRTFDAttachment(NSFileWrapper *wrapper, const Strin
     if (!RTFDData)
         return;
 
-    newChangeCount = platformStrategies()->pasteboardStrategy()->setBufferForType(ContiguousSharedBuffer::create(RTFDData).ptr(), legacyRTFDPasteboardType(), pasteboardName, context);
+    newChangeCount = platformStrategies()->pasteboardStrategy()->setBufferForType(SharedBuffer::create(RTFDData).ptr(), legacyRTFDPasteboardType(), pasteboardName, context);
 }
 
 void Pasteboard::write(const PasteboardImage& pasteboardImage)
@@ -285,7 +285,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     }
 
     m_changeCount = writeURLForTypes(types, m_pasteboardName, pasteboardImage.url, context());
-    m_changeCount = platformStrategies()->pasteboardStrategy()->setBufferForType(ContiguousSharedBuffer::create(imageData).ptr(), legacyTIFFPasteboardType(), m_pasteboardName, context());
+    m_changeCount = platformStrategies()->pasteboardStrategy()->setBufferForType(SharedBuffer::create(imageData).ptr(), legacyTIFFPasteboardType(), m_pasteboardName, context());
     if (auto archiveData = pasteboardImage.dataInWebArchiveFormat) {
         m_changeCount = platformStrategies()->pasteboardStrategy()->setBufferForType(archiveData.get(), WebArchivePboardType, m_pasteboardName, context());
 
@@ -344,7 +344,7 @@ static String readStringAtPreferredItemIndex(const String& type, std::optional<s
     return strategy.stringForType(type, pasteboardName, context);
 }
 
-static RefPtr<ContiguousSharedBuffer> readBufferAtPreferredItemIndex(const String& type, std::optional<size_t> itemIndex, PasteboardStrategy& strategy, const String& pasteboardName, const PasteboardContext* context)
+static RefPtr<SharedBuffer> readBufferAtPreferredItemIndex(const String& type, std::optional<size_t> itemIndex, PasteboardStrategy& strategy, const String& pasteboardName, const PasteboardContext* context)
 {
     if (itemIndex)
         return strategy.readBufferFromPasteboard(*itemIndex, type, pasteboardName, context);

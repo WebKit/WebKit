@@ -74,7 +74,7 @@ private:
     void didSendData(unsigned long long bytesSent, unsigned long long totalBytesToBeSent) override;
     void didReceiveResponse(const ResourceResponse&, CompletionHandler<void()>&& policyCompletionHandler) override;
     void didReceiveData(const uint8_t*, unsigned, long long encodedDataLength, DataPayloadType) override;
-    void didReceiveBuffer(Ref<SharedBuffer>&&, long long encodedDataLength, DataPayloadType) override;
+    void didReceiveBuffer(Ref<FragmentedSharedBuffer>&&, long long encodedDataLength, DataPayloadType) override;
     void didFinishLoading(const NetworkLoadMetrics&) override;
     void didFail(const ResourceError&) override;
     void willCancel(const ResourceError&) override;
@@ -92,7 +92,7 @@ private:
     Expected<void, String> checkResponseCrossOriginAccessControl(const ResourceResponse&);
     Expected<void, String> checkRedirectionCrossOriginAccessControl(const ResourceRequest& previousRequest, const ResourceResponse&, ResourceRequest& newRequest);
 
-    void didReceiveDataOrBuffer(const uint8_t*, int, RefPtr<SharedBuffer>&&, long long encodedDataLength, DataPayloadType);
+    void didReceiveDataOrBuffer(const uint8_t*, int, RefPtr<FragmentedSharedBuffer>&&, long long encodedDataLength, DataPayloadType);
 
     void notifyDone(LoadCompletionType);
 

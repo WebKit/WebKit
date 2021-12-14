@@ -4159,7 +4159,7 @@ PromisedAttachmentInfo Editor::promisedAttachmentInfo(Element& element)
         return { };
 
     Vector<String> additionalTypes;
-    Vector<RefPtr<ContiguousSharedBuffer>> additionalData;
+    Vector<RefPtr<SharedBuffer>> additionalData;
 #if PLATFORM(COCOA)
     getPasteboardTypesAndDataForAttachment(element, additionalTypes, additionalData);
 #endif
@@ -4167,7 +4167,7 @@ PromisedAttachmentInfo Editor::promisedAttachmentInfo(Element& element)
     return { attachment->uniqueIdentifier(), WTFMove(additionalTypes), WTFMove(additionalData) };
 }
 
-void Editor::registerAttachmentIdentifier(const String& identifier, const String& contentType, const String& preferredFileName, Ref<SharedBuffer>&& data)
+void Editor::registerAttachmentIdentifier(const String& identifier, const String& contentType, const String& preferredFileName, Ref<FragmentedSharedBuffer>&& data)
 {
     if (auto* client = this->client())
         client->registerAttachmentIdentifier(identifier, contentType, preferredFileName, WTFMove(data));

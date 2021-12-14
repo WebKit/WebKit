@@ -460,7 +460,7 @@ void addTypesFromClass(NSMutableDictionary *allTypes, Class objCClass, NSArray *
 
 - (NSData *)data
 {
-    RefPtr<WebCore::SharedBuffer> mainResourceData = toPrivate(_private)->loader->mainResourceData();
+    RefPtr<WebCore::FragmentedSharedBuffer> mainResourceData = toPrivate(_private)->loader->mainResourceData();
     if (!mainResourceData)
         return nil;
     return mainResourceData->makeContiguous()->createNSData().autorelease();

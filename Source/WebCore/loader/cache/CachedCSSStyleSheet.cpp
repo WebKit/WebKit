@@ -97,7 +97,7 @@ void CachedCSSStyleSheet::setBodyDataFrom(const CachedResource& resource)
         saveParsedStyleSheet(*sheet.m_parsedStyleSheetCache);
 }
 
-void CachedCSSStyleSheet::finishLoading(const SharedBuffer* data, const NetworkLoadMetrics& metrics)
+void CachedCSSStyleSheet::finishLoading(const FragmentedSharedBuffer* data, const NetworkLoadMetrics& metrics)
 {
     if (data) {
         m_data = data->makeContiguous();

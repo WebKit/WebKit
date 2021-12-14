@@ -199,7 +199,7 @@ TEST(DisplayListTests, ItemBufferClient)
             return { globalBufferIdentifier, globalItemBuffer, globalItemBufferCapacity };
         }
 
-        RefPtr<SharedBuffer> encodeItemOutOfLine(const DisplayListItem& displayListItem) const final
+        RefPtr<FragmentedSharedBuffer> encodeItemOutOfLine(const DisplayListItem& displayListItem) const final
         {
             auto index = m_items.size();
             m_items.append(std::get<StrokePath>(displayListItem));

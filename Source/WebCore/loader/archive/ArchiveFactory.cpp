@@ -46,12 +46,12 @@
 
 namespace WebCore {
 
-typedef RefPtr<Archive> RawDataCreationFunction(const URL&, SharedBuffer&);
+typedef RefPtr<Archive> RawDataCreationFunction(const URL&, FragmentedSharedBuffer&);
 typedef HashMap<String, RawDataCreationFunction*, ASCIICaseInsensitiveHash> ArchiveMIMETypesMap;
 
 // The create functions in the archive classes return RefPtr to concrete subclasses
 // of Archive. This adaptor makes the functions have a uniform return type.
-template<typename ArchiveClass> static RefPtr<Archive> archiveFactoryCreate(const URL& url, SharedBuffer& buffer)
+template<typename ArchiveClass> static RefPtr<Archive> archiveFactoryCreate(const URL& url, FragmentedSharedBuffer& buffer)
 {
     return ArchiveClass::create(url, buffer);
 }
@@ -83,7 +83,7 @@ bool ArchiveFactory::isArchiveMIMEType(const String& mimeType)
     return !mimeType.isEmpty() && archiveMIMETypes().contains(mimeType);
 }
 
-RefPtr<Archive> ArchiveFactory::create(const URL& url, SharedBuffer* data, const String& mimeType)
+RefPtr<Archive> ArchiveFactory::create(const URL& url, FragmentedSharedBuffer* data, const String& mimeType)
 {
     if (!data)
         return nullptr;

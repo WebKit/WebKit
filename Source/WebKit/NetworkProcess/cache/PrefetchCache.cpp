@@ -30,7 +30,7 @@
 
 namespace WebKit {
 
-PrefetchCache::Entry::Entry(WebCore::ResourceResponse&& response, RefPtr<WebCore::SharedBuffer>&& buffer)
+PrefetchCache::Entry::Entry(WebCore::ResourceResponse&& response, RefPtr<WebCore::FragmentedSharedBuffer>&& buffer)
     : response(WTFMove(response)), buffer(WTFMove(buffer))
 {
 }
@@ -72,7 +72,7 @@ std::unique_ptr<PrefetchCache::Entry> PrefetchCache::take(const URL& url)
 
 static const Seconds expirationTimeout { 5_s };
 
-void PrefetchCache::store(const URL& requestUrl, WebCore::ResourceResponse&& response, RefPtr<WebCore::SharedBuffer>&& buffer)
+void PrefetchCache::store(const URL& requestUrl, WebCore::ResourceResponse&& response, RefPtr<WebCore::FragmentedSharedBuffer>&& buffer)
 {
     if (!m_sessionPrefetches)
         m_sessionPrefetches = makeUnique<PrefetchEntriesMap>();

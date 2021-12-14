@@ -297,14 +297,14 @@ FetchBody::TakenData FetchBody::take()
         return formDataBody();
 
     if (isText())
-        return ContiguousSharedBuffer::create(PAL::UTF8Encoding().encode(textBody(), PAL::UnencodableHandling::Entities));
+        return SharedBuffer::create(PAL::UTF8Encoding().encode(textBody(), PAL::UnencodableHandling::Entities));
     if (isURLSearchParams())
-        return ContiguousSharedBuffer::create(PAL::UTF8Encoding().encode(urlSearchParamsBody().toString(), PAL::UnencodableHandling::Entities));
+        return SharedBuffer::create(PAL::UTF8Encoding().encode(urlSearchParamsBody().toString(), PAL::UnencodableHandling::Entities));
 
     if (isArrayBuffer())
-        return ContiguousSharedBuffer::create(static_cast<const char*>(arrayBufferBody().data()), arrayBufferBody().byteLength());
+        return SharedBuffer::create(static_cast<const char*>(arrayBufferBody().data()), arrayBufferBody().byteLength());
     if (isArrayBufferView())
-        return ContiguousSharedBuffer::create(static_cast<const uint8_t*>(arrayBufferViewBody().baseAddress()), arrayBufferViewBody().byteLength());
+        return SharedBuffer::create(static_cast<const uint8_t*>(arrayBufferViewBody().baseAddress()), arrayBufferViewBody().byteLength());
 
     return nullptr;
 }

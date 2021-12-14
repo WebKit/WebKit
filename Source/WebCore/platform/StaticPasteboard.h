@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-class ContiguousSharedBuffer;
+class SharedBuffer;
 
 class StaticPasteboard final : public Pasteboard {
 public:
@@ -52,7 +52,7 @@ public:
     String readStringInCustomData(const String& type) final;
 
     void writeString(const String& type, const String& data) final;
-    void writeData(const String& type, Ref<ContiguousSharedBuffer>&& data);
+    void writeData(const String& type, Ref<SharedBuffer>&& data);
     void writeStringInCustomData(const String& type, const String& data);
     void clear() final;
     void clear(const String& type) final;

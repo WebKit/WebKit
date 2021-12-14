@@ -72,7 +72,7 @@ ImageSource::~ImageSource()
     ASSERT(&m_runLoop == &RunLoop::current());
 }
 
-bool ImageSource::ensureDecoderAvailable(SharedBuffer* data)
+bool ImageSource::ensureDecoderAvailable(FragmentedSharedBuffer* data)
 {
     if (!data || isDecoderAvailable())
         return true;
@@ -96,7 +96,7 @@ bool ImageSource::ensureDecoderAvailable(SharedBuffer* data)
     return true;
 }
 
-void ImageSource::setData(SharedBuffer* data, bool allDataReceived)
+void ImageSource::setData(FragmentedSharedBuffer* data, bool allDataReceived)
 {
     if (!data || !ensureDecoderAvailable(data))
         return;
@@ -104,13 +104,13 @@ void ImageSource::setData(SharedBuffer* data, bool allDataReceived)
     m_decoder->setData(*data, allDataReceived);
 }
 
-void ImageSource::resetData(SharedBuffer* data)
+void ImageSource::resetData(FragmentedSharedBuffer* data)
 {
     m_decoder = nullptr;
     setData(data, isAllDataReceived());
 }
 
-EncodedDataStatus ImageSource::dataChanged(SharedBuffer* data, bool allDataReceived)
+EncodedDataStatus ImageSource::dataChanged(FragmentedSharedBuffer* data, bool allDataReceived)
 {
     setData(data, allDataReceived);
     clearMetadata();

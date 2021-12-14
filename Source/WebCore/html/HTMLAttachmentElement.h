@@ -36,7 +36,7 @@ class File;
 class HTMLImageElement;
 class RenderAttachment;
 class ShareableBitmap;
-class SharedBuffer;
+class FragmentedSharedBuffer;
 
 class HTMLAttachmentElement final : public HTMLElement {
     WTF_MAKE_ISO_ALLOCATED(HTMLAttachmentElement);
@@ -57,7 +57,7 @@ public:
     void copyNonAttributePropertiesFromElement(const Element&) final;
 
     WEBCORE_EXPORT void updateAttributes(std::optional<uint64_t>&& newFileSize, const String& newContentType, const String& newFilename);
-    WEBCORE_EXPORT void updateEnclosingImageWithData(const String& contentType, Ref<SharedBuffer>&& data);
+    WEBCORE_EXPORT void updateEnclosingImageWithData(const String& contentType, Ref<FragmentedSharedBuffer>&& data);
     WEBCORE_EXPORT void updateThumbnail(const RefPtr<Image>& thumbnail);
 
     InsertedIntoAncestorResult insertedIntoAncestor(InsertionType, ContainerNode&) final;

@@ -63,7 +63,7 @@ private:
     void willSendRequest(ResourceRequest&&, const ResourceResponse& redirectResponse, CompletionHandler<void(ResourceRequest&&)>&& callback) override;
     void didReceiveResponse(const ResourceResponse&, CompletionHandler<void()>&& policyCompletionHandler) override;
     void didReceiveData(const uint8_t*, unsigned, long long encodedDataLength, DataPayloadType) override;
-    void didReceiveBuffer(Ref<SharedBuffer>&&, long long encodedDataLength, DataPayloadType) override;
+    void didReceiveBuffer(Ref<FragmentedSharedBuffer>&&, long long encodedDataLength, DataPayloadType) override;
     void didFinishLoading(const NetworkLoadMetrics&) override;
     void didFail(const ResourceError&) override;
 
@@ -74,7 +74,7 @@ private:
     void willCancel(const ResourceError&) override;
     void didCancel(const ResourceError&) override;
 
-    void didReceiveDataOrBuffer(const uint8_t*, int, RefPtr<SharedBuffer>&&, long long encodedDataLength, DataPayloadType);
+    void didReceiveDataOrBuffer(const uint8_t*, int, RefPtr<FragmentedSharedBuffer>&&, long long encodedDataLength, DataPayloadType);
 
     void notifyDone();
 

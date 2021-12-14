@@ -37,14 +37,14 @@ public:
 
     const URL& url() const { return m_url; }
     const ResourceResponse& response() const { return m_response; }
-    SharedBuffer& data() const { return static_reference_cast<SharedBuffer>(Ref { *m_data.get() }); }
+    FragmentedSharedBuffer& data() const { return static_reference_cast<FragmentedSharedBuffer>(Ref { *m_data.get() }); }
     void append(const uint8_t* data, int length) { m_data.append(data, length); }
     void clear() { m_data.empty(); }
 
     virtual void deliver(ResourceLoader& loader) { loader.deliverResponseAndData(m_response, m_data.copy()); }
 
 protected:
-    SubstituteResource(URL&& url, ResourceResponse&& response, Ref<SharedBuffer>&& data)
+    SubstituteResource(URL&& url, ResourceResponse&& response, Ref<FragmentedSharedBuffer>&& data)
         : m_url(WTFMove(url))
         , m_response(WTFMove(response))
         , m_data(WTFMove(data))

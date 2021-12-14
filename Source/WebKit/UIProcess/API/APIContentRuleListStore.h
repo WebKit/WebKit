@@ -30,7 +30,7 @@
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
-class SharedBuffer;
+class FragmentedSharedBuffer;
 }
 
 namespace WTF {

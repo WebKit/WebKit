@@ -97,7 +97,7 @@ String createAVCCodecParametersString(const AVCParameters& parameters)
         , hex(parameters.levelIDC, 2));
 }
 
-std::optional<AVCParameters> parseAVCDecoderConfigurationRecord(const ContiguousSharedBuffer& buffer)
+std::optional<AVCParameters> parseAVCDecoderConfigurationRecord(const SharedBuffer& buffer)
 {
     // ISO/IEC 14496-10:2014
     // 7.3.2.1.1 Sequence parameter set data syntax
@@ -255,7 +255,7 @@ String createHEVCCodecParametersString(const HEVCParameters& parameters)
         , compatibilityFlags.toString());
 }
 
-std::optional<HEVCParameters> parseHEVCDecoderConfigurationRecord(const FourCC& codecCode, const ContiguousSharedBuffer& buffer)
+std::optional<HEVCParameters> parseHEVCDecoderConfigurationRecord(const FourCC& codecCode, const SharedBuffer& buffer)
 {
     // ISO/IEC 14496-15:2014
     // 8.3.3.1 HEVC decoder configuration record
@@ -436,7 +436,7 @@ std::optional<DoViParameters> parseDoViCodecParameters(StringView codecView)
     return parameters;
 }
 
-std::optional<DoViParameters> parseDoViDecoderConfigurationRecord(const ContiguousSharedBuffer& buffer)
+std::optional<DoViParameters> parseDoViDecoderConfigurationRecord(const SharedBuffer& buffer)
 {
     // The format of the DoVi Configuration Record is contained in "Dolby Vision Streams Within
     // the ISO Base Media File Format, Version 2.0"

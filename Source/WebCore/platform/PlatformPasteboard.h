@@ -47,14 +47,14 @@ struct wpe_pasteboard;
 namespace WebCore {
 
 class Color;
-class ContiguousSharedBuffer;
+class SharedBuffer;
 class PasteboardCustomData;
 class SelectionData;
 struct PasteboardImage;
 struct PasteboardItemInfo;
 struct PasteboardURL;
 struct PasteboardWebContent;
-class SharedBuffer;
+class FragmentedSharedBuffer;
 
 class PlatformPasteboard {
 public:
@@ -72,7 +72,7 @@ public:
     static String platformPasteboardTypeForSafeTypeForDOMToReadAndWrite(const String& domType, IncludeImageTypes = IncludeImageTypes::No);
 
     WEBCORE_EXPORT void getTypes(Vector<String>& types) const;
-    WEBCORE_EXPORT RefPtr<ContiguousSharedBuffer> bufferForType(const String& pasteboardType) const;
+    WEBCORE_EXPORT RefPtr<SharedBuffer> bufferForType(const String& pasteboardType) const;
     WEBCORE_EXPORT void getPathnamesForType(Vector<String>& pathnames, const String& pasteboardType) const;
     WEBCORE_EXPORT String stringForType(const String& pasteboardType) const;
     WEBCORE_EXPORT Vector<String> allStringsForType(const String& pasteboardType) const;
@@ -86,7 +86,7 @@ public:
 
     // These methods will return 0 if pasteboard ownership has been taken from us.
     WEBCORE_EXPORT int64_t copy(const String& fromPasteboard);
-    WEBCORE_EXPORT int64_t setBufferForType(ContiguousSharedBuffer*, const String& pasteboardType);
+    WEBCORE_EXPORT int64_t setBufferForType(SharedBuffer*, const String& pasteboardType);
     WEBCORE_EXPORT int64_t setURL(const PasteboardURL&);
     WEBCORE_EXPORT int64_t setColor(const Color&);
     WEBCORE_EXPORT int64_t setStringForType(const String&, const String& pasteboardType);
@@ -94,7 +94,7 @@ public:
     WEBCORE_EXPORT void write(const PasteboardImage&);
     WEBCORE_EXPORT void write(const String& pasteboardType, const String&);
     WEBCORE_EXPORT void write(const PasteboardURL&);
-    WEBCORE_EXPORT RefPtr<ContiguousSharedBuffer> readBuffer(std::optional<size_t> index, const String& pasteboardType) const;
+    WEBCORE_EXPORT RefPtr<SharedBuffer> readBuffer(std::optional<size_t> index, const String& pasteboardType) const;
     WEBCORE_EXPORT String readString(size_t index, const String& pasteboardType) const;
     WEBCORE_EXPORT URL readURL(size_t index, String& title) const;
     WEBCORE_EXPORT int count() const;

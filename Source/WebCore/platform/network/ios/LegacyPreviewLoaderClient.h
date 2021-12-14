@@ -31,12 +31,12 @@
 
 namespace WebCore {
 
-class SharedBuffer;
+class FragmentedSharedBuffer;
 
 class LegacyPreviewLoaderClient : public RefCounted<LegacyPreviewLoaderClient> {
 public:
     virtual ~LegacyPreviewLoaderClient() = default;
-    virtual void didReceiveBuffer(const SharedBuffer&) { }
+    virtual void didReceiveBuffer(const FragmentedSharedBuffer&) { }
     virtual void didFinishLoading() { }
     virtual void didFail() { }
     virtual bool supportsPasswordEntry() const { return false; }

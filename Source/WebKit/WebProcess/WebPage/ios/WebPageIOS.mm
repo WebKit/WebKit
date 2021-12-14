@@ -3217,7 +3217,7 @@ void WebPage::performActionOnElement(uint32_t action)
         CachedImage* cachedImage = downcast<RenderImage>(*element.renderer()).cachedImage();
         if (!cachedImage)
             return;
-        RefPtr<SharedBuffer> buffer = cachedImage->resourceBuffer();
+        RefPtr<FragmentedSharedBuffer> buffer = cachedImage->resourceBuffer();
         if (!buffer)
             return;
         auto sharedMemoryBuffer = SharedMemory::copyBuffer(*buffer);
@@ -4683,7 +4683,7 @@ void WebPage::didStartLoadForQuickLookDocumentInMainFrame(const String& fileName
     send(Messages::WebPageProxy::DidStartLoadForQuickLookDocumentInMainFrame(fileName, uti));
 }
 
-void WebPage::didFinishLoadForQuickLookDocumentInMainFrame(const SharedBuffer& buffer)
+void WebPage::didFinishLoadForQuickLookDocumentInMainFrame(const FragmentedSharedBuffer& buffer)
 {
     ASSERT(!buffer.isEmpty());
 

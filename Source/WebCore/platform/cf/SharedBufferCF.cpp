@@ -33,7 +33,7 @@
 
 namespace WebCore {
 
-SharedBuffer::SharedBuffer(CFDataRef data)
+FragmentedSharedBuffer::FragmentedSharedBuffer(CFDataRef data)
 {
     append(data);
 }
@@ -41,7 +41,7 @@ SharedBuffer::SharedBuffer(CFDataRef data)
 // Using Foundation allows for an even more efficient implementation of this function,
 // so only use this version for non-Foundation.
 #if !USE(FOUNDATION)
-RetainPtr<CFDataRef> ContiguousSharedBuffer::createCFData() const
+RetainPtr<CFDataRef> SharedBuffer::createCFData() const
 {
     if (hasOneSegment()) {
         if (auto* data = std::get_if<RetainPtr<CFDataRef>>(&m_segments[0].segment->m_immutableData))
@@ -51,12 +51,12 @@ RetainPtr<CFDataRef> ContiguousSharedBuffer::createCFData() const
 }
 #endif
 
-Ref<SharedBuffer> SharedBuffer::create(CFDataRef data)
+Ref<FragmentedSharedBuffer> FragmentedSharedBuffer::create(CFDataRef data)
 {
-    return adoptRef(*new SharedBuffer(data));
+    return adoptRef(*new FragmentedSharedBuffer(data));
 }
 
-void SharedBuffer::hintMemoryNotNeededSoon() const
+void FragmentedSharedBuffer::hintMemoryNotNeededSoon() const
 {
     for (const auto& entry : m_segments) {
         if (entry.segment->hasOneRef()) {
@@ -66,7 +66,7 @@ void SharedBuffer::hintMemoryNotNeededSoon() const
     }
 }
 
-void SharedBuffer::append(CFDataRef data)
+void FragmentedSharedBuffer::append(CFDataRef data)
 {
     ASSERT(!m_contiguous);
     if (data) {

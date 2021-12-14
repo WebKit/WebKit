@@ -38,9 +38,7 @@ GST_DEBUG_CATEGORY_EXTERN(webkit_media_common_encryption_decrypt_debug_category)
 namespace WebCore {
 class InitData {
 public:
-    InitData()
-        : m_payload(SharedBuffer::create()) { }
-
+    InitData() = default;
     // FIXME: We should have an enum for system uuids for better type safety.
     InitData(const String& systemId, GstBuffer* initData)
         : m_systemId(systemId)
@@ -50,17 +48,14 @@ public:
             GST_CAT_LEVEL_LOG(webkit_media_common_encryption_decrypt_debug_category, GST_LEVEL_ERROR, nullptr, "cannot map %s protection data", systemId.utf8().data());
             ASSERT_NOT_REACHED();
         }
-        if (auto parsedPayload = extractCencIfNeeded(mappedInitData->createSharedBuffer()))
-            m_payload.append(parsedPayload.releaseNonNull());
+        m_payload = extractCencIfNeeded(mappedInitData->createSharedBuffer());
     }
 
-    InitData(const String& systemId, RefPtr<SharedBuffer>&& payload)
+    InitData(const String& systemId, RefPtr<FragmentedSharedBuffer>&& payload)
         : m_systemId(systemId)
     {
-        if (payload) {
-            if (auto parsedPayload = extractCencIfNeeded(payload->makeContiguous()))
-                m_payload.append(parsedPayload.releaseNonNull());
-        }
+        if (payload)
+            m_payload = extractCencIfNeeded(payload->makeContiguous());
     }
 
     void append(InitData&& initData)
@@ -79,7 +74,7 @@ public:
         m_payload.append(*initData.payload());
     }
 
-    RefPtr<SharedBuffer> payload() const { return m_payload.get(); }
+    RefPtr<FragmentedSharedBuffer> payload() const { return m_payload.get(); }
     const String& systemId() const { return m_systemId; }
     String payloadContainerType() const
     {
@@ -90,9 +85,8 @@ public:
         return "cenc"_s;
     }
 
-    static RefPtr<SharedBuffer> extractCencIfNeeded(RefPtr<ContiguousSharedBuffer>&&);
-
 private:
+    static RefPtr<SharedBuffer> extractCencIfNeeded(RefPtr<SharedBuffer>&&);
     String m_systemId;
     SharedBufferBuilder m_payload;
 };

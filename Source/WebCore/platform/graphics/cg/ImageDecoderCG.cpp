@@ -231,7 +231,7 @@ static std::optional<IntSize> densityCorrectedSizeFromProperties(CFDictionaryRef
 #if !PLATFORM(COCOA)
 size_t sharedBufferGetBytesAtPosition(void* info, void* buffer, off_t position, size_t count)
 {
-    ContiguousSharedBuffer* sharedBuffer = static_cast<ContiguousSharedBuffer*>(info);
+    SharedBuffer* sharedBuffer = static_cast<SharedBuffer*>(info);
     size_t sourceSize = sharedBuffer->size();
     if (position >= sourceSize)
         return 0;
@@ -244,12 +244,12 @@ size_t sharedBufferGetBytesAtPosition(void* info, void* buffer, off_t position, 
 
 void sharedBufferRelease(void* info)
 {
-    SharedBuffer* sharedBuffer = static_cast<SharedBuffer*>(info);
+    FragmentedSharedBuffer* sharedBuffer = static_cast<FragmentedSharedBuffer*>(info);
     sharedBuffer->deref();
 }
 #endif
 
-ImageDecoderCG::ImageDecoderCG(SharedBuffer& data, AlphaOption, GammaAndColorProfileOption)
+ImageDecoderCG::ImageDecoderCG(FragmentedSharedBuffer& data, AlphaOption, GammaAndColorProfileOption)
 {
     RetainPtr<CFStringRef> utiHint;
     if (data.size() >= 32)
@@ -562,20 +562,20 @@ PlatformImagePtr ImageDecoderCG::createFrameImageAtIndex(size_t index, Subsampli
     return maskedImage ? maskedImage : image;
 }
 
-void ImageDecoderCG::setData(SharedBuffer& data, bool allDataReceived)
+void ImageDecoderCG::setData(FragmentedSharedBuffer& data, bool allDataReceived)
 {
     m_isAllDataReceived = allDataReceived;
 
 #if PLATFORM(COCOA)
-    // On Mac the NSData inside the SharedBuffer can be secretly appended to without the SharedBuffer's knowledge.
-    // We use SharedBuffer's ability to wrap itself inside CFData to get around this, ensuring that ImageIO is
-    // really looking at the SharedBuffer.
+    // On Mac the NSData inside the FragmentedSharedBuffer can be secretly appended to without the FragmentedSharedBuffer's knowledge.
+    // We use FragmentedSharedBuffer's ability to wrap itself inside CFData to get around this, ensuring that ImageIO is
+    // really looking at the FragmentedSharedBuffer.
     CGImageSourceUpdateData(m_nativeDecoder.get(), data.makeContiguous()->createCFData().get(), allDataReceived);
 #else
-    // Create a CGDataProvider to wrap the SharedBuffer.
+    // Create a CGDataProvider to wrap the FragmentedSharedBuffer.
     auto contiguousData = data.makeContiguous();
     contiguousData.get().ref();
-    // We use the GetBytesAtPosition callback rather than the GetBytePointer one because SharedBuffer
+    // We use the GetBytesAtPosition callback rather than the GetBytePointer one because FragmentedSharedBuffer
     // does not provide a way to lock down the byte pointer and guarantee that it won't move, which
     // is a requirement for using the GetBytePointer callback.
     CGDataProviderDirectCallbacks providerCallbacks = { 0, 0, 0, sharedBufferGetBytesAtPosition, sharedBufferRelease };

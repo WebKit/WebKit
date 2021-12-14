@@ -2552,7 +2552,7 @@ void PDFPlugin::notifyDisplayModeChanged(int)
     updateScrollbars();
 }
 
-RefPtr<SharedBuffer> PDFPlugin::liveResourceData() const
+RefPtr<FragmentedSharedBuffer> PDFPlugin::liveResourceData() const
 {
     NSData *pdfData = liveData();
 

@@ -82,7 +82,7 @@
 namespace WebCore {
 
 PreviewConverter::PreviewConverter(const ResourceResponse& response, PreviewConverterProvider& provider)
-    : m_previewData { SharedBuffer::create() }
+    : m_previewData { FragmentedSharedBuffer::create() }
     , m_originalResponse { response }
     , m_provider { provider }
     , m_platformDelegate { adoptNS([[WebPreviewConverterDelegate alloc] initWithDelegate:*this]) }

@@ -41,8 +41,8 @@ struct SimpleRange;
 class LegacyWebArchive final : public Archive {
 public:
     WEBCORE_EXPORT static Ref<LegacyWebArchive> create();
-    WEBCORE_EXPORT static RefPtr<LegacyWebArchive> create(SharedBuffer&);
-    WEBCORE_EXPORT static RefPtr<LegacyWebArchive> create(const URL&, SharedBuffer&);
+    WEBCORE_EXPORT static RefPtr<LegacyWebArchive> create(FragmentedSharedBuffer&);
+    WEBCORE_EXPORT static RefPtr<LegacyWebArchive> create(const URL&, FragmentedSharedBuffer&);
     WEBCORE_EXPORT static Ref<LegacyWebArchive> create(Ref<ArchiveResource>&& mainResource, Vector<Ref<ArchiveResource>>&& subresources, Vector<Ref<LegacyWebArchive>>&& subframeArchives);
     WEBCORE_EXPORT static RefPtr<LegacyWebArchive> create(Node&, Function<bool(Frame&)>&& frameFilter = { });
     WEBCORE_EXPORT static RefPtr<LegacyWebArchive> create(Frame&);

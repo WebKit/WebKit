@@ -44,8 +44,8 @@ class Encoder;
 }
 
 namespace WebCore {
-class ContiguousSharedBuffer;
 class SharedBuffer;
+class FragmentedSharedBuffer;
 }
 
 #if OS(DARWIN)
@@ -121,7 +121,7 @@ public:
 
     // FIXME: Change these factory functions to return Ref<SharedMemory> and crash on failure.
     static RefPtr<SharedMemory> allocate(size_t);
-    static RefPtr<SharedMemory> copyBuffer(const WebCore::SharedBuffer&);
+    static RefPtr<SharedMemory> copyBuffer(const WebCore::FragmentedSharedBuffer&);
     static RefPtr<SharedMemory> map(const Handle&, Protection);
 #if USE(UNIX_DOMAIN_SOCKETS)
     static RefPtr<SharedMemory> wrapMap(void*, size_t, int fileDescriptor);
@@ -154,7 +154,7 @@ public:
     // Return the system page size in bytes.
     static unsigned systemPageSize();
 
-    Ref<WebCore::ContiguousSharedBuffer> createSharedBuffer(size_t) const;
+    Ref<WebCore::SharedBuffer> createSharedBuffer(size_t) const;
 
 private:
 #if OS(DARWIN)

@@ -227,7 +227,7 @@ CDMInstanceSession::KeyStatusVector KeyStore::convertToJSKeyStatusVector() const
     CDMInstanceSession::KeyStatusVector keyStatusVector;
     keyStatusVector.reserveInitialCapacity(numKeys());
     for (const auto& key : m_keys)
-        keyStatusVector.uncheckedAppend(std::pair<Ref<SharedBuffer>, CDMInstanceSession::KeyStatus> { key->idAsSharedBuffer(), key->status() });
+        keyStatusVector.uncheckedAppend(std::pair<Ref<FragmentedSharedBuffer>, CDMInstanceSession::KeyStatus> { key->idAsSharedBuffer(), key->status() });
     return keyStatusVector;
 }
 

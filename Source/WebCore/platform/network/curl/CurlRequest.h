@@ -42,7 +42,7 @@ namespace WebCore {
 class CurlRequestClient;
 class NetworkLoadMetrics;
 class ResourceError;
-class SharedBuffer;
+class FragmentedSharedBuffer;
 class SynchronousLoaderMessageQueue;
 
 class CurlRequest : public ThreadSafeRefCounted<CurlRequest>, public CurlRequestSchedulerClient, public CurlMultipartHandleClient {
@@ -122,9 +122,9 @@ private:
     CURL* setupTransfer() override;
     size_t willSendData(char*, size_t, size_t);
     size_t didReceiveHeader(String&&);
-    size_t didReceiveData(Ref<SharedBuffer>&&);
+    size_t didReceiveData(Ref<FragmentedSharedBuffer>&&);
     void didReceiveHeaderFromMultipart(const Vector<String>&) override;
-    void didReceiveDataFromMultipart(Ref<SharedBuffer>&&) override;
+    void didReceiveDataFromMultipart(Ref<FragmentedSharedBuffer>&&) override;
     void didCompleteTransfer(CURLcode) override;
     void didCancelTransfer() override;
     void finalizeTransfer();
@@ -153,7 +153,7 @@ private:
     NetworkLoadMetrics networkLoadMetrics();
 
     // Download
-    void writeDataToDownloadFileIfEnabled(const SharedBuffer&);
+    void writeDataToDownloadFileIfEnabled(const FragmentedSharedBuffer&);
     void closeDownloadFile();
     void cleanupDownloadFile();
 

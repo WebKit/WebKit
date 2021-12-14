@@ -38,7 +38,7 @@ enum class CreateNewGroupForHighlight : bool { No, Yes };
 enum class HighlightRequestOriginatedInApp : bool { No, Yes };
 
 struct AppHighlight {
-    Ref<WebCore::SharedBuffer> highlight;
+    Ref<WebCore::FragmentedSharedBuffer> highlight;
     std::optional<String> text;
     CreateNewGroupForHighlight isNewGroup;
     HighlightRequestOriginatedInApp requestOriginatedInApp;

@@ -32,7 +32,7 @@ namespace WebKit {
 
 using namespace WebCore;
 
-RefPtr<SharedMemory> SharedMemory::copyBuffer(const SharedBuffer& buffer)
+RefPtr<SharedMemory> SharedMemory::copyBuffer(const FragmentedSharedBuffer& buffer)
 {
     if (buffer.isEmpty())
         return nullptr;
@@ -48,10 +48,10 @@ RefPtr<SharedMemory> SharedMemory::copyBuffer(const SharedBuffer& buffer)
     return sharedMemory;
 }
 
-Ref<ContiguousSharedBuffer> SharedMemory::createSharedBuffer(size_t dataSize) const
+Ref<SharedBuffer> SharedMemory::createSharedBuffer(size_t dataSize) const
 {
     ASSERT(dataSize <= size());
-    return ContiguousSharedBuffer::create(DataSegment::Provider {
+    return SharedBuffer::create(DataSegment::Provider {
         [protectedThis = Ref { *this }] () -> const uint8_t* {
             return static_cast<const uint8_t*>(protectedThis->data());
         },

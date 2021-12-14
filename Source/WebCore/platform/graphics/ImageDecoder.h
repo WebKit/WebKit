@@ -37,12 +37,12 @@
 
 namespace WebCore {
 
-class SharedBuffer;
+class FragmentedSharedBuffer;
 
 class ImageDecoder : public ThreadSafeRefCounted<ImageDecoder> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static RefPtr<ImageDecoder> create(SharedBuffer&, const String& mimeType, AlphaOption, GammaAndColorProfileOption);
+    static RefPtr<ImageDecoder> create(FragmentedSharedBuffer&, const String& mimeType, AlphaOption, GammaAndColorProfileOption);
     virtual ~ImageDecoder() = default;
 
     enum class MediaType {
@@ -91,7 +91,7 @@ public:
 #if ENABLE(GPU_PROCESS)
     using SupportsMediaTypeFunc = Function<bool(MediaType)>;
     using CanDecodeTypeFunc = Function<bool(const String&)>;
-    using CreateImageDecoderFunc = Function<RefPtr<ImageDecoder>(SharedBuffer&, const String&, AlphaOption, GammaAndColorProfileOption)>;
+    using CreateImageDecoderFunc = Function<RefPtr<ImageDecoder>(FragmentedSharedBuffer&, const String&, AlphaOption, GammaAndColorProfileOption)>;
 
     struct ImageDecoderFactory {
         SupportsMediaTypeFunc supportsMediaType;
@@ -129,7 +129,7 @@ public:
     virtual PlatformImagePtr createFrameImageAtIndex(size_t, SubsamplingLevel = SubsamplingLevel::Default, const DecodingOptions& = DecodingOptions(DecodingMode::Synchronous)) = 0;
 
     virtual void setExpectedContentSize(long long) { }
-    virtual void setData(SharedBuffer&, bool allDataReceived) = 0;
+    virtual void setData(FragmentedSharedBuffer&, bool allDataReceived) = 0;
     virtual bool isAllDataReceived() const = 0;
     virtual void clearFrameBufferCache(size_t) = 0;
 

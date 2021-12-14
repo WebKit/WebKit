@@ -177,7 +177,7 @@ ResourceError ServiceWorkerSoftUpdateLoader::processResponse(const ResourceRespo
     return { };
 }
 
-void ServiceWorkerSoftUpdateLoader::didReceiveBuffer(Ref<SharedBuffer>&& buffer, int reportedEncodedDataLength)
+void ServiceWorkerSoftUpdateLoader::didReceiveBuffer(Ref<FragmentedSharedBuffer>&& buffer, int reportedEncodedDataLength)
 {
     if (!m_decoder) {
         if (!m_responseEncoding.isEmpty())

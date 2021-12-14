@@ -63,7 +63,7 @@ Ref<Font> Font::create(const FontPlatformData& platformData, Origin origin, Inte
     return adoptRef(*new Font(platformData, origin, interstitial, visibility, orientationFallback, identifier));
 }
 
-Ref<Font> Font::create(Ref<ContiguousSharedBuffer>&& fontFaceData, Font::Origin origin, float fontSize, bool syntheticBold, bool syntheticItalic)
+Ref<Font> Font::create(Ref<SharedBuffer>&& fontFaceData, Font::Origin origin, float fontSize, bool syntheticBold, bool syntheticItalic)
 {
     bool wrapping;
     auto customFontData = CachedFont::createCustomFontData(fontFaceData.get(), { }, wrapping);

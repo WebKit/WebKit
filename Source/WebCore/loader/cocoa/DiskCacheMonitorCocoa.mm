@@ -42,13 +42,13 @@ namespace WebCore {
 // The maximum number of seconds we'll try to wait for a resource to be disk cached before we forget the request.
 static const double diskCacheMonitorTimeout = 20;
 
-RefPtr<ContiguousSharedBuffer> DiskCacheMonitor::tryGetFileBackedSharedBufferFromCFURLCachedResponse(CFCachedURLResponseRef cachedResponse)
+RefPtr<SharedBuffer> DiskCacheMonitor::tryGetFileBackedSharedBufferFromCFURLCachedResponse(CFCachedURLResponseRef cachedResponse)
 {
     auto data = _CFCachedURLResponseGetMemMappedData(cachedResponse);
     if (!data)
         return nullptr;
 
-    return ContiguousSharedBuffer::create(data);
+    return SharedBuffer::create(data);
 }
 
 void DiskCacheMonitor::monitorFileBackingStoreCreation(const ResourceRequest& request, PAL::SessionID sessionID, CFCachedURLResponseRef cachedResponse)
@@ -113,7 +113,7 @@ DiskCacheMonitor::DiskCacheMonitor(const ResourceRequest& request, PAL::SessionI
     _CFCachedURLResponseSetBecameFileBackedCallBackBlock(cachedResponse, blockToRun, dispatch_get_main_queue());
 }
 
-void DiskCacheMonitor::resourceBecameFileBacked(ContiguousSharedBuffer& fileBackedBuffer)
+void DiskCacheMonitor::resourceBecameFileBacked(SharedBuffer& fileBackedBuffer)
 {
     auto* resource = MemoryCache::singleton().resourceForRequest(m_resourceRequest, m_sessionID);
     if (!resource)

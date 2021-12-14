@@ -65,7 +65,7 @@ class SessionID;
 
 namespace WebCore {
 class AuthenticationChallenge;
-class ContiguousSharedBuffer;
+class SharedBuffer;
 class ProtectionSpace;
 class ResourceRequest;
 enum class ShouldSample : bool;
@@ -124,7 +124,7 @@ public:
     void getNetworkProcessConnection(WebProcessProxy&, Messages::WebProcessProxy::GetNetworkProcessConnectionDelayedReply&&);
 
     DownloadProxy& createDownloadProxy(WebsiteDataStore&, WebProcessPool&, const WebCore::ResourceRequest&, const FrameInfoData&, WebPageProxy* originatingPage);
-    void requestResource(WebPageProxyIdentifier, PAL::SessionID, WebCore::ResourceRequest&&, CompletionHandler<void(Ref<WebCore::ContiguousSharedBuffer>&&, WebCore::ResourceResponse&&, WebCore::ResourceError&&)>&&);
+    void requestResource(WebPageProxyIdentifier, PAL::SessionID, WebCore::ResourceRequest&&, CompletionHandler<void(Ref<WebCore::SharedBuffer>&&, WebCore::ResourceResponse&&, WebCore::ResourceError&&)>&&);
 
     void fetchWebsiteData(PAL::SessionID, OptionSet<WebsiteDataType>, OptionSet<WebsiteDataFetchOption>, CompletionHandler<void(WebsiteData)>&&);
     void deleteWebsiteData(PAL::SessionID, OptionSet<WebsiteDataType>, WallTime modifiedSince, CompletionHandler<void()>&& completionHandler);

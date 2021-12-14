@@ -95,7 +95,7 @@ void ArgumentCoder<SelectionData>::encode(Encoder& encoder, const SelectionData&
     bool hasCustomData = selection.hasCustomData();
     encoder << hasCustomData;
     if (hasCustomData)
-        encoder << RefPtr<SharedBuffer>(selection.customData());
+        encoder << RefPtr<FragmentedSharedBuffer>(selection.customData());
 
     bool canSmartReplace = selection.canSmartReplace();
     encoder << canSmartReplace;
@@ -159,10 +159,10 @@ std::optional<SelectionData> ArgumentCoder<SelectionData>::decode(Decoder& decod
     if (!decoder.decode(hasCustomData))
         return std::nullopt;
     if (hasCustomData) {
-        RefPtr<ContiguousSharedBuffer> buffer;
+        RefPtr<SharedBuffer> buffer;
         if (!decoder.decode(buffer))
             return std::nullopt;
-        selection.setCustomData(Ref<ContiguousSharedBuffer>(*buffer));
+        selection.setCustomData(Ref<SharedBuffer>(*buffer));
     }
 
     bool canSmartReplace;

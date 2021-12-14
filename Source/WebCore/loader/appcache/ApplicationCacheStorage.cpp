@@ -1112,7 +1112,7 @@ RefPtr<ApplicationCache> ApplicationCacheStorage::loadCache(unsigned storageID)
         int httpStatusCode = cacheStatement->columnInt(1);
 
         unsigned type = static_cast<unsigned>(cacheStatement->columnInt64(2));
-        auto data = ContiguousSharedBuffer::create(cacheStatement->columnBlob(6));
+        auto data = SharedBuffer::create(cacheStatement->columnBlob(6));
         
         String path = cacheStatement->columnText(7);
         long long size = 0;
@@ -1272,7 +1272,7 @@ bool ApplicationCacheStorage::shouldStoreResourceAsFlatFile(ApplicationCacheReso
     return startsWithLettersIgnoringASCIICase(type, "audio/") || startsWithLettersIgnoringASCIICase(type, "video/");
 }
     
-bool ApplicationCacheStorage::writeDataToUniqueFileInDirectory(SharedBuffer& data, const String& directory, String& path, const String& fileExtension)
+bool ApplicationCacheStorage::writeDataToUniqueFileInDirectory(FragmentedSharedBuffer& data, const String& directory, String& path, const String& fileExtension)
 {
     String fullPath;
     

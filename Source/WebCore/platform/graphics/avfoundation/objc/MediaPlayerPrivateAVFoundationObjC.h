@@ -67,7 +67,7 @@ class InbandMetadataTextTrackPrivateAVF;
 class MediaPlaybackTarget;
 class MediaSelectionGroupAVFObjC;
 class PixelBufferConformerCV;
-class SharedBuffer;
+class FragmentedSharedBuffer;
 class VideoLayerManagerObjC;
 class VideoTrackPrivateAVFObjC;
 class WebCoreAVFResourceLoader;
@@ -427,7 +427,7 @@ private:
     mutable std::optional<WallTime> m_wallClockAtCachedCurrentTime;
     mutable int m_timeControlStatusAtCachedCurrentTime { 0 };
     mutable double m_requestedRateAtCachedCurrentTime { 0 };
-    RefPtr<SharedBuffer> m_keyID;
+    RefPtr<FragmentedSharedBuffer> m_keyID;
     double m_cachedRate { 0 };
     bool m_requestedPlaying { false };
     double m_requestedRate { 1.0 };

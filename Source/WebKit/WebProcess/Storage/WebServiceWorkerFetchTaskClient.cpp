@@ -72,7 +72,7 @@ void WebServiceWorkerFetchTaskClient::didReceiveResponse(const ResourceResponse&
     m_connection->send(Messages::ServiceWorkerFetchTask::DidReceiveResponse { response, m_needsContinueDidReceiveResponseMessage }, m_fetchIdentifier);
 }
 
-void WebServiceWorkerFetchTaskClient::didReceiveData(Ref<SharedBuffer>&& buffer)
+void WebServiceWorkerFetchTaskClient::didReceiveData(Ref<FragmentedSharedBuffer>&& buffer)
 {
     if (!m_connection)
         return;

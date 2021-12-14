@@ -49,7 +49,7 @@ WebPreviewLoaderClient::WebPreviewLoaderClient(const String& fileName, const Str
 
 WebPreviewLoaderClient::~WebPreviewLoaderClient() = default;
 
-void WebPreviewLoaderClient::didReceiveBuffer(const SharedBuffer& buffer)
+void WebPreviewLoaderClient::didReceiveBuffer(const FragmentedSharedBuffer& buffer)
 {
     auto webPage = WebProcess::singleton().webPage(m_pageID);
     if (!webPage)

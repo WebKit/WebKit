@@ -62,7 +62,7 @@ const ResourceError& PreviewConverter::previewError() const
     return m_previewError;
 }
 
-const SharedBuffer& PreviewConverter::previewData() const
+const FragmentedSharedBuffer& PreviewConverter::previewData() const
 {
     return *m_previewData.get();
 }
@@ -89,7 +89,7 @@ void PreviewConverter::updateMainResource()
     });
 }
 
-void PreviewConverter::appendFromBuffer(const SharedBuffer& buffer)
+void PreviewConverter::appendFromBuffer(const FragmentedSharedBuffer& buffer)
 {
     while (buffer.size() > m_lengthAppended) {
         auto newData = buffer.getSomeData(m_lengthAppended);
@@ -238,7 +238,7 @@ void PreviewConverter::replayToClient(PreviewConverterClient& client)
     client.previewConverterDidFinishConverting(*this);
 }
 
-void PreviewConverter::delegateDidReceiveData(const SharedBuffer& data)
+void PreviewConverter::delegateDidReceiveData(const FragmentedSharedBuffer& data)
 {
     auto protectedThis { Ref { *this } };
 

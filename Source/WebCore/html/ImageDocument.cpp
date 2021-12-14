@@ -141,7 +141,7 @@ void ImageDocument::updateDuringParsing()
     if (!m_imageElement)
         createDocumentStructure();
 
-    if (RefPtr<SharedBuffer> buffer = loader()->mainResourceData())
+    if (RefPtr<FragmentedSharedBuffer> buffer = loader()->mainResourceData())
         m_imageElement->cachedImage()->updateBuffer(*buffer);
 
     imageUpdated();
@@ -151,7 +151,7 @@ void ImageDocument::finishedParsing()
 {
     if (!parser()->isStopped() && m_imageElement) {
         CachedImage& cachedImage = *m_imageElement->cachedImage();
-        RefPtr<SharedBuffer> data = loader()->mainResourceData();
+        RefPtr<FragmentedSharedBuffer> data = loader()->mainResourceData();
 
         // If this is a multipart image, make a copy of the current part, since the resource data
         // will be overwritten by the next part.

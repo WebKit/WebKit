@@ -66,7 +66,7 @@ private:
     bool shouldMoveRangeAfterDelete(const WebCore::SimpleRange&, const WebCore::SimpleRange&) final;
 
 #if ENABLE(ATTACHMENT_ELEMENT)
-    void registerAttachmentIdentifier(const String&, const String& contentType, const String& preferredFileName, Ref<WebCore::SharedBuffer>&&) final;
+    void registerAttachmentIdentifier(const String&, const String& contentType, const String& preferredFileName, Ref<WebCore::FragmentedSharedBuffer>&&) final;
     void registerAttachmentIdentifier(const String&, const String& contentType, const String& filePath) final;
     void registerAttachmentIdentifier(const String&) final;
     void registerAttachments(Vector<WebCore::SerializedAttachmentData>&&) final;
@@ -88,7 +88,7 @@ private:
     void didEndEditing() final;
     void willWriteSelectionToPasteboard(const std::optional<WebCore::SimpleRange>&) final;
     void didWriteSelectionToPasteboard() final;
-    void getClientPasteboardData(const std::optional<WebCore::SimpleRange>&, Vector<String>& pasteboardTypes, Vector<RefPtr<WebCore::ContiguousSharedBuffer>>& pasteboardData) final;
+    void getClientPasteboardData(const std::optional<WebCore::SimpleRange>&, Vector<String>& pasteboardTypes, Vector<RefPtr<WebCore::SharedBuffer>>& pasteboardData) final;
     
     void registerUndoStep(WebCore::UndoStep&) final;
     void registerRedoStep(WebCore::UndoStep&) final;

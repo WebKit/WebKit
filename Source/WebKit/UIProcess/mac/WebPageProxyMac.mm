@@ -227,7 +227,7 @@ String WebPageProxy::stringSelectionForPasteboard()
     return value;
 }
 
-RefPtr<WebCore::ContiguousSharedBuffer> WebPageProxy::dataSelectionForPasteboard(const String& pasteboardType)
+RefPtr<WebCore::SharedBuffer> WebPageProxy::dataSelectionForPasteboard(const String& pasteboardType)
 {
     if (!hasRunningProcess())
         return nullptr;
@@ -277,7 +277,7 @@ void WebPageProxy::setPromisedDataForImage(const String& pasteboardName, const S
         return;
     auto imageBuffer = sharedMemoryImage->createSharedBuffer(imageHandle.dataSize);
 
-    RefPtr<SharedBuffer> archiveBuffer;
+    RefPtr<FragmentedSharedBuffer> archiveBuffer;
     if (!archiveHandle.handle.isNull()) {
         auto sharedMemoryArchive = SharedMemory::map(archiveHandle.handle, SharedMemory::Protection::ReadOnly);
         if (!sharedMemoryArchive)

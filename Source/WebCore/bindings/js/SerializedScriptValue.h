@@ -55,7 +55,7 @@ class DetachedOffscreenCanvas;
 class IDBValue;
 class MessagePort;
 class ImageBitmapBacking;
-class SharedBuffer;
+class FragmentedSharedBuffer;
 enum class SerializationReturnCode;
 
 enum class SerializationErrorMode { NonThrowing, Throwing };

@@ -155,7 +155,7 @@ void WebResourceLoader::didReceiveResponse(const ResourceResponse& response, boo
     if (InspectorInstrumentationWebKit::shouldInterceptResponse(m_coreLoader->frame(), response)) {
         auto interceptedRequestIdentifier = m_coreLoader->identifier();
         m_interceptController.beginInterceptingResponse(interceptedRequestIdentifier);
-        InspectorInstrumentationWebKit::interceptResponse(m_coreLoader->frame(), response, interceptedRequestIdentifier, [this, protectedThis = Ref { *this }, interceptedRequestIdentifier, policyDecisionCompletionHandler = WTFMove(policyDecisionCompletionHandler)](const ResourceResponse& inspectorResponse, RefPtr<SharedBuffer> overrideData) mutable {
+        InspectorInstrumentationWebKit::interceptResponse(m_coreLoader->frame(), response, interceptedRequestIdentifier, [this, protectedThis = Ref { *this }, interceptedRequestIdentifier, policyDecisionCompletionHandler = WTFMove(policyDecisionCompletionHandler)](const ResourceResponse& inspectorResponse, RefPtr<FragmentedSharedBuffer> overrideData) mutable {
             if (!m_coreLoader || !m_coreLoader->identifier()) {
                 WEBRESOURCELOADER_RELEASE_LOG("didReceiveResponse: not continuing intercept load because no coreLoader or no ID");
                 m_interceptController.continueResponse(interceptedRequestIdentifier);
@@ -195,7 +195,7 @@ void WebResourceLoader::didReceiveData(const IPC::DataReference& data, int64_t e
     ASSERT_WITH_MESSAGE(!m_isProcessingNetworkResponse, "Network process should not send data until we've validated the response");
 
     if (UNLIKELY(m_interceptController.isIntercepting(m_coreLoader->identifier()))) {
-        auto buffer = ContiguousSharedBuffer::create(data.data(), data.size());
+        auto buffer = SharedBuffer::create(data.data(), data.size());
         m_interceptController.defer(m_coreLoader->identifier(), [this, protectedThis = Ref { *this }, buffer = WTFMove(buffer), encodedDataLength]() mutable {
             if (m_coreLoader)
                 didReceiveData({ buffer->data(), buffer->size() }, encodedDataLength);
@@ -295,11 +295,11 @@ void WebResourceLoader::didReceiveResource(const ShareableResource::Handle& hand
     LOG(Network, "(WebProcess) WebResourceLoader::didReceiveResource for '%s'", m_coreLoader->url().string().latin1().data());
     WEBRESOURCELOADER_RELEASE_LOG("didReceiveResource:");
 
-    RefPtr<SharedBuffer> buffer = handle.tryWrapInSharedBuffer();
+    RefPtr<FragmentedSharedBuffer> buffer = handle.tryWrapInSharedBuffer();
 
     if (!buffer) {
         LOG_ERROR("Unable to create buffer from ShareableResource sent from the network process.");
-        WEBRESOURCELOADER_RELEASE_LOG("didReceiveResource: Unable to create SharedBuffer");
+        WEBRESOURCELOADER_RELEASE_LOG("didReceiveResource: Unable to create FragmentedSharedBuffer");
         if (auto* frame = m_coreLoader->frame()) {
             if (auto* page = frame->page())
                 page->diagnosticLoggingClient().logDiagnosticMessage(WebCore::DiagnosticLoggingKeys::internalErrorKey(), WebCore::DiagnosticLoggingKeys::createSharedBufferFailedKey(), WebCore::ShouldSample::No);

@@ -80,7 +80,7 @@ void SourceBufferParser::setMinimumAudioSampleDuration(float)
 {
 }
 
-SourceBufferParser::Segment::Segment(Ref<SharedBuffer>&& buffer)
+SourceBufferParser::Segment::Segment(Ref<FragmentedSharedBuffer>&& buffer)
     : m_segment(WTFMove(buffer))
 {
 }
@@ -101,7 +101,7 @@ size_t SourceBufferParser::Segment::size() const
             return clampTo<size_t>(MTPluginByteSourceGetLength(byteSource.get()));
         },
 #endif
-        [](const Ref<SharedBuffer>& buffer)
+        [](const Ref<FragmentedSharedBuffer>& buffer)
         {
             return buffer->size();
         }
@@ -125,7 +125,7 @@ auto SourceBufferParser::Segment::read(size_t position, size_t sizeToRead, uint8
             return Unexpected<ReadError> { ReadError::FatalError };
         },
 #endif
-        [&](const Ref<SharedBuffer>& buffer) -> ReadResult
+        [&](const Ref<FragmentedSharedBuffer>& buffer) -> ReadResult
         {
             buffer->copyTo(destination, position, sizeToRead);
             return sizeToRead;
@@ -133,7 +133,7 @@ auto SourceBufferParser::Segment::read(size_t position, size_t sizeToRead, uint8
     );
 }
 
-Ref<SharedBuffer> SourceBufferParser::Segment::takeSharedBuffer()
+Ref<FragmentedSharedBuffer> SourceBufferParser::Segment::takeSharedBuffer()
 {
     return WTF::switchOn(m_segment,
 #if HAVE(MT_PLUGIN_FORMAT_READER)
@@ -142,28 +142,28 @@ Ref<SharedBuffer> SourceBufferParser::Segment::takeSharedBuffer()
             Vector<uint8_t> vector(size());
             auto readResult = read(0, vector.size(), vector.data());
             if (!readResult.has_value())
-                return SharedBuffer::create();
+                return FragmentedSharedBuffer::create();
             vector.shrink(readResult.value());
-            return SharedBuffer::create(WTFMove(vector));
+            return FragmentedSharedBuffer::create(WTFMove(vector));
         },
 #endif
-        [&](Ref<SharedBuffer>& buffer)
+        [&](Ref<FragmentedSharedBuffer>& buffer)
         {
-            return std::exchange(buffer, SharedBuffer::create());
+            return std::exchange(buffer, FragmentedSharedBuffer::create());
         }
     );
 }
 
-RefPtr<SharedBuffer> SourceBufferParser::Segment::getSharedBuffer() const
+RefPtr<FragmentedSharedBuffer> SourceBufferParser::Segment::getSharedBuffer() const
 {
     return WTF::switchOn(m_segment,
 #if HAVE(MT_PLUGIN_FORMAT_READER)
-        [&](const RetainPtr<MTPluginByteSourceRef>&) -> RefPtr<SharedBuffer>
+        [&](const RetainPtr<MTPluginByteSourceRef>&) -> RefPtr<FragmentedSharedBuffer>
         {
             return nullptr;
         },
 #endif
-        [&](const Ref<SharedBuffer>& buffer) -> RefPtr<SharedBuffer>
+        [&](const Ref<FragmentedSharedBuffer>& buffer) -> RefPtr<FragmentedSharedBuffer>
         {
             return buffer.ptr();
         }

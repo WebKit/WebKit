@@ -135,17 +135,17 @@ bool CDM::supportsInitDataType(const AtomString& initDataType) const
     return m_private && m_private->supportedInitDataTypes().contains(initDataType);
 }
 
-RefPtr<SharedBuffer> CDM::sanitizeInitData(const AtomString& initDataType, const SharedBuffer& initData)
+RefPtr<FragmentedSharedBuffer> CDM::sanitizeInitData(const AtomString& initDataType, const FragmentedSharedBuffer& initData)
 {
     return InitDataRegistry::shared().sanitizeInitData(initDataType, initData);
 }
 
-bool CDM::supportsInitData(const AtomString& initDataType, const SharedBuffer& initData)
+bool CDM::supportsInitData(const AtomString& initDataType, const FragmentedSharedBuffer& initData)
 {
     return m_private && m_private->supportsInitData(initDataType, initData);
 }
 
-RefPtr<SharedBuffer> CDM::sanitizeResponse(const SharedBuffer& response)
+RefPtr<FragmentedSharedBuffer> CDM::sanitizeResponse(const FragmentedSharedBuffer& response)
 {
     if (!m_private)
         return nullptr;

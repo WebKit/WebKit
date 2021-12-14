@@ -50,7 +50,7 @@ class PlatformMediaResourceLoader;
 class ResourceError;
 class ResourceRequest;
 class ResourceResponse;
-class SharedBuffer;
+class FragmentedSharedBuffer;
 class SharedBufferDataView;
 class WebCoreNSURLSessionDataTaskClient;
 enum class ShouldContinuePolicyCheck : bool;
@@ -158,7 +158,7 @@ WEBCORE_EXPORT @interface WebCoreNSURLSession : NSObject {
 - (void)resource:(nullable WebCore::PlatformMediaResource*)resource sentBytes:(unsigned long long)bytesSent totalBytesToBeSent:(unsigned long long)totalBytesToBeSent;
 - (void)resource:(nullable WebCore::PlatformMediaResource*)resource receivedResponse:(const WebCore::ResourceResponse&)response completionHandler:(CompletionHandler<void(WebCore::ShouldContinuePolicyCheck)>&&)completionHandler;
 - (BOOL)resource:(nullable WebCore::PlatformMediaResource*)resource shouldCacheResponse:(const WebCore::ResourceResponse&)response;
-- (void)resource:(nullable WebCore::PlatformMediaResource*)resource receivedData:(Ref<WebCore::SharedBuffer>&&)data;
+- (void)resource:(nullable WebCore::PlatformMediaResource*)resource receivedData:(Ref<WebCore::FragmentedSharedBuffer>&&)data;
 - (void)resource:(nullable WebCore::PlatformMediaResource*)resource receivedRedirect:(const WebCore::ResourceResponse&)response request:(WebCore::ResourceRequest&&)request completionHandler:(CompletionHandler<void(WebCore::ResourceRequest&&)>&&)completionHandler;
 - (void)resource:(nullable WebCore::PlatformMediaResource*)resource accessControlCheckFailedWithError:(const WebCore::ResourceError&)error;
 - (void)resource:(nullable WebCore::PlatformMediaResource*)resource loadFailedWithError:(const WebCore::ResourceError&)error;

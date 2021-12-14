@@ -51,7 +51,7 @@ public:
     void responseReceived(const ResourceResponse&) override;
     void addData(const uint8_t* data, int length) override;
     void finishedAddingData() override;
-    Ref<SharedBuffer> replacementData() const override;
+    Ref<FragmentedSharedBuffer> replacementData() const override;
     ContentFilterUnblockHandler unblockHandler() const override;
 
     WEBCORE_EXPORT static bool isRequired();

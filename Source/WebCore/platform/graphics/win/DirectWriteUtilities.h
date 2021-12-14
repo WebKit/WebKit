@@ -43,7 +43,7 @@ enum DWRITE_FONT_STRETCH;
 namespace WebCore {
 
 class FontPlatformData;
-class SharedBuffer;
+class FragmentedSharedBuffer;
 
 namespace DirectWrite {
 
