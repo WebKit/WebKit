@@ -111,6 +111,8 @@ public:
     String helpText() const override;
     String title() const override;
     String text() const override;
+    void alternativeText(Vector<AccessibilityText>&) const;
+    void helpText(Vector<AccessibilityText>&) const;
     String stringValue() const override;
     SRGBA<uint8_t> colorValue() const override;
     String ariaLabeledByAttribute() const override;
@@ -180,9 +182,7 @@ protected:
 private:
     bool isAccessibilityNodeObject() const final { return true; }
     void accessibilityText(Vector<AccessibilityText>&) const override;
-    void alternativeText(Vector<AccessibilityText>&) const;
     void visibleText(Vector<AccessibilityText>&) const;
-    void helpText(Vector<AccessibilityText>&) const;
     String alternativeTextForWebArea() const;
     void ariaLabeledByText(Vector<AccessibilityText>&) const;
     bool computeAccessibilityIsIgnored() const override;

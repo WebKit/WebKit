@@ -1,3 +1,25 @@
+2021-12-14  Tyler Wilcock  <tyler_w@apple.com>
+
+        Web Inspector: test webpage keeps reloading when Inspector is open
+        https://bugs.webkit.org/show_bug.cgi?id=234076
+
+        Reviewed by Chris Fleizach.
+
+        This patch fixes the potential for infinite recursion introduced by
+        https://trac.webkit.org/changeset/284335/webkit. See corresponding
+        Source/WebCore/ChangeLog for full details.
+
+        * accessibility/mac/ignore-redundant-accessibility-text-groups-expected.txt:
+        * accessibility/mac/ignore-redundant-accessibility-text-groups.html:
+        Add an aria-describedby testcase.
+
+        * accessibility/mac/ignore-redundant-groups-crash-expected.txt: Added.
+        * accessibility/mac/ignore-redundant-groups-crash.html:
+        Added. Exercises the crash testcase raised in
+        https://bugs.webkit.org/show_bug.cgi?id=234076 along with other
+        branches in AccessibilityNodeObject::alternativeText to prevent future
+        problems.
+
 2021-12-14  Brandon Stewart  <brandonstewart@apple.com>
 
         Add test case for execCommand to verify inserting an ordered list and deletion
