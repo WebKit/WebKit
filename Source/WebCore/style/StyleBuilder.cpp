@@ -180,6 +180,8 @@ void Builder::applyCustomProperty(const String& name)
     auto property = m_cascade.customProperty(name);
     bool inCycle = m_state.m_inProgressPropertiesCustom.contains(name);
 
+    SetForScope levelScope(m_state.m_currentProperty, &property);
+
     for (auto index : { SelectorChecker::MatchDefault, SelectorChecker::MatchLink, SelectorChecker::MatchVisited }) {
         if (!property.cssValue[index])
             continue;
@@ -233,9 +235,7 @@ void Builder::applyCustomProperty(const String& name)
 
 inline void Builder::applyCascadeProperty(const PropertyCascade::Property& property)
 {
-    m_state.m_cascadeLevel = property.level;
-    m_state.m_styleScopeOrdinal = property.styleScopeOrdinal;
-    m_state.m_cascadeLayerPriority = property.cascadeLayerPriority;
+    SetForScope levelScope(m_state.m_currentProperty, &property);
 
     auto applyWithLinkMatch = [&](SelectorChecker::LinkMatchMask linkMatch) {
         if (property.cssValue[linkMatch]) {
@@ -261,9 +261,7 @@ void Builder::applyRollbackCascadeProperty(const PropertyCascade::Property& prop
     if (!value)
         return;
 
-    SetForScope levelScope(m_state.m_cascadeLevel, property.level);
-    SetForScope scopeScope(m_state.m_styleScopeOrdinal, property.styleScopeOrdinal);
-    SetForScope layerScope(m_state.m_cascadeLayerPriority, property.cascadeLayerPriority);
+    SetForScope levelScope(m_state.m_currentProperty, &property);
 
     applyProperty(property.id, *value, linkMatchMask);
 }
@@ -302,9 +300,7 @@ void Builder::applyProperty(CSSPropertyID id, CSSValue& value, SelectorChecker::
     bool isRevertLayer = valueToApply->isRevertLayerValue() || customPropertyValueID == CSSValueRevertLayer;
 
     if (isRevert || isRevertLayer) {
-        auto* rollbackCascade = isRevert
-            ? ensureRollbackCascadeForRevert(m_state.m_cascadeLevel)
-            : ensureRollbackCascadeForRevertLayer(m_state.m_cascadeLevel, m_state.m_cascadeLayerPriority);
+        auto* rollbackCascade = isRevert ? ensureRollbackCascadeForRevert() : ensureRollbackCascadeForRevertLayer();
 
         if (rollbackCascade) {
             // With the rollback cascade built, we need to obtain the property and apply it. If the property is
@@ -379,29 +375,36 @@ RefPtr<CSSValue> Builder::resolvedVariableValue(CSSPropertyID propertyID, const 
     return CSSParser(m_state.document()).parseValueWithVariableReferences(propertyID, value, m_state);
 }
 
-const PropertyCascade* Builder::ensureRollbackCascadeForRevert(CascadeLevel rollbackCascadeLevel)
+const PropertyCascade* Builder::ensureRollbackCascadeForRevert()
 {
+    auto rollbackCascadeLevel = m_state.m_currentProperty->cascadeLevel;
     if (rollbackCascadeLevel == CascadeLevel::UserAgent)
         return nullptr;
 
     --rollbackCascadeLevel;
 
-    auto key = makeRollbackCascadeKey(rollbackCascadeLevel, RuleSet::cascadeLayerPriorityForUnlayered);
+    auto key = makeRollbackCascadeKey(rollbackCascadeLevel, 0);
     return m_rollbackCascades.ensure(key, [&] {
-        return makeUnique<const PropertyCascade>(m_cascade, rollbackCascadeLevel, RuleSet::cascadeLayerPriorityForUnlayered);
+        return makeUnique<const PropertyCascade>(m_cascade, rollbackCascadeLevel);
     }).iterator->value.get();
 }
 
-const PropertyCascade* Builder::ensureRollbackCascadeForRevertLayer(CascadeLevel cascadeLevel, CascadeLayerPriority rollbackLayerPriority)
+const PropertyCascade* Builder::ensureRollbackCascadeForRevertLayer()
 {
+    auto& property = *m_state.m_currentProperty;
+    auto rollbackLayerPriority = property.cascadeLayerPriority;
     if (!rollbackLayerPriority)
         return nullptr;
 
-    --rollbackLayerPriority;
+    ASSERT(property.fromStyleAttribute == FromStyleAttribute::No || property.cascadeLayerPriority == RuleSet::cascadeLayerPriorityForUnlayered);
 
-    auto key = makeRollbackCascadeKey(cascadeLevel, rollbackLayerPriority);
+    // Style attribute reverts to the regular author style.
+    if (property.fromStyleAttribute == FromStyleAttribute::No)
+        --rollbackLayerPriority;
+
+    auto key = makeRollbackCascadeKey(property.cascadeLevel, rollbackLayerPriority);
     return m_rollbackCascades.ensure(key, [&] {
-        return makeUnique<const PropertyCascade>(m_cascade, cascadeLevel, rollbackLayerPriority);
+        return makeUnique<const PropertyCascade>(m_cascade, property.cascadeLevel, rollbackLayerPriority);
     }).iterator->value.get();
 }
 

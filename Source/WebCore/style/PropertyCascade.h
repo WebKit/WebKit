@@ -27,7 +27,6 @@
 
 #include "CascadeLevel.h"
 #include "MatchResult.h"
-#include "StyleBuilderState.h"
 #include <bitset>
 
 namespace WebCore {
@@ -47,15 +46,16 @@ public:
     };
 
     PropertyCascade(const MatchResult&, CascadeLevel, IncludedProperties, Direction);
-    PropertyCascade(const PropertyCascade&, CascadeLevel, CascadeLayerPriority maximumCascadeLayerPriority = RuleSet::cascadeLayerPriorityForUnlayered);
+    PropertyCascade(const PropertyCascade&, CascadeLevel, std::optional<CascadeLayerPriority> maximumCascadeLayerPriorityForRollback = { });
 
     ~PropertyCascade();
 
     struct Property {
         CSSPropertyID id;
-        CascadeLevel level;
+        CascadeLevel cascadeLevel;
         ScopeOrdinal styleScopeOrdinal;
         CascadeLayerPriority cascadeLayerPriority;
+        FromStyleAttribute fromStyleAttribute;
         CSSValue* cssValue[3]; // Values for link match states MatchDefault, MatchLink and MatchVisited
     };
 
@@ -69,9 +69,6 @@ public:
     const HashMap<AtomString, Property>& customProperties() const { return m_customProperties; }
 
     Direction direction() const;
-
-    auto maximumCascadeLevel() const { return m_maximumCascadeLevel; }
-    auto maximumCascadeLayerPriority() const { return m_maximumCascadeLayerPriority; }
 
 private:
     void buildCascade();
@@ -88,7 +85,7 @@ private:
     const MatchResult& m_matchResult;
     const IncludedProperties m_includedProperties;
     const CascadeLevel m_maximumCascadeLevel;
-    const CascadeLayerPriority m_maximumCascadeLayerPriority { RuleSet::cascadeLayerPriorityForUnlayered };
+    const std::optional<CascadeLayerPriority> m_maximumCascadeLayerPriorityForRollback;
     mutable Direction m_direction;
     mutable bool m_directionIsUnresolved { true };
 

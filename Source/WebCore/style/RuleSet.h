@@ -106,6 +106,7 @@ public:
     bool hasHostPseudoClassRulesMatchingInShadowTree() const { return m_hasHostPseudoClassRulesMatchingInShadowTree; }
 
     static constexpr auto cascadeLayerPriorityForUnlayered = std::numeric_limits<CascadeLayerPriority>::max();
+
     CascadeLayerPriority cascadeLayerPriorityFor(const RuleData&) const;
 
 private:

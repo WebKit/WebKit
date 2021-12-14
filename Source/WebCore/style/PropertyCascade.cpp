@@ -26,6 +26,7 @@
 #include "config.h"
 #include "PropertyCascade.h"
 
+#include "CSSCustomPropertyValue.h"
 #include "CSSPaintImageValue.h"
 #include "CSSPrimitiveValueMappings.h"
 #include "CSSValuePool.h"
@@ -80,11 +81,11 @@ PropertyCascade::PropertyCascade(const MatchResult& matchResult, CascadeLevel ma
     buildCascade();
 }
 
-PropertyCascade::PropertyCascade(const PropertyCascade& parent, CascadeLevel maximumCascadeLevel, CascadeLayerPriority maximumCascadeLayerPriority)
+PropertyCascade::PropertyCascade(const PropertyCascade& parent, CascadeLevel maximumCascadeLevel, std::optional<CascadeLayerPriority> maximumCascadeLayerPriorityForRollback)
     : m_matchResult(parent.m_matchResult)
     , m_includedProperties(parent.m_includedProperties)
     , m_maximumCascadeLevel(maximumCascadeLevel)
-    , m_maximumCascadeLayerPriority(maximumCascadeLayerPriority)
+    , m_maximumCascadeLayerPriorityForRollback(maximumCascadeLayerPriorityForRollback)
     , m_direction(parent.direction())
     , m_directionIsUnresolved(false)
 {
@@ -116,9 +117,10 @@ void PropertyCascade::setPropertyInternal(Property& property, CSSPropertyID id, 
 {
     ASSERT(matchedProperties.linkMatchType <= SelectorChecker::MatchAll);
     property.id = id;
-    property.level = cascadeLevel;
+    property.cascadeLevel = cascadeLevel;
     property.styleScopeOrdinal = matchedProperties.styleScopeOrdinal;
     property.cascadeLayerPriority = matchedProperties.cascadeLayerPriority;
+    property.fromStyleAttribute = matchedProperties.fromStyleAttribute;
 
     if (matchedProperties.linkMatchType == SelectorChecker::MatchAll) {
         property.cssValue[0] = &cssValue;
@@ -177,7 +179,18 @@ void PropertyCascade::setDeferred(CSSPropertyID id, CSSValue& cssValue, const Ma
 
 bool PropertyCascade::addMatch(const MatchedProperties& matchedProperties, CascadeLevel cascadeLevel, bool important)
 {
-    if (matchedProperties.cascadeLayerPriority > m_maximumCascadeLayerPriority && cascadeLevel == m_maximumCascadeLevel && matchedProperties.styleScopeOrdinal == ScopeOrdinal::Element)
+    auto skipForRollback = [&] {
+        if (!m_maximumCascadeLayerPriorityForRollback)
+            return false;
+        if (matchedProperties.styleScopeOrdinal != ScopeOrdinal::Element)
+            return false;
+        if (cascadeLevel < m_maximumCascadeLevel)
+            return false;
+        if (matchedProperties.fromStyleAttribute == FromStyleAttribute::Yes)
+            return true;
+        return matchedProperties.cascadeLayerPriority > *m_maximumCascadeLayerPriorityForRollback;
+    };
+    if (skipForRollback())
         return false;
 
     auto& styleProperties = *matchedProperties.properties;

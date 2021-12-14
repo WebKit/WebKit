@@ -62,8 +62,8 @@ private:
     Ref<CSSValue> resolveValue(CSSPropertyID, CSSValue&);
     RefPtr<CSSValue> resolvedVariableValue(CSSPropertyID, const CSSValue&);
 
-    const PropertyCascade* ensureRollbackCascadeForRevert(CascadeLevel);
-    const PropertyCascade* ensureRollbackCascadeForRevertLayer(CascadeLevel, CascadeLayerPriority);
+    const PropertyCascade* ensureRollbackCascadeForRevert();
+    const PropertyCascade* ensureRollbackCascadeForRevertLayer();
 
     using RollbackCascadeKey = std::pair<unsigned, unsigned>;
     RollbackCascadeKey makeRollbackCascadeKey(CascadeLevel, CascadeLayerPriority);
