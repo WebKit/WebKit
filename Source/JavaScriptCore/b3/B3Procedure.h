@@ -189,7 +189,7 @@ public:
     CFG& cfg() const { return *m_cfg; }
 
     Dominators& dominators();
-    NaturalLoops& naturalLoops();
+    JS_EXPORT_PRIVATE NaturalLoops& naturalLoops();
     BackwardsCFG& backwardsCFG();
     BackwardsDominators& backwardsDominators();
 

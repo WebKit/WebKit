@@ -906,6 +906,8 @@
 		52CD0F5E2242F569004A18A5 /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 932F5BD90822A1C700736975 /* JavaScriptCore.framework */; };
 		52CD0F682242F71C004A18A5 /* testdfg.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52CD0F672242F71C004A18A5 /* testdfg.cpp */; };
 		52DD000826E039B90054E408 /* BaselineJITCode.h in Headers */ = {isa = PBXBuildFile; fileRef = 52DD000626E039B30054E408 /* BaselineJITCode.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		52E65A1C27682760002B4C0A /* B3EstimateStaticExecutionCounts.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52E65A1A27682760002B4C0A /* B3EstimateStaticExecutionCounts.cpp */; };
+		52E65A1E27682771002B4C0A /* B3EstimateStaticExecutionCounts.h in Headers */ = {isa = PBXBuildFile; fileRef = 52E65A1B27682760002B4C0A /* B3EstimateStaticExecutionCounts.h */; };
 		52EED7942492B870008F4C93 /* FunctionAllowlist.h in Headers */ = {isa = PBXBuildFile; fileRef = 52EED7932492B868008F4C93 /* FunctionAllowlist.h */; };
 		52F6C35E1E71EB080081F4CC /* WebAssemblyWrapperFunction.h in Headers */ = {isa = PBXBuildFile; fileRef = 52F6C35C1E71EB080081F4CC /* WebAssemblyWrapperFunction.h */; };
 		530A66B91FA3E78B0026A545 /* UnifiedSource3-mm.mm in Sources */ = {isa = PBXBuildFile; fileRef = 530A66B11FA3E77A0026A545 /* UnifiedSource3-mm.mm */; };
@@ -3717,6 +3719,8 @@
 		52D1308F221CE03A009C836C /* foo.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = foo.js; sourceTree = "<group>"; };
 		52DD000626E039B30054E408 /* BaselineJITCode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BaselineJITCode.h; sourceTree = "<group>"; };
 		52DD000726E039B40054E408 /* BaselineJITCode.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = BaselineJITCode.cpp; sourceTree = "<group>"; };
+		52E65A1A27682760002B4C0A /* B3EstimateStaticExecutionCounts.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = B3EstimateStaticExecutionCounts.cpp; path = b3/B3EstimateStaticExecutionCounts.cpp; sourceTree = "<group>"; };
+		52E65A1B27682760002B4C0A /* B3EstimateStaticExecutionCounts.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = B3EstimateStaticExecutionCounts.h; path = b3/B3EstimateStaticExecutionCounts.h; sourceTree = "<group>"; };
 		52EED7922492B868008F4C93 /* FunctionAllowlist.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = FunctionAllowlist.cpp; sourceTree = "<group>"; };
 		52EED7932492B868008F4C93 /* FunctionAllowlist.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FunctionAllowlist.h; sourceTree = "<group>"; };
 		52F6C35B1E71EB080081F4CC /* WebAssemblyWrapperFunction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebAssemblyWrapperFunction.cpp; path = js/WebAssemblyWrapperFunction.cpp; sourceTree = "<group>"; };
@@ -5978,6 +5982,8 @@
 				3395C70522555F6D00BDBFAD /* B3EliminateDeadCode.h */,
 				0F5BF16E1F23A5A10029D91D /* B3EnsureLoopPreHeaders.cpp */,
 				0F5BF16F1F23A5A10029D91D /* B3EnsureLoopPreHeaders.h */,
+				52E65A1A27682760002B4C0A /* B3EstimateStaticExecutionCounts.cpp */,
+				52E65A1B27682760002B4C0A /* B3EstimateStaticExecutionCounts.h */,
 				5318045D22EAAF0F004A7342 /* B3ExtractValue.cpp */,
 				5318045B22EAAC4B004A7342 /* B3ExtractValue.h */,
 				0F6971E81D92F42100BA02A5 /* B3FenceValue.cpp */,
@@ -9912,6 +9918,7 @@
 				0FFB921D16D02F300055A5DB /* DFGSlowPathGenerator.h in Headers */,
 				E322E5A31DA64439006E7709 /* DFGSnippetParams.h in Headers */,
 				86EC9DD31328DF82002B2AD7 /* DFGSpeculativeJIT.h in Headers */,
+				52E65A1E27682771002B4C0A /* B3EstimateStaticExecutionCounts.h in Headers */,
 				0F682FB319BCB36400FA3BAD /* DFGSSACalculator.h in Headers */,
 				A7D89D0017A0B8CC00773AD8 /* DFGSSAConversionPhase.h in Headers */,
 				0FC20CBA18556A3500C9E954 /* DFGSSALoweringPhase.h in Headers */,
@@ -11783,6 +11790,7 @@
 				5C3A77BA22F2480F003827FF /* testb3_2.cpp in Sources */,
 				5C3A77B922F2480B003827FF /* testb3_3.cpp in Sources */,
 				5C3A77B822F24809003827FF /* testb3_4.cpp in Sources */,
+				52E65A1C27682760002B4C0A /* B3EstimateStaticExecutionCounts.cpp in Sources */,
 				5C3A77B722F24806003827FF /* testb3_5.cpp in Sources */,
 				5C3A77B622F24803003827FF /* testb3_6.cpp in Sources */,
 				5C3A77B522F24800003827FF /* testb3_7.cpp in Sources */,

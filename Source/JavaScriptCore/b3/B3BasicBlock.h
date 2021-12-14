@@ -144,6 +144,7 @@ public:
     // Update predecessors starting with the successors of this block.
     void updatePredecessorsAfter();
 
+    void setFrequency(double frequency) { m_frequency = frequency; }
     double frequency() const { return m_frequency; }
 
     void dump(PrintStream&) const;

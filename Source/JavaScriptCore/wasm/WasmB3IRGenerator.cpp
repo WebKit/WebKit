@@ -33,6 +33,7 @@
 #include "B3BasicBlockInlines.h"
 #include "B3CCallValue.h"
 #include "B3ConstPtrValue.h"
+#include "B3EstimateStaticExecutionCounts.h"
 #include "B3FixSSA.h"
 #include "B3Generate.h"
 #include "B3InsertionSet.h"
@@ -3293,6 +3294,8 @@ Expected<std::unique_ptr<InternalFunction>, String> parseAndCompile(CompilationC
     procedure.resetReachability();
     if (ASSERT_ENABLED)
         validate(procedure, "After parsing:\n");
+
+    estimateStaticExecutionCounts(procedure);
 
     dataLogIf(WasmB3IRGeneratorInternal::verbose, "Pre SSA: ", procedure);
     fixSSA(procedure);
