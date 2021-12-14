@@ -1,3 +1,12 @@
+2021-12-14  Ryan Haddad  <ryanhaddad@apple.com>
+
+        REGRESSION (r286982): ASSERTION FAILED: clipRectsContext.rootLayer == m_clipRectsCache->m_clipRectsRoot[clipRectsType]
+        https://bugs.webkit.org/show_bug.cgi?id=234315
+
+        Unreviewed test gardening.
+
+        * TestExpectations: Skip the test.
+
 2021-12-14  Jer Noble  <jer.noble@apple.com>
 
         Safari intermittently stopping playing Spotify Web Player (currentTime goes backwards)

@@ -5074,6 +5074,8 @@ webkit.org/b/233344 imported/w3c/web-platform-tests/css/motion/offset-rotate-002
 
 imported/w3c/web-platform-tests/css/css-shadow-parts/interaction-with-nested-pseudo-class.html [ ImageOnlyFailure ]
 
+webkit.org/b/234315 [ Debug ] fast/layers/top-layer-ancestor-opacity-and-transform-crash.html [ Skip ]
+
 # Plugins
 # FIXME: Remove these tests.
 plugins/ [ Skip ]
