@@ -1,3 +1,14 @@
+2021-12-13  Christopher Reid  <chris.reid@sony.com>
+
+        [Curl] Improve curl's cookie conformance in WPT
+        https://bugs.webkit.org/show_bug.cgi?id=232722
+
+        Reviewed by Fujii Hironori.
+
+        Add baseline for wpt cookie tests on wincairo
+
+        * platform/wincairo/TestExpectations:
+
 2021-12-13  Robert Jenner  <Jenner@apple.com>
 
         [ iOS ] 8 imported/w3c/web-platform-tests/fetch/api (layout-tests) are flaky text failures

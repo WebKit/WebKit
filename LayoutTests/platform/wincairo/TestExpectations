@@ -1427,6 +1427,35 @@ storage/indexeddb/modern/objectstore-rename-1.html [ Timeout Pass ]
 storage/indexeddb/modern/aborted-put.html [ Timeout Pass ]
 [ Debug ] storage/indexeddb/modern/index-rename-1.html [ Skip ]
 
+# Flaky values in WPT cookie expectations
+imported/w3c/web-platform-tests/cookies/prefix/__secure.header.https.html [ Pass Failure ]
+imported/w3c/web-platform-tests/cookies/samesite-none-secure/cookies-without-samesite-must-be-secure.https.tentative.html [ Pass Failure ]
+imported/w3c/web-platform-tests/cookies/samesite/iframe.document.https.html [ Pass Failure ]
+imported/w3c/web-platform-tests/cookies/samesite/multiple-samesite-attributes.https.html [ Pass Failure ]
+imported/w3c/web-platform-tests/cookies/samesite/sandbox-iframe-nested.https.html [ Pass Failure ]
+imported/w3c/web-platform-tests/cookies/samesite/sandbox-iframe-subresource.https.html [ Pass Failure ]
+imported/w3c/web-platform-tests/cookies/samesite/setcookie-lax.https.html [ Pass Failure ]
+imported/w3c/web-platform-tests/cookies/samesite/setcookie-navigation.https.html [ Pass Failure ]
+imported/w3c/web-platform-tests/cookies/schemeful-same-site/schemeful-iframe-subresource.tentative.html [ Pass Failure ]
+imported/w3c/web-platform-tests/cookies/schemeful-same-site/schemeful-navigation.tentative.html [ Pass Failure ]
+imported/w3c/web-platform-tests/cookies/schemeful-same-site/schemeful-subresource.tentative.html [ Pass Failure ]
+
+# WPT diff failures that need more investigation
+imported/w3c/web-platform-tests/cookies/domain/domain-attribute-host-with-leading-period.sub.https.html [ Failure ]
+imported/w3c/web-platform-tests/cookies/encoding/charset.html [ Failure ]
+imported/w3c/web-platform-tests/cookies/name/name-ctl.html [ Failure ]
+imported/w3c/web-platform-tests/cookies/secure/set-from-dom.sub.html [ Failure ]
+imported/w3c/web-platform-tests/cookies/secure/set-from-http.sub.html [ Failure ]
+imported/w3c/web-platform-tests/cookies/secure/set-from-ws.sub.html [ Failure ]
+imported/w3c/web-platform-tests/cookies/value/value-ctl.html [ Failure ]
+imported/w3c/web-platform-tests/cookies/value/value.html [ Failure ]
+
+# Skip WPT tests that timeout
+imported/w3c/web-platform-tests/cookies/samesite/form-get-blank-reload.https.html [ Skip ]
+imported/w3c/web-platform-tests/cookies/samesite/form-get-blank.https.html [ Skip ]
+imported/w3c/web-platform-tests/cookies/samesite/form-post-blank-reload.https.html [ Skip ]
+imported/w3c/web-platform-tests/cookies/samesite/form-post-blank.https.html [ Skip ]
+
 ################################################################################
 ############################   End Storage Issues   ############################
 ################################################################################
@@ -1548,7 +1577,6 @@ imported/w3c/web-platform-tests/common [ Skip ]
 imported/w3c/web-platform-tests/compat [ Skip ]
 imported/w3c/web-platform-tests/console [ Skip ]
 imported/w3c/web-platform-tests/content-security-policy [ Skip ]
-imported/w3c/web-platform-tests/cookies [ Skip ]
 imported/w3c/web-platform-tests/cors [ Skip ]
 imported/w3c/web-platform-tests/credential-management [ Skip ]
 imported/w3c/web-platform-tests/css [ Skip ]

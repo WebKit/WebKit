@@ -64,8 +64,10 @@ static String cookiesForSession(const NetworkStorageSession& session, const URL&
         for (const auto& cookie : *result) {
             if (!cookies.isEmpty())
                 cookies.append("; ");
-            cookies.append(cookie.name);
-            cookies.append("=");
+            if (!cookie.name.isEmpty()) {
+                cookies.append(cookie.name);
+                cookies.append("=");
+            }
             cookies.append(cookie.value);
         }
     }

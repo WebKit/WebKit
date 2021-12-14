@@ -124,15 +124,23 @@ static void parseCookieAttributes(const String& attribute, bool& hasMaxAge, Cook
             // If there is a max-age attribute as well as an expires attribute
             // the rightmost max-age attribute takes precedence.
             hasMaxAge = true;
+        } else {
+            result.session = true;
+            result.expires = std::nullopt;
         }
     } else if (equalIgnoringASCIICase(attributeName, "expires") && !hasMaxAge) {
         if (auto expiryTime = parseExpiresMS(attributeValue.utf8().data())) {
             result.expires = expiryTime.value();
             result.session = false;
+        } else if (!hasMaxAge) {
+            result.session = true;
+            result.expires = std::nullopt;
         }
     } else if (equalIgnoringASCIICase(attributeName, "path")) {
         if (!attributeValue.isEmpty() && attributeValue.startsWith('/'))
             result.path = attributeValue;
+        else
+            result.path = emptyString();
     }
 }
 
