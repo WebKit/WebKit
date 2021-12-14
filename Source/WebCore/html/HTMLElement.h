@@ -161,8 +161,7 @@ protected:
     void childrenChanged(const ChildChange&) override;
     void calculateAndAdjustDirectionality();
 
-    typedef HashMap<AtomStringImpl*, AtomString> EventHandlerNameMap;
-    template<size_t tableSize> static void populateEventHandlerNameMap(EventHandlerNameMap&, const QualifiedName* const (&table)[tableSize]);
+    using EventHandlerNameMap = HashMap<AtomStringImpl*, AtomString>;
     static const AtomString& eventNameForEventHandlerAttribute(const QualifiedName& attributeName, const EventHandlerNameMap&);
 
 private:
@@ -175,9 +174,6 @@ private:
     void adjustDirectionalityIfNeededAfterChildrenChanged(Element* beforeChange, ChildChange::Type);
     TextDirection directionality(Node** strongDirectionalityTextNode= 0) const;
 
-    static void populateEventHandlerNameMap(EventHandlerNameMap&, const QualifiedName* const table[], size_t tableSize);
-    static EventHandlerNameMap createEventHandlerNameMap();
-
     enum class AllowPercentage : bool { No, Yes };
     enum class UseCSSPXAsUnitType : bool { No, Yes };
     enum class IsMultiLength : bool { No, Yes };
@@ -188,11 +184,6 @@ inline HTMLElement::HTMLElement(const QualifiedName& tagName, Document& document
     : StyledElement(tagName, document, type)
 {
     ASSERT(tagName.localName().impl());
-}
-
-template<size_t tableSize> inline void HTMLElement::populateEventHandlerNameMap(EventHandlerNameMap& map, const QualifiedName* const (&table)[tableSize])
-{
-    populateEventHandlerNameMap(map, table, tableSize);
 }
 
 inline bool Node::hasTagName(const HTMLQualifiedName& name) const

@@ -3,7 +3,7 @@
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Simon Hausmann (hausmann@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2021 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -35,6 +35,7 @@
 #include "HTMLIFrameElement.h"
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
+#include "JSHTMLBodyElement.h"
 #include "StyleProperties.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/NeverDestroyed.h>
@@ -96,46 +97,19 @@ void HTMLBodyElement::collectPresentationalHintsForAttribute(const QualifiedName
         HTMLElement::collectPresentationalHintsForAttribute(name, value, style);
 }
 
-HTMLElement::EventHandlerNameMap HTMLBodyElement::createWindowEventHandlerNameMap()
-{
-    static const QualifiedName* const table[] = {
-        &onafterprintAttr.get(),
-        &onbeforeprintAttr.get(),
-        &onbeforeunloadAttr.get(),
-        &onblurAttr.get(),
-        &onerrorAttr.get(),
-        &onfocusAttr.get(),
-        &onfocusinAttr.get(),
-        &onfocusoutAttr.get(),
-        &onhashchangeAttr.get(),
-        &onlanguagechangeAttr.get(),
-        &onloadAttr.get(),
-        &onmessageAttr.get(),
-        &onofflineAttr.get(),
-        &ononlineAttr.get(),
-        &onorientationchangeAttr.get(),
-        &onpagehideAttr.get(),
-        &onpageshowAttr.get(),
-        &onpopstateAttr.get(),
-        &onresizeAttr.get(),
-        &onscrollAttr.get(),
-        &onstorageAttr.get(),
-        &onunloadAttr.get(),
-        &onwebkitmouseforcechangedAttr.get(),
-        &onwebkitmouseforcedownAttr.get(),
-        &onwebkitmouseforceupAttr.get(),
-        &onwebkitmouseforcewillbeginAttr.get(),
-    };
-
-    EventHandlerNameMap map;
-    populateEventHandlerNameMap(map, table);
-    return map;
-}
-
 const AtomString& HTMLBodyElement::eventNameForWindowEventHandlerAttribute(const QualifiedName& attributeName)
 {
-    static NeverDestroyed<EventHandlerNameMap> map = createWindowEventHandlerNameMap();
-    return eventNameForEventHandlerAttribute(attributeName, map.get());
+    static NeverDestroyed map = [] {
+        EventHandlerNameMap map;
+        JSHTMLBodyElement::forEachWindowEventHandlerContentAttribute([&] (const AtomString& attributeName, const AtomString& eventName) {
+            // FIXME: Remove these special cases. These have has an [WindowEventHandler] line in the IDL but were not in this map before, so this preserves behavior.
+            if (attributeName == onrejectionhandledAttr.get().localName() || attributeName == onunhandledrejectionAttr.get().localName())
+                return;
+            map.add(attributeName.impl(), eventName);
+        });
+        return map;
+    }();
+    return eventNameForEventHandlerAttribute(attributeName, map);
 }
 
 void HTMLBodyElement::parseAttribute(const QualifiedName& name, const AtomString& value)

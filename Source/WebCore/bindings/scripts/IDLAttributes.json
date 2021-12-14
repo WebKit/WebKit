@@ -227,13 +227,21 @@
                 "url": "https://webidl.spec.whatwg.org/#Exposed"
             }
         },
-        "GenerateIsReachable": {
-            "contextsAllowed": ["interface"],
-            "values": ["", "Impl", "ImplWebGLRenderingContext", "ImplCanvasBase", "ImplDocument", "ImplElementRoot", "ImplOwnerNodeRoot", "ImplScriptExecutionContext", "ReachableFromDOMWindow", "ReachableFromNavigator"]
-        },
         "GenerateAddOpaqueRoot": {
             "contextsAllowed": ["interface"],
             "values": ["*"]
+        },
+        "GenerateForEachEventHandlerContentAttribute": {
+            "contextsAllowed": ["interface"],
+            "values": ["*"]
+        },
+        "GenerateForEachWindowEventHandlerContentAttribute": {
+            "contextsAllowed": ["interface"],
+            "values": ["*"]
+        },
+        "GenerateIsReachable": {
+            "contextsAllowed": ["interface"],
+            "values": ["", "Impl", "ImplWebGLRenderingContext", "ImplCanvasBase", "ImplDocument", "ImplElementRoot", "ImplOwnerNodeRoot", "ImplScriptExecutionContext", "ReachableFromDOMWindow", "ReachableFromNavigator"]
         },
         "Global": {
             "contextsAllowed": ["interface"],

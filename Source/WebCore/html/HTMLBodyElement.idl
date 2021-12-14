@@ -19,7 +19,8 @@
  */
 
 [
-    Exposed=Window
+    Exposed=Window,
+    GenerateForEachWindowEventHandlerContentAttribute,
 ] interface HTMLBodyElement : HTMLElement {
     [CEReactions=NotNeeded, Reflect] attribute [LegacyNullToEmptyString] DOMString aLink;
     [CEReactions=NotNeeded, Reflect] attribute DOMString background;

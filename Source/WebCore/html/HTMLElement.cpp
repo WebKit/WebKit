@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
- * Copyright (C) 2004-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2021 Apple Inc. All rights reserved.
  * Copyright (C) 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
  * Copyright (C) 2011 Motorola Mobility. All rights reserved.
  *
@@ -61,6 +61,7 @@
 #include "HTMLTextAreaElement.h"
 #include "HTMLTextFormControlElement.h"
 #include "ImageOverlay.h"
+#include "JSHTMLElement.h"
 #include "MediaControlsHost.h"
 #include "NodeTraversal.h"
 #include "RenderElement.h"
@@ -240,167 +241,6 @@ void HTMLElement::collectPresentationalHintsForAttribute(const QualifiedName& na
         StyledElement::collectPresentationalHintsForAttribute(name, value, style);
 }
 
-HTMLElement::EventHandlerNameMap HTMLElement::createEventHandlerNameMap()
-{
-    EventHandlerNameMap map;
-
-    static const QualifiedName* const table[] = {
-        &onabortAttr.get(),
-        &onanimationendAttr.get(),
-        &onanimationiterationAttr.get(),
-        &onanimationstartAttr.get(),
-        &onanimationcancelAttr.get(),
-        &onautocompleteAttr.get(),
-        &onautocompleteerrorAttr.get(),
-        &onbeforecopyAttr.get(),
-        &onbeforecutAttr.get(),
-        &onbeforeinputAttr.get(),
-        &onbeforeloadAttr.get(),
-        &onbeforepasteAttr.get(),
-        &onblurAttr.get(),
-        &oncancelAttr.get(),
-        &oncanplayAttr.get(),
-        &oncanplaythroughAttr.get(),
-        &onchangeAttr.get(),
-        &onclickAttr.get(),
-        &oncloseAttr.get(),
-        &oncontextmenuAttr.get(),
-        &oncopyAttr.get(),
-        &oncutAttr.get(),
-        &ondblclickAttr.get(),
-        &ondragAttr.get(),
-        &ondragendAttr.get(),
-        &ondragenterAttr.get(),
-        &ondragleaveAttr.get(),
-        &ondragoverAttr.get(),
-        &ondragstartAttr.get(),
-        &ondropAttr.get(),
-        &ondurationchangeAttr.get(),
-        &onemptiedAttr.get(),
-        &onendedAttr.get(),
-        &onerrorAttr.get(),
-        &onfocusAttr.get(),
-        &onfocusinAttr.get(),
-        &onfocusoutAttr.get(),
-        &onformdataAttr.get(),
-        &ongesturechangeAttr.get(),
-        &ongestureendAttr.get(),
-        &ongesturestartAttr.get(),
-        &ongotpointercaptureAttr.get(),
-        &oninputAttr.get(),
-        &oninvalidAttr.get(),
-        &onkeydownAttr.get(),
-        &onkeypressAttr.get(),
-        &onkeyupAttr.get(),
-        &onloadAttr.get(),
-        &onloadeddataAttr.get(),
-        &onloadedmetadataAttr.get(),
-        &onloadstartAttr.get(),
-        &onlostpointercaptureAttr.get(),
-        &onmousedownAttr.get(),
-        &onmouseenterAttr.get(),
-        &onmouseleaveAttr.get(),
-        &onmousemoveAttr.get(),
-        &onmouseoutAttr.get(),
-        &onmouseoverAttr.get(),
-        &onmouseupAttr.get(),
-        &onmousewheelAttr.get(),
-        &onpasteAttr.get(),
-        &onpauseAttr.get(),
-        &onplayAttr.get(),
-        &onplayingAttr.get(),
-        &onpointerdownAttr.get(),
-        &onpointermoveAttr.get(),
-        &onpointerupAttr.get(),
-        &onpointercancelAttr.get(),
-        &onpointeroverAttr.get(),
-        &onpointeroutAttr.get(),
-        &onpointerenterAttr.get(),
-        &onpointerleaveAttr.get(),
-        &onprogressAttr.get(),
-        &onratechangeAttr.get(),
-        &onresetAttr.get(),
-        &onresizeAttr.get(),
-        &onscrollAttr.get(),
-        &onsearchAttr.get(),
-        &onsecuritypolicyviolationAttr.get(),
-        &onseekedAttr.get(),
-        &onseekingAttr.get(),
-        &onselectAttr.get(),
-        &onselectionchangeAttr.get(),
-        &onselectstartAttr.get(),
-        &onslotchangeAttr.get(),
-        &onstalledAttr.get(),
-        &onsubmitAttr.get(),
-        &onsuspendAttr.get(),
-        &ontimeupdateAttr.get(),
-        &ontoggleAttr.get(),
-        &ontouchcancelAttr.get(),
-        &ontouchendAttr.get(),
-        &ontouchforcechangeAttr.get(),
-        &ontouchmoveAttr.get(),
-        &ontouchstartAttr.get(),
-        &ontransitioncancelAttr.get(),
-        &ontransitionendAttr.get(),
-        &ontransitionrunAttr.get(),
-        &ontransitionstartAttr.get(),
-        &onvolumechangeAttr.get(),
-        &onwaitingAttr.get(),
-        &onwebkitbeginfullscreenAttr.get(),
-        &onwebkitcurrentplaybacktargetiswirelesschangedAttr.get(),
-        &onwebkitendfullscreenAttr.get(),
-        &onwebkitfullscreenchangeAttr.get(),
-        &onwebkitfullscreenerrorAttr.get(),
-        &onwebkitkeyaddedAttr.get(),
-        &onwebkitkeyerrorAttr.get(),
-        &onwebkitkeymessageAttr.get(),
-        &onwebkitmouseforcechangedAttr.get(),
-        &onwebkitmouseforcedownAttr.get(),
-        &onwebkitmouseforcewillbeginAttr.get(),
-        &onwebkitmouseforceupAttr.get(),
-        &onwebkitneedkeyAttr.get(),
-        &onwebkitplaybacktargetavailabilitychangedAttr.get(),
-        &onwebkitpresentationmodechangedAttr.get(),
-        &onwheelAttr.get(),
-    };
-
-    populateEventHandlerNameMap(map, table);
-
-    struct UnusualMapping {
-        const QualifiedName& attributeName;
-        const AtomString& eventName;
-    };
-
-    const UnusualMapping unusualPairsTable[] = {
-        { onwebkitanimationendAttr, eventNames().webkitAnimationEndEvent },
-        { onwebkitanimationiterationAttr, eventNames().webkitAnimationIterationEvent },
-        { onwebkitanimationstartAttr, eventNames().webkitAnimationStartEvent },
-        { onwebkittransitionendAttr, eventNames().webkitTransitionEndEvent },
-    };
-
-    for (auto& entry : unusualPairsTable)
-        map.add(entry.attributeName.localName().impl(), entry.eventName);
-
-    return map;
-}
-
-void HTMLElement::populateEventHandlerNameMap(EventHandlerNameMap& map, const QualifiedName* const table[], size_t tableSize)
-{
-    for (size_t i = 0; i < tableSize; ++i) {
-        auto* entry = table[i];
-
-        // FIXME: Would be nice to check these against the actual event names in eventNames().
-        // Not obvious how to do that simply, though.
-        auto& attributeName = entry->localName();
-
-        // Remove the "on" prefix. Requires some memory allocation and computing a hash, but by not
-        // using pointers from eventNames(), the passed-in table can be initialized at compile time.
-        AtomString eventName = attributeName.string().substring(2);
-
-        map.add(attributeName.impl(), WTFMove(eventName));
-    }
-}
-
 const AtomString& HTMLElement::eventNameForEventHandlerAttribute(const QualifiedName& attributeName, const EventHandlerNameMap& map)
 {
     ASSERT(!attributeName.localName().isNull());
@@ -420,8 +260,43 @@ const AtomString& HTMLElement::eventNameForEventHandlerAttribute(const Qualified
 
 const AtomString& HTMLElement::eventNameForEventHandlerAttribute(const QualifiedName& attributeName)
 {
-    static NeverDestroyed<EventHandlerNameMap> map = createEventHandlerNameMap();
-    return eventNameForEventHandlerAttribute(attributeName, map.get());
+    static NeverDestroyed map = [] {
+        EventHandlerNameMap map;
+        JSHTMLElement::forEachEventHandlerContentAttribute([&] (const AtomString& attributeName, const AtomString& eventName) {
+            // FIXME: Remove this special case. This has an [EventHandler] line in the IDL but was not historically in this map.
+            if (attributeName == oncuechangeAttr.get().localName())
+                return;
+            map.add(attributeName.impl(), eventName);
+        });
+        // FIXME: Remove these special cases. These are not in IDL with [EventHandler] but were historically in this map.
+        static constexpr const LazyNeverDestroyed<const QualifiedName>* table[] = {
+            &onautocompleteAttr,
+            &onautocompleteerrorAttr,
+            &onbeforeloadAttr,
+            &onfocusinAttr,
+            &onfocusoutAttr,
+            &ongesturechangeAttr,
+            &ongestureendAttr,
+            &ongesturestartAttr,
+            &onwebkitbeginfullscreenAttr,
+            &onwebkitcurrentplaybacktargetiswirelesschangedAttr,
+            &onwebkitendfullscreenAttr,
+            &onwebkitfullscreenchangeAttr,
+            &onwebkitfullscreenerrorAttr,
+            &onwebkitkeyaddedAttr,
+            &onwebkitkeyerrorAttr,
+            &onwebkitkeymessageAttr,
+            &onwebkitneedkeyAttr,
+            &onwebkitplaybacktargetavailabilitychangedAttr,
+            &onwebkitpresentationmodechangedAttr,
+        };
+        for (auto& entry : table) {
+            auto* name = entry->get().localName().impl();
+            map.add(name, AtomString { name, 2, String::MaxLength });
+        }
+        return map;
+    }();
+    return eventNameForEventHandlerAttribute(attributeName, map);
 }
 
 Node::Editability HTMLElement::editabilityFromContentEditableAttr(const Node& node)

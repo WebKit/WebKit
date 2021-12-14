@@ -21,8 +21,9 @@
 [
     CustomPushEventHandlerScope,
     ExportMacro=WEBCORE_EXPORT,
+    Exposed=Window,
+    GenerateForEachEventHandlerContentAttribute,
     JSGenerateToNativeObject,
-    Exposed=Window
 ] interface HTMLElement : Element {
     [Custom] constructor();
 

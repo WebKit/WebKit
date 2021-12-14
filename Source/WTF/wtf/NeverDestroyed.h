@@ -179,6 +179,9 @@ private:
     typename std::aligned_storage<sizeof(T), std::alignment_of<T>::value>::type m_storage;
 };
 
+template<typename T> NeverDestroyed(T) -> NeverDestroyed<T>;
+
+// FIXME: Remove this function, relying instead on the deduction guide for NeverDestroyed above.
 template<typename T, typename AccessTraits> inline NeverDestroyed<T, AccessTraits> makeNeverDestroyed(T&& argument)
 {
     return std::forward<T>(argument);

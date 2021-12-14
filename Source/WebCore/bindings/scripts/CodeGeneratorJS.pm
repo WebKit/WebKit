@@ -487,7 +487,7 @@ sub AddStringifierOperationIfNeeded
     }
 }
 
-sub EventHandlerAttributeEventName
+sub EventHandlerAttributeShortEventName
 {
     my $attribute = shift;
     my $eventType = $attribute->extendedAttributes->{ImplementedAs} || $attribute->name;
@@ -495,7 +495,13 @@ sub EventHandlerAttributeEventName
     # Remove the "on" prefix.
     $eventType = substr($eventType, 2);
 
-    return "eventNames().${eventType}Event";
+    return "${eventType}Event";
+}
+
+sub EventHandlerAttributeEventName
+{
+    my $attribute = shift;
+    return "eventNames()." . EventHandlerAttributeShortEventName($attribute);
 }
 
 sub GetParentClassName
@@ -3027,11 +3033,18 @@ sub GenerateHeader
     if ($interface->extendedAttributes->{CustomPushEventHandlerScope}) {
         push(@headerContent, "    JSC::JSScope* pushEventHandlerScope(JSC::JSGlobalObject*, JSC::JSScope*) const;\n\n");
     }
-    
+
     # Constructor object getter
     unless ($interface->extendedAttributes->{LegacyNoInterfaceObject}) {
         push(@headerContent, "    static JSC::JSValue getConstructor(JSC::VM&, const JSC::JSGlobalObject*);\n");
         push(@headerContent, "    static JSC::JSValue getLegacyFactoryFunction(JSC::VM&, JSC::JSGlobalObject*);\n") if $interface->extendedAttributes->{LegacyFactoryFunction};
+    }
+
+    if ($interface->extendedAttributes->{GenerateForEachEventHandlerContentAttribute}) {
+        push(@headerContent, "    static void forEachEventHandlerContentAttribute(const Function<void(const AtomString& attributeName, const AtomString& eventName)>&);\n\n");
+    }
+    if ($interface->extendedAttributes->{GenerateForEachWindowEventHandlerContentAttribute}) {
+        push(@headerContent, "    static void forEachWindowEventHandlerContentAttribute(const Function<void(const AtomString& attributeName, const AtomString& eventName)>&);\n\n");
     }
 
     my $numCustomOperations = 0;
@@ -4944,6 +4957,13 @@ sub GenerateImplementation
         push(@implContent, "}\n\n");
     }
 
+    if ($interface->extendedAttributes->{GenerateForEachEventHandlerContentAttribute}) {
+        GenerateForEachEventHandlerContentAttribute(\@implContent, $interface, $className, "forEachEventHandlerContentAttribute");
+    }
+    if ($interface->extendedAttributes->{GenerateForEachWindowEventHandlerContentAttribute}) {
+        GenerateForEachEventHandlerContentAttribute(\@implContent, $interface, $className, "forEachWindowEventHandlerContentAttribute", "WindowEventHandler");
+    }
+
     if ($indexedGetterOperation) {
         $implIncludes{"<wtf/URL.h>"} = 1 if $indexedGetterOperation->type->name eq "DOMString";
         if ($interfaceName =~ /^HTML\w*Collection$/ or $interfaceName eq "RadioNodeList") {
@@ -5182,6 +5202,27 @@ sub GenerateAttributeGetterAndSetterDeclaration
         push(@$outputArray, "#endif\n") if $readWriteConditional;
     }
     push(@$outputArray, "#endif\n") if $conditionalString;
+}
+
+sub GenerateForEachEventHandlerContentAttribute
+{
+    my ($outputArray, $interface, $className, $functionName, $eventHandlerExtendedAttributeName) = @_;
+    AddToImplIncludes("HTMLNames.h");
+    push(@$outputArray, "void ${className}::${functionName}(const Function<void(const AtomString& attributeName, const AtomString& eventName)>& function)\n");
+    push(@$outputArray, "{\n");
+    push(@$outputArray, "    static constexpr std::pair<LazyNeverDestroyed<const QualifiedName>*, const AtomString EventNames::*> table[] = {\n");
+    foreach my $attribute (@{$interface->attributes}) {
+        if ($attribute->type->name eq "EventHandler" && (!defined $eventHandlerExtendedAttributeName || $attribute->extendedAttributes->{$eventHandlerExtendedAttributeName})) {
+            my $attributeName = $attribute->name;
+            my $eventName = EventHandlerAttributeShortEventName($attribute);
+            push(@$outputArray, "        { &HTMLNames::${attributeName}Attr, &EventNames::${eventName} },\n");
+        }
+    }
+    push(@$outputArray, "    };\n");
+    push(@$outputArray, "    auto& eventNames = WebCore::eventNames();\n");
+    push(@$outputArray, "    for (auto& names : table)\n");
+    push(@$outputArray, "        function(names.first->get().localName(), eventNames.*names.second);\n");
+    push(@$outputArray, "}\n\n");
 }
 
 sub GenerateAttributeGetterBodyDefinition
