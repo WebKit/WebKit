@@ -1,3 +1,19 @@
+2021-12-14  Razvan Caliman  <rcaliman@apple.com>
+
+        Web Inspector: Computed Panel: Adjust color of CSS Variables grouping mode control
+        https://bugs.webkit.org/show_bug.cgi?id=234246
+        <rdar://problem/86414682>
+
+        Reviewed by Devin Rousso.
+
+        Change color of CSS variables grouping mode scope bar from the system accent color to transparent
+        so it doesn't draw disproportionate attention to itself.
+
+        * UserInterface/Views/ComputedStyleDetailsPanel.css:
+        (.sidebar > .panel.details.css-style > .content > .computed > .details-section.computed-style-variables .scope-bar.computed-style-variables-grouping-mode:not(:hover)):
+        (.sidebar > .panel.details.css-style > .content > .computed > .details-section.computed-style-variables .scope-bar.computed-style-variables-grouping-mode.default-item-selected:not(:hover)): Deleted.
+        (.sidebar > .panel.details.css-style > .content > .computed > .details-section.computed-style-variables .scope-bar.computed-style-variables-grouping-mode.default-item-selected:hover): Deleted.
+
 2021-12-13  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: remove coloring of Web Inspector area in dock icons

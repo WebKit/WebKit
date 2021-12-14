@@ -65,12 +65,12 @@
     font-weight: normal;
 }
 
-.sidebar > .panel.details.css-style > .content > .computed > .details-section.computed-style-variables .scope-bar.computed-style-variables-grouping-mode.default-item-selected:not(:hover) {
+.sidebar > .panel.details.css-style > .content > .computed > .details-section.computed-style-variables .scope-bar.computed-style-variables-grouping-mode:not(:hover) {
     --scope-bar-text-color-override: var(--text-color);
     --scope-bar-background-color-override: transparent;
     --scope-bar-border-color-override: transparent;
 }
 
-.sidebar > .panel.details.css-style > .content > .computed > .details-section.computed-style-variables .scope-bar.computed-style-variables-grouping-mode.default-item-selected:hover {
+.sidebar > .panel.details.css-style > .content > .computed > .details-section.computed-style-variables .scope-bar.computed-style-variables-grouping-mode:hover {
     --scope-bar-background-opacity-override: 0.5;
 }
