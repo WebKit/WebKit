@@ -1,3 +1,14 @@
+2021-12-13  Saam Barati  <sbarati@apple.com>
+
+        Roll back r286345, r286387, r286471, r286667, r286849
+        https://bugs.webkit.org/show_bug.cgi?id=234268
+
+        Reviewed by Mark Lam.
+
+        * wtf/OSAllocator.h:
+        * wtf/posix/OSAllocatorPOSIX.cpp:
+        (WTF::OSAllocator::reserveUncommittedAligned): Deleted.
+
 2021-12-13  Antoine Quint  <graouts@webkit.org>
 
         CustomEffect and animation frame rate should be disabled by default in STP

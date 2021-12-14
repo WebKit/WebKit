@@ -28,14 +28,17 @@
 #include "CellState.h"
 #include "IndexingType.h"
 #include "JSTypeInfo.h"
-#include "StructureID.h"
+#include "StructureIDTable.h"
 
 namespace JSC {
 
 class StructureIDBlob {
     friend class LLIntOffsetsExtractor;
 public:
-    StructureIDBlob() = default;
+    StructureIDBlob()
+    {
+        u.doubleWord = 0xbbadbeef;
+    }
 
     StructureIDBlob(StructureID structureID, IndexingType indexingModeIncludingHistory, const TypeInfo& typeInfo)
     {
@@ -74,9 +77,8 @@ public:
     }
 
 private:
-    union Data {
+    union {
         struct {
-            // FIXME: We should remove this since the structureID can be directly computed from the Structure*
             StructureID structureID;
             IndexingType indexingModeIncludingHistory;
             JSType type;
@@ -88,11 +90,7 @@ private:
             int32_t word2;
         } words;
         int64_t doubleWord;
-
-        Data() { doubleWord = 0xbbadbeef; }
-    };
-
-    Data u;
+    } u;
 };
 
 } // namespace JSC

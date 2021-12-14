@@ -118,7 +118,6 @@ public:
 
     typedef JSCell Base;
     static constexpr unsigned StructureFlags = Base::StructureFlags | StructureIsImmortal;
-    static constexpr uint8_t numberOfLowerTierCells = 0;
     
     enum PolyProtoTag { PolyProto };
     static Structure* create(VM&, JSGlobalObject*, JSValue prototype, const TypeInfo&, const ClassInfo*, IndexingType = NonArray, unsigned inlineCapacity = 0);
@@ -165,7 +164,7 @@ private:
     void validateFlags();
 
 public:
-    StructureID id() const { ASSERT(m_blob.structureID() == StructureID::encode(this)); return m_blob.structureID(); }
+    StructureID id() const { return m_blob.structureID(); }
     int32_t objectInitializationBlob() const { return m_blob.blobExcludingStructureID(); }
     int64_t idBlob() const { return m_blob.blob(); }
 

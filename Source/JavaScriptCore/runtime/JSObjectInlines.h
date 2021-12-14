@@ -110,9 +110,10 @@ ALWAYS_INLINE bool JSObject::getPropertySlot(JSGlobalObject* globalObject, unsig
 {
     VM& vm = getVM(globalObject);
     auto scope = DECLARE_THROW_SCOPE(vm);
+    auto& structureIDTable = vm.heap.structureIDTable();
     JSObject* object = this;
     while (true) {
-        Structure* structure = object->structureID().decode();
+        Structure* structure = structureIDTable.get(object->structureID());
         bool hasSlot = structure->classInfo()->methodTable.getOwnPropertySlotByIndex(object, globalObject, propertyName, slot);
         RETURN_IF_EXCEPTION(scope, false);
         if (hasSlot)
@@ -150,9 +151,10 @@ ALWAYS_INLINE bool JSObject::getNonIndexPropertySlot(JSGlobalObject* globalObjec
 
     VM& vm = getVM(globalObject);
     auto scope = DECLARE_THROW_SCOPE(vm);
+    auto& structureIDTable = vm.heap.structureIDTable();
     JSObject* object = this;
     while (true) {
-        Structure* structure = object->structureID().decode();
+        Structure* structure = structureIDTable.get(object->structureID());
         if (LIKELY(!TypeInfo::overridesGetOwnPropertySlot(object->inlineTypeFlags()))) {
             if (object->getOwnNonIndexPropertySlot(vm, structure, propertyName, slot))
                 return true;
@@ -217,7 +219,7 @@ inline void JSObject::putDirectWithoutTransition(VM& vm, PropertyName propertyNa
     ASSERT(!value.isGetterSetter() && !(attributes & PropertyAttribute::Accessor));
     ASSERT(!value.isCustomGetterSetter());
     StructureID structureID = this->structureID();
-    Structure* structure = structureID.decode();
+    Structure* structure = vm.heap.structureIDTable().get(structureID);
     PropertyOffset offset = prepareToPutDirectWithoutTransition(vm, propertyName, attributes, structureID, structure);
     putDirect(vm, offset, value);
     if (attributes & PropertyAttribute::ReadOnly)
@@ -326,7 +328,7 @@ ALWAYS_INLINE ASCIILiteral JSObject::putDirectInternal(VM& vm, PropertyName prop
     ASSERT(!parseIndex(propertyName));
 
     StructureID structureID = this->structureID();
-    Structure* structure = structureID.decode();
+    Structure* structure = vm.heap.structureIDTable().get(structureID);
     if (structure->isDictionary()) {
         ASSERT(!isCopyOnWrite(indexingMode()));
         

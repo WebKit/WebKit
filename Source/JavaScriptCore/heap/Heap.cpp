@@ -67,7 +67,6 @@
 #include "SpaceTimeMutatorScheduler.h"
 #include "StochasticSpaceTimeMutatorScheduler.h"
 #include "StopIfNecessaryTimer.h"
-#include "StructureAlignedMemoryAllocator.h"
 #include "SubspaceInlines.h"
 #include "SuperSampler.h"
 #include "SweepingScope.h"
@@ -389,8 +388,8 @@ Heap::Heap(VM& vm, HeapType heapType)
     , stringObjectSpace ISO_SUBSPACE_INIT(*this, cellHeapCellType, StringObject)
     , structureChainSpace ISO_SUBSPACE_INIT(*this, cellHeapCellType, StructureChain)
     , structureRareDataSpace ISO_SUBSPACE_INIT(*this, destructibleCellHeapCellType, StructureRareData) // Hash:0xaca4e62d
-    , structureSpace("IsolatedStructureSpace", *this, destructibleCellHeapCellType, sizeof(Structure), Structure::numberOfLowerTierCells, makeUnique<StructureAlignedMemoryAllocator>("Structure"))
-    , brandedStructureSpace("IsolatedBrandedStructureSpace", *this, destructibleCellHeapCellType, sizeof(BrandedStructure), BrandedStructure::numberOfLowerTierCells, makeUnique<StructureAlignedMemoryAllocator>("Structure"))
+    , structureSpace ISO_SUBSPACE_INIT(*this, destructibleCellHeapCellType, Structure)
+    , brandedStructureSpace ISO_SUBSPACE_INIT(*this, destructibleCellHeapCellType, BrandedStructure)
     , symbolTableSpace ISO_SUBSPACE_INIT(*this, destructibleCellHeapCellType, SymbolTable) // Hash:0xc5215afd
     , executableToCodeBlockEdgesWithConstraints(executableToCodeBlockEdgeSpace)
     , executableToCodeBlockEdgesWithFinalizers(executableToCodeBlockEdgeSpace)
@@ -1605,6 +1604,8 @@ NEVER_INLINE bool Heap::runEndPhase(GCConductor conn)
 
         if (vm().typeProfiler())
             vm().typeProfiler()->invalidateTypeSetCache(vm());
+
+        m_structureIDTable.flushOldTables();
 
         reapWeakHandles();
         pruneStaleEntriesFromWeakGCHashTables();

@@ -197,7 +197,7 @@ inline void Structure::validateFlags() { }
 
 Structure::Structure(VM& vm, JSGlobalObject* globalObject, JSValue prototype, const TypeInfo& typeInfo, const ClassInfo* classInfo, IndexingType indexingType, unsigned inlineCapacity)
     : JSCell(vm, vm.structureStructure.get())
-    , m_blob(StructureID::encode(this), indexingType, typeInfo)
+    , m_blob(vm.heap.structureIDTable().allocateID(this), indexingType, typeInfo)
     , m_outOfLineTypeFlags(typeInfo.outOfLineTypeFlags())
     , m_inlineCapacity(inlineCapacity)
     , m_bitField(0)
@@ -264,7 +264,7 @@ Structure::Structure(VM& vm, CreatingEarlyCellTag)
     setMaxOffset(vm, invalidOffset);
  
     TypeInfo typeInfo = TypeInfo(StructureType, StructureFlags);
-    m_blob = StructureIDBlob(StructureID::encode(this), 0, typeInfo);
+    m_blob = StructureIDBlob(vm.heap.structureIDTable().allocateID(this), 0, typeInfo);
     m_outOfLineTypeFlags = typeInfo.outOfLineTypeFlags();
 
     ASSERT(hasReadOnlyOrGetterSetterPropertiesExcludingProto() || !m_classInfo->hasStaticSetterOrReadonlyProperties());
@@ -301,7 +301,7 @@ Structure::Structure(VM& vm, Structure* previous, DeferredStructureTransitionWat
     setMaxOffset(vm, invalidOffset);
  
     TypeInfo typeInfo = previous->typeInfo();
-    m_blob = StructureIDBlob(StructureID::encode(this), previous->indexingModeIncludingHistory(), typeInfo);
+    m_blob = StructureIDBlob(vm.heap.structureIDTable().allocateID(this), previous->indexingModeIncludingHistory(), typeInfo);
     m_outOfLineTypeFlags = typeInfo.outOfLineTypeFlags();
 
     ASSERT(!previous->typeInfo().structureIsImmortal());
@@ -326,6 +326,7 @@ Structure::~Structure()
 
     if (isBrandedStructure())
         static_cast<BrandedStructure*>(this)->destruct();
+    Heap::heap(this)->structureIDTable().deallocateID(this, m_blob.structureID());
 }
 
 void Structure::destroy(JSCell* cell)
@@ -909,7 +910,7 @@ Structure* Structure::flattenDictionaryStructure(VM& vm, JSObject* object)
     
     GCSafeConcurrentJSLocker locker(m_lock, vm);
     
-    object->setStructureIDDirectly(id().nuke());
+    object->setStructureIDDirectly(nuke(id()));
     WTF::storeStoreFence();
 
     size_t beforeOutOfLineCapacity = this->outOfLineCapacity();
@@ -1369,7 +1370,7 @@ Ref<StructureShape> Structure::toStructureShape(JSValue value, bool& sawPolyProt
 
 void Structure::dump(PrintStream& out) const
 {
-    auto* structureID = reinterpret_cast<void*>(id().bits());
+    auto* structureID = reinterpret_cast<void*>(id());
     out.print(RawPointer(this), ":[", RawPointer(structureID),
         "/", (uint32_t)(reinterpret_cast<uintptr_t>(structureID)), ", ",
         classInfo()->className, ", (", inlineSize(), "/", inlineCapacity(), ", ",
@@ -1469,7 +1470,7 @@ uintptr_t Structure::cachedPropertyNameEnumeratorAndFlag() const
     return rareData()->cachedPropertyNameEnumeratorAndFlag();
 }
 
-bool Structure::canCachePropertyNameEnumerator(VM&) const
+bool Structure::canCachePropertyNameEnumerator(VM& vm) const
 {
     if (!this->canCacheOwnPropertyNames())
         return false;
@@ -1481,7 +1482,7 @@ bool Structure::canCachePropertyNameEnumerator(VM&) const
         StructureID structureID = *currentStructureID;
         if (!structureID)
             return true;
-        Structure* structure = structureID.decode();
+        Structure* structure = vm.getStructure(structureID);
         if (!structure->canCacheOwnPropertyNames())
             return false;
         currentStructureID++;

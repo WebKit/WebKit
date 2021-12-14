@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "StructureID.h"
+#include "StructureIDTable.h"
 #include "VM.h"
 #include <wtf/FixedVector.h>
 #include <wtf/Vector.h>
@@ -57,20 +57,20 @@ public:
     bool needImpurePropertyWatchpoint(VM&) const;
 
     template <typename Func>
-    void forEach(VM&, Structure* baseStructure, const Func& func) const
+    void forEach(VM& vm, Structure* baseStructure, const Func& func) const
     {
         bool atEnd = !m_chain.size();
         func(baseStructure, atEnd);
         for (unsigned i = 0; i < m_chain.size(); ++i) {
             atEnd = i + 1 == m_chain.size();
-            func(m_chain[i].decode(), atEnd);
+            func(vm.getStructure(m_chain[i]), atEnd);
         }
     }
 
-    Structure* slotBaseStructure(VM&, Structure* baseStructure) const
+    Structure* slotBaseStructure(VM& vm, Structure* baseStructure) const
     {
         if (m_chain.size())
-            return m_chain.last().decode();
+            return vm.getStructure(m_chain.last());
         return baseStructure;
     }
 
