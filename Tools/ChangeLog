@@ -1,3 +1,13 @@
+2021-12-14  Alex Christensen  <achristensen@webkit.org>
+
+        Revert r284816
+        https://bugs.webkit.org/show_bug.cgi?id=234308
+
+        Reviewed by Eric Carlson.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/MediaLoading.mm:
+        (TestWebKitAPI::TEST):
+
 2021-12-13  Jonathan Bedard  <jbedard@apple.com>
 
         [reporelaypy] Update checkout with hook instead of polling

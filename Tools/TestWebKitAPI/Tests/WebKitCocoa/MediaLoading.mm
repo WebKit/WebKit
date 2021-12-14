@@ -181,7 +181,7 @@ TEST(MediaLoading, RangeRequestSynthesisWithoutContentLength)
     HTTPServer server([&](Connection connection) {
         respondToRequests(connection);
     });
-    runVideoTest(server.request(), "playing");
+    runVideoTest(server.request(), "error");
     EXPECT_EQ(totalRequests, 2u);
 }
 

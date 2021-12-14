@@ -72,13 +72,13 @@ RangeResponseGenerator::~RangeResponseGenerator()
     ASSERT(isMainThread());
 }
 
-static ResourceResponse synthesizedResponseForRange(const ResourceResponse& originalResponse, const ParsedRequestRange& parsedRequestRange, size_t totalContentLength)
+static ResourceResponse synthesizedResponseForRange(const ResourceResponse& originalResponse, const ParsedRequestRange& parsedRequestRange, std::optional<size_t> totalContentLength)
 {
     ASSERT(isMainThread());
     auto begin = parsedRequestRange.begin;
     auto end = parsedRequestRange.end;
 
-    auto newContentRange = makeString("bytes ", begin, "-", end, "/", totalContentLength);
+    auto newContentRange = makeString("bytes ", begin, "-", end, "/", (totalContentLength ? makeString(*totalContentLength) : "*"));
     auto newContentLength = makeString(end - begin + 1);
 
     ResourceResponse newResponse = originalResponse;
@@ -105,11 +105,6 @@ void RangeResponseGenerator::removeTask(WebCoreNSURLSessionDataTask *task)
 void RangeResponseGenerator::giveResponseToTaskIfBytesInRangeReceived(WebCoreNSURLSessionDataTask *task, const ParsedRequestRange& range, std::optional<size_t> expectedContentLength, const Data& data)
 {
     ASSERT(isMainThread());
-
-    // FIXME: We ought to be able to just make a range with a * after the / but AVFoundation doesn't accept such ranges.
-    // Instead, we just wait until the load has completed, at which time we will know the content length from the buffer length.
-    if (!expectedContentLength)
-        return;
 
     auto bufferSize = data.buffer.size();
     if (bufferSize < range.begin)
@@ -150,7 +145,7 @@ void RangeResponseGenerator::giveResponseToTaskIfBytesInRangeReceived(WebCoreNSU
 
     switch (taskData->responseState) {
     case Data::TaskData::ResponseState::NotSynthesizedYet: {
-        auto response = synthesizedResponseForRange(data.originalResponse, range, *expectedContentLength);
+        auto response = synthesizedResponseForRange(data.originalResponse, range, expectedContentLength);
         [task resource:nullptr receivedResponse:response completionHandler:[giveBytesToTask = WTFMove(giveBytesToTask), taskData = WeakPtr { taskData }, task = retainPtr(task)] (WebCore::ShouldContinuePolicyCheck shouldContinue) {
             if (taskData)
                 taskData->responseState = Data::TaskData::ResponseState::SessionCalledCompletionHandler;
