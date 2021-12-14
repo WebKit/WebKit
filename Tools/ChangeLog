@@ -1,3 +1,20 @@
+2021-12-11  Dean Jackson  <dino@apple.com>
+
+        Allow override of system's preferred color scheme
+        https://bugs.webkit.org/show_bug.cgi?id=234199
+        <rdar://problem/86366044>
+
+        Reviewed by Tim Horton.
+
+        New API test that checks the color-scheme after
+        explicitly setting it.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit/color-scheme.html: Added. Note: Xcode was
+        being difficult and wouldn't let me put this file in the right order
+        for the Copy Build Phase :(
+        * TestWebKitAPI/Tests/WebKitCocoa/WebsitePolicies.mm:
+
 2021-12-14  Angelos Oikonomopoulos  <angelos@igalia.com>
 
         [JSC] Fix LocalJumpError in run-jsc-stress-tests

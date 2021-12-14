@@ -1787,3 +1787,27 @@ TEST(WebpagePreferences, WebsitePoliciesUserContentController)
     [replacementUserContentController _addUserScriptImmediately:makeScript(@"alert('testAlert3');").get()];
     EXPECT_WK_STREQ([uiDelegate waitForAlert], "testAlert3");
 }
+
+TEST(WebpagePreferences, UserExplicitlyPrefersColorSchemeLight)
+{
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+
+    configuration.get().defaultWebpagePreferences._colorSchemePreference = _WKWebsiteColorSchemePreferenceLight;
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+
+    [webView loadTestPageNamed:@"color-scheme"];
+    [webView waitForMessage:@"light-detected"];
+}
+
+TEST(WebpagePreferences, UserExplicitlyPrefersColorSchemeDark)
+{
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+
+    configuration.get().defaultWebpagePreferences._colorSchemePreference = _WKWebsiteColorSchemePreferenceDark;
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+
+    [webView loadTestPageNamed:@"color-scheme"];
+    [webView waitForMessage:@"dark-detected"];
+}

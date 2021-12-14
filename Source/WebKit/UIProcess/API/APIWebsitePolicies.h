@@ -132,6 +132,9 @@ public:
     void setCaptivePortalModeEnabled(std::optional<bool> captivePortalModeEnabled) { m_captivePortalModeEnabled = captivePortalModeEnabled; }
     bool isCaptivePortalModeExplicitlySet() const { return !!m_captivePortalModeEnabled; }
 
+    WebCore::ColorSchemePreference colorSchemePreference() const { return m_colorSchemePreference; }
+    void setColorSchemePreference(WebCore::ColorSchemePreference colorSchemePreference) { m_colorSchemePreference = colorSchemePreference; }
+
     WebCore::MouseEventPolicy mouseEventPolicy() const { return m_mouseEventPolicy; }
     void setMouseEventPolicy(WebCore::MouseEventPolicy policy) { m_mouseEventPolicy = policy; }
 
@@ -171,6 +174,7 @@ private:
     WebCore::ModalContainerObservationPolicy m_modalContainerObservationPolicy { WebCore::ModalContainerObservationPolicy::Disabled };
     bool m_idempotentModeAutosizingOnlyHonorsPercentages { false };
     std::optional<bool> m_captivePortalModeEnabled;
+    WebCore::ColorSchemePreference m_colorSchemePreference { WebCore::ColorSchemePreference::NoPreference };
 };
 
 } // namespace API

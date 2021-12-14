@@ -35,6 +35,7 @@
 #include "CSSValueKeywords.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
+#include "DocumentLoader.h"
 #include "Frame.h"
 #include "FrameView.h"
 #include "Logging.h"
@@ -807,7 +808,15 @@ static bool prefersColorSchemeEvaluate(CSSValue* value, const CSSToLengthConvers
         return false;
 
     auto keyword = downcast<CSSPrimitiveValue>(*value).valueID();
-    bool useDarkAppearance = frame.page()->useDarkAppearance();
+    bool useDarkAppearance = [&] () -> auto {
+        if (frame.document()->loader()) {
+            auto colorSchemePreference = frame.document()->loader()->colorSchemePreference();
+            if (colorSchemePreference != ColorSchemePreference::NoPreference)
+                return colorSchemePreference == ColorSchemePreference::Dark;
+        }
+
+        return frame.page()->useDarkAppearance();
+    }();
 
     switch (keyword) {
     case CSSValueDark:

@@ -69,6 +69,13 @@ typedef NS_OPTIONS(NSUInteger, _WKWebsiteModalContainerObservationPolicy) {
     _WKWebsiteModalContainerObservationPolicyDisallow,
 } WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
+// Allow overriding the system color-scheme with a per-website preference.
+typedef NS_OPTIONS(NSUInteger, _WKWebsiteColorSchemePreference) {
+    _WKWebsiteColorSchemePreferenceNoPreference,
+    _WKWebsiteColorSchemePreferenceLight,
+    _WKWebsiteColorSchemePreferenceDark,
+} WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+
 @class _WKCustomHeaderFields;
 @class WKUserContentController;
 @class WKWebsiteDataStore;
@@ -95,5 +102,7 @@ typedef NS_OPTIONS(NSUInteger, _WKWebsiteModalContainerObservationPolicy) {
 @property (nonatomic, setter=_setModalContainerObservationPolicy:) _WKWebsiteModalContainerObservationPolicy _modalContainerObservationPolicy WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 @property (nonatomic, setter=_setCaptivePortalModeEnabled:) BOOL _captivePortalModeEnabled WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+
+@property (nonatomic, setter=_setColorSchemePreference:) _WKWebsiteColorSchemePreference _colorSchemePreference;
 
 @end

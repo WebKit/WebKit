@@ -1411,6 +1411,11 @@ MouseEventPolicy DocumentLoader::mouseEventPolicy() const
     return m_mouseEventPolicy;
 }
 
+ColorSchemePreference DocumentLoader::colorSchemePreference() const
+{
+    return m_colorSchemePreference;
+}
+
 void DocumentLoader::attachToFrame(Frame& frame)
 {
     if (m_frame == &frame)

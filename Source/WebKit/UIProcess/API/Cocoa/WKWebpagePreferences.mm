@@ -501,6 +501,33 @@ static _WKWebsiteDeviceOrientationAndMotionAccessPolicy toWKWebsiteDeviceOrienta
     return _websitePolicies->captivePortalModeEnabled();
 }
 
+- (_WKWebsiteColorSchemePreference)_colorSchemePreference
+{
+    switch (_websitePolicies->colorSchemePreference()) {
+    case WebCore::ColorSchemePreference::NoPreference:
+        return _WKWebsiteColorSchemePreferenceNoPreference;
+    case WebCore::ColorSchemePreference::Light:
+        return _WKWebsiteColorSchemePreferenceLight;
+    case WebCore::ColorSchemePreference::Dark:
+        return _WKWebsiteColorSchemePreferenceDark;
+    }
+}
+
+- (void)_setColorSchemePreference:(_WKWebsiteColorSchemePreference)value
+{
+    switch (value) {
+    case _WKWebsiteColorSchemePreferenceNoPreference:
+        _websitePolicies->setColorSchemePreference(WebCore::ColorSchemePreference::NoPreference);
+        break;
+    case _WKWebsiteColorSchemePreferenceLight:
+        _websitePolicies->setColorSchemePreference(WebCore::ColorSchemePreference::Light);
+        break;
+    case _WKWebsiteColorSchemePreferenceDark:
+        _websitePolicies->setColorSchemePreference(WebCore::ColorSchemePreference::Dark);
+        break;
+    }
+}
+
 #if PLATFORM(IOS_FAMILY)
 
 - (void)setPreferredContentMode:(WKContentMode)contentMode

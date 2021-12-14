@@ -152,6 +152,12 @@ enum class ModalContainerObservationPolicy : uint8_t {
     Disallow,
 };
 
+enum class ColorSchemePreference : uint8_t {
+    NoPreference,
+    Light,
+    Dark
+};
+
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(DocumentLoader);
 class DocumentLoader
     : public RefCounted<DocumentLoader>
@@ -353,6 +359,9 @@ public:
 
     ModalContainerObservationPolicy modalContainerObservationPolicy() const { return m_modalContainerObservationPolicy; }
     void setModalContainerObservationPolicy(ModalContainerObservationPolicy policy) { m_modalContainerObservationPolicy = policy; }
+
+    WEBCORE_EXPORT ColorSchemePreference colorSchemePreference() const;
+    void setColorSchemePreference(ColorSchemePreference preference) { m_colorSchemePreference = preference; }
 
     void addSubresourceLoader(ResourceLoader&);
     void removeSubresourceLoader(LoadCompletionType, ResourceLoader*);
@@ -679,6 +688,7 @@ private:
     LegacyOverflowScrollingTouchPolicy m_legacyOverflowScrollingTouchPolicy { LegacyOverflowScrollingTouchPolicy::Default };
     MouseEventPolicy m_mouseEventPolicy { MouseEventPolicy::Default };
     ModalContainerObservationPolicy m_modalContainerObservationPolicy { ModalContainerObservationPolicy::Disabled };
+    ColorSchemePreference m_colorSchemePreference { ColorSchemePreference::NoPreference };
 
 #if ENABLE(SERVICE_WORKER)
     std::optional<ServiceWorkerRegistrationData> m_serviceWorkerRegistrationData;
@@ -801,6 +811,15 @@ template<> struct EnumTraits<WebCore::ModalContainerObservationPolicy> {
         WebCore::ModalContainerObservationPolicy::Prompt,
         WebCore::ModalContainerObservationPolicy::Allow,
         WebCore::ModalContainerObservationPolicy::Disallow
+    >;
+};
+
+template<> struct EnumTraits<WebCore::ColorSchemePreference> {
+    using values = EnumValues<
+        WebCore::ColorSchemePreference,
+        WebCore::ColorSchemePreference::NoPreference,
+        WebCore::ColorSchemePreference::Light,
+        WebCore::ColorSchemePreference::Dark
     >;
 };
 
