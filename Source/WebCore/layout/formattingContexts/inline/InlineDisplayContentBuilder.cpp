@@ -288,39 +288,42 @@ void InlineDisplayContentBuilder::appendInlineDisplayBoxAtBidiBoundary(const Box
 
 void InlineDisplayContentBuilder::processNonBidiContent(const LineBuilder::LineContent& lineContent, const LineBox& lineBox, const InlineLayoutPoint& lineBoxLogicalTopLeft, DisplayBoxes& boxes)
 {
-    // Create the inline boxes on the current line. This is mostly text and atomic inline boxes.
+    auto rootInlineBoxWidth = lineBox.logicalRectForRootInlineBox().width();
     auto rootInlineBoxAlignmentOffset = lineBox.rootInlineBoxAlignmentOffset();
+    auto needsDirectionAdjustment = !root().style().isLeftToRightDirection();
 
     for (auto& lineRun : lineContent.runs) {
         auto& layoutBox = lineRun.layoutBox();
 
-        auto logicalRectRelativeToRoot = [&](auto logicalRect) {
-            logicalRect.moveBy({ lineBoxLogicalTopLeft.x() + rootInlineBoxAlignmentOffset, lineBoxLogicalTopLeft.y() });
+        auto visualRectRelativeToRoot = [&](auto logicalRect) {
+            // When the logical order == visual order, RTL inline direction is just an offset.
+            auto horizontalOffset = needsDirectionAdjustment ? lineContent.lineLogicalWidth - rootInlineBoxWidth - rootInlineBoxAlignmentOffset : rootInlineBoxAlignmentOffset;
+            logicalRect.moveBy({ lineBoxLogicalTopLeft.x() + horizontalOffset, lineBoxLogicalTopLeft.y() });
             return logicalRect;
         };
 
         if (lineRun.isText()) {
-            appendTextDisplayBox(lineRun, logicalRectRelativeToRoot(lineBox.logicalRectForTextRun(lineRun)), boxes);
+            appendTextDisplayBox(lineRun, visualRectRelativeToRoot(lineBox.logicalRectForTextRun(lineRun)), boxes);
             continue;
         }
         if (lineRun.isSoftLineBreak()) {
-            appendSoftLineBreakDisplayBox(lineRun, logicalRectRelativeToRoot(lineBox.logicalRectForTextRun(lineRun)), boxes);
+            appendSoftLineBreakDisplayBox(lineRun, visualRectRelativeToRoot(lineBox.logicalRectForTextRun(lineRun)), boxes);
             continue;
         }
         if (lineRun.isHardLineBreak()) {
-            appendHardLineBreakDisplayBox(lineRun, logicalRectRelativeToRoot(lineBox.logicalRectForLineBreakBox(layoutBox)), boxes);
+            appendHardLineBreakDisplayBox(lineRun, visualRectRelativeToRoot(lineBox.logicalRectForLineBreakBox(layoutBox)), boxes);
             continue;
         }
         if (lineRun.isBox()) {
             appendAtomicInlineLevelDisplayBox(lineRun
-                , logicalRectRelativeToRoot(lineBox.logicalBorderBoxForAtomicInlineLevelBox(layoutBox, formattingState().boxGeometry(layoutBox)))
+                , visualRectRelativeToRoot(lineBox.logicalBorderBoxForAtomicInlineLevelBox(layoutBox, formattingState().boxGeometry(layoutBox)))
                 , boxes);
             continue;
         }
         if (lineRun.isInlineBoxStart()) {
             appendInlineBoxDisplayBox(lineRun
                 , lineBox.inlineLevelBoxForLayoutBox(lineRun.layoutBox())
-                , logicalRectRelativeToRoot(lineBox.logicalBorderBoxForInlineBox(layoutBox, formattingState().boxGeometry(layoutBox)))
+                , visualRectRelativeToRoot(lineBox.logicalBorderBoxForInlineBox(layoutBox, formattingState().boxGeometry(layoutBox)))
                 , lineBox.hasContent()
                 , boxes);
             continue;
@@ -334,7 +337,7 @@ void InlineDisplayContentBuilder::processNonBidiContent(const LineBuilder::LineC
             }
             appendSpanningInlineBoxDisplayBox(lineRun
                 , lineBox.inlineLevelBoxForLayoutBox(lineRun.layoutBox())
-                , logicalRectRelativeToRoot(lineBox.logicalBorderBoxForInlineBox(layoutBox, formattingState().boxGeometry(layoutBox)))
+                , visualRectRelativeToRoot(lineBox.logicalBorderBoxForInlineBox(layoutBox, formattingState().boxGeometry(layoutBox)))
                 , boxes);
             continue;
         }
@@ -484,16 +487,11 @@ void InlineDisplayContentBuilder::processBidiContent(const LineBuilder::LineCont
     ancestorStack.push({ }, root());
 
     auto rootInlineBoxAlignmentOffset = lineBox.rootInlineBoxAlignmentOffset();
-    auto contentStartInVisualOrder = InlineLayoutUnit { };
+    auto contentStartInVisualOrder = rootInlineBoxAlignmentOffset;
     auto createDisplayBoxesInVisualOrder = [&] {
-        auto rootInlineBoxRect = lineBox.logicalRectForRootInlineBox();
         // First visual run's initial content position depends on the block's inline direction.
-        if (!root().style().isLeftToRightDirection()) {
-            // FIXME: This needs the block end position instead of the lineLogicalWidth.
-            contentStartInVisualOrder += lineContent.lineLogicalWidth - rootInlineBoxRect.width();
-        }
-        // Adjust the content start position with the (text)alignment offset (root inline box has the alignment offset and not the individual runs).
-        contentStartInVisualOrder += rootInlineBoxAlignmentOffset;
+        if (!root().style().isLeftToRightDirection())
+            contentStartInVisualOrder = lineContent.lineLogicalWidth - lineBox.logicalRectForRootInlineBox().width() - rootInlineBoxAlignmentOffset;
 
         auto contentRightInVisualOrder = contentStartInVisualOrder;
         auto& runs = lineContent.runs;
@@ -507,10 +505,10 @@ void InlineDisplayContentBuilder::processBidiContent(const LineBuilder::LineCont
             if (!needsDisplayBox)
                 continue;
 
-            auto visualRectRelativeToRoot = [&](auto logicallRect) {
-                logicallRect.setLeft(contentRightInVisualOrder);
-                logicallRect.moveBy(lineBoxLogicalTopLeft);
-                return logicallRect;
+            auto visualRectRelativeToRoot = [&](auto logicalRect) {
+                logicalRect.setLeft(contentRightInVisualOrder);
+                logicalRect.moveBy(lineBoxLogicalTopLeft);
+                return logicalRect;
             };
 
             auto parentDisplayBoxNodeIndex = ensureDisplayBoxForContainer(layoutBox.parent(), displayBoxTree, ancestorStack, boxes);
