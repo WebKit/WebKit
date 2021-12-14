@@ -1,3 +1,34 @@
+2021-12-13  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r286849. rdar://problem/86445989
+
+    Reduce maximum mmap size for Structure regions to help placate ios
+    https://bugs.webkit.org/show_bug.cgi?id=234091
+    
+    Reviewed by Saam Barati.
+    
+    Use mach_vm_map since that supports memory alignement so we don't have to map 2x desired address space then free then trim.
+    
+    * wtf/PlatformHave.h:
+    * wtf/posix/OSAllocatorPOSIX.cpp:
+    (WTF::OSAllocator::reserveUncommittedAligned):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@286849 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-12-10  Keith Miller  <keith_miller@apple.com>
+
+            Reduce maximum mmap size for Structure regions to help placate ios
+            https://bugs.webkit.org/show_bug.cgi?id=234091
+
+            Reviewed by Saam Barati.
+
+            Use mach_vm_map since that supports memory alignement so we don't have to map 2x desired address space then free then trim.
+
+            * wtf/PlatformHave.h:
+            * wtf/posix/OSAllocatorPOSIX.cpp:
+            (WTF::OSAllocator::reserveUncommittedAligned):
+
 2021-12-03  Chris Dumez  <cdumez@apple.com>
 
         [WK2] Turn on Web Locks API support
