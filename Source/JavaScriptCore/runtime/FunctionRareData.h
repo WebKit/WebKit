@@ -72,9 +72,7 @@ public:
     static inline ptrdiff_t offsetOfObjectAllocationProfile() { return OBJECT_OFFSETOF(FunctionRareData, m_objectAllocationProfile); }
     static inline ptrdiff_t offsetOfAllocationProfileWatchpointSet() { return OBJECT_OFFSETOF(FunctionRareData, m_allocationProfileWatchpointSet); }
     static inline ptrdiff_t offsetOfInternalFunctionAllocationProfile() { return OBJECT_OFFSETOF(FunctionRareData, m_internalFunctionAllocationProfile); }
-    static inline ptrdiff_t offsetOfBoundFunctionStructure() { return OBJECT_OFFSETOF(FunctionRareData, m_boundFunctionStructure); }
     static inline ptrdiff_t offsetOfExecutable() { return OBJECT_OFFSETOF(FunctionRareData, m_executable); }
-    static inline ptrdiff_t offsetOfAllocationProfileClearingWatchpoint() { return OBJECT_OFFSETOF(FunctionRareData, m_allocationProfileClearingWatchpoint); }
 
     ObjectAllocationProfileWithPrototype* objectAllocationProfile()
     {
@@ -113,8 +111,8 @@ public:
             m_allocationProfileWatchpointSet.startWatching();
     }
 
-    Structure* getBoundFunctionStructure() { return m_boundFunctionStructure.get(); }
-    void setBoundFunctionStructure(VM& vm, Structure* structure) { m_boundFunctionStructure.set(vm, this, structure); }
+    Structure* getBoundFunctionStructure() { return m_boundFunctionStructureID.get(); }
+    void setBoundFunctionStructure(VM& vm, Structure* structure) { m_boundFunctionStructureID.set(vm, this, structure); }
 
     ExecutableBase* executable() const { return m_executable.get(); }
 
@@ -160,7 +158,7 @@ private:
     ObjectAllocationProfileWithPrototype m_objectAllocationProfile;
     InlineWatchpointSet m_allocationProfileWatchpointSet;
     InternalFunctionAllocationProfile m_internalFunctionAllocationProfile;
-    WriteBarrier<Structure> m_boundFunctionStructure;
+    WriteBarrierStructureID m_boundFunctionStructureID;
     WriteBarrier<ExecutableBase> m_executable;
     std::unique_ptr<AllocationProfileClearingWatchpoint> m_allocationProfileClearingWatchpoint;
     bool m_hasReifiedLength : 1;

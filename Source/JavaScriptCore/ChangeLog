@@ -1,5 +1,257 @@
 2021-12-13  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r286667. rdar://problem/86445989
+
+    [JSC] Introduce WriteBarrierStructureID
+    https://bugs.webkit.org/show_bug.cgi?id=233918
+    
+    Reviewed by Mark Lam.
+    
+    This patch adds WriteBarrierStructureID class, which is similar to WriteBarrier<Structure>, but internally,
+    it holds StructureID, so sizeof(WriteBarrierStructureID) is 4. This class is useful to use StructureID for
+    memory saving while keeping WriteBarrier<Structure>'s useful features (automatically inserts write-barrier when
+    setting etc.). This also paves the way to introducing DOMStructures array with WriteBarrierStructureID instead
+    of costly HashMap<ClassInfo*, WriteBarrier<Structure>>.
+    
+    * bytecode/AccessCase.cpp:
+    (JSC::AccessCase::AccessCase):
+    (JSC::AccessCase::forEachDependentCell const):
+    (JSC::AccessCase::dump const):
+    (JSC::AccessCase::propagateTransitions const):
+    (JSC::AccessCase::canBeShared):
+    * bytecode/AccessCase.h:
+    (JSC::AccessCase::structure const):
+    (JSC::AccessCase::newStructure const):
+    (JSC::AccessCase::hash const):
+    (JSC::AccessCase::AccessCase):
+    * bytecode/CheckPrivateBrandStatus.cpp:
+    (JSC::CheckPrivateBrandStatus::computeForStubInfoWithoutExitSiteFeedback):
+    * bytecode/DeleteByStatus.cpp:
+    (JSC::DeleteByStatus::computeForStubInfoWithoutExitSiteFeedback):
+    * bytecode/GetByStatus.cpp:
+    (JSC::GetByStatus::computeForStubInfoWithoutExitSiteFeedback):
+    * bytecode/InByStatus.cpp:
+    (JSC::InByStatus::computeForStubInfoWithoutExitSiteFeedback):
+    * bytecode/InlineAccess.cpp:
+    (JSC::InlineAccess::rewireStubAsJumpInAccess):
+    (JSC::InlineAccess::resetStubAsJumpInAccess):
+    * bytecode/InstanceOfStatus.cpp:
+    (JSC::InstanceOfStatus::computeForStubInfo):
+    * bytecode/InternalFunctionAllocationProfile.h:
+    (JSC::InternalFunctionAllocationProfile::offsetOfStructureID):
+    (JSC::InternalFunctionAllocationProfile::structure):
+    (JSC::InternalFunctionAllocationProfile::clear):
+    (JSC::InternalFunctionAllocationProfile::visitAggregate):
+    (JSC::InternalFunctionAllocationProfile::createAllocationStructureFromBase):
+    (JSC::InternalFunctionAllocationProfile::offsetOfStructure): Deleted.
+    * bytecode/PutByStatus.cpp:
+    (JSC::PutByStatus::computeForStubInfo):
+    * bytecode/SetPrivateBrandStatus.cpp:
+    (JSC::SetPrivateBrandStatus::computeForStubInfoWithoutExitSiteFeedback):
+    * bytecode/StructureStubInfo.cpp:
+    (JSC::StructureStubInfo::initGetByIdSelf):
+    (JSC::StructureStubInfo::initPutByIdReplace):
+    (JSC::StructureStubInfo::initInByIdSelf):
+    (JSC::StructureStubInfo::deref):
+    (JSC::StructureStubInfo::aboutToDie):
+    (JSC::StructureStubInfo::addAccessCase):
+    (JSC::StructureStubInfo::reset):
+    (JSC::StructureStubInfo::visitAggregateImpl):
+    (JSC::StructureStubInfo::visitWeakReferences):
+    (JSC::StructureStubInfo::propagateTransitions):
+    (JSC::StructureStubInfo::summary const):
+    (JSC::StructureStubInfo::containsPC const):
+    * bytecode/StructureStubInfo.h:
+    (JSC::StructureStubInfo::inlineAccessBaseStructure):
+    (JSC::StructureStubInfo::offsetOfByIdSelfOffset):
+    (JSC::StructureStubInfo::offsetOfInlineAccessBaseStructureID):
+    (JSC::StructureStubInfo::offsetOfInlineAccessBaseStructure): Deleted.
+    * dfg/DFGSpeculativeJIT.cpp:
+    * ftl/FTLAbstractHeapRepository.h:
+    * ftl/FTLLowerDFGToB3.cpp:
+    (JSC::FTL::DFG::LowerDFGToB3::compileCreatePromise):
+    (JSC::FTL::DFG::LowerDFGToB3::compileCreateInternalFieldObject):
+    (JSC::FTL::DFG::LowerDFGToB3::compileCompareStrictEq):
+    * heap/AbstractSlotVisitor.h:
+    * heap/AbstractSlotVisitorInlines.h:
+    (JSC::AbstractSlotVisitor::append):
+    (JSC::AbstractSlotVisitor::appendHidden):
+    * heap/SlotVisitor.h:
+    * heap/SlotVisitorInlines.h:
+    (JSC::SlotVisitor::append):
+    (JSC::SlotVisitor::appendHidden):
+    * jit/AssemblyHelpers.cpp:
+    (JSC::AssemblyHelpers::emitNonNullDecodeStructureID):
+    (JSC::AssemblyHelpers::emitLoadStructure):
+    * jit/AssemblyHelpers.h:
+    * jit/JITInlineCacheGenerator.cpp:
+    (JSC::generateGetByIdInlineAccess):
+    (JSC::JITPutByIdGenerator::generateBaselineDataICFastPath):
+    (JSC::JITInByIdGenerator::generateBaselineDataICFastPath):
+    * runtime/FunctionExecutable.cpp:
+    (JSC::FunctionExecutable::visitChildrenImpl):
+    * runtime/FunctionExecutable.h:
+    * runtime/FunctionRareData.cpp:
+    (JSC::FunctionRareData::visitChildrenImpl):
+    * runtime/FunctionRareData.h:
+    * runtime/JSGlobalObject.cpp:
+    (JSC::JSGlobalObject::visitChildrenImpl):
+    * runtime/JSGlobalObject.h:
+    * runtime/JSPropertyNameEnumerator.cpp:
+    (JSC::JSPropertyNameEnumerator::JSPropertyNameEnumerator):
+    (JSC::JSPropertyNameEnumerator::visitChildrenImpl):
+    * runtime/JSPropertyNameEnumerator.h:
+    * runtime/StructureRareData.cpp:
+    (JSC::StructureRareData::StructureRareData):
+    * runtime/StructureRareData.h:
+    * runtime/WriteBarrier.h:
+    (JSC::WriteBarrierStructureID::WriteBarrierStructureID):
+    (JSC::WriteBarrierStructureID::get const):
+    (JSC::WriteBarrierStructureID::operator* const):
+    (JSC::WriteBarrierStructureID::operator-> const):
+    (JSC::WriteBarrierStructureID::clear):
+    (JSC::WriteBarrierStructureID::operator bool const):
+    (JSC::WriteBarrierStructureID::operator! const):
+    (JSC::WriteBarrierStructureID::setWithoutWriteBarrier):
+    (JSC::WriteBarrierStructureID::unvalidatedGet const):
+    (JSC::WriteBarrierStructureID::value const):
+    * runtime/WriteBarrierInlines.h:
+    (JSC::WriteBarrierStructureID::set):
+    (JSC::WriteBarrierStructureID::setMayBeNull):
+    (JSC::WriteBarrierStructureID::setEarlyValue):
+    * tools/JSDollarVM.cpp:
+    (JSC::JSDollarVM::finishCreation):
+    (JSC::JSDollarVM::visitChildrenImpl):
+    * tools/JSDollarVM.h:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@286667 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-12-08  Yusuke Suzuki  <ysuzuki@apple.com>
+
+            [JSC] Introduce WriteBarrierStructureID
+            https://bugs.webkit.org/show_bug.cgi?id=233918
+
+            Reviewed by Mark Lam.
+
+            This patch adds WriteBarrierStructureID class, which is similar to WriteBarrier<Structure>, but internally,
+            it holds StructureID, so sizeof(WriteBarrierStructureID) is 4. This class is useful to use StructureID for
+            memory saving while keeping WriteBarrier<Structure>'s useful features (automatically inserts write-barrier when
+            setting etc.). This also paves the way to introducing DOMStructures array with WriteBarrierStructureID instead
+            of costly HashMap<ClassInfo*, WriteBarrier<Structure>>.
+
+            * bytecode/AccessCase.cpp:
+            (JSC::AccessCase::AccessCase):
+            (JSC::AccessCase::forEachDependentCell const):
+            (JSC::AccessCase::dump const):
+            (JSC::AccessCase::propagateTransitions const):
+            (JSC::AccessCase::canBeShared):
+            * bytecode/AccessCase.h:
+            (JSC::AccessCase::structure const):
+            (JSC::AccessCase::newStructure const):
+            (JSC::AccessCase::hash const):
+            (JSC::AccessCase::AccessCase):
+            * bytecode/CheckPrivateBrandStatus.cpp:
+            (JSC::CheckPrivateBrandStatus::computeForStubInfoWithoutExitSiteFeedback):
+            * bytecode/DeleteByStatus.cpp:
+            (JSC::DeleteByStatus::computeForStubInfoWithoutExitSiteFeedback):
+            * bytecode/GetByStatus.cpp:
+            (JSC::GetByStatus::computeForStubInfoWithoutExitSiteFeedback):
+            * bytecode/InByStatus.cpp:
+            (JSC::InByStatus::computeForStubInfoWithoutExitSiteFeedback):
+            * bytecode/InlineAccess.cpp:
+            (JSC::InlineAccess::rewireStubAsJumpInAccess):
+            (JSC::InlineAccess::resetStubAsJumpInAccess):
+            * bytecode/InstanceOfStatus.cpp:
+            (JSC::InstanceOfStatus::computeForStubInfo):
+            * bytecode/InternalFunctionAllocationProfile.h:
+            (JSC::InternalFunctionAllocationProfile::offsetOfStructureID):
+            (JSC::InternalFunctionAllocationProfile::structure):
+            (JSC::InternalFunctionAllocationProfile::clear):
+            (JSC::InternalFunctionAllocationProfile::visitAggregate):
+            (JSC::InternalFunctionAllocationProfile::createAllocationStructureFromBase):
+            (JSC::InternalFunctionAllocationProfile::offsetOfStructure): Deleted.
+            * bytecode/PutByStatus.cpp:
+            (JSC::PutByStatus::computeForStubInfo):
+            * bytecode/SetPrivateBrandStatus.cpp:
+            (JSC::SetPrivateBrandStatus::computeForStubInfoWithoutExitSiteFeedback):
+            * bytecode/StructureStubInfo.cpp:
+            (JSC::StructureStubInfo::initGetByIdSelf):
+            (JSC::StructureStubInfo::initPutByIdReplace):
+            (JSC::StructureStubInfo::initInByIdSelf):
+            (JSC::StructureStubInfo::deref):
+            (JSC::StructureStubInfo::aboutToDie):
+            (JSC::StructureStubInfo::addAccessCase):
+            (JSC::StructureStubInfo::reset):
+            (JSC::StructureStubInfo::visitAggregateImpl):
+            (JSC::StructureStubInfo::visitWeakReferences):
+            (JSC::StructureStubInfo::propagateTransitions):
+            (JSC::StructureStubInfo::summary const):
+            (JSC::StructureStubInfo::containsPC const):
+            * bytecode/StructureStubInfo.h:
+            (JSC::StructureStubInfo::inlineAccessBaseStructure):
+            (JSC::StructureStubInfo::offsetOfByIdSelfOffset):
+            (JSC::StructureStubInfo::offsetOfInlineAccessBaseStructureID):
+            (JSC::StructureStubInfo::offsetOfInlineAccessBaseStructure): Deleted.
+            * dfg/DFGSpeculativeJIT.cpp:
+            * ftl/FTLAbstractHeapRepository.h:
+            * ftl/FTLLowerDFGToB3.cpp:
+            (JSC::FTL::DFG::LowerDFGToB3::compileCreatePromise):
+            (JSC::FTL::DFG::LowerDFGToB3::compileCreateInternalFieldObject):
+            (JSC::FTL::DFG::LowerDFGToB3::compileCompareStrictEq):
+            * heap/AbstractSlotVisitor.h:
+            * heap/AbstractSlotVisitorInlines.h:
+            (JSC::AbstractSlotVisitor::append):
+            (JSC::AbstractSlotVisitor::appendHidden):
+            * heap/SlotVisitor.h:
+            * heap/SlotVisitorInlines.h:
+            (JSC::SlotVisitor::append):
+            (JSC::SlotVisitor::appendHidden):
+            * jit/AssemblyHelpers.cpp:
+            (JSC::AssemblyHelpers::emitNonNullDecodeStructureID):
+            (JSC::AssemblyHelpers::emitLoadStructure):
+            * jit/AssemblyHelpers.h:
+            * jit/JITInlineCacheGenerator.cpp:
+            (JSC::generateGetByIdInlineAccess):
+            (JSC::JITPutByIdGenerator::generateBaselineDataICFastPath):
+            (JSC::JITInByIdGenerator::generateBaselineDataICFastPath):
+            * runtime/FunctionExecutable.cpp:
+            (JSC::FunctionExecutable::visitChildrenImpl):
+            * runtime/FunctionExecutable.h:
+            * runtime/FunctionRareData.cpp:
+            (JSC::FunctionRareData::visitChildrenImpl):
+            * runtime/FunctionRareData.h:
+            * runtime/JSGlobalObject.cpp:
+            (JSC::JSGlobalObject::visitChildrenImpl):
+            * runtime/JSGlobalObject.h:
+            * runtime/JSPropertyNameEnumerator.cpp:
+            (JSC::JSPropertyNameEnumerator::JSPropertyNameEnumerator):
+            (JSC::JSPropertyNameEnumerator::visitChildrenImpl):
+            * runtime/JSPropertyNameEnumerator.h:
+            * runtime/StructureRareData.cpp:
+            (JSC::StructureRareData::StructureRareData):
+            * runtime/StructureRareData.h:
+            * runtime/WriteBarrier.h:
+            (JSC::WriteBarrierStructureID::WriteBarrierStructureID):
+            (JSC::WriteBarrierStructureID::get const):
+            (JSC::WriteBarrierStructureID::operator* const):
+            (JSC::WriteBarrierStructureID::operator-> const):
+            (JSC::WriteBarrierStructureID::clear):
+            (JSC::WriteBarrierStructureID::operator bool const):
+            (JSC::WriteBarrierStructureID::operator! const):
+            (JSC::WriteBarrierStructureID::setWithoutWriteBarrier):
+            (JSC::WriteBarrierStructureID::unvalidatedGet const):
+            (JSC::WriteBarrierStructureID::value const):
+            * runtime/WriteBarrierInlines.h:
+            (JSC::WriteBarrierStructureID::set):
+            (JSC::WriteBarrierStructureID::setMayBeNull):
+            (JSC::WriteBarrierStructureID::setEarlyValue):
+            * tools/JSDollarVM.cpp:
+            (JSC::JSDollarVM::finishCreation):
+            (JSC::JSDollarVM::visitChildrenImpl):
+            * tools/JSDollarVM.h:
+
+2021-12-13  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r286597. rdar://problem/86445989
 
     Unreviewed, reverting r286502 and r286580.

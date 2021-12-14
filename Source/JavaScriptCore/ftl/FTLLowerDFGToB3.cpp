@@ -7877,10 +7877,11 @@ IGNORE_CLANG_WARNINGS_END
 
         m_out.appendTo(hasRareData, hasStructure);
         LValue rareData = m_out.sub(rareDataTags, m_out.constIntPtr(JSFunction::rareDataTag));
-        LValue structure = m_out.loadPtr(rareData, m_heaps.FunctionRareData_internalFunctionAllocationProfile_structure);
-        m_out.branch(m_out.isZero64(structure), rarely(slowCase), usually(hasStructure));
+        LValue structureID = m_out.load32(rareData, m_heaps.FunctionRareData_internalFunctionAllocationProfile_structureID);
+        m_out.branch(m_out.isZero32(structureID), rarely(slowCase), usually(hasStructure));
 
         m_out.appendTo(hasStructure, checkGlobalObjectCase);
+        LValue structure = decodeNonNullStructure(structureID);
         m_out.branch(m_out.equal(m_out.loadPtr(structure, m_heaps.Structure_classInfo), m_out.constIntPtr(m_node->isInternalPromise() ? JSInternalPromise::info() : JSPromise::info())), usually(checkGlobalObjectCase), rarely(slowCase));
 
         m_out.appendTo(checkGlobalObjectCase, fastAllocationCase);
@@ -7932,10 +7933,11 @@ IGNORE_CLANG_WARNINGS_END
 
         m_out.appendTo(hasRareData, hasStructure);
         LValue rareData = m_out.sub(rareDataTags, m_out.constIntPtr(JSFunction::rareDataTag));
-        LValue structure = m_out.loadPtr(rareData, m_heaps.FunctionRareData_internalFunctionAllocationProfile_structure);
-        m_out.branch(m_out.isZero64(structure), rarely(slowCase), usually(hasStructure));
+        LValue structureID = m_out.load32(rareData, m_heaps.FunctionRareData_internalFunctionAllocationProfile_structureID);
+        m_out.branch(m_out.isZero32(structureID), rarely(slowCase), usually(hasStructure));
 
         m_out.appendTo(hasStructure, checkGlobalObjectCase);
+        LValue structure = decodeNonNullStructure(structureID);
         m_out.branch(m_out.equal(m_out.loadPtr(structure, m_heaps.Structure_classInfo), m_out.constIntPtr(JSClass::info())), usually(checkGlobalObjectCase), rarely(slowCase));
 
         m_out.appendTo(checkGlobalObjectCase, fastAllocationCase);
@@ -20973,11 +20975,16 @@ IGNORE_CLANG_WARNINGS_END
         m_graph.m_plan.weakReferences().addLazily(target);
     }
 
+    LValue decodeNonNullStructure(LValue structureID)
+    {
+        LValue maskedStructureID = m_out.bitAnd(structureID, m_out.constInt32(structureIDMask));
+        return m_out.add(m_out.constIntPtr(g_jscConfig.startOfStructureHeap), m_out.zeroExtPtr(maskedStructureID));
+    }
+
     LValue loadStructure(LValue value)
     {
         LValue structureID = m_out.load32(value, m_heaps.JSCell_structureID);
-        LValue maskedStructureID = m_out.bitAnd(structureID, m_out.constInt32(structureIDMask));
-        return m_out.add(m_out.constIntPtr(g_jscConfig.startOfStructureHeap), m_out.zeroExtPtr(maskedStructureID));
+        return decodeNonNullStructure(structureID);
     }
 
     LValue weakPointer(JSCell* pointer)
