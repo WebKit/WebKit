@@ -1,3 +1,24 @@
+2021-12-13  John Wilander  <wilander@apple.com>
+
+        PCM: Remove old DB update and migration code, and add a unit test for destination token DB columns
+        https://bugs.webkit.org/show_bug.cgi?id=234281
+        <rdar://86347439>
+
+        Reviewed by Alex Christensen and Kate Cheney.
+
+        These expect files are just updated with destination token dump output.
+
+        * http/tests/privateClickMeasurement/attribution-conversion-through-fetch-keepalive-expected.txt:
+        * http/tests/privateClickMeasurement/attribution-conversion-through-image-redirect-ephemeral-expected.txt:
+        * http/tests/privateClickMeasurement/attribution-conversion-through-image-redirect-in-new-window-expected.txt:
+        * http/tests/privateClickMeasurement/attribution-conversion-through-image-redirect-with-priority-expected.txt:
+        * http/tests/privateClickMeasurement/attribution-conversion-through-image-redirect-without-priority-expected.txt:
+        * http/tests/privateClickMeasurement/second-attribution-converted-with-higher-priority-expected.txt:
+        * http/tests/privateClickMeasurement/second-attribution-converted-with-lower-priority-expected.txt:
+        * http/tests/privateClickMeasurement/second-conversion-with-higher-priority-expected.txt:
+        * http/tests/privateClickMeasurement/second-conversion-with-lower-priority-expected.txt:
+        * http/tests/privateClickMeasurement/triggering-event-with-attribution-source-through-fetch-keepalive-expected.txt:
+
 2021-12-13  Alex Christensen  <achristensen@webkit.org>
 
         Allow WKContentRuleList to run regexes on current frame's URL, not just top frame's URL

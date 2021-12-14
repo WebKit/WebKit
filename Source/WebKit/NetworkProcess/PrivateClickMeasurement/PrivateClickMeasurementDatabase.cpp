@@ -88,7 +88,6 @@ Database::Database(const String& storageDirectory)
     openDatabaseAndCreateSchemaIfNecessary();
     enableForeignKeys();
     addDestinationTokenColumnsIfNecessary();
-    migrateDataToNewTablesIfNecessary();
     allDatabases().add(this);
 }
 
@@ -449,6 +448,12 @@ String Database::attributionToStringForTesting(const WebCore::PrivateClickMeasur
             auto secondsUntilSend = *earliestTimeToSend - WallTime::now();
             builder.append((secondsUntilSend >= 24_h && secondsUntilSend <= 48_h) ? "Within 24-48 hours" : "Outside 24-48 hours");
         }
+
+        builder.append("\nDestination token: ");
+        if (!triggerData->destinationSecretToken)
+            builder.append("Not set");
+        else
+            builder.append("\ntoken: ", triggerData->destinationSecretToken->tokenBase64URL, "\nsignature: ", triggerData->destinationSecretToken->signatureBase64URL, "\nkey: ", triggerData->destinationSecretToken->keyIDBase64URL);
     } else
         builder.append("\nNo attribution trigger data.");
     builder.append("\nApplication bundle identifier: ", pcm.sourceApplicationBundleID(), '\n');
@@ -714,17 +719,6 @@ void Database::addDestinationTokenColumnsIfNecessary()
         addMissingColumnToTable(attributedTableName, "destinationSignature"_s);
         addMissingColumnToTable(attributedTableName, destinationKeyIDColumnName);
     }
-}
-
-bool Database::needsUpdatedSchema()
-{
-    // FIXME: Remove this at the end of 2021. No public release was made with the schema missing sourceApplicationBundleID, so this is only needed to migrate internal users who updated in September 2021.
-    for (auto& table : expectedTableAndIndexQueries().keys()) {
-        if (currentTableAndIndexQueries(table) != expectedTableAndIndexQueries().get(table))
-            return true;
-    }
-
-    return false;
 }
 
 Vector<String> Database::columnsForTable(const String& tableName)

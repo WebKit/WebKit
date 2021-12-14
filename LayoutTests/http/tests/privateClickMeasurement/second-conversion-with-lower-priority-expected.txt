@@ -9,4 +9,5 @@ Source ID: 3
 Attribution trigger data: 12
 Attribution priority: 4
 Attribution earliest time to send: Within 24-48 hours
+Destination token: Not set
 Application bundle identifier: com.apple.WebKit.WebKitTestRunner

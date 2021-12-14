@@ -1,3 +1,19 @@
+2021-12-13  John Wilander  <wilander@apple.com>
+
+        PCM: Remove old DB update and migration code, and add a unit test for destination token DB columns
+        https://bugs.webkit.org/show_bug.cgi?id=234281
+        <rdar://86347439>
+
+        Reviewed by Alex Christensen and Kate Cheney.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/PrivateClickMeasurement.mm:
+        (addAttributedPCMv5):
+        (pollUntilPCMIsMigrated):
+            Now takes a parameter UsingDestinationToken and handles its expectation
+            accordingly.
+        (TEST):
+            New test PrivateClickMeasurement.MigrateWithDestinationToken.
+
 2021-12-13  Alex Christensen  <achristensen@webkit.org>
 
         Allow WKContentRuleList to run regexes on current frame's URL, not just top frame's URL

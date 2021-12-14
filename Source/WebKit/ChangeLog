@@ -1,3 +1,28 @@
+2021-12-13  John Wilander  <wilander@apple.com>
+
+        PCM: Remove old DB update and migration code, and add a unit test for destination token DB columns
+        https://bugs.webkit.org/show_bug.cgi?id=234281
+        <rdar://86347439>
+
+        Reviewed by Alex Christensen and Kate Cheney.
+
+        WebKit::Database::needsUpdatedSchema() in PrivateClickMeasurement.cpp has a comment saying it
+        should be removed late 2021. WebKit::DatabaseUtilities::migrateDataToNewTablesIfNecessary()
+        returns directly if WebKit::Database::needsUpdatedSchema() returns false so always returning
+        false for WebKit::Database::needsUpdatedSchema() in PrivateClickMeasurement.cpp effectively
+        disables WebKit::DatabaseUtilities::migrateDataToNewTablesIfNecessary() for PCM.
+
+        New unit/API test PrivateClickMeasurement.MigrateWithDestinationToken added.
+
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementDatabase.cpp:
+        (WebKit::PCM::Database::Database):
+            No longer calls the deleted DatabaseUtilities::migrateDataToNewTablesIfNecessary().
+        (WebKit::PCM::Database::attributionToStringForTesting const):
+            Now outputs destination token info.
+        (WebKit::PCM::Database::needsUpdatedSchema): Deleted.
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementDatabase.h:
+            needsUpdatedSchema() now always returns false.
+
 2021-12-13  Alex Christensen  <achristensen@webkit.org>
 
         Allow WKContentRuleList to run regexes on current frame's URL, not just top frame's URL

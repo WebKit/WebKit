@@ -77,7 +77,7 @@ private:
     String getDomainStringFromDomainID(DomainID) const final;
 
     void addDestinationTokenColumnsIfNecessary();
-    bool needsUpdatedSchema() final;
+    bool needsUpdatedSchema() final { return false; };
     bool createUniqueIndices() final;
     const MemoryCompactLookupOnlyRobinHoodHashMap<String, TableAndIndexPair>& expectedTableAndIndexQueries() final;
     Span<const ASCIILiteral> sortedTables() final;
