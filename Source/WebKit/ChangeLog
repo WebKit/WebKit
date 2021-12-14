@@ -1,3 +1,18 @@
+2021-12-14  Jer Noble  <jer.noble@apple.com>
+
+        Safari intermittently stopping playing Spotify Web Player (currentTime goes backwards)
+        https://bugs.webkit.org/show_bug.cgi?id=233257
+        <rdar://problem/85504967>
+
+        Reviewed by Eric Carlson.
+
+        Test: media/video-currentTime-duration.html
+
+        Clamp currentMediaTime() to [0, durationMediaTime()].
+
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.cpp:
+        (WebKit::MediaPlayerPrivateRemote::currentMediaTime const):
+
 2021-12-14  Alex Christensen  <achristensen@webkit.org>
 
         Revert r284816

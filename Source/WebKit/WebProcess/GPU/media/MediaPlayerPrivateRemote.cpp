@@ -285,7 +285,8 @@ MediaTime MediaPlayerPrivateRemote::currentMediaTime() const
     if (!m_timeIsProgressing)
         return m_cachedMediaTime;
 
-    return m_cachedMediaTime + MediaTime::createWithDouble(m_rate * (MonotonicTime::now() - m_cachedMediaTimeQueryTime).seconds());
+    auto calculatedCurrentTime = m_cachedMediaTime + MediaTime::createWithDouble(m_rate * (MonotonicTime::now() - m_cachedMediaTimeQueryTime).seconds());
+    return std::min(std::max(calculatedCurrentTime, MediaTime::zeroTime()), durationMediaTime());
 }
 
 void MediaPlayerPrivateRemote::seek(const MediaTime& time)
