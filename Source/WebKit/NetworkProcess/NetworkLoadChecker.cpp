@@ -474,7 +474,7 @@ void NetworkLoadChecker::processContentRuleListsForLoad(ResourceRequest&& reques
             return;
         }
 
-        auto results = backend.processContentRuleListsForPingLoad(request.url(), m_mainDocumentURL);
+        auto results = backend.processContentRuleListsForPingLoad(request.url(), m_mainDocumentURL, m_frameURL);
         WebCore::ContentExtensions::applyResultsToRequest(ContentRuleListResults { results }, nullptr, request);
         callback(ContentExtensionResult { WTFMove(request), results });
     });

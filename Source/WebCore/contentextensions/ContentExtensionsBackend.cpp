@@ -50,9 +50,7 @@
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/CString.h>
 
-namespace WebCore {
-
-namespace ContentExtensions {
+namespace WebCore::ContentExtensions {
 
 #if USE(APPLE_INTERNAL_SDK)
 #import <WebKitAdditions/ContentRuleListAdditions.mm>
@@ -98,6 +96,60 @@ void ContentExtensionsBackend::removeAllContentExtensions()
     m_contentExtensions.clear();
 }
 
+auto ContentExtensionsBackend::actionsFromContentRuleList(const ContentExtension& contentExtension, const CString& urlString, const ResourceLoadInfo& resourceLoadInfo, ResourceFlags flags) const -> ActionsFromContentRuleList
+{
+    ActionsFromContentRuleList actionsStruct;
+    actionsStruct.contentRuleListIdentifier = contentExtension.identifier();
+
+    const auto& compiledExtension = contentExtension.compiledExtension();
+
+    DFABytecodeInterpreter interpreter(compiledExtension.urlFiltersBytecode());
+    auto actionLocations = interpreter.interpret(urlString, flags);
+    auto& topURLActions = contentExtension.topURLActions(resourceLoadInfo.mainDocumentURL);
+    auto& frameURLActions = contentExtension.frameURLActions(resourceLoadInfo.frameURL);
+
+    actionLocations.removeIf([&](uint64_t actionAndFlags) {
+        ResourceFlags flags = actionAndFlags >> 32;
+        auto actionCondition = static_cast<ActionCondition>(flags & ActionConditionMask);
+        switch (actionCondition) {
+        case ActionCondition::None:
+            return false;
+        case ActionCondition::IfTopURL:
+            return !topURLActions.contains(actionAndFlags);
+        case ActionCondition::UnlessTopURL:
+            return topURLActions.contains(actionAndFlags);
+        case ActionCondition::IfFrameURL:
+            return !frameURLActions.contains(actionAndFlags);
+        }
+        ASSERT_NOT_REACHED();
+        return false;
+    });
+
+    auto serializedActions = compiledExtension.serializedActions();
+
+    const auto& universalActions = contentExtension.universalActions();
+    if (auto totalActionCount = actionLocations.size() + universalActions.size()) {
+        Vector<uint32_t> vector;
+        vector.reserveInitialCapacity(totalActionCount);
+        for (uint64_t actionLocation : actionLocations)
+            vector.uncheckedAppend(static_cast<uint32_t>(actionLocation));
+        for (uint64_t actionLocation : universalActions)
+            vector.uncheckedAppend(static_cast<uint32_t>(actionLocation));
+        std::sort(vector.begin(), vector.end());
+
+        // Add actions in reverse order to properly deal with IgnorePreviousRules.
+        for (auto i = vector.size(); i; i--) {
+            auto action = DeserializedAction::deserialize(serializedActions, vector[i - 1]);
+            if (std::holds_alternative<IgnorePreviousRulesAction>(action.data())) {
+                actionsStruct.sawIgnorePreviousRules = true;
+                break;
+            }
+            actionsStruct.actions.append(WTFMove(action));
+        }
+    }
+    return actionsStruct;
+}
+
 auto ContentExtensionsBackend::actionsForResourceLoad(const ResourceLoadInfo& resourceLoadInfo) const -> Vector<ActionsFromContentRuleList>
 {
 #if CONTENT_EXTENSIONS_PERFORMANCE_REPORTING
@@ -110,53 +162,16 @@ auto ContentExtensionsBackend::actionsForResourceLoad(const ResourceLoadInfo& re
 
     const String& urlString = resourceLoadInfo.resourceURL.string();
     ASSERT_WITH_MESSAGE(urlString.isAllASCII(), "A decoded URL should only contain ASCII characters. The matching algorithm assumes the input is ASCII.");
+    // FIXME: UTF-8 conversion should only be necessary with UTF-16 String based URLs, which are rare.
+    // DFABytecodeInterpreter::interpret should take a Span<char> instead of a CString and we can avoid this allocation almost all of the time.
     const auto urlCString = urlString.utf8();
 
     Vector<ActionsFromContentRuleList> actionsVector;
     actionsVector.reserveInitialCapacity(m_contentExtensions.size());
-    const ResourceFlags flags = resourceLoadInfo.getResourceFlags();
-    for (auto& contentExtension : m_contentExtensions.values()) {
-        ActionsFromContentRuleList actionsStruct;
-        actionsStruct.contentRuleListIdentifier = contentExtension->identifier();
-
-        const CompiledContentExtension& compiledExtension = contentExtension->compiledExtension();
-        
-        DFABytecodeInterpreter withoutConditionsInterpreter(compiledExtension.filtersWithoutConditionsBytecode());
-        DFABytecodeInterpreter::Actions withoutConditionsActions = withoutConditionsInterpreter.interpret(urlCString, flags);
-        
-        URL topURL = resourceLoadInfo.mainDocumentURL;
-        DFABytecodeInterpreter withConditionsInterpreter(compiledExtension.filtersWithConditionsBytecode());
-        DFABytecodeInterpreter::Actions withConditionsActions = withConditionsInterpreter.interpretWithConditions(urlCString, flags, contentExtension->topURLActions(topURL));
-        
-        auto serializedActions = compiledExtension.serializedActions();
-        
-        const Vector<uint32_t>& universalWithConditions = contentExtension->universalActionsWithConditions(topURL);
-        const Vector<uint32_t>& universalWithoutConditions = contentExtension->universalActionsWithoutConditions();
-        if (!withoutConditionsActions.isEmpty() || !withConditionsActions.isEmpty() || !universalWithConditions.isEmpty() || !universalWithoutConditions.isEmpty()) {
-            Vector<uint32_t> actionLocations;
-            actionLocations.reserveInitialCapacity(withoutConditionsActions.size() + withConditionsActions.size() + universalWithoutConditions.size() + universalWithConditions.size());
-            for (uint64_t actionLocation : withoutConditionsActions)
-                actionLocations.uncheckedAppend(static_cast<uint32_t>(actionLocation));
-            for (uint64_t actionLocation : withConditionsActions)
-                actionLocations.uncheckedAppend(static_cast<uint32_t>(actionLocation));
-            for (uint32_t actionLocation : universalWithoutConditions)
-                actionLocations.uncheckedAppend(actionLocation);
-            for (uint32_t actionLocation : universalWithConditions)
-                actionLocations.uncheckedAppend(actionLocation);
-            std::sort(actionLocations.begin(), actionLocations.end());
-
-            // Add actions in reverse order to properly deal with IgnorePreviousRules.
-            for (unsigned i = actionLocations.size(); i; i--) {
-                auto action = DeserializedAction::deserialize(serializedActions, actionLocations[i - 1]);
-                if (std::holds_alternative<IgnorePreviousRulesAction>(action.data())) {
-                    actionsStruct.sawIgnorePreviousRules = true;
-                    break;
-                }
-                actionsStruct.actions.append(WTFMove(action));
-            }
-        }
-        actionsVector.uncheckedAppend(WTFMove(actionsStruct));
-    }
+    ASSERT(!(resourceLoadInfo.getResourceFlags() & ActionConditionMask));
+    const ResourceFlags flags = resourceLoadInfo.getResourceFlags() | ActionConditionMask;
+    for (auto& contentExtension : m_contentExtensions.values())
+        actionsVector.uncheckedAppend(actionsFromContentRuleList(contentExtension.get(), urlCString, resourceLoadInfo, flags));
 #if CONTENT_EXTENSIONS_PERFORMANCE_REPORTING
     MonotonicTime addedTimeEnd = MonotonicTime::now();
     dataLogF("Time added: %f microseconds %s \n", (addedTimeEnd - addedTimeStart).microseconds(), resourceLoadInfo.resourceURL.string().utf8().data());
@@ -180,6 +195,7 @@ ContentRuleListResults ContentExtensionsBackend::processContentRuleListsForLoad(
 {
     Document* currentDocument = nullptr;
     URL mainDocumentURL;
+    URL frameURL;
     bool mainFrameContext = false;
 
     if (auto* frame = initiatingDocumentLoader.frame()) {
@@ -193,8 +209,12 @@ ContentRuleListResults ContentExtensionsBackend::processContentRuleListsForLoad(
         else if (auto* mainDocument = frame->mainFrame().document())
             mainDocumentURL = mainDocument->url();
     }
+    if (currentDocument)
+        frameURL = currentDocument->url();
+    else
+        frameURL = url;
 
-    ResourceLoadInfo resourceLoadInfo = { url, mainDocumentURL, resourceType, mainFrameContext };
+    ResourceLoadInfo resourceLoadInfo { url, mainDocumentURL, frameURL, resourceType, mainFrameContext };
     auto actions = actionsForResourceLoad(resourceLoadInfo);
 
     ContentRuleListResults results;
@@ -271,9 +291,9 @@ ContentRuleListResults ContentExtensionsBackend::processContentRuleListsForLoad(
     return results;
 }
 
-ContentRuleListResults ContentExtensionsBackend::processContentRuleListsForPingLoad(const URL& url, const URL& mainDocumentURL)
+ContentRuleListResults ContentExtensionsBackend::processContentRuleListsForPingLoad(const URL& url, const URL& mainDocumentURL, const URL& frameURL)
 {
-    ResourceLoadInfo resourceLoadInfo = { url, mainDocumentURL, ResourceType::Ping };
+    ResourceLoadInfo resourceLoadInfo { url, mainDocumentURL, frameURL, ResourceType::Ping };
     auto actions = actionsForResourceLoad(resourceLoadInfo);
 
     ContentRuleListResults results;
@@ -340,8 +360,6 @@ void applyResultsToRequest(ContentRuleListResults&& results, Page* page, Resourc
     }
 }
     
-} // namespace ContentExtensions
-
-} // namespace WebCore
+} // namespace WebCore::ContentExtensions
 
 #endif // ENABLE(CONTENT_EXTENSIONS)

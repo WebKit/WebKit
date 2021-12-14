@@ -74,13 +74,6 @@ void setBits(Vector<DFABytecode>& bytecode, uint32_t index, IntType value)
     *reinterpret_cast<IntType*>(&bytecode[index]) = value;
 }
 
-static unsigned appendActionBytecodeSize(uint64_t action)
-{
-    if (action & ActionFlagMask)
-        return sizeof(DFABytecodeInstruction) + sizeof(uint16_t) + sizeof(uint32_t);
-    return sizeof(DFABytecodeInstruction) + sizeof(uint32_t);
-}
-
 static DFABytecodeFlagsSize bytecodeFlagsSize(ResourceFlags flags)
 {
     if (flags <= std::numeric_limits<uint8_t>::max())
@@ -102,6 +95,40 @@ static DFABytecodeActionSize bytecodeActionSize(uint32_t actionWithoutFlags)
     return DFABytecodeActionSize::UInt32;
 }
 
+static size_t toSizeT(DFABytecodeFlagsSize size)
+{
+    switch (size) {
+    case DFABytecodeFlagsSize::UInt8:
+        return sizeof(uint8_t);
+    case DFABytecodeFlagsSize::UInt16:
+        return sizeof(uint16_t);
+    case DFABytecodeFlagsSize::UInt24:
+        return UInt24Size;
+    }
+}
+
+static size_t toSizeT(DFABytecodeActionSize size)
+{
+    switch (size) {
+    case DFABytecodeActionSize::UInt8:
+        return sizeof(uint8_t);
+    case DFABytecodeActionSize::UInt16:
+        return sizeof(uint16_t);
+    case DFABytecodeActionSize::UInt24:
+        return UInt24Size;
+    case DFABytecodeActionSize::UInt32:
+        return sizeof(uint32_t);
+    }
+}
+
+static size_t appendActionBytecodeSize(uint64_t action)
+{
+    auto flags = static_cast<ResourceFlags>((action & ActionFlagMask) >> 32);
+    return sizeof(DFABytecodeInstruction)
+        + (flags ? toSizeT(bytecodeFlagsSize(flags)) : 0)
+        + toSizeT(bytecodeActionSize(action));
+}
+
 static void appendVariableLengthUnsignedInteger(Vector<DFABytecode>& bytecode, uint32_t integer)
 {
     if (integer <= std::numeric_limits<uint8_t>::max())
@@ -121,7 +148,7 @@ void DFABytecodeCompiler::emitAppendAction(uint64_t action)
     // High bits are used to store flags. See compileRuleList.
     if (ResourceFlags flags = (action & ActionFlagMask) >> 32) {
         auto flagsSize = bytecodeFlagsSize(flags);
-        auto instruction = (action & IfConditionFlag) ? DFABytecodeInstruction::TestFlagsAndAppendActionWithIfCondition : DFABytecodeInstruction::TestFlagsAndAppendAction;
+        auto instruction = DFABytecodeInstruction::TestFlagsAndAppendAction;
         ASSERT(!(static_cast<uint8_t>(instruction) & static_cast<uint8_t>(flagsSize) & static_cast<uint8_t>(actionSize)));
         append<uint8_t>(m_bytecode, static_cast<uint8_t>(instruction) | static_cast<uint8_t>(flagsSize) | static_cast<uint8_t>(actionSize));
         appendVariableLengthUnsignedInteger(m_bytecode, flags);
@@ -129,7 +156,7 @@ void DFABytecodeCompiler::emitAppendAction(uint64_t action)
         return;
     }
 
-    auto instruction = (action & IfConditionFlag) ? DFABytecodeInstruction::AppendActionWithIfCondition : DFABytecodeInstruction::AppendAction;
+    auto instruction = DFABytecodeInstruction::AppendAction;
     ASSERT(!(static_cast<uint8_t>(instruction) & static_cast<uint8_t>(actionSize)));
     append<uint8_t>(m_bytecode, static_cast<uint8_t>(instruction) | static_cast<uint8_t>(actionSize));
     appendVariableLengthUnsignedInteger(m_bytecode, actionWithoutFlags);

@@ -63,8 +63,7 @@ public:
 
 struct CompiledContentExtensionData {
     Vector<ContentExtensions::SerializedActionByte> actions;
-    Vector<ContentExtensions::DFABytecode> filtersWithoutConditions;
-    Vector<ContentExtensions::DFABytecode> filtersWithConditions;
+    Vector<ContentExtensions::DFABytecode> urlFilters;
     Vector<ContentExtensions::DFABytecode> topURLFilters;
     Vector<ContentExtensions::DFABytecode> frameURLFilters;
 };
@@ -75,52 +74,62 @@ public:
         : m_data(data)
     {
         EXPECT_EQ(data.actions.size(), 0ull);
-        EXPECT_EQ(data.filtersWithoutConditions.size(), 0ull);
-        EXPECT_EQ(data.filtersWithConditions.size(), 0ull);
+        EXPECT_EQ(data.urlFilters.size(), 0ull);
         EXPECT_EQ(data.topURLFilters.size(), 0ull);
+        EXPECT_EQ(data.frameURLFilters.size(), 0ull);
     }
 
 private:
-    void writeSource(String&&) final { }
-
-    void writeActions(Vector<ContentExtensions::SerializedActionByte>&& actions) final
+    void writeSource(String&&) final
     {
+        EXPECT_FALSE(sourceWritten);
+        sourceWritten = true;
+    }
+
+    void writeActions(Vector<SerializedActionByte>&& actions) final
+    {
+        EXPECT_TRUE(sourceWritten);
         EXPECT_FALSE(finalized);
         EXPECT_EQ(m_data.actions.size(), 0ull);
-        EXPECT_EQ(m_data.filtersWithoutConditions.size(), 0ull);
-        EXPECT_EQ(m_data.filtersWithConditions.size(), 0ull);
+        EXPECT_EQ(m_data.urlFilters.size(), 0ull);
         EXPECT_EQ(m_data.topURLFilters.size(), 0ull);
-        EXPECT_EQ(m_data.actions.size(), 0ull);
+        EXPECT_EQ(m_data.frameURLFilters.size(), 0ull);
         m_data.actions.appendVector(actions);
     }
     
-    void writeFiltersWithoutConditionsBytecode(Vector<ContentExtensions::DFABytecode>&& bytecode) final
+    void writeURLFiltersBytecode(Vector<DFABytecode>&& bytecode) final
     {
-        EXPECT_FALSE(finalized);
-        EXPECT_EQ(m_data.filtersWithConditions.size(), 0ull);
-        EXPECT_EQ(m_data.topURLFilters.size(), 0ull);
-        m_data.filtersWithoutConditions.appendVector(bytecode);
-    }
-    
-    void writeFiltersWithConditionsBytecode(Vector<ContentExtensions::DFABytecode>&& bytecode) final
-    {
+        EXPECT_TRUE(sourceWritten);
         EXPECT_FALSE(finalized);
         EXPECT_EQ(m_data.topURLFilters.size(), 0ull);
-        m_data.filtersWithConditions.appendVector(bytecode);
+        EXPECT_EQ(m_data.frameURLFilters.size(), 0ull);
+        m_data.urlFilters.appendVector(bytecode);
     }
-    
-    void writeTopURLFiltersBytecode(Vector<ContentExtensions::DFABytecode>&& bytecode) final
+
+    void writeTopURLFiltersBytecode(Vector<DFABytecode>&& bytecode) final
     {
+        EXPECT_TRUE(sourceWritten);
         EXPECT_FALSE(finalized);
+        EXPECT_EQ(m_data.frameURLFilters.size(), 0ull);
         m_data.topURLFilters.appendVector(bytecode);
+    }
+
+    void writeFrameURLFiltersBytecode(Vector<DFABytecode>&& bytecode) final
+    {
+        EXPECT_TRUE(sourceWritten);
+        EXPECT_FALSE(finalized);
+        m_data.frameURLFilters.appendVector(bytecode);
     }
     
     void finalize() final
     {
+        EXPECT_TRUE(sourceWritten);
+        EXPECT_FALSE(finalized);
         finalized = true;
     }
 
     CompiledContentExtensionData& m_data;
+    bool sourceWritten { false };
     bool finalized { false };
 };
 
@@ -143,8 +152,7 @@ public:
 
 private:
     Span<const uint8_t> serializedActions() const final { return { m_data.actions.data(), m_data.actions.size() }; }
-    Span<const uint8_t> filtersWithoutConditionsBytecode() const final { return { m_data.filtersWithoutConditions.data(), m_data.filtersWithoutConditions.size() }; }
-    Span<const uint8_t> filtersWithConditionsBytecode() const final { return { m_data.filtersWithConditions.data(), m_data.filtersWithConditions.size() }; }
+    Span<const uint8_t> urlFiltersBytecode() const final { return { m_data.urlFilters.data(), m_data.urlFilters.size() }; }
     Span<const uint8_t> topURLFiltersBytecode() const final { return { m_data.topURLFilters.data(), m_data.topURLFilters.size() }; }
     Span<const uint8_t> frameURLFiltersBytecode() const final { return { m_data.frameURLFilters.data(), m_data.frameURLFilters.size() }; }
 
@@ -185,14 +193,21 @@ void static testRequestImpl(int line, const ContentExtensions::ContentExtensions
     EXPECT_EQ(actions.second.size(), stylesheets);
 }
 
-static ResourceLoadInfo mainDocumentRequest(const char* url, ResourceType resourceType = ResourceType::Document)
+static ResourceLoadInfo mainDocumentRequest(const char* urlString, ResourceType resourceType = ResourceType::Document)
 {
-    return { URL(URL(), url), URL(URL(), url), resourceType };
+    URL url(URL(), urlString);
+    return { url, url, url, resourceType };
 }
 
-static ResourceLoadInfo subResourceRequest(const char* url, const char* mainDocumentURL, ResourceType resourceType = ResourceType::Document)
+static ResourceLoadInfo subResourceRequest(const char* url, const char* mainDocumentURLString, ResourceType resourceType = ResourceType::Document)
 {
-    return { URL(URL(), url), URL(URL(), mainDocumentURL), resourceType };
+    URL mainDocumentURL(URL(), mainDocumentURLString);
+    return { URL(URL(), url), mainDocumentURL, mainDocumentURL, resourceType };
+}
+
+static ResourceLoadInfo requestInTopAndFrameURLs(const char* url, const char* topURL, const char* frameURL, ResourceType resourceType = ResourceType::Document)
+{
+    return { URL(URL(), url), URL(URL(), topURL), URL(URL(), frameURL), resourceType };
 }
 
 ContentExtensions::ContentExtensionsBackend makeBackend(const char* json)
@@ -970,9 +985,9 @@ TEST_F(ContentExtensionTest, StringCombining)
     ASSERT_EQ(sequenceInstances(data.actions, "GGG"), 1);
 
     ASSERT_EQ(data.actions.size(), 72u);
-    ASSERT_EQ(data.filtersWithoutConditions.size(), 288u);
-    ASSERT_EQ(data.filtersWithConditions.size(), 5u);
+    ASSERT_EQ(data.urlFilters.size(), 288u);
     ASSERT_EQ(data.topURLFilters.size(), 5u);
+    ASSERT_EQ(data.frameURLFilters.size(), 5u);
 
     auto extensionWithFlags = InMemoryCompiledContentExtension::create("["
         "{\"action\":{\"type\":\"notify\",\"notification\":\"AAA\"},\"trigger\":{\"url-filter\":\"A\"}},"
@@ -1123,13 +1138,13 @@ TEST_F(ContentExtensionTest, LoadType)
         "{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"alwaysblock.pdf\"}}]");
     
     testRequest(backend, mainDocumentRequest("http://webkit.org"), { });
-    testRequest(backend, { URL(URL(), "http://webkit.org"), URL(URL(), "http://not_webkit.org"), ResourceType::Document }, { variantIndex<ContentExtensions::BlockLoadAction> });
+    testRequest(backend, { URL(URL(), "http://webkit.org"), URL(URL(), "http://not_webkit.org"), URL(URL(), "http://not_webkit.org"), ResourceType::Document }, { variantIndex<ContentExtensions::BlockLoadAction> });
         
     testRequest(backend, mainDocumentRequest("http://whatwg.org"), { variantIndex<ContentExtensions::BlockLoadAction> });
-    testRequest(backend, { URL(URL(), "http://whatwg.org"), URL(URL(), "http://not_whatwg.org"), ResourceType::Document }, { });
+    testRequest(backend, { URL(URL(), "http://whatwg.org"), URL(URL(), "http://not_whatwg.org"), URL(URL(), "http://not_whatwg.org"), ResourceType::Document }, { });
     
     testRequest(backend, mainDocumentRequest("http://foobar.org/alwaysblock.pdf"), { variantIndex<ContentExtensions::BlockLoadAction> });
-    testRequest(backend, { URL(URL(), "http://foobar.org/alwaysblock.pdf"), URL(URL(), "http://not_foobar.org/alwaysblock.pdf"), ResourceType::Document }, { variantIndex<ContentExtensions::BlockLoadAction> });
+    testRequest(backend, { URL(URL(), "http://foobar.org/alwaysblock.pdf"), URL(URL(), "http://not_foobar.org/alwaysblock.pdf"), URL(URL(), "http://not_foobar.org/alwaysblock.pdf"), ResourceType::Document }, { variantIndex<ContentExtensions::BlockLoadAction> });
 }
 
 TEST_F(ContentExtensionTest, ResourceType)
@@ -1166,8 +1181,8 @@ TEST_F(ContentExtensionTest, ResourceOrLoadTypeMatchingEverything)
         "{\"action\":{\"type\":\"ignore-previous-rules\"},\"trigger\":{\"url-filter\":\".*\",\"load-type\":[\"first-party\"]}}]");
     
     testRequest(backend, mainDocumentRequest("http://webkit.org"), { }, 0);
-    testRequest(backend, { URL(URL(), "http://webkit.org"), URL(URL(), "http://not_webkit.org"), ResourceType::Document }, { variantIndex<ContentExtensions::BlockCookiesAction> });
-    testRequest(backend, { URL(URL(), "http://webkit.org"), URL(URL(), "http://not_webkit.org"), ResourceType::Image }, { variantIndex<ContentExtensions::BlockCookiesAction>, variantIndex<ContentExtensions::BlockLoadAction> });
+    testRequest(backend, { URL(URL(), "http://webkit.org"), URL(URL(), "http://not_webkit.org"), URL(URL(), "http://not_webkit.org"), ResourceType::Document }, { variantIndex<ContentExtensions::BlockCookiesAction> });
+    testRequest(backend, { URL(URL(), "http://webkit.org"), URL(URL(), "http://not_webkit.org"), URL(URL(), "http://not_webkit.org"), ResourceType::Image }, { variantIndex<ContentExtensions::BlockCookiesAction>, variantIndex<ContentExtensions::BlockLoadAction> });
 }
     
 TEST_F(ContentExtensionTest, WideNFA)
@@ -1540,6 +1555,7 @@ TEST_F(ContentExtensionTest, InvalidJSON)
 
     checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-domain\":[\"a\"],\"unless-domain\":[\"a\"]}}]", ContentExtensionError::JSONMultipleConditions);
     checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-top-url\":[\"a\"],\"unless-top-url\":[]}}]", ContentExtensionError::JSONMultipleConditions);
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-top-url\":[\"a\"],\"if-frame-url\":[]}}]", ContentExtensionError::JSONMultipleConditions);
     checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-top-url\":[\"a\"],\"unless-top-url\":[\"a\"]}}]", ContentExtensionError::JSONMultipleConditions);
     checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-domain\":[\"a\"],\"if-top-url\":[\"a\"]}}]", ContentExtensionError::JSONMultipleConditions);
     checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-top-url\":[],\"unless-domain\":[\"a\"]}}]", ContentExtensionError::JSONMultipleConditions);
@@ -3051,6 +3067,34 @@ TEST_F(ContentExtensionTest, Serialization)
     EXPECT_EQ(modifyHeadersBuffer.size(), 59u);
     auto deserializedModifyHeaders = ModifyHeadersAction::deserialize({ modifyHeadersBuffer.data(), modifyHeadersBuffer.size() });
     EXPECT_EQ(modifyHeaders, deserializedModifyHeaders);
+}
+
+TEST_F(ContentExtensionTest, IfFrameURL)
+{
+    auto basic = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"https\", \"if-frame-url\":[\"whatwg\"]}}]");
+    testRequest(basic, requestInTopAndFrameURLs("https://example.com/", "https://webkit.org/", "https://whatwg.org/"), { variantIndex<BlockLoadAction> });
+    testRequest(basic, requestInTopAndFrameURLs("https://example.com/", "https://webkit.org/", "https://webkit.org/"), { });
+
+    auto caseSensitivity = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"https\", \"if-frame-url\":[\"whatwg\"],\"frame-url-filter-is-case-sensitive\":true}}]");
+    auto caseSensitivityRequest = requestInTopAndFrameURLs("https://example.com/", "https://webkit.org/", "https://example.com/wHaTwG");
+    testRequest(basic, caseSensitivityRequest, { variantIndex<BlockLoadAction> });
+    testRequest(caseSensitivity, caseSensitivityRequest, { });
+
+    auto otherFlags = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"https\", \"if-frame-url\":[\"whatwg\"],\"resource-type\":[\"image\"]}}]");
+    testRequest(otherFlags, requestInTopAndFrameURLs("https://example.com/", "https://webkit.org/", "https://whatwg.org/", ResourceType::Document), { });
+    testRequest(otherFlags, requestInTopAndFrameURLs("https://example.com/", "https://webkit.org/", "https://whatwg.org/", ResourceType::Image), { variantIndex<BlockLoadAction> });
+
+    auto otherRulesWithConditions = makeBackend("["
+        "{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"https\", \"if-frame-url\":[\"whatwg\"]}},"
+        "{\"action\":{\"type\":\"block-cookies\"},\"trigger\":{\"url-filter\":\"https\", \"if-top-url\":[\"example\"]}}"
+    "]");
+    testRequest(otherRulesWithConditions, requestInTopAndFrameURLs("https://example.com/", "https://webkit.org/", "https://whatwg.org/"), { variantIndex<BlockLoadAction> });
+    testRequest(otherRulesWithConditions, requestInTopAndFrameURLs("https://example.com/", "https://example.com/", "https://webkit.org/"), { variantIndex<BlockCookiesAction> });
+    testRequest(otherRulesWithConditions, requestInTopAndFrameURLs("https://example.com/", "https://example.com/", "https://whatwg.org/"), { variantIndex<BlockCookiesAction>, variantIndex<BlockLoadAction> });
+    
+    auto matchingEverything = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"https\", \"if-frame-url\":[\".*\"]}}]");
+    testRequest(matchingEverything, requestInTopAndFrameURLs("https://example.com/", "https://webkit.org/", "https://whatwg.org/"), { variantIndex<BlockLoadAction> });
+    testRequest(matchingEverything, requestInTopAndFrameURLs("http://example.com/", "https://webkit.org/", "https://webkit.org/"), { });
 }
 
 } // namespace TestWebKitAPI

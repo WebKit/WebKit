@@ -1,0 +1,11 @@
+[
+    {
+        "action": {
+            "type": "block"
+        },
+        "trigger": {
+            "url-filter": ".*",
+            "if-frame-url": ["iframe.html"]
+        }
+    }
+]

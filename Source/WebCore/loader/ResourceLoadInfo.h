@@ -33,6 +33,14 @@
 
 namespace WebCore::ContentExtensions {
 
+enum class ActionCondition : uint32_t {
+    None = 0x00000,
+    IfTopURL = 0x20000,
+    UnlessTopURL = 0x40000,
+    IfFrameURL = 0x60000,
+};
+static constexpr uint32_t ActionConditionMask = 0x60000;
+
 enum class ResourceType : uint32_t {
     Document = 0x0001,
     Image = 0x0002,
@@ -62,21 +70,14 @@ enum class LoadContext : uint32_t {
 };
 static constexpr uint32_t LoadContextMask = 0xC000;
 
-static_assert(!(ResourceTypeMask & LoadTypeMask), "ResourceTypeMask and LoadTypeMask should be mutually exclusive because they are stored in the same uint32_t");
-static_assert(!(ResourceTypeMask & LoadContextMask), "ResourceTypeMask and LoadContextMask should be mutually exclusive because they are stored in the same uint32_t");
-static_assert(!(LoadContextMask & LoadTypeMask), "LoadContextMask and LoadTypeMask should be mutually exclusive because they are stored in the same uint32_t");
-
 using ResourceFlags = uint32_t;
 
+constexpr ResourceFlags AllResourceFlags = LoadTypeMask | ResourceTypeMask | LoadContextMask | ActionConditionMask;
+
 // The first 32 bits of a uint64_t action are used for the action location.
-// The next 24 bits are used for the flags (ResourceType and LoadType).
-// The next bit is used to mark actions that are from a rule with an if-domain.
-//     Actions from rules with unless-domain conditions are distinguished from
-//     rules with if-domain conditions by not having this bit set.
-//     Actions from rules with no conditions are put in the DFA without conditions.
+// The next 19 bits are used for the flags (ResourceType, LoadType, LoadContext, ActionCondition).
 // The values -1 and -2 are used for removed and empty values in HashTables.
-static constexpr uint64_t ActionFlagMask = 0x00FFFFFF00000000;
-static constexpr uint64_t IfConditionFlag = 0x0100000000000000;
+static constexpr uint64_t ActionFlagMask = 0x0007FFFF00000000;
 
 OptionSet<ResourceType> toResourceType(CachedResource::Type, ResourceRequestBase::Requester);
 std::optional<OptionSet<ResourceType>> readResourceType(StringView);
@@ -86,6 +87,7 @@ std::optional<OptionSet<LoadContext>> readLoadContext(StringView);
 struct ResourceLoadInfo {
     URL resourceURL;
     URL mainDocumentURL;
+    URL frameURL;
     OptionSet<ResourceType> type;
     bool mainFrameContext { false };
 

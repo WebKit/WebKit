@@ -134,7 +134,10 @@ static Expected<Trigger, std::error_code> loadTrigger(const JSON::Object& ruleOb
         trigger.urlFilterIsCaseSensitive = *urlFilterCaseSensitiveValue;
 
     if (std::optional<bool> topURLFilterCaseSensitiveValue = triggerObject->getBoolean("top-url-filter-is-case-sensitive"))
-        trigger.topURLConditionIsCaseSensitive = *topURLFilterCaseSensitiveValue;
+        trigger.topURLFilterIsCaseSensitive = *topURLFilterCaseSensitiveValue;
+
+    if (std::optional<bool> frameURLFilterCaseSensitiveValue = triggerObject->getBoolean("frame-url-filter-is-case-sensitive"))
+        trigger.frameURLFilterIsCaseSensitive = *frameURLFilterCaseSensitiveValue;
 
     if (auto resourceTypeValue = triggerObject->getValue("resource-type")) {
         auto resourceTypeArray = resourceTypeValue->asArray();
@@ -160,9 +163,9 @@ static Expected<Trigger, std::error_code> loadTrigger(const JSON::Object& ruleOb
             return makeUnexpected(error);
     }
 
-    auto checkCondition = [&] (ASCIILiteral key, Expected<Vector<String>, std::error_code> (*listReader)(const JSON::Array&), Trigger::ConditionType conditionType) -> std::error_code {
+    auto checkCondition = [&] (ASCIILiteral key, Expected<Vector<String>, std::error_code> (*listReader)(const JSON::Array&), ActionCondition actionCondition) -> std::error_code {
         if (auto value = triggerObject->getValue(key)) {
-            if (trigger.conditionType != Trigger::ConditionType::None)
+            if (trigger.flags & ActionConditionMask)
                 return ContentExtensionError::JSONMultipleConditions;
             auto array = value->asArray();
             if (!array)
@@ -173,22 +176,24 @@ static Expected<Trigger, std::error_code> loadTrigger(const JSON::Object& ruleOb
             trigger.conditions = WTFMove(list.value());
             if (trigger.conditions.isEmpty())
                 return ContentExtensionError::JSONInvalidConditionList;
-            ASSERT(trigger.conditionType == Trigger::ConditionType::None);
-            trigger.conditionType = conditionType;
+            trigger.flags |= static_cast<ResourceFlags>(actionCondition);
         }
         return { };
     };
 
-    if (auto error = checkCondition("if-domain"_s, getDomainList, Trigger::ConditionType::IfTopURL))
+    if (auto error = checkCondition("if-domain"_s, getDomainList, ActionCondition::IfTopURL))
         return makeUnexpected(error);
 
-    if (auto error = checkCondition("unless-domain"_s, getDomainList, Trigger::ConditionType::UnlessTopURL))
+    if (auto error = checkCondition("unless-domain"_s, getDomainList, ActionCondition::UnlessTopURL))
         return makeUnexpected(error);
 
-    if (auto error = checkCondition("if-top-url"_s, getStringList, Trigger::ConditionType::IfTopURL))
+    if (auto error = checkCondition("if-top-url"_s, getStringList, ActionCondition::IfTopURL))
         return makeUnexpected(error);
 
-    if (auto error = checkCondition("unless-top-url"_s, getStringList, Trigger::ConditionType::UnlessTopURL))
+    if (auto error = checkCondition("unless-top-url"_s, getStringList, ActionCondition::UnlessTopURL))
+        return makeUnexpected(error);
+
+    if (auto error = checkCondition("if-frame-url"_s, getStringList, ActionCondition::IfFrameURL))
         return makeUnexpected(error);
 
     return trigger;

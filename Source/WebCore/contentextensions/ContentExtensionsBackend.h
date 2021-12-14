@@ -71,7 +71,7 @@ public:
     WEBCORE_EXPORT StyleSheetContents* globalDisplayNoneStyleSheet(const String& identifier) const;
 
     ContentRuleListResults processContentRuleListsForLoad(Page&, const URL&, OptionSet<ResourceType>, DocumentLoader& initiatingDocumentLoader, const URL& redirectFrom);
-    WEBCORE_EXPORT ContentRuleListResults processContentRuleListsForPingLoad(const URL&, const URL& mainDocumentURL);
+    WEBCORE_EXPORT ContentRuleListResults processContentRuleListsForPingLoad(const URL&, const URL& mainDocumentURL, const URL& frameURL);
 
     static const String& displayNoneCSSRule();
 
@@ -80,12 +80,14 @@ public:
     WEBCORE_EXPORT static bool shouldBeMadeSecure(const URL&);
 
 private:
+    ActionsFromContentRuleList actionsFromContentRuleList(const ContentExtension&, const CString& urlString, const ResourceLoadInfo&, ResourceFlags) const;
+
     HashMap<String, Ref<ContentExtension>> m_contentExtensions;
 };
 
 WEBCORE_EXPORT void applyResultsToRequest(ContentRuleListResults&&, Page*, ResourceRequest&);
 
-} // namespace ContentExtensions
+} // namespace WebCore::ContentExtensions
 } // namespace WebCore
 
 #endif // ENABLE(CONTENT_EXTENSIONS)

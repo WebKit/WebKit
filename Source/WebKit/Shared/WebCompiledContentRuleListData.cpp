@@ -51,10 +51,8 @@ void WebCompiledContentRuleListData::encode(IPC::Encoder& encoder) const
 
     encoder << actionsOffset;
     encoder << actionsSize;
-    encoder << filtersWithoutConditionsBytecodeOffset;
-    encoder << filtersWithoutConditionsBytecodeSize;
-    encoder << filtersWithConditionsBytecodeOffset;
-    encoder << filtersWithConditionsBytecodeSize;
+    encoder << urlFiltersBytecodeOffset;
+    encoder << urlFiltersBytecodeSize;
     encoder << topURLFiltersBytecodeOffset;
     encoder << topURLFiltersBytecodeSize;
     encoder << frameURLFiltersBytecodeOffset;
@@ -85,24 +83,14 @@ std::optional<WebCompiledContentRuleListData> WebCompiledContentRuleListData::de
     if (!actionsSize)
         return std::nullopt;
 
-    std::optional<size_t> filtersWithoutConditionsBytecodeOffset;
-    decoder >> filtersWithoutConditionsBytecodeOffset;
-    if (!filtersWithoutConditionsBytecodeOffset)
+    std::optional<size_t> urlFiltersBytecodeOffset;
+    decoder >> urlFiltersBytecodeOffset;
+    if (!urlFiltersBytecodeOffset)
         return std::nullopt;
 
-    std::optional<size_t> filtersWithoutConditionsBytecodeSize;
-    decoder >> filtersWithoutConditionsBytecodeSize;
-    if (!filtersWithoutConditionsBytecodeSize)
-        return std::nullopt;
-
-    std::optional<size_t> filtersWithConditionsBytecodeOffset;
-    decoder >> filtersWithConditionsBytecodeOffset;
-    if (!filtersWithConditionsBytecodeOffset)
-        return std::nullopt;
-
-    std::optional<size_t> filtersWithConditionsBytecodeSize;
-    decoder >> filtersWithConditionsBytecodeSize;
-    if (!filtersWithConditionsBytecodeSize)
+    std::optional<size_t> urlFiltersBytecodeSize;
+    decoder >> urlFiltersBytecodeSize;
+    if (!urlFiltersBytecodeSize)
         return std::nullopt;
 
     std::optional<size_t> topURLFiltersBytecodeOffset;
@@ -130,10 +118,8 @@ std::optional<WebCompiledContentRuleListData> WebCompiledContentRuleListData::de
         data.releaseNonNull(),
         WTFMove(*actionsOffset),
         WTFMove(*actionsSize),
-        WTFMove(*filtersWithoutConditionsBytecodeOffset),
-        WTFMove(*filtersWithoutConditionsBytecodeSize),
-        WTFMove(*filtersWithConditionsBytecodeOffset),
-        WTFMove(*filtersWithConditionsBytecodeSize),
+        WTFMove(*urlFiltersBytecodeOffset),
+        WTFMove(*urlFiltersBytecodeSize),
         WTFMove(*topURLFiltersBytecodeOffset),
         WTFMove(*topURLFiltersBytecodeSize),
         WTFMove(*frameURLFiltersBytecodeOffset),

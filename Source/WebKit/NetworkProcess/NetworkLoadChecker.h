@@ -85,9 +85,10 @@ public:
     void setParentCrossOriginEmbedderPolicy(const WebCore::CrossOriginEmbedderPolicy& parentCrossOriginEmbedderPolicy) { m_parentCrossOriginEmbedderPolicy = parentCrossOriginEmbedderPolicy; }
     void setCrossOriginEmbedderPolicy(const WebCore::CrossOriginEmbedderPolicy& crossOriginEmbedderPolicy) { m_crossOriginEmbedderPolicy = crossOriginEmbedderPolicy; }
 #if ENABLE(CONTENT_EXTENSIONS)
-    void setContentExtensionController(URL&& mainDocumentURL, std::optional<UserContentControllerIdentifier> identifier)
+    void setContentExtensionController(URL&& mainDocumentURL, URL&& frameURL, std::optional<UserContentControllerIdentifier> identifier)
     {
         m_mainDocumentURL = WTFMove(mainDocumentURL);
+        m_frameURL = WTFMove(frameURL);
         m_userContentControllerIdentifier = identifier;
     }
 #endif
@@ -148,6 +149,7 @@ private:
     WebCore::CrossOriginEmbedderPolicy m_crossOriginEmbedderPolicy;
 #if ENABLE(CONTENT_EXTENSIONS)
     URL m_mainDocumentURL;
+    URL m_frameURL;
     std::optional<UserContentControllerIdentifier> m_userContentControllerIdentifier;
 #endif
 

@@ -87,6 +87,7 @@ public:
 
 #if ENABLE(CONTENT_EXTENSIONS)
     URL mainDocumentURL;
+    URL frameURL;
     std::optional<UserContentControllerIdentifier> userContentControllerIdentifier;
 #endif
     

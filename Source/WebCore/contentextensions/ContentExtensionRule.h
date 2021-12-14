@@ -32,9 +32,7 @@
 #include <wtf/Hasher.h>
 #include <wtf/text/WTFString.h>
 
-namespace WebCore {
-
-namespace ContentExtensions {
+namespace WebCore::ContentExtensions {
 
 // A ContentExtensionRule is the smallest unit in a ContentExtension.
 //
@@ -44,49 +42,48 @@ namespace ContentExtensions {
 struct Trigger {
     String urlFilter;
     bool urlFilterIsCaseSensitive { false };
-    bool topURLConditionIsCaseSensitive { false };
+    bool topURLFilterIsCaseSensitive { false };
+    bool frameURLFilterIsCaseSensitive { false };
     ResourceFlags flags { 0 };
     Vector<String> conditions;
-    enum class ConditionType : uint8_t {
-        None,
-        IfTopURL,
-        UnlessTopURL,
-    } conditionType { ConditionType::None };
 
     WEBCORE_EXPORT Trigger isolatedCopy() const;
     
     ~Trigger()
     {
-        ASSERT(conditions.isEmpty() == (conditionType == ConditionType::None));
-        if (topURLConditionIsCaseSensitive)
-            ASSERT(conditionType == ConditionType::IfTopURL || conditionType == ConditionType::UnlessTopURL);
+        auto actionCondition = static_cast<ActionCondition>(flags & ActionConditionMask);
+        ASSERT_UNUSED(actionCondition, conditions.isEmpty() == (actionCondition == ActionCondition::None));
+        if (topURLFilterIsCaseSensitive)
+            ASSERT(actionCondition == ActionCondition::IfTopURL || actionCondition == ActionCondition::UnlessTopURL);
+        if (frameURLFilterIsCaseSensitive)
+            ASSERT(actionCondition == ActionCondition::IfFrameURL);
     }
 
     bool isEmpty() const
     {
         return urlFilter.isEmpty()
             && !urlFilterIsCaseSensitive
-            && !topURLConditionIsCaseSensitive
+            && !topURLFilterIsCaseSensitive
+            && !frameURLFilterIsCaseSensitive
             && !flags
-            && conditions.isEmpty()
-            && conditionType == ConditionType::None;
+            && conditions.isEmpty();
     }
 
     bool operator==(const Trigger& other) const
     {
         return urlFilter == other.urlFilter
             && urlFilterIsCaseSensitive == other.urlFilterIsCaseSensitive
-            && topURLConditionIsCaseSensitive == other.topURLConditionIsCaseSensitive
+            && topURLFilterIsCaseSensitive == other.topURLFilterIsCaseSensitive
+            && frameURLFilterIsCaseSensitive == other.frameURLFilterIsCaseSensitive
             && flags == other.flags
-            && conditions == other.conditions
-            && conditionType == other.conditionType;
+            && conditions == other.conditions;
     }
 };
 
 struct TriggerHash {
     static unsigned hash(const Trigger& trigger)
     {
-        return computeHash(trigger.urlFilterIsCaseSensitive, trigger.urlFilter, trigger.flags, trigger.conditions, trigger.conditionType);
+        return computeHash(trigger.urlFilterIsCaseSensitive, trigger.urlFilter, trigger.flags, trigger.conditions);
     }
     static bool equal(const Trigger& a, const Trigger& b)
     {
@@ -170,7 +167,6 @@ private:
     const Action m_action;
 };
 
-} // namespace ContentExtensions
-} // namespace WebCore
+} // namespace WebCore::ContentExtensions
 
 #endif // ENABLE(CONTENT_EXTENSIONS)

@@ -60,13 +60,11 @@ enum class DFABytecodeInstruction : uint8_t {
     // AppendAction has one argument:
     // The action to append (1-4 bytes).
     AppendAction = 0x6,
-    AppendActionWithIfCondition = 0x7,
     
     // TestFlagsAndAppendAction has two arguments:
     // The flags to check before appending (1-3 bytes).
     // The action to append (1-4 bytes).
     TestFlagsAndAppendAction = 0x8,
-    TestFlagsAndAppendActionWithIfCondition = 0x9,
 
     // Terminate has no arguments.
     Terminate = 0xA,

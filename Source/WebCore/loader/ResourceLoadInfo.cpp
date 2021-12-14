@@ -34,6 +34,14 @@
 
 namespace WebCore::ContentExtensions {
 
+static_assert(!(ResourceTypeMask & LoadTypeMask), "ResourceTypeMask and LoadTypeMask should be mutually exclusive because they are stored in the same uint32_t");
+static_assert(!(ResourceTypeMask & LoadContextMask), "ResourceTypeMask and LoadContextMask should be mutually exclusive because they are stored in the same uint32_t");
+static_assert(!(ResourceTypeMask & ActionConditionMask), "ResourceTypeMask and ActionConditionMask should be mutually exclusive because they are stored in the same uint32_t");
+static_assert(!(LoadContextMask & LoadTypeMask), "LoadContextMask and LoadTypeMask should be mutually exclusive because they are stored in the same uint32_t");
+static_assert(!(LoadContextMask & ActionConditionMask), "LoadContextMask and ActionConditionMask should be mutually exclusive because they are stored in the same uint32_t");
+static_assert(!(LoadTypeMask & ActionConditionMask), "LoadTypeMask and ActionConditionMask should be mutually exclusive because they are stored in the same uint32_t");
+static_assert(static_cast<uint64_t>(AllResourceFlags) << 32 == ActionFlagMask, "ActionFlagMask should cover all the action flags");
+
 OptionSet<ResourceType> toResourceType(CachedResource::Type type, ResourceRequestBase::Requester requester)
 {
     switch (type) {

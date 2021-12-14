@@ -44,8 +44,7 @@
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
 
-namespace WebCore {
-namespace ContentExtensions {
+namespace WebCore::ContentExtensions {
 
 // css-display-none combining is special because we combine the string arguments with commas because we know they are css selectors.
 struct PendingDisplayNoneActions {
@@ -87,9 +86,7 @@ static Vector<unsigned> serializeActions(const Vector<ContentExtensionRule>& rul
     RedirectActionMap redirectActionMap;
     ModifyHeadersActionMap modifyHeadersActionMap;
 
-    for (unsigned ruleIndex = 0; ruleIndex < ruleList.size(); ++ruleIndex) {
-        const ContentExtensionRule& rule = ruleList[ruleIndex];
-
+    for (auto& rule : ruleList) {
         auto& actionData = rule.action().data();
         if (std::holds_alternative<IgnorePreviousRulesAction>(actionData)) {
             resolvePendingDisplayNoneActions(actions, actionLocations, cssDisplayNoneActionsMap);
@@ -173,7 +170,7 @@ static Vector<unsigned> serializeActions(const Vector<ContentExtensionRule>& rul
     return actionLocations;
 }
 
-typedef HashSet<uint64_t, DefaultHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>> UniversalActionSet;
+using UniversalActionSet = HashSet<uint64_t, DefaultHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>>;
 
 static void addUniversalActionsToDFA(DFA& dfa, UniversalActionSet&& universalActions)
 {
@@ -290,18 +287,19 @@ std::error_code compileRuleList(ContentExtensionCompilationClient& client, Strin
     LOG_LARGE_STRUCTURES(actions, actions.capacity() * sizeof(SerializedActionByte));
     client.writeActions(WTFMove(actions));
 
-    UniversalActionSet universalActionsWithoutConditions;
-    UniversalActionSet universalActionsWithConditions;
-    UniversalActionSet universalTopURLActions;
-
     // FIXME: These don't all need to be in memory at the same time.
-    CombinedURLFilters filtersWithoutConditions;
-    CombinedURLFilters filtersWithConditions;
+    CombinedURLFilters urlFilters;
+    UniversalActionSet universalActions;
+    URLFilterParser urlFilterParser(urlFilters);
+
     CombinedURLFilters topURLFilters;
-    URLFilterParser filtersWithoutConditionParser(filtersWithoutConditions);
-    URLFilterParser filtersWithConditionParser(filtersWithConditions);
+    UniversalActionSet topURLUniversalActions;
     URLFilterParser topURLFilterParser(topURLFilters);
-    
+
+    CombinedURLFilters frameURLFilters;
+    UniversalActionSet frameURLUniversalActions;
+    URLFilterParser frameURLFilterParser(frameURLFilters);
+
     for (unsigned ruleIndex = 0; ruleIndex < parsedRuleList.size(); ++ruleIndex) {
         const ContentExtensionRule& contentExtensionRule = parsedRuleList[ruleIndex];
         const Trigger& trigger = contentExtensionRule.trigger();
@@ -312,47 +310,44 @@ std::error_code compileRuleList(ContentExtensionCompilationClient& client, Strin
         ASSERT(!(~ActionFlagMask & (static_cast<uint64_t>(trigger.flags) << 32)));
         uint64_t actionLocationAndFlags = (static_cast<uint64_t>(trigger.flags) << 32) | static_cast<uint64_t>(actionLocations[ruleIndex]);
         URLFilterParser::ParseStatus status = URLFilterParser::Ok;
-        if (trigger.conditions.isEmpty()) {
-            ASSERT(trigger.conditionType == Trigger::ConditionType::None);
-            status = filtersWithoutConditionParser.addPattern(trigger.urlFilter, trigger.urlFilterIsCaseSensitive, actionLocationAndFlags);
-            if (status == URLFilterParser::MatchesEverything) {
-                universalActionsWithoutConditions.add(actionLocationAndFlags);
-                status = URLFilterParser::Ok;
-            }
-            if (status != URLFilterParser::Ok) {
-                dataLogF("Error while parsing %s: %s\n", trigger.urlFilter.utf8().data(), URLFilterParser::statusString(status).utf8().data());
-                return ContentExtensionError::JSONInvalidRegex;
-            }
-        } else {
-            switch (trigger.conditionType) {
-            case Trigger::ConditionType::IfTopURL:
-                actionLocationAndFlags |= IfConditionFlag;
+        status = urlFilterParser.addPattern(trigger.urlFilter, trigger.urlFilterIsCaseSensitive, actionLocationAndFlags);
+        if (status == URLFilterParser::MatchesEverything) {
+            universalActions.add(actionLocationAndFlags);
+            status = URLFilterParser::Ok;
+        }
+        if (status != URLFilterParser::Ok) {
+            dataLogF("Error while parsing %s: %s\n", trigger.urlFilter.utf8().data(), URLFilterParser::statusString(status).utf8().data());
+            return ContentExtensionError::JSONInvalidRegex;
+        }
+
+        for (const String& condition : trigger.conditions) {
+            switch (static_cast<ActionCondition>(trigger.flags & ActionConditionMask)) {
+            case ActionCondition::None:
+                ASSERT_NOT_REACHED();
                 break;
-            case Trigger::ConditionType::None:
-            case Trigger::ConditionType::UnlessTopURL:
-                ASSERT(!(actionLocationAndFlags & IfConditionFlag));
-                break;
-            }
-            
-            status = filtersWithConditionParser.addPattern(trigger.urlFilter, trigger.urlFilterIsCaseSensitive, actionLocationAndFlags);
-            if (status == URLFilterParser::MatchesEverything) {
-                universalActionsWithConditions.add(actionLocationAndFlags);
-                status = URLFilterParser::Ok;
-            }
-            if (status != URLFilterParser::Ok) {
-                dataLogF("Error while parsing %s: %s\n", trigger.urlFilter.utf8().data(), URLFilterParser::statusString(status).utf8().data());
-                return ContentExtensionError::JSONInvalidRegex;
-            }
-            for (const String& condition : trigger.conditions) {
-                status = topURLFilterParser.addPattern(condition, trigger.topURLConditionIsCaseSensitive, actionLocationAndFlags);
+            case ActionCondition::IfTopURL:
+            case ActionCondition::UnlessTopURL:
+                status = topURLFilterParser.addPattern(condition, trigger.topURLFilterIsCaseSensitive, actionLocationAndFlags);
                 if (status == URLFilterParser::MatchesEverything) {
-                    universalTopURLActions.add(actionLocationAndFlags);
+                    topURLUniversalActions.add(actionLocationAndFlags);
                     status = URLFilterParser::Ok;
                 }
                 if (status != URLFilterParser::Ok) {
                     dataLogF("Error while parsing %s: %s\n", condition.utf8().data(), URLFilterParser::statusString(status).utf8().data());
                     return ContentExtensionError::JSONInvalidRegex;
                 }
+                break;
+            case ActionCondition::IfFrameURL:
+                status = frameURLFilterParser.addPattern(condition, trigger.frameURLFilterIsCaseSensitive, actionLocationAndFlags);
+                if (status == URLFilterParser::MatchesEverything) {
+                    frameURLUniversalActions.add(actionLocationAndFlags);
+                    status = URLFilterParser::Ok;
+                }
+                if (status != URLFilterParser::Ok) {
+                    dataLogF("Error while parsing %s: %s\n", condition.utf8().data(), URLFilterParser::statusString(status).utf8().data());
+                    return ContentExtensionError::JSONInvalidRegex;
+                }
+                break;
             }
         }
         ASSERT(status == URLFilterParser::Ok);
@@ -370,23 +365,24 @@ std::error_code compileRuleList(ContentExtensionCompilationClient& client, Strin
     LOG_LARGE_STRUCTURES(filtersWithoutConditions, filtersWithoutConditions.memoryUsed());
     LOG_LARGE_STRUCTURES(filtersWithConditions, filtersWithConditions.memoryUsed());
     LOG_LARGE_STRUCTURES(topURLFilters, topURLFilters.memoryUsed());
+    LOG_LARGE_STRUCTURES(frameURLFilters, frameURLFilters.memoryUsed());
 
 #if CONTENT_EXTENSIONS_PERFORMANCE_REPORTING
     MonotonicTime totalNFAToByteCodeBuildTimeStart = MonotonicTime::now();
 #endif
 
-    bool success = compileToBytecode(WTFMove(filtersWithoutConditions), WTFMove(universalActionsWithoutConditions), [&](Vector<DFABytecode>&& bytecode) {
-        client.writeFiltersWithoutConditionsBytecode(WTFMove(bytecode));
+    bool success = compileToBytecode(WTFMove(urlFilters), WTFMove(universalActions), [&](Vector<DFABytecode>&& bytecode) {
+        client.writeURLFiltersBytecode(WTFMove(bytecode));
     });
     if (!success)
         return ContentExtensionError::ErrorWritingSerializedNFA;
-    success = compileToBytecode(WTFMove(filtersWithConditions), WTFMove(universalActionsWithConditions), [&](Vector<DFABytecode>&& bytecode) {
-        client.writeFiltersWithConditionsBytecode(WTFMove(bytecode));
-    });
-    if (!success)
-        return ContentExtensionError::ErrorWritingSerializedNFA;
-    success = compileToBytecode(WTFMove(topURLFilters), WTFMove(universalTopURLActions), [&](Vector<DFABytecode>&& bytecode) {
+    success = compileToBytecode(WTFMove(topURLFilters), WTFMove(topURLUniversalActions), [&](Vector<DFABytecode>&& bytecode) {
         client.writeTopURLFiltersBytecode(WTFMove(bytecode));
+    });
+    if (!success)
+        return ContentExtensionError::ErrorWritingSerializedNFA;
+    success = compileToBytecode(WTFMove(frameURLFilters), WTFMove(frameURLUniversalActions), [&](Vector<DFABytecode>&& bytecode) {
+        client.writeFrameURLFiltersBytecode(WTFMove(bytecode));
     });
     if (!success)
         return ContentExtensionError::ErrorWritingSerializedNFA;
@@ -401,7 +397,6 @@ std::error_code compileRuleList(ContentExtensionCompilationClient& client, Strin
     return { };
 }
 
-} // namespace ContentExtensions
-} // namespace WebCore
+} // namespace WebCore::ContentExtensions
 
 #endif // ENABLE(CONTENT_EXTENSIONS)

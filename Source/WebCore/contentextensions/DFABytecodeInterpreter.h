@@ -43,18 +43,16 @@ public:
     using Actions = HashSet<uint64_t, DefaultHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>>;
 
     WEBCORE_EXPORT Actions interpret(const CString&, ResourceFlags);
-    Actions interpretWithConditions(const CString&, ResourceFlags, const Actions& conditionActions);
     Actions actionsMatchingEverything();
 
 private:
-    void interpretAppendAction(unsigned& programCounter, Actions&, bool ifCondition);
-    void interpretTestFlagsAndAppendAction(unsigned& programCounter, ResourceFlags, Actions&, bool ifCondition);
+    void interpretAppendAction(unsigned& programCounter, Actions&);
+    void interpretTestFlagsAndAppendAction(unsigned& programCounter, ResourceFlags, Actions&);
 
     template<bool caseSensitive>
     void interpetJumpTable(const char* url, uint32_t& urlIndex, uint32_t& programCounter, bool& urlIndexIsAfterEndOfString);
 
     const Span<const uint8_t> m_bytecode;
-    const DFABytecodeInterpreter::Actions* m_topURLActions { nullptr };
 };
 
 } // namespace WebCore::ContentExtensions

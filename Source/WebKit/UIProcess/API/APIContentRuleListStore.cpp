@@ -109,21 +109,20 @@ struct ContentRuleListMetaData {
     uint32_t version { ContentRuleListStore::CurrentContentRuleListFileVersion };
     uint64_t sourceSize { 0 };
     uint64_t actionsSize { 0 };
-    uint64_t filtersWithoutConditionsBytecodeSize { 0 };
-    uint64_t filtersWithConditionsBytecodeSize { 0 };
-    uint64_t conditionedFiltersBytecodeSize { 0 };
-    uint32_t unused32bits { false };
+    uint64_t urlFiltersBytecodeSize { 0 };
+    uint64_t topURLFiltersBytecodeSize { 0 };
     uint64_t frameURLFiltersBytecodeSize { 0 };
-    uint64_t unused64bits { 0 }; // Additional space on disk reserved so we can add something without incrementing the version number.
+    uint32_t unused32bits { false };
+    uint64_t unused64bits1 { 0 };
+    uint64_t unused64bits2 { 0 }; // Additional space on disk reserved so we can add something without incrementing the version number.
     
     size_t fileSize() const
     {
         return headerSize(version)
             + sourceSize
             + actionsSize
-            + filtersWithoutConditionsBytecodeSize
-            + filtersWithConditionsBytecodeSize
-            + conditionedFiltersBytecodeSize
+            + urlFiltersBytecodeSize
+            + topURLFiltersBytecodeSize
             + frameURLFiltersBytecodeSize;
     }
 };
@@ -135,12 +134,12 @@ static WebKit::NetworkCache::Data encodeContentRuleListMetaData(const ContentRul
     encoder << metaData.version;
     encoder << metaData.sourceSize;
     encoder << metaData.actionsSize;
-    encoder << metaData.filtersWithoutConditionsBytecodeSize;
-    encoder << metaData.filtersWithConditionsBytecodeSize;
-    encoder << metaData.conditionedFiltersBytecodeSize;
-    encoder << metaData.unused32bits;
+    encoder << metaData.urlFiltersBytecodeSize;
+    encoder << metaData.topURLFiltersBytecodeSize;
     encoder << metaData.frameURLFiltersBytecodeSize;
-    encoder << metaData.unused64bits;
+    encoder << metaData.unused32bits;
+    encoder << metaData.unused64bits1;
+    encoder << metaData.unused64bits2;
 
     ASSERT(encoder.bufferSize() == CurrentVersionFileHeaderSize);
     return WebKit::NetworkCache::Data(encoder.buffer(), encoder.bufferSize());
@@ -181,23 +180,23 @@ static std::optional<ContentRuleListMetaData> decodeContentRuleListMetaData(cons
         return std::nullopt;
     metaData.actionsSize = WTFMove(*actionsSize);
 
-    std::optional<uint64_t> filtersWithoutConditionsBytecodeSize;
-    decoder >> filtersWithoutConditionsBytecodeSize;
-    if (!filtersWithoutConditionsBytecodeSize)
+    std::optional<uint64_t> urlFiltersBytecodeSize;
+    decoder >> urlFiltersBytecodeSize;
+    if (!urlFiltersBytecodeSize)
         return std::nullopt;
-    metaData.filtersWithoutConditionsBytecodeSize = WTFMove(*filtersWithoutConditionsBytecodeSize);
+    metaData.urlFiltersBytecodeSize = WTFMove(*urlFiltersBytecodeSize);
 
-    std::optional<uint64_t> filtersWithConditionsBytecodeSize;
-    decoder >> filtersWithConditionsBytecodeSize;
-    if (!filtersWithConditionsBytecodeSize)
+    std::optional<uint64_t> topURLFiltersBytecodeSize;
+    decoder >> topURLFiltersBytecodeSize;
+    if (!topURLFiltersBytecodeSize)
         return std::nullopt;
-    metaData.filtersWithConditionsBytecodeSize = WTFMove(*filtersWithConditionsBytecodeSize);
+    metaData.topURLFiltersBytecodeSize = WTFMove(*topURLFiltersBytecodeSize);
 
-    std::optional<uint64_t> conditionedFiltersBytecodeSize;
-    decoder >> conditionedFiltersBytecodeSize;
-    if (!conditionedFiltersBytecodeSize)
+    std::optional<uint64_t> frameURLFiltersBytecodeSize;
+    decoder >> frameURLFiltersBytecodeSize;
+    if (!frameURLFiltersBytecodeSize)
         return std::nullopt;
-    metaData.conditionedFiltersBytecodeSize = WTFMove(*conditionedFiltersBytecodeSize);
+    metaData.frameURLFiltersBytecodeSize = WTFMove(*frameURLFiltersBytecodeSize);
 
     std::optional<uint32_t> unused32bits;
     decoder >> unused32bits;
@@ -208,17 +207,17 @@ static std::optional<ContentRuleListMetaData> decodeContentRuleListMetaData(cons
     if (metaData.version < 12)
         return metaData;
 
-    std::optional<uint64_t> frameURLFiltersBytecodeSize;
-    decoder >> frameURLFiltersBytecodeSize;
-    if (!frameURLFiltersBytecodeSize)
+    std::optional<uint64_t> unused1;
+    decoder >> unused1;
+    if (!unused1)
         return std::nullopt;
-    metaData.frameURLFiltersBytecodeSize = WTFMove(*frameURLFiltersBytecodeSize);
-    
-    std::optional<uint64_t> unused;
-    decoder >> unused;
-    if (!unused)
+    metaData.unused64bits1 = 0;
+
+    std::optional<uint64_t> unused2;
+    decoder >> unused2;
+    if (!unused2)
         return std::nullopt;
-    metaData.unused64bits = 0;
+    metaData.unused64bits2 = 0;
 
     return metaData;
 }
@@ -266,18 +265,19 @@ static Expected<MappedData, std::error_code> compiledToFile(WTF::String&& json, 
         {
             ASSERT(!metaData.sourceSize);
             ASSERT(!metaData.actionsSize);
-            ASSERT(!metaData.filtersWithoutConditionsBytecodeSize);
-            ASSERT(!metaData.filtersWithConditionsBytecodeSize);
-            ASSERT(!metaData.conditionedFiltersBytecodeSize);
+            ASSERT(!metaData.urlFiltersBytecodeSize);
+            ASSERT(!metaData.topURLFiltersBytecodeSize);
+            ASSERT(!metaData.frameURLFiltersBytecodeSize);
         }
         
         void writeSource(WTF::String&& sourceJSON) final
         {
-            ASSERT(!m_filtersWithoutConditionsBytecodeWritten);
-            ASSERT(!m_filtersWithConditionBytecodeWritten);
-            ASSERT(!m_conditionFiltersBytecodeWritten);
-            ASSERT(!m_actionsWritten);
             ASSERT(!m_sourceWritten);
+            ASSERT(!m_actionsWritten);
+            ASSERT(!m_urlFiltersBytecodeWritten);
+            ASSERT(!m_topURLFiltersBytecodeWritten);
+            ASSERT(!m_frameURLFiltersBytecodeWritten);
+
             writeToFile(sourceJSON.is8Bit());
             m_sourceWritten += sizeof(bool);
             if (sourceJSON.is8Bit()) {
@@ -290,46 +290,46 @@ static Expected<MappedData, std::error_code> compiledToFile(WTF::String&& json, 
                 m_sourceWritten += serializedLength;
             }
         }
-        
-        void writeFiltersWithoutConditionsBytecode(Vector<DFABytecode>&& bytecode) final
+
+        void writeActions(Vector<SerializedActionByte>&& actions) final
         {
-            ASSERT(!m_filtersWithConditionBytecodeWritten);
-            ASSERT(!m_conditionFiltersBytecodeWritten);
-            m_filtersWithoutConditionsBytecodeWritten += bytecode.size();
-            writeToFile(WebKit::NetworkCache::Data(bytecode.data(), bytecode.size()));
+            ASSERT(!m_actionsWritten);
+            ASSERT(!m_urlFiltersBytecodeWritten);
+            ASSERT(!m_topURLFiltersBytecodeWritten);
+            ASSERT(!m_frameURLFiltersBytecodeWritten);
+            m_actionsWritten += actions.size();
+            writeToFile(WebKit::NetworkCache::Data(actions.data(), actions.size()));
         }
-        
-        void writeFiltersWithConditionsBytecode(Vector<DFABytecode>&& bytecode) final
+
+        void writeURLFiltersBytecode(Vector<DFABytecode>&& bytecode) final
         {
-            ASSERT(!m_conditionFiltersBytecodeWritten);
-            m_filtersWithConditionBytecodeWritten += bytecode.size();
+            ASSERT(!m_topURLFiltersBytecodeWritten);
+            ASSERT(!m_frameURLFiltersBytecodeWritten);
+            m_urlFiltersBytecodeWritten += bytecode.size();
             writeToFile(WebKit::NetworkCache::Data(bytecode.data(), bytecode.size()));
         }
         
         void writeTopURLFiltersBytecode(Vector<DFABytecode>&& bytecode) final
         {
-            m_conditionFiltersBytecodeWritten += bytecode.size();
+            ASSERT(!m_frameURLFiltersBytecodeWritten);
+            m_topURLFiltersBytecodeWritten += bytecode.size();
             writeToFile(WebKit::NetworkCache::Data(bytecode.data(), bytecode.size()));
         }
 
-        void writeActions(Vector<SerializedActionByte>&& actions) final
+        void writeFrameURLFiltersBytecode(Vector<DFABytecode>&& bytecode) final
         {
-            ASSERT(!m_filtersWithoutConditionsBytecodeWritten);
-            ASSERT(!m_filtersWithConditionBytecodeWritten);
-            ASSERT(!m_conditionFiltersBytecodeWritten);
-            ASSERT(!m_actionsWritten);
-            m_actionsWritten += actions.size();
-            writeToFile(WebKit::NetworkCache::Data(actions.data(), actions.size()));
+            m_frameURLFiltersBytecodeWritten += bytecode.size();
+            writeToFile(WebKit::NetworkCache::Data(bytecode.data(), bytecode.size()));
         }
         
         void finalize() final
         {
             m_metaData.sourceSize = m_sourceWritten;
             m_metaData.actionsSize = m_actionsWritten;
-            m_metaData.filtersWithoutConditionsBytecodeSize = m_filtersWithoutConditionsBytecodeWritten;
-            m_metaData.filtersWithConditionsBytecodeSize = m_filtersWithConditionBytecodeWritten;
-            m_metaData.conditionedFiltersBytecodeSize = m_conditionFiltersBytecodeWritten;
-            
+            m_metaData.urlFiltersBytecodeSize = m_urlFiltersBytecodeWritten;
+            m_metaData.topURLFiltersBytecodeSize = m_topURLFiltersBytecodeWritten;
+            m_metaData.frameURLFiltersBytecodeSize = m_frameURLFiltersBytecodeWritten;
+
             WebKit::NetworkCache::Data header = encodeContentRuleListMetaData(m_metaData);
             if (!m_fileError && seekFile(m_fileHandle, 0ll, FileSeekOrigin::Beginning) == -1) {
                 closeFile(m_fileHandle);
@@ -355,11 +355,11 @@ static Expected<MappedData, std::error_code> compiledToFile(WTF::String&& json, 
         
         PlatformFileHandle m_fileHandle;
         ContentRuleListMetaData& m_metaData;
-        size_t m_filtersWithoutConditionsBytecodeWritten { 0 };
-        size_t m_filtersWithConditionBytecodeWritten { 0 };
-        size_t m_conditionFiltersBytecodeWritten { 0 };
-        size_t m_actionsWritten { 0 };
         size_t m_sourceWritten { 0 };
+        size_t m_actionsWritten { 0 };
+        size_t m_urlFiltersBytecodeWritten { 0 };
+        size_t m_topURLFiltersBytecodeWritten { 0 };
+        size_t m_frameURLFiltersBytecodeWritten { 0 };
         bool m_fileError { false };
     };
 
@@ -422,28 +422,21 @@ static Ref<API::ContentRuleList> createExtension(const WTF::String& identifier, 
     RELEASE_ASSERT(sharedMemory);
 
     const size_t headerAndSourceSize = headerSize(data.metaData.version) + data.metaData.sourceSize;
+    const size_t actionsOffset = headerAndSourceSize;
+    const size_t urlFiltersOffset = actionsOffset + data.metaData.actionsSize;
+    const size_t topURLFiltersOffset = urlFiltersOffset + data.metaData.urlFiltersBytecodeSize;
+    const size_t frameURLFiltersOffset = topURLFiltersOffset + data.metaData.topURLFiltersBytecodeSize;
+
     auto compiledContentRuleListData = WebKit::WebCompiledContentRuleListData(
         WTF::String(identifier),
         sharedMemory.releaseNonNull(),
-        headerAndSourceSize,
+        actionsOffset,
         data.metaData.actionsSize,
-        headerAndSourceSize
-            + data.metaData.actionsSize,
-        data.metaData.filtersWithoutConditionsBytecodeSize,
-        headerAndSourceSize
-            + data.metaData.actionsSize
-            + data.metaData.filtersWithoutConditionsBytecodeSize,
-        data.metaData.filtersWithConditionsBytecodeSize,
-        headerAndSourceSize
-            + data.metaData.actionsSize
-            + data.metaData.filtersWithoutConditionsBytecodeSize
-            + data.metaData.filtersWithConditionsBytecodeSize,
-        data.metaData.conditionedFiltersBytecodeSize,
-        headerAndSourceSize
-            + data.metaData.actionsSize
-            + data.metaData.filtersWithoutConditionsBytecodeSize
-            + data.metaData.filtersWithConditionsBytecodeSize
-            + data.metaData.conditionedFiltersBytecodeSize,
+        urlFiltersOffset,
+        data.metaData.urlFiltersBytecodeSize,
+        topURLFiltersOffset,
+        data.metaData.topURLFiltersBytecodeSize,
+        frameURLFiltersOffset,
         data.metaData.frameURLFiltersBytecodeSize
     );
     auto compiledContentRuleList = WebKit::WebCompiledContentRuleList::create(WTFMove(compiledContentRuleListData));
@@ -454,30 +447,25 @@ static WTF::String getContentRuleListSourceFromMappedFile(const MappedData& mapp
 {
     ASSERT(!RunLoop::isMain());
 
-    switch (mappedData.metaData.version) {
-    case 9:
-    case 10:
-    case 11:
-    case 12:
-    case 13:
-        if (!mappedData.metaData.sourceSize)
-            return { };
-            
-        auto headerSizeBytes = headerSize(mappedData.metaData.version);
-        bool is8Bit = mappedData.data.data()[headerSizeBytes];
-        size_t start = headerSizeBytes + sizeof(bool);
-        size_t length = mappedData.metaData.sourceSize - sizeof(bool);
-        if (is8Bit)
-            return WTF::String(mappedData.data.data() + start, length);
-        if (length % sizeof(UChar)) {
-            ASSERT_NOT_REACHED();
-            return { };
-        }
-        return WTF::String(reinterpret_cast<const UChar*>(mappedData.data.data() + start), length / sizeof(UChar));
+    if (mappedData.metaData.version < 9) {
+        // Older versions cannot recover the original JSON source from disk.
+        return { };
     }
 
-    // Older versions cannot recover the original JSON source from disk.
-    return { };
+    if (!mappedData.metaData.sourceSize)
+        return { };
+
+    auto headerSizeBytes = headerSize(mappedData.metaData.version);
+    bool is8Bit = mappedData.data.data()[headerSizeBytes];
+    size_t start = headerSizeBytes + sizeof(bool);
+    size_t length = mappedData.metaData.sourceSize - sizeof(bool);
+    if (is8Bit)
+        return WTF::String(mappedData.data.data() + start, length);
+    if (length % sizeof(UChar)) {
+        ASSERT_NOT_REACHED();
+        return { };
+    }
+    return WTF::String(reinterpret_cast<const UChar*>(mappedData.data.data() + start), length / sizeof(UChar));
 }
 
 void ContentRuleListStore::lookupContentRuleList(const WTF::String& identifier, CompletionHandler<void(RefPtr<API::ContentRuleList>, std::error_code)> completionHandler)

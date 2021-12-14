@@ -100,10 +100,10 @@ Trigger Trigger::isolatedCopy() const
     return {
         urlFilter.isolatedCopy(),
         urlFilterIsCaseSensitive,
-        topURLConditionIsCaseSensitive,
+        topURLFilterIsCaseSensitive,
+        frameURLFilterIsCaseSensitive,
         flags,
-        conditions.isolatedCopy(),
-        conditionType
+        conditions.isolatedCopy()
     };
 }
 

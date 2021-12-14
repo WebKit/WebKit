@@ -1,3 +1,15 @@
+2021-12-13  Alex Christensen  <achristensen@webkit.org>
+
+        Allow WKContentRuleList to run regexes on current frame's URL, not just top frame's URL
+        https://bugs.webkit.org/show_bug.cgi?id=233889
+
+        Reviewed by Timothy Hatcher.
+
+        * TestWebKitAPI/Tests/WebCore/ContentExtensions.cpp:
+        (TestWebKitAPI::mainDocumentRequest):
+        (TestWebKitAPI::subResourceRequest):
+        (TestWebKitAPI::TEST_F):
+
 2021-12-13  Brady Eidson  <beidson@apple.com>
 
         Teach webpushtool to register and "host" the daemon.

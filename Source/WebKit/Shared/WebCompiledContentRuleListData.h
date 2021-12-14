@@ -41,15 +41,13 @@ namespace WebKit {
 
 class WebCompiledContentRuleListData {
 public:
-    WebCompiledContentRuleListData(String&& identifier, Ref<SharedMemory>&& data, size_t actionsOffset, size_t actionsSize, size_t filtersWithoutConditionsBytecodeOffset, size_t filtersWithoutConditionsBytecodeSize, size_t filtersWithConditionsBytecodeOffset, size_t filtersWithConditionsBytecodeSize, size_t topURLFiltersBytecodeOffset, size_t topURLFiltersBytecodeSize, size_t frameURLFiltersBytecodeOffset, size_t frameURLFiltersBytecodeSize)
+    WebCompiledContentRuleListData(String&& identifier, Ref<SharedMemory>&& data, size_t actionsOffset, size_t actionsSize, size_t urlFiltersBytecodeOffset, size_t urlFiltersBytecodeSize, size_t topURLFiltersBytecodeOffset, size_t topURLFiltersBytecodeSize, size_t frameURLFiltersBytecodeOffset, size_t frameURLFiltersBytecodeSize)
         : identifier(WTFMove(identifier))
         , data(WTFMove(data))
         , actionsOffset(actionsOffset)
         , actionsSize(actionsSize)
-        , filtersWithoutConditionsBytecodeOffset(filtersWithoutConditionsBytecodeOffset)
-        , filtersWithoutConditionsBytecodeSize(filtersWithoutConditionsBytecodeSize)
-        , filtersWithConditionsBytecodeOffset(filtersWithConditionsBytecodeOffset)
-        , filtersWithConditionsBytecodeSize(filtersWithConditionsBytecodeSize)
+        , urlFiltersBytecodeOffset(urlFiltersBytecodeOffset)
+        , urlFiltersBytecodeSize(urlFiltersBytecodeSize)
         , topURLFiltersBytecodeOffset(topURLFiltersBytecodeOffset)
         , topURLFiltersBytecodeSize(topURLFiltersBytecodeSize)
         , frameURLFiltersBytecodeOffset(frameURLFiltersBytecodeOffset)
@@ -64,10 +62,8 @@ public:
     Ref<SharedMemory> data;
     size_t actionsOffset { 0 };
     size_t actionsSize { 0 };
-    size_t filtersWithoutConditionsBytecodeOffset { 0 };
-    size_t filtersWithoutConditionsBytecodeSize { 0 };
-    size_t filtersWithConditionsBytecodeOffset { 0 };
-    size_t filtersWithConditionsBytecodeSize { 0 };
+    size_t urlFiltersBytecodeOffset { 0 };
+    size_t urlFiltersBytecodeSize { 0 };
     size_t topURLFiltersBytecodeOffset { 0 };
     size_t topURLFiltersBytecodeSize { 0 };
     size_t frameURLFiltersBytecodeOffset { 0 };
