@@ -1932,7 +1932,7 @@ TARGET_OS_MACCATALYST
             break;
 
 #endif // TARGET_OS_IOS || TARGET_OS_TV 
- #elif TARGET_OS_IPHONE
+ #elif TARGET_OS_IPHONE && !TARGET_OS_MACCATALYST
         case angle::FormatID::ASTC_10x10_SRGB_BLOCK:
             
             this->metalFormat = MTLPixelFormatASTC_10x10_sRGB;
