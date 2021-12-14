@@ -290,6 +290,8 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     Modules/permissions/PermissionObserver.h
     Modules/permissions/PermissionState.h
 
+    Modules/push-api/PushCrypto.h
+    Modules/push-api/PushMessageCrypto.h
     Modules/push-api/PushPermissionState.h
     Modules/push-api/PushSubscriptionData.h
 

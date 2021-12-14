@@ -106,6 +106,7 @@ Modules/model-element/scenekit/SceneKitModelLoader.mm
 Modules/model-element/scenekit/SceneKitModelLoaderClient.mm
 Modules/model-element/scenekit/SceneKitModelLoaderUSD.mm
 Modules/model-element/scenekit/SceneKitModelPlayer.mm
+Modules/push-api/cocoa/PushCryptoCocoa.cpp
 Modules/speech/cocoa/SpeechRecognizerCocoa.mm
 Modules/speech/cocoa/WebSpeechRecognizerTask.mm
 Modules/speech/cocoa/WebSpeechRecognizerTaskMock.mm

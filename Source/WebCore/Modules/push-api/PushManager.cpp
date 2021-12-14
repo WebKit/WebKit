@@ -28,11 +28,11 @@
 
 #if ENABLE(SERVICE_WORKER)
 
-#include "CryptoKeyEC.h"
 #include "EventLoop.h"
 #include "Exception.h"
 #include "JSPushPermissionState.h"
 #include "JSPushSubscription.h"
+#include "PushCrypto.h"
 #include "ScriptExecutionContext.h"
 #include "ServiceWorkerRegistration.h"
 #include <wtf/IsoMallocInlines.h>
@@ -101,14 +101,7 @@ void PushManager::subscribe(ScriptExecutionContext& scriptExecutionContext, std:
             return;
         }
 
-#if ENABLE(WEB_CRYPTO)
-        auto keyData = keyDataResult.returnValue();
-        auto key = CryptoKeyEC::importRaw(CryptoAlgorithmIdentifier::ECDSA, "P-256"_s, WTFMove(keyData), false, CryptoKeyUsageVerify);
-#else
-        auto key = nullptr;
-#endif
-
-        if (!key) {
+        if (!PushCrypto::validateP256DHPublicKey(keyDataResult.returnValue())) {
             promise.reject(Exception { InvalidAccessError, "applicationServerKey must contain a valid P-256 public key"_s });
             return;
         }

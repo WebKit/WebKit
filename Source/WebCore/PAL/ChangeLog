@@ -1,3 +1,12 @@
+2021-12-14  Ben Nham  <nham@apple.com>
+
+        Add web push message decryption routines
+        https://bugs.webkit.org/show_bug.cgi?id=233903
+
+        Reviewed by Brady Eidson.
+
+        * pal/spi/cocoa/CommonCryptoSPI.h: Add AES-GCM decryption SPI.
+
 2021-12-11  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r286893.
