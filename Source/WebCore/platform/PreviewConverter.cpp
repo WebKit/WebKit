@@ -81,11 +81,8 @@ void PreviewConverter::updateMainResource()
         return;
     }
 
-    provider->provideMainResourceForPreviewConverter(*this, [this, protectedThis = Ref { *this }](auto buffer) {
-        if (buffer)
-            appendFromBuffer(*buffer);
-        else
-            didFailUpdating();
+    provider->provideMainResourceForPreviewConverter(*this, [this, protectedThis = Ref { *this }](auto&& buffer) {
+        appendFromBuffer(WTFMove(buffer));
     });
 }
 
