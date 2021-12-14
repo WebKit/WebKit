@@ -45,7 +45,7 @@ void WebPage::platformInitialize()
     // object there specifically placed for that purpose (the socket).
     m_accessibilityObject = adoptGRef(webkitWebPageAccessibilityObjectNew(this));
     GUniquePtr<gchar> plugID(atk_plug_get_id(ATK_PLUG(m_accessibilityObject.get())));
-    sendWithAsyncReply(Messages::WebPageProxy::BindAccessibilityTree(String(plugID.get())), [](String&&) { });
+    send(Messages::WebPageProxy::BindAccessibilityTree(String(plugID.get())));
 #endif
 }
 

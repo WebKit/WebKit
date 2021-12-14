@@ -49,7 +49,7 @@ GtkWidget* WebPageProxy::viewWidget()
     return static_cast<PageClientImpl&>(pageClient()).viewWidget();
 }
 
-void WebPageProxy::bindAccessibilityTree(const String& plugID, CompletionHandler<void(String&&)>&& completionHandler)
+void WebPageProxy::bindAccessibilityTree(const String& plugID)
 {
 #if USE(GTK4)
     // FIXME: We need a way to override accessible interface of WebView and send the atspi reference to the web process.
@@ -57,15 +57,6 @@ void WebPageProxy::bindAccessibilityTree(const String& plugID, CompletionHandler
 #else
     auto* accessible = gtk_widget_get_accessible(viewWidget());
     atk_socket_embed(ATK_SOCKET(accessible), const_cast<char*>(plugID.utf8().data()));
-#if USE(ATSPI)
-    // ATK doesn't have API to get the atspi reference of an object, but we know the id is stored
-    // as an object user data as "spi-dbus-id". To let the web process know about the unique name, we call
-    // atk_object_ref_state_set() that sends a GetState message to the web process root object.
-    g_object_unref(atk_object_ref_state_set(accessible));
-    completionHandler(makeString("/org/a11y/atspi/accessible/", GPOINTER_TO_INT(g_object_get_data(G_OBJECT(accessible), "spi-dbus-id"))));
-#else
-    completionHandler({ });
-#endif
     atk_object_notify_state_change(accessible, ATK_STATE_TRANSIENT, FALSE);
 #endif
 }

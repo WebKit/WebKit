@@ -73,7 +73,7 @@ void AccessibilityAtspi::registerRoot(AccessibilityRootAtspi& rootObject, Vector
         if (m_connection) {
             ensureCache();
             String path = makeString("/org/a11y/webkit/accessible/", createCanonicalUUIDString().replace('-', '_'));
-            Vector<unsigned, 2> registeredObjects;
+            Vector<unsigned, 3> registeredObjects;
             registeredObjects.reserveInitialCapacity(interfaces.size());
             for (const auto& interface : interfaces) {
                 auto id = g_dbus_connection_register_object(m_connection.get(), path.utf8().data(), interface.first, interface.second, rootObject.ptr(), nullptr, nullptr);

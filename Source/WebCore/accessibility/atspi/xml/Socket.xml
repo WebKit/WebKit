@@ -14,6 +14,11 @@
     <annotation name="org.qtproject.QtDBus.QtTypeName.In0" value="QSpiObjectReference"/>
   </method>
 
+  <method name="Embedded">
+    <arg direction="in" name="socketPath" type="s"/>
+    <annotation name="org.qtproject.QtDBus.QtTypeName.In0" value="QSpiObjectReference"/>
+  </method>
+
   <signal name="Available">
     <arg direction="in" name="socket" type="(so)"/>
     <annotation name="org.qtproject.QtDBus.QtTypeName.In0" value="QSpiObjectReference"/>

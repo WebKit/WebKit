@@ -444,10 +444,9 @@ void ProvisionalPageProxy::registerWebProcessAccessibilityToken(const IPC::DataR
 #endif
 
 #if PLATFORM(GTK) || PLATFORM(WPE)
-void ProvisionalPageProxy::bindAccessibilityTree(const String& plugID, CompletionHandler<void(String&&)>&& completionHandler)
+void ProvisionalPageProxy::bindAccessibilityTree(const String& plugID)
 {
     m_accessibilityPlugID = plugID;
-    m_accessibilityBindCompletionHandler = WTFMove(completionHandler);
 }
 #endif
 
@@ -512,7 +511,7 @@ void ProvisionalPageProxy::didReceiveMessage(IPC::Connection& connection, IPC::D
 
 #if PLATFORM(GTK) || PLATFORM(WPE)
     if (decoder.messageName() == Messages::WebPageProxy::BindAccessibilityTree::name()) {
-        IPC::handleMessageAsync<Messages::WebPageProxy::BindAccessibilityTree>(connection, decoder, this, &ProvisionalPageProxy::bindAccessibilityTree);
+        IPC::handleMessage<Messages::WebPageProxy::BindAccessibilityTree>(connection, decoder, this, &ProvisionalPageProxy::bindAccessibilityTree);
         return;
     }
 #endif

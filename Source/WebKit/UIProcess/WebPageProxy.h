@@ -2290,7 +2290,7 @@ private:
 #endif
 
 #if PLATFORM(GTK) || PLATFORM(WPE)
-    void bindAccessibilityTree(const String&, CompletionHandler<void(String&&)>&&);
+    void bindAccessibilityTree(const String&);
 #endif
 
 #if PLATFORM(GTK)

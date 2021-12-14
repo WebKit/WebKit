@@ -64,7 +64,7 @@ void WebPage::platformInitialize()
 #if USE(ATK)
     m_accessibilityObject = adoptGRef(webkitWebPageAccessibilityObjectNew(this));
     GUniquePtr<gchar> plugID(atk_plug_get_id(ATK_PLUG(m_accessibilityObject.get())));
-    sendWithAsyncReply(Messages::WebPageProxy::BindAccessibilityTree(String(plugID.get())), [](String&&) { });
+    send(Messages::WebPageProxy::BindAccessibilityTree(String(plugID.get())));
 #elif USE(ATSPI)
 #if USE(GTK4)
     // FIXME: we need a way to connect DOM and app a11y tree in GTK4.
@@ -72,12 +72,7 @@ void WebPage::platformInitialize()
     if (auto* page = corePage()) {
         m_accessibilityRootObject = AccessibilityRootAtspi::create(*page, WebProcess::singleton().accessibilityAtspi());
         m_accessibilityRootObject->registerObject([&](const String& plugID) {
-            // ATK uses a custom DBus message to send the socket path to the AtkPlug object. GDBus doesn't allow
-            // to send a message that is not defined in the interface, so we use the WebKit IPC to get the socket
-            // path from the UI process.
-            sendWithAsyncReply(Messages::WebPageProxy::BindAccessibilityTree(plugID), [&](String&& socketPath) {
-                m_accessibilityRootObject->setParentPath(WTFMove(socketPath));
-            });
+            send(Messages::WebPageProxy::BindAccessibilityTree(plugID));
         });
     }
 #endif

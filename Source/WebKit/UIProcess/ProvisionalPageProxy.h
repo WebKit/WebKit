@@ -96,7 +96,6 @@ public:
 #endif
 #if PLATFORM(GTK) || PLATFORM(WPE)
     const String& accessibilityPlugID() { return m_accessibilityPlugID; }
-    CompletionHandler<void(String&&)> takeAccessibilityBindCompletionHandler() { return std::exchange(m_accessibilityBindCompletionHandler, nullptr); }
 #endif
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)
     LayerHostingContextID contextIDForVisibilityPropagationInWebProcess() const { return m_contextIDForVisibilityPropagationInWebProcess; }
@@ -149,7 +148,7 @@ private:
     void registerWebProcessAccessibilityToken(const IPC::DataReference&);
 #endif
 #if PLATFORM(GTK) || PLATFORM(WPE)
-    void bindAccessibilityTree(const String&, CompletionHandler<void(String&&)>&&);
+    void bindAccessibilityTree(const String&);
 #endif
 #if ENABLE(CONTENT_FILTERING)
     void contentFilterDidBlockLoadForFrame(const WebCore::ContentFilterUnblockHandler&, WebCore::FrameIdentifier);

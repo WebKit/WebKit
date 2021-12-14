@@ -48,7 +48,7 @@ AccessibilityRootAtspi::AccessibilityRootAtspi(Page& page, AccessibilityAtspi& a
 
 GDBusInterfaceVTable AccessibilityRootAtspi::s_accessibleFunctions = {
     // method_call
-    [](GDBusConnection*, const gchar* sender, const gchar*, const gchar*, const gchar* methodName, GVariant* parameters, GDBusMethodInvocation* invocation, gpointer userData) {
+    [](GDBusConnection*, const gchar*, const gchar*, const gchar*, const gchar* methodName, GVariant* parameters, GDBusMethodInvocation* invocation, gpointer userData) {
         RELEASE_ASSERT(!isMainThread());
         auto& rootObject = *static_cast<AccessibilityRootAtspi*>(userData);
         if (!g_strcmp0(methodName, "GetRole"))
@@ -58,15 +58,6 @@ GDBusInterfaceVTable AccessibilityRootAtspi::s_accessibleFunctions = {
         else if (!g_strcmp0(methodName, "GetLocalizedRoleName"))
             g_dbus_method_invocation_return_value(invocation, g_variant_new("(s)", _("filler")));
         else if (!g_strcmp0(methodName, "GetState")) {
-#if USE(GTK4)
-            // FIXME: we need a way to get the parent atspi reference in GTK4.
-#else
-            // Since we don't have a way to know the unique name of the UI process, right after calling
-            // atk_socket_embed() the UI process calls atk_object_ref_state_set() to force a GetState message.
-            // We use this first GetState message to set the sender as the parent unique name.
-            if (rootObject.m_parentUniqueName.isNull())
-                rootObject.m_parentUniqueName = sender;
-#endif
             GVariantBuilder builder = G_VARIANT_BUILDER_INIT(G_VARIANT_TYPE("(au)"));
 
             uint64_t atspiStates = (G_GUINT64_CONSTANT(1) << Atspi::State::ManagesDescendants);
@@ -154,6 +145,26 @@ GDBusInterfaceVTable AccessibilityRootAtspi::s_accessibleFunctions = {
     nullptr
 };
 
+GDBusInterfaceVTable AccessibilityRootAtspi::s_socketFunctions = {
+    // method_call
+    [](GDBusConnection*, const gchar* sender, const gchar*, const gchar*, const gchar* methodName, GVariant* parameters, GDBusMethodInvocation* invocation, gpointer userData) {
+        RELEASE_ASSERT(!isMainThread());
+        auto& rootObject = *static_cast<AccessibilityRootAtspi*>(userData);
+        if (!g_strcmp0(methodName, "Embedded")) {
+            const char* path;
+            g_variant_get(parameters, "(&s)", &path);
+            rootObject.embedded(sender, path);
+            g_dbus_method_invocation_return_value(invocation, nullptr);
+        }
+    },
+    // get_property
+    nullptr,
+    // set_property,
+    nullptr,
+    // padding
+    nullptr
+};
+
 void AccessibilityRootAtspi::registerObject(CompletionHandler<void(const String&)>&& completionHandler)
 {
     RELEASE_ASSERT(isMainThread());
@@ -162,6 +173,7 @@ void AccessibilityRootAtspi::registerObject(CompletionHandler<void(const String&
 
     Vector<std::pair<GDBusInterfaceInfo*, GDBusInterfaceVTable*>> interfaces;
     interfaces.append({ const_cast<GDBusInterfaceInfo*>(&webkit_accessible_interface), &s_accessibleFunctions });
+    interfaces.append({ const_cast<GDBusInterfaceInfo*>(&webkit_socket_interface), &s_socketFunctions });
     interfaces.append({ const_cast<GDBusInterfaceInfo*>(&webkit_component_interface), &s_componentFunctions });
     m_atspi.registerRoot(*this, WTFMove(interfaces), WTFMove(completionHandler));
 }
@@ -181,10 +193,11 @@ void AccessibilityRootAtspi::setPath(String&& path)
     m_path = WTFMove(path);
 }
 
-void AccessibilityRootAtspi::setParentPath(String&& path)
+void AccessibilityRootAtspi::embedded(const char* parentUniqueName, const char* parentPath)
 {
-    RELEASE_ASSERT(isMainThread());
-    m_parentPath = WTFMove(path);
+    RELEASE_ASSERT(!isMainThread());
+    m_parentUniqueName = parentUniqueName;
+    m_parentPath = parentPath;
 }
 
 GVariant* AccessibilityRootAtspi::applicationReference() const

@@ -41,7 +41,6 @@ public:
     void registerObject(CompletionHandler<void(const String&)>&&);
     void unregisterObject();
     void setPath(String&&);
-    void setParentPath(String&&);
 
     const String& path() const { return m_path; }
     const String& parentUniqueName() const { return m_parentUniqueName; }
@@ -55,9 +54,11 @@ public:
 private:
     AccessibilityRootAtspi(Page&, AccessibilityAtspi&);
 
+    void embedded(const char* parentUniqueName, const char* parentPath);
     IntRect frameRect(uint32_t) const;
 
     static GDBusInterfaceVTable s_accessibleFunctions;
+    static GDBusInterfaceVTable s_socketFunctions;
     static GDBusInterfaceVTable s_componentFunctions;
 
     AccessibilityAtspi& m_atspi;
