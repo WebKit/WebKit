@@ -268,7 +268,7 @@ public:
     {
         Structure* structure = weakStructure.get();
 #if USE(JSVALUE64)
-        Jump result = branch32(cond, left, TrustedImm32(structure->id().bits()));
+        Jump result = branch32(cond, left, TrustedImm32(structure->id()));
         return result;
 #else
         return branchPtr(cond, left, TrustedImmPtr(structure));

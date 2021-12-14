@@ -127,7 +127,7 @@ GetByStatus GetByStatus::computeFromLLInt(CodeBlock* profiledBlock, BytecodeInde
     if (!structureID)
         return GetByStatus(NoInformation, false);
 
-    Structure* structure = structureID.decode();
+    Structure* structure = vm.heap.structureIDTable().get(structureID);
 
     if (structure->takesSlowPathInDFGForImpureProperty())
         return GetByStatus(NoInformation, false);
@@ -236,7 +236,7 @@ GetByStatus GetByStatus::computeForStubInfoWithoutExitSiteFeedback(
     }
         
     case CacheType::Stub: {
-        PolymorphicAccess* list = stubInfo->m_stub;
+        PolymorphicAccess* list = stubInfo->u.stub;
         if (list->size() == 1) {
             const AccessCase& access = list->at(0);
             switch (access.type()) {

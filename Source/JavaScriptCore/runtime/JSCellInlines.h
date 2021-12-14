@@ -133,13 +133,12 @@ inline IndexingType JSCell::indexingMode() const
 
 ALWAYS_INLINE Structure* JSCell::structure() const
 {
-    return m_structureID.decode();
+    return structure(vm());
 }
 
-// FIXME: Delete this in a cleanup fixup.
-ALWAYS_INLINE Structure* JSCell::structure(VM&) const
+ALWAYS_INLINE Structure* JSCell::structure(VM& vm) const
 {
-    return structure();
+    return vm.getStructure(m_structureID);
 }
 
 template<typename Visitor>
@@ -305,7 +304,7 @@ ALWAYS_INLINE void JSCell::setStructure(VM& vm, Structure* structure)
     ASSERT(structure->classInfo() == this->structure(vm)->classInfo());
     ASSERT(!this->structure(vm)
         || this->structure(vm)->transitionWatchpointSetHasBeenInvalidated()
-        || structure->id().decode() == structure);
+        || Heap::heap(this)->structureIDTable().get(structure->id()) == structure);
     m_structureID = structure->id();
     m_flags = TypeInfo::mergeInlineTypeFlags(structure->typeInfo().inlineTypeFlags(), m_flags);
     m_type = structure->typeInfo().type();

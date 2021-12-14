@@ -1,5 +1,359 @@
 2021-12-13  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r286994. rdar://problem/86445989
+
+    Roll back r286345, r286387, r286471, r286667, r286849
+    https://bugs.webkit.org/show_bug.cgi?id=234268
+    
+    Reviewed by Mark Lam.
+    
+    Source/JavaScriptCore:
+    
+    * CMakeLists.txt:
+    * JavaScriptCore.xcodeproj/project.pbxproj:
+    * Sources.txt:
+    * bytecode/AccessCase.cpp:
+    (JSC::AccessCase::AccessCase):
+    (JSC::AccessCase::forEachDependentCell const):
+    (JSC::AccessCase::dump const):
+    (JSC::AccessCase::propagateTransitions const):
+    (JSC::AccessCase::generateWithGuard):
+    (JSC::AccessCase::canBeShared):
+    * bytecode/AccessCase.h:
+    (JSC::AccessCase::structure const):
+    (JSC::AccessCase::newStructure const):
+    (JSC::AccessCase::hash const):
+    (JSC::AccessCase::AccessCase):
+    * bytecode/ArrayProfile.cpp:
+    (JSC::ArrayProfile::computeUpdatedPrediction):
+    * bytecode/ArrayProfile.h:
+    * bytecode/CheckPrivateBrandStatus.cpp:
+    (JSC::CheckPrivateBrandStatus::computeForStubInfoWithoutExitSiteFeedback):
+    * bytecode/CodeBlock.cpp:
+    (JSC::CodeBlock::propagateTransitions):
+    (JSC::CodeBlock::determineLiveness):
+    (JSC::CodeBlock::finalizeLLIntInlineCaches):
+    (JSC::CodeBlock::stronglyVisitWeakReferences):
+    * bytecode/DeleteByStatus.cpp:
+    (JSC::DeleteByStatus::computeForStubInfoWithoutExitSiteFeedback):
+    * bytecode/GetByIdMetadata.h:
+    (JSC::GetByIdModeMetadata::GetByIdModeMetadata):
+    (JSC::GetByIdModeMetadata::clearToDefaultModeWithoutCache):
+    * bytecode/GetByStatus.cpp:
+    (JSC::GetByStatus::computeFromLLInt):
+    (JSC::GetByStatus::computeForStubInfoWithoutExitSiteFeedback):
+    * bytecode/InByStatus.cpp:
+    (JSC::InByStatus::computeForStubInfoWithoutExitSiteFeedback):
+    * bytecode/InlineAccess.cpp:
+    (JSC::InlineAccess::rewireStubAsJumpInAccess):
+    (JSC::InlineAccess::resetStubAsJumpInAccess):
+    * bytecode/InstanceOfStatus.cpp:
+    (JSC::InstanceOfStatus::computeForStubInfo):
+    * bytecode/InternalFunctionAllocationProfile.h:
+    (JSC::InternalFunctionAllocationProfile::offsetOfStructure):
+    (JSC::InternalFunctionAllocationProfile::structure):
+    (JSC::InternalFunctionAllocationProfile::clear):
+    (JSC::InternalFunctionAllocationProfile::visitAggregate):
+    (JSC::InternalFunctionAllocationProfile::createAllocationStructureFromBase):
+    (JSC::InternalFunctionAllocationProfile::offsetOfStructureID): Deleted.
+    * bytecode/PolyProtoAccessChain.cpp:
+    (JSC::PolyProtoAccessChain::needImpurePropertyWatchpoint const):
+    * bytecode/PolyProtoAccessChain.h:
+    * bytecode/PolymorphicAccess.cpp:
+    (JSC::PolymorphicAccess::visitWeak const):
+    * bytecode/PutByIdFlags.h:
+    * bytecode/PutByStatus.cpp:
+    (JSC::PutByStatus::computeFromLLInt):
+    (JSC::PutByStatus::computeForStubInfo):
+    * bytecode/SetPrivateBrandStatus.cpp:
+    (JSC::SetPrivateBrandStatus::computeForStubInfoWithoutExitSiteFeedback):
+    * bytecode/SpeculatedType.cpp:
+    (JSC::speculationFromCell):
+    * bytecode/StructureStubInfo.cpp:
+    (JSC::StructureStubInfo::initGetByIdSelf):
+    (JSC::StructureStubInfo::initPutByIdReplace):
+    (JSC::StructureStubInfo::initInByIdSelf):
+    (JSC::StructureStubInfo::deref):
+    (JSC::StructureStubInfo::aboutToDie):
+    (JSC::StructureStubInfo::addAccessCase):
+    (JSC::StructureStubInfo::reset):
+    (JSC::StructureStubInfo::visitAggregateImpl):
+    (JSC::StructureStubInfo::visitWeakReferences):
+    (JSC::StructureStubInfo::propagateTransitions):
+    (JSC::StructureStubInfo::summary const):
+    (JSC::StructureStubInfo::containsPC const):
+    * bytecode/StructureStubInfo.h:
+    (JSC::StructureStubInfo::offsetOfByIdSelfOffset):
+    (JSC::StructureStubInfo::offsetOfInlineAccessBaseStructure):
+    (JSC::StructureStubInfo::inlineAccessBaseStructure):
+    (JSC::StructureStubInfo::offsetOfInlineAccessBaseStructureID): Deleted.
+    * dfg/DFGAbstractInterpreterInlines.h:
+    (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+    * dfg/DFGByteCodeParser.cpp:
+    (JSC::DFG::ByteCodeParser::parseBlock):
+    * dfg/DFGGraph.cpp:
+    (JSC::DFG::Graph::dump):
+    * dfg/DFGJITCompiler.h:
+    (JSC::DFG::JITCompiler::branchWeakStructure):
+    * dfg/DFGPlan.cpp:
+    (JSC::DFG::Plan::finalize):
+    * dfg/DFGSpeculativeJIT.cpp:
+    * dfg/DFGSpeculativeJIT64.cpp:
+    (JSC::DFG::SpeculativeJIT::nonSpeculativeNonPeepholeCompareNullOrUndefined):
+    (JSC::DFG::SpeculativeJIT::nonSpeculativePeepholeBranchNullOrUndefined):
+    (JSC::DFG::SpeculativeJIT::compileToBooleanObjectOrOther):
+    (JSC::DFG::SpeculativeJIT::emitObjectOrOtherBranch):
+    (JSC::DFG::SpeculativeJIT::emitUntypedBranch):
+    (JSC::DFG::SpeculativeJIT::compile):
+    * ftl/FTLAbstractHeapRepository.h:
+    * ftl/FTLLowerDFGToB3.cpp:
+    (JSC::FTL::DFG::LowerDFGToB3::compileCreatePromise):
+    (JSC::FTL::DFG::LowerDFGToB3::compileCreateInternalFieldObject):
+    (JSC::FTL::DFG::LowerDFGToB3::compileCompareStrictEq):
+    * heap/AbstractSlotVisitor.h:
+    * heap/AbstractSlotVisitorInlines.h:
+    * heap/Heap.cpp:
+    (JSC::Heap::Heap):
+    (JSC::Heap::runEndPhase):
+    * heap/Heap.h:
+    (JSC::Heap::structureIDTable):
+    * heap/IsoAlignedMemoryAllocator.cpp:
+    (JSC::IsoAlignedMemoryAllocator::IsoAlignedMemoryAllocator):
+    (JSC::IsoAlignedMemoryAllocator::~IsoAlignedMemoryAllocator):
+    (JSC::IsoAlignedMemoryAllocator::tryAllocateAlignedMemory):
+    (JSC::IsoAlignedMemoryAllocator::freeAlignedMemory):
+    (JSC::IsoAlignedMemoryAllocator::tryMallocBlock): Deleted.
+    (JSC::IsoAlignedMemoryAllocator::freeBlock): Deleted.
+    (JSC::IsoAlignedMemoryAllocator::commitBlock): Deleted.
+    (JSC::IsoAlignedMemoryAllocator::decommitBlock): Deleted.
+    * heap/IsoAlignedMemoryAllocator.h:
+    * heap/IsoMemoryAllocatorBase.cpp: Removed.
+    * heap/IsoMemoryAllocatorBase.h: Removed.
+    * heap/IsoSubspace.cpp:
+    (JSC::IsoSubspace::IsoSubspace):
+    (JSC::IsoSubspace::tryAllocateFromLowerTier):
+    * heap/IsoSubspace.h:
+    * heap/PreciseAllocation.cpp:
+    (JSC::PreciseAllocation::createForLowerTier):
+    (JSC::PreciseAllocation::tryCreateForLowerTier): Deleted.
+    * heap/PreciseAllocation.h:
+    * heap/SlotVisitor.cpp:
+    (JSC::SlotVisitor::appendJSCellOrAuxiliary):
+    * heap/SlotVisitor.h:
+    * heap/SlotVisitorInlines.h:
+    * heap/StructureAlignedMemoryAllocator.cpp: Removed.
+    * heap/StructureAlignedMemoryAllocator.h: Removed.
+    * jit/AssemblyHelpers.cpp:
+    (JSC::AssemblyHelpers::emitStoreStructureWithTypeInfo):
+    (JSC::AssemblyHelpers::emitLoadStructure):
+    (JSC::AssemblyHelpers::emitLoadPrototype):
+    (JSC::AssemblyHelpers::emitRandomThunk):
+    (JSC::AssemblyHelpers::emitConvertValueToBoolean):
+    (JSC::AssemblyHelpers::branchIfValue):
+    (JSC::AssemblyHelpers::emitNonNullDecodeStructureID): Deleted.
+    * jit/AssemblyHelpers.h:
+    (JSC::AssemblyHelpers::branchStructure):
+    (JSC::AssemblyHelpers::nukeStructureAndStoreButterfly):
+    * jit/GCAwareJITStubRoutine.cpp:
+    (JSC::PolymorphicAccessJITStubRoutine::computeHash):
+    * jit/JITInlineCacheGenerator.cpp:
+    (JSC::generateGetByIdInlineAccess):
+    (JSC::JITPutByIdGenerator::generateBaselineDataICFastPath):
+    (JSC::JITInByIdGenerator::generateBaselineDataICFastPath):
+    * jit/JITOpcodes.cpp:
+    (JSC::JIT::emit_op_typeof_is_undefined):
+    (JSC::JIT::emit_op_jeq_null):
+    (JSC::JIT::emit_op_jneq_null):
+    (JSC::JIT::emit_op_eq_null):
+    (JSC::JIT::emit_op_neq_null):
+    (JSC::JIT::emit_op_get_prototype_of):
+    * jit/JITPropertyAccess.cpp:
+    (JSC::JIT::emit_op_get_property_enumerator):
+    * jit/JITStubRoutine.h:
+    * llint/LLIntSlowPaths.cpp:
+    (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+    (JSC::LLInt::performLLIntGetByID):
+    * llint/LowLevelInterpreter.asm:
+    * llint/LowLevelInterpreter64.asm:
+    * runtime/ArrayPrototype.cpp:
+    (JSC::JSC_DEFINE_HOST_FUNCTION):
+    * runtime/BigIntPrototype.cpp:
+    (JSC::JSC_DEFINE_HOST_FUNCTION):
+    * runtime/BooleanPrototype.cpp:
+    (JSC::JSC_DEFINE_HOST_FUNCTION):
+    * runtime/CommonSlowPaths.cpp:
+    (JSC::JSC_DEFINE_COMMON_SLOW_PATH):
+    * runtime/DatePrototype.cpp:
+    (JSC::formateDateInstance):
+    (JSC::JSC_DEFINE_HOST_FUNCTION):
+    * runtime/ErrorInstance.cpp:
+    (JSC::ErrorInstance::sanitizedMessageString):
+    (JSC::ErrorInstance::sanitizedNameString):
+    (JSC::ErrorInstance::sanitizedToString):
+    * runtime/ErrorPrototype.cpp:
+    (JSC::JSC_DEFINE_HOST_FUNCTION):
+    * runtime/FunctionExecutable.cpp:
+    (JSC::FunctionExecutable::visitChildrenImpl):
+    * runtime/FunctionExecutable.h:
+    * runtime/FunctionPrototype.cpp:
+    (JSC::JSC_DEFINE_HOST_FUNCTION):
+    * runtime/FunctionRareData.cpp:
+    (JSC::FunctionRareData::visitChildrenImpl):
+    * runtime/FunctionRareData.h:
+    * runtime/HasOwnPropertyCache.h:
+    * runtime/InitializeThreading.cpp:
+    (JSC::initialize):
+    * runtime/JSCConfig.h:
+    * runtime/JSCJSValue.cpp:
+    (JSC::JSValue::dumpInContextAssumingStructure const):
+    (JSC::JSValue::dumpForBacktrace const):
+    * runtime/JSCell.cpp:
+    (JSC::JSCell::toObjectSlow const):
+    * runtime/JSCell.h:
+    (JSC::JSCell::clearStructure):
+    * runtime/JSCellInlines.h:
+    (JSC::JSCell::structure const):
+    (JSC::JSCell::setStructure):
+    * runtime/JSGlobalObject.cpp:
+    (JSC::JSGlobalObject::visitChildrenImpl):
+    * runtime/JSGlobalObject.h:
+    * runtime/JSObject.cpp:
+    (JSC::JSObject::visitButterflyImpl):
+    (JSC::JSObject::createInitialUndecided):
+    (JSC::JSObject::createInitialInt32):
+    (JSC::JSObject::createInitialDouble):
+    (JSC::JSObject::createInitialContiguous):
+    (JSC::JSObject::createArrayStorage):
+    (JSC::JSObject::convertUndecidedToArrayStorage):
+    (JSC::JSObject::convertInt32ToArrayStorage):
+    (JSC::JSObject::convertDoubleToArrayStorage):
+    (JSC::JSObject::convertContiguousToArrayStorage):
+    (JSC::JSObject::putDirectCustomGetterSetterWithoutTransition):
+    (JSC::JSObject::putDirectNonIndexAccessorWithoutTransition):
+    * runtime/JSObject.h:
+    (JSC::JSObject::nukeStructureAndSetButterfly):
+    (JSC::JSObject::getPropertySlot):
+    * runtime/JSObjectInlines.h:
+    (JSC::JSObject::getPropertySlot):
+    (JSC::JSObject::getNonIndexPropertySlot):
+    (JSC::JSObject::putDirectWithoutTransition):
+    (JSC::JSObject::putDirectInternal):
+    * runtime/JSPropertyNameEnumerator.cpp:
+    (JSC::JSPropertyNameEnumerator::JSPropertyNameEnumerator):
+    (JSC::JSPropertyNameEnumerator::visitChildrenImpl):
+    * runtime/JSPropertyNameEnumerator.h:
+    * runtime/NumberPrototype.cpp:
+    (JSC::toThisNumber):
+    * runtime/ObjectPrototype.cpp:
+    (JSC::JSC_DEFINE_HOST_FUNCTION):
+    (JSC::objectPrototypeToString):
+    * runtime/RegExpPrototype.cpp:
+    (JSC::JSC_DEFINE_HOST_FUNCTION):
+    * runtime/StringPrototype.cpp:
+    (JSC::JSC_DEFINE_HOST_FUNCTION):
+    * runtime/Structure.cpp:
+    (JSC::Structure::Structure):
+    (JSC::Structure::~Structure):
+    (JSC::Structure::flattenDictionaryStructure):
+    (JSC::Structure::dump const):
+    (JSC::Structure::canCachePropertyNameEnumerator const):
+    * runtime/Structure.h:
+    (JSC::Structure::id const):
+    * runtime/StructureChain.cpp:
+    (JSC::StructureChain::create):
+    (JSC::StructureChain::visitChildrenImpl):
+    * runtime/StructureID.h: Removed.
+    * runtime/StructureIDBlob.h:
+    (JSC::StructureIDBlob::StructureIDBlob):
+    * runtime/StructureIDTable.cpp: Added.
+    (JSC::StructureIDTable::StructureIDTable):
+    (JSC::StructureIDTable::makeFreeListFromRange):
+    (JSC::StructureIDTable::resize):
+    (JSC::StructureIDTable::flushOldTables):
+    (JSC::StructureIDTable::allocateID):
+    (JSC::StructureIDTable::deallocateID):
+    * runtime/StructureIDTable.h: Added.
+    (JSC::nukedStructureIDBit):
+    (JSC::nuke):
+    (JSC::isNuked):
+    (JSC::decontaminate):
+    (JSC::StructureIDTable::base):
+    (JSC::StructureIDTable::size const):
+    (JSC::StructureIDTable::table const):
+    (JSC::StructureIDTable::decode):
+    (JSC::StructureIDTable::encode):
+    (JSC::StructureIDTable::get):
+    (JSC::StructureIDTable::tryGet):
+    (JSC::StructureIDTable::validate):
+    (JSC::StructureIDTable::deallocateID):
+    (JSC::StructureIDTable::allocateID):
+    (JSC::StructureIDTable::flushOldTables):
+    * runtime/StructureRareData.cpp:
+    (JSC::StructureRareData::StructureRareData):
+    * runtime/StructureRareData.h:
+    * runtime/StructureRareDataInlines.h:
+    (JSC::StructureRareData::tryCachePropertyNameEnumeratorViaWatchpoint):
+    * runtime/SymbolPrototype.cpp:
+    (JSC::JSC_DEFINE_CUSTOM_GETTER):
+    (JSC::JSC_DEFINE_HOST_FUNCTION):
+    * runtime/TypeProfilerLog.cpp:
+    (JSC::TypeProfilerLog::processLogEntries):
+    (JSC::TypeProfilerLog::visit):
+    * runtime/VM.h:
+    (JSC::VM::getStructure):
+    (JSC::VM::tryGetStructure):
+    * runtime/WriteBarrier.h:
+    (JSC::WriteBarrierStructureID::WriteBarrierStructureID): Deleted.
+    (JSC::WriteBarrierStructureID::get const): Deleted.
+    (JSC::WriteBarrierStructureID::operator* const): Deleted.
+    (JSC::WriteBarrierStructureID::operator-> const): Deleted.
+    (JSC::WriteBarrierStructureID::clear): Deleted.
+    (JSC::WriteBarrierStructureID::operator bool const): Deleted.
+    (JSC::WriteBarrierStructureID::operator! const): Deleted.
+    (JSC::WriteBarrierStructureID::setWithoutWriteBarrier): Deleted.
+    (JSC::WriteBarrierStructureID::unvalidatedGet const): Deleted.
+    (JSC::WriteBarrierStructureID::value const): Deleted.
+    * runtime/WriteBarrierInlines.h:
+    (JSC::WriteBarrierStructureID::set): Deleted.
+    (JSC::WriteBarrierStructureID::setMayBeNull): Deleted.
+    (JSC::WriteBarrierStructureID::setEarlyValue): Deleted.
+    * tools/HeapVerifier.cpp:
+    (JSC::HeapVerifier::validateJSCell):
+    * tools/Integrity.cpp:
+    * tools/Integrity.h:
+    * tools/IntegrityInlines.h:
+    (JSC::Integrity::auditStructureID):
+    * tools/JSDollarVM.cpp:
+    (JSC::JSC_DEFINE_HOST_FUNCTION):
+    (JSC::JSDollarVM::finishCreation):
+    (JSC::JSDollarVM::visitChildrenImpl):
+    * tools/JSDollarVM.h:
+    * wasm/js/WebAssemblyFunction.cpp:
+    (JSC::WebAssemblyFunction::jsCallEntrypointSlow):
+    * wasm/js/WebAssemblyGlobalPrototype.cpp:
+    (JSC::getGlobal):
+    
+    Source/WTF:
+    
+    * wtf/OSAllocator.h:
+    * wtf/posix/OSAllocatorPOSIX.cpp:
+    (WTF::OSAllocator::reserveUncommittedAligned): Deleted.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@286994 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-12-13  Saam Barati  <sbarati@apple.com>
+
+            Roll back r286345, r286387, r286471, r286667, r286849
+            https://bugs.webkit.org/show_bug.cgi?id=234268
+
+            Reviewed by Mark Lam.
+
+            * wtf/OSAllocator.h:
+            * wtf/posix/OSAllocatorPOSIX.cpp:
+            (WTF::OSAllocator::reserveUncommittedAligned): Deleted.
+
+2021-12-13  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r286849. rdar://problem/86445989
 
     Reduce maximum mmap size for Structure regions to help placate ios

@@ -52,26 +52,6 @@ void* OSAllocator::reserveUncommitted(size_t bytes, Usage, bool writable, bool e
     return result;
 }
 
-void* OSAllocator::reserveUncommittedAligned(size_t bytes, Usage usage, bool writable, bool executable, bool, bool)
-{
-    ASSERT(hasOneBitSet(bytes) && bytes >= pageSize());
-    if (VirtualAlloc2Ptr()) {
-        MEM_ADDRESS_REQUIREMENTS addressReqs = { };
-        MEM_EXTENDED_PARAMETER param = { };
-        addressReqs.Alignment = bytes;
-        param.Type = MemExtendedParameterAddressRequirements;
-        param.Pointer = &addressReqs;
-        void* result = VirtualAlloc2Ptr()(nullptr, nullptr, bytes, MEM_RESERVE, protection(writable, executable), &param, 1);
-        if (!result)
-            CRASH();
-        return result;
-    }
-    void* result = reserveUncommitted(2 * bytes, usage, writable, executable);
-
-    char* aligned = reinterpret_cast<char*>(roundUpToMultipleOf(bytes, reinterpret_cast<uintptr_t>(result)));
-    return aligned;
-}
-
 void* OSAllocator::reserveAndCommit(size_t bytes, Usage, bool writable, bool executable, bool, bool)
 {
     void* result = VirtualAlloc(nullptr, bytes, MEM_RESERVE | MEM_COMMIT, protection(writable, executable));
