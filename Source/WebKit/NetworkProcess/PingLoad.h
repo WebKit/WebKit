@@ -60,6 +60,7 @@ private:
     void wasBlocked() final;
     void cannotShowURL() final;
     void wasBlockedByRestrictions() final;
+    void wasBlockedByDisabledFTP() final;
     void timeoutTimerFired();
 
     void loadRequest(NetworkProcess&, WebCore::ResourceRequest&&);

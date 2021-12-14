@@ -2154,6 +2154,21 @@ TEST(WKDownload, DownloadRequestFailure)
     checkCallbackRecord(delegate.get(), {
         DownloadCallback::DidFailWithError,
     });
+
+    failed = false;
+    [webView startDownloadUsingRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"ftp:///"]] completionHandler:^(WKDownload *download) {
+        download.delegate = delegate.get();
+        delegate.get().didFailWithError = ^(WKDownload *download, NSError *error, NSData *resumeData) {
+            EXPECT_WK_STREQ(error.domain, WebKitErrorDomain);
+            EXPECT_EQ(error.code, 101);
+            failed = true;
+        };
+    }];
+    Util::run(&failed);
+
+    checkCallbackRecord(delegate.get(), {
+        DownloadCallback::DidFailWithError,
+    });
 }
 
 TEST(WKDownload, DownloadRequest404)

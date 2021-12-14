@@ -76,12 +76,18 @@ NetworkDataTask::NetworkDataTask(NetworkSession& session, NetworkDataTaskClient&
     ASSERT(RunLoop::isMain());
 
     if (!requestWithCredentials.url().isValid()) {
-        scheduleFailure(InvalidURLFailure);
+        scheduleFailure(FailureType::InvalidURL);
         return;
     }
 
     if (!portAllowed(requestWithCredentials.url())) {
-        scheduleFailure(BlockedFailure);
+        scheduleFailure(FailureType::Blocked);
+        return;
+    }
+
+    if (!session.networkProcess().ftpEnabled()
+        && requestWithCredentials.url().protocolIsInFTPFamily()) {
+        scheduleFailure(FailureType::FTPDisabled);
         return;
     }
 }
@@ -94,20 +100,23 @@ NetworkDataTask::~NetworkDataTask()
 
 void NetworkDataTask::scheduleFailure(FailureType type)
 {
+    m_failureScheduled = true;
     RunLoop::main().dispatch([this, weakThis = WeakPtr { *this }, type] {
         if (!weakThis || !m_client)
             return;
 
         switch (type) {
-        case BlockedFailure:
+        case FailureType::Blocked:
             m_client->wasBlocked();
             return;
-        case InvalidURLFailure:
+        case FailureType::InvalidURL:
             m_client->cannotShowURL();
             return;
-        case RestrictedURLFailure:
+        case FailureType::RestrictedURL:
             m_client->wasBlockedByRestrictions();
             return;
+        case FailureType::FTPDisabled:
+            m_client->wasBlockedByDisabledFTP();
         }
     });
 }
