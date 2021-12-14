@@ -78,9 +78,9 @@ AbstractHeapRepository::AbstractHeapRepository()
 
     // Make sure that our explicit assumptions about the StructureIDBlob match reality.
     RELEASE_ASSERT(!(JSCell_indexingTypeAndMisc.offset() & (sizeof(int32_t) - 1)));
-    RELEASE_ASSERT(JSCell_indexingTypeAndMisc.offset() + 1 == JSCell_cellState.offset());
-    RELEASE_ASSERT(JSCell_indexingTypeAndMisc.offset() + 2 == JSCell_typeInfoType.offset());
-    RELEASE_ASSERT(JSCell_indexingTypeAndMisc.offset() + 3 == JSCell_typeInfoFlags.offset());
+    RELEASE_ASSERT(JSCell_indexingTypeAndMisc.offset() + 1 == JSCell_typeInfoType.offset());
+    RELEASE_ASSERT(JSCell_indexingTypeAndMisc.offset() + 2 == JSCell_typeInfoFlags.offset());
+    RELEASE_ASSERT(JSCell_indexingTypeAndMisc.offset() + 3 == JSCell_cellState.offset());
 
     JSCell_structureID.changeParent(&JSCell_header);
     JSCell_usefulBytes.changeParent(&JSCell_header);

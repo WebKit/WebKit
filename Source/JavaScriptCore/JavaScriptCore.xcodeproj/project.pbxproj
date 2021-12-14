@@ -852,6 +852,7 @@
 		2A4BB7F318A41179008A0FCD /* JSManagedValueInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 2A4BB7F218A41179008A0FCD /* JSManagedValueInternal.h */; };
 		2A83638618D7D0EE0000EBCC /* EdenGCActivityCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 2A83638418D7D0EE0000EBCC /* EdenGCActivityCallback.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2A83638A18D7D0FE0000EBCC /* FullGCActivityCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 2A83638818D7D0FE0000EBCC /* FullGCActivityCallback.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		2AAAA31218BD49D100394CC8 /* StructureIDBlob.h in Headers */ = {isa = PBXBuildFile; fileRef = 2AAAA31018BD49D100394CC8 /* StructureIDBlob.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2AABCDE718EF294200002096 /* GCLogging.h in Headers */ = {isa = PBXBuildFile; fileRef = 2AABCDE618EF294200002096 /* GCLogging.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2AACE63D18CA5A0300ED0191 /* GCActivityCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 2AACE63B18CA5A0300ED0191 /* GCActivityCallback.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2AD2EDFB19799E38004D6478 /* EnumerationMode.h in Headers */ = {isa = PBXBuildFile; fileRef = 2AD2EDFA19799E38004D6478 /* EnumerationMode.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -3631,6 +3632,7 @@
 		2A83638418D7D0EE0000EBCC /* EdenGCActivityCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EdenGCActivityCallback.h; sourceTree = "<group>"; };
 		2A83638718D7D0FE0000EBCC /* FullGCActivityCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FullGCActivityCallback.cpp; sourceTree = "<group>"; };
 		2A83638818D7D0FE0000EBCC /* FullGCActivityCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FullGCActivityCallback.h; sourceTree = "<group>"; };
+		2AAAA31018BD49D100394CC8 /* StructureIDBlob.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StructureIDBlob.h; sourceTree = "<group>"; };
 		2AABCDE618EF294200002096 /* GCLogging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GCLogging.h; sourceTree = "<group>"; };
 		2AACE63A18CA5A0300ED0191 /* GCActivityCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GCActivityCallback.cpp; sourceTree = "<group>"; };
 		2AACE63B18CA5A0300ED0191 /* GCActivityCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GCActivityCallback.h; sourceTree = "<group>"; };
@@ -8074,6 +8076,7 @@
 				7E4EE70E0EBB7A5B005934AA /* StructureChain.cpp */,
 				7E4EE7080EBB7963005934AA /* StructureChain.h */,
 				537FEEC82742BDA300C9EFEE /* StructureID.h */,
+				2AAAA31018BD49D100394CC8 /* StructureIDBlob.h */,
 				0FD2C92316D01EE900C7803F /* StructureInlines.h */,
 				C2F0F2D016BAEEE900187C19 /* StructureRareData.cpp */,
 				C2FE18A316BAEC4000AF3061 /* StructureRareData.h */,
@@ -10157,7 +10160,6 @@
 				A5398FAB1C750DA40060A963 /* HeapProfiler.h in Headers */,
 				A54C2AB11C6544F200A18D78 /* HeapSnapshot.h in Headers */,
 				A5311C361C77CEC500E6B1B6 /* HeapSnapshotBuilder.h in Headers */,
-				FE2CC9302756B2B9003F5AB8 /* HeapSubspaceTypes.h in Headers */,
 				0FADE6731D4D23BE00768457 /* HeapUtil.h in Headers */,
 				FE1BD0251E72053800134BC9 /* HeapVerifier.h in Headers */,
 				DC2143071CA32E55000A8869 /* ICStats.h in Headers */,
@@ -10274,7 +10276,6 @@
 				0FB467811FDDA6F7003FCB09 /* IsoCellSetInlines.h in Headers */,
 				E3BF1BAE238AAEDB003A1C2B /* IsoHeapCellType.h in Headers */,
 				E3C8ED4323A1DBCB00131958 /* IsoInlinedHeapCellType.h in Headers */,
-				FE65B1512748601F00DB5B16 /* IsoInlinedHeapCellTypeInlines.h in Headers */,
 				537FEED12742BDE100C9EFEE /* IsoMemoryAllocatorBase.h in Headers */,
 				537FEECE2742BDE100C9EFEE /* IsoMemoryAllocatorBaseInlines.h in Headers */,
 				0FDCE12D1FAFB4E5006F3901 /* IsoSubspace.h in Headers */,
@@ -10425,6 +10426,7 @@
 				E33F50811B8429A400413856 /* JSInternalPromise.h in Headers */,
 				E33F50791B84225700413856 /* JSInternalPromiseConstructor.h in Headers */,
 				E33F50871B8449EF00413856 /* JSInternalPromiseConstructor.lut.h in Headers */,
+				FE65B1512748601F00DB5B16 /* IsoInlinedHeapCellTypeInlines.h in Headers */,
 				E33F50751B8421C000413856 /* JSInternalPromisePrototype.h in Headers */,
 				A503FA1E188E0FB000110F14 /* JSJavaScriptCallFramePrototype.h in Headers */,
 				BC18C4160E16F5CD00B34460 /* JSLexicalEnvironment.h in Headers */,
@@ -10830,6 +10832,7 @@
 				7986943B1F8C0ACC009232AE /* StructureCache.h in Headers */,
 				7E4EE7090EBB7963005934AA /* StructureChain.h in Headers */,
 				537FEEC92742BDA300C9EFEE /* StructureID.h in Headers */,
+				2AAAA31218BD49D100394CC8 /* StructureIDBlob.h in Headers */,
 				0FD2C92416D01EE900C7803F /* StructureInlines.h in Headers */,
 				C2FE18A416BAEC4000AF3061 /* StructureRareData.h in Headers */,
 				C20BA92D16BB1C1500B3AEA2 /* StructureRareDataInlines.h in Headers */,
@@ -10952,6 +10955,7 @@
 				E337B967224324EA0093A820 /* WasmCapabilities.h in Headers */,
 				526AC4B71E977C5D003500E1 /* WasmCodeBlock.h in Headers */,
 				E3BD2B7622F275020011765C /* WasmCompilationMode.h in Headers */,
+				FE2CC9302756B2B9003F5AB8 /* HeapSubspaceTypes.h in Headers */,
 				AD412B341E7B2E9E008AF157 /* WasmContext.h in Headers */,
 				7593C898BE714A64BE93A6E7 /* WasmContextInlines.h in Headers */,
 				E36CC9472086314F0051FFD6 /* WasmCreationMode.h in Headers */,
