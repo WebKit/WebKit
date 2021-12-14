@@ -1,7 +1,3 @@
-2021-12-13  Alan Coon  <alancoon@apple.com>
-
-        Revert r286382. rdar://problem/86408710
-
 2021-12-03  Keith Miller  <keith_miller@apple.com>
 
         Remove StructureIDBlob
