@@ -148,13 +148,23 @@
         NSItemProvider *itemProvider = (NSItemProvider *)item;
         
         ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-        [itemProvider loadDataRepresentationForTypeIdentifier:(NSString *)kUTTypeData completionHandler:^(NSData *data, NSError *error) {
+        WeakPtr weakPage = _menuProxy->page();
+        [itemProvider loadDataRepresentationForTypeIdentifier:(NSString *)kUTTypeData completionHandler:[weakPage, attachmentID = _attachmentID](NSData *data, NSError *error) {
+            RefPtr webPage = weakPage.get();
+            
+            if (!webPage)
+                return;
+            
             if (error)
                 return;
             
-            auto apiAttachment = _menuProxy->page()->attachmentForIdentifier(_attachmentID);
+            auto apiAttachment = webPage->attachmentForIdentifier(attachmentID);
+            if (!apiAttachment)
+                return;
+            
             auto attachment = wrapper(apiAttachment);
             [attachment setData:data newContentType:String(NSPasteboardTypeTIFF)];
+            webPage->didInvalidateDataForAttachment(*apiAttachment.get());
         }];
         ALLOW_DEPRECATED_DECLARATIONS_END
         return;

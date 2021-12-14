@@ -1,3 +1,16 @@
+2021-12-14  Megan Gardner  <megan_gardner@apple.com>
+
+        Attachment does not update after markup.
+        https://bugs.webkit.org/show_bug.cgi?id=234266
+
+        Reviewed by Wenson Hsieh.
+
+        If we don't call the deligate to inform Mail about the new attachment data,
+        it will not update and the original image will be sent.
+
+        * UIProcess/mac/WKSharingServicePickerDelegate.mm:
+        (-[WKSharingServicePickerDelegate sharingService:didShareItems:]):
+
 2021-12-11  Dean Jackson  <dino@apple.com>
 
         Allow override of system's preferred color scheme
