@@ -1,3 +1,17 @@
+2021-12-14  Brandon Stewart  <brandonstewart@apple.com>
+
+        Add test case for execCommand to verify inserting an ordered list and deletion
+        https://bugs.webkit.org/show_bug.cgi?id=234113
+        <rdar://85926354>
+
+        Reviewed by Chris Dumez.
+
+        Add test to verify correct execution of execCommand when inserting an ordered
+        list and calling delete.
+
+        * editing/execCommand/insert-ordered-list-and-delete-expected.txt: Added.
+        * editing/execCommand/insert-ordered-list-and-delete.html: Added.
+
 2021-12-14  Antti Koivisto  <antti@apple.com>
 
         [CSS Cascade Layers] revert-layer should revert style attribute to regular author style
