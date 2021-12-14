@@ -36,7 +36,7 @@
 namespace WebCore {
 namespace Layout {
 
-static std::optional<InlineLayoutUnit> horizontalAlignmentOffset(TextAlignMode textAlign, const LineBuilder::LineContent& lineContent)
+static std::optional<InlineLayoutUnit> horizontalAlignmentOffset(TextAlignMode textAlign, const LineBuilder::LineContent& lineContent, bool isLeftToRightDirection)
 {
     // Depending on the line’s alignment/justification, the hanging glyph can be placed outside the line box.
     auto& runs = lineContent.runs;
@@ -72,10 +72,16 @@ static std::optional<InlineLayoutUnit> horizontalAlignmentOffset(TextAlignMode t
     switch (computedHorizontalAlignment()) {
     case TextAlignMode::Left:
     case TextAlignMode::WebKitLeft:
+        if (!isLeftToRightDirection)
+            return extraHorizontalSpace;
+        FALLTHROUGH;
     case TextAlignMode::Start:
         return { };
     case TextAlignMode::Right:
     case TextAlignMode::WebKitRight:
+        if (!isLeftToRightDirection)
+            return { };
+        FALLTHROUGH;
     case TextAlignMode::End:
         return extraHorizontalSpace;
     case TextAlignMode::Center:
@@ -99,8 +105,8 @@ LineBoxBuilder::LineBoxBuilder(const InlineFormattingContext& inlineFormattingCo
 
 LineBoxBuilder::LineAndLineBox LineBoxBuilder::build(const LineBuilder::LineContent& lineContent, size_t lineIndex)
 {
-    auto textAlign = !lineIndex ? rootBox().firstLineStyle().textAlign() : rootBox().style().textAlign();
-    auto rootInlineBoxAlignmentOffset = Layout::horizontalAlignmentOffset(textAlign, lineContent).value_or(InlineLayoutUnit { });
+    auto& rootStyle = lineIndex ? rootBox().firstLineStyle() : rootBox().style();
+    auto rootInlineBoxAlignmentOffset = Layout::horizontalAlignmentOffset(rootStyle.textAlign(), lineContent, rootStyle.isLeftToRightDirection()).value_or(InlineLayoutUnit { });
     auto lineBox = LineBox { rootBox(), rootInlineBoxAlignmentOffset, lineContent.contentLogicalWidth, lineIndex, lineContent.nonSpanningInlineLevelBoxCount };
 
     auto lineBoxLogicalHeight = constructAndAlignInlineLevelBoxes(lineBox, lineContent.runs, lineIndex);
