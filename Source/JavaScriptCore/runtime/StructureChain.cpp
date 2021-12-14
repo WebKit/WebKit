@@ -49,7 +49,6 @@ StructureChain* StructureChain::create(VM& vm, JSObject* head)
     ++size; // Sentinel nullptr.
     size_t bytes = Checked<size_t>(size) * sizeof(StructureID);
     void* vector = vm.jsValueGigacageAuxiliarySpace().allocateNonVirtual(vm, bytes, nullptr, AllocationFailureMode::Assert);
-    static_assert(!StructureID().bits(), "Make sure the value we're going to memcpy below matches the default StructureID");
     memset(vector, 0, bytes);
     StructureChain* chain = new (NotNull, allocateCell<StructureChain>(vm)) StructureChain(vm, vm.structureChainStructure.get(), static_cast<StructureID*>(vector));
     chain->finishCreation(vm, head);
