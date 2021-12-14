@@ -115,5 +115,4 @@ template<> struct EnumTraits<JSC::MessageLevel> {
 } // namespace WTF
 
 using JSC::MessageSource;
-using JSC::MessageType;
 using JSC::MessageLevel;

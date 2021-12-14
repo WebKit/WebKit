@@ -53,8 +53,10 @@ void AppBundleRequest::start()
 
     if (m_connection->useMockBundlesForTesting())
         m_appBundle = MockAppBundleForTesting::create(m_originString, m_connection->hostAppCodeSigningIdentifier(), *this);
-    else
+    else {
+        m_connection->broadcastDebugMessage("Client is trying to initiate app bundle request without having configured mock app bundles for testing. About to crash...");
         RELEASE_ASSERT_NOT_REACHED();
+    }
 
     startInternal();
 }

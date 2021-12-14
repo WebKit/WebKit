@@ -125,8 +125,24 @@ static RetainPtr<NSDictionary> testWebPushDaemonPList(NSURL *storageLocation)
 
 #endif // HAVE(OS_LAUNCHD_JOB)
 
+static bool shouldSetupWebPushD()
+{
+    static bool shouldSetup = true;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        NSArray<NSString *> *arguments = [[NSProcessInfo processInfo] arguments];
+        if ([arguments containsObject:@"--no-webpushd"])
+            shouldSetup = false;
+    });
+
+    return shouldSetup;
+}
+
 static NSURL *setUpTestWebPushD()
 {
+    if (!shouldSetupWebPushD())
+        return nil;
+
     NSFileManager *fileManager = [NSFileManager defaultManager];
     NSURL *tempDir = [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingPathComponent:@"WebPushDaemonTest"] isDirectory:YES];
     NSError *error = nil;
@@ -148,6 +164,9 @@ static NSURL *setUpTestWebPushD()
 
 static void cleanUpTestWebPushD(NSURL *tempDir)
 {
+    if (!shouldSetupWebPushD())
+        return;
+
     killFirstInstanceOfDaemon(@"webpushd");
 
     if (![[NSFileManager defaultManager] fileExistsAtPath:tempDir.path])
@@ -242,7 +261,7 @@ static Vector<uint8_t> encodeString(const String& message)
 }
 
 // FIXME: Re-enable this test on Mac once webkit.org/232857 is resolved.
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) && !USE(APPLE_INTERNAL_SDK)
 TEST(WebPushD, DISABLED_BasicCommunication)
 #else
 TEST(WebPushD, BasicCommunication)
@@ -321,7 +340,7 @@ static const char* mainBytes = R"WEBPUSHRESOURCE(
 )WEBPUSHRESOURCE";
 
 // FIXME: Re-enable this test on Mac once webkit.org/232857 is resolved.
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) && !USE(APPLE_INTERNAL_SDK)
 TEST(WebPushD, DISABLED_PermissionManagement)
 #else
 TEST(WebPushD, PermissionManagement)
@@ -454,7 +473,7 @@ static void clearWebsiteDataStore(WKWebsiteDataStore *store)
 }
 
 // FIXME: Re-enable this test on Mac once webkit.org/232857 is resolved.
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) && !USE(APPLE_INTERNAL_SDK)
 TEST(WebPushD, DISABLED_HandleInjectedPush)
 #else
 TEST(WebPushD, HandleInjectedPush)

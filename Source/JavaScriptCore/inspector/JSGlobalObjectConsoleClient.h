@@ -29,6 +29,8 @@
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
+using JSC::MessageType;
+
 namespace Inspector {
 
 class InspectorConsoleAgent;

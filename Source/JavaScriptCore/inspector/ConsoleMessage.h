@@ -43,6 +43,8 @@ class CallFrame;
 class JSGlobalObject;
 }
 
+using JSC::MessageType;
+
 namespace Inspector {
 
 class ConsoleFrontendDispatcher;

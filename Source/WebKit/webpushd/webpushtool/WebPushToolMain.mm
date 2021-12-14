@@ -43,6 +43,11 @@ static void printUsageAndTerminate(NSString *message)
     fprintf(stderr, "    Connects to mach service \"org.webkit.webpushtestdaemon.service\" (Default)\n");
     fprintf(stderr, "  --production\n");
     fprintf(stderr, "    Connects to mach service \"com.apple.webkit.webpushd.service\"\n");
+#if HAVE(OS_LAUNCHD_JOB)
+    fprintf(stderr, "  --host\n");
+    fprintf(stderr, "    Dynamically registers the service with launchd so it is visible to other applications\n");
+    fprintf(stderr, "    The service name of the registration depends on either the --development or --production option chosen\n");
+#endif
     fprintf(stderr, "  --streamDebugMessages\n");
     fprintf(stderr, "    Stream debug messages from webpushd\n");
     fprintf(stderr, "  --reconnect\n");
@@ -76,12 +81,70 @@ static std::unique_ptr<PushMessageForTesting> pushMessageFromArguments(NSEnumera
     return makeUniqueWithoutFastMallocCheck<PushMessageForTesting>(WTFMove(pushMessage));
 }
 
+#if HAVE(OS_LAUNCHD_JOB)
+static bool registerDaemonWithLaunchD(WebPushTool::PreferTestService preferTestService)
+{
+    // For now webpushtool only knows how to host webpushd when they're in the same directory
+    // e.g. the build directory of a WebKit contributor.
+    NSString *currentExecutablePath = [[NSBundle mainBundle] executablePath];
+    NSURL *currentExecutableDirectoryURL = [[NSURL fileURLWithPath:currentExecutablePath isDirectory:NO] URLByDeletingLastPathComponent];
+    NSURL *daemonExecutablePathURL = [currentExecutableDirectoryURL URLByAppendingPathComponent:@"webpushd"];
+
+    if (![[NSFileManager defaultManager] fileExistsAtPath:daemonExecutablePathURL.path]) {
+        NSLog(@"Daemon executable does not exist at path %@", daemonExecutablePathURL.path);
+        return false;
+    }
+
+    const char* serviceName = (preferTestService == WebPushTool::PreferTestService::Yes) ? "org.webkit.webpushtestdaemon.service" : "com.apple.webkit.webpushd.service";
+
+    auto plist = adoptNS(xpc_dictionary_create(nullptr, nullptr, 0));
+    xpc_dictionary_set_string(plist.get(), "_ManagedBy", "webpushtool");
+    xpc_dictionary_set_string(plist.get(), "Label", "org.webkit.webpushtestdaemon");
+    xpc_dictionary_set_bool(plist.get(), "LaunchOnlyOnce", true);
+    xpc_dictionary_set_bool(plist.get(), "RootedSimulatorPath", true);
+
+    {
+        auto environmentVariables = adoptNS(xpc_dictionary_create(nullptr, nullptr, 0));
+        xpc_dictionary_set_string(environmentVariables.get(), "DYLD_FRAMEWORK_PATH", currentExecutableDirectoryURL.fileSystemRepresentation);
+        xpc_dictionary_set_value(plist.get(), "EnvironmentVariables", environmentVariables.get());
+    }
+    {
+        auto machServices = adoptNS(xpc_dictionary_create(nullptr, nullptr, 0));
+        xpc_dictionary_set_bool(machServices.get(), serviceName, true);
+        xpc_dictionary_set_value(plist.get(), "MachServices", machServices.get());
+    }
+    {
+        auto programArguments = adoptNS(xpc_array_create(nullptr, 0));
+#if PLATFORM(MAC)
+        xpc_array_set_string(programArguments.get(), XPC_ARRAY_APPEND, daemonExecutablePathURL.fileSystemRepresentation);
+#else
+        xpc_array_set_string(programArguments.get(), XPC_ARRAY_APPEND, daemonExecutablePathURL.path.fileSystemRepresentation);
+#endif
+        xpc_array_set_string(programArguments.get(), XPC_ARRAY_APPEND, "--machServiceName");
+        xpc_array_set_string(programArguments.get(), XPC_ARRAY_APPEND, serviceName);
+        xpc_dictionary_set_value(plist.get(), "ProgramArguments", programArguments.get());
+    }
+
+    auto job = adoptNS([[OSLaunchdJob alloc] initWithPlist:plist.get()]);
+    NSError *error = nil;
+    [job submit:&error];
+
+    if (error) {
+        NSLog(@"Error setting up service: %@", error);
+        return false;
+    }
+
+    return true;
+}
+#endif // #if HAVE(OS_LAUNCHD_JOB)
+
 int main(int, const char **)
 {
     WTF::initializeMainThread();
 
     auto preferTestService = WebPushTool::PreferTestService::Yes;
     auto reconnect = WebPushTool::Reconnect::No;
+    bool host = false;
     std::optional<WebPushTool::Action> action;
     std::unique_ptr<PushMessageForTesting> pushMessage;
 
@@ -101,6 +164,10 @@ int main(int, const char **)
                 action = WebPushTool::Action::StreamDebugMessages;
             else if ([argument isEqualToString:@"--reconnect"])
                 reconnect = WebPushTool::Reconnect::Yes;
+#if HAVE(OS_LAUNCHD_JOB)
+            else if ([argument isEqualToString:@"--host"])
+                host = true;
+#endif
             else if ([argument isEqualToString:@"--push"]) {
                 pushMessage = pushMessageFromArguments(enumerator);
                 if (!pushMessage)
@@ -115,11 +182,16 @@ int main(int, const char **)
     if (!action && !pushMessage)
         printUsageAndTerminate(@"No action provided");
 
+#if HAVE(OS_LAUNCHD_JOB)
+    if (host && !registerDaemonWithLaunchD(preferTestService))
+        printUsageAndTerminate(@"Unable to install plist to host the service");
+#endif
+
     auto connection = WebPushTool::Connection::create(*action, preferTestService, reconnect);
     if (pushMessage)
         connection->setPushMessage(WTFMove(pushMessage));
 
-    connection->connectToService();
+    connection->connectToService(host ? WebPushTool::WaitForServiceToExist::No : WebPushTool::WaitForServiceToExist::Yes);
 
     CFRunLoopRun();
     return 0;

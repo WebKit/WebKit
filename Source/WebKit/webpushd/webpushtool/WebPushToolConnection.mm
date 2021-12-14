@@ -66,7 +66,7 @@ Connection::Connection(Action action, PreferTestService preferTestService, Recon
         m_serviceName = "com.apple.webkit.webpushd.service";
 }
 
-void Connection::connectToService()
+void Connection::connectToService(WaitForServiceToExist waitForServiceToExist)
 {
     if (m_connection)
         return;
@@ -99,13 +99,15 @@ void Connection::connectToService()
         RELEASE_ASSERT_NOT_REACHED();
     });
 
-    auto result = maybeConnectToService(m_serviceName);
-    if (result == MACH_PORT_NULL)
-        printf("Waiting for service '%s' to be available\n", m_serviceName);
+    if (waitForServiceToExist == WaitForServiceToExist::Yes) {
+        auto result = maybeConnectToService(m_serviceName);
+        if (result == MACH_PORT_NULL)
+            printf("Waiting for service '%s' to be available\n", m_serviceName);
 
-    while (result == MACH_PORT_NULL) {
-        usleep(1000);
-        result = maybeConnectToService(m_serviceName);
+        while (result == MACH_PORT_NULL) {
+            usleep(1000);
+            result = maybeConnectToService(m_serviceName);
+        }
     }
 
     xpc_connection_activate(m_connection.get());
@@ -184,7 +186,7 @@ void Connection::connectionDropped()
     if (m_reconnect) {
         callOnMainRunLoop([this, weakThis = WeakPtr { this }] {
             if (weakThis)
-                connectToService();
+                connectToService(WaitForServiceToExist::Yes);
         });
         return;
     }

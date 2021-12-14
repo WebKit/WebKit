@@ -28,6 +28,7 @@
 #include <optional>
 #include <wtf/Deque.h>
 #include <wtf/Forward.h>
+#include <wtf/Identified.h>
 #include <wtf/OSObjectPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/WeakPtr.h>
@@ -45,7 +46,7 @@ namespace WebPushD {
 
 class AppBundleRequest;
 
-class ClientConnection : public RefCounted<ClientConnection>, public CanMakeWeakPtr<ClientConnection> {
+class ClientConnection : public RefCounted<ClientConnection>, public CanMakeWeakPtr<ClientConnection>, public Identified<ClientConnection> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static Ref<ClientConnection> create(xpc_connection_t);

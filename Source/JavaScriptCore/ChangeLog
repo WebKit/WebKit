@@ -1,3 +1,15 @@
+2021-12-13  Brady Eidson  <beidson@apple.com>
+
+        Teach webpushtool to register and "host" the daemon.
+        https://bugs.webkit.org/show_bug.cgi?id=234265
+
+        Reviewed by Tim Horton.
+
+        * inspector/ConsoleMessage.h: Remove `using JSC::MessageType` because it makes it hard for others
+          to also have a `MessageType` type.
+        * inspector/JSGlobalObjectConsoleClient.h:
+        * runtime/ConsoleTypes.h:
+
 2021-12-13  Saam Barati  <sbarati@apple.com>
 
         Roll back r286345, r286387, r286471, r286667, r286849

@@ -185,6 +185,14 @@ void Daemon::broadcastDebugMessage(JSC::MessageLevel messageLevel, const String&
     }
 }
 
+void Daemon::broadcastAllConnectionIdentities()
+{
+    broadcastDebugMessage((JSC::MessageLevel)4, "===\nCurrent connections:");
+    for (auto& iterator : m_connectionMap)
+        iterator.value->broadcastDebugMessage("");
+    broadcastDebugMessage((JSC::MessageLevel)4, "===");
+}
+
 void Daemon::connectionEventHandler(xpc_object_t request)
 {
     if (xpc_get_type(request) != XPC_TYPE_DICTIONARY)

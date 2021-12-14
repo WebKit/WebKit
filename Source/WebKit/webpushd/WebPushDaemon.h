@@ -70,6 +70,7 @@ public:
     void getPendingPushMessages(ClientConnection*, CompletionHandler<void(const Vector<WebKit::WebPushMessage>&)>&& replySender);
 
     void broadcastDebugMessage(JSC::MessageLevel, const String&);
+    void broadcastAllConnectionIdentities();
 
 private:
     Daemon() = default;

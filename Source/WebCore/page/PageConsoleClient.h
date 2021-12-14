@@ -40,6 +40,8 @@ namespace JSC {
 class CallFrame;
 }
 
+using JSC::MessageType;
+
 namespace WebCore {
 
 class Document;

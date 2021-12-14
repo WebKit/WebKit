@@ -1,3 +1,45 @@
+2021-12-13  Brady Eidson  <beidson@apple.com>
+
+        Teach webpushtool to register and "host" the daemon.
+        https://bugs.webkit.org/show_bug.cgi?id=234265
+
+        Reviewed by Tim Horton.
+
+        Covered by API tests verifying hosting mode operation.
+
+        As various engineers work on various parts of the project, it's become apparent that it's super useful
+        to have a tool handle the "setting up" of the daemon itself, to avoid launchctl, etc.
+        
+        Implement that, as well as a few other niceties found while testing.
+        
+        * Configurations/webpushtool.xcconfig:
+        * Resources/webpushtool.entitlements:
+        
+        * Shared/Daemon/DaemonUtilities.mm:
+        (WebKit::startListeningForMachServiceConnections):
+        
+        * webpushd/AppBundleRequest.mm:
+        (WebPushD::AppBundleRequest::start):
+        
+        * webpushd/PushClientConnection.h:
+        * webpushd/PushClientConnection.mm:
+        (WebPushD::ClientConnection::setHostAppAuditTokenData):
+        (WebPushD::ClientConnection::broadcastDebugMessage):
+
+        * webpushd/WebPushDaemon.h:
+        * webpushd/WebPushDaemon.mm:
+        (WebPushD::Daemon::broadcastAllConnectionIdentities):
+
+        * webpushd/webpushtool/WebPushToolConnection.h:
+        * webpushd/webpushtool/WebPushToolConnection.mm:
+        (WebPushTool::Connection::connectToService):
+        (WebPushTool::Connection::connectionDropped):
+
+        * webpushd/webpushtool/WebPushToolMain.mm:
+        (printUsageAndTerminate):
+        (registerDaemonWithLaunchD):
+        (main):
+
 2021-12-13  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r286993.

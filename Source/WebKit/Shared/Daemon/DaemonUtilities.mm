@@ -54,6 +54,9 @@ void startListeningForMachServiceConnections(const char* serviceName, const char
 #else
                 NSLog(@"Failed to start listening for connections to mach service %s, likely because it is not registered with launchd", serviceName);
 #endif
+                NSLog(@"Removing peer connection %p", peer);
+                connectionRemoved(peer);
+                return;
             }
             if (event == XPC_ERROR_CONNECTION_INTERRUPTED) {
                 NSLog(@"Removing peer connection %p", peer);

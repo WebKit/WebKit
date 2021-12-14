@@ -73,6 +73,7 @@ void ClientConnection::setHostAppAuditTokenData(const Vector<uint8_t>& tokenData
     }
 
     m_hostAppAuditToken = WTFMove(token);
+    Daemon::singleton().broadcastAllConnectionIdentities();
 }
 
 const String& ClientConnection::hostAppCodeSigningIdentifier()
@@ -121,9 +122,9 @@ void ClientConnection::broadcastDebugMessage(const String& message)
     String messageIdentifier;
     auto signingIdentifer = hostAppCodeSigningIdentifier();
     if (signingIdentifer.isEmpty())
-        messageIdentifier = makeString("[(0x", hex(reinterpret_cast<uint64_t>(m_xpcConnection.get()), WTF::HexConversionMode::Lowercase), ")] ");
+        messageIdentifier = makeString("[(0x", hex(reinterpret_cast<uint64_t>(m_xpcConnection.get()), WTF::HexConversionMode::Lowercase), ") (", String::number(identifier()), " )] ");
     else
-        messageIdentifier = makeString("[", signingIdentifer, " (0x", hex(reinterpret_cast<uint64_t>(m_xpcConnection.get()), WTF::HexConversionMode::Lowercase), ")] ");
+        messageIdentifier = makeString("[", signingIdentifer, " (", String::number(identifier()), ")] ");
 
     Daemon::singleton().broadcastDebugMessage(JSC::MessageLevel::Info, makeString(messageIdentifier, message));
 }

@@ -41,13 +41,18 @@ enum class Action {
 };
 
 enum class PreferTestService : bool {
-    Yes,
     No,
+    Yes,
 };
 
 enum class Reconnect : bool {
-    Yes,
     No,
+    Yes,
+};
+
+enum class WaitForServiceToExist : bool {
+    No,
+    Yes,
 };
 
 class Connection : public CanMakeWeakPtr<Connection> {
@@ -56,7 +61,7 @@ public:
     static std::unique_ptr<Connection> create(Action, PreferTestService, Reconnect);
     Connection(Action, PreferTestService, Reconnect);
 
-    void connectToService();
+    void connectToService(WaitForServiceToExist);
 
     void setPushMessage(std::unique_ptr<PushMessageForTesting>&& message) { m_pushMessage = WTFMove(message); }
 
