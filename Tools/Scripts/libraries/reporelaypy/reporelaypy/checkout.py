@@ -170,7 +170,11 @@ class Checkout(object):
             return None
 
         branch = branch or self.repository.default_branch
-        if not self.repository.prod_branches.match(branch):
+        if branch == self.repository.default_branch:
+            self.repository.pull(remote=remote)
+            self.repository.cache.populate(branch=branch)
+            return True
+        elif not self.repository.prod_branches.match(branch):
             return False
         elif track and branch not in self.repository.branches_for(remote=remote):
             run(
@@ -178,10 +182,6 @@ class Checkout(object):
                 cwd=self.repository.root_path,
             )
             self.repository.cache.populate(branch=branch)
-        elif branch == self.repository.default_branch:
-            self.repository.pull(remote=remote)
-            self.repository.cache.populate(branch=branch)
-            return True
         elif not track and self.is_updated(branch, remote=remote):
             return True
 
