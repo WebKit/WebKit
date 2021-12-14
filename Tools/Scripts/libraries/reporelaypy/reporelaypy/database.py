@@ -46,9 +46,9 @@ class Database(object):
         self.host = host or Environment.instance().get(self.HOST_ENV)
         self.password = password or Environment.instance().get(self.PASSWORD_ENV)
 
-        if host:
+        if self.host:
             import redis
-            self._redis = redis.Redis(host=host, password=password)
+            self._redis = redis.StrictRedis(host=self.host, password=self.password)
         else:
             import fakeredis
             self._redis = fakeredis.FakeStrictRedis()

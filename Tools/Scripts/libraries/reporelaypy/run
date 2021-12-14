@@ -38,7 +38,7 @@ if os.path.isdir(os.path.join(scripts, 'webkitpy')):
     sys.path.insert(0, scripts)
     import webkitpy
 
-from reporelaypy import Checkout, Database, Redirector
+from reporelaypy import Checkout, Database, HookProcessor, HookReceiver, Redirector
 from webkitcorepy import arguments, AutoInstall
 from whichcraft import which
 
@@ -101,6 +101,16 @@ def main(args=None):
         help='Base URL to redirect user to for commit information.',
     )
 
+    group = parser.add_argument_group('Hooks')
+    group.add_argument(
+        '--hooks', '--no-hooks', action=arguments.NoAction, dest='hooks', default=False,
+        help='Enable or disable hook end-points (disabled by default)',
+    )
+    group.add_argument(
+        '--debug', '--no-debug', action=arguments.NoAction, dest='hooks_debug', default=True,
+        help='Enable endpoint to report hooks being processed (enabled by default)',
+    )
+
     args = parser.parse_args(args=args)
 
     database = Database(host=args.redis_host, password=args.redis_password)
@@ -140,25 +150,30 @@ def main(args=None):
             redirector = Redirector(url)
             print('    {}: {}'.format(redirector.name, redirector.url))
 
-    env = dict(
+    passenv = dict(
         PYTHONPATH=':'.join(sys.path),
         CHECKOUT=json.dumps(checkout, cls=Checkout.Encoder),
-        REDIRECTORS=json.dumps([Redirector(url) for url in args.redirector or []], cls=Redirector.Encoder)
+        REDIRECTORS=json.dumps([Redirector(url) for url in args.redirector or []], cls=Redirector.Encoder),
+        HOOKS=json.dumps({'enabled': args.hooks, 'debug': args.hooks_debug}),
     )
 
     if AutoInstall.directory:
-        env['AUTOINSTALL_PATH'] = AutoInstall.directory
+        passenv['AUTOINSTALL_PATH'] = AutoInstall.directory
     if database.host:
-        env[database.HOST_ENV] = database.host
+        passenv[database.HOST_ENV] = database.host
     if database.password:
-        env[database.PASSWORD_ENV] = database.password
+        passenv[database.PASSWORD_ENV] = database.password
     if database.default_expiration:
-        env[database.EXPIRATION_ENV] = str(database.default_expiration)
+        passenv[database.EXPIRATION_ENV] = str(database.default_expiration)
+    if os.environ.get(HookReceiver.SECRET_ENV):
+        passenv[HookReceiver.SECRET_ENV] = os.environ.get(HookReceiver.SECRET_ENV)
+
+    processor = HookProcessor(checkout=checkout, database=database) if args.hooks else None
 
     with subprocess.Popen(
         [which('gunicorn'), 'reporelaypy.webserver:app'],
         cwd=os.path.dirname(os.path.dirname(reporelaypy.__file__)),
-        env=env,
+        env=passenv,
     ) as webserver:
         last_poll = time.time()
         last_pull = time.time()
@@ -169,7 +184,7 @@ def main(args=None):
                     break
                 last_poll = time.time()
             if last_pull + args.update_interval < time.time():
-                checkout.update_all()
+                processor.process_hooks() if processor else checkout.update_all()
                 last_pull = time.time()
             time.sleep(math.gcd(args.poll, args.update_interval))
 

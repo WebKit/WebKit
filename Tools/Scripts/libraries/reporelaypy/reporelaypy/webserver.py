@@ -20,6 +20,7 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import json
 import os
 
 autoinstall_path = os.environ.get('AUTOINSTALL_PATH')
@@ -28,7 +29,7 @@ if autoinstall_path:
     AutoInstall.set_directory(autoinstall_path)
 
 from flask import Flask, current_app, json as fjson
-from reporelaypy import Checkout, CheckoutRoute, Database, Redirector
+from reporelaypy import Checkout, CheckoutRoute, Database, Redirector, HookReceiver
 
 app = Flask(__name__)
 
@@ -39,6 +40,15 @@ checkout_routes = CheckoutRoute(
     import_name=__name__, database=database,
 )
 
+hook_args = json.loads(os.environ.get('HOOKS', '{}'))
+if hook_args.get('enabled', False):
+    hook_routes = HookReceiver(
+        import_name=__name__, database=database,
+        debug=hook_args.get('debug', False), secret=os.environ.get(HookReceiver.SECRET_ENV),
+    )
+else:
+    hook_routes = None
+
 
 @app.route('/__health')
 def health():
@@ -46,6 +56,8 @@ def health():
 
 
 app.register_blueprint(checkout_routes)
+if hook_routes:
+    app.register_blueprint(hook_routes)
 
 
 if __name__ == '__main__':

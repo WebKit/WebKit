@@ -44,13 +44,14 @@ except ImportError:
         "Please install webkitcorepy with `pip install webkitcorepy --extra-index-url <package index URL>`"
     )
 
-version = Version(0, 2, 0)
+version = Version(0, 3, 0)
 
 import webkitflaskpy
 
 from reporelaypy.checkout import Checkout
 from reporelaypy.database import Database
 from reporelaypy.checkoutroute import CheckoutRoute, Redirector
+from reporelaypy.hooks import HookProcessor, HookReceiver
 
 AutoInstall.register(Package('fakeredis', Version(1, 5, 2)))
 AutoInstall.register(Package('hiredis', Version(1, 1, 0)))

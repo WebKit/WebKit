@@ -164,19 +164,25 @@ class Checkout(object):
                 return ref == line.split()[0]
         return False
 
-    def update_for(self, branch=None, remote='origin'):
+    def update_for(self, branch=None, remote='origin', track=False):
         if not self.repository:
             sys.stderr.write("Cannot update '{}', clone still pending...\n".format(branch))
             return None
 
         branch = branch or self.repository.default_branch
-        if branch == self.repository.default_branch:
+        if not self.repository.prod_branches.match(branch):
+            return False
+        elif track and branch not in self.repository.branches_for(remote=remote):
+            run(
+                [self.repository.executable(), 'branch', '--track', branch, 'remotes/{}/{}'.format(remote, branch)],
+                cwd=self.repository.root_path,
+            )
+            self.repository.cache.populate(branch=branch)
+        elif branch == self.repository.default_branch:
             self.repository.pull(remote=remote)
             self.repository.cache.populate(branch=branch)
             return True
-        if not self.repository.prod_branches.match(branch):
-            return False
-        if self.is_updated(branch, remote=remote):
+        elif not track and self.is_updated(branch, remote=remote):
             return True
 
         run(
