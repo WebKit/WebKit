@@ -28,6 +28,7 @@
 #include "PlatformVideoColorPrimaries.h"
 #include "PlatformVideoMatrixCoefficients.h"
 #include "PlatformVideoTransferCharacteristics.h"
+#include <optional>
 #include <wtf/FastMalloc.h>
 
 namespace WebCore {
