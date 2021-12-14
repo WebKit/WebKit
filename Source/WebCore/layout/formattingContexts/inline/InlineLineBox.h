@@ -59,7 +59,7 @@ class LineBoxVerticalAligner;
 class LineBox {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    LineBox(const Box& rootLayoutBox, InlineLayoutUnit contentLogicalLeft, InlineLayoutUnit contentLogicalWidth, size_t lineIndex, size_t nonSpanningInlineLevelBoxCount);
+    LineBox(const Box& rootLayoutBox, InlineLayoutUnit rootInlineBoxAlignmentOffset, InlineLayoutUnit contentLogicalWidth, size_t lineIndex, size_t nonSpanningInlineLevelBoxCount);
 
     // Note that the line can have many inline boxes and be "empty" the same time e.g. <div><span></span><span></span></div>
     bool hasContent() const { return m_hasContent; }
@@ -79,6 +79,8 @@ public:
     using InlineLevelBoxList = Vector<InlineLevelBox>;
     const InlineLevelBoxList& nonRootInlineLevelBoxes() const { return m_nonRootInlineLevelBoxList; }
 
+    InlineLayoutUnit rootInlineBoxAlignmentOffset() const { return m_rootInlineBoxAlignmentOffset; }
+
 private:
     friend class LineBoxBuilder;
     friend class LineBoxVerticalAligner;
@@ -97,6 +99,7 @@ private:
     bool m_hasContent { false };
     OptionSet<InlineLevelBox::Type> m_boxTypes;
 
+    InlineLayoutUnit m_rootInlineBoxAlignmentOffset { 0 };
     InlineLevelBox m_rootInlineBox;
     InlineLevelBoxList m_nonRootInlineLevelBoxList;
 

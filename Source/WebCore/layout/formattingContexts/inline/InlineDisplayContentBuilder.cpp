@@ -289,11 +289,13 @@ void InlineDisplayContentBuilder::appendInlineDisplayBoxAtBidiBoundary(const Box
 void InlineDisplayContentBuilder::processNonBidiContent(const LineBuilder::LineContent& lineContent, const LineBox& lineBox, const InlineLayoutPoint& lineBoxLogicalTopLeft, DisplayBoxes& boxes)
 {
     // Create the inline boxes on the current line. This is mostly text and atomic inline boxes.
+    auto rootInlineBoxAlignmentOffset = lineBox.rootInlineBoxAlignmentOffset();
+
     for (auto& lineRun : lineContent.runs) {
         auto& layoutBox = lineRun.layoutBox();
 
         auto logicalRectRelativeToRoot = [&](auto logicalRect) {
-            logicalRect.moveBy(lineBoxLogicalTopLeft);
+            logicalRect.moveBy({ lineBoxLogicalTopLeft.x() + rootInlineBoxAlignmentOffset, lineBoxLogicalTopLeft.y() });
             return logicalRect;
         };
 
@@ -481,6 +483,7 @@ void InlineDisplayContentBuilder::processBidiContent(const LineBuilder::LineCont
     auto displayBoxTree = DisplayBoxTree { };
     ancestorStack.push({ }, root());
 
+    auto rootInlineBoxAlignmentOffset = lineBox.rootInlineBoxAlignmentOffset();
     auto contentStartInVisualOrder = InlineLayoutUnit { };
     auto createDisplayBoxesInVisualOrder = [&] {
         auto rootInlineBoxRect = lineBox.logicalRectForRootInlineBox();
@@ -490,7 +493,7 @@ void InlineDisplayContentBuilder::processBidiContent(const LineBuilder::LineCont
             contentStartInVisualOrder += lineContent.lineLogicalWidth - rootInlineBoxRect.width();
         }
         // Adjust the content start position with the (text)alignment offset (root inline box has the alignment offset and not the individual runs).
-        contentStartInVisualOrder += rootInlineBoxRect.left();
+        contentStartInVisualOrder += rootInlineBoxAlignmentOffset;
 
         auto contentRightInVisualOrder = contentStartInVisualOrder;
         auto& runs = lineContent.runs;
