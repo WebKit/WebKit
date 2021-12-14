@@ -1,3 +1,13 @@
+2021-12-14  Rob Buis  <rbuis@igalia.com>
+
+        Incorrect aspect ratio size
+        https://bugs.webkit.org/show_bug.cgi?id=234148
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        * web-platform-tests/css/css-sizing/aspect-ratio/block-aspect-ratio-036-expected.xht: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/block-aspect-ratio-036.html: Added.
+
 2021-12-13  Andreu Botella  <andreu@andreubotella.com>
 
         A FormData constructed in the form's submit event listener shouldn't include the submitter
