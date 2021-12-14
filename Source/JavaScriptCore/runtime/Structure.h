@@ -261,7 +261,11 @@ public:
     }
     
     // Type accessors.
+#if CPU(NEEDS_ALIGNED_ACCESS)
     TypeInfo typeInfo() const { return TypeInfo(m_cellHeaderType, m_cellHeaderInlineTypeFlags, m_outOfLineTypeFlags); }
+#else
+    TypeInfo typeInfo() const { return *reinterpret_cast_ptr<const TypeInfo*>(&m_cellHeaderType); }
+#endif
     bool isObject() const { return typeInfo().isObject(); }
 protected:
     // You probably want typeInfo().type()
@@ -856,9 +860,9 @@ private:
     // part of the object. And need to match the order of the equivalent properties in
     // JSCell.
     IndexingType m_cellHeaderIndexingModeIncludingHistory;
+    const CellState m_cellHeaderDefaultCellState { CellState::DefinitelyWhite };
     const JSType m_cellHeaderType;
     TypeInfo::InlineTypeFlags m_cellHeaderInlineTypeFlags;
-    const CellState m_cellHeaderDefaultCellState { CellState::DefinitelyWhite };
     TypeInfo::OutOfLineTypeFlags m_outOfLineTypeFlags;
 
     uint8_t m_inlineCapacity;
