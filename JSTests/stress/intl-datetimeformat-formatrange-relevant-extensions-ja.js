@@ -71,7 +71,7 @@ if ($vm.icuVersion() >= 64) {
         timeZone: 'America/Los_Angeles',
         calendar: 'chinese'
     });
-    shouldBe(fmt2.format(date1), `丙戌年11月22日 2:00`);
+    shouldBe(fmt2.format(date1), $vm.icuVersion() >= 69 ? `丙戌-11-22 2:00` : `丙戌年11月22日 2:00`);
     shouldBe(fmt2.formatRange(date1, date2), `丙戌年11月22日 2時00分～3時00分`);
     shouldBe(fmt2.formatRange(date1, date3), `丙戌年11月22日 2:00～丙戌年12月2日 2:00`);
 

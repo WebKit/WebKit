@@ -80,7 +80,7 @@ function shouldBe(actual, expected) {
     let locale = new Intl.Locale("zh")
     shouldBe(JSON.stringify(locale.calendars), `["gregory","chinese"]`);
     shouldBe(JSON.stringify(locale.collations), `["pinyin","big5han","gb2312","stroke","unihan","zhuyin","emoji","eor"]`);
-    shouldBe(JSON.stringify(locale.hourCycles), `["h12"]`);
+    shouldBe(JSON.stringify(locale.hourCycles), $vm.icuVersion() >= 69 ? `["h23"]` : `["h12"]`);
     shouldBe(JSON.stringify(locale.numberingSystems), `["latn"]`);
     shouldBe(locale.timeZones, undefined);
 }

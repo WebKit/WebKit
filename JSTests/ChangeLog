@@ -1,3 +1,25 @@
+2021-12-13  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Update Intl tests based on ICU 69~
+        https://bugs.webkit.org/show_bug.cgi?id=234276
+
+        Reviewed by Mark Lam.
+
+        Rebaseline Intl tests based on ICU 69~'s CLDR update.
+
+        * stress/array-toLocaleString.js:
+        * stress/date-toLocaleString.js:
+        * stress/intl-canonical-locale-alias-mapping.js:
+        (Intl.getCanonicalLocales):
+        * stress/intl-datetimeformat-formatrange-relevant-extensions-ja.js:
+        (vm.icuVersion):
+        * stress/intl-datetimeformat-formatrangetoparts-relevant-extensions-ja.js:
+        * stress/intl-datetimeformat.js:
+        * stress/intl-enumeration.js:
+        * stress/intl-locale-info.js:
+        (shouldBe):
+        * stress/intl-locale.js:
+
 2021-12-10  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Unreviewed, we may not throw an stack overflow error

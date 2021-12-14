@@ -757,7 +757,7 @@ shouldBe(JSON.stringify(Intl.DateTimeFormat('zh', { era: 'short', year: 'numeric
     shouldBe(JSON.stringify(actual), JSON.stringify(expected));
 }
 {
-    shouldBe(new Date(0).toLocaleTimeString('zh-Hans-CN', { timeZone: 'UTC', numberingSystem: 'hanidec', hour: "numeric", minute: "numeric", second: "numeric", fractionalSecondDigits: 2 }), "上午一二:〇〇:〇〇.〇〇");
+    shouldBe(new Date(0).toLocaleTimeString('zh-Hans-CN', { timeZone: 'UTC', numberingSystem: 'hanidec', hour: "numeric", minute: "numeric", second: "numeric", fractionalSecondDigits: 2 }), $vm.icuVersion() >= 69 ? "〇〇:〇〇:〇〇.〇〇" : "上午一二:〇〇:〇〇.〇〇");
 }
 {
     const dtf = new Intl.DateTimeFormat('en-AU', { timeZone: 'Australia/Melbourne', year: 'numeric' });
