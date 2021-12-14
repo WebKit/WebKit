@@ -189,25 +189,34 @@ bool TextCodecUTF8::handlePartialSequence(LChar*& destination, const uint8_t*& s
         if (!count)
             return true;
 
-        if (count > m_partialSequenceSize) {
-            if (count - m_partialSequenceSize > end - source) {
-                if (!flush) {
-                    // The new data is not enough to complete the sequence, so
-                    // add it to the existing partial sequence.
-                    memcpy(m_partialSequence + m_partialSequenceSize, source, end - source);
-                    m_partialSequenceSize += end - source;
-                    return false;
-                }
-                // An incomplete partial sequence at the end is an error, but it will create
-                // a 16 bit string due to the replacementCharacter. Let the 16 bit path handle
-                // the error.
-                return true;
-            }
-            memcpy(m_partialSequence + m_partialSequenceSize, source, count - m_partialSequenceSize);
-            source += count - m_partialSequenceSize;
-            m_partialSequenceSize = count;
+        // Copy from `source` until we have `count` bytes.
+        if (count > m_partialSequenceSize && end > source) {
+            size_t additionalBytes = std::min<size_t>(count - m_partialSequenceSize, end - source);
+            memcpy(m_partialSequence + m_partialSequenceSize, source, additionalBytes);
+            source += additionalBytes;
+            m_partialSequenceSize += additionalBytes;
         }
+
+        // If we still don't have `count` bytes, fill the rest with zeros (any
+        // other lead byte would do), so we can run `decodeNonASCIISequence` to
+        // tell if the chunk that we have is valid. These bytes are not part of
+        // the partial sequence, so don't increment `m_partialSequenceSize`.
+        bool partialSequenceIsTooShort = false;
+        if (count > m_partialSequenceSize) {
+            partialSequenceIsTooShort = true;
+            memset(m_partialSequence + m_partialSequenceSize, 0, count - m_partialSequenceSize);
+        }
+
         int character = decodeNonASCIISequence(m_partialSequence, count);
+        if (partialSequenceIsTooShort) {
+            ASSERT(character == nonCharacter);
+            ASSERT(count <= m_partialSequenceSize);
+            // If we're not at the end, and the partial sequence that we have is
+            // incomplete but otherwise valid, a non-character is not an error.
+            if (!flush && count == m_partialSequenceSize)
+                return false;
+        }
+
         if (!isLatin1(character))
             return true;
 
@@ -236,29 +245,35 @@ void TextCodecUTF8::handlePartialSequence(UChar*& destination, const uint8_t*& s
             consumePartialSequenceByte();
             continue;
         }
-        if (count > m_partialSequenceSize) {
-            if (count - m_partialSequenceSize > end - source) {
-                if (!flush) {
-                    // The new data is not enough to complete the sequence, so
-                    // add it to the existing partial sequence.
-                    memcpy(m_partialSequence + m_partialSequenceSize, source, end - source);
-                    m_partialSequenceSize += end - source;
-                    return;
-                }
-                // An incomplete partial sequence at the end is an error.
-                sawError = true;
-                if (stopOnError)
-                    return;
-                *destination++ = replacementCharacter;
-                m_partialSequenceSize = 0;
-                source = end;
-                continue;
-            }
-            memcpy(m_partialSequence + m_partialSequenceSize, source, count - m_partialSequenceSize);
-            source += count - m_partialSequenceSize;
-            m_partialSequenceSize = count;
+
+        // Copy from `source` until we have `count` bytes.
+        if (count > m_partialSequenceSize && end > source) {
+            size_t additionalBytes = std::min<size_t>(count - m_partialSequenceSize, end - source);
+            memcpy(m_partialSequence + m_partialSequenceSize, source, additionalBytes);
+            source += additionalBytes;
+            m_partialSequenceSize += additionalBytes;
         }
+
+        // If we still don't have `count` bytes, fill the rest with zeros (any
+        // other lead byte would do), so we can run `decodeNonASCIISequence` to
+        // tell if the chunk that we have is valid. These bytes are not part of
+        // the partial sequence, so don't increment `m_partialSequenceSize`.
+        bool partialSequenceIsTooShort = false;
+        if (count > m_partialSequenceSize) {
+            partialSequenceIsTooShort = true;
+            memset(m_partialSequence + m_partialSequenceSize, 0, count - m_partialSequenceSize);
+        }
+
         int character = decodeNonASCIISequence(m_partialSequence, count);
+        if (partialSequenceIsTooShort) {
+            ASSERT(character == nonCharacter);
+            ASSERT(count <= m_partialSequenceSize);
+            // If we're not at the end, and the partial sequence that we have is
+            // incomplete but otherwise valid, a non-character is not an error.
+            if (!flush && count == m_partialSequenceSize)
+                return;
+        }
+
         if (character == nonCharacter) {
             sawError = true;
             if (stopOnError)
@@ -353,7 +368,7 @@ String TextCodecUTF8::decode(const char* bytes, size_t length, bool flush, bool 
             source += count;
             *destination++ = character;
         }
-    } while (flush && m_partialSequenceSize);
+    } while (m_partialSequenceSize);
 
     buffer.shrink(destination - buffer.characters());
     if (flush)
@@ -433,7 +448,7 @@ upConvertTo16Bit:
                 continue;
             destination16 = appendCharacter(destination16, character);
         }
-    } while (flush && m_partialSequenceSize);
+    } while (m_partialSequenceSize);
 
     buffer16.shrink(destination16 - buffer16.characters());
     if (flush)

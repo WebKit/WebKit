@@ -1,3 +1,22 @@
+2021-12-14  Andreu Botella  <andreu@andreubotella.com>
+
+        TextDecoder doesn't detect invalid UTF-8 sequences early enough
+        https://bugs.webkit.org/show_bug.cgi?id=233921
+
+        Reviewed by Darin Adler.
+
+        Import WPT tests from
+        https://github.com/web-platform-tests/wpt/pull/31537.
+
+        * web-platform-tests/encoding/textdecoder-eof.any.js:
+        (test):
+        * web-platform-tests/encoding/textdecoder-streaming.any-expected.txt:
+        * web-platform-tests/encoding/textdecoder-streaming.any.js:
+        (string_appeared_here.forEach.):
+        (string_appeared_here.forEach.test):
+        (string_appeared_here.forEach):
+        * web-platform-tests/encoding/textdecoder-streaming.any.worker-expected.txt:
+
 2021-12-14  Rob Buis  <rbuis@igalia.com>
 
         Incorrect aspect ratio size

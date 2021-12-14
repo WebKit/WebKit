@@ -1,3 +1,40 @@
+2021-12-14  Andreu Botella  <andreu@andreubotella.com>
+
+        TextDecoder doesn't detect invalid UTF-8 sequences early enough
+        https://bugs.webkit.org/show_bug.cgi?id=233921
+
+        Reviewed by Darin Adler.
+
+        In streaming mode, when TextCodecUTF8 found a lead byte for which a
+        valid sequence would span longer than the currently available bytes, it
+        used to defer any processing of that sequence until all such bytes were
+        available, even if errors could be detected earlier. Additionally, if
+        the stream was flushed at that point, it would emit a single replacement
+        character, regardless of whether the remaining bytes formed a valid
+        sequence, even if they had lead bytes, resulting in skipped characters.
+        Both issues are solved by always checking the validity of partial
+        sequences.
+
+        The approach used in this patch uses `decodeNonASCIISequence` to find
+        the length of the maximal subpart of a partial sequence, and if the
+        length is equal to the partial sequence size and we're not at EOF, we
+        don't emit the error. This is enough to handle the missing characters at
+        EOF, and when combined with changing the condition of the outer do-while
+        loops in the `decode` method from `flush && m_partialSequenceSize` to
+        only `m_partialSequenceSize`, it also fixes the streaming issue.
+
+        This patch is a port of
+        https://chromium-review.googlesource.com/c/chromium/src/+/3263938
+
+        Tests: imported/w3c/web-platform-tests/encoding/textdecoder-eof.any.html
+               imported/w3c/web-platform-tests/encoding/textdecoder-stream.any.html
+
+        * pal/text/TextCodecUTF8.cpp:
+        (PAL::TextCodecUTF8::handlePartialSequence): Changed to always process
+        partial sequences.
+        (PAL::TextCodecUTF8::decode): Changed the loop condition of the outer
+        do-while loops to not depend on `flush`.
+
 2021-12-14  Ben Nham  <nham@apple.com>
 
         Add web push message decryption routines
