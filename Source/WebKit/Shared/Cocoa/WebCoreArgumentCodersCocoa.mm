@@ -37,6 +37,7 @@
 #import <WebCore/FontCustomPlatformData.h>
 #import <WebCore/ResourceRequest.h>
 #import <WebCore/TextRecognitionResult.h>
+#import <pal/spi/cf/CFNetworkSPI.h>
 #import <pal/spi/cf/CoreTextSPI.h>
 
 #if PLATFORM(IOS_FAMILY)
@@ -625,10 +626,20 @@ void ArgumentCoder<WebCore::ResourceRequest>::encodePlatformData(Encoder& encode
 
     // We don't send HTTP body over IPC for better performance.
     // Also, it's not always possible to do, as streams can only be created in process that does networking.
-    if ([requestToSerialize HTTPBody] || [requestToSerialize HTTPBodyStream]) {
+    bool hasHTTPBody = [requestToSerialize HTTPBody] || [requestToSerialize HTTPBodyStream];
+#if HAVE(NSURLREQUEST_REMOVE_ALL_PROTOCOL_PROPERTIES)
+    bool hasProtocolProperties = [requestToSerialize _allProtocolProperties];
+#else
+    bool hasProtocolProperties = false;
+#endif
+
+    if (hasHTTPBody || hasProtocolProperties) {
         auto mutableRequest = adoptNS([requestToSerialize mutableCopy]);
         [mutableRequest setHTTPBody:nil];
         [mutableRequest setHTTPBodyStream:nil];
+#if HAVE(NSURLREQUEST_REMOVE_ALL_PROTOCOL_PROPERTIES)
+        [mutableRequest _removeAllProtocolProperties];
+#endif
         requestToSerialize = WTFMove(mutableRequest);
     }
 

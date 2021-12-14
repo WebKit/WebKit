@@ -137,5 +137,27 @@ TEST(WebKit, LoadNSURLRequestSubclass)
     [webView _test_waitForDidFinishNavigation];
 }
 
+TEST(WebKit, LoadNSURLRequestWithProtocolProperties)
+{
+    auto request = adoptNS([[NSMutableURLRequest alloc] initWithURL:[NSURL URLWithString:@"test:///"]]);
+
+    [NSURLProtocol setProperty:@"world" forKey:@"hello" inRequest:request.get()];
+    auto handler = adoptNS([TestURLSchemeHandler new]);
+    __block bool done = false;
+    handler.get().startURLSchemeTaskHandler = ^(WKWebView *, id<WKURLSchemeTask> task) {
+#if HAVE(NSURLREQUEST_REMOVE_ALL_PROTOCOL_PROPERTIES)
+        EXPECT_FALSE([NSURLProtocol propertyForKey:@"hello" inRequest:task.request]);
+#else
+        EXPECT_TRUE([NSURLProtocol propertyForKey:@"hello" inRequest:task.request]);
+#endif
+        done = true;
+    };
+    auto configuration = adoptNS([WKWebViewConfiguration new]);
+    [configuration setURLSchemeHandler:handler.get() forURLScheme:@"test"];
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSZeroRect configuration:configuration.get()]);
+    [webView loadRequest:request.get()];
+    Util::run(&done);
+}
+
 } // namespace TestWebKitAPI
 
