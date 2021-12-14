@@ -1,3 +1,9 @@
+2021-12-14  Tim Horton  <timothy_horton@apple.com>
+
+        Fix the build
+
+        * Configurations/webpushtool.xcconfig:
+
 2021-12-14  Megan Gardner  <megan_gardner@apple.com>
 
         Attachment does not update after markup.
