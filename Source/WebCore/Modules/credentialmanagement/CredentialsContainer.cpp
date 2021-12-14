@@ -37,7 +37,6 @@
 #include "JSDOMPromiseDeferred.h"
 #include "Page.h"
 #include "SecurityOrigin.h"
-#include "WebAuthenticationConstants.h"
 
 namespace WebCore {
 
@@ -46,27 +45,19 @@ CredentialsContainer::CredentialsContainer(WeakPtr<Document>&& document)
 {
 }
 
-WebAuthn::Scope CredentialsContainer::scope()
+bool CredentialsContainer::doesHaveSameOriginAsItsAncestors()
 {
+    // The following implements https://w3c.github.io/webappsec-credential-management/#same-origin-with-its-ancestors
+    // as of 14 November 2017.
     if (!m_document)
-        return WebAuthn::Scope::CrossOrigin;
-    
-    bool isSameOrigin = true;
-    bool isSameSite = true;
-    auto& origin = m_document->securityOrigin();
-    auto& url = m_document->url();
-    for (auto* document = m_document->parentDocument(); document; document = document->parentDocument()) {
-        if (!origin.isSameOriginDomain(document->securityOrigin()) && !areRegistrableDomainsEqual(url, document->url()))
-            isSameSite = false;
-        if (!origin.isSameOriginAs(document->securityOrigin()))
-            isSameOrigin = false;
-    }
+        return false;
 
-    if (isSameOrigin)
-        return WebAuthn::Scope::SameOrigin;
-    if (isSameSite)
-        return WebAuthn::Scope::SameSite;
-    return WebAuthn::Scope::CrossOrigin;
+    auto& origin = m_document->securityOrigin();
+    for (auto* document = m_document->parentDocument(); document; document = document->parentDocument()) {
+        if (!origin.isSameOriginAs(document->securityOrigin()))
+            return false;
+    }
+    return true;
 }
 
 void CredentialsContainer::get(CredentialRequestOptions&& options, CredentialPromise&& promise)
@@ -98,7 +89,7 @@ void CredentialsContainer::get(CredentialRequestOptions&& options, CredentialPro
         return;
     }
 
-    m_document->page()->authenticatorCoordinator().discoverFromExternalSource(*m_document, options.publicKey.value(), scope(), WTFMove(options.signal), WTFMove(promise));
+    m_document->page()->authenticatorCoordinator().discoverFromExternalSource(*m_document, options.publicKey.value(), doesHaveSameOriginAsItsAncestors(), WTFMove(options.signal), WTFMove(promise));
 }
 
 void CredentialsContainer::store(const BasicCredential&, CredentialPromise&& promise)
@@ -133,7 +124,7 @@ void CredentialsContainer::isCreate(CredentialCreationOptions&& options, Credent
         return;
     }
 
-    m_document->page()->authenticatorCoordinator().create(*m_document, options.publicKey.value(), scope(), WTFMove(options.signal), WTFMove(promise));
+    m_document->page()->authenticatorCoordinator().create(*m_document, options.publicKey.value(), doesHaveSameOriginAsItsAncestors(), WTFMove(options.signal), WTFMove(promise));
 }
 
 void CredentialsContainer::preventSilentAccess(DOMPromiseDeferred<void>&& promise) const

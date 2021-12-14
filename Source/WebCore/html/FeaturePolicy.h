@@ -53,9 +53,6 @@ public:
         Accelerometer,
         Magnetometer,
 #endif
-#if ENABLE(WEB_AUTHN)
-        PublickeyCredentialsGetRule,
-#endif
 #if ENABLE(WEBXR)
         XRSpatialTracking,
 #endif
@@ -83,9 +80,6 @@ private:
     AllowRule m_gyroscopeRule;
     AllowRule m_accelerometerRule;
     AllowRule m_magnetometerRule;
-#endif
-#if ENABLE(WEB_AUTHN)
-    AllowRule m_publickeyCredentialsGetRule;
 #endif
 #if ENABLE(WEBXR)
     AllowRule m_xrSpatialTrackingRule;

@@ -107,8 +107,7 @@ typedef NS_ENUM(NSInteger, ASCSecurityKeyPublicKeyCredentialKind) {
 
 @interface ASCPublicKeyCredentialCreationOptions : NSObject <NSSecureCoding>
 
-@property (nonatomic, nullable, copy) NSData *challenge;
-@property (nonatomic, nullable, copy) NSData *clientDataHash;
+@property (nonatomic, copy) NSData *challenge;
 @property (nonatomic, copy) NSString *relyingPartyIdentifier;
 @property (nonatomic, copy) NSString *userName;
 @property (nonatomic, copy) NSData *userIdentifier;
@@ -117,13 +116,6 @@ typedef NS_ENUM(NSInteger, ASCSecurityKeyPublicKeyCredentialKind) {
 
 @property (nonatomic) BOOL shouldRequireResidentKey;
 
-@end
-
-@interface ASCPublicKeyCredentialAssertionOptions : NSObject <NSSecureCoding>
-@property (nonatomic, copy, readonly) NSString *relyingPartyIdentifier;
-@property (nonatomic, nullable, copy, readonly) NSData *challenge;
-@property (nonatomic, nullable, copy) NSData *clientDataHash;
-@property (nonatomic, nullable, readonly, copy) NSString *userVerificationPreference;
 @end
 
 @interface ASCSecurityKeyPublicKeyCredentialLoginChoice : NSObject <ASCLoginChoiceProtocol>

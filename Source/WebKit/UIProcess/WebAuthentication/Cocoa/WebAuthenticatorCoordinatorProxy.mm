@@ -145,7 +145,7 @@ static inline RetainPtr<ASCPublicKeyCredentialDescriptor> toASCDescriptor(Public
     return adoptNS([allocASCPublicKeyCredentialDescriptorInstance() initWithCredentialID:WebCore::toNSData(descriptor.id).get() transports:transports.get()]);
 }
 
-static RetainPtr<ASCCredentialRequestContext> configureRegistrationRequestContext(const PublicKeyCredentialCreationOptions& options, NSData *hash)
+static RetainPtr<ASCCredentialRequestContext> configureRegistrationRequestContext(const PublicKeyCredentialCreationOptions& options)
 {
     ASCCredentialRequestTypes requestTypes = ASCCredentialRequestTypePlatformPublicKeyRegistration | ASCCredentialRequestTypeSecurityKeyPublicKeyRegistration;
 
@@ -169,10 +169,7 @@ static RetainPtr<ASCCredentialRequestContext> configureRegistrationRequestContex
 
     auto credentialCreationOptions = adoptNS([allocASCPublicKeyCredentialCreationOptionsInstance() init]);
 
-    if ([credentialCreationOptions respondsToSelector:@selector(setClientDataHash:)])
-        [credentialCreationOptions setClientDataHash:toNSData(hash).get()];
-    else
-        [credentialCreationOptions setChallenge:WebCore::toNSData(options.challenge).get()];
+    [credentialCreationOptions setChallenge:WebCore::toNSData(options.challenge).get()];
     [credentialCreationOptions setRelyingPartyIdentifier:options.rp.id];
     [credentialCreationOptions setUserName:options.user.name];
     [credentialCreationOptions setUserIdentifier:WebCore::toNSData(options.user.id).get()];
@@ -205,7 +202,7 @@ static RetainPtr<ASCCredentialRequestContext> configureRegistrationRequestContex
     return requestContext;
 }
 
-static RetainPtr<ASCCredentialRequestContext> configurationAssertionRequestContext(const PublicKeyCredentialRequestOptions& options, Vector<uint_8> hash)
+static RetainPtr<ASCCredentialRequestContext> configurationAssertionRequestContext(const PublicKeyCredentialRequestOptions& options)
 {
     ASCCredentialRequestTypes requestTypes = ASCCredentialRequestTypePlatformPublicKeyAssertion | ASCCredentialRequestTypeSecurityKeyPublicKeyAssertion;
 
@@ -230,30 +227,13 @@ static RetainPtr<ASCCredentialRequestContext> configurationAssertionRequestConte
     auto requestContext = adoptNS([allocASCCredentialRequestContextInstance() initWithRequestTypes:requestTypes]);
     [requestContext setRelyingPartyIdentifier:options.rpId];
 
-    if (requestTypes & ASCCredentialRequestTypePlatformPublicKeyAssertion) {
-        auto assertionOptions = adoptNS(allocASCPublicKeyCredentialAssertionOptionsInstance());
-        if ([assertionOptions respondsToSelector:@selector(initWithKind:relyingPartyIdentifier:clientDataHash:userVerificationPreference:allowedCredentials:)]) {
-            auto nsHash = toNSData(hash);
-            [assertionOptions initWithKind:ASCPublicKeyCredentialKindPlatform relyingPartyIdentifier:options.rpId clientDataHash:nsHash userVerificationPreference:userVerification.get() allowedCredentials:allowedCredentials.get()]
-        } else {
-            auto challenge = WebCore::toNSData(options.challenge);
-            [assertionOptions initWithKind:ASCPublicKeyCredentialKindPlatform relyingPartyIdentifier:options.rpId challenge:challenge.get() userVerificationPreference:userVerification.get() allowedCredentials:allowedCredentials.get()]
-        }
+    auto challenge = WebCore::toNSData(options.challenge);
 
-        [requestContext setPlatformKeyCredentialAssertionOptions:assertionOptions.get()];
-    }
+    if (requestTypes & ASCCredentialRequestTypePlatformPublicKeyAssertion)
+        [requestContext setPlatformKeyCredentialAssertionOptions:[allocASCPublicKeyCredentialAssertionOptionsInstance() initWithKind:ASCPublicKeyCredentialKindPlatform relyingPartyIdentifier:options.rpId challenge:challenge.get() userVerificationPreference:userVerification.get() allowedCredentials:allowedCredentials.get()]];
 
-    if (requestTypes & ASCCredentialRequestTypeSecurityKeyPublicKeyAssertion) {
-        auto assertionOptions = adoptNS(allocASCPublicKeyCredentialAssertionOptionsInstance());
-        if ([assertionOptions respondsToSelector:@selector(initWithKind:relyingPartyIdentifier:clientDataHash:userVerificationPreference:allowedCredentials:)]) {
-            auto nsHash = toNSData(hash);
-            [assertionOptions initWithKind:ASCPublicKeyCredentialKindSecurityKey relyingPartyIdentifier:options.rpId clientDataHash:nsHash userVerificationPreference:userVerification.get() allowedCredentials:allowedCredentials.get()]];
-        } else {
-            auto challenge = WebCore::toNSData(options.challenge);
-            [assertionOptions initWithKind:ASCPublicKeyCredentialKindSecurityKey relyingPartyIdentifier:options.rpId challenge:challenge.get() userVerificationPreference:userVerification.get() allowedCredentials:allowedCredentials.get()]];
-        }
-        [requestContext setSecurityKeyCredentialAssertionOptions:assertionOptions.get()];
-    }
+    if (requestTypes & ASCCredentialRequestTypeSecurityKeyPublicKeyAssertion)
+        [requestContext setSecurityKeyCredentialAssertionOptions:[allocASCPublicKeyCredentialAssertionOptionsInstance() initWithKind:ASCPublicKeyCredentialKindSecurityKey relyingPartyIdentifier:options.rpId challenge:challenge.get() userVerificationPreference:userVerification.get() allowedCredentials:allowedCredentials.get()]];
 
     return requestContext;
 }
@@ -262,9 +242,9 @@ RetainPtr<ASCCredentialRequestContext> WebAuthenticatorCoordinatorProxy::context
 {
     RetainPtr<ASCCredentialRequestContext> result;
     WTF::switchOn(requestData.options, [&](const PublicKeyCredentialCreationOptions& options) {
-        result = configureRegistrationRequestContext(options, requestData.hash);
+        result = configureRegistrationRequestContext(options);
     }, [&](const PublicKeyCredentialRequestOptions& options) {
-        result = configurationAssertionRequestContext(options, requestData.hash);
+        result = configurationAssertionRequestContext(options);
     });
     return result;
 }
