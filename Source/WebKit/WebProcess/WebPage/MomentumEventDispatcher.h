@@ -123,7 +123,6 @@ private:
     HistoricalDeltas m_deltaHistoryY;
 
     std::optional<WallTime> m_lastScrollTimestamp;
-    WallTime m_lastEndedEventTimestamp;
     std::optional<WebWheelEvent> m_lastIncomingEvent;
     WebCore::RectEdges<bool> m_lastRubberBandableEdges;
 

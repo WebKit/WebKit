@@ -100,9 +100,6 @@ bool MomentumEventDispatcher::handleWheelEvent(WebCore::PageIdentifier pageIdent
 #endif
     }
 
-    if (event.phase() == WebWheelEvent::PhaseEnded)
-        m_lastEndedEventTimestamp = event.ioHIDEventTimestamp();
-
     if (eventShouldStartSyntheticMomentumPhase(pageIdentifier, event))
         didStartMomentumPhase(pageIdentifier, event);
 
@@ -190,13 +187,11 @@ void MomentumEventDispatcher::didStartMomentumPhase(WebCore::PageIdentifier page
 
     tracePoint(SyntheticMomentumStart);
 
-    auto momentumStartInterval = event.ioHIDEventTimestamp() - m_lastEndedEventTimestamp;
-
     m_currentGesture.active = true;
     m_currentGesture.pageIdentifier = pageIdentifier;
     m_currentGesture.initiatingEvent = event;
     m_currentGesture.currentOffset = { };
-    m_currentGesture.startTime = MonotonicTime::now() - momentumStartInterval;
+    m_currentGesture.startTime = MonotonicTime::now();
     m_currentGesture.displayNominalFrameRate = displayProperties->nominalFrameRate;
     m_currentGesture.accelerationCurve = [&] () -> std::optional<ScrollingAccelerationCurve> {
         auto curveIterator = m_accelerationCurves.find(m_currentGesture.pageIdentifier);
@@ -213,7 +208,12 @@ void MomentumEventDispatcher::didStartMomentumPhase(WebCore::PageIdentifier page
     float idealCurveMultiplier = m_currentGesture.accelerationCurve->frameRate() / idealCurveFrameRate;
     buildOffsetTableWithInitialDelta(*event.rawPlatformDelta() * idealCurveMultiplier);
 
-    dispatchSyntheticMomentumEvent(WebWheelEvent::PhaseBegan, consumeDeltaForCurrentTime());
+    WebCore::FloatSize consumedDelta = event.delta();
+    if (m_currentGesture.initiatingEvent->directionInvertedFromDevice())
+        consumedDelta.scale(-1);
+    m_currentGesture.currentOffset += consumedDelta;
+    
+    dispatchSyntheticMomentumEvent(WebWheelEvent::PhaseBegan, event.delta());
 }
 
 void MomentumEventDispatcher::didEndMomentumPhase()

@@ -1,3 +1,25 @@
+2021-12-13  Tim Horton  <timothy_horton@apple.com>
+
+        Momentum Event Dispatcher: Excessive "kick" at the beginning of scrolling (especially on 60fps displays)
+        https://bugs.webkit.org/show_bug.cgi?id=234279
+        <rdar://problem/86425321>
+
+        Reviewed by Simon Fraser.
+
+        * WebProcess/WebPage/MomentumEventDispatcher.cpp:
+        (WebKit::MomentumEventDispatcher::handleWheelEvent):
+        (WebKit::MomentumEventDispatcher::didStartMomentumPhase):
+        Instead of back-dating the animation to try to acquire a momentum-start
+        delta, pass the one we got from the event through, and start the animation
+        curve at momentum-start time. Also, critically, inset ourselves along
+        the curve by the amount of that initial delta (since the time starts now).
+
+        Tested at both 60fps and 120fps, this significantly smooths out the
+        transition from fingers-down phase to the generated momentum phase,
+        avoiding the overly large initial delta.
+
+        * WebProcess/WebPage/MomentumEventDispatcher.h:
+
 2021-12-13  J Pascoe  <j_pascoe@apple.com>
 
         [WebAuthn] Allow same-site, cross-origin iframe get()
