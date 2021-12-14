@@ -1,3 +1,12 @@
+2021-12-14  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Unreviewed, fix Xcode build of libpas
+        https://bugs.webkit.org/show_bug.cgi?id=233821
+
+        r286934 broke build.sh for Xcode. This patch fixes it.
+
+        * libpas/build.sh:
+
 2021-12-13  Elliott Williams  <emw@apple.com>
 
         Deployment target for macOS 11+ does not follow minor version bumps

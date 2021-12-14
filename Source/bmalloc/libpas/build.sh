@@ -96,7 +96,7 @@ build_variant() {
             build_variant_cmake $@
             ;;
         *)
-            build_variant_xcodebuild
+            build_variant_xcodebuild $@
             ;;
     esac
 }
