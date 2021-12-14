@@ -1373,14 +1373,17 @@ BASE_MODES = [
         "NoLLInt",
         "no-llint",
         Proc.new { |*optionalTestSpecificOptions|
-            return nil unless $jitTests
-            {
-                :cfg => {
-                },
-                :testSpecificOptions => [
-                    "--useLLInt=false",
-                ] + optionalTestSpecificOptions
-            }
+            if $jitTests
+                {
+                    :cfg => {
+                    },
+                    :testSpecificOptions => [
+                        "--useLLInt=false",
+                    ] + optionalTestSpecificOptions
+                }
+            else
+                nil
+            end
         }
     ],
     [
@@ -1388,11 +1391,12 @@ BASE_MODES = [
         "default",
         Proc.new { |*optionalTestSpecificOptions|
             if $memoryLimited
-                return nil
+                nil
+            else
+                {
+                    :testSpecificOptions => optionalTestSpecificOptions
+                }
             end
-            {
-                :testSpecificOptions => optionalTestSpecificOptions
-            }
         }
     ]
 ]

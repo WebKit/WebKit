@@ -1,3 +1,15 @@
+2021-12-14  Angelos Oikonomopoulos  <angelos@igalia.com>
+
+        [JSC] Fix LocalJumpError in run-jsc-stress-tests
+        https://bugs.webkit.org/show_bug.cgi?id=234295
+
+        Reviewed by Michael Catanzaro.
+
+        Ruby code cannot return from a Proc; use an if/else instead. This fixes
+        the LocalJumpError reported in https://bugs.webkit.org/show_bug.cgi?id=233926.
+
+        * Scripts/run-jsc-stress-tests:
+
 2021-12-14  Jean-Yves Avenard  <jya@apple.com>
 
         Rename SharedBuffer classes.
