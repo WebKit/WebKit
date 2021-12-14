@@ -478,7 +478,9 @@ static Ref<JSON::ArrayOf<Protocol::CSS::Grouping>> buildArrayForGroupings(CSSRul
             auto layerRulePayload = Protocol::CSS::Grouping::create()
                 .setType(Protocol::CSS::Grouping::Type::LayerRule)
                 .release();
-            layerRulePayload->setText(downcast<CSSLayerBlockRule>(parentRule)->name());
+            auto layerName = downcast<CSSLayerBlockRule>(parentRule)->name();
+            if (!layerName.isEmpty())
+                layerRulePayload->setText(layerName);
             ruleGroupingPayloads.append(WTFMove(layerRulePayload));
         }
 
