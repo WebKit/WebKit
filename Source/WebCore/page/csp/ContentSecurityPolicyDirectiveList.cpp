@@ -391,7 +391,7 @@ const ContentSecurityPolicyDirective* ContentSecurityPolicyDirectiveList::violat
 {
     auto* operativeDirective = this->operativeDirective(m_scriptSrc.get(), ContentSecurityPolicyDirectiveNames::scriptSrcElem);
 
-    if (operativeDirective->containsAllHashes(subResourceIntegrityDigests))
+    if (!operativeDirective || operativeDirective->containsAllHashes(subResourceIntegrityDigests))
         return nullptr;
 
     if (checkSource(operativeDirective, url, didReceiveRedirectResponse))
