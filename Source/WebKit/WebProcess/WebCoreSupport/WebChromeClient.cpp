@@ -1002,7 +1002,6 @@ unsigned WebChromeClient::remoteImagesCountForTesting() const
 void WebChromeClient::contentRuleListNotification(const URL& url, const ContentRuleListResults& results)
 {
 #if ENABLE(CONTENT_EXTENSIONS)
-    ASSERT(results.shouldNotifyApplication());
     m_page.send(Messages::WebPageProxy::ContentRuleListNotification(url, results));
 #endif
 }

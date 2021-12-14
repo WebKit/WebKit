@@ -57,6 +57,16 @@ bool ContentRuleListAction::blockedCookies() const
     return m_result.blockedCookies;
 }
 
+bool ContentRuleListAction::redirected() const
+{
+    return m_result.redirected;
+}
+
+bool ContentRuleListAction::modifiedHeaders() const
+{
+    return m_result.modifiedHeaders;
+}
+
 const Vector<WTF::String>& ContentRuleListAction::notifications() const
 {
     return m_result.notifications;

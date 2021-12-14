@@ -169,6 +169,12 @@
     return _navigationError.autorelease();
 }
 
+- (void)_webView:(WKWebView *)webView contentRuleListWithIdentifier:(NSString *)identifier performedAction:(_WKContentRuleListAction *)action forURL:(NSURL *)url
+{
+    if (_contentRuleListPerformedAction)
+        _contentRuleListPerformedAction(webView, identifier, action, url);
+}
+
 @end
 
 @implementation WKWebView (TestWebKitAPIExtras)

@@ -39,6 +39,8 @@ struct ContentRuleListResults {
         bool blockedLoad { false };
         bool madeHTTPS { false };
         bool blockedCookies { false };
+        bool modifiedHeaders { false };
+        bool redirected { false };
         Vector<String> notifications;
         
         bool shouldNotifyApplication() const
@@ -46,6 +48,8 @@ struct ContentRuleListResults {
             return blockedLoad
                 || madeHTTPS
                 || blockedCookies
+                || modifiedHeaders
+                || redirected
                 || !notifications.isEmpty();
         }
 
@@ -73,6 +77,8 @@ struct ContentRuleListResults {
         return summary.blockedLoad
             || summary.madeHTTPS
             || summary.blockedCookies
+            || !summary.modifyHeadersActions.isEmpty()
+            || !summary.redirectActions.isEmpty()
             || summary.hasNotifications;
     }
     
@@ -105,6 +111,8 @@ template<class Encoder> void ContentRuleListResults::Result::encode(Encoder& enc
     encoder << blockedLoad;
     encoder << madeHTTPS;
     encoder << blockedCookies;
+    encoder << modifiedHeaders;
+    encoder << redirected;
     encoder << notifications;
 }
 
@@ -125,6 +133,16 @@ template<class Decoder> auto ContentRuleListResults::Result::decode(Decoder& dec
     if (!blockedCookies)
         return std::nullopt;
     
+    std::optional<bool> modifiedHeaders;
+    decoder >> modifiedHeaders;
+    if (!modifiedHeaders)
+        return std::nullopt;
+    
+    std::optional<bool> redirected;
+    decoder >> redirected;
+    if (!redirected)
+        return std::nullopt;
+    
     std::optional<Vector<String>> notifications;
     decoder >> notifications;
     if (!notifications)
@@ -134,6 +152,8 @@ template<class Decoder> auto ContentRuleListResults::Result::decode(Decoder& dec
         WTFMove(*blockedLoad),
         WTFMove(*madeHTTPS),
         WTFMove(*blockedCookies),
+        WTFMove(*modifiedHeaders),
+        WTFMove(*redirected),
         WTFMove(*notifications)
     }};
 }

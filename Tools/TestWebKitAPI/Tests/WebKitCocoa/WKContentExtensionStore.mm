@@ -34,10 +34,12 @@
 #import <WebKit/WKContentRuleListStorePrivate.h>
 #import <WebKit/WKUserContentControllerPrivate.h>
 #import <WebKit/WKWebpagePreferencesPrivate.h>
+#import <WebKit/_WKContentRuleListAction.h>
 #import <WebKit/_WKUserContentExtensionStore.h>
 #import <WebKit/_WKUserContentFilter.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/Vector.h>
+#import <wtf/text/WTFString.h>
 
 class WKContentRuleListStoreTest : public testing::Test {
 public:
@@ -505,6 +507,13 @@ static RetainPtr<TestNavigationDelegate> navigationDelegateAllowingActiveActions
     return delegate;
 }
 
+static void checkURLs(const Vector<String>& actual, const Vector<String>& expected)
+{
+    EXPECT_EQ(actual.size(), expected.size());
+    for (size_t i = 0; i < std::min(actual.size(), expected.size()); i++)
+        EXPECT_WK_STREQ(actual[i], expected[i]);
+}
+
 TEST_F(WKContentRuleListStoreTest, ModifyHeaders)
 {
     auto list = compileContentRuleList(R"JSON(
@@ -562,9 +571,22 @@ TEST_F(WKContentRuleListStoreTest, ModifyHeaders)
     [[configuration userContentController] addContentRuleList:list.get()];
     [configuration setURLSchemeHandler:handler.get() forURLScheme:@"testscheme"];
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSZeroRect configuration:configuration.get()]);
-    webView.get().navigationDelegate = navigationDelegateAllowingActiveActionsOnTestHost().get();
+    auto delegate = navigationDelegateAllowingActiveActionsOnTestHost().get();
+    webView.get().navigationDelegate = delegate;
+    __block bool receivedActionNotification { false };
+    __block Vector<String> urls;
+    delegate.contentRuleListPerformedAction = ^(WKWebView *, NSString *identifier, _WKContentRuleListAction *action, NSURL *url) {
+        urls.append(url.absoluteString);
+        EXPECT_TRUE(action.modifiedHeaders);
+        receivedActionNotification = true;
+    };
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"testscheme://testhost/main.html"]]];
     TestWebKitAPI::Util::run(&receivedAllRequests);
+    TestWebKitAPI::Util::run(&receivedActionNotification);
+    checkURLs(urls, {
+        "testscheme://testhost/main.html",
+        "testscheme://testhost/fetch.txt"
+    });
     
     // FIXME: Appending to the User-Agent replaces the user agent because we haven't added the user agent yet when processing the request.
 }
@@ -667,11 +689,21 @@ TEST_F(WKContentRuleListStoreTest, Redirect)
     [configuration setURLSchemeHandler:handler.get() forURLScheme:@"testscheme"];
     [configuration setURLSchemeHandler:handler.get() forURLScheme:@"othertestscheme"];
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSZeroRect configuration:configuration.get()]);
-    webView.get().navigationDelegate = navigationDelegateAllowingActiveActionsOnTestHost().get();
+    auto delegate = navigationDelegateAllowingActiveActionsOnTestHost().get();
+    webView.get().navigationDelegate = delegate;
+    __block bool receivedActionNotification { false };
+    __block Vector<String> urlsFromCallback;
+    delegate.contentRuleListPerformedAction = ^(WKWebView *, NSString *identifier, _WKContentRuleListAction *action, NSURL *url) {
+        urlsFromCallback.append(url.absoluteString);
+        EXPECT_TRUE(action.redirected);
+        receivedActionNotification = true;
+    };
+
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"testscheme://testhost/main.html"]]];
     TestWebKitAPI::Util::run(&receivedAllRequests);
+    TestWebKitAPI::Util::run(&receivedActionNotification);
 
-    Vector<const char*> expectedRequestedURLs {
+    Vector<String> expectedRequestedURLs {
         "testscheme://testhost/main.html",
         "othertestscheme://not-testhost/1-redirected.txt",
         "testscheme://not-testhost-should-not-trigger-action/2.txt",
@@ -685,6 +717,10 @@ TEST_F(WKContentRuleListStoreTest, Redirect)
     EXPECT_EQ(expectedRequestedURLs.size(), [urls count]);
     for (size_t i = 0; i < expectedRequestedURLs.size(); i++)
         EXPECT_WK_STREQ(expectedRequestedURLs[i], [[urls objectAtIndex:i] absoluteString]);
+
+    expectedRequestedURLs.remove(0);
+    expectedRequestedURLs[1] = "testscheme://testhost:123/2.txt";
+    checkURLs(urlsFromCallback, expectedRequestedURLs);
 }
 
 TEST_F(WKContentRuleListStoreTest, NullPatternSet)

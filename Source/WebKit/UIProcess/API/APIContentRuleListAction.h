@@ -40,6 +40,8 @@ public:
     bool blockedLoad() const;
     bool madeHTTPS() const;
     bool blockedCookies() const;
+    bool redirected() const;
+    bool modifiedHeaders() const;
     const Vector<WTF::String>& notifications() const;
 
 private:

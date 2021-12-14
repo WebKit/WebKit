@@ -248,11 +248,15 @@ ContentRuleListResults ContentExtensionsBackend::processContentRuleListsForLoad(
             }, [&](const IgnorePreviousRulesAction&) {
                 RELEASE_ASSERT_NOT_REACHED();
             }, [&] (const ModifyHeadersAction& action) {
-                if (initiatingDocumentLoader.allowsActiveContentRuleListActionsForURL(contentRuleListIdentifier, url))
+                if (initiatingDocumentLoader.allowsActiveContentRuleListActionsForURL(contentRuleListIdentifier, url)) {
+                    result.modifiedHeaders = true;
                     results.summary.modifyHeadersActions.append(action);
+                }
             }, [&] (const RedirectAction& redirectAction) {
-                if (initiatingDocumentLoader.allowsActiveContentRuleListActionsForURL(contentRuleListIdentifier, url))
+                if (initiatingDocumentLoader.allowsActiveContentRuleListActionsForURL(contentRuleListIdentifier, url)) {
+                    result.redirected = true;
                     results.summary.redirectActions.append({ redirectAction, m_contentExtensions.get(contentRuleListIdentifier)->extensionBaseURL() });
+                }
             }), action.data());
         }
 

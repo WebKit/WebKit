@@ -68,6 +68,24 @@
 #endif
 }
 
+- (BOOL)redirected
+{
+#if ENABLE(CONTENT_EXTENSIONS)
+    return _action->redirected();
+#else
+    return NO;
+#endif
+}
+
+- (BOOL)modifiedHeaders
+{
+#if ENABLE(CONTENT_EXTENSIONS)
+    return _action->modifiedHeaders();
+#else
+    return NO;
+#endif
+}
+
 - (NSArray<NSString *> *)notifications
 {
 #if ENABLE(CONTENT_EXTENSIONS)
