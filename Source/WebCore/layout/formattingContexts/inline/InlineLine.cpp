@@ -67,7 +67,7 @@ void Line::initialize(const Vector<InlineItem>& lineSpanningInlineBoxes)
                 // https://drafts.csswg.org/css-break/#break-decoration
                 // clone: Each box fragment is independently wrapped with the border, padding, and margin.
                 auto& inlineBoxGeometry = formattingContext().geometryForBox(inlineBoxStartItem.layoutBox());
-                auto marginBorderAndPaddingStart = inlineBoxGeometry.marginStart() + inlineBoxGeometry.borderLeft() + inlineBoxGeometry.paddingLeft().value_or(0_lu);
+                auto marginBorderAndPaddingStart = inlineBoxGeometry.marginStart() + inlineBoxGeometry.borderStart() + inlineBoxGeometry.paddingStart().value_or(0_lu);
                 auto runLogicalLeft = lastRunLogicalRight();
                 m_runs.append({ inlineBoxStartItem, runLogicalLeft, marginBorderAndPaddingStart });
                 // Do not let negative margin make the content shorter than it already is.
@@ -434,7 +434,7 @@ InlineLayoutUnit Line::addBorderAndPaddingEndForInlineBoxDecorationClone(const I
         return { };
     // https://drafts.csswg.org/css-break/#break-decoration
     auto& inlineBoxGeometry = formattingContext().geometryForBox(inlineBoxStartItem.layoutBox());
-    auto borderAndPaddingEnd = inlineBoxGeometry.borderRight() + inlineBoxGeometry.paddingRight().value_or(0_lu);
+    auto borderAndPaddingEnd = inlineBoxGeometry.borderEnd() + inlineBoxGeometry.paddingEnd().value_or(0_lu);
     m_inlineBoxListWithClonedDecorationEnd.add(&inlineBoxStartItem.layoutBox(), borderAndPaddingEnd);
     m_clonedEndDecorationWidthForInlineBoxRuns += borderAndPaddingEnd;
     return borderAndPaddingEnd;

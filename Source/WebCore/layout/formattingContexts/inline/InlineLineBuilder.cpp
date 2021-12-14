@@ -253,17 +253,17 @@ InlineLayoutUnit LineBuilder::inlineItemWidth(const InlineItem& inlineItem, Inli
         return boxGeometry.marginBoxWidth();
 
     if (inlineItem.isInlineBoxStart()) {
-        auto logicalWidth = boxGeometry.marginStart() + boxGeometry.borderLeft() + boxGeometry.paddingLeft().value_or(0);
+        auto logicalWidth = boxGeometry.marginStart() + boxGeometry.borderStart() + boxGeometry.paddingStart().value_or(0);
 #if ENABLE(CSS_BOX_DECORATION_BREAK)
         auto& style = m_isFirstLine ? inlineItem.firstLineStyle() : inlineItem.style();
         if (style.boxDecorationBreak() == BoxDecorationBreak::Clone)
-            logicalWidth += boxGeometry.borderRight() + boxGeometry.paddingRight().value_or(0_lu);
+            logicalWidth += boxGeometry.borderEnd() + boxGeometry.paddingEnd().value_or(0_lu);
 #endif
         return logicalWidth;
     }
 
     if (inlineItem.isInlineBoxEnd())
-        return boxGeometry.marginEnd() + boxGeometry.borderRight() + boxGeometry.paddingRight().value_or(0);
+        return boxGeometry.marginEnd() + boxGeometry.borderEnd() + boxGeometry.paddingEnd().value_or(0);
 
     // Non-replaced inline box (e.g. inline-block)
     return boxGeometry.marginBoxWidth();

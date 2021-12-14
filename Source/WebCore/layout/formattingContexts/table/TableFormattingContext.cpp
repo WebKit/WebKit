@@ -123,8 +123,8 @@ void TableFormattingContext::setUsedGeometryForCells(LayoutUnit availableHorizon
 
             // FIXME: Find out if it is ok to use the regular padding here to align the content box inside a tall cell or we need to
             // use some kind of intrinsic padding similar to RenderTableCell.
-            auto paddingTop = cellBoxGeometry.paddingTop().value_or(LayoutUnit { });
-            auto paddingBottom = cellBoxGeometry.paddingBottom().value_or(LayoutUnit { });
+            auto paddingTop = cellBoxGeometry.paddingBefore().value_or(LayoutUnit { });
+            auto paddingBottom = cellBoxGeometry.paddingAfter().value_or(LayoutUnit { });
             auto intrinsicPaddingTop = LayoutUnit { };
             auto intrinsicPaddingBottom = LayoutUnit { };
 
@@ -138,7 +138,7 @@ void TableFormattingContext::setUsedGeometryForCells(LayoutUnit availableHorizon
             case VerticalAlign::Baseline: {
                 auto rowBaseline = LayoutUnit { rowList[cell->startRow()].baseline() };
                 auto cellBaseline = LayoutUnit { cell->baseline() };
-                intrinsicPaddingTop = std::max(0_lu, rowBaseline - cellBaseline - cellBoxGeometry.borderTop());
+                intrinsicPaddingTop = std::max(0_lu, rowBaseline - cellBaseline - cellBoxGeometry.borderBefore());
                 intrinsicPaddingBottom = std::max(0_lu, cellLogicalHeight - cellBoxGeometry.verticalMarginBorderAndPadding() - intrinsicPaddingTop - cellBoxGeometry.contentBoxHeight());
                 break;
             }

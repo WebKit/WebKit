@@ -275,9 +275,9 @@ InlineLayoutUnit LineBoxBuilder::constructAndAlignInlineLevelBoxes(LineBox& line
             auto& inlineBoxGeometry = formattingContext().geometryForBox(layoutBox);
             // Even negative horizontal margin makes the line "contentful".
             if (run.isInlineBoxStart())
-                return inlineBoxGeometry.marginStart() || inlineBoxGeometry.borderLeft() || inlineBoxGeometry.paddingLeft().value_or(0_lu);
+                return inlineBoxGeometry.marginStart() || inlineBoxGeometry.borderStart() || inlineBoxGeometry.paddingStart().value_or(0_lu);
             if (run.isInlineBoxEnd())
-                return inlineBoxGeometry.marginEnd() || inlineBoxGeometry.borderRight() || inlineBoxGeometry.paddingRight().value_or(0_lu);
+                return inlineBoxGeometry.marginEnd() || inlineBoxGeometry.borderEnd() || inlineBoxGeometry.paddingEnd().value_or(0_lu);
             ASSERT_NOT_REACHED();
             return true;
         };
@@ -301,7 +301,7 @@ InlineLayoutUnit LineBoxBuilder::constructAndAlignInlineLevelBoxes(LineBox& line
                     auto& formattingState = layoutState().formattingStateForInlineFormattingContext(downcast<ContainerBox>(layoutBox));
                     auto& lastLine = formattingState.lines().last();
                     auto inlineBlockBaseline = lastLine.lineBoxLogicalRect().top() + lastLine.baseline();
-                    ascent = inlineLevelBoxGeometry.marginBefore() + inlineLevelBoxGeometry.borderTop() + inlineLevelBoxGeometry.paddingTop().value_or(0) + inlineBlockBaseline;
+                    ascent = inlineLevelBoxGeometry.marginBefore() + inlineLevelBoxGeometry.borderBefore() + inlineLevelBoxGeometry.paddingBefore().value_or(0) + inlineBlockBaseline;
                 }
             } else if (layoutBox.isReplacedBox())
                 ascent = downcast<ReplacedBox>(layoutBox).baseline().value_or(marginBoxHeight);
