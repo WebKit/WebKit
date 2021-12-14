@@ -54,6 +54,7 @@ public:
     void unregisterObject(AccessibilityObjectAtspi&);
     String registerHyperlink(AccessibilityObjectAtspi&, Vector<std::pair<GDBusInterfaceInfo*, GDBusInterfaceVTable*>>&&);
 
+    void parentChanged(AccessibilityObjectAtspi&);
     enum class ChildrenChanged { Added, Removed };
     void childrenChanged(AccessibilityObjectAtspi&, AccessibilityObjectAtspi&, ChildrenChanged);
 
@@ -70,9 +71,10 @@ public:
 
     static const char* localizedRoleName(AccessibilityRole);
 
+    void addAccessible(AccessibilityObjectAtspi&);
+
 private:
     void ensureCache();
-    void addAccessible(AccessibilityObjectAtspi&, const String&);
     void removeAccessible(AccessibilityObjectAtspi&);
 
     static GDBusInterfaceVTable s_cacheFunctions;
@@ -84,6 +86,7 @@ private:
     HashMap<AccessibilityObjectAtspi*, Vector<unsigned, 20>> m_atspiHyperlinks;
     unsigned m_cacheID { 0 };
     HashMap<String, AccessibilityObjectAtspi*> m_cache;
+    bool m_inGetItems { false };
 };
 
 } // namespace WebCore

@@ -187,6 +187,31 @@ void AccessibilityRootAtspi::unregisterObject()
         m_page->setAccessibilityRootObject(nullptr);
 }
 
+static void registerSubtree(AccessibilityObjectAtspi* atspiObject)
+{
+    if (!atspiObject)
+        return;
+
+    if (!atspiObject->registerObject())
+        return;
+
+    atspiObject->updateBackingStore();
+    for (auto& child : atspiObject->children())
+        registerSubtree(child.get());
+}
+
+void AccessibilityRootAtspi::registerTree()
+{
+    RELEASE_ASSERT(!isMainThread());
+    if (m_parentUniqueName.isNull())
+        return;
+
+    registerSubtree(Accessibility::retrieveValueFromMainThread<AccessibilityObjectAtspi*>([this]() -> AccessibilityObjectAtspi* {
+        return child();
+    }));
+    m_isTreeRegistered.store(true);
+}
+
 void AccessibilityRootAtspi::setPath(String&& path)
 {
     RELEASE_ASSERT(!isMainThread());

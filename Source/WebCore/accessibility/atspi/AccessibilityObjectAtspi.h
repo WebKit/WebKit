@@ -41,6 +41,8 @@ public:
     static Ref<AccessibilityObjectAtspi> create(AXCoreObject*, AccessibilityRootAtspi&);
     ~AccessibilityObjectAtspi() = default;
 
+    bool registerObject();
+
     enum class Interface : uint16_t {
         Accessible = 1 << 0,
         Component = 1 << 1,
@@ -60,6 +62,7 @@ public:
     const AccessibilityRootAtspi& root() const { return m_root; }
     void setParent(std::optional<AccessibilityObjectAtspi*>);
     WEBCORE_EXPORT std::optional<AccessibilityObjectAtspi*> parent() const;
+    GVariant* parentReference() const;
     WEBCORE_EXPORT void updateBackingStore();
 
     void attach(AXCoreObject*);
@@ -83,6 +86,7 @@ public:
     WEBCORE_EXPORT Vector<RefPtr<AccessibilityObjectAtspi>> children() const;
     WEBCORE_EXPORT AccessibilityObjectAtspi* childAt(unsigned) const;
     WEBCORE_EXPORT uint64_t state() const;
+    bool isDefunct() const;
     void stateChanged(const char*, bool);
     WEBCORE_EXPORT HashMap<String, String> attributes() const;
     WEBCORE_EXPORT HashMap<uint32_t, Vector<RefPtr<AccessibilityObjectAtspi>>> relationMap() const;
@@ -157,7 +161,6 @@ private:
 
     Vector<RefPtr<AccessibilityObjectAtspi>> wrapperVector(const Vector<RefPtr<AXCoreObject>>&) const;
     int indexInParent() const;
-    GVariant* parentReference() const;
     void childAdded(AccessibilityObjectAtspi&);
     void childRemoved(AccessibilityObjectAtspi&);
 

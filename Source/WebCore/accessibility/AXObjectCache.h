@@ -528,6 +528,9 @@ private:
     ListHashSet<RefPtr<AccessibilityObject>> m_deferredAttachedWrapperObjectList;
     ListHashSet<GRefPtr<AccessibilityObjectWrapper>> m_deferredDetachedWrapperList;
 #endif
+#if USE(ATSPI)
+    ListHashSet<RefPtr<AXCoreObject>> m_deferredParentChangedList;
+#endif
 };
 
 class AXAttributeCacheEnabler

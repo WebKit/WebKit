@@ -42,22 +42,30 @@ void AXObjectCache::attachWrapper(AXCoreObject* axObject)
     auto wrapper = AccessibilityObjectAtspi::create(axObject, *rootWrapper);
     axObject->setWrapper(wrapper.ptr());
 
-    auto* axParent = axObject->parentObjectUnignored();
-    if (!axParent) {
-        if (axObject->isScrollView() && axObject->scrollView() == document().view())
-            wrapper->setParent(nullptr); // nullptr parent means root.
-        return;
-    }
-
-    auto* axParentWrapper = axParent->wrapper();
-    if (!axParentWrapper)
-        return;
-
-    wrapper->setParent(axParentWrapper);
+    m_deferredParentChangedList.add(axObject);
 }
 
 void AXObjectCache::platformPerformDeferredCacheUpdate()
 {
+    auto handleParentChanged = [&](const AXCoreObject& axObject) {
+        auto* wrapper = axObject.wrapper();
+        if (!wrapper)
+            return;
+
+        auto* axParent = axObject.parentObjectUnignored();
+        if (!axParent) {
+            if (axObject.isScrollView() && axObject.scrollView() == document().view())
+                wrapper->setParent(nullptr); // nullptr parent means root.
+            return;
+        }
+
+        if (auto* axParentWrapper = axParent->wrapper())
+            wrapper->setParent(axParentWrapper);
+    };
+
+    for (const auto& axObject : m_deferredParentChangedList)
+        handleParentChanged(*axObject);
+    m_deferredParentChangedList.clear();
 }
 
 bool AXObjectCache::isIsolatedTreeEnabled()

@@ -22,6 +22,7 @@
 #if ENABLE(ACCESSIBILITY) && USE(ATSPI)
 #include "AccessibilityAtspi.h"
 #include "IntRect.h"
+#include <wtf/Atomics.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/WeakPtr.h>
@@ -40,6 +41,8 @@ public:
 
     void registerObject(CompletionHandler<void(const String&)>&&);
     void unregisterObject();
+    void registerTree();
+    bool isTreeRegistered() const { return m_isTreeRegistered.load(); }
     void setPath(String&&);
 
     const String& path() const { return m_path; }
@@ -66,6 +69,7 @@ private:
     String m_path;
     String m_parentUniqueName;
     String m_parentPath;
+    Atomic<bool> m_isTreeRegistered { false };
 };
 
 } // namespace WebCore
