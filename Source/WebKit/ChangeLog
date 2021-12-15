@@ -1,3 +1,21 @@
+2021-12-15  Sihui Liu  <sihui_liu@apple.com>
+
+        REGRESSION (r286936): Many webstorage layout tests have become flaky failures
+        https://bugs.webkit.org/show_bug.cgi?id=234274
+        <rdar://problem/86434478>
+
+        Reviewed by Chris Dumez.
+
+        Connection (listener) is not added properly to existing MemoryStorageAreas, so events are not dispatched.
+        Also according to the old behavior, we don't add connection (listener) to StorageArea when creating it, but when
+        there is a connection message.
+
+        * NetworkProcess/storage/SessionStorageManager.cpp:
+        (WebKit::SessionStorageManager::addStorageArea):
+        (WebKit::SessionStorageManager::connectToSessionStorageArea):
+        (WebKit::SessionStorageManager::cloneStorageArea):
+        * NetworkProcess/storage/SessionStorageManager.h:
+
 2021-12-15  Chris Dumez  <cdumez@apple.com>
 
         Move SWServers from NetworkProcess to NetworkSession

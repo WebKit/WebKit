@@ -52,7 +52,7 @@ public:
     void cloneStorageArea(IPC::Connection::UniqueID, StorageNamespaceIdentifier, StorageNamespaceIdentifier);
 
 private:
-    StorageAreaIdentifier addStorageArea(std::unique_ptr<MemoryStorageArea>, IPC::Connection::UniqueID, StorageNamespaceIdentifier);
+    StorageAreaIdentifier addStorageArea(std::unique_ptr<MemoryStorageArea>, StorageNamespaceIdentifier);
 
     StorageAreaRegistry& m_registry;
     HashMap<StorageAreaIdentifier, std::unique_ptr<MemoryStorageArea>> m_storageAreas;

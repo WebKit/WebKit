@@ -62,11 +62,10 @@ void SessionStorageManager::connectionClosed(IPC::Connection::UniqueID connectio
         storageArea->removeListener(connection);
 }
 
-StorageAreaIdentifier SessionStorageManager::addStorageArea(std::unique_ptr<MemoryStorageArea> storageArea, IPC::Connection::UniqueID connection, StorageNamespaceIdentifier namespaceIdentifier)
+StorageAreaIdentifier SessionStorageManager::addStorageArea(std::unique_ptr<MemoryStorageArea> storageArea, StorageNamespaceIdentifier namespaceIdentifier)
 {
     auto identifier = storageArea->identifier();
     m_registry.registerStorageArea(identifier, *storageArea);
-    storageArea->addListener(connection);
     m_storageAreasByNamespace.add(namespaceIdentifier, identifier);
     m_storageAreas.add(identifier, WTFMove(storageArea));
 
@@ -76,13 +75,17 @@ StorageAreaIdentifier SessionStorageManager::addStorageArea(std::unique_ptr<Memo
 StorageAreaIdentifier SessionStorageManager::connectToSessionStorageArea(IPC::Connection::UniqueID connection, const WebCore::ClientOrigin& origin, StorageNamespaceIdentifier namespaceIdentifier)
 {
     auto identifier = m_storageAreasByNamespace.get(namespaceIdentifier);
-    if (identifier.isValid()) {
-        ASSERT(m_storageAreas.contains(identifier));
-        return identifier;
+    if (!identifier.isValid()) {
+        auto newStorageArea = makeUnique<MemoryStorageArea>(origin);
+        identifier = addStorageArea(WTFMove(newStorageArea), namespaceIdentifier);
     }
 
-    auto newStorageArea = makeUnique<MemoryStorageArea>(origin);
-    return addStorageArea(WTFMove(newStorageArea), connection, namespaceIdentifier);
+    auto storageArea = m_storageAreas.get(identifier);
+    if (!storageArea)
+        return StorageAreaIdentifier { };
+
+    storageArea->addListener(connection);
+    return identifier;
 }
 
 void SessionStorageManager::disconnectFromStorageArea(IPC::Connection::UniqueID connection, StorageAreaIdentifier identifier)
@@ -97,10 +100,8 @@ void SessionStorageManager::cloneStorageArea(IPC::Connection::UniqueID connectio
     if (!identifier.isValid())
         return;
 
-    if (auto iterator = m_storageAreas.find(identifier); iterator != m_storageAreas.end()) {
-        auto newStorageArea = iterator->value->clone();
-        addStorageArea(WTFMove(newStorageArea), connection, targetNamespaceIdentifier);
-    }
+    if (auto storageArea = m_storageAreas.get(identifier))
+        addStorageArea(storageArea->clone(), targetNamespaceIdentifier);
 }
 
 } // namespace WebKit
