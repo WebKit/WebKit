@@ -1,3 +1,18 @@
+2021-12-15  Jer Noble  <jer.noble@apple.com>
+
+        [Mac] Adopt -[NSScreen safeAreaInsets]
+        https://bugs.webkit.org/show_bug.cgi?id=234291
+        <rdar://85805895>
+
+        Reviewed by Eric Carlson.
+
+        Drive-by fix: use the safeAreaFrame() when determining where to place the exit
+        fullscreen placeholder image.
+
+        * UIProcess/mac/WKFullScreenWindowController.mm:
+        (-[WKFullScreenWindowController enterFullScreen:]):
+        (-[WKFullScreenWindowController finishedExitFullScreenAnimationAndExitImmediately:]):
+
 2021-12-15  Alex Christensen  <achristensen@webkit.org>
 
         More cleanup after PluginProcess removal

@@ -140,7 +140,7 @@ IORegistryGPUID primaryGPUID();
 IORegistryGPUID gpuIDForDisplay(PlatformDisplayID);
 IORegistryGPUID gpuIDForDisplayMask(uint32_t);
 
-WEBCORE_EXPORT FloatRect screenRectAvoidingMenuBar(NSScreen *);
+WEBCORE_EXPORT FloatRect safeScreenFrame(NSScreen *);
 
 #endif // !PLATFORM(MAC)
 
