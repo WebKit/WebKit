@@ -1560,6 +1560,11 @@
 (define (kernel-mig-routine-in-use)
     (kernel-mig-routine
         (when (defined? '_mach_make_memory_entry) _mach_make_memory_entry)
+#if PLATFORM(WATCHOS)
+        (when (defined? 'mach_make_memory_entry) mach_make_memory_entry)
+        (when (defined? 'mach_make_memory_entry_64) mach_make_memory_entry_64)
+        (when (defined? 'vm_copy) vm_copy)
+#endif
         host_get_io_master
         io_connect_async_method
         io_connect_method
@@ -1636,11 +1641,6 @@
             (when (defined? 'mach_port_is_connection_for_service)
                 (allow mach-message-send (kernel-mig-routine mach_port_is_connection_for_service))
             )
-
-            (if (and gizmo? (defined? 'mach_make_memory_entry))
-                (allow mach-message-send (kernel-mig-routine mach_make_memory_entry)))
-            (if (and gizmo? (defined? 'mach_make_memory_entry_64))
-                (allow mach-message-send (kernel-mig-routine mach_make_memory_entry_64)))
         )
     )
 )
