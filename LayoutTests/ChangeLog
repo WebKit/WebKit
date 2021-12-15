@@ -1,3 +1,23 @@
+2021-12-14  Joonghun Park  <jh718.park@samsung.com>
+
+        Fix that height is calculated incorrectly when using display:table, box-sizing:border-box and padding.
+        https://bugs.webkit.org/show_bug.cgi?id=196175
+
+        Reviewed by Darin Adler.
+
+        Currently, box sizing type check is missing, so the height of display:table element's percent height child
+        is subtracted by its border and padding even when its 'box-sizing' is not 'content-box'.
+
+        This patch adds the missing box sizing type check.
+
+        * platform/gtk/fast/table/003-expected.txt:
+        * platform/gtk/tables/mozilla/bugs/bug30692-expected.txt:
+        * platform/ios/tables/mozilla/bugs/bug30692-expected.txt:
+        * platform/mac-catalina/tables/mozilla/bugs/bug30692-expected.txt:
+        * platform/mac-mojave/tables/mozilla/bugs/bug30692-expected.txt:
+        * platform/mac/fast/table/003-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug30692-expected.txt:
+
 2021-12-14  Ryan Haddad  <ryanhaddad@apple.com>
 
         REGRESSION (r286982): ASSERTION FAILED: clipRectsContext.rootLayer == m_clipRectsCache->m_clipRectsRoot[clipRectsType]
