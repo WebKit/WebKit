@@ -1895,8 +1895,6 @@ webkit.org/b/213520 perf/htmlcollection-backwards-iteration.html [ Pass Failure 
 
 webkit.org/b/21365 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/intrinsic_sizes.htm [ Pass Failure ]
 
-webkit.org/b/214084 webrtc/libwebrtc/descriptionGetters.html [ Pass Failure ]
-
 webkit.org/b/214322 [ Debug ] http/tests/workers/worker-importScripts-banned-mimetype.html [ Pass Crash ]
 
 webkit.org/b/214382 [ Release ] imported/w3c/web-platform-tests/websockets/remove-own-iframe-during-onerror.window.html [ Pass Failure ]

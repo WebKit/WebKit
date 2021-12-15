@@ -1,3 +1,18 @@
+2021-12-15  Youenn Fablet  <youenn@apple.com>
+
+        [ Mac wk2 and iOS wk2 ] webrtc/libwebrtc/descriptionGetters.html is flaky failing.
+        https://bugs.webkit.org/show_bug.cgi?id=214084
+        <rdar://problem/65225336>
+
+        Reviewed by Eric Carlson.
+
+        * platform/ios-wk2/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+        * webrtc/libwebrtc/descriptionGetters.html:
+        We are no longer getting the descriptions straight from the backend.
+        Instead, we are storing them at end of createOffer or answer/set descriptions time.
+        Update test accordingly.
+
 2021-12-15  Jer Noble  <jer.noble@apple.com>
 
         [ iOS EWS ]  2X media/track (layout-tests) are a constant image failure
