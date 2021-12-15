@@ -174,3 +174,35 @@ function shouldThrow(func, errorType, assertionFn) {
     shouldBe(retrievedFoo, false);
     shouldBe(anotherFoo, 42);
 }
+
+// wrapped functions throw TypeError from the calling realm whenever the
+// implementing function throws:
+
+// (1) when the calling realm is the incubating realm
+{
+    let realm = new ShadowRealm();
+    let f = realm.evaluate("() => {throw new Error('ahh');}");
+    shouldThrow(f, TypeError, (e) => {});
+}
+
+// (2) when the calling realm is the shadow realm
+{
+    let realm = new ShadowRealm();
+    let f = realm.evaluate(`
+      (f) => {
+        try {
+          f();
+        } catch(e) {
+          if (e instanceof TypeError)
+            return 'ok';
+          else
+            return e.toString();
+        }
+        return 'fail: normal exit';
+      }
+    `);
+    shouldBe(
+        f(() => {throw new Error('ahhh');}),
+        'ok'
+    );
+}

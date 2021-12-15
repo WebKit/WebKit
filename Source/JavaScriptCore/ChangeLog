@@ -1,3 +1,25 @@
+2021-12-15  Joseph Griego  <jgriego@igalia.com>
+
+        [Shadow Realms] Wrapped functions must only throw TypeError from calling realm
+        https://bugs.webkit.org/show_bug.cgi?id=234357
+
+        Reviewed by Yusuke Suzuki.
+
+        This wrapping logic already exists for ShadowRealm.prototype.evaluate
+        but not for calls to wrapped functions. at present, this requires some
+        awkward manouvering to actually throw a typeerror from the shadow realm,
+        since the wrapper code always runs in the incubating realm.
+
+        Hopefully we can make this less messy soon by replacing this
+        implementation with one more integrated with the runtime.
+
+        This case wasn't covered by existing JSC or test262 tests; added
+        coverage both upstream in t262 and in this patch.
+
+        * builtins/ShadowRealmPrototype.js:
+        (wrapped):
+        (globalPrivate.wrap):
+
 2021-12-14  Ross Kirsling  <ross.kirsling@sony.com>
 
         [JSC] OpInstanceofCustom should be in CommonSlowPaths

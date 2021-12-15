@@ -1,3 +1,18 @@
+2021-12-15  Joseph Griego  <jgriego@igalia.com>
+
+        [Shadow Realms] Wrapped functions must only throw TypeError from calling realm
+        https://bugs.webkit.org/show_bug.cgi?id=234357
+
+        Test the cases when the exception would be thrown by a function
+        originating from both the shadow realm and the incubating realm.
+
+        Reviewed by Yusuke Suzuki.
+
+        * stress/shadow-realm-evaluate.js:
+        (shouldBe):
+        (let.f.realm.evaluate):
+        (shouldBe.f):
+
 2021-12-13  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Update Intl tests based on ICU 69~

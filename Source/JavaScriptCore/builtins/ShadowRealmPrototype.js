@@ -42,7 +42,18 @@ function wrap(fromShadowRealm, shadowRealm, target)
                 // calling the wrapped function
                 @putByValDirect(wrappedArgs, index, @wrap(!fromShadowRealm, shadowRealm, arguments[index]));
 
-            var result = target.@apply(@undefined, wrappedArgs);
+            try {
+                var result = target.@apply(@undefined, wrappedArgs);
+            } catch (e) {
+                const msg = "wrapped function threw: " + e.toString();
+                if (fromShadowRealm)
+                    @throwTypeError(msg);
+                else {
+                    const mkTypeError = @evalInRealm(shadowRealm, "(msg) => new TypeError(msg)");
+                    const err = mkTypeError.@apply(msg);
+                    throw err;
+                }
+            }
             return @wrap(fromShadowRealm, shadowRealm, result);
         };
         delete wrapped['name'];
