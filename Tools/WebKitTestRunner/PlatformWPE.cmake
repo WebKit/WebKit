@@ -15,7 +15,6 @@ list(APPEND WebKitTestRunner_SOURCES
 
 list(APPEND WebKitTestRunner_INCLUDE_DIRECTORIES
     ${FORWARDING_HEADERS_DIR}
-    ${TOOLS_DIR}/wpe/backends
 )
 
 list(APPEND WebKitTestRunner_SYSTEM_INCLUDE_DIRECTORIES
@@ -30,7 +29,7 @@ list(APPEND WebKitTestRunner_LIBRARIES
     ${LIBXKBCOMMON_LIBRARIES}
     ${WPEBACKEND_FDO_LIBRARIES}
     Cairo::Cairo
-    WPEToolingBackends
+    WebKit::WPEToolingBackends
 )
 
 list(APPEND WebKitTestRunnerInjectedBundle_LIBRARIES

@@ -26,7 +26,7 @@
 #include "config.h"
 #include "PlatformWebView.h"
 
-#include "HeadlessViewBackend.h"
+#include <WPEToolingBackends/HeadlessViewBackend.h>
 #include <WebKit/WKRetainPtr.h>
 #include <WebKit/WKView.h>
 

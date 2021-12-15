@@ -26,9 +26,9 @@
 #include "config.h"
 #include "EventSenderProxy.h"
 
-#include "HeadlessViewBackend.h"
 #include "PlatformWebView.h"
 #include "TestController.h"
+#include <WPEToolingBackends/HeadlessViewBackend.h>
 #include <WebCore/NotImplemented.h>
 #include <wpe/wpe.h>
 #include <wtf/MonotonicTime.h>

@@ -1,3 +1,27 @@
+2021-12-14  Don Olmstead  <don.olmstead@sony.com>
+
+        [CMake] Modernize WPEToolingBackend
+        https://bugs.webkit.org/show_bug.cgi?id=234307
+
+        Reviewed by Adrian Perez de Castro.
+
+        Use WEBKIT_FRAMEWORK to build WPEToolingBackend and follow its conventions. Also support
+        different platform definitions so other ports using libwpe can also use this library.
+
+        Update includes to use <WPEToolingBackend/*.h>.
+
+        * MiniBrowser/wpe/CMakeLists.txt:
+        * MiniBrowser/wpe/main.cpp:
+        * TestWebKitAPI/PlatformWPE.cmake:
+        * TestWebKitAPI/glib/PlatformWPE.cmake:
+        * TestWebKitAPI/glib/WebKitGLib/TestMain.h:
+        * TestWebKitAPI/wpe/PlatformWebViewWPE.cpp:
+        * WebKitTestRunner/PlatformWPE.cmake:
+        * WebKitTestRunner/wpe/EventSenderProxyWPE.cpp:
+        * WebKitTestRunner/wpe/PlatformWebViewWPE.cpp:
+        * wpe/backends/CMakeLists.txt:
+        * wpe/backends/PlatformWPE.cmake: Added.
+
 2021-12-14  Ryan Haddad  <ryanhaddad@apple.com>
 
         Bring up another iOS GPU Processes tester

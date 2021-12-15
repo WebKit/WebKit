@@ -26,8 +26,8 @@
 #include "cmakeconfig.h"
 
 #include "BuildRevision.h"
-#include "HeadlessViewBackend.h"
-#include "WindowViewBackend.h"
+#include <WPEToolingBackends/HeadlessViewBackend.h>
+#include <WPEToolingBackends/WindowViewBackend.h>
 #include <memory>
 #include <wpe/webkit.h>
 
