@@ -3009,15 +3009,6 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     return NO;
 }
 
-// accessibilityShouldUseUniqueId is an AppKit method we override so that
-// objects will be given a unique ID, and therefore allow AppKit to know when they
-// become obsolete (e.g. when the user navigates to a new web page, making this one
-// unrendered but not deallocated because it is in the back/forward cache).
-// It is important to call NSAccessibilityUnregisterUniqueIdForUIElement in the
-// appropriate place (e.g. dealloc) to remove these non-retained references from
-// AppKit's id mapping tables. We do this in detach by calling unregisterUniqueIdForUIElement.
-//
-// Registering an object is also required for observing notifications. Only registered objects can be observed.
 ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
 - (BOOL)accessibilityIsIgnored
 ALLOW_DEPRECATED_IMPLEMENTATIONS_END
@@ -4331,6 +4322,15 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     return YES;
 }
 
+// accessibilityShouldUseUniqueId is an AppKit method we override so that
+// objects will be given a unique ID, and therefore allow AppKit to know when they
+// become obsolete (e.g. when the user navigates to a new web page, making this one
+// unrendered but not deallocated because it is in the back/forward cache).
+// It is important to call NSAccessibilityUnregisterUniqueIdForUIElement in the
+// appropriate place (e.g. dealloc) to remove these non-retained references from
+// AppKit's id mapping tables. We do this in detach by calling unregisterUniqueIdForUIElement.
+//
+// Registering an object is also required for observing notifications. Only registered objects can be observed.
 - (BOOL)accessibilityShouldUseUniqueId
 {
     // All AX object wrappers should use unique ID's because it's faster within AppKit to look them up.
