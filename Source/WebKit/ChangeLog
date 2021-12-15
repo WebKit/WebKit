@@ -1,3 +1,20 @@
+2021-12-15  Alex Christensen  <achristensen@webkit.org>
+
+        Actually use adattributiond.entitlements when code signing adattributiond
+        https://bugs.webkit.org/show_bug.cgi?id=234329
+        <rdar://86425785>
+
+        Reviewed by Tim Horton.
+
+        r283897 got me so close.  I generate the entitlements and the sandbox profile.  Now I need to actually sign with the entitlements.
+        I verified by building two roots that before this change, the codesign invocation looked like this:
+        /usr/bin/codesign --force --sign - --generate-entitlement-der .../Root/System/Library/Frameworks/WebKit.framework/Daemons/adattributiond
+        and after this change it looks like this:
+        /usr/bin/codesign --force --sign - --entitlements .../TempContent/Objects/WebKit.build/adattributiond.build/adattributiond.entitlements
+            --generate-entitlement-der .../Root/System/Library/Frameworks/WebKit.framework/Daemons/adattributiond
+
+        * Configurations/adattributiond.xcconfig:
+
 2021-12-15  Per Arne Vollan  <pvollan@apple.com>
 
         [iOS][WP] Add access to required syscall
