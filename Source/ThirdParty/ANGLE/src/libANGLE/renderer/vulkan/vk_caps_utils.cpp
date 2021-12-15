@@ -382,7 +382,8 @@ void RendererVk::ensureCapsInitialized() const
     mNativeExtensions.multiDrawIndirectEXT = true;
 
     // Enable ANGLE_base_vertex_base_instance
-    mNativeExtensions.baseVertexBaseInstanceANGLE = true;
+    mNativeExtensions.baseVertexBaseInstanceANGLE              = true;
+    mNativeExtensions.baseVertexBaseInstanceShaderBuiltinANGLE = true;
 
     // Enable OES/EXT_draw_elements_base_vertex
     mNativeExtensions.drawElementsBaseVertexOES = true;
@@ -1108,6 +1109,9 @@ void RendererVk::ensureCapsInitialized() const
 
     // GL_ANGLE_vulkan_image
     mNativeExtensions.vulkanImageANGLE = true;
+
+    // GL_ANGLE_texture_usage
+    mNativeExtensions.textureUsageANGLE = true;
 }
 
 namespace vk
@@ -1174,13 +1178,6 @@ egl::Config GenerateDefaultConfig(DisplayVk *display,
     EGLint es2Support = (maxSupportedESVersion.major >= 2 ? EGL_OPENGL_ES2_BIT : 0);
     EGLint es3Support = (maxSupportedESVersion.major >= 3 ? EGL_OPENGL_ES3_BIT : 0);
 
-    EGLint surfaceType = EGL_WINDOW_BIT;
-    // Don't support RGB8 PBuffers.
-    if (colorFormat.internalFormat != GL_RGB8)
-    {
-        surfaceType |= EGL_PBUFFER_BIT;
-    }
-
     egl::Config config;
 
     config.renderTargetFormat = colorFormat.internalFormat;
@@ -1211,7 +1208,7 @@ egl::Config GenerateDefaultConfig(DisplayVk *display,
     config.renderableType     = es1Support | es2Support | es3Support;
     config.sampleBuffers      = (sampleCount > 0) ? 1 : 0;
     config.samples            = sampleCount;
-    config.surfaceType        = surfaceType;
+    config.surfaceType        = EGL_WINDOW_BIT | EGL_PBUFFER_BIT;
     if (display->getExtensions().mutableRenderBufferKHR)
     {
         config.surfaceType |= EGL_MUTABLE_RENDER_BUFFER_BIT_KHR;

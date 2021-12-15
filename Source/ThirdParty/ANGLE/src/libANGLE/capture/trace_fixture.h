@@ -149,6 +149,10 @@ using BufferHandleMap = std::unordered_map<GLuint, void *>;
 extern BufferHandleMap gMappedBufferData;
 void UpdateClientBufferData(GLuint bufferID, const void *source, GLsizei size);
 void UpdateClientBufferData2(GLuint bufferID, const void *source, GLsizei size);
+void UpdateClientBufferData2WithOffset(GLuint bufferID,
+                                       const void *source,
+                                       GLsizei size,
+                                       GLsizei offset);
 void UpdateBufferID(GLuint id, GLsizei readBufferOffset);
 void UpdateFenceNVID(GLuint id, GLsizei readBufferOffset);
 void UpdateFramebufferID(GLuint id, GLsizei readBufferOffset);

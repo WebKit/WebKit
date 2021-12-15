@@ -6186,21 +6186,21 @@ CallCapture CaptureImportMemoryFdEXT(const State &glState,
 
 CallCapture CaptureMultiDrawArraysIndirectEXT(const State &glState,
                                               bool isCallValid,
-                                              GLenum mode,
+                                              PrimitiveMode modePacked,
                                               const void *indirect,
                                               GLsizei drawcount,
                                               GLsizei stride)
 {
     ParamBuffer paramBuffer;
 
-    paramBuffer.addEnumParam("mode", GLenumGroup::PrimitiveType, ParamType::TGLenum, mode);
+    paramBuffer.addValueParam("modePacked", ParamType::TPrimitiveMode, modePacked);
 
     if (isCallValid)
     {
         ParamCapture indirectParam("indirect", ParamType::TvoidConstPointer);
         InitParamValue(ParamType::TvoidConstPointer, indirect, &indirectParam.value);
-        CaptureMultiDrawArraysIndirectEXT_indirect(glState, isCallValid, mode, indirect, drawcount,
-                                                   stride, &indirectParam);
+        CaptureMultiDrawArraysIndirectEXT_indirect(glState, isCallValid, modePacked, indirect,
+                                                   drawcount, stride, &indirectParam);
         paramBuffer.addParam(std::move(indirectParam));
     }
     else
@@ -6219,23 +6219,23 @@ CallCapture CaptureMultiDrawArraysIndirectEXT(const State &glState,
 
 CallCapture CaptureMultiDrawElementsIndirectEXT(const State &glState,
                                                 bool isCallValid,
-                                                GLenum mode,
-                                                GLenum type,
+                                                PrimitiveMode modePacked,
+                                                DrawElementsType typePacked,
                                                 const void *indirect,
                                                 GLsizei drawcount,
                                                 GLsizei stride)
 {
     ParamBuffer paramBuffer;
 
-    paramBuffer.addEnumParam("mode", GLenumGroup::PrimitiveType, ParamType::TGLenum, mode);
-    paramBuffer.addEnumParam("type", GLenumGroup::DrawElementsType, ParamType::TGLenum, type);
+    paramBuffer.addValueParam("modePacked", ParamType::TPrimitiveMode, modePacked);
+    paramBuffer.addValueParam("typePacked", ParamType::TDrawElementsType, typePacked);
 
     if (isCallValid)
     {
         ParamCapture indirectParam("indirect", ParamType::TvoidConstPointer);
         InitParamValue(ParamType::TvoidConstPointer, indirect, &indirectParam.value);
-        CaptureMultiDrawElementsIndirectEXT_indirect(glState, isCallValid, mode, type, indirect,
-                                                     drawcount, stride, &indirectParam);
+        CaptureMultiDrawElementsIndirectEXT_indirect(glState, isCallValid, modePacked, typePacked,
+                                                     indirect, drawcount, stride, &indirectParam);
         paramBuffer.addParam(std::move(indirectParam));
     }
     else

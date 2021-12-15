@@ -28,7 +28,7 @@
 #include "platform/Platform.h"
 
 #ifdef ANGLE_METAL_XCODE_BUILDS_SHADERS
-#include "mtl_default_shaders_compiled.inc"
+#    include "mtl_default_shaders_compiled.inc"
 #endif
 
 #include "EGL/eglext.h"
@@ -150,7 +150,7 @@ angle::Result DisplayMtl::initializeImpl(egl::Display *display)
 
         mMetalDeviceVendorId = mtl::GetDeviceVendorId(mMetalDevice);
 
-        mCmdQueue.set([[mMetalDevice.get() newCommandQueue] ANGLE_MTL_AUTORELEASE]);
+        mCmdQueue.set([[mMetalDevice newCommandQueue] ANGLE_MTL_AUTORELEASE]);
 
         mCapsInitialized = false;
 #if ANGLE_ENABLE_METAL_SPIRV
@@ -379,7 +379,7 @@ rx::ContextImpl *DisplayMtl::createContext(const gl::State &state,
                                            const gl::Context *shareContext,
                                            const egl::AttributeMap &attribs)
 {
-    return new ContextMtl(state, errorSet, this);
+    return new ContextMtl(state, errorSet, attribs, this);
 }
 
 StreamProducerImpl *DisplayMtl::createStreamProducerD3DTexture(
@@ -474,6 +474,9 @@ void DisplayMtl::generateExtensions(egl::DisplayExtensions *outExtensions) const
     // EGL_KHR_image
     outExtensions->image     = true;
     outExtensions->imageBase = true;
+
+    // EGL_ANGLE_metal_create_context_ownership_identity
+    outExtensions->metalCreateContextOwnershipIdentityANGLE = true;
 }
 
 void DisplayMtl::generateCaps(egl::Caps *outCaps) const {}
@@ -1187,14 +1190,12 @@ bool DisplayMtl::supportsEitherGPUFamily(uint8_t iOSFamily, uint8_t macFamily) c
     return supportsAppleGPUFamily(iOSFamily) || supportsMacGPUFamily(macFamily);
 }
 
-
-
 bool DisplayMtl::supports32BitFloatFiltering() const
 {
-#if (defined(__MAC_11_0) && __MAC_OS_X_VERSION_MIN_REQUIRED >= __MAC_11_0) ||\
-    (defined(__IPHONE_14_0) && __IPHONE_OS_VERSION_MIN_REQUIRED >= __IPHONE_14_0) ||\
+#if (defined(__MAC_11_0) && __MAC_OS_X_VERSION_MIN_REQUIRED >= __MAC_11_0) ||        \
+    (defined(__IPHONE_14_0) && __IPHONE_OS_VERSION_MIN_REQUIRED >= __IPHONE_14_0) || \
     (defined(__TVOS_14_0) && __TV_OS_VERSION_MIN_REQUIRED >= __TVOS_14_0)
-    if(@available(ios 14.0, macOS 11.0,*))
+    if (@available(ios 14.0, macOS 11.0, *))
     {
         return [mMetalDevice supports32BitFloatFiltering];
     }
@@ -1209,8 +1210,9 @@ bool DisplayMtl::supportsDepth24Stencil8PixelFormat() const
 {
 #if TARGET_OS_OSX || TARGET_OS_MACCATALYST
     return [mMetalDevice isDepth24Stencil8PixelFormatSupported];
-#endif
+#else
     return false;
+#endif
 }
 bool DisplayMtl::isAMD() const
 {

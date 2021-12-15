@@ -205,6 +205,10 @@ angle_sample("gles3_torus_bufferstorage") {
   ]
 }
 
+angle_sample("multiple_contexts") {
+  sources = [ "multiple_contexts/MultipleContexts.cpp" ]
+}
+
 if (angle_build_capture_replay_sample) {
   # The capture_replay sample is set up to work with a single Context.
   # To use the capture replay sample first move your capture sources into
@@ -262,6 +266,7 @@ group("angle_samples") {
       ":mip_map_2d",
       ":multi_texture",
       ":multi_window",
+      ":multiple_contexts",
       ":multiple_draw_buffers",
       ":multiview",
       ":particle_system",

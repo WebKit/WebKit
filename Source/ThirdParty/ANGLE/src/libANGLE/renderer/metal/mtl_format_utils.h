@@ -27,6 +27,7 @@ class DisplayMtl;
 
 namespace mtl
 {
+class ContextDevice;
 
 LoadFunctionMap GetLoadFunctionsMap(GLenum internalFormat, angle::FormatID angleFormat);
 
@@ -193,7 +194,7 @@ class FormatTable final : angle::NonCopyable
 
     void setCompressedFormatCaps(MTLPixelFormat formatId, bool filterable);
 
-    void adjustFormatCapsForDevice(id<MTLDevice> device,
+    void adjustFormatCapsForDevice(const mtl::ContextDevice &device,
                                    MTLPixelFormat id,
                                    bool supportsiOS2,
                                    bool supportsiOS4);

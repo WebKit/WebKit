@@ -187,5 +187,10 @@
                 <command name="eglExportVkImageANGLE"/>
             </require>
         </extension>
+        <extension name="EGL_ANGLE_metal_create_context_ownership_identity" supported="egl">
+            <require>
+                <enum name="EGL_CONTEXT_METAL_OWNERSHIP_IDENTITY_ANGLE"/>
+            </require>
+        </extension>
     </extensions>
 </registry>

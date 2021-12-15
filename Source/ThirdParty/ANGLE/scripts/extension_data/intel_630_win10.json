@@ -5,6 +5,7 @@
     "ShaderLanguageVersion": "OpenGL ES GLSL ES 3.20 (ANGLE 2.1.16846 git hash: 22d8115a208b)",
     "Extensions": [
         "GL_ANGLE_base_vertex_base_instance",
+        "GL_ANGLE_base_vertex_base_instance_shader_builtin",
         "GL_ANGLE_client_arrays",
         "GL_ANGLE_compressed_texture_etc",
         "GL_ANGLE_copy_texture_3d",

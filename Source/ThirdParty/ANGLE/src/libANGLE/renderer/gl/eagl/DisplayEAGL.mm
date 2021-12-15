@@ -404,6 +404,7 @@ RendererGL *DisplayEAGL::getRenderer() const
 {
     return mRenderer.get();
 }
+
 }
 
 #endif  // defined(ANGLE_ENABLE_EAGL)

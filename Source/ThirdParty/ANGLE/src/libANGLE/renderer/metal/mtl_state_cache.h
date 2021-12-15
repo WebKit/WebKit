@@ -18,6 +18,7 @@
 #include "libANGLE/State.h"
 #include "libANGLE/angletypes.h"
 #include "libANGLE/renderer/metal/mtl_common.h"
+#include "libANGLE/renderer/metal/mtl_context_device.h"
 #include "libANGLE/renderer/metal/mtl_resources.h"
 
 static inline bool operator==(const MTLClearColor &lhs, const MTLClearColor &rhs);
@@ -451,7 +452,7 @@ class RenderPipelineCacheSpecializeShaderFactory
   public:
     virtual ~RenderPipelineCacheSpecializeShaderFactory() = default;
     // Get specialized shader for the render pipeline cache.
-    virtual angle::Result getSpecializedShader(Context *context,
+    virtual angle::Result getSpecializedShader(ContextMtl *context,
                                                gl::ShaderType shaderType,
                                                const RenderPipelineDesc &renderPipelineDesc,
                                                id<MTLFunction> *shaderOut) = 0;
@@ -494,8 +495,8 @@ class RenderPipelineCache final : angle::NonCopyable
     // RenderPipelineCacheSpecializeShaderFactory.hasSpecializedShader() returns false for a
     // particular RenderPipelineDesc, the render pipeline cache will use the non-specialized
     // shaders.
-    void setVertexShader(Context *context, id<MTLFunction> shader);
-    void setFragmentShader(Context *context, id<MTLFunction> shader);
+    void setVertexShader(ContextMtl *context, id<MTLFunction> shader);
+    void setFragmentShader(ContextMtl *context, id<MTLFunction> shader);
 
     // Get non-specialized shaders supplied via set*Shader().
     id<MTLFunction> getVertexShader() { return mVertexShader; }
@@ -514,13 +515,13 @@ class RenderPipelineCache final : angle::NonCopyable
 
   private:
     void clearPipelineStates();
-    void recreatePipelineStates(Context *context);
+    void recreatePipelineStates(ContextMtl *context);
     AutoObjCPtr<id<MTLRenderPipelineState>> insertRenderPipelineState(
-        Context *context,
+        ContextMtl *context,
         const RenderPipelineDesc &desc,
         bool insertDefaultAttribLayout);
     AutoObjCPtr<id<MTLRenderPipelineState>> createRenderPipelineState(
-        Context *context,
+        ContextMtl *context,
         const RenderPipelineDesc &desc,
         bool insertDefaultAttribLayout);
 
@@ -546,7 +547,7 @@ class ProvokingVertexComputePipelineCache final : angle::NonCopyable
     // RenderPipelineCacheSpecializeShaderFactory.hasSpecializedShader() returns false for a
     // particular RenderPipelineDesc, the render pipeline cache will use the non-specialized
     // shaders.
-    void setComputeShader(Context *context, id<MTLFunction> shader);
+    void setComputeShader(ContextMtl *context, id<MTLFunction> shader);
     id<MTLFunction> getComputeShader() { return mComputeShader; }
 
     AutoObjCPtr<id<MTLComputePipelineState>> getComputePipelineState(
@@ -561,13 +562,13 @@ class ProvokingVertexComputePipelineCache final : angle::NonCopyable
 
   private:
     void clearPipelineStates();
-    void recreatePipelineStates(Context *context);
+    void recreatePipelineStates(ContextMtl *context);
     AutoObjCPtr<id<MTLComputePipelineState>> insertComputePipelineState(
-        Context *context,
+        ContextMtl *context,
         const ProvokingVertexComputePipelineDesc &desc);
 
     AutoObjCPtr<id<MTLComputePipelineState>> createComputePipelineState(
-        Context *context,
+        ContextMtl *context,
         const ProvokingVertexComputePipelineDesc &desc);
 
     bool hasDefaultAttribs(const RenderPipelineDesc &desc) const;
@@ -585,17 +586,15 @@ class StateCache final : angle::NonCopyable
     ~StateCache();
 
     // Null depth stencil state has depth/stecil read & write disabled.
-    inline AutoObjCPtr<id<MTLDepthStencilState>> getNullDepthStencilState(Context *context)
-    {
-        return getNullDepthStencilState(context->getMetalDevice());
-    }
-    AutoObjCPtr<id<MTLDepthStencilState>> getNullDepthStencilState(id<MTLDevice> device);
-    AutoObjCPtr<id<MTLDepthStencilState>> getDepthStencilState(id<MTLDevice> device,
+    AutoObjCPtr<id<MTLDepthStencilState>> getNullDepthStencilState(
+        const mtl::ContextDevice &device);
+    AutoObjCPtr<id<MTLDepthStencilState>> getDepthStencilState(const mtl::ContextDevice &device,
                                                                const DepthStencilDesc &desc);
-    AutoObjCPtr<id<MTLSamplerState>> getSamplerState(id<MTLDevice> device, const SamplerDesc &desc);
+    AutoObjCPtr<id<MTLSamplerState>> getSamplerState(const mtl::ContextDevice &device,
+                                                     const SamplerDesc &desc);
     // Null sampler state uses default SamplerDesc
-    AutoObjCPtr<id<MTLSamplerState>> getNullSamplerState(Context *context);
-    AutoObjCPtr<id<MTLSamplerState>> getNullSamplerState(id<MTLDevice> device);
+    AutoObjCPtr<id<MTLSamplerState>> getNullSamplerState(ContextMtl *context);
+    AutoObjCPtr<id<MTLSamplerState>> getNullSamplerState(const mtl::ContextDevice &device);
     void clear();
 
   private:

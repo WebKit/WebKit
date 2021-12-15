@@ -61,6 +61,12 @@ Resource::Resource(Resource &&other) : Resource()
     mUse = std::move(other.mUse);
 }
 
+Resource &Resource::operator=(Resource &&rhs)
+{
+    std::swap(mUse, rhs.mUse);
+    return *this;
+}
+
 Resource::~Resource()
 {
     mUse.release();
@@ -140,7 +146,9 @@ SharedGarbage &SharedGarbage::operator=(SharedGarbage &&rhs)
 bool SharedGarbage::destroyIfComplete(RendererVk *renderer, Serial completedSerial)
 {
     if (mLifetime.isCurrentlyInUse(completedSerial))
+    {
         return false;
+    }
 
     for (GarbageObject &object : mGarbage)
     {

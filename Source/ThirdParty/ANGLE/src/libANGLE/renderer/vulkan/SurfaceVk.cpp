@@ -318,47 +318,6 @@ angle::Result OffscreenSurfaceVk::AttachmentImage::initialize(DisplayVk *display
     return angle::Result::Continue;
 }
 
-angle::Result OffscreenSurfaceVk::AttachmentImage::initializeWithExternalMemory(
-    DisplayVk *displayVk,
-    EGLint width,
-    EGLint height,
-    const vk::Format &vkFormat,
-    GLint samples,
-    void *buffer,
-    bool isRobustResourceInitEnabled,
-    bool hasProtectedContent)
-{
-    RendererVk *renderer = displayVk->getRenderer();
-    ASSERT(renderer->getFeatures().supportsExternalMemoryHost.enabled);
-
-    ANGLE_TRY(InitImageHelper(displayVk, width, height, vkFormat, samples,
-                              isRobustResourceInitEnabled, hasProtectedContent, &image));
-
-    VkImportMemoryHostPointerInfoEXT importMemoryHostPointerInfo = {};
-    importMemoryHostPointerInfo.sType = VK_STRUCTURE_TYPE_IMPORT_MEMORY_HOST_POINTER_INFO_EXT;
-    importMemoryHostPointerInfo.pNext = nullptr;
-    importMemoryHostPointerInfo.handleType =
-        VK_EXTERNAL_MEMORY_HANDLE_TYPE_HOST_MAPPED_FOREIGN_MEMORY_BIT_EXT;
-    importMemoryHostPointerInfo.pHostPointer   = buffer;
-    const void *importMemoryHostPointerInfoPtr = &importMemoryHostPointerInfo;
-
-    VkMemoryRequirements externalMemoryRequirements;
-    image.getImage().getMemoryRequirements(renderer->getDevice(), &externalMemoryRequirements);
-
-    VkMemoryPropertyFlags flags = 0;
-    if (hasProtectedContent)
-    {
-        flags |= VK_MEMORY_PROPERTY_PROTECTED_BIT;
-    }
-    ANGLE_TRY(image.initExternalMemory(
-        displayVk, renderer->getMemoryProperties(), externalMemoryRequirements, nullptr, 1,
-        &importMemoryHostPointerInfoPtr, VK_QUEUE_FAMILY_EXTERNAL, flags));
-
-    imageViews.init(renderer);
-
-    return angle::Result::Continue;
-}
-
 void OffscreenSurfaceVk::AttachmentImage::destroy(const egl::Display *display)
 {
     DisplayVk *displayVk = vk::GetImpl(display);

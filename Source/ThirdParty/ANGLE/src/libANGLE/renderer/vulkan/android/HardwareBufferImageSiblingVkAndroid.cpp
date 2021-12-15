@@ -320,8 +320,6 @@ angle::Result HardwareBufferImageSiblingVkAndroid::initImpl(DisplayVk *displayVk
         VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT |
         (hasProtectedContent() ? VK_MEMORY_PROPERTY_PROTECTED_BIT : 0);
 
-    VkSamplerYcbcrConversionCreateInfo yuvConversionInfo     = {};
-    VkSamplerYcbcrConversionCreateInfo *yuvConversionInfoPtr = nullptr;
     if (bufferFormatProperties.format == VK_FORMAT_UNDEFINED)
     {
         // Note from Vulkan spec: Since GL_OES_EGL_image_external does not require the same sampling
@@ -331,24 +329,19 @@ angle::Result HardwareBufferImageSiblingVkAndroid::initImpl(DisplayVk *displayVk
                        VK_ERROR_FEATURE_NOT_PRESENT);
         ASSERT(externalFormat.pNext == nullptr);
 
-        yuvConversionInfo.sType         = VK_STRUCTURE_TYPE_SAMPLER_YCBCR_CONVERSION_CREATE_INFO;
-        yuvConversionInfo.pNext         = &externalFormat;
-        yuvConversionInfo.format        = VK_FORMAT_UNDEFINED;
-        yuvConversionInfo.xChromaOffset = bufferFormatProperties.suggestedXChromaOffset;
-        yuvConversionInfo.yChromaOffset = bufferFormatProperties.suggestedYChromaOffset;
-        yuvConversionInfo.ycbcrModel    = bufferFormatProperties.suggestedYcbcrModel;
-        yuvConversionInfo.ycbcrRange    = bufferFormatProperties.suggestedYcbcrRange;
-        yuvConversionInfo.chromaFilter  = VK_FILTER_NEAREST;
-        yuvConversionInfo.components    = bufferFormatProperties.samplerYcbcrConversionComponents;
-
-        yuvConversionInfoPtr = &yuvConversionInfo;
-
+        // Update the SamplerYcbcrConversionCache key
+        mImage->updateYcbcrConversionDesc(
+            renderer, bufferFormatProperties.externalFormat,
+            bufferFormatProperties.suggestedYcbcrModel, bufferFormatProperties.suggestedYcbcrRange,
+            bufferFormatProperties.suggestedXChromaOffset,
+            bufferFormatProperties.suggestedYChromaOffset, VK_FILTER_NEAREST,
+            bufferFormatProperties.samplerYcbcrConversionComponents, angle::FormatID::NONE);
         mYUV = true;
     }
 
-    ANGLE_TRY(mImage->initExternalMemory(
-        displayVk, renderer->getMemoryProperties(), externalMemoryRequirements,
-        yuvConversionInfoPtr, 1, &dedicatedAllocInfoPtr, VK_QUEUE_FAMILY_FOREIGN_EXT, flags));
+    ANGLE_TRY(mImage->initExternalMemory(displayVk, renderer->getMemoryProperties(),
+                                         externalMemoryRequirements, 1, &dedicatedAllocInfoPtr,
+                                         VK_QUEUE_FAMILY_FOREIGN_EXT, flags));
 
     constexpr uint32_t kColorRenderableRequiredBits        = VK_FORMAT_FEATURE_COLOR_ATTACHMENT_BIT;
     constexpr uint32_t kDepthStencilRenderableRequiredBits = VK_FORMAT_FEATURE_COLOR_ATTACHMENT_BIT;

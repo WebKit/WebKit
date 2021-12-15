@@ -39,15 +39,15 @@ if (angle_build_capture_replay_tests) {
     _trace_json_path = "$_dir/$_trace.json"
 
     # This extra empty step is needed to prevent GN from warning on reassignment.
-    _trace_data = {
-    }
+    _trace_data = []
     _trace_data = read_file(_trace_json_path, "json")
-    _ctx = _trace_data.WindowSurfaceContextID
     _target = "cr_trace_${_trace_counter}"
     _trace_counter += 1
+    _trace_extra_cpp =
+        "$_dir/${_trace}_context${_trace_data.WindowSurfaceContextID}.cpp"
     angle_trace(_target) {
-      trace_prefix = "$_dir/${_trace}_context${_ctx}"
-      sources = rebase_path(_trace_data.TraceFiles, ".", _dir)
+      sources =
+          rebase_path(_trace_data.TraceFiles, ".", _dir) + [ _trace_extra_cpp ]
       data = []
       fixture = ":angle_capture_replay_tests_fixture"
       output_name = _trace

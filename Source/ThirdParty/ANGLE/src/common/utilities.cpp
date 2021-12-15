@@ -9,7 +9,7 @@
 // Older clang versions have a false positive on this warning here.
 // TODO(dino): Is this still necessary?
 #if defined(__clang__)
-#pragma clang diagnostic ignored "-Wglobal-constructors"
+#    pragma clang diagnostic ignored "-Wglobal-constructors"
 #endif
 
 #include "common/utilities.h"
@@ -1281,6 +1281,7 @@ bool IsExternalImageTarget(EGLenum target)
         case EGL_D3D11_TEXTURE_ANGLE:
         case EGL_LINUX_DMA_BUF_EXT:
         case EGL_METAL_TEXTURE_ANGLE:
+        case EGL_VULKAN_IMAGE_ANGLE:
             return true;
 
         default:

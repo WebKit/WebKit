@@ -382,6 +382,7 @@ def gen_image_map_switch_astc_case_iosmac(angle_format, angle_to_gl, angle_to_mt
     return gen_image_map_switch_case(angle_format, angle_format, angle_to_mtl_map,
                                      gen_format_assign_code)
 
+
 def gen_image_map_switch_astc_case_watchos(angle_format, angle_to_gl, angle_to_mtl_map):
     gl_format = angle_to_gl[angle_format]
 
@@ -394,7 +395,6 @@ def gen_image_map_switch_astc_case_watchos(angle_format, angle_to_gl, angle_to_m
 
     return gen_image_map_switch_case(angle_format, angle_format, angle_to_mtl_map,
                                      gen_format_assign_code)
-
 
 
 def gen_image_map_switch_string(image_table, angle_to_gl):
@@ -454,7 +454,7 @@ def gen_image_map_switch_string(image_table, angle_to_gl):
                                                         mac_override_es3[angle_format],
                                                         angle_to_gl, mac_angle_to_mtl)
     switch_data += "#endif\n"
-    
+
     switch_data += "#if TARGET_OS_SIMULATOR\n"
     for angle_format in sorted(sim_specific_map.keys()):
         switch_data += gen_image_map_switch_simple_case(angle_format, angle_format, angle_to_gl,
@@ -464,11 +464,13 @@ def gen_image_map_switch_string(image_table, angle_to_gl):
                                                         angle_to_gl, sim_angle_to_mtl)
     switch_data += "#if TARGET_OS_IOS || TARGET_OS_TV\n"
     for angle_format in sorted(astc_tpl_map.keys()):
-        switch_data += gen_image_map_switch_astc_case_iosmac(angle_format, angle_to_gl, astc_tpl_map)
+        switch_data += gen_image_map_switch_astc_case_iosmac(angle_format, angle_to_gl,
+                                                             astc_tpl_map)
     switch_data += "#elif TARGET_OS_WATCH\n"
 
     for angle_format in sorted(astc_tpl_map.keys()):
-        switch_data += gen_image_map_switch_astc_case_watchos(angle_format, angle_to_gl, astc_tpl_map)
+        switch_data += gen_image_map_switch_astc_case_watchos(angle_format, angle_to_gl,
+                                                              astc_tpl_map)
     switch_data += "#endif // TARGET_OS_IOS || TARGET_OS_TV \n "
     # iOS specific
     switch_data += "#elif TARGET_OS_IPHONE && !TARGET_OS_MACCATALYST\n"
@@ -480,12 +482,14 @@ def gen_image_map_switch_string(image_table, angle_to_gl):
                                                         angle_to_gl, ios_angle_to_mtl)
     switch_data += "#if TARGET_OS_IOS || TARGET_OS_TV\n"
     for angle_format in sorted(astc_tpl_map.keys()):
-        switch_data += gen_image_map_switch_astc_case_iosmac(angle_format, angle_to_gl, astc_tpl_map)
+        switch_data += gen_image_map_switch_astc_case_iosmac(angle_format, angle_to_gl,
+                                                             astc_tpl_map)
 
     switch_data += "#elif TARGET_OS_WATCH\n"
 
     for angle_format in sorted(astc_tpl_map.keys()):
-        switch_data += gen_image_map_switch_astc_case_watchos(angle_format, angle_to_gl, astc_tpl_map)
+        switch_data += gen_image_map_switch_astc_case_watchos(angle_format, angle_to_gl,
+                                                              astc_tpl_map)
     switch_data += "#endif // TARGET_OS_IOS || TARGET_OS_TV\n"
     switch_data += "#endif // TARGET_OS_IPHONE\n"
 
@@ -502,7 +506,8 @@ def gen_image_map_switch_string(image_table, angle_to_gl):
                                                             angle_to_gl, ios_specific_map)
     # ASTC LDR or HDR
     for angle_format in sorted(astc_tpl_map.keys()):
-        switch_data += gen_image_map_switch_astc_case_iosmac(angle_format, angle_to_gl, astc_tpl_map)
+        switch_data += gen_image_map_switch_astc_case_iosmac(angle_format, angle_to_gl,
+                                                             astc_tpl_map)
     switch_data += "#endif // TARGET_OS_OSX && (__MAC_OS_X_VERSION_MAX_ALLOWED >= 101600)) \n"
 
     switch_data += "        default:\n"
@@ -651,7 +656,7 @@ def gen_mtl_format_caps_init_string(map_image):
     caps_init_str += "    (TARGET_OS_OSX && (__MAC_OS_X_VERSION_MAX_ALLOWED >= 101600))\n"
 
     caps_init_str += caps_to_cpp(ios_platform_caps)
-    
+
     caps_init_str += "#if TARGET_OS_IOS || TARGET_OS_TV || TARGET_OS_OSX\n"
     caps_init_str += caps_to_cpp(ios_specific_caps)
     caps_init_str += "#endif // TARGET_OS_IOS || TARGET_OS_TV || mac 11.0+ \n"

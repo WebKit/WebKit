@@ -715,6 +715,9 @@
 		FF194FEB27432CC3006A97A3 /* ForcePrecisionQualifier.h in Headers */ = {isa = PBXBuildFile; fileRef = FF194FDF27432CC3006A97A3 /* ForcePrecisionQualifier.h */; };
 		FF2D2F5525C8B14A002FB699 /* FixTypeConstructors.h in Headers */ = {isa = PBXBuildFile; fileRef = FF2D2F5225C8B14A002FB699 /* FixTypeConstructors.h */; };
 		FF3A9FFB2756B7C000BE0397 /* ImageImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FF3A9FFA2756B7C000BE0397 /* ImageImpl.cpp */; };
+		FF4BB3642769467600994EBF /* mtl_context_device.mm in Sources */ = {isa = PBXBuildFile; fileRef = FF4BB3612769467500994EBF /* mtl_context_device.mm */; };
+		FF4BB3652769467600994EBF /* mtl_resource_spi.h in Headers */ = {isa = PBXBuildFile; fileRef = FF4BB3622769467600994EBF /* mtl_resource_spi.h */; };
+		FF4BB3662769467600994EBF /* mtl_context_device.h in Headers */ = {isa = PBXBuildFile; fileRef = FF4BB3632769467600994EBF /* mtl_context_device.h */; };
 		FF582E1626544FC4006DA5B8 /* ProvokingVertexHelper.mm in Sources */ = {isa = PBXBuildFile; fileRef = FF582E1426544FC4006DA5B8 /* ProvokingVertexHelper.mm */; };
 		FF582E1726544FC4006DA5B8 /* ProvokingVertexHelper.h in Headers */ = {isa = PBXBuildFile; fileRef = FF582E1526544FC4006DA5B8 /* ProvokingVertexHelper.h */; };
 		FF62F63127443DC400AD6EDC /* mtl_default_shaders_src_autogen.metal in Sources */ = {isa = PBXBuildFile; fileRef = FF62F63027443DB900AD6EDC /* mtl_default_shaders_src_autogen.metal */; };
@@ -1558,6 +1561,9 @@
 		FF33284725F6CAB9005FDFC4 /* IntroduceVertexIndexID.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IntroduceVertexIndexID.cpp; sourceTree = "<group>"; };
 		FF33284825F6CAB9005FDFC4 /* IntroduceVertexIndexID.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IntroduceVertexIndexID.h; sourceTree = "<group>"; };
 		FF3A9FFA2756B7C000BE0397 /* ImageImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ImageImpl.cpp; sourceTree = "<group>"; };
+		FF4BB3612769467500994EBF /* mtl_context_device.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = mtl_context_device.mm; sourceTree = "<group>"; };
+		FF4BB3622769467600994EBF /* mtl_resource_spi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mtl_resource_spi.h; sourceTree = "<group>"; };
+		FF4BB3632769467600994EBF /* mtl_context_device.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mtl_context_device.h; sourceTree = "<group>"; };
 		FF582E1426544FC4006DA5B8 /* ProvokingVertexHelper.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ProvokingVertexHelper.mm; sourceTree = "<group>"; };
 		FF582E1526544FC4006DA5B8 /* ProvokingVertexHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProvokingVertexHelper.h; sourceTree = "<group>"; };
 		FF582E1826544FE5006DA5B8 /* rewrite_indices.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = rewrite_indices.metal; sourceTree = "<group>"; };
@@ -2920,6 +2926,8 @@
 				FF81FE9625818D6800894E24 /* mtl_command_buffer.mm */,
 				FF81FE8825818D6800894E24 /* mtl_common.h */,
 				FF81FEC625818D6800894E24 /* mtl_common.mm */,
+				FF4BB3632769467600994EBF /* mtl_context_device.h */,
+				FF4BB3612769467500994EBF /* mtl_context_device.mm */,
 				FF81FE9225818D6800894E24 /* mtl_format_table_autogen.mm */,
 				FF81FE8E25818D6800894E24 /* mtl_format_utils.h */,
 				FF81FE8525818D6800894E24 /* mtl_format_utils.mm */,
@@ -2930,6 +2938,7 @@
 				FF81FEBB25818D6800894E24 /* mtl_occlusion_query_pool.mm */,
 				FF81FEC725818D6800894E24 /* mtl_render_utils.h */,
 				FF81FEA325818D6800894E24 /* mtl_render_utils.mm */,
+				FF4BB3622769467600994EBF /* mtl_resource_spi.h */,
 				FF81FEA025818D6800894E24 /* mtl_resources.h */,
 				FF81FE9F25818D6800894E24 /* mtl_resources.mm */,
 				FF81FEC825818D6800894E24 /* mtl_state_cache.h */,
@@ -3291,6 +3300,8 @@
 				31CD0032249184F400486F27 /* MemoryObjectImpl.h in Headers */,
 				31CD0053249184FC00486F27 /* MemoryProgramCache.h in Headers */,
 				FF194FE727432CC3006A97A3 /* MonomorphizeUnsupportedFunctions.h in Headers */,
+				FF4BB3662769467600994EBF /* mtl_context_device.h in Headers */,
+				FF4BB3652769467600994EBF /* mtl_resource_spi.h in Headers */,
 				31CDFF4F2491848000486F27 /* no_destructor.h in Headers */,
 				31CDFFB5249184A100486F27 /* NodeSearch.h in Headers */,
 				31CD001D249184E700486F27 /* null_functions.h in Headers */,
@@ -3789,6 +3800,7 @@
 				DF83E3802639FEB8000825EF /* mtl_buffer_pool.mm in Sources */,
 				DF83E3742639FEB8000825EF /* mtl_command_buffer.mm in Sources */,
 				DF83E38B2639FEB8000825EF /* mtl_common.mm in Sources */,
+				FF4BB3642769467600994EBF /* mtl_context_device.mm in Sources */,
 				DF83E3872639FEB8000825EF /* mtl_format_table_autogen.mm in Sources */,
 				DF83E3712639FEB8000825EF /* mtl_format_utils.mm in Sources */,
 				DF83E3822639FEB8000825EF /* mtl_glslang_mtl_utils.mm in Sources */,

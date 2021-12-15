@@ -367,7 +367,7 @@ void FormatTable::setCompressedFormatCaps(MTLPixelFormat formatId, bool filterab
     setFormatCaps(formatId, filterable, false, false, false, false, false, false);
 }
 
-void FormatTable::adjustFormatCapsForDevice(id<MTLDevice> device,
+void FormatTable::adjustFormatCapsForDevice(const mtl::ContextDevice &device,
                                             MTLPixelFormat id,
                                             bool supportsiOS2,
                                             bool supportsiOS4)

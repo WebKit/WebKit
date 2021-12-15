@@ -74,7 +74,7 @@
 6221 : VulkanExternalImageTest.ShouldDrawOpaqueFdWithSemaphores/* = TIMEOUT
 6221 : VulkanExternalImageTest.WaitSemaphoresRetainsContentOpaqueFd/* = TIMEOUT
 
-6267 : WebGLCompatibilityTest.MultiContextNoRenderingFeedbackLoops/* = COMPILE_FAIL
+6267 : WebGLCompatibilityTest.MultiContextNoRenderingFeedbackLoops/* = SKIP_FOR_CAPTURE
 
 6180 WIN : WebGLCompatibilityTest.DrawElementsBufferOutOfBoundsInVertexBuffer/* = FLAKY
 
@@ -95,6 +95,7 @@
 # ES3
 6180 : BlitFramebufferTest.BlitDepthStencilPixelByPixel/* = NOT_RUN
 6180 : GLSLTest_ES3.UnsuccessfulRelinkWithBindAttribLocation/* = NOT_RUN
+1274316 : SimpleStateChangeTestES3.RespecifyBufferAfterBeginTransformFeedback/* = NOT_RUN
 
 # This test only exists on Win64
 6180 WIN : BufferDataOverflowTest.VertexBufferIntegerOverflow/* = NOT_RUN
@@ -215,4 +216,4 @@
 6663 : Texture2DTest.UploadThenFSThenVS/* = NOT_RUN
 6663 : Texture2DTest.UploadThenFSThenVSThenNewRPThenFS/*  = NOT_RUN
 
-6741 : VulkanImageTest.PixelTest* = SKIP_FOR_CAPTURE
+6741 : VulkanImageTest.* = SKIP_FOR_CAPTURE

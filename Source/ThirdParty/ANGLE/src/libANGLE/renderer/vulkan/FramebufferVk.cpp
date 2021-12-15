@@ -1216,6 +1216,12 @@ angle::Result FramebufferVk::blit(const gl::Context *context,
         // Otherwise use a shader to do blit or resolve.
         else
         {
+            // Flush the render pass, which may incur a vkQueueSubmit, before taking any views.
+            // Otherwise the view serials would not reflect the render pass they are really used in.
+            // http://crbug.com/1272266#c22
+            ANGLE_TRY(
+                contextVk->flushCommandsAndEndRenderPass(RenderPassClosureReason::PrepareForBlit));
+
             const vk::ImageView *copyImageView = nullptr;
             ANGLE_TRY(readRenderTarget->getAndRetainCopyImageView(contextVk, &copyImageView));
             ANGLE_TRY(utilsVk.colorBlitResolve(

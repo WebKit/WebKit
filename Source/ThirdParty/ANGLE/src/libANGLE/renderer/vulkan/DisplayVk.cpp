@@ -18,6 +18,7 @@
 #include "libANGLE/renderer/vulkan/RendererVk.h"
 #include "libANGLE/renderer/vulkan/SurfaceVk.h"
 #include "libANGLE/renderer/vulkan/SyncVk.h"
+#include "libANGLE/renderer/vulkan/VkImageImageSiblingVk.h"
 #include "libANGLE/trace.h"
 
 namespace rx
@@ -200,6 +201,54 @@ gl::Version DisplayVk::getMaxSupportedESVersion() const
 gl::Version DisplayVk::getMaxConformantESVersion() const
 {
     return mRenderer->getMaxConformantESVersion();
+}
+
+egl::Error DisplayVk::validateImageClientBuffer(const gl::Context *context,
+                                                EGLenum target,
+                                                EGLClientBuffer clientBuffer,
+                                                const egl::AttributeMap &attribs) const
+{
+    switch (target)
+    {
+        case EGL_VULKAN_IMAGE_ANGLE:
+        {
+            VkImage *vkImage = reinterpret_cast<VkImage *>(clientBuffer);
+            if (!vkImage || *vkImage == VK_NULL_HANDLE)
+            {
+                return egl::EglBadParameter() << "clientBuffer is invalid.";
+            }
+
+            uint64_t hi = static_cast<uint64_t>(attribs.get(EGL_VULKAN_IMAGE_CREATE_INFO_HI_ANGLE));
+            uint64_t lo = static_cast<uint64_t>(attribs.get(EGL_VULKAN_IMAGE_CREATE_INFO_LO_ANGLE));
+            uint64_t info = ((hi & 0xffffffff) << 32) | (lo & 0xffffffff);
+            if (reinterpret_cast<const VkImageCreateInfo *>(info)->sType !=
+                VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO)
+            {
+                return egl::EglBadParameter()
+                       << "EGL_VULKAN_IMAGE_CREATE_INFO_HI_ANGLE and "
+                          "EGL_VULKAN_IMAGE_CREATE_INFO_LO_ANGLE are not pointing to a "
+                          "valid VkImageCreateInfo structure.";
+            }
+
+            return egl::NoError();
+        }
+        default:
+            return DisplayImpl::validateImageClientBuffer(context, target, clientBuffer, attribs);
+    }
+}
+
+ExternalImageSiblingImpl *DisplayVk::createExternalImageSibling(const gl::Context *context,
+                                                                EGLenum target,
+                                                                EGLClientBuffer buffer,
+                                                                const egl::AttributeMap &attribs)
+{
+    switch (target)
+    {
+        case EGL_VULKAN_IMAGE_ANGLE:
+            return new VkImageImageSiblingVk(buffer, attribs);
+        default:
+            return DisplayImpl::createExternalImageSibling(context, target, buffer, attribs);
+    }
 }
 
 void DisplayVk::generateExtensions(egl::DisplayExtensions *outExtensions) const

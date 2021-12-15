@@ -237,22 +237,15 @@ jq ".traces = (.traces + [\"$LABEL $VERSION\"] | unique)" restricted_traces.json
 
 ## Run code auto-generation
 
-We use two scripts to update the test harness so it will compile and run the new trace:
+The [`gen_restricted_traces`](gen_restricted_traces.py) script auto-generates entries
+in our checkout dependencies to sync restricted trace data on checkout. To trigger
+code generation run the following from the angle root folder:
 ```
-python ./gen_restricted_traces.py
-cd ../../..
 python ./scripts/run_code_generation.py
 ```
 After this you should be able to `git diff` and see your new trace added to the harness files:
 ```
-$ git diff --stat
- scripts/code_generation_hashes/restricted_traces.json     | 12 +++++++-----
- src/tests/restricted_traces/.gitignore                    |  2 ++
- src/tests/restricted_traces/restricted_traces.json        |  1 +
- src/tests/restricted_traces/restricted_traces_autogen.cpp | 19 +++++++++++++++++++
- src/tests/restricted_traces/restricted_traces_autogen.gni |  1 +
- src/tests/restricted_traces/restricted_traces_autogen.h   |  1 +
- 6 files changed, 31 insertions(+), 5 deletions(-)
+TODO: Redo this. http://anglebug.com/5133
 ```
 Note the absence of the traces themselves listed above.  They are automatically .gitignored since
 they won't be checked in directly to the repo.
@@ -264,7 +257,7 @@ be done by Googlers with write access to the trace CIPD prefix. If you need writ
 someone listed in the `OWNERS` file.
 
 ```
-sync_restricted_traces_to_cipd.py
+./sync_restricted_traces_to_cipd.py
 ```
 
 ## Upload your CL
@@ -276,3 +269,161 @@ git cl upload
 ```
 
 You're now ready to run your new trace on CI!
+
+# Upgrading existing traces
+
+With tracer updates sometimes we want to re-run tracing to upgrade the trace file format or to
+take advantage of new tracer improvements. The [`retrace_restricted_traces`](retrace_restricted_traces.py)
+script allows us to re-run tracing using [SwiftShader](https://swiftshader.googlesource.com/SwiftShader)
+on a desktop machine. As of writing we require re-tracing on a Windows machine because of size
+limitations with a Linux app window.
+
+## Prep work: Back up existing traces
+
+This will save the original traces in a temporary folder if you need to revert to the prior trace format:
+
+```
+py ./src/tests/restricted_traces/retrace_restricted_traces.py backup "*"
+```
+
+*Note: on Linux, remove the command `py` prefix to the Python scripts.*
+
+This will save the traces to `./retrace-backups`. At any time you can revert the trace files by running:
+
+```
+py ./src/tests/restricted_traces/retrace_restricted_traces.py restore "*"
+```
+
+## Part 1: Sanity Check with T-Rex
+
+First we'll retrace a single app to verify the workflow is intact. Please
+ensure you replace the specified variables with paths that work on your
+configuration and checkout:
+
+### Step 1/3: Capture T-Rex with Validation
+
+```
+export TRACE_GN_PATH=out/Debug
+export TRACE_NAME=trex_200
+py ./src/tests/restricted_traces/retrace_restricted_traces.py upgrade $TRACE_GN_PATH retrace-wip -f $TRACE_NAME --validation --limit 3
+```
+
+The `--validation` flag will turn on additional validation checks in the
+trace. The `--limit 3` flag forces a maximum of 3 frames of tracing so the
+test will run more quickly. The trace will end up in the `retrace-wip`
+folder.
+
+### Step 2/3: Validate T-Rex
+
+The command below will update your copy of the trace, rebuild, the run the
+test suite with validation enabled:
+
+```
+py ./src/tests/restricted_traces/retrace_restricted_traces.py validate $TRACE_GN_PATH retrace-wip $TRACE_NAME
+```
+
+If the trace failed validation, see the section below on diagnosing tracer
+errors. Otherwise proceed with the steps below.
+
+### Step 3/3: Restore the Canonical T-Rex Trace
+
+```
+py ./src/tests/restricted_traces/retrace_restricted_traces.py restore $TRACE_NAME
+```
+
+## Part 2: Do a limited trace upgrade with validation enabled
+
+### Step 1/3: Upgrade all traces with a limit of 3 frames
+
+```
+py ./src/tests/restricted_traces/retrace_restricted_traces.py upgrade $TRACE_GN_PATH retrace-wip --validation --limit 3  --no-overwrite
+```
+
+If this process gets interrupted, re-run the upgrade command. The
+`--no-overwrite` argument will ensure it will complete eventually.
+
+If any traces failed to upgrade, see the section below on diagnosing tracer
+errors. Otherwise proceed with the steps below.
+
+### Step 2/3: Validate all upgraded traces
+
+```
+py ./src/tests/restricted_traces/retrace_restricted_traces.py validate $TRACE_GN_PATH retrace-wip "*"
+```
+
+If any traces failed validation, see the section below on diagnosing tracer
+errors. Otherwise proceed with the steps below.
+
+### Step 3/3: Restore all traces
+
+```
+py ./src/tests/restricted_traces/retrace_restricted_traces.py restore "*"
+```
+
+## Part 3: Do the full trace upgrade
+
+```
+rm -rf retrace-wip
+py ./src/tests/restricted_traces/retrace_restricted_traces.py upgrade $TRACE_GN_PATH retrace-wip --no-overwrite
+```
+
+If this process gets interrupted, re-run the upgrade command. The
+`--no-overwrite` argument will ensure it will complete eventually.
+
+If any traces failed to upgrade, see the section below on diagnosing tracer
+errors. Otherwise proceed with the steps below.
+
+## Part 4: Test the upgraded traces under an experimental prefix (slow)
+
+Because there still may be trace errors undetected by validation, we first
+upload the traces to a temporary CIPD path for testing. After a successful
+run on the CQ, we will then upload them to the main ANGLE prefix.
+
+To enable the experimental prefix, edit
+[`restricted_traces.json`](restricted_traces.json) to use a version
+number beginning with 'x'. For example:
+
+```
+  "traces": [
+    "aliexpress x1",
+    "among_us x1",
+    "angry_birds_2_1500 x1",
+    "arena_of_valor x1",
+    "asphalt_8 x1",
+    "avakin_life x1",
+... and so on ...
+```
+
+Then run:
+
+```
+py ./src/tests/restricted_traces/retrace_restricted_traces.py restore -o retrace-wip "*"
+py ./src/tests/restricted_traces/sync_restricted_traces_to_cipd.py
+py ./scripts/run_code_generation.py
+```
+
+The restore command will copy the new traces from the `retrace-wip` directory
+into the trace folder before we call the sync script.
+
+After these commands complete succesfully, create and upload a CL as normal.
+Run CQ +1 Dry-Run. If you find a test regression, see the section below on
+diagnosing tracer errors. Otherwise proceed with the steps below.
+
+## Part 5: Upload the verified traces to CIPD under the stable prefix
+
+Now that you've validated the traces on the CQ, update
+[`restricted_traces.json`](restricted_traces.json) to remove the 'x' prefix
+and incrementing the version of the traces (skipping versions if you prefer)
+and then run:
+
+```
+py ./src/tests/restricted_traces/sync_restricted_traces_to_cipd.py
+py ./scripts/run_code_generation.py
+```
+
+Then create and upload a CL as normal. Congratulations, you've finished the
+trace upgrade!
+
+# Diagnosing and fixing tracer errors
+
+TODO: http://anglebug.com/5133

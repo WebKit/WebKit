@@ -182,6 +182,7 @@ using data from registry_xml.py and gl.xml.
 | Extension Name | NVIDIA P400 Win10 | Intel 630 Win10 | NVIDIA P400 Linux | Intel 630 Linux | SwiftShader Win10 | Pixel 4 Android 11 |
 | -------------- | :---------------: | :-------------: | :---------------: | :-------------: | :---------------: | :----------------: |
 | [GL_ANGLE_base_vertex_base_instance](https://chromium.googlesource.com/angle/angle/+/refs/heads/main/extensions/ANGLE_base_vertex_base_instance.txt) | &#10004; | &#10004; | &#10004; | &#10004; | &#10004; | &#10004; |
+| [GL_ANGLE_base_vertex_base_instance_shader_builtin](https://chromium.googlesource.com/angle/angle/+/refs/heads/main/extensions/ANGLE_base_vertex_base_instance_shader_builtin.txt) | &#10004; | &#10004; | &#10004; | &#10004; | &#10004; | &#10004; |
 | [GL_CHROMIUM_bind_generates_resource](https://chromium.googlesource.com/angle/angle/+/refs/heads/main/extensions/CHROMIUM_bind_generates_resource.txt) | &#10004; | &#10004; | &#10004; | &#10004; | &#10004; | &#10004; |
 | [GL_CHROMIUM_bind_uniform_location](https://chromium.googlesource.com/angle/angle/+/refs/heads/main/extensions/CHROMIUM_bind_uniform_location.txt) | &#10004; | &#10004; | &#10004; | &#10004; | &#10004; | &#10004; |
 | [GL_ANGLE_client_arrays](https://chromium.googlesource.com/angle/angle/+/refs/heads/main/extensions/ANGLE_client_arrays.txt) | &#10004; | &#10004; | &#10004; | &#10004; | &#10004; | &#10004; |

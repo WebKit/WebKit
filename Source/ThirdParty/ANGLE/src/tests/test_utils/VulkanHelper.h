@@ -28,6 +28,14 @@ class VulkanHelper
     VkDevice getDevice() const { return mDevice; }
     VkQueue getGraphicsQueue() const { return mGraphicsQueue; }
 
+    VkResult createImage2D(VkFormat format,
+                           VkImageCreateFlags createFlags,
+                           VkImageUsageFlags usageFlags,
+                           VkExtent3D extent,
+                           VkImage *imageOut,
+                           VkDeviceMemory *deviceMemoryOut,
+                           VkDeviceSize *deviceMemorySizeOut,
+                           VkImageCreateInfo *imageCreateInfoOut);
     bool canCreateImageExternal(VkFormat format,
                                 VkImageType type,
                                 VkImageTiling tiling,

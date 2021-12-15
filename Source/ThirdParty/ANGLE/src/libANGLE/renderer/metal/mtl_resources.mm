@@ -17,6 +17,7 @@
 #include "libANGLE/renderer/metal/ContextMtl.h"
 #include "libANGLE/renderer/metal/DisplayMtl.h"
 #include "libANGLE/renderer/metal/mtl_command_buffer.h"
+#include "libANGLE/renderer/metal/mtl_context_device.h"
 #include "libANGLE/renderer/metal/mtl_format_utils.h"
 #include "libANGLE/renderer/metal/mtl_utils.h"
 
@@ -355,7 +356,7 @@ Texture::Texture(ContextMtl *context,
 {
     ANGLE_MTL_OBJC_SCOPE
     {
-        id<MTLDevice> metalDevice = context->getMetalDevice();
+        const mtl::ContextDevice &metalDevice = context->getMetalDevice();
 
         if (mips > 1 && mips < desc.mipmapLevelCount)
         {
@@ -403,7 +404,7 @@ Texture::Texture(ContextMtl *context,
             desc.usage = desc.usage | MTLTextureUsagePixelFormatView;
         }
 
-        set([[metalDevice newTextureWithDescriptor:desc] ANGLE_MTL_AUTORELEASE]);
+        set([metalDevice.newTextureWithDescriptor(desc) ANGLE_MTL_AUTORELEASE]);
 
         mCreationDesc.retainAssign(desc);
     }
@@ -418,7 +419,7 @@ Texture::Texture(ContextMtl *context,
 {
     ANGLE_MTL_OBJC_SCOPE
     {
-        id<MTLDevice> metalDevice = context->getMetalDevice();
+        const mtl::ContextDevice &metalDevice = context->getMetalDevice();
 
         // Every texture will support being rendered for now
         desc.usage = MTLTextureUsagePixelFormatView;
@@ -442,9 +443,7 @@ Texture::Texture(ContextMtl *context,
                 desc.usage = desc.usage | MTLTextureUsageShaderWrite;
             }
         }
-        id<MTLTexture> iosurfTexture = [metalDevice newTextureWithDescriptor:desc
-                                                                   iosurface:iosurface
-                                                                       plane:plane];
+        id<MTLTexture> iosurfTexture = metalDevice.newTextureWithDescriptor(desc, iosurface, plane);
         set([iosurfTexture ANGLE_MTL_AUTORELEASE]);
     }
 }
@@ -820,7 +819,7 @@ TextureRef Texture::getReadableCopy(ContextMtl *context,
             desc.sampleCount     = get().sampleCount;
             desc.usage           = MTLTextureUsageShaderRead | MTLTextureUsagePixelFormatView;
 
-            id<MTLTexture> mtlTexture = [context->getMetalDevice() newTextureWithDescriptor:desc];
+            id<MTLTexture> mtlTexture = context->getMetalDevice().newTextureWithDescriptor(desc);
             mReadCopy.reset(new Texture(mtlTexture));
         }  // ANGLE_MTL_OBJC_SCOPE
     }
@@ -963,15 +962,15 @@ angle::Result Buffer::resetWithResOpt(ContextMtl *context,
     ANGLE_MTL_OBJC_SCOPE
     {
         id<MTLBuffer> newBuffer;
-        id<MTLDevice> metalDevice = context->getMetalDevice();
+        const mtl::ContextDevice &metalDevice = context->getMetalDevice();
 
         if (data)
         {
-            newBuffer = [metalDevice newBufferWithBytes:data length:size options:options];
+            newBuffer = metalDevice.newBufferWithBytes(data, size, options);
         }
         else
         {
-            newBuffer = [metalDevice newBufferWithLength:size options:options];
+            newBuffer = metalDevice.newBufferWithLength(size, options);
         }
 
         set([newBuffer ANGLE_MTL_AUTORELEASE]);

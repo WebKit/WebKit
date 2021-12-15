@@ -276,6 +276,15 @@ void UpdateClientBufferData2(GLuint bufferID, const void *source, GLsizei size)
     memcpy(gMappedBufferData[gBufferMap2[bufferID]], source, size);
 }
 
+void UpdateClientBufferData2WithOffset(GLuint bufferID,
+                                       const void *source,
+                                       GLsizei size,
+                                       GLsizei offset)
+{
+    uintptr_t dest = reinterpret_cast<uintptr_t>(gMappedBufferData[gBufferMap2[bufferID]]) + offset;
+    memcpy(reinterpret_cast<void *>(dest), source, size);
+}
+
 void UpdateBufferID(GLuint id, GLsizei readBufferOffset)
 {
     UpdateResourceMap(&gBufferMap, id, readBufferOffset);

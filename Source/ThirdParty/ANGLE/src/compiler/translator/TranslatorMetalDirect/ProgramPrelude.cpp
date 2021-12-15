@@ -1095,8 +1095,6 @@ ANGLE_ALWAYS_INLINE bool ANGLE_equalStructArray(metal::array<T, N> u, metal::arr
 }
 )")
 
-
-
 PROGRAM_PRELUDE_DECLARE(notEqualArray,
                         R"(
 template <typename T, size_t N>
@@ -3605,9 +3603,9 @@ void ProgramPrelude::visitOperator(TOperator op,
                 subMatrixScalar();
             }
             break;
-            
+
         case TOperator::EOpSubAssign:
-            if(argType0->isMatrix() && argType1->isScalar())
+            if (argType0->isMatrix() && argType1->isScalar())
             {
                 subMatrixScalarAssign();
             }
@@ -3935,7 +3933,7 @@ bool ProgramPrelude::visitAggregate(Visit visit, TIntermAggregate *node)
             visitOperator(node->getOp(), func, &argType0, &argType1);
         }
         break;
-            
+
         case 3:
         {
             const TType &argType0 = getArgType(0);

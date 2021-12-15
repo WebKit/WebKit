@@ -411,7 +411,7 @@ TIntermTyped &sh::CoerceSimple(TBasicType toBasicType,
     ASSERT(HasScalarBasicType(toBasicType));
     ASSERT(HasScalarBasicType(fromType));
     ASSERT(!fromType.isArray());
-    
+
     const TBasicType fromBasicType = fromType.getBasicType();
 
     if (toBasicType != fromBasicType)
@@ -463,7 +463,7 @@ TIntermTyped &sh::CoerceSimple(const TType &toType,
     ASSERT(toType.getSecondarySize() == fromType.getSecondarySize());
     ASSERT(!toType.isArray());
     ASSERT(!fromType.isArray());
-    
+
     const TBasicType toBasicType   = toType.getBasicType();
     const TBasicType fromBasicType = fromType.getBasicType();
 

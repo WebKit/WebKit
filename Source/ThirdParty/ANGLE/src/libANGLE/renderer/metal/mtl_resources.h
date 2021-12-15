@@ -31,6 +31,7 @@ class ContextMtl;
 namespace mtl
 {
 
+class ContextDevice;
 class CommandQueue;
 class BlitCommandEncoder;
 class Resource;

@@ -2597,6 +2597,13 @@ TEST_P(ClearTestES3, ClearAndReadPixels3DTexture)
     }
 }
 
+// Test that clearing stencil with zero first byte in mask doesn't crash.
+TEST_P(ClearTestES3, ClearStencilZeroFirstByteMask)
+{
+    glStencilMask(0xe7d6a900);
+    glClear(GL_STENCIL_BUFFER_BIT);
+}
+
 #ifdef Bool
 // X11 craziness.
 #    undef Bool

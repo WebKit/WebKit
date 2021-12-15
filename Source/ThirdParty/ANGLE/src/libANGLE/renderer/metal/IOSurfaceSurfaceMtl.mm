@@ -150,10 +150,8 @@ angle::Result IOSurfaceSurfaceMtl::ensureColorTextureCreated(const gl::Context *
 
         texDesc.usage = MTLTextureUsageShaderRead | MTLTextureUsageRenderTarget;
 
-        id<MTLTexture> texture =
-            [contextMtl->getMetalDevice() newTextureWithDescriptor:texDesc
-                                                         iosurface:mIOSurface
-                                                             plane:mIOSurfacePlane];
+        id<MTLTexture> texture = contextMtl->getMetalDevice().newTextureWithDescriptor(
+            texDesc, mIOSurface, mIOSurfacePlane);
 
         mColorTexture = mtl::Texture::MakeFromMetal([texture ANGLE_MTL_AUTORELEASE]);
     }

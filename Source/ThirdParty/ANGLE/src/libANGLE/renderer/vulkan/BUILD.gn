@@ -84,6 +84,8 @@ _vulkan_backend_sources = [
   "UtilsVk.h",
   "VertexArrayVk.cpp",
   "VertexArrayVk.h",
+  "VkImageImageSiblingVk.cpp",
+  "VkImageImageSiblingVk.h",
   "VulkanSecondaryCommandBuffer.cpp",
   "VulkanSecondaryCommandBuffer.h",
   "android/vk_android_utils.cpp",
@@ -233,6 +235,7 @@ config("angle_vulkan_backend_config") {
 }
 
 angle_source_set("angle_vk_mem_alloc_wrapper") {
+  defines = [ "VMA_USE_STL_CONTAINERS=1" ]
   deps = [
     "$angle_root/src/common/vulkan:angle_vulkan_headers",
     "$angle_vulkan_memory_allocator_dir",

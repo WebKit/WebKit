@@ -1091,7 +1091,7 @@
                         "variables":{
                             "gl_BaseVertex":{
                                 "essl_level":"ESSL3_BUILTINS",
-                                "essl_extension":"ANGLE_base_vertex_base_instance",
+                                "essl_extension":"ANGLE_base_vertex_base_instance_shader_builtin",
                                 "type":{
                                     "basic":"Int",
                                     "precision":"High",
@@ -1100,7 +1100,7 @@
                             },
                             "gl_BaseInstance":{
                                 "essl_level":"ESSL3_BUILTINS",
-                                "essl_extension":"ANGLE_base_vertex_base_instance",
+                                "essl_extension":"ANGLE_base_vertex_base_instance_shader_builtin",
                                 "type":{
                                     "basic":"Int",
                                     "precision":"High",
@@ -1109,7 +1109,7 @@
                             },
                             "angle_BaseVertex":{
                                 "essl_level":"COMMON_BUILTINS",
-                                "essl_extension":"ANGLE_base_vertex_base_instance",
+                                "essl_extension":"ANGLE_base_vertex_base_instance_shader_builtin",
                                 "type":{
                                     "basic":"Int",
                                     "precision":"High",
@@ -1118,7 +1118,7 @@
                             },
                             "angle_BaseInstance":{
                                 "essl_level":"COMMON_BUILTINS",
-                                "essl_extension":"ANGLE_base_vertex_base_instance",
+                                "essl_extension":"ANGLE_base_vertex_base_instance_shader_builtin",
                                 "type":{
                                     "basic":"Int",
                                     "precision":"High",

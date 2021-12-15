@@ -795,12 +795,10 @@ angle::Result TextureMtl::ensureSamplerStateCreated(const gl::Context *context)
     }
 
     ContextMtl *contextMtl = mtl::GetImpl(context);
-    DisplayMtl *displayMtl = contextMtl->getDisplay();
 
     mtl::SamplerDesc samplerDesc(mState.getSamplerState());
 
-    if (mFormat.actualAngleFormat().depthBits &&
-        !mFormat.getCaps().filterable)
+    if (mFormat.actualAngleFormat().depthBits && !mFormat.getCaps().filterable)
     {
         // On devices not supporting filtering for depth textures, we need to convert to nearest
         // here.
@@ -819,8 +817,8 @@ angle::Result TextureMtl::ensureSamplerStateCreated(const gl::Context *context)
         samplerDesc.sAddressMode = MTLSamplerAddressModeClampToEdge;
         samplerDesc.tAddressMode = MTLSamplerAddressModeClampToEdge;
     }
-    mMetalSamplerState =
-        displayMtl->getStateCache().getSamplerState(displayMtl->getMetalDevice(), samplerDesc);
+    mMetalSamplerState = contextMtl->getDisplay()->getStateCache().getSamplerState(
+        contextMtl->getMetalDevice(), samplerDesc);
 
     return angle::Result::Continue;
 }

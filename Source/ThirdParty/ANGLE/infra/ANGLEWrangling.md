@@ -16,6 +16,8 @@ As an ANGLE Sheriff. Your job is to:
 If you're not an ANGLE team member, you can contact us on the public ANGLE project
 [Google group](https://groups.google.com/forum/#!forum/angleproject).
 
+**Note**: Please review and if needed update the [wrangler schedule].
+
 **Note**: It's highly recommend that all wranglers install the [Chromium Flake Linker][Flaker]
 extension for inspecting bot builds. It'll save you a lot of time.
 
@@ -23,6 +25,8 @@ extension for inspecting bot builds. It'll save you a lot of time.
 [Handling Test Failures](../doc/TestingAndProcesses.md).
 
 [Flaker]: https://chrome.google.com/webstore/detail/flake-linker/boamnmbgmfnobomddmenbaicodgglkhc
+
+[wrangler schedule]: https://rotations.corp.google.com/rotation/5080504293392384
 
 ## Task 1: Monitor ANGLE CI and Try Testers
 

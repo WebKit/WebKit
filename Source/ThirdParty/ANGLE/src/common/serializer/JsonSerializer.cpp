@@ -48,6 +48,14 @@ void JsonSerializer::endGroup()
 
 void JsonSerializer::addBlob(const std::string &name, const uint8_t *blob, size_t length)
 {
+    addBlobWithMax(name, blob, length, 16);
+}
+
+void JsonSerializer::addBlobWithMax(const std::string &name,
+                                    const uint8_t *blob,
+                                    size_t length,
+                                    size_t maxSerializedLength)
+{
     unsigned char hash[angle::base::kSHA1Length];
     angle::base::SHA1HashBytes(blob, length, hash);
     std::ostringstream os;
@@ -64,7 +72,8 @@ void JsonSerializer::addBlob(const std::string &name, const uint8_t *blob, size_
     hashName << name << "-hash";
     addString(hashName.str(), os.str());
 
-    std::vector<uint8_t> data((length < 16) ? length : static_cast<size_t>(16));
+    std::vector<uint8_t> data(
+        (length < maxSerializedLength) ? length : static_cast<size_t>(maxSerializedLength));
     std::copy(blob, blob + data.size(), data.begin());
 
     std::ostringstream rawName;

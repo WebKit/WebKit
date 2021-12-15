@@ -279,6 +279,13 @@ inline PlatformParameters WithNoVulkanViewportFlip(const PlatformParameters &par
     return withoutVulkanViewportFlip;
 }
 
+inline PlatformParameters WithNoVulkanMultiDrawIndirect(const PlatformParameters &params)
+{
+    PlatformParameters withoutVulkanMultiDrawIndirectSupport                            = params;
+    withoutVulkanMultiDrawIndirectSupport.eglParameters.supportsVulkanMultiDrawIndirect = EGL_FALSE;
+    return withoutVulkanMultiDrawIndirectSupport;
+}
+
 inline PlatformParameters WithEmulatedVAOs(const PlatformParameters &params)
 {
     PlatformParameters emualtedVAOParams         = params;
@@ -325,6 +332,13 @@ inline PlatformParameters WithHighPowerGPU(const PlatformParameters &paramsIn)
 {
     PlatformParameters paramsOut                   = paramsIn;
     paramsOut.eglParameters.displayPowerPreference = EGL_HIGH_POWER_ANGLE;
+    return paramsOut;
+}
+
+inline PlatformParameters WithVulkanPreferCPUForBufferSubData(const PlatformParameters &paramsIn)
+{
+    PlatformParameters paramsOut                                = paramsIn;
+    paramsOut.eglParameters.WithVulkanPreferCPUForBufferSubData = EGL_TRUE;
     return paramsOut;
 }
 }  // namespace angle

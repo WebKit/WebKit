@@ -381,7 +381,7 @@ class Test():
         source_json_count = 0
         context_id = 0
         for f in test_files:
-            if "_frame" in f:
+            if "_001.cpp" in f:
                 frame_files_count += 1
             elif f.endswith(".json"):
                 source_json_count += 1

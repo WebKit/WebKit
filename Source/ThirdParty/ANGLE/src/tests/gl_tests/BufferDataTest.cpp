@@ -10,6 +10,7 @@
 #include "util/random_utils.h"
 
 #include <stdint.h>
+#include <thread>
 
 using namespace angle;
 
@@ -200,6 +201,95 @@ TEST_P(BufferDataTest, RepeatedDrawDynamicBug)
     glDrawArrays(GL_TRIANGLES, 0, 6);
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::black);
     EXPECT_GL_NO_ERROR();
+}
+
+class BufferSubDataTest : public ANGLETest
+{
+  protected:
+    BufferSubDataTest()
+    {
+        setWindowWidth(16);
+        setWindowHeight(16);
+        setConfigRedBits(8);
+        setConfigGreenBits(8);
+        setConfigBlueBits(8);
+        setConfigAlphaBits(8);
+        setConfigDepthBits(24);
+
+        mBuffer = 0;
+    }
+
+    void testSetUp() override
+    {
+        glGenBuffers(1, &mBuffer);
+        ASSERT_NE(mBuffer, 0U);
+
+        glClearColor(0, 0, 0, 0);
+        glClearDepthf(0.0);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        glDisable(GL_DEPTH_TEST);
+
+        ASSERT_GL_NO_ERROR();
+    }
+
+    void testTearDown() override { glDeleteBuffers(1, &mBuffer); }
+    GLuint mBuffer;
+};
+
+// Test that updating a small index buffer after drawing with it works.
+// In the Vulkan backend, the CPU may be used to perform this copy.
+TEST_P(BufferSubDataTest, SmallIndexBufferUpdateAfterDraw)
+{
+    constexpr std::array<GLfloat, 4> kRed   = {1.0f, 0.0f, 0.0f, 1.0f};
+    constexpr std::array<GLfloat, 4> kGreen = {0.0f, 1.0f, 0.0f, 1.0f};
+    // Index buffer data
+    GLuint indexData[] = {0, 1, 2, 0};
+    // Vertex buffer data fully cover the screen
+    float vertexData[] = {-1.0f, -1.0f, 1.0f, -1.0f, -1.0f, 1.0f, 1.0f, 1.0f};
+
+    GLBuffer indexBuffer;
+    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), essl1_shaders::fs::UniformColor());
+    GLint vPos = glGetAttribLocation(program, essl1_shaders::PositionAttrib());
+    ASSERT_NE(vPos, -1);
+    glUseProgram(program);
+    GLint colorUniformLocation =
+        glGetUniformLocation(program, angle::essl1_shaders::ColorUniform());
+    ASSERT_NE(colorUniformLocation, -1);
+
+    // Bind vertex buffer
+    glBindBuffer(GL_ARRAY_BUFFER, mBuffer);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertexData), vertexData, GL_STATIC_DRAW);
+    glVertexAttribPointer(vPos, 2, GL_FLOAT, GL_FALSE, 0, nullptr);
+    glEnableVertexAttribArray(vPos);
+
+    // Bind index buffer
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indexData), indexData, GL_DYNAMIC_DRAW);
+
+    glUniform4fv(colorUniformLocation, 1, kRed.data());
+    // Draw left red triangle
+    glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, nullptr);
+    // Update the index buffer data.
+    indexData[1] = 1;
+    indexData[2] = 2;
+    indexData[3] = 3;
+    // Partial copy to trigger the buffer pool allocation
+    glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint), 3 * sizeof(GLuint), &indexData[1]);
+    // Draw triangle with index (1, 2, 3).
+    glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, (const void *)sizeof(GLuint));
+    // Update the index buffer again
+    indexData[0] = 0;
+    indexData[1] = 0;
+    indexData[2] = 2;
+    glUniform4fv(colorUniformLocation, 1, kGreen.data());
+    glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, 3 * sizeof(GLuint), &indexData[0]);
+    // Draw triangle with index (0, 2, 3), hope angle copy the last index 3 back.
+    glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, (const void *)sizeof(GLuint));
+
+    EXPECT_PIXEL_COLOR_EQ(getWindowWidth() - 1, 0, GLColor::red);
+    // Verify pixel top left corner is green
+    EXPECT_PIXEL_COLOR_EQ(0, getWindowHeight() - 1, GLColor::green);
 }
 
 class IndexedBufferCopyTest : public ANGLETest
@@ -1130,8 +1220,7 @@ TEST_P(BufferStorageTestES3, StorageBufferMapBufferOES)
 TEST_P(BufferStorageTestES3, StorageCopyBufferSubDataMapped)
 {
     ANGLE_SKIP_TEST_IF(getClientMajorVersion() < 3 ||
-                       !IsGLExtensionEnabled("GL_EXT_buffer_storage") ||
-                       !IsGLExtensionEnabled("GL_EXT_map_buffer_range"));
+                       !IsGLExtensionEnabled("GL_EXT_buffer_storage"));
 
     const std::array<GLColor, 4> kInitialData = {GLColor::red, GLColor::green, GLColor::blue,
                                                  GLColor::yellow};
@@ -1172,8 +1261,7 @@ TEST_P(BufferStorageTestES3, StorageCopyBufferSubDataMapped)
 TEST_P(BufferStorageTestES3, DrawElementsElementArrayBufferMapped)
 {
     ANGLE_SKIP_TEST_IF(getClientMajorVersion() < 3 ||
-                       !IsGLExtensionEnabled("GL_EXT_buffer_storage") ||
-                       !IsGLExtensionEnabled("GL_EXT_map_buffer_range"));
+                       !IsGLExtensionEnabled("GL_EXT_buffer_storage"));
 
     GLfloat kVertexBuffer[] = {-1.0f, -1.0f, 1.0f,  // (x, y, R)
                                -1.0f, 1.0f,  1.0f, 1.0f, -1.0f, 1.0f, 1.0f, 1.0f, 1.0f};
@@ -1220,9 +1308,33 @@ TEST_P(BufferStorageTestES3, DrawElementsElementArrayBufferMapped)
     mappedPtr[5] = 3;
     glDrawElements(GL_TRIANGLE_STRIP, 4, GL_UNSIGNED_SHORT, 0);
 
+    glUnmapBuffer(GL_ELEMENT_ARRAY_BUFFER);
+
     ASSERT_GL_NO_ERROR();
 
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+}
+
+// Test that maps a coherent buffer storage and does not call glUnmapBuffer.
+TEST_P(BufferStorageTestES3, NoUnmap)
+{
+    ANGLE_SKIP_TEST_IF(getClientMajorVersion() < 3 ||
+                       !IsGLExtensionEnabled("GL_EXT_buffer_storage"));
+
+    GLsizei size = sizeof(GLfloat) * 128;
+
+    GLBuffer buffer;
+    glBindBuffer(GL_ARRAY_BUFFER, buffer.get());
+    glBufferStorageEXT(GL_ARRAY_BUFFER, size, nullptr,
+                       GL_DYNAMIC_STORAGE_BIT_EXT | GL_MAP_WRITE_BIT | GL_MAP_PERSISTENT_BIT_EXT |
+                           GL_MAP_COHERENT_BIT_EXT);
+
+    GLshort *mappedPtr = (GLshort *)glMapBufferRange(
+        GL_ARRAY_BUFFER, 0, size,
+        GL_MAP_WRITE_BIT | GL_MAP_PERSISTENT_BIT_EXT | GL_MAP_COHERENT_BIT_EXT);
+    ASSERT_NE(nullptr, mappedPtr);
+
+    ASSERT_GL_NO_ERROR();
 }
 
 // Test that we are able to perform glTex*D calls while a pixel unpack buffer is bound
@@ -1264,8 +1376,7 @@ TEST_P(BufferStorageTestES3, TexImage2DPixelUnpackBufferMappedPersistently)
 TEST_P(BufferStorageTestES3, StorageBufferSubDataMapped)
 {
     ANGLE_SKIP_TEST_IF(getClientMajorVersion() < 3 ||
-                       !IsGLExtensionEnabled("GL_EXT_buffer_storage") ||
-                       !IsGLExtensionEnabled("GL_EXT_map_buffer_range"));
+                       !IsGLExtensionEnabled("GL_EXT_buffer_storage"));
 
     const std::array<GLColor, 4> kUpdateData1 = {GLColor::red, GLColor::green, GLColor::blue,
                                                  GLColor::yellow};
@@ -1297,7 +1408,300 @@ TEST_P(BufferStorageTestES3, StorageBufferSubDataMapped)
     ASSERT_GL_NO_ERROR();
 }
 
+// Verify that persistently mapped coherent buffers can be used as uniform buffers,
+// and written to by using the pointer from glMapBufferRange.
+TEST_P(BufferStorageTestES3, UniformBufferMapped)
+{
+    ANGLE_SKIP_TEST_IF(getClientMajorVersion() < 3 ||
+                       !IsGLExtensionEnabled("GL_EXT_buffer_storage"));
+
+    const char *mkFS = R"(#version 300 es
+precision highp float;
+uniform uni { vec4 color; };
+out vec4 fragColor;
+void main()
+{
+    fragColor = color;
+})";
+
+    ANGLE_GL_PROGRAM(program, essl3_shaders::vs::Simple(), mkFS);
+    ASSERT_NE(program, 0u);
+
+    GLint uniformBufferIndex = glGetUniformBlockIndex(program, "uni");
+    ASSERT_NE(uniformBufferIndex, -1);
+
+    GLBuffer uniformBuffer;
+
+    ASSERT_GL_NO_ERROR();
+
+    glViewport(0, 0, getWindowWidth(), getWindowHeight());
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    glBindBuffer(GL_UNIFORM_BUFFER, uniformBuffer.get());
+
+    glBufferStorageEXT(GL_UNIFORM_BUFFER, sizeof(float) * 4, nullptr,
+                       GL_MAP_WRITE_BIT | GL_MAP_PERSISTENT_BIT_EXT | GL_MAP_COHERENT_BIT_EXT);
+
+    float *mapPtr = static_cast<float *>(
+        glMapBufferRange(GL_UNIFORM_BUFFER, 0, sizeof(float) * 4,
+                         GL_MAP_WRITE_BIT | GL_MAP_UNSYNCHRONIZED_BIT | GL_MAP_PERSISTENT_BIT_EXT |
+                             GL_MAP_COHERENT_BIT_EXT));
+
+    ASSERT_NE(mapPtr, nullptr);
+
+    glBindBufferBase(GL_UNIFORM_BUFFER, 0, uniformBuffer.get());
+
+    glUniformBlockBinding(program, uniformBufferIndex, 0);
+
+    mapPtr[0] = 0.5f;
+    mapPtr[1] = 0.75f;
+    mapPtr[2] = 0.25f;
+    mapPtr[3] = 1.0f;
+
+    drawQuad(program, essl3_shaders::PositionAttrib(), 0.5f);
+
+    EXPECT_PIXEL_NEAR(0, 0, 128, 191, 64, 255, 1);
+
+    glUnmapBuffer(GL_UNIFORM_BUFFER);
+
+    glDeleteProgram(program);
+
+    ASSERT_GL_NO_ERROR();
+}
+
+// Verify that persistently mapped coherent buffers can be used as vertex array buffers,
+// and written to by using the pointer from glMapBufferRange.
+TEST_P(BufferStorageTestES3, VertexBufferMapped)
+{
+    ANGLE_SKIP_TEST_IF(getClientMajorVersion() < 3 ||
+                       !IsGLExtensionEnabled("GL_EXT_buffer_storage"));
+
+    ANGLE_GL_PROGRAM(program, essl3_shaders::vs::Simple(), essl3_shaders::fs::Red());
+    ASSERT_NE(program, 0u);
+
+    glUseProgram(program);
+
+    auto quadVertices = GetQuadVertices();
+
+    size_t bufferSize = sizeof(GLfloat) * quadVertices.size() * 3;
+
+    GLBuffer positionBuffer;
+    glBindBuffer(GL_ARRAY_BUFFER, positionBuffer.get());
+
+    glBufferStorageEXT(GL_ARRAY_BUFFER, bufferSize, nullptr,
+                       GL_DYNAMIC_STORAGE_BIT_EXT | GL_MAP_WRITE_BIT | GL_MAP_PERSISTENT_BIT_EXT |
+                           GL_MAP_COHERENT_BIT_EXT);
+
+    GLint positionLocation = glGetAttribLocation(program, essl3_shaders::PositionAttrib());
+    ASSERT_NE(-1, positionLocation);
+    glVertexAttribPointer(positionLocation, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
+    glEnableVertexAttribArray(positionLocation);
+
+    void *mappedPtr =
+        glMapBufferRange(GL_ARRAY_BUFFER, 0, bufferSize,
+                         GL_MAP_WRITE_BIT | GL_MAP_PERSISTENT_BIT_EXT | GL_MAP_COHERENT_BIT_EXT);
+    ASSERT_NE(nullptr, mappedPtr);
+
+    memcpy(mappedPtr, reinterpret_cast<void *>(quadVertices.data()), bufferSize);
+
+    glDrawArrays(GL_TRIANGLES, 0, quadVertices.size());
+    EXPECT_PIXEL_COLOR_EQ(8, 8, GLColor::red);
+
+    glUnmapBuffer(GL_ARRAY_BUFFER);
+    glDeleteProgram(program);
+
+    EXPECT_GL_NO_ERROR();
+}
+
+class BufferStorageTestES3Threaded : public ANGLETest
+{
+  protected:
+    BufferStorageTestES3Threaded()
+    {
+        setWindowWidth(16);
+        setWindowHeight(16);
+        setConfigRedBits(8);
+        setConfigGreenBits(8);
+        setConfigBlueBits(8);
+        setConfigAlphaBits(8);
+        setConfigDepthBits(24);
+
+        mProgram = 0;
+    }
+
+    void testSetUp() override
+    {
+        constexpr char kVS[] = R"(#version 300 es
+
+in vec4 position;
+in vec4 color;
+out vec4 out_color;
+
+void main()
+{
+    out_color = color;
+    gl_Position = position;
+})";
+
+        constexpr char kFS[] = R"(#version 300 es
+precision highp float;
+
+in vec4 out_color;
+out vec4 fragColor;
+
+void main()
+{
+    fragColor = vec4(out_color);
+})";
+
+        mProgram = CompileProgram(kVS, kFS);
+        ASSERT_NE(mProgram, 0U);
+
+        glClearColor(0, 0, 0, 0);
+        glClearDepthf(0.0);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        glDisable(GL_DEPTH_TEST);
+
+        ASSERT_GL_NO_ERROR();
+    }
+
+    void testTearDown() override { glDeleteProgram(mProgram); }
+
+    void updateColors(int i, int offset, const GLColor &color)
+    {
+        Vector4 colorVec               = color.toNormalizedVector();
+        mMappedPtr[offset + i * 4 + 0] = colorVec.x();
+        mMappedPtr[offset + i * 4 + 1] = colorVec.y();
+        mMappedPtr[offset + i * 4 + 2] = colorVec.z();
+        mMappedPtr[offset + i * 4 + 3] = colorVec.w();
+    }
+
+    void updateThreadedAndDraw(int offset, const GLColor &color)
+    {
+        std::mutex mutex;
+        std::vector<std::thread> threads(4);
+        for (size_t i = 0; i < 4; i++)
+        {
+            threads[i] = std::thread([&, i]() {
+                std::lock_guard<decltype(mutex)> lock(mutex);
+                updateColors(i, offset, color);
+            });
+        }
+
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
+
+        for (std::thread &thread : threads)
+        {
+            thread.join();
+        }
+    }
+
+    GLuint mProgram;
+    GLfloat *mMappedPtr = nullptr;
+};
+
+// Test using a large buffer storage for a color vertex array buffer, which is
+// off set every iteration step via glVertexAttribPointer.
+// Write to the buffer storage map pointer from multiple threads for the next iteration,
+// while drawing the current one.
+TEST_P(BufferStorageTestES3Threaded, VertexBuffer)
+{
+    ANGLE_SKIP_TEST_IF(getClientMajorVersion() < 3 ||
+                       !IsGLExtensionEnabled("GL_EXT_buffer_storage"));
+
+    auto vertices = GetIndexedQuadVertices();
+
+    // Set up position buffer
+    GLBuffer positionBuffer;
+    glBindBuffer(GL_ARRAY_BUFFER, positionBuffer.get());
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices[0]) * vertices.size(), vertices.data(),
+                 GL_STATIC_DRAW);
+
+    GLint positionLoc = glGetAttribLocation(mProgram, "position");
+    glVertexAttribPointer(positionLoc, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), nullptr);
+    glEnableVertexAttribArray(positionLoc);
+
+    // Set up color buffer
+    GLBuffer colorBuffer;
+    glBindBuffer(GL_ARRAY_BUFFER, colorBuffer.get());
+
+    // Let's create a big buffer which fills 10 pages at pagesize 4096
+    GLint bufferSize   = sizeof(GLfloat) * 1024 * 10;
+    GLint offsetFloats = 0;
+
+    glBufferStorageEXT(GL_ARRAY_BUFFER, bufferSize, nullptr,
+                       GL_DYNAMIC_STORAGE_BIT_EXT | GL_MAP_WRITE_BIT | GL_MAP_PERSISTENT_BIT_EXT |
+                           GL_MAP_COHERENT_BIT_EXT);
+    GLint colorLoc = glGetAttribLocation(mProgram, "color");
+    glEnableVertexAttribArray(colorLoc);
+
+    auto indices = GetQuadIndices();
+
+    GLBuffer indexBuffer;
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer.get());
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices[0]) * indices.size(), indices.data(),
+                 GL_STATIC_DRAW);
+
+    glUseProgram(mProgram);
+
+    glClearColor(0, 0, 0, 0);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    ASSERT_GL_NO_ERROR();
+
+    mMappedPtr = (GLfloat *)glMapBufferRange(
+        GL_ARRAY_BUFFER, 0, bufferSize,
+        GL_MAP_WRITE_BIT | GL_MAP_PERSISTENT_BIT_EXT | GL_MAP_COHERENT_BIT_EXT);
+    ASSERT_NE(nullptr, mMappedPtr);
+    ASSERT_GL_NO_ERROR();
+
+    // Initial color
+    for (int i = 0; i < 4; i++)
+    {
+        updateColors(i, offsetFloats, GLColor::black);
+    }
+
+    std::vector<GLColor> colors = {GLColor::red, GLColor::green, GLColor::blue};
+
+    // 4 vertices, 4 floats
+    GLint contentSize = 4 * 4;
+
+    // Update and draw last
+    int i = 0;
+    while (bufferSize > (int)((offsetFloats + contentSize) * sizeof(GLfloat)))
+    {
+        glVertexAttribPointer(colorLoc, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat),
+                              reinterpret_cast<const GLvoid *>(offsetFloats * sizeof(GLfloat)));
+
+        offsetFloats += contentSize;
+        GLColor color = colors[i % colors.size()];
+        updateThreadedAndDraw(offsetFloats, color);
+
+        if (i > 0)
+        {
+            GLColor lastColor = colors[(i - 1) % colors.size()];
+            EXPECT_PIXEL_COLOR_EQ(0, 0, lastColor);
+        }
+        ASSERT_GL_NO_ERROR();
+        i++;
+    }
+
+    // Last draw
+    glVertexAttribPointer(colorLoc, 3, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat),
+                          reinterpret_cast<const GLvoid *>(offsetFloats * sizeof(GLfloat)));
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
+
+    glUnmapBuffer(GL_ARRAY_BUFFER);
+
+    ASSERT_GL_NO_ERROR();
+}
+
 ANGLE_INSTANTIATE_TEST_ES2(BufferDataTest);
+
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(BufferSubDataTest);
+ANGLE_INSTANTIATE_TEST_ES3_AND(BufferSubDataTest,
+                               WithVulkanPreferCPUForBufferSubData(ES3_VULKAN()));
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(BufferDataTestES3);
 ANGLE_INSTANTIATE_TEST_ES3(BufferDataTestES3);
@@ -1307,6 +1711,9 @@ ANGLE_INSTANTIATE_TEST_ES3(BufferStorageTestES3);
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(IndexedBufferCopyTest);
 ANGLE_INSTANTIATE_TEST_ES3(IndexedBufferCopyTest);
+
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(BufferStorageTestES3Threaded);
+ANGLE_INSTANTIATE_TEST_ES3(BufferStorageTestES3Threaded);
 
 #ifdef _WIN64
 

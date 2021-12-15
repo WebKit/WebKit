@@ -4444,7 +4444,7 @@ void Program::postResolveLink(const gl::Context *context)
         mState.mDrawIDLocation = getUniformLocation("gl_DrawID").value;
     }
 
-    if (context->getExtensions().baseVertexBaseInstanceANGLE)
+    if (context->getExtensions().baseVertexBaseInstanceShaderBuiltinANGLE)
     {
         mState.mBaseVertexLocation   = getUniformLocation("gl_BaseVertex").value;
         mState.mBaseInstanceLocation = getUniformLocation("gl_BaseInstance").value;

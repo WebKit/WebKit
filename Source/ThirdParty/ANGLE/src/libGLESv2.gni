@@ -97,6 +97,7 @@ if (is_linux || is_chromeos || is_android || is_fuchsia) {
 if (is_apple) {
   libangle_common_sources += [
     "src/common/apple/SoftLinking.h",
+    "src/common/apple/apple_platform.h",
     "src/common/gl/cgl/FunctionsCGL.cpp",
     "src/common/gl/cgl/FunctionsCGL.h",
     "src/common/system_utils_apple.cpp",

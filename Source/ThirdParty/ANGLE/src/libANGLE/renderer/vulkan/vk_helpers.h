@@ -545,6 +545,10 @@ class QueryHelper final : public Resource
                         CommandBuffer *resetCommandBuffer,
                         CommandBuffer *commandBuffer);
     void endQueryImpl(ContextVk *contextVk, CommandBuffer *commandBuffer);
+    template <typename CommandBufferT>
+    void resetQueryPoolImpl(ContextVk *contextVk,
+                            const QueryPool &queryPool,
+                            CommandBufferT *commandBuffer);
     VkResult getResultImpl(ContextVk *contextVk,
                            const VkQueryResultFlags flags,
                            QueryResult *resultOut);
@@ -1515,15 +1519,13 @@ class ImageHelper final : public Resource, public angle::Subject
                              bool hasProtectedContent,
                              const MemoryProperties &memoryProperties,
                              VkMemoryPropertyFlags flags);
-    angle::Result initExternalMemory(
-        Context *context,
-        const MemoryProperties &memoryProperties,
-        const VkMemoryRequirements &memoryRequirements,
-        const VkSamplerYcbcrConversionCreateInfo *samplerYcbcrConversionCreateInfo,
-        uint32_t extraAllocationInfoCount,
-        const void **extraAllocationInfo,
-        uint32_t currentQueueFamilyIndex,
-        VkMemoryPropertyFlags flags);
+    angle::Result initExternalMemory(Context *context,
+                                     const MemoryProperties &memoryProperties,
+                                     const VkMemoryRequirements &memoryRequirements,
+                                     uint32_t extraAllocationInfoCount,
+                                     const void **extraAllocationInfo,
+                                     uint32_t currentQueueFamilyIndex,
+                                     VkMemoryPropertyFlags flags);
     angle::Result initLayerImageView(Context *context,
                                      gl::TextureType textureType,
                                      VkImageAspectFlags aspectMask,
@@ -2009,6 +2011,20 @@ class ImageHelper final : public Resource, public angle::Subject
                                                       : 0;
     }
     const YcbcrConversionDesc *getYcbcrConversionDesc() const { return &mYcbcrConversionDesc; }
+    void updateYcbcrConversionDesc(RendererVk *rendererVk,
+                                   uint64_t externalFormat,
+                                   VkSamplerYcbcrModelConversion conversionModel,
+                                   VkSamplerYcbcrRange colorRange,
+                                   VkChromaLocation xChromaOffset,
+                                   VkChromaLocation yChromaOffset,
+                                   VkFilter chromaFilter,
+                                   VkComponentMapping components,
+                                   angle::FormatID intendedFormatID)
+    {
+        mYcbcrConversionDesc.update(rendererVk, externalFormat, conversionModel, colorRange,
+                                    xChromaOffset, yChromaOffset, chromaFilter, components,
+                                    intendedFormatID);
+    }
 
     // Used by framebuffer and render pass functions to decide loadOps and invalidate/un-invalidate
     // render target contents.
@@ -2269,7 +2285,6 @@ class ImageHelper final : public Resource, public angle::Subject
 
     // For imported images
     YcbcrConversionDesc mYcbcrConversionDesc;
-    BindingPointer<SamplerYcbcrConversion> mYuvConversionSampler;
 
     // The first level that has been allocated. For mutable textures, this should be same as
     // mBaseLevel since we always reallocate VkImage based on mBaseLevel change. But for immutable

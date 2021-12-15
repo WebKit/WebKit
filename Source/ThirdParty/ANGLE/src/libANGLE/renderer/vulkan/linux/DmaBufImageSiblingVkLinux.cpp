@@ -466,8 +466,6 @@ angle::Result DmaBufImageSiblingVkLinux::initImpl(DisplayVk *displayVk)
         VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT |
         (hasProtectedContent() ? VK_MEMORY_PROPERTY_PROTECTED_BIT : 0);
 
-    VkSamplerYcbcrConversionCreateInfo yuvConversionInfo     = {};
-    VkSamplerYcbcrConversionCreateInfo *yuvConversionInfoPtr = nullptr;
     if (mYUV)
     {
         const VkChromaLocation xChromaOffset =
@@ -476,30 +474,27 @@ angle::Result DmaBufImageSiblingVkLinux::initImpl(DisplayVk *displayVk)
             GetChromaLocation(mAttribs, EGL_YUV_CHROMA_VERTICAL_SITING_HINT_EXT);
         const VkSamplerYcbcrModelConversion model = GetYcbcrModel(mAttribs);
         const VkSamplerYcbcrRange range           = GetYcbcrRange(mAttribs);
+        const VkComponentMapping components       = {
+            VK_COMPONENT_SWIZZLE_IDENTITY,
+            VK_COMPONENT_SWIZZLE_IDENTITY,
+            VK_COMPONENT_SWIZZLE_IDENTITY,
+            VK_COMPONENT_SWIZZLE_IDENTITY,
+        };
 
         ANGLE_VK_CHECK(displayVk, renderer->getFeatures().supportsYUVSamplerConversion.enabled,
                        VK_ERROR_FEATURE_NOT_PRESENT);
 
-        yuvConversionInfo.sType         = VK_STRUCTURE_TYPE_SAMPLER_YCBCR_CONVERSION_CREATE_INFO;
-        yuvConversionInfo.format        = vulkanFormat;
-        yuvConversionInfo.xChromaOffset = xChromaOffset;
-        yuvConversionInfo.yChromaOffset = yChromaOffset;
-        yuvConversionInfo.ycbcrModel    = model;
-        yuvConversionInfo.ycbcrRange    = range;
-        yuvConversionInfo.chromaFilter  = VK_FILTER_NEAREST;
-        // yuvConversionInfo.components    = {}; // TODO: swizzle?
-
-        yuvConversionInfoPtr = &yuvConversionInfo;
+        mImage->updateYcbcrConversionDesc(renderer, 0, model, range, xChromaOffset, yChromaOffset,
+                                          VK_FILTER_NEAREST, components, intendedFormatID);
     }
 
     AllocateInfo allocateInfo;
     const uint32_t allocateInfoCount = GetAllocateInfo(
         mAttribs, mImage->getImage().getHandle(), planeCount, modifierProperties, &allocateInfo);
 
-    return mImage->initExternalMemory(displayVk, renderer->getMemoryProperties(),
-                                      externalMemoryRequirements, yuvConversionInfoPtr,
-                                      allocateInfoCount, allocateInfo.allocateInfoPtr.data(),
-                                      VK_QUEUE_FAMILY_FOREIGN_EXT, flags);
+    return mImage->initExternalMemory(
+        displayVk, renderer->getMemoryProperties(), externalMemoryRequirements, allocateInfoCount,
+        allocateInfo.allocateInfoPtr.data(), VK_QUEUE_FAMILY_FOREIGN_EXT, flags);
 }
 
 void DmaBufImageSiblingVkLinux::onDestroy(const egl::Display *display)

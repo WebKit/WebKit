@@ -20,7 +20,7 @@ Status
 
 Version
 
-    Version 1, Nov 17, 2021
+    Version 2, Dec 10, 2021
 
 Number
 
@@ -51,7 +51,41 @@ New Procedures and Functions
 
 New Tokens
 
-    None
+    EGL_VULKAN_IMAGE_ANGLE 0x34D3
+    EGL_VULKAN_IMAGE_CREATE_INFO_HI_ANGLE 0x34D4
+    EGL_VULKAN_IMAGE_CREATE_INFO_LO_ANGLE 0x34D5
+
+Additions to Chapter 2 of the EGL 1.4 Specification (EGL Operation)
+
+    Add to section 2.5.1 "EGLImage Specification" (as defined by the
+    EGL_KHR_image_base specification), in the description of
+    eglCreateImageKHR:
+
+   "Values accepted for <target> are listed in Table aaa, below.
+
+      +----------------------------+-----------------------------------------+
+      |  <target>                  |  Notes                                  |
+      +----------------------------+-----------------------------------------+
+      |  EGL_VULKAN_IMAGE_ANGLE    |  Used for VkImage objects               |
+      +----------------------------+-----------------------------------------+
+       Table aaa.  Legal values for eglCreateImageKHR <target> parameter
+
+    ...
+
+    If <target> is EGL_VULKAN_IMAGE_ANGLE, <dpy> must be a valid display, <ctx>
+    must be EGL_NO_CONTEXT, <buffer> must be a pointer to a valid VkImage
+    (cast into the type EGLClientBuffer), the VkImage must be created with the
+    same VkDevice used by GL implementation and attributes other than
+    EGL_VULKAN_IMAGE_CREATE_INFO_HI_ANGLE or
+    EGL_VULKAN_IMAGE_CREATE_INFO_LO_ANGLE are ignored.
+
+    EGL_VULKAN_IMAGE_CREATE_INFO_HI_ANGLE and
+    EGL_VULKAN_IMAGE_CREATE_INFO_LO_ANGLE must be specified. They contain
+    hi 32bits and lo 32bits of a pointer to the memory stores a valid
+    VkImageCreateInfo structure. The GL implementation will get all necessary
+    info of the VkImage from it. All supported structures in the pNext structure
+    chain will be parsed, not supported structures will be ignored.
+
 
 Additions to the EGL 1.4 Specification:
 
@@ -75,3 +109,5 @@ Issues
 Revision History
 
     Version 1, 2021/11/17 - first draft.
+
+    Version 2, 2021/12/10 - add support for creating EGLImageKHR from VkImage.

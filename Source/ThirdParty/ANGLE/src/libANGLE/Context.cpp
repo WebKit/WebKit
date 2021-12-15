@@ -4269,7 +4269,9 @@ void Context::clear(GLbitfield mask)
 
     // If all stencil bits are masked, don't attempt to clear stencil.
     if (mState.getDrawFramebuffer()->getStencilAttachment() == nullptr ||
-        mState.getDepthStencilState().stencilWritemask == 0)
+        (angle::BitMask<uint32_t>(
+             mState.getDrawFramebuffer()->getStencilAttachment()->getStencilSize()) &
+         mState.getDepthStencilState().stencilWritemask) == 0)
     {
         mask &= ~GL_STENCIL_BUFFER_BIT;
     }
@@ -6460,16 +6462,14 @@ void Context::multiDrawArraysInstanced(PrimitiveMode mode,
                                                                 instanceCounts, drawcount));
 }
 
-void Context::multiDrawArraysIndirect(GLenum mode,
+void Context::multiDrawArraysIndirect(PrimitiveMode mode,
                                       const void *indirect,
                                       GLsizei drawcount,
                                       GLsizei stride)
 {
-    PrimitiveMode primitiveMode = FromGLenum<PrimitiveMode>(mode);
-
-    ANGLE_CONTEXT_TRY(prepareForDraw(primitiveMode));
+    ANGLE_CONTEXT_TRY(prepareForDraw(mode));
     ANGLE_CONTEXT_TRY(
-        mImplementation->multiDrawArraysIndirect(this, primitiveMode, indirect, drawcount, stride));
+        mImplementation->multiDrawArraysIndirect(this, mode, indirect, drawcount, stride));
     MarkShaderStorageUsage(this);
 }
 
@@ -6496,18 +6496,15 @@ void Context::multiDrawElementsInstanced(PrimitiveMode mode,
                                                                   instanceCounts, drawcount));
 }
 
-void Context::multiDrawElementsIndirect(GLenum mode,
-                                        GLenum type,
+void Context::multiDrawElementsIndirect(PrimitiveMode mode,
+                                        DrawElementsType type,
                                         const void *indirect,
                                         GLsizei drawcount,
                                         GLsizei stride)
 {
-    PrimitiveMode primitiveMode       = FromGLenum<PrimitiveMode>(mode);
-    DrawElementsType drawElementsType = FromGLenum<DrawElementsType>(type);
-
-    ANGLE_CONTEXT_TRY(prepareForDraw(primitiveMode));
-    ANGLE_CONTEXT_TRY(mImplementation->multiDrawElementsIndirect(
-        this, primitiveMode, drawElementsType, indirect, drawcount, stride));
+    ANGLE_CONTEXT_TRY(prepareForDraw(mode));
+    ANGLE_CONTEXT_TRY(
+        mImplementation->multiDrawElementsIndirect(this, mode, type, indirect, drawcount, stride));
     MarkShaderStorageUsage(this);
 }
 

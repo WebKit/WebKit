@@ -99,7 +99,7 @@
       'gn_args': 'use_goma=true',
     },
     'non_clang': {
-      'gn_args': 'is_clang=false',
+      'gn_args': 'is_clang=false build_angle_deqp_tests=false',
     },
     'perf': {
       'gn_args': 'is_debug=false dcheck_always_on=false symbol_level=1',

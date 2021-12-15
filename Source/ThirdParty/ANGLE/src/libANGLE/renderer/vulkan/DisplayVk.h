@@ -117,6 +117,14 @@ class DisplayVk : public DisplayImpl, public vk::Context
     gl::Version getMaxSupportedESVersion() const override;
     gl::Version getMaxConformantESVersion() const override;
 
+    egl::Error validateImageClientBuffer(const gl::Context *context,
+                                         EGLenum target,
+                                         EGLClientBuffer clientBuffer,
+                                         const egl::AttributeMap &attribs) const override;
+    ExternalImageSiblingImpl *createExternalImageSibling(const gl::Context *context,
+                                                         EGLenum target,
+                                                         EGLClientBuffer buffer,
+                                                         const egl::AttributeMap &attribs) override;
     virtual const char *getWSIExtension() const = 0;
     virtual const char *getWSILayer() const;
     virtual bool isUsingSwapchain() const;

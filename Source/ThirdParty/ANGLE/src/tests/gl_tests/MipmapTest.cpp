@@ -1992,6 +1992,30 @@ TEST_P(MipmapTestES3, GenerateMipmapZeroSize)
     glGenerateMipmap(GL_TEXTURE_3D);
 }
 
+// Test that reducing the size of the mipchain by resizing the base image then deleting it doesn't
+// cause a crash. Issue found by fuzzer.
+TEST_P(MipmapTestES3, ResizeBaseMipTo1x1ThenDelete)
+{
+    GLTexture tex;
+    glBindTexture(GL_TEXTURE_2D, tex);
+
+    std::vector<GLColor> data(2, GLColor::blue);
+
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 1, 2, 0, GL_RGBA, GL_UNSIGNED_BYTE, data.data());
+    glTexImage2D(GL_TEXTURE_2D, 1, GL_RGBA, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, data.data());
+
+    clearAndDrawQuad(m2DProgram, getWindowWidth(), getWindowHeight());
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::blue);
+
+    data[0] = GLColor::green;
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, data.data());
+
+    clearAndDrawQuad(m2DProgram, getWindowWidth(), getWindowHeight());
+
+    tex.reset();
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
+}
+
 // Use this to select which configurations (e.g. which renderer, which GLES major version) these
 // tests should be run against.
 ANGLE_INSTANTIATE_TEST_ES2_AND_ES3(MipmapTest);

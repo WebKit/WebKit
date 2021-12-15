@@ -3419,30 +3419,30 @@ namespace BuiltInVariable
 
 constexpr const unsigned int kArraySize4[1] = {4};
 
-constexpr const TVariable kangle_BaseInstance(BuiltInId::angle_BaseInstance,
-                                              BuiltInName::angle_BaseInstance,
-                                              SymbolType::BuiltIn,
-                                              std::array<TExtension, 1u>{
-                                                  {TExtension::ANGLE_base_vertex_base_instance}},
-                                              StaticType::Get<EbtInt, EbpHigh, EvqUniform, 1, 1>());
-constexpr const TVariable kangle_BaseVertex(BuiltInId::angle_BaseVertex,
-                                            BuiltInName::angle_BaseVertex,
-                                            SymbolType::BuiltIn,
-                                            std::array<TExtension, 1u>{
-                                                {TExtension::ANGLE_base_vertex_base_instance}},
-                                            StaticType::Get<EbtInt, EbpHigh, EvqUniform, 1, 1>());
-constexpr const TVariable kgl_BaseInstance(BuiltInId::gl_BaseInstance,
-                                           BuiltInName::gl_BaseInstance,
-                                           SymbolType::BuiltIn,
-                                           std::array<TExtension, 1u>{
-                                               {TExtension::ANGLE_base_vertex_base_instance}},
-                                           StaticType::Get<EbtInt, EbpHigh, EvqUniform, 1, 1>());
-constexpr const TVariable kgl_BaseVertex(BuiltInId::gl_BaseVertex,
-                                         BuiltInName::gl_BaseVertex,
-                                         SymbolType::BuiltIn,
-                                         std::array<TExtension, 1u>{
-                                             {TExtension::ANGLE_base_vertex_base_instance}},
-                                         StaticType::Get<EbtInt, EbpHigh, EvqUniform, 1, 1>());
+constexpr const TVariable kangle_BaseInstance(
+    BuiltInId::angle_BaseInstance,
+    BuiltInName::angle_BaseInstance,
+    SymbolType::BuiltIn,
+    std::array<TExtension, 1u>{{TExtension::ANGLE_base_vertex_base_instance_shader_builtin}},
+    StaticType::Get<EbtInt, EbpHigh, EvqUniform, 1, 1>());
+constexpr const TVariable kangle_BaseVertex(
+    BuiltInId::angle_BaseVertex,
+    BuiltInName::angle_BaseVertex,
+    SymbolType::BuiltIn,
+    std::array<TExtension, 1u>{{TExtension::ANGLE_base_vertex_base_instance_shader_builtin}},
+    StaticType::Get<EbtInt, EbpHigh, EvqUniform, 1, 1>());
+constexpr const TVariable kgl_BaseInstance(
+    BuiltInId::gl_BaseInstance,
+    BuiltInName::gl_BaseInstance,
+    SymbolType::BuiltIn,
+    std::array<TExtension, 1u>{{TExtension::ANGLE_base_vertex_base_instance_shader_builtin}},
+    StaticType::Get<EbtInt, EbpHigh, EvqUniform, 1, 1>());
+constexpr const TVariable kgl_BaseVertex(
+    BuiltInId::gl_BaseVertex,
+    BuiltInName::gl_BaseVertex,
+    SymbolType::BuiltIn,
+    std::array<TExtension, 1u>{{TExtension::ANGLE_base_vertex_base_instance_shader_builtin}},
+    StaticType::Get<EbtInt, EbpHigh, EvqUniform, 1, 1>());
 constexpr const TVariable kgl_DrawID(BuiltInId::gl_DrawID,
                                      BuiltInName::gl_DrawID,
                                      SymbolType::BuiltIn,
@@ -34597,13 +34597,25 @@ constexpr SymbolRule kRules[] = {
     Rule::Get<Spec::GLSL, 0, Shader::VERTEX, 0>(&BuiltInVariable::kgl_VertexID),
     Rule::Get<Spec::ESSL, 0, Shader::VERTEX, EXT_INDEX(ANGLE_multi_draw)>(
         &BuiltInVariable::kgl_DrawID),
-    Rule::Get<Spec::ESSL, 300, Shader::VERTEX, EXT_INDEX(ANGLE_base_vertex_base_instance)>(
+    Rule::Get<Spec::ESSL,
+              300,
+              Shader::VERTEX,
+              EXT_INDEX(ANGLE_base_vertex_base_instance_shader_builtin)>(
         &BuiltInVariable::kgl_BaseVertex),
-    Rule::Get<Spec::ESSL, 300, Shader::VERTEX, EXT_INDEX(ANGLE_base_vertex_base_instance)>(
+    Rule::Get<Spec::ESSL,
+              300,
+              Shader::VERTEX,
+              EXT_INDEX(ANGLE_base_vertex_base_instance_shader_builtin)>(
         &BuiltInVariable::kgl_BaseInstance),
-    Rule::Get<Spec::ESSL, 0, Shader::VERTEX, EXT_INDEX(ANGLE_base_vertex_base_instance)>(
+    Rule::Get<Spec::ESSL,
+              0,
+              Shader::VERTEX,
+              EXT_INDEX(ANGLE_base_vertex_base_instance_shader_builtin)>(
         &BuiltInVariable::kangle_BaseVertex),
-    Rule::Get<Spec::ESSL, 0, Shader::VERTEX, EXT_INDEX(ANGLE_base_vertex_base_instance)>(
+    Rule::Get<Spec::ESSL,
+              0,
+              Shader::VERTEX,
+              EXT_INDEX(ANGLE_base_vertex_base_instance_shader_builtin)>(
         &BuiltInVariable::kangle_BaseInstance),
     Rule::Get<Spec::ESSL, 310, Shader::COMPUTE, 0>(&BuiltInVariable::kgl_NumWorkGroups),
     Rule::Get<Spec::GLSL, 0, Shader::COMPUTE, 0>(&BuiltInVariable::kgl_NumWorkGroups),

@@ -461,6 +461,80 @@ void VulkanHelper::initializeFromANGLE()
     ASSERT(!mHasExternalSemaphoreFuchsia || vkGetSemaphoreZirconHandleFUCHSIA);
 }
 
+VkResult VulkanHelper::createImage2D(VkFormat format,
+                                     VkImageCreateFlags createFlags,
+                                     VkImageUsageFlags usageFlags,
+                                     VkExtent3D extent,
+                                     VkImage *imageOut,
+                                     VkDeviceMemory *deviceMemoryOut,
+                                     VkDeviceSize *deviceMemorySizeOut,
+                                     VkImageCreateInfo *imageCreateInfoOut)
+{
+    VkImageCreateInfo imageCreateInfo = {
+        /* .sType = */ VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO,
+        /* .pNext = */ nullptr,
+        /* .flags = */ createFlags,
+        /* .imageType = */ VK_IMAGE_TYPE_2D,
+        /* .format = */ format,
+        /* .extent = */ extent,
+        /* .mipLevels = */ 1,
+        /* .arrayLayers = */ 1,
+        /* .samples = */ VK_SAMPLE_COUNT_1_BIT,
+        /* .tiling = */ VK_IMAGE_TILING_OPTIMAL,
+        /* .usage = */ usageFlags,
+        /* .sharingMode = */ VK_SHARING_MODE_EXCLUSIVE,
+        /* .queueFamilyIndexCount = */ 0,
+        /* .pQueueFamilyIndices = */ nullptr,
+        /* initialLayout = */ VK_IMAGE_LAYOUT_UNDEFINED,
+    };
+
+    VkImage image   = VK_NULL_HANDLE;
+    VkResult result = vkCreateImage(mDevice, &imageCreateInfo, nullptr, &image);
+    if (result != VK_SUCCESS)
+    {
+        return result;
+    }
+
+    VkMemoryPropertyFlags requestedMemoryPropertyFlags = 0;
+    VkMemoryRequirements memoryRequirements;
+    vkGetImageMemoryRequirements(mDevice, image, &memoryRequirements);
+    uint32_t memoryTypeIndex = FindMemoryType(mMemoryProperties, memoryRequirements.memoryTypeBits,
+                                              requestedMemoryPropertyFlags);
+    ASSERT(memoryTypeIndex != UINT32_MAX);
+    VkDeviceSize deviceMemorySize = memoryRequirements.size;
+
+    VkMemoryAllocateInfo memoryAllocateInfo = {
+        /* .sType = */ VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO,
+        /* .pNext = */ nullptr,
+        /* .allocationSize = */ deviceMemorySize,
+        /* .memoryTypeIndex = */ memoryTypeIndex,
+    };
+
+    VkDeviceMemory deviceMemory = VK_NULL_HANDLE;
+    result = vkAllocateMemory(mDevice, &memoryAllocateInfo, nullptr, &deviceMemory);
+    if (result != VK_SUCCESS)
+    {
+        vkDestroyImage(mDevice, image, nullptr);
+        return result;
+    }
+
+    VkDeviceSize memoryOffset = 0;
+    result                    = vkBindImageMemory(mDevice, image, deviceMemory, memoryOffset);
+    if (result != VK_SUCCESS)
+    {
+        vkFreeMemory(mDevice, deviceMemory, nullptr);
+        vkDestroyImage(mDevice, image, nullptr);
+        return result;
+    }
+
+    *imageOut            = image;
+    *deviceMemoryOut     = deviceMemory;
+    *deviceMemorySizeOut = deviceMemorySize;
+    *imageCreateInfoOut  = imageCreateInfo;
+
+    return VK_SUCCESS;
+}
+
 bool VulkanHelper::canCreateImageExternal(VkFormat format,
                                           VkImageType type,
                                           VkImageTiling tiling,

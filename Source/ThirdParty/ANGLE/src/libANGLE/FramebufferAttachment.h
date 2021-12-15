@@ -117,11 +117,8 @@ class FramebufferAttachment final
     bool isMultiview() const;
     GLint getBaseViewIndex() const;
 
-    bool isRenderToTexture() const
-    {
-        return mRenderToTextureSamples != kDefaultRenderToTextureSamples;
-    }
-    GLsizei getRenderToTextureSamples() const { return mRenderToTextureSamples; }
+    bool isRenderToTexture() const;
+    GLsizei getRenderToTextureSamples() const;
 
     // The size of the underlying resource the attachment points to. The 'depth' value will
     // correspond to a 3D texture depth or the layer count of a 2D array texture. For Surfaces and
@@ -195,6 +192,14 @@ class FramebufferAttachment final
     GLsizei mNumViews;
     bool mIsMultiview;
     GLint mBaseViewIndex;
+    // A single-sampled texture can be attached to a framebuffer either as single-sampled or as
+    // multisampled-render-to-texture.  In the latter case, |mRenderToTextureSamples| will contain
+    // the number of samples.  For renderbuffers, the number of samples is inherited from the
+    // renderbuffer itself.
+    //
+    // Note that textures cannot change storage between single and multisample once attached to a
+    // framebuffer.  Renderbuffers instead can, and caching the number of renderbuffer samples here
+    // can lead to stale data.
     GLsizei mRenderToTextureSamples;
 };
 
@@ -254,8 +259,7 @@ inline Format FramebufferAttachment::getFormat() const
 
 inline GLsizei FramebufferAttachment::getSamples() const
 {
-    return (mRenderToTextureSamples != kDefaultRenderToTextureSamples) ? getRenderToTextureSamples()
-                                                                       : getResourceSamples();
+    return isRenderToTexture() ? getRenderToTextureSamples() : getResourceSamples();
 }
 
 inline GLsizei FramebufferAttachment::getResourceSamples() const

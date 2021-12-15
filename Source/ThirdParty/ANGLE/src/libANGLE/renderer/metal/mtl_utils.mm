@@ -779,7 +779,7 @@ static MTLLanguageVersion GetUserSetOrHighestMSLVersion(const MTLLanguageVersion
 }
 
 AutoObjCPtr<id<MTLLibrary>> CreateShaderLibrary(
-    id<MTLDevice> metalDevice,
+    const mtl::ContextDevice &metalDevice,
     const std::string &source,
     NSDictionary<NSString *, NSObject *> *substitutionMacros,
     bool enableFastMath,
@@ -789,7 +789,7 @@ AutoObjCPtr<id<MTLLibrary>> CreateShaderLibrary(
                                enableFastMath, error);
 }
 
-AutoObjCPtr<id<MTLLibrary>> CreateShaderLibrary(id<MTLDevice> metalDevice,
+AutoObjCPtr<id<MTLLibrary>> CreateShaderLibrary(const mtl::ContextDevice &metalDevice,
                                                 const std::string &source,
                                                 AutoObjCPtr<NSError *> *error)
 {
@@ -797,7 +797,7 @@ AutoObjCPtr<id<MTLLibrary>> CreateShaderLibrary(id<MTLDevice> metalDevice,
 }
 
 AutoObjCPtr<id<MTLLibrary>> CreateShaderLibrary(
-    id<MTLDevice> metalDevice,
+    const mtl::ContextDevice &metalDevice,
     const char *source,
     size_t sourceLen,
     NSDictionary<NSString *, NSObject *> *substitutionMacros,
@@ -824,7 +824,7 @@ AutoObjCPtr<id<MTLLibrary>> CreateShaderLibrary(
         options.fastMathEnabled &= enableFastMath;
         options.languageVersion    = GetUserSetOrHighestMSLVersion(options.languageVersion);
         options.preprocessorMacros = substitutionMacros;
-        auto library = [metalDevice newLibraryWithSource:nsSource options:options error:&nsError];
+        auto library               = metalDevice.newLibraryWithSource(nsSource, options, &nsError);
         if (angle::GetEnvironmentVar(kANGLEPrintMSLEnv)[0] == '1')
         {
             NSLog(@"%@\n", nsSource);
@@ -1194,7 +1194,7 @@ MTLClearColor EmulatedAlphaClearColor(MTLClearColor color, MTLColorWriteMask col
     return re;
 }
 
-NSUInteger GetMaxRenderTargetSizeForDeviceInBytes(id<MTLDevice> device)
+NSUInteger GetMaxRenderTargetSizeForDeviceInBytes(const mtl::ContextDevice &device)
 {
     if (SupportsAppleGPUFamily(device, 4))
     {
@@ -1210,7 +1210,7 @@ NSUInteger GetMaxRenderTargetSizeForDeviceInBytes(id<MTLDevice> device)
     }
 }
 
-NSUInteger GetMaxNumberOfRenderTargetsForDevice(id<MTLDevice> device)
+NSUInteger GetMaxNumberOfRenderTargetsForDevice(const mtl::ContextDevice &device)
 {
     if (SupportsAppleGPUFamily(device, 2) || SupportsMacGPUFamily(device, 1))
     {
@@ -1229,12 +1229,10 @@ bool DeviceHasMaximumRenderTargetSize(id<MTLDevice> device)
 
 bool SupportsAppleGPUFamily(id<MTLDevice> device, uint8_t appleFamily)
 {
-#if (!TARGET_OS_IOS && !TARGET_OS_TV) || TARGET_OS_MACCATALYST
-    return false;
-#else
-#    if (__IPHONE_OS_VERSION_MAX_ALLOWED >= 130000) || (__TV_OS_VERSION_MAX_ALLOWED >= 130000)
+#if (__MAC_OS_X_VERSION_MAX_ALLOWED >= 101500 || __IPHONE_OS_VERSION_MAX_ALLOWED >= 130000) || \
+    (__TV_OS_VERSION_MAX_ALLOWED >= 130000)
     // If device supports [MTLDevice supportsFamily:], then use it.
-    if (ANGLE_APPLE_AVAILABLE_I(13.0))
+    if (ANGLE_APPLE_AVAILABLE_XC(10.15, 13.0))
     {
         MTLGPUFamily family;
         switch (appleFamily)
@@ -1254,18 +1252,29 @@ bool SupportsAppleGPUFamily(id<MTLDevice> device, uint8_t appleFamily)
             case 5:
                 family = MTLGPUFamilyApple5;
                 break;
-#        if TARGET_OS_IOS
+                
+#    if TARGET_OS_IOS || (TARGET_OS_OSX && __MAC_OS_X_VERSION_MAX_ALLOWED >= 110000)
             case 6:
-                family = MTLGPUFamilyApple6;
+                if (@available(ios 14.0, macOS 10.15, *))
+                {
+                    family = MTLGPUFamilyApple6;
+                }
+                else
+                {
+                    return false;
+                }
                 break;
-#        endif
+#    endif
             default:
                 return false;
         }
         return [device supportsFamily:family];
-    }  // Metal 2.2
-#    endif  // __IPHONE_OS_VERSION_MAX_ALLOWED
+    }   // Metal 2.2
+#endif  // __IPHONE_OS_VERSION_MAX_ALLOWED
 
+#if (!TARGET_OS_IOS && !TARGET_OS_TV) || TARGET_OS_MACCATALYST
+    return false;
+#else
     // If device doesn't support [MTLDevice supportsFamily:], then use
     // [MTLDevice supportsFeatureSet:].
     MTLFeatureSet featureSet;
@@ -1383,7 +1392,7 @@ static NSUInteger getNextLocationForFormat(const FormatCaps &caps,
 
 NSUInteger ComputeTotalSizeUsedForMTLRenderPassDescriptor(const MTLRenderPassDescriptor *descriptor,
                                                           const Context *context,
-                                                          id<MTLDevice> device)
+                                                          const mtl::ContextDevice &device)
 {
     NSUInteger currentRenderTargetSize = 0;
 
@@ -1434,7 +1443,7 @@ NSUInteger ComputeTotalSizeUsedForMTLRenderPassDescriptor(const MTLRenderPassDes
 NSUInteger ComputeTotalSizeUsedForMTLRenderPipelineDescriptor(
     const MTLRenderPipelineDescriptor *descriptor,
     const Context *context,
-    id<MTLDevice> device)
+    const mtl::ContextDevice &device)
 {
     NSUInteger currentRenderTargetSize = 0;
     bool isMsaa                        = descriptor.sampleCount > 1;

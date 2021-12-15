@@ -442,7 +442,7 @@ bool ValidateMultiDrawElementsBaseVertexEXT(const Context *context,
 
 bool ValidateMultiDrawArraysIndirectEXT(const Context *context,
                                         angle::EntryPoint entryPoint,
-                                        GLenum mode,
+                                        PrimitiveMode modePacked,
                                         const void *indirect,
                                         GLsizei drawcount,
                                         GLsizei stride)
@@ -452,8 +452,7 @@ bool ValidateMultiDrawArraysIndirectEXT(const Context *context,
         return false;
     }
 
-    PrimitiveMode primitiveMode = FromGLenum<PrimitiveMode>(mode);
-    if (!ValidateDrawArraysIndirect(context, entryPoint, primitiveMode, indirect))
+    if (!ValidateDrawArraysIndirect(context, entryPoint, modePacked, indirect))
     {
         return false;
     }
@@ -463,8 +462,8 @@ bool ValidateMultiDrawArraysIndirectEXT(const Context *context,
 
 bool ValidateMultiDrawElementsIndirectEXT(const Context *context,
                                           angle::EntryPoint entryPoint,
-                                          GLenum mode,
-                                          GLenum type,
+                                          PrimitiveMode modePacked,
+                                          DrawElementsType typePacked,
                                           const void *indirect,
                                           GLsizei drawcount,
                                           GLsizei stride)
@@ -474,12 +473,9 @@ bool ValidateMultiDrawElementsIndirectEXT(const Context *context,
         return false;
     }
 
-    PrimitiveMode primitiveMode             = FromGLenum<PrimitiveMode>(mode);
-    DrawElementsType drawElementsType       = FromGLenum<DrawElementsType>(type);
     const State &state                      = context->getState();
     TransformFeedback *curTransformFeedback = state.getCurrentTransformFeedback();
-    if (!ValidateDrawElementsIndirect(context, entryPoint, primitiveMode, drawElementsType,
-                                      indirect))
+    if (!ValidateDrawElementsIndirect(context, entryPoint, modePacked, typePacked, indirect))
     {
         return false;
     }
@@ -492,7 +488,7 @@ bool ValidateMultiDrawElementsIndirectEXT(const Context *context,
         if (context->getExtensions().geometryShaderAny() || context->getClientVersion() >= ES_3_2)
         {
             if (!ValidateTransformFeedbackPrimitiveMode(
-                    context, entryPoint, curTransformFeedback->getPrimitiveMode(), primitiveMode))
+                    context, entryPoint, curTransformFeedback->getPrimitiveMode(), modePacked))
             {
                 context->validationError(entryPoint, GL_INVALID_OPERATION,
                                          kInvalidDrawModeTransformFeedback);

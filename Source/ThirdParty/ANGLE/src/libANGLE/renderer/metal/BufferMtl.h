@@ -210,7 +210,7 @@ class BufferMtl : public BufferImpl, public BufferHolderMtl
     std::vector<VertexConversionBufferMtl> mVertexConversionBuffers;
 
     std::vector<IndexConversionBufferMtl> mIndexConversionBuffers;
-    
+
     std::vector<UniformConversionBufferMtl> mUniformConversionBuffers;
 
     struct RestartRangeCache

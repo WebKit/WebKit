@@ -203,11 +203,11 @@ bool EmulateGLBaseVertexBaseInstance(TCompiler *compiler,
             uniformBaseVertex.precision  = GLVariablePrecision(type);
             uniformBaseVertex.staticUse = symbolTable->isStaticallyUsed(*builtInVariableBaseVertex);
             uniformBaseVertex.active    = true;
-            uniformBaseVertex.binding    = type.getLayoutQualifier().binding;
-            uniformBaseVertex.location   = type.getLayoutQualifier().location;
-            uniformBaseVertex.offset     = type.getLayoutQualifier().offset;
-            uniformBaseVertex.readonly   = type.getMemoryQualifier().readonly;
-            uniformBaseVertex.writeonly  = type.getMemoryQualifier().writeonly;
+            uniformBaseVertex.binding   = type.getLayoutQualifier().binding;
+            uniformBaseVertex.location  = type.getLayoutQualifier().location;
+            uniformBaseVertex.offset    = type.getLayoutQualifier().offset;
+            uniformBaseVertex.readonly  = type.getMemoryQualifier().readonly;
+            uniformBaseVertex.writeonly = type.getMemoryQualifier().writeonly;
             addBaseVertex               = true;
         }
 

@@ -176,6 +176,11 @@ EGLAPI EGLBoolean EGLAPIENTRY eglStreamPostD3DTextureANGLE(EGLDisplay dpy, EGLSt
 #define EGL_CONTEXT_BIND_GENERATES_RESOURCE_CHROMIUM 0x33AD
 #endif /* EGL_CHROMIUM_create_context_bind_generates_resource */
 
+#ifndef EGL_ANGLE_metal_create_context_ownership_identity
+#define EGL_ANGLE_metal_create_context_ownership_identity 1
+#define EGL_CONTEXT_METAL_OWNERSHIP_IDENTITY_ANGLE 0x34D2
+#endif /* EGL_ANGLE_metal_create_context_ownership_identity */
+
 #ifndef EGL_ANGLE_create_context_client_arrays
 #define EGL_ANGLE_create_context_client_arrays 1
 #define EGL_CONTEXT_CLIENT_ARRAYS_ENABLED_ANGLE 0x3452
@@ -371,6 +376,9 @@ EGLAPI EGLBoolean EGLAPIENTRY eglSwapBuffersWithFrameTokenANGLE(EGLDisplay dpy, 
 
 #ifndef EGL_ANGLE_vulkan_image
 #define EGL_ANGLE_vulkan_image
+#define EGL_VULKAN_IMAGE_ANGLE 0x34D3
+#define EGL_VULKAN_IMAGE_CREATE_INFO_HI_ANGLE 0x34D4
+#define EGL_VULKAN_IMAGE_CREATE_INFO_LO_ANGLE 0x34D5
 typedef EGLBoolean (EGLAPIENTRYP PFNEGLEXPORTVKIMAGEANGLEPROC)(EGLDisplay dpy, EGLImage image, void* vk_image, void* vk_image_create_info);
 #endif /* EGL_ANGLE_vulkan_image */
 

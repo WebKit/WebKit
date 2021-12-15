@@ -12,6 +12,7 @@
 #include "common/Optional.h"
 #include "common/angleutils.h"
 
+#include <functional>
 #include <string>
 
 namespace angle
@@ -82,6 +83,7 @@ enum class SearchType
     AlreadyLoaded,
 };
 
+std::string GetSharedLibraryName(const char *libraryName, SearchType searchType);
 Library *OpenSharedLibrary(const char *libraryName, SearchType searchType);
 Library *OpenSharedLibraryWithExtension(const char *libraryName, SearchType searchType);
 
@@ -90,6 +92,44 @@ bool IsDebuggerAttached();
 
 // Calls system APIs to break into the debugger.
 void BreakDebugger();
+
+bool ProtectMemory(uintptr_t start, size_t size);
+bool UnprotectMemory(uintptr_t start, size_t size);
+
+size_t GetPageSize();
+
+// Return type of the PageFaultCallback
+enum class PageFaultHandlerRangeType
+{
+    // The memory address was known by the page fault handler
+    InRange,
+    // The memory address was not in the page fault handler's range
+    // and the signal will be forwarded to the default page handler.
+    OutOfRange,
+};
+
+using PageFaultCallback = std::function<PageFaultHandlerRangeType(uintptr_t)>;
+
+class PageFaultHandler : angle::NonCopyable
+{
+  public:
+    PageFaultHandler(PageFaultCallback callback);
+    virtual ~PageFaultHandler();
+
+    // Registers OS level page fault handler for memory protection signals
+    // and enables reception on PageFaultCallback
+    virtual bool enable() = 0;
+
+    // Unregisters OS level page fault handler and deactivates PageFaultCallback
+    virtual bool disable() = 0;
+
+  protected:
+    PageFaultCallback mCallback;
+};
+
+// Creates single instance page fault handler
+PageFaultHandler *CreatePageFaultHandler(PageFaultCallback callback);
+
 }  // namespace angle
 
 #endif  // COMMON_SYSTEM_UTILS_H_

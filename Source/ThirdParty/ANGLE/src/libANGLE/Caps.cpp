@@ -1293,6 +1293,7 @@ std::vector<std::string> DisplayExtensions::getStrings() const
     InsertExtensionString("EGL_ANGLE_context_virtualization",                    contextVirtualizationANGLE,         &extensionStrings);
     InsertExtensionString("EGL_KHR_lock_surface3",                               lockSurface3KHR,                    &extensionStrings);
     InsertExtensionString("EGL_ANGLE_vulkan_image",                              vulkanImageANGLE,                   &extensionStrings);
+    InsertExtensionString("EGL_ANGLE_metal_create_context_ownership_identity",   metalCreateContextOwnershipIdentityANGLE, &extensionStrings);
     // clang-format on
 
     return extensionStrings;

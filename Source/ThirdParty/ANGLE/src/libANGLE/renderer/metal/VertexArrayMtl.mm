@@ -375,7 +375,6 @@ angle::Result VertexArrayMtl::setupDraw(const gl::Context *glContext,
 
     if (dirty)
     {
-        ContextMtl *contextMtl = mtl::GetImpl(glContext);
 
         mVertexArrayDirty = false;
         mEmulatedInstanceAttribs.clear();

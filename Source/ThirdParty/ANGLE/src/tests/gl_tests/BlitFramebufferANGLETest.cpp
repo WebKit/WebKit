@@ -2664,6 +2664,60 @@ TEST_P(BlitFramebufferTestES31, DrawToSmallFBOThenResolveLargeFBO)
     EXPECT_PIXEL_COLOR_EQ(kLargeWidth - 1, kLargeHeight - 1, GLColor::red);
 }
 
+// Blit a multisampled RGBX8 framebuffer to an RGB8 framebuffer.
+TEST_P(BlitFramebufferTestES31, BlitMultisampledRGBX8ToRGB8)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_ANGLE_rgbx_internal_format"));
+
+    constexpr const GLsizei kWidth  = 256;
+    constexpr const GLsizei kHeight = 256;
+
+    GLTexture textureMS;
+    GLRenderbuffer targetRBO;
+    GLFramebuffer sourceFBO, targetFBO;
+
+    // Initialize a source multisampled FBO with checker pattern
+    glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, textureMS);
+    glTexStorage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, 4, GL_RGBX8_ANGLE, kWidth, kHeight,
+                              GL_TRUE);
+    EXPECT_GL_NO_ERROR();
+    glBindFramebuffer(GL_FRAMEBUFFER, sourceFBO);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D_MULTISAMPLE,
+                           textureMS, 0);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+    ANGLE_GL_PROGRAM(checkerProgram, essl1_shaders::vs::Passthrough(),
+                     essl1_shaders::fs::Checkered());
+    glViewport(0, 0, kWidth, kHeight);
+    glBindFramebuffer(GL_FRAMEBUFFER, sourceFBO);
+    drawQuad(checkerProgram.get(), essl1_shaders::PositionAttrib(), 0.5f);
+    EXPECT_GL_NO_ERROR();
+
+    // Initialize the destination FBO
+    initColorFBO(&targetFBO, &targetRBO, GL_RGB8, kWidth, kHeight);
+    EXPECT_GL_NO_ERROR();
+
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, sourceFBO);
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, targetFBO);
+    EXPECT_GL_NO_ERROR();
+
+    glViewport(0, 0, kWidth, kHeight);
+
+    glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    // Scale down without flipping.
+    glBlitFramebuffer(0, 0, kWidth, kHeight, 0, 0, kWidth, kHeight, GL_COLOR_BUFFER_BIT,
+                      GL_NEAREST);
+    EXPECT_GL_NO_ERROR();
+
+    glBindFramebuffer(GL_FRAMEBUFFER, targetFBO);
+
+    EXPECT_PIXEL_COLOR_EQ(kWidth / 4, kHeight / 4, GLColor::red);
+    EXPECT_PIXEL_COLOR_EQ(kWidth / 4, 3 * kHeight / 4, GLColor::green);
+    EXPECT_PIXEL_COLOR_EQ(3 * kWidth / 4, kHeight / 4, GLColor::blue);
+    EXPECT_PIXEL_COLOR_EQ(3 * kWidth / 4, 3 * kHeight / 4, GLColor::yellow);
+}
+
 // Use this to select which configurations (e.g. which renderer, which GLES major version) these
 // tests should be run against.
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(BlitFramebufferANGLETest);

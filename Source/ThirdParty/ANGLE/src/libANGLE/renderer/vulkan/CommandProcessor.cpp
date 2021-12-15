@@ -17,7 +17,7 @@ namespace vk
 {
 namespace
 {
-constexpr size_t kInFlightCommandsLimit = 100u;
+constexpr size_t kInFlightCommandsLimit = 50u;
 constexpr bool kOutputVmaStatsString    = false;
 
 void InitializeSubmitInfo(VkSubmitInfo *submitInfo,

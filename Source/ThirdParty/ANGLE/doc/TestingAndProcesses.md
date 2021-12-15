@@ -42,6 +42,7 @@ There are a set of [dEQP](dEQP.md) expectations files in the
 [src/tests/deqp_support](../src/tests/deqp_support) directory.  Notice the format of a line and
 your choices for OS, driver, etc.  This is described in the directory's
 [README.md](../src/tests/deqp_support/README.md) file.  This includes:
+- `FLAKY` - For rare flakes
 - `FAIL` - For a test that flakes often or persistently fails
 - `SKIP` - For a test that crashes
 - `TIMEOUT` - For a test that is very slow and may timeout
@@ -51,9 +52,19 @@ your choices for OS, driver, etc.  This is described in the directory's
 
 These expectations all live in the
 [angle_end2end_tests_expectations.txt](../src/tests/angle_end2end_tests_expectations.txt) file.  The file format
-is the same as for the dEQP expectations.  However, `FAIL` is not valid, and so the choices are:
+is the same as for the dEQP expectations.  However, `FAIL` and `FLAKY` are not valid, and so the choices are:
 - `SKIP` - For a test that fails or crashes
 - `TIMEOUT` - For a test that is very slow and may timeout
+
+
+## Rubber stamping expectations CLs
+
+CLs that only change dEQP or angle_end2end_tests expectations don't require a human reviewer and can be
+[Rubber Stamped](https://chromium.googlesource.com/infra/infra/+/refs/heads/main/go/src/infra/appengine/rubber-stamper/README.md).
+The procedure is:
+1. Add rubber-stamper@appspot.gserviceaccount.com as the reviewer on the expectations CL. Please also CC a human reviewer for TBR.
+2. After 1 minute, Rubber Stamper should set "Bot-Commit: +1" on the CL.
+3. Now you should be able to "Commit-Queue: +2" your CL.
 
 
 ## WebGL conformance test expectations

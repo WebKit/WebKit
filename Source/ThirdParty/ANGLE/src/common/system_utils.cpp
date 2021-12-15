@@ -136,4 +136,8 @@ std::string ConcatenatePath(std::string first, std::string second)
     }
     return first + GetPathSeparator() + second;
 }
+
+PageFaultHandler::PageFaultHandler(PageFaultCallback callback) : mCallback(callback) {}
+PageFaultHandler::~PageFaultHandler() {}
+
 }  // namespace angle

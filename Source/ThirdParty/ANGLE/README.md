@@ -65,7 +65,7 @@ View the [Dev setup instructions](doc/DevSetup.md).
 
 * Join our [Google group](https://groups.google.com/group/angleproject) to keep up to date.
 * Join us on [Slack](https://chromium.slack.com) in the #angle channel. You can
-  follow the instructions on the [choromium developer page](https://www.chromium.org/developers/slack)
+  follow the instructions on the [Chromium developer page](https://www.chromium.org/developers/slack)
   for the steps to join the Slack channel. For Googlers, please follow the
   instructions on this [document](https://docs.google.com/document/d/1wWmRm-heDDBIkNJnureDiRO7kqcRouY2lSXlO6N2z6M/edit?usp=sharing)
   to use your google or chromium email to join the Slack channel.

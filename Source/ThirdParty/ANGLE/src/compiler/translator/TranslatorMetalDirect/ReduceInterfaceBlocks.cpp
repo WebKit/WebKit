@@ -21,7 +21,6 @@ using namespace sh;
 namespace
 {
 
-
 class Reducer : public TIntermRebuild
 {
     std::unordered_map<const TInterfaceBlock *, const TVariable *> mLiftedMap;

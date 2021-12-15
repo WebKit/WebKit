@@ -556,7 +556,6 @@ class Context : public ErrorHandler
 {
   public:
     Context(DisplayMtl *displayMtl);
-    _Nullable id<MTLDevice> getMetalDevice() const;
     mtl::CommandQueue &cmdQueue();
 
     DisplayMtl *getDisplay() const { return mDisplay; }

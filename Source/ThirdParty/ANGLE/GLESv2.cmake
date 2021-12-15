@@ -105,6 +105,7 @@ endif()
 if(is_apple)
     list(APPEND libangle_common_sources
         "src/common/apple/SoftLinking.h"
+        "src/common/apple/apple_platform.h"
         "src/common/gl/cgl/FunctionsCGL.cpp"
         "src/common/gl/cgl/FunctionsCGL.h"
         "src/common/system_utils_apple.cpp"

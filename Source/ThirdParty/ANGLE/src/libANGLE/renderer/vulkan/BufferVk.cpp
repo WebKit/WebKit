@@ -1022,6 +1022,8 @@ angle::Result BufferVk::acquireAndUpdate(ContextVk *contextVk,
     bool updateRegionBeforeSubData = mHasValidData && (offset > 0);
     bool updateRegionAfterSubData  = mHasValidData && (offsetAfterSubdata < bufferSize);
 
+    VkDeviceSize srcBufferOffset = mBufferOffset;
+
     uint8_t *srcMapPtrBeforeSubData = nullptr;
     uint8_t *srcMapPtrAfterSubData  = nullptr;
     if (updateRegionBeforeSubData || updateRegionAfterSubData)
@@ -1046,8 +1048,8 @@ angle::Result BufferVk::acquireAndUpdate(ContextVk *contextVk,
             ANGLE_TRY(
                 src->mapWithOffset(contextVk, &mapPointer, static_cast<size_t>(mBufferOffset)));
             ASSERT(mapPointer);
-            srcMapPtrBeforeSubData = mapPointer + mBufferOffset;
-            srcMapPtrAfterSubData  = mapPointer + mBufferOffset + offsetAfterSubdata;
+            srcMapPtrBeforeSubData = mapPointer;
+            srcMapPtrAfterSubData  = mapPointer + offsetAfterSubdata;
         }
     }
 
@@ -1066,7 +1068,7 @@ angle::Result BufferVk::acquireAndUpdate(ContextVk *contextVk,
         }
         else
         {
-            copyRegions.push_back({0, mBufferOffset, offset});
+            copyRegions.push_back({srcBufferOffset, mBufferOffset, offset});
         }
     }
 
@@ -1080,8 +1082,8 @@ angle::Result BufferVk::acquireAndUpdate(ContextVk *contextVk,
         }
         else
         {
-            copyRegions.push_back(
-                {offsetAfterSubdata, mBufferOffset + offsetAfterSubdata, copySize});
+            copyRegions.push_back({srcBufferOffset + offsetAfterSubdata,
+                                   mBufferOffset + offsetAfterSubdata, copySize});
         }
     }
 

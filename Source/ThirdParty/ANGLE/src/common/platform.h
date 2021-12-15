@@ -133,6 +133,16 @@
 #        if TARGET_OS_MACCATALYST
 #            define ANGLE_PLATFORM_MACCATALYST 1
 #        endif
+#    elif TARGET_OS_WATCH
+#        define ANGLE_PLATFORM_WATCHOS 1
+#        if TARGET_OS_SIMULATOR
+#            define ANGLE_PLATFORM_IOS_SIMULATOR 1
+#        endif
+#    elif TARGET_OS_TV
+#        define ANGLE_PLATFORM_APPLETV 1
+#        if TARGET_OS_SIMULATOR
+#            define ANGLE_PLATFORM_IOS_SIMULATOR 1
+#        endif
 #    endif
 #    // This might be useful globally. At the moment it is used
 #    // to differentiate MacCatalyst on Intel and Apple Silicon.

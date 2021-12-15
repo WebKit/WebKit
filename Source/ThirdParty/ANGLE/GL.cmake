@@ -164,9 +164,8 @@ if(ozone_platform_gbm)
         "src/libANGLE/renderer/gl/egl/gbm/SurfaceGbm.h"
     )
 
-     pkg_config("src/libANGLE/renderer/gl/libdrm") 
-     set(packages "src/libANGLE/renderer/gl/libdrm" )
-   
+    pkg_config("src/libANGLE/renderer/gl/libdrm") 
+    set(packages "src/libANGLE/renderer/gl/libdrm" )
 endif()
 
 

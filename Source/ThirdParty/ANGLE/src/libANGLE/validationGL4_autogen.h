@@ -517,14 +517,14 @@ bool ValidateInvalidateTexSubImage(const Context *context,
                                    GLsizei depth);
 bool ValidateMultiDrawArraysIndirect(const Context *context,
                                      angle::EntryPoint entryPoint,
-                                     GLenum mode,
+                                     PrimitiveMode modePacked,
                                      const void *indirect,
                                      GLsizei drawcount,
                                      GLsizei stride);
 bool ValidateMultiDrawElementsIndirect(const Context *context,
                                        angle::EntryPoint entryPoint,
-                                       GLenum mode,
-                                       GLenum type,
+                                       PrimitiveMode modePacked,
+                                       DrawElementsType typePacked,
                                        const void *indirect,
                                        GLsizei drawcount,
                                        GLsizei stride);

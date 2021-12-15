@@ -398,7 +398,7 @@ class ProgramState final : angle::NonCopyable
     // GL_ANGLE_multi_draw
     int mDrawIDLocation;
 
-    // GL_ANGLE_base_vertex_base_instance
+    // GL_ANGLE_base_vertex_base_instance_shader_builtin
     int mBaseVertexLocation;
     int mBaseInstanceLocation;
     // Cached value of base vertex and base instance

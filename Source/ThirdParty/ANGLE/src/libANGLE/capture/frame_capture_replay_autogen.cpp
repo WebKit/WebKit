@@ -1957,7 +1957,7 @@ void FrameCaptureShared::ReplayCall(gl::Context *context,
             break;
         case angle::EntryPoint::GLMultiDrawArraysIndirect:
             context->multiDrawArraysIndirect(
-                params.getParam("mode", ParamType::TGLenum, 0).value.GLenumVal,
+                params.getParam("modePacked", ParamType::TPrimitiveMode, 0).value.PrimitiveModeVal,
                 replayContext->getAsConstPointer<const void *>(
                     params.getParam("indirect", ParamType::TvoidConstPointer, 1)),
                 params.getParam("drawcount", ParamType::TGLsizei, 2).value.GLsizeiVal,
@@ -1989,8 +1989,9 @@ void FrameCaptureShared::ReplayCall(gl::Context *context,
             break;
         case angle::EntryPoint::GLMultiDrawElementsIndirect:
             context->multiDrawElementsIndirect(
-                params.getParam("mode", ParamType::TGLenum, 0).value.GLenumVal,
-                params.getParam("type", ParamType::TGLenum, 1).value.GLenumVal,
+                params.getParam("modePacked", ParamType::TPrimitiveMode, 0).value.PrimitiveModeVal,
+                params.getParam("typePacked", ParamType::TDrawElementsType, 1)
+                    .value.DrawElementsTypeVal,
                 replayContext->getAsConstPointer<const void *>(
                     params.getParam("indirect", ParamType::TvoidConstPointer, 2)),
                 params.getParam("drawcount", ParamType::TGLsizei, 3).value.GLsizeiVal,

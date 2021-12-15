@@ -10,6 +10,7 @@
 #include "libANGLE/renderer/driver_utils.h"
 
 #include "common/utilities.h"
+#include "common/vulkan/vk_headers.h"
 #include "image_util/loadimage.h"
 #include "libANGLE/Context.h"
 #include "libANGLE/renderer/renderer_utils.h"
@@ -1104,7 +1105,6 @@ void CommandBufferHelper::bufferRead(ContextVk *contextVk,
                                      PipelineStage readStage,
                                      BufferHelper *buffer)
 {
-    buffer->retainReadOnly(&contextVk->getResourceUseList());
     VkPipelineStageFlagBits stageBits = kPipelineStageFlagBitMap[readStage];
     if (buffer->recordReadBarrier(readAccessType, stageBits, &mPipelineBarriers[readStage]))
     {
@@ -1115,6 +1115,7 @@ void CommandBufferHelper::bufferRead(ContextVk *contextVk,
     if (!mUsedBuffers.contains(buffer->getBufferSerial().getValue()))
     {
         mUsedBuffers.insert(buffer->getBufferSerial().getValue(), BufferAccess::Read);
+        buffer->retainReadOnly(&contextVk->getResourceUseList());
     }
 }
 
@@ -1155,8 +1156,6 @@ void CommandBufferHelper::imageRead(ContextVk *contextVk,
                                     ImageLayout imageLayout,
                                     ImageHelper *image)
 {
-    image->retain(&contextVk->getResourceUseList());
-
     if (image->isReadBarrierNecessary(imageLayout))
     {
         updateImageLayoutAndBarrier(contextVk, image, aspectFlags, imageLayout);
@@ -1169,7 +1168,12 @@ void CommandBufferHelper::imageRead(ContextVk *contextVk,
         if (!usesImageInRenderPass(*image))
         {
             mRenderPassUsedImages.insert(image->getImageSerial().getValue());
+            image->retain(&contextVk->getResourceUseList());
         }
+    }
+    else
+    {
+        image->retain(&contextVk->getResourceUseList());
     }
 }
 
@@ -3060,7 +3064,7 @@ void QueryHelper::beginQueryImpl(ContextVk *contextVk,
 {
     ASSERT(mStatus != QueryStatus::Active);
     const QueryPool &queryPool = getQueryPool();
-    resetCommandBuffer->resetQueryPool(queryPool, mQuery, mQueryCount);
+    resetQueryPoolImpl(contextVk, queryPool, resetCommandBuffer);
     commandBuffer->beginQuery(queryPool, mQuery, 0);
     mStatus = QueryStatus::Active;
 }
@@ -3111,6 +3115,22 @@ angle::Result QueryHelper::endQuery(ContextVk *contextVk)
     return angle::Result::Continue;
 }
 
+template <typename CommandBufferT>
+void QueryHelper::resetQueryPoolImpl(ContextVk *contextVk,
+                                     const QueryPool &queryPool,
+                                     CommandBufferT *commandBuffer)
+{
+    RendererVk *renderer = contextVk->getRenderer();
+    if (vkResetQueryPoolEXT != nullptr && renderer->getFeatures().supportsHostQueryReset.enabled)
+    {
+        vkResetQueryPoolEXT(contextVk->getDevice(), queryPool.getHandle(), mQuery, mQueryCount);
+    }
+    else
+    {
+        commandBuffer->resetQueryPool(queryPool, mQuery, mQueryCount);
+    }
+}
+
 angle::Result QueryHelper::beginRenderPassQuery(ContextVk *contextVk)
 {
     CommandBuffer *outsideRenderPassCommandBuffer;
@@ -3151,14 +3171,14 @@ void QueryHelper::writeTimestampToPrimary(ContextVk *contextVk, PrimaryCommandBu
     // Note that commands may not be flushed at this point.
 
     const QueryPool &queryPool = getQueryPool();
-    primary->resetQueryPool(queryPool, mQuery, mQueryCount);
+    resetQueryPoolImpl(contextVk, queryPool, primary);
     primary->writeTimestamp(VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT, queryPool, mQuery);
 }
 
 void QueryHelper::writeTimestamp(ContextVk *contextVk, CommandBuffer *commandBuffer)
 {
     const QueryPool &queryPool = getQueryPool();
-    commandBuffer->resetQueryPool(queryPool, mQuery, mQueryCount);
+    resetQueryPoolImpl(contextVk, queryPool, commandBuffer);
     commandBuffer->writeTimestamp(VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT, queryPool, mQuery);
     // timestamp results are available immediately, retain this query so that we get its serial
     // updated which is used to indicate that query results are (or will be) available.
@@ -3966,7 +3986,6 @@ ImageHelper::ImageHelper(ImageHelper &&other)
       mLastNonShaderReadOnlyLayout(other.mLastNonShaderReadOnlyLayout),
       mCurrentShaderReadStageMask(other.mCurrentShaderReadStageMask),
       mYcbcrConversionDesc(other.mYcbcrConversionDesc),
-      mYuvConversionSampler(std::move(other.mYuvConversionSampler)),
       mFirstAllocatedLevel(other.mFirstAllocatedLevel),
       mLayerCount(other.mLayerCount),
       mLevelCount(other.mLevelCount),
@@ -4202,7 +4221,6 @@ angle::Result ImageHelper::initExternal(Context *context,
     }
 
     mYcbcrConversionDesc.reset();
-    mYuvConversionSampler.reset();
 
     const angle::Format &actualFormat = angle::Format::Get(actualFormatID);
     VkFormat actualVkFormat           = GetVkFormatFromFormatID(actualFormatID);
@@ -4231,23 +4249,17 @@ angle::Result ImageHelper::initExternal(Context *context,
         VkSamplerYcbcrModelConversion conversionModel = VK_SAMPLER_YCBCR_MODEL_CONVERSION_YCBCR_601;
         VkSamplerYcbcrRange colorRange                = VK_SAMPLER_YCBCR_RANGE_ITU_NARROW;
         VkFilter chromaFilter                         = VK_FILTER_NEAREST;
+        VkComponentMapping components                 = {
+            VK_COMPONENT_SWIZZLE_IDENTITY,
+            VK_COMPONENT_SWIZZLE_IDENTITY,
+            VK_COMPONENT_SWIZZLE_IDENTITY,
+            VK_COMPONENT_SWIZZLE_IDENTITY,
+        };
 
         // Create the VkSamplerYcbcrConversion to associate with image views and samplers
-        VkSamplerYcbcrConversionCreateInfo yuvConversionInfo = {};
-        yuvConversionInfo.sType         = VK_STRUCTURE_TYPE_SAMPLER_YCBCR_CONVERSION_CREATE_INFO;
-        yuvConversionInfo.format        = actualVkFormat;
-        yuvConversionInfo.xChromaOffset = supportedLocation;
-        yuvConversionInfo.yChromaOffset = supportedLocation;
-        yuvConversionInfo.ycbcrModel    = conversionModel;
-        yuvConversionInfo.ycbcrRange    = colorRange;
-        yuvConversionInfo.chromaFilter  = chromaFilter;
-
-        // Update the YuvConversionCache key
+        // Update the SamplerYcbcrConversionCache key
         mYcbcrConversionDesc.update(rendererVk, 0, conversionModel, colorRange, supportedLocation,
-                                    supportedLocation, chromaFilter, intendedFormatID);
-
-        ANGLE_TRY(rendererVk->getYuvConversionCache().getYuvConversion(
-            context, mYcbcrConversionDesc, yuvConversionInfo, &mYuvConversionSampler));
+                                    supportedLocation, chromaFilter, components, intendedFormatID);
     }
 
     if (hasProtectedContent)
@@ -4534,15 +4546,13 @@ angle::Result ImageHelper::initMemory(Context *context,
     return angle::Result::Continue;
 }
 
-angle::Result ImageHelper::initExternalMemory(
-    Context *context,
-    const MemoryProperties &memoryProperties,
-    const VkMemoryRequirements &memoryRequirements,
-    const VkSamplerYcbcrConversionCreateInfo *samplerYcbcrConversionCreateInfo,
-    uint32_t extraAllocationInfoCount,
-    const void **extraAllocationInfo,
-    uint32_t currentQueueFamilyIndex,
-    VkMemoryPropertyFlags flags)
+angle::Result ImageHelper::initExternalMemory(Context *context,
+                                              const MemoryProperties &memoryProperties,
+                                              const VkMemoryRequirements &memoryRequirements,
+                                              uint32_t extraAllocationInfoCount,
+                                              const void **extraAllocationInfo,
+                                              uint32_t currentQueueFamilyIndex,
+                                              VkMemoryPropertyFlags flags)
 {
     // Vulkan allows up to 4 memory planes.
     constexpr size_t kMaxMemoryPlanes                                     = 4;
@@ -4570,28 +4580,6 @@ angle::Result ImageHelper::initExternalMemory(
     }
     mCurrentQueueFamilyIndex = currentQueueFamilyIndex;
 
-#ifdef VK_USE_PLATFORM_ANDROID_KHR
-    if (samplerYcbcrConversionCreateInfo)
-    {
-        const VkExternalFormatANDROID *vkExternalFormat =
-            reinterpret_cast<const VkExternalFormatANDROID *>(
-                samplerYcbcrConversionCreateInfo->pNext);
-        ASSERT(vkExternalFormat->sType == VK_STRUCTURE_TYPE_EXTERNAL_FORMAT_ANDROID);
-
-        // Update the YuvConversionCache key
-        mYcbcrConversionDesc.update(context->getRenderer(), vkExternalFormat->externalFormat,
-                                    samplerYcbcrConversionCreateInfo->ycbcrModel,
-                                    samplerYcbcrConversionCreateInfo->ycbcrRange,
-                                    samplerYcbcrConversionCreateInfo->xChromaOffset,
-                                    samplerYcbcrConversionCreateInfo->yChromaOffset,
-                                    samplerYcbcrConversionCreateInfo->chromaFilter,
-                                    angle::FormatID::NONE);
-
-        ANGLE_TRY(context->getRenderer()->getYuvConversionCache().getYuvConversion(
-            context, mYcbcrConversionDesc, *samplerYcbcrConversionCreateInfo,
-            &mYuvConversionSampler));
-    }
-#endif
     return angle::Result::Continue;
 }
 
@@ -4674,7 +4662,7 @@ angle::Result ImageHelper::initLayerImageViewImpl(
     viewInfo.viewType              = gl_vk::GetImageViewType(textureType);
     viewInfo.format                = imageFormat;
 
-    if (swizzleMap.swizzleRequired() && !mYuvConversionSampler.valid())
+    if (swizzleMap.swizzleRequired() && !mYcbcrConversionDesc.valid())
     {
         viewInfo.components.r = gl_vk::GetSwizzle(swizzleMap.swizzleRed);
         viewInfo.components.g = gl_vk::GetSwizzle(swizzleMap.swizzleGreen);
@@ -4697,12 +4685,13 @@ angle::Result ImageHelper::initLayerImageViewImpl(
     viewInfo.pNext = imageViewUsageCreateInfo;
 
     VkSamplerYcbcrConversionInfo yuvConversionInfo = {};
-    if (mYuvConversionSampler.valid())
+    if (mYcbcrConversionDesc.valid())
     {
         ASSERT((context->getRenderer()->getFeatures().supportsYUVSamplerConversion.enabled));
-        yuvConversionInfo.sType      = VK_STRUCTURE_TYPE_SAMPLER_YCBCR_CONVERSION_INFO;
-        yuvConversionInfo.pNext      = nullptr;
-        yuvConversionInfo.conversion = mYuvConversionSampler.get().getHandle();
+        yuvConversionInfo.sType = VK_STRUCTURE_TYPE_SAMPLER_YCBCR_CONVERSION_INFO;
+        yuvConversionInfo.pNext = nullptr;
+        ANGLE_TRY(context->getRenderer()->getYuvConversionCache().getSamplerYcbcrConversion(
+            context, mYcbcrConversionDesc, &yuvConversionInfo.conversion));
         AddToPNextChain(&viewInfo, &yuvConversionInfo);
 
         // VUID-VkImageViewCreateInfo-image-02399
@@ -4773,9 +4762,10 @@ void ImageHelper::init2DWeakReference(Context *context,
     mActualFormatID     = actualFormatID;
     mSamples            = std::max(samples, 1);
     mImageSerial        = context->getRenderer()->getResourceSerialFactory().generateImageSerial();
-    mCurrentLayout      = ImageLayout::Undefined;
-    mLayerCount         = 1;
-    mLevelCount         = 1;
+    mCurrentQueueFamilyIndex = context->getRenderer()->getQueueFamilyIndex();
+    mCurrentLayout           = ImageLayout::Undefined;
+    mLayerCount              = 1;
+    mLevelCount              = 1;
 
     mImage.setHandle(handle);
 
@@ -6536,6 +6526,9 @@ void ImageHelper::stageSelfAsSubresourceUpdates(ContextVk *contextVk,
 
     // Move the necessary information for staged update to work, and keep the rest as part of this
     // object.
+
+    // Usage info
+    prevImage->get().Resource::operator=(std::move(*this));
 
     // Vulkan objects
     prevImage->get().mImage        = std::move(mImage);

@@ -690,7 +690,7 @@ Result SerializeBuffer(const gl::Context *context,
 {
     GroupScope group(json, "Buffer", buffer->id().value);
     SerializeBufferState(json, buffer->getState());
-    if (buffer->getSize())
+    if (buffer->getSize() > 0)
     {
         MemoryBuffer *dataPtr = nullptr;
         ANGLE_CHECK_GL_ALLOC(

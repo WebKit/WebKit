@@ -149,14 +149,14 @@ bool CanMultiDrawIndirectUseCmd(ContextVk *contextVk,
     // Use the generic implementation if multiDrawIndirect is disabled, if line loop is being used
     // for multiDraw, if drawcount is greater than maxDrawIndirectCount, or if there are streaming
     // vertex attributes.
+    ASSERT(drawcount > 1);
     const bool supportsMultiDrawIndirect =
         contextVk->getFeatures().supportsMultiDrawIndirect.enabled;
-    const bool isMultiDrawLineLoop = (mode == gl::PrimitiveMode::LineLoop && drawcount > 1);
+    const bool isMultiDrawLineLoop = (mode == gl::PrimitiveMode::LineLoop);
     const bool isDrawCountBeyondLimit =
         (static_cast<uint32_t>(drawcount) >
          contextVk->getRenderer()->getPhysicalDeviceProperties().limits.maxDrawIndirectCount);
-    const bool isMultiDrawWithStreamingAttribs =
-        (vertexArray->getStreamingVertexAttribsMask().any() && drawcount > 1);
+    const bool isMultiDrawWithStreamingAttribs = vertexArray->getStreamingVertexAttribsMask().any();
 
     const bool canMultiDrawIndirectUseCmd = supportsMultiDrawIndirect && !isMultiDrawLineLoop &&
                                             !isDrawCountBeyondLimit &&
@@ -339,11 +339,15 @@ void AppendBufferVectorToDesc(vk::ShaderBuffersDescriptorDesc *desc,
             VkDeviceSize bufferOffset = 0;
             vk::BufferSerial bufferSerial =
                 bufferVk->getBufferAndOffset(&bufferOffset).getBufferSerial();
-
             desc->appendBufferSerial(bufferSerial);
+
             ASSERT(static_cast<uint64_t>(binding.getSize()) <=
                    static_cast<uint64_t>(std::numeric_limits<uint32_t>::max()));
-            desc->append32BitValue(static_cast<uint32_t>(binding.getSize()));
+            // binding's size could be 0 if it is bound by glBindBufferBase call. In this case, the
+            // spec says we should use the actual buffer size at the time buffer is been referenced.
+            GLint64 size = binding.getSize() == 0 ? bufferGL->getSize() : binding.getSize();
+            desc->append32BitValue(static_cast<uint32_t>(size));
+
             if (appendOffset)
             {
                 ASSERT(static_cast<uint64_t>(binding.getOffset()) <
@@ -444,6 +448,9 @@ constexpr angle::PackedEnumMap<RenderPassClosureReason, const char *> kRenderPas
      "Render pass closed due to reformatting texture to a renderable fallback"},
     {RenderPassClosureReason::DeviceLocalBufferMap,
      "Render pass closed due to mapping device local buffer"},
+    {RenderPassClosureReason::PrepareForBlit, "Render pass closed prior to draw-based blit"},
+    {RenderPassClosureReason::PrepareForImageCopy,
+     "Render pass closed prior to draw-based image copy"},
     {RenderPassClosureReason::TemporaryForImageClear,
      "Temporary render pass used for image clear closed"},
     {RenderPassClosureReason::TemporaryForImageCopy,
@@ -929,7 +936,13 @@ angle::Result ContextVk::initialize()
 
 angle::Result ContextVk::flush(const gl::Context *context)
 {
-    if (mRenderer->getFeatures().deferFlushUntilEndRenderPass.enabled && hasStartedRenderPass())
+    const bool isSingleBuffer =
+        (mCurrentWindowSurface != nullptr) && mCurrentWindowSurface->isSharedPresentMode();
+
+    // Don't defer flushes in single-buffer mode.  In this mode, the application is not required to
+    // call eglSwapBuffers(), and glFlush() is expected to ensure that work is submitted.
+    if (mRenderer->getFeatures().deferFlushUntilEndRenderPass.enabled && hasStartedRenderPass() &&
+        !isSingleBuffer)
     {
         mHasDeferredFlush = true;
         return angle::Result::Continue;
@@ -2902,7 +2915,7 @@ angle::Result ContextVk::multiDrawArraysIndirectHelper(const gl::Context *contex
                                                        GLsizei drawcount,
                                                        GLsizei stride)
 {
-    if (!rx::CanMultiDrawIndirectUseCmd(this, mVertexArray, mode, drawcount, stride))
+    if (drawcount > 1 && !CanMultiDrawIndirectUseCmd(this, mVertexArray, mode, drawcount, stride))
     {
         return rx::MultiDrawArraysIndirectGeneral(this, context, mode, indirect, drawcount, stride);
     }
@@ -3004,7 +3017,7 @@ angle::Result ContextVk::multiDrawElementsIndirectHelper(const gl::Context *cont
                                                          GLsizei drawcount,
                                                          GLsizei stride)
 {
-    if (!rx::CanMultiDrawIndirectUseCmd(this, mVertexArray, mode, drawcount, stride))
+    if (drawcount > 1 && !CanMultiDrawIndirectUseCmd(this, mVertexArray, mode, drawcount, stride))
     {
         return rx::MultiDrawElementsIndirectGeneral(this, context, mode, type, indirect, drawcount,
                                                     stride);
@@ -3022,6 +3035,10 @@ angle::Result ContextVk::multiDrawElementsIndirectHelper(const gl::Context *cont
         &vk::GetImpl(indirectBuffer)->getBufferAndOffset(&indirectBufferOffset);
     VkDeviceSize currentIndirectBufOffset =
         indirectBufferOffset + reinterpret_cast<VkDeviceSize>(indirect);
+
+    // Reset the index buffer offset
+    mGraphicsDirtyBits.set(DIRTY_BIT_INDEX_BUFFER);
+    mCurrentIndexBufferOffset = 0;
 
     if (mVertexArray->getStreamingVertexAttribsMask().any())
     {
@@ -6174,15 +6191,21 @@ angle::Result ContextVk::endRenderPassQuery(QueryVk *queryVk)
     // Emit debug-util markers before calling the query command.
     ANGLE_TRY(handleGraphicsEventLog(rx::GraphicsEventCmdBuf::InRenderPassCmdBufQueryCmd));
 
-    if (mRenderPassCommandBuffer)
+    // End the query inside the render pass.  In some situations, the query may not have actually
+    // been issued, so there is nothing to do there.  That is the case for transform feedback
+    // queries which are deferred until a draw call with transform feedback active is issued, which
+    // may have never happened.
+    ASSERT(mRenderPassCommandBuffer == nullptr ||
+           type == gl::QueryType::TransformFeedbackPrimitivesWritten || queryVk->hasQueryBegun());
+    if (mRenderPassCommandBuffer && queryVk->hasQueryBegun())
     {
         queryVk->getQueryHelper()->endRenderPassQuery(this);
+    }
 
-        // Update rasterizer discard emulation with primitives generated query if necessary.
-        if (type == gl::QueryType::PrimitivesGenerated)
-        {
-            updateRasterizerDiscardEnabled(false);
-        }
+    // Update rasterizer discard emulation with primitives generated query if necessary.
+    if (type == gl::QueryType::PrimitivesGenerated)
+    {
+        updateRasterizerDiscardEnabled(false);
     }
 
     ASSERT(mActiveRenderPassQueries[type] == queryVk);

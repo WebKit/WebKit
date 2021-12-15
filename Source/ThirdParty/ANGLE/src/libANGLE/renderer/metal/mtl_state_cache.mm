@@ -183,10 +183,10 @@ id<MTLTexture> ToObjC(const TextureRef &texture)
     return textureRef ? textureRef->get() : nil;
 }
 
-void BaseRenderPassAttachmentDescToObjC(MTLRenderPassAttachmentDescriptor *dst,
-                                        const RenderPassAttachmentDesc &src)
+void BaseRenderPassAttachmentDescToObjC(const RenderPassAttachmentDesc &src,
+                                        MTLRenderPassAttachmentDescriptor *dst)
 {
-    auto implicitMsTexture = src.implicitMSTexture;
+    const TextureRef &implicitMsTexture = src.implicitMSTexture;
 
     if (implicitMsTexture)
     {
@@ -232,26 +232,26 @@ void BaseRenderPassAttachmentDescToObjC(MTLRenderPassAttachmentDescriptor *dst,
     ANGLE_OBJC_CP_PROPERTY(dst, src, storeActionOptions);
 }
 
-void ToObjC(MTLRenderPassColorAttachmentDescriptor *objCDesc,
-            const RenderPassColorAttachmentDesc &desc)
+void ToObjC(const RenderPassColorAttachmentDesc &desc,
+            MTLRenderPassColorAttachmentDescriptor *objCDesc)
 {
-    BaseRenderPassAttachmentDescToObjC(objCDesc, desc);
+    BaseRenderPassAttachmentDescToObjC(desc, objCDesc);
 
     ANGLE_OBJC_CP_PROPERTY(objCDesc, desc, clearColor);
 }
 
-void ToObjC(MTLRenderPassDepthAttachmentDescriptor *objCDesc,
-            const RenderPassDepthAttachmentDesc &desc)
+void ToObjC(const RenderPassDepthAttachmentDesc &desc,
+            MTLRenderPassDepthAttachmentDescriptor *objCDesc)
 {
-    BaseRenderPassAttachmentDescToObjC(objCDesc, desc);
+    BaseRenderPassAttachmentDescToObjC(desc, objCDesc);
 
     ANGLE_OBJC_CP_PROPERTY(objCDesc, desc, clearDepth);
 }
 
-void ToObjC(MTLRenderPassStencilAttachmentDescriptor *objCDesc,
-            const RenderPassStencilAttachmentDesc &desc)
+void ToObjC(const RenderPassStencilAttachmentDesc &desc,
+            MTLRenderPassStencilAttachmentDescriptor *objCDesc)
 {
-    BaseRenderPassAttachmentDescToObjC(objCDesc, desc);
+    BaseRenderPassAttachmentDescToObjC(desc, objCDesc);
 
     ANGLE_OBJC_CP_PROPERTY(objCDesc, desc, clearStencil);
 }
@@ -714,30 +714,6 @@ bool RenderPassAttachmentDesc::operator==(const RenderPassAttachmentDesc &other)
     return loadAction == other.loadAction && storeAction == other.storeAction &&
            storeActionOptions == other.storeActionOptions;
 }
-// Convert to Metal object
-void RenderPassDesc::convertToMetalDesc(MTLRenderPassDescriptor *objCDesc) const
-{
-    ANGLE_MTL_OBJC_SCOPE
-    {
-        for (uint32_t i = 0; i < numColorAttachments; ++i)
-        {
-            ToObjC(objCDesc.colorAttachments[i], colorAttachments[i]);
-        }
-        for (uint32_t i = numColorAttachments; i < kMaxRenderTargets; ++i)
-        {
-            // Inactive render target
-            objCDesc.colorAttachments[i].texture     = nil;
-            objCDesc.colorAttachments[i].level       = 0;
-            objCDesc.colorAttachments[i].slice       = 0;
-            objCDesc.colorAttachments[i].depthPlane  = 0;
-            objCDesc.colorAttachments[i].loadAction  = MTLLoadActionDontCare;
-            objCDesc.colorAttachments[i].storeAction = MTLStoreActionDontCare;
-        }
-
-        ToObjC(objCDesc.depthAttachment, depthAttachment);
-        ToObjC(objCDesc.stencilAttachment, stencilAttachment);
-    }
-}
 
 void RenderPassDesc::populateRenderPipelineOutputDesc(RenderPipelineOutputDesc *outDesc) const
 {
@@ -761,9 +737,9 @@ void RenderPassDesc::populateRenderPipelineOutputDesc(const WriteMaskArray &writ
 void RenderPassDesc::populateRenderPipelineOutputDesc(const BlendDescArray &blendDescArray,
                                                       RenderPipelineOutputDesc *outDesc) const
 {
-    auto &outputDescriptor               = *outDesc;
-    outputDescriptor.numColorAttachments = this->numColorAttachments;
-    outputDescriptor.sampleCount         = this->sampleCount;
+    RenderPipelineOutputDesc &outputDescriptor = *outDesc;
+    outputDescriptor.numColorAttachments       = this->numColorAttachments;
+    outputDescriptor.sampleCount               = this->sampleCount;
     for (uint32_t i = 0; i < this->numColorAttachments; ++i)
     {
         auto &renderPassColorAttachment = this->colorAttachments[i];
@@ -854,9 +830,33 @@ bool RenderPassDesc::operator==(const RenderPassDesc &other) const
     return depthAttachment == other.depthAttachment && stencilAttachment == other.stencilAttachment;
 }
 
-// RenderPipelineCache implementation
-RenderPipelineCache::RenderPipelineCache() : RenderPipelineCache(nullptr) {
+// Convert to Metal object
+void RenderPassDesc::convertToMetalDesc(MTLRenderPassDescriptor *objCDesc) const
+{
+    ANGLE_MTL_OBJC_SCOPE
+    {
+        for (uint32_t i = 0; i < numColorAttachments; ++i)
+        {
+            ToObjC(colorAttachments[i], objCDesc.colorAttachments[i]);
+        }
+        for (uint32_t i = numColorAttachments; i < kMaxRenderTargets; ++i)
+        {
+            // Inactive render target
+            objCDesc.colorAttachments[i].texture     = nil;
+            objCDesc.colorAttachments[i].level       = 0;
+            objCDesc.colorAttachments[i].slice       = 0;
+            objCDesc.colorAttachments[i].depthPlane  = 0;
+            objCDesc.colorAttachments[i].loadAction  = MTLLoadActionDontCare;
+            objCDesc.colorAttachments[i].storeAction = MTLStoreActionDontCare;
+        }
+
+        ToObjC(depthAttachment, objCDesc.depthAttachment);
+        ToObjC(stencilAttachment, objCDesc.stencilAttachment);
+    }
 }
+
+// RenderPipelineCache implementation
+RenderPipelineCache::RenderPipelineCache() : RenderPipelineCache(nullptr) {}
 
 RenderPipelineCache::RenderPipelineCache(
     RenderPipelineCacheSpecializeShaderFactory *specializedShaderFactory)
@@ -865,8 +865,7 @@ RenderPipelineCache::RenderPipelineCache(
 
 RenderPipelineCache::~RenderPipelineCache() {}
 
-void RenderPipelineCache::setVertexShader(Context *context,
-                                          id<MTLFunction> shader)
+void RenderPipelineCache::setVertexShader(ContextMtl *context, id<MTLFunction> shader)
 {
     mVertexShader.retainAssign(shader);
 
@@ -879,8 +878,7 @@ void RenderPipelineCache::setVertexShader(Context *context,
     recreatePipelineStates(context);
 }
 
-void RenderPipelineCache::setFragmentShader(Context *context,
-                                            id<MTLFunction> shader)
+void RenderPipelineCache::setFragmentShader(ContextMtl *context, id<MTLFunction> shader)
 {
     mFragmentShader.retainAssign(shader);
 
@@ -924,12 +922,16 @@ AutoObjCPtr<id<MTLRenderPipelineState>> RenderPipelineCache::getRenderPipelineSt
 }
 
 AutoObjCPtr<id<MTLRenderPipelineState>> RenderPipelineCache::insertRenderPipelineState(
-    Context *context,
+    ContextMtl *context,
     const RenderPipelineDesc &desc,
     bool insertDefaultAttribLayout)
 {
     AutoObjCPtr<id<MTLRenderPipelineState>> newState =
         createRenderPipelineState(context, desc, insertDefaultAttribLayout);
+    if (!newState)
+    {
+        return nil;
+    }
 
     int tableIdx = insertDefaultAttribLayout ? 1 : 0;
     auto re      = mRenderPipelineStates[tableIdx].insert(std::make_pair(desc, newState));
@@ -941,9 +943,8 @@ AutoObjCPtr<id<MTLRenderPipelineState>> RenderPipelineCache::insertRenderPipelin
     return re.first->second;
 }
 
-
 AutoObjCPtr<id<MTLRenderPipelineState>> RenderPipelineCache::createRenderPipelineState(
-    Context *context,
+    ContextMtl *context,
     const RenderPipelineDesc &originalDesc,
     bool insertDefaultAttribLayout)
 {
@@ -957,6 +958,7 @@ AutoObjCPtr<id<MTLRenderPipelineState>> RenderPipelineCache::createRenderPipelin
             desc.emulateCoverageMask    = false;
             desc.alphaToCoverageEnabled = false;
         }
+
         // Choose shader variant
         id<MTLFunction> vertShader = nil;
         id<MTLFunction> fragShader = nil;
@@ -997,29 +999,32 @@ AutoObjCPtr<id<MTLRenderPipelineState>> RenderPipelineCache::createRenderPipelin
             return nil;
         }
 
-        id<MTLDevice> metalDevice = context->getMetalDevice();
+        const mtl::ContextDevice &metalDevice = context->getMetalDevice();
 
         // Convert to Objective-C desc:
         AutoObjCObj<MTLRenderPipelineDescriptor> objCDesc = ToObjC(vertShader, fragShader, desc);
+
         // Validate Render Pipeline State:
         if (DeviceHasMaximumRenderTargetSize(metalDevice))
         {
+            // TODO: Is the use of NSUInteger in 32 bit systems ok without any overflow checking?
             NSUInteger maxSize = GetMaxRenderTargetSizeForDeviceInBytes(metalDevice);
             NSUInteger renderTargetSize =
                 ComputeTotalSizeUsedForMTLRenderPipelineDescriptor(objCDesc, context, metalDevice);
             if (renderTargetSize > maxSize)
             {
-                NSString *errorString =
-                    [NSString stringWithFormat:@"This set of render targets requires %lu bytes of "
-                                               @"pixel storage. This device supports %lu bytes.",
-                                               (unsigned long)renderTargetSize, (unsigned long)maxSize];
-                NSError *err = [NSError errorWithDomain:@"MTLValidationError"
+                NSString *errorString = [NSString
+                    stringWithFormat:@"This set of render targets requires %lu bytes of "
+                                     @"pixel storage. This device supports %lu bytes.",
+                                     (unsigned long)renderTargetSize, (unsigned long)maxSize];
+                NSError *err          = [NSError errorWithDomain:@"MTLValidationError"
                                                    code:-1
                                                userInfo:@{NSLocalizedDescriptionKey : errorString}];
                 context->handleError(err, __FILE__, ANGLE_FUNCTION, __LINE__);
                 return nil;
             }
         }
+
         // Special attribute slot for default attribute
         if (insertDefaultAttribLayout)
         {
@@ -1034,9 +1039,8 @@ AutoObjCPtr<id<MTLRenderPipelineState>> RenderPipelineCache::createRenderPipelin
                 atIndexedSubscript:kDefaultAttribsBindingIndex];
         }
         // Create pipeline state
-        NSError *err = nil;
-        auto newState =
-            adoptObjCObj([metalDevice newRenderPipelineStateWithDescriptor:objCDesc error:&err]);
+        NSError *err  = nil;
+        auto newState = metalDevice.newRenderPipelineStateWithDescriptor(objCDesc, &err);
         if (err)
         {
             context->handleError(err, __FILE__, ANGLE_FUNCTION, __LINE__);
@@ -1047,7 +1051,7 @@ AutoObjCPtr<id<MTLRenderPipelineState>> RenderPipelineCache::createRenderPipelin
     }
 }
 
-void RenderPipelineCache::recreatePipelineStates(Context *context)
+void RenderPipelineCache::recreatePipelineStates(ContextMtl *context)
 {
     for (int hasDefaultAttrib = 0; hasDefaultAttrib <= 1; ++hasDefaultAttrib)
     {
@@ -1120,7 +1124,8 @@ ProvokingVertexComputePipelineCache::ProvokingVertexComputePipelineCache(
     : mComputeShader(nullptr), mSpecializedShaderFactory(specializedShaderFactory)
 {}
 
-void ProvokingVertexComputePipelineCache::setComputeShader(Context *context, id<MTLFunction> shader)
+void ProvokingVertexComputePipelineCache::setComputeShader(ContextMtl *context,
+                                                           id<MTLFunction> shader)
 {
     mComputeShader.retainAssign(shader);
     if (!shader)
@@ -1159,7 +1164,7 @@ ProvokingVertexComputePipelineCache::getComputePipelineState(
 
 AutoObjCPtr<id<MTLComputePipelineState>>
 ProvokingVertexComputePipelineCache::insertComputePipelineState(
-    Context *context,
+    ContextMtl *context,
     const ProvokingVertexComputePipelineDesc &desc)
 {
     AutoObjCPtr<id<MTLComputePipelineState>> newState = createComputePipelineState(context, desc);
@@ -1173,7 +1178,7 @@ ProvokingVertexComputePipelineCache::insertComputePipelineState(
     return re.first->second;
 }
 
-void ProvokingVertexComputePipelineCache::recreatePipelineStates(Context *context)
+void ProvokingVertexComputePipelineCache::recreatePipelineStates(ContextMtl *context)
 {
 
     for (auto &ite : mComputePipelineStates)
@@ -1189,7 +1194,7 @@ void ProvokingVertexComputePipelineCache::recreatePipelineStates(Context *contex
 
 AutoObjCPtr<id<MTLComputePipelineState>>
 ProvokingVertexComputePipelineCache::createComputePipelineState(
-    Context *context,
+    ContextMtl *context,
     const ProvokingVertexComputePipelineDesc &originalDesc)
 {
     ANGLE_MTL_OBJC_SCOPE
@@ -1198,6 +1203,8 @@ ProvokingVertexComputePipelineCache::createComputePipelineState(
         ProvokingVertexComputePipelineDesc desc = originalDesc;
 
         id<MTLFunction> computeFunction = nil;
+        // Special case for transform feedback shader, we've already created it! See
+        // getTransformFeedbackRenderPipeline
         if (mSpecializedShaderFactory &&
             mSpecializedShaderFactory->hasSpecializedShader(gl::ShaderType::Compute, desc))
         {
@@ -1220,12 +1227,11 @@ ProvokingVertexComputePipelineCache::createComputePipelineState(
             return nil;
         }
 
-        id<MTLDevice> metalDevice = context->getMetalDevice();
+        const mtl::ContextDevice &metalDevice = context->getMetalDevice();
 
         // Convert to Objective-C desc:
-        NSError *err = nil;
-        auto newState =
-            adoptObjCObj([metalDevice newComputePipelineStateWithFunction:computeFunction error:&err]);
+        NSError *err  = nil;
+        auto newState = metalDevice.newComputePipelineStateWithFunction(computeFunction, &err);
         if (err)
         {
             context->handleError(err, __FILE__, ANGLE_FUNCTION, __LINE__);
@@ -1243,7 +1249,8 @@ StateCache::StateCache(const angle::FeaturesMtl &features) : mFeatures(features)
 
 StateCache::~StateCache() {}
 
-AutoObjCPtr<id<MTLDepthStencilState>> StateCache::getNullDepthStencilState(id<MTLDevice> device)
+AutoObjCPtr<id<MTLDepthStencilState>> StateCache::getNullDepthStencilState(
+    const mtl::ContextDevice &device)
 {
     if (!mNullDepthStencilState)
     {
@@ -1256,8 +1263,9 @@ AutoObjCPtr<id<MTLDepthStencilState>> StateCache::getNullDepthStencilState(id<MT
     return mNullDepthStencilState;
 }
 
-AutoObjCPtr<id<MTLDepthStencilState>> StateCache::getDepthStencilState(id<MTLDevice> metalDevice,
-                                                                       const DepthStencilDesc &desc)
+AutoObjCPtr<id<MTLDepthStencilState>> StateCache::getDepthStencilState(
+    const mtl::ContextDevice &device,
+    const DepthStencilDesc &desc)
 {
     ANGLE_MTL_OBJC_SCOPE
     {
@@ -1266,7 +1274,7 @@ AutoObjCPtr<id<MTLDepthStencilState>> StateCache::getDepthStencilState(id<MTLDev
         {
             AutoObjCObj<MTLDepthStencilDescriptor> objCDesc = ToObjC(desc);
             AutoObjCPtr<id<MTLDepthStencilState>> newState =
-                [[metalDevice newDepthStencilStateWithDescriptor:objCDesc] ANGLE_MTL_AUTORELEASE];
+                [device.newDepthStencilStateWithDescriptor(objCDesc) ANGLE_MTL_AUTORELEASE];
 
             auto re = mDepthStencilStates.insert(std::make_pair(desc, newState));
             if (!re.second)
@@ -1281,7 +1289,7 @@ AutoObjCPtr<id<MTLDepthStencilState>> StateCache::getDepthStencilState(id<MTLDev
     }
 }
 
-AutoObjCPtr<id<MTLSamplerState>> StateCache::getSamplerState(id<MTLDevice> metalDevice,
+AutoObjCPtr<id<MTLSamplerState>> StateCache::getSamplerState(const mtl::ContextDevice &device,
                                                              const SamplerDesc &desc)
 {
     ANGLE_MTL_OBJC_SCOPE
@@ -1296,7 +1304,7 @@ AutoObjCPtr<id<MTLSamplerState>> StateCache::getSamplerState(id<MTLDevice> metal
                 objCDesc.get().compareFunction = MTLCompareFunctionNever;
             }
             AutoObjCPtr<id<MTLSamplerState>> newState =
-                [[metalDevice newSamplerStateWithDescriptor:objCDesc] ANGLE_MTL_AUTORELEASE];
+                [device.newSamplerStateWithDescriptor(objCDesc) ANGLE_MTL_AUTORELEASE];
 
             auto re = mSamplerStates.insert(std::make_pair(desc, newState));
             if (!re.second)
@@ -1309,12 +1317,12 @@ AutoObjCPtr<id<MTLSamplerState>> StateCache::getSamplerState(id<MTLDevice> metal
     }
 }
 
-AutoObjCPtr<id<MTLSamplerState>> StateCache::getNullSamplerState(Context *context)
+AutoObjCPtr<id<MTLSamplerState>> StateCache::getNullSamplerState(ContextMtl *context)
 {
     return getNullSamplerState(context->getMetalDevice());
 }
 
-AutoObjCPtr<id<MTLSamplerState>> StateCache::getNullSamplerState(id<MTLDevice> device)
+AutoObjCPtr<id<MTLSamplerState>> StateCache::getNullSamplerState(const mtl::ContextDevice &device)
 {
     SamplerDesc desc;
     desc.reset();

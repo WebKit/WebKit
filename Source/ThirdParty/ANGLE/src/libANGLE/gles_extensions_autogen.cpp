@@ -194,6 +194,7 @@ const ExtensionInfoMap &GetExtensionInfoMap()
         // ANGLE unofficial extension strings
         // ----------------------------------
         map["GL_ANGLE_base_vertex_base_instance"] = enableableExtension(&Extensions::baseVertexBaseInstanceANGLE);
+        map["GL_ANGLE_base_vertex_base_instance_shader_builtin"] = enableableExtension(&Extensions::baseVertexBaseInstanceShaderBuiltinANGLE);
         map["GL_CHROMIUM_bind_generates_resource"] = esOnlyExtension(&Extensions::bindGeneratesResourceCHROMIUM);
         map["GL_CHROMIUM_bind_uniform_location"] = esOnlyExtension(&Extensions::bindUniformLocationCHROMIUM);
         map["GL_ANGLE_client_arrays"] = esOnlyExtension(&Extensions::clientArraysANGLE);

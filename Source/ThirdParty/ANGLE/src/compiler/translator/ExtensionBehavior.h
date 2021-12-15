@@ -19,7 +19,7 @@ enum class TExtension : uint8_t
 {
     UNDEFINED,  // Special value used to indicate no extension.
 
-    ANGLE_base_vertex_base_instance,
+    ANGLE_base_vertex_base_instance_shader_builtin,
     ANGLE_multi_draw,
     ANGLE_texture_multisample,
     APPLE_clip_distance,

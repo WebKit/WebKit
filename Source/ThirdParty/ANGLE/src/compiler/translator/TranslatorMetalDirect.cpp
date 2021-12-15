@@ -409,15 +409,6 @@ ANGLE_NO_DISCARD bool AddFragDataDeclaration(TCompiler &compiler, TIntermBlock &
     return RunAtTheEndOfShader(&compiler, &root, insertSequence, &symbolTable);
 }
 
-ANGLE_NO_DISCARD bool EmulateInstanceID(TCompiler &compiler,
-                                        TIntermBlock &root,
-                                        DriverUniform &driverUniforms)
-{
-    TIntermBinary *emuInstanceID = driverUniforms.getEmulatedInstanceId();
-    const TVariable *instanceID  = BuiltInVariable::gl_InstanceIndex();
-    return ReplaceVariableWithTyped(&compiler, &root, instanceID, emuInstanceID);
-}
-
 ANGLE_NO_DISCARD bool AppendVertexShaderTransformFeedbackOutputToMain(TCompiler &compiler,
                                                                       SymbolEnv &mSymbolEnv,
                                                                       TIntermBlock &root)

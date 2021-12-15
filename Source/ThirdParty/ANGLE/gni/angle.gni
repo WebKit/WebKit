@@ -536,17 +536,12 @@ template("angle_trace_fixture") {
 }
 
 template("angle_trace") {
-  _trace_prefix = invoker.trace_prefix
   angle_shared_library(target_name) {
     testonly = true
 
     # Similar to capture replay sample, use the file index for sources
-    sources = [
-                "${_trace_prefix}.cpp",
-                "${_trace_prefix}.h",
-              ] + invoker.sources
+    sources = invoker.sources
 
-    # TODO(http://anglebug.com/5133): Revert back to non-autogen'ed data.
     data = invoker.data
     defines = [ "ANGLE_REPLAY_IMPLEMENTATION" ]
     suppressed_configs += [ "$angle_root:constructor_and_destructor_warnings" ]
@@ -576,9 +571,5 @@ template("angle_trace") {
     if (defined(invoker.output_name)) {
       output_name = invoker.output_name
     }
-  }
-
-  angle_source_set(target_name + "_headers") {
-    sources = [ "${_trace_prefix}.h" ]
   }
 }

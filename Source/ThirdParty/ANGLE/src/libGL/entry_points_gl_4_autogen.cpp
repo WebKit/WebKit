@@ -5222,17 +5222,18 @@ void GL_APIENTRY GL_MultiDrawArraysIndirect(GLenum mode,
 
     if (context)
     {
+        PrimitiveMode modePacked                              = PackParam<PrimitiveMode>(mode);
         std::unique_lock<angle::GlobalMutex> shareContextLock = GetContextLock(context);
         bool isCallValid =
             (context->skipValidation() ||
              ValidateMultiDrawArraysIndirect(context, angle::EntryPoint::GLMultiDrawArraysIndirect,
-                                             mode, indirect, drawcount, stride));
+                                             modePacked, indirect, drawcount, stride));
         if (isCallValid)
         {
-            context->multiDrawArraysIndirect(mode, indirect, drawcount, stride);
+            context->multiDrawArraysIndirect(modePacked, indirect, drawcount, stride);
         }
-        ANGLE_CAPTURE(MultiDrawArraysIndirect, isCallValid, context, mode, indirect, drawcount,
-                      stride);
+        ANGLE_CAPTURE(MultiDrawArraysIndirect, isCallValid, context, modePacked, indirect,
+                      drawcount, stride);
     }
     else
     {
@@ -5256,17 +5257,19 @@ void GL_APIENTRY GL_MultiDrawElementsIndirect(GLenum mode,
 
     if (context)
     {
+        PrimitiveMode modePacked                              = PackParam<PrimitiveMode>(mode);
+        DrawElementsType typePacked                           = PackParam<DrawElementsType>(type);
         std::unique_lock<angle::GlobalMutex> shareContextLock = GetContextLock(context);
         bool isCallValid                                      = (context->skipValidation() ||
                             ValidateMultiDrawElementsIndirect(
-                                context, angle::EntryPoint::GLMultiDrawElementsIndirect, mode, type,
-                                indirect, drawcount, stride));
+                                context, angle::EntryPoint::GLMultiDrawElementsIndirect, modePacked,
+                                typePacked, indirect, drawcount, stride));
         if (isCallValid)
         {
-            context->multiDrawElementsIndirect(mode, type, indirect, drawcount, stride);
+            context->multiDrawElementsIndirect(modePacked, typePacked, indirect, drawcount, stride);
         }
-        ANGLE_CAPTURE(MultiDrawElementsIndirect, isCallValid, context, mode, type, indirect,
-                      drawcount, stride);
+        ANGLE_CAPTURE(MultiDrawElementsIndirect, isCallValid, context, modePacked, typePacked,
+                      indirect, drawcount, stride);
     }
     else
     {

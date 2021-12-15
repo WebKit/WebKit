@@ -849,6 +849,7 @@ struct YcbcrConversionDesc final
                 VkChromaLocation xChromaOffset,
                 VkChromaLocation yChromaOffset,
                 VkFilter chromaFilter,
+                VkComponentMapping components,
                 angle::FormatID intendedFormatID);
 
     // If the sampler needs to convert the image content (e.g. from YUV to RGB) then
@@ -858,20 +859,27 @@ struct YcbcrConversionDesc final
     // mConversionModel and mColorRange works as a Serial() used elsewhere in ANGLE.
     uint64_t mExternalOrVkFormat;
     // 1 bit to identify if external format is used
-    uint16_t mIsExternalFormat : 1;
+    uint32_t mIsExternalFormat : 1;
     // 3 bits to identify conversion model
-    uint16_t mConversionModel : 3;
+    uint32_t mConversionModel : 3;
     // 1 bit to identify color component range
-    uint16_t mColorRange : 1;
+    uint32_t mColorRange : 1;
     // 1 bit to identify x chroma location
-    uint16_t mXChromaOffset : 1;
+    uint32_t mXChromaOffset : 1;
     // 1 bit to identify y chroma location
-    uint16_t mYChromaOffset : 1;
+    uint32_t mYChromaOffset : 1;
     // 1 bit to identify chroma filtering
-    uint16_t mChromaFilter : 1;
-    uint16_t mPadding : 8;
-    uint16_t mReserved0;
-    uint32_t mReserved1;
+    uint32_t mChromaFilter : 1;
+    // 3 bit to identify R component swizzle
+    uint32_t mRSwizzle : 3;
+    // 3 bit to identify G component swizzle
+    uint32_t mGSwizzle : 3;
+    // 3 bit to identify B component swizzle
+    uint32_t mBSwizzle : 3;
+    // 3 bit to identify A component swizzle
+    uint32_t mASwizzle : 3;
+    uint32_t mPadding : 12;
+    uint32_t mReserved;
 };
 
 static_assert(sizeof(YcbcrConversionDesc) == 16, "Unexpected YcbcrConversionDesc size");
@@ -1684,17 +1692,13 @@ class SamplerYcbcrConversionCache final
 
     void destroy(RendererVk *rendererVk);
 
-    angle::Result getYuvConversion(
-        vk::Context *context,
-        const vk::YcbcrConversionDesc &ycbcrConversionDesc,
-        const VkSamplerYcbcrConversionCreateInfo &yuvConversionCreateInfo,
-        vk::BindingPointer<vk::SamplerYcbcrConversion> *yuvConversionOut);
-    VkSamplerYcbcrConversion getSamplerYcbcrConversion(
-        const vk::YcbcrConversionDesc &ycbcrConversionDesc) const;
+    angle::Result getSamplerYcbcrConversion(vk::Context *context,
+                                            const vk::YcbcrConversionDesc &ycbcrConversionDesc,
+                                            VkSamplerYcbcrConversion *vkSamplerYcbcrConversionOut);
 
   private:
     using SamplerYcbcrConversionMap =
-        std::unordered_map<vk::YcbcrConversionDesc, vk::RefCountedSamplerYcbcrConversion>;
+        std::unordered_map<vk::YcbcrConversionDesc, vk::SamplerYcbcrConversion>;
     SamplerYcbcrConversionMap mExternalFormatPayload;
     SamplerYcbcrConversionMap mVkFormatPayload;
 };

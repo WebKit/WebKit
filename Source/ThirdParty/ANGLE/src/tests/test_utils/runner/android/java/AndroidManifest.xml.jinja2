@@ -28,8 +28,13 @@ found in the LICENSE file.
          breaks test listing. See
          https://developer.android.com/training/data-storage#scoped-storage and
          https://developer.android.com/training/data-storage/compatibility. -->
+    <!-- Disable allowNativeHeapPointerTagging for siginfo_t POSIX struct
+         pointers to match heap allocations. This is required for the
+         SystemUtils.PageFaultHandler* tests.
+         https://source.android.com/devices/tech/debug/tagged-pointers -->
     <application android:label="NativeTests"
-      android:requestLegacyExternalStorage="true">
+      android:requestLegacyExternalStorage="true"
+      android:allowNativeHeapPointerTagging="false">
         <uses-library android:name="android.test.runner"/>
         <activity android:name=".AngleUnitTestActivity"
                 android:label="NativeTest"

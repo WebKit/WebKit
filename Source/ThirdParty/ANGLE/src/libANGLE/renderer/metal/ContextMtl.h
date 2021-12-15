@@ -11,6 +11,7 @@
 #define LIBANGLE_RENDERER_METAL_CONTEXTMTL_H_
 
 #import <Metal/Metal.h>
+#import <mach/mach_types.h>
 
 #include "common/Optional.h"
 #include "libANGLE/Context.h"
@@ -18,6 +19,7 @@
 #include "libANGLE/renderer/metal/ProvokingVertexHelper.h"
 #include "libANGLE/renderer/metal/mtl_buffer_pool.h"
 #include "libANGLE/renderer/metal/mtl_command_buffer.h"
+#include "libANGLE/renderer/metal/mtl_context_device.h"
 #include "libANGLE/renderer/metal/mtl_occlusion_query_pool.h"
 #include "libANGLE/renderer/metal/mtl_resources.h"
 #include "libANGLE/renderer/metal/mtl_state_cache.h"
@@ -35,7 +37,10 @@ class TransformFeedbackMtl;
 class ContextMtl : public ContextImpl, public mtl::Context
 {
   public:
-    ContextMtl(const gl::State &state, gl::ErrorSet *errorSet, DisplayMtl *display);
+    ContextMtl(const gl::State &state,
+               gl::ErrorSet *errorSet,
+               const egl::AttributeMap &attribs,
+               DisplayMtl *display);
     ~ContextMtl() override;
 
     angle::Result initialize() override;
@@ -369,6 +374,8 @@ class ContextMtl : public ContextImpl, public mtl::Context
     // Get the provoking vertex command encoder.
     mtl::ComputeCommandEncoder *getIndexPreprocessingCommandEncoder();
 
+    const mtl::ContextDevice &getMetalDevice() const { return mContextDevice; }
+
   private:
     void ensureCommandBufferReady();
     angle::Result ensureIncompleteTexturesCreated(const gl::Context *context);
@@ -580,6 +587,8 @@ class ContextMtl : public ContextImpl, public mtl::Context
     IncompleteTextureSet mIncompleteTextures;
     bool mIncompleteTexturesInitialized = false;
     ProvokingVertexHelper mProvokingVertexHelper;
+
+    mtl::ContextDevice mContextDevice;
 };
 
 }  // namespace rx
