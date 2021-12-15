@@ -5269,9 +5269,7 @@ sub GenerateAttributeGetterBodyDefinition
         push(@$outputArray, "    return thisObject.${implGetterFunctionName}(lexicalGlobalObject);\n");
     } elsif ($isEventHandler) {
         $implIncludes{"EventNames.h"} = 1;
-        my $getter = $attribute->extendedAttributes->{WindowEventHandler} ? "windowEventHandlerAttribute"
-            : $attribute->extendedAttributes->{DocumentEventHandler} ? "documentEventHandlerAttribute"
-            : "eventHandlerAttribute";
+        my $getter = $attribute->extendedAttributes->{WindowEventHandler} ? "windowEventHandlerAttribute" : "eventHandlerAttribute";
         my $eventName = EventHandlerAttributeEventName($attribute);
         push(@$outputArray, "    return $getter(thisObject.wrapped(), $eventName, worldForDOMObject(thisObject));\n");
     } elsif ($isConstructor) {
@@ -5443,9 +5441,7 @@ sub GenerateAttributeSetterBodyDefinition
             push(@$outputArray, "    thisObject.wrapped().setAttributeEventListener($eventName, createJSErrorHandler(lexicalGlobalObject, value, thisObject), worldForDOMObject(thisObject));\n");
         } else {
             AddToImplIncludes("JSEventListener.h", $conditional);
-            my $setter = $attribute->extendedAttributes->{WindowEventHandler} ? "setWindowEventHandlerAttribute"
-                : $attribute->extendedAttributes->{DocumentEventHandler} ? "setDocumentEventHandlerAttribute"
-                : "setEventHandlerAttribute";
+            my $setter = $attribute->extendedAttributes->{WindowEventHandler} ? "setWindowEventHandlerAttribute" : "setEventHandlerAttribute";
             push(@$outputArray, "    $setter(lexicalGlobalObject, thisObject, thisObject.wrapped(), ${eventName}, value);\n");
         }
         push(@$outputArray, "    vm.writeBarrier(&thisObject, value);\n");

@@ -175,9 +175,6 @@
         "DoNotCheckSecurityOnSetter": {
             "contextsAllowed": ["attribute"]
         },
-        "DocumentEventHandler": {
-            "contextsAllowed": ["attribute"]
-        },
         "EnabledByQuirk": {
             "contextsAllowed": ["interface", "dictionary", "enum", "attribute", "operation", "constant", "dictionary-member", "includes"],
             "values": ["*"],

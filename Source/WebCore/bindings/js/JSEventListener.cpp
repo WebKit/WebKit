@@ -316,29 +316,4 @@ void setWindowEventHandlerAttribute(JSC::JSGlobalObject& lexicalGlobalObject, JS
     setEventHandlerAttribute(lexicalGlobalObject, wrapper, window, eventType, value);
 }
 
-JSC::JSValue documentEventHandlerAttribute(HTMLElement& element, const AtomString& eventType, DOMWrapperWorld& isolatedWorld)
-{
-    auto& document = element.document();
-    return eventHandlerAttribute(document.attributeEventListener(eventType, isolatedWorld), document);
-}
-
-void setDocumentEventHandlerAttribute(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSObject& wrapper, HTMLElement& element, const AtomString& eventType, JSC::JSValue value)
-{
-    ASSERT(wrapper.globalObject());
-    auto& document = element.document();
-    auto* documentWrapper = JSC::jsCast<JSDocument*>(toJS(&lexicalGlobalObject, JSC::jsCast<JSDOMGlobalObject*>(wrapper.globalObject()), document));
-    ASSERT(documentWrapper);
-    document.setAttributeEventListener(eventType, createEventListenerForEventHandlerAttribute(lexicalGlobalObject, value, *documentWrapper), currentWorld(lexicalGlobalObject));
-}
-
-JSC::JSValue documentEventHandlerAttribute(Document& document, const AtomString& eventType, DOMWrapperWorld& isolatedWorld)
-{
-    return eventHandlerAttribute(document, eventType, isolatedWorld);
-}
-
-void setDocumentEventHandlerAttribute(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSObject& wrapper, Document& document, const AtomString& eventType, JSC::JSValue value)
-{
-    setEventHandlerAttribute(lexicalGlobalObject, wrapper, document, eventType, value);
-}
-
 } // namespace WebCore

@@ -92,12 +92,6 @@ void setWindowEventHandlerAttribute(JSC::JSGlobalObject&, JSC::JSObject&, HTMLEl
 JSC::JSValue windowEventHandlerAttribute(DOMWindow&, const AtomString& eventType, DOMWrapperWorld&);
 void setWindowEventHandlerAttribute(JSC::JSGlobalObject&, JSC::JSObject&, DOMWindow&, const AtomString& eventType, JSC::JSValue);
 
-// Like the functions above, but for attributes that forward event handlers to the document rather than setting them on the target.
-JSC::JSValue documentEventHandlerAttribute(HTMLElement&, const AtomString& eventType, DOMWrapperWorld&);
-void setDocumentEventHandlerAttribute(JSC::JSGlobalObject&, JSC::JSObject&, HTMLElement&, const AtomString& eventType, JSC::JSValue);
-JSC::JSValue documentEventHandlerAttribute(Document&, const AtomString& eventType, DOMWrapperWorld&);
-void setDocumentEventHandlerAttribute(JSC::JSGlobalObject&, JSC::JSObject&, Document&, const AtomString& eventType, JSC::JSValue);
-
 inline JSC::JSObject* JSEventListener::ensureJSFunction(ScriptExecutionContext& scriptExecutionContext) const
 {
     // initializeJSFunction can trigger code that deletes this event listener
