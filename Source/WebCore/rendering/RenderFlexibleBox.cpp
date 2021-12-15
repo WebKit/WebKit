@@ -1224,7 +1224,6 @@ bool RenderFlexibleBox::hasAutoMarginsInCrossAxis(const RenderBox& child) const
 
 LayoutUnit RenderFlexibleBox::availableAlignmentSpaceForChild(LayoutUnit lineCrossAxisExtent, const RenderBox& child)
 {
-    ASSERT(!child.isOutOfFlowPositioned());
     LayoutUnit childCrossExtent = crossAxisMarginExtentForChild(child) + crossAxisExtentForChild(child);
     return lineCrossAxisExtent - childCrossExtent;
 }
@@ -1684,7 +1683,7 @@ LayoutUnit RenderFlexibleBox::staticMainAxisPositionForPositionedChild(const Ren
 
 LayoutUnit RenderFlexibleBox::staticCrossAxisPositionForPositionedChild(const RenderBox& child)
 {
-    LayoutUnit availableSpace = crossAxisContentExtent() - crossAxisExtentForChild(child);
+    auto availableSpace = availableAlignmentSpaceForChild(crossAxisContentExtent(), child);
     return alignmentOffset(availableSpace, alignmentForChild(child), 0_lu, 0_lu, style().flexWrap() == FlexWrap::Reverse);
 }
 
