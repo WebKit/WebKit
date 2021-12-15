@@ -1,3 +1,28 @@
+2021-12-14  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [JSC] OpInstanceofCustom should be in CommonSlowPaths
+        https://bugs.webkit.org/show_bug.cgi?id=234316
+
+        Reviewed by Alexey Shvayka.
+
+        No tier has a fast path for OpInstanceofCustom and this is unlikely to change anytime soon.
+        As such, we should not be having LLInt and Baseline implement *separate* slow paths for this operation;
+        this patch straightforwardly makes use of CommonSlowPaths instead.
+
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        (JSC::JIT::privateCompileSlowCases):
+        * jit/JIT.h:
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_instanceof_custom): Deleted.
+        (JSC::JIT::emitSlow_op_instanceof_custom): Deleted.
+        * llint/LLIntSlowPaths.cpp:
+        * llint/LLIntSlowPaths.h:
+        * llint/LowLevelInterpreter.asm:
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::JSC_DEFINE_COMMON_SLOW_PATH):
+        * runtime/CommonSlowPaths.h:
+
 2021-12-14  Jean-Yves Avenard  <jya@apple.com>
 
         Rename SharedBuffer classes.

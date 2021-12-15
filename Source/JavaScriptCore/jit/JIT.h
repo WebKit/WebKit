@@ -443,7 +443,6 @@ namespace JSC {
         void emit_op_init_lazy_reg(const Instruction*);
         void emit_op_overrides_has_instance(const Instruction*);
         void emit_op_instanceof(const Instruction*);
-        void emit_op_instanceof_custom(const Instruction*);
         void emit_op_is_empty(const Instruction*);
         void emit_op_typeof_is_undefined(const Instruction*);
         void emit_op_is_undefined_or_null(const Instruction*);
@@ -582,7 +581,6 @@ namespace JSC {
         void emitSlow_op_has_private_name(const Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_has_private_brand(const Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_instanceof(const Instruction*, Vector<SlowCaseEntry>::iterator&);
-        void emitSlow_op_instanceof_custom(const Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_jless(const Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_jlesseq(const Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_jgreater(const Instruction*, Vector<SlowCaseEntry>::iterator&);

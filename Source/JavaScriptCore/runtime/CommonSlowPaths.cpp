@@ -816,6 +816,21 @@ JSC_DEFINE_COMMON_SLOW_PATH(slow_path_typeof_is_function)
     RETURN(jsBoolean(jsTypeofIsFunction(globalObject, GET_C(bytecode.m_operand).jsValue())));
 }
 
+JSC_DEFINE_COMMON_SLOW_PATH(slow_path_instanceof_custom)
+{
+    BEGIN();
+
+    auto bytecode = pc->as<OpInstanceofCustom>();
+    auto value = GET_C(bytecode.m_value).jsValue();
+    auto constructor = GET_C(bytecode.m_constructor).jsValue();
+    auto hasInstanceValue = GET_C(bytecode.m_hasInstanceValue).jsValue();
+
+    ASSERT(constructor.isObject());
+    ASSERT(hasInstanceValue != globalObject->functionProtoHasInstanceSymbolFunction() || !constructor.getObject()->structure(vm)->typeInfo().implementsDefaultHasInstance());
+
+    RETURN(jsBoolean(constructor.getObject()->hasInstance(globalObject, value, hasInstanceValue)));
+}
+
 JSC_DEFINE_COMMON_SLOW_PATH(slow_path_is_callable)
 {
     BEGIN();

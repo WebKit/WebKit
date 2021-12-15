@@ -637,22 +637,6 @@ LLINT_SLOW_PATH_DECL(slow_path_instanceof)
     LLINT_RETURN(jsBoolean(JSObject::defaultHasInstance(globalObject, value, proto)));
 }
 
-LLINT_SLOW_PATH_DECL(slow_path_instanceof_custom)
-{
-    LLINT_BEGIN();
-
-    auto bytecode = pc->as<OpInstanceofCustom>();
-    JSValue value = getOperand(callFrame, bytecode.m_value);
-    JSValue constructor = getOperand(callFrame, bytecode.m_constructor);
-    JSValue hasInstanceValue = getOperand(callFrame, bytecode.m_hasInstanceValue);
-
-    ASSERT(constructor.isObject());
-    ASSERT(hasInstanceValue != globalObject->functionProtoHasInstanceSymbolFunction() || !constructor.getObject()->structure(vm)->typeInfo().implementsDefaultHasInstance());
-
-    JSValue result = jsBoolean(constructor.getObject()->hasInstance(globalObject, value, hasInstanceValue));
-    LLINT_RETURN(result);
-}
-
 LLINT_SLOW_PATH_DECL(slow_path_try_get_by_id)
 {
     LLINT_BEGIN();
