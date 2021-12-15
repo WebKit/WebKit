@@ -127,7 +127,7 @@ std::optional<Vector<uint8_t>> decryptAES128GCMPayload(const ClientKeys& clientK
      * IKM = HMAC-SHA-256(PRK_key, key_info || 0x01)
      */
     struct KeyInfo {
-        uint8_t label[14] = { "WebPush: info" };
+        char label[14] = { "WebPush: info" };
         uint8_t clientKey[p256dhPublicKeyLength];
         uint8_t serverKey[p256dhPublicKeyLength];
         uint8_t end = 0x01;
@@ -251,7 +251,7 @@ std::optional<Vector<uint8_t>> decryptAESGCMPayload(const ClientKeys& clientKeys
      * derivation functions below require that trailing 0x01 byte.
      */
     struct KeyDerivationContext {
-        uint8_t label[6] = { "P-256" };
+        char label[6] = { "P-256" };
         uint8_t clientPublicKeyLength[2] = { 0, 0x41 };
         uint8_t clientPublicKey[p256dhPublicKeyLength];
         uint8_t serverPublicKeyLength[2] = { 0, 0x41 };
