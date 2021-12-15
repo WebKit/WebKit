@@ -33,6 +33,7 @@
 #import "FrameView.h"
 #import "Logging.h"
 #import "Page.h"
+#import "PlatformCALayerContentsDelayedReleaser.h"
 #import "PlatformWheelEvent.h"
 #import "Region.h"
 #import "ScrollingStateTree.h"
@@ -142,9 +143,15 @@ void ScrollingCoordinatorMac::didCompleteRenderingUpdate()
         scheduleRenderingUpdate();
 }
 
+void ScrollingCoordinatorMac::willStartPlatformRenderingUpdate()
+{
+    PlatformCALayerContentsDelayedReleaser::singleton().mainThreadCommitWillStart();
+}
+
 void ScrollingCoordinatorMac::didCompletePlatformRenderingUpdate()
 {
     downcast<ThreadedScrollingTree>(scrollingTree())->didCompletePlatformRenderingUpdate();
+    PlatformCALayerContentsDelayedReleaser::singleton().mainThreadCommitDidEnd();
 }
 
 void ScrollingCoordinatorMac::hasNodeWithAnimatedScrollChanged(bool hasAnimatingNode)

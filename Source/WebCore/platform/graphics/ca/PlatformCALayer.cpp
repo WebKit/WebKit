@@ -199,6 +199,11 @@ LayerPool& PlatformCALayer::layerPool()
     return *sharedPool;
 }
 
+void PlatformCALayer::clearContents()
+{
+    setContents(nullptr);
+}
+
 void PlatformCALayer::dumpAdditionalProperties(TextStream&, OptionSet<PlatformLayerTreeAsTextFlags>)
 {
 }

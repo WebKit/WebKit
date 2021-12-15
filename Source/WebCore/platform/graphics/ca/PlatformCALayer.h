@@ -199,6 +199,7 @@ public:
     virtual bool hasContents() const = 0;
     virtual CFTypeRef contents() const = 0;
     virtual void setContents(CFTypeRef) = 0;
+    virtual void clearContents();
 
 #if HAVE(IOSURFACE)
     virtual void setContents(const WebCore::IOSurface&) = 0;
