@@ -164,7 +164,7 @@ HRESULT WebArchive::data(_COM_Outptr_opt_ IStream** stream)
     if (!cfData)
         return E_FAIL;
 
-    auto buffer = ContiguousSharedBuffer::create(CFDataGetBytePtr(cfData.get()), CFDataGetLength(cfData.get()));
+    auto buffer = SharedBuffer::create(CFDataGetBytePtr(cfData.get()), CFDataGetLength(cfData.get()));
 
     return MemoryStream::createInstance(WTFMove(buffer)).copyRefTo(stream);
 #else

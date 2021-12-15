@@ -281,7 +281,7 @@ void NetworkProcessConnection::didCacheResource(const ResourceRequest& request, 
     if (!resource)
         return;
     
-    auto buffer = handle.tryWrapInSharedBuffer();
+    RefPtr<SharedBuffer> buffer = handle.tryWrapInSharedBuffer();
     if (!buffer) {
         LOG_ERROR("Unable to create SharedBuffer from ShareableResource handle for resource url %s", request.url().string().utf8().data());
         return;

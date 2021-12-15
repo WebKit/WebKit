@@ -51,9 +51,9 @@ std::optional<SharedBufferCopy> SharedBufferCopy::decode(Decoder& decoder)
     IPC::DataReference data;
     if (!decoder.decode(data))
         return std::nullopt;
-    RefPtr<ContiguousSharedBuffer> buffer;
+    RefPtr<SharedBuffer> buffer;
     if (data.size())
-        buffer = ContiguousSharedBuffer::create(data.data(), data.size());
+        buffer = SharedBuffer::create(data.data(), data.size());
     return { WTFMove(buffer) };
 }
 

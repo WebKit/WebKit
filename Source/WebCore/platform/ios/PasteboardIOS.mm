@@ -240,14 +240,14 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 
 #if !PLATFORM(MACCATALYST)
     if ([type isEqualToString:(__bridge NSString *)kUTTypeFlatRTFD]) {
-        RefPtr<ContiguousSharedBuffer> buffer = strategy.readBufferFromPasteboard(itemIndex, kUTTypeFlatRTFD, m_pasteboardName, context());
+        RefPtr<SharedBuffer> buffer = strategy.readBufferFromPasteboard(itemIndex, kUTTypeFlatRTFD, m_pasteboardName, context());
         if (m_changeCount != changeCount())
             return ReaderResult::PasteboardWasChangedExternally;
         return buffer && reader.readRTFD(*buffer) ? ReaderResult::ReadType : ReaderResult::DidNotReadType;
     }
 
     if ([type isEqualToString:(__bridge NSString *)kUTTypeRTF]) {
-        RefPtr<ContiguousSharedBuffer> buffer = strategy.readBufferFromPasteboard(itemIndex, kUTTypeRTF, m_pasteboardName, context());
+        RefPtr<SharedBuffer> buffer = strategy.readBufferFromPasteboard(itemIndex, kUTTypeRTF, m_pasteboardName, context());
         if (m_changeCount != changeCount())
             return ReaderResult::PasteboardWasChangedExternally;
         return buffer && reader.readRTF(*buffer) ? ReaderResult::ReadType : ReaderResult::DidNotReadType;
@@ -255,7 +255,7 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 #endif // !PLATFORM(MACCATALYST)
 
     if ([supportedImageTypes() containsObject:type]) {
-        RefPtr<ContiguousSharedBuffer> buffer = strategy.readBufferFromPasteboard(itemIndex, type, m_pasteboardName, context());
+        RefPtr<SharedBuffer> buffer = strategy.readBufferFromPasteboard(itemIndex, type, m_pasteboardName, context());
         if (m_changeCount != changeCount())
             return ReaderResult::PasteboardWasChangedExternally;
         return buffer && reader.readImage(buffer.releaseNonNull(), type, itemInfo.preferredPresentationSize) ? ReaderResult::ReadType : ReaderResult::DidNotReadType;

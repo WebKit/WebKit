@@ -220,7 +220,7 @@ static bool isICCMarker(jpeg_saved_marker_ptr marker)
         && marker->data[11] == '\0';
 }
 
-static RefPtr<ContiguousSharedBuffer> readICCProfile(jpeg_decompress_struct* info)
+static RefPtr<SharedBuffer> readICCProfile(jpeg_decompress_struct* info)
 {
     auto buffer = SharedBuffer::create();
     for (jpeg_saved_marker_ptr marker = info->marker_list; marker; marker = marker->next) {
@@ -242,7 +242,7 @@ static RefPtr<ContiguousSharedBuffer> readICCProfile(jpeg_decompress_struct* inf
     if (buffer->isEmpty())
         return nullptr;
 
-    return buffer->makeContiguous();
+    return buffer;
 }
 #endif
 
@@ -726,7 +726,7 @@ void JPEGImageDecoder::decode(bool onlySize, bool allDataReceived)
 }
 
 #if USE(LCMS)
-void JPEGImageDecoder::setICCProfile(RefPtr<ContiguousSharedBuffer>&& buffer)
+void JPEGImageDecoder::setICCProfile(RefPtr<SharedBuffer>&& buffer)
 {
     if (!buffer)
         return;

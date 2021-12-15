@@ -227,7 +227,7 @@ String WebPageProxy::stringSelectionForPasteboard()
     return value;
 }
 
-RefPtr<WebCore::ContiguousSharedBuffer> WebPageProxy::dataSelectionForPasteboard(const String& pasteboardType)
+RefPtr<WebCore::SharedBuffer> WebPageProxy::dataSelectionForPasteboard(const String& pasteboardType)
 {
     if (!hasRunningProcess())
         return nullptr;

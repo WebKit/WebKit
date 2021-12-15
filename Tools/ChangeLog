@@ -27,19 +27,6 @@
         * TestWebKitAPI/Tests/WebCore/cocoa/TestGraphicsContextGLOpenGLCocoa.mm:
         Add a dummy override of the new member function layerContentsDisplayDelegate.
 
-2021-12-13  Jean-Yves Avenard  <jya@apple.com>
-
-        Distinguish contiguous SharedBuffer from non-contiguous one and guarantee immutability
-        https://bugs.webkit.org/show_bug.cgi?id=233030
-        rdar://85333814
-
-        Reviewed by Darin Adler.
-
-        * TestWebKitAPI/Tests/WebCore/SharedBuffer.cpp:
-        (TestWebKitAPI::TEST_F):
-        * TestWebKitAPI/Tests/WebCore/cocoa/SharedBuffer.mm:
-        (TestWebKitAPI::TEST_F):
-
 2021-12-12  Sam Weinig  <weinig@apple.com>
 
         Pipe ColorInterpolationMethod into Gradient

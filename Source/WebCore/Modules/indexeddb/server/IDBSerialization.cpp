@@ -39,7 +39,7 @@ namespace WebCore {
 
 enum class KeyPathType { Null, String, Array };
 
-RefPtr<ContiguousSharedBuffer> serializeIDBKeyPath(const std::optional<IDBKeyPath>& keyPath)
+RefPtr<SharedBuffer> serializeIDBKeyPath(const std::optional<IDBKeyPath>& keyPath)
 {
     auto encoder = KeyedEncoder::encoder();
 
@@ -282,13 +282,13 @@ static void encodeKey(Vector<uint8_t>& data, const IDBKeyData& key)
     }
 }
 
-RefPtr<ContiguousSharedBuffer> serializeIDBKeyData(const IDBKeyData& key)
+RefPtr<SharedBuffer> serializeIDBKeyData(const IDBKeyData& key)
 {
     Vector<uint8_t> data;
     data.append(SIDBKeyVersion);
 
     encodeKey(data, key);
-    return ContiguousSharedBuffer::create(WTFMove(data));
+    return SharedBuffer::create(WTFMove(data));
 }
 
 static WARN_UNUSED_RETURN bool decodeKey(const uint8_t*& data, const uint8_t* end, IDBKeyData& result)

@@ -107,7 +107,7 @@ static xmlDocPtr docLoaderFunc(const xmlChar* uri,
         ResourceError error;
         ResourceResponse response;
 
-        RefPtr<ContiguousSharedBuffer> data;
+        RefPtr<SharedBuffer> data;
 
         bool requestAllowed = globalCachedResourceLoader->frame() && globalCachedResourceLoader->document()->securityOrigin().canRequest(url);
         if (requestAllowed) {

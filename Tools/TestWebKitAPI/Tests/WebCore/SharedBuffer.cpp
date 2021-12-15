@@ -43,40 +43,38 @@ namespace TestWebKitAPI {
 
 TEST_F(SharedBufferTest, createWithContentsOfMissingFile)
 {
-    auto buffer = ContiguousSharedBuffer::createWithContentsOfFile(String("not_existing_file"));
+    RefPtr<SharedBuffer> buffer = SharedBuffer::createWithContentsOfFile(String("not_existing_file"));
     ASSERT_NULL(buffer);
 }
 
 TEST_F(SharedBufferTest, createWithContentsOfExistingFile)
 {
-    auto buffer = ContiguousSharedBuffer::createWithContentsOfFile(tempFilePath());
+    RefPtr<SharedBuffer> buffer = SharedBuffer::createWithContentsOfFile(tempFilePath());
     ASSERT_NOT_NULL(buffer);
     EXPECT_TRUE(buffer->size() == strlen(SharedBufferTest::testData()));
-    EXPECT_TRUE(String(SharedBufferTest::testData()) == String(buffer->makeContiguous()->data(), buffer->size()));
+    EXPECT_TRUE(String(SharedBufferTest::testData()) == String(buffer->data(), buffer->size()));
 }
 
 TEST_F(SharedBufferTest, createWithContentsOfExistingEmptyFile)
 {
-    auto buffer = ContiguousSharedBuffer::createWithContentsOfFile(tempEmptyFilePath());
+    RefPtr<SharedBuffer> buffer = SharedBuffer::createWithContentsOfFile(tempEmptyFilePath());
     ASSERT_NOT_NULL(buffer);
-    EXPECT_TRUE(buffer->isContiguous());
     EXPECT_TRUE(buffer->isEmpty());
 }
 
 TEST_F(SharedBufferTest, copyBufferCreatedWithContentsOfExistingFile)
 {
-    auto buffer = ContiguousSharedBuffer::createWithContentsOfFile(tempFilePath());
+    RefPtr<SharedBuffer> buffer = SharedBuffer::createWithContentsOfFile(tempFilePath());
     ASSERT_NOT_NULL(buffer);
-    EXPECT_TRUE(buffer->isContiguous());
-    auto copy = buffer->copy();
+    RefPtr<SharedBuffer> copy = buffer->copy();
     EXPECT_GT(buffer->size(), 0U);
     EXPECT_TRUE(buffer->size() == copy->size());
-    EXPECT_TRUE(!memcmp(buffer->data(), copy->makeContiguous()->data(), buffer->size()));
+    EXPECT_TRUE(!memcmp(buffer->data(), copy->data(), buffer->size()));
 }
 
 TEST_F(SharedBufferTest, clearBufferCreatedWithContentsOfExistingFile)
 {
-    auto buffer = ContiguousSharedBuffer::createWithContentsOfFile(tempFilePath());
+    RefPtr<SharedBuffer> buffer = SharedBuffer::createWithContentsOfFile(tempFilePath());
     ASSERT_NOT_NULL(buffer);
     buffer->clear();
     EXPECT_TRUE(!buffer->size());
@@ -85,13 +83,12 @@ TEST_F(SharedBufferTest, clearBufferCreatedWithContentsOfExistingFile)
 
 TEST_F(SharedBufferTest, appendBufferCreatedWithContentsOfExistingFile)
 {
-    auto contiguousBuffer = ContiguousSharedBuffer::createWithContentsOfFile(tempFilePath());
-    ASSERT_NOT_NULL(contiguousBuffer);
-    auto buffer = SharedBuffer::create(contiguousBuffer.releaseNonNull());
+    RefPtr<SharedBuffer> buffer = SharedBuffer::createWithContentsOfFile(tempFilePath());
+    ASSERT_NOT_NULL(buffer);
     buffer->append("a", 1);
     EXPECT_TRUE(buffer->size() == (strlen(SharedBufferTest::testData()) + 1));
-    EXPECT_TRUE(!memcmp(buffer->makeContiguous()->data(), SharedBufferTest::testData(), strlen(SharedBufferTest::testData())));
-    EXPECT_EQ('a', buffer->makeContiguous()->data()[strlen(SharedBufferTest::testData())]);
+    EXPECT_TRUE(!memcmp(buffer->data(), SharedBufferTest::testData(), strlen(SharedBufferTest::testData())));
+    EXPECT_EQ('a', buffer->data()[strlen(SharedBufferTest::testData())]);
 }
 
 TEST_F(SharedBufferTest, tryCreateArrayBuffer)
@@ -99,7 +96,7 @@ TEST_F(SharedBufferTest, tryCreateArrayBuffer)
     char testData0[] = "Hello";
     char testData1[] = "World";
     char testData2[] = "Goodbye";
-    auto sharedBuffer = SharedBuffer::create(testData0, strlen(testData0));
+    RefPtr<SharedBuffer> sharedBuffer = SharedBuffer::create(testData0, strlen(testData0));
     sharedBuffer->append(testData1, strlen(testData1));
     sharedBuffer->append(testData2, strlen(testData2));
     RefPtr<ArrayBuffer> arrayBuffer = sharedBuffer->tryCreateArrayBuffer();
@@ -114,7 +111,7 @@ TEST_F(SharedBufferTest, tryCreateArrayBufferLargeSegments)
     Vector<uint8_t> vector1(0x4000, 'b');
     Vector<uint8_t> vector2(0x4000, 'c');
 
-    auto sharedBuffer = SharedBuffer::create(WTFMove(vector0));
+    RefPtr<SharedBuffer> sharedBuffer = SharedBuffer::create(WTFMove(vector0));
     sharedBuffer->append(WTFMove(vector1));
     sharedBuffer->append(WTFMove(vector2));
     RefPtr<ArrayBuffer> arrayBuffer = sharedBuffer->tryCreateArrayBuffer();
@@ -154,15 +151,15 @@ TEST_F(SharedBufferTest, copy)
     "mattis dignissim massa ac pulvinar urna, nunc ut. Sagittis, aliquet penatibus proin lorem, pulvinar lectus,"
     "augue proin! Ac, arcu quis. Placerat habitasse, ridiculus ridiculus.";
     unsigned length = strlen(testData);
-    auto sharedBuffer = SharedBuffer::create(testData, length);
+    RefPtr<SharedBuffer> sharedBuffer = SharedBuffer::create(testData, length);
     sharedBuffer->append(testData, length);
     sharedBuffer->append(testData, length);
     sharedBuffer->append(testData, length);
     // sharedBuffer must contain data more than segmentSize (= 0x1000) to check copy().
     ASSERT_EQ(length * 4, sharedBuffer->size());
-    auto clone = sharedBuffer->copy();
+    RefPtr<SharedBuffer> clone = sharedBuffer->copy();
     ASSERT_EQ(length * 4, clone->size());
-    ASSERT_EQ(0, memcmp(clone->makeContiguous()->data(), sharedBuffer->makeContiguous()->data(), clone->size()));
+    ASSERT_EQ(0, memcmp(clone->data(), sharedBuffer->data(), clone->size()));
     clone->append(testData, length);
     ASSERT_EQ(length * 5, clone->size());
 }
@@ -178,33 +175,30 @@ static void checkBuffer(const uint8_t* buffer, size_t bufferLength, const char* 
 
 TEST_F(SharedBufferTest, getSomeData)
 {
-    Vector<uint8_t> s1 = { 'a', 'b', 'c', 'd' };
-    Vector<uint8_t> s2 = { 'e', 'f', 'g', 'h' };
-    Vector<uint8_t> s3 = { 'i', 'j', 'k', 'l' };
-
+    Vector<uint8_t> s1 = {'a', 'b', 'c', 'd'};
+    Vector<uint8_t> s2 = {'e', 'f', 'g', 'h'};
+    Vector<uint8_t> s3 = {'i', 'j', 'k', 'l'};
+    
     auto buffer = SharedBuffer::create();
     buffer->append(WTFMove(s1));
     buffer->append(WTFMove(s2));
     buffer->append(WTFMove(s3));
-    auto contiguousBuffer = buffer->makeContiguous();
     
     auto abcd = buffer->getSomeData(0);
-    auto gh1 = buffer->getSomeData(6);
+    auto gh = buffer->getSomeData(6);
     auto h = buffer->getSomeData(7);
     auto ijkl = buffer->getSomeData(8);
     auto kl = buffer->getSomeData(10);
-    auto abcdefghijkl = contiguousBuffer->data();
-    auto gh2 = buffer->getSomeData(6);
+    auto abcdefghijkl = buffer->data();
+    auto ghijkl = buffer->getSomeData(6);
     auto l = buffer->getSomeData(11);
     checkBuffer(abcd.data(), abcd.size(), "abcd");
-    checkBuffer(gh1.data(), gh1.size(), "gh");
+    checkBuffer(gh.data(), gh.size(), "gh");
     checkBuffer(h.data(), h.size(), "h");
     checkBuffer(ijkl.data(), ijkl.size(), "ijkl");
     checkBuffer(kl.data(), kl.size(), "kl");
     checkBuffer(abcdefghijkl, buffer->size(), "abcdefghijkl");
-    checkBuffer(gh2.data(), gh2.size(), "gh");
-    EXPECT_EQ(gh1.size(), gh2.size());
-    checkBuffer(gh1.data(), gh1.size(), gh2.dataAsCharPtr());
+    checkBuffer(ghijkl.data(), ghijkl.size(), "ghijkl");
     checkBuffer(l.data(), l.size(), "l");
 }
 
@@ -216,15 +210,15 @@ TEST_F(SharedBufferTest, isEqualTo)
             buffer->append(WTFMove(content));
         return buffer;
     };
-    auto buffer1 = makeBuffer({ { 'a', 'b', 'c', 'd' } });
+    auto buffer1 = makeBuffer({{'a', 'b', 'c', 'd'}});
     EXPECT_EQ(buffer1.get(), buffer1.get());
 
     buffer1->append(Vector<uint8_t>({'a', 'b', 'c', 'd'}));
     EXPECT_EQ(buffer1.get(), makeBuffer({{'a', 'b', 'c', 'd', 'a', 'b', 'c', 'd'}}).get());
-    EXPECT_EQ(makeBuffer({ { 'a' }, { 'b', 'c' }, { 'd' } }).get(), makeBuffer({ { 'a', 'b' }, { 'c', 'd' } }).get());
-    EXPECT_NE(makeBuffer({ { 'a', 'b' } }).get(), makeBuffer({ { 'a', 'b', 'c' } }).get());
-    EXPECT_NE(makeBuffer({ { 'a', 'b' } }).get(), makeBuffer({ { 'b', 'c' } }).get());
-    EXPECT_NE(makeBuffer({ { 'a' }, { 'b' } }).get(), makeBuffer({ { 'a' }, { 'a' } }).get());
+    EXPECT_EQ(makeBuffer({{'a'}, {'b', 'c'}, {'d'}}).get(), makeBuffer({{'a', 'b'}, {'c', 'd'}}).get());
+    EXPECT_NE(makeBuffer({{'a', 'b'}}).get(), makeBuffer({{'a', 'b', 'c'}}).get());
+    EXPECT_NE(makeBuffer({{'a', 'b'}}).get(), makeBuffer({{'b', 'c'}}).get());
+    EXPECT_NE(makeBuffer({{'a'}, {'b'}}).get(), makeBuffer({{'a'}, {'a'}}).get());
 }
 
 TEST_F(SharedBufferTest, toHexString)

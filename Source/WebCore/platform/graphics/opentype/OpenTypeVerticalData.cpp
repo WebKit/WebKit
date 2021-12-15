@@ -116,7 +116,7 @@ struct SubstitutionSubTable : TableBase {
     OpenType::UInt16 substFormat;
     OpenType::Offset coverageOffset;
 
-    const CoverageTable* coverage(const ContiguousSharedBuffer& buffer) const { return validateOffset<CoverageTable>(buffer, coverageOffset); }
+    const CoverageTable* coverage(const SharedBuffer& buffer) const { return validateOffset<CoverageTable>(buffer, coverageOffset); }
 };
 
 struct SingleSubstitution2SubTable : SubstitutionSubTable {
@@ -131,7 +131,7 @@ struct LookupTable : TableBase {
     OpenType::Offset subTableOffsets[1];
     // OpenType::UInt16 markFilteringSet; this field comes after variable length, so offset is determined dynamically.
 
-    bool getSubstitutions(HashMap<Glyph, Glyph>* map, const ContiguousSharedBuffer& buffer) const
+    bool getSubstitutions(HashMap<Glyph, Glyph>* map, const SharedBuffer& buffer) const
     {
         uint16_t countSubTable = subTableCount;
         if (!isValidEnd(buffer, &subTableOffsets[countSubTable]))
@@ -194,7 +194,7 @@ struct LookupList : TableBase {
     OpenType::UInt16 lookupCount;
     OpenType::Offset lookupOffsets[1];
 
-    const LookupTable* lookup(uint16_t index, const ContiguousSharedBuffer& buffer) const
+    const LookupTable* lookup(uint16_t index, const SharedBuffer& buffer) const
     {
         uint16_t count = lookupCount;
         if (index >= count || !isValidEnd(buffer, &lookupOffsets[count]))
@@ -208,7 +208,7 @@ struct FeatureTable : TableBase {
     OpenType::UInt16 lookupCount;
     OpenType::UInt16 lookupListIndex[1];
 
-    bool getGlyphSubstitutions(const LookupList* lookups, HashMap<Glyph, Glyph>* map, const ContiguousSharedBuffer& buffer) const
+    bool getGlyphSubstitutions(const LookupList* lookups, HashMap<Glyph, Glyph>* map, const SharedBuffer& buffer) const
     {
         uint16_t count = lookupCount;
         if (!isValidEnd(buffer, &lookupListIndex[count]))
@@ -229,7 +229,7 @@ struct FeatureList : TableBase {
         OpenType::Offset featureOffset;
     } features[1];
 
-    const FeatureTable* feature(uint16_t index, OpenType::Tag tag, const ContiguousSharedBuffer& buffer) const
+    const FeatureTable* feature(uint16_t index, OpenType::Tag tag, const SharedBuffer& buffer) const
     {
         uint16_t count = featureCount;
         if (index >= count || !isValidEnd(buffer, &features[count]))
@@ -239,7 +239,7 @@ struct FeatureList : TableBase {
         return 0;
     }
 
-    const FeatureTable* findFeature(OpenType::Tag tag, const ContiguousSharedBuffer& buffer) const
+    const FeatureTable* findFeature(OpenType::Tag tag, const SharedBuffer& buffer) const
     {
         for (uint16_t i = 0; i < featureCount; ++i) {
             if (isValidEnd(buffer, &features[i]) && features[i].featureTag == tag)
@@ -255,7 +255,7 @@ struct LangSysTable : TableBase {
     OpenType::UInt16 featureCount;
     OpenType::UInt16 featureIndex[1];
 
-    const FeatureTable* feature(OpenType::Tag featureTag, const FeatureList* features, const ContiguousSharedBuffer& buffer) const
+    const FeatureTable* feature(OpenType::Tag featureTag, const FeatureList* features, const SharedBuffer& buffer) const
     {
         uint16_t count = featureCount;
         if (!isValidEnd(buffer, &featureIndex[count]))
@@ -277,7 +277,7 @@ struct ScriptTable : TableBase {
         OpenType::Offset langSysOffset;
     } langSysRecords[1];
 
-    const LangSysTable* defaultLangSys(const ContiguousSharedBuffer& buffer) const
+    const LangSysTable* defaultLangSys(const SharedBuffer& buffer) const
     {
         uint16_t count = langSysCount;
         if (!isValidEnd(buffer, &langSysRecords[count]))
@@ -298,7 +298,7 @@ struct ScriptList : TableBase {
         OpenType::Offset scriptOffset;
     } scripts[1];
 
-    const ScriptTable* script(OpenType::Tag tag, const ContiguousSharedBuffer& buffer) const
+    const ScriptTable* script(OpenType::Tag tag, const SharedBuffer& buffer) const
     {
         uint16_t count = scriptCount;
         if (!isValidEnd(buffer, &scripts[count]))
@@ -310,7 +310,7 @@ struct ScriptList : TableBase {
         return 0;
     }
 
-    const ScriptTable* defaultScript(const ContiguousSharedBuffer& buffer) const
+    const ScriptTable* defaultScript(const SharedBuffer& buffer) const
     {
         uint16_t count = scriptCount;
         if (!count || !isValidEnd(buffer, &scripts[count]))
@@ -321,7 +321,7 @@ struct ScriptList : TableBase {
         return validateOffset<ScriptTable>(buffer, scripts[0].scriptOffset);
     }
 
-    const LangSysTable* defaultLangSys(const ContiguousSharedBuffer& buffer) const
+    const LangSysTable* defaultLangSys(const SharedBuffer& buffer) const
     {
         const ScriptTable* scriptTable = defaultScript(buffer);
         if (!scriptTable)
@@ -336,11 +336,11 @@ struct GSUBTable : TableBase {
     OpenType::Offset featureListOffset;
     OpenType::Offset lookupListOffset;
 
-    const ScriptList* scriptList(const ContiguousSharedBuffer& buffer) const { return validateOffset<ScriptList>(buffer, scriptListOffset); }
-    const FeatureList* featureList(const ContiguousSharedBuffer& buffer) const { return validateOffset<FeatureList>(buffer, featureListOffset); }
-    const LookupList* lookupList(const ContiguousSharedBuffer& buffer) const { return validateOffset<LookupList>(buffer, lookupListOffset); }
+    const ScriptList* scriptList(const SharedBuffer& buffer) const { return validateOffset<ScriptList>(buffer, scriptListOffset); }
+    const FeatureList* featureList(const SharedBuffer& buffer) const { return validateOffset<FeatureList>(buffer, featureListOffset); }
+    const LookupList* lookupList(const SharedBuffer& buffer) const { return validateOffset<LookupList>(buffer, lookupListOffset); }
 
-    const LangSysTable* defaultLangSys(const ContiguousSharedBuffer& buffer) const
+    const LangSysTable* defaultLangSys(const SharedBuffer& buffer) const
     {
         const ScriptList* scripts = scriptList(buffer);
         if (!scripts)
@@ -348,7 +348,7 @@ struct GSUBTable : TableBase {
         return scripts->defaultLangSys(buffer);
     }
 
-    const FeatureTable* feature(OpenType::Tag featureTag, const ContiguousSharedBuffer& buffer) const
+    const FeatureTable* feature(OpenType::Tag featureTag, const SharedBuffer& buffer) const
     {
         const LangSysTable* langSys = defaultLangSys(buffer);
         const FeatureList* features = featureList(buffer);
@@ -365,7 +365,7 @@ struct GSUBTable : TableBase {
         return feature;
     }
 
-    bool getVerticalGlyphSubstitutions(HashMap<Glyph, Glyph>* map, const ContiguousSharedBuffer& buffer) const
+    bool getVerticalGlyphSubstitutions(HashMap<Glyph, Glyph>* map, const SharedBuffer& buffer) const
     {
         const FeatureTable* verticalFeatureTable = feature(OpenType::VertFeatureTag, buffer);
         if (!verticalFeatureTable)
@@ -381,7 +381,7 @@ struct GSUBTable : TableBase {
 
 static bool loadHmtxTable(const FontPlatformData& platformData, Vector<uint16_t>& advanceWidths)
 {
-    auto buffer = platformData.openTypeTable(OpenType::HheaTag);
+    RefPtr<SharedBuffer> buffer = platformData.openTypeTable(OpenType::HheaTag);
     const OpenType::HheaTable* hhea = OpenType::validateTable<OpenType::HheaTable>(buffer);
     if (!hhea)
         return false;
@@ -424,7 +424,7 @@ OpenTypeVerticalData::OpenTypeVerticalData(const FontPlatformData& platformData,
 void OpenTypeVerticalData::loadMetrics(const FontPlatformData& platformData)
 {
     // Load vhea first. This table is required for fonts that support vertical flow.
-    auto buffer = platformData.openTypeTable(OpenType::VheaTag);
+    RefPtr<SharedBuffer> buffer = platformData.openTypeTable(OpenType::VheaTag);
     const OpenType::VheaTable* vhea = OpenType::validateTable<OpenType::VheaTable>(buffer);
     if (!vhea)
         return;
@@ -486,7 +486,7 @@ void OpenTypeVerticalData::loadMetrics(const FontPlatformData& platformData)
 
 void OpenTypeVerticalData::loadVerticalGlyphSubstitutions(const FontPlatformData& platformData)
 {
-    auto buffer = platformData.openTypeTable(OpenType::GSUBTag);
+    RefPtr<SharedBuffer> buffer = platformData.openTypeTable(OpenType::GSUBTag);
     const OpenType::GSUBTable* gsub = OpenType::validateTable<OpenType::GSUBTable>(buffer);
     if (gsub)
         gsub->getVerticalGlyphSubstitutions(&m_verticalGlyphMap, *buffer.get());

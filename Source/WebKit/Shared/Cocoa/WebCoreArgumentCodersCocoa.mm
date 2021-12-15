@@ -569,7 +569,8 @@ std::optional<WebCore::FontPlatformData> ArgumentCoder<Ref<WebCore::Font>>::deco
         if (!fontFaceData)
             return std::nullopt;
 
-        auto localFontFaceData = fontFaceData.value()->makeContiguous();
+        // Upon receipt, copy the data for security, so the sender can't scribble over it while we're using it.
+        auto localFontFaceData = WebCore::SharedBuffer::create(fontFaceData.value()->data(), fontFaceData.value()->size());
 
         std::optional<String> itemInCollection;
         decoder >> itemInCollection;

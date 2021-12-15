@@ -55,7 +55,7 @@ public:
 
     InitData(const String& systemId, RefPtr<SharedBuffer>&& payload)
         : m_systemId(systemId)
-        , m_payload(extractCencIfNeeded(payload ? payload->makeContiguous() : RefPtr<ContiguousSharedBuffer>()))
+        , m_payload(extractCencIfNeeded(WTFMove(payload)))
     {
     }
 
@@ -86,7 +86,7 @@ public:
         return "cenc"_s;
     }
 
-    static RefPtr<SharedBuffer> extractCencIfNeeded(RefPtr<ContiguousSharedBuffer>&&);
+    static RefPtr<SharedBuffer> extractCencIfNeeded(RefPtr<SharedBuffer>&&);
 
 private:
     String m_systemId;

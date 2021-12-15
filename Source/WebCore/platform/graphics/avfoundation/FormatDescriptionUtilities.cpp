@@ -106,7 +106,7 @@ String codecFromFormatDescription(CMFormatDescriptionRef formatDescription)
             auto sampleExtensions = static_cast<CFDataRef>(CFDictionaryGetValue(sampleExtensionsDict, CFSTR("avcC")));
             if (!sampleExtensions)
                 return "avc1";
-            auto configurationRecordBuffer = ContiguousSharedBuffer::create(sampleExtensions);
+            auto configurationRecordBuffer = SharedBuffer::create(sampleExtensions);
             auto parameters = parseAVCDecoderConfigurationRecord(configurationRecordBuffer);
             if (!parameters)
                 return "avc1";
@@ -122,7 +122,7 @@ String codecFromFormatDescription(CMFormatDescriptionRef formatDescription)
             auto sampleExtensions = static_cast<CFDataRef>(CFDictionaryGetValue(sampleExtensionsDict, CFSTR("hvcC")));
             if (!sampleExtensions)
                 return "hvc1";
-            auto configurationRecordBuffer = ContiguousSharedBuffer::create(sampleExtensions);
+            auto configurationRecordBuffer = SharedBuffer::create(sampleExtensions);
             auto parameters = parseHEVCDecoderConfigurationRecord(kCMVideoCodecType_HEVC, configurationRecordBuffer);
             if (!parameters)
                 return "hvc1";
@@ -137,7 +137,7 @@ String codecFromFormatDescription(CMFormatDescriptionRef formatDescription)
             auto sampleExtensions = static_cast<CFDataRef>(CFDictionaryGetValue(sampleExtensionsDict, CFSTR("dvcC")));
             if (!sampleExtensions)
                 return "dvh1";
-            auto configurationRecordBuffer = ContiguousSharedBuffer::create(sampleExtensions);
+            auto configurationRecordBuffer = SharedBuffer::create(sampleExtensions);
             auto parameters = parseDoViDecoderConfigurationRecord(configurationRecordBuffer);
             if (!parameters)
                 return "dvh1";

@@ -1605,11 +1605,11 @@ bool DocumentLoader::maybeCreateArchive()
     addAllArchiveResources(*m_archive);
     ASSERT(m_archive->mainResource());
     auto& mainResource = *m_archive->mainResource();
-    m_parsedArchiveData = mainResource.data().makeContiguous();
+    m_parsedArchiveData = &mainResource.data();
     m_writer.setMIMEType(mainResource.mimeType());
 
     ASSERT(m_frame->document());
-    commitData(m_parsedArchiveData->data(), mainResource.data().size());
+    commitData(mainResource.data().data(), mainResource.data().size());
     return true;
 #endif
 }
@@ -1649,7 +1649,7 @@ void DocumentLoader::clearArchiveResources()
     m_substituteResourceDeliveryTimer.stop();
 }
 
-ContiguousSharedBuffer* DocumentLoader::parsedArchiveData() const
+SharedBuffer* DocumentLoader::parsedArchiveData() const
 {
     return m_parsedArchiveData.get();
 }
@@ -2253,7 +2253,7 @@ void DocumentLoader::maybeFinishLoadingMultipartContent()
     frameLoader()->setupForReplace();
     m_committed = false;
     RefPtr<SharedBuffer> resourceData = mainResourceData();
-    commitLoad(resourceData->makeContiguous()->data(), resourceData->size());
+    commitLoad(resourceData->data(), resourceData->size());
 }
 
 void DocumentLoader::startIconLoading()

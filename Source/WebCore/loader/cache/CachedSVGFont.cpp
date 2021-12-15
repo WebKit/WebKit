@@ -80,7 +80,7 @@ bool CachedSVGFont::ensureCustomFontData(const AtomString& remoteURI)
 
             ScriptDisallowedScope::DisableAssertionsInScope disabledScope;
 
-            m_externalSVGDocument->setContent(decoder->decodeAndFlush(m_data->makeContiguous()->data(), m_data->size()));
+            m_externalSVGDocument->setContent(decoder->decodeAndFlush(m_data->data(), m_data->size()));
             sawError = decoder->sawError();
         }
 
@@ -91,7 +91,7 @@ bool CachedSVGFont::ensureCustomFontData(const AtomString& remoteURI)
         if (!m_externalSVGFontElement || !firstFontFace(remoteURI))
             return false;
         if (auto convertedFont = convertSVGToOTFFont(*m_externalSVGFontElement))
-            m_convertedFont = ContiguousSharedBuffer::create(WTFMove(convertedFont.value()));
+            m_convertedFont = SharedBuffer::create(WTFMove(convertedFont.value()));
         else {
             m_externalSVGDocument = nullptr;
             m_externalSVGFontElement = nullptr;

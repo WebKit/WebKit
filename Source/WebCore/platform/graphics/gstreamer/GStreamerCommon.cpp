@@ -424,9 +424,9 @@ Vector<uint8_t> GstMappedBuffer::createVector() const
     return { data(), size() };
 }
 
-Ref<ContiguousSharedBuffer> GstMappedOwnedBuffer::createSharedBuffer()
+Ref<SharedBuffer> GstMappedOwnedBuffer::createSharedBuffer()
 {
-    return ContiguousSharedBuffer::create(*this);
+    return SharedBuffer::create(*this);
 }
 
 bool isGStreamerPluginAvailable(const char* name)

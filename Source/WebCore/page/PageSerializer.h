@@ -54,7 +54,7 @@ public:
     struct Resource {
         URL url;
         String mimeType;
-        RefPtr<ContiguousSharedBuffer> data;
+        RefPtr<SharedBuffer> data;
     };
 
     explicit PageSerializer(Vector<Resource>&);

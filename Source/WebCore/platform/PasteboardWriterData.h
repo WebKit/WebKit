@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-class ContiguousSharedBuffer;
+class SharedBuffer;
 
 class PasteboardWriterData final {
 public:
@@ -51,14 +51,14 @@ public:
 #if PLATFORM(COCOA)
         String contentOrigin;
         bool canSmartCopyOrDelete;
-        RefPtr<ContiguousSharedBuffer> dataInWebArchiveFormat;
-        RefPtr<ContiguousSharedBuffer> dataInRTFDFormat;
-        RefPtr<ContiguousSharedBuffer> dataInRTFFormat;
-        RefPtr<ContiguousSharedBuffer> dataInAttributedStringFormat;
+        RefPtr<SharedBuffer> dataInWebArchiveFormat;
+        RefPtr<SharedBuffer> dataInRTFDFormat;
+        RefPtr<SharedBuffer> dataInRTFFormat;
+        RefPtr<SharedBuffer> dataInAttributedStringFormat;
         String dataInHTMLFormat;
         String dataInStringFormat;
         Vector<String> clientTypes;
-        Vector<RefPtr<ContiguousSharedBuffer>> clientData;
+        Vector<RefPtr<SharedBuffer>> clientData;
 #endif
     };
 

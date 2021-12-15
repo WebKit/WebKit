@@ -151,7 +151,7 @@ template<> void getData(const WebKit::NetworkCache::Data& data, const Function<b
 {
     data.apply(function);
 }
-template<> void getData(const WebCore::ContiguousSharedBuffer& data, const Function<bool(Span<const uint8_t>)>& function)
+template<> void getData(const WebCore::SharedBuffer& data, const Function<bool(Span<const uint8_t>)>& function)
 {
     function({ data.data(), data.size() });
 }

@@ -146,12 +146,12 @@ void KeyedEncoderCF::endArray()
     m_arrayStack.removeLast();
 }
 
-RefPtr<ContiguousSharedBuffer> KeyedEncoderCF::finishEncoding()
+RefPtr<SharedBuffer> KeyedEncoderCF::finishEncoding()
 {
     auto data = adoptCF(CFPropertyListCreateData(kCFAllocatorDefault, m_rootDictionary.get(), kCFPropertyListBinaryFormat_v1_0, 0, nullptr));
     if (!data)
         return nullptr;
-    return ContiguousSharedBuffer::create(data.get());
+    return SharedBuffer::create(data.get());
 }
 
 } // namespace WebCore

@@ -34,7 +34,6 @@ namespace WebCore {
 
 class CSSFontFace;
 class CSSFontSelector;
-class ContiguousSharedBuffer;
 class Document;
 class Font;
 class FontCreationContext;
@@ -43,6 +42,7 @@ class FontDescription;
 struct FontSelectionSpecifiedCapabilities;
 struct FontVariantSettings;
 class SVGFontFaceElement;
+class SharedBuffer;
 
 template <typename T> class FontTaggedSettings;
 typedef FontTaggedSettings<int> FontFeatureSettings;
@@ -93,7 +93,7 @@ private:
     WeakPtr<CSSFontSelector> m_fontSelector; // For remote fonts, to orchestrate loading.
     std::unique_ptr<FontLoadRequest> m_fontRequest; // Also for remote fonts, a pointer to the resource request.
 
-    RefPtr<ContiguousSharedBuffer> m_generatedOTFBuffer;
+    RefPtr<SharedBuffer> m_generatedOTFBuffer;
     RefPtr<JSC::ArrayBufferView> m_immediateSource;
     std::unique_ptr<FontCustomPlatformData> m_immediateFontCustomPlatformData;
 

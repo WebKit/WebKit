@@ -151,10 +151,10 @@ RetainPtr<CFTypeRef> FontPlatformData::objectForEqualityCheck() const
     return objectForEqualityCheck(ctFont());
 }
 
-RefPtr<ContiguousSharedBuffer> FontPlatformData::openTypeTable(uint32_t table) const
+RefPtr<SharedBuffer> FontPlatformData::openTypeTable(uint32_t table) const
 {
     if (RetainPtr<CFDataRef> data = adoptCF(CTFontCopyTable(ctFont(), table, kCTFontTableOptionNoOptions)))
-        return ContiguousSharedBuffer::create(data.get());
+        return SharedBuffer::create(data.get());
 
     return platformOpenTypeTable(table);
 }

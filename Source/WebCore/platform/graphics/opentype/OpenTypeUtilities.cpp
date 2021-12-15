@@ -199,7 +199,7 @@ void EOTHeader::appendPaddingShort()
 
 // adds fontName to the font table in fontData, and writes the new font table to rewrittenFontTable
 // returns the size of the name table (which is used by renameAndActivateFont), or 0 on early abort
-bool renameFont(const ContiguousSharedBuffer& fontData, const String& fontName, Vector<uint8_t>& rewrittenFontData)
+bool renameFont(const SharedBuffer& fontData, const String& fontName, Vector<uint8_t>& rewrittenFontData)
 {
     size_t originalDataSize = fontData.size();
     const sfntHeader* sfnt = reinterpret_cast<const sfntHeader*>(fontData.data());
@@ -266,7 +266,7 @@ bool renameFont(const ContiguousSharedBuffer& fontData, const String& fontName, 
 }
 
 // Rename the font and install the new font data into the system
-RefPtr<FontMemoryResource> renameAndActivateFont(const ContiguousSharedBuffer& fontData, const String& fontName)
+RefPtr<FontMemoryResource> renameAndActivateFont(const SharedBuffer& fontData, const String& fontName)
 {
     Vector<uint8_t> rewrittenFontData;
     if (!renameFont(fontData, fontName, rewrittenFontData))

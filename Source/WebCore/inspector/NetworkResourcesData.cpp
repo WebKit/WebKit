@@ -103,10 +103,10 @@ unsigned NetworkResourcesData::ResourceData::decodeDataToContent()
 
     if (m_decoder) {
         m_base64Encoded = false;
-        m_content = m_decoder->decodeAndFlush(m_dataBuffer->makeContiguous()->data(), dataLength);
+        m_content = m_decoder->decodeAndFlush(m_dataBuffer->data(), dataLength);
     } else {
         m_base64Encoded = true;
-        m_content = base64EncodeToString(m_dataBuffer->makeContiguous()->data(), dataLength);
+        m_content = base64EncodeToString(m_dataBuffer->data(), dataLength);
     }
 
     m_dataBuffer = nullptr;

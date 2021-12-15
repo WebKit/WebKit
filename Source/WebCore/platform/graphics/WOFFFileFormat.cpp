@@ -37,7 +37,7 @@ static const uint32_t kWoff2Signature = 0x774f4632; // "wOF2"
 
 namespace WebCore {
 
-static bool readUInt32(ContiguousSharedBuffer& buffer, size_t& offset, uint32_t& value)
+static bool readUInt32(SharedBuffer& buffer, size_t& offset, uint32_t& value)
 {
     ASSERT_ARG(offset, offset <= buffer.size());
     if (buffer.size() - offset < sizeof(value))
@@ -49,7 +49,7 @@ static bool readUInt32(ContiguousSharedBuffer& buffer, size_t& offset, uint32_t&
     return true;
 }
 
-static bool readUInt16(ContiguousSharedBuffer& buffer, size_t& offset, uint16_t& value)
+static bool readUInt16(SharedBuffer& buffer, size_t& offset, uint16_t& value)
 {
     ASSERT_ARG(offset, offset <= buffer.size());
     if (buffer.size() - offset < sizeof(value))
@@ -75,7 +75,7 @@ static bool writeUInt16(Vector<uint8_t>& vector, uint16_t value)
 
 static const uint32_t woffSignature = 0x774f4646; /* 'wOFF' */
 
-bool isWOFF(ContiguousSharedBuffer& buffer)
+bool isWOFF(SharedBuffer& buffer)
 {
     size_t offset = 0;
     uint32_t signature;
@@ -126,7 +126,7 @@ private:
 };
 #endif
 
-bool convertWOFFToSfnt(ContiguousSharedBuffer& woff, Vector<uint8_t>& sfnt)
+bool convertWOFFToSfnt(SharedBuffer& woff, Vector<uint8_t>& sfnt)
 {
     ASSERT_ARG(sfnt, sfnt.isEmpty());
 
@@ -283,7 +283,7 @@ bool convertWOFFToSfnt(ContiguousSharedBuffer& woff, Vector<uint8_t>& sfnt)
     return sfnt.size() == totalSfntSize;
 }
 
-bool convertWOFFToSfntIfNecessary(RefPtr<ContiguousSharedBuffer>& buffer)
+bool convertWOFFToSfntIfNecessary(RefPtr<SharedBuffer>& buffer)
 {
 #if PLATFORM(COCOA)
     UNUSED_PARAM(buffer);
@@ -294,7 +294,7 @@ bool convertWOFFToSfntIfNecessary(RefPtr<ContiguousSharedBuffer>& buffer)
 
     Vector<uint8_t> convertedFont;
     if (convertWOFFToSfnt(*buffer, convertedFont))
-        buffer = ContiguousSharedBuffer::create(WTFMove(convertedFont));
+        buffer = SharedBuffer::create(WTFMove(convertedFont));
     else
         buffer = nullptr;
 

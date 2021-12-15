@@ -57,7 +57,7 @@ bool FontPlatformData::platformIsEqual(const FontPlatformData& other) const
     return CFEqual(m_font.get(), other.m_font.get());
 }
 
-RefPtr<ContiguousSharedBuffer> FontPlatformData::platformOpenTypeTable(uint32_t) const
+RefPtr<SharedBuffer> FontPlatformData::platformOpenTypeTable(uint32_t) const
 {
     return nullptr;
 }

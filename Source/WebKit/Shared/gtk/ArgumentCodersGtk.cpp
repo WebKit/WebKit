@@ -159,10 +159,10 @@ std::optional<SelectionData> ArgumentCoder<SelectionData>::decode(Decoder& decod
     if (!decoder.decode(hasCustomData))
         return std::nullopt;
     if (hasCustomData) {
-        RefPtr<ContiguousSharedBuffer> buffer;
+        RefPtr<SharedBuffer> buffer;
         if (!decoder.decode(buffer))
             return std::nullopt;
-        selection.setCustomData(Ref<ContiguousSharedBuffer>(*buffer));
+        selection.setCustomData(Ref<SharedBuffer>(*buffer));
     }
 
     bool canSmartReplace;

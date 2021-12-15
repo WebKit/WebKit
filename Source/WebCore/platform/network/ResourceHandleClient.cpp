@@ -38,7 +38,7 @@ ResourceHandleClient::~ResourceHandleClient() = default;
 
 void ResourceHandleClient::didReceiveBuffer(ResourceHandle* handle, Ref<SharedBuffer>&& buffer, int encodedDataLength)
 {
-    didReceiveData(handle, buffer->makeContiguous()->data(), buffer->size(), encodedDataLength);
+    didReceiveData(handle, buffer->data(), buffer->size(), encodedDataLength);
 }
 
 }

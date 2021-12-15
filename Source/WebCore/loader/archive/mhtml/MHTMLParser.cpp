@@ -193,10 +193,9 @@ RefPtr<ArchiveResource> MHTMLParser::parseNextPart(const MIMEHeader& mimeHeader,
     }
 
     Vector<uint8_t> data;
-    auto contiguousContent = content->makeContiguous();
     switch (mimeHeader.contentTransferEncoding()) {
     case MIMEHeader::Base64: {
-        auto decodedData = base64Decode(contiguousContent->data(), content->size());
+        auto decodedData = base64Decode(content->data(), content->size());
         if (!decodedData) {
             LOG_ERROR("Invalid base64 content for MHTML part.");
             return nullptr;
@@ -205,17 +204,17 @@ RefPtr<ArchiveResource> MHTMLParser::parseNextPart(const MIMEHeader& mimeHeader,
         break;
     }
     case MIMEHeader::QuotedPrintable:
-        data = quotedPrintableDecode(contiguousContent->data(), content->size());
+        data = quotedPrintableDecode(content->data(), content->size());
         break;
     case MIMEHeader::SevenBit:
     case MIMEHeader::Binary:
-        data.append(contiguousContent->data(), content->size());
+        data.append(content->data(), content->size());
         break;
     default:
         LOG_ERROR("Invalid encoding for MHTML part.");
         return nullptr;
     }
-    auto contentBuffer = ContiguousSharedBuffer::create(WTFMove(data));
+    auto contentBuffer = SharedBuffer::create(WTFMove(data));
     // FIXME: the URL in the MIME header could be relative, we should resolve it if it is.
     // The specs mentions 5 ways to resolve a URL: http://tools.ietf.org/html/rfc2557#section-5
     // IE and Firefox (UNMht) seem to generate only absolute URLs.

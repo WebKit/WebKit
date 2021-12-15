@@ -62,7 +62,7 @@ void InjectedBundlePageLoaderClient::willLoadURLRequest(WebPage& page, const Res
 static void releaseSharedBuffer(unsigned char*, const void* data)
 {
     // Balanced by ref() in InjectedBundlePageLoaderClient::willLoadDataRequest().
-    static_cast<const ContiguousSharedBuffer*>(data)->deref();
+    static_cast<SharedBuffer*>(const_cast<void*>(data))->deref();
 }
 
 void InjectedBundlePageLoaderClient::willLoadDataRequest(WebPage& page, const ResourceRequest& request, SharedBuffer* sharedBuffer, const String& MIMEType, const String& encodingName, const URL& unreachableURL, API::Object* userData)
@@ -72,9 +72,8 @@ void InjectedBundlePageLoaderClient::willLoadDataRequest(WebPage& page, const Re
 
     RefPtr<API::Data> data;
     if (sharedBuffer) {
-        auto contiguousBuffer = sharedBuffer->makeContiguous();
-        contiguousBuffer->ref();
-        data = API::Data::createWithoutCopying(contiguousBuffer->data(), contiguousBuffer->size(), releaseSharedBuffer, contiguousBuffer.ptr());
+        sharedBuffer->ref();
+        data = API::Data::createWithoutCopying((const unsigned char*)sharedBuffer->data(), sharedBuffer->size(), releaseSharedBuffer, sharedBuffer);
     }
 
     m_client.willLoadDataRequest(toAPI(&page), toAPI(request), toAPI(data.get()), toAPI(MIMEType.impl()), toAPI(encodingName.impl()), toURLRef(unreachableURL.string().impl()), toAPI(userData), m_client.base.clientInfo);

@@ -196,7 +196,7 @@ void PageSerializer::serializeFrame(Frame* frame)
         return;
     }
     String text = accumulator.serializeNodes(*document->documentElement(), SerializedNodes::SubtreeIncludingNode);
-    m_resources.append({ url, document->suggestedMIMEType(), ContiguousSharedBuffer::create(textEncoding.encode(text, PAL::UnencodableHandling::Entities)) });
+    m_resources.append({ url, document->suggestedMIMEType(), SharedBuffer::create(textEncoding.encode(text, PAL::UnencodableHandling::Entities)) });
     m_resourceURLs.add(url);
 
     for (auto& node : nodes) {
@@ -260,7 +260,7 @@ void PageSerializer::serializeCSSStyleSheet(CSSStyleSheet* styleSheet, const URL
         // FIXME: We should check whether a charset has been specified and if none was found add one.
         PAL::TextEncoding textEncoding(styleSheet->contents().charset());
         ASSERT(textEncoding.isValid());
-        m_resources.append({ url, "text/css"_s, ContiguousSharedBuffer::create(textEncoding.encode(cssText.toString(), PAL::UnencodableHandling::Entities)) });
+        m_resources.append({ url, "text/css"_s, SharedBuffer::create(textEncoding.encode(cssText.toString(), PAL::UnencodableHandling::Entities)) });
         m_resourceURLs.add(url);
     }
 }
@@ -282,7 +282,7 @@ void PageSerializer::addImageToResources(CachedImage* image, RenderElement* imag
         return;
     }
 
-    m_resources.append({ url, image->response().mimeType(), data->makeContiguous() });
+    m_resources.append({ url, image->response().mimeType(), WTFMove(data) });
     m_resourceURLs.add(url);
 }
 

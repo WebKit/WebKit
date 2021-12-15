@@ -402,7 +402,7 @@ struct PasteboardFileTypeReader final : PasteboardFileReader {
         types.add(File::contentTypeForFile(filename));
     }
 
-    void readBuffer(const String&, const String& type, Ref<ContiguousSharedBuffer>&&)
+    void readBuffer(const String&, const String& type, Ref<SharedBuffer>&&)
     {
         types.add(type);
     }

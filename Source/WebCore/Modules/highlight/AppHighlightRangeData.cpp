@@ -46,8 +46,7 @@ constexpr uint64_t highlightFileSignature = 0x4141504832303231; // File Signatur
 
 std::optional<AppHighlightRangeData> AppHighlightRangeData::create(const SharedBuffer& buffer)
 {
-    auto contiguousBuffer = buffer.makeContiguous();
-    auto decoder = contiguousBuffer->decoder();
+    auto decoder = buffer.decoder();
     std::optional<AppHighlightRangeData> data;
     decoder >> data;
     return data;

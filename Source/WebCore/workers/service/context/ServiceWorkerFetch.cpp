@@ -131,7 +131,7 @@ static void processResponse(Ref<Client>&& client, Expected<Ref<FetchResponse>, s
     auto body = response->consumeBody();
     WTF::switchOn(body, [&] (Ref<FormData>& formData) {
         client->didReceiveFormDataAndFinish(WTFMove(formData));
-    }, [&] (Ref<ContiguousSharedBuffer>& buffer) {
+    }, [&] (Ref<SharedBuffer>& buffer) {
         client->didReceiveData(WTFMove(buffer));
         client->didFinish();
     }, [&] (std::nullptr_t&) {

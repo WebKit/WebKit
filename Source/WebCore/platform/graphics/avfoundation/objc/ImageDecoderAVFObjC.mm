@@ -309,7 +309,7 @@ ImageDecoderAVFObjC::ImageDecoderAVFObjC(SharedBuffer& data, const String& mimeT
     , m_loader(adoptNS([[WebCoreSharedBufferResourceLoaderDelegate alloc] initWithParent:this]))
     , m_decompressionSession(WebCoreDecompressionSession::createRGB())
 {
-    [m_loader updateData:data.makeContiguous()->createNSData().get() complete:NO];
+    [m_loader updateData:data.createNSData().get() complete:NO];
 
     [m_asset.get().resourceLoader setDelegate:m_loader.get() queue:dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)];
     [m_asset loadValuesAsynchronouslyForKeys:@[@"tracks"] completionHandler:[protectedThis = Ref { *this }] () mutable {
@@ -643,7 +643,7 @@ void ImageDecoderAVFObjC::setExpectedContentSize(long long expectedContentSize)
 
 void ImageDecoderAVFObjC::setData(SharedBuffer& data, bool allDataReceived)
 {
-    [m_loader updateData:data.makeContiguous()->createNSData().get() complete:allDataReceived];
+    [m_loader updateData:data.createNSData().get() complete:allDataReceived];
 
     if (allDataReceived) {
         m_isAllDataReceived = true;

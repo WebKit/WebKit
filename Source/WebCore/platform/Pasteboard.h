@@ -61,7 +61,6 @@ typedef struct HWND__* HWND;
 
 namespace WebCore {
 
-class ContiguousSharedBuffer;
 class DocumentFragment;
 class DragData;
 class Element;
@@ -83,14 +82,14 @@ struct PasteboardWebContent {
     WEBCORE_EXPORT ~PasteboardWebContent();
     String contentOrigin;
     bool canSmartCopyOrDelete;
-    RefPtr<ContiguousSharedBuffer> dataInWebArchiveFormat;
-    RefPtr<ContiguousSharedBuffer> dataInRTFDFormat;
-    RefPtr<ContiguousSharedBuffer> dataInRTFFormat;
-    RefPtr<ContiguousSharedBuffer> dataInAttributedStringFormat;
+    RefPtr<SharedBuffer> dataInWebArchiveFormat;
+    RefPtr<SharedBuffer> dataInRTFDFormat;
+    RefPtr<SharedBuffer> dataInRTFFormat;
+    RefPtr<SharedBuffer> dataInAttributedStringFormat;
     String dataInHTMLFormat;
     String dataInStringFormat;
     Vector<String> clientTypes;
-    Vector<RefPtr<ContiguousSharedBuffer>> clientData;
+    Vector<RefPtr<SharedBuffer>> clientData;
 #endif
 #if PLATFORM(GTK)
     String contentOrigin;
@@ -120,17 +119,17 @@ struct PasteboardImage {
     WEBCORE_EXPORT ~PasteboardImage();
     RefPtr<Image> image;
 #if PLATFORM(MAC)
-    RefPtr<ContiguousSharedBuffer> dataInWebArchiveFormat;
+    RefPtr<SharedBuffer> dataInWebArchiveFormat;
     String dataInHTMLFormat;
 #endif
 #if !PLATFORM(WIN)
     PasteboardURL url;
 #endif
 #if !(PLATFORM(GTK) || PLATFORM(WIN))
-    RefPtr<ContiguousSharedBuffer> resourceData;
+    RefPtr<SharedBuffer> resourceData;
     String resourceMIMEType;
     Vector<String> clientTypes;
-    Vector<RefPtr<ContiguousSharedBuffer>> clientData;
+    Vector<RefPtr<SharedBuffer>> clientData;
 #endif
     String suggestedName;
     FloatSize imageSize;
@@ -144,7 +143,7 @@ struct PasteboardBuffer {
     String contentOrigin;
 #endif
     String type;
-    RefPtr<ContiguousSharedBuffer> data;
+    RefPtr<SharedBuffer> data;
 };
 
 // For reading from the pasteboard.
@@ -165,10 +164,10 @@ public:
 #endif
 
 #if PLATFORM(COCOA)
-    virtual bool readWebArchive(ContiguousSharedBuffer&) = 0;
-    virtual bool readRTFD(ContiguousSharedBuffer&) = 0;
-    virtual bool readRTF(ContiguousSharedBuffer&) = 0;
-    virtual bool readDataBuffer(ContiguousSharedBuffer&, const String& type, const String& name, PresentationSize preferredPresentationSize = { }) = 0;
+    virtual bool readWebArchive(SharedBuffer&) = 0;
+    virtual bool readRTFD(SharedBuffer&) = 0;
+    virtual bool readRTF(SharedBuffer&) = 0;
+    virtual bool readDataBuffer(SharedBuffer&, const String& type, const String& name, PresentationSize preferredPresentationSize = { }) = 0;
 #endif
 };
 
@@ -183,7 +182,7 @@ struct PasteboardFileReader {
     virtual ~PasteboardFileReader() = default;
     virtual void readFilename(const String&) = 0;
     virtual bool shouldReadBuffer(const String& /* type */) const { return true; }
-    virtual void readBuffer(const String& filename, const String& type, Ref<ContiguousSharedBuffer>&&) = 0;
+    virtual void readBuffer(const String& filename, const String& type, Ref<SharedBuffer>&&) = 0;
 };
 
 class Pasteboard {
@@ -309,7 +308,7 @@ public:
     std::optional<PasteboardItemInfo> pasteboardItemInfo(size_t index) const;
 
     String readString(size_t index, const String& type);
-    RefPtr<WebCore::ContiguousSharedBuffer> readBuffer(std::optional<size_t> index, const String& type);
+    RefPtr<WebCore::SharedBuffer> readBuffer(std::optional<size_t> index, const String& type);
     URL readURL(size_t index, String& title);
 
     const PasteboardContext* context() const { return m_context.get(); }
@@ -341,7 +340,7 @@ private:
     static void addHTMLClipboardTypesForCocoaType(ListHashSet<String>& resultTypes, const String& cocoaType);
     String readStringForPlatformType(const String&);
     Vector<String> readTypesWithSecurityCheck();
-    RefPtr<ContiguousSharedBuffer> readBufferForTypeWithSecurityCheck(const String&);
+    RefPtr<SharedBuffer> readBufferForTypeWithSecurityCheck(const String&);
 #endif
 
     std::unique_ptr<PasteboardContext> m_context;

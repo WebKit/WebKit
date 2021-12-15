@@ -51,15 +51,13 @@ public:
         if (m_scriptBuffer.isEmpty())
             return emptyString();
 
-        if (!m_contiguousBuffer && (!m_containsOnlyASCII || *m_containsOnlyASCII))
-            m_contiguousBuffer = m_scriptBuffer.buffer()->makeContiguous();
         if (!m_containsOnlyASCII) {
-            m_containsOnlyASCII = charactersAreAllASCII(m_contiguousBuffer->data(), m_scriptBuffer.buffer()->size());
+            m_containsOnlyASCII = charactersAreAllASCII(m_scriptBuffer.buffer()->data(), m_scriptBuffer.buffer()->size());
             if (*m_containsOnlyASCII)
-                m_scriptHash = StringHasher::computeHashAndMaskTop8Bits(m_contiguousBuffer->data(), m_scriptBuffer.buffer()->size());
+                m_scriptHash = StringHasher::computeHashAndMaskTop8Bits(m_scriptBuffer.buffer()->data(), m_scriptBuffer.buffer()->size());
         }
         if (*m_containsOnlyASCII)
-            return { m_contiguousBuffer->data(), static_cast<unsigned>(m_scriptBuffer.buffer()->size()) };
+            return { m_scriptBuffer.buffer()->data(), static_cast<unsigned>(m_scriptBuffer.buffer()->size()) };
 
         if (!m_cachedScriptString) {
             m_cachedScriptString = m_scriptBuffer.toString();
@@ -83,7 +81,6 @@ public:
             return;
 
         m_scriptBuffer = scriptBuffer;
-        m_contiguousBuffer = nullptr;
     }
 
 private:
@@ -94,7 +91,6 @@ private:
     }
 
     ScriptBuffer m_scriptBuffer;
-    mutable RefPtr<ContiguousSharedBuffer> m_contiguousBuffer;
     mutable unsigned m_scriptHash { 0 };
     mutable String m_cachedScriptString;
     mutable std::optional<bool> m_containsOnlyASCII;

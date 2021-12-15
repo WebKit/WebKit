@@ -41,13 +41,17 @@ SharedBuffer::SharedBuffer(CFDataRef data)
 // Using Foundation allows for an even more efficient implementation of this function,
 // so only use this version for non-Foundation.
 #if !USE(FOUNDATION)
-RetainPtr<CFDataRef> ContiguousSharedBuffer::createCFData() const
+RetainPtr<CFDataRef> SharedBuffer::createCFData() const
 {
-    if (hasOneSegment()) {
+    if (m_segments.size() == 1) {
         if (auto* data = std::get_if<RetainPtr<CFDataRef>>(&m_segments[0].segment->m_immutableData))
             return *data;
     }
-    return adoptCF(CFDataCreate(nullptr, data(), size()));
+    auto cfData = adoptCF(CFDataCreateMutable(nullptr, size()));
+    forEachSegment([&](auto& segment) {
+        CFDataAppendBytes(cfData.get(), segment.data(), segment.size());
+    });
+    return cfData;
 }
 #endif
 
@@ -68,7 +72,7 @@ void SharedBuffer::hintMemoryNotNeededSoon() const
 
 void SharedBuffer::append(CFDataRef data)
 {
-    ASSERT(!m_contiguous);
+    ASSERT(!m_hasBeenCombinedIntoOneSegment);
     if (data) {
         m_segments.append({m_size, DataSegment::create(data)});
         m_size += CFDataGetLength(data);

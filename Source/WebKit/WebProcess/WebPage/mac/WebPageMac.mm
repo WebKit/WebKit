@@ -566,7 +566,7 @@ void WebPage::getDataSelectionForPasteboard(const String pasteboardType, Complet
     if (frame.selection().isNone())
         return completionHandler({ });
 
-    auto buffer = frame.editor().dataSelectionForPasteboard(pasteboardType);
+    RefPtr<SharedBuffer> buffer = frame.editor().dataSelectionForPasteboard(pasteboardType);
     if (!buffer)
         return completionHandler({ });
     auto sharedMemoryBuffer = SharedMemory::copyBuffer(*buffer);

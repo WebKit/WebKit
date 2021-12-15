@@ -51,7 +51,7 @@ WebResource::~WebResource()
     gClassNameCount().remove("WebResource");
 }
 
-WebResource* WebResource::createInstance(RefPtr<WebCore::ContiguousSharedBuffer>&& data, const WebCore::ResourceResponse& response)
+WebResource* WebResource::createInstance(RefPtr<WebCore::SharedBuffer>&& data, const WebCore::ResourceResponse& response)
 {
     COMPtr<MemoryStream> memoryStream = MemoryStream::createInstance(WTFMove(data));
 

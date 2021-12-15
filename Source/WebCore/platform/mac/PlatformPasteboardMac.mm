@@ -68,12 +68,12 @@ void PlatformPasteboard::getTypes(Vector<String>& types) const
     types = makeVector<String>([m_pasteboard types]);
 }
 
-RefPtr<ContiguousSharedBuffer> PlatformPasteboard::bufferForType(const String& pasteboardType) const
+RefPtr<SharedBuffer> PlatformPasteboard::bufferForType(const String& pasteboardType) const
 {
     NSData *data = [m_pasteboard dataForType:pasteboardType];
     if (!data)
         return nullptr;
-    return ContiguousSharedBuffer::create(adoptNS([data copy]).get());
+    return SharedBuffer::create(adoptNS([data copy]).get());
 }
 
 int PlatformPasteboard::numberOfFiles() const
@@ -218,7 +218,7 @@ Vector<String> PlatformPasteboard::typesSafeForDOMToReadAndWrite(const String& o
 {
     ListHashSet<String> domPasteboardTypes;
     if (NSData *serializedCustomData = [m_pasteboard dataForType:@(PasteboardCustomData::cocoaType())]) {
-        auto data = PasteboardCustomData::fromSharedBuffer(ContiguousSharedBuffer::create(serializedCustomData).get());
+        auto data = PasteboardCustomData::fromSharedBuffer(SharedBuffer::create(serializedCustomData).get());
         if (data.origin() == origin) {
             for (auto& type : data.orderedTypes())
                 domPasteboardTypes.add(type);
@@ -263,8 +263,8 @@ int64_t PlatformPasteboard::write(const PasteboardCustomData& data)
         if (platformType.isEmpty())
             return;
 
-        if (std::holds_alternative<Ref<ContiguousSharedBuffer>>(stringOrBuffer)) {
-            if (auto platformData = std::get<Ref<ContiguousSharedBuffer>>(stringOrBuffer)->createNSData())
+        if (std::holds_alternative<Ref<SharedBuffer>>(stringOrBuffer)) {
+            if (auto platformData = std::get<Ref<SharedBuffer>>(stringOrBuffer)->createNSData())
                 [m_pasteboard setData:platformData.get() forType:platformType];
         } else if (std::holds_alternative<String>(stringOrBuffer)) {
             auto string = std::get<String>(stringOrBuffer);
@@ -341,7 +341,7 @@ int64_t PlatformPasteboard::setTypes(const Vector<String>& pasteboardTypes)
     return [m_pasteboard declareTypes:createNSArray(pasteboardTypes).get() owner:nil];
 }
 
-int64_t PlatformPasteboard::setBufferForType(ContiguousSharedBuffer* buffer, const String& pasteboardType)
+int64_t PlatformPasteboard::setBufferForType(SharedBuffer* buffer, const String& pasteboardType)
 {
     if (!canWritePasteboardType(pasteboardType))
         return 0;
@@ -446,7 +446,7 @@ static String webSafeMIMETypeForModernPasteboardType(NSPasteboardType platformTy
     return { };
 }
 
-RefPtr<ContiguousSharedBuffer> PlatformPasteboard::readBuffer(std::optional<size_t> index, const String& type) const
+RefPtr<SharedBuffer> PlatformPasteboard::readBuffer(std::optional<size_t> index, const String& type) const
 {
     if (!index)
         return bufferForType(type);
@@ -457,7 +457,7 @@ RefPtr<ContiguousSharedBuffer> PlatformPasteboard::readBuffer(std::optional<size
 
     if (NSData *data = [item dataForType:type]) {
         auto nsData = adoptNS(data.copy);
-        return ContiguousSharedBuffer::create(nsData.get());
+        return SharedBuffer::create(nsData.get());
     }
 
     return nullptr;
@@ -507,8 +507,8 @@ static RetainPtr<NSPasteboardItem> createPasteboardItem(const PasteboardCustomDa
         if (!platformType)
             return;
 
-        if (std::holds_alternative<Ref<ContiguousSharedBuffer>>(stringOrBuffer)) {
-            if (auto platformData = std::get<Ref<ContiguousSharedBuffer>>(stringOrBuffer)->createNSData())
+        if (std::holds_alternative<Ref<SharedBuffer>>(stringOrBuffer)) {
+            if (auto platformData = std::get<Ref<SharedBuffer>>(stringOrBuffer)->createNSData())
                 [item setData:platformData.get() forType:platformType];
         } else if (std::holds_alternative<String>(stringOrBuffer)) {
             auto string = std::get<String>(stringOrBuffer);

@@ -412,13 +412,13 @@ uint64_t FormData::lengthInBytes() const
     return *m_lengthInBytes;
 }
 
-RefPtr<ContiguousSharedBuffer> FormData::asSharedBuffer() const
+RefPtr<SharedBuffer> FormData::asSharedBuffer() const
 {
     for (auto& element : m_elements) {
         if (!std::holds_alternative<Vector<uint8_t>>(element.data))
             return nullptr;
     }
-    return ContiguousSharedBuffer::create(flatten());
+    return SharedBuffer::create(flatten());
 }
 
 URL FormData::asBlobURL() const

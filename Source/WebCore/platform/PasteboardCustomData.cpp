@@ -33,13 +33,13 @@
 
 namespace WebCore {
 
-static std::variant<String, Ref<ContiguousSharedBuffer>> copyPlatformData(const std::variant<String, Ref<ContiguousSharedBuffer>>& other)
+static std::variant<String, Ref<SharedBuffer>> copyPlatformData(const std::variant<String, Ref<SharedBuffer>>& other)
 {
     if (std::holds_alternative<String>(other))
         return { std::get<String>(other) };
 
-    if (std::holds_alternative<Ref<ContiguousSharedBuffer>>(other))
-        return { std::get<Ref<ContiguousSharedBuffer>>(other).copyRef() };
+    if (std::holds_alternative<Ref<SharedBuffer>>(other))
+        return { std::get<Ref<SharedBuffer>>(other).copyRef() };
 
     return { };
 }
@@ -80,7 +80,7 @@ PasteboardCustomData::PasteboardCustomData(String&& origin, Vector<Entry>&& data
 {
 }
 
-Ref<ContiguousSharedBuffer> PasteboardCustomData::createSharedBuffer() const
+Ref<SharedBuffer> PasteboardCustomData::createSharedBuffer() const
 {
     constexpr unsigned currentCustomDataSerializationVersion = 1;
 
@@ -89,7 +89,7 @@ Ref<ContiguousSharedBuffer> PasteboardCustomData::createSharedBuffer() const
     encoder << m_origin;
     encoder << sameOriginCustomStringData();
     encoder << orderedTypes();
-    return ContiguousSharedBuffer::create(encoder.buffer(), encoder.bufferSize());
+    return SharedBuffer::create(encoder.buffer(), encoder.bufferSize());
 }
 
 PasteboardCustomData PasteboardCustomData::fromPersistenceDecoder(WTF::Persistence::Decoder&& decoder)
@@ -124,7 +124,7 @@ PasteboardCustomData PasteboardCustomData::fromPersistenceDecoder(WTF::Persisten
     return result;
 }
 
-PasteboardCustomData PasteboardCustomData::fromSharedBuffer(const ContiguousSharedBuffer& buffer)
+PasteboardCustomData PasteboardCustomData::fromSharedBuffer(const SharedBuffer& buffer)
 {
     return fromPersistenceDecoder(buffer.decoder());
 }
@@ -134,7 +134,7 @@ void PasteboardCustomData::writeString(const String& type, const String& value)
     addOrMoveEntryToEnd(type).platformData = { value };
 }
 
-void PasteboardCustomData::writeData(const String& type, Ref<ContiguousSharedBuffer>&& data)
+void PasteboardCustomData::writeData(const String& type, Ref<SharedBuffer>&& data)
 {
     addOrMoveEntryToEnd(type).platformData = { WTFMove(data) };
 }
@@ -202,14 +202,14 @@ HashMap<String, String> PasteboardCustomData::sameOriginCustomStringData() const
     return customData;
 }
 
-RefPtr<ContiguousSharedBuffer> PasteboardCustomData::readBuffer(const String& type) const
+RefPtr<SharedBuffer> PasteboardCustomData::readBuffer(const String& type) const
 {
     for (auto& entry : m_data) {
         if (entry.type != type)
             continue;
 
-        if (std::holds_alternative<Ref<ContiguousSharedBuffer>>(entry.platformData))
-            return std::get<Ref<ContiguousSharedBuffer>>(entry.platformData).copyRef();
+        if (std::holds_alternative<Ref<SharedBuffer>>(entry.platformData))
+            return std::get<Ref<SharedBuffer>>(entry.platformData).copyRef();
 
         return nullptr;
     }
@@ -265,11 +265,11 @@ void PasteboardCustomData::forEachCustomString(Function<void(const String& type,
     }
 }
 
-void PasteboardCustomData::forEachPlatformStringOrBuffer(Function<void(const String& type, const std::variant<String, Ref<ContiguousSharedBuffer>>& data)>&& function) const
+void PasteboardCustomData::forEachPlatformStringOrBuffer(Function<void(const String& type, const std::variant<String, Ref<SharedBuffer>>& data)>&& function) const
 {
     for (auto& entry : m_data) {
         auto& data = entry.platformData;
-        if ((std::holds_alternative<String>(data) && !std::get<String>(data).isNull()) || std::holds_alternative<Ref<ContiguousSharedBuffer>>(data))
+        if ((std::holds_alternative<String>(data) && !std::get<String>(data).isNull()) || std::holds_alternative<Ref<SharedBuffer>>(data))
             function(entry.type, data);
     }
 }

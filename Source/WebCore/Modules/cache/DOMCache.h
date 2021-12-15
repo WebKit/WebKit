@@ -72,7 +72,7 @@ private:
     void stop() final;
     const char* activeDOMObjectName() const final;
 
-    void putWithResponseData(DOMPromiseDeferred<void>&&, Ref<FetchRequest>&&, Ref<FetchResponse>&&, ExceptionOr<RefPtr<ContiguousSharedBuffer>>&&);
+    void putWithResponseData(DOMPromiseDeferred<void>&&, Ref<FetchRequest>&&, Ref<FetchResponse>&&, ExceptionOr<RefPtr<SharedBuffer>>&&);
 
     enum class ShouldRetrieveResponses : bool { No, Yes };
     using RecordsCallback = CompletionHandler<void(ExceptionOr<Vector<DOMCacheEngine::Record>>&&)>;

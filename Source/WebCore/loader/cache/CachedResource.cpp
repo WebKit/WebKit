@@ -915,7 +915,7 @@ void CachedResource::Callback::timerFired()
 
 #if ENABLE(SHAREABLE_RESOURCE)
 
-void CachedResource::tryReplaceEncodedData(ContiguousSharedBuffer& newBuffer)
+void CachedResource::tryReplaceEncodedData(SharedBuffer& newBuffer)
 {
     if (!m_data)
         return;
@@ -929,7 +929,8 @@ void CachedResource::tryReplaceEncodedData(ContiguousSharedBuffer& newBuffer)
     if (*m_data != newBuffer)
         return;
 
-    m_data = Ref { newBuffer };
+    m_data->clear();
+    m_data->append(newBuffer);
     didReplaceSharedBufferContents();
 }
 

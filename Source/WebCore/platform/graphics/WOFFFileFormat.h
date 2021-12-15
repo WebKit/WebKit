@@ -30,19 +30,19 @@
 
 namespace WebCore {
 
-class ContiguousSharedBuffer;
+class SharedBuffer;
 
 // Returns whether the buffer is a WOFF file.
-bool isWOFF(ContiguousSharedBuffer&);
+bool isWOFF(SharedBuffer&);
 
 // Returns false if the WOFF file woff is invalid or could not be converted to sfnt (for example,
 // if conversion ran out of memory). Otherwise returns true and writes the sfnt payload into sfnt.
-bool convertWOFFToSfnt(ContiguousSharedBuffer& woff, Vector<uint8_t>& sfnt);
+bool convertWOFFToSfnt(SharedBuffer& woff, Vector<uint8_t>& sfnt);
 
 // If the given buffer is a WOFF file and the current platform has no native support for WOFF
 // fonts, convert it to sfnt. Returns true if the given buffer was converted. If conversion fails,
 // the buffer will be set to nullptr.
-bool convertWOFFToSfntIfNecessary(RefPtr<ContiguousSharedBuffer>&);
+bool convertWOFFToSfntIfNecessary(RefPtr<SharedBuffer>&);
 
 } // namespace WebCore
 

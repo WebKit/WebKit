@@ -139,9 +139,9 @@ void KeyedEncoderGeneric::endArray()
     m_encoder << Type::EndArray;
 }
 
-RefPtr<ContiguousSharedBuffer> KeyedEncoderGeneric::finishEncoding()
+RefPtr<SharedBuffer> KeyedEncoderGeneric::finishEncoding()
 {
-    return ContiguousSharedBuffer::create(m_encoder.buffer(), m_encoder.bufferSize());
+    return SharedBuffer::create(m_encoder.buffer(), m_encoder.bufferSize());
 }
 
 } // namespace WebCore

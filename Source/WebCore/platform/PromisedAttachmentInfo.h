@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-class ContiguousSharedBuffer;
+class SharedBuffer;
 
 struct PromisedAttachmentInfo {
 #if ENABLE(ATTACHMENT_ELEMENT)
@@ -38,7 +38,7 @@ struct PromisedAttachmentInfo {
 #endif
 
     Vector<String> additionalTypes;
-    Vector<RefPtr<ContiguousSharedBuffer>> additionalData;
+    Vector<RefPtr<SharedBuffer>> additionalData;
 
     operator bool() const
     {

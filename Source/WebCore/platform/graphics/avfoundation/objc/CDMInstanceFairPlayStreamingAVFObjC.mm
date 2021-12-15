@@ -324,7 +324,7 @@ static RefPtr<JSON::Value> parseJSONValue(const SharedBuffer& buffer)
         return nullptr;
 
     // Parse the buffer contents as JSON, returning the root object (if any).
-    String json { buffer.makeContiguous()->data(), static_cast<unsigned>(size) };
+    String json { buffer.data(), static_cast<unsigned>(size) };
 
     return JSON::Value::parseJSON(json);
 }
@@ -709,12 +709,12 @@ void CDMInstanceSessionFairPlayStreamingAVFObjC::requestLicense(LicenseType lice
     RetainPtr<NSData> initializationData;
 
     if (initDataType == CDMPrivateFairPlayStreaming::sinfName())
-        initializationData = initData->makeContiguous()->createNSData();
+        initializationData = initData->createNSData();
     else if (initDataType == CDMPrivateFairPlayStreaming::skdName())
-        identifier = adoptNS([[NSString alloc] initWithData:initData->makeContiguous()->createNSData().get() encoding:NSUTF8StringEncoding]);
+        identifier = adoptNS([[NSString alloc] initWithData:initData->createNSData().get() encoding:NSUTF8StringEncoding]);
 #if HAVE(FAIRPLAYSTREAMING_CENC_INITDATA)
     else if (initDataType == InitDataRegistry::cencName()) {
-        auto psshString = base64EncodeToString(initData->makeContiguous()->data(), initData->size());
+        auto psshString = base64EncodeToString(initData->data(), initData->size());
         initializationData = [NSJSONSerialization dataWithJSONObject:@{ @"pssh": (NSString*)psshString } options:NSJSONWritingPrettyPrinted error:nil];
     }
 #endif
@@ -770,7 +770,7 @@ void CDMInstanceSessionFairPlayStreamingAVFObjC::updateLicense(const String&, Li
         auto expiredSessions = createNSArray(m_expiredSessions, [] (auto& data) {
             return data.get();
         });
-        auto appIdentifier = certificate->makeContiguous()->createNSData();
+        auto appIdentifier = certificate->createNSData();
         [PAL::getAVContentKeySessionClass() removePendingExpiredSessionReports:expiredSessions.get() withAppIdentifier:appIdentifier.get() storageDirectoryAtURL:storageURL];
         callback(false, { }, std::nullopt, std::nullopt, Succeeded);
         return;
@@ -888,7 +888,7 @@ void CDMInstanceSessionFairPlayStreamingAVFObjC::updateLicense(const String&, Li
                 if (!payloadVector)
                     return false;
                 auto payloadData = SharedBuffer::create(WTFMove(*payloadVector));
-                [request processContentKeyResponse:[PAL::getAVContentKeyResponseClass() contentKeyResponseWithFairPlayStreamingKeyResponseData:payloadData->makeContiguous()->createNSData().get()]];
+                [request processContentKeyResponse:[PAL::getAVContentKeyResponseClass() contentKeyResponseWithFairPlayStreamingKeyResponseData:payloadData->createNSData().get()]];
             }
             return true;
         };
@@ -901,7 +901,7 @@ void CDMInstanceSessionFairPlayStreamingAVFObjC::updateLicense(const String&, Li
         }
     } else {
         DEBUG_LOG_IF_POSSIBLE(LOGIDENTIFIER, "'sinf' initData, processing response");
-        [m_currentRequest.value().requests.first() processContentKeyResponse:[PAL::getAVContentKeyResponseClass() contentKeyResponseWithFairPlayStreamingKeyResponseData:responseData->makeContiguous()->createNSData().get()]];
+        [m_currentRequest.value().requests.first() processContentKeyResponse:[PAL::getAVContentKeyResponseClass() contentKeyResponseWithFairPlayStreamingKeyResponseData:responseData->createNSData().get()]];
     }
 
     // FIXME(rdar://problem/35592277): stash the callback and call it once AVContentKeyResponse supports a success callback.
@@ -934,7 +934,7 @@ void CDMInstanceSessionFairPlayStreamingAVFObjC::loadSession(LicenseType license
             return;
         }
 
-        RetainPtr<NSData> appIdentifier = certificate->makeContiguous()->createNSData();
+        RetainPtr<NSData> appIdentifier = certificate->createNSData();
         KeyStatusVector changedKeys;
         for (NSData* expiredSessionData in [PAL::getAVContentKeySessionClass() pendingExpiredSessionReportsWithAppIdentifier:appIdentifier.get() storageDirectoryAtURL:storageURL]) {
             static const NSString *PlaybackSessionIdKey = @"PlaybackSessionID";
@@ -999,7 +999,7 @@ void CDMInstanceSessionFairPlayStreamingAVFObjC::removeSessionData(const String&
             return;
         }
 
-        RetainPtr<NSData> appIdentifier = certificate->makeContiguous()->createNSData();
+        RetainPtr<NSData> appIdentifier = certificate->createNSData();
         RetainPtr<NSMutableArray> expiredSessionsArray = adoptNS([[NSMutableArray alloc] init]);
         KeyStatusVector changedKeys;
         for (NSData* expiredSessionData in [PAL::getAVContentKeySessionClass() pendingExpiredSessionReportsWithAppIdentifier:appIdentifier.get() storageDirectoryAtURL:storageURL]) {
@@ -1086,7 +1086,7 @@ void CDMInstanceSessionFairPlayStreamingAVFObjC::didProvideRequest(AVContentKeyR
 
     RetainPtr<NSData> appIdentifier;
     if (auto* certificate = m_instance->serverCertificate())
-        appIdentifier = certificate->makeContiguous()->createNSData();
+        appIdentifier = certificate->createNSData();
 
     auto keyIDs = keyIDsForRequest(request);
     if (keyIDs.isEmpty()) {
@@ -1097,7 +1097,7 @@ void CDMInstanceSessionFairPlayStreamingAVFObjC::didProvideRequest(AVContentKeyR
         return;
     }
 
-    RetainPtr<NSData> contentIdentifier = keyIDs.first()->makeContiguous()->createNSData();
+    RetainPtr<NSData> contentIdentifier = keyIDs.first()->createNSData();
     @try {
         [request makeStreamingContentKeyRequestDataForApp:appIdentifier.get() contentIdentifier:contentIdentifier.get() options:nil completionHandler:[this, weakThis = WeakPtr { *this }] (NSData *contentKeyRequestData, NSError *error) mutable {
             callOnMainThread([this, weakThis = WTFMove(weakThis), error = retainPtr(error), contentKeyRequestData = retainPtr(contentKeyRequestData)] {
@@ -1153,7 +1153,7 @@ void CDMInstanceSessionFairPlayStreamingAVFObjC::didProvideRequests(Vector<Retai
 
     RetainPtr<NSData> appIdentifier;
     if (auto* certificate = m_instance->serverCertificate())
-        appIdentifier = certificate->makeContiguous()->createNSData();
+        appIdentifier = certificate->createNSData();
 
     using RequestsData = Vector<std::pair<RefPtr<SharedBuffer>, RetainPtr<NSData>>>;
     struct CallbackAggregator final : public ThreadSafeRefCounted<CallbackAggregator> {
@@ -1196,7 +1196,7 @@ void CDMInstanceSessionFairPlayStreamingAVFObjC::didProvideRequests(Vector<Retai
             auto entry = JSON::Object::create();
             auto& keyID = requestData.first;
             auto& payload = requestData.second;
-            entry->setString("keyID", base64EncodeToString(keyID->makeContiguous()->data(), keyID->size()));
+            entry->setString("keyID", base64EncodeToString(keyID->data(), keyID->size()));
             entry->setString("payload", base64EncodeToString(payload.get().bytes, payload.get().length));
             requestJSON->pushObject(WTFMove(entry));
         }
@@ -1212,7 +1212,7 @@ void CDMInstanceSessionFairPlayStreamingAVFObjC::didProvideRequests(Vector<Retai
         for (auto request : m_currentRequest.value().requests) {
             auto keyIDs = keyIDsForRequest(request.get());
             RefPtr<SharedBuffer> keyID = WTFMove(keyIDs.first());
-            auto contentIdentifier = keyID->makeContiguous()->createNSData();
+            auto contentIdentifier = keyID->createNSData();
             [request makeStreamingContentKeyRequestDataForApp:appIdentifier.get() contentIdentifier:contentIdentifier.get() options:nil completionHandler:[keyID = WTFMove(keyID), aggregator] (NSData *contentKeyRequestData, NSError *error) mutable {
                 UNUSED_PARAM(error);
                 callOnMainThread([keyID = WTFMove(keyID), aggregator = WTFMove(aggregator), contentKeyRequestData = retainPtr(contentKeyRequestData)] () mutable {
@@ -1249,10 +1249,10 @@ void CDMInstanceSessionFairPlayStreamingAVFObjC::didProvideRenewingRequest(AVCon
 
     RetainPtr<NSData> appIdentifier;
     if (auto* certificate = m_instance->serverCertificate())
-        appIdentifier = certificate->makeContiguous()->createNSData();
+        appIdentifier = certificate->createNSData();
     auto keyIDs = keyIDsForRequest(m_currentRequest.value());
 
-    RetainPtr<NSData> contentIdentifier = keyIDs.first()->makeContiguous()->createNSData();
+    RetainPtr<NSData> contentIdentifier = keyIDs.first()->createNSData();
     @try {
         [request makeStreamingContentKeyRequestDataForApp:appIdentifier.get() contentIdentifier:contentIdentifier.get() options:nil completionHandler:[this, weakThis = WeakPtr { *this }] (NSData *contentKeyRequestData, NSError *error) mutable {
             callOnMainThread([this, weakThis = WTFMove(weakThis), error = retainPtr(error), contentKeyRequestData = retainPtr(contentKeyRequestData)] {

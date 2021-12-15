@@ -31,7 +31,7 @@
 
 namespace WebCore {
 
-class ContiguousSharedBuffer;
+class SharedBuffer;
 
 class KeyedDecoder {
     WTF_MAKE_FAST_ALLOCATED;
@@ -160,7 +160,7 @@ public:
     virtual void encodeDouble(const String& key, double) = 0;
     virtual void encodeString(const String& key, const String&) = 0;
 
-    virtual RefPtr<ContiguousSharedBuffer> finishEncoding() = 0;
+    virtual RefPtr<SharedBuffer> finishEncoding() = 0;
 
     template<typename T>
     void encodeEnum(const String& key, T value)

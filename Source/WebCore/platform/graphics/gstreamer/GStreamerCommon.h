@@ -32,7 +32,7 @@
 namespace WebCore {
 
 class IntSize;
-class ContiguousSharedBuffer;
+class SharedBuffer;
 
 inline bool webkitGstCheckVersion(guint major, guint minor, guint micro)
 {
@@ -190,7 +190,7 @@ public:
         unmapEarly();
     }
 
-    Ref<ContiguousSharedBuffer> createSharedBuffer();
+    Ref<SharedBuffer> createSharedBuffer();
 
 private:
     GstMappedOwnedBuffer(GRefPtr<GstBuffer>&& buffer)

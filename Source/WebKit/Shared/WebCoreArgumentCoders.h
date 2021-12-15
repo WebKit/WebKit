@@ -114,7 +114,6 @@ class AuthenticationChallenge;
 class BlobPart;
 class CertificateInfo;
 class Color;
-class ContiguousSharedBuffer;
 class Credential;
 class CubicBezierTimingFunction;
 class Cursor;
@@ -760,16 +759,6 @@ template<> struct ArgumentCoder<RefPtr<WebCore::SharedBuffer>> {
 template<> struct ArgumentCoder<Ref<WebCore::SharedBuffer>> {
     static void encode(Encoder&, const Ref<WebCore::SharedBuffer>&);
     static std::optional<Ref<WebCore::SharedBuffer>> decode(Decoder&);
-};
-
-template<> struct ArgumentCoder<RefPtr<WebCore::ContiguousSharedBuffer>> {
-    static void encode(Encoder&, const RefPtr<WebCore::ContiguousSharedBuffer>&);
-    static std::optional<RefPtr<WebCore::ContiguousSharedBuffer>> decode(Decoder&);
-};
-
-template<> struct ArgumentCoder<Ref<WebCore::ContiguousSharedBuffer>> {
-    static void encode(Encoder&, const Ref<WebCore::ContiguousSharedBuffer>&);
-    static std::optional<Ref<WebCore::ContiguousSharedBuffer>> decode(Decoder&);
 };
 
 template<> struct ArgumentCoder<WebCore::ScriptBuffer> {

@@ -76,9 +76,10 @@ public:
         if (m_encodedDataStatus == EncodedDataStatus::Error)
             return;
 
-        auto contiguousData = data.makeContiguous();
-        if (contiguousData->data())
-            m_data = contiguousData->begin()->segment.copyRef();
+        if (data.data()) {
+            // SharedBuffer::data() combines all segments into one in case there's more than one.
+            m_data = data.begin()->segment.copyRef();
+        }
         if (m_encodedDataStatus == EncodedDataStatus::TypeAvailable) {
             m_decodingSizeFromSetData = true;
             tryDecodeSize(allDataReceived);

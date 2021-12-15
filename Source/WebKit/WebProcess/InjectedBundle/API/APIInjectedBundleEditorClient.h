@@ -31,9 +31,9 @@
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
-class ContiguousSharedBuffer;
 class DocumentFragment;
 class Node;
+class SharedBuffer;
 class StyleProperties;
 struct SimpleRange;
 }
@@ -63,7 +63,7 @@ public:
     virtual void didChange(WebKit::WebPage&, const WTF::String&) { }
     virtual void didChangeSelection(WebKit::WebPage&, const WTF::String&) { }
     virtual void willWriteToPasteboard(WebKit::WebPage&, const std::optional<WebCore::SimpleRange>&) { }
-    virtual void getPasteboardDataForRange(WebKit::WebPage&, const std::optional<WebCore::SimpleRange>&, Vector<WTF::String>&, Vector<RefPtr<WebCore::ContiguousSharedBuffer>>&) { }
+    virtual void getPasteboardDataForRange(WebKit::WebPage&, const std::optional<WebCore::SimpleRange>&, Vector<WTF::String>&, Vector<RefPtr<WebCore::SharedBuffer>>&) { }
     virtual void didWriteToPasteboard(WebKit::WebPage&) { }
     virtual bool performTwoStepDrop(WebKit::WebPage&, WebCore::DocumentFragment&, const WebCore::SimpleRange&, bool) { return false; }
 };

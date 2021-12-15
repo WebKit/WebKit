@@ -561,7 +561,7 @@ void SubresourceLoader::didReceiveDataOrBuffer(const uint8_t* data, int length, 
         if (auto* resourceData = this->resourceData())
             m_resource->updateBuffer(*resourceData);
         else
-            m_resource->updateData(buffer ? buffer->makeContiguous()->data() : data, buffer ? buffer->size() : length);
+            m_resource->updateData(buffer ? buffer->data() : data, buffer ? buffer->size() : length);
     }
 }
 

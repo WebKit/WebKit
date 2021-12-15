@@ -233,7 +233,7 @@ void ContentFilter::deliverResourceData(CachedResource& resource)
     ASSERT(m_state == State::Allowed);
     ASSERT(resource.dataBufferingPolicy() == DataBufferingPolicy::BufferData);
     if (auto* resourceBuffer = resource.resourceBuffer())
-        m_client.dataReceivedThroughContentFilter(resourceBuffer->makeContiguous()->data(), resourceBuffer->size());
+        m_client.dataReceivedThroughContentFilter(resourceBuffer->data(), resourceBuffer->size());
 }
 
 static const URL& blockedPageURL()

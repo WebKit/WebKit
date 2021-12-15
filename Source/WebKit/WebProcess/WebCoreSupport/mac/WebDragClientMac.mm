@@ -150,7 +150,7 @@ void WebDragClient::declareAndWriteDragImage(const String& pasteboardName, Eleme
 
     NSURLResponse *response = image->response().nsURLResponse();
     
-    auto imageBuffer = image->image()->data();
+    RefPtr<SharedBuffer> imageBuffer = image->image()->data();
     size_t imageSize = imageBuffer->size();
 
     auto sharedMemoryBuffer = SharedMemory::copyBuffer(*imageBuffer);
@@ -163,7 +163,7 @@ void WebDragClient::declareAndWriteDragImage(const String& pasteboardName, Eleme
     SharedMemory::Handle archiveHandle;
     size_t archiveSize = 0;
     if (data) {
-        auto archiveBuffer = ContiguousSharedBuffer::create((__bridge NSData *)data.get());
+        auto archiveBuffer = SharedBuffer::create((__bridge NSData *)data.get());
         auto archiveSharedMemoryBuffer = SharedMemory::copyBuffer(archiveBuffer.get());
         if (!archiveSharedMemoryBuffer)
             return;

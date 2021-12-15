@@ -1600,7 +1600,7 @@ inline OptionSet<WebKit::FindOptions> toFindOptions(WKFindConfiguration *configu
     if (highlight.text)
         text = highlight.text.value();
 
-    auto wkHighlight = adoptNS([[_WKAppHighlight alloc] initWithHighlight:highlight.highlight->makeContiguous()->createNSData().get() text:text image:nil]);
+    auto wkHighlight = adoptNS([[_WKAppHighlight alloc] initWithHighlight:highlight.highlight->createNSData().get() text:text image:nil]);
 
     if ([delegate respondsToSelector:@selector(_webView:storeAppHighlight:inNewGroup:requestOriginatedInApp:)])
         [delegate _webView:self storeAppHighlight:wkHighlight.get() inNewGroup:highlight.isNewGroup == WebCore::CreateNewGroupForHighlight::Yes requestOriginatedInApp:highlight.requestOriginatedInApp == WebCore::HighlightRequestOriginatedInApp::Yes];
@@ -2223,7 +2223,7 @@ static RetainPtr<NSArray> wkTextManipulationErrors(NSArray<_WKTextManipulationIt
 
 - (void)_requestResource:(NSURLRequest *)request completionHandler:(void(^)(NSData *, NSURLResponse *, NSError *))completionHandler
 {
-    _page->requestResource(request, [completionHandler = makeBlockPtr(completionHandler)] (Ref<WebCore::ContiguousSharedBuffer>&& buffer, WebCore::ResourceResponse&& response, WebCore::ResourceError&& error) {
+    _page->requestResource(request, [completionHandler = makeBlockPtr(completionHandler)] (Ref<WebCore::SharedBuffer>&& buffer, WebCore::ResourceResponse&& response, WebCore::ResourceError&& error) {
         if (error.isNull())
             return completionHandler(buffer->createNSData().get(), response.nsURLResponse(), nil);
         completionHandler(nil, nil, error.nsError());

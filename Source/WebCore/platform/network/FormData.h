@@ -36,7 +36,7 @@ namespace WebCore {
 class BlobRegistryImpl;
 class DOMFormData;
 class File;
-class ContiguousSharedBuffer;
+class SharedBuffer;
 
 struct FormDataElement {
     struct EncodedFileData;
@@ -232,7 +232,7 @@ public:
     const Vector<FormDataElement>& elements() const { return m_elements; }
     const Vector<char>& boundary() const { return m_boundary; }
 
-    WEBCORE_EXPORT RefPtr<ContiguousSharedBuffer> asSharedBuffer() const;
+    WEBCORE_EXPORT RefPtr<SharedBuffer> asSharedBuffer() const;
 
     bool alwaysStream() const { return m_alwaysStream; }
     void setAlwaysStream(bool alwaysStream) { m_alwaysStream = alwaysStream; }

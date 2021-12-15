@@ -356,7 +356,7 @@ String Pasteboard::readStringInCustomData(const String& type)
 
 struct PasteboardFileCounter final : PasteboardFileReader {
     void readFilename(const String&) final { ++count; }
-    void readBuffer(const String&, const String&, Ref<ContiguousSharedBuffer>&&) final { ++count; }
+    void readBuffer(const String&, const String&, Ref<SharedBuffer>&&) final { ++count; }
 
     unsigned count { 0 };
 };
@@ -978,8 +978,8 @@ static HGLOBAL createGlobalImageFileContent(SharedBuffer* data)
         return 0;
     }
 
-    if (data->size())
-        CopyMemory(fileContents, data->makeContiguous()->data(), data->size());
+    if (data->data())
+        CopyMemory(fileContents, data->data(), data->size());
 
     GlobalUnlock(memObj);
 
@@ -1030,8 +1030,8 @@ static HGLOBAL createGlobalHDropContent(const URL& url, String& fileName, Shared
         // Write the data to this temp file.
         DWORD written;
         BOOL tempWriteSucceeded = FALSE;
-        if (data->size())
-            tempWriteSucceeded = WriteFile(tempFileHandle, data->makeContiguous()->data(), data->size(), &written, 0);
+        if (data->data())
+            tempWriteSucceeded = WriteFile(tempFileHandle, data->data(), data->size(), &written, 0);
         CloseHandle(tempFileHandle);
         if (!tempWriteSucceeded)
             return 0;

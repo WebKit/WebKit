@@ -30,12 +30,12 @@
 
 namespace WebCore {
 
-Ref<Model> Model::create(Ref<ContiguousSharedBuffer>&& data, String mimeType, URL url)
+Ref<Model> Model::create(Ref<SharedBuffer> data, String mimeType, URL url)
 {
     return adoptRef(*new Model(WTFMove(data), WTFMove(mimeType), WTFMove(url)));
 }
 
-Model::Model(Ref<ContiguousSharedBuffer>&& data, String mimeType, URL url)
+Model::Model(Ref<SharedBuffer> data, String mimeType, URL url)
     : m_data(WTFMove(data))
     , m_mimeType(WTFMove(mimeType))
     , m_url(WTFMove(url))
