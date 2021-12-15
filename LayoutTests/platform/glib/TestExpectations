@@ -806,6 +806,8 @@ webkit.org/b/234083 media/track/track-webvtt-snap-to-lines-left-right.html [ Ima
 webkit.org/b/234084 media/track/audio-track-configuration.html [ Failure ]
 webkit.org/b/234084 media/track/video-track-configuration.html [ Failure ]
 
+webkit.org/b/234352 imported/w3c/web-platform-tests/media-source/mediasource-video-is-visible.html [ ImageOnlyFailure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of GStreamer-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -1896,6 +1898,9 @@ fast/css/has-attachment.html [ Skip ]
 
 # <model> is not supported by GTK/WPE
 http/tests/model/ [ Skip ]
+
+# The DocumentTimeline.maximumFrameRate property which this test is about is not available on GTK/WPE.
+webanimations/frame-rate/document-timeline-maximum-frame-rate.html [ Skip ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of UNSUPPORTED tests.

@@ -1,3 +1,18 @@
+2021-12-15  Arcady Goldmints-Orlov  <agoldmints@igalia.com>
+
+        [GLIB] Update test expectations and baselines. Unreviewed test gardening.
+        https://bugs.webkit.org/show_bug.cgi?id=234353
+
+        * platform/glib/TestExpectations:
+        * platform/glib/http/tests/workers/service/service-worker-download-async-delegates.https-expected.txt: Added.
+        * platform/glib/http/tests/workers/service/service-worker-download-body.https-expected.txt: Added.
+        * platform/glib/http/tests/workers/service/service-worker-download-stream.https-expected.txt: Added.
+        * platform/glib/http/tests/workers/service/service-worker-download.https-expected.txt: Added.
+        * platform/glib/http/wpt/service-workers/fetch-service-worker-preload-download-through-direct-preload.https-expected.txt: Added.
+        * platform/glib/http/wpt/service-workers/fetch-service-worker-preload-download.https-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/service-workers/service-worker/clients-matchall-client-types.https-expected.txt: Added.
+        * platform/gtk/TestExpectations:
+
 2021-12-15  Alexey Shvayka  <ashvayka@apple.com>
 
         [WebIDL] onselectionchange IDL attribute should not Document-reflect event listeners
