@@ -133,9 +133,10 @@ fast/images/avif-as-image.html [ Skip ]
 fast/images/animated-avif.html [ Skip ]
 http/tests/images/avif-partial-load-crash.html [ Skip ]
 
-# These tests don't have to be platform-specific, but they are only implemented on WinCairo now.
+# Only applicable on platforms with JPEG XL support
 fast/images/jpegxl-image-decoding.html [ Skip ]
 fast/images/jpegxl-as-image.html [ Skip ]
+fast/images/jpegxl-with-color-profile.html [ Skip ]
 fast/images/animated-jpegxl-loop-count.html [ Skip ]
 
 # Only applicable on platforms with dark mode support

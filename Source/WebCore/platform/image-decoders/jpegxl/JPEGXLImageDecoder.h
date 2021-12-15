@@ -31,6 +31,11 @@
 
 #include <jxl/decode_cxx.h>
 
+#if USE(LCMS)
+typedef void* cmsHPROFILE;
+typedef void* cmsHTRANSFORM;
+#endif
+
 namespace WebCore {
 
 // This class decodes the JPEG XL image format.
@@ -65,6 +70,9 @@ private:
     };
 
     JPEGXLImageDecoder(AlphaOption, GammaAndColorProfileOption);
+
+    void clear();
+
     void tryDecodeSize(bool allDataReceived) override;
 
     bool hasAlpha() const;
@@ -80,6 +88,12 @@ private:
     static void imageOutCallback(void*, size_t x, size_t y, size_t numPixels, const void* pixels);
     void imageOut(size_t x, size_t y, size_t numPixels, const uint8_t* pixels);
 
+#if USE(LCMS)
+    void clearColorTransform();
+    void prepareColorTransform();
+    cmsHPROFILE tryDecodeICCColorProfile();
+#endif
+
     JxlDecoderPtr m_decoder;
     size_t m_readOffset { 0 };
     std::optional<JxlBasicInfo> m_basicInfo;
@@ -89,6 +103,10 @@ private:
     size_t m_currentFrame { 0 };
 
     bool m_isLastFrameHeaderReceived { false }; // If this is true, we know we don't need to update m_frameCount.
+
+#if USE(LCMS)
+    cmsHTRANSFORM m_iccTransform { nullptr };
+#endif
 };
 
 } // namespace WebCore

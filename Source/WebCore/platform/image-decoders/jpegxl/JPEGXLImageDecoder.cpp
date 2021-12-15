@@ -28,9 +28,20 @@
 
 #if USE(JPEGXL)
 
-#include <optional>
+#if USE(LCMS)
+#include "PlatformDisplay.h"
+#include <lcms2.h>
+#endif
 
 namespace WebCore {
+
+static const JxlPixelFormat s_pixelFormat { 4, JXL_TYPE_UINT8, JXL_NATIVE_ENDIAN, 0 };
+
+#if USE(LCMS)
+static constexpr int s_eventsWanted = JXL_DEC_BASIC_INFO | JXL_DEC_FRAME | JXL_DEC_FULL_IMAGE | JXL_DEC_COLOR_ENCODING;
+#else
+static constexpr int s_eventsWanted = JXL_DEC_BASIC_INFO | JXL_DEC_FRAME | JXL_DEC_FULL_IMAGE;
+#endif
 
 JPEGXLImageDecoder::JPEGXLImageDecoder(AlphaOption alphaOption, GammaAndColorProfileOption gammaAndColorProfileOption)
     : ScalableImageDecoder(alphaOption, gammaAndColorProfileOption)
@@ -39,6 +50,15 @@ JPEGXLImageDecoder::JPEGXLImageDecoder(AlphaOption alphaOption, GammaAndColorPro
 
 JPEGXLImageDecoder::~JPEGXLImageDecoder()
 {
+    clear();
+}
+
+void JPEGXLImageDecoder::clear()
+{
+    m_decoder.reset();
+#if USE(LCMS)
+    clearColorTransform();
+#endif
 }
 
 size_t JPEGXLImageDecoder::frameCount() const
@@ -102,7 +122,7 @@ void JPEGXLImageDecoder::clearFrameBufferCache(size_t clearBeforeFrame)
 
 bool JPEGXLImageDecoder::setFailed()
 {
-    m_decoder.reset();
+    clear();
     return ScalableImageDecoder::setFailed();
 }
 
@@ -137,7 +157,7 @@ void JPEGXLImageDecoder::ensureDecoderInitialized()
         return;
     }
 
-    if (JxlDecoderSubscribeEvents(m_decoder.get(), JXL_DEC_BASIC_INFO | JXL_DEC_FRAME | JXL_DEC_FULL_IMAGE) != JXL_DEC_SUCCESS) {
+    if (JxlDecoderSubscribeEvents(m_decoder.get(), s_eventsWanted) != JXL_DEC_SUCCESS) {
         setFailed();
         return;
     }
@@ -177,7 +197,7 @@ bool JPEGXLImageDecoder::shouldRewind(Query query, size_t frameIndex) const
 void JPEGXLImageDecoder::rewind()
 {
     JxlDecoderRewind(m_decoder.get());
-    JxlDecoderSubscribeEvents(m_decoder.get(), JXL_DEC_BASIC_INFO | JXL_DEC_FRAME | JXL_DEC_FULL_IMAGE);
+    JxlDecoderSubscribeEvents(m_decoder.get(), s_eventsWanted);
     m_readOffset = 0;
     m_currentFrame = 0;
 }
@@ -226,8 +246,8 @@ void JPEGXLImageDecoder::decode(Query query, size_t frameIndex, bool allDataRece
     }
 
     if (query == Query::DecodedImage && status == JXL_DEC_FULL_IMAGE && m_isLastFrameHeaderReceived && m_currentFrame == m_frameCount) {
-        // We free the decoder when the last frame is decoded.
-        m_decoder.reset();
+        // We free the decoder and LCMS data when the last frame is decoded.
+        clear();
         return;
     }
 
@@ -267,8 +287,14 @@ JxlDecoderStatus JPEGXLImageDecoder::processInput(Query query)
             continue;
         }
 
+#if USE(LCMS)
+        if (status == JXL_DEC_COLOR_ENCODING && !m_ignoreGammaAndColorProfile) {
+            prepareColorTransform();
+            continue;
+        }
+#endif
+
         if (status == JXL_DEC_FRAME) {
-            JxlPixelFormat format { 4, JXL_TYPE_UINT8, JXL_NATIVE_ENDIAN, 0 };
             JxlFrameHeader frameHeader;
             if (JxlDecoderGetFrameHeader(m_decoder.get(), &frameHeader) != JXL_DEC_SUCCESS)
                 return JXL_DEC_ERROR;
@@ -279,7 +305,7 @@ JxlDecoderStatus JPEGXLImageDecoder::processInput(Query query)
                 m_isLastFrameHeaderReceived = true;
 
             if (query != Query::DecodedImage) {
-                if (JxlDecoderSetImageOutCallback(m_decoder.get(), &format, [](void*, size_t, size_t, size_t, const void*) { }, nullptr) != JXL_DEC_SUCCESS)
+                if (JxlDecoderSetImageOutCallback(m_decoder.get(), &s_pixelFormat, [](void*, size_t, size_t, size_t, const void*) { }, nullptr) != JXL_DEC_SUCCESS)
                     return JXL_DEC_ERROR;
 
                 continue;
@@ -291,14 +317,14 @@ JxlDecoderStatus JPEGXLImageDecoder::processInput(Query query)
             auto& buffer = m_frameBufferCache[m_currentFrame];
             if (buffer.isInvalid() && buffer.initialize(size(), m_premultiplyAlpha)) {
                 buffer.setDecodingStatus(DecodingStatus::Partial);
-                buffer.setHasAlpha(false);
+                buffer.setHasAlpha(hasAlpha());
                 if (m_basicInfo && m_basicInfo->have_animation) {
                     buffer.setDuration(Seconds((double)frameHeader.duration * m_basicInfo->animation.tps_denominator / m_basicInfo->animation.tps_numerator));
                     buffer.setDisposalMethod(ScalableImageDecoderFrame::DisposalMethod::DoNotDispose);
                 }
             }
 
-            if (JxlDecoderSetImageOutCallback(m_decoder.get(), &format, imageOutCallback, this) != JXL_DEC_SUCCESS)
+            if (JxlDecoderSetImageOutCallback(m_decoder.get(), &s_pixelFormat, imageOutCallback, this) != JXL_DEC_SUCCESS)
                 return JXL_DEC_ERROR;
 
             continue;
@@ -344,7 +370,59 @@ void JPEGXLImageDecoder::imageOut(size_t x, size_t y, size_t numPixels, const ui
         uint8_t a = *pixels++;
         buffer.backingStore()->setPixel(currentAddress++, r, g, b, a);
     }
+
+#if USE(LCMS)
+    if (m_iccTransform)
+        cmsDoTransform(m_iccTransform, row, row, numPixels);
+#endif
 }
+
+#if USE(LCMS)
+void JPEGXLImageDecoder::clearColorTransform()
+{
+    if (m_iccTransform) {
+        cmsDeleteTransform(m_iccTransform);
+        m_iccTransform = nullptr;
+    }
+}
+
+void JPEGXLImageDecoder::prepareColorTransform()
+{
+    if (m_iccTransform)
+        return;
+
+    cmsHPROFILE displayProfile = PlatformDisplay::sharedDisplay().colorProfile();
+    if (!displayProfile)
+        return;
+
+    cmsHPROFILE profile = tryDecodeICCColorProfile();
+    if (!profile)
+        return; // TODO(bugs.webkit.org/show_bug.cgi?id=234222): We should try to use encoded color profile if ICC profile is not available.
+
+    // TODO(bugs.webkit.org/show_bug.cgi?id=234221): We should handle CMYK color but it may require two extra channels (Alpha and K)
+    // and libjxl has yet to support it. 
+    if (cmsGetColorSpace(profile) == cmsSigRgbData && cmsGetColorSpace(displayProfile) == cmsSigRgbData)
+        m_iccTransform = cmsCreateTransform(profile, TYPE_BGRA_8, displayProfile, TYPE_BGRA_8, INTENT_RELATIVE_COLORIMETRIC, 0);
+
+    // We close the profile here. The profile may still be alive if m_iccTransform holds a reference to it.
+    if (profile)
+        cmsCloseProfile(profile);
+}
+
+cmsHPROFILE JPEGXLImageDecoder::tryDecodeICCColorProfile()
+{
+    size_t profileSize;
+    if (JxlDecoderGetICCProfileSize(m_decoder.get(), &s_pixelFormat, JXL_COLOR_PROFILE_TARGET_DATA, &profileSize) != JXL_DEC_SUCCESS)
+        return nullptr;
+
+    Vector<uint8_t> profileData(profileSize);
+    if (JxlDecoderGetColorAsICCProfile(m_decoder.get(), &s_pixelFormat, JXL_COLOR_PROFILE_TARGET_DATA, profileData.data(), profileData.size()) != JXL_DEC_SUCCESS)
+        return nullptr;
+
+    return cmsOpenProfileFromMem(profileData.data(), profileData.size());
+}
+
+#endif // USE(LCMS)
 
 }
 #endif // USE(JPEGXL)

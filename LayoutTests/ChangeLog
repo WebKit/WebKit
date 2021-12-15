@@ -1,3 +1,21 @@
+2021-12-15  Yoshiaki Jitsukawa  <yoshiaki.jitsukawa@sony.com>
+
+        JPEG XL decoder should support understand color profiles
+        https://bugs.webkit.org/show_bug.cgi?id=233364
+        <rdar://problem/85767076>
+
+        Reviewed by Michael Catanzaro.
+
+        Add test for JPEG XL with color profile. The test image is
+        converted from the JPEG test's image.
+
+        * TestExpectations:
+        * fast/images/jpegxl-with-color-profile-expected.html: Added.
+        * fast/images/jpegxl-with-color-profile.html: Added.
+        * fast/images/resources/red-at-12-oclock-with-color-profile.jxl: Added.
+        * platform/glib/TestExpectations:
+        * platform/wincairo/TestExpectations:
+
 2021-12-15  Youenn Fablet  <youenn@apple.com>
 
         [ Mac wk2 and iOS wk2 ] webrtc/libwebrtc/descriptionGetters.html is flaky failing.

@@ -107,6 +107,7 @@ fast/text/emoji-gender-9.html [ Pass ]
 # JPEG-XL tests
 fast/images/jpegxl-as-image.html [ Pass ]
 fast/images/jpegxl-image-decoding.html [ Pass ]
+fast/images/jpegxl-with-color-profile.html [ Pass ]
 fast/images/animated-jpegxl-loop-count.html [ Pass ]
 
 # Some Apple ports don't support RTL scrollbars.
