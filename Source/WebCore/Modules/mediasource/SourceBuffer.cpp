@@ -530,7 +530,7 @@ void SourceBuffer::appendBufferTimerFired()
     // https://dvcs.w3.org/hg/html-media/raw-file/tip/media-source/media-source.html#sourcebuffer-segment-parser-loop
     // When the segment parser loop algorithm is invoked, run the following steps:
 
-    RefPtr<FragmentedSharedBuffer> appendData = WTFMove(m_pendingAppendData);
+    RefPtr<SharedBuffer> appendData = WTFMove(m_pendingAppendData);
     // 1. Loop Top: If the input buffer is empty, then jump to the need more data step below.
     if (!appendData || !appendData->size()) {
         sourceBufferPrivateAppendComplete(AppendResult::AppendSucceeded);

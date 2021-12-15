@@ -45,7 +45,7 @@ namespace WebCore {
 
 class ContentType;
 class MediaSample;
-class FragmentedSharedBuffer;
+class SharedBuffer;
 
 class WEBCORE_EXPORT SourceBufferParser : public ThreadSafeRefCounted<SourceBufferParser> {
 public:
@@ -69,11 +69,11 @@ public:
 #if HAVE(MT_PLUGIN_FORMAT_READER)
         Segment(RetainPtr<MTPluginByteSourceRef>&&);
 #endif
-        Segment(Ref<FragmentedSharedBuffer>&&);
+        Segment(Ref<SharedBuffer>&&);
         Segment(Segment&&) = default;
-        Ref<FragmentedSharedBuffer> takeSharedBuffer();
-        // Will return nullptr if Segment's backend isn't a FragmentedSharedBuffer.
-        RefPtr<FragmentedSharedBuffer> getSharedBuffer() const;
+        Ref<SharedBuffer> takeSharedBuffer();
+        // Will return nullptr if Segment's backend isn't a SharedBuffer.
+        RefPtr<SharedBuffer> getSharedBuffer() const;
 
         size_t size() const;
 
@@ -87,7 +87,7 @@ public:
 #if HAVE(MT_PLUGIN_FORMAT_READER)
             RetainPtr<MTPluginByteSourceRef>,
 #endif
-            Ref<FragmentedSharedBuffer>
+            Ref<SharedBuffer>
         > m_segment;
     };
 

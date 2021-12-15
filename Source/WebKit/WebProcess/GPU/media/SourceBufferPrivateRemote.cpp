@@ -78,7 +78,7 @@ SourceBufferPrivateRemote::~SourceBufferPrivateRemote()
     m_gpuProcessConnection->messageReceiverMap().removeMessageReceiver(Messages::SourceBufferPrivateRemote::messageReceiverName(), m_remoteSourceBufferIdentifier.toUInt64());
 }
 
-void SourceBufferPrivateRemote::append(Ref<FragmentedSharedBuffer>&& data)
+void SourceBufferPrivateRemote::append(Ref<SharedBuffer>&& data)
 {
     if (!m_gpuProcessConnection)
         return;

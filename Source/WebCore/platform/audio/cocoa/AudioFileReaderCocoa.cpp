@@ -130,7 +130,7 @@ class AudioFileReaderWebMData {
     WTF_MAKE_FAST_ALLOCATED;
 
 public:
-    Ref<FragmentedSharedBuffer> m_buffer;
+    Ref<SharedBuffer> m_buffer;
 #if ENABLE(MEDIA_SOURCE)
     Ref<AudioTrackPrivateWebM> m_track;
 #endif

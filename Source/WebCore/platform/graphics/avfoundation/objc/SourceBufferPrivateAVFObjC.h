@@ -153,7 +153,7 @@ private:
     void didProvideMediaDataForTrackId(Ref<MediaSample>&&, uint64_t trackId, const String& mediaType);
 
     // SourceBufferPrivate overrides
-    void append(Ref<FragmentedSharedBuffer>&&) final;
+    void append(Ref<SharedBuffer>&&) final;
     void abort() final;
     void resetParserState() final;
     void removedFromMediaSource() final;

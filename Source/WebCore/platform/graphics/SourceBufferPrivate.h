@@ -49,7 +49,7 @@
 
 namespace WebCore {
 
-class FragmentedSharedBuffer;
+class SharedBuffer;
 class TimeRanges;
 
 enum class SourceBufferAppendMode : uint8_t {
@@ -68,7 +68,7 @@ public:
     WEBCORE_EXPORT virtual ~SourceBufferPrivate();
 
     virtual void setActive(bool) = 0;
-    WEBCORE_EXPORT virtual void append(Ref<FragmentedSharedBuffer>&&);
+    WEBCORE_EXPORT virtual void append(Ref<SharedBuffer>&&);
     virtual void abort() = 0;
     virtual void resetParserState() = 0;
     virtual void removedFromMediaSource() = 0;

@@ -365,9 +365,9 @@ public:
         return Status(Status::kWouldBlock);
     }
 
-    static void FreeDataSegment(void* refcon, void*, size_t)
+    static void FreeSharedBuffer(void* refcon, void*, size_t)
     {
-        auto* buffer = reinterpret_cast<DataSegment*>(refcon);
+        auto* buffer = reinterpret_cast<SharedBuffer*>(refcon);
         buffer->deref();
     }
 
@@ -388,7 +388,7 @@ public:
                 advanceToNextSegment();
                 continue;
             }
-            RefPtr<FragmentedSharedBuffer> sharedBuffer = currentSegment.getSharedBuffer();
+            RefPtr<SharedBuffer> sharedBuffer = currentSegment.getSharedBuffer();
             CMBlockBufferRef rawBlockBuffer = nullptr;
             uint64_t lastRead = 0;
             size_t destinationOffset = m_positionWithinSegment;
@@ -408,11 +408,8 @@ public:
                 lastRead = readResult.value();
                 destinationOffset = 0;
             } else {
-                ASSERT(sharedBuffer->hasOneSegment(), "Can only deal with sharedBuffer containing a single DataSegment");
-                // A FragmentedSharedBuffer doesn't have thread-safe refcounting, as such we must keep a reference to the DataSegment instead.
                 // TODO: could we only create a new CMBlockBuffer if the backend memory changed since the previous one?
-                auto firstSegment = sharedBuffer->begin()->segment;
-                size_t canRead = std::min<size_t>(numToRead, firstSegment->size() - m_positionWithinSegment);
+                size_t canRead = std::min<size_t>(numToRead, sharedBuffer->size() - m_positionWithinSegment);
                 // From CMBlockBufferCustomBlockSource documentation:
                 // Note that for 64-bit architectures, this struct contains misaligned function pointers.
                 // To avoid link-time issues, it is recommended that clients fill CMBlockBufferCustomBlockSource's function pointer fields
@@ -420,10 +417,10 @@ public:
                 CMBlockBufferCustomBlockSource allocator;
                 allocator.version = 0;
                 allocator.AllocateBlock = nullptr;
-                allocator.FreeBlock = FreeDataSegment;
-                allocator.refCon = firstSegment.ptr();
-                firstSegment->ref();
-                auto err = PAL::CMBlockBufferCreateWithMemoryBlock(nullptr, static_cast<void*>(const_cast<uint8_t*>(firstSegment->data())), firstSegment->size(), nullptr, &allocator, m_positionWithinSegment, canRead, 0, &rawBlockBuffer);
+                allocator.FreeBlock = FreeSharedBuffer;
+                allocator.refCon = sharedBuffer.get();
+                sharedBuffer->ref();
+                auto err = PAL::CMBlockBufferCreateWithMemoryBlock(nullptr, static_cast<void*>(const_cast<uint8_t*>(sharedBuffer->data())), sharedBuffer->size(), nullptr, &allocator, m_positionWithinSegment, canRead, 0, &rawBlockBuffer);
                 if (err != kCMBlockBufferNoErr)
                     return Status(Status::kNotEnoughMemory);
                 lastRead = canRead;
