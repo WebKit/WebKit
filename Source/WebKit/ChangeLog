@@ -1,3 +1,16 @@
+2021-12-15  Per Arne Vollan  <pvollan@apple.com>
+
+        [iOS][WP] Add access to required syscall
+        https://bugs.webkit.org/show_bug.cgi?id=234336
+        <rdar://86502081>
+
+        Reviewed by Tim Horton.
+
+        Add required syscall to the WebContent process' sandbox on iOS. This syscall was blocked in
+        https://trac.webkit.org/changeset/286673/webkit.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb.in:
+
 2021-12-14  Jean-Yves Avenard  <jya@apple.com>
 
         SourceBufferParser should be using contiguous shared buffer
