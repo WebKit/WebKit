@@ -22,10 +22,22 @@ if (USE_ANGLE_EGL OR USE_ANGLE_WEBGL)
 
     list(APPEND ANGLE_DEFINITIONS
         ANGLE_ENABLE_OPENGL
+        ANGLE_USE_GBM
+        USE_SYSTEM_EGL
+    )
+
+    find_package(LibDRM REQUIRED)
+    find_package(GBM REQUIRED)
+
+    list(APPEND ANGLE_PRIVATE_INCLUDE_DIRECTORIES
+        ${LIBDRM_INCLUDE_DIR}
+        {GBM_INCLUDE_DIR}
     )
 
     list(APPEND ANGLEGLESv2_LIBRARIES
         ${CMAKE_DL_LIBS}
+        ${LIBDRM_LIBRARIES}
+        ${GBM_LIBRARIES}
         Threads::Threads
     )
 
@@ -34,24 +46,4 @@ if (USE_ANGLE_EGL OR USE_ANGLE_WEBGL)
     else ()
         list(APPEND ANGLEGLESv2_LIBRARIES OpenGL::GLES)
     endif ()
-
-    # NOTE: When both Wayland and X11 are enabled, ANGLE_USE_X11 will be
-    # defined and the X11 type definitions will be used for code involving
-    # both. That works because types for both Wayland and X11 have the same
-    # sizes and the code in WebKit casts the values to the proper types as
-    # needed.
-    set(GTK_ANGLE_DEFINITIONS)
-
-    if (ENABLE_X11_TARGET)
-        list(APPEND ANGLE_SOURCES ${libangle_gl_glx_sources})
-        list(APPEND ANGLEGLESv2_LIBRARIES X11)
-        list(APPEND GTK_ANGLE_DEFINITIONS ANGLE_USE_X11)
-    endif ()
-
-    # Allow building ANGLE on platforms which may not provide X11 headers.
-    if (NOT GTK_ANGLE_DEFINITIONS)
-        list(APPEND GTK_ANGLE_DEFINITIONS USE_SYSTEM_EGL)
-    endif ()
-
-    list(APPEND ANGLE_DEFINITIONS ${GTK_ANGLE_DEFINITIONS})
 endif ()

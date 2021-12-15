@@ -1,3 +1,15 @@
+2021-12-15  Chris Lord  <clord@igalia.com>
+
+        [GTK] Use libgbm and the ANGLE gbm backend to fix initialisation
+        https://bugs.webkit.org/show_bug.cgi?id=234293
+
+        Reviewed by Don Olmstead.
+
+        Add cmake files to find gbm and libdrm.
+
+        * Source/cmake/FindGBM.cmake: Added.
+        * Source/cmake/FindLibDRM.cmake: Added.
+
 2021-12-11  Aakash Jain  <aakash_jain@apple.com>
 
         Update my github username.
