@@ -115,11 +115,17 @@ void ApplePaySetup::begin(Document& document, Vector<RefPtr<ApplePaySetupFeature
     });
 }
 
+Ref<ApplePaySetup> ApplePaySetup::create(ScriptExecutionContext& context, ApplePaySetupConfiguration&& configuration)
+{
+    auto setup = adoptRef(*new ApplePaySetup(context, WTFMove(configuration)));
+    setup->suspendIfNeeded();
+    return setup;
+}
+
 ApplePaySetup::ApplePaySetup(ScriptExecutionContext& context, ApplePaySetupConfiguration&& configuration)
     : ActiveDOMObject(&context)
     , m_configuration(WTFMove(configuration))
 {
-    suspendIfNeeded();
 }
 
 void ApplePaySetup::stop()

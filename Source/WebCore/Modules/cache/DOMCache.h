@@ -37,7 +37,7 @@ class ScriptExecutionContext;
 
 class DOMCache final : public RefCounted<DOMCache>, public ActiveDOMObject {
 public:
-    static Ref<DOMCache> create(ScriptExecutionContext& context, String&& name, uint64_t identifier, Ref<CacheStorageConnection>&& connection) { return adoptRef(*new DOMCache(context, WTFMove(name), identifier, WTFMove(connection))); }
+    static Ref<DOMCache> create(ScriptExecutionContext&, String&&, uint64_t, Ref<CacheStorageConnection>&&);
     ~DOMCache();
 
     using RequestInfo = FetchRequest::Info;

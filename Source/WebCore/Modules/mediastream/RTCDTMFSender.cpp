@@ -51,6 +51,7 @@ RTCDTMFSender::RTCDTMFSender(ScriptExecutionContext& context, RTCRtpSender& send
     m_backend->onTonePlayed([this](const String&) {
         onTonePlayed();
     });
+
     suspendIfNeeded();
 }
 

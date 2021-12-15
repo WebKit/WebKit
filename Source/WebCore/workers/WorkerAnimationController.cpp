@@ -39,7 +39,9 @@ namespace WebCore {
 
 Ref<WorkerAnimationController> WorkerAnimationController::create(WorkerGlobalScope& workerGlobalScope)
 {
-    return adoptRef(*new WorkerAnimationController(workerGlobalScope));
+    auto controller = adoptRef(*new WorkerAnimationController(workerGlobalScope));
+    controller->suspendIfNeeded();
+    return controller;
 }
 
 WorkerAnimationController::WorkerAnimationController(WorkerGlobalScope& workerGlobalScope)
@@ -47,7 +49,6 @@ WorkerAnimationController::WorkerAnimationController(WorkerGlobalScope& workerGl
     , m_workerGlobalScope(workerGlobalScope)
     , m_animationTimer(*this, &WorkerAnimationController::animationTimerFired)
 {
-    suspendIfNeeded();
 }
 
 WorkerAnimationController::~WorkerAnimationController()

@@ -37,7 +37,9 @@ namespace WebCore {
 
 Ref<FileSystemSyncAccessHandle> FileSystemSyncAccessHandle::create(ScriptExecutionContext& context, FileSystemFileHandle& source, FileSystemSyncAccessHandleIdentifier identifier, FileSystem::PlatformFileHandle file)
 {
-    return adoptRef(*new FileSystemSyncAccessHandle(context, source, identifier, file));
+    auto handle = adoptRef(*new FileSystemSyncAccessHandle(context, source, identifier, file));
+    handle->suspendIfNeeded();
+    return handle;
 }
 
 FileSystemSyncAccessHandle::FileSystemSyncAccessHandle(ScriptExecutionContext& context, FileSystemFileHandle& source, FileSystemSyncAccessHandleIdentifier identifier, FileSystem::PlatformFileHandle file)
@@ -47,7 +49,6 @@ FileSystemSyncAccessHandle::FileSystemSyncAccessHandle(ScriptExecutionContext& c
     , m_file(file)
 {
     ASSERT(m_file != FileSystem::invalidPlatformFileHandle);
-    suspendIfNeeded();
 
     m_source->registerSyncAccessHandle(m_identifier, *this);
 }

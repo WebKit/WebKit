@@ -344,7 +344,9 @@ ExceptionOr<Ref<PaymentRequest>> PaymentRequest::create(Document& document, Vect
         return detailsResult.releaseException();
 
     auto shippingOptionAndModifierData = detailsResult.releaseReturnValue();
-    return adoptRef(*new PaymentRequest(document, WTFMove(options), WTFMove(details), WTFMove(std::get<1>(shippingOptionAndModifierData)), WTFMove(serializedMethodData), WTFMove(std::get<0>(shippingOptionAndModifierData))));
+    auto request = adoptRef(*new PaymentRequest(document, WTFMove(options), WTFMove(details), WTFMove(std::get<1>(shippingOptionAndModifierData)), WTFMove(serializedMethodData), WTFMove(std::get<0>(shippingOptionAndModifierData))));
+    request->suspendIfNeeded();
+    return request;
 }
 
 bool PaymentRequest::enabledForContext(ScriptExecutionContext& context)
@@ -360,7 +362,6 @@ PaymentRequest::PaymentRequest(Document& document, PaymentOptions&& options, Pay
     , m_serializedMethodData { WTFMove(serializedMethodData) }
     , m_shippingOption { WTFMove(selectedShippingOption) }
 {
-    suspendIfNeeded();
 }
 
 PaymentRequest::~PaymentRequest()

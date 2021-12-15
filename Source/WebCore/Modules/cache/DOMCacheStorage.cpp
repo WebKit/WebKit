@@ -36,11 +36,17 @@
 
 namespace WebCore {
 
+Ref<DOMCacheStorage> DOMCacheStorage::create(ScriptExecutionContext& context, Ref<CacheStorageConnection>&& connection)
+{
+    auto cacheStorage = adoptRef(*new DOMCacheStorage(context, WTFMove(connection)));
+    cacheStorage->suspendIfNeeded();
+    return cacheStorage;
+}
+
 DOMCacheStorage::DOMCacheStorage(ScriptExecutionContext& context, Ref<CacheStorageConnection>&& connection)
     : ActiveDOMObject(&context)
     , m_connection(WTFMove(connection))
 {
-    suspendIfNeeded();
 }
 
 DOMCacheStorage::~DOMCacheStorage() = default;

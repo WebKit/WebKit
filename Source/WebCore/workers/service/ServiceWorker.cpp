@@ -57,15 +57,15 @@ Ref<ServiceWorker> ServiceWorker::getOrCreate(ScriptExecutionContext& context, S
 {
     if (auto existingServiceWorker = context.serviceWorker(data.identifier))
         return *existingServiceWorker;
-    return adoptRef(*new ServiceWorker(context, WTFMove(data)));
+    auto serviceWorker = adoptRef(*new ServiceWorker(context, WTFMove(data)));
+    serviceWorker->suspendIfNeeded();
+    return serviceWorker;
 }
 
 ServiceWorker::ServiceWorker(ScriptExecutionContext& context, ServiceWorkerData&& data)
     : ActiveDOMObject(&context)
     , m_data(WTFMove(data))
 {
-    suspendIfNeeded();
-
     context.registerServiceWorker(*this);
 
     relaxAdoptionRequirement();

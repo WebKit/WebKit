@@ -41,11 +41,17 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(FileSystemDirectoryReader);
 
+Ref<FileSystemDirectoryReader> FileSystemDirectoryReader::create(ScriptExecutionContext& context, FileSystemDirectoryEntry& directory)
+{
+    auto reader = adoptRef(*new FileSystemDirectoryReader(context, directory));
+    reader->suspendIfNeeded();
+    return reader;
+}
+
 FileSystemDirectoryReader::FileSystemDirectoryReader(ScriptExecutionContext& context, FileSystemDirectoryEntry& directory)
     : ActiveDOMObject(&context)
     , m_directory(directory)
 {
-    suspendIfNeeded();
 }
 
 FileSystemDirectoryReader::~FileSystemDirectoryReader() = default;

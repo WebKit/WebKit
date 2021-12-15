@@ -56,7 +56,9 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(WebXRSystem);
 
 Ref<WebXRSystem> WebXRSystem::create(Navigator& navigator)
 {
-    return adoptRef(*new WebXRSystem(navigator));
+    auto system = adoptRef(*new WebXRSystem(navigator));
+    system->suspendIfNeeded();
+    return system;
 }
 
 WebXRSystem::WebXRSystem(Navigator& navigator)
@@ -65,7 +67,6 @@ WebXRSystem::WebXRSystem(Navigator& navigator)
     , m_defaultInlineDevice(*navigator.scriptExecutionContext())
 {
     m_inlineXRDevice = m_defaultInlineDevice;
-    suspendIfNeeded();
 }
 
 WebXRSystem::~WebXRSystem() = default;

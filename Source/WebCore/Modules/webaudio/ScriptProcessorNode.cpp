@@ -47,7 +47,9 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(ScriptProcessorNode);
 
 Ref<ScriptProcessorNode> ScriptProcessorNode::create(BaseAudioContext& context, size_t bufferSize, unsigned numberOfInputChannels, unsigned numberOfOutputChannels)
 {
-    return adoptRef(*new ScriptProcessorNode(context, bufferSize, numberOfInputChannels, numberOfOutputChannels));
+    auto node = adoptRef(*new ScriptProcessorNode(context, bufferSize, numberOfInputChannels, numberOfOutputChannels));
+    node->suspendIfNeeded();
+    return node;
 }
 
 ScriptProcessorNode::ScriptProcessorNode(BaseAudioContext& context, size_t bufferSize, unsigned numberOfInputChannels, unsigned numberOfOutputChannels)
@@ -69,7 +71,6 @@ ScriptProcessorNode::ScriptProcessorNode(BaseAudioContext& context, size_t buffe
     addOutput(numberOfOutputChannels);
 
     initialize();
-    suspendIfNeeded();
 }
 
 ScriptProcessorNode::~ScriptProcessorNode()

@@ -47,7 +47,9 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(WebXRSession);
 
 Ref<WebXRSession> WebXRSession::create(Document& document, WebXRSystem& system, XRSessionMode mode, PlatformXR::Device& device, FeatureList&& requestedFeatures)
 {
-    return adoptRef(*new WebXRSession(document, system, mode, device, WTFMove(requestedFeatures)));
+    auto session = adoptRef(*new WebXRSession(document, system, mode, device, WTFMove(requestedFeatures)));
+    session->suspendIfNeeded();
+    return session;
 }
 
 WebXRSession::WebXRSession(Document& document, WebXRSystem& system, XRSessionMode mode, PlatformXR::Device& device, FeatureList&& requestedFeatures)
@@ -68,8 +70,6 @@ WebXRSession::WebXRSession(Document& document, WebXRSystem& system, XRSessionMod
     // https://immersive-web.github.io/webxr/#ref-for-dom-xrreferencespacetype-viewer%E2%91%A2
     // Every session MUST support viewer XRReferenceSpaces.
     m_device->initializeReferenceSpace(XRReferenceSpaceType::Viewer);
-
-    suspendIfNeeded();
 }
 
 WebXRSession::~WebXRSession()

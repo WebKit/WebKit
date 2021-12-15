@@ -134,7 +134,7 @@ void Geolocation::Watchers::getNotifiersVector(GeoNotifierVector& copy) const
 Ref<Geolocation> Geolocation::create(Navigator& navigator)
 {
     auto geolocation = adoptRef(*new Geolocation(navigator));
-    geolocation.get().suspendIfNeeded();
+    geolocation->suspendIfNeeded();
     return geolocation;
 }
 

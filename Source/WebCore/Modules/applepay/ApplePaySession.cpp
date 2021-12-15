@@ -333,7 +333,9 @@ ExceptionOr<Ref<ApplePaySession>> ApplePaySession::create(Document& document, un
     if (convertedPaymentRequest.hasException())
         return convertedPaymentRequest.releaseException();
 
-    return adoptRef(*new ApplePaySession(document, version, convertedPaymentRequest.releaseReturnValue()));
+    auto session = adoptRef(*new ApplePaySession(document, version, convertedPaymentRequest.releaseReturnValue()));
+    session->suspendIfNeeded();
+    return session;
 }
 
 ApplePaySession::ApplePaySession(Document& document, unsigned version, ApplePaySessionPaymentRequest&& paymentRequest)
@@ -342,7 +344,6 @@ ApplePaySession::ApplePaySession(Document& document, unsigned version, ApplePayS
     , m_version { version }
 {
     ASSERT(document.page()->paymentCoordinator().supportsVersion(document, version));
-    suspendIfNeeded();
 }
 
 ApplePaySession::~ApplePaySession() = default;

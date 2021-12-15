@@ -51,10 +51,7 @@ class StyleRuleFontFace;
 
 class CSSFontSelector final : public FontSelector, public CSSFontFace::Client, public CanMakeWeakPtr<CSSFontSelector>, public ActiveDOMObject {
 public:
-    static Ref<CSSFontSelector> create(ScriptExecutionContext& context)
-    {
-        return adoptRef(*new CSSFontSelector(context));
-    }
+    static Ref<CSSFontSelector> create(ScriptExecutionContext&);
     virtual ~CSSFontSelector();
     
     unsigned version() const final { return m_version; }

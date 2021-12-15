@@ -45,14 +45,15 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(RemotePlayback);
 
 Ref<RemotePlayback> RemotePlayback::create(HTMLMediaElement& element)
 {
-    return adoptRef(*new RemotePlayback(element));
+    auto remotePlayback = adoptRef(*new RemotePlayback(element));
+    remotePlayback->suspendIfNeeded();
+    return remotePlayback;
 }
 
 RemotePlayback::RemotePlayback(HTMLMediaElement& element)
     : WebCore::ActiveDOMObject(element.scriptExecutionContext())
     , m_mediaElement(element)
 {
-    suspendIfNeeded();
 }
 
 RemotePlayback::~RemotePlayback()

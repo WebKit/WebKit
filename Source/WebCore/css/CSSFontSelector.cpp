@@ -62,6 +62,13 @@ using namespace WebKitFontFamilyNames;
 
 static unsigned fontSelectorId;
 
+Ref<CSSFontSelector> CSSFontSelector::create(ScriptExecutionContext& context)
+{
+    auto fontSelector = adoptRef(*new CSSFontSelector(context));
+    fontSelector->suspendIfNeeded();
+    return fontSelector;
+}
+
 CSSFontSelector::CSSFontSelector(ScriptExecutionContext& context)
     : ActiveDOMObject(&context)
     , m_context(context)
@@ -83,8 +90,6 @@ CSSFontSelector::CSSFontSelector(ScriptExecutionContext& context)
     FontCache::forCurrentThread().addClient(*this);
     m_cssFontFaceSet->addFontModifiedObserver(m_fontModifiedObserver);
     LOG(Fonts, "CSSFontSelector %p ctor", this);
-
-    suspendIfNeeded();
 }
 
 CSSFontSelector::~CSSFontSelector()
