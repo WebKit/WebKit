@@ -148,6 +148,39 @@ void LineLayout::updateInlineBlockDimensions(const RenderBlock& inlineBlock)
     updateLayoutBoxDimensions(inlineBlock);
 }
 
+static inline Layout::BoxGeometry::HorizontalMargin logicalMargin(const RenderBoxModelObject& renderer, bool isLeftToRightDirection, bool retainMarginStart = true, bool retainMarginEnd = true)
+{
+    auto marginStart = LayoutUnit { 0_lu };
+    auto marginEnd = LayoutUnit { 0_lu };
+    if (retainMarginStart)
+        marginStart = isLeftToRightDirection ? renderer.marginLeft() : renderer.marginRight();
+    if (retainMarginEnd)
+        marginEnd = isLeftToRightDirection ? renderer.marginRight() : renderer.marginLeft();
+    return { marginStart, marginEnd };
+}
+
+static inline Layout::Edges logicalBorder(const RenderBoxModelObject& renderer, bool isLeftToRightDirection, bool retainBorderStart = true, bool retainBorderEnd = true)
+{
+    auto borderStart = LayoutUnit { 0_lu };
+    auto borderEnd = LayoutUnit { 0_lu };
+    if (retainBorderStart)
+        borderStart = isLeftToRightDirection ? renderer.borderLeft() : renderer.borderRight();
+    if (retainBorderEnd)
+        borderEnd = isLeftToRightDirection ? renderer.borderRight() : renderer.borderLeft();
+    return { { borderStart, borderEnd }, { renderer.borderTop(), renderer.borderBottom() } };
+}
+
+static inline Layout::Edges logicalPadding(const RenderBoxModelObject& renderer, bool isLeftToRightDirection, bool retainPaddingStart = true, bool retainPaddingEnd = true)
+{
+    auto paddingStart = LayoutUnit { 0_lu };
+    auto paddingEnd = LayoutUnit { 0_lu };
+    if (retainPaddingStart)
+        paddingStart = isLeftToRightDirection ? renderer.paddingLeft() : renderer.paddingRight();
+    if (retainPaddingEnd)
+        paddingEnd = isLeftToRightDirection ? renderer.paddingRight() : renderer.paddingLeft();
+    return Layout::Edges { { paddingStart, paddingEnd }, { renderer.paddingTop(), renderer.paddingBottom() } };
+}
+
 void LineLayout::updateLayoutBoxDimensions(const RenderBox& replacedOrInlineBlock)
 {
     auto& layoutBox = m_boxTree.layoutBoxForRenderer(replacedOrInlineBlock);
@@ -169,11 +202,11 @@ void LineLayout::updateLayoutBoxDimensions(const RenderBox& replacedOrInlineBloc
     replacedBoxGeometry.setContentBoxWidth(replacedOrInlineBlock.contentWidth());
     replacedBoxGeometry.setContentBoxHeight(replacedOrInlineBlock.contentHeight());
 
-    replacedBoxGeometry.setBorder({ { replacedOrInlineBlock.borderLeft(), replacedOrInlineBlock.borderRight() }, { replacedOrInlineBlock.borderTop(), replacedOrInlineBlock.borderBottom() } });
-    replacedBoxGeometry.setPadding(Layout::Edges { { replacedOrInlineBlock.paddingLeft(), replacedOrInlineBlock.paddingRight() }, { replacedOrInlineBlock.paddingTop(), replacedOrInlineBlock.paddingBottom() } });
-
-    replacedBoxGeometry.setHorizontalMargin({ replacedOrInlineBlock.marginLeft(), replacedOrInlineBlock.marginRight() });
     replacedBoxGeometry.setVerticalMargin({ replacedOrInlineBlock.marginTop(), replacedOrInlineBlock.marginBottom() });
+    auto isLeftToRightDirection = flow().style().isLeftToRightDirection();
+    replacedBoxGeometry.setHorizontalMargin(logicalMargin(replacedOrInlineBlock, isLeftToRightDirection));
+    replacedBoxGeometry.setBorder(logicalBorder(replacedOrInlineBlock, isLeftToRightDirection));
+    replacedBoxGeometry.setPadding(logicalPadding(replacedOrInlineBlock, isLeftToRightDirection));
 
     auto baseline = replacedOrInlineBlock.baselinePosition(AlphabeticBaseline, false /* firstLine */, HorizontalLine, PositionOnContainingLine);
     replacedBox.setBaseline(roundToInt(baseline));
@@ -198,15 +231,12 @@ void LineLayout::updateInlineBoxDimensions(const RenderInline& renderInline)
     // Check if this renderer is part of a continuation and adjust horizontal margin/border/padding accordingly.
     auto shouldNotRetainBorderPaddingAndMarginStart = renderInline.parent()->isAnonymousBlock() && renderInline.isContinuation();
     auto shouldNotRetainBorderPaddingAndMarginEnd = renderInline.parent()->isAnonymousBlock() && !renderInline.isContinuation() && renderInline.inlineContinuation();
-    
-    auto horizontalMargin = Layout::BoxGeometry::HorizontalMargin { shouldNotRetainBorderPaddingAndMarginStart ? 0_lu : renderInline.marginLeft(), shouldNotRetainBorderPaddingAndMarginEnd ? 0_lu : renderInline.marginRight() };
-    auto horizontalBorder = Layout::HorizontalEdges { shouldNotRetainBorderPaddingAndMarginStart ? 0_lu : renderInline.borderLeft(), shouldNotRetainBorderPaddingAndMarginEnd ? 0_lu : renderInline.borderRight() };
-    auto horizontalPadding = Layout::HorizontalEdges { shouldNotRetainBorderPaddingAndMarginStart ? 0_lu : renderInline.paddingLeft(), shouldNotRetainBorderPaddingAndMarginEnd ? 0_lu : renderInline.paddingRight() };
-    
-    boxGeometry.setPadding(Layout::Edges { horizontalPadding, { renderInline.paddingTop(), renderInline.paddingBottom() } });
-    boxGeometry.setBorder({ horizontalBorder, { renderInline.borderTop(), renderInline.borderBottom() } });
-    boxGeometry.setHorizontalMargin(horizontalMargin);
+
     boxGeometry.setVerticalMargin({ });
+    auto isLeftToRightDirection = flow().style().isLeftToRightDirection();
+    boxGeometry.setHorizontalMargin(logicalMargin(renderInline, isLeftToRightDirection, !shouldNotRetainBorderPaddingAndMarginStart, !shouldNotRetainBorderPaddingAndMarginEnd));
+    boxGeometry.setBorder(logicalBorder(renderInline, isLeftToRightDirection, !shouldNotRetainBorderPaddingAndMarginStart, !shouldNotRetainBorderPaddingAndMarginEnd));
+    boxGeometry.setPadding(logicalPadding(renderInline, isLeftToRightDirection, !shouldNotRetainBorderPaddingAndMarginStart, !shouldNotRetainBorderPaddingAndMarginEnd));
 }
 
 void LineLayout::updateStyle(const RenderBoxModelObject& renderer, const RenderStyle& oldStyle)
