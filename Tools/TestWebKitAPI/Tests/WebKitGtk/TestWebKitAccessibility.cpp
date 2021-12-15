@@ -114,16 +114,28 @@ public:
         return !g_strcmp0(applicationName.get(), "TestWebKitAccessibility");
     }
 
-    void startEventMonitor(AtspiAccessible* source, Vector<CString>&& events)
+    bool shouldProcessEvent(AtspiEvent* event)
+    {
+        // source = std::nullopt -> no filter.
+        if (!m_eventMonitor.source)
+            return true;
+
+        // source = nullptr -> filter by application.
+        if (!m_eventMonitor.source.value())
+            return accessibleApplicationIsTestProgram(event->source);
+
+        // source != nullptr -> filter by accessible.
+        return m_eventMonitor.source.value() == event->source;
+    }
+
+    void startEventMonitor(std::optional<AtspiAccessible*> source, Vector<CString>&& events)
     {
         m_eventMonitor.source = source;
         m_eventMonitor.eventTypes = WTFMove(events);
         m_eventMonitor.listener = adoptGRef(atspi_event_listener_new([](AtspiEvent* event, gpointer userData) {
             auto* test = static_cast<AccessibilityTest*>(userData);
-            if ((test->m_eventMonitor.source && event->source == test->m_eventMonitor.source)
-                || (!test->m_eventMonitor.source && accessibleApplicationIsTestProgram(event->source))) {
+            if (test->shouldProcessEvent(event))
                 test->m_eventMonitor.events.append(static_cast<AtspiEvent*>(g_boxed_copy(ATSPI_TYPE_EVENT, event)));
-            }
         }, this, nullptr));
 
         for (const auto& event : m_eventMonitor.eventTypes)
@@ -175,7 +187,7 @@ private:
         GRefPtr<AtspiEventListener> listener;
         Vector<CString> eventTypes;
         Vector<UniqueAtspiEvent> events;
-        AtspiAccessible* source { nullptr };
+        std::optional<AtspiAccessible*> source;
     } m_eventMonitor;
 };
 
@@ -2118,6 +2130,56 @@ static void testDocumentBasic(AccessibilityTest* test, gconstpointer)
 #endif
 }
 
+static void testDocumentLoadEvents(AccessibilityTest* test, gconstpointer)
+{
+    test->showInWindow();
+    test->loadURI("about:blank");
+    test->waitUntilLoadFinished();
+    test->startEventMonitor(std::nullopt, { "document:", "object:state-changed:busy" });
+    test->loadHtml(
+        "<html>"
+        "  <body>"
+        "    <p>Loading events test</p>"
+        "  </body>"
+        "</html>",
+        nullptr);
+    test->waitUntilLoadFinished();
+    auto events = test->stopEventMonitor(3);
+    g_assert_cmpuint(events.size(), ==, 3);
+    g_assert_cmpstr(events[0]->type, ==, "object:state-changed:busy");
+    g_assert_cmpuint(events[0]->detail1, ==, 1);
+    g_assert_cmpstr(events[1]->type, ==, "object:state-changed:busy");
+    g_assert_cmpuint(events[1]->detail1, ==, 0);
+    g_assert_false(events[0]->source == events[1]->source);
+    g_assert_true(ATSPI_IS_ACCESSIBLE(events[0]->source));
+    g_assert_cmpint(atspi_accessible_get_role(events[0]->source, nullptr), ==, ATSPI_ROLE_DOCUMENT_WEB);
+    g_assert_cmpstr(events[2]->type, ==, "document:load-complete");
+    g_assert_true(events[1]->source == events[2]->source);
+    g_assert_true(ATSPI_IS_ACCESSIBLE(events[1]->source));
+    g_assert_cmpint(atspi_accessible_get_role(events[1]->source, nullptr), ==, ATSPI_ROLE_DOCUMENT_WEB);
+    events = { };
+
+    test->startEventMonitor(std::nullopt, { "document:", "object:state-changed:busy" });
+    webkit_web_view_reload(test->m_webView);
+    test->waitUntilLoadFinished();
+    events = test->stopEventMonitor(4);
+    g_assert_cmpuint(events.size(), ==, 4);
+    g_assert_cmpstr(events[0]->type, ==, "object:state-changed:busy");
+    g_assert_cmpuint(events[0]->detail1, ==, 1);
+    g_assert_cmpstr(events[1]->type, ==, "document:reload");
+    g_assert_true(events[0]->source == events[1]->source);
+    g_assert_true(ATSPI_IS_ACCESSIBLE(events[0]->source));
+    g_assert_cmpint(atspi_accessible_get_role(events[0]->source, nullptr), ==, ATSPI_ROLE_DOCUMENT_WEB);
+    g_assert_cmpstr(events[2]->type, ==, "object:state-changed:busy");
+    g_assert_cmpuint(events[2]->detail1, ==, 0);
+    g_assert_false(events[1]->source == events[2]->source);
+    g_assert_cmpstr(events[3]->type, ==, "document:load-complete");
+    g_assert_true(events[2]->source == events[3]->source);
+    g_assert_true(ATSPI_IS_ACCESSIBLE(events[2]->source));
+    g_assert_cmpint(atspi_accessible_get_role(events[2]->source, nullptr), ==, ATSPI_ROLE_DOCUMENT_WEB);
+    events = { };
+}
+
 static void testImageBasic(AccessibilityTest* test, gconstpointer)
 {
     test->showInWindow(800, 600);
@@ -2819,6 +2881,7 @@ void beforeAll()
     AccessibilityTest::add("WebKitAccessibility", "hypertext/basic", testHypertextBasic);
     AccessibilityTest::add("WebKitAccessibility", "action/basic", testActionBasic);
     AccessibilityTest::add("WebKitAccessibility", "document/basic", testDocumentBasic);
+    AccessibilityTest::add("WebKitAccessibility", "document/load-events", testDocumentLoadEvents);
     AccessibilityTest::add("WebKitAccessibility", "image/basic", testImageBasic);
     AccessibilityTest::add("WebKitAccessibility", "selection/listbox", testSelectionListBox);
     AccessibilityTest::add("WebKitAccessibility", "selection/menulist", testSelectionMenuList);

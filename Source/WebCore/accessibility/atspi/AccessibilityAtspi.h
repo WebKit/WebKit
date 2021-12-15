@@ -72,6 +72,8 @@ public:
 
     void selectionChanged(AccessibilityObjectAtspi&);
 
+    void loadEvent(AccessibilityObjectAtspi&, CString&&);
+
     static const char* localizedRoleName(AccessibilityRole);
 
     void addAccessible(AccessibilityObjectAtspi&);

@@ -1237,6 +1237,12 @@ void AccessibilityObjectAtspi::stateChanged(const char* name, bool value)
     m_root.atspi().stateChanged(*this, name, value);
 }
 
+void AccessibilityObjectAtspi::loadEvent(const char* event)
+{
+    RELEASE_ASSERT(isMainThread());
+    m_root.atspi().loadEvent(*this, event);
+}
+
 unsigned AccessibilityObjectAtspi::role() const
 {
     RELEASE_ASSERT(!isMainThread());

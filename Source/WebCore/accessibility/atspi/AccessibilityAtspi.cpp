@@ -464,6 +464,21 @@ void AccessibilityAtspi::selectionChanged(AccessibilityObjectAtspi& atspiObject)
     });
 }
 
+void AccessibilityAtspi::loadEvent(AccessibilityObjectAtspi& atspiObject, CString&& event)
+{
+    RELEASE_ASSERT(isMainThread());
+    m_queue->dispatch([this, atspiObject = Ref { atspiObject }, event = WTFMove(event)] {
+        if (!m_connection)
+            return;
+
+        if (!shouldEmitSignal("Document", event.data()))
+            return;
+
+        g_dbus_connection_emit_signal(m_connection.get(), nullptr, atspiObject->path().utf8().data(), "org.a11y.atspi.Event.Document", event.data(),
+            g_variant_new("(siiva{sv})", "", 0, 0, g_variant_new_string(""), nullptr), nullptr);
+    });
+}
+
 struct RoleNameEntry {
     const char* name;
     const char* localizedName;

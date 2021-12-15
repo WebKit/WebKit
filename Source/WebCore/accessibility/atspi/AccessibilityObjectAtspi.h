@@ -135,6 +135,7 @@ public:
     WEBCORE_EXPORT bool doAction() const;
 
     WEBCORE_EXPORT String documentAttribute(const String&) const;
+    void loadEvent(const char*);
 
     WEBCORE_EXPORT unsigned selectionCount() const;
     WEBCORE_EXPORT AccessibilityObjectAtspi* selectedChild(unsigned) const;

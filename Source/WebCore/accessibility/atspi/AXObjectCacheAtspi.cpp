@@ -305,8 +305,36 @@ void AXObjectCache::postTextReplacementPlatformNotification(AXCoreObject* coreOb
         wrapper->textInserted(insertedText, position);
 }
 
-void AXObjectCache::frameLoadingEventPlatformNotification(AccessibilityObject* object, AXLoadingEvent loadingEvent)
+void AXObjectCache::frameLoadingEventPlatformNotification(AccessibilityObject* coreObject, AXLoadingEvent loadingEvent)
 {
+    RELEASE_ASSERT(isMainThread());
+    if (!coreObject)
+        return;
+
+    if (coreObject->roleValue() != AccessibilityRole::WebArea)
+        return;
+
+    auto* wrapper = coreObject->wrapper();
+    if (!wrapper)
+        return;
+
+    switch (loadingEvent) {
+    case AXObjectCache::AXLoadingStarted:
+        wrapper->stateChanged("busy", true);
+        break;
+    case AXObjectCache::AXLoadingReloaded:
+        wrapper->stateChanged("busy", true);
+        wrapper->loadEvent("Reload");
+        break;
+    case AXObjectCache::AXLoadingFailed:
+        wrapper->stateChanged("busy", false);
+        wrapper->loadEvent("LoadStopped");
+        break;
+    case AXObjectCache::AXLoadingFinished:
+        wrapper->stateChanged("busy", false);
+        wrapper->loadEvent("LoadComplete");
+        break;
+    }
 }
 
 void AXObjectCache::platformHandleFocusedUIElementChanged(Node* oldFocusedNode, Node* newFocusedNode)
