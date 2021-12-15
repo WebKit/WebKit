@@ -851,7 +851,7 @@ MediaRecorderEnabled:
     WebKitLegacy:
       default: false
     WebKit:
-      "HAVE(AVASSETWRITERDELEGATE)": true
+      "PLATFORM(COCOA)": true
       default: false
     WebCore:
       default: false
