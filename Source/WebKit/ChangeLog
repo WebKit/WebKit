@@ -1,5 +1,21 @@
 2021-12-15  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r286781. rdar://problem/86221898
+
+    Unreviewed fix after r286778 to address WebContent crashes on launch
+    
+    * WebProcess/com.apple.WebProcess.sb.in:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@286781 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-12-09  Chris Dumez  <cdumez@apple.com>
+
+            Unreviewed fix after r286778 to address WebContent crashes on launch
+
+            * WebProcess/com.apple.WebProcess.sb.in:
+
+2021-12-15  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r286778. rdar://problem/86221898
 
     [macOS][WP] Block access to unused system calls
