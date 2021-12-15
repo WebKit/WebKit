@@ -1,3 +1,19 @@
+2021-12-15  Youenn Fablet  <youenn@apple.com>
+
+        RemoteAudioMediaStreamTrackRendererInternalUnitManager::Unit should only reset once
+        https://bugs.webkit.org/show_bug.cgi?id=234340
+
+        Reviewed by Eric Carlson.
+
+        As seen in logs, there are cases where the unit is notified reset several times before it gets stopped and restarted.
+        This triggers resetting on WebProcess side several times which is unneeded.
+        Instead, we now only call reset once in a start/stop cycle of the audio unit.
+        Manually tested.
+
+        * GPUProcess/webrtc/RemoteAudioMediaStreamTrackRendererInternalUnitManager.cpp:
+        (WebKit::RemoteAudioMediaStreamTrackRendererInternalUnitManager::Unit::notifyReset):
+        (WebKit::RemoteAudioMediaStreamTrackRendererInternalUnitManager::Unit::start):
+
 2021-12-15  Per Arne Vollan  <pvollan@apple.com>
 
         [iOS][WP] Add access to required syscall

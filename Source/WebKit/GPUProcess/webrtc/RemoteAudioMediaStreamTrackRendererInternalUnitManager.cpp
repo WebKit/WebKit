@@ -88,6 +88,7 @@ private:
     bool m_isPlaying { false };
     WebCore::CAAudioStreamDescription m_description;
     bool m_shouldRegisterAsSpeakerSamplesProducer { false };
+    bool m_canReset { true };
 };
 
 RemoteAudioMediaStreamTrackRendererInternalUnitManager::RemoteAudioMediaStreamTrackRendererInternalUnitManager(GPUConnectionToWebProcess& gpuConnectionToWebProcess)
@@ -178,6 +179,10 @@ RemoteAudioMediaStreamTrackRendererInternalUnitManager::Unit::~Unit()
 
 void RemoteAudioMediaStreamTrackRendererInternalUnitManager::Unit::notifyReset()
 {
+    if (!m_canReset)
+        return;
+
+    m_canReset = false;
     m_connection->send(Messages::GPUProcessConnection::ResetAudioMediaStreamTrackRendererInternalUnit { m_identifier }, 0);
 }
 
@@ -202,6 +207,7 @@ void RemoteAudioMediaStreamTrackRendererInternalUnitManager::Unit::start(const S
     m_readOffset = 0;
     m_generateOffset = 0;
     m_isPlaying = true;
+    m_canReset = true;
     m_ringBuffer = WebCore::CARingBuffer::adoptStorage(makeUniqueRef<ReadOnlySharedRingBufferStorage>(handle), description, numberOfFrames).moveToUniquePtr();
     m_renderSemaphore = WTFMove(semaphore);
     m_description = description;
