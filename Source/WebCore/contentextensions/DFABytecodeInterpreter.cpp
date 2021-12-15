@@ -203,19 +203,18 @@ void DFABytecodeInterpreter::interpretTestFlagsAndAppendAction(uint32_t& program
 }
 
 template<bool caseSensitive>
-inline void DFABytecodeInterpreter::interpetJumpTable(const char* url, uint32_t& urlIndex, uint32_t& programCounter, bool& urlIndexIsAfterEndOfString)
+inline void DFABytecodeInterpreter::interpetJumpTable(Span<const char> url, uint32_t& urlIndex, uint32_t& programCounter)
 {
     DFABytecodeJumpSize jumpSize = getJumpSize(m_bytecode, programCounter);
 
-    char character = caseSensitive ? url[urlIndex] : toASCIILower(url[urlIndex]);
+    char c = urlIndex < url.size() ? url[urlIndex] : 0;
+    char character = caseSensitive ? c : toASCIILower(c);
     uint8_t firstCharacter = getBits<uint8_t>(m_bytecode, programCounter + sizeof(DFABytecodeInstruction));
     uint8_t lastCharacter = getBits<uint8_t>(m_bytecode, programCounter + sizeof(DFABytecodeInstruction) + sizeof(uint8_t));
     if (character >= firstCharacter && character <= lastCharacter) {
         uint32_t startOffset = programCounter + sizeof(DFABytecodeInstruction) + 2 * sizeof(uint8_t);
         uint32_t jumpLocation = startOffset + (character - firstCharacter) * jumpSizeInBytes(jumpSize);
         programCounter += getJumpDistance(m_bytecode, jumpLocation, jumpSize);
-        if (!character)
-            urlIndexIsAfterEndOfString = true;
         urlIndex++; // This represents an edge in the DFA.
     } else
         programCounter += sizeof(DFABytecodeInstruction) + 2 * sizeof(uint8_t) + jumpSizeInBytes(jumpSize) * (lastCharacter - firstCharacter + 1);
@@ -243,10 +242,17 @@ auto DFABytecodeInterpreter::actionsMatchingEverything() -> Actions
     return actions;
 }
 
-auto DFABytecodeInterpreter::interpret(const CString& urlCString, ResourceFlags flags) -> Actions
+auto DFABytecodeInterpreter::interpret(const String& urlString, ResourceFlags flags) -> Actions
 {
-    const char* url = urlCString.data();
-    ASSERT(url);
+    CString urlCString;
+    Span<const char> url;
+    if (LIKELY(urlString.is8Bit()))
+        url = { reinterpret_cast<const char*>(urlString.characters8()), urlString.length() };
+    else {
+        urlCString = urlString.utf8();
+        url = { urlCString.data(), urlCString.length() };
+    }
+    ASSERT(url.data());
     
     Actions actions;
     
@@ -281,7 +287,6 @@ auto DFABytecodeInterpreter::interpret(const CString& urlCString, ResourceFlags 
         // Interpret the bytecode from this DFA.
         // This should always terminate if interpreting correctly compiled bytecode.
         uint32_t urlIndex = 0;
-        bool urlIndexIsAfterEndOfString = false;
         while (true) {
             ASSERT(programCounter <= m_bytecode.size());
             switch (getInstruction(m_bytecode, programCounter)) {
@@ -290,17 +295,15 @@ auto DFABytecodeInterpreter::interpret(const CString& urlCString, ResourceFlags 
                 goto nextDFA;
                     
             case DFABytecodeInstruction::CheckValueCaseSensitive: {
-                if (urlIndexIsAfterEndOfString)
+                if (urlIndex > url.size())
                     goto nextDFA;
 
                 // Check to see if the next character in the url is the value stored with the bytecode.
-                char character = url[urlIndex];
+                char character = urlIndex < url.size() ? url[urlIndex] : 0;
                 DFABytecodeJumpSize jumpSize = getJumpSize(m_bytecode, programCounter);
                 if (character == getBits<uint8_t>(m_bytecode, programCounter + sizeof(DFABytecodeInstruction))) {
                     uint32_t jumpLocation = programCounter + sizeof(DFABytecodeInstruction) + sizeof(uint8_t);
                     programCounter += getJumpDistance(m_bytecode, jumpLocation, jumpSize);
-                    if (!character)
-                        urlIndexIsAfterEndOfString = true;
                     urlIndex++; // This represents an edge in the DFA.
                 } else
                     programCounter += sizeof(DFABytecodeInstruction) + sizeof(uint8_t) + jumpSizeInBytes(jumpSize);
@@ -308,17 +311,15 @@ auto DFABytecodeInterpreter::interpret(const CString& urlCString, ResourceFlags 
             }
 
             case DFABytecodeInstruction::CheckValueCaseInsensitive: {
-                if (urlIndexIsAfterEndOfString)
+                if (urlIndex > url.size())
                     goto nextDFA;
 
                 // Check to see if the next character in the url is the value stored with the bytecode.
-                char character = toASCIILower(url[urlIndex]);
+                char character = urlIndex < url.size() ? toASCIILower(url[urlIndex]) : 0;
                 DFABytecodeJumpSize jumpSize = getJumpSize(m_bytecode, programCounter);
                 if (character == getBits<uint8_t>(m_bytecode, programCounter + sizeof(DFABytecodeInstruction))) {
                     uint32_t jumpLocation = programCounter + sizeof(DFABytecodeInstruction) + sizeof(uint8_t);
                     programCounter += getJumpDistance(m_bytecode, jumpLocation, jumpSize);
-                    if (!character)
-                        urlIndexIsAfterEndOfString = true;
                     urlIndex++; // This represents an edge in the DFA.
                 } else
                     programCounter += sizeof(DFABytecodeInstruction) + sizeof(uint8_t) + jumpSizeInBytes(jumpSize);
@@ -326,30 +327,28 @@ auto DFABytecodeInterpreter::interpret(const CString& urlCString, ResourceFlags 
             }
 
             case DFABytecodeInstruction::JumpTableCaseInsensitive:
-                if (urlIndexIsAfterEndOfString)
+                if (urlIndex > url.size())
                     goto nextDFA;
 
-                interpetJumpTable<false>(url, urlIndex, programCounter, urlIndexIsAfterEndOfString);
+                interpetJumpTable<false>(url, urlIndex, programCounter);
                 break;
             case DFABytecodeInstruction::JumpTableCaseSensitive:
-                if (urlIndexIsAfterEndOfString)
+                if (urlIndex > url.size())
                     goto nextDFA;
 
-                interpetJumpTable<true>(url, urlIndex, programCounter, urlIndexIsAfterEndOfString);
+                interpetJumpTable<true>(url, urlIndex, programCounter);
                 break;
                     
             case DFABytecodeInstruction::CheckValueRangeCaseSensitive: {
-                if (urlIndexIsAfterEndOfString)
+                if (urlIndex > url.size())
                     goto nextDFA;
                 
-                char character = url[urlIndex];
+                char character = urlIndex < url.size() ? url[urlIndex] : 0;
                 DFABytecodeJumpSize jumpSize = getJumpSize(m_bytecode, programCounter);
                 if (character >= getBits<uint8_t>(m_bytecode, programCounter + sizeof(DFABytecodeInstruction))
                     && character <= getBits<uint8_t>(m_bytecode, programCounter + sizeof(DFABytecodeInstruction) + sizeof(uint8_t))) {
                     uint32_t jumpLocation = programCounter + sizeof(DFABytecodeInstruction) + 2 * sizeof(uint8_t);
                     programCounter += getJumpDistance(m_bytecode, jumpLocation, jumpSize);
-                    if (!character)
-                        urlIndexIsAfterEndOfString = true;
                     urlIndex++; // This represents an edge in the DFA.
                 } else
                     programCounter += sizeof(DFABytecodeInstruction) + 2 * sizeof(uint8_t) + jumpSizeInBytes(jumpSize);
@@ -357,17 +356,15 @@ auto DFABytecodeInterpreter::interpret(const CString& urlCString, ResourceFlags 
             }
 
             case DFABytecodeInstruction::CheckValueRangeCaseInsensitive: {
-                if (urlIndexIsAfterEndOfString)
+                if (urlIndex > url.size())
                     goto nextDFA;
                 
-                char character = toASCIILower(url[urlIndex]);
+                char character = urlIndex < url.size() ? toASCIILower(url[urlIndex]) : 0;
                 DFABytecodeJumpSize jumpSize = getJumpSize(m_bytecode, programCounter);
                 if (character >= getBits<uint8_t>(m_bytecode, programCounter + sizeof(DFABytecodeInstruction))
                     && character <= getBits<uint8_t>(m_bytecode, programCounter + sizeof(DFABytecodeInstruction) + sizeof(uint8_t))) {
                     uint32_t jumpLocation = programCounter + sizeof(DFABytecodeInstruction) + 2 * sizeof(uint8_t);
                     programCounter += getJumpDistance(m_bytecode, jumpLocation, jumpSize);
-                    if (!character)
-                        urlIndexIsAfterEndOfString = true;
                     urlIndex++; // This represents an edge in the DFA.
                 } else
                     programCounter += sizeof(DFABytecodeInstruction) + 2 * sizeof(uint8_t) + jumpSizeInBytes(jumpSize);
@@ -375,7 +372,7 @@ auto DFABytecodeInterpreter::interpret(const CString& urlCString, ResourceFlags 
             }
 
             case DFABytecodeInstruction::Jump: {
-                if (!url[urlIndex] || urlIndexIsAfterEndOfString)
+                if (urlIndex >= url.size())
                     goto nextDFA;
                 
                 uint32_t jumpLocation = programCounter + sizeof(DFABytecodeInstruction);
@@ -396,8 +393,8 @@ auto DFABytecodeInterpreter::interpret(const CString& urlCString, ResourceFlags 
             default:
                 RELEASE_ASSERT_NOT_REACHED(); // Invalid bytecode.
             }
-            // We should always terminate before or at a null character at the end of a String.
-            ASSERT(urlIndex <= urlCString.length() || (urlIndexIsAfterEndOfString && urlIndex <= urlCString.length() + 1));
+            // We should always terminate before or at an imaginary null character at the end of a String.
+            ASSERT(urlIndex <= url.size() + 1);
         }
         RELEASE_ASSERT_NOT_REACHED(); // The while loop can only be exited using goto nextDFA.
         nextDFA:

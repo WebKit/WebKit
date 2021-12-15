@@ -96,7 +96,7 @@ void ContentExtensionsBackend::removeAllContentExtensions()
     m_contentExtensions.clear();
 }
 
-auto ContentExtensionsBackend::actionsFromContentRuleList(const ContentExtension& contentExtension, const CString& urlString, const ResourceLoadInfo& resourceLoadInfo, ResourceFlags flags) const -> ActionsFromContentRuleList
+auto ContentExtensionsBackend::actionsFromContentRuleList(const ContentExtension& contentExtension, const String& urlString, const ResourceLoadInfo& resourceLoadInfo, ResourceFlags flags) const -> ActionsFromContentRuleList
 {
     ActionsFromContentRuleList actionsStruct;
     actionsStruct.contentRuleListIdentifier = contentExtension.identifier();
@@ -162,16 +162,13 @@ auto ContentExtensionsBackend::actionsForResourceLoad(const ResourceLoadInfo& re
 
     const String& urlString = resourceLoadInfo.resourceURL.string();
     ASSERT_WITH_MESSAGE(urlString.isAllASCII(), "A decoded URL should only contain ASCII characters. The matching algorithm assumes the input is ASCII.");
-    // FIXME: UTF-8 conversion should only be necessary with UTF-16 String based URLs, which are rare.
-    // DFABytecodeInterpreter::interpret should take a Span<char> instead of a CString and we can avoid this allocation almost all of the time.
-    const auto urlCString = urlString.utf8();
 
     Vector<ActionsFromContentRuleList> actionsVector;
     actionsVector.reserveInitialCapacity(m_contentExtensions.size());
     ASSERT(!(resourceLoadInfo.getResourceFlags() & ActionConditionMask));
     const ResourceFlags flags = resourceLoadInfo.getResourceFlags() | ActionConditionMask;
     for (auto& contentExtension : m_contentExtensions.values())
-        actionsVector.uncheckedAppend(actionsFromContentRuleList(contentExtension.get(), urlCString, resourceLoadInfo, flags));
+        actionsVector.uncheckedAppend(actionsFromContentRuleList(contentExtension.get(), urlString, resourceLoadInfo, flags));
 #if CONTENT_EXTENSIONS_PERFORMANCE_REPORTING
     MonotonicTime addedTimeEnd = MonotonicTime::now();
     dataLogF("Time added: %f microseconds %s \n", (addedTimeEnd - addedTimeStart).microseconds(), resourceLoadInfo.resourceURL.string().utf8().data());

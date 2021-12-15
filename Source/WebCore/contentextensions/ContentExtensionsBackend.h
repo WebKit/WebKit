@@ -80,7 +80,7 @@ public:
     WEBCORE_EXPORT static bool shouldBeMadeSecure(const URL&);
 
 private:
-    ActionsFromContentRuleList actionsFromContentRuleList(const ContentExtension&, const CString& urlString, const ResourceLoadInfo&, ResourceFlags) const;
+    ActionsFromContentRuleList actionsFromContentRuleList(const ContentExtension&, const String& urlString, const ResourceLoadInfo&, ResourceFlags) const;
 
     HashMap<String, Ref<ContentExtension>> m_contentExtensions;
 };

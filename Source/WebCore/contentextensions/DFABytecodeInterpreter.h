@@ -42,7 +42,7 @@ public:
 
     using Actions = HashSet<uint64_t, DefaultHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>>;
 
-    WEBCORE_EXPORT Actions interpret(const CString&, ResourceFlags);
+    WEBCORE_EXPORT Actions interpret(const String&, ResourceFlags);
     Actions actionsMatchingEverything();
 
 private:
@@ -50,7 +50,7 @@ private:
     void interpretTestFlagsAndAppendAction(unsigned& programCounter, ResourceFlags, Actions&);
 
     template<bool caseSensitive>
-    void interpetJumpTable(const char* url, uint32_t& urlIndex, uint32_t& programCounter, bool& urlIndexIsAfterEndOfString);
+    void interpetJumpTable(Span<const char> url, uint32_t& urlIndex, uint32_t& programCounter);
 
     const Span<const uint8_t> m_bytecode;
 };

@@ -114,7 +114,7 @@ void ContentExtension::populateTopURLActionCacheIfNeeded(const URL& topURL) cons
         return;
 
     DFABytecodeInterpreter interpreter(m_compiledExtension->topURLFiltersBytecode());
-    auto topURLActions = interpreter.interpret(topURL.string().utf8(), AllResourceFlags);
+    auto topURLActions = interpreter.interpret(topURL.string(), AllResourceFlags);
 
     m_cachedTopURLActions.clear();
     for (uint64_t action : topURLActions)
@@ -131,7 +131,7 @@ void ContentExtension::populateFrameURLActionCacheIfNeeded(const URL& frameURL) 
         return;
 
     DFABytecodeInterpreter interpreter(m_compiledExtension->frameURLFiltersBytecode());
-    auto frameURLActions = interpreter.interpret(frameURL.string().utf8(), AllResourceFlags);
+    auto frameURLActions = interpreter.interpret(frameURL.string(), AllResourceFlags);
 
     m_cachedFrameURLActions.clear();
     for (uint64_t action : frameURLActions)

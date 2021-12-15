@@ -1316,7 +1316,7 @@ TEST_F(ContentExtensionTest, LargeJumps)
                         pattern.append('x');
                         break;
                     }
-                    auto matches = interpreter.interpret(pattern.toString().utf8(), 0);
+                    auto matches = interpreter.interpret(pattern.toString(), 0);
                     switch ((c1 + c2 + c3 + c4) % 4) {
                     case 0:
                         compareContents(matches, { });
