@@ -1,3 +1,22 @@
+2021-12-15  Chris Dumez  <cdumez@apple.com>
+
+        RELEASE_ASSERT in WTF::Deque<WebKit::NativeWebKeyboardEvent, 0ul>::first()
+        https://bugs.webkit.org/show_bug.cgi?id=234301
+
+        Reviewed by Geoffrey Garen.
+
+        WebPageProxy::interpretKeyEvent() gets called as the result of IPC from the WebProcess
+        and assumes that WebPageProxy::m_keyEventQueue is non-empty. We have evidence based on
+        the Chrome crash report that this assertion doesn't always hold. Also, the WebProcess
+        is not a trusted process so we shouldn't be making such assumptions in the first place.
+
+        Add a check in WebPageProxy::interpretKeyEvent() to properly deal with an empty queue.
+
+        No new tests, unknown how to reproduce.
+
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::interpretKeyEvent):
+
 2021-12-15  Alex Christensen  <achristensen@webkit.org>
 
         Actually use adattributiond.entitlements when code signing adattributiond

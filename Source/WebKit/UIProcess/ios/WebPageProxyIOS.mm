@@ -723,7 +723,10 @@ void WebPageProxy::moveSelectionByOffset(int32_t offset, CompletionHandler<void(
 void WebPageProxy::interpretKeyEvent(const EditorState& state, bool isCharEvent, CompletionHandler<void(bool)>&& completionHandler)
 {
     m_editorState = state;
-    completionHandler(pageClient().interpretKeyEvent(m_keyEventQueue.first(), isCharEvent));
+    if (m_keyEventQueue.isEmpty())
+        completionHandler(false);
+    else
+        completionHandler(pageClient().interpretKeyEvent(m_keyEventQueue.first(), isCharEvent));
 }
 
 // Complex text input support for plug-ins.
