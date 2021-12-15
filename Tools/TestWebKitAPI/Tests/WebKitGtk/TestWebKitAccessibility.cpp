@@ -57,9 +57,10 @@ public:
         Test::removeLogFatalFlag(G_LOG_LEVEL_WARNING);
         int childCount = atspi_accessible_get_child_count(desktop.get(), nullptr);
         Test::addLogFatalFlag(G_LOG_LEVEL_WARNING);
-        for (int i = 0; i < childCount; ++i) {
+        for (int i = childCount - 1; i >= 0; --i)  {
             GRefPtr<AtspiAccessible> current = adoptGRef(atspi_accessible_get_child_at_index(desktop.get(), i, nullptr));
-            if (!g_strcmp0(atspi_accessible_get_name(current.get(), nullptr), "TestWebKitAccessibility"))
+            GUniquePtr<char> name(atspi_accessible_get_name(current.get(), nullptr));
+            if (!g_strcmp0(name.get(), "TestWebKitAccessibility"))
                 return current;
         }
 
@@ -106,14 +107,23 @@ public:
         m_eventSource = nullptr;
     }
 
+    static bool accessibleApplicationIsTestProgram(AtspiAccessible* accessible)
+    {
+        GRefPtr<AtspiAccessible> application = adoptGRef(atspi_accessible_get_application(accessible, nullptr));
+        GUniquePtr<char> applicationName(atspi_accessible_get_name(application.get(), nullptr));
+        return !g_strcmp0(applicationName.get(), "TestWebKitAccessibility");
+    }
+
     void startEventMonitor(AtspiAccessible* source, Vector<CString>&& events)
     {
         m_eventMonitor.source = source;
         m_eventMonitor.eventTypes = WTFMove(events);
         m_eventMonitor.listener = adoptGRef(atspi_event_listener_new([](AtspiEvent* event, gpointer userData) {
             auto* test = static_cast<AccessibilityTest*>(userData);
-            if (event->source == test->m_eventMonitor.source)
+            if ((test->m_eventMonitor.source && event->source == test->m_eventMonitor.source)
+                || (!test->m_eventMonitor.source && accessibleApplicationIsTestProgram(event->source))) {
                 test->m_eventMonitor.events.append(static_cast<AtspiEvent*>(g_boxed_copy(ATSPI_TYPE_EVENT, event)));
+            }
         }, this, nullptr));
 
         for (const auto& event : m_eventMonitor.eventTypes)
@@ -809,6 +819,45 @@ static void testAccessibleStateChanged(AccessibilityTest* test, gconstpointer)
     g_assert_true(AccessibilityTest::isSelected(option1.get()));
     g_assert_false(AccessibilityTest::isSelected(option2.get()));
 #endif
+}
+
+static void testAccessibleEventListener(AccessibilityTest* test, gconstpointer)
+{
+    test->startEventMonitor(nullptr, { "object:state-changed:focused" });
+    test->showInWindow();
+    test->loadHtml(
+        "<html>"
+        "  <body>"
+        "    <input id='entry' type='text'/>"
+        "  </body>"
+        "</html>",
+        nullptr);
+    test->waitUntilLoadFinished();
+
+    test->runJavaScriptAndWaitUntilFinished("document.getElementById('entry').focus();", nullptr);
+
+    auto events = test->stopEventMonitor(1);
+    g_assert_cmpuint(events.size(), ==, 1);
+    g_assert_cmpstr(events[0]->type, ==, "object:state-changed:focused");
+    auto* entry = events[0]->source;
+    g_assert_true(ATSPI_IS_ACCESSIBLE(entry));
+    g_assert_cmpint(atspi_accessible_get_role(entry, nullptr), ==, ATSPI_ROLE_ENTRY);
+
+    auto panel = adoptGRef(atspi_accessible_get_parent(entry, nullptr));
+    g_assert_true(ATSPI_IS_ACCESSIBLE(panel.get()));
+    g_assert_cmpint(atspi_accessible_get_role(panel.get(), nullptr), ==, ATSPI_ROLE_PANEL);
+
+    auto documentWeb = adoptGRef(atspi_accessible_get_parent(panel.get(), nullptr));
+    g_assert_true(ATSPI_IS_ACCESSIBLE(documentWeb.get()));
+    g_assert_cmpint(atspi_accessible_get_role(documentWeb.get(), nullptr), ==, ATSPI_ROLE_DOCUMENT_WEB);
+
+    auto scrollView = adoptGRef(atspi_accessible_get_parent(documentWeb.get(), nullptr));
+    g_assert_true(ATSPI_IS_ACCESSIBLE(scrollView.get()));
+    g_assert_cmpint(atspi_accessible_get_role(scrollView.get(), nullptr), ==, ATSPI_ROLE_SCROLL_PANE);
+
+    auto rootObject = adoptGRef(atspi_accessible_get_parent(scrollView.get(), nullptr));
+    g_assert_true(ATSPI_IS_ACCESSIBLE(rootObject.get()));
+    g_assert_cmpint(atspi_accessible_get_role(rootObject.get(), nullptr), ==, ATSPI_ROLE_FILLER);
 }
 
 static void testComponentHitTest(AccessibilityTest* test, gconstpointer)
@@ -2752,6 +2801,7 @@ void beforeAll()
     AccessibilityTest::add("WebKitAccessibility", "accessible/attributes", testAccessibleAttributes);
     AccessibilityTest::add("WebKitAccessibility", "accessible/state", testAccessibleState);
     AccessibilityTest::add("WebKitAccessibility", "accessible/state-changed", testAccessibleStateChanged);
+    AccessibilityTest::add("WebKitAccessibility", "accessible/event-listener", testAccessibleEventListener);
     AccessibilityTest::add("WebKitAccessibility", "component/hit-test", testComponentHitTest);
 #ifdef ATSPI_SCROLLTYPE_COUNT
     AccessibilityTest::add("WebKitAccessibility", "component/scroll-to", testComponentScrollTo);

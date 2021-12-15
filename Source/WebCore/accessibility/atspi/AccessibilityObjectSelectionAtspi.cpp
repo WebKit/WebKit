@@ -224,9 +224,6 @@ bool AccessibilityObjectAtspi::clearSelection() const
 void AccessibilityObjectAtspi::selectionChanged()
 {
     RELEASE_ASSERT(isMainThread());
-    if (!m_isRegistered.load())
-        return;
-
     m_root.atspi().selectionChanged(*this);
 }
 

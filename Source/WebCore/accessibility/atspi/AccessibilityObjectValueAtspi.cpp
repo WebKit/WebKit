@@ -134,9 +134,6 @@ double AccessibilityObjectAtspi::minimumIncrement() const
 void AccessibilityObjectAtspi::valueChanged(double value)
 {
     RELEASE_ASSERT(isMainThread());
-    if (!m_isRegistered.load())
-        return;
-
     m_root.atspi().valueChanged(*this, value);
 }
 

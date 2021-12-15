@@ -348,9 +348,6 @@ CString AccessibilityObjectAtspi::text(int startOffset, int endOffset) const
 void AccessibilityObjectAtspi::textInserted(const String& insertedText, const VisiblePosition& position)
 {
     RELEASE_ASSERT(isMainThread());
-    if (!m_isRegistered.load())
-        return;
-
     if (!m_interfaces.contains(Interface::Text))
         return;
 
@@ -367,9 +364,6 @@ void AccessibilityObjectAtspi::textInserted(const String& insertedText, const Vi
 void AccessibilityObjectAtspi::textDeleted(const String& deletedText, const VisiblePosition& position)
 {
     RELEASE_ASSERT(isMainThread());
-    if (!m_isRegistered.load())
-        return;
-
     if (!m_interfaces.contains(Interface::Text))
         return;
 
@@ -751,9 +745,6 @@ bool AccessibilityObjectAtspi::selectRange(int startOffset, int endOffset)
 void AccessibilityObjectAtspi::selectionChanged(const VisibleSelection& selection)
 {
     RELEASE_ASSERT(isMainThread());
-    if (!m_isRegistered.load())
-        return;
-
     if (!m_interfaces.contains(Interface::Text))
         return;
 
@@ -943,9 +934,6 @@ AccessibilityObjectAtspi::TextAttributes AccessibilityObjectAtspi::textAttribute
 void AccessibilityObjectAtspi::textAttributesChanged()
 {
     RELEASE_ASSERT(isMainThread());
-    if (!m_isRegistered.load())
-        return;
-
     if (!m_interfaces.contains(Interface::Text))
         return;
 

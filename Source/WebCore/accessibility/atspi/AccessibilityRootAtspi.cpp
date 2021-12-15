@@ -223,6 +223,8 @@ void AccessibilityRootAtspi::embedded(const char* parentUniqueName, const char* 
     RELEASE_ASSERT(!isMainThread());
     m_parentUniqueName = parentUniqueName;
     m_parentPath = parentPath;
+    if (!m_isTreeRegistered.load() && m_atspi.hasEventListeners())
+        registerTree();
 }
 
 GVariant* AccessibilityRootAtspi::applicationReference() const

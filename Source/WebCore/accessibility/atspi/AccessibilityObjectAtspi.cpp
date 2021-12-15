@@ -1213,6 +1213,9 @@ void AccessibilityObjectAtspi::childAdded(AccessibilityObjectAtspi& child)
     if (!m_isRegistered.load())
         return;
 
+    if (!m_coreObject || m_coreObject->accessibilityIsIgnored())
+        return;
+
     m_root.atspi().childrenChanged(*this, child, AccessibilityAtspi::ChildrenChanged::Added);
 }
 
@@ -1222,15 +1225,15 @@ void AccessibilityObjectAtspi::childRemoved(AccessibilityObjectAtspi& child)
     if (!m_isRegistered.load())
         return;
 
+    if (!m_coreObject || m_coreObject->accessibilityIsIgnored())
+        return;
+
     m_root.atspi().childrenChanged(*this, child, AccessibilityAtspi::ChildrenChanged::Removed);
 }
 
 void AccessibilityObjectAtspi::stateChanged(const char* name, bool value)
 {
     RELEASE_ASSERT(isMainThread());
-    if (!m_isRegistered.load())
-        return;
-
     m_root.atspi().stateChanged(*this, name, value);
 }
 
