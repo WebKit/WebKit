@@ -1,3 +1,17 @@
+2021-12-15  Jer Noble  <jer.noble@apple.com>
+
+        [ iOS EWS ]  2X media/track (layout-tests) are a constant image failure
+        https://bugs.webkit.org/show_bug.cgi?id=234090
+        <rdar://problem/86281284>
+
+        Reviewed by Eric Carlson.
+
+        Fix the expected results.
+
+        * media/track/track-webvtt-no-snap-to-lines-overlap-expected.html:
+        * media/track/track-webvtt-snap-to-lines-left-right-expected.html:
+        * platform/ios-wk2/TestExpectations:
+
 2021-12-15  Youenn Fablet  <youenn@apple.com>
 
         Make sure to start a realtime outgoing source in case it is taken to another sender
