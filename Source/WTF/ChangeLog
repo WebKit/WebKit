@@ -1,3 +1,31 @@
+2021-12-15  Tomoki Imai  <tomoki.imai@sony.com>
+
+        [PlayStation] Use FileSystem instead of FileSystemPlayStation except several unsupported APIs
+        https://bugs.webkit.org/show_bug.cgi?id=234337
+
+        Reviewed by Don Olmstead.
+
+        PlayStation should use FileSystem as its current SDK supports std::filesystem.
+        We have to maintain FileSystemPlayStation for now to supply some of FileSystem APIs
+        because the following functions are not supported yet.
+        - std::filesystem::space
+        - std::filesystem::rename
+        - std::filesystem::canonical
+        - std::filesystem::directory_iterator
+        - std::filesystem::remove_all
+
+        The plan is to remove FileSystemPlayStation entirely after the SDK supports these functions.
+
+        This patch also fixes the incompatible issue of FileSystem::listDirectory of FileSystemPlayStation.
+        FileSystem::listDirectory is expected to return only the names, but it actually returns full paths.
+
+        Confirmed that there is no regression in FileSystem related testcases in TestWTF.
+
+        * wtf/FileSystem.cpp: Add PLATFORM(PLAYSTATION) guards not to use unsupported std::filesystem APIs.
+        * wtf/playstation/FileSystemPlayStation.cpp: Remove the functions duplicated with FileSystem.
+        Make FileSystem::listDirectory returns only names.
+        Add listDirectorySub which can return a full path because deleteNonEmptyDirectory depends on it.
+
 2021-12-15  Youenn Fablet  <youenn@apple.com>
 
         Make use of PLATFORM(COCOA) in MediaRecorder WebPreference
