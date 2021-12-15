@@ -1,3 +1,34 @@
+2021-12-15  Alex Christensen  <achristensen@webkit.org>
+
+        More cleanup after PluginProcess removal
+        https://bugs.webkit.org/show_bug.cgi?id=234354
+
+        Reviewed by Tim Horton.
+
+        Remove some unused code, unify some sources.
+
+        * Configurations/PluginProcessShim.xcconfig: Removed.
+        * Configurations/PluginService.xcconfig: Removed.
+        * DerivedSources.make:
+        * Shared/Cocoa/SharedRingBufferStorage.cpp:
+        (WebKit::ReadOnlySharedRingBufferStorage::allocate):
+        (WebKit::SharedRingBufferStorage::setStorage):
+        (WebKit::SharedRingBufferStorage::allocate):
+        * Shared/WebPreferencesDefaultValues.cpp:
+        (WebKit::defaultMediaSessionCoordinatorEnabled):
+        * Sources.txt:
+        * UIProcess/WebProcessPool.h:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/Plugins/PluginController.h:
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::platformLayer const):
+        (WebKit::PluginView::contentsScaleFactor):
+        (WebKit::PluginView::pluginProcessCrashed): Deleted.
+        (WebKit::PluginView::proxiesForURL): Deleted.
+        (WebKit::PluginView::cookiesForURL): Deleted.
+        (WebKit::PluginView::setCookiesForURL): Deleted.
+        * WebProcess/Plugins/PluginView.h:
+
 2021-12-15  Sihui Liu  <sihui_liu@apple.com>
 
         REGRESSION (r286936): Many webstorage layout tests have become flaky failures

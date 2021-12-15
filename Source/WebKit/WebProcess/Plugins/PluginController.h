@@ -77,9 +77,6 @@ public:
     // Return whether accelerated compositing is enabled.
     virtual bool isAcceleratedCompositingEnabled() = 0;
 
-    // Tells the controller that the plug-in process has crashed.
-    virtual void pluginProcessCrashed() = 0;
-
 #if PLATFORM(COCOA)
     // Tells the controller that the plug-in focus or window focus did change.
     virtual void pluginFocusOrWindowFocusChanged(bool) = 0;
@@ -90,15 +87,6 @@ public:
 
     // Returns the contents scale factor.
     virtual float contentsScaleFactor() = 0;
-
-    // Returns the proxies for the given URL or null on failure.
-    virtual String proxiesForURL(const String&) = 0;
-
-    // Returns the cookies for the given URL or null on failure.
-    virtual String cookiesForURL(const String&) = 0;
-
-    // Sets the cookies for the given URL.
-    virtual void setCookiesForURL(const String& urlString, const String& cookieString) = 0;
 
     // Get authentication credentials for the given protection space.
     virtual bool getAuthenticationInfo(const WebCore::ProtectionSpace&, String& username, String& password) = 0;

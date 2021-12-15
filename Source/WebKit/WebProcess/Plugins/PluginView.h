@@ -198,15 +198,11 @@ private:
     void cancelManualStreamLoad() override;
     void setStatusbarText(const String&) override;
     bool isAcceleratedCompositingEnabled() override;
-    void pluginProcessCrashed() override;
 #if PLATFORM(COCOA)
     void pluginFocusOrWindowFocusChanged(bool pluginHasFocusAndWindowHasFocus) override;
     const WTF::MachSendRight& compositingRenderServerPort() override;
 #endif
     float contentsScaleFactor() override;
-    String proxiesForURL(const String&) override;
-    String cookiesForURL(const String&) override;
-    void setCookiesForURL(const String& urlString, const String& cookieString) override;
     bool getAuthenticationInfo(const WebCore::ProtectionSpace&, String& username, String& password) override;
     bool isPrivateBrowsingEnabled() override;
     bool asynchronousPluginInitializationEnabled() const override;
@@ -227,13 +223,12 @@ private:
 
     RefPtr<WebCore::HTMLPlugInElement> m_pluginElement;
     RefPtr<Plugin> m_plugin;
-    WebPage* m_webPage;
+    WeakPtr<WebPage> m_webPage;
     Plugin::Parameters m_parameters;
 
     bool m_isInitialized { false };
     bool m_isWaitingForSynchronousInitialization { false };
     bool m_isWaitingUntilMediaCanStart { false };
-    bool m_pluginProcessHasCrashed { false };
 
     // Pending URLRequests that the plug-in has made.
     Deque<RefPtr<URLRequest>> m_pendingURLRequests;

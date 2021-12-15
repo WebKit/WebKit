@@ -715,7 +715,6 @@ private:
 
 #if PLATFORM(COCOA)
     RetainPtr<NSMutableDictionary> m_bundleParameters;
-    ProcessSuppressionDisabledToken m_pluginProcessManagerProcessSuppressionDisabledToken;
     mutable RetainPtr<NSSet> m_classesForParameterCoder;
 #endif
 

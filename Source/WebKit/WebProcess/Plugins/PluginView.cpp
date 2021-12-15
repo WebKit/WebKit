@@ -622,9 +622,9 @@ void PluginView::didInitializePlugin()
 PlatformLayer* PluginView::platformLayer() const
 {
     // The plug-in can be null here if it failed to initialize.
-    if (!m_isInitialized || !m_plugin || m_pluginProcessHasCrashed)
+    if (!m_isInitialized || !m_plugin)
         return 0;
-        
+
     return m_plugin->pluginLayer();
 }
 #endif
@@ -1378,21 +1378,6 @@ bool PluginView::isAcceleratedCompositingEnabled()
     return frame()->settings().acceleratedCompositingEnabled();
 }
 
-void PluginView::pluginProcessCrashed()
-{
-    m_pluginProcessHasCrashed = true;
-
-    auto* renderer = m_pluginElement->renderer();
-    if (!is<RenderEmbeddedObject>(renderer))
-        return;
-
-    m_pluginElement->invalidateStyleAndLayerComposition();
-
-    downcast<RenderEmbeddedObject>(*renderer).setPluginUnavailabilityReason(RenderEmbeddedObject::PluginCrashed);
-
-    Widget::invalidate();
-}
-
 #if PLATFORM(COCOA)
 void PluginView::pluginFocusOrWindowFocusChanged(bool pluginHasFocusAndWindowHasFocus)
 {
@@ -1413,28 +1398,6 @@ float PluginView::contentsScaleFactor()
         return page->deviceScaleFactor();
         
     return 1;
-}
-    
-String PluginView::proxiesForURL(const String& urlString)
-{
-    Vector<ProxyServer> proxyServers = proxyServersForURL(URL(URL(), urlString));
-    return toString(proxyServers);
-}
-
-String PluginView::cookiesForURL(const String& urlString)
-{
-    if (auto* page = m_pluginElement->document().page())
-        return page->cookieJar().cookies(m_pluginElement->document(), URL(URL(), urlString));
-    ASSERT_NOT_REACHED();
-    return { };
-}
-
-void PluginView::setCookiesForURL(const String& urlString, const String& cookieString)
-{
-    if (auto* page = m_pluginElement->document().page())
-        page->cookieJar().setCookies(m_pluginElement->document(), URL(URL(), urlString), cookieString);
-    else
-        ASSERT_NOT_REACHED();
 }
 
 bool PluginView::getAuthenticationInfo(const ProtectionSpace& protectionSpace, String& username, String& password)

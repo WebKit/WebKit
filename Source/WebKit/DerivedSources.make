@@ -38,8 +38,6 @@ VPATH = \
     $(WebKit2)/NetworkProcess/ServiceWorker \
     $(WebKit2)/NetworkProcess/WebStorage \
     $(WebKit2)/NetworkProcess/storage \
-    $(WebKit2)/PluginProcess \
-    $(WebKit2)/PluginProcess/mac \
     $(WebKit2)/Resources/SandboxProfiles/ios \
     $(WebKit2)/Shared/Plugins \
     $(WebKit2)/Shared \

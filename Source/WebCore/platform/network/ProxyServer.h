@@ -66,6 +66,7 @@ private:
 };
 
 // Return a vector of proxy servers for the given URL.
+// FIXME: This is dead code. Remove it.
 WEBCORE_EXPORT Vector<ProxyServer> proxyServersForURL(const URL&);
 
 // Converts the given vector of proxy servers to a PAC string, as described in
