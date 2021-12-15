@@ -13,7 +13,6 @@ set(WPEToolingBackends_PUBLIC_HEADERS
 set(WPEToolingBackends_SOURCES
     HeadlessViewBackend.cpp
     ViewBackend.cpp
-    WebKitAccessibleApplication.cpp
     WindowViewBackend.cpp
 )
 

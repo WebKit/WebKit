@@ -1,3 +1,35 @@
+2021-12-15  Don Olmstead  <don.olmstead@sony.com>
+
+        Split ATK specific code in WPEViewBackends
+        https://bugs.webkit.org/show_bug.cgi?id=234310
+
+        Reviewed by Adrian Perez de Castro.
+
+        Move ATK specific code in WPEViewBackends into the atk directory. This splits
+        ViewBackend's implementation into two files with ATK specific code migrated to
+        atk/ViewBackendAtk.cpp. The code in WebKitAccessibleApplication is all ATK specific so
+        its completely moved into the atk directory.
+
+        * wpe/backends/CMakeLists.txt:
+        * wpe/backends/PlatformWPE.cmake:
+        * wpe/backends/ViewBackend.cpp:
+        (WPEToolingBackends::ViewBackend::initializeAccessibility):
+        (WPEToolingBackends::ViewBackend::updateAccessibilityState):
+        (WPEToolingBackends::addKeyEventListener): Deleted.
+        (WPEToolingBackends::removeKeyEventListener): Deleted.
+        (WPEToolingBackends::notifyAccessibilityKeyEventListeners): Deleted.
+        (WPEToolingBackends::ViewBackend::setAccessibleChild): Deleted.
+        * wpe/backends/ViewBackend.h:
+        * wpe/backends/atk/ViewBackendAtk.cpp: Copied from Tools/wpe/backends/ViewBackend.cpp.
+        (WPEToolingBackends::addKeyEventListener):
+        (WPEToolingBackends::removeKeyEventListener):
+        (WPEToolingBackends::ViewBackend::notifyAccessibilityKeyEventListeners):
+        (WPEToolingBackends::ViewBackend::initializeAccessibility):
+        (WPEToolingBackends::ViewBackend::updateAccessibilityState):
+        (WPEToolingBackends::ViewBackend::setAccessibleChild):
+        * wpe/backends/atk/WebKitAccessibleApplication.cpp: Renamed from Tools/wpe/backends/WebKitAccessibleApplication.cpp.
+        * wpe/backends/atk/WebKitAccessibleApplication.h: Renamed from Tools/wpe/backends/WebKitAccessibleApplication.h.
+
 2021-12-15  Alex Christensen  <achristensen@webkit.org>
 
         Avoid unnecessary allocation and UTF-8 conversion when calling DFABytecodeInterpreter::interpret

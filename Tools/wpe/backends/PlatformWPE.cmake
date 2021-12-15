@@ -9,6 +9,12 @@ list(APPEND WPEToolingBackends_PUBLIC_HEADERS
 
 list(APPEND WPEToolingBackends_SOURCES
     ${WPEToolingBackends_DERIVED_SOURCES_DIR}/xdg-shell-unstable-v6-protocol.c
+    atk/ViewBackendAtk.cpp
+    atk/WebKitAccessibleApplication.cpp
+)
+
+list(APPEND WPEToolingBackends_PRIVATE_INCLUDE_DIRECTORIES
+    ${TOOLS_DIR}/wpe/backends/atk
 )
 
 list(APPEND WPEToolingBackends_SYSTEM_INCLUDE_DIRECTORIES

@@ -28,10 +28,13 @@
 #include <memory>
 #include <wpe/fdo.h>
 
+#if defined(HAVE_ACCESSIBILITY) && HAVE_ACCESSIBILITY
+typedef struct _AtkObject AtkObject;
+#endif
+
 typedef void* EGLConfig;
 typedef void* EGLContext;
 typedef void* EGLDisplay;
-typedef struct _AtkObject AtkObject;
 struct wpe_fdo_egl_exported_image;
 
 #if WPE_FDO_CHECK_VERSION(1, 5, 0)
@@ -73,6 +76,9 @@ protected:
 
     void initializeAccessibility();
     void updateAccessibilityState(uint32_t);
+#if defined(HAVE_ACCESSIBILITY) && HAVE_ACCESSIBILITY
+    static void notifyAccessibilityKeyEventListeners(struct wpe_input_keyboard_event* event);
+#endif
 
     void dispatchInputPointerEvent(struct wpe_input_pointer_event*);
     void dispatchInputAxisEvent(struct wpe_input_axis_event*);
