@@ -1,3 +1,15 @@
+2021-12-14  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Bring up another iOS GPU Processes tester
+        https://bugs.webkit.org/show_bug.cgi?id=234016
+
+        Reviewed by Jonathan Bedard.
+
+        * CISupport/build-webkit-org/config.json: Put the Catalina GPUP bot back and
+        use a different machine for the new iOS tester.
+        * CISupport/build-webkit-org/factories_unittest.py: Update unit tests.
+        (TestExpectedBuildSteps):
+
 2021-12-14  Alex Christensen  <achristensen@webkit.org>
 
         Remove properties set by NSURLProtocol on NSURLRequest before serializing

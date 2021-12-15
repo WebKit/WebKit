@@ -45,6 +45,7 @@
                     { "name": "bot246", "platform": "mac-catalina" },
                     { "name": "bot247", "platform": "mac-catalina" },
                     { "name": "bot248", "platform": "mac-catalina" },
+                    { "name": "bot260", "platform": "mac-catalina" },
                     { "name": "bot610", "platform": "mac-catalina" },
                     { "name": "bot638", "platform": "mac-catalina" },
                     { "name": "bot674", "platform": "mac-catalina" },
@@ -55,11 +56,10 @@
                     { "name": "bot611", "platform": "*" },
                     { "name": "bot612", "platform": "*" },
                     { "name": "bot613", "platform": "*" },
-                    { "name": "bot600", "platform": "*" },
                     { "name": "bot684", "platform": "*" },
 
                     { "name": "bot210", "platform": "ios-simulator-15" },
-                    { "name": "bot260", "platform": "ios-simulator-15" },
+                    { "name": "bot600", "platform": "ios-simulator-15" },
                     { "name": "bot673", "platform": "ios-15" },
                     { "name": "bot614", "platform": "ios-simulator-15" },
                     { "name": "bot651", "platform": "ios-simulator-15" },
@@ -273,7 +273,7 @@
                     },
                     { "name": "Apple-Catalina-Debug-Build", "factory": "BuildFactory", "builddir": "catalina-debug",
                       "platform": "mac-catalina", "configuration": "debug", "architectures": ["x86_64"],
-                      "triggers": ["catalina-debug-tests-jsc", "catalina-debug-tests-wk1", "catalina-debug-tests-wk2"],
+                      "triggers": ["catalina-debug-tests-jsc", "catalina-debug-tests-wk1", "catalina-debug-tests-wk2", "catalina-debug-tests-wk2-gpuprocess"],
                       "workernames": ["bot687", "bot688"]
                     },
                     { "name": "Apple-Catalina-Debug-WK1-Tests", "factory": "TestWebKit1AllButJSCFactory", "builddir": "catalina-debug-tests-wk1",
@@ -285,6 +285,11 @@
                       "platform": "mac-catalina", "configuration": "debug", "architectures": ["x86_64"],
                       "additionalArguments": ["--no-retry-failures"],
                       "workernames": ["bot243", "bot244"]
+                    },
+                    { "name": "Apple-Catalina-Debug-WK2-GPUProcess-Tests", "factory": "TestAllButJSCFactory", "builddir": "catalina-debug-tests-wk2-gpuprocess",
+                      "platform": "mac-catalina", "configuration": "debug", "architectures": ["x86_64"],
+                      "additionalArguments": ["--no-retry-failures", "--use-gpu-process"],
+                      "workernames": ["bot260"]
                     },
                     { "name": "Apple-Catalina-Release-Build", "factory": "BuildFactory", "builddir": "catalina-release",
                       "platform": "mac-catalina", "configuration": "release", "architectures": ["x86_64"],
@@ -345,7 +350,7 @@
                       "name": "Apple-iOS-15-Simulator-Release-GPUProcess-WK2-Tests", "factory": "TestAllButJSCFactory", "builddir": "ios-simulator-15-release-gpuprocess-tests-wk2",
                       "platform": "ios-simulator-15", "configuration": "release", "architectures": ["x86_64", "arm64"], "device_model": "iphone",
                       "additionalArguments": ["--no-retry-failures", "--use-gpu-process", "--accelerated-drawing"],
-                      "workernames": ["bot260"]
+                      "workernames": ["bot600"]
                     },
                     {
                       "name": "Apple-iOS-15-Simulator-Release-WK2-Tests", "factory": "TestAllButJSCFactory", "builddir": "ios-simulator-15-release-tests-wk2",
@@ -725,6 +730,9 @@
                     },
                     { "type": "Triggerable", "name": "catalina-debug-tests-wk2",
                       "builderNames": ["Apple-Catalina-Debug-WK2-Tests"]
+                    },
+                    { "type": "Triggerable", "name": "catalina-debug-tests-wk2-gpuprocess",
+                      "builderNames": ["Apple-Catalina-Debug-WK2-GPUProcess-Tests"]
                     },
                     { "type": "Triggerable", "name": "catalina-debug-tests-jsc",
                       "builderNames": ["Apple-Catalina-Debug-JSC-Tests"]
