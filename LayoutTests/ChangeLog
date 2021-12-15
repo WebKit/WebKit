@@ -1,3 +1,14 @@
+2021-12-15  Youenn Fablet  <youenn@apple.com>
+
+        Make sure to start a realtime outgoing source in case it is taken to another sender
+        https://bugs.webkit.org/show_bug.cgi?id=234296
+        <rdar://86276497>
+
+        Reviewed by Eric Carlson.
+
+        * webrtc/addTransceiver-then-addTrack-expected.txt: Added.
+        * webrtc/addTransceiver-then-addTrack.html: Added.
+
 2021-12-14  Joonghun Park  <jh718.park@samsung.com>
 
         Fix that height is calculated incorrectly when using display:table, box-sizing:border-box and padding.
