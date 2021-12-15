@@ -31,8 +31,14 @@
 
 #if (defined(__arm64__) && defined(__APPLE__)) || defined(__aarch64__) || defined(__arm64e__)
 #define __PAS_ARM64 1
+#if defined(__arm64e__)
+#define __PAS_ARM64E 1
+#else
+#define __PAS_ARM64E 0
+#endif
 #else
 #define __PAS_ARM64 0
+#define __PAS_ARM64E 0
 #endif
 
 #if (defined(arm) || defined(__arm__) || defined(ARM) || defined(_ARM_)) && !__PAS_ARM64

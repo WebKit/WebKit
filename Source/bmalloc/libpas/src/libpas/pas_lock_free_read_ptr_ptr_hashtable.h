@@ -88,7 +88,7 @@ static PAS_ALWAYS_INLINE void* pas_lock_free_read_ptr_ptr_hashtable_find(
            NOTE: Perf would be better if we did an atomic pair read on Apple Silicon. Then we'd
            avoid the synthetic pointer chase. */
         loaded_key = pas_pair_low(*entry);
-        if ((const void*)loaded_key == key)
+        if (pas_compare_ptr_opaque(loaded_key, (uintptr_t)key))
             return (void*)pas_pair_high(entry[pas_depend(loaded_key)]);
 
         if (loaded_key == UINTPTR_MAX)

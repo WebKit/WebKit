@@ -1,3 +1,50 @@
+2021-12-15  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [libpas] Implement atomics in inline assembly if compiler is using ARM64
+        https://bugs.webkit.org/show_bug.cgi?id=234333
+
+        Reviewed by Filip Pizlo.
+
+        libpas relies on how value is loaded since we are using `pas_depend`.
+        For example, we expect that compare_and_swap_strong returns a loaded value.
+        But it is not guaranteed: the compiler can return argument's old_value
+        if we ensure that the loaded value equals to old_value. In that case,
+        pas_depend's chain is broken because we start using distinct registers.
+        This can happen if atomics is implemented as LL/SC loop.
+
+        This patch implements atomics in inline assembly if the build is ARM64 (not ARM64E),
+        so that we ensure that we return loaded value's register instead of old value's one.
+
+        This significantly improved crash rate of libpas test suite on ARM64 (on ARM64E, all
+        tests pass already).
+
+        * libpas/src/libpas/pas_config_prefix.h:
+        * libpas/src/libpas/pas_lock.h:
+        (pas_lock_unlock):
+        * libpas/src/libpas/pas_lock_free_read_ptr_ptr_hashtable.h:
+        (pas_lock_free_read_ptr_ptr_hashtable_find):
+        * libpas/src/libpas/pas_utils.h:
+        (pas_atomic_store_uint8):
+        (pas_compare_and_swap_uint8_weak):
+        (pas_compare_and_swap_uint8_strong):
+        (pas_compare_and_swap_uint16_weak):
+        (pas_compare_and_swap_uint32_weak):
+        (pas_compare_and_swap_uint32_strong):
+        (pas_compare_and_swap_uint64_weak):
+        (pas_compare_and_swap_uint64_strong):
+        (pas_atomic_store_bool):
+        (pas_compare_and_swap_bool_weak):
+        (pas_compare_and_swap_bool_strong):
+        (pas_compare_and_swap_uintptr_weak):
+        (pas_compare_and_swap_uintptr_strong):
+        (pas_compare_and_swap_ptr_weak):
+        (pas_compare_and_swap_ptr_strong):
+        (pas_compare_and_swap_pair_weak):
+        (pas_compare_and_swap_pair_strong):
+        (pas_atomic_load_pair):
+        (pas_atomic_store_pair):
+        (pas_compare_ptr_opaque):
+
 2021-12-14  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Unreviewed, fix Xcode build of libpas
