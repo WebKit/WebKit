@@ -1,3 +1,22 @@
+2021-12-15  Ryan Haddad  <ryanhaddad@apple.com>
+
+        PCM: Remove old DB update and migration code, and add a unit test for destination token DB columns
+        https://bugs.webkit.org/show_bug.cgi?id=234281
+
+        Unreviewed test gardening.
+
+        Rebaseline tests for iOS.
+
+        * platform/ios/http/tests/privateClickMeasurement/attribution-conversion-through-fetch-keepalive-expected.txt:
+        * platform/ios/http/tests/privateClickMeasurement/attribution-conversion-through-image-redirect-ephemeral-expected.txt:
+        * platform/ios/http/tests/privateClickMeasurement/attribution-conversion-through-image-redirect-in-new-window-expected.txt:
+        * platform/ios/http/tests/privateClickMeasurement/attribution-conversion-through-image-redirect-with-priority-expected.txt:
+        * platform/ios/http/tests/privateClickMeasurement/attribution-conversion-through-image-redirect-without-priority-expected.txt:
+        * platform/ios/http/tests/privateClickMeasurement/second-attribution-converted-with-higher-priority-expected.txt:
+        * platform/ios/http/tests/privateClickMeasurement/second-attribution-converted-with-lower-priority-expected.txt:
+        * platform/ios/http/tests/privateClickMeasurement/second-conversion-with-higher-priority-expected.txt:
+        * platform/ios/http/tests/privateClickMeasurement/second-conversion-with-lower-priority-expected.txt:
+
 2021-12-15  Arcady Goldmints-Orlov  <agoldmints@igalia.com>
 
         [GLIB] Update test expectations and baselines. Unreviewed test gardening.
