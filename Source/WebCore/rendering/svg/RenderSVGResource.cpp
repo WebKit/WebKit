@@ -207,8 +207,22 @@ void RenderSVGResource::markForLayoutAndParentResourceInvalidation(RenderObject&
         else if (is<RenderSVGRoot>(object) && downcast<RenderSVGRoot>(object).isInLayout())
             object.setNeedsLayout(MarkOnlyThis);
 #endif
-        else
-            object.setNeedsLayout(MarkContainingBlockChain);
+        else {
+            if (!is<RenderElement>(object))
+                object.setNeedsLayout(MarkOnlyThis);
+            else {
+                auto svgRoot = SVGRenderSupport::findTreeRootObject(downcast<RenderElement>(object));
+                if (!svgRoot || !svgRoot->isInLayout())
+                    object.setNeedsLayout(MarkContainingBlockChain);
+                else {
+                    // We just want to re-layout the ancestors up to the RenderSVGRoot.
+                    object.setNeedsLayout(MarkOnlyThis);
+                    for (auto current = object.parent(); current != svgRoot; current = current->parent())
+                        current->setNeedsLayout(MarkOnlyThis);
+                    svgRoot->setNeedsLayout(MarkOnlyThis);
+                }
+            }
+        }
     }
 
     if (is<RenderElement>(object))
