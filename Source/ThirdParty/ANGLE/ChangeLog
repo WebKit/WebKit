@@ -1,3 +1,16 @@
+2021-12-15  Dean Jackson  <dino@apple.com>
+
+        [ANGLE] clang with -Wunknown-warning-option will fail on -Wweak-template-vtables
+        https://bugs.webkit.org/show_bug.cgi?id=233837
+        <rdar://problem/86335819>
+
+        Reviewed by Antoine Quint.
+
+        Turn off unknown-warning-option on Apple builds. This shouldn't need to be
+        upstreamed - the Xcode configurations for ANGLE are specific to WebKit.
+
+        * Configurations/Base.xcconfig:
+
 2021-12-15  Chris Lord  <clord@igalia.com>
 
         [GTK] Use libgbm and the ANGLE gbm backend to fix initialisation
