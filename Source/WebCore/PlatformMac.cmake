@@ -402,7 +402,6 @@ list(APPEND WebCore_SOURCES
     platform/network/cf/DNSResolveQueueCFNet.cpp
     platform/network/cf/FormDataStreamCFNet.cpp
     platform/network/cf/NetworkStorageSessionCFNet.cpp
-    platform/network/cf/ProxyServerCFNet.cpp
     platform/network/cf/ResourceRequestCFNet.cpp
     platform/network/cf/SocketStreamHandleImplCFNet.cpp
 

@@ -1,3 +1,12 @@
+2021-12-15  Alex Christensen  <achristensen@webkit.org>
+
+        Remove ProxyServer
+        https://bugs.webkit.org/show_bug.cgi?id=234362
+
+        Reviewed by Geoffrey Garen.
+
+        * WebProcess/Plugins/PluginView.cpp:
+
 2021-12-15  Chris Dumez  <cdumez@apple.com>
 
         RELEASE_ASSERT in WTF::Deque<WebKit::NativeWebKeyboardEvent, 0ul>::first()

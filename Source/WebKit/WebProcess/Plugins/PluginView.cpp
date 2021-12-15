@@ -61,7 +61,6 @@
 #include <WebCore/PageInlines.h>
 #include <WebCore/PlatformMouseEvent.h>
 #include <WebCore/ProtectionSpace.h>
-#include <WebCore/ProxyServer.h>
 #include <WebCore/RenderEmbeddedObject.h>
 #include <WebCore/ScriptController.h>
 #include <WebCore/ScrollView.h>

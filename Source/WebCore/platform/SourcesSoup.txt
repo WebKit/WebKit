@@ -28,7 +28,6 @@ platform/network/soup/CookieStorageSoup.cpp
 platform/network/soup/CredentialSoup.cpp
 platform/network/soup/CredentialStorageSoup.cpp
 platform/network/soup/NetworkStorageSessionSoup.cpp
-platform/network/soup/ProxyServerSoup.cpp
 platform/network/soup/ResourceErrorSoup.cpp
 platform/network/soup/ResourceHandleSoup.cpp
 platform/network/soup/ResourceRequestSoup.cpp
