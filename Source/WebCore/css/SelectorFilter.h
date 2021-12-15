@@ -50,8 +50,21 @@ public:
     bool fastRejectSelector(const Hashes&) const;
     static Hashes collectHashes(const CSSSelector&);
 
+    static void collectElementIdentifierHashes(const Element&, Vector<unsigned, 4>&);
+
+    struct CollectedSelectorHashes {
+        using HashVector = Vector<unsigned, 8>;
+        HashVector ids;
+        HashVector classes;
+        HashVector tags;
+        HashVector attributes;
+    };
+    static void collectSimpleSelectorHash(CollectedSelectorHashes&, const CSSSelector&);
+
 private:
     void initializeParentStack(Element& parent);
+    static CollectedSelectorHashes collectSelectorHashes(const CSSSelector& rightmostSelector);
+    static Hashes chooseSelectorHashesForFilter(const CollectedSelectorHashes&);
 
     struct ParentStackFrame {
         ParentStackFrame() : element(0) { }

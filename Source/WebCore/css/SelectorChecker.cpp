@@ -1249,12 +1249,31 @@ bool SelectorChecker::matchSelectorList(CheckingContext& checkingContext, const 
 
 bool SelectorChecker::matchHasPseudoClass(CheckingContext& checkingContext, const Element& element, const CSSSelector& hasSelector) const
 {
+    auto matchElement = Style::computeHasPseudoClassMatchElement(hasSelector);
+
+    auto canMatch = [&] {
+        switch (matchElement) {
+        case Style::MatchElement::HasChild:
+        case Style::MatchElement::HasDescendant:
+            return !!element.firstElementChild();
+        case Style::MatchElement::HasSibling:
+        case Style::MatchElement::HasSiblingDescendant:
+            return !!element.nextElementSibling();
+        default:
+            return true;
+        };
+    };
+
+    // See if there are any elements that this :has() selector could match.
+    if (!canMatch())
+        return false;
+
     auto* cache = checkingContext.selectorMatchingState ? &checkingContext.selectorMatchingState->hasPseudoClassMatchCache : nullptr;
 
-    Style::HasPseudoClassMatch* cachedMatch = nullptr;
-    if (cache) {
-        cachedMatch = &cache->add(Style::makeHasPseudoClassCacheKey(hasSelector, element), Style::HasPseudoClassMatch::None).iterator->value;
-        switch (*cachedMatch) {
+    auto checkForCachedMatch = [&]() -> std::optional<bool> {
+        if (!cache)
+            return { };
+        switch (cache->get(Style::makeHasPseudoClassCacheKey(element, hasSelector))) {
         case Style::HasPseudoClassMatch::Matches:
             return true;
         case Style::HasPseudoClassMatch::Fails:
@@ -1263,6 +1282,34 @@ bool SelectorChecker::matchHasPseudoClass(CheckingContext& checkingContext, cons
         case Style::HasPseudoClassMatch::None:
             break;
         }
+        return { };
+    };
+
+    // See if we know the result already.
+    if (auto match = checkForCachedMatch())
+        return *match;
+
+    auto filterForElement = [&]() -> Style::HasSelectorFilter* {
+        if (!checkingContext.selectorMatchingState)
+            return nullptr;
+        auto type = Style::HasSelectorFilter::typeForMatchElement(matchElement);
+        if (!type)
+            return nullptr;
+        auto& filtersMap = checkingContext.selectorMatchingState->hasPseudoClassSelectorFilters;
+        auto addResult = filtersMap.add(Style::makeHasPseudoClassFilterKey(element, *type), std::unique_ptr<Style::HasSelectorFilter>());
+        // Only build a filter if the same element gets checked second time with a different selector (misses the match cache).
+        if (addResult.isNewEntry)
+            return nullptr;
+
+        if (!addResult.iterator->value)
+            addResult.iterator->value = makeUnique<Style::HasSelectorFilter>(element, *type);
+        return addResult.iterator->value.get();
+    };
+
+    // Check if the bloom filter rejects this selector
+    if (auto* filter = filterForElement()) {
+        if (filter->reject(hasSelector))
+            return false;
     }
 
     SelectorChecker hasChecker(element.document());
@@ -1283,8 +1330,8 @@ bool SelectorChecker::matchHasPseudoClass(CheckingContext& checkingContext, cons
     auto checkDescendants = [&](const Element& descendantRoot) {
         for (auto it = descendantsOfType<Element>(descendantRoot).begin(); it;) {
             auto& descendant = *it;
-            if (cache) {
-                auto key = Style::makeHasPseudoClassCacheKey(hasSelector, descendant);
+            if (cache && descendant.firstElementChild()) {
+                auto key = Style::makeHasPseudoClassCacheKey(descendant, hasSelector);
                 if (cache->get(key) == Style::HasPseudoClassMatch::FailsSubtree) {
                     it.traverseNextSkippingChildren();
                     continue;
@@ -1300,8 +1347,6 @@ bool SelectorChecker::matchHasPseudoClass(CheckingContext& checkingContext, cons
     };
 
     auto match = [&] {
-        auto matchElement = Style::computeHasPseudoClassMatchElement(hasSelector);
-
         switch (matchElement) {
         // :has(> .child)
         case Style::MatchElement::HasChild:
@@ -1312,18 +1357,17 @@ bool SelectorChecker::matchHasPseudoClass(CheckingContext& checkingContext, cons
             break;
         // :has(.descendant)
         case Style::MatchElement::HasDescendant: {
-            if (!element.firstElementChild())
-                return false;
             if (cache) {
                 // See if we already know this descendant selector doesn't match in this subtree.
                 for (auto* ancestor = element.parentElement(); ancestor; ancestor = ancestor->parentElement()) {
-                    auto key = Style::makeHasPseudoClassCacheKey(hasSelector, *ancestor);
+                    auto key = Style::makeHasPseudoClassCacheKey(*ancestor, hasSelector);
                     if (cache->get(key) == Style::HasPseudoClassMatch::FailsSubtree)
                         return false;
                 }
             }
             if (checkDescendants(element))
                 return true;
+
             break;
         }
         // FIXME: Add a separate case for adjacent combinator.
@@ -1354,15 +1398,16 @@ bool SelectorChecker::matchHasPseudoClass(CheckingContext& checkingContext, cons
 
     auto result = match();
 
-    if (cachedMatch) {
-        *cachedMatch = [&] {
-            if (result)
-                return Style::HasPseudoClassMatch::Matches;
-            if (matchedInsideScope)
-                return Style::HasPseudoClassMatch::Fails;
-            return Style::HasPseudoClassMatch::FailsSubtree;
-        }();
-    }
+    auto matchTypeForCache = [&] {
+        if (result)
+            return Style::HasPseudoClassMatch::Matches;
+        if (matchedInsideScope)
+            return Style::HasPseudoClassMatch::Fails;
+        return Style::HasPseudoClassMatch::FailsSubtree;
+    };
+
+    if (cache)
+        cache->add(Style::makeHasPseudoClassCacheKey(element, hasSelector), matchTypeForCache());
 
     return result;
 }

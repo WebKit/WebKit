@@ -45,7 +45,7 @@ static bool isExcludedAttribute(const AtomString& name)
     return name == HTMLNames::classAttr->localName() || name == HTMLNames::idAttr->localName() || name == HTMLNames::styleAttr->localName();
 }
 
-static inline void collectElementIdentifierHashes(const Element& element, Vector<unsigned, 4>& identifierHashes)
+void SelectorFilter::collectElementIdentifierHashes(const Element& element, Vector<unsigned, 4>& identifierHashes)
 {
     AtomString tagLowercaseLocalName = element.localName().convertToASCIILowercase();
     identifierHashes.append(tagLowercaseLocalName.impl()->existingHash() * TagNameSalt);
@@ -134,15 +134,7 @@ void SelectorFilter::popParentsUntil(Element* parent)
     }
 }
 
-struct CollectedSelectorHashes {
-    using HashVector = Vector<unsigned, 8>;
-    HashVector ids;
-    HashVector classes;
-    HashVector tags;
-    HashVector attributes;
-};
-
-static inline void collectSimpleSelectorHash(CollectedSelectorHashes& collectedHashes, const CSSSelector& selector)
+void SelectorFilter::collectSimpleSelectorHash(CollectedSelectorHashes& collectedHashes, const CSSSelector& selector)
 {
     switch (selector.match()) {
     case CSSSelector::Id:
@@ -176,7 +168,7 @@ static inline void collectSimpleSelectorHash(CollectedSelectorHashes& collectedH
     }
 }
 
-static CollectedSelectorHashes collectSelectorHashes(const CSSSelector& rightmostSelector)
+auto SelectorFilter::collectSelectorHashes(const CSSSelector& rightmostSelector) -> CollectedSelectorHashes
 {
     CollectedSelectorHashes collectedHashes;
 
@@ -210,9 +202,9 @@ static CollectedSelectorHashes collectSelectorHashes(const CSSSelector& rightmos
     return collectedHashes;
 }
 
-static SelectorFilter::Hashes chooseSelectorHashesForFilter(const CollectedSelectorHashes& collectedSelectorHashes)
+auto SelectorFilter::chooseSelectorHashesForFilter(const CollectedSelectorHashes& collectedSelectorHashes) -> Hashes
 {
-    SelectorFilter::Hashes resultHashes;
+    Hashes resultHashes;
     unsigned index = 0;
 
     auto addIfNew = [&] (unsigned hash) {

@@ -2543,6 +2543,7 @@ style/AttributeChangeInvalidation.cpp
 style/ChildChangeInvalidation.cpp
 style/ClassChangeInvalidation.cpp
 style/ElementRuleCollector.cpp
+style/HasSelectorFilter.cpp
 style/IdChangeInvalidation.cpp
 style/InlineTextBoxStyle.cpp
 style/InspectorCSSOMWrappers.cpp
