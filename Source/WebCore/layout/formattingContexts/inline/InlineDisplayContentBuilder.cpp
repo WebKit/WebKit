@@ -41,6 +41,36 @@ using WTF::Range;
 namespace WebCore {
 namespace Layout {
 
+static inline LayoutUnit marginLeft(const Layout::BoxGeometry& boxGeometry, bool isLeftToRightDirection)
+{
+    return isLeftToRightDirection ? boxGeometry.marginStart() : boxGeometry.marginEnd();
+}
+
+static inline LayoutUnit marginRight(const Layout::BoxGeometry& boxGeometry, bool isLeftToRightDirection)
+{
+    return isLeftToRightDirection ? boxGeometry.marginEnd() : boxGeometry.marginStart();
+}
+
+static inline LayoutUnit borderLeft(const Layout::BoxGeometry& boxGeometry, bool isLeftToRightDirection)
+{
+    return isLeftToRightDirection ? boxGeometry.borderStart() : boxGeometry.borderEnd();
+}
+
+static inline LayoutUnit borderRight(const Layout::BoxGeometry& boxGeometry, bool isLeftToRightDirection)
+{
+    return isLeftToRightDirection ? boxGeometry.borderEnd() : boxGeometry.borderStart();
+}
+
+static inline LayoutUnit paddingLeft(const Layout::BoxGeometry& boxGeometry, bool isLeftToRightDirection)
+{
+    return isLeftToRightDirection ? boxGeometry.paddingStart().value_or(0_lu) : boxGeometry.paddingEnd().value_or(0_lu);
+}
+
+static inline LayoutUnit paddingRight(const Layout::BoxGeometry& boxGeometry, bool isLeftToRightDirection)
+{
+    return isLeftToRightDirection ? boxGeometry.paddingEnd().value_or(0_lu) : boxGeometry.paddingStart().value_or(0_lu);
+}
+
 static inline OptionSet<InlineDisplay::Box::PositionWithinInlineLevelBox> isFirstLastBox(const InlineLevelBox& inlineBox)
 {
     auto positionWithinInlineLevelBox = OptionSet<InlineDisplay::Box::PositionWithinInlineLevelBox> { };
@@ -424,6 +454,7 @@ size_t InlineDisplayContentBuilder::ensureDisplayBoxForContainer(const Container
 
 void InlineDisplayContentBuilder::adjustVisualGeometryForDisplayBox(size_t displayBoxNodeIndex, InlineLayoutUnit& contentRightInVisualOrder, InlineLayoutUnit lineBoxLogicalTop, const DisplayBoxTree& displayBoxTree, DisplayBoxes& boxes, const LineBox& lineBox)
 {
+    auto isLeftToRightDirection = root().style().isLeftToRightDirection();
     // Non-inline box display boxes just need a horizontal adjustment while
     // inline box type of display boxes need
     // 1. horizontal adjustment and margin/border/padding start offsetting on the first box
@@ -435,7 +466,7 @@ void InlineDisplayContentBuilder::adjustVisualGeometryForDisplayBox(size_t displ
         displayBox.setLeft(contentRightInVisualOrder);
         contentRightInVisualOrder += displayBox.width();
         if (displayBox.isAtomicInlineLevelBox() || displayBox.isGenericInlineLevelBox())
-            contentRightInVisualOrder += formattingState().boxGeometry(layoutBox).marginEnd();
+            contentRightInVisualOrder += marginRight(formattingState().boxGeometry(layoutBox), isLeftToRightDirection);
         return;
     }
 
@@ -446,10 +477,10 @@ void InlineDisplayContentBuilder::adjustVisualGeometryForDisplayBox(size_t displ
         if (!displayBox.isFirstForLayoutBox())
             return displayBox.setRect(visualRect, visualRect);
 
-        contentRightInVisualOrder += boxGeometry.marginStart();
-        auto visualRectWithMarginStart = InlineRect { visualRect.top(), contentRightInVisualOrder, visualRect.width(), visualRect.height() };
-        displayBox.setRect(visualRectWithMarginStart, visualRectWithMarginStart);
-        contentRightInVisualOrder += boxGeometry.borderAndPaddingStart();
+        contentRightInVisualOrder += marginLeft(boxGeometry, isLeftToRightDirection);
+        auto visualRectWithMarginLeft = InlineRect { visualRect.top(), contentRightInVisualOrder, visualRect.width(), visualRect.height() };
+        displayBox.setRect(visualRectWithMarginLeft, visualRectWithMarginLeft);
+        contentRightInVisualOrder += borderLeft(boxGeometry, isLeftToRightDirection) + paddingLeft(boxGeometry, isLeftToRightDirection);
     };
     beforeInlineBoxContent();
 
@@ -460,9 +491,9 @@ void InlineDisplayContentBuilder::adjustVisualGeometryForDisplayBox(size_t displ
         if (!displayBox.isLastForLayoutBox())
             return displayBox.setRight(contentRightInVisualOrder);
 
-        contentRightInVisualOrder += boxGeometry.borderAndPaddingEnd();
+        contentRightInVisualOrder += borderRight(boxGeometry, isLeftToRightDirection) + paddingRight(boxGeometry, isLeftToRightDirection);
         displayBox.setRight(contentRightInVisualOrder);
-        contentRightInVisualOrder += boxGeometry.marginEnd();
+        contentRightInVisualOrder += marginRight(boxGeometry, isLeftToRightDirection);
     };
     afterInlineBoxContent();
 
