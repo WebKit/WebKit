@@ -1,3 +1,13 @@
+2021-12-15  Chris Dumez  <cdumez@apple.com>
+
+        Move SWServers from NetworkProcess to NetworkSession
+        https://bugs.webkit.org/show_bug.cgi?id=234179
+
+        Reviewed by Darin Adler.
+
+        * wtf/MemoryPressureHandler.h:
+        Using a bool as underlying type for those enum classes is sufficient.
+
 2021-12-15  Tomoki Imai  <tomoki.imai@sony.com>
 
         [PlayStation] Use FileSystem instead of FileSystemPlayStation except several unsupported APIs

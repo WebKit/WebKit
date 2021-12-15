@@ -55,9 +55,14 @@ class CertificateInfo;
 class NetworkStorageSession;
 class ResourceRequest;
 class ResourceError;
+class SWServer;
 enum class IncludeHttpOnlyCookies : bool;
 enum class ShouldSample : bool;
 struct SecurityOriginData;
+}
+
+namespace WTF {
+enum class Critical : bool;
 }
 
 namespace WebKit {
@@ -72,6 +77,8 @@ class ServiceWorkerFetchTask;
 class WebPageNetworkParameters;
 class WebResourceLoadStatisticsStore;
 class WebSocketTask;
+class WebSWOriginStore;
+class WebSWServerConnection;
 struct NetworkSessionCreationParameters;
 struct SessionSet;
 
@@ -176,12 +183,24 @@ public:
 
     bool isStaleWhileRevalidateEnabled() const { return m_isStaleWhileRevalidateEnabled; }
 
+    void lowMemoryHandler(WTF::Critical);
+
 #if ENABLE(SERVICE_WORKER)
     void addSoftUpdateLoader(std::unique_ptr<ServiceWorkerSoftUpdateLoader>&& loader) { m_softUpdateLoaders.add(WTFMove(loader)); }
     void removeSoftUpdateLoader(ServiceWorkerSoftUpdateLoader* loader) { m_softUpdateLoaders.remove(loader); }
     void addNavigationPreloaderTask(ServiceWorkerFetchTask&);
     ServiceWorkerFetchTask* navigationPreloaderTaskFromFetchIdentifier(WebCore::FetchIdentifier);
     void removeNavigationPreloaderTask(ServiceWorkerFetchTask&);
+
+    WebCore::SWServer* swServer() { return m_swServer.get(); }
+    WebCore::SWServer& ensureSWServer();
+    WebSWOriginStore* swOriginStore() const; // FIXME: Can be private?
+    void registerSWServerConnection(WebSWServerConnection&);
+    void unregisterSWServerConnection(WebSWServerConnection&);
+
+    bool hasServiceWorkerDatabasePath() const;
+
+    void addServiceWorkerSession(bool processTerminationDelayEnabled, String&& serviceWorkerRegistrationDirectory, const SandboxExtension::Handle&);
 #endif
 
     NetworkLoadScheduler& networkLoadScheduler();
@@ -267,6 +286,13 @@ protected:
 #if ENABLE(SERVICE_WORKER)
     HashSet<std::unique_ptr<ServiceWorkerSoftUpdateLoader>> m_softUpdateLoaders;
     HashMap<WebCore::FetchIdentifier, WeakPtr<ServiceWorkerFetchTask>> m_navigationPreloaders;
+
+    struct ServiceWorkerInfo {
+        String databasePath;
+        bool processTerminationDelayEnabled { true };
+    };
+    std::optional<ServiceWorkerInfo> m_serviceWorkerInfo;
+    std::unique_ptr<WebCore::SWServer> m_swServer;
 #endif
 
 #if PLATFORM(COCOA)

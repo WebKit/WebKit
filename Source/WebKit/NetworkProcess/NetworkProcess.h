@@ -85,7 +85,6 @@ class ProtectionSpace;
 class StorageQuotaManager;
 class NetworkStorageSession;
 class ResourceError;
-class SWServer;
 class UserContentURLPattern;
 enum class HTTPCookieAcceptPolicy : uint8_t;
 enum class IncludeHttpOnlyCookies : bool;
@@ -108,8 +107,6 @@ class NetworkResourceLoader;
 class NetworkStorageManager;
 class ProcessAssertion;
 class WebPageNetworkParameters;
-class WebSWServerConnection;
-class WebSWServerToContextConnection;
 enum class CallDownloadDidStart : bool;
 enum class ShouldGrandfatherStatistics : bool;
 enum class StorageAccessStatus : uint8_t;
@@ -118,10 +115,6 @@ enum class WebsiteDataType : uint32_t;
 struct NetworkProcessCreationParameters;
 struct WebPushMessage;
 struct WebsiteDataStoreParameters;
-
-#if ENABLE(SERVICE_WORKER)
-class WebSWOriginStore;
-#endif
 
 namespace NetworkCache {
 enum class CacheOption : uint8_t;
@@ -308,15 +301,6 @@ public:
     void clearStorage(PAL::SessionID, CompletionHandler<void()>&&);
     void renameOriginInWebsiteData(PAL::SessionID, const URL&, const URL&, OptionSet<WebsiteDataType>, CompletionHandler<void()>&&);
 
-#if ENABLE(SERVICE_WORKER)
-    WebCore::SWServer* swServerForSessionIfExists(PAL::SessionID sessionID) { return m_swServers.get(sessionID); }
-    WebCore::SWServer& swServerForSession(PAL::SessionID);
-    void registerSWServerConnection(WebSWServerConnection&);
-    void unregisterSWServerConnection(WebSWServerConnection&);
-    
-    void forEachSWServer(const Function<void(WebCore::SWServer&)>&);
-#endif
-
 #if PLATFORM(IOS_FAMILY)
     bool parentProcessHasServiceWorkerEntitlement() const;
     void disableServiceWorkerEntitlement();
@@ -500,18 +484,6 @@ private:
     void removeWebIDBServerIfPossible(PAL::SessionID);
     void suspendIDBServers(bool isSuspensionImminent);
 
-#if ENABLE(SERVICE_WORKER)
-    void didCreateWorkerContextProcessConnection(const IPC::Attachment&);
-
-    void postMessageToServiceWorker(PAL::SessionID, WebCore::ServiceWorkerIdentifier destination, WebCore::MessageWithMessagePorts&&, const WebCore::ServiceWorkerOrClientIdentifier& source, WebCore::SWServerConnectionIdentifier);
-    
-    void disableServiceWorkerProcessTerminationDelay();
-    
-    WebSWOriginStore* existingSWOriginStoreForSession(PAL::SessionID) const;
-
-    void addServiceWorkerSession(PAL::SessionID, bool processTerminationDelayEnabled, String&& serviceWorkerRegistrationDirectory, const SandboxExtension::Handle&);
-#endif
-
 #if PLATFORM(IOS_FAMILY)
     void setIsHoldingLockedFiles(bool);
 #endif
@@ -597,15 +569,6 @@ private:
     HashMap<PAL::SessionID, RefPtr<WebIDBServer>> m_webIDBServers;
     bool m_shouldSuspendIDBServers { false };
     uint64_t m_suspensionIdentifier { 0 };
-    
-#if ENABLE(SERVICE_WORKER)
-    struct ServiceWorkerInfo {
-        String databasePath;
-        bool processTerminationDelayEnabled { true };
-    };
-    HashMap<PAL::SessionID, ServiceWorkerInfo> m_serviceWorkerInfo;
-    HashMap<PAL::SessionID, std::unique_ptr<WebCore::SWServer>> m_swServers;
-#endif
     
 #if ENABLE(WEB_RTC)
     RefPtr<RTCDataChannelRemoteManagerProxy> m_rtcDataChannelProxy;

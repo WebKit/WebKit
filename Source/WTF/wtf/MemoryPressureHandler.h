@@ -66,8 +66,8 @@ enum class WebsamProcessState : uint8_t {
     Inactive,
 };
 
-enum class Critical : uint8_t { No, Yes };
-enum class Synchronous : uint8_t { No, Yes };
+enum class Critical : bool { No, Yes };
+enum class Synchronous : bool { No, Yes };
 
 typedef WTF::Function<void(Critical, Synchronous)> LowMemoryHandler;
 

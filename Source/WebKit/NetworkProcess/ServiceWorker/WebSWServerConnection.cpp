@@ -35,6 +35,7 @@
 #include "NetworkProcess.h"
 #include "NetworkProcessProxyMessages.h"
 #include "NetworkResourceLoader.h"
+#include "NetworkSession.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebProcess.h"
 #include "WebProcessMessages.h"
@@ -69,12 +70,14 @@ WebSWServerConnection::WebSWServerConnection(NetworkProcess& networkProcess, SWS
     , m_contentConnection(connection)
     , m_networkProcess(networkProcess)
 {
-    networkProcess.registerSWServerConnection(*this);
+    if (auto* session = this->session())
+        session->registerSWServerConnection(*this);
 }
 
 WebSWServerConnection::~WebSWServerConnection()
 {
-    m_networkProcess->unregisterSWServerConnection(*this);
+    if (auto* session = this->session())
+        session->unregisterSWServerConnection(*this);
     for (const auto& keyValue : m_clientOrigins)
         server().unregisterServiceWorkerClient(keyValue.value, keyValue.key);
     for (auto& completionHandler : m_unregisterJobs.values())

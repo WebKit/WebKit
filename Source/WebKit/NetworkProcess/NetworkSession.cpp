@@ -43,6 +43,7 @@
 #include "WebPageProxy.h"
 #include "WebPageProxyMessages.h"
 #include "WebProcessProxy.h"
+#include "WebSWOriginStore.h"
 #include "WebSocketTask.h"
 #include <WebCore/CookieJar.h>
 #include <WebCore/ResourceRequest.h>
@@ -547,6 +548,16 @@ String NetworkSession::attributedBundleIdentifierFromPageIdentifier(WebPageProxy
     return m_attributedBundleIdentifierFromPageIdentifiers.get(identifier);
 }
 
+void NetworkSession::lowMemoryHandler(Critical)
+{
+    clearPrefetchCache();
+
+#if ENABLE(SERVICE_WORKER)
+    if (m_swServer)
+        m_swServer->handleLowMemoryWarning();
+#endif
+}
+
 #if ENABLE(SERVICE_WORKER)
 void NetworkSession::addNavigationPreloaderTask(ServiceWorkerFetchTask& task)
 {
@@ -562,6 +573,70 @@ ServiceWorkerFetchTask* NetworkSession::navigationPreloaderTaskFromFetchIdentifi
 {
     return m_navigationPreloaders.get(identifier).get();
 }
+
+WebSWOriginStore* NetworkSession::swOriginStore() const
+{
+    return m_swServer ? &static_cast<WebSWOriginStore&>(m_swServer->originStore()) : nullptr;
+}
+
+void NetworkSession::registerSWServerConnection(WebSWServerConnection& connection)
+{
+    auto* store = swOriginStore();
+    ASSERT(store);
+    if (store)
+        store->registerSWServerConnection(connection);
+}
+
+void NetworkSession::unregisterSWServerConnection(WebSWServerConnection& connection)
+{
+    if (auto* store = swOriginStore())
+        store->unregisterSWServerConnection(connection);
+}
+
+SWServer& NetworkSession::ensureSWServer()
+{
+    if (!m_swServer) {
+        auto info = m_serviceWorkerInfo.value_or(ServiceWorkerInfo { });
+        auto path = info.databasePath;
+        // There should already be a registered path for this PAL::SessionID.
+        // If there's not, then where did this PAL::SessionID come from?
+        ASSERT(m_sessionID.isEphemeral() || !path.isEmpty());
+
+#if ENABLE(APP_BOUND_DOMAINS)
+        auto appBoundDomainsCallback = [this](auto&& completionHandler) {
+            m_networkProcess->parentProcessConnection()->sendWithAsyncReply(Messages::NetworkProcessProxy::GetAppBoundDomains { m_sessionID }, WTFMove(completionHandler), 0);
+        };
+#else
+        auto appBoundDomainsCallback = [] (auto&& completionHandler) {
+            completionHandler({ });
+        };
 #endif
+        m_swServer = makeUnique<SWServer>(makeUniqueRef<WebSWOriginStore>(), info.processTerminationDelayEnabled, WTFMove(path), m_sessionID, shouldRunServiceWorkersOnMainThreadForTesting(), m_networkProcess->parentProcessHasServiceWorkerEntitlement(), [this](auto&& jobData, bool shouldRefreshCache, auto&& request, auto&& completionHandler) mutable {
+            ServiceWorkerSoftUpdateLoader::start(this, WTFMove(jobData), shouldRefreshCache, WTFMove(request), WTFMove(completionHandler));
+        }, [this](auto& registrableDomain, std::optional<ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, auto&& completionHandler) {
+            ASSERT(!registrableDomain.isEmpty());
+            m_networkProcess->parentProcessConnection()->sendWithAsyncReply(Messages::NetworkProcessProxy::EstablishWorkerContextConnectionToNetworkProcess { registrableDomain, serviceWorkerPageIdentifier, m_sessionID }, WTFMove(completionHandler), 0);
+        }, WTFMove(appBoundDomainsCallback));
+    }
+    return *m_swServer;
+}
+
+void NetworkSession::addServiceWorkerSession(bool processTerminationDelayEnabled, String&& serviceWorkerRegistrationDirectory, const SandboxExtension::Handle& handle)
+{
+    bool hadServiceWorkerInfo = !!m_serviceWorkerInfo;
+    m_serviceWorkerInfo = ServiceWorkerInfo {
+        WTFMove(serviceWorkerRegistrationDirectory),
+        processTerminationDelayEnabled
+    };
+    if (!hadServiceWorkerInfo)
+        SandboxExtension::consumePermanently(handle);
+}
+
+bool NetworkSession::hasServiceWorkerDatabasePath() const
+{
+    return m_serviceWorkerInfo && !m_serviceWorkerInfo->databasePath.isEmpty();
+}
+
+#endif // ENABLE(SERVICE_WORKER)
 
 } // namespace WebKit

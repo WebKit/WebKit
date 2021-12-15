@@ -499,15 +499,19 @@ void NetworkConnectionToWebProcess::scheduleResourceLoad(NetworkResourceLoadPara
     CONNECTION_RELEASE_LOG(Loading, "scheduleResourceLoad: (parentPID=%d, pageProxyID=%" PRIu64 ", webPageID=%" PRIu64 ", frameID=%" PRIu64 ", resourceID=%" PRIu64 ", existingLoaderToResume=%" PRIu64 ")", loadParameters.parentPID, loadParameters.webPageProxyID.toUInt64(), loadParameters.webPageID.toUInt64(), loadParameters.webFrameID.toUInt64(), loadParameters.identifier.toUInt64(), existingLoaderToResume.value_or(NetworkResourceLoadIdentifier { }).toUInt64());
 
 #if ENABLE(SERVICE_WORKER)
-    auto& server = m_networkProcess->swServerForSession(m_sessionID);
-    if (!server.isImportCompleted()) {
-        server.whenImportIsCompleted([this, protectedThis = Ref { *this }, loadParameters = WTFMove(loadParameters), existingLoaderToResume]() mutable {
-            if (!m_networkProcess->webProcessConnection(webProcessIdentifier()))
-                return;
-            ASSERT(m_networkProcess->swServerForSession(m_sessionID).isImportCompleted());
-            scheduleResourceLoad(WTFMove(loadParameters), existingLoaderToResume);
-        });
-        return;
+    if (auto* session = networkSession()) {
+        if (auto& server = session->ensureSWServer(); !server.isImportCompleted()) {
+            server.whenImportIsCompleted([this, protectedThis = Ref { *this }, loadParameters = WTFMove(loadParameters), existingLoaderToResume]() mutable {
+                if (!m_networkProcess->webProcessConnection(webProcessIdentifier()))
+                    return;
+
+                ASSERT(networkSession());
+                ASSERT(networkSession()->swServer());
+                ASSERT(networkSession()->swServer()->isImportCompleted());
+                scheduleResourceLoad(WTFMove(loadParameters), existingLoaderToResume);
+            });
+            return;
+        }
     }
 #endif
 
@@ -1151,7 +1155,11 @@ void NetworkConnectionToWebProcess::establishSWServerConnection()
     if (m_swConnection)
         return;
 
-    auto& server = m_networkProcess->swServerForSession(m_sessionID);
+    auto* session = networkSession();
+    if (!session)
+        return;
+
+    auto& server = session->ensureSWServer();
     auto connection = makeUnique<WebSWServerConnection>(m_networkProcess, server, m_connection.get(), m_webProcessIdentifier);
 
     m_swConnection = *connection;
@@ -1160,8 +1168,9 @@ void NetworkConnectionToWebProcess::establishSWServerConnection()
 
 void NetworkConnectionToWebProcess::establishSWContextConnection(WebPageProxyIdentifier webPageProxyID, RegistrableDomain&& registrableDomain, std::optional<ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, CompletionHandler<void()>&& completionHandler)
 {
-    if (auto* server = m_networkProcess->swServerForSessionIfExists(m_sessionID))
-        m_swContextConnection = makeUnique<WebSWServerToContextConnection>(*this, webPageProxyID, WTFMove(registrableDomain), serviceWorkerPageIdentifier, *server);
+    auto* session = networkSession();
+    if (auto* swServer = session ? session->swServer() : nullptr)
+        m_swContextConnection = makeUnique<WebSWServerToContextConnection>(*this, webPageProxyID, WTFMove(registrableDomain), serviceWorkerPageIdentifier, *swServer);
     completionHandler();
 }
 

@@ -1,3 +1,51 @@
+2021-12-15  Chris Dumez  <cdumez@apple.com>
+
+        Move SWServers from NetworkProcess to NetworkSession
+        https://bugs.webkit.org/show_bug.cgi?id=234179
+
+        Reviewed by Darin Adler.
+
+        Move SWServers from NetworkProcess to NetworkSession since they are per session.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::scheduleResourceLoad):
+        (WebKit::NetworkConnectionToWebProcess::establishSWServerConnection):
+        (WebKit::NetworkConnectionToWebProcess::establishSWContextConnection):
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::lowMemoryHandler):
+        (WebKit::NetworkProcess::addWebsiteDataStore):
+        (WebKit::NetworkProcess::destroySession):
+        (WebKit::NetworkProcess::fetchWebsiteData):
+        (WebKit::NetworkProcess::deleteWebsiteData):
+        (WebKit::NetworkProcess::deleteWebsiteDataForOrigins):
+        (WebKit::NetworkProcess::deleteAndRestrictWebsiteDataForRegistrableDomains):
+        (WebKit::NetworkProcess::registrableDomainsWithWebsiteData):
+        (WebKit::NetworkProcess::prepareToSuspend):
+        (WebKit::NetworkProcess::resume):
+        (WebKit::NetworkProcess::processPushMessage):
+        (WebKit::NetworkProcess::forEachSWServer): Deleted.
+        (WebKit::NetworkProcess::swServerForSession): Deleted.
+        (WebKit::NetworkProcess::existingSWOriginStoreForSession const): Deleted.
+        (WebKit::NetworkProcess::registerSWServerConnection): Deleted.
+        (WebKit::NetworkProcess::unregisterSWServerConnection): Deleted.
+        (WebKit::NetworkProcess::addServiceWorkerSession): Deleted.
+        * NetworkProcess/NetworkProcess.h:
+        (WebKit::NetworkProcess::swServerForSessionIfExists): Deleted.
+        * NetworkProcess/NetworkSession.cpp:
+        (WebKit::NetworkSession::lowMemoryHandler):
+        (WebKit::NetworkSession::swOriginStore const):
+        (WebKit::NetworkSession::registerSWServerConnection):
+        (WebKit::NetworkSession::unregisterSWServerConnection):
+        (WebKit::NetworkSession::ensureSWServer):
+        (WebKit::NetworkSession::addServiceWorkerSession):
+        (WebKit::NetworkSession::hasServiceWorkerDatabasePath const):
+        * NetworkProcess/NetworkSession.h:
+        (WebKit::NetworkSession::swServer):
+        * NetworkProcess/ServiceWorker/WebSWServerConnection.cpp:
+        (WebKit::WebSWServerConnection::WebSWServerConnection):
+        (WebKit::WebSWServerConnection::~WebSWServerConnection):
+        * WebProcess/WebPage/WebPage.h:
+
 2021-12-15  Youenn Fablet  <youenn@apple.com>
 
         RemoteAudioMediaStreamTrackRendererInternalUnitManager::Unit should only reset once

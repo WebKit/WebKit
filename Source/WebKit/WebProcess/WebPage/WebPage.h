@@ -173,7 +173,7 @@ OBJC_CLASS WKAccessibilityWebPageObject;
 #define ENABLE_VIEWPORT_RESIZING PLATFORM(IOS_FAMILY)
 
 namespace WTF {
-enum class Critical : uint8_t;
+enum class Critical : bool;
 }
 
 namespace API {
