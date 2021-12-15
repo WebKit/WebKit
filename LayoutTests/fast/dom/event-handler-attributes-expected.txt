@@ -581,10 +581,6 @@ PASS testElementAttribute(bodyElement, "resize") is "window"
 PASS testElementAttribute(bodyElement, "storage") is "window"
 PASS testElementAttribute(bodyElement, "unload") is "window"
 
-Event names we expect to be forwarded from <body> element to document)
-
-PASS testElementAttribute(bodyElement, "selectionchange") is "document"
-
 Non-forwarded event names on <body> element
 
 PASS testElementAttribute(bodyElement, "abort") is "target"
@@ -641,6 +637,7 @@ PASS testElementAttribute(bodyElement, "search") is "target"
 PASS testElementAttribute(bodyElement, "seeked") is "target"
 PASS testElementAttribute(bodyElement, "seeking") is "target"
 PASS testElementAttribute(bodyElement, "select") is "target"
+FAIL testElementAttribute(bodyElement, "selectionchange") should be target. Was script: target; content: document.
 PASS testElementAttribute(bodyElement, "selectstart") is "target"
 PASS testElementAttribute(bodyElement, "stalled") is "target"
 PASS testElementAttribute(bodyElement, "submit") is "target"
@@ -679,10 +676,6 @@ PASS testElementAttribute(framesetElement, "popstate") is "window"
 PASS testElementAttribute(framesetElement, "resize") is "window"
 PASS testElementAttribute(framesetElement, "storage") is "window"
 PASS testElementAttribute(framesetElement, "unload") is "window"
-
-Event names we expect to be forwarded from <frameset> element to document)
-
-FAIL testElementAttribute(framesetElement, "selectionchange") should be document. Was target.
 
 Non-forwarded event names on <frameset> element
 
@@ -740,6 +733,7 @@ PASS testElementAttribute(framesetElement, "search") is "target"
 PASS testElementAttribute(framesetElement, "seeked") is "target"
 PASS testElementAttribute(framesetElement, "seeking") is "target"
 PASS testElementAttribute(framesetElement, "select") is "target"
+PASS testElementAttribute(framesetElement, "selectionchange") is "target"
 PASS testElementAttribute(framesetElement, "selectstart") is "target"
 PASS testElementAttribute(framesetElement, "stalled") is "target"
 PASS testElementAttribute(framesetElement, "submit") is "target"
@@ -941,6 +935,10 @@ PASS testElementAttribute(nonHTMLElement, "webkitanimationiteration") is "none"
 PASS testElementAttribute(nonHTMLElement, "webkitanimationstart") is "none"
 PASS testElementAttribute(nonHTMLElement, "webkittransitionend") is "none"
 PASS testElementAttribute(nonHTMLElement, "wheel") is "none"
+
+onselectionchange IDL attribute doesn't forward event listeners from <body> element to document
+
+PASS document.onselectionchange is null
 
 PASS successfullyParsed is true
 

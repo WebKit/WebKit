@@ -1,3 +1,13 @@
+2021-12-15  Alexey Shvayka  <ashvayka@apple.com>
+
+        [WebIDL] onselectionchange IDL attribute should not Document-reflect event listeners
+        https://bugs.webkit.org/show_bug.cgi?id=234349
+
+        Reviewed by Darin Adler.
+
+        * fast/dom/event-handler-attributes-expected.txt:
+        * fast/dom/event-handler-attributes.html:
+
 2021-12-15  Yoshiaki Jitsukawa  <yoshiaki.jitsukawa@sony.com>
 
         JPEG XL decoder should support understand color profiles

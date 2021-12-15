@@ -143,10 +143,6 @@ const bodyElementWindowForwardedEvents = [
     "unload",
 ];
 
-const bodyElementDocumentForwardedEvents = [
-    "selectionchange",
-];
-
 const nonEventNames = [
     "noneventname",
 ];
@@ -251,7 +247,7 @@ const windowEvents = arrayUnion(eventsInGlobalEventHandlers, eventsInWindowEvent
 const documentEvents = arrayUnion(eventsInGlobalEventHandlers, elementAndDocumentEvents, uniqueDocumentEvents);
 const elementEvents = arrayUnion(eventsInGlobalEventHandlers, elementAndDocumentEvents, elementAndWindowEvents, elementBodyAndFrameSetEvents, uniqueElementEvents);
 
-const allEventNames = arrayUnion(windowEvents, documentEvents, elementEvents, bodyElementWindowForwardedEvents, bodyElementDocumentForwardedEvents, nonEventNames);
+const allEventNames = arrayUnion(windowEvents, documentEvents, elementEvents, bodyElementWindowForwardedEvents, nonEventNames);
 
 var sectionOpen = false;
 
@@ -307,19 +303,22 @@ testArray(elementEvents, "testElementAttribute(videoElement", "target", "Event n
 testArray(arrayDifference(allEventNames, elementEvents), "testElementAttribute(videoElement", "none", "Event names we expect not to be able to set on an element (tested on the &lt;video> element)");
 
 testArray(bodyElementWindowForwardedEvents, "testElementAttribute(bodyElement", "window", "Event names we expect to be forwarded from &lt;body> element to window object)");
-testArray(bodyElementDocumentForwardedEvents, "testElementAttribute(bodyElement", "document", "Event names we expect to be forwarded from &lt;body> element to document)");
-testArray(arrayDifference(elementEvents, arrayUnion(bodyElementWindowForwardedEvents, bodyElementDocumentForwardedEvents)), "testElementAttribute(bodyElement", "target", "Non-forwarded event names on &lt;body> element");
-testArray(arrayDifference(allEventNames, arrayUnion(elementEvents, bodyElementWindowForwardedEvents, bodyElementDocumentForwardedEvents)), "testElementAttribute(bodyElement", "none", "Event names we expect to not be able to set on &lt;body> element");
+testArray(arrayDifference(elementEvents, bodyElementWindowForwardedEvents), "testElementAttribute(bodyElement", "target", "Non-forwarded event names on &lt;body> element");
+testArray(arrayDifference(allEventNames, arrayUnion(elementEvents, bodyElementWindowForwardedEvents)), "testElementAttribute(bodyElement", "none", "Event names we expect to not be able to set on &lt;body> element");
 
 testArray(bodyElementWindowForwardedEvents, "testElementAttribute(framesetElement", "window", "Event names we expect to be forwarded from &lt;frameset> element to window object)");
-testArray(bodyElementDocumentForwardedEvents, "testElementAttribute(framesetElement", "document", "Event names we expect to be forwarded from &lt;frameset> element to document)");
-testArray(arrayDifference(elementEvents, arrayUnion(bodyElementWindowForwardedEvents, bodyElementDocumentForwardedEvents)), "testElementAttribute(framesetElement", "target", "Non-forwarded event names on &lt;frameset> element");
-testArray(arrayDifference(allEventNames, arrayUnion(elementEvents, bodyElementWindowForwardedEvents, bodyElementDocumentForwardedEvents)), "testElementAttribute(framesetElement", "none", "Event names we expect to not be able to set on &lt;frameset> element");
+testArray(arrayDifference(elementEvents, bodyElementWindowForwardedEvents), "testElementAttribute(framesetElement", "target", "Non-forwarded event names on &lt;frameset> element");
+testArray(arrayDifference(allEventNames, arrayUnion(elementEvents, bodyElementWindowForwardedEvents)), "testElementAttribute(framesetElement", "none", "Event names we expect to not be able to set on &lt;frameset> element");
 
 testArray(elementEvents, "testElementAttribute(rectElement", "target", "Event names we expect to be able to set on an element (tested on the SVG &lt;rect> element)");
 testArray(arrayDifference(allEventNames, elementEvents), "testElementAttribute(rectElement", "none", "Event names we expect not to be able to set on an element (tested on the SVG &lt;rect> element)");
 
 testArray(allEventNames, "testElementAttribute(nonHTMLElement", "none", "Event names on a non-HTML element");
+
+section("onselectionchange IDL attribute doesn't forward event listeners from &lt;body> element to document");
+
+document.body.onselectionchange = function() {};
+shouldBe("document.onselectionchange", "null");
 
 endSection();
 

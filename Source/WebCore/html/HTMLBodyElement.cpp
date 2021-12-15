@@ -138,6 +138,8 @@ void HTMLBodyElement::parseAttribute(const QualifiedName& name, const AtomString
         return;
     }
 
+    // FIXME: Emit "selectionchange" event at <input> / <textarea> elements and remove this special-case.
+    // https://bugs.webkit.org/show_bug.cgi?id=234348
     if (name == onselectionchangeAttr) {
         document().setAttributeEventListener(eventNames().selectionchangeEvent, name, value, mainThreadNormalWorld());
         return;

@@ -42,7 +42,6 @@
     [NotEnumerable, WindowEventHandler, Conditional=MOUSE_FORCE_EVENTS] attribute EventHandler onwebkitmouseforcedown;
     [NotEnumerable, WindowEventHandler, Conditional=MOUSE_FORCE_EVENTS] attribute EventHandler onwebkitmouseforcewillbegin;
     [NotEnumerable, WindowEventHandler, Conditional=MOUSE_FORCE_EVENTS] attribute EventHandler onwebkitmouseforceup;
-    [NotEnumerable, DocumentEventHandler] attribute EventHandler onselectionchange;
 };
 
 HTMLBodyElement includes WindowEventHandlers;
