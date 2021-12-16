@@ -44,8 +44,6 @@ OBJC_CLASS PDFDocument;
 OBJC_CLASS PDFSelection;
 #endif
 
-struct NPObject;
-
 namespace IPC {
 class Encoder;
 class Decoder;
@@ -72,12 +70,6 @@ class WebMouseEvent;
 class WebWheelEvent;
     
 class PluginController;
-
-enum PluginType {
-    PluginProxyType,
-    NetscapePluginType,
-    PDFPluginType,
-};
 
 enum class LayerHostingMode : uint8_t;
 
@@ -108,12 +100,6 @@ public:
     const PluginController* controller() const;
 
     virtual ~Plugin();
-
-    PluginType type() const { return m_type; }
-
-    bool isPluginProxy() const { return m_type == PluginProxyType; }
-    bool isNetscapePlugin() const { return m_type == NetscapePluginType; }
-    bool isPDFPlugin() const { return m_type == PDFPluginType; }
 
 private:
     // Initializes the plug-in. If the plug-in fails to initialize this should return false.
@@ -231,9 +217,6 @@ public:
     // Tells the plug-in about focus changes.
     virtual void setFocus(bool) = 0;
 
-    // Get the NPObject that corresponds to the plug-in's scriptable object. Returns a retained object.
-    virtual NPObject* pluginScriptableNPObject() = 0;
-
     // Tells the plug-in about window focus changes.
     virtual void windowFocusChanged(bool) = 0;
     
@@ -293,7 +276,6 @@ public:
     virtual bool performDictionaryLookupAtLocation(const WebCore::FloatPoint&) = 0;
 
     virtual String getSelectionString() const = 0;
-    virtual String getSelectionForWordAtPoint(const WebCore::FloatPoint&) const = 0;
     virtual bool existingSelectionContainsPoint(const WebCore::FloatPoint&) const = 0;
 
     virtual void mutedStateChanged(bool) { }
@@ -307,9 +289,7 @@ public:
     virtual bool pluginHandlesContentOffsetForAccessibilityHitTest() const { return false; }
 
 protected:
-    Plugin(PluginType);
-
-    PluginType m_type;
+    Plugin();
 
     bool m_isBeingDestroyed { false };
 

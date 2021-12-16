@@ -256,18 +256,6 @@ EventHandlerDrivenSmoothKeyboardScrollingEnabled:
   WebCore:
    default: false
 
-# FIXME: This is not relevent for WebKitLegacy, so should be excluded from WebKitLegacy entirely.
-ExperimentalPlugInSandboxProfilesEnabled:
-  type: bool
-  humanReadableName: "Sandbox Plug-Ins"
-  humanReadableDescription: "Enable Plug-In sandboxing"
-  webcoreBinding: RuntimeEnabledFeatures
-  defaultValue:
-    WebKitLegacy:
-      default: false
-    WebKit:
-      default: false
-
 FasterClicksEnabled:
   type: bool
   humanReadableName: "Fast clicks"

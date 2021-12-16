@@ -194,7 +194,6 @@ private:
     bool handlesPageScaleFactor() const final;
     bool requiresUnifiedScaleFactor() const final { return true; }
     void setFocus(bool) final { }
-    NPObject* pluginScriptableNPObject() final { return nullptr; }
     void windowFocusChanged(bool) final { }
     void windowAndViewFramesChanged(const WebCore::IntRect& windowFrameInScreenCoordinates, const WebCore::IntRect& viewFrameInWindowCoordinates) final { }
     void windowVisibilityChanged(bool) final { }
@@ -224,7 +223,6 @@ private:
 
     bool performDictionaryLookupAtLocation(const WebCore::FloatPoint&) final;
     String getSelectionString() const final;
-    String getSelectionForWordAtPoint(const WebCore::FloatPoint&) const final;
     bool existingSelectionContainsPoint(const WebCore::FloatPoint&) const final;
 
     bool shouldAllowScripting() final { return false; }
@@ -436,7 +434,7 @@ private:
 } // namespace WebKit
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebKit::PDFPlugin)
-    static bool isType(const WebKit::Plugin& plugin) { return plugin.isPDFPlugin(); }
+    static bool isType(const WebKit::Plugin&) { return true; } // FIXME: Consolidate PDFPlugin and Plugin into one class.
     static bool isType(const WebCore::ScrollableArea& area) { return area.isPDFPlugin(); }
 SPECIALIZE_TYPE_TRAITS_END()
 

@@ -1,3 +1,13 @@
+2021-12-15  Alex Christensen  <achristensen@webkit.org>
+
+        Remove unreachable code in Plugin and PluginController
+        https://bugs.webkit.org/show_bug.cgi?id=234365
+
+        Reviewed by Geoff Garen and Anders Carlsson.
+
+        * Scripts/Preferences/WebPreferences.yaml:
+        * Scripts/Preferences/WebPreferencesInternal.yaml:
+
 2021-12-15  Chris Dumez  <cdumez@apple.com>
 
         Support passing an old-style enum to add(Hasher&, ...)

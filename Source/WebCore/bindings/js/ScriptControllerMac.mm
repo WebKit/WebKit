@@ -46,7 +46,6 @@
 
 @interface NSObject (WebPlugin)
 - (id)objectForWebScript;
-- (NPObject *)createPluginScriptableObject;
 - (RefPtr<JSC::Bindings::Instance>)createPluginBindingsInstance:(Ref<JSC::Bindings::RootObject>&&)rootObject;
 @end
 

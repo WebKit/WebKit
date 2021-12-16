@@ -1,3 +1,17 @@
+2021-12-15  Alex Christensen  <achristensen@webkit.org>
+
+        Remove unreachable code in Plugin and PluginController
+        https://bugs.webkit.org/show_bug.cgi?id=234365
+
+        Reviewed by Geoff Garen and Anders Carlsson.
+
+        * fast/frames/restoring-page-cache-should-not-run-scripts-via-style-update.html:
+        * media/crash-closing-page-with-media-as-plugin-fallback.html:
+        * plugins/crash-restoring-plugin-page-from-page-cache.html:
+        * plugins/frameset-with-plugin-frame.html:
+        * plugins/netscape-plugin-page-cache-works.html:
+        * plugins/netscape-plugin-page-cache-works-expected.html: Remove test for no-longer-reachable configuration.
+
 2021-12-15  Gabriel Nava Marino  <gnavamarino@apple.com>
 
         null ptr deref in WebCore::ApplyStyleCommand::applyRelativeFontStyleChange

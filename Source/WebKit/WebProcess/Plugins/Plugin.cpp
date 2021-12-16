@@ -79,11 +79,7 @@ bool Plugin::Parameters::decode(IPC::Decoder& decoder, Parameters& parameters)
     return true;
 }
 
-Plugin::Plugin(PluginType type)
-    : m_type(type)
-{
-}
-
+Plugin::Plugin() = default;
 Plugin::~Plugin() = default;
 
 bool Plugin::initialize(PluginController& pluginController, const Parameters& parameters)

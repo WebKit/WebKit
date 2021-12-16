@@ -101,9 +101,6 @@ public:
     void setServerTimingEnabled(bool isEnabled) { m_isServerTimingEnabled = isEnabled; }
     bool serverTimingEnabled() const { return m_isServerTimingEnabled; }
 
-    void setExperimentalPlugInSandboxProfilesEnabled(bool isEnabled) { m_experimentalPlugInSandboxProfilesEnabled = isEnabled; }
-    bool experimentalPlugInSandboxProfilesEnabled() const { return m_experimentalPlugInSandboxProfilesEnabled; }
-
     void setAttrStyleEnabled(bool isEnabled) { m_attrStyleEnabled = isEnabled; }
     bool attrStyleEnabled() const { return m_attrStyleEnabled; }
 
@@ -288,7 +285,6 @@ private:
     bool m_itpDebugMode { false };
     bool m_isRestrictedHTTPResponseAccess { true };
     bool m_isServerTimingEnabled { false };
-    bool m_experimentalPlugInSandboxProfilesEnabled { false };
     bool m_attrStyleEnabled { false };
     bool m_webAPIStatisticsEnabled { false };
     bool m_syntheticEditingCommandsEnabled { true };

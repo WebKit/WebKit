@@ -1,3 +1,77 @@
+2021-12-15  Alex Christensen  <achristensen@webkit.org>
+
+        Remove unreachable code in Plugin and PluginController
+        https://bugs.webkit.org/show_bug.cgi?id=234365
+
+        Reviewed by Geoff Garen and Anders Carlsson.
+
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetPageCacheSupportsPlugins):
+        (WKPreferencesGetPageCacheSupportsPlugins):
+        (WKPreferencesSetAsynchronousPluginInitializationEnabled):
+        (WKPreferencesGetAsynchronousPluginInitializationEnabled):
+        (WKPreferencesSetAsynchronousPluginInitializationEnabledForAllPlugins):
+        (WKPreferencesGetAsynchronousPluginInitializationEnabledForAllPlugins):
+        (WKPreferencesSetArtificialPluginInitializationDelayEnabled):
+        (WKPreferencesGetArtificialPluginInitializationDelayEnabled):
+        (WKPreferencesSetPluginSandboxProfilesEnabledForAllPlugins):
+        (WKPreferencesGetPluginSandboxProfilesEnabledForAllPlugins):
+        * UIProcess/API/Cocoa/WKPreferences.mm:
+        (-[WKPreferences _setPageCacheSupportsPlugins:]):
+        (-[WKPreferences _pageCacheSupportsPlugins]):
+        (-[WKPreferences _setAsynchronousPluginInitializationEnabled:]):
+        (-[WKPreferences _asynchronousPluginInitializationEnabled]):
+        (-[WKPreferences _setArtificialPluginInitializationDelayEnabled:]):
+        (-[WKPreferences _artificialPluginInitializationDelayEnabled]):
+        (-[WKPreferences _setExperimentalPlugInSandboxProfilesEnabled:]):
+        (-[WKPreferences _experimentalPlugInSandboxProfilesEnabled]):
+        * WebProcess/Plugins/PDF/PDFPlugin.h:
+        (isType):
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (WebKit::PDFPlugin::PDFPlugin):
+        (WebKit::PDFPlugin::getSelectionForWordAtPoint const): Deleted.
+        * WebProcess/Plugins/Plugin.cpp:
+        (WebKit::Plugin::Plugin): Deleted.
+        * WebProcess/Plugins/Plugin.h:
+        (WebKit::Plugin::type const): Deleted.
+        (WebKit::Plugin::isPluginProxy const): Deleted.
+        (WebKit::Plugin::isNetscapePlugin const): Deleted.
+        (WebKit::Plugin::isPDFPlugin const): Deleted.
+        * WebProcess/Plugins/PluginController.h:
+        (WebKit::PluginController::asynchronousPluginInitializationEnabled const): Deleted.
+        (WebKit::PluginController::asynchronousPluginInitializationEnabledForAllPlugins const): Deleted.
+        (WebKit::PluginController::artificialPluginInitializationDelayEnabled const): Deleted.
+        (WebKit::PluginController::PluginDestructionProtector::PluginDestructionProtector): Deleted.
+        (WebKit::PluginController::PluginDestructionProtector::~PluginDestructionProtector): Deleted.
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::initializePlugin):
+        (WebKit::PluginView::pluginFocusOrWindowFocusChanged):
+        (WebKit::PluginView::didFailToInitializePlugin): Deleted.
+        (WebKit::PluginView::getSelectionForWordAtPoint const): Deleted.
+        (WebKit::PluginView::invalidate): Deleted.
+        (WebKit::PluginView::userAgent): Deleted.
+        (WebKit::PluginView::cancelStreamLoad): Deleted.
+        (WebKit::PluginView::continueStreamLoad): Deleted.
+        (WebKit::PluginView::cancelManualStreamLoad): Deleted.
+        (WebKit::PluginView::setStatusbarText): Deleted.
+        (WebKit::PluginView::isAcceleratedCompositingEnabled): Deleted.
+        (WebKit::PluginView::compositingRenderServerPort): Deleted.
+        (WebKit::PluginView::getAuthenticationInfo): Deleted.
+        (WebKit::PluginView::isPrivateBrowsingEnabled): Deleted.
+        (WebKit::PluginView::asynchronousPluginInitializationEnabled const): Deleted.
+        (WebKit::PluginView::asynchronousPluginInitializationEnabledForAllPlugins const): Deleted.
+        (WebKit::PluginView::artificialPluginInitializationDelayEnabled const): Deleted.
+        (WebKit::PluginView::protectPluginFromDestruction): Deleted.
+        (WebKit::PluginView::unprotectPluginFromDestruction): Deleted.
+        * WebProcess/Plugins/PluginView.h:
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::asynchronousPluginInitializationEnabled const): Deleted.
+        (WebKit::WebPage::setAsynchronousPluginInitializationEnabled): Deleted.
+        (WebKit::WebPage::asynchronousPluginInitializationEnabledForAllPlugins const): Deleted.
+        (WebKit::WebPage::setAsynchronousPluginInitializationEnabledForAllPlugins): Deleted.
+        (WebKit::WebPage::artificialPluginInitializationDelayEnabled const): Deleted.
+        (WebKit::WebPage::setArtificialPluginInitializationDelayEnabled): Deleted.
+
 2021-12-15  J Pascoe  <j_pascoe@apple.com>
 
         [WebAuthn] Allow same-site, cross-origin iframe get()

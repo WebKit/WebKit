@@ -1131,13 +1131,6 @@ public:
 
     bool shouldUseCustomContentProviderForResponse(const WebCore::ResourceResponse&);
 
-    bool asynchronousPluginInitializationEnabled() const { return m_asynchronousPluginInitializationEnabled; }
-    void setAsynchronousPluginInitializationEnabled(bool enabled) { m_asynchronousPluginInitializationEnabled = enabled; }
-    bool asynchronousPluginInitializationEnabledForAllPlugins() const { return m_asynchronousPluginInitializationEnabledForAllPlugins; }
-    void setAsynchronousPluginInitializationEnabledForAllPlugins(bool enabled) { m_asynchronousPluginInitializationEnabledForAllPlugins = enabled; }
-    bool artificialPluginInitializationDelayEnabled() const { return m_artificialPluginInitializationDelayEnabled; }
-    void setArtificialPluginInitializationDelayEnabled(bool enabled) { m_artificialPluginInitializationDelayEnabled = enabled; }
-
 #if PLATFORM(COCOA)
     bool pdfPluginEnabled() const { return m_pdfPluginEnabled; }
     void setPDFPluginEnabled(bool enabled) { m_pdfPluginEnabled = enabled; }
@@ -1981,9 +1974,6 @@ private:
     bool m_isClosed { false };
     bool m_tabToLinks { false };
     
-    bool m_asynchronousPluginInitializationEnabled { false };
-    bool m_asynchronousPluginInitializationEnabledForAllPlugins { false };
-    bool m_artificialPluginInitializationDelayEnabled { false };
     bool m_mainFrameIsScrollable { true };
 
     bool m_alwaysShowsHorizontalScroller { false };

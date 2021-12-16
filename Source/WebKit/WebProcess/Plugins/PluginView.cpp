@@ -332,21 +332,6 @@ void PluginView::destroyPluginAndReset()
     cancelAllStreams();
 }
 
-void PluginView::recreateAndInitialize(Ref<Plugin>&& plugin)
-{
-    if (m_plugin)
-        destroyPluginAndReset();
-
-    m_plugin = WTFMove(plugin);
-    m_isInitialized = false;
-    m_isWaitingForSynchronousInitialization = false;
-    m_isWaitingUntilMediaCanStart = false;
-    m_manualStreamState = ManualStreamState::Initial;
-    m_transientPaintingSnapshot = nullptr;
-
-    initializePlugin();
-}
-
 void PluginView::setLayerHostingMode(LayerHostingMode layerHostingMode)
 {
 #if HAVE(OUT_OF_PROCESS_LAYER_HOSTING)
@@ -569,12 +554,7 @@ void PluginView::initializePlugin()
 
     m_plugin->initialize(*this, m_parameters);
     
-    // Plug-in initialization continued in didFailToInitializePlugin() or didInitializePlugin().
-}
-
-void PluginView::didFailToInitializePlugin()
-{
-    m_plugin = nullptr;
+    // Plug-in initialization continued in didInitializePlugin().
 }
 
 void PluginView::didInitializePlugin()
@@ -942,14 +922,6 @@ bool PluginView::performDictionaryLookupAtLocation(const WebCore::FloatPoint& po
     return m_plugin->performDictionaryLookupAtLocation(point);
 }
 
-String PluginView::getSelectionForWordAtPoint(const WebCore::FloatPoint& point) const
-{
-    if (!m_isInitialized || !m_plugin)
-        return String();
-    
-    return m_plugin->getSelectionForWordAtPoint(point);
-}
-
 bool PluginView::existingSelectionContainsPoint(const WebCore::FloatPoint& point) const
 {
     if (!m_isInitialized || !m_plugin)
@@ -1290,20 +1262,6 @@ void PluginView::pageMutedStateDidChange()
 {
 }
 
-void PluginView::invalidate(const IntRect& dirtyRect)
-{
-    invalidateRect(dirtyRect);
-}
-
-String PluginView::userAgent()
-{
-    Frame* frame = m_pluginElement->document().frame();
-    if (!frame)
-        return String();
-    
-    return frame->loader().client().userAgent(URL());
-}
-
 void PluginView::loadURL(uint64_t requestID, const String& method, const String& urlString, const String& target, const HTTPHeaderMap& headerFields, const Vector<uint8_t>& httpBody, bool allowPopups)
 {
     FrameLoadRequest frameLoadRequest { m_pluginElement->document(), m_pluginElement->document().securityOrigin(), { }, target, InitiatedByMainFrame::Unknown };
@@ -1324,71 +1282,12 @@ void PluginView::loadURL(uint64_t requestID, const String& method, const String&
     m_pendingURLRequestsTimer.startOneShot(0_s);
 }
 
-void PluginView::cancelStreamLoad(uint64_t streamID)
-{
-    // Keep a reference to the stream. Stream::cancel might remove the stream from the map, and thus
-    // releasing its last reference.
-    RefPtr<Stream> stream = m_streams.get(streamID);
-    if (!stream)
-        return;
-
-    // Cancelling the stream here will remove it from the map.
-    stream->cancel();
-    ASSERT(!m_streams.contains(streamID));
-}
-
-void PluginView::continueStreamLoad(uint64_t streamID)
-{
-    RefPtr<Stream> stream = m_streams.get(streamID);
-    if (!stream)
-        return;
-
-    stream->continueLoad();
-}
-
-void PluginView::cancelManualStreamLoad()
-{
-    if (!frame())
-        return;
-
-    DocumentLoader* documentLoader = frame()->loader().activeDocumentLoader();
-    ASSERT(documentLoader);
-    if (documentLoader && documentLoader->isLoadingMainResource())
-        documentLoader->cancelMainResourceLoad(frame()->loader().cancelledError(m_parameters.url));
-}
-
-void PluginView::setStatusbarText(const String& statusbarText)
-{
-    if (!frame())
-        return;
-    
-    Page* page = frame()->page();
-    if (!page)
-        return;
-
-    page->chrome().setStatusbarText(*frame(), statusbarText);
-}
-
-bool PluginView::isAcceleratedCompositingEnabled()
-{
-    if (!frame())
-        return false;
-    
-    return frame()->settings().acceleratedCompositingEnabled();
-}
-
 #if PLATFORM(COCOA)
 void PluginView::pluginFocusOrWindowFocusChanged(bool pluginHasFocusAndWindowHasFocus)
 {
     if (m_webPage)
         m_webPage->send(Messages::WebPageProxy::PluginFocusOrWindowFocusChanged(m_plugin->pluginComplexTextInputIdentifier(), pluginHasFocusAndWindowHasFocus));
 }
-
-const MachSendRight& PluginView::compositingRenderServerPort()
-{
-    return WebProcess::singleton().compositingRenderServerPort();
-}
-
 #endif
 
 float PluginView::contentsScaleFactor()
@@ -1397,74 +1296,6 @@ float PluginView::contentsScaleFactor()
         return page->deviceScaleFactor();
         
     return 1;
-}
-
-bool PluginView::getAuthenticationInfo(const ProtectionSpace& protectionSpace, String& username, String& password)
-{
-    auto* contentDocument = m_pluginElement->contentDocument();
-    if (!contentDocument)
-        return false;
-
-    auto credential = CredentialStorage::getFromPersistentStorage(protectionSpace);
-    if (!credential.hasPassword())
-        return false;
-
-    username = credential.user();
-    password = credential.password();
-
-    return true;
-}
-
-bool PluginView::isPrivateBrowsingEnabled()
-{
-    // If we can't get the real setting, we'll assume that private browsing is enabled.
-    if (!frame())
-        return true;
-
-    if (!frame()->document()->securityOrigin().canAccessPluginStorage(frame()->document()->topOrigin()))
-        return true;
-
-    return frame()->page()->usesEphemeralSession();
-}
-
-bool PluginView::asynchronousPluginInitializationEnabled() const
-{
-    return m_webPage->asynchronousPluginInitializationEnabled();
-}
-
-bool PluginView::asynchronousPluginInitializationEnabledForAllPlugins() const
-{
-    return m_webPage->asynchronousPluginInitializationEnabledForAllPlugins();
-}
-
-bool PluginView::artificialPluginInitializationDelayEnabled() const
-{
-    return m_webPage->artificialPluginInitializationDelayEnabled();
-}
-
-void PluginView::protectPluginFromDestruction()
-{
-    if (m_plugin && !m_plugin->isBeingDestroyed())
-        ref();
-}
-
-void PluginView::unprotectPluginFromDestruction()
-{
-    if (!m_plugin || m_plugin->isBeingDestroyed())
-        return;
-
-    // A plug-in may ask us to evaluate JavaScript that removes the plug-in from the
-    // page, but expect the object to still be alive when the call completes. Flash,
-    // for example, may crash if the plug-in is destroyed and we return to code for
-    // the destroyed object higher on the stack. To prevent this, if the plug-in has
-    // only one remaining reference, call deref() asynchronously.
-    if (hasOneRef()) {
-        RunLoop::main().dispatch([lastRef = adoptRef(*this)] {
-        });
-        return;
-    }
-
-    deref();
 }
 
 void PluginView::didFinishLoad(WebFrame* webFrame)

@@ -633,8 +633,7 @@ Ref<PDFPlugin> PDFPlugin::create(WebFrame& frame, HTMLPlugInElement* pluginEleme
 }
 
 inline PDFPlugin::PDFPlugin(WebFrame& frame, HTMLPlugInElement* pluginElement)
-    : Plugin(PDFPluginType)
-    , m_frame(frame)
+    : m_frame(frame)
     , m_containerLayer(adoptNS([[CALayer alloc] init]))
     , m_contentLayer(adoptNS([[CALayer alloc] init]))
     , m_scrollCornerLayer(adoptNS([[WKPDFPluginScrollbarLayer alloc] initWithPDFPlugin:this]))
@@ -2836,14 +2835,6 @@ void PDFPlugin::notifyCursorChanged(uint64_t type)
 String PDFPlugin::getSelectionString() const
 {
     return [[m_pdfLayerController currentSelection] string];
-}
-
-String PDFPlugin::getSelectionForWordAtPoint(const WebCore::FloatPoint& point) const
-{
-    IntPoint pointInView = convertFromPluginToPDFView(convertFromRootViewToPlugin(roundedIntPoint(point)));
-    PDFSelection *selectionForWord = [m_pdfLayerController getSelectionForWordAtPoint:pointInView];
-    [m_pdfLayerController setCurrentSelection:selectionForWord];
-    return [selectionForWord string];
 }
 
 bool PDFPlugin::existingSelectionContainsPoint(const WebCore::FloatPoint& locationInViewCoordinates) const

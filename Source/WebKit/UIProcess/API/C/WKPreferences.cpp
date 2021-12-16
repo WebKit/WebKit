@@ -605,14 +605,13 @@ bool WKPreferencesGetPageCacheEnabled(WKPreferencesRef preferencesRef)
     return toImpl(preferencesRef)->usesBackForwardCache();
 }
 
-void WKPreferencesSetPageCacheSupportsPlugins(WKPreferencesRef preferencesRef, bool backForwardCacheSupportsPlugins)
+void WKPreferencesSetPageCacheSupportsPlugins(WKPreferencesRef, bool)
 {
-    toImpl(preferencesRef)->setBackForwardCacheSupportsPlugins(backForwardCacheSupportsPlugins);
 }
 
-bool WKPreferencesGetPageCacheSupportsPlugins(WKPreferencesRef preferencesRef)
+bool WKPreferencesGetPageCacheSupportsPlugins(WKPreferencesRef)
 {
-    return toImpl(preferencesRef)->backForwardCacheSupportsPlugins();
+    return false;
 }
 
 void WKPreferencesSetPaginateDuringLayoutEnabled(WKPreferencesRef preferencesRef, bool enabled)
@@ -1005,34 +1004,31 @@ bool WKPreferencesGetDiagnosticLoggingEnabled(WKPreferencesRef preferencesRef)
     return toImpl(preferencesRef)->diagnosticLoggingEnabled();
 }
 
-void WKPreferencesSetAsynchronousPluginInitializationEnabled(WKPreferencesRef preferencesRef, bool enabled)
+void WKPreferencesSetAsynchronousPluginInitializationEnabled(WKPreferencesRef, bool)
 {
-    toImpl(preferencesRef)->setAsynchronousPluginInitializationEnabled(enabled);
 }
 
-bool WKPreferencesGetAsynchronousPluginInitializationEnabled(WKPreferencesRef preferencesRef)
+bool WKPreferencesGetAsynchronousPluginInitializationEnabled(WKPreferencesRef)
 {
-    return toImpl(preferencesRef)->asynchronousPluginInitializationEnabled();
+    return false;
 }
 
-void WKPreferencesSetAsynchronousPluginInitializationEnabledForAllPlugins(WKPreferencesRef preferencesRef, bool enabled)
+void WKPreferencesSetAsynchronousPluginInitializationEnabledForAllPlugins(WKPreferencesRef, bool)
 {
-    toImpl(preferencesRef)->setAsynchronousPluginInitializationEnabledForAllPlugins(enabled);
 }
 
-bool WKPreferencesGetAsynchronousPluginInitializationEnabledForAllPlugins(WKPreferencesRef preferencesRef)
+bool WKPreferencesGetAsynchronousPluginInitializationEnabledForAllPlugins(WKPreferencesRef)
 {
-    return toImpl(preferencesRef)->asynchronousPluginInitializationEnabledForAllPlugins();
+    return false;
 }
 
-void WKPreferencesSetArtificialPluginInitializationDelayEnabled(WKPreferencesRef preferencesRef, bool enabled)
+void WKPreferencesSetArtificialPluginInitializationDelayEnabled(WKPreferencesRef, bool)
 {
-    toImpl(preferencesRef)->setArtificialPluginInitializationDelayEnabled(enabled);
 }
 
-bool WKPreferencesGetArtificialPluginInitializationDelayEnabled(WKPreferencesRef preferencesRef)
+bool WKPreferencesGetArtificialPluginInitializationDelayEnabled(WKPreferencesRef)
 {
-    return toImpl(preferencesRef)->artificialPluginInitializationDelayEnabled();
+    return false;
 }
 
 void WKPreferencesSetInteractiveFormValidationEnabled(WKPreferencesRef preferencesRef, bool enabled)
@@ -1064,14 +1060,13 @@ bool WKPreferencesGetPlugInSnapshottingEnabled(WKPreferencesRef preferencesRef)
     return false;
 }
 
-void WKPreferencesSetPluginSandboxProfilesEnabledForAllPlugins(WKPreferencesRef preferencesRef, bool enabled)
+void WKPreferencesSetPluginSandboxProfilesEnabledForAllPlugins(WKPreferencesRef, bool)
 {
-    toImpl(preferencesRef)->setExperimentalPlugInSandboxProfilesEnabled(enabled);
 }
 
-bool WKPreferencesGetPluginSandboxProfilesEnabledForAllPlugins(WKPreferencesRef preferencesRef)
+bool WKPreferencesGetPluginSandboxProfilesEnabledForAllPlugins(WKPreferencesRef)
 {
-    return toImpl(preferencesRef)->experimentalPlugInSandboxProfilesEnabled();
+    return false;
 }
 
 void WKPreferencesSetSnapshotAllPlugIns(WKPreferencesRef, bool)

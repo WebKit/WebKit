@@ -784,7 +784,6 @@ webkit.org/b/88107 platform/win/plugins/iframe-inside-overflow.html [ Skip ]
 webkit.org/b/88107 platform/win/plugins/window-region-is-set-to-clip-rect.html [ Skip ]
 webkit.org/b/88107 plugins/crash-restoring-plugin-page-from-page-cache.html [ Skip ]
 webkit.org/b/88107 plugins/fullscreen-plugins-dont-reload.html [ Skip ]
-webkit.org/b/88107 plugins/netscape-plugin-page-cache-works.html [ Skip ]
 # This test causes any following plugins test to crash
 plugins/nested-plugin-objects.html [ Skip ]
 

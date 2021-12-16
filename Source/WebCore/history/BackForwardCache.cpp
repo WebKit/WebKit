@@ -135,10 +135,6 @@ static bool canCacheFrame(Frame& frame, DiagnosticLoggingClient& diagnosticLoggi
         logBackForwardCacheFailureDiagnosticMessage(diagnosticLoggingClient, DiagnosticLoggingKeys::isErrorPageKey());
         isCacheable = false;
     }
-    if (frameLoader.subframeLoader().containsPlugins() && !frame.page()->settings().backForwardCacheSupportsPlugins()) {
-        PCLOG("   -Frame contains plugins");
-        isCacheable = false;
-    }
     if (frame.isMainFrame() && frame.document() && frame.document()->url().protocolIs("https") && documentLoader->response().cacheControlContainsNoStore()) {
         PCLOG("   -Frame is HTTPS, and cache control prohibits storing");
         logBackForwardCacheFailureDiagnosticMessage(diagnosticLoggingClient, DiagnosticLoggingKeys::httpsNoStoreKey());

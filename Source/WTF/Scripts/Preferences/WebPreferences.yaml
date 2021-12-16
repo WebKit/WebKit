@@ -312,30 +312,6 @@ ApplePayEnabled:
       "ENABLE(APPLE_PAY_REMOTE_UI)": true
       default: false
 
-ArtificialPluginInitializationDelayEnabled:
-  type: bool
-  webcoreBinding: none
-  exposed: [ WebKit ]
-  defaultValue:
-    WebKit:
-      default: false
-
-AsynchronousPluginInitializationEnabled:
-  type: bool
-  webcoreBinding: none
-  exposed: [ WebKit ]
-  defaultValue:
-    WebKit:
-      default: false
-
-AsynchronousPluginInitializationEnabledForAllPlugins:
-  type: bool
-  webcoreBinding: none
-  exposed: [ WebKit ]
-  defaultValue:
-    WebKit:
-      default: false
-
 AsynchronousSpellCheckingEnabled:
   type: bool
   defaultValue:
@@ -368,17 +344,6 @@ AuthorAndUserStylesEnabled:
       default: true
     WebCore:
       default: true
-
-BackForwardCacheSupportsPlugins:
-  type: bool
-  webKitLegacyPreferenceKey: WebKitPageCacheSupportsPluginsPreferenceKey
-  defaultValue:
-    WebKitLegacy:
-      default: true
-    WebKit:
-      default: true
-    WebCore:
-      default: false
 
 BackspaceKeyNavigationEnabled:
   type: bool

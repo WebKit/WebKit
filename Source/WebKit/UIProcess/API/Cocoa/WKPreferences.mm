@@ -1036,12 +1036,11 @@ static WebCore::EditableLinkBehavior toEditableLinkBehavior(_WKEditableLinkBehav
 
 - (void)_setPageCacheSupportsPlugins:(BOOL)enabled
 {
-    _preferences->setBackForwardCacheSupportsPlugins(enabled);
 }
 
 - (BOOL)_pageCacheSupportsPlugins
 {
-    return _preferences->backForwardCacheSupportsPlugins();
+    return NO;
 }
 
 - (void)_setShouldPrintBackgrounds:(BOOL)enabled
@@ -1096,32 +1095,29 @@ static WebCore::EditableLinkBehavior toEditableLinkBehavior(_WKEditableLinkBehav
 
 - (void)_setAsynchronousPluginInitializationEnabled:(BOOL)enabled
 {
-    _preferences->setAsynchronousPluginInitializationEnabled(enabled);
 }
 
 - (BOOL)_asynchronousPluginInitializationEnabled
 {
-    return _preferences->asynchronousPluginInitializationEnabled();
+    return NO;
 }
 
 - (void)_setArtificialPluginInitializationDelayEnabled:(BOOL)enabled
 {
-    _preferences->setArtificialPluginInitializationDelayEnabled(enabled);
 }
 
 - (BOOL)_artificialPluginInitializationDelayEnabled
 {
-    return _preferences->artificialPluginInitializationDelayEnabled();
+    return NO;
 }
 
 - (void)_setExperimentalPlugInSandboxProfilesEnabled:(BOOL)enabled
 {
-    _preferences->setExperimentalPlugInSandboxProfilesEnabled(enabled);
 }
 
 - (BOOL)_experimentalPlugInSandboxProfilesEnabled
 {
-    return _preferences->experimentalPlugInSandboxProfilesEnabled();
+    return NO;
 }
 
 - (void)_setCookieEnabled:(BOOL)enabled

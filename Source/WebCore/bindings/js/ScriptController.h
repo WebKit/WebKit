@@ -38,8 +38,6 @@ OBJC_CLASS JSContext;
 OBJC_CLASS WebScriptObject;
 #endif
 
-struct NPObject;
-
 namespace JSC {
 class CallFrame;
 class JSGlobalObject;

@@ -68,8 +68,6 @@ class PluginView : public WebCore::PluginViewBase, public PluginController, priv
 public:
     static Ref<PluginView> create(WebCore::HTMLPlugInElement&, Ref<Plugin>&&, const Plugin::Parameters&);
 
-    void recreateAndInitialize(Ref<Plugin>&&);
-
     WebCore::Frame* frame() const;
 
     bool isBeingDestroyed() const { return !m_plugin || m_plugin->isBeingDestroyed(); }
@@ -118,7 +116,6 @@ public:
 
     RefPtr<WebCore::FragmentedSharedBuffer> liveResourceData() const;
     bool performDictionaryLookupAtLocation(const WebCore::FloatPoint&);
-    String getSelectionForWordAtPoint(const WebCore::FloatPoint&) const;
     bool existingSelectionContainsPoint(const WebCore::FloatPoint&) const;
 
 private:
@@ -190,29 +187,13 @@ private:
     void pageMutedStateDidChange() override;
 
     // PluginController
-    void invalidate(const WebCore::IntRect&) override;
-    String userAgent() override;
     void loadURL(uint64_t requestID, const String& method, const String& urlString, const String& target, const WebCore::HTTPHeaderMap& headerFields, const Vector<uint8_t>& httpBody, bool allowPopups) override;
-    void cancelStreamLoad(uint64_t streamID) override;
-    void continueStreamLoad(uint64_t streamID) override;
-    void cancelManualStreamLoad() override;
-    void setStatusbarText(const String&) override;
-    bool isAcceleratedCompositingEnabled() override;
 #if PLATFORM(COCOA)
     void pluginFocusOrWindowFocusChanged(bool pluginHasFocusAndWindowHasFocus) override;
-    const WTF::MachSendRight& compositingRenderServerPort() override;
 #endif
     float contentsScaleFactor() override;
-    bool getAuthenticationInfo(const WebCore::ProtectionSpace&, String& username, String& password) override;
-    bool isPrivateBrowsingEnabled() override;
-    bool asynchronousPluginInitializationEnabled() const override;
-    bool asynchronousPluginInitializationEnabledForAllPlugins() const override;
-    bool artificialPluginInitializationDelayEnabled() const override;
-    void protectPluginFromDestruction() override;
-    void unprotectPluginFromDestruction() override;
 
     void didInitializePlugin() override;
-    void didFailToInitializePlugin() override;
     void destroyPluginAndReset();
 
     // WebFrame::LoadListener
