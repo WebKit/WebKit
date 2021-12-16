@@ -1,3 +1,17 @@
+2021-12-15  Chris Dumez  <cdumez@apple.com>
+
+        Support passing an old-style enum to add(Hasher&, ...)
+        https://bugs.webkit.org/show_bug.cgi?id=234368
+
+        Reviewed by Darin Adler.
+
+        Support passing an old-style enum to add(Hasher&, ...). Previously, it would work for enum classes
+        but lead to ambiguity errors with some compiler when passing a plain enum.
+
+        * wtf/Hasher.h:
+        (WTF::Hasher::add):
+        (WTF::add):
+
 2021-12-15  Jer Noble  <jer.noble@apple.com>
 
         [Mac] Adopt -[NSScreen safeAreaInsets]
