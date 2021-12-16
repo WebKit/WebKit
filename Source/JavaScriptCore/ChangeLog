@@ -1,3 +1,16 @@
+2021-12-16  Caitlin Potter  <caitp@igalia.com>
+
+        [JSC] only emit pointer validation for ARM64E
+        https://bugs.webkit.org/show_bug.cgi?id=234402
+
+        Reviewed by Yusuke Suzuki and Mark Lam.
+
+        JIT thunks no longer emit `push <reg>; pop <reg>;` on
+        non-ARM64E arches with the emitPointerValidation macro.
+
+        * jit/ThunkGenerators.cpp:
+        (JSC::emitPointerValidation):
+
 2021-12-16  Michael Saboff  <msaboff@apple.com>
 
         Create symlinks pointing to alternate root framework locations

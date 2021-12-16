@@ -148,6 +148,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> checkExceptionGenerator(VM& vm)
 template<typename TagType>
 inline void emitPointerValidation(CCallHelpers& jit, GPRReg pointerGPR, TagType tag)
 {
+#if CPU(ARM64E)
     if (!ASSERT_ENABLED)
         return;
     if (!Options::useJITCage()) {
@@ -159,6 +160,11 @@ inline void emitPointerValidation(CCallHelpers& jit, GPRReg pointerGPR, TagType 
         jit.validateUntaggedPtr(pointerGPR);
         jit.popToRestore(pointerGPR);
     }
+#else
+    UNUSED_PARAM(jit);
+    UNUSED_PARAM(pointerGPR);
+    UNUSED_PARAM(tag);
+#endif
 }
 
 // We will jump here if the JIT code tries to make a call, but the
