@@ -3377,6 +3377,9 @@ fast/text/design-system-ui-14.html [ ImageOnlyFailure ]
 fast/text/design-system-ui-15.html [ ImageOnlyFailure ]
 fast/text/design-system-ui-16.html [ ImageOnlyFailure ]
 
+# This is a crash test.
+fast/editing/apply-relative-font-style-change-crash-004.html [ Pass Failure ]
+
 # This is a crash test. The result is ignored for now.
 imported/w3c/web-platform-tests/shadow-dom/imperative-slot-assign-not-slotable-crash.html [ Pass Failure ]
 
