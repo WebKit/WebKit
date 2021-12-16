@@ -259,14 +259,6 @@ void InlineItemsBuilder::breakAndComputeBidiLevels(InlineItems& inlineItems)
     inlineItemOffsets.reserveInitialCapacity(inlineItems.size());
     buildBidiParagraph(root().style(), inlineItems, paragraphContentBuilder, inlineItemOffsets);
     ASSERT(inlineItemOffsets.size() == inlineItems.size());
-    if (paragraphContentBuilder.is8Bit()) {
-        // Simple content with RTL inline base direction could just follow the logical order.
-        // Note that inline level elements produce 16bit paragraph content by appending objectReplacementCharacter.
-        // e.g. <div dir=rtl>this initiates 8bit paragraph builder</div> while
-        //      <div dir=rtl><img> <- turns the paragraph builder to 16bit</div> 
-        return;
-    }
-
     // 1. Setup the bidi boundary loop by calling ubidi_setPara with the paragraph text.
     // 2. Call ubidi_getLogicalRun to advance to the next bidi boundary until we hit the end of the content.
     // 3. Set the computed bidi level on the associated inline items. Split them as needed.
@@ -283,7 +275,13 @@ void InlineItemsBuilder::breakAndComputeBidiLevels(InlineItems& inlineItems)
 
     UErrorCode error = U_ZERO_ERROR;
     ASSERT(!paragraphContentBuilder.isEmpty());
-    ubidi_setPara(ubidi, paragraphContentBuilder.characters16(), paragraphContentBuilder.length(), rootBidiLevel, nullptr, &error);
+    ubidi_setPara(ubidi
+        , StringView(paragraphContentBuilder).upconvertedCharacters()
+        , paragraphContentBuilder.length()
+        , rootBidiLevel
+        , nullptr
+        , &error);
+
     if (U_FAILURE(error)) {
         ASSERT_NOT_REACHED();
         return;
