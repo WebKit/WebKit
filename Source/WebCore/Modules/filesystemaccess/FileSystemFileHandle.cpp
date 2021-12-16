@@ -27,6 +27,7 @@
 #include "FileSystemFileHandle.h"
 
 #include "File.h"
+#include "FileSystemHandleCloseScope.h"
 #include "FileSystemStorageConnection.h"
 #include "FileSystemSyncAccessHandle.h"
 #include "JSDOMPromiseDeferred.h"
@@ -82,7 +83,7 @@ void FileSystemFileHandle::createSyncAccessHandle(DOMPromiseDeferred<IDLInterfac
         auto* context = protectedThis->scriptExecutionContext();
         if (!context) {
             FileSystem::closeFile(file);
-            protectedThis->close(identifier, { });
+            protectedThis->closeSyncAccessHandle(identifier, { });
             return promise.reject(Exception { InvalidStateError, "Context has stopped"_s });
         }
 
@@ -90,12 +91,12 @@ void FileSystemFileHandle::createSyncAccessHandle(DOMPromiseDeferred<IDLInterfac
     });
 }
 
-void FileSystemFileHandle::close(FileSystemSyncAccessHandleIdentifier accessHandleIdentifier, CompletionHandler<void(ExceptionOr<void>&&)>&& completionHandler)
+void FileSystemFileHandle::closeSyncAccessHandle(FileSystemSyncAccessHandleIdentifier accessHandleIdentifier, CompletionHandler<void(ExceptionOr<void>&&)>&& completionHandler)
 {
     if (isClosed())
         return completionHandler(Exception { InvalidStateError, "Handle is closed"_s });
 
-    connection().close(identifier(), accessHandleIdentifier, WTFMove(completionHandler));
+    connection().closeSyncAccessHandle(identifier(), accessHandleIdentifier, WTFMove(completionHandler));
 }
 
 void FileSystemFileHandle::registerSyncAccessHandle(FileSystemSyncAccessHandleIdentifier identifier, FileSystemSyncAccessHandle& handle)

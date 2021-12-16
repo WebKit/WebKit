@@ -68,6 +68,8 @@ void FileSystemStorageHandle::close()
     if (!m_manager)
         return;
 
+    if (m_activeSyncAccessHandle)
+        closeSyncAccessHandle(*m_activeSyncAccessHandle);
     m_manager->closeHandle(*this);
 }
 
@@ -181,7 +183,7 @@ Expected<FileSystemStorageHandle::AccessHandleInfo, FileSystemStorageError> File
     return std::pair { *m_activeSyncAccessHandle, WTFMove(*ipcHandle) };
 }
 
-std::optional<FileSystemStorageError> FileSystemStorageHandle::close(WebCore::FileSystemSyncAccessHandleIdentifier accessHandleIdentifier)
+std::optional<FileSystemStorageError> FileSystemStorageHandle::closeSyncAccessHandle(WebCore::FileSystemSyncAccessHandleIdentifier accessHandleIdentifier)
 {
     if (!m_activeSyncAccessHandle || *m_activeSyncAccessHandle != accessHandleIdentifier)
         return FileSystemStorageError::Unknown;

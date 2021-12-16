@@ -25,32 +25,46 @@
 
 #pragma once
 
-#include "FileSystemHandle.h"
-#include "FileSystemSyncAccessHandleIdentifier.h"
+#include "FileSystemStorageConnection.h"
+#include <wtf/RunLoop.h>
 
 namespace WebCore {
 
-class File;
-class FileSystemSyncAccessHandle;
-template<typename> class ExceptionOr;
-
-class FileSystemFileHandle final : public FileSystemHandle {
-    WTF_MAKE_ISO_ALLOCATED(FileSystemFileHandle);
+class FileSystemHandleCloseScope : public ThreadSafeRefCounted<FileSystemHandleCloseScope, WTF::DestructionThread::MainRunLoop> {
 public:
-    WEBCORE_EXPORT static Ref<FileSystemFileHandle> create(ScriptExecutionContext&, String&&, FileSystemHandleIdentifier, Ref<FileSystemStorageConnection>&&);
-    void getFile(DOMPromiseDeferred<IDLInterface<File>>&&);
+    static Ref<FileSystemHandleCloseScope> create(FileSystemHandleIdentifier identifier, bool isDirectory, FileSystemStorageConnection& connection)
+    {
+        return adoptRef(*new FileSystemHandleCloseScope(identifier, isDirectory, connection));
+    }
 
-    void createSyncAccessHandle(DOMPromiseDeferred<IDLInterface<FileSystemSyncAccessHandle>>&&);
-    void closeSyncAccessHandle(FileSystemSyncAccessHandleIdentifier, CompletionHandler<void(ExceptionOr<void>&&)>&&);
-    void registerSyncAccessHandle(FileSystemSyncAccessHandleIdentifier, FileSystemSyncAccessHandle&);
-    void unregisterSyncAccessHandle(FileSystemSyncAccessHandleIdentifier);
+    ~FileSystemHandleCloseScope()
+    {
+        ASSERT(RunLoop::isMain());
+
+        if (m_identifier.isValid())
+            m_connection->closeHandle(m_identifier);
+    }
+
+    std::pair<FileSystemHandleIdentifier, bool> release()
+    {
+        Locker locker { m_lock };
+        ASSERT_WITH_MESSAGE(m_identifier.isValid(), "FileSystemHandleCloseScope should not be released more than once");
+        return { std::exchange(m_identifier, { }), m_isDirectory };
+    }
 
 private:
-    FileSystemFileHandle(ScriptExecutionContext&, String&&, FileSystemHandleIdentifier, Ref<FileSystemStorageConnection>&&);
+    FileSystemHandleCloseScope(FileSystemHandleIdentifier identifer, bool isDirectory, FileSystemStorageConnection& connection)
+        : m_identifier(identifer)
+        , m_isDirectory(isDirectory)
+        , m_connection(Ref { connection })
+    {
+        ASSERT(RunLoop::isMain());
+    }
+
+    Lock m_lock;
+    FileSystemHandleIdentifier m_identifier WTF_GUARDED_BY_LOCK(m_lock);
+    bool m_isDirectory;
+    Ref<FileSystemStorageConnection> m_connection;
 };
 
 } // namespace WebCore
-
-SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::FileSystemFileHandle)
-    static bool isType(const WebCore::FileSystemHandle& handle) { return handle.kind() == WebCore::FileSystemHandle::Kind::File; }
-SPECIALIZE_TYPE_TRAITS_END()

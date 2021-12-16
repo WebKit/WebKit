@@ -99,6 +99,10 @@ void FileSystemStorageManager::closeHandle(FileSystemStorageHandle& handle)
     auto identifier = handle.identifier();
     auto takenHandle = m_handles.take(identifier);
     ASSERT(takenHandle.get() == &handle);
+    for (auto& handles : m_handlesByConnection.values()) {
+        if (handles.remove(identifier))
+            break;
+    }
     m_registry.unregisterHandle(identifier);
 }
 

@@ -181,13 +181,13 @@ void FileSystemSyncAccessHandle::closeBackend(CloseMode mode)
         return;
 
     if (mode == CloseMode::Async) {
-        m_source->close(m_identifier, [this, protectedThis = Ref { *this }](auto result) mutable {
+        m_source->closeSyncAccessHandle(m_identifier, [this, protectedThis = Ref { *this }](auto result) mutable {
             didCloseBackend(WTFMove(result));
         });
         return;
     }
 
-    m_source->close(m_identifier, [](auto) { });
+    m_source->closeSyncAccessHandle(m_identifier, [](auto) { });
     didCloseBackend({ });
 }
 

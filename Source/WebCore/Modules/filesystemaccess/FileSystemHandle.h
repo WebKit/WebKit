@@ -36,7 +36,7 @@ template<typename> class DOMPromiseDeferred;
 
 class FileSystemStorageConnection;
 
-class FileSystemHandle : public ActiveDOMObject, public CanMakeWeakPtr<FileSystemHandle>, public RefCounted<FileSystemHandle> {
+class FileSystemHandle : public ActiveDOMObject, public CanMakeWeakPtr<FileSystemHandle>, public ThreadSafeRefCounted<FileSystemHandle> {
     WTF_MAKE_ISO_ALLOCATED(FileSystemHandle);
 public:
     virtual ~FileSystemHandle();
@@ -49,6 +49,7 @@ public:
     const String& name() const { return m_name; }
     FileSystemHandleIdentifier identifier() const { return m_identifier; }
     bool isClosed() const { return m_isClosed; }
+    void close();
 
     void isSameEntry(FileSystemHandle&, DOMPromiseDeferred<IDLBoolean>&&) const;
     void move(FileSystemHandle&, const String& newName, DOMPromiseDeferred<void>&&);

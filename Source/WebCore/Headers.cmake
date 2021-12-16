@@ -172,6 +172,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     Modules/filesystemaccess/FileSystemDirectoryHandle.h
     Modules/filesystemaccess/FileSystemFileHandle.h
     Modules/filesystemaccess/FileSystemHandle.h
+    Modules/filesystemaccess/FileSystemHandleCloseScope.h
     Modules/filesystemaccess/FileSystemHandleIdentifier.h
     Modules/filesystemaccess/FileSystemStorageConnection.h
     Modules/filesystemaccess/FileSystemSyncAccessHandle.h

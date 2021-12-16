@@ -47,7 +47,7 @@ public:
     void registerSyncAccessHandle(FileSystemSyncAccessHandleIdentifier, FileSystemSyncAccessHandle&);
     using CallbackIdentifier = WorkerFileSystemStorageConnectionCallbackIdentifier;
     void didIsSameEntry(CallbackIdentifier, ExceptionOr<bool>&&);
-    void didGetHandle(CallbackIdentifier, ExceptionOr<FileSystemHandleIdentifier>&&);
+    void didGetHandle(CallbackIdentifier, ExceptionOr<Ref<FileSystemHandleCloseScope>>&&);
     void didResolve(CallbackIdentifier, ExceptionOr<Vector<String>>&&);
     void completeStringCallback(CallbackIdentifier, ExceptionOr<String>&&);
     void didCreateSyncAccessHandle(CallbackIdentifier, ExceptionOr<std::pair<FileSystemSyncAccessHandleIdentifier, FileSystem::PlatformFileHandle>>&&);
@@ -68,10 +68,10 @@ private:
     void removeEntry(FileSystemHandleIdentifier, const String& name, bool deleteRecursively, FileSystemStorageConnection::VoidCallback&&) final;
     void resolve(FileSystemHandleIdentifier, FileSystemHandleIdentifier, FileSystemStorageConnection::ResolveCallback&&) final;
     void getHandleNames(FileSystemHandleIdentifier, GetHandleNamesCallback&&) final;
-    void getHandle(FileSystemHandleIdentifier, const String& name, GetHandleWithTypeCallback&&) final;
+    void getHandle(FileSystemHandleIdentifier, const String& name, GetHandleCallback&&) final;
     void getFile(FileSystemHandleIdentifier, StringCallback&&) final;
     void createSyncAccessHandle(FileSystemHandleIdentifier, FileSystemStorageConnection::GetAccessHandleCallback&&) final;
-    void close(FileSystemHandleIdentifier, FileSystemSyncAccessHandleIdentifier, FileSystemStorageConnection::VoidCallback&&) final;
+    void closeSyncAccessHandle(FileSystemHandleIdentifier, FileSystemSyncAccessHandleIdentifier, FileSystemStorageConnection::VoidCallback&&) final;
     void registerSyncAccessHandle(FileSystemSyncAccessHandleIdentifier, ScriptExecutionContextIdentifier) final { };
     void unregisterSyncAccessHandle(FileSystemSyncAccessHandleIdentifier) final;
     void invalidateAccessHandle(FileSystemSyncAccessHandleIdentifier) final;

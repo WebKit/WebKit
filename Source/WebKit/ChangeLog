@@ -1,3 +1,30 @@
+2021-12-16  Sihui Liu  <sihui_liu@apple.com>
+
+        REGRESSION (r286601): storage/filesystemaccess/sync-access-handle-read-write-worker.html and file-system-access/sandboxed_FileSystemSyncAccessHandle-truncate.https.tentative.worker.html are consistently failing
+        https://bugs.webkit.org/show_bug.cgi?id=234271
+        <rdar://problem/86434111>
+
+        Reviewed by Youenn Fablet.
+
+        * NetworkProcess/storage/FileSystemStorageHandle.cpp:
+        (WebKit::FileSystemStorageHandle::close):
+        (WebKit::FileSystemStorageHandle::closeSyncAccessHandle):
+        * NetworkProcess/storage/FileSystemStorageHandle.h:
+        * NetworkProcess/storage/FileSystemStorageManager.cpp:
+        (WebKit::FileSystemStorageManager::closeHandle):
+        * NetworkProcess/storage/NetworkStorageManager.cpp:
+        (WebKit::NetworkStorageManager::closeSyncAccessHandle):
+        (WebKit::NetworkStorageManager::closeAccessHandle): Deleted.
+        * NetworkProcess/storage/NetworkStorageManager.h:
+        * NetworkProcess/storage/NetworkStorageManager.messages.in:
+        * WebProcess/WebCoreSupport/WebFileSystemStorageConnection.cpp:
+        (WebKit::WebFileSystemStorageConnection::getFileHandle):
+        (WebKit::WebFileSystemStorageConnection::getDirectoryHandle):
+        (WebKit::WebFileSystemStorageConnection::closeSyncAccessHandle):
+        (WebKit::WebFileSystemStorageConnection::getHandle):
+        (WebKit::WebFileSystemStorageConnection::close): Deleted.
+        * WebProcess/WebCoreSupport/WebFileSystemStorageConnection.h:
+
 2021-12-16  Adrian Perez de Castro  <aperez@igalia.com>
 
         Non-unified build fixes, late-ish December 2021 edition

@@ -30,6 +30,7 @@
 #include <WebCore/ExceptionOr.h>
 #include <WebCore/FileSystemDirectoryHandle.h>
 #include <WebCore/FileSystemFileHandle.h>
+#include <WebCore/FileSystemHandleCloseScope.h>
 #include <WebCore/ScriptExecutionContext.h>
 #include <WebCore/WorkerFileSystemStorageConnection.h>
 #include <WebCore/WorkerGlobalScope.h>
@@ -78,13 +79,13 @@ void WebFileSystemStorageConnection::getFileHandle(WebCore::FileSystemHandleIden
     if (!m_connection)
         return completionHandler(WebCore::Exception { WebCore::UnknownError, "Connection is lost" });
 
-    m_connection->sendWithAsyncReply(Messages::NetworkStorageManager::GetFileHandle(identifier, name, createIfNecessary), [name, completionHandler = WTFMove(completionHandler)](auto result) mutable {
+    m_connection->sendWithAsyncReply(Messages::NetworkStorageManager::GetFileHandle(identifier, name, createIfNecessary), [this, protectedThis = Ref { *this }, name, completionHandler = WTFMove(completionHandler)](auto result) mutable {
         if (!result)
             return completionHandler(convertToException(result.error()));
 
         auto identifier = result.value();
         ASSERT(identifier.isValid());
-        completionHandler(WTFMove(identifier));
+        completionHandler(WebCore::FileSystemHandleCloseScope::create(identifier, false, *this));
     });
 }
 
@@ -93,13 +94,13 @@ void WebFileSystemStorageConnection::getDirectoryHandle(WebCore::FileSystemHandl
     if (!m_connection)
         return completionHandler(WebCore::Exception { WebCore::UnknownError, "Connection is lost" });
 
-    m_connection->sendWithAsyncReply(Messages::NetworkStorageManager::GetDirectoryHandle(identifier, name, createIfNecessary), [name, completionHandler = WTFMove(completionHandler)](auto result) mutable {
+    m_connection->sendWithAsyncReply(Messages::NetworkStorageManager::GetDirectoryHandle(identifier, name, createIfNecessary), [this, protectedThis = Ref { *this }, name, completionHandler = WTFMove(completionHandler)](auto result) mutable {
         if (!result)
             return completionHandler(convertToException(result.error()));
 
         auto identifier = result.value();
         ASSERT(identifier.isValid());
-        completionHandler(WTFMove(identifier));
+        completionHandler(WebCore::FileSystemHandleCloseScope::create(identifier, true, *this));
     });
 }
 
@@ -153,12 +154,12 @@ void WebFileSystemStorageConnection::createSyncAccessHandle(WebCore::FileSystemH
     });
 }
 
-void WebFileSystemStorageConnection::close(WebCore::FileSystemHandleIdentifier identifier, WebCore::FileSystemSyncAccessHandleIdentifier accessHandleIdentifier, VoidCallback&& completionHandler)
+void WebFileSystemStorageConnection::closeSyncAccessHandle(WebCore::FileSystemHandleIdentifier identifier, WebCore::FileSystemSyncAccessHandleIdentifier accessHandleIdentifier, VoidCallback&& completionHandler)
 {
     if (!m_connection)
         return completionHandler(WebCore::Exception { WebCore::UnknownError, "Connection is lost" });
 
-    m_connection->sendWithAsyncReply(Messages::NetworkStorageManager::CloseAccessHandle(identifier, accessHandleIdentifier), [completionHandler = WTFMove(completionHandler)](auto error) mutable {
+    m_connection->sendWithAsyncReply(Messages::NetworkStorageManager::CloseSyncAccessHandle(identifier, accessHandleIdentifier), [completionHandler = WTFMove(completionHandler)](auto error) mutable {
         completionHandler(convertToExceptionOr(error));
     });
 }
@@ -176,16 +177,18 @@ void WebFileSystemStorageConnection::getHandleNames(WebCore::FileSystemHandleIde
     });
 }
 
-void WebFileSystemStorageConnection::getHandle(WebCore::FileSystemHandleIdentifier identifier, const String& name, FileSystemStorageConnection::GetHandleWithTypeCallback&& completionHandler)
+void WebFileSystemStorageConnection::getHandle(WebCore::FileSystemHandleIdentifier identifier, const String& name, FileSystemStorageConnection::GetHandleCallback&& completionHandler)
 {
     if (!m_connection)
         return completionHandler(WebCore::Exception { WebCore::UnknownError, "Connection is lost" });
 
-    m_connection->sendWithAsyncReply(Messages::NetworkStorageManager::GetHandle(identifier, name), [completionHandler = WTFMove(completionHandler)](auto result) mutable {
+    m_connection->sendWithAsyncReply(Messages::NetworkStorageManager::GetHandle(identifier, name), [this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](auto result) mutable {
         if (!result)
             return completionHandler(convertToException(result.error()));
-
-        completionHandler(WTFMove(result.value()));
+        
+        auto [identifier, isDirectory] = result.value();
+        ASSERT(identifier.isValid());
+        completionHandler(WebCore::FileSystemHandleCloseScope::create(identifier, isDirectory, *this));
     });
 }
 

@@ -379,7 +379,7 @@ void NetworkStorageManager::createSyncAccessHandle(WebCore::FileSystemHandleIden
     fileHandle.close();
 }
 
-void NetworkStorageManager::closeAccessHandle(WebCore::FileSystemHandleIdentifier identifier, WebCore::FileSystemSyncAccessHandleIdentifier accessHandleIdentifier, CompletionHandler<void(std::optional<FileSystemStorageError>)>&& completionHandler)
+void NetworkStorageManager::closeSyncAccessHandle(WebCore::FileSystemHandleIdentifier identifier, WebCore::FileSystemSyncAccessHandleIdentifier accessHandleIdentifier, CompletionHandler<void(std::optional<FileSystemStorageError>)>&& completionHandler)
 {
     ASSERT(!RunLoop::isMain());
 
@@ -387,7 +387,7 @@ void NetworkStorageManager::closeAccessHandle(WebCore::FileSystemHandleIdentifie
     if (!handle)
         return completionHandler(FileSystemStorageError::Unknown);
 
-    completionHandler(handle->close(accessHandleIdentifier));
+    completionHandler(handle->closeSyncAccessHandle(accessHandleIdentifier));
 }
 
 void NetworkStorageManager::getHandleNames(WebCore::FileSystemHandleIdentifier identifier, CompletionHandler<void(Expected<Vector<String>, FileSystemStorageError>)>&& completionHandler)
