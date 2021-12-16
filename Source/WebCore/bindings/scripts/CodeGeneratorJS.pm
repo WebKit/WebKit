@@ -5969,10 +5969,6 @@ sub GenerateCallWith
     $indent ||= "    ";
 
     my @callWithArgs;
-    if ($codeGenerator->ExtendedAttributeContains($callWith, "ExecState")) {
-        push(@callWithArgs, "*${globalObject}");
-        push(@callWithArgs, $callFrameReference);
-    }
     # Global object of current realm (https://html.spec.whatwg.org/multipage/webappapis.html#concept-current-everything)
     if ($codeGenerator->ExtendedAttributeContains($callWith, "GlobalObject")) {
         push(@callWithArgs, "*${globalObject}");
@@ -7729,7 +7725,8 @@ sub GenerateConstructorDefinition
             my $functionString = GenerateParametersCheck($outputArray, $operation, $interface, $functionImplementationName, "    ");
 
             push(@$outputArray, "    auto object = ${functionString};\n");
-            push(@$outputArray, "    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());\n") if $codeGenerator->ExtendedAttributeContains($interface->extendedAttributes->{CallWith}, "ExecState");
+            push(@$outputArray, "    if constexpr (IsExceptionOr<decltype(object)>)\n");
+            push(@$outputArray, "        RETURN_IF_EXCEPTION(throwScope, { });\n");
 
             push(@$outputArray, "    static_assert(TypeOrExceptionOrUnderlyingType<decltype(object)>::isRef);\n");
 

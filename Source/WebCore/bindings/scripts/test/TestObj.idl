@@ -189,19 +189,19 @@ enum TestConfidence { "high", "kinda-low" };
     [ImplementedAs=onfoo] attribute EventHandler onwebkitfoo;
 
     // 'CallWith' extended attribute
-    [CallWith=GlobalObject] undefined withExecStateVoid();
+    [CallWith=GlobalObject] undefined withGlobalObjectVoid();
     [CallWith=RelevantGlobalObject] undefined withRelevantGlobalObjectVoid();
-    [CallWith=GlobalObject] TestObj withExecStateObj();
+    [CallWith=GlobalObject] TestObj withGlobalObjectObj();
     [CallWith=ScriptExecutionContext] undefined withScriptExecutionContext();
     [CallWith=RelevantScriptExecutionContext] undefined withRelevantScriptExecutionContext();
-    [CallWith=ScriptExecutionContext&ExecState] undefined withScriptExecutionContextAndExecState();
-    [CallWith=  ScriptExecutionContext  &  ExecState  ] TestObj withScriptExecutionContextAndExecStateWithSpaces();
+    [CallWith=ScriptExecutionContext&GlobalObject] undefined withScriptExecutionContextAndGlobalObject();
+    [CallWith=  ScriptExecutionContext  &  GlobalObject  ] TestObj withScriptExecutionContextAndGlobalObjectWithSpaces();
     [CallWith=Document] undefined withDocumentArgument();
     [CallWith=RelevantDocument] undefined withRelevantDocumentArgument();
     [CallWith=IncumbentDocument] undefined withCallerDocumentArgument();
     [CallWith=IncumbentWindow] undefined withCallerWindowArgument();
 
-    [CallWith=GlobalObject] attribute long withExecStateAttribute;
+    [CallWith=GlobalObject] attribute long withGlobalObjectAttribute;
     [CallWith=GlobalObject, SetterCallWith=ActiveWindow&FirstWindow] attribute long withCallWithAndSetterCallWithAttribute;
     [SetterCallWith=IncumbentWindow&FirstWindow] attribute DOMString withSetterCallWithAttribute;
 

@@ -127,6 +127,8 @@ template<> EncodedJSValue JSC_HOST_CALL_ATTRIBUTES JSTestLegacyFactoryFunctionLe
     auto str3 = argument2.value().isUndefined() ? String() : convert<IDLDOMString>(*lexicalGlobalObject, argument2.value());
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     auto object = TestLegacyFactoryFunction::createForLegacyFactoryFunction(document, WTFMove(str1), WTFMove(str2), WTFMove(str3));
+    if constexpr (IsExceptionOr<decltype(object)>)
+        RETURN_IF_EXCEPTION(throwScope, { });
     static_assert(TypeOrExceptionOrUnderlyingType<decltype(object)>::isRef);
     auto jsValue = toJSNewlyCreated<IDLInterface<TestLegacyFactoryFunction>>(*lexicalGlobalObject, *castedThis->globalObject(), throwScope, WTFMove(object));
     if constexpr (IsExceptionOr<decltype(object)>)

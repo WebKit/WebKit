@@ -51,7 +51,7 @@
         },
         "CallWith": {
             "contextsAllowed": ["attribute", "operation"],
-            "values": ["Document", "RelevantDocument", "ExecState", "ScriptExecutionContext", "RelevantScriptExecutionContext", "GlobalObject", "RelevantGlobalObject", "ActiveWindow", "FirstWindow", "EntryDocument", "World", "PropertyName"],
+            "values": ["Document", "RelevantDocument", "ScriptExecutionContext", "RelevantScriptExecutionContext", "GlobalObject", "RelevantGlobalObject", "ActiveWindow", "FirstWindow", "EntryDocument", "World", "PropertyName"],
             "standard": {
                 "url": "https://html.spec.whatwg.org/multipage/webappapis.html#concept-current-everything",
                 "note": "Currently, Document / ScriptExecutionContext / GlobalObject values denote current realm, which is a [[Realm]] of the currently-running function object."
@@ -312,7 +312,7 @@
         },
         "LegacyFactoryFunctionCallWith": {
             "contextsAllowed": ["interface"],
-            "values": ["Document", "ExecState", "RuntimeFlags", "ScriptExecutionContext"],
+            "values": ["Document", "RuntimeFlags", "ScriptExecutionContext"],
             "supportsConjunction": true
         },
         "LegacyFactoryFunctionEnabledBySetting": {
@@ -482,7 +482,7 @@
         },
         "SetterCallWith": {
             "contextsAllowed": ["attribute"],
-            "values": ["ExecState", "ScriptExecutionContext", "GlobalObject", "ActiveWindow", "FirstWindow", "PropertyName"],
+            "values": ["ScriptExecutionContext", "GlobalObject", "ActiveWindow", "FirstWindow", "PropertyName"],
             "supportsConjunction": true
         },
         "SettingsConditionallyReadWrite": {
