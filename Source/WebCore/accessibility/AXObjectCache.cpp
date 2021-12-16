@@ -1082,6 +1082,7 @@ void AXObjectCache::notificationPostTimerFired()
     // In tests, posting notifications has a tendency to immediately queue up other notifications, which can lead to unexpected behavior
     // when the notification list is cleared at the end. Instead copy this list at the start.
     auto notifications = WTFMove(m_notificationsToPost);
+    m_notificationsToPost.clear();
 
     // Filter out the notifications that are not going to be posted to platform clients.
     Vector<std::pair<RefPtr<AXCoreObject>, AXNotification>> notificationsToPost;
@@ -1133,6 +1134,7 @@ void AXObjectCache::passwordNotificationPostTimerFired()
     // In tests, posting notifications has a tendency to immediately queue up other notifications, which can lead to unexpected behavior
     // when the notification list is cleared at the end. Instead copy this list at the start.
     auto notifications = WTFMove(m_passwordNotificationsToPost);
+    m_passwordNotificationsToPost.clear();
 
     for (auto& notification : notifications)
         postTextStateChangePlatformNotification(notification.get(), AXTextEditTypeInsert, " ", VisiblePosition());
