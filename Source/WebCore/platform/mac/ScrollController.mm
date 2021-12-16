@@ -125,6 +125,9 @@ bool ScrollController::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
         return true;
     }
 
+    if (wheelEvent.phase() == PlatformWheelEventPhase::Changed)
+        m_lastActivePhaseVelocity = -wheelEvent.scrollingVelocity();
+
     bool isMomentumScrollEvent = (wheelEvent.momentumPhase() != PlatformWheelEventPhase::None);
     if (m_ignoreMomentumScrolls && (isMomentumScrollEvent || m_isAnimatingRubberBand)) {
         if (wheelEvent.momentumPhase() == PlatformWheelEventPhase::Ended) {
@@ -162,20 +165,27 @@ bool ScrollController::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
     deltaX += eventCoalescedDeltaX;
     deltaY += eventCoalescedDeltaY;
 
-    // Slightly prefer scrolling vertically by applying the = case to deltaY
-    // FIXME: Use wheelDeltaBiasingTowardsVertical().
-    if (fabsf(deltaY) >= fabsf(deltaX))
-        deltaX = 0;
-    else
-        deltaY = 0;
-
-    bool shouldStretch = false;
-
-    PlatformWheelEventPhase momentumPhase = wheelEvent.momentumPhase();
-
+    auto momentumPhase = wheelEvent.momentumPhase();
     // If we are starting momentum scrolling then do some setup.
     if (!m_momentumScrollInProgress && (momentumPhase == PlatformWheelEventPhase::Began || momentumPhase == PlatformWheelEventPhase::Changed))
         m_momentumScrollInProgress = true;
+
+    // Slightly prefer scrolling vertically by applying the = case to deltaY
+    // FIXME: Use wheelDeltaBiasingTowardsVertical().
+    if (m_momentumScrollInProgress) {
+        // Use the same axis locking for the duration of a momentum scroll.
+        if (!m_lastActivePhaseVelocity.width())
+            deltaX = 0;
+        else if (!m_lastActivePhaseVelocity.height())
+            deltaY = 0;
+    } else {
+        if (fabsf(deltaY) >= fabsf(deltaX))
+            deltaX = 0;
+        else
+            deltaY = 0;
+    }
+
+    bool shouldStretch = false;
 
     auto timeDelta = wheelEvent.timestamp() - m_lastMomentumScrollTimestamp;
     if (m_inScrollGesture || m_momentumScrollInProgress) {

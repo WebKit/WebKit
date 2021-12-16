@@ -1,3 +1,27 @@
+2021-12-16  Alan Coon  <alancoon@apple.com>
+
+        Apply patch. rdar://problem/86505382
+
+    2021-12-16  Simon Fraser  <simon.fraser@apple.com>
+
+            rdar://86505382 ([root] StarE21E179 / J314c : Slight but noticeable J-shaped "wobble" at tail end of sm-med scrolls)
+
+            Branch patch reviewed by Tim Horton. 
+
+            During momentum scrolling, we axis-lock on a per-event basis by zeroing out the smaller
+            of the X and Y deltas. This is a problem for slightly diagonal scrolls, where, towards
+            the tail, in a Y-biased scroll we can get individual events whose X delta is later than
+            their Y delta.
+
+            To fix this, use the same axis locking for all the events in a gesture, based on the
+            scrollingVelocity() of the last fingers-down event. This velocity is not strictly
+            X- or Y-locked; it can contain both X and Y deltas for strongly diagonal gestures,
+            but that's what we want.
+
+            * platform/ScrollController.h:
+            * platform/mac/ScrollController.mm:
+            (WebCore::ScrollController::handleWheelEvent):
+
 2021-12-13  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r286907. rdar://problem/86307593

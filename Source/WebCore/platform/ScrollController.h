@@ -217,6 +217,7 @@ private:
     FloatSize m_overflowScrollDelta;
     FloatSize m_stretchScrollForce;
     FloatSize m_momentumVelocity;
+    FloatSize m_lastActivePhaseVelocity;
 
     bool m_inScrollGesture { false };
     bool m_momentumScrollInProgress { false };
