@@ -28,6 +28,9 @@
 #include <wtf/BloomFilter.h>
 
 namespace WebCore {
+
+class Element;
+
 namespace Style {
 
 enum class MatchElement : uint8_t;

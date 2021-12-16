@@ -29,6 +29,7 @@
 #include "AuthenticationManager.h"
 #include "NetworkDataTaskBlob.h"
 #include "NetworkLoadParameters.h"
+#include "NetworkProcess.h"
 #include "NetworkSession.h"
 #include <WebCore/RegistrableDomain.h>
 #include <WebCore/ResourceError.h>

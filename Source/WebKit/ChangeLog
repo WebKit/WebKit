@@ -1,3 +1,15 @@
+2021-12-16  Adrian Perez de Castro  <aperez@igalia.com>
+
+        Non-unified build fixes, late-ish December 2021 edition
+        https://bugs.webkit.org/show_bug.cgi?id=234392
+
+        Unreviewed non-unified build fixes.
+
+        * NetworkProcess/NetworkDataTask.cpp: Add missing NetworkProcess.h header inclusion.
+        * NetworkProcess/NetworkSession.cpp: Add missing WebCore/SWServer.h heeader inclusion.
+        * UIProcess/Notifications/WebNotificationManagerProxy.cpp: Add missing
+        WebCore/NotificationData.h header inclusion.
+
 2021-12-16  Per Arne Vollan  <pvollan@apple.com>
 
         [watchOS] Adjust sandbox message filter

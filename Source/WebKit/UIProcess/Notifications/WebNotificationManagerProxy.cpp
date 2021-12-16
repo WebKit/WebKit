@@ -34,6 +34,7 @@
 #include "WebPageProxy.h"
 #include "WebProcessPool.h"
 #include "WebProcessProxy.h"
+#include <WebCore/NotificationData.h>
 
 namespace WebKit {
 using namespace WebCore;

@@ -28,6 +28,7 @@
 #include "ElementIterator.h"
 #include "RuleFeature.h"
 #include "SelectorFilter.h"
+#include "StyleRule.h"
 
 namespace WebCore::Style {
 

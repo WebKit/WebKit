@@ -25,6 +25,9 @@
 
 #pragma once
 
+#include <optional>
+#include <wtf/text/WTFString.h>
+
 namespace WebCore {
 
 enum class NotificationDirection : uint8_t;

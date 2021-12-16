@@ -48,6 +48,7 @@
 #include <WebCore/CookieJar.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/RuntimeApplicationChecks.h>
+#include <WebCore/SWServer.h>
 
 #if PLATFORM(COCOA)
 #include "DefaultWebBrowserChecks.h"
