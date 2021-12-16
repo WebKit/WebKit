@@ -149,7 +149,7 @@ static InputTypeFactoryMap createInputTypeFactoryMap()
 Ref<InputType> InputType::create(HTMLInputElement& element, const AtomString& typeName)
 {
     if (!typeName.isEmpty()) {
-        static const auto factoryMap = makeNeverDestroyed(createInputTypeFactoryMap());
+        static NeverDestroyed factoryMap = createInputTypeFactoryMap();
         auto&& [conditional, factory] = factoryMap.get().get(typeName);
         if (factory && (!conditional || std::invoke(conditional, element.document().settings())))
             return factory(element);

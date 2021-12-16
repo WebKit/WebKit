@@ -178,10 +178,10 @@ void VideoFullscreenModelVideoElement::setVideoLayerGravity(MediaPlayer::VideoGr
         m_videoElement->setVideoFullscreenGravity(gravity);
 }
 
-const Vector<AtomString>& VideoFullscreenModelVideoElement::observedEventNames()
+Span<const AtomString> VideoFullscreenModelVideoElement::observedEventNames()
 {
-    static const auto names = makeNeverDestroyed(Vector<AtomString> { eventNames().resizeEvent });
-    return names;
+    static NeverDestroyed names = std::array { eventNames().resizeEvent };
+    return names.get();
 }
 
 const AtomString& VideoFullscreenModelVideoElement::eventNameAll()

@@ -236,7 +236,7 @@ String RenderThemeCocoa::mediaControlsFormattedStringForDuration(const double du
 
 FontCascadeDescription& RenderThemeCocoa::cachedSystemFontDescription(CSSValueID valueID) const
 {
-    static auto fontDescriptions = makeNeverDestroyed<std::array<FontCascadeDescription, 17>>({ });
+    static NeverDestroyed<std::array<FontCascadeDescription, 17>> fontDescriptions;
 
     ASSERT(std::all_of(std::begin(fontDescriptions.get()), std::end(fontDescriptions.get()), [](auto& description) {
         return !description.isAbsoluteSize();

@@ -3431,21 +3431,21 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
     if (_page->editorState().selectionIsNone)
         return nil;
 
-    static auto plainTextTypes = makeNeverDestroyed([] {
+    static NeverDestroyed plainTextTypes = [] {
         auto plainTextTypes = adoptNS([[NSMutableArray alloc] init]);
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         [plainTextTypes addObject:(id)kUTTypeURL];
 ALLOW_DEPRECATED_DECLARATIONS_END
         [plainTextTypes addObjectsFromArray:UIPasteboardTypeListString];
         return plainTextTypes;
-    }());
-    static auto richTypes = makeNeverDestroyed([] {
+    }();
+    static NeverDestroyed richTypes = [] {
         auto richTypes = adoptNS([[NSMutableArray alloc] init]);
         [richTypes addObject:WebCore::WebArchivePboardType];
         [richTypes addObjectsFromArray:UIPasteboardTypeListImage];
         [richTypes addObjectsFromArray:plainTextTypes.get().get()];
         return richTypes;
-    }());
+    }();
 
     return (_page->editorState().isContentRichlyEditable) ? richTypes.get().get() : plainTextTypes.get().get();
 }

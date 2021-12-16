@@ -40,9 +40,6 @@ TEST(WTF_NeverDestroyed, Construct)
     { static NeverDestroyed<LifecycleLogger> x("name"); UNUSED_PARAM(x); }
     ASSERT_STREQ("construct(name) ", takeLogStr().c_str());
 
-    { static auto x = makeNeverDestroyed(LifecycleLogger { "name" }); UNUSED_PARAM(x); }
-    ASSERT_STREQ("construct(name) move-construct(name) destruct(<default>) ", takeLogStr().c_str());
-
     {
         static NeverDestroyed<LifecycleLogger> x("name");
         LifecycleLogger l = x.get();
@@ -53,20 +50,6 @@ TEST(WTF_NeverDestroyed, Construct)
 
     { static NeverDestroyed<LifecycleLogger> x { [] { return LifecycleLogger { "name" }; }() }; UNUSED_PARAM(x); }
     ASSERT_STREQ("construct(name) move-construct(name) destruct(<default>) ", takeLogStr().c_str());
-
-    {
-        static auto x = makeNeverDestroyed([] {
-            LifecycleLogger l { "name" };
-            l.setName("x");
-            return l;
-        }());
-        ASSERT_STREQ(x.get().name, "x");
-    }
-#if COMPILER(MSVC) && !defined(NDEBUG)
-    ASSERT_STREQ("construct(name) set-name(x) move-construct(x) destruct(<default>) move-construct(x) destruct(<default>) ", takeLogStr().c_str());
-#else
-    ASSERT_STREQ("construct(name) set-name(x) move-construct(x) destruct(<default>) ", takeLogStr().c_str());
-#endif
 
     {
         static NeverDestroyed<LifecycleLogger> x;
@@ -84,25 +67,11 @@ TEST(WTF_NeverDestroyed, Construct)
 
     { static NeverDestroyed<MoveOnlyLifecycleLogger> x { [] { return MoveOnlyLifecycleLogger { "name" }; }() }; UNUSED_PARAM(x); }
     ASSERT_STREQ("construct(name) move-construct(name) destruct(<default>) ", takeLogStr().c_str());
-
-    {
-        static auto x = makeNeverDestroyed([] {
-            MoveOnlyLifecycleLogger l { "name" };
-            l.setName("x");
-            return l;
-        }());
-        UNUSED_PARAM(x);
-    }
-#if COMPILER(MSVC) && !defined(NDEBUG)
-    ASSERT_STREQ("construct(name) set-name(x) move-construct(x) destruct(<default>) move-construct(x) destruct(<default>) ", takeLogStr().c_str());
-#else
-    ASSERT_STREQ("construct(name) set-name(x) move-construct(x) destruct(<default>) ", takeLogStr().c_str());
-#endif
 }
 
 static const Vector<int>& list()
 {
-    static const auto x = makeNeverDestroyed(Vector<int> { 1, 2, 3 });
+    static const NeverDestroyed x = Vector<int> { 1, 2, 3 };
     return x;
 }
 

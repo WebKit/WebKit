@@ -123,7 +123,7 @@ Element* FormatBlockCommand::elementForFormatBlockCommand(const std::optional<Si
 
 bool isElementForFormatBlock(const QualifiedName& tagName)
 {
-    static const auto blockTags = makeNeverDestroyed(MemoryCompactLookupOnlyRobinHoodHashSet<QualifiedName> {
+    static NeverDestroyed blockTags = MemoryCompactLookupOnlyRobinHoodHashSet<QualifiedName> {
         addressTag,
         articleTag,
         asideTag,
@@ -146,7 +146,7 @@ bool isElementForFormatBlock(const QualifiedName& tagName)
         pTag,
         preTag,
         sectionTag,
-    });
+    };
     return blockTags.get().contains(tagName);
 }
 

@@ -1764,12 +1764,10 @@ void AVFWrapper::checkPlayability()
 {
     LOG(Media, "AVFWrapper::checkPlayability(%p)", this);
 
-    static auto propertyKeyName = makeNeverDestroyed([] {
-        const void* keyNames[] = {
-            AVCFAssetPropertyPlayable
-        };
+    static NeverDestroyed propertyKeyName = [] {
+        const void* keyNames[] = { AVCFAssetPropertyPlayable };
         return adoptCF(CFArrayCreate(0, keyNames, std::size(keyNames), &kCFTypeArrayCallBacks));
-    }());
+    }();
 
     AVCFAssetLoadValuesAsynchronouslyForProperties(avAsset(), propertyKeyName.get().get(), loadPlayableCompletionCallback, callbackContext());
 }

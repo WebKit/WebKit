@@ -100,11 +100,11 @@ Database::~Database()
 
 const MemoryCompactLookupOnlyRobinHoodHashMap<String, TableAndIndexPair>& Database::expectedTableAndIndexQueries()
 {
-    static auto expectedTableAndIndexQueries = makeNeverDestroyed(MemoryCompactLookupOnlyRobinHoodHashMap<String, TableAndIndexPair> {
+    static NeverDestroyed expectedTableAndIndexQueries = MemoryCompactLookupOnlyRobinHoodHashMap<String, TableAndIndexPair> {
         { "PCMObservedDomains"_s, std::make_pair<String, std::optional<String>>(createPCMObservedDomain, std::nullopt) },
         { "UnattributedPrivateClickMeasurement"_s, std::make_pair<String, std::optional<String>>(createUnattributedPrivateClickMeasurement, stripIndexQueryToMatchStoredValue(createUniqueIndexUnattributedPrivateClickMeasurement)) },
         { "AttributedPrivateClickMeasurement"_s, std::make_pair<String, std::optional<String>>(createAttributedPrivateClickMeasurement, stripIndexQueryToMatchStoredValue(createUniqueIndexAttributedPrivateClickMeasurement)) },
-    });
+    };
 
     return expectedTableAndIndexQueries;
 }

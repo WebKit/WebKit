@@ -1035,7 +1035,7 @@ END
 
 static $parameters{namespace}ConstructorFunctionMapEntry find$parameters{namespace}ElementConstructorFunction(const AtomString& localName)
 {
-    static const auto map = makeNeverDestroyed(create$parameters{namespace}FactoryMap());
+    static NeverDestroyed map = create$parameters{namespace}FactoryMap();
     return map.get().get(localName);
 }
 
@@ -1309,7 +1309,7 @@ END
 
 JSDOMObject* createJS$parameters{namespace}Wrapper(JSDOMGlobalObject* globalObject, Ref<$parameters{namespace}Element>&& element)
 {
-    static const auto functions = makeNeverDestroyed(create$parameters{namespace}WrapperMap());
+    static NeverDestroyed functions = create$parameters{namespace}WrapperMap();
     if (auto function = functions.get().get(element->localName()))
         return function(globalObject, WTFMove(element));
 END

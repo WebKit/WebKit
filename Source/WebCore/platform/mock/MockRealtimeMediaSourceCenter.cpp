@@ -229,21 +229,18 @@ private:
 
 static Vector<MockMediaDevice>& devices()
 {
-    static auto devices = makeNeverDestroyed([] {
-        return defaultDevices();
-    }());
+    static NeverDestroyed devices = defaultDevices();
     return devices;
 }
 
 static HashMap<String, MockMediaDevice>& deviceMap()
 {
-    static auto map = makeNeverDestroyed([] {
+    static NeverDestroyed map = [] {
         HashMap<String, MockMediaDevice> map;
         for (auto& device : devices())
             map.add(device.persistentId, device);
-
         return map;
-    }());
+    }();
     return map;
 }
 
@@ -396,57 +393,53 @@ std::optional<CaptureDevice> MockRealtimeMediaSourceCenter::captureDeviceWithPer
 
 Vector<CaptureDevice>& MockRealtimeMediaSourceCenter::microphoneDevices()
 {
-    static auto microphoneDevices = makeNeverDestroyed([] {
+    static NeverDestroyed microphoneDevices = [] {
         Vector<CaptureDevice> microphoneDevices;
         for (const auto& device : devices()) {
             if (device.isMicrophone())
                 microphoneDevices.append(toCaptureDevice(device));
         }
         return microphoneDevices;
-    }());
-
+    }();
     return microphoneDevices;
 }
 
 Vector<CaptureDevice>& MockRealtimeMediaSourceCenter::speakerDevices()
 {
-    static auto speakerDevices = makeNeverDestroyed([] {
+    static NeverDestroyed speakerDevices = [] {
         Vector<CaptureDevice> speakerDevices;
         for (const auto& device : devices()) {
             if (device.isSpeaker())
                 speakerDevices.append(toCaptureDevice(device));
         }
         return speakerDevices;
-    }());
-
+    }();
     return speakerDevices;
 }
 
 Vector<CaptureDevice>& MockRealtimeMediaSourceCenter::videoDevices()
 {
-    static auto videoDevices = makeNeverDestroyed([] {
+    static NeverDestroyed videoDevices = [] {
         Vector<CaptureDevice> videoDevices;
         for (const auto& device : devices()) {
             if (device.isCamera())
                 videoDevices.append(toCaptureDevice(device));
         }
         return videoDevices;
-    }());
-
+    }();
     return videoDevices;
 }
 
 Vector<CaptureDevice>& MockRealtimeMediaSourceCenter::displayDevices()
 {
-    static auto displayDevices = makeNeverDestroyed([] {
+    static NeverDestroyed displayDevices = [] {
         Vector<CaptureDevice> displayDevices;
         for (const auto& device : devices()) {
             if (device.isDisplay())
                 displayDevices.append(captureDeviceWithPersistentID(CaptureDevice::DeviceType::Screen, device.persistentId).value());
         }
         return displayDevices;
-    }());
-
+    }();
     return displayDevices;
 }
 

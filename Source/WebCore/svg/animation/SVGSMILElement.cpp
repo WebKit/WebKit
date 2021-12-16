@@ -457,7 +457,7 @@ void SVGSMILElement::parseBeginOrEnd(const String& parseString, BeginOrEnd begin
 
 bool SVGSMILElement::isSupportedAttribute(const QualifiedName& attrName)
 {
-    static const auto supportedAttributes = makeNeverDestroyed(MemoryCompactLookupOnlyRobinHoodHashSet<QualifiedName> {
+    static NeverDestroyed supportedAttributes = MemoryCompactLookupOnlyRobinHoodHashSet<QualifiedName> {
         SVGNames::beginAttr,
         SVGNames::endAttr,
         SVGNames::durAttr,
@@ -468,7 +468,7 @@ bool SVGSMILElement::isSupportedAttribute(const QualifiedName& attrName)
         SVGNames::attributeNameAttr,
         SVGNames::hrefAttr,
         XLinkNames::hrefAttr,
-    });
+    };
     return supportedAttributes.get().contains<SVGAttributeHashTranslator>(attrName);
 }
 

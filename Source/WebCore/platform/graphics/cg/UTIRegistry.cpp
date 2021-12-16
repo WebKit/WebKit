@@ -40,7 +40,7 @@ namespace WebCore {
 
 const MemoryCompactLookupOnlyRobinHoodHashSet<String>& defaultSupportedImageTypes()
 {
-    static const auto defaultSupportedImageTypes = makeNeverDestroyed([] {
+    static NeverDestroyed defaultSupportedImageTypes = [] {
         HashSet<String> defaultSupportedImageTypes = {
             "com.compuserve.gif"_s,
             "com.microsoft.bmp"_s,
@@ -75,7 +75,7 @@ const MemoryCompactLookupOnlyRobinHoodHashSet<String>& defaultSupportedImageType
                 filtered.add(imageType);
         }
         return filtered;
-    }());
+    }();
 
     return defaultSupportedImageTypes;
 }

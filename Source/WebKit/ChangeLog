@@ -1,3 +1,52 @@
+2021-12-15  Darin Adler  <darin@apple.com>
+
+        Many call sites use makeNeverDestroyed, but could instead take advantage of the NeverDestroyed deduction guide
+        https://bugs.webkit.org/show_bug.cgi?id=234350
+
+        Reviewed by Sam Weinig.
+
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.cpp:
+        (WebKit::ResourceLoadStatisticsDatabaseStore::expectedTableAndIndexQueries):
+        Use deduction.
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementDatabase.cpp:
+        (WebKit::PCM::Database::expectedTableAndIndexQueries): Ditto.
+        * Shared/Cocoa/DefaultWebBrowserChecks.mm:
+        (WebKit::getAppBoundDomainsTesting): Ditto.
+
+        * Shared/Cocoa/SandboxExtensionCocoa.mm:
+        (WebKit::createHandlesForResources): Make this more generic so it works with
+        other kinds of collections, not just Vector. Also right-size the Vector this
+        returns rather than letting it grow organically.
+        (WebKit::SandboxExtension::createReadOnlyHandlesForFiles): Ditto.
+        (WebKit::SandboxExtension::createHandleForReadWriteDirectory): Ditto.
+        (WebKit::SandboxExtension::createHandlesForMachLookup): Ditto. Also update this
+        function to take a Span or an initializer_list instead of a Vector.
+        (WebKit::SandboxExtension::createHandlesForIOKitClassExtensions): Ditto.
+        (WebKit::SandboxExtension::consumePermanently): Ditto.
+        * Shared/SandboxExtension.h: Updated for the above. Also corrected some unusual
+        use of #if to share a single declaration of some functions for both enabled
+        and disabled SANDBOX_EXTENSIONS.
+
+        * UIProcess/GPU/GPUProcessProxy.cpp:
+        (WebKit::nonBrowserServices): Use deduction.
+
+        * UIProcess/WebPageProxy.cpp: Remove unused MERGE_WHEEL_EVENTS.
+        (WebKit::attachmentElementServices): Return a Span, allowing us to use a
+        constexpr obviating the need for memory allocation or read/write memory,
+        (WebKit::gpuIOKitClasses): Ditto.
+        (WebKit::gpuMachServices): Ditto.
+        (WebKit::mediaRelatedMachServices): Ditto.
+        (WebKit::mediaRelatedIOKitClasses): Ditto.
+
+        * UIProcess/ios/TextCheckerIOS.mm:
+        (WebKit::mutableState): Use deduction.
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView supportedPasteboardTypesForCurrentSelection]): Ditto.
+        * UIProcess/mac/TextCheckerMac.mm:
+        (WebKit::mutableState): Ditto.
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::temporaryPDFDirectoryPath): Ditto.
+
 2021-12-16  Michael Saboff  <msaboff@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=234173

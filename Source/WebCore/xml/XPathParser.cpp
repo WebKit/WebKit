@@ -104,7 +104,7 @@ static MemoryCompactLookupOnlyRobinHoodHashMap<String, Step::Axis> createAxisNam
 
 static bool parseAxisName(const String& name, Step::Axis& type)
 {
-    static const auto axisNames = makeNeverDestroyed(createAxisNamesMap());
+    static NeverDestroyed axisNames = createAxisNamesMap();
     auto it = axisNames.get().find(name);
     if (it == axisNames.get().end())
         return false;

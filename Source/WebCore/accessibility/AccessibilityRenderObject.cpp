@@ -3214,18 +3214,18 @@ bool AccessibilityRenderObject::inheritsPresentationalRole() const
     // those child elements are also presentational. For example, <li> becomes presentational from <ul>.
     // http://www.w3.org/WAI/PF/aria/complete#presentation
 
-    const Vector<const HTMLQualifiedName*>* parentTags;
+    Span<const LazyNeverDestroyed<const HTMLQualifiedName>* const> parentTags;
     switch (roleValue()) {
     case AccessibilityRole::ListItem:
     case AccessibilityRole::ListMarker: {
-        static const auto listItemParents = makeNeverDestroyed(Vector<const HTMLQualifiedName*> { &dlTag.get(), &olTag.get(), &ulTag.get() });
-        parentTags = &listItemParents.get();
+        static constexpr std::array listItemParents { &dlTag, &olTag, &ulTag };
+        parentTags = listItemParents;
         break;
     }
     case AccessibilityRole::GridCell:
     case AccessibilityRole::Cell: {
-        static const auto tableCellParents = makeNeverDestroyed(Vector<const HTMLQualifiedName*> { &tableTag.get() });
-        parentTags = &tableCellParents.get();
+        static constexpr std::array tableCellParents { &tableTag };
+        parentTags = tableCellParents;
         break;
     }
     default:
@@ -3244,7 +3244,7 @@ bool AccessibilityRenderObject::inheritsPresentationalRole() const
         // If native tag of the parent element matches an acceptable name, then return
         // based on its presentational status.
         auto& name = downcast<Element>(*node).tagQName();
-        if (std::any_of(parentTags->begin(), parentTags->end(), [&name] (auto* possibleName) { return *possibleName == name; }))
+        if (std::any_of(parentTags.begin(), parentTags.end(), [&name] (auto* possibleName) { return possibleName->get() == name; }))
             return parent->roleValue() == AccessibilityRole::Presentational;
     }
 

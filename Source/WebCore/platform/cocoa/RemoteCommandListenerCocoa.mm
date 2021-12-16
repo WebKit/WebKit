@@ -31,37 +31,33 @@
 #import "Logging.h"
 #import <wtf/MainThread.h>
 
+#import <wtf/SortedArrayMap.h>
+
 #import "MediaRemoteSoftLink.h"
 
 namespace WebCore {
 
 static std::optional<MRMediaRemoteCommand> mediaRemoteCommandForPlatformCommand(PlatformMediaSession::RemoteControlCommandType command)
 {
-    static const auto commandMap = makeNeverDestroyed([] {
-        using CommandToActionMap = HashMap<PlatformMediaSession::RemoteControlCommandType, MRMediaRemoteCommand, WTF::IntHash<PlatformMediaSession::RemoteControlCommandType>, WTF::StrongEnumHashTraits<PlatformMediaSession::RemoteControlCommandType>>;
-
-        return CommandToActionMap {
-            { PlatformMediaSession::PlayCommand, MRMediaRemoteCommandPlay },
-            { PlatformMediaSession::PauseCommand, MRMediaRemoteCommandPause },
-            { PlatformMediaSession::StopCommand, MRMediaRemoteCommandStop },
-            { PlatformMediaSession::TogglePlayPauseCommand, MRMediaRemoteCommandTogglePlayPause },
-            { PlatformMediaSession::BeginSeekingBackwardCommand, MRMediaRemoteCommandBeginRewind },
-            { PlatformMediaSession::EndSeekingBackwardCommand, MRMediaRemoteCommandEndRewind },
-            { PlatformMediaSession::BeginSeekingForwardCommand, MRMediaRemoteCommandBeginFastForward },
-            { PlatformMediaSession::EndSeekingForwardCommand, MRMediaRemoteCommandEndFastForward },
-            { PlatformMediaSession::SeekToPlaybackPositionCommand, MRMediaRemoteCommandSeekToPlaybackPosition },
-            { PlatformMediaSession::SkipForwardCommand, MRMediaRemoteCommandSkipForward },
-            { PlatformMediaSession::SkipBackwardCommand, MRMediaRemoteCommandSkipBackward },
-            { PlatformMediaSession::NextTrackCommand, MRMediaRemoteCommandNextTrack },
-            { PlatformMediaSession::PreviousTrackCommand, MRMediaRemoteCommandPreviousTrack },
-        };
-    }());
-
-    auto it = commandMap.get().find(command);
-    if (it != commandMap.get().end())
-        return { it->value };
-
-    return { };
+    static constexpr std::pair<PlatformMediaSession::RemoteControlCommandType, MRMediaRemoteCommand> mappings[] = {
+        { PlatformMediaSession::PlayCommand, MRMediaRemoteCommandPlay },
+        { PlatformMediaSession::PauseCommand, MRMediaRemoteCommandPause },
+        { PlatformMediaSession::StopCommand, MRMediaRemoteCommandStop },
+        { PlatformMediaSession::TogglePlayPauseCommand, MRMediaRemoteCommandTogglePlayPause },
+        { PlatformMediaSession::BeginSeekingBackwardCommand, MRMediaRemoteCommandBeginRewind },
+        { PlatformMediaSession::EndSeekingBackwardCommand, MRMediaRemoteCommandEndRewind },
+        { PlatformMediaSession::BeginSeekingForwardCommand, MRMediaRemoteCommandBeginFastForward },
+        { PlatformMediaSession::EndSeekingForwardCommand, MRMediaRemoteCommandEndFastForward },
+        { PlatformMediaSession::SeekToPlaybackPositionCommand, MRMediaRemoteCommandSeekToPlaybackPosition },
+        { PlatformMediaSession::SkipForwardCommand, MRMediaRemoteCommandSkipForward },
+        { PlatformMediaSession::SkipBackwardCommand, MRMediaRemoteCommandSkipBackward },
+        { PlatformMediaSession::NextTrackCommand, MRMediaRemoteCommandNextTrack },
+        { PlatformMediaSession::PreviousTrackCommand, MRMediaRemoteCommandPreviousTrack },
+    };
+    static constexpr SortedArrayMap map { mappings };
+    if (auto* value = map.tryGet(command))
+        return *value;
+    return std::nullopt;
 }
 
 std::unique_ptr<RemoteCommandListenerCocoa> RemoteCommandListenerCocoa::create(RemoteCommandListenerClient& client)
@@ -140,7 +136,7 @@ RemoteCommandListenerCocoa::RemoteCommandListenerCocoa(RemoteCommandListenerClie
 
         LOG(Media, "RemoteCommandListenerCocoa::RemoteCommandListenerCocoa - received command %u", command);
 
-        PlatformMediaSession::RemoteControlCommandType platformCommand { PlatformMediaSession::NoCommand };
+        auto platformCommand { PlatformMediaSession::NoCommand };
         PlatformMediaSession::RemoteCommandArgument argument;
         MRMediaRemoteCommandHandlerStatus status = MRMediaRemoteCommandHandlerStatusSuccess;
 

@@ -47,7 +47,7 @@ RemoveFormatCommand::RemoveFormatCommand(Document& document)
 
 static bool isElementForRemoveFormatCommand(const Element* element)
 {
-    static const auto elements = makeNeverDestroyed(MemoryCompactLookupOnlyRobinHoodHashSet<QualifiedName> {
+    static NeverDestroyed elements = MemoryCompactLookupOnlyRobinHoodHashSet<QualifiedName> {
         acronymTag,
         bTag,
         bdoTag,
@@ -72,7 +72,7 @@ static bool isElementForRemoveFormatCommand(const Element* element)
         ttTag,
         uTag,
         varTag,
-    });
+    };
     return elements.get().contains(element->tagQName());
 }
 

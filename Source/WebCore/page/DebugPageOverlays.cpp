@@ -152,18 +152,16 @@ bool NonFastScrollableRegionOverlay::updateRegion()
 
 static const MemoryCompactLookupOnlyRobinHoodHashMap<String, SRGBA<uint8_t>>& touchEventRegionColors()
 {
-    static const auto regionColors = makeNeverDestroyed([] {
-        return MemoryCompactLookupOnlyRobinHoodHashMap<String, SRGBA<uint8_t>> { {
-            { "touchstart"_s, { 191, 191, 63, 50 } },
-            { "touchmove"_s, { 80, 204, 245, 50 } },
-            { "touchend"_s, { 191, 63, 127, 50 } },
-            { "touchforcechange"_s, { 63, 63, 191, 50 } },
-            { "wheel"_s, { 255, 128, 0, 50 } },
-            { "mousedown"_s, { 80, 245, 80, 50 } },
-            { "mousemove"_s, { 245, 245, 80, 50 } },
-            { "mouseup"_s, { 80, 245, 176, 50 } }
-        } };
-    }());
+    static NeverDestroyed regionColors { MemoryCompactLookupOnlyRobinHoodHashMap<String, SRGBA<uint8_t>> { {
+        { "touchstart"_s, { 191, 191, 63, 50 } },
+        { "touchmove"_s, { 80, 204, 245, 50 } },
+        { "touchend"_s, { 191, 63, 127, 50 } },
+        { "touchforcechange"_s, { 63, 63, 191, 50 } },
+        { "wheel"_s, { 255, 128, 0, 50 } },
+        { "mousedown"_s, { 80, 245, 80, 50 } },
+        { "mousemove"_s, { 245, 245, 80, 50 } },
+        { "mouseup"_s, { 80, 245, 176, 50 } },
+    } } };
     return regionColors;
 }
 

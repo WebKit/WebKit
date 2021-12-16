@@ -314,9 +314,6 @@
 #include <WebCore/HighlightVisibility.h>
 #endif
 
-// This controls what strategy we use for mouse wheel coalescing.
-#define MERGE_WHEEL_EVENTS 1
-
 #define MESSAGE_CHECK(process, assertion) MESSAGE_CHECK_BASE(assertion, process->connection())
 #define MESSAGE_CHECK_URL(process, url) MESSAGE_CHECK_BASE(checkURLReceivedFromCurrentOrPreviousWebProcess(process, url), process->connection())
 #define MESSAGE_CHECK_COMPLETION(process, assertion, completion) MESSAGE_CHECK_COMPLETION_BASE(assertion, process->connection(), completion)
@@ -8049,23 +8046,25 @@ void WebPageProxy::resetStateAfterProcessExited(ProcessTerminationReason termina
 }
 
 #if ENABLE(ATTACHMENT_ELEMENT) && PLATFORM(COCOA)
-static const Vector<ASCIILiteral>& attachmentElementServices()
+
+static Span<const ASCIILiteral> attachmentElementServices()
 {
-    static const auto services = makeNeverDestroyed(Vector<ASCIILiteral> {
+    static constexpr std::array services {
         "com.apple.iconservices"_s,
 #if PLATFORM(MAC)
         "com.apple.iconservices.store"_s,
 #endif
-    });
+    };
     return services;
 }
+
 #endif
 
 #if PLATFORM(COCOA)
-static const Vector<ASCIILiteral>& gpuIOKitClasses()
+
+static Span<const ASCIILiteral> gpuIOKitClasses()
 {
-    ASSERT(isMainRunLoop());
-    static const auto services = makeNeverDestroyed(Vector<ASCIILiteral> {
+    static constexpr std::array services {
 #if PLATFORM(IOS_FAMILY)
         "AGXDeviceUserClient"_s,
         "IOGPU"_s,
@@ -8086,33 +8085,32 @@ static const Vector<ASCIILiteral>& gpuIOKitClasses()
         "IOAudioEngineUserClient"_s,
         "IOSurfaceRootUserClient"_s,
 #endif
+        // FIXME: Is this also needed in PLATFORM(MACCATALYST)?
 #if PLATFORM(MAC) && CPU(ARM64)
         "IOMobileFramebufferUserClient"_s,
 #endif
-#if PLATFORM(MAC) && CPU(ARM64) || PLATFORM(IOS_FAMILY)
+#if (PLATFORM(MAC) && CPU(ARM64)) || PLATFORM(IOS_FAMILY)
         "IOSurfaceAcceleratorClient"_s,
 #endif
-    });
+    };
     return services;
 }
 
-static const Vector<ASCIILiteral>& gpuMachServices()
+static Span<const ASCIILiteral> gpuMachServices()
 {
-    ASSERT(isMainRunLoop());
-    static const auto services = makeNeverDestroyed(Vector<ASCIILiteral> {
+    static constexpr std::array services {
         "com.apple.MTLCompilerService"_s,
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
         "com.apple.cvmsServ"_s,
 #endif
-    });
+    };
     return services;
 }
 
 // FIXME(207716): The following should be removed when the GPU process is complete.
-static const Vector<ASCIILiteral>& mediaRelatedMachServices()
+static Span<const ASCIILiteral> mediaRelatedMachServices()
 {
-    ASSERT(isMainRunLoop());
-    static const auto services = makeNeverDestroyed(Vector<ASCIILiteral> {
+    static constexpr std::array services {
         "com.apple.audio.AudioComponentPrefs"_s, "com.apple.audio.AudioComponentRegistrar"_s,
         "com.apple.audio.AudioQueueServer"_s, "com.apple.coremedia.endpoint.xpc"_s,
         "com.apple.coremedia.routediscoverer.xpc"_s, "com.apple.coremedia.routingcontext.xpc"_s,
@@ -8140,26 +8138,30 @@ static const Vector<ASCIILiteral>& mediaRelatedMachServices()
         "com.apple.audio.audiohald"_s, "com.apple.audio.SandboxHelper"_s, "com.apple.coremedia.endpointstream.xpc"_s, "com.apple.coremedia.endpointplaybacksession.xpc"_s,
         "com.apple.coremedia.endpointremotecontrolsession.xpc"_s, "com.apple.coremedia.videodecoder"_s,
         "com.apple.coremedia.videoencoder"_s, "com.apple.lskdd"_s, "com.apple.trustd.agent"_s,
+#endif
+        // FIXME: Is this also needed in PLATFORM(MACCATALYST)?
 #if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED > 120000
         "com.apple.coremedia.samplebufferconsumer.xpc"_s,
 #endif
-#endif
-    });
+    };
     return services;
 }
 
-static const Vector<ASCIILiteral>& mediaRelatedIOKitClasses()
+static Span<const ASCIILiteral> mediaRelatedIOKitClasses()
 {
-    static const auto services = makeNeverDestroyed(Vector<ASCIILiteral> {
-#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
+#if !(PLATFORM(MAC) || PLATFORM(MACCATALYST))
+    return { };
+#else
+    static constexpr std::array services {
 #if CPU(ARM64)
         "AppleAVDUserClient"_s,
 #endif
         "RootDomainUserClient"_s,
-#endif
-    });
+    };
     return services;
+#endif
 }
+
 #endif
 
 WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& process, DrawingAreaProxy& drawingArea, RefPtr<API::WebsitePolicies>&& websitePolicies)
@@ -11055,4 +11057,3 @@ void WebPageProxy::requestCookieConsent(CompletionHandler<void(CookieConsentDeci
 #undef MESSAGE_CHECK_COMPLETION
 #undef MESSAGE_CHECK_URL
 #undef MESSAGE_CHECK
-#undef MERGE_WHEEL_EVENTS

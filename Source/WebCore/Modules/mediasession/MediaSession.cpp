@@ -42,6 +42,7 @@
 #include "Page.h"
 #include "PlatformMediaSessionManager.h"
 #include <wtf/JSONValues.h>
+#include <wtf/SortedArrayMap.h>
 
 namespace WebCore {
 
@@ -65,27 +66,19 @@ static const char* logClassName()
 
 static PlatformMediaSession::RemoteControlCommandType platformCommandForMediaSessionAction(MediaSessionAction action)
 {
-    static const auto commandMap = makeNeverDestroyed([] {
-        using ActionToCommandMap = HashMap<MediaSessionAction, PlatformMediaSession::RemoteControlCommandType, IntHash<MediaSessionAction>, WTF::StrongEnumHashTraits<MediaSessionAction>>;
-
-        return ActionToCommandMap {
-            { MediaSessionAction::Play, PlatformMediaSession::PlayCommand },
-            { MediaSessionAction::Pause, PlatformMediaSession::PauseCommand },
-            { MediaSessionAction::Seekforward, PlatformMediaSession::SkipForwardCommand },
-            { MediaSessionAction::Seekbackward, PlatformMediaSession::SkipBackwardCommand },
-            { MediaSessionAction::Previoustrack, PlatformMediaSession::PreviousTrackCommand },
-            { MediaSessionAction::Nexttrack, PlatformMediaSession::NextTrackCommand },
-            { MediaSessionAction::Stop, PlatformMediaSession::StopCommand },
-            { MediaSessionAction::Seekto, PlatformMediaSession::SeekToPlaybackPositionCommand },
-            { MediaSessionAction::Skipad, PlatformMediaSession::NextTrackCommand },
-        };
-    }());
-
-    auto it = commandMap.get().find(action);
-    if (it != commandMap.get().end())
-        return it->value;
-
-    return PlatformMediaSession::NoCommand;
+    static constexpr std::pair<MediaSessionAction, PlatformMediaSession::RemoteControlCommandType> mappings[] {
+        { MediaSessionAction::Play, PlatformMediaSession::PlayCommand },
+        { MediaSessionAction::Pause, PlatformMediaSession::PauseCommand },
+        { MediaSessionAction::Seekbackward, PlatformMediaSession::SkipBackwardCommand },
+        { MediaSessionAction::Seekforward, PlatformMediaSession::SkipForwardCommand },
+        { MediaSessionAction::Previoustrack, PlatformMediaSession::PreviousTrackCommand },
+        { MediaSessionAction::Nexttrack, PlatformMediaSession::NextTrackCommand },
+        { MediaSessionAction::Skipad, PlatformMediaSession::NextTrackCommand },
+        { MediaSessionAction::Stop, PlatformMediaSession::StopCommand },
+        { MediaSessionAction::Seekto, PlatformMediaSession::SeekToPlaybackPositionCommand },
+    };
+    static constexpr SortedArrayMap map { mappings };
+    return map.get(action, PlatformMediaSession::NoCommand);
 }
 
 static std::optional<std::pair<PlatformMediaSession::RemoteControlCommandType, PlatformMediaSession::RemoteCommandArgument>> platformCommandForMediaSessionAction(const MediaSessionActionDetails& actionDetails)

@@ -555,20 +555,16 @@ private:
 
 const HashSet<String, ASCIICaseInsensitiveHash>& SourceBufferParserWebM::webmMIMETypes()
 {
-    static auto types = makeNeverDestroyed([] {
-
+    static NeverDestroyed types = [] {
         HashSet<String, ASCIICaseInsensitiveHash> types;
-
 #if ENABLE(VP9)
         types.add("video/webm");
 #endif
 #if ENABLE(VORBIS) || ENABLE(OPUS)
         types.add("audio/webm");
 #endif
-
         return types;
-    }());
-
+    }();
     return types;
 }
 
@@ -1533,13 +1529,13 @@ void SourceBufferParserWebM::setMinimumAudioSampleDuration(float duration)
 
 const MemoryCompactLookupOnlyRobinHoodHashSet<String>& SourceBufferParserWebM::supportedVideoCodecs()
 {
-    static auto codecs = makeNeverDestroyed<MemoryCompactLookupOnlyRobinHoodHashSet<String>>({ "V_VP8"_s, "V_VP9"_s });
+    static NeverDestroyed codecs = MemoryCompactLookupOnlyRobinHoodHashSet<String> { "V_VP8"_s, "V_VP9"_s };
     return codecs;
 }
 
 const MemoryCompactLookupOnlyRobinHoodHashSet<String>& SourceBufferParserWebM::supportedAudioCodecs()
 {
-    static auto codecs = makeNeverDestroyed<MemoryCompactLookupOnlyRobinHoodHashSet<String>>({ "A_VORBIS"_s, "A_OPUS"_s });
+    static NeverDestroyed codecs = MemoryCompactLookupOnlyRobinHoodHashSet<String> { "A_VORBIS"_s, "A_OPUS"_s };
     return codecs;
 }
 

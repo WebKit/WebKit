@@ -56,7 +56,7 @@ static void platformRegisterFactories(FactoryVector& factories)
 
 static FactoryVector& installedFactories()
 {
-    static auto factories = makeNeverDestroyed<FactoryVector>({ });
+    static NeverDestroyed<FactoryVector> factories;
     static std::once_flag registerDefaults;
     std::call_once(registerDefaults, [&] {
         platformRegisterFactories(factories);

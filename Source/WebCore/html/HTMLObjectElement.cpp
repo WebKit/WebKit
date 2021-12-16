@@ -356,7 +356,7 @@ void HTMLObjectElement::renderFallbackContent()
 
 static inline bool preventsParentObjectFromExposure(const Element& child)
 {
-    static const auto mostKnownTags = makeNeverDestroyed([] {
+    static NeverDestroyed mostKnownTags = [] {
         MemoryCompactLookupOnlyRobinHoodHashSet<QualifiedName> set;
         auto* tags = HTMLNames::getHTMLTags();
         for (size_t i = 0; i < HTMLNames::HTMLTagsCount; i++) {
@@ -377,7 +377,7 @@ static inline bool preventsParentObjectFromExposure(const Element& child)
             set.add(tag);
         }
         return set;
-    }());
+    }();
     return mostKnownTags.get().contains(child.tagQName());
 }
 

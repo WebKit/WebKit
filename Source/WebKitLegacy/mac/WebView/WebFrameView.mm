@@ -240,7 +240,7 @@ enum {
 
 + (NSMutableDictionary *)_viewTypesAllowImageTypeOmission:(BOOL)allowImageTypeOmission
 {
-    static auto viewTypes = makeNeverDestroyed([] {
+    static NeverDestroyed viewTypes = [] {
         auto types = adoptNS([[NSMutableDictionary alloc] init]);
         addTypesFromClass(types.get(), [WebHTMLView class], [WebHTMLView supportedNonImageMIMETypes]);
         addTypesFromClass(types.get(), [WebHTMLView class], [WebHTMLView supportedMediaMIMETypes]);
@@ -257,7 +257,7 @@ enum {
 #endif
         }
         return types;
-    }());
+    }();
     static BOOL addedImageTypes = NO;
     if (!addedImageTypes && !allowImageTypeOmission) {
         addTypesFromClass(viewTypes.get().get(), [WebHTMLView class], [WebHTMLView supportedImageMIMETypes]);

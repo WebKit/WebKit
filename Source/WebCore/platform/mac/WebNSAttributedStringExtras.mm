@@ -42,11 +42,11 @@ NSAttributedString *attributedStringByStrippingAttachmentCharacters(NSAttributed
 {
     NSRange attachmentRange;
     NSString *originalString = [attributedString string];
-    static auto attachmentCharString = makeNeverDestroyed([] {
+    static NeverDestroyed attachmentCharString = [] {
         unichar chars[2] = { NSAttachmentCharacter, 0 };
         return adoptNS([[NSString alloc] initWithCharacters:chars length:1]);
-    }());
-    
+    }();
+
     attachmentRange = [originalString rangeOfString:attachmentCharString.get().get()];
     if (attachmentRange.location != NSNotFound && attachmentRange.length > 0) {
         auto newAttributedString = adoptNS([attributedString mutableCopyWithZone:NULL]);

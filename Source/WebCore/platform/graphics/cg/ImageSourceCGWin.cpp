@@ -50,8 +50,7 @@ String preferredExtensionForImageType(const String& type)
 {
     if (type.isNull())
         return String();
-
-    static const auto map = makeNeverDestroyed(HashMap<String, String, ASCIICaseInsensitiveHash> {
+    static NeverDestroyed map = HashMap<String, String, ASCIICaseInsensitiveHash> {
         { "public.html"_s, "html"_s },
         { "public.jpeg"_s, "jpeg"_s },
         { "public.jpeg-2000"_s, "jp2"_s },
@@ -77,7 +76,7 @@ String preferredExtensionForImageType(const String& type)
         { "com.netscape.javascript-source"_s, "js"_s },
         { "com.sgi.sgi-image"_s, "sgi"_s },
         { "com.truevision.tga-image"_s, "tga"_s },
-    });
+    };
     return map.get().get(type);
 }
 

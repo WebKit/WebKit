@@ -193,8 +193,8 @@ constexpr ComparableLettersLiteral supportedJavaScriptMIMETypeArray[] = {
 
 HashSet<String, ASCIICaseInsensitiveHash>& MIMETypeRegistry::supportedNonImageMIMETypes()
 {
-    static auto supportedNonImageMIMETypes = makeNeverDestroyed([] {
-        HashSet<String, ASCIICaseInsensitiveHash> supportedNonImageMIMETypes = std::initializer_list<String> {
+    static NeverDestroyed types = [] {
+        HashSet<String, ASCIICaseInsensitiveHash> types = std::initializer_list<String> {
             "text/html"_s,
             "text/xml"_s,
             "text/xsl"_s,
@@ -217,25 +217,25 @@ HashSet<String, ASCIICaseInsensitiveHash>& MIMETypeRegistry::supportedNonImageMI
         // This can result in cross-site scripting vulnerabilities.
         };
         for (auto& type : supportedJavaScriptMIMETypeArray)
-            supportedNonImageMIMETypes.add(type.literal);
+            types.add(type.literal);
 #if ENABLE(WEB_ARCHIVE) || ENABLE(MHTML)
-        ArchiveFactory::registerKnownArchiveMIMETypes(supportedNonImageMIMETypes);
+        ArchiveFactory::registerKnownArchiveMIMETypes(types);
 #endif
-        return supportedNonImageMIMETypes;
-    }());
-    return supportedNonImageMIMETypes;
+        return types;
+    }();
+    return types;
 }
 
 const HashSet<String, ASCIICaseInsensitiveHash>& MIMETypeRegistry::supportedMediaMIMETypes()
 {
-    static const auto supportedMediaMIMETypes = makeNeverDestroyed([] {
-        HashSet<String, ASCIICaseInsensitiveHash> supportedMediaMIMETypes;
+    static NeverDestroyed types = [] {
+        HashSet<String, ASCIICaseInsensitiveHash> types;
 #if ENABLE(VIDEO)
-        MediaPlayer::getSupportedTypes(supportedMediaMIMETypes);
+        MediaPlayer::getSupportedTypes(types);
 #endif
-        return supportedMediaMIMETypes;
-    }());
-    return supportedMediaMIMETypes;
+        return types;
+    }();
+    return types;
 }
 
 constexpr ComparableLettersLiteral pdfMIMETypeArray[] = {

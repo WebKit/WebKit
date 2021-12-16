@@ -73,7 +73,8 @@ protected:
     void updateCapabilities(RealtimeMediaSourceCapabilities&);
 
     void dispatchMediaSampleToObservers(MediaSample&, WebCore::VideoSampleMetadata);
-    const Vector<IntSize>& standardVideoSizes();
+
+    static Span<const IntSize> standardVideoSizes();
 
 private:
     struct CaptureSizeAndFrameRate {

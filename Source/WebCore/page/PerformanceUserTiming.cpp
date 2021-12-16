@@ -43,8 +43,7 @@ using NavigationTimingFunction = unsigned long long (PerformanceTiming::*)() con
 static const MemoryCompactLookupOnlyRobinHoodHashMap<String, NavigationTimingFunction>& restrictedMarkNamesToNavigationTimingFunctionMap()
 {
     ASSERT(isMainThread());
-
-    static auto map = makeNeverDestroyed<MemoryCompactLookupOnlyRobinHoodHashMap<String, NavigationTimingFunction>>({
+    static NeverDestroyed map = MemoryCompactLookupOnlyRobinHoodHashMap<String, NavigationTimingFunction> {
         { "connectEnd"_s, &PerformanceTiming::connectEnd },
         { "connectStart"_s, &PerformanceTiming::connectStart },
         { "domComplete"_s, &PerformanceTiming::domComplete },
@@ -66,8 +65,7 @@ static const MemoryCompactLookupOnlyRobinHoodHashMap<String, NavigationTimingFun
         { "secureConnectionStart"_s, &PerformanceTiming::secureConnectionStart },
         { "unloadEventEnd"_s, &PerformanceTiming::unloadEventEnd },
         { "unloadEventStart"_s, &PerformanceTiming::unloadEventStart },
-    });
-    
+    };
     return map;
 }
 

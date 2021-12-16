@@ -128,7 +128,7 @@ static std::optional<Vector<UnitBezier>> parseKeySplines(StringView string)
 
 bool SVGAnimationElement::isSupportedAttribute(const QualifiedName& attrName)
 {
-    static const auto supportedAttributes = makeNeverDestroyed([] {
+    static NeverDestroyed supportedAttributes = [] {
         MemoryCompactLookupOnlyRobinHoodHashSet<QualifiedName> set;
         SVGTests::addSupportedAttributes(set);
         set.add({
@@ -143,7 +143,7 @@ bool SVGAnimationElement::isSupportedAttribute(const QualifiedName& attrName)
             SVGNames::byAttr.get(),
         });
         return set;
-    }());
+    }();
     return supportedAttributes.get().contains<SVGAttributeHashTranslator>(attrName);
 }
 

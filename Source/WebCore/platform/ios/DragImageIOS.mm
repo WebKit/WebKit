@@ -116,9 +116,9 @@ static FontCascade cascadeForSystemFont(CGFloat size)
 DragImageRef createDragImageForLink(Element& linkElement, URL& url, const String& title, TextIndicatorData& indicatorData, FontRenderingMode, float)
 {
     // FIXME: Most of this can go away once we can use UIURLDragPreviewView unconditionally.
-    static const CGFloat dragImagePadding = 10;
-    static const auto titleFontCascade = makeNeverDestroyed(cascadeForSystemFont(16));
-    static const auto urlFontCascade = makeNeverDestroyed(cascadeForSystemFont(14));
+    constexpr CGFloat dragImagePadding = 10;
+    static const NeverDestroyed titleFontCascade = cascadeForSystemFont(16);
+    static const NeverDestroyed urlFontCascade = cascadeForSystemFont(14);
 
     String topString(title.stripWhiteSpace());
     String bottomString([(NSURL *)url absoluteString]);

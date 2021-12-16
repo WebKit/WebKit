@@ -1391,8 +1391,7 @@ auto RenderTheme::colorCache(OptionSet<StyleColorOptions> options) const -> Colo
 
 FontCascadeDescription& RenderTheme::cachedSystemFontDescription(CSSValueID systemFontID) const
 {
-    static auto fontDescriptions = makeNeverDestroyed<std::array<FontCascadeDescription, 10>>({ });
-
+    static NeverDestroyed<std::array<FontCascadeDescription, 10>> fontDescriptions;
     switch (systemFontID) {
     case CSSValueCaption:
         return fontDescriptions.get()[0];

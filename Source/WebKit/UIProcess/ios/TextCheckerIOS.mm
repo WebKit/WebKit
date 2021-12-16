@@ -41,12 +41,12 @@ using namespace WebCore;
 
 static TextCheckerState& mutableState()
 {
-    static NeverDestroyed<TextCheckerState> state = makeNeverDestroyed([] {
+    static NeverDestroyed state = [] {
         TextCheckerState initialState;
         initialState.isContinuousSpellCheckingEnabled = TextChecker::isContinuousSpellCheckingAllowed();
         initialState.isGrammarCheckingEnabled = false;
         return initialState;
-    }());
+    }();
     return state;
 }
 

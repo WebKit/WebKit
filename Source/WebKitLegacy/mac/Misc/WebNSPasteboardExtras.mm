@@ -71,32 +71,30 @@ NSString *WebURLNamePboardType = @"public.url-name";
     return types;
 }
 
-static NSArray *_writableTypesForImageWithoutArchive (void)
+static NSArray *writableTypesForImageWithoutArchive()
 {
-    static auto types = makeNeverDestroyed([] {
+    static NeverDestroyed types = [] {
         auto types = adoptNS([[NSMutableArray alloc] initWithObjects:legacyTIFFPasteboardType(), nil]);
         [types addObjectsFromArray:[NSPasteboard _web_writableTypesForURL]];
         return types;
-    }());
+    }();
     return types.get().get();
 }
 
-static NSArray *_writableTypesForImageWithArchive (void)
+static NSArray *writableTypesForImageWithArchive()
 {
-    static auto types = makeNeverDestroyed([] {
-        auto types = adoptNS([_writableTypesForImageWithoutArchive() mutableCopy]);
+    static NeverDestroyed types = [] {
+        auto types = adoptNS([writableTypesForImageWithoutArchive() mutableCopy]);
         [types addObject:legacyRTFDPasteboardType()];
         [types addObject:WebArchivePboardType];
         return types;
-    }());
+    }();
     return types.get().get();
 }
 
 + (NSArray *)_web_writableTypesForImageIncludingArchive:(BOOL)hasArchive
 {
-    return hasArchive 
-        ? _writableTypesForImageWithArchive()
-        : _writableTypesForImageWithoutArchive();
+    return hasArchive ? writableTypesForImageWithArchive() : writableTypesForImageWithoutArchive();
 }
 
 + (NSArray *)_web_dragTypesForURL

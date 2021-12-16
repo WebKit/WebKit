@@ -1095,7 +1095,7 @@ WTFLogChannel& MediaPlayerPrivateAVFoundation::logChannel() const
 
 const HashSet<String, ASCIICaseInsensitiveHash>& MediaPlayerPrivateAVFoundation::staticMIMETypeList()
 {
-    static const auto cache = makeNeverDestroyed(HashSet<String, ASCIICaseInsensitiveHash> {
+    static NeverDestroyed cache = HashSet<String, ASCIICaseInsensitiveHash> {
         "application/vnd.apple.mpegurl"_s,
         "application/x-mpegurl"_s,
         "audio/3gpp"_s,
@@ -1127,7 +1127,7 @@ const HashSet<String, ASCIICaseInsensitiveHash>& MediaPlayerPrivateAVFoundation:
         "video/x-m4v"_s,
         "video/x-mpeg"_s,
         "video/x-mpg"_s,
-    });
+    };
     return cache;
 }
 

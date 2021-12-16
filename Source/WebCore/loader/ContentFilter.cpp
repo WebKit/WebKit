@@ -238,10 +238,10 @@ void ContentFilter::deliverResourceData(CachedResource& resource)
 
 static const URL& blockedPageURL()
 {
-    static const auto blockedPageURL = makeNeverDestroyed([] () -> URL {
+    static NeverDestroyed blockedPageURL = [] () -> URL {
         auto webCoreBundle = CFBundleGetBundleWithIdentifier(CFSTR("com.apple.WebCore"));
         return adoptCF(CFBundleCopyResourceURL(webCoreBundle, CFSTR("ContentFilterBlockedPage"), CFSTR("html"), nullptr)).get();
-    }());
+    }();
     return blockedPageURL;
 }
 

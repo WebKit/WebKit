@@ -88,7 +88,7 @@ private:
     void willExitPictureInPicture() override;
     void didExitPictureInPicture() override;
 
-    static const Vector<AtomString>& observedEventNames();
+    static Span<const AtomString> observedEventNames();
     const AtomString& eventNameAll();
 
     RefPtr<HTMLVideoElement> m_videoElement;

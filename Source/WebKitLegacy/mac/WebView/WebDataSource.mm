@@ -270,7 +270,7 @@ void addTypesFromClass(NSMutableDictionary *allTypes, Class objCClass, NSArray *
 
 + (NSMutableDictionary *)_repTypesAllowImageTypeOmission:(BOOL)allowImageTypeOmission
 {
-    static auto repTypes = makeNeverDestroyed([] {
+    static NeverDestroyed repTypes = [] {
         auto types = adoptNS([[NSMutableDictionary alloc] init]);
         addTypesFromClass(types.get(), [WebHTMLRepresentation class], [WebHTMLRepresentation supportedNonImageMIMETypes]);
         addTypesFromClass(types.get(), [WebHTMLRepresentation class], [WebHTMLRepresentation supportedMediaMIMETypes]);
@@ -287,7 +287,7 @@ void addTypesFromClass(NSMutableDictionary *allTypes, Class objCClass, NSArray *
 #endif
         }
         return types;
-    }());
+    }();
     static BOOL addedImageTypes = NO;
     if (!addedImageTypes && !allowImageTypeOmission) {
         addTypesFromClass(repTypes.get().get(), [WebHTMLRepresentation class], [WebHTMLRepresentation supportedImageMIMETypes]);

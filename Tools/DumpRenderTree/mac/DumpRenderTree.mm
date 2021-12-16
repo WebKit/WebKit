@@ -454,7 +454,7 @@ static NSSet *allowedFontFamilySet()
 
 static NSArray *fontAllowList()
 {
-    static auto availableFonts = makeNeverDestroyed([] {
+    static NeverDestroyed availableFonts = [] {
         auto availableFonts = adoptNS([[NSMutableArray alloc] init]);
         for (NSString *fontFamily in allowedFontFamilySet()) {
             NSArray* fontsForFamily = [[NSFontManager sharedFontManager] availableMembersOfFontFamily:fontFamily];
@@ -465,7 +465,7 @@ static NSArray *fontAllowList()
             }
         }
         return availableFonts;
-    }());
+    }();
     return availableFonts.get().get();
 }
 

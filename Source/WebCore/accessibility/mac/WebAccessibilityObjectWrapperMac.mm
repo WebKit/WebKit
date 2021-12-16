@@ -1334,7 +1334,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         NSAccessibilityEditableAncestorAttribute,
         NSAccessibilityHighestEditableAncestorAttribute,
     ];
-    static auto incrementorAttrs = makeNeverDestroyed([] {
+    static NeverDestroyed incrementorAttrs = [] {
         auto tempArray = adoptNS([[NSMutableArray alloc] initWithArray:attributes.get().get()]);
         [tempArray addObject:NSAccessibilityIncrementButtonAttribute];
         [tempArray addObject:NSAccessibilityDecrementButtonAttribute];
@@ -1342,14 +1342,14 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         [tempArray addObject:NSAccessibilityMinValueAttribute];
         [tempArray addObject:NSAccessibilityMaxValueAttribute];
         return tempArray;
-    }());
-    static auto anchorAttrs = makeNeverDestroyed([] {
+    }();
+    static NeverDestroyed anchorAttrs = [] {
         auto tempArray = adoptNS([[NSMutableArray alloc] initWithArray:attributes.get().get()]);
         [tempArray addObject:NSAccessibilityURLAttribute];
         [tempArray addObject:NSAccessibilityAccessKeyAttribute];
         [tempArray addObject:NSAccessibilityLinkRelationshipTypeAttribute];
         return tempArray;
-    }());
+    }();
     static NeverDestroyed<RetainPtr<NSArray>> commonMenuAttrs = @[
         NSAccessibilityRoleAttribute,
         NSAccessibilityRoleDescriptionAttribute,
@@ -1359,7 +1359,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         NSAccessibilityPositionAttribute,
         NSAccessibilitySizeAttribute,
     ];
-    static auto webAreaAttrs = makeNeverDestroyed([] {
+    static NeverDestroyed webAreaAttrs = [] {
         auto tempArray = adoptNS([[NSMutableArray alloc] initWithArray:attributes.get().get()]);
         // WebAreas should not expose AXSubrole.
         [tempArray removeObject:NSAccessibilitySubroleAttribute];
@@ -1376,8 +1376,8 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         [tempArray addObject:NSAccessibilityPreventKeyboardDOMEventDispatchAttribute];
         [tempArray addObject:NSAccessibilityWebSessionIDAttribute];
         return tempArray;
-    }());
-    static auto textAttrs = makeNeverDestroyed([] {
+    }();
+    static NeverDestroyed textAttrs = [] {
         auto tempArray = adoptNS([[NSMutableArray alloc] initWithArray:attributes.get().get()]);
         [tempArray addObject:NSAccessibilityNumberOfCharactersAttribute];
         [tempArray addObject:NSAccessibilitySelectedTextAttribute];
@@ -1391,24 +1391,24 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         [tempArray addObject:NSAccessibilityPlaceholderValueAttribute];
         [tempArray addObject:NSAccessibilityValueAutofilledAttribute];
         return tempArray;
-    }());
-    static auto listAttrs = makeNeverDestroyed([] {
+    }();
+    static NeverDestroyed listAttrs = [] {
         auto tempArray = adoptNS([[NSMutableArray alloc] initWithArray:attributes.get().get()]);
         [tempArray addObject:NSAccessibilitySelectedChildrenAttribute];
         [tempArray addObject:NSAccessibilityVisibleChildrenAttribute];
         [tempArray addObject:NSAccessibilityOrientationAttribute];
         [tempArray addObject:NSAccessibilityTitleUIElementAttribute];
         return tempArray;
-    }());
-    static auto listBoxAttrs = makeNeverDestroyed([] {
+    }();
+    static NeverDestroyed listBoxAttrs = [] {
         auto tempArray = adoptNS([[NSMutableArray alloc] initWithArray:listAttrs.get().get()]);
         [tempArray addObject:NSAccessibilityAccessKeyAttribute];
         [tempArray addObject:NSAccessibilityRequiredAttribute];
         [tempArray addObject:NSAccessibilityInvalidAttribute];
         [tempArray addObject:NSAccessibilityOrientationAttribute];
         return tempArray;
-    }());
-    static auto rangeAttrs = makeNeverDestroyed([] {
+    }();
+    static NeverDestroyed rangeAttrs = [] {
         auto tempArray = adoptNS([[NSMutableArray alloc] initWithArray:attributes.get().get()]);
         [tempArray addObject:NSAccessibilityMinValueAttribute];
         [tempArray addObject:NSAccessibilityMaxValueAttribute];
@@ -1416,24 +1416,24 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         [tempArray addObject:NSAccessibilityValueDescriptionAttribute];
         [tempArray addObject:NSAccessibilityTitleUIElementAttribute];
         return tempArray;
-    }());
-    static auto menuBarAttrs = makeNeverDestroyed([] {
+    }();
+    static NeverDestroyed menuBarAttrs = [] {
         auto tempArray = adoptNS([[NSMutableArray alloc] initWithArray:commonMenuAttrs.get().get()]);
         [tempArray addObject:NSAccessibilitySelectedChildrenAttribute];
         [tempArray addObject:NSAccessibilityVisibleChildrenAttribute];
         [tempArray addObject:NSAccessibilityTitleUIElementAttribute];
         [tempArray addObject:NSAccessibilityOrientationAttribute];
         return tempArray;
-    }());
-    static auto menuAttrs = makeNeverDestroyed([] {
+    }();
+    static NeverDestroyed menuAttrs = [] {
         auto tempArray = adoptNS([[NSMutableArray alloc] initWithArray:commonMenuAttrs.get().get()]);
         [tempArray addObject:NSAccessibilitySelectedChildrenAttribute];
         [tempArray addObject:NSAccessibilityVisibleChildrenAttribute];
         [tempArray addObject:NSAccessibilityTitleUIElementAttribute];
         [tempArray addObject:NSAccessibilityOrientationAttribute];
         return tempArray;
-    }());
-    static auto menuItemAttrs = makeNeverDestroyed([] {
+    }();
+    static NeverDestroyed menuItemAttrs = [] {
         auto tempArray = adoptNS([[NSMutableArray alloc] initWithArray:commonMenuAttrs.get().get()]);
         [tempArray addObject:NSAccessibilityTitleAttribute];
         [tempArray addObject:NSAccessibilityDescriptionAttribute];
@@ -1449,7 +1449,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         [tempArray addObject:NSAccessibilityServesAsTitleForUIElementsAttribute];
         [tempArray addObject:NSAccessibilityFocusedAttribute];
         return tempArray;
-    }());
+    }();
     static NeverDestroyed<RetainPtr<NSArray>> menuButtonAttrs = @[
         NSAccessibilityRoleAttribute,
         NSAccessibilityRoleDescriptionAttribute,
@@ -1462,29 +1462,29 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         NSAccessibilityTitleAttribute,
         NSAccessibilityChildrenAttribute,
     ];
-    static auto controlAttrs = makeNeverDestroyed([] {
+    static NeverDestroyed controlAttrs = [] {
         auto tempArray = adoptNS([[NSMutableArray alloc] initWithArray:attributes.get().get()]);
         [tempArray addObject:NSAccessibilityTitleUIElementAttribute];
         [tempArray addObject:NSAccessibilityAccessKeyAttribute];
         [tempArray addObject:NSAccessibilityRequiredAttribute];
         [tempArray addObject:NSAccessibilityInvalidAttribute];
         return tempArray;
-    }());
-    static auto buttonAttrs = makeNeverDestroyed([] {
+    }();
+    static NeverDestroyed buttonAttrs = [] {
         auto tempArray = adoptNS([[NSMutableArray alloc] initWithArray:attributes.get().get()]);
         // Buttons should not expose AXValue.
         [tempArray removeObject:NSAccessibilityValueAttribute];
         [tempArray addObject:NSAccessibilityTitleUIElementAttribute];
         [tempArray addObject:NSAccessibilityAccessKeyAttribute];
         return tempArray;
-    }());
-    static auto comboBoxAttrs = makeNeverDestroyed([] {
+    }();
+    static NeverDestroyed comboBoxAttrs = [] {
         auto tempArray = adoptNS([[NSMutableArray alloc] initWithArray:controlAttrs.get().get()]);
         [tempArray addObject:NSAccessibilityExpandedAttribute];
         [tempArray addObject:NSAccessibilityOrientationAttribute];
         return tempArray;
-    }());
-    static auto tableAttrs = makeNeverDestroyed([] {
+    }();
+    static NeverDestroyed tableAttrs = [] {
         auto tempArray = adoptNS([[NSMutableArray alloc] initWithArray:attributes.get().get()]);
         [tempArray addObject:NSAccessibilityRowsAttribute];
         [tempArray addObject:NSAccessibilityVisibleRowsAttribute];
@@ -1499,21 +1499,21 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         [tempArray addObject:NSAccessibilityARIAColumnCountAttribute];
         [tempArray addObject:NSAccessibilityARIARowCountAttribute];
         return tempArray;
-    }());
-    static auto tableRowAttrs = makeNeverDestroyed([] {
+    }();
+    static NeverDestroyed tableRowAttrs = [] {
         auto tempArray = adoptNS([[NSMutableArray alloc] initWithArray:attributes.get().get()]);
         [tempArray addObject:NSAccessibilityIndexAttribute];
         return tempArray;
-    }());
-    static auto tableColAttrs = makeNeverDestroyed([] {
+    }();
+    static NeverDestroyed tableColAttrs = [] {
         auto tempArray = adoptNS([[NSMutableArray alloc] initWithArray:attributes.get().get()]);
         [tempArray addObject:NSAccessibilityIndexAttribute];
         [tempArray addObject:NSAccessibilityHeaderAttribute];
         [tempArray addObject:NSAccessibilityRowsAttribute];
         [tempArray addObject:NSAccessibilityVisibleRowsAttribute];
         return tempArray;
-    }());
-    static auto tableCellAttrs = makeNeverDestroyed([] {
+    }();
+    static NeverDestroyed tableCellAttrs = [] {
         auto tempArray = adoptNS([[NSMutableArray alloc] initWithArray:attributes.get().get()]);
         [tempArray addObject:NSAccessibilityRowIndexRangeAttribute];
         [tempArray addObject:NSAccessibilityColumnIndexRangeAttribute];
@@ -1522,18 +1522,18 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         [tempArray addObject:NSAccessibilityARIAColumnIndexAttribute];
         [tempArray addObject:NSAccessibilityARIARowIndexAttribute];
         return tempArray;
-    }());
-    static auto groupAttrs = makeNeverDestroyed([] {
+    }();
+    static NeverDestroyed groupAttrs = [] {
         auto tempArray = adoptNS([[NSMutableArray alloc] initWithArray:attributes.get().get()]);
         [tempArray addObject:NSAccessibilityTitleUIElementAttribute];
         return tempArray;
-    }());
-    static auto inputImageAttrs = makeNeverDestroyed([] {
+    }();
+    static NeverDestroyed inputImageAttrs = [] {
         auto tempArray = adoptNS([[NSMutableArray alloc] initWithArray:buttonAttrs.get().get()]);
         [tempArray addObject:NSAccessibilityURLAttribute];
         return tempArray;
-    }());
-    static auto passwordFieldAttrs = makeNeverDestroyed([] {
+    }();
+    static NeverDestroyed passwordFieldAttrs = [] {
         auto tempArray = adoptNS([[NSMutableArray alloc] initWithArray:attributes.get().get()]);
         [tempArray addObject:NSAccessibilityTitleUIElementAttribute];
         [tempArray addObject:NSAccessibilityRequiredAttribute];
@@ -1541,23 +1541,23 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         [tempArray addObject:NSAccessibilityPlaceholderValueAttribute];
         [tempArray addObject:NSAccessibilityValueAutofilledAttribute];
         return tempArray;
-    }());
-    static auto tabListAttrs = makeNeverDestroyed([] {
+    }();
+    static NeverDestroyed tabListAttrs = [] {
         auto tempArray = adoptNS([[NSMutableArray alloc] initWithArray:attributes.get().get()]);
         [tempArray addObject:NSAccessibilityTabsAttribute];
         [tempArray addObject:NSAccessibilityContentsAttribute];
         [tempArray addObject:NSAccessibilityOrientationAttribute];
         return tempArray;
-    }());
-    static auto outlineAttrs = makeNeverDestroyed([] {
+    }();
+    static NeverDestroyed outlineAttrs = [] {
         auto tempArray = adoptNS([[NSMutableArray alloc] initWithArray:attributes.get().get()]);
         [tempArray addObject:NSAccessibilitySelectedRowsAttribute];
         [tempArray addObject:NSAccessibilityRowsAttribute];
         [tempArray addObject:NSAccessibilityColumnsAttribute];
         [tempArray addObject:NSAccessibilityOrientationAttribute];
         return tempArray;
-    }());
-    static auto outlineRowAttrs = makeNeverDestroyed([] {
+    }();
+    static NeverDestroyed outlineRowAttrs = [] {
         auto tempArray = adoptNS([[NSMutableArray alloc] initWithArray:tableRowAttrs.get().get()]);
         [tempArray addObject:NSAccessibilityDisclosingAttribute];
         [tempArray addObject:NSAccessibilityDisclosedByRowAttribute];
@@ -1565,27 +1565,27 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         [tempArray addObject:NSAccessibilityDisclosedRowsAttribute];
         [tempArray removeObject:NSAccessibilityValueAttribute];
         return tempArray;
-    }());
-    static auto scrollViewAttrs = makeNeverDestroyed([] {
+    }();
+    static NeverDestroyed scrollViewAttrs = [] {
         auto tempArray = adoptNS([[NSMutableArray alloc] initWithArray:attributes.get().get()]);
         [tempArray addObject:NSAccessibilityContentsAttribute];
         [tempArray addObject:NSAccessibilityHorizontalScrollBarAttribute];
         [tempArray addObject:NSAccessibilityVerticalScrollBarAttribute];
         return tempArray;
-    }());
-    static auto imageAttrs = makeNeverDestroyed([] {
+    }();
+    static NeverDestroyed imageAttrs = [] {
         auto tempArray = adoptNS([[NSMutableArray alloc] initWithArray:attributes.get().get()]);
         [tempArray addObject:NSAccessibilityImageOverlayElementsAttribute];
         [tempArray addObject:NSAccessibilityEmbeddedImageDescriptionAttribute];
         [tempArray addObject:NSAccessibilityURLAttribute];
         return tempArray;
-    }());
-    static auto videoAttrs = makeNeverDestroyed([] {
+    }();
+    static NeverDestroyed videoAttrs = [] {
         auto tempArray = adoptNS([[NSMutableArray alloc] initWithArray:attributes.get().get()]);
         // This should represent the URL of the video content, not the poster.
         [tempArray addObject:NSAccessibilityURLAttribute];
         return tempArray;
-    }());
+    }();
 
     NSArray *objectAttributes = attributes.get().get();
 

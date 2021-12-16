@@ -50,7 +50,7 @@ static bool useBackslashAsYenSignForFamily(const AtomString& family)
 {
     if (family.isEmpty())
         return false;
-    static const auto set = makeNeverDestroyed([] {
+    static NeverDestroyed set = [] {
         MemoryCompactLookupOnlyRobinHoodHashSet<AtomString> set;
         auto add = [&set] (const char* name, std::initializer_list<UChar> unicodeName) {
             unsigned nameLength = strlen(name);
@@ -64,7 +64,7 @@ static bool useBackslashAsYenSignForFamily(const AtomString& family)
         add("MS Mincho", { 0xFF2D, 0xFF33, 0x0020, 0x660E, 0x671D });
         add("Meiryo", { 0x30E1, 0x30A4, 0x30EA, 0x30AA });
         return set;
-    }());
+    }();
     return set.get().contains(family);
 }
 
@@ -373,7 +373,7 @@ bool FontCascade::hasValidAverageCharWidth() const
         return false;
 #endif
 
-    static const auto map = makeNeverDestroyed(MemoryCompactLookupOnlyRobinHoodHashSet<AtomString> {
+    static NeverDestroyed map = MemoryCompactLookupOnlyRobinHoodHashSet<AtomString> {
         "American Typewriter"_s,
         "Arial Hebrew"_s,
         "Chalkboard"_s,
@@ -408,7 +408,7 @@ bool FontCascade::hasValidAverageCharWidth() const
         "#HeadLineA"_s,
         "#PCMyungjo"_s,
         "#PilGi"_s,
-    });
+    };
     return !map.get().contains(family);
 }
 

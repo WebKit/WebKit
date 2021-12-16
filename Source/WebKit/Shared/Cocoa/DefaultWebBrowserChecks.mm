@@ -55,9 +55,9 @@ std::optional<Vector<WebCore::RegistrableDomain>> getAppBoundDomainsTesting(cons
     if (bundleID.isNull())
         return std::nullopt;
 
-    static auto appBoundDomainList = makeNeverDestroyed(MemoryCompactLookupOnlyRobinHoodHashMap<String, Vector<WebCore::RegistrableDomain>> {
+    static NeverDestroyed appBoundDomainList = MemoryCompactLookupOnlyRobinHoodHashMap<String, Vector<WebCore::RegistrableDomain>> {
         {"inAppBrowserPrivacyTestIdentifier"_s, Vector<WebCore::RegistrableDomain> { WebCore::RegistrableDomain::uncheckedCreateFromRegistrableDomainString("127.0.0.1") }},
-    });
+    };
 
     auto appBoundDomainIter = appBoundDomainList->find(bundleID);
     if (appBoundDomainIter != appBoundDomainList->end())

@@ -58,20 +58,18 @@ bool deviceHasAGXCompilerService()
     return *hasAGXCompilerService;
 }
 
-const Vector<ASCIILiteral>& agxCompilerServices()
+Span<const ASCIILiteral> agxCompilerServices()
 {
-    ASSERT(isMainRunLoop());
-    static const auto services = makeNeverDestroyed(Vector<ASCIILiteral> {
+    static constexpr std::array services {
         "com.apple.AGXCompilerService"_s,
         "com.apple.AGXCompilerService-S2A8"_s
-    });
+    };
     return services;
 }
 
-const Vector<ASCIILiteral>& agxCompilerClasses()
+Span<const ASCIILiteral> agxCompilerClasses()
 {
-    ASSERT(isMainRunLoop());
-    static const auto iokitClasses = makeNeverDestroyed(Vector<ASCIILiteral> {
+    static constexpr std::array classes {
         "AGXCommandQueue"_s,
         "AGXDevice"_s,
         "AGXSharedUserClient"_s,
@@ -82,8 +80,8 @@ const Vector<ASCIILiteral>& agxCompilerClasses()
         "IOAccelSharedUserClient"_s,
         "IOAccelSharedUserClient2"_s,
         "IOAccelSubmitter2"_s,
-    });
-    return iokitClasses;
+    };
+    return classes;
 }
 
 }

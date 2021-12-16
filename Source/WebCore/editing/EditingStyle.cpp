@@ -949,9 +949,9 @@ bool EditingStyle::conflictsWithInlineStyleOfElement(StyledElement& element, Ref
     return conflicts;
 }
 
-static const Vector<const HTMLElementEquivalent*>& htmlElementEquivalents()
+static Span<const HTMLElementEquivalent* const> htmlElementEquivalents()
 {
-    static const auto equivalents = makeNeverDestroyed(Vector<const HTMLElementEquivalent*> {
+    static const HTMLElementEquivalent* const equivalents[] = {
         new HTMLFontWeightEquivalent(HTMLNames::bTag),
         new HTMLFontWeightEquivalent(HTMLNames::strongTag),
 
@@ -963,10 +963,9 @@ static const Vector<const HTMLElementEquivalent*>& htmlElementEquivalents()
         new HTMLTextDecorationEquivalent(CSSValueUnderline, HTMLNames::uTag),
         new HTMLTextDecorationEquivalent(CSSValueLineThrough, HTMLNames::sTag),
         new HTMLTextDecorationEquivalent(CSSValueLineThrough, HTMLNames::strikeTag),
-    });
+    };
     return equivalents;
 }
-
 
 bool EditingStyle::conflictsWithImplicitStyleOfElement(HTMLElement& element, EditingStyle* extractedStyle, ShouldExtractMatchingStyle shouldExtractMatchingStyle) const
 {
@@ -984,9 +983,9 @@ bool EditingStyle::conflictsWithImplicitStyleOfElement(HTMLElement& element, Edi
     return false;
 }
 
-static const Vector<const HTMLAttributeEquivalent*>& htmlAttributeEquivalents()
+static Span<const HTMLAttributeEquivalent* const> htmlAttributeEquivalents()
 {
-    static const auto equivalents = makeNeverDestroyed(Vector<const HTMLAttributeEquivalent*> {
+    static const HTMLAttributeEquivalent* const equivalents[] = {
         // elementIsStyledSpanOrHTMLEquivalent depends on the fact each HTMLAttriuteEquivalent matches exactly one attribute
         // of exactly one element except dirAttr.
         new HTMLAttributeEquivalent(CSSPropertyColor, HTMLNames::fontTag, HTMLNames::colorAttr),
@@ -995,7 +994,7 @@ static const Vector<const HTMLAttributeEquivalent*>& htmlAttributeEquivalents()
 
         new HTMLAttributeEquivalent(CSSPropertyDirection, HTMLNames::dirAttr),
         new HTMLAttributeEquivalent(CSSPropertyUnicodeBidi, HTMLNames::dirAttr),
-    });
+    };
     return equivalents;
 }
 

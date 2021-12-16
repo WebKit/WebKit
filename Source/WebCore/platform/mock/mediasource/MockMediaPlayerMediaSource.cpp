@@ -63,10 +63,10 @@ void MockMediaPlayerMediaSource::registerMediaEngine(MediaEngineRegistrar regist
 // FIXME: What does the word "cache" mean here?
 static const HashSet<String, ASCIICaseInsensitiveHash>& mimeTypeCache()
 {
-    static const auto cache = makeNeverDestroyed(HashSet<String, ASCIICaseInsensitiveHash> {
+    static NeverDestroyed cache = HashSet<String, ASCIICaseInsensitiveHash> {
         "video/mock",
         "audio/mock",
-    });
+    };
     return cache;
 }
 

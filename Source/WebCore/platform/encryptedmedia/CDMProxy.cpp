@@ -42,7 +42,7 @@ namespace WebCore {
 
 Vector<CDMProxyFactory*>& CDMProxyFactory::registeredFactories()
 {
-    static auto factories = makeNeverDestroyed(platformRegisterFactories());
+    static NeverDestroyed factories = platformRegisterFactories();
     return factories;
 }
 

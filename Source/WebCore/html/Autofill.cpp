@@ -52,14 +52,14 @@ struct AutofillInfo {
 
 static const MemoryCompactLookupOnlyRobinHoodHashMap<AtomString, AutofillInfo>& fieldNameMap()
 {
-    static const auto map = makeNeverDestroyed([] {
+    static NeverDestroyed map = [] {
         struct MapEntry {
             ASCIILiteral name;
             AutofillInfo value;
         };
-        static const MapEntry entries[] = {
+        static constexpr MapEntry entries[] = {
             { "off"_s, { AutofillFieldName::None, AutofillCategory::Off } },
-            { "on"_s, { AutofillFieldName::None,  AutofillCategory::Automatic } },
+            { "on"_s, { AutofillFieldName::None, AutofillCategory::Automatic } },
             { "name"_s, { AutofillFieldName::Name, AutofillCategory::Normal } },
             { "honorific-prefix"_s, { AutofillFieldName::HonorificPrefix, AutofillCategory::Normal } },
             { "given-name"_s, { AutofillFieldName::GivenName, AutofillCategory::Normal } },
@@ -119,7 +119,7 @@ static const MemoryCompactLookupOnlyRobinHoodHashMap<AtomString, AutofillInfo>& 
         for (auto& entry : entries)
             map.add(entry.name, entry.value);
         return map;
-    }());
+    }();
     return map;
 }
 

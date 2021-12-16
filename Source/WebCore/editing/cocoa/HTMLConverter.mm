@@ -416,12 +416,12 @@ AttributedString HTMLConverter::convert()
 // Returns the font to be used if the NSFontAttributeName doesn't exist
 static NSFont *WebDefaultFont()
 {
-    static auto defaultFont = makeNeverDestroyed([] {
+    static NeverDestroyed defaultFont = [] {
         NSFont *font = [NSFont fontWithName:@"Helvetica" size:12];
         if (!font)
             font = [NSFont systemFontOfSize:12];
-        return retainPtr(font);
-    }());
+        return RetainPtr { font };
+    }();
     return defaultFont.get().get();
 }
 #endif
@@ -518,13 +518,13 @@ static PlatformFont *_fontForNameAndSize(NSString *fontName, CGFloat size, NSMut
 
 static NSParagraphStyle *defaultParagraphStyle()
 {
-    static auto defaultParagraphStyle = makeNeverDestroyed([] {
-        auto defaultParagraphStyle = adoptNS([[PlatformNSParagraphStyle defaultParagraphStyle] mutableCopy]);
-        [defaultParagraphStyle setDefaultTabInterval:36];
-        [defaultParagraphStyle setTabStops:@[]];
-        return defaultParagraphStyle;
-    }());
-    return defaultParagraphStyle.get().get();
+    static NeverDestroyed style = [] {
+        auto style = adoptNS([[PlatformNSParagraphStyle defaultParagraphStyle] mutableCopy]);
+        [style setDefaultTabInterval:36];
+        [style setTabStops:@[]];
+        return style;
+    }();
+    return style.get().get();
 }
 
 RefPtr<CSSValue> HTMLConverterCaches::computedStylePropertyForElement(Element& element, CSSPropertyID propertyId)

@@ -85,11 +85,11 @@ static bool shouldCreateAppleCameraServiceSandboxExtension()
 static const Vector<ASCIILiteral>& nonBrowserServices()
 {
     ASSERT(isMainRunLoop());
-    static const auto services = makeNeverDestroyed(Vector<ASCIILiteral> {
+    static NeverDestroyed services = Vector<ASCIILiteral> {
         "com.apple.iconservices"_s,
         "com.apple.PowerManagement.control"_s,
         "com.apple.frontboard.systemappservices"_s
-    });
+    };
     return services;
 }
 #endif
