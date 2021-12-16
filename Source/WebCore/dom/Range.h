@@ -115,6 +115,8 @@ public:
     String debugDescription() const;
 #endif
 
+    void visitNodesConcurrently(JSC::AbstractSlotVisitor&) const;
+
     enum ActionType : uint8_t { Delete, Extract, Clone };
 
 private:

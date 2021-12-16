@@ -22,6 +22,7 @@
     GenerateIsReachable=ReachableFromDOMWindow,
     ExportMacro=WEBCORE_EXPORT,
     Exposed=Window,
+    JSCustomMarkFunction,
     JSGenerateToNativeObject,
 ] interface Range : AbstractRange {
     [CallWith=Document] constructor();
