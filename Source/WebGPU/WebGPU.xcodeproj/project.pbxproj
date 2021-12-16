@@ -345,6 +345,7 @@
 				1CEBD7DF2716AFBA00A5254D /* Sources */,
 				1CEBD7E02716AFBA00A5254D /* Frameworks */,
 				1CEBD7E12716AFBA00A5254D /* Resources */,
+				6577FFC8276ACA060011AEC8 /* Create Symlink to Alt Root Path */,
 			);
 			buildRules = (
 			);
@@ -429,6 +430,28 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		6577FFC8276ACA060011AEC8 /* Create Symlink to Alt Root Path */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 8;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Create Symlink to Alt Root Path";
+			outputFileListPaths = (
+				"${OUTPUT_ALTERNATE_ROOT_PATH}",
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+			shellPath = /bin/zsh;
+			shellScript = "\"${SRCROOT}/Scripts/create-symlink-to-altroot.sh\"\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		1C023D3827449070001DB734 /* Sources */ = {

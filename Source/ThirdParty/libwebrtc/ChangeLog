@@ -1,3 +1,116 @@
+2021-12-16  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r287137. rdar://problem/86476583
+
+    Source/JavaScriptCore:
+    Create symlinks pointing to alternate root framework locations
+    https://bugs.webkit.org/show_bug.cgi?id=234374
+    
+    Reviewed by Filip Pizlo.
+    
+    Added build variables and build step to create symlinks pointing to the alternate
+    build locations from the current framework install location.
+    
+    * Configurations/JavaScriptCore.xcconfig:
+    * JavaScriptCore.xcodeproj/project.pbxproj:
+    * Scripts/create-symlink-to-altroot.sh: Added.
+    
+    Source/ThirdParty/ANGLE:
+    https://bugs.webkit.org/show_bug.cgi?id=234173
+    Update Install Paths for build system changes
+    
+    Reviewed by Filip Pizlo.
+    
+    Added build variables and build step to create symlinks pointing to the alternate
+    build locations from the current framework install location.
+    
+    * ANGLE.xcodeproj/project.pbxproj:
+    * Configurations/ANGLE-dynamic.xcconfig:
+    * scripts/create-symlink-to-altroot.sh: Added.
+    
+    Source/ThirdParty/libwebrtc:
+    https://bugs.webkit.org/show_bug.cgi?id=234173
+    Update Install Paths for build system changes
+    
+    Reviewed by Filip Pizlo.
+    
+    Added build variables and build step to create symlinks pointing to the alternate
+    build locations from the current framework install location.
+    
+    * Configurations/libwebrtc.xcconfig:
+    
+    Source/WebCore:
+    https://bugs.webkit.org/show_bug.cgi?id=234173
+    Update Install Paths for build system changes
+    
+    Reviewed by Filip Pizlo.
+    
+    Added build variables and build step to create symlinks pointing to the alternate
+    build locations from the current framework install location.
+    
+    Covered by existing tests.
+    
+    * Configurations/WebCore.xcconfig:
+    * Scripts/create-symlink-to-altroot.sh: Added.
+    * WebCore.xcodeproj/project.pbxproj:
+    
+    Source/WebGPU:
+    https://bugs.webkit.org/show_bug.cgi?id=234173
+    Update Install Paths for build system changes
+    
+    Reviewed by Filip Pizlo.
+    
+    Added build variables and build step to create symlinks pointing to the alternate
+    build locations from the current framework install location.
+    
+    * Configurations/WebGPU.xcconfig:
+    * Scripts: Added.
+    * Scripts/create-symlink-to-altroot.sh: Added.
+    * WebGPU.xcodeproj/project.pbxproj:
+    
+    Source/WebInspectorUI:
+    https://bugs.webkit.org/show_bug.cgi?id=234173
+    Update Install Paths for build system changes
+    
+    Reviewed by Filip Pizlo.
+    
+    Added build variables and build step to create symlinks pointing to the alternate
+    build locations from the current framework install location.
+    
+    * Configurations/WebInspectorUIFramework.xcconfig:
+    * Scripts/create-symlink-to-altroot.sh: Added.
+    * WebInspectorUI.xcodeproj/project.pbxproj:
+    
+    Source/WebKit:
+    https://bugs.webkit.org/show_bug.cgi?id=234173
+    Update Install Paths for build system changes
+    
+    Reviewed by Filip Pizlo.
+    
+    Added build variables and build step to create symlinks pointing to the alternate
+    build locations from the current framework install location.
+    
+    * Configurations/BaseXPCService.xcconfig:
+    * Configurations/adattributiond.xcconfig:
+    * Configurations/webpushd.xcconfig:
+    * Scripts/create-symlink-to-altroot.sh: Added.
+    * WebKit.xcodeproj/project.pbxproj:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@287137 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-12-16  Michael Saboff  <msaboff@apple.com>
+
+            https://bugs.webkit.org/show_bug.cgi?id=234173
+            Update Install Paths for build system changes
+
+            Reviewed by Filip Pizlo.
+
+            Added build variables and build step to create symlinks pointing to the alternate
+            build locations from the current framework install location.
+
+            * Configurations/libwebrtc.xcconfig:
+
 2021-12-10  Michael Saboff  <msaboff@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=234173
