@@ -316,6 +316,8 @@ static void cleanUp()
     NSFileManager *defaultFileManager = NSFileManager.defaultManager;
     NSString *itpRoot = WKWebsiteDataStore.defaultDataStore._configuration._resourceLoadStatisticsDirectory.path;
     [defaultFileManager removeItemAtPath:itpRoot error:nil];
+    while ([defaultFileManager fileExistsAtPath:itpRoot])
+        usleep(10000);
     EXPECT_FALSE([defaultFileManager fileExistsAtPath:itpRoot]);
 }
 

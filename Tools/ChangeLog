@@ -1,3 +1,15 @@
+2021-12-15  John Wilander  <wilander@apple.com>
+
+        TestWebKitAPI.PrivateClickMeasurement.MigrateWithDestinationToken is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=234335
+        <rdar://problem/86505218>
+
+        Unreviewed test gardening.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/PrivateClickMeasurement.mm:
+        (cleanUp):
+            Made the function sleep-wait until the file is indeed deleted.
+
 2021-12-15  Jonathan Bedard  <jbedard@apple.com>
 
         [reporelaypy] Forward branches to alternate remote
