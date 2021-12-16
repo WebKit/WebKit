@@ -140,6 +140,7 @@ private:
     LayoutUnit flowAwareMarginEndForChild(const RenderBox& child) const;
     LayoutUnit flowAwareMarginBeforeForChild(const RenderBox& child) const;
     LayoutUnit crossAxisMarginExtentForChild(const RenderBox& child) const;
+    LayoutUnit mainAxisMarginExtentForChild(const RenderBox& child) const;
     LayoutUnit crossAxisScrollbarExtent() const;
     LayoutUnit crossAxisScrollbarExtentForChild(const RenderBox& child) const;
     LayoutPoint flowAwareLocationForChild(const RenderBox& child) const;

@@ -823,6 +823,20 @@ LayoutUnit RenderFlexibleBox::flowAwareMarginBeforeForChild(const RenderBox& chi
     return marginTop();
 }
 
+LayoutUnit RenderFlexibleBox::mainAxisMarginExtentForChild(const RenderBox& child) const
+{
+    if (!child.needsLayout())
+        return isHorizontalFlow() ? child.horizontalMarginExtent() : child.verticalMarginExtent();
+
+    LayoutUnit marginStart;
+    LayoutUnit marginEnd;
+    if (isHorizontalFlow())
+        child.computeInlineDirectionMargins(*this, child.containingBlockLogicalWidthForContentInFragment(nullptr), child.logicalWidth(), marginStart, marginEnd);
+    else
+        child.computeBlockDirectionMargins(*this, marginStart, marginEnd);
+    return marginStart + marginEnd;
+}
+
 LayoutUnit RenderFlexibleBox::crossAxisMarginExtentForChild(const RenderBox& child) const
 {
     if (!child.needsLayout())
@@ -1673,7 +1687,8 @@ void RenderFlexibleBox::setOverridingMainSizeForChild(RenderBox& child, LayoutUn
 
 LayoutUnit RenderFlexibleBox::staticMainAxisPositionForPositionedChild(const RenderBox& child)
 {
-    const LayoutUnit availableSpace = mainAxisContentExtent(contentLogicalHeight()) - mainAxisExtentForChild(child);
+    auto childMainExtent = mainAxisMarginExtentForChild(child) + mainAxisExtentForChild(child);
+    auto availableSpace = mainAxisContentExtent(contentLogicalHeight()) - childMainExtent;
     auto isReverse = isColumnOrRowReverse();
     LayoutUnit offset = initialJustifyContentOffset(style(), availableSpace, 1, isReverse);
     if (isReverse)

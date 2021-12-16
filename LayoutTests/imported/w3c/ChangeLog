@@ -1,3 +1,15 @@
+2021-12-16  Vitaly Dyachkov  <obyknovenius@me.com>
+
+        Flexbox ignores margins of absolute positioned children when `align-items: flex-end` or `justify-content: flex-end`
+        https://bugs.webkit.org/show_bug.cgi?id=234143
+
+        Reviewed by Sergio Villar Senin.
+
+        * web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-margin-003-expected.html: Added.
+        * web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-margin-003.html: Added.
+        * web-platform-tests/css/css-flexbox/abspos/position-absolute-015-expected.txt: Replaced FAIL
+        by PASS expectations.
+
 2021-12-16  Joonghun Park  <jh718.park@samsung.com>
 
         Unreviewed. Import updated table-child-percentage-height-with-border-box-expected.html
