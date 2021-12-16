@@ -100,6 +100,10 @@ void ArrayPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
     JSC_NATIVE_INTRINSIC_FUNCTION_WITHOUT_TRANSITION("indexOf", arrayProtoFuncIndexOf, static_cast<unsigned>(PropertyAttribute::DontEnum), 1, ArrayIndexOfIntrinsic);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("lastIndexOf", arrayProtoFuncLastIndexOf, static_cast<unsigned>(PropertyAttribute::DontEnum), 1);
     JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().filterPublicName(), arrayPrototypeFilterCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
+    if (Options::useArrayGroupByMethod()) {
+        JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().groupByPublicName(), arrayPrototypeGroupByCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
+        JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().groupByToMapPublicName(), arrayPrototypeGroupByToMapCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
+    }
     JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().flatPublicName(), arrayPrototypeFlatCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
     JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().flatMapPublicName(), arrayPrototypeFlatMapCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
     JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().reducePublicName(), arrayPrototypeReduceCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
@@ -137,6 +141,8 @@ void ArrayPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
         Options::useArrayFindLastMethod() ? &vm.propertyNames->builtinNames().findLastIndexPublicName() : nullptr,
         &vm.propertyNames->builtinNames().flatPublicName(),
         &vm.propertyNames->builtinNames().flatMapPublicName(),
+        Options::useArrayGroupByMethod() ? &vm.propertyNames->builtinNames().groupByPublicName() : nullptr,
+        Options::useArrayGroupByMethod() ? &vm.propertyNames->builtinNames().groupByToMapPublicName() : nullptr,
         &vm.propertyNames->builtinNames().includesPublicName(),
         &vm.propertyNames->builtinNames().keysPublicName(),
         &vm.propertyNames->builtinNames().valuesPublicName()

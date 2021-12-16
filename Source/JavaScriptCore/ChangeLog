@@ -1,3 +1,45 @@
+2021-12-16  Devin Rousso  <drousso@apple.com>
+
+        Implement Array.prototype.groupBy and Array.prototype.groupByToMap
+        https://bugs.webkit.org/show_bug.cgi?id=234327
+
+        Reviewed by Yusuke Suzuki.
+
+        Implement new Array Grouping proposal <https://tc39.es/proposal-array-grouping/>, which just
+        reached Stage 3.
+
+        `Array.prototype.groupBy`/`Array.prototype.groupByToMap` will return a `{}`/`Map` where each
+        value in the array is put into a "bucket" keyed by the return value of the provoded callback.
+
+        ```js
+        const array = [1, 2, 3, 4];
+
+        array.groupBy(n => n % 2 ? "odd" : "even") // { odd: [1, 3], even: [2, 4] }
+        array.groupByToMap(n => n % 2 ? "odd" : "even") // new Map([["odd", [1, 3]], ["even", [2, 4]])
+        ```
+
+        * builtins/ArrayPrototype.js:
+        (groupBy): Added.
+        (groupByToMap): Added.
+        * runtime/ArrayPrototype.cpp:
+        (JSC::ArrayPrototype::finishCreation):
+
+        * bytecode/BytecodeIntrinsicRegistry.h:
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::BytecodeIntrinsicNode::emit_intrinsic_toPropertyKey): Added.
+        Allow `@toPropertyKey` to be used in builtins to convert a value to a property key. This is
+        used to avoid converting the return value of the callback given to `groupBy` more than once.
+
+        * builtins/BuiltinNames.h:
+        * bytecode/LinkTimeConstant.h:
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        Allow `@Map` to be used in builtins to create a primordial `Map` instance. This is used to
+        avoid side effects when creating and populating the `Map` returned by `groupByToMap`.
+
+        * runtime/OptionsList.h:
+        Add `useArrayGroupByMethod` option.
+
 2021-12-15  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Rename Wasm::CodeBlock to Wasm::CalleeGroup

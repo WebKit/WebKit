@@ -70,6 +70,7 @@ namespace JSC {
     macro(defineProperty) \
     macro(defaultPromiseThen) \
     macro(Set) \
+    macro(Map) \
     macro(throwTypeErrorFunction) \
     macro(typedArrayLength) \
     macro(typedArrayContentType) \

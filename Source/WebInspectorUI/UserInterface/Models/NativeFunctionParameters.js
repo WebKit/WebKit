@@ -252,6 +252,8 @@ WI.NativePrototypeFunctionParameters = {
         findLast: "callback, [thisArg]",
         findLastIndex: "callback, [thisArg]",
         forEach: "callback, [thisArg]",
+        groupBy: "callback, [thisArg]",
+        groupByToMap: "callback, [thisArg]",
         includes: "searchValue, [startIndex=0]",
         indexOf: "searchValue, [startIndex=0]",
         join: "[separator=\",\"]",

@@ -90,6 +90,7 @@ enum class LinkTimeConstant : int32_t;
     macro(putSetIteratorInternalField) \
     macro(toNumber) \
     macro(toString) \
+    macro(toPropertyKey) \
     macro(toObject) \
     macro(newArrayWithSize) \
     macro(newPromise) \

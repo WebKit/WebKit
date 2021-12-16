@@ -1350,6 +1350,9 @@ capitalName ## Constructor* lowerName ## Constructor = featureFlag ? capitalName
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::Set)].initLater([] (const Initializer<JSCell>& init) {
             init.set(jsCast<JSGlobalObject*>(init.owner)->setConstructor());
         });
+    m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::Map)].initLater([] (const Initializer<JSCell>& init) {
+            init.set(jsCast<JSGlobalObject*>(init.owner)->mapConstructor());
+        });
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::mapBucketHead)].initLater([] (const Initializer<JSCell>& init) {
             init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 0, String(), mapPrivateFuncMapBucketHead, JSMapBucketHeadIntrinsic));
         });

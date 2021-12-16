@@ -77,6 +77,7 @@ class JSGlobalObject;
     v(appendMemcpy, nullptr) \
     v(hostPromiseRejectionTracker, nullptr) \
     v(Set, nullptr) \
+    v(Map, nullptr) \
     v(thisTimeValue, nullptr) \
     v(importInRealm, nullptr) \
     v(evalInRealm, nullptr) \

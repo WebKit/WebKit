@@ -1841,6 +1841,15 @@ RegisterID* BytecodeIntrinsicNode::emit_intrinsic_toString(BytecodeGenerator& ge
     return generator.move(dst, generator.emitToString(generator.tempDestination(dst), src.get()));
 }
 
+RegisterID* BytecodeIntrinsicNode::emit_intrinsic_toPropertyKey(BytecodeGenerator& generator, RegisterID* dst)
+{
+    ArgumentListNode* node = m_args->m_listNode;
+    RefPtr<RegisterID> src = generator.emitNode(node);
+    ASSERT(!node->m_next);
+
+    return generator.move(dst, generator.emitToPropertyKey(generator.tempDestination(dst), src.get()));
+}
+
 RegisterID* BytecodeIntrinsicNode::emit_intrinsic_toObject(BytecodeGenerator& generator, RegisterID* dst)
 {
     ArgumentListNode* node = m_args->m_listNode;
