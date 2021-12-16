@@ -79,6 +79,7 @@ static unsigned moveToNextBreakablePosition(unsigned startPosition, LazyLineBrea
 InlineItemsBuilder::InlineItemsBuilder(const ContainerBox& formattingContextRoot, InlineFormattingState& formattingState)
     : m_root(formattingContextRoot)
     , m_formattingState(formattingState)
+    , m_needsVisualReordering(!formattingContextRoot.style().isLeftToRightDirection())
 {
 }
 
@@ -414,9 +415,7 @@ void InlineItemsBuilder::handleTextContent(const InlineTextBox& inlineTextBox, I
     if (!contentLength)
         return inlineItems.append(InlineTextItem::createEmptyItem(inlineTextBox));
 
-    if (inlineTextBox.containsBidiText())
-        m_hasSeenBidiContent = true;
-
+    m_needsVisualReordering = m_needsVisualReordering || inlineTextBox.containsBidiText();
     auto& style = inlineTextBox.style();
     auto shouldPreserveSpacesAndTabs = TextUtil::shouldPreserveSpacesAndTabs(inlineTextBox);
     auto shouldPreserveNewline = TextUtil::shouldPreserveNewline(inlineTextBox);
@@ -488,14 +487,14 @@ void InlineItemsBuilder::handleInlineBoxStart(const Box& inlineBox, InlineItems&
 {
     inlineItems.append({ inlineBox, InlineItem::Type::InlineBoxStart });
     auto& style = inlineBox.style();
-    m_hasSeenBidiContent = m_hasSeenBidiContent || (style.rtlOrdering() == Order::Logical && style.unicodeBidi() != EUnicodeBidi::UBNormal); 
+    m_needsVisualReordering = m_needsVisualReordering || !style.isLeftToRightDirection() || (style.rtlOrdering() == Order::Logical && style.unicodeBidi() != EUnicodeBidi::UBNormal);
 }
 
 void InlineItemsBuilder::handleInlineBoxEnd(const Box& inlineBox, InlineItems& inlineItems)
 {
     inlineItems.append({ inlineBox, InlineItem::Type::InlineBoxEnd });
     // Inline box end item itself can not trigger bidi content.
-    ASSERT(hasSeenBidiContent() || inlineBox.style().rtlOrdering() == Order::Visual || inlineBox.style().unicodeBidi() == EUnicodeBidi::UBNormal);
+    ASSERT(needsVisualReordering() || inlineBox.style().isLeftToRightDirection() || inlineBox.style().rtlOrdering() == Order::Visual || inlineBox.style().unicodeBidi() == EUnicodeBidi::UBNormal);
 }
 
 void InlineItemsBuilder::handleInlineLevelBox(const Box& layoutBox, InlineItems& inlineItems)
