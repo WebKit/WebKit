@@ -1,3 +1,18 @@
+2021-12-15  J Pascoe  <j_pascoe@apple.com>
+
+        [WebAuthn] Allow same-site, cross-origin iframe get()
+        https://bugs.webkit.org/show_bug.cgi?id=234309
+        rdar://problem/86486313
+
+        Reviewed by Brent Fulgham.
+
+        Add layout test for WebAuthn get assertions on cross-site, same-sites i-frames with
+        publickey-credentials-get feature policy.
+
+        * http/wpt/webauthn/public-key-credential-same-origin-with-ancestors.https-expected.txt:
+        * http/wpt/webauthn/public-key-credential-same-origin-with-ancestors.https.html:
+        * http/wpt/webauthn/resources/util.js:
+
 2021-12-15  Ryan Haddad  <ryanhaddad@apple.com>
 
         PCM: Remove old DB update and migration code, and add a unit test for destination token DB columns

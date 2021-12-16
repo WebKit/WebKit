@@ -25,10 +25,7 @@
 
 #pragma once
 
-#if HAVE(UNIFIED_ASC_AUTH_UI)
-#import <AuthenticationServicesCore/AuthenticationServicesCore.h>
-#import <AuthenticationServicesCore/AuthenticationServicesCorePrivate.h>
-#elif HAVE(ASC_AUTH_UI)
+#if HAVE(ASC_AUTH_UI) || HAVE(UNIFIED_ASC_AUTH_UI)
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -71,6 +68,14 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
+@interface ASCAuthorizationRemotePresenter : NSObject
+
+#if TARGET_OS_OSX
+- (void)presentWithWindow:(NSWindow *)window daemonEndpoint:(NSXPCListenerEndpoint *)daemonEndpoint completionHandler:(void (^)(id <ASCCredentialProtocol>, NSError *))completionHandler;
+#endif
+
+@end
+
 @class ASCCredentialRequestContext;
 
 extern NSString * const ASCAuthorizationPresentationContextDataKey;
@@ -105,16 +110,65 @@ typedef NS_ENUM(NSInteger, ASCSecurityKeyPublicKeyCredentialKind) {
     ASCSecurityKeyPublicKeyCredentialKindAssertionPlaceholder,
 };
 
+@class ASCPublicKeyCredentialDescriptor;
+
+@interface ASCPublicKeyCredentialDescriptor : NSObject <NSSecureCoding>
+
+- (instancetype)initWithCredentialID:(NSData *)credentialID transports:(nullable NSArray<NSString *> *)allowedTransports;
+
+@property (nonatomic, readonly) NSData *credentialID;
+@property (nonatomic, nullable, readonly) NSArray<NSString *> *transports;
+
+@end
+
+@class ASCPublicKeyCredentialDescriptor;
+
+typedef NS_ENUM(NSUInteger, ASCPublicKeyCredentialKind) {
+    ASCPublicKeyCredentialKindPlatform = 1,
+    ASCPublicKeyCredentialKindSecurityKey,
+};
+
+@interface ASCPublicKeyCredentialAssertionOptions : NSObject <NSSecureCoding>
+
+- (instancetype)initWithKind:(ASCPublicKeyCredentialKind)credentialKind relyingPartyIdentifier:(NSString *)relyingPartyIdentifier challenge:(NSData *)challenge userVerificationPreference:(nullable NSString *)userVerificationPreference allowedCredentials:(nullable NSArray<ASCPublicKeyCredentialDescriptor *> *)allowedCredentials;
+
+- (instancetype)initWithKind:(ASCPublicKeyCredentialKind)credentialKind relyingPartyIdentifier:(NSString *)relyingPartyIdentifier clientDataHash:(NSData *)clientDataHash userVerificationPreference:(nullable NSString *)userVerificationPreference allowedCredentials:(nullable NSArray<ASCPublicKeyCredentialDescriptor *> *)allowedCredentials;
+
+@property (nonatomic, readonly) ASCPublicKeyCredentialKind credentialKind;
+@property (nonatomic, copy, readonly) NSString *relyingPartyIdentifier;
+@property (nonatomic, nullable, copy, readonly) NSData *challenge;
+// If clientDataHash is null, then gets generated from challenge and relyingPartyIdentifier.
+@property (nonatomic, nullable, copy) NSData *clientDataHash;
+@property (nonatomic, nullable, readonly, copy) NSString *userVerificationPreference;
+
+@property (nonatomic, nullable, readonly, copy) NSArray<ASCPublicKeyCredentialDescriptor *> *allowedCredentials;
+
+@end
+
+
+typedef NS_OPTIONS(NSUInteger, ASCCredentialRequestTypes) {
+    ASCCredentialRequestTypeNone = 0,
+    ASCCredentialRequestTypePassword = 1 << 0,
+    ASCCredentialRequestTypeAppleID = 1 << 1,
+    ASCCredentialRequestTypePlatformPublicKeyRegistration = 1 << 2,
+    ASCCredentialRequestTypePlatformPublicKeyAssertion = 1 << 3,
+    ASCCredentialRequestTypeSecurityKeyPublicKeyRegistration = 1 << 4,
+    ASCCredentialRequestTypeSecurityKeyPublicKeyAssertion = 1 << 5,
+};
+
 @interface ASCPublicKeyCredentialCreationOptions : NSObject <NSSecureCoding>
 
-@property (nonatomic, copy) NSData *challenge;
+@property (nonatomic, nullable, copy) NSData *challenge;
+@property (nonatomic, nullable, copy) NSData *clientDataHash;
 @property (nonatomic, copy) NSString *relyingPartyIdentifier;
 @property (nonatomic, copy) NSString *userName;
 @property (nonatomic, copy) NSData *userIdentifier;
 @property (nonatomic, copy) NSString *userDisplayName;
 @property (nonatomic, copy) NSArray<NSNumber *> *supportedAlgorithmIdentifiers;
+@property (nonatomic, nullable, copy) NSString *userVerificationPreference;
 
 @property (nonatomic) BOOL shouldRequireResidentKey;
+@property (nonatomic, copy) NSArray<ASCPublicKeyCredentialDescriptor *> *excludedCredentials;
 
 @end
 
@@ -149,7 +203,112 @@ typedef NS_ENUM(NSInteger, ASCSecurityKeyPublicKeyCredentialKind) {
 
 @end
 
+@interface ASCCredentialRequestContext : NSObject <NSSecureCoding>
+
+- (instancetype)init NS_UNAVAILABLE;
++ (instancetype)new NS_UNAVAILABLE;
+
+- (instancetype)initWithRequestTypes:(ASCCredentialRequestTypes)requestTypes;
+
+@property (nonatomic, readonly) NSUInteger requestTypes;
+@property (nonatomic, nullable, copy) NSString *relyingPartyIdentifier;
+
+@property (nonatomic, nullable, copy) ASCPublicKeyCredentialCreationOptions *platformKeyCredentialCreationOptions;
+@property (nonatomic, nullable, copy) ASCPublicKeyCredentialCreationOptions *securityKeyCredentialCreationOptions;
+
+@property (nonatomic, nullable, copy) ASCPublicKeyCredentialAssertionOptions *platformKeyCredentialAssertionOptions;
+@property (nonatomic, nullable, copy) ASCPublicKeyCredentialAssertionOptions *securityKeyCredentialAssertionOptions;
+
+@end
+
 @protocol ASCCredentialProtocol <NSObject, NSSecureCoding>
+
+@end
+
+@class _WKAuthenticatorAttestationResponse;
+
+@interface ASCPlatformPublicKeyCredentialRegistration : NSObject <ASCCredentialProtocol>
+
+- (instancetype)initWithRelyingPartyIdentifier:(NSString *)relyingPartyIdentifier attestationObject:(NSData *)attestationObject rawClientDataJSON:(NSData *)rawClientDataJSON credentialID:(NSData *)credentialID;
+
+- (instancetype)initWithRelyingPartyIdentifier:(NSString *)relyingPartyIdentifier authenticatorAttestationResponse:(_WKAuthenticatorAttestationResponse *)attestationResponse rawClientDataJSON:(NSData *)rawClientDataJSON;
+
+@property (nonatomic, copy, readonly) NSData *credentialID;
+@property (nonatomic, copy, readonly) NSString *relyingPartyIdentifier;
+@property (nonatomic, copy, readonly) NSData *attestationObject;
+@property (nonatomic, copy, readonly) NSData *rawClientDataJSON;
+
++ (instancetype)new NS_UNAVAILABLE;
+- (instancetype)init NS_UNAVAILABLE;
+
+@end
+
+@interface ASCSecurityKeyPublicKeyCredentialRegistration : NSObject <ASCCredentialProtocol>
+
+- (instancetype)initWithRelyingPartyIdentifier:(NSString *)relyingPartyIdentifier authenticatorAttestationResponse:(_WKAuthenticatorAttestationResponse *)attestationResponse;
+
+@property (nonatomic, copy, readonly) NSData *credentialID;
+@property (nonatomic, copy, readonly) NSData *rawClientDataJSON;
+@property (nonatomic, copy, readonly) NSString *relyingPartyIdentifier;
+@property (nonatomic, copy, readonly) NSData *attestationObject;
+
+@end
+
+@class _WKAuthenticatorAssertionResponse;
+
+@interface ASCPlatformPublicKeyCredentialAssertion : NSObject <ASCCredentialProtocol>
+
+- (instancetype)initWithRelyingPartyIdentifier:(NSString *)relyingPartyIdentifier authenticatorAssertionResponse:(_WKAuthenticatorAssertionResponse *)assertionResponse;
+
+@property (nonatomic, copy, readonly) NSData *credentialID;
+@property (nonatomic, copy, readonly) NSData *rawClientDataJSON;
+@property (nonatomic, copy, readonly) NSString *relyingPartyIdentifier;
+@property (nonatomic, copy, readonly) NSData *authenticatorData;
+@property (nonatomic, copy, readonly) NSData *signature;
+@property (nonatomic, copy, readonly, nullable) NSData *userHandle;
+
+@end
+
+@interface ASCSecurityKeyPublicKeyCredentialAssertion : NSObject <ASCCredentialProtocol>
+
+- (instancetype)initWithRelyingPartyIdentifier:(NSString *)relyingPartyIdentifier authenticatorAssertionResponse:(_WKAuthenticatorAssertionResponse *)assertionResponse;
+
+@property (nonatomic, copy, readonly) NSData *credentialID;
+@property (nonatomic, copy, readonly) NSString *relyingPartyIdentifier;
+@property (nonatomic, copy, readonly) NSData *authenticatorData;
+@property (nonatomic, copy, readonly) NSData *signature;
+@property (nonatomic, copy, readonly, nullable) NSData *userHandle;
+@property (nonatomic, copy, readonly) NSData *rawClientDataJSON;
+
+@end
+
+@protocol ASCAgentProtocol <NSObject>
+
+#if TARGET_OS_IOS && !TARGET_OS_MACCATALYST
+- (void)performAuthorizationRequestsForContext:(ASCCredentialRequestContext *)context withCompletionHandler:(void (^)(id <ASCCredentialProtocol> _Nullable credential, NSError * _Nullable error))completionHandler;
+#elif TARGET_OS_OSX || TARGET_OS_MACCATALYST
+- (void)performAuthorizationRequestsForContext:(ASCCredentialRequestContext *)context withClearanceHandler:(void (^)(NSXPCListenerEndpoint * _Nullable daemonEndpoint, NSError * _Nullable error))clearanceHandler;
+
+- (void)beginAuthorizationForApplicationIdentifier:(NSString *)applicationIdentifier fromEndpoint:(NSXPCListenerEndpoint *)listenerEndpoint;
+
+- (void)userSelectedLoginChoice:(id <ASCLoginChoiceProtocol>)loginChoice authenticatedContext:(LAContext *)context completionHandler:(void (^)(id <ASCCredentialProtocol> _Nullable, NSError * _Nullable))completionHandler;
+
+- (void)requestCompletedWithCredential:(nullable id<ASCCredentialProtocol>)credential error:(nullable NSError *)error;
+#endif
+
+@end
+
+@interface ASCAgentProxy : NSObject <ASCAgentProtocol>
+
+- (instancetype)init;
+
+#if TARGET_OS_OSX
+- (instancetype)initWithEndpoint:(NSXPCListenerEndpoint *)endpoint;
+#endif
+
+- (void)invalidate;
+
+- (void)reconnectIfNecessary;
 
 @end
 
