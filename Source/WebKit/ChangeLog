@@ -1,3 +1,15 @@
+2021-12-16  Per Arne Vollan  <pvollan@apple.com>
+
+        [watchOS] Adjust sandbox message filter
+        https://bugs.webkit.org/show_bug.cgi?id=234385
+        <rdar://86550488>
+
+        Reviewed by Brent Fulgham.
+
+        Add required items to sandbox message filter in the WebContent process on watchOS.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb.in:
+
 2021-12-16  Alex Christensen  <achristensen@webkit.org>
 
         Unreviewed, reverting r287056.

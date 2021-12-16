@@ -1548,6 +1548,14 @@
 #endif
 )
 
+(define (kernel-mig-routine-in-use-watchos)
+    (kernel-mig-routine
+        io_connect_set_notification_port
+        mach_make_memory_entry
+        mach_make_memory_entry_64
+        vm_copy
+        vm_remap_external))
+
 (define (kernel-mig-routine-only-in-use-during-launch)
     (kernel-mig-routine
         host_get_clock_service
@@ -1561,11 +1569,6 @@
 (define (kernel-mig-routine-in-use)
     (kernel-mig-routine
         (when (defined? '_mach_make_memory_entry) _mach_make_memory_entry)
-#if PLATFORM(WATCHOS)
-        (when (defined? 'mach_make_memory_entry) mach_make_memory_entry)
-        (when (defined? 'mach_make_memory_entry_64) mach_make_memory_entry_64)
-        (when (defined? 'vm_copy) vm_copy)
-#endif
         host_get_io_master
         io_connect_async_method
         io_connect_method
@@ -1625,6 +1628,11 @@
             (allow mach-message-send
                 (kernel-mig-routine-only-in-use-during-launch)
                 (kernel-mig-routine-in-use))
+
+#if PLATFORM(WATCHOS)
+            (allow mach-message-send
+                (kernel-mig-routine-in-use-watchos))
+#endif
 
 #if HAVE(SANDBOX_STATE_FLAGS)
 ;; FIXME: enable this when rdar://85931614 is fixed
