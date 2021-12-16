@@ -1,3 +1,14 @@
+2021-12-16  Joonghun Park  <jh718.park@samsung.com>
+
+        Unreviewed. Import updated table-child-percentage-height-with-border-box-expected.html
+
+        The wpt expected file was fixed accroding to the spec,
+        https://drafts.csswg.org/css-tables-3/#table-cell-content-relayout.
+
+        The corresponding wpt issue is https://github.com/web-platform-tests/wpt/pull/32089.
+
+        * web-platform-tests/css/css-sizing/table-child-percentage-height-with-border-box-expected.html:
+
 2021-12-13  Sergio Villar Senin  <svillar@igalia.com>
 
         [css-flexbox] Absolutely positioned children should be aligned using the margin box
