@@ -364,7 +364,11 @@ public:
 #endif
 
 protected:
+#if PLATFORM(COCOA) && HAVE(TASK_IDENTITY_TOKEN)
+    GraphicsContextGLANGLE(GraphicsContextGLAttributes, const ProcessIdentity&);
+#else
     GraphicsContextGLANGLE(GraphicsContextGLAttributes);
+#endif
     // Called once by all the public entry points that eventually call OpenGL.
     // Called once by all the public entry points of ExtensionsGL that eventually call OpenGL.
     bool makeContextCurrent() WARN_UNUSED_RETURN;

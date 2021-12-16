@@ -202,7 +202,12 @@ RefPtr<GraphicsContextGLCocoa> GraphicsContextGLCocoa::create(GraphicsContextGLA
 }
 
 GraphicsContextGLCocoa::GraphicsContextGLCocoa(GraphicsContextGLAttributes&& creationAttributes, ProcessIdentity&& resourceOwner)
-    : GraphicsContextGLANGLE(WTFMove(creationAttributes))
+    :
+#if PLATFORM(COCOA) && HAVE(TASK_IDENTITY_TOKEN)
+    GraphicsContextGLANGLE(WTFMove(creationAttributes), resourceOwner)
+#else
+    GraphicsContextGLANGLE(WTFMove(creationAttributes))
+#endif
 {
     if (!isValid())
         return;
@@ -230,7 +235,11 @@ void GraphicsContextGLCocoa::markDisplayBufferInUse()
 
 // FIXME: Below is functionality that should be moved to GraphicsContextGLCocoa to simplify the base class.
 
+#if PLATFORM(COCOA) && HAVE(TASK_IDENTITY_TOKEN)
+GraphicsContextGLANGLE::GraphicsContextGLANGLE(GraphicsContextGLAttributes attrs, const ProcessIdentity& resourceOwner)
+#else
 GraphicsContextGLANGLE::GraphicsContextGLANGLE(GraphicsContextGLAttributes attrs)
+#endif
     : GraphicsContextGL(attrs)
 {
     m_isForWebGL2 = attrs.webGLVersion == GraphicsContextGLWebGLVersion::WebGL2;
@@ -322,6 +331,16 @@ GraphicsContextGLANGLE::GraphicsContextGLANGLE(GraphicsContextGLAttributes attrs
     // WebGL doesn't allow implicit creation of objects on bind.
     eglContextAttributes.append(EGL_CONTEXT_BIND_GENERATES_RESOURCE_CHROMIUM);
     eglContextAttributes.append(EGL_FALSE);
+
+#if PLATFORM(COCOA) && HAVE(TASK_IDENTITY_TOKEN)
+    auto displayExtensions = EGL_QueryString(m_displayObj, EGL_EXTENSIONS);
+    bool supportsOwnershipIdentity = strstr(displayExtensions, "EGL_ANGLE_metal_create_context_ownership_identity");
+    // FIXME: Use m_resourceOwner once it moves to GraphicsContextGLCocoa.
+    if (attrs.useMetal && resourceOwner && supportsOwnershipIdentity) {
+        eglContextAttributes.append(EGL_CONTEXT_METAL_OWNERSHIP_IDENTITY_ANGLE);
+        eglContextAttributes.append(resourceOwner.taskIdToken());
+    }
+#endif
 
     eglContextAttributes.append(EGL_NONE);
 
