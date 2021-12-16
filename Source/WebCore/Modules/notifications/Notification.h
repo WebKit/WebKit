@@ -46,6 +46,8 @@ class DeferredPromise;
 class Document;
 class NotificationPermissionCallback;
 
+struct NotificationData;
+
 class Notification final : public RefCounted<Notification>, public ActiveDOMObject, public EventTargetWithInlineData {
     WTF_MAKE_ISO_ALLOCATED_EXPORT(Notification, WEBCORE_EXPORT);
 public:
@@ -86,6 +88,8 @@ public:
     static void requestPermission(Document&, RefPtr<NotificationPermissionCallback>&&, Ref<DeferredPromise>&&);
 
     ScriptExecutionContext* scriptExecutionContext() const final { return ActiveDOMObject::scriptExecutionContext(); }
+
+    WEBCORE_EXPORT NotificationData dataWithoutNotificationID() const;
 
     using RefCounted::ref;
     using RefCounted::deref;

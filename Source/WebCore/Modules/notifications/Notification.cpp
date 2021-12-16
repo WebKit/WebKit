@@ -41,6 +41,7 @@
 #include "JSDOMPromiseDeferred.h"
 #include "NotificationClient.h"
 #include "NotificationController.h"
+#include "NotificationData.h"
 #include "NotificationPermissionCallback.h"
 #include "WindowEventLoop.h"
 #include "WindowFocusAllowedIndicator.h"
@@ -222,6 +223,20 @@ void Notification::eventListenersDidChange()
 bool Notification::virtualHasPendingActivity() const
 {
     return m_state == Showing && m_hasRelevantEventListener;
+}
+
+NotificationData Notification::dataWithoutNotificationID() const
+{
+    return {
+        m_title,
+        m_body,
+        m_icon.string(),
+        m_tag,
+        m_lang,
+        m_direction,
+        scriptExecutionContext()->securityOrigin()->toString(),
+        0
+    };
 }
 
 } // namespace WebCore

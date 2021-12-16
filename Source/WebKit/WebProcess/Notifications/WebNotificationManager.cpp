@@ -39,6 +39,7 @@
 #include "WebPageProxyMessages.h"
 #include <WebCore/Document.h>
 #include <WebCore/Notification.h>
+#include <WebCore/NotificationData.h>
 #include <WebCore/Page.h>
 #include <WebCore/RuntimeEnabledFeatures.h>
 #include <WebCore/ScriptExecutionContext.h>
@@ -163,7 +164,9 @@ bool WebNotificationManager::show(Notification* notification, WebPage* page)
     auto it = m_notificationContextMap.add(notification->scriptExecutionContext(), Vector<uint64_t>()).iterator;
     it->value.append(notificationID);
 
-    sendNotificationMessage(m_process, Messages::NotificationManagerMessageHandler::ShowNotification(notification->title(), notification->body(), notification->icon().string(), notification->tag(), notification->lang(), notification->dir(), notification->scriptExecutionContext()->securityOrigin()->toString(), notificationID), *page);
+    auto notificationData = notification->dataWithoutNotificationID();
+    notificationData.notificationID = notificationID;
+    sendNotificationMessage(m_process, Messages::NotificationManagerMessageHandler::ShowNotification(WTFMove(notificationData)), *page);
     return true;
 #else
     UNUSED_PARAM(notification);

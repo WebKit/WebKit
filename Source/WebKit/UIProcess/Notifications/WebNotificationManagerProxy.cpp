@@ -93,11 +93,11 @@ HashMap<String, bool> WebNotificationManagerProxy::notificationPermissions()
     return m_provider->notificationPermissions();
 }
 
-void WebNotificationManagerProxy::show(WebPageProxy* webPage, const String& title, const String& body, const String& iconURL, const String& tag, const String& lang, WebCore::NotificationDirection dir, const String& originString, uint64_t pageNotificationID)
+void WebNotificationManagerProxy::show(WebPageProxy* webPage, const WebCore::NotificationData& notificationData)
 {
     uint64_t globalNotificationID = generateGlobalNotificationID();
-    auto notification = WebNotification::create(title, body, iconURL, tag, lang, dir, originString, globalNotificationID);
-    auto notificationIDPair = std::make_pair(webPage->identifier(), pageNotificationID);
+    auto notification = WebNotification::create(notificationData);
+    auto notificationIDPair = std::make_pair(webPage->identifier(), notificationData.notificationID);
     m_globalNotificationMap.set(globalNotificationID, notificationIDPair);
     m_notifications.set(notificationIDPair, std::make_pair(globalNotificationID, notification.copyRef()));
     m_provider->show(*webPage, notification.get());

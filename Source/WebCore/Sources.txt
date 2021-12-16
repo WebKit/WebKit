@@ -242,6 +242,7 @@ Modules/model-element/dummy/DummyModelPlayer.cpp
 Modules/model-element/dummy/DummyModelPlayerProvider.cpp
 Modules/notifications/Notification.cpp
 Modules/notifications/NotificationController.cpp
+Modules/notifications/NotificationData.cpp
 Modules/paymentrequest/MerchantValidationEvent.cpp
 Modules/paymentrequest/PaymentAddress.cpp
 Modules/paymentrequest/PaymentHandler.cpp

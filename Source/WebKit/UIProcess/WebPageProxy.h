@@ -2032,7 +2032,7 @@ public:
     bool isQuarantinedAndNotUserApproved(const String&);
 #endif
 
-    void showNotification(const String& title, const String& body, const String& iconURL, const String& tag, const String& lang, WebCore::NotificationDirection, const String& originString, uint64_t notificationID);
+    void showNotification(const WebCore::NotificationData&);
     void cancelNotification(uint64_t notificationID);
     void clearNotifications(const Vector<uint64_t>& notificationIDs);
     void didDestroyNotification(uint64_t notificationID);

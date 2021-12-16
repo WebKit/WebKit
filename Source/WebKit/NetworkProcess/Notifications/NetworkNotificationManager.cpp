@@ -98,7 +98,7 @@ void NetworkNotificationManager::getPendingPushMessages(CompletionHandler<void(c
     sendMessageWithReply<WebPushD::MessageType::GetPendingPushMessages>(WTFMove(replyHandler));
 }
 
-void NetworkNotificationManager::showNotification(const String&, const String&, const String&, const String&, const String&, WebCore::NotificationDirection, const String&, uint64_t)
+void NetworkNotificationManager::showNotification(const WebCore::NotificationData&)
 {
     if (!m_connection)
         return;

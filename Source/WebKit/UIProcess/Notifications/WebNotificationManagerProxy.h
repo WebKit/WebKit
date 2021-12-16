@@ -34,7 +34,7 @@
 #include <wtf/text/StringHash.h>
 
 namespace WebCore {
-enum class NotificationDirection : uint8_t;
+struct NotificationData;
 }
 
 namespace API {
@@ -59,7 +59,7 @@ public:
     void setProvider(std::unique_ptr<API::NotificationProvider>&&);
     HashMap<String, bool> notificationPermissions();
 
-    void show(WebPageProxy*, const String& title, const String& body, const String& iconURL, const String& tag, const String& lang, WebCore::NotificationDirection, const String& originString, uint64_t pageNotificationID);
+    void show(WebPageProxy*, const WebCore::NotificationData&);
     void cancel(WebPageProxy*, uint64_t pageNotificationID);
     void clearNotifications(WebPageProxy*);
     void clearNotifications(WebPageProxy*, const Vector<uint64_t>& pageNotificationIDs);

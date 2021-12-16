@@ -32,15 +32,16 @@
 
 namespace WebCore {
 enum class NotificationDirection : uint8_t;
+struct NotificationData;
 }
 
 namespace WebKit {
 
 class WebNotification : public API::ObjectImpl<API::Object::Type::Notification> {
 public:
-    static Ref<WebNotification> create(const String& title, const String& body, const String& iconURL, const String& tag, const String& lang, WebCore::NotificationDirection dir, const String& originString, uint64_t notificationID)
+    static Ref<WebNotification> create(const WebCore::NotificationData& data)
     {
-        return adoptRef(*new WebNotification(title, body, iconURL, tag, lang, dir, originString, notificationID));
+        return adoptRef(*new WebNotification(data));
     }
 
     const String& title() const { return m_title; }
@@ -54,7 +55,7 @@ public:
     uint64_t notificationID() const { return m_notificationID; }
 
 private:
-    WebNotification(const String& title, const String& body, const String& iconURL, const String& tag, const String& lang, WebCore::NotificationDirection, const String& originString, uint64_t notificationID);
+    WebNotification(const WebCore::NotificationData&);
 
     String m_title;
     String m_body;
