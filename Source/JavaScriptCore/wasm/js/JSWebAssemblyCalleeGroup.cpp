@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "JSWebAssemblyCodeBlock.h"
+#include "JSWebAssemblyCalleeGroup.h"
 
 #if ENABLE(WEBASSEMBLY)
 
@@ -35,23 +35,23 @@
 
 namespace JSC {
 
-const ClassInfo JSWebAssemblyCodeBlock::s_info = { "WebAssemblyCodeBlock", nullptr, nullptr, nullptr, CREATE_METHOD_TABLE(JSWebAssemblyCodeBlock) };
+const ClassInfo JSWebAssemblyCalleeGroup::s_info = { "WebAssemblyCalleeGroup", nullptr, nullptr, nullptr, CREATE_METHOD_TABLE(JSWebAssemblyCalleeGroup) };
 
-JSWebAssemblyCodeBlock* JSWebAssemblyCodeBlock::create(VM& vm, Ref<Wasm::CodeBlock> codeBlock, const Wasm::ModuleInformation& moduleInformation)
+JSWebAssemblyCalleeGroup* JSWebAssemblyCalleeGroup::create(VM& vm, Ref<Wasm::CalleeGroup> calleeGroup, const Wasm::ModuleInformation& moduleInformation)
 {
-    auto* result = new (NotNull, allocateCell<JSWebAssemblyCodeBlock>(vm)) JSWebAssemblyCodeBlock(vm, WTFMove(codeBlock), moduleInformation);
+    auto* result = new (NotNull, allocateCell<JSWebAssemblyCalleeGroup>(vm)) JSWebAssemblyCalleeGroup(vm, WTFMove(calleeGroup), moduleInformation);
     result->finishCreation(vm);
     return result;
 }
 
-JSWebAssemblyCodeBlock::JSWebAssemblyCodeBlock(VM& vm, Ref<Wasm::CodeBlock>&& codeBlock, const Wasm::ModuleInformation& moduleInformation)
-    : Base(vm, vm.webAssemblyCodeBlockStructure.get())
-    , m_codeBlock(WTFMove(codeBlock))
-    , m_wasmToJSExitStubs(m_codeBlock->functionImportCount())
+JSWebAssemblyCalleeGroup::JSWebAssemblyCalleeGroup(VM& vm, Ref<Wasm::CalleeGroup>&& calleeGroup, const Wasm::ModuleInformation& moduleInformation)
+    : Base(vm, vm.webAssemblyCalleeGroupStructure.get())
+    , m_calleeGroup(WTFMove(calleeGroup))
+    , m_wasmToJSExitStubs(m_calleeGroup->functionImportCount())
 {
     // FIXME: We should not need to do this synchronously.
     // https://bugs.webkit.org/show_bug.cgi?id=170567
-    for (unsigned importIndex = 0; importIndex < m_codeBlock->functionImportCount(); ++importIndex) {
+    for (unsigned importIndex = 0; importIndex < m_calleeGroup->functionImportCount(); ++importIndex) {
         Wasm::SignatureIndex signatureIndex = moduleInformation.importFunctionSignatureIndices.at(importIndex);
         auto binding = Wasm::wasmToJS(vm, m_callLinkInfos, signatureIndex, importIndex);
         if (UNLIKELY(!binding)) {
@@ -66,34 +66,34 @@ JSWebAssemblyCodeBlock::JSWebAssemblyCodeBlock(VM& vm, Ref<Wasm::CodeBlock>&& co
     }
 }
 
-void JSWebAssemblyCodeBlock::finishCreation(VM& vm)
+void JSWebAssemblyCalleeGroup::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
 }
 
-void JSWebAssemblyCodeBlock::destroy(JSCell* cell)
+void JSWebAssemblyCalleeGroup::destroy(JSCell* cell)
 {
-    static_cast<JSWebAssemblyCodeBlock*>(cell)->JSWebAssemblyCodeBlock::~JSWebAssemblyCodeBlock();
+    static_cast<JSWebAssemblyCalleeGroup*>(cell)->JSWebAssemblyCalleeGroup::~JSWebAssemblyCalleeGroup();
 }
 
-void JSWebAssemblyCodeBlock::clearJSCallICs(VM& vm)
+void JSWebAssemblyCalleeGroup::clearJSCallICs(VM& vm)
 {
     for (auto iter = m_callLinkInfos.begin(); !!iter; ++iter)
         (*iter)->unlink(vm);
 }
 
 template<typename Visitor>
-void JSWebAssemblyCodeBlock::visitChildrenImpl(JSCell* cell, Visitor& visitor)
+void JSWebAssemblyCalleeGroup::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
-    JSWebAssemblyCodeBlock* thisObject = jsCast<JSWebAssemblyCodeBlock*>(cell);
+    JSWebAssemblyCalleeGroup* thisObject = jsCast<JSWebAssemblyCalleeGroup*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
 
     Base::visitChildren(thisObject, visitor);
 }
 
-DEFINE_VISIT_CHILDREN(JSWebAssemblyCodeBlock);
+DEFINE_VISIT_CHILDREN(JSWebAssemblyCalleeGroup);
 
-void JSWebAssemblyCodeBlock::finalizeUnconditionally(VM& vm)
+void JSWebAssemblyCalleeGroup::finalizeUnconditionally(VM& vm)
 {
     for (auto iter = m_callLinkInfos.begin(); !!iter; ++iter)
         (*iter)->visitWeak(vm);

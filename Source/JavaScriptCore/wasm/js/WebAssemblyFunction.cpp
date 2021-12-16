@@ -67,7 +67,7 @@ JSC_DEFINE_HOST_FUNCTION(callWebAssemblyFunction, (JSGlobalObject* globalObject,
     const Wasm::Signature& signature = Wasm::SignatureInformation::get(signatureIndex);
 
     // Make sure that the memory we think we are going to run with matches the one we expect.
-    ASSERT(wasmFunction->instance()->instance().codeBlock()->isSafeToRun(wasmFunction->instance()->memory()->memory().mode()));
+    ASSERT(wasmFunction->instance()->instance().calleeGroup()->isSafeToRun(wasmFunction->instance()->memory()->memory().mode()));
 
     std::optional<TraceScope> traceScope;
     if (Options::useTracePoints())

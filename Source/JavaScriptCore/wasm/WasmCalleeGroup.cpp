@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "WasmCodeBlock.h"
+#include "WasmCalleeGroup.h"
 
 #if ENABLE(WEBASSEMBLY)
 
@@ -35,17 +35,17 @@
 
 namespace JSC { namespace Wasm {
 
-Ref<CodeBlock> CodeBlock::create(Context* context, MemoryMode mode, ModuleInformation& moduleInformation, RefPtr<LLIntCallees> llintCallees)
+Ref<CalleeGroup> CalleeGroup::create(Context* context, MemoryMode mode, ModuleInformation& moduleInformation, RefPtr<LLIntCallees> llintCallees)
 {
-    return adoptRef(*new CodeBlock(context, mode, moduleInformation, llintCallees));
+    return adoptRef(*new CalleeGroup(context, mode, moduleInformation, llintCallees));
 }
 
-Ref<CodeBlock> CodeBlock::createFromExisting(MemoryMode mode, const CodeBlock& other)
+Ref<CalleeGroup> CalleeGroup::createFromExisting(MemoryMode mode, const CalleeGroup& other)
 {
-    return adoptRef(*new CodeBlock(mode, other));
+    return adoptRef(*new CalleeGroup(mode, other));
 }
 
-CodeBlock::CodeBlock(MemoryMode mode, const CodeBlock& other)
+CalleeGroup::CalleeGroup(MemoryMode mode, const CalleeGroup& other)
     : m_calleeCount(other.m_calleeCount)
     , m_mode(mode)
 #if ENABLE(WEBASSEMBLY_B3JIT)
@@ -61,12 +61,12 @@ CodeBlock::CodeBlock(MemoryMode mode, const CodeBlock& other)
     setCompilationFinished();
 }
 
-CodeBlock::CodeBlock(Context* context, MemoryMode mode, ModuleInformation& moduleInformation, RefPtr<LLIntCallees> llintCallees)
+CalleeGroup::CalleeGroup(Context* context, MemoryMode mode, ModuleInformation& moduleInformation, RefPtr<LLIntCallees> llintCallees)
     : m_calleeCount(moduleInformation.internalFunctionCount())
     , m_mode(mode)
     , m_llintCallees(llintCallees)
 {
-    RefPtr<CodeBlock> protectedThis = this;
+    RefPtr<CalleeGroup> protectedThis = this;
 
     if (Options::useWasmLLInt()) {
         m_plan = adoptRef(*new LLIntPlan(context, moduleInformation, m_llintCallees->data(), createSharedTask<Plan::CallbackType>([this, protectedThis = WTFMove(protectedThis)] (Plan&) {
@@ -133,9 +133,9 @@ CodeBlock::CodeBlock(Context* context, MemoryMode mode, ModuleInformation& modul
     worklist.enqueue(*m_plan.get());
 }
 
-CodeBlock::~CodeBlock() { }
+CalleeGroup::~CalleeGroup() { }
 
-void CodeBlock::waitUntilFinished()
+void CalleeGroup::waitUntilFinished()
 {
     RefPtr<Plan> plan;
     {
@@ -150,7 +150,7 @@ void CodeBlock::waitUntilFinished()
     // else, if we don't have a plan, we're already compiled.
 }
 
-void CodeBlock::compileAsync(Context* context, AsyncCompilationCallback&& task)
+void CalleeGroup::compileAsync(Context* context, AsyncCompilationCallback&& task)
 {
     RefPtr<Plan> plan;
     {
@@ -161,7 +161,7 @@ void CodeBlock::compileAsync(Context* context, AsyncCompilationCallback&& task)
     if (plan) {
         // We don't need to keep a RefPtr on the Plan because the worklist will keep
         // a RefPtr on the Plan until the plan finishes notifying all of its callbacks.
-        RefPtr<CodeBlock> protectedThis = this;
+        RefPtr<CalleeGroup> protectedThis = this;
         plan->addCompletionTask(context, createSharedTask<Plan::CallbackType>([this, task = WTFMove(task), protectedThis = WTFMove(protectedThis)] (Plan&) {
             task->run(Ref { *this });
         }));
@@ -169,7 +169,7 @@ void CodeBlock::compileAsync(Context* context, AsyncCompilationCallback&& task)
         task->run(Ref { *this });
 }
 
-bool CodeBlock::isSafeToRun(MemoryMode memoryMode)
+bool CalleeGroup::isSafeToRun(MemoryMode memoryMode)
 {
     if (!runnable())
         return false;
@@ -188,7 +188,7 @@ bool CodeBlock::isSafeToRun(MemoryMode memoryMode)
 }
 
 
-void CodeBlock::setCompilationFinished()
+void CalleeGroup::setCompilationFinished()
 {
     m_plan = nullptr;
     m_compilationFinished.store(true);

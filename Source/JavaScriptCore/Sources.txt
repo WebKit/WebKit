@@ -1073,9 +1073,9 @@ wasm/WasmB3IRGenerator.cpp
 wasm/WasmBBQPlan.cpp
 wasm/WasmBinding.cpp
 wasm/WasmCallee.cpp
+wasm/WasmCalleeGroup.cpp
 wasm/WasmCalleeRegistry.cpp
 wasm/WasmCallingConvention.cpp
-wasm/WasmCodeBlock.cpp
 wasm/WasmCompilationMode.cpp
 wasm/WasmContext.cpp
 wasm/WasmEmbedder.h
@@ -1121,7 +1121,7 @@ wasm/js/JSToWasm.cpp
 wasm/js/JSToWasm.h
 wasm/js/JSToWasmICCallee.cpp
 wasm/js/JSWebAssembly.cpp
-wasm/js/JSWebAssemblyCodeBlock.cpp
+wasm/js/JSWebAssemblyCalleeGroup.cpp
 wasm/js/JSWebAssemblyCompileError.cpp
 wasm/js/JSWebAssemblyException.cpp
 wasm/js/JSWebAssemblyGlobal.cpp

@@ -29,7 +29,7 @@
 #if ENABLE(WEBASSEMBLY)
 
 #include "JSCInlines.h"
-#include "JSWebAssemblyCodeBlock.h"
+#include "JSWebAssemblyCalleeGroup.h"
 #include "JSWebAssemblyCompileError.h"
 #include "WasmFormat.h"
 #include "WasmModule.h"
@@ -109,9 +109,9 @@ Wasm::SignatureIndex JSWebAssemblyModule::signatureIndexFromFunctionIndexSpace(u
     return m_module->signatureIndexFromFunctionIndexSpace(functionIndexSpace);
 }
 
-JSWebAssemblyCodeBlock* JSWebAssemblyModule::codeBlock(Wasm::MemoryMode mode)
+JSWebAssemblyCalleeGroup* JSWebAssemblyModule::calleeGroup(Wasm::MemoryMode mode)
 {
-    return m_codeBlocks[static_cast<size_t>(mode)].get();
+    return m_calleeGroups[static_cast<size_t>(mode)].get();
 }
 
 Wasm::Module& JSWebAssemblyModule::module()
@@ -119,9 +119,9 @@ Wasm::Module& JSWebAssemblyModule::module()
     return m_module.get();
 }
 
-void JSWebAssemblyModule::setCodeBlock(VM& vm, Wasm::MemoryMode mode, JSWebAssemblyCodeBlock* codeBlock)
+void JSWebAssemblyModule::setCalleeGroup(VM& vm, Wasm::MemoryMode mode, JSWebAssemblyCalleeGroup* calleeGroup)
 {
-    m_codeBlocks[static_cast<size_t>(mode)].set(vm, this, codeBlock);
+    m_calleeGroups[static_cast<size_t>(mode)].set(vm, this, calleeGroup);
 }
 
 template<typename Visitor>
@@ -133,7 +133,7 @@ void JSWebAssemblyModule::visitChildrenImpl(JSCell* cell, Visitor& visitor)
     Base::visitChildren(thisObject, visitor);
     visitor.append(thisObject->m_exportSymbolTable);
     for (unsigned i = 0; i < Wasm::NumberOfMemoryModes; ++i)
-        visitor.append(thisObject->m_codeBlocks[i]);
+        visitor.append(thisObject->m_calleeGroups[i]);
 }
 
 DEFINE_VISIT_CHILDREN(JSWebAssemblyModule);

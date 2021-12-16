@@ -1,3 +1,102 @@
+2021-12-15  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Rename Wasm::CodeBlock to Wasm::CalleeGroup
+        https://bugs.webkit.org/show_bug.cgi?id=203694
+
+        Reviewed by Mark Lam.
+
+        This is not a CodeBlock. And the name causes confusion with JSC::CodeBlock, which is not at all related.
+        This patch renames it to Wasm::CalleeGroup.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * heap/Heap.cpp:
+        (JSC::Heap::Heap):
+        (JSC::Heap::finalizeUnconditionalFinalizers):
+        (JSC::Heap::deleteAllCodeBlocks):
+        * heap/Heap.h:
+        (JSC::Heap::forEachCodeBlockSpace):
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        * runtime/VM.h:
+        * wasm/WasmBBQPlan.cpp:
+        (JSC::Wasm::BBQPlan::BBQPlan):
+        (JSC::Wasm::BBQPlan::work):
+        * wasm/WasmBBQPlan.h:
+        * wasm/WasmCalleeGroup.cpp: Renamed from Source/JavaScriptCore/wasm/WasmCodeBlock.cpp.
+        (JSC::Wasm::CalleeGroup::create):
+        (JSC::Wasm::CalleeGroup::createFromExisting):
+        (JSC::Wasm::CalleeGroup::CalleeGroup):
+        (JSC::Wasm::CalleeGroup::~CalleeGroup):
+        (JSC::Wasm::CalleeGroup::waitUntilFinished):
+        (JSC::Wasm::CalleeGroup::compileAsync):
+        (JSC::Wasm::CalleeGroup::isSafeToRun):
+        (JSC::Wasm::CalleeGroup::setCompilationFinished):
+        * wasm/WasmCalleeGroup.h: Renamed from Source/JavaScriptCore/wasm/WasmCodeBlock.h.
+        * wasm/WasmInstance.cpp:
+        (JSC::Wasm::Instance::initElementSegment):
+        * wasm/WasmInstance.h:
+        (JSC::Wasm::Instance::calleeGroup const):
+        (JSC::Wasm::Instance::isImportFunction const):
+        (JSC::Wasm::Instance::codeBlock const): Deleted.
+        * wasm/WasmMachineThreads.h:
+        * wasm/WasmModule.cpp:
+        (JSC::Wasm::Module::getOrCreateCalleeGroup):
+        (JSC::Wasm::Module::compileSync):
+        (JSC::Wasm::Module::compileAsync):
+        (JSC::Wasm::Module::copyInitialCalleeGroupToAllMemoryModes):
+        (JSC::Wasm::Module::getOrCreateCodeBlock): Deleted.
+        (JSC::Wasm::Module::copyInitialCodeBlockToAllMemoryModes): Deleted.
+        * wasm/WasmModule.h:
+        (JSC::Wasm::Module::calleeGroupFor):
+        (JSC::Wasm::Module::codeBlockFor): Deleted.
+        * wasm/WasmOMGForOSREntryPlan.cpp:
+        (JSC::Wasm::OMGForOSREntryPlan::OMGForOSREntryPlan):
+        (JSC::Wasm::OMGForOSREntryPlan::work):
+        * wasm/WasmOMGForOSREntryPlan.h:
+        * wasm/WasmOMGPlan.cpp:
+        (JSC::Wasm::OMGPlan::OMGPlan):
+        (JSC::Wasm::OMGPlan::work):
+        * wasm/WasmOMGPlan.h:
+        * wasm/WasmOperations.cpp:
+        (JSC::Wasm::triggerOMGReplacementCompile):
+        (JSC::Wasm::JSC_DEFINE_JIT_OPERATION):
+        * wasm/WasmPlan.cpp:
+        (JSC::Wasm::Plan::updateCallSitesToCallUs):
+        * wasm/WasmPlan.h:
+        * wasm/WasmSlowPaths.cpp:
+        (JSC::LLInt::jitCompileAndSetHeuristics):
+        (JSC::LLInt::doWasmCall):
+        * wasm/js/JSWebAssembly.cpp:
+        (JSC::resolve):
+        (JSC::instantiate):
+        * wasm/js/JSWebAssemblyCalleeGroup.cpp: Renamed from Source/JavaScriptCore/wasm/js/JSWebAssemblyCodeBlock.cpp.
+        (JSC::JSWebAssemblyCalleeGroup::create):
+        (JSC::JSWebAssemblyCalleeGroup::JSWebAssemblyCalleeGroup):
+        (JSC::JSWebAssemblyCalleeGroup::finishCreation):
+        (JSC::JSWebAssemblyCalleeGroup::destroy):
+        (JSC::JSWebAssemblyCalleeGroup::clearJSCallICs):
+        (JSC::JSWebAssemblyCalleeGroup::visitChildrenImpl):
+        (JSC::JSWebAssemblyCalleeGroup::finalizeUnconditionally):
+        * wasm/js/JSWebAssemblyCalleeGroup.h: Renamed from Source/JavaScriptCore/wasm/js/JSWebAssemblyCodeBlock.h.
+        * wasm/js/JSWebAssemblyInstance.cpp:
+        (JSC::JSWebAssemblyInstance::visitChildrenImpl):
+        (JSC::JSWebAssemblyInstance::finalizeCreation):
+        * wasm/js/JSWebAssemblyInstance.h:
+        * wasm/js/JSWebAssemblyModule.cpp:
+        (JSC::JSWebAssemblyModule::calleeGroup):
+        (JSC::JSWebAssemblyModule::setCalleeGroup):
+        (JSC::JSWebAssemblyModule::visitChildrenImpl):
+        (JSC::JSWebAssemblyModule::codeBlock): Deleted.
+        (JSC::JSWebAssemblyModule::setCodeBlock): Deleted.
+        * wasm/js/JSWebAssemblyModule.h:
+        * wasm/js/WebAssemblyFunction.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * wasm/js/WebAssemblyModuleRecord.cpp:
+        (JSC::WebAssemblyModuleRecord::initializeImportsAndExports):
+        * wasm/js/WebAssemblyWrapperFunction.h:
+
 2021-12-15  Joseph Griego  <jgriego@igalia.com>
 
         [Shadow Realms] Wrapped functions must only throw TypeError from calling realm

@@ -46,7 +46,7 @@ class Plan;
 }
 
 class SymbolTable;
-class JSWebAssemblyCodeBlock;
+class JSWebAssemblyCalleeGroup;
 class JSWebAssemblyMemory;
 
 class JSWebAssemblyModule final : public JSNonFinalObject {
@@ -70,13 +70,13 @@ public:
     SymbolTable* exportSymbolTable() const;
     Wasm::SignatureIndex signatureIndexFromFunctionIndexSpace(unsigned functionIndexSpace) const;
 
-    JSWebAssemblyCodeBlock* codeBlock(Wasm::MemoryMode mode);
-    void setCodeBlock(VM&, Wasm::MemoryMode, JSWebAssemblyCodeBlock*);
+    JSWebAssemblyCalleeGroup* calleeGroup(Wasm::MemoryMode);
+    void setCalleeGroup(VM&, Wasm::MemoryMode, JSWebAssemblyCalleeGroup*);
 
     JS_EXPORT_PRIVATE Wasm::Module& module();
 
 private:
-    friend class JSWebAssemblyCodeBlock;
+    friend class JSWebAssemblyCalleeGroup;
 
     JSWebAssemblyModule(VM&, Structure*, Ref<Wasm::Module>&&);
     void finishCreation(VM&);
@@ -84,7 +84,7 @@ private:
 
     Ref<Wasm::Module> m_module;
     WriteBarrier<SymbolTable> m_exportSymbolTable;
-    WriteBarrier<JSWebAssemblyCodeBlock> m_codeBlocks[Wasm::NumberOfMemoryModes];
+    WriteBarrier<JSWebAssemblyCalleeGroup> m_calleeGroups[Wasm::NumberOfMemoryModes];
 };
 
 } // namespace JSC

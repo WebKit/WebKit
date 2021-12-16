@@ -138,10 +138,10 @@ JSC_DEFINE_HOST_FUNCTION(webAssemblyCompileFunc, (JSGlobalObject* globalObject, 
 }
 
 enum class Resolve { WithInstance, WithModuleRecord, WithModuleAndInstance };
-static void resolve(VM& vm, JSGlobalObject* globalObject, JSPromise* promise, JSWebAssemblyInstance* instance, JSWebAssemblyModule* module, JSObject* importObject, Ref<Wasm::CodeBlock>&& codeBlock, Resolve resolveKind, Wasm::CreationMode creationMode)
+static void resolve(VM& vm, JSGlobalObject* globalObject, JSPromise* promise, JSWebAssemblyInstance* instance, JSWebAssemblyModule* module, JSObject* importObject, Ref<Wasm::CalleeGroup>&& calleeGroup, Resolve resolveKind, Wasm::CreationMode creationMode)
 {
     auto scope = DECLARE_THROW_SCOPE(vm);
-    instance->finalizeCreation(vm, globalObject, WTFMove(codeBlock), importObject, creationMode);
+    instance->finalizeCreation(vm, globalObject, WTFMove(calleeGroup), importObject, creationMode);
     if (UNLIKELY(scope.exception())) {
         promise->rejectWithCaughtException(globalObject, scope);
         return;
@@ -204,11 +204,11 @@ static void instantiate(VM& vm, JSGlobalObject* globalObject, JSPromise* promise
 
     vm.deferredWorkTimer->addPendingWork(vm, instance, WTFMove(dependencies));
     // Note: This completion task may or may not get called immediately.
-    module->module().compileAsync(&vm.wasmContext, instance->memoryMode(), createSharedTask<Wasm::CodeBlock::CallbackType>([promise, instance, module, importObject, resolveKind, creationMode, &vm] (Ref<Wasm::CodeBlock>&& refCodeBlock) mutable {
-        RefPtr<Wasm::CodeBlock> codeBlock = WTFMove(refCodeBlock);
-        vm.deferredWorkTimer->scheduleWorkSoon(instance, [promise, instance, module, importObject, resolveKind, creationMode, &vm, codeBlock = WTFMove(codeBlock)](DeferredWorkTimer::Ticket, DeferredWorkTimer::TicketData&&) mutable {
+    module->module().compileAsync(&vm.wasmContext, instance->memoryMode(), createSharedTask<Wasm::CalleeGroup::CallbackType>([promise, instance, module, importObject, resolveKind, creationMode, &vm] (Ref<Wasm::CalleeGroup>&& refCalleeGroup) mutable {
+        RefPtr<Wasm::CalleeGroup> calleeGroup = WTFMove(refCalleeGroup);
+        vm.deferredWorkTimer->scheduleWorkSoon(instance, [promise, instance, module, importObject, resolveKind, creationMode, &vm, calleeGroup = WTFMove(calleeGroup)](DeferredWorkTimer::Ticket, DeferredWorkTimer::TicketData&&) mutable {
             JSGlobalObject* globalObject = instance->globalObject();
-            resolve(vm, globalObject, promise, instance, module, importObject, codeBlock.releaseNonNull(), resolveKind, creationMode);
+            resolve(vm, globalObject, promise, instance, module, importObject, calleeGroup.releaseNonNull(), resolveKind, creationMode);
         });
     }));
 }

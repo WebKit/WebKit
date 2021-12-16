@@ -46,12 +46,12 @@ namespace Wasm {
 class Plan;
 }
 
-class JSWebAssemblyCodeBlock final : public JSCell {
+class JSWebAssemblyCalleeGroup final : public JSCell {
 public:
     typedef JSCell Base;
     static constexpr unsigned StructureFlags = Base::StructureFlags | StructureIsImmortal;
 
-    static JSWebAssemblyCodeBlock* create(VM&, Ref<Wasm::CodeBlock>, const Wasm::ModuleInformation&);
+    static JSWebAssemblyCalleeGroup* create(VM&, Ref<Wasm::CalleeGroup>, const Wasm::ModuleInformation&);
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
     {
         return Structure::create(vm, globalObject, prototype, TypeInfo(CellType, StructureFlags), info());
@@ -60,10 +60,10 @@ public:
     template<typename CellType, SubspaceAccess mode>
     static IsoSubspace* subspaceFor(VM& vm)
     {
-        return vm.webAssemblyCodeBlockSpace<mode>();
+        return vm.webAssemblyCalleeGroupSpace<mode>();
     }
 
-    Wasm::CodeBlock& codeBlock() { return m_codeBlock.get(); }
+    Wasm::CalleeGroup& calleeGroup() { return m_calleeGroup.get(); }
     
     MacroAssemblerCodePtr<WasmEntryPtrTag> wasmToEmbedderStub(size_t importFunctionNum) { return m_wasmToJSExitStubs[importFunctionNum].code(); }
 
@@ -82,13 +82,13 @@ public:
     void finalizeUnconditionally(VM&);
 
 private:
-    JSWebAssemblyCodeBlock(VM&, Ref<Wasm::CodeBlock>&&, const Wasm::ModuleInformation&);
+    JSWebAssemblyCalleeGroup(VM&, Ref<Wasm::CalleeGroup>&&, const Wasm::ModuleInformation&);
     DECLARE_EXPORT_INFO;
     static constexpr bool needsDestruction = true;
     static void destroy(JSCell*);
     DECLARE_VISIT_CHILDREN;
 
-    Ref<Wasm::CodeBlock> m_codeBlock;
+    Ref<Wasm::CalleeGroup> m_calleeGroup;
     FixedVector<MacroAssemblerCodeRef<WasmEntryPtrTag>> m_wasmToJSExitStubs;
     Bag<OptimizingCallLinkInfo> m_callLinkInfos;
     String m_errorMessage;

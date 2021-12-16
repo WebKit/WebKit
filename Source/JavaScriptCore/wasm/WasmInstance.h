@@ -71,7 +71,7 @@ public:
     Wasm::Context* context() const { return m_context; }
 
     Module& module() const { return m_module.get(); }
-    CodeBlock* codeBlock() const { return module().codeBlockFor(memory()->mode()); }
+    CalleeGroup* calleeGroup() const { return module().calleeGroupFor(memory()->mode()); }
     Memory* memory() const { return m_memory.get(); }
     Table* table(unsigned);
     void setTable(unsigned, Ref<Table>&&);
@@ -81,7 +81,7 @@ public:
 
     bool isImportFunction(uint32_t functionIndex) const
     {
-        return functionIndex < codeBlock()->functionImportCount();
+        return functionIndex < calleeGroup()->functionImportCount();
     }
 
     void tableInit(uint32_t dstOffset, uint32_t srcOffset, uint32_t length, uint32_t elementIndex, uint32_t tableIndex);

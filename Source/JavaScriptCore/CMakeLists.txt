@@ -1236,8 +1236,8 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     tools/VMInspectorInlines.h
 
     wasm/WasmCallee.h
+    wasm/WasmCalleeGroup.h
     wasm/WasmCapabilities.h
-    wasm/WasmCodeBlock.h
     wasm/WasmCompilationMode.h
     wasm/WasmContext.h
     wasm/WasmEmbedder.h

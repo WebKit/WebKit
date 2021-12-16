@@ -47,15 +47,13 @@ class EntryPlan;
 struct ModuleInformation;
 struct UnlinkedWasmToWasmCall;
 enum class MemoryMode : uint8_t;
-    
-// FIXME: Rename this, since it's not a CodeBlock
-// https://bugs.webkit.org/show_bug.cgi?id=203694
-class CodeBlock : public ThreadSafeRefCounted<CodeBlock> {
+
+class CalleeGroup : public ThreadSafeRefCounted<CalleeGroup> {
 public:
-    typedef void CallbackType(Ref<CodeBlock>&&);
+    typedef void CallbackType(Ref<CalleeGroup>&&);
     using AsyncCompilationCallback = RefPtr<WTF::SharedTask<CallbackType>>;
-    static Ref<CodeBlock> create(Context*, MemoryMode, ModuleInformation&, RefPtr<LLIntCallees>);
-    static Ref<CodeBlock> createFromExisting(MemoryMode, const CodeBlock&);
+    static Ref<CalleeGroup> create(Context*, MemoryMode, ModuleInformation&, RefPtr<LLIntCallees>);
+    static Ref<CalleeGroup> createFromExisting(MemoryMode, const CalleeGroup&);
 
     void waitUntilFinished();
     void compileAsync(Context*, AsyncCompilationCallback&&);
@@ -129,7 +127,7 @@ public:
 
     MemoryMode mode() const { return m_mode; }
 
-    ~CodeBlock();
+    ~CalleeGroup();
 private:
     friend class Plan;
 #if ENABLE(WEBASSEMBLY_B3JIT)
@@ -138,8 +136,8 @@ private:
     friend class OMGForOSREntryPlan;
 #endif
 
-    CodeBlock(Context*, MemoryMode, ModuleInformation&, RefPtr<LLIntCallees>);
-    CodeBlock(MemoryMode, const CodeBlock&);
+    CalleeGroup(Context*, MemoryMode, ModuleInformation&, RefPtr<LLIntCallees>);
+    CalleeGroup(MemoryMode, const CalleeGroup&);
     void setCompilationFinished();
     unsigned m_calleeCount;
     MemoryMode m_mode;

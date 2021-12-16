@@ -29,7 +29,7 @@
 #if ENABLE(WEBASSEMBLY)
 
 #include "WasmCallee.h"
-#include "WasmCodeBlock.h"
+#include "WasmCalleeGroup.h"
 #include "WasmMachineThreads.h"
 #include <wtf/DataLog.h>
 #include <wtf/Locker.h>
@@ -124,7 +124,7 @@ void Plan::fail(String&& errorMessage)
 }
 
 #if ENABLE(WEBASSEMBLY_B3JIT)
-void Plan::updateCallSitesToCallUs(CodeBlock& codeBlock, CodeLocationLabel<WasmEntryPtrTag> entrypoint, uint32_t functionIndex, uint32_t functionIndexSpace)
+void Plan::updateCallSitesToCallUs(CalleeGroup& calleeGroup, CodeLocationLabel<WasmEntryPtrTag> entrypoint, uint32_t functionIndex, uint32_t functionIndexSpace)
 {
     HashMap<void*, CodeLocationLabel<WasmEntryPtrTag>> stagedCalls;
     auto stageRepatch = [&] (const auto& callsites) {
@@ -135,16 +135,16 @@ void Plan::updateCallSitesToCallUs(CodeBlock& codeBlock, CodeLocationLabel<WasmE
             }
         }
     };
-    for (unsigned i = 0; i < codeBlock.m_wasmToWasmCallsites.size(); ++i) {
-        stageRepatch(codeBlock.m_wasmToWasmCallsites[i]);
-        if (codeBlock.m_llintCallees) {
-            LLIntCallee& llintCallee = codeBlock.m_llintCallees->at(i).get();
-            if (JITCallee* replacementCallee = llintCallee.replacement(codeBlock.mode()))
+    for (unsigned i = 0; i < calleeGroup.m_wasmToWasmCallsites.size(); ++i) {
+        stageRepatch(calleeGroup.m_wasmToWasmCallsites[i]);
+        if (calleeGroup.m_llintCallees) {
+            LLIntCallee& llintCallee = calleeGroup.m_llintCallees->at(i).get();
+            if (JITCallee* replacementCallee = llintCallee.replacement(calleeGroup.mode()))
                 stageRepatch(replacementCallee->wasmToWasmCallsites());
-            if (OMGForOSREntryCallee* osrEntryCallee = llintCallee.osrEntryCallee(codeBlock.mode()))
+            if (OMGForOSREntryCallee* osrEntryCallee = llintCallee.osrEntryCallee(calleeGroup.mode()))
                 stageRepatch(osrEntryCallee->wasmToWasmCallsites());
         }
-        if (BBQCallee* bbqCallee = codeBlock.m_bbqCallees[i].get()) {
+        if (BBQCallee* bbqCallee = calleeGroup.m_bbqCallees[i].get()) {
             if (OMGCallee* replacementCallee = bbqCallee->replacement())
                 stageRepatch(replacementCallee->wasmToWasmCallsites());
             if (OMGForOSREntryCallee* osrEntryCallee = bbqCallee->osrEntryCallee())
@@ -158,7 +158,7 @@ void Plan::updateCallSitesToCallUs(CodeBlock& codeBlock, CodeLocationLabel<WasmE
     resetInstructionCacheOnAllThreads();
     WTF::storeStoreFence(); // This probably isn't necessary but it's good to be paranoid.
 
-    codeBlock.m_wasmIndirectCallEntryPoints[functionIndex] = entrypoint;
+    calleeGroup.m_wasmIndirectCallEntryPoints[functionIndex] = entrypoint;
 
     auto repatchCalls = [&] (const auto& callsites) {
         for (auto& call : callsites) {
@@ -170,16 +170,16 @@ void Plan::updateCallSitesToCallUs(CodeBlock& codeBlock, CodeLocationLabel<WasmE
         }
     };
 
-    for (unsigned i = 0; i < codeBlock.m_wasmToWasmCallsites.size(); ++i) {
-        repatchCalls(codeBlock.m_wasmToWasmCallsites[i]);
-        if (codeBlock.m_llintCallees) {
-            LLIntCallee& llintCallee = codeBlock.m_llintCallees->at(i).get();
-            if (JITCallee* replacementCallee = llintCallee.replacement(codeBlock.mode()))
+    for (unsigned i = 0; i < calleeGroup.m_wasmToWasmCallsites.size(); ++i) {
+        repatchCalls(calleeGroup.m_wasmToWasmCallsites[i]);
+        if (calleeGroup.m_llintCallees) {
+            LLIntCallee& llintCallee = calleeGroup.m_llintCallees->at(i).get();
+            if (JITCallee* replacementCallee = llintCallee.replacement(calleeGroup.mode()))
                 repatchCalls(replacementCallee->wasmToWasmCallsites());
-            if (OMGForOSREntryCallee* osrEntryCallee = llintCallee.osrEntryCallee(codeBlock.mode()))
+            if (OMGForOSREntryCallee* osrEntryCallee = llintCallee.osrEntryCallee(calleeGroup.mode()))
                 repatchCalls(osrEntryCallee->wasmToWasmCallsites());
         }
-        if (BBQCallee* bbqCallee = codeBlock.m_bbqCallees[i].get()) {
+        if (BBQCallee* bbqCallee = calleeGroup.m_bbqCallees[i].get()) {
             if (OMGCallee* replacementCallee = bbqCallee->replacement())
                 repatchCalls(replacementCallee->wasmToWasmCallsites());
             if (OMGForOSREntryCallee* osrEntryCallee = bbqCallee->osrEntryCallee())

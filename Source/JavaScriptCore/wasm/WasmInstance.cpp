@@ -256,8 +256,8 @@ void Instance::initElementSegment(uint32_t tableIndex, const Element& segment, u
             continue;
         }
 
-        Callee& embedderEntrypointCallee = codeBlock()->embedderEntrypointCalleeFromFunctionIndexSpace(functionIndex);
-        WasmToWasmImportableFunction::LoadLocation entrypointLoadLocation = codeBlock()->entrypointLoadLocationFromFunctionIndexSpace(functionIndex);
+        Callee& embedderEntrypointCallee = calleeGroup()->embedderEntrypointCalleeFromFunctionIndexSpace(functionIndex);
+        WasmToWasmImportableFunction::LoadLocation entrypointLoadLocation = calleeGroup()->entrypointLoadLocationFromFunctionIndexSpace(functionIndex);
         const Signature& signature = SignatureInformation::get(signatureIndex);
         // FIXME: Say we export local function "foo" at function index 0.
         // What if we also set it to the table an Element w/ index 0.

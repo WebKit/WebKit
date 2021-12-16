@@ -27,7 +27,7 @@
 
 #if ENABLE(WEBASSEMBLY)
 
-#include "WasmCodeBlock.h"
+#include "WasmCalleeGroup.h"
 #include "WasmMemory.h"
 #include <wtf/Expected.h>
 #include <wtf/Lock.h>

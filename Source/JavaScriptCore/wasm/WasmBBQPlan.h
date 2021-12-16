@@ -45,7 +45,7 @@ class CallLinkInfo;
 namespace Wasm {
 
 class BBQCallee;
-class CodeBlock;
+class CalleeGroup;
 class EmbedderEntrypointCallee;
 
 class BBQPlan final : public EntryPlan {
@@ -54,7 +54,7 @@ public:
 
     using Base::Base;
 
-    BBQPlan(Context*, Ref<ModuleInformation>, uint32_t functionIndex, CodeBlock*, CompletionTask&&);
+    BBQPlan(Context*, Ref<ModuleInformation>, uint32_t functionIndex, CalleeGroup*, CompletionTask&&);
 
     bool hasWork() const final
     {
@@ -88,7 +88,7 @@ private:
     Vector<CompilationContext> m_compilationContexts;
     Vector<std::unique_ptr<TierUpCount>> m_tierUpCounts;
 
-    RefPtr<CodeBlock> m_codeBlock { nullptr };
+    RefPtr<CalleeGroup> m_calleeGroup { nullptr };
     uint32_t m_functionIndex;
 };
 

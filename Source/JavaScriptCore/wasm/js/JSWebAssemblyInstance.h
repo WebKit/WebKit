@@ -28,7 +28,7 @@
 #if ENABLE(WEBASSEMBLY)
 
 #include "JSDestructibleObject.h"
-#include "JSWebAssemblyCodeBlock.h"
+#include "JSWebAssemblyCalleeGroup.h"
 #include "JSWebAssemblyGlobal.h"
 #include "JSWebAssemblyMemory.h"
 #include "JSWebAssemblyTable.h"
@@ -44,7 +44,7 @@ class JSWebAssemblyModule;
 class WebAssemblyModuleRecord;
 
 namespace Wasm {
-class CodeBlock;
+class CalleeGroup;
 }
 
 class JSWebAssemblyInstance final : public JSNonFinalObject {
@@ -68,7 +68,7 @@ public:
 
     DECLARE_EXPORT_INFO;
 
-    void finalizeCreation(VM&, JSGlobalObject*, Ref<Wasm::CodeBlock>&&, JSObject* importObject, Wasm::CreationMode);
+    void finalizeCreation(VM&, JSGlobalObject*, Ref<Wasm::CalleeGroup>&&, JSObject* importObject, Wasm::CreationMode);
     
     Wasm::Instance& instance() { return m_instance.get(); }
     WebAssemblyModuleRecord* moduleRecord() { return m_moduleRecord.get(); }
@@ -114,7 +114,7 @@ private:
 
     WriteBarrier<JSGlobalObject> m_globalObject;
     WriteBarrier<JSWebAssemblyModule> m_module;
-    WriteBarrier<JSWebAssemblyCodeBlock> m_codeBlock;
+    WriteBarrier<JSWebAssemblyCalleeGroup> m_calleeGroup;
     WriteBarrier<WebAssemblyModuleRecord> m_moduleRecord;
     WriteBarrier<JSWebAssemblyMemory> m_memory;
     FixedVector<WriteBarrier<JSWebAssemblyTable>> m_tables;

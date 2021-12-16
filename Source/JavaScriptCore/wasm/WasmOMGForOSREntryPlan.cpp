@@ -48,22 +48,22 @@ static constexpr bool verbose = false;
 OMGForOSREntryPlan::OMGForOSREntryPlan(Context* context, Ref<Module>&& module, Ref<Callee>&& callee, uint32_t functionIndex, uint32_t loopIndex, MemoryMode mode, CompletionTask&& task)
     : Base(context, const_cast<ModuleInformation&>(module->moduleInformation()), WTFMove(task))
     , m_module(WTFMove(module))
-    , m_codeBlock(*m_module->codeBlockFor(mode))
+    , m_calleeGroup(*m_module->calleeGroupFor(mode))
     , m_callee(WTFMove(callee))
     , m_functionIndex(functionIndex)
     , m_loopIndex(loopIndex)
 {
     ASSERT(Options::useOMGJIT());
     setMode(mode);
-    ASSERT(m_codeBlock->runnable());
-    ASSERT(m_codeBlock.ptr() == m_module->codeBlockFor(m_mode));
+    ASSERT(m_calleeGroup->runnable());
+    ASSERT(m_calleeGroup.ptr() == m_module->calleeGroupFor(m_mode));
     dataLogLnIf(WasmOMGForOSREntryPlanInternal::verbose, "Starting OMGForOSREntry plan for ", functionIndex, " of module: ", RawPointer(&m_module.get()));
 }
 
 void OMGForOSREntryPlan::work(CompilationEffort)
 {
-    ASSERT(m_codeBlock->runnable());
-    ASSERT(m_codeBlock.ptr() == m_module->codeBlockFor(mode()));
+    ASSERT(m_calleeGroup->runnable());
+    ASSERT(m_calleeGroup.ptr() == m_module->calleeGroupFor(mode()));
     const FunctionData& function = m_moduleInformation->functions[m_functionIndex];
 
     const uint32_t functionIndexSpace = m_functionIndex + m_module->moduleInformation().importFunctionCount();
@@ -101,18 +101,18 @@ void OMGForOSREntryPlan::work(CompilationEffort)
 
     omgEntrypoint.calleeSaveRegisters = WTFMove(internalFunction->entrypoint.calleeSaveRegisters);
 
-    ASSERT(m_codeBlock.ptr() == m_module->codeBlockFor(mode()));
+    ASSERT(m_calleeGroup.ptr() == m_module->calleeGroupFor(mode()));
     Ref<OMGForOSREntryCallee> callee = OMGForOSREntryCallee::create(WTFMove(omgEntrypoint), functionIndexSpace, m_moduleInformation->nameSection->get(functionIndexSpace), osrEntryScratchBufferSize, m_loopIndex, WTFMove(unlinkedCalls), WTFMove(internalFunction->stackmaps), WTFMove(internalFunction->exceptionHandlers), WTFMove(exceptionHandlerLocations));
     {
         MacroAssembler::repatchPointer(internalFunction->calleeMoveLocation, CalleeBits::boxWasm(callee.ptr()));
 
-        Locker locker { m_codeBlock->m_lock };
+        Locker locker { m_calleeGroup->m_lock };
         for (auto& call : callee->wasmToWasmCallsites()) {
             MacroAssemblerCodePtr<WasmEntryPtrTag> entrypoint;
             if (call.functionIndexSpace < m_module->moduleInformation().importFunctionCount())
-                entrypoint = m_codeBlock->m_wasmToWasmExitStubs[call.functionIndexSpace].code();
+                entrypoint = m_calleeGroup->m_wasmToWasmExitStubs[call.functionIndexSpace].code();
             else
-                entrypoint = m_codeBlock->wasmEntrypointCalleeFromFunctionIndexSpace(call.functionIndexSpace).entrypoint().retagged<WasmEntryPtrTag>();
+                entrypoint = m_calleeGroup->wasmEntrypointCalleeFromFunctionIndexSpace(call.functionIndexSpace).entrypoint().retagged<WasmEntryPtrTag>();
 
             MacroAssembler::repatchNearCall(call.callLocation, CodeLocationLabel<WasmEntryPtrTag>(entrypoint));
         }

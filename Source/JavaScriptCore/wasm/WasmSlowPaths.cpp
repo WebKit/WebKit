@@ -132,7 +132,7 @@ inline bool jitCompileAndSetHeuristics(Wasm::LLIntCallee* callee, Wasm::Function
         uint32_t functionIndex = codeBlock->functionIndex();
         RefPtr<Wasm::Plan> plan;
         if (Options::wasmLLIntTiersUpToBBQ())
-            plan = adoptRef(*new Wasm::BBQPlan(instance->context(), const_cast<Wasm::ModuleInformation&>(instance->module().moduleInformation()), functionIndex, instance->codeBlock(), Wasm::Plan::dontFinalize()));
+            plan = adoptRef(*new Wasm::BBQPlan(instance->context(), const_cast<Wasm::ModuleInformation&>(instance->module().moduleInformation()), functionIndex, instance->calleeGroup(), Wasm::Plan::dontFinalize()));
         else
             plan = adoptRef(*new Wasm::OMGPlan(instance->context(), Ref<Wasm::Module>(instance->module()), functionIndex, instance->memory()->mode(), Wasm::Plan::dontFinalize()));
 
@@ -435,14 +435,14 @@ inline SlowPathReturnType doWasmCall(Wasm::Instance* instance, unsigned function
         Wasm::Instance::ImportFunctionInfo* functionInfo = instance->importFunctionInfo(functionIndex);
         if (functionInfo->targetInstance) {
             // target is a wasm function from a different instance
-            codePtr = instance->codeBlock()->wasmToWasmExitStub(functionIndex);
+            codePtr = instance->calleeGroup()->wasmToWasmExitStub(functionIndex);
         } else {
             // target is JS
             codePtr = functionInfo->wasmToEmbedderStub;
         }
     } else {
         // Target is a wasm function within the same instance
-        codePtr = *instance->codeBlock()->entrypointLoadLocationFromFunctionIndexSpace(functionIndex);
+        codePtr = *instance->calleeGroup()->entrypointLoadLocationFromFunctionIndexSpace(functionIndex);
     }
 
     WASM_CALL_RETURN(instance, codePtr.executableAddress(), WasmEntryPtrTag);

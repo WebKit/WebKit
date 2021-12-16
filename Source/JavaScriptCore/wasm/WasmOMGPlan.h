@@ -60,7 +60,7 @@ private:
     }
     
     Ref<Module> m_module;
-    Ref<CodeBlock> m_codeBlock;
+    Ref<CalleeGroup> m_calleeGroup;
     bool m_completed { false };
     uint32_t m_functionIndex;
 };

@@ -785,7 +785,7 @@ public:
     IsoHeapCellType intlSegmenterHeapCellType;
     IsoHeapCellType intlSegmentsHeapCellType;
 #if ENABLE(WEBASSEMBLY)
-    IsoHeapCellType webAssemblyCodeBlockHeapCellType;
+    IsoHeapCellType webAssemblyCalleeGroupHeapCellType;
     IsoHeapCellType webAssemblyExceptionHeapCellType;
     IsoHeapCellType webAssemblyFunctionHeapCellType;
     IsoHeapCellType webAssemblyGlobalHeapCellType;
@@ -967,7 +967,7 @@ public:
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(intlSegmentsSpace)
 #if ENABLE(WEBASSEMBLY)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(jsToWasmICCalleeSpace)
-    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(webAssemblyCodeBlockSpace)
+    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(webAssemblyCalleeGroupSpace)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(webAssemblyExceptionSpace)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(webAssemblyFunctionSpace)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(webAssemblyGlobalSpace)
@@ -1025,8 +1025,6 @@ public:
     template<typename Func>
     void forEachCodeBlockSpace(const Func& func)
     {
-        // This should not include webAssemblyCodeBlockSpace because this is about subsclasses of
-        // JSC::CodeBlock.
         func(codeBlockSpace);
     }
 

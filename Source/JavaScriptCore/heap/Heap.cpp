@@ -55,7 +55,7 @@
 #include "JSWeakMap.h"
 #include "JSWeakObjectRef.h"
 #include "JSWeakSet.h"
-#include "JSWebAssemblyCodeBlock.h"
+#include "JSWebAssemblyCalleeGroup.h"
 #include "MachineStackMarker.h"
 #include "MarkStackMergingConstraint.h"
 #include "MarkedJSValueRefArray.h"
@@ -335,7 +335,7 @@ Heap::Heap(VM& vm, HeapType heapType)
     , intlSegmenterHeapCellType(IsoHeapCellType::Args<IntlSegmenter>())
     , intlSegmentsHeapCellType(IsoHeapCellType::Args<IntlSegments>())
 #if ENABLE(WEBASSEMBLY)
-    , webAssemblyCodeBlockHeapCellType(IsoHeapCellType::Args<JSWebAssemblyCodeBlock>())
+    , webAssemblyCalleeGroupHeapCellType(IsoHeapCellType::Args<JSWebAssemblyCalleeGroup>())
     , webAssemblyExceptionHeapCellType(IsoHeapCellType::Args<JSWebAssemblyException>())
     , webAssemblyFunctionHeapCellType(IsoHeapCellType::Args<WebAssemblyFunction>())
     , webAssemblyGlobalHeapCellType(IsoHeapCellType::Args<JSWebAssemblyGlobal>())
@@ -714,8 +714,8 @@ void Heap::finalizeUnconditionalFinalizers()
         finalizeMarkedUnconditionalFinalizers<JSFinalizationRegistry>(*m_finalizationRegistrySpace);
 
 #if ENABLE(WEBASSEMBLY)
-    if (m_webAssemblyCodeBlockSpace)
-        finalizeMarkedUnconditionalFinalizers<JSWebAssemblyCodeBlock>(*m_webAssemblyCodeBlockSpace);
+    if (m_webAssemblyCalleeGroupSpace)
+        finalizeMarkedUnconditionalFinalizers<JSWebAssemblyCalleeGroup>(*m_webAssemblyCalleeGroupSpace);
 #endif
 }
 
@@ -1036,11 +1036,10 @@ void Heap::deleteAllCodeBlocks(DeleteAllCodeEffort effort)
         // points into a CodeBlock that could be dead. The IC will still succeed because
         // it uses a callee check, but then it will call into dead code.
         HeapIterationScope heapIterationScope(*this);
-        if (m_webAssemblyCodeBlockSpace) {
-            m_webAssemblyCodeBlockSpace->forEachLiveCell([&] (HeapCell* cell, HeapCell::Kind kind) {
+        if (m_webAssemblyCalleeGroupSpace) {
+            m_webAssemblyCalleeGroupSpace->forEachLiveCell([&] (HeapCell* cell, HeapCell::Kind kind) {
                 ASSERT_UNUSED(kind, kind == HeapCell::JSCell);
-                JSWebAssemblyCodeBlock* codeBlock = static_cast<JSWebAssemblyCodeBlock*>(cell);
-                codeBlock->clearJSCallICs(vm);
+                static_cast<JSWebAssemblyCalleeGroup*>(cell)->clearJSCallICs(vm);
             });
         }
     }
@@ -3275,7 +3274,7 @@ DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(intlSegmenterSpace, intlSegmenterHeapCel
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(intlSegmentsSpace, intlSegmentsHeapCellType, IntlSegments)
 #if ENABLE(WEBASSEMBLY)
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(jsToWasmICCalleeSpace, cellHeapCellType, JSToWasmICCallee)
-DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(webAssemblyCodeBlockSpace, webAssemblyCodeBlockHeapCellType, JSWebAssemblyCodeBlock) // Hash:0x9ad995cd
+DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(webAssemblyCalleeGroupSpace, webAssemblyCalleeGroupHeapCellType, JSWebAssemblyCalleeGroup) // Hash:0x9ad995cd
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(webAssemblyExceptionSpace, webAssemblyExceptionHeapCellType, JSWebAssemblyException)
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(webAssemblyFunctionSpace, webAssemblyFunctionHeapCellType, WebAssemblyFunction) // Hash:0x8b7c32db
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(webAssemblyGlobalSpace, webAssemblyGlobalHeapCellType, JSWebAssemblyGlobal)
