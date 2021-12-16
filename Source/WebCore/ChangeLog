@@ -1,3 +1,123 @@
+2021-12-15  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r287079. rdar://problem/85892959
+
+    Twitter scroll stutter: ensure that CA backing store is always deallocated on the main thread
+    https://bugs.webkit.org/show_bug.cgi?id=234328
+    <rdar://85892959>
+    
+    Reviewed by Tim Horton.
+    
+    When scrolling pages like Twitter and Facebook we observed CoreAnimation commits on the
+    scrolling thread taking longer than they should because CABackingStore objects were being
+    released in those transactions.
+    
+    Work around this issue by extending the lifetime of CABackingStore objects if we detect that
+    they might be entrained into a scrolling tree commit, by virtue of having overlapping main
+    thread and scrolling thread commits.
+    
+    The logic is contained in PlatformCALayerContentsDelayedReleaser, which puts layer contents
+    into a retaining vector when they are being cleared on the layer. They are released at the
+    end of a main thread commit; if we detected overlapping commits, then we release on a
+    dispatch to extend the lifetime slightly.
+    
+    The remaining changes are plumbing to get commit willBegin/didEnd messages to PlatformCALayerContentsDelayedReleaser
+    for main and scrolling threads.
+    
+    * SourcesCocoa.txt:
+    * WebCore.xcodeproj/project.pbxproj:
+    * page/scrolling/ScrollingTree.h:
+    * page/scrolling/ThreadedScrollingTree.h:
+    * page/scrolling/mac/ScrollingCoordinatorMac.h:
+    * page/scrolling/mac/ScrollingCoordinatorMac.mm:
+    (WebCore::ScrollingCoordinatorMac::willStartPlatformRenderingUpdate):
+    (WebCore::ScrollingCoordinatorMac::didCompletePlatformRenderingUpdate):
+    * page/scrolling/mac/ScrollingTreeMac.h:
+    * page/scrolling/mac/ScrollingTreeMac.mm:
+    (ScrollingTreeMac::applyLayerPositionsInternal):
+    (ScrollingTreeMac::registerForPlatformRenderingUpdateCallback):
+    * platform/graphics/ca/GraphicsLayerCA.cpp:
+    (WebCore::GraphicsLayerCA::updateContentsVisibility):
+    (WebCore::GraphicsLayerCA::updateDrawsContent):
+    * platform/graphics/ca/PlatformCALayer.cpp:
+    (WebCore::PlatformCALayer::clearContents):
+    * platform/graphics/ca/PlatformCALayer.h:
+    * platform/graphics/ca/cocoa/PlatformCALayerCocoa.h:
+    * platform/graphics/ca/cocoa/PlatformCALayerCocoa.mm:
+    (WebCore::PlatformCALayerCocoa::setBackingStoreAttached):
+    (WebCore::PlatformCALayerCocoa::clearContents):
+    * platform/graphics/ca/cocoa/PlatformCALayerContentsDelayedReleaser.h: Added.
+    (WebCore::PlatformCALayerContentsDelayedReleaser::WTF_GUARDED_BY_LOCK):
+    * platform/graphics/ca/cocoa/PlatformCALayerContentsDelayedReleaser.mm: Added.
+    (WebCore::PlatformCALayerContentsDelayedReleaser::singleton):
+    (WebCore::PlatformCALayerContentsDelayedReleaser::takeLayerContents):
+    (WebCore::PlatformCALayerContentsDelayedReleaser::mainThreadCommitWillStart):
+    (WebCore::PlatformCALayerContentsDelayedReleaser::mainThreadCommitDidEnd):
+    (WebCore::PlatformCALayerContentsDelayedReleaser::scrollingThreadCommitWillStart):
+    (WebCore::PlatformCALayerContentsDelayedReleaser::scrollingThreadCommitDidEnd):
+    (WebCore::PlatformCALayerContentsDelayedReleaser::updateSawOverlappingCommit):
+    (WebCore::PlatformCALayerContentsDelayedReleaser::clearRetainedContents):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@287079 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-12-15  Simon Fraser  <simon.fraser@apple.com>
+
+            Twitter scroll stutter: ensure that CA backing store is always deallocated on the main thread
+            https://bugs.webkit.org/show_bug.cgi?id=234328
+            <rdar://85892959>
+
+            Reviewed by Tim Horton.
+
+            When scrolling pages like Twitter and Facebook we observed CoreAnimation commits on the
+            scrolling thread taking longer than they should because CABackingStore objects were being
+            released in those transactions.
+
+            Work around this issue by extending the lifetime of CABackingStore objects if we detect that
+            they might be entrained into a scrolling tree commit, by virtue of having overlapping main
+            thread and scrolling thread commits.
+
+            The logic is contained in PlatformCALayerContentsDelayedReleaser, which puts layer contents
+            into a retaining vector when they are being cleared on the layer. They are released at the
+            end of a main thread commit; if we detected overlapping commits, then we release on a
+            dispatch to extend the lifetime slightly.
+
+            The remaining changes are plumbing to get commit willBegin/didEnd messages to PlatformCALayerContentsDelayedReleaser
+            for main and scrolling threads.
+
+            * SourcesCocoa.txt:
+            * WebCore.xcodeproj/project.pbxproj:
+            * page/scrolling/ScrollingTree.h:
+            * page/scrolling/ThreadedScrollingTree.h:
+            * page/scrolling/mac/ScrollingCoordinatorMac.h:
+            * page/scrolling/mac/ScrollingCoordinatorMac.mm:
+            (WebCore::ScrollingCoordinatorMac::willStartPlatformRenderingUpdate):
+            (WebCore::ScrollingCoordinatorMac::didCompletePlatformRenderingUpdate):
+            * page/scrolling/mac/ScrollingTreeMac.h:
+            * page/scrolling/mac/ScrollingTreeMac.mm:
+            (ScrollingTreeMac::applyLayerPositionsInternal):
+            (ScrollingTreeMac::registerForPlatformRenderingUpdateCallback):
+            * platform/graphics/ca/GraphicsLayerCA.cpp:
+            (WebCore::GraphicsLayerCA::updateContentsVisibility):
+            (WebCore::GraphicsLayerCA::updateDrawsContent):
+            * platform/graphics/ca/PlatformCALayer.cpp:
+            (WebCore::PlatformCALayer::clearContents):
+            * platform/graphics/ca/PlatformCALayer.h:
+            * platform/graphics/ca/cocoa/PlatformCALayerCocoa.h:
+            * platform/graphics/ca/cocoa/PlatformCALayerCocoa.mm:
+            (WebCore::PlatformCALayerCocoa::setBackingStoreAttached):
+            (WebCore::PlatformCALayerCocoa::clearContents):
+            * platform/graphics/ca/cocoa/PlatformCALayerContentsDelayedReleaser.h: Added.
+            (WebCore::PlatformCALayerContentsDelayedReleaser::WTF_GUARDED_BY_LOCK):
+            * platform/graphics/ca/cocoa/PlatformCALayerContentsDelayedReleaser.mm: Added.
+            (WebCore::PlatformCALayerContentsDelayedReleaser::singleton):
+            (WebCore::PlatformCALayerContentsDelayedReleaser::takeLayerContents):
+            (WebCore::PlatformCALayerContentsDelayedReleaser::mainThreadCommitWillStart):
+            (WebCore::PlatformCALayerContentsDelayedReleaser::mainThreadCommitDidEnd):
+            (WebCore::PlatformCALayerContentsDelayedReleaser::scrollingThreadCommitWillStart):
+            (WebCore::PlatformCALayerContentsDelayedReleaser::scrollingThreadCommitDidEnd):
+            (WebCore::PlatformCALayerContentsDelayedReleaser::updateSawOverlappingCommit):
+            (WebCore::PlatformCALayerContentsDelayedReleaser::clearRetainedContents):
+
 2021-12-16  Alan Coon  <alancoon@apple.com>
 
         Apply patch. rdar://problem/86505382

@@ -259,7 +259,7 @@ protected:
     void setGestureState(std::optional<WheelScrollGestureState>);
     std::optional<WheelScrollGestureState> gestureState();
 
-    void applyLayerPositionsInternal() WTF_REQUIRES_LOCK(m_treeLock);
+    WEBCORE_EXPORT virtual void applyLayerPositionsInternal() WTF_REQUIRES_LOCK(m_treeLock);
     void removeAllNodes() WTF_REQUIRES_LOCK(m_treeLock);
 
     Lock m_treeLock; // Protects the scrolling tree.
