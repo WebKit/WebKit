@@ -1,3 +1,31 @@
+2021-12-16  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK][WPE] Apply optimizations to speed up the layout-test EWS and add a few more workers to the build ones.
+        https://bugs.webkit.org/show_bug.cgi?id=234378
+
+        Reviewed by Jonathan Bedard.
+
+        This applies two optimizations to speed up the testing on the layout-tests EWS added in r286405
+
+        1. Pass --fully-parallel to the retry steps. This makes the tool to utilize all the available workers for running
+        the tests instead of running them in serial. That makes the time needed to complete the retry steps to be considerable less,
+        In this example https://ews-build.webkit.org/#/builders/35/builds/1757 it reduces the timing from 43 mins to 12 mins.
+
+        2. When the first run fails without giving a list of failures and we have not reached the maximum retry count
+        we are going to end retring the whole testing anyway, so there is no point in running the tests without patch
+        in that case, we can skip doing that to save time. See: https://ews-build.webkit.org/#/builders/35/builds/1763
+
+        On top of that this patch adds an extra worker to the EWS build queues of GTK and WPE
+        because I detected that this queues sometimes are not fast enough.
+
+        * CISupport/ews-build/config.json:
+        * CISupport/ews-build/steps.py:
+        (BugzillaMixin.send_email_for_infrastructure_issue):
+        (RunWebKitTestsRedTree.evaluateCommand):
+        (RunWebKitTestsRepeatFailuresRedTree.setLayoutTestCommand):
+        (RunWebKitTestsRepeatFailuresWithoutPatchRedTree.setLayoutTestCommand):
+        * CISupport/ews-build/steps_unittest.py:
+
 2021-12-15  John Wilander  <wilander@apple.com>
 
         TestWebKitAPI.PrivateClickMeasurement.MigrateWithDestinationToken is a flaky failure

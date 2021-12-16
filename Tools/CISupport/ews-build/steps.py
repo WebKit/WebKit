@@ -755,7 +755,7 @@ class BugzillaMixin(object):
             build_url = '{}#/builders/{}/builds/{}'.format(self.master.config.buildbotURL, self.build._builderid, self.build.number)
             email_subject = 'Infrastructure issue at {}'.format(builder_name)
             email_text = 'The following infrastructure issue happened at:\n\n'
-            email_text += '    - Build : {}\n'.format(build_url)
+            email_text += '    - Build : <a href="{}">{}</a>\n'.format(build_url, build_url)
             email_text += '    - Builder : {}\n'.format(builder_name)
             email_text += '    - Worker : {}\n'.format(worker_name)
             email_text += '    - Issue: {}\n'.format(infrastructure_issue_text)
@@ -2764,12 +2764,15 @@ class RunWebKitTestsRedTree(RunWebKitTests):
             self.build.results = SUCCESS
             self.setProperty('build_summary', message)
         else:
-            # We have a failure return code, but not a list of failed or flaky tests.
-            # So retry re-running the _whole_ layout tests without-patch to see if
-            # this unexpected failure was pre-existent. If the failure was not pre-existent,
-            # then we would not report a list of failed test, just a generic "unknown" failure.
+            # We have a failure return code but not a list of failed or flaky tests, so we can't run the repeat steps.
+            # If we are on the last retry then run the whole layout tests without patch.
+            # If not, then go to analyze-layout-tests-results where we will retry everything hoping this was a random failure.
             self.setProperty('patchFailedTests', True)
-            next_steps.extend([UnApplyPatchIfRequired(), CompileWebKitWithoutPatch(retry_build_on_failure=True), ValidatePatch(verifyBugClosed=False, addURLs=False), RunWebKitTestsWithoutPatchRedTree()])
+            retry_count = int(self.getProperty('retry_count', 0))
+            if retry_count < AnalyzeLayoutTestsResultsRedTree.MAX_RETRY:
+                next_steps.append(AnalyzeLayoutTestsResultsRedTree())
+            else:
+                next_steps.extend([UnApplyPatchIfRequired(), CompileWebKitWithoutPatch(retry_build_on_failure=True), ValidatePatch(verifyBugClosed=False, addURLs=False), RunWebKitTestsWithoutPatchRedTree()])
         if next_steps:
             self.build.addStepsAfterCurrentStep(next_steps)
         return rc
@@ -2787,7 +2790,7 @@ class RunWebKitTestsRepeatFailuresRedTree(RunWebKitTestsRedTree):
     def setLayoutTestCommand(self):
         super().setLayoutTestCommand()
         first_results_failing_tests = set(self.getProperty('first_run_failures', []))
-        self.setCommand(self.command + ['--repeat-each=%s' % self.NUM_REPEATS_PER_TEST] + sorted(first_results_failing_tests))
+        self.setCommand(self.command + ['--fully-parallel', '--repeat-each=%s' % self.NUM_REPEATS_PER_TEST] + sorted(first_results_failing_tests))
 
     def evaluateCommand(self, cmd):
         with_patch_repeat_failures_results_nonflaky_failures = set(self.getProperty('with_patch_repeat_failures_results_nonflaky_failures', []))
@@ -2846,7 +2849,7 @@ class RunWebKitTestsRepeatFailuresWithoutPatchRedTree(RunWebKitTestsRedTree):
         # is skipped anyways if is marked as such on the Expectation files or if is marked
         # as failure (since we are passing also '--skip-failing-tests'). That way we ensure
         # to report the case of a patch removing an expectation that still fails with it.
-        self.setCommand(self.command + ['--repeat-each=%s' % self.NUM_REPEATS_PER_TEST, '--skipped=always'] + sorted(failures_to_repeat))
+        self.setCommand(self.command + ['--fully-parallel', '--repeat-each=%s' % self.NUM_REPEATS_PER_TEST, '--skipped=always'] + sorted(failures_to_repeat))
 
     def evaluateCommand(self, cmd):
         rc = self.evaluateResult(cmd)
