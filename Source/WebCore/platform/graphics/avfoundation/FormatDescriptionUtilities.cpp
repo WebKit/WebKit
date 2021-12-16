@@ -58,35 +58,29 @@ std::optional<PlatformVideoColorSpace> colorSpaceFromFormatDescription(CMFormatD
     if (!formatDescription)
         return std::nullopt;
 
-    auto safeCFStringEquals = [] (CFStringRef one, CFStringRef two) -> bool {
-        if (!one || !two)
-            return false;
-        return CFStringCompare(one, two, 0) == kCFCompareEqualTo;
-    };
-
     PlatformVideoColorSpace colorSpace;
     if (auto primaries = static_cast<CFStringRef>(PAL::CMFormatDescriptionGetExtension(formatDescription, PAL::get_CoreMedia_kCMFormatDescriptionExtension_ColorPrimaries()))) {
-        if (safeCFStringEquals(primaries, PAL::get_CoreMedia_kCMFormatDescriptionColorPrimaries_ITU_R_709_2()))
+        if (safeCFEqual(primaries, PAL::get_CoreMedia_kCMFormatDescriptionColorPrimaries_ITU_R_709_2()))
             colorSpace.primaries = PlatformVideoColorPrimaries::Bt709;
-        else if (safeCFStringEquals(primaries, PAL::get_CoreMedia_kCMFormatDescriptionColorPrimaries_EBU_3213()))
+        else if (safeCFEqual(primaries, PAL::get_CoreMedia_kCMFormatDescriptionColorPrimaries_EBU_3213()))
             colorSpace.primaries = PlatformVideoColorPrimaries::Bt470bg;
-        else if (safeCFStringEquals(primaries, PAL::get_CoreMedia_kCMFormatDescriptionColorPrimaries_SMPTE_C()))
+        else if (safeCFEqual(primaries, PAL::get_CoreMedia_kCMFormatDescriptionColorPrimaries_SMPTE_C()))
             colorSpace.primaries = PlatformVideoColorPrimaries::Smpte170m;
     }
 
     if (auto transfer = static_cast<CFStringRef>(PAL::CMFormatDescriptionGetExtension(formatDescription, PAL::get_CoreMedia_kCMFormatDescriptionExtension_TransferFunction()))) {
-        if (safeCFStringEquals(transfer, PAL::get_CoreMedia_kCMFormatDescriptionTransferFunction_ITU_R_709_2()))
+        if (safeCFEqual(transfer, PAL::get_CoreMedia_kCMFormatDescriptionTransferFunction_ITU_R_709_2()))
             colorSpace.transfer = PlatformVideoTransferCharacteristics::Bt709;
-        else if (safeCFStringEquals(transfer, PAL::get_CoreMedia_kCMFormatDescriptionTransferFunction_sRGB()))
+        else if (safeCFEqual(transfer, PAL::get_CoreMedia_kCMFormatDescriptionTransferFunction_sRGB()))
             colorSpace.transfer = PlatformVideoTransferCharacteristics::Iec6196621;
     }
 
     if (auto matrix = static_cast<CFStringRef>(PAL::CMFormatDescriptionGetExtension(formatDescription, PAL::get_CoreMedia_kCMFormatDescriptionExtension_YCbCrMatrix()))) {
-        if (safeCFStringEquals(matrix, PAL::get_CoreMedia_kCVImageBufferYCbCrMatrix_ITU_R_709_2()))
+        if (safeCFEqual(matrix, PAL::get_CoreMedia_kCVImageBufferYCbCrMatrix_ITU_R_709_2()))
             colorSpace.matrix = PlatformVideoMatrixCoefficients::Bt709;
-        else if (safeCFStringEquals(matrix, PAL::get_CoreMedia_kCVImageBufferYCbCrMatrix_ITU_R_601_4()))
+        else if (safeCFEqual(matrix, PAL::get_CoreMedia_kCVImageBufferYCbCrMatrix_ITU_R_601_4()))
             colorSpace.matrix = PlatformVideoMatrixCoefficients::Bt470bg;
-        else if (safeCFStringEquals(matrix, PAL::get_CoreMedia_kCMFormatDescriptionYCbCrMatrix_SMPTE_240M_1995()))
+        else if (safeCFEqual(matrix, PAL::get_CoreMedia_kCMFormatDescriptionYCbCrMatrix_SMPTE_240M_1995()))
             colorSpace.matrix = PlatformVideoMatrixCoefficients::Smpte170m;
     }
 
