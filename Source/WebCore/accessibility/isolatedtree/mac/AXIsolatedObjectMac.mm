@@ -80,7 +80,7 @@ void AXIsolatedObject::detachPlatformWrapper(AccessibilityDetachmentType detachm
 
 AXTextMarkerRangeRef AXIsolatedObject::textMarkerRangeForNSRange(const NSRange& range) const
 {
-    return Accessibility::retrieveValueFromMainThread<AXTextMarkerRangeRef>([&range, this] () -> AXTextMarkerRangeRef {
+    return Accessibility::retrieveAutoreleasedValueFromMainThread<AXTextMarkerRangeRef>([&range, this] () -> RetainPtr<AXTextMarkerRangeRef> {
         auto* axObject = associatedAXObject();
         return axObject ? axObject->textMarkerRangeForNSRange(range) : nullptr;
     });
