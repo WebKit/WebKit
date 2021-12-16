@@ -334,26 +334,21 @@ void InlineItemsBuilder::breakAndComputeBidiLevels(InlineItems& inlineItems)
     auto setBidiLevelForOpaqueInlineItems = [&] {
         if (!hasSeenOpaqueItem)
             return;
-        // Opaque items (inline items with no paragraph content) get their bidi level values from their adjacent items.
+        // Let's not confuse ubidi with non-content entries.
+        // Opaque runs are excluded from the visual list (ie. only empty inline boxes should be kept around as bidi content -to figure out their visual order).
         enum class InlineBoxHasContent : bool { No, Yes };
         Vector<InlineBoxHasContent> inlineBoxContentFlagStack;
         inlineBoxContentFlagStack.reserveInitialCapacity(inlineItems.size());
         for (auto index = inlineItems.size(); index--;) {
             auto& inlineItem = inlineItems[index];
-            if (inlineItemOffsets[index]) {
-                inlineBoxContentFlagStack.fill(InlineBoxHasContent::Yes);
-                continue;
-            }
             if (inlineItem.isInlineBoxStart()) {
                 ASSERT(!inlineBoxContentFlagStack.isEmpty());
-                // Inline box start (e.g <span>) uses its content bidi level (next inline item).
                 if (inlineBoxContentFlagStack.takeLast() == InlineBoxHasContent::Yes)
                     inlineItems[index].setBidiLevel(InlineItem::opaqueBidiLevel);
                 continue;
             }
             if (inlineItem.isInlineBoxEnd()) {
                 inlineBoxContentFlagStack.append(InlineBoxHasContent::No);
-                // Let's not confuse ubidi with non-content entries. Opaque runs are excluded from the visual list.
                 inlineItem.setBidiLevel(InlineItem::opaqueBidiLevel);
                 continue;
             }
@@ -361,7 +356,8 @@ void InlineItemsBuilder::breakAndComputeBidiLevels(InlineItems& inlineItems)
                 inlineItem.setBidiLevel(InlineItem::opaqueBidiLevel);
                 continue;
             }
-            ASSERT_NOT_REACHED();
+            // Mark the inline box stack with "content yes", when we come across a content type of inline item.
+            inlineBoxContentFlagStack.fill(InlineBoxHasContent::Yes);
         }
     };
     setBidiLevelForOpaqueInlineItems();

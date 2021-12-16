@@ -572,6 +572,10 @@ void InlineDisplayContentBuilder::processBidiContent(const LineBuilder::LineCont
                 continue;
             }
             if (lineRun.isInlineBoxStart() || lineRun.isLineSpanningInlineBoxStart()) {
+                // FIXME: While we should only get here with empty inline boxes, there are
+                // some cases where the inline box has some content on the paragraph level (at bidi split) but line breaking renders it empty
+                // or their content is completely collapsed.
+                // Such inline boxes should also be handled here.
                 appendInlineDisplayBoxAtBidiBoundary(layoutBox, boxes);
                 createdDisplayBoxNodeForContainerBoxAndPushToAncestorStack(downcast<ContainerBox>(layoutBox), boxes.size() - 1, parentDisplayBoxNodeIndex, displayBoxTree, ancestorStack);
                 continue;
