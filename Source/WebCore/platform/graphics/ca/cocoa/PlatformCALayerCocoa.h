@@ -120,7 +120,6 @@ public:
     bool hasContents() const override;
     CFTypeRef contents() const override;
     void setContents(CFTypeRef) override;
-    void clearContents() override;
 
     void setContentsRect(const FloatRect&) override;
 

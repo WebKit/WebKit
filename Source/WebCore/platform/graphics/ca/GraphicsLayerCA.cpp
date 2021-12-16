@@ -2278,7 +2278,7 @@ void GraphicsLayerCA::updateContentsVisibility()
         if (m_backdropLayer)
             m_backdropLayer->setHidden(false);
     } else {
-        m_layer->clearContents();
+        m_layer->setContents(nullptr);
 
         if (m_layerClones) {
             for (auto& layer : m_layerClones->primaryLayerClones.values())
@@ -2593,7 +2593,7 @@ void GraphicsLayerCA::updateDrawsContent()
         m_layer->setNeedsDisplay();
         m_hasEverPainted = false;
     } else {
-        m_layer->clearContents();
+        m_layer->setContents(nullptr);
         if (m_layerClones) {
             for (auto& layer : m_layerClones->primaryLayerClones.values())
                 layer->setContents(nullptr);

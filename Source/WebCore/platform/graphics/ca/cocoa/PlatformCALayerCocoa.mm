@@ -35,7 +35,6 @@
 #import "Model.h"
 #import "PlatformCAAnimationCocoa.h"
 #import "PlatformCAFilters.h"
-#import "PlatformCALayerContentsDelayedReleaser.h"
 #import "ScrollbarThemeMac.h"
 #import "TileController.h"
 #import "TiledBacking.h"
@@ -685,7 +684,7 @@ void PlatformCALayerCocoa::setBackingStoreAttached(bool attached)
     if (attached)
         setNeedsDisplay();
     else
-        clearContents();
+        setContents(nullptr);
 }
 
 bool PlatformCALayerCocoa::backingStoreAttached() const
@@ -789,15 +788,6 @@ bool PlatformCALayerCocoa::hasContents() const
 CFTypeRef PlatformCALayerCocoa::contents() const
 {
     return (__bridge CFTypeRef)[m_layer contents];
-}
-
-void PlatformCALayerCocoa::clearContents()
-{
-#if PLATFORM(MAC)
-    PlatformCALayerContentsDelayedReleaser::singleton().takeLayerContents(*this);
-#else
-    setContents(nullptr);
-#endif
 }
 
 void PlatformCALayerCocoa::setContents(CFTypeRef value)

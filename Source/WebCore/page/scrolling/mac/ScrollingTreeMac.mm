@@ -28,7 +28,6 @@
 
 #import "Logging.h"
 #import "PlatformCALayer.h"
-#import "PlatformCALayerContentsDelayedReleaser.h"
 #import "ScrollingTreeFixedNode.h"
 #import "ScrollingTreeFrameHostingNode.h"
 #import "ScrollingTreeFrameScrollingNodeMac.h"
@@ -39,7 +38,6 @@
 #import "WebCoreCALayerExtras.h"
 #import "WebLayer.h"
 #import "WheelEventTestMonitor.h"
-#import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <wtf/text/TextStream.h>
 
 #if ENABLE(ASYNC_SCROLLING) && ENABLE(SCROLLING_THREAD)
@@ -240,25 +238,6 @@ void ScrollingTreeMac::lockLayersForHitTesting()
 void ScrollingTreeMac::unlockLayersForHitTesting()
 {
     m_layerHitTestMutex.unlock();
-}
-
-void ScrollingTreeMac::applyLayerPositionsInternal()
-{
-    if (ScrollingThread::isCurrentThread())
-        registerForPlatformRenderingUpdateCallback();
-
-    ThreadedScrollingTree::applyLayerPositionsInternal();
-}
-
-void ScrollingTreeMac::registerForPlatformRenderingUpdateCallback()
-{
-    [CATransaction addCommitHandler:[] {
-        PlatformCALayerContentsDelayedReleaser::singleton().scrollingThreadCommitWillStart();
-    } forPhase:kCATransactionPhasePreLayout];
-
-    [CATransaction addCommitHandler:[] {
-        PlatformCALayerContentsDelayedReleaser::singleton().scrollingThreadCommitDidEnd();
-    } forPhase:kCATransactionPhasePostCommit];
 }
 
 void ScrollingTreeMac::setWheelEventTestMonitor(RefPtr<WheelEventTestMonitor>&& monitor)
