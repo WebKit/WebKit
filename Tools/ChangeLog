@@ -1,5 +1,18 @@
 2021-12-16  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
+        [GTK] Add gtk-wk2 to EWS bubbles
+        https://bugs.webkit.org/show_bug.cgi?id=209104
+
+        Reviewed by Jonathan Bedard.
+
+        A new queue was added in 286405 which runs GTK LayoutTests.
+        This patch adds the queue to the EWS bubbles.
+
+        * CISupport/ews-app/ews/views/statusbubble.py:
+        (StatusBubble):
+
+2021-12-16  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
         [GTK][WPE] Apply optimizations to speed up the layout-test EWS and add a few more workers to the build ones.
         https://bugs.webkit.org/show_bug.cgi?id=234378
 
