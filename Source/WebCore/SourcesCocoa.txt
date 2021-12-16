@@ -224,6 +224,7 @@ platform/audio/cocoa/AudioDestinationCocoa.cpp
 platform/audio/cocoa/AudioFileReaderCocoa.cpp
 platform/audio/cocoa/AudioOutputUnitAdaptor.cpp
 platform/audio/cocoa/AudioSampleBufferList.cpp
+platform/audio/cocoa/AudioSampleDataConverter.mm
 platform/audio/cocoa/AudioSampleDataSource.mm
 platform/audio/cocoa/CAAudioStreamDescription.cpp
 platform/audio/cocoa/CARingBuffer.cpp
@@ -315,14 +316,14 @@ platform/graphics/avfoundation/objc/InbandTextTrackPrivateAVFObjC.mm
 platform/graphics/avfoundation/objc/InbandChapterTrackPrivateAVFObjC.mm @no-unify
 platform/graphics/avfoundation/objc/LocalSampleBufferDisplayLayer.mm
 platform/graphics/avfoundation/objc/MediaPlaybackTargetPickerMac.mm
-platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm
+platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm @no-unify
 platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm @no-unify
 platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.mm
 platform/graphics/avfoundation/objc/MediaSampleAVFObjC.mm
 platform/graphics/avfoundation/objc/MediaSourcePrivateAVFObjC.mm
 platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.mm @no-unify
 platform/graphics/avfoundation/objc/SourceBufferParserAVFObjC.mm
-platform/graphics/avfoundation/objc/VideoLayerManagerObjC.mm
+platform/graphics/avfoundation/objc/VideoLayerManagerObjC.mm @no-unify
 platform/graphics/avfoundation/objc/VideoTrackPrivateAVFObjC.cpp
 platform/graphics/avfoundation/objc/VideoTrackPrivateMediaSourceAVFObjC.mm
 platform/graphics/avfoundation/objc/WebCoreAVFResourceLoader.mm

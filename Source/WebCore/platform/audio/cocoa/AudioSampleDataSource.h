@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "AudioSampleDataConverter.h"
 #include "CARingBuffer.h"
 #include <CoreAudio/CoreAudioTypes.h>
 #include <wtf/LoggerHelper.h>
@@ -102,13 +103,15 @@ private:
 
     uint64_t m_lastPushedSampleCount { 0 };
     size_t m_waitToStartForPushCount { 2 };
-    MediaTime m_expectedNextPushedSampleTime { MediaTime::invalidTime() };
-    bool m_isFirstPull { true };
 
-    MediaTime m_inputSampleOffset;
+    int64_t m_expectedNextPushedSampleTimeValue { 0 };
+    int64_t m_converterInputOffset { 0 };
+    std::optional<int64_t> m_inputSampleOffset;
     int64_t m_outputSampleOffset { 0 };
+    uint64_t m_lastBufferedAmount { 0 };
 
-    AudioConverterRef m_converter;
+    AudioSampleDataConverter m_converter;
+
     RefPtr<AudioSampleBufferList> m_scratchBuffer;
 
     UniqueRef<CARingBuffer> m_ringBuffer;
@@ -117,10 +120,8 @@ private:
     float m_volume { 1.0 };
     bool m_muted { false };
     bool m_shouldComputeOutputSampleOffset { true };
-    uint64_t m_endFrameWhenNotEnoughData { 0 };
 
     bool m_isInNeedOfMoreData { false };
-
 #if !RELEASE_LOG_DISABLED
     Ref<const Logger> m_logger;
     const void* m_logIdentifier;

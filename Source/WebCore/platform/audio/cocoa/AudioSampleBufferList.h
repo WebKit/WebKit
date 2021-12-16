@@ -50,7 +50,6 @@ public:
 
     OSStatus copyFrom(const AudioSampleBufferList&, size_t count = SIZE_MAX);
     OSStatus copyFrom(const AudioBufferList&, size_t frameCount, AudioConverterRef);
-    OSStatus copyFrom(AudioSampleBufferList&, size_t frameCount, AudioConverterRef);
     OSStatus copyFrom(CARingBuffer&, size_t frameCount, uint64_t startFrame, CARingBuffer::FetchMode);
 
     OSStatus mixFrom(const AudioSampleBufferList&, size_t count = SIZE_MAX);

@@ -297,15 +297,10 @@ OSStatus AudioSampleBufferList::copyFrom(const AudioBufferList& source, size_t f
         return 0;
     }
 
-    LOG_ERROR("AudioSampleBufferList::copyFrom(%p) AudioConverterFillComplexBuffer returned error %d (%.4s)", this, (int)err, (char*)&err);
+    RELEASE_LOG_ERROR(Media, "AudioSampleBufferList::copyFrom(%p) AudioConverterFillComplexBuffer returned error %d (%.4s)", this, (int)err, (char*)&err);
     m_sampleCount = std::min(m_sampleCapacity, static_cast<size_t>(samplesConverted));
     zero();
     return err;
-}
-
-OSStatus AudioSampleBufferList::copyFrom(AudioSampleBufferList& source, size_t frameCount, AudioConverterRef converter)
-{
-    return copyFrom(source.bufferList(), frameCount, converter);
 }
 
 OSStatus AudioSampleBufferList::copyFrom(CARingBuffer& ringBuffer, size_t sampleCount, uint64_t startFrame, CARingBuffer::FetchMode mode)

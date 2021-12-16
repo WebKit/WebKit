@@ -62,15 +62,16 @@ private:
 
     void delaySamples(Seconds) final;
 
+    void start();
     CapabilityValueOrRange sampleRateCapacities() const final { return CapabilityValueOrRange(44100, 48000); }
 
     void tick();
 
-    void render(Seconds);
+    void render(MonotonicTime);
     void emitSampleBuffers(uint32_t frameCount);
     void reconfigure();
 
-    static Seconds renderInterval() { return 60_ms; }
+    static Seconds renderInterval() { return 20_ms; }
 
     std::unique_ptr<WebAudioBufferList> m_audioBufferList;
 
@@ -83,6 +84,7 @@ private:
 
     Vector<float> m_bipBopBuffer;
     bool m_hasAudioUnit { false };
+    bool m_isProducingData { false };
 
     RunLoop::Timer<MockAudioSharedUnit> m_timer;
     MonotonicTime m_lastRenderTime { MonotonicTime::nan() };
