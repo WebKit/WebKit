@@ -1,5 +1,31 @@
 2021-12-15  Brady Eidson  <beidson@apple.com>
 
+        Some webpushtool improvements.
+        https://bugs.webkit.org/show_bug.cgi?id=234372
+
+        Reviewed by Alex Christensen.
+
+        - Make the list of current connections be reliably ordered
+        - If the invocation is solely about injecting a push message, exit afterwards
+        - Some other tiny niceties
+
+        * webpushd/WebPushDaemon.mm:
+        (WebPushD::Daemon::broadcastAllConnectionIdentities):
+        (WebPushD::Daemon::injectPushMessageForTesting):
+
+        * webpushd/webpushtool/WebPushToolConnection.h:
+        * webpushd/webpushtool/WebPushToolConnection.mm:
+        (WebPushTool::Connection::create):
+        (WebPushTool::Connection::Connection):
+        (WebPushTool::Connection::connectToService):
+        (WebPushTool::Connection::startAction):
+        (WebPushTool::Connection::sendPushMessage):
+
+        * webpushd/webpushtool/WebPushToolMain.mm:
+        (main):
+
+2021-12-15  Brady Eidson  <beidson@apple.com>
+
         Add a "NotificationData" object to encompass local Notification-related parameters, instead of passing tons of them around everywhere.
         https://bugs.webkit.org/show_bug.cgi?id=234370
 

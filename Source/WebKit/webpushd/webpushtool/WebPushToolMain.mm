@@ -187,7 +187,7 @@ int main(int, const char **)
         printUsageAndTerminate(@"Unable to install plist to host the service");
 #endif
 
-    auto connection = WebPushTool::Connection::create(*action, preferTestService, reconnect);
+    auto connection = WebPushTool::Connection::create(action, preferTestService, reconnect);
     if (pushMessage)
         connection->setPushMessage(WTFMove(pushMessage));
 

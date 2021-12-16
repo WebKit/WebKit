@@ -188,8 +188,14 @@ void Daemon::broadcastDebugMessage(JSC::MessageLevel messageLevel, const String&
 void Daemon::broadcastAllConnectionIdentities()
 {
     broadcastDebugMessage((JSC::MessageLevel)4, "===\nCurrent connections:");
-    for (auto& iterator : m_connectionMap)
-        iterator.value->broadcastDebugMessage("");
+
+    auto connections = copyToVector(m_connectionMap.values());
+    std::sort(connections.begin(), connections.end(), [] (const Ref<ClientConnection>& a, const Ref<ClientConnection>& b) {
+        return a->identifier() < b->identifier();
+    });
+
+    for (auto& iterator : connections)
+        iterator->broadcastDebugMessage("");
     broadcastDebugMessage((JSC::MessageLevel)4, "===");
 }
 
@@ -350,7 +356,7 @@ void Daemon::injectPushMessageForTesting(ClientConnection* connection, const Pus
         return;
     }
 
-    connection->broadcastDebugMessage(makeString("Injected a test push messasge for ", message.targetAppCodeSigningIdentifier, " at ", message.registrationURL.string()));
+    connection->broadcastDebugMessage(makeString("Injected a test push message for ", message.targetAppCodeSigningIdentifier, " at ", message.registrationURL.string()));
     connection->broadcastDebugMessage(message.message);
 
     auto addResult = m_testingPushMessages.ensure(message.targetAppCodeSigningIdentifier, [] {

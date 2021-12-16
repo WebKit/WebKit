@@ -37,7 +37,7 @@
 
 namespace WebPushTool {
 
-std::unique_ptr<Connection> Connection::create(Action action, PreferTestService preferTestService, Reconnect reconnect)
+std::unique_ptr<Connection> Connection::create(std::optional<Action> action, PreferTestService preferTestService, Reconnect reconnect)
 {
     return makeUnique<Connection>(action, preferTestService, reconnect);
 }
@@ -56,7 +56,7 @@ static mach_port_t maybeConnectToService(const char* serviceName)
     return MACH_PORT_NULL;
 }
 
-Connection::Connection(Action action, PreferTestService preferTestService, Reconnect reconnect)
+Connection::Connection(std::optional<Action> action, PreferTestService preferTestService, Reconnect reconnect)
     : m_action(action)
     , m_reconnect(reconnect == Reconnect::Yes)
 {
@@ -110,6 +110,7 @@ void Connection::connectToService(WaitForServiceToExist waitForServiceToExist)
         }
     }
 
+    printf("Connecting to service '%s'\n", m_serviceName);
     xpc_connection_activate(m_connection.get());
 
     sendAuditToken();
@@ -118,11 +119,13 @@ void Connection::connectToService(WaitForServiceToExist waitForServiceToExist)
 
 void Connection::startAction()
 {
-    switch (m_action) {
-    case Action::StreamDebugMessages:
-        startDebugStreamAction();
-        break;
-    };
+    if (m_action) {
+        switch (*m_action) {
+        case Action::StreamDebugMessages:
+            startDebugStreamAction();
+            break;
+        };
+    }
 
     if (m_pushMessage)
         sendPushMessage();
@@ -140,8 +143,14 @@ void Connection::sendPushMessage()
     xpc_dictionary_set_value(dictionary.get(), WebKit::WebPushD::protocolEncodedMessageKey, WebKit::vectorToXPCData(encoder.takeBuffer()).get());
     xpc_dictionary_set_uint64(dictionary.get(), WebKit::WebPushD::protocolMessageTypeKey, static_cast<uint64_t>(WebKit::WebPushD::MessageType::InjectPushMessageForTesting));
 
+    printf("Injecting push message\n");
+
+    // If we have no action for this invocation (such as streaming debug messages) then we can exit after the push injection completes
+    __block bool shouldExitAfterInject = !m_action;
     xpc_connection_send_message_with_reply(m_connection.get(), dictionary.get(), dispatch_get_main_queue(), ^(xpc_object_t resultMessage) {
-        // This reply handler intentionally left blank
+        printf("Push message injected\n");
+        if (shouldExitAfterInject)
+            CFRunLoopStop(CFRunLoopGetMain());
     });
 }
 

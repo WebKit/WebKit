@@ -58,8 +58,8 @@ enum class WaitForServiceToExist : bool {
 class Connection : public CanMakeWeakPtr<Connection> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static std::unique_ptr<Connection> create(Action, PreferTestService, Reconnect);
-    Connection(Action, PreferTestService, Reconnect);
+    static std::unique_ptr<Connection> create(std::optional<Action>, PreferTestService, Reconnect);
+    Connection(std::optional<Action>, PreferTestService, Reconnect);
 
     void connectToService(WaitForServiceToExist);
 
@@ -75,7 +75,7 @@ private:
 
     void sendAuditToken();
 
-    Action m_action;
+    std::optional<Action> m_action;
     bool m_reconnect { false };
     RetainPtr<xpc_connection_t> m_connection;
     const char* m_serviceName;
