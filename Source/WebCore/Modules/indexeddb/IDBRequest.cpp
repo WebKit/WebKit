@@ -57,27 +57,37 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(IDBRequest);
 
 Ref<IDBRequest> IDBRequest::create(ScriptExecutionContext& context, IDBObjectStore& objectStore, IDBTransaction& transaction)
 {
-    return adoptRef(*new IDBRequest(context, objectStore, transaction));
+    auto request = adoptRef(*new IDBRequest(context, objectStore, transaction));
+    request->suspendIfNeeded();
+    return request;
 }
 
 Ref<IDBRequest> IDBRequest::create(ScriptExecutionContext& context, IDBCursor& cursor, IDBTransaction& transaction)
 {
-    return adoptRef(*new IDBRequest(context, cursor, transaction));
+    auto request = adoptRef(*new IDBRequest(context, cursor, transaction));
+    request->suspendIfNeeded();
+    return request;
 }
 
 Ref<IDBRequest> IDBRequest::create(ScriptExecutionContext& context, IDBIndex& index, IDBTransaction& transaction)
 {
-    return adoptRef(*new IDBRequest(context, index, transaction));
+    auto request = adoptRef(*new IDBRequest(context, index, transaction));
+    request->suspendIfNeeded();
+    return request;
 }
 
 Ref<IDBRequest> IDBRequest::createObjectStoreGet(ScriptExecutionContext& context, IDBObjectStore& objectStore, IndexedDB::ObjectStoreRecordType type, IDBTransaction& transaction)
 {
-    return adoptRef(*new IDBRequest(context, objectStore, type, transaction));
+    auto request = adoptRef(*new IDBRequest(context, objectStore, type, transaction));
+    request->suspendIfNeeded();
+    return request;
 }
 
 Ref<IDBRequest> IDBRequest::createIndexGet(ScriptExecutionContext& context, IDBIndex& index, IndexedDB::IndexRecordType requestedRecordType, IDBTransaction& transaction)
 {
-    return adoptRef(*new IDBRequest(context, index, requestedRecordType, transaction));
+    auto request = adoptRef(*new IDBRequest(context, index, requestedRecordType, transaction));
+    request->suspendIfNeeded();
+    return request;
 }
 
 IDBRequest::IDBRequest(ScriptExecutionContext& context, IDBClient::IDBConnectionProxy& connectionProxy, IndexedDB::RequestType requestType)
@@ -87,7 +97,6 @@ IDBRequest::IDBRequest(ScriptExecutionContext& context, IDBClient::IDBConnection
     , m_connectionProxy(connectionProxy)
     , m_requestType(requestType)
 {
-    suspendIfNeeded();
 }
 
 IDBRequest::IDBRequest(ScriptExecutionContext& context, IDBObjectStore& objectStore, IDBTransaction& transaction)
@@ -98,7 +107,6 @@ IDBRequest::IDBRequest(ScriptExecutionContext& context, IDBObjectStore& objectSt
     , m_source(&objectStore)
     , m_connectionProxy(transaction.database().connectionProxy())
 {
-    suspendIfNeeded();
 }
 
 IDBRequest::IDBRequest(ScriptExecutionContext& context, IDBCursor& cursor, IDBTransaction& transaction)
@@ -109,8 +117,6 @@ IDBRequest::IDBRequest(ScriptExecutionContext& context, IDBCursor& cursor, IDBTr
     , m_pendingCursor(&cursor)
     , m_connectionProxy(transaction.database().connectionProxy())
 {
-    suspendIfNeeded();
-
     WTF::switchOn(cursor.source(),
         [this] (const auto& value) { this->m_source = IDBRequest::Source { value }; }
     );
@@ -126,7 +132,6 @@ IDBRequest::IDBRequest(ScriptExecutionContext& context, IDBIndex& index, IDBTran
     , m_source(&index)
     , m_connectionProxy(transaction.database().connectionProxy())
 {
-    suspendIfNeeded();
 }
 
 IDBRequest::IDBRequest(ScriptExecutionContext& context, IDBObjectStore& objectStore, IndexedDB::ObjectStoreRecordType type, IDBTransaction& transaction)
@@ -138,7 +143,6 @@ IDBRequest::IDBRequest(ScriptExecutionContext& context, IDBObjectStore& objectSt
     , m_connectionProxy(transaction.database().connectionProxy())
     , m_requestedObjectStoreRecordType(type)
 {
-    suspendIfNeeded();
 }
 
 IDBRequest::IDBRequest(ScriptExecutionContext& context, IDBIndex& index, IndexedDB::IndexRecordType requestedRecordType, IDBTransaction& transaction)

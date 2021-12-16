@@ -65,12 +65,16 @@ std::atomic<unsigned> IDBTransaction::numberOfIDBTransactions { 0 };
 
 Ref<IDBTransaction> IDBTransaction::create(IDBDatabase& database, const IDBTransactionInfo& info)
 {
-    return adoptRef(*new IDBTransaction(database, info, nullptr));
+    auto transaction = adoptRef(*new IDBTransaction(database, info, nullptr));
+    transaction->suspendIfNeeded();
+    return transaction;
 }
 
 Ref<IDBTransaction> IDBTransaction::create(IDBDatabase& database, const IDBTransactionInfo& info, IDBOpenDBRequest& request)
 {
-    return adoptRef(*new IDBTransaction(database, info, &request));
+    auto transaction = adoptRef(*new IDBTransaction(database, info, &request));
+    transaction->suspendIfNeeded();
+    return transaction;
 }
 
 IDBTransaction::IDBTransaction(IDBDatabase& database, const IDBTransactionInfo& info, IDBOpenDBRequest* request)
@@ -102,8 +106,6 @@ IDBTransaction::IDBTransaction(IDBDatabase& database, const IDBTransactionInfo& 
 
         establishOnServer();
     }
-
-    suspendIfNeeded();
 }
 
 IDBTransaction::~IDBTransaction()
@@ -175,11 +177,11 @@ ExceptionOr<Ref<IDBObjectStore>> IDBTransaction::objectStore(const String& objec
     if (!info || (!found && !isVersionChange()))
         return Exception { NotFoundError, "Failed to execute 'objectStore' on 'IDBTransaction': The specified object store was not found."_s };
 
-    auto objectStore = makeUnique<IDBObjectStore>(*scriptExecutionContext(), *info, *this);
-    auto* rawObjectStore = objectStore.get();
-    m_referencedObjectStores.set(objectStoreName, WTFMove(objectStore));
+    auto objectStore = IDBObjectStore::create(*scriptExecutionContext(), *info, *this);
+    Ref objectStoreRef { objectStore.get() };
+    m_referencedObjectStores.set(objectStoreName, objectStore.moveToUniquePtr());
 
-    return Ref<IDBObjectStore>(*rawObjectStore);
+    return objectStoreRef;
 }
 
 
@@ -659,9 +661,9 @@ Ref<IDBObjectStore> IDBTransaction::createObjectStore(const IDBObjectStoreInfo& 
 
     Locker locker { m_referencedObjectStoreLock };
 
-    auto objectStore = makeUnique<IDBObjectStore>(*scriptExecutionContext(), info, *this);
-    auto* rawObjectStore = objectStore.get();
-    m_referencedObjectStores.set(info.name(), WTFMove(objectStore));
+    auto objectStore = IDBObjectStore::create(*scriptExecutionContext(), info, *this);
+    Ref objectStoreRef { objectStore.get() };
+    m_referencedObjectStores.set(info.name(), objectStore.moveToUniquePtr());
 
     LOG(IndexedDBOperations, "IDB create object store operation: %s", info.condensedLoggingString().utf8().data());
     scheduleOperation(IDBClient::TransactionOperationImpl::create(*this, [protectedThis = Ref { *this }] (const auto& result) {
@@ -670,7 +672,7 @@ Ref<IDBObjectStore> IDBTransaction::createObjectStore(const IDBObjectStoreInfo& 
         protectedThis->createObjectStoreOnServer(operation, info);
     }), IsWriteOperation::Yes);
 
-    return *rawObjectStore;
+    return objectStoreRef;
 }
 
 void IDBTransaction::createObjectStoreOnServer(IDBClient::TransactionOperation& operation, const IDBObjectStoreInfo& info)
@@ -747,7 +749,7 @@ std::unique_ptr<IDBIndex> IDBTransaction::createIndex(IDBObjectStore& objectStor
         protectedThis->createIndexOnServer(operation, info);
     }), IsWriteOperation::Yes);
 
-    return makeUnique<IDBIndex>(*scriptExecutionContext(), info, objectStore);
+    return IDBIndex::create(*scriptExecutionContext(), info, objectStore).moveToUniquePtr();
 }
 
 void IDBTransaction::createIndexOnServer(IDBClient::TransactionOperation& operation, const IDBIndexInfo& info)

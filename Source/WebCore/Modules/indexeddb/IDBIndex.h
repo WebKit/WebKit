@@ -29,6 +29,7 @@
 #include "IDBIndexInfo.h"
 #include "IDBRequest.h"
 #include <wtf/IsoMalloc.h>
+#include <wtf/UniqueRef.h>
 
 namespace JSC {
 class CallFrame;
@@ -43,7 +44,7 @@ struct IDBKeyRangeData;
 class IDBIndex final : public ActiveDOMObject {
     WTF_MAKE_ISO_ALLOCATED(IDBIndex);
 public:
-    IDBIndex(ScriptExecutionContext&, const IDBIndexInfo&, IDBObjectStore&);
+    static UniqueRef<IDBIndex> create(ScriptExecutionContext&, const IDBIndexInfo&, IDBObjectStore&);
 
     virtual ~IDBIndex();
 
@@ -85,6 +86,8 @@ public:
     void* objectStoreAsOpaqueRoot() { return &m_objectStore; }
 
 private:
+    IDBIndex(ScriptExecutionContext&, const IDBIndexInfo&, IDBObjectStore&);
+
     ExceptionOr<Ref<IDBRequest>> doCount(const IDBKeyRangeData&);
     ExceptionOr<Ref<IDBRequest>> doGet(ExceptionOr<IDBKeyRangeData>);
     ExceptionOr<Ref<IDBRequest>> doGetKey(ExceptionOr<IDBKeyRangeData>);

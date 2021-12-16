@@ -32,6 +32,7 @@
 #include "IDBObjectStoreInfo.h"
 #include <wtf/IsoMalloc.h>
 #include <wtf/Lock.h>
+#include <wtf/UniqueRef.h>
 
 namespace JSC {
 class CallFrame;
@@ -59,7 +60,7 @@ enum class ObjectStoreOverwriteMode : uint8_t;
 class IDBObjectStore final : public ActiveDOMObject {
     WTF_MAKE_ISO_ALLOCATED(IDBObjectStore);
 public:
-    IDBObjectStore(ScriptExecutionContext&, const IDBObjectStoreInfo&, IDBTransaction&);
+    static UniqueRef<IDBObjectStore> create(ScriptExecutionContext&, const IDBObjectStoreInfo&, IDBTransaction&);
     ~IDBObjectStore();
 
     const String& name() const;
@@ -113,6 +114,8 @@ public:
     void renameReferencedIndex(IDBIndex&, const String& newName);
 
 private:
+    IDBObjectStore(ScriptExecutionContext&, const IDBObjectStoreInfo&, IDBTransaction&);
+
     enum class InlineKeyCheck { Perform, DoNotPerform };
     ExceptionOr<Ref<IDBRequest>> putOrAdd(JSC::JSGlobalObject&, JSC::JSValue, RefPtr<IDBKey>, IndexedDB::ObjectStoreOverwriteMode, InlineKeyCheck, RefPtr<SerializedScriptValue>&& = nullptr);
     ExceptionOr<Ref<IDBRequest>> doCount(const IDBKeyRangeData&);

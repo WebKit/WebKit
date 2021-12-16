@@ -55,6 +55,13 @@ using namespace JSC;
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(IDBObjectStore);
 
+UniqueRef<IDBObjectStore> IDBObjectStore::create(ScriptExecutionContext& context, const IDBObjectStoreInfo& info, IDBTransaction& transaction)
+{
+    auto result = UniqueRef(*new IDBObjectStore(context, info, transaction));
+    result->suspendIfNeeded();
+    return result;
+}
+
 IDBObjectStore::IDBObjectStore(ScriptExecutionContext& context, const IDBObjectStoreInfo& info, IDBTransaction& transaction)
     : ActiveDOMObject(&context)
     , m_info(info)
@@ -62,8 +69,6 @@ IDBObjectStore::IDBObjectStore(ScriptExecutionContext& context, const IDBObjectS
     , m_transaction(transaction)
 {
     ASSERT(canCurrentThreadAccessThreadLocalData(m_transaction.database().originThread()));
-
-    suspendIfNeeded();
 }
 
 IDBObjectStore::~IDBObjectStore()
@@ -520,11 +525,11 @@ ExceptionOr<Ref<IDBIndex>> IDBObjectStore::index(const String& indexName)
     if (!info)
         return Exception { NotFoundError, "Failed to execute 'index' on 'IDBObjectStore': The specified index was not found."_s };
 
-    auto index = makeUnique<IDBIndex>(*scriptExecutionContext(), *info, *this);
+    auto index = IDBIndex::create(*scriptExecutionContext(), *info, *this);
 
-    Ref<IDBIndex> referencedIndex { *index };
+    Ref referencedIndex { index.get() };
 
-    m_referencedIndexes.set(indexName, WTFMove(index));
+    m_referencedIndexes.set(indexName, index.moveToUniquePtr());
 
     return referencedIndex;
 }

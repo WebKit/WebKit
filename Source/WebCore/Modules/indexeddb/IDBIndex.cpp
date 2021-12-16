@@ -42,6 +42,13 @@ using namespace JSC;
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(IDBIndex);
 
+UniqueRef<IDBIndex> IDBIndex::create(ScriptExecutionContext& context, const IDBIndexInfo& info, IDBObjectStore& objectStore)
+{
+    auto result = UniqueRef(*new IDBIndex(context, info, objectStore));
+    result->suspendIfNeeded();
+    return result;
+}
+
 IDBIndex::IDBIndex(ScriptExecutionContext& context, const IDBIndexInfo& info, IDBObjectStore& objectStore)
     : ActiveDOMObject(&context)
     , m_info(info)
@@ -49,8 +56,6 @@ IDBIndex::IDBIndex(ScriptExecutionContext& context, const IDBIndexInfo& info, ID
     , m_objectStore(objectStore)
 {
     ASSERT(canCurrentThreadAccessThreadLocalData(m_objectStore.transaction().database().originThread()));
-
-    suspendIfNeeded();
 }
 
 IDBIndex::~IDBIndex()
