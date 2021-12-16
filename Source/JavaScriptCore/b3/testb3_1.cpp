@@ -828,6 +828,9 @@ void run(const char* filter)
 
     RUN(testInfiniteLoopDoesntCauseBadHoisting());
 
+    RUN(testFloatMaxMin());
+    RUN(testDoubleMaxMin());
+
     if (isX86()) {
         RUN(testBranchBitAndImmFusion(Identity, Int64, 1, Air::BranchTest32, Air::Arg::Tmp));
         RUN(testBranchBitAndImmFusion(Identity, Int64, 0xff, Air::BranchTest32, Air::Arg::Tmp));

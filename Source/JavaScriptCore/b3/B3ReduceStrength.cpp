@@ -974,7 +974,7 @@ private:
 
         case Mod:
             // Turn this: Mod(constant1, constant2)
-            // Into this: constant1 / constant2
+            // Into this: constant1 % constant2
             // Note that this uses Mod<Chill> semantics.
             if (replaceWithNewValue(m_value->child(0)->modConstant(m_proc, m_value->child(1))))
                 break;
@@ -1034,10 +1034,18 @@ private:
 
         case UMod:
             // Turn this: UMod(constant1, constant2)
-            // Into this: constant1 / constant2
+            // Into this: constant1 % constant2
             replaceWithNewValue(m_value->child(0)->uModConstant(m_proc, m_value->child(1)));
             // FIXME: We should do what we do for Mod since the same principle applies here.
             // https://bugs.webkit.org/show_bug.cgi?id=164809
+            break;
+
+        case FMax:
+            replaceWithNewValue(m_value->child(0)->fMaxConstant(m_proc, m_value->child(1)));
+            break;
+
+        case FMin:
+            replaceWithNewValue(m_value->child(0)->fMinConstant(m_proc, m_value->child(1)));
             break;
 
         case BitAnd:

@@ -4401,11 +4401,6 @@ template<> auto AirIRGenerator::addOp<OpType::F32DemoteF64>(ExpressionType arg0,
     return { };
 }
 
-template<> auto AirIRGenerator::addOp<OpType::F32Min>(ExpressionType arg0, ExpressionType arg1, ExpressionType& result) -> PartialResult
-{
-    return addFloatingPointMinOrMax(Types::F32, MinOrMax::Min, arg0, arg1, result);
-}
-
 template<> auto AirIRGenerator::addOp<OpType::F64Ne>(ExpressionType arg0, ExpressionType arg1, ExpressionType& result) -> PartialResult
 {
     result = g32();
@@ -4424,6 +4419,14 @@ auto AirIRGenerator::addFloatingPointMinOrMax(Type floatType, MinOrMax minOrMax,
 {
     ASSERT(floatType.isF32() || floatType.isF64());
     result = tmpForType(floatType);
+
+    if (isARM64()) {
+        if (floatType.isF32())
+            append(m_currentBlock, minOrMax == MinOrMax::Max ? FloatMax : FloatMin, arg0, arg1, result);
+        else
+            append(m_currentBlock, minOrMax == MinOrMax::Max ? DoubleMax : DoubleMin, arg0, arg1, result);
+        return { };
+    }
 
     BasicBlock* isEqual = m_code.addBlock();
     BasicBlock* notEqual = m_code.addBlock();
@@ -4469,9 +4472,24 @@ auto AirIRGenerator::addFloatingPointMinOrMax(Type floatType, MinOrMax minOrMax,
     return { };
 }
 
+template<> auto AirIRGenerator::addOp<OpType::F32Min>(ExpressionType arg0, ExpressionType arg1, ExpressionType& result) -> PartialResult
+{
+    return addFloatingPointMinOrMax(Types::F32, MinOrMax::Min, arg0, arg1, result);
+}
+
 template<> auto AirIRGenerator::addOp<OpType::F32Max>(ExpressionType arg0, ExpressionType arg1, ExpressionType& result) -> PartialResult
 {
     return addFloatingPointMinOrMax(Types::F32, MinOrMax::Max, arg0, arg1, result);
+}
+
+template<> auto AirIRGenerator::addOp<OpType::F64Min>(ExpressionType arg0, ExpressionType arg1, ExpressionType& result) -> PartialResult
+{
+    return addFloatingPointMinOrMax(Types::F64, MinOrMax::Min, arg0, arg1, result);
+}
+
+template<> auto AirIRGenerator::addOp<OpType::F64Max>(ExpressionType arg0, ExpressionType arg1, ExpressionType& result) -> PartialResult
+{
+    return addFloatingPointMinOrMax(Types::F64, MinOrMax::Max, arg0, arg1, result);
 }
 
 template<> auto AirIRGenerator::addOp<OpType::F64Mul>(ExpressionType arg0, ExpressionType arg1, ExpressionType& result) -> PartialResult
@@ -4829,11 +4847,6 @@ template<> auto AirIRGenerator::addOp<OpType::F32Abs>(ExpressionType arg0, Expre
     return addFloatingPointAbs(AbsFloat, arg0, result);
 }
 
-template<> auto AirIRGenerator::addOp<OpType::F64Min>(ExpressionType arg0, ExpressionType arg1, ExpressionType& result) -> PartialResult
-{
-    return addFloatingPointMinOrMax(Types::F64, MinOrMax::Min, arg0, arg1, result);
-}
-
 template<> auto AirIRGenerator::addOp<OpType::F32Mul>(ExpressionType arg0, ExpressionType arg1, ExpressionType& result) -> PartialResult
 {
     result = f32();
@@ -5142,11 +5155,6 @@ template<> auto AirIRGenerator::addOp<OpType::F64Neg>(ExpressionType arg0, Expre
         append(Move64ToDouble, temp, result);
     }
     return { };
-}
-
-template<> auto AirIRGenerator::addOp<OpType::F64Max>(ExpressionType arg0, ExpressionType arg1, ExpressionType& result) -> PartialResult
-{
-    return addFloatingPointMinOrMax(Types::F64, MinOrMax::Max, arg0, arg1, result);
 }
 
 template<> auto AirIRGenerator::addOp<OpType::I64LeU>(ExpressionType arg0, ExpressionType arg1, ExpressionType& result) -> PartialResult

@@ -88,6 +88,8 @@ Value* ValueKey::materialize(Procedure& proc, Origin origin) const
     case UDiv:
     case Mod:
     case UMod:
+    case FMax:
+    case FMin:
     case BitAnd:
     case BitOr:
     case BitXor:

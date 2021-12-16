@@ -1173,4 +1173,7 @@ void testStorePreIndex64();
 void testStorePostIndex32();
 void testStorePostIndex64();
 
+void testFloatMaxMin();
+void testDoubleMaxMin();
+
 #endif // ENABLE(B3_JIT)

@@ -111,6 +111,8 @@ enum Opcode : uint8_t {
     Ceil,
     Floor,
     Sqrt,
+    FMax,
+    FMin,
 
     // Casts and such.
     // Bitwise Cast of Double->Int64 or Int64->Double

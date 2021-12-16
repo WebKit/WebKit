@@ -218,6 +218,8 @@ public:
     virtual Value* uDivConstant(Procedure&, const Value* other) const;
     virtual Value* modConstant(Procedure&, const Value* other) const; // This chooses Mod<Chill> semantics.
     virtual Value* uModConstant(Procedure&, const Value* other) const;
+    virtual Value* fMinConstant(Procedure&, const Value* other) const;
+    virtual Value* fMaxConstant(Procedure&, const Value* other) const;
     virtual Value* bitAndConstant(Procedure&, const Value* other) const;
     virtual Value* bitOrConstant(Procedure&, const Value* other) const;
     virtual Value* bitXorConstant(Procedure&, const Value* other) const;
@@ -436,6 +438,8 @@ protected:
         case UDiv:
         case Mod:
         case UMod:
+        case FMin:
+        case FMax:
         case BitAnd:
         case BitOr:
         case BitXor:
@@ -601,6 +605,8 @@ private:
         case UDiv:
         case Mod:
         case UMod:
+        case FMin:
+        case FMax:
         case BitAnd:
         case BitOr:
         case BitXor:

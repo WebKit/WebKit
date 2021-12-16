@@ -159,6 +159,12 @@ void printInternal(PrintStream& out, Opcode opcode)
     case UMod:
         out.print("UMod");
         return;
+    case FMin:
+        out.print("FMin");
+        return;
+    case FMax:
+        out.print("FMax");
+        return;
     case Neg:
         out.print("Neg");
         return;

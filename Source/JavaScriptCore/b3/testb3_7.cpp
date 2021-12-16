@@ -1888,4 +1888,112 @@ void addTupleTests(const char* filter, Deque<RefPtr<SharedTask<void()>>>& tasks)
     RUN_BINARY(tupleNestedLoop<false>, int32Operands(), int64Operands());
 }
 
+template <typename FloatType>
+static void testFMaxMin()
+{
+    auto checkResult = [&] (FloatType result, FloatType expected) {
+        CHECK_EQ(std::isnan(result), std::isnan(expected));
+        if (!std::isnan(expected)) {
+            CHECK_EQ(result, expected);
+            CHECK_EQ(std::signbit(result), std::signbit(expected));
+        }
+    };
+
+    auto runArgTest = [&] (bool max, FloatType arg1, FloatType arg2) {
+        Procedure proc;
+        BasicBlock* root = proc.addBlock();
+        Value* a = root->appendNew<ArgumentRegValue>(proc, Origin(), FPRInfo::argumentFPR0);
+        Value* b = root->appendNew<ArgumentRegValue>(proc, Origin(), FPRInfo::argumentFPR1);
+        if (std::is_same_v<FloatType, float>) {
+            a = root->appendNew<Value>(proc, Trunc, Origin(), a);
+            b = root->appendNew<Value>(proc, Trunc, Origin(), b);
+        }
+        Value* result = root->appendNew<Value>(proc, max ? FMax : FMin, Origin(), a, b);
+        root->appendNewControlValue(proc, Return, Origin(), result);
+        auto code = compileProc(proc);
+        return invoke<FloatType>(*code, arg1, arg2);
+    };
+
+    auto runConstTest = [&] (bool max, FloatType arg1, FloatType arg2) {
+        Procedure proc;
+        BasicBlock* root = proc.addBlock();
+        Value* a;
+        Value* b;
+        if (std::is_same_v<FloatType, float>) {
+            a = root->appendNew<ConstFloatValue>(proc, Origin(), arg1);
+            b = root->appendNew<ConstFloatValue>(proc, Origin(), arg2);
+        } else {
+            a = root->appendNew<ConstDoubleValue>(proc, Origin(), arg1);
+            b = root->appendNew<ConstDoubleValue>(proc, Origin(), arg2);
+        }
+        Value* result = root->appendNew<Value>(proc, max ? FMax : FMin, Origin(), a, b);
+        root->appendNewControlValue(proc, Return, Origin(), result);
+        auto code = compileProc(proc);
+        return invoke<FloatType>(*code, arg1, arg2);
+    };
+
+    auto runMinTest = [&] (FloatType a, FloatType b, FloatType expected) {
+        checkResult(runArgTest(false, a, b), expected);
+        checkResult(runArgTest(false, b, a), expected);
+        checkResult(runConstTest(false, a, b), expected);
+        checkResult(runConstTest(false, b, a), expected);
+    };
+
+    auto runMaxTest = [&] (FloatType a, FloatType b, FloatType expected) {
+        checkResult(runArgTest(true, a, b), expected);
+        checkResult(runConstTest(true, a, b), expected);
+        checkResult(runArgTest(true, b, a), expected);
+        checkResult(runConstTest(true, b, a), expected);
+    };
+
+    auto inf = std::numeric_limits<FloatType>::infinity();
+
+    runMinTest(10.0, 0.0, 0.0);
+    runMinTest(-10.0, 4.0, -10.0);
+    runMinTest(4.1, 4.2, 4.1);
+    runMinTest(-4.1, -4.2, -4.2);
+    runMinTest(0.0, -0.0, -0.0);
+    runMinTest(-0.0, -0.0, -0.0);
+    runMinTest(0.0, 0.0, 0.0);
+    runMinTest(-inf, 0, -inf);
+    runMinTest(-inf, inf, -inf);
+    runMinTest(inf, 42.0, 42.0);
+    if constexpr (std::is_same_v<FloatType, float>) {
+        runMinTest(0.0, std::nanf(""), std::nanf(""));
+        runMinTest(std::nanf(""), 42.0, std::nanf(""));
+    } else if constexpr (std::is_same_v<FloatType, double>) {
+        runMinTest(0.0, std::nan(""), std::nan(""));
+        runMinTest(std::nan(""), 42.0, std::nan(""));
+    }
+
+
+    runMaxTest(0.0, 10.0, 10.0);
+    runMaxTest(-10.0, 4.0, 4.0);
+    runMaxTest(4.1, 4.2, 4.2);
+    runMaxTest(-4.1, -4.2, -4.1);
+    runMaxTest(0.0, -0.0, 0.0);
+    runMaxTest(-0.0, -0.0, -0.0);
+    runMaxTest(0.0, 0.0, 0.0);
+    runMaxTest(-inf, 0, 0);
+    runMaxTest(-inf, inf, inf);
+    runMaxTest(inf, 42.0, inf);
+    if constexpr (std::is_same_v<FloatType, float>) {
+        runMaxTest(0.0, std::nanf(""), std::nanf(""));
+        runMaxTest(std::nanf(""), 42.0, std::nanf(""));
+    } else if constexpr (std::is_same_v<FloatType, double>) {
+        runMaxTest(0.0, std::nan(""), std::nan(""));
+        runMaxTest(std::nan(""), 42.0, std::nan(""));
+    }
+}
+
+void testFloatMaxMin()
+{
+    testFMaxMin<float>();
+}
+
+void testDoubleMaxMin()
+{
+    testFMaxMin<double>();
+}
+
 #endif // ENABLE(B3_JIT)

@@ -2706,6 +2706,26 @@ public:
         orDouble(op1, op2, dest);
     }
 
+    void floatMax(FPRegisterID op1, FPRegisterID op2, FPRegisterID dest)
+    {
+        m_assembler.fmax<32>(dest, op1, op2);
+    }
+
+    void floatMin(FPRegisterID op1, FPRegisterID op2, FPRegisterID dest)
+    {
+        m_assembler.fmin<32>(dest, op1, op2);
+    }
+
+    void doubleMax(FPRegisterID op1, FPRegisterID op2, FPRegisterID dest)
+    {
+        m_assembler.fmax<64>(dest, op1, op2);
+    }
+
+    void doubleMin(FPRegisterID op1, FPRegisterID op2, FPRegisterID dest)
+    {
+        m_assembler.fmin<64>(dest, op1, op2);
+    }
+
     void negateDouble(FPRegisterID src, FPRegisterID dest)
     {
         m_assembler.fneg<64>(dest, src);
