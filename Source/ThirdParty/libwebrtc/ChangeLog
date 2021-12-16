@@ -1,3 +1,15 @@
+2021-12-16  Michael Saboff  <msaboff@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=234173
+        Update Install Paths for build system changes
+
+        Reviewed by Filip Pizlo.
+
+        Added build variables and build step to create symlinks pointing to the alternate
+        build locations from the current framework install location.
+
+        * Configurations/libwebrtc.xcconfig:
+
 2021-12-10  Michael Saboff  <msaboff@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=234173

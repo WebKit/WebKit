@@ -14038,6 +14038,7 @@
 				A15797632582B1A500528236 /* Copy Plug-ins */,
 				2D9FB222237523830049F936 /* Unlock keychain */,
 				2D9FB223237523830049F936 /* Process GPU entitlements */,
+				6577FFBF2769C7550011AEC8 /* Create Symlink to Alt Root Path */,
 			);
 			buildRules = (
 			);
@@ -14060,6 +14061,7 @@
 				372EBB402017E64300085064 /* Resources */,
 				A1EF36BF2581F73B0090B02A /* Copy Plug-ins */,
 				7AFCBD5520B8917D00F55C9C /* Process WebContent entitlements */,
+				6577FFBD2769C70F0011AEC8 /* Create Symlink to Alt Root Path */,
 			);
 			buildRules = (
 			);
@@ -14079,6 +14081,7 @@
 			buildPhases = (
 				517B5F57275A8D3E002DC22D /* Sources */,
 				517B5F58275A8D3E002DC22D /* Frameworks */,
+				6577FFC32769C8110011AEC8 /* Create Symlink to Alt Root Path */,
 			);
 			buildRules = (
 			);
@@ -14100,6 +14103,7 @@
 				5742A2F02535613F00B7BA14 /* Resources */,
 				5742A2F12535613F00B7BA14 /* Unlock keychain */,
 				5742A2F22535613F00B7BA14 /* Process WebAuthentication entitlements */,
+				6577FFC02769C7700011AEC8 /* Create Symlink to Alt Root Path */,
 			);
 			buildRules = (
 			);
@@ -14120,6 +14124,7 @@
 				5C1579D227165B2F00ED5280 /* Sources */,
 				5C1579D427165B2F00ED5280 /* Frameworks */,
 				5C1579D527165B2F00ED5280 /* Process webpushd Entitlements */,
+				6577FFC22769C7EE0011AEC8 /* Create Symlink to Alt Root Path */,
 			);
 			buildRules = (
 			);
@@ -14140,6 +14145,7 @@
 				5CAF7A9D26F93A750003F19E /* Sources */,
 				5CAF7A9F26F93A750003F19E /* Frameworks */,
 				5C1578E6270E129400ED5280 /* Process adattributiond Entitlements */,
+				6577FFC12769C7BB0011AEC8 /* Create Symlink to Alt Root Path */,
 			);
 			buildRules = (
 			);
@@ -14161,6 +14167,7 @@
 				7A7E8DEE2748392500DCC97A /* Resources */,
 				7A7E8DF02748392500DCC97A /* Copy Plug-ins */,
 				7A7E8DF22748392500DCC97A /* Process WebContent entitlements */,
+				6577FFBC2769C6D90011AEC8 /* Create Symlink to Alt Root Path */,
 			);
 			buildRules = (
 			);
@@ -14206,6 +14213,7 @@
 				512B81CA273CAFBE00D87D49 /* Create symlinks to Daemons for engineering builds */,
 				0FB94836239F31B700926A8F /* Copy Testing Headers */,
 				DFD03A29270D5F57001A996E /* Copy Daemon Plists */,
+				6577FFB92769C1460011AEC8 /* Create Symlink to Alt Root Path */,
 			);
 			buildRules = (
 				535E08C422545B7200DF00CA /* PBXBuildRule */,
@@ -14248,6 +14256,7 @@
 				A1EF36D42581F7D70090B02A /* Copy Plug-ins */,
 				7AFCBD5420B8911D00F55C9C /* Process WebContent entitlements */,
 				4157853721279CC600DD3800 /* Copy Custom WebContent Resources to Framework Private Headers */,
+				6577FFBB2769C6AA0011AEC8 /* Create Symlink to Alt Root Path */,
 			);
 			buildRules = (
 			);
@@ -14270,6 +14279,7 @@
 				BC8283AF16B4BF7700A278FE /* Resources */,
 				41D0FC8020E43B4500076AE8 /* Unlock keychain */,
 				41D0FC8120E43B7000076AE8 /* Process Network entitlements */,
+				6577FFBE2769C7370011AEC8 /* Create Symlink to Alt Root Path */,
 			);
 			buildRules = (
 			);
@@ -14289,6 +14299,7 @@
 				CD95493126159004008372D9 /* Headers */,
 				CD95493226159004008372D9 /* Sources */,
 				CD95493326159004008372D9 /* Frameworks */,
+				6577FFBA2769C64A0011AEC8 /* Create Symlink to Alt Root Path */,
 			);
 			buildRules = (
 			);
@@ -14877,6 +14888,215 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "if [ \"${ACTION}\" = \"installhdrs\" ] || [ \"${ACTION}\" = \"installapi\" ]; then\n    exit 0;\nfi\n\nif [ -f ../../Tools/Scripts/check-for-inappropriate-files-in-framework ]; then\n    ../../Tools/Scripts/check-for-inappropriate-files-in-framework || exit $?\nfi\n";
+		};
+		6577FFB92769C1460011AEC8 /* Create Symlink to Alt Root Path */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 8;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Create Symlink to Alt Root Path";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"${OUTPUT_ALTERNATE_ROOT_PATH}",
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+			shellPath = /bin/zsh;
+			shellScript = "\"${SRCROOT}/Scripts/create-symlink-to-altroot.sh\"\n";
+		};
+		6577FFBA2769C64A0011AEC8 /* Create Symlink to Alt Root Path */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 8;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Create Symlink to Alt Root Path";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"${OUTPUT_ALTERNATE_ROOT_PATH}",
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+			shellPath = /bin/zsh;
+			shellScript = "\"${SRCROOT}/Scripts/create-symlink-to-altroot.sh\"\n";
+		};
+		6577FFBB2769C6AA0011AEC8 /* Create Symlink to Alt Root Path */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 8;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Create Symlink to Alt Root Path";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"${OUTPUT_ALTERNATE_ROOT_PATH}",
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+			shellPath = /bin/zsh;
+			shellScript = "\"${SRCROOT}/Scripts/create-symlink-to-altroot.sh\"\n";
+		};
+		6577FFBC2769C6D90011AEC8 /* Create Symlink to Alt Root Path */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 8;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Create Symlink to Alt Root Path";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"${OUTPUT_ALTERNATE_ROOT_PATH}",
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+			shellPath = /bin/zsh;
+			shellScript = "\"${SRCROOT}/Scripts/create-symlink-to-altroot.sh\"\n";
+		};
+		6577FFBD2769C70F0011AEC8 /* Create Symlink to Alt Root Path */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 8;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Create Symlink to Alt Root Path";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"${OUTPUT_ALTERNATE_ROOT_PATH}",
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+			shellPath = /bin/zsh;
+			shellScript = "\"${SRCROOT}/Scripts/create-symlink-to-altroot.sh\"\n";
+		};
+		6577FFBE2769C7370011AEC8 /* Create Symlink to Alt Root Path */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 8;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Create Symlink to Alt Root Path";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"${OUTPUT_ALTERNATE_ROOT_PATH}",
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+			shellPath = /bin/zsh;
+			shellScript = "\"${SRCROOT}/Scripts/create-symlink-to-altroot.sh\"\n";
+		};
+		6577FFBF2769C7550011AEC8 /* Create Symlink to Alt Root Path */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 8;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Create Symlink to Alt Root Path";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"${OUTPUT_ALTERNATE_ROOT_PATH}",
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+			shellPath = /bin/zsh;
+			shellScript = "\"${SRCROOT}/Scripts/create-symlink-to-altroot.sh\"\n";
+		};
+		6577FFC02769C7700011AEC8 /* Create Symlink to Alt Root Path */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 8;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Create Symlink to Alt Root Path";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"${OUTPUT_ALTERNATE_ROOT_PATH}",
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+			shellPath = /bin/zsh;
+			shellScript = "\"${SRCROOT}/Scripts/create-symlink-to-altroot.sh\"\n";
+		};
+		6577FFC12769C7BB0011AEC8 /* Create Symlink to Alt Root Path */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 8;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Create Symlink to Alt Root Path";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"${OUTPUT_ALTERNATE_ROOT_PATH}",
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+			shellPath = /bin/zsh;
+			shellScript = "\"${SRCROOT}/Scripts/create-symlink-to-altroot.sh\"\n";
+		};
+		6577FFC22769C7EE0011AEC8 /* Create Symlink to Alt Root Path */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 8;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Create Symlink to Alt Root Path";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"${OUTPUT_ALTERNATE_ROOT_PATH}",
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+			shellPath = /bin/zsh;
+			shellScript = "\"${SRCROOT}/Scripts/create-symlink-to-altroot.sh\"\n";
+		};
+		6577FFC32769C8110011AEC8 /* Create Symlink to Alt Root Path */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 8;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Create Symlink to Alt Root Path";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"${OUTPUT_ALTERNATE_ROOT_PATH}",
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+			shellPath = /bin/zsh;
+			shellScript = "\"${SRCROOT}/Scripts/create-symlink-to-altroot.sh\"\n";
 		};
 		7A7E8DF22748392500DCC97A /* Process WebContent entitlements */ = {
 			isa = PBXShellScriptBuildPhase;

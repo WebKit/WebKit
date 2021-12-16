@@ -89,6 +89,7 @@
 				A54C2255148B23DF00373FA3 /* Resources */,
 				1C60FF1214E6D9AF006CD77D /* Copy User Interface Resources */,
 				1C78EE1417611302002F6AA5 /* Sources */,
+				6577FFC9276ACA680011AEC8 /* Create Symlink to Alt Root Path */,
 			);
 			buildRules = (
 			);
@@ -146,6 +147,25 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "/usr/bin/perl \"${SRCROOT}/Scripts/copy-user-interface-resources.pl\"";
+		};
+		6577FFC9276ACA680011AEC8 /* Create Symlink to Alt Root Path */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 8;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Create Symlink to Alt Root Path";
+			outputFileListPaths = (
+				"${OUTPUT_ALTERNATE_ROOT_PATH}",
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+			shellPath = /bin/zsh;
+			shellScript = "\"${SRCROOT}/Scripts/create-symlink-to-altroot.sh\"\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 

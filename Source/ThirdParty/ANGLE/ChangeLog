@@ -1,3 +1,17 @@
+2021-12-16  Michael Saboff  <msaboff@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=234173
+        Update Install Paths for build system changes
+
+        Reviewed by Filip Pizlo.
+
+        Added build variables and build step to create symlinks pointing to the alternate
+        build locations from the current framework install location.
+
+        * ANGLE.xcodeproj/project.pbxproj:
+        * Configurations/ANGLE-dynamic.xcconfig:
+        * scripts/create-symlink-to-altroot.sh: Added.
+
 2021-12-15  Dean Jackson  <dino@apple.com>
 
         [ANGLE] clang with -Wunknown-warning-option will fail on -Wweak-template-vtables
