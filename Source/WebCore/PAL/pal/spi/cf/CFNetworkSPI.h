@@ -174,9 +174,6 @@ typedef enum {
 @end
 
 @interface NSMutableURLRequest ()
-#if HAVE(NSURLREQUEST_REMOVE_ALL_PROTOCOL_PROPERTIES)
-- (void)_removeAllProtocolProperties;
-#endif
 - (void)setContentDispositionEncodingFallbackArray:(NSArray *)theEncodingFallbackArray;
 - (void)setBoundInterfaceIdentifier:(NSString *)identifier;
 - (void)_setPreventHSTSStorage:(BOOL)preventHSTSStorage;
@@ -194,9 +191,6 @@ typedef enum {
 #endif
 
 @interface NSURLRequest ()
-#if HAVE(NSURLREQUEST_REMOVE_ALL_PROTOCOL_PROPERTIES)
-@property (nonatomic, readonly, nullable, retain) NSDictionary<NSString *, id> *_allProtocolProperties;
-#endif
 + (NSArray *)allowsSpecificHTTPSCertificateForHost:(NSString *)host;
 + (void)setAllowsSpecificHTTPSCertificate:(NSArray *)allow forHost:(NSString *)host;
 + (void)setDefaultTimeoutInterval:(NSTimeInterval)seconds;
