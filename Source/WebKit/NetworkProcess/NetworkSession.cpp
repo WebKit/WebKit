@@ -40,6 +40,7 @@
 #include "PrivateClickMeasurementManager.h"
 #include "PrivateClickMeasurementManagerProxy.h"
 #include "ServiceWorkerFetchTask.h"
+#include "WebIDBServer.h"
 #include "WebPageProxy.h"
 #include "WebPageProxyMessages.h"
 #include "WebProcessProxy.h"
@@ -66,16 +67,16 @@ using namespace WebCore;
 
 constexpr Seconds cachedNetworkResourceLoaderLifetime { 30_s };
 
-std::unique_ptr<NetworkSession> NetworkSession::create(NetworkProcess& networkProcess, NetworkSessionCreationParameters&& parameters)
+std::unique_ptr<NetworkSession> NetworkSession::create(NetworkProcess& networkProcess, const NetworkSessionCreationParameters& parameters)
 {
 #if PLATFORM(COCOA)
-    return NetworkSessionCocoa::create(networkProcess, WTFMove(parameters));
+    return NetworkSessionCocoa::create(networkProcess, parameters);
 #endif
 #if USE(SOUP)
-    return NetworkSessionSoup::create(networkProcess, WTFMove(parameters));
+    return NetworkSessionSoup::create(networkProcess, parameters);
 #endif
 #if USE(CURL)
-    return NetworkSessionCurl::create(networkProcess, WTFMove(parameters));
+    return NetworkSessionCurl::create(networkProcess, parameters);
 #endif
 }
 
@@ -198,6 +199,8 @@ void NetworkSession::invalidateAndCancel()
     if (m_resourceLoadStatistics)
         m_resourceLoadStatistics->invalidateAndCancel();
 #endif
+    if (auto server = std::exchange(m_webIDBServer, nullptr))
+        server->close();
 #if ASSERT_ENABLED
     m_isInvalidated = true;
 #endif
@@ -639,5 +642,46 @@ bool NetworkSession::hasServiceWorkerDatabasePath() const
 }
 
 #endif // ENABLE(SERVICE_WORKER)
+
+WebIDBServer& NetworkSession::ensureWebIDBServer()
+{
+    if (!m_webIDBServer) {
+        String path;
+        if (!sessionID().isEphemeral()) {
+            ASSERT(!m_idbDatabasePath.isNull());
+            path = m_idbDatabasePath;
+        }
+
+        auto spaceRequester = [networkProcess = Ref { networkProcess() }, sessionID = sessionID()](const auto& origin, uint64_t spaceRequested) {
+            return networkProcess->storageQuotaManager(sessionID, origin)->requestSpaceOnBackgroundThread(spaceRequested);
+        };
+
+        m_webIDBServer = WebIDBServer::create(sessionID(), path, WTFMove(spaceRequester));
+        if (networkProcess().shouldSuspendIDBServers())
+            m_webIDBServer->suspend(WebIDBServer::SuspensionCondition::Always);
+    }
+    return *m_webIDBServer;
+}
+
+void NetworkSession::closeIDBServer(CompletionHandler<void()>&& completionHandler)
+{
+    if (!m_webIDBServer)
+        return completionHandler();
+
+    std::exchange(m_webIDBServer, nullptr)->close(WTFMove(completionHandler));
+}
+
+void NetworkSession::addIndexedDatabaseSession(const String& indexedDatabaseDirectory, SandboxExtension::Handle& handle)
+{
+    // *********
+    // IMPORTANT: Do not change the directory structure for indexed databases on disk without first consulting a reviewer from Apple (<rdar://problem/17454712>)
+    // *********
+    auto isNew = m_idbDatabasePath.isNull();
+    m_idbDatabasePath = indexedDatabaseDirectory;
+    if (isNew) {
+        SandboxExtension::consumePermanently(handle);
+        networkProcess().setSessionStorageQuotaManagerIDBRootPath(sessionID(), indexedDatabaseDirectory);
+    }
+}
 
 } // namespace WebKit

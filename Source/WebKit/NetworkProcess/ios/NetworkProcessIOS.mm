@@ -33,6 +33,7 @@
 #import "ProcessAssertion.h"
 #import "SandboxInitializationParameters.h"
 #import "SecItemShim.h"
+#import "WebIDBServer.h"
 #import <WebCore/CertificateInfo.h>
 #import <WebCore/NotImplemented.h>
 #import <WebCore/WebCoreThreadSystemInterface.h>
@@ -116,8 +117,10 @@ void NetworkProcess::setIsHoldingLockedFiles(bool isHoldingLockedFiles)
         if (!m_shouldSuspendIDBServers)
             return;
 
-        for (auto& server : m_webIDBServers.values())
-            server->suspend();
+        forEachNetworkSession([](auto& session) {
+            if (auto* server = session.webIDBServer())
+                server->suspend();
+        });
     });
 }
 

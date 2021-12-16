@@ -1,3 +1,97 @@
+2021-12-16  Chris Dumez  <cdumez@apple.com>
+
+        Move WebIDBServers from NetworkProcess to NetworkSession class
+        https://bugs.webkit.org/show_bug.cgi?id=234366
+
+        Reviewed by Darin Adler.
+
+        Move WebIDBServers from NetworkProcess to NetworkSession class, since they are per session.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::writeBlobsToTemporaryFilesForIndexedDB):
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::didClose):
+        (WebKit::NetworkProcess::createNetworkConnectionToWebProcess):
+        (WebKit::NetworkProcess::addWebsiteDataStore):
+        (WebKit::NetworkProcess::destroySession):
+        (WebKit::NetworkProcess::fetchWebsiteData):
+        (WebKit::NetworkProcess::deleteWebsiteData):
+        (WebKit::NetworkProcess::deleteWebsiteDataForOrigins):
+        (WebKit::NetworkProcess::deleteAndRestrictWebsiteDataForRegistrableDomains):
+        (WebKit::NetworkProcess::registrableDomainsWithWebsiteData):
+        (WebKit::NetworkProcess::suspendIDBServers):
+        (WebKit::NetworkProcess::resume):
+        (WebKit::CompletionHandler<void):
+        (WebKit::NetworkProcess::prefetchDNS): Deleted.
+        (WebKit::NetworkProcess::cacheStorageRootPath): Deleted.
+        (WebKit::NetworkProcess::setCacheStorageParameters): Deleted.
+        (WebKit::NetworkProcess::registerURLSchemeAsSecure const): Deleted.
+        (WebKit::NetworkProcess::registerURLSchemeAsBypassingContentSecurityPolicy const): Deleted.
+        (WebKit::NetworkProcess::registerURLSchemeAsLocal const): Deleted.
+        (WebKit::NetworkProcess::registerURLSchemeAsNoAccess const): Deleted.
+        (WebKit::NetworkProcess::createWebIDBServer): Deleted.
+        (WebKit::NetworkProcess::webIDBServer): Deleted.
+        (WebKit::NetworkProcess::addIndexedDatabaseSession): Deleted.
+        (WebKit::NetworkProcess::setSessionStorageQuotaManagerIDBRootPath): Deleted.
+        (WebKit::NetworkProcess::syncLocalStorage): Deleted.
+        (WebKit::NetworkProcess::resetQuota): Deleted.
+        (WebKit::NetworkProcess::clearStorage): Deleted.
+        (WebKit::NetworkProcess::renameOriginInWebsiteData): Deleted.
+        (WebKit::NetworkProcess::getPendingPushMessages): Deleted.
+        (WebKit::NetworkProcess::processPushMessage): Deleted.
+        (WebKit::NetworkProcess::deletePushAndNotificationRegistration): Deleted.
+        (WebKit::NetworkProcess::getOriginsWithPushAndNotificationPermissions): Deleted.
+        (WebKit::NetworkProcess::requestStorageSpace): Deleted.
+        (WebKit::NetworkProcess::storageQuotaManager): Deleted.
+        (WebKit::NetworkProcess::initializeProcess): Deleted.
+        (WebKit::NetworkProcess::initializeProcessName): Deleted.
+        (WebKit::NetworkProcess::initializeSandbox): Deleted.
+        (WebKit::NetworkProcess::flushCookies): Deleted.
+        (WebKit::NetworkProcess::platformFlushCookies): Deleted.
+        (WebKit::NetworkProcess::storePrivateClickMeasurement): Deleted.
+        (WebKit::NetworkProcess::dumpPrivateClickMeasurement): Deleted.
+        (WebKit::NetworkProcess::clearPrivateClickMeasurement): Deleted.
+        (WebKit::NetworkProcess::setPrivateClickMeasurementOverrideTimerForTesting): Deleted.
+        (WebKit::NetworkProcess::simulateResourceLoadStatisticsSessionRestart): Deleted.
+        (WebKit::NetworkProcess::markAttributedPrivateClickMeasurementsAsExpiredForTesting): Deleted.
+        (WebKit::NetworkProcess::setPrivateClickMeasurementEphemeralMeasurementForTesting): Deleted.
+        (WebKit::NetworkProcess::setPrivateClickMeasurementTokenPublicKeyURLForTesting): Deleted.
+        (WebKit::NetworkProcess::setPrivateClickMeasurementTokenSignatureURLForTesting): Deleted.
+        (WebKit::NetworkProcess::setPrivateClickMeasurementAttributionReportURLsForTesting): Deleted.
+        (WebKit::NetworkProcess::markPrivateClickMeasurementsAsExpiredForTesting): Deleted.
+        (WebKit::NetworkProcess::setPCMFraudPreventionValuesForTesting): Deleted.
+        (WebKit::NetworkProcess::setPrivateClickMeasurementAppBundleIDForTesting): Deleted.
+        (WebKit::NetworkProcess::addKeptAliveLoad): Deleted.
+        (WebKit::NetworkProcess::removeKeptAliveLoad): Deleted.
+        (WebKit::NetworkProcess::connectionToWebProcessClosed): Deleted.
+        (WebKit::NetworkProcess::webProcessConnection const): Deleted.
+        (WebKit::NetworkProcess::setServiceWorkerFetchTimeoutForTesting): Deleted.
+        (WebKit::NetworkProcess::resetServiceWorkerFetchTimeoutForTesting): Deleted.
+        (WebKit::NetworkProcess::randomClosedPortDelay): Deleted.
+        (WebKit::NetworkProcess::hasAppBoundSession const): Deleted.
+        (WebKit::NetworkProcess::clearAppBoundSession): Deleted.
+        (WebKit::NetworkProcess::broadcastConsoleMessage): Deleted.
+        (WebKit::NetworkProcess::updateBundleIdentifier): Deleted.
+        (WebKit::NetworkProcess::clearBundleIdentifier): Deleted.
+        (WebKit::NetworkProcess::shouldDisableCORSForRequestTo const): Deleted.
+        (WebKit::NetworkProcess::setCORSDisablingPatterns): Deleted.
+        (WebKit::NetworkProcess::appPrivacyReportTestingData): Deleted.
+        (WebKit::NetworkProcess::clearAppPrivacyReportTestingData): Deleted.
+        (WebKit::NetworkProcess::rtcDataChannelProxy): Deleted.
+        (WebKit::NetworkProcess::addWebPageNetworkParameters): Deleted.
+        (WebKit::NetworkProcess::removeWebPageNetworkParameters): Deleted.
+        (WebKit::NetworkProcess::countNonDefaultSessionSets): Deleted.
+        * NetworkProcess/NetworkProcess.h:
+        (WebKit::NetworkProcess::shouldSuspendIDBServers const):
+        * NetworkProcess/NetworkSession.cpp:
+        (WebKit::NetworkSession::invalidateAndCancel):
+        (WebKit::NetworkSession::ensureWebIDBServer):
+        (WebKit::NetworkSession::closeIDBServer):
+        (WebKit::NetworkSession::addIndexedDatabaseSession):
+        * NetworkProcess/NetworkSession.h:
+        (WebKit::NetworkSession::webIDBServer):
+        (WebKit::NetworkSession::hasIDBDatabasePath const):
+
 2021-12-16  Sihui Liu  <sihui_liu@apple.com>
 
         REGRESSION (r286601): storage/filesystemaccess/sync-access-handle-read-write-worker.html and file-system-access/sandboxed_FileSystemSyncAccessHandle-truncate.https.tentative.worker.html are consistently failing

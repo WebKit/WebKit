@@ -58,6 +58,7 @@
 #include "ServiceWorkerFetchTaskMessages.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebErrors.h"
+#include "WebIDBServer.h"
 #include "WebProcessMessages.h"
 #include "WebProcessPoolMessages.h"
 #include "WebResourceLoadStatisticsStore.h"
@@ -940,7 +941,8 @@ void NetworkConnectionToWebProcess::writeBlobsToTemporaryFilesForIndexedDB(const
         for (auto& file : fileReferences)
             file->revokeFileAccess();
 
-        m_networkProcess->webIDBServer(m_sessionID).registerTemporaryBlobFilePaths(m_connection, filePaths);
+        if (auto* session = networkSession())
+            session->ensureWebIDBServer().registerTemporaryBlobFilePaths(m_connection, filePaths);
         completionHandler(WTFMove(filePaths));
     });
 }

@@ -108,7 +108,7 @@ public:
 
     // Proxy
     const CurlProxySettings& proxySettings() const { return m_proxySettings; }
-    void setProxySettings(CurlProxySettings&& settings) { m_proxySettings = WTFMove(settings); }
+    void setProxySettings(const CurlProxySettings& settings) { m_proxySettings = settings; }
     void setProxyUserPass(const String& user, const String& password) { m_proxySettings.setUserPass(user, password); }
     void setDefaultProxyAuthMethod() { m_proxySettings.setDefaultAuthMethod(); }
     void setProxyAuthMethod(long authMethod) { m_proxySettings.setAuthMethod(authMethod); }

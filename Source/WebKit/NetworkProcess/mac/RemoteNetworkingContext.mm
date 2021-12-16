@@ -41,7 +41,7 @@
 
 namespace WebKit {
 
-void RemoteNetworkingContext::ensureWebsiteDataStoreSession(NetworkProcess& networkProcess, WebsiteDataStoreParameters&& parameters)
+void RemoteNetworkingContext::ensureWebsiteDataStoreSession(NetworkProcess& networkProcess, const WebsiteDataStoreParameters& parameters)
 {
     auto sessionID = parameters.networkSessionParameters.sessionID;
     if (networkProcess.storageSession(sessionID))
@@ -60,7 +60,7 @@ void RemoteNetworkingContext::ensureWebsiteDataStoreSession(NetworkProcess& netw
 
     networkProcess.ensureSession(sessionID, parameters.networkSessionParameters.shouldUseTestingNetworkSession, makeString(base, '.', sessionID.toUInt64()), WTFMove(uiProcessCookieStorage));
 
-    networkProcess.setSession(sessionID, NetworkSession::create(networkProcess, WTFMove(parameters.networkSessionParameters)));
+    networkProcess.setSession(sessionID, NetworkSession::create(networkProcess, parameters.networkSessionParameters));
 }
 
 }

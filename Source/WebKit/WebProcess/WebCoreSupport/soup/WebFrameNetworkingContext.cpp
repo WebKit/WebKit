@@ -40,7 +40,7 @@
 namespace WebKit {
 using namespace WebCore;
 
-void WebFrameNetworkingContext::ensureWebsiteDataStoreSession(WebsiteDataStoreParameters&&)
+void WebFrameNetworkingContext::ensureWebsiteDataStoreSession(const WebsiteDataStoreParameters&)
 {
 }
 

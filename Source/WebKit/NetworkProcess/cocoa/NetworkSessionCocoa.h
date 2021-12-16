@@ -97,9 +97,9 @@ private:
 
 class NetworkSessionCocoa final : public NetworkSession {
 public:
-    static std::unique_ptr<NetworkSession> create(NetworkProcess&, NetworkSessionCreationParameters&&);
+    static std::unique_ptr<NetworkSession> create(NetworkProcess&, const NetworkSessionCreationParameters&);
 
-    NetworkSessionCocoa(NetworkProcess&, NetworkSessionCreationParameters&&);
+    NetworkSessionCocoa(NetworkProcess&, const NetworkSessionCreationParameters&);
     ~NetworkSessionCocoa();
 
     SessionWrapper& initializeEphemeralStatelessSessionIfNeeded(WebPageProxyIdentifier, NavigatingToAppBoundDomain);

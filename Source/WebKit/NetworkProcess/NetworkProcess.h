@@ -35,7 +35,6 @@
 #include "NetworkResourceLoadIdentifier.h"
 #include "RTCDataChannelRemoteManagerProxy.h"
 #include "SandboxExtension.h"
-#include "WebIDBServer.h"
 #include "WebPageProxyIdentifier.h"
 #include "WebResourceLoadStatisticsStore.h"
 #include "WebsiteData.h"
@@ -44,13 +43,13 @@
 #include <WebCore/CrossSiteNavigationDataTransfer.h>
 #include <WebCore/DiagnosticLoggingClient.h>
 #include <WebCore/FetchIdentifier.h>
-#include <WebCore/IDBKeyData.h>
 #include <WebCore/MessagePortChannelRegistry.h>
 #include <WebCore/PageIdentifier.h>
 #include <WebCore/PrivateClickMeasurement.h>
 #include <WebCore/RegistrableDomain.h>
 #include <WebCore/ServiceWorkerIdentifier.h>
 #include <WebCore/ServiceWorkerTypes.h>
+#include <WebCore/StorageQuotaManager.h>
 #include <memory>
 #include <wtf/CrossThreadTask.h>
 #include <wtf/Function.h>
@@ -82,7 +81,6 @@ namespace WebCore {
 class CertificateInfo;
 class CurlProxySettings;
 class ProtectionSpace;
-class StorageQuotaManager;
 class NetworkStorageSession;
 class ResourceError;
 class UserContentURLPattern;
@@ -293,7 +291,7 @@ public:
     NetworkContentRuleListManager& networkContentRuleListManager() { return m_networkContentRuleListManager; }
 #endif
 
-    WebIDBServer& webIDBServer(PAL::SessionID);
+    bool shouldSuspendIDBServers() const { return m_shouldSuspendIDBServers; }
 
     void syncLocalStorage(CompletionHandler<void()>&&);
 
@@ -385,6 +383,8 @@ public:
 
     void deletePushAndNotificationRegistration(PAL::SessionID, const WebCore::SecurityOriginData&, CompletionHandler<void(const String&)>&&);
     void getOriginsWithPushAndNotificationPermissions(PAL::SessionID, CompletionHandler<void(const Vector<WebCore::SecurityOriginData>&)>&&);
+
+    void setSessionStorageQuotaManagerIDBRootPath(PAL::SessionID, const String& idbRootPath);
 
 private:
     void platformInitializeNetworkProcess(const NetworkProcessCreationParameters&);
@@ -478,10 +478,6 @@ private:
     void registerURLSchemeAsNoAccess(const String&) const;
     void registerURLSchemeAsCORSEnabled(const String&) const;
 
-    void addIndexedDatabaseSession(PAL::SessionID, String&, SandboxExtension::Handle&);
-    Ref<WebIDBServer> createWebIDBServer(PAL::SessionID);
-    void setSessionStorageQuotaManagerIDBRootPath(PAL::SessionID, const String& idbRootPath);
-    void removeWebIDBServerIfPossible(PAL::SessionID);
     void suspendIDBServers(bool isSuspensionImminent);
 
 #if PLATFORM(IOS_FAMILY)
@@ -565,8 +561,6 @@ private:
     RefPtr<ProcessAssertion> m_holdingLockedFileAssertion;
 #endif
 
-    HashMap<PAL::SessionID, String> m_idbDatabasePaths;
-    HashMap<PAL::SessionID, RefPtr<WebIDBServer>> m_webIDBServers;
     bool m_shouldSuspendIDBServers { false };
     uint64_t m_suspensionIdentifier { 0 };
     
@@ -589,7 +583,7 @@ private:
     bool m_privateClickMeasurementEnabled { true };
     bool m_ftpEnabled { false };
 
-    HashMap<PAL::SessionID, Ref<NetworkStorageManager>> m_storageManagers;
+    HashMap<PAL::SessionID, Ref<NetworkStorageManager>> m_storageManagers; // FIXME: Should move to NetworkSession.
 };
 
 } // namespace WebKit

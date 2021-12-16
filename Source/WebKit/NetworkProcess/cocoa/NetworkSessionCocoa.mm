@@ -1169,9 +1169,9 @@ const String& NetworkSessionCocoa::dataConnectionServiceType() const
 }
 #endif
 
-std::unique_ptr<NetworkSession> NetworkSessionCocoa::create(NetworkProcess& networkProcess, NetworkSessionCreationParameters&& parameters)
+std::unique_ptr<NetworkSession> NetworkSessionCocoa::create(NetworkProcess& networkProcess, const NetworkSessionCreationParameters& parameters)
 {
-    return makeUnique<NetworkSessionCocoa>(networkProcess, WTFMove(parameters));
+    return makeUnique<NetworkSessionCocoa>(networkProcess, parameters);
 }
 
 static RetainPtr<NSDictionary> proxyDictionary(const URL& httpProxy, const URL& httpsProxy)
@@ -1233,7 +1233,7 @@ static void activateSessionCleanup(NetworkSessionCocoa& session, const NetworkSe
 }
 #endif
 
-NetworkSessionCocoa::NetworkSessionCocoa(NetworkProcess& networkProcess, NetworkSessionCreationParameters&& parameters)
+NetworkSessionCocoa::NetworkSessionCocoa(NetworkProcess& networkProcess, const NetworkSessionCreationParameters& parameters)
     : NetworkSession(networkProcess, parameters)
     , m_defaultSessionSet(SessionSet::create())
     , m_boundInterfaceIdentifier(parameters.boundInterfaceIdentifier)
@@ -1351,7 +1351,7 @@ NetworkSessionCocoa::NetworkSessionCocoa(NetworkProcess& networkProcess, Network
 
 #if ENABLE(APP_BOUND_DOMAINS)
     if (m_resourceLoadStatistics && !parameters.resourceLoadStatisticsParameters.appBoundDomains.isEmpty())
-        m_resourceLoadStatistics->setAppBoundDomains(WTFMove(parameters.resourceLoadStatisticsParameters.appBoundDomains), [] { });
+        m_resourceLoadStatistics->setAppBoundDomains(HashSet<WebCore::RegistrableDomain> { parameters.resourceLoadStatisticsParameters.appBoundDomains }, [] { });
 #endif
 
 #if HAVE(SESSION_CLEANUP)

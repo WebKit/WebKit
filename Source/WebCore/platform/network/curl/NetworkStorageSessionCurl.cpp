@@ -232,9 +232,9 @@ std::pair<String, bool> NetworkStorageSession::cookieRequestHeaderFieldValue(con
     return cookieRequestHeaderFieldValue(headerFieldProxy.firstParty, headerFieldProxy.sameSiteInfo, headerFieldProxy.url, headerFieldProxy.frameID, headerFieldProxy.pageID, headerFieldProxy.includeSecureCookies, ShouldAskITP::Yes, ShouldRelaxThirdPartyCookieBlocking::No);
 }
 
-void NetworkStorageSession::setProxySettings(CurlProxySettings&& proxySettings)
+void NetworkStorageSession::setProxySettings(const CurlProxySettings& proxySettings)
 {
-    CurlContext::singleton().setProxySettings(WTFMove(proxySettings));
+    CurlContext::singleton().setProxySettings(proxySettings);
 }
 
 } // namespace WebCore

@@ -74,6 +74,7 @@ class NetworkResourceLoader;
 class NetworkBroadcastChannelRegistry;
 class NetworkSocketChannel;
 class ServiceWorkerFetchTask;
+class WebIDBServer;
 class WebPageNetworkParameters;
 class WebResourceLoadStatisticsStore;
 class WebSocketTask;
@@ -91,7 +92,7 @@ class Cache;
 class NetworkSession : public CanMakeWeakPtr<NetworkSession> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static std::unique_ptr<NetworkSession> create(NetworkProcess&, NetworkSessionCreationParameters&&);
+    static std::unique_ptr<NetworkSession> create(NetworkProcess&, const NetworkSessionCreationParameters&);
     virtual ~NetworkSession();
 
     virtual void invalidateAndCancel();
@@ -203,6 +204,12 @@ public:
     void addServiceWorkerSession(bool processTerminationDelayEnabled, String&& serviceWorkerRegistrationDirectory, const SandboxExtension::Handle&);
 #endif
 
+    WebIDBServer* webIDBServer() { return m_webIDBServer.get(); }
+    WebIDBServer& ensureWebIDBServer();
+    void closeIDBServer(CompletionHandler<void()>&&);
+    void addIndexedDatabaseSession(const String& indexedDatabaseDirectory, SandboxExtension::Handle&);
+    bool hasIDBDatabasePath() const { return !m_idbDatabasePath.isEmpty(); }
+
     NetworkLoadScheduler& networkLoadScheduler();
     PCM::ManagerInterface& privateClickMeasurement() { return m_privateClickMeasurement.get(); }
     void setPrivateClickMeasurementDebugMode(bool);
@@ -294,6 +301,9 @@ protected:
     std::optional<ServiceWorkerInfo> m_serviceWorkerInfo;
     std::unique_ptr<WebCore::SWServer> m_swServer;
 #endif
+
+    String m_idbDatabasePath;
+    RefPtr<WebIDBServer> m_webIDBServer;
 
 #if PLATFORM(COCOA)
     AppPrivacyReportTestingData m_appPrivacyReportTestingData;
