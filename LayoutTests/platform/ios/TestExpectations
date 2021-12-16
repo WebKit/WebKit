@@ -3560,6 +3560,8 @@ webkit.org/b/229584 animations/fill-mode-forwards.html [ Pass Failure ]
 
 webkit.org/b/229832 [ Release ] imported/w3c/web-platform-tests/beacon/beacon-redirect.https.window.html [ Pass Failure ]
 
+webkit.org/b/234363 http/tests/app-privacy-report/user-attribution-post-request.html [ Failure ]
+
 # rdar://83207621 ([ BigSur wk2 Release ] 2 fast/canvas/ tests are flaky failing (230366))
 [ Release ] fast/canvas/canvas-composite-text-alpha.html [ Pass Timeout Failure ]
 fast/canvas/canvas-blending-text.html [ Pass Failure ]
