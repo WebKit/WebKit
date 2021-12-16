@@ -1,3 +1,36 @@
+2021-12-15  Jonathan Bedard  <jbedard@apple.com>
+
+        [reporelaypy] Forward branches to alternate remote
+        https://bugs.webkit.org/show_bug.cgi?id=234347
+        <rdar://problem/86526293>
+
+        Reviewed by Dewei Zhu.
+
+        * Scripts/libraries/reporelaypy/reporelaypy/__init__.py: Bump version.
+        * Scripts/libraries/reporelaypy/reporelaypy/checkout.py:
+        (Checkout.Encoder.default): Add remotes.
+        (Checkout.clone): After cloning a repository, add required remotes.
+        (Checkout.add_remotes): Track remotes in repository.
+        (Checkout.__init__): Allow caller to specify set of remotes to be tracked.
+        (Checkout.push_update): Push update for specified remote.
+        (Checkout.update_for): Return 'True' and 'False.'
+        (Checkout.update_all): If a branch is being updated, we should forward that
+        update to any tracked remotes.
+        * Scripts/libraries/reporelaypy/reporelaypy/hooks.py:
+        (HookProcessor.process_worker_hook): After updating a branch, forward that
+        update to any tracked remotes.
+        * Scripts/libraries/reporelaypy/reporelaypy/tests/checkout_unittest.py:
+        (CheckoutUnittest.test_constructor_no_sentinal): Capture debug logging.
+        * Scripts/libraries/reporelaypy/reporelaypy/tests/checkoutroute_unittest.py:
+        (CheckoutRouteUnittest.test_landing): Capture debug logging.
+        (CheckoutRouteUnittest.test_invoked_redirect): Ditto.
+        (CheckoutRouteUnittest.test_trac): Ditto.
+        * Scripts/libraries/reporelaypy/reporelaypy/tests/hooks_unittest.py:
+        (HooksUnittest.test_process): Test for any error logging.
+        (HooksUnittest.test_process_branch): Ditto.
+        * Scripts/libraries/reporelaypy/run: Allow caller to specify remote to be tracked.
+        * Scripts/libraries/reporelaypy/setup.py: Bump version.
+
 2021-12-15  Don Olmstead  <don.olmstead@sony.com>
 
         Split ATK specific code in WPEViewBackends

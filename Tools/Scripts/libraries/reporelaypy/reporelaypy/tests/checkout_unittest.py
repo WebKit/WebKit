@@ -42,7 +42,7 @@ class CheckoutUnittest(testing.PathTestCase):
             Checkout(path=self.path, url=repo.remote, sentinal=True)
 
     def test_constructor_no_sentinal(self):
-        with mocks.local.Git(self.path) as repo:
+        with mocks.local.Git(self.path) as repo, OutputCapture():
             Checkout(path=self.path, url=repo.remote, sentinal=False)
 
             with self.assertRaises(Checkout.Exception):

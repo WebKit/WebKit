@@ -71,7 +71,7 @@ class HooksUnittest(testing.PathTestCase):
 
     @mock_app
     def test_process(self, app=None, client=None):
-        with OutputCapture(), mocks.local.Git(self.path) as repo:
+        with OutputCapture() as captured, mocks.local.Git(self.path) as repo:
             database = Database()
             app.register_blueprint(HookReceiver(database=database, debug=True))
 
@@ -88,9 +88,11 @@ class HooksUnittest(testing.PathTestCase):
             self.assertEqual(response.status_code, 200)
             self.assertEqual(response.json(), [])
 
+        self.assertEqual(captured.stderr.getvalue(), '')
+
     @mock_app
     def test_process_branch(self, app=None, client=None):
-        with OutputCapture(), mocks.local.Git(self.path) as repo:
+        with OutputCapture() as captured, mocks.local.Git(self.path) as repo:
             database = Database()
             app.register_blueprint(HookReceiver(database=database, debug=True))
 
@@ -106,6 +108,8 @@ class HooksUnittest(testing.PathTestCase):
             response = client.get('/hooks')
             self.assertEqual(response.status_code, 200)
             self.assertEqual(response.json(), [])
+
+        self.assertEqual(captured.stderr.getvalue(), '')
 
     @mock_app
     def test_hmac(self, app=None, client=None):

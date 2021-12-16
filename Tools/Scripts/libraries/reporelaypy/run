@@ -72,6 +72,10 @@ def main(args=None):
         '--fallback', dest='fallback', default=None, action='store', type=str,
         help='Fallback repository URL',
     )
+    group.add_argument(
+        '--remote', dest='remotes', action='append',
+        help="Add an additional remote to forward changes to, formatted as 'name:url'",
+    )
 
     group = parser.add_argument_group('Database')
     group.add_argument(
@@ -124,6 +128,14 @@ def main(args=None):
     database.ping()
     print('Connected to database!')
 
+    remotes = {}
+    for pair in args.remotes:
+        name, remote = pair.split(':', 1)
+        if not remote:
+            sys.stderr("Invalid forwarding remote '{}'".format(pair))
+            return 1
+        remotes[name] = remote
+
     print('Finding checkout...')
     checkout = Checkout(
         path=args.path,
@@ -131,6 +143,7 @@ def main(args=None):
         http_proxy=args.http_proxy,
         sentinal=args.sentinal,
         fallback_url=args.fallback,
+        remotes=remotes,
     )
     print('Git checkout:')
     print('    Path: {}'.format(checkout.path))
@@ -143,6 +156,10 @@ def main(args=None):
     if args.update_interval:
         print('    Polling checkout with interval of {} seconds, doing first poll now...'.format(args.update_interval))
         checkout.update_all()
+    if remotes:
+        print('Forwarding updates to:')
+        for name, url in remotes.items():
+            print('    {}: {}'.format(name, url))
 
     if args.redirector:
         print('User specified the following redirect urls:')

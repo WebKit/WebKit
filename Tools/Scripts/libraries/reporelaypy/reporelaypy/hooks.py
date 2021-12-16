@@ -23,6 +23,7 @@
 import hashlib
 import hmac
 import json
+import sys
 
 from flask import current_app, json as fjson, request
 from reporelaypy import Database
@@ -66,6 +67,7 @@ class HookProcessor(object):
                 if branch.startswith('refs/heads/'):
                     branch = branch[len('refs/heads/'):]
                 self.checkout.update_for(branch, track=True)
+                [self.checkout.push_update(branch=branch, remote=remote, track=True) for remote in self.checkout.remotes.keys()]
             except BaseException as e:
                 sys.stderr.write('{}\n'.format(e))
 
