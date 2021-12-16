@@ -1,3 +1,17 @@
+2021-12-16  John Cunningham  <johncunningham@apple.com>
+
+        Add support to attribute ownership of ANGLE Metal's resources
+        https://bugs.webkit.org/show_bug.cgi?id=233941
+
+        Reviewed by Kimmo Kinnunen.
+
+        Add SPI to mtl_resource_spi.h to attribute memory to another task.
+
+        * Configurations/ANGLE-dynamic.xcconfig:
+        * Configurations/ANGLE-static.xcconfig:
+        * src/libANGLE/renderer/metal/mtl_resource_spi.h:
+        (rx::mtl::setOwnerWithIdentity):
+
 2021-12-16  Michael Saboff  <msaboff@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=234173
