@@ -41,7 +41,6 @@ struct AudioBufferSourceOptions;
 class AudioBufferSourceNode final : public AudioScheduledSourceNode {
     WTF_MAKE_ISO_ALLOCATED(AudioBufferSourceNode);
 public:
-    static Ref<AudioBufferSourceNode> create(BaseAudioContext&, float sampleRate);
     static ExceptionOr<Ref<AudioBufferSourceNode>> create(BaseAudioContext&, AudioBufferSourceOptions&& = { });
 
     virtual ~AudioBufferSourceNode();
