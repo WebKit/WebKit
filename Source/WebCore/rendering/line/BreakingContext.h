@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000 Lars Knoll (knoll@kde.org)
- * Copyright (C) 2003, 2004, 2006, 2007, 2008, 2009, 2010, 2011 Apple Inc. All right reserved.
+ * Copyright (C) 2003-2021 Apple Inc. All right reserved.
  * Copyright (C) 2010 Google Inc. All rights reserved.
  * Copyright (C) 2013 ChangSeok Oh <shivamidow@gmail.com>
  * Copyright (C) 2013 Adobe Systems Inc. All right reserved.
@@ -38,7 +38,9 @@
 #include "RenderListMarker.h"
 #include "RenderRubyRun.h"
 #include "RenderSVGInlineText.h"
+#include "RenderTextInlines.h"
 #include "TrailingObjects.h"
+#include "WordTrailingSpace.h"
 #include <wtf/Function.h>
 #include <wtf/text/StringView.h>
 #include <wtf/unicode/CharacterNames.h>
@@ -62,32 +64,6 @@ struct WordMeasurement {
     unsigned startOffset;
     unsigned endOffset;
     HashSet<const Font*> fallbackFonts;
-};
-
-struct WordTrailingSpace {
-    WordTrailingSpace(const RenderStyle& style, bool measuringWithTrailingWhitespaceEnabled = true)
-        : m_style(style)
-    {
-        if (!measuringWithTrailingWhitespaceEnabled || !m_style.fontCascade().enableKerning())
-            m_state = WordTrailingSpaceState::Initialized;
-    }
-
-    std::optional<float> width(HashSet<const Font*>& fallbackFonts)
-    {
-        if (m_state == WordTrailingSpaceState::Initialized)
-            return m_width;
-
-        auto& font = m_style.fontCascade();
-        m_width = font.width(RenderBlock::constructTextRun(&space, 1, m_style), &fallbackFonts) + font.wordSpacing();
-        m_state = WordTrailingSpaceState::Initialized;
-        return m_width;
-    }
-
-private:
-    enum class WordTrailingSpaceState { Uninitialized, Initialized };
-    const RenderStyle& m_style;
-    WordTrailingSpaceState m_state { WordTrailingSpaceState::Uninitialized };
-    std::optional<float> m_width;
 };
 
 class BreakingContext {
@@ -151,6 +127,7 @@ public:
     LegacyInlineIterator handleEndOfLine();
     
     float computeAdditionalBetweenWordsWidth(RenderText&, TextLayout*, UChar, WordTrailingSpace&, HashSet<const Font*>& fallbackFonts, WordMeasurements&, const FontCascade&, bool isFixedPitch, unsigned lastSpace, float lastSpaceWordSpacing, float wordSpacingForWordMeasurement, unsigned offset);
+    float textWidthConsideringPossibleTrailingSpace(RenderText&, TextLayout*, UChar currentCharacter, WordTrailingSpace&, HashSet<const Font*>& fallbackFonts, HashSet<const Font*>& wordMeasurementFallbackFonts, const FontCascade&, bool isFixedPitch, unsigned lastSpace, unsigned offset);
 
     void clearLineBreakIfFitsOnLine(bool ignoringTrailingSpace = false)
     {
@@ -631,6 +608,13 @@ inline void tryHyphenating(RenderText& text, const FontCascade& font, const Atom
     hyphenated = true;
 }
 
+inline float BreakingContext::textWidthConsideringPossibleTrailingSpace(RenderText& renderText, TextLayout* textLayout, UChar currentCharacter, WordTrailingSpace& wordTrailingSpace, HashSet<const Font*>& fallbackFonts, HashSet<const Font*>& wordMeasurementFallbackFonts, const FontCascade& font, bool isFixedPitch, unsigned lastSpace, unsigned offset)
+{
+    return RenderText::measureTextConsideringPossibleTrailingSpace(currentCharacter == space, lastSpace, offset - lastSpace, wordTrailingSpace, fallbackFonts, [&] (unsigned from, unsigned len) {
+        return textWidth(renderText, from, len, font, m_width.currentWidth(), isFixedPitch, m_collapseWhiteSpace, wordMeasurementFallbackFonts, textLayout);
+    });
+}
+
 inline float BreakingContext::computeAdditionalBetweenWordsWidth(RenderText& renderText, TextLayout* textLayout, UChar currentCharacter, WordTrailingSpace& wordTrailingSpace, HashSet<const Font*>& fallbackFonts, WordMeasurements& wordMeasurements, const FontCascade& font, bool isFixedPitch, unsigned lastSpace, float lastSpaceWordSpacing, float wordSpacingForWordMeasurement, unsigned offset)
 {
     wordMeasurements.grow(wordMeasurements.size() + 1);
@@ -640,14 +624,7 @@ inline float BreakingContext::computeAdditionalBetweenWordsWidth(RenderText& ren
     wordMeasurement.endOffset = offset;
     wordMeasurement.startOffset = lastSpace;
     
-    float additionalTempWidth = 0;
-    std::optional<float> wordTrailingSpaceWidth;
-    if (currentCharacter == ' ')
-        wordTrailingSpaceWidth = wordTrailingSpace.width(fallbackFonts);
-    if (wordTrailingSpaceWidth)
-        additionalTempWidth = textWidth(renderText, lastSpace, offset + 1 - lastSpace, font, m_width.currentWidth(), isFixedPitch, m_collapseWhiteSpace, wordMeasurement.fallbackFonts, textLayout) - wordTrailingSpaceWidth.value();
-    else
-        additionalTempWidth = textWidth(renderText, lastSpace, offset - lastSpace, font, m_width.currentWidth(), isFixedPitch, m_collapseWhiteSpace, wordMeasurement.fallbackFonts, textLayout);
+    float additionalTempWidth = textWidthConsideringPossibleTrailingSpace(renderText, textLayout, currentCharacter, wordTrailingSpace, fallbackFonts, wordMeasurement.fallbackFonts, font, isFixedPitch, lastSpace, offset);
     
     if (wordMeasurement.fallbackFonts.isEmpty() && !fallbackFonts.isEmpty())
         wordMeasurement.fallbackFonts.swap(fallbackFonts);
@@ -1252,4 +1229,4 @@ inline LegacyInlineIterator BreakingContext::handleEndOfLine()
     return m_lineBreak;
 }
 
-}
+} // namespace WebCore

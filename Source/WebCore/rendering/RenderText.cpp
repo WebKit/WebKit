@@ -1,7 +1,7 @@
 /*
  * (C) 1999 Lars Knoll (knoll@kde.org)
  * (C) 2000 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2021 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Andrew Wellington (proton@wiretapped.net)
  * Copyright (C) 2006 Graham Dennis (graham.dennis@gmail.com)
  *
@@ -47,6 +47,7 @@
 #include "RenderCombineText.h"
 #include "RenderInline.h"
 #include "RenderLayer.h"
+#include "RenderTextInlines.h"
 #include "RenderView.h"
 #include "RenderedDocumentMarker.h"
 #include "SVGElementTypeHelpers.h"
@@ -717,6 +718,13 @@ ALWAYS_INLINE float RenderText::widthFromCache(const FontCascade& f, unsigned st
     return f.width(run, fallbackFonts, glyphOverflow);
 }
 
+ALWAYS_INLINE float RenderText::widthFromCacheConsideringPossibleTrailingSpace(const RenderStyle& style, const FontCascade& font, unsigned startIndex, unsigned wordLen, float xPos, bool currentCharacterIsSpace, WordTrailingSpace& wordTrailingSpace, HashSet<const Font*>& fallbackFonts, GlyphOverflow& glyphOverflow) const
+{
+    return measureTextConsideringPossibleTrailingSpace(currentCharacterIsSpace, startIndex, wordLen, wordTrailingSpace, fallbackFonts, [&] (unsigned from, unsigned len) {
+        return widthFromCache(font, from, len, xPos, &fallbackFonts, &glyphOverflow, style);
+    });
+}
+
 inline bool isHangablePunctuationAtLineStart(UChar c)
 {
     return U_GET_GC_MASK(c) & (U_GC_PS_MASK | U_GC_PI_MASK | U_GC_PF_MASK);
@@ -973,15 +981,7 @@ float RenderText::maxWordFragmentWidth(const RenderStyle& style, const FontCasca
         return entireWordWidth;
     }
 
-    float suffixWidth;
-    std::optional<float> wordTrailingSpaceWidth;
-    if (currentCharacterIsSpace)
-        wordTrailingSpaceWidth = wordTrailingSpace.width(fallbackFonts);
-    if (wordTrailingSpaceWidth)
-        suffixWidth = widthFromCache(font, characterIndex + suffixStart, word.length() - suffixStart + 1, xPos, 0, 0, style) - wordTrailingSpaceWidth.value();
-    else
-        suffixWidth = widthFromCache(font, characterIndex + suffixStart, word.length() - suffixStart, xPos, 0, 0, style);
-
+    auto suffixWidth = widthFromCacheConsideringPossibleTrailingSpace(style, font, characterIndex + suffixStart, word.length() - suffixStart, xPos, currentCharacterIsSpace, wordTrailingSpace, fallbackFonts, glyphOverflow);
     return std::max(maxFragmentWidth, suffixWidth);
 }
 
@@ -1115,17 +1115,9 @@ void RenderText::computePreferredLogicalWidths(float leadWidth, HashSet<const Fo
         if (wordLen) {
             float currMinWidth = 0;
             bool isSpace = (j < length) && isSpaceAccordingToStyle(c, style);
-            float w;
-            std::optional<float> wordTrailingSpaceWidth;
-            if (isSpace)
-                wordTrailingSpaceWidth = wordTrailingSpace.width(fallbackFonts);
-            if (wordTrailingSpaceWidth)
-                w = widthFromCache(font, i, wordLen + 1, leadWidth + currMaxWidth, &fallbackFonts, &glyphOverflow, style) - wordTrailingSpaceWidth.value();
-            else {
-                w = widthFromCache(font, i, wordLen, leadWidth + currMaxWidth, &fallbackFonts, &glyphOverflow, style);
-                if (c == softHyphen && style.hyphens() != Hyphens::None)
-                    currMinWidth = hyphenWidth(*this, font);
-            }
+            float w = widthFromCacheConsideringPossibleTrailingSpace(style, font, i, wordLen, leadWidth + currMaxWidth, isSpace, wordTrailingSpace, fallbackFonts, glyphOverflow);
+            if (c == softHyphen && style.hyphens() != Hyphens::None)
+                currMinWidth = hyphenWidth(*this, font);
 
             if (w > maxWordWidth) {
                 auto maxFragmentWidth = maxWordFragmentWidth(style, font, StringView(string).substring(i, wordLen), minimumPrefixLength, minimumSuffixLength, isSpace, i, leadWidth + currMaxWidth, w, wordTrailingSpace, fallbackFonts, glyphOverflow);
