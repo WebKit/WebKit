@@ -1,3 +1,13 @@
+2021-12-17  Sihui Liu  <sihui_liu@apple.com>
+
+        Add custom copy() method for Ref<T> to CrossThreadCopier
+        https://bugs.webkit.org/show_bug.cgi?id=234411
+
+        Reviewed by Youenn Fablet.
+
+        * wtf/CrossThreadCopier.cpp:
+        * wtf/CrossThreadCopier.h:
+
 2021-12-17  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         MSVC reports "wtf/RetainPtr.h(196): error C3861: 'CFAutorelease': identifier not found " with /permissive- on Windows

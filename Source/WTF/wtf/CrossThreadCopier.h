@@ -54,12 +54,16 @@ struct CrossThreadCopierBaseHelper {
         typedef T Type;
     };
 
+    template<typename T> struct RemovePointer<Ref<T>> {
+        typedef T Type;
+    };
+
     template<typename T> struct IsEnumOrConvertibleToInteger {
         static constexpr bool value = std::is_integral<T>::value || std::is_enum<T>::value || std::is_convertible<T, long double>::value;
     };
 
     template<typename T> struct IsThreadSafeRefCountedPointer {
-        static constexpr bool value = std::is_convertible<typename RemovePointer<T>::Type*, ThreadSafeRefCounted<typename RemovePointer<T>::Type>*>::value;
+        static constexpr bool value = std::is_convertible<typename RemovePointer<T>::Type*, ThreadSafeRefCountedBase*>::value;
     };
 };
 
@@ -88,12 +92,22 @@ template<class T> struct CrossThreadCopierBase<false, false, T> {
 // Custom copy methods.
 template<typename T> struct CrossThreadCopierBase<false, true, T> {
     typedef typename CrossThreadCopierBaseHelper::RemovePointer<T>::Type RefCountedType;
-    static_assert(std::is_convertible<RefCountedType*, ThreadSafeRefCounted<RefCountedType>*>::value, "T is not convertible to ThreadSafeRefCounted!");
+    static_assert(std::is_convertible<RefCountedType*, ThreadSafeRefCountedBase*>::value, "T is not convertible to ThreadSafeRefCounted!");
 
     typedef RefPtr<RefCountedType> Type;
     static Type copy(const T& refPtr)
     {
         return refPtr;
+    }
+};
+
+template<typename T> struct CrossThreadCopierBase<false, true, Ref<T>> {
+    static_assert(std::is_convertible<T*, ThreadSafeRefCountedBase*>::value, "T is not convertible to ThreadSafeRefCounted!");
+
+    typedef Ref<T> Type;
+    static Type copy(const Type& ref)
+    {
+        return ref;
     }
 };
 

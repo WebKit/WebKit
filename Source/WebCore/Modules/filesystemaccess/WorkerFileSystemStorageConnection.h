@@ -53,7 +53,6 @@ public:
     void didCreateSyncAccessHandle(CallbackIdentifier, ExceptionOr<std::pair<FileSystemSyncAccessHandleIdentifier, FileSystem::PlatformFileHandle>>&&);
     void completeVoidCallback(CallbackIdentifier, ExceptionOr<void>&& result);
     void didGetHandleNames(CallbackIdentifier, ExceptionOr<Vector<String>>&&);
-    void didGetHandleWithType(CallbackIdentifier, ExceptionOr<std::pair<FileSystemHandleIdentifier, bool>>&&);
 
 private:
     WorkerFileSystemStorageConnection(WorkerGlobalScope&, Ref<FileSystemStorageConnection>&&);
@@ -84,7 +83,6 @@ private:
     HashMap<CallbackIdentifier, FileSystemStorageConnection::GetAccessHandleCallback> m_getAccessHandlCallbacks;
     HashMap<CallbackIdentifier, FileSystemStorageConnection::VoidCallback> m_voidCallbacks;
     HashMap<CallbackIdentifier, FileSystemStorageConnection::GetHandleNamesCallback> m_getHandleNamesCallbacks;
-    HashMap<CallbackIdentifier, FileSystemStorageConnection::GetHandleWithTypeCallback> m_getHandleWithTypeCallbacks;
     HashMap<CallbackIdentifier, FileSystemStorageConnection::StringCallback> m_stringCallbacks;
     HashMap<FileSystemSyncAccessHandleIdentifier, Function<void()>> m_accessHandleInvalidationHandlers;
     HashMap<FileSystemSyncAccessHandleIdentifier, WeakPtr<FileSystemSyncAccessHandle>> m_syncAccessHandles;

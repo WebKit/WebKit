@@ -129,8 +129,7 @@ void WorkerFileSystemStorageConnection::getFileHandle(FileSystemHandleIdentifier
 
     callOnMainThread([callbackIdentifier, workerThread = Ref { m_scope->thread() }, mainThreadConnection = m_mainThreadConnection, identifier, name = name.isolatedCopy(), createIfNecessary]() mutable {
         auto mainThreadCallback = [callbackIdentifier, workerThread = WTFMove(workerThread)](auto result) mutable {
-            auto crossThreadResult = result.hasException() ? ExceptionOr<Ref<FileSystemHandleCloseScope>> { crossThreadCopy(result.exception()) } : ExceptionOr<Ref<FileSystemHandleCloseScope>> { result.releaseReturnValue() };
-            workerThread->runLoop().postTaskForMode([callbackIdentifier, result = WTFMove(crossThreadResult)] (auto& scope) mutable {
+            workerThread->runLoop().postTaskForMode([callbackIdentifier, result = crossThreadCopy(result)] (auto& scope) mutable {
                 if (auto connection = downcast<WorkerGlobalScope>(scope).fileSystemStorageConnection())
                     connection->didGetHandle(callbackIdentifier, WTFMove(result));
             }, WorkerRunLoop::defaultMode());
@@ -150,8 +149,7 @@ void WorkerFileSystemStorageConnection::getDirectoryHandle(FileSystemHandleIdent
 
     callOnMainThread([callbackIdentifier, workerThread = Ref { m_scope->thread() }, mainThreadConnection = m_mainThreadConnection, identifier, name = name.isolatedCopy(), createIfNecessary]() mutable {
         auto mainThreadCallback = [callbackIdentifier, workerThread = WTFMove(workerThread)](auto result) mutable {
-            auto crossThreadResult = result.hasException() ? ExceptionOr<Ref<FileSystemHandleCloseScope>> { crossThreadCopy(result.exception()) } : ExceptionOr<Ref<FileSystemHandleCloseScope>> { result.releaseReturnValue() };
-            workerThread->runLoop().postTaskForMode([callbackIdentifier, result = WTFMove(crossThreadResult)] (auto& scope) mutable {
+            workerThread->runLoop().postTaskForMode([callbackIdentifier, result = crossThreadCopy(result)] (auto& scope) mutable {
                 if (auto connection = downcast<WorkerGlobalScope>(scope).fileSystemStorageConnection())
                     connection->didGetHandle(callbackIdentifier, WTFMove(result));
             }, WorkerRunLoop::defaultMode());
@@ -355,8 +353,7 @@ void WorkerFileSystemStorageConnection::getHandle(FileSystemHandleIdentifier ide
 
     callOnMainThread([callbackIdentifier, workerThread = Ref { m_scope->thread() }, mainThreadConnection = m_mainThreadConnection, identifier, name = name.isolatedCopy()]() mutable {
         auto mainThreadCallback = [callbackIdentifier, workerThread = WTFMove(workerThread)](auto result) mutable {
-            auto crossThreadResult = result.hasException() ? ExceptionOr<Ref<FileSystemHandleCloseScope>> { crossThreadCopy(result.exception()) } : ExceptionOr<Ref<FileSystemHandleCloseScope>> { result.releaseReturnValue() };
-            workerThread->runLoop().postTaskForMode([callbackIdentifier, result = WTFMove(crossThreadResult)] (auto& scope) mutable {
+            workerThread->runLoop().postTaskForMode([callbackIdentifier, result = crossThreadCopy(result)] (auto& scope) mutable {
                 if (auto connection = downcast<WorkerGlobalScope>(scope).fileSystemStorageConnection())
                     connection->didGetHandle(callbackIdentifier, WTFMove(result));
             }, WorkerRunLoop::defaultMode());
@@ -364,12 +361,6 @@ void WorkerFileSystemStorageConnection::getHandle(FileSystemHandleIdentifier ide
 
         mainThreadConnection->getHandle(identifier, name, WTFMove(mainThreadCallback));
     });
-}
-
-void WorkerFileSystemStorageConnection::didGetHandleWithType(CallbackIdentifier callbackIdentifier, ExceptionOr<std::pair<FileSystemHandleIdentifier, bool>>&& result)
-{
-    if (auto callback = m_getHandleWithTypeCallbacks.take(callbackIdentifier))
-        callback(WTFMove(result));
 }
 
 void WorkerFileSystemStorageConnection::move(FileSystemHandleIdentifier identifier, FileSystemHandleIdentifier destinationIdentifier, const String& newName, VoidCallback&& callback)

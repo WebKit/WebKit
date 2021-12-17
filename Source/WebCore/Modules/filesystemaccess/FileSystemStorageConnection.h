@@ -51,7 +51,6 @@ public:
     using GetAccessHandleCallback = CompletionHandler<void(ExceptionOr<std::pair<FileSystemSyncAccessHandleIdentifier, FileSystem::PlatformFileHandle>>&&)>;
     using VoidCallback = CompletionHandler<void(ExceptionOr<void>&&)>;
     using GetHandleNamesCallback = CompletionHandler<void(ExceptionOr<Vector<String>>&&)>;
-    using GetHandleWithTypeCallback = CompletionHandler<void(ExceptionOr<std::pair<FileSystemHandleIdentifier, bool>>&&)>;
     using StringCallback = CompletionHandler<void(ExceptionOr<String>&&)>;
 
     virtual bool isWorker() const { return false; }
