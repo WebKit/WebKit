@@ -1,3 +1,22 @@
+2021-12-17  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        REGRESSION (r287068): [macOS arm64] TestWebKitAPI.GraphicsContextGLCocoaTest.UnrecycledDisplayBuffersNoLeaks is failing
+        https://bugs.webkit.org/show_bug.cgi?id=234356
+        <rdar://problem/86533892>
+
+        Reviewed by Antti Koivisto.
+
+        Avoid leaking MTLTexture instances for render targets. Leak would happen through
+        temporary render pass descriptor that would ref the render target texture.
+        The descriptor was created without autoreleasepool in call stack.
+        Also fixes the error string leaks.
+
+        UnrecycledDisplayBuffersNoLeaks would report leaks of iosurface-backed
+        GraphicsContextGL default framebuffer bound textures if glClear was called.
+
+        * src/libANGLE/renderer/metal/ContextMtl.mm:
+        (rx::ContextMtl::getRenderPassCommandEncoder):
+
 2021-12-16  John Cunningham  <johncunningham@apple.com>
 
         Add support to attribute ownership of ANGLE Metal's resources

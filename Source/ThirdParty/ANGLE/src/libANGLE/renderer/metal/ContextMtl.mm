@@ -1586,23 +1586,26 @@ mtl::RenderCommandEncoder *ContextMtl::getRenderPassCommandEncoder(const mtl::Re
     const mtl::ContextDevice &metalDevice = getMetalDevice();
     if (mtl::DeviceHasMaximumRenderTargetSize(metalDevice))
     {
-        MTLRenderPassDescriptor *objCDesc = [MTLRenderPassDescriptor renderPassDescriptor];
-        desc.convertToMetalDesc(objCDesc);
-        NSUInteger maxSize = mtl::GetMaxRenderTargetSizeForDeviceInBytes(metalDevice);
-        NSUInteger renderTargetSize =
-            ComputeTotalSizeUsedForMTLRenderPassDescriptor(objCDesc, this, metalDevice);
-        if (renderTargetSize > maxSize)
+        ANGLE_MTL_OBJC_SCOPE
         {
+            MTLRenderPassDescriptor *objCDesc = [MTLRenderPassDescriptor renderPassDescriptor];
+            desc.convertToMetalDesc(objCDesc);
+            NSUInteger maxSize = mtl::GetMaxRenderTargetSizeForDeviceInBytes(metalDevice);
+            NSUInteger renderTargetSize =
+                ComputeTotalSizeUsedForMTLRenderPassDescriptor(objCDesc, this, metalDevice);
+            if (renderTargetSize > maxSize)
+            {
 
-            NSString *errorString =
-                [NSString stringWithFormat:@"This set of render targets requires %lu bytes of "
-                                           @"pixel storage. This device supports %lu bytes.",
-                                           (unsigned long)renderTargetSize, (unsigned long)maxSize];
-            NSError *err = [NSError errorWithDomain:@"MTLValidationError"
-                                               code:-1
-                                           userInfo:@{NSLocalizedDescriptionKey : errorString}];
-            this->handleError(err, __FILE__, ANGLE_FUNCTION, __LINE__);
-            return nil;
+                NSString *errorString = [NSString
+                    stringWithFormat:@"This set of render targets requires %lu bytes of "
+                                     @"pixel storage. This device supports %lu bytes.",
+                                     (unsigned long)renderTargetSize, (unsigned long)maxSize];
+                NSError *err          = [NSError errorWithDomain:@"MTLValidationError"
+                                                   code:-1
+                                               userInfo:@{NSLocalizedDescriptionKey : errorString}];
+                this->handleError(err, __FILE__, ANGLE_FUNCTION, __LINE__);
+                return nil;
+            }
         }
     }
     return &mRenderEncoder.restart(desc);
