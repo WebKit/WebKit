@@ -1970,6 +1970,7 @@
         SYS_readlink
         SYS_rename
         SYS_sendto
+        SYS_sigaltstack
         SYS_sigprocmask
         SYS_stat64
         SYS_statfs64
@@ -1983,10 +1984,6 @@
         SYS_workq_kernreturn
         SYS_write_nocancel
         SYS_writev))
-
-(define (syscall-unix-intel)
-    (syscall-number
-        SYS_sigaltstack))
 
 (define (syscall-unix-apple-silicon)
     (syscall-number
@@ -2028,10 +2025,7 @@
     (if (equal? (param "CPU") "arm64")
         (begin
             (allow syscall-unix
-                (syscall-unix-apple-silicon)))
-        (begin
-            (allow syscall-unix
-                (syscall-unix-intel))))
+                (syscall-unix-apple-silicon))))
 
     (allow syscall-unix
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 120000

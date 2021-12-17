@@ -1,3 +1,15 @@
+2021-12-16  Per Arne Vollan  <pvollan@apple.com>
+
+        [macOS] Adjust syscall filter
+        https://bugs.webkit.org/show_bug.cgi?id=234401
+
+        Reviewed by Tim Horton.
+
+        Adjust syscall filter in the WebContent process' sandbox on macOS. A syscall that was previously
+        believed to only be used on Intel, is being used on all architectures.
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2021-12-16  Alex Christensen  <achristensen@webkit.org>
 
         Remove more NPAPI plugin code
