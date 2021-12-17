@@ -17,7 +17,7 @@ layer at (0,0) size 800x502
           RenderInline {SPAN} at (0,0) size 190x53 [border: (1px solid #0000FF) (10px solid #FFA500) (1px solid #0000FF) (10px solid #008000)]
             RenderText {#text} at (122,39) size 46x19
               text run at (122,39) width 46: " dgnjk "
-            RenderImage {IMG} at (122,32) size 23x22 [border: (1px solid #0000FF)]
+            RenderImage {IMG} at (167,32) size 23x22 [border: (1px solid #0000FF)]
             RenderText {#text} at (0,71) size 41x19
               text run at (0,71) width 41: "njkng "
           RenderText {#text} at (85,71) size 174x51

@@ -1,3 +1,11 @@
+2021-12-17  Alan Bujtas  <zalan@apple.com>
+
+        Rebaseline after r287199.
+
+        Unreviewed.
+
+        * platform/ios/fast/borders/rtl-border-05-expected.txt:
+
 2021-12-17  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         Unskip pointerevents layout tests
