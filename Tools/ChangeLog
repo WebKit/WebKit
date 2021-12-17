@@ -1,3 +1,18 @@
+2021-12-17  Alexey Shvayka  <ashvayka@apple.com>
+
+        Fix deprecation warning in Tools/Scripts/run-jsc-benchmarks
+        https://bugs.webkit.org/show_bug.cgi?id=234425
+
+        Reviewed by Alex Christensen.
+
+        Ruby 2.4 unified Fixnum and Bignum classes into Integer [1], deprecating them as
+        implementation details. To get rid of the deprecation console message, this patch replaces
+        Fixnum type checks with Integer, which is unobservable and backwards-compatible.
+
+        [1] https://bugs.ruby-lang.org/issues/12005
+
+        * Scripts/run-jsc-benchmarks:
+
 2021-12-16  Jonathan Bedard  <jbedard@apple.com>
 
         [reporelaypy] Accept pull-request hooks
