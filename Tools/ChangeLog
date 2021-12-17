@@ -1,5 +1,19 @@
 2021-12-17  Alexey Shvayka  <ashvayka@apple.com>
 
+        Tools/Scripts/run-perf-tests is failing on Speedometer2
+        https://bugs.webkit.org/show_bug.cgi?id=234426
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        r282357 added a debug console warning regarding 'dppx' units, which is being emitted
+        for TodoMVC's stylesheets, thus failing metrics parsing in PerfTest. To fix the execution
+        of Speedometer2 suite, this particular warning has now been added to the ignore list.
+
+        * Scripts/webkitpy/performance_tests/perftest.py:
+        (PerfTest):
+
+2021-12-17  Alexey Shvayka  <ashvayka@apple.com>
+
         Fix deprecation warning in Tools/Scripts/run-jsc-benchmarks
         https://bugs.webkit.org/show_bug.cgi?id=234425
 

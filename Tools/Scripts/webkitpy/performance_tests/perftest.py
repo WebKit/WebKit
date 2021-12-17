@@ -253,6 +253,7 @@ class PerfTest(object):
         re.compile(r'CONSOLE MESSAGE: (line \d+: )?DEBUG: -------------------------------'),
         re.compile(r'CONSOLE MESSAGE: (line \d+: )?DEBUG: Ember\s+: (\d\.)+'),
         re.compile(r'CONSOLE MESSAGE: (line \d+: )?DEBUG: jQuery\s+: (\d\.)+'),
+        re.compile(r"CONSOLE MESSAGE: Consider using 'dppx' units instead of '.+"),
     ]
 
     _errors_to_ignore_in_sierra = [
