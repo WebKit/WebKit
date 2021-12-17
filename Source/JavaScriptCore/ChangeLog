@@ -1,3 +1,19 @@
+2021-12-17  Saam Barati  <sbarati@apple.com>
+
+        Support WasmAddress in B3 CSE
+        https://bugs.webkit.org/show_bug.cgi?id=234051
+        <rdar://problem/86552957>
+
+        Reviewed by Filip Pizlo and Yusuke Suzuki.
+
+        This patch adds support in B3's CSE phase to handle WasmAddressValue computations.
+        The reason this can't partake in pure CSE is that WasmAddressValue reads pinned.
+        To support this, we keep track of which blocks write pinned. If we're trying to
+        replace a value V2 with V1 because it appears there is a redundancy, we check if
+        any paths from V1 to V2 write pinned. If none do, we proceed with the replacement.
+
+        * b3/B3EliminateCommonSubexpressions.cpp:
+
 2021-12-17  Zan Dobersek  <zdobersek@igalia.com>
 
         [RISCV64] Implement linking and patching support in RISCV64Assembler
