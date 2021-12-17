@@ -857,6 +857,7 @@
 		2AACE63D18CA5A0300ED0191 /* GCActivityCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 2AACE63B18CA5A0300ED0191 /* GCActivityCallback.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2AD2EDFB19799E38004D6478 /* EnumerationMode.h in Headers */ = {isa = PBXBuildFile; fileRef = 2AD2EDFA19799E38004D6478 /* EnumerationMode.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2AD8932B17E3868F00668276 /* HeapIterationScope.h in Headers */ = {isa = PBXBuildFile; fileRef = 2AD8932917E3868F00668276 /* HeapIterationScope.h */; };
+		2AF7382D18BBBF92008A5A37 /* StructureIDTable.h in Headers */ = {isa = PBXBuildFile; fileRef = 2AF7382B18BBBF92008A5A37 /* StructureIDTable.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2D342F36F7244096804ADB24 /* SourceOrigin.h in Headers */ = {isa = PBXBuildFile; fileRef = 425BA1337E4344E1B269A671 /* SourceOrigin.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		33111B8B2397256500AA34CE /* Scribble.h in Headers */ = {isa = PBXBuildFile; fileRef = 33111B8A2397256500AA34CE /* Scribble.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		3395C70722555F6D00BDBFAD /* B3EliminateDeadCode.h in Headers */ = {isa = PBXBuildFile; fileRef = 3395C70522555F6D00BDBFAD /* B3EliminateDeadCode.h */; };
@@ -1089,10 +1090,6 @@
 		536B319E1F735F160037FC33 /* LowLevelInterpreter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F4680C714BBB16900BFE272 /* LowLevelInterpreter.cpp */; };
 		5370806B1FE232DF00299E44 /* JSArrayBufferView.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F2B66BB17B6B5AB00A7AE3F /* JSArrayBufferView.h */; };
 		5370B4F61BF26205005C40FC /* AdaptiveInferredPropertyValueWatchpointBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 5370B4F41BF25EA2005C40FC /* AdaptiveInferredPropertyValueWatchpointBase.h */; };
-		537FEEC92742BDA300C9EFEE /* StructureID.h in Headers */ = {isa = PBXBuildFile; fileRef = 537FEEC82742BDA300C9EFEE /* StructureID.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		537FEECE2742BDE100C9EFEE /* IsoMemoryAllocatorBaseInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 537FEECA2742BDE000C9EFEE /* IsoMemoryAllocatorBaseInlines.h */; };
-		537FEED02742BDE100C9EFEE /* StructureAlignedMemoryAllocator.h in Headers */ = {isa = PBXBuildFile; fileRef = 537FEECC2742BDE000C9EFEE /* StructureAlignedMemoryAllocator.h */; };
-		537FEED12742BDE100C9EFEE /* IsoMemoryAllocatorBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 537FEECD2742BDE000C9EFEE /* IsoMemoryAllocatorBase.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5381B9391E60E97D0090F794 /* WasmFaultSignalHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 5381B9381E60E97D0090F794 /* WasmFaultSignalHandler.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		538F15E7268FBBB600D601C4 /* UnifiedSource148.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 538F15DD268FBBB300D601C4 /* UnifiedSource148.cpp */; };
 		538F15E8268FBBB600D601C4 /* UnifiedSource151.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 538F15DE268FBBB300D601C4 /* UnifiedSource151.cpp */; };
@@ -3639,6 +3636,8 @@
 		2AD2EDFA19799E38004D6478 /* EnumerationMode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EnumerationMode.h; sourceTree = "<group>"; };
 		2AD8932917E3868F00668276 /* HeapIterationScope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HeapIterationScope.h; sourceTree = "<group>"; };
 		2ADFA26218EF3540004F9FCC /* GCLogging.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GCLogging.cpp; sourceTree = "<group>"; };
+		2AF7382A18BBBF92008A5A37 /* StructureIDTable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StructureIDTable.cpp; sourceTree = "<group>"; };
+		2AF7382B18BBBF92008A5A37 /* StructureIDTable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StructureIDTable.h; sourceTree = "<group>"; };
 		3032175DF1AD47D8998B34E1 /* JSSourceCode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSSourceCode.h; sourceTree = "<group>"; };
 		30A5F403F11C4F599CD596D5 /* WasmSignatureInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WasmSignatureInlines.h; sourceTree = "<group>"; };
 		33111B8A2397256500AA34CE /* Scribble.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Scribble.h; sourceTree = "<group>"; };
@@ -3741,7 +3740,6 @@
 		530FB3011E7A0B6E003C19DD /* WasmWorklist.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WasmWorklist.h; sourceTree = "<group>"; };
 		530FB3031E7A1146003C19DD /* WasmWorklist.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WasmWorklist.cpp; sourceTree = "<group>"; };
 		530FDE7321FAAFC600059D65 /* testIncludes.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = testIncludes.m; path = API/tests/testIncludes.m; sourceTree = "<group>"; };
-		531013F3274419F40009009C /* libWTF.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libWTF.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		5311BD481EA581E500525281 /* WasmOMGPlan.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WasmOMGPlan.cpp; sourceTree = "<group>"; };
 		5311BD491EA581E500525281 /* WasmOMGPlan.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WasmOMGPlan.h; sourceTree = "<group>"; };
 		531374BC1D5CE67600AF7A0B /* WasmPlan.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WasmPlan.h; sourceTree = "<group>"; };
@@ -3930,11 +3928,6 @@
 		5370B4F41BF25EA2005C40FC /* AdaptiveInferredPropertyValueWatchpointBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AdaptiveInferredPropertyValueWatchpointBase.h; sourceTree = "<group>"; };
 		5373B4D322AD8BF700803572 /* WeakObjectRefPrototype.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WeakObjectRefPrototype.cpp; sourceTree = "<group>"; };
 		5373B4D422ADB31400803572 /* WeakObjectRefConstructor.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WeakObjectRefConstructor.cpp; sourceTree = "<group>"; };
-		537FEEC82742BDA300C9EFEE /* StructureID.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StructureID.h; sourceTree = "<group>"; };
-		537FEECA2742BDE000C9EFEE /* IsoMemoryAllocatorBaseInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IsoMemoryAllocatorBaseInlines.h; sourceTree = "<group>"; };
-		537FEECB2742BDE000C9EFEE /* StructureAlignedMemoryAllocator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StructureAlignedMemoryAllocator.cpp; sourceTree = "<group>"; };
-		537FEECC2742BDE000C9EFEE /* StructureAlignedMemoryAllocator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StructureAlignedMemoryAllocator.h; sourceTree = "<group>"; };
-		537FEECD2742BDE000C9EFEE /* IsoMemoryAllocatorBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IsoMemoryAllocatorBase.h; sourceTree = "<group>"; };
 		5381B9361E60E9660090F794 /* WasmFaultSignalHandler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WasmFaultSignalHandler.cpp; sourceTree = "<group>"; };
 		5381B9381E60E97D0090F794 /* WasmFaultSignalHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WasmFaultSignalHandler.h; sourceTree = "<group>"; };
 		5383AA2F1E65E8A100A532FC /* JSWebAssemblyCodeBlock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JSWebAssemblyCodeBlock.cpp; path = js/JSWebAssemblyCodeBlock.cpp; sourceTree = "<group>"; };
@@ -5790,7 +5783,6 @@
 				5D5D8AD00E0D0EBE00F9C692 /* libedit.dylib */,
 				9322A00306C341D3009067BB /* libicucore.dylib */,
 				51F0EC0705C86C9A00E6DF1B /* libobjc.dylib */,
-				531013F3274419F40009009C /* libWTF.a */,
 				1498CAD3214656C400710879 /* libWTF.a */,
 				A8A4748D151A8306004123FF /* libWTF.a */,
 				371D842C17C98B6E00ECF994 /* libz.dylib */,
@@ -6672,8 +6664,6 @@
 				142E3132134FF0A600AFADB5 /* Strong.h */,
 				CD1F9B4A270CFE0F00617EB6 /* StrongForward.h */,
 				145722851437E140005FDE26 /* StrongInlines.h */,
-				537FEECB2742BDE000C9EFEE /* StructureAlignedMemoryAllocator.cpp */,
-				537FEECC2742BDE000C9EFEE /* StructureAlignedMemoryAllocator.h */,
 				0F7DF1311E2970D50095951B /* Subspace.cpp */,
 				0F7DF1321E2970D50095951B /* Subspace.h */,
 				0F7DF1331E2970D50095951B /* SubspaceInlines.h */,
@@ -8075,8 +8065,9 @@
 				7986943A1F8C0AC8009232AE /* StructureCache.h */,
 				7E4EE70E0EBB7A5B005934AA /* StructureChain.cpp */,
 				7E4EE7080EBB7963005934AA /* StructureChain.h */,
-				537FEEC82742BDA300C9EFEE /* StructureID.h */,
 				2AAAA31018BD49D100394CC8 /* StructureIDBlob.h */,
+				2AF7382A18BBBF92008A5A37 /* StructureIDTable.cpp */,
+				2AF7382B18BBBF92008A5A37 /* StructureIDTable.h */,
 				0FD2C92316D01EE900C7803F /* StructureInlines.h */,
 				C2F0F2D016BAEEE900187C19 /* StructureRareData.cpp */,
 				C2FE18A316BAEC4000AF3061 /* StructureRareData.h */,
@@ -10276,8 +10267,6 @@
 				0FB467811FDDA6F7003FCB09 /* IsoCellSetInlines.h in Headers */,
 				E3BF1BAE238AAEDB003A1C2B /* IsoHeapCellType.h in Headers */,
 				E3C8ED4323A1DBCB00131958 /* IsoInlinedHeapCellType.h in Headers */,
-				537FEED12742BDE100C9EFEE /* IsoMemoryAllocatorBase.h in Headers */,
-				537FEECE2742BDE100C9EFEE /* IsoMemoryAllocatorBaseInlines.h in Headers */,
 				0FDCE12D1FAFB4E5006F3901 /* IsoSubspace.h in Headers */,
 				0FD2FD9520B52BE200F09441 /* IsoSubspaceInlines.h in Headers */,
 				0F5E0FE72086AD480097F0DE /* IsoSubspacePerVM.h in Headers */,
@@ -10828,11 +10817,10 @@
 				CD1F9B4B270CFE0F00617EB6 /* StrongForward.h in Headers */,
 				145722861437E140005FDE26 /* StrongInlines.h in Headers */,
 				BCDE3AB80E6C82F5001453A7 /* Structure.h in Headers */,
-				537FEED02742BDE100C9EFEE /* StructureAlignedMemoryAllocator.h in Headers */,
 				7986943B1F8C0ACC009232AE /* StructureCache.h in Headers */,
 				7E4EE7090EBB7963005934AA /* StructureChain.h in Headers */,
-				537FEEC92742BDA300C9EFEE /* StructureID.h in Headers */,
 				2AAAA31218BD49D100394CC8 /* StructureIDBlob.h in Headers */,
+				2AF7382D18BBBF92008A5A37 /* StructureIDTable.h in Headers */,
 				0FD2C92416D01EE900C7803F /* StructureInlines.h in Headers */,
 				C2FE18A416BAEC4000AF3061 /* StructureRareData.h in Headers */,
 				C20BA92D16BB1C1500B3AEA2 /* StructureRareDataInlines.h in Headers */,

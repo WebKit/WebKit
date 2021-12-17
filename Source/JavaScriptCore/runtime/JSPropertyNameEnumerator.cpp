@@ -50,7 +50,7 @@ JSPropertyNameEnumerator* JSPropertyNameEnumerator::create(VM& vm, Structure* st
 JSPropertyNameEnumerator::JSPropertyNameEnumerator(VM& vm, Structure* structure, uint32_t indexedLength, uint32_t numberStructureProperties, WriteBarrier<JSString>* propertyNamesBuffer, unsigned propertyNamesSize)
     : JSCell(vm, vm.propertyNameEnumeratorStructure.get())
     , m_propertyNames(vm, this, propertyNamesBuffer)
-    , m_cachedStructureID(vm, this, structure, WriteBarrierStructureID::MayBeNull)
+    , m_cachedStructureID(structure ? structure->id() : 0)
     , m_indexedLength(indexedLength)
     , m_endStructurePropertyIndex(numberStructureProperties)
     , m_endGenericPropertyIndex(propertyNamesSize)
@@ -86,7 +86,11 @@ void JSPropertyNameEnumerator::visitChildrenImpl(JSCell* cell, Visitor& visitor)
         visitor.markAuxiliary(propertyNames);
         visitor.append(propertyNames, propertyNames + thisObject->sizeOfPropertyNames());
     }
-    visitor.append(thisObject->m_cachedStructureID);
+
+    if (thisObject->cachedStructureID()) {
+        VM& vm = visitor.vm();
+        visitor.appendUnbarriered(vm.getStructure(thisObject->cachedStructureID()));
+    }
 }
 
 DEFINE_VISIT_CHILDREN(JSPropertyNameEnumerator);

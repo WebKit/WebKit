@@ -64,7 +64,7 @@ static ALWAYS_INLINE JSWebAssemblyGlobal* getGlobal(JSGlobalObject* globalObject
             createTypeError(globalObject, "expected |this| value to be an instance of WebAssembly.Global"_s));
         return nullptr;
     }
-    Integrity::auditStructureID(result->structureID());
+    Integrity::auditStructureID(vm, result->structureID());
     return result;
 }
 

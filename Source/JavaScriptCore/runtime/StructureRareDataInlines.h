@@ -177,7 +177,7 @@ inline void StructureChainInvalidationWatchpoint::fireInternal(VM&, const FireDe
     m_structureRareData->clearCachedPropertyNameEnumerator();
 }
 
-inline bool StructureRareData::tryCachePropertyNameEnumeratorViaWatchpoint(VM&, Structure* baseStructure, StructureChain* chain)
+inline bool StructureRareData::tryCachePropertyNameEnumeratorViaWatchpoint(VM& vm, Structure* baseStructure, StructureChain* chain)
 {
     if (baseStructure->hasPolyProto())
         return false;
@@ -186,7 +186,7 @@ inline bool StructureRareData::tryCachePropertyNameEnumeratorViaWatchpoint(VM&, 
     for (auto* current = chain->head(); *current; ++current) {
         ++size;
         StructureID structureID = *current;
-        Structure* structure = structureID.decode();
+        Structure* structure = vm.getStructure(structureID);
         if (!structure->propertyNameEnumeratorShouldWatch())
             return false;
     }
@@ -194,7 +194,7 @@ inline bool StructureRareData::tryCachePropertyNameEnumeratorViaWatchpoint(VM&, 
     unsigned index = 0;
     for (auto* current = chain->head(); *current; ++current) {
         StructureID structureID = *current;
-        Structure* structure = structureID.decode();
+        Structure* structure = vm.getStructure(structureID);
         m_cachedPropertyNameEnumeratorWatchpoints[index].install(this, structure);
         ++index;
     }

@@ -5504,7 +5504,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
             StructureID cachedStructureID = metadata.m_cachedStructureID;
             Structure* cachedStructure = nullptr;
             if (cachedStructureID)
-                cachedStructure = cachedStructureID.decode();
+                cachedStructure = m_vm->heap.structureIDTable().get(cachedStructureID);
             if (metadata.m_toThisStatus != ToThisOK
                 || !cachedStructure
                 || cachedStructure->classInfo()->methodTable.toThis != JSObject::info()->methodTable.toThis

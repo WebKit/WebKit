@@ -36,7 +36,6 @@
 #include "LLIntData.h"
 #include "Options.h"
 #include "SigillCrashAnalyzer.h"
-#include "StructureAlignedMemoryAllocator.h"
 #include "SuperSampler.h"
 #include "VMTraps.h"
 #include "WasmCalleeRegistry.h"
@@ -66,7 +65,6 @@ void initialize()
 #endif
         {
             Options::AllowUnfinalizedAccessScope scope;
-            StructureAlignedMemoryAllocator::initializeStructureAddressSpace();
             JITOperationList::initialize();
             ExecutableAllocator::initialize();
             VM::computeCanUseJIT();
