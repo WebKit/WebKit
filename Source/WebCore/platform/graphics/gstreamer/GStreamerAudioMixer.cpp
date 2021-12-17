@@ -48,7 +48,7 @@ GStreamerAudioMixer::GStreamerAudioMixer()
     connectSimpleBusMessageCallback(m_pipeline.get());
 
     m_mixer = makeGStreamerElement("audiomixer", nullptr);
-    GstElement* audioSink = makeGStreamerElement("autoaudiosink", nullptr);
+    auto* audioSink = createAutoAudioSink({ });
 
     gst_bin_add_many(GST_BIN_CAST(m_pipeline.get()), m_mixer.get(), audioSink, nullptr);
     gst_element_link(m_mixer.get(), audioSink);

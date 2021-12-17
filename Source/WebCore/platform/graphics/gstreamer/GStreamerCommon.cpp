@@ -23,8 +23,10 @@
 
 #if USE(GSTREAMER)
 
+#include "ApplicationGLib.h"
 #include "GLVideoSinkGStreamer.h"
 #include "GStreamerAudioMixer.h"
+#include "GUniquePtrGStreamer.h"
 #include "GstAllocatorFastMalloc.h"
 #include "IntSize.h"
 #include "RuntimeApplicationChecks.h"
@@ -440,7 +442,26 @@ bool gstElementFactoryEquals(GstElement* element, const char* name)
     return equal(GST_OBJECT_NAME(gst_element_get_factory(element)), name);
 }
 
-GstElement* createPlatformAudioSink()
+GstElement* createAutoAudioSink(const String& role)
+{
+    auto* audioSink = makeGStreamerElement("autoaudiosink", nullptr);
+    g_signal_connect_data(audioSink, "child-added", G_CALLBACK(+[](GstChildProxy*, GObject* object, gchar*, gpointer userData) {
+        auto* role = reinterpret_cast<StringImpl*>(userData);
+        auto* objectClass = G_OBJECT_GET_CLASS(object);
+        if (role && g_object_class_find_property(objectClass, "stream-properties")) {
+            GUniquePtr<GstStructure> properties(gst_structure_new("stream-properties", "media.role", G_TYPE_STRING, role->utf8().data(), nullptr));
+            g_object_set(object, "stream-properties", properties.get(), nullptr);
+            GST_DEBUG("Set media.role as %s on %" GST_PTR_FORMAT, role->utf8().data(), GST_ELEMENT_CAST(object));
+        }
+        if (g_object_class_find_property(objectClass, "client-name"))
+            g_object_set(object, "client-name", getApplicationName(), nullptr);
+    }), role.isolatedCopy().releaseImpl().leakRef(), static_cast<GClosureNotify>([](gpointer userData, GClosure*) {
+        reinterpret_cast<StringImpl*>(userData)->deref();
+    }), static_cast<GConnectFlags>(0));
+    return audioSink;
+}
+
+GstElement* createPlatformAudioSink(const String& role)
 {
     GstElement* audioSink = webkitAudioSinkNew();
     if (!audioSink) {
@@ -450,7 +471,7 @@ GstElement* createPlatformAudioSink()
         //   runtime requirements are not fullfilled.
         // - the sink was created for the WPE port, audio mixing was not requested and no
         //   WPEBackend-FDO audio receiver has been registered at runtime.
-        audioSink = makeGStreamerElement("autoaudiosink", nullptr);
+        audioSink = createAutoAudioSink(role);
     }
 
     return audioSink;

@@ -1,3 +1,35 @@
+2021-12-08  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] Fill in client-name property on audio sinks
+        https://bugs.webkit.org/show_bug.cgi?id=233826
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        The audio sink client-name property is now set on sinks that support this property, such as
+        pulsesink and pipewiresink. This is picked-up by GNOME settings and the corresponding audio
+        streams now appear as owned by the WebKit application (MiniBrowser, ephy, etc) instead of
+        "WebKitWebProcess".
+
+        When the audio mixer is enabled, no media.role property is set, because the mixer can accept
+        music and/or video roles simultaneously, so it doesn't make sense in this context.
+
+        * platform/audio/gstreamer/AudioDestinationGStreamer.cpp:
+        (WebCore::AudioDestinationGStreamer::AudioDestinationGStreamer): Drive-by refactoring, using
+        a lambda instead of a static callback function.
+        (WebCore::autoAudioSinkChildAddedCallback): Deleted.
+        * platform/graphics/gstreamer/GStreamerAudioMixer.cpp:
+        (WebCore::GStreamerAudioMixer::GStreamerAudioMixer):
+        * platform/graphics/gstreamer/GStreamerCommon.cpp:
+        (WebCore::createAutoAudioSink):
+        (WebCore::createPlatformAudioSink):
+        * platform/graphics/gstreamer/GStreamerCommon.h:
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::~MediaPlayerPrivateGStreamer):
+        (WebCore::MediaPlayerPrivateGStreamer::createAudioSink):
+        (WebCore::MediaPlayerPrivateGStreamer::setAudioStreamPropertiesCallback): Deleted.
+        (WebCore::MediaPlayerPrivateGStreamer::setAudioStreamProperties): Deleted.
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.h:
+
 2021-09-08  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         KeyboardEvent should setDefaultHandled if EventHandler::startKeyboardScrolling returns true

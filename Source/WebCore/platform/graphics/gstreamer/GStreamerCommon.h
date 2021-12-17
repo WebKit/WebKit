@@ -26,6 +26,7 @@
 #include <gst/gst.h>
 #include <gst/video/video-format.h>
 #include <gst/video/video-info.h>
+#include <optional>
 #include <wtf/MediaTime.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
@@ -294,7 +295,8 @@ enum class GstVideoDecoderPlatform { ImxVPU, Video4Linux, OpenMAX };
 bool isGStreamerPluginAvailable(const char* name);
 bool gstElementFactoryEquals(GstElement*, const char* name);
 
-GstElement* createPlatformAudioSink();
+GstElement* createAutoAudioSink(const String& role);
+GstElement* createPlatformAudioSink(const String& role);
 
 bool webkitGstSetElementStateSynchronously(GstElement*, GstState, Function<bool(GstMessage*)>&& = [](GstMessage*) -> bool {
     return true;

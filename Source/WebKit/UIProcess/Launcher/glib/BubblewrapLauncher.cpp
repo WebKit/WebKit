@@ -129,6 +129,22 @@ argsToFd(const Vector<CString>& args, const char *name)
     return memfd;
 }
 
+static const char* applicationId(GError** error)
+{
+    GApplication* app = g_application_get_default();
+    if (!app) {
+        g_set_error_literal(error, G_IO_ERROR, G_IO_ERROR_INVALID_DATA, "GApplication is required.");
+        return nullptr;
+    }
+
+    const char* appID = g_application_get_application_id(app);
+    if (!appID) {
+        g_set_error_literal(error, G_IO_ERROR, G_IO_ERROR_INVALID_DATA, "GApplication must have a valid ID.");
+        return nullptr;
+    }
+    return appID;
+}
+
 static int createFlatpakInfo()
 {
     static NeverDestroyed<GUniquePtr<char>> data;
@@ -137,13 +153,10 @@ static int createFlatpakInfo()
     if (!data.get()) {
         // xdg-desktop-portal relates your name to certain permissions so we want
         // them to be application unique which is best done via GApplication.
-        GApplication* app = g_application_get_default();
-        if (!app)
-            g_error("GApplication is required for xdg-desktop-portal access in the WebKit sandbox.");
-
-        const char* appID = g_application_get_application_id(app);
+        GUniqueOutPtr<GError> error;
+        const char* appID = applicationId(&error.outPtr());
         if (!appID)
-            g_error("GApplication must have a valid ID for xdg-desktop-portal access in the WebKit sandbox.");
+            g_error("Unable to configure xdg-desktop-portal access in the WebKit sandbox: %s", error->message);
 
         GUniquePtr<GKeyFile> keyFile(g_key_file_new());
         g_key_file_set_string(keyFile.get(), "Application", "name", appID);

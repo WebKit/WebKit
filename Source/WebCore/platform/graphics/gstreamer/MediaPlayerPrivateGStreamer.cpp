@@ -200,10 +200,6 @@ MediaPlayerPrivateGStreamer::~MediaPlayerPrivateGStreamer()
     if (m_fillTimer.isActive())
         m_fillTimer.stop();
 
-    auto* sink = audioSink();
-    if (sink && !WEBKIT_IS_AUDIO_SINK(sink))
-        g_signal_handlers_disconnect_by_func(G_OBJECT(sink), reinterpret_cast<gpointer>(setAudioStreamPropertiesCallback), this);
-
     m_readyTimerHandler.stop();
     for (auto& missingPluginCallback : m_missingPluginCallbacks) {
         if (missingPluginCallback)
@@ -884,23 +880,6 @@ void MediaPlayerPrivateGStreamer::sourceSetup(GstElement* sourceElement)
     }
 }
 
-void MediaPlayerPrivateGStreamer::setAudioStreamPropertiesCallback(MediaPlayerPrivateGStreamer* player, GObject* object)
-{
-    player->setAudioStreamProperties(object);
-}
-
-void MediaPlayerPrivateGStreamer::setAudioStreamProperties(GObject* object)
-{
-    if (g_strcmp0(G_OBJECT_TYPE_NAME(object), "GstPulseSink"))
-        return;
-
-    const char* role = m_player->isVideoPlayer() ? "video" : "music";
-    GUniquePtr<GstStructure> properties(gst_structure_new("stream-properties", "media.role", G_TYPE_STRING, role, nullptr));
-    g_object_set(object, "stream-properties", properties.get(), nullptr);
-    GUniquePtr<gchar> elementName(gst_element_get_name(GST_ELEMENT(object)));
-    GST_DEBUG_OBJECT(pipeline(), "Set media.role as %s at %s", role, elementName.get());
-}
-
 void MediaPlayerPrivateGStreamer::sourceSetupCallback(MediaPlayerPrivateGStreamer* player, GstElement* sourceElement)
 {
     player->sourceSetup(sourceElement);
@@ -1249,13 +1228,11 @@ void MediaPlayerPrivateGStreamer::loadingFailed(MediaPlayer::NetworkState networ
 
 GstElement* MediaPlayerPrivateGStreamer::createAudioSink()
 {
-    GstElement* audioSink = createPlatformAudioSink();
+    const char* role = m_player->isVideoPlayer() ? "video" : "music";
+    GstElement* audioSink = createPlatformAudioSink(role);
     RELEASE_ASSERT(audioSink);
     if (!audioSink)
         return nullptr;
-
-    if (!WEBKIT_IS_AUDIO_SINK(audioSink))
-        g_signal_connect_swapped(audioSink, "child-added", G_CALLBACK(setAudioStreamPropertiesCallback), this);
 
 #if ENABLE(WEB_AUDIO)
     GstElement* audioSinkBin = gst_bin_new("audio-sink");

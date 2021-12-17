@@ -27,6 +27,7 @@ list(APPEND WebCore_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/page/gtk"
     "${WEBCORE_DIR}/platform/adwaita"
     "${WEBCORE_DIR}/platform/generic"
+    "${WEBCORE_DIR}/platform/glib"
     "${WEBCORE_DIR}/platform/gtk"
     "${WEBCORE_DIR}/platform/graphics/egl"
     "${WEBCORE_DIR}/platform/graphics/glx"
@@ -52,6 +53,8 @@ endif ()
 
 list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/adwaita/ScrollbarThemeAdwaita.h
+
+    platform/glib/ApplicationGLib.h
 
     platform/graphics/x11/PlatformDisplayX11.h
     platform/graphics/x11/XErrorTrapper.h
