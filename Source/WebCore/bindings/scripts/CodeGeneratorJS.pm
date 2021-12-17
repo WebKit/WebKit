@@ -2055,7 +2055,6 @@ sub GetJSCAttributesForAttribute
     push(@specials, "JSC::PropertyAttribute::DontEnum") if ($attribute->extendedAttributes->{NotEnumerable} || $isGlobalConstructor);
     push(@specials, "JSC::PropertyAttribute::ReadOnly") if IsReadonly($attribute);
     push(@specials, "JSC::PropertyAttribute::CustomAccessor") unless $isGlobalConstructor or IsJSBuiltin($interface, $attribute);
-    push(@specials, "JSC::PropertyAttribute::DOMLegacyAccessor") if $attribute->extendedAttributes->{LegacyActiveWindowForAccessor};
     push(@specials, "JSC::PropertyAttribute::DOMAttribute") if IsAcceleratedDOMAttribute($interface, $attribute);
     push(@specials, "JSC::PropertyAttribute::DOMJITAttribute") if $attribute->extendedAttributes->{DOMJIT};
     push(@specials, "JSC::PropertyAttribute::Accessor | JSC::PropertyAttribute::Builtin") if  IsJSBuiltin($interface, $attribute);

@@ -1847,6 +1847,8 @@ static JSC_DECLARE_CUSTOM_GETTER(jsTestObj_double_leading_underscore_attribute);
 static JSC_DECLARE_CUSTOM_SETTER(setJSTestObj_double_leading_underscore_attribute);
 static JSC_DECLARE_CUSTOM_GETTER(jsTestObj_trailing_underscore_attribute_);
 static JSC_DECLARE_CUSTOM_SETTER(setJSTestObj_trailing_underscore_attribute_);
+static JSC_DECLARE_CUSTOM_GETTER(jsTestObj_search);
+static JSC_DECLARE_CUSTOM_SETTER(setJSTestObj_search);
 
 class JSTestObjPrototype final : public JSC::JSNonFinalObject {
 public:
@@ -2181,6 +2183,7 @@ static const HashTableValue JSTestObjPrototypeTableValues[] =
     { "leading_underscore_attribute", static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObj_leading_underscore_attribute), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObj_leading_underscore_attribute) } },
     { "_double_leading_underscore_attribute", static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObj_double_leading_underscore_attribute), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObj_double_leading_underscore_attribute) } },
     { "trailing_underscore_attribute_", static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObj_trailing_underscore_attribute_), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObj_trailing_underscore_attribute_) } },
+    { "search", static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObj_search), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObj_search) } },
 #if ENABLE(TEST_FEATURE)
     { "enabledAtRuntimeOperation", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestObjPrototypeFunction_enabledAtRuntimeOperation), (intptr_t) (1) } },
 #else
@@ -5324,6 +5327,37 @@ static inline bool setJSTestObj_trailing_underscore_attribute_Setter(JSGlobalObj
 JSC_DEFINE_CUSTOM_SETTER(setJSTestObj_trailing_underscore_attribute_, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue, PropertyName attributeName))
 {
     return IDLAttribute<JSTestObj>::set<setJSTestObj_trailing_underscore_attribute_Setter>(*lexicalGlobalObject, thisValue, encodedValue, attributeName);
+}
+
+static inline JSValue jsTestObj_searchGetter(JSGlobalObject& lexicalGlobalObject, JSTestObj& thisObject)
+{
+    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    auto& impl = thisObject.wrapped();
+    RELEASE_AND_RETURN(throwScope, (toJS<IDLUSVString>(lexicalGlobalObject, throwScope, impl.search())));
+}
+
+JSC_DEFINE_CUSTOM_GETTER(jsTestObj_search, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
+{
+    return IDLAttribute<JSTestObj>::get<jsTestObj_searchGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, attributeName);
+}
+
+static inline bool setJSTestObj_searchSetter(JSGlobalObject& lexicalGlobalObject, JSTestObj& thisObject, JSValue value)
+{
+    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    auto& impl = thisObject.wrapped();
+    auto nativeValue = convert<IDLUSVString>(lexicalGlobalObject, value);
+    RETURN_IF_EXCEPTION(throwScope, false);
+    invokeFunctorPropagatingExceptionIfNecessary(lexicalGlobalObject, throwScope, [&] {
+        return impl.setSearch(legacyActiveDOMWindowForAccessor(*jsCast<JSDOMGlobalObject*>(&lexicalGlobalObject)), firstDOMWindow(*jsCast<JSDOMGlobalObject*>(&lexicalGlobalObject)), WTFMove(nativeValue));
+    });
+    return true;
+}
+
+JSC_DEFINE_CUSTOM_SETTER(setJSTestObj_search, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue, PropertyName attributeName))
+{
+    return IDLAttribute<JSTestObj>::set<setJSTestObj_searchSetter>(*lexicalGlobalObject, thisValue, encodedValue, attributeName);
 }
 
 #if ENABLE(TEST_FEATURE)
