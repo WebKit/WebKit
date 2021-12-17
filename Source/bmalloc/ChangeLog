@@ -1,3 +1,83 @@
+2021-12-16  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [libpas] ARM64 CAS emulation loop needs dmb ish
+        https://bugs.webkit.org/show_bug.cgi?id=234414
+
+        Reviewed by Filip Pizlo.
+
+        Just using LL/SC does not guarantee that the ordering of accesses around the loop. For example,
+
+           access(A)
+         0:
+           LL (ldaxr)
+           ...
+           SC (stlxr)
+           cond-branch 0
+           access(B)
+
+        In the above code case, the ordering A -> LL -> SC -> B is not guaranteed and it can be
+        LL -> A -> B -> SC or LL -> B -> A -> SC: memory access may happen in the middle of RMW atomics.
+        This breaks pas_versioned_field's assumption where they are ordered as A -> LL -> SC -> B.
+
+        https://stackoverflow.com/questions/35217406/partial-reordering-of-c11-atomics-on-aarch64
+        https://stackoverflow.com/questions/21535058/arm64-ldxr-stxr-vs-ldaxr-stlxr
+        http://lists.infradead.org/pipermail/linux-arm-kernel/2014-February/229588.html
+
+        Another example is that the following can happen if we use CAS loop without barrier.
+
+            == thread A ==
+            *a = 1;
+            spin_lock(&lock);
+            *b = 1;
+
+            == thread B ==
+            b_value = atomic_get(&b);
+            a_value = atomic_get(&a);
+            assert(a_value || !b_value); // can fail
+
+        https://github.com/zephyrproject-rtos/zephyr/issues/32133
+        https://gcc.gnu.org/bugzilla/show_bug.cgi?id=65697
+
+        To guarantee A -> (atomic) -> B ordering, we insert barrier (dmb ish) just after the loop.
+
+           access(A)
+         0:
+           LL (ldxr)
+           ...
+           SC (stlxr)
+           cond-branch 0
+           dmb ish
+           access(B)
+
+        `dmb ish` ensures B is done after (atomic) region. And this barrier also ensures that A cannot happen after
+        For this CAS emulation loop, we do not need to have acquire, so we can use ldxr. (atomic) region.
+        SC ensures A does not happen after SC. But still, A and LL can be reordered.
+        If A is storing to the same location X, then it will be detected due to ldxr's exclusiveness.
+
+             data = LL(X)
+             store(X, 42) // Reordered here
+             => SC will fail.
+
+        If A is storing to the different location, then we have no way to observe the difference.
+
+            data = LL(X)
+            store(A, 42) // Reordered here. But there is no way to know whether this access happens before or after LL.
+
+        * libpas/src/libpas/pas_utils.h:
+        (pas_atomic_store_uint8):
+        (pas_compare_and_swap_uint8_weak):
+        (pas_compare_and_swap_uint8_strong):
+        (pas_compare_and_swap_uint16_weak):
+        (pas_compare_and_swap_uint32_weak):
+        (pas_compare_and_swap_uint32_strong):
+        (pas_compare_and_swap_uint64_weak):
+        (pas_compare_and_swap_uint64_strong):
+        (pas_compare_and_swap_pair_weak):
+        (pas_compare_and_swap_pair_strong):
+        (pas_atomic_load_pair_relaxed):
+        (pas_atomic_store_pair):
+        (pas_atomic_load_pair): Deleted.
+
 2021-12-15  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [libpas] Implement atomics in inline assembly if compiler is using ARM64

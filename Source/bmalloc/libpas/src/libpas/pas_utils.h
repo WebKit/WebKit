@@ -87,9 +87,68 @@ PAS_BEGIN_EXTERN_C;
 #define PAS_RISCV __PAS_RISCV
 
 #if PAS_ARM64 && !PAS_ARM64E && !PAS_OS(MAC)
-/* clang has a bug on ARM64 atomics when it is generating non-LSE-atomics. If CPU is ARM64E, clang uses LSE-atomics.
-   And if OS is Mac, then clang uses LSE-atomics when it is ARM64 since all ARM64 macOS supports LSE-atomics. */
-#define PAS_COMPILER_CLANG_ARM64_ATOMICS_DEPENDENCY 1
+/* Just using LL/SC does not guarantee that the ordering of accesses around the loop. For example,
+ *
+ *    access(A)
+ *  0:
+ *    LL (ldaxr)
+ *    ...
+ *    SC (stlxr)
+ *    cond-branch 0
+ *    access(B)
+ *
+ * In the above code case, the ordering A -> LL -> SC -> B is not guaranteed and it can be
+ * LL -> A -> B -> SC or LL -> B -> A -> SC: memory access may happen in the middle of RMW atomics.
+ * This breaks pas_versioned_field's assumption where they are ordered as A -> LL -> SC -> B.
+ *
+ * https://stackoverflow.com/questions/35217406/partial-reordering-of-c11-atomics-on-aarch64
+ * https://stackoverflow.com/questions/21535058/arm64-ldxr-stxr-vs-ldaxr-stlxr
+ * http://lists.infradead.org/pipermail/linux-arm-kernel/2014-February/229588.html
+ *
+ * Another example is that the following can happen if we use CAS loop without barrier.
+ *
+ *     == thread A ==
+ *     *a = 1;
+ *     spin_lock(&lock);
+ *     *b = 1;
+ *
+ *     == thread B ==
+ *     b_value = atomic_get(&b);
+ *     a_value = atomic_get(&a);
+ *     assert(a_value || !b_value); // can fail
+ *
+ * https://github.com/zephyrproject-rtos/zephyr/issues/32133
+ * https://gcc.gnu.org/bugzilla/show_bug.cgi?id=65697
+ *
+ * To guarantee A -> (atomic) -> B ordering, we insert barrier (dmb ish) just after the loop.
+ *
+ *    access(A)
+ *  0:
+ *    LL (ldxr)
+ *    ...
+ *    SC (stlxr)
+ *    cond-branch 0
+ *    dmb ish
+ *    access(B)
+ *
+ * `dmb ish` ensures B is done after (atomic) region. And this barrier also ensures that A cannot happen after
+ * For this CAS emulation loop, we do not need to have acquire, so we can use ldxr.
+ * (atomic) region. SC ensures A does not happen after SC. But still, A and LL can be reordered.
+ * If A is storing to the same location X, then it will be detected due to ldxr's exclusiveness.
+ *
+ *      data = LL(X)
+ *      store(X, 42) // Reordered here
+ *      => SC will fail.
+ *
+ * If A is storing to the different location, then we have no way to observe the difference.
+ *
+ *     data = LL(X)
+ *     store(A, 42) // Reordered here. But there is no way to know whether this access happens before or after LL.
+ *
+ * To achieve that, when we are not building with ARM LSE Atomics, we use inline assembly instead of
+ * clang's builtin (e.g. __c11_atomic_compare_exchange_weak).
+ */
+#define PAS_COMPILER_CLANG_ARM64_ATOMICS_LL_SC 1
 #endif
 
 #ifdef __cplusplus
@@ -240,7 +299,7 @@ static inline uint64_t pas_make_mask64(uint64_t num_bits)
 static inline void pas_atomic_store_uint8(uint8_t* ptr, uint8_t value)
 {
 #if PAS_COMPILER(CLANG)
-#if PAS_COMPILER(CLANG_ARM64_ATOMICS_DEPENDENCY)
+#if PAS_COMPILER(CLANG_ARM64_ATOMICS_LL_SC)
     asm volatile (
         "stlrb %w[value], [%x[ptr]]\t\n"
         /* outputs */  :
@@ -258,11 +317,11 @@ static inline void pas_atomic_store_uint8(uint8_t* ptr, uint8_t value)
 static inline bool pas_compare_and_swap_uint8_weak(uint8_t* ptr, uint8_t old_value, uint8_t new_value)
 {
 #if PAS_COMPILER(CLANG)
-#if PAS_COMPILER(CLANG_ARM64_ATOMICS_DEPENDENCY)
+#if PAS_COMPILER(CLANG_ARM64_ATOMICS_LL_SC)
     uint32_t value = 0;
     uint32_t cond = 0;
     asm volatile (
-        "ldaxrb %w[value], [%x[ptr]]\t\n"
+        "ldxrb %w[value], [%x[ptr]]\t\n"
         "cmp %w[value], %w[old_value], uxtb\t\n"
         "b.ne 1f\t\n"
         "stlxrb %w[cond], %w[new_value], [%x[ptr]]\t\n"
@@ -276,6 +335,7 @@ static inline bool pas_compare_and_swap_uint8_weak(uint8_t* ptr, uint8_t old_val
     "2:\t\n"
         "mov %w[cond], wzr\t\n"
     "3:\t\n"
+        "dmb ish\t\n"
         /* outputs */  : [value]"=&r"(value), [cond]"=&r"(cond)
         /* inputs  */  : [old_value]"r"((uint32_t)old_value), [new_value]"r"((uint32_t)new_value), [ptr]"r"(ptr)
         /* clobbers */ : "cc", "memory"
@@ -292,12 +352,12 @@ static inline bool pas_compare_and_swap_uint8_weak(uint8_t* ptr, uint8_t old_val
 static inline uint8_t pas_compare_and_swap_uint8_strong(uint8_t* ptr, uint8_t old_value, uint8_t new_value)
 {
 #if PAS_COMPILER(CLANG)
-#if PAS_COMPILER(CLANG_ARM64_ATOMICS_DEPENDENCY)
+#if PAS_COMPILER(CLANG_ARM64_ATOMICS_LL_SC)
     uint32_t value = 0;
     uint32_t cond = 0;
     asm volatile (
     "0:\t\n"
-        "ldaxrb %w[value], [%x[ptr]]\t\n"
+        "ldxrb %w[value], [%x[ptr]]\t\n"
         "cmp %w[value], %w[old_value], uxtb\t\n"
         "b.ne 1f\t\n"
         "stlxrb %w[cond], %w[new_value], [%x[ptr]]\t\n"
@@ -306,6 +366,7 @@ static inline uint8_t pas_compare_and_swap_uint8_strong(uint8_t* ptr, uint8_t ol
     "1:\t\n"
         "clrex\t\n"
     "2:\t\n"
+        "dmb ish\t\n"
         /* outputs */  : [value]"=&r"(value), [cond]"=&r"(cond)
         /* inputs  */  : [old_value]"r"((uint32_t)old_value), [new_value]"r"((uint32_t)new_value), [ptr]"r"(ptr)
         /* clobbers */ : "cc", "memory"
@@ -324,11 +385,11 @@ static inline uint8_t pas_compare_and_swap_uint8_strong(uint8_t* ptr, uint8_t ol
 static inline bool pas_compare_and_swap_uint16_weak(uint16_t* ptr, uint16_t old_value, uint16_t new_value)
 {
 #if PAS_COMPILER(CLANG)
-#if PAS_COMPILER(CLANG_ARM64_ATOMICS_DEPENDENCY)
+#if PAS_COMPILER(CLANG_ARM64_ATOMICS_LL_SC)
     uint32_t value = 0;
     uint32_t cond = 0;
     asm volatile (
-        "ldaxrh %w[value], [%x[ptr]]\t\n"
+        "ldxrh %w[value], [%x[ptr]]\t\n"
         "cmp %w[value], %w[old_value], uxth\t\n"
         "b.ne 1f\t\n"
         "stlxrh %w[cond], %w[new_value], [%x[ptr]]\t\n"
@@ -342,6 +403,7 @@ static inline bool pas_compare_and_swap_uint16_weak(uint16_t* ptr, uint16_t old_
     "2:\t\n"
         "mov %w[cond], wzr\t\n"
     "3:\t\n"
+        "dmb ish\t\n"
         /* outputs */  : [value]"=&r"(value), [cond]"=&r"(cond)
         /* inputs  */  : [old_value]"r"((uint32_t)old_value), [new_value]"r"((uint32_t)new_value), [ptr]"r"(ptr)
         /* clobbers */ : "cc", "memory"
@@ -358,11 +420,11 @@ static inline bool pas_compare_and_swap_uint16_weak(uint16_t* ptr, uint16_t old_
 static inline bool pas_compare_and_swap_uint32_weak(uint32_t* ptr, uint32_t old_value, uint32_t new_value)
 {
 #if PAS_COMPILER(CLANG)
-#if PAS_COMPILER(CLANG_ARM64_ATOMICS_DEPENDENCY)
+#if PAS_COMPILER(CLANG_ARM64_ATOMICS_LL_SC)
     uint32_t value = 0;
     uint32_t cond = 0;
     asm volatile (
-        "ldaxr %w[value], [%x[ptr]]\t\n"
+        "ldxr %w[value], [%x[ptr]]\t\n"
         "cmp %w[value], %w[old_value]\t\n"
         "b.ne 1f\t\n"
         "stlxr %w[cond], %w[new_value], [%x[ptr]]\t\n"
@@ -376,6 +438,7 @@ static inline bool pas_compare_and_swap_uint32_weak(uint32_t* ptr, uint32_t old_
     "2:\t\n"
         "mov %w[cond], wzr\t\n"
     "3:\t\n"
+        "dmb ish\t\n"
         /* outputs */  : [value]"=&r"(value), [cond]"=&r"(cond)
         /* inputs  */  : [old_value]"r"(old_value), [new_value]"r"(new_value), [ptr]"r"(ptr)
         /* clobbers */ : "cc", "memory"
@@ -392,12 +455,12 @@ static inline bool pas_compare_and_swap_uint32_weak(uint32_t* ptr, uint32_t old_
 static inline uint32_t pas_compare_and_swap_uint32_strong(uint32_t* ptr, uint32_t old_value, uint32_t new_value)
 {
 #if PAS_COMPILER(CLANG)
-#if PAS_COMPILER(CLANG_ARM64_ATOMICS_DEPENDENCY)
+#if PAS_COMPILER(CLANG_ARM64_ATOMICS_LL_SC)
     uint32_t value = 0;
     uint32_t cond = 0;
     asm volatile (
     "0:\t\n"
-        "ldaxr %w[value], [%x[ptr]]\t\n"
+        "ldxr %w[value], [%x[ptr]]\t\n"
         "cmp %w[value], %w[old_value]\t\n"
         "b.ne 1f\t\n"
         "stlxr %w[cond], %w[new_value], [%x[ptr]]\t\n"
@@ -406,6 +469,7 @@ static inline uint32_t pas_compare_and_swap_uint32_strong(uint32_t* ptr, uint32_
     "1:\t\n"
         "clrex\t\n"
     "2:\t\n"
+        "dmb ish\t\n"
         /* outputs */  : [value]"=&r"(value), [cond]"=&r"(cond)
         /* inputs  */  : [old_value]"r"(old_value), [new_value]"r"(new_value), [ptr]"r"(ptr)
         /* clobbers */ : "cc", "memory"
@@ -424,11 +488,11 @@ static inline uint32_t pas_compare_and_swap_uint32_strong(uint32_t* ptr, uint32_
 static inline bool pas_compare_and_swap_uint64_weak(uint64_t* ptr, uint64_t old_value, uint64_t new_value)
 {
 #if PAS_COMPILER(CLANG)
-#if PAS_COMPILER(CLANG_ARM64_ATOMICS_DEPENDENCY)
+#if PAS_COMPILER(CLANG_ARM64_ATOMICS_LL_SC)
     uint64_t value = 0;
     uint64_t cond = 0;
     asm volatile (
-        "ldaxr %x[value], [%x[ptr]]\t\n"
+        "ldxr %x[value], [%x[ptr]]\t\n"
         "cmp %x[value], %x[old_value]\t\n"
         "b.ne 1f\t\n"
         "stlxr %w[cond], %x[new_value], [%x[ptr]]\t\n"
@@ -442,6 +506,7 @@ static inline bool pas_compare_and_swap_uint64_weak(uint64_t* ptr, uint64_t old_
     "2:\t\n"
         "mov %x[cond], xzr\t\n"
     "3:\t\n"
+        "dmb ish\t\n"
         /* outputs */  : [value]"=&r"(value), [cond]"=&r"(cond)
         /* inputs  */  : [old_value]"r"(old_value), [new_value]"r"(new_value), [ptr]"r"(ptr)
         /* clobbers */ : "cc", "memory"
@@ -458,12 +523,12 @@ static inline bool pas_compare_and_swap_uint64_weak(uint64_t* ptr, uint64_t old_
 static inline uint64_t pas_compare_and_swap_uint64_strong(uint64_t* ptr, uint64_t old_value, uint64_t new_value)
 {
 #if PAS_COMPILER(CLANG)
-#if PAS_COMPILER(CLANG_ARM64_ATOMICS_DEPENDENCY)
+#if PAS_COMPILER(CLANG_ARM64_ATOMICS_LL_SC)
     uint64_t value = 0;
     uint64_t cond = 0;
     asm volatile (
     "0:\t\n"
-        "ldaxr %x[value], [%x[ptr]]\t\n"
+        "ldxr %x[value], [%x[ptr]]\t\n"
         "cmp %x[value], %x[old_value]\t\n"
         "b.ne 1f\t\n"
         "stlxr %w[cond], %x[new_value], [%x[ptr]]\t\n"
@@ -472,6 +537,7 @@ static inline uint64_t pas_compare_and_swap_uint64_strong(uint64_t* ptr, uint64_
     "1:\t\n"
         "clrex\t\n"
     "2:\t\n"
+        "dmb ish\t\n"
         /* outputs */  : [value]"=&r"(value), [cond]"=&r"(cond)
         /* inputs  */  : [old_value]"r"(old_value), [new_value]"r"(new_value), [ptr]"r"(ptr)
         /* clobbers */ : "cc", "memory"
@@ -603,7 +669,7 @@ static inline bool pas_compare_and_swap_pair_weak(void* raw_ptr,
                                                   pas_pair old_value, pas_pair new_value)
 {
 #if PAS_COMPILER(CLANG)
-#if PAS_COMPILER(CLANG_ARM64_ATOMICS_DEPENDENCY)
+#if PAS_COMPILER(CLANG_ARM64_ATOMICS_LL_SC)
     uintptr_t low = 0;
     uintptr_t high = 0;
     uintptr_t old_low = pas_pair_low(old_value);
@@ -613,7 +679,7 @@ static inline bool pas_compare_and_swap_pair_weak(void* raw_ptr,
     uintptr_t cond = 0;
     uintptr_t temp = 0;
     asm volatile (
-        "ldaxp %x[low], %x[high], [%x[ptr]]\t\n"
+        "ldxp %x[low], %x[high], [%x[ptr]]\t\n"
         "eor %x[cond], %x[high], %x[old_high]\t\n"
         "eor %x[temp], %x[low], %x[old_low]\t\n"
         "orr %x[cond], %x[temp], %x[cond]\t\n"
@@ -629,6 +695,7 @@ static inline bool pas_compare_and_swap_pair_weak(void* raw_ptr,
     "2:\t\n"
         "mov %x[cond], xzr\t\n"
     "3:\t\n"
+        "dmb ish\t\n"
         /* outputs */  : [low]"=&r"(low), [high]"=&r"(high), [cond]"=&r"(cond), [temp]"=&r"(temp)
         /* inputs  */  : [old_low]"r"(old_low), [old_high]"r"(old_high), [new_low]"r"(new_low), [new_high]"r"(new_high), [ptr]"r"(raw_ptr)
         /* clobbers */ : "cc", "memory"
@@ -646,7 +713,7 @@ static inline pas_pair pas_compare_and_swap_pair_strong(void* raw_ptr,
                                                         pas_pair old_value, pas_pair new_value)
 {
 #if PAS_COMPILER(CLANG)
-#if PAS_COMPILER(CLANG_ARM64_ATOMICS_DEPENDENCY)
+#if PAS_COMPILER(CLANG_ARM64_ATOMICS_LL_SC)
     uintptr_t low = 0;
     uintptr_t high = 0;
     uintptr_t old_low = pas_pair_low(old_value);
@@ -657,7 +724,7 @@ static inline pas_pair pas_compare_and_swap_pair_strong(void* raw_ptr,
     uintptr_t temp = 0;
     asm volatile (
     "0:\t\n"
-        "ldaxp %x[low], %x[high], [%x[ptr]]\t\n"
+        "ldxp %x[low], %x[high], [%x[ptr]]\t\n"
         "eor %x[cond], %x[high], %x[old_high]\t\n"
         "eor %x[temp], %x[low], %x[old_low]\t\n"
         "orr %x[cond], %x[temp], %x[cond]\t\n"
@@ -668,6 +735,7 @@ static inline pas_pair pas_compare_and_swap_pair_strong(void* raw_ptr,
     "1:\t\n"
         "clrex\t\n"
     "2:\t\n"
+        "dmb ish\t\n"
         /* outputs */  : [low]"=&r"(low), [high]"=&r"(high), [cond]"=&r"(cond), [temp]"=&r"(temp)
         /* inputs  */  : [old_low]"r"(old_low), [old_high]"r"(old_high), [new_low]"r"(new_low), [new_high]"r"(new_high), [ptr]"r"(raw_ptr)
         /* clobbers */ : "cc", "memory"
@@ -683,26 +751,11 @@ static inline pas_pair pas_compare_and_swap_pair_strong(void* raw_ptr,
 #endif
 }
 
-static inline pas_pair pas_atomic_load_pair(void* raw_ptr)
+static inline pas_pair pas_atomic_load_pair_relaxed(void* raw_ptr)
 {
 #if PAS_COMPILER(CLANG)
-#if PAS_COMPILER(CLANG_ARM64_ATOMICS_DEPENDENCY)
-    uintptr_t low = 0;
-    uintptr_t high = 0;
-    uint32_t cond = 0;
-    asm volatile (
-    "0:\t\n"
-        "ldxp %x[low], %x[high], [%x[ptr]]\t\n"
-        "stxp %w[cond], %x[low], %x[high], [%x[ptr]]\t\n"
-        "cbnz %w[cond], 0b\t\n"
-        /* outputs */  : [low]"=&r"(low), [high]"=&r"(high), [cond]"=&r"(cond)
-        /* inputs  */  : [ptr]"r"(raw_ptr)
-        /* clobbers */ : "cc", "memory"
-    );
-    return pas_pair_create(low, high);
-#else
+    /* Since it is __ATOMIC_RELAXED, we do not need to care about memory barrier even when the implementation uses LL/SC. */
     return __c11_atomic_load((_Atomic pas_pair*)raw_ptr, __ATOMIC_RELAXED);
-#endif
 #else
     return __atomic_load_n((pas_pair*)raw_ptr, __ATOMIC_RELAXED);
 #endif
@@ -711,15 +764,16 @@ static inline pas_pair pas_atomic_load_pair(void* raw_ptr)
 static inline void pas_atomic_store_pair(void* raw_ptr, pas_pair value)
 {
 #if PAS_COMPILER(CLANG)
-#if PAS_COMPILER(CLANG_ARM64_ATOMICS_DEPENDENCY)
+#if PAS_COMPILER(CLANG_ARM64_ATOMICS_LL_SC)
     uintptr_t low = pas_pair_low(value);
     uintptr_t high = pas_pair_high(value);
     uintptr_t cond = 0;
     asm volatile (
     "0:\t\n"
-        "ldaxp xzr, %x[cond], [%x[ptr]]\t\n"
+        "ldxp xzr, %x[cond], [%x[ptr]]\t\n"
         "stlxp %w[cond], %x[low], %x[high], [%x[ptr]]\t\n"
         "cbnz %w[cond], 0b\t\n"
+        "dmb ish\t\n"
         /* outputs */  : [cond]"=&r"(cond)
         /* inputs  */  : [low]"r"(low), [high]"r"(high), [ptr]"r"(raw_ptr)
         /* clobbers */ : "cc", "memory"
