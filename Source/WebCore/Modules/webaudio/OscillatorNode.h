@@ -52,10 +52,9 @@ public:
 
     void setPeriodicWave(PeriodicWave&);
 
-protected:
-    explicit OscillatorNode(BaseAudioContext&, const OscillatorOptions& = { });
-
 private:
+    OscillatorNode(BaseAudioContext&, const OscillatorOptions& = { });
+
     void process(size_t framesToProcess) final;
 
     double tailTime() const final { return 0; }

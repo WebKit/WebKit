@@ -51,7 +51,6 @@ AudioScheduledSourceNode::AudioScheduledSourceNode(BaseAudioContext& context, No
     : AudioNode(context, type)
     , ActiveDOMObject(context.scriptExecutionContext())
 {
-    suspendIfNeeded();
 }
 
 void AudioScheduledSourceNode::updateSchedulingInfo(size_t quantumFrameSize, AudioBus& outputBus, size_t& quantumFrameOffset, size_t& nonSilentFramesToProcess, double& startFrameOffset)

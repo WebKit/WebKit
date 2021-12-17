@@ -82,10 +82,9 @@ public:
 
     const char* activeDOMObjectName() const override { return "AudioBufferSourceNode"; }
 
-protected:
-    explicit AudioBufferSourceNode(BaseAudioContext&);
-
 private:
+    AudioBufferSourceNode(BaseAudioContext&);
+
     double tailTime() const final { return 0; }
     double latencyTime() const final { return 0; }
 
