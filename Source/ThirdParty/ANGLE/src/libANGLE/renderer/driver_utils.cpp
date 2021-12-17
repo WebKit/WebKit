@@ -146,6 +146,8 @@ const char *GetVendorString(uint32_t vendorId)
             return "ARM";
         case VENDOR_ID_APPLE:
             return "Apple";
+        case VENDOR_ID_MICROSOFT:
+            return "Microsoft";
         case VENDOR_ID_BROADCOM:
             return "Broadcom";
         case VENDOR_ID_GOOGLE:
@@ -160,6 +162,12 @@ const char *GetVendorString(uint32_t vendorId)
             return "Imagination Technologies";
         case VENDOR_ID_QUALCOMM:
             return "Qualcomm";
+        case VENDOR_ID_SAMSUNG:
+            return "Samsung";
+        case VENDOR_ID_VMWARE:
+            return "VMware";
+        case VENDOR_ID_VIVANTE:
+            return "Vivante";
         case 0xba5eba11:  // Mock vendor ID used for tests.
             return "Test";
         case 0:

@@ -21,6 +21,7 @@ enum VendorID : uint32_t
     VENDOR_ID_AMD     = 0x1002,
     VENDOR_ID_APPLE   = 0x106B,
     VENDOR_ID_ARM     = 0x13B5,
+    VENDOR_ID_MICROSOFT = 0x1414,
     // Broadcom devices won't use PCI, but this is their Vulkan vendor id.
     VENDOR_ID_BROADCOM = 0x14E4,
     VENDOR_ID_GOOGLE   = 0x1AE0,

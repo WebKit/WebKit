@@ -1,3 +1,21 @@
+2021-12-17  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [ANGLE] "WARN: driver_utils.cpp:169 (rx::GetVendorString):! Unimplemented: rx::GetVendorString" on WinCairo debug testing bot
+        https://bugs.webkit.org/show_bug.cgi?id=234371
+
+        Reviewed by Kenneth Russell.
+
+        After r286603 updated ANGLE, WinCairo debug testing bot was
+        observing annoying warning message for all WebGL tessts.
+        > WARN: driver_utils.cpp:169 (rx::GetVendorString): 	! Unimplemented: rx::GetVendorString(..\..\Source\ThirdParty\ANGLE\src\libANGLE\renderer\driver_utils.cpp:169)
+
+        The vendor ID was 0x1414 (Microsoft).
+        <https://pcisig.com/membership/member-companies>
+
+        * src/libANGLE/renderer/driver_utils.cpp:
+        (rx::GetVendorString): Added more vendor strings for vendor IDs.
+        * src/libANGLE/renderer/driver_utils.h: Added VENDOR_ID_MICROSOFT.
+
 2021-12-17  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         REGRESSION (r287068): [macOS arm64] TestWebKitAPI.GraphicsContextGLCocoaTest.UnrecycledDisplayBuffersNoLeaks is failing
