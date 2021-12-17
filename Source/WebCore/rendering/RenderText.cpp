@@ -924,9 +924,9 @@ static inline float hyphenWidth(RenderText& renderer, const FontCascade& font)
     return font.width(textRun);
 }
 
-static float maxWordFragmentWidth(RenderText& renderer, const RenderStyle& style, const FontCascade& font, StringView word, unsigned minimumPrefixLength, unsigned minimumSuffixLength, unsigned& suffixStart, HashSet<const Font*>& fallbackFonts, GlyphOverflow& glyphOverflow)
+float RenderText::maxWordFragmentWidth(const RenderStyle& style, const FontCascade& font, StringView word, unsigned minimumPrefixLength, unsigned minimumSuffixLength, bool currentCharacterIsSpace, unsigned characterIndex, float xPos, float entireWordWidth, WordTrailingSpace& wordTrailingSpace, HashSet<const Font*>& fallbackFonts, GlyphOverflow& glyphOverflow)
 {
-    suffixStart = 0;
+    unsigned suffixStart = 0;
     if (word.length() <= minimumSuffixLength)
         return 0;
 
@@ -941,8 +941,13 @@ static float maxWordFragmentWidth(RenderText& renderer, const RenderStyle& style
 
     hyphenLocations.reverse();
 
-    // FIXME: Breaking the string at these places in the middle of words is completely broken with complex text.
-    float minimumFragmentWidthToConsider = font.pixelSize() * 5 / 4 + hyphenWidth(renderer, font);
+    // Consider the word "ABC-DEF-GHI" (where the '-' characters are hyphenation opportunities). We want to measure the width
+    // of "ABC-" and "DEF-", but not "GHI-". Instead, we should measure "GHI" the same way we measure regular unhyphenated
+    // words (by using wordTrailingSpace). Therefore, this function is split up into two parts - one that measures each prefix,
+    // and one that measures the single last suffix.
+
+    // FIXME: Breaking the string at these places in the middle of words doesn't work with complex text.
+    float minimumFragmentWidthToConsider = font.pixelSize() * 5 / 4 + hyphenWidth(*this, font);
     float maxFragmentWidth = 0;
     for (size_t k = 0; k < hyphenLocations.size(); ++k) {
         int fragmentLength = hyphenLocations[k] - suffixStart;
@@ -951,7 +956,7 @@ static float maxWordFragmentWidth(RenderText& renderer, const RenderStyle& style
         fragmentWithHyphen.append(style.hyphenString());
 
         TextRun run = RenderBlock::constructTextRun(fragmentWithHyphen.toString(), style);
-        run.setCharacterScanForCodePath(!renderer.canUseSimpleFontCodePath());
+        run.setCharacterScanForCodePath(!canUseSimpleFontCodePath());
         float fragmentWidth = font.width(run, &fallbackFonts, &glyphOverflow);
 
         // Narrow prefixes are ignored. See tryHyphenating in RenderBlockLineLayout.cpp.
@@ -962,7 +967,22 @@ static float maxWordFragmentWidth(RenderText& renderer, const RenderStyle& style
         maxFragmentWidth = std::max(maxFragmentWidth, fragmentWidth);
     }
 
-    return maxFragmentWidth;
+    if (!suffixStart) {
+        // We didn't find any hyphenation opportunities that we're willing to actually use.
+        // Therefore, the width of the maximum fragment is just ... the width of the entire word.
+        return entireWordWidth;
+    }
+
+    float suffixWidth;
+    std::optional<float> wordTrailingSpaceWidth;
+    if (currentCharacterIsSpace)
+        wordTrailingSpaceWidth = wordTrailingSpace.width(fallbackFonts);
+    if (wordTrailingSpaceWidth)
+        suffixWidth = widthFromCache(font, characterIndex + suffixStart, word.length() - suffixStart + 1, xPos, 0, 0, style) - wordTrailingSpaceWidth.value();
+    else
+        suffixWidth = widthFromCache(font, characterIndex + suffixStart, word.length() - suffixStart, xPos, 0, 0, style);
+
+    return std::max(maxFragmentWidth, suffixWidth);
 }
 
 void RenderText::computePreferredLogicalWidths(float leadWidth, HashSet<const Font*>& fallbackFonts, GlyphOverflow& glyphOverflow)
@@ -1108,25 +1128,9 @@ void RenderText::computePreferredLogicalWidths(float leadWidth, HashSet<const Fo
             }
 
             if (w > maxWordWidth) {
-                unsigned suffixStart;
-                float maxFragmentWidth = maxWordFragmentWidth(*this, style, font, StringView(string).substring(i, wordLen), minimumPrefixLength, minimumSuffixLength, suffixStart, fallbackFonts, glyphOverflow);
-
-                if (suffixStart) {
-                    float suffixWidth;
-                    std::optional<float> wordTrailingSpaceWidth;
-                    if (isSpace)
-                        wordTrailingSpaceWidth = wordTrailingSpace.width(fallbackFonts);
-                    if (wordTrailingSpaceWidth)
-                        suffixWidth = widthFromCache(font, i + suffixStart, wordLen - suffixStart + 1, leadWidth + currMaxWidth, 0, 0, style) - wordTrailingSpaceWidth.value();
-                    else
-                        suffixWidth = widthFromCache(font, i + suffixStart, wordLen - suffixStart, leadWidth + currMaxWidth, 0, 0, style);
-
-                    maxFragmentWidth = std::max(maxFragmentWidth, suffixWidth);
-
-                    currMinWidth += maxFragmentWidth - w;
-                    maxWordWidth = std::max(maxWordWidth, maxFragmentWidth);
-                } else
-                    maxWordWidth = w;
+                auto maxFragmentWidth = maxWordFragmentWidth(style, font, StringView(string).substring(i, wordLen), minimumPrefixLength, minimumSuffixLength, isSpace, i, leadWidth + currMaxWidth, w, wordTrailingSpace, fallbackFonts, glyphOverflow);
+                currMinWidth += maxFragmentWidth - w; // This, when combined with "currMinWidth += w" below, has the effect of executing "currMinWidth += maxFragmentWidth" instead.
+                maxWordWidth = std::max(maxWordWidth, maxFragmentWidth);
             }
 
             if (!firstGlyphLeftOverflow)

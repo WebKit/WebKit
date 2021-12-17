@@ -33,6 +33,7 @@ namespace WebCore {
 class Font;
 class LegacyInlineTextBox;
 struct GlyphOverflow;
+struct WordTrailingSpace;
 
 namespace LayoutIntegration {
 class LineLayout;
@@ -221,6 +222,8 @@ private:
     void node() const = delete;
     void container() const = delete; // Use parent() instead.
     void container(const RenderLayerModelObject&, bool&) const = delete; // Use parent() instead.
+
+    float maxWordFragmentWidth(const RenderStyle&, const FontCascade&, StringView word, unsigned minimumPrefixLength, unsigned minimumSuffixLength, bool currentCharacterIsSpace, unsigned characterIndex, float xPos, float entireWordWidth, WordTrailingSpace&, HashSet<const Font*>& fallbackFonts, GlyphOverflow&);
 
     // We put the bitfield first to minimize padding on 64-bit.
     unsigned m_hasBreakableChar : 1; // Whether or not we can be broken into multiple lines.
