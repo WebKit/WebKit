@@ -1553,13 +1553,19 @@ public:
     }
 
     template<PtrTag resultTag, PtrTag locationTag>
-    static FunctionPtr<resultTag> readCallTarget(CodeLocationCall<locationTag>) { return { }; }
+    static FunctionPtr<resultTag> readCallTarget(CodeLocationCall<locationTag> call)
+    {
+        return FunctionPtr<resultTag>(MacroAssemblerCodePtr<resultTag>(Assembler::readCallTarget(call.dataLocation())));
+    }
 
     template<PtrTag tag>
     static void replaceWithVMHalt(CodeLocationLabel<tag>) { }
 
     template<PtrTag startTag, PtrTag destTag>
-    static void replaceWithJump(CodeLocationLabel<startTag>, CodeLocationLabel<destTag>) { }
+    static void replaceWithJump(CodeLocationLabel<startTag> instructionStart, CodeLocationLabel<destTag> destination)
+    {
+        Assembler::replaceWithJump(instructionStart.dataLocation(), destination.dataLocation());
+    }
 
     static ptrdiff_t maxJumpReplacementSize()
     {
@@ -1572,37 +1578,142 @@ public:
     }
 
     template<PtrTag tag>
-    static CodeLocationLabel<tag> startOfBranchPtrWithPatchOnRegister(CodeLocationDataLabelPtr<tag>) { return { }; }
+    static CodeLocationLabel<tag> startOfBranchPtrWithPatchOnRegister(CodeLocationDataLabelPtr<tag> label)
+    {
+        return label.labelAtOffset(0);
+    }
 
     template<PtrTag tag>
-    static CodeLocationLabel<tag> startOfPatchableBranchPtrWithPatchOnAddress(CodeLocationDataLabelPtr<tag>) { return { }; }
+    static void revertJumpReplacementToBranchPtrWithPatch(CodeLocationLabel<tag> jump, RegisterID, void* initialValue)
+    {
+        Assembler::revertJumpReplacementToPatch(jump.dataLocation(), initialValue);
+    }
 
     template<PtrTag tag>
-    static CodeLocationLabel<tag> startOfPatchableBranch32WithPatchOnAddress(CodeLocationDataLabel32<tag>) { return { }; }
-
-    template<PtrTag tag>
-    static void revertJumpReplacementToBranchPtrWithPatch(CodeLocationLabel<tag>, RegisterID, void*) { }
-
-    template<PtrTag tag>
-    static void revertJumpReplacementToPatchableBranchPtrWithPatch(CodeLocationLabel<tag>, Address, void*) { }
-
-    template<PtrTag tag>
-    static void revertJumpReplacementToPatchableBranch32WithPatch(CodeLocationLabel<tag>, Address, int32_t) { }
+    static void linkCall(void* code, Call call, FunctionPtr<tag> function)
+    {
+        if (!call.isFlagSet(Call::Near))
+            Assembler::linkPointer(code, call.m_label, function.executableAddress());
+        else
+            Assembler::linkCall(code, call.m_label, function.template retaggedExecutableAddress<NoPtrTag>());
+    }
 
     template<PtrTag callTag, PtrTag destTag>
-    static void repatchCall(CodeLocationCall<callTag>, CodeLocationLabel<destTag>) { }
+    static void repatchCall(CodeLocationCall<callTag> call, CodeLocationLabel<destTag> destination)
+    {
+        Assembler::repatchPointer(call.dataLocation(), destination.executableAddress());
+    }
 
     template<PtrTag callTag, PtrTag destTag>
-    static void repatchCall(CodeLocationCall<callTag>, FunctionPtr<destTag>) { }
+    static void repatchCall(CodeLocationCall<callTag> call, FunctionPtr<destTag> destination)
+    {
+        Assembler::repatchPointer(call.dataLocation(), destination.executableAddress());
+    }
 
-    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD_WITH_RETURN(jump, Jump);
-    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(farJump);
+    Jump jump()
+    {
+        auto label = m_assembler.label();
+        m_assembler.jumpPlaceholder(
+            [&] {
+                m_assembler.jalInsn(RISCV64Registers::zero, Imm::J<0>());
+            });
+        return Jump(label);
+    }
 
-    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD_WITH_RETURN(nearCall, Call);
-    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD_WITH_RETURN(nearTailCall, Call);
-    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD_WITH_RETURN(threadSafePatchableNearCall, Call);
+    void farJump(RegisterID target, PtrTag)
+    {
+        m_assembler.jalrInsn(RISCV64Registers::zero, target, Imm::I<0>());
+    }
 
-    void ret() { }
+    void farJump(AbsoluteAddress address, PtrTag)
+    {
+        auto temp = temps<Data>();
+        loadImmediate(TrustedImmPtr(address.m_ptr), temp.data());
+        m_assembler.ldInsn(temp.data(), temp.data(), Imm::I<0>());
+        m_assembler.jalrInsn(RISCV64Registers::zero, temp.data(), Imm::I<0>());
+    }
+
+    void farJump(Address address, PtrTag)
+    {
+        auto temp = temps<Data, Memory>();
+        auto resolution = resolveAddress(address, temp.memory());
+        m_assembler.ldInsn(temp.data(), resolution.base, Imm::I(resolution.offset));
+        m_assembler.jalrInsn(RISCV64Registers::zero, temp.data(), Imm::I<0>());
+    }
+
+    void farJump(BaseIndex address, PtrTag)
+    {
+        auto temp = temps<Data, Memory>();
+        auto resolution = resolveAddress(address, temp.memory());
+        m_assembler.ldInsn(temp.data(), resolution.base, Imm::I(resolution.offset));
+        m_assembler.jalrInsn(RISCV64Registers::zero, temp.data(), Imm::I<0>());
+    }
+
+    void farJump(TrustedImmPtr imm, PtrTag)
+    {
+        auto temp = temps<Data>();
+        loadImmediate(imm, temp.data());
+        m_assembler.jalrInsn(RISCV64Registers::zero, temp.data(), Imm::I<0>());
+    }
+
+    void farJump(RegisterID target, RegisterID jumpTag)
+    {
+        UNUSED_PARAM(jumpTag);
+        farJump(target, NoPtrTag);
+    }
+
+    void farJump(AbsoluteAddress address, RegisterID jumpTag)
+    {
+        UNUSED_PARAM(jumpTag);
+        farJump(address, NoPtrTag);
+    }
+
+    void farJump(Address address, RegisterID jumpTag)
+    {
+        UNUSED_PARAM(jumpTag);
+        farJump(address, NoPtrTag);
+    }
+
+    void farJump(BaseIndex address, RegisterID jumpTag)
+    {
+        UNUSED_PARAM(jumpTag);
+        farJump(address, NoPtrTag);
+    }
+
+    Call nearCall()
+    {
+        auto label = m_assembler.label();
+        m_assembler.nearCallPlaceholder(
+            [&] {
+                m_assembler.jalInsn(RISCV64Registers::x1, Imm::J<0>());
+            });
+        return Call(label, Call::LinkableNear);
+    }
+
+    Call nearTailCall()
+    {
+        auto label = m_assembler.label();
+        m_assembler.nearCallPlaceholder(
+            [&] {
+                m_assembler.jalInsn(RISCV64Registers::zero, Imm::J<0>());
+            });
+        return Call(label, Call::LinkableNearTail);
+    }
+
+    Call threadSafePatchableNearCall()
+    {
+        auto label = m_assembler.label();
+        m_assembler.nearCallPlaceholder(
+            [&] {
+                m_assembler.jalInsn(RISCV64Registers::x1, Imm::J<0>());
+            });
+        return Call(label, Call::LinkableNear);
+    }
+
+    void ret()
+    {
+        m_assembler.jalrInsn(RISCV64Registers::zero, RISCV64Registers::x1, Imm::I<0>());
+    }
 
     MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(test8);
     MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(test32);
@@ -1652,8 +1763,43 @@ public:
 
     MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(branchConvertDoubleToInt32);
 
-    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD_WITH_RETURN(call, Call);
-    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(callOperation);
+    Call call(PtrTag)
+    {
+        auto label = m_assembler.label();
+        m_assembler.pointerCallPlaceholder(
+            [&] {
+                auto temp = temps<Data>();
+                m_assembler.addiInsn(temp.data(), RISCV64Registers::zero, Imm::I<0>());
+                m_assembler.jalrInsn(RISCV64Registers::x1, temp.data(), Imm::I<0>());
+            });
+        return Call(label, Call::Linkable);
+    }
+
+    Call call(RegisterID target, PtrTag)
+    {
+        m_assembler.jalrInsn(RISCV64Registers::x1, target, Imm::I<0>());
+        return Call(m_assembler.label(), Call::None);
+    }
+
+    Call call(Address address, PtrTag)
+    {
+        auto temp = temps<Data, Memory>();
+        auto resolution = resolveAddress(address, temp.memory());
+        m_assembler.ldInsn(temp.data(), resolution.base, Imm::I(resolution.offset));
+        m_assembler.jalrInsn(RISCV64Registers::x1, temp.data(), Imm::I<0>());
+        return Call(m_assembler.label(), Call::None);
+    }
+
+    Call call(RegisterID callTag) { UNUSED_PARAM(callTag); return call(NoPtrTag); }
+    Call call(RegisterID target, RegisterID callTag) { UNUSED_PARAM(callTag); return call(target, NoPtrTag); }
+    Call call(Address address, RegisterID callTag) { UNUSED_PARAM(callTag); return call(address, NoPtrTag); }
+
+    void callOperation(const FunctionPtr<OperationPtrTag> operation)
+    {
+        auto temp = temps<Data>();
+        loadImmediate(TrustedImmPtr(operation.executableAddress()), temp.data());
+        m_assembler.jalrInsn(RISCV64Registers::x1, temp.data(), Imm::I<0>());
+    }
 
     void getEffectiveAddress(BaseIndex address, RegisterID dest)
     {
@@ -2070,9 +2216,6 @@ public:
     MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD_WITH_RETURN(branchAtomicWeakCAS16, JumpList);
     MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD_WITH_RETURN(branchAtomicWeakCAS32, JumpList);
     MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD_WITH_RETURN(branchAtomicWeakCAS64, JumpList);
-
-    template<PtrTag tag>
-    static void linkCall(void*, Call, FunctionPtr<tag>) { }
 
 private:
     struct Imm {

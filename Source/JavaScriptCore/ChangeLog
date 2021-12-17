@@ -1,3 +1,87 @@
+2021-12-17  Zan Dobersek  <zdobersek@igalia.com>
+
+        [RISCV64] Implement linking and patching support in RISCV64Assembler
+        https://bugs.webkit.org/show_bug.cgi?id=234398
+
+        Reviewed by Yusuke Suzuki.
+
+        Populate RISCV64Assembler class with the necessary implementations and
+        facilities to support linking and patching operations. Implementations
+        of different methods in MacroAssemblerRISCV64 covering calls, jumps
+        and patches are also added.
+
+        Helper structs are added in the RISCV64Assembler class that cover
+        linking of jumps, calls or branches and patching of pointer values.
+        Relevant methods are also implemented to utilize these helpers.
+
+        RISCV64Assembler also gains helper methods that generate placeholders
+        for the specific type of linking or patching. The passed-in functor is
+        then invoked, enabling the user (MacroAssemblerRISCV64 implementation)
+        to additionally generate the desired instruction sequence that utilizes
+        the given placeholder.
+
+        In MacroAssemblerRISCV64, different noop methods covering jumps, calls,
+        linking and patching are replaced with the appropriate implementations.
+
+        * assembler/MacroAssemblerRISCV64.h:
+        (JSC::MacroAssemblerRISCV64::readCallTarget):
+        (JSC::MacroAssemblerRISCV64::replaceWithJump):
+        (JSC::MacroAssemblerRISCV64::startOfBranchPtrWithPatchOnRegister):
+        (JSC::MacroAssemblerRISCV64::revertJumpReplacementToBranchPtrWithPatch):
+        (JSC::MacroAssemblerRISCV64::linkCall):
+        (JSC::MacroAssemblerRISCV64::repatchCall):
+        (JSC::MacroAssemblerRISCV64::jump):
+        (JSC::MacroAssemblerRISCV64::farJump):
+        (JSC::MacroAssemblerRISCV64::nearCall):
+        (JSC::MacroAssemblerRISCV64::nearTailCall):
+        (JSC::MacroAssemblerRISCV64::threadSafePatchableNearCall):
+        (JSC::MacroAssemblerRISCV64::ret):
+        (JSC::MacroAssemblerRISCV64::call):
+        (JSC::MacroAssemblerRISCV64::callOperation):
+        (JSC::MacroAssemblerRISCV64::startOfPatchableBranchPtrWithPatchOnAddress): Deleted.
+        (JSC::MacroAssemblerRISCV64::startOfPatchableBranch32WithPatchOnAddress): Deleted.
+        (JSC::MacroAssemblerRISCV64::revertJumpReplacementToPatchableBranchPtrWithPatch): Deleted.
+        (JSC::MacroAssemblerRISCV64::revertJumpReplacementToPatchableBranch32WithPatch): Deleted.
+        * assembler/RISCV64Assembler.h:
+        (JSC::RISCV64Instructions::ImmediateBase::immediateMask):
+        (JSC::RISCV64Instructions::ImmediateBase::v):
+        (JSC::RISCV64Instructions::ImmediateDecomposition::ImmediateDecomposition):
+        (JSC::RISCV64Assembler::getDifferenceBetweenLabels):
+        (JSC::RISCV64Assembler::getCallReturnOffset):
+        (JSC::RISCV64Assembler::labelIgnoringWatchpoints):
+        (JSC::RISCV64Assembler::labelForWatchpoint):
+        (JSC::RISCV64Assembler::label):
+        (JSC::RISCV64Assembler::linkJump):
+        (JSC::RISCV64Assembler::linkCall):
+        (JSC::RISCV64Assembler::linkPointer):
+        (JSC::RISCV64Assembler::maxJumpReplacementSize):
+        (JSC::RISCV64Assembler::patchableJumpSize):
+        (JSC::RISCV64Assembler::repatchPointer):
+        (JSC::RISCV64Assembler::relinkJump):
+        (JSC::RISCV64Assembler::relinkJumpToNop):
+        (JSC::RISCV64Assembler::relinkCall):
+        (JSC::RISCV64Assembler::replaceWithJump):
+        (JSC::RISCV64Assembler::revertJumpReplacementToPatch):
+        (JSC::RISCV64Assembler::readCallTarget):
+        (JSC::RISCV64Assembler::cacheFlush):
+        (JSC::RISCV64Assembler::fillNops):
+        (JSC::RISCV64Assembler::jumpPlaceholder):
+        (JSC::RISCV64Assembler::branchPlaceholder):
+        (JSC::RISCV64Assembler::pointerCallPlaceholder):
+        (JSC::RISCV64Assembler::nearCallPlaceholder):
+        (JSC::RISCV64Assembler::LinkJumpOrCallImpl::apply):
+        (JSC::RISCV64Assembler::LinkJumpImpl::placeholderInsn):
+        (JSC::RISCV64Assembler::LinkJumpImpl::generatePlaceholder):
+        (JSC::RISCV64Assembler::LinkCallImpl::placeholderInsn):
+        (JSC::RISCV64Assembler::LinkCallImpl::generatePlaceholder):
+        (JSC::RISCV64Assembler::LinkBranchImpl::placeholderInsn):
+        (JSC::RISCV64Assembler::LinkBranchImpl::generatePlaceholder):
+        (JSC::RISCV64Assembler::LinkBranchImpl::apply):
+        (JSC::RISCV64Assembler::PatchPointerImpl::placeholderInsn):
+        (JSC::RISCV64Assembler::PatchPointerImpl::generatePlaceholder):
+        (JSC::RISCV64Assembler::PatchPointerImpl::apply):
+        (JSC::RISCV64Assembler::PatchPointerImpl::read):
+
 2021-12-16  Saam Barati  <sbarati@apple.com>
 
         Use arm64's fmax/fmin instructions in Wasm
