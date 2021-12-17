@@ -24,6 +24,7 @@
  */
 
 #import "config.h"
+#import "Color.h"
 #import "LegacyTileCache.h"
 
 #if PLATFORM(IOS_FAMILY)
