@@ -1,3 +1,16 @@
+2021-12-17  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, reverting r286850.
+
+        Put r282794 back in. It turns out it was an overall
+        progression after all
+
+        Reverted changeset:
+
+        "Unreviewed, reverting r282794."
+        https://bugs.webkit.org/show_bug.cgi?id=230517
+        https://commits.webkit.org/r286850
+
 2021-12-16  Per Arne Vollan  <pvollan@apple.com>
 
         [macOS] Adjust syscall filter
