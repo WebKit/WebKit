@@ -980,7 +980,7 @@ class WebkitFlatpak:
         command = flatpak_command
 
         if gather_output:
-            return run_sanitized(command, gather_output=True, ignore_stderr=True, env=flatpak_env)
+            return run_sanitized(command, gather_output=True, ignore_stderr=False, env=flatpak_env)
 
         try:
             return self.execute_command(command, stdout=stdout, env=flatpak_env, keep_signals=keep_signals)

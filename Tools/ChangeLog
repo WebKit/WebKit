@@ -1,3 +1,15 @@
+2021-12-16  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK][WPE] Don't ignore stderr when calling flatpak in update-webkitgtk-libs
+        https://bugs.webkit.org/show_bug.cgi?id=234407
+
+        Reviewed by Michael Catanzaro.
+
+        Print stderr when calling flatpak, is useful to debug problems when it fails.
+
+        * flatpak/flatpakutils.py:
+        (WebkitFlatpak.run_in_sandbox):
+
 2021-12-16  Alex Christensen  <achristensen@webkit.org>
 
         Unreviewed, reverting r287056.
