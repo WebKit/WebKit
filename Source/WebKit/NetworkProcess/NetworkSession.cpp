@@ -34,6 +34,7 @@
 #include "NetworkResourceLoadParameters.h"
 #include "NetworkResourceLoader.h"
 #include "NetworkSessionCreationParameters.h"
+#include "NetworkStorageManager.h"
 #include "NotificationManagerMessageHandlerMessages.h"
 #include "PingLoad.h"
 #include "PrivateClickMeasurementClientImpl.h"
@@ -201,6 +202,8 @@ void NetworkSession::invalidateAndCancel()
 #endif
     if (auto server = std::exchange(m_webIDBServer, nullptr))
         server->close();
+    if (auto manager = std::exchange(m_storageManager, nullptr))
+        manager->close();
 #if ASSERT_ENABLED
     m_isInvalidated = true;
 #endif
@@ -560,6 +563,8 @@ void NetworkSession::lowMemoryHandler(Critical)
     if (m_swServer)
         m_swServer->handleLowMemoryWarning();
 #endif
+    if (m_storageManager)
+        m_storageManager->handleLowMemoryWarning();
 }
 
 #if ENABLE(SERVICE_WORKER)
@@ -682,6 +687,16 @@ void NetworkSession::addIndexedDatabaseSession(const String& indexedDatabaseDire
         SandboxExtension::consumePermanently(handle);
         networkProcess().setSessionStorageQuotaManagerIDBRootPath(sessionID(), indexedDatabaseDirectory);
     }
+}
+
+void NetworkSession::addStorageManagerSession(const String& generalStoragePath, SandboxExtension::Handle& generalStoragePathHandle, const String& localStoragePath, SandboxExtension::Handle& localStoragePathHandle)
+{
+    if (m_storageManager)
+        return;
+
+    SandboxExtension::consumePermanently(generalStoragePathHandle);
+    SandboxExtension::consumePermanently(localStoragePathHandle);
+    m_storageManager = NetworkStorageManager::create(sessionID(), generalStoragePath, localStoragePath);
 }
 
 } // namespace WebKit

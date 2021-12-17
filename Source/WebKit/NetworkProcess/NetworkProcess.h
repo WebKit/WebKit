@@ -102,7 +102,6 @@ class NetworkConnectionToWebProcess;
 class NetworkProcessSupplement;
 class NetworkProximityManager;
 class NetworkResourceLoader;
-class NetworkStorageManager;
 class ProcessAssertion;
 class WebPageNetworkParameters;
 enum class CallDownloadDidStart : bool;
@@ -520,9 +519,6 @@ private:
     void addSessionStorageQuotaManager(PAL::SessionID, uint64_t defaultQuota, uint64_t defaultThirdPartyQuota, const String& cacheRootPath, SandboxExtension::Handle&);
     void removeSessionStorageQuotaManager(PAL::SessionID);
 
-    void addStorageManagerForSession(PAL::SessionID, const String& path, SandboxExtension::Handle&, const String& localStoragePath, SandboxExtension::Handle&);
-    void removeStorageManagerForSession(PAL::SessionID);
-
     // Connections to WebProcesses.
     HashMap<WebCore::ProcessIdentifier, Ref<NetworkConnectionToWebProcess>> m_webProcessConnections;
 
@@ -582,8 +578,6 @@ private:
 
     bool m_privateClickMeasurementEnabled { true };
     bool m_ftpEnabled { false };
-
-    HashMap<PAL::SessionID, Ref<NetworkStorageManager>> m_storageManagers; // FIXME: Should move to NetworkSession.
 };
 
 } // namespace WebKit

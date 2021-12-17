@@ -67,12 +67,13 @@ enum class Critical : bool;
 
 namespace WebKit {
 
+class NetworkBroadcastChannelRegistry;
 class NetworkDataTask;
 class NetworkLoadScheduler;
 class NetworkProcess;
 class NetworkResourceLoader;
-class NetworkBroadcastChannelRegistry;
 class NetworkSocketChannel;
+class NetworkStorageManager;
 class ServiceWorkerFetchTask;
 class WebIDBServer;
 class WebPageNetworkParameters;
@@ -210,6 +211,9 @@ public:
     void addIndexedDatabaseSession(const String& indexedDatabaseDirectory, SandboxExtension::Handle&);
     bool hasIDBDatabasePath() const { return !m_idbDatabasePath.isEmpty(); }
 
+    NetworkStorageManager* storageManager() { return m_storageManager.get(); }
+    void addStorageManagerSession(const String& generalStoragePath, SandboxExtension::Handle& generalStoragePathHandle, const String& localStoragePath, SandboxExtension::Handle& localStoragePathHandle);
+
     NetworkLoadScheduler& networkLoadScheduler();
     PCM::ManagerInterface& privateClickMeasurement() { return m_privateClickMeasurement.get(); }
     void setPrivateClickMeasurementDebugMode(bool);
@@ -304,6 +308,8 @@ protected:
 
     String m_idbDatabasePath;
     RefPtr<WebIDBServer> m_webIDBServer;
+
+    RefPtr<NetworkStorageManager> m_storageManager;
 
 #if PLATFORM(COCOA)
     AppPrivacyReportTestingData m_appPrivacyReportTestingData;
