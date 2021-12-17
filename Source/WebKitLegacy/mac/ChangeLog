@@ -1,3 +1,11 @@
+2021-12-16  Alex Christensen  <achristensen@webkit.org>
+
+        Fix iOS debug build
+        https://bugs.webkit.org/show_bug.cgi?id=234365
+
+        * WebView/WebView.mm:
+        (-[WebView _preferencesChanged:]):
+
 2021-12-15  Darin Adler  <darin@apple.com>
 
         Many call sites use makeNeverDestroyed, but could instead take advantage of the NeverDestroyed deduction guide
