@@ -484,7 +484,8 @@ void InlineDisplayContentBuilder::adjustVisualGeometryForDisplayBox(size_t displ
     auto beforeInlineBoxContent = [&] {
         auto logicalRect = lineBox.logicalBorderBoxForInlineBox(layoutBox, boxGeometry);
         auto visualRect = InlineRect { lineBoxLogicalTop + logicalRect.top(), contentRightInVisualOrder, { }, logicalRect.height() };
-        if (!isFirstBox)
+        auto shouldApplyLeftSide = (isLeftToRightDirection && isFirstBox) || (!isLeftToRightDirection && isLastBox);
+        if (!shouldApplyLeftSide)
             return displayBox.setRect(visualRect, visualRect);
 
         contentRightInVisualOrder += marginLeft(boxGeometry, isLeftToRightDirection);
@@ -498,7 +499,8 @@ void InlineDisplayContentBuilder::adjustVisualGeometryForDisplayBox(size_t displ
         adjustVisualGeometryForDisplayBox(childDisplayBoxNodeIndex, contentRightInVisualOrder, lineBoxLogicalTop, displayBoxTree, boxes, lineBox, isFirstLastIndexesMap);
 
     auto afterInlineBoxContent = [&] {
-        if (!isLastBox)
+        auto shouldApplyRightSide = (isLeftToRightDirection && isLastBox) || (!isLeftToRightDirection && isFirstBox);
+        if (!shouldApplyRightSide)
             return displayBox.setRight(contentRightInVisualOrder);
 
         contentRightInVisualOrder += borderRight(boxGeometry, isLeftToRightDirection) + paddingRight(boxGeometry, isLeftToRightDirection);
