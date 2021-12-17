@@ -2257,3 +2257,7 @@ imported/w3c/web-platform-tests/fetch/api/policies/referrer-origin-service-worke
 imported/w3c/web-platform-tests/fetch/api/policies/referrer-origin-when-cross-origin-service-worker.https.html [ Pass Failure ]
 imported/w3c/web-platform-tests/fetch/api/policies/referrer-unsafe-url-service-worker.https.html [ Pass Failure ]
 imported/w3c/web-platform-tests/fetch/api/request/destination/fetch-destination-worker.https.html [ Pass Failure ]
+
+# See webkit.org/b/233498 for context on this pointerevents tests
+imported/w3c/web-platform-tests/pointerevents [ Skip ]
+pointerevents/mouse [ Failure ]

@@ -1,3 +1,20 @@
+2021-12-17  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        Unskip pointerevents layout tests
+        https://bugs.webkit.org/show_bug.cgi?id=233498
+
+        Unreviewed gardening.
+
+        This tests were skipped for all platforms.
+        Skip only globally the pointerevents/ios ones that seem to fail on
+        all platforms (even on iOS, at least on the open source builds).
+        On iOS also the ones imported from WPT fail but those work on
+        other platforms.
+
+        * TestExpectations:
+        * platform/ios-wk2/TestExpectations:
+        * platform/win/TestExpectations:
+
 2021-12-17  Gabriel Nava Marino  <gnavamarino@apple.com>
 
         null ptr deref in WebCore::findPlaceForCounter

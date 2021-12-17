@@ -4771,3 +4771,6 @@ fast/text/otsvg-canvas.html [ ImageOnlyFailure ]
 
 # The DocumentTimeline.maximumFrameRate property which this test is about is not available on Windows.
 webanimations/frame-rate/document-timeline-maximum-frame-rate.html [ Skip ]
+
+pointerevents/mouse/pointer-button-and-buttons.html [ Failure ]
+pointerevents/mouse/pointer-capture.html [ Failure ]
