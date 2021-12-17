@@ -45,6 +45,7 @@ enum class PropertyAttribute : unsigned {
     Accessor          = 1 << 4,  // property is a getter/setter
     CustomAccessor    = 1 << 5,
     CustomValue       = 1 << 6,
+    DOMLegacyAccessor = 1 << 7, // property is a DOM legacy accessor, which holds caller's global object when it is materialized.
     CustomAccessorOrValue = CustomAccessor | CustomValue,
     AccessorOrCustomAccessorOrValue = Accessor | CustomAccessor | CustomValue,
     ReadOnlyOrAccessorOrCustomAccessor = ReadOnly | Accessor | CustomAccessor,

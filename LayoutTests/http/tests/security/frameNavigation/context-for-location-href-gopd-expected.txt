@@ -1,2 +1,2 @@
-document.referrer = http://127.0.0.1:8000/security/frameNavigation/context-for-location-href-gopd.html
+document.referrer = http://127.0.0.1:8000/security/frameNavigation/resources/middle-frame-for-location.html
 
