@@ -173,6 +173,17 @@ void ContentSecurityPolicy::didReceiveHeaders(const ContentSecurityPolicyRespons
     m_httpStatusCode = headers.m_httpStatusCode;
 }
 
+void ContentSecurityPolicy::didReceiveHeaders(const ContentSecurityPolicy& other, ReportParsingErrors reportParsingErrors)
+{
+    SetForScope<bool> isReportingEnabled(m_isReportingEnabled, reportParsingErrors == ReportParsingErrors::Yes);
+    for (auto& policy : other.m_policies)
+        didReceiveHeader(policy->header(), policy->headerType(), ContentSecurityPolicy::PolicyFrom::HTTPHeader, String { });
+    m_referrer = other.m_referrer;
+    m_httpStatusCode = other.m_httpStatusCode;
+    m_upgradeInsecureRequests = other.m_upgradeInsecureRequests;
+    m_insecureNavigationRequestsToUpgrade.add(other.m_insecureNavigationRequestsToUpgrade.begin(), other.m_insecureNavigationRequestsToUpgrade.end());
+}
+
 void ContentSecurityPolicy::didReceiveHeader(const String& header, ContentSecurityPolicyHeaderType type, ContentSecurityPolicy::PolicyFrom policyFrom, String&& referrer, int httpStatusCode)
 {
     if (m_hasAPIPolicy)
