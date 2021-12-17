@@ -1,3 +1,19 @@
+2021-12-17  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        MSVC reports "wtf/RetainPtr.h(196): error C3861: 'CFAutorelease': identifier not found " with /permissive- on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=202842
+
+        Reviewed by Alex Christensen and Darin Adler.
+
+        MSVC /std:c++20 option implicitly enables /permissive- option.
+        However, RetainPtr.h can't compile because 'CFAutorelease' is not
+        defined.
+
+        CFAutorelease isn't available in AppleWin's CoreFoundation and
+        WinCairo's OpenCFLite as of now.
+
+        * wtf/RetainPtr.h: Enclosed RetainPtr<T>::autorelease with #if !OS(WINDOWS).
+
 2021-12-16  Alex Christensen  <achristensen@webkit.org>
 
         Unreviewed, reverting r287056.

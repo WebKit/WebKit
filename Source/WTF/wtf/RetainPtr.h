@@ -100,7 +100,9 @@ public:
 
     void clear();
     PtrType leakRef() WARN_UNUSED_RETURN;
+#if PLATFORM(COCOA)
     PtrType autorelease();
+#endif
 
 #ifdef __OBJC__
     id bridgingAutorelease();
@@ -204,6 +206,7 @@ template<typename T> inline auto RetainPtr<T>::leakRef() -> PtrType
     return fromStorageType(std::exchange(m_ptr, nullptr));
 }
 
+#if PLATFORM(COCOA)
 template<typename T> inline auto RetainPtr<T>::autorelease() -> PtrType
 {
 #ifdef __OBJC__
@@ -214,6 +217,7 @@ template<typename T> inline auto RetainPtr<T>::autorelease() -> PtrType
         CFAutorelease(m_ptr);
     return leakRef();
 }
+#endif // PLATFORM(COCOA)
 
 #ifdef __OBJC__
 
