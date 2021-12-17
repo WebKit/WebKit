@@ -1,3 +1,24 @@
+2021-12-17  Rob Buis  <rbuis@igalia.com>
+
+        [css-contain][Performance test] Add test contain-paint-text-nowrap.html
+        https://bugs.webkit.org/show_bug.cgi?id=234001
+
+        Reviewed by Simon Fraser.
+
+        Add test contain-paint-text-nowrap.html to verify that paint containment
+        improves the case where many contained children have inline text that is
+        wider than the container width. The improvement is because paint
+        containment clips the child content.
+
+        This patch also introduces the Containment directory to separate the
+        containment tests.
+
+        * Containment/contain-paint-nowrap.html:
+        * Containment/css-contain-change-size.html: Renamed from PerformanceTests/Layout/css-contain-change-size.html.
+        * Containment/css-contain-layout-size-inside-complex-document.html: Renamed from PerformanceTests/Layout/css-contain-layout-size-inside-complex-document.html.
+        * Containment/large-grid.html: Renamed from PerformanceTests/Layout/large-grid.html.
+        * Paint/lots-of-self-painting-layers.html: use let instead of var
+
 2021-12-14  Jean-Yves Avenard  <jya@apple.com>
 
         Distinguish contiguous SharedBuffer from non-contiguous one and guarantee immutability: part 3
