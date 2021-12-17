@@ -38,6 +38,13 @@
 
 namespace WebCore {
 
+Ref<FileSystemDirectoryEntry> FileSystemDirectoryEntry::create(ScriptExecutionContext& context, DOMFileSystem& filesystem, const String& virtualPath)
+{
+    auto result = adoptRef(*new FileSystemDirectoryEntry(context, filesystem, virtualPath));
+    result->suspendIfNeeded();
+    return result;
+}
+
 FileSystemDirectoryEntry::FileSystemDirectoryEntry(ScriptExecutionContext& context, DOMFileSystem& filesystem, const String& virtualPath)
     : FileSystemEntry(context, filesystem, virtualPath)
 {

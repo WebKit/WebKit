@@ -40,6 +40,7 @@
 #include "ServiceWorkerRegistration.h"
 #include "ServiceWorkerRegistrationOptions.h"
 #include "WorkerType.h"
+#include <wtf/Forward.h>
 #include <wtf/Threading.h>
 
 namespace WebCore {
@@ -57,7 +58,8 @@ class ServiceWorkerContainer final : public EventTargetWithInlineData, public Ac
     WTF_MAKE_NONCOPYABLE(ServiceWorkerContainer);
     WTF_MAKE_ISO_ALLOCATED(ServiceWorkerContainer);
 public:
-    ServiceWorkerContainer(ScriptExecutionContext*, NavigatorBase&);
+    static UniqueRef<ServiceWorkerContainer> create(ScriptExecutionContext*, NavigatorBase&);
+
     ~ServiceWorkerContainer();
 
     ServiceWorker* controller() const;
@@ -106,6 +108,8 @@ public:
     void getNavigationPreloadState(ServiceWorkerRegistrationIdentifier, NavigationPreloadStatePromise&&);
 
 private:
+    ServiceWorkerContainer(ScriptExecutionContext*, NavigatorBase&);
+
     bool addEventListener(const AtomString& eventType, Ref<EventListener>&&, const AddEventListenerOptions& = { }) final;
 
     void scheduleJob(std::unique_ptr<ServiceWorkerJob>&&);

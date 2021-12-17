@@ -42,7 +42,6 @@ namespace WebCore {
 
 class FetchBodyOwner : public RefCounted<FetchBodyOwner>, public ActiveDOMObject, public CanMakeWeakPtr<FetchBodyOwner> {
 public:
-    FetchBodyOwner(ScriptExecutionContext&, std::optional<FetchBody>&&, Ref<FetchHeaders>&&);
     ~FetchBodyOwner();
 
     bool bodyUsed() const { return isDisturbed(); }
@@ -73,6 +72,8 @@ public:
     const String& contentType() const { return m_contentType; }
 
 protected:
+    FetchBodyOwner(ScriptExecutionContext&, std::optional<FetchBody>&&, Ref<FetchHeaders>&&);
+
     const FetchBody& body() const { return *m_body; }
     FetchBody& body() { return *m_body; }
     bool isBodyNull() const { return !m_body; }

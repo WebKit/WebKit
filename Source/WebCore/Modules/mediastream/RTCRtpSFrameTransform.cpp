@@ -50,12 +50,17 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(RTCRtpSFrameTransform);
 
+Ref<RTCRtpSFrameTransform> RTCRtpSFrameTransform::create(ScriptExecutionContext& context, Options options)
+{
+    auto result = adoptRef(*new RTCRtpSFrameTransform(context, options));
+    result->suspendIfNeeded();
+    return result;
+}
+
 RTCRtpSFrameTransform::RTCRtpSFrameTransform(ScriptExecutionContext& context, Options options)
     : ActiveDOMObject(&context)
     , m_transformer(RTCRtpSFrameTransformer::create(options.compatibilityMode))
 {
-    suspendIfNeeded();
-
     m_transformer->setIsEncrypting(options.role == Role::Encrypt);
     m_transformer->setAuthenticationSize(options.authenticationSize);
 }

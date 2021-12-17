@@ -41,7 +41,6 @@ FileSystemHandle::FileSystemHandle(ScriptExecutionContext& context, FileSystemHa
     , m_identifier(identifier)
     , m_connection(WTFMove(connection))
 {
-    suspendIfNeeded();
 }
 
 FileSystemHandle::~FileSystemHandle()

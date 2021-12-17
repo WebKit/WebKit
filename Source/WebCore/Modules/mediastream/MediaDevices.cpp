@@ -59,8 +59,6 @@ inline MediaDevices::MediaDevices(Document& document)
     , m_eventNames(eventNames())
     , m_groupIdHashSalt(createCanonicalUUIDString())
 {
-    suspendIfNeeded();
-
     static_assert(static_cast<size_t>(MediaDevices::DisplayCaptureSurfaceType::Monitor) == static_cast<size_t>(RealtimeMediaSourceSettings::DisplaySurfaceType::Monitor), "MediaDevices::DisplayCaptureSurfaceType::Monitor is not equal to RealtimeMediaSourceSettings::DisplaySurfaceType::Monitor as expected");
     static_assert(static_cast<size_t>(MediaDevices::DisplayCaptureSurfaceType::Window) == static_cast<size_t>(RealtimeMediaSourceSettings::DisplaySurfaceType::Window), "MediaDevices::DisplayCaptureSurfaceType::Window is not RealtimeMediaSourceSettings::DisplaySurfaceType::Window as expected");
     static_assert(static_cast<size_t>(MediaDevices::DisplayCaptureSurfaceType::Application) == static_cast<size_t>(RealtimeMediaSourceSettings::DisplaySurfaceType::Application), "MediaDevices::DisplayCaptureSurfaceType::Application is not RealtimeMediaSourceSettings::DisplaySurfaceType::Application as expected");
@@ -81,7 +79,9 @@ void MediaDevices::stop()
 
 Ref<MediaDevices> MediaDevices::create(Document& document)
 {
-    return adoptRef(*new MediaDevices(document));
+    auto result = adoptRef(*new MediaDevices(document));
+    result->suspendIfNeeded();
+    return result;
 }
 
 Document* MediaDevices::document() const

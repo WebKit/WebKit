@@ -46,7 +46,6 @@ FetchBodyOwner::FetchBodyOwner(ScriptExecutionContext& context, std::optional<Fe
     , m_body(WTFMove(body))
     , m_headers(WTFMove(headers))
 {
-    suspendIfNeeded();
 }
 
 FetchBodyOwner::~FetchBodyOwner()

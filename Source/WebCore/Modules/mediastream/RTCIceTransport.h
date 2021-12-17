@@ -49,10 +49,7 @@ class RTCPeerConnection;
 class RTCIceTransport : public RefCounted<RTCIceTransport>, public ActiveDOMObject, public EventTargetWithInlineData, public RTCIceTransportBackend::Client {
     WTF_MAKE_ISO_ALLOCATED(RTCIceTransport);
 public:
-    static Ref<RTCIceTransport> create(ScriptExecutionContext& context, UniqueRef<RTCIceTransportBackend>&& backend, RTCPeerConnection& connection)
-    {
-        return adoptRef(*new RTCIceTransport(context, WTFMove(backend), connection));
-    }
+    static Ref<RTCIceTransport> create(ScriptExecutionContext&, UniqueRef<RTCIceTransportBackend>&&, RTCPeerConnection&);
     ~RTCIceTransport();
 
     RTCIceTransportState state() const { return m_transportState; }

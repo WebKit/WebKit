@@ -42,6 +42,13 @@ static const size_t minToneDurationMs = 40;
 static const size_t maxToneDurationMs = 6000;
 static const size_t minInterToneGapMs = 30;
 
+Ref<RTCDTMFSender> RTCDTMFSender::create(ScriptExecutionContext& context, RTCRtpSender& sender, std::unique_ptr<RTCDTMFSenderBackend>&& backend)
+{
+    auto result = adoptRef(*new RTCDTMFSender(context, sender, WTFMove(backend)));
+    result->suspendIfNeeded();
+    return result;
+}
+
 RTCDTMFSender::RTCDTMFSender(ScriptExecutionContext& context, RTCRtpSender& sender, std::unique_ptr<RTCDTMFSenderBackend>&& backend)
     : ActiveDOMObject(&context)
     , m_toneTimer(*this, &RTCDTMFSender::toneTimerFired)
@@ -51,8 +58,6 @@ RTCDTMFSender::RTCDTMFSender(ScriptExecutionContext& context, RTCRtpSender& send
     m_backend->onTonePlayed([this](const String&) {
         onTonePlayed();
     });
-
-    suspendIfNeeded();
 }
 
 RTCDTMFSender::~RTCDTMFSender() = default;

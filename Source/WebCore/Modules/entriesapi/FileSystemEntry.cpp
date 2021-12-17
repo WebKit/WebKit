@@ -47,7 +47,6 @@ FileSystemEntry::FileSystemEntry(ScriptExecutionContext& context, DOMFileSystem&
     , m_name(FileSystem::pathFileName(virtualPath))
     , m_virtualPath(virtualPath)
 {
-    suspendIfNeeded();
 }
 
 FileSystemEntry::~FileSystemEntry() = default;

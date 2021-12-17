@@ -42,13 +42,13 @@ PaymentResponse::PaymentResponse(ScriptExecutionContext* context, PaymentRequest
     : ActiveDOMObject { context }
     , m_request { request }
 {
-    suspendIfNeeded();
 }
 
 void PaymentResponse::finishConstruction()
 {
     ASSERT(!hasPendingActivity());
     m_pendingActivity = makePendingActivity(*this);
+    suspendIfNeeded();
 }
 
 PaymentResponse::~PaymentResponse()

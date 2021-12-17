@@ -56,7 +56,7 @@ public:
         CompatibilityMode compatibilityMode { CompatibilityMode::None };
     };
 
-    static Ref<RTCRtpSFrameTransform> create(ScriptExecutionContext& context, Options options) { return adoptRef(*new RTCRtpSFrameTransform(context, options)); }
+    static Ref<RTCRtpSFrameTransform> create(ScriptExecutionContext&, Options);
     ~RTCRtpSFrameTransform();
 
     void setEncryptionKey(CryptoKey&, std::optional<uint64_t>, DOMPromiseDeferred<void>&&);

@@ -55,6 +55,7 @@ Ref<FetchResponse> FetchResponse::create(ScriptExecutionContext& context, std::o
     auto headers = isOpaque ? FetchHeaders::create(guard) : FetchHeaders::create(guard, HTTPHeaderMap { response.httpHeaderFields() });
 
     auto fetchResponse = adoptRef(*new FetchResponse(context, WTFMove(body), WTFMove(headers), WTFMove(response)));
+    fetchResponse->suspendIfNeeded();
     fetchResponse->updateContentType();
     if (!isSynthetic)
         fetchResponse->m_filteredResponse = ResourceResponseBase::filter(fetchResponse->m_internalResponse, ResourceResponse::PerformExposeAllHeadersCheck::Yes);
@@ -127,6 +128,7 @@ ExceptionOr<Ref<FetchResponse>> FetchResponse::create(ScriptExecutionContext& co
     
     // 12. Return r.
     auto r = adoptRef(*new FetchResponse(context, WTFMove(extractedBody), WTFMove(headers), { }));
+    r->suspendIfNeeded();
 
     r->m_contentType = contentType;
     auto mimeType = extractMIMETypeFromMediaType(contentType);
@@ -142,6 +144,7 @@ ExceptionOr<Ref<FetchResponse>> FetchResponse::create(ScriptExecutionContext& co
 Ref<FetchResponse> FetchResponse::error(ScriptExecutionContext& context)
 {
     auto response = adoptRef(*new FetchResponse(context, { }, FetchHeaders::create(FetchHeaders::Guard::Immutable), { }));
+    response->suspendIfNeeded();
     response->m_internalResponse.setType(Type::Error);
     return response;
 }
@@ -157,6 +160,7 @@ ExceptionOr<Ref<FetchResponse>> FetchResponse::redirect(ScriptExecutionContext& 
     if (!ResourceResponse::isRedirectionStatusCode(status))
         return Exception { RangeError, makeString("Status code ", status, "is not a redirection status code") };
     auto redirectResponse = adoptRef(*new FetchResponse(context, { }, FetchHeaders::create(FetchHeaders::Guard::Immutable), { }));
+    redirectResponse->suspendIfNeeded();
     redirectResponse->m_internalResponse.setHTTPStatusCode(status);
     redirectResponse->m_internalResponse.setHTTPHeaderField(HTTPHeaderName::Location, requestURL.string());
     redirectResponse->m_headers->fastSet(HTTPHeaderName::Location, requestURL.string());
@@ -251,6 +255,7 @@ void FetchResponse::fetch(ScriptExecutionContext& context, FetchRequest& request
     InspectorInstrumentation::willFetch(context, request.url().string());
 
     auto response = adoptRef(*new FetchResponse(context, FetchBody { }, FetchHeaders::create(FetchHeaders::Guard::Immutable), { }));
+    response->suspendIfNeeded();
 
     response->body().consumer().setAsLoading();
 

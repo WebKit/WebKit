@@ -38,7 +38,7 @@ class RTCDtlsTransport;
 class RTCSctpTransport final : public RefCounted<RTCSctpTransport>, public ActiveDOMObject, public EventTargetWithInlineData, public RTCSctpTransportBackend::Client {
     WTF_MAKE_ISO_ALLOCATED(RTCSctpTransport);
 public:
-    static Ref<RTCSctpTransport> create(ScriptExecutionContext& context, UniqueRef<RTCSctpTransportBackend>&& backend, Ref<RTCDtlsTransport>&& transport) { return adoptRef(*new RTCSctpTransport(context, WTFMove(backend), WTFMove(transport))); }
+    static Ref<RTCSctpTransport> create(ScriptExecutionContext&, UniqueRef<RTCSctpTransportBackend>&&, Ref<RTCDtlsTransport>&&);
     ~RTCSctpTransport();
 
     using RefCounted<RTCSctpTransport>::ref;

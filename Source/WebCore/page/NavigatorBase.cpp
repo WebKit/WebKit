@@ -37,6 +37,7 @@
 #include <wtf/Language.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/NumberOfCores.h>
+#include <wtf/UniqueRef.h>
 #include <wtf/text/WTFString.h>
 
 #if OS(LINUX)
@@ -163,7 +164,7 @@ ServiceWorkerContainer& NavigatorBase::serviceWorker()
 {
     ASSERT(RuntimeEnabledFeatures::sharedFeatures().serviceWorkerEnabled());
     if (!m_serviceWorkerContainer)
-        m_serviceWorkerContainer = makeUnique<ServiceWorkerContainer>(scriptExecutionContext(), *this);
+        m_serviceWorkerContainer = ServiceWorkerContainer::create(scriptExecutionContext(), *this).moveToUniquePtr();
     return *m_serviceWorkerContainer;
 }
 

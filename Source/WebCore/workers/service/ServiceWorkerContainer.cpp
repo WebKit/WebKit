@@ -75,12 +75,17 @@ static inline SWClientConnection& mainThreadConnection()
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(ServiceWorkerContainer);
 
+UniqueRef<ServiceWorkerContainer> ServiceWorkerContainer::create(ScriptExecutionContext* context, NavigatorBase& navigator)
+{
+    auto result = UniqueRef(*new ServiceWorkerContainer(context, navigator));
+    result->suspendIfNeeded();
+    return result;
+}
+
 ServiceWorkerContainer::ServiceWorkerContainer(ScriptExecutionContext* context, NavigatorBase& navigator)
     : ActiveDOMObject(context)
     , m_navigator(navigator)
 {
-    suspendIfNeeded();
-    
     // We should queue messages until the DOMContentLoaded event has fired or startMessages() has been called.
     if (is<Document>(context) && downcast<Document>(*context).parsing())
         m_shouldDeferMessageEvents = true;

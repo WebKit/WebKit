@@ -655,6 +655,7 @@ public:
         if (scriptExecutionContext.activeDOMObjectsAreStopped())
             return;
         auto pendingImageBitmap = new PendingImageBitmap(scriptExecutionContext, WTFMove(blob), WTFMove(options), WTFMove(rect), WTFMove(promise));
+        pendingImageBitmap->suspendIfNeeded();
         pendingImageBitmap->start(scriptExecutionContext);
     }
 
@@ -668,7 +669,6 @@ private:
         , m_promise(WTFMove(promise))
         , m_createImageBitmapTimer(&scriptExecutionContext, *this, &PendingImageBitmap::createImageBitmapAndResolvePromise)
     {
-        suspendIfNeeded();
         m_createImageBitmapTimer.suspendIfNeeded();
     }
 

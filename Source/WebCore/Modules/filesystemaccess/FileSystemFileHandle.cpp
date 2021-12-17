@@ -42,7 +42,9 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(FileSystemFileHandle);
 
 Ref<FileSystemFileHandle> FileSystemFileHandle::create(ScriptExecutionContext& context, String&& name, FileSystemHandleIdentifier identifier, Ref<FileSystemStorageConnection>&& connection)
 {
-    return adoptRef(*new FileSystemFileHandle(context, WTFMove(name), identifier, WTFMove(connection)));
+    auto result = adoptRef(*new FileSystemFileHandle(context, WTFMove(name), identifier, WTFMove(connection)));
+    result->suspendIfNeeded();
+    return result;
 }
 
 FileSystemFileHandle::FileSystemFileHandle(ScriptExecutionContext& context, String&& name, FileSystemHandleIdentifier identifier, Ref<FileSystemStorageConnection>&& connection)

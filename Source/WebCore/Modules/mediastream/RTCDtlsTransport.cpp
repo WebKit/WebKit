@@ -42,12 +42,18 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(RTCDtlsTransport);
 
+Ref<RTCDtlsTransport> RTCDtlsTransport::create(ScriptExecutionContext& context, UniqueRef<RTCDtlsTransportBackend>&& backend, Ref<RTCIceTransport>&& iceTransport)
+{
+    auto result = adoptRef(*new RTCDtlsTransport(context, WTFMove(backend), WTFMove(iceTransport)));
+    result->suspendIfNeeded();
+    return result;
+}
+
 RTCDtlsTransport::RTCDtlsTransport(ScriptExecutionContext& context, UniqueRef<RTCDtlsTransportBackend>&& backend, Ref<RTCIceTransport>&& iceTransport)
     : ActiveDOMObject(&context)
     , m_backend(WTFMove(backend))
     , m_iceTransport(WTFMove(iceTransport))
 {
-    suspendIfNeeded();
     m_backend->registerClient(*this);
 }
 

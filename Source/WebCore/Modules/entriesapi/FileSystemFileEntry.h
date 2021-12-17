@@ -35,10 +35,7 @@ class ScriptExecutionContext;
 
 class FileSystemFileEntry final : public FileSystemEntry {
 public:
-    static Ref<FileSystemFileEntry> create(ScriptExecutionContext& context, DOMFileSystem& filesystem, const String& virtualPath)
-    {
-        return adoptRef(*new FileSystemFileEntry(context, filesystem, virtualPath));
-    }
+    static Ref<FileSystemFileEntry> create(ScriptExecutionContext&, DOMFileSystem&, const String&);
 
     void file(ScriptExecutionContext&, Ref<FileCallback>&&, RefPtr<ErrorCallback>&& = nullptr);
 

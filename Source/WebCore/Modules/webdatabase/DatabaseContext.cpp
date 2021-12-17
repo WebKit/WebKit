@@ -97,9 +97,6 @@ namespace WebCore {
 DatabaseContext::DatabaseContext(Document& document)
     : ActiveDOMObject(document)
 {
-    // ActiveDOMObject expects this to be called to set internal flags.
-    suspendIfNeeded();
-
     ASSERT(!document.databaseContext());
     document.setDatabaseContext(this);
 }

@@ -36,10 +36,7 @@ class ScriptExecutionContext;
 
 class FileSystemDirectoryEntry final : public FileSystemEntry {
 public:
-    static Ref<FileSystemDirectoryEntry> create(ScriptExecutionContext& context, DOMFileSystem& filesystem, const String& virtualPath)
-    {
-        return adoptRef(*new FileSystemDirectoryEntry(context, filesystem, virtualPath));
-    }
+    static Ref<FileSystemDirectoryEntry> create(ScriptExecutionContext&, DOMFileSystem&, const String&);
 
     Ref<FileSystemDirectoryReader> createReader(ScriptExecutionContext&);
 
