@@ -3214,7 +3214,7 @@ bool AccessibilityRenderObject::inheritsPresentationalRole() const
     // those child elements are also presentational. For example, <li> becomes presentational from <ul>.
     // http://www.w3.org/WAI/PF/aria/complete#presentation
 
-    Span<const LazyNeverDestroyed<const HTMLQualifiedName>* const> parentTags;
+    Span<LazyNeverDestroyed<const HTMLQualifiedName>* const> parentTags;
     switch (roleValue()) {
     case AccessibilityRole::ListItem:
     case AccessibilityRole::ListMarker: {
