@@ -468,9 +468,11 @@ void InlineDisplayContentBuilder::adjustVisualGeometryForDisplayBox(size_t displ
 
     if (!displayBox.isNonRootInlineBox()) {
         displayBox.setLeft(contentRightInVisualOrder);
-        contentRightInVisualOrder += displayBox.width();
-        if (displayBox.isAtomicInlineLevelBox() || displayBox.isGenericInlineLevelBox())
-            contentRightInVisualOrder += marginRight(formattingState().boxGeometry(layoutBox), layoutBox.parent().style().isLeftToRightDirection());
+        if (displayBox.isAtomicInlineLevelBox() || displayBox.isGenericInlineLevelBox()) {
+            formattingState().boxGeometry(layoutBox).setLogicalLeft(LayoutUnit { contentRightInVisualOrder });
+            contentRightInVisualOrder += displayBox.width() + marginRight(formattingState().boxGeometry(layoutBox), layoutBox.parent().style().isLeftToRightDirection());
+        } else
+            contentRightInVisualOrder += displayBox.width();
         return;
     }
 
