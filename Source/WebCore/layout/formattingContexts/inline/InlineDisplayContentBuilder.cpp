@@ -454,7 +454,6 @@ size_t InlineDisplayContentBuilder::ensureDisplayBoxForContainer(const Container
 
 void InlineDisplayContentBuilder::adjustVisualGeometryForDisplayBox(size_t displayBoxNodeIndex, InlineLayoutUnit& contentRightInVisualOrder, InlineLayoutUnit lineBoxLogicalTop, const DisplayBoxTree& displayBoxTree, DisplayBoxes& boxes, const LineBox& lineBox)
 {
-    auto isLeftToRightDirection = root().style().isLeftToRightDirection();
     // Non-inline box display boxes just need a horizontal adjustment while
     // inline box type of display boxes need
     // 1. horizontal adjustment and margin/border/padding start offsetting on the first box
@@ -466,10 +465,11 @@ void InlineDisplayContentBuilder::adjustVisualGeometryForDisplayBox(size_t displ
         displayBox.setLeft(contentRightInVisualOrder);
         contentRightInVisualOrder += displayBox.width();
         if (displayBox.isAtomicInlineLevelBox() || displayBox.isGenericInlineLevelBox())
-            contentRightInVisualOrder += marginRight(formattingState().boxGeometry(layoutBox), isLeftToRightDirection);
+            contentRightInVisualOrder += marginRight(formattingState().boxGeometry(layoutBox), layoutBox.parent().style().isLeftToRightDirection());
         return;
     }
 
+    auto isLeftToRightDirection = layoutBox.style().isLeftToRightDirection();
     auto& boxGeometry = formattingState().boxGeometry(layoutBox);
     auto beforeInlineBoxContent = [&] {
         auto logicalRect = lineBox.logicalBorderBoxForInlineBox(layoutBox, boxGeometry);

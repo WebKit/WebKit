@@ -203,7 +203,7 @@ void LineLayout::updateLayoutBoxDimensions(const RenderBox& replacedOrInlineBloc
     replacedBoxGeometry.setContentBoxHeight(replacedOrInlineBlock.contentHeight());
 
     replacedBoxGeometry.setVerticalMargin({ replacedOrInlineBlock.marginTop(), replacedOrInlineBlock.marginBottom() });
-    auto isLeftToRightDirection = flow().style().isLeftToRightDirection();
+    auto isLeftToRightDirection = replacedOrInlineBlock.parent()->style().isLeftToRightDirection();
     replacedBoxGeometry.setHorizontalMargin(logicalMargin(replacedOrInlineBlock, isLeftToRightDirection));
     replacedBoxGeometry.setBorder(logicalBorder(replacedOrInlineBlock, isLeftToRightDirection));
     replacedBoxGeometry.setPadding(logicalPadding(replacedOrInlineBlock, isLeftToRightDirection));
@@ -233,7 +233,7 @@ void LineLayout::updateInlineBoxDimensions(const RenderInline& renderInline)
     auto shouldNotRetainBorderPaddingAndMarginEnd = renderInline.parent()->isAnonymousBlock() && !renderInline.isContinuation() && renderInline.inlineContinuation();
 
     boxGeometry.setVerticalMargin({ });
-    auto isLeftToRightDirection = flow().style().isLeftToRightDirection();
+    auto isLeftToRightDirection = renderInline.style().isLeftToRightDirection();
     boxGeometry.setHorizontalMargin(logicalMargin(renderInline, isLeftToRightDirection, !shouldNotRetainBorderPaddingAndMarginStart, !shouldNotRetainBorderPaddingAndMarginEnd));
     boxGeometry.setBorder(logicalBorder(renderInline, isLeftToRightDirection, !shouldNotRetainBorderPaddingAndMarginStart, !shouldNotRetainBorderPaddingAndMarginEnd));
     boxGeometry.setPadding(logicalPadding(renderInline, isLeftToRightDirection, !shouldNotRetainBorderPaddingAndMarginStart, !shouldNotRetainBorderPaddingAndMarginEnd));
