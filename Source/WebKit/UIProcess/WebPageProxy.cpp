@@ -4005,7 +4005,7 @@ void WebPageProxy::setIntrinsicDeviceScaleFactor(float scaleFactor)
 void WebPageProxy::windowScreenDidChange(PlatformDisplayID displayID, std::optional<unsigned> nominalFramesPerSecond)
 {
 #if HAVE(CVDISPLAYLINK)
-    if (hasRunningProcess() && m_displayID && m_registeredForFullSpeedUpdates)
+    if (m_process->hasConnection() && m_displayID && m_registeredForFullSpeedUpdates)
         process().processPool().setDisplayLinkForDisplayWantsFullSpeedUpdates(*m_process->connection(), *m_displayID, false);
 
     m_registeredForFullSpeedUpdates = false;

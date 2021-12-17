@@ -1,3 +1,19 @@
+2021-12-17  Russell Epstein  <repstein@apple.com>
+
+        Apply patch. rdar://problem/86635432
+
+    2021-12-17  Simon Fraser  <simon.fraser@apple.com>
+
+            rdar://86635432 (CrashTracer: Safari at com.apple.WebKit: WebKit::DisplayLink::decrementFullSpeedRequestClientCount)
+
+            Reviewed by Chris Dumez.
+
+            We need to check m_process->hasConnection() rather than hasRunningProcess(), since there
+            is a window of time where hasRunningProcess() is true but we don't have a connection yet.
+
+            * UIProcess/WebPageProxy.cpp:
+            (WebKit::WebPageProxy::windowScreenDidChange):
+
 2021-12-14  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r286999. rdar://problem/86425321
