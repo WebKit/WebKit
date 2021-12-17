@@ -36,6 +36,7 @@ namespace Layout {
 struct AncestorStack;
 class ContainerBox;
 struct DisplayBoxTree;
+struct IsFirstLastIndex;
 class InlineFormattingState;
 class LineBox;
 
@@ -62,7 +63,7 @@ private:
     void appendInlineDisplayBoxAtBidiBoundary(const Box&, DisplayBoxes&);
 
     void setInlineBoxGeometry(const Box&, const InlineRect&, bool isFirstInlineBoxFragment);
-    void adjustVisualGeometryForDisplayBox(size_t displayBoxNodeIndex, InlineLayoutUnit& accumulatedOffset, InlineLayoutUnit lineBoxLogicalTop, const DisplayBoxTree&, DisplayBoxes&, const LineBox&);
+    void adjustVisualGeometryForDisplayBox(size_t displayBoxNodeIndex, InlineLayoutUnit& accumulatedOffset, InlineLayoutUnit lineBoxLogicalTop, const DisplayBoxTree&, DisplayBoxes&, const LineBox&, const HashMap<const Box*, IsFirstLastIndex>&);
     size_t ensureDisplayBoxForContainer(const ContainerBox&, DisplayBoxTree&, AncestorStack&, DisplayBoxes&);
 
     const ContainerBox& root() const { return m_formattingContextRoot; }

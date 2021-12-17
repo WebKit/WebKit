@@ -452,7 +452,12 @@ size_t InlineDisplayContentBuilder::ensureDisplayBoxForContainer(const Container
     return createdDisplayBoxNodeForContainerBoxAndPushToAncestorStack(containerBox, boxes.size() - 1, enclosingDisplayBoxNodeIndexForContainer, displayBoxTree, ancestorStack);
 }
 
-void InlineDisplayContentBuilder::adjustVisualGeometryForDisplayBox(size_t displayBoxNodeIndex, InlineLayoutUnit& contentRightInVisualOrder, InlineLayoutUnit lineBoxLogicalTop, const DisplayBoxTree& displayBoxTree, DisplayBoxes& boxes, const LineBox& lineBox)
+struct IsFirstLastIndex {
+    std::optional<size_t> first;
+    std::optional<size_t> last;
+};
+using IsFirstLastIndexesMap = HashMap<const Box*, IsFirstLastIndex>;
+void InlineDisplayContentBuilder::adjustVisualGeometryForDisplayBox(size_t displayBoxNodeIndex, InlineLayoutUnit& contentRightInVisualOrder, InlineLayoutUnit lineBoxLogicalTop, const DisplayBoxTree& displayBoxTree, DisplayBoxes& boxes, const LineBox& lineBox, const IsFirstLastIndexesMap& isFirstLastIndexesMap)
 {
     // Non-inline box display boxes just need a horizontal adjustment while
     // inline box type of display boxes need
@@ -469,12 +474,15 @@ void InlineDisplayContentBuilder::adjustVisualGeometryForDisplayBox(size_t displ
         return;
     }
 
-    auto isLeftToRightDirection = layoutBox.style().isLeftToRightDirection();
     auto& boxGeometry = formattingState().boxGeometry(layoutBox);
+    auto isLeftToRightDirection = layoutBox.style().isLeftToRightDirection();
+    auto isFirstLastIndexes = isFirstLastIndexesMap.get(&layoutBox);
+    auto isFirstBox = isFirstLastIndexes.first && *isFirstLastIndexes.first == displayBoxNodeIndex;
+    auto isLastBox = isFirstLastIndexes.last && *isFirstLastIndexes.last == displayBoxNodeIndex;
     auto beforeInlineBoxContent = [&] {
         auto logicalRect = lineBox.logicalBorderBoxForInlineBox(layoutBox, boxGeometry);
         auto visualRect = InlineRect { lineBoxLogicalTop + logicalRect.top(), contentRightInVisualOrder, { }, logicalRect.height() };
-        if (!displayBox.isFirstForLayoutBox())
+        if (!isFirstBox)
             return displayBox.setRect(visualRect, visualRect);
 
         contentRightInVisualOrder += marginLeft(boxGeometry, isLeftToRightDirection);
@@ -485,10 +493,10 @@ void InlineDisplayContentBuilder::adjustVisualGeometryForDisplayBox(size_t displ
     beforeInlineBoxContent();
 
     for (auto childDisplayBoxNodeIndex : displayBoxTree.at(displayBoxNodeIndex).children)
-        adjustVisualGeometryForDisplayBox(childDisplayBoxNodeIndex, contentRightInVisualOrder, lineBoxLogicalTop, displayBoxTree, boxes, lineBox);
+        adjustVisualGeometryForDisplayBox(childDisplayBoxNodeIndex, contentRightInVisualOrder, lineBoxLogicalTop, displayBoxTree, boxes, lineBox, isFirstLastIndexesMap);
 
     auto afterInlineBoxContent = [&] {
-        if (!displayBox.isLastForLayoutBox())
+        if (!isLastBox)
             return displayBox.setRight(contentRightInVisualOrder);
 
         contentRightInVisualOrder += borderRight(boxGeometry, isLeftToRightDirection) + paddingRight(boxGeometry, isLeftToRightDirection);
@@ -504,7 +512,7 @@ void InlineDisplayContentBuilder::adjustVisualGeometryForDisplayBox(size_t displ
     };
     computeInkOverflow();
 
-    setInlineBoxGeometry(layoutBox, displayBox.rect(), displayBox.isFirstForLayoutBox());
+    setInlineBoxGeometry(layoutBox, displayBox.rect(), isFirstBox);
     if (lineBox.inlineLevelBoxForLayoutBox(layoutBox).hasContent())
         displayBox.setHasContent();
 }
@@ -586,21 +594,28 @@ void InlineDisplayContentBuilder::processBidiContent(const LineBuilder::LineCont
     createDisplayBoxesInVisualOrder();
 
     if (displayBoxTree.hasInlineBox()) {
+        IsFirstLastIndexesMap isFirstLastIndexesMap;
         auto computeIsFirstIsLastBox = [&] {
-            HashMap<const Box*, size_t> lastDisplayBoxIndexes;
             ASSERT(boxes[0].isRootInlineBox());
             for (size_t index = 1; index < boxes.size(); ++index) {
-                auto& displayBox = boxes[index];
-                if (!displayBox.isNonRootInlineBox())
+                if (!boxes[index].isNonRootInlineBox())
                     continue;
-                auto& layoutBox = displayBox.layoutBox();
-                auto isFirstBoxOnCurrentLine = lastDisplayBoxIndexes.set(&layoutBox, index).isNewEntry;
-                if (lineBox.inlineLevelBoxForLayoutBox(layoutBox).isFirstBox() && isFirstBoxOnCurrentLine)
-                    displayBox.setIsFirstForLayoutBox(true);
-            }
-            for (auto index : lastDisplayBoxIndexes.values()) {
-                if (lineBox.inlineLevelBoxForLayoutBox(boxes[index].layoutBox()).isLastBox())
-                    boxes[index].setIsLastForLayoutBox(true);
+                auto& layoutBox = boxes[index].layoutBox();
+                auto isFirstBox = lineBox.inlineLevelBoxForLayoutBox(layoutBox).isFirstBox();
+                auto isLastBox = lineBox.inlineLevelBoxForLayoutBox(layoutBox).isLastBox();
+                if (!isFirstBox && !isLastBox)
+                    continue;
+                if (isFirstBox) {
+                    auto isFirstLastIndexes = isFirstLastIndexesMap.get(&layoutBox);
+                    if (!isFirstLastIndexes.first || isLastBox)
+                        isFirstLastIndexesMap.set(&layoutBox, IsFirstLastIndex { isFirstLastIndexes.first.value_or(index), isLastBox ? index : isFirstLastIndexes.last });
+                    continue;
+                }
+                if (isLastBox) {
+                    ASSERT(!isFirstBox);
+                    isFirstLastIndexesMap.set(&layoutBox, IsFirstLastIndex { { }, index });
+                    continue;
+                }
             }
         };
         computeIsFirstIsLastBox();
@@ -609,7 +624,7 @@ void InlineDisplayContentBuilder::processBidiContent(const LineBuilder::LineCont
             auto contentRightInVisualOrder = lineBoxLogicalTopLeft.x() + contentStartInVisualOrder;
 
             for (auto childDisplayBoxNodeIndex : displayBoxTree.root().children)
-                adjustVisualGeometryForDisplayBox(childDisplayBoxNodeIndex, contentRightInVisualOrder, lineBoxLogicalTopLeft.y(), displayBoxTree, boxes, lineBox);
+                adjustVisualGeometryForDisplayBox(childDisplayBoxNodeIndex, contentRightInVisualOrder, lineBoxLogicalTopLeft.y(), displayBoxTree, boxes, lineBox, isFirstLastIndexesMap);
         };
         adjustVisualGeometryWithInlineBoxes();
     }
