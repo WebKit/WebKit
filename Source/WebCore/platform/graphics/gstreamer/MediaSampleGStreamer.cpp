@@ -42,7 +42,6 @@ MediaSampleGStreamer::MediaSampleGStreamer(GRefPtr<GstSample>&& sample, const Fl
     , m_videoRotation(videoRotation)
     , m_videoMirrored(videoMirrored)
 {
-    const GstClockTime minimumDuration = 1000; // 1 us
     ASSERT(sample);
     GstBuffer* buffer = gst_sample_get_buffer(sample.get());
     RELEASE_ASSERT(buffer);
@@ -50,35 +49,10 @@ MediaSampleGStreamer::MediaSampleGStreamer(GRefPtr<GstSample>&& sample, const Fl
     if (metadata)
         buffer = webkitGstBufferSetVideoSampleMetadata(buffer, WTFMove(metadata));
 
-    if (GST_BUFFER_PTS_IS_VALID(buffer))
-        m_pts = fromGstClockTime(GST_BUFFER_PTS(buffer));
-    if (GST_BUFFER_DTS_IS_VALID(buffer) || GST_BUFFER_PTS_IS_VALID(buffer))
-        m_dts = fromGstClockTime(GST_BUFFER_DTS_OR_PTS(buffer));
-    if (GST_BUFFER_DURATION_IS_VALID(buffer)) {
-        // Sometimes (albeit rarely, so far seen only at the end of a track)
-        // frames have very small durations, so small that may be under the
-        // precision we are working with and be truncated to zero.
-        // SourceBuffer algorithms are not expecting frames with zero-duration,
-        // so let's use something very small instead in those fringe cases.
-        m_duration = fromGstClockTime(std::max(GST_BUFFER_DURATION(buffer), minimumDuration));
-    } else {
-        // Unfortunately, sometimes samples don't provide a duration. This can never happen in MP4 because of the way
-        // the format is laid out, but it's pretty common in WebM.
-        // The good part is that durations don't matter for playback, just for buffered ranges and coded frame deletion.
-        // We want to pick something small enough to not cause unwanted frame deletion, but big enough to never be
-        // mistaken for a rounding artifact.
-        m_duration = fromGstClockTime(16666667); // 1/60 seconds
-    }
-
-    m_size = gst_buffer_get_size(buffer);
     m_sample = adoptGRef(gst_sample_new(buffer, gst_sample_get_caps(sample.get()), nullptr,
         gst_sample_get_info(sample.get()) ? gst_structure_copy(gst_sample_get_info(sample.get())) : nullptr));
 
-    if (GST_BUFFER_FLAG_IS_SET(buffer, GST_BUFFER_FLAG_DELTA_UNIT))
-        m_flags = MediaSample::None;
-
-    if (GST_BUFFER_FLAG_IS_SET(buffer, GST_BUFFER_FLAG_DECODE_ONLY))
-        m_flags = static_cast<MediaSample::SampleFlags>(m_flags | MediaSample::IsNonDisplaying);
+    initializeFromBuffer();
 }
 
 MediaSampleGStreamer::MediaSampleGStreamer(const FloatSize& presentationSize, const AtomString& trackId)
@@ -88,6 +62,13 @@ MediaSampleGStreamer::MediaSampleGStreamer(const FloatSize& presentationSize, co
     , m_trackId(trackId)
     , m_presentationSize(presentationSize)
 {
+}
+
+MediaSampleGStreamer::MediaSampleGStreamer(const GRefPtr<GstSample>& sample, VideoRotation videoRotation)
+    : m_sample(sample)
+    , m_videoRotation(videoRotation)
+{
+    initializeFromBuffer();
 }
 
 Ref<MediaSampleGStreamer> MediaSampleGStreamer::createFakeSample(GstCaps*, MediaTime pts, MediaTime dts, MediaTime duration, const FloatSize& presentationSize, const AtomString& trackId)
@@ -152,6 +133,41 @@ Ref<MediaSampleGStreamer> MediaSampleGStreamer::createImageSample(PixelBuffer&& 
         sample = adoptGRef(gst_sample_new(outputBuffer.get(), outputCaps.get(), nullptr, nullptr));
     }
     return create(WTFMove(sample), FloatSize(width, height), { }, videoRotation, videoMirrored);
+}
+
+void MediaSampleGStreamer::initializeFromBuffer()
+{
+    const GstClockTime minimumDuration = 1000; // 1 us
+    auto* buffer = gst_sample_get_buffer(m_sample.get());
+    RELEASE_ASSERT(buffer);
+
+    if (GST_BUFFER_PTS_IS_VALID(buffer))
+        m_pts = fromGstClockTime(GST_BUFFER_PTS(buffer));
+    if (GST_BUFFER_DTS_IS_VALID(buffer) || GST_BUFFER_PTS_IS_VALID(buffer))
+        m_dts = fromGstClockTime(GST_BUFFER_DTS_OR_PTS(buffer));
+    if (GST_BUFFER_DURATION_IS_VALID(buffer)) {
+        // Sometimes (albeit rarely, so far seen only at the end of a track)
+        // frames have very small durations, so small that may be under the
+        // precision we are working with and be truncated to zero.
+        // SourceBuffer algorithms are not expecting frames with zero-duration,
+        // so let's use something very small instead in those fringe cases.
+        m_duration = fromGstClockTime(std::max(GST_BUFFER_DURATION(buffer), minimumDuration));
+    } else {
+        // Unfortunately, sometimes samples don't provide a duration. This can never happen in MP4 because of the way
+        // the format is laid out, but it's pretty common in WebM.
+        // The good part is that durations don't matter for playback, just for buffered ranges and coded frame deletion.
+        // We want to pick something small enough to not cause unwanted frame deletion, but big enough to never be
+        // mistaken for a rounding artifact.
+        m_duration = fromGstClockTime(16666667); // 1/60 seconds
+    }
+
+    m_size = gst_buffer_get_size(buffer);
+
+    if (GST_BUFFER_FLAG_IS_SET(buffer, GST_BUFFER_FLAG_DELTA_UNIT))
+        m_flags = MediaSample::None;
+
+    if (GST_BUFFER_FLAG_IS_SET(buffer, GST_BUFFER_FLAG_DECODE_ONLY))
+        m_flags = static_cast<MediaSample::SampleFlags>(m_flags | MediaSample::IsNonDisplaying);
 }
 
 RefPtr<JSC::Uint8ClampedArray> MediaSampleGStreamer::getRGBAImageData() const

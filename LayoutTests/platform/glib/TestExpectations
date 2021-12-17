@@ -1349,8 +1349,7 @@ webkit.org/b/206464 webkit.org/b/218787 webrtc/peerconnection-page-cache-long.ht
 
 webkit.org/b/208125 webrtc/peerconnection-new-candidate-page-cache.html [ Pass Crash ]
 
-# Was Slow Failure before libwebrtc bumped to M96 in r285577
-webkit.org/b/216538 webrtc/captureCanvas-webrtc-software-h264-baseline.html [ Timeout ]
+webkit.org/b/216538 webrtc/captureCanvas-webrtc-software-h264-baseline.html [ Slow Failure ]
 
 webkit.org/b/216763 webrtc/captureCanvas-webrtc-software-h264-high.html [ Crash Failure ]
 
@@ -1369,10 +1368,6 @@ webkit.org/b/210385 imported/w3c/web-platform-tests/mediacapture-streams/MediaSt
 webkit.org/b/227987 http/tests/media/media-stream/get-display-media-prompt.html [ Timeout Pass ]
 
 webkit.org/b/229055 http/wpt/webrtc/sframe-transform-error.html [ Failure ]
-
-webkit.org/b/233740 http/wpt/webrtc/video-script-transform-keyframe-only.html [ Failure ]
-webkit.org/b/233740 webrtc/vp9-svc.html [ Timeout ]
-webkit.org/b/233740 webrtc/vp9.html [ Timeout ]
 
 webkit.org/b/233879 fast/mediastream/get-display-media-settings.html [ Failure ]
 

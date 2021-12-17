@@ -150,7 +150,7 @@ public:
             return WEBRTC_VIDEO_CODEC_ERROR;
         }
 
-        return WEBRTC_VIDEO_CODEC_OK;
+        return true;
     }
 
     int32_t RegisterDecodeCompleteCallback(webrtc::DecodedImageCallback* callback) override
@@ -240,7 +240,7 @@ public:
         auto timestamps = m_dtsPtsMap[GST_BUFFER_PTS(buffer)];
         m_dtsPtsMap.erase(GST_BUFFER_PTS(buffer));
 
-        auto frame(LibWebRTCVideoFrameFromGStreamerSample(WTFMove(sample), webrtc::kVideoRotation_0,
+        auto frame(convertGStreamerSampleToLibWebRTCVideoFrame(sample, webrtc::kVideoRotation_0,
             timestamps.timestamp, timestamps.renderTimeMs));
 
         GST_BUFFER_DTS(buffer) = GST_CLOCK_TIME_NONE;

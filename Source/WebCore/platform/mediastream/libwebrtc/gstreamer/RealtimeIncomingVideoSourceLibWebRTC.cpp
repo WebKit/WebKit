@@ -58,12 +58,14 @@ void RealtimeIncomingVideoSourceLibWebRTC::OnFrame(const webrtc::VideoFrame& fra
     if (!isProducingData())
         return;
 
-    callOnMainThread([protectedThis = Ref { *this }, frame] {
-        auto gstSample = GStreamerSampleFromLibWebRTCVideoFrame(frame);
+    if (frame.video_frame_buffer()->type() == webrtc::VideoFrameBuffer::Type::kNative) {
+        auto* framebuffer = static_cast<GStreamerVideoFrameLibWebRTC*>(frame.video_frame_buffer().get());
+        videoSampleAvailable(MediaSampleGStreamer::createWrappedSample(framebuffer->getSample(), static_cast<MediaSample::VideoRotation>(frame.rotation())), { });
+    } else {
+        auto gstSample = convertLibWebRTCVideoFrameToGStreamerSample(frame);
         auto metadata = std::make_optional(metadataFromVideoFrame(frame));
-        auto sample = MediaSampleGStreamer::create(WTFMove(gstSample), { }, { }, static_cast<MediaSample::VideoRotation>(frame.rotation()), false, WTFMove(metadata));
-        protectedThis->videoSampleAvailable(sample.get(), { });
-    });
+        videoSampleAvailable(MediaSampleGStreamer::create(WTFMove(gstSample), { }, { }, static_cast<MediaSample::VideoRotation>(frame.rotation()), false, WTFMove(metadata)), { });
+    }
 }
 
 } // namespace WebCore

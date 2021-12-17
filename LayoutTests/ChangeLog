@@ -1,3 +1,14 @@
+2021-12-17  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer][WebRTC] Huge memory leak
+        https://bugs.webkit.org/show_bug.cgi?id=234134
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        * platform/glib/TestExpectations: Update test expectations, #233740 was mostly due to video
+        decoder initialization wrongly reported as failed.
+        webrtc/captureCanvas-webrtc-software-h264-baseline.html no longer times out.
+
 2021-12-16  Tyler Wilcock  <tyler_w@apple.com>
 
         AX: Make aria-multiline.html, clipped-text-under-element.html, mixed-checkbox.html, and selection-states.html pass in isolated tree mode

@@ -228,7 +228,7 @@ public:
             return WEBRTC_VIDEO_CODEC_UNINITIALIZED;
         }
 
-        auto sample = GStreamerSampleFromLibWebRTCVideoFrame(frame);
+        auto sample = convertLibWebRTCVideoFrameToGStreamerSample(frame);
         auto buffer = gst_sample_get_buffer(sample.get());
 
         if (!GST_CLOCK_TIME_IS_VALID(m_firstFramePts)) {
