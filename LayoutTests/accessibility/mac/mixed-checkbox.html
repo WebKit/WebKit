@@ -21,24 +21,19 @@
     if (window.accessibilityController) {
 
           // aria-state=false
-          document.getElementById("box1").focus();
-          shouldBe("accessibilityController.focusedElement.intValue", "0");
+          shouldBe("accessibilityController.accessibleElementById('box1').intValue", "0");
 
           // aria-state=true
-          document.getElementById("box2").focus();
-          shouldBe("accessibilityController.focusedElement.intValue", "1");
+          shouldBe("accessibilityController.accessibleElementById('box2').intValue", "1");
 
           // aria-state=mixed
-          document.getElementById("box3").focus();
-          shouldBe("accessibilityController.focusedElement.intValue", "2");
+          shouldBe("accessibilityController.accessibleElementById('box3').intValue", "2");
 
           // no aria state, default to off
-          document.getElementById("box4").focus();
-          shouldBe("accessibilityController.focusedElement.intValue", "0");
+          shouldBe("accessibilityController.accessibleElementById('box4').intValue", "0");
 
           // native checkbox is also aria checkbox, default to native semantics
-          document.getElementById("box5").focus();
-          shouldBe("accessibilityController.focusedElement.intValue", "0");
+          shouldBe("accessibilityController.accessibleElementById('box5').intValue", "0");
 
     }
 
