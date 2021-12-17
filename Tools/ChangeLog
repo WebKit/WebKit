@@ -1,3 +1,19 @@
+2021-12-16  Jonathan Bedard  <jbedard@apple.com>
+
+        [reporelaypy] Accept pull-request hooks
+        https://bugs.webkit.org/show_bug.cgi?id=234406
+        <rdar://problem/86598451>
+
+        Reviewed by Dewei Zhu.
+
+        * Scripts/libraries/reporelaypy/reporelaypy/__init__.py: Bump version.
+        * Scripts/libraries/reporelaypy/reporelaypy/hooks.py:
+        (HookProcessor):
+        (HookProcessor.is_valid): Check 'pull_request' hook format.
+        * Scripts/libraries/reporelaypy/reporelaypy/tests/hooks_unittest.py:
+        (HooksUnittest.test_pull_request):
+        * Scripts/libraries/reporelaypy/setup.py: Bump version.
+
 2021-12-16  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK][WPE] Don't ignore stderr when calling flatpak in update-webkitgtk-libs

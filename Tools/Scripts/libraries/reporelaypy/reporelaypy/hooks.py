@@ -36,13 +36,17 @@ TIMEOUT = 30 * 60
 class HookProcessor(object):
     INBOUND_KEY = 'inbound-hooks'
     WORKER_HOOKS = 'worker-hooks'
-    TYPES = ('push',)
+    TYPES = ('pull_request', 'push')
 
     @classmethod
     def is_valid(cls, type, data):
         if type not in cls.TYPES or not isinstance(data, dict):
             return False
-        return type == 'push' and data.get('ref')
+        if type == 'push':
+            return bool(data.get('ref'))
+        if type == 'pull_request':
+            return bool(data.get('number')) and data.get('action') in ('edited', 'synchronize')
+        return True
 
     def __init__(self, checkout, database=None, num_workers=1, worker_index=0, callbacks=None):
         self.checkout = checkout

@@ -138,3 +138,36 @@ class HooksUnittest(testing.PathTestCase):
             status='Unauthorized Hook',
             message='HMAC verification failed failed',
         ))
+
+    @mock_app
+    def test_pull_request(self, app=None, client=None):
+        with OutputCapture() as captured, mocks.local.Git(self.path) as repo:
+            database = Database()
+            app.register_blueprint(HookReceiver(database=database, debug=True))
+
+            response = client.post(
+                '/hooks', headers={'X-GitHub-Event': 'pull_request'},
+                json=dict(action='synchronize', number=58),
+            )
+            self.assertEqual(response.status_code, 202)
+
+            def func(data):
+                print('action: {}'.format(data.get('action')))
+                print('number: {}'.format(data.get('number')))
+
+            processor = HookProcessor(
+                Checkout(path=self.path, url=repo.remote, sentinal=False),
+                database=database,
+                callbacks=dict(pull_request=func),
+            )
+            processor.process_hooks()
+
+            response = client.get('/hooks')
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual(response.json(), [])
+
+        self.assertEqual('', captured.stderr.getvalue())
+        self.assertEqual(
+            'action: synchronize\nnumber: 58\n',
+            captured.stdout.getvalue(),
+        )
