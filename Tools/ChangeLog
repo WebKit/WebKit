@@ -1,3 +1,15 @@
+2021-12-17  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Fix runscript's standalone ability to run
+        https://bugs.webkit.org/show_bug.cgi?id=234166
+
+        Reviewed by Mark Lam.
+
+        r286109 broke the ability to run `runscript` as a standalone script to test JSC stress test package on the device.
+        This patch reverts the ability back.
+
+        * Scripts/jsc-stress-test-helpers/shell-runner.sh:
+
 2021-12-17  Alex Christensen  <achristensen@webkit.org>
 
         Remove API::Object::Type::BundlePageGroup
