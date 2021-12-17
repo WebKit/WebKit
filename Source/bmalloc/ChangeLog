@@ -1,5 +1,17 @@
 2021-12-16  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [libpas] Enable libpas on ARM64 Darwin platforms (ARM64E is already enabled)
+        https://bugs.webkit.org/show_bug.cgi?id=234416
+
+        Reviewed by Filip Pizlo.
+
+        r287168 fixed libpas compare_and_swap on ARM64 so that we pass all libpas tests on ARM64 platforms.
+        Speedometer2 and JetStream2 are neutral, PLUM3 is 10.79% better, and RAMification is 2.83% better.
+
+        * bmalloc/BPlatform.h:
+
+2021-12-16  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [libpas] ARM64 CAS emulation loop needs dmb ish
         https://bugs.webkit.org/show_bug.cgi?id=234414
 
