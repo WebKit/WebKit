@@ -197,14 +197,11 @@ private:
     void windowFocusChanged(bool) final { }
     void windowAndViewFramesChanged(const WebCore::IntRect& windowFrameInScreenCoordinates, const WebCore::IntRect& viewFrameInWindowCoordinates) final { }
     void windowVisibilityChanged(bool) final { }
-    uint64_t pluginComplexTextInputIdentifier() const final { return 0; }
     void sendComplexTextInput(const String& textInput) final { }
     void setLayerHostingMode(LayerHostingMode) final { }
     WebCore::Scrollbar* horizontalScrollbar() final { return m_horizontalScrollbar.get(); }
     WebCore::Scrollbar* verticalScrollbar() final { return m_verticalScrollbar.get(); }
     void storageBlockingStateChanged(bool) final { }
-    void privateBrowsingStateChanged(bool) final { }
-    bool getFormValue(String& formValue) final { return false; }
     bool handleScroll(WebCore::ScrollDirection, WebCore::ScrollGranularity) final;
     RefPtr<WebCore::FragmentedSharedBuffer> liveResourceData() const final;
     void willDetachRenderer() final;

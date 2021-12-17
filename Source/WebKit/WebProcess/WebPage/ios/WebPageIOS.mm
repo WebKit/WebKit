@@ -557,11 +557,6 @@ void WebPage::clearServiceWorkerEntitlementOverride(CompletionHandler<void()>&& 
     completionHandler();
 }
 
-void WebPage::sendComplexTextInputToPlugin(uint64_t, const String&)
-{
-    notImplemented();
-}
-
 bool WebPage::performNonEditingBehaviorForSelector(const String&, WebCore::KeyboardEvent*)
 {
     notImplemented();

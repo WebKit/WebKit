@@ -1074,8 +1074,7 @@ bool RenderLayerBacking::updateConfiguration(const RenderLayer* compositingAnces
             pluginViewBase->attachPluginLayer();
         }
 #else
-        if (!pluginViewBase->shouldNotAddLayer())
-            m_graphicsLayer->setContentsToPlatformLayer(pluginViewBase->platformLayer(), GraphicsLayer::ContentsLayerPurpose::Plugin);
+        m_graphicsLayer->setContentsToPlatformLayer(pluginViewBase->platformLayer(), GraphicsLayer::ContentsLayerPurpose::Plugin);
 #endif
     }
 #if ENABLE(VIDEO)

@@ -321,14 +321,6 @@ bool WebPage::handleEditingKeyboardEvent(KeyboardEvent& event)
     return eventWasHandled;
 }
 
-void WebPage::sendComplexTextInputToPlugin(uint64_t pluginComplexTextInputIdentifier, const String& textInput)
-{
-    for (auto* pluginView : m_pluginViews) {
-        if (pluginView->sendComplexTextInput(pluginComplexTextInputIdentifier, textInput))
-            break;
-    }
-}
-
 void WebPage::attributedSubstringForCharacterRangeAsync(const EditingRange& editingRange, CompletionHandler<void(const WebCore::AttributedString&, const EditingRange&)>&& completionHandler)
 {
     Frame& frame = m_page->focusController().focusedOrMainFrame();

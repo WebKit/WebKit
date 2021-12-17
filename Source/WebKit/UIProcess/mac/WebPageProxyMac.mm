@@ -289,15 +289,6 @@ void WebPageProxy::setPromisedDataForImage(const String& pasteboardName, const S
 
 #endif
 
-// Complex text input support for plug-ins.
-void WebPageProxy::sendComplexTextInputToPlugin(uint64_t pluginComplexTextInputIdentifier, const String& textInput)
-{
-    if (!hasRunningProcess())
-        return;
-    
-    send(Messages::WebPage::SendComplexTextInputToPlugin(pluginComplexTextInputIdentifier, textInput));
-}
-
 void WebPageProxy::uppercaseWord()
 {
     send(Messages::WebPage::UppercaseWord());
@@ -357,11 +348,6 @@ void WebPageProxy::registerUIProcessAccessibilityTokens(const IPC::DataReference
         return;
 
     send(Messages::WebPage::RegisterUIProcessAccessibilityTokens(elementToken, windowToken));
-}
-
-void WebPageProxy::pluginFocusOrWindowFocusChanged(uint64_t pluginComplexTextInputIdentifier, bool pluginHasFocusAndWindowHasFocus)
-{
-    pageClient().pluginFocusOrWindowFocusChanged(pluginComplexTextInputIdentifier, pluginHasFocusAndWindowHasFocus);
 }
 
 void WebPageProxy::executeSavedCommandBySelector(const String& selector, CompletionHandler<void(bool)>&& completionHandler)

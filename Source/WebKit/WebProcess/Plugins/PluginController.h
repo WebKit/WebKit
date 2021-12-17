@@ -48,11 +48,6 @@ public:
     virtual void loadURL(uint64_t requestID, const String& method, const String& urlString, const String& target, 
                          const WebCore::HTTPHeaderMap& headerFields, const Vector<uint8_t>& httpBody, bool allowPopups) = 0;
 
-#if PLATFORM(COCOA)
-    // Tells the controller that the plug-in focus or window focus did change.
-    virtual void pluginFocusOrWindowFocusChanged(bool) = 0;
-#endif
-
     // Returns the contents scale factor.
     virtual float contentsScaleFactor() = 0;
 

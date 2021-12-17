@@ -227,9 +227,6 @@ public:
     // Tells the plug-in about window and plug-in frame changes.
     virtual void windowAndViewFramesChanged(const WebCore::IntRect& windowFrameInScreenCoordinates, const WebCore::IntRect& viewFrameInWindowCoordinates) = 0;
 
-    // Get the per complex text input identifier.
-    virtual uint64_t pluginComplexTextInputIdentifier() const = 0;
-
     // Send the complex text input to the plug-in.
     virtual void sendComplexTextInput(const String& textInput) = 0;
 
@@ -242,12 +239,6 @@ public:
 
     // Called when the storage blocking policy for this plug-in changes.
     virtual void storageBlockingStateChanged(bool) = 0;
-
-    // Called when the private browsing state for this plug-in changes.
-    virtual void privateBrowsingStateChanged(bool) = 0;
-
-    // Gets the form value representation for the plug-in, letting plug-ins participate in form submission.
-    virtual bool getFormValue(String& formValue) = 0;
 
     // Tells the plug-in that it should scroll. The plug-in should return true if it did scroll.
     virtual bool handleScroll(WebCore::ScrollDirection, WebCore::ScrollGranularity) = 0;
@@ -279,8 +270,6 @@ public:
     virtual bool existingSelectionContainsPoint(const WebCore::FloatPoint&) const = 0;
 
     virtual void mutedStateChanged(bool) { }
-
-    virtual bool canCreateTransientPaintingSnapshot() const { return true; }
 
     virtual bool requiresUnifiedScaleFactor() const { return false; }
 

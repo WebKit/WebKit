@@ -327,9 +327,6 @@ messages -> WebPageProxy {
     # Remote accessibility messages
     RegisterWebProcessAccessibilityToken(IPC::DataReference data)
 
-    # Plug-in complex text input support messages
-    PluginFocusOrWindowFocusChanged(uint64_t pluginComplexTextInputIdentifier, bool pluginHasFocusAndWindowHasFocus)
-
     # Speech messages
     GetIsSpeaking() -> (bool isSpeaking) Synchronous
     Speak(String string)

@@ -99,7 +99,6 @@ private:
     bool isFormControlElement() const final { return false; }
 
     bool isEnumeratable() const final { return true; }
-    bool appendFormData(DOMFormData&) final;
 
     bool canContainRangeEndPoint() const final;
 

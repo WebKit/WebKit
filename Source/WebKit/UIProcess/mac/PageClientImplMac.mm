@@ -654,11 +654,6 @@ void PageClientImpl::gestureEventWasNotHandledByWebCore(const NativeWebGestureEv
 }
 #endif
 
-void PageClientImpl::pluginFocusOrWindowFocusChanged(uint64_t pluginComplexTextInputIdentifier, bool pluginHasFocusAndWindowHasFocus)
-{
-    m_impl->pluginFocusOrWindowFocusChanged(pluginHasFocusAndWindowHasFocus, pluginComplexTextInputIdentifier);
-}
-
 void PageClientImpl::didPerformDictionaryLookup(const DictionaryPopupInfo& dictionaryPopupInfo)
 {
     m_impl->prepareForDictionaryLookup();

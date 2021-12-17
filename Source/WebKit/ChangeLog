@@ -1,3 +1,53 @@
+2021-12-16  Alex Christensen  <achristensen@webkit.org>
+
+        Remove more NPAPI plugin code
+        https://bugs.webkit.org/show_bug.cgi?id=234379
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/Cocoa/WebViewImpl.h:
+        (WebKit::WebViewImpl::pluginComplexTextInputIdentifier const): Deleted.
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::doneWithKeyEvent):
+        (WebKit::WebViewImpl::interpretKeyEvent):
+        (WebKit::WebViewImpl::inputContext):
+        (WebKit::WebViewImpl::performKeyEquivalent):
+        (WebKit::WebViewImpl::keyDown):
+        (WebKit::WebViewImpl::disableComplexTextInputIfNecessary): Deleted.
+        (WebKit::WebViewImpl::handlePluginComplexTextInputKeyDown): Deleted.
+        (WebKit::WebViewImpl::tryHandlePluginComplexTextInputKeyDown): Deleted.
+        (WebKit::WebViewImpl::pluginFocusOrWindowFocusChanged): Deleted.
+        (WebKit::WebViewImpl::tryPostProcessPluginComplexTextInputKeyDown): Deleted.
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::pluginFocusOrWindowFocusChanged): Deleted.
+        * UIProcess/mac/PageClientImplMac.h:
+        * UIProcess/mac/PageClientImplMac.mm:
+        (WebKit::PageClientImpl::pluginFocusOrWindowFocusChanged): Deleted.
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::sendComplexTextInputToPlugin): Deleted.
+        (WebKit::WebPageProxy::pluginFocusOrWindowFocusChanged): Deleted.
+        * WebProcess/Plugins/PDF/PDFPlugin.h:
+        * WebProcess/Plugins/Plugin.h:
+        (WebKit::Plugin::canCreateTransientPaintingSnapshot const): Deleted.
+        * WebProcess/Plugins/PluginController.h:
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::destroyPluginAndReset):
+        (WebKit::PluginView::shouldCreateTransientPaintingSnapshot const):
+        (WebKit::PluginView::sendComplexTextInput): Deleted.
+        (WebKit::PluginView::privateBrowsingStateChanged): Deleted.
+        (WebKit::PluginView::getFormValue): Deleted.
+        (WebKit::PluginView::shouldNotAddLayer const): Deleted.
+        (WebKit::PluginView::pluginFocusOrWindowFocusChanged): Deleted.
+        * WebProcess/Plugins/PluginView.h:
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::accessibilityPosition const):
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::sendComplexTextInputToPlugin): Deleted.
+
 2021-12-16  Chris Dumez  <cdumez@apple.com>
 
         Move WebIDBServers from NetworkProcess to NetworkSession class

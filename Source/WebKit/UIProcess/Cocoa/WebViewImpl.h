@@ -338,12 +338,6 @@ public:
     void resetSecureInputState();
     bool inSecureInputState() const { return m_inSecureInputState; }
     void notifyInputContextAboutDiscardedComposition();
-    void disableComplexTextInputIfNecessary();
-    bool handlePluginComplexTextInputKeyDown(NSEvent *);
-    bool tryHandlePluginComplexTextInputKeyDown(NSEvent *);
-    void pluginFocusOrWindowFocusChanged(bool pluginHasFocusAndWindowHasFocus, uint64_t pluginComplexTextInputIdentifier);
-    bool tryPostProcessPluginComplexTextInputKeyDown(NSEvent *);
-    uint64_t pluginComplexTextInputIdentifier() const { return m_pluginComplexTextInputIdentifier; }
     
     void handleAcceptedAlternativeText(const String&);
     NSInteger spellCheckerDocumentTag();
@@ -783,9 +777,6 @@ private:
     RetainPtr<WKEditorUndoTarget> m_undoTarget;
 
     ValidationMap m_validationMap;
-
-    // The identifier of the plug-in we want to send complex text input to, or 0 if there is none.
-    uint64_t m_pluginComplexTextInputIdentifier { 0 };
 
 #if ENABLE(FULLSCREEN_API)
     RetainPtr<WKFullScreenWindowController> m_fullScreenWindowController;

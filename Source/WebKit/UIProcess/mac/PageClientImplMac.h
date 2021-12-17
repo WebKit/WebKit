@@ -173,8 +173,6 @@ private:
 
     void accessibilityWebProcessTokenReceived(const IPC::DataReference&) override;
 
-    void pluginFocusOrWindowFocusChanged(uint64_t pluginComplexTextInputIdentifier, bool pluginHasFocusAndWindowHasFocus) override;
-
     void makeFirstResponder() override;
     void assistiveTechnologyMakeFirstResponder() override;
     void setShouldSuppressFirstResponderChanges(bool shouldSuppress) override { m_shouldSuppressFirstResponderChanges = shouldSuppress; }

@@ -462,23 +462,6 @@ void HTMLObjectElement::didMoveToNewDocument(Document& oldDocument, Document& ne
     HTMLPlugInImageElement::didMoveToNewDocument(oldDocument, newDocument);
 }
 
-bool HTMLObjectElement::appendFormData(DOMFormData& formData)
-{
-    if (name().isEmpty())
-        return false;
-
-    // Use PluginLoadingPolicy::DoNotLoad here or it would fire JS events synchronously
-    // which would not be safe here.
-    RefPtr widget = pluginWidget(PluginLoadingPolicy::DoNotLoad);
-    if (!is<PluginViewBase>(widget))
-        return false;
-    String value;
-    if (!downcast<PluginViewBase>(*widget).getFormValue(value))
-        return false;
-    formData.append(name(), value);
-    return true;
-}
-
 bool HTMLObjectElement::canContainRangeEndPoint() const
 {
     // Call through to HTMLElement because HTMLPlugInElement::canContainRangeEndPoint

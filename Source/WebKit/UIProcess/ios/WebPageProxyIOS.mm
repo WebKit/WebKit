@@ -729,12 +729,6 @@ void WebPageProxy::interpretKeyEvent(const EditorState& state, bool isCharEvent,
         completionHandler(pageClient().interpretKeyEvent(m_keyEventQueue.first(), isCharEvent));
 }
 
-// Complex text input support for plug-ins.
-void WebPageProxy::sendComplexTextInputToPlugin(uint64_t, const String&)
-{
-    notImplemented();
-}
-
 void WebPageProxy::setSmartInsertDeleteEnabled(bool)
 {
     notImplemented();
@@ -761,11 +755,6 @@ void WebPageProxy::registerUIProcessAccessibilityTokens(const IPC::DataReference
         return;
     
     send(Messages::WebPage::RegisterUIProcessAccessibilityTokens(elementToken, windowToken));
-}
-
-void WebPageProxy::pluginFocusOrWindowFocusChanged(uint64_t, bool)
-{
-    notImplemented();
 }
 
 void WebPageProxy::executeSavedCommandBySelector(const String&, CompletionHandler<void(bool)>&& completionHandler)

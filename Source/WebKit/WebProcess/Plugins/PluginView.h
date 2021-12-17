@@ -83,7 +83,6 @@ public:
 #if PLATFORM(COCOA)
     void setDeviceScaleFactor(float);
     void windowAndViewFramesChanged(const WebCore::FloatRect& windowFrameInScreenCoordinates, const WebCore::FloatRect& viewFrameInWindowCoordinates);
-    bool sendComplexTextInput(uint64_t pluginComplexTextInputIdentifier, const String& textInput);
     RetainPtr<PDFDocument> pdfDocumentForPrinting() const { return m_plugin->pdfDocumentForPrinting(); }
     id accessibilityHitTest(const WebCore::IntPoint& point) const override { return m_plugin->accessibilityHitTest(point); }
     id accessibilityObject() const override;
@@ -154,14 +153,11 @@ private:
 #endif
     JSC::JSObject* scriptObject(JSC::JSGlobalObject*) override;
     void storageBlockingStateChanged() override;
-    void privateBrowsingStateChanged(bool) override;
-    bool getFormValue(String&) override;
     bool scroll(WebCore::ScrollDirection, WebCore::ScrollGranularity) override;
     WebCore::Scrollbar* horizontalScrollbar() override;
     WebCore::Scrollbar* verticalScrollbar() override;
     bool wantsWheelEvents() override;
     bool shouldAllowNavigationFromDrags() const override;
-    bool shouldNotAddLayer() const override;
     void willDetachRenderer() override;
 
     // WebCore::Widget
@@ -188,9 +184,6 @@ private:
 
     // PluginController
     void loadURL(uint64_t requestID, const String& method, const String& urlString, const String& target, const WebCore::HTTPHeaderMap& headerFields, const Vector<uint8_t>& httpBody, bool allowPopups) override;
-#if PLATFORM(COCOA)
-    void pluginFocusOrWindowFocusChanged(bool pluginHasFocusAndWindowHasFocus) override;
-#endif
     float contentsScaleFactor() override;
 
     void didInitializePlugin() override;

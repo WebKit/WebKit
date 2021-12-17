@@ -3047,12 +3047,6 @@ void Page::setSessionID(PAL::SessionID sessionID)
     forEachDocument([&] (Document& document) {
         document.privateBrowsingStateDidChange(m_sessionID);
     });
-
-    // Collect the PluginViews in to a vector to ensure that action the plug-in takes
-    // from below privateBrowsingStateChanged does not affect their lifetime.
-
-    for (auto& view : pluginViews())
-        view->privateBrowsingStateChanged(sessionID.isEphemeral());
 }
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)

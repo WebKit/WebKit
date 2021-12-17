@@ -322,11 +322,6 @@ void PluginView::destroyPluginAndReset()
 
         m_pendingURLRequests.clear();
         m_pendingURLRequestsTimer.stop();
-
-#if PLATFORM(COCOA)
-        if (m_webPage)
-            pluginFocusOrWindowFocusChanged(false);
-#endif
     }
 
     cancelAllStreams();
@@ -497,18 +492,6 @@ void PluginView::windowAndViewFramesChanged(const FloatRect& windowFrameInScreen
     m_plugin->windowAndViewFramesChanged(enclosingIntRect(windowFrameInScreenCoordinates), enclosingIntRect(viewFrameInWindowCoordinates));
 }
 
-bool PluginView::sendComplexTextInput(uint64_t pluginComplexTextInputIdentifier, const String& textInput)
-{
-    if (!m_plugin)
-        return false;
-
-    if (m_plugin->pluginComplexTextInputIdentifier() != pluginComplexTextInputIdentifier)
-        return false;
-
-    m_plugin->sendComplexTextInput(textInput);
-    return true;
-}
-    
 id PluginView::accessibilityAssociatedPluginParentForElement(Element* element) const
 {
     if (!m_plugin)
@@ -633,24 +616,6 @@ void PluginView::storageBlockingStateChanged()
     bool storageBlockingPolicy = !frame()->document()->securityOrigin().canAccessPluginStorage(frame()->document()->topOrigin());
 
     m_plugin->storageBlockingStateChanged(storageBlockingPolicy);
-}
-
-void PluginView::privateBrowsingStateChanged(bool privateBrowsingEnabled)
-{
-    // The plug-in can be null here if it failed to initialize.
-    if (!m_isInitialized || !m_plugin)
-        return;
-
-    m_plugin->privateBrowsingStateChanged(privateBrowsingEnabled);
-}
-
-bool PluginView::getFormValue(String& formValue)
-{
-    // The plug-in can be null here if it failed to initialize.
-    if (!m_isInitialized || !m_plugin)
-        return false;
-
-    return m_plugin->getFormValue(formValue);
 }
 
 bool PluginView::scroll(ScrollDirection direction, ScrollGranularity granularity)
@@ -887,11 +852,6 @@ bool PluginView::shouldAllowNavigationFromDrags() const
         return false;
 
     return m_plugin->shouldAllowNavigationFromDrags();
-}
-
-bool PluginView::shouldNotAddLayer() const
-{
-    return false;
 }
 
 void PluginView::willDetachRenderer()
@@ -1282,14 +1242,6 @@ void PluginView::loadURL(uint64_t requestID, const String& method, const String&
     m_pendingURLRequestsTimer.startOneShot(0_s);
 }
 
-#if PLATFORM(COCOA)
-void PluginView::pluginFocusOrWindowFocusChanged(bool pluginHasFocusAndWindowHasFocus)
-{
-    if (m_webPage)
-        m_webPage->send(Messages::WebPageProxy::PluginFocusOrWindowFocusChanged(m_plugin->pluginComplexTextInputIdentifier(), pluginHasFocusAndWindowHasFocus));
-}
-#endif
-
 float PluginView::contentsScaleFactor()
 {
     if (Page* page = frame() ? frame()->page() : 0)
@@ -1331,9 +1283,6 @@ bool PluginView::shouldCreateTransientPaintingSnapshot() const
             return false;
         }
     }
-
-    if (!m_plugin->canCreateTransientPaintingSnapshot())
-        return false;
 
     return true;
 }

@@ -956,8 +956,6 @@ public:
 #if PLATFORM(COCOA)
     void windowAndViewFramesChanged(const WebCore::FloatRect& viewFrameInWindowCoordinates, const WebCore::FloatPoint& accessibilityViewCoordinates);
     void setMainFrameIsScrollable(bool);
-        
-    void sendComplexTextInputToPlugin(uint64_t pluginComplexTextInputIdentifier, const String& textInput);
     bool shouldDelayWindowOrderingForEvent(const WebMouseEvent&);
 
     void setRemoteLayerTreeRootNode(RemoteLayerTreeNode*);
@@ -2364,10 +2362,6 @@ private:
     void focusedFrameChanged(const std::optional<WebCore::FrameIdentifier>&);
 
     void didFinishLoadingDataForCustomContentProvider(const String& suggestedFilename, const IPC::DataReference&);
-
-#if PLATFORM(COCOA)
-    void pluginFocusOrWindowFocusChanged(uint64_t pluginComplexTextInputIdentifier, bool pluginHasFocusAndWindowHasFocus);
-#endif
 
 #if USE(AUTOMATIC_TEXT_REPLACEMENT)
     void toggleSmartInsertDelete();
