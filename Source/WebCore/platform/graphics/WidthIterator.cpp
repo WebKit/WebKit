@@ -554,16 +554,6 @@ bool WidthIterator::characterCanUseSimplifiedTextMeasuring(UChar character, bool
     return true;
 }
 
-void WidthIterator::adjustForSyntheticBold(GlyphBuffer& glyphBuffer, unsigned index)
-{
-    auto glyph = glyphBuffer.glyphAt(index);
-    static constexpr const GlyphBufferGlyph deletedGlyph = 0xFFFF;
-    auto syntheticBoldOffset = glyph == deletedGlyph ? 0 : glyphBuffer.fontAt(index).syntheticBoldOffset();
-    m_runWidthSoFar += syntheticBoldOffset;
-    auto& advance = glyphBuffer.advances(index)[0];
-    setWidth(advance, width(advance) + syntheticBoldOffset);
-}
-
 void WidthIterator::applyCSSVisibilityRules(GlyphBuffer& glyphBuffer, unsigned glyphBufferStartIndex)
 {
     // This function needs to be kept in sync with characterCanUseSimplifiedTextMeasuring().
@@ -571,6 +561,32 @@ void WidthIterator::applyCSSVisibilityRules(GlyphBuffer& glyphBuffer, unsigned g
     Vector<unsigned> glyphsIndicesToBeDeleted;
 
     float yPosition = height(glyphBuffer.initialAdvance());
+
+    auto adjustForSyntheticBold = [&] (auto index) {
+        auto glyph = glyphBuffer.glyphAt(index);
+        static constexpr const GlyphBufferGlyph deletedGlyph = 0xFFFF;
+        auto syntheticBoldOffset = glyph == deletedGlyph ? 0 : glyphBuffer.fontAt(index).syntheticBoldOffset();
+        m_runWidthSoFar += syntheticBoldOffset;
+        auto& advance = glyphBuffer.advances(index)[0];
+        setWidth(advance, width(advance) + syntheticBoldOffset);
+    };
+
+    auto clobberGlyph = [&] (auto index, auto newGlyph) {
+        glyphBuffer.glyphs(index)[0] = newGlyph;
+    };
+
+    auto clobberAdvance = [&] (auto index, auto newAdvance) {
+        auto advanceBeforeClobbering = glyphBuffer.advanceAt(index);
+        glyphBuffer.advances(index)[0] = makeGlyphBufferAdvance(newAdvance, height(advanceBeforeClobbering));
+        m_runWidthSoFar += width(glyphBuffer.advanceAt(index)) - width(advanceBeforeClobbering);
+        glyphBuffer.origins(index)[0] = makeGlyphBufferOrigin(0, -yPosition);
+    };
+
+    auto deleteGlyph = [&] (auto index) {
+        m_runWidthSoFar -= width(glyphBuffer.advanceAt(index));
+        glyphBuffer.deleteGlyphWithoutAffectingSize(index);
+    };
+
     for (unsigned i = glyphBufferStartIndex; i < glyphBuffer.size(); yPosition += height(glyphBuffer.advanceAt(i)), ++i) {
         auto stringOffset = glyphBuffer.checkedStringOffsetAt(i, m_run.length());
         if (!stringOffset)
@@ -580,12 +596,12 @@ void WidthIterator::applyCSSVisibilityRules(GlyphBuffer& glyphBuffer, unsigned g
         switch (characterResponsibleForThisGlyph) {
         case newlineCharacter:
         case carriageReturn:
-        case tabCharacter:
         case noBreakSpace:
+        case tabCharacter:
             ASSERT(glyphBuffer.fonts(i)[0]);
             // FIXME: Is this actually necessary? If the font specifically has a glyph for NBSP, I don't see a reason not to use it.
-            glyphBuffer.glyphs(i)[0] = glyphBuffer.fonts(i)[0]->spaceGlyph();
-            adjustForSyntheticBold(glyphBuffer, i);
+            clobberGlyph(i, glyphBuffer.fontAt(i).spaceGlyph());
+            adjustForSyntheticBold(i);
             continue;
         }
 
@@ -593,22 +609,17 @@ void WidthIterator::applyCSSVisibilityRules(GlyphBuffer& glyphBuffer, unsigned g
         // "Control characters (Unicode category Cc)—other than tabs (U+0009), line feeds (U+000A), carriage returns (U+000D) and sequences that form a segment break—must be rendered as a visible glyph"
         if (u_charType(characterResponsibleForThisGlyph) == U_CONTROL_CHAR) {
             // Let's assume that .notdef is visible.
-            auto previousAdvance = glyphBuffer.advanceAt(i);
             GlyphBufferGlyph visibleGlyph = 0;
-            glyphBuffer.glyphs(i)[0] = visibleGlyph;
-            ASSERT(glyphBuffer.fonts(i)[0]);
-            glyphBuffer.advances(i)[0] = makeGlyphBufferAdvance(glyphBuffer.fonts(i)[0]->widthForGlyph(visibleGlyph), height(previousAdvance));
-            m_runWidthSoFar += width(glyphBuffer.advanceAt(i)) - width(previousAdvance);
-            glyphBuffer.origins(i)[0] = makeGlyphBufferOrigin(0, -yPosition);
+            clobberGlyph(i, visibleGlyph);
+            clobberAdvance(i, glyphBuffer.fontAt(i).widthForGlyph(visibleGlyph));
             continue;
         }
 
-        adjustForSyntheticBold(glyphBuffer, i);
+        adjustForSyntheticBold(i);
 
         if ((characterResponsibleForThisGlyph >= nullCharacter && characterResponsibleForThisGlyph < space)
             || (characterResponsibleForThisGlyph >= deleteCharacter && characterResponsibleForThisGlyph < noBreakSpace)) {
-            m_runWidthSoFar -= width(glyphBuffer.advanceAt(i));
-            glyphBuffer.deleteGlyphWithoutAffectingSize(i);
+            deleteGlyph(i);
             continue;
         }
 
@@ -629,8 +640,7 @@ void WidthIterator::applyCSSVisibilityRules(GlyphBuffer& glyphBuffer, unsigned g
         case firstStrongIsolate:
         case objectReplacementCharacter:
         case zeroWidthNoBreakSpace:
-            m_runWidthSoFar -= width(glyphBuffer.advanceAt(i));
-            glyphBuffer.deleteGlyphWithoutAffectingSize(i);
+            deleteGlyph(i);
             continue;
         }
     }
