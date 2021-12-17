@@ -27,7 +27,6 @@
 #include "WebProcess.h"
 
 #include "APIFrameHandle.h"
-#include "APIPageGroupHandle.h"
 #include "APIPageHandle.h"
 #include "AudioMediaStreamTrackRendererInternalUnitManager.h"
 #include "AuthenticationManager.h"
@@ -1773,7 +1772,6 @@ RefPtr<API::Object> WebProcess::transformHandlesToObjects(API::Object* object)
             case API::Object::Type::PageHandle:
                 return static_cast<const API::PageHandle&>(object).isAutoconverting();
 
-            case API::Object::Type::PageGroupHandle:
 #if PLATFORM(COCOA)
             case API::Object::Type::ObjCObjectGraph:
 #endif
@@ -1789,9 +1787,6 @@ RefPtr<API::Object> WebProcess::transformHandlesToObjects(API::Object* object)
             switch (object.type()) {
             case API::Object::Type::FrameHandle:
                 return m_webProcess.webFrame(static_cast<const API::FrameHandle&>(object).frameID());
-
-            case API::Object::Type::PageGroupHandle:
-                return m_webProcess.webPageGroup(static_cast<const API::PageGroupHandle&>(object).webPageGroupData());
 
             case API::Object::Type::PageHandle:
                 return m_webProcess.webPage(static_cast<const API::PageHandle&>(object).webPageID());
@@ -1819,7 +1814,6 @@ RefPtr<API::Object> WebProcess::transformObjectsToHandles(API::Object* object)
             switch (object.type()) {
             case API::Object::Type::BundleFrame:
             case API::Object::Type::BundlePage:
-            case API::Object::Type::BundlePageGroup:
 #if PLATFORM(COCOA)
             case API::Object::Type::ObjCObjectGraph:
 #endif
@@ -1838,13 +1832,6 @@ RefPtr<API::Object> WebProcess::transformObjectsToHandles(API::Object* object)
 
             case API::Object::Type::BundlePage:
                 return API::PageHandle::createAutoconverting(static_cast<const WebPage&>(object).webPageProxyIdentifier(), static_cast<const WebPage&>(object).identifier());
-
-            case API::Object::Type::BundlePageGroup: {
-                WebPageGroupData pageGroupData;
-                pageGroupData.pageGroupID = static_cast<const WebPageGroupProxy&>(object).pageGroupID();
-
-                return API::PageGroupHandle::create(WTFMove(pageGroupData));
-            }
 
 #if PLATFORM(COCOA)
             case API::Object::Type::ObjCObjectGraph:

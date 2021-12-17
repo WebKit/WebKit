@@ -28,6 +28,7 @@
 
 #include "ShareableBitmap.h"
 #include "WKSharedAPICast.h"
+#include "WKString.h"
 #include "WebImage.h"
 #include <WebCore/ColorSpace.h>
 #include <WebCore/GraphicsContext.h>

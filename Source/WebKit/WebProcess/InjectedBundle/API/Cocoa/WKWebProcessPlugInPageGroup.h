@@ -27,9 +27,8 @@
 
 #import <Foundation/Foundation.h>
 
+// FIXME: Remove this file once the staging code for rdar://77775952 is removed.
 WK_CLASS_DEPRECATED_WITH_REPLACEMENT("WKWebProcessPlugInBrowserContextController._groupIdentifier", macos(10.10, 12.0), ios(8.0, 15.0))
 @interface WKWebProcessPlugInPageGroup : NSObject
-
-@property (readonly) NSString *identifier;
 
 @end
