@@ -273,11 +273,13 @@ void InlineItemsBuilder::breakAndComputeBidiLevels(InlineItems& inlineItems)
     if (!useHeuristicBaseDirection)
         rootBidiLevel = root().style().isLeftToRightDirection() ? UBIDI_LTR : UBIDI_RTL;
 
+    auto bidiContent = StringView { paragraphContentBuilder }.upconvertedCharacters();
+    auto bidiContentLength = paragraphContentBuilder.length();
     UErrorCode error = U_ZERO_ERROR;
-    ASSERT(!paragraphContentBuilder.isEmpty());
+    ASSERT(bidiContentLength);
     ubidi_setPara(ubidi
-        , StringView(paragraphContentBuilder).upconvertedCharacters()
-        , paragraphContentBuilder.length()
+        , bidiContent
+        , bidiContentLength
         , rootBidiLevel
         , nullptr
         , &error);
@@ -289,7 +291,7 @@ void InlineItemsBuilder::breakAndComputeBidiLevels(InlineItems& inlineItems)
 
     size_t inlineItemIndex = 0;
     auto hasSeenOpaqueItem = false;
-    for (size_t currentPosition = 0; currentPosition < paragraphContentBuilder.length();) {
+    for (size_t currentPosition = 0; currentPosition < bidiContentLength;) {
         UBiDiLevel bidiLevel;
         int32_t endPosition = currentPosition;
         ubidi_getLogicalRun(ubidi, currentPosition, &endPosition, &bidiLevel);
