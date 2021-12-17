@@ -39,16 +39,28 @@ PAS_BEGIN_EXTERN_C;
 #define PAS_BASIC_SEGREGATED_NUM_ALLOC_BITS(min_align_shift, page_size) \
     ((page_size) >> (min_align_shift))
 
-#define PAS_BASIC_SEGREGATED_PAGE_HEADER_SIZE(min_align_shift, page_size, granule_size) \
+#define PAS_BASIC_SEGREGATED_PAGE_HEADER_SIZE_EXCLUSIVE(min_align_shift, page_size, granule_size) \
     PAS_SEGREGATED_PAGE_HEADER_SIZE( \
         PAS_BASIC_SEGREGATED_NUM_ALLOC_BITS((min_align_shift), (page_size)), \
         (page_size) / (granule_size))
 
-#define PAS_BASIC_SEGREGATED_PAYLOAD_OFFSET(min_align_shift, page_size, granule_size) \
-    PAS_BASIC_SEGREGATED_PAGE_HEADER_SIZE((min_align_shift), (page_size), (granule_size))
+#define PAS_BASIC_SEGREGATED_PAYLOAD_OFFSET_EXCLUSIVE(min_align_shift, page_size, granule_size) \
+    PAS_BASIC_SEGREGATED_PAGE_HEADER_SIZE_EXCLUSIVE((min_align_shift), (page_size), (granule_size))
 
-#define PAS_BASIC_SEGREGATED_PAYLOAD_SIZE(min_align_shift, page_size, granule_size) \
-    ((page_size) - PAS_BASIC_SEGREGATED_PAYLOAD_OFFSET((min_align_shift), (page_size), (granule_size)))
+#define PAS_BASIC_SEGREGATED_PAYLOAD_SIZE_EXCLUSIVE(min_align_shift, page_size, granule_size) \
+    ((page_size) - PAS_BASIC_SEGREGATED_PAYLOAD_OFFSET_EXCLUSIVE( \
+         (min_align_shift), (page_size), (granule_size)))
+
+#define PAS_BASIC_SEGREGATED_PAGE_HEADER_SIZE_SHARED(min_align_shift, page_size, granule_size) \
+    PAS_SEGREGATED_PAGE_HEADER_SIZE( \
+        PAS_BASIC_SEGREGATED_NUM_ALLOC_BITS((min_align_shift), (page_size)), \
+        (page_size) / (granule_size))
+
+#define PAS_BASIC_SEGREGATED_PAYLOAD_OFFSET_SHARED(min_align_shift, page_size, granule_size) \
+    PAS_BASIC_SEGREGATED_PAGE_HEADER_SIZE_SHARED((min_align_shift), (page_size), (granule_size))
+
+#define PAS_BASIC_SEGREGATED_PAYLOAD_SIZE_SHARED(min_align_shift, page_size, granule_size) \
+    ((page_size) - PAS_BASIC_SEGREGATED_PAYLOAD_OFFSET_SHARED((min_align_shift), (page_size), (granule_size)))
 
 #define PAS_BASIC_SEGREGATED_PAGE_CONFIG_FORWARD_DECLARATIONS(name) \
     PAS_SEGREGATED_PAGE_CONFIG_SPECIALIZATION_DECLARATIONS(name ## _page_config); \

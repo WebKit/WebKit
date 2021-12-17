@@ -121,8 +121,7 @@ static pas_heap_summary compute_summary_impl(pas_segregated_exclusive_view* view
 
     object_size = size_directory->object_size;
 
-    begin = pas_segregated_page_offset_from_page_boundary_to_first_object(
-        page, size_directory, page_config);
+    begin = data->offset_from_page_boundary_to_first_object;
     end = data->offset_from_page_boundary_to_end_of_last_object;
 
     pas_page_base_add_free_range(

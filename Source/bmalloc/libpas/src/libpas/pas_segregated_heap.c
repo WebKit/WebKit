@@ -899,7 +899,8 @@ static size_t compute_ideal_object_size(pas_segregated_heap* heap,
     alignment = PAS_MAX(alignment, pas_segregated_page_config_min_align(page_config));
     
     num_objects = pas_segregated_page_number_of_objects((unsigned)object_size,
-                                                        page_config);
+                                                        page_config,
+                                                        pas_segregated_page_exclusive_role);
     
     parent_heap = pas_heap_for_segregated_heap(heap);
 
@@ -921,7 +922,8 @@ static size_t compute_ideal_object_size(pas_segregated_heap* heap,
             break;
         }
         if (pas_segregated_page_number_of_objects((unsigned)next_object_size,
-                                                  page_config) != num_objects)
+                                                  page_config,
+                                                  pas_segregated_page_exclusive_role) != num_objects)
             break;
         
         object_size = next_object_size;
@@ -1573,7 +1575,8 @@ pas_segregated_heap_ensure_size_directory_for_size(
                     continue;
                 
                 bytes_dirtied_per_object =
-                    pas_segregated_page_bytes_dirtied_per_object(object_size_for_config, page_config);
+                    pas_segregated_page_bytes_dirtied_per_object(
+                        object_size_for_config, page_config, pas_segregated_page_exclusive_role);
                 
                 if (verbose) {
                     pas_log("Bytes dirtied per object for %s, %zu: %lf.\n",
@@ -1617,7 +1620,8 @@ pas_segregated_heap_ensure_size_directory_for_size(
                 bytes_dirtied_per_object_by_candidate =
                     pas_segregated_page_bytes_dirtied_per_object(
                         candidate->object_size,
-                        *pas_segregated_page_config_kind_get_config(candidate->base.page_config_kind));
+                        *pas_segregated_page_config_kind_get_config(candidate->base.page_config_kind),
+                        pas_segregated_page_exclusive_role);
             } else
                 bytes_dirtied_per_object_by_candidate = candidate->object_size;
 

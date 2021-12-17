@@ -40,42 +40,7 @@
 
 PAS_BEGIN_EXTERN_C;
 
-/* OK to pass NULL page if you pass non-NULL directory. */
-static PAS_ALWAYS_INLINE unsigned
-pas_segregated_page_offset_from_page_boundary_to_first_object(
-    pas_segregated_page* page,
-    pas_segregated_size_directory* directory,
-    pas_segregated_page_config page_config)
-{
-    uintptr_t result;
-
-    PAS_ASSERT(page_config.base.is_enabled);
-    
-    if (!page || pas_segregated_view_is_some_exclusive(page->owner)) {
-        if (!page)
-            PAS_ASSERT(directory);
-        else {
-            directory = pas_compact_segregated_size_directory_ptr_load_non_null(
-                &pas_segregated_view_get_exclusive(page->owner)->directory);
-        }
-
-        return pas_segregated_size_directory_data_ptr_load_non_null(&directory->data)
-            ->offset_from_page_boundary_to_first_object;
-    }
-
-    result = pas_round_up_to_power_of_2(
-        page_config.base.page_object_payload_offset,
-        pas_segregated_page_config_min_align(page_config));
-
-    PAS_ASSERT((unsigned)result == result);
-    return (unsigned)result;
-}
-
-/* Returns true if it covered everything. OK to pass NULL page. Passing NULL for the directory
-   means that we're interested in leaving zeroes where the objects go, which is useful for
-   bringing up shared views. */
 static PAS_ALWAYS_INLINE bool pas_segregated_page_initialize_full_use_counts(
-    pas_segregated_page* page,
     pas_segregated_size_directory* directory,
     pas_page_granule_use_count* use_counts,
     uintptr_t end_granule_index,
@@ -92,6 +57,7 @@ static PAS_ALWAYS_INLINE bool pas_segregated_page_initialize_full_use_counts(
     pas_segregated_size_directory_data* data;
 
     PAS_ASSERT(page_config.base.is_enabled);
+    PAS_ASSERT(directory);
     
     num_granules = page_config.base.page_size / page_config.base.granule_size;
     PAS_ASSERT(end_granule_index <= num_granules);
@@ -103,9 +69,10 @@ static PAS_ALWAYS_INLINE bool pas_segregated_page_initialize_full_use_counts(
     /* If there are any bytes in the page not made available for allocation then make sure
        that the use counts know about it. */
     start_of_payload =
-        page_config.base.page_object_payload_offset;
+        page_config.exclusive_payload_offset;
     end_of_payload =
-        page_config.base.page_object_payload_offset + page_config.base.page_object_payload_size;
+        pas_segregated_page_config_payload_end_offset_for_role(
+            page_config, pas_segregated_page_exclusive_role);
 
     if (start_of_payload) {
         if (!end_granule_offset)
@@ -119,14 +86,9 @@ static PAS_ALWAYS_INLINE bool pas_segregated_page_initialize_full_use_counts(
     if (start_of_payload > end_granule_offset)
         return false;
 
-    if (!directory)
-        return end_granule_offset == page_config.base.page_size;
-
     data = pas_segregated_size_directory_data_ptr_load_non_null(&directory->data);
 
-    start_of_first_object =
-        pas_segregated_page_offset_from_page_boundary_to_first_object(
-            page, directory, page_config);
+    start_of_first_object = data->offset_from_page_boundary_to_first_object;
     end_of_last_object = data->offset_from_page_boundary_to_end_of_last_object;
 
     object_size = directory->object_size;

@@ -144,7 +144,11 @@ pas_segregated_shared_handle* pas_segregated_shared_view_commit_page(
         }
         
         page = (pas_segregated_page*)
-            page_config.base.create_page_header(page_boundary, pas_lock_is_held);
+            page_config.base.create_page_header(
+                page_boundary,
+                pas_page_kind_for_segregated_variant_and_role(
+                    page_config.variant, pas_segregated_page_shared_role),
+                pas_lock_is_held);
         
         pas_heap_lock_unlock_conditionally(
             pas_segregated_page_config_heap_lock_hold_mode(page_config));
@@ -152,8 +156,7 @@ pas_segregated_shared_handle* pas_segregated_shared_view_commit_page(
         handle->page_boundary = pas_segregated_page_boundary(page, page_config);
 
         view->bump_offset = (unsigned)pas_round_up_to_power_of_2(
-            page_config.base.page_object_payload_offset,
-            pas_segregated_page_config_min_align(page_config));
+            page_config.shared_payload_offset, pas_segregated_page_config_min_align(page_config));
     } else {
         if (PAS_DEBUG_SPECTRUM_USE_FOR_COMMIT) {
             pas_debug_spectrum_add(
@@ -165,7 +168,11 @@ pas_segregated_shared_handle* pas_segregated_shared_view_commit_page(
             pas_segregated_page_config_heap_lock_hold_mode(page_config));
 
         pas_page_malloc_commit(handle->page_boundary, page_config.base.page_size);
-        page_config.base.create_page_header(handle->page_boundary, pas_lock_is_not_held);
+        page_config.base.create_page_header(
+            handle->page_boundary,
+            pas_page_kind_for_segregated_variant_and_role(
+                page_config.variant, pas_segregated_page_shared_role),
+            pas_lock_is_not_held);
     }
 
     pas_segregated_page_construct(
@@ -263,7 +270,7 @@ static pas_heap_summary compute_summary(pas_segregated_shared_view* view,
 
     start_of_page = 0;
     start_of_payload = pas_round_up_to_power_of_2(
-        page_config.base.page_object_payload_offset,
+        page_config.shared_payload_offset,
         pas_segregated_page_config_min_align(page_config));
     end_of_payload = view->bump_offset;
     end_of_page = page_config.base.page_size;

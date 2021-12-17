@@ -548,6 +548,9 @@
 		0FF8D62722C04A7700EC72FE /* pas_segregated_page_config_kind.def in Headers */ = {isa = PBXBuildFile; fileRef = 0FF8D62622C04A6D00EC72FE /* pas_segregated_page_config_kind.def */; };
 		0FF8D62922C166F500EC72FE /* pas_segregated_page_inlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FF8D62822C166F500EC72FE /* pas_segregated_page_inlines.h */; };
 		0FFFD515256B0FBD001EB94C /* pas_deallocation_mode.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FFFD514256B0FBC001EB94C /* pas_deallocation_mode.h */; };
+		2B2A58992742D803005EE07C /* pas_probabilistic_guard_malloc_allocator.h in Headers */ = {isa = PBXBuildFile; fileRef = 2B2A58972742D802005EE07C /* pas_probabilistic_guard_malloc_allocator.h */; };
+		2B2A589A2742D803005EE07C /* pas_probabilistic_guard_malloc_allocator.c in Sources */ = {isa = PBXBuildFile; fileRef = 2B2A58982742D802005EE07C /* pas_probabilistic_guard_malloc_allocator.c */; };
+		2B2A589C2742D815005EE07C /* PGMTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2B2A589B2742D815005EE07C /* PGMTests.cpp */; };
 		2C11E88E2728A783002162D0 /* bmalloc_type.h in Headers */ = {isa = PBXBuildFile; fileRef = 2C11E88C2728A783002162D0 /* bmalloc_type.h */; };
 		2C11E88F2728A783002162D0 /* pas_simple_type.c in Sources */ = {isa = PBXBuildFile; fileRef = 2C11E88D2728A783002162D0 /* pas_simple_type.c */; };
 		2C11E8912728A893002162D0 /* bmalloc_type.c in Sources */ = {isa = PBXBuildFile; fileRef = 2C11E8902728A893002162D0 /* bmalloc_type.c */; };
@@ -1233,6 +1236,9 @@
 		0FF8D62622C04A6D00EC72FE /* pas_segregated_page_config_kind.def */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; path = pas_segregated_page_config_kind.def; sourceTree = "<group>"; };
 		0FF8D62822C166F500EC72FE /* pas_segregated_page_inlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_segregated_page_inlines.h; sourceTree = "<group>"; };
 		0FFFD514256B0FBC001EB94C /* pas_deallocation_mode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_deallocation_mode.h; sourceTree = "<group>"; };
+		2B2A58972742D802005EE07C /* pas_probabilistic_guard_malloc_allocator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_probabilistic_guard_malloc_allocator.h; sourceTree = "<group>"; };
+		2B2A58982742D802005EE07C /* pas_probabilistic_guard_malloc_allocator.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pas_probabilistic_guard_malloc_allocator.c; sourceTree = "<group>"; };
+		2B2A589B2742D815005EE07C /* PGMTests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PGMTests.cpp; sourceTree = "<group>"; };
 		2C11E88C2728A783002162D0 /* bmalloc_type.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bmalloc_type.h; sourceTree = "<group>"; };
 		2C11E88D2728A783002162D0 /* pas_simple_type.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pas_simple_type.c; sourceTree = "<group>"; };
 		2C11E8902728A893002162D0 /* bmalloc_type.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = bmalloc_type.c; sourceTree = "<group>"; };
@@ -1348,6 +1354,7 @@
 				0FDEA45D228B651B0085E340 /* BitfieldVectorTests.cpp */,
 				2CE2AE34275A953E00D02BBC /* BitfitTests.cpp */,
 				0F53181022C954ED003F7B6A /* BitvectorTests.cpp */,
+				2B2A589B2742D815005EE07C /* PGMTests.cpp */,
 				0F31A66723E8B336002C0CA3 /* CartesianTreeTests.cpp */,
 				0FC682362129D4EB003C6A13 /* CoalignTests.cpp */,
 				2C48132C273F4159006CAB55 /* ExpendableMemoryTests.cpp */,
@@ -1361,6 +1368,7 @@
 				0FD48B6623B589910026C46D /* IsoHeapPartialAndBaselineTests.cpp */,
 				0F5B6093235E919900CAE629 /* IsoHeapReservedMemoryTests.cpp */,
 				0F5193E6266AE5D400483A2C /* JITHeapTests.cpp */,
+				2B8BCAC62739A47900B1A46F /* PGMTests.cpp */,
 				0FC64190213745FA0040CE5E /* LargeFreeHeapTests.cpp */,
 				0FEB6666231C87BC009C001B /* LargeSharingPoolDump.cpp */,
 				0FEB6667231C87BC009C001B /* LargeSharingPoolDump.h */,
@@ -1402,6 +1410,8 @@
 				0F5FE7A325B614F2001859FC /* iso_heap_inlines.h */,
 				0F516EE624561A60004E2B8D /* iso_heap_innards.h */,
 				0F529DDE2455460C00385A8C /* iso_heap_ref.h */,
+				2B2A58982742D802005EE07C /* pas_probabilistic_guard_malloc_allocator.c */,
+				2B2A58972742D802005EE07C /* pas_probabilistic_guard_malloc_allocator.h */,
 				0FE7EE74229F010F004F4166 /* iso_heap.c */,
 				0FE7EE75229F010F004F4166 /* iso_heap.h */,
 				0F5E5CE823BEF35F00AA0B6F /* iso_test_heap_config.c */,
@@ -1732,6 +1742,8 @@
 				0FD22CFD22CC01D300B21841 /* pas_page_sharing_pool.h */,
 				0F4F61C925A4CD3B008B4A82 /* pas_payload_reservation_page_list.c */,
 				0F4F61C825A4CD3B008B4A82 /* pas_payload_reservation_page_list.h */,
+				2B8BCAC32739A45900B1A46F /* pas_probabilistic_guard_malloc_allocator.c */,
+				2B8BCAC22739A45900B1A46F /* pas_probabilistic_guard_malloc_allocator.h */,
 				0F6D547323C573E000F40DBB /* pas_physical_memory_synchronization_style.h */,
 				0FF248F722FC9EDA0077202E /* pas_physical_memory_transaction.c */,
 				0F78088622FA2E4900F37451 /* pas_physical_memory_transaction.h */,
@@ -2018,6 +2030,7 @@
 				0FE7EE0322960142004F4166 /* pas_bitfield_vector.h in Headers */,
 				0F9A1D072559961700C8D11B /* pas_bitfit_allocation_result.h in Headers */,
 				0F9A1D082559961700C8D11B /* pas_bitfit_allocator.h in Headers */,
+				2B2A58992742D803005EE07C /* pas_probabilistic_guard_malloc_allocator.h in Headers */,
 				0F9A1D1D2559961700C8D11B /* pas_bitfit_allocator_inlines.h in Headers */,
 				0F9A1D022559961700C8D11B /* pas_bitfit_directory.h in Headers */,
 				0F9A1D142559961700C8D11B /* pas_bitfit_directory_inlines.h in Headers */,
@@ -2593,6 +2606,7 @@
 				0FEB6668231C87BC009C001B /* LargeSharingPoolDump.cpp in Sources */,
 				0FEB666A231DA86F009C001B /* LargeSharingPoolTests.cpp in Sources */,
 				0FEA45BF236CDAED00B5A375 /* LockFreeReadPtrPtrHashtableTests.cpp in Sources */,
+				2B2A589C2742D815005EE07C /* PGMTests.cpp in Sources */,
 				0FD22D0822CD8A7500B21841 /* MinHeapTests.cpp in Sources */,
 				0F5E483A23D69F610046DA5C /* RaceTests.cpp in Sources */,
 				0FF08F3622A59DB300386575 /* RedBlackTreeTests.cpp in Sources */,
@@ -2627,6 +2641,7 @@
 				0FD48B4623A9ABB30026C46D /* pas_all_shared_page_directories.c in Sources */,
 				0F47C31E23396E0B002A1CF7 /* pas_allocation_callbacks.c in Sources */,
 				0FD48B6323A9ABB30026C46D /* pas_baseline_allocator.c in Sources */,
+				2B2A589A2742D803005EE07C /* pas_probabilistic_guard_malloc_allocator.c in Sources */,
 				0FD48B3F23A9ABB30026C46D /* pas_baseline_allocator_table.c in Sources */,
 				0F59A39C266844A300A38657 /* pas_basic_heap_config_enumerator_data.c in Sources */,
 				0F9A1D102559961700C8D11B /* pas_bitfit_allocator.c in Sources */,

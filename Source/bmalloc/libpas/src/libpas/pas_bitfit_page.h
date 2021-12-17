@@ -99,7 +99,7 @@ PAS_API void pas_bitfit_page_construct(pas_bitfit_page* page,
 static PAS_ALWAYS_INLINE uintptr_t
 pas_bitfit_page_offset_to_first_object(pas_bitfit_page_config page_config)
 {
-    return pas_round_up_to_power_of_2(page_config.base.page_object_payload_offset,
+    return pas_round_up_to_power_of_2(page_config.page_object_payload_offset,
                                       pas_page_base_config_min_align(page_config.base));
 }
 
@@ -107,7 +107,7 @@ static PAS_ALWAYS_INLINE uintptr_t
 pas_bitfit_page_offset_to_end_of_last_object(pas_bitfit_page_config page_config)
 {
     return pas_round_down_to_power_of_2(
-        pas_page_base_config_object_payload_end_offset_from_boundary(page_config.base),
+        pas_bitfit_page_config_object_payload_end_offset_from_boundary(page_config),
         pas_page_base_config_min_align(page_config.base));
 }
 

@@ -141,6 +141,14 @@ struct pas_segregated_page_config {
        and where you place the header. */
     size_t num_alloc_bits;
 
+    /* What's the first byte at which the object payload could start relative to the boundary? */
+    uintptr_t shared_payload_offset;
+    uintptr_t exclusive_payload_offset;
+
+    /* How many bytes are provisioned for objects past that offset? */
+    size_t shared_payload_size;
+    size_t exclusive_payload_size;
+
     pas_segregated_deallocation_logging_mode shared_logging_mode;
     pas_segregated_deallocation_logging_mode exclusive_logging_mode;
 
@@ -235,9 +243,39 @@ pas_segregated_page_config_min_align(pas_segregated_page_config config)
 }
 
 static PAS_ALWAYS_INLINE uintptr_t
-pas_segregated_page_config_object_payload_end_offset_from_boundary(pas_segregated_page_config config)
+pas_segregated_page_config_payload_offset_for_role(pas_segregated_page_config config,
+                                                   pas_segregated_page_role role)
 {
-    return pas_page_base_config_object_payload_end_offset_from_boundary(config.base);
+    switch (role) {
+    case pas_segregated_page_shared_role:
+        return config.shared_payload_offset;
+    case pas_segregated_page_exclusive_role:
+        return config.exclusive_payload_offset;
+    }
+    PAS_ASSERT(!"Should not be reached");
+    return 0;
+}
+
+static PAS_ALWAYS_INLINE size_t
+pas_segregated_page_config_payload_size_for_role(pas_segregated_page_config config,
+                                                 pas_segregated_page_role role)
+{
+    switch (role) {
+    case pas_segregated_page_shared_role:
+        return config.shared_payload_size;
+    case pas_segregated_page_exclusive_role:
+        return config.exclusive_payload_size;
+    }
+    PAS_ASSERT(!"Should not be reached");
+    return 0;
+}
+
+static PAS_ALWAYS_INLINE uintptr_t
+pas_segregated_page_config_payload_end_offset_for_role(pas_segregated_page_config config,
+                                                       pas_segregated_page_role role)
+{
+    return pas_segregated_page_config_payload_offset_for_role(config, role)
+        + pas_segregated_page_config_payload_size_for_role(config, role);
 }
 
 #define PAS_SEGREGATED_PAGE_CONFIG_NUM_ALLOC_WORDS(num_alloc_bits) \

@@ -28,6 +28,7 @@
 
 #include "pas_lock.h"
 #include "pas_page_config_kind.h"
+#include "pas_page_kind.h"
 #include "pas_page_granule_use_count.h"
 #include "pas_utils.h"
 
@@ -55,7 +56,7 @@ typedef void* (*pas_page_base_config_boundary_for_page_header)(pas_page_base* pa
 typedef pas_page_base* (*pas_page_base_config_page_header_for_boundary_remote)(
     pas_enumerator* enumerator, void* boundary);
 typedef pas_page_base* (*pas_page_base_config_create_page_header)(
-    void* boundary, pas_lock_hold_mode heap_lock_hold_mode);
+    void* boundary, pas_page_kind kind, pas_lock_hold_mode heap_lock_hold_mode);
 typedef void (*pas_page_base_config_destroy_page_header)(
     pas_page_base* page_base, pas_lock_hold_mode heap_lock_hold_mode);
 
@@ -82,10 +83,6 @@ struct pas_page_base_config {
     /* The commit granule size. */
     size_t granule_size;
 
-    /* The header size. This can be computed if you know the kind of page config we're dealing
-       with. But we don't always, so it's best to store it. */
-    size_t page_header_size;
-    
     /* Hard cut-off for object sizes for this variant. For segregated page configs, it's recommended
        that this is something that divides cleanly into page_object_payload_size. For bitfit page
        configs, this must be strictly smaller than PAS_BITFIT_MAX_FREE_UNPROCESSED * min_align. */
@@ -98,12 +95,6 @@ struct pas_page_base_config {
     /* Need to also be able to get the page header remotely during enumeration. */
     pas_page_base_config_page_header_for_boundary_remote page_header_for_boundary_remote;
     
-    /* What's the first byte at which the object payload could start relative to the boundary? */
-    uintptr_t page_object_payload_offset;
-
-    /* How many bytes are provisioned for objects past that offset? */
-    size_t page_object_payload_size;
-
     /* Some configurations need to be able to allocate/free the page header. The allocation would
        happen after page allocation or commit, and the deallocation would happen right before or
        right after page decommit. */
@@ -114,12 +105,6 @@ struct pas_page_base_config {
 static PAS_ALWAYS_INLINE size_t pas_page_base_config_min_align(pas_page_base_config config)
 {
     return (size_t)1 << (size_t)config.min_align_shift;
-}
-
-static PAS_ALWAYS_INLINE uintptr_t
-pas_page_base_config_object_payload_end_offset_from_boundary(pas_page_base_config config)
-{
-    return config.page_object_payload_offset + config.page_object_payload_size;
 }
 
 #define PAS_PAGE_BASE_CONFIG_NUM_GRANULE_BYTES(num_granules) \
@@ -138,7 +123,7 @@ static PAS_ALWAYS_INLINE bool pas_page_base_config_is_segregated(pas_page_base_c
 
 static PAS_ALWAYS_INLINE bool pas_page_base_config_is_bitfit(pas_page_base_config config)
 {
-    return config.page_config_kind == pas_page_config_kind_segregated;
+    return config.page_config_kind == pas_page_config_kind_bitfit;
 }
 
 static inline pas_segregated_page_config*

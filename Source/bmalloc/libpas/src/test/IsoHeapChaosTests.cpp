@@ -946,10 +946,10 @@ void addTheTests(unsigned multiplier, bool testEnumerator)
     ADD_TEST(testAllocationChaos(10, 0, 1000 * multiplier, 200000 * multiplier, sometimesSmallSometimesBig, 10000000 * multiplier, false));
     ADD_TEST(testAllocationChaos(10, 10, 1000 * multiplier, 200000 * multiplier, uniformlyRandomUpTo5000, 10000000 * multiplier, false));
     if (testEnumerator) {
-        ADD_TEST(testAllocationChaos(1, 0, 1000, 7000, sometimesSmallSometimesBig, 10000000, true));
-        ADD_TEST(testAllocationChaos(1, 10, 1000, 7000, uniformlyRandomUpTo5000, 10000000, true));
-        ADD_TEST(testAllocationChaos(10, 0, 1000, 4000, uniformlyRandomUpTo5000, 10000000, true));
-        ADD_TEST(testAllocationChaos(10, 10, 1000, 4000, sometimesSmallSometimesBig, 10000000, true));
+        ADD_TEST(testAllocationChaos(1, 0, 1000, 7000, sometimesSmallSometimesBig, 10000000, testEnumerator));
+        ADD_TEST(testAllocationChaos(1, 10, 1000, 7000, uniformlyRandomUpTo5000, 10000000, testEnumerator));
+        ADD_TEST(testAllocationChaos(10, 0, 1000, 4000, uniformlyRandomUpTo5000, 10000000, testEnumerator));
+        ADD_TEST(testAllocationChaos(10, 10, 1000, 4000, sometimesSmallSometimesBig, 10000000, testEnumerator));
     }
 }
 

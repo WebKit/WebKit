@@ -69,6 +69,12 @@ struct pas_bitfit_page_config {
     pas_bitfit_page_config_variant variant;
     pas_bitfit_page_config_kind kind;
 
+    /* What's the first byte at which the object payload could start relative to the boundary? */
+    uintptr_t page_object_payload_offset;
+
+    /* How many bytes are provisioned for objects past that offset? */
+    size_t page_object_payload_size;
+
     /* This is the allocator used to create pages. */
     pas_bitfit_page_config_page_allocator page_allocator;
 
@@ -139,6 +145,12 @@ static inline bool pas_bitfit_page_config_is_enabled(pas_bitfit_page_config conf
     }
     PAS_ASSERT(!"Should not be reached");
     return false;
+}
+
+static PAS_ALWAYS_INLINE uintptr_t
+pas_bitfit_page_config_object_payload_end_offset_from_boundary(pas_bitfit_page_config config)
+{
+    return config.page_object_payload_offset + config.page_object_payload_size;
 }
 
 static PAS_ALWAYS_INLINE size_t pas_bitfit_page_config_num_alloc_bits(pas_bitfit_page_config config)

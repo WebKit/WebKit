@@ -1,3 +1,120 @@
+2021-12-16  Filip Pizlo  <fpizlo@apple.com>
+
+        [libpas] update to b1531141d8d5831b0a37efb70f200f7e2c37ff3d (initial pgm support, refactorings to further distinguish exclusive from shared)
+        https://bugs.webkit.org/show_bug.cgi?id=234415
+
+        Reviewed by Yusuke Suzuki.
+
+        This includes two main changes:
+
+        - Initial PGM support thanks to Brandon Stewart.
+
+        - Refactorings to enable more differences in behavior between exclusive pages and shared pages. This
+          is the only useful part of my attempt to add line allocation, which turned out not to be a win.
+
+        * bmalloc.xcodeproj/project.pbxproj:
+        * libpas/.gitignore:
+        * libpas/libpas.xcodeproj/project.pbxproj:
+        * libpas/src/libpas/jit_heap_config.c:
+        (jit_small_bitfit_create_page_header):
+        (jit_medium_bitfit_create_page_header):
+        * libpas/src/libpas/jit_heap_config.h:
+        * libpas/src/libpas/pas_bitfit_allocator.c:
+        (pas_bitfit_allocator_commit_view):
+        * libpas/src/libpas/pas_bitfit_page.c:
+        (pas_bitfit_page_construct):
+        (pas_bitfit_page_verify):
+        * libpas/src/libpas/pas_bitfit_page.h:
+        (pas_bitfit_page_offset_to_first_object):
+        (pas_bitfit_page_offset_to_end_of_last_object):
+        * libpas/src/libpas/pas_bitfit_page_config.h:
+        (pas_bitfit_page_config_object_payload_end_offset_from_boundary):
+        * libpas/src/libpas/pas_compact_tagged_void_ptr.h: Added.
+        * libpas/src/libpas/pas_enumerate_segregated_heaps.c:
+        (enumerate_exclusive_view):
+        (enumerate_shared_view):
+        (enumerate_partial_view):
+        * libpas/src/libpas/pas_heap_config_utils.h:
+        * libpas/src/libpas/pas_local_allocator_inlines.h:
+        (pas_local_allocator_set_up_free_bits):
+        * libpas/src/libpas/pas_page_base.c:
+        (pas_page_base_header_size):
+        * libpas/src/libpas/pas_page_base.h:
+        * libpas/src/libpas/pas_page_base_config.h:
+        (pas_page_base_config_is_bitfit):
+        (pas_page_base_config_object_payload_end_offset_from_boundary): Deleted.
+        * libpas/src/libpas/pas_page_base_config_utils.h:
+        * libpas/src/libpas/pas_page_base_config_utils_inlines.h:
+        * libpas/src/libpas/pas_probabilistic_guard_malloc_allocator.c: Added.
+        (pas_probabilistic_guard_malloc_allocate):
+        (pas_probabilistic_guard_malloc_deallocate):
+        (pas_probabilistic_guard_malloc_trigger):
+        (pas_probabilistic_guard_malloc_can_use):
+        (pas_probabilistic_guard_malloc_should_use):
+        (pas_probabilistic_guard_malloc_get_free_virtual_memory):
+        (pas_probabilistic_guard_malloc_get_free_wasted_memory):
+        * libpas/src/libpas/pas_probabilistic_guard_malloc_allocator.h: Added.
+        * libpas/src/libpas/pas_segregated_exclusive_view.c:
+        (compute_summary_impl):
+        * libpas/src/libpas/pas_segregated_heap.c:
+        (compute_ideal_object_size):
+        (pas_segregated_heap_ensure_size_directory_for_size):
+        * libpas/src/libpas/pas_segregated_page.c:
+        (pas_segregated_page_construct):
+        (pas_segregated_page_verify_granules):
+        (pas_segregated_page_verify_num_non_empty_words): Deleted.
+        * libpas/src/libpas/pas_segregated_page.h:
+        (pas_segregated_page_header_size):
+        (pas_segregated_page_offset_from_page_boundary_to_first_object_for_hugging_mode):
+        (pas_segregated_page_offset_from_page_boundary_to_end_of_last_object_for_hugging_mode):
+        (pas_segregated_page_useful_object_payload_size_for_hugging_mode):
+        (pas_segregated_page_best_hugging_mode):
+        (pas_segregated_page_offset_from_page_boundary_to_first_object_exclusive):
+        (pas_segregated_page_offset_from_page_boundary_to_end_of_last_object_exclusive):
+        (pas_segregated_page_useful_object_payload_size):
+        (pas_segregated_page_number_of_objects):
+        (pas_segregated_page_bytes_dirtied_per_object):
+        * libpas/src/libpas/pas_segregated_page_config.c:
+        (pas_segregated_page_config_validate):
+        * libpas/src/libpas/pas_segregated_page_config.h:
+        (pas_segregated_page_config_payload_offset_for_role):
+        (pas_segregated_page_config_payload_size_for_role):
+        (pas_segregated_page_config_payload_end_offset_for_role):
+        (pas_segregated_page_config_object_payload_end_offset_from_boundary): Deleted.
+        * libpas/src/libpas/pas_segregated_page_config_utils.h:
+        * libpas/src/libpas/pas_segregated_page_inlines.h:
+        (pas_segregated_page_initialize_full_use_counts):
+        (pas_segregated_page_offset_from_page_boundary_to_first_object): Deleted.
+        * libpas/src/libpas/pas_segregated_shared_view.c:
+        (pas_segregated_shared_view_commit_page):
+        (compute_summary):
+        * libpas/src/libpas/pas_segregated_shared_view.h:
+        (pas_segregated_shared_view_can_bump):
+        (pas_segregated_shared_view_compute_new_bump):
+        * libpas/src/libpas/pas_segregated_size_directory.c:
+        (pas_segregated_size_directory_enable_exclusive_views):
+        * libpas/src/libpas/pas_segregated_view.c:
+        (for_each_live_object):
+        (should_be_eligible):
+        * libpas/src/libpas/pas_segregated_view_allocator_inlines.h:
+        (pas_segregated_view_will_start_allocating):
+        * libpas/src/libpas/pas_status_reporter.c:
+        (report_segregated_directory_contents):
+        * libpas/src/libpas/pas_utility_heap_config.h:
+        (pas_utility_heap_create_page_header):
+        * libpas/src/test/IsoHeapChaosTests.cpp:
+        (std::addTheTests):
+        * libpas/src/test/PGMTests.cpp: Added.
+        (std::testPGMSingleAlloc):
+        (std::testPGMMultipleAlloc):
+        (std::testPGMErrors):
+        (addPGMTests):
+        * libpas/src/test/TestHarness.cpp:
+        (main):
+        * libpas/src/test/ThingyAndUtilityHeapAllocationTests.cpp:
+        (std::testFreeListRefillSpans):
+        (std::testSpuriousEligibility):
+
 2021-12-16  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [libpas] Enable libpas on ARM64 Darwin platforms (ARM64E is already enabled)

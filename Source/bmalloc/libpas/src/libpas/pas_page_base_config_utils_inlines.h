@@ -69,7 +69,7 @@ typedef struct {
     } \
     \
     pas_page_base* name ## _create_page_header( \
-        void* boundary, pas_lock_hold_mode heap_lock_hold_mode) \
+        void* boundary, pas_page_kind kind, pas_lock_hold_mode heap_lock_hold_mode) \
     { \
         pas_basic_page_base_config_definitions_arguments arguments = \
             ((pas_basic_page_base_config_definitions_arguments){__VA_ARGS__}); \
@@ -84,10 +84,11 @@ typedef struct {
         case pas_page_header_in_table: { \
             pas_page_base* result; \
             pas_heap_lock_lock_conditionally(heap_lock_hold_mode); \
-            result = pas_page_header_table_add(arguments.header_table, \
-                                               arguments.page_config.page_size, \
-                                               arguments.page_config.page_header_size, \
-                                               boundary); \
+            result = pas_page_header_table_add( \
+                arguments.header_table, \
+                arguments.page_config.page_size, \
+                pas_page_base_header_size(arguments.page_config.page_config_ptr, kind), \
+                boundary); \
             pas_heap_lock_unlock_conditionally(heap_lock_hold_mode); \
             return result; \
         } } \

@@ -376,13 +376,7 @@ static bool for_each_live_object(
                 full_alloc_bits.word_index_end);
     }
 
-    /* FIXME: Pretty sure this can just start at word_index_begin. */
-    for (index = PAS_MAX(
-             PAS_BITVECTOR_BIT_INDEX(full_alloc_bits.word_index_begin),
-             pas_page_base_index_of_object_at_offset_from_page_boundary(
-                 pas_segregated_page_offset_from_page_boundary_to_first_object(
-                     page, NULL, page_config),
-                 page_config.base));
+    for (index = PAS_BITVECTOR_BIT_INDEX(full_alloc_bits.word_index_begin);
          index < PAS_BITVECTOR_BIT_INDEX(full_alloc_bits.word_index_end);
          ++index) {
         uintptr_t object;
@@ -463,7 +457,8 @@ static pas_tri_state should_be_eligible(pas_segregated_view view,
             pas_log("Checking if can bump for shared view %p, bump %u, max object size %zu, "
                     "bump limit %zu\n",
                     shared_view, shared_view->bump_offset, page_config->base.max_object_size,
-                    pas_segregated_page_config_object_payload_end_offset_from_boundary(*page_config));
+                    pas_segregated_page_config_payload_end_offset_for_role(
+                        *page_config, pas_segregated_page_shared_role));
         }
         
         PAS_ASSERT((unsigned)page_config->base.max_object_size == page_config->base.max_object_size);

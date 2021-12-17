@@ -400,7 +400,7 @@ void pas_segregated_size_directory_enable_exclusive_views(
             pas_object_allocation);
 
         initialize_result = pas_segregated_page_initialize_full_use_counts(
-            NULL, directory, full_use_counts, num_granules, page_config);
+            directory, full_use_counts, num_granules, page_config);
 
         /* This should have initialized all of the bits. */
         PAS_ASSERT(initialize_result);

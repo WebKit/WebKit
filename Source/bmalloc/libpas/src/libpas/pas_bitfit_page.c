@@ -103,9 +103,8 @@ void pas_bitfit_page_construct(pas_bitfit_page* page,
         
         /* If there are any bytes in the page not made available for allocation then make sure
            that the use counts know about it. */
-        start_of_payload = config.base.page_object_payload_offset;
-        end_of_payload =
-            config.base.page_object_payload_offset + config.base.page_object_payload_size;
+        start_of_payload = config.page_object_payload_offset;
+        end_of_payload = config.page_object_payload_offset + config.page_object_payload_size;
 
         pas_page_granule_increment_uses_for_range(
             use_counts, 0, start_of_payload,
@@ -299,9 +298,8 @@ void pas_bitfit_page_verify(pas_bitfit_page* page)
     data.boundary = (uintptr_t)pas_bitfit_page_boundary(page, config);
     pas_zero_memory(data.my_use_counts, PAS_MAX_GRANULES);
     
-    start_of_payload = config.base.page_object_payload_offset;
-    end_of_payload =
-        config.base.page_object_payload_offset + config.base.page_object_payload_size;
+    start_of_payload = config.page_object_payload_offset;
+    end_of_payload = config.page_object_payload_offset + config.page_object_payload_size;
     
     pas_page_granule_increment_uses_for_range(
         data.my_use_counts, 0, start_of_payload,

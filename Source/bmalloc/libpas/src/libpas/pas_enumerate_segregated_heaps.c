@@ -344,7 +344,8 @@ static bool enumerate_exclusive_view(pas_enumerator* enumerator,
         enumerator, (void*)page_boundary);
     PAS_ASSERT(page);
 
-    page = pas_enumerator_read(enumerator, page, pas_segregated_page_header_size(*page_config));
+    page = pas_enumerator_read(
+        enumerator, page, pas_segregated_page_header_size(*page_config, pas_segregated_page_exclusive_role));
     if (!page)
         return false;
 
@@ -404,7 +405,9 @@ static bool enumerate_shared_view(pas_enumerator* enumerator,
                 enumerator, (void*)page_boundary);
             PAS_ASSERT(page);
             
-            page = pas_enumerator_read(enumerator, page, pas_segregated_page_header_size(*page_config));
+            page = pas_enumerator_read(
+                enumerator, page,
+                pas_segregated_page_header_size(*page_config, pas_segregated_page_shared_role));
             if (!page)
                 return false;
         }
@@ -430,9 +433,10 @@ static bool enumerate_shared_view(pas_enumerator* enumerator,
         
         PAS_ASSERT(page);
         
-        payload_begin = pas_round_up_to_power_of_2(page_config->base.page_object_payload_offset,
+        payload_begin = pas_round_up_to_power_of_2(page_config->shared_payload_offset,
                                                    pas_segregated_page_config_min_align(*page_config));
-        payload_end = pas_segregated_page_config_object_payload_end_offset_from_boundary(*page_config);
+        payload_end = pas_segregated_page_config_payload_end_offset_for_role(
+            *page_config, pas_segregated_page_shared_role);
         
         record_page_payload_and_meta(enumerator,
                                      page_config,
@@ -481,7 +485,8 @@ static bool enumerate_partial_view(pas_enumerator* enumerator,
         enumerator, (void*)page_boundary);
     PAS_ASSERT(page);
     
-    page = pas_enumerator_read(enumerator, page, pas_segregated_page_header_size(*page_config));
+    page = pas_enumerator_read(
+        enumerator, page, pas_segregated_page_header_size(*page_config, pas_segregated_page_shared_role));
     if (!page)
         return false;
 

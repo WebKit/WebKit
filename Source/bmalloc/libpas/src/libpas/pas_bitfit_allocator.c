@@ -125,8 +125,12 @@ bool pas_bitfit_allocator_commit_view(pas_bitfit_view* view,
                 if (verbose)
                     pas_log("page_boundary = %p, did_succeed = %d\n", view->page_boundary, did_succeed);
                 
-                if (did_succeed)
-                    config->base.create_page_header(view->page_boundary, pas_lock_is_held);
+                if (did_succeed) {
+                    config->base.create_page_header(
+                        view->page_boundary,
+                        pas_page_kind_for_bitfit_variant(config->variant),
+                        pas_lock_is_held);
+                }
                 
                 pas_heap_lock_unlock();
                 if (pas_physical_memory_transaction_end(&transaction))
@@ -174,7 +178,10 @@ bool pas_bitfit_allocator_commit_view(pas_bitfit_view* view,
 
         pas_page_malloc_commit(
             view->page_boundary, config->base.page_size);
-        config->base.create_page_header(view->page_boundary, pas_lock_is_not_held);
+        config->base.create_page_header(
+            view->page_boundary,
+            pas_page_kind_for_bitfit_variant(config->variant),
+            pas_lock_is_not_held);
 
         pas_lock_lock(&view->ownership_lock);
 

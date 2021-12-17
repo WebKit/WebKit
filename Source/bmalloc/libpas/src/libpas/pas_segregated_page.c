@@ -278,9 +278,8 @@ void pas_segregated_page_construct(pas_segregated_page* page,
         
         /* If there are any bytes in the page not made available for allocation then make sure
            that the use counts know about it. */
-        start_of_payload = page_config.base.page_object_payload_offset;
-        end_of_payload =
-            page_config.base.page_object_payload_offset + page_config.base.page_object_payload_size;
+        start_of_payload = pas_segregated_page_config_payload_offset_for_role(page_config, role);
+        end_of_payload = pas_segregated_page_config_payload_end_offset_for_role(page_config, role);
 
         pas_page_granule_increment_uses_for_range(
             use_counts, 0, start_of_payload,
@@ -584,6 +583,7 @@ void pas_segregated_page_verify_granules(pas_segregated_page* page)
     static const bool verbose = false;
     
     pas_segregated_page_config page_config;
+    pas_segregated_page_role role;
     pas_page_granule_use_count correct_use_counts[PAS_MAX_GRANULES];
     pas_page_granule_use_count* use_counts;
     uintptr_t num_granules;
@@ -593,6 +593,7 @@ void pas_segregated_page_verify_granules(pas_segregated_page* page)
     verify_granules_data data;
 
     page_config = *pas_segregated_view_get_page_config(page->owner);
+    role = pas_page_kind_get_segregated_role(pas_page_base_get_kind(&page->base));
 
     if (verbose)
         pas_log("Verifying granules in page %p.\n", page);
@@ -604,10 +605,8 @@ void pas_segregated_page_verify_granules(pas_segregated_page* page)
     
     /* If there are any bytes in the page not made available for allocation then make sure
        that the use counts know about it. */
-    start_of_payload =
-        page_config.base.page_object_payload_offset;
-    end_of_payload =
-        page_config.base.page_object_payload_offset + page_config.base.page_object_payload_size;
+    start_of_payload = pas_segregated_page_config_payload_offset_for_role(page_config, role);
+    end_of_payload = pas_segregated_page_config_payload_end_offset_for_role(page_config, role);
     
     pas_page_granule_increment_uses_for_range(
         correct_use_counts, 0, start_of_payload,
@@ -808,22 +807,6 @@ pas_segregated_page_and_config_for_address_and_heap_config(uintptr_t begin,
     } }
     PAS_ASSERT(!"Should not be reached");
     return pas_segregated_page_and_config_create_empty();
-}
-
-void pas_segregated_page_verify_num_non_empty_words(pas_segregated_page* page,
-                                                    pas_segregated_page_config* page_config)
-{
-    size_t my_num_non_empty_words;
-    size_t index;
-
-    my_num_non_empty_words = 0;
-
-    for (index = pas_segregated_page_config_num_alloc_words(*page_config); index--;) {
-        if (page->alloc_bits[index])
-            my_num_non_empty_words++;
-    }
-
-    PAS_ASSERT(page->num_non_empty_words == my_num_non_empty_words);
 }
 
 #endif /* LIBPAS_ENABLED */

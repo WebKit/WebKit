@@ -32,7 +32,6 @@
 #include "thingy_heap_config.h"
 #include <functional>
 #include <map>
-#include <mutex>
 #include "pas_all_heaps.h"
 #include "pas_baseline_allocator_table.h"
 #include "pas_bootstrap_free_heap.h"
@@ -753,7 +752,8 @@ void testFreeListRefillSpans(unsigned prewarmObjectSize,
         objectSize,
         *pas_heap_config_segregated_page_config_ptr_for_variant(
             &thingy_heap_config,
-            variant));
+            variant),
+        pas_segregated_page_exclusive_role);
     unsigned numberOfObjectsPerSpan = numberOfObjects / numberOfSpans;
     CHECK(numberOfObjectsPerSpan >= 1);
     unsigned numberOfObjectsInLastSpan = numberOfObjects - numberOfObjectsPerSpan * (numberOfSpans - 1);
@@ -1181,7 +1181,8 @@ void testSpuriousEligibility()
     unsigned objectSize = 16;
     unsigned numberOfObjects =
         pas_segregated_page_number_of_objects(objectSize,
-                                              THINGY_HEAP_CONFIG.small_segregated_config);
+                                              THINGY_HEAP_CONFIG.small_segregated_config,
+                                              pas_segregated_page_exclusive_role);
     unsigned numberOfObjectsInFirstSpan = numberOfObjects / 2;
     unsigned numberOfObjectsInSecondSpan = numberOfObjects - numberOfObjectsInFirstSpan;
 

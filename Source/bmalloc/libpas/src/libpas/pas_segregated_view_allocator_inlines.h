@@ -127,6 +127,8 @@ pas_segregated_view_will_start_allocating(pas_segregated_view view,
                             }
                             page_config.base.create_page_header(
                                 exclusive->page_boundary,
+                                pas_page_kind_for_segregated_variant_and_role(
+                                    page_config.variant, pas_segregated_page_exclusive_role),
                                 pas_lock_is_held);
                         }
                         pas_heap_lock_unlock_conditionally(heap_lock_hold_mode);
@@ -187,6 +189,8 @@ pas_segregated_view_will_start_allocating(pas_segregated_view view,
                 }
                 page_config.base.create_page_header(
                     exclusive->page_boundary,
+                    pas_page_kind_for_segregated_variant_and_role(
+                        page_config.variant, pas_segregated_page_exclusive_role),
                     heap_lock_hold_mode);
             
                 pas_compiler_fence();

@@ -324,14 +324,15 @@ pas_local_allocator_set_up_free_bits(pas_local_allocator* allocator,
     if (view_kind == pas_segregated_exclusive_view_kind) {
         unsigned begin_offset;
         unsigned end_offset;
+        pas_segregated_size_directory_data* data;
 
         if (page_config.base.page_size > page_config.base.granule_size)
             pas_segregated_exclusive_view_install_full_use_counts((pas_segregated_exclusive_view*)view);
 
-        begin_offset = pas_segregated_page_offset_from_page_boundary_to_first_object(
-            page, directory, page_config);
-        end_offset = pas_segregated_size_directory_data_ptr_load_non_null(
-            &directory->data)->offset_from_page_boundary_to_end_of_last_object;
+        data = pas_segregated_size_directory_data_ptr_load_non_null(&directory->data);
+
+        begin_offset = data->offset_from_page_boundary_to_first_object;
+        end_offset = data->offset_from_page_boundary_to_end_of_last_object;
 
         begin_offset = PAS_BITVECTOR_WORD64_INDEX(
             (unsigned)pas_page_base_index_of_object_at_offset_from_page_boundary(

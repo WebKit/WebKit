@@ -71,7 +71,7 @@ static PAS_ALWAYS_INLINE void* jit_small_bitfit_boundary_for_page_header(pas_pag
 PAS_API void* jit_small_bitfit_allocate_page(
     pas_segregated_heap* heap, pas_physical_memory_transaction* transaction);
 PAS_API pas_page_base* jit_small_bitfit_create_page_header(
-    void* boundary, pas_lock_hold_mode heap_lock_hold_mode);
+    void* boundary, pas_page_kind kind, pas_lock_hold_mode heap_lock_hold_mode);
 PAS_API void jit_small_bitfit_destroy_page_header(
     pas_page_base* page, pas_lock_hold_mode heap_lock_hold_mode);
 
@@ -81,7 +81,7 @@ static PAS_ALWAYS_INLINE pas_page_base* jit_medium_bitfit_page_header_for_bounda
 PAS_API void* jit_medium_bitfit_allocate_page(
     pas_segregated_heap* heap, pas_physical_memory_transaction* transaction);
 PAS_API pas_page_base* jit_medium_bitfit_create_page_header(
-    void* boundary, pas_lock_hold_mode heap_lock_hold_mode);
+    void* boundary, pas_page_kind kind, pas_lock_hold_mode heap_lock_hold_mode);
 PAS_API void jit_medium_bitfit_destroy_page_header(
     pas_page_base* page, pas_lock_hold_mode heap_lock_hold_mode);
 
@@ -124,22 +124,18 @@ PAS_HEAP_CONFIG_SPECIALIZATION_DECLARATIONS(jit_heap_config);
             .min_align_shift = JIT_ ## variant_uppercase ## _MIN_ALIGN_SHIFT, \
             .page_size = JIT_ ## variant_uppercase ## _PAGE_SIZE, \
             .granule_size = JIT_ ## variant_uppercase ## _GRANULE_SIZE, \
-            .page_header_size = PAS_BITFIT_PAGE_HEADER_SIZE( \
-                JIT_ ## variant_uppercase ## _PAGE_SIZE, \
-                JIT_ ## variant_uppercase ## _GRANULE_SIZE, \
-                JIT_ ## variant_uppercase ## _MIN_ALIGN_SHIFT), \
             .max_object_size = \
                 PAS_BITFIT_MAX_FREE_MAX_VALID << JIT_ ## variant_uppercase ## _MIN_ALIGN_SHIFT, \
             .page_header_for_boundary = jit_ ## variant_lowercase ## _bitfit_page_header_for_boundary, \
             .boundary_for_page_header = jit_ ## variant_lowercase ## _bitfit_boundary_for_page_header, \
             .page_header_for_boundary_remote = jit_page_header_for_boundary_remote, \
-            .page_object_payload_offset = 0, \
-            .page_object_payload_size = JIT_ ## variant_uppercase ## _PAGE_SIZE, \
             .create_page_header = jit_ ## variant_lowercase ## _bitfit_create_page_header, \
             .destroy_page_header = jit_ ## variant_lowercase ## _bitfit_destroy_page_header \
         }, \
         .variant = pas_ ## variant_lowercase ## _bitfit_page_config_variant, \
         .kind = pas_bitfit_page_config_kind_jit_ ## variant_lowercase ## _bitfit, \
+        .page_object_payload_offset = 0, \
+        .page_object_payload_size = JIT_ ## variant_uppercase ## _PAGE_SIZE, \
         .page_allocator = jit_ ## variant_lowercase ## _bitfit_allocate_page, \
         PAS_BITFIT_PAGE_CONFIG_SPECIALIZATIONS(jit_ ## variant_lowercase ## _bitfit_page_config) \
     }

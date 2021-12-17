@@ -257,9 +257,10 @@ static void report_segregated_directory_contents(
         page_config = pas_segregated_page_config_kind_get_config(directory->page_config_kind);
 
         payload_begin = pas_round_up_to_power_of_2(
-            page_config->base.page_object_payload_offset,
+            page_config->shared_payload_offset,
             pas_segregated_page_config_min_align(*page_config));
-        payload_end = pas_segregated_page_config_object_payload_end_offset_from_boundary(*page_config);
+        payload_end = pas_segregated_page_config_payload_end_offset_for_role(
+            *page_config, pas_segregated_page_shared_role);
         
         pas_stream_printf(stream, "%s        Bump: ", prefix);
         for (index = 0; index < pas_segregated_directory_size(directory); ++index) {

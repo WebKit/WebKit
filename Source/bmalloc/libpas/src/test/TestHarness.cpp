@@ -354,6 +354,7 @@ void addLargeFreeHeapTests();
 void addLargeSharingPoolTests();
 void addLockFreeReadPtrPtrHashtableTests();
 void addMinHeapTests();
+void addPGMTests();
 void addRaceTests();
 void addRedBlackTreeTests();
 void addTSDTests();
@@ -717,6 +718,7 @@ int main(int argc, char** argv)
     ADD_SUITE(LargeSharingPool);
     ADD_SUITE(LockFreeReadPtrPtrHashtable);
     ADD_SUITE(MinHeap);
+    ADD_SUITE(PGM);
     ADD_SUITE(Race);
     ADD_SUITE(RedBlackTree);
     ADD_SUITE(TSD);

@@ -152,13 +152,14 @@ void* jit_small_bitfit_allocate_page(
 }
 
 pas_page_base* jit_small_bitfit_create_page_header(
-    void* boundary, pas_lock_hold_mode heap_lock_hold_mode)
+    void* boundary, pas_page_kind kind, pas_lock_hold_mode heap_lock_hold_mode)
 {
     pas_page_base* result;
+    PAS_ASSERT(kind == pas_small_bitfit_page_kind);
     pas_heap_lock_lock_conditionally(heap_lock_hold_mode);
     result = pas_page_header_table_add(&jit_small_bitfit_page_header_table,
                                        JIT_SMALL_PAGE_SIZE,
-                                       JIT_HEAP_CONFIG.small_bitfit_config.base.page_header_size,
+                                       pas_bitfit_page_header_size(JIT_HEAP_CONFIG.small_bitfit_config),
                                        boundary);
     pas_heap_lock_unlock_conditionally(heap_lock_hold_mode);
     return result;
@@ -184,13 +185,14 @@ void* jit_medium_bitfit_allocate_page(
 }
 
 pas_page_base* jit_medium_bitfit_create_page_header(
-    void* boundary, pas_lock_hold_mode heap_lock_hold_mode)
+    void* boundary, pas_page_kind kind, pas_lock_hold_mode heap_lock_hold_mode)
 {
     pas_page_base* result;
+    PAS_ASSERT(kind == pas_medium_bitfit_page_kind);
     pas_heap_lock_lock_conditionally(heap_lock_hold_mode);
     result = pas_page_header_table_add(&jit_medium_bitfit_page_header_table,
                                        JIT_MEDIUM_PAGE_SIZE,
-                                       JIT_HEAP_CONFIG.medium_bitfit_config.base.page_header_size,
+                                       pas_bitfit_page_header_size(JIT_HEAP_CONFIG.medium_bitfit_config),
                                        boundary);
     pas_heap_lock_unlock_conditionally(heap_lock_hold_mode);
     return result;
