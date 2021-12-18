@@ -142,6 +142,7 @@ set(bmalloc_SOURCES
     libpas/src/libpas/pas_payload_reservation_page_list.c
     libpas/src/libpas/pas_physical_memory_transaction.c
     libpas/src/libpas/pas_primitive_heap_ref.c
+    libpas/src/libpas/pas_probabilistic_guard_malloc_allocator.c
     libpas/src/libpas/pas_ptr_worklist.c
     libpas/src/libpas/pas_race_test_hooks.c
     libpas/src/libpas/pas_random.c
@@ -537,6 +538,7 @@ set(bmalloc_PUBLIC_HEADERS
     libpas/src/libpas/pas_physical_memory_transaction.h
     libpas/src/libpas/pas_platform.h
     libpas/src/libpas/pas_primitive_heap_ref.h
+    libpas/src/libpas/pas_probabilistic_guard_malloc_allocator.h
     libpas/src/libpas/pas_promote_intrinsic_heap.h
     libpas/src/libpas/pas_ptr_hash_map.h
     libpas/src/libpas/pas_ptr_hash_set.h

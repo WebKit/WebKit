@@ -1,5 +1,13 @@
 2021-12-17  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        Unreviewed, CMakeLists is missing pas_probabilistic_guard_malloc_allocator.[ch]
+        https://bugs.webkit.org/show_bug.cgi?id=234415
+
+        * CMakeLists.txt:
+        * libpas/src/libpas/pas_probabilistic_guard_malloc_allocator.c:
+
+2021-12-17  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [libpas] Use inline-assembly ARM64 code in GCC too
         https://bugs.webkit.org/show_bug.cgi?id=234450
 

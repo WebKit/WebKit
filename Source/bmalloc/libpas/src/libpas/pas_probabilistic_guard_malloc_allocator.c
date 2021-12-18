@@ -57,7 +57,7 @@
 #include "pas_large_utility_free_heap.h"
 
 // debug toggle
-bool pgm_verbose = false;
+static const bool pgm_verbose = false;
 
 // max amount of free memory that can be wasted (1MB)
 #define MAX_WASTED_MEMORY (1024 * 1024)
@@ -66,10 +66,10 @@ bool pgm_verbose = false;
 // including guard pages and wasted memory
 #define MAX_VIRTUAL_MEMORY (1024 * 1024 * 1024)
 
-bool pgm_enabled = true;
+static bool pgm_enabled = true;
 
-size_t free_wasted_mem  = MAX_WASTED_MEMORY;
-size_t free_virtual_mem = MAX_VIRTUAL_MEMORY;
+static size_t free_wasted_mem  = MAX_WASTED_MEMORY;
+static size_t free_virtual_mem = MAX_VIRTUAL_MEMORY;
 
 // structure for holding metadata of pgm allocations
 typedef struct pgm_storage pgm_storage;
@@ -88,9 +88,10 @@ struct pgm_storage {
 // value : metadata for tracking that allocation (pgm_storage)
 pas_ptr_hash_map pgm_hash_map = PAS_HASHTABLE_INITIALIZER;
 
-
+#if PAS_COMPILER(CLANG)
 #pragma mark -
 #pragma mark ALLOC/DEALLOC
+#endif
 
 void* pas_probabilistic_guard_malloc_allocate(size_t size, pas_heap* heap, pas_heap_config* heap_config,
                                               pas_physical_memory_transaction* transaction) {
@@ -266,8 +267,10 @@ void pas_probabilistic_guard_malloc_deallocate(void* mem) {
 }
 
 
+#if PAS_COMPILER(CLANG)
 #pragma mark -
 #pragma mark Determine whether to use PGM
+#endif
 
 void pas_probabilistic_guard_malloc_trigger(void) {
     // ???
@@ -294,8 +297,10 @@ bool pas_probabilistic_guard_malloc_should_use(void) {
     return true;
 }
 
+#if PAS_COMPILER(CLANG)
 #pragma mark -
 #pragma mark Helper Functions
+#endif
 
 size_t pas_probabilistic_guard_malloc_get_free_virtual_memory() {
     pas_heap_lock_assert_held();
