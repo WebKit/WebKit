@@ -171,7 +171,6 @@ void RuleSet::addRule(RuleData&& ruleData, CascadeLayerIdentifier cascadeLayerId
             case CSSSelector::PseudoClassAnyLinkDeprecated:
                 linkSelector = selector;
                 break;
-            case CSSSelector::PseudoClassDirectFocus:
             case CSSSelector::PseudoClassFocus:
             case CSSSelector::PseudoClassFocusVisible:
                 focusSelector = selector;

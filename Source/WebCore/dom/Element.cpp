@@ -850,7 +850,6 @@ void Element::setFocus(bool flag, FocusVisibility visibility)
     {
         Style::PseudoClassChangeInvalidation focusStyleInvalidation(*this, CSSSelector::PseudoClassFocus);
         Style::PseudoClassChangeInvalidation focusVisibleStyleInvalidation(*this, CSSSelector::PseudoClassFocusVisible);
-        Style::PseudoClassChangeInvalidation directFocusStyleInvalidation(*this, CSSSelector::PseudoClassDirectFocus);
         document().userActionElements().setFocused(*this, flag);
 
         // Shadow host with a slot that contain focused element is not considered focused.

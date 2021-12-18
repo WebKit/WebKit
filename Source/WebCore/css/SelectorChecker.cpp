@@ -982,8 +982,6 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, const LocalCont
             if (context.inFunctionalPseudoClass)
                 return false;
             return element.isLink() && context.visitedMatchType == VisitedMatchType::Enabled;
-        case CSSSelector::PseudoClassDirectFocus:
-            return matchesDirectFocusPseudoClass(element);
         case CSSSelector::PseudoClassDrag:
             return element.isBeingDragged();
         case CSSSelector::PseudoClassFocus:

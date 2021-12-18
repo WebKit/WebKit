@@ -85,7 +85,6 @@ static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesDefaultPse
 static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesDisabledPseudoClass, bool, (const Element&));
 static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesEnabledPseudoClass, bool, (const Element&));
 static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationIsDefinedElement, bool, (const Element&));
-static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesDirectFocusPseudoClass, bool, (const Element&));
 static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesFocusPseudoClass, bool, (const Element&));
 static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesFocusVisiblePseudoClass, bool, (const Element&));
 static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesFocusWithinPseudoClass, bool, (const Element&));
@@ -641,11 +640,6 @@ JSC_DEFINE_JIT_OPERATION(operationIsDefinedElement, bool, (const Element& elemen
     return isDefinedElement(element);
 }
 
-JSC_DEFINE_JIT_OPERATION(operationMatchesDirectFocusPseudoClass, bool, (const Element& element))
-{
-    return matchesDirectFocusPseudoClass(element);
-}
-
 JSC_DEFINE_JIT_OPERATION(operationMatchesFocusPseudoClass, bool, (const Element& element))
 {
     return matchesFocusPseudoClass(element);
@@ -845,9 +839,6 @@ static inline FunctionType addPseudoClassType(const CSSSelector& selector, Selec
         return FunctionType::SimpleSelectorChecker;
     case CSSSelector::PseudoClassDefined:
         fragment.unoptimizedPseudoClasses.append(JSC::FunctionPtr<JSC::OperationPtrTag>(operationIsDefinedElement));
-        return FunctionType::SimpleSelectorChecker;
-    case CSSSelector::PseudoClassDirectFocus:
-        fragment.unoptimizedPseudoClasses.append(JSC::FunctionPtr<JSC::OperationPtrTag>(operationMatchesDirectFocusPseudoClass));
         return FunctionType::SimpleSelectorChecker;
     case CSSSelector::PseudoClassFocus:
         fragment.unoptimizedPseudoClasses.append(JSC::FunctionPtr<JSC::OperationPtrTag>(operationMatchesFocusPseudoClass));

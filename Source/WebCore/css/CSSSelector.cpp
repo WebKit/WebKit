@@ -444,9 +444,6 @@ String CSSSelector::selectorText(const String& rightSide) const
             case CSSSelector::PseudoClassAutofillStrongPasswordViewable:
                 builder.append(":-webkit-autofill-strong-password-viewable");
                 break;
-            case CSSSelector::PseudoClassDirectFocus:
-                builder.append(":-internal-direct-focus");
-                break;
             case CSSSelector::PseudoClassDrag:
                 builder.append(":-webkit-drag");
                 break;

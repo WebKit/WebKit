@@ -114,7 +114,6 @@ namespace WebCore {
             PseudoClassAutofillStrongPassword,
             PseudoClassAutofillStrongPasswordViewable,
             PseudoClassHover,
-            PseudoClassDirectFocus,
             PseudoClassDrag,
             PseudoClassFocus,
             PseudoClassFocusVisible,

@@ -490,9 +490,7 @@ ALWAYS_INLINE bool isFrameFocused(const Element& element)
     return element.document().frame() && element.document().frame()->selection().isFocusedAndActive();
 }
 
-// This needs to match a subset of elements matchesFocusPseudoClass match since direct focus is treated
-// as a part of focus pseudo class selectors in ElementRuleCollector::collectMatchingRules.
-ALWAYS_INLINE bool matchesDirectFocusPseudoClass(const Element& element)
+ALWAYS_INLINE bool matchesLegacyDirectFocusPseudoClass(const Element& element)
 {
     if (InspectorInstrumentation::forcePseudoState(element, CSSSelector::PseudoClassFocus))
         return true;
@@ -517,7 +515,7 @@ ALWAYS_INLINE bool matchesFocusPseudoClass(const Element& element)
 ALWAYS_INLINE bool matchesFocusVisiblePseudoClass(const Element& element)
 {
     if (!element.document().settings().focusVisibleEnabled())
-        return matchesDirectFocusPseudoClass(element);
+        return matchesLegacyDirectFocusPseudoClass(element);
 
     if (InspectorInstrumentation::forcePseudoState(element, CSSSelector::PseudoClassFocusVisible))
         return true;
