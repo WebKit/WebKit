@@ -1,5 +1,19 @@
 2021-12-17  Saam Barati  <sbarati@apple.com>
 
+        Use IRC by default on arm64
+        https://bugs.webkit.org/show_bug.cgi?id=234449
+
+        Reviewed by Yusuke Suzuki.
+
+        I'm seeing a Wasm perf improvement on some benchmarks of ~12% by switching
+        from Briggs to IRC. Let's make IRC the default on arm64.
+
+        * b3/air/AirAllocateRegistersByGraphColoring.cpp:
+        * b3/air/AirAllocateRegistersByGraphColoring.h:
+        (JSC::B3::Air::useIRC): Deleted.
+
+2021-12-17  Saam Barati  <sbarati@apple.com>
+
         Support WasmAddress in B3 CSE
         https://bugs.webkit.org/show_bug.cgi?id=234051
         <rdar://problem/86552957>

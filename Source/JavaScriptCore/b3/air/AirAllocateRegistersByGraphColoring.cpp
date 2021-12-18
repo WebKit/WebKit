@@ -1815,6 +1815,10 @@ private:
                 return false;
             };
 
+            auto useIRC = [] {
+                return Options::airForceIRCAllocator() || !Options::airForceBriggsAllocator();
+            };
+
             if (m_code.numTmps(bank) < WTF::maxSizeForSmallInterferenceGraph) {
                 if (useIRC()) {
                     ColoringAllocator<uint16_t, bank, IRC, SmallInterferenceGraph> allocator(m_code, m_tmpWidth, m_useCounts, unspillableTmps);
