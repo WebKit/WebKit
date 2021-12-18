@@ -1,3 +1,26 @@
+2021-12-18  Darin Adler  <darin@apple.com>
+
+        Hash tables, read/write, and heap memory are used unnecessarily, which may hurt performance
+        https://bugs.webkit.org/show_bug.cgi?id=234438
+
+        Reviewed by Anders Carlsson.
+
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.cpp:
+        (WebKit::ResourceLoadStatisticsDatabaseStore::sortedTables): Simplify unnecessarily complicated
+        expression to initialize the Span.
+
+        * Shared/Cocoa/DefaultWebBrowserChecks.h: Return a Span instead of an optional Vector.
+        * Shared/Cocoa/DefaultWebBrowserChecks.mm:
+        (WebKit::appBoundDomainsForTesting): Renamed from getAppBoundDomainsTesting to fit WebKit
+        coding style a bit better, and be a little more grammatical. Removed an un-needed HashMap
+        that had only a single entry, used a NeverDestroyed std::array rather than a Vector so we
+        don't use any heap or read/write memory.
+
+        * UIProcess/WebsiteData/Cocoa/WebsiteDataStoreCocoa.mm:
+        (WebKit::WebsiteDataStore::addTestDomains const): Rewrite to use the function above.
+        Fewer special cases needed since we are just using an empty Span, which efficiently
+        does nothing, so no need to have a distinct null value.
+
 2021-12-18  Chris Dumez  <cdumez@apple.com>
 
         Move CacheStorage engines from NetworkProcess to NetworkSession

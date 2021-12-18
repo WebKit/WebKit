@@ -43,36 +43,33 @@
 #include "Page.h"
 #include "Settings.h"
 #include <wtf/Logger.h>
-#include <wtf/RobinHoodHashSet.h>
+#include <wtf/SortedArrayMap.h>
 
 namespace WebCore {
 
-static const MemoryCompactLookupOnlyRobinHoodHashSet<String>& bucketMIMETypes()
+static bool isValidMediaMIMEType(const ContentType& contentType)
 {
     // A "bucket" MIME types is one whose container type does not uniquely specify a codec.
     // See: https://tools.ietf.org/html/rfc6381
-    static NeverDestroyed<MemoryCompactLookupOnlyRobinHoodHashSet<String>> bucketMIMETypes(std::initializer_list<String> {
-        "audio/3gpp"_s,
-        "video/3gpp"_s,
-        "audio/3gpp2"_s,
-        "video/3gpp2"_s,
-        "audio/mp4"_s,
-        "video/mp4"_s,
-        "application/mp4"_s,
-        "video/quicktime"_s,
-        "application/mp21"_s,
-        "audio/vnd.apple.mpegurl"_s,
-        "video/vnd.apple.mpegurl"_s,
-        "audio/ogg"_s,
-        "video/ogg"_s,
-        "video/webm"_s,
-        "audio/webm"_s,
-    });
-    return bucketMIMETypes;
-}
+    static constexpr ComparableASCIILiteral bucketMIMETypeArray[] = {
+        "application/mp21",
+        "application/mp4",
+        "audio/3gpp",
+        "audio/3gpp2",
+        "audio/mp4",
+        "audio/ogg",
+        "audio/vnd.apple.mpegurl",
+        "audio/webm",
+        "video/3gpp",
+        "video/3gpp2",
+        "video/mp4",
+        "video/ogg",
+        "video/quicktime",
+        "video/vnd.apple.mpegurl",
+        "video/webm",
+    };
+    static constexpr SortedArraySet bucketMIMETypes { bucketMIMETypeArray };
 
-static bool isValidMediaMIMEType(const ContentType& contentType)
-{
     // 2.1.4. MIME types
     // https://wicg.github.io/media-capabilities/#valid-media-mime-type
     // A valid media MIME type is a string that is a valid MIME type per [mimesniff]. If the MIME type does
@@ -84,7 +81,7 @@ static bool isValidMediaMIMEType(const ContentType& contentType)
     auto codecs = contentType.codecs();
 
     // FIXME: The spec requires that the "codecs" parameter is the only parameter present.
-    if (bucketMIMETypes().contains(contentType.containerType()))
+    if (bucketMIMETypes.contains(contentType.containerType()))
         return codecs.size() == 1;
     return !codecs.size();
 }

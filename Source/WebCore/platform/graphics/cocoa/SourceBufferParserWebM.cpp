@@ -553,19 +553,21 @@ private:
     webm::TrackEntry m_track;
 };
 
-const HashSet<String, ASCIICaseInsensitiveHash>& SourceBufferParserWebM::webmMIMETypes()
+Span<const ASCIILiteral> SourceBufferParserWebM::supportedMIMETypes()
 {
-    static NeverDestroyed types = [] {
-        HashSet<String, ASCIICaseInsensitiveHash> types;
+#if !(ENABLE(VP9) || ENABLE(VORBIS) || ENABLE(OPUS))
+    return { };
+#else
+    static constexpr std::array types {
 #if ENABLE(VP9)
-        types.add("video/webm");
+        "video/webm"_s,
 #endif
 #if ENABLE(VORBIS) || ENABLE(OPUS)
-        types.add("audio/webm");
+        "audio/webm"_s,
 #endif
-        return types;
-    }();
+    };
     return types;
+#endif
 }
 
 static bool canLoadFormatReader()
@@ -806,7 +808,6 @@ auto SourceBufferParserWebM::trackDataForTrackNumber(uint64_t trackNumber) -> Tr
 
 Status SourceBufferParserWebM::OnElementBegin(const ElementMetadata& metadata, Action* action)
 {
-    UNUSED_PARAM(metadata);
     ASSERT(action);
     if (!action)
         return Status(Status::kNotEnoughMemory);
@@ -879,7 +880,6 @@ Status SourceBufferParserWebM::OnElementBegin(const ElementMetadata& metadata, A
 
 Status SourceBufferParserWebM::OnElementEnd(const ElementMetadata& metadata)
 {
-    UNUSED_PARAM(metadata);
     INFO_LOG_IF_POSSIBLE(LOGIDENTIFIER);
 
     auto oldState = m_state;
@@ -919,9 +919,8 @@ Status SourceBufferParserWebM::OnElementEnd(const ElementMetadata& metadata)
     return Status(Status::kOkCompleted);
 }
 
-Status SourceBufferParserWebM::OnEbml(const ElementMetadata& metadata, const Ebml& ebml)
+Status SourceBufferParserWebM::OnEbml(const ElementMetadata&, const Ebml& ebml)
 {
-    UNUSED_PARAM(metadata);
     INFO_LOG_IF_POSSIBLE(LOGIDENTIFIER);
 
     if (ebml.doc_type.is_present() && ebml.doc_type.value().compare("webm"))
@@ -939,9 +938,8 @@ Status SourceBufferParserWebM::OnEbml(const ElementMetadata& metadata, const Ebm
     return Status(Status::kOkCompleted);
 }
 
-Status SourceBufferParserWebM::OnSegmentBegin(const ElementMetadata& metadata, Action* action)
+Status SourceBufferParserWebM::OnSegmentBegin(const ElementMetadata&, Action* action)
 {
-    UNUSED_PARAM(metadata);
     INFO_LOG_IF_POSSIBLE(LOGIDENTIFIER);
 
     if (!m_initializationSegmentEncountered) {
@@ -957,9 +955,8 @@ Status SourceBufferParserWebM::OnSegmentBegin(const ElementMetadata& metadata, A
     return Status(Status::kOkCompleted);
 }
 
-Status SourceBufferParserWebM::OnInfo(const ElementMetadata& metadata, const Info& info)
+Status SourceBufferParserWebM::OnInfo(const ElementMetadata&, const Info& info)
 {
-    UNUSED_PARAM(metadata);
     INFO_LOG_IF_POSSIBLE(LOGIDENTIFIER);
 
     if (!m_initializationSegmentEncountered || !m_initializationSegment) {
@@ -974,9 +971,8 @@ Status SourceBufferParserWebM::OnInfo(const ElementMetadata& metadata, const Inf
     return Status(Status::kOkCompleted);
 }
 
-Status SourceBufferParserWebM::OnClusterBegin(const ElementMetadata& metadata, const Cluster& cluster, Action* action)
+Status SourceBufferParserWebM::OnClusterBegin(const ElementMetadata&, const Cluster& cluster, Action* action)
 {
-    UNUSED_PARAM(metadata);
     INFO_LOG_IF_POSSIBLE(LOGIDENTIFIER);
 
     ASSERT(action);
@@ -991,9 +987,8 @@ Status SourceBufferParserWebM::OnClusterBegin(const ElementMetadata& metadata, c
     return Status(Status::kOkCompleted);
 }
 
-Status SourceBufferParserWebM::OnTrackEntry(const ElementMetadata& metadata, const TrackEntry& trackEntry)
+Status SourceBufferParserWebM::OnTrackEntry(const ElementMetadata&, const TrackEntry& trackEntry)
 {
-    UNUSED_PARAM(metadata);
     if (!trackEntry.track_type.is_present() || !trackEntry.codec_id.is_present())
         return Status(Status::kOkCompleted);
 
@@ -1002,12 +997,12 @@ Status SourceBufferParserWebM::OnTrackEntry(const ElementMetadata& metadata, con
 
     ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER, trackType, ", codec ", codecId);
 
-    if (trackType == TrackType::kVideo && !supportedVideoCodecs().contains(codecId)) {
+    if (trackType == TrackType::kVideo && !isSupportedVideoCodec(codecId)) {
         ERROR_LOG_IF_POSSIBLE(LOGIDENTIFIER, "Encountered unsupported video codec ID ", codecId);
         return Status(Status::Code(ErrorCode::UnsupportedVideoCodec));
     }
 
-    if (trackType == TrackType::kAudio && !supportedAudioCodecs().contains(codecId)) {
+    if (trackType == TrackType::kAudio && !isSupportedAudioCodec(codecId)) {
         ERROR_LOG_IF_POSSIBLE(LOGIDENTIFIER, "Encountered unsupported audio codec ID ", codecId);
         return Status(Status::Code(ErrorCode::UnsupportedAudioCodec));
     }
@@ -1073,9 +1068,8 @@ Status SourceBufferParserWebM::OnTrackEntry(const ElementMetadata& metadata, con
     return Status(Status::kOkCompleted);
 }
 
-webm::Status SourceBufferParserWebM::OnBlockBegin(const ElementMetadata& metadata, const Block& block, Action* action)
+webm::Status SourceBufferParserWebM::OnBlockBegin(const ElementMetadata&, const Block& block, Action* action)
 {
-    UNUSED_PARAM(metadata);
     INFO_LOG_IF_POSSIBLE(LOGIDENTIFIER);
 
     ASSERT(action);
@@ -1089,10 +1083,8 @@ webm::Status SourceBufferParserWebM::OnBlockBegin(const ElementMetadata& metadat
     return Status(Status::kOkCompleted);
 }
 
-webm::Status SourceBufferParserWebM::OnBlockEnd(const ElementMetadata& metadata, const Block& block)
+webm::Status SourceBufferParserWebM::OnBlockEnd(const ElementMetadata&, const Block&)
 {
-    UNUSED_PARAM(metadata);
-    UNUSED_PARAM(block);
     INFO_LOG_IF_POSSIBLE(LOGIDENTIFIER);
 
     m_currentBlock = std::nullopt;
@@ -1100,9 +1092,8 @@ webm::Status SourceBufferParserWebM::OnBlockEnd(const ElementMetadata& metadata,
     return Status(Status::kOkCompleted);
 }
 
-webm::Status SourceBufferParserWebM::OnSimpleBlockBegin(const ElementMetadata& metadata, const SimpleBlock& block, Action* action)
+webm::Status SourceBufferParserWebM::OnSimpleBlockBegin(const ElementMetadata&, const SimpleBlock& block, Action* action)
 {
-    UNUSED_PARAM(metadata);
     INFO_LOG_IF_POSSIBLE(LOGIDENTIFIER);
 
     ASSERT(action);
@@ -1116,21 +1107,17 @@ webm::Status SourceBufferParserWebM::OnSimpleBlockBegin(const ElementMetadata& m
     return Status(Status::kOkCompleted);
 }
 
-webm::Status SourceBufferParserWebM::OnSimpleBlockEnd(const ElementMetadata& metadata, const SimpleBlock& block)
+webm::Status SourceBufferParserWebM::OnSimpleBlockEnd(const ElementMetadata&, const SimpleBlock&)
 {
-    UNUSED_PARAM(metadata);
     INFO_LOG_IF_POSSIBLE(LOGIDENTIFIER);
-
-    UNUSED_PARAM(block);
 
     m_currentBlock = std::nullopt;
 
     return Status(Status::kOkCompleted);
 }
 
-webm::Status SourceBufferParserWebM::OnBlockGroupBegin(const webm::ElementMetadata& metadata, webm::Action* action)
+webm::Status SourceBufferParserWebM::OnBlockGroupBegin(const webm::ElementMetadata&, webm::Action* action)
 {
-    UNUSED_PARAM(metadata);
     INFO_LOG_IF_POSSIBLE(LOGIDENTIFIER);
 
     ASSERT(action);
@@ -1141,9 +1128,8 @@ webm::Status SourceBufferParserWebM::OnBlockGroupBegin(const webm::ElementMetada
     return Status(Status::kOkCompleted);
 }
 
-webm::Status SourceBufferParserWebM::OnBlockGroupEnd(const webm::ElementMetadata& metadata, const webm::BlockGroup& blockGroup)
+webm::Status SourceBufferParserWebM::OnBlockGroupEnd(const webm::ElementMetadata&, const webm::BlockGroup& blockGroup)
 {
-    UNUSED_PARAM(metadata);
     INFO_LOG_IF_POSSIBLE(LOGIDENTIFIER);
     if (blockGroup.block.is_present() && blockGroup.discard_padding.is_present()) {
         auto trackNumber = blockGroup.block.value().track_number;
@@ -1527,16 +1513,14 @@ void SourceBufferParserWebM::setMinimumAudioSampleDuration(float duration)
     m_minimumAudioSampleDuration = duration;
 }
 
-const MemoryCompactLookupOnlyRobinHoodHashSet<String>& SourceBufferParserWebM::supportedVideoCodecs()
+bool SourceBufferParserWebM::isSupportedVideoCodec(StringView name)
 {
-    static NeverDestroyed codecs = MemoryCompactLookupOnlyRobinHoodHashSet<String> { "V_VP8"_s, "V_VP9"_s };
-    return codecs;
+    return name == "V_VP8" || name == "V_VP9";
 }
 
-const MemoryCompactLookupOnlyRobinHoodHashSet<String>& SourceBufferParserWebM::supportedAudioCodecs()
+bool SourceBufferParserWebM::isSupportedAudioCodec(StringView name)
 {
-    static NeverDestroyed codecs = MemoryCompactLookupOnlyRobinHoodHashSet<String> { "A_VORBIS"_s, "A_OPUS"_s };
-    return codecs;
+    return name == "A_VORBIS" || name == "A_OPUS";
 }
 
 }

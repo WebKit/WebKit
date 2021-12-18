@@ -39,6 +39,7 @@
 #include <wtf/MathExtras.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RobinHoodHashSet.h>
+#include <wtf/SortedArrayMap.h>
 #include <wtf/text/AtomStringHash.h>
 #include <wtf/text/StringBuilder.h>
 
@@ -373,43 +374,44 @@ bool FontCascade::hasValidAverageCharWidth() const
         return false;
 #endif
 
-    static NeverDestroyed map = MemoryCompactLookupOnlyRobinHoodHashSet<AtomString> {
-        "American Typewriter"_s,
-        "Arial Hebrew"_s,
-        "Chalkboard"_s,
-        "Cochin"_s,
-        "Corsiva Hebrew"_s,
-        "Courier"_s,
-        "Euphemia UCAS"_s,
-        "Geneva"_s,
-        "Gill Sans"_s,
-        "Hei"_s,
-        "Helvetica"_s,
-        "Hoefler Text"_s,
-        "InaiMathi"_s,
-        "Kai"_s,
-        "Lucida Grande"_s,
-        "Marker Felt"_s,
-        "Monaco"_s,
-        "Mshtakan"_s,
-        "New Peninim MT"_s,
-        "Osaka"_s,
-        "Raanana"_s,
-        "STHeiti"_s,
-        "Symbol"_s,
-        "Times"_s,
-        "Apple Braille"_s,
-        "Apple LiGothic"_s,
-        "Apple LiSung"_s,
-        "Apple Symbols"_s,
-        "AppleGothic"_s,
-        "AppleMyungjo"_s,
-        "#GungSeo"_s,
-        "#HeadLineA"_s,
-        "#PCMyungjo"_s,
-        "#PilGi"_s,
+    static constexpr ComparableASCIILiteral names[] = {
+        "#GungSeo",
+        "#HeadLineA",
+        "#PCMyungjo",
+        "#PilGi",
+        "American Typewriter",
+        "Apple Braille",
+        "Apple LiGothic",
+        "Apple LiSung",
+        "Apple Symbols",
+        "AppleGothic",
+        "AppleMyungjo",
+        "Arial Hebrew",
+        "Chalkboard",
+        "Cochin",
+        "Corsiva Hebrew",
+        "Courier",
+        "Euphemia UCAS",
+        "Geneva",
+        "Gill Sans",
+        "Hei",
+        "Helvetica",
+        "Hoefler Text",
+        "InaiMathi",
+        "Kai",
+        "Lucida Grande",
+        "Marker Felt",
+        "Monaco",
+        "Mshtakan",
+        "New Peninim MT",
+        "Osaka",
+        "Raanana",
+        "STHeiti",
+        "Symbol",
+        "Times",
     };
-    return !map.get().contains(family);
+    static constexpr SortedArraySet set { names };
+    return !set.contains(family);
 }
 
 bool FontCascade::fastAverageCharWidthIfAvailable(float& width) const

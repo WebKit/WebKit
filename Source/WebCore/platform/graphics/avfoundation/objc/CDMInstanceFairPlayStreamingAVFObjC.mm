@@ -145,6 +145,7 @@ static const NSInteger SecurityLevelError = -42811;
     if (_parent)
         _parent->sessionIdentifierChanged(session.contentProtectionSessionIdentifier);
 }
+
 - (void)contentKeySession:(AVContentKeySession *)session contentProtectionSessionIdentifierDidChangeForKeyGroup:(nullable AVContentKeyReportGroup *)reportGroup
 {
     // FIXME: Remove after rdar://57430747 is fixed
@@ -298,9 +299,8 @@ public:
         if (!--m_numberOfExpectedResponses)
             m_callback(WTFMove(m_responses));
     }
-    void addErrorResponse(AVContentKeyRequest* request, NSError* error)
+    void addErrorResponse(AVContentKeyRequest* request, NSError*)
     {
-        UNUSED_PARAM(error);
         m_responses.set(request, nullptr);
         if (!--m_numberOfExpectedResponses)
             m_callback(WTFMove(m_responses));
@@ -536,9 +536,8 @@ bool CDMInstanceFairPlayStreamingAVFObjC::shouldRetryRequestForReason(AVContentK
     return false;
 }
 
-void CDMInstanceFairPlayStreamingAVFObjC::sessionIdentifierChanged(NSData *sessionIdentifier)
+void CDMInstanceFairPlayStreamingAVFObjC::sessionIdentifierChanged(NSData *)
 {
-    UNUSED_PARAM(sessionIdentifier);
     // No-op. If we are getting this callback, there are outstanding AVContentKeyRequestGroups which are managing their own
     // session identifiers.
 }
@@ -917,9 +916,8 @@ void CDMInstanceSessionFairPlayStreamingAVFObjC::updateLicense(const String&, Li
     m_updateLicenseCallback = WTFMove(callback);
 }
 
-void CDMInstanceSessionFairPlayStreamingAVFObjC::loadSession(LicenseType licenseType, const String& sessionId, const String& origin, LoadSessionCallback&& callback)
+void CDMInstanceSessionFairPlayStreamingAVFObjC::loadSession(LicenseType licenseType, const String& sessionId, const String&, LoadSessionCallback&& callback)
 {
-    UNUSED_PARAM(origin);
     if (licenseType == LicenseType::PersistentUsageRecord) {
         auto* storageURL = m_instance->storageURL();
         if (!m_instance->persistentStateAllowed() || !storageURL) {
@@ -1213,8 +1211,7 @@ void CDMInstanceSessionFairPlayStreamingAVFObjC::didProvideRequests(Vector<Retai
             auto keyIDs = keyIDsForRequest(request.get());
             RefPtr<FragmentedSharedBuffer> keyID = WTFMove(keyIDs.first());
             auto contentIdentifier = keyID->makeContiguous()->createNSData();
-            [request makeStreamingContentKeyRequestDataForApp:appIdentifier.get() contentIdentifier:contentIdentifier.get() options:nil completionHandler:[keyID = WTFMove(keyID), aggregator] (NSData *contentKeyRequestData, NSError *error) mutable {
-                UNUSED_PARAM(error);
+            [request makeStreamingContentKeyRequestDataForApp:appIdentifier.get() contentIdentifier:contentIdentifier.get() options:nil completionHandler:[keyID = WTFMove(keyID), aggregator] (NSData *contentKeyRequestData, NSError *) mutable {
                 callOnMainThread([keyID = WTFMove(keyID), aggregator = WTFMove(aggregator), contentKeyRequestData = retainPtr(contentKeyRequestData)] () mutable {
                     aggregator->requestsData.append({ WTFMove(keyID), WTFMove(contentKeyRequestData) });
                 });
@@ -1276,15 +1273,12 @@ void CDMInstanceSessionFairPlayStreamingAVFObjC::didProvideRenewingRequest(AVCon
     }
 }
 
-void CDMInstanceSessionFairPlayStreamingAVFObjC::didProvidePersistableRequest(AVContentKeyRequest *request)
+void CDMInstanceSessionFairPlayStreamingAVFObjC::didProvidePersistableRequest(AVContentKeyRequest *)
 {
-    UNUSED_PARAM(request);
 }
 
 void CDMInstanceSessionFairPlayStreamingAVFObjC::didFailToProvideRequest(AVContentKeyRequest *request, NSError *error)
 {
-    UNUSED_PARAM(request);
-
     // Rather than reject the update() promise when the CDM indicates that
     // the key requires a higher level of security than it is currently able
     // to provide, signal this state by "succeeding", but set the key status
@@ -1312,7 +1306,6 @@ void CDMInstanceSessionFairPlayStreamingAVFObjC::didFailToProvideRequest(AVConte
 
 void CDMInstanceSessionFairPlayStreamingAVFObjC::requestDidSucceed(AVContentKeyRequest *request)
 {
-    UNUSED_PARAM(request);
     if (m_updateResponseCollector) {
         m_updateResponseCollector->addSuccessfulResponse(request, nullptr);
         return;
@@ -1371,10 +1364,8 @@ bool CDMInstanceSessionFairPlayStreamingAVFObjC::hasRequest(AVContentKeyRequest*
     return false;
 }
 
-bool CDMInstanceSessionFairPlayStreamingAVFObjC::shouldRetryRequestForReason(AVContentKeyRequest *request, NSString *reason)
+bool CDMInstanceSessionFairPlayStreamingAVFObjC::shouldRetryRequestForReason(AVContentKeyRequest *, NSString *)
 {
-    UNUSED_PARAM(request);
-    UNUSED_PARAM(reason);
     notImplemented();
     return false;
 }
@@ -1393,9 +1384,8 @@ void CDMInstanceSessionFairPlayStreamingAVFObjC::sessionIdentifierChanged(NSData
         m_client->sessionIdChanged(m_sessionId);
 }
 
-void CDMInstanceSessionFairPlayStreamingAVFObjC::groupSessionIdentifierChanged(AVContentKeyReportGroup* group, NSData *sessionIdentifier)
+void CDMInstanceSessionFairPlayStreamingAVFObjC::groupSessionIdentifierChanged(AVContentKeyReportGroup*, NSData *sessionIdentifier)
 {
-    UNUSED_PARAM(group);
     sessionIdentifierChanged(sessionIdentifier);
 }
 
@@ -1452,16 +1442,15 @@ void CDMInstanceSessionFairPlayStreamingAVFObjC::outputObscuredDueToInsufficient
         m_client->updateKeyStatuses(keyStatuses());
 }
 
-void CDMInstanceSessionFairPlayStreamingAVFObjC::externalProtectionStatusDidChangeForContentKeyRequest(AVContentKeyRequest* request)
+void CDMInstanceSessionFairPlayStreamingAVFObjC::externalProtectionStatusDidChangeForContentKeyRequest(AVContentKeyRequest*)
 {
-    UNUSED_PARAM(request);
     if (!m_client)
         return;
 
     updateProtectionStatusForDisplayID(m_client->displayID());
 }
 
-std::optional<CDMKeyStatus> CDMInstanceSessionFairPlayStreamingAVFObjC::protectionStatusForDisplayID(AVContentKeyRequest *request, std::optional<PlatformDisplayID> displayID) const
+std::optional<CDMKeyStatus> CDMInstanceSessionFairPlayStreamingAVFObjC::protectionStatusForDisplayID(AVContentKeyRequest *request, std::optional<PlatformDisplayID>) const
 {
 #if HAVE(AVCONTENTKEYREQUEST_PENDING_PROTECTION_STATUS)
     if ([request respondsToSelector:@selector(externalContentProtectionStatus)]) {
@@ -1478,7 +1467,6 @@ std::optional<CDMKeyStatus> CDMInstanceSessionFairPlayStreamingAVFObjC::protecti
     // across all displays. Replace the below with explicit APIs to query the per-display HDCP status in the UIProcess
     // and to query the HDCP level required by each AVContentKeyRequest, and do the comparison between the two in the
     // WebProcess.
-    UNUSED_PARAM(displayID);
     if ([request respondsToSelector:@selector(willOutputBeObscuredDueToInsufficientExternalProtectionForDisplays:)]) {
 
         // willOutputBeObscuredDueToInsufficientExternalProtectionForDisplays will always return "YES" prior to

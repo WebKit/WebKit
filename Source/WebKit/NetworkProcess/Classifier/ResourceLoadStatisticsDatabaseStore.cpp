@@ -288,7 +288,7 @@ Span<const ASCIILiteral> ResourceLoadStatisticsDatabaseStore::sortedTables()
         "OperatingDates"_s
     };
 
-    return { sortedTables.data(), sortedTables.size() };
+    return sortedTables;
 }
 
 template <typename ContainerType>

@@ -55,9 +55,7 @@ static std::optional<MRMediaRemoteCommand> mediaRemoteCommandForPlatformCommand(
         { PlatformMediaSession::PreviousTrackCommand, MRMediaRemoteCommandPreviousTrack },
     };
     static constexpr SortedArrayMap map { mappings };
-    if (auto* value = map.tryGet(command))
-        return *value;
-    return std::nullopt;
+    return makeOptionalFromPointer(map.tryGet(command));
 }
 
 std::unique_ptr<RemoteCommandListenerCocoa> RemoteCommandListenerCocoa::create(RemoteCommandListenerClient& client)

@@ -51,6 +51,7 @@ public:
     using ValueType = typename ElementType::second_type;
 
     constexpr SortedArrayMap(const ArrayType&);
+    template<typename KeyArgument> bool contains(const KeyArgument&) const;
 
     // FIXME: To match HashMap interface better, would be nice to get the default value from traits.
     template<typename KeyArgument> ValueType get(const KeyArgument&, const ValueType& defaultValue = { }) const;
@@ -77,7 +78,7 @@ struct ComparableStringView {
 
 // NoUppercaseLettersOptimized means no characters with the 0x20 bit set.
 // That means the strings can't include control characters, uppercase letters, or any of @[\]_.
-enum class ASCIISubset { All, NoUppercaseLetters, NoUppercaseLettersOptimized };
+enum class ASCIISubset : uint8_t { All, NoUppercaseLetters, NoUppercaseLettersOptimized };
 
 template<ASCIISubset> struct ComparableASCIISubsetLiteral {
     ASCIILiteral literal;
@@ -187,6 +188,11 @@ template<typename ArrayType> template<typename KeyArgument> inline auto SortedAr
 {
     auto result = tryGet(key);
     return result ? *result : defaultValue;
+}
+
+template<typename ArrayType> template<typename KeyArgument> inline bool SortedArrayMap<ArrayType>::contains(const KeyArgument& key) const
+{
+    return tryGet(key);
 }
 
 template<typename ArrayType> constexpr SortedArraySet<ArrayType>::SortedArraySet(const ArrayType& array)
@@ -365,6 +371,13 @@ template<typename StorageInteger> constexpr bool operator<(PackedASCIILowerCodes
     return a.value() < b.value();
 }
 
+template<typename ValueType> constexpr std::optional<ValueType> makeOptionalFromPointer(const ValueType* pointer)
+{
+    if (!pointer)
+        return std::nullopt;
+    return *pointer;
+}
+
 }
 
 // FIXME: Rename the Comparable and Packed types for clarity and to align them better with each other.
@@ -376,3 +389,4 @@ using WTF::ComparableLettersLiteral;
 using WTF::PackedASCIILowerCodes;
 using WTF::SortedArrayMap;
 using WTF::SortedArraySet;
+using WTF::makeOptionalFromPointer;

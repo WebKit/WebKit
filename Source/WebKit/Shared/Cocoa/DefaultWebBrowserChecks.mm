@@ -35,7 +35,6 @@
 #import <WebCore/VersionChecks.h>
 #import <wtf/HashMap.h>
 #import <wtf/NeverDestroyed.h>
-#import <wtf/RobinHoodHashMap.h>
 #import <wtf/RunLoop.h>
 #import <wtf/WorkQueue.h>
 #import <wtf/cocoa/Entitlements.h>
@@ -50,20 +49,15 @@ bool isRunningTest(const String& bundleID)
     return bundleID == "com.apple.WebKit.TestWebKitAPI"_s || bundleID == "com.apple.WebKit.WebKitTestRunner"_s || bundleID == "org.webkit.WebKitTestRunnerApp"_s;
 }
 
-std::optional<Vector<WebCore::RegistrableDomain>> getAppBoundDomainsTesting(const String& bundleID)
+Span<const WebCore::RegistrableDomain> appBoundDomainsForTesting(const String& bundleID)
 {
-    if (bundleID.isNull())
-        return std::nullopt;
-
-    static NeverDestroyed appBoundDomainList = MemoryCompactLookupOnlyRobinHoodHashMap<String, Vector<WebCore::RegistrableDomain>> {
-        {"inAppBrowserPrivacyTestIdentifier"_s, Vector<WebCore::RegistrableDomain> { WebCore::RegistrableDomain::uncheckedCreateFromRegistrableDomainString("127.0.0.1") }},
-    };
-
-    auto appBoundDomainIter = appBoundDomainList->find(bundleID);
-    if (appBoundDomainIter != appBoundDomainList->end())
-        return appBoundDomainIter->value;
-
-    return std::nullopt;
+    if (bundleID == "inAppBrowserPrivacyTestIdentifier") {
+        static NeverDestroyed domains = std::array {
+            WebCore::RegistrableDomain::uncheckedCreateFromRegistrableDomainString("127.0.0.1"_s),
+        };
+        return domains.get();
+    }
+    return { };
 }
 
 #if ASSERT_ENABLED

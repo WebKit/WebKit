@@ -994,31 +994,27 @@ END
 
     printConstructors($F, \%tagConstructorMap);
 
+    my $firstTag;
+    for my $tag (sort keys %tagConstructorMap) {
+        $firstTag = $tag;
+        last;
+    }
+
     print F <<END
 
 struct $parameters{namespace}ConstructorFunctionMapEntry {
-    $parameters{namespace}ConstructorFunctionMapEntry($parameters{namespace}ConstructorFunction function, const QualifiedName& name)
-        : function(function)
-        , qualifiedName(&name)
-    { }
-
-    $parameters{namespace}ConstructorFunctionMapEntry()
-        : function(nullptr)
-        , qualifiedName(nullptr)
-    { }
-
-    $parameters{namespace}ConstructorFunction function;
-    const QualifiedName* qualifiedName; // Use pointer instead of reference so that emptyValue() in HashMap is cheap to create.
+    $parameters{namespace}ConstructorFunction function { nullptr };
+    const QualifiedName* qualifiedName { nullptr }; // Use pointer instead of reference so that emptyValue() in HashMap is cheap to create.
 };
 
 static NEVER_INLINE MemoryCompactLookupOnlyRobinHoodHashMap<AtomString, $parameters{namespace}ConstructorFunctionMapEntry> create$parameters{namespace}FactoryMap()
 {
     struct TableEntry {
-        const QualifiedName& name;
+        decltype($parameters{namespace}Names::${firstTag}Tag)& name;
         $parameters{namespace}ConstructorFunction function;
     };
 
-    static const TableEntry table[] = {
+    static constexpr TableEntry table[] = {
 END
     ;
 
@@ -1029,7 +1025,7 @@ END
 
     MemoryCompactLookupOnlyRobinHoodHashMap<AtomString, $parameters{namespace}ConstructorFunctionMapEntry> map;
     for (auto& entry : table)
-        map.add(entry.name.localName(), $parameters{namespace}ConstructorFunctionMapEntry(entry.function, entry.name));
+        map.add(entry.name.get().localName(), $parameters{namespace}ConstructorFunctionMapEntry { entry.function, &entry.name.get() });
     return map;
 }
 
@@ -1261,16 +1257,22 @@ END
 
     printWrapperFunctions($F);
 
+    my $firstTag;
+    for my $tag (sort keys %allTags) {
+        $firstTag = $tag;
+        last;
+    }
+
 print F <<END
 
 static NEVER_INLINE MemoryCompactLookupOnlyRobinHoodHashMap<AtomString, Create$parameters{namespace}ElementWrapperFunction> create$parameters{namespace}WrapperMap()
 {
     struct TableEntry {
-        const QualifiedName& name;
+        decltype($parameters{namespace}Names::${firstTag}Tag)& name;
         Create$parameters{namespace}ElementWrapperFunction function;
     };
 
-    static const TableEntry table[] = {
+    static constexpr TableEntry table[] = {
 END
 ;
 
@@ -1303,7 +1305,7 @@ END
 
     MemoryCompactLookupOnlyRobinHoodHashMap<AtomString, Create$parameters{namespace}ElementWrapperFunction> map;
     for (auto& entry : table)
-        map.add(entry.name.localName(), entry.function);
+        map.add(entry.name.get().localName(), entry.function);
     return map;
 }
 

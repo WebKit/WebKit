@@ -87,7 +87,6 @@
 #include "VisibleUnits.h"
 #include <pal/SessionID.h>
 #include <wtf/NeverDestroyed.h>
-#include <wtf/RobinHoodHashSet.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringView.h>
@@ -2842,29 +2841,28 @@ bool AccessibilityObject::supportsHasPopup() const
 
 String AccessibilityObject::popupValue() const
 {
-    static const NeverDestroyed<MemoryCompactLookupOnlyRobinHoodHashSet<String>> allowedPopupValues(std::initializer_list<String> {
-        "menu"_s, "listbox"_s, "tree"_s, "grid"_s, "dialog"_s,
-    });
-
-    auto hasPopup = getAttribute(aria_haspopupAttr).convertToASCIILowercase();
-    if (hasPopup.isNull() || hasPopup.isEmpty()) {
+    auto& hasPopup = getAttribute(aria_haspopupAttr);
+    if (hasPopup.isEmpty()) {
         // In ARIA 1.1, the implicit value for combobox became "listbox."
         if (isComboBox() || hasDatalist())
-            return "listbox";
-        return "false";
+            return "listbox"_s;
+        return "false"_s;
     }
 
-    if (allowedPopupValues->contains(hasPopup))
-        return hasPopup;
+    for (auto& value : { "menu"_s, "listbox"_s, "tree"_s, "grid"_s, "dialog"_s }) {
+        // FIXME: Should fix ambiguity so we don't have to write "characters", but also don't create/destroy a String when passing an ASCIILiteral to equalIgnoringASCIICase.
+        if (equalIgnoringASCIICase(hasPopup, value.characters()))
+            return value;
+    }
 
     // aria-haspopup specification states that true must be treated as menu.
-    if (hasPopup == "true")
-        return "menu";
+    if (equalLettersIgnoringASCIICase(hasPopup, "true"))
+        return "menu"_s;
 
     // The spec states that "User agents must treat any value of aria-haspopup that is not
     // included in the list of allowed values, including an empty string, as if the value
     // false had been provided."
-    return "false";
+    return "false"_s;
 }
 
 bool AccessibilityObject::hasDatalist() const

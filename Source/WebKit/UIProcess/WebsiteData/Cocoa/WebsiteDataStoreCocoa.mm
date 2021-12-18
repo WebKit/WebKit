@@ -519,12 +519,8 @@ void WebsiteDataStore::initializeAppBoundDomains(ForceReinitialization forceRein
 void WebsiteDataStore::addTestDomains() const
 {
     if (appBoundDomains().isEmpty()) {
-        auto bundleID = WebCore::applicationBundleIdentifier();
-        auto appBoundDomainsTesting = getAppBoundDomainsTesting(bundleID);
-        if (appBoundDomainsTesting) {
-            for (auto& domain : *appBoundDomainsTesting)
-                appBoundDomains().add(domain);
-        }
+        for (auto& domain : appBoundDomainsForTesting(WebCore::applicationBundleIdentifier()))
+            appBoundDomains().add(domain);
     }
 }
 

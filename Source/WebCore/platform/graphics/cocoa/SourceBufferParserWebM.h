@@ -35,14 +35,8 @@
 #include <webm/callback.h>
 #include <webm/status.h>
 #include <webm/vp9_header_parser.h>
-#include <wtf/Box.h>
-#include <wtf/Function.h>
-#include <wtf/MediaTime.h>
-#include <wtf/RobinHoodHashSet.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/Vector.h>
-#include <wtf/text/AtomString.h>
-#include <wtf/text/WTFString.h>
 
 typedef const struct opaqueCMFormatDescription* CMFormatDescriptionRef;
 typedef struct OpaqueCMBlockBuffer *CMBlockBufferRef;
@@ -53,8 +47,6 @@ class WebmParser;
 
 namespace WebCore {
 
-class MediaSampleAVFObjC;
-
 class SourceBufferParserWebM : public SourceBufferParser, private webm::Callback {
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -62,7 +54,7 @@ public:
 
     static bool isWebMFormatReaderAvailable();
     static MediaPlayerEnums::SupportsType isContentTypeSupported(const ContentType&);
-    static const HashSet<String, ASCIICaseInsensitiveHash>& webmMIMETypes();
+    static Span<const ASCIILiteral> supportedMIMETypes();
     WEBCORE_EXPORT static RefPtr<SourceBufferParserWebM> create(const ContentType&);
 
     SourceBufferParserWebM();
@@ -256,8 +248,8 @@ private:
 
     TrackData* trackDataForTrackNumber(uint64_t);
 
-    static const MemoryCompactLookupOnlyRobinHoodHashSet<String>& supportedVideoCodecs();
-    static const MemoryCompactLookupOnlyRobinHoodHashSet<String>& supportedAudioCodecs();
+    static bool isSupportedVideoCodec(StringView);
+    static bool isSupportedAudioCodec(StringView);
 
     // webm::Callback
     webm::Status OnElementBegin(const webm::ElementMetadata&, webm::Action*) final;

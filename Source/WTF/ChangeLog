@@ -1,3 +1,16 @@
+2021-12-18  Darin Adler  <darin@apple.com>
+
+        Hash tables, read/write, and heap memory are used unnecessarily, which may hurt performance
+        https://bugs.webkit.org/show_bug.cgi?id=234438
+
+        Reviewed by Anders Carlsson.
+
+        * wtf/SortedArrayMap.h:
+        (WTF::SortedArrayMap<ArrayType>::contains const): Added. More elegant than calling tryGet and
+        treating the pointer as a boolean.
+        (WTF::makeOptionalFromPointer): Moved here so it can be reused. Might rename later, since it's
+        only used in a few places.
+
 2021-12-17  Simon Fraser  <simon.fraser@apple.com>
 
         Read the default value of the ScrollAnimatorEnabled setting from NSUserDefaults

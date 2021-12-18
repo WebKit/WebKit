@@ -312,13 +312,6 @@ std::optional<HEVCParameters> parseHEVCDecoderConfigurationRecord(const FourCC& 
     return parameters;
 }
 
-template<typename ValueType> static inline std::optional<ValueType> makeOptionalFromPointer(const ValueType* pointer)
-{
-    if (!pointer)
-        return std::nullopt;
-    return *pointer;
-}
-
 static std::optional<DoViParameters::Codec> parseDoViCodecType(StringView string)
 {
     static constexpr std::pair<PackedASCIILowerCodes<uint32_t>, DoViParameters::Codec> typesArray[] = {

@@ -359,6 +359,7 @@ static inline bool preventsParentObjectFromExposure(const Element& child)
     static NeverDestroyed mostKnownTags = [] {
         MemoryCompactLookupOnlyRobinHoodHashSet<QualifiedName> set;
         auto* tags = HTMLNames::getHTMLTags();
+        set.reserveInitialCapacity(HTMLNames::HTMLTagsCount);
         for (size_t i = 0; i < HTMLNames::HTMLTagsCount; i++) {
             auto& tag = *tags[i];
             // Only the param element was explicitly mentioned in the HTML specification rule

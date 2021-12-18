@@ -227,6 +227,7 @@ bool HTMLDocument::isCaseSensitiveAttribute(const QualifiedName& attributeName)
             &vlinkAttr,
         };
         MemoryCompactLookupOnlyRobinHoodHashSet<AtomString> set;
+        set.reserveInitialCapacity(std::size(names));
         for (auto* name : names)
             set.add(name->get().localName());
         return set;

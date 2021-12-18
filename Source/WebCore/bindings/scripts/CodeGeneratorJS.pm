@@ -5210,18 +5210,18 @@ sub GenerateForEachEventHandlerContentAttribute
     AddToImplIncludes("HTMLNames.h");
     push(@$outputArray, "void ${className}::${functionName}(const Function<void(const AtomString& attributeName, const AtomString& eventName)>& function)\n");
     push(@$outputArray, "{\n");
-    push(@$outputArray, "    static constexpr std::pair<LazyNeverDestroyed<const QualifiedName>*, const AtomString EventNames::*> table[] = {\n");
+    push(@$outputArray, "    static constexpr std::pair<decltype(HTMLNames::altAttr)&, const AtomString EventNames::*> table[] = {\n");
     foreach my $attribute (@{$interface->attributes}) {
         if ($attribute->type->name eq "EventHandler" && (!defined $eventHandlerExtendedAttributeName || $attribute->extendedAttributes->{$eventHandlerExtendedAttributeName})) {
             my $attributeName = $attribute->name;
             my $eventName = EventHandlerAttributeShortEventName($attribute);
-            push(@$outputArray, "        { &HTMLNames::${attributeName}Attr, &EventNames::${eventName} },\n");
+            push(@$outputArray, "        { HTMLNames::${attributeName}Attr, &EventNames::${eventName} },\n");
         }
     }
     push(@$outputArray, "    };\n");
     push(@$outputArray, "    auto& eventNames = WebCore::eventNames();\n");
     push(@$outputArray, "    for (auto& names : table)\n");
-    push(@$outputArray, "        function(names.first->get().localName(), eventNames.*names.second);\n");
+    push(@$outputArray, "        function(names.first.get().localName(), eventNames.*names.second);\n");
     push(@$outputArray, "}\n\n");
 }
 

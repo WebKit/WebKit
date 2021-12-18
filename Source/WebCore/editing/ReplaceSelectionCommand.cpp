@@ -778,6 +778,7 @@ static bool isProhibitedParagraphChild(const AtomString& name)
             &xmpTag,
         };
         MemoryCompactLookupOnlyRobinHoodHashSet<AtomString> set;
+        set.reserveInitialCapacity(std::size(tags));
         for (auto& tag : tags)
             set.add(tag->get().localName());
         return set;
