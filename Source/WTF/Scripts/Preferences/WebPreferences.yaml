@@ -1889,13 +1889,14 @@ ScrollAnimatorEnabled:
   type: bool
   defaultValue:
     WebKitLegacy:
-      "PLATFORM(MAC)": true
+      "PLATFORM(MAC)": WebKit::defaultScrollAnimatorEnabled()
+      "PLATFORM(GTK) || PLATFORM(WPE)": true
       default: false
     WebKit:
-      "PLATFORM(MAC) || PLATFORM(GTK) || PLATFORM(WPE)": true
+      "PLATFORM(MAC)": WebKit::defaultScrollAnimatorEnabled()
+      "PLATFORM(GTK) || PLATFORM(WPE)": true
       default: false
     WebCore:
-      "PLATFORM(MAC) || PLATFORM(GTK) || PLATFORM(WPE)": true
       default: false
 
 # FIXME: This is handled via WebView SPI rather than WebPreferences for WebKitLegacy. We should change the SPI to lookup the WebPreferences value instead.

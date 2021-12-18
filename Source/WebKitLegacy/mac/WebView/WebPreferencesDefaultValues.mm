@@ -190,6 +190,12 @@ bool defaultNeedsAdobeFrameReloadingQuirk()
     return needsQuirk;
 }
 
+bool defaultScrollAnimatorEnabled()
+{
+    static bool enabled = [[NSUserDefaults standardUserDefaults] boolForKey:@"NSScrollAnimationEnabled"];
+    return enabled;
+}
+
 bool defaultTreatsAnyTextCSSLinkAsStylesheet()
 {
     static bool needsQuirk = !WebKitLinkedOnOrAfter(WEBKIT_FIRST_VERSION_WITHOUT_LINK_ELEMENT_TEXT_CSS_QUIRK)

@@ -23,6 +23,9 @@
             testRunner.waitUntilDone();
         }
 
+        if (window.internals)
+            internals.settings.setScrollAnimatorEnabled(false);
+
         function checkForScroll()
         {
             var expectedScrollLeft = -120;

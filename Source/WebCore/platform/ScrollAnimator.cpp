@@ -78,7 +78,7 @@ bool ScrollAnimator::singleAxisScroll(ScrollEventAxis axis, float scrollDelta, O
         delta = newOffset - currentOffset;
     }
 
-    if (m_scrollableArea.scrollAnimatorEnabled() && platformAllowsScrollAnimation() && !behavior.contains(ScrollBehavior::NeverAnimate)) {
+    if (m_scrollableArea.scrollAnimatorEnabled() && !behavior.contains(ScrollBehavior::NeverAnimate)) {
         if (m_scrollController.retargetAnimatedScrollBy(delta))
             return true;
 
@@ -391,7 +391,7 @@ void ScrollAnimator::removeWheelEventTestCompletionDeferralForReason(WheelEventT
 #if PLATFORM(GTK) || USE(NICOSIA)
 bool ScrollAnimator::scrollAnimationEnabled() const
 {
-    return m_scrollableArea.scrollAnimatorEnabled() && platformAllowsScrollAnimation();
+    return m_scrollableArea.scrollAnimatorEnabled();
 }
 #endif
 

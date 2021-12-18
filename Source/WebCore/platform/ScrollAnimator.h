@@ -124,9 +124,6 @@ public:
 
     ScrollAnimationStatus serviceScrollAnimation(MonotonicTime);
 
-protected:
-    virtual bool platformAllowsScrollAnimation() const { return true; }
-
 private:
     void notifyPositionChanged(const FloatSize& delta);
 

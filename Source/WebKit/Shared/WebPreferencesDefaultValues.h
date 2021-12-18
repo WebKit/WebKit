@@ -47,6 +47,7 @@ bool defaultTextAutosizingUsesIdempotentMode();
 #endif
 
 #if PLATFORM(MAC)
+bool defaultScrollAnimatorEnabled();
 bool defaultPassiveWheelListenersAsDefaultOnDocument();
 bool defaultWheelEventGesturesBecomeNonBlocking();
 #endif

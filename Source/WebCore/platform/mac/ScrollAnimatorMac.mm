@@ -51,12 +51,6 @@ ScrollAnimatorMac::ScrollAnimatorMac(ScrollableArea& scrollableArea)
 
 ScrollAnimatorMac::~ScrollAnimatorMac() = default;
 
-bool ScrollAnimatorMac::platformAllowsScrollAnimation() const
-{
-    static bool enabled = [[NSUserDefaults standardUserDefaults] boolForKey:@"NSScrollAnimationEnabled"];
-    return enabled;
-}
-
 static bool rubberBandingEnabledForSystem()
 {
     static bool initialized = false;

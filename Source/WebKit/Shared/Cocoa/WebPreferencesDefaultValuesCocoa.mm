@@ -65,6 +65,13 @@ bool isFeatureFlagEnabled(const char* featureName, bool defaultValue)
 #endif // HAVE(SYSTEM_FEATURE_FLAGS)
 }
 
+#if PLATFORM(MAC)
+bool defaultScrollAnimatorEnabled()
+{
+    return [[NSUserDefaults standardUserDefaults] boolForKey:@"NSScrollAnimationEnabled"];
+}
+#endif
+
 } // namespace WebKit
 
 #endif

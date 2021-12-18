@@ -31,6 +31,8 @@
 
         async function runTests()
         {
+            if (window.internals)
+                internals.settings.setScrollAnimatorEnabled(false);
             try {
                 await UIHelper.delayFor(0);
 

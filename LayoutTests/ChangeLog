@@ -1,5 +1,21 @@
 2021-12-17  Simon Fraser  <simon.fraser@apple.com>
 
+        Read the default value of the ScrollAnimatorEnabled setting from NSUserDefaults
+        https://bugs.webkit.org/show_bug.cgi?id=234456
+
+        Reviewed by Tim Horton.
+
+        Now that ScrollAnimatorEnabled is true by default, turn it off for these tests.
+
+        * tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-mainframe-horizontal-with-keyboard-scaled.html:
+        * tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-mainframe-horizontal-with-keyboard.html:
+        * tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-mainframe-vertical-with-keyboard-scaled.html:
+        * tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-mainframe-vertical-with-keyboard.html:
+        * tiled-drawing/scrolling/scroll-snap/scroll-snap-proximity-mainframe-horizontal-with-keyboard.html:
+        * tiled-drawing/scrolling/scroll-snap/scroll-snap-proximity-mainframe-vertical-with-keyboard.html:
+
+2021-12-17  Simon Fraser  <simon.fraser@apple.com>
+
         Rename MockScrollAnimatorEnabled to MockScrollbarsControllerEnabled
         https://bugs.webkit.org/show_bug.cgi?id=234452
 

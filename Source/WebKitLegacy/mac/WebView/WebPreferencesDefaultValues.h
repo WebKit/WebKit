@@ -64,6 +64,7 @@ bool defaultLoadDeferringEnabled();
 bool defaultWindowFocusRestricted();
 bool defaultUsePreHTML5ParserQuirks();
 bool defaultNeedsAdobeFrameReloadingQuirk();
+bool defaultScrollAnimatorEnabled();
 bool defaultTreatsAnyTextCSSLinkAsStylesheet();
 bool defaultNeedsFrameNameFallbackToIdQuirk();
 bool defaultNeedsKeyboardEventDisambiguationQuirks();
