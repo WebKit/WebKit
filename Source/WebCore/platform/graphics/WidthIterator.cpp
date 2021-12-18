@@ -575,6 +575,10 @@ void WidthIterator::applyCSSVisibilityRules(GlyphBuffer& glyphBuffer, unsigned g
         glyphBuffer.glyphs(index)[0] = newGlyph;
     };
 
+    // FIXME: It's technically wrong to call clobberAdvance or deleteGlyph here, because this is after initialAdvances have been
+    // applied. If the last glyph in a run needs to have its advance clobbered, but the next run has an initial advance, we need
+    // to apply the initial advance on the new clobbered advance, rather than clobbering the initial advance entirely.
+
     auto clobberAdvance = [&] (auto index, auto newAdvance) {
         auto advanceBeforeClobbering = glyphBuffer.advanceAt(index);
         glyphBuffer.advances(index)[0] = makeGlyphBufferAdvance(newAdvance, height(advanceBeforeClobbering));
