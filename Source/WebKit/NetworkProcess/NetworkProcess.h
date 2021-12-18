@@ -276,9 +276,6 @@ public:
     bool privateClickMeasurementEnabled() const;
     void setPrivateClickMeasurementDebugMode(PAL::SessionID, bool);
 
-    using CacheStorageRootPathCallback = CompletionHandler<void(String&&)>;
-    void cacheStorageRootPath(PAL::SessionID, CacheStorageRootPathCallback&&);
-
     void preconnectTo(PAL::SessionID, WebPageProxyIdentifier, WebCore::PageIdentifier, const URL&, const String&, WebCore::StoredCredentialsPolicy, std::optional<NavigatingToAppBoundDomain>, LastNavigationWasAppInitiated);
 
     void setSessionIsControlledByAutomation(PAL::SessionID, bool);
@@ -311,9 +308,6 @@ public:
     void ref() const override { ThreadSafeRefCounted<NetworkProcess>::ref(); }
     void deref() const override { ThreadSafeRefCounted<NetworkProcess>::deref(); }
 
-    CacheStorage::Engine* findCacheEngine(PAL::SessionID);
-    CacheStorage::Engine& ensureCacheEngine(PAL::SessionID, Function<Ref<CacheStorage::Engine>()>&&);
-    void removeCacheEngine(PAL::SessionID);
     void requestStorageSpace(PAL::SessionID, const WebCore::ClientOrigin&, uint64_t quota, uint64_t currentSize, uint64_t spaceRequired, CompletionHandler<void(std::optional<uint64_t>)>&&);
 
     void storePrivateClickMeasurement(PAL::SessionID, WebCore::PrivateClickMeasurement&&);
@@ -425,7 +419,6 @@ private:
 
     void clearCachedCredentials(PAL::SessionID);
 
-    void setCacheStorageParameters(PAL::SessionID, String&& cacheStorageDirectory, SandboxExtension::Handle&&);
     void initializeQuotaUsers(WebCore::StorageQuotaManager&, PAL::SessionID, const WebCore::ClientOrigin&);
 
     // FIXME: This should take a session ID so we can identify which disk cache to delete.
@@ -528,13 +521,10 @@ private:
     String m_uiProcessBundleIdentifier;
     DownloadManager m_downloadManager;
 
-    HashMap<PAL::SessionID, Ref<CacheStorage::Engine>> m_cacheEngines;
-
     typedef HashMap<const char*, std::unique_ptr<NetworkProcessSupplement>, PtrHash<const char*>> NetworkProcessSupplementMap;
     NetworkProcessSupplementMap m_supplements;
 
     HashSet<PAL::SessionID> m_sessionsControlledByAutomation;
-    HashMap<PAL::SessionID, Vector<CacheStorageRootPathCallback>> m_cacheStorageParametersCallbacks;
 
     HashMap<PAL::SessionID, std::unique_ptr<NetworkSession>> m_networkSessions;
     HashMap<PAL::SessionID, std::unique_ptr<WebCore::NetworkStorageSession>> m_networkStorageSessions;

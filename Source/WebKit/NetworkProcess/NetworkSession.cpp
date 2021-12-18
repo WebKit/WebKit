@@ -26,6 +26,7 @@
 #include "config.h"
 #include "NetworkSession.h"
 
+#include "CacheStorageEngine.h"
 #include "Logging.h"
 #include "NetworkBroadcastChannelRegistry.h"
 #include "NetworkLoadScheduler.h"
@@ -204,6 +205,7 @@ void NetworkSession::invalidateAndCancel()
         server->close();
     if (auto manager = std::exchange(m_storageManager, nullptr))
         manager->close();
+    m_cacheEngine = nullptr;
 #if ASSERT_ENABLED
     m_isInvalidated = true;
 #endif
@@ -697,6 +699,32 @@ void NetworkSession::addStorageManagerSession(const String& generalStoragePath, 
     SandboxExtension::consumePermanently(generalStoragePathHandle);
     SandboxExtension::consumePermanently(localStoragePathHandle);
     m_storageManager = NetworkStorageManager::create(sessionID(), generalStoragePath, localStoragePath);
+}
+
+void NetworkSession::ensureCacheEngine(Function<void(CacheStorage::Engine&)>&& callback)
+{
+    if (m_cacheEngine)
+        return callback(*m_cacheEngine);
+
+    m_cacheStorageParametersCallbacks.append(WTFMove(callback));
+    if (m_cacheStorageParametersCallbacks.size() > 1)
+        return;
+
+    m_networkProcess->parentProcessConnection()->sendWithAsyncReply(Messages::NetworkProcessProxy::RetrieveCacheStorageParameters { sessionID() }, [this, weakThis = WeakPtr { *this }](String&& cacheStorageDirectory, SandboxExtension::Handle&& cacheStorageDirectoryHandle) {
+        if (!weakThis)
+            return;
+
+        SandboxExtension::consumePermanently(cacheStorageDirectoryHandle);
+        ASSERT(!m_cacheEngine);
+        m_cacheEngine = CacheStorage::Engine::create(*this, WTFMove(cacheStorageDirectory));
+        for (auto& callback : std::exchange(m_cacheStorageParametersCallbacks, { }))
+            callback(*m_cacheEngine);
+    }, 0);
+}
+
+void NetworkSession::clearCacheEngine()
+{
+    m_cacheEngine = nullptr;
 }
 
 } // namespace WebKit

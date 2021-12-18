@@ -1,3 +1,69 @@
+2021-12-18  Chris Dumez  <cdumez@apple.com>
+
+        Move CacheStorage engines from NetworkProcess to NetworkSession
+        https://bugs.webkit.org/show_bug.cgi?id=234448
+
+        Reviewed by Alex Christensen.
+
+        Move CacheStorage engines from NetworkProcess to NetworkSession, as they are per-session.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::destroySession):
+        (WebKit::NetworkProcess::fetchWebsiteData):
+        (WebKit::NetworkProcess::deleteWebsiteData):
+        (WebKit::NetworkProcess::deleteWebsiteDataForOrigins):
+        (WebKit::NetworkProcess::deleteAndRestrictWebsiteDataForRegistrableDomains):
+        (WebKit::NetworkProcess::registrableDomainsWithWebsiteData):
+        (WebKit::NetworkProcess::~NetworkProcess): Deleted.
+        (WebKit::NetworkProcess::findCacheEngine): Deleted.
+        (WebKit::NetworkProcess::ensureCacheEngine): Deleted.
+        (WebKit::NetworkProcess::removeCacheEngine): Deleted.
+        (WebKit::NetworkProcess::cacheStorageRootPath): Deleted.
+        (WebKit::NetworkProcess::setCacheStorageParameters): Deleted.
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * NetworkProcess/NetworkSession.cpp:
+        (WebKit::NetworkSession::invalidateAndCancel):
+        (WebKit::NetworkSession::ensureCacheEngine):
+        (WebKit::NetworkSession::clearCacheEngine):
+        * NetworkProcess/NetworkSession.h:
+        (WebKit::NetworkSession::cacheEngine):
+        * NetworkProcess/cache/CacheStorageEngine.cpp:
+        (WebKit::CacheStorage::Engine::create):
+        (WebKit::CacheStorage::Engine::fetchEntries):
+        (WebKit::CacheStorage::Engine::open):
+        (WebKit::CacheStorage::Engine::remove):
+        (WebKit::CacheStorage::Engine::retrieveCaches):
+        (WebKit::CacheStorage::Engine::retrieveRecords):
+        (WebKit::CacheStorage::Engine::putRecords):
+        (WebKit::CacheStorage::Engine::deleteMatchingRecords):
+        (WebKit::CacheStorage::Engine::lock):
+        (WebKit::CacheStorage::Engine::unlock):
+        (WebKit::CacheStorage::Engine::clearMemoryRepresentation):
+        (WebKit::CacheStorage::Engine::representation):
+        (WebKit::CacheStorage::Engine::clearAllCaches):
+        (WebKit::CacheStorage::Engine::clearCachesForOrigin):
+        (WebKit::CacheStorage::Engine::Engine):
+        (WebKit::CacheStorage::Engine::from): Deleted.
+        (WebKit::CacheStorage::Engine::destroyEngine): Deleted.
+        * NetworkProcess/cache/CacheStorageEngine.h:
+        * NetworkProcess/cache/CacheStorageEngineConnection.cpp:
+        (WebKit::CacheStorageEngineConnection::~CacheStorageEngineConnection):
+        (WebKit::CacheStorageEngineConnection::open):
+        (WebKit::CacheStorageEngineConnection::remove):
+        (WebKit::CacheStorageEngineConnection::caches):
+        (WebKit::CacheStorageEngineConnection::retrieveRecords):
+        (WebKit::CacheStorageEngineConnection::deleteMatchingRecords):
+        (WebKit::CacheStorageEngineConnection::putRecords):
+        (WebKit::CacheStorageEngineConnection::reference):
+        (WebKit::CacheStorageEngineConnection::dereference):
+        (WebKit::CacheStorageEngineConnection::clearMemoryRepresentation):
+        (WebKit::CacheStorageEngineConnection::engineRepresentation):
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::retrieveCacheStorageParameters):
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/Network/NetworkProcessProxy.messages.in:
+
 2021-12-17  Simon Fraser  <simon.fraser@apple.com>
 
         Read the default value of the ScrollAnimatorEnabled setting from NSUserDefaults

@@ -86,6 +86,10 @@ struct SessionSet;
 
 enum class WebsiteDataType : uint32_t;
 
+namespace CacheStorage {
+class Engine;
+}
+
 namespace NetworkCache {
 class Cache;
 }
@@ -214,6 +218,10 @@ public:
     NetworkStorageManager* storageManager() { return m_storageManager.get(); }
     void addStorageManagerSession(const String& generalStoragePath, SandboxExtension::Handle& generalStoragePathHandle, const String& localStoragePath, SandboxExtension::Handle& localStoragePathHandle);
 
+    CacheStorage::Engine* cacheEngine() { return m_cacheEngine.get(); }
+    void ensureCacheEngine(Function<void(CacheStorage::Engine&)>&&);
+    void clearCacheEngine();
+
     NetworkLoadScheduler& networkLoadScheduler();
     PCM::ManagerInterface& privateClickMeasurement() { return m_privateClickMeasurement.get(); }
     void setPrivateClickMeasurementDebugMode(bool);
@@ -310,6 +318,8 @@ protected:
     RefPtr<WebIDBServer> m_webIDBServer;
 
     RefPtr<NetworkStorageManager> m_storageManager;
+    RefPtr<CacheStorage::Engine> m_cacheEngine;
+    Vector<Function<void(CacheStorage::Engine&)>> m_cacheStorageParametersCallbacks;
 
 #if PLATFORM(COCOA)
     AppPrivacyReportTestingData m_appPrivacyReportTestingData;

@@ -319,7 +319,7 @@ private:
     void notifyWebsiteDataDeletionForRegistrableDomainsFinished();
     void notifyWebsiteDataScanForRegistrableDomainsFinished();
 #endif
-    void retrieveCacheStorageParameters(PAL::SessionID);
+    void retrieveCacheStorageParameters(PAL::SessionID, CompletionHandler<void(const String& cacheStorageDirectory, const WebKit::SandboxExtension::Handle& handle)>&&);
 
 #if ENABLE(CONTENT_EXTENSIONS)
     void contentExtensionRules(UserContentControllerIdentifier);

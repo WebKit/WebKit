@@ -48,7 +48,7 @@ messages -> NetworkProcessProxy LegacyReceiver {
     ContentExtensionRules(WebKit::UserContentControllerIdentifier identifier)
 #endif
 
-    RetrieveCacheStorageParameters(PAL::SessionID sessionID)
+    RetrieveCacheStorageParameters(PAL::SessionID sessionID) -> (String cacheStorageDirectory, WebKit::SandboxExtension::Handle handle) Async
 
     TerminateWebProcess(WebCore::ProcessIdentifier webProcessIdentifier)
 
