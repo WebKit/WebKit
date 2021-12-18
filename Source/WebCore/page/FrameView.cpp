@@ -1467,12 +1467,12 @@ bool FrameView::usesAsyncScrolling() const
     return false;
 }
 
-bool FrameView::mockScrollAnimatorEnabled() const
+bool FrameView::mockScrollbarsControllerEnabled() const
 {
-    return frame().settings().mockScrollAnimatorEnabled();
+    return frame().settings().mockScrollbarsControllerEnabled();
 }
 
-void FrameView::logMockScrollAnimatorMessage(const String& message) const
+void FrameView::logMockScrollbarsControllerMessage(const String& message) const
 {
     auto document = frame().document();
     if (!document)

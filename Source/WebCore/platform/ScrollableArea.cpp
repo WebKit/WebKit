@@ -71,10 +71,9 @@ ScrollAnimator& ScrollableArea::scrollAnimator() const
 ScrollbarsController& ScrollableArea::scrollbarsController() const
 {
     if (!m_scrollbarsController) {
-        // Note that mockScrollAnimatorEnabled is a misnomer.
-        if (mockScrollAnimatorEnabled()) {
+        if (mockScrollbarsControllerEnabled()) {
             m_scrollbarsController = makeUnique<ScrollbarsControllerMock>(const_cast<ScrollableArea&>(*this), [this](const String& message) {
-                logMockScrollAnimatorMessage(message);
+                logMockScrollbarsControllerMessage(message);
             });
         } else
             m_scrollbarsController = ScrollbarsController::create(const_cast<ScrollableArea&>(*this));

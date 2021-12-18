@@ -1520,7 +1520,7 @@ MockCaptureDevicesPromptEnabled:
     WebKit:
       default: true
 
-MockScrollAnimatorEnabled:
+MockScrollbarsControllerEnabled:
   type: bool
   defaultValue:
     WebKitLegacy:

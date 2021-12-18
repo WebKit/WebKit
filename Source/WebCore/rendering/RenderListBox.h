@@ -138,8 +138,8 @@ private:
     bool isScrollableOrRubberbandable() final;
     bool hasScrollableOrRubberbandableAncestor() final;
     IntRect scrollableAreaBoundingBox(bool* = nullptr) const final;
-    bool mockScrollAnimatorEnabled() const final;
-    void logMockScrollAnimatorMessage(const String&) const final;
+    bool mockScrollbarsControllerEnabled() const final;
+    void logMockScrollbarsControllerMessage(const String&) const final;
     String debugDescription() const final;
     void didStartScrollAnimation() final;
 

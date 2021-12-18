@@ -5600,7 +5600,7 @@ HRESULT WebView::notifyPreferencesChanged(IWebNotification* notification)
     settings.setOverscrollBehaviorEnabled(!!enabled);
 
     settings.setCanvasColorSpaceEnabled(m_preferences->canvasColorSpaceEnabled());
-    settings.setMockScrollAnimatorEnabled(m_preferences->mockScrollAnimatorEnabled());
+    settings.setMockScrollbarsControllerEnabled(m_preferences->mockScrollbarsControllerEnabled());
 
     return S_OK;
 }

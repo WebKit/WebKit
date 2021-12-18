@@ -357,8 +357,8 @@ public:
     void verticalScrollbarLayerDidChange();
     void horizontalScrollbarLayerDidChange();
 
-    virtual bool mockScrollAnimatorEnabled() const { return false; }
-    virtual void logMockScrollAnimatorMessage(const String&) const { };
+    virtual bool mockScrollbarsControllerEnabled() const { return false; }
+    virtual void logMockScrollbarsControllerMessage(const String&) const { };
 
     virtual bool shouldPlaceVerticalScrollbarOnLeft() const = 0;
     

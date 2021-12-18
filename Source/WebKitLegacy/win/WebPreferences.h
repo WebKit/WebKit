@@ -346,7 +346,7 @@ public:
     // The following preference accessors are not exposed via IWebPreferences* as they are only
     // needed for testing purposes and can be toggled via the set*PreferenceForTesting functions.
     bool canvasColorSpaceEnabled();
-    bool mockScrollAnimatorEnabled();
+    bool mockScrollbarsControllerEnabled();
 
 private:
     WebPreferences();

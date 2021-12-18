@@ -155,7 +155,7 @@ const TestFeatures& TestOptions::defaults()
             { "LoadsImagesAutomatically", true },
             { "MainContentUserGestureOverrideEnabled", false },
             { "MenuItemElementEnabled", false },
-            { "MockScrollAnimatorEnabled", false },
+            { "MockScrollbarsControllerEnabled", false },
             { "ModernMediaControlsEnabled", true },
             { "NeedsStorageAccessFromFileURLsQuirk", false },
             { "OverscrollBehaviorEnabled", true },

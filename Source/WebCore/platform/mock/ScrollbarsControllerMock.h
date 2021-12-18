@@ -37,8 +37,7 @@ namespace WebCore {
 
 // A Mock implementation of ScrollbarsController used to test the scroll events
 // received by the scrollbar controller. Tests can enable this mock object using
-// the internal setting setUsesMockScrollAnimator().
-// FIXME: setUsesMockScrollAnimator() needs renaming.
+// the internal setting setMockScrollbarsControllerEnabled().
 
 class ScrollbarsControllerMock final : public ScrollbarsController {
     WTF_MAKE_FAST_ALLOCATED;

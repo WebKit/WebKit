@@ -1,3 +1,18 @@
+2021-12-17  Simon Fraser  <simon.fraser@apple.com>
+
+        Rename MockScrollAnimatorEnabled to MockScrollbarsControllerEnabled
+        https://bugs.webkit.org/show_bug.cgi?id=234452
+
+        Reviewed by Anders Carlsson.
+
+        The class formerly known as MockScrollAnimatorEnabled is used for logging when scrollbars
+        get events, so fix the name. It's a subclass of ScrollbarsController.
+
+        * fast/scrolling/scroll-animator-basic-events.html:
+        * fast/scrolling/scroll-animator-overlay-scrollbars-clicked.html:
+        * fast/scrolling/scroll-animator-overlay-scrollbars-hovered.html:
+        * fast/scrolling/scroll-animator-select-list-events.html:
+
 2021-12-17  Alan Bujtas  <zalan@apple.com>
 
         Rebaseline after r287199.

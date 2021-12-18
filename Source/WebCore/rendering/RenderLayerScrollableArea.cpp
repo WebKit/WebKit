@@ -1839,12 +1839,12 @@ void RenderLayerScrollableArea::updateLayerPositionsAfterOverflowScroll()
     m_layer.updateLayerPositionsAfterScroll(&geometryMap, RenderLayer::IsOverflowScroll);
 }
 
-bool RenderLayerScrollableArea::mockScrollAnimatorEnabled() const
+bool RenderLayerScrollableArea::mockScrollbarsControllerEnabled() const
 {
-    return m_layer.renderer().settings().mockScrollAnimatorEnabled();
+    return m_layer.renderer().settings().mockScrollbarsControllerEnabled();
 }
 
-void RenderLayerScrollableArea::logMockScrollAnimatorMessage(const String& message) const
+void RenderLayerScrollableArea::logMockScrollbarsControllerMessage(const String& message) const
 {
     m_layer.renderer().document().addConsoleMessage(MessageSource::Other, MessageLevel::Debug, "RenderLayer: " + message);
 }
