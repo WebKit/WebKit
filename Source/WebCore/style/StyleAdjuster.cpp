@@ -46,6 +46,7 @@
 #include "HTMLTextAreaElement.h"
 #include "HTMLVideoElement.h"
 #include "MathMLElement.h"
+#include "ModalContainerObserver.h"
 #include "Page.h"
 #include "Quirks.h"
 #include "RenderBox.h"
@@ -548,6 +549,11 @@ void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearance
     if (m_element && m_document.settings().textAutosizingUsesIdempotentMode())
         adjustForTextAutosizing(style, *m_element);
 #endif
+
+    if (m_element) {
+        if (auto observer = m_element->document().modalContainerObserver(); observer && observer->shouldHide(*m_element))
+            style.setDisplay(DisplayType::None);
+    }
 
     adjustForSiteSpecificQuirks(style);
 }

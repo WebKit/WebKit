@@ -121,10 +121,16 @@ void ModalContainerObserver::updateModalContainerIfNeeded(const FrameView& view)
         for (auto& textRenderer : descendantsOfType<RenderText>(renderer)) {
             if (RefPtr textNode = textRenderer.textNode(); textNode && matchesSearchTerm(*textNode, searchTerm)) {
                 m_container = element.get();
+                element->invalidateStyle();
                 return;
             }
         }
     }
+}
+
+bool ModalContainerObserver::shouldHide(const Element& element)
+{
+    return &element == m_container;
 }
 
 } // namespace WebCore

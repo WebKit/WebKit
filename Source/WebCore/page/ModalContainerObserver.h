@@ -43,6 +43,7 @@ public:
     ModalContainerObserver();
     ~ModalContainerObserver();
 
+    bool shouldHide(const Element&);
     void updateModalContainerIfNeeded(const FrameView&);
 
 private:
