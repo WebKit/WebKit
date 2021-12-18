@@ -1743,6 +1743,7 @@ page/IntersectionObserverEntry.cpp
 page/Location.cpp
 page/LoggedInStatus.cpp
 page/MemoryRelease.cpp
+page/ModalContainerObserver.cpp
 page/MouseEventWithHitTestResults.cpp
 page/Navigator.cpp
 page/NavigatorBase.cpp

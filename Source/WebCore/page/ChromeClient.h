@@ -623,6 +623,8 @@ public:
 
     virtual void requestCookieConsent(CompletionHandler<void(CookieConsentDecisionResult)>&&) = 0;
 
+    virtual const AtomString& searchStringForModalContainerObserver() const { return nullAtom(); }
+
 protected:
     virtual ~ChromeClient() = default;
 };

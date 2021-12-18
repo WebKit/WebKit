@@ -1568,4 +1568,13 @@ void WebChromeClient::requestCookieConsent(CompletionHandler<void(WebCore::Cooki
     m_page.sendWithAsyncReply(Messages::WebPageProxy::RequestCookieConsent(), WTFMove(completion));
 }
 
+#if USE(APPLE_INTERNAL_SDK)
+#include <WebKitAdditions/WebChromeClientAdditions.cpp>
+#else
+const AtomString& WebChromeClient::searchStringForModalContainerObserver() const
+{
+    return nullAtom();
+}
+#endif
+
 } // namespace WebKit

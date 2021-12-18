@@ -72,6 +72,7 @@
 #include "LegacyRenderSVGRoot.h"
 #include "Logging.h"
 #include "MemoryCache.h"
+#include "ModalContainerObserver.h"
 #include "NullGraphicsContext.h"
 #include "OverflowEvent.h"
 #include "Page.h"
@@ -3433,6 +3434,9 @@ void FrameView::performPostLayoutTasks()
 
     if (AXObjectCache* cache = frame().document()->existingAXObjectCache())
         cache->performDeferredCacheUpdate();
+
+    if (auto* observer = frame().document()->modalContainerObserver())
+        observer->updateModalContainerIfNeeded(*this);
 }
 
 IntSize FrameView::sizeForResizeEvent() const

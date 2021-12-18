@@ -183,6 +183,7 @@ class MediaProducer;
 class MediaQueryList;
 class MediaQueryMatcher;
 class MessagePortChannelProvider;
+class ModalContainerObserver;
 class MouseEventWithHitTestResults;
 class NodeFilter;
 class NodeIterator;
@@ -1663,6 +1664,9 @@ public:
 
     URL fallbackBaseURL() const;
 
+    ModalContainerObserver* modalContainerObserver();
+    ModalContainerObserver* modalContainerObserverIfExists() const;
+
 protected:
     enum ConstructionFlags { Synthesized = 1, NonRenderedPlaceholder = 1 << 1 };
     WEBCORE_EXPORT Document(Frame*, const Settings&, const URL&, DocumentClasses = { }, unsigned constructionFlags = 0);
@@ -2249,6 +2253,8 @@ private:
 #if ENABLE(WEB_RTC)
     RefPtr<RTCNetworkManager> m_rtcNetworkManager;
 #endif
+
+    std::unique_ptr<ModalContainerObserver> m_modalContainerObserver;
 };
 
 Element* eventTargetElementForDocument(Document*);
