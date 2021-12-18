@@ -399,18 +399,18 @@ bool SocketStreamHandleImpl::getStoredCONNECTProxyCredentials(const ProtectionSp
     return true;
 }
 
-static ProtectionSpaceAuthenticationScheme authenticationSchemeFromAuthenticationMethod(CFStringRef method)
+static ProtectionSpace::AuthenticationScheme authenticationSchemeFromAuthenticationMethod(CFStringRef method)
 {
     if (CFEqual(method, kCFHTTPAuthenticationSchemeBasic))
-        return ProtectionSpaceAuthenticationSchemeHTTPBasic;
+        return ProtectionSpace::AuthenticationScheme::HTTPBasic;
     if (CFEqual(method, kCFHTTPAuthenticationSchemeDigest))
-        return ProtectionSpaceAuthenticationSchemeHTTPDigest;
+        return ProtectionSpace::AuthenticationScheme::HTTPDigest;
     if (CFEqual(method, kCFHTTPAuthenticationSchemeNTLM))
-        return ProtectionSpaceAuthenticationSchemeNTLM;
+        return ProtectionSpace::AuthenticationScheme::NTLM;
     if (CFEqual(method, kCFHTTPAuthenticationSchemeNegotiate))
-        return ProtectionSpaceAuthenticationSchemeNegotiate;
+        return ProtectionSpace::AuthenticationScheme::Negotiate;
     ASSERT_NOT_REACHED();
-    return ProtectionSpaceAuthenticationSchemeUnknown;
+    return ProtectionSpace::AuthenticationScheme::Unknown;
 }
     
 static void setCONNECTProxyAuthorizationForStream(CFReadStreamRef stream, CFStringRef proxyAuthorizationString)
@@ -447,7 +447,7 @@ void SocketStreamHandleImpl::addCONNECTCredentials(CFHTTPMessageRef proxyRespons
         return;
     }
 
-    ProtectionSpace protectionSpace(String(m_proxyHost.get()), port, ProtectionSpaceProxyHTTPS, String(realmCF.get()), authenticationSchemeFromAuthenticationMethod(methodCF.get()));
+    ProtectionSpace protectionSpace(String(m_proxyHost.get()), port, ProtectionSpace::ServerType::ProxyHTTPS, String(realmCF.get()), authenticationSchemeFromAuthenticationMethod(methodCF.get()));
     String login;
     String password;
     if (!m_sentStoredCredentials && getStoredCONNECTProxyCredentials(protectionSpace, login, password)) {

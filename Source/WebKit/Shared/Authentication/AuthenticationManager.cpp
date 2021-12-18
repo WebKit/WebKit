@@ -45,7 +45,7 @@ using namespace WebCore;
 static bool canCoalesceChallenge(const WebCore::AuthenticationChallenge& challenge)
 {
     // Do not coalesce server trust evaluation requests because ProtectionSpace comparison does not evaluate server trust (e.g. certificate).
-    return challenge.protectionSpace().authenticationScheme() != ProtectionSpaceAuthenticationSchemeServerTrustEvaluationRequested;
+    return challenge.protectionSpace().authenticationScheme() != ProtectionSpace::AuthenticationScheme::ServerTrustEvaluationRequested;
 }
 
 const char* AuthenticationManager::supplementName()

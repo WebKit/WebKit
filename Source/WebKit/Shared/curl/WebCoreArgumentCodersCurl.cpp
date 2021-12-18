@@ -163,11 +163,11 @@ bool ArgumentCoder<ProtectionSpace>::decodePlatformData(Decoder& decoder, Protec
     if (!decoder.decode(realm))
         return false;
 
-    ProtectionSpaceAuthenticationScheme authenticationScheme;
+    ProtectionSpace::AuthenticationScheme authenticationScheme;
     if (!decoder.decode(authenticationScheme))
         return false;
 
-    ProtectionSpaceServerType serverType;
+    ProtectionSpace::ServerType serverType;
     if (!decoder.decode(serverType))
         return false;
 

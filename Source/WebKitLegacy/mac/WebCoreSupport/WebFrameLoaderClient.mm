@@ -429,7 +429,7 @@ bool WebFrameLoaderClient::canAuthenticateAgainstProtectionSpace(WebCore::Docume
     // If our resource load delegate doesn't handle the question, then only send authentication
     // challenges for pre-iOS-3.0, pre-10.6 protection spaces.  This is the same as the default implementation
     // in CFNetwork.
-    return (protectionSpace.authenticationScheme() < WebCore::ProtectionSpaceAuthenticationSchemeClientCertificateRequested);
+    return (protectionSpace.authenticationScheme() < WebCore::ProtectionSpace::AuthenticationScheme::ClientCertificateRequested);
 }
 #endif
 

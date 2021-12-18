@@ -64,22 +64,22 @@ void CurlRequest::invalidateClient()
     m_messageQueue = nullptr;
 }
 
-void CurlRequest::setAuthenticationScheme(ProtectionSpaceAuthenticationScheme scheme)
+void CurlRequest::setAuthenticationScheme(ProtectionSpace::AuthenticationScheme scheme)
 {
     switch (scheme) {
-    case ProtectionSpaceAuthenticationSchemeHTTPBasic:
+    case ProtectionSpace::AuthenticationScheme::HTTPBasic:
         m_authType = CURLAUTH_BASIC;
         break;
 
-    case ProtectionSpaceAuthenticationSchemeHTTPDigest:
+    case ProtectionSpace::AuthenticationScheme::HTTPDigest:
         m_authType = CURLAUTH_DIGEST;
         break;
 
-    case ProtectionSpaceAuthenticationSchemeNTLM:
+    case ProtectionSpace::AuthenticationScheme::NTLM:
         m_authType = CURLAUTH_NTLM;
         break;
 
-    case ProtectionSpaceAuthenticationSchemeNegotiate:
+    case ProtectionSpace::AuthenticationScheme::Negotiate:
         m_authType = CURLAUTH_NEGOTIATE;
         break;
 

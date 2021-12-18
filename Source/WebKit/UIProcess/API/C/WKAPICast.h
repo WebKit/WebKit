@@ -290,49 +290,49 @@ inline WebCore::EditableLinkBehavior toEditableLinkBehavior(WKEditableLinkBehavi
     return WebCore::EditableLinkBehavior::NeverLive;
 }
     
-inline WKProtectionSpaceServerType toAPI(WebCore::ProtectionSpaceServerType type)
+inline WKProtectionSpaceServerType toAPI(WebCore::ProtectionSpace::ServerType type)
 {
     switch (type) {
-    case WebCore::ProtectionSpaceServerHTTP:
+    case WebCore::ProtectionSpace::ServerType::HTTP:
         return kWKProtectionSpaceServerTypeHTTP;
-    case WebCore::ProtectionSpaceServerHTTPS:
+    case WebCore::ProtectionSpace::ServerType::HTTPS:
         return kWKProtectionSpaceServerTypeHTTPS;
-    case WebCore::ProtectionSpaceServerFTP:
+    case WebCore::ProtectionSpace::ServerType::FTP:
         return kWKProtectionSpaceServerTypeFTP;
-    case WebCore::ProtectionSpaceServerFTPS:
+    case WebCore::ProtectionSpace::ServerType::FTPS:
         return kWKProtectionSpaceServerTypeFTPS;
-    case WebCore::ProtectionSpaceProxyHTTP:
+    case WebCore::ProtectionSpace::ServerType::ProxyHTTP:
         return kWKProtectionSpaceProxyTypeHTTP;
-    case WebCore::ProtectionSpaceProxyHTTPS:
+    case WebCore::ProtectionSpace::ServerType::ProxyHTTPS:
         return kWKProtectionSpaceProxyTypeHTTPS;
-    case WebCore::ProtectionSpaceProxyFTP:
+    case WebCore::ProtectionSpace::ServerType::ProxyFTP:
         return kWKProtectionSpaceProxyTypeFTP;
-    case WebCore::ProtectionSpaceProxySOCKS:
+    case WebCore::ProtectionSpace::ServerType::ProxySOCKS:
         return kWKProtectionSpaceProxyTypeSOCKS;
     }
     return kWKProtectionSpaceServerTypeHTTP;
 }
 
-inline WKProtectionSpaceAuthenticationScheme toAPI(WebCore::ProtectionSpaceAuthenticationScheme type)
+inline WKProtectionSpaceAuthenticationScheme toAPI(WebCore::ProtectionSpace::AuthenticationScheme type)
 {
     switch (type) {
-    case WebCore::ProtectionSpaceAuthenticationSchemeDefault:
+    case WebCore::ProtectionSpace::AuthenticationScheme::Default:
         return kWKProtectionSpaceAuthenticationSchemeDefault;
-    case WebCore::ProtectionSpaceAuthenticationSchemeHTTPBasic:
+    case WebCore::ProtectionSpace::AuthenticationScheme::HTTPBasic:
         return kWKProtectionSpaceAuthenticationSchemeHTTPBasic;
-    case WebCore::ProtectionSpaceAuthenticationSchemeHTTPDigest:
+    case WebCore::ProtectionSpace::AuthenticationScheme::HTTPDigest:
         return kWKProtectionSpaceAuthenticationSchemeHTTPDigest;
-    case WebCore::ProtectionSpaceAuthenticationSchemeHTMLForm:
+    case WebCore::ProtectionSpace::AuthenticationScheme::HTMLForm:
         return kWKProtectionSpaceAuthenticationSchemeHTMLForm;
-    case WebCore::ProtectionSpaceAuthenticationSchemeNTLM:
+    case WebCore::ProtectionSpace::AuthenticationScheme::NTLM:
         return kWKProtectionSpaceAuthenticationSchemeNTLM;
-    case WebCore::ProtectionSpaceAuthenticationSchemeNegotiate:
+    case WebCore::ProtectionSpace::AuthenticationScheme::Negotiate:
         return kWKProtectionSpaceAuthenticationSchemeNegotiate;
-    case WebCore::ProtectionSpaceAuthenticationSchemeClientCertificateRequested:
+    case WebCore::ProtectionSpace::AuthenticationScheme::ClientCertificateRequested:
         return kWKProtectionSpaceAuthenticationSchemeClientCertificateRequested;
-    case WebCore::ProtectionSpaceAuthenticationSchemeServerTrustEvaluationRequested:
+    case WebCore::ProtectionSpace::AuthenticationScheme::ServerTrustEvaluationRequested:
         return kWKProtectionSpaceAuthenticationSchemeServerTrustEvaluationRequested;
-    case WebCore::ProtectionSpaceAuthenticationSchemeOAuth:
+    case WebCore::ProtectionSpace::AuthenticationScheme::OAuth:
         return kWKProtectionSpaceAuthenticationSchemeOAuth;
     default:
         return kWKProtectionSpaceAuthenticationSchemeUnknown;

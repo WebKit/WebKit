@@ -421,7 +421,7 @@ void NetworkProcessProxy::didReceiveInvalidMessage(IPC::Connection& connection, 
 void NetworkProcessProxy::processAuthenticationChallenge(PAL::SessionID sessionID, Ref<AuthenticationChallengeProxy>&& authenticationChallenge)
 {
     auto* store = websiteDataStoreFromSessionID(sessionID);
-    if (!store || authenticationChallenge->core().protectionSpace().authenticationScheme() != ProtectionSpaceAuthenticationSchemeServerTrustEvaluationRequested) {
+    if (!store || authenticationChallenge->core().protectionSpace().authenticationScheme() != ProtectionSpace::AuthenticationScheme::ServerTrustEvaluationRequested) {
         authenticationChallenge->listener().completeChallenge(AuthenticationChallengeDisposition::PerformDefaultHandling);
         return;
     }
@@ -432,7 +432,7 @@ void NetworkProcessProxy::didReceiveAuthenticationChallenge(PAL::SessionID sessi
 {
 #if HAVE(SEC_KEY_PROXY)
     WeakPtr<SecKeyProxyStore> secKeyProxyStore;
-    if (coreChallenge.protectionSpace().authenticationScheme() == ProtectionSpaceAuthenticationSchemeClientCertificateRequested) {
+    if (coreChallenge.protectionSpace().authenticationScheme() == ProtectionSpace::AuthenticationScheme::ClientCertificateRequested) {
         if (auto* store = websiteDataStoreFromSessionID(sessionID)) {
             auto newSecKeyProxyStore = SecKeyProxyStore::create();
             secKeyProxyStore = newSecKeyProxyStore;

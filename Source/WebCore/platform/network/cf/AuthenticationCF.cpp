@@ -104,28 +104,28 @@ RetainPtr<CFURLProtectionSpaceRef> createCF(const ProtectionSpace& coreSpace)
 {
     CFURLProtectionSpaceServerType serverType = kCFURLProtectionSpaceServerHTTP;
     switch (coreSpace.serverType()) {
-    case ProtectionSpaceServerHTTP:
+    case ProtectionSpace::ServerType::HTTP:
         serverType = kCFURLProtectionSpaceServerHTTP;
         break;
-    case ProtectionSpaceServerHTTPS:
+    case ProtectionSpace::ServerType::HTTPS:
         serverType = kCFURLProtectionSpaceServerHTTPS;
         break;
-    case ProtectionSpaceServerFTP:
+    case ProtectionSpace::ServerType::FTP:
         serverType = kCFURLProtectionSpaceServerFTP;
         break;
-    case ProtectionSpaceServerFTPS:
+    case ProtectionSpace::ServerType::FTPS:
         serverType = kCFURLProtectionSpaceServerFTPS;
         break;
-    case ProtectionSpaceProxyHTTP:
+    case ProtectionSpace::ServerType::ProxyHTTP:
         serverType = kCFURLProtectionSpaceProxyHTTP;
         break;
-    case ProtectionSpaceProxyHTTPS:
+    case ProtectionSpace::ServerType::ProxyHTTPS:
         serverType = kCFURLProtectionSpaceProxyHTTPS;
         break;
-    case ProtectionSpaceProxyFTP:
+    case ProtectionSpace::ServerType::ProxyFTP:
         serverType = kCFURLProtectionSpaceProxyFTP;
         break;
-    case ProtectionSpaceProxySOCKS:
+    case ProtectionSpace::ServerType::ProxySOCKS:
         serverType = kCFURLProtectionSpaceProxySOCKS;
         break;
     default:
@@ -134,29 +134,29 @@ RetainPtr<CFURLProtectionSpaceRef> createCF(const ProtectionSpace& coreSpace)
 
     CFURLProtectionSpaceAuthenticationScheme scheme = kCFURLProtectionSpaceAuthenticationSchemeDefault;
     switch (coreSpace.authenticationScheme()) {
-    case ProtectionSpaceAuthenticationSchemeDefault:
+    case ProtectionSpace::AuthenticationScheme::Default:
         scheme = kCFURLProtectionSpaceAuthenticationSchemeDefault;
         break;
-    case ProtectionSpaceAuthenticationSchemeHTTPBasic:
+    case ProtectionSpace::AuthenticationScheme::HTTPBasic:
         scheme = kCFURLProtectionSpaceAuthenticationSchemeHTTPBasic;
         break;
-    case ProtectionSpaceAuthenticationSchemeHTTPDigest:
+    case ProtectionSpace::AuthenticationScheme::HTTPDigest:
         scheme = kCFURLProtectionSpaceAuthenticationSchemeHTTPDigest;
         break;
-    case ProtectionSpaceAuthenticationSchemeHTMLForm:
+    case ProtectionSpace::AuthenticationScheme::HTMLForm:
         scheme = kCFURLProtectionSpaceAuthenticationSchemeHTMLForm;
         break;
-    case ProtectionSpaceAuthenticationSchemeNTLM:
+    case ProtectionSpace::AuthenticationScheme::NTLM:
         scheme = kCFURLProtectionSpaceAuthenticationSchemeNTLM;
         break;
-    case ProtectionSpaceAuthenticationSchemeNegotiate:
+    case ProtectionSpace::AuthenticationScheme::Negotiate:
         scheme = kCFURLProtectionSpaceAuthenticationSchemeNegotiate;
         break;
 #if USE(PROTECTION_SPACE_AUTH_CALLBACK)
-    case ProtectionSpaceAuthenticationSchemeServerTrustEvaluationRequested:
+    case ProtectionSpace::AuthenticationScheme::ServerTrustEvaluationRequested:
         scheme = kCFURLProtectionSpaceAuthenticationSchemeServerTrustEvaluationRequested;
         break;
-    case ProtectionSpaceAuthenticationSchemeClientCertificateRequested:
+    case ProtectionSpace::AuthenticationScheme::ClientCertificateRequested:
         scheme = kCFURLProtectionSpaceAuthenticationSchemeClientCertificateRequested;
         break;
 #endif
@@ -192,67 +192,67 @@ Credential core(CFURLCredentialRef cfCredential)
 
 ProtectionSpace core(CFURLProtectionSpaceRef cfSpace)
 {
-    ProtectionSpaceServerType serverType = ProtectionSpaceServerHTTP;
+    auto serverType = ProtectionSpace::ServerType::HTTP;
     
     switch (CFURLProtectionSpaceGetServerType(cfSpace)) {
     case kCFURLProtectionSpaceServerHTTP:
         break;
     case kCFURLProtectionSpaceServerHTTPS:
-        serverType = ProtectionSpaceServerHTTPS;
+        serverType = ProtectionSpace::ServerType::HTTPS;
         break;
     case kCFURLProtectionSpaceServerFTP:
-        serverType = ProtectionSpaceServerFTP;
+        serverType = ProtectionSpace::ServerType::FTP;
         break;
     case kCFURLProtectionSpaceServerFTPS:
-        serverType = ProtectionSpaceServerFTPS;
+        serverType = ProtectionSpace::ServerType::FTPS;
         break;
     case kCFURLProtectionSpaceProxyHTTP:
-        serverType = ProtectionSpaceProxyHTTP;
+        serverType = ProtectionSpace::ServerType::ProxyHTTP;
         break;
     case kCFURLProtectionSpaceProxyHTTPS:
-        serverType = ProtectionSpaceProxyHTTPS;
+        serverType = ProtectionSpace::ServerType::ProxyHTTPS;
         break;
     case kCFURLProtectionSpaceProxyFTP:
-        serverType = ProtectionSpaceProxyFTP;
+        serverType = ProtectionSpace::ServerType::ProxyFTP;
         break;
     case kCFURLProtectionSpaceProxySOCKS:
-        serverType = ProtectionSpaceProxySOCKS;
+        serverType = ProtectionSpace::ServerType::ProxySOCKS;
         break;
     default:
         ASSERT_NOT_REACHED();
     }
 
-    ProtectionSpaceAuthenticationScheme scheme = ProtectionSpaceAuthenticationSchemeDefault;
+    auto scheme = ProtectionSpace::AuthenticationScheme::Default;
     
     switch (CFURLProtectionSpaceGetAuthenticationScheme(cfSpace)) {
     case kCFURLProtectionSpaceAuthenticationSchemeDefault:
-        scheme = ProtectionSpaceAuthenticationSchemeDefault;
+        scheme = ProtectionSpace::AuthenticationScheme::Default;
         break;
     case kCFURLProtectionSpaceAuthenticationSchemeHTTPBasic:
-        scheme = ProtectionSpaceAuthenticationSchemeHTTPBasic;
+        scheme = ProtectionSpace::AuthenticationScheme::HTTPBasic;
         break;
     case kCFURLProtectionSpaceAuthenticationSchemeHTTPDigest:
-        scheme = ProtectionSpaceAuthenticationSchemeHTTPDigest;
+        scheme = ProtectionSpace::AuthenticationScheme::HTTPDigest;
         break;
     case kCFURLProtectionSpaceAuthenticationSchemeHTMLForm:
-        scheme = ProtectionSpaceAuthenticationSchemeHTMLForm;
+        scheme = ProtectionSpace::AuthenticationScheme::HTMLForm;
         break;
     case kCFURLProtectionSpaceAuthenticationSchemeNTLM:
-        scheme = ProtectionSpaceAuthenticationSchemeNTLM;
+        scheme = ProtectionSpace::AuthenticationScheme::NTLM;
         break;
     case kCFURLProtectionSpaceAuthenticationSchemeNegotiate:
-        scheme = ProtectionSpaceAuthenticationSchemeNegotiate;
+        scheme = ProtectionSpace::AuthenticationScheme::Negotiate;
         break;
 #if USE(PROTECTION_SPACE_AUTH_CALLBACK)
     case kCFURLProtectionSpaceAuthenticationSchemeClientCertificateRequested:
-        scheme = ProtectionSpaceAuthenticationSchemeClientCertificateRequested;
+        scheme = ProtectionSpace::AuthenticationScheme::ClientCertificateRequested;
         break;
     case kCFURLProtectionSpaceAuthenticationSchemeServerTrustEvaluationRequested:
-        scheme = ProtectionSpaceAuthenticationSchemeServerTrustEvaluationRequested;
+        scheme = ProtectionSpace::AuthenticationScheme::ServerTrustEvaluationRequested;
         break;
 #endif
     default:
-        scheme = ProtectionSpaceAuthenticationSchemeUnknown;
+        scheme = ProtectionSpace::AuthenticationScheme::Unknown;
         ASSERT_NOT_REACHED();
     }
         

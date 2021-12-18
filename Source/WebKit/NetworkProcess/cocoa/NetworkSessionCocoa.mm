@@ -1617,7 +1617,7 @@ bool NetworkSessionCocoa::allowsSpecificHTTPSCertificateForHost(const WebCore::A
     if (!certificates)
         return false;
 
-    bool requireServerCertificates = challenge.protectionSpace().authenticationScheme() == WebCore::ProtectionSpaceAuthenticationScheme::ProtectionSpaceAuthenticationSchemeServerTrustEvaluationRequested;
+    bool requireServerCertificates = challenge.protectionSpace().authenticationScheme() == WebCore::ProtectionSpace::AuthenticationScheme::ServerTrustEvaluationRequested;
     RetainPtr<SecPolicyRef> policy = adoptCF(SecPolicyCreateSSL(requireServerCertificates, host.createCFString().get()));
 
     SecTrustRef trustRef = nullptr;

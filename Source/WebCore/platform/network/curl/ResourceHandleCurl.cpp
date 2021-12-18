@@ -86,7 +86,7 @@ bool ResourceHandle::start()
 
     if (auto credential = getCredential(d->m_firstRequest, false)) {
         d->m_curlRequest->setUserPass(credential->user(), credential->password());
-        d->m_curlRequest->setAuthenticationScheme(ProtectionSpaceAuthenticationSchemeHTTPBasic);
+        d->m_curlRequest->setAuthenticationScheme(ProtectionSpace::AuthenticationScheme::HTTPBasic);
     }
 
     d->m_curlRequest->start();
@@ -390,7 +390,7 @@ void ResourceHandle::platformLoadResourceSynchronously(NetworkingContext* contex
 
     if (auto credential = handle->getCredential(handle->d->m_firstRequest, false)) {
         handle->d->m_curlRequest->setUserPass(credential->user(), credential->password());
-        handle->d->m_curlRequest->setAuthenticationScheme(ProtectionSpaceAuthenticationSchemeHTTPBasic);
+        handle->d->m_curlRequest->setAuthenticationScheme(ProtectionSpace::AuthenticationScheme::HTTPBasic);
     }
 
     handle->d->m_curlRequest->start();

@@ -1,3 +1,16 @@
+2021-12-18  Chris Dumez  <cdumez@apple.com>
+
+        Convert ProtectionSpace enums into enum classes
+        https://bugs.webkit.org/show_bug.cgi?id=234455
+
+        Reviewed by Alex Christensen.
+
+        * WebURLProtectionSpace.cpp:
+        (WebURLProtectionSpace::authenticationMethod):
+        (coreScheme):
+        (WebURLProtectionSpace::initWithHost):
+        (WebURLProtectionSpace::initWithProxyHost):
+
 2021-12-14  Jean-Yves Avenard  <jya@apple.com>
 
         Rename SharedBuffer classes.

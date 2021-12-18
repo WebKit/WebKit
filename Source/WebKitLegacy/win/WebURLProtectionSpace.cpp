@@ -102,16 +102,16 @@ HRESULT WebURLProtectionSpace::authenticationMethod(__deref_opt_out BSTR* result
         return E_POINTER;
 
     switch (m_protectionSpace.authenticationScheme()) {
-    case ProtectionSpaceAuthenticationSchemeDefault:
+    case ProtectionSpace::AuthenticationScheme::Default:
         *result = SysAllocString(WebURLAuthenticationMethodDefault);
         break;
-    case ProtectionSpaceAuthenticationSchemeHTTPBasic:
+    case ProtectionSpace::AuthenticationScheme::HTTPBasic:
         *result = SysAllocString(WebURLAuthenticationMethodHTTPBasic);
         break;
-    case ProtectionSpaceAuthenticationSchemeHTTPDigest:
+    case ProtectionSpace::AuthenticationScheme::HTTPDigest:
         *result = SysAllocString(WebURLAuthenticationMethodHTTPDigest);
         break;
-    case ProtectionSpaceAuthenticationSchemeHTMLForm:
+    case ProtectionSpace::AuthenticationScheme::HTMLForm:
         *result = SysAllocString(WebURLAuthenticationMethodHTMLForm);
         break;
     default:
@@ -131,17 +131,17 @@ HRESULT WebURLProtectionSpace::host(__deref_opt_out BSTR* result)
     return S_OK;
 }
 
-static ProtectionSpaceAuthenticationScheme coreScheme(BSTR authenticationMethod)
+static ProtectionSpace::AuthenticationScheme coreScheme(BSTR authenticationMethod)
 {
-    ProtectionSpaceAuthenticationScheme scheme = ProtectionSpaceAuthenticationSchemeDefault;
+    auto scheme = ProtectionSpace::AuthenticationScheme::Default;
     if (BString(authenticationMethod) == BString(WebURLAuthenticationMethodDefault))
-        scheme = ProtectionSpaceAuthenticationSchemeDefault;
+        scheme = ProtectionSpace::AuthenticationScheme::Default;
     else if (BString(authenticationMethod) == BString(WebURLAuthenticationMethodHTTPBasic))
-        scheme = ProtectionSpaceAuthenticationSchemeHTTPBasic;
+        scheme = ProtectionSpace::AuthenticationScheme::HTTPBasic;
     else if (BString(authenticationMethod) == BString(WebURLAuthenticationMethodHTTPDigest))
-        scheme = ProtectionSpaceAuthenticationSchemeHTTPDigest;
+        scheme = ProtectionSpace::AuthenticationScheme::HTTPDigest;
     else if (BString(authenticationMethod) == BString(WebURLAuthenticationMethodHTMLForm))
-        scheme = ProtectionSpaceAuthenticationSchemeHTMLForm;
+        scheme = ProtectionSpace::AuthenticationScheme::HTMLForm;
     else
         ASSERT_NOT_REACHED();
     return scheme;
@@ -154,15 +154,15 @@ HRESULT WebURLProtectionSpace::initWithHost(_In_ BSTR host, int port, _In_ BSTR 
     static BString& webURLProtectionSpaceFTPBString = *new BString(WebURLProtectionSpaceFTP);
     static BString& webURLProtectionSpaceFTPSBString = *new BString(WebURLProtectionSpaceFTPS);
 
-    ProtectionSpaceServerType serverType = ProtectionSpaceServerHTTP;
+    auto serverType = ProtectionSpace::ServerType::HTTP;
     if (BString(protocol) == webURLProtectionSpaceHTTPBString)
-        serverType = ProtectionSpaceServerHTTP;
+        serverType = ProtectionSpace::ServerType::HTTP;
     else if (BString(protocol) == webURLProtectionSpaceHTTPSBString)
-        serverType = ProtectionSpaceServerHTTPS;
+        serverType = ProtectionSpace::ServerType::HTTPS;
     else if (BString(protocol) == webURLProtectionSpaceFTPBString)
-        serverType = ProtectionSpaceServerFTP;
+        serverType = ProtectionSpace::ServerType::FTP;
     else if (BString(protocol) == webURLProtectionSpaceFTPSBString)
-        serverType = ProtectionSpaceServerFTPS;
+        serverType = ProtectionSpace::ServerType::FTPS;
 
     m_protectionSpace = ProtectionSpace(String(host, SysStringLen(host)), port, serverType, 
         String(realm, SysStringLen(realm)), coreScheme(authenticationMethod));
@@ -177,15 +177,15 @@ HRESULT WebURLProtectionSpace::initWithProxyHost(_In_ BSTR host, int port, _In_ 
     static BString& webURLProtectionSpaceFTPProxyBString = *new BString(WebURLProtectionSpaceFTPProxy);
     static BString& webURLProtectionSpaceSOCKSProxyBString = *new BString(WebURLProtectionSpaceSOCKSProxy);
 
-    ProtectionSpaceServerType serverType = ProtectionSpaceProxyHTTP;
+    auto serverType = ProtectionSpace::ServerType::ProxyHTTP;
     if (BString(proxyType) == webURLProtectionSpaceHTTPProxyBString)
-        serverType = ProtectionSpaceProxyHTTP;
+        serverType = ProtectionSpace::ServerType::ProxyHTTP;
     else if (BString(proxyType) == webURLProtectionSpaceHTTPSProxyBString)
-        serverType = ProtectionSpaceProxyHTTPS;
+        serverType = ProtectionSpace::ServerType::ProxyHTTPS;
     else if (BString(proxyType) == webURLProtectionSpaceFTPProxyBString)
-        serverType = ProtectionSpaceProxyFTP;
+        serverType = ProtectionSpace::ServerType::ProxyFTP;
     else if (BString(proxyType) == webURLProtectionSpaceSOCKSProxyBString)
-        serverType = ProtectionSpaceProxySOCKS;
+        serverType = ProtectionSpace::ServerType::ProxySOCKS;
     else
         ASSERT_NOT_REACHED();
 
@@ -217,16 +217,16 @@ HRESULT WebURLProtectionSpace::protocol(__deref_opt_out BSTR* result)
         return E_POINTER;
 
     switch (m_protectionSpace.serverType()) {
-    case ProtectionSpaceServerHTTP:
+    case ProtectionSpace::ServerType::HTTP:
         *result = SysAllocString(WebURLProtectionSpaceHTTP);
         break;
-    case ProtectionSpaceServerHTTPS:
+    case ProtectionSpace::ServerType::HTTPS:
         *result = SysAllocString(WebURLProtectionSpaceHTTPS);
         break;
-    case ProtectionSpaceServerFTP:
+    case ProtectionSpace::ServerType::FTP:
         *result = SysAllocString(WebURLProtectionSpaceFTP);
         break;
-    case ProtectionSpaceServerFTPS:
+    case ProtectionSpace::ServerType::FTPS:
         *result = SysAllocString(WebURLProtectionSpaceFTPS);
         break;
     default:
@@ -242,16 +242,16 @@ HRESULT WebURLProtectionSpace::proxyType(__deref_opt_out BSTR* result)
         return E_POINTER;
 
     switch (m_protectionSpace.serverType()) {
-    case ProtectionSpaceProxyHTTP:
+    case ProtectionSpace::ServerType::ProxyHTTP:
         *result = SysAllocString(WebURLProtectionSpaceHTTPProxy);
         break;
-    case ProtectionSpaceProxyHTTPS:
+    case ProtectionSpace::ServerType::ProxyHTTPS:
         *result = SysAllocString(WebURLProtectionSpaceHTTPSProxy);
         break;
-    case ProtectionSpaceProxyFTP:
+    case ProtectionSpace::ServerType::ProxyFTP:
         *result = SysAllocString(WebURLProtectionSpaceFTPProxy);
         break;
-    case ProtectionSpaceProxySOCKS:
+    case ProtectionSpace::ServerType::ProxySOCKS:
         *result = SysAllocString(WebURLProtectionSpaceSOCKSProxy);
         break;
     default:

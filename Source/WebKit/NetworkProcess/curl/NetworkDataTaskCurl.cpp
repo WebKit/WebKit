@@ -75,7 +75,7 @@ NetworkDataTaskCurl::NetworkDataTaskCurl(NetworkSession& session, NetworkDataTas
     m_curlRequest = createCurlRequest(WTFMove(request));
     if (!m_initialCredential.isEmpty()) {
         m_curlRequest->setUserPass(m_initialCredential.user(), m_initialCredential.password());
-        m_curlRequest->setAuthenticationScheme(ProtectionSpaceAuthenticationSchemeHTTPBasic);
+        m_curlRequest->setAuthenticationScheme(ProtectionSpace::AuthenticationScheme::HTTPBasic);
     }
     m_curlRequest->start();
 }
@@ -313,7 +313,7 @@ void NetworkDataTaskCurl::willPerformHTTPRedirection()
         m_curlRequest = createCurlRequest(WTFMove(requestCopy));
         if (didChangeCredential && !m_initialCredential.isEmpty()) {
             m_curlRequest->setUserPass(m_initialCredential.user(), m_initialCredential.password());
-            m_curlRequest->setAuthenticationScheme(ProtectionSpaceAuthenticationSchemeHTTPBasic);
+            m_curlRequest->setAuthenticationScheme(ProtectionSpace::AuthenticationScheme::HTTPBasic);
         }
         m_curlRequest->start();
 
@@ -427,7 +427,7 @@ void NetworkDataTaskCurl::restartWithCredential(const ProtectionSpace& protectio
     ASSERT(m_curlRequest);
 
     auto previousRequest = m_curlRequest->resourceRequest();
-    auto shouldDisableServerTrustEvaluation = protectionSpace.authenticationScheme() == ProtectionSpaceAuthenticationSchemeServerTrustEvaluationRequested || m_curlRequest->isServerTrustEvaluationDisabled();
+    auto shouldDisableServerTrustEvaluation = protectionSpace.authenticationScheme() == ProtectionSpace::AuthenticationScheme::ServerTrustEvaluationRequested || m_curlRequest->isServerTrustEvaluationDisabled();
     m_curlRequest->cancel();
 
     m_curlRequest = createCurlRequest(WTFMove(previousRequest), RequestStatus::ReusedRequest);

@@ -88,48 +88,48 @@ void NetworkStorageSession::setCookieObserverHandler(Function<void ()>&& handler
 }
 
 #if USE(LIBSECRET)
-static const char* schemeFromProtectionSpaceServerType(ProtectionSpaceServerType serverType)
+static const char* schemeFromProtectionSpaceServerType(ProtectionSpace::ServerType serverType)
 {
     switch (serverType) {
-    case ProtectionSpaceServerHTTP:
-    case ProtectionSpaceProxyHTTP:
+    case ProtectionSpace::ServerType::HTTP:
+    case ProtectionSpace::ServerType::ProxyHTTP:
         return "http";
-    case ProtectionSpaceServerHTTPS:
-    case ProtectionSpaceProxyHTTPS:
+    case ProtectionSpace::ServerType::HTTPS:
+    case ProtectionSpace::ServerType::ProxyHTTPS:
         return "https";
-    case ProtectionSpaceServerFTP:
-    case ProtectionSpaceProxyFTP:
+    case ProtectionSpace::ServerType::FTP:
+    case ProtectionSpace::ServerType::ProxyFTP:
         return "ftp";
-    case ProtectionSpaceServerFTPS:
-    case ProtectionSpaceProxySOCKS:
+    case ProtectionSpace::ServerType::FTPS:
+    case ProtectionSpace::ServerType::ProxySOCKS:
         break;
     }
 
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-static const char* authTypeFromProtectionSpaceAuthenticationScheme(ProtectionSpaceAuthenticationScheme scheme)
+static const char* authTypeFromProtectionSpaceAuthenticationScheme(ProtectionSpace::AuthenticationScheme scheme)
 {
     switch (scheme) {
-    case ProtectionSpaceAuthenticationSchemeDefault:
-    case ProtectionSpaceAuthenticationSchemeHTTPBasic:
+    case ProtectionSpace::AuthenticationScheme::Default:
+    case ProtectionSpace::AuthenticationScheme::HTTPBasic:
         return "Basic";
-    case ProtectionSpaceAuthenticationSchemeHTTPDigest:
+    case ProtectionSpace::AuthenticationScheme::HTTPDigest:
         return "Digest";
-    case ProtectionSpaceAuthenticationSchemeNTLM:
+    case ProtectionSpace::AuthenticationScheme::NTLM:
         return "NTLM";
-    case ProtectionSpaceAuthenticationSchemeNegotiate:
+    case ProtectionSpace::AuthenticationScheme::Negotiate:
         return "Negotiate";
-    case ProtectionSpaceAuthenticationSchemeHTMLForm:
-    case ProtectionSpaceAuthenticationSchemeClientCertificateRequested:
-    case ProtectionSpaceAuthenticationSchemeServerTrustEvaluationRequested:
+    case ProtectionSpace::AuthenticationScheme::HTMLForm:
+    case ProtectionSpace::AuthenticationScheme::ClientCertificateRequested:
+    case ProtectionSpace::AuthenticationScheme::ServerTrustEvaluationRequested:
         ASSERT_NOT_REACHED();
         break;
-    case ProtectionSpaceAuthenticationSchemeClientCertificatePINRequested:
+    case ProtectionSpace::AuthenticationScheme::ClientCertificatePINRequested:
         return "Certificate PIN";
-    case ProtectionSpaceAuthenticationSchemeOAuth:
+    case ProtectionSpace::AuthenticationScheme::OAuth:
         return "OAuth";
-    case ProtectionSpaceAuthenticationSchemeUnknown:
+    case ProtectionSpace::AuthenticationScheme::Unknown:
         return "unknown";
     }
 

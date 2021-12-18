@@ -962,11 +962,11 @@ bool ArgumentCoder<ProtectionSpace>::decode(Decoder& decoder, ProtectionSpace& s
     if (!decoder.decode(realm))
         return false;
     
-    ProtectionSpaceAuthenticationScheme authenticationScheme;
+    ProtectionSpace::AuthenticationScheme authenticationScheme;
     if (!decoder.decode(authenticationScheme))
         return false;
 
-    ProtectionSpaceServerType serverType;
+    ProtectionSpace::ServerType serverType;
     if (!decoder.decode(serverType))
         return false;
 

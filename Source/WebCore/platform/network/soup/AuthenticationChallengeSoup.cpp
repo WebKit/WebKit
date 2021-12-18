@@ -35,31 +35,31 @@
 
 namespace WebCore {
 
-static ProtectionSpaceServerType protectionSpaceServerTypeFromURL(const URL& url, bool isForProxy)
+static ProtectionSpace::ServerType protectionSpaceServerTypeFromURL(const URL& url, bool isForProxy)
 {
     if (url.protocolIs("https"))
-        return isForProxy ? ProtectionSpaceProxyHTTPS : ProtectionSpaceServerHTTPS;
+        return isForProxy ? ProtectionSpace::ServerType::ProxyHTTPS : ProtectionSpace::ServerType::HTTPS;
     if (url.protocolIs("http"))
-        return isForProxy ? ProtectionSpaceProxyHTTP : ProtectionSpaceServerHTTP;
+        return isForProxy ? ProtectionSpace::ServerType::ProxyHTTP : ProtectionSpace::ServerType::HTTP;
     if (url.protocolIs("ftp"))
-        return isForProxy ? ProtectionSpaceProxyFTP : ProtectionSpaceServerFTP;
-    return isForProxy ? ProtectionSpaceProxyHTTP : ProtectionSpaceServerHTTP;
+        return isForProxy ? ProtectionSpace::ServerType::ProxyFTP : ProtectionSpace::ServerType::FTP;
+    return isForProxy ? ProtectionSpace::ServerType::ProxyHTTP : ProtectionSpace::ServerType::HTTP;
 }
 
 static ProtectionSpace protectionSpaceFromSoupAuthAndURL(SoupAuth* soupAuth, const URL& url)
 {
     const char* schemeName = soup_auth_get_scheme_name(soupAuth);
-    ProtectionSpaceAuthenticationScheme scheme;
+    ProtectionSpace::AuthenticationScheme scheme;
     if (!g_ascii_strcasecmp(schemeName, "basic"))
-        scheme = ProtectionSpaceAuthenticationSchemeHTTPBasic;
+        scheme = ProtectionSpace::AuthenticationScheme::HTTPBasic;
     else if (!g_ascii_strcasecmp(schemeName, "digest"))
-        scheme = ProtectionSpaceAuthenticationSchemeHTTPDigest;
+        scheme = ProtectionSpace::AuthenticationScheme::HTTPDigest;
     else if (!g_ascii_strcasecmp(schemeName, "ntlm"))
-        scheme = ProtectionSpaceAuthenticationSchemeNTLM;
+        scheme = ProtectionSpace::AuthenticationScheme::NTLM;
     else if (!g_ascii_strcasecmp(schemeName, "negotiate"))
-        scheme = ProtectionSpaceAuthenticationSchemeNegotiate;
+        scheme = ProtectionSpace::AuthenticationScheme::Negotiate;
     else
-        scheme = ProtectionSpaceAuthenticationSchemeUnknown;
+        scheme = ProtectionSpace::AuthenticationScheme::Unknown;
 
 #if USE(SOUP2)
     auto host = url.host();
@@ -96,7 +96,7 @@ static ProtectionSpace protectionSpaceForClientCertificate(const URL& url)
     if (!port)
         port = defaultPortForProtocol(url.protocol());
     return ProtectionSpace(url.host().toString(), static_cast<int>(port.value_or(0)), protectionSpaceServerTypeFromURL(url, false), { },
-        ProtectionSpaceAuthenticationSchemeClientCertificateRequested);
+        ProtectionSpace::AuthenticationScheme::ClientCertificateRequested);
 }
 
 AuthenticationChallenge::AuthenticationChallenge(SoupMessage* soupMessage, GTlsClientConnection*)
@@ -114,7 +114,7 @@ static ProtectionSpace protectionSpaceForClientCertificatePassword(GTlsPassword*
     if (!port)
         port = defaultPortForProtocol(url.protocol());
     return ProtectionSpace(url.host().toString(), static_cast<int>(port.value_or(0)), protectionSpaceServerTypeFromURL(url, false),
-        String::fromUTF8(g_tls_password_get_description(tlsPassword)), ProtectionSpaceAuthenticationSchemeClientCertificatePINRequested);
+        String::fromUTF8(g_tls_password_get_description(tlsPassword)), ProtectionSpace::AuthenticationScheme::ClientCertificatePINRequested);
 }
 
 AuthenticationChallenge::AuthenticationChallenge(SoupMessage* soupMessage, GTlsPassword* tlsPassword)

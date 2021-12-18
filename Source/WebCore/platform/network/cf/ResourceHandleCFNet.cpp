@@ -425,7 +425,7 @@ void ResourceHandle::receivedCredential(const AuthenticationChallenge& challenge
         return;
     }
 
-    if (credential.persistence() == CredentialPersistenceForSession && challenge.protectionSpace().authenticationScheme() != ProtectionSpaceAuthenticationSchemeServerTrustEvaluationRequested) {
+    if (credential.persistence() == CredentialPersistenceForSession && challenge.protectionSpace().authenticationScheme() != ProtectionSpace::AuthenticationScheme::ServerTrustEvaluationRequested) {
         // Manage per-session credentials internally, because once NSURLCredentialPersistencePerSession is used, there is no way
         // to ignore it for a particular request (short of removing it altogether).
         Credential webCredential(credential, CredentialPersistenceNone);

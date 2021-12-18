@@ -688,16 +688,16 @@ static inline bool isAuthenticationFailureStatusCode(int httpStatusCode)
 void NetworkDataTaskSoup::completeAuthentication(const AuthenticationChallenge& challenge, const Credential& credential)
 {
     switch (challenge.protectionSpace().authenticationScheme()) {
-    case ProtectionSpaceAuthenticationSchemeDefault:
-    case ProtectionSpaceAuthenticationSchemeHTTPBasic:
-    case ProtectionSpaceAuthenticationSchemeHTTPDigest:
-    case ProtectionSpaceAuthenticationSchemeHTMLForm:
-    case ProtectionSpaceAuthenticationSchemeNTLM:
-    case ProtectionSpaceAuthenticationSchemeNegotiate:
-    case ProtectionSpaceAuthenticationSchemeOAuth:
+    case ProtectionSpace::AuthenticationScheme::Default:
+    case ProtectionSpace::AuthenticationScheme::HTTPBasic:
+    case ProtectionSpace::AuthenticationScheme::HTTPDigest:
+    case ProtectionSpace::AuthenticationScheme::HTMLForm:
+    case ProtectionSpace::AuthenticationScheme::NTLM:
+    case ProtectionSpace::AuthenticationScheme::Negotiate:
+    case ProtectionSpace::AuthenticationScheme::OAuth:
         soup_auth_authenticate(challenge.soupAuth(), credential.user().utf8().data(), credential.password().utf8().data());
         break;
-    case ProtectionSpaceAuthenticationSchemeClientCertificatePINRequested: {
+    case ProtectionSpace::AuthenticationScheme::ClientCertificatePINRequested: {
 #if USE(SOUP2)
         ASSERT_NOT_REACHED();
 #else
@@ -707,15 +707,15 @@ void NetworkDataTaskSoup::completeAuthentication(const AuthenticationChallenge& 
 #endif
         break;
     }
-    case ProtectionSpaceAuthenticationSchemeClientCertificateRequested:
+    case ProtectionSpace::AuthenticationScheme::ClientCertificateRequested:
 #if USE(SOUP2)
         ASSERT_NOT_REACHED();
 #else
         soup_message_set_tls_client_certificate(m_soupMessage.get(), credential.certificate());
 #endif
         break;
-    case ProtectionSpaceAuthenticationSchemeServerTrustEvaluationRequested:
-    case ProtectionSpaceAuthenticationSchemeUnknown:
+    case ProtectionSpace::AuthenticationScheme::ServerTrustEvaluationRequested:
+    case ProtectionSpace::AuthenticationScheme::Unknown:
         break;
     }
 }
@@ -723,31 +723,31 @@ void NetworkDataTaskSoup::completeAuthentication(const AuthenticationChallenge& 
 void NetworkDataTaskSoup::cancelAuthentication(const AuthenticationChallenge& challenge)
 {
     switch (challenge.protectionSpace().authenticationScheme()) {
-    case ProtectionSpaceAuthenticationSchemeDefault:
-    case ProtectionSpaceAuthenticationSchemeHTTPBasic:
-    case ProtectionSpaceAuthenticationSchemeHTTPDigest:
-    case ProtectionSpaceAuthenticationSchemeHTMLForm:
-    case ProtectionSpaceAuthenticationSchemeNTLM:
-    case ProtectionSpaceAuthenticationSchemeNegotiate:
-    case ProtectionSpaceAuthenticationSchemeOAuth:
+    case ProtectionSpace::AuthenticationScheme::Default:
+    case ProtectionSpace::AuthenticationScheme::HTTPBasic:
+    case ProtectionSpace::AuthenticationScheme::HTTPDigest:
+    case ProtectionSpace::AuthenticationScheme::HTMLForm:
+    case ProtectionSpace::AuthenticationScheme::NTLM:
+    case ProtectionSpace::AuthenticationScheme::Negotiate:
+    case ProtectionSpace::AuthenticationScheme::OAuth:
         soup_auth_cancel(challenge.soupAuth());
         break;
-    case ProtectionSpaceAuthenticationSchemeClientCertificatePINRequested:
+    case ProtectionSpace::AuthenticationScheme::ClientCertificatePINRequested:
 #if USE(SOUP2)
         ASSERT_NOT_REACHED();
 #else
         soup_message_tls_client_certificate_password_request_complete(m_soupMessage.get());
 #endif
         break;
-    case ProtectionSpaceAuthenticationSchemeClientCertificateRequested:
+    case ProtectionSpace::AuthenticationScheme::ClientCertificateRequested:
 #if USE(SOUP2)
         ASSERT_NOT_REACHED();
 #else
         soup_message_set_tls_client_certificate(m_soupMessage.get(), nullptr);
 #endif
         break;
-    case ProtectionSpaceAuthenticationSchemeServerTrustEvaluationRequested:
-    case ProtectionSpaceAuthenticationSchemeUnknown:
+    case ProtectionSpace::AuthenticationScheme::ServerTrustEvaluationRequested:
+    case ProtectionSpace::AuthenticationScheme::Unknown:
         break;
     }
 }

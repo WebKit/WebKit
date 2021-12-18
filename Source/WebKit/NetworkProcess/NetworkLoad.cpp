@@ -215,8 +215,8 @@ void NetworkLoad::didReceiveChallenge(AuthenticationChallenge&& challenge, Negot
     m_client.get().didReceiveChallenge(challenge);
 
     auto scheme = challenge.protectionSpace().authenticationScheme();
-    bool isTLSHandshake = scheme == ProtectionSpaceAuthenticationSchemeServerTrustEvaluationRequested
-        || scheme == ProtectionSpaceAuthenticationSchemeClientCertificateRequested;
+    bool isTLSHandshake = scheme == ProtectionSpace::AuthenticationScheme::ServerTrustEvaluationRequested
+        || scheme == ProtectionSpace::AuthenticationScheme::ClientCertificateRequested;
     if (!isAllowedToAskUserForCredentials() && !isTLSHandshake && !challenge.protectionSpace().isProxy()) {
         m_client.get().didBlockAuthenticationChallenge();
         completionHandler(AuthenticationChallengeDisposition::UseCredential, { });

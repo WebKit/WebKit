@@ -95,11 +95,11 @@ void NetworkCORSPreflightChecker::willPerformHTTPRedirection(WebCore::ResourceRe
 
 void NetworkCORSPreflightChecker::didReceiveChallenge(WebCore::AuthenticationChallenge&& challenge, NegotiatedLegacyTLS negotiatedLegacyTLS, ChallengeCompletionHandler&& completionHandler)
 {
-    CORS_CHECKER_RELEASE_LOG("didReceiveChallenge, authentication scheme: %u", challenge.protectionSpace().authenticationScheme());
+    CORS_CHECKER_RELEASE_LOG("didReceiveChallenge, authentication scheme: %u", static_cast<unsigned>(challenge.protectionSpace().authenticationScheme()));
 
     auto scheme = challenge.protectionSpace().authenticationScheme();
-    bool isTLSHandshake = scheme == ProtectionSpaceAuthenticationSchemeServerTrustEvaluationRequested
-        || scheme == ProtectionSpaceAuthenticationSchemeClientCertificateRequested;
+    bool isTLSHandshake = scheme == ProtectionSpace::AuthenticationScheme::ServerTrustEvaluationRequested
+        || scheme == ProtectionSpace::AuthenticationScheme::ClientCertificateRequested;
 
     if (!isTLSHandshake) {
         completionHandler(AuthenticationChallengeDisposition::UseCredential, { });
