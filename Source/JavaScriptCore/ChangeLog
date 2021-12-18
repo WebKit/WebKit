@@ -1,3 +1,38 @@
+2021-12-18  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Do not allocate m_bbqCallee and m_omgCallee until it becomes necessary
+        https://bugs.webkit.org/show_bug.cgi?id=234457
+
+        Reviewed by Saam Barati.
+
+        WebAssembly memory import will require initializing both Wasm::CalleeGroup.
+        So, we should shrink memory size of Wasm::CalleeGroup as much as possible
+        to avoid memory regression. This patch allocates m_bbqCallee and m_omgCallee
+        only when it becomes available.
+
+        * wasm/WasmBBQPlan.cpp:
+        (JSC::Wasm::BBQPlan::work):
+        * wasm/WasmCalleeGroup.cpp:
+        (JSC::Wasm::CalleeGroup::CalleeGroup):
+        * wasm/WasmCalleeGroup.h:
+        (JSC::Wasm::CalleeGroup::compilationFinished): Deleted.
+        (JSC::Wasm::CalleeGroup::runnable): Deleted.
+        (JSC::Wasm::CalleeGroup::errorMessage): Deleted.
+        (JSC::Wasm::CalleeGroup::functionImportCount const): Deleted.
+        (JSC::Wasm::CalleeGroup::embedderEntrypointCalleeFromFunctionIndexSpace): Deleted.
+        (JSC::Wasm::CalleeGroup::wasmEntrypointCalleeFromFunctionIndexSpace): Deleted.
+        (JSC::Wasm::CalleeGroup::wasmBBQCalleeFromFunctionIndexSpace): Deleted.
+        (JSC::Wasm::CalleeGroup::entrypointLoadLocationFromFunctionIndexSpace): Deleted.
+        (JSC::Wasm::CalleeGroup::wasmToWasmExitStub): Deleted.
+        (JSC::Wasm::CalleeGroup::mode const): Deleted.
+        * wasm/WasmOMGForOSREntryPlan.cpp:
+        (JSC::Wasm::OMGForOSREntryPlan::work):
+        * wasm/WasmOMGPlan.cpp:
+        (JSC::Wasm::OMGPlan::work):
+        * wasm/WasmPlan.cpp:
+        (JSC::Wasm::Plan::updateCallSitesToCallUs):
+        * wasm/WasmPlan.h:
+
 2021-12-17  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [WTF] Introduce TrailingArray

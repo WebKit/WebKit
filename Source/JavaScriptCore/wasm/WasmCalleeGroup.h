@@ -48,7 +48,7 @@ struct ModuleInformation;
 struct UnlinkedWasmToWasmCall;
 enum class MemoryMode : uint8_t;
 
-class CalleeGroup : public ThreadSafeRefCounted<CalleeGroup> {
+class CalleeGroup final : public ThreadSafeRefCounted<CalleeGroup> {
 public:
     typedef void CallbackType(Ref<CalleeGroup>&&);
     using AsyncCompilationCallback = RefPtr<WTF::SharedTask<CallbackType>>;
@@ -87,15 +87,15 @@ public:
         return *callee;
     }
 
-    Callee& wasmEntrypointCalleeFromFunctionIndexSpace(unsigned functionIndexSpace)
+    Callee& wasmEntrypointCalleeFromFunctionIndexSpace(const AbstractLocker&, unsigned functionIndexSpace)
     {
         ASSERT(runnable());
         RELEASE_ASSERT(functionIndexSpace >= functionImportCount());
         unsigned calleeIndex = functionIndexSpace - functionImportCount();
 #if ENABLE(WEBASSEMBLY_B3JIT)
-        if (m_omgCallees[calleeIndex])
+        if (!m_omgCallees.isEmpty() && m_omgCallees[calleeIndex])
             return *m_omgCallees[calleeIndex].get();
-        if (m_bbqCallees[calleeIndex])
+        if (!m_bbqCallees.isEmpty() && m_bbqCallees[calleeIndex])
             return *m_bbqCallees[calleeIndex].get();
 #endif
         return m_llintCallees->at(calleeIndex).get();
@@ -104,10 +104,40 @@ public:
 #if ENABLE(WEBASSEMBLY_B3JIT)
     BBQCallee& wasmBBQCalleeFromFunctionIndexSpace(unsigned functionIndexSpace)
     {
+        // We do not look up without locking because this function is called from this BBQCallee itself.
         ASSERT(runnable());
         RELEASE_ASSERT(functionIndexSpace >= functionImportCount());
         unsigned calleeIndex = functionIndexSpace - functionImportCount();
+        ASSERT(m_bbqCallees[calleeIndex]);
         return *m_bbqCallees[calleeIndex].get();
+    }
+
+    BBQCallee* bbqCallee(const AbstractLocker&, unsigned functionIndex)
+    {
+        if (m_bbqCallees.isEmpty())
+            return nullptr;
+        return m_bbqCallees[functionIndex].get();
+    }
+
+    OMGCallee* omgCallee(const AbstractLocker&, unsigned functionIndex)
+    {
+        if (m_omgCallees.isEmpty())
+            return nullptr;
+        return m_omgCallees[functionIndex].get();
+    }
+
+    void setBBQCallee(const AbstractLocker&, unsigned functionIndex, Ref<BBQCallee>&& callee)
+    {
+        if (m_bbqCallees.isEmpty())
+            m_bbqCallees = FixedVector<RefPtr<BBQCallee>>(m_calleeCount);
+        m_bbqCallees[functionIndex] = WTFMove(callee);
+    }
+
+    void setOMGCallee(const AbstractLocker&, unsigned functionIndex, Ref<OMGCallee>&& callee)
+    {
+        if (m_omgCallees.isEmpty())
+            m_omgCallees = FixedVector<RefPtr<OMGCallee>>(m_calleeCount);
+        m_omgCallees[functionIndex] = WTFMove(callee);
     }
 #endif
 

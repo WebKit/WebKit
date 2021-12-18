@@ -48,10 +48,6 @@ Ref<CalleeGroup> CalleeGroup::createFromExisting(MemoryMode mode, const CalleeGr
 CalleeGroup::CalleeGroup(MemoryMode mode, const CalleeGroup& other)
     : m_calleeCount(other.m_calleeCount)
     , m_mode(mode)
-#if ENABLE(WEBASSEMBLY_B3JIT)
-    , m_omgCallees(m_calleeCount)
-    , m_bbqCallees(m_calleeCount)
-#endif
     , m_llintCallees(other.m_llintCallees)
     , m_embedderCallees(other.m_embedderCallees)
     , m_wasmIndirectCallEntryPoints(other.m_wasmIndirectCallEntryPoints)
@@ -77,11 +73,6 @@ CalleeGroup::CalleeGroup(Context* context, MemoryMode mode, ModuleInformation& m
                 return;
             }
 
-#if ENABLE(WEBASSEMBLY_B3JIT)
-            // FIXME: we should eventually collect the BBQ code.
-            m_bbqCallees = FixedVector<RefPtr<BBQCallee>>(m_calleeCount);
-            m_omgCallees = FixedVector<RefPtr<OMGCallee>>(m_calleeCount);
-#endif
             m_wasmIndirectCallEntryPoints = FixedVector<MacroAssemblerCodePtr<WasmEntryPtrTag>>(m_calleeCount);
 
             for (unsigned i = 0; i < m_calleeCount; ++i)
@@ -104,9 +95,6 @@ CalleeGroup::CalleeGroup(Context* context, MemoryMode mode, ModuleInformation& m
                 return;
             }
 
-            // FIXME: we should eventually collect the BBQ code.
-            m_bbqCallees = FixedVector<RefPtr<BBQCallee>>(m_calleeCount);
-            m_omgCallees = FixedVector<RefPtr<OMGCallee>>(m_calleeCount);
             m_wasmIndirectCallEntryPoints = FixedVector<MacroAssemblerCodePtr<WasmEntryPtrTag>>(m_calleeCount);
 
             BBQPlan* bbqPlan = static_cast<BBQPlan*>(m_plan.get());
@@ -116,7 +104,7 @@ CalleeGroup::CalleeGroup(Context* context, MemoryMode mode, ModuleInformation& m
                     ASSERT_UNUSED(result, result.isNewEntry);
                 }
                 m_wasmIndirectCallEntryPoints[calleeIndex] = wasmEntrypoint->entrypoint();
-                m_bbqCallees[calleeIndex] = adoptRef(static_cast<BBQCallee*>(wasmEntrypoint.leakRef()));
+                setBBQCallee(locker, calleeIndex, adoptRef(*static_cast<BBQCallee*>(wasmEntrypoint.leakRef())));
             });
 
             m_wasmToWasmExitStubs = m_plan->takeWasmToWasmExitStubs();

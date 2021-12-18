@@ -124,7 +124,7 @@ void Plan::fail(String&& errorMessage)
 }
 
 #if ENABLE(WEBASSEMBLY_B3JIT)
-void Plan::updateCallSitesToCallUs(CalleeGroup& calleeGroup, CodeLocationLabel<WasmEntryPtrTag> entrypoint, uint32_t functionIndex, uint32_t functionIndexSpace)
+void Plan::updateCallSitesToCallUs(const AbstractLocker& calleeGroupLocker, CalleeGroup& calleeGroup, CodeLocationLabel<WasmEntryPtrTag> entrypoint, uint32_t functionIndex, uint32_t functionIndexSpace)
 {
     HashMap<void*, CodeLocationLabel<WasmEntryPtrTag>> stagedCalls;
     auto stageRepatch = [&] (const auto& callsites) {
@@ -144,7 +144,7 @@ void Plan::updateCallSitesToCallUs(CalleeGroup& calleeGroup, CodeLocationLabel<W
             if (OMGForOSREntryCallee* osrEntryCallee = llintCallee.osrEntryCallee(calleeGroup.mode()))
                 stageRepatch(osrEntryCallee->wasmToWasmCallsites());
         }
-        if (BBQCallee* bbqCallee = calleeGroup.m_bbqCallees[i].get()) {
+        if (BBQCallee* bbqCallee = calleeGroup.bbqCallee(calleeGroupLocker, i)) {
             if (OMGCallee* replacementCallee = bbqCallee->replacement())
                 stageRepatch(replacementCallee->wasmToWasmCallsites());
             if (OMGForOSREntryCallee* osrEntryCallee = bbqCallee->osrEntryCallee())
@@ -179,7 +179,7 @@ void Plan::updateCallSitesToCallUs(CalleeGroup& calleeGroup, CodeLocationLabel<W
             if (OMGForOSREntryCallee* osrEntryCallee = llintCallee.osrEntryCallee(calleeGroup.mode()))
                 repatchCalls(osrEntryCallee->wasmToWasmCallsites());
         }
-        if (BBQCallee* bbqCallee = calleeGroup.m_bbqCallees[i].get()) {
+        if (BBQCallee* bbqCallee = calleeGroup.bbqCallee(calleeGroupLocker, i)) {
             if (OMGCallee* replacementCallee = bbqCallee->replacement())
                 repatchCalls(replacementCallee->wasmToWasmCallsites());
             if (OMGForOSREntryCallee* osrEntryCallee = bbqCallee->osrEntryCallee())

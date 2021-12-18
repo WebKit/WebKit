@@ -127,7 +127,6 @@ void BBQPlan::work(CompilationEffort effort)
     {
         Ref<BBQCallee> callee = BBQCallee::create(WTFMove(function->entrypoint), functionIndexSpace, m_moduleInformation->nameSection->get(functionIndexSpace), WTFMove(tierUp), WTFMove(unlinkedWasmToWasmCalls), WTFMove(function->stackmaps), WTFMove(function->exceptionHandlers), WTFMove(exceptionHandlerLocations));
         MacroAssembler::repatchPointer(function->calleeMoveLocation, CalleeBits::boxWasm(callee.ptr()));
-        ASSERT(!m_calleeGroup->m_bbqCallees[m_functionIndex]);
         entrypoint = callee->entrypoint();
 
         if (context.pcToCodeOriginMap)
@@ -139,19 +138,19 @@ void BBQPlan::work(CompilationEffort effort)
         // the lock our code is ready to be published too.
         Locker locker { m_calleeGroup->m_lock };
 
-        m_calleeGroup->m_bbqCallees[m_functionIndex] = callee.copyRef();
+        m_calleeGroup->setBBQCallee(locker, m_functionIndex, callee.copyRef());
 
         for (auto& call : callee->wasmToWasmCallsites()) {
             MacroAssemblerCodePtr<WasmEntryPtrTag> entrypoint;
             if (call.functionIndexSpace < m_moduleInformation->importFunctionCount())
                 entrypoint = m_calleeGroup->m_wasmToWasmExitStubs[call.functionIndexSpace].code();
             else
-                entrypoint = m_calleeGroup->wasmEntrypointCalleeFromFunctionIndexSpace(call.functionIndexSpace).entrypoint().retagged<WasmEntryPtrTag>();
+                entrypoint = m_calleeGroup->wasmEntrypointCalleeFromFunctionIndexSpace(locker, call.functionIndexSpace).entrypoint().retagged<WasmEntryPtrTag>();
 
             MacroAssembler::repatchNearCall(call.callLocation, CodeLocationLabel<WasmEntryPtrTag>(entrypoint));
         }
 
-        Plan::updateCallSitesToCallUs(*m_calleeGroup, CodeLocationLabel<WasmEntryPtrTag>(entrypoint), m_functionIndex, functionIndexSpace);
+        Plan::updateCallSitesToCallUs(locker, *m_calleeGroup, CodeLocationLabel<WasmEntryPtrTag>(entrypoint), m_functionIndex, functionIndexSpace);
 
         {
             LLIntCallee& llintCallee = m_calleeGroup->m_llintCallees->at(m_functionIndex).get();
