@@ -86,15 +86,15 @@ TEST(WTF_FixedVector, Copy)
     vec1[2] = 2;
 
     FixedVector<unsigned> vec2(vec1);
-    EXPECT_EQ(vec1.size(), 3U);
-    EXPECT_EQ(vec2.size(), 3U);
+    EXPECT_EQ(3U, vec1.size());
+    EXPECT_EQ(3U, vec2.size());
     for (unsigned i = 0; i < vec1.size(); ++i) {
-        EXPECT_EQ(vec1[i], i);
-        EXPECT_EQ(vec2[i], i);
+        EXPECT_EQ(i, vec1[i]);
+        EXPECT_EQ(i, vec2[i]);
     }
     vec1[2] = 42;
-    EXPECT_EQ(vec1[2], 42U);
-    EXPECT_EQ(vec2[2], 2U);
+    EXPECT_EQ(42U, vec1[2]);
+    EXPECT_EQ(2U, vec2[2]);
 }
 
 TEST(WTF_FixedVector, CopyAssign)
@@ -106,15 +106,15 @@ TEST(WTF_FixedVector, CopyAssign)
 
     FixedVector<unsigned> vec2;
     vec2 = vec1;
-    EXPECT_EQ(vec1.size(), 3U);
-    EXPECT_EQ(vec2.size(), 3U);
+    EXPECT_EQ(3U, vec1.size());
+    EXPECT_EQ(3U, vec2.size());
     for (unsigned i = 0; i < vec1.size(); ++i) {
-        EXPECT_EQ(vec1[i], i);
-        EXPECT_EQ(vec2[i], i);
+        EXPECT_EQ(i, vec1[i]);
+        EXPECT_EQ(i, vec2[i]);
     }
     vec1[2] = 42;
-    EXPECT_EQ(vec1[2], 42U);
-    EXPECT_EQ(vec2[2], 2U);
+    EXPECT_EQ(42U, vec1[2]);
+    EXPECT_EQ(2U, vec2[2]);
 }
 
 TEST(WTF_FixedVector, Move)
@@ -125,10 +125,10 @@ TEST(WTF_FixedVector, Move)
     vec1[2] = 2;
 
     FixedVector<unsigned> vec2(WTFMove(vec1));
-    EXPECT_EQ(vec1.size(), 0U);
-    EXPECT_EQ(vec2.size(), 3U);
+    EXPECT_EQ(0U, vec1.size());
+    EXPECT_EQ(3U, vec2.size());
     for (unsigned i = 0; i < vec2.size(); ++i)
-        EXPECT_EQ(vec2[i], i);
+        EXPECT_EQ(i, vec2[i]);
 }
 
 TEST(WTF_FixedVector, MoveAssign)
@@ -140,21 +140,21 @@ TEST(WTF_FixedVector, MoveAssign)
 
     FixedVector<unsigned> vec2;
     vec2 = WTFMove(vec1);
-    EXPECT_EQ(vec1.size(), 0U);
-    EXPECT_EQ(vec2.size(), 3U);
+    EXPECT_EQ(0U, vec1.size());
+    EXPECT_EQ(3U, vec2.size());
     for (unsigned i = 0; i < vec2.size(); ++i)
-        EXPECT_EQ(vec2[i], i);
+        EXPECT_EQ(i, vec2[i]);
 }
 
 TEST(WTF_FixedVector, MoveVector)
 {
     auto vec1 = Vector<MoveOnly>::from(MoveOnly(0), MoveOnly(1), MoveOnly(2), MoveOnly(3));
-    EXPECT_EQ(vec1.size(), 4U);
+    EXPECT_EQ(4U, vec1.size());
     FixedVector<MoveOnly> vec2(WTFMove(vec1));
-    EXPECT_EQ(vec1.size(), 0U);
-    EXPECT_EQ(vec2.size(), 4U);
+    EXPECT_EQ(0U, vec1.size());
+    EXPECT_EQ(4U, vec2.size());
     for (unsigned index = 0; index < vec2.size(); ++index)
-        EXPECT_EQ(vec2[index].value(), index);
+        EXPECT_EQ(index, vec2[index].value());
 }
 
 TEST(WTF_FixedVector, MoveAssignVector)
@@ -162,13 +162,13 @@ TEST(WTF_FixedVector, MoveAssignVector)
     FixedVector<MoveOnly> vec2;
     {
         auto vec1 = Vector<MoveOnly>::from(MoveOnly(0), MoveOnly(1), MoveOnly(2), MoveOnly(3));
-        EXPECT_EQ(vec1.size(), 4U);
+        EXPECT_EQ(4U, vec1.size());
         vec2 = WTFMove(vec1);
-        EXPECT_EQ(vec1.size(), 0U);
+        EXPECT_EQ(0U, vec1.size());
     }
-    EXPECT_EQ(vec2.size(), 4U);
+    EXPECT_EQ(4U, vec2.size());
     for (unsigned index = 0; index < vec2.size(); ++index)
-        EXPECT_EQ(vec2[index].value(), index);
+        EXPECT_EQ(index, vec2[index].value());
 }
 
 TEST(WTF_FixedVector, Swap)
@@ -180,10 +180,10 @@ TEST(WTF_FixedVector, Swap)
 
     FixedVector<unsigned> vec2;
     vec2.swap(vec1);
-    EXPECT_EQ(vec1.size(), 0U);
-    EXPECT_EQ(vec2.size(), 3U);
+    EXPECT_EQ(0U, vec1.size());
+    EXPECT_EQ(3U, vec2.size());
     for (unsigned i = 0; i < vec2.size(); ++i)
-        EXPECT_EQ(vec2[i], i);
+        EXPECT_EQ(i, vec2[i]);
 }
 
 TEST(WTF_FixedVector, IteratorFor)
@@ -195,7 +195,7 @@ TEST(WTF_FixedVector, IteratorFor)
 
     unsigned index = 0;
     for (auto iter = vec1.begin(); iter != vec1.end(); ++iter) {
-        EXPECT_EQ(*iter, index);
+        EXPECT_EQ(index, *iter);
         ++index;
     }
 }
@@ -210,7 +210,7 @@ TEST(WTF_FixedVector, Reverse)
     unsigned index = 0;
     for (auto iter = vec1.rbegin(); iter != vec1.rend(); ++iter) {
         ++index;
-        EXPECT_EQ(*iter, 3U - index);
+        EXPECT_EQ(3U - index, *iter);
     }
 }
 
@@ -220,7 +220,7 @@ TEST(WTF_FixedVector, Fill)
     vec1.fill(42);
 
     for (auto& value : vec1)
-        EXPECT_EQ(value, 42U);
+        EXPECT_EQ(42U, value);
 }
 
 struct DestructorObserver {
@@ -293,14 +293,14 @@ TEST(WTF_FixedVector, MoveKeepsData)
         FixedVector<unsigned> vec1(3);
         auto* data1 = vec1.data();
         FixedVector<unsigned> vec2(WTFMove(vec1));
-        EXPECT_EQ(vec2.data(), data1);
+        EXPECT_EQ(data1, vec2.data());
     }
     {
         FixedVector<unsigned> vec1(3);
         auto* data1 = vec1.data();
         FixedVector<unsigned> vec2;
         vec2 = WTFMove(vec1);
-        EXPECT_EQ(vec2.data(), data1);
+        EXPECT_EQ(data1, vec2.data());
     }
 }
 
@@ -311,8 +311,8 @@ TEST(WTF_FixedVector, MoveKeepsDataNested)
         vec1.append(FixedVector<unsigned>(3));
         auto* data1 = vec1[0].data();
         FixedVector<FixedVector<unsigned>> vec2(WTFMove(vec1));
-        EXPECT_EQ(vec2.size(), 1U);
-        EXPECT_EQ(vec2[0].data(), data1);
+        EXPECT_EQ(1U, vec2.size());
+        EXPECT_EQ(data1, vec2[0].data());
     }
     {
         Vector<FixedVector<unsigned>> vec1;
@@ -320,8 +320,38 @@ TEST(WTF_FixedVector, MoveKeepsDataNested)
         auto* data1 = vec1[0].data();
         FixedVector<FixedVector<unsigned>> vec2;
         vec2 = WTFMove(vec1);
-        EXPECT_EQ(vec2.size(), 1U);
-        EXPECT_EQ(vec2[0].data(), data1);
+        EXPECT_EQ(1U, vec2.size());
+        EXPECT_EQ(data1, vec2[0].data());
+    }
+}
+
+TEST(WTF_FixedVector, Offset)
+{
+    EXPECT_EQ(0, FixedVector<unsigned>::offsetOfStorage());
+    EXPECT_EQ(4, FixedVector<unsigned>::Storage::offsetOfData());
+    EXPECT_EQ(0, FixedVector<void*>::offsetOfStorage());
+    EXPECT_EQ(sizeof(void*), static_cast<unsigned>(FixedVector<void*>::Storage::offsetOfData()));
+}
+
+TEST(WTF_FixedVector, Equal)
+{
+    {
+        FixedVector<unsigned> vec1(10);
+        FixedVector<unsigned> vec2(10);
+        for (unsigned i = 0; i < 10; ++i) {
+            vec1[i] = i;
+            vec2[i] = i;
+        }
+        EXPECT_EQ(vec2, vec1);
+        vec1[0] = 42;
+        EXPECT_NE(vec1, vec2);
+    }
+    {
+        FixedVector<unsigned> vec1;
+        FixedVector<unsigned> vec2;
+        FixedVector<unsigned> vec3(0);
+        EXPECT_EQ(vec2, vec1);
+        EXPECT_EQ(vec3, vec1);
     }
 }
 

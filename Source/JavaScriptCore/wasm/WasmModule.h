@@ -74,7 +74,7 @@ private:
     Module(LLIntPlan&);
     Ref<ModuleInformation> m_moduleInformation;
     RefPtr<CalleeGroup> m_calleeGroups[Wasm::NumberOfMemoryModes];
-    RefPtr<LLIntCallees> m_llintCallees;
+    Ref<LLIntCallees> m_llintCallees;
     MacroAssemblerCodeRef<JITCompilationPtrTag> m_llintEntryThunks;
     Lock m_lock;
 };

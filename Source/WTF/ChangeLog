@@ -1,3 +1,79 @@
+2021-12-17  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [WTF] Introduce TrailingArray
+        https://bugs.webkit.org/show_bug.cgi?id=234201
+
+        Reviewed by Darin Adler.
+
+        This patch implements TrailingArray<Derived, T>, which allows us to implement class
+        with trailing array easily. By using this, we implement EmbeddedFixedVector and RefCountedFixedVector.
+        Plus, we replace underlying implementation of FixedVector from RefCountedArray to EmbeddedFixedVector
+        since ref-counting is not necessary. This is great for swapping: while RefCountedArray will decrease ref
+        and touching memory when destryoing, EmbeddedFixedVector does not, so we can keep memory untouched if
+        EmbeddedFixedVector's T is POD when destroying.
+
+        In a subsequent patch, we will remove RefCountedArray and use RefCountedFixedVector since RefCountedFixedVector
+        is following normal Ref / RefPtr protocol, so easy to understand the semantics.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+        * wtf/EmbeddedFixedVector.h: Added.
+        * wtf/FixedVector.h:
+        (WTF::FixedVector::FixedVector):
+        (WTF::FixedVector::operator=):
+        (WTF::FixedVector::size const):
+        (WTF::FixedVector::isEmpty const):
+        (WTF::FixedVector::byteSize const):
+        (WTF::FixedVector::data):
+        (WTF::FixedVector::begin):
+        (WTF::FixedVector::end):
+        (WTF::FixedVector::rbegin):
+        (WTF::FixedVector::rend):
+        (WTF::FixedVector::rbegin const):
+        (WTF::FixedVector::rend const):
+        (WTF::FixedVector::at):
+        (WTF::FixedVector::at const):
+        (WTF::FixedVector::operator[]):
+        (WTF::FixedVector::operator[] const):
+        (WTF::FixedVector::fill):
+        (WTF::FixedVector::operator!= const):
+        (WTF::FixedVector::operator== const):
+        (WTF::FixedVector::swap):
+        (WTF::FixedVector::getStorage):
+        * wtf/RefCountedFixedVector.h: Added.
+        * wtf/TrailingArray.h: Added.
+        (WTF::TrailingArray::TrailingArray):
+        (WTF::TrailingArray::~TrailingArray):
+        (WTF::TrailingArray::allocationSize):
+        (WTF::TrailingArray::size const):
+        (WTF::TrailingArray::isEmpty const):
+        (WTF::TrailingArray::byteSize const):
+        (WTF::TrailingArray::data):
+        (WTF::TrailingArray::data const):
+        (WTF::TrailingArray::begin):
+        (WTF::TrailingArray::end):
+        (WTF::TrailingArray::begin const):
+        (WTF::TrailingArray::end const):
+        (WTF::TrailingArray::cbegin const):
+        (WTF::TrailingArray::cend const):
+        (WTF::TrailingArray::rbegin):
+        (WTF::TrailingArray::rend):
+        (WTF::TrailingArray::rbegin const):
+        (WTF::TrailingArray::rend const):
+        (WTF::TrailingArray::crbegin const):
+        (WTF::TrailingArray::crend const):
+        (WTF::TrailingArray::at):
+        (WTF::TrailingArray::at const):
+        (WTF::TrailingArray::operator[]):
+        (WTF::TrailingArray::operator[] const):
+        (WTF::TrailingArray::first):
+        (WTF::TrailingArray::first const):
+        (WTF::TrailingArray::last):
+        (WTF::TrailingArray::last const):
+        (WTF::TrailingArray::fill):
+        (WTF::TrailingArray::offsetOfSize):
+        (WTF::TrailingArray::offsetOfData):
+
 2021-12-17  Sihui Liu  <sihui_liu@apple.com>
 
         Add custom copy() method for Ref<T> to CrossThreadCopier

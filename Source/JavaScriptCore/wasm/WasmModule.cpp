@@ -36,7 +36,7 @@ namespace JSC { namespace Wasm {
 
 Module::Module(LLIntPlan& plan)
     : m_moduleInformation(plan.takeModuleInformation())
-    , m_llintCallees(LLIntCallees::create(plan.takeCallees()))
+    , m_llintCallees(LLIntCallees::createFromVector(plan.takeCallees()))
     , m_llintEntryThunks(plan.takeEntryThunks())
 {
 }
@@ -91,8 +91,8 @@ Ref<CalleeGroup> Module::getOrCreateCalleeGroup(Context* context, MemoryMode mod
     if (!calleeGroup || (calleeGroup->compilationFinished() && !calleeGroup->runnable())) {
         RefPtr<LLIntCallees> llintCallees = nullptr;
         if (Options::useWasmLLInt())
-            llintCallees = m_llintCallees;
-        calleeGroup = CalleeGroup::create(context, mode, const_cast<ModuleInformation&>(moduleInformation()), llintCallees);
+            llintCallees = m_llintCallees.copyRef();
+        calleeGroup = CalleeGroup::create(context, mode, const_cast<ModuleInformation&>(moduleInformation()), WTFMove(llintCallees));
         m_calleeGroups[static_cast<uint8_t>(mode)] = calleeGroup;
     }
     return calleeGroup.releaseNonNull();

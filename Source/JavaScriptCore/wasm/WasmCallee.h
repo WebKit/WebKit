@@ -37,6 +37,7 @@
 #include "WasmLLIntTierUpCounter.h"
 #include "WasmTierUpCount.h"
 #include <wtf/FixedVector.h>
+#include <wtf/RefCountedFixedVector.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
 namespace JSC {
@@ -264,31 +265,7 @@ private:
     MacroAssemblerCodePtr<WasmEntryPtrTag> m_entrypoint;
 };
 
-class LLIntCallees : public ThreadSafeRefCounted<LLIntCallees> {
-public:
-    static Ref<LLIntCallees> create(Vector<Ref<LLIntCallee>>&& llintCallees)
-    {
-        return adoptRef(*new LLIntCallees(WTFMove(llintCallees)));
-    }
-
-    const Ref<LLIntCallee>& at(unsigned i) const
-    {
-        return m_llintCallees.at(i);
-    }
-
-    const Ref<LLIntCallee>* data() const
-    {
-        return m_llintCallees.data();
-    }
-
-private:
-    LLIntCallees(Vector<Ref<LLIntCallee>>&& llintCallees)
-        : m_llintCallees(WTFMove(llintCallees))
-    {
-    }
-
-    FixedVector<Ref<LLIntCallee>> m_llintCallees;
-};
+using LLIntCallees = ThreadSafeRefCountedFixedVector<Ref<LLIntCallee>>;
 
 } } // namespace JSC::Wasm
 

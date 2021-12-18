@@ -1,5 +1,27 @@
 2021-12-17  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [WTF] Introduce TrailingArray
+        https://bugs.webkit.org/show_bug.cgi?id=234201
+
+        Reviewed by Darin Adler.
+
+        * TestWebKitAPI/CMakeLists.txt:
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WTF/EmbeddedFixedVector.cpp: Added.
+        (TestWebKitAPI::TEST):
+        (TestWebKitAPI::DestructorObserver::DestructorObserver):
+        (TestWebKitAPI::DestructorObserver::~DestructorObserver):
+        (TestWebKitAPI::DestructorObserver::operator=):
+        * TestWebKitAPI/Tests/WTF/FixedVector.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WTF/RefCountedFixedVector.cpp: Added.
+        (TestWebKitAPI::TEST):
+        (TestWebKitAPI::DestructorObserver::DestructorObserver):
+        (TestWebKitAPI::DestructorObserver::~DestructorObserver):
+        (TestWebKitAPI::DestructorObserver::operator=):
+
+2021-12-17  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] Fix runscript's standalone ability to run
         https://bugs.webkit.org/show_bug.cgi?id=234166
 

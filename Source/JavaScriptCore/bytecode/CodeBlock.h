@@ -557,7 +557,7 @@ public:
     void* baselineJITConstantPool()
     {
         RELEASE_ASSERT(m_jitData && jitType() == JITType::BaselineJIT);
-        return m_jitData->m_jitConstantPool.data();
+        return m_jitData->m_jitConstantPool.storage();
     }
 #endif
     size_t numberOfUnlinkedSwitchJumpTables() const { return m_unlinkedCode->numberOfUnlinkedSwitchJumpTables(); }

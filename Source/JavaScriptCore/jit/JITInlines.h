@@ -505,7 +505,7 @@ ALWAYS_INLINE void JIT::materializePointerIntoMetadata(const Bytecode& bytecode,
 
 ALWAYS_INLINE void JIT::loadConstant(JITConstantPool::Constant constantIndex, GPRReg result)
 {
-    loadPtr(Address(s_constantsGPR, static_cast<uintptr_t>(constantIndex) * sizeof(void*)), result);
+    loadPtr(Address(s_constantsGPR, FixedVector<void*>::Storage::offsetOfData() + static_cast<uintptr_t>(constantIndex) * sizeof(void*)), result);
 }
 
 ALWAYS_INLINE void JIT::loadGlobalObject(GPRReg result)

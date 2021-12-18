@@ -38,6 +38,7 @@ set(TestWTF_SOURCES
     Tests/WTF/DataMutex.cpp
     Tests/WTF/DateMath.cpp
     Tests/WTF/Deque.cpp
+    Tests/WTF/EmbeddedFixedVector.cpp
     Tests/WTF/EnumTraits.cpp
     Tests/WTF/Expected.cpp
     Tests/WTF/FileSystem.cpp
@@ -74,6 +75,7 @@ set(TestWTF_SOURCES
     Tests/WTF/PriorityQueue.cpp
     Tests/WTF/RedBlackTree.cpp
     Tests/WTF/Ref.cpp
+    Tests/WTF/RefCountedFixedVector.cpp
     Tests/WTF/RefCounter.cpp
     Tests/WTF/RefLogger.cpp
     Tests/WTF/RefPtr.cpp

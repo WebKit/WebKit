@@ -2099,14 +2099,15 @@ llintOpWithJump(op_switch_imm, OpSwitchImm, macro (size, get, jump, dispatch)
     loadp CodeBlock::m_unlinkedCode[t2], t2
     loadp UnlinkedCodeBlock::m_rareData[t2], t2
     muli sizeof UnlinkedSimpleJumpTable, t3
-    loadp UnlinkedCodeBlock::RareData::m_unlinkedSwitchJumpTables + FixedVector::m_storage + RefCountedArray::m_data[t2], t2
+    loadp UnlinkedCodeBlock::RareData::m_unlinkedSwitchJumpTables + UnlinkedSimpleJumpTableFixedVector::m_storage[t2], t2
+    addp (constexpr (UnlinkedSimpleJumpTableFixedVector::Storage::offsetOfData())), t2
     addp t3, t2
     bineq t1, Int32Tag, .opSwitchImmNotInt
     subi UnlinkedSimpleJumpTable::m_min[t2], t0
-    loadp UnlinkedSimpleJumpTable::m_branchOffsets + FixedVector::m_storage + RefCountedArray::m_data[t2], t2
+    loadp UnlinkedSimpleJumpTable::m_branchOffsets + Int32FixedVector::m_storage[t2], t2
     btpz t2, .opSwitchImmFallThrough
-    biaeq t0, RefCountedArrayStorageNonNullSizeOffset[t2], .opSwitchImmFallThrough
-    loadi [t2, t0, 4], t1
+    biaeq t0, Int32FixedVector::Storage::m_size[t2], .opSwitchImmFallThrough
+    loadi (constexpr (Int32FixedVector::Storage::offsetOfData()))[t2, t0, 4], t1
     btiz t1, .opSwitchImmFallThrough
     dispatchIndirect(t1)
 
@@ -2129,7 +2130,8 @@ llintOpWithJump(op_switch_char, OpSwitchChar, macro (size, get, jump, dispatch)
     loadp CodeBlock::m_unlinkedCode[t2], t2
     loadp UnlinkedCodeBlock::m_rareData[t2], t2
     muli sizeof UnlinkedSimpleJumpTable, t3
-    loadp UnlinkedCodeBlock::RareData::m_unlinkedSwitchJumpTables + FixedVector::m_storage + RefCountedArray::m_data[t2], t2
+    loadp UnlinkedCodeBlock::RareData::m_unlinkedSwitchJumpTables + UnlinkedSimpleJumpTableFixedVector::m_storage[t2], t2
+    addp (constexpr (UnlinkedSimpleJumpTableFixedVector::Storage::offsetOfData())), t2
     addp t3, t2
     bineq t1, CellTag, .opSwitchCharFallThrough
     bbneq JSCell::m_type[t0], StringType, .opSwitchCharFallThrough
@@ -2144,10 +2146,10 @@ llintOpWithJump(op_switch_char, OpSwitchChar, macro (size, get, jump, dispatch)
     loadb [t0], t0
 .opSwitchCharReady:
     subi UnlinkedSimpleJumpTable::m_min[t2], t0
-    loadp UnlinkedSimpleJumpTable::m_branchOffsets + FixedVector::m_storage + RefCountedArray::m_data[t2], t2
+    loadp UnlinkedSimpleJumpTable::m_branchOffsets + Int32FixedVector::m_storage[t2], t2
     btpz t2, .opSwitchCharFallThrough
-    biaeq t0, RefCountedArrayStorageNonNullSizeOffset[t2], .opSwitchCharFallThrough
-    loadi [t2, t0, 4], t1
+    biaeq t0, Int32FixedVector::Storage::m_size[t2], .opSwitchCharFallThrough
+    loadi (constexpr (Int32FixedVector::Storage::offsetOfData()))[t2, t0, 4], t1
     btiz t1, .opSwitchCharFallThrough
     dispatchIndirect(t1)
 

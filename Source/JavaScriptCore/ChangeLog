@@ -1,3 +1,52 @@
+2021-12-17  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [WTF] Introduce TrailingArray
+        https://bugs.webkit.org/show_bug.cgi?id=234201
+
+        Reviewed by Darin Adler.
+
+        Use ThreadSafeRefCountedFixedVector in ObjectPropertyConditionSet and Wasm::LLIntCallees.
+
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::baselineJITConstantPool):
+        * bytecode/ObjectPropertyConditionSet.cpp:
+        (JSC::ObjectPropertyConditionSet::mergedWith const):
+        (JSC::ObjectPropertyConditionSet::dumpInContext const):
+        (JSC::ObjectPropertyConditionSet::isValidAndWatchable const):
+        * bytecode/ObjectPropertyConditionSet.h:
+        (JSC::ObjectPropertyConditionSet::invalid):
+        (JSC::ObjectPropertyConditionSet::create):
+        (JSC::ObjectPropertyConditionSet::isValid const):
+        (JSC::ObjectPropertyConditionSet::size const):
+        (JSC::ObjectPropertyConditionSet::begin const):
+        (JSC::ObjectPropertyConditionSet::end const):
+        (JSC::ObjectPropertyConditionSet::ObjectPropertyConditionSet): Deleted.
+        (JSC::ObjectPropertyConditionSet::releaseRawPointer): Deleted.
+        (JSC::ObjectPropertyConditionSet::adoptRawPointer): Deleted.
+        (JSC::ObjectPropertyConditionSet::fromRawPointer): Deleted.
+        (JSC::ObjectPropertyConditionSet::Data::Data): Deleted.
+        * jit/JIT.cpp:
+        (JSC::JIT::compileAndLinkWithoutFinalizing):
+        * jit/JITInlines.h:
+        (JSC::JIT::loadConstant):
+        * llint/LLIntOffsetsExtractor.cpp:
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * wasm/WasmCallee.h:
+        (JSC::Wasm::LLIntCallees::create): Deleted.
+        (JSC::Wasm::LLIntCallees::at const): Deleted.
+        (JSC::Wasm::LLIntCallees::data const): Deleted.
+        (JSC::Wasm::LLIntCallees::LLIntCallees): Deleted.
+        * wasm/WasmCodeBlock.cpp:
+        (JSC::Wasm::CodeBlock::create):
+        (JSC::Wasm::CodeBlock::CodeBlock):
+        * wasm/WasmCodeBlock.h:
+        * wasm/WasmModule.cpp:
+        (JSC::Wasm::Module::Module):
+        (JSC::Wasm::Module::getOrCreateCodeBlock):
+        * wasm/WasmModule.h:
+
 2021-12-17  Saam Barati  <sbarati@apple.com>
 
         Use IRC by default on arm64
