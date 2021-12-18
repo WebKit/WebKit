@@ -43,6 +43,9 @@
 // use after frees and out of bounds accesses.
 //
 
+#include "pas_config.h"
+
+#if LIBPAS_ENABLED
 
 #include <stdlib.h>
 #include <stdbool.h>
@@ -311,3 +314,5 @@ size_t pas_probabilistic_guard_malloc_get_free_wasted_memory() {
     pas_heap_lock_assert_held();
     return free_wasted_mem;
 }
+
+#endif /* LIBPAS_ENABLED */
