@@ -125,29 +125,29 @@ WEBCORE_EXPORT @interface WebCoreNSURLSession : NSObject {
     RefPtr<WebCore::PlatformMediaResource> _resource;
     RetainPtr<NSURLResponse> _response;
     NSUInteger _taskIdentifier;
-    NSURLRequest *_originalRequest;
-    NSURLRequest *_currentRequest;
+    RetainPtr<NSURLRequest> _originalRequest;
+    RetainPtr<NSURLRequest> _currentRequest;
     int64_t _countOfBytesReceived;
     int64_t _countOfBytesSent;
     int64_t _countOfBytesExpectedToSend;
     int64_t _countOfBytesExpectedToReceive;
     NSURLSessionTaskState _state;
-    NSError *_error;
-    NSString *_taskDescription;
+    RetainPtr<NSError> _error;
+    RetainPtr<NSString> _taskDescription;
     float _priority;
 }
 
 @property NSUInteger taskIdentifier;
-@property (copy) NSURLRequest *originalRequest;
-@property (copy) NSURLRequest *currentRequest;
-@property (readonly, copy) NSURLResponse *response;
+@property (nullable, readonly, copy) NSURLRequest *originalRequest;
+@property (nullable, readonly, copy) NSURLRequest *currentRequest;
+@property (nullable, readonly, copy) NSURLResponse *response;
 @property (assign, atomic) int64_t countOfBytesReceived;
 @property int64_t countOfBytesSent;
 @property int64_t countOfBytesExpectedToSend;
 @property int64_t countOfBytesExpectedToReceive;
 @property NSURLSessionTaskState state;
-@property (copy) NSError *error;
-@property (copy) NSString *taskDescription;
+@property (nullable, readonly, copy) NSError *error;
+@property (nullable, copy) NSString *taskDescription;
 @property float priority;
 - (void)cancel;
 - (void)suspend;

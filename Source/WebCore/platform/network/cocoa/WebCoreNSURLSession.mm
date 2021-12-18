@@ -721,7 +721,7 @@ void WebCoreNSURLSessionDataTaskClient::loadFinished(PlatformMediaResource& reso
         request = mutableRequest.get();
     }
 
-    self.originalRequest = self.currentRequest = request;
+    self->_originalRequest = self->_currentRequest = request;
 
     return self;
 }
@@ -770,16 +770,37 @@ void WebCoreNSURLSessionDataTaskClient::loadFinished(PlatformMediaResource& reso
 
 #pragma mark - NSURLSession API
 @synthesize taskIdentifier = _taskIdentifier;
-@synthesize originalRequest = _originalRequest;
-@synthesize currentRequest = _currentRequest;
 @synthesize countOfBytesReceived = _countOfBytesReceived;
 @synthesize countOfBytesSent = _countOfBytesSent;
 @synthesize countOfBytesExpectedToSend = _countOfBytesExpectedToSend;
 @synthesize countOfBytesExpectedToReceive = _countOfBytesExpectedToReceive;
 @synthesize state = _state;
-@synthesize error = _error;
-@synthesize taskDescription = _taskDescription;
 @synthesize priority = _priority;
+
+- (NSURLRequest *)originalRequest
+{
+    return adoptNS([_originalRequest copy]).autorelease();
+}
+
+- (NSURLRequest *)currentRequest
+{
+    return adoptNS([_currentRequest copy]).autorelease();
+}
+
+- (NSError *)error
+{
+    return adoptNS([_error copy]).autorelease();
+}
+
+- (NSString *)taskDescription
+{
+    return adoptNS([_taskDescription copy]).autorelease();
+}
+
+- (void)setTaskDescription:(NSString *)description
+{
+    _taskDescription = adoptNS([description copy]);
+}
 
 - (WebCoreNSURLSession *)session
 {
@@ -831,11 +852,6 @@ void WebCoreNSURLSessionDataTaskClient::loadFinished(PlatformMediaResource& reso
 
 - (void)dealloc
 {
-    [_originalRequest release];
-    [_currentRequest release];
-    [_error release];
-    [_taskDescription release];
-
     if (!isMainThread() && _resource) {
         if (auto* client = _resource->client())
             static_cast<WebCoreNSURLSessionDataTaskClient*>(client)->clearTask();
