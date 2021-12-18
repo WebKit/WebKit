@@ -1,3 +1,28 @@
+2021-12-17  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [libpas] Use inline-assembly ARM64 code in GCC too
+        https://bugs.webkit.org/show_bug.cgi?id=234450
+
+        Reviewed by Saam Barati.
+
+        Same problem to r287168 can happen in GCC too. Use inline assembly version
+        of CAS operation on ARM64 in GCC too. We also use __ARM_FEATURE_ATOMICS
+        to determine whether LSE atomics is enabled further (but since this is very
+        new macro, we continue using the old check too).
+
+        * libpas/src/libpas/pas_utils.h:
+        (pas_atomic_store_uint8):
+        (pas_compare_and_swap_uint8_weak):
+        (pas_compare_and_swap_uint8_strong):
+        (pas_compare_and_swap_uint16_weak):
+        (pas_compare_and_swap_uint32_weak):
+        (pas_compare_and_swap_uint32_strong):
+        (pas_compare_and_swap_uint64_weak):
+        (pas_compare_and_swap_uint64_strong):
+        (pas_compare_and_swap_pair_weak):
+        (pas_compare_and_swap_pair_strong):
+        (pas_atomic_store_pair):
+
 2021-12-16  Filip Pizlo  <fpizlo@apple.com>
 
         [libpas] update to b1531141d8d5831b0a37efb70f200f7e2c37ff3d (initial pgm support, refactorings to further distinguish exclusive from shared)
