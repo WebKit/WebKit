@@ -1,3 +1,10 @@
+2021-12-18  Adrian Perez de Castro  <aperez@igalia.com>
+
+        Unreviewed non-unified build fixes.
+
+        * loader/DocumentWriter.cpp: Add missing DocumentLoader.h header.
+        * page/PerformanceNavigationTiming.cpp: Remove "#pragma once" from non-header file.
+
 2021-09-07  Brent Fulgham  <bfulgham@apple.com>
 
         [wpt-improvement] Improve CSP support for window reuse
