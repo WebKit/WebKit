@@ -27,8 +27,8 @@
 #import <WebKit/WebKit.h>
 
 #import "DeprecatedGlobalValues.h"
+#import "HTTPServer.h"
 #import "PlatformUtilities.h"
-#import "ServiceWorkerTCPServer.h"
 #import "Test.h"
 #import "TestNavigationDelegate.h"
 #import "TestWKWebView.h"
@@ -261,10 +261,8 @@ TEST(WebKit, QuotaDelegateHidden)
     auto messageHandler = adoptNS([[QuotaMessageHandler alloc] init]);
     [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"qt"];
 
-    ServiceWorkerTCPServer server({
-        { "text/html", TestHiddenBytes }
-    }, {
-        { "text/html", TestHiddenBytes }
+    TestWebKitAPI::HTTPServer server({
+        { "/", { TestHiddenBytes } },
     });
 
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get() addToWindow:YES]);
@@ -321,10 +319,8 @@ TEST(WebKit, QuotaDelegate)
     auto messageHandler = adoptNS([[QuotaMessageHandler alloc] init]);
     [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"qt"];
 
-    ServiceWorkerTCPServer server({
-        { "text/html", TestBytes }
-    }, {
-        { "text/html", TestBytes }
+    TestWebKitAPI::HTTPServer server({
+        { "/", { TestBytes } },
     });
 
     auto webView1 = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get() addToWindow:YES]);
@@ -382,9 +378,8 @@ TEST(WebKit, QuotaDelegateReload)
     auto messageHandler = adoptNS([[QuotaMessageHandler alloc] init]);
     [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"qt"];
     
-    ServiceWorkerTCPServer server({
-        { "text/html", TestBytes },
-        { "text/html", TestBytes }
+    TestWebKitAPI::HTTPServer server({
+        { "/", { TestBytes } },
     });
     
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get() addToWindow:YES]);
@@ -430,8 +425,8 @@ TEST(WebKit, QuotaDelegateNavigateFragment)
     auto messageHandler = adoptNS([[QuotaMessageHandler alloc] init]);
     [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"qt"];
 
-    ServiceWorkerTCPServer server({
-        { "text/html", TestBytes }
+    TestWebKitAPI::HTTPServer server({
+        { "/main.html", { TestBytes } },
     });
 
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get() addToWindow:YES]);
@@ -440,7 +435,7 @@ TEST(WebKit, QuotaDelegateNavigateFragment)
     setVisible(webView.get());
 
     receivedQuotaDelegateCalled = false;
-    [webView loadRequest:server.request()];
+    [webView loadRequest:server.request("/main.html")];
     Util::run(&receivedQuotaDelegateCalled);
 
     [delegate denyQuota];
@@ -450,7 +445,7 @@ TEST(WebKit, QuotaDelegateNavigateFragment)
     Util::run(&receivedMessage);
 
     receivedQuotaDelegateCalled = false;
-    [webView loadRequest:server.requestWithFragment()];
+    [webView loadRequest:server.request("/main.html#fragment")];
     [webView stringByEvaluatingJavaScript:@"doTestAgain()"];
 
     [messageHandler setExpectedMessage: @"start"];
@@ -481,8 +476,8 @@ TEST(WebKit, DefaultQuota)
     auto messageHandler = adoptNS([[QuotaMessageHandler alloc] init]);
     [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"qt"];
 
-    ServiceWorkerTCPServer server({
-        { "text/html", TestUrlBytes }
+    TestWebKitAPI::HTTPServer server({
+        { "/", { TestUrlBytes } },
     });
 
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get() addToWindow:YES]);

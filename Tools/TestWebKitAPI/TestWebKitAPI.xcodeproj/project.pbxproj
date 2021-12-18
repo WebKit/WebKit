@@ -2204,7 +2204,6 @@
 		5C42594422669E9B0039AA7A /* BasicProposedCredentialPlugIn.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BasicProposedCredentialPlugIn.mm; sourceTree = "<group>"; };
 		5C4A84941F7EEFD400ACFC54 /* Configuration.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Configuration.mm; sourceTree = "<group>"; };
 		5C5E633D1D0B67940085A025 /* UniqueRef.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UniqueRef.cpp; sourceTree = "<group>"; };
-		5C683471235ACC7C0041E6B1 /* ServiceWorkerTCPServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ServiceWorkerTCPServer.h; sourceTree = "<group>"; };
 		5C69BDD41F82A7EB000F4F4B /* JavaScriptDuringNavigation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = JavaScriptDuringNavigation.mm; sourceTree = "<group>"; };
 		5C6E27A6224EEBEA00128736 /* URLCanonicalization.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = URLCanonicalization.mm; sourceTree = "<group>"; };
 		5C7101C625DD988700686200 /* test_print.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = test_print.pdf; sourceTree = "<group>"; };
@@ -3549,7 +3548,6 @@
 				51EB12931FDF050500A5A1BD /* ServiceWorkerBasic.mm */,
 				466AF38826FE393200CE2EB8 /* ServiceWorkerPagePlugIn.mm */,
 				460C2FC827039D7D0047EF11 /* ServiceWorkerPageProtocol.h */,
-				5C683471235ACC7C0041E6B1 /* ServiceWorkerTCPServer.h */,
 				46A46A192575645600A1B118 /* SessionStorage.mm */,
 				5CCB10DF2134579D00AC5AF0 /* ShouldGoToBackForwardListItem.mm */,
 				37BCA61B1B596BA9002012CA /* ShouldOpenExternalURLsInNewWindowActions.mm */,

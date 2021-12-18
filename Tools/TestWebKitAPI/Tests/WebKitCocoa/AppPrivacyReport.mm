@@ -27,7 +27,6 @@
 
 #import "HTTPServer.h"
 #import "PlatformUtilities.h"
-#import "ServiceWorkerTCPServer.h"
 #import "TestNavigationDelegate.h"
 #import "TestUIDelegate.h"
 #import "TestWKWebView.h"
@@ -665,17 +664,14 @@ TEST(AppPrivacyReport, RegisterServiceWorkerClientUpdatesAppInitiatedValue)
     webView1.get().navigationDelegate = delegate.get();
     webView2.get().navigationDelegate = delegate.get();
 
-    ServiceWorkerTCPServer server({
-        { "text/html", mainSWBytesDefaultValue },
-        { "application/javascript", scriptBytesDefaultValue },
-    }, {
-        { "text/html", mainSWBytesDefaultValue },
-        { "application/javascript", scriptBytesDefaultValue },
+    TestWebKitAPI::HTTPServer server({
+        { "/main.html", { mainSWBytesDefaultValue } },
+        { "/sw.js", { { { "Content-Type", "application/javascript" } }, scriptBytesDefaultValue } },
     });
 
     // Load WebView with an app initiated request. We expect the ServiceWorkerThreadProxy to be app initiated.
     expectedMessage = "app initiated";
-    [webView1 loadRequest:server.request()];
+    [webView1 loadRequest:server.request("/main.html")];
     TestWebKitAPI::Util::run(&receivedMessage);
 
     // Load WebView with a non app initiated request. We expect the ServiceWorkerThreadProxy to be app initiated

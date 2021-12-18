@@ -357,7 +357,7 @@ uint16_t HTTPServer::port() const
     return nw_listener_get_port(m_listener.get());
 }
 
-NSURLRequest *HTTPServer::request(const String& path) const
+const char* HTTPServer::scheme() const
 {
     const char* scheme = nullptr;
     switch (m_protocol) {
@@ -373,7 +373,17 @@ NSURLRequest *HTTPServer::request(const String& path) const
     case Protocol::HttpsProxyWithAuthentication:
         RELEASE_ASSERT_NOT_REACHED();
     }
-    return [NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%s://127.0.0.1:%d%@", scheme, port(), path.createCFString().get()]]];
+    return scheme;
+}
+
+NSURLRequest *HTTPServer::request(const String& path) const
+{
+    return [NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%s://127.0.0.1:%d%@", scheme(), port(), path.createCFString().get()]]];
+}
+
+NSURLRequest *HTTPServer::requestWithLocalhost(const String& path) const
+{
+    return [NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%s://localhost:%d%@", scheme(), port(), path.createCFString().get()]]];
 }
 
 void Connection::receiveBytes(CompletionHandler<void(Vector<uint8_t>&&)>&& completionHandler, size_t minimumSize) const

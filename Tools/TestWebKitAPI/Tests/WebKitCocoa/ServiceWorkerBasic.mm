@@ -29,7 +29,6 @@
 #import "HTTPServer.h"
 #import "PlatformUtilities.h"
 #import "ServiceWorkerPageProtocol.h"
-#import "ServiceWorkerTCPServer.h"
 #import "Test.h"
 #import "TestNavigationDelegate.h"
 #import "TestUIDelegate.h"
@@ -438,9 +437,9 @@ static void setViewDataStore(WKWebViewConfiguration* viewConfiguration, ShouldRu
 
 static void runBasicSWTest(ShouldRunServiceWorkersOnMainThread shouldRunServiceWorkersOnMainThread)
 {
-    ServiceWorkerTCPServer server({
-        { "text/html", mainBytes },
-        { "application/javascript", scriptBytes},
+    TestWebKitAPI::HTTPServer server({
+        { "/", { mainBytes } },
+        { "/sw.js", { { { "Content-Type", "application/javascript" } }, scriptBytes } },
     });
 
     [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
@@ -561,13 +560,10 @@ TEST(ServiceWorkers, UserAgentOverride)
     auto messageHandler = adoptNS([[SWUserAgentMessageHandler alloc] initWithExpectedMessage:@"Message from worker: Foo Custom UserAgent"]);
     [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sw"];
 
-    ServiceWorkerTCPServer server({
-        { "text/html", mainBytes },
-        { "application/javascript", userAgentSWBytes },
-    }, {
-        { "text/html", mainBytes },
-        { "application/javascript", userAgentSWBytes },
-    }, 2, { "Foo Custom UserAgent"_s, "Bar Custom UserAgent"_s });
+    TestWebKitAPI::HTTPServer server({
+        { "/", { mainBytes } },
+        { "/sw.js", { { { "Content-Type", "application/javascript" } }, userAgentSWBytes } },
+    });
 
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
 
@@ -599,7 +595,6 @@ TEST(ServiceWorkers, UserAgentOverride)
 
     TestWebKitAPI::Util::run(&done);
     done = false;
-    EXPECT_EQ(server.userAgentsChecked(), 3ull);
 }
 
 TEST(ServiceWorkers, RestoreFromDisk)
@@ -618,17 +613,15 @@ TEST(ServiceWorkers, RestoreFromDisk)
     RetainPtr<SWMessageHandlerForRestoreFromDiskTest> messageHandler = adoptNS([[SWMessageHandlerForRestoreFromDiskTest alloc] initWithExpectedMessage:@"PASS: Registration was successful and service worker was activated"]);
     [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sw"];
 
-    ServiceWorkerTCPServer server({
-        { "text/html", mainRegisteringWorkerBytes },
-        { "application/javascript", scriptBytes },
-    }, {
-        { "text/html", mainRegisteringAlreadyExistingWorkerBytes },
-        { "application/javascript", scriptBytes },
+    TestWebKitAPI::HTTPServer server({
+        { "/first.html", { mainRegisteringWorkerBytes } },
+        { "/second.html", { mainRegisteringAlreadyExistingWorkerBytes } },
+        { "/sw.js", { { { "Content-Type", "application/javascript" } }, scriptBytes } },
     });
 
     RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
 
-    [webView loadRequest:server.request()];
+    [webView loadRequest:server.request("/first.html")];
 
     TestWebKitAPI::Util::run(&done);
 
@@ -644,7 +637,7 @@ TEST(ServiceWorkers, RestoreFromDisk)
 
     webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
 
-    [webView loadRequest:server.request()];
+    [webView loadRequest:server.request("/second.html")];
 
     TestWebKitAPI::Util::run(&done);
     done = false;
@@ -756,17 +749,15 @@ TEST(ServiceWorkers, InterceptFirstLoadAfterRestoreFromDisk)
     RetainPtr<SWMessageHandlerWithExpectedMessage> messageHandler = adoptNS([[SWMessageHandlerWithExpectedMessage alloc] init]);
     [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sw"];
 
-    ServiceWorkerTCPServer server({
-        { "text/html", mainForFirstLoadInterceptTestBytes },
-        { "application/javascript", scriptInterceptingFirstLoadBytes },
-    }, {
-        { "application/javascript", scriptInterceptingFirstLoadBytes },
+    TestWebKitAPI::HTTPServer server({
+        { "/main.html", { mainForFirstLoadInterceptTestBytes } },
+        { "/sw.js", { { { "Content-Type", "application/javascript" } }, scriptInterceptingFirstLoadBytes } },
     });
 
     RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
 
     expectedMessage = "Service Worker activated";
-    [webView loadRequest:server.request()];
+    [webView loadRequest:server.request("/main.html")];
 
     TestWebKitAPI::Util::run(&done);
 
@@ -783,7 +774,7 @@ TEST(ServiceWorkers, InterceptFirstLoadAfterRestoreFromDisk)
     webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
 
     expectedMessage = "Intercepted by worker";
-    [webView loadRequest:server.request()];
+    [webView loadRequest:server.request("/main.html")];
 
     TestWebKitAPI::Util::run(&done);
     done = false;
@@ -807,17 +798,15 @@ TEST(ServiceWorkers, MainThreadSWInterceptsLoad)
     auto messageHandler = adoptNS([[SWMessageHandlerWithExpectedMessage alloc] init]);
     [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sw"];
 
-    ServiceWorkerTCPServer server({
-        { "text/html", mainForFirstLoadInterceptTestBytes },
-        { "application/javascript", scriptInterceptingFirstLoadBytes },
-    }, {
-        { "application/javascript", scriptInterceptingFirstLoadBytes },
+    TestWebKitAPI::HTTPServer server({
+        { "/main.html", { mainForFirstLoadInterceptTestBytes } },
+        { "/sw.js", { { { "Content-Type", "application/javascript" } }, scriptInterceptingFirstLoadBytes } },
     });
 
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
 
     expectedMessage = "Service Worker activated";
-    [webView loadRequest:server.request()];
+    [webView loadRequest:server.request("/main.html")];
 
     TestWebKitAPI::Util::run(&done);
 
@@ -835,7 +824,7 @@ TEST(ServiceWorkers, MainThreadSWInterceptsLoad)
     webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
 
     expectedMessage = "Intercepted by worker";
-    [webView loadRequest:server.request()];
+    [webView loadRequest:server.request("/main.html")];
 
     TestWebKitAPI::Util::run(&done);
     done = false;
@@ -857,18 +846,16 @@ TEST(ServiceWorkers, WaitForPolicyDelegate)
     RetainPtr<SWMessageHandlerWithExpectedMessage> messageHandler = adoptNS([[SWMessageHandlerWithExpectedMessage alloc] init]);
     [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sw"];
 
-    ServiceWorkerTCPServer server({
-        { "text/html", mainForFirstLoadInterceptTestBytes },
-        { "application/javascript", scriptInterceptingFirstLoadBytes },
-    }, {
-        { "application/javascript", scriptInterceptingFirstLoadBytes },
+    TestWebKitAPI::HTTPServer server({
+        { "/main.html", { mainForFirstLoadInterceptTestBytes } },
+        { "/sw.js", { { { "Content-Type", "application/javascript" } }, scriptInterceptingFirstLoadBytes } },
     });
 
     RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
 
     // Register a service worker and activate it.
     expectedMessage = "Service Worker activated";
-    [webView loadRequest:server.request()];
+    [webView loadRequest:server.request("/main.html")];
 
     TestWebKitAPI::Util::run(&done);
 
@@ -886,7 +873,7 @@ TEST(ServiceWorkers, WaitForPolicyDelegate)
 
     // Verify service worker is intercepting load.
     expectedMessage = "Intercepted by worker";
-    [webView loadRequest:server.request()];
+    [webView loadRequest:server.request("/main.html")];
 
     TestWebKitAPI::Util::run(&done);
     done = false;
@@ -901,7 +888,7 @@ TEST(ServiceWorkers, WaitForPolicyDelegate)
     navigationComplete = false;
 
     // Verify service worker load goes well when policy delegate is ok.
-    [webView loadRequest:server.request()];
+    [webView loadRequest:server.request("/main.html")];
     TestWebKitAPI::Util::run(&navigationComplete);
 
     EXPECT_FALSE(navigationFailed);
@@ -915,7 +902,7 @@ TEST(ServiceWorkers, WaitForPolicyDelegate)
     navigationComplete = false;
 
     // Verify service worker load fails well when policy delegate is not ok.
-    [webView loadRequest:server.request()];
+    [webView loadRequest:server.request("/main.html")];
     TestWebKitAPI::Util::run(&navigationComplete);
 
     EXPECT_TRUE(navigationFailed);
@@ -974,12 +961,12 @@ TEST(ServiceWorkers, SWProcessConnectionCreation)
     RetainPtr<RegularPageMessageHandler> regularPageMessageHandler = adoptNS([[RegularPageMessageHandler alloc] init]);
     [[configuration userContentController] addScriptMessageHandler:regularPageMessageHandler.get() name:@"regularPage"];
 
-    ServiceWorkerTCPServer server({
-        { "text/html", regularPageWithConnectionBytes },
-        { "text/html", mainBytes },
-        { "application/javascript", scriptBytes },
-        { "text/html", regularPageWithConnectionBytes },
-        { "text/html", regularPageWithConnectionBytes },
+    TestWebKitAPI::HTTPServer server({
+        { "/first.html", { regularPageWithConnectionBytes } },
+        { "/second.html", { mainBytes } },
+        { "/sw.js", { { { "Content-Type", "application/javascript" } }, scriptBytes } },
+        { "/third.html", { regularPageWithConnectionBytes } },
+        { "/fourth.html", { regularPageWithConnectionBytes } },
     });
 
     RetainPtr<WKWebView> regularPageWebView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
@@ -987,23 +974,23 @@ TEST(ServiceWorkers, SWProcessConnectionCreation)
     RetainPtr<WKWebView> newRegularPageWebView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
 
     // Test that a regular page does not trigger a service worker connection to network process if there is no registered service worker.
-    [regularPageWebView loadRequest:server.request()];
+    [regularPageWebView loadRequest:server.request("/first.html")];
     TestWebKitAPI::Util::run(&done);
     done = false;
 
     // Test that a sw scheme page can register a service worker.
-    [webView loadRequest:server.request()];
+    [webView loadRequest:server.request("/second.html")];
     TestWebKitAPI::Util::run(&done);
     done = false;
     webView = nullptr;
 
     // Now that a service worker is registered, the regular page should have a service worker connection.
-    [regularPageWebView loadRequest:server.request()];
+    [regularPageWebView loadRequest:server.request("/third.html")];
     TestWebKitAPI::Util::run(&done);
     done = false;
     regularPageWebView = nullptr;
 
-    [newRegularPageWebView loadRequest:server.request()];
+    [newRegularPageWebView loadRequest:server.request("/fourth.html")];
     TestWebKitAPI::Util::run(&done);
     done = false;
     newRegularPageWebView = nullptr;
@@ -1078,19 +1065,17 @@ TEST(ServiceWorkers, ServiceWorkerProcessCreation)
     RetainPtr<RegularPageMessageHandler> regularPageMessageHandler = adoptNS([[RegularPageMessageHandler alloc] init]);
     [[configuration userContentController] addScriptMessageHandler:regularPageMessageHandler.get() name:@"regularPage"];
 
-    ServiceWorkerTCPServer server({
-        { "text/html", mainBytesWithScope },
-        { "application/javascript", scriptBytes },
-    }, {
-        { "text/html", regularPageWithConnectionBytes },
-        { "text/html", mainBytes },
-        { "application/javascript", scriptBytes },
+    TestWebKitAPI::HTTPServer server({
+        { "/first.html", { mainBytesWithScope } },
+        { "/second.html", { regularPageWithConnectionBytes } },
+        { "/third.html", { mainBytes } },
+        { "/sw.js", { { { "Content-Type", "application/javascript" } }, scriptBytes } },
     });
 
     RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
 
     // Load a page that registers a service worker.
-    [webView loadRequest:server.request()];
+    [webView loadRequest:server.request("/first.html")];
     TestWebKitAPI::Util::run(&done);
     done = false;
     webView = nullptr;
@@ -1105,7 +1090,7 @@ TEST(ServiceWorkers, ServiceWorkerProcessCreation)
 
     webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:newConfiguration.get()]);
     EXPECT_EQ(1u, webView.get().configuration.processPool._webProcessCountIgnoringPrewarmed);
-    [webView loadRequest:server.request()];
+    [webView loadRequest:server.request("/second.html")];
     TestWebKitAPI::Util::run(&done);
     done = false;
 
@@ -1114,7 +1099,7 @@ TEST(ServiceWorkers, ServiceWorkerProcessCreation)
 
     webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:newConfiguration.get()]);
     EXPECT_EQ(2u, webView.get().configuration.processPool._webProcessCountIgnoringPrewarmed);
-    [webView loadRequest:server.request()];
+    [webView loadRequest:server.request("/third.html")];
     TestWebKitAPI::Util::run(&done);
     done = false;
 
@@ -1181,20 +1166,20 @@ TEST(ServiceWorkers, CacheStorageInPrivateBrowsingMode)
     auto messageHandler = adoptNS([[SWMessageHandlerForCacheStorage alloc] init]);
     [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sw"];
 
-    ServiceWorkerTCPServer server({
-        { "text/html", writeCacheBytes },
-        { "text/html", readCacheBytes },
+    TestWebKitAPI::HTTPServer server({
+        { "/first.html", { writeCacheBytes } },
+        { "/second.html", { readCacheBytes } },
     });
 
     configuration.get().websiteDataStore = [WKWebsiteDataStore nonPersistentDataStore];
 
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
-    [webView loadRequest:server.request()];
+    [webView loadRequest:server.request("/first.html")];
     TestWebKitAPI::Util::run(&done);
     done = false;
 
     webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
-    [webView loadRequest:server.request()];
+    [webView loadRequest:server.request("/second.html")];
     TestWebKitAPI::Util::run(&done);
     done = false;
 }
@@ -1253,9 +1238,9 @@ TEST(ServiceWorkers, ServiceWorkerCacheAccessEphemeralSession)
     auto defaultPreferences = [configuration preferences];
     [defaultPreferences _setSecureContextChecksEnabled:NO];
     
-    ServiceWorkerTCPServer server({
-        { "text/html", serviceWorkerCacheAccessEphemeralSessionMainBytes },
-        { "application/javascript", serviceWorkerCacheAccessEphemeralSessionSWBytes },
+    TestWebKitAPI::HTTPServer server({
+        { "/", { serviceWorkerCacheAccessEphemeralSessionMainBytes } },
+        { "/serviceworker-private-browsing-worker.js", { { { "Content-Type", "application/javascript" } }, serviceWorkerCacheAccessEphemeralSessionSWBytes } },
     });
 
     auto defaultWebView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
@@ -1334,28 +1319,27 @@ TEST(ServiceWorkers, DifferentSessionsUseDifferentRegistrations)
     auto messageHandler = adoptNS([[SWMessageHandlerForCacheStorage alloc] init]);
     [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sw"];
     
-    ServiceWorkerTCPServer server({
-        { "text/html", differentSessionsUseDifferentRegistrationsMainBytes },
-        { "application/javascript", "" },
-        { "text/html", defaultPageMainBytes }
-    }, {
-        { "text/html", privatePageMainBytes }
+    TestWebKitAPI::HTTPServer server({
+        { "/first.html", { differentSessionsUseDifferentRegistrationsMainBytes } },
+        { "/empty-worker.js", { { { "Content-Type", "application/javascript" } }, "" } },
+        { "/second.html", { defaultPageMainBytes } },
+        { "/third.html", { privatePageMainBytes } },
     });
 
     auto defaultWebView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
-    [defaultWebView synchronouslyLoadRequest:server.request()];
+    [defaultWebView synchronouslyLoadRequest:server.request("/first.html")];
 
     TestWebKitAPI::Util::run(&done);
     done = false;
 
-    [defaultWebView synchronouslyLoadRequest:server.request()];
+    [defaultWebView synchronouslyLoadRequest:server.request("/second.html")];
 
     TestWebKitAPI::Util::run(&done);
     done = false;
 
     configuration.get().websiteDataStore = [WKWebsiteDataStore nonPersistentDataStore];
     auto ephemeralWebView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
-    [ephemeralWebView synchronouslyLoadRequest:server.request()];
+    [ephemeralWebView synchronouslyLoadRequest:server.request("/third.html")];
 
     TestWebKitAPI::Util::run(&done);
     done = false;
@@ -1393,15 +1377,15 @@ TEST(ServiceWorkers, ServiceWorkerAndCacheStorageDefaultDirectories)
     RetainPtr<DirectoryPageMessageHandler> directoryPageMessageHandler = adoptNS([[DirectoryPageMessageHandler alloc] init]);
     [[configuration userContentController] addScriptMessageHandler:directoryPageMessageHandler.get() name:@"sw"];
 
-    ServiceWorkerTCPServer server({
-        { "text/html", mainBytes },
-        { "application/javascript", scriptBytes },
-        { "text/html", regularPageGrabbingCacheStorageDirectory },
+    TestWebKitAPI::HTTPServer server({
+        { "/first.html", { mainBytes } },
+        { "/sw.js", { { { "Content-Type", "application/javascript" } }, scriptBytes } },
+        { "/second.html", { regularPageGrabbingCacheStorageDirectory } },
     });
 
     RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
 
-    [webView loadRequest:server.request()];
+    [webView loadRequest:server.request("/first.html")];
     TestWebKitAPI::Util::run(&done);
     done = false;
     while (![[configuration websiteDataStore] _hasRegisteredServiceWorker])
@@ -1409,7 +1393,7 @@ TEST(ServiceWorkers, ServiceWorkerAndCacheStorageDefaultDirectories)
 
     webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
 
-    [webView loadRequest:server.request()];
+    [webView loadRequest:server.request("/second.html")];
     TestWebKitAPI::Util::run(&done);
     done = false;
     EXPECT_TRUE(retrievedString.contains("/Caches/com.apple.WebKit.TestWebKitAPI/WebKit/CacheStorage"));
@@ -1436,15 +1420,15 @@ TEST(ServiceWorkers, ServiceWorkerAndCacheStorageSpecificDirectories)
     RetainPtr<DirectoryPageMessageHandler> directoryPageMessageHandler = adoptNS([[DirectoryPageMessageHandler alloc] init]);
     [[configuration userContentController] addScriptMessageHandler:directoryPageMessageHandler.get() name:@"sw"];
 
-    ServiceWorkerTCPServer server({
-        { "text/html", mainBytes },
-        { "application/javascript", scriptBytes },
-        { "text/html", regularPageGrabbingCacheStorageDirectory },
+    TestWebKitAPI::HTTPServer server({
+        { "/first.html", { mainBytes } },
+        { "/sw.js", { { { "Content-Type", "application/javascript" } }, scriptBytes } },
+        { "/second.html", { regularPageGrabbingCacheStorageDirectory } },
     });
 
     RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
 
-    [webView loadRequest:server.request()];
+    [webView loadRequest:server.request("/first.html")];
     TestWebKitAPI::Util::run(&done);
     done = false;
     while (![websiteDataStore _hasRegisteredServiceWorker])
@@ -1452,7 +1436,7 @@ TEST(ServiceWorkers, ServiceWorkerAndCacheStorageSpecificDirectories)
 
     webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
 
-    [webView loadRequest:server.request()];
+    [webView loadRequest:server.request("/second.html")];
     TestWebKitAPI::Util::run(&done);
     done = false;
     EXPECT_TRUE(retrievedString.contains("\"path\": \"/var/tmp\""));
@@ -1487,9 +1471,9 @@ TEST(ServiceWorkers, NonDefaultSessionID)
     RetainPtr<SWMessageHandlerWithExpectedMessage> messageHandler = adoptNS([[SWMessageHandlerWithExpectedMessage alloc] init]);
     [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sw"];
 
-    ServiceWorkerTCPServer server({
-        { "text/html", mainBytesForSessionIDTest },
-        { "application/javascript", scriptBytesForSessionIDTest },
+    TestWebKitAPI::HTTPServer server({
+        { "/", { mainBytesForSessionIDTest } },
+        { "/sw.js", { { { "Content-Type", "application/javascript" } }, scriptBytesForSessionIDTest } },
     });
 
     expectedMessage = "PASS: activation successful";
@@ -1551,15 +1535,13 @@ TEST(ServiceWorkers, ProcessPerSite)
     RetainPtr<SWMessageHandler> messageHandler = adoptNS([[SWMessageHandler alloc] init]);
     [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sw"];
 
-    ServiceWorkerTCPServer server1({
-        { "text/html", mainBytes },
-        { "application/javascript", scriptBytes },
-        { "text/html", mainBytes },
-        { "text/html", mainBytes },
+    TestWebKitAPI::HTTPServer server1({
+        { "/", { mainBytes } },
+        { "/sw.js", { { { "Content-Type", "application/javascript" } }, scriptBytes } },
     });
-    ServiceWorkerTCPServer server2({
-        { "text/html", mainBytes },
-        { "application/javascript", scriptBytes },
+    TestWebKitAPI::HTTPServer server2({
+        { "/", { mainBytes } },
+        { "/sw.js", { { { "Content-Type", "application/javascript" } }, scriptBytes } },
     });
 
     WKProcessPool *processPool = configuration.get().processPool;
@@ -1629,13 +1611,13 @@ TEST(ServiceWorkers, ParallelProcessLaunch)
     auto messageHandler = adoptNS([[SWMessageHandler alloc] init]);
     [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sw"];
 
-    ServiceWorkerTCPServer server1({
-        { "text/html", mainBytes },
-        { "application/javascript", scriptBytes },
+    TestWebKitAPI::HTTPServer server1({
+        { "/", { mainBytes } },
+        { "/sw.js", { { { "Content-Type", "application/javascript" } }, scriptBytes } },
     });
-    ServiceWorkerTCPServer server2({
-        { "text/html", mainBytes },
-        { "application/javascript", scriptBytes },
+    TestWebKitAPI::HTTPServer server2({
+        { "/", { mainBytes } },
+        { "/sw.js", { { { "Content-Type", "application/javascript" } }, scriptBytes } },
     });
 
     auto *processPool = configuration.get().processPool;
@@ -1743,9 +1725,9 @@ void testSuspendServiceWorkerProcessBasedOnClientProcesses(UseSeparateServiceWor
     auto messageHandler = adoptNS([[SWMessageHandler alloc] init]);
     [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sw"];
 
-    ServiceWorkerTCPServer server({
-        { "text/html", mainBytes },
-        { "application/javascript", scriptBytes },
+    TestWebKitAPI::HTTPServer server({
+        { "/", { mainBytes } },
+        { "/sw.js", { { { "Content-Type", "application/javascript" } }, scriptBytes } },
     });
 
     auto *processPool = configuration.get().processPool;
@@ -1884,9 +1866,9 @@ TEST(ServiceWorkers, LoadData)
     RetainPtr<SWMessageHandler> messageHandler = adoptNS([[SWMessageHandler alloc] init]);
     [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sw"];
 
-    ServiceWorkerTCPServer server({
-        { "text/html", mainBytes },
-        { "application/javascript", scriptBytes },
+    TestWebKitAPI::HTTPServer server({
+        { "/", { mainBytes } },
+        { "/sw.js", { { { "Content-Type", "application/javascript" } }, scriptBytes } },
     });
 
     RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
@@ -1924,12 +1906,10 @@ TEST(ServiceWorkers, RestoreFromDiskNonDefaultStore)
     RetainPtr<WKProcessPool> protectedProcessPool;
     RetainPtr<WKWebsiteDataStore> protectedWebsiteDataStore;
 
-    ServiceWorkerTCPServer server({
-        { "text/html", mainRegisteringWorkerBytes },
-        { "application/javascript", scriptBytes },
-    }, {
-        { "text/html", mainRegisteringAlreadyExistingWorkerBytes },
-        { "application/javascript", scriptBytes },
+    TestWebKitAPI::HTTPServer server({
+        { "/first.html", { mainRegisteringWorkerBytes } },
+        { "/sw.js", { { { "Content-Type", "application/javascript" } }, scriptBytes } },
+        { "/second.html", { mainRegisteringAlreadyExistingWorkerBytes } },
     });
 
     @autoreleasepool {
@@ -1947,7 +1927,7 @@ TEST(ServiceWorkers, RestoreFromDiskNonDefaultStore)
         protectedProcessPool = webView.get().configuration.processPool;
         protectedWebsiteDataStore = webView.get().configuration.websiteDataStore;
 
-        [webView loadRequest:server.request()];
+        [webView loadRequest:server.request("/first.html")];
 
         TestWebKitAPI::Util::run(&done);
         done = false;
@@ -1970,7 +1950,7 @@ TEST(ServiceWorkers, RestoreFromDiskNonDefaultStore)
 
         auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
 
-        [webView loadRequest:server.request()];
+        [webView loadRequest:server.request("/second.html")];
 
         TestWebKitAPI::Util::run(&done);
         done = false;
@@ -1993,10 +1973,10 @@ TEST(ServiceWorkers, SuspendNetworkProcess)
     RetainPtr<SWMessageHandler> messageHandler = adoptNS([[SWMessageHandler alloc] init]);
     [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sw"];
 
-    ServiceWorkerTCPServer server({
-        { "text/html", mainBytes },
-        { "application/javascript", scriptBytes },
-        { "text/html", mainBytes },
+    TestWebKitAPI::HTTPServer server({
+        { "/first.html", { mainBytes } },
+        { "/sw.js", { { { "Content-Type", "application/javascript" } }, scriptBytes } },
+        { "/second.html", { mainBytes } },
     });
 
     RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
@@ -2008,7 +1988,7 @@ TEST(ServiceWorkers, SuspendNetworkProcess)
     done = false;
 
     // Normal load to get SW registered.
-    [webView loadRequest:server.request()];
+    [webView loadRequest:server.request("/first.html")];
 
     TestWebKitAPI::Util::run(&done);
     done = false;
@@ -2031,7 +2011,7 @@ TEST(ServiceWorkers, SuspendNetworkProcess)
 
     [webView.get().configuration.websiteDataStore _sendNetworkProcessDidResume];
 
-    [webView loadRequest:server.request()];
+    [webView loadRequest:server.request("/second.html")];
     TestWebKitAPI::Util::run(&done);
     done = false;
 
@@ -2081,9 +2061,9 @@ TEST(ServiceWorkers, ProcessPerSession)
     auto messageHandler = adoptNS([[SWMessageHandler alloc] init]);
     [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sw"];
 
-    ServiceWorkerTCPServer server1({
-        { "text/html", mainBytes },
-        { "application/javascript", scriptBytes },
+    TestWebKitAPI::HTTPServer server1({
+        { "/", { mainBytes } },
+        { "/sw.js", { { { "Content-Type", "application/javascript" } }, scriptBytes } },
     });
 
     WKProcessPool *processPool = configuration.get().processPool;
@@ -2097,9 +2077,9 @@ TEST(ServiceWorkers, ProcessPerSession)
 
     configuration.get().websiteDataStore = [WKWebsiteDataStore nonPersistentDataStore];
 
-    ServiceWorkerTCPServer server2({
-        { "text/html", mainBytes },
-        { "application/javascript", scriptBytes },
+    TestWebKitAPI::HTTPServer server2({
+        { "/", { mainBytes } },
+        { "/sw.js", { { { "Content-Type", "application/javascript" } }, scriptBytes } },
     });
 
     auto webView2 = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
@@ -2384,9 +2364,9 @@ TEST(ServiceWorkers, ClearDOMCacheAlsoIncludesServiceWorkerRegistrations)
     auto messageHandler = adoptNS([[SWMessageHandler alloc] init]);
     [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sw"];
 
-    ServiceWorkerTCPServer server({
-        { "text/html", mainBytes },
-        { "application/javascript", scriptBytes },
+    TestWebKitAPI::HTTPServer server({
+        { "/", { mainBytes } },
+        { "/sw.js", { { { "Content-Type", "application/javascript" } }, scriptBytes } },
     });
 
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
@@ -2439,9 +2419,9 @@ TEST(ServiceWorkers, CustomDataStorePathsVersusCompletionHandlers)
     auto messageHandler = adoptNS([[SWMessageHandler alloc] init]);
     [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sw"];
 
-    ServiceWorkerTCPServer server({
-        { "text/html", mainBytes },
-        { "application/javascript", scriptBytes },
+    TestWebKitAPI::HTTPServer server({
+        { "/", { mainBytes } },
+        { "/sw.js", { { { "Content-Type", "application/javascript" } }, scriptBytes } },
     });
 
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);

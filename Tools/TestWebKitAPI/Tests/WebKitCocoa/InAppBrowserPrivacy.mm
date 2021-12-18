@@ -26,8 +26,8 @@
 #import "config.h"
 
 #import "DeprecatedGlobalValues.h"
+#import "HTTPServer.h"
 #import "PlatformUtilities.h"
-#import "ServiceWorkerTCPServer.h"
 #import "TestNavigationDelegate.h"
 #import "TestURLSchemeHandler.h"
 #import "TestWKWebView.h"
@@ -898,9 +898,9 @@ TEST(InAppBrowserPrivacy, AppBoundDomainAllowsServiceWorkers)
 
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
 
-    ServiceWorkerTCPServer server1({
-        { "text/html", mainBytes },
-        { "application/javascript", scriptBytes},
+    TestWebKitAPI::HTTPServer server({
+        { "/main.html", { mainBytes } },
+        { "/sw.js", { { { "Content-Type", "application/javascript" } }, scriptBytes } },
     });
 
     [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
@@ -914,7 +914,7 @@ TEST(InAppBrowserPrivacy, AppBoundDomainAllowsServiceWorkers)
     
     // Expect the service worker load to complete successfully.
     expectedMessage = "Message from worker: ServiceWorker received: Hello from an app-bound domain";
-    [webView loadRequest:server1.requestWithLocalhost()];
+    [webView loadRequest:server.requestWithLocalhost("/main.html")];
     TestWebKitAPI::Util::run(&isDone);
     isDone = false;
 
@@ -955,9 +955,9 @@ TEST(InAppBrowserPrivacy, UnregisterServiceWorker)
 
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
 
-    ServiceWorkerTCPServer server({
-        { "text/html", mainUnregisterBytes },
-        { "application/javascript", scriptBytes},
+    TestWebKitAPI::HTTPServer server({
+        { "/main.html", { mainUnregisterBytes } },
+        { "/sw.js", { { { "Content-Type", "application/javascript" } }, scriptBytes } },
     });
 
     [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
@@ -968,7 +968,7 @@ TEST(InAppBrowserPrivacy, UnregisterServiceWorker)
     isDone = false;
 
     expectedMessage = "Unregistration success";
-    [webView loadRequest:server.requestWithLocalhost()];
+    [webView loadRequest:server.requestWithLocalhost("/main.html")];
     TestWebKitAPI::Util::run(&isDone);
 
     isDone = false;
