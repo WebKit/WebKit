@@ -23,12 +23,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef LargeMap_h
-#define LargeMap_h
+#pragma once
 
 #include "LargeRange.h"
 #include "Vector.h"
 #include <algorithm>
+
+#if !BUSE(LIBPAS)
 
 namespace bmalloc {
 
@@ -51,4 +52,4 @@ private:
 
 } // namespace bmalloc
 
-#endif // LargeMap_h
+#endif

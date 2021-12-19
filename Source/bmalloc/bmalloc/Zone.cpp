@@ -26,6 +26,8 @@
 #include "Sizes.h"
 #include "Zone.h"
 
+#if !BUSE(LIBPAS)
+
 namespace bmalloc {
 
 template<typename T> static void remoteRead(task_t task, memory_reader_t reader, vm_address_t remotePointer, T& result)
@@ -130,3 +132,5 @@ Zone::Zone(task_t task, memory_reader_t reader, vm_address_t remotePointer)
 }
 
 } // namespace bmalloc
+
+#endif

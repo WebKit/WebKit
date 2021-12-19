@@ -27,6 +27,8 @@
 
 #include "FreeListInlines.h"
 
+#if !BUSE(LIBPAS)
+
 namespace bmalloc {
 
 FreeList::FreeList()
@@ -81,3 +83,4 @@ bool FreeList::contains(void* target) const
 
 } // namespace JSC
 
+#endif

@@ -32,6 +32,8 @@
 #include "Mutex.h"
 #include <mutex>
 
+#if !BUSE(LIBPAS)
+
 namespace bmalloc {
 
 template<typename Config>
@@ -82,3 +84,4 @@ BNO_INLINE void IsoDeallocator<Config>::scavenge()
 
 } // namespace bmalloc
 
+#endif

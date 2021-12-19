@@ -29,6 +29,8 @@
 #include "IsoPage.h"
 #include "IsoSharedConfig.h"
 
+#if !BUSE(LIBPAS)
+
 namespace bmalloc {
 
 class IsoHeapImplBase;
@@ -58,3 +60,4 @@ uint8_t* indexSlotFor(void* ptr)
 
 } // namespace bmalloc
 
+#endif

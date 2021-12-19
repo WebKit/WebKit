@@ -30,6 +30,8 @@
 #include "IsoSharedPage.h"
 #include "StdLibExtras.h"
 
+#if !BUSE(LIBPAS)
+
 namespace bmalloc {
 
 template<unsigned objectSize, typename Func>
@@ -82,3 +84,5 @@ BNO_INLINE void* IsoSharedHeap::allocateSlow(const LockHolder& locker, bool abor
 }
 
 } // namespace bmalloc
+
+#endif

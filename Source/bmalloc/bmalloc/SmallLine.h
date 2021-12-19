@@ -23,13 +23,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef SmallLine_h
-#define SmallLine_h
+#pragma once
 
 #include "BAssert.h"
 #include "Mutex.h"
 #include "ObjectType.h"
 #include <mutex>
+
+#if !BUSE(LIBPAS)
 
 namespace bmalloc {
 
@@ -66,4 +67,4 @@ inline bool SmallLine::deref(UniqueLockHolder&)
 
 } // namespace bmalloc
 
-#endif // SmallLine_h
+#endif

@@ -25,6 +25,10 @@
 
 #pragma once
 
+#include "BPlatform.h"
+
+#if !BUSE(LIBPAS)
+
 namespace bmalloc {
 
 template<unsigned passedObjectSize>
@@ -34,3 +38,4 @@ struct IsoConfig {
 
 } // namespace bmalloc
 
+#endif

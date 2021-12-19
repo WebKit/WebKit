@@ -1,3 +1,137 @@
+2021-12-19  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [libpas] Add macros to disable bmalloc core so that libpas can be enabled on 64-bit watchOS
+        https://bugs.webkit.org/show_bug.cgi?id=234481
+
+        Reviewed by David Kilzer.
+
+        This patch re-enables libpas for watchOS by disabling compilation of bmalloc core when libpas
+        is enabled.
+
+        Also we found that size of libbmalloc.a is misleading: it is just collection of object
+        files, thus it includes a lot of duplicate inline functions, which is deduped when linking
+        it to JavaScriptCore.framework. Thus, that size does not directly reflect the final size of
+        JavaScriptCore.framework.
+
+        Before and after this patch, we see 2.4MB size reduction in total.
+
+            1. JavaScriptCore.framework increases by 363KB.
+                Before: 32452544 JavaScriptCore.framework/JavaScriptCore
+                After:  32825088 JavaScriptCore.framework/JavaScriptCore
+
+                Most part of libbmalloc.a archive file is just many duplicate inline functions, which is deduped
+                in JavaScriptCore.framework (archive file v.s. framework). After deduping and after removing bmalloc
+                core in this patch, it only increases 363KB. Removing bmalloc core code is contributing to 70KB reduction.
+
+            2. WebCore.framework decreases by 2.75MB
+                Before: 72591584 WebCore.framework/WebCore
+                After:  69702240 WebCore.framework/WebCore
+
+                We can get 2.75MB size reduction if we enable libpas on WebCore. This is because how IsoHeap is
+                implemented in bmalloc v.s. libpas. In bmalloc, we use extensive amount of distinct template-based
+                IsoHeap code, which bloats code size. Plus, it uses very long function name strings to fix per-process
+                singleton linking issue happening for C++ template. Compared to that, libpas is just using very small
+                C structure and functions that can be much smaller than the bmalloc's IsoHeap's code which even duplicate
+                slow path code. As a result, switching to libpas offers 2.75MB size deduction.
+
+        * bmalloc/Algorithm.h:
+        * bmalloc/AllIsoHeaps.cpp:
+        * bmalloc/AllIsoHeaps.h:
+        * bmalloc/AllIsoHeapsInlines.h:
+        * bmalloc/Allocator.cpp:
+        * bmalloc/Allocator.h:
+        * bmalloc/BInline.h:
+        * bmalloc/BPlatform.h:
+        * bmalloc/Bits.h:
+        * bmalloc/BulkDecommit.h:
+        * bmalloc/BumpAllocator.h:
+        * bmalloc/BumpRange.h:
+        * bmalloc/Cache.cpp:
+        * bmalloc/Cache.h:
+        * bmalloc/Chunk.h:
+        * bmalloc/Deallocator.cpp:
+        * bmalloc/Deallocator.h:
+        * bmalloc/DeferredDecommit.h:
+        * bmalloc/DeferredDecommitInlines.h:
+        * bmalloc/DeferredTrigger.h:
+        * bmalloc/DeferredTriggerInlines.h:
+        * bmalloc/EligibilityResult.h:
+        * bmalloc/EligibilityResultInlines.h:
+        * bmalloc/Environment.h:
+        * bmalloc/FixedVector.h:
+        * bmalloc/FreeList.cpp:
+        * bmalloc/FreeList.h:
+        * bmalloc/FreeListInlines.h:
+        * bmalloc/Heap.cpp:
+        * bmalloc/Heap.h:
+        * bmalloc/HeapConstants.cpp:
+        * bmalloc/HeapConstants.h:
+        * bmalloc/IsoAllocator.h:
+        * bmalloc/IsoAllocatorInlines.h:
+        * bmalloc/IsoConfig.h:
+        * bmalloc/IsoDeallocator.h:
+        * bmalloc/IsoDeallocatorInlines.h:
+        * bmalloc/IsoDirectory.h:
+        * bmalloc/IsoDirectoryInlines.h:
+        * bmalloc/IsoDirectoryPage.h:
+        * bmalloc/IsoDirectoryPageInlines.h:
+        * bmalloc/IsoHeapImpl.cpp:
+        * bmalloc/IsoHeapImpl.h:
+        * bmalloc/IsoHeapImplInlines.h:
+        * bmalloc/IsoMallocFallback.h:
+        * bmalloc/IsoPage.cpp:
+        * bmalloc/IsoPage.h:
+        * bmalloc/IsoPageInlines.h:
+        * bmalloc/IsoPageTrigger.h:
+        * bmalloc/IsoSharedConfig.h:
+        * bmalloc/IsoSharedHeap.cpp:
+        * bmalloc/IsoSharedHeap.h:
+        * bmalloc/IsoSharedHeapInlines.h:
+        * bmalloc/IsoSharedPage.cpp:
+        * bmalloc/IsoSharedPage.h:
+        * bmalloc/IsoSharedPageInlines.h:
+        * bmalloc/IsoTLS.cpp:
+        * bmalloc/IsoTLS.h:
+        * bmalloc/IsoTLSAllocatorEntry.h:
+        * bmalloc/IsoTLSAllocatorEntryInlines.h:
+        * bmalloc/IsoTLSDeallocatorEntry.h:
+        * bmalloc/IsoTLSDeallocatorEntryInlines.h:
+        * bmalloc/IsoTLSEntry.cpp:
+        * bmalloc/IsoTLSEntry.h:
+        * bmalloc/IsoTLSEntryInlines.h:
+        * bmalloc/IsoTLSInlines.h:
+        * bmalloc/IsoTLSLayout.cpp:
+        * bmalloc/IsoTLSLayout.h:
+        * bmalloc/LargeMap.cpp:
+        * bmalloc/LargeMap.h:
+        * bmalloc/LargeRange.h:
+        * bmalloc/LineMetadata.h:
+        * bmalloc/List.h:
+        * bmalloc/Map.h:
+        * bmalloc/Object.h:
+        * bmalloc/ObjectType.cpp:
+        * bmalloc/ObjectType.h:
+        * bmalloc/ObjectTypeTable.cpp:
+        * bmalloc/ObjectTypeTable.h:
+        * bmalloc/Packed.h:
+        * bmalloc/PerHeapKind.h:
+        * bmalloc/PerProcess.cpp:
+        * bmalloc/PerProcess.h:
+        * bmalloc/PerThread.h:
+        * bmalloc/PhysicalPageMap.h:
+        * bmalloc/Range.h:
+        * bmalloc/Scavenger.cpp:
+        * bmalloc/Scavenger.h:
+        * bmalloc/Sizes.h:
+        * bmalloc/SmallLine.h:
+        * bmalloc/SmallPage.h:
+        * bmalloc/StdLibExtras.h:
+        * bmalloc/Syscall.h:
+        * bmalloc/VMAllocate.h:
+        * bmalloc/Vector.h:
+        * bmalloc/Zone.cpp:
+        * bmalloc/Zone.h:
+
 2021-12-18  David Kilzer  <ddkilzer@apple.com>
 
         [libpas] Do not compile libpas for 64-bit watchOS to save ~6 MB per architecture

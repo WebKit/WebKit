@@ -30,6 +30,8 @@
 #include "Object.h"
 #include "PerProcess.h"
 
+#if !BUSE(LIBPAS)
+
 namespace bmalloc {
 
 ObjectType objectType(Heap& heap, void* object)
@@ -46,3 +48,5 @@ ObjectType objectType(Heap& heap, void* object)
 }
 
 } // namespace bmalloc
+
+#endif

@@ -28,6 +28,8 @@
 #include "HeapKind.h"
 #include <array>
 
+#if !BUSE(LIBPAS)
+
 namespace bmalloc {
 
 template<typename T>
@@ -105,3 +107,4 @@ public:
 
 } // namespace bmalloc
 
+#endif

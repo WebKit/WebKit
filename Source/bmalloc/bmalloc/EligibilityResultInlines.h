@@ -27,6 +27,8 @@
 
 #include "EligibilityResult.h"
 
+#if !BUSE(LIBPAS)
+
 namespace bmalloc {
 
 template<typename Config>
@@ -43,3 +45,5 @@ EligibilityResult<Config>::EligibilityResult(IsoPage<Config>* page)
 }
 
 } // namespace bmalloc
+
+#endif

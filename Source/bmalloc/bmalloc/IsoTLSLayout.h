@@ -29,6 +29,8 @@
 #include "StaticPerProcess.h"
 #include <mutex>
 
+#if !BUSE(LIBPAS)
+
 namespace bmalloc {
 
 class IsoTLSEntry;
@@ -49,3 +51,4 @@ DECLARE_STATIC_PER_PROCESS_STORAGE(IsoTLSLayout);
 
 } // namespace bmalloc
 
+#endif

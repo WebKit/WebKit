@@ -44,6 +44,8 @@
 #include <pthread_np.h>
 #endif
 
+#if !BUSE(LIBPAS)
+
 namespace bmalloc {
 
 static constexpr bool verbose = false;
@@ -379,3 +381,4 @@ void Scavenger::setSelfQOSClass()
 
 } // namespace bmalloc
 
+#endif

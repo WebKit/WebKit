@@ -46,18 +46,13 @@
 #include "Zone.h"
 #endif
 
+#if !BUSE(LIBPAS)
+
 namespace bmalloc {
 
-#if BUSE(LIBPAS) && BCOMPILER(CLANG)
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wmissing-noreturn"
-#endif
 Heap::Heap(HeapKind kind, LockHolder&)
     : m_kind { kind }, m_constants { *HeapConstants::get() }
 {
-#if BUSE(LIBPAS)
-    RELEASE_BASSERT(!"Should not be using Heap if BUSE(LIBPAS)");
-#endif
     BASSERT(!Environment::get()->isDebugHeapEnabled());
 
     Gigacage::ensureGigacage();
@@ -70,9 +65,6 @@ Heap::Heap(HeapKind kind, LockHolder&)
     
     m_scavenger = Scavenger::get();
 }
-#if BUSE(LIBPAS) && BCOMPILER(CLANG)
-#pragma clang diagnostic pop
-#endif
 
 bool Heap::usingGigacage()
 {
@@ -685,3 +677,5 @@ void Heap::externalDecommit(UniqueLockHolder& lock, void* ptr, size_t size)
 }
 
 } // namespace bmalloc
+
+#endif

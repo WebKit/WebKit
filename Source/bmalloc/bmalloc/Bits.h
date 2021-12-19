@@ -29,6 +29,8 @@
 #include "BInline.h"
 #include <climits>
 
+#if !BUSE(LIBPAS)
+
 namespace bmalloc {
 
 constexpr size_t bitsArrayLength(size_t numBits) { return (numBits + 31) / 32; }
@@ -504,3 +506,4 @@ public:
 
 } // namespace bmalloc
 
+#endif

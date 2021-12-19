@@ -27,6 +27,8 @@
 
 #include "IsoTLSEntry.h"
 
+#if !BUSE(LIBPAS)
+
 namespace bmalloc {
 
 DEFINE_STATIC_PER_PROCESS_STORAGE(IsoTLSLayout);
@@ -61,3 +63,4 @@ void IsoTLSLayout::add(IsoTLSEntry* entry)
 
 } // namespace bmalloc
 
+#endif

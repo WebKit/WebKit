@@ -23,11 +23,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef LargeRange_h
-#define LargeRange_h
+#pragma once
 
 #include "BAssert.h"
 #include "Range.h"
+
+#if !BUSE(LIBPAS)
 
 namespace bmalloc {
 
@@ -190,4 +191,4 @@ inline std::pair<LargeRange, LargeRange> LargeRange::split(size_t leftSize) cons
 
 } // namespace bmalloc
 
-#endif // LargeRange_h
+#endif

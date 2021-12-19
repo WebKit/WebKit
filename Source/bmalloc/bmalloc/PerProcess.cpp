@@ -28,6 +28,8 @@
 #include "VMAllocate.h"
 #include <stdio.h>
 
+#if !BUSE(LIBPAS)
+
 namespace bmalloc {
 
 static constexpr unsigned tableSize = 100;
@@ -89,3 +91,4 @@ PerProcessData* getPerProcessData(unsigned hash, const char* disambiguator, size
 
 } // namespace bmalloc
 
+#endif

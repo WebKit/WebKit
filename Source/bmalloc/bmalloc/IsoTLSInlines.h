@@ -31,6 +31,8 @@
 #include "IsoTLS.h"
 #include "bmalloc.h"
 
+#if !BUSE(LIBPAS)
+
 #if BOS(DARWIN)
 #include <malloc/malloc.h>
 #endif
@@ -188,3 +190,4 @@ BNO_INLINE IsoTLS* IsoTLS::ensureHeapAndEntries(api::IsoHeap<Type>& handle)
 
 } // namespace bmalloc
 
+#endif

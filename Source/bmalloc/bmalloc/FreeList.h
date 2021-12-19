@@ -29,6 +29,8 @@
 #include <cstddef>
 #include <cstdint>
 
+#if !BUSE(LIBPAS)
+
 namespace bmalloc {
 
 class VariadicBumpAllocator;
@@ -94,3 +96,4 @@ private:
 
 } // namespace bmalloc
 
+#endif

@@ -32,6 +32,8 @@
 #include "Packed.h"
 #include "PhysicalPageMap.h"
 
+#if !BUSE(LIBPAS)
+
 namespace bmalloc {
 
 class AllIsoHeaps;
@@ -142,4 +144,4 @@ private:
 
 } // namespace bmalloc
 
-
+#endif

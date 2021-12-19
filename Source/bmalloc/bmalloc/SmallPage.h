@@ -23,14 +23,15 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef SmallPage_h
-#define SmallPage_h
+#pragma once
 
 #include "BAssert.h"
 #include "List.h"
 #include "Mutex.h"
 #include "VMAllocate.h"
 #include <mutex>
+
+#if !BUSE(LIBPAS)
 
 namespace bmalloc {
 
@@ -92,4 +93,4 @@ inline bool SmallPage::deref(UniqueLockHolder&)
 
 } // namespace bmalloc
 
-#endif // SmallPage_h
+#endif

@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef Algorithm_h
-#define Algorithm_h
+#pragma once
 
 #include "BAssert.h"
 #include <algorithm>
@@ -300,5 +299,3 @@ constexpr uint32_t roundUpToPowerOfTwo(uint32_t v)
 }
 
 } // namespace bmalloc
-
-#endif // Algorithm_h

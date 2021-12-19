@@ -34,6 +34,8 @@
 #include <mach/vm_param.h>
 #endif
 
+#if !BUSE(LIBPAS)
+
 namespace bmalloc {
 
 class Chunk;
@@ -135,3 +137,5 @@ inline ObjectTypeTable::Bits::WordType* ObjectTypeTable::Bits::wordForIndex(unsi
 }
 
 } // namespace bmalloc
+
+#endif

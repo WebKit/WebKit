@@ -23,8 +23,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef List_h
-#define List_h
+#pragma once
+
+#include "BPlatform.h"
+
+#if !BUSE(LIBPAS)
 
 namespace bmalloc {
 
@@ -120,4 +123,4 @@ private:
 
 } // namespace bmalloc
 
-#endif // List_h
+#endif

@@ -28,6 +28,8 @@
 #include "BAssert.h"
 #include "DeferredTrigger.h"
 
+#if !BUSE(LIBPAS)
+
 namespace bmalloc {
 
 template<IsoPageTrigger trigger>
@@ -54,3 +56,4 @@ void DeferredTrigger<trigger>::handleDeferral(const LockHolder& locker, IsoPage<
 
 } // namespace bmalloc
 
+#endif

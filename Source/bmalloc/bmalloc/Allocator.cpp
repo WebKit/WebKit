@@ -34,6 +34,8 @@
 #include <algorithm>
 #include <cstdlib>
 
+#if !BUSE(LIBPAS)
+
 namespace bmalloc {
 
 Allocator::Allocator(Heap& heap, Deallocator& deallocator)
@@ -170,3 +172,5 @@ void* Allocator::allocateSlowCase(size_t size, FailureAction action)
 }
 
 } // namespace bmalloc
+
+#endif

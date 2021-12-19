@@ -29,7 +29,10 @@
 #include "StaticPerProcess.h"
 #include "Vector.h"
 
+#if !BUSE(LIBPAS)
+
 namespace bmalloc {
+
 
 class BEXPORT AllIsoHeaps : public StaticPerProcess<AllIsoHeaps> {
 public:
@@ -48,3 +51,4 @@ DECLARE_STATIC_PER_PROCESS_STORAGE(AllIsoHeaps);
 
 } // namespace bmalloc
 
+#endif

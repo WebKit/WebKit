@@ -27,6 +27,8 @@
 
 #include "Sizes.h"
 
+#if !BUSE(LIBPAS)
+
 namespace bmalloc {
 
 struct LineMetadata {
@@ -43,3 +45,5 @@ static_assert(
     "maximum object count must fit in LineMetadata::objectCount");
 
 } // namespace bmalloc
+
+#endif

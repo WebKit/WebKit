@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef Heap_h
-#define Heap_h
+#pragma once
 
 #include "BumpRange.h"
 #include "Chunk.h"
@@ -45,6 +44,8 @@
 #include <condition_variable>
 #include <mutex>
 #include <vector>
+
+#if !BUSE(LIBPAS)
 
 namespace bmalloc {
 
@@ -171,4 +172,4 @@ inline bool Heap::isLarge(void* object)
 
 } // namespace bmalloc
 
-#endif // Heap_h
+#endif

@@ -29,6 +29,8 @@
 #include "StdLibExtras.h"
 #include "VMAllocate.h"
 
+#if !BUSE(LIBPAS)
+
 namespace bmalloc {
 
 // IsoSharedPage never becomes empty state again after we allocate some cells from IsoSharedPage. This makes IsoSharedPage management super simple.
@@ -71,3 +73,4 @@ inline void IsoSharedPage::stopAllocating(const LockHolder&)
 
 } // namespace bmalloc
 
+#endif

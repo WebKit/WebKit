@@ -30,6 +30,8 @@
 #include "IsoSharedHeapInlines.h"
 #include "IsoSharedPageInlines.h"
 
+#if !BUSE(LIBPAS)
+
 namespace bmalloc {
 
 template<typename Config>
@@ -326,3 +328,4 @@ void* IsoHeapImpl<Config>::allocateFromShared(const LockHolder&, bool abortOnFai
 
 } // namespace bmalloc
 
+#endif

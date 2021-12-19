@@ -29,6 +29,8 @@
 #include "PerProcess.h"
 #include <climits>
 
+#if !BUSE(LIBPAS)
+
 namespace bmalloc {
 
 IsoTLSEntry::IsoTLSEntry(size_t size)
@@ -42,3 +44,4 @@ IsoTLSEntry::~IsoTLSEntry()
 
 } // namespace bmalloc
 
+#endif

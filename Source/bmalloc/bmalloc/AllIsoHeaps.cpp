@@ -25,6 +25,8 @@
 
 #include "AllIsoHeaps.h"
 
+#if !BUSE(LIBPAS)
+
 namespace bmalloc {
 
 DEFINE_STATIC_PER_PROCESS_STORAGE(AllIsoHeaps);
@@ -48,3 +50,4 @@ IsoHeapImplBase* AllIsoHeaps::head()
 
 } // namespace bmalloc
 
+#endif

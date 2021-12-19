@@ -27,9 +27,12 @@
 
 #include "IsoConfig.h"
 
+#if !BUSE(LIBPAS)
+
 namespace bmalloc {
 
 static constexpr unsigned alignmentForIsoSharedAllocation = 16;
 
 } // namespace bmalloc
 
+#endif

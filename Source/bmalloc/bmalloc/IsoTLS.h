@@ -28,6 +28,8 @@
 #include "PerThread.h"
 #include <cstddef>
 
+#if !BUSE(LIBPAS)
+
 namespace bmalloc {
 
 class IsoTLSEntry;
@@ -108,3 +110,4 @@ private:
 
 } // namespace bmalloc
 
+#endif

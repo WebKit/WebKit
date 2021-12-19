@@ -23,12 +23,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef BumpRange_h
-#define BumpRange_h
+#pragma once
 
 #include "FixedVector.h"
 #include "Range.h"
 #include "Sizes.h"
+
+#if !BUSE(LIBPAS)
 
 namespace bmalloc {
 
@@ -41,4 +42,4 @@ typedef FixedVector<BumpRange, bumpRangeCacheCapacity> BumpRangeCache;
 
 } // namespace bmalloc
 
-#endif // BumpRange_h
+#endif

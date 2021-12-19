@@ -28,6 +28,8 @@
 #include "StdLibExtras.h"
 #include "VMAllocate.h"
 
+#if !BUSE(LIBPAS)
+
 namespace bmalloc {
 
 IsoSharedPage* IsoSharedPage::tryCreate()
@@ -41,3 +43,5 @@ IsoSharedPage* IsoSharedPage::tryCreate()
 
 
 } // namespace bmalloc
+
+#endif

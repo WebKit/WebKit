@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef PerThread_h
-#define PerThread_h
+#pragma once
 
 #include "BInline.h"
 #include "BPlatform.h"
@@ -43,6 +42,8 @@
 #else
 #define HAVE_PTHREAD_MACHDEP_H 0
 #endif
+
+#if !BUSE(LIBPAS)
 
 namespace bmalloc {
 
@@ -158,4 +159,4 @@ T* PerThread<T>::getSlowCase()
 
 } // namespace bmalloc
 
-#endif // PerThread_h
+#endif
