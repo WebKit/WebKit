@@ -25,15 +25,19 @@
 
 #pragma once
 
+#include "Timer.h"
 #include <wtf/FastMalloc.h>
+#include <wtf/Vector.h>
 #include <wtf/WeakHashSet.h>
 #include <wtf/WeakPtr.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
 class Document;
 class Element;
 class FrameView;
+class HTMLElement;
 
 class ModalContainerObserver {
     WTF_MAKE_FAST_ALLOCATED;
@@ -47,8 +51,15 @@ public:
     void updateModalContainerIfNeeded(const FrameView&);
 
 private:
+    void scheduleClickableElementCollection();
+    void collectClickableElementsTimerFired();
+
+    std::pair<Vector<WeakPtr<HTMLElement>>, Vector<String>> collectClickableElements();
+
     WeakHashSet<Element> m_elementsToIgnoreWhenSearching;
     WeakPtr<Element> m_container;
+    Timer m_collectClickableElementsTimer;
+    bool m_collectingClickableElements { false };
 };
 
 } // namespace WebCore
