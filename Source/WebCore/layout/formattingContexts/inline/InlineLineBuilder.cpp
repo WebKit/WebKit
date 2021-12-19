@@ -288,6 +288,11 @@ LineBuilder::LineBuilder(const InlineFormattingContext& inlineFormattingContext,
 {
 }
 
+struct UsedConstraints {
+    InlineRect logicalRect;
+    InlineLayoutUnit marginStart { 0 };
+    bool isConstrainedByFloat { false };
+};
 LineBuilder::LineContent LineBuilder::layoutInlineContent(const InlineItemRange& needsLayoutRange, size_t partialLeadingContentLength, std::optional<InlineLayoutUnit> overflowingLogicalWidth, const InlineRect& initialLineLogicalRect, bool isFirstLine)
 {
     initialize(initialConstraintsForLine(initialLineLogicalRect, isFirstLine), isFirstLine, needsLayoutRange.start, partialLeadingContentLength, overflowingLogicalWidth);
@@ -332,6 +337,7 @@ LineBuilder::LineContent LineBuilder::layoutInlineContent(const InlineItemRange&
         , committedContent.overflowLogicalWidth
         , m_floats
         , m_contentIsConstrainedByFloat
+        , m_lineMarginStart
         , m_lineLogicalRect.topLeft()
         , m_lineLogicalRect.width()
         , m_line.contentLogicalWidth()
@@ -351,7 +357,7 @@ LineBuilder::IntrinsicContent LineBuilder::computedIntrinsicWidth(const InlineIt
 
     auto committedContent = placeInlineContent(needsLayoutRange);
     auto committedRange = close(needsLayoutRange, committedContent);
-    auto lineWidth = lineConstraints.logicalRect.left() + m_line.contentLogicalWidth();
+    auto lineWidth = lineConstraints.logicalRect.left() + lineConstraints.marginStart + m_line.contentLogicalWidth();
     return { committedRange, lineWidth, m_floats };
 }
 
@@ -395,7 +401,12 @@ void LineBuilder::initialize(const UsedConstraints& lineConstraints, bool isFirs
     createLineSpanningInlineBoxes();
     m_line.initialize(m_lineSpanningInlineBoxes);
 
+    m_lineMarginStart = lineConstraints.marginStart;
     m_lineLogicalRect = lineConstraints.logicalRect;
+    m_lineLogicalRect.moveHorizontally(m_lineMarginStart);
+    // While negative margins normally don't expand the available space, preferred width computation gets confused by negative text-indent
+    // (shrink the space needed for the content) which we have to balance it here.
+    m_lineLogicalRect.expandHorizontally(-m_lineMarginStart);
     m_contentIsConstrainedByFloat = lineConstraints.isConstrainedByFloat;
 
     if (partialLeadingContentLength) {
@@ -547,7 +558,7 @@ std::optional<HorizontalConstraints> LineBuilder::floatConstraints(const InlineR
     return HorizontalConstraints { toLayoutUnit(lineLogicalLeft), toLayoutUnit(lineLogicalRight - lineLogicalLeft) };
 }
 
-LineBuilder::UsedConstraints LineBuilder::initialConstraintsForLine(const InlineRect& initialLineLogicalRect, bool isFirstLine) const
+UsedConstraints LineBuilder::initialConstraintsForLine(const InlineRect& initialLineLogicalRect, bool isFirstLine) const
 {
     auto lineLogicalLeft = initialLineLogicalRect.left();
     auto lineLogicalRight = initialLineLogicalRect.right();
@@ -598,8 +609,7 @@ LineBuilder::UsedConstraints LineBuilder::initialConstraintsForLine(const Inline
         }
         return { minimumValueForLength(textIndent, initialLineLogicalRect.width()) };
     };
-    lineLogicalLeft += computedTextIndent();
-    return UsedConstraints { { initialLineLogicalRect.top(), lineLogicalLeft, lineLogicalRight - lineLogicalLeft, initialLineLogicalRect.height() }, lineIsConstrainedByFloat };
+    return UsedConstraints { { initialLineLogicalRect.top(), lineLogicalLeft, lineLogicalRight - lineLogicalLeft, initialLineLogicalRect.height() }, computedTextIndent(), lineIsConstrainedByFloat };
 }
 
 void LineBuilder::candidateContentForLine(LineCandidate& lineCandidate, size_t currentInlineItemIndex, const InlineItemRange& layoutRange, InlineLayoutUnit currentLogicalRight)

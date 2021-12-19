@@ -37,6 +37,7 @@ namespace Layout {
 
 class FloatingContext;
 struct LineCandidate;
+struct UsedConstraints;
 
 class LineBuilder {
 public:
@@ -56,7 +57,8 @@ public:
         std::optional<InlineLayoutUnit> overflowLogicalWidth;
         const FloatList& floats;
         bool hasIntrusiveFloat { false };
-        InlineLayoutPoint logicalTopLeft;
+        InlineLayoutUnit lineMarginStart { 0 };
+        InlineLayoutPoint lineLogicalTopLeft;
         InlineLayoutUnit lineLogicalWidth { 0 };
         InlineLayoutUnit contentLogicalWidth { 0 };
         InlineLayoutUnit hangingWhitespaceWidth { 0 };
@@ -87,10 +89,6 @@ private:
         CommittedContentCount committedCount { };
         size_t partialTrailingContentLength { 0 };
         std::optional<InlineLayoutUnit> overflowLogicalWidth { };
-    };
-    struct UsedConstraints {
-        InlineRect logicalRect;
-        bool isConstrainedByFloat { false };
     };
     UsedConstraints initialConstraintsForLine(const InlineRect& initialLineLogicalRect, bool isFirstLine) const;
     std::optional<HorizontalConstraints> floatConstraints(const InlineRect& lineLogicalRect) const;
@@ -132,6 +130,7 @@ private:
 
     Line m_line;
     InlineRect m_lineLogicalRect;
+    InlineLayoutUnit m_lineMarginStart { 0 };
     const InlineItems& m_inlineItems;
     FloatList m_floats;
     std::optional<InlineTextItem> m_partialLeadingTextItem;

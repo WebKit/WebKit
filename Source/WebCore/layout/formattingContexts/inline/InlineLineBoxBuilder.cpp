@@ -112,7 +112,7 @@ LineBoxBuilder::LineAndLineBox LineBoxBuilder::build(const LineBuilder::LineCont
     auto lineBoxLogicalHeight = constructAndAlignInlineLevelBoxes(lineBox, lineContent.runs, lineIndex);
 
     auto line = [&] {
-        auto lineBoxLogicalRect = InlineRect { lineContent.logicalTopLeft, lineContent.lineLogicalWidth, lineBoxLogicalHeight };
+        auto lineBoxLogicalRect = InlineRect { lineContent.lineLogicalTopLeft, lineContent.lineLogicalWidth, lineBoxLogicalHeight };
         auto scrollableOverflowRect = lineBoxLogicalRect;
         auto& rootInlineBox = lineBox.rootInlineBox();
         auto enclosingTopAndBottom = InlineDisplay::Line::EnclosingTopAndBottom { lineBoxLogicalRect.top() + rootInlineBox.logicalTop(), lineBoxLogicalRect.top() + rootInlineBox.logicalBottom() };
