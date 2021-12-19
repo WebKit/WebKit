@@ -1,3 +1,22 @@
+2021-12-18  Mikhail R. Gadelha  <mikhail@igalia.com>
+
+        [JSC][32bit] Fix undefined behavior causing miscompilation with clang 13 on ARM
+        https://bugs.webkit.org/show_bug.cgi?id=234399
+
+        Reviewed by Yusuke Suzuki.
+
+        Compiling JSC with clang 13 on ARMv7 on linux was broken because clang
+        was marking the constant Infinity as poison during constant folding, if
+        either -O2 or -O3 were used, causing the constant to not being
+        initialized.
+
+        This patch removes the undefined behaviour by preventing the
+        static_cast to int32_t if the double is either inf or NaN.
+
+        * runtime/MathCommon.h:
+        (JSC::canBeInt32):
+        (JSC::canBeStrictInt32):
+
 2021-12-18  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Do not allocate m_bbqCallee and m_omgCallee until it becomes necessary
