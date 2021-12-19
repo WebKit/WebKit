@@ -1,3 +1,26 @@
+2021-12-19  Jon Lee  <jonlee@apple.com>
+
+        Garden tests that are passing iOS but marked failure.
+        https://bugs.webkit.org/show_bug.cgi?id=234464
+
+        Reviewed by Simon Fraser.
+
+        An attempt to garden the tests that are marked failing but are now passing.
+        These were cross-checked against bot history.
+
+        * TestExpectations:
+        * platform/ios-14/TestExpectations:
+        * platform/ios-simulator-wk2/TestExpectations:
+        * platform/ios-simulator/TestExpectations:
+        * platform/ios-wk1/TestExpectations:
+        * platform/ios-wk2/TestExpectations:
+        * platform/ios/TestExpectations:
+        * platform/mac-wk1/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/win/TestExpectations:
+        * platform/wk2/TestExpectations:
+
 2021-12-17  Simon Fraser  <simon.fraser@apple.com>
 
         Read the default value of the ScrollAnimatorEnabled setting from NSUserDefaults

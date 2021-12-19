@@ -81,8 +81,6 @@ accessibility/ios-simulator/image-overlay-elements.html [ Pass ]
 http/tests/ssl/applepay [ Pass ]
 webkit.org/b/212975 http/tests/ssl/applepay/PaymentRequest.https.html [ Pass Timeout ]
 
-webkit.org/b/212998 http/tests/ssl/applepay/ApplePayInstallmentItems.https.html [ Failure ]
-
 http/tests/paymentrequest [ Pass ]
 http/tests/paymentrequest/ApplePayModifier-additionalLineItems.https.html [ Skip ]
 http/tests/paymentrequest/ApplePayModifier-additionalShippingMethods.https.html [ Skip ]
@@ -340,7 +338,6 @@ imported/mozilla/svg/filters/feColorMatrix-2.svg [ ImageOnlyFailure ]
 imported/mozilla/svg/filters/feConvolveMatrix-1.svg [ ImageOnlyFailure ]
 imported/mozilla/svg/filters/feConvolveMatrix-2.svg [ ImageOnlyFailure ]
 imported/mozilla/svg/filters/feSpecularLighting-1.svg [ ImageOnlyFailure ]
-imported/mozilla/svg/filters/feTurbulence-offset.svg [ ImageOnlyFailure ]
 imported/mozilla/svg/image/image-opacity-01.svg [ ImageOnlyFailure ]
 imported/mozilla/svg/image/image-opacity-02.svg [ ImageOnlyFailure ]
 imported/mozilla/svg/image/image-rotate-01.svg [ ImageOnlyFailure ]
@@ -383,15 +380,12 @@ webarchive/doctype.html [ Failure ]
 http/tests/download/inherited-encoding-form-submission-result.html [ Failure ]
 http/tests/globalhistory/history-delegate-basic-refresh-redirect.html [ Failure ]
 http/tests/globalhistory/history-delegate-basic-visited-links.html [ Failure ]
-http/tests/history/back-with-fragment-change.py [ Failure ]
 http/tests/loading/bad-scheme-subframe.html [ Failure ]
 http/tests/misc/favicon-as-image.html [ Failure ]
 http/tests/misc/favicon-loads-with-images-disabled.html [ Failure ]
 http/tests/misc/iframe404.html [ Failure ]
 http/tests/misc/redirect-to-external-url.html [ Failure ]
 http/tests/misc/slow-loading-image-in-pattern.html [ Failure ]
-http/tests/navigation/anchor-frames-same-origin.html [ Failure ]
-http/tests/navigation/anchor-frames.html [ Failure ]
 http/tests/navigation/anchor-subframeload.html [ Failure ]
 http/tests/navigation/error404-subframeload.html [ Failure ]
 http/tests/navigation/javascriptlink-subframeload.html [ Failure ]
@@ -497,25 +491,15 @@ fast/dom/HTMLAnchorElement/anchor-in-noscroll-iframe.html [ Failure ]
 fast/dom/left-overflow-in-ltr.html [ Failure ]
 fast/events/blur-focus-window-should-blur-focus-element.html [ Failure ]
 fast/frames/meta-refresh-user-gesture.html [ Failure ]
-fast/parser/pre-html5-parser-quirks.html [ Failure ]
-fast/text/word-space-between-inlines.html [ ImageOnlyFailure ]
 fast/dynamic/text-combine.html [ Failure ]
 fast/encoding/utf-16-big-endian.html [ Failure ]
 fast/encoding/utf-16-little-endian.html [ Failure ]
-fast/forms/basic-buttons.html [ Failure ]
-fast/forms/basic-textareas-quirks.html [ Failure ]
-fast/forms/targeted-frame-submission.html [ Failure ]
-fast/invalid/junk-data.xml [ Failure ]
 fast/invalid/missing-end-tag.xhtml [ Failure ]
-fast/loader/text-document-wrapping.html [ Failure ]
 fast/overflow/clip-rects-fixed-ancestor.html [ Failure ]
-fast/parser/document-write-option.html [ Failure ]
 fast/parser/entity-comment-in-style.html [ Failure ]
-fast/parser/entity-comment-in-textarea.html [ Failure ]
 fast/parser/fonts.html [ Failure ]
 fast/parser/nofoo-tags-inside-paragraph.html [ Failure ]
 fast/parser/open-comment-in-style.html [ Failure ]
-fast/parser/open-comment-in-textarea.html [ Failure ]
 fast/parser/tabs-in-scripts.html [ Failure ]
 fast/parser/title-error-test.html [ Failure ]
 fast/parser/xhtml-alternate-entities.xml [ Failure ]
@@ -541,7 +525,6 @@ fast/text/international/hebrew-vowels.html [ Failure ]
 fast/text/international/text-combine-image-test.html [ Failure ]
 fast/text/international/thai-line-breaks.html [ Failure ]
 fast/text/whitespace/024.html [ Failure ]
-fast/text/whitespace/030.html [ Failure ]
 fast/writing-mode/Kusa-Makura-background-canvas.html [ Failure ]
 fast/writing-mode/broken-ideograph-small-caps.html [ Failure ]
 fast/writing-mode/broken-ideographic-font.html [ Failure ]
@@ -1161,8 +1144,6 @@ webkit.org/b/161323 media/track/track-remove-crash.html [ Skip ]
 webkit.org/b/142152 media/track/track-in-band-cues-added-once.html [ Pass Failure ]
 webkit.org/b/161491 media/video-main-content-allow-then-scroll.html [ Failure ]
 
-webkit.org/b/160591 http/tests/security/contentSecurityPolicy/upgrade-insecure-requests/upgrade-insecure-fetch-in-worker.html [ Failure Timeout ]
-
 webkit.org/b/153809 transitions/clip-path-transitions.html [ Pass Failure ]
 webkit.org/b/153809 transitions/clip-path-path-transitions.html [ Pass Failure ]
 webkit.org/b/153029 fast/css-generated-content/details-summary-before-after.html [ Failure ]
@@ -1195,9 +1176,6 @@ imported/w3c/web-platform-tests/uievents/order-of-events/mouse-events/mouseover-
 imported/w3c/web-platform-tests/html/webappapis/scripting/processing-model-2/unhandled-promise-rejections/promise-rejection-events-onerror.html [ Pass Failure ]
 imported/w3c/web-platform-tests/uievents/click/click_events_on_input.html [ Pass Failure ]
 imported/w3c/web-platform-tests/mediacapture-streams/MediaStreamTrack-MediaElement-disabled-audio-is-silence.https.html [ Pass Failure ]
-
-# rdar://problem/26477855
-http/tests/xmlhttprequest/logout.html [ Failure ]
 
 webkit.org/b/162032 js/date-constructor.html [ Pass Timeout ]
 
@@ -1325,10 +1303,6 @@ webkit.org/b/194826 [ Debug ] http/tests/resourceLoadStatistics/do-not-block-top
 
 webkit.org/b/195341 compositing/ios/overflow-scroll-update-overlap.html [ Pass ImageOnlyFailure Crash ]
 
-webkit.org/b/196013 fast/scrolling/rtl-scrollbars-sticky-overflow-scroll-2.html [ ImageOnlyFailure ]
-webkit.org/b/196013 fast/scrolling/rtl-scrollbars-sticky-overflow-scroll.html [ ImageOnlyFailure ]
-webkit.org/b/196013 fast/scrolling/rubber-band-shows-background.html [ ImageOnlyFailure ]
-
 # <rdar://problem/28233746>
 webkit.org/b/196274 imported/w3c/web-platform-tests/xhr/send-redirect-post-upload.htm [ Skip ]
 
@@ -1431,8 +1405,6 @@ webkit.org/b/207866 imported/w3c/IndexedDB-private-browsing [ Pass Timeout ]
 fast/layoutformattingcontext/ [ Skip ]
 
 webkit.org/b/208018 [ Release ] perf/clone-with-focus.html [ Pass Failure ]
-
-webkit.org/b/207943 fast/images/exif-orientation-webgl-texture.html [ ImageOnlyFailure ]
 
 webkit.org/b/230857 fast/images/image-subsampling.html [ Pass ImageOnlyFailure ]
 
@@ -1918,9 +1890,6 @@ webkit.org/b/214468 imported/w3c/web-platform-tests/css/css-values/ch-unit-002.h
 
 webkit.org/b/229874 imported/w3c/web-platform-tests/css/css-sizing/percentage-height-in-flexbox.html [ Pass Failure ]
 
-webkit.org/b/232518 imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/flex-aspect-ratio-021.html [ ImageOnlyFailure ]
-webkit.org/b/232518 imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/flex-aspect-ratio-022.html [ ImageOnlyFailure ]
-
 webkit.org/b/214512 imported/w3c/web-platform-tests/css/geometry/DOMMatrix2DInit-validate-fixup.html [ Pass Failure ]
 
 webkit.org/b/230959 fast/scrolling/ios/click-events-after-long-press-during-momentum-scroll-in-overflow.html [ Pass Timeout ]
@@ -1988,8 +1957,6 @@ webkit.org/b/215476 [ Release ] imported/w3c/web-platform-tests/css/css-text/ove
 
 webkit.org/b/215773 http/tests/websocket/tests/hybi/client-close-2.html [ Pass Failure ]
 
-webkit.org/b/209461 imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-item-dynamic-min-contribution-001.html [ Failure ]
-
 webkit.org/b/227283 imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-item-inline-contribution-001.html [ ImageOnlyFailure ]
 webkit.org/b/227283 imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-item-inline-contribution-002.html [ ImageOnlyFailure ]
 
@@ -1998,8 +1965,6 @@ webkit.org/b/215929 compositing/video/poster.html [ Pass Timeout ]
 webkit.org/b/223900 compositing/video/video-update-rendering.html [ Pass Failure ]
 
 webkit.org/b/224690 compositing/video/video-border-radius-clipping.html [ Pass ImageOnlyFailure ]
-
-webkit.org/b/216126 fast/encoding/charset-replacement.html [ Failure ]
 
 webkit.org/b/216156 http/tests/misc/script-async.html [ Pass Failure ]
 
@@ -2070,11 +2035,6 @@ webkit.org/b/214955 fast/parser/xml-colon-entity.html [ Failure ]
 webkit.org/b/155196 security/contentSecurityPolicy/video-with-file-url-allowed-by-media-src-star-with-AllowContentSecurityPolicySourceStarToMatchAnyProtocol-enabled.html [ Pass ImageOnlyFailure ]
 webkit.org/b/155196 security/contentSecurityPolicy/video-with-file-url-allowed-by-media-src-star.html [ Pass ImageOnlyFailure ]
 
-webkit.org/b/225686 imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-snap-root-001.html [ ImageOnlyFailure ]
-webkit.org/b/225686 imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-snap-root-002.html [ ImageOnlyFailure ]
-
-webkit.org/b/226826 http/tests/ssl/applepay/ApplePayButton.html [ Failure ]
-
 webkit.org/b/227273 fast/css-custom-paint/out-of-memory-while-adding-worklet-module.html [ Pass Timeout DumpJSConsoleLogInStdErr ]
 
 webkit.org/b/226598 animations/leak-document-with-css-animation.html [ Pass Failure ]
@@ -2112,16 +2072,12 @@ editing/selection/ios/changing-selection-does-not-trigger-autocapitalization.htm
 editing/selection/ios/do-not-hide-selection-in-visible-container.html [ Failure ]
 editing/selection/ios/do-not-hide-selection-in-visible-field.html [ Failure ]
 
-webkit.org/b/230127 editing/selection/ios/select-text-under-hidden-subframe.html [ Timeout ]
-
 webkit.org/b/231962 editing/selection/modal-dialog-select-paragraph.html [ Failure ]
 
 # rdar://80393995 ([ iOS15 ] http/tests/media/modern-media-controls/overflow-support/playback-speed-live-broadcast.html is a constant timeout) 
 http/tests/media/modern-media-controls/overflow-support/playback-speed-live-broadcast.html [ Timeout ]
 
 webkit.org/b/168961 fast/events/wheelevent-in-frame.html [ Pass Timeout ]
-
-#rdar://80386061 (REGRESSION (iOS15 19A163?): fast/events/touch/ios/long-press-on-editable-content-then-drag-up-to-change-selected-text.html [ Failure ]) [ iOS15 ]  fast/events/touch/ios/long-press-on-editable-content-then-drag-up-to-change-selected-text.html [ Failure ]
 
 #rdar://80386523 (REGRESSION (iOS15 19A224?): fast/events/touch/ios/long-press-then-drag-to-select-text.html is failing) [ iOS15 ] fast/events/touch/ios/long-press-then-drag-to-select-text.html [ Failure ]
 
@@ -2170,7 +2126,6 @@ media/modern-media-controls/media-documents/media-document-audio-ios-sizing.html
 media/modern-media-controls/media-documents/media-document-video-iphone-sizing.html [ Skip ]
 fast/forms/ios/scroll-to-reveal-focused-select.html [ Failure ]
 fast/scrolling/ios/body-overflow-hidden-height-100-percent-zoomed-1.html [ Failure ]
-fast/scrolling/ios/overflow-div-scrolling.html [ Failure ]
 media/vp9.html [ Failure ]
 webgl/pending/conformance2/glsl3/empty-shader-with-output.html [ Failure ]
 

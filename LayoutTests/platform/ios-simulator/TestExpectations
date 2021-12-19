@@ -31,10 +31,6 @@ svg/filters/filter-hidden-content.svg [ Failure ]
 
 transforms/hittest-translated-content-off-to-infinity-and-back.html [ Pass ImageOnlyFailure ]
 
-# This test relies on Arial being used to draw Arabic. However, on iOS,
-# we explicitly disallow this because this font is too slow.
-fast/text/initial-advance-in-intermediate-run-complex.html [ ImageOnlyFailure ]
-
 # These tests seem to fail due pixel rounding errors in the absolute positioned elements used as reference.
 webkit.org/b/170176 fast/inline-block/baseline-vertical-01.html [ ImageOnlyFailure ]
 webkit.org/b/170176 fast/inline-block/baseline-vertical-02.html [ ImageOnlyFailure ]
@@ -101,7 +97,7 @@ webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/white-space/tex
 webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/white-space/textarea-pre-wrap-007.html [ ImageOnlyFailure ]
 webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/white-space/textarea-pre-wrap-011.html [ ImageOnlyFailure ]
 webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/white-space/textarea-pre-wrap-014.html [ ImageOnlyFailure ]
-webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/word-break/word-break-normal-ko-000.html [ ImageOnlyFailure ]
+
 imported/w3c/web-platform-tests/css/css-ui/outline-020.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/selectors/selectors-empty-001.xml [ ImageOnlyFailure ]
 
@@ -110,13 +106,6 @@ webkit.org/b/195275 imported/w3c/web-platform-tests/css/css-text/white-space/tex
 # Baseline Alignment tests affected by 1px diff failures only on Mac and iOS platforms
 webkit.org/b/170293 fast/css-grid-layout/grid-align-baseline-vertical.html [ Failure ]
 webkit.org/b/170293 fast/css-grid-layout/grid-self-baseline-two-dimensional.html [ Failure ]
-webkit.org/b/170293 imported/w3c/web-platform-tests/css/css-grid/alignment/self-baseline/grid-self-baseline-003.html [ ImageOnlyFailure ]
-webkit.org/b/170293 imported/w3c/web-platform-tests/css/css-grid/alignment/self-baseline/grid-self-baseline-004.html [ ImageOnlyFailure ]
-webkit.org/b/170293 imported/w3c/web-platform-tests/css/css-grid/alignment/self-baseline/grid-self-baseline-vertical-rl-005.html [ ImageOnlyFailure ]
-webkit.org/b/170293 imported/w3c/web-platform-tests/css/css-grid/alignment/self-baseline/grid-self-baseline-vertical-rl-004.html [ ImageOnlyFailure ]
-webkit.org/b/170293 imported/w3c/web-platform-tests/css/css-grid/alignment/self-baseline/grid-self-baseline-006.html [ ImageOnlyFailure ]
-webkit.org/b/170293 imported/w3c/web-platform-tests/css/css-grid/alignment/self-baseline/grid-self-baseline-007.html [ ImageOnlyFailure ]
-
 
 # A sub-test in this test is extremely flaky and fails most of the time, messing up partial-failure expectations
 webkit.org/b/189686 webgl/2.0.0/conformance2/renderbuffers/multisampled-renderbuffer-initialization.html [ Skip ]
@@ -133,7 +122,6 @@ webkit.org/b/226813 webgl/draw-webgl-to-context2d-memory-test.html [ Skip ]
 
 imported/w3c/web-platform-tests/css/css-lists/content-property/marker-text-matches-georgian.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-lists/content-property/marker-text-matches-lower-greek.html [ Pass ]
-imported/w3c/web-platform-tests/css/css-lists/list-and-writing-mode-001.html [ Failure ]
 
 webkit.org/b/195466 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/sizes/parse-a-sizes-attribute-width-1000px.html [ Pass Failure ]
 webkit.org/b/195466 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/ready-states/autoplay.html [ Pass Failure ]

@@ -11,9 +11,6 @@ fast/text/mending-heart.html [ Failure ]
 # rdar://80344138 ([ Monterey iOS15 wk2 ] imported/w3c/web-platform-tests/fetch/connection-pool/network-partition-key.html [ Failure ])
 imported/w3c/web-platform-tests/fetch/connection-pool/network-partition-key.html [ Pass ]
 
-# rdar://80333758 (REGRESSION: [ Monterey ] crypto/subtle/rsaes-pkcs1-v1_5-import-jwk-public-key-leading-zero.html is a constant timeout)
-crypto/subtle/rsaes-pkcs1-v1_5-import-jwk-public-key-leading-zero.html [ Pass ]
-
 # rdar://80397467 ([ iOS15 ] imported/w3c/web-platform-tests/html/rendering/widgets/input-date-no-resize-on-hover.html (layout-test) is a constant timeout)
 imported/w3c/web-platform-tests/html/rendering/widgets/input-date-no-resize-on-hover.html [ Pass ]
 
@@ -47,9 +44,6 @@ accessibility/misspelling-range.html  [ Pass ]
 
 # rdar://80392665 ([ iOS15 ] fast/text/simple-line-wordspacing.html is a constant failure)
 fast/text/simple-line-wordspacing.html [ Pass ]
-
-# rdar://80395949 ([ iOS15 ] http/tests/websocket/tests/hybi/too-long-payload.html is a constant timeout)
-http/tests/websocket/tests/hybi/too-long-payload.html [ Pass ]
 
 fast/events/touch/ios/long-press-on-link.html [ Pass ]
 

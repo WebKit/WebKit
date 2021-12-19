@@ -4,8 +4,6 @@
 #
 
 http/tests/cookies/js-get-and-set-http-only-cookie.html [ Failure ]
-http/tests/security/cross-origin-worker-indexeddb-allowed.html [ Failure ]
-http/tests/security/cross-origin-worker-indexeddb.html [ Failure ]
 
 fast/sub-pixel/sub-pixel-composited-layers.html [ ImageOnlyFailure ]
 

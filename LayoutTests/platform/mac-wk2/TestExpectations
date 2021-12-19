@@ -48,9 +48,6 @@ http/tests/ssl/applepay [ Pass ]
 
 # APPLE_PAY_INSTALLMENTS was first available in Catalina.
 [ Mojave ] http/tests/ssl/applepay/ApplePayInstallmentConfiguration.https.html [ Skip ]
-[ Mojave ] http/tests/ssl/applepay/ApplePayInstallmentItems.https.html [ Skip ]
-
-webkit.org/b/212998 [ Catalina ] http/tests/ssl/applepay/ApplePayInstallmentItems.https.html [ Failure ]
 
 fast/visual-viewport/rubberbanding-viewport-rects.html [ Pass ]
 fast/visual-viewport/rubberbanding-viewport-rects-header-footer.html  [ Pass ]
@@ -744,7 +741,6 @@ fast/scrolling/rtl-scrollbars-listbox.html [ Pass ]
 fast/scrolling/rtl-scrollbars-positioned-intersect-scrollbars.html [ Pass ]
 fast/scrolling/rtl-scrollbars-alternate-body-dir-attr-does-not-update-scrollbar-placement.html [ Pass ]
 fast/scrolling/rtl-scrollbars-alternate-body-dir-attr-does-not-update-scrollbar-placement-2.html [ Pass ]
-webkit.org/b/162638 fast/scrolling/rtl-scrollbars-alternate-iframe-body-dir-attr-does-not-update-scrollbar-placement.html [ Pass ImageOnlyFailure ]
 fast/scrolling/rtl-scrollbars-animation-property.html [ Pass ]
 
 webkit.org/b/167607 [ Debug ] http/tests/inspector/worker/blob-script-with-cross-domain-imported-scripts.html [ Pass Timeout ]
@@ -1137,8 +1133,6 @@ webkit.org/b/215304 fast/forms/auto-fill-button/caps-lock-indicator-should-be-vi
 webkit.org/b/189672 [ Mojave Release ] webgl/2.0.0/conformance2/textures/canvas_sub_rectangle/tex-3d-rgb8-rgb-unsigned_byte.html [ Skip ]
 
 webkit.org/b/215468 [ Mojave Release ] media/modern-media-controls/scrubber-support/scrubber-support-drag.html [ Pass Failure ]
-
-webkit.org/b/68278 http/tests/history/back-with-fragment-change.py [ Pass Failure ]
 
 # Some WPT encoding tests run too slowly under ASan (and too slowly in debug builds).
 # Since there is no convenient way to skip them under ASan only, skip all encoding tests here.

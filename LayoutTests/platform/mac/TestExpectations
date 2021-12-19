@@ -982,10 +982,6 @@ webkit.org/b/210436 http/tests/performance/paint-timing/performance-paint-timing
 # Touch events are not enabled on Mac
 webkit.org/b/149592 fast/shadow-dom/touch-event-ios.html [ Skip ]
 
-webkit.org/b/149819 [ Debug ] compositing/video/video-poster.html [ Pass Crash Failure ]
-
-webkit.org/b/168953 [ Release ] compositing/video/video-poster.html [ Pass Failure ]
-
 webkit.org/b/232330 [ Debug ] compositing/video/video-reflection.html [ Pass Timeout ]
 
 # Flaky on Mac
@@ -1381,9 +1377,6 @@ webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/word-break/word
 
 [ Catalina ] imported/w3c/web-platform-tests/css/css-text/line-break/line-break-anywhere-001.html [ ImageOnlyFailure ]
 
-webkit.org/b/232518 imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/flex-aspect-ratio-021.html [ ImageOnlyFailure ]
-webkit.org/b/232518 imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/flex-aspect-ratio-022.html [ ImageOnlyFailure ]
-
 http/tests/cookies/same-site [ Pass ]
 
 # FIXME: Mark as Pass once <rdar://problem/47165939> is fixed.
@@ -1590,6 +1583,7 @@ webkit.org/b/206883 [ Mojave ] imported/w3c/web-platform-tests/css/css-fonts/fon
 webkit.org/b/206883 [ Mojave ] imported/w3c/web-platform-tests/css/css-fonts/font-default-02.html [ ImageOnlyFailure ]
 webkit.org/b/206883 [ Mojave ] imported/w3c/web-platform-tests/css/css-fonts/font-default-03.html [ ImageOnlyFailure ]
 webkit.org/b/206883 [ Mojave ] imported/w3c/web-platform-tests/css/css-fonts/variations/font-weight-matching.html [ Failure ]
+webkit.org/b/206881 [ Catalina BigSur ] imported/w3c/web-platform-tests/css/css-fonts/first-available-font-003.html [ ImageOnlyFailure ]
 
 webkit.org/b/205729 webrtc/captureCanvas-webrtc.html [ Pass Failure ]
 
@@ -2430,3 +2424,6 @@ webkit.org/b/221230 [ BigSur+ ] imported/w3c/web-platform-tests/media-source/med
 
 # OT-SVG is not implemented on Catalina.
 [ Catalina ] fast/text/otsvg-canvas.html [ ImageOnlyFailure ]
+
+# This test is specific to Core Text.
+fast/text/font-lookup-dot-prefix-case-sensitive.html [ Pass ]
