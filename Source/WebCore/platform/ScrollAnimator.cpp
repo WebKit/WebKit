@@ -76,6 +76,13 @@ bool ScrollAnimator::singleAxisScroll(ScrollEventAxis axis, float scrollDelta, O
         auto newOffsetOnAxis = m_scrollController.adjustedScrollDestination(axis, newOffset, velocity, valueForAxis(currentOffset, axis));
         newOffset = setValueForAxis(newOffset, axis, newOffsetOnAxis);
         delta = newOffset - currentOffset;
+    } else {
+        auto newPosition = m_currentPosition + delta;
+        newPosition = newPosition.constrainedBetween(scrollableArea().minimumScrollPosition(), scrollableArea().maximumScrollPosition());
+        if (newPosition == m_currentPosition)
+            return false;
+
+        delta = newPosition - m_currentPosition;
     }
 
     if (m_scrollableArea.scrollAnimatorEnabled() && !behavior.contains(ScrollBehavior::NeverAnimate)) {

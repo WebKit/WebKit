@@ -1,3 +1,14 @@
+2021-12-19  Simon Fraser  <simon.fraser@apple.com>
+
+        Keyboard shortcut to scroll to top when already at the top of the page moves to the bottom
+        https://bugs.webkit.org/show_bug.cgi?id=234483
+        <rdar://86628260>
+
+        Reviewed by Dean Jackson.
+
+        * fast/scrolling/keyboard-scrolling-home-expected.txt: Added.
+        * fast/scrolling/keyboard-scrolling-home.html: Added.
+
 2021-12-19  Philippe Normand  <pnormand@igalia.com>
 
         [GTK][WPE][VTT] tests media/track/track-webvtt-* fail on GTK and WPE
