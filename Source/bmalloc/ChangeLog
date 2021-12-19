@@ -1,3 +1,15 @@
+2021-12-18  David Kilzer  <ddkilzer@apple.com>
+
+        [libpas] Do not compile libpas for 64-bit watchOS to save ~6 MB per architecture
+        <https://webkit.org/b/234478>
+        <rdar://problem/85620647>
+
+        Reviewed by Yusuke Suzuki.
+
+        * bmalloc/BPlatform.h:
+        (BENABLE_LIBPAS):
+        - Disable libpas on 64-bit watchOS.
+
 2021-12-17  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Unreviewed, pas_probabilistic_guard_malloc_allocator.c is broken when LIBPAS is not enabled
