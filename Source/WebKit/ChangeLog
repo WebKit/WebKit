@@ -1,3 +1,9 @@
+2021-12-17  Adrian Perez de Castro  <aperez@igalia.com>
+
+        Unreviewed. Update OptionsWPE.cmake and NEWS for the 2.34.3 release
+
+        * wpe/NEWS: Add release notes for 2.34.3.
+
 2021-12-09  Chris Dumez  <cdumez@apple.com>
 
         [WPE] Crash under WebProcessProxy::setIsInProcessCache when closing web view in debug builds
