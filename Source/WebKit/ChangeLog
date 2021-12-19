@@ -1,3 +1,30 @@
+2021-12-19  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Add client layer plumbing for classifying modal container controls
+        https://bugs.webkit.org/show_bug.cgi?id=234320
+
+        Reviewed by Dean Jackson.
+
+        See WebCore/ChangeLog for more details.
+
+        * Scripts/webkit/messages.py:
+        (types_that_cannot_be_forward_declared):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::classifyModalContainerControls):
+
+        Add a method stub with a comment for now. The next patch in the sequence will implement this method hook on
+        Cocoa platforms.
+
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::requestCookieConsent):
+
+        Drive-by fix: remove an unnecessary WebCore:: prefix.
+
+        (WebKit::WebChromeClient::classifyModalContainerControls):
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+
 2021-12-18  Darin Adler  <darin@apple.com>
 
         Hash tables, read/write, and heap memory are used unnecessarily, which may hurt performance

@@ -466,6 +466,8 @@ private:
 
     void requestCookieConsent(CompletionHandler<void(WebCore::CookieConsentDecisionResult)>&&) final;
 
+    void classifyModalContainerControls(Vector<String>&&, CompletionHandler<void(Vector<WebCore::ModalContainerControlType>&&)>&&) final;
+
     const AtomString& searchStringForModalContainerObserver() const final;
 
     mutable bool m_cachedMainFrameHasHorizontalScrollbar { false };

@@ -220,6 +220,7 @@ class EmptyChromeClient : public ChromeClient {
     RefPtr<Icon> createIconForFiles(const Vector<String>& /* filenames */) final { return nullptr; }
 
     void requestCookieConsent(CompletionHandler<void(CookieConsentDecisionResult)>&&) final;
+    void classifyModalContainerControls(Vector<String>&&, CompletionHandler<void(Vector<ModalContainerControlType>&&)>&&) final;
 };
 
 DiagnosticLoggingClient& emptyDiagnosticLoggingClient();

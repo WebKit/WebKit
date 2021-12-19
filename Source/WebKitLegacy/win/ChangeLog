@@ -1,3 +1,16 @@
+2021-12-19  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Add client layer plumbing for classifying modal container controls
+        https://bugs.webkit.org/show_bug.cgi?id=234320
+
+        Reviewed by Dean Jackson.
+
+        See WebCore/ChangeLog for more details.
+
+        * WebCoreSupport/WebChromeClient.cpp:
+        (WebChromeClient::classifyModalContainerControls):
+        * WebCoreSupport/WebChromeClient.h:
+
 2021-12-18  Chris Dumez  <cdumez@apple.com>
 
         Convert ProtectionSpace enums into enum classes

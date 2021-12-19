@@ -78,6 +78,7 @@
 #import <WebCore/Icon.h>
 #import <WebCore/IntPoint.h>
 #import <WebCore/IntRect.h>
+#import <WebCore/ModalContainerControlType.h>
 #import <WebCore/NavigationAction.h>
 #import <WebCore/NotImplemented.h>
 #import <WebCore/Page.h>
@@ -1171,4 +1172,9 @@ RefPtr<PAL::WebGPU::GPU> WebChromeClient::createGPUForWebGPU() const
 void WebChromeClient::requestCookieConsent(CompletionHandler<void(CookieConsentDecisionResult)>&& completion)
 {
     completion(CookieConsentDecisionResult::NotSupported);
+}
+
+void WebChromeClient::classifyModalContainerControls(Vector<String>&&, CompletionHandler<void(Vector<ModalContainerControlType>&&)>&& completion)
+{
+    completion({ });
 }

@@ -615,4 +615,5 @@ messages -> WebPageProxy {
 #endif
 
     RequestCookieConsent() -> (enum:uint8_t WebCore::CookieConsentDecisionResult result) Async
+    ClassifyModalContainerControls(Vector<String> texts) -> (Vector<WebCore::ModalContainerControlType> types) Async
 }

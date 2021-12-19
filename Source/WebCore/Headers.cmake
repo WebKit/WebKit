@@ -1109,6 +1109,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     page/MediaControlsContextMenuItem.h
     page/MediaProducer.h
     page/MemoryRelease.h
+    page/ModalContainerControlType.h
     page/NavigatorIsLoggedIn.h
     page/PDFImageCachingPolicy.h
     page/Page.h
