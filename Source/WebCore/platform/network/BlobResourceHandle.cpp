@@ -379,7 +379,7 @@ int BlobResourceHandle::readDataSync(const BlobDataItem& item, void* buf, int le
     int bytesToRead = (length > remaining) ? static_cast<int>(remaining) : length;
     if (bytesToRead > m_totalRemainingSize)
         bytesToRead = static_cast<int>(m_totalRemainingSize);
-    memcpy(buf, item.data().data() + item.offset() + m_currentItemReadSize, bytesToRead);
+    memcpy(buf, item.data().data()->data() + item.offset() + m_currentItemReadSize, bytesToRead);
     m_totalRemainingSize -= bytesToRead;
 
     m_currentItemReadSize += bytesToRead;
