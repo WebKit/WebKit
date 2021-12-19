@@ -67,50 +67,10 @@ static RetainPtr<NSURL> testWebPushDaemonLocation()
     return [currentExecutableDirectory() URLByAppendingPathComponent:@"webpushd" isDirectory:NO];
 }
 
-#if HAVE(OS_LAUNCHD_JOB)
-
-static RetainPtr<xpc_object_t> testWebPushDaemonPList(NSURL *storageLocation)
-{
-    auto currentDirectory = currentExecutableDirectory();
-
-    auto plist = adoptNS(xpc_dictionary_create(nullptr, nullptr, 0));
-    xpc_dictionary_set_string(plist.get(), "_ManagedBy", "TestWebKitAPI");
-    xpc_dictionary_set_string(plist.get(), "Label", "org.webkit.webpushtestdaemon");
-    xpc_dictionary_set_bool(plist.get(), "LaunchOnlyOnce", true);
-    xpc_dictionary_set_bool(plist.get(), "RootedSimulatorPath", true);
-    xpc_dictionary_set_string(plist.get(), "StandardErrorPath", [storageLocation URLByAppendingPathComponent:@"daemon_stderr"].path.fileSystemRepresentation);
-
-    {
-        auto environmentVariables = adoptNS(xpc_dictionary_create(nullptr, nullptr, 0));
-        xpc_dictionary_set_string(environmentVariables.get(), "DYLD_FRAMEWORK_PATH", currentDirectory.get().fileSystemRepresentation);
-        xpc_dictionary_set_value(plist.get(), "EnvironmentVariables", environmentVariables.get());
-    }
-    {
-        auto machServices = adoptNS(xpc_dictionary_create(nullptr, nullptr, 0));
-        xpc_dictionary_set_bool(machServices.get(), "org.webkit.webpushtestdaemon.service", true);
-        xpc_dictionary_set_value(plist.get(), "MachServices", machServices.get());
-    }
-    {
-        auto programArguments = adoptNS(xpc_array_create(nullptr, 0));
-        auto executableLocation = testWebPushDaemonLocation();
-#if PLATFORM(MAC)
-        xpc_array_set_string(programArguments.get(), XPC_ARRAY_APPEND, executableLocation.get().fileSystemRepresentation);
-#else
-        xpc_array_set_string(programArguments.get(), XPC_ARRAY_APPEND, [currentDirectory URLByAppendingPathComponent:@"webpushd"].path.fileSystemRepresentation);
-#endif
-        xpc_array_set_string(programArguments.get(), XPC_ARRAY_APPEND, "--machServiceName");
-        xpc_array_set_string(programArguments.get(), XPC_ARRAY_APPEND, "org.webkit.webpushtestdaemon.service");
-        xpc_dictionary_set_value(plist.get(), "ProgramArguments", programArguments.get());
-    }
-    return plist;
-}
-
-#else // HAVE(OS_LAUNCHD_JOB)
-
-static RetainPtr<NSDictionary> testWebPushDaemonPList(NSURL *storageLocation)
+static NSDictionary<NSString *, id> *testWebPushDaemonPList(NSURL *storageLocation)
 {
     return @{
-        @"Label" : @"org.webkit.pcmtestdaemon",
+        @"Label" : @"org.webkit.webpushtestdaemon",
         @"LaunchOnlyOnce" : @YES,
         @"StandardErrorPath" : [storageLocation URLByAppendingPathComponent:@"daemon_stderr"].path,
         @"EnvironmentVariables" : @{ @"DYLD_FRAMEWORK_PATH" : currentExecutableDirectory().get().path },
@@ -122,8 +82,6 @@ static RetainPtr<NSDictionary> testWebPushDaemonPList(NSURL *storageLocation)
         ]
     };
 }
-
-#endif // HAVE(OS_LAUNCHD_JOB)
 
 static bool shouldSetupWebPushD()
 {
@@ -152,12 +110,7 @@ static NSURL *setUpTestWebPushD()
 
     killFirstInstanceOfDaemon(@"webpushd");
 
-    auto plist = testWebPushDaemonPList(tempDir);
-#if HAVE(OS_LAUNCHD_JOB)
-    registerPlistWithLaunchD(WTFMove(plist));
-#else
-    registerPlistWithLaunchD(WTFMove(plist), tempDir);
-#endif
+    registerPlistWithLaunchD(testWebPushDaemonPList(tempDir), tempDir);
 
     return tempDir;
 }

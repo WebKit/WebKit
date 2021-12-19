@@ -1,3 +1,28 @@
+2021-12-18  Alex Christensen  <achristensen@webkit.org>
+
+        [Monterey] TestWebKitAPI.PrivateClickMeasurement.Daemon* tests timing out: Failed to connect to mach service org.webkit.pcmtestdaemon.service
+        https://bugs.webkit.org/show_bug.cgi?id=232890
+
+        Reviewed by Brady Eidson.
+
+        Using OSLaunchdJob on macOS works, but it requires a private entitlement which the public SDK can't sign with.
+        Just continue using launchctl instead.  Also, do the NSDictionary -> xpc dictionary conversion at runtime to reduce duplicate code.
+
+        * TestWebKitAPI/Configurations/TestWebKitAPI-macOS-internal.entitlements:
+        * TestWebKitAPI/Configurations/TestWebKitAPI-macOS.entitlements:
+        * TestWebKitAPI/Configurations/TestWebKitAPI.xcconfig:
+        * TestWebKitAPI/Tests/WebKitCocoa/EventAttribution.mm:
+        (TestWebKitAPI::testDaemonPList):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/WebPushDaemon.mm:
+        (TestWebKitAPI::testWebPushDaemonPList):
+        (TestWebKitAPI::setUpTestWebPushD):
+        * TestWebKitAPI/cocoa/DaemonTestUtilities.h:
+        * TestWebKitAPI/cocoa/DaemonTestUtilities.mm:
+        (TestWebKitAPI::convertArrayToXPC):
+        (TestWebKitAPI::convertDictionaryToXPC):
+        (TestWebKitAPI::registerPlistWithLaunchD):
+
 2021-12-17  Simon Fraser  <simon.fraser@apple.com>
 
         Read the default value of the ScrollAnimatorEnabled setting from NSUserDefaults

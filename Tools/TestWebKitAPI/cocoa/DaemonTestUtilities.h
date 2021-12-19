@@ -39,11 +39,7 @@ RetainPtr<NSURL> currentExecutableDirectory();
 
 void killFirstInstanceOfDaemon(NSString *daemonExecutableName);
 
-#if HAVE(OS_LAUNCHD_JOB)
-void registerPlistWithLaunchD(RetainPtr<xpc_object_t>&&);
-#else
-void registerPlistWithLaunchD(RetainPtr<NSDictionary>&&, NSURL *tempDir);
-#endif
+void registerPlistWithLaunchD(NSDictionary<NSString *, id> *plist, NSURL *tempDir);
 
 } // namespace TestWebKitAPI
 

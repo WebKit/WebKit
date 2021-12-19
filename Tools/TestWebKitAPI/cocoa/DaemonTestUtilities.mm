@@ -65,27 +65,57 @@ RetainPtr<NSURL> currentExecutableDirectory()
     return [currentExecutableLocation() URLByDeletingLastPathComponent];
 }
 
-#if HAVE(OS_LAUNCHD_JOB)
-
-void registerPlistWithLaunchD(RetainPtr<xpc_object_t>&& plist)
+#if PLATFORM(IOS)
+static RetainPtr<xpc_object_t> convertArrayToXPC(NSArray *array)
 {
-    NSError *error = nil;
-    auto launchDJob = adoptNS([[OSLaunchdJob alloc] initWithPlist:plist.get()]);
-    [launchDJob submit:&error];
-
-    // In the iOS Simulator we often see the following error here:
-    // Error Domain=OSLaunchdErrorDomain Code=17 "File exists"
-    // Tests still behave as expected.
-#if PLATFORM(MAC)
-    EXPECT_FALSE(error);
-#endif
+    auto xpc = adoptNS(xpc_array_create(nullptr, 0));
+    for (id value in array) {
+        if ([value isKindOfClass:NSString.class])
+            xpc_array_set_string(xpc.get(), XPC_ARRAY_APPEND, [value UTF8String]);
+        else
+            ASSERT_NOT_REACHED();
+    }
+    return xpc;
 }
 
-#else // HAVE(OS_LAUNCHD_JOB)
+static RetainPtr<xpc_object_t> convertDictionaryToXPC(NSDictionary<NSString *, id> *dictionary)
+{
+    auto xpc = adoptNS(xpc_dictionary_create(nullptr, nullptr, 0));
+    for (NSString *key in dictionary) {
+        ASSERT([key isKindOfClass:NSString.class]);
+        const char* keyUTF8 = key.UTF8String;
+        id value = dictionary[key];
+        if ([value isKindOfClass:NSString.class])
+            xpc_dictionary_set_string(xpc.get(), keyUTF8, [value UTF8String]);
+        else if ([value isKindOfClass:NSNumber.class]) {
+            uint64_t uint64Value = [value unsignedLongLongValue];
+            if (uint64Value == 1)
+                xpc_dictionary_set_bool(xpc.get(), keyUTF8, uint64Value);
+            else {
+                ASSERT([value doubleValue] == uint64Value);
+                xpc_dictionary_set_uint64(xpc.get(), keyUTF8, uint64Value);
+            }
+        } else if ([value isKindOfClass:NSArray.class])
+            xpc_dictionary_set_value(xpc.get(), keyUTF8, convertArrayToXPC(value).get());
+        else if ([value isKindOfClass:NSDictionary.class])
+            xpc_dictionary_set_value(xpc.get(), keyUTF8, convertDictionaryToXPC(value).get());
+        else
+            ASSERT_NOT_REACHED();
+    }
+    return xpc;
+}
+#endif
 
-void registerPlistWithLaunchD(RetainPtr<NSDictionary>&& plist, NSURL *tempDir)
+void registerPlistWithLaunchD(NSDictionary<NSString *, id> *plist, NSURL *tempDir)
 {
     NSError *error = nil;
+#if PLATFORM(IOS)
+    auto xpcPlist = convertDictionaryToXPC(plist);
+    xpc_dictionary_set_string(xpcPlist.get(), "_ManagedBy", "TestWebKitAPI");
+    xpc_dictionary_set_bool(xpcPlist.get(), "RootedSimulatorPath", true);
+    auto launchDJob = adoptNS([[OSLaunchdJob alloc] initWithPlist:xpcPlist.get()]);
+    [launchDJob submit:&error];
+#else
     NSURL *plistLocation = [tempDir URLByAppendingPathComponent:@"DaemonInfo.plist"];
     BOOL success = [[NSFileManager defaultManager] createDirectoryAtURL:tempDir withIntermediateDirectories:YES attributes:nil error:&error];
     EXPECT_TRUE(success);
@@ -95,9 +125,8 @@ void registerPlistWithLaunchD(RetainPtr<NSDictionary>&& plist, NSURL *tempDir)
     system([NSString stringWithFormat:@"launchctl unload %@ 2> /dev/null", plistLocation.path].fileSystemRepresentation);
     system([NSString stringWithFormat:@"launchctl load %@", plistLocation.path].fileSystemRepresentation);
     EXPECT_FALSE(error);
+#endif
 }
-
-#endif // HAVE(OS_LAUNCHD_JOB)
 
 static int pidOfFirstDaemonInstance(NSString *daemonExecutableName)
 {

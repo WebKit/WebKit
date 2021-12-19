@@ -448,43 +448,7 @@ static RetainPtr<NSURL> testPCMDaemonLocation()
     return [currentExecutableDirectory() URLByAppendingPathComponent:@"adattributiond" isDirectory:NO];
 }
 
-#if HAVE(OS_LAUNCHD_JOB)
-
-static RetainPtr<xpc_object_t> testDaemonPList(NSURL *storageLocation)
-{
-    auto plist = adoptNS(xpc_dictionary_create(nullptr, nullptr, 0));
-    xpc_dictionary_set_string(plist.get(), "_ManagedBy", "TestWebKitAPI");
-    xpc_dictionary_set_string(plist.get(), "Label", "org.webkit.pcmtestdaemon");
-    xpc_dictionary_set_bool(plist.get(), "RootedSimulatorPath", true);
-    xpc_dictionary_set_bool(plist.get(), "LaunchOnlyOnce", true);
-    xpc_dictionary_set_string(plist.get(), "StandardErrorPath", [storageLocation URLByAppendingPathComponent:@"daemon_stderr"].path.fileSystemRepresentation);
-
-    {
-        auto environmentVariables = adoptNS(xpc_dictionary_create(nullptr, nullptr, 0));
-        xpc_dictionary_set_string(environmentVariables.get(), "DYLD_FRAMEWORK_PATH", currentExecutableDirectory().get().fileSystemRepresentation);
-        xpc_dictionary_set_value(plist.get(), "EnvironmentVariables", environmentVariables.get());
-    }
-    {
-        auto machServices = adoptNS(xpc_dictionary_create(nullptr, nullptr, 0));
-        xpc_dictionary_set_bool(machServices.get(), "org.webkit.pcmtestdaemon.service", true);
-        xpc_dictionary_set_value(plist.get(), "MachServices", machServices.get());
-    }
-    {
-        auto programArguments = adoptNS(xpc_array_create(nullptr, 0));
-        auto executableLocation = testPCMDaemonLocation();
-        xpc_array_set_string(programArguments.get(), XPC_ARRAY_APPEND, executableLocation.get().fileSystemRepresentation);
-        xpc_array_set_string(programArguments.get(), XPC_ARRAY_APPEND, "--machServiceName");
-        xpc_array_set_string(programArguments.get(), XPC_ARRAY_APPEND, "org.webkit.pcmtestdaemon.service");
-        xpc_array_set_string(programArguments.get(), XPC_ARRAY_APPEND, "--storageLocation");
-        xpc_array_set_string(programArguments.get(), XPC_ARRAY_APPEND, storageLocation.fileSystemRepresentation);
-        xpc_dictionary_set_value(plist.get(), "ProgramArguments", programArguments.get());
-    }
-    return plist;
-}
-
-#else // HAVE(OS_LAUNCHD_JOB)
-
-static RetainPtr<NSDictionary> testDaemonPList(NSURL *storageLocation)
+static NSDictionary<NSString *, id> *testDaemonPList(NSURL *storageLocation)
 {
     return @{
         @"Label" : @"org.webkit.pcmtestdaemon",
@@ -502,8 +466,6 @@ static RetainPtr<NSDictionary> testDaemonPList(NSURL *storageLocation)
     };
 }
 
-#endif // HAVE(OS_LAUNCHD_JOB)
-
 static std::pair<NSURL *, WKWebViewConfiguration *> setUpDaemon(WKWebViewConfiguration *viewConfiguration)
 {
     NSFileManager *fileManager = [NSFileManager defaultManager];
@@ -515,12 +477,8 @@ static std::pair<NSURL *, WKWebViewConfiguration *> setUpDaemon(WKWebViewConfigu
 
     killFirstInstanceOfDaemon(@"adattributiond");
 
-    auto plist = testDaemonPList(tempDir);
-#if HAVE(OS_LAUNCHD_JOB)
-    registerPlistWithLaunchD(WTFMove(plist));
-#else
-    registerPlistWithLaunchD(WTFMove(plist), tempDir);
-#endif
+    registerPlistWithLaunchD(testDaemonPList(tempDir), tempDir);
+
     auto dataStoreConfiguration = adoptNS([_WKWebsiteDataStoreConfiguration new]);
     dataStoreConfiguration.get().pcmMachServiceName = @"org.webkit.pcmtestdaemon.service";
     viewConfiguration.websiteDataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:dataStoreConfiguration.get()]).get();
@@ -554,12 +512,7 @@ static void attemptConnectionInProcessWithoutEntitlement()
 #endif
 }
 
-// FIXME: Re-enable this test for Monterey+ once webkit.org/232890 is resolved.
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 120000
-TEST(PrivateClickMeasurement, DISABLED_DaemonBasicFunctionality)
-#else
 TEST(PrivateClickMeasurement, DaemonBasicFunctionality)
-#endif
 {
     auto [tempDir, configuration] = setUpDaemon(configurationWithoutUsingDaemon().autorelease());
     attemptConnectionInProcessWithoutEntitlement();
@@ -594,12 +547,7 @@ static RetainPtr<TestWKWebView> webViewWithOpenInspector(WKWebViewConfiguration 
     return webView;
 }
 
-// FIXME: Re-enable this test for Monterey+ once webkit.org/232890 is resolved.
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 120000
-TEST(PrivateClickMeasurement, DISABLED_DaemonDebugMode)
-#else
 TEST(PrivateClickMeasurement, DaemonDebugMode)
-#endif
 {
     auto [tempDir, configuration] = setUpDaemon([WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"BundlePageConsoleMessage"]);
     Vector<String> consoleMessages;
