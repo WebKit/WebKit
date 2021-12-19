@@ -1,3 +1,44 @@
+2021-12-19  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [JSC] OpPow should have a "small int exponent" fast path at lower tiers
+        https://bugs.webkit.org/show_bug.cgi?id=234408
+
+        Reviewed by Yusuke Suzuki.
+
+        DFG has an ArithPow fast path which just multiplies in a loop when the exponent is an int between 0 and 1000;
+        this can be done at lower tiers too.
+
+        Implementing this at LLInt gives the following speedup with JIT disabled:
+
+                                  Before                    After
+
+        pow-int-int         193.7180+-0.4897     ^    100.3569+-1.9804        ^ definitely 1.9303x faster
+        pow-double-int      194.0744+-0.7998     ^    100.0346+-0.8655        ^ definitely 1.9401x faster
+
+        <geometric>         193.8824+-0.4667     ^    100.0964+-0.9922        ^ definitely 1.9370x faster
+
+        Implementing this at Baseline gives similar results with DFG disabled:
+
+                                          Before                    After
+
+        pow-int-int         195.6251+-0.9577     ^     99.9627+-0.3307        ^ definitely 1.9570x faster
+        pow-double-int      196.1975+-0.9307     ^    101.0056+-0.3124        ^ definitely 1.9424x faster
+
+        <geometric>         195.8786+-0.5883     ^    100.4767+-0.2333        ^ definitely 1.9495x faster
+
+        Results are neutral otherwise.
+
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        (JSC::JIT::privateCompileSlowCases):
+        * jit/JIT.h:
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::emit_op_pow):
+        (JSC::JIT::emitSlow_op_pow):
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+
 2021-12-18  Mikhail R. Gadelha  <mikhail@igalia.com>
 
         [JSC][32bit] Fix undefined behavior causing miscompilation with clang 13 on ARM

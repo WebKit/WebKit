@@ -476,6 +476,60 @@ void JIT::emitSlow_op_mod(const Instruction*, Vector<SlowCaseEntry>::iterator&)
 
 /* ------------------------------ END: OP_MOD ------------------------------ */
 
+void JIT::emit_op_pow(const Instruction* currentInstruction)
+{
+    auto bytecode = currentInstruction->as<OpPow>();
+    VirtualRegister result = bytecode.m_dst;
+    VirtualRegister op1 = bytecode.m_lhs;
+    VirtualRegister op2 = bytecode.m_rhs;
+
+    constexpr JSValueRegs leftRegs = jsRegT10;
+    constexpr JSValueRegs rightRegs = jsRegT32;
+    constexpr JSValueRegs resultRegs = leftRegs;
+    constexpr GPRReg scratchGPR = regT4;
+
+    emitGetVirtualRegister(op1, leftRegs);
+    emitGetVirtualRegister(op2, rightRegs);
+    emitJumpSlowCaseIfNotInt(rightRegs);
+
+    addSlowCase(branch32(LessThan, rightRegs.payloadGPR(), TrustedImm32(0)));
+    addSlowCase(branch32(GreaterThan, rightRegs.payloadGPR(), TrustedImm32(maxExponentForIntegerMathPow)));
+
+    Jump lhsNotInt = branchIfNotInt32(leftRegs);
+    convertInt32ToDouble(leftRegs.payloadGPR(), fpRegT0);
+    Jump lhsReady = jump();
+    lhsNotInt.link(this);
+    addSlowCase(branchIfNotNumber(leftRegs, scratchGPR));
+#if USE(JSVALUE64)
+    unboxDouble(leftRegs.payloadGPR(), scratchGPR, fpRegT0);
+#else
+    unboxDouble(leftRegs, fpRegT0);
+#endif
+    lhsReady.link(this);
+
+    move(TrustedImm32(1), scratchGPR);
+    convertInt32ToDouble(scratchGPR, fpRegT1);
+
+    Label loop = label();
+    Jump exponentIsEven = branchTest32(Zero, rightRegs.payloadGPR(), TrustedImm32(1));
+    mulDouble(fpRegT0, fpRegT1);
+    exponentIsEven.link(this);
+    mulDouble(fpRegT0, fpRegT0);
+    rshift32(TrustedImm32(1), rightRegs.payloadGPR());
+    branchTest32(NonZero, rightRegs.payloadGPR()).linkTo(loop, this);
+
+    boxDouble(fpRegT1, resultRegs);
+    emitPutVirtualRegister(result, resultRegs);
+}
+
+void JIT::emitSlow_op_pow(const Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+{
+    linkAllSlowCases(iter);
+
+    JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_pow);
+    slowPathCall.call();
+}
+
 void JIT::emit_op_negate(const Instruction* currentInstruction)
 {
     UnaryArithProfile* arithProfile = &m_unlinkedCodeBlock->unaryArithProfile(currentInstruction->as<OpNegate>().m_profileIndex);
@@ -960,8 +1014,6 @@ void JIT::emitSlow_op_sub(const Instruction* currentInstruction, Vector<SlowCase
     JITSubIC* subIC = bitwise_cast<JITSubIC*>(m_instructionToMathIC.get(currentInstruction));
     emitMathICSlow<OpSub>(subIC, currentInstruction, operationValueSubProfiledOptimize, operationValueSubProfiled, operationValueSubOptimize);
 }
-
-/* ------------------------------ END: OP_ADD, OP_SUB, OP_MUL, OP_POW ------------------------------ */
 
 } // namespace JSC
 

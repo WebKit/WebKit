@@ -1208,6 +1208,42 @@ binaryOpCustomStore(div, OpDiv,
     end,
     macro (lhs, rhs) divd rhs, lhs end)
 
+llintOpWithReturn(op_pow, OpPow, macro (size, get, dispatch, return)
+    get(m_rhs, t2)
+    get(m_lhs, t0)
+    loadConstantOrVariable(size, t2, t3, t1)
+    loadConstantOrVariable2Reg(size, t0, t2, t0)
+    bineq t3, Int32Tag, .slow
+
+    bilt t1, 0, .slow
+    bigt t1, (constexpr maxExponentForIntegerMathPow), .slow
+
+    bineq t2, Int32Tag, .lhsNotInt
+    ci2ds t0, ft0
+    jmp .lhsReady
+.lhsNotInt:
+    bia t2, LowestTag, .slow
+    fii2d t0, t2, ft0
+.lhsReady:
+    get(m_dst, t2)
+    move 1, t0
+    ci2ds t0, ft1
+
+.loop:
+    btiz t1, 0x1, .exponentIsEven
+    muld ft0, ft1
+.exponentIsEven:
+    muld ft0, ft0
+    rshifti 1, t1
+    btinz t1, .loop
+
+    stored ft1, [cfr, t2, 8]
+    dispatch()
+
+.slow:
+    callSlowPath(_slow_path_pow)
+    dispatch()
+end)
 
 llintOpWithReturn(op_unsigned, OpUnsigned, macro (size, get, dispatch, return)
     get(m_operand, t1)
