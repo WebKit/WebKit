@@ -7186,8 +7186,6 @@ String HTMLMediaElement::mediaPlayerUserAgent() const
     return frame->loader().userAgent(m_currentSrc);
 }
 
-#if ENABLE(AVF_CAPTIONS)
-
 static inline PlatformTextTrackData::TrackKind toPlatform(TextTrack::Kind kind)
 {
     switch (kind) {
@@ -7254,8 +7252,6 @@ Vector<RefPtr<PlatformTextTrack>> HTMLMediaElement::outOfBandTrackSources()
 
     return outOfBandTrackSources;
 }
-
-#endif
 
 bool HTMLMediaElement::mediaPlayerIsFullscreen() const
 {

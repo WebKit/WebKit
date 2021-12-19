@@ -34,6 +34,7 @@
 #include "MediaPlayerEnums.h"
 #include "MediaPlayerIdentifier.h"
 #include "PlatformLayer.h"
+#include "PlatformTextTrack.h"
 #include "SecurityOriginData.h"
 #include "Timer.h"
 #include "VideoFrameMetadata.h"
@@ -82,7 +83,6 @@ class MediaSourcePrivateClient;
 class MediaStreamPrivate;
 class NativeImage;
 class PlatformMediaResourceLoader;
-class PlatformTextTrack;
 class PlatformTimeRanges;
 class TextTrackRepresentation;
 class VideoTrackPrivate;
@@ -246,9 +246,7 @@ public:
 
     virtual void textTrackRepresentationBoundsChanged(const IntRect&) { }
 
-#if ENABLE(AVF_CAPTIONS)
     virtual Vector<RefPtr<PlatformTextTrack>> outOfBandTrackSources() { return { }; }
-#endif
 
 #if PLATFORM(IOS_FAMILY)
     virtual String mediaPlayerNetworkInterfaceName() const { return String(); }
@@ -597,10 +595,8 @@ public:
     void syncTextTrackBounds();
     void tracksChanged();
 
-#if ENABLE(AVF_CAPTIONS)
     void notifyTrackModeChanged();
     Vector<RefPtr<PlatformTextTrack>> outOfBandTrackSources();
-#endif
 
 #if PLATFORM(IOS_FAMILY)
     String mediaPlayerNetworkInterfaceName() const;

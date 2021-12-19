@@ -1,3 +1,12 @@
+2021-12-19  Philippe Normand  <pnormand@igalia.com>
+
+        [GTK][WPE][VTT] tests media/track/track-webvtt-* fail on GTK and WPE
+        https://bugs.webkit.org/show_bug.cgi?id=234083
+
+        Reviewed by Eric Carlson.
+
+        * platform/glib/TestExpectations:
+
 2021-12-19  Jon Lee  <jonlee@apple.com>
 
         Garden tests that are passing iOS but marked failure.

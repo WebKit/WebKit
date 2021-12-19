@@ -292,9 +292,7 @@ public:
 
     virtual std::optional<VideoPlaybackQualityMetrics> videoPlaybackQualityMetrics() { return std::nullopt; }
 
-#if ENABLE(AVF_CAPTIONS)
     virtual void notifyTrackModeChanged() { }
-#endif
 
     virtual void notifyActiveSourceBuffersChanged() { }
 

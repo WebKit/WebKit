@@ -380,9 +380,7 @@ public:
     void mediaPlayerDidRemoveTextTrack(InbandTextTrackPrivate&) final;
     void mediaPlayerDidRemoveVideoTrack(VideoTrackPrivate&) final;
 
-#if ENABLE(AVF_CAPTIONS)
     Vector<RefPtr<PlatformTextTrack>> outOfBandTrackSources() final;
-#endif
 
     struct TrackGroup;
     void configureTextTrackGroupForLanguage(const TrackGroup&) const;
