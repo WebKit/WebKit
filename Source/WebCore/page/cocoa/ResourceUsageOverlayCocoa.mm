@@ -146,6 +146,7 @@ struct HistoricMemoryCategoryInfo {
 };
 
 struct HistoricResourceUsageData {
+    WTF_MAKE_STRUCT_FAST_ALLOCATED;
     HistoricResourceUsageData();
 
     RingBuffer<float> cpu;
@@ -184,8 +185,12 @@ HistoricResourceUsageData::HistoricResourceUsageData()
 
 static HistoricResourceUsageData& historicUsageData()
 {
-    static NeverDestroyed<HistoricResourceUsageData> data;
-    return data;
+    static HistoricResourceUsageData* data { nullptr };
+    static std::once_flag onceKey;
+    std::call_once(onceKey, [&] {
+        data = new HistoricResourceUsageData;
+    });
+    return *data;
 }
 
 static void appendDataToHistory(const ResourceUsageData& data)
