@@ -1717,6 +1717,12 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNonElementParentNode.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNonElementParentNode.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNotification.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNotification.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNotificationDirection.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNotificationDirection.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNotificationEvent.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNotificationEvent.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNotificationOptions.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNotificationOptions.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNotificationPermission.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNotificationPermission.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNotificationPermissionCallback.cpp

@@ -48,7 +48,7 @@ class NotificationPermissionCallback;
 
 struct NotificationData;
 
-class Notification final : public RefCounted<Notification>, public ActiveDOMObject, public EventTargetWithInlineData {
+class Notification final : public ThreadSafeRefCounted<Notification>, public ActiveDOMObject, public EventTargetWithInlineData {
     WTF_MAKE_ISO_ALLOCATED_EXPORT(Notification, WEBCORE_EXPORT);
 public:
     using Permission = NotificationPermission;
@@ -91,8 +91,8 @@ public:
 
     WEBCORE_EXPORT NotificationData dataWithoutNotificationID() const;
 
-    using RefCounted::ref;
-    using RefCounted::deref;
+    using ThreadSafeRefCounted::ref;
+    using ThreadSafeRefCounted::deref;
 
 private:
     Notification(Document&, const String& title, const Options&);

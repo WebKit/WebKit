@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,29 +23,35 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[
-    Global=(Worker,ServiceWorker),
-    Exposed=ServiceWorker,
-    Conditional=SERVICE_WORKER,
-    EnabledAtRuntime=ServiceWorkerEnabled,
-    JSCustomMarkFunction,
-    IsImmutablePrototypeExoticObject,
-    IsImmutablePrototypeExoticObjectOnPrototype,
-] interface ServiceWorkerGlobalScope : WorkerGlobalScope {
-    [SameObject] readonly attribute ServiceWorkerClients clients;
-    [SameObject] readonly attribute ServiceWorkerRegistration registration;
-    [SameObject] readonly attribute ServiceWorker serviceWorker;
+#pragma once
 
-    [NewObject] Promise<undefined> skipWaiting();
+#if ENABLE(NOTIFICATION_EVENT)
 
-    attribute EventHandler oninstall;
-    attribute EventHandler onactivate;
-    attribute EventHandler onfetch;
+#include "ExtendableEvent.h"
+#include "ExtendableEventInit.h"
+#include "Notification.h"
 
-    // event
-    attribute EventHandler onmessage;
-    attribute EventHandler onmessageerror;
+namespace WebCore {
 
-    [Conditional=NOTIFICATION_EVENT, EnabledAtRuntime=NotificationEventEnabled] attribute EventHandler onnotificationclick;
-    [Conditional=NOTIFICATION_EVENT, EnabledAtRuntime=NotificationEventEnabled] attribute EventHandler onnotificationclose;
+class NotificationEvent final : public ExtendableEvent {
+public:
+    ~NotificationEvent();
+
+    struct Init : ExtendableEventInit {
+        RefPtr<Notification> notification;
+        String action;
+    };
+
+    EventInterface eventInterface() const final { return NotificationEventInterfaceType; }
+
+    Notification* notification() { return m_notification.get(); }
+    const String& action() { return m_action; }
+
+private:
+    RefPtr<Notification> m_notification;
+    String m_action;
 };
+
+} // namespace WebCore
+
+#endif // ENABLE(NOTIFICATION_EVENT)

@@ -243,6 +243,7 @@ Modules/model-element/dummy/DummyModelPlayerProvider.cpp
 Modules/notifications/Notification.cpp
 Modules/notifications/NotificationController.cpp
 Modules/notifications/NotificationData.cpp
+Modules/notifications/NotificationEvent.cpp
 Modules/paymentrequest/MerchantValidationEvent.cpp
 Modules/paymentrequest/PaymentAddress.cpp
 Modules/paymentrequest/PaymentHandler.cpp
@@ -3495,6 +3496,9 @@ JSNodeList.cpp
 JSNonDocumentTypeChildNode.cpp
 JSNonElementParentNode.cpp
 JSNotification.cpp
+JSNotificationDirection.cpp
+JSNotificationEvent.cpp
+JSNotificationOptions.cpp
 JSNotificationPermission.cpp
 JSNotificationPermissionCallback.cpp
 JSOESElementIndexUint.cpp

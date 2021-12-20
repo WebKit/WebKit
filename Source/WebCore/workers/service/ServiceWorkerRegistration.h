@@ -30,6 +30,7 @@
 #include "ActiveDOMObject.h"
 #include "EventTarget.h"
 #include "JSDOMPromiseDeferred.h"
+#include "NotificationOptions.h"
 #include "PushPermissionState.h"
 #include "PushSubscription.h"
 #include "SWClientConnection.h"
@@ -88,6 +89,15 @@ public:
 
     NavigationPreloadManager& navigationPreload();
     ServiceWorkerContainer& container() { return m_container.get(); }
+
+#if ENABLE(NOTIFICATION_EVENT)
+    struct GetNotificationOptions {
+        String tag;
+    };
+
+    void showNotification(ScriptExecutionContext&, const String& title, const NotificationOptions&, DOMPromiseDeferred<void>&&);
+    void getNotifications(ScriptExecutionContext&, const GetNotificationOptions& filter, DOMPromiseDeferred<IDLSequence<IDLDOMString>>);
+#endif
 
 private:
     ServiceWorkerRegistration(ScriptExecutionContext&, Ref<ServiceWorkerContainer>&&, ServiceWorkerRegistrationData&&);

@@ -461,6 +461,9 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/model-element/HTMLModelElement.idl \
     $(WebCore)/Modules/model-element/HTMLModelElementCamera.idl \
     $(WebCore)/Modules/notifications/Notification.idl \
+    $(WebCore)/Modules/notifications/NotificationDirection.idl \
+    $(WebCore)/Modules/notifications/NotificationEvent.idl \
+    $(WebCore)/Modules/notifications/NotificationOptions.idl \
     $(WebCore)/Modules/notifications/NotificationPermission.idl \
     $(WebCore)/Modules/notifications/NotificationPermissionCallback.idl \
     $(WebCore)/Modules/paymentrequest/AddressErrors.idl \

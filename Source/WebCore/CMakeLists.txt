@@ -473,6 +473,9 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/model-element/HTMLModelElementCamera.idl
 
     Modules/notifications/Notification.idl
+    Modules/notifications/NotificationDirection.idl
+    Modules/notifications/NotificationEvent.idl
+    Modules/notifications/NotificationOptions.idl
     Modules/notifications/NotificationPermission.idl
     Modules/notifications/NotificationPermissionCallback.idl
 

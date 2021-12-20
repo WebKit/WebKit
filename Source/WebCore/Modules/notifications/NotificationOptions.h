@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -22,30 +22,17 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
+#pragma once
 
-[
-    Global=(Worker,ServiceWorker),
-    Exposed=ServiceWorker,
-    Conditional=SERVICE_WORKER,
-    EnabledAtRuntime=ServiceWorkerEnabled,
-    JSCustomMarkFunction,
-    IsImmutablePrototypeExoticObject,
-    IsImmutablePrototypeExoticObjectOnPrototype,
-] interface ServiceWorkerGlobalScope : WorkerGlobalScope {
-    [SameObject] readonly attribute ServiceWorkerClients clients;
-    [SameObject] readonly attribute ServiceWorkerRegistration registration;
-    [SameObject] readonly attribute ServiceWorker serviceWorker;
+#include "Notification.h"
 
-    [NewObject] Promise<undefined> skipWaiting();
+#if ENABLE(NOTIFICATIONS)
 
-    attribute EventHandler oninstall;
-    attribute EventHandler onactivate;
-    attribute EventHandler onfetch;
+namespace WebCore {
 
-    // event
-    attribute EventHandler onmessage;
-    attribute EventHandler onmessageerror;
+using NotificationOptions = Notification::Options;
 
-    [Conditional=NOTIFICATION_EVENT, EnabledAtRuntime=NotificationEventEnabled] attribute EventHandler onnotificationclick;
-    [Conditional=NOTIFICATION_EVENT, EnabledAtRuntime=NotificationEventEnabled] attribute EventHandler onnotificationclose;
-};
+}
+
+#endif // ENABLE(NOTIFICATIONS)
+

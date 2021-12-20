@@ -190,6 +190,8 @@ namespace WebCore {
     macro(negotiationneeded) \
     macro(nexttrack) \
     macro(nomatch) \
+    macro(notificationclick) \
+    macro(notificationclose) \
     macro(noupdate) \
     macro(obsolete) \
     macro(offline) \

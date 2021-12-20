@@ -1,3 +1,14 @@
+2021-12-19  Brady Eidson  <beidson@apple.com>
+
+        Stub out NotificationEvent and related
+        https://bugs.webkit.org/show_bug.cgi?id=234420
+
+        Reviewed by Alex Christensen.
+
+        * Scripts/Preferences/WebPreferencesInternal.yaml:
+
+        * wtf/PlatformEnable.h:
+
 2021-12-18  Darin Adler  <darin@apple.com>
 
         Hash tables, read/write, and heap memory are used unnecessarily, which may hurt performance

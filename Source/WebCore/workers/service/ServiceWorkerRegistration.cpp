@@ -263,6 +263,24 @@ NavigationPreloadManager& ServiceWorkerRegistration::navigationPreload()
     return *m_navigationPreload;
 }
 
+#if ENABLE(NOTIFICATION_EVENT)
+void ServiceWorkerRegistration::showNotification(ScriptExecutionContext&, const String& title, const NotificationOptions& options, DOMPromiseDeferred<void>&& promise)
+{
+    UNUSED_PARAM(title);
+    UNUSED_PARAM(options);
+
+    promise.reject();
+}
+
+void ServiceWorkerRegistration::getNotifications(ScriptExecutionContext&, const GetNotificationOptions& filter, DOMPromiseDeferred<IDLSequence<IDLDOMString>> promise)
+{
+    UNUSED_PARAM(filter);
+
+    promise.reject();
+
+}
+#endif // ENABLE(NOTIFICATION_EVENT)
+
 } // namespace WebCore
 
 #endif // ENABLE(SERVICE_WORKER)

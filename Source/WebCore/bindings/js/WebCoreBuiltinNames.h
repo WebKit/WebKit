@@ -224,6 +224,7 @@ namespace WebCore {
     macro(NavigatorPermissions) \
     macro(NavigatorUserMedia) \
     macro(Notification) \
+    macro(NotificationEvent) \
     macro(OfflineAudioContext) \
     macro(OffscreenCanvas) \
     macro(OffscreenCanvasRenderingContext2D) \
@@ -454,6 +455,8 @@ namespace WebCore {
     macro(makeThisTypeError) \
     macro(matchingElementInFlatTree) \
     macro(mediaStreamTrackConstraints) \
+    macro(onnotificationclick) \
+    macro(onnotificationclose) \
     macro(onpush) \
     macro(onpushsubscriptionchange) \
     macro(onrtctransform) \

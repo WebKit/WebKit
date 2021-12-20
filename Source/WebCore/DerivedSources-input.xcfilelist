@@ -541,6 +541,9 @@ $(PROJECT_DIR)/Modules/modern-media-controls/media/tracks-support.js
 $(PROJECT_DIR)/Modules/modern-media-controls/media/volume-support.js
 $(PROJECT_DIR)/Modules/modern-media-controls/media/watchos-media-controls-support.js
 $(PROJECT_DIR)/Modules/notifications/Notification.idl
+$(PROJECT_DIR)/Modules/notifications/NotificationDirection.idl
+$(PROJECT_DIR)/Modules/notifications/NotificationEvent.idl
+$(PROJECT_DIR)/Modules/notifications/NotificationOptions.idl
 $(PROJECT_DIR)/Modules/notifications/NotificationPermission.idl
 $(PROJECT_DIR)/Modules/notifications/NotificationPermissionCallback.idl
 $(PROJECT_DIR)/Modules/paymentrequest/AddressErrors.idl
