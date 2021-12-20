@@ -1,5 +1,31 @@
 2021-12-20  Alex Christensen  <achristensen@webkit.org>
 
+        Prevent test functionality in AdAttributionDaemon when not running tests
+        https://bugs.webkit.org/show_bug.cgi?id=231258
+        <rdar://84168088>
+
+        Reviewed by Brady Eidson.
+
+        adattributiond already has a private entitlement check to make sure that only the network process has permission to connect to it.
+        This makes it so that the network process can't manipulate state only intended to be manipulated for tests when told to do so by
+        an application misusing SPI.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::allowsPrivateClickMeasurementTestFunctionality const):
+        (WebKit::NetworkProcess::setPrivateClickMeasurementOverrideTimerForTesting):
+        (WebKit::NetworkProcess::simulateResourceLoadStatisticsSessionRestart):
+        (WebKit::NetworkProcess::markAttributedPrivateClickMeasurementsAsExpiredForTesting):
+        (WebKit::NetworkProcess::setPrivateClickMeasurementEphemeralMeasurementForTesting):
+        (WebKit::NetworkProcess::setPrivateClickMeasurementTokenPublicKeyURLForTesting):
+        (WebKit::NetworkProcess::setPrivateClickMeasurementTokenSignatureURLForTesting):
+        (WebKit::NetworkProcess::setPrivateClickMeasurementAttributionReportURLsForTesting):
+        (WebKit::NetworkProcess::markPrivateClickMeasurementsAsExpiredForTesting):
+        (WebKit::NetworkProcess::setPCMFraudPreventionValuesForTesting):
+        (WebKit::NetworkProcess::setPrivateClickMeasurementAppBundleIDForTesting):
+        * NetworkProcess/NetworkProcess.h:
+
+2021-12-20  Alex Christensen  <achristensen@webkit.org>
+
         [ Monterey ] TestWebKitAPI.WebSocket.PageWithAttributedBundleIdentifierDestroyed (API-test) is a constant timeout
         https://bugs.webkit.org/show_bug.cgi?id=233224
 

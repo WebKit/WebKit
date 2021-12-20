@@ -104,6 +104,7 @@
 #if PLATFORM(COCOA)
 #include "LaunchServicesDatabaseObserver.h"
 #include "NetworkSessionCocoa.h"
+#include <wtf/cocoa/Entitlements.h>
 #endif
 
 #if USE(SOUP)
@@ -2420,8 +2421,23 @@ void NetworkProcess::clearPrivateClickMeasurement(PAL::SessionID sessionID, Comp
         completionHandler();
 }
 
+bool NetworkProcess::allowsPrivateClickMeasurementTestFunctionality() const
+{
+#if !PLATFORM(COCOA) || !USE(APPLE_INTERNAL_SDK)
+    return true;
+#else
+    auto auditToken = sourceApplicationAuditToken();
+    if (!auditToken)
+        return false;
+    return WTF::hasEntitlement(*auditToken, "com.apple.private.webkit.adattributiond.testing");
+#endif
+}
+
 void NetworkProcess::setPrivateClickMeasurementOverrideTimerForTesting(PAL::SessionID sessionID, bool value, CompletionHandler<void()>&& completionHandler)
 {
+    if (!allowsPrivateClickMeasurementTestFunctionality())
+        return completionHandler();
+
     if (auto* session = networkSession(sessionID))
         session->setPrivateClickMeasurementOverrideTimerForTesting(value);
     
@@ -2430,6 +2446,9 @@ void NetworkProcess::setPrivateClickMeasurementOverrideTimerForTesting(PAL::Sess
 
 void NetworkProcess::simulateResourceLoadStatisticsSessionRestart(PAL::SessionID sessionID, CompletionHandler<void()>&& completionHandler)
 {
+    if (!allowsPrivateClickMeasurementTestFunctionality())
+        return completionHandler();
+
     // FIXME: Rename this to simulatePrivateClickMeasurementSessionRestart.
     if (auto* session = networkSession(sessionID)) {
         session->recreatePrivateClickMeasurementStore([session = WeakPtr { *session }, completionHandler = WTFMove(completionHandler)] () mutable {
@@ -2444,6 +2463,9 @@ void NetworkProcess::simulateResourceLoadStatisticsSessionRestart(PAL::SessionID
 
 void NetworkProcess::markAttributedPrivateClickMeasurementsAsExpiredForTesting(PAL::SessionID sessionID, CompletionHandler<void()>&& completionHandler)
 {
+    if (!allowsPrivateClickMeasurementTestFunctionality())
+        return completionHandler();
+
     if (auto* session = networkSession(sessionID)) {
         session->markAttributedPrivateClickMeasurementsAsExpiredForTesting(WTFMove(completionHandler));
         return;
@@ -2453,6 +2475,9 @@ void NetworkProcess::markAttributedPrivateClickMeasurementsAsExpiredForTesting(P
 
 void NetworkProcess::setPrivateClickMeasurementEphemeralMeasurementForTesting(PAL::SessionID sessionID, bool value, CompletionHandler<void()>&& completionHandler)
 {
+    if (!allowsPrivateClickMeasurementTestFunctionality())
+        return completionHandler();
+
     if (auto* session = networkSession(sessionID))
         session->setPrivateClickMeasurementEphemeralMeasurementForTesting(value);
     
@@ -2462,6 +2487,9 @@ void NetworkProcess::setPrivateClickMeasurementEphemeralMeasurementForTesting(PA
 
 void NetworkProcess::setPrivateClickMeasurementTokenPublicKeyURLForTesting(PAL::SessionID sessionID, URL&& url, CompletionHandler<void()>&& completionHandler)
 {
+    if (!allowsPrivateClickMeasurementTestFunctionality())
+        return completionHandler();
+
     if (auto* session = networkSession(sessionID))
         session->setPrivateClickMeasurementTokenPublicKeyURLForTesting(WTFMove(url));
 
@@ -2470,6 +2498,9 @@ void NetworkProcess::setPrivateClickMeasurementTokenPublicKeyURLForTesting(PAL::
 
 void NetworkProcess::setPrivateClickMeasurementTokenSignatureURLForTesting(PAL::SessionID sessionID, URL&& url, CompletionHandler<void()>&& completionHandler)
 {
+    if (!allowsPrivateClickMeasurementTestFunctionality())
+        return completionHandler();
+
     if (auto* session = networkSession(sessionID))
         session->setPrivateClickMeasurementTokenSignatureURLForTesting(WTFMove(url));
     
@@ -2478,6 +2509,9 @@ void NetworkProcess::setPrivateClickMeasurementTokenSignatureURLForTesting(PAL::
 
 void NetworkProcess::setPrivateClickMeasurementAttributionReportURLsForTesting(PAL::SessionID sessionID, URL&& sourceURL, URL&& destinationURL, CompletionHandler<void()>&& completionHandler)
 {
+    if (!allowsPrivateClickMeasurementTestFunctionality())
+        return completionHandler();
+
     if (auto* session = networkSession(sessionID))
         session->setPrivateClickMeasurementAttributionReportURLsForTesting(WTFMove(sourceURL), WTFMove(destinationURL));
 
@@ -2486,6 +2520,9 @@ void NetworkProcess::setPrivateClickMeasurementAttributionReportURLsForTesting(P
 
 void NetworkProcess::markPrivateClickMeasurementsAsExpiredForTesting(PAL::SessionID sessionID, CompletionHandler<void()>&& completionHandler)
 {
+    if (!allowsPrivateClickMeasurementTestFunctionality())
+        return completionHandler();
+
     if (auto* session = networkSession(sessionID))
         session->markPrivateClickMeasurementsAsExpiredForTesting();
 
@@ -2494,6 +2531,9 @@ void NetworkProcess::markPrivateClickMeasurementsAsExpiredForTesting(PAL::Sessio
 
 void NetworkProcess::setPCMFraudPreventionValuesForTesting(PAL::SessionID sessionID, String&& unlinkableToken, String&& secretToken, String&& signature, String&& keyID, CompletionHandler<void()>&& completionHandler)
 {
+    if (!allowsPrivateClickMeasurementTestFunctionality())
+        return completionHandler();
+
     if (auto* session = networkSession(sessionID))
         session->setPCMFraudPreventionValuesForTesting(WTFMove(unlinkableToken), WTFMove(secretToken), WTFMove(signature), WTFMove(keyID));
 
@@ -2502,6 +2542,9 @@ void NetworkProcess::setPCMFraudPreventionValuesForTesting(PAL::SessionID sessio
 
 void NetworkProcess::setPrivateClickMeasurementAppBundleIDForTesting(PAL::SessionID sessionID, String&& appBundleIDForTesting, CompletionHandler<void()>&& completionHandler)
 {
+    if (!allowsPrivateClickMeasurementTestFunctionality())
+        return completionHandler();
+
     if (auto* session = networkSession(sessionID))
         session->setPrivateClickMeasurementAppBundleIDForTesting(WTFMove(appBundleIDForTesting));
 

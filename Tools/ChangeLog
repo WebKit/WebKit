@@ -1,5 +1,15 @@
 2021-12-20  Alex Christensen  <achristensen@webkit.org>
 
+        Prevent test functionality in AdAttributionDaemon when not running tests
+        https://bugs.webkit.org/show_bug.cgi?id=231258
+
+        Reviewed by Brady Eidson.
+
+        * TestWebKitAPI/Configurations/TestWebKitAPI-macOS-internal.entitlements:
+        * WebKitTestRunner/Configurations/WebKitTestRunner.entitlements:
+
+2021-12-20  Alex Christensen  <achristensen@webkit.org>
+
         [ Monterey ] TestWebKitAPI.WebSocket.PageWithAttributedBundleIdentifierDestroyed (API-test) is a constant timeout
         https://bugs.webkit.org/show_bug.cgi?id=233224
 
