@@ -4300,24 +4300,6 @@ void EventHandler::defaultBackspaceEventHandler(KeyboardEvent& event)
         event.setDefaultHandled();
 }
 
-float EventHandler::scrollDistance(ScrollDirection direction, ScrollGranularity granularity)
-{
-    auto scrollbar = m_frame.view()->scrollbarForDirection(direction);
-
-    switch (granularity) {
-    case ScrollGranularity::Line:
-        return scrollbar->lineStep();
-    case ScrollGranularity::Page:
-        return scrollbar->pageStep();
-    case ScrollGranularity::Document:
-        return scrollbar->totalSize();
-    case ScrollGranularity::Pixel:
-        return scrollbar->pixelStep();
-    }
-
-    RELEASE_ASSERT_NOT_REACHED();
-}
-
 void EventHandler::stopKeyboardScrolling()
 {
     Ref protectedFrame = m_frame;

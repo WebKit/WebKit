@@ -381,7 +381,6 @@ private:
     bool handleMousePressEventDoubleClick(const MouseEventWithHitTestResults&);
     bool handleMousePressEventTripleClick(const MouseEventWithHitTestResults&);
 
-    float scrollDistance(ScrollDirection, ScrollGranularity);
     bool startKeyboardScrolling(KeyboardEvent&);
     void stopKeyboardScrolling();
 
