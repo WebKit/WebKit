@@ -27,6 +27,18 @@
 
 #if HAVE(ASC_AUTH_UI) || HAVE(UNIFIED_ASC_AUTH_UI)
 
+#if USE(APPLE_INTERNAL_SDK)
+#import <AuthenticationServicesCore/ASCWebKitSPISupport.h>
+#else
+@interface ASCWebKitSPISupport : NSObject
+@property (class, nonatomic) BOOL shouldUseAlternateCredentialStore;
+@end
+#endif
+
+// FIXME: Most of the forward declarations below should be behind a non-Apple-internal SDK compile-time flag.
+// When building with an Apple-internal SDK, we should instead import the private headers directly from the
+// AuthenticationServicesCore framework.
+
 NS_ASSUME_NONNULL_BEGIN
 
 @class LAContext;
@@ -343,6 +355,4 @@ typedef NS_ERROR_ENUM(ASCAuthorizationErrorDomain, ASCAuthorizationError) {
 
 NS_ASSUME_NONNULL_END
 
-//#endif // USE(APPLE_INTERNAL_SDK)
-
-#endif // HAVE(ASC_AUTH_UI)
+#endif // HAVE(ASC_AUTH_UI) || HAVE(UNIFIED_ASC_AUTH_UI)

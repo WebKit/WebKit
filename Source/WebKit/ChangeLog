@@ -1,3 +1,19 @@
+2021-12-20  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Minor cleanup in AuthenticationServicesCoreSPI.h
+        https://bugs.webkit.org/show_bug.cgi?id=234514
+
+        Reviewed by Devin Rousso.
+
+        When using the Apple internal SDK, directly import <AuthenticationServicesCore/ASCWebKitSPISupport.h> instead of
+        relying on forward declarations (or, in this case, relying on a previous unified source to import the header
+        through WebKitAdditions).
+
+        Additionally leave a FIXME to clean up the rest of this file by importing the private headers directly when
+        building with the internal SDK (and falling back to forward declarations in non-internal builds).
+
+        * Platform/spi/Cocoa/AuthenticationServicesCoreSPI.h:
+
 2021-12-20  Youenn Fablet  <youenn@apple.com>
 
         Improve UserMediaPermissionRequestManagerProxy logging
