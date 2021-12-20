@@ -2258,6 +2258,7 @@ TEST(WebAuthenticationPanel, DeleteOneCredential)
 }
 #endif // USE(APPLE_INTERNAL_SDK) || PLATFORM(IOS)
 
+#if PLATFORM(IOS)
 TEST(WebAuthenticationPanel, RecoverAfterAuthNProcessCrash)
 {
     TestWebKitAPI::HTTPServer server({
@@ -2308,6 +2309,7 @@ TEST(WebAuthenticationPanel, RecoverAfterAuthNProcessCrash)
 
     Util::run(&gotMessage);
 }
+#endif // PLATFORM(IOS)
 
 } // namespace TestWebKitAPI
 
