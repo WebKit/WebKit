@@ -53,7 +53,7 @@ static int compareIcons(const LinkIcon& a, const LinkIcon& b)
     // Apple Touch icons always come first.
     if (a.type == LinkIconType::Favicon && b.type != LinkIconType::Favicon)
         return 1;
-    if (a.type == LinkIconType::Favicon && b.type != LinkIconType::Favicon)
+    if (b.type == LinkIconType::Favicon && a.type != LinkIconType::Favicon)
         return -1;
 
     unsigned aSize = iconSize(a);
