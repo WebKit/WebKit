@@ -467,12 +467,21 @@ void InlineDisplayContentBuilder::adjustVisualGeometryForDisplayBox(size_t displ
     auto& layoutBox = displayBox.layoutBox();
 
     if (!displayBox.isNonRootInlineBox()) {
-        displayBox.setLeft(contentRightInVisualOrder);
         if (displayBox.isAtomicInlineLevelBox() || displayBox.isGenericInlineLevelBox()) {
-            formattingState().boxGeometry(layoutBox).setLogicalLeft(LayoutUnit { contentRightInVisualOrder });
-            contentRightInVisualOrder += displayBox.width() + marginRight(formattingState().boxGeometry(layoutBox), layoutBox.parent().style().isLeftToRightDirection());
-        } else
+            auto isLeftToRightDirection = layoutBox.parent().style().isLeftToRightDirection();
+            auto& boxGeometry = formattingState().boxGeometry(layoutBox);
+            auto boxMarginLeft = marginLeft(boxGeometry, isLeftToRightDirection);
+            auto boxMarginRight = marginRight(boxGeometry, isLeftToRightDirection);
+
+            auto borderBoxLeft = LayoutUnit { contentRightInVisualOrder + boxMarginLeft };
+            boxGeometry.setLogicalLeft(borderBoxLeft);
+            displayBox.setLeft(borderBoxLeft);
+
+            contentRightInVisualOrder += boxMarginLeft + displayBox.width() + boxMarginRight;
+        } else {
+            displayBox.setLeft(contentRightInVisualOrder);
             contentRightInVisualOrder += displayBox.width();
+        }
         return;
     }
 
@@ -577,9 +586,12 @@ void InlineDisplayContentBuilder::processBidiContent(const LineBuilder::LineCont
             if (lineRun.isBox()) {
                 auto& boxGeometry = formattingState().boxGeometry(layoutBox);
                 auto visualRect = visualRectRelativeToRoot(lineBox.logicalBorderBoxForAtomicInlineLevelBox(layoutBox, boxGeometry));
-                visualRect.moveHorizontally(boxGeometry.marginStart());
+
+                auto isLeftToRightDirection = layoutBox.parent().style().isLeftToRightDirection();
+                auto boxMarginLeft = marginLeft(boxGeometry, isLeftToRightDirection);
+                visualRect.moveHorizontally(boxMarginLeft);
                 appendAtomicInlineLevelDisplayBox(lineRun, visualRect, boxes);
-                contentRightInVisualOrder += boxGeometry.marginStart() + visualRect.width() + boxGeometry.marginEnd();
+                contentRightInVisualOrder += boxMarginLeft + visualRect.width() + marginRight(boxGeometry, isLeftToRightDirection);
                 displayBoxTree.append(parentDisplayBoxNodeIndex, boxes.size() - 1);
                 continue;
             }
