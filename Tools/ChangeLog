@@ -1,5 +1,17 @@
 2021-12-20  Robert Jenner  <Jenner@apple.com>
 
+        Fix for Cherry-pick r284133.
+        https://bugs.webkit.org/show_bug.cgi?id=231700
+
+        Unreviewed test gardening.
+
+        Remove unintedned "<<<<<<< HEAD" entries in file from cherry pick that could break the build. 
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ResourceLoadStatistics.mm:
+        (TEST):
+
+2021-12-20  Robert Jenner  <Jenner@apple.com>
+
         Cherry-pick r284133. rdar://problem/84224737
 
     Disable failing API tests
