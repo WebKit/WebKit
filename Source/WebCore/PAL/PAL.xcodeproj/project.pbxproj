@@ -388,6 +388,10 @@
 		F44291681FA52705002CC93E /* FileSizeFormatterCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = F44291661FA52705002CC93E /* FileSizeFormatterCocoa.mm */; };
 		F46B8C4D26740918007A6554 /* VisionKitCoreSoftLink.mm in Sources */ = {isa = PBXBuildFile; fileRef = F46B8C4C26740918007A6554 /* VisionKitCoreSoftLink.mm */; };
 		F46B8C4F26740AD8007A6554 /* VisionKitCoreSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = F46B8C4E26740AD8007A6554 /* VisionKitCoreSPI.h */; };
+		F47221F3276FC2EB00B984C7 /* CoreMLSoftLink.h in Headers */ = {isa = PBXBuildFile; fileRef = F47221F1276FC2EB00B984C7 /* CoreMLSoftLink.h */; };
+		F47221F4276FC2EB00B984C7 /* CoreMLSoftLink.mm in Sources */ = {isa = PBXBuildFile; fileRef = F47221F2276FC2EB00B984C7 /* CoreMLSoftLink.mm */; };
+		F47221F7276FC32300B984C7 /* NaturalLanguageSoftLink.h in Headers */ = {isa = PBXBuildFile; fileRef = F47221F5276FC32300B984C7 /* NaturalLanguageSoftLink.h */; };
+		F47221F8276FC32300B984C7 /* NaturalLanguageSoftLink.mm in Sources */ = {isa = PBXBuildFile; fileRef = F47221F6276FC32300B984C7 /* NaturalLanguageSoftLink.mm */; };
 		F4974EA3265EEA2200B49B8C /* RevealSoftLink.h in Headers */ = {isa = PBXBuildFile; fileRef = F4974EA1265EEA2200B49B8C /* RevealSoftLink.h */; };
 		F4974EA4265EEA2200B49B8C /* RevealSoftLink.mm in Sources */ = {isa = PBXBuildFile; fileRef = F4974EA2265EEA2200B49B8C /* RevealSoftLink.mm */; };
 		F4C85A4E2658551A005B89CC /* QuickLookUISoftLink.mm in Sources */ = {isa = PBXBuildFile; fileRef = F4C85A4C26585519005B89CC /* QuickLookUISoftLink.mm */; };
@@ -830,6 +834,10 @@
 		F46B8C4B267408FA007A6554 /* VisionKitCoreSoftLink.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VisionKitCoreSoftLink.h; sourceTree = "<group>"; };
 		F46B8C4C26740918007A6554 /* VisionKitCoreSoftLink.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = VisionKitCoreSoftLink.mm; sourceTree = "<group>"; };
 		F46B8C4E26740AD8007A6554 /* VisionKitCoreSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VisionKitCoreSPI.h; sourceTree = "<group>"; };
+		F47221F1276FC2EB00B984C7 /* CoreMLSoftLink.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CoreMLSoftLink.h; sourceTree = "<group>"; };
+		F47221F2276FC2EB00B984C7 /* CoreMLSoftLink.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = CoreMLSoftLink.mm; sourceTree = "<group>"; };
+		F47221F5276FC32300B984C7 /* NaturalLanguageSoftLink.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NaturalLanguageSoftLink.h; sourceTree = "<group>"; };
+		F47221F6276FC32300B984C7 /* NaturalLanguageSoftLink.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = NaturalLanguageSoftLink.mm; sourceTree = "<group>"; };
 		F4974EA1265EEA2200B49B8C /* RevealSoftLink.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RevealSoftLink.h; sourceTree = "<group>"; };
 		F4974EA2265EEA2200B49B8C /* RevealSoftLink.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = RevealSoftLink.mm; sourceTree = "<group>"; };
 		F4C85A4C26585519005B89CC /* QuickLookUISoftLink.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = QuickLookUISoftLink.mm; sourceTree = "<group>"; };
@@ -1188,6 +1196,8 @@
 				57FD318922B3593E008D0E8B /* AppSSOSoftLink.mm */,
 				077E87B0226A460200A2AFF0 /* AVFoundationSoftLink.h */,
 				077E87AF226A460200A2AFF0 /* AVFoundationSoftLink.mm */,
+				F47221F1276FC2EB00B984C7 /* CoreMLSoftLink.h */,
+				F47221F2276FC2EB00B984C7 /* CoreMLSoftLink.mm */,
 				57F1C90725DCF0CF00E8F6EA /* CryptoKitPrivateSoftLink.h */,
 				57F1C90825DCF0CF00E8F6EA /* CryptoKitPrivateSoftLink.mm */,
 				F4DDD01A264DC69E00EF1B91 /* DataDetectorsCoreSoftLink.h */,
@@ -1196,6 +1206,8 @@
 				1C022EFC22CFE8E0006DF01B /* Gunzip.cpp */,
 				CDACB35E23873E480018D7CE /* MediaToolboxSoftLink.cpp */,
 				CDACB35F23873E480018D7CE /* MediaToolboxSoftLink.h */,
+				F47221F5276FC32300B984C7 /* NaturalLanguageSoftLink.h */,
+				F47221F6276FC32300B984C7 /* NaturalLanguageSoftLink.mm */,
 				31647FAF251759DC0010F8FB /* OpenGLSoftLinkCocoa.h */,
 				31647FAE251759DB0010F8FB /* OpenGLSoftLinkCocoa.mm */,
 				A1F63C9D21A4DBF7006FB43B /* PassKitSoftLink.h */,
@@ -1520,6 +1532,7 @@
 				0C2DA11E1F3BE9E000DBC317 /* CoreGraphicsSPI.h in Headers */,
 				0CF99CA91F738437007EE793 /* CoreMediaSoftLink.h in Headers */,
 				0C2DA0721F33CA8400DBC317 /* CoreMediaSPI.h in Headers */,
+				F47221F3276FC2EB00B984C7 /* CoreMLSoftLink.h in Headers */,
 				ABCA536824895DB900361BFF /* CoreMotionSPI.h in Headers */,
 				0C2DA1401F3BEB4900DBC317 /* CoreTextSPI.h in Headers */,
 				1CCEE4F520D871930047B097 /* CoreUISPI.h in Headers */,
@@ -1566,6 +1579,7 @@
 				EB8A8DC22509E87E00D1BF90 /* MediaToolboxSPI.h in Headers */,
 				1CC3ACE822BD7EC500F360F0 /* MetalSPI.h in Headers */,
 				0C5AF91E1F43A4C7002EAC02 /* MobileGestaltSPI.h in Headers */,
+				F47221F7276FC32300B984C7 /* NaturalLanguageSoftLink.h in Headers */,
 				0C2DA1491F3BEB4900DBC317 /* NEFilterSourceSPI.h in Headers */,
 				E327C0DF260BE436002281C5 /* NotifySPI.h in Headers */,
 				0C77858D1F45130F00F4EBB6 /* NSAccessibilitySPI.h in Headers */,
@@ -1877,6 +1891,7 @@
 				077E87B1226A460200A2AFF0 /* AVFoundationSoftLink.mm in Sources */,
 				1D2B413425F05E3500A3F70A /* ClockGeneric.cpp in Sources */,
 				0CF99CA81F738437007EE793 /* CoreMediaSoftLink.cpp in Sources */,
+				F47221F4276FC2EB00B984C7 /* CoreMLSoftLink.mm in Sources */,
 				1C77C8C925D7972000635E0C /* CoreTextSoftLink.cpp in Sources */,
 				1C09D0561E31C46500725F18 /* CryptoDigestCommonCrypto.cpp in Sources */,
 				57F1C90A25DCF0CF00E8F6EA /* CryptoKitPrivateSoftLink.mm in Sources */,
@@ -1894,6 +1909,7 @@
 				5C7C787423AC3E770065F47E /* ManagedConfigurationSoftLink.mm in Sources */,
 				0CF99CA41F736375007EE793 /* MediaTimeAVFoundation.cpp in Sources */,
 				CDACB3602387425B0018D7CE /* MediaToolboxSoftLink.cpp in Sources */,
+				F47221F8276FC32300B984C7 /* NaturalLanguageSoftLink.mm in Sources */,
 				31647FB0251759DD0010F8FB /* OpenGLSoftLinkCocoa.mm in Sources */,
 				1C77C8CE25D7A4A300635E0C /* OTSVGTable.cpp in Sources */,
 				CD6122CD2559B6AC00FC657A /* OutputContext.mm in Sources */,

@@ -11,9 +11,11 @@ list(APPEND PAL_PUBLIC_HEADERS
 
     cocoa/AppSSOSoftLink.h
     cocoa/AVFoundationSoftLink.h
+    cocoa/CoreMLSoftLink.h
     cocoa/CryptoKitPrivateSoftLink.h
     cocoa/DataDetectorsCoreSoftLink.h
     cocoa/MediaToolboxSoftLink.h
+    cocoa/NaturalLanguageSoftLink.h
     cocoa/OpenGLSoftLinkCocoa.h
     cocoa/PassKitSoftLink.h
     cocoa/RevealSoftLink.h
@@ -155,11 +157,13 @@ list(APPEND PAL_SOURCES
 
     cocoa/AppSSOSoftLink.mm
     cocoa/AVFoundationSoftLink.mm
+    cocoa/CoreMLSoftLink.mm
     cocoa/CryptoKitPrivateSoftLink.mm
     cocoa/DataDetectorsCoreSoftLink.mm
     cocoa/FileSizeFormatterCocoa.mm
     cocoa/Gunzip.cpp
     cocoa/MediaToolboxSoftLink.cpp
+    cocoa/NaturalLanguageSoftLink.mm
     cocoa/OpenGLSoftLinkCocoa.mm
     cocoa/PassKitSoftLink.mm
     cocoa/RevealSoftLink.mm
