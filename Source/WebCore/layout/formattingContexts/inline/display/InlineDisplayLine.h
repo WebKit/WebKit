@@ -40,40 +40,40 @@ public:
         Layout::InlineLayoutUnit top { 0 };
         Layout::InlineLayoutUnit bottom { 0 };
     };
-    Line(const Layout::InlineRect& lineBoxLogicalRect, const Layout::InlineRect& scrollableOverflow, EnclosingTopAndBottom, Layout::InlineLayoutUnit aligmentBaseline, Layout::InlineLayoutUnit contentLogicalLeft, Layout::InlineLayoutUnit contentLogicalWidth);
+    Line(const Layout::InlineRect& lineBoxRect, const Layout::InlineRect& scrollableOverflow, EnclosingTopAndBottom, Layout::InlineLayoutUnit aligmentBaseline, Layout::InlineLayoutUnit contentLeft, Layout::InlineLayoutUnit contentWidth);
 
-    const Layout::InlineRect& lineBoxLogicalRect() const { return m_lineBoxLogicalRect; }
+    const Layout::InlineRect& lineBoxRect() const { return m_lineBoxRect; }
     const Layout::InlineRect& scrollableOverflow() const { return m_scrollableOverflow; }
 
     EnclosingTopAndBottom enclosingTopAndBottom() const { return m_enclosingTopAndBottom; }
 
     Layout::InlineLayoutUnit baseline() const { return m_aligmentBaseline; }
 
-    Layout::InlineLayoutUnit contentLogicalLeft() const { return m_contentLogicalLeft; }
-    Layout::InlineLayoutUnit contentLogicalWidth() const { return m_contentLogicalWidth; }
+    Layout::InlineLayoutUnit contentLeft() const { return m_contentLeft; }
+    Layout::InlineLayoutUnit contentWidth() const { return m_contentWidth; }
 
-    void moveVertically(Layout::InlineLayoutUnit offset) { m_lineBoxLogicalRect.moveVertically(offset); }
+    void moveVertically(Layout::InlineLayoutUnit offset) { m_lineBoxRect.moveVertically(offset); }
 
 private:
     // This is line box geometry (see https://www.w3.org/TR/css-inline-3/#line-box).
-    Layout::InlineRect m_lineBoxLogicalRect;
+    Layout::InlineRect m_lineBoxRect;
     Layout::InlineRect m_scrollableOverflow;
     // Enclosing top and bottom includes all inline level boxes (border box) vertically.
     // While the line box usually enclose them as well, its vertical geometry is based on
     // the layout bounds of the inline level boxes which may be different when line-height is present.
     EnclosingTopAndBottom m_enclosingTopAndBottom;
     Layout::InlineLayoutUnit m_aligmentBaseline { 0 };
-    Layout::InlineLayoutUnit m_contentLogicalLeft { 0 };
-    Layout::InlineLayoutUnit m_contentLogicalWidth { 0 };
+    Layout::InlineLayoutUnit m_contentLeft { 0 };
+    Layout::InlineLayoutUnit m_contentWidth { 0 };
 };
 
-inline Line::Line(const Layout::InlineRect& lineBoxLogicalRect, const Layout::InlineRect& scrollableOverflow, EnclosingTopAndBottom enclosingTopAndBottom, Layout::InlineLayoutUnit aligmentBaseline, Layout::InlineLayoutUnit contentLogicalLeft, Layout::InlineLayoutUnit contentLogicalWidth)
-    : m_lineBoxLogicalRect(lineBoxLogicalRect)
+inline Line::Line(const Layout::InlineRect& lineBoxRect, const Layout::InlineRect& scrollableOverflow, EnclosingTopAndBottom enclosingTopAndBottom, Layout::InlineLayoutUnit aligmentBaseline, Layout::InlineLayoutUnit contentLeft, Layout::InlineLayoutUnit contentWidth)
+    : m_lineBoxRect(lineBoxRect)
     , m_scrollableOverflow(scrollableOverflow)
     , m_enclosingTopAndBottom(enclosingTopAndBottom)
     , m_aligmentBaseline(aligmentBaseline)
-    , m_contentLogicalLeft(contentLogicalLeft)
-    , m_contentLogicalWidth(contentLogicalWidth)
+    , m_contentLeft(contentLeft)
+    , m_contentWidth(contentWidth)
 {
 }
 

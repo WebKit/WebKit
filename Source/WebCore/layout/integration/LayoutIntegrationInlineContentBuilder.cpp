@@ -46,7 +46,7 @@ inline InlineDisplay::Line::EnclosingTopAndBottom operator+(const InlineDisplay:
     return { enclosingTopAndBottom.top + offset, enclosingTopAndBottom.bottom + offset };
 }
 
-inline static float lineOverflowWidth(const RenderBlockFlow& flow, Layout::InlineLayoutUnit lineContentLogicalWidth)
+inline static float lineOverflowWidth(const RenderBlockFlow& flow, Layout::InlineLayoutUnit lineContentWidth)
 {
     // FIXME: It's the copy of the lets-adjust-overflow-for-the-caret behavior from LegacyLineLayout::addOverflowFromInlineChildren.
     auto endPadding = flow.hasNonVisibleOverflow() ? flow.paddingEnd() : 0_lu;
@@ -54,7 +54,7 @@ inline static float lineOverflowWidth(const RenderBlockFlow& flow, Layout::Inlin
         endPadding = flow.endPaddingWidthForCaret();
     if (flow.hasNonVisibleOverflow() && !endPadding && flow.element() && flow.element()->isRootEditableElement())
         endPadding = 1;
-    return lineContentLogicalWidth + endPadding;
+    return lineContentWidth + endPadding;
 }
 
 InlineContentBuilder::InlineContentBuilder(const RenderBlockFlow& blockFlow, const BoxTree& boxTree)
@@ -79,7 +79,7 @@ void InlineContentBuilder::createDisplayLines(Layout::InlineFormattingState& inl
     for (size_t lineIndex = 0; lineIndex < lines.size(); ++lineIndex) {
         auto& line = lines[lineIndex];
         auto scrollableOverflowRect = FloatRect { line.scrollableOverflow() };
-        if (auto overflowWidth = lineOverflowWidth(m_blockFlow, line.contentLogicalWidth()); overflowWidth > scrollableOverflowRect.width())
+        if (auto overflowWidth = lineOverflowWidth(m_blockFlow, line.contentWidth()); overflowWidth > scrollableOverflowRect.width())
             scrollableOverflowRect.setWidth(overflowWidth);
 
         auto firstBoxIndex = boxIndex;
@@ -112,9 +112,8 @@ void InlineContentBuilder::createDisplayLines(Layout::InlineFormattingState& inl
                 inlineContent.hasMultilinePaintOverlap = true;
         }
 
-        auto lineBoxLogicalRect = FloatRect { line.lineBoxLogicalRect() };
         auto boxCount = boxIndex - firstBoxIndex;
-        inlineContent.lines.append({ firstBoxIndex, boxCount, lineBoxLogicalRect, line.enclosingTopAndBottom().top, line.enclosingTopAndBottom().bottom, scrollableOverflowRect, lineInkOverflowRect, line.baseline(), line.contentLogicalLeft(), line.contentLogicalWidth() });
+        inlineContent.lines.append({ firstBoxIndex, boxCount, FloatRect { line.lineBoxRect() }, line.enclosingTopAndBottom().top, line.enclosingTopAndBottom().bottom, scrollableOverflowRect, lineInkOverflowRect, line.baseline(), line.contentLeft(), line.contentWidth() });
     }
 }
 
