@@ -100,7 +100,7 @@ public:
 
     void clear();
     PtrType leakRef() WARN_UNUSED_RETURN;
-#if PLATFORM(COCOA)
+#if HAVE(CFAUTORELEASE)
     PtrType autorelease();
 #endif
 
@@ -206,7 +206,7 @@ template<typename T> inline auto RetainPtr<T>::leakRef() -> PtrType
     return fromStorageType(std::exchange(m_ptr, nullptr));
 }
 
-#if PLATFORM(COCOA)
+#if HAVE(CFAUTORELEASE)
 template<typename T> inline auto RetainPtr<T>::autorelease() -> PtrType
 {
 #ifdef __OBJC__

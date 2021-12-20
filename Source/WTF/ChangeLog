@@ -1,3 +1,15 @@
+2021-12-20  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        MSVC reports "wtf/RetainPtr.h(196): error C3861: 'CFAutorelease': identifier not found " with /permissive- on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=202842
+
+        Reviewed by Darin Adler.
+
+        r287200 fixed the problem, but not a right fix.
+
+        * wtf/PlatformHave.h: Defined a new macro HAVE_CFAUTORELEASE for PLATFORM(COCOA).
+        * wtf/RetainPtr.h: Use HAVE(CFAUTORELEASE) instead of PLATFORM(COCOA).
+
 2021-12-19  Brady Eidson  <beidson@apple.com>
 
         Stub out NotificationEvent and related
