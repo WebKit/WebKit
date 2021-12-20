@@ -1,3 +1,3 @@
 
-FAIL Should convert the script contents to UTF-8 before hashing assert_unreached: Should not have fired a spv Reached unreachable code
+PASS Should convert the script contents to UTF-8 before hashing
 

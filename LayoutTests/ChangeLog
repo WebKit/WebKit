@@ -1,3 +1,17 @@
+2021-12-20  Patrick Griffis  <pgriffis@igalia.com>
+
+        CSP: Always use UTF-8 encoded content when checking hashes
+        https://bugs.webkit.org/show_bug.cgi?id=234159
+
+        Reviewed by Kate Cheney.
+
+        Remove normalization tests that are counter to WPT's CSP normalization tests.
+
+        * http/tests/security/contentSecurityPolicy/1.1/scripthash-tests-expected.txt:
+        * http/tests/security/contentSecurityPolicy/1.1/scripthash-tests.html:
+        * http/tests/security/contentSecurityPolicy/1.1/scripthash-unicode-normalization-expected.txt: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/scripthash-unicode-normalization.html: Removed.
+
 2021-12-20  Tim Nguyen  <ntim@apple.com>
 
         Re-import the-dialog-element WPT

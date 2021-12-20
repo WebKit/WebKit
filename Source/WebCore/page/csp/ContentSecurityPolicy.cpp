@@ -362,20 +362,12 @@ ContentSecurityPolicy::HashInEnforcedAndReportOnlyPoliciesPair ContentSecurityPo
     if (algorithms.isEmpty() || content.isEmpty())
         return { false, false };
 
-    // FIXME: We should compute the document encoding once and cache it instead of computing it on each invocation.
-    PAL::TextEncoding documentEncoding;
-    if (is<Document>(m_scriptExecutionContext))
-        documentEncoding = downcast<Document>(*m_scriptExecutionContext).textEncoding();
-    const PAL::TextEncoding& encodingToUse = documentEncoding.isValid() ? documentEncoding : PAL::UTF8Encoding();
-
-    // FIXME: Compute the digest with respect to the raw bytes received from the page.
-    // See <https://bugs.webkit.org/show_bug.cgi?id=155184>.
-    auto encodedContent = encodingToUse.encode(content, PAL::UnencodableHandling::Entities);
+    CString utf8Content = content.utf8(StrictConversionReplacingUnpairedSurrogatesWithFFFD);
     bool foundHashInEnforcedPolicies = false;
     bool foundHashInReportOnlyPolicies = false;
     Vector<ContentSecurityPolicyHash> hashes;
     for (auto algorithm : algorithms) {
-        auto hash = cryptographicDigestForBytes(algorithm, encodedContent.data(), encodedContent.size());
+        auto hash = cryptographicDigestForBytes(algorithm, utf8Content.data(), utf8Content.length());
         hashes.append(hash);
     }
     if (!foundHashInEnforcedPolicies && allPoliciesWithDispositionAllow(ContentSecurityPolicy::Disposition::Enforce, predicate, hashes))

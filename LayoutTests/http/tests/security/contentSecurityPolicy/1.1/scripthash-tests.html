@@ -82,20 +82,13 @@ var tests = [
     hashSource: "'sha256-rrdh0QCl46qqHxfnnk08ydh/rkhVi2JvD6DLuUP30MI='", // Hash of "didRunInlineScript+%3D+true%3B+//+%E2%84%AB"
     expectedResult: DoNotRunInlineScript,
 },
-{
-    name: "Unicode code point U+212B is equivalent to U+00C5",
-    charset: "UTF8",
-    script: "didRunInlineScript+%3D+true%3B+//+%E2%84%AB", // %E2%84%AB is the URL encoded UTF-8 byte sequence for U+212B.
-    hashSource: "'sha256-K3oo3dJj28X47TIh/UinhDWS3C5DfcQVCRzw4JM7SWE='", // Intentionally not 'sha256-rrdh0QCl46qqHxfnnk08ydh/rkhVi2JvD6DLuUP30MI='
-    expectedResult: RunInlineScript,
-},
 // Big-5 encoding test cases
 {
     name: "Big-5 page with Big-5 hash",
     charset: "Big5",
     script: "didRunInlineScript+%3D+true%3B+//+%A4%F4",
     hashSource: "'sha256-CAEkHFV/oUoz+L2Oa6gIFelb73og89vCbxrz4u/jAY4='",
-    expectedResult: RunInlineScript,
+    expectedResult: DoNotRunInlineScript,
 },
 {
     name: "Big-5 page with UTF-8 hash",

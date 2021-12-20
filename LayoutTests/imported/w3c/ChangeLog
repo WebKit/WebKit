@@ -1,3 +1,15 @@
+2021-12-20  Patrick Griffis  <pgriffis@igalia.com>
+
+        CSP: Always use UTF-8 encoded content when checking hashes
+        https://bugs.webkit.org/show_bug.cgi?id=234159
+
+        Reviewed by Kate Cheney.
+
+        Update expectations as passing.
+
+        * web-platform-tests/content-security-policy/script-src/hash-always-converted-to-utf-8/utf-8-lone-surrogate-expected.txt:
+        * web-platform-tests/content-security-policy/script-src/scripthash-unicode-normalization.sub-expected.txt:
+
 2021-12-20  Tim Nguyen  <ntim@apple.com>
 
         Re-import the-dialog-element WPT

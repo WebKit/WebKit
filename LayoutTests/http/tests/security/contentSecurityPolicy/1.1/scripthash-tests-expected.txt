@@ -1,5 +1,6 @@
 CONSOLE MESSAGE: Refused to execute a script because its hash, its nonce, or 'unsafe-inline' does not appear in the script-src directive of the Content Security Policy.
 CONSOLE MESSAGE: Refused to execute a script because its hash, its nonce, or 'unsafe-inline' does not appear in the script-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Refused to execute a script because its hash, its nonce, or 'unsafe-inline' does not appear in the script-src directive of the Content Security Policy.
 CONSOLE MESSAGE: The source list for Content Security Policy directive 'script-src' contains an invalid source: ''sha-/vET2rVA6WWSNY8XYBl+BqAL0gTF0fzw7eovQQG+hNA=''. It will be ignored.
 CONSOLE MESSAGE: Refused to execute a script because its hash, its nonce, or 'unsafe-inline' does not appear in the script-src directive of the Content Security Policy.
 CONSOLE MESSAGE: The source list for Content Security Policy directive 'script-src' contains an invalid source: ''sha-dummy''. It will be ignored.
@@ -41,8 +42,7 @@ PASS "Base64url encoded SHA-512 hash" did run inline script.
 PASS "Script that contains HTML entity &gt;" did run inline script.
 PASS "Script that contains Unicode code point U+00C5" did run inline script.
 PASS "Unicode code point U+00C5 is not equivalent to U+212B" did not run inline script.
-PASS "Unicode code point U+212B is equivalent to U+00C5" did run inline script.
-PASS "Big-5 page with Big-5 hash" did run inline script.
+PASS "Big-5 page with Big-5 hash" did not run inline script.
 PASS "Big-5 page with UTF-8 hash" did not run inline script.
 PASS "Hash source with invalid prefix" did not run inline script.
 PASS "Invalid prefix" did not run inline script.
