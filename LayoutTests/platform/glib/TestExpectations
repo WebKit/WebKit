@@ -481,7 +481,7 @@ webkit.org/b/133122 crypto/workers/subtle/aes-cfb-import-key-wrap-key.html [ Ski
 # CSS-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
 
-webkit.org/b/206589 fast/box-shadow/inset-box-shadow-fractional-radius.html [ ImageOnlyFailure ]
+webkit.org/b/211615 fast/box-shadow/inset-box-shadow-fractional-radius.html [ ImageOnlyFailure ]
 
 webkit.org/b/212300 fast/text/font-collection-2.html [ ImageOnlyFailure ]
 
@@ -2242,7 +2242,8 @@ webkit.org/b/206528 imported/w3c/web-platform-tests/remote-playback/watch-availa
 
 webkit.org/b/206586 imported/w3c/web-platform-tests/content-security-policy/frame-ancestors/frame-ancestors-from-serviceworker.https.html [ Failure ]
 webkit.org/b/206588 fast/history/page-cache-media-recorder.html [ Failure ]
-webkit.org/b/206589 fast/box-shadow/inset-box-shadow.html [ ImageOnlyFailure ]
+webkit.org/b/206005 fast/box-shadow/inset-box-shadow.html [ ImageOnlyFailure ]
+webkit.org/b/234529 fast/box-shadow/hidpi-box-shadow-inset-on-subpixel-position.html [ ImageOnlyFailure ]
 webkit.org/b/206652 imported/w3c/web-platform-tests/websockets/constructor/011.html [ Failure ]
 webkit.org/b/206652 imported/w3c/web-platform-tests/websockets/interfaces/WebSocket/bufferedAmount/bufferedAmount-getting.html [ Failure ]
 webkit.org/b/206692 fast/canvas/canvas-fillPath-shadow.html [ Failure ]
