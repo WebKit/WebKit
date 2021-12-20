@@ -3048,7 +3048,7 @@ static void handleWheelEventPhaseInScrollableArea(ScrollableArea& scrollableArea
 #endif
 }
 
-static bool didScrollInScrollableArea(ScrollableArea& scrollableArea, const WheelEvent& wheelEvent)
+static bool scrollViaNonPlatformEvent(ScrollableArea& scrollableArea, const WheelEvent& wheelEvent)
 {
     ScrollGranularity scrollGranularity = wheelGranularityToScrollGranularity(wheelEvent.deltaMode());
     bool didHandleWheelEvent = false;
@@ -3080,19 +3080,26 @@ bool EventHandler::handleWheelEventInAppropriateEnclosingBox(Node* startNode, co
     if (!shouldHandleEvent)
         return false;
 
-    if (is<RenderListBox>(initialEnclosingBox))
-        return didScrollInScrollableArea(downcast<RenderListBox>(initialEnclosingBox), wheelEvent);
+    auto scrollableAreaForBox = [](RenderBox& box) -> ScrollableArea* {
+        if (is<RenderListBox>(box))
+            return &downcast<RenderListBox>(box);
+
+        if (box.hasLayer())
+            return box.layer()->scrollableArea();
+
+        return nullptr;
+    };
 
     RenderBox* currentEnclosingBox = &initialEnclosingBox;
     while (currentEnclosingBox) {
-        if (auto* boxScrollableArea = currentEnclosingBox->layer() ? currentEnclosingBox->layer()->scrollableArea() : nullptr) {
+        if (auto* boxScrollableArea = scrollableAreaForBox(*currentEnclosingBox)) {
             auto platformEvent = wheelEvent.underlyingPlatformEvent();
             bool scrollingWasHandled;
             if (platformEvent) {
                 auto copiedEvent = platformEvent->copyWithDeltaAndVelocity(filteredPlatformDelta, filteredVelocity);
                 scrollingWasHandled = scrollableAreaCanHandleEvent(copiedEvent, *boxScrollableArea) && handleWheelEventInScrollableArea(copiedEvent, *boxScrollableArea, eventHandling);
             } else
-                scrollingWasHandled = didScrollInScrollableArea(*boxScrollableArea, wheelEvent);
+                scrollingWasHandled = scrollViaNonPlatformEvent(*boxScrollableArea, wheelEvent);
 
             if (scrollingWasHandled)
                 return true;
