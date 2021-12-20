@@ -1,3 +1,20 @@
+2021-12-20  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Add some missing API availability macros around some WebXR SPI
+        https://bugs.webkit.org/show_bug.cgi?id=234521
+
+        Reviewed by Tim Horton.
+
+        Add some missing API availability macros around some WebXR-related SPI that was introduced in r286318.
+        Also remove a few unnecessary `PLATFORM(COCOA)` compile-time guards, and add a missing `#import` to fix the
+        non-unified build.
+
+        * UIProcess/API/Cocoa/WKUIDelegatePrivate.h:
+        * UIProcess/Cocoa/PlatformXRCoordinator.mm:
+        * UIProcess/Cocoa/UIDelegate.h:
+        * UIProcess/Cocoa/UIDelegate.mm:
+        (WebKit::UIDelegate::setDelegate):
+
 2021-12-20  Alex Christensen  <achristensen@webkit.org>
 
         Prevent test functionality in AdAttributionDaemon when not running tests

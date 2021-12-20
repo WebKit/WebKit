@@ -193,7 +193,7 @@ void UIDelegate::setDelegate(id <WKUIDelegate> delegate)
     m_delegateMethods.webViewDidEnableInspectorBrowserDomain = [delegate respondsToSelector:@selector(_webViewDidEnableInspectorBrowserDomain:)];
     m_delegateMethods.webViewDidDisableInspectorBrowserDomain = [delegate respondsToSelector:@selector(_webViewDidDisableInspectorBrowserDomain:)];
 
-#if ENABLE(WEBXR) && PLATFORM(COCOA)
+#if ENABLE(WEBXR)
     m_delegateMethods.webViewRequestPermissionForXRSessionOriginModeAndFeaturesWithCompletionHandler = [delegate respondsToSelector:@selector(_webView:requestPermissionForXRSessionOrigin:mode:grantedFeatures:consentRequiredFeatures:consentOptionalFeatures:completionHandler:)];
     m_delegateMethods.webViewStartXRSessionWithCompletionHandler = [delegate respondsToSelector:@selector(_webView:startXRSessionWithCompletionHandler:)];
 #endif
@@ -1685,7 +1685,7 @@ void UIDelegate::UIClient::didDisableInspectorBrowserDomain(WebPageProxy&)
     [delegate _webViewDidDisableInspectorBrowserDomain:m_uiDelegate->m_webView.get().get()];
 }
 
-#if ENABLE(WEBXR) && PLATFORM(COCOA)
+#if ENABLE(WEBXR)
 static _WKXRSessionMode toWKXRSessionMode(PlatformXR::SessionMode mode)
 {
     switch (mode) {

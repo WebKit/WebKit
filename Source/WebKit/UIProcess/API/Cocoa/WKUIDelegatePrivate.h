@@ -92,7 +92,7 @@ typedef NS_ENUM(NSInteger, _WKXRSessionMode) {
     _WKXRSessionModeInline,
     _WKXRSessionModeImmersiveVr,
     _WKXRSessionModeImmersiveAr,
-};
+} WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 typedef NS_OPTIONS(NSUInteger, _WKXRSessionFeatureFlags) {
     _WKXRSessionFeatureFlagsNone = 0,
@@ -101,7 +101,7 @@ typedef NS_OPTIONS(NSUInteger, _WKXRSessionFeatureFlags) {
     _WKXRSessionFeatureFlagsReferenceSpaceTypeLocalFloor = 1 << 2,
     _WKXRSessionFeatureFlagsReferenceSpaceTypeBoundedFloor = 1 << 3,
     _WKXRSessionFeatureFlagsReferenceSpaceTypeUnbounded = 1 << 4,
-};
+} WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 @protocol WKUIDelegatePrivate <WKUIDelegate>
 
@@ -175,7 +175,7 @@ struct UIEdgeInsets;
 - (void)_webViewDidEnableInspectorBrowserDomain:(WKWebView *)webView WK_API_AVAILABLE(macos(12.0), ios(15.0));
 - (void)_webViewDidDisableInspectorBrowserDomain:(WKWebView *)webView WK_API_AVAILABLE(macos(12.0), ios(15.0));
 
-- (void)_webView:(WKWebView *)webView requestPermissionForXRSessionOrigin:(NSString *)originString mode:(_WKXRSessionMode)mode grantedFeatures:(_WKXRSessionFeatureFlags)grantedFeatures consentRequiredFeatures:(_WKXRSessionFeatureFlags)consentRequiredFeatures consentOptionalFeatures:(_WKXRSessionFeatureFlags)consentOptionalFeatures completionHandler:(void (^)(_WKXRSessionFeatureFlags))completionHandler;
+- (void)_webView:(WKWebView *)webView requestPermissionForXRSessionOrigin:(NSString *)originString mode:(_WKXRSessionMode)mode grantedFeatures:(_WKXRSessionFeatureFlags)grantedFeatures consentRequiredFeatures:(_WKXRSessionFeatureFlags)consentRequiredFeatures consentOptionalFeatures:(_WKXRSessionFeatureFlags)consentOptionalFeatures completionHandler:(void (^)(_WKXRSessionFeatureFlags))completionHandler WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 - (void)_webView:(WKWebView *)webView startXRSessionWithCompletionHandler:(void (^)(id))completionHandler WK_API_AVAILABLE(macos(12.0), ios(15.0));
 - (void)_webView:(WKWebView *)webView requestNotificationPermissionForSecurityOrigin:(WKSecurityOrigin *)securityOrigin decisionHandler:(void (^)(BOOL))decisionHandler WK_API_AVAILABLE(macos(10.13.4), ios(WK_IOS_TBA));
 
