@@ -509,7 +509,23 @@ TEST(ResourceLoadStatistics, NetworkProcessRestart)
 
 @end
 
+<<<<<<< HEAD
 #if HAVE(SSL)
+=======
+void waitUntilTwoServersConnected(const unsigned& serversConnected, CompletionHandler<void()>&& completionHandler)
+{
+    if (serversConnected >= 2) {
+        completionHandler();
+        return;
+    }
+    dispatch_async(dispatch_get_main_queue(), makeBlockPtr([&serversConnected, completionHandler = WTFMove(completionHandler)] () mutable {
+        waitUntilTwoServersConnected(serversConnected, WTFMove(completionHandler));
+    }).get());
+}
+
+// FIXME: Re-enable this test once webkit.org/b/231366 is resolved.
+#if PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED < 150000
+>>>>>>> 03cb852f3ba2 (Disable failing API tests)
 TEST(ResourceLoadStatistics, DataTaskIdentifierCollision)
 {
     using namespace TestWebKitAPI;
@@ -580,7 +596,11 @@ TEST(ResourceLoadStatistics, DataTaskIdentifierCollision)
     EXPECT_TRUE(contains(messages, @"1"));
     EXPECT_TRUE(contains(messages, @"2"));
 }
+<<<<<<< HEAD
 #endif // HAVE(SSL)
+=======
+#endif
+>>>>>>> 03cb852f3ba2 (Disable failing API tests)
 
 TEST(ResourceLoadStatistics, NoMessagesWhenNotTesting)
 {

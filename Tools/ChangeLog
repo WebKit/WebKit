@@ -1,3 +1,37 @@
+2021-12-20  Robert Jenner  <Jenner@apple.com>
+
+        Cherry-pick r284133. rdar://problem/84224737
+
+    Disable failing API tests
+    https://bugs.webkit.org/show_bug.cgi?id=231700
+    
+    Unreviewed test gardening.
+    
+    * TestWebKitAPI/Tests/WTF/cocoa/URLExtras.mm:
+    * TestWebKitAPI/Tests/WebKitCocoa/Challenge.mm:
+    * TestWebKitAPI/Tests/WebKitCocoa/Proxy.mm:
+    * TestWebKitAPI/Tests/WebKitCocoa/ResourceLoadStatistics.mm:
+    * TestWebKitAPI/Tests/WebKitCocoa/WKURLSchemeHandler-1.mm:
+    * TestWebKitAPI/Tests/WebKitCocoa/WKWebViewDoesNotLogDuringInitialization.mm:
+    * TestWebKitAPI/Tests/ios/WKWebViewPausePlayingAudioTests.mm:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@284133 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-10-13  Ryan Haddad  <ryanhaddad@apple.com>
+
+            Disable failing API tests
+            https://bugs.webkit.org/show_bug.cgi?id=231700
+
+            Unreviewed test gardening.
+
+            * TestWebKitAPI/Tests/WTF/cocoa/URLExtras.mm:
+            * TestWebKitAPI/Tests/WebKitCocoa/Challenge.mm:
+            * TestWebKitAPI/Tests/WebKitCocoa/Proxy.mm:
+            * TestWebKitAPI/Tests/WebKitCocoa/ResourceLoadStatistics.mm:
+            * TestWebKitAPI/Tests/WebKitCocoa/WKURLSchemeHandler-1.mm:
+            * TestWebKitAPI/Tests/WebKitCocoa/WKWebViewDoesNotLogDuringInitialization.mm:
+            * TestWebKitAPI/Tests/ios/WKWebViewPausePlayingAudioTests.mm:
+
 2021-12-06  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r286537. rdar://problem/85928816

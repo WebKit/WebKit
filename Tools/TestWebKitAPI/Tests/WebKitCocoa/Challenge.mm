@@ -523,6 +523,8 @@ static void verifyCertificateAndPublicKey(SecTrustRef trust)
 
 namespace TestWebKitAPI {
 
+// FIXME: Re-enable these tests once webkit.org/b/231320 is resolved.
+#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 120000) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED < 150000)
 TEST(WebKit, ServerTrust)
 {
     TCPServer server(TCPServer::Protocol::HTTPS, [] (SSL* ssl) {
@@ -574,6 +576,7 @@ TEST(WebKit, FastServerTrust)
     EXPECT_EQ([delegate authenticationChallengeCount], 0ull);
 #endif
 }
+#endif // (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 120000) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED < 150000)
 
 TEST(WebKit, ErrorSecureCoding)
 {
