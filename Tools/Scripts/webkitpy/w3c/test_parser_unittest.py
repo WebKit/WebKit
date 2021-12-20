@@ -195,6 +195,15 @@ class TestParserTest(unittest.TestCase):
         test_info = parser.analyze_test(test_contents=test_html)
         self.assertFalse('manualtest' in test_info.keys() and test_info['manualtest'], 'test_info is not manual')
 
+        parser = TestParser(options, os.path.join(test_path, 'somefile-ref-manual.html'))
+        test_info = parser.analyze_test(test_contents=test_html)
+        self.assertFalse('manualtest' in test_info.keys() and test_info['manualtest'], 'test_info is not manual')
+
+        ref_test_path = os.path.join(os.path.sep, 'some', 'madeup', 'path', 'reference')
+        parser = TestParser(options, os.path.join(ref_test_path, 'somefile-manual.html'))
+        test_info = parser.analyze_test(test_contents=test_html)
+        self.assertFalse('manualtest' in test_info.keys() and test_info['manualtest'], 'test_info is not manual')
+
     def test_analyze_css_manual_test(self):
         """ Tests analyze_test() using a css manual test """
 

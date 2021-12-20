@@ -120,16 +120,12 @@ class TestParser(object):
                     reference_relpath = self.filesystem.relpath(self.filesystem.dirname(self.filename), self.filesystem.dirname(ref_file)) + self.filesystem.sep
                     test_info['reference_support_info'] = {'reference_relpath': reference_relpath, 'files': reference_support_files}
 
-        # not all reference tests have a <link rel='match'> element in WPT repo
-        elif self.is_wpt_reftest():
-            test_info = {'test': self.filename, 'reference': self.potential_ref_filename()}
-            test_info['reference_support_info'] = {}
         # we check for wpt manual test before checking for jstest, as some WPT manual tests can be classified as CSS JS tests
-        elif self.is_wpt_manualtest():
+        elif self.is_wpt_manualtest() and not self.is_reference_filename():
             test_info = {'test': self.filename, 'manualtest': True}
         elif self.is_jstest():
             test_info = {'test': self.filename, 'jstest': True}
-        elif '-ref' in self.filename or 'reference' in self.filename:
+        elif self.is_reference_filename():
             test_info = {'referencefile': self.filename}
         elif self.options['all'] is True:
             test_info = {'test': self.filename}
@@ -167,6 +163,12 @@ class TestParser(object):
                 return True
 
         return False
+
+    def is_reference_filename(self):
+        # From tools/manifest/sourcefile.py in WPT repository
+        # https://github.com/web-platform-tests/wpt/blob/22f29564bb82b407aeaf6507c8efffdbd51b9974/tools/manifest/sourcefile.py#L405
+        reference_file_re = re.compile(r'(^|[\-_])(not)?ref[0-9]*([\-_]|$)')
+        return "/reference/" in self.filename or bool(reference_file_re.search(self.filename))
 
     def is_slow_test(self):
         return any([match.name == 'meta' and match['name'] == 'timeout' for match in self.test_doc.findAll(content='long')])
@@ -236,15 +238,6 @@ class TestParser(object):
             assert len(arg_values) == 0 and len(positional_args) == 0
 
         return result
-
-    def potential_ref_filename(self):
-        parts = self.filesystem.splitext(self.filename)
-        return parts[0] + '-ref' + parts[1]
-
-    def is_wpt_reftest(self):
-        """Returns whether the test is a ref test according WPT rules (i.e. file has a -ref.html counterpart)."""
-        parts = self.filesystem.splitext(self.filename)
-        return  self.filesystem.isfile(self.potential_ref_filename())
 
     def support_files(self, doc):
         """ Searches the file for all paths specified in url()'s, href or src attributes."""
