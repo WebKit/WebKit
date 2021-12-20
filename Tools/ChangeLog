@@ -1,3 +1,19 @@
+2021-12-20  Lauro Moura  <lmoura@igalia.com>
+
+        [webkitcorepy] Require cryptography while on Linux with Py3
+        https://bugs.webkit.org/show_bug.cgi?id=234499
+
+        Reviewed by Philippe Normand.
+
+        cryptography is required by secretstorage.util. When not installed,
+        the import fails and the keyring backend initialization fails silently,
+        just removing the SecretService keyring backend from the list of
+        viable backends. This can happen when running the scripts from a fresh
+        virtualenv, for example.
+
+        * Scripts/libraries/webkitcorepy/setup.py:
+        * Scripts/libraries/webkitcorepy/webkitcorepy/__init__.py:
+
 2021-12-20  Tim Nguyen  <ntim@apple.com>
 
         Fix Tools/Scripts/webkitpy/w3c/test_importer.py

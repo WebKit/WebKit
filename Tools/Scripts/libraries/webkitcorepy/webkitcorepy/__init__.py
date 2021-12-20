@@ -44,7 +44,7 @@ from webkitcorepy.call_by_need import CallByNeed
 from webkitcorepy.editor import Editor
 from webkitcorepy.file_lock import FileLock
 
-version = Version(0, 12, 3)
+version = Version(0, 12, 4)
 
 from webkitcorepy.autoinstall import Package, AutoInstall
 if sys.version_info > (3, 0):
@@ -76,6 +76,8 @@ AutoInstall.register(Package('whichcraft', Version(0, 6, 1)))
 if sys.version_info >= (3, 6):
     if sys.platform == 'linux':
         AutoInstall.register(Package('jeepney', Version(0, 7, 1)))
+        AutoInstall.register(Package('cffi', Version(1, 15, 0)))
+        AutoInstall.register(Package('cryptography', Version(36, 0, 1), wheel=True, implicit_deps=['cffi']))
         AutoInstall.register(Package('secretstorage', Version(3, 3, 1)))
     AutoInstall.register(Package('keyring', Version(23, 2, 1)))
 else:
