@@ -42,10 +42,12 @@
 #include "HTMLElement.h"
 #include "HTMLImageElement.h"
 #include "HTMLInputElement.h"
+#include "ModalContainerControlType.h"
 #include "Page.h"
 #include "RenderDescendantIterator.h"
 #include "RenderText.h"
 #include "RenderView.h"
+#include "SimulatedClickOptions.h"
 #include "Text.h"
 #include <wtf/Scope.h>
 #include <wtf/URL.h>
@@ -111,6 +113,9 @@ static bool matchesSearchTerm(const Text& textNode, const AtomString& searchTerm
 void ModalContainerObserver::updateModalContainerIfNeeded(const FrameView& view)
 {
     if (m_container)
+        return;
+
+    if (m_hasAttemptedToFulfillPolicy)
         return;
 
     if (!view.hasViewportConstrainedObjects())
@@ -256,7 +261,7 @@ void ModalContainerObserver::collectClickableElementsTimerFired()
     if (!m_container)
         return;
 
-    m_container->document().eventLoop().queueTask(TaskSource::InternalAsyncTask, [observer = this, weakDocument = WeakPtr { m_container->document() }] {
+    m_container->document().eventLoop().queueTask(TaskSource::InternalAsyncTask, [observer = this, weakDocument = WeakPtr { m_container->document() }]() mutable {
         RefPtr document = weakDocument.get();
         if (!document)
             return;
@@ -270,7 +275,83 @@ void ModalContainerObserver::collectClickableElementsTimerFired()
         if (classifiableControls.isEmpty())
             return;
 
-        // FIXME(234323): Classify strings by propagating them through the client layer.
+        auto* page = document->page();
+        if (!page) {
+            ASSERT_NOT_REACHED();
+            return;
+        }
+
+        page->chrome().client().classifyModalContainerControls(WTFMove(controlTextsToClassify), [weakDocument = WTFMove(weakDocument), observer, controls = WTFMove(classifiableControls)] (auto&& types) mutable {
+            if (types.size() != controls.size())
+                return;
+
+            RefPtr document = weakDocument.get();
+            if (!document)
+                return;
+
+            RefPtr documentLoader = document->loader();
+            if (!documentLoader) {
+                ASSERT_NOT_REACHED();
+                return;
+            }
+
+            if (observer != document->modalContainerObserverIfExists()) {
+                ASSERT_NOT_REACHED();
+                return;
+            }
+
+            Vector<Ref<HTMLElement>> positiveControls;
+            Vector<Ref<HTMLElement>> neutralControls;
+            Vector<Ref<HTMLElement>> negativeControls;
+            for (size_t index = 0; index < types.size(); ++index) {
+                auto control = controls[index];
+                if (!control)
+                    continue;
+
+                switch (types[index]) {
+                case ModalContainerControlType::Positive:
+                    positiveControls.append(*control);
+                    break;
+                case ModalContainerControlType::Negative:
+                    negativeControls.append(*control);
+                    break;
+                case ModalContainerControlType::Neutral:
+                    neutralControls.append(*control);
+                    break;
+                case ModalContainerControlType::Other:
+                    break;
+                }
+            }
+
+            RefPtr<HTMLElement> controlToClick;
+            switch (documentLoader->modalContainerObservationPolicy()) {
+            case ModalContainerObservationPolicy::Disabled:
+                ASSERT_NOT_REACHED();
+                break;
+            case ModalContainerObservationPolicy::Allow: {
+                if (!positiveControls.isEmpty())
+                    controlToClick = positiveControls[0].ptr();
+                else if (!neutralControls.isEmpty())
+                    controlToClick = neutralControls[0].ptr();
+                break;
+            }
+            case ModalContainerObservationPolicy::Disallow: {
+                if (!negativeControls.isEmpty())
+                    controlToClick = negativeControls[0].ptr();
+                else if (!neutralControls.isEmpty())
+                    controlToClick = neutralControls[0].ptr();
+                break;
+            }
+            case ModalContainerObservationPolicy::Prompt:
+                // Not supported yet.
+                break;
+            }
+
+            observer->m_hasAttemptedToFulfillPolicy = true;
+
+            if (controlToClick)
+                controlToClick->dispatchSimulatedClick(nullptr, SendMouseUpDownEvents, DoNotShowPressedLook);
+        });
     });
 }
 

@@ -60,6 +60,7 @@ private:
     WeakPtr<Element> m_container;
     Timer m_collectClickableElementsTimer;
     bool m_collectingClickableElements { false };
+    bool m_hasAttemptedToFulfillPolicy { false };
 };
 
 } // namespace WebCore
