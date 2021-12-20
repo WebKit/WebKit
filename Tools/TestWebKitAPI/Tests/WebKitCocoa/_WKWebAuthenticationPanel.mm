@@ -72,6 +72,7 @@ static bool webAuthenticationPanelUpdateLAError = false;
 static bool webAuthenticationPanelUpdateLAExcludeCredentialsMatched = false;
 static bool webAuthenticationPanelUpdateLANoCredential = false;
 static bool webAuthenticationPanelCancelImmediately = false;
+static bool webAuthenticationPanelRequestNoGesture = true;
 static _WKLocalAuthenticatorPolicy localAuthenticatorPolicy = _WKLocalAuthenticatorPolicyDisallow;
 static String webAuthenticationPanelPin;
 static BOOL webAuthenticationPanelNullUserHandle = NO;
@@ -233,7 +234,7 @@ static bool laContextRequested = false;
 
 - (void)_webView:(WKWebView *)webView requestWebAuthenticationNoGestureForOrigin:(WKSecurityOrigin *)orgin completionHandler:(void (^)(BOOL))completionHandler
 {
-    completionHandler(true);
+    completionHandler(webAuthenticationPanelRequestNoGesture);
 }
 
 - (void)_webView:(WKWebView *)webView runWebAuthenticationPanel:(_WKWebAuthenticationPanel *)panel initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)(_WKWebAuthenticationPanelResult))completionHandler
@@ -342,6 +343,7 @@ static void reset()
     webAuthenticationPanelUpdateLAExcludeCredentialsMatched = false;
     webAuthenticationPanelUpdateLANoCredential = false;
     webAuthenticationPanelCancelImmediately = false;
+    webAuthenticationPanelRequestNoGesture = true;
     webAuthenticationPanelPin = emptyString();
     webAuthenticationPanelNullUserHandle = NO;
     localAuthenticatorPolicy = _WKLocalAuthenticatorPolicyDisallow;
@@ -1493,6 +1495,7 @@ TEST(WebAuthenticationPanel, LAMakeCredentialAllowLocalAuthenticator)
 TEST(WebAuthenticationPanel, LAMakeCredentialNoMockNoUserGesture)
 {
     reset();
+    webAuthenticationPanelRequestNoGesture = false;
     RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"web-authentication-make-credential-la-no-mock" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
 
     auto *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
@@ -1562,6 +1565,7 @@ TEST(WebAuthenticationPanel, LAGetAssertion)
 TEST(WebAuthenticationPanel, LAGetAssertionNoMockNoUserGesture)
 {
     reset();
+    webAuthenticationPanelRequestNoGesture = false;
     RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"web-authentication-get-assertion-la-no-mock" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
 
     auto *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];

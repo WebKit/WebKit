@@ -1,5 +1,23 @@
 2021-12-20  J Pascoe  <j_pascoe@apple.com>
 
+        [WebAuthn] Add option to change requestWebAuthenticationNoGesture delegate for api tests.
+        https://bugs.webkit.org/show_bug.cgi?id=234444
+        rdar://86644642
+
+        Reviewed by Brent Fulgham.
+
+        These test a lack of user gesture in local authenticator. Recently we made a change to
+        change user gesture behavior, causing these tests to call out to an agent that cannot be called
+        from TWAPI. To restore test behavior, we add an option to change the return value of the
+        requestWebAuthenticationNoGesture delegate in tests.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/_WKWebAuthenticationPanel.mm:
+        (-[TestWebAuthenticationPanelUIDelegate _webView:requestWebAuthenticationNoGestureForOrigin:completionHandler:]):
+        (TestWebKitAPI::WebCore::reset):
+        (TestWebKitAPI::TEST):
+
+2021-12-20  J Pascoe  <j_pascoe@apple.com>
+
         [WebAuthn] Only run WebAuthn test process on platform it is used
         https://bugs.webkit.org/show_bug.cgi?id=234445
         rdar://86646638
