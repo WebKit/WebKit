@@ -349,7 +349,7 @@ class TestImporter(object):
                     # Using a naming convention creates duplicate copies of the
                     # reference files.
                     ref_file = self.filesystem.splitext(test_basename)[0] + '-expected'
-                    if test_info['type'] == 'mismatch':
+                    if 'type' in test_info and test_info['type'] == 'mismatch':
                         ref_file += '-mismatch'
                     ref_file += self.filesystem.splitext(test_info['reference'])[1]
 

@@ -1,3 +1,13 @@
+2021-12-20  Tim Nguyen  <ntim@apple.com>
+
+        Fix Tools/Scripts/webkitpy/w3c/test_importer.py
+        https://bugs.webkit.org/show_bug.cgi?id=234480
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        * Scripts/webkitpy/w3c/test_importer.py:
+        (TestImporter.find_importable_tests):
+
 2021-12-20  Lauro Moura  <lmoura@igalia.com>
 
         REGRESSION(r286936) [GLIB] WebsiteData configuration API test is failing with non-created localstorage dir
