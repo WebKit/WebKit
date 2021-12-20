@@ -121,24 +121,6 @@ template<typename T> struct COMVariantSetter<COMPtr<T> > : COMVariantSetterBase<
     }
 };
 
-template<typename T> struct COMVariantSetter<Vector<T>> : COMVariantSetterBase<Vector<T>> {
-    static const VARTYPE VariantType = VT_ARRAY | COMVariantSetter<T>::VariantType;
-
-    static void setVariant(VARIANT* variant, const Vector<T>& value)
-    {
-        ASSERT(V_VT(variant) == VT_EMPTY);
-
-        SAFEARRAY* safeArray = ::SafeArrayCreateVector(COMVariantSetter<T>::VariantType, 0, value.size());
-        for (LONG i = 0; i < value.size(); ++i) {
-            COMVariant item(value[i]);
-            ::SafeArrayPutElement(safeArray, &i, &item);
-        }
-
-        V_VT(variant) = VariantType;
-        V_ARRAY(variant) = safeArray;
-    }
-};
-
 template<typename COMType, typename UnderlyingType>
 struct COMIUnknownVariantSetter : COMVariantSetterBase<UnderlyingType>
 {
@@ -217,6 +199,24 @@ template<> struct COMVariantSetter<COMVariant>
         ASSERT(V_VT(variant) == VT_EMPTY);
 
         value.copyTo(variant);
+    }
+};
+
+template<typename T> struct COMVariantSetter<Vector<T>> : COMVariantSetterBase<Vector<T>> {
+    static const VARTYPE VariantType = VT_ARRAY | COMVariantSetter<T>::VariantType;
+
+    static void setVariant(VARIANT* variant, const Vector<T>& value)
+    {
+        ASSERT(V_VT(variant) == VT_EMPTY);
+
+        SAFEARRAY* safeArray = ::SafeArrayCreateVector(COMVariantSetter<T>::VariantType, 0, value.size());
+        for (LONG i = 0; i < value.size(); ++i) {
+            COMVariant item(value[i]);
+            ::SafeArrayPutElement(safeArray, &i, &item);
+        }
+
+        V_VT(variant) = VariantType;
+        V_ARRAY(variant) = safeArray;
     }
 };
 

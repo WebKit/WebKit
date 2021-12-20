@@ -1,3 +1,19 @@
+2021-12-20  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win] MSVC reports "COMVariantSetter.h(133): error C2760: syntax error: unexpected token 'identifier', expected ';'" with /std:c++20
+        https://bugs.webkit.org/show_bug.cgi?id=234501
+
+        Reviewed by Don Olmstead.
+
+        > Source\WebKitLegacy\win\COMVariantSetter.h(133): error C2760: syntax error: unexpected token 'identifier', expected ';'
+        > Source\WebKitLegacy\win\COMVariantSetter.h(140): note: see reference to class template instantiation 'COMVariantSetter<WTF::Vector<T,0,WTF::CrashOnOverflow,16,WTF::VectorMalloc>>' being compiled
+
+        COMVariant should be used after defined.
+
+        * COMVariantSetter.h:
+        (COMVariantSetter<Vector<T>>): Moved after the COMVariant
+        definition.
+
 2021-12-19  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Add client layer plumbing for classifying modal container controls
