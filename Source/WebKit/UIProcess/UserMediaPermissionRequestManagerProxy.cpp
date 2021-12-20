@@ -737,7 +737,7 @@ void UserMediaPermissionRequestManagerProxy::computeFilteredDeviceList(bool reve
     static const unsigned defaultMaximumCameraCount = 1;
     static const unsigned defaultMaximumMicrophoneCount = 1;
 
-    platformGetMediaStreamDevices([this, weakThis = WeakPtr { *this }, revealIdsAndLabels, completion = WTFMove(completion)](auto&& devices) mutable {
+    platformGetMediaStreamDevices([logIdentifier = LOGIDENTIFIER, this, weakThis = WeakPtr { *this }, revealIdsAndLabels, completion = WTFMove(completion)](auto&& devices) mutable {
 
         if (!weakThis) {
             completion({ });
@@ -747,11 +747,15 @@ void UserMediaPermissionRequestManagerProxy::computeFilteredDeviceList(bool reve
         unsigned cameraCount = 0;
         unsigned microphoneCount = 0;
 
+        bool hasCamera = false;
+        bool hasMicrophone = false;
+
         Vector<CaptureDevice> filteredDevices;
         for (const auto& device : devices) {
             if (!device.enabled() || (device.type() != WebCore::CaptureDevice::DeviceType::Camera && device.type() != WebCore::CaptureDevice::DeviceType::Microphone && device.type() != WebCore::CaptureDevice::DeviceType::Speaker))
                 continue;
-
+            hasCamera |= device.type() == WebCore::CaptureDevice::DeviceType::Camera;
+            hasMicrophone |= device.type() == WebCore::CaptureDevice::DeviceType::Microphone;
             if (!revealIdsAndLabels) {
                 if (device.type() == WebCore::CaptureDevice::DeviceType::Camera && ++cameraCount > defaultMaximumCameraCount)
                     continue;
@@ -769,7 +773,7 @@ void UserMediaPermissionRequestManagerProxy::computeFilteredDeviceList(bool reve
         }
 
         m_hasFilteredDeviceList = !revealIdsAndLabels;
-        ALWAYS_LOG(LOGIDENTIFIER, filteredDevices.size(), " devices revealed");
+        ALWAYS_LOG(logIdentifier, filteredDevices.size(), " devices revealed, has filtering = ", !revealIdsAndLabels, " has camera = ", hasCamera, ", has microphone = ", hasMicrophone, " ");
 
         completion(WTFMove(filteredDevices));
     });
