@@ -107,7 +107,6 @@ DragImageRef scaleDragImage(DragImageRef imageRef, FloatSize scale)
     if (!imageRef)
         return 0;
 
-    GDIObject<HBITMAP> hbmp;
     auto image = adoptGDIObject(imageRef);
 
     IntSize srcSize = dragImageSize(image.get());
@@ -116,12 +115,12 @@ DragImageRef scaleDragImage(DragImageRef imageRef, FloatSize scale)
     HWndDC dc(0);
     auto dstDC = adoptGDIObject(::CreateCompatibleDC(dc));
     if (!dstDC)
-        goto exit;
+        return image.leak();
 
     GraphicsContextCairo* targetContext;
-    hbmp = allocImage(dstDC.get(), dstSize, &targetContext);
+    GDIObject<HBITMAP> hbmp = allocImage(dstDC.get(), dstSize, &targetContext);
     if (!hbmp)
-        goto exit;
+        return image.leak();
 
     cairo_surface_t* srcImage = createCairoContextFromBitmap(image.get());
 
@@ -139,9 +138,6 @@ DragImageRef scaleDragImage(DragImageRef imageRef, FloatSize scale)
     cairo_surface_destroy(srcImage);
     deallocContext(targetContext);
 
-exit:
-    if (!hbmp)
-        hbmp.swap(image);
     return hbmp.leak();
 }
     
