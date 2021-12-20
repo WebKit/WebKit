@@ -234,7 +234,8 @@ public:
         size_t m_currentPacketByteOffset { 0 };
         uint8_t m_framesPerPacket { 0 };
         Seconds m_frameDuration { 0_s };
-        Vector<AudioStreamPacketDescription> m_packetDescriptions;
+        Vector<size_t> m_packetSizes;
+        Vector<CMSampleTimingInfo> m_packetTimings;
         size_t mNumFramesInCompleteBlock { 0 };
         // FIXME: 0.5 - 1.0 seconds is a better duration per sample buffer, but use 2 seconds so at least the first
         // sample buffer will play until we fix MediaSampleCursor::createSampleBuffer to deal with `endCursor`.

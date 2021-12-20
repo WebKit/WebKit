@@ -1373,13 +1373,23 @@ void SourceBufferParserWebM::VideoTrackData::createSampleBuffer(const CMTime& pr
 void SourceBufferParserWebM::AudioTrackData::resetCompleted()
 {
     mNumFramesInCompleteBlock = 0;
-    m_packetDescriptions.clear();
+    m_packetSizes.clear();
+    m_packetTimings.clear();
     m_currentPacketByteOffset = 0;
     TrackData::resetCompleted();
 }
 
 webm::Status SourceBufferParserWebM::AudioTrackData::consumeFrameData(webm::Reader& reader, const FrameMetadata& metadata, uint64_t* bytesRemaining, const CMTime& presentationTime, int sampleCount)
 {
+    if (m_packetTimings.size()) {
+        auto& lastTiming = m_packetTimings.last();
+        if (PAL::CMTimeCompare(PAL::CMTimeAdd(lastTiming.duration, lastTiming.presentationTimeStamp), presentationTime)) {
+            // Discontinuity encountered, emit the previously demuxed samples.
+            createSampleBuffer(metadata.position);
+            reset();
+        }
+    }
+
     auto status = readFrameData(reader, metadata, bytesRemaining);
     if (!status.completed_ok())
         return status;
@@ -1389,7 +1399,7 @@ webm::Status SourceBufferParserWebM::AudioTrackData::consumeFrameData(webm::Read
     if (mNumFramesInCompleteBlock > mMaxBlockBufferCapacity)
         mMaxBlockBufferCapacity = mNumFramesInCompleteBlock;
 
-    if (m_packetDescriptions.isEmpty())
+    if (m_packetSizes.isEmpty())
         m_samplePresentationTime = presentationTime;
 
     if (!formatDescription()) {
@@ -1466,11 +1476,13 @@ webm::Status SourceBufferParserWebM::AudioTrackData::consumeFrameData(webm::Read
         }
     }
 
-    m_packetDescriptions.append({ static_cast<int64_t>(m_currentPacketByteOffset), 0, static_cast<UInt32>(*m_completePacketSize) });
+    m_packetSizes.append(*m_completePacketSize);
+    m_packetTimings.append({ m_packetDuration, presentationTime, PAL::kCMTimeInvalid });
     m_currentPacketByteOffset += *m_completePacketSize;
     m_completePacketSize = std::nullopt;
 
     auto sampleDuration = PAL::CMTimeGetSeconds(PAL::CMTimeSubtract(presentationTime, m_samplePresentationTime)) + PAL::CMTimeGetSeconds(m_packetDuration) * sampleCount;
+
     if (sampleDuration >= m_minimumSampleDuration) {
         createSampleBuffer(metadata.position);
         reset();
@@ -1482,11 +1494,11 @@ webm::Status SourceBufferParserWebM::AudioTrackData::consumeFrameData(webm::Read
 
 void SourceBufferParserWebM::AudioTrackData::createSampleBuffer(std::optional<size_t> latestByteRangeOffset)
 {
-    if (m_packetDescriptions.isEmpty())
+    if (m_packetSizes.isEmpty())
         return;
 
     CMSampleBufferRef rawSampleBuffer = nullptr;
-    auto err = PAL::CMAudioSampleBufferCreateReadyWithPacketDescriptions(kCFAllocatorDefault, m_completeBlockBuffer.get(), formatDescription().get(), m_packetDescriptions.size(), m_samplePresentationTime, m_packetDescriptions.data(), &rawSampleBuffer);
+    auto err = PAL::CMSampleBufferCreateReady(kCFAllocatorDefault, m_completeBlockBuffer.get(), formatDescription().get(), m_packetSizes.size(), m_packetTimings.size(), m_packetTimings.data(), m_packetSizes.size(), m_packetSizes.data(), &rawSampleBuffer);
     if (err) {
         PARSER_LOG_ERROR_IF_POSSIBLE("CMAudioSampleBufferCreateWithPacketDescriptions failed with %d", err);
         return;
