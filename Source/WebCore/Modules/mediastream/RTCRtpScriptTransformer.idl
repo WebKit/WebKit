@@ -34,5 +34,7 @@
     readonly attribute WritableStream writable;
     [CallWith=GlobalObject, CachedAttribute] readonly attribute any options;
 
-    undefined requestKeyFrame();
+    // FIXME: Add support for RID options.
+    Promise<undefined> generateKeyFrame();
+    Promise<undefined> sendKeyFrameRequest();
 };

@@ -29,6 +29,7 @@
 #if ENABLE(WEB_RTC)
 
 #include "DedicatedWorkerGlobalScope.h"
+#include "EventLoop.h"
 #include "JSRTCEncodedAudioFrame.h"
 #include "JSRTCEncodedVideoFrame.h"
 #include "MessageWithMessagePorts.h"
@@ -123,17 +124,10 @@ void RTCRtpScriptTransformer::start(Ref<RTCRtpTransformBackend>&& backend)
     m_backend = WTFMove(backend);
 
     auto& context = downcast<WorkerGlobalScope>(*scriptExecutionContext());
-    m_backend->setTransformableFrameCallback([readableSource = WeakPtr { m_readableSource }, isAudio = m_backend->mediaType() == RTCRtpTransformBackend::MediaType::Audio, thread = Ref { context.thread() }](auto&& frame) mutable {
-        thread->runLoop().postTaskForMode([readableSource, isAudio, frame = WTFMove(frame)](auto& context) mutable {
-            if (!readableSource)
-                return;
-
-            auto& globalObject = *JSC::jsCast<JSDOMGlobalObject*>(context.globalObject());
-            auto& vm = globalObject.vm();
-            JSC::JSLockHolder lock(vm);
-
-            auto value = isAudio ? toJS(&globalObject, &globalObject, RTCEncodedAudioFrame::create(WTFMove(frame))) : toJS(&globalObject, &globalObject, RTCEncodedVideoFrame::create(WTFMove(frame)));
-            readableSource->enqueue(value);
+    m_backend->setTransformableFrameCallback([weakThis = WeakPtr { *this }, thread = Ref { context.thread() }](auto&& frame) mutable {
+        thread->runLoop().postTaskForMode([weakThis, frame = WTFMove(frame)](auto& context) mutable {
+            if (weakThis)
+                weakThis->enqueueFrame(context, WTFMove(frame));
         }, WorkerRunLoop::defaultMode());
     });
 }
@@ -146,16 +140,53 @@ void RTCRtpScriptTransformer::clear(ClearCallback clearCallback)
     stopPendingActivity();
 }
 
-ExceptionOr<void> RTCRtpScriptTransformer::requestKeyFrame()
+void RTCRtpScriptTransformer::enqueueFrame(ScriptExecutionContext& context, Ref<RTCRtpTransformableFrame>&& frame)
 {
-    if (!m_backend)
-        return Exception { InvalidStateError, "Not attached to a receiver or sender"_s };
+    auto* globalObject = JSC::jsCast<JSDOMGlobalObject*>(context.globalObject());
+    if (!globalObject)
+        return;
 
-    if (m_backend->mediaType() != RTCRtpTransformBackend::MediaType::Video)
-        return Exception { InvalidStateError, "Cannot request key frame on audio sender"_s };
+    auto& vm = globalObject->vm();
+    JSC::JSLockHolder lock(vm);
 
+    bool isVideo = m_backend->mediaType() == RTCRtpTransformBackend::MediaType::Video;
+    if (isVideo && !m_pendingKeyFramePromises.isEmpty() && frame->isKeyFrame()) {
+        for (auto& promise : std::exchange(m_pendingKeyFramePromises, { }))
+            promise->resolve();
+    }
+
+    auto value = isVideo ? toJS(globalObject, globalObject, RTCEncodedVideoFrame::create(WTFMove(frame))) : toJS(globalObject, globalObject, RTCEncodedAudioFrame::create(WTFMove(frame)));
+    m_readableSource->enqueue(value);
+}
+
+void RTCRtpScriptTransformer::generateKeyFrame(Ref<DeferredPromise>&& promise)
+{
+    auto* context = scriptExecutionContext();
+    if (!context || !m_backend || m_backend->side() != RTCRtpTransformBackend::Side::Sender || m_backend->mediaType() != RTCRtpTransformBackend::MediaType::Video) {
+        promise->reject(Exception { InvalidStateError, "Not attached to a valid video sender"_s });
+        return;
+    }
+
+    bool shouldRequestKeyFrame = m_pendingKeyFramePromises.isEmpty();
+    m_pendingKeyFramePromises.append(WTFMove(promise));
+    if (shouldRequestKeyFrame)
+        m_backend->requestKeyFrame();
+}
+
+void RTCRtpScriptTransformer::sendKeyFrameRequest(Ref<DeferredPromise>&& promise)
+{
+    auto* context = scriptExecutionContext();
+    if (!context || !m_backend || m_backend->side() != RTCRtpTransformBackend::Side::Receiver || m_backend->mediaType() != RTCRtpTransformBackend::MediaType::Video) {
+        promise->reject(Exception { InvalidStateError, "Not attached to a valid video receiver"_s });
+        return;
+    }
+
+    // FIXME: We should be able to know when the FIR request is sent to resolve the promise at this exact time.
     m_backend->requestKeyFrame();
-    return { };
+
+    context->eventLoop().queueTask(TaskSource::Networking, [promise = WTFMove(promise)]() mutable {
+        promise->resolve();
+    });
 }
 
 JSC::JSValue RTCRtpScriptTransformer::options(JSC::JSGlobalObject& globalObject)

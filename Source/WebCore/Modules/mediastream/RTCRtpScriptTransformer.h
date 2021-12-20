@@ -29,6 +29,7 @@
 
 #include "ActiveDOMObject.h"
 #include "ExceptionOr.h"
+#include "JSDOMPromiseDeferred.h"
 #include "RTCRtpTransformBackend.h"
 #include <JavaScriptCore/JSCJSValue.h>
 #include <wtf/RefCounted.h>
@@ -58,7 +59,8 @@ public:
     ExceptionOr<Ref<WritableStream>> writable();
     JSC::JSValue options(JSC::JSGlobalObject&);
 
-    ExceptionOr<void> requestKeyFrame();
+    void generateKeyFrame(Ref<DeferredPromise>&&);
+    void sendKeyFrameRequest(Ref<DeferredPromise>&&);
 
     void startPendingActivity() { m_pendingActivity = makePendingActivity(*this); }
     void start(Ref<RTCRtpTransformBackend>&&);
@@ -75,6 +77,8 @@ private:
 
     void stopPendingActivity() { auto pendingActivity = WTFMove(m_pendingActivity); }
 
+    void enqueueFrame(ScriptExecutionContext&, Ref<RTCRtpTransformableFrame>&&);
+
     Ref<SerializedScriptValue> m_options;
     Vector<RefPtr<MessagePort>> m_ports;
 
@@ -84,6 +88,8 @@ private:
 
     RefPtr<RTCRtpTransformBackend> m_backend;
     RefPtr<PendingActivity<RTCRtpScriptTransformer>> m_pendingActivity;
+
+    Deque<Ref<DeferredPromise>> m_pendingKeyFramePromises;
 };
 
 } // namespace WebCore
