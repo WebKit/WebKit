@@ -86,12 +86,7 @@ TEST(WebSocket, LongMessageNoDeflate)
     EXPECT_WK_STREQ([webView _test_waitForAlert], "PASS");
 }
 
-// FIXME: Re-enable this test for Monterey+ once webkit.org/b/233224 is resolved.
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 120000
-TEST(WebSocket, DISABLED_PageWithAttributedBundleIdentifierDestroyed)
-#else
 TEST(WebSocket, PageWithAttributedBundleIdentifierDestroyed)
-#endif
 {
     HTTPServer server([](Connection connection) {
         connection.webSocketHandshake();

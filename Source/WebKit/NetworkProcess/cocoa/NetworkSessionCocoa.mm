@@ -1763,7 +1763,7 @@ void NetworkSessionCocoa::addWebPageNetworkParameters(WebPageProxyIdentifier pag
     auto addResult2 = m_perPageSessionSets.add(pageID, SessionSet::create());
     ASSERT(addResult2.isNewEntry);
     RetainPtr<NSURLSessionConfiguration> configuration = adoptNS([m_defaultSessionSet->sessionWithCredentialStorage.session.get().configuration copy]);
-#if HAVE(CFNETWORK_NSURLSESSION_ATTRIBUTED_BUNDLE_IDENTIFIER)
+#if HAVE(CFNETWORK_NSURLSESSION_ATTRIBUTED_BUNDLE_IDENTIFIER) && USE(APPLE_INTERNAL_SDK)
     if ([configuration respondsToSelector:@selector(_attributedBundleIdentifier)])
         configuration.get()._attributedBundleIdentifier = parameters.attributedBundleIdentifier();
 #endif

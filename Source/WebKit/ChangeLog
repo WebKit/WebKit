@@ -1,3 +1,16 @@
+2021-12-20  Alex Christensen  <achristensen@webkit.org>
+
+        [ Monterey ] TestWebKitAPI.WebSocket.PageWithAttributedBundleIdentifierDestroyed (API-test) is a constant timeout
+        https://bugs.webkit.org/show_bug.cgi?id=233224
+
+        Reviewed by Darin Adler.
+
+        Using NSURLSession._attributedBundleIdentifier requires the com.apple.private.network.socket-delegate entitlement,
+        which can't be signed into the network process with the public SDK.
+
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (WebKit::NetworkSessionCocoa::addWebPageNetworkParameters):
+
 2021-12-20  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Minor cleanup in AuthenticationServicesCoreSPI.h

@@ -1,3 +1,13 @@
+2021-12-20  Alex Christensen  <achristensen@webkit.org>
+
+        [ Monterey ] TestWebKitAPI.WebSocket.PageWithAttributedBundleIdentifierDestroyed (API-test) is a constant timeout
+        https://bugs.webkit.org/show_bug.cgi?id=233224
+
+        Reviewed by Darin Adler.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WebSocket.mm:
+        (TestWebKitAPI::TEST):
+
 2021-12-20  Tim Nguyen  <ntim@apple.com>
 
         Stop assuming WPT is a reftest based on existence of -ref.html file
