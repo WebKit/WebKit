@@ -1,0 +1,3 @@
+
+FAIL Ensure that closed dialogs do not block mouse events. To test manually, click the red box. The test succeeds if the red box turns green. assert_true: div should have gotten a click event. expected true got undefined
+

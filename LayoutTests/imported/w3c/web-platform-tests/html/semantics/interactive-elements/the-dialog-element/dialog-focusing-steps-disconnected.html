@@ -8,7 +8,7 @@
 <body>
 <input>
 <script>
-test(() => {
+test(function() {
   const outerInput = document.querySelector("input");
   outerInput.focus();
   assert_equals(document.activeElement, outerInput,
@@ -22,14 +22,12 @@ test(() => {
   dialog.append(innerInput);
 
   dialog.show();
+  this.add_cleanup(() => { dialog.close(); });
 
   assert_equals(document.activeElement, outerInput, "Focusing steps should not change focus");
-
-  // Clean up
-  dialog.close();
 }, "dialog.show(): focusing steps should not change focus on disconnected <dialog>");
 
-test(() => {
+test(function() {
   assert_throws_dom("InvalidStateError", () => {
     document.createElement("dialog").showModal();
   });

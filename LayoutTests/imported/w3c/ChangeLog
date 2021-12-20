@@ -1,3 +1,77 @@
+2021-12-20  Tim Nguyen  <ntim@apple.com>
+
+        Re-import the-dialog-element WPT
+        https://bugs.webkit.org/show_bug.cgi?id=234479
+
+        Reviewed by Dean Jackson.
+
+        Upstream commit: https://github.com/web-platform-tests/wpt/commit/6259400ce70fd41d25bcf5db624a04db854f304e
+
+        * resources/resource-files.json:
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/abspos-dialog-layout.html:
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/backdrop-receives-element-events-expected.txt: Added.
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/backdrop-receives-element-events.html: Added.
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/closed-dialog-does-not-block-mouse-events-expected.txt: Added.
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/closed-dialog-does-not-block-mouse-events.html: Added.
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-canceling-expected.txt: Added.
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-canceling.html: Added.
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-close-event-async-expected.txt: Added.
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-close-event-async.html: Added.
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-close-event-expected.txt: Added.
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-close-event.html: Added.
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-focusing-steps-disconnected.html:
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-focusing-steps-inert.html:
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-open-2-expected.txt: Added.
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-open-2.html: Added.
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-show-modal-expected.txt: Added.
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-show-modal-inert-crash.html: Added.
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-show-modal.html: Added.
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/inert-focus-in-frames-expected.txt: Added.
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/inert-focus-in-frames.html: Added.
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/inert-inlines-expected.txt: Added.
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/inert-inlines.html: Added.
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/inert-label-focus-expected.txt: Added.
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/inert-label-focus.html: Added.
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/inert-node-is-uneditable-expected.txt: Added.
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/inert-node-is-uneditable.html: Added.
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/inert-node-is-unselectable-expected.txt: Added.
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/inert-node-is-unselectable.html: Added.
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/inertness-with-modal-dialogs-and-iframes-expected.txt: Added.
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/inertness-with-modal-dialogs-and-iframes.html: Added.
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/modal-dialog-ancestor-is-inert-expected.txt: Added.
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/modal-dialog-ancestor-is-inert.html: Added.
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/modal-dialog-blocks-mouse-events-expected.txt: Added.
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/modal-dialog-blocks-mouse-events.html: Added.
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/modal-dialog-scroll-height-expected.txt: Added.
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/modal-dialog-scroll-height.html: Added.
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/multiple-centered-dialogs-expected.txt: Added.
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/multiple-centered-dialogs.html: Added.
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/non-modal-dialog-does-not-block-mouse-events-expected.txt: Added.
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/non-modal-dialog-does-not-block-mouse-events.html: Added.
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/non-modal-dialog-layout-expected.txt: Added.
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/non-modal-dialog-layout.html: Added.
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/resources/dialog.css:
+        (.pseudodialog):
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/resources/inert-focus-in-frames-frame1.html: Added.
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/resources/inert-focus-in-frames-frame2.html: Added.
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/resources/w3c-import.log:
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/showmodal-in-shadow-crash.html: Added.
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/showmodal-shadow-sibling-frame-crash.html: Added.
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/simulated-click-inert-expected.txt: Added.
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/simulated-click-inert.html: Added.
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/submit-dialog-close-event-expected.txt: Added.
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/submit-dialog-close-event.html: Added.
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/synthetic-click-inert-expected.txt: Added.
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/synthetic-click-inert.html: Added.
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/top-layer-parent-mask.html:
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/top-layer-position-relative-expected.html: Added.
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/top-layer-position-relative.html: Added.
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/top-layer-position-static-expected.html: Added.
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/top-layer-position-static.html: Added.
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/top-layer-position-expected.txt: Added.
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/top-layer-position.html: Added.
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/w3c-import.log:
+
 2021-12-14  Sergio Villar Senin  <svillar@igalia.com>
 
         [css-flexbox] Pre-layout orthogonal children to compute the preferred logical width

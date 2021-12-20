@@ -1,0 +1,3 @@
+
+FAIL Test that ancestors of modal dialog are inert. assert_true: Clicking on ancestor. expected true got false
+
