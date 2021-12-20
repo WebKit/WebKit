@@ -113,6 +113,10 @@ void RenderFlexibleBox::computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidt
             continue;
         ++numItemsWithNormalLayout;
 
+        // Pre-layout orthogonal children in order to get a valid value for the preferred width.
+        if (style().isHorizontalWritingMode() != child->style().isHorizontalWritingMode())
+            child->layoutIfNeeded();
+
         LayoutUnit margin = marginIntrinsicLogicalWidthForChild(*child);
 
         LayoutUnit minPreferredLogicalWidth;
