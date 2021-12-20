@@ -1,3 +1,14 @@
+2021-12-20  Lauro Moura  <lmoura@igalia.com>
+
+        REGRESSION(r286936) [GLIB] WebsiteData configuration API test is failing with non-created localstorage dir
+        https://bugs.webkit.org/show_bug.cgi?id=234497
+
+        Reviewed by Adrian Perez de Castro.
+
+        * TestWebKitAPI/Tests/WebKitGLib/TestWebsiteData.cpp:
+        (testWebsiteDataConfiguration): Ensure localStorage is created before
+        trying to query it.
+
 2021-12-18  Alex Christensen  <achristensen@webkit.org>
 
         [Monterey] TestWebKitAPI.PrivateClickMeasurement.Daemon* tests timing out: Failed to connect to mach service org.webkit.pcmtestdaemon.service
