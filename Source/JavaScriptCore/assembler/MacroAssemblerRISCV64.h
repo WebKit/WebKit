@@ -2163,11 +2163,45 @@ public:
         m_assembler.fsgnjxInsn<64>(dest, src, src);
     }
 
-    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(ceilFloat);
-    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(ceilDouble);
+    void ceilFloat(FPRegisterID src, FPRegisterID dest)
+    {
+        roundFP<32, RISCV64Assembler::FPRoundingMode::RUP>(src, dest);
+    }
 
-    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(floorFloat);
-    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(floorDouble);
+    void ceilDouble(FPRegisterID src, FPRegisterID dest)
+    {
+        roundFP<64, RISCV64Assembler::FPRoundingMode::RUP>(src, dest);
+    }
+
+    void floorFloat(FPRegisterID src, FPRegisterID dest)
+    {
+        roundFP<32, RISCV64Assembler::FPRoundingMode::RDN>(src, dest);
+    }
+
+    void floorDouble(FPRegisterID src, FPRegisterID dest)
+    {
+        roundFP<64, RISCV64Assembler::FPRoundingMode::RDN>(src, dest);
+    }
+
+    void roundTowardNearestIntFloat(FPRegisterID src, FPRegisterID dest)
+    {
+        roundFP<32, RISCV64Assembler::FPRoundingMode::RNE>(src, dest);
+    }
+
+    void roundTowardNearestIntDouble(FPRegisterID src, FPRegisterID dest)
+    {
+        roundFP<64, RISCV64Assembler::FPRoundingMode::RNE>(src, dest);
+    }
+
+    void roundTowardZeroFloat(FPRegisterID src, FPRegisterID dest)
+    {
+        roundFP<32, RISCV64Assembler::FPRoundingMode::RTZ>(src, dest);
+    }
+
+    void roundTowardZeroDouble(FPRegisterID src, FPRegisterID dest)
+    {
+        roundFP<64, RISCV64Assembler::FPRoundingMode::RTZ>(src, dest);
+    }
 
     void andFloat(FPRegisterID op1, FPRegisterID op2, FPRegisterID dest)
     {
@@ -2215,13 +2249,15 @@ public:
         m_assembler.fsgnjnInsn<64>(dest, src, src);
     }
 
-    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(roundTowardNearestIntFloat);
-    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(roundTowardNearestIntDouble);
-    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(roundTowardZeroFloat);
-    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(roundTowardZeroDouble);
+    void compareFloat(DoubleCondition cond, FPRegisterID lhs, FPRegisterID rhs, RegisterID dest)
+    {
+        compareFP<32>(cond, lhs, rhs, dest);
+    }
 
-    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD_WITH_RETURN(compareFloat, Jump);
-    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD_WITH_RETURN(compareDouble, Jump);
+    void compareDouble(DoubleCondition cond, FPRegisterID lhs, FPRegisterID rhs, RegisterID dest)
+    {
+        compareFP<64>(cond, lhs, rhs, dest);
+    }
 
     void convertInt32ToFloat(RegisterID src, FPRegisterID dest)
     {
@@ -2555,6 +2591,137 @@ private:
                 }
             });
         return Jump(label);
+    }
+
+    template<unsigned fpSize, RISCV64Assembler::FPRoundingMode RM>
+    void roundFP(FPRegisterID src, FPRegisterID dest)
+    {
+        static_assert(fpSize == 32 || fpSize == 64);
+        auto temp = temps<Data>();
+
+        JumpList end;
+
+        // Test the given source register for NaN condition. If detected, it should be
+        // propagated to the destination register.
+        m_assembler.fclassInsn<fpSize>(temp.data(), src);
+        m_assembler.andiInsn(temp.data(), temp.data(), Imm::I<0b1100000000>());
+        Jump notNaN = makeBranch(Equal, temp.data(), RISCV64Registers::zero);
+
+        m_assembler.faddInsn<fpSize>(dest, src, src);
+        end.append(jump());
+
+        notNaN.link(this);
+        m_assembler.fsgnjxInsn<fpSize>(fpTempRegister, src, src);
+
+        // Compare the absolute source value with the maximum representable integer value.
+        // Rounding is only possible if the absolute source value is smaller.
+        if constexpr (fpSize == 32) {
+            m_assembler.addiInsn(temp.data(), RISCV64Registers::zero, Imm::I<0b10010111>());
+            m_assembler.slliInsn<23>(temp.data(), temp.data());
+            m_assembler.fmvInsn<RISCV64Assembler::FMVType::W, RISCV64Assembler::FMVType::X>(fpTempRegister2, temp.data());
+        } else {
+            m_assembler.addiInsn(temp.data(), RISCV64Registers::zero, Imm::I<0b10000110100>());
+            m_assembler.slliInsn<52>(temp.data(), temp.data());
+            m_assembler.fmvInsn<RISCV64Assembler::FMVType::D, RISCV64Assembler::FMVType::X>(fpTempRegister2, temp.data());
+        }
+
+        m_assembler.fltInsn<fpSize>(temp.data(), fpTempRegister, fpTempRegister2);
+        Jump notRoundable = makeBranch(Equal, temp.data(), RISCV64Registers::zero);
+
+        FPRegisterID dealiasedSrc = src;
+        if (src == dest) {
+            m_assembler.fsgnjInsn<fpSize>(fpTempRegister, src, src);
+            dealiasedSrc = fpTempRegister;
+        }
+
+        // Rounding can now be done by roundtripping through a general-purpose register
+        // with the desired rounding mode applied.
+        if constexpr (fpSize == 32) {
+            m_assembler.fcvtInsn<RM, RISCV64Assembler::FCVTType::W, RISCV64Assembler::FCVTType::S>(temp.data(), dealiasedSrc);
+            m_assembler.fcvtInsn<RM, RISCV64Assembler::FCVTType::S, RISCV64Assembler::FCVTType::W>(dest, temp.data());
+        } else {
+            m_assembler.fcvtInsn<RM, RISCV64Assembler::FCVTType::L, RISCV64Assembler::FCVTType::D>(temp.data(), dealiasedSrc);
+            m_assembler.fcvtInsn<RM, RISCV64Assembler::FCVTType::D, RISCV64Assembler::FCVTType::L>(dest, temp.data());
+        }
+        m_assembler.fsgnjInsn<fpSize>(dest, dest, dealiasedSrc);
+        end.append(jump());
+
+        notRoundable.link(this);
+        // If not roundable, the value should still be moved over into the destination register.
+        if (src != dest)
+            m_assembler.fsgnjInsn<fpSize>(dest, src, src);
+
+        end.link(this);
+    }
+
+    template<unsigned fpSize>
+    void compareFP(DoubleCondition cond, FPRegisterID lhs, FPRegisterID rhs, RegisterID dest)
+    {
+        static_assert(fpSize == 32 || fpSize == 64);
+        auto temp = temps<Data>();
+
+        JumpList unorderedJump;
+
+        // Detect any NaN values that could still yield a positive comparison, depending on the condition.
+        m_assembler.fclassInsn<fpSize>(temp.data(), lhs);
+        m_assembler.andiInsn(temp.data(), temp.data(), Imm::I<0b1100000000>());
+        unorderedJump.append(makeBranch(NotEqual, temp.data(), RISCV64Registers::zero));
+
+        m_assembler.fclassInsn<fpSize>(temp.data(), rhs);
+        m_assembler.andiInsn(temp.data(), temp.data(), Imm::I<0b1100000000>());
+        unorderedJump.append(makeBranch(NotEqual, temp.data(), RISCV64Registers::zero));
+
+        switch (cond) {
+        case DoubleEqualAndOrdered:
+        case DoubleEqualOrUnordered:
+            m_assembler.feqInsn<fpSize>(dest, lhs, rhs);
+            break;
+        case DoubleNotEqualAndOrdered:
+        case DoubleNotEqualOrUnordered:
+            m_assembler.feqInsn<fpSize>(dest, lhs, rhs);
+            m_assembler.xoriInsn(dest, dest, Imm::I<1>());
+            break;
+        case DoubleGreaterThanAndOrdered:
+        case DoubleGreaterThanOrUnordered:
+            m_assembler.fltInsn<fpSize>(dest, rhs, lhs);
+            break;
+        case DoubleGreaterThanOrEqualAndOrdered:
+        case DoubleGreaterThanOrEqualOrUnordered:
+            m_assembler.fleInsn<fpSize>(dest, rhs, lhs);
+            break;
+        case DoubleLessThanAndOrdered:
+        case DoubleLessThanOrUnordered:
+            m_assembler.fltInsn<fpSize>(dest, lhs, rhs);
+            break;
+        case DoubleLessThanOrEqualAndOrdered:
+        case DoubleLessThanOrEqualOrUnordered:
+            m_assembler.fleInsn<fpSize>(dest, lhs, rhs);
+            break;
+        }
+
+        Jump end = jump();
+        unorderedJump.link(this);
+
+        switch (cond) {
+        case DoubleEqualAndOrdered:
+        case DoubleNotEqualAndOrdered:
+        case DoubleGreaterThanAndOrdered:
+        case DoubleGreaterThanOrEqualAndOrdered:
+        case DoubleLessThanAndOrdered:
+        case DoubleLessThanOrEqualAndOrdered:
+            m_assembler.addiInsn(dest, RISCV64Registers::zero, Imm::I<0>());
+            break;
+        case DoubleEqualOrUnordered:
+        case DoubleNotEqualOrUnordered:
+        case DoubleGreaterThanOrUnordered:
+        case DoubleGreaterThanOrEqualOrUnordered:
+        case DoubleLessThanOrUnordered:
+        case DoubleLessThanOrEqualOrUnordered:
+            m_assembler.addiInsn(dest, RISCV64Registers::zero, Imm::I<1>());
+            break;
+        }
+
+        end.link(this);
     }
 };
 
