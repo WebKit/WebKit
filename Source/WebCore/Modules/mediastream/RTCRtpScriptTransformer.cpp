@@ -142,6 +142,9 @@ void RTCRtpScriptTransformer::clear(ClearCallback clearCallback)
 
 void RTCRtpScriptTransformer::enqueueFrame(ScriptExecutionContext& context, Ref<RTCRtpTransformableFrame>&& frame)
 {
+    if (!m_backend)
+        return;
+
     auto* globalObject = JSC::jsCast<JSDOMGlobalObject*>(context.globalObject());
     if (!globalObject)
         return;
