@@ -165,7 +165,10 @@ private:
     void childAdded(AccessibilityObjectAtspi&);
     void childRemoved(AccessibilityObjectAtspi&);
 
+    std::optional<unsigned> effectiveRole() const;
+    String effectiveRoleName() const;
     String roleName() const;
+    const char* effectiveLocalizedRoleName() const;
     const char* localizedRoleName() const;
     void buildAttributes(GVariantBuilder*) const;
     void buildRelationSet(GVariantBuilder*) const;
@@ -243,6 +246,7 @@ private:
     Atomic<bool> m_isRegistered { false };
     String m_path;
     String m_hyperlinkPath;
+    mutable std::atomic<bool> m_hasListMarkerAtStart;
     mutable int m_indexInParent { -1 };
     mutable Lock m_rootLock;
 };

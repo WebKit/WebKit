@@ -781,10 +781,15 @@ String AccessibilityRenderObject::stringValue() const
         }
         return downcast<RenderMenuList>(*m_renderer).text();
     }
-    
-    if (is<RenderListMarker>(*m_renderer))
+
+    if (is<RenderListMarker>(*m_renderer)) {
+#if USE(ATSPI)
+        return downcast<RenderListMarker>(*m_renderer).textWithSuffix().toString();
+#else
         return downcast<RenderListMarker>(*m_renderer).textWithoutSuffix().toString();
-    
+#endif
+    }
+
     if (isWebArea())
         return String();
     

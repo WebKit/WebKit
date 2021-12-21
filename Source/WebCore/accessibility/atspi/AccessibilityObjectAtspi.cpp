@@ -73,16 +73,6 @@ OptionSet<AccessibilityObjectAtspi::Interface> AccessibilityObjectAtspi::interfa
             if ((renderer && renderer->childrenInline()) || roleIsTextType(coreObject.roleValue()) || coreObject.isMathToken())
                 interfaces.add(Interface::Text);
         }
-
-        // Add the Text interface for list items whose first accessible child has a text renderer.
-        if (coreObject.roleValue() == AccessibilityRole::ListItem) {
-            const auto& children = coreObject.children();
-            if (!children.isEmpty()) {
-                auto childInterfaces = interfacesForObject(*children[0]);
-                if (childInterfaces.contains(Interface::Text))
-                    interfaces.add(Interface::Text);
-            }
-        }
     }
 
     if (coreObject.supportsRangeValue())
@@ -108,6 +98,14 @@ OptionSet<AccessibilityObjectAtspi::Interface> AccessibilityObjectAtspi::interfa
         || coreObject.roleValue() == AccessibilityRole::ColumnHeader
         || coreObject.roleValue() == AccessibilityRole::RowHeader)
         interfaces.add(Interface::TableCell);
+
+    if (coreObject.roleValue() == AccessibilityRole::ListMarker && renderer) {
+        if (renderer->isImage())
+            interfaces.add(Interface::Image);
+        else
+            interfaces.add(Interface::Text);
+        interfaces.add(Interface::Hyperlink);
+    }
 
     return interfaces;
 }
@@ -272,8 +270,6 @@ static unsigned atspiRole(AccessibilityRole role)
     case AccessibilityRole::GraphicsSymbol:
     case AccessibilityRole::Image:
         return Atspi::Role::Image;
-    case AccessibilityRole::ListMarker:
-        return Atspi::Role::Text;
     case AccessibilityRole::DocumentArticle:
         return Atspi::Role::Article;
     case AccessibilityRole::Document:
@@ -393,6 +389,8 @@ static unsigned atspiRole(AccessibilityRole role)
     case AccessibilityRole::TableHeaderContainer:
     case AccessibilityRole::ValueIndicator:
         return Atspi::Role::Unknown;
+    case AccessibilityRole::ListMarker:
+        RELEASE_ASSERT_NOT_REACHED();
     }
 
     RELEASE_ASSERT_NOT_REACHED();
@@ -1243,13 +1241,60 @@ void AccessibilityObjectAtspi::loadEvent(const char* event)
     m_root.atspi().loadEvent(*this, event);
 }
 
+std::optional<unsigned> AccessibilityObjectAtspi::effectiveRole() const
+{
+    RELEASE_ASSERT(!isMainThread());
+    RELEASE_ASSERT(m_axObject);
+
+    switch (m_axObject->roleValue()) {
+    case AccessibilityRole::ListMarker:
+        return Accessibility::retrieveValueFromMainThread<unsigned>([this]() -> unsigned {
+            if (m_coreObject)
+                m_coreObject->updateBackingStore();
+
+            if (!m_coreObject)
+                return Atspi::Role::InvalidRole;
+
+            auto* renderer = m_coreObject->renderer();
+            return renderer && renderer->isImage() ? Atspi::Role::Image : Atspi::Role::Text;
+        });
+    default:
+        break;
+    }
+
+    return std::nullopt;
+}
+
 unsigned AccessibilityObjectAtspi::role() const
 {
     RELEASE_ASSERT(!isMainThread());
     if (!m_axObject)
         return Atspi::Role::Unknown;
 
+    if (auto effective = effectiveRole())
+        return *effective;
+
     return atspiRole(m_axObject->roleValue());
+}
+
+String AccessibilityObjectAtspi::effectiveRoleName() const
+{
+    auto effective = effectiveRole();
+    if (!effective)
+        return { };
+
+    switch (*effective) {
+    case Atspi::Role::Image:
+        return "image";
+    case Atspi::Role::Text:
+        return "text";
+    case Atspi::Role::InvalidRole:
+        return "invalid";
+    default:
+        break;
+    }
+
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 String AccessibilityObjectAtspi::roleName() const
@@ -1258,7 +1303,31 @@ String AccessibilityObjectAtspi::roleName() const
     if (!m_axObject)
         return "invalid";
 
+    auto effective = effectiveRoleName();
+    if (!effective.isEmpty())
+        return effective;
+
     return m_axObject->rolePlatformString();
+}
+
+const char* AccessibilityObjectAtspi::effectiveLocalizedRoleName() const
+{
+    auto effective = effectiveRole();
+    if (!effective)
+        return nullptr;
+
+    switch (*effective) {
+    case Atspi::Role::Image:
+        return AccessibilityAtspi::localizedRoleName(AccessibilityRole::Image);
+    case Atspi::Role::Text:
+        return AccessibilityAtspi::localizedRoleName(AccessibilityRole::StaticText);
+    case Atspi::Role::InvalidRole:
+        return _("invalid");
+    default:
+        break;
+    }
+
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 const char* AccessibilityObjectAtspi::localizedRoleName() const
@@ -1266,6 +1335,9 @@ const char* AccessibilityObjectAtspi::localizedRoleName() const
     RELEASE_ASSERT(!isMainThread());
     if (!m_axObject)
         return _("invalid");
+
+    if (const auto* effective = effectiveLocalizedRoleName())
+        return effective;
 
     return AccessibilityAtspi::localizedRoleName(m_axObject->roleValue());
 }
