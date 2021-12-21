@@ -1,3 +1,60 @@
+2021-12-20  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Add ModalContainerControlClassifier and use it to implement classifyModalContainerControls()
+        https://bugs.webkit.org/show_bug.cgi?id=234322
+
+        Reviewed by Devin Rousso.
+
+        Introduce and implement ModalContainerControlClassifier. This singleton uses the NaturalLanguage and CoreML
+        frameworks on Cocoa to classify strings as one of four modal container control types. See below for more
+        details.
+
+        * SourcesCocoa.txt:
+        * UIProcess/Cocoa/ModalContainerControlClassifier.h: Added.
+        * UIProcess/Cocoa/ModalContainerControlClassifier.mm: Added.
+        (-[WKModalContainerClassifierBatch initWithRawInputs:]):
+        (-[WKModalContainerClassifierBatch count]):
+        (-[WKModalContainerClassifierBatch featuresAtIndex:]):
+        (-[WKModalContainerClassifierInput initWithTokenizer:rawInput:]):
+        (-[WKModalContainerClassifierInput featureNames]):
+        (-[WKModalContainerClassifierInput featureValueForName:]):
+
+        Add Objective-C objects that implement the MLBatchProvider and MLFeatureProvider protocols, respectively.
+        WKModalContainerClassifierBatch is essentially a wrapper around a list of WKModalContainerClassifierInput; each
+        WKModalContainerClassifierInput is initialized with a raw string, and uses NLTokenizer to filter out non-word
+        characters and tokenize the raw input into a single space-separated, lower case string (referred to as the
+        "canonical" input format).
+
+        (WebKit::ModalContainerControlClassifier::ModalContainerControlClassifier):
+        (WebKit::ModalContainerControlClassifier::sharedClassifier):
+
+        Return the singleton instance (this must be accessed on the main thread).
+
+        (WebKit::computePredictions):
+
+        Static helper method that takes a list of strings and an MLModel, and classifies each string using the model,
+        and the Objective-C helper classes above.
+
+        (WebKit::ModalContainerControlClassifier::classify):
+
+        This method exposes the primary functionality of the classifier, which is to take a list of raw strings
+        representing text in clickable controls, and asynchronously return a list of class labels representing the
+        predicted control type for each of the strings. Note that this method needs to be invoked on the main thread
+        (and will also invoke the completion handler on the main thread), but the process of loading the MLModel and
+        using it to predict input strings is done in a work queue ("com.apple.WebKit.ModalContainerControlClassifier").
+
+        (WebKit::ModalContainerControlClassifier::loadModelIfNeeded):
+
+        Load the MLModel from a predetermined bundle resource name; returns immediately if the model has
+        already been created. While this happens synchronously, this is always invoked on a background queue and never
+        blocks the main thread.
+
+        * UIProcess/Cocoa/WebPageProxyCocoa.mm:
+        (WebKit::WebPageProxy::classifyModalContainerControls):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::classifyModalContainerControls):
+        * WebKit.xcodeproj/project.pbxproj:
+
 2021-12-20  Alexey Shvayka  <ashvayka@apple.com>
 
         [WebIDL] convertVariadicArguments() should return a FixedVector
