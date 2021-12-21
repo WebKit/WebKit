@@ -225,10 +225,13 @@ void RenderSVGResourceGradient::postApplyResource(RenderElement& renderer, Graph
     context->restore();
 }
 
-void RenderSVGResourceGradient::addStops(Gradient& gradient, const Gradient::ColorStopVector& stops, const RenderStyle& style)
+Gradient::ColorStopVector RenderSVGResourceGradient::stopsByApplyingColorFilter(const Gradient::ColorStopVector& stops, const RenderStyle& style)
 {
+    Gradient::ColorStopVector result;
+    result.reserveInitialCapacity(stops.size());
     for (auto& stop : stops)
-        gradient.addColorStop({ stop.offset, style.colorByApplyingColorFilter(stop.color) });
+        result.uncheckedAppend({ stop.offset, style.colorByApplyingColorFilter(stop.color) });
+    return result;
 }
 
 GradientSpreadMethod RenderSVGResourceGradient::platformSpreadMethodFromSVGType(SVGSpreadMethodType method)

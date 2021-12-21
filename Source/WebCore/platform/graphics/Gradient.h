@@ -96,7 +96,7 @@ public:
 
     using Data = std::variant<LinearData, RadialData, ConicData>;
 
-    WEBCORE_EXPORT static Ref<Gradient> create(Data&&, ColorInterpolationMethod);
+    WEBCORE_EXPORT static Ref<Gradient> create(Data&&, ColorInterpolationMethod, GradientSpreadMethod = GradientSpreadMethod::Pad, ColorStopVector&& = { });
 
     bool isZeroSize() const;
 
@@ -106,8 +106,6 @@ public:
     WEBCORE_EXPORT void setSortedColorStops(ColorStopVector&&);
 
     const ColorStopVector& stops() const { return m_stops; }
-
-    WEBCORE_EXPORT void setSpreadMethod(GradientSpreadMethod);
     GradientSpreadMethod spreadMethod() const { return m_spreadMethod; }
 
     void fill(GraphicsContext&, const FloatRect&);
@@ -132,16 +130,16 @@ public:
     template<typename Decoder> static std::optional<Ref<Gradient>> decode(Decoder&);
 
 private:
-    explicit Gradient(Data&&, ColorInterpolationMethod);
+    explicit Gradient(Data&&, ColorInterpolationMethod, GradientSpreadMethod, ColorStopVector&&);
 
     void sortStops() const;
     void stopsChanged();
 
     Data m_data;
     ColorInterpolationMethod m_colorInterpolationMethod;
+    GradientSpreadMethod m_spreadMethod;
     mutable ColorStopVector m_stops;
     mutable bool m_stopsSorted { false };
-    GradientSpreadMethod m_spreadMethod { GradientSpreadMethod::Pad };
     mutable unsigned m_cachedHash { 0 };
 
 #if USE(CG)
@@ -238,9 +236,8 @@ template<typename Encoder> void Gradient::encode(Encoder& encoder) const
 {
     encoder << m_data;
     encoder << m_colorInterpolationMethod;
-    encoder << m_stops;
-    encoder << m_stopsSorted;
     encoder << m_spreadMethod;
+    encoder << m_stops;
 }
 
 template<typename Decoder> std::optional<Ref<Gradient>> Gradient::decode(Decoder& decoder)
@@ -255,29 +252,17 @@ template<typename Decoder> std::optional<Ref<Gradient>> Gradient::decode(Decoder
     if (!colorInterpolationMethod)
         return std::nullopt;
 
-    auto gradient = Gradient::create(WTFMove(*data), *colorInterpolationMethod);
+    std::optional<GradientSpreadMethod> spreadMethod;
+    decoder >> spreadMethod;
+    if (!spreadMethod)
+        return std::nullopt;
 
     std::optional<ColorStopVector> stops;
     decoder >> stops;
     if (!stops)
         return std::nullopt;
-    std::optional<bool> stopsSorted;
-    decoder >> stopsSorted;
-    if (!stopsSorted.has_value())
-        return std::nullopt;
-    if (*stopsSorted)
-        gradient->setSortedColorStops(WTFMove(*stops));
-    else {
-        for (auto& stop : *stops)
-            gradient->addColorStop(WTFMove(stop));
-    }
 
-    GradientSpreadMethod spreadMethod;
-    if (!decoder.decode(spreadMethod))
-        return std::nullopt;
-    gradient->setSpreadMethod(spreadMethod);
-
-    return gradient;
+    return Gradient::create(WTFMove(*data), *colorInterpolationMethod, *spreadMethod, WTFMove(*stops));
 }
 
 inline void add(Hasher& hasher, const Color& color)
