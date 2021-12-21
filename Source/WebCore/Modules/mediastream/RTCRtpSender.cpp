@@ -162,14 +162,14 @@ void RTCRtpSender::setParameters(const RTCRtpSendParameters& parameters, DOMProm
     return m_backend->setParameters(parameters, WTFMove(promise));
 }
 
-ExceptionOr<void> RTCRtpSender::setStreams(const Vector<std::reference_wrapper<MediaStream>>& streams)
+ExceptionOr<void> RTCRtpSender::setStreams(const FixedVector<std::reference_wrapper<MediaStream>>& streams)
 {
     return setMediaStreamIds(WTF::map(streams, [](auto& stream) -> String {
         return stream.get().id();
     }));
 }
 
-ExceptionOr<void> RTCRtpSender::setMediaStreamIds(const Vector<String>& streamIds)
+ExceptionOr<void> RTCRtpSender::setMediaStreamIds(const FixedVector<String>& streamIds)
 {
     if (!m_connection || m_connection->isClosed() || !m_backend)
         return Exception { InvalidStateError, "connection is closed"_s };

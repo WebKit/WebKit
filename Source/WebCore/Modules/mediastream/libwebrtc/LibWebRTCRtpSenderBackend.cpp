@@ -163,7 +163,7 @@ std::unique_ptr<RTCDtlsTransportBackend> LibWebRTCRtpSenderBackend::dtlsTranspor
     return backend ? makeUnique<LibWebRTCDtlsTransportBackend>(WTFMove(backend)) : nullptr;
 }
 
-void LibWebRTCRtpSenderBackend::setMediaStreamIds(const Vector<String>& streamIds)
+void LibWebRTCRtpSenderBackend::setMediaStreamIds(const FixedVector<String>& streamIds)
 {
     std::vector<std::string> ids;
     for (auto& id : streamIds)

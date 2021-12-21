@@ -37,11 +37,11 @@ class CSSNumericArray;
 class CSSMathMin : public CSSMathValue {
     WTF_MAKE_ISO_ALLOCATED(CSSMathMin);
 public:
-    static Ref<CSSMathMin> create(Vector<CSSNumberish>&&);
+    static Ref<CSSMathMin> create(FixedVector<CSSNumberish>&&);
     const CSSNumericArray& values() const;
     
 private:
-    CSSMathMin(Vector<CSSNumberish>&&);
+    CSSMathMin(FixedVector<CSSNumberish>&&);
     Ref<CSSNumericArray> m_values;
 };
 

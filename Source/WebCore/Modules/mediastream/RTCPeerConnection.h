@@ -148,7 +148,7 @@ public:
 
     const Vector<RefPtr<RTCRtpTransceiver>>& currentTransceivers() const { return m_transceiverSet.list(); }
 
-    ExceptionOr<Ref<RTCRtpSender>> addTrack(Ref<MediaStreamTrack>&&, const Vector<std::reference_wrapper<MediaStream>>&);
+    ExceptionOr<Ref<RTCRtpSender>> addTrack(Ref<MediaStreamTrack>&&, const FixedVector<std::reference_wrapper<MediaStream>>&);
     ExceptionOr<void> removeTrack(RTCRtpSender&);
 
     using AddTransceiverTrackOrKind = std::variant<RefPtr<MediaStreamTrack>, String>;

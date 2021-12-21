@@ -57,6 +57,7 @@
 #include "ViewportArguments.h"
 #include "VisibilityState.h"
 #include <wtf/Deque.h>
+#include <wtf/FixedVector.h>
 #include <wtf/Forward.h>
 #include <wtf/HashCountedSet.h>
 #include <wtf/HashSet.h>
@@ -693,8 +694,8 @@ public:
     void cancelParsing();
 
     ExceptionOr<void> write(Document* entryDocument, SegmentedString&&);
-    WEBCORE_EXPORT ExceptionOr<void> write(Document* entryDocument, Vector<String>&&);
-    WEBCORE_EXPORT ExceptionOr<void> writeln(Document* entryDocument, Vector<String>&&);
+    WEBCORE_EXPORT ExceptionOr<void> write(Document* entryDocument, FixedVector<String>&&);
+    WEBCORE_EXPORT ExceptionOr<void> writeln(Document* entryDocument, FixedVector<String>&&);
 
     bool wellFormed() const { return m_wellFormed; }
 

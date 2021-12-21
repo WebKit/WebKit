@@ -3337,7 +3337,7 @@ ExceptionOr<void> Document::write(Document* entryDocument, SegmentedString&& tex
     return { };
 }
 
-ExceptionOr<void> Document::write(Document* entryDocument, Vector<String>&& strings)
+ExceptionOr<void> Document::write(Document* entryDocument, FixedVector<String>&& strings)
 {
     if (!isHTMLDocument() || m_throwOnDynamicMarkupInsertionCount)
         return Exception { InvalidStateError };
@@ -3349,7 +3349,7 @@ ExceptionOr<void> Document::write(Document* entryDocument, Vector<String>&& stri
     return write(entryDocument, WTFMove(text));
 }
 
-ExceptionOr<void> Document::writeln(Document* entryDocument, Vector<String>&& strings)
+ExceptionOr<void> Document::writeln(Document* entryDocument, FixedVector<String>&& strings)
 {
     if (!isHTMLDocument() || m_throwOnDynamicMarkupInsertionCount)
         return Exception { InvalidStateError };

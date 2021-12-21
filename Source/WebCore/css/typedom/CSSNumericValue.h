@@ -29,6 +29,7 @@
 
 #include "CSSStyleValue.h"
 #include <variant>
+#include <wtf/FixedVector.h>
 
 namespace WebCore {
 
@@ -44,17 +45,17 @@ class CSSNumericValue : public CSSStyleValue {
 public:
     using CSSNumberish = std::variant<double, RefPtr<CSSNumericValue>>;
 
-    Ref<CSSNumericValue> add(Vector<CSSNumberish>&&);
-    Ref<CSSNumericValue> sub(Vector<CSSNumberish>&&);
-    Ref<CSSNumericValue> mul(Vector<CSSNumberish>&&);
-    Ref<CSSNumericValue> div(Vector<CSSNumberish>&&);
-    Ref<CSSNumericValue> min(Vector<CSSNumberish>&&);
-    Ref<CSSNumericValue> max(Vector<CSSNumberish>&&);
+    Ref<CSSNumericValue> add(FixedVector<CSSNumberish>&&);
+    Ref<CSSNumericValue> sub(FixedVector<CSSNumberish>&&);
+    Ref<CSSNumericValue> mul(FixedVector<CSSNumberish>&&);
+    Ref<CSSNumericValue> div(FixedVector<CSSNumberish>&&);
+    Ref<CSSNumericValue> min(FixedVector<CSSNumberish>&&);
+    Ref<CSSNumericValue> max(FixedVector<CSSNumberish>&&);
     
-    bool equals(Vector<CSSNumberish>&&);
+    bool equals(FixedVector<CSSNumberish>&&);
     
     Ref<CSSUnitValue> to(String&&);
-    Ref<CSSMathSum> toSum(Vector<String>&&);
+    Ref<CSSMathSum> toSum(FixedVector<String>&&);
     CSSNumericType type();
     
     static ExceptionOr<Ref<CSSNumericValue>> parse(String&&);

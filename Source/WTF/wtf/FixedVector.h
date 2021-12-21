@@ -47,6 +47,16 @@ public:
     { }
     FixedVector(FixedVector&& other) = default;
 
+    FixedVector(std::initializer_list<T> initializerList)
+        : m_storage(initializerList.size() ? Storage::create(initializerList.size()).moveToUniquePtr() : nullptr)
+    {
+        size_t index = 0;
+        for (const auto& element : initializerList) {
+            m_storage->at(index) = element;
+            index++;
+        }
+    }
+
     FixedVector& operator=(const FixedVector& other)
     {
         FixedVector tmp(other);
@@ -165,6 +175,20 @@ template<typename T>
 inline void swap(FixedVector<T>& a, FixedVector<T>& b)
 {
     a.swap(b);
+}
+
+template<typename T, typename MapFunction, typename ReturnType = typename std::invoke_result<MapFunction, const T&>::type>
+FixedVector<ReturnType> map(const FixedVector<T>& source, MapFunction&& mapFunction)
+{
+    FixedVector<ReturnType> result(source.size());
+
+    size_t resultIndex = 0;
+    for (const auto& item : source) {
+        result[resultIndex] = mapFunction(item);
+        resultIndex++;
+    }
+
+    return result;
 }
 
 } // namespace WTF

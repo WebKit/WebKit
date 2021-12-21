@@ -513,7 +513,7 @@ ExceptionOr<void> Node::appendChild(Node& newChild)
     return downcast<ContainerNode>(*this).appendChild(newChild);
 }
 
-static HashSet<RefPtr<Node>> nodeSetPreTransformedFromNodeOrStringVector(const Vector<NodeOrString>& vector)
+static HashSet<RefPtr<Node>> nodeSetPreTransformedFromNodeOrStringVector(const FixedVector<NodeOrString>& vector)
 {
     HashSet<RefPtr<Node>> nodeSet;
     for (const auto& variant : vector) {
@@ -543,7 +543,7 @@ static RefPtr<Node> firstFollowingSiblingNotInNodeSet(Node& context, const HashS
     return nullptr;
 }
 
-ExceptionOr<RefPtr<Node>> Node::convertNodesOrStringsIntoNode(Vector<NodeOrString>&& nodeOrStringVector)
+ExceptionOr<RefPtr<Node>> Node::convertNodesOrStringsIntoNode(FixedVector<NodeOrString>&& nodeOrStringVector)
 {
     if (nodeOrStringVector.isEmpty())
         return nullptr;
@@ -569,7 +569,7 @@ ExceptionOr<RefPtr<Node>> Node::convertNodesOrStringsIntoNode(Vector<NodeOrStrin
     return RefPtr<Node> { WTFMove(nodeToReturn) };
 }
 
-ExceptionOr<void> Node::before(Vector<NodeOrString>&& nodeOrStringVector)
+ExceptionOr<void> Node::before(FixedVector<NodeOrString>&& nodeOrStringVector)
 {
     RefPtr<ContainerNode> parent = parentNode();
     if (!parent)
@@ -593,7 +593,7 @@ ExceptionOr<void> Node::before(Vector<NodeOrString>&& nodeOrStringVector)
     return parent->insertBefore(*node, viablePreviousSibling.get());
 }
 
-ExceptionOr<void> Node::after(Vector<NodeOrString>&& nodeOrStringVector)
+ExceptionOr<void> Node::after(FixedVector<NodeOrString>&& nodeOrStringVector)
 {
     RefPtr<ContainerNode> parent = parentNode();
     if (!parent)
@@ -612,7 +612,7 @@ ExceptionOr<void> Node::after(Vector<NodeOrString>&& nodeOrStringVector)
     return parent->insertBefore(*node, viableNextSibling.get());
 }
 
-ExceptionOr<void> Node::replaceWith(Vector<NodeOrString>&& nodeOrStringVector)
+ExceptionOr<void> Node::replaceWith(FixedVector<NodeOrString>&& nodeOrStringVector)
 {
     RefPtr<ContainerNode> parent = parentNode();
     if (!parent)

@@ -213,7 +213,7 @@ void OffscreenCanvas::createContextWebGL(RenderingContextType contextType, WebGL
 
 #endif // ENABLE(WEBGL)
 
-ExceptionOr<std::optional<OffscreenRenderingContext>> OffscreenCanvas::getContext(JSC::JSGlobalObject& state, RenderingContextType contextType, Vector<JSC::Strong<JSC::Unknown>>&& arguments)
+ExceptionOr<std::optional<OffscreenRenderingContext>> OffscreenCanvas::getContext(JSC::JSGlobalObject& state, RenderingContextType contextType, FixedVector<JSC::Strong<JSC::Unknown>>&& arguments)
 {
     if (m_detached)
         return Exception { InvalidStateError };

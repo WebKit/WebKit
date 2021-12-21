@@ -40,14 +40,14 @@ template<typename> class ExceptionOr;
 class CSSNumericArray : public RefCounted<CSSNumericArray> {
     WTF_MAKE_ISO_ALLOCATED(CSSNumericArray);
 public:
-    static Ref<CSSNumericArray> create(Vector<CSSNumberish>&&);
-    static Ref<CSSNumericArray> create(Vector<Ref<CSSNumericValue>>&&);
+    static Ref<CSSNumericArray> create(const FixedVector<CSSNumberish>&);
+    static Ref<CSSNumericArray> create(FixedVector<Ref<CSSNumericValue>>&&);
     size_t length() const { return m_array.size(); };
     ExceptionOr<Ref<CSSNumericValue>> item(size_t index);
 
 private:
-    Vector<Ref<CSSNumericValue>> m_array;
-    CSSNumericArray(Vector<Ref<CSSNumericValue>>&&);
+    FixedVector<Ref<CSSNumericValue>> m_array;
+    CSSNumericArray(FixedVector<Ref<CSSNumericValue>>&&);
 };
 
 } // namespace WebCore

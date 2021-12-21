@@ -131,7 +131,7 @@ RTCPeerConnection::~RTCPeerConnection()
     stop();
 }
 
-ExceptionOr<Ref<RTCRtpSender>> RTCPeerConnection::addTrack(Ref<MediaStreamTrack>&& track, const Vector<std::reference_wrapper<MediaStream>>& streams)
+ExceptionOr<Ref<RTCRtpSender>> RTCPeerConnection::addTrack(Ref<MediaStreamTrack>&& track, const FixedVector<std::reference_wrapper<MediaStream>>& streams)
 {
     INFO_LOG(LOGIDENTIFIER);
 
@@ -143,11 +143,9 @@ ExceptionOr<Ref<RTCRtpSender>> RTCPeerConnection::addTrack(Ref<MediaStreamTrack>
             return Exception { InvalidAccessError };
     }
 
-    Vector<String> mediaStreamIds;
-    for (auto stream : streams)
-        mediaStreamIds.append(stream.get().id());
-
-    return m_backend->addTrack(track.get(), WTFMove(mediaStreamIds));
+    return m_backend->addTrack(track.get(), WTF::map(streams, [](auto& stream) -> String {
+        return stream.get().id();
+    }));
 }
 
 ExceptionOr<void> RTCPeerConnection::removeTrack(RTCRtpSender& sender)

@@ -38,22 +38,19 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(CSSNumericArray);
 
-Ref<CSSNumericArray> CSSNumericArray::create(Vector<CSSNumberish>&& numberishes)
+Ref<CSSNumericArray> CSSNumericArray::create(const FixedVector<CSSNumberish>& numberishes)
 {
-    Vector<Ref<CSSNumericValue>> values;
-    values.reserveInitialCapacity(numberishes.size());
-    for (auto&& numberish : numberishes)
-        values.uncheckedAppend(CSSNumericValue::rectifyNumberish(WTFMove(numberish)));
-    
-    return adoptRef(*new CSSNumericArray(WTFMove(values)));
+    return adoptRef(*new CSSNumericArray(WTF::map(numberishes, [](auto& numberish) -> Ref<CSSNumericValue> {
+        return CSSNumericValue::rectifyNumberish(const_cast<CSSNumberish&&>(numberish));
+    })));
 }
 
-Ref<CSSNumericArray> CSSNumericArray::create(Vector<Ref<CSSNumericValue>>&& values)
+Ref<CSSNumericArray> CSSNumericArray::create(FixedVector<Ref<CSSNumericValue>>&& values)
 {
     return adoptRef(*new CSSNumericArray(WTFMove(values)));
 }
 
-CSSNumericArray::CSSNumericArray(Vector<Ref<CSSNumericValue>>&& values)
+CSSNumericArray::CSSNumericArray(FixedVector<Ref<CSSNumericValue>>&& values)
     : m_array(WTFMove(values))
 {
 }

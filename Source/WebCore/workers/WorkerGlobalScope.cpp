@@ -302,7 +302,7 @@ void WorkerGlobalScope::setIsOnline(bool isOnline)
         m_navigator->setIsOnline(isOnline);
 }
 
-ExceptionOr<int> WorkerGlobalScope::setTimeout(std::unique_ptr<ScheduledAction> action, int timeout, Vector<JSC::Strong<JSC::Unknown>>&& arguments)
+ExceptionOr<int> WorkerGlobalScope::setTimeout(std::unique_ptr<ScheduledAction> action, int timeout, FixedVector<JSC::Strong<JSC::Unknown>>&& arguments)
 {
     // FIXME: Should this check really happen here? Or should it happen when code is about to eval?
     if (action->type() == ScheduledAction::Type::Code) {
@@ -320,7 +320,7 @@ void WorkerGlobalScope::clearTimeout(int timeoutId)
     DOMTimer::removeById(*this, timeoutId);
 }
 
-ExceptionOr<int> WorkerGlobalScope::setInterval(std::unique_ptr<ScheduledAction> action, int timeout, Vector<JSC::Strong<JSC::Unknown>>&& arguments)
+ExceptionOr<int> WorkerGlobalScope::setInterval(std::unique_ptr<ScheduledAction> action, int timeout, FixedVector<JSC::Strong<JSC::Unknown>>&& arguments)
 {
     // FIXME: Should this check really happen here? Or should it happen when code is about to eval?
     if (action->type() == ScheduledAction::Type::Code) {
@@ -338,7 +338,7 @@ void WorkerGlobalScope::clearInterval(int timeoutId)
     DOMTimer::removeById(*this, timeoutId);
 }
 
-ExceptionOr<void> WorkerGlobalScope::importScripts(const Vector<String>& urls)
+ExceptionOr<void> WorkerGlobalScope::importScripts(const FixedVector<String>& urls)
 {
     ASSERT(contentSecurityPolicy());
 

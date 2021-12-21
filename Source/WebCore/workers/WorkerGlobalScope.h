@@ -37,6 +37,7 @@
 #include "WorkerType.h"
 #include <JavaScriptCore/ConsoleMessage.h>
 #include <memory>
+#include <wtf/FixedVector.h>
 #include <wtf/HashMap.h>
 #include <wtf/MemoryPressureHandler.h>
 #include <wtf/URL.h>
@@ -107,14 +108,14 @@ public:
     WorkerLocation& location() const;
     void close();
 
-    virtual ExceptionOr<void> importScripts(const Vector<String>& urls);
+    virtual ExceptionOr<void> importScripts(const FixedVector<String>& urls);
     WorkerNavigator& navigator();
 
     void setIsOnline(bool);
 
-    ExceptionOr<int> setTimeout(std::unique_ptr<ScheduledAction>, int timeout, Vector<JSC::Strong<JSC::Unknown>>&& arguments);
+    ExceptionOr<int> setTimeout(std::unique_ptr<ScheduledAction>, int timeout, FixedVector<JSC::Strong<JSC::Unknown>>&& arguments);
     void clearTimeout(int timeoutId);
-    ExceptionOr<int> setInterval(std::unique_ptr<ScheduledAction>, int timeout, Vector<JSC::Strong<JSC::Unknown>>&& arguments);
+    ExceptionOr<int> setInterval(std::unique_ptr<ScheduledAction>, int timeout, FixedVector<JSC::Strong<JSC::Unknown>>&& arguments);
     void clearInterval(int timeoutId);
 
     bool isSecureContext() const final;

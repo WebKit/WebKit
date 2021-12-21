@@ -44,7 +44,7 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(CSSNumericValue);
 
-Ref<CSSNumericValue> CSSNumericValue::add(Vector<CSSNumberish>&& values)
+Ref<CSSNumericValue> CSSNumericValue::add(FixedVector<CSSNumberish>&& values)
 {
     UNUSED_PARAM(values);
     // FIXME: add impl.
@@ -52,7 +52,7 @@ Ref<CSSNumericValue> CSSNumericValue::add(Vector<CSSNumberish>&& values)
     return *this;
 }
 
-Ref<CSSNumericValue> CSSNumericValue::sub(Vector<CSSNumberish>&& values)
+Ref<CSSNumericValue> CSSNumericValue::sub(FixedVector<CSSNumberish>&& values)
 {
     UNUSED_PARAM(values);
     // FIXME: add impl.
@@ -60,7 +60,7 @@ Ref<CSSNumericValue> CSSNumericValue::sub(Vector<CSSNumberish>&& values)
     return *this;
 }
 
-Ref<CSSNumericValue> CSSNumericValue::mul(Vector<CSSNumberish>&& values)
+Ref<CSSNumericValue> CSSNumericValue::mul(FixedVector<CSSNumberish>&& values)
 {
     UNUSED_PARAM(values);
     // FIXME: add impl.
@@ -68,21 +68,21 @@ Ref<CSSNumericValue> CSSNumericValue::mul(Vector<CSSNumberish>&& values)
     return *this;
 }
 
-Ref<CSSNumericValue> CSSNumericValue::div(Vector<CSSNumberish>&& values)
+Ref<CSSNumericValue> CSSNumericValue::div(FixedVector<CSSNumberish>&& values)
 {
     UNUSED_PARAM(values);
     // FIXME: add impl.
 
     return *this;
 }
-Ref<CSSNumericValue> CSSNumericValue::min(Vector<CSSNumberish>&& values)
+Ref<CSSNumericValue> CSSNumericValue::min(FixedVector<CSSNumberish>&& values)
 {
     UNUSED_PARAM(values);
     // FIXME: add impl.
 
     return *this;
 }
-Ref<CSSNumericValue> CSSNumericValue::max(Vector<CSSNumberish>&& values)
+Ref<CSSNumericValue> CSSNumericValue::max(FixedVector<CSSNumberish>&& values)
 {
     UNUSED_PARAM(values);
     // FIXME: add impl.
@@ -100,7 +100,7 @@ Ref<CSSNumericValue> CSSNumericValue::rectifyNumberish(CSSNumberish&& numberish)
     });
 }
 
-bool CSSNumericValue::equals(Vector<CSSNumberish>&& value)
+bool CSSNumericValue::equals(FixedVector<CSSNumberish>&& value)
 {
     UNUSED_PARAM(value);
     // https://drafts.css-houdini.org/css-typed-om/#dom-cssnumericvalue-equals
@@ -116,7 +116,7 @@ Ref<CSSUnitValue> CSSNumericValue::to(String&& unit)
     return CSSUnitValue::create(1.0, "number");
 }
 
-Ref<CSSMathSum> CSSNumericValue::toSum(Vector<String>&& units)
+Ref<CSSMathSum> CSSNumericValue::toSum(FixedVector<String>&& units)
 {
     UNUSED_PARAM(units);
     // https://drafts.css-houdini.org/css-typed-om/#dom-cssnumericvalue-tosum

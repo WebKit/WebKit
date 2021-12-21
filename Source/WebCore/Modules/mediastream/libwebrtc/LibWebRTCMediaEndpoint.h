@@ -96,7 +96,7 @@ public:
     void stop();
     bool isStopped() const { return !m_backend; }
 
-    bool addTrack(LibWebRTCRtpSenderBackend&, MediaStreamTrack&, const Vector<String>&);
+    bool addTrack(LibWebRTCRtpSenderBackend&, MediaStreamTrack&, const FixedVector<String>&);
     void removeTrack(LibWebRTCRtpSenderBackend&);
 
     struct Backends {

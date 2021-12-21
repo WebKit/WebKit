@@ -41,6 +41,7 @@
 #include "WindowOrWorkerGlobalScope.h"
 #include <JavaScriptCore/HandleTypes.h>
 #include <JavaScriptCore/Strong.h>
+#include <wtf/FixedVector.h>
 #include <wtf/Function.h>
 #include <wtf/HashSet.h>
 #include <wtf/MonotonicTime.h>
@@ -293,9 +294,9 @@ public:
     VisualViewport& visualViewport();
 
     // Timers
-    ExceptionOr<int> setTimeout(std::unique_ptr<ScheduledAction>, int timeout, Vector<JSC::Strong<JSC::Unknown>>&& arguments);
+    ExceptionOr<int> setTimeout(std::unique_ptr<ScheduledAction>, int timeout, FixedVector<JSC::Strong<JSC::Unknown>>&& arguments);
     void clearTimeout(int timeoutId);
-    ExceptionOr<int> setInterval(std::unique_ptr<ScheduledAction>, int timeout, Vector<JSC::Strong<JSC::Unknown>>&& arguments);
+    ExceptionOr<int> setInterval(std::unique_ptr<ScheduledAction>, int timeout, FixedVector<JSC::Strong<JSC::Unknown>>&& arguments);
     void clearInterval(int timeoutId);
 
     int requestAnimationFrame(Ref<RequestAnimationFrameCallback>&&);

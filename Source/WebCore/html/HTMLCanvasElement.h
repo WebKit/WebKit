@@ -74,7 +74,7 @@ public:
     void setSize(const IntSize& newSize) override;
 
     CanvasRenderingContext* renderingContext() const final { return m_context.get(); }
-    ExceptionOr<std::optional<RenderingContext>> getContext(JSC::JSGlobalObject&, const String& contextId, Vector<JSC::Strong<JSC::Unknown>>&& arguments);
+    ExceptionOr<std::optional<RenderingContext>> getContext(JSC::JSGlobalObject&, const String& contextId, FixedVector<JSC::Strong<JSC::Unknown>>&& arguments);
 
     CanvasRenderingContext* getContext(const String&);
 

@@ -22,7 +22,6 @@
 #include <JavaScriptCore/Strong.h>
 #include <JavaScriptCore/StrongInlines.h>
 #include <memory>
-#include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
 namespace JSC {
@@ -43,7 +42,7 @@ public:
     static std::unique_ptr<ScheduledAction> create(DOMWrapperWorld&, String&&);
     ~ScheduledAction();
 
-    void addArguments(Vector<JSC::Strong<JSC::Unknown>>&&);
+    void addArguments(FixedVector<JSC::Strong<JSC::Unknown>>&&);
 
     enum class Type { Code, Function };
     Type type() const;
@@ -60,7 +59,7 @@ private:
 
     Ref<DOMWrapperWorld> m_isolatedWorld;
     JSC::Strong<JSC::Unknown> m_function;
-    Vector<JSC::Strong<JSC::Unknown>> m_arguments;
+    FixedVector<JSC::Strong<JSC::Unknown>> m_arguments;
     String m_code;
 };
 

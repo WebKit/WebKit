@@ -37,11 +37,11 @@ class CSSNumericArray;
 class CSSMathMax : public CSSMathValue {
     WTF_MAKE_ISO_ALLOCATED(CSSMathMax);
 public:
-    static Ref<CSSMathMax> create(Vector<CSSNumberish>&&);
+    static Ref<CSSMathMax> create(FixedVector<CSSNumberish>&&);
     const CSSNumericArray& values() const;
     
 private:
-    CSSMathMax(Vector<CSSNumberish>&&);
+    CSSMathMax(FixedVector<CSSNumberish>&&);
     Ref<CSSNumericArray> m_values;
 };
 

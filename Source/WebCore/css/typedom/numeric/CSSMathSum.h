@@ -38,11 +38,11 @@ class CSSNumericArray;
 class CSSMathSum : public CSSMathValue {
     WTF_MAKE_ISO_ALLOCATED(CSSMathSum);
 public:
-    static Ref<CSSMathSum> create(Vector<CSSNumberish>&&);
+    static Ref<CSSMathSum> create(FixedVector<CSSNumberish>&&);
     const CSSNumericArray& values() const;
 
 private:
-    CSSMathSum(Vector<CSSNumberish>&&);
+    CSSMathSum(FixedVector<CSSNumberish>&&);
     Ref<CSSNumericArray> m_values;
 };
 

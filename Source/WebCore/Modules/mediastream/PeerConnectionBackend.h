@@ -39,6 +39,7 @@
 #include "RTCRtpSendParameters.h"
 #include "RTCSessionDescription.h"
 #include "RTCSignalingState.h"
+#include <wtf/FixedVector.h>
 #include <wtf/LoggerHelper.h>
 #include <wtf/WeakPtr.h>
 
@@ -114,7 +115,7 @@ public:
     virtual void getStats(RTCRtpSender&, Ref<DeferredPromise>&&) = 0;
     virtual void getStats(RTCRtpReceiver&, Ref<DeferredPromise>&&) = 0;
 
-    virtual ExceptionOr<Ref<RTCRtpSender>> addTrack(MediaStreamTrack&, Vector<String>&&);
+    virtual ExceptionOr<Ref<RTCRtpSender>> addTrack(MediaStreamTrack&, FixedVector<String>&&);
     virtual void removeTrack(RTCRtpSender&) { }
 
     virtual ExceptionOr<Ref<RTCRtpTransceiver>> addTransceiver(const String&, const RTCRtpTransceiverInit&);

@@ -70,6 +70,7 @@ namespace WTF {
 
     template<typename P> struct VectorTraits<RefPtr<P>> : SimpleClassVectorTraits { };
     template<typename P> struct VectorTraits<std::unique_ptr<P>> : SimpleClassVectorTraits { };
+    template<typename P> struct VectorTraits<std::reference_wrapper<P>> : SimpleClassVectorTraits { };
     template<typename P> struct VectorTraits<Ref<P>> : SimpleClassVectorTraits { };
     template<> struct VectorTraits<AtomString> : SimpleClassVectorTraits { };
 

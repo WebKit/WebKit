@@ -37,13 +37,13 @@ class CSSNumericArray;
 class CSSMathProduct : public CSSMathValue {
     WTF_MAKE_ISO_ALLOCATED(CSSMathProduct);
 public:
-    static Ref<CSSMathProduct> create(Vector<CSSNumberish>&&);
+    static Ref<CSSMathProduct> create(FixedVector<CSSNumberish>&&);
     const CSSNumericArray& values() const;
     
     CSSMathOperator getOperator() const final { return CSSMathOperator::Product; }
 
 private:
-    CSSMathProduct(Vector<CSSNumberish>&&);
+    CSSMathProduct(FixedVector<CSSNumberish>&&);
     Ref<CSSNumericArray> m_values;
 };
 

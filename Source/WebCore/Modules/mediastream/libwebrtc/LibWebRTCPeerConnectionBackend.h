@@ -83,7 +83,7 @@ private:
 
     void getStatsSucceeded(const DeferredPromise&, Ref<RTCStatsReport>&&);
 
-    ExceptionOr<Ref<RTCRtpSender>> addTrack(MediaStreamTrack&, Vector<String>&&) final;
+    ExceptionOr<Ref<RTCRtpSender>> addTrack(MediaStreamTrack&, FixedVector<String>&&) final;
     void removeTrack(RTCRtpSender&) final;
 
     ExceptionOr<Ref<RTCRtpTransceiver>> addTransceiver(const String&, const RTCRtpTransceiverInit&) final;

@@ -26,6 +26,7 @@
 #pragma once
 
 #include "Element.h"
+#include <wtf/FixedVector.h>
 
 namespace WebCore {
 
@@ -44,9 +45,9 @@ public:
     const AtomString& item(unsigned index) const;
 
     WEBCORE_EXPORT bool contains(const AtomString&) const;
-    ExceptionOr<void> add(const Vector<String>&);
+    ExceptionOr<void> add(const FixedVector<String>&);
     ExceptionOr<void> add(const AtomString&);
-    ExceptionOr<void> remove(const Vector<String>&);
+    ExceptionOr<void> remove(const FixedVector<String>&);
     ExceptionOr<void> remove(const AtomString&);
     WEBCORE_EXPORT ExceptionOr<bool> toggle(const AtomString&, std::optional<bool> force);
     ExceptionOr<bool> replace(const AtomString& token, const AtomString& newToken);

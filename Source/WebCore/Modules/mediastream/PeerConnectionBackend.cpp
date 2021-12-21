@@ -414,7 +414,7 @@ void PeerConnectionBackend::markAsNeedingNegotiation(uint32_t eventId)
     m_peerConnection.updateNegotiationNeededFlag(eventId);
 }
 
-ExceptionOr<Ref<RTCRtpSender>> PeerConnectionBackend::addTrack(MediaStreamTrack&, Vector<String>&&)
+ExceptionOr<Ref<RTCRtpSender>> PeerConnectionBackend::addTrack(MediaStreamTrack&, FixedVector<String>&&)
 {
     return Exception { NotSupportedError, "Not implemented"_s };
 }

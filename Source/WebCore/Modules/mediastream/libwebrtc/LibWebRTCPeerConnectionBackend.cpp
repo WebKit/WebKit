@@ -322,7 +322,7 @@ static inline RefPtr<RTCRtpSender> findExistingSender(const Vector<RefPtr<RTCRtp
     return nullptr;
 }
 
-ExceptionOr<Ref<RTCRtpSender>> LibWebRTCPeerConnectionBackend::addTrack(MediaStreamTrack& track, Vector<String>&& mediaStreamIds)
+ExceptionOr<Ref<RTCRtpSender>> LibWebRTCPeerConnectionBackend::addTrack(MediaStreamTrack& track, FixedVector<String>&& mediaStreamIds)
 {
     auto senderBackend = makeUnique<LibWebRTCRtpSenderBackend>(*this, nullptr);
     if (!m_endpoint->addTrack(*senderBackend, track, mediaStreamIds))
