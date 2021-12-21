@@ -63,7 +63,7 @@
 #include "LibWebRTCProvider.h"
 #include "MediaRecorderPrivate.h"
 #include "MediaRecorderProvider.h"
-#include "ModalContainerControlType.h"
+#include "ModalContainerTypes.h"
 #include "NetworkStorageSession.h"
 #include "Page.h"
 #include "PageConfiguration.h"
@@ -594,6 +594,11 @@ void EmptyChromeClient::requestCookieConsent(CompletionHandler<void(CookieConsen
 void EmptyChromeClient::classifyModalContainerControls(Vector<String>&&, CompletionHandler<void(Vector<ModalContainerControlType>&&)>&& completion)
 {
     completion({ });
+}
+
+void EmptyChromeClient::decidePolicyForModalContainer(OptionSet<ModalContainerControlType>, CompletionHandler<void(ModalContainerDecision)>&& completion)
+{
+    completion(ModalContainerDecision::Show);
 }
 
 void EmptyFrameLoaderClient::dispatchDecidePolicyForNewWindowAction(const NavigationAction&, const ResourceRequest&, FormState*, const String&, PolicyCheckIdentifier, FramePolicyFunction&&)

@@ -144,6 +144,7 @@ struct WindowFeatures;
 
 enum class CookieConsentDecisionResult : uint8_t;
 enum class ModalContainerControlType : uint8_t;
+enum class ModalContainerDecision : uint8_t;
 enum class RouteSharingPolicy : uint8_t;
 
 class ChromeClient {
@@ -626,6 +627,8 @@ public:
 
     virtual const AtomString& searchStringForModalContainerObserver() const { return nullAtom(); }
     virtual void classifyModalContainerControls(Vector<String>&& texts, CompletionHandler<void(Vector<ModalContainerControlType>&&)>&&) = 0;
+
+    virtual void decidePolicyForModalContainer(OptionSet<ModalContainerControlType>, CompletionHandler<void(ModalContainerDecision)>&&) = 0;
 
 protected:
     virtual ~ChromeClient() = default;

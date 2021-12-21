@@ -1573,6 +1573,11 @@ void WebChromeClient::classifyModalContainerControls(Vector<String>&& strings, C
     m_page.sendWithAsyncReply(Messages::WebPageProxy::ClassifyModalContainerControls(WTFMove(strings)), WTFMove(completion));
 }
 
+void WebChromeClient::decidePolicyForModalContainer(OptionSet<ModalContainerControlType> types, CompletionHandler<void(ModalContainerDecision)>&& completion)
+{
+    m_page.sendWithAsyncReply(Messages::WebPageProxy::DecidePolicyForModalContainer(types), WTFMove(completion));
+}
+
 #if USE(APPLE_INTERNAL_SDK)
 #include <WebKitAdditions/WebChromeClientAdditions.cpp>
 #else

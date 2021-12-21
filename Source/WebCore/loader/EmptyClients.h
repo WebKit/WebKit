@@ -221,6 +221,7 @@ class EmptyChromeClient : public ChromeClient {
 
     void requestCookieConsent(CompletionHandler<void(CookieConsentDecisionResult)>&&) final;
     void classifyModalContainerControls(Vector<String>&&, CompletionHandler<void(Vector<ModalContainerControlType>&&)>&&) final;
+    void decidePolicyForModalContainer(OptionSet<ModalContainerControlType>, CompletionHandler<void(ModalContainerDecision)>&&) final;
 };
 
 DiagnosticLoggingClient& emptyDiagnosticLoggingClient();

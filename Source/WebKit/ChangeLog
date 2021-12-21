@@ -1,3 +1,62 @@
+2021-12-21  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Add support for a UI delegate method to decide how to handle detected modal containers
+        https://bugs.webkit.org/show_bug.cgi?id=234440
+        rdar://77073735
+
+        Reviewed by Darin Adler.
+
+        Add support for a new UI delegate method, `-_webView:decidePolicyForModalContainer:decisionHandler:`, that is
+        invoked when a modal container has been detected and suppressed due to a WebKit client specifying the
+        `_WKWebsiteModalContainerObservationPolicyPrompt` option in webpage preferences. This new delegate method is
+        invoked with a new `_WKModalContainerInfo` object, which (for now) just encapsulates an option set of
+        ModalContainerControlTypes that indicates which types of modal containers are available.
+
+        * Scripts/webkit/messages.py:
+        (headers_for_type):
+        * SourcesCocoa.txt:
+        * UIProcess/API/APIUIClient.h:
+        (API::UIClient::decidePolicyForModalContainer):
+        * UIProcess/API/Cocoa/WKUIDelegatePrivate.h:
+        * UIProcess/API/Cocoa/WKWebpagePreferences.mm:
+        (WebKit::modalContainerObservationPolicy):
+        (WebKit::coreModalContainerObservationPolicy):
+        * UIProcess/API/Cocoa/WKWebpagePreferencesPrivate.h:
+
+        Remove support for two unused policy flags, `_WKWebsiteModalContainerObservationPolicyAllow` and
+        `_WKWebsiteModalContainerObservationPolicyDisallow`. These are now obviated by the new decision handler return
+        values `_WKModalContainerDecisionHideAndAllow` and `_WKModalContainerDecisionHideAndDisallow`, respectively.
+        While this leaves us with only two policy modes (such that the policy can now be turned into a single BOOL
+        switch), I'm keeping the named enum flags for now, since:
+
+        1. The existing names do a better job of describing their respective behaviors than a single BOOL flag like
+        `modalContainerObserverShouldPrompt`, or `modalContainerObserverEnabled`, and...
+
+        2. We'll probably need to extend this policy set to add a new value in the near future, anyways.
+
+        * UIProcess/API/Cocoa/_WKModalContainerInfo.h:
+        * UIProcess/API/Cocoa/_WKModalContainerInfo.mm:
+        (-[_WKModalContainerInfo initWithTypes:]):
+        * UIProcess/API/Cocoa/_WKModalContainerInfoInternal.h:
+        * UIProcess/Cocoa/ModalContainerControlClassifier.mm:
+        * UIProcess/Cocoa/UIDelegate.h:
+        * UIProcess/Cocoa/UIDelegate.mm:
+        (WebKit::UIDelegate::setDelegate):
+        (WebKit::coreModalContainerDecision):
+        (WebKit::UIDelegate::UIClient::decidePolicyForModalContainer):
+
+        Add plumbing for the new chrome client hook through WebChromeClient, WebPage, WebPageProxy, and finally the UI
+        client.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::decidePolicyForModalContainer):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::decidePolicyForModalContainer):
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+
 2021-12-21  Alex Christensen  <achristensen@webkit.org>
 
         ASSERT NOT REACHED under WebKit::Daemon::ConnectionToMachService seen with TestWebKitAPI.WebPushD.BasicCommunication and PermissionManagement

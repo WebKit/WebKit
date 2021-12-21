@@ -65,8 +65,6 @@ typedef NS_OPTIONS(NSUInteger, _WKWebsiteMouseEventPolicy) {
 typedef NS_OPTIONS(NSUInteger, _WKWebsiteModalContainerObservationPolicy) {
     _WKWebsiteModalContainerObservationPolicyDisabled,
     _WKWebsiteModalContainerObservationPolicyPrompt,
-    _WKWebsiteModalContainerObservationPolicyAllow,
-    _WKWebsiteModalContainerObservationPolicyDisallow,
 } WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 // Allow overriding the system color-scheme with a per-website preference.

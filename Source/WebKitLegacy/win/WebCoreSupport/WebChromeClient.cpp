@@ -53,7 +53,7 @@
 #include <WebCore/Icon.h>
 #include <WebCore/LocalWindowsContext.h>
 #include <WebCore/LocalizedStrings.h>
-#include <WebCore/ModalContainerControlType.h>
+#include <WebCore/ModalContainerTypes.h>
 #include <WebCore/NavigationAction.h>
 #include <WebCore/NotImplemented.h>
 #include <WebCore/Page.h>
@@ -886,4 +886,9 @@ void WebChromeClient::requestCookieConsent(CompletionHandler<void(CookieConsentD
 void WebChromeClient::classifyModalContainerControls(Vector<String>&&, CompletionHandler<void(Vector<ModalContainerControlType>&&)>&& completion)
 {
     completion({ });
+}
+
+void WebChromeClient::decidePolicyForModalContainer(OptionSet<ModalContainerControlType>, CompletionHandler<void(ModalContainerDecision)>&& completion)
+{
+    completion(ModalContainerDecision::Show);
 }

@@ -169,7 +169,7 @@
 #include <WebCore/LengthBox.h>
 #include <WebCore/MIMETypeRegistry.h>
 #include <WebCore/MediaStreamRequest.h>
-#include <WebCore/ModalContainerControlType.h>
+#include <WebCore/ModalContainerTypes.h>
 #include <WebCore/PerformanceLoggingClient.h>
 #include <WebCore/PermissionState.h>
 #include <WebCore/PlatformEvent.h>
@@ -11055,6 +11055,11 @@ void WebPageProxy::clearAppPrivacyReportTestingData(CompletionHandler<void()>&& 
 void WebPageProxy::requestCookieConsent(CompletionHandler<void(CookieConsentDecisionResult)>&& completion)
 {
     m_uiClient->requestCookieConsent(WTFMove(completion));
+}
+
+void WebPageProxy::decidePolicyForModalContainer(OptionSet<ModalContainerControlType> types, CompletionHandler<void(ModalContainerDecision)>&& completion)
+{
+    m_uiClient->decidePolicyForModalContainer(types, WTFMove(completion));
 }
 
 } // namespace WebKit

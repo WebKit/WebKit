@@ -111,10 +111,6 @@ static _WKWebsiteModalContainerObservationPolicy modalContainerObservationPolicy
         return _WKWebsiteModalContainerObservationPolicyDisabled;
     case WebCore::ModalContainerObservationPolicy::Prompt:
         return _WKWebsiteModalContainerObservationPolicyPrompt;
-    case WebCore::ModalContainerObservationPolicy::Allow:
-        return _WKWebsiteModalContainerObservationPolicyAllow;
-    case WebCore::ModalContainerObservationPolicy::Disallow:
-        return _WKWebsiteModalContainerObservationPolicyDisallow;
     }
     ASSERT_NOT_REACHED();
     return _WKWebsiteModalContainerObservationPolicyDisabled;
@@ -127,10 +123,6 @@ static WebCore::ModalContainerObservationPolicy coreModalContainerObservationPol
         return WebCore::ModalContainerObservationPolicy::Disabled;
     case _WKWebsiteModalContainerObservationPolicyPrompt:
         return WebCore::ModalContainerObservationPolicy::Prompt;
-    case _WKWebsiteModalContainerObservationPolicyAllow:
-        return WebCore::ModalContainerObservationPolicy::Allow;
-    case _WKWebsiteModalContainerObservationPolicyDisallow:
-        return WebCore::ModalContainerObservationPolicy::Disallow;
     }
     ASSERT_NOT_REACHED();
     return WebCore::ModalContainerObservationPolicy::Disabled;

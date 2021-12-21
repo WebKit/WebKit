@@ -42,6 +42,7 @@
 @class _WKInspector;
 @class _WKInspectorConfiguration;
 @class _WKInspectorDebuggableInfo;
+@class _WKModalContainerInfo;
 
 #if TARGET_OS_IOS
 
@@ -101,6 +102,13 @@ typedef NS_OPTIONS(NSUInteger, _WKXRSessionFeatureFlags) {
     _WKXRSessionFeatureFlagsReferenceSpaceTypeLocalFloor = 1 << 2,
     _WKXRSessionFeatureFlagsReferenceSpaceTypeBoundedFloor = 1 << 3,
     _WKXRSessionFeatureFlagsReferenceSpaceTypeUnbounded = 1 << 4,
+} WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+
+typedef NS_ENUM(NSInteger, _WKModalContainerDecision) {
+    _WKModalContainerDecisionShow,
+    _WKModalContainerDecisionHideAndIgnore,
+    _WKModalContainerDecisionHideAndAllow,
+    _WKModalContainerDecisionHideAndDisallow,
 } WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 @protocol WKUIDelegatePrivate <WKUIDelegate>
@@ -180,6 +188,8 @@ struct UIEdgeInsets;
 - (void)_webView:(WKWebView *)webView requestNotificationPermissionForSecurityOrigin:(WKSecurityOrigin *)securityOrigin decisionHandler:(void (^)(BOOL))decisionHandler WK_API_AVAILABLE(macos(10.13.4), ios(WK_IOS_TBA));
 
 - (void)_webView:(WKWebView *)webView requestCookieConsentWithMoreInfoHandler:(void (^)(void))moreInfoHandler decisionHandler:(void (^)(BOOL))decisionHandler WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+
+- (void)_webView:(WKWebView *)webView decidePolicyForModalContainer:(_WKModalContainerInfo *)containerInfo decisionHandler:(void (^)(_WKModalContainerDecision))decisionHandler WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 #if TARGET_OS_IPHONE
 

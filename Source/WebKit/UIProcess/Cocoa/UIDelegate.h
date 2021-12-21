@@ -107,6 +107,7 @@ private:
         void handleAutoplayEvent(WebPageProxy&, WebCore::AutoplayEvent, OptionSet<WebCore::AutoplayEventFlags>) final;
         void decidePolicyForNotificationPermissionRequest(WebPageProxy&, API::SecurityOrigin&, CompletionHandler<void(bool allowed)>&&) final;
         void requestCookieConsent(CompletionHandler<void(WebCore::CookieConsentDecisionResult)>&&) final;
+        void decidePolicyForModalContainer(OptionSet<WebCore::ModalContainerControlType>, CompletionHandler<void(WebCore::ModalContainerDecision)>&&) final;
 
 #if PLATFORM(MAC)
         void showPage(WebPageProxy*) final;
@@ -274,6 +275,7 @@ private:
 #endif
         bool webViewRequestNotificationPermissionForSecurityOriginDecisionHandler : 1;
         bool webViewRequestCookieConsentWithMoreInfoHandlerDecisionHandler : 1;
+        bool webViewDecidePolicyForModalContainerDecisionHandler : 1;
     } m_delegateMethods;
 };
 

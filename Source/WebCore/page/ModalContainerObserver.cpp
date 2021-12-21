@@ -42,7 +42,7 @@
 #include "HTMLElement.h"
 #include "HTMLImageElement.h"
 #include "HTMLInputElement.h"
-#include "ModalContainerControlType.h"
+#include "ModalContainerTypes.h"
 #include "Page.h"
 #include "RenderDescendantIterator.h"
 #include "RenderText.h"
@@ -300,9 +300,49 @@ void ModalContainerObserver::collectClickableElementsTimerFired()
                 return;
             }
 
-            Vector<Ref<HTMLElement>> positiveControls;
-            Vector<Ref<HTMLElement>> neutralControls;
-            Vector<Ref<HTMLElement>> negativeControls;
+            struct ClassifiedControls {
+                Vector<WeakPtr<HTMLElement>> positive;
+                Vector<WeakPtr<HTMLElement>> neutral;
+                Vector<WeakPtr<HTMLElement>> negative;
+
+                HTMLElement* controlToClick(ModalContainerDecision decision) const
+                {
+                    auto matchNonNull = [&](const WeakPtr<HTMLElement>& element) {
+                        return !!element;
+                    };
+
+                    switch (decision) {
+                    case ModalContainerDecision::Show:
+                    case ModalContainerDecision::HideAndIgnore:
+                        break;
+                    case ModalContainerDecision::HideAndAllow:
+                        if (auto index = positive.findMatching(matchNonNull); index != notFound)
+                            return positive[index].get();
+                        if (auto index = neutral.findMatching(matchNonNull); index != notFound)
+                            return neutral[index].get();
+                        break;
+                    case ModalContainerDecision::HideAndDisallow:
+                        if (auto index = negative.findMatching(matchNonNull); index != notFound)
+                            return negative[index].get();
+                        break;
+                    }
+                    return nullptr;
+                }
+
+                OptionSet<ModalContainerControlType> types() const
+                {
+                    OptionSet<ModalContainerControlType> availableTypesIgnoringOther;
+                    if (!positive.isEmpty())
+                        availableTypesIgnoringOther.add(ModalContainerControlType::Positive);
+                    if (!negative.isEmpty())
+                        availableTypesIgnoringOther.add(ModalContainerControlType::Negative);
+                    if (!neutral.isEmpty())
+                        availableTypesIgnoringOther.add(ModalContainerControlType::Neutral);
+                    return availableTypesIgnoringOther;
+                }
+            };
+
+            ClassifiedControls classifiedControls;
             for (size_t index = 0; index < types.size(); ++index) {
                 auto control = controls[index];
                 if (!control)
@@ -310,49 +350,55 @@ void ModalContainerObserver::collectClickableElementsTimerFired()
 
                 switch (types[index]) {
                 case ModalContainerControlType::Positive:
-                    positiveControls.append(*control);
+                    classifiedControls.positive.append(control);
                     break;
                 case ModalContainerControlType::Negative:
-                    negativeControls.append(*control);
+                    classifiedControls.negative.append(control);
                     break;
                 case ModalContainerControlType::Neutral:
-                    neutralControls.append(*control);
+                    classifiedControls.neutral.append(control);
                     break;
                 case ModalContainerControlType::Other:
                     break;
                 }
             }
 
-            RefPtr<HTMLElement> controlToClick;
-            switch (documentLoader->modalContainerObservationPolicy()) {
-            case ModalContainerObservationPolicy::Disabled:
-                ASSERT_NOT_REACHED();
-                break;
-            case ModalContainerObservationPolicy::Allow: {
-                if (!positiveControls.isEmpty())
-                    controlToClick = positiveControls[0].ptr();
-                else if (!neutralControls.isEmpty())
-                    controlToClick = neutralControls[0].ptr();
-                break;
-            }
-            case ModalContainerObservationPolicy::Disallow: {
-                if (!negativeControls.isEmpty())
-                    controlToClick = negativeControls[0].ptr();
-                else if (!neutralControls.isEmpty())
-                    controlToClick = neutralControls[0].ptr();
-                break;
-            }
-            case ModalContainerObservationPolicy::Prompt:
-                // Not supported yet.
-                break;
-            }
-
             observer->m_hasAttemptedToFulfillPolicy = true;
 
-            if (controlToClick)
-                controlToClick->dispatchSimulatedClick(nullptr, SendMouseUpDownEvents, DoNotShowPressedLook);
+            auto* page = document->page();
+            if (!page)
+                return;
+
+            auto clickableControlTypes = classifiedControls.types();
+            if (clickableControlTypes.isEmpty()) {
+                observer->revealModalContainer();
+                return;
+            }
+
+            page->chrome().client().decidePolicyForModalContainer(clickableControlTypes, [weakDocument = WTFMove(weakDocument), observer, classifiedControls = WTFMove(classifiedControls)](auto decision) mutable {
+                RefPtr document = weakDocument.get();
+                if (!document)
+                    return;
+
+                if (observer != document->modalContainerObserverIfExists())
+                    return;
+
+                if (decision == ModalContainerDecision::Show) {
+                    observer->revealModalContainer();
+                    return;
+                }
+
+                if (RefPtr controlToClick = classifiedControls.controlToClick(decision))
+                    controlToClick->dispatchSimulatedClick(nullptr, SendMouseUpDownEvents, DoNotShowPressedLook);
+            });
         });
     });
+}
+
+void ModalContainerObserver::revealModalContainer()
+{
+    if (auto container = std::exchange(m_container, { }))
+        container->invalidateStyle();
 }
 
 std::pair<Vector<WeakPtr<HTMLElement>>, Vector<String>> ModalContainerObserver::collectClickableElements()

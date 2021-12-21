@@ -78,7 +78,7 @@
 #import <WebCore/Icon.h>
 #import <WebCore/IntPoint.h>
 #import <WebCore/IntRect.h>
-#import <WebCore/ModalContainerControlType.h>
+#import <WebCore/ModalContainerTypes.h>
 #import <WebCore/NavigationAction.h>
 #import <WebCore/NotImplemented.h>
 #import <WebCore/Page.h>
@@ -1177,4 +1177,9 @@ void WebChromeClient::requestCookieConsent(CompletionHandler<void(CookieConsentD
 void WebChromeClient::classifyModalContainerControls(Vector<String>&&, CompletionHandler<void(Vector<ModalContainerControlType>&&)>&& completion)
 {
     completion({ });
+}
+
+void WebChromeClient::decidePolicyForModalContainer(OptionSet<ModalContainerControlType>, CompletionHandler<void(ModalContainerDecision)>&& completion)
+{
+    completion(ModalContainerDecision::Show);
 }

@@ -53,6 +53,7 @@ public:
 private:
     void scheduleClickableElementCollection();
     void collectClickableElementsTimerFired();
+    void revealModalContainer();
 
     std::pair<Vector<WeakPtr<HTMLElement>>, Vector<String>> collectClickableElements();
 

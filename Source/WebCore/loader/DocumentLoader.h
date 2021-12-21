@@ -145,12 +145,7 @@ enum class MouseEventPolicy : uint8_t {
 #endif
 };
 
-enum class ModalContainerObservationPolicy : uint8_t {
-    Disabled,
-    Prompt,
-    Allow,
-    Disallow,
-};
+enum class ModalContainerObservationPolicy : bool { Disabled, Prompt };
 
 enum class ColorSchemePreference : uint8_t {
     NoPreference,
@@ -808,9 +803,7 @@ template<> struct EnumTraits<WebCore::ModalContainerObservationPolicy> {
     using values = EnumValues<
         WebCore::ModalContainerObservationPolicy,
         WebCore::ModalContainerObservationPolicy::Disabled,
-        WebCore::ModalContainerObservationPolicy::Prompt,
-        WebCore::ModalContainerObservationPolicy::Allow,
-        WebCore::ModalContainerObservationPolicy::Disallow
+        WebCore::ModalContainerObservationPolicy::Prompt
     >;
 };
 

@@ -57,6 +57,7 @@
 #import "_WKHitTestResultInternal.h"
 #import "_WKInspectorConfigurationInternal.h"
 #import "_WKInspectorInternal.h"
+#import "_WKModalContainerInfoInternal.h"
 #import "_WKWebAuthenticationPanelInternal.h"
 #import <AVFoundation/AVCaptureDevice.h>
 #import <AVFoundation/AVMediaFormat.h>
@@ -199,6 +200,7 @@ void UIDelegate::setDelegate(id <WKUIDelegate> delegate)
 #endif
     m_delegateMethods.webViewRequestNotificationPermissionForSecurityOriginDecisionHandler = [delegate respondsToSelector:@selector(_webView:requestNotificationPermissionForSecurityOrigin:decisionHandler:)];
     m_delegateMethods.webViewRequestCookieConsentWithMoreInfoHandlerDecisionHandler = [delegate respondsToSelector:@selector(_webView:requestCookieConsentWithMoreInfoHandler:decisionHandler:)];
+    m_delegateMethods.webViewDecidePolicyForModalContainerDecisionHandler = [delegate respondsToSelector:@selector(_webView:decidePolicyForModalContainer:decisionHandler:)];
 }
 
 #if ENABLE(CONTEXT_MENUS)
@@ -662,6 +664,44 @@ void UIDelegate::UIClient::requestCookieConsent(CompletionHandler<void(WebCore::
             return;
         checker->didCallCompletionHandler();
         completion(decision ? WebCore::CookieConsentDecisionResult::Consent : WebCore::CookieConsentDecisionResult::Dissent);
+    }).get()];
+}
+
+static WebCore::ModalContainerDecision coreModalContainerDecision(_WKModalContainerDecision decision)
+{
+    switch (decision) {
+    case _WKModalContainerDecisionShow:
+        return WebCore::ModalContainerDecision::Show;
+    case _WKModalContainerDecisionHideAndIgnore:
+        return WebCore::ModalContainerDecision::HideAndIgnore;
+    case _WKModalContainerDecisionHideAndAllow:
+        return WebCore::ModalContainerDecision::HideAndAllow;
+    case _WKModalContainerDecisionHideAndDisallow:
+        return WebCore::ModalContainerDecision::HideAndDisallow;
+    }
+    return WebCore::ModalContainerDecision::Show;
+}
+
+void UIDelegate::UIClient::decidePolicyForModalContainer(OptionSet<WebCore::ModalContainerControlType> controlTypes, CompletionHandler<void(WebCore::ModalContainerDecision)>&& completion)
+{
+    if (!m_uiDelegate)
+        return completion(WebCore::ModalContainerDecision::Show);
+
+    if (!m_uiDelegate->m_delegateMethods.webViewDecidePolicyForModalContainerDecisionHandler)
+        return completion(WebCore::ModalContainerDecision::Show);
+
+    auto delegate = m_uiDelegate->m_delegate.get();
+    if (!delegate)
+        return completion(WebCore::ModalContainerDecision::Show);
+
+    auto checker = CompletionHandlerCallChecker::create(delegate.get(), @selector(_webView:decidePolicyForModalContainer:decisionHandler:));
+    auto info = adoptNS([[_WKModalContainerInfo alloc] initWithTypes:controlTypes]);
+    [(id <WKUIDelegatePrivate>)delegate _webView:m_uiDelegate->m_webView.get().get() decidePolicyForModalContainer:info.get() decisionHandler:makeBlockPtr([completion = WTFMove(completion), checker = WTFMove(checker)] (_WKModalContainerDecision decision) mutable {
+        if (checker->completionHandlerHasBeenCalled())
+            return;
+
+        checker->didCallCompletionHandler();
+        completion(coreModalContainerDecision(decision));
     }).get()];
 }
 

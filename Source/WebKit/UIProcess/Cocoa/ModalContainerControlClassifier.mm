@@ -26,7 +26,7 @@
 #import "config.h"
 #import "ModalContainerControlClassifier.h"
 
-#import <WebCore/ModalContainerControlType.h>
+#import <WebCore/ModalContainerTypes.h>
 #import <pal/cocoa/CoreMLSoftLink.h>
 #import <pal/cocoa/NaturalLanguageSoftLink.h>
 
