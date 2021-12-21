@@ -1,3 +1,54 @@
+2021-12-20  Dewei Zhu  <dewei_zhu@apple.com>
+
+        'run-benchmark' should launch browsers in a relative clean state.
+        https://bugs.webkit.org/show_bug.cgi?id=234107
+
+        Reviewed by Stephanie Lewis.
+
+        Add code to ensure Chrome and Firefox launches in a relative clean state.
+        Refactor browser drivers for macOS Chrome and Firefox to share more code.
+
+        * Scripts/webkitpy/benchmark_runner/browser_driver/osx_chrome_driver.py:
+        Added '--no-first-run', '--no-default-browser-check', '--disable-extensions' flags.
+        (OSXChromeDriverBase):
+        (OSXChromeDriverBase.launch_url):
+        (OSXChromeDriverBase.launch_driver):
+        (OSXChromeDriverBase._create_chrome_options):
+        (OSXChromeDriverBase._window_size_arg):
+        (OSXChromeDriverBase._set_chrome_binary_location):
+        (OSXChromeDriver):
+        (OSXChromeDriver._set_chrome_binary_location):
+        (OSXChromeCanaryDriver._set_chrome_binary_location):
+        (OSXChromeDriver.launch_url): Deleted.
+        (OSXChromeDriver.launch_driver): Deleted.
+        (OSXChromeCanaryDriver.launch_url): Deleted.
+        (OSXChromeCanaryDriver.launch_driver): Deleted.
+        (create_args): Deleted.
+        (create_chrome_options): Deleted.
+        (create_window_size_arg): Deleted.
+        * Scripts/webkitpy/benchmark_runner/browser_driver/osx_firefox_driver.py:
+        Added code to use profiles to suppress default browser check and privacy notice tab.
+        (OSXFirefoxDriverBase):
+        (OSXFirefoxDriverBase.__init__):
+        (OSXFirefoxDriverBase.prepare_env):
+        (OSXFirefoxDriverBase.restore_env):
+        (OSXFirefoxDriverBase.launch_url):
+        (OSXFirefoxDriverBase.launch_driver):
+        (OSXFirefoxDriverBase._setup_temporary_profile_directory):
+        (OSXFirefoxDriverBase._teardown_temporary_profile_directory):
+        (OSXFirefoxDriverBase._set_firefox_binary_location):
+        (OSXFirefoxDriver):
+        (OSXFirefoxDriver._set_firefox_binary_location):
+        (OSXFirefoxNightlyDriver):
+        (OSXFirefoxNightlyDriver._set_firefox_binary_location):
+        (OSXFirefoxDriver.launch_url): Deleted.
+        (OSXFirefoxDriver.launch_driver): Deleted.
+        (OSXFirefoxNightlyDriver.launch_url): Deleted.
+        (OSXFirefoxNightlyDriver.launch_driver): Deleted.
+        (create_args): Deleted.
+        * Scripts/webkitpy/benchmark_runner/data/firefox_profile/user.js: Added user preferences
+        so that Firefox can be launched without checking default browser and privacy notice.
+
 2021-12-20  J Pascoe  <j_pascoe@apple.com>
 
         [WebAuthn] Add option to change requestWebAuthenticationNoGesture delegate for api tests.

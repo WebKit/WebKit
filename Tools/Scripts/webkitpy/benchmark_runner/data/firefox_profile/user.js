@@ -1,0 +1,9 @@
+user_pref("browser.shell.checkDefaultBrowser", false);
+user_pref("browser.startup.couldRestoreSession.count", -1);
+user_pref("browser.webapps.checkForUpdates", 0);
+user_pref("startup.homepage_welcome_url", "");
+user_pref("startup.homepage_welcome_url.additional", "");
+user_pref("app.update.checkInstallTime", false);
+user_pref("app.update.disabledForTesting", true);
+user_pref("extensions.update.enabled", false);
+user_pref("datareporting.policy.dataSubmissionPolicyBypassNotification", true);
