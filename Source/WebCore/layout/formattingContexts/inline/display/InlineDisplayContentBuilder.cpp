@@ -87,23 +87,24 @@ InlineDisplayContentBuilder::InlineDisplayContentBuilder(const ContainerBox& for
 {
 }
 
-DisplayBoxes InlineDisplayContentBuilder::build(const LineBuilder::LineContent& lineContent, const LineBox& lineBox, const InlineRect& lineBoxLogicalRect, const size_t lineIndex)
+DisplayBoxes InlineDisplayContentBuilder::build(const LineBuilder::LineContent& lineContent, const LineBox& lineBox, const InlineDisplay::Line displayLine, const size_t lineIndex)
 {
     DisplayBoxes boxes;
     boxes.reserveInitialCapacity(lineContent.runs.size() + lineBox.nonRootInlineLevelBoxes().size() + 1);
 
     m_lineIndex = lineIndex;
+    auto lineBoxRect = displayLine.lineBoxRect();
     // Every line starts with a root box, even the empty ones.
     auto rootInlineBoxRect = lineBox.logicalRectForRootInlineBox();
-    rootInlineBoxRect.moveBy(lineBoxLogicalRect.topLeft());
+    rootInlineBoxRect.moveBy(lineBoxRect.topLeft());
     boxes.append({ m_lineIndex, InlineDisplay::Box::Type::RootInlineBox, root(), UBIDI_DEFAULT_LTR, rootInlineBoxRect, rootInlineBoxRect, { }, { }, lineBox.rootInlineBox().hasContent() });
 
     auto contentNeedsBidiReordering = !lineContent.visualOrderList.isEmpty();
     if (contentNeedsBidiReordering)
-        processBidiContent(lineContent, lineBox, lineBoxLogicalRect.topLeft(), boxes);
+        processBidiContent(lineContent, lineBox, lineBoxRect.topLeft(), boxes);
     else
-        processNonBidiContent(lineContent, lineBox, lineBoxLogicalRect.topLeft(), boxes);
-    processOverflownRunsForEllipsis(boxes, lineBoxLogicalRect.right());
+        processNonBidiContent(lineContent, lineBox, lineBoxRect.topLeft(), boxes);
+    processOverflownRunsForEllipsis(boxes, lineBoxRect.right());
     collectInkOverflowForInlineBoxes(boxes);
     return boxes;
 }
@@ -316,7 +317,7 @@ void InlineDisplayContentBuilder::appendInlineDisplayBoxAtBidiBoundary(const Box
     });
 }
 
-void InlineDisplayContentBuilder::processNonBidiContent(const LineBuilder::LineContent& lineContent, const LineBox& lineBox, const InlineLayoutPoint& lineBoxLogicalTopLeft, DisplayBoxes& boxes)
+void InlineDisplayContentBuilder::processNonBidiContent(const LineBuilder::LineContent& lineContent, const LineBox& lineBox, const InlineLayoutPoint& lineBoxTopLeft, DisplayBoxes& boxes)
 {
     auto rootInlineBoxWidth = lineBox.logicalRectForRootInlineBox().width();
     auto rootInlineBoxAlignmentOffset = lineBox.rootInlineBoxAlignmentOffset();
@@ -328,7 +329,7 @@ void InlineDisplayContentBuilder::processNonBidiContent(const LineBuilder::LineC
         auto visualRectRelativeToRoot = [&](auto logicalRect) {
             // When the logical order == visual order, RTL inline direction is just an offset.
             auto horizontalOffset = needsDirectionAdjustment ? lineContent.lineLogicalWidth - rootInlineBoxWidth - rootInlineBoxAlignmentOffset : rootInlineBoxAlignmentOffset;
-            logicalRect.moveBy({ lineBoxLogicalTopLeft.x() + horizontalOffset, lineBoxLogicalTopLeft.y() });
+            logicalRect.moveBy({ lineBoxTopLeft.x() + horizontalOffset, lineBoxTopLeft.y() });
             return logicalRect;
         };
 
@@ -457,7 +458,7 @@ struct IsFirstLastIndex {
     std::optional<size_t> last;
 };
 using IsFirstLastIndexesMap = HashMap<const Box*, IsFirstLastIndex>;
-void InlineDisplayContentBuilder::adjustVisualGeometryForDisplayBox(size_t displayBoxNodeIndex, InlineLayoutUnit& contentRightInVisualOrder, InlineLayoutUnit lineBoxLogicalTop, const DisplayBoxTree& displayBoxTree, DisplayBoxes& boxes, const LineBox& lineBox, const IsFirstLastIndexesMap& isFirstLastIndexesMap)
+void InlineDisplayContentBuilder::adjustVisualGeometryForDisplayBox(size_t displayBoxNodeIndex, InlineLayoutUnit& contentRightInVisualOrder, InlineLayoutUnit lineBoxTop, const DisplayBoxTree& displayBoxTree, DisplayBoxes& boxes, const LineBox& lineBox, const IsFirstLastIndexesMap& isFirstLastIndexesMap)
 {
     // Non-inline box display boxes just need a horizontal adjustment while
     // inline box type of display boxes need
@@ -492,7 +493,7 @@ void InlineDisplayContentBuilder::adjustVisualGeometryForDisplayBox(size_t displ
     auto isLastBox = isFirstLastIndexes.last && *isFirstLastIndexes.last == displayBoxNodeIndex;
     auto beforeInlineBoxContent = [&] {
         auto logicalRect = lineBox.logicalBorderBoxForInlineBox(layoutBox, boxGeometry);
-        auto visualRect = InlineRect { lineBoxLogicalTop + logicalRect.top(), contentRightInVisualOrder, { }, logicalRect.height() };
+        auto visualRect = InlineRect { lineBoxTop + logicalRect.top(), contentRightInVisualOrder, { }, logicalRect.height() };
         auto shouldApplyLeftSide = (isLeftToRightDirection && isFirstBox) || (!isLeftToRightDirection && isLastBox);
         if (!shouldApplyLeftSide)
             return displayBox.setRect(visualRect, visualRect);
@@ -505,7 +506,7 @@ void InlineDisplayContentBuilder::adjustVisualGeometryForDisplayBox(size_t displ
     beforeInlineBoxContent();
 
     for (auto childDisplayBoxNodeIndex : displayBoxTree.at(displayBoxNodeIndex).children)
-        adjustVisualGeometryForDisplayBox(childDisplayBoxNodeIndex, contentRightInVisualOrder, lineBoxLogicalTop, displayBoxTree, boxes, lineBox, isFirstLastIndexesMap);
+        adjustVisualGeometryForDisplayBox(childDisplayBoxNodeIndex, contentRightInVisualOrder, lineBoxTop, displayBoxTree, boxes, lineBox, isFirstLastIndexesMap);
 
     auto afterInlineBoxContent = [&] {
         auto shouldApplyRightSide = (isLeftToRightDirection && isLastBox) || (!isLeftToRightDirection && isFirstBox);
@@ -530,7 +531,7 @@ void InlineDisplayContentBuilder::adjustVisualGeometryForDisplayBox(size_t displ
         displayBox.setHasContent();
 }
 
-void InlineDisplayContentBuilder::processBidiContent(const LineBuilder::LineContent& lineContent, const LineBox& lineBox, const InlineLayoutPoint& lineBoxLogicalTopLeft, DisplayBoxes& boxes)
+void InlineDisplayContentBuilder::processBidiContent(const LineBuilder::LineContent& lineContent, const LineBox& lineBox, const InlineLayoutPoint& lineBoxTopLeft, DisplayBoxes& boxes)
 {
     ASSERT(lineContent.visualOrderList.size() <= lineContent.runs.size());
 
@@ -559,7 +560,7 @@ void InlineDisplayContentBuilder::processBidiContent(const LineBuilder::LineCont
 
             auto visualRectRelativeToRoot = [&](auto logicalRect) {
                 logicalRect.setLeft(contentRightInVisualOrder);
-                logicalRect.moveBy(lineBoxLogicalTopLeft);
+                logicalRect.moveBy(lineBoxTopLeft);
                 return logicalRect;
             };
 
@@ -637,16 +638,16 @@ void InlineDisplayContentBuilder::processBidiContent(const LineBuilder::LineCont
         computeIsFirstIsLastBox();
 
         auto adjustVisualGeometryWithInlineBoxes = [&] {
-            auto contentRightInVisualOrder = lineBoxLogicalTopLeft.x() + contentStartInVisualOrder;
+            auto contentRightInVisualOrder = lineBoxTopLeft.x() + contentStartInVisualOrder;
 
             for (auto childDisplayBoxNodeIndex : displayBoxTree.root().children)
-                adjustVisualGeometryForDisplayBox(childDisplayBoxNodeIndex, contentRightInVisualOrder, lineBoxLogicalTopLeft.y(), displayBoxTree, boxes, lineBox, isFirstLastIndexesMap);
+                adjustVisualGeometryForDisplayBox(childDisplayBoxNodeIndex, contentRightInVisualOrder, lineBoxTopLeft.y(), displayBoxTree, boxes, lineBox, isFirstLastIndexesMap);
         };
         adjustVisualGeometryWithInlineBoxes();
     }
 }
 
-void InlineDisplayContentBuilder::processOverflownRunsForEllipsis(DisplayBoxes& boxes, InlineLayoutUnit lineBoxLogicalRight)
+void InlineDisplayContentBuilder::processOverflownRunsForEllipsis(DisplayBoxes& boxes, InlineLayoutUnit lineBoxRight)
 {
     if (root().style().textOverflow() != TextOverflow::Ellipsis)
         return;
@@ -654,8 +655,8 @@ void InlineDisplayContentBuilder::processOverflownRunsForEllipsis(DisplayBoxes& 
     ASSERT(rootInlineBox.isRootInlineBox());
 
     auto rootInlineBoxRect = rootInlineBox.rect();
-    if (rootInlineBoxRect.right() <= lineBoxLogicalRight) {
-        ASSERT(boxes.last().right() <= lineBoxLogicalRight);
+    if (rootInlineBoxRect.right() <= lineBoxRight) {
+        ASSERT(boxes.last().right() <= lineBoxRight);
         return;
     }
 
@@ -667,7 +668,7 @@ void InlineDisplayContentBuilder::processOverflownRunsForEllipsis(DisplayBoxes& 
     for (auto index = boxes.size(); index--;) {
         auto& displayBox = boxes[index];
 
-        if (displayBox.left() >= lineBoxLogicalRight) {
+        if (displayBox.left() >= lineBoxRight) {
             // Fully overflown boxes are collapsed.
             displayBox.truncate();
             continue;
@@ -676,7 +677,7 @@ void InlineDisplayContentBuilder::processOverflownRunsForEllipsis(DisplayBoxes& 
         // We keep truncating content until after we can accommodate the ellipsis content
         // 1. fully truncate in case of inline level boxes (ie non-text content) or if ellipsis content is wider than the overflowing one.
         // 2. partially truncated to make room for the ellipsis box.
-        auto availableRoomForEllipsis = lineBoxLogicalRight - displayBox.left();
+        auto availableRoomForEllipsis = lineBoxRight - displayBox.left();
         if (availableRoomForEllipsis <= ellipsisWidth) {
             // Can't accommodate the ellipsis content here. We need to truncate non-overflowing boxes too.
             displayBox.truncate();

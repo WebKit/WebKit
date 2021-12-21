@@ -552,17 +552,21 @@ InlineRect InlineFormattingContext::computeGeometryForLineContent(const LineBuil
     auto& formattingState = this->formattingState();
     auto currentLineIndex = formattingState.lines().size();
 
-    auto lineBoxAndHeight = LineBoxBuilder(*this).build(lineContent, currentLineIndex);
-
-    auto displayLine = InlineDisplayLineBuilder(*this).build(lineContent, lineBoxAndHeight.lineBox, lineBoxAndHeight.lineBoxLogicalHeight, currentLineIndex);
-    auto displayLineBoxRect = displayLine.lineBoxRect();
-
-    auto inlineContentBuilder = InlineDisplayContentBuilder { root(), formattingState };
-    formattingState.addBoxes(inlineContentBuilder.build(lineContent, lineBoxAndHeight.lineBox, displayLineBoxRect, currentLineIndex));
+    auto lineBoxAndHeight = LineBoxBuilder { *this }.build(lineContent, currentLineIndex);
+    auto displayLine = InlineDisplayLineBuilder { *this }.build(lineContent
+        , lineBoxAndHeight.lineBox
+        , lineBoxAndHeight.lineBoxLogicalHeight
+        , currentLineIndex
+    );
+    formattingState.addBoxes(InlineDisplayContentBuilder { root(), formattingState }.build(lineContent
+        , lineBoxAndHeight.lineBox
+        , displayLine
+        , currentLineIndex)
+    );
     formattingState.addLineBox(WTFMove(lineBoxAndHeight.lineBox));
     formattingState.addLine(displayLine);
 
-    return displayLineBoxRect;
+    return formattingState.lines().last().lineBoxRect();
 }
 
 void InlineFormattingContext::invalidateFormattingState()

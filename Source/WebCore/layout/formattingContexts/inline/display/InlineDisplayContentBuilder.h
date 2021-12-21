@@ -44,14 +44,14 @@ class InlineDisplayContentBuilder {
 public:
     InlineDisplayContentBuilder(const ContainerBox& formattingContextRoot, InlineFormattingState&);
 
-    DisplayBoxes build(const LineBuilder::LineContent&, const LineBox&, const InlineRect& lineBoxLogicalRect, const size_t lineIndex);
+    DisplayBoxes build(const LineBuilder::LineContent&, const LineBox&, const InlineDisplay::Line displayLine, const size_t lineIndex);
 
     static void computeIsFirstIsLastBoxForInlineContent(DisplayBoxes&);
 
 private:
-    void processNonBidiContent(const LineBuilder::LineContent&, const LineBox&, const InlineLayoutPoint& lineBoxLogicalTopLeft, DisplayBoxes&);
-    void processBidiContent(const LineBuilder::LineContent&, const LineBox&, const InlineLayoutPoint& lineBoxLogicalTopLeft, DisplayBoxes&);
-    void processOverflownRunsForEllipsis(DisplayBoxes&, InlineLayoutUnit lineBoxLogicalRight);
+    void processNonBidiContent(const LineBuilder::LineContent&, const LineBox&, const InlineLayoutPoint& lineBoxTopLeft, DisplayBoxes&);
+    void processBidiContent(const LineBuilder::LineContent&, const LineBox&, const InlineLayoutPoint& lineBoxTopLeft, DisplayBoxes&);
+    void processOverflownRunsForEllipsis(DisplayBoxes&, InlineLayoutUnit lineBoxRight);
     void collectInkOverflowForInlineBoxes(DisplayBoxes&);
 
     void appendTextDisplayBox(const Line::Run&, const InlineRect&, DisplayBoxes&);
@@ -63,7 +63,7 @@ private:
     void appendInlineDisplayBoxAtBidiBoundary(const Box&, DisplayBoxes&);
 
     void setInlineBoxGeometry(const Box&, const InlineRect&, bool isFirstInlineBoxFragment);
-    void adjustVisualGeometryForDisplayBox(size_t displayBoxNodeIndex, InlineLayoutUnit& accumulatedOffset, InlineLayoutUnit lineBoxLogicalTop, const DisplayBoxTree&, DisplayBoxes&, const LineBox&, const HashMap<const Box*, IsFirstLastIndex>&);
+    void adjustVisualGeometryForDisplayBox(size_t displayBoxNodeIndex, InlineLayoutUnit& accumulatedOffset, InlineLayoutUnit lineBoxTop, const DisplayBoxTree&, DisplayBoxes&, const LineBox&, const HashMap<const Box*, IsFirstLastIndex>&);
     size_t ensureDisplayBoxForContainer(const ContainerBox&, DisplayBoxTree&, AncestorStack&, DisplayBoxes&);
 
     const ContainerBox& root() const { return m_formattingContextRoot; }

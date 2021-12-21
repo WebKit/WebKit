@@ -38,14 +38,14 @@ InlineDisplayLineBuilder::InlineDisplayLineBuilder(const InlineFormattingContext
 InlineDisplay::Line InlineDisplayLineBuilder::build(const LineBuilder::LineContent& lineContent, const LineBox& lineBox, InlineLayoutUnit lineBoxLogicalHeight, size_t lineIndex)
 {
     auto& rootStyle = lineIndex ? root().firstLineStyle() : root().style();
-    auto physicalLeft = lineContent.lineLogicalTopLeft.x();
+    auto visualLeft = lineContent.lineLogicalTopLeft.x();
     if (!rootStyle.isLeftToRightDirection()) {
         // https://drafts.csswg.org/css-text/#text-indent-property
         // Since text-indent only initiates margin start, we just need to pull the linebox back to the left.
-        physicalLeft -= lineContent.lineMarginStart;
+        visualLeft -= lineContent.lineMarginStart;
     }
     // FIXME: Use physical geometry here.
-    auto lineBoxRect = InlineRect { lineContent.lineLogicalTopLeft.y(), physicalLeft, lineContent.lineLogicalWidth, lineBoxLogicalHeight };
+    auto lineBoxRect = InlineRect { lineContent.lineLogicalTopLeft.y(), visualLeft, lineContent.lineLogicalWidth, lineBoxLogicalHeight };
     auto scrollableOverflowRect = lineBoxRect;
     auto& rootInlineBox = lineBox.rootInlineBox();
     auto enclosingTopAndBottom = InlineDisplay::Line::EnclosingTopAndBottom { lineBoxRect.top() + rootInlineBox.logicalTop(), lineBoxRect.top() + rootInlineBox.logicalBottom() };
@@ -79,7 +79,13 @@ InlineDisplay::Line InlineDisplayLineBuilder::build(const LineBuilder::LineConte
         enclosingTopAndBottom.top = std::min(enclosingTopAndBottom.top, borderBox.top());
         enclosingTopAndBottom.bottom = std::max(enclosingTopAndBottom.bottom, borderBox.bottom());
     }
-    return InlineDisplay::Line { lineBoxRect, scrollableOverflowRect, enclosingTopAndBottom, rootInlineBox.logicalTop() + rootInlineBox.baseline(), lineBox.rootInlineBoxAlignmentOffset() + rootInlineBox.logicalLeft(), rootInlineBox.logicalWidth() };
+    return InlineDisplay::Line { lineBoxRect
+        , scrollableOverflowRect
+        , enclosingTopAndBottom
+        , rootInlineBox.logicalTop() + rootInlineBox.baseline()
+        , lineBox.rootInlineBoxAlignmentOffset() + rootInlineBox.logicalLeft()
+        , rootInlineBox.logicalWidth()
+    };
 }
 
 }
