@@ -1,3 +1,15 @@
+2021-12-21  Robert Jenner  <Jenner@apple.com>
+
+        [ Monterey ] 2 TestWebKitAPI.WebKit.DisplayName (api-tests) are constantly failing
+        <rdar://80353834>
+
+        Uneviewed test gardening.
+
+        Adding the disable of 2 TestWebKitAPI.WebKit.DisplayName api-tests to Safari-612-Branch.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/DisplayName.mm:
+        (TestWebKitAPI::TEST):
+
 2021-12-20  Robert Jenner  <Jenner@apple.com>
 
         Fix for Cherry-pick r283599. rdar://problem/83897435
