@@ -56,9 +56,10 @@ void WorkQueue::dispatch(Function<void()>&& function)
 
 void WorkQueue::dispatchWithQOS(Function<void()>&& function, QOS qos)
 {
-    dispatch_async(m_dispatchQueue.get(), dispatch_block_create_with_qos_class(DISPATCH_BLOCK_ENFORCE_QOS_CLASS, Thread::dispatchQOSClass(qos), 0, makeBlockPtr([function = WTFMove(function)] {
+    dispatch_block_t blockWithQOS = dispatch_block_create_with_qos_class(DISPATCH_BLOCK_ENFORCE_QOS_CLASS, Thread::dispatchQOSClass(qos), 0, makeBlockPtr([function = WTFMove(function)] {
         function();
-    }).get()));
+    }).get());
+    dispatch_async(m_dispatchQueue.get(), blockWithQOS);
 #if !__has_feature(objc_arc)
     Block_release(blockWithQOS);
 #endif
