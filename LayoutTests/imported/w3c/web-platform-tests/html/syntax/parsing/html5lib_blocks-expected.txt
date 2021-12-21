@@ -13,8 +13,8 @@ PASS html5lib_blocks.html 41586061adf395acf518e7ad457d048a911e52c1
 PASS html5lib_blocks.html 1394f443495c04661d70ec27e44d99e6fcb3b536
 PASS html5lib_blocks.html 9a977cfacba03a56f6ccd11dd6595a7fa65b3c3e
 PASS html5lib_blocks.html 284962aa35b722a4d05a22c264c0bbbc859f7d41
-FAIL html5lib_blocks.html 88dfa3115905b28f4086717b8d6547b8f88ee46a assert_equals: expected "#document\n| <!DOCTYPE html>\n| <html>\n|   <head>\n|   <body>\n|     <p>\n|       \"foo\"\n|     <dialog>\n|       \"bar\"\n|       <p>\n|         \"baz\"" but got "#document\n| <!DOCTYPE html>\n| <html>\n|   <head>\n|   <body>\n|     <p>\n|       \"foo\"\n|       <dialog>\n|         \"bar\"\n|     <p>\n|       \"baz\""
-FAIL html5lib_blocks.html d5e8a935c5b5c3723b77ff0a9079bbee3e8f02ad assert_equals: expected "#document\n| <!DOCTYPE html>\n| <html>\n|   <head>\n|   <body>\n|     <dialog>\n|       <p>\n|         \"foo\"\n|     \"bar\"" but got "#document\n| <!DOCTYPE html>\n| <html>\n|   <head>\n|   <body>\n|     <dialog>\n|       <p>\n|         \"foobar\""
+PASS html5lib_blocks.html 88dfa3115905b28f4086717b8d6547b8f88ee46a
+PASS html5lib_blocks.html d5e8a935c5b5c3723b77ff0a9079bbee3e8f02ad
 PASS html5lib_blocks.html 6cb6f36b9c042e41b18967b46b068db7b36431ef
 PASS html5lib_blocks.html 68111d7cbc22fd47cbec6912d008ab93bc1719ec
 PASS html5lib_blocks.html 5ff74097bb1276f6d595d17674c04d2d9ba9a49a
@@ -49,61 +49,4 @@ PASS html5lib_blocks.html 6c32d08349975d65ec100346f36beb760252c42f
 PASS html5lib_blocks.html 17f3861b008afd895cc5e642218d4aed099afc77
 PASS html5lib_blocks.html fe4badd0b7469c6ddb8cd243133f10ffd1b84814
 PASS html5lib_blocks.html b130e7f7a09b5516e13e281d577c5bcc1f56cb5d
-88dfa3115905b28f4086717b8d6547b8f88ee46a
-
-Input
-
-<!doctype html><p>foo<dialog>bar<p>baz
-Expected
-
-#document
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     <p>
-|       "foo"
-|     <dialog>
-|       "bar"
-|       <p>
-|         "baz"
-Actual
-
-#document
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     <p>
-|       "foo"
-|       <dialog>
-|         "bar"
-|     <p>
-|       "baz"
-d5e8a935c5b5c3723b77ff0a9079bbee3e8f02ad
-
-Input
-
-<!doctype html><dialog><p>foo</dialog>bar
-Expected
-
-#document
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     <dialog>
-|       <p>
-|         "foo"
-|     "bar"
-Actual
-
-#document
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     <dialog>
-|       <p>
-|         "foobar"
 

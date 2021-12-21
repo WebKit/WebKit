@@ -1,3 +1,14 @@
+2021-12-21  Tim Nguyen  <ntim@apple.com>
+
+        <dialog> should generate implied end tags
+        https://bugs.webkit.org/show_bug.cgi?id=234442
+
+        Reviewed by Antti Koivisto.
+
+        See references to dialog in: https://html.spec.whatwg.org/multipage/parsing.html#parsing-main-inbody
+
+        * web-platform-tests/html/syntax/parsing/html5lib_blocks-expected.txt:
+
 2021-12-21  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         CSP: Include the sample in eval violation reports

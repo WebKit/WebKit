@@ -612,6 +612,7 @@ void HTMLTreeBuilder::processStartTagForInBody(AtomHTMLToken&& token)
         || token.name() == blockquoteTag
         || token.name() == centerTag
         || token.name() == detailsTag
+        || token.name() == dialogTag
         || token.name() == dirTag
         || token.name() == divTag
         || token.name() == dlTag
@@ -1725,6 +1726,7 @@ void HTMLTreeBuilder::processEndTagForInBody(AtomHTMLToken&& token)
         || token.name() == buttonTag
         || token.name() == centerTag
         || token.name() == detailsTag
+        || token.name() == dialogTag
         || token.name() == dirTag
         || token.name() == divTag
         || token.name() == dlTag
