@@ -32,8 +32,7 @@
 #include <jxl/decode_cxx.h>
 
 #if USE(LCMS)
-typedef void* cmsHPROFILE;
-typedef void* cmsHTRANSFORM;
+#include "LCMSUniquePtr.h"
 #endif
 
 namespace WebCore {
@@ -91,7 +90,7 @@ private:
 #if USE(LCMS)
     void clearColorTransform();
     void prepareColorTransform();
-    cmsHPROFILE tryDecodeICCColorProfile();
+    LCMSProfilePtr tryDecodeICCColorProfile();
 #endif
 
     JxlDecoderPtr m_decoder;
@@ -105,7 +104,7 @@ private:
     bool m_isLastFrameHeaderReceived { false }; // If this is true, we know we don't need to update m_frameCount.
 
 #if USE(LCMS)
-    cmsHTRANSFORM m_iccTransform { nullptr };
+    LCMSTransformPtr m_iccTransform;
 #endif
 };
 

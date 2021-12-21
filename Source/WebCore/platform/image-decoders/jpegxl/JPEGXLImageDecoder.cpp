@@ -30,7 +30,6 @@
 
 #if USE(LCMS)
 #include "PlatformDisplay.h"
-#include <lcms2.h>
 #endif
 
 namespace WebCore {
@@ -373,17 +372,14 @@ void JPEGXLImageDecoder::imageOut(size_t x, size_t y, size_t numPixels, const ui
 
 #if USE(LCMS)
     if (m_iccTransform)
-        cmsDoTransform(m_iccTransform, row, row, numPixels);
+        cmsDoTransform(m_iccTransform.get(), row, row, numPixels);
 #endif
 }
 
 #if USE(LCMS)
 void JPEGXLImageDecoder::clearColorTransform()
 {
-    if (m_iccTransform) {
-        cmsDeleteTransform(m_iccTransform);
-        m_iccTransform = nullptr;
-    }
+    m_iccTransform.reset();
 }
 
 void JPEGXLImageDecoder::prepareColorTransform()
@@ -395,21 +391,17 @@ void JPEGXLImageDecoder::prepareColorTransform()
     if (!displayProfile)
         return;
 
-    cmsHPROFILE profile = tryDecodeICCColorProfile();
+    auto profile = tryDecodeICCColorProfile();
     if (!profile)
         return; // TODO(bugs.webkit.org/show_bug.cgi?id=234222): We should try to use encoded color profile if ICC profile is not available.
 
     // TODO(bugs.webkit.org/show_bug.cgi?id=234221): We should handle CMYK color but it may require two extra channels (Alpha and K)
     // and libjxl has yet to support it. 
-    if (cmsGetColorSpace(profile) == cmsSigRgbData && cmsGetColorSpace(displayProfile) == cmsSigRgbData)
-        m_iccTransform = cmsCreateTransform(profile, TYPE_BGRA_8, displayProfile, TYPE_BGRA_8, INTENT_RELATIVE_COLORIMETRIC, 0);
-
-    // We close the profile here. The profile may still be alive if m_iccTransform holds a reference to it.
-    if (profile)
-        cmsCloseProfile(profile);
+    if (cmsGetColorSpace(profile.get()) == cmsSigRgbData && cmsGetColorSpace(displayProfile) == cmsSigRgbData)
+        m_iccTransform = LCMSTransformPtr(cmsCreateTransform(profile.get(), TYPE_BGRA_8, displayProfile, TYPE_BGRA_8, INTENT_RELATIVE_COLORIMETRIC, 0));
 }
 
-cmsHPROFILE JPEGXLImageDecoder::tryDecodeICCColorProfile()
+LCMSProfilePtr JPEGXLImageDecoder::tryDecodeICCColorProfile()
 {
     size_t profileSize;
     if (JxlDecoderGetICCProfileSize(m_decoder.get(), &s_pixelFormat, JXL_COLOR_PROFILE_TARGET_DATA, &profileSize) != JXL_DEC_SUCCESS)
@@ -419,7 +411,7 @@ cmsHPROFILE JPEGXLImageDecoder::tryDecodeICCColorProfile()
     if (JxlDecoderGetColorAsICCProfile(m_decoder.get(), &s_pixelFormat, JXL_COLOR_PROFILE_TARGET_DATA, profileData.data(), profileData.size()) != JXL_DEC_SUCCESS)
         return nullptr;
 
-    return cmsOpenProfileFromMem(profileData.data(), profileData.size());
+    return LCMSProfilePtr(cmsOpenProfileFromMem(profileData.data(), profileData.size()));
 }
 
 #endif // USE(LCMS)

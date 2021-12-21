@@ -1966,6 +1966,14 @@ if (ENABLE_USER_MESSAGE_HANDLERS)
 endif ()
 
 if (USE_LCMS)
+    list(APPEND WebCore_PRIVATE_INCLUDE_DIRECTORIES
+        "${WEBCORE_DIR}/platform/graphics/lcms"
+    )
+
+    list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
+        platform/graphics/lcms/LCMSUniquePtr.h
+    )
+
     list(APPEND WebCore_LIBRARIES LCMS2::LCMS2)
 endif ()
 

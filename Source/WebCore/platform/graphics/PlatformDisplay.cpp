@@ -80,10 +80,6 @@
 #include <wtf/NeverDestroyed.h>
 #endif
 
-#if USE(LCMS)
-#include <lcms2.h>
-#endif
-
 #if USE(ATSPI)
 #include <wtf/glib/GUniquePtr.h>
 #endif
@@ -189,10 +185,6 @@ PlatformDisplay::~PlatformDisplay()
 #endif
     if (s_sharedDisplayForCompositing == this)
         s_sharedDisplayForCompositing = nullptr;
-#if USE(LCMS)
-    if (m_iccProfile)
-        cmsCloseProfile(m_iccProfile);
-#endif
 }
 
 #if USE(EGL) || USE(GLX)
@@ -292,8 +284,8 @@ void PlatformDisplay::terminateEGLDisplay()
 cmsHPROFILE PlatformDisplay::colorProfile() const
 {
     if (!m_iccProfile)
-        m_iccProfile = cmsCreate_sRGBProfile();
-    return m_iccProfile;
+        m_iccProfile = LCMSProfilePtr(cmsCreate_sRGBProfile());
+    return m_iccProfile.get();
 }
 #endif
 

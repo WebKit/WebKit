@@ -41,7 +41,7 @@ typedef struct _GstGLDisplay GstGLDisplay;
 #endif // ENABLE(VIDEO) && USE(GSTREAMER_GL)
 
 #if USE(LCMS)
-typedef void* cmsHPROFILE;
+#include "LCMSUniquePtr.h"
 #endif
 
 namespace WebCore {
@@ -114,7 +114,7 @@ protected:
 #endif
 
 #if USE(LCMS)
-    mutable cmsHPROFILE m_iccProfile { nullptr };
+    mutable LCMSProfilePtr m_iccProfile;
 #endif
 
 #if USE(ATSPI)
