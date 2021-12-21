@@ -590,6 +590,7 @@ TEST(ResourceLoadStatistics, DataTaskIdentifierCollision)
     EXPECT_TRUE(contains(messages, "1"));
     EXPECT_TRUE(contains(messages, "2"));
 }
+#endif
 
 TEST(ResourceLoadStatistics, NoMessagesWhenNotTesting)
 {

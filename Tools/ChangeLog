@@ -1,5 +1,16 @@
 2021-12-20  Robert Jenner  <Jenner@apple.com>
 
+        Fix for Cherry-pick r283599. rdar://problem/83897435
+        https://bugs.webkit.org/show_bug.cgi?id=231246
+
+        Unreviewed test gardening.
+
+        Adding an '#endif' that got left off the cherry pick for disabling an api-test for iOS.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ResourceLoadStatistics.mm:
+
+2021-12-20  Robert Jenner  <Jenner@apple.com>
+
         Cherry-pick r283599. rdar://problem/83897435
 
     [ iOS15 ] TestWebKitAPI.ResourceLoadStatistics.DataTaskIdentifierCollision is a constant crash
