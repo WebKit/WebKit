@@ -318,7 +318,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestDefaultToJSON_eventHandlerAttribute, (JSGlobalObj
 static inline bool setJSTestDefaultToJSON_eventHandlerAttributeSetter(JSGlobalObject& lexicalGlobalObject, JSTestDefaultToJSON& thisObject, JSValue value)
 {
     auto& vm = JSC::getVM(&lexicalGlobalObject);
-    setEventHandlerAttribute(lexicalGlobalObject, thisObject, thisObject.wrapped(), eventNames().entHandlerAttributeEvent, value);
+    setEventHandlerAttribute<JSEventListener>(thisObject.wrapped(), eventNames().entHandlerAttributeEvent, value, thisObject);
     vm.writeBarrier(&thisObject, value);
     ensureStillAliveHere(value);
 

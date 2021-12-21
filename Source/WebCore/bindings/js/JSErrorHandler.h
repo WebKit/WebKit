@@ -45,13 +45,4 @@ private:
     void handleEvent(ScriptExecutionContext&, Event&) final;
 };
 
-// Creates a listener for "onerror" event handler.
-// It has custom implementation because, unlike other event listeners, it accepts three parameters.
-inline RefPtr<JSErrorHandler> createJSErrorHandler(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue listener, JSC::JSObject& wrapper)
-{
-    if (!listener.isObject())
-        return nullptr;
-    return JSErrorHandler::create(*asObject(listener), wrapper, true, currentWorld(lexicalGlobalObject));
-}
-
 } // namespace WebCore

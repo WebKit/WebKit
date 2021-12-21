@@ -4178,7 +4178,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestObj_onfoo, (JSGlobalObject* lexicalGlobalObject, 
 static inline bool setJSTestObj_onfooSetter(JSGlobalObject& lexicalGlobalObject, JSTestObj& thisObject, JSValue value)
 {
     auto& vm = JSC::getVM(&lexicalGlobalObject);
-    setEventHandlerAttribute(lexicalGlobalObject, thisObject, thisObject.wrapped(), eventNames().fooEvent, value);
+    setEventHandlerAttribute<JSEventListener>(thisObject.wrapped(), eventNames().fooEvent, value, thisObject);
     vm.writeBarrier(&thisObject, value);
     ensureStillAliveHere(value);
 
@@ -4204,7 +4204,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestObj_onwebkitfoo, (JSGlobalObject* lexicalGlobalOb
 static inline bool setJSTestObj_onwebkitfooSetter(JSGlobalObject& lexicalGlobalObject, JSTestObj& thisObject, JSValue value)
 {
     auto& vm = JSC::getVM(&lexicalGlobalObject);
-    setEventHandlerAttribute(lexicalGlobalObject, thisObject, thisObject.wrapped(), eventNames().fooEvent, value);
+    setEventHandlerAttribute<JSEventListener>(thisObject.wrapped(), eventNames().fooEvent, value, thisObject);
     vm.writeBarrier(&thisObject, value);
     ensureStillAliveHere(value);
 

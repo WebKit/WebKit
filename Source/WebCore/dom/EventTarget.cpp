@@ -39,8 +39,8 @@
 #include "HTMLBodyElement.h"
 #include "HTMLHtmlElement.h"
 #include "InspectorInstrumentation.h"
+#include "JSErrorHandler.h"
 #include "JSEventListener.h"
-#include "JSLazyEventListener.h"
 #include "Logging.h"
 #include "Quirks.h"
 #include "ScriptController.h"
@@ -160,6 +160,27 @@ bool EventTarget::removeEventListener(const AtomString& eventType, EventListener
     return false;
 }
 
+template<typename JSMaybeErrorEventListener>
+void EventTarget::setAttributeEventListener(const AtomString& eventType, JSC::JSValue listener, JSC::JSObject& jsEventTarget)
+{
+    auto& isolatedWorld = worldForDOMObject(jsEventTarget);
+    auto* existingListener = attributeEventListener(eventType, isolatedWorld);
+    if (!listener.isObject()) {
+        if (existingListener)
+            removeEventListener(eventType, *existingListener, false);
+    } else if (existingListener) {
+        bool capture = false;
+
+        InspectorInstrumentation::willRemoveEventListener(*this, eventType, *existingListener, capture);
+        existingListener->replaceJSFunctionForAttributeListener(asObject(listener), &jsEventTarget);
+        InspectorInstrumentation::didAddEventListener(*this, eventType, *existingListener, capture);
+    } else
+        addEventListener(eventType, JSMaybeErrorEventListener::create(*asObject(listener), jsEventTarget, true, isolatedWorld), { });
+}
+
+template void EventTarget::setAttributeEventListener<JSErrorHandler>(const AtomString& eventType, JSC::JSValue listener, JSC::JSObject& jsEventTarget);
+template void EventTarget::setAttributeEventListener<JSEventListener>(const AtomString& eventType, JSC::JSValue listener, JSC::JSObject& jsEventTarget);
+
 bool EventTarget::setAttributeEventListener(const AtomString& eventType, RefPtr<EventListener>&& listener, DOMWrapperWorld& isolatedWorld)
 {
     auto* existingListener = attributeEventListener(eventType, isolatedWorld);
@@ -185,16 +206,16 @@ bool EventTarget::setAttributeEventListener(const AtomString& eventType, RefPtr<
     return addEventListener(eventType, listener.releaseNonNull(), { });
 }
 
-EventListener* EventTarget::attributeEventListener(const AtomString& eventType, DOMWrapperWorld& isolatedWorld)
+JSEventListener* EventTarget::attributeEventListener(const AtomString& eventType, DOMWrapperWorld& isolatedWorld)
 {
     for (auto& eventListener : eventListeners(eventType)) {
         auto& listener = eventListener->callback();
-        if (!listener.isAttribute())
+        if (listener.type() != EventListener::JSEventListenerType)
             continue;
 
-        auto& listenerWorld = downcast<JSEventListener>(listener).isolatedWorld();
-        if (&listenerWorld == &isolatedWorld)
-            return &listener;
+        auto& jsListener = downcast<JSEventListener>(listener);
+        if (jsListener.isAttribute() && &jsListener.isolatedWorld() == &isolatedWorld)
+            return &jsListener;
     }
 
     return nullptr;

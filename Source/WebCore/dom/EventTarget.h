@@ -41,10 +41,16 @@
 #include <wtf/IsoMalloc.h>
 #include <wtf/WeakPtr.h>
 
+namespace JSC {
+class JSValue;
+class JSObject;
+}
+
 namespace WebCore {
 
 struct AddEventListenerOptions;
 class DOMWrapperWorld;
+class JSEventListener;
 
 struct EventTargetData {
     WTF_MAKE_NONCOPYABLE(EventTargetData); WTF_MAKE_FAST_ALLOCATED;
@@ -82,8 +88,10 @@ public:
     WEBCORE_EXPORT virtual void uncaughtExceptionInEventHandler();
 
     // Used for legacy "onevent" attributes.
+    template<typename JSMaybeErrorEventListener>
+    void setAttributeEventListener(const AtomString& eventType, JSC::JSValue listener, JSC::JSObject& jsEventTarget);
     bool setAttributeEventListener(const AtomString& eventType, RefPtr<EventListener>&&, DOMWrapperWorld&);
-    EventListener* attributeEventListener(const AtomString& eventType, DOMWrapperWorld&);
+    JSEventListener* attributeEventListener(const AtomString& eventType, DOMWrapperWorld&);
 
     bool hasEventListeners() const;
     bool hasEventListeners(const AtomString& eventType) const;

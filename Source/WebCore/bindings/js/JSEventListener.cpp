@@ -61,9 +61,9 @@ JSEventListener::JSEventListener(JSObject* function, JSObject* wrapper, bool isA
 
 JSEventListener::~JSEventListener() = default;
 
-Ref<JSEventListener> JSEventListener::create(JSC::JSObject* listener, JSC::JSObject* wrapper, bool isAttribute, DOMWrapperWorld& world)
+Ref<JSEventListener> JSEventListener::create(JSC::JSObject& listener, JSC::JSObject& wrapper, bool isAttribute, DOMWrapperWorld& world)
 {
-    return adoptRef(*new JSEventListener(listener, wrapper, isAttribute, world));
+    return adoptRef(*new JSEventListener(&listener, &wrapper, isAttribute, world));
 }
 
 RefPtr<JSEventListener> JSEventListener::create(JSC::JSValue listener, JSC::JSObject& wrapper, bool isAttribute, DOMWrapperWorld& world)
@@ -71,12 +71,35 @@ RefPtr<JSEventListener> JSEventListener::create(JSC::JSValue listener, JSC::JSOb
     if (UNLIKELY(!listener.isObject()))
         return nullptr;
 
-    return create(JSC::asObject(listener), &wrapper, isAttribute, world);
+    return adoptRef(*new JSEventListener(asObject(listener), &wrapper, isAttribute, world));
 }
 
 JSObject* JSEventListener::initializeJSFunction(ScriptExecutionContext&) const
 {
     return nullptr;
+}
+
+void JSEventListener::replaceJSFunctionForAttributeListener(JSObject* function, JSObject* wrapper)
+{
+    ASSERT(m_isAttribute);
+    ASSERT(function);
+    ASSERT(wrapper);
+
+    m_jsFunction = Weak { function };
+    m_wrapper = wrapper;
+    m_isInitialized = true;
+}
+
+JSValue eventHandlerAttribute(EventTarget& eventTarget, const AtomString& eventType, DOMWrapperWorld& isolatedWorld)
+{
+    if (auto* jsListener = eventTarget.attributeEventListener(eventType, isolatedWorld)) {
+        if (auto* context = eventTarget.scriptExecutionContext()) {
+            if (auto* jsFunction = jsListener->ensureJSFunction(*context))
+                return jsFunction;
+        }
+    }
+
+    return jsNull();
 }
 
 template<typename Visitor>
@@ -260,60 +283,6 @@ String JSEventListener::functionName() const
         return { };
 
     return handlerFunction->name(vm);
-}
-
-static inline JSC::JSValue eventHandlerAttribute(EventListener* abstractListener, ScriptExecutionContext& context)
-{
-    if (!is<JSEventListener>(abstractListener))
-        return jsNull();
-
-    auto* function = downcast<JSEventListener>(*abstractListener).ensureJSFunction(context);
-    if (!function)
-        return jsNull();
-
-    return function;
-}
-
-static inline RefPtr<JSEventListener> createEventListenerForEventHandlerAttribute(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue listener, JSC::JSObject& wrapper)
-{
-    if (!listener.isObject())
-        return nullptr;
-    return JSEventListener::create(asObject(listener), &wrapper, true, currentWorld(lexicalGlobalObject));
-}
-
-JSC::JSValue eventHandlerAttribute(EventTarget& target, const AtomString& eventType, DOMWrapperWorld& isolatedWorld)
-{
-    auto* context = target.scriptExecutionContext();
-    if (!context)
-        return jsNull();
-    return eventHandlerAttribute(target.attributeEventListener(eventType, isolatedWorld), *context);
-}
-
-void setEventHandlerAttribute(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSObject& wrapper, EventTarget& target, const AtomString& eventType, JSC::JSValue value)
-{
-    target.setAttributeEventListener(eventType, createEventListenerForEventHandlerAttribute(lexicalGlobalObject, value, wrapper), currentWorld(lexicalGlobalObject));
-}
-
-JSC::JSValue windowEventHandlerAttribute(HTMLElement& element, const AtomString& eventType, DOMWrapperWorld& isolatedWorld)
-{
-    auto& document = element.document();
-    return eventHandlerAttribute(document.getWindowAttributeEventListener(eventType, isolatedWorld), document);
-}
-
-void setWindowEventHandlerAttribute(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSObject& wrapper, HTMLElement& element, const AtomString& eventType, JSC::JSValue value)
-{
-    ASSERT(wrapper.globalObject());
-    element.document().setWindowAttributeEventListener(eventType, createEventListenerForEventHandlerAttribute(lexicalGlobalObject, value, *wrapper.globalObject()), currentWorld(lexicalGlobalObject));
-}
-
-JSC::JSValue windowEventHandlerAttribute(DOMWindow& window, const AtomString& eventType, DOMWrapperWorld& isolatedWorld)
-{
-    return eventHandlerAttribute(window, eventType, isolatedWorld);
-}
-
-void setWindowEventHandlerAttribute(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSObject& wrapper, DOMWindow& window, const AtomString& eventType, JSC::JSValue value)
-{
-    setEventHandlerAttribute(lexicalGlobalObject, wrapper, window, eventType, value);
 }
 
 } // namespace WebCore

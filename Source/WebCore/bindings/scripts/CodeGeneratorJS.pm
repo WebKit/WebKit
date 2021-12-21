@@ -5438,11 +5438,11 @@ sub GenerateAttributeSetterBodyDefinition
         # FIXME: Find a way to do this special case without hardcoding the class and attribute names here.
         if (($interface->type->name eq "DOMWindow" or $interface->type->name eq "WorkerGlobalScope") and $attribute->name eq "onerror") {
             AddToImplIncludes("JSErrorHandler.h", $conditional);
-            push(@$outputArray, "    thisObject.wrapped().setAttributeEventListener($eventName, createJSErrorHandler(lexicalGlobalObject, value, thisObject), worldForDOMObject(thisObject));\n");
+            push(@$outputArray, "    setEventHandlerAttribute<JSErrorHandler>(thisObject.wrapped(), ${eventName}, value, thisObject);\n");
         } else {
             AddToImplIncludes("JSEventListener.h", $conditional);
             my $setter = $attribute->extendedAttributes->{WindowEventHandler} ? "setWindowEventHandlerAttribute" : "setEventHandlerAttribute";
-            push(@$outputArray, "    $setter(lexicalGlobalObject, thisObject, thisObject.wrapped(), ${eventName}, value);\n");
+            push(@$outputArray, "    $setter<JSEventListener>(thisObject.wrapped(), ${eventName}, value, thisObject);\n");
         }
         push(@$outputArray, "    vm.writeBarrier(&thisObject, value);\n");
         push(@$outputArray, "    ensureStillAliveHere(value);\n\n");

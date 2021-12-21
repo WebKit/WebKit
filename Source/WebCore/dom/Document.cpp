@@ -5104,27 +5104,13 @@ void Document::setAttributeEventListener(const AtomString& eventType, const Qual
     setAttributeEventListener(eventType, JSLazyEventListener::create(*this, attributeName, attributeValue), isolatedWorld);
 }
 
-void Document::setWindowAttributeEventListener(const AtomString& eventType, RefPtr<EventListener>&& listener, DOMWrapperWorld& isolatedWorld)
-{
-    if (!m_domWindow)
-        return;
-    m_domWindow->setAttributeEventListener(eventType, WTFMove(listener), isolatedWorld);
-}
-
 void Document::setWindowAttributeEventListener(const AtomString& eventType, const QualifiedName& attributeName, const AtomString& attributeValue, DOMWrapperWorld& isolatedWorld)
 {
     if (!m_domWindow)
         return;
     if (!m_domWindow->frame())
         return;
-    setWindowAttributeEventListener(eventType, JSLazyEventListener::create(*m_domWindow, attributeName, attributeValue), isolatedWorld);
-}
-
-EventListener* Document::getWindowAttributeEventListener(const AtomString& eventType, DOMWrapperWorld& isolatedWorld)
-{
-    if (!m_domWindow)
-        return nullptr;
-    return m_domWindow->attributeEventListener(eventType, isolatedWorld);
+    m_domWindow->setAttributeEventListener(eventType, JSLazyEventListener::create(*m_domWindow, attributeName, attributeValue), isolatedWorld);
 }
 
 void Document::dispatchWindowEvent(Event& event, EventTarget* target)
