@@ -1,3 +1,22 @@
+2021-12-21  Simon Fraser  <simon.fraser@apple.com>
+
+        Allow a way to specify a custom pixel tolerance in a ref test
+        https://bugs.webkit.org/show_bug.cgi?id=149828
+
+        Reviewed by Martin Robinson.
+
+        When determining if a ref test failed, look for <meta name=fuzzy> in the test file,
+        and if present, compare the actual pixel differences with the range allowed by the
+        fuzzy metadata. This may cause a failing reference to match, or a passing reference
+        (based on ImageDiff internal tolerance) to fail.
+
+        In the case of mismatch ref tests, the fuzziness is taken into account to determine
+        if the mismatch still occurs. If not, then the mismatch test fails.
+
+        * Scripts/webkitpy/layout_tests/controllers/single_test_runner.py:
+        (SingleTestRunner._fuzzy_tolerance_for_reference):
+        (SingleTestRunner._compare_output_with_reference):
+
 2021-12-21  Alex Christensen  <achristensen@webkit.org>
 
         ASSERT NOT REACHED under WebKit::Daemon::ConnectionToMachService seen with TestWebKitAPI.WebPushD.BasicCommunication and PermissionManagement

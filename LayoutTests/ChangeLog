@@ -1,3 +1,21 @@
+2021-12-21  Simon Fraser  <simon.fraser@apple.com>
+
+        Allow a way to specify a custom pixel tolerance in a ref test
+        https://bugs.webkit.org/show_bug.cgi?id=149828
+
+        Reviewed by Martin Robinson.
+
+        Add some ref tests using <meta name=fuzzy> to test fuzzy-based passes and failures.
+
+        * fast/harness/image-diff/fuzz-2-25-expected.html: Added.
+        * fast/harness/image-diff/fuzz-2-25.html: Added.
+        * fast/harness/image-diff/fuzz-2-36-over-expected-mismatch.html: Added.
+        * fast/harness/image-diff/fuzz-2-36-over.html: Added.
+        * fast/harness/image-diff/fuzz-2-36-under-expected-mismatch.html: Added.
+        * fast/harness/image-diff/fuzz-2-36-under.html: Added.
+        * fast/harness/image-diff/zero-fuzz-expected.html: Added.
+        * fast/harness/image-diff/zero-fuzz.html: Added.
+
 2021-12-21  Sam Weinig  <weinig@apple.com>
 
         Add support for premultiplied alpha interpolated gradients and defaulted off option to use them for CSS Gradients
