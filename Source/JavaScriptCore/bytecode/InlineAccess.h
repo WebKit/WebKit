@@ -54,6 +54,8 @@ public:
         return 48;
 #elif CPU(MIPS)
         return 72;
+#elif CPU(RISCV64)
+        return 44;
 #else
 #error "unsupported platform"
 #endif
@@ -72,6 +74,8 @@ public:
         return 48;
 #elif CPU(MIPS)
         return 72;
+#elif CPU(RISCV64)
+        return 52;
 #else
 #error "unsupported platform"
 #endif
@@ -93,6 +97,8 @@ public:
         size_t size = 30;
 #elif CPU(MIPS)
         size_t size = 56;
+#elif CPU(RISCV64)
+        size_t size = 60;
 #else
 #error "unsupported platform"
 #endif

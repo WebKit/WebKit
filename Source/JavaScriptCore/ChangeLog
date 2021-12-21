@@ -1,5 +1,55 @@
 2021-12-21  Zan Dobersek  <zdobersek@igalia.com>
 
+        [RISCV64] Add or enable missing CPU(RISCV64) codepaths in baseline JIT
+        https://bugs.webkit.org/show_bug.cgi?id=234551
+
+        Reviewed by Yusuke Suzuki.
+
+        Sprinkle the necessary CPU(RISCV64) build guards as well as additional
+        RISCV64-specific codepaths encapsualted by those build guards in the
+        baseline JIT code. In many cases we can align with the code that ARM64
+        is already using.
+
+        In InlineAccess, the byte-sizes for access and replacement operations
+        are based on a mix of educated guessing and aggressive testing.
+
+        In baseline JIT, we can usually adopt what ARM64 already does since the
+        similarities are big enough.
+
+        * bytecode/InlineAccess.h: The sizes here are based on the estimated
+        count of necessary instructions for access or replacement, and were
+        tested with the enabled crash-inducing fallback in linkCodeInline().
+        (JSC::InlineAccess::sizeForPropertyAccess):
+        (JSC::InlineAccess::sizeForPropertyReplace):
+        (JSC::InlineAccess::sizeForLengthAccess):
+        * jit/AssemblyHelpers.cpp:
+        (JSC::AssemblyHelpers::emitLoadStructure):
+        (JSC::AssemblyHelpers::debugCall):
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::emitSaveThenMaterializeTagRegisters):
+        (JSC::AssemblyHelpers::emitRestoreSavedTagRegisters):
+        (JSC::AssemblyHelpers::prologueStackPointerDelta):
+        (JSC::AssemblyHelpers::emitFunctionPrologue):
+        (JSC::AssemblyHelpers::emitFunctionEpilogueWithEmptyFrame):
+        (JSC::AssemblyHelpers::emitFunctionEpilogue):
+        (JSC::AssemblyHelpers::preserveReturnAddressAfterCall):
+        (JSC::AssemblyHelpers::restoreReturnAddressBeforeReturn):
+        * jit/CCallHelpers.h:
+        (JSC::CCallHelpers::prepareForTailCallSlow):
+        * jit/CallFrameShuffler.cpp:
+        (JSC::CallFrameShuffler::prepareForTailCall):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::slow_op_resolve_scopeGenerator):
+        (JSC::JIT::slow_op_get_from_scopeGenerator):
+        * jit/RegisterSet.cpp:
+        (JSC::RegisterSet::macroScratchRegisters):
+        (JSC::RegisterSet::dfgCalleeSaveRegisters):
+        (JSC::RegisterSet::ftlCalleeSaveRegisters):
+        * jit/ThunkGenerators.cpp:
+        (JSC::popThunkStackPreservesAndHandleExceptionGenerator):
+
+2021-12-21  Zan Dobersek  <zdobersek@igalia.com>
+
         [RISCV64] Add missing MacroAssemblerRISCV64 floating-point rounding, comparison methods
         https://bugs.webkit.org/show_bug.cgi?id=234475
 

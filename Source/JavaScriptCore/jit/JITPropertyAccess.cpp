@@ -2139,7 +2139,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JIT::slow_op_resolve_scopeGenerator(VM& vm
     // The fast path already pushed the return address.
 #if CPU(X86_64)
     jit.push(X86Registers::ebp);
-#elif CPU(ARM64) || CPU(ARM_THUMB2)
+#elif CPU(ARM64) || CPU(ARM_THUMB2) || CPU(RISCV64)
     jit.pushPair(framePointerRegister, linkRegister);
 #elif CPU(MIPS)
     jit.pushPair(framePointerRegister, returnAddressRegister);
@@ -2167,7 +2167,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JIT::slow_op_resolve_scopeGenerator(VM& vm
 
 #if CPU(X86_64)
     jit.pop(X86Registers::ebp);
-#elif CPU(ARM64) || CPU(ARM_THUMB2)
+#elif CPU(ARM64) || CPU(ARM_THUMB2) || CPU(RISCV64)
     jit.popPair(framePointerRegister, linkRegister);
 #elif CPU(MIPS)
     jit.popPair(framePointerRegister, returnAddressRegister);
@@ -2373,7 +2373,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JIT::slow_op_get_from_scopeGenerator(VM& v
 
 #if CPU(X86_64)
     jit.push(X86Registers::ebp);
-#elif CPU(ARM64) || CPU(ARM_THUMB2)
+#elif CPU(ARM64) || CPU(ARM_THUMB2) || CPU(RISCV64)
     jit.pushPair(framePointerRegister, linkRegister);
 #elif CPU(MIPS)
     jit.pushPair(framePointerRegister, returnAddressRegister);
@@ -2422,7 +2422,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JIT::slow_op_get_from_scopeGenerator(VM& v
 
 #if CPU(X86_64)
     jit.pop(X86Registers::ebp);
-#elif CPU(ARM64) || CPU(ARM_THUMB2)
+#elif CPU(ARM64) || CPU(ARM_THUMB2) || CPU(RISCV64)
     jit.popPair(framePointerRegister, linkRegister);
 #elif CPU(MIPS)
     jit.popPair(framePointerRegister, returnAddressRegister);

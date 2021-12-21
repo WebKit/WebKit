@@ -85,7 +85,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> popThunkStackPreservesAndHandleExceptionGe
 
 #if CPU(X86_64)
     jit.addPtr(CCallHelpers::TrustedImm32(2 * sizeof(CPURegister)), X86Registers::esp);
-#elif CPU(ARM64) || CPU(ARM_THUMB2)
+#elif CPU(ARM64) || CPU(ARM_THUMB2) || CPU(RISCV64)
     jit.popPair(CCallHelpers::framePointerRegister, CCallHelpers::linkRegister);
 #elif CPU(MIPS)
     jit.popPair(CCallHelpers::framePointerRegister, CCallHelpers::returnAddressRegister);
