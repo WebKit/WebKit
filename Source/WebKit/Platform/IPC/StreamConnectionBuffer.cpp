@@ -42,6 +42,7 @@ StreamConnectionBuffer::StreamConnectionBuffer(size_t memorySize)
     : m_dataSize(memorySize - headerSize())
     , m_sharedMemory(createMemory(memorySize))
 {
+    ASSERT(m_dataSize > 0);
     ASSERT(m_dataSize <= maximumSize());
 }
 
@@ -50,6 +51,7 @@ StreamConnectionBuffer::StreamConnectionBuffer(Ref<WebKit::SharedMemory>&& memor
     , m_sharedMemory(WTFMove(memory))
     , m_clientWaitSemaphore(WTFMove(clientWaitSemaphore))
 {
+    ASSERT(m_dataSize > 0);
     ASSERT(m_dataSize <= maximumSize());
 }
 
@@ -88,7 +90,7 @@ std::optional<StreamConnectionBuffer> StreamConnectionBuffer::decode(Decoder& de
     if (!semaphore)
         return std::nullopt;
     size_t dataSize = static_cast<size_t>(ipcHandle->dataSize);
-    if (dataSize < headerSize())
+    if (dataSize <= headerSize())
         return std::nullopt;
     if (dataSize > headerSize() + maximumSize())
         return std::nullopt;
