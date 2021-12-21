@@ -1,3 +1,15 @@
+2021-12-21  Michael Saboff  <msaboff@apple.com>
+
+        Fix symlinks for alternate root framework locations
+        https://bugs.webkit.org/show_bug.cgi?id=234567
+
+        Reviewed by Filip Pizlo.
+
+        Eliminated the creation of symlinks for ANGLE as it is under WebCore.
+
+        * ANGLE.xcodeproj/project.pbxproj:
+        * Configurations/ANGLE-dynamic.xcconfig:
+
 2021-12-21  Arcady Goldmints-Orlov  <agoldmints@igalia.com>
 
         [GTK] build fails with undefined symbol in ANGLE if USE_ANGLE_WEBGL is enabled.

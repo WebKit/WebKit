@@ -443,9 +443,9 @@
 			);
 			name = "Create Symlink to Alt Root Path";
 			outputFileListPaths = (
-				"${OUTPUT_ALTERNATE_ROOT_PATH}",
 			);
 			outputPaths = (
+				"${OUTPUT_ALTERNATE_ROOT_PATH}",
 			);
 			runOnlyForDeploymentPostprocessing = 1;
 			shellPath = /bin/zsh;
