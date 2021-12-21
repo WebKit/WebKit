@@ -715,9 +715,9 @@ void Database::addDestinationTokenColumnsIfNecessary()
     String destinationKeyIDColumnName("destinationKeyID"_s);
     auto columns = columnsForTable(attributedTableName);
     if (!columns.size() || columns.last() != destinationKeyIDColumnName) {
-        addMissingColumnToTable(attributedTableName, "destinationToken"_s);
-        addMissingColumnToTable(attributedTableName, "destinationSignature"_s);
-        addMissingColumnToTable(attributedTableName, destinationKeyIDColumnName);
+        addMissingColumnToTable(attributedTableName, "destinationToken TEXT"_s);
+        addMissingColumnToTable(attributedTableName, "destinationSignature TEXT"_s);
+        addMissingColumnToTable(attributedTableName, "destinationKeyID TEXT");
     }
 }
 

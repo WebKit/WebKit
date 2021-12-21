@@ -1,3 +1,28 @@
+2021-12-21  Kate Cheney  <katherine_cheney@apple.com>
+
+        Harden PCM and ITP databases against crashes
+        https://bugs.webkit.org/show_bug.cgi?id=234528
+        <rdar://problem/86741319>
+
+        Reviewed by Brent Fulgham.
+
+        This patch does two things. First, it specifies a column type for the
+        new destination token, keyID and signature columns. This was causing
+        the crashes in rdar://86347439 by comparing the defined CREATE TABLE query
+        with types to the existing query with no types. Second, it adds
+        hardening to the migration code to abort migration if one of the steps
+        fails. This will help prevent future crashes like rdar://86347439
+        by aborting a migration early if a failure occurs and not leaving the
+        db in a messy state.
+
+        No new tests. No behavior change, this will harden against flaky issues
+        that may cause a migration to fail part way through, like I/O errors.
+
+        * NetworkProcess/DatabaseUtilities.cpp:
+        (WebKit::DatabaseUtilities::migrateDataToNewTablesIfNecessary):
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementDatabase.cpp:
+        (WebKit::PCM::Database::addDestinationTokenColumnsIfNecessary):
+
 2021-12-21  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Add support for a UI delegate method to decide how to handle detected modal containers

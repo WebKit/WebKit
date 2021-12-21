@@ -273,21 +273,25 @@ static Expected<WebCore::SQLiteStatement, int> insertDistinctValuesInTableStatem
 
 void DatabaseUtilities::migrateDataToNewTablesIfNecessary()
 {
+    ASSERT(!RunLoop::isMain());
     if (!needsUpdatedSchema())
         return;
 
-    auto transactionScope = beginTransactionIfNecessary();
+    WebCore::SQLiteTransaction transaction(m_database);
+    transaction.begin();
 
     for (auto& table : expectedTableAndIndexQueries().keys()) {
         auto alterTable = m_database.prepareStatementSlow(makeString("ALTER TABLE ", table, " RENAME TO _", table));
         if (!alterTable || alterTable->step() != SQLITE_DONE) {
             RELEASE_LOG_ERROR(PrivateClickMeasurement, "%p - DatabaseUtilities::migrateDataToNewTablesIfNecessary failed to rename table, error message: %s", this, m_database.lastErrorMsg());
+            transaction.rollback();
             ASSERT_NOT_REACHED();
             return;
         }
     }
 
     if (!createSchema()) {
+        transaction.rollback();
         ASSERT_NOT_REACHED();
         return;
     }
@@ -296,6 +300,7 @@ void DatabaseUtilities::migrateDataToNewTablesIfNecessary()
     for (auto& table : sortedTables()) {
         auto migrateTableData = insertDistinctValuesInTableStatement(m_database, table);
         if (!migrateTableData || migrateTableData->step() != SQLITE_DONE) {
+            transaction.rollback();
             RELEASE_LOG_ERROR(PrivateClickMeasurement, "%p - DatabaseUtilities::migrateDataToNewTablesIfNecessary (table %s) failed to migrate schema, error message: %s", this, table.characters(), m_database.lastErrorMsg());
             ASSERT_NOT_REACHED();
             return;
@@ -306,6 +311,7 @@ void DatabaseUtilities::migrateDataToNewTablesIfNecessary()
     for (auto& table : sortedTables()) {
         auto dropTableQuery = m_database.prepareStatementSlow(makeString("DROP TABLE _", table));
         if (!dropTableQuery || dropTableQuery->step() != SQLITE_DONE) {
+            transaction.rollback();
             RELEASE_LOG_ERROR(PrivateClickMeasurement, "%p - DatabaseUtilities::migrateDataToNewTablesIfNecessary failed to drop temporary tables, error message: %s", this, m_database.lastErrorMsg());
             ASSERT_NOT_REACHED();
             return;
@@ -314,8 +320,12 @@ void DatabaseUtilities::migrateDataToNewTablesIfNecessary()
 
     if (!createUniqueIndices()) {
         RELEASE_LOG_ERROR(PrivateClickMeasurement, "%p - DatabaseUtilities::migrateDataToNewTablesIfNecessary failed to create unique indices, error message: %s", this, m_database.lastErrorMsg());
+        transaction.rollback();
         ASSERT_NOT_REACHED();
+        return;
     }
+
+    transaction.commit();
 }
 
 } // namespace WebKit
