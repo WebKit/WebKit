@@ -85,6 +85,7 @@ struct RuleFeatureSet {
     void collectFeatures(const RuleData&);
     void registerContentAttribute(const AtomString&);
 
+    bool usesHasPseudoClass() const;
     bool usesMatchElement(MatchElement matchElement) const  { return usedMatchElements[static_cast<uint8_t>(matchElement)]; }
     void setUsesMatchElement(MatchElement matchElement) { usedMatchElements[static_cast<uint8_t>(matchElement)] = true; }
 
@@ -133,6 +134,15 @@ PseudoClassInvalidationKey makePseudoClassInvalidationKey(CSSSelector::PseudoCla
 inline bool isUniversalInvalidation(const PseudoClassInvalidationKey& key)
 {
     return static_cast<InvalidationKeyType>(std::get<1>(key)) == InvalidationKeyType::Universal;
+}
+
+inline bool RuleFeatureSet::usesHasPseudoClass() const
+{
+    return usesMatchElement(MatchElement::HasChild)
+        || usesMatchElement(MatchElement::HasDescendant)
+        || usesMatchElement(MatchElement::HasSiblingDescendant)
+        || usesMatchElement(MatchElement::HasSibling)
+        || usesMatchElement(MatchElement::HasNonSubject);
 }
 
 } // namespace Style

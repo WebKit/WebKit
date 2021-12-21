@@ -88,7 +88,8 @@ public:
     bool hasPendingSheetInBody(const Element&) const;
     bool hasPendingSheet(const ProcessingInstruction&) const;
 
-    bool usesStyleBasedEditability() { return m_usesStyleBasedEditability; }
+    bool usesStyleBasedEditability() const { return m_usesStyleBasedEditability; }
+    bool usesHasPseudoClass() const { return m_usesHasPseudoClass; }
 
     bool activeStyleSheetsContains(const CSSStyleSheet*) const;
 
@@ -196,6 +197,7 @@ private:
 
     bool m_hasDescendantWithPendingUpdate { false };
     bool m_usesStyleBasedEditability { false };
+    bool m_usesHasPseudoClass { false };
     bool m_isUpdatingStyleResolver { false };
 
     std::optional<MediaQueryViewportState> m_viewportStateOnPreviousMediaQueryEvaluation;

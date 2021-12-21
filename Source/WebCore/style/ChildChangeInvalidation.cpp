@@ -36,31 +36,6 @@
 
 namespace WebCore::Style {
 
-ChildChangeInvalidation::ChildChangeInvalidation(ContainerNode& container, const ContainerNode::ChildChange& childChange)
-    : m_parentElement(is<Element>(container) ? downcast<Element>(&container) : nullptr)
-    , m_isEnabled(m_parentElement ? m_parentElement->needsStyleInvalidation() : false)
-    , m_childChange(childChange)
-{
-    if (!m_isEnabled)
-        return;
-
-    traverseRemovedElements([&](auto& changedElement) {
-        invalidateForChangedElement(changedElement);
-    });
-}
-
-ChildChangeInvalidation::~ChildChangeInvalidation()
-{
-    if (!m_isEnabled)
-        return;
-
-    traverseAddedElements([&](auto& changedElement) {
-        invalidateForChangedElement(changedElement);
-    });
-    
-    invalidateAfterChange();
-}
-
 void ChildChangeInvalidation::invalidateForChangedElement(Element& changedElement)
 {
     auto& ruleSets = parentElement().styleResolver().ruleSets();
@@ -108,18 +83,29 @@ void ChildChangeInvalidation::invalidateForChangedElement(Element& changedElemen
     Invalidator::invalidateWithMatchElementRuleSets(changedElement, matchElementRuleSets);
 }
 
-static bool needsTraversal(const RuleFeatureSet& features, const ContainerNode::ChildChange& childChange)
+void ChildChangeInvalidation::invalidateForHasBeforeMutation()
 {
-    if (features.usesMatchElement(MatchElement::HasChild))
-        return true;
-    if (features.usesMatchElement(MatchElement::HasDescendant))
-        return true;
-    if (features.usesMatchElement(MatchElement::HasSiblingDescendant))
-        return true;
-    if (features.usesMatchElement(MatchElement::HasNonSubject))
-        return true;
-    return features.usesMatchElement(MatchElement::HasSibling) && childChange.previousSiblingElement;
-};
+    ASSERT(m_needsHasInvalidation);
+
+    if (m_childChange.isInsertion() && m_childChange.type != ContainerNode::ChildChange::Type::AllChildrenReplaced)
+        return;
+
+    traverseRemovedElements([&](auto& changedElement) {
+        invalidateForChangedElement(changedElement);
+    });
+}
+
+void ChildChangeInvalidation::invalidateForHasAfterMutation()
+{
+    ASSERT(m_needsHasInvalidation);
+
+    if (!m_childChange.isInsertion())
+        return;
+
+    traverseAddedElements([&](auto& changedElement) {
+        invalidateForChangedElement(changedElement);
+    });
+}
 
 static bool needsDescendantTraversal(const RuleFeatureSet& features)
 {
@@ -131,13 +117,7 @@ static bool needsDescendantTraversal(const RuleFeatureSet& features)
 template<typename Function>
 void ChildChangeInvalidation::traverseRemovedElements(Function&& function)
 {
-    if (m_childChange.isInsertion() && m_childChange.type != ContainerNode::ChildChange::Type::AllChildrenReplaced)
-        return;
-
     auto& features = parentElement().styleResolver().ruleSets().features();
-    if (!needsTraversal(features, m_childChange))
-        return;
-
     bool needsDescendantTraversal = Style::needsDescendantTraversal(features);
 
     auto* toRemove = m_childChange.previousSiblingElement ? m_childChange.previousSiblingElement->nextElementSibling() : parentElement().firstElementChild();
@@ -155,9 +135,6 @@ void ChildChangeInvalidation::traverseRemovedElements(Function&& function)
 template<typename Function>
 void ChildChangeInvalidation::traverseAddedElements(Function&& function)
 {
-    if (!m_childChange.isInsertion())
-        return;
-
     auto* newElement = [&] {
         auto* previous = m_childChange.previousSiblingElement;
         auto* candidate = previous ? ElementTraversal::nextSibling(*previous) : ElementTraversal::firstChild(parentElement());
@@ -169,12 +146,9 @@ void ChildChangeInvalidation::traverseAddedElements(Function&& function)
     if (!newElement)
         return;
 
-    auto& features = parentElement().styleResolver().ruleSets().features();
-    if (!needsTraversal(features, m_childChange))
-        return;
-
     function(*newElement);
 
+    auto& features = parentElement().styleResolver().ruleSets().features();
     if (!needsDescendantTraversal(features))
         return;
 
