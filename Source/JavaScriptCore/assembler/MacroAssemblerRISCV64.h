@@ -118,17 +118,22 @@ public:
     static bool supportsFloatingPointRounding() { return true; }
 
     enum RelationalCondition {
-        Equal,
-        NotEqual,
-        Above,
-        AboveOrEqual,
-        Below,
-        BelowOrEqual,
-        GreaterThan,
-        GreaterThanOrEqual,
-        LessThan,
-        LessThanOrEqual,
+        Equal = Assembler::ConditionEQ,
+        NotEqual = Assembler::ConditionNE,
+        Above = Assembler::ConditionGTU,
+        AboveOrEqual = Assembler::ConditionGEU,
+        Below = Assembler::ConditionLTU,
+        BelowOrEqual = Assembler::ConditionLEU,
+        GreaterThan = Assembler::ConditionGT,
+        GreaterThanOrEqual = Assembler::ConditionGE,
+        LessThan = Assembler::ConditionLT,
+        LessThanOrEqual = Assembler::ConditionLE,
     };
+
+    static constexpr RelationalCondition invert(RelationalCondition cond)
+    {
+        return static_cast<RelationalCondition>(Assembler::invert(static_cast<Assembler::Condition>(cond)));
+    }
 
     enum ResultCondition {
         Overflow,
@@ -1547,11 +1552,6 @@ public:
     MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(compare32);
     MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(compare64);
 
-    static RelationalCondition invert(RelationalCondition cond)
-    {
-        return static_cast<RelationalCondition>(Assembler::invert(static_cast<Assembler::Condition>(cond)));
-    }
-
     template<PtrTag resultTag, PtrTag locationTag>
     static FunctionPtr<resultTag> readCallTarget(CodeLocationCall<locationTag> call)
     {
@@ -1719,12 +1719,189 @@ public:
     MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(test32);
     MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(test64);
 
-    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD_WITH_RETURN(branch8, Jump);
-    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD_WITH_RETURN(branch32, Jump);
-    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD_WITH_RETURN(branch64, Jump);
+    Jump branch8(RelationalCondition cond, Address address, TrustedImm32 imm)
+    {
+        auto temp = temps<Data, Memory>();
+        auto resolution = resolveAddress(address, temp.memory());
+        m_assembler.lbInsn(temp.memory(), resolution.base, Imm::I(resolution.offset));
+        loadImmediate(imm, temp.data());
+        return makeBranch(cond, temp.memory(), temp.data());
+    }
 
-    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD_WITH_RETURN(branch32WithPatch, Jump);
-    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD_WITH_RETURN(branch32WithUnalignedHalfWords, Jump);
+    Jump branch8(RelationalCondition cond, AbsoluteAddress address, TrustedImm32 imm)
+    {
+        auto temp = temps<Data, Memory>();
+        loadImmediate(TrustedImmPtr(address.m_ptr), temp.memory());
+        m_assembler.lbInsn(temp.memory(), temp.memory(), Imm::I<0>());
+        loadImmediate(imm, temp.data());
+        return makeBranch(cond, temp.memory(), temp.data());
+    }
+
+    Jump branch32(RelationalCondition cond, RegisterID lhs, RegisterID rhs)
+    {
+        auto temp = temps<Data, Memory>();
+        m_assembler.signExtend<32>(temp.data(), lhs);
+        m_assembler.signExtend<32>(temp.memory(), rhs);
+        return makeBranch(cond, temp.data(), temp.memory());
+    }
+
+    Jump branch32(RelationalCondition cond, RegisterID lhs, TrustedImm32 imm)
+    {
+        auto temp = temps<Data, Memory>();
+        m_assembler.signExtend<32>(temp.data(), lhs);
+        loadImmediate(imm, temp.memory());
+        return makeBranch(cond, temp.data(), temp.memory());
+    }
+
+    Jump branch32(RelationalCondition cond, RegisterID lhs, Address address)
+    {
+        auto temp = temps<Data, Memory>();
+        auto resolution = resolveAddress(address, temp.memory());
+        m_assembler.lwInsn(temp.memory(), resolution.base, Imm::I(resolution.offset));
+        m_assembler.signExtend<32>(temp.data(), lhs);
+        return makeBranch(cond, temp.data(), temp.memory());
+    }
+
+    Jump branch32(RelationalCondition cond, Address address, RegisterID rhs)
+    {
+        auto temp = temps<Data, Memory>();
+        auto resolution = resolveAddress(address, temp.memory());
+        m_assembler.lwInsn(temp.memory(), resolution.base, Imm::I(resolution.offset));
+        m_assembler.signExtend<32>(temp.data(), rhs);
+        return makeBranch(cond, temp.memory(), temp.data());
+    }
+
+    Jump branch32(RelationalCondition cond, Address address, TrustedImm32 imm)
+    {
+        auto temp = temps<Data, Memory>();
+        auto resolution = resolveAddress(address, temp.memory());
+        m_assembler.lwInsn(temp.memory(), resolution.base, Imm::I(resolution.offset));
+        loadImmediate(imm, temp.data());
+        return makeBranch(cond, temp.memory(), temp.data());
+    }
+
+    Jump branch32(RelationalCondition cond, AbsoluteAddress address, RegisterID rhs)
+    {
+        auto temp = temps<Data, Memory>();
+        loadImmediate(TrustedImmPtr(address.m_ptr), temp.memory());
+        m_assembler.lwInsn(temp.memory(), temp.memory(), Imm::I<0>());
+        m_assembler.signExtend<32>(temp.data(), rhs);
+        return makeBranch(cond, temp.memory(), temp.data());
+    }
+
+    Jump branch32(RelationalCondition cond, BaseIndex address, TrustedImm32 imm)
+    {
+        auto temp = temps<Data, Memory>();
+        auto resolution = resolveAddress(address, temp.memory());
+        m_assembler.lwInsn(temp.memory(), resolution.base, Imm::I(resolution.offset));
+        loadImmediate(imm, temp.data());
+        return makeBranch(cond, temp.memory(), temp.data());
+    }
+
+    Jump branch64(RelationalCondition cond, RegisterID lhs, RegisterID rhs)
+    {
+        return makeBranch(cond, lhs, rhs);
+    }
+
+    Jump branch64(RelationalCondition cond, RegisterID lhs, TrustedImm32 imm)
+    {
+        auto temp = temps<Data>();
+        loadImmediate(imm, temp.data());
+        return makeBranch(cond, lhs, temp.data());
+    }
+
+    Jump branch64(RelationalCondition cond, RegisterID lhs, TrustedImm64 imm)
+    {
+        auto temp = temps<Data>();
+        loadImmediate(imm, temp.data());
+        return makeBranch(cond, lhs, temp.data());
+    }
+
+    Jump branch64(RelationalCondition cond, RegisterID left, Imm64 right)
+    {
+        return branch64(cond, left, right.asTrustedImm64());
+    }
+
+    Jump branch64(RelationalCondition cond, RegisterID lhs, Address address)
+    {
+        auto temp = temps<Data, Memory>();
+        auto resolution = resolveAddress(address, temp.memory());
+        m_assembler.ldInsn(temp.data(), resolution.base, Imm::I(resolution.offset));
+        return makeBranch(cond, lhs, temp.data());
+    }
+
+    Jump branch64(RelationalCondition cond, RegisterID lhs, AbsoluteAddress address)
+    {
+        auto temp = temps<Data, Memory>();
+        loadImmediate(TrustedImmPtr(address.m_ptr), temp.memory());
+        m_assembler.ldInsn(temp.data(), temp.memory(), Imm::I<0>());
+        return makeBranch(cond, lhs, temp.data());
+    }
+
+    Jump branch64(RelationalCondition cond, Address address, RegisterID rhs)
+    {
+        auto temp = temps<Data, Memory>();
+        auto resolution = resolveAddress(address, temp.memory());
+        m_assembler.ldInsn(temp.data(), resolution.base, Imm::I(resolution.offset));
+        return makeBranch(cond, temp.data(), rhs);
+    }
+
+    Jump branch64(RelationalCondition cond, Address address, TrustedImm32 imm)
+    {
+        auto temp = temps<Data, Memory>();
+        auto resolution = resolveAddress(address, temp.memory());
+        m_assembler.ldInsn(temp.memory(), resolution.base, Imm::I(resolution.offset));
+        loadImmediate(imm, temp.data());
+        return makeBranch(cond, temp.memory(), temp.data());
+    }
+
+    Jump branch64(RelationalCondition cond, Address address, TrustedImm64 imm)
+    {
+        auto temp = temps<Data, Memory>();
+        auto resolution = resolveAddress(address, temp.memory());
+        m_assembler.ldInsn(temp.memory(), resolution.base, Imm::I(resolution.offset));
+        loadImmediate(imm, temp.data());
+        return makeBranch(cond, temp.memory(), temp.data());
+    }
+
+    Jump branch64(RelationalCondition cond, AbsoluteAddress address, RegisterID rhs)
+    {
+        auto temp = temps<Data, Memory>();
+        loadImmediate(TrustedImmPtr(address.m_ptr), temp.memory());
+        m_assembler.ldInsn(temp.data(), temp.memory(), Imm::I<0>());
+        return makeBranch(cond, temp.data(), rhs);
+    }
+
+    Jump branch64(RelationalCondition cond, AbsoluteAddress address, TrustedImm32 imm)
+    {
+        auto temp = temps<Data, Memory>();
+        loadImmediate(TrustedImmPtr(address.m_ptr), temp.memory());
+        m_assembler.ldInsn(temp.memory(), temp.memory(), Imm::I<0>());
+        loadImmediate(imm, temp.data());
+        return makeBranch(cond, temp.memory(), temp.data());
+    }
+
+    Jump branch64(RelationalCondition cond, AbsoluteAddress address, TrustedImm64 imm)
+    {
+        auto temp = temps<Data, Memory>();
+        loadImmediate(TrustedImmPtr(address.m_ptr), temp.memory());
+        m_assembler.ldInsn(temp.memory(), temp.memory(), Imm::I<0>());
+        loadImmediate(imm, temp.data());
+        return makeBranch(cond, temp.memory(), temp.data());
+    }
+
+    Jump branch64(RelationalCondition cond, BaseIndex address, RegisterID rhs)
+    {
+        auto temp = temps<Data, Memory>();
+        auto resolution = resolveAddress(address, temp.memory());
+        m_assembler.ldInsn(temp.data(), resolution.base, Imm::I(resolution.offset));
+        return makeBranch(cond, temp.data(), rhs);
+    }
+
+    Jump branch32WithUnalignedHalfWords(RelationalCondition cond, BaseIndex address, TrustedImm32 imm)
+    {
+        return branch32(cond, address, imm);
+    }
 
     MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD_WITH_RETURN(branchAdd32, Jump);
     MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD_WITH_RETURN(branchAdd64, Jump);
@@ -1747,6 +1924,7 @@ public:
     MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD_WITH_RETURN(moveWithPatch, DataLabel32);
     MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD_WITH_RETURN(moveWithPatch, DataLabelPtr);
 
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD_WITH_RETURN(branch32WithPatch, Jump);
     MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD_WITH_RETURN(branchPtrWithPatch, Jump);
 
     MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD_WITH_RETURN(patchableBranch8, PatchableJump);
@@ -2346,6 +2524,37 @@ private:
         imml.moveInto(m_assembler, destination);
         m_assembler.addInsn(destination, address.base, destination);
         return { destination, 0 };
+    }
+
+    Jump makeBranch(RelationalCondition condition, RegisterID lhs, RegisterID rhs)
+    {
+        auto label = m_assembler.label();
+        m_assembler.branchPlaceholder(
+            [&] {
+                switch (condition) {
+                case Equal:
+                    return m_assembler.beqInsn(lhs, rhs, Imm::B<0>());
+                case NotEqual:
+                    return m_assembler.bneInsn(lhs, rhs, Imm::B<0>());
+                case Above:
+                    return m_assembler.bltuInsn(rhs, lhs, Imm::B<0>());
+                case AboveOrEqual:
+                    return m_assembler.bgeuInsn(lhs, rhs, Imm::B<0>());
+                case Below:
+                    return m_assembler.bltuInsn(lhs, rhs, Imm::B<0>());
+                case BelowOrEqual:
+                    return m_assembler.bgeuInsn(rhs, lhs, Imm::B<0>());
+                case GreaterThan:
+                    return m_assembler.bltInsn(rhs, lhs, Imm::B<0>());
+                case GreaterThanOrEqual:
+                    return m_assembler.bgeInsn(lhs, rhs, Imm::B<0>());
+                case LessThan:
+                    return m_assembler.bltInsn(lhs, rhs, Imm::B<0>());
+                case LessThanOrEqual:
+                    return m_assembler.bgeInsn(rhs, lhs, Imm::B<0>());
+                }
+            });
+        return Jump(label);
     }
 };
 

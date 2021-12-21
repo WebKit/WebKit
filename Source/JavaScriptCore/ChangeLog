@@ -1,3 +1,33 @@
+2021-12-21  Zan Dobersek  <zdobersek@igalia.com>
+
+        [RISCV64] Add basic MacroAssemblerRISCV64 branching methods
+        https://bugs.webkit.org/show_bug.cgi?id=234474
+
+        Reviewed by Yusuke Suzuki.
+
+        Add MacroAssemblerRISCV64 implementations for the basic branching
+        methods. RelationalCondition enum values are aliased to the branching
+        condition values in RISCV64Assembler. The makeBranch() helper method
+        is added that generates the final branching instruction for the given
+        condition and the two registers holding values for the comparison and
+        returns the Jump object based on the label constructed at the location
+        of the branching placeholder.
+
+        Branching methods essentially consist of preparing the two registers
+        and calling the makeBranch() method. For 8-bit and 32-bit comparisons
+        the compared values have to be sign-extended into the scratch registers
+        because the branching instructions don't operate on partial values. This
+        might cause friction in higher JIT levels where the use of scratch
+        registers is disallowed.
+
+        * assembler/MacroAssemblerRISCV64.h:
+        (JSC::MacroAssemblerRISCV64::invert):
+        (JSC::MacroAssemblerRISCV64::branch8):
+        (JSC::MacroAssemblerRISCV64::branch32):
+        (JSC::MacroAssemblerRISCV64::branch64):
+        (JSC::MacroAssemblerRISCV64::branch32WithUnalignedHalfWords):
+        (JSC::MacroAssemblerRISCV64::makeBranch):
+
 2021-12-21  Geza Lore  <glore@igalia.com>
 
         [JSC][ARMv7] Minor code size improvements
