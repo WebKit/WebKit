@@ -41,8 +41,9 @@
 #include <CoreGraphics/CGContextDelegatePrivate.h>
 #include <CoreGraphics/CGFontCache.h>
 #include <CoreGraphics/CGPathPrivate.h>
-#include <CoreGraphics/CoreGraphicsPrivate.h>
+#include <CoreGraphics/CGShadingPrivate.h>
 #include <CoreGraphics/CGStylePrivate.h>
+#include <CoreGraphics/CoreGraphicsPrivate.h>
 
 #if PLATFORM(MAC)
 #include <CoreGraphics/CGAccessibility.h>
@@ -323,6 +324,16 @@ void CGContextSetStyle(CGContextRef, CGStyleRef);
 void CGContextDrawConicGradient(CGContextRef, CGGradientRef, CGPoint center, CGFloat angle);
 void CGPathAddUnevenCornersRoundedRect(CGMutablePathRef, const CGAffineTransform *, CGRect, const CGSize corners[4]);
 bool CGFontRenderingGetFontSmoothingDisabled(void);
+CGShadingRef CGShadingCreateConic(CGColorSpaceRef, CGPoint center, CGFloat angle, CGFunctionRef);
+
+#if HAVE(CORE_GRAPHICS_GRADIENT_CREATE_WITH_OPTIONS)
+CGGradientRef CGGradientCreateWithColorComponentsAndOptions(CGColorSpaceRef, const CGFloat*, const CGFloat*, size_t, CFDictionaryRef);
+CGGradientRef CGGradientCreateWithColorsAndOptions(CGColorSpaceRef, CFArrayRef, const CGFloat*, CFDictionaryRef);
+#endif
+
+#if HAVE(CORE_GRAPHICS_PREMULTIPLIED_INTERPOLATION_GRADIENT)
+extern const CFStringRef kCGGradientInterpolatesPremultiplied;
+#endif
 
 #endif // PLATFORM(COCOA)
 

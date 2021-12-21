@@ -2439,24 +2439,6 @@ static std::optional<ColorMixPercentages> normalizedMixPercentages(const ColorMi
     return result;
 }
 
-// After interpolation, if the color is in the HWB or HSL color space, it needs to be canonicalized back to sRGB as
-// is done at parse time.
-
-template<typename ColorType> Color makeCanonicalColor(ColorType color)
-{
-    return color;
-}
-
-template<> Color makeCanonicalColor<HWBA<float>>(HWBA<float> color)
-{
-    return convertColor<SRGBA<uint8_t>>(color);
-}
-
-template<> Color makeCanonicalColor<HSLA<float>>(HSLA<float> color)
-{
-    return convertColor<SRGBA<uint8_t>>(color);
-}
-
 template<typename InterpolationMethod> static Color mixColorComponentsUsingColorInterpolationMethod(InterpolationMethod interpolationMethod, ColorMixPercentages mixPercentages, const Color& color1, const Color& color2)
 {
     using ColorType = typename InterpolationMethod::ColorType;
@@ -2946,15 +2928,20 @@ static bool consumeDeprecatedGradientColorStop(CSSParserTokenRange& range, CSSGr
     return stop.color && args.atEnd();
 }
 
+static AlphaPremultiplication gradientAlphaPremultiplication(const CSSParserContext& context)
+{
+    return context.gradientPremultipliedAlphaInterpolationEnabled ? AlphaPremultiplication::Premultiplied : AlphaPremultiplication::Unpremultiplied;
+}
+
 static RefPtr<CSSValue> consumeDeprecatedGradient(CSSParserTokenRange& args, const CSSParserContext& context)
 {
     RefPtr<CSSGradientValue> result;
     CSSValueID id = args.consumeIncludingWhitespace().id();
     bool isDeprecatedRadialGradient = (id == CSSValueRadial);
     if (isDeprecatedRadialGradient)
-        result = CSSRadialGradientValue::create(NonRepeating, CSSDeprecatedRadialGradient, { ColorInterpolationMethod::SRGB { }, AlphaPremultiplication::Unpremultiplied });
+        result = CSSRadialGradientValue::create(NonRepeating, CSSDeprecatedRadialGradient, { ColorInterpolationMethod::SRGB { }, gradientAlphaPremultiplication(context) });
     else if (id == CSSValueLinear)
-        result = CSSLinearGradientValue::create(NonRepeating, CSSDeprecatedLinearGradient, { ColorInterpolationMethod::SRGB { }, AlphaPremultiplication::Unpremultiplied });
+        result = CSSLinearGradientValue::create(NonRepeating, CSSDeprecatedLinearGradient, { ColorInterpolationMethod::SRGB { }, gradientAlphaPremultiplication(context) });
     if (!result || !consumeCommaIncludingWhitespace(args))
         return nullptr;
 
@@ -3054,7 +3041,7 @@ static bool consumeGradientColorStops(CSSParserTokenRange& range, const CSSParse
 
 static RefPtr<CSSValue> consumeDeprecatedRadialGradient(CSSParserTokenRange& args, const CSSParserContext& context, CSSGradientRepeat repeating)
 {
-    auto result = CSSRadialGradientValue::create(repeating, CSSPrefixedRadialGradient, { ColorInterpolationMethod::SRGB { }, AlphaPremultiplication::Unpremultiplied });
+    auto result = CSSRadialGradientValue::create(repeating, CSSPrefixedRadialGradient, { ColorInterpolationMethod::SRGB { }, gradientAlphaPremultiplication(context) });
 
     auto centerCoordinate = consumeOneOrTwoValuedPositionCoordinates(args, context.mode, UnitlessQuirk::Forbid);
     if (centerCoordinate && !consumeCommaIncludingWhitespace(args))
@@ -3098,7 +3085,7 @@ static RefPtr<CSSValue> consumeDeprecatedRadialGradient(CSSParserTokenRange& arg
 
 static RefPtr<CSSValue> consumeRadialGradient(CSSParserTokenRange& args, const CSSParserContext& context, CSSGradientRepeat repeating)
 {
-    RefPtr<CSSRadialGradientValue> result = CSSRadialGradientValue::create(repeating, CSSRadialGradient, { ColorInterpolationMethod::SRGB { }, AlphaPremultiplication::Unpremultiplied });
+    RefPtr<CSSRadialGradientValue> result = CSSRadialGradientValue::create(repeating, CSSRadialGradient, { ColorInterpolationMethod::SRGB { }, gradientAlphaPremultiplication(context) });
 
     RefPtr<CSSPrimitiveValue> shape;
     RefPtr<CSSPrimitiveValue> sizeKeyword;
@@ -3186,7 +3173,7 @@ static RefPtr<CSSValue> consumeRadialGradient(CSSParserTokenRange& args, const C
 
 static RefPtr<CSSValue> consumeLinearGradient(CSSParserTokenRange& args, const CSSParserContext& context, CSSGradientRepeat repeating, CSSGradientType gradientType)
 {
-    RefPtr<CSSLinearGradientValue> result = CSSLinearGradientValue::create(repeating, gradientType, { ColorInterpolationMethod::SRGB { }, AlphaPremultiplication::Unpremultiplied });
+    RefPtr<CSSLinearGradientValue> result = CSSLinearGradientValue::create(repeating, gradientType, { ColorInterpolationMethod::SRGB { }, gradientAlphaPremultiplication(context) });
 
     bool expectComma = true;
     RefPtr<CSSPrimitiveValue> angle = consumeAngle(args, context.mode, UnitlessQuirk::Forbid, UnitlessZeroQuirk::Allow);
@@ -3220,7 +3207,7 @@ static RefPtr<CSSValue> consumeLinearGradient(CSSParserTokenRange& args, const C
 static RefPtr<CSSValue> consumeConicGradient(CSSParserTokenRange& args, const CSSParserContext& context, CSSGradientRepeat repeating)
 {
 #if ENABLE(CSS_CONIC_GRADIENTS)
-    RefPtr<CSSConicGradientValue> result = CSSConicGradientValue::create(repeating, { ColorInterpolationMethod::SRGB { }, AlphaPremultiplication::Unpremultiplied });
+    RefPtr<CSSConicGradientValue> result = CSSConicGradientValue::create(repeating, { ColorInterpolationMethod::SRGB { }, gradientAlphaPremultiplication(context) });
 
     bool expectComma = false;
     if (args.peek().type() == IdentToken) {

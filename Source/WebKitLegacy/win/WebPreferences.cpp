@@ -2637,6 +2637,11 @@ bool WebPreferences::canvasColorSpaceEnabled()
     return boolValueForKey("WebKitCanvasColorSpaceEnabled");
 }
 
+bool WebPreferences::cssGradientPremultipliedAlphaInterpolationEnabled()
+{
+    return boolValueForKey("WebKitCSSGradientPremultipliedAlphaInterpolationEnabled");
+}
+
 bool WebPreferences::mockScrollbarsControllerEnabled()
 {
     return boolValueForKey("WebKitMockScrollbarsControllerEnabled");

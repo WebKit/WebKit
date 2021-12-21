@@ -1,3 +1,18 @@
+2021-12-21  Sam Weinig  <weinig@apple.com>
+
+        Add support for premultiplied alpha interpolated gradients and defaulted off option to use them for CSS Gradients
+        https://bugs.webkit.org/show_bug.cgi?id=234492
+
+        Reviewed by Simon Fraser.
+
+        Add support for tests enabling the CSSGradientPremultipliedAlphaInterpolationEnabled preference.
+
+        * WebPreferences.cpp:
+        (WebPreferences::cssGradientPremultipliedAlphaInterpolationEnabled):
+        * WebPreferences.h:
+        * WebView.cpp:
+        (WebView::notifyPreferencesChanged):
+
 2021-12-20  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [Win] MSVC reports "COMPropertyBag.h(233): error C2385: ambiguous access of 'IUnknown'" with /std:c++20

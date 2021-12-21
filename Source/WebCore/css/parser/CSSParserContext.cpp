@@ -106,10 +106,11 @@ CSSParserContext::CSSParserContext(const Document& document, const URL& sheetBas
     , hasPseudoClassEnabled { document.settings().hasPseudoClassEnabled() }
     , cascadeLayersEnabled { document.settings().cssCascadeLayersEnabled() }
     , containerQueriesEnabled { document.settings().cssContainerQueriesEnabled() }
+    , overflowClipEnabled { document.settings().overflowClipEnabled() }
+    , gradientPremultipliedAlphaInterpolationEnabled { document.settings().cssGradientPremultipliedAlphaInterpolationEnabled() }
 #if ENABLE(ATTACHMENT_ELEMENT)
     , attachmentEnabled { RuntimeEnabledFeatures::sharedFeatures().attachmentElementEnabled() }
 #endif
-    , overflowClipEnabled { document.settings().overflowClipEnabled() }
 {
 }
 
@@ -153,10 +154,11 @@ bool operator==(const CSSParserContext& a, const CSSParserContext& b)
         && a.hasPseudoClassEnabled == b.hasPseudoClassEnabled
         && a.cascadeLayersEnabled == b.cascadeLayersEnabled
         && a.containerQueriesEnabled == b.containerQueriesEnabled
+        && a.overflowClipEnabled == b.overflowClipEnabled
+        && a.gradientPremultipliedAlphaInterpolationEnabled == b.gradientPremultipliedAlphaInterpolationEnabled
 #if ENABLE(ATTACHMENT_ELEMENT)
         && a.attachmentEnabled == b.attachmentEnabled
 #endif
-        && a.overflowClipEnabled == b.overflowClipEnabled
     ;
 }
 
@@ -193,12 +195,13 @@ void add(Hasher& hasher, const CSSParserContext& context)
         | context.hasPseudoClassEnabled                     << 22
         | context.cascadeLayersEnabled                      << 23
         | context.containerQueriesEnabled                   << 24
+        | context.overflowClipEnabled                       << 25
+        | context.gradientPremultipliedAlphaInterpolationEnabled << 26
 #if ENABLE(ATTACHMENT_ELEMENT)
-        | context.attachmentEnabled                         << 25
+        | context.attachmentEnabled                         << 27
 #endif
-        | context.overflowClipEnabled                       << 26
-        | context.accentColorEnabled                        << 27
-        | context.mode                                      << 28; // This is multiple bits, so keep it last.
+        | context.accentColorEnabled                        << 28
+        | context.mode                                      << 29; // This is multiple bits, so keep it last.
     add(hasher, context.baseURL, context.charset, bits);
 }
 

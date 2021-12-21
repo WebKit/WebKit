@@ -26,11 +26,10 @@
 #include "config.h"
 #include "CSSGradientValue.h"
 
-#include "AnimationUtilities.h"
 #include "CSSCalcValue.h"
 #include "CSSToLengthConversionData.h"
 #include "CSSValueKeywords.h"
-#include "ColorBlending.h"
+#include "ColorInterpolation.h"
 #include "GradientImage.h"
 #include "NodeRenderStyle.h"
 #include "Pair.h"
@@ -138,7 +137,7 @@ public:
     }
     float maxExtent(float, float) const { return 1; }
 
-    void normalizeStopsAndEndpointsOutsideRange(Vector<GradientStop>& stops)
+    void normalizeStopsAndEndpointsOutsideRange(Vector<GradientStop>& stops, ColorInterpolationMethod)
     {
         float firstOffset = *stops.first().offset;
         float lastOffset = *stops.last().offset;
@@ -181,7 +180,7 @@ public:
         return 1;
     }
 
-    void normalizeStopsAndEndpointsOutsideRange(Vector<GradientStop>& stops)
+    void normalizeStopsAndEndpointsOutsideRange(Vector<GradientStop>& stops, ColorInterpolationMethod colorInterpolationMethod)
     {
         auto numStops = stops.size();
 
@@ -205,8 +204,7 @@ public:
                 float nextOffset = *stops[firstZeroOrGreaterIndex].offset;
 
                 float interStopProportion = -prevOffset / (nextOffset - prevOffset);
-                // FIXME: when we interpolate gradients using premultiplied colors, this should do premultiplication.
-                Color blendedColor = blend(stops[firstZeroOrGreaterIndex - 1].color, stops[firstZeroOrGreaterIndex].color, { interStopProportion });
+                auto blendedColor = interpolateColors(colorInterpolationMethod, stops[firstZeroOrGreaterIndex - 1].color, 1.0f - interStopProportion, stops[firstZeroOrGreaterIndex].color, interStopProportion);
 
                 // Clamp the positions to 0 and set the color.
                 for (size_t i = 0; i < firstZeroOrGreaterIndex; ++i) {
@@ -236,7 +234,7 @@ public:
     float gradientLength() const { return 1; }
     float maxExtent(float, float) const { return 1; }
 
-    void normalizeStopsAndEndpointsOutsideRange(Vector<GradientStop>& stops)
+    void normalizeStopsAndEndpointsOutsideRange(Vector<GradientStop>& stops, ColorInterpolationMethod colorInterpolationMethod)
     {
         size_t numStops = stops.size();
         size_t lastStopIndex = numStops - 1;
@@ -256,8 +254,7 @@ public:
                 float nextOffset = *stops[index].offset;
 
                 float interStopProportion = -previousOffset / (nextOffset - previousOffset);
-                // FIXME: when we interpolate gradients using premultiplied colors, this should do premultiplication.
-                Color blendedColor = blend(stops[index - 1].color, stops[index].color, { interStopProportion });
+                auto blendedColor = interpolateColors(colorInterpolationMethod, stops[index - 1].color, 1.0f - interStopProportion, stops[index].color, interStopProportion);
 
                 // Clamp the positions to 0 and set the color.
                 for (size_t i = 0; i < index; ++i) {
@@ -286,8 +283,7 @@ public:
                 float nextOffset = *stops[index + 1].offset;
 
                 float interStopProportion = (1 - previousOffset) / (nextOffset - previousOffset);
-                // FIXME: when we interpolate gradients using premultiplied colors, this should do premultiplication.
-                Color blendedColor = blend(stops[index].color, stops[index + 1].color, { interStopProportion });
+                auto blendedColor = interpolateColors(colorInterpolationMethod, stops[index].color, 1.0f - interStopProportion, stops[index + 1].color, interStopProportion);
 
                 // Clamp the positions to 1 and set the color.
                 for (size_t i = index + 1; i < numStops; ++i) {
@@ -485,8 +481,7 @@ Gradient::ColorStopVector CSSGradientValue::computeStops(GradientAdapter& gradie
         for (size_t y = 0; y < 9; ++y) {
             float relativeOffset = (*newStops[y].offset - offset1) / (offset2 - offset1);
             float multiplier = std::pow(relativeOffset, std::log(.5f) / std::log(midpoint));
-            // FIXME: Why not premultiply here?
-            newStops[y].color = blendWithoutPremultiply(color1, color2, { multiplier });
+            newStops[y].color = interpolateColors(m_colorInterpolationMethod, color1, 1.0f - multiplier, color2, multiplier);
         }
 
         stops.remove(x);
@@ -557,7 +552,7 @@ Gradient::ColorStopVector CSSGradientValue::computeStops(GradientAdapter& gradie
 
     // If the gradient goes outside the 0-1 range, normalize it by moving the endpoints, and adjusting the stops.
     if (stops.size() > 1 && (*stops.first().offset < 0 || *stops.last().offset > 1))
-        gradientAdapter.normalizeStopsAndEndpointsOutsideRange(stops);
+        gradientAdapter.normalizeStopsAndEndpointsOutsideRange(stops, m_colorInterpolationMethod);
     
     Gradient::ColorStopVector result;
     result.reserveInitialCapacity(stops.size());

@@ -1,3 +1,20 @@
+2021-12-21  Sam Weinig  <weinig@apple.com>
+
+        Add support for premultiplied alpha interpolated gradients and defaulted off option to use them for CSS Gradients
+        https://bugs.webkit.org/show_bug.cgi?id=234492
+
+        Reviewed by Simon Fraser.
+
+        Add and update tests for gradients with alpha now that we have support for premultiplied interpolation.
+        By default, the tests now enable premultiplied interpolation (since it is an experimental feature) so
+        to continue testing the old path, the setting must be explicitly disabled.
+
+        * fast/gradients/alpha-premultiplied-expected.html: Added.
+        * fast/gradients/alpha-premultiplied.html: Added.
+        * fast/gradients/conic-gradient-alpha-expected.html:
+        * fast/gradients/conic-gradient-alpha-unpremultiplied-expected.html: Added.
+        * fast/gradients/conic-gradient-alpha-unpremultiplied.html: Added.
+
 2021-12-20  Jon Lee  <jonlee@apple.com>
 
         Unreviewed, garden GPU Process test expectations

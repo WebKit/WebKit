@@ -68,6 +68,8 @@ struct ColorComponents {
     template<size_t Start, size_t End>
     constexpr ColorComponents<T, End - Start> subset() const;
 
+    constexpr size_t size() const { return Size; }
+
     std::array<T, N> components;
 };
 

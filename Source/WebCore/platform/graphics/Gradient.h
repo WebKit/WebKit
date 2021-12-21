@@ -27,16 +27,16 @@
 
 #pragma once
 
-#include "AffineTransform.h"
 #include "Color.h"
 #include "ColorInterpolationMethod.h"
 #include "FloatPoint.h"
+#include "GradientColorStop.h"
 #include "GraphicsTypes.h"
 #include <variant>
 #include <wtf/Vector.h>
 
 #if USE(CG)
-#include <wtf/RetainPtr.h>
+#include "GradientRendererCG.h"
 #endif
 
 #if USE(DIRECT2D)
@@ -45,7 +45,6 @@
 
 #if USE(CG)
 typedef struct CGContext* CGContextRef;
-typedef struct CGGradient* CGGradientRef;
 #endif
 
 #if USE(DIRECT2D)
@@ -59,20 +58,14 @@ typedef struct _cairo_pattern cairo_pattern_t;
 
 namespace WebCore {
 
+class AffineTransform;
 class FloatRect;
 class GraphicsContext;
 
 class Gradient : public RefCounted<Gradient> {
 public:
-    struct ColorStop {
-        float offset { 0 };
-        Color color;
-
-        template<typename Encoder> void encode(Encoder&) const;
-        template<typename Decoder> static std::optional<ColorStop> decode(Decoder&);
-    };
-
-    using ColorStopVector = Vector<ColorStop, 2>;
+    using ColorStop = GradientColorStop;
+    using ColorStopVector = GradientColorStopVector;
 
     struct LinearData {
         FloatPoint point0;
@@ -144,11 +137,6 @@ private:
     void sortStops() const;
     void stopsChanged();
 
-#if USE(CG)
-    void createCGGradient();
-    bool hasOnlyBoundedSRGBColorStops() const;
-#endif
-
     Data m_data;
     ColorInterpolationMethod m_colorInterpolationMethod;
     mutable ColorStopVector m_stops;
@@ -157,34 +145,13 @@ private:
     mutable unsigned m_cachedHash { 0 };
 
 #if USE(CG)
-    RetainPtr<CGGradientRef> m_gradient;
+    std::optional<GradientRendererCG> m_platformRenderer;
 #endif
 
 #if USE(DIRECT2D)
     COMPtr<ID2D1Brush> m_brush;
 #endif
 };
-
-template<typename Encoder> void Gradient::ColorStop::encode(Encoder& encoder) const
-{
-    encoder << offset;
-    encoder << color;
-}
-
-template<typename Decoder> std::optional<Gradient::ColorStop> Gradient::ColorStop::decode(Decoder& decoder)
-{
-    std::optional<float> offset;
-    decoder >> offset;
-    if (!offset)
-        return std::nullopt;
-
-    std::optional<Color> color;
-    decoder >> color;
-    if (!color)
-        return std::nullopt;
-
-    return {{ *offset, *color }};
-}
 
 template<typename Encoder> void Gradient::LinearData::encode(Encoder& encoder) const
 {

@@ -1,3 +1,14 @@
+2021-12-21  Sam Weinig  <weinig@apple.com>
+
+        Add support for premultiplied alpha interpolated gradients and defaulted off option to use them for CSS Gradients
+        https://bugs.webkit.org/show_bug.cgi?id=234492
+
+        Reviewed by Simon Fraser.
+
+        * DumpRenderTree/TestOptions.cpp:
+        (WTR::TestOptions::defaults):
+        Add default for Windows WebKitLegacy testing which still requires it.
+
 2021-12-21  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][a11y] Implement list markers when building with ATSPI

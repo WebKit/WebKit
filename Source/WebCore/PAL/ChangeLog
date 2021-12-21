@@ -1,3 +1,13 @@
+2021-12-21  Sam Weinig  <weinig@apple.com>
+
+        Add support for premultiplied alpha interpolated gradients and defaulted off option to use them for CSS Gradients
+        https://bugs.webkit.org/show_bug.cgi?id=234492
+
+        Reviewed by Simon Fraser.
+
+        * pal/spi/cg/CoreGraphicsSPI.h:
+        Add forwards for creating conic shadings and enabling premultiplied alpha interpolation for gradients.
+
 2021-12-20  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Add PAL soft linking headers for CoreML and NaturalLanguage frameworks

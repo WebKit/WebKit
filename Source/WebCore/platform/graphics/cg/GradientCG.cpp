@@ -29,70 +29,15 @@
 
 #if USE(CG)
 
+#include "GradientRendererCG.h"
 #include "GraphicsContextCG.h"
 #include <pal/spi/cg/CoreGraphicsSPI.h>
-#include <wtf/RetainPtr.h>
 
 namespace WebCore {
 
 void Gradient::stopsChanged()
 {
-    m_gradient = nullptr;
-}
-
-bool Gradient::hasOnlyBoundedSRGBColorStops() const
-{
-    for (const auto& stop : m_stops) {
-        if (stop.color.colorSpace() != ColorSpace::SRGB)
-            return false;
-    }
-    return true;
-}
-
-void Gradient::createCGGradient()
-{
-    sortStops();
-
-    unsigned numStops = m_stops.size();
-
-    const int reservedStops = 3;
-    Vector<CGFloat, reservedStops> locations;
-    locations.reserveInitialCapacity(numStops);
-
-    // If all the stops are bounded sRGB (as represented by the color having the color space
-    // ColorSpace::SRGB), it is faster to create a gradient using components than CGColors.
-    if (hasOnlyBoundedSRGBColorStops()) {
-        Vector<CGFloat, 4 * reservedStops> colorComponents;
-        colorComponents.reserveInitialCapacity(numStops * 4);
-
-        for (const auto& stop : m_stops) {
-            auto [colorSpace, components] = stop.color.colorSpaceAndComponents();
-            auto [r, g, b, a] = components;
-            colorComponents.uncheckedAppend(r);
-            colorComponents.uncheckedAppend(g);
-            colorComponents.uncheckedAppend(b);
-            colorComponents.uncheckedAppend(a);
-
-            locations.uncheckedAppend(stop.offset);
-        }
-
-        m_gradient = adoptCF(CGGradientCreateWithColorComponents(sRGBColorSpaceRef(), colorComponents.data(), locations.data(), numStops));
-        return;
-    }
-
-    auto colorsArray = adoptCF(CFArrayCreateMutable(0, m_stops.size(), &kCFTypeArrayCallBacks));
-    for (const auto& stop : m_stops) {
-        CFArrayAppendValue(colorsArray.get(), cachedCGColor(stop.color).get());
-        locations.uncheckedAppend(stop.offset);
-    }
-
-#if HAVE(CORE_GRAPHICS_EXTENDED_SRGB_COLOR_SPACE)
-    auto extendedColorsGradientColorSpace = extendedSRGBColorSpaceRef();
-#else
-    auto extendedColorsGradientColorSpace = sRGBColorSpaceRef();
-#endif
-
-    m_gradient = adoptCF(CGGradientCreateWithColors(extendedColorsGradientColorSpace, colorsArray.get(), locations.data()));
+    m_platformRenderer = { };
 }
 
 void Gradient::fill(GraphicsContext& context, const FloatRect& rect)
@@ -108,10 +53,10 @@ void Gradient::paint(GraphicsContext& context)
 
 void Gradient::paint(CGContextRef platformContext)
 {
-    CGGradientDrawingOptions extendOptions = kCGGradientDrawsBeforeStartLocation | kCGGradientDrawsAfterEndLocation;
-
-    if (!m_gradient)
-        createCGGradient();
+    if (!m_platformRenderer) {
+        sortStops();
+        m_platformRenderer = GradientRendererCG { m_colorInterpolationMethod, m_stops };
+    }
 
     WTF::switchOn(m_data,
         [&] (const LinearData& data) {
@@ -119,7 +64,7 @@ void Gradient::paint(CGContextRef platformContext)
             case GradientSpreadMethod::Repeat:
             case GradientSpreadMethod::Reflect: {
                 CGContextStateSaver saveState(platformContext);
-                extendOptions = 0;
+                CGGradientDrawingOptions extendOptions = 0;
 
                 FloatPoint gradientVectorNorm(data.point1 - data.point0);
                 gradientVectorNorm.normalize();
@@ -143,7 +88,7 @@ void Gradient::paint(CGContextRef platformContext)
                     CGPoint left = CGPointMake(flip ? end : start, 0);
                     CGPoint right = CGPointMake(flip ? start : end, 0);
 
-                    CGContextDrawLinearGradient(platformContext, m_gradient.get(), left, right, extendOptions);
+                    m_platformRenderer->drawLinearGradient(platformContext, left, right, extendOptions);
                 };
 
                 auto isLeftOf = [](CGFloat start, CGFloat end, CGRect boundingBox) -> bool {
@@ -189,11 +134,13 @@ void Gradient::paint(CGContextRef platformContext)
                     drawLinearGradient(end - dx, end, flip);
                     flip = !flip && m_spreadMethod == GradientSpreadMethod::Reflect;
                 }
-
                 break;
             }
-            case GradientSpreadMethod::Pad:
-                CGContextDrawLinearGradient(platformContext, m_gradient.get(), data.point0, data.point1, extendOptions);
+            case GradientSpreadMethod::Pad: {
+                CGGradientDrawingOptions extendOptions = kCGGradientDrawsBeforeStartLocation | kCGGradientDrawsAfterEndLocation;
+                m_platformRenderer->drawLinearGradient(platformContext, data.point0, data.point1, extendOptions);
+                break;
+            }
             }
         },
         [&] (const RadialData& data) {
@@ -208,7 +155,8 @@ void Gradient::paint(CGContextRef platformContext)
                 CGContextTranslateCTM(platformContext, -data.point0.x(), -data.point0.y());
             }
 
-            CGContextDrawRadialGradient(platformContext, m_gradient.get(), data.point0, data.startRadius, data.point1, data.endRadius, extendOptions);
+            CGGradientDrawingOptions extendOptions = kCGGradientDrawsBeforeStartLocation | kCGGradientDrawsAfterEndLocation;
+            m_platformRenderer->drawRadialGradient(platformContext, data.point0, data.startRadius, data.point1, data.endRadius, extendOptions);
 
             if (needScaling)
                 CGContextRestoreGState(platformContext);
@@ -221,7 +169,7 @@ void Gradient::paint(CGContextRef platformContext)
             CGContextTranslateCTM(platformContext, data.point0.x(), data.point0.y());
             CGContextRotateCTM(platformContext, (CGFloat)-M_PI_2);
             CGContextTranslateCTM(platformContext, -data.point0.x(), -data.point0.y());
-            CGContextDrawConicGradient(platformContext, m_gradient.get(), data.point0, data.angleRadians);
+            m_platformRenderer->drawConicGradient(platformContext, data.point0, data.angleRadians);
             CGContextRestoreGState(platformContext);
 #else
             UNUSED_PARAM(data);

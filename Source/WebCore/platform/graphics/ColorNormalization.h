@@ -25,13 +25,18 @@
 
 #pragma once
 
+#include "Color.h"
+#include "ColorConversion.h"
 #include "ColorTypes.h"
 #include <wtf/MathExtras.h>
 
 namespace WebCore {
 
 template<typename ColorType> ColorType makeColorTypeByNormalizingComponents(const ColorComponents<float, 4>&);
+template<typename ColorType> Color makeCanonicalColor(ColorType);
 
+
+// MARK: - Normalization
 
 template<typename ComponentType> struct WhitenessBlackness {
     ComponentType whiteness;
@@ -99,6 +104,23 @@ template<> inline OKLCHA<float> makeColorTypeByNormalizingComponents<OKLCHA<floa
     float normalizedHue = normalizeHue(hue);
 
     return { lightness, chroma, normalizedHue, alpha };
+}
+
+// MARK: - Canonicalization
+
+template<typename ColorType> inline Color makeCanonicalColor(ColorType color)
+{
+    return color;
+}
+
+template<> inline Color makeCanonicalColor<HWBA<float>>(HWBA<float> color)
+{
+    return convertColor<SRGBA<uint8_t>>(color);
+}
+
+template<> inline Color makeCanonicalColor<HSLA<float>>(HSLA<float> color)
+{
+    return convertColor<SRGBA<uint8_t>>(color);
 }
 
 }

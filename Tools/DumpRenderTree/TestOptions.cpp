@@ -135,6 +135,7 @@ const TestFeatures& TestOptions::defaults()
             { "CSSContainmentEnabled", false },
             { "CSSCounterStyleAtRuleImageSymbolsEnabled", false },
             { "CSSCounterStyleAtRulesEnabled", false },
+            { "CSSGradientPremultipliedAlphaInterpolationEnabled", true },
             { "CSSLogicalEnabled", false },
             { "CSSOMViewSmoothScrollingEnabled", false },
             { "CanvasColorSpaceEnabled", true },
