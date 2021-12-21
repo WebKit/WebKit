@@ -44,7 +44,7 @@ void TestController::setHidden(bool)
 {
 }
 
-void TestController::platformInitialize()
+void TestController::platformInitialize(const Options&)
 {
 }
 

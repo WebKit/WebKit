@@ -111,12 +111,12 @@ static void swizzledCancelTracking(NSMenu *menu, SEL)
     });
 }
 
-void TestController::platformInitialize()
+void TestController::platformInitialize(const Options& options)
 {
     poseAsClass("WebKitTestRunnerPasteboard", "NSPasteboard");
     poseAsClass("WebKitTestRunnerEvent", "NSEvent");
     
-    cocoaPlatformInitialize();
+    cocoaPlatformInitialize(options);
 
     [NSSound _setAlertType:0];
 

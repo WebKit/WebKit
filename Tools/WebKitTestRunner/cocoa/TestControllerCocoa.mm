@@ -27,6 +27,7 @@
 #import "TestController.h"
 
 #import "CrashReporterInfo.h"
+#import "Options.h"
 #import "PlatformWebView.h"
 #import "StringFunctions.h"
 #import "TestInvocation.h"
@@ -103,7 +104,7 @@ void initializeWebViewConfiguration(const char* libraryPath, WKStringRef injecte
     }();
 }
 
-void TestController::cocoaPlatformInitialize()
+void TestController::cocoaPlatformInitialize(const Options& options)
 {
     const char* dumpRenderTreeTemp = libraryPathForTesting();
     if (!dumpRenderTreeTemp)
@@ -115,6 +116,12 @@ void TestController::cocoaPlatformInitialize()
     NSDictionary *resourceLogPlist = @{ @"version": @(1) };
     if (![resourceLogPlist writeToFile:fullBrowsingSessionResourceLog atomically:YES])
         WTFCrash();
+    
+    if (options.webCoreLogChannels.length())
+        [[NSUserDefaults standardUserDefaults] setValue:[NSString stringWithUTF8String:options.webCoreLogChannels.c_str()] forKey:@"WebCoreLogging"];
+
+    if (options.webKitLogChannels.length())
+        [[NSUserDefaults standardUserDefaults] setValue:[NSString stringWithUTF8String:options.webKitLogChannels.c_str()] forKey:@"WebKitLogging"];
 }
 
 WKContextRef TestController::platformContext()

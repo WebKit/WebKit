@@ -104,7 +104,7 @@ void TestController::setHidden(bool)
 {
 }
 
-void TestController::platformInitialize()
+void TestController::platformInitialize(const Options&)
 {
     // Cygwin calls ::SetErrorMode(SEM_FAILCRITICALERRORS), which we will inherit. This is bad for
     // testing/debugging, as it causes the post-mortem debugger not to be invoked. We reset the

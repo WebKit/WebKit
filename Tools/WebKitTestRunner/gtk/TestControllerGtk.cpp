@@ -44,7 +44,7 @@ void TestController::notifyDone()
     RunLoop::main().stop();
 }
 
-void TestController::platformInitialize()
+void TestController::platformInitialize(const Options&)
 {
 }
 

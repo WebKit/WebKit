@@ -528,8 +528,6 @@ void TestController::initialize(int argc, const char* argv[])
     WTF::setProcessPrivileges(allPrivileges());
     WebCoreTestSupport::populateJITOperations();
 
-    platformInitialize();
-
     Options options;
     OptionsHandler optionsHandler(options);
 
@@ -539,6 +537,8 @@ void TestController::initialize(int argc, const char* argv[])
     }
     if (!optionsHandler.parse(argc, argv))
         exit(1);
+
+    platformInitialize(options);
 
     m_useWaitToDumpWatchdogTimer = options.useWaitToDumpWatchdogTimer;
     m_forceNoTimeout = options.forceNoTimeout;

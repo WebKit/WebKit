@@ -98,10 +98,10 @@ void TestController::notifyDone()
     [selectionView _removeAllAnimations:YES];
 }
 
-void TestController::platformInitialize()
+void TestController::platformInitialize(const Options& options)
 {
     setUpIOSLayoutTestCommunication();
-    cocoaPlatformInitialize();
+    cocoaPlatformInitialize(options);
 
     [UIApplication sharedApplication].idleTimerDisabled = YES;
     [[UIScreen mainScreen] _setScale:2.0];

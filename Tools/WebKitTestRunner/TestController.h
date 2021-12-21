@@ -56,6 +56,7 @@ class OriginSettings;
 class PlatformWebView;
 class TestInvocation;
 class TestOptions;
+struct Options;
 struct TestCommand;
 
 class AsyncTask {
@@ -384,7 +385,7 @@ private:
 
     bool handleControlCommand(const char* command);
 
-    void platformInitialize();
+    void platformInitialize(const Options&);
     void platformInitializeDataStore(WKPageConfigurationRef, const TestOptions&);
     void platformDestroy();
     WKContextRef platformAdjustContext(WKContextRef, WKContextConfigurationRef);
@@ -396,7 +397,7 @@ private:
     bool platformResetStateToConsistentValues(const TestOptions&);
 
 #if PLATFORM(COCOA)
-    void cocoaPlatformInitialize();
+    void cocoaPlatformInitialize(const Options&);
     void cocoaResetStateToConsistentValues(const TestOptions&);
     void setApplicationBundleIdentifier(const std::string&);
     void clearApplicationBundleIdentifierTestingOverride();
