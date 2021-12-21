@@ -1,3 +1,12 @@
+2021-12-21  Alan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Compute visual geometry for InlineDisplay::Line
+        https://bugs.webkit.org/show_bug.cgi?id=234545
+
+        Reviewed by Antti Koivisto.
+
+        * TestExpectations:
+
 2021-12-21  Simon Fraser  <simon.fraser@apple.com>
 
         Allow a way to specify a custom pixel tolerance in a ref test

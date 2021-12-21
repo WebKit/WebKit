@@ -4847,6 +4847,8 @@ webkit.org/b/226364 fast/layoutformattingcontext/table-with-percent-columns-and-
 fast/layoutformattingcontext/absolute-positioned-box-with-inline-sibling.html [ Skip ]
 [ Debug ] fast/layoutformattingcontext/table-fixed-width-with-max-distribution.html [ Skip ]
 [ Debug ] fast/layoutformattingcontext/table-space-distribution-simple-mismatching.html [ Skip ]
+# Needs display box support.
+fast/layoutformattingcontext/flex-box-simple.html [ Skip ]
 
 # Missing painting support for in-flow positioning
 fast/layoutformattingcontext/replaced-box-with-margin-on-baseline.html [ ImageOnlyFailure ]

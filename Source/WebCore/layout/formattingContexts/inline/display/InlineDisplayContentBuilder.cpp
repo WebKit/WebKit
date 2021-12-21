@@ -540,11 +540,6 @@ void InlineDisplayContentBuilder::processBidiContent(const LineBuilder::LineCont
     auto lineBoxRect = displayLine.lineBoxRect();
     auto contentStartInVisualOrder = lineBoxRect.left() + displayLine.contentLeft();
     auto createDisplayBoxesInVisualOrder = [&] {
-        // First visual run's initial content position depends on the block's inline direction.
-        if (!root().style().isLeftToRightDirection()) {
-            // FIXME: Turn display line's contentLeft to visual and just use that value.
-            contentStartInVisualOrder = lineBoxRect.width() - displayLine.contentWidth() - displayLine.contentLeft();
-        }
 
         auto contentRightInVisualOrder = contentStartInVisualOrder;
         auto& runs = lineContent.runs;

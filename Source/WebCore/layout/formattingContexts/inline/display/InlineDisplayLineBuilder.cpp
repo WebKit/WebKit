@@ -76,22 +76,26 @@ InlineDisplayLineBuilder::EnclosingLineGeometry InlineDisplayLineBuilder::collec
 InlineDisplay::Line InlineDisplayLineBuilder::build(const LineBuilder::LineContent& lineContent, const LineBox& lineBox, InlineLayoutUnit lineBoxLogicalHeight, size_t lineIndex) const
 {
     auto& rootStyle = lineIndex ? root().firstLineStyle() : root().style();
-    auto lineBoxVisualLeft = lineContent.lineLogicalTopLeft.x();
-    if (!rootStyle.isLeftToRightDirection()) {
-        // https://drafts.csswg.org/css-text/#text-indent-property
-        // Since text-indent only initiates margin start, we just need to pull the linebox back to the left.
-        lineBoxVisualLeft -= lineContent.lineMarginStart;
-    }
-    // FIXME: Use physical geometry here.
+    auto& rootInlineBox = lineBox.rootInlineBox();
+    auto& rootGeometry = layoutState().geometryForBox(root());
+    auto isLeftToRightDirection = rootStyle.isLeftToRightDirection();
+    auto lineOffsetFromContentBox = lineContent.lineLogicalTopLeft.x() - rootGeometry.contentBoxLeft();
+
+    auto lineBoxVisualLeft = isLeftToRightDirection
+        ? rootGeometry.contentBoxLeft() + lineOffsetFromContentBox
+        : InlineLayoutUnit { rootGeometry.borderEnd() } + rootGeometry.paddingEnd().value_or(0_lu);
+    auto contentVisualLeft = isLeftToRightDirection
+        ? lineBox.rootInlineBoxAlignmentOffset()
+        : rootGeometry.contentBoxWidth() - lineOffsetFromContentBox -  lineBox.rootInlineBoxAlignmentOffset() - rootInlineBox.logicalWidth();
+
     auto lineBoxRect = InlineRect { lineContent.lineLogicalTopLeft.y(), lineBoxVisualLeft, lineContent.lineLogicalWidth, lineBoxLogicalHeight };
     auto enclosingLineGeometry = collectEnclosingLineGeometry(lineBox, lineBoxRect);
 
-    auto& rootInlineBox = lineBox.rootInlineBox();
     return InlineDisplay::Line { lineBoxRect
         , enclosingLineGeometry.scrollableOverflowRect
         , enclosingLineGeometry.enclosingTopAndBottom
         , rootInlineBox.logicalTop() + rootInlineBox.baseline()
-        , lineBox.rootInlineBoxAlignmentOffset() + rootInlineBox.logicalLeft()
+        , contentVisualLeft
         , rootInlineBox.logicalWidth()
     };
 }
