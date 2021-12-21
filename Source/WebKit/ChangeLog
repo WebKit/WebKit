@@ -1,3 +1,16 @@
+2021-12-21  Eliot Hsu  <eliot_hsu@apple.com>
+
+        Fix Safari-side SafeBrowsing telemetry
+        https://bugs.webkit.org/show_bug.cgi?id=234439
+
+        Reviewed by Alex Christensen.
+
+        Fix old (and privacy-preserving) telemetry for Safe Browsing,
+        which were previously reported from the Safari side.
+
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::showSafeBrowsingWarning):
+
 2021-12-21  Kate Cheney  <katherine_cheney@apple.com>
 
         Harden PCM and ITP databases against crashes

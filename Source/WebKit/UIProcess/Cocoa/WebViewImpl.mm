@@ -1776,6 +1776,11 @@ void WebViewImpl::showSafeBrowsingWarning(const SafeBrowsingWarning& warning, Co
     if (!m_view)
         return completionHandler(ContinueUnsafeLoad::Yes);
 
+    WebCore::DiagnosticLoggingClient::ValueDictionary showedWarningDictionary;
+    showedWarningDictionary.set("source"_s, String("service"));
+
+    m_page->logDiagnosticMessageWithValueDictionary("SafeBrowsing.ShowedWarning"_s, "Safari"_s, showedWarningDictionary, ShouldSample::No);
+
     m_safeBrowsingWarning = adoptNS([[WKSafeBrowsingWarning alloc] initWithFrame:[m_view bounds] safeBrowsingWarning:warning completionHandler:[weakThis = WeakPtr { *this }, completionHandler = WTFMove(completionHandler)] (auto&& result) mutable {
         completionHandler(WTFMove(result));
         if (!weakThis)
@@ -1785,10 +1790,28 @@ void WebViewImpl::showSafeBrowsingWarning(const SafeBrowsingWarning& warning, Co
             [] (const URL&) { return true; }
         );
         bool forMainFrameNavigation = [weakThis->m_safeBrowsingWarning forMainFrameNavigation];
+
+        WebCore::DiagnosticLoggingClient::ValueDictionary dictionary;
+        dictionary.set("source"_s, String("service"));
         if (navigatesFrame && forMainFrameNavigation) {
             // The safe browsing warning will be hidden once the next page is shown.
+            bool continuingUnsafeLoad = WTF::switchOn(result,
+                [] (ContinueUnsafeLoad continueUnsafeLoad) { return continueUnsafeLoad == ContinueUnsafeLoad::Yes; },
+                [] (const URL&) { return false; }
+            );
+
+            if (continuingUnsafeLoad)
+                dictionary.set("action"_s, String("visit website"));
+            else
+                dictionary.set("action"_s, String("redirect to url"));
+
+            weakThis->m_page->logDiagnosticMessageWithValueDictionary("SafeBrowsing.PerformedAction"_s, "Safari"_s, dictionary, ShouldSample::No);
             return;
         }
+
+        dictionary.set("action"_s, String("go back"));
+        weakThis->m_page->logDiagnosticMessageWithValueDictionary("SafeBrowsing.PerformedAction"_s, "Safari"_s, dictionary, ShouldSample::No);
+
         if (!navigatesFrame && weakThis->m_safeBrowsingWarning && !forMainFrameNavigation) {
             weakThis->m_page->goBack();
             return;
