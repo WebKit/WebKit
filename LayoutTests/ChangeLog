@@ -1,3 +1,9 @@
+2021-12-20  Jon Lee  <jonlee@apple.com>
+
+        Unreviewed, garden GPU Process test expectations
+
+        * gpu-process/TestExpectations:
+
 2021-12-20  Arcady Goldmints-Orlov  <agoldmints@igalia.com>
 
         [GLIB] Update test expectations for some fast/box-shadow tests.
