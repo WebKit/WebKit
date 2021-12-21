@@ -219,7 +219,6 @@ set(WTF_PUBLIC_HEADERS
     RedBlackTree.h
     Ref.h
     RefCounted.h
-    RefCountedArray.h
     RefCountedFixedVector.h
     RefCountedLeakCounter.h
     RefCounter.h
@@ -458,7 +457,6 @@ set(WTF_SOURCES
     RandomNumber.cpp
     ReadWriteLock.cpp
     RefCounted.cpp
-    RefCountedArray.cpp
     RefCountedLeakCounter.cpp
     RunLoop.cpp
     SHA1.cpp

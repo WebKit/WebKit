@@ -27,7 +27,7 @@
 #include "CSSValueKeywords.h"
 #include "FontDescription.h"
 #include <variant>
-#include <wtf/RefCountedArray.h>
+#include <wtf/RefCountedFixedVector.h>
 
 #if PLATFORM(COCOA)
 #include "FontFamilySpecificationCoreText.h"
@@ -52,10 +52,10 @@ public:
     bool operator==(const FontCascadeDescription&) const;
     bool operator!=(const FontCascadeDescription& other) const { return !(*this == other); }
 
-    unsigned familyCount() const { return m_families.size(); }
+    unsigned familyCount() const { return m_families->size(); }
     const AtomString& firstFamily() const { return familyAt(0); }
-    const AtomString& familyAt(unsigned i) const { return m_families[i]; }
-    const RefCountedArray<AtomString>& families() const { return m_families; }
+    const AtomString& familyAt(unsigned i) const { return m_families.get()[i]; }
+    RefCountedFixedVector<AtomString>& families() const { return m_families.get(); }
 
     static bool familyNamesAreEqual(const AtomString&, const AtomString&);
     static unsigned familyNameHash(const AtomString&);
@@ -85,9 +85,9 @@ public:
     FontSmoothingMode fontSmoothing() const { return static_cast<FontSmoothingMode>(m_fontSmoothing); }
     bool isSpecifiedFont() const { return m_isSpecifiedFont; }
 
-    void setOneFamily(const AtomString& family) { ASSERT(m_families.size() == 1); m_families[0] = family; }
-    void setFamilies(const Vector<AtomString>& families) { m_families = RefCountedArray<AtomString>(families); }
-    void setFamilies(const RefCountedArray<AtomString>& families) { m_families = families; }
+    void setOneFamily(const AtomString& family) { ASSERT(m_families->size() == 1); m_families.get()[0] = family; }
+    void setFamilies(const Vector<AtomString>& families) { m_families = RefCountedFixedVector<AtomString>::createFromVector(families); }
+    void setFamilies(RefCountedFixedVector<AtomString>& families) { m_families = families; }
     void setSpecifiedSize(float s) { m_specifiedSize = clampToFloat(s); }
     void setIsAbsoluteSize(bool s) { m_isAbsoluteSize = s; }
     void setKerning(Kerning kerning) { m_kerning = static_cast<unsigned>(kerning); }
@@ -136,7 +136,7 @@ public:
     static FontPalette initialFontPalette() { return { FontPalette::Type::Normal, nullAtom() }; }
 
 private:
-    RefCountedArray<AtomString> m_families { 1 };
+    Ref<RefCountedFixedVector<AtomString>> m_families;
 
     // Specified CSS value. Independent of rendering issues such as integer rounding, minimum font sizes, and zooming.
     float m_specifiedSize { 0 };
@@ -155,7 +155,7 @@ private:
 inline bool FontCascadeDescription::operator==(const FontCascadeDescription& other) const
 {
     return FontDescription::operator==(other)
-        && m_families == other.m_families
+        && m_families.get() == other.m_families.get()
         && m_specifiedSize == other.m_specifiedSize
         && m_isAbsoluteSize == other.m_isAbsoluteSize
         && m_kerning == other.m_kerning

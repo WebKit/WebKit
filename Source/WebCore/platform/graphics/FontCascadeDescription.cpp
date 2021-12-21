@@ -52,7 +52,8 @@ struct SameSizeAsFontCascadeDescription {
 COMPILE_ASSERT(sizeof(FontCascadeDescription) == sizeof(SameSizeAsFontCascadeDescription), FontCascadeDescription_should_stay_small);
 
 FontCascadeDescription::FontCascadeDescription()
-    : m_isAbsoluteSize(false)
+    : m_families(RefCountedFixedVector<AtomString>::create(1))
+    , m_isAbsoluteSize(false)
     , m_kerning(static_cast<unsigned>(Kerning::Auto))
     , m_keywordSize(0)
     , m_fontSmoothing(static_cast<unsigned>(FontSmoothingMode::AutoSmoothing))

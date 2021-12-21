@@ -29,7 +29,6 @@
 #include "LegacyRootInlineBox.h"
 #include "RenderText.h"
 #include "TextBoxSelectableRange.h"
-#include <wtf/RefCountedArray.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {

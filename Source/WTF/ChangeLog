@@ -1,3 +1,21 @@
+2021-12-21  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [WTF] Remove RefCountedArray and use RefCountedFixedVector
+        https://bugs.webkit.org/show_bug.cgi?id=234484
+
+        Reviewed by Dean Jackson.
+
+        Use RefCountedFixedVector<T> instead of RefCountedArray<T> and remove RefCountedArray<T>.
+        RefCountedFixedVector<T> is much simpler interface: it is just using Ref<> / RefPtr<>
+        instead of integrating ref-counting holder semantics into the class itself.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+        * wtf/FixedVector.h:
+        * wtf/RefCountedArray.cpp: Removed.
+        * wtf/RefCountedArray.h: Removed.
+        * wtf/WTFAssertions.cpp:
+
 2021-12-20  Alexey Shvayka  <ashvayka@apple.com>
 
         [WebIDL] convertVariadicArguments() should return a FixedVector

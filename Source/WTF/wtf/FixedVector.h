@@ -26,12 +26,9 @@
 #pragma once
 
 #include <wtf/EmbeddedFixedVector.h>
-#include <wtf/RefCountedArray.h>
 
 namespace WTF {
 
-// Wrapper around RefCountedArray, fixed-sized, memory compact Vector.
-// Copy constructor / assignment operator work differently from RefCountedArray: works as like a Vector.
 template<typename T>
 class FixedVector {
 public:
