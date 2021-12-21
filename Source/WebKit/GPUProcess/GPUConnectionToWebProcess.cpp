@@ -146,6 +146,7 @@
 
 #if USE(GRAPHICS_LAYER_WC)
 #include "RemoteWCLayerTreeHost.h"
+#include "WCContentBufferManager.h"
 #endif
 
 namespace WebKit {
@@ -303,6 +304,11 @@ void GPUConnectionToWebProcess::didClose(IPC::Connection& connection)
     // RemoteGraphicsContextsGL objects are unneeded after connection closes.
     m_remoteGraphicsContextGLMap.clear();
 #endif
+#if USE(GRAPHICS_LAYER_WC)
+    remoteGraphicsContextGLStreamWorkQueue().dispatch([webProcessIdentifier = m_webProcessIdentifier] {
+        WCContentBufferManager::singleton().removeAllContentBuffersForProcess(webProcessIdentifier);
+    });
+#endif
 
     gpuProcess().connectionToWebProcessClosed(connection);
     gpuProcess().removeGPUConnectionToWebProcess(*this); // May destroy |this|.
@@ -358,12 +364,6 @@ void GPUConnectionToWebProcess::createWCLayerTreeHost(WebKit::WCLayerTreeHostIde
 void GPUConnectionToWebProcess::releaseWCLayerTreeHost(WebKit::WCLayerTreeHostIdentifier identifier)
 {
     m_remoteWCLayerTreeHostMap.remove(identifier);
-}
-
-RefPtr<RemoteGraphicsContextGL> GPUConnectionToWebProcess::findRemoteGraphicsContextGL(GraphicsContextGLIdentifier identifier)
-{
-    ASSERT(RunLoop::isMain());
-    return m_remoteGraphicsContextGLMap.get(identifier);
 }
 #endif
 

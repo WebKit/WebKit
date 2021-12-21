@@ -32,6 +32,7 @@
 #include "MessageSender.h"
 #include "WCLayerTreeHostIdentifier.h"
 #include "WCSharedSceneContextHolder.h"
+#include <WebCore/ProcessIdentifier.h>
 
 namespace WebKit {
 class GPUConnectionToWebProcess;
@@ -55,6 +56,7 @@ private:
     uint64_t messageSenderDestinationID() const override;
 
     WeakPtr<GPUConnectionToWebProcess> m_connectionToWebProcess;
+    WebCore::ProcessIdentifier m_webProcessIdentifier;
     WCLayerTreeHostIdentifier m_identifier;
     RefPtr<WCSharedSceneContextHolder::Holder> m_sharedSceneContextHolder;
     std::unique_ptr<WCScene> m_scene;

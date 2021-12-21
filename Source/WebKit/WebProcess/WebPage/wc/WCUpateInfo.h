@@ -26,6 +26,7 @@
 #pragma once
 
 #include "WCBackingStore.h"
+#include "WCContentBufferIdentifier.h"
 #include "WebCoreArgumentCoders.h"
 #include <WebCore/GraphicsLayer.h>
 #include <optional>
@@ -74,6 +75,7 @@ struct WCLayerUpateInfo {
     bool contentsVisible;
     bool backfaceVisibility;
     bool preserves3D;
+    bool hasPlatformLayer;
     WebCore::Color solidColor;
     WebCore::Color backgroundColor;
     WebCore::Color debugBorderColor;
@@ -88,7 +90,7 @@ struct WCLayerUpateInfo {
     WebCore::FilterOperations backdropFilters;
     WebCore::FloatRoundedRect backdropFiltersRect;
     WebCore::FloatRoundedRect contentsClippingRect;
-    uint64_t graphicsContextGLIdentifier;
+    Vector<WCContentBufferIdentifier> contentBufferIdentifiers;
 
     template<class Encoder>
     void encode(Encoder& encoder) const
@@ -136,7 +138,7 @@ struct WCLayerUpateInfo {
         if (changes & WCLayerChange::BackdropFilters)
             encoder << backdropFilters << backdropFiltersRect;
         if (changes & WCLayerChange::PlatformLayer)
-            encoder << graphicsContextGLIdentifier;
+            encoder << hasPlatformLayer << contentBufferIdentifiers;
     }
 
     template <class Decoder>
@@ -241,7 +243,9 @@ struct WCLayerUpateInfo {
                 return false;
         }
         if (result.changes & WCLayerChange::PlatformLayer) {
-            if (!decoder.decode(result.graphicsContextGLIdentifier))
+            if (!decoder.decode(result.hasPlatformLayer))
+                return false;
+            if (!decoder.decode(result.contentBufferIdentifiers))
                 return false;
         }
         return true;

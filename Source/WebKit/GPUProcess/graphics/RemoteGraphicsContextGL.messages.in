@@ -29,7 +29,10 @@ messages -> RemoteGraphicsContextGL NotRefCounted Stream {
 #if PLATFORM(COCOA)
     void PrepareForDisplay() -> (MachSendRight displayBuffer) Synchronous NotStreamEncodableReply
 #endif
-#if !PLATFORM(COCOA)
+#if USE(GRAPHICS_LAYER_WC)
+    void PrepareForDisplay() -> (std::optional<WebKit::WCContentBufferIdentifier> contentBuffer) Synchronous
+#endif
+#if !PLATFORM(COCOA) && !USE(GRAPHICS_LAYER_WC)
     void PrepareForDisplay() -> () Synchronous
 #endif
     void EnsureExtensionEnabled(String extension)

@@ -29,25 +29,27 @@
 #if USE(GRAPHICS_LAYER_WC)
 
 #include "RemoteGraphicsContextGL.h"
+#include "WCContentBuffer.h"
+#include "WCContentBufferManager.h"
 #include "WCSceneContext.h"
 #include "WCUpateInfo.h"
 #include <WebCore/GraphicsContextGLOpenGL.h>
 #include <WebCore/TextureMapperLayer.h>
+#include <WebCore/TextureMapperPlatformLayer.h>
 #include <WebCore/TextureMapperTiledBackingStore.h>
 
 namespace WebKit {
 
-struct WCScene::Layer : public WebCore::TextureMapperPlatformLayer::Client {
+struct WCScene::Layer final : public WCContentBuffer::Client {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     Layer() = default;
 
-    // TextureMapperPlatformLayer::Client
+    // WCContentBuffer::Client
     void platformLayerWillBeDestroyed() override
     {
         texmapLayer.setContentsLayer(nullptr);
     }
-    void setPlatformLayerNeedsDisplay() override { }
 
     WebCore::TextureMapperLayer texmapLayer;
     RefPtr<WebCore::TextureMapperTiledBackingStore> backingStore;
@@ -62,7 +64,10 @@ void WCScene::initialize(WCSceneContext& context)
     m_textureMapper = m_context->createTextureMapper();
 }
 
-WCScene::WCScene() = default;
+WCScene::WCScene(WebCore::ProcessIdentifier webProcessIdentifier)
+    : m_webProcessIdentifier(webProcessIdentifier)
+{
+}
 
 WCScene::~WCScene()
 {
@@ -70,7 +75,7 @@ WCScene::~WCScene()
     m_textureMapper = nullptr;
 }
 
-void WCScene::update(WCUpateInfo&& update, Vector<RefPtr<RemoteGraphicsContextGL>>&& remoteGCGL)
+void WCScene::update(WCUpateInfo&& update)
 {
     if (!m_context->makeContextCurrent())
         return;
@@ -79,8 +84,6 @@ void WCScene::update(WCUpateInfo&& update, Vector<RefPtr<RemoteGraphicsContextGL
         auto layer = makeUnique<Layer>();
         m_layers.add(id, WTFMove(layer));
     }
-
-    auto remoteGCGLIterator = remoteGCGL.begin();
 
     for (auto& layerUpdate : update.changedLayers) {
         auto layer = m_layers.get(layerUpdate.id);
@@ -165,16 +168,19 @@ void WCScene::update(WCUpateInfo&& update, Vector<RefPtr<RemoteGraphicsContextGL
             layer->texmapLayer.setBackdropFiltersRect(layerUpdate.backdropFiltersRect);
         }
         if (layerUpdate.changes & WCLayerChange::PlatformLayer) {
-            if (*remoteGCGLIterator) {
-                auto platformLayer = (*remoteGCGLIterator)->platformLayer();
-                platformLayer->setClient(layer);
-                layer->texmapLayer.setContentsLayer(platformLayer);
-            } else
+            if (!layerUpdate.hasPlatformLayer)
                 layer->texmapLayer.setContentsLayer(nullptr);
+            else {
+                WCContentBuffer* contentBuffer = nullptr;
+                for (auto identifier : layerUpdate.contentBufferIdentifiers)
+                    contentBuffer = WCContentBufferManager::singleton().releaseContentBufferIdentifier(m_webProcessIdentifier, identifier);
+                if (contentBuffer) {
+                    contentBuffer->setClient(layer);
+                    layer->texmapLayer.setContentsLayer(contentBuffer->platformLayer());
+                }
+            }
         }
-        remoteGCGLIterator++;
     }
-    ASSERT(remoteGCGLIterator == remoteGCGL.end());
 
     for (auto id : update.removedLayers)
         m_layers.remove(id);

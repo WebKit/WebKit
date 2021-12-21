@@ -27,40 +27,63 @@
 
 #if USE(GRAPHICS_LAYER_WC)
 
+#include "WCContentBufferIdentifier.h"
+#include "WCContentBufferManager.h"
 #include <WebCore/ProcessIdentifier.h>
-#include <WebCore/TextureMapperFPSCounter.h>
-#include <wtf/Forward.h>
-#include <wtf/HashMap.h>
-
-namespace WebCore {
-class TextureMapper;
-class TextureMapperLayer;
-class TextureMapperPlatformLayer;
-class TextureMapperTiledBackingStore;
-}
+#include <WebCore/TextureMapperPlatformLayer.h>
 
 namespace WebKit {
 
-class WCSceneContext;
-struct WCUpateInfo;
-
-class WCScene {
+class WCContentBuffer final : WebCore::TextureMapperPlatformLayer::Client {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    WCScene(WebCore::ProcessIdentifier);
-    ~WCScene();
-    void initialize(WCSceneContext&);
-    void update(WCUpateInfo&&);
+    class Client {
+    public:
+        virtual void platformLayerWillBeDestroyed() = 0;
+    };
+    
+    WCContentBuffer(WCContentBufferManager& manager, WebCore::ProcessIdentifier processIdentifier, WebCore::TextureMapperPlatformLayer* platformLayer)
+        : m_manager(manager)
+        , m_processIdentifier(processIdentifier)
+        , m_platformLayer(platformLayer)
+    {
+        m_platformLayer->setClient(this);
+    }
+
+    ~WCContentBuffer()
+    {
+        m_platformLayer->setClient(nullptr);
+    }
+
+    void setClient(Client* client)
+    {
+        m_client = client;
+    }
+
+    WebCore::TextureMapperPlatformLayer* platformLayer() const
+    {
+        return m_platformLayer;
+    }
+
+    WCContentBufferIdentifier identifier()
+    {
+        return m_identifier;
+    }
 
 private:
-    struct Layer;
-    using LayerMap = HashMap<uint64_t, std::unique_ptr<Layer>>;
+    void platformLayerWillBeDestroyed() override
+    {
+        if (m_client)
+            m_client->platformLayerWillBeDestroyed();
+        m_manager.removeContentBuffer(m_processIdentifier, *this);
+    }
+    void setPlatformLayerNeedsDisplay() override { }
 
-    WebCore::ProcessIdentifier m_webProcessIdentifier;
-    WCSceneContext* m_context { nullptr };
-    std::unique_ptr<WebCore::TextureMapper> m_textureMapper;
-    WebCore::TextureMapperFPSCounter m_fpsCounter;
-    LayerMap m_layers;
+    WCContentBufferManager& m_manager;
+    WebCore::ProcessIdentifier m_processIdentifier;
+    WCContentBufferIdentifier m_identifier { WCContentBufferIdentifier::generate() };
+    WebCore::TextureMapperPlatformLayer* m_platformLayer;
+    Client* m_client { nullptr };
 };
 
 } // namespace WebKit

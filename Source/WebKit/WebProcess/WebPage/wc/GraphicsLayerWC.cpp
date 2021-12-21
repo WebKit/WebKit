@@ -76,7 +76,7 @@ void GraphicsLayerWC::setNeedsDisplayInRect(const WebCore::FloatRect& rect, Shou
 void GraphicsLayerWC::setContentsNeedsDisplay()
 {
     // For example, if WebGL canvas changed, it needs flush to display.
-    noteLayerPropertyChanged({ });
+    noteLayerPropertyChanged(WCLayerChange::PlatformLayer);
 }
 
 bool GraphicsLayerWC::setChildren(Vector<Ref<GraphicsLayer>>&& children)
@@ -475,10 +475,9 @@ void GraphicsLayerWC::flushCompositingStateForThisLayerOnly()
         update.backdropFiltersRect = backdropFiltersRect();
     }
     if (update.changes & WCLayerChange::PlatformLayer) {
+        update.hasPlatformLayer = m_platformLayer;
         if (m_platformLayer)
-            update.graphicsContextGLIdentifier = static_cast<WCPlatformLayerGCGL*>(m_platformLayer)->graphicsContextGLIdentifier().toUInt64();
-        else
-            update.graphicsContextGLIdentifier = 0;
+            update.contentBufferIdentifiers = static_cast<WCPlatformLayerGCGL*>(m_platformLayer)->takeContentBufferIdentifiers();
     }
     m_observer->commitLayerUpateInfo(WTFMove(update));
 }

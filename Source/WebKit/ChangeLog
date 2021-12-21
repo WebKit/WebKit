@@ -1,3 +1,78 @@
+2021-12-20  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        WC variant RemoteGraphicsContextGL::platformLayer() should be removed
+        https://bugs.webkit.org/show_bug.cgi?id=233756
+        <rdar://problem/86261919>
+
+        Reviewed by Kimmo Kinnunen.
+
+        WinCairo is using TextureMapperGCGLPlatformLayer as the WebGL
+        PlatformLayer at the moment, that is using only a single output
+        buffer. And, WinCairo doesn't transfer the WebGL output buffer
+        cross-process boundary even in GPU process mode. Based on these
+        assumptions, r285099 added platformLayer() method to
+        RemoteGraphicsContextGL to get a PlatformLayer and pass it to the
+        compositor in GPU process.
+
+        However, this is not appropriate. The output buffer identifier
+        should be transferred to web process by using the completion
+        handler of RemoteGraphicsContextGL::PrepareForDisplay message.
+        Then, the identifier will be passed back to GPU process.
+
+        Added WCContentBufferManager to manage the WebGL output buffer
+        identifiers. However, because TextureMapperGCGLPlatformLayer has
+        only a single output buffer, the maximum number of identifiers is
+        one for each PlatformLayer now.
+
+        * GPUProcess/GPUConnectionToWebProcess.cpp:
+        (WebKit::GPUConnectionToWebProcess::didClose):
+        (WebKit::GPUConnectionToWebProcess::releaseWCLayerTreeHost):
+        (WebKit::GPUConnectionToWebProcess::findRemoteGraphicsContextGL): Deleted.
+        * GPUProcess/GPUConnectionToWebProcess.h:
+        * GPUProcess/graphics/RemoteGraphicsContextGL.h:
+        * GPUProcess/graphics/RemoteGraphicsContextGL.messages.in:
+        * GPUProcess/graphics/RemoteGraphicsContextGLWin.cpp:
+        (WebKit::RemoteGraphicsContextGLWin::prepareForDisplay):
+        (WebKit::RemoteGraphicsContextGL::prepareForDisplay): Deleted.
+        (WebKit::RemoteGraphicsContextGL::platformLayer const): Deleted.
+        * GPUProcess/graphics/wc/RemoteWCLayerTreeHost.cpp:
+        (WebKit::RemoteWCLayerTreeHost::RemoteWCLayerTreeHost):
+        (WebKit::RemoteWCLayerTreeHost::update):
+        * GPUProcess/graphics/wc/RemoteWCLayerTreeHost.h:
+        * GPUProcess/graphics/wc/WCContentBuffer.h: Added.
+        * GPUProcess/graphics/wc/WCContentBufferManager.cpp: Added.
+        (WebKit::WCContentBufferManager::ProcessInfo::ProcessInfo):
+        (WebKit::WCContentBufferManager::ProcessInfo::acquireContentBufferIdentifier):
+        (WebKit::WCContentBufferManager::ProcessInfo::releaseContentBufferIdentifier):
+        (WebKit::WCContentBufferManager::ProcessInfo::removeContentBuffer):
+        (WebKit::WCContentBufferManager::singleton):
+        (WebKit::WCContentBufferManager::acquireContentBufferIdentifier):
+        (WebKit::WCContentBufferManager::releaseContentBufferIdentifier):
+        (WebKit::WCContentBufferManager::removeContentBuffer):
+        (WebKit::WCContentBufferManager::removeAllContentBuffersForProcess):
+        * GPUProcess/graphics/wc/WCContentBufferManager.h: Added.
+        * GPUProcess/graphics/wc/WCScene.cpp:
+        (WebKit::WCScene::WCScene):
+        (WebKit::WCScene::update):
+        * GPUProcess/graphics/wc/WCScene.h:
+        * PlatformWin.cmake:
+        * Scripts/webkit/messages.py:
+        (types_that_cannot_be_forward_declared):
+        (conditions_for_header):
+        * Shared/wc/WCContentBufferIdentifier.h: Added.
+        * WebProcess/GPU/graphics/wc/RemoteGraphicsContextGLProxyWC.cpp:
+        * WebProcess/GPU/graphics/wc/WCPlatformLayerGCGL.h:
+        (WebKit::WCPlatformLayerGCGL::takeContentBufferIdentifiers):
+        (WebKit::WCPlatformLayerGCGL::addContentBufferIdentifier):
+        (WebKit::WCPlatformLayerGCGL::WCPlatformLayerGCGL): Deleted.
+        (WebKit::WCPlatformLayerGCGL::graphicsContextGLIdentifier): Deleted.
+        * WebProcess/WebPage/wc/GraphicsLayerWC.cpp:
+        (WebKit::GraphicsLayerWC::setContentsNeedsDisplay):
+        (WebKit::GraphicsLayerWC::flushCompositingStateForThisLayerOnly):
+        * WebProcess/WebPage/wc/WCUpateInfo.h:
+        (WebKit::WCLayerUpateInfo::encode const):
+        (WebKit::WCLayerUpateInfo::decode):
+
 2021-12-20  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Add some missing API availability macros around some WebXR SPI

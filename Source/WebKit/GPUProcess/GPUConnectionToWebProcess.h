@@ -175,10 +175,6 @@ public:
     RemoteImageDecoderAVFProxy& imageDecoderAVFProxy();
 #endif
 
-#if USE(GRAPHICS_LAYER_WC)
-    RefPtr<RemoteGraphicsContextGL> findRemoteGraphicsContextGL(GraphicsContextGLIdentifier);
-#endif
-
     void updateSupportedRemoteCommands();
 
     bool allowsExitUnderMemoryPressure() const;

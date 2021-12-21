@@ -27,40 +27,32 @@
 
 #if USE(GRAPHICS_LAYER_WC)
 
+#include "WCContentBufferIdentifier.h"
+#include <WebCore/PlatformLayer.h>
 #include <WebCore/ProcessIdentifier.h>
-#include <WebCore/TextureMapperFPSCounter.h>
-#include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 
 namespace WebCore {
-class TextureMapper;
-class TextureMapperLayer;
 class TextureMapperPlatformLayer;
-class TextureMapperTiledBackingStore;
 }
 
 namespace WebKit {
 
-class WCSceneContext;
-struct WCUpateInfo;
+class WCContentBuffer;
 
-class WCScene {
-    WTF_MAKE_FAST_ALLOCATED;
+class WCContentBufferManager {
 public:
-    WCScene(WebCore::ProcessIdentifier);
-    ~WCScene();
-    void initialize(WCSceneContext&);
-    void update(WCUpateInfo&&);
+    class ProcessInfo;
+
+    static WCContentBufferManager& singleton();
+
+    std::optional<WCContentBufferIdentifier> acquireContentBufferIdentifier(WebCore::ProcessIdentifier, WebCore::TextureMapperPlatformLayer*);
+    WCContentBuffer* releaseContentBufferIdentifier(WebCore::ProcessIdentifier, WCContentBufferIdentifier);
+    void removeContentBuffer(WebCore::ProcessIdentifier, WCContentBuffer&);
+    void removeAllContentBuffersForProcess(WebCore::ProcessIdentifier);
 
 private:
-    struct Layer;
-    using LayerMap = HashMap<uint64_t, std::unique_ptr<Layer>>;
-
-    WebCore::ProcessIdentifier m_webProcessIdentifier;
-    WCSceneContext* m_context { nullptr };
-    std::unique_ptr<WebCore::TextureMapper> m_textureMapper;
-    WebCore::TextureMapperFPSCounter m_fpsCounter;
-    LayerMap m_layers;
+    HashMap<WebCore::ProcessIdentifier, std::unique_ptr<ProcessInfo>> m_processMap;
 };
 
 } // namespace WebKit

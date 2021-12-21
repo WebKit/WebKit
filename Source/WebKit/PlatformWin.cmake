@@ -12,6 +12,7 @@ list(APPEND WebKit_SOURCES
     GPUProcess/graphics/RemoteGraphicsContextGLWin.cpp
 
     GPUProcess/graphics/wc/RemoteWCLayerTreeHost.cpp
+    GPUProcess/graphics/wc/WCContentBufferManager.cpp
     GPUProcess/graphics/wc/WCScene.cpp
     GPUProcess/graphics/wc/WCSceneContext.cpp
 
@@ -120,6 +121,7 @@ list(APPEND WebKit_INCLUDE_DIRECTORIES
     "${WEBKIT_DIR}/Shared/CoordinatedGraphics"
     "${WEBKIT_DIR}/Shared/CoordinatedGraphics/threadedcompositor"
     "${WEBKIT_DIR}/Shared/Plugins/win"
+    "${WEBKIT_DIR}/Shared/wc"
     "${WEBKIT_DIR}/Shared/win"
     "${WEBKIT_DIR}/UIProcess/API/C/cairo"
     "${WEBKIT_DIR}/UIProcess/API/C/curl"

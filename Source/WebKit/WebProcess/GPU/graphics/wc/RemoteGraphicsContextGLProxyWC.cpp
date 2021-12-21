@@ -72,7 +72,7 @@ public:
 private:
     RemoteGraphicsContextGLProxyWC(GPUProcessConnection& gpuProcessConnection, const WebCore::GraphicsContextGLAttributes& attributes, RenderingBackendIdentifier renderingBackend)
         : RemoteGraphicsContextGLProxy(gpuProcessConnection, attributes, renderingBackend)
-        , m_layerContentsDisplayDelegate(PlatformLayerDisplayDelegate::create(makeUnique<WCPlatformLayerGCGL>(m_graphicsContextGLIdentifier)))
+        , m_layerContentsDisplayDelegate(PlatformLayerDisplayDelegate::create(makeUnique<WCPlatformLayerGCGL>()))
     {
     }
 
@@ -84,11 +84,14 @@ void RemoteGraphicsContextGLProxyWC::prepareForDisplay()
 {
     if (isContextLost())
         return;
-    auto sendResult = sendSync(Messages::RemoteGraphicsContextGL::PrepareForDisplay(), Messages::RemoteGraphicsContextGL::PrepareForDisplay::Reply());
+    std::optional<WCContentBufferIdentifier> contentBuffer;
+    auto sendResult = sendSync(Messages::RemoteGraphicsContextGL::PrepareForDisplay(), Messages::RemoteGraphicsContextGL::PrepareForDisplay::Reply(contentBuffer));
     if (!sendResult) {
         markContextLost();
         return;
     }
+    if (contentBuffer)
+        static_cast<WCPlatformLayerGCGL*>(m_layerContentsDisplayDelegate->platformLayer())->addContentBufferIdentifier(*contentBuffer);
     markLayerComposited();
 }
 

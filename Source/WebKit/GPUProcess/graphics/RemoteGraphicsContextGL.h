@@ -50,6 +50,10 @@
 #include <CoreGraphics/CGDisplayConfiguration.h>
 #endif
 
+#if USE(GRAPHICS_LAYER_WC)
+#include "WCContentBufferIdentifier.h"
+#endif
+
 #if PLATFORM(COCOA)
 namespace WTF {
 class MachSendRight;
@@ -71,11 +75,6 @@ public:
     void didReceiveStreamMessage(IPC::StreamServerConnectionBase&, IPC::Decoder&) final;
 #if PLATFORM(MAC)
     void displayWasReconfigured();
-#endif
-
-#if USE(GRAPHICS_LAYER_WC)
-    // FIXME: This is layering violation and should be removed.
-    PlatformLayer* platformLayer() const;
 #endif
 
 protected:
@@ -100,6 +99,8 @@ protected:
     void notifyMarkContextChanged();
 #if PLATFORM(COCOA)
     virtual void prepareForDisplay(CompletionHandler<void(WTF::MachSendRight&&)>&&) = 0;
+#elif USE(GRAPHICS_LAYER_WC)
+    virtual void prepareForDisplay(CompletionHandler<void(std::optional<WCContentBufferIdentifier>)>&&) = 0;
 #else
     void prepareForDisplay(CompletionHandler<void()>&&);
 #endif

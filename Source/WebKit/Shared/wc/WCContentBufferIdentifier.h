@@ -27,41 +27,12 @@
 
 #if USE(GRAPHICS_LAYER_WC)
 
-#include <WebCore/ProcessIdentifier.h>
-#include <WebCore/TextureMapperFPSCounter.h>
-#include <wtf/Forward.h>
-#include <wtf/HashMap.h>
-
-namespace WebCore {
-class TextureMapper;
-class TextureMapperLayer;
-class TextureMapperPlatformLayer;
-class TextureMapperTiledBackingStore;
-}
+#include <wtf/ObjectIdentifier.h>
 
 namespace WebKit {
 
-class WCSceneContext;
-struct WCUpateInfo;
-
-class WCScene {
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    WCScene(WebCore::ProcessIdentifier);
-    ~WCScene();
-    void initialize(WCSceneContext&);
-    void update(WCUpateInfo&&);
-
-private:
-    struct Layer;
-    using LayerMap = HashMap<uint64_t, std::unique_ptr<Layer>>;
-
-    WebCore::ProcessIdentifier m_webProcessIdentifier;
-    WCSceneContext* m_context { nullptr };
-    std::unique_ptr<WebCore::TextureMapper> m_textureMapper;
-    WebCore::TextureMapperFPSCounter m_fpsCounter;
-    LayerMap m_layers;
-};
+enum WCContentBufferIdentifierType { };
+using WCContentBufferIdentifier = ObjectIdentifier<WCContentBufferIdentifierType>;
 
 } // namespace WebKit
 

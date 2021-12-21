@@ -29,6 +29,7 @@
 
 #if ENABLE(GPU_PROCESS) && ENABLE(WEBGL) && PLATFORM(WIN)
 #include "GPUConnectionToWebProcess.h"
+#include "WCContentBufferManager.h"
 #include <WebCore/GraphicsContextGLTextureMapper.h>
 
 namespace WebKit {
@@ -40,6 +41,7 @@ public:
 
     // RemoteGraphicsContextGL overrides.
     void platformWorkQueueInitialize(WebCore::GraphicsContextGLAttributes&&) final;
+    void prepareForDisplay(CompletionHandler<void(std::optional<WCContentBufferIdentifier>)>&&) final;
 };
 
 Ref<RemoteGraphicsContextGL> RemoteGraphicsContextGL::create(GPUConnectionToWebProcess& gpuConnectionToWebProcess, WebCore::GraphicsContextGLAttributes&& attributes, GraphicsContextGLIdentifier graphicsContextGLIdentifier, RemoteRenderingBackend& renderingBackend, IPC::StreamConnectionBuffer&& stream)
@@ -59,18 +61,12 @@ void RemoteGraphicsContextGLWin::platformWorkQueueInitialize(WebCore::GraphicsCo
     m_context = WebCore::GraphicsContextGLTextureMapper::create(WTFMove(attributes));
 }
 
-void RemoteGraphicsContextGL::prepareForDisplay(CompletionHandler<void()>&& completionHandler)
+void RemoteGraphicsContextGLWin::prepareForDisplay(CompletionHandler<void(std::optional<WCContentBufferIdentifier>)>&& completionHandler)
 {
     m_context->prepareForDisplay();
-    completionHandler();
+    auto identifier = WCContentBufferManager::singleton().acquireContentBufferIdentifier(m_webProcessIdentifier, m_context->layerContentsDisplayDelegate()->platformLayer());
+    completionHandler(identifier);
 }
-
-#if USE(GRAPHICS_LAYER_WC)
-PlatformLayer* RemoteGraphicsContextGL::platformLayer() const
-{
-    return m_context->layerContentsDisplayDelegate()->platformLayer();
-}
-#endif
 
 }
 

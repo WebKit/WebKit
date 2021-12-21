@@ -26,20 +26,27 @@
 #pragma once
 
 #include "GraphicsContextGLIdentifier.h"
+#include "WCContentBufferIdentifier.h"
 #include <WebCore/WCPlatformLayer.h>
 
 namespace WebKit {
 
 class WCPlatformLayerGCGL : public WebCore::WCPlatformLayer {
 public:
-    WCPlatformLayerGCGL(GraphicsContextGLIdentifier identifier)
-        : m_graphicsContextGLIdentifier(identifier)
+    Vector<WCContentBufferIdentifier> takeContentBufferIdentifiers()
     {
+        return std::exchange(m_contentBufferIdentifiers, { });
     }
-    GraphicsContextGLIdentifier& graphicsContextGLIdentifier() { return m_graphicsContextGLIdentifier; }
+
+    void addContentBufferIdentifier(WCContentBufferIdentifier contentBuffer)
+    {
+        m_contentBufferIdentifiers.append(contentBuffer);
+        // FIXME: TextureMapperGCGLPlatformLayer doesn't support double buffering yet.
+        ASSERT(m_contentBufferIdentifiers.size() == 1);
+    }
 
 private:
-    GraphicsContextGLIdentifier m_graphicsContextGLIdentifier;
+    Vector<WCContentBufferIdentifier> m_contentBufferIdentifiers;
 };
 
 } // namespace WebKit
