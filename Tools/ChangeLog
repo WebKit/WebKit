@@ -1,3 +1,13 @@
+2021-12-20  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win] MSVC reports "DumpRenderTree.cpp(633): error C2362: initialization of 'length' is skipped by 'goto exit'" with /std:c++20
+        https://bugs.webkit.org/show_bug.cgi?id=234503
+
+        Reviewed by Don Olmstead.
+
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (dumpHistoryItem): Removed goto statements. Use std::unique_ptr for SAFEARRAY.
+
 2021-12-20  Simon Fraser  <simon.fraser@apple.com>
 
         Make it possible to enable log channels in WebKitTestRunner and DumpRenderTree
