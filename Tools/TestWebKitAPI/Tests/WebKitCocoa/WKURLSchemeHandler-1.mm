@@ -1571,8 +1571,6 @@ TEST(URLSchemeHandler, APIRedirect)
     EXPECT_WK_STREQ(@"Document URL: redirectone://bar.com/anothertest.html", [lastScriptMessage body]);
 }
 
-// FIXME: Re-enable this test once webkit.org/b/231394 is resolved.
-#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 120000) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED < 150000)
 TEST(URLSchemeHandler, Ranges)
 {
     RetainPtr<NSData> videoData = [NSData dataWithContentsOfURL:[[NSBundle mainBundle] URLForResource:@"test" withExtension:@"mp4" subdirectory:@"TestWebKitAPI.resources"]];
@@ -1606,15 +1604,16 @@ TEST(URLSchemeHandler, Ranges)
         auto rangeBeginString = requestRangeString.substring(begin + rangeBytes.length(), dash - begin - rangeBytes.length());
         auto rangeEndString = requestRangeString.substring(dash + 1, end - dash - 1);
         auto rangeBegin = parseInteger<uint64_t>(rangeBeginString).value_or(0);
-        auto rangeEnd = rangeEndString == "*" ? [videoData length] : parseInteger<uint64_t>(rangeEndString).value_or(0);
+        auto rangeEnd = rangeEndString == "*" ? [videoData length] - 1 : parseInteger<uint64_t>(rangeEndString).value_or(0);
+        auto contentLength = rangeEnd - rangeBegin + 1;
 
         auto response = adoptNS([[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@"https://webkit.org/"] statusCode:206 HTTPVersion:@"HTTP/1.1" headerFields:@{
             @"Content-Range" : [NSString stringWithFormat:@"bytes %llu-%llu/%lu", rangeBegin, rangeEnd, (unsigned long)[videoData length]],
-            @"Content-Length" : [NSString stringWithFormat:@"%llu", rangeEnd - rangeBegin + 1]
+            @"Content-Length" : [NSString stringWithFormat:@"%llu", contentLength]
         }]);
 
         [task didReceiveResponse:response.get()];
-        [task didReceiveData:[videoData subdataWithRange:NSMakeRange(rangeBegin, rangeEnd - rangeBegin)]];
+        [task didReceiveData:[videoData subdataWithRange:NSMakeRange(rangeBegin, contentLength)]];
         [task didFinish];
         foundRangeRequest = true;
     }];
@@ -1622,7 +1621,6 @@ TEST(URLSchemeHandler, Ranges)
     EXPECT_WK_STREQ([webView _test_waitForAlert], "playing");
     EXPECT_TRUE(foundRangeRequest);
 }
-#endif
 
 TEST(URLSchemeHandler, HandleURLRewrittenByPlugIn)
 {

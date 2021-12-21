@@ -1,5 +1,37 @@
 2021-12-21  Robert Jenner  <Jenner@apple.com>
 
+        Cherry-pick r285057. rdar://problem/84000764
+
+    [ Monterey iOS15 ] TestWebKitAPI.URLSchemeHandler.Ranges is a constant timeout
+    https://bugs.webkit.org/show_bug.cgi?id=231394
+    
+    Reviewed by Jer Noble.
+    
+    For some reason, AVFoundation used to play videos from custom schemes when you respond to range requests with 1 fewer byte than requested.
+    They stopped successfully playing videos in such circumstances, which is fine.  I had accidentally done that in my test.
+    When I respond properly, the test starts passing again.
+    
+    * TestWebKitAPI/Tests/WebKitCocoa/WKURLSchemeHandler-1.mm:
+    
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@285057 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-10-29  Alex Christensen  <achristensen@webkit.org>
+
+            [ Monterey iOS15 ] TestWebKitAPI.URLSchemeHandler.Ranges is a constant timeout
+            https://bugs.webkit.org/show_bug.cgi?id=231394
+
+            Reviewed by Jer Noble.
+
+            For some reason, AVFoundation used to play videos from custom schemes when you respond to range requests with 1 fewer byte than requested.
+            They stopped successfully playing videos in such circumstances, which is fine.  I had accidentally done that in my test.
+            When I respond properly, the test starts passing again.
+
+            * TestWebKitAPI/Tests/WebKitCocoa/WKURLSchemeHandler-1.mm:
+
+2021-12-21  Robert Jenner  <Jenner@apple.com>
+
         Cherry-pick r286040. rdar://problem/80476146
 
     [ Monterey ] TestWebKitAPI.WebpagePreferences.WebsitePoliciesDuringRedirect is a constant timeout
