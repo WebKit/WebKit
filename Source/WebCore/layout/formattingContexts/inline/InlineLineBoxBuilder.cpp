@@ -103,59 +103,13 @@ LineBoxBuilder::LineBoxBuilder(const InlineFormattingContext& inlineFormattingCo
 {
 }
 
-LineBoxBuilder::LineAndLineBox LineBoxBuilder::build(const LineBuilder::LineContent& lineContent, size_t lineIndex)
+LineBoxBuilder::LineBoxAndHeight LineBoxBuilder::build(const LineBuilder::LineContent& lineContent, size_t lineIndex)
 {
     auto& rootStyle = lineIndex ? rootBox().firstLineStyle() : rootBox().style();
     auto rootInlineBoxAlignmentOffset = Layout::horizontalAlignmentOffset(rootStyle.textAlign(), lineContent, rootStyle.isLeftToRightDirection()).value_or(InlineLayoutUnit { });
     auto lineBox = LineBox { rootBox(), rootInlineBoxAlignmentOffset, lineContent.contentLogicalWidth, lineIndex, lineContent.nonSpanningInlineLevelBoxCount };
-
     auto lineBoxLogicalHeight = constructAndAlignInlineLevelBoxes(lineBox, lineContent.runs, lineIndex);
-
-    auto line = [&] {
-        auto physicalLeft = lineContent.lineLogicalTopLeft.x();
-        if (!rootStyle.isLeftToRightDirection()) {
-            // https://drafts.csswg.org/css-text/#text-indent-property
-            // Since text-indent only initiates margin start, we just need to pull the linebox back to the left.
-            physicalLeft -= lineContent.lineMarginStart;
-        }
-        // FIXME: Use physical geometry here.
-        auto lineBoxRect = InlineRect { lineContent.lineLogicalTopLeft.y(), physicalLeft, lineContent.lineLogicalWidth, lineBoxLogicalHeight };
-        auto scrollableOverflowRect = lineBoxRect;
-        auto& rootInlineBox = lineBox.rootInlineBox();
-        auto enclosingTopAndBottom = InlineDisplay::Line::EnclosingTopAndBottom { lineBoxRect.top() + rootInlineBox.logicalTop(), lineBoxRect.top() + rootInlineBox.logicalBottom() };
-
-        for (auto& inlineLevelBox : lineBox.nonRootInlineLevelBoxes()) {
-            if (!inlineLevelBox.isAtomicInlineLevelBox() && !inlineLevelBox.isInlineBox())
-                continue;
-
-            auto& layoutBox = inlineLevelBox.layoutBox();
-            auto borderBox = InlineRect { };
-
-            if (inlineLevelBox.isAtomicInlineLevelBox()) {
-                borderBox = lineBox.logicalBorderBoxForAtomicInlineLevelBox(layoutBox, formattingContext().geometryForBox(layoutBox));
-                borderBox.moveBy(lineBoxRect.topLeft());
-            } else if (inlineLevelBox.isInlineBox()) {
-                auto& boxGeometry = formattingContext().geometryForBox(layoutBox);
-                borderBox = lineBox.logicalBorderBoxForInlineBox(layoutBox, boxGeometry);
-                borderBox.moveBy(lineBoxRect.topLeft());
-                // Collect scrollable overflow from inline boxes. All other inline level boxes (e.g atomic inline level boxes) stretch the line.
-                auto hasScrollableContent = [&] {
-                    // In standards mode, inline boxes always start with an imaginary strut.
-                    return layoutState().inStandardsMode() || inlineLevelBox.hasContent() || boxGeometry.horizontalBorder() || (boxGeometry.horizontalPadding() && boxGeometry.horizontalPadding().value());
-                };
-                if (lineBox.hasContent() && hasScrollableContent()) {
-                    // Empty lines (e.g. continuation pre/post blocks) don't expect scrollbar overflow.
-                    scrollableOverflowRect.expandToContain(borderBox);
-                }
-            } else
-                ASSERT_NOT_REACHED();
-
-            enclosingTopAndBottom.top = std::min(enclosingTopAndBottom.top, borderBox.top());
-            enclosingTopAndBottom.bottom = std::max(enclosingTopAndBottom.bottom, borderBox.bottom());
-        }
-        return InlineDisplay::Line { lineBoxRect, scrollableOverflowRect, enclosingTopAndBottom, rootInlineBox.logicalTop() + rootInlineBox.baseline(), rootInlineBoxAlignmentOffset + rootInlineBox.logicalLeft(), rootInlineBox.logicalWidth() };
-    };
-    return { line(), lineBox };
+    return { lineBox, lineBoxLogicalHeight };
 }
 
 void LineBoxBuilder::adjustVerticalGeometryForInlineBoxWithFallbackFonts(InlineLevelBox& inlineBox, const TextUtil::FallbackFontList& fallbackFontsForContent) const

@@ -33,6 +33,7 @@
 #include "InlineDamage.h"
 #include "InlineDisplayBox.h"
 #include "InlineDisplayContentBuilder.h"
+#include "InlineDisplayLineBuilder.h"
 #include "InlineFormattingState.h"
 #include "InlineItemsBuilder.h"
 #include "InlineLineBox.h"
@@ -551,15 +552,17 @@ InlineRect InlineFormattingContext::computeGeometryForLineContent(const LineBuil
     auto& formattingState = this->formattingState();
     auto currentLineIndex = formattingState.lines().size();
 
-    auto lineAndLineBox = LineBoxBuilder(*this).build(lineContent, currentLineIndex);
-    auto lineBoxLogicalRect = lineAndLineBox.line.lineBoxRect();
+    auto lineBoxAndHeight = LineBoxBuilder(*this).build(lineContent, currentLineIndex);
+
+    auto displayLine = InlineDisplayLineBuilder(*this).build(lineContent, lineBoxAndHeight.lineBox, lineBoxAndHeight.lineBoxLogicalHeight, currentLineIndex);
+    auto displayLineBoxRect = displayLine.lineBoxRect();
 
     auto inlineContentBuilder = InlineDisplayContentBuilder { root(), formattingState };
-    formattingState.addBoxes(inlineContentBuilder.build(lineContent, lineAndLineBox.lineBox, lineBoxLogicalRect, currentLineIndex));
-    formattingState.addLineBox(WTFMove(lineAndLineBox.lineBox));
-    formattingState.addLine(lineAndLineBox.line);
+    formattingState.addBoxes(inlineContentBuilder.build(lineContent, lineBoxAndHeight.lineBox, displayLineBoxRect, currentLineIndex));
+    formattingState.addLineBox(WTFMove(lineBoxAndHeight.lineBox));
+    formattingState.addLine(displayLine);
 
-    return lineBoxLogicalRect;
+    return displayLineBoxRect;
 }
 
 void InlineFormattingContext::invalidateFormattingState()

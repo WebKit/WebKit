@@ -27,9 +27,7 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
-#include "InlineDisplayLine.h"
 #include "InlineFormattingContext.h"
-#include "InlineLineBox.h"
 #include "InlineLineBuilder.h"
 #include "TextUtil.h"
 
@@ -44,11 +42,11 @@ class LineBoxBuilder {
 public:
     LineBoxBuilder(const InlineFormattingContext&);
 
-    struct LineAndLineBox {
-        InlineDisplay::Line line;
+    struct LineBoxAndHeight {
         LineBox lineBox;
+        InlineLayoutUnit lineBoxLogicalHeight;
     };
-    LineAndLineBox build(const LineBuilder::LineContent&, size_t lineIndex);
+    LineBoxAndHeight build(const LineBuilder::LineContent&, size_t lineIndex);
 
 private:
     void setInitialVerticalGeometryForInlineBox(InlineLevelBox&) const;

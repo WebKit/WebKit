@@ -102,6 +102,7 @@ private:
     };
     InlineLevelBox(const Box&, const RenderStyle&, InlineLayoutUnit logicalLeft, InlineLayoutSize, Type, OptionSet<PositionWithinLayoutBox> = { PositionWithinLayoutBox::First, PositionWithinLayoutBox::Last });
 
+    friend class InlineDisplayLineBuilder;
     friend class LineBox;
     friend class LineBoxBuilder;
     friend class LineBoxVerticalAligner;
