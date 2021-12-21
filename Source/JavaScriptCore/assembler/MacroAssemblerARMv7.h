@@ -279,12 +279,19 @@ public:
     void and32(TrustedImm32 imm, RegisterID src, RegisterID dest)
     {
         ARMThumbImmediate armImm = ARMThumbImmediate::makeEncodedImm(imm.m_value);
-        if (armImm.isValid())
+        if (armImm.isValid()) {
             m_assembler.ARM_and(dest, src, armImm);
-        else {
-            move(imm, dataTempRegister);
-            m_assembler.ARM_and(dest, src, dataTempRegister);
+            return;
         }
+
+        armImm = ARMThumbImmediate::makeEncodedImm(~imm.m_value);
+        if (armImm.isValid()) {
+            m_assembler.bic(dest, src, armImm);
+            return;
+        }
+
+        move(imm, dataTempRegister);
+        m_assembler.ARM_and(dest, src, dataTempRegister);
     }
 
     void and32(RegisterID src, RegisterID dest)
@@ -1026,6 +1033,12 @@ public:
         storePair32(src1, src2, Address(dataTempRegister, address.offset));
     }
 
+    void storePair32(RegisterID src1, RegisterID src2, const void* address)
+    {
+        move(TrustedImmPtr(address), addressTempRegister);
+        storePair32(src1, src2, addressTempRegister);
+    }
+
     // Possibly clobbers src, but not on this architecture.
     void moveDoubleToInts(FPRegisterID src, RegisterID dest1, RegisterID dest2)
     {
@@ -1587,15 +1600,25 @@ private:
     {
         int32_t imm = right.m_value;
         ARMThumbImmediate armImm = ARMThumbImmediate::makeEncodedImm(imm);
-        if (armImm.isValid())
+        if (armImm.isValid()) {
             m_assembler.cmp(left, armImm);
-        else if ((armImm = ARMThumbImmediate::makeEncodedImm(-imm)).isValid())
-            m_assembler.cmn(left, armImm);
-        else {
-            RegisterID scratch = bestTempRegister(left);
-            move(TrustedImm32(imm), scratch);
-            m_assembler.cmp(left, scratch);
+            return;
         }
+
+        armImm = ARMThumbImmediate::makeEncodedImm(-imm);
+        if (armImm.isValid()) {
+            if (!(left & 8) && armImm.isUInt3() && (left != addressTempRegister)) {
+                // This is common enough to warrant a special case to save 2 bytes
+                m_assembler.add_S(addressTempRegister, left, armImm);
+                return;
+            }
+            m_assembler.cmn(left, armImm);
+            return;
+        }
+
+        RegisterID scratch = bestTempRegister(left);
+        move(TrustedImm32(imm), scratch);
+        m_assembler.cmp(left, scratch);
     }
 
     void add32Impl(TrustedImm32 imm, Address address, bool updateFlags = false)
@@ -1679,11 +1702,11 @@ public:
     Jump branch32(RelationalCondition cond, RegisterID left, RegisterID right)
     {
         if (left == ARMRegisters::sp) {
-            move(left, dataTempRegister);
-            m_assembler.cmp(dataTempRegister, right);
+            move(left, addressTempRegister);
+            m_assembler.cmp(addressTempRegister, right);
         } else if (right == ARMRegisters::sp) {
-            move(right, dataTempRegister);
-            m_assembler.cmp(left, dataTempRegister);
+            move(right, addressTempRegister);
+            m_assembler.cmp(left, addressTempRegister);
         } else
             m_assembler.cmp(left, right);
         return Jump(makeBranch(cond));

@@ -1665,6 +1665,12 @@ public:
         store32(src2, address.withOffset(4));
     }
 
+    void storePair32(RegisterID src1, RegisterID src2, const void* address)
+    {
+        move(TrustedImmPtr(address), addrTempRegister);
+        storePair32(src1, src2, addrTempRegister);
+    }
+
     // Floating-point operations:
 
     static bool supportsFloatingPoint()

@@ -184,8 +184,8 @@ public:
 #if USE(JSVALUE64)
         store64(regs.gpr(), address);
 #else
-        store32(regs.payloadGPR(), bitwise_cast<void*>(bitwise_cast<uintptr_t>(address) + PayloadOffset));
-        store32(regs.tagGPR(), bitwise_cast<void*>(bitwise_cast<uintptr_t>(address) + TagOffset));
+        static_assert(!PayloadOffset && TagOffset == 4, "Assumes little-endian system");
+        storePair32(regs.payloadGPR(), regs.tagGPR(), address);
 #endif
     }
 
@@ -262,15 +262,26 @@ public:
 #endif
     }
 
-    void storeValue(JSValue value, Address address)
+    void storeValue(JSValue value, Address address, JSValueRegs tmpJSR)
     {
 #if USE(JSVALUE64)
+        UNUSED_PARAM(tmpJSR);
         store64(Imm64(JSValue::encode(value)), address);
 #elif USE(JSVALUE32_64)
-        store32(Imm32(value.tag()), address.withOffset(TagOffset));
-        store32(Imm32(value.payload()), address.withOffset(PayloadOffset));
+        // Can implement this without the tmpJSR, but using it yields denser code.
+        moveValue(value, tmpJSR);
+        storeValue(tmpJSR, address);
 #endif
     }
+
+#if USE(JSVALUE32_64)
+    void storeValue(JSValue value, void* address, JSValueRegs tmpJSR)
+    {
+        // Can implement this without the tmpJSR, but using it yields denser code.
+        moveValue(value, tmpJSR);
+        storeValue(tmpJSR, address);
+    }
+#endif
 
     void storeTrustedValue(JSValue value, Address address)
     {

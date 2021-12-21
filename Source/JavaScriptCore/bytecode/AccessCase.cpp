@@ -1920,13 +1920,15 @@ void AccessCase::generateImpl(AccessGenerationState& state)
                 CCallHelpers::Address(storageGPR, offsetRelativeToBase(m_offset)), loadedValueGPR);
 #else
             if (m_type == Load || m_type == GetGetter) {
+                jit.loadValue(
+                    CCallHelpers::Address(storageGPR, offsetRelativeToBase(m_offset)),
+                    JSValueRegs { valueRegs.tagGPR(), loadedValueGPR });
+
+            } else {
                 jit.load32(
-                    CCallHelpers::Address(storageGPR, offsetRelativeToBase(m_offset) + TagOffset),
-                    valueRegs.tagGPR());
+                    CCallHelpers::Address(storageGPR, offsetRelativeToBase(m_offset) + PayloadOffset),
+                    loadedValueGPR);
             }
-            jit.load32(
-                CCallHelpers::Address(storageGPR, offsetRelativeToBase(m_offset) + PayloadOffset),
-                loadedValueGPR);
 #endif
         }
 

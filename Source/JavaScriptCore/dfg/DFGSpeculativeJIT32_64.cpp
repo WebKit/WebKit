@@ -64,10 +64,10 @@ bool SpeculativeJIT::fillJSValue(Edge edge, GPRReg& tagGPR, GPRReg& payloadGPR, 
 
     switch (info.registerFormat()) {
     case DataFormatNone: {
+        payloadGPR = allocate();
+        tagGPR = allocate();
 
         if (edge->hasConstant()) {
-            tagGPR = allocate();
-            payloadGPR = allocate();
             JSValue value = edge->asJSValue();
             m_jit.move(Imm32(value.tag()), tagGPR);
             m_jit.move(Imm32(value.payload()), payloadGPR);
@@ -77,26 +77,26 @@ bool SpeculativeJIT::fillJSValue(Edge edge, GPRReg& tagGPR, GPRReg& payloadGPR, 
         } else {
             DataFormat spillFormat = info.spillFormat();
             ASSERT(spillFormat != DataFormatNone && spillFormat != DataFormatStorage);
-            tagGPR = allocate();
-            payloadGPR = allocate();
             switch (spillFormat) {
             case DataFormatInt32:
                 m_jit.move(TrustedImm32(JSValue::Int32Tag), tagGPR);
+                m_jit.load32(JITCompiler::payloadFor(virtualRegister), payloadGPR);
                 spillFormat = DataFormatJSInt32; // This will be used as the new register format.
                 break;
             case DataFormatCell:
                 m_jit.move(TrustedImm32(JSValue::CellTag), tagGPR);
+                m_jit.load32(JITCompiler::payloadFor(virtualRegister), payloadGPR);
                 spillFormat = DataFormatJSCell; // This will be used as the new register format.
                 break;
             case DataFormatBoolean:
                 m_jit.move(TrustedImm32(JSValue::BooleanTag), tagGPR);
+                m_jit.load32(JITCompiler::payloadFor(virtualRegister), payloadGPR);
                 spillFormat = DataFormatJSBoolean; // This will be used as the new register format.
                 break;
             default:
-                m_jit.load32(JITCompiler::tagFor(virtualRegister), tagGPR);
+                m_jit.loadValue(JITCompiler::addressFor(virtualRegister), JSValueRegs { tagGPR, payloadGPR });
                 break;
             }
-            m_jit.load32(JITCompiler::payloadFor(virtualRegister), payloadGPR);
             m_gprs.retain(tagGPR, virtualRegister, SpillOrderSpilled);
             m_gprs.retain(payloadGPR, virtualRegister, SpillOrderSpilled);
             info.fillJSValue(*m_stream, tagGPR, payloadGPR, spillFormat == DataFormatJSDouble ? DataFormatJS : spillFormat);
@@ -688,13 +688,11 @@ void SpeculativeJIT::emitCall(Node* node)
 
         // Now set up the "this" argument.
         JSValueOperand thisArgument(this, node->child2());
-        GPRReg thisArgumentTagGPR = thisArgument.tagGPR();
-        GPRReg thisArgumentPayloadGPR = thisArgument.payloadGPR();
+        JSValueRegs thisArgumentRegs = thisArgument.jsValueRegs();
         thisArgument.use();
         
-        m_jit.store32(thisArgumentTagGPR, JITCompiler::calleeArgumentTagSlot(0));
-        m_jit.store32(thisArgumentPayloadGPR, JITCompiler::calleeArgumentPayloadSlot(0));
-    } else {        
+        m_jit.storeValue(thisArgumentRegs, JITCompiler::calleeArgumentSlot(0));
+    } else {
         // The call instruction's first child is either the function (normal call) or the
         // receiver (method call). subsequent children are the arguments.
         numPassedArgs = node->numChildren() - 1;
@@ -750,12 +748,10 @@ void SpeculativeJIT::emitCall(Node* node)
             for (unsigned i = 0; i < numPassedArgs; i++) {
                 Edge argEdge = m_jit.graph().m_varArgChildren[node->firstChild() + 1 + i];
                 JSValueOperand arg(this, argEdge);
-                GPRReg argTagGPR = arg.tagGPR();
-                GPRReg argPayloadGPR = arg.payloadGPR();
+                JSValueRegs argRegs = arg.jsValueRegs();
                 use(argEdge);
-            
-                m_jit.store32(argTagGPR, m_jit.calleeArgumentTagSlot(i));
-                m_jit.store32(argPayloadGPR, m_jit.calleeArgumentPayloadSlot(i));
+
+                m_jit.storeValue(argRegs, m_jit.calleeArgumentSlot(i));
             }
             
             for (unsigned i = numPassedArgs; i < numAllocatedArgs; ++i)
@@ -767,9 +763,10 @@ void SpeculativeJIT::emitCall(Node* node)
         JSValueOperand callee(this, calleeEdge);
         calleeTagGPR = callee.tagGPR();
         calleePayloadGPR = callee.payloadGPR();
+        JSValueRegs calleRegs = callee.jsValueRegs();
         use(calleeEdge);
-        m_jit.store32(calleePayloadGPR, m_jit.calleeFramePayloadSlot(CallFrameSlot::callee));
-        m_jit.store32(calleeTagGPR, m_jit.calleeFrameTagSlot(CallFrameSlot::callee));
+
+        m_jit.storeValue(calleRegs, m_jit.calleeFrameSlot(CallFrameSlot::callee));
 
         if (!isTail)
             flushRegisters();
@@ -827,8 +824,7 @@ void SpeculativeJIT::emitCall(Node* node)
         
         // This is the part where we meant to make a normal call. Oops.
         m_jit.addPtr(TrustedImm32(requiredBytes), JITCompiler::stackPointerRegister);
-        m_jit.load32(JITCompiler::calleeFrameSlot(CallFrameSlot::callee).withOffset(PayloadOffset), GPRInfo::regT0);
-        m_jit.load32(JITCompiler::calleeFrameSlot(CallFrameSlot::callee).withOffset(TagOffset), GPRInfo::regT1);
+        m_jit.loadValue(JITCompiler::calleeFrameSlot(CallFrameSlot::callee), JSValueRegs { GPRInfo::regT1, GPRInfo::regT0 });
         m_jit.emitVirtualCall(vm(), globalObject, info);
         
         done.link(&m_jit);
@@ -1906,18 +1902,12 @@ void SpeculativeJIT::compileGetByVal(Node* node, const ScopedLambda<std::tuple<J
             }
 
             ASSERT(format == DataFormatJS);
-            m_jit.load32(
-                MacroAssembler::BaseIndex(
-                    storageReg, propertyReg, MacroAssembler::TimesEight, TagOffset),
-                resultRegs.tagGPR());
-            m_jit.load32(
-                MacroAssembler::BaseIndex(
-                    storageReg, propertyReg, MacroAssembler::TimesEight, PayloadOffset),
-                resultRegs.payloadGPR());
+            m_jit.loadValue(
+                MacroAssembler::BaseIndex(storageReg, propertyReg, MacroAssembler::TimesEight),
+                resultRegs);
             if (node->arrayMode().isInBoundsSaneChain()) {
                 JITCompiler::Jump notHole = m_jit.branchIfNotEmpty(resultRegs.tagGPR());
-                m_jit.move(TrustedImm32(JSValue::UndefinedTag), resultRegs.tagGPR());
-                m_jit.move(TrustedImm32(0), resultRegs.payloadGPR());
+                m_jit.moveTrustedValue(jsUndefined(), resultRegs);
                 notHole.link(&m_jit);
             } else {
                 speculationCheck(
@@ -2203,18 +2193,16 @@ void SpeculativeJIT::compile(Node* node)
         }
             
         case FlushedJSValue: {
-            GPRTemporary result(this);
-            GPRTemporary tag(this);
-            m_jit.load32(JITCompiler::payloadFor(node->machineLocal()), result.gpr());
-            m_jit.load32(JITCompiler::tagFor(node->machineLocal()), tag.gpr());
-            
+            JSValueRegsTemporary result(this);
+            m_jit.loadValue(JITCompiler::addressFor(node->machineLocal()), result.regs());
+
             // Like jsValueResult, but don't useChildren - our children are phi nodes,
             // and don't represent values within this dataflow with virtual registers.
             VirtualRegister virtualRegister = node->virtualRegister();
-            m_gprs.retain(result.gpr(), virtualRegister, SpillOrderJS);
-            m_gprs.retain(tag.gpr(), virtualRegister, SpillOrderJS);
+            m_gprs.retain(result.regs().payloadGPR(), virtualRegister, SpillOrderJS);
+            m_gprs.retain(result.regs().tagGPR(), virtualRegister, SpillOrderJS);
             
-            generationInfoFromVirtualRegister(virtualRegister).initJSValue(node, node->refCount(), tag.gpr(), result.gpr(), DataFormatJS);
+            generationInfoFromVirtualRegister(virtualRegister).initJSValue(node, node->refCount(), result.regs().tagGPR(), result.regs().payloadGPR(), DataFormatJS);
             break;
         }
             
@@ -2275,8 +2263,8 @@ void SpeculativeJIT::compile(Node* node)
             
         case FlushedJSValue: {
             JSValueOperand value(this, node->child1());
-            m_jit.store32(value.payloadGPR(), JITCompiler::payloadFor(node->machineLocal()));
-            m_jit.store32(value.tagGPR(), JITCompiler::tagFor(node->machineLocal()));
+            JSValueRegs valueRegs = value.jsValueRegs();
+            m_jit.storeValue(valueRegs, JITCompiler::addressFor(node->machineLocal()));
             noResult(node);
             recordSetLocal(dataFormatFor(node->variableAccessData()->flushFormat()));
             break;
@@ -2787,12 +2775,9 @@ void SpeculativeJIT::compile(Node* node)
                 tempFPR);
             MacroAssembler::Jump slowCase = m_jit.branchIfNaN(tempFPR);
             JSValue nan = JSValue(JSValue::EncodeAsDouble, PNaN);
-            m_jit.store32(
-                MacroAssembler::TrustedImm32(nan.u.asBits.tag),
-                MacroAssembler::BaseIndex(storageGPR, valuePayloadGPR, MacroAssembler::TimesEight, OBJECT_OFFSETOF(JSValue, u.asBits.tag)));
-            m_jit.store32(
-                MacroAssembler::TrustedImm32(nan.u.asBits.payload),
-                MacroAssembler::BaseIndex(storageGPR, valuePayloadGPR, MacroAssembler::TimesEight, OBJECT_OFFSETOF(JSValue, u.asBits.payload)));
+            m_jit.storeTrustedValue(
+                nan,
+                MacroAssembler::BaseIndex(storageGPR, valuePayloadGPR, MacroAssembler::TimesEight));
             boxDouble(tempFPR, valueTagGPR, valuePayloadGPR);
 
             addSlowPathGenerator(
@@ -2821,9 +2806,8 @@ void SpeculativeJIT::compile(Node* node)
             m_jit.sub32(TrustedImm32(1), storageLengthGPR);
         
             MacroAssembler::Jump slowCase = m_jit.branch32(MacroAssembler::AboveOrEqual, storageLengthGPR, MacroAssembler::Address(storageGPR, ArrayStorage::vectorLengthOffset()));
-        
-            m_jit.load32(MacroAssembler::BaseIndex(storageGPR, storageLengthGPR, MacroAssembler::TimesEight, ArrayStorage::vectorOffset() + OBJECT_OFFSETOF(JSValue, u.asBits.tag)), valueTagGPR);
-            m_jit.load32(MacroAssembler::BaseIndex(storageGPR, storageLengthGPR, MacroAssembler::TimesEight, ArrayStorage::vectorOffset() + OBJECT_OFFSETOF(JSValue, u.asBits.payload)), valuePayloadGPR);
+
+            m_jit.loadValue(MacroAssembler::BaseIndex(storageGPR, storageLengthGPR, MacroAssembler::TimesEight, ArrayStorage::vectorOffset()), JSValueRegs { valueTagGPR, valuePayloadGPR });
         
             m_jit.store32(storageLengthGPR, MacroAssembler::Address(storageGPR, ArrayStorage::lengthOffset()));
 

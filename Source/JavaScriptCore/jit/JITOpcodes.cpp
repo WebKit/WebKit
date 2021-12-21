@@ -53,7 +53,7 @@ void JIT::emit_op_mov(const Instruction* currentInstruction)
 
     if (src.isConstant()) {
         if (m_profiledCodeBlock->isConstantOwnedByUnlinkedCodeBlock(src)) {
-            storeValue(m_unlinkedCodeBlock->getConstant(src), addressFor(dst));
+            storeValue(m_unlinkedCodeBlock->getConstant(src), addressFor(dst), jsRegT10);
         } else {
             loadCodeBlockConstant(src, jsRegT10);
             storeValue(jsRegT10, addressFor(dst));

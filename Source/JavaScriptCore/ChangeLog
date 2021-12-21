@@ -1,3 +1,48 @@
+2021-12-21  Geza Lore  <glore@igalia.com>
+
+        [JSC][ARMv7] Minor code size improvements
+        https://bugs.webkit.org/show_bug.cgi?id=234387
+
+        Reviewed by Yusuke Suzuki.
+
+        A few mew code size improvements to ARMv7/Thumb-2
+
+        - Use ldrd/strd in mode places (via AssemblyHelpers:loadValue
+        and AssemblyHelpers::storeValue)
+
+        - Use BIC immediate instruction instead of AND where appropriate
+
+        - Use a 2-byte ADDS instead of a 4-byte CMN when possible. This
+        applies very often as it handles testing JSValue tags.
+
+        - Use addressTempRegister in branch32
+
+        Overall saving of about 3.5% code size on JetStream2, according to
+        --dumpLinkBufferStats.
+
+        * assembler/ARMv7Assembler.h:
+        (JSC::ARMv7Assembler::bic):
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::and32):
+        (JSC::MacroAssemblerARMv7::storePair32):
+        (JSC::MacroAssemblerARMv7::compare32AndSetFlags):
+        (JSC::MacroAssemblerARMv7::branch32):
+        * assembler/MacroAssemblerMIPS.h:
+        (JSC::MacroAssemblerMIPS::storePair32):
+        * bytecode/AccessCase.cpp:
+        (JSC::AccessCase::generateImpl):
+        * dfg/DFGOSRExit.cpp:
+        (JSC::DFG::OSRExit::compileExit):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::fillJSValue):
+        (JSC::DFG::SpeculativeJIT::emitCall):
+        (JSC::DFG::SpeculativeJIT::compileGetByVal):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::storeValue):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_mov):
+
 2021-12-19  Ross Kirsling  <ross.kirsling@sony.com>
 
         [JSC] OpPow should have a "small int exponent" fast path at lower tiers

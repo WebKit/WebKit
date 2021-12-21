@@ -609,6 +609,7 @@ private:
         OP_B_T4a        = 0xF000,
         OP_AND_imm_T1   = 0xF000,
         OP_TST_imm      = 0xF010,
+        OP_BIC_imm_T1   = 0xF020,
         OP_ORR_imm_T1   = 0xF040,
         OP_MOV_imm_T2   = 0xF040,
         OP_MVN_imm      = 0xF060,
@@ -930,6 +931,14 @@ public:
     {
         m_formatter.oneWordOp8RegReg143(OP_BX, rm, (RegisterID)0);
         return m_formatter.label();
+    }
+
+    ALWAYS_INLINE void bic(RegisterID rd, RegisterID rn, ARMThumbImmediate imm)
+    {
+        ASSERT(!BadReg(rd));
+        ASSERT(!BadReg(rn));
+        ASSERT(imm.isEncodedImm());
+        m_formatter.twoWordOp5i6Imm4Reg4EncodedImm(OP_BIC_imm_T1, rn, rd, imm);
     }
 
     void bkpt(uint8_t imm = 0)
