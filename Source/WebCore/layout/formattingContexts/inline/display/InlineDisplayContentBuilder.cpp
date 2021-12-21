@@ -87,7 +87,7 @@ InlineDisplayContentBuilder::InlineDisplayContentBuilder(const ContainerBox& for
 {
 }
 
-DisplayBoxes InlineDisplayContentBuilder::build(const LineBuilder::LineContent& lineContent, const LineBox& lineBox, const InlineDisplay::Line displayLine, const size_t lineIndex)
+DisplayBoxes InlineDisplayContentBuilder::build(const LineBuilder::LineContent& lineContent, const LineBox& lineBox, const InlineDisplay::Line& displayLine, const size_t lineIndex)
 {
     DisplayBoxes boxes;
     boxes.reserveInitialCapacity(lineContent.runs.size() + lineBox.nonRootInlineLevelBoxes().size() + 1);
@@ -101,9 +101,9 @@ DisplayBoxes InlineDisplayContentBuilder::build(const LineBuilder::LineContent& 
 
     auto contentNeedsBidiReordering = !lineContent.visualOrderList.isEmpty();
     if (contentNeedsBidiReordering)
-        processBidiContent(lineContent, lineBox, lineBoxRect.topLeft(), boxes);
+        processBidiContent(lineContent, lineBox, displayLine, boxes);
     else
-        processNonBidiContent(lineContent, lineBox, lineBoxRect.topLeft(), boxes);
+        processNonBidiContent(lineContent, lineBox, displayLine, boxes);
     processOverflownRunsForEllipsis(boxes, lineBoxRect.right());
     collectInkOverflowForInlineBoxes(boxes);
     return boxes;
@@ -317,19 +317,17 @@ void InlineDisplayContentBuilder::appendInlineDisplayBoxAtBidiBoundary(const Box
     });
 }
 
-void InlineDisplayContentBuilder::processNonBidiContent(const LineBuilder::LineContent& lineContent, const LineBox& lineBox, const InlineLayoutPoint& lineBoxTopLeft, DisplayBoxes& boxes)
+void InlineDisplayContentBuilder::processNonBidiContent(const LineBuilder::LineContent& lineContent, const LineBox& lineBox, const InlineDisplay::Line& displayLine, DisplayBoxes& boxes)
 {
-    auto rootInlineBoxWidth = lineBox.logicalRectForRootInlineBox().width();
-    auto rootInlineBoxAlignmentOffset = lineBox.rootInlineBoxAlignmentOffset();
-    auto needsDirectionAdjustment = !root().style().isLeftToRightDirection();
+    ASSERT(root().style().isLeftToRightDirection());
+    auto lineBoxRect = displayLine.lineBoxRect();
+    auto contentStartInVisualOrder = lineBoxRect.left() + displayLine.contentLeft();
 
     for (auto& lineRun : lineContent.runs) {
         auto& layoutBox = lineRun.layoutBox();
 
         auto visualRectRelativeToRoot = [&](auto logicalRect) {
-            // When the logical order == visual order, RTL inline direction is just an offset.
-            auto horizontalOffset = needsDirectionAdjustment ? lineContent.lineLogicalWidth - rootInlineBoxWidth - rootInlineBoxAlignmentOffset : rootInlineBoxAlignmentOffset;
-            logicalRect.moveBy({ lineBoxTopLeft.x() + horizontalOffset, lineBoxTopLeft.y() });
+            logicalRect.moveBy({ contentStartInVisualOrder, lineBoxRect.top() });
             return logicalRect;
         };
 
@@ -531,7 +529,7 @@ void InlineDisplayContentBuilder::adjustVisualGeometryForDisplayBox(size_t displ
         displayBox.setHasContent();
 }
 
-void InlineDisplayContentBuilder::processBidiContent(const LineBuilder::LineContent& lineContent, const LineBox& lineBox, const InlineLayoutPoint& lineBoxTopLeft, DisplayBoxes& boxes)
+void InlineDisplayContentBuilder::processBidiContent(const LineBuilder::LineContent& lineContent, const LineBox& lineBox, const InlineDisplay::Line& displayLine, DisplayBoxes& boxes)
 {
     ASSERT(lineContent.visualOrderList.size() <= lineContent.runs.size());
 
@@ -539,12 +537,14 @@ void InlineDisplayContentBuilder::processBidiContent(const LineBuilder::LineCont
     auto displayBoxTree = DisplayBoxTree { };
     ancestorStack.push({ }, root());
 
-    auto rootInlineBoxAlignmentOffset = lineBox.rootInlineBoxAlignmentOffset();
-    auto contentStartInVisualOrder = rootInlineBoxAlignmentOffset;
+    auto lineBoxRect = displayLine.lineBoxRect();
+    auto contentStartInVisualOrder = lineBoxRect.left() + displayLine.contentLeft();
     auto createDisplayBoxesInVisualOrder = [&] {
         // First visual run's initial content position depends on the block's inline direction.
-        if (!root().style().isLeftToRightDirection())
-            contentStartInVisualOrder = lineContent.lineLogicalWidth - lineBox.logicalRectForRootInlineBox().width() - rootInlineBoxAlignmentOffset;
+        if (!root().style().isLeftToRightDirection()) {
+            // FIXME: Turn display line's contentLeft to visual and just use that value.
+            contentStartInVisualOrder = lineBoxRect.width() - displayLine.contentWidth() - displayLine.contentLeft();
+        }
 
         auto contentRightInVisualOrder = contentStartInVisualOrder;
         auto& runs = lineContent.runs;
@@ -560,7 +560,7 @@ void InlineDisplayContentBuilder::processBidiContent(const LineBuilder::LineCont
 
             auto visualRectRelativeToRoot = [&](auto logicalRect) {
                 logicalRect.setLeft(contentRightInVisualOrder);
-                logicalRect.moveBy(lineBoxTopLeft);
+                logicalRect.moveVertically(lineBoxRect.top());
                 return logicalRect;
             };
 
@@ -638,10 +638,10 @@ void InlineDisplayContentBuilder::processBidiContent(const LineBuilder::LineCont
         computeIsFirstIsLastBox();
 
         auto adjustVisualGeometryWithInlineBoxes = [&] {
-            auto contentRightInVisualOrder = lineBoxTopLeft.x() + contentStartInVisualOrder;
+            auto contentRightInVisualOrder = contentStartInVisualOrder;
 
             for (auto childDisplayBoxNodeIndex : displayBoxTree.root().children)
-                adjustVisualGeometryForDisplayBox(childDisplayBoxNodeIndex, contentRightInVisualOrder, lineBoxTopLeft.y(), displayBoxTree, boxes, lineBox, isFirstLastIndexesMap);
+                adjustVisualGeometryForDisplayBox(childDisplayBoxNodeIndex, contentRightInVisualOrder, lineBoxRect.top(), displayBoxTree, boxes, lineBox, isFirstLastIndexesMap);
         };
         adjustVisualGeometryWithInlineBoxes();
     }

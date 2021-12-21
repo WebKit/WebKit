@@ -44,13 +44,13 @@ class InlineDisplayContentBuilder {
 public:
     InlineDisplayContentBuilder(const ContainerBox& formattingContextRoot, InlineFormattingState&);
 
-    DisplayBoxes build(const LineBuilder::LineContent&, const LineBox&, const InlineDisplay::Line displayLine, const size_t lineIndex);
+    DisplayBoxes build(const LineBuilder::LineContent&, const LineBox&, const InlineDisplay::Line&, const size_t lineIndex);
 
     static void computeIsFirstIsLastBoxForInlineContent(DisplayBoxes&);
 
 private:
-    void processNonBidiContent(const LineBuilder::LineContent&, const LineBox&, const InlineLayoutPoint& lineBoxTopLeft, DisplayBoxes&);
-    void processBidiContent(const LineBuilder::LineContent&, const LineBox&, const InlineLayoutPoint& lineBoxTopLeft, DisplayBoxes&);
+    void processNonBidiContent(const LineBuilder::LineContent&, const LineBox&, const InlineDisplay::Line&, DisplayBoxes&);
+    void processBidiContent(const LineBuilder::LineContent&, const LineBox&, const InlineDisplay::Line&, DisplayBoxes&);
     void processOverflownRunsForEllipsis(DisplayBoxes&, InlineLayoutUnit lineBoxRight);
     void collectInkOverflowForInlineBoxes(DisplayBoxes&);
 
