@@ -40,9 +40,15 @@ class InlineDisplayLineBuilder {
 public:
     InlineDisplayLineBuilder(const InlineFormattingContext&);
 
-    InlineDisplay::Line build(const LineBuilder::LineContent&, const LineBox&, InlineLayoutUnit lineBoxLogicalHeight, size_t lineIndex);
+    InlineDisplay::Line build(const LineBuilder::LineContent&, const LineBox&, InlineLayoutUnit lineBoxLogicalHeight, size_t lineIndex) const;
 
 private:
+    struct EnclosingLineGeometry {
+        InlineDisplay::Line::EnclosingTopAndBottom enclosingTopAndBottom;
+        InlineRect scrollableOverflowRect;
+    };
+    EnclosingLineGeometry collectEnclosingLineGeometry(const LineBox&, const InlineRect& lineBoxRect) const;
+
     const InlineFormattingContext& formattingContext() const { return m_inlineFormattingContext; }
     const Box& root() const { return formattingContext().root(); }
     LayoutState& layoutState() const { return formattingContext().layoutState(); }

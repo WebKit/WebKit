@@ -35,19 +35,10 @@ InlineDisplayLineBuilder::InlineDisplayLineBuilder(const InlineFormattingContext
 {
 }
 
-InlineDisplay::Line InlineDisplayLineBuilder::build(const LineBuilder::LineContent& lineContent, const LineBox& lineBox, InlineLayoutUnit lineBoxLogicalHeight, size_t lineIndex)
+InlineDisplayLineBuilder::EnclosingLineGeometry InlineDisplayLineBuilder::collectEnclosingLineGeometry(const LineBox& lineBox, const InlineRect& lineBoxRect) const
 {
-    auto& rootStyle = lineIndex ? root().firstLineStyle() : root().style();
-    auto visualLeft = lineContent.lineLogicalTopLeft.x();
-    if (!rootStyle.isLeftToRightDirection()) {
-        // https://drafts.csswg.org/css-text/#text-indent-property
-        // Since text-indent only initiates margin start, we just need to pull the linebox back to the left.
-        visualLeft -= lineContent.lineMarginStart;
-    }
-    // FIXME: Use physical geometry here.
-    auto lineBoxRect = InlineRect { lineContent.lineLogicalTopLeft.y(), visualLeft, lineContent.lineLogicalWidth, lineBoxLogicalHeight };
-    auto scrollableOverflowRect = lineBoxRect;
     auto& rootInlineBox = lineBox.rootInlineBox();
+    auto scrollableOverflowRect = lineBoxRect;
     auto enclosingTopAndBottom = InlineDisplay::Line::EnclosingTopAndBottom { lineBoxRect.top() + rootInlineBox.logicalTop(), lineBoxRect.top() + rootInlineBox.logicalBottom() };
 
     for (auto& inlineLevelBox : lineBox.nonRootInlineLevelBoxes()) {
@@ -79,9 +70,26 @@ InlineDisplay::Line InlineDisplayLineBuilder::build(const LineBuilder::LineConte
         enclosingTopAndBottom.top = std::min(enclosingTopAndBottom.top, borderBox.top());
         enclosingTopAndBottom.bottom = std::max(enclosingTopAndBottom.bottom, borderBox.bottom());
     }
+    return { enclosingTopAndBottom, scrollableOverflowRect };
+}
+
+InlineDisplay::Line InlineDisplayLineBuilder::build(const LineBuilder::LineContent& lineContent, const LineBox& lineBox, InlineLayoutUnit lineBoxLogicalHeight, size_t lineIndex) const
+{
+    auto& rootStyle = lineIndex ? root().firstLineStyle() : root().style();
+    auto lineBoxVisualLeft = lineContent.lineLogicalTopLeft.x();
+    if (!rootStyle.isLeftToRightDirection()) {
+        // https://drafts.csswg.org/css-text/#text-indent-property
+        // Since text-indent only initiates margin start, we just need to pull the linebox back to the left.
+        lineBoxVisualLeft -= lineContent.lineMarginStart;
+    }
+    // FIXME: Use physical geometry here.
+    auto lineBoxRect = InlineRect { lineContent.lineLogicalTopLeft.y(), lineBoxVisualLeft, lineContent.lineLogicalWidth, lineBoxLogicalHeight };
+    auto enclosingLineGeometry = collectEnclosingLineGeometry(lineBox, lineBoxRect);
+
+    auto& rootInlineBox = lineBox.rootInlineBox();
     return InlineDisplay::Line { lineBoxRect
-        , scrollableOverflowRect
-        , enclosingTopAndBottom
+        , enclosingLineGeometry.scrollableOverflowRect
+        , enclosingLineGeometry.enclosingTopAndBottom
         , rootInlineBox.logicalTop() + rootInlineBox.baseline()
         , lineBox.rootInlineBoxAlignmentOffset() + rootInlineBox.logicalLeft()
         , rootInlineBox.logicalWidth()
