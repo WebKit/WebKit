@@ -1251,6 +1251,25 @@ TEST(WebAuthenticationPanel, GetAssertionInternalUV)
     [webView waitForMessage:@"Succeeded!"];
 }
 
+TEST(WebAuthenticationPanel, GetAssertionInternalUVPinFallback)
+{
+    reset();
+    RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"web-authentication-get-assertion-hid-internal-uv-pin-fallback" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+
+    auto *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
+    [[configuration preferences] _setEnabled:YES forExperimentalFeature:webAuthenticationExperimentalFeature()];
+    [[configuration preferences] _setEnabled:NO forExperimentalFeature:webAuthenticationModernExperimentalFeature()];
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSZeroRect configuration:configuration]);
+    auto delegate = adoptNS([[TestWebAuthenticationPanelUIDelegate alloc] init]);
+    [webView setUIDelegate:delegate.get()];
+    [webView focus];
+
+    webAuthenticationPanelPin = "1234";
+    [webView loadRequest:[NSURLRequest requestWithURL:testURL.get()]];
+    [webView waitForMessage:@"Succeeded!"];
+}
+
 TEST(WebAuthenticationPanel, GetAssertionPinAuthBlockedError)
 {
     reset();

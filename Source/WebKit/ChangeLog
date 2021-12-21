@@ -1,3 +1,22 @@
+2021-12-21  J Pascoe  <j_pascoe@apple.com>
+
+        [WebAuthn] Authenticator is not falling back to clientPIN after internal verification fails and is blocked.
+        https://bugs.webkit.org/show_bug.cgi?id=232501
+        <rdar://problem/84913636>
+
+        Reviewed by Darin Adler.
+
+        Whenever internal uv gets blocked, the user agent should fall back to using a pin for user verification. This
+        patch starts doing that by going into the pin flow whenever the authenticator returns the pin required error
+        code.
+
+        Added API test for fallback.
+
+        * UIProcess/WebAuthentication/fido/CtapAuthenticator.cpp:
+        (WebKit::CtapAuthenticator::makeCredential):
+        (WebKit::CtapAuthenticator::getAssertion):
+        (WebKit::CtapAuthenticator::tryRestartPin):
+
 2021-12-21  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         IPC streams should not accept 0-length stream buffers

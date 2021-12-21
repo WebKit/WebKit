@@ -1,3 +1,18 @@
+2021-12-21  J Pascoe  <j_pascoe@apple.com>
+
+        [WebAuthn] Authenticator is not falling back to clientPIN after internal verification fails and is blocked.
+        https://bugs.webkit.org/show_bug.cgi?id=232501
+        <rdar://problem/84913636>
+
+        Reviewed by Darin Adler.
+
+        Whenever internal uv gets blocked, the user agent should fall back to using a pin for user verification. This
+        adds an API test to verify this behavior.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/_WKWebAuthenticationPanel.mm:
+        (TestWebKitAPI::TEST):
+
 2021-12-21  Sam Weinig  <weinig@apple.com>
 
         Add support for premultiplied alpha interpolated gradients and defaulted off option to use them for CSS Gradients

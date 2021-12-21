@@ -298,6 +298,7 @@
 		51EB126524CA6B66000CB030 /* SteelSeriesNimbus.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51EB126124CA6B5F000CB030 /* SteelSeriesNimbus.mm */; };
 		51EB126724CB8753000CB030 /* SunLightApplicationGenericNES.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51EB126624CB8493000CB030 /* SunLightApplicationGenericNES.mm */; };
 		520BCF4C141EB09E00937EA8 /* WebArchive_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 520BCF4A141EB09E00937EA8 /* WebArchive_Bundle.cpp */; };
+		521D1B7327713E80003900C5 /* web-authentication-get-assertion-hid-internal-uv-pin-fallback.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 521D1B7227713E80003900C5 /* web-authentication-get-assertion-hid-internal-uv-pin-fallback.html */; };
 		5245178721B9F57B0082CB34 /* RenderingProgressPlugIn.mm in Sources */ = {isa = PBXBuildFile; fileRef = 52D5D6BE21B9F1B20046ABA6 /* RenderingProgressPlugIn.mm */; };
 		524BBC9E19DF72C0002F1AF1 /* file-with-video.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 524BBC9B19DF3714002F1AF1 /* file-with-video.html */; };
 		524BBCA119E30C77002F1AF1 /* test.mp4 in Copy Resources */ = {isa = PBXBuildFile; fileRef = 524BBCA019E30C63002F1AF1 /* test.mp4 */; };
@@ -1579,6 +1580,7 @@
 				2EBD9D0A2134730D002DA758 /* video.html in Copy Resources */,
 				CD577799211CE0E4001B371E /* web-audio-only.html in Copy Resources */,
 				57663DF32357E48900E85E09 /* web-authentication-get-assertion-hid-cancel.html in Copy Resources */,
+				521D1B7327713E80003900C5 /* web-authentication-get-assertion-hid-internal-uv-pin-fallback.html in Copy Resources */,
 				52C8C13A2706439000BDF3B7 /* web-authentication-get-assertion-hid-internal-uv.html in Copy Resources */,
 				579F1C0123C93AF500C7D4B4 /* web-authentication-get-assertion-hid-multiple-accounts.html in Copy Resources */,
 				577454D02359B378008E1ED7 /* web-authentication-get-assertion-hid-no-credentials.html in Copy Resources */,
@@ -2091,6 +2093,7 @@
 		51FBBB4C1513D4E900822738 /* WebViewCanPasteURL.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebViewCanPasteURL.mm; sourceTree = "<group>"; };
 		520BCF4A141EB09E00937EA8 /* WebArchive_Bundle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebArchive_Bundle.cpp; sourceTree = "<group>"; };
 		520BCF4B141EB09E00937EA8 /* WebArchive.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebArchive.cpp; sourceTree = "<group>"; };
+		521D1B7227713E80003900C5 /* web-authentication-get-assertion-hid-internal-uv-pin-fallback.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; name = "web-authentication-get-assertion-hid-internal-uv-pin-fallback.html"; path = "Tests/WebKitCocoa/web-authentication-get-assertion-hid-internal-uv-pin-fallback.html"; sourceTree = "<group>"; };
 		524BBC9B19DF3714002F1AF1 /* file-with-video.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "file-with-video.html"; sourceTree = "<group>"; };
 		524BBC9C19DF377A002F1AF1 /* WKPageIsPlayingAudio.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKPageIsPlayingAudio.cpp; sourceTree = "<group>"; };
 		524BBCA019E30C63002F1AF1 /* test.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = test.mp4; sourceTree = "<group>"; };
@@ -3164,6 +3167,7 @@
 		08FB7794FE84155DC02AAC07 /* TestWebKitAPI */ = {
 			isa = PBXGroup;
 			children = (
+				521D1B7227713E80003900C5 /* web-authentication-get-assertion-hid-internal-uv-pin-fallback.html */,
 				52C8C1392706439000BDF3B7 /* web-authentication-get-assertion-hid-internal-uv.html */,
 				52C8C1372706437C00BDF3B7 /* web-authentication-make-credential-hid-internal-uv.html */,
 				49AEEF682407276F00C87E4C /* Info.plist */,

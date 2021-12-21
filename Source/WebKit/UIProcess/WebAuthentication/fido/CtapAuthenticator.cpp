@@ -73,6 +73,7 @@ bool isPinError(const CtapDeviceResponseCode& error)
     case CtapDeviceResponseCode::kCtap2ErrPinAuthBlocked:
     case CtapDeviceResponseCode::kCtap2ErrPinInvalid:
     case CtapDeviceResponseCode::kCtap2ErrPinBlocked:
+    case CtapDeviceResponseCode::kCtap2ErrPinRequired:
         return true;
     default:
         return false;
@@ -96,7 +97,7 @@ void CtapAuthenticator::makeCredential()
     auto& options = std::get<PublicKeyCredentialCreationOptions>(requestData().options);
     auto internalUVAvailability = m_info.options().userVerificationAvailability();
     // If UV is required, then either built-in uv or a pin will work.
-    if (internalUVAvailability == UVAvailability::kSupportedAndConfigured && (!options.authenticatorSelection || options.authenticatorSelection->userVerification != UserVerificationRequirement::Discouraged))
+    if (internalUVAvailability == UVAvailability::kSupportedAndConfigured && (!options.authenticatorSelection || options.authenticatorSelection->userVerification != UserVerificationRequirement::Discouraged) && m_pinAuth.isEmpty())
         cborCmd = encodeMakeCredenitalRequestAsCBOR(requestData().hash, options, internalUVAvailability);
     else if (m_info.options().clientPinAvailability() == AuthenticatorSupportedOptions::ClientPinAvailability::kSupportedAndPinSet)
         cborCmd = encodeMakeCredenitalRequestAsCBOR(requestData().hash, options, internalUVAvailability, PinParameters { pin::kProtocolVersion, m_pinAuth });
@@ -141,7 +142,7 @@ void CtapAuthenticator::getAssertion()
     auto& options = std::get<PublicKeyCredentialRequestOptions>(requestData().options);
     auto internalUVAvailability = m_info.options().userVerificationAvailability();
     // If UV is required, then either built-in uv or a pin will work.
-    if (internalUVAvailability == UVAvailability::kSupportedAndConfigured && options.userVerification != UserVerificationRequirement::Discouraged)
+    if (internalUVAvailability == UVAvailability::kSupportedAndConfigured && options.userVerification != UserVerificationRequirement::Discouraged && m_pinAuth.isEmpty())
         cborCmd = encodeGetAssertionRequestAsCBOR(requestData().hash, options, internalUVAvailability);
     else if (m_info.options().clientPinAvailability() == AuthenticatorSupportedOptions::ClientPinAvailability::kSupportedAndPinSet && options.userVerification != UserVerificationRequirement::Discouraged)
         cborCmd = encodeGetAssertionRequestAsCBOR(requestData().hash, options, internalUVAvailability, PinParameters { pin::kProtocolVersion, m_pinAuth });
@@ -343,6 +344,7 @@ bool CtapAuthenticator::tryRestartPin(const CtapDeviceResponseCode& error)
     switch (error) {
     case CtapDeviceResponseCode::kCtap2ErrPinAuthInvalid:
     case CtapDeviceResponseCode::kCtap2ErrPinInvalid:
+    case CtapDeviceResponseCode::kCtap2ErrPinRequired:
         getRetries();
         return true;
     default:
