@@ -1,3 +1,16 @@
+2021-12-21  Alex Christensen  <achristensen@webkit.org>
+
+        ASSERT NOT REACHED under WebKit::Daemon::ConnectionToMachService seen with TestWebKitAPI.WebPushD.BasicCommunication and PermissionManagement
+        https://bugs.webkit.org/show_bug.cgi?id=232857
+
+        Reviewed by Darin Adler.
+
+        When using the public SDK, don't code sign with an entitlements file that contains restricted entitlements,
+        otherwise webpushd won't launch.  Also, don't compile files we aren't going to use.
+
+        * Configurations/webpushd.xcconfig:
+        * WebKit.xcodeproj/project.pbxproj:
+
 2021-12-21  J Pascoe  <j_pascoe@apple.com>
 
         [WebAuthn] Authenticator is not falling back to clientPIN after internal verification fails and is blocked.

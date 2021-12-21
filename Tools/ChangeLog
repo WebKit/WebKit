@@ -1,3 +1,13 @@
+2021-12-21  Alex Christensen  <achristensen@webkit.org>
+
+        ASSERT NOT REACHED under WebKit::Daemon::ConnectionToMachService seen with TestWebKitAPI.WebPushD.BasicCommunication and PermissionManagement
+        https://bugs.webkit.org/show_bug.cgi?id=232857
+
+        Reviewed by Darin Adler.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WebPushDaemon.mm:
+        (TestWebKitAPI::TEST):
+
 2021-12-21  J Pascoe  <j_pascoe@apple.com>
 
         [WebAuthn] Authenticator is not falling back to clientPIN after internal verification fails and is blocked.

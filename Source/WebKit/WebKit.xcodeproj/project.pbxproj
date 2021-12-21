@@ -991,7 +991,6 @@
 		517A530F1F47A86200DCDC0A /* WebSWClientConnectionMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 517A530E1F47A84300DCDC0A /* WebSWClientConnectionMessageReceiver.cpp */; };
 		517A53101F47A86200DCDC0A /* WebSWClientConnectionMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 517A530D1F47A84300DCDC0A /* WebSWClientConnectionMessages.h */; };
 		517B5F2E2757382A002DC22D /* WebPushDaemonConnectionConfiguration.h in Headers */ = {isa = PBXBuildFile; fileRef = 517B5F2D2757382A002DC22D /* WebPushDaemonConnectionConfiguration.h */; };
-		517B5F2F2757382B002DC22D /* WebPushDaemonConnectionConfiguration.h in Headers */ = {isa = PBXBuildFile; fileRef = 517B5F2D2757382A002DC22D /* WebPushDaemonConnectionConfiguration.h */; };
 		517B5F65275A8D7F002DC22D /* WebPushToolMain.mm in Sources */ = {isa = PBXBuildFile; fileRef = 517B5F64275A8D7E002DC22D /* WebPushToolMain.mm */; };
 		517B5F68275A9A78002DC22D /* WebPushToolConnection.mm in Sources */ = {isa = PBXBuildFile; fileRef = 517B5F67275A9A78002DC22D /* WebPushToolConnection.mm */; };
 		517B5F73275E9609002DC22D /* WebPushDaemonMain.h in Headers */ = {isa = PBXBuildFile; fileRef = 517B5F72275E9609002DC22D /* WebPushDaemonMain.h */; };
@@ -1056,8 +1055,6 @@
 		51F060E11654318500F3282E /* NetworkRTCProviderMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51F060DD1654317500F3282E /* NetworkRTCProviderMessageReceiver.cpp */; };
 		51F060E11654318500F3282F /* WebMDNSRegisterMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51F060DD1654317500F3282F /* WebMDNSRegisterMessageReceiver.cpp */; };
 		51F060E11654318500F3283F /* NetworkMDNSRegisterMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51F060DD1654317500F3283F /* NetworkMDNSRegisterMessageReceiver.cpp */; };
-		51F7BB7D2745640400C45A72 /* CodeSigning.mm in Sources */ = {isa = PBXBuildFile; fileRef = CE11AD4F1CBC47F800681EE5 /* CodeSigning.mm */; };
-		51F7BB7F274564A100C45A72 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 51F7BB7E274564A100C45A72 /* Security.framework */; };
 		51F886A61F2C228100C193EF /* WKTestingSupport.h in Headers */ = {isa = PBXBuildFile; fileRef = 51F886A41F2C214A00C193EF /* WKTestingSupport.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51FAEC3A1B0657630009C4E7 /* AuxiliaryProcessMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 51FAEC371B0657310009C4E7 /* AuxiliaryProcessMessages.h */; };
 		51FAEC3B1B0657680009C4E7 /* AuxiliaryProcessMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51FAEC361B0657310009C4E7 /* AuxiliaryProcessMessageReceiver.cpp */; };
@@ -1205,10 +1202,6 @@
 		5C1427181C23F8B700D41183 /* LegacyCustomProtocolManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C1427141C23F8B000D41183 /* LegacyCustomProtocolManager.h */; };
 		5C1579EE27172A8B00ED5280 /* DaemonEncoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C1579EA27172A8B00ED5280 /* DaemonEncoder.h */; };
 		5C1579EF27172A8B00ED5280 /* DaemonDecoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C1579EB27172A8B00ED5280 /* DaemonDecoder.h */; };
-		5C1579FB2717AF5000ED5280 /* DaemonUtilities.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C1579F92717AF5000ED5280 /* DaemonUtilities.mm */; };
-		5C1579FC2717AF5000ED5280 /* DaemonUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C1579FA2717AF5000ED5280 /* DaemonUtilities.h */; };
-		5C1579FE2717B6C100ED5280 /* DaemonEncoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C1579E827172A8A00ED5280 /* DaemonEncoder.cpp */; };
-		5C1579FF2717B6D200ED5280 /* DaemonDecoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C1579E927172A8B00ED5280 /* DaemonDecoder.cpp */; };
 		5C19A5201FD0B29500EEA323 /* URLSchemeTaskParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C19A51F1FD0B14700EEA323 /* URLSchemeTaskParameters.h */; };
 		5C20CBA01BB1ECD800895BB1 /* NetworkSession.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C20CB9E1BB0DD1800895BB1 /* NetworkSession.h */; };
 		5C20F679276A6DB6006CAC22 /* ArgumentCoders.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3D610413A7F03A00F95D4E /* ArgumentCoders.cpp */; };
@@ -6503,7 +6496,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				51F7BB7F274564A100C45A72 /* Security.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -12555,8 +12547,6 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5C1579FC2717AF5000ED5280 /* DaemonUtilities.h in Headers */,
-				517B5F2F2757382B002DC22D /* WebPushDaemonConnectionConfiguration.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -15366,10 +15356,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				51F7BB7D2745640400C45A72 /* CodeSigning.mm in Sources */,
-				5C1579FF2717B6D200ED5280 /* DaemonDecoder.cpp in Sources */,
-				5C1579FE2717B6C100ED5280 /* DaemonEncoder.cpp in Sources */,
-				5C1579FB2717AF5000ED5280 /* DaemonUtilities.mm in Sources */,
 				517B5F78275E9795002DC22D /* webpushd.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
