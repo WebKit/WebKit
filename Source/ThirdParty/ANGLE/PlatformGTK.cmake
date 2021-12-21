@@ -1,4 +1,5 @@
 list(APPEND ANGLE_DEFINITIONS ANGLE_PLATFORM_LINUX)
+include(linux.cmake)
 
 if (USE_OPENGL)
     # Enable GLSL compiler output.
@@ -11,6 +12,8 @@ if (USE_ANGLE_EGL OR USE_ANGLE_WEBGL)
 
         ${angle_system_utils_sources_linux}
         ${angle_system_utils_sources_posix}
+
+        ${angle_dma_buf_sources}
 
         ${libangle_gl_egl_dl_sources}
         ${libangle_gl_egl_sources}
