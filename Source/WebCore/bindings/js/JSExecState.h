@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2010 Google Inc. All rights reserved.
- * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -47,25 +47,25 @@ public:
     static JSC::JSGlobalObject* currentState()
     {
         return threadGlobalData().currentState();
-    };
+    }
     
     static JSC::JSValue call(JSC::JSGlobalObject* lexicalGlobalObject, JSC::JSValue functionObject, const JSC::CallData& callData, JSC::JSValue thisValue, const JSC::ArgList& args, NakedPtr<JSC::Exception>& returnedException)
     {
         JSExecState currentState(lexicalGlobalObject);
         return JSC::call(lexicalGlobalObject, functionObject, callData, thisValue, args, returnedException);
-    };
+    }
 
     static JSC::JSValue evaluate(JSC::JSGlobalObject* lexicalGlobalObject, const JSC::SourceCode& source, JSC::JSValue thisValue, NakedPtr<JSC::Exception>& returnedException)
     {
         JSExecState currentState(lexicalGlobalObject);
         return JSC::evaluate(lexicalGlobalObject, source, thisValue, returnedException);
-    };
+    }
 
     static JSC::JSValue evaluate(JSC::JSGlobalObject* lexicalGlobalObject, const JSC::SourceCode& source, JSC::JSValue thisValue = JSC::JSValue())
     {
         NakedPtr<JSC::Exception> unused;
         return evaluate(lexicalGlobalObject, source, thisValue, unused);
-    };
+    }
 
     static JSC::JSValue profiledCall(JSC::JSGlobalObject* lexicalGlobalObject, JSC::ProfilingReason reason, JSC::JSValue functionObject, const JSC::CallData& callData, JSC::JSValue thisValue, const JSC::ArgList& args, NakedPtr<JSC::Exception>& returnedException)
     {
@@ -184,5 +184,7 @@ private:
 
 JSC::JSValue functionCallHandlerFromAnyThread(JSC::JSGlobalObject*, JSC::JSValue functionObject, const JSC::CallData&, JSC::JSValue thisValue, const JSC::ArgList& args, NakedPtr<JSC::Exception>& returnedException);
 JSC::JSValue evaluateHandlerFromAnyThread(JSC::JSGlobalObject*, const JSC::SourceCode&, JSC::JSValue thisValue, NakedPtr<JSC::Exception>& returnedException);
+
+ScriptExecutionContext* executionContext(JSC::JSGlobalObject*);
 
 } // namespace WebCore

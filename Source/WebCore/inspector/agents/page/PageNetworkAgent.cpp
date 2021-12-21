@@ -31,7 +31,6 @@
 #include "Frame.h"
 #include "InstrumentingAgents.h"
 #include "Page.h"
-#include "ScriptState.h"
 #include "WebSocket.h"
 #include "WebSocketChannel.h"
 

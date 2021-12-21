@@ -26,14 +26,12 @@
 #include "config.h"
 #include "WorkerAuditAgent.h"
 
-#include "ScriptState.h"
+#include "JSDOMGlobalObject.h"
 #include "WorkerOrWorkletGlobalScope.h"
+#include "WorkerOrWorkletScriptController.h"
 #include <JavaScriptCore/InjectedScript.h>
 #include <JavaScriptCore/InjectedScriptManager.h>
 #include <JavaScriptCore/JSCInlines.h>
-#include <wtf/Ref.h>
-#include <wtf/RefPtr.h>
-#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
@@ -55,7 +53,9 @@ InjectedScript WorkerAuditAgent::injectedScriptForEval(Protocol::ErrorString& er
         return InjectedScript();
     }
 
-    return injectedScriptManager().injectedScriptFor(globalObject(m_globalScope));
+    // FIXME: What guarantees m_globalScope.script() is non-null?
+    // FIXME: What guarantees globalScopeWrapper() is non-null?
+    return injectedScriptManager().injectedScriptFor(m_globalScope.script()->globalScopeWrapper());
 }
 
 } // namespace WebCore

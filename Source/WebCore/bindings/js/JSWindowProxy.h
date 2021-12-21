@@ -48,17 +48,14 @@ public:
     static constexpr bool needsDestruction = true;
     static void destroy(JSCell*);
 
-    template<typename CellType, JSC::SubspaceAccess>
-    static JSC::IsoSubspace* subspaceFor(JSC::VM& vm)
-    {
-        return subspaceForImpl(vm);
-    }
+    template<typename CellType, JSC::SubspaceAccess> static JSC::IsoSubspace* subspaceFor(JSC::VM& vm) { return subspaceForImpl(vm); }
 
     static JSWindowProxy& create(JSC::VM&, AbstractDOMWindow&, DOMWrapperWorld&);
 
     DECLARE_INFO;
 
     JSDOMGlobalObject* window() const { return static_cast<JSDOMGlobalObject*>(target()); }
+
     void setWindow(JSC::VM&, JSDOMGlobalObject&);
     void setWindow(AbstractDOMWindow&);
 

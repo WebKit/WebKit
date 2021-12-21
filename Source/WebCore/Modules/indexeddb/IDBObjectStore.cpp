@@ -42,7 +42,6 @@
 #include "Logging.h"
 #include "Page.h"
 #include "ScriptExecutionContext.h"
-#include "ScriptState.h"
 #include "SerializedScriptValue.h"
 #include <JavaScriptCore/CatchScope.h>
 #include <JavaScriptCore/HeapInlines.h>

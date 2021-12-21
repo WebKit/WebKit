@@ -56,7 +56,6 @@
 #include "SWContextManager.h"
 #include "ScriptController.h"
 #include "ScriptDisallowedScope.h"
-#include "ScriptState.h"
 #include "ServiceWorker.h"
 #include "ServiceWorkerGlobalScope.h"
 #include "ServiceWorkerProvider.h"
@@ -543,11 +542,15 @@ bool ScriptExecutionContext::hasPendingActivity() const
 
 JSC::JSGlobalObject* ScriptExecutionContext::globalObject()
 {
-    if (is<Document>(*this))
-        return WebCore::globalObject(mainThreadNormalWorld(), downcast<Document>(*this).frame());
+    if (is<Document>(*this)) {
+        auto frame = downcast<Document>(*this).frame();
+        return frame ? frame->script().globalObject(mainThreadNormalWorld()) : nullptr;
+    }
 
-    if (is<WorkerOrWorkletGlobalScope>(*this))
-        return WebCore::globalObject(downcast<WorkerOrWorkletGlobalScope>(*this));
+    if (is<WorkerOrWorkletGlobalScope>(*this)) {
+        auto script = downcast<WorkerOrWorkletGlobalScope>(*this).script();
+        return script ? script->globalScopeWrapper() : nullptr;
+    }
 
     ASSERT_NOT_REACHED();
     return nullptr;

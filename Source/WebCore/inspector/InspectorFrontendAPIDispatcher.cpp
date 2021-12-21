@@ -33,7 +33,6 @@
 #include "ScriptController.h"
 #include "ScriptDisallowedScope.h"
 #include "ScriptSourceCode.h"
-#include "ScriptState.h"
 #include <JavaScriptCore/FrameTracers.h>
 #include <JavaScriptCore/JSPromise.h>
 #include <wtf/RunLoop.h>

@@ -50,7 +50,6 @@
 #include "JSDOMWindowBase.h"
 #include "Logging.h"
 #include "ScriptExecutionContext.h"
-#include "ScriptState.h"
 #include "SerializedScriptValue.h"
 #include "TransactionOperation.h"
 #include <wtf/CompletionHandler.h>

@@ -85,6 +85,7 @@
 #include "InstrumentingAgents.h"
 #include "IntRect.h"
 #include "JSDOMBindingSecurity.h"
+#include "JSDOMWindowCustom.h"
 #include "JSEventListener.h"
 #include "JSNode.h"
 #include "MutationEvent.h"
@@ -96,7 +97,7 @@
 #include "RenderGrid.h"
 #include "RenderStyle.h"
 #include "RenderStyleConstants.h"
-#include "ScriptState.h"
+#include "ScriptController.h"
 #include "SelectorChecker.h"
 #include "ShadowRoot.h"
 #include "StaticNodeList.h"
@@ -1163,20 +1164,17 @@ void InspectorDOMAgent::focusNode()
         return;
 
     ASSERT(m_nodeToFocus);
-
-    RefPtr<Node> node = m_nodeToFocus.get();
-    m_nodeToFocus = nullptr;
-
-    Frame* frame = node->document().frame();
+    auto node = std::exchange(m_nodeToFocus, nullptr);
+    auto frame = node->document().frame();
     if (!frame)
         return;
 
-    JSC::JSGlobalObject* scriptState = mainWorldExecState(frame);
-    InjectedScript injectedScript = m_injectedScriptManager.injectedScriptFor(scriptState);
+    auto& globalObject = mainWorldGlobalObject(*frame);
+    auto injectedScript = m_injectedScriptManager.injectedScriptFor(&globalObject);
     if (injectedScript.hasNoValue())
         return;
 
-    injectedScript.inspectObject(nodeAsScriptValue(*scriptState, node.get()));
+    injectedScript.inspectObject(nodeAsScriptValue(globalObject, node.get()));
 }
 
 void InspectorDOMAgent::mouseDidMoveOverElement(const HitTestResult& result, unsigned)
@@ -1892,7 +1890,11 @@ Ref<Protocol::DOM::EventListener> InspectorDOMAgent::buildObjectForEventListener
 
         if (document) {
             handlerObject = scriptListener.ensureJSFunction(*document);
-            globalObject = WebCore::globalObject(scriptListener.isolatedWorld(), document);
+            if (auto frame = document->frame()) {
+                // FIXME: Why do we need the canExecuteScripts check here?
+                if (frame->script().canExecuteScripts(NotAboutToExecuteScript))
+                    globalObject = frame->script().globalObject(scriptListener.isolatedWorld());
+            }
         }
 
         if (handlerObject && globalObject) {
@@ -2846,12 +2848,12 @@ RefPtr<Protocol::Runtime::RemoteObject> InspectorDOMAgent::resolveNode(Node* nod
     if (!frame)
         return nullptr;
 
-    auto& state = *mainWorldExecState(frame);
-    auto injectedScript = m_injectedScriptManager.injectedScriptFor(&state);
+    auto& globalObject = mainWorldGlobalObject(*frame);
+    auto injectedScript = m_injectedScriptManager.injectedScriptFor(&globalObject);
     if (injectedScript.hasNoValue())
         return nullptr;
 
-    return injectedScript.wrapObject(nodeAsScriptValue(state, node), objectGroup);
+    return injectedScript.wrapObject(nodeAsScriptValue(globalObject, node), objectGroup);
 }
 
 Node* InspectorDOMAgent::scriptValueAsNode(JSC::JSValue value)

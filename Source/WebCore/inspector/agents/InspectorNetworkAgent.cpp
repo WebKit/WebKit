@@ -51,6 +51,7 @@
 #include "InspectorDOMAgent.h"
 #include "InspectorTimelineAgent.h"
 #include "InstrumentingAgents.h"
+#include "JSDOMWindowCustom.h"
 #include "JSExecState.h"
 #include "JSWebSocket.h"
 #include "LoaderStrategy.h"
@@ -64,7 +65,6 @@
 #include "ResourceLoader.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
-#include "ScriptState.h"
 #include "ScriptableDocumentParser.h"
 #include "SubresourceLoader.h"
 #include "TextResourceDecoder.h"
@@ -1043,11 +1043,11 @@ Protocol::ErrorStringOr<Ref<Protocol::Runtime::RemoteObject>> InspectorNetworkAg
     if (!frame)
         return makeUnexpected("Missing frame of web socket for given requestId"_s);
 
-    auto& state = *mainWorldExecState(frame);
-    auto injectedScript = m_injectedScriptManager.injectedScriptFor(&state);
+    auto& globalObject = mainWorldGlobalObject(*frame);
+    auto injectedScript = m_injectedScriptManager.injectedScriptFor(&globalObject);
     ASSERT(!injectedScript.hasNoValue());
 
-    auto object = injectedScript.wrapObject(webSocketAsScriptValue(state, webSocket), objectGroup);
+    auto object = injectedScript.wrapObject(webSocketAsScriptValue(globalObject, webSocket), objectGroup);
     if (!object)
         return makeUnexpected("Internal error: unable to cast WebSocket");
 

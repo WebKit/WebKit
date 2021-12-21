@@ -56,7 +56,7 @@
 #include "IDBTransaction.h"
 #include "InspectorPageAgent.h"
 #include "InstrumentingAgents.h"
-#include "ScriptState.h"
+#include "JSDOMWindowCustom.h"
 #include "SecurityOrigin.h"
 #include "WindowOrWorkerGlobalScopeIndexedDatabase.h"
 #include <JavaScriptCore/HeapInlines.h>
@@ -617,14 +617,17 @@ void InspectorIndexedDBAgent::requestData(const String& securityOrigin, const St
     if (!getDocumentAndIDBFactoryFromFrameOrSendFailure(frame, document, idbFactory, callback))
         return;
 
-    InjectedScript injectedScript = m_injectedScriptManager.injectedScriptFor(mainWorldExecState(frame));
-    RefPtr<IDBKeyRange> idbKeyRange = keyRange ? idbKeyRangeFromKeyRange(*keyRange) : nullptr;
-    if (keyRange && !idbKeyRange) {
-        callback->sendFailure("Could not parse key range."_s);
-        return;
+    RefPtr<IDBKeyRange> idbKeyRange;
+    if (keyRange) {
+        idbKeyRange = idbKeyRangeFromKeyRange(*keyRange);
+        if (!idbKeyRange) {
+            callback->sendFailure("Could not parse key range."_s);
+            return;
+        }
     }
 
-    Ref<DataLoader> dataLoader = DataLoader::create(document, WTFMove(callback), injectedScript, objectStoreName, indexName, WTFMove(idbKeyRange), skipCount, pageSize);
+    auto injectedScript = m_injectedScriptManager.injectedScriptFor(&mainWorldGlobalObject(*frame));
+    auto dataLoader = DataLoader::create(document, WTFMove(callback), injectedScript, objectStoreName, indexName, WTFMove(idbKeyRange), skipCount, pageSize);
     dataLoader->start(idbFactory, &document->securityOrigin(), databaseName);
 }
 

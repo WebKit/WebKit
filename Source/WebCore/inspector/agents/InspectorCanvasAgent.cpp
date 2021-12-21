@@ -50,7 +50,6 @@
 #include "JSExecState.h"
 #include "OffscreenCanvas.h"
 #include "Path2D.h"
-#include "ScriptState.h"
 #include "StringAdaptors.h"
 #include "WebGL2RenderingContext.h"
 #include "WebGLBuffer.h"

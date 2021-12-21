@@ -45,6 +45,7 @@
 #include "JSCDATASection.h"
 #include "JSComment.h"
 #include "JSDOMBinding.h"
+#include "JSDOMWindowCustom.h"
 #include "JSDocument.h"
 #include "JSDocumentFragment.h"
 #include "JSDocumentType.h"
@@ -61,17 +62,15 @@
 #include "ProcessingInstruction.h"
 #include "RegisteredEventListener.h"
 #include "SVGElement.h"
-#include "ScriptState.h"
 #include "ShadowRoot.h"
 #include "GCReachableRef.h"
 #include "StyleSheet.h"
 #include "StyledElement.h"
 #include "Text.h"
 
-
 namespace WebCore {
-using namespace JSC;
 
+using namespace JSC;
 using namespace HTMLNames;
 
 static inline bool isReachableFromDOM(Node* node, AbstractSlotVisitor& visitor, const char** reason)
@@ -212,14 +211,15 @@ JSC::JSObject* getOutOfLineCachedWrapper(JSDOMGlobalObject* globalObject, Node& 
     return globalObject->world().wrappers().get(&node);
 }
 
-void willCreatePossiblyOrphanedTreeByRemovalSlowCase(Node* root)
+void willCreatePossiblyOrphanedTreeByRemovalSlowCase(Node& root)
 {
-    JSC::JSGlobalObject* lexicalGlobalObject = mainWorldExecState(root->document().frame());
-    if (!lexicalGlobalObject)
+    auto frame = root.document().frame();
+    if (!frame)
         return;
 
-    JSLockHolder lock(lexicalGlobalObject);
-    toJS(lexicalGlobalObject, static_cast<JSDOMGlobalObject*>(lexicalGlobalObject), *root);
+    auto& globalObject = mainWorldGlobalObject(*frame);
+    JSLockHolder lock(&globalObject);
+    toJS(&globalObject, &globalObject, root);
 }
 
 } // namespace WebCore

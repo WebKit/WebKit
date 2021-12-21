@@ -637,4 +637,12 @@ void JSDOMWindow::setOpenDatabase(JSC::JSGlobalObject& lexicalGlobalObject, JSC:
     createDataProperty(&lexicalGlobalObject, Identifier::fromString(lexicalGlobalObject.vm(), "openDatabase"), value, shouldThrow);
 }
 
+JSDOMWindow& mainWorldGlobalObject(Frame& frame)
+{
+    // FIXME: What guarantees the result of jsWindowProxy() is non-null?
+    // FIXME: What guarantees the result of window() is non-null?
+    // FIXME: What guarantees the result of window() a JSDOMWindow?
+    return *jsCast<JSDOMWindow*>(frame.windowProxy().jsWindowProxy(mainThreadNormalWorld())->window());
+}
+
 } // namespace WebCore

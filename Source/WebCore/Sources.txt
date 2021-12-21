@@ -632,7 +632,6 @@ bindings/js/ScheduledAction.cpp
 bindings/js/ScriptCachedFrameData.cpp
 bindings/js/ScriptController.cpp
 bindings/js/ScriptModuleLoader.cpp
-bindings/js/ScriptState.cpp
 bindings/js/ScriptWrappable.cpp
 bindings/js/SerializedScriptValue.cpp
 bindings/js/StructuredClone.cpp

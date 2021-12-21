@@ -46,7 +46,7 @@ public:
     void disconnect() override;
     void discardInjectedScripts() override;
 
-    void discardInjectedScriptsFor(DOMWindow*);
+    void discardInjectedScriptsFor(DOMWindow&);
 
 private:
     void didCreateInjectedScript(const Inspector::InjectedScript&) override;

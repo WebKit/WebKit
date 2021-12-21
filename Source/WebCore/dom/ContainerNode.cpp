@@ -128,7 +128,7 @@ ALWAYS_INLINE NodeVector ContainerNode::removeAllChildrenWithScriptAssertion(Chi
             removeBetween(nullptr, child->nextSibling(), *child);
             auto subtreeObservability = notifyChildNodeRemoved(*this, *child);
             if (source == ChildChange::Source::API && subtreeObservability == RemovedSubtreeObservability::MaybeObservableByRefPtr)
-                willCreatePossiblyOrphanedTreeByRemoval(child.get());
+                willCreatePossiblyOrphanedTreeByRemoval(*child);
         }
     }
 
@@ -210,7 +210,7 @@ ALWAYS_INLINE bool ContainerNode::removeNodeWithScriptAssertion(Node& childToRem
     }
 
     if (source == ChildChange::Source::API && subtreeObservability == RemovedSubtreeObservability::MaybeObservableByRefPtr)
-        willCreatePossiblyOrphanedTreeByRemoval(&childToRemove);
+        willCreatePossiblyOrphanedTreeByRemoval(childToRemove);
 
     ASSERT_WITH_SECURITY_IMPLICATION(!document().selection().selection().isOrphan());
 

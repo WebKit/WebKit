@@ -465,7 +465,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     bindings/js/RunJavaScriptParameters.h
     bindings/js/ScriptCachedFrameData.h
     bindings/js/ScriptController.h
-    bindings/js/ScriptState.h
     bindings/js/ScriptWrappable.h
     bindings/js/ScriptWrappableInlines.h
     bindings/js/SerializedScriptValue.h

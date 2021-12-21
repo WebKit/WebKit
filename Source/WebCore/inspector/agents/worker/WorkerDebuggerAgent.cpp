@@ -26,8 +26,9 @@
 #include "config.h"
 #include "WorkerDebuggerAgent.h"
 
-#include "ScriptState.h"
+#include "JSDOMGlobalObject.h"
 #include "WorkerOrWorkletGlobalScope.h"
+#include "WorkerOrWorkletScriptController.h"
 #include <JavaScriptCore/ConsoleMessage.h>
 #include <JavaScriptCore/InjectedScript.h>
 #include <JavaScriptCore/InjectedScriptManager.h>
@@ -60,7 +61,9 @@ InjectedScript WorkerDebuggerAgent::injectedScriptForEval(Protocol::ErrorString&
         return InjectedScript();
     }
 
-    return injectedScriptManager().injectedScriptFor(globalObject(m_globalScope));
+    // FIXME: What guarantees m_globalScope.script() is non-null?
+    // FIXME: What guarantees globalScopeWrapper() is non-null?
+    return injectedScriptManager().injectedScriptFor(m_globalScope.script()->globalScopeWrapper());
 }
 
 } // namespace WebCore

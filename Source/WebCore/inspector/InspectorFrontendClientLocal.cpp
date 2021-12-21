@@ -48,7 +48,6 @@
 #include "Page.h"
 #include "ScriptController.h"
 #include "ScriptSourceCode.h"
-#include "ScriptState.h"
 #include "Settings.h"
 #include "Timer.h"
 #include "UserGestureIndicator.h"

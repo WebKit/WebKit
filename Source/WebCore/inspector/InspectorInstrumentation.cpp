@@ -228,8 +228,11 @@ void InspectorInstrumentation::frameWindowDiscardedImpl(InstrumentingAgents& ins
     if (LIKELY(!instrumentingAgents.inspectorEnvironment().developerExtrasEnabled()))
         return;
 
+    if (!window)
+        return;
+
     if (auto* consoleAgent = instrumentingAgents.webConsoleAgent())
-        consoleAgent->frameWindowDiscarded(window);
+        consoleAgent->frameWindowDiscarded(*window);
 }
 
 void InspectorInstrumentation::mediaQueryResultChangedImpl(InstrumentingAgents& instrumentingAgents)

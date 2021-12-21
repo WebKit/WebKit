@@ -133,6 +133,7 @@
 #include "InspectorInstrumentation.h"
 #include "IntersectionObserver.h"
 #include "JSCustomElementInterface.h"
+#include "JSDOMWindowCustom.h"
 #include "JSLazyEventListener.h"
 #include "KeyboardEvent.h"
 #include "KeyframeEffect.h"
@@ -210,7 +211,6 @@
 #include "ScriptModuleLoader.h"
 #include "ScriptRunner.h"
 #include "ScriptSourceCode.h"
-#include "ScriptState.h"
 #include "ScriptedAnimationController.h"
 #include "ScrollAnimator.h"
 #include "ScrollbarTheme.h"
@@ -8716,8 +8716,8 @@ void Document::didLogMessage(const WTFLogChannel& channel, WTFLogLevel level, Ve
             return;
 
         auto messageLevel = messageLevelFromWTFLogLevel(level);
-        auto message = makeUnique<Inspector::ConsoleMessage>(messageSource, MessageType::Log, messageLevel, WTFMove(logMessages), mainWorldExecState(weakThis->frame()));
-
+        auto* globalObject = mainWorldGlobalObject(weakThis->frame());
+        auto message = makeUnique<Inspector::ConsoleMessage>(messageSource, MessageType::Log, messageLevel, WTFMove(logMessages), globalObject);
         weakThis->addConsoleMessage(WTFMove(message));
     });
 }

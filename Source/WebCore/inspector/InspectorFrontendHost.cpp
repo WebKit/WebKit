@@ -56,7 +56,6 @@
 #include "Page.h"
 #include "PagePasteboardContext.h"
 #include "Pasteboard.h"
-#include "ScriptState.h"
 #include "Settings.h"
 #include "SystemSoundManager.h"
 #include "UserGestureIndicator.h"
@@ -160,15 +159,15 @@ void InspectorFrontendHost::disconnectClient()
 
 void InspectorFrontendHost::addSelfToGlobalObjectInWorld(DOMWrapperWorld& world)
 {
-    auto& lexicalGlobalObject = *globalObject(world, m_frontendPage ? &m_frontendPage->mainFrame() : nullptr);
-    auto& vm = lexicalGlobalObject.vm();
+    // FIXME: What guarantees m_frontendPage is non-null?
+    // FIXME: What guarantees globalObject's return value is non-null?
+    auto& globalObject = *m_frontendPage->mainFrame().script().globalObject(world);
+    auto& vm = globalObject.vm();
     JSC::JSLockHolder lock(vm);
     auto scope = DECLARE_CATCH_SCOPE(vm);
-
-    auto& globalObject = *JSC::jsCast<JSDOMGlobalObject*>(&lexicalGlobalObject);
-    globalObject.putDirect(vm, JSC::Identifier::fromString(vm, "InspectorFrontendHost"), toJS<IDLInterface<InspectorFrontendHost>>(lexicalGlobalObject, globalObject, *this));
+    globalObject.putDirect(vm, JSC::Identifier::fromString(vm, "InspectorFrontendHost"), toJS<IDLInterface<InspectorFrontendHost>>(globalObject, globalObject, *this));
     if (UNLIKELY(scope.exception()))
-        reportException(&lexicalGlobalObject, scope.exception());
+        reportException(&globalObject, scope.exception());
 }
 
 void InspectorFrontendHost::loaded()
@@ -503,19 +502,20 @@ static void populateContextMenu(Vector<InspectorFrontendHost::ContextMenuItem>&&
 void InspectorFrontendHost::showContextMenu(Event& event, Vector<ContextMenuItem>&& items)
 {
 #if ENABLE(CONTEXT_MENUS)
+    // FIXME: What guarantees m_frontendPage is non-null?
+    // FIXME: What guarantees globalObject's return value is non-null?
     ASSERT(m_frontendPage);
-
-    auto& lexicalGlobalObject = *globalObject(debuggerWorld(), &m_frontendPage->mainFrame());
-    auto& vm = lexicalGlobalObject.vm();
-    auto value = lexicalGlobalObject.get(&lexicalGlobalObject, JSC::Identifier::fromString(vm, "InspectorFrontendAPI"));
+    auto& globalObject = *m_frontendPage->mainFrame().script().globalObject(debuggerWorld());
+    auto& vm = globalObject.vm();
+    auto value = globalObject.get(&globalObject, JSC::Identifier::fromString(vm, "InspectorFrontendAPI"));
     ASSERT(value);
     ASSERT(value.isObject());
     auto* frontendAPIObject = asObject(value);
-    
+
     ContextMenu menu;
     populateContextMenu(WTFMove(items), menu);
 
-    auto menuProvider = FrontendMenuProvider::create(this, { &lexicalGlobalObject, frontendAPIObject }, menu.items());
+    auto menuProvider = FrontendMenuProvider::create(this, { &globalObject, frontendAPIObject }, menu.items());
     m_menuProvider = menuProvider.ptr();
     m_frontendPage->contextMenuController().showContextMenu(event, menuProvider);
 #else
