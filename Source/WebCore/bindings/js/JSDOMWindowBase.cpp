@@ -255,7 +255,7 @@ JSC::ScriptExecutionStatus JSDOMWindowBase::scriptExecutionStatus(JSC::JSGlobalO
     return jsCast<JSDocument*>(owner)->wrapped().jscScriptExecutionStatus();
 }
 
-void JSDOMWindowBase::reportViolationForUnsafeEval(JSGlobalObject* object)
+void JSDOMWindowBase::reportViolationForUnsafeEval(JSGlobalObject* object, JSString* source)
 {
     const JSDOMWindowBase* thisObject = static_cast<const JSDOMWindowBase*>(object);
     ContentSecurityPolicy* contentSecurityPolicy = nullptr;
@@ -270,7 +270,7 @@ void JSDOMWindowBase::reportViolationForUnsafeEval(JSGlobalObject* object)
     if (!contentSecurityPolicy)
         return;
 
-    contentSecurityPolicy->allowEval(object, LogToConsole::No, false);
+    contentSecurityPolicy->allowEval(object, LogToConsole::No, source ? source->tryGetValue() : StringView());
 }
 
 void JSDOMWindowBase::willRemoveFromWindowProxy()

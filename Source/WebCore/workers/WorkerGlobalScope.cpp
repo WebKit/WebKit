@@ -306,7 +306,7 @@ ExceptionOr<int> WorkerGlobalScope::setTimeout(std::unique_ptr<ScheduledAction> 
 {
     // FIXME: Should this check really happen here? Or should it happen when code is about to eval?
     if (action->type() == ScheduledAction::Type::Code) {
-        if (!contentSecurityPolicy()->allowEval(globalObject(), LogToConsole::Yes))
+        if (!contentSecurityPolicy()->allowEval(globalObject(), LogToConsole::Yes, action->code()))
             return 0;
     }
 
@@ -324,7 +324,7 @@ ExceptionOr<int> WorkerGlobalScope::setInterval(std::unique_ptr<ScheduledAction>
 {
     // FIXME: Should this check really happen here? Or should it happen when code is about to eval?
     if (action->type() == ScheduledAction::Type::Code) {
-        if (!contentSecurityPolicy()->allowEval(globalObject(), LogToConsole::Yes))
+        if (!contentSecurityPolicy()->allowEval(globalObject(), LogToConsole::Yes, action->code()))
             return 0;
     }
 

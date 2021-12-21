@@ -253,7 +253,7 @@ struct GlobalObjectMethodTable {
     typedef ScriptExecutionStatus (*ScriptExecutionStatusPtr)(JSGlobalObject*, JSObject* scriptExecutionOwner);
     ScriptExecutionStatusPtr scriptExecutionStatus;
     
-    typedef void (*ReportViolationForUnsafeEvalPtr)(JSGlobalObject*);
+    typedef void (*ReportViolationForUnsafeEvalPtr)(JSGlobalObject*, JSString*);
     ReportViolationForUnsafeEvalPtr reportViolationForUnsafeEval;
 
     typedef String (*DefaultLanguageFunctionPtr)();
@@ -931,7 +931,7 @@ public:
     static void reportUncaughtExceptionAtEventLoop(JSGlobalObject*, Exception*);
     static JSObject* currentScriptExecutionOwner(JSGlobalObject* global) { return global; }
     static ScriptExecutionStatus scriptExecutionStatus(JSGlobalObject*, JSObject*) { return ScriptExecutionStatus::Running; }
-    static void reportViolationForUnsafeEval(JSGlobalObject*) { }
+    static void reportViolationForUnsafeEval(JSGlobalObject*, JSString*) { }
 
     JSObject* arrayBufferPrototype(ArrayBufferSharingMode sharingMode) const
     {
@@ -1080,7 +1080,7 @@ public:
 
     JS_EXPORT_PRIVATE void queueMicrotask(Ref<Microtask>&&);
 
-    static void reportViolationForUnsafeEval(const JSGlobalObject*) { }
+    static void reportViolationForUnsafeEval(const JSGlobalObject*, JSString*) { }
 
     bool evalEnabled() const { return m_evalEnabled; }
     bool webAssemblyEnabled() const { return m_webAssemblyEnabled; }

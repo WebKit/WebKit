@@ -47,6 +47,8 @@ public:
     enum class Type { Code, Function };
     Type type() const;
 
+    StringView code() const { return m_code; }
+
     void execute(ScriptExecutionContext&);
 
 private:

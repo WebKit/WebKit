@@ -1,3 +1,26 @@
+2021-12-21  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        CSP: Include the sample in eval violation reports
+        https://bugs.webkit.org/show_bug.cgi?id=234390
+
+        Reviewed by Kate Cheney.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::eval): Pass the code to reportViolationForUnsafeEval().
+        * runtime/DirectEvalExecutable.cpp:
+        (JSC::DirectEvalExecutable::create): Ditto.
+        * runtime/FunctionConstructor.cpp:
+        (JSC::stringifyFunction): Helper function with the code to stringify function to be called also for the csp
+        violation report.
+        (JSC::constructFunction): Call stringifyFunction() to get the code for reportViolationForUnsafeEval().
+        (JSC::constructFunctionSkippingEvalEnabledCheck): Use stringifyFunction().
+        * runtime/IndirectEvalExecutable.cpp:
+        (JSC::IndirectEvalExecutable::createImpl): Pass the code to reportViolationForUnsafeEval().
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::reportViolationForUnsafeEval): Add string parameter for the code sample.
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION): Pass the code to reportViolationForUnsafeEval().
+
 2021-12-21  Zan Dobersek  <zdobersek@igalia.com>
 
         [RISCV64] Add basic MacroAssemblerRISCV64 branching methods

@@ -1,3 +1,14 @@
+2021-12-21  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        CSP: Include the sample in eval violation reports
+        https://bugs.webkit.org/show_bug.cgi?id=234390
+
+        Reviewed by Kate Cheney.
+
+        Update expectations.
+
+        * web-platform-tests/content-security-policy/securitypolicyviolation/script-sample-expected.txt:
+
 2021-12-20  Patrick Griffis  <pgriffis@igalia.com>
 
         CSP: Always use UTF-8 encoded content when checking hashes

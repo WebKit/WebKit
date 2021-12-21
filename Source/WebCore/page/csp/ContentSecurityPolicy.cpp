@@ -511,14 +511,14 @@ bool ContentSecurityPolicy::allowInlineStyle(const String& contextURL, const Ord
     return checkHashAndReportViolation(styleContent.toString(), &ContentSecurityPolicyDirectiveList::violatedDirectiveForUnsafeInlineStyleElement, &ContentSecurityPolicyDirectiveList::violatedDirectiveForStyleHash, m_hashAlgorithmsForInlineStylesheets, handleViolatedDirective);
 }
 
-bool ContentSecurityPolicy::allowEval(JSC::JSGlobalObject* state, LogToConsole shouldLogToConsole, bool overrideContentSecurityPolicy) const
+bool ContentSecurityPolicy::allowEval(JSC::JSGlobalObject* state, LogToConsole shouldLogToConsole, StringView codeContent, bool overrideContentSecurityPolicy) const
 {
     if (overrideContentSecurityPolicy)
         return true;
     bool didNotifyInspector = false;
     auto handleViolatedDirective = [&] (const ContentSecurityPolicyDirective& violatedDirective) {
         String consoleMessage = shouldLogToConsole == LogToConsole::Yes ? consoleMessageForViolation(ContentSecurityPolicyDirectiveNames::scriptSrc, violatedDirective, URL(), "Refused to execute a script", "'unsafe-eval'") : String();
-        reportViolation(ContentSecurityPolicyDirectiveNames::scriptSrc, violatedDirective, "eval", consoleMessage, state);
+        reportViolation(ContentSecurityPolicyDirectiveNames::scriptSrc, violatedDirective, "eval", consoleMessage, state, codeContent);
         if (!didNotifyInspector && !violatedDirective.directiveList().isReportOnly()) {
             reportBlockedScriptExecutionToInspector(violatedDirective.text());
             didNotifyInspector = true;
@@ -754,10 +754,10 @@ String ContentSecurityPolicy::createURLForReporting(const URL& url, const String
     return SecurityOrigin::create(url)->toString();
 }
 
-void ContentSecurityPolicy::reportViolation(const String& violatedDirective, const ContentSecurityPolicyDirective& effectiveViolatedDirective, const String& blockedURL, const String& consoleMessage, JSC::JSGlobalObject* state) const
+void ContentSecurityPolicy::reportViolation(const String& violatedDirective, const ContentSecurityPolicyDirective& effectiveViolatedDirective, const String& blockedURL, const String& consoleMessage, JSC::JSGlobalObject* state, StringView sourceContent) const
 {
-    // FIXME: Extract source file, content, and position from JSC::ExecState.
-    return reportViolation(violatedDirective, effectiveViolatedDirective.nameForReporting().convertToASCIILowercase(), effectiveViolatedDirective.directiveList(), blockedURL, consoleMessage, String(), StringView(), TextPosition(OrdinalNumber::beforeFirst(), OrdinalNumber::beforeFirst()), state);
+    // FIXME: Extract source file, and position from JSC::ExecState.
+    return reportViolation(violatedDirective, effectiveViolatedDirective.nameForReporting().convertToASCIILowercase(), effectiveViolatedDirective.directiveList(), blockedURL, consoleMessage, String(), sourceContent, TextPosition(OrdinalNumber::beforeFirst(), OrdinalNumber::beforeFirst()), state);
 }
 
 void ContentSecurityPolicy::reportViolation(const String& effectiveViolatedDirective, const String& violatedDirective, const ContentSecurityPolicyDirectiveList& violatedDirectiveList, const String& blockedURL, const String& consoleMessage, JSC::JSGlobalObject* state) const

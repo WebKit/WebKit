@@ -98,13 +98,15 @@ JSValue eval(JSGlobalObject* globalObject, CallFrame* callFrame, ECMAMode ecmaMo
     if (!program.isString())
         return program;
 
+    auto* programString = asString(program);
+
     TopCallFrameSetter topCallFrame(vm, callFrame);
     if (!globalObject->evalEnabled()) {
-        globalObject->globalObjectMethodTable()->reportViolationForUnsafeEval(globalObject);
+        globalObject->globalObjectMethodTable()->reportViolationForUnsafeEval(globalObject, programString);
         throwException(globalObject, scope, createEvalError(globalObject, globalObject->evalDisabledErrorMessage()));
         return jsUndefined();
     }
-    String programSource = asString(program)->value(globalObject);
+    String programSource = programString->value(globalObject);
     RETURN_IF_EXCEPTION(scope, JSValue());
     
     CallFrame* callerFrame = callFrame->callerFrame();
