@@ -142,6 +142,33 @@ public:
     static constexpr MacroAssembler::TrustedImm32 leadingSurrogateTag = MacroAssembler::TrustedImm32(0xd800);
     static constexpr MacroAssembler::TrustedImm32 trailingSurrogateTag = MacroAssembler::TrustedImm32(0xdc00);
     static constexpr MacroAssembler::TrustedImm32 surrogateTagMask = MacroAssembler::TrustedImm32(0xfffffc00);
+#elif CPU(RISCV64)
+    // Argument registers
+    static constexpr GPRReg input = RISCV64Registers::x10;
+    static constexpr GPRReg index = RISCV64Registers::x11;
+    static constexpr GPRReg length = RISCV64Registers::x12;
+    static constexpr GPRReg output = RISCV64Registers::x13;
+    static constexpr GPRReg matchingContext = RISCV64Registers::x14;
+    static constexpr GPRReg freelistRegister = RISCV64Registers::x14; // Loaded from the MatchingContextHolder in the prologue.
+    static constexpr GPRReg freelistSizeRegister = RISCV64Registers::x15; // Only used during initialization.
+
+    // Scratch registers
+    static constexpr GPRReg regT0 = RISCV64Registers::x16;
+    static constexpr GPRReg regT1 = RISCV64Registers::x17;
+    static constexpr GPRReg regT2 = RISCV64Registers::x5;
+    static constexpr GPRReg remainingMatchCount = RISCV64Registers::x6;
+    static constexpr GPRReg regUnicodeInputAndTrail = RISCV64Registers::x7;
+    static constexpr GPRReg unicodeTemp = RISCV64Registers::x15;
+    static constexpr GPRReg initialStart = RISCV64Registers::x28;
+    static constexpr GPRReg endOfStringAddress = RISCV64Registers::x29;
+
+    static constexpr GPRReg returnRegister = RISCV64Registers::x10;
+    static constexpr GPRReg returnRegister2 = RISCV64Registers::x11;
+
+    static constexpr MacroAssembler::TrustedImm32 supplementaryPlanesBase = MacroAssembler::TrustedImm32(0x10000);
+    static constexpr MacroAssembler::TrustedImm32 leadingSurrogateTag = MacroAssembler::TrustedImm32(0xd800);
+    static constexpr MacroAssembler::TrustedImm32 trailingSurrogateTag = MacroAssembler::TrustedImm32(0xdc00);
+    static constexpr MacroAssembler::TrustedImm32 surrogateTagMask = MacroAssembler::TrustedImm32(0xfffffc00);
 #endif
 };
 

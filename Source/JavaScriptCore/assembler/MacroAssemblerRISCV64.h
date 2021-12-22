@@ -669,6 +669,15 @@ public:
         m_assembler.lhuInsn(dest, temp.memory(), Imm::I<0>());
     }
 
+    void load16(ExtendedAddress address, RegisterID dest)
+    {
+        auto temp = temps<Data, Memory>();
+        loadImmediate(TrustedImm64(int64_t(address.offset)), temp.memory());
+        m_assembler.slliInsn<1>(temp.data(), address.base);
+        m_assembler.addInsn(temp.memory(), temp.memory(), temp.data());
+        m_assembler.lhuInsn(dest, temp.memory(), Imm::I<0>());
+    }
+
     void load16Unaligned(Address address, RegisterID dest)
     {
         load16(address, dest);

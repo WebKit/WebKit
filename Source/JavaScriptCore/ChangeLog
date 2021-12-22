@@ -1,5 +1,22 @@
 2021-12-22  Zan Dobersek  <zdobersek@igalia.com>
 
+        [RISCV64] Add RISCV64 support in YARR
+        https://bugs.webkit.org/show_bug.cgi?id=234547
+
+        Reviewed by Yusuke Suzuki.
+
+        Add RISCV64 support to YARR. This covers providing the required register
+        and immediate defitinitions, as well as also enabling codepaths shared
+        with other 64-bit architectures.
+
+        * assembler/MacroAssemblerRISCV64.h:
+        (JSC::MacroAssemblerRISCV64::load16): YARR JIT also requires a load16()
+        overload that loads from an ExtendedAddress.
+        * yarr/YarrJIT.cpp:
+        * yarr/YarrJITRegisters.h:
+
+2021-12-22  Zan Dobersek  <zdobersek@igalia.com>
+
         [RISCV64] Fix RISCV64Assembler::ImmediateDecomposition in debug builds
         https://bugs.webkit.org/show_bug.cgi?id=234594
 
