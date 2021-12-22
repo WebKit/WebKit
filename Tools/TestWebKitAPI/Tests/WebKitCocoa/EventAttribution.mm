@@ -383,12 +383,7 @@ TEST(PrivateClickMeasurement, Basic)
     });
 }
 
-// FIXME: Re-enable this test for Monterey+ once webkit.org/b/233345 is resolved.
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 120000
-TEST(PrivateClickMeasurement, DISABLED_EphemeralWithAttributedBundleIdentifier)
-#else
 TEST(PrivateClickMeasurement, EphemeralWithAttributedBundleIdentifier)
-#endif
 {
     auto configuration = configurationWithoutUsingDaemon();
     configuration.get()._attributedBundleIdentifier = @"other.test.bundle.id";
