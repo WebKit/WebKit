@@ -37,6 +37,7 @@
 #include "EventTarget.h"
 #include "NotificationDirection.h"
 #include "NotificationPermission.h"
+#include <wtf/Identified.h>
 #include <wtf/URL.h>
 #include "WritingMode.h"
 
@@ -48,7 +49,7 @@ class NotificationPermissionCallback;
 
 struct NotificationData;
 
-class Notification final : public ThreadSafeRefCounted<Notification>, public ActiveDOMObject, public EventTargetWithInlineData {
+class Notification final : public ThreadSafeRefCounted<Notification>, public ActiveDOMObject, public EventTargetWithInlineData, public UUIDIdentified<Notification> {
     WTF_MAKE_ISO_ALLOCATED_EXPORT(Notification, WEBCORE_EXPORT);
 public:
     using Permission = NotificationPermission;
@@ -89,7 +90,7 @@ public:
 
     ScriptExecutionContext* scriptExecutionContext() const final { return ActiveDOMObject::scriptExecutionContext(); }
 
-    WEBCORE_EXPORT NotificationData dataWithoutNotificationID() const;
+    WEBCORE_EXPORT NotificationData data() const;
 
     using ThreadSafeRefCounted::ref;
     using ThreadSafeRefCounted::deref;

@@ -106,7 +106,7 @@ public:
     void setUserStyleSheetLocation(const String&);
     void setWebNotificationPermission(WebPage*, const String& originString, bool allowed);
     void removeAllWebNotificationPermissions(WebPage*);
-    uint64_t webNotificationID(JSContextRef, JSValueRef);
+    std::optional<String> webNotificationID(JSContextRef, JSValueRef);
     Ref<API::Data> createWebDataFromUint8Array(JSContextRef, JSValueRef);
     
     typedef HashMap<uint64_t, String> DocumentIDToURLMap;

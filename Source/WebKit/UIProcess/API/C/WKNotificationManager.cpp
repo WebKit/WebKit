@@ -54,6 +54,11 @@ void WKNotificationManagerProviderDidClickNotification(WKNotificationManagerRef 
     toImpl(managerRef)->providerDidClickNotification(notificationID);
 }
 
+void WKNotificationManagerProviderDidClickNotification_b(WKNotificationManagerRef managerRef, WKStringRef notificationID)
+{
+    toImpl(managerRef)->providerDidClickNotification(toWTFString(notificationID));
+}
+
 void WKNotificationManagerProviderDidCloseNotifications(WKNotificationManagerRef managerRef, WKArrayRef notificationIDs)
 {
     toImpl(managerRef)->providerDidCloseNotifications(toImpl(notificationIDs));
@@ -67,9 +72,4 @@ void WKNotificationManagerProviderDidUpdateNotificationPolicy(WKNotificationMana
 void WKNotificationManagerProviderDidRemoveNotificationPolicies(WKNotificationManagerRef managerRef, WKArrayRef origins)
 {
     toImpl(managerRef)->providerDidRemoveNotificationPolicies(toImpl(origins));
-}
-
-uint64_t WKNotificationManagerGetLocalIDForTesting(WKNotificationManagerRef manager, WKNotificationRef notification)
-{
-    return toImpl(manager)->notificationLocalIDForTesting(toImpl(notification));
 }

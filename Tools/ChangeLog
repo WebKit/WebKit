@@ -1,3 +1,38 @@
+2021-12-21  Brady Eidson  <beidson@apple.com>
+
+        Make Notification identifiers be a UUID string instead of a uint64_t
+        https://bugs.webkit.org/show_bug.cgi?id=234534
+
+        Reviewed by Alex Christensen.
+        
+        Where possible, use the String UUID identifier.
+        This gets rid of lots of weird maps and cleans up flaky situations that could occasionally occur.
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::postSimulateWebNotificationClick):
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.h:
+
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::simulateWebNotificationClick):
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::simulateWebNotificationClick):
+        * WebKitTestRunner/TestController.h:
+
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::didReceiveMessageFromInjectedBundle):
+
+        * WebKitTestRunner/WebNotificationProvider.cpp:
+        (WTR::WebNotificationProvider::~WebNotificationProvider):
+        (WTR::WebNotificationProvider::showWebNotification):
+        (WTR::WebNotificationProvider::closeWebNotification):
+        (WTR::WebNotificationProvider::addNotificationManager):
+        (WTR::WebNotificationProvider::removeNotificationManager):
+        (WTR::WebNotificationProvider::simulateWebNotificationClick):
+        (WTR::WebNotificationProvider::reset):
+        (WTR::removeGlobalIDFromIDMap): Deleted.
+        * WebKitTestRunner/WebNotificationProvider.h:
+
 2021-12-21  Simon Fraser  <simon.fraser@apple.com>
 
         Allow a way to specify a custom pixel tolerance in a ref test

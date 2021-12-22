@@ -94,7 +94,7 @@ public:
     void postSetBackingScaleFactor(double);
     void postSetWindowIsKey(bool);
     void postSetViewSize(double width, double height);
-    void postSimulateWebNotificationClick(uint64_t notificationID);
+    void postSimulateWebNotificationClick(WKStringRef notificationID);
     void postSetAddsVisitedLinks(bool);
 
     // Geolocation.

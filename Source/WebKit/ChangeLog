@@ -1,3 +1,95 @@
+2021-12-21  Brady Eidson  <beidson@apple.com>
+
+        Make Notification identifiers be a UUID string instead of a uint64_t
+        https://bugs.webkit.org/show_bug.cgi?id=234534
+
+        Reviewed by Alex Christensen.
+        
+        This is mostly changing a whole bunch of uint64_ts to Strings, but also gets rid of lots of weird
+        and fragile maps.
+
+        * NetworkProcess/Notifications/NetworkNotificationManager.cpp:
+        (WebKit::NetworkNotificationManager::cancelNotification):
+        (WebKit::NetworkNotificationManager::clearNotifications):
+        (WebKit::NetworkNotificationManager::didDestroyNotification):
+        * NetworkProcess/Notifications/NetworkNotificationManager.h:
+        * Shared/Notifications/NotificationManagerMessageHandler.h:
+        * Shared/Notifications/NotificationManagerMessageHandler.messages.in:
+
+        * UIProcess/API/C/WKNotification.cpp:
+        (WKNotificationCopyCoreIDForTesting):
+        * UIProcess/API/C/WKNotification.h:
+
+        * UIProcess/API/C/WKNotificationManager.cpp:
+        (WKNotificationManagerProviderDidClickNotification_b):
+        (WKNotificationManagerProviderDidRemoveNotificationPolicies):
+        (WKNotificationManagerGetLocalIDForTesting): Deleted.
+        * UIProcess/API/C/WKNotificationManager.h:
+
+        * UIProcess/Notifications/WebNotification.cpp:
+        (WebKit::WebNotification::WebNotification):
+        * UIProcess/Notifications/WebNotification.h:
+        (WebKit::WebNotification::create):
+        (WebKit::WebNotification::notificationID const):
+        (WebKit::WebNotification::coreNotificationID const):
+        (WebKit::WebNotification::pageIdentifier const):
+
+        * UIProcess/Notifications/WebNotificationManagerMessageHandler.cpp:
+        (WebKit::WebNotificationManagerMessageHandler::cancelNotification):
+        (WebKit::WebNotificationManagerMessageHandler::clearNotifications):
+        (WebKit::WebNotificationManagerMessageHandler::didDestroyNotification):
+        * UIProcess/Notifications/WebNotificationManagerMessageHandler.h:
+
+        * UIProcess/Notifications/WebNotificationManagerProxy.cpp:
+        (WebKit::WebNotificationManagerProxy::show):
+        (WebKit::WebNotificationManagerProxy::cancel):
+        (WebKit::WebNotificationManagerProxy::didDestroyNotification):
+        (WebKit::pageIDsMatch):
+        (WebKit::pageAndNotificationIDsMatch):
+        (WebKit::WebNotificationManagerProxy::clearNotifications):
+        (WebKit::WebNotificationManagerProxy::providerDidShowNotification):
+        (WebKit::WebNotificationManagerProxy::providerDidClickNotification):
+        (WebKit::WebNotificationManagerProxy::providerDidCloseNotifications):
+        (WebKit::generateGlobalNotificationID): Deleted.
+        (WebKit::WebNotificationManagerProxy::notificationLocalIDForTesting): Deleted.
+        * UIProcess/Notifications/WebNotificationManagerProxy.h:
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::cancelNotification):
+        (WebKit::WebPageProxy::clearNotifications):
+        (WebKit::WebPageProxy::didDestroyNotification):
+        * UIProcess/WebPageProxy.h:
+
+        * WebProcess/InjectedBundle/API/c/WKBundle.cpp:
+        (WKBundleCopyWebNotificationID):
+        (WKBundleGetWebNotificationID): Deleted.
+        * WebProcess/InjectedBundle/API/c/WKBundlePrivate.h:
+
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::webNotificationID):
+        * WebProcess/InjectedBundle/InjectedBundle.h:
+
+        * WebProcess/Notifications/WebNotificationManager.cpp:
+        (WebKit::WebNotificationManager::show):
+        (WebKit::WebNotificationManager::cancel):
+        (WebKit::WebNotificationManager::didDestroyNotification):
+        (WebKit::WebNotificationManager::didShowNotification):
+        (WebKit::WebNotificationManager::didClickNotification):
+        (WebKit::WebNotificationManager::didCloseNotifications):
+        (WebKit::generateNotificationID): Deleted.
+        (WebKit::WebNotificationManager::notificationIDForTesting): Deleted.
+        (WebKit::WebNotificationManager::clearNotifications): Deleted.
+        (WebKit::WebNotificationManager::removeNotificationFromContextMap): Deleted.
+        * WebProcess/Notifications/WebNotificationManager.h:
+        * WebProcess/Notifications/WebNotificationManager.messages.in:
+
+        * WebProcess/WebCoreSupport/WebNotificationClient.cpp:
+        (WebKit::WebNotificationClient::show):
+        (WebKit::WebNotificationClient::cancel):
+        (WebKit::WebNotificationClient::notificationObjectDestroyed):
+        (WebKit::WebNotificationClient::clearNotifications): Deleted.
+        * WebProcess/WebCoreSupport/WebNotificationClient.h:
+
 2021-12-21  Eliot Hsu  <eliot_hsu@apple.com>
 
         Fix Safari-side SafeBrowsing telemetry

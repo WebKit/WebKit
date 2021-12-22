@@ -43,7 +43,7 @@ struct NotificationData {
     String language;
     WebCore::NotificationDirection direction;
     String originString;
-    uint64_t notificationID;
+    String notificationID;
 };
 
 template<class Encoder>
@@ -90,7 +90,7 @@ std::optional<NotificationData> NotificationData::decode(Decoder& decoder)
     if (!originString)
         return std::nullopt;
 
-    std::optional<uint64_t> notificationID;
+    std::optional<String> notificationID;
     decoder >> notificationID;
     if (!notificationID)
         return std::nullopt;

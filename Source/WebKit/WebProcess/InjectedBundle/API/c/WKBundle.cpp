@@ -206,9 +206,13 @@ void WKBundleRemoveAllWebNotificationPermissions(WKBundleRef bundleRef, WKBundle
     WebKit::toImpl(bundleRef)->removeAllWebNotificationPermissions(WebKit::toImpl(pageRef));
 }
 
-uint64_t WKBundleGetWebNotificationID(WKBundleRef bundleRef, JSContextRef context, JSValueRef notification)
+WKStringRef WKBundleCopyWebNotificationID(WKBundleRef bundleRef, JSContextRef context, JSValueRef notification)
 {
-    return WebKit::toImpl(bundleRef)->webNotificationID(context, notification);
+    auto identifier = WebKit::toImpl(bundleRef)->webNotificationID(context, notification);
+    if (!identifier)
+        return nullptr;
+
+    return WebKit::toCopiedAPI(*identifier);
 }
 
 void WKBundleSetTabKeyCyclesThroughElements(WKBundleRef bundleRef, WKBundlePageRef pageRef, bool enabled)

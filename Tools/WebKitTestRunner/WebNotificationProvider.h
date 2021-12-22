@@ -31,6 +31,7 @@
 #include <WebKit/WKRetainPtr.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
+#include <wtf/text/StringHash.h>
 
 namespace WTR {
 
@@ -46,15 +47,12 @@ public:
     void removeNotificationManager(WKNotificationManagerRef);
     WKDictionaryRef notificationPermissions();
 
-    void simulateWebNotificationClick(WKPageRef, uint64_t notificationID);
+    void simulateWebNotificationClick(WKPageRef, WKStringRef notificationID);
     void reset();
 
 private:
-    // Inverses of each other.
-    HashMap<WKRetainPtr<WKNotificationManagerRef>, HashSet<uint64_t>> m_ownedNotifications;
-    HashMap<uint64_t, WKNotificationManagerRef> m_owningManager;
-
-    HashMap<std::pair<WKPageRef, uint64_t>, uint64_t> m_localToGlobalNotificationIDMap;
+    HashSet<WKRetainPtr<WKNotificationManagerRef>> m_knownManagers;
+    HashMap<String, WKNotificationManagerRef> m_owningManager;
 };
 
 }

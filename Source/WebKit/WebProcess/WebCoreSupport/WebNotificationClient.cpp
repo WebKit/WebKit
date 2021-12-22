@@ -46,22 +46,17 @@ WebNotificationClient::~WebNotificationClient()
 {
 }
 
-bool WebNotificationClient::show(Notification* notification)
+bool WebNotificationClient::show(Notification& notification)
 {
     return WebProcess::singleton().supplement<WebNotificationManager>()->show(notification, m_page);
 }
 
-void WebNotificationClient::cancel(Notification* notification)
+void WebNotificationClient::cancel(Notification& notification)
 {
     WebProcess::singleton().supplement<WebNotificationManager>()->cancel(notification, m_page);
 }
 
-void WebNotificationClient::clearNotifications(ScriptExecutionContext* context)
-{
-    WebProcess::singleton().supplement<WebNotificationManager>()->clearNotifications(context, m_page);
-}
-
-void WebNotificationClient::notificationObjectDestroyed(Notification* notification)
+void WebNotificationClient::notificationObjectDestroyed(Notification& notification)
 {
     WebProcess::singleton().supplement<WebNotificationManager>()->didDestroyNotification(notification, m_page);
 }

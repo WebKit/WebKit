@@ -41,9 +41,9 @@ public:
 
     virtual void requestSystemNotificationPermission(const String& securityOrigin, CompletionHandler<void(bool)>&&) = 0;
     virtual void showNotification(const WebCore::NotificationData&) = 0;
-    virtual void cancelNotification(uint64_t notificationID) = 0;
-    virtual void clearNotifications(const Vector<uint64_t>& notificationIDs) = 0;
-    virtual void didDestroyNotification(uint64_t notificationID) = 0;
+    virtual void cancelNotification(const String& notificationID) = 0;
+    virtual void clearNotifications(const Vector<String>& notificationIDs) = 0;
+    virtual void didDestroyNotification(const String& notificationID) = 0;
 
 private:
     // IPC::MessageReceiver

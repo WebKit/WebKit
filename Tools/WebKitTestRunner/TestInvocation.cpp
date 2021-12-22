@@ -390,7 +390,7 @@ void TestInvocation::didReceiveMessageFromInjectedBundle(WKStringRef messageName
     }
 
     if (WKStringIsEqualToUTF8CString(messageName, "SimulateWebNotificationClick")) {
-        uint64_t notificationID = uint64Value(messageBody);
+        WKStringRef notificationID = stringValue(messageBody);
         TestController::singleton().simulateWebNotificationClick(notificationID);
         return;
     }

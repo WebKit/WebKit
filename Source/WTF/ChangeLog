@@ -1,3 +1,15 @@
+2021-12-21  Brady Eidson  <beidson@apple.com>
+
+        Make Notification identifiers be a UUID string instead of a uint64_t
+        https://bugs.webkit.org/show_bug.cgi?id=234534
+
+        Reviewed by Alex Christensen.
+
+        Add a new form of Identified that uses a UUID String as the identifier.
+        
+        * wtf/Identified.h:
+        (WTF::UUIDIdentified::UUIDIdentified):
+
 2021-12-21  Sam Weinig  <weinig@apple.com>
 
         Add support for premultiplied alpha interpolated gradients and defaulted off option to use them for CSS Gradients

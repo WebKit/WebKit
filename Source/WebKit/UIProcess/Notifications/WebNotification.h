@@ -27,6 +27,8 @@
 
 #include "APIObject.h"
 #include "APISecurityOrigin.h"
+#include "WebPageProxyIdentifier.h"
+#include <wtf/Identified.h>
 #include <wtf/RefPtr.h>
 #include <wtf/text/WTFString.h>
 
@@ -37,11 +39,11 @@ struct NotificationData;
 
 namespace WebKit {
 
-class WebNotification : public API::ObjectImpl<API::Object::Type::Notification> {
+class WebNotification : public API::ObjectImpl<API::Object::Type::Notification>, public Identified<WebNotification> {
 public:
-    static Ref<WebNotification> create(const WebCore::NotificationData& data)
+    static Ref<WebNotification> create(const WebCore::NotificationData& data, WebPageProxyIdentifier pageIdentifier)
     {
-        return adoptRef(*new WebNotification(data));
+        return adoptRef(*new WebNotification(data, pageIdentifier));
     }
 
     const String& title() const { return m_title; }
@@ -52,10 +54,13 @@ public:
     WebCore::NotificationDirection dir() const { return m_dir; }
     API::SecurityOrigin* origin() const { return m_origin.get(); }
     
-    uint64_t notificationID() const { return m_notificationID; }
+    uint64_t notificationID() const { return identifier(); }
+    const String& coreNotificationID() const { return m_coreNotificationID; }
+
+    WebPageProxyIdentifier pageIdentifier() const { return m_pageIdentifier; }
 
 private:
-    WebNotification(const WebCore::NotificationData&);
+    WebNotification(const WebCore::NotificationData&, WebPageProxyIdentifier);
 
     String m_title;
     String m_body;
@@ -64,7 +69,9 @@ private:
     String m_lang;
     WebCore::NotificationDirection m_dir;
     RefPtr<API::SecurityOrigin> m_origin;
-    uint64_t m_notificationID;
+    String m_coreNotificationID;
+
+    WebPageProxyIdentifier m_pageIdentifier;
 };
 
 inline bool isNotificationIDValid(uint64_t id)

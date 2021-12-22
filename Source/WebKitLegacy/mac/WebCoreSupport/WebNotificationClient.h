@@ -45,10 +45,9 @@ public:
     uint64_t notificationIDForTesting(WebCore::Notification*);
 
 private:
-    bool show(WebCore::Notification*) override;
-    void cancel(WebCore::Notification*) override;
-    void clearNotifications(WebCore::ScriptExecutionContext*) override;
-    void notificationObjectDestroyed(WebCore::Notification*) override;
+    bool show(WebCore::Notification&) override;
+    void cancel(WebCore::Notification&) override;
+    void notificationObjectDestroyed(WebCore::Notification&) override;
     void notificationControllerDestroyed() override;
     void requestPermission(WebCore::ScriptExecutionContext&, PermissionHandler&&) override;
     WebCore::NotificationClient::Permission checkPermission(WebCore::ScriptExecutionContext*) override;
@@ -57,9 +56,6 @@ private:
 
     WebView *m_webView;
     HashMap<RefPtr<WebCore::Notification>, RetainPtr<WebNotification>> m_notificationMap;
-    
-    typedef HashMap<RefPtr<WebCore::ScriptExecutionContext>, Vector<RetainPtr<WebNotification>>> NotificationContextMap;
-    NotificationContextMap m_notificationContextMap;
 
     bool m_everRequestedPermission { false };
 };

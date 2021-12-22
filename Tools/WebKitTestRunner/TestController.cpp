@@ -2346,7 +2346,7 @@ void TestController::didRemoveNavigationGestureSnapshot(WKPageRef)
     m_currentInvocation->didRemoveSwipeSnapshot();
 }
 
-void TestController::simulateWebNotificationClick(uint64_t notificationID)
+void TestController::simulateWebNotificationClick(WKStringRef notificationID)
 {
     m_webNotificationProvider.simulateWebNotificationClick(mainWebView()->page(), notificationID);
 }

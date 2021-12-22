@@ -87,3 +87,8 @@ uint64_t WKNotificationGetID(WKNotificationRef notification)
 {
     return toImpl(notification)->notificationID();
 }
+
+WKStringRef WKNotificationCopyCoreIDForTesting(WKNotificationRef notification)
+{
+    return toCopiedAPI(toImpl(notification)->coreNotificationID());
+}

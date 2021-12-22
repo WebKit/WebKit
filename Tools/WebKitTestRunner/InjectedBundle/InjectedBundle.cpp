@@ -663,9 +663,9 @@ void InjectedBundle::postSetViewSize(double width, double height)
     WKBundlePagePostSynchronousMessageForTesting(page()->page(), toWK("SetViewSize").get(), body.get(), 0);
 }
 
-void InjectedBundle::postSimulateWebNotificationClick(uint64_t notificationID)
+void InjectedBundle::postSimulateWebNotificationClick(WKStringRef notificationID)
 {
-    postPageMessage("SimulateWebNotificationClick", adoptWK(WKUInt64Create(notificationID)));
+    postPageMessage("SimulateWebNotificationClick", notificationID);
 }
 
 void InjectedBundle::postSetAddsVisitedLinks(bool addsVisitedLinks)

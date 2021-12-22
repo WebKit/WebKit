@@ -8742,17 +8742,17 @@ void WebPageProxy::showNotification(const WebCore::NotificationData& notificatio
     m_process->processPool().supplement<WebNotificationManagerProxy>()->show(this, notificationData);
 }
 
-void WebPageProxy::cancelNotification(uint64_t notificationID)
+void WebPageProxy::cancelNotification(const String& notificationID)
 {
     m_process->processPool().supplement<WebNotificationManagerProxy>()->cancel(this, notificationID);
 }
 
-void WebPageProxy::clearNotifications(const Vector<uint64_t>& notificationIDs)
+void WebPageProxy::clearNotifications(const Vector<String>& notificationIDs)
 {
     m_process->processPool().supplement<WebNotificationManagerProxy>()->clearNotifications(this, notificationIDs);
 }
 
-void WebPageProxy::didDestroyNotification(uint64_t notificationID)
+void WebPageProxy::didDestroyNotification(const String& notificationID)
 {
     m_process->processPool().supplement<WebNotificationManagerProxy>()->didDestroyNotification(this, notificationID);
 }

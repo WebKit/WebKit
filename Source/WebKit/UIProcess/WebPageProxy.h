@@ -2033,9 +2033,9 @@ public:
 #endif
 
     void showNotification(const WebCore::NotificationData&);
-    void cancelNotification(uint64_t notificationID);
-    void clearNotifications(const Vector<uint64_t>& notificationIDs);
-    void didDestroyNotification(uint64_t notificationID);
+    void cancelNotification(const String& notificationID);
+    void clearNotifications(const Vector<String>& notificationIDs);
+    void didDestroyNotification(const String& notificationID);
 
     void requestCookieConsent(CompletionHandler<void(WebCore::CookieConsentDecisionResult)>&&);
     void classifyModalContainerControls(Vector<String>&& texts, CompletionHandler<void(Vector<WebCore::ModalContainerControlType>&&)>&&);

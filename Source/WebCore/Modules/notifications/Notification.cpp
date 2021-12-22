@@ -102,7 +102,7 @@ void Notification::show()
         dispatchErrorEvent();
         return;
     }
-    if (client.show(this))
+    if (client.show(*this))
         m_state = Showing;
 }
 
@@ -113,7 +113,7 @@ void Notification::close()
         break;
     case Showing: {
         if (auto* page = document()->page())
-            NotificationController::from(page)->client().cancel(this);
+            NotificationController::from(page)->client().cancel(*this);
         break;
     }
     case Closed:
@@ -136,7 +136,7 @@ void Notification::stop()
     ActiveDOMObject::stop();
 
     if (auto* page = document()->page())
-        NotificationController::from(page)->client().notificationObjectDestroyed(this);
+        NotificationController::from(page)->client().notificationObjectDestroyed(*this);
 }
 
 void Notification::suspend(ReasonForSuspension)
@@ -225,7 +225,7 @@ bool Notification::virtualHasPendingActivity() const
     return m_state == Showing && m_hasRelevantEventListener;
 }
 
-NotificationData Notification::dataWithoutNotificationID() const
+NotificationData Notification::data() const
 {
     return {
         m_title,
@@ -235,7 +235,7 @@ NotificationData Notification::dataWithoutNotificationID() const
         m_lang,
         m_direction,
         scriptExecutionContext()->securityOrigin()->toString(),
-        0
+        identifier(),
     };
 }
 

@@ -30,7 +30,7 @@
 
 namespace WebKit {
 
-WebNotification::WebNotification(const WebCore::NotificationData& data)
+WebNotification::WebNotification(const WebCore::NotificationData& data, WebPageProxyIdentifier pageIdentifier)
     : m_title(data.title)
     , m_body(data.body)
     , m_iconURL(data.iconURL)
@@ -38,7 +38,8 @@ WebNotification::WebNotification(const WebCore::NotificationData& data)
     , m_lang(data.language)
     , m_dir(data.direction)
     , m_origin(API::SecurityOrigin::createFromString(data.originString))
-    , m_notificationID(data.notificationID)
+    , m_coreNotificationID(data.notificationID)
+    , m_pageIdentifier(pageIdentifier)
 {
 }
 

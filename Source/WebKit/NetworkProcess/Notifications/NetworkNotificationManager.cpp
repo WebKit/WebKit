@@ -114,19 +114,19 @@ void NetworkNotificationManager::showNotification(const WebCore::NotificationDat
 //    sendMessageWithReply<WebPushD::MessageType::EchoTwice>(WTFMove(completionHandler), String("FIXME: Do useful work here"));
 }
 
-void NetworkNotificationManager::cancelNotification(uint64_t)
+void NetworkNotificationManager::cancelNotification(const String&)
 {
     if (!m_connection)
         return;
 }
 
-void NetworkNotificationManager::clearNotifications(const Vector<uint64_t>&)
+void NetworkNotificationManager::clearNotifications(const Vector<String>&)
 {
     if (!m_connection)
         return;
 }
 
-void NetworkNotificationManager::didDestroyNotification(uint64_t)
+void NetworkNotificationManager::didDestroyNotification(const String&)
 {
     if (!m_connection)
         return;

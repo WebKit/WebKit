@@ -51,14 +51,6 @@
 namespace WebKit {
 using namespace WebCore;
 
-#if ENABLE(NOTIFICATIONS)
-static uint64_t generateNotificationID()
-{
-    static uint64_t uniqueNotificationID = 1;
-    return uniqueNotificationID++;
-}
-#endif
-
 const char* WebNotificationManager::supplementName()
 {
     return "WebNotificationManager";
@@ -128,18 +120,6 @@ void WebNotificationManager::removeAllPermissionsForTesting()
 #endif
 }
 
-uint64_t WebNotificationManager::notificationIDForTesting(Notification* notification)
-{
-#if ENABLE(NOTIFICATIONS)
-    if (!notification)
-        return 0;
-    return m_notificationMap.get(notification);
-#else
-    UNUSED_PARAM(notification);
-    return 0;
-#endif
-}
-
 #if ENABLE(NOTIFICATIONS)
 template<typename U> bool sendNotificationMessage(WebProcess& process, U&& message, WebPage& page)
 {
@@ -151,22 +131,15 @@ template<typename U> bool sendNotificationMessage(WebProcess& process, U&& messa
 }
 #endif // ENABLE(NOTIFICATIONS)
 
-bool WebNotificationManager::show(Notification* notification, WebPage* page)
+bool WebNotificationManager::show(Notification& notification, WebPage* page)
 {
 #if ENABLE(NOTIFICATIONS)
-    if (!notification || !page->corePage()->settings().notificationsEnabled())
+    if (!page->corePage()->settings().notificationsEnabled())
         return false;
-    
-    uint64_t notificationID = generateNotificationID();
-    m_notificationMap.set(notification, notificationID);
-    m_notificationIDMap.set(notificationID, notification);
-    
-    auto it = m_notificationContextMap.add(notification->scriptExecutionContext(), Vector<uint64_t>()).iterator;
-    it->value.append(notificationID);
 
-    auto notificationData = notification->dataWithoutNotificationID();
-    notificationData.notificationID = notificationID;
-    sendNotificationMessage(m_process, Messages::NotificationManagerMessageHandler::ShowNotification(WTFMove(notificationData)), *page);
+    m_notificationIDMap.set(notification.identifier(), &notification);
+
+    sendNotificationMessage(m_process, Messages::NotificationManagerMessageHandler::ShowNotification(notification.data()), *page);
     return true;
 #else
     UNUSED_PARAM(notification);
@@ -175,72 +148,44 @@ bool WebNotificationManager::show(Notification* notification, WebPage* page)
 #endif
 }
 
-void WebNotificationManager::cancel(Notification* notification, WebPage* page)
+void WebNotificationManager::cancel(Notification& notification, WebPage* page)
 {
 #if ENABLE(NOTIFICATIONS)
-    if (!notification || !page->corePage()->settings().notificationsEnabled())
+    if (!page->corePage()->settings().notificationsEnabled())
         return;
-    
-    uint64_t notificationID = m_notificationMap.get(notification);
-    if (!notificationID)
+
+    auto mappedNotification = m_notificationIDMap.get(notification.identifier());
+    if (!mappedNotification)
         return;
-    
-    sendNotificationMessage(m_process, Messages::NotificationManagerMessageHandler::CancelNotification(notificationID), *page);
+    ASSERT(mappedNotification == &notification);
+
+    sendNotificationMessage(m_process, Messages::NotificationManagerMessageHandler::CancelNotification(notification.identifier()), *page);
 #else
     UNUSED_PARAM(notification);
     UNUSED_PARAM(page);
 #endif
 }
 
-void WebNotificationManager::clearNotifications(WebCore::ScriptExecutionContext* context, WebPage* page)
+void WebNotificationManager::didDestroyNotification(Notification& notification, WebPage* page)
 {
 #if ENABLE(NOTIFICATIONS)
-    NotificationContextMap::iterator it = m_notificationContextMap.find(context);
-    if (it == m_notificationContextMap.end())
+    Ref protectedNotification { notification };
+
+    auto takenNotification = m_notificationIDMap.take(notification.identifier());
+    if (!takenNotification)
         return;
+    ASSERT(takenNotification == &notification);
 
-    Vector<uint64_t>& notificationIDs = it->value;
-    sendNotificationMessage(m_process, Messages::NotificationManagerMessageHandler::ClearNotifications(notificationIDs), *page);
-    size_t count = notificationIDs.size();
-    for (size_t i = 0; i < count; ++i) {
-        RefPtr<Notification> notification = m_notificationIDMap.take(notificationIDs[i]);
-        if (!notification)
-            continue;
-        notification->finalize();
-        m_notificationMap.remove(notification);
-    }
-    
-    m_notificationContextMap.remove(it);
-#else
-    UNUSED_PARAM(context);
-    UNUSED_PARAM(page);
-#endif
-}
-
-void WebNotificationManager::didDestroyNotification(Notification* notification, WebPage* page)
-{
-#if ENABLE(NOTIFICATIONS)
-    RefPtr protectedNotification { notification };
-
-    uint64_t notificationID = m_notificationMap.take(notification);
-    if (!notificationID)
-        return;
-
-    m_notificationIDMap.remove(notificationID);
-    removeNotificationFromContextMap(notificationID, notification);
-    sendNotificationMessage(m_process, Messages::NotificationManagerMessageHandler::DidDestroyNotification(notificationID), *page);
+    sendNotificationMessage(m_process, Messages::NotificationManagerMessageHandler::DidDestroyNotification(notification.identifier()), *page);
 #else
     UNUSED_PARAM(notification);
     UNUSED_PARAM(page);
 #endif
 }
 
-void WebNotificationManager::didShowNotification(uint64_t notificationID)
+void WebNotificationManager::didShowNotification(const String& notificationID)
 {
 #if ENABLE(NOTIFICATIONS)
-    if (!isNotificationIDValid(notificationID))
-        return;
-    
     RefPtr<Notification> notification = m_notificationIDMap.get(notificationID);
     if (!notification)
         return;
@@ -251,12 +196,9 @@ void WebNotificationManager::didShowNotification(uint64_t notificationID)
 #endif
 }
 
-void WebNotificationManager::didClickNotification(uint64_t notificationID)
+void WebNotificationManager::didClickNotification(const String& notificationID)
 {
 #if ENABLE(NOTIFICATIONS)
-    if (!isNotificationIDValid(notificationID))
-        return;
-
     RefPtr<Notification> notification = m_notificationIDMap.get(notificationID);
     if (!notification)
         return;
@@ -269,21 +211,16 @@ void WebNotificationManager::didClickNotification(uint64_t notificationID)
 #endif
 }
 
-void WebNotificationManager::didCloseNotifications(const Vector<uint64_t>& notificationIDs)
+void WebNotificationManager::didCloseNotifications(const Vector<String>& notificationIDs)
 {
 #if ENABLE(NOTIFICATIONS)
     size_t count = notificationIDs.size();
     for (size_t i = 0; i < count; ++i) {
-        uint64_t notificationID = notificationIDs[i];
-        if (!isNotificationIDValid(notificationID))
-            continue;
+        auto notificationID = notificationIDs[i];
 
         RefPtr<Notification> notification = m_notificationIDMap.take(notificationID);
         if (!notification)
             continue;
-
-        m_notificationMap.remove(notification);
-        removeNotificationFromContextMap(notificationID, notification.get());
 
         notification->dispatchCloseEvent();
     }
@@ -291,19 +228,5 @@ void WebNotificationManager::didCloseNotifications(const Vector<uint64_t>& notif
     UNUSED_PARAM(notificationIDs);
 #endif
 }
-
-#if ENABLE(NOTIFICATIONS)
-void WebNotificationManager::removeNotificationFromContextMap(uint64_t notificationID, Notification* notification)
-{
-    // This is a helper function for managing the hash maps.
-    NotificationContextMap::iterator it = m_notificationContextMap.find(notification->scriptExecutionContext());
-    ASSERT(it != m_notificationContextMap.end());
-    size_t index = it->value.find(notificationID);
-    ASSERT(index != notFound);
-    it->value.remove(index);
-    if (it->value.isEmpty())
-        m_notificationContextMap.remove(it);
-}
-#endif
 
 } // namespace WebKit
