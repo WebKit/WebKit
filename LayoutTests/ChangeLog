@@ -1,3 +1,42 @@
+2021-12-21  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r287067. rdar://problem/86276497
+
+    Make sure to start a realtime outgoing source in case it is taken to another sender
+    https://bugs.webkit.org/show_bug.cgi?id=234296
+    <rdar://86276497>
+    
+    Reviewed by Eric Carlson.
+    
+    Source/WebCore:
+    
+    We are asynchronously starting libwebrtc sources.
+    When a sender is created first and is assigned a source later, we take the source and assign it to the sender.
+    In that case, the source might not be started and we will not send any data.
+    
+    Test: webrtc/addTransceiver-then-addTrack.html
+    
+    * Modules/mediastream/libwebrtc/LibWebRTCRtpSenderBackend.cpp:
+    
+    LayoutTests:
+    
+    * webrtc/addTransceiver-then-addTrack-expected.txt: Added.
+    * webrtc/addTransceiver-then-addTrack.html: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@287067 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-12-15  Youenn Fablet  <youenn@apple.com>
+
+            Make sure to start a realtime outgoing source in case it is taken to another sender
+            https://bugs.webkit.org/show_bug.cgi?id=234296
+            <rdar://86276497>
+
+            Reviewed by Eric Carlson.
+
+            * webrtc/addTransceiver-then-addTrack-expected.txt: Added.
+            * webrtc/addTransceiver-then-addTrack.html: Added.
+
 2021-12-09  Robert Jenner  <Jenner@apple.com>
 
         REGRESSION(r285452-r285595):[ Monterey Release ] 2 accessibility (layout-tests) are constant text failures

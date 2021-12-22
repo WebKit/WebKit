@@ -194,16 +194,14 @@ bool LibWebRTCRtpSenderBackend::hasSource() const
 void LibWebRTCRtpSenderBackend::setSource(Source&& source)
 {
     stopSource();
-    m_source = WTFMove(source);
+    m_source = std::exchange(source, nullptr);
     startSource();
 }
 
 void LibWebRTCRtpSenderBackend::takeSource(LibWebRTCRtpSenderBackend& backend)
 {
     ASSERT(backend.hasSource());
-    stopSource();
-    m_source = WTFMove(backend.m_source);
-    backend.m_source = nullptr;
+    setSource(WTFMove(backend.m_source));
 }
 
 } // namespace WebCore
