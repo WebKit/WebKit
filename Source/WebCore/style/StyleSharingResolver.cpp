@@ -107,6 +107,9 @@ std::unique_ptr<RenderStyle> SharingResolver::resolve(const Styleable& searchSty
         if (keyframeEffectStack->hasEffectWithImplicitKeyframes())
             return nullptr;
     }
+    // FIXME: Do something smarter here, for example RuleSet based matching like with attribute/sibling selectors.
+    if (Scope::forNode(element).usesHasPseudoClass())
+        return nullptr;
 
     Context context {
         update,
