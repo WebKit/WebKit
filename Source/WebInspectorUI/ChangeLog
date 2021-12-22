@@ -1,3 +1,19 @@
+2021-12-21  Patrick Angle  <pangle@apple.com>
+
+        Web Inspector: Assertion Failed adding event listener in CSSPropertyNameCompletions.prototype._updateValuesWithLatestCSSVariablesIfNeeded
+        https://bugs.webkit.org/show_bug.cgi?id=234570
+
+        Reviewed by Devin Rousso.
+
+        Adding an event listener to listen for style changes every time we update the list of CSS variables isn't quite
+        correct because it means we may attempt to add the event listener multiple times. Instead, this should be done
+        in response to the InspectedNodeChanged event directly to avoid adding the event listener multiple time to the
+        same DOM node.
+
+        * UserInterface/Models/CSSPropertyNameCompletions.js:
+        (WI.CSSPropertyNameCompletions.prototype._updateValuesWithLatestCSSVariablesIfNeeded):
+        (WI.CSSPropertyNameCompletions.prototype._handleInspectedNodeChanged):
+
 2021-12-21  Michael Saboff  <msaboff@apple.com>
 
         Fix symlinks for alternate root framework locations

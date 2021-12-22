@@ -86,10 +86,7 @@ WI.CSSPropertyNameCompletions = class CSSPropertyNameCompletions extends WI.CSSC
             return;
         }
 
-        let nodeStyles = WI.cssManager.stylesForNode(WI.domManager.inspectedNode);
-        nodeStyles.addEventListener(WI.DOMNodeStyles.Event.NeedsRefresh, this._handleNodesStylesNeedsRefresh, this);
-
-        let values = Array.from(nodeStyles.allCSSVariables);
+        let values = Array.from(WI.cssManager.stylesForNode(WI.domManager.inspectedNode).allCSSVariables);
         values.pushAll(this._cachedSortedPropertyNames);
         this.replaceValues(values);
 
@@ -98,13 +95,12 @@ WI.CSSPropertyNameCompletions = class CSSPropertyNameCompletions extends WI.CSSC
 
     _handleInspectedNodeChanged(event)
     {
-        if (this._needsVariablesFromInspectedNode || !event.data.lastInspectedNode)
-            return;
-
         this._needsVariablesFromInspectedNode = true;
 
-        let nodeStyles = WI.cssManager.stylesForNode(event.data.lastInspectedNode);
-        nodeStyles.removeEventListener(WI.DOMNodeStyles.Event.NeedsRefresh, this._handleNodesStylesNeedsRefresh, this);
+        if (event.data.lastInspectedNode)
+            WI.cssManager.stylesForNode(event.data.lastInspectedNode).removeEventListener(WI.DOMNodeStyles.Event.NeedsRefresh, this._handleNodesStylesNeedsRefresh, this);
+
+        WI.cssManager.stylesForNode(WI.domManager.inspectedNode).addEventListener(WI.DOMNodeStyles.Event.NeedsRefresh, this._handleNodesStylesNeedsRefresh, this);
     }
 
     _handleNodesStylesNeedsRefresh(event)
