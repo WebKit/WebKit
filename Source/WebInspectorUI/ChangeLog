@@ -1,5 +1,18 @@
 2021-12-21  Patrick Angle  <pangle@apple.com>
 
+        Web Inspector: Assertion Failed removing subview in ContentViewContainer.prototype._disassociateFromContentView
+        https://bugs.webkit.org/show_bug.cgi?id=234572
+
+        Reviewed by Devin Rousso.
+
+        r283859 accidentally removed the checks that a content view is attached before attempting to remove it, leading
+        to an assertion.
+
+        * UserInterface/Views/ContentViewContainer.js:
+        (WI.ContentViewContainer.prototype._disassociateFromContentView):
+
+2021-12-21  Patrick Angle  <pangle@apple.com>
+
         Web Inspector: Assertion Failed adding event listener in CSSPropertyNameCompletions.prototype._updateValuesWithLatestCSSVariablesIfNeeded
         https://bugs.webkit.org/show_bug.cgi?id=234570
 

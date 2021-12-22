@@ -421,11 +421,14 @@ WI.ContentViewContainer = class ContentViewContainer extends WI.View
             return;
         }
 
-        // Hidden/non-visible extension tabs must remain attached to the DOM to avoid reloading.
-        if (contentView.constructor.shouldNotRemoveFromDOMWhenHidden() && !contentView.visible)
-            return;
+        if (contentView.constructor.shouldNotRemoveFromDOMWhenHidden()) {
+            // Hidden/non-visible extension tabs must remain attached to the DOM to avoid reloading.
+            if (!contentView.visible)
+                return;
 
-        this.removeSubview(contentView);
+            if (contentView.isAttached)
+                this.removeSubview(contentView);
+        }
 
         console.assert(!contentView.isAttached);
 
