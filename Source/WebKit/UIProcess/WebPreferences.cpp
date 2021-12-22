@@ -228,10 +228,6 @@ void WebPreferences::platformInitializeStore()
 #endif
 
 #if !PLATFORM(COCOA)
-void WebPreferences::initializeProcessStateDependentPreferences()
-{
-}
-
 void WebPreferences::platformUpdateStringValueForKey(const String&, const String&)
 {
     notImplemented();
