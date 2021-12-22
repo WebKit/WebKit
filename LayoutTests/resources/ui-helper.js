@@ -94,6 +94,18 @@ window.UIHelper = class UIHelper {
         });
     }
 
+    static async statelessMouseWheelScrollAt(x, y, deltaX, deltaY)
+    {
+        eventSender.monitorWheelEvents();
+        eventSender.mouseMoveTo(x, y);
+        eventSender.mouseScrollBy(deltaX, deltaY);
+        return new Promise(resolve => {
+            eventSender.callAfterScrollingCompletes(() => {
+                requestAnimationFrame(resolve);
+            });
+        });
+    }
+
     static async mouseWheelMayBeginAt(x, y)
     {
         eventSender.mouseMoveTo(x, y);

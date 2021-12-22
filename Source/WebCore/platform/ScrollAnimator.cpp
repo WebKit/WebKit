@@ -377,7 +377,6 @@ void ScrollAnimator::stopAnimationCallback(ScrollingEffectsController&)
     m_scrollAnimationScheduled = false;
 }
 
-#if PLATFORM(MAC)
 void ScrollAnimator::deferWheelEventTestCompletionForReason(WheelEventTestMonitor::ScrollableAreaIdentifier identifier, WheelEventTestMonitor::DeferReason reason) const
 {
     if (!m_wheelEventTestMonitor)
@@ -393,7 +392,6 @@ void ScrollAnimator::removeWheelEventTestCompletionDeferralForReason(WheelEventT
     
     m_wheelEventTestMonitor->removeDeferralForReason(identifier, reason);
 }
-#endif
 
 #if PLATFORM(GTK) || USE(NICOSIA)
 bool ScrollAnimator::scrollAnimationEnabled() const

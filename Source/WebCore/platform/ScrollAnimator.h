@@ -158,10 +158,8 @@ private:
     bool isPinnedOnSide(BoxSide) const final;
 #endif
 
-#if PLATFORM(MAC)
     void deferWheelEventTestCompletionForReason(WheelEventTestMonitor::ScrollableAreaIdentifier, WheelEventTestMonitor::DeferReason) const final;
     void removeWheelEventTestCompletionDeferralForReason(WheelEventTestMonitor::ScrollableAreaIdentifier, WheelEventTestMonitor::DeferReason) const final;
-#endif
 
 #if PLATFORM(GTK) || USE(NICOSIA)
     bool scrollAnimationEnabled() const final;

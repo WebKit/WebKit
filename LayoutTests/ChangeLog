@@ -1,3 +1,16 @@
+2021-12-22  Simon Fraser  <simon.fraser@apple.com>
+
+        Convert css3/scroll-snap/scroll-snap-wheel-event.html to use monitorWheelEvents()
+        https://bugs.webkit.org/show_bug.cgi?id=234526
+
+        Reviewed by Wenson Hsieh.
+
+        Convert the test to use a UIHelper function which makes use of WheelEventTestMonitor.
+
+        * css3/scroll-snap/scroll-snap-wheel-event.html:
+        * resources/ui-helper.js:
+        (window.UIHelper.async statelessMouseWheelScrollAt):
+
 2021-12-22  Kate Cheney  <katherine_cheney@apple.com>
 
         PCM tests crashing with 'unlink' errors

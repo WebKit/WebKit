@@ -609,6 +609,8 @@ void ScrollingEffectsController::statelessSnapTransitionTimerFired()
 
     if (m_scrollSnapState->transitionToSnapAnimationState(m_client.scrollExtents(), m_client.pageScaleFactor(), m_client.scrollOffset()))
         startScrollSnapAnimation();
+    else
+        stopDeferringWheelEventTestCompletion(WheelEventTestMonitor::ScrollSnapInProgress);
 }
 
 bool ScrollingEffectsController::processWheelEventForScrollSnap(const PlatformWheelEvent& wheelEvent)
