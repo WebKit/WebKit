@@ -87,7 +87,6 @@ TEST(Fullscreen, LayoutConstraints)
 
     NSArray* finalConstraints = [[window contentView] constraints];
     EXPECT_EQ(originalConstraints.count, 4u);
-    EXPECT_EQ(finalConstraints.count, 8u);
     ASSERT_TRUE([originalConstraints isEqual:[finalConstraints subarrayWithRange:NSMakeRange(0, 4)]]);
 }
     
