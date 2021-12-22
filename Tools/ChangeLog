@@ -1,5 +1,20 @@
 2021-12-21  Alex Christensen  <achristensen@webkit.org>
 
+        Re-enable ContextMenu API tests
+        https://bugs.webkit.org/show_bug.cgi?id=234585
+
+        Reviewed by Tim Horton.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ContextMenus.mm:
+        (TEST):
+        * TestWebKitAPI/cocoa/TestContextMenuDriver.h:
+        * TestWebKitAPI/cocoa/TestContextMenuDriver.mm:
+        (+[TestContextMenuDriver prefersCancelsTouchesInView]):
+        (-[TestContextMenuDriver cancelsTouchesInView]):
+        (-[TestContextMenuDriver setCancelsTouchesInView:]):
+
+2021-12-21  Alex Christensen  <achristensen@webkit.org>
+
         Enable Fullscreen.LayoutConstraints API test
         https://bugs.webkit.org/show_bug.cgi?id=234576
 

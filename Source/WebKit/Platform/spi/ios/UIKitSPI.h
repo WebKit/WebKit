@@ -1388,11 +1388,7 @@ typedef NS_ENUM(NSUInteger, _UIContextMenuLayout) {
 @end
 
 @interface _UIClickPresentationInteraction (IPI)
-@property (nonatomic, strong) _UIClickInteraction *previewClickInteraction;
-@end
-
-@interface _UIClickInteraction (IPI)
-@property (nonatomic, strong) id<_UIClickInteractionDriving> driver;
+@property (nonatomic, strong /*, nullable */) NSArray<id<_UIClickInteractionDriving>> *overrideDrivers;
 @end
 
 @interface UIContextMenuInteraction (IPI)

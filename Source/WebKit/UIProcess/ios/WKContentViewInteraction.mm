@@ -10786,11 +10786,8 @@ static NSString *previewIdentifierForElementAction(_WKElementAction *action)
         _contextMenuHasRequestedLegacyData = NO;
         [self addInteraction:_contextMenuInteraction.get()];
 
-        if (id<_UIClickInteractionDriving> driver = self.webView.configuration._clickInteractionDriverForTesting) {
-            _UIClickInteraction *previewClickInteraction = [[_contextMenuInteraction presentationInteraction] previewClickInteraction];
-            [previewClickInteraction setDriver:driver];
-            [driver setDelegate:(id<_UIClickInteractionDriverDelegate>)previewClickInteraction];
-        }
+        if (id<_UIClickInteractionDriving> driver = self.webView.configuration._clickInteractionDriverForTesting)
+            [_contextMenuInteraction presentationInteraction].overrideDrivers = @[driver];
         return;
     }
 #endif
