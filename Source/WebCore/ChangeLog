@@ -1,5 +1,23 @@
 2021-12-21  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r287107. rdar://problem/85150486
+
+    Unreviewed build fix after r287077.
+    
+    * platform/network/ProtectionSpaceHash.h:
+    (WebCore::ProtectionSpaceHash::hash):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@287107 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-12-15  Chris Dumez  <cdumez@apple.com>
+
+            Unreviewed build fix after r287077.
+
+            * platform/network/ProtectionSpaceHash.h:
+            (WebCore::ProtectionSpaceHash::hash):
+
+2021-12-21  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r287077. rdar://problem/85150486
 
     http/tests/security/basic-auth-subresource.html and some other http auth tests are flaky

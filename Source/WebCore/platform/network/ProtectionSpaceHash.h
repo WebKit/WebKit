@@ -37,8 +37,8 @@ struct ProtectionSpaceHash {
         Hasher hasher;
         add(hasher, protectionSpace.host());
         add(hasher, protectionSpace.port());
-        add(hasher, protectionSpace.serverType());
-        add(hasher, protectionSpace.authenticationScheme());
+        add(hasher, static_cast<unsigned>(protectionSpace.serverType()));
+        add(hasher, static_cast<unsigned>(protectionSpace.authenticationScheme()));
         if (!protectionSpace.isProxy())
             add(hasher, protectionSpace.realm());
         return hasher.hash();
