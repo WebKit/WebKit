@@ -76,7 +76,7 @@ bool FEColorMatrixCoreImageApplier::apply(const Filter&, const FilterImageVector
 
     case FECOLORMATRIX_TYPE_UNKNOWN:
     case FECOLORMATRIX_TYPE_LUMINANCETOALPHA: // FIXME: Add Luminance to Alpha Implementation
-        return nullptr;
+        return false;
     }
 
     auto *colorMatrixFilter = [CIFilter filterWithName:@"CIColorMatrix"];
@@ -102,7 +102,7 @@ bool FEColorMatrixCoreImageApplier::apply(const Filter&, const FilterImageVector
 
     case FECOLORMATRIX_TYPE_LUMINANCETOALPHA:
     case FECOLORMATRIX_TYPE_UNKNOWN:
-        return nullptr;
+        return false;
     }
 
     result.setCIImage(colorMatrixFilter.outputImage);

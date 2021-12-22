@@ -3058,11 +3058,6 @@ TEST(TextManipulation, CompleteTextManipulationAvoidExtractingManipulatedTextAft
 
     EXPECT_WK_STREQ("<p>FOO<br>BAR</p>", [webView stringByEvaluatingJavaScript:@"document.body.innerHTML"]);
 
-    __block bool itemCallbackFired = false;
-    [delegate setItemCallback:^(_WKTextManipulationItem *) {
-        itemCallbackFired = true;
-    }];
-
     [webView objectByEvaluatingJavaScript:@"document.querySelector('p').style.display = 'none'"];
     [webView objectByEvaluatingJavaScript:@"document.querySelector('p').style.display = ''"];
     [webView stringByEvaluatingJavaScript:@"var element = document.createElement('span');"

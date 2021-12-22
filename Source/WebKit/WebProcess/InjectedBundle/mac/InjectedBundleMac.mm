@@ -146,7 +146,7 @@ bool InjectedBundle::initialize(const WebProcessCreationParameters& parameters, 
         NSError *error;
         if (![m_platformBundle preflightAndReturnError:&error]) {
             NSLog(@"InjectedBundle::load failed - preflightAndReturnError failed, error: %@", error);
-            return nil;
+            return false;
         }
         if (![m_platformBundle loadAndReturnError:&error]) {
             NSLog(@"InjectedBundle::load failed - loadAndReturnError failed, error: %@", error);

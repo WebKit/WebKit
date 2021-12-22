@@ -1,5 +1,18 @@
 2021-12-22  Alex Christensen  <achristensen@webkit.org>
 
+        Fix compiling with pickier compiler
+        https://bugs.webkit.org/show_bug.cgi?id=234593
+
+        Reviewed by Brady Eidson.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ContentRuleListNotification.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/CreateWebArchive.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/TextManipulation.mm:
+        (TestWebKitAPI::TEST):
+
+2021-12-22  Alex Christensen  <achristensen@webkit.org>
+
         Re-enable WebpagePreferences.WebsitePoliciesDuringRedirect API test on Monterey
         https://bugs.webkit.org/show_bug.cgi?id=234607
 

@@ -391,7 +391,6 @@ public:
             RefPtr<SharedBuffer> sharedBuffer = currentSegment.getSharedBuffer();
             CMBlockBufferRef rawBlockBuffer = nullptr;
             uint64_t lastRead = 0;
-            size_t destinationOffset = m_positionWithinSegment;
             if (!sharedBuffer) {
                 // We could potentially allocate more memory than needed if the read is partial.
                 auto err = PAL::CMBlockBufferCreateWithMemoryBlock(kCFAllocatorDefault, nullptr, numToRead, kCFAllocatorDefault, nullptr, 0, numToRead, kCMBlockBufferAssureMemoryNowFlag, &rawBlockBuffer);
@@ -406,7 +405,6 @@ public:
                 if (!readResult.has_value())
                     return segmentReadErrorToWebmStatus(readResult.error());
                 lastRead = readResult.value();
-                destinationOffset = 0;
             } else {
                 // TODO: could we only create a new CMBlockBuffer if the backend memory changed since the previous one?
                 size_t canRead = std::min<size_t>(numToRead, sharedBuffer->size() - m_positionWithinSegment);

@@ -498,11 +498,9 @@ TEST(ContentRuleList, LegacyVersionAndName)
     TestWebKitAPI::Util::run(&removed);
     
     setupLegacyContentRuleList();
-    __block bool foundAvailable = false;
     [store getAvailableContentRuleListIdentifiers:^(NSArray<NSString *> *identifiers) {
         EXPECT_EQ(identifiers.count, 1u);
         EXPECT_WK_STREQ(identifiers[0], @"test");
-        foundAvailable = true;
     }];
     TestWebKitAPI::Util::run(&removed);
 

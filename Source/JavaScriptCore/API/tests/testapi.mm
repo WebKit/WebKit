@@ -1884,11 +1884,9 @@ static void checkModuleCodeRan(JSContext *context, JSValue *promise, JSValue *ex
 
 static void checkModuleWasRejected(JSContext *context, JSValue *promise)
 {
-    __block BOOL promiseWasRejected = false;
     [promise invokeMethod:@"then" withArguments:@[^() {
         checkResult(@"module was rejected as expected", NO);
     }, ^(JSValue *error) {
-        promiseWasRejected = true;
         NSLog(@"%@", [error toString]);
         checkResult(@"module graph was rejected with error", ![error isEqualWithTypeCoercionToObject:[JSValue valueWithNullInContext:context]]);
     }]];

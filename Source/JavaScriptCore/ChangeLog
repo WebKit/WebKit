@@ -1,3 +1,15 @@
+2021-12-22  Alex Christensen  <achristensen@webkit.org>
+
+        Fix compiling with pickier compiler
+        https://bugs.webkit.org/show_bug.cgi?id=234593
+
+        Reviewed by Brady Eidson.
+
+        * API/tests/Regress141275.mm:
+        (-[JSTEvaluator initWithScript:]):
+        * API/tests/testapi.mm:
+        (checkModuleWasRejected):
+
 2021-12-22  Zan Dobersek  <zdobersek@igalia.com>
 
         [RISCV64] Add RISCV64 support in YARR

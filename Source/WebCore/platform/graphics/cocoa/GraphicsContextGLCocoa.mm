@@ -523,9 +523,7 @@ void GraphicsContextGLANGLE::checkGPUStatus()
 
     m_statusCheckCount = (m_statusCheckCount + 1) % statusCheckThreshold;
 
-    GLint restartStatus = 0;
     // FIXME: check via KHR_robustness.
-    restartStatus = 0;
 }
 
 void GraphicsContextGLCocoa::setContextVisibility(bool isVisible)

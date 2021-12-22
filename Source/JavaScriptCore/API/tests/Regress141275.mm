@@ -126,11 +126,9 @@ static const NSString* JSTEvaluatorThreadContextKey = @"JSTEvaluatorThreadContex
 {
     self = [self init];
     if (self) {
-        __block NSError* scriptError = nil;
         dispatch_semaphore_t dsema = dispatch_semaphore_create(0);
         [self evaluateScript:script
-            completion:^(NSError* error) {
-                scriptError = error;
+            completion:^(NSError*) {
                 dispatch_semaphore_signal(dsema);
             }];
         dispatch_semaphore_wait(dsema, DISPATCH_TIME_FOREVER);

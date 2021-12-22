@@ -2180,7 +2180,6 @@ void MediaPlayerPrivateAVFoundationObjC::tracksChanged()
 
     setDelayCharacteristicsChangedNotification(true);
 
-    bool haveCCTrack = false;
     bool hasCaptions = false;
 
     // This is called whenever the tracks collection changes so cache hasVideo and hasAudio since we are
@@ -2211,9 +2210,7 @@ void MediaPlayerPrivateAVFoundationObjC::tracksChanged()
                     hasVideo = true;
                 else if ([mediaType isEqualToString:AVMediaTypeAudio])
                     hasAudio = true;
-                else if ([mediaType isEqualToString:AVMediaTypeClosedCaption]) {
-                    haveCCTrack = true;
-                } else if ([mediaType isEqualToString:AVMediaTypeMetadata]) {
+                else if ([mediaType isEqualToString:AVMediaTypeMetadata]) {
                     hasMetaData = true;
                 }
             }
