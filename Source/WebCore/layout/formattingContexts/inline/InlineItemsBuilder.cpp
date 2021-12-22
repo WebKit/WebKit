@@ -171,7 +171,12 @@ static void replaceNonPreservedNewLineCharactersAndAppend(const InlineTextBox& i
         paragraphContentBuilder.append(textContent.right(contentLength - nonReplacedContentStartPosition));
 }
 
-static inline void handleEnterExitBidiContext(StringBuilder& paragraphContentBuilder, EUnicodeBidi unicodeBidi, bool isLTR, bool isEnteringBidi)
+struct BidiContext {
+    EUnicodeBidi unicodeBidi;
+    bool isLeftToRightDirection { false };
+};
+using BidiContextStack = Vector<BidiContext>;
+static inline void handleEnterExitBidiContext(StringBuilder& paragraphContentBuilder, EUnicodeBidi unicodeBidi, bool isLTR, bool isEnteringBidi, BidiContextStack& bidiContextStack)
 {
     switch (unicodeBidi) {
     case EUnicodeBidi::UBNormal:
@@ -202,12 +207,15 @@ static inline void handleEnterExitBidiContext(StringBuilder& paragraphContentBui
     default:
         ASSERT_NOT_REACHED();
     }
+
+    isEnteringBidi ? bidiContextStack.append({ unicodeBidi, isLTR }) : bidiContextStack.removeLast();
 }
 
 using InlineItemOffsetList = Vector<std::optional<size_t>>;
 static inline void buildBidiParagraph(const RenderStyle& rootStyle, const InlineItems& inlineItems,  StringBuilder& paragraphContentBuilder, InlineItemOffsetList& inlineItemOffsetList)
 {
-    handleEnterExitBidiContext(paragraphContentBuilder, rootStyle.unicodeBidi(), rootStyle.isLeftToRightDirection(), true);
+    auto bidiContextStack = BidiContextStack { };
+    handleEnterExitBidiContext(paragraphContentBuilder, rootStyle.unicodeBidi(), rootStyle.isLeftToRightDirection(), true, bidiContextStack);
 
     const Box* lastInlineTextBox = nullptr;
     size_t inlineTextBoxOffset = 0;
@@ -242,13 +250,29 @@ static inline void buildBidiParagraph(const RenderStyle& rootStyle, const Inline
             }
             inlineItemOffsetList.uncheckedAppend({ paragraphContentBuilder.length() });
             auto isEnteringBidi = inlineItem.isInlineBoxStart();
-            handleEnterExitBidiContext(paragraphContentBuilder, style.unicodeBidi(), style.isLeftToRightDirection(), isEnteringBidi);
+            handleEnterExitBidiContext(paragraphContentBuilder, style.unicodeBidi(), style.isLeftToRightDirection(), isEnteringBidi, bidiContextStack);
         } else if (inlineItem.isSoftLineBreak()) {
+            // FIXME: Unwind the bidi stack for soft line break too.
             appendTextBasedContent();
             inlineItemOffsetList.uncheckedAppend({ inlineTextBoxOffset + downcast<InlineSoftLineBreakItem>(inlineItem).position() });
         } else if (inlineItem.isHardLineBreak()) {
+            auto copyOfBidiStack = bidiContextStack;
+
+            auto unwindBidiContextStack = [&] {
+                // Unwind all the way up to the block entry.
+                for (size_t index = copyOfBidiStack.size(); index-- > 1;)
+                    handleEnterExitBidiContext(paragraphContentBuilder, copyOfBidiStack[index].unicodeBidi, copyOfBidiStack[index].isLeftToRightDirection, false, bidiContextStack);
+            };
+            unwindBidiContextStack();
+
             inlineItemOffsetList.uncheckedAppend({ paragraphContentBuilder.length() });
             paragraphContentBuilder.append(newlineCharacter);
+
+            auto rewindBidiContextStack = [&] {
+                for (size_t index = 1; index < copyOfBidiStack.size(); ++index)
+                    handleEnterExitBidiContext(paragraphContentBuilder, copyOfBidiStack[index].unicodeBidi, copyOfBidiStack[index].isLeftToRightDirection, true, bidiContextStack);
+            };
+            rewindBidiContextStack();
         } else if (inlineItem.isWordBreakOpportunity()) {
             // Soft wrap opportunity markers are opaque to bidi. 
             inlineItemOffsetList.uncheckedAppend({ });            
