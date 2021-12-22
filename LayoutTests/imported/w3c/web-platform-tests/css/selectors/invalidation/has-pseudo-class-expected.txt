@@ -1,0 +1,8 @@
+
+
+PASS Initial color
+PASS Set checked on checkbox
+PASS Unset checked on checkbox
+PASS Set selected on option
+PASS Unset selected on option
+

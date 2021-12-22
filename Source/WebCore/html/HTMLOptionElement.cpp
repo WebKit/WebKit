@@ -38,6 +38,7 @@
 #include "HTMLSelectElement.h"
 #include "NodeRenderStyle.h"
 #include "NodeTraversal.h"
+#include "PseudoClassChangeInvalidation.h"
 #include "RenderMenuList.h"
 #include "RenderTheme.h"
 #include "ScriptElement.h"
@@ -54,8 +55,6 @@ using namespace HTMLNames;
 
 HTMLOptionElement::HTMLOptionElement(const QualifiedName& tagName, Document& document)
     : HTMLElement(tagName, document)
-    , m_disabled(false)
-    , m_isSelected(false)
 {
     ASSERT(hasTagName(optionTag));
     setHasCustomStyleResolveCallbacks();
@@ -101,7 +100,7 @@ bool HTMLOptionElement::isFocusable() const
 
 bool HTMLOptionElement::matchesDefaultPseudoClass() const
 {
-    return hasAttributeWithoutSynchronization(selectedAttr);
+    return m_isDefault;
 }
 
 String HTMLOptionElement::text() const
@@ -185,15 +184,15 @@ void HTMLOptionElement::parseAttribute(const QualifiedName& name, const AtomStri
                 renderer()->theme().stateChanged(*renderer(), ControlStates::States::Enabled);
         }
     } else if (name == selectedAttr) {
-        invalidateStyleForSubtree();
+        // FIXME: Use PseudoClassChangeInvalidation in other elements that implement matchesDefaultPseudoClass().
+        Style::PseudoClassChangeInvalidation defaultInvalidation(*this, CSSSelector::PseudoClassDefault);
+        m_isDefault = !value.isNull();
 
         // FIXME: This doesn't match what the HTML specification says.
         // The specification implies that removing the selected attribute or
         // changing the value of a selected attribute that is already present
-        // has no effect on whether the element is selected. Further, it seems
-        // that we need to do more than just set m_isSelected to select in that
-        // case; we'd need to do the other work from the setSelected function.
-        m_isSelected = !value.isNull();
+        // has no effect on whether the element is selected.
+        setSelectedState(!value.isNull());
     } else
         HTMLElement::parseAttribute(name, value);
 }
@@ -234,8 +233,9 @@ void HTMLOptionElement::setSelectedState(bool selected)
     if (m_isSelected == selected)
         return;
 
+    Style::PseudoClassChangeInvalidation checkedInvalidation(*this, CSSSelector::PseudoClassChecked);
+
     m_isSelected = selected;
-    invalidateStyleForSubtree();
 
 #if ENABLE(ACCESSIBILITY) && USE(ATSPI)
     if (auto* cache = document().existingAXObjectCache())

@@ -60,6 +60,7 @@
 #include "NodeRenderStyle.h"
 #include "Page.h"
 #include "PlatformMouseEvent.h"
+#include "PseudoClassChangeInvalidation.h"
 #include "RenderTextControlSingleLine.h"
 #include "RenderTheme.h"
 #include "ScopedEventQueue.h"
@@ -797,7 +798,6 @@ void HTMLInputElement::parseAttribute(const QualifiedName& name, const AtomStrin
     } else if (name == checkedAttr) {
         if (m_inputType->isCheckable())
             invalidateStyleForSubtree();
-
         // Another radio button in the same group might be checked by state
         // restore. We shouldn't call setChecked() even if this has the checked
         // attribute. So, delay the setChecked() call until
@@ -982,9 +982,10 @@ void HTMLInputElement::setChecked(bool nowChecked)
 
     m_inputType->willUpdateCheckedness(nowChecked);
 
+    Style::PseudoClassChangeInvalidation checkedInvalidation(*this, CSSSelector::PseudoClassChecked);
+
     m_dirtyCheckednessFlag = true;
     m_isChecked = nowChecked;
-    invalidateStyleForSubtree();
 
     if (RadioButtonGroups* buttons = radioButtonGroups())
         buttons->updateCheckedState(*this);
@@ -999,8 +1000,6 @@ void HTMLInputElement::setChecked(bool nowChecked)
         if (AXObjectCache* cache = renderer()->document().existingAXObjectCache())
             cache->checkedStateChanged(this);
     }
-
-    invalidateStyleForSubtree();
 }
 
 void HTMLInputElement::setIndeterminate(bool newValue)

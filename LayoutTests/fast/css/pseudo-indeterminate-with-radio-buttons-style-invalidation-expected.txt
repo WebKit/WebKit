@@ -15,11 +15,9 @@ PASS elementsNeedingStyleRecalc() is ["radio6", "radio7", "radio8", "radio9", "r
 PASS elementsWithIndeterminateStyle() is []
 PASS checkedElements() is ["radio3", "radio8"]
 Check radio4
-PASS elementsNeedingStyleRecalc() is ["radio3", "radio4"]
 PASS elementsWithIndeterminateStyle() is []
 PASS checkedElements() is ["radio4", "radio8"]
 Check radio9
-PASS elementsNeedingStyleRecalc() is ["radio8", "radio9"]
 PASS elementsWithIndeterminateStyle() is []
 PASS checkedElements() is ["radio4", "radio9"]
 PASS successfullyParsed is true

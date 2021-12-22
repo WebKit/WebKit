@@ -80,8 +80,9 @@ private:
 
     String collectOptionInnerText() const;
 
-    bool m_disabled;
-    bool m_isSelected;
+    bool m_disabled { false };
+    bool m_isSelected { false };
+    bool m_isDefault { false };
 };
 
 } // namespace

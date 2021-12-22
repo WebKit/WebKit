@@ -1,5 +1,28 @@
 2021-12-22  Antti Koivisto  <antti@apple.com>
 
+        [:has() pseudo-class] :has() selector invalidation issue with toggling :checked
+        https://bugs.webkit.org/show_bug.cgi?id=234561
+
+        Reviewed by Simon Fraser.
+
+        Results here change because we do more accurate invalidation.
+
+        * fast/css/indirect-adjacent-style-invalidation-1-expected.txt:
+        * fast/css/indirect-adjacent-style-invalidation-1.html:
+        * fast/css/indirect-adjacent-style-invalidation-2-expected.txt:
+        * fast/css/indirect-adjacent-style-invalidation-2.html:
+        * fast/css/indirect-adjacent-style-invalidation-3-expected.txt:
+        * fast/css/indirect-adjacent-style-invalidation-3.html:
+        * fast/css/pseudo-indeterminate-with-radio-buttons-style-invalidation-expected.txt:
+        * fast/css/pseudo-indeterminate-with-radio-buttons-style-invalidation.html:
+
+        Stop testing invalidation state for the element where :checked state changed. That is not
+        really the point of these tests anyway.
+        With accurate invalidation the result depends on plaform (iOS has :checked in UA sheet
+        while other platforms don't)
+
+2021-12-22  Antti Koivisto  <antti@apple.com>
+
         [:has() pseudo-class] :has() selector does not render on first pass?
         https://bugs.webkit.org/show_bug.cgi?id=234531
 
