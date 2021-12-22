@@ -1,3 +1,18 @@
+2021-12-22  Alex Christensen  <achristensen@webkit.org>
+
+        Re-enable WebpagePreferences.WebsitePoliciesDuringRedirect API test on Monterey
+        https://bugs.webkit.org/show_bug.cgi?id=234607
+
+        Reviewed by Brady Eidson.
+
+        This is the same as r285057 where we were responding with one byte short of the ranges requested,
+        which used to give a playing event but since Monterey it doesn't.  The fix is to respond with all
+        the bytes requested.  If the request is for bytes 0-1, we need to respond with two bytes, for example.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WebsitePolicies.mm:
+        (-[TestSchemeHandler webView:startURLSchemeTask:]):
+        (TEST):
+
 2021-12-22  J Pascoe  <j_pascoe@apple.com>
 
         [WebAuthn] Set Web Authentication experimental feature flag as default true
