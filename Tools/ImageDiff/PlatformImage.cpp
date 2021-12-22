@@ -36,6 +36,7 @@ bool PlatformImage::isCompatible(const PlatformImage& other) const
 {
     return width() == other.width()
         && height() == other.height()
+        && scaleFactor() == other.scaleFactor()
         && rowBytes() == other.rowBytes()
         && hasAlpha() == other.hasAlpha();
 }
@@ -104,6 +105,9 @@ std::unique_ptr<PlatformImage> PlatformImage::difference(const PlatformImage& ot
             pixel = std::min(pixel / legacyDistanceMax, 255.0f);
             diffPixel[p] = static_cast<unsigned char>(pixel);
         }
+
+        // totalPixels is "CSS pixels" or "points".
+        difference.totalPixels /= (scaleFactor() * scaleFactor());
 
         return PlatformImage::createFromDiffData(diffBuffer, width, height);
     }

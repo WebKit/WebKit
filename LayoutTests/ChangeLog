@@ -1,3 +1,16 @@
+2021-12-21  Simon Fraser  <simon.fraser@apple.com>
+
+        Fuzzy pixel data need to be computed in terms of CSS pixels
+        https://bugs.webkit.org/show_bug.cgi?id=232525
+
+        Reviewed by Tim Horton.
+
+        Add a hidpi pixel tolerance test.
+
+        * fast/harness/image-diff/hidpi-pixel-tolerance-expected.html: Added.
+        * fast/harness/image-diff/hidpi-pixel-tolerance.html: Added.
+        * platform/ios-wk2/TestExpectations: Remove fast/harness/image-diff/fuzz-2-25.html.
+
 2021-12-21  Alan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Compute visual geometry for InlineDisplay::Line

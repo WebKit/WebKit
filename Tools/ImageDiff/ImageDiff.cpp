@@ -58,6 +58,9 @@ static int processImages(std::unique_ptr<PlatformImage>&& actualImage, std::uniq
         } else if (actualImage->hasAlpha() != baselineImage->hasAlpha()) {
             fprintf(stderr, "Error: test and reference images differ in alpha. Test image %s alpha, reference image %s alpha.\n",
                 actualImage->hasAlpha() ? "has" : "does not have", baselineImage->hasAlpha() ? "has" : "does not have");
+        } else if (actualImage->scaleFactor() != baselineImage->scaleFactor()) {
+            fprintf(stderr, "Error: test and reference images differ in scale factor. Test image scale factor %.1f, reference image scale factor %.1f.\n",
+                actualImage->scaleFactor(), baselineImage->scaleFactor());
         }
 
         return EXIT_FAILURE;

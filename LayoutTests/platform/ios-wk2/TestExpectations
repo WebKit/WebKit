@@ -1112,8 +1112,6 @@ fast/scrolling/ios/scroll-events-back-forward-after-pageshow.html [ Pass Failure
 
 webkit.org/b/157589 fast/text-autosizing/ios/text-autosizing-after-back.html [ Pass Timeout ]
 
-webkit.org/b/232525 fast/harness/image-diff/fuzz-2-25.html [ ImageOnlyFailure ]
-
 # started to fail after new snapshotting in r202532
 webkit.org/b/150942 animations/multiple-backgrounds.html [ Pass ImageOnlyFailure ]
 compositing/overlap-blending/reflection-opacity-huge.html [ ImageOnlyFailure ]

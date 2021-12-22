@@ -1,3 +1,20 @@
+2021-12-21  Simon Fraser  <simon.fraser@apple.com>
+
+        Fuzzy pixel data need to be computed in terms of CSS pixels
+        https://bugs.webkit.org/show_bug.cgi?id=232525
+
+        Reviewed by Tim Horton.
+
+        Pixel tolerance is computed in CSS pixels, so have ImageDiff divide the total number of
+        differing pixels by the square of the scale factor (a single different pixel at 1x becomes 4
+        different pixels at 2x).
+
+        * ImageDiff/ImageDiff.cpp:
+        (processImages):
+        * ImageDiff/PlatformImage.cpp:
+        (ImageDiff::PlatformImage::isCompatible const):
+        (ImageDiff::PlatformImage::difference):
+
 2021-12-21  Alex Christensen  <achristensen@webkit.org>
 
         Re-enable ContextMenu API tests
