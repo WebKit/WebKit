@@ -1,3 +1,13 @@
+2021-12-21  Alex Christensen  <achristensen@webkit.org>
+
+        Fix some API tests after r287341
+        https://bugs.webkit.org/show_bug.cgi?id=232857
+
+        I found the cause of the strange failures and verified my "fix" on an Intel Mac and an Apple Silicon Mac.
+
+        * webpushd/PushClientConnection.mm:
+        (WebPushD::ClientConnection::hostAppCodeSigningIdentifier):
+
 2021-12-21  Sihui Liu  <sihui_liu@apple.com>
 
         Use fileURLWithPath instead of URLWithString in WebsiteDataStore::excludeDirectoryFromBackup

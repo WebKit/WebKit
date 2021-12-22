@@ -79,10 +79,15 @@ void ClientConnection::setHostAppAuditTokenData(const Vector<uint8_t>& tokenData
 const String& ClientConnection::hostAppCodeSigningIdentifier()
 {
     if (!m_hostAppCodeSigningIdentifier) {
+#if PLATFORM(MAC) && !USE(APPLE_INTERNAL_SDK)
+        // This isn't great, but currently the only user of webpushd in open source builds is TestWebKitAPI and codeSigningIdentifier returns the null String.
+        m_hostAppCodeSigningIdentifier = "TestWebKitAPI";
+#else
         if (!m_hostAppAuditToken)
             m_hostAppCodeSigningIdentifier = String();
         else
             m_hostAppCodeSigningIdentifier = WebKit::codeSigningIdentifier(*m_hostAppAuditToken);
+#endif
     }
 
     return *m_hostAppCodeSigningIdentifier;

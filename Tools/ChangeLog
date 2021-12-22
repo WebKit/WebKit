@@ -1,3 +1,11 @@
+2021-12-21  Alex Christensen  <achristensen@webkit.org>
+
+        Fix some API tests after r287341
+        https://bugs.webkit.org/show_bug.cgi?id=232857
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WebPushDaemon.mm:
+        (TestWebKitAPI::TEST):
+
 2021-12-21  Simon Fraser  <simon.fraser@apple.com>
 
         Fuzzy pixel data need to be computed in terms of CSS pixels
