@@ -644,9 +644,9 @@ void WebsiteDataStore::sendNetworkProcessXPCEndpointToAllProcesses()
 
 void WebsiteDataStore::excludeDirectoryFromBackup(const String& directory)
 {
-    NSURL *url = [NSURL URLWithString:(NSString *)directory];
+    NSURL *url = [NSURL fileURLWithPath:(NSString *)directory isDirectory:YES];
     if ([[NSFileManager defaultManager] createDirectoryAtURL:url withIntermediateDirectories:YES attributes:nil error:nullptr])
-        [[NSURL fileURLWithPath:(NSString *)directory isDirectory:YES] setResourceValue:@YES forKey:NSURLIsExcludedFromBackupKey error:nil];
+        [url setResourceValue:@YES forKey:NSURLIsExcludedFromBackupKey error:nil];
 }
 
 #endif

@@ -1,3 +1,16 @@
+2021-12-21  Sihui Liu  <sihui_liu@apple.com>
+
+        Use fileURLWithPath instead of URLWithString in WebsiteDataStore::excludeDirectoryFromBackup
+        https://bugs.webkit.org/show_bug.cgi?id=234582
+        rdar://86787798
+
+        Reviewed by Simon Fraser.
+
+        URLWithString may return nil while fileURLWithPath does not; and fileURLWithPath adds file:// to path correctly.
+
+        * UIProcess/WebsiteData/Cocoa/WebsiteDataStoreCocoa.mm:
+        (WebKit::WebsiteDataStore::excludeDirectoryFromBackup):
+
 2021-12-21  Alex Christensen  <achristensen@webkit.org>
 
         Re-enable ContextMenu API tests
