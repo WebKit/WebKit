@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2020 Apple Inc.  All rights reserved.
+ * Copyright (C) 2007-2021 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -64,12 +64,12 @@ class ProtectionSpaceBase {
 public:
     bool isHashTableDeletedValue() const { return m_isHashTableDeletedValue; }
     
-    WEBCORE_EXPORT const String& host() const;
-    WEBCORE_EXPORT int port() const;
-    WEBCORE_EXPORT ProtectionSpaceServerType serverType() const;
+    const String& host() const { return m_host; }
+    int port() const { return m_port; }
+    ProtectionSpaceServerType serverType() const { return m_serverType; }
     WEBCORE_EXPORT bool isProxy() const;
-    WEBCORE_EXPORT const String& realm() const;
-    WEBCORE_EXPORT ProtectionSpaceAuthenticationScheme authenticationScheme() const;
+    const String& realm() const { return m_realm; }
+    ProtectionSpaceAuthenticationScheme authenticationScheme() const { return m_authenticationScheme; }
     
     WEBCORE_EXPORT bool receivesCredentialSecurely() const;
     WEBCORE_EXPORT bool isPasswordBased() const;
@@ -79,7 +79,7 @@ public:
     WEBCORE_EXPORT static bool compare(const ProtectionSpace&, const ProtectionSpace&);
 
 protected:
-    WEBCORE_EXPORT ProtectionSpaceBase();
+    ProtectionSpaceBase() = default;
     WEBCORE_EXPORT ProtectionSpaceBase(const String& host, int port, ProtectionSpaceServerType, const String& realm, ProtectionSpaceAuthenticationScheme);
 
     // Hash table deleted values, which are only constructed and never copied or destroyed.
@@ -88,12 +88,15 @@ protected:
     static bool platformCompare(const ProtectionSpace&, const ProtectionSpace&) { return true; }
 
 private:
-    String m_host;
-    int m_port;
-    ProtectionSpaceServerType m_serverType;
-    String m_realm;
-    ProtectionSpaceAuthenticationScheme m_authenticationScheme;
-    bool m_isHashTableDeletedValue;
+    // Need to enforce empty, non-null strings due to the pickiness of the String == String operator
+    // combined with the semantics of the String(NSString*) constructor
+    String m_host { emptyString() };
+    String m_realm { emptyString() };
+
+    int m_port { 0 };
+    ProtectionSpaceServerType m_serverType { ProtectionSpaceServerHTTP };
+    ProtectionSpaceAuthenticationScheme m_authenticationScheme { ProtectionSpaceAuthenticationSchemeDefault };
+    bool m_isHashTableDeletedValue { false };
 };
 
 inline bool operator==(const ProtectionSpace& a, const ProtectionSpace& b) { return ProtectionSpaceBase::compare(a, b); }

@@ -33,44 +33,16 @@
 #endif
 
 namespace WebCore {
-
-// Need to enforce empty, non-null strings due to the pickiness of the String == String operator
-// combined with the semantics of the String(NSString*) constructor
-ProtectionSpaceBase::ProtectionSpaceBase()
-    : m_host(emptyString())
-    , m_port(0)
-    , m_serverType(ProtectionSpaceServerHTTP)
-    , m_realm(emptyString())
-    , m_authenticationScheme(ProtectionSpaceAuthenticationSchemeDefault)
-    , m_isHashTableDeletedValue(false)
-{
-}
  
 // Need to enforce empty, non-null strings due to the pickiness of the String == String operator
 // combined with the semantics of the String(NSString*) constructor
 ProtectionSpaceBase::ProtectionSpaceBase(const String& host, int port, ProtectionSpaceServerType serverType, const String& realm, ProtectionSpaceAuthenticationScheme authenticationScheme)
     : m_host(host.length() ? host : emptyString())
+    , m_realm(realm.length() ? realm : emptyString())
     , m_port(port)
     , m_serverType(serverType)
-    , m_realm(realm.length() ? realm : emptyString())
     , m_authenticationScheme(authenticationScheme)
-    , m_isHashTableDeletedValue(false)
 {    
-}
-    
-const String& ProtectionSpaceBase::host() const
-{
-    return m_host; 
-}
-
-int ProtectionSpaceBase::port() const
-{
-    return m_port; 
-}
-
-ProtectionSpaceServerType ProtectionSpaceBase::serverType() const
-{
-    return m_serverType;
 }
 
 bool ProtectionSpaceBase::isProxy() const
@@ -79,16 +51,6 @@ bool ProtectionSpaceBase::isProxy() const
             m_serverType == ProtectionSpaceProxyHTTPS ||
             m_serverType == ProtectionSpaceProxyFTP ||
             m_serverType == ProtectionSpaceProxySOCKS);
-}
-
-const String& ProtectionSpaceBase::realm() const
-{ 
-    return m_realm; 
-}
-
-ProtectionSpaceAuthenticationScheme ProtectionSpaceBase::authenticationScheme() const
-{ 
-    return m_authenticationScheme; 
 }
 
 bool ProtectionSpaceBase::receivesCredentialSecurely() const

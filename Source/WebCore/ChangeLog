@@ -1,5 +1,88 @@
 2021-12-21  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r287077. rdar://problem/85150486
+
+    http/tests/security/basic-auth-subresource.html and some other http auth tests are flaky
+    https://bugs.webkit.org/show_bug.cgi?id=234314
+    <rdar://85150486>
+    
+    Reviewed by Darin Adler.
+    
+    http/tests/security/basic-auth-subresource.html and some other http auth tests are flaky.
+    
+    No new tests, I will be able to unskip those layout tests in internal once this lands.
+    
+    * platform/network/ProtectionSpaceBase.cpp:
+    (WebCore::ProtectionSpaceBase::ProtectionSpaceBase):
+    (WebCore::ProtectionSpaceBase::host const): Deleted.
+    (WebCore::ProtectionSpaceBase::port const): Deleted.
+    (WebCore::ProtectionSpaceBase::serverType const): Deleted.
+    (WebCore::ProtectionSpaceBase::realm const): Deleted.
+    (WebCore::ProtectionSpaceBase::authenticationScheme const): Deleted.
+    * platform/network/ProtectionSpaceBase.h:
+    (WebCore::ProtectionSpaceBase::host const):
+    (WebCore::ProtectionSpaceBase::port const):
+    (WebCore::ProtectionSpaceBase::serverType const):
+    (WebCore::ProtectionSpaceBase::realm const):
+    (WebCore::ProtectionSpaceBase::authenticationScheme const):
+    Clean up / modernise the ProtectionSpaceBase class.
+    
+    * platform/network/ProtectionSpaceHash.h:
+    (WebCore::ProtectionSpaceHash::hash):
+    - Use Hasher in ProtectionSpaceHash::hash() as it is less error-prone. I believe the
+      previous implementation was wrong because it was calling
+      `StringHasher::hashMemory(hashCodes, codeCount)` instead of
+      `StringHasher::hashMemory(hashCodes, codeCount * sizeof(unsigned))`.
+      This could have resulted in inefficiencies I believe since we were not hashing the
+      whole array memory.
+    - Fix ProtectionSpace<ProtectionSpace> so that emptyValueIsZero is false instead of
+      true. This was a bug since the ProtectionSpaceBase constructor initializes data
+      members to non-zero values.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@287077 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-12-15  Chris Dumez  <cdumez@apple.com>
+
+            http/tests/security/basic-auth-subresource.html and some other http auth tests are flaky
+            https://bugs.webkit.org/show_bug.cgi?id=234314
+            <rdar://85150486>
+
+            Reviewed by Darin Adler.
+
+            http/tests/security/basic-auth-subresource.html and some other http auth tests are flaky.
+
+            No new tests, I will be able to unskip those layout tests in internal once this lands.
+
+            * platform/network/ProtectionSpaceBase.cpp:
+            (WebCore::ProtectionSpaceBase::ProtectionSpaceBase):
+            (WebCore::ProtectionSpaceBase::host const): Deleted.
+            (WebCore::ProtectionSpaceBase::port const): Deleted.
+            (WebCore::ProtectionSpaceBase::serverType const): Deleted.
+            (WebCore::ProtectionSpaceBase::realm const): Deleted.
+            (WebCore::ProtectionSpaceBase::authenticationScheme const): Deleted.
+            * platform/network/ProtectionSpaceBase.h:
+            (WebCore::ProtectionSpaceBase::host const):
+            (WebCore::ProtectionSpaceBase::port const):
+            (WebCore::ProtectionSpaceBase::serverType const):
+            (WebCore::ProtectionSpaceBase::realm const):
+            (WebCore::ProtectionSpaceBase::authenticationScheme const):
+            Clean up / modernise the ProtectionSpaceBase class.
+
+            * platform/network/ProtectionSpaceHash.h:
+            (WebCore::ProtectionSpaceHash::hash):
+            - Use Hasher in ProtectionSpaceHash::hash() as it is less error-prone. I believe the
+              previous implementation was wrong because it was calling
+              `StringHasher::hashMemory(hashCodes, codeCount)` instead of
+              `StringHasher::hashMemory(hashCodes, codeCount * sizeof(unsigned))`.
+              This could have resulted in inefficiencies I believe since we were not hashing the
+              whole array memory.
+            - Fix ProtectionSpace<ProtectionSpace> so that emptyValueIsZero is false instead of
+              true. This was a bug since the ProtectionSpaceBase constructor initializes data
+              members to non-zero values.
+
+2021-12-21  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r287067. rdar://problem/86276497
 
     Make sure to start a realtime outgoing source in case it is taken to another sender
