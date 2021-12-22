@@ -1,3 +1,16 @@
+2021-12-22  J Pascoe  <j_pascoe@apple.com>
+
+        [WebAuthn] Set Web Authentication experimental feature flag as default true
+        https://bugs.webkit.org/show_bug.cgi?id=234533
+        <rdar://problem/86743595>
+
+        Reviewed by Brent Fulgham.
+
+        The Web Authentication feature has been shipping for a while. Default value
+        for experimental feature flag should be true.
+
+        * Scripts/Preferences/WebPreferencesExperimental.yaml:
+
 2021-12-21  Brady Eidson  <beidson@apple.com>
 
         Make Notification identifiers be a UUID string instead of a uint64_t
