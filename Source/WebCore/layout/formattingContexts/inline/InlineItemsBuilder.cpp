@@ -215,12 +215,17 @@ static inline void buildBidiParagraph(const RenderStyle& rootStyle, const Inline
         auto& inlineItem = inlineItems[index];
         auto& layoutBox = inlineItem.layoutBox();
 
+        auto appendTextBasedContent = [&] {
+            // Append the entire InlineTextBox content and keep track of individual inline item positions.
+            if (lastInlineTextBox == &layoutBox)
+                return;
+            inlineTextBoxOffset = paragraphContentBuilder.length();
+            replaceNonPreservedNewLineCharactersAndAppend(downcast<InlineTextBox>(layoutBox), paragraphContentBuilder);
+            lastInlineTextBox = &layoutBox;
+        };
+
         if (inlineItem.isText()) {
-            if (lastInlineTextBox != &layoutBox) {
-                inlineTextBoxOffset = paragraphContentBuilder.length();
-                replaceNonPreservedNewLineCharactersAndAppend(downcast<InlineTextBox>(layoutBox), paragraphContentBuilder);
-                lastInlineTextBox = &layoutBox;
-            }
+            appendTextBasedContent();
             inlineItemOffsetList.uncheckedAppend({ inlineTextBoxOffset + downcast<InlineTextItem>(inlineItem).start() });
         } else if (inlineItem.isBox()) {
             inlineItemOffsetList.uncheckedAppend({ paragraphContentBuilder.length() });
@@ -238,7 +243,10 @@ static inline void buildBidiParagraph(const RenderStyle& rootStyle, const Inline
             inlineItemOffsetList.uncheckedAppend({ paragraphContentBuilder.length() });
             auto isEnteringBidi = inlineItem.isInlineBoxStart();
             handleEnterExitBidiContext(paragraphContentBuilder, style.unicodeBidi(), style.isLeftToRightDirection(), isEnteringBidi);
-        } else if (inlineItem.isLineBreak()) {
+        } else if (inlineItem.isSoftLineBreak()) {
+            appendTextBasedContent();
+            inlineItemOffsetList.uncheckedAppend({ inlineTextBoxOffset + downcast<InlineSoftLineBreakItem>(inlineItem).position() });
+        } else if (inlineItem.isHardLineBreak()) {
             inlineItemOffsetList.uncheckedAppend({ paragraphContentBuilder.length() });
             paragraphContentBuilder.append(newlineCharacter);
         } else if (inlineItem.isWordBreakOpportunity()) {
