@@ -64,6 +64,7 @@
 #import <wtf/CompletionHandler.h>
 #import <wtf/Forward.h>
 #import <wtf/Function.h>
+#import <wtf/HashSet.h>
 #import <wtf/ObjectIdentifier.h>
 #import <wtf/OptionSet.h>
 #import <wtf/Vector.h>
@@ -259,6 +260,7 @@ using ImageAnalysisRequestIdentifier = ObjectIdentifier<ImageAnalysisRequestIden
     RetainPtr<WKDeferringGestureRecognizer> _touchEndDeferringGestureRecognizerForImmediatelyResettableGestures;
     RetainPtr<WKDeferringGestureRecognizer> _touchEndDeferringGestureRecognizerForDelayedResettableGestures;
     RetainPtr<WKDeferringGestureRecognizer> _touchEndDeferringGestureRecognizerForSyntheticTapGestures;
+    std::optional<HashSet<RetainPtr<WKDeferringGestureRecognizer>>> _failedTouchStartDeferringGestures;
 #if ENABLE(IMAGE_ANALYSIS)
     RetainPtr<WKDeferringGestureRecognizer> _imageAnalysisDeferringGestureRecognizer;
 #endif

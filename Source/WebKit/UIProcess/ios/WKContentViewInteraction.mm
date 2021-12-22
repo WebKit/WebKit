@@ -1699,6 +1699,9 @@ typedef NS_ENUM(NSInteger, EndEditingReason) {
 
     _lastInteractionLocation = lastTouchEvent->locationInDocumentCoordinates;
     if (lastTouchEvent->type == UIWebTouchEventTouchBegin) {
+        if (!_failedTouchStartDeferringGestures)
+            _failedTouchStartDeferringGestures = { { } };
+
         [self _handleDOMPasteRequestWithResult:WebCore::DOMPasteAccessResponse::DeniedForGesture];
         _layerTreeTransactionIdAtLastInteractionStart = downcast<WebKit::RemoteLayerTreeDrawingAreaProxy>(*_page->drawingArea()).lastCommittedLayerTreeTransactionID();
 
@@ -1744,6 +1747,8 @@ typedef NS_ENUM(NSInteger, EndEditingReason) {
 
         if (!_page->isHandlingPreventableTouchEnd())
             stopDeferringNativeGesturesIfNeeded(self._touchEndDeferringGestures);
+
+        _failedTouchStartDeferringGestures = std::nullopt;
     }
 #endif // ENABLE(TOUCH_EVENTS)
 }
@@ -1989,8 +1994,11 @@ static WebCore::FloatQuad inflateQuad(const WebCore::FloatQuad& quad, float infl
 
 - (void)_doneDeferringTouchStart:(BOOL)preventNativeGestures
 {
-    for (WKDeferringGestureRecognizer *gesture in self._touchStartDeferringGestures)
-        [gesture endDeferral:preventNativeGestures ? WebKit::ShouldPreventGestures::Yes : WebKit::ShouldPreventGestures::No];
+    for (WKDeferringGestureRecognizer *gestureRecognizer in self._touchStartDeferringGestures) {
+        [gestureRecognizer endDeferral:preventNativeGestures ? WebKit::ShouldPreventGestures::Yes : WebKit::ShouldPreventGestures::No];
+        if (_failedTouchStartDeferringGestures && !preventNativeGestures)
+            _failedTouchStartDeferringGestures->add(gestureRecognizer);
+    }
 }
 
 - (void)_doneDeferringTouchEnd:(BOOL)preventNativeGestures
@@ -8040,6 +8048,15 @@ static WebCore::DataOwnerType coreDataOwnerType(_UIDataOwner platformType)
 #if ENABLE(IOS_TOUCH_EVENTS)
     if ([self _touchEventsMustRequireGestureRecognizerToFail:gestureRecognizer])
         return NO;
+
+    if (_failedTouchStartDeferringGestures && _failedTouchStartDeferringGestures->contains(deferringGestureRecognizer)
+        && deferringGestureRecognizer.state == UIGestureRecognizerStatePossible) {
+        // This deferring gesture no longer has an oppportunity to defer native gestures (either because the touch region did not have any
+        // active touch event listeners, or because any active touch event listeners on the page have already executed, and did not prevent
+        // default). UIKit may have already reset the gesture to Possible state underneath us, in which case we still need to treat it as
+        // if it has already failed; otherwise, we will incorrectly defer other gestures in the web view, such as scroll view pinching.
+        return NO;
+    }
 
     auto webView = _webView.getAutoreleased();
     auto view = gestureRecognizer.view;

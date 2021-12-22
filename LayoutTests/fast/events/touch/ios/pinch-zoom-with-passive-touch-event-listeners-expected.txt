@@ -1,0 +1,9 @@
+Verifies that the pinch zoom gesture is recognized in passive touch event regions. To manually run the test, pinch over the red square to zoom in.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS Successfully zoomed in by pinching
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

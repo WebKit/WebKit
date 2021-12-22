@@ -1,3 +1,89 @@
+2021-12-22  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r287366. rdar://problem/84379650
+
+    [iOS] Scroll view pinch zoom gesture sometimes fails to recognize in WKWebView
+    https://bugs.webkit.org/show_bug.cgi?id=234584
+    rdar://84379650
+    
+    Reviewed by Simon Fraser.
+    
+    Source/WebKit:
+    
+    WKWebView may get into a state where the pinch zoom gesture recognizer on its scroll view sometimes fails to
+    transition to Changed state (and invoke its action, which sets the zoomScale of the scroll view); this happens
+    because the scroll view pinch gesture requires the touch start deferring gesture recognizer (TSDG) to fail, but
+    it's possible for TSDG to remain stuck in Possible state over the duration of a gesture after beginning a touch
+    over content with either passive touch event listeners, or no touch event listeners.
+    
+    In the case where the TSDG is stuck in Possible state, we observe the following sequence of events (let's
+    suppose the user is starting a touch over a passive touch event listener on a web page):
+    
+    1.      The UITouch is delivered to the web touch event gesture recognizer, which fires the action
+            (`-_webTouchEventsRecognized:`). We observe that we're over an async touch event handling region (i.e.
+            passive or no touch event listeners), so we immediately "lift the gesture gate" by transitioning all
+            deferring gesture recognizers to Failed state, (with the intent that they won't prevent native gestures
+            from recognizing).
+    
+    2.      A UITouch is then delivered to the TSDG in the same runloop as UIKit continues to deliver the touch
+            event to all gestures in the `NSSet` of gesture recognizers on the window. Receiving the UITouch causes
+            TSDG (which we already set to Failed state in step (1)) to internally reset and transition back to
+            Possible state, underneath WebKit.
+    
+    3.      TSDG is now in possible state after the gesture has begun, but we've already tried to unblock native
+            gestures. When performing the second touch of the pinch zoom gesture, the pinch zoom gesture fails to
+            commence because it's stuck waiting for TSDG to fail.
+    
+    In the normal (working) scenario, step (2) happens before step (1); this ensures that TSDG is set to Failed
+    state and remains in Failed state over the course of the gesture, thereby preventing the bug from happening. The
+    order in which (1) and (2) happen is dependent on the order in which the web touch event gesture and TSDG are
+    iterated in UIKit's `NSSet` of gestures, which explains why this bug only reproduces some of the time.
+    
+    This patch mitigates this by adding a mechanism to keep track of touch start deferrers that we've already
+    transitioned to Failed state during the course of a gesture, and uses this information to avoid adding failure
+    requirements to these deferring gestures that have already been "ungated". This ensures that even if the
+    deferring gesture resets to Possible state from underneath WebKit, we still avoid pushing out native gesture
+    recognition due to these deferring gestures.
+    
+    As an aside, I initially attempted to avoid having TSDG transition back to Possible state altogether in this
+    scenario, but this doesn't seem to be avoidable (short of overriding the SPI method `-_resetGestureRecognizer`
+    and not calling the superclass, which does not seem to be supported behavior).
+    
+    Test: fast/events/touch/ios/pinch-zoom-with-passive-touch-event-listeners.html
+    
+    * UIProcess/ios/WKContentViewInteraction.h:
+    * UIProcess/ios/WKContentViewInteraction.mm:
+    (-[WKContentView _webTouchEventsRecognized:]):
+    (-[WKContentView _doneDeferringTouchStart:]):
+    (-[WKContentView deferringGestureRecognizer:shouldDeferOtherGestureRecognizer:]):
+    
+    LayoutTests:
+    
+    Add a test to exercise the fix. Note that this test will only fail without the fix *some* of the time, since it
+    depends entirely on the order in which two gestures appear in an Objective-C hash datastructure (see WebKit
+    ChangeLog for more details).
+    
+    * fast/events/touch/ios/pinch-zoom-with-passive-touch-event-listeners-expected.txt: Added.
+    * fast/events/touch/ios/pinch-zoom-with-passive-touch-event-listeners.html: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@287366 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-12-22  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+            [iOS] Scroll view pinch zoom gesture sometimes fails to recognize in WKWebView
+            https://bugs.webkit.org/show_bug.cgi?id=234584
+            rdar://84379650
+
+            Reviewed by Simon Fraser.
+
+            Add a test to exercise the fix. Note that this test will only fail without the fix *some* of the time, since it
+            depends entirely on the order in which two gestures appear in an Objective-C hash datastructure (see WebKit
+            ChangeLog for more details).
+
+            * fast/events/touch/ios/pinch-zoom-with-passive-touch-event-listeners-expected.txt: Added.
+            * fast/events/touch/ios/pinch-zoom-with-passive-touch-event-listeners.html: Added.
+
 2021-12-21  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r287067. rdar://problem/86276497
