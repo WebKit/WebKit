@@ -1,0 +1,5 @@
+XXX
+
+FAIL {Element,Range}.prototype.getBoundingClientRect on SVG <tspan>, Element assert_equals: left expected 108 but got 8
+FAIL {Element,Range}.prototype.getBoundingClientRect on SVG <tspan>, Range assert_equals: left expected 108 but got 80
+
