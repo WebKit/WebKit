@@ -372,10 +372,6 @@ public:
 
     void countNonDefaultSessionSets(CompletionHandler<void(size_t)>&&);
 
-#if PLATFORM(IOS_FAMILY)
-    void excludeDirectoryFromBackup(const String& directory);
-#endif
-
 private:
     enum class ForceReinitialization : bool { No, Yes };
 #if ENABLE(APP_BOUND_DOMAINS)

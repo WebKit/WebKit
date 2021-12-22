@@ -1,3 +1,22 @@
+2021-12-22  Sihui Liu  <sihui_liu@apple.com>
+
+        WebsiteDataStore::excludeDirectoryFromBackup should set attribute for existing directories
+        https://bugs.webkit.org/show_bug.cgi?id=234404
+
+        Reviewed by Youenn Fablet.
+
+        createDirectoryAtURL returning false means directory cannot be created, but the cause can be that directory 
+        already exists; so we should set exclude attribute on the directory no matter createDirectoryAtURL returns true
+        or false. Also, we can use existing FileSystem functions. 
+
+        API test: WKWebView.LocalStorageDirectoryExcludedFromBackup
+
+        * UIProcess/WebsiteData/Cocoa/WebsiteDataStoreCocoa.mm:
+        (WebKit::WebsiteDataStore::excludeDirectoryFromBackup): Deleted.
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::parameters):
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+
 2021-12-22  Alex Christensen  <achristensen@webkit.org>
 
         Re-enable CustomDisplayName and DefaultDisplayName API tests on Monterey
