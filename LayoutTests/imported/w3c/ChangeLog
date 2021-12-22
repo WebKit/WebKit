@@ -1,3 +1,14 @@
+2021-12-21  Sergio Villar Senin  <svillar@igalia.com>
+
+        [REGRESSION][[css-flexbox] child elements are shrunk to fit into container after r286206
+        https://bugs.webkit.org/show_bug.cgi?id=234361
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        * web-platform-tests/css/css-flexbox/flexbox-iframe-intrinsic-size-001-expected.html: Added.
+        * web-platform-tests/css/css-flexbox/flexbox-iframe-intrinsic-size-001.html: Added.
+        * web-platform-tests/css/css-flexbox/w3c-import.log:
+
 2021-12-21  Tim Nguyen  <ntim@apple.com>
 
         <dialog> should generate implied end tags
