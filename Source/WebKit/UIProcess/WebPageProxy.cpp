@@ -5844,13 +5844,21 @@ void WebPageProxy::createNewPage(FrameInfoData&& originatingFrameInfoData, WebPa
     auto* originatingPage = m_process->webPage(originatingPageID);
     auto originatingFrameInfo = API::FrameInfo::create(WTFMove(originatingFrameInfoData), originatingPage);
     auto mainFrameURL = m_mainFrame ? m_mainFrame->url() : URL();
-    auto completionHandler = [this, protectedThis = Ref { *this }, mainFrameURL, request, reply = WTFMove(reply), privateClickMeasurement = navigationActionData.privateClickMeasurement] (RefPtr<WebPageProxy> newPage) mutable {
+
+    std::optional<bool> openerAppInitiatedState;
+    if (originatingPage)
+        openerAppInitiatedState = originatingPage->lastNavigationWasAppInitiated();
+
+    auto completionHandler = [this, protectedThis = Ref { *this }, mainFrameURL, request, reply = WTFMove(reply), privateClickMeasurement = navigationActionData.privateClickMeasurement, openerAppInitiatedState = WTFMove(openerAppInitiatedState)] (RefPtr<WebPageProxy> newPage) mutable {
         if (!newPage) {
             reply(std::nullopt, std::nullopt);
             return;
         }
 
         newPage->setOpenedByDOM();
+
+        if (openerAppInitiatedState)
+            newPage->m_lastNavigationWasAppInitiated = *openerAppInitiatedState;
 
         reply(newPage->webPageID(), newPage->creationParameters(m_process, *newPage->drawingArea()));
 

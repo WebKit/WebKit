@@ -1,3 +1,27 @@
+2021-12-21  Brent Fulgham  <bfulgham@apple.com>
+
+        Propagate app-initiated state to new ResourceRequests
+        https://bugs.webkit.org/show_bug.cgi?id=234015
+        <rdar://problem/86128638>
+
+        Reviewed by Kate Cheney.
+
+        While reviewing logging we have found that some ResourceRequest objects
+        are missing the correct state for app-initiated loads. Typically, these
+        are cases where a new ResourceRequest is created from a URL string, losing
+        the context that came with the original load (or the context of the page
+        triggering the load).
+
+        This patch corrects a number of such cases.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::createNewPage): Propagate app-initiated state to newly created page.
+        * NetworkProcess/cache/NetworkCacheSubresourcesEntry.cpp:
+        (WebKit::NetworkCache::SubresourceInfo::encode const): Correct missing serialization for
+        app-initiated state.
+        (WebKit::NetworkCache::SubresourceInfo::decode):
+        (WebKit::NetworkCache::SubresourceInfo::SubresourceInfo):
+
 2021-12-21  Alex Christensen  <achristensen@webkit.org>
 
         Fix some API tests after r287341

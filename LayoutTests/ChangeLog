@@ -1,3 +1,22 @@
+2021-12-21  Brent Fulgham  <bfulgham@apple.com>
+
+        Propagate app-initiated state to new ResourceRequests
+        https://bugs.webkit.org/show_bug.cgi?id=234015
+        <rdar://problem/86128638>
+
+        Reviewed by Kate Cheney.
+
+        * http/tests/app-privacy-report/app-attribution-beacon-isappinitiated-expected.txt: Added.
+        * http/tests/app-privacy-report/app-attribution-beacon-isappinitiated.html: Added.
+        * http/tests/app-privacy-report/app-attribution-beacon-isnotappinitiated-expected.txt: Added.
+        * http/tests/app-privacy-report/app-attribution-beacon-isnotappinitiated.html: Added.
+        * http/tests/app-privacy-report/new-window-isappinitiated.html: Added.
+        * http/tests/app-privacy-report/new-window-isappinitiated-expected.txt: Added.
+        * http/tests/app-privacy-report/new-window-isnotappinitiated.html: Added.
+        * http/tests/app-privacy-report/new-window-isnotappinitiated-expected.txt: Added.
+        * http/tests/app-privacy-report/resources/new-window-isappinitiated-win.html: Added.
+        * http/tests/app-privacy-report/resources/new-window-isnotappinitiated-win.html: Added.
+
 2021-12-21  Simon Fraser  <simon.fraser@apple.com>
 
         Fuzzy pixel data need to be computed in terms of CSS pixels

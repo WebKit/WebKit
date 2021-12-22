@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2021 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Nokia Corporation and/or its subsidiary(-ies)
  * Copyright (C) 2008, 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
  * Copyright (C) 2008 Alp Toker <alp@atoker.com>
@@ -1681,6 +1681,8 @@ bool FrameLoader::willLoadMediaElementURL(URL& url, Node& initiatorNode)
 
     ResourceRequest request(url);
     request.setInspectorInitiatorNodeIdentifier(InspectorInstrumentation::identifierForNode(initiatorNode));
+    if (m_documentLoader)
+        request.setIsAppInitiated(m_documentLoader->lastNavigationWasAppInitiated());
 
     ResourceLoaderIdentifier identifier;
     ResourceError error;
@@ -2128,6 +2130,8 @@ void FrameLoader::commitProvisionalLoad()
             ResourceError error;
             ResourceLoaderIdentifier identifier;
             ResourceRequest request(response.url());
+            if (m_documentLoader)
+                request.setIsAppInitiated(m_documentLoader->lastNavigationWasAppInitiated());
             requestFromDelegate(request, identifier, error);
             // FIXME: If we get a resource with more than 2B bytes, this code won't do the right thing.
             // However, with today's computers and networking speeds, this won't happen in practice.

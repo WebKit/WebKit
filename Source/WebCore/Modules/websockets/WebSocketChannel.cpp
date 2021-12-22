@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2011, 2012 Google Inc.  All rights reserved.
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -35,6 +35,7 @@
 #include "Blob.h"
 #include "CookieJar.h"
 #include "Document.h"
+#include "DocumentLoader.h"
 #include "ExceptionCode.h"
 #include "FileReaderLoader.h"
 #include "Frame.h"
@@ -92,7 +93,12 @@ WebSocketChannel::ConnectStatus WebSocketChannel::connect(const URL& requestedUR
     m_allowCookies = validatedURL->areCookiesAllowed;
     String userAgent = m_document->userAgent(m_document->url());
     String clientOrigin = m_document->securityOrigin().toString();
-    m_handshake = makeUnique<WebSocketHandshake>(validatedURL->url, protocol, userAgent, clientOrigin, m_allowCookies);
+
+    bool isAppInitiated = true;
+    if (auto* documentLoader = m_document->loader())
+        isAppInitiated = documentLoader->lastNavigationWasAppInitiated();
+
+    m_handshake = makeUnique<WebSocketHandshake>(validatedURL->url, protocol, userAgent, clientOrigin, m_allowCookies, isAppInitiated);
     m_handshake->reset();
     m_handshake->addExtensionProcessor(m_deflateFramer.createExtensionProcessor());
     if (m_progressIdentifier)
