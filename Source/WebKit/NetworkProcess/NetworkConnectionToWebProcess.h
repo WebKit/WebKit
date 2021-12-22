@@ -274,6 +274,7 @@ private:
 
 #if PLATFORM(MAC)
     void updateActivePages(const String& name, const Vector<String>& activePagesOrigins, audit_token_t);
+    void getProcessDisplayName(audit_token_t, CompletionHandler<void(const String&)>&&);
 #endif
 
 #if USE(LIBWEBRTC)
@@ -406,6 +407,9 @@ private:
 
 #if ENABLE(APPLE_PAY_REMOTE_UI)
     std::unique_ptr<WebPaymentCoordinatorProxy> m_paymentCoordinator;
+#endif
+#if PLATFORM(MAC) && !USE(APPLE_INTERNAL_SDK)
+    String m_processDisplayName;
 #endif
     const WebCore::ProcessIdentifier m_webProcessIdentifier;
 

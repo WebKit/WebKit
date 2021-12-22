@@ -294,6 +294,8 @@ public:
 #if PLATFORM(COCOA)
     RetainPtr<CFDataRef> sourceApplicationAuditData() const;
     void destroyRenderingResources();
+    void getProcessDisplayName(CompletionHandler<void(String&&)>&&);
+    std::optional<audit_token_t> auditTokenForSelf();
 #endif
 
     const String& uiProcessBundleIdentifier() const { return m_uiProcessBundleIdentifier; }
