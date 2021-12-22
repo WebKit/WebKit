@@ -262,8 +262,8 @@ void CDMInstanceThunder::initializeWithConfiguration(const CDMKeySystemConfigura
 
 void CDMInstanceThunder::setServerCertificate(Ref<FragmentedSharedBuffer>&& certificate,  SuccessCallback&& callback)
 {
-    OpenCDMError error = opencdm_system_set_server_certificate(m_thunderSystem.get(), const_cast<uint8_t*>(certificate->data()),
-        certificate->size());
+    auto data = certificate->extractData();
+    OpenCDMError error = opencdm_system_set_server_certificate(m_thunderSystem.get(), const_cast<uint8_t*>(data.data()), data.size());
     callback(!error ? Succeeded : Failed);
 }
 
@@ -332,23 +332,18 @@ public:
             return;
 
         GST_DEBUG("parsing buffer of size %zu", buffer->size());
-        GST_MEMDUMP("buffer", buffer->data(), buffer->size());
-
-        StringView payload(reinterpret_cast<const LChar*>(buffer->data()), buffer->size());
-        static NeverDestroyed<StringView> type(reinterpret_cast<const LChar*>(":Type:"), 6);
-        size_t typePosition = payload.find(type, 0);
-        StringView requestType(payload.characters8(), typePosition != notFound ? typePosition : 0);
         unsigned offset = 0u;
-        if (!requestType.isEmpty() && requestType.length() != payload.length())
-            offset = typePosition + 6;
-
-        if (requestType.length() == 1) {
-            // FIXME: There are simpler ways to convert a single digit to a number than calling parseInteger.
-            m_type = std::make_optional(static_cast<WebCore::MediaKeyMessageType>(parseInteger<int>(requestType).value_or(0)));
+        if (buffer->size() >= 7) {
+            auto data = buffer->read(0, 7);
+            StringView dataString(reinterpret_cast<const LChar*>(data.data()), data.size());
+            static NeverDestroyed<StringView> type(reinterpret_cast<const LChar*>(":Type:"), 6);
+            if (dataString.endsWith(type)) {
+                m_type.emplace(static_cast<WebCore::MediaKeyMessageType>(dataString.characterAt(0) - '0'));
+                offset = 7;
+            }
         }
-
-        m_payload = SharedBuffer::create(payload.characters8() + offset, payload.length() - offset);
-
+        auto remainingData = buffer->read(offset, buffer->size() - offset);
+        m_payload = SharedBuffer::create(WTFMove(remainingData));
         m_isValid = true;
     }
 
@@ -478,7 +473,8 @@ void CDMInstanceSessionThunder::keysUpdateDoneCallback()
 void CDMInstanceSessionThunder::errorCallback(RefPtr<FragmentedSharedBuffer>&& message)
 {
     GST_ERROR("CDM error");
-    GST_MEMDUMP("error dump", message->data(), message->size());
+    auto data = message->extractData();
+    GST_MEMDUMP("error dump", data.data(), data.size());
     for (const auto& challengeCallback : m_challengeCallbacks)
         challengeCallback();
     m_challengeCallbacks.clear();
@@ -499,11 +495,12 @@ void CDMInstanceSessionThunder::requestLicense(LicenseType licenseType, const At
     m_initData = InitData(instance->keySystem(), WTFMove(initDataSharedBuffer));
 
     GST_TRACE("Going to request a new session id, init data size %zu", m_initData.payload()->size());
-    GST_MEMDUMP("init data", m_initData.payload()->data(), m_initData.payload()->size());
+    auto payloadData = m_initData.payload()->extractData();
+    GST_MEMDUMP("init data", payloadData.data(), payloadData.size());
 
     OpenCDMSession* session = nullptr;
     opencdm_construct_session(&instance->thunderSystem(), thunderLicenseType(licenseType), initDataType.string().utf8().data(),
-        m_initData.payload()->data(), m_initData.payload()->size(), nullptr, 0, &m_thunderSessionCallbacks, this, &session);
+        payloadData.data(), payloadData.size(), nullptr, 0, &m_thunderSessionCallbacks, this, &session);
     if (!session) {
         GST_ERROR("Could not create session");
         RefPtr<FragmentedSharedBuffer> initData = m_initData.payload();
@@ -564,7 +561,10 @@ void CDMInstanceSessionThunder::updateLicense(const String& sessionID, LicenseTy
                 if (parsedResponseMessage.hasPayload()) {
                     Ref<FragmentedSharedBuffer> message = WTFMove(parsedResponseMessage.payload());
                     GST_DEBUG("got message of size %zu", message->size());
-                    GST_MEMDUMP("message", message->data(), message->size());
+#ifndef GST_DISABLE_GST_DEBUG
+                    auto data = message->copyData();
+                    GST_MEMDUMP("message", data.data(), data.size());
+#endif
                     callback(false, std::nullopt, std::nullopt,
                         std::make_pair(parsedResponseMessage.typeOr(MediaKeyMessageType::LicenseRequest),
                             WTFMove(message)), SuccessValue::Succeeded);
@@ -578,7 +578,8 @@ void CDMInstanceSessionThunder::updateLicense(const String& sessionID, LicenseTy
             callback(false, std::nullopt, std::nullopt, std::nullopt, SuccessValue::Failed);
         }
     });
-    if (!m_session || m_sessionID.isEmpty() || opencdm_session_update(m_session->get(), response->data(), response->size()))
+    auto responseData = response->extractData();
+    if (!m_session || m_sessionID.isEmpty() || opencdm_session_update(m_session->get(), responseData.data(), responseData.size()))
         sessionFailure();
 }
 
@@ -599,7 +600,10 @@ void CDMInstanceSessionThunder::loadSession(LicenseType, const String& sessionID
                 if (parsedResponseMessage.hasPayload()) {
                     Ref<FragmentedSharedBuffer> message = WTFMove(parsedResponseMessage.payload());
                     GST_DEBUG("got message of size %zu", message->size());
-                    GST_MEMDUMP("message", message->data(), message->size());
+#ifndef GST_DISABLE_GST_DEBUG
+                    auto data = message->copyData();
+                    GST_MEMDUMP("message", data.data(), data.size());
+#endif
                     callback(std::nullopt, std::nullopt, std::make_pair(parsedResponseMessage.typeOr(MediaKeyMessageType::LicenseRequest),
                         WTFMove(message)), SuccessValue::Succeeded, SessionLoadFailure::None);
                 } else {
@@ -608,11 +612,15 @@ void CDMInstanceSessionThunder::loadSession(LicenseType, const String& sessionID
                 }
             }
         } else {
-            auto responseMessageData = responseMessage ? responseMessage->data() : nullptr;
-            auto responseMessageSize = responseMessage ? responseMessage->size() : 0;
-            StringView response(reinterpret_cast<const LChar*>(responseMessageData), responseMessageSize);
-            GST_ERROR("session %s not loaded, reason %s", m_sessionID.utf8().data(), response.utf8().data());
-            callback(std::nullopt, std::nullopt, std::nullopt, SuccessValue::Failed, sessionLoadFailureFromThunder(response));
+            GST_ERROR("session %s not loaded", m_sessionID.utf8().data());
+            if (responseMessage->isEmpty())
+                callback(std::nullopt, std::nullopt, std::nullopt, SuccessValue::Failed, sessionLoadFailureFromThunder({ }));
+            else {
+                auto responseData = responseMessage->extractData();
+                StringView response(reinterpret_cast<const LChar*>(responseData.data()), responseData.size());
+                GST_DEBUG("Error message: %s", response.utf8().data());
+                callback(std::nullopt, std::nullopt, std::nullopt, SuccessValue::Failed, sessionLoadFailureFromThunder(response));
+            }
         }
     });
     if (!m_session || m_sessionID.isEmpty() || opencdm_session_load(m_session->get()))
