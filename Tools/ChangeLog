@@ -1,3 +1,18 @@
+2021-12-21  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        REGRESSION (12/21/2021): [iOS] TestWebKitAPI.WebKit.AddAndRemoveDataDetectors is consistently failing
+        https://bugs.webkit.org/show_bug.cgi?id=234574
+        rdar://86782559
+
+        Reviewed by Tim Horton.
+
+        This test began failing today due to DataDetectors no longer recognizing "December 21, 2021" as a valid date in
+        the future. Avoid this problem (at least, until the next century) by adjusting this date to be much later.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/DataDetection.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/data-detectors.html:
+
 2021-12-21  Brady Eidson  <beidson@apple.com>
 
         Make Notification identifiers be a UUID string instead of a uint64_t
