@@ -319,7 +319,7 @@ public:
 
     enum class IsServiceWorkerNavigationLoad : bool { No, Yes };
     // For subresource requests the FrameLoadType parameter has no effect and can be skipped.
-    void updateRequestAndAddExtraFields(ResourceRequest&, IsMainResource, FrameLoadType = FrameLoadType::Standard, ShouldUpdateAppInitiatedValue = ShouldUpdateAppInitiatedValue::Yes, IsServiceWorkerNavigationLoad = IsServiceWorkerNavigationLoad::No);
+    void updateRequestAndAddExtraFields(ResourceRequest&, IsMainResource, FrameLoadType = FrameLoadType::Standard, ShouldUpdateAppInitiatedValue = ShouldUpdateAppInitiatedValue::Yes, IsServiceWorkerNavigationLoad = IsServiceWorkerNavigationLoad::No, Document* = nullptr);
 
     void scheduleRefreshIfNeeded(Document&, const String& content, IsMetaRefresh);
 

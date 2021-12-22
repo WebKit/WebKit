@@ -188,6 +188,11 @@ RefPtr<PushSubscription> ServiceWorkerInternals::createPushSubscription(const St
     return PushSubscription::create(PushSubscriptionData { WTFMove(myEndpoint), expirationTime, WTFMove(myServerVAPIDPublicKey), WTFMove(myClientECDHPublicKey), WTFMove(myAuth) });
 }
 
+bool ServiceWorkerInternals::fetchEventIsSameSite(FetchEvent& event)
+{
+    return event.request().internalRequest().isSameSite();
+}
+
 } // namespace WebCore
 
 #endif

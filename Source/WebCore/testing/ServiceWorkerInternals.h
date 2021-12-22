@@ -69,6 +69,8 @@ public:
     
     RefPtr<PushSubscription> createPushSubscription(const String& endpoint, std::optional<EpochTimeStamp> expirationTime, const ArrayBuffer& serverVAPIDPublicKey, const ArrayBuffer& clientECDHPublicKey, const ArrayBuffer& auth);
 
+    bool fetchEventIsSameSite(FetchEvent&);
+
 private:
     explicit ServiceWorkerInternals(ServiceWorkerIdentifier);
 
