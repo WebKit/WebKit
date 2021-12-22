@@ -1,3 +1,18 @@
+2021-12-22  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Scroll view pinch zoom gesture sometimes fails to recognize in WKWebView
+        https://bugs.webkit.org/show_bug.cgi?id=234584
+        rdar://84379650
+
+        Reviewed by Simon Fraser.
+
+        Add a test to exercise the fix. Note that this test will only fail without the fix *some* of the time, since it
+        depends entirely on the order in which two gestures appear in an Objective-C hash datastructure (see WebKit
+        ChangeLog for more details).
+
+        * fast/events/touch/ios/pinch-zoom-with-passive-touch-event-listeners-expected.txt: Added.
+        * fast/events/touch/ios/pinch-zoom-with-passive-touch-event-listeners.html: Added.
+
 2021-12-22  Antti Koivisto  <antti@apple.com>
 
         [:has() pseudo-class] :has() selector invalidation issue with toggling :checked
