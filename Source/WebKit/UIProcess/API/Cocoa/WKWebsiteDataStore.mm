@@ -535,6 +535,13 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
 #endif
 }
 
+- (void)_closeDatabases:(void (^)(void))completionHandler
+{
+    _websiteDataStore->closeDatabases([completionHandler = makeBlockPtr(completionHandler)]() {
+        completionHandler();
+    });
+}
+
 - (void)_getResourceLoadStatisticsDataSummary:(void (^)(NSArray<_WKResourceLoadStatisticsThirdParty *> *))completionHandler
 {
 #if ENABLE(INTELLIGENT_TRACKING_PREVENTION)

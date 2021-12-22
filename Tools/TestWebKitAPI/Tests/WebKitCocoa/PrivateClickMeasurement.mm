@@ -311,14 +311,18 @@ static NSString *emptyPcmDBPath()
     return fileURL.path;
 }
 
-static void cleanUp()
+static void cleanUp(RetainPtr<WKWebView> webView)
 {
-    NSFileManager *defaultFileManager = NSFileManager.defaultManager;
-    NSString *itpRoot = WKWebsiteDataStore.defaultDataStore._configuration._resourceLoadStatisticsDirectory.path;
-    [defaultFileManager removeItemAtPath:itpRoot error:nil];
-    while ([defaultFileManager fileExistsAtPath:itpRoot])
-        usleep(10000);
-    EXPECT_FALSE([defaultFileManager fileExistsAtPath:itpRoot]);
+    static bool isDone = false;
+    [[webView.get() configuration].websiteDataStore _closeDatabases:^{
+        NSFileManager *defaultFileManager = NSFileManager.defaultManager;
+        NSString *itpRoot = WKWebsiteDataStore.defaultDataStore._configuration._resourceLoadStatisticsDirectory.path;
+        [defaultFileManager removeItemAtPath:itpRoot error:nil];
+        while ([defaultFileManager fileExistsAtPath:itpRoot])
+            usleep(10000);
+        isDone = true;
+    }];
+    TestWebKitAPI::Util::run(&isDone);
 }
 
 static void createAndPopulateObservedDomainTable(WebCore::SQLiteDatabase& database)
@@ -384,7 +388,7 @@ TEST(PrivateClickMeasurement, MigrateFromResourceLoadStatistics1)
     setUpFromResourceLoadStatisticsDatabase(addUnattributedPCMv1, addAttributedPCMv1);
     auto webView = webViewWithResourceLoadStatisticsEnabledInNetworkProcess();
     pollUntilPCMIsMigrated(webView.get(), MigratingFromResourceLoadStatistics::Yes, UsingDestinationToken::No);
-    cleanUp();
+    cleanUp(webView);
 }
 
 TEST(PrivateClickMeasurement, MigrateFromResourceLoadStatistics2)
@@ -392,7 +396,7 @@ TEST(PrivateClickMeasurement, MigrateFromResourceLoadStatistics2)
     setUpFromResourceLoadStatisticsDatabase(addUnattributedPCMv2, addAttributedPCMv2);
     auto webView = webViewWithResourceLoadStatisticsEnabledInNetworkProcess();
     pollUntilPCMIsMigrated(webView.get(), MigratingFromResourceLoadStatistics::Yes, UsingDestinationToken::No);
-    cleanUp();
+    cleanUp(webView);
 }
 
 TEST(PrivateClickMeasurement, MigrateFromResourceLoadStatistics3)
@@ -400,7 +404,7 @@ TEST(PrivateClickMeasurement, MigrateFromResourceLoadStatistics3)
     setUpFromResourceLoadStatisticsDatabase(addUnattributedPCMv3, addAttributedPCMv3);
     auto webView = webViewWithResourceLoadStatisticsEnabledInNetworkProcess();
     pollUntilPCMIsMigrated(webView.get(), MigratingFromResourceLoadStatistics::Yes, UsingDestinationToken::No);
-    cleanUp();
+    cleanUp(webView);
 }
 
 TEST(PrivateClickMeasurement, MigrateFromPCM1)
@@ -408,7 +412,7 @@ TEST(PrivateClickMeasurement, MigrateFromPCM1)
     setUpFromPCMDatabase(addUnattributedPCMv4, addAttributedPCMv4);
     auto webView = webViewWithResourceLoadStatisticsEnabledInNetworkProcess();
     pollUntilPCMIsMigrated(webView.get(), MigratingFromResourceLoadStatistics::No, UsingDestinationToken::No);
-    cleanUp();
+    cleanUp(webView);
 }
 
 TEST(PrivateClickMeasurement, MigrateWithDestinationToken)
@@ -416,5 +420,5 @@ TEST(PrivateClickMeasurement, MigrateWithDestinationToken)
     setUpFromPCMDatabase(addUnattributedPCMv4, addAttributedPCMv5);
     auto webView = webViewWithResourceLoadStatisticsEnabledInNetworkProcess();
     pollUntilPCMIsMigrated(webView.get(), MigratingFromResourceLoadStatistics::No, UsingDestinationToken::Yes);
-    cleanUp();
+    cleanUp(webView);
 }

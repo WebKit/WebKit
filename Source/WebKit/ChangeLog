@@ -1,3 +1,49 @@
+2021-12-22  Kate Cheney  <katherine_cheney@apple.com>
+
+        PCM tests crashing with 'unlink' errors
+        https://bugs.webkit.org/show_bug.cgi?id=234565
+        <rdar://problem/86771766>
+
+        Reviewed by Alex Christensen.
+
+        Close PCM and ITP databases before deleting their database files in
+        API testing. This adds 2 new SPIs on WKWebsiteDataStore to close the
+        respective databases. It also addresses the renaming FIXME for
+        NetworkProcess::simulatePrivateClickMeasurementSessionRestart.
+
+        No new tests. This will fix existing crashing PCM API tests.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::closeITPDatabase):
+        (WebKit::NetworkProcess::closePCMDatabase):
+        (WebKit::NetworkProcess::simulatePrivateClickMeasurementSessionRestart):
+        (WebKit::NetworkProcess::simulateResourceLoadStatisticsSessionRestart): Deleted.
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * NetworkProcess/NetworkSession.cpp:
+        (WebKit::NetworkSession::destroyPrivateClickMeasurementStore):
+        (WebKit::NetworkSession::setPrivateClickMeasurementAppBundleIDForTesting):
+        (WebKit::NetworkSession::recreatePrivateClickMeasurementStore): Renamed.
+        Renamed to be more accurate. This function only deletes the database,
+        then the call in the completion handler recreates it. This also makes
+        it more clear when we reuse it to close the database.
+
+        * NetworkProcess/NetworkSession.h:
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSimulatePrivateClickMeasurementSessionRestart):
+        (WKPageSimulateResourceLoadStatisticsSessionRestart): Deleted.
+        * UIProcess/API/C/WKPagePrivate.h:
+        * UIProcess/API/Cocoa/WKWebsiteDataStore.mm:
+        (-[WKWebsiteDataStore _closeDatabases:]):
+        * UIProcess/API/Cocoa/WKWebsiteDataStorePrivate.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::simulatePrivateClickMeasurementSessionRestart):
+        (WebKit::WebPageProxy::simulateResourceLoadStatisticsSessionRestart): Deleted.
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::closeDatabases):
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+
 2021-12-22  Alex Christensen  <achristensen@webkit.org>
 
         Fix compiling with pickier compiler

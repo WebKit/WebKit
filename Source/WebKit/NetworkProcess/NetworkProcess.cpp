@@ -1988,6 +1988,17 @@ void NetworkProcess::registrableDomainsWithWebsiteData(PAL::SessionID sessionID,
         });
     }
 }
+
+void NetworkProcess::closeITPDatabase(PAL::SessionID sessionID, CompletionHandler<void()>&& completionHandler)
+{
+    if (auto* session = networkSession(sessionID)) {
+        session->destroyResourceLoadStatistics(WTFMove(completionHandler));
+        return;
+    }
+
+    completionHandler();
+}
+
 #endif // ENABLE(INTELLIGENT_TRACKING_PREVENTION)
 
 void NetworkProcess::downloadRequest(PAL::SessionID sessionID, DownloadID downloadID, const ResourceRequest& request, std::optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain, const String& suggestedFilename)
@@ -2444,14 +2455,23 @@ void NetworkProcess::setPrivateClickMeasurementOverrideTimerForTesting(PAL::Sess
     completionHandler();
 }
 
-void NetworkProcess::simulateResourceLoadStatisticsSessionRestart(PAL::SessionID sessionID, CompletionHandler<void()>&& completionHandler)
+void NetworkProcess::closePCMDatabase(PAL::SessionID sessionID, CompletionHandler<void()>&& completionHandler)
+{
+    if (auto* session = networkSession(sessionID)) {
+        session->destroyPrivateClickMeasurementStore(WTFMove(completionHandler));
+        return;
+    }
+
+    completionHandler();
+}
+
+void NetworkProcess::simulatePrivateClickMeasurementSessionRestart(PAL::SessionID sessionID, CompletionHandler<void()>&& completionHandler)
 {
     if (!allowsPrivateClickMeasurementTestFunctionality())
         return completionHandler();
 
-    // FIXME: Rename this to simulatePrivateClickMeasurementSessionRestart.
     if (auto* session = networkSession(sessionID)) {
-        session->recreatePrivateClickMeasurementStore([session = WeakPtr { *session }, completionHandler = WTFMove(completionHandler)] () mutable {
+        session->destroyPrivateClickMeasurementStore([session = WeakPtr { *session }, completionHandler = WTFMove(completionHandler)] () mutable {
             if (session)
                 session->firePrivateClickMeasurementTimerImmediatelyForTesting();
             completionHandler();

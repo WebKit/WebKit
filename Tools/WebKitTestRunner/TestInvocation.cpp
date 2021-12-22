@@ -1387,8 +1387,8 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
         return nullptr;
     }
     
-    if (WKStringIsEqualToUTF8CString(messageName, "SimulateResourceLoadStatisticsSessionRestart")) {
-        TestController::singleton().simulateResourceLoadStatisticsSessionRestart();
+    if (WKStringIsEqualToUTF8CString(messageName, "SimulatePrivateClickMeasurementSessionRestart")) {
+        TestController::singleton().simulatePrivateClickMeasurementSessionRestart();
         return nullptr;
     }
 

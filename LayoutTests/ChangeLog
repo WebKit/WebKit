@@ -1,3 +1,14 @@
+2021-12-22  Kate Cheney  <katherine_cheney@apple.com>
+
+        PCM tests crashing with 'unlink' errors
+        https://bugs.webkit.org/show_bug.cgi?id=234565
+        <rdar://problem/86771766>
+
+        Reviewed by Alex Christensen.
+
+        * http/tests/privateClickMeasurement/expired-ad-click-gets-removed-on-session-start.html:
+        * http/tests/privateClickMeasurement/expired-attribution-report-gets-sent-on-session-start.html:
+
 2021-12-22  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Scroll view pinch zoom gesture sometimes fails to recognize in WKWebView

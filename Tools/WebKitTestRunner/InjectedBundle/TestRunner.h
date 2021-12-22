@@ -535,7 +535,7 @@ public:
     void setPrivateClickMeasurementEphemeralMeasurementForTesting(bool value);
     void setPrivateClickMeasurementFraudPreventionValuesForTesting(JSStringRef unlinkableToken, JSStringRef secretToken, JSStringRef signature, JSStringRef keyID);
     void setPrivateClickMeasurementAppBundleIDForTesting(JSStringRef);
-    void simulateResourceLoadStatisticsSessionRestart();
+    void simulatePrivateClickMeasurementSessionRestart();
 
     void setIsSpeechRecognitionPermissionGranted(bool);
 

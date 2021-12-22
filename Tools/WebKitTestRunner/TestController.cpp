@@ -3780,10 +3780,10 @@ void TestController::setPrivateClickMeasurementEphemeralMeasurementForTesting(bo
     runUntil(callbackContext.done, noTimeout);
 }
 
-void TestController::simulateResourceLoadStatisticsSessionRestart()
+void TestController::simulatePrivateClickMeasurementSessionRestart()
 {
     PrivateClickMeasurementVoidCallbackContext callbackContext(*this);
-    WKPageSimulateResourceLoadStatisticsSessionRestart(m_mainWebView->page(), privateClickMeasurementVoidCallback, &callbackContext);
+    WKPageSimulatePrivateClickMeasurementSessionRestart(m_mainWebView->page(), privateClickMeasurementVoidCallback, &callbackContext);
     runUntil(callbackContext.done, noTimeout);
 }
 

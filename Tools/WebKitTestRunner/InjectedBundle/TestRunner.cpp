@@ -2086,9 +2086,9 @@ void TestRunner::setPrivateClickMeasurementEphemeralMeasurementForTesting(bool v
     postSynchronousPageMessage("SetPrivateClickMeasurementEphemeralMeasurementForTesting", value);
 }
 
-void TestRunner::simulateResourceLoadStatisticsSessionRestart()
+void TestRunner::simulatePrivateClickMeasurementSessionRestart()
 {
-    postSynchronousPageMessage("SimulateResourceLoadStatisticsSessionRestart");
+    postSynchronousPageMessage("SimulatePrivateClickMeasurementSessionRestart");
 }
 
 void TestRunner::setPrivateClickMeasurementTokenPublicKeyURLForTesting(JSStringRef urlString)

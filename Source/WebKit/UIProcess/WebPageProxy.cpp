@@ -10493,9 +10493,9 @@ void WebPageProxy::setPrivateClickMeasurementEphemeralMeasurementForTesting(bool
     websiteDataStore().networkProcess().sendWithAsyncReply(Messages::NetworkProcess::SetPrivateClickMeasurementEphemeralMeasurementForTesting(m_websiteDataStore->sessionID(), value), WTFMove(completionHandler));
 }
 
-void WebPageProxy::simulateResourceLoadStatisticsSessionRestart(CompletionHandler<void()>&& completionHandler)
+void WebPageProxy::simulatePrivateClickMeasurementSessionRestart(CompletionHandler<void()>&& completionHandler)
 {
-    websiteDataStore().networkProcess().sendWithAsyncReply(Messages::NetworkProcess::SimulateResourceLoadStatisticsSessionRestart(m_websiteDataStore->sessionID()), WTFMove(completionHandler));
+    websiteDataStore().networkProcess().sendWithAsyncReply(Messages::NetworkProcess::SimulatePrivateClickMeasurementSessionRestart(m_websiteDataStore->sessionID()), WTFMove(completionHandler));
 }
 
 void WebPageProxy::setPrivateClickMeasurementTokenPublicKeyURLForTesting(const URL& url, CompletionHandler<void()>&& completionHandler)

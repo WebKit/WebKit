@@ -1723,6 +1723,17 @@ void WebsiteDataStore::setPrivateClickMeasurementDebugMode(bool enabled)
     networkProcess().setPrivateClickMeasurementDebugMode(sessionID(), enabled);
 }
 
+void WebsiteDataStore::closeDatabases(CompletionHandler<void()>&& completionHandler)
+{
+    auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
+
+    networkProcess().sendWithAsyncReply(Messages::NetworkProcess::ClosePCMDatabase(m_sessionID), [callbackAggregator] { });
+
+#if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
+    networkProcess().sendWithAsyncReply(Messages::NetworkProcess::CloseITPDatabase(m_sessionID), [callbackAggregator] { });
+#endif
+}
+
 #if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
 void WebsiteDataStore::logTestingEvent(const String& event)
 {

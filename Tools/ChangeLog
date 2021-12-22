@@ -1,3 +1,29 @@
+2021-12-22  Kate Cheney  <katherine_cheney@apple.com>
+
+        PCM tests crashing with 'unlink' errors
+        https://bugs.webkit.org/show_bug.cgi?id=234565
+        <rdar://problem/86771766>
+
+        Reviewed by Alex Christensen.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/PrivateClickMeasurement.mm:
+        (cleanUp):
+        Close the databases before removing the files.
+
+        (TEST):
+        * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::simulatePrivateClickMeasurementSessionRestart):
+        (WTR::TestRunner::simulateResourceLoadStatisticsSessionRestart): Deleted.
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::simulatePrivateClickMeasurementSessionRestart):
+        (WTR::TestController::simulateResourceLoadStatisticsSessionRestart): Deleted.
+        * WebKitTestRunner/TestController.h:
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::didReceiveSynchronousMessageFromInjectedBundle):
+        Rename.
+
 2021-12-22  Alex Christensen  <achristensen@webkit.org>
 
         Fix compiling with pickier compiler

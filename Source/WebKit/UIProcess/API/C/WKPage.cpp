@@ -3068,10 +3068,10 @@ void WKPageSetPrivateClickMeasurementEphemeralMeasurementForTesting(WKPageRef pa
     });
 }
 
-void WKPageSimulateResourceLoadStatisticsSessionRestart(WKPageRef pageRef, WKPageSimulateResourceLoadStatisticsSessionRestartFunction callback, void* callbackContext)
+void WKPageSimulatePrivateClickMeasurementSessionRestart(WKPageRef pageRef, WKPageSimulatePrivateClickMeasurementSessionRestartFunction callback, void* callbackContext)
 {
     CRASH_IF_SUSPENDED;
-    toImpl(pageRef)->simulateResourceLoadStatisticsSessionRestart([callbackContext, callback] () {
+    toImpl(pageRef)->simulatePrivateClickMeasurementSessionRestart([callbackContext, callback] () {
         callback(callbackContext);
     });
 }

@@ -351,7 +351,7 @@ public:
     void setPrivateClickMeasurementOverrideTimerForTesting(bool value);
     void markAttributedPrivateClickMeasurementsAsExpiredForTesting();
     void setPrivateClickMeasurementEphemeralMeasurementForTesting(bool value);
-    void simulateResourceLoadStatisticsSessionRestart();
+    void simulatePrivateClickMeasurementSessionRestart();
     void setPrivateClickMeasurementTokenPublicKeyURLForTesting(WKURLRef);
     void setPrivateClickMeasurementTokenSignatureURLForTesting(WKURLRef);
     void setPrivateClickMeasurementAttributionReportURLsForTesting(WKURLRef sourceURL, WKURLRef destinationURL);

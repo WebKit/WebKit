@@ -114,7 +114,7 @@ public:
     void registerNetworkDataTask(NetworkDataTask&);
     void unregisterNetworkDataTask(NetworkDataTask&);
 
-    void recreatePrivateClickMeasurementStore(CompletionHandler<void()>&&);
+    void destroyPrivateClickMeasurementStore(CompletionHandler<void()>&&);
 
 #if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
     WebResourceLoadStatisticsStore* resourceLoadStatistics() const { return m_resourceLoadStatistics.get(); }
