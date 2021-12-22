@@ -315,13 +315,13 @@ struct ImmediateDecomposition {
         : upper(UImmediate(0))
         , lower(IImmediate(0))
     {
-        ASSERT(ImmediateBase<32>::isValid(value));
+        ASSERT(ImmediateBase<32>::isValid(immediate));
         int32_t value = int32_t(immediate);
         if (value & (1 << 11))
             value += (1 << 12);
 
         upper = UImmediate::v<UImmediate>(value);
-        lower = IImmediate::v<IImmediate>(value);
+        lower = IImmediate::v<IImmediate>((value << 20) >> 20);
     }
 
     UImmediate upper;

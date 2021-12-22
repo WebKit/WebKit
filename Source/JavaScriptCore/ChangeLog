@@ -1,3 +1,16 @@
+2021-12-22  Zan Dobersek  <zdobersek@igalia.com>
+
+        [RISCV64] Fix RISCV64Assembler::ImmediateDecomposition in debug builds
+        https://bugs.webkit.org/show_bug.cgi?id=234594
+
+        Unreviewed, fix the RISCV64Assembler::ImmediateDecomposition constructor
+        to build in debug mode (fixing the assert) as well as run properly in
+        that mode (performing manual sign-extension on the lower 12 bits of the
+        IImmediate value as required for this type of immediates).
+
+        * assembler/RISCV64Assembler.h:
+        (JSC::RISCV64Instructions::ImmediateDecomposition::ImmediateDecomposition):
+
 2021-12-21  Zan Dobersek  <zdobersek@igalia.com>
 
         [RISCV64] Add or enable missing CPU(RISCV64) codepaths in baseline JIT
