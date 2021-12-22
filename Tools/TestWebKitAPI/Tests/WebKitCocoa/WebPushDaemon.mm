@@ -237,7 +237,7 @@ TEST(WebPushD, BasicCommunication)
         bool stringMatches = [nsMessage hasPrefix:@"[com.apple.WebKit.TestWebKitAPI"] || [nsMessage hasPrefix:@"[TestWebKitAPI"];
         stringMatches = stringMatches && [nsMessage hasSuffix:@" Turned Debug Mode on"];
         
-#if PLATFORM(MAC) && !USE(APPLE_INTERNAL_SDK) && __MAC_OS_X_VERSION_MIN_REQUIRED < 120000
+#if PLATFORM(MAC) && !USE(APPLE_INTERNAL_SDK) && CPU(x86_64)
         // ClientConnection::hostAppCodeSigningIdentifier returns an empty string,
         // so the string is more like "[(0x7f8f4bd083f0) (1 )] Turned Debug Mode on".
         // This is of no consequence, so just make the test pass.
@@ -334,7 +334,7 @@ TEST(WebPushD, PermissionManagement)
     static bool originOperationDone = false;
     static RetainPtr<WKSecurityOrigin> origin;
     [dataStore _getOriginsWithPushAndNotificationPermissions:^(NSSet<WKSecurityOrigin *> *origins) {
-#if PLATFORM(MAC) && !USE(APPLE_INTERNAL_SDK) && __MAC_OS_X_VERSION_MIN_REQUIRED < 120000
+#if PLATFORM(MAC) && !USE(APPLE_INTERNAL_SDK) && CPU(x86_64)
         // ClientConnection::hostAppCodeSigningIdentifier returns an empty string,
         // so Daemon::canRegisterForNotifications returns false.
         // This is of no consequence, so just make the test pass.
@@ -348,7 +348,7 @@ TEST(WebPushD, PermissionManagement)
 
     TestWebKitAPI::Util::run(&originOperationDone);
 
-#if !PLATFORM(MAC) || USE(APPLE_INTERNAL_SDK) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 120000
+#if !PLATFORM(MAC) || USE(APPLE_INTERNAL_SDK) || !CPU(x86_64)
     EXPECT_WK_STREQ(origin.get().protocol, "testing");
     EXPECT_WK_STREQ(origin.get().host, "main");
 #endif
