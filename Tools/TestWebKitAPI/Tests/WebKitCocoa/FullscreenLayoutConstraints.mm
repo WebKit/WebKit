@@ -29,6 +29,7 @@
 
 #import "DeprecatedGlobalValues.h"
 #import "PlatformUtilities.h"
+#import "TestWKWebView.h"
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
@@ -50,16 +51,15 @@
 
 namespace TestWebKitAPI {
 
-// FIXME: Fix and enable this test.
-TEST(Fullscreen, DISABLED_LayoutConstraints)
+TEST(Fullscreen, LayoutConstraints)
 {
     RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     [configuration preferences]._fullScreenEnabled = YES;
-    RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100) configuration:configuration.get()]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100) configuration:configuration.get()]);
     RetainPtr<FullscreenStateChangeMessageHandler> handler = adoptNS([[FullscreenStateChangeMessageHandler alloc] init]);
     [[configuration userContentController] addScriptMessageHandler:handler.get() name:@"fullscreenStateChangeHandler"];
 
-    RetainPtr<NSWindow> window = adoptNS([[NSWindow alloc] initWithContentRect:[webView frame] styleMask:NSWindowStyleMaskBorderless backing:NSBackingStoreBuffered defer:NO]);
+    RetainPtr window { webView.get().hostWindow };
     webView.get().translatesAutoresizingMaskIntoConstraints = NO;
     [[window contentView] addSubview:webView.get()];
     
@@ -86,7 +86,9 @@ TEST(Fullscreen, DISABLED_LayoutConstraints)
     TestWebKitAPI::Util::run(&receivedFullscreenChangeMessage);
 
     NSArray* finalConstraints = [[window contentView] constraints];
-    ASSERT_TRUE([originalConstraints isEqual:finalConstraints]);
+    EXPECT_EQ(originalConstraints.count, 4u);
+    EXPECT_EQ(finalConstraints.count, 8u);
+    ASSERT_TRUE([originalConstraints isEqual:[finalConstraints subarrayWithRange:NSMakeRange(0, 4)]]);
 }
     
 } // namespace TestWebKitAPI

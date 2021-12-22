@@ -1,5 +1,17 @@
 2021-12-21  Alex Christensen  <achristensen@webkit.org>
 
+        Enable Fullscreen.LayoutConstraints API test
+        https://bugs.webkit.org/show_bug.cgi?id=234576
+
+        Reviewed by Tim Horton.
+
+        Added in bug 159900 and not compiled until bug 232768, now it's giving us some useful test coverage.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/FullscreenLayoutConstraints.mm:
+        (TestWebKitAPI::TEST):
+
+2021-12-21  Alex Christensen  <achristensen@webkit.org>
+
         Fix some API tests after r287316
         https://bugs.webkit.org/show_bug.cgi?id=232857
 
