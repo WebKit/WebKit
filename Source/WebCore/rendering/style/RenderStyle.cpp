@@ -2147,7 +2147,7 @@ Color RenderStyle::unresolvedColorForProperty(CSSPropertyID colorProperty, bool 
         return unresolvedColorForProperty(CSSProperty::resolveDirectionAwareProperty(colorProperty, direction(), writingMode()));
     case CSSPropertyColumnRuleColor:
         return visitedLink ? visitedLinkColumnRuleColor() : columnRuleColor();
-    case CSSPropertyWebkitTextEmphasisColor:
+    case CSSPropertyTextEmphasisColor:
         return visitedLink ? visitedLinkTextEmphasisColor() : textEmphasisColor();
     case CSSPropertyWebkitTextFillColor:
         return visitedLink ? visitedLinkTextFillColor() : textFillColor();

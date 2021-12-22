@@ -112,7 +112,7 @@ public:
     DECLARE_PROPERTY_CUSTOM_HANDLERS(WebkitMaskBoxImageRepeat);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(WebkitMaskBoxImageSlice);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(WebkitMaskBoxImageWidth);
-    DECLARE_PROPERTY_CUSTOM_HANDLERS(WebkitTextEmphasisStyle);
+    DECLARE_PROPERTY_CUSTOM_HANDLERS(TextEmphasisStyle);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(Zoom);
 
     // Custom handling of initial + inherit value setting only.
@@ -1187,14 +1187,14 @@ inline void BuilderCustom::applyValueBaselineShift(BuilderState& builderState, C
     }
 }
 
-inline void BuilderCustom::applyInitialWebkitTextEmphasisStyle(BuilderState& builderState)
+inline void BuilderCustom::applyInitialTextEmphasisStyle(BuilderState& builderState)
 {
     builderState.style().setTextEmphasisFill(RenderStyle::initialTextEmphasisFill());
     builderState.style().setTextEmphasisMark(RenderStyle::initialTextEmphasisMark());
     builderState.style().setTextEmphasisCustomMark(RenderStyle::initialTextEmphasisCustomMark());
 }
 
-inline void BuilderCustom::applyInheritWebkitTextEmphasisStyle(BuilderState& builderState)
+inline void BuilderCustom::applyInheritTextEmphasisStyle(BuilderState& builderState)
 {
     builderState.style().setTextEmphasisFill(builderState.parentStyle().textEmphasisFill());
     builderState.style().setTextEmphasisMark(builderState.parentStyle().textEmphasisMark());
@@ -1287,7 +1287,7 @@ inline void BuilderCustom::applyValueContain(BuilderState& builderState, CSSValu
     return builderState.style().setContain(containment);
 }
 
-inline void BuilderCustom::applyValueWebkitTextEmphasisStyle(BuilderState& builderState, CSSValue& value)
+inline void BuilderCustom::applyValueTextEmphasisStyle(BuilderState& builderState, CSSValue& value)
 {
     if (is<CSSValueList>(value)) {
         auto& list = downcast<CSSValueList>(value);

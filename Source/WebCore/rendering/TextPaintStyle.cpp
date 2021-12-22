@@ -126,7 +126,7 @@ TextPaintStyle computeTextPaintStyle(const Frame& frame, const RenderStyle& line
     if (forceBackgroundToWhite)
         paintStyle.strokeColor = adjustColorForVisibilityOnBackground(paintStyle.strokeColor, Color::white);
 
-    paintStyle.emphasisMarkColor = lineStyle.visitedDependentColorWithColorFilter(CSSPropertyWebkitTextEmphasisColor);
+    paintStyle.emphasisMarkColor = lineStyle.visitedDependentColorWithColorFilter(CSSPropertyTextEmphasisColor);
 
     // Make the text stroke color legible against a white background
     if (forceBackgroundToWhite)

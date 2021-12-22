@@ -6910,16 +6910,16 @@
             },
             "status": "non-standard"
         },
-        "-webkit-text-emphasis": {
+        "text-emphasis": {
             "inherited": true,
             "codegen-properties": {
                 "aliases": [
                     "-epub-text-emphasis",
-                    "text-emphasis"
+                    "-webkit-text-emphasis"
                 ],
                 "longhands": [
-                    "-webkit-text-emphasis-style",
-                    "-webkit-text-emphasis-color"
+                    "text-emphasis-style",
+                    "text-emphasis-color"
                 ]
             },
             "status": {
@@ -6930,12 +6930,12 @@
                 "url": "https://www.w3.org/TR/css-text-decor-3/#text-emphasis"
             }
         },
-        "-webkit-text-emphasis-color": {
+        "text-emphasis-color": {
             "inherited": true,
             "codegen-properties": {
                 "aliases": [
                     "-epub-text-emphasis-color",
-                    "text-emphasis-color"
+                    "-webkit-text-emphasis-color"
                 ],
                 "initial": "currentColor",
                 "visited-link-color-support": true,
@@ -6949,11 +6949,11 @@
                 "url": "https://www.w3.org/TR/css-text-decor-3/#text-emphasis-color"
             }
         },
-        "-webkit-text-emphasis-position": {
+        "text-emphasis-position": {
             "inherited": true,
             "codegen-properties": {
                 "aliases": [
-                    "text-emphasis-position"
+                    "-webkit-text-emphasis-position"
                 ],
                 "converter": "TextEmphasisPosition"
             },
@@ -6965,12 +6965,12 @@
                 "url": "https://www.w3.org/TR/css-text-decor-3/#text-emphasis-position"
             }
         },
-        "-webkit-text-emphasis-style": {
+        "text-emphasis-style": {
             "inherited": true,
             "codegen-properties": {
                 "aliases": [
                     "-epub-text-emphasis-style",
-                    "text-emphasis-style"
+                    "-webkit-text-emphasis-style"
                 ],
                 "custom": "All"
             },

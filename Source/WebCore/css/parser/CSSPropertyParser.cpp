@@ -4344,7 +4344,7 @@ RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, CSS
 #if ENABLE(TOUCH_EVENTS)
     case CSSPropertyWebkitTapHighlightColor:
 #endif
-    case CSSPropertyWebkitTextEmphasisColor:
+    case CSSPropertyTextEmphasisColor:
     case CSSPropertyBorderInlineStartColor:
     case CSSPropertyBorderInlineEndColor:
     case CSSPropertyBorderBlockStartColor:
@@ -4407,7 +4407,7 @@ RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, CSS
     case CSSPropertyWebkitTextDecorationsInEffect:
     case CSSPropertyTextDecorationLine:
         return consumeTextDecorationLine(m_range);
-    case CSSPropertyWebkitTextEmphasisStyle:
+    case CSSPropertyTextEmphasisStyle:
         return consumeTextEmphasisStyle(m_range);
     case CSSPropertyOutlineColor:
         return consumeOutlineColor(m_range, m_context.mode);
@@ -4633,7 +4633,7 @@ RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, CSS
         if (!m_context.containmentEnabled)
             return nullptr;
         return consumeContain(m_range);
-    case CSSPropertyWebkitTextEmphasisPosition:
+    case CSSPropertyTextEmphasisPosition:
         return consumeTextEmphasisPosition(m_range);
 #if ENABLE(DARK_MODE_CSS)
     case CSSPropertyColorScheme:
@@ -6183,8 +6183,8 @@ bool CSSPropertyParser::parseShorthand(CSSPropertyID property, bool important)
         return consume2ValueShorthand(scrollPaddingBlockShorthand(), important);
     case CSSPropertyScrollPaddingInline:
         return consume2ValueShorthand(scrollPaddingInlineShorthand(), important);
-    case CSSPropertyWebkitTextEmphasis:
-        return consumeShorthandGreedily(webkitTextEmphasisShorthand(), important);
+    case CSSPropertyTextEmphasis:
+        return consumeShorthandGreedily(textEmphasisShorthand(), important);
     case CSSPropertyOutline:
         return consumeShorthandGreedily(outlineShorthand(), important);
     case CSSPropertyBorderInline: {

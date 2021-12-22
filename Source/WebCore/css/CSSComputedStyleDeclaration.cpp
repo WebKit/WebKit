@@ -3359,11 +3359,11 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
             return renderTextDecorationLineFlagsToCSSValue(style.textDecorationsInEffect());
         case CSSPropertyWebkitTextFillColor:
             return currentColorOrValidColor(&style, style.textFillColor());
-        case CSSPropertyWebkitTextEmphasisColor:
+        case CSSPropertyTextEmphasisColor:
             return currentColorOrValidColor(&style, style.textEmphasisColor());
-        case CSSPropertyWebkitTextEmphasisPosition:
+        case CSSPropertyTextEmphasisPosition:
             return renderEmphasisPositionFlagsToCSSValue(style.textEmphasisPosition());
-        case CSSPropertyWebkitTextEmphasisStyle:
+        case CSSPropertyTextEmphasisStyle:
             switch (style.textEmphasisMark()) {
             case TextEmphasisMark::None:
                 return cssValuePool.createIdentifierValue(CSSValueNone);
@@ -4088,7 +4088,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         /* Unimplemented CSS 3 properties (including CSS3 shorthand properties) */
         case CSSPropertyAll:
         case CSSPropertyAnimation:
-        case CSSPropertyWebkitTextEmphasis:
+        case CSSPropertyTextEmphasis:
             break;
 
         /* Directional properties are resolved by resolveDirectionAwareProperty() before the switch. */

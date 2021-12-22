@@ -1,3 +1,17 @@
+2021-12-22  Tim Nguyen  <ntim@apple.com>
+
+        Internally unprefix -webkit-text-emphasis properties
+        https://bugs.webkit.org/show_bug.cgi?id=234602
+
+        Reviewed by Antti Koivisto.
+
+        Adjust test expectations.
+
+        * web-platform-tests/css/css-cascade/all-prop-initial-xml-expected.txt:
+        * web-platform-tests/web-animations/animation-model/animation-types/accumulation-per-property-002-expected.txt:
+        * web-platform-tests/web-animations/animation-model/animation-types/addition-per-property-002-expected.txt:
+        * web-platform-tests/web-animations/animation-model/animation-types/interpolation-per-property-002-expected.txt:
+
 2021-12-21  Sergio Villar Senin  <svillar@igalia.com>
 
         [REGRESSION][[css-flexbox] child elements are shrunk to fit into container after r286206

@@ -310,8 +310,8 @@ String StyleProperties::getPropertyValue(CSSPropertyID propertyID) const
     case CSSPropertyMask:
     case CSSPropertyWebkitMask:
         return getLayeredShorthandValue(shorthandForProperty(propertyID));
-    case CSSPropertyWebkitTextEmphasis:
-        return getShorthandValue(webkitTextEmphasisShorthand());
+    case CSSPropertyTextEmphasis:
+        return getShorthandValue(textEmphasisShorthand());
     case CSSPropertyWebkitTextStroke:
         return getShorthandValue(webkitTextStrokeShorthand());
     case CSSPropertyPerspectiveOrigin:

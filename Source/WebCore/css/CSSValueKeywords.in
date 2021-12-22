@@ -1114,11 +1114,11 @@ after
 before
 inter-character
 
-// -webkit-text-emphasis-position
+// text-emphasis-position
 over
 under
 
-// -webkit-text-emphasis-style
+// text-emphasis-style
 filled
 open
 dot
