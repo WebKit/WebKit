@@ -499,7 +499,8 @@ unsigned DocumentTimeline::numberOfAnimationTimelineInvalidationsForTesting() co
 
 ExceptionOr<Ref<WebAnimation>> DocumentTimeline::animate(Ref<CustomEffectCallback>&& callback, std::optional<std::variant<double, CustomAnimationOptions>>&& options)
 {
-    ASSERT(m_document);
+    if (!m_document)
+        return Exception { InvalidStateError };
 
     String id = "";
     std::optional<std::variant<double, EffectTiming>> customEffectOptions;
