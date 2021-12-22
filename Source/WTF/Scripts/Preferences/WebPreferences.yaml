@@ -1893,7 +1893,7 @@ ScrollAnimatorEnabled:
       "PLATFORM(GTK) || PLATFORM(WPE)": true
       default: false
     WebKit:
-      "PLATFORM(MAC)": WebKit::defaultScrollAnimatorEnabled()
+      # PLATFORM(MAC) initializes the value in initializeProcessStateDependentPreferences
       "PLATFORM(GTK) || PLATFORM(WPE)": true
       default: false
     WebCore:

@@ -89,6 +89,7 @@ public:
 
 private:
     void platformInitializeStore();
+    void initializeProcessStateDependentPreferences();
 
     void update();
 

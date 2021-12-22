@@ -1,3 +1,21 @@
+2021-12-22  Simon Fraser  <simon.fraser@apple.com>
+
+        Preferences that read from NSUserDefaults need to be initialied from platformInitializeStore()
+        https://bugs.webkit.org/show_bug.cgi?id=234488
+
+        Reviewed by Sam Weinig.
+
+        Having the default value for a preference read from NSUserDefaults can cause issues
+        if the UIProcess and WebProcess values don't match. Instead, have platformInitializeStore()
+        explicitly add values for these keys; this is done for scrollAnimatorEnabledKey.
+
+        * UIProcess/Cocoa/WebPreferencesCocoa.mm:
+        (WebKit::WebPreferences::initializePlatformDependentPreferences):
+        (WebKit::WebPreferences::platformInitializeStore):
+        * UIProcess/WebPreferences.cpp:
+        (WebKit::WebPreferences::initializePlatformDependentPreferences):
+        * UIProcess/WebPreferences.h:
+
 2021-12-22  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r285087.
