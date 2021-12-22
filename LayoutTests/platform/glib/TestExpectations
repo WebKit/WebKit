@@ -804,8 +804,6 @@ webkit.org/b/233836 http/tests/media/media-blocked-by-willsendrequest.html [ Tim
 webkit.org/b/234084 media/track/audio-track-configuration.html [ Failure ]
 webkit.org/b/234084 media/track/video-track-configuration.html [ Failure ]
 
-webkit.org/b/234352 imported/w3c/web-platform-tests/media-source/mediasource-video-is-visible.html [ ImageOnlyFailure ]
-
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of GStreamer-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
