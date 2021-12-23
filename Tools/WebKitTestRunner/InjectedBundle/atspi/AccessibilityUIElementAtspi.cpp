@@ -343,6 +343,11 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::stringDescriptionOfAttributeVal
     return JSStringCreateWithCharacters(nullptr, 0);
 }
 
+static bool checkElementState(WebCore::AccessibilityObjectAtspi* element, WebCore::Atspi::State state)
+{
+    return element->state() & (G_GUINT64_CONSTANT(1) << state);
+}
+
 JSRetainPtr<JSStringRef> AccessibilityUIElement::stringAttributeValue(JSStringRef attribute)
 {
     String attributeName = toWTFString(attribute);
@@ -359,6 +364,13 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::stringAttributeValue(JSStringRe
     auto attributes = m_element->attributes();
     if (attributeName == "AXPlaceholderValue")
         return OpaqueJSString::tryCreate(attributes.get("placeholder-text")).leakRef();
+    if (attributeName == "AXInvalid") {
+        auto textAttributes = m_element->textAttributes();
+        auto value = textAttributes.attributes.get("invalid");
+        if (value.isEmpty())
+            value = checkElementState(m_element.get(), WebCore::Atspi::State::InvalidEntry) ? "true" : "false";
+        return OpaqueJSString::tryCreate(value).leakRef();
+    }
 
     return JSStringCreateWithCharacters(nullptr, 0);
 }
@@ -444,16 +456,19 @@ RefPtr<AccessibilityUIElement> AccessibilityUIElement::uiElementAttributeValue(J
     return nullptr;
 }
 
-static bool checkElementState(WebCore::AccessibilityObjectAtspi* element, WebCore::Atspi::State state)
-{
-    return element->state() & (G_GUINT64_CONSTANT(1) << state);
-}
-
 bool AccessibilityUIElement::boolAttributeValue(JSStringRef attribute)
 {
     String attributeName = toWTFString(attribute);
     if (attributeName == "AXElementBusy")
         return checkElementState(m_element.get(), WebCore::Atspi::State::Busy);
+    if (attributeName == "AXModal")
+        return checkElementState(m_element.get(), WebCore::Atspi::State::Modal);
+    if (attributeName == "AXSupportsAutoCompletion")
+        return checkElementState(m_element.get(), WebCore::Atspi::State::SupportsAutocompletion);
+    if (attributeName == "AXInterfaceTable")
+        return m_element->interfaces().contains(WebCore::AccessibilityObjectAtspi::Interface::Table);
+    if (attributeName == "AXInterfaceTableCell")
+        return m_element->interfaces().contains(WebCore::AccessibilityObjectAtspi::Interface::TableCell);
 
     return false;
 }
