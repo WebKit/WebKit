@@ -483,7 +483,7 @@ Vector<uint8_t> HTTPResponse::bodyFromString(const String& string)
     return vector;
 }
 
-Vector<uint8_t> HTTPResponse::serialize(IncludeContentLength includeContentLength)
+Vector<uint8_t> HTTPResponse::serialize(IncludeContentLength includeContentLength) const
 {
     StringBuilder responseBuilder;
     responseBuilder.append("HTTP/1.1 ", statusCode, ' ', statusText(statusCode), "\r\n");

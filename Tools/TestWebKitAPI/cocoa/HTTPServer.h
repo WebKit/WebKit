@@ -117,7 +117,7 @@ struct HTTPResponse {
     HTTPResponse& operator=(HTTPResponse&&) = default;
 
     enum class IncludeContentLength : bool { No, Yes };
-    Vector<uint8_t> serialize(IncludeContentLength = IncludeContentLength::Yes);
+    Vector<uint8_t> serialize(IncludeContentLength = IncludeContentLength::Yes) const;
     static Vector<uint8_t> bodyFromString(const String&);
 
     unsigned statusCode { 200 };

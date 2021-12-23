@@ -85,7 +85,7 @@ public:
     WEBCORE_EXPORT void start();
     WEBCORE_EXPORT void cancel(const ResourceError&);
     WEBCORE_EXPORT ResourceError cancelledError();
-    ResourceError blockedError();
+    WEBCORE_EXPORT ResourceError blockedError();
     ResourceError blockedByContentBlockerError();
     ResourceError cannotShowURLError();
     

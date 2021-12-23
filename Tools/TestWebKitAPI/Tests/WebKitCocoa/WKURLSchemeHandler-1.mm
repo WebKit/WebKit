@@ -1255,36 +1255,43 @@ TEST(URLSchemeHandler, AllowedNetworkHostsRedirect)
     EXPECT_EQ(server127001.totalRequests(), 2u);
 }
 
-TEST(URLSchemeHandler, LoadsSubresources)
+static void serverLoop(const TestWebKitAPI::Connection& connection, bool& loadedImage, bool& loadedIFrame)
+{
+    using namespace TestWebKitAPI;
+    connection.receiveHTTPRequest([&, connection] (Vector<char>&& request) {
+        auto path = HTTPServer::parsePath(request);
+        auto sendReply = [&, connection] (const HTTPResponse& response) {
+            connection.send(response.serialize(), [&, connection] {
+                serverLoop(connection, loadedImage, loadedIFrame);
+            });
+        };
+        if (path == "/main.html")
+            sendReply({ { { "Content-Type", "text/html" } }, "<img src='/imgsrc'></img><iframe src='/iframesrc'></iframe>" });
+        else if (path == "/imgsrc") {
+            loadedImage = true;
+            sendReply({ "image content" });
+        } else if (path == "/iframesrc") {
+            loadedIFrame = true;
+            sendReply({ "iframe content" });
+        } else
+            ASSERT_NOT_REACHED();
+    });
+}
+
+TEST(WKWebViewConfiguration, LoadsSubresources)
 {
     bool loadedImage = false;
     bool loadedIFrame = false;
 
-    auto handler = adoptNS([TestURLSchemeHandler new]);
-
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    [configuration setURLSchemeHandler:handler.get() forURLScheme:@"test"];
 
-    [handler setStartURLSchemeTaskHandler:[&](WKWebView *, id<WKURLSchemeTask> task) {
-        NSString *response = nil;
-        if ([task.request.URL.path isEqualToString:@"/main.html"])
-            response = @"<img src='/imgsrc'></img><iframe src='/iframesrc'></iframe>";
-        else if ([task.request.URL.path isEqualToString:@"/imgsrc"]) {
-            response = @"image content";
-            loadedImage = true;
-        } else if ([task.request.URL.path isEqualToString:@"/iframesrc"]) {
-            response = @"iframe content";
-            loadedIFrame = true;
-        } else
-            ASSERT_NOT_REACHED();
-        [task didReceiveResponse:adoptNS([[NSURLResponse alloc] initWithURL:task.request.URL MIMEType:@"text/html" expectedContentLength:response.length textEncodingName:nil]).get()];
-        [task didReceiveData:[response dataUsingEncoding:NSUTF8StringEncoding]];
-        [task didFinish];
-    }];
-    
+    TestWebKitAPI::HTTPServer server([&] (const TestWebKitAPI::Connection& connection) {
+        serverLoop(connection, loadedIFrame, loadedImage);
+    });
+
     {
         auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get()]);
-        [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"test://host1/main.html"]]];
+        [webView loadRequest:server.request("/main.html")];
         TestWebKitAPI::Util::run(&loadedImage);
         TestWebKitAPI::Util::run(&loadedIFrame);
     }
@@ -1297,7 +1304,7 @@ TEST(URLSchemeHandler, LoadsSubresources)
         auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get()]);
         auto delegate = adoptNS([TestNavigationDelegate new]);
         webView.get().navigationDelegate = delegate.get();
-        [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"test://host1/main.html"]]];
+        [webView loadRequest:server.request("/main.html")];
         [delegate waitForDidFinishNavigation];
         TestWebKitAPI::Util::spinRunLoop(100);
         EXPECT_FALSE(loadedIFrame);

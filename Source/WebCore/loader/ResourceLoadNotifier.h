@@ -68,6 +68,11 @@ public:
 
     void sendRemainingDelegateMessages(DocumentLoader*, ResourceLoaderIdentifier, const ResourceRequest&, const ResourceResponse&, const uint8_t* data, int dataLength, int encodedDataLength, const ResourceError&);
 
+    bool isInitialRequestIdentifier(ResourceLoaderIdentifier identifier)
+    {
+        return m_initialRequestIdentifier == identifier;
+    }
+
 private:
     Frame& m_frame;
     std::optional<ResourceLoaderIdentifier> m_initialRequestIdentifier;

@@ -106,6 +106,17 @@ void WebResourceLoader::willSendRequest(ResourceRequest&& proposedRequest, IPC::
         WEBRESOURCELOADER_RELEASE_LOG("willSendRequest: exiting early because maybeLoadFallbackForRedirect returned false");
         return;
     }
+    
+    if (auto* frame = m_coreLoader->frame()) {
+        if (auto* page = frame->page()) {
+            auto mainFrameMainResource = frame->isMainFrame()
+                && m_coreLoader->frameLoader()
+                && m_coreLoader->frameLoader()->notifier().isInitialRequestIdentifier(m_coreLoader->identifier())
+                ? MainFrameMainResource::Yes : MainFrameMainResource::No;
+            if (!page->allowsLoadFromURL(proposedRequest.url(), mainFrameMainResource))
+                proposedRequest = { };
+        }
+    }
 
     m_coreLoader->willSendRequest(WTFMove(proposedRequest), redirectResponse, [this, protectedThis = WTFMove(protectedThis)](ResourceRequest&& request) {
         if (!m_coreLoader || !m_coreLoader->identifier()) {

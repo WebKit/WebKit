@@ -299,13 +299,26 @@ void WebLoaderStrategy::scheduleLoadFromNetworkProcess(ResourceLoader& resourceL
     auto identifier = resourceLoader.identifier();
     ASSERT(identifier);
 
+    auto* frame = resourceLoader.frame();
+
+    if (auto* page = frame ? frame->page() : nullptr) {
+        auto mainFrameMainResource = frame->isMainFrame()
+            && resourceLoader.frameLoader()
+            && resourceLoader.frameLoader()->notifier().isInitialRequestIdentifier(identifier)
+            ? MainFrameMainResource::Yes : MainFrameMainResource::No;
+        if (!page->allowsLoadFromURL(request.url(), mainFrameMainResource)) {
+            RunLoop::main().dispatch([resourceLoader = Ref { resourceLoader }] {
+                resourceLoader->didFail(resourceLoader->blockedError());
+            });
+            return;
+        }
+    }
+
     ContentSniffingPolicy contentSniffingPolicy = resourceLoader.shouldSniffContent() ? ContentSniffingPolicy::SniffContent : ContentSniffingPolicy::DoNotSniffContent;
     ContentEncodingSniffingPolicy contentEncodingSniffingPolicy = resourceLoader.shouldSniffContentEncoding() ? ContentEncodingSniffingPolicy::Sniff : ContentEncodingSniffingPolicy::DoNotSniff;
     StoredCredentialsPolicy storedCredentialsPolicy = resourceLoader.shouldUseCredentialStorage() ? StoredCredentialsPolicy::Use : StoredCredentialsPolicy::DoNotUse;
 
     LOG(NetworkScheduling, "(WebProcess) WebLoaderStrategy::scheduleLoad, url '%s' will be scheduled with the NetworkProcess with priority %d, storedCredentialsPolicy %i", resourceLoader.url().string().latin1().data(), static_cast<int>(resourceLoader.request().priority()), (int)storedCredentialsPolicy);
-
-    auto* frame = resourceLoader.frame();
 
     NetworkResourceLoadParameters loadParameters;
     loadParameters.identifier = identifier;

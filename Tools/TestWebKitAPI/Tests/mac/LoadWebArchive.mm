@@ -33,6 +33,7 @@
 #import <WebKit/WKDragDestinationAction.h>
 #import <WebKit/WKNavigationPrivate.h>
 #import <WebKit/WKWebView.h>
+#import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/text/WTFString.h>
@@ -204,7 +205,7 @@ TEST(LoadWebArchive, DragNavigationReload)
     EXPECT_WK_STREQ(finalURL, "");
 }
 
-TEST(LoadWebArchive, HTTPSUpgrade)
+static NSData* constructArchive()
 {
     NSString *js = @"alert('loaded http subresource successfully')";
     auto response = adoptNS([[NSURLResponse alloc] initWithURL:[NSURL URLWithString:@"http://download/script.js"] MIMEType:@"application/javascript" expectedContentLength:js.length textEncodingName:@"utf-8"]);
@@ -226,9 +227,26 @@ TEST(LoadWebArchive, HTTPSUpgrade)
             @"WebResourceURL": @"http://download/script.js",
         }]
     };
-    NSData *data = [NSPropertyListSerialization dataFromPropertyList:archive format:NSPropertyListBinaryFormat_v1_0 errorDescription:nil];
+    return [NSPropertyListSerialization dataFromPropertyList:archive format:NSPropertyListBinaryFormat_v1_0 errorDescription:nil];
+}
+
+TEST(LoadWebArchive, HTTPSUpgrade)
+{
+    NSData *data = constructArchive();
 
     auto webView = adoptNS([WKWebView new]);
+    [webView loadData:data MIMEType:@"application/x-webarchive" characterEncodingName:@"utf-8" baseURL:[NSURL URLWithString:@"http://download/"]];
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "loaded http subresource successfully");
+}
+
+TEST(LoadWebArchive, DisallowedNetworkHosts)
+{
+    NSData *data = constructArchive();
+
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    configuration.get()._allowedNetworkHosts = [NSSet set];
+
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get()]);
     [webView loadData:data MIMEType:@"application/x-webarchive" characterEncodingName:@"utf-8" baseURL:[NSURL URLWithString:@"http://download/"]];
     EXPECT_WK_STREQ([webView _test_waitForAlert], "loaded http subresource successfully");
 }

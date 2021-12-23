@@ -1,3 +1,21 @@
+2021-12-23  Matt Woodrow  <mattwoodrow@apple.com>
+
+        Check allowed network hosts list when we schedule the load in the network process
+        https://bugs.webkit.org/show_bug.cgi?id=234543
+        <rdar://83501315>
+
+        Reviewed by Alex Christensen.
+
+        The check for WKWebViewConfiguration._allowedNetworkHost previously happened before the check to see if
+        the given ResourceRequest would directly from an archive.
+        This moves to the allowed network host list check to happen when we schedule the network request, and thus
+        allows subresources cached within an archive to load, even if their original URL would be blocked.
+
+        New test LoadWebArchive.DisallowedNetworkHosts added.
+
+        * TestWebKitAPI/Tests/mac/LoadWebArchive.mm:
+        (TestWebKitAPI::TEST):
+
 2021-12-23  Brady Eidson  <beidson@apple.com>
 
         Add WTF::UUID class which is natively a 128-bit integer

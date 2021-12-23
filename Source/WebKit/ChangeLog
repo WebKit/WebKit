@@ -1,3 +1,27 @@
+2021-12-23  Matt Woodrow  <mattwoodrow@apple.com>
+
+        Check allowed network hosts list when we schedule the load in the network process
+        https://bugs.webkit.org/show_bug.cgi?id=234543
+        <rdar://83501315>
+
+        Reviewed by Alex Christensen.
+
+        The check for WKWebViewConfiguration._allowedNetworkHost previously happened before the check to see if
+        the given ResourceRequest would directly from an archive.
+        This moves to the allowed network host list check to happen when we schedule the network request, and thus
+        allows subresources cached within an archive to load, even if their original URL would be blocked.
+        We also need to check when redirecting to prevent an allowed domain from redirecting to a forbidden domain.
+        This also makes it so that WKWebViewConfiguration._loadsSubresources only prevents
+        subresource loads that would touch the network, so we can't use WKURLSchemeHandler to test it any more.
+        That's fine, since the two users of the SPI only load URLs from the network.
+
+        New test LoadWebArchive.DisallowedNetworkHosts added.
+
+        * WebProcess/Network/WebLoaderStrategy.cpp:
+        (WebKit::WebLoaderStrategy::scheduleLoadFromNetworkProcess):
+        * WebProcess/Network/WebResourceLoader.cpp:
+        (WebKit::WebResourceLoader::willSendRequest):
+
 2021-12-23  Brent Fulgham  <bfulgham@apple.com>
 
         Allow a necessary syscall in the WebContent sandbox

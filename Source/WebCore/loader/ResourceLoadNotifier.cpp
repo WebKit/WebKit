@@ -137,12 +137,6 @@ void ResourceLoadNotifier::dispatchWillSendRequest(DocumentLoader* loader, Resou
     Ref<Frame> protectedFrame(m_frame);
     m_frame.loader().client().dispatchWillSendRequest(loader, identifier, request, redirectResponse);
 
-    if (auto* page = m_frame.page()) {
-        auto mainFrameMainResource = m_frame.isMainFrame() && m_initialRequestIdentifier == identifier ? MainFrameMainResource::Yes : MainFrameMainResource::No;
-        if (!page->allowsLoadFromURL(request.url(), mainFrameMainResource))
-            request = { };
-    }
-
     // If the URL changed, then we want to put that new URL in the "did tell client" set too.
     if (!request.isNull() && oldRequestURL != request.url().string() && m_frame.loader().documentLoader())
         m_frame.loader().documentLoader()->didTellClientAboutLoad(request.url().string());
