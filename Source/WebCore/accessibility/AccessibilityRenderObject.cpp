@@ -3397,7 +3397,12 @@ AccessibilitySVGRoot* AccessibilityRenderObject::remoteSVGRootElement(CreationCh
     ASSERT(!createIfNecessary || rootSVGObject);
     if (!is<AccessibilitySVGRoot>(rootSVGObject))
         return nullptr;
-    
+
+#if USE(ATSPI)
+    if (auto* page = document->page())
+        page->setAccessibilityRootObject(createIfNecessary == Create ? axObjectCache()->document().page()->accessibilityRootObject() : nullptr);
+#endif
+
     return downcast<AccessibilitySVGRoot>(rootSVGObject);
 }
     
