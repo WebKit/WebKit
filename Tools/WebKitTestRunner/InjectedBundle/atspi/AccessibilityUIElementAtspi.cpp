@@ -867,15 +867,25 @@ double AccessibilityUIElement::clickPointY()
 
 double AccessibilityUIElement::intValue() const
 {
-    if (!m_element->interfaces().contains(WebCore::AccessibilityObjectAtspi::Interface::Value))
-        return 0;
+    if (m_element->interfaces().contains(WebCore::AccessibilityObjectAtspi::Interface::Value)) {
+        double currentValue;
+        s_controller->executeOnAXThreadAndWait([this, &currentValue] {
+            m_element->updateBackingStore();
+            currentValue = m_element->currentValue();
+        });
+        return currentValue;
+    }
 
-    double currentValue;
-    s_controller->executeOnAXThreadAndWait([this, &currentValue] {
+    // Consider headings as an special case when returning the int value.
+    unsigned elementRole;
+    s_controller->executeOnAXThreadAndWait([this, &elementRole] {
         m_element->updateBackingStore();
-        currentValue = m_element->currentValue();
+        elementRole = m_element->role();
     });
-    return currentValue;
+    if (elementRole == WebCore::Atspi::Role::Heading)
+        return m_element->attributes().get("level").toDouble();
+
+    return 0;
 }
 
 double AccessibilityUIElement::minValue()
