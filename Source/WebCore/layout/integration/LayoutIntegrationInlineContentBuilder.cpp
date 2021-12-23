@@ -79,8 +79,10 @@ void InlineContentBuilder::createDisplayLines(Layout::InlineFormattingState& inl
     for (size_t lineIndex = 0; lineIndex < lines.size(); ++lineIndex) {
         auto& line = lines[lineIndex];
         auto scrollableOverflowRect = FloatRect { line.scrollableOverflow() };
-        if (auto overflowWidth = lineOverflowWidth(m_blockFlow, line.contentWidth()); overflowWidth > scrollableOverflowRect.width())
-            scrollableOverflowRect.setWidth(overflowWidth);
+        if (auto overflowWidth = lineOverflowWidth(m_blockFlow, line.contentWidth()); overflowWidth > scrollableOverflowRect.width()) {
+            auto overflowValue = overflowWidth - scrollableOverflowRect.width();
+            m_blockFlow.style().isLeftToRightDirection() ? scrollableOverflowRect.shiftMaxXEdgeBy(overflowValue) : scrollableOverflowRect.shiftXEdgeBy(-overflowValue);
+        }
 
         auto firstBoxIndex = boxIndex;
         auto lineInkOverflowRect = scrollableOverflowRect;

@@ -150,6 +150,11 @@ public:
         setWidth(std::max(0.0f, width() - delta));
     }
 
+    void shiftMaxXEdgeBy(float delta)
+    {
+        shiftMaxXEdgeTo(maxX() + delta);
+    }
+
     void shiftYEdgeBy(float delta)
     {
         move(0, delta);
