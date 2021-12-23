@@ -63,7 +63,7 @@ static void encodeArrayBuffer(Encoder& encoder, const ArrayBuffer& buffer)
 }
 
 template<class Decoder>
-RefPtr<ArrayBuffer> decodeArrayBuffer(Decoder& decoder)
+RefPtr<ArrayBuffer> WARN_UNUSED_RETURN decodeArrayBuffer(Decoder& decoder)
 {
     std::optional<uint64_t> length;
     decoder >> length;
