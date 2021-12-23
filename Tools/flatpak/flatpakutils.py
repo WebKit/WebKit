@@ -765,8 +765,6 @@ class WebkitFlatpak:
                            "--session-bus",
                            "--no-a11y-bus",
                            "--talk-name=org.a11y.Bus",
-                           # at-spi creates directories like `$XDG_RUNTIME_DIR/at-spi2-E6A5E1` on the host
-                           "--filesystem=" + self.get_user_runtime_dir(),
                            "--talk-name=org.gtk.vfs",
                            "--talk-name=org.gtk.vfs.*"]
 

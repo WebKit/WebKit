@@ -1,3 +1,16 @@
+2021-12-23  Patrick Griffis  <pgriffis@igalia.com>
+
+        [Flatpak] Revert filesystem permission change in r287396
+        https://bugs.webkit.org/show_bug.cgi?id=234612
+
+        Reviewed by Michael Catanzaro.
+
+        This causes a regression where some important contents of
+        XDG_RUNTIME_DIR are overriden and causes issues like TLS failures.
+
+        * flatpak/flatpakutils.py:
+        (WebkitFlatpak.run_in_sandbox):
+
 2021-12-23  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Add API testing support for modal container observation
