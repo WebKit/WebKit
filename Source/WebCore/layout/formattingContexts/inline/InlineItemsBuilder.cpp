@@ -238,8 +238,7 @@ static inline void buildBidiParagraph(const RenderStyle& rootStyle, const Inline
         } else if (inlineItem.isBox()) {
             inlineItemOffsetList.uncheckedAppend({ paragraphContentBuilder.length() });
             paragraphContentBuilder.append(objectReplacementCharacter);
-        }
-        else if (inlineItem.isInlineBoxStart() || inlineItem.isInlineBoxEnd()) {
+        } else if (inlineItem.isInlineBoxStart() || inlineItem.isInlineBoxEnd()) {
             // https://drafts.csswg.org/css-writing-modes/#unicode-bidi
             auto& style = inlineItem.style();
             auto initiatesControlCharacter = style.rtlOrdering() == Order::Logical && style.unicodeBidi() != EUnicodeBidi::UBNormal;
@@ -290,6 +289,12 @@ void InlineItemsBuilder::breakAndComputeBidiLevels(InlineItems& inlineItems)
     InlineItemOffsetList inlineItemOffsets;
     inlineItemOffsets.reserveInitialCapacity(inlineItems.size());
     buildBidiParagraph(root().style(), inlineItems, paragraphContentBuilder, inlineItemOffsets);
+    if (paragraphContentBuilder.isEmpty()) {
+        // Style may trigger visual reordering even on a completely empty content.
+        // e.g. <div><span style="direction:rtl"></span></div>
+        // Let's not try to do bidi handling when there's no content to reorder.
+        return;
+    }
     ASSERT(inlineItemOffsets.size() == inlineItems.size());
     // 1. Setup the bidi boundary loop by calling ubidi_setPara with the paragraph text.
     // 2. Call ubidi_getLogicalRun to advance to the next bidi boundary until we hit the end of the content.

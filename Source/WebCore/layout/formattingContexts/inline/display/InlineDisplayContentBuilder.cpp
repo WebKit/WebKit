@@ -319,7 +319,12 @@ void InlineDisplayContentBuilder::appendInlineDisplayBoxAtBidiBoundary(const Box
 
 void InlineDisplayContentBuilder::processNonBidiContent(const LineBuilder::LineContent& lineContent, const LineBox& lineBox, const InlineDisplay::Line& displayLine, DisplayBoxes& boxes)
 {
-    ASSERT(root().style().isLeftToRightDirection());
+#ifndef NDEBUG
+    auto hasContent = false;
+    for (auto& lineRun : lineContent.runs)
+        hasContent = hasContent || lineRun.isText() || lineRun.isBox();
+    ASSERT(root().style().isLeftToRightDirection() || !hasContent);
+#endif
     auto lineBoxRect = displayLine.lineBoxRect();
     auto contentStartInVisualOrder = lineBoxRect.left() + displayLine.contentLeft();
 
