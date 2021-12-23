@@ -53,10 +53,8 @@ void Gradient::paint(GraphicsContext& context)
 
 void Gradient::paint(CGContextRef platformContext)
 {
-    if (!m_platformRenderer) {
-        sortStops();
-        m_platformRenderer = GradientRendererCG { m_colorInterpolationMethod, m_stops };
-    }
+    if (!m_platformRenderer)
+        m_platformRenderer = GradientRendererCG { m_colorInterpolationMethod, m_stops.sorted() };
 
     WTF::switchOn(m_data,
         [&] (const LinearData& data) {

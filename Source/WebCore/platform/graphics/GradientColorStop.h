@@ -27,7 +27,7 @@
 
 #include "Color.h"
 #include <optional>
-#include <wtf/Vector.h>
+#include <wtf/Hasher.h>
 
 namespace WebCore {
 
@@ -38,8 +38,6 @@ struct GradientColorStop {
     template<typename Encoder> void encode(Encoder&) const;
     template<typename Decoder> static std::optional<GradientColorStop> decode(Decoder&);
 };
-
-using GradientColorStopVector = Vector<GradientColorStop, 2>;
 
 template<typename Encoder> void GradientColorStop::encode(Encoder& encoder) const
 {
@@ -60,6 +58,11 @@ template<typename Decoder> std::optional<GradientColorStop> GradientColorStop::d
         return std::nullopt;
 
     return {{ *offset, *color }};
+}
+
+inline void add(Hasher& hasher, const GradientColorStop& stop)
+{
+    add(hasher, stop.offset, stop.color);
 }
 
 }

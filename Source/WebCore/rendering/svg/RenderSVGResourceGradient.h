@@ -46,7 +46,7 @@ public:
 protected:
     RenderSVGResourceGradient(SVGGradientElement&, RenderStyle&&);
 
-    static Gradient::ColorStopVector stopsByApplyingColorFilter(const Gradient::ColorStopVector&, const RenderStyle&);
+    static GradientColorStops stopsByApplyingColorFilter(const GradientColorStops&, const RenderStyle&);
     static GradientSpreadMethod platformSpreadMethodFromSVGType(SVGSpreadMethodType);
 
 private:

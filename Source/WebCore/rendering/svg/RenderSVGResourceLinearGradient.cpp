@@ -55,7 +55,7 @@ Ref<Gradient> RenderSVGResourceLinearGradient::buildGradient(const RenderStyle& 
 {
     return Gradient::create(
         Gradient::LinearData { startPoint(m_attributes), endPoint(m_attributes) },
-        ColorInterpolationMethod { ColorInterpolationMethod::SRGB { }, AlphaPremultiplication::Unpremultiplied },
+        { ColorInterpolationMethod::SRGB { }, AlphaPremultiplication::Unpremultiplied },
         platformSpreadMethodFromSVGType(m_attributes.spreadMethod()),
         stopsByApplyingColorFilter(m_attributes.stops(), style)
     );

@@ -28,6 +28,7 @@
 
 #include "FloatSize.h"
 #include "IntPoint.h"
+#include <wtf/Hasher.h>
 #include <wtf/MathExtras.h>
 
 #if USE(CG)
@@ -55,7 +56,6 @@ namespace WebCore {
 
 class AffineTransform;
 class TransformationMatrix;
-class IntPoint;
 class IntSize;
 
 class FloatPoint {
@@ -308,6 +308,11 @@ inline FloatPoint toFloatPoint(const FloatSize& a)
 inline bool areEssentiallyEqual(const FloatPoint& a, const FloatPoint& b)
 {
     return WTF::areEssentiallyEqual(a.x(), b.x()) && WTF::areEssentiallyEqual(a.y(), b.y());
+}
+
+inline void add(Hasher& hasher, const FloatPoint& point)
+{
+    add(hasher, point.x(), point.y());
 }
 
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const FloatPoint&);

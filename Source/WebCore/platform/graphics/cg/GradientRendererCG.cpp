@@ -28,18 +28,19 @@
 
 #include "ColorInterpolation.h"
 #include "ColorSpaceCG.h"
+#include "GradientColorStops.h"
 #include <pal/spi/cg/CoreGraphicsSPI.h>
 
 namespace WebCore {
 
-GradientRendererCG::GradientRendererCG(ColorInterpolationMethod colorInterpolationMethod, const GradientColorStopVector& stops)
+GradientRendererCG::GradientRendererCG(ColorInterpolationMethod colorInterpolationMethod, const GradientColorStops& stops)
     : m_strategy { pickStrategy(colorInterpolationMethod, stops) }
 {
 }
 
 // MARK: - Strategy selection.
 
-GradientRendererCG::Strategy GradientRendererCG::pickStrategy(ColorInterpolationMethod colorInterpolationMethod, const GradientColorStopVector& stops) const
+GradientRendererCG::Strategy GradientRendererCG::pickStrategy(ColorInterpolationMethod colorInterpolationMethod, const GradientColorStops& stops) const
 {
     return WTF::switchOn(colorInterpolationMethod.colorSpace,
         [&] (const ColorInterpolationMethod::SRGB&) -> Strategy {
@@ -64,7 +65,7 @@ GradientRendererCG::Strategy GradientRendererCG::pickStrategy(ColorInterpolation
 
 // MARK: - Gradient strategy.
 
-GradientRendererCG::Strategy GradientRendererCG::makeGradient(ColorInterpolationMethod colorInterpolationMethod, const GradientColorStopVector& stops) const
+GradientRendererCG::Strategy GradientRendererCG::makeGradient(ColorInterpolationMethod colorInterpolationMethod, const GradientColorStops& stops) const
 {
     ASSERT_UNUSED(colorInterpolationMethod, std::holds_alternative<ColorInterpolationMethod::SRGB>(colorInterpolationMethod.colorSpace));
 #if !HAVE(CORE_GRAPHICS_PREMULTIPLIED_INTERPOLATION_GRADIENT)
@@ -201,7 +202,7 @@ void GradientRendererCG::Shading::shadingFunction(void* info, const CGFloat* in,
         out[componentIndex] = interpolatedColorConvertedToOutputSpace[componentIndex];
 }
 
-GradientRendererCG::Strategy GradientRendererCG::makeShading(ColorInterpolationMethod colorInterpolationMethod, const GradientColorStopVector& stops) const
+GradientRendererCG::Strategy GradientRendererCG::makeShading(ColorInterpolationMethod colorInterpolationMethod, const GradientColorStops& stops) const
 {
     auto makeData = [&] (auto colorInterpolationMethod, auto& stops) {
         auto convertColorToColorInterpolationSpace = [&] (const Color& color, auto colorInterpolationMethod) -> ColorComponents<float, 4> {

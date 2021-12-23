@@ -225,13 +225,12 @@ void RenderSVGResourceGradient::postApplyResource(RenderElement& renderer, Graph
     context->restore();
 }
 
-Gradient::ColorStopVector RenderSVGResourceGradient::stopsByApplyingColorFilter(const Gradient::ColorStopVector& stops, const RenderStyle& style)
+GradientColorStops RenderSVGResourceGradient::stopsByApplyingColorFilter(const GradientColorStops& stops, const RenderStyle& style)
 {
-    Gradient::ColorStopVector result;
-    result.reserveInitialCapacity(stops.size());
-    for (auto& stop : stops)
-        result.uncheckedAppend({ stop.offset, style.colorByApplyingColorFilter(stop.color) });
-    return result;
+    if (!style.hasAppleColorFilter())
+        return stops;
+
+    return stops.mapColors([&] (auto& color) { return style.colorByApplyingColorFilter(color); });
 }
 
 GradientSpreadMethod RenderSVGResourceGradient::platformSpreadMethodFromSVGType(SVGSpreadMethodType method)

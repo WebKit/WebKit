@@ -30,7 +30,7 @@
 #include "Color.h"
 #include "ColorInterpolationMethod.h"
 #include "FloatPoint.h"
-#include "GradientColorStop.h"
+#include "GradientColorStops.h"
 #include "GraphicsTypes.h"
 #include <variant>
 #include <wtf/Vector.h>
@@ -64,9 +64,6 @@ class GraphicsContext;
 
 class Gradient : public RefCounted<Gradient> {
 public:
-    using ColorStop = GradientColorStop;
-    using ColorStopVector = GradientColorStopVector;
-
     struct LinearData {
         FloatPoint point0;
         FloatPoint point1;
@@ -96,16 +93,15 @@ public:
 
     using Data = std::variant<LinearData, RadialData, ConicData>;
 
-    WEBCORE_EXPORT static Ref<Gradient> create(Data&&, ColorInterpolationMethod, GradientSpreadMethod = GradientSpreadMethod::Pad, ColorStopVector&& = { });
+    WEBCORE_EXPORT static Ref<Gradient> create(Data&&, ColorInterpolationMethod, GradientSpreadMethod = GradientSpreadMethod::Pad, GradientColorStops&& = { });
 
     bool isZeroSize() const;
 
     const Data& data() const { return m_data; }
 
-    WEBCORE_EXPORT void addColorStop(ColorStop&&);
-    WEBCORE_EXPORT void setSortedColorStops(ColorStopVector&&);
+    WEBCORE_EXPORT void addColorStop(GradientColorStop&&);
 
-    const ColorStopVector& stops() const { return m_stops; }
+    const GradientColorStops& stops() const { return m_stops; }
     GradientSpreadMethod spreadMethod() const { return m_spreadMethod; }
 
     void fill(GraphicsContext&, const FloatRect&);
@@ -130,16 +126,14 @@ public:
     template<typename Decoder> static std::optional<Ref<Gradient>> decode(Decoder&);
 
 private:
-    explicit Gradient(Data&&, ColorInterpolationMethod, GradientSpreadMethod, ColorStopVector&&);
+    explicit Gradient(Data&&, ColorInterpolationMethod, GradientSpreadMethod, GradientColorStops&&);
 
-    void sortStops() const;
     void stopsChanged();
 
     Data m_data;
     ColorInterpolationMethod m_colorInterpolationMethod;
     GradientSpreadMethod m_spreadMethod;
-    mutable ColorStopVector m_stops;
-    mutable bool m_stopsSorted { false };
+    GradientColorStops m_stops;
     mutable unsigned m_cachedHash { 0 };
 
 #if USE(CG)
@@ -257,18 +251,12 @@ template<typename Decoder> std::optional<Ref<Gradient>> Gradient::decode(Decoder
     if (!spreadMethod)
         return std::nullopt;
 
-    std::optional<ColorStopVector> stops;
+    std::optional<GradientColorStops> stops;
     decoder >> stops;
     if (!stops)
         return std::nullopt;
 
     return Gradient::create(WTFMove(*data), *colorInterpolationMethod, *spreadMethod, WTFMove(*stops));
-}
-
-inline void add(Hasher& hasher, const Color& color)
-{
-    // FIXME: We don't want to hash a hash; do better.
-    add(hasher, color.hash());
 }
 
 } // namespace WebCore

@@ -632,6 +632,12 @@ template<class Decoder> std::optional<Color> Color::decode(Decoder& decoder)
     return Color { asSRGBA(PackedColor::RGBA { value }), flags };
 }
 
+inline void add(Hasher& hasher, const Color& color)
+{
+    // FIXME: We don't want to hash a hash; do better.
+    add(hasher, color.hash());
+}
+
 } // namespace WebCore
 
 namespace WTF {

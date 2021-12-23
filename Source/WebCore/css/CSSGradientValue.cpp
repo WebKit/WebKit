@@ -300,12 +300,14 @@ public:
 };
 
 template<typename GradientAdapter>
-Gradient::ColorStopVector CSSGradientValue::computeStops(GradientAdapter& gradientAdapter, const CSSToLengthConversionData& conversionData, const RenderStyle& style, float maxLengthForRepeat)
+GradientColorStops CSSGradientValue::computeStops(GradientAdapter& gradientAdapter, const CSSToLengthConversionData& conversionData, const RenderStyle& style, float maxLengthForRepeat)
 {
-    if (m_gradientType == CSSDeprecatedLinearGradient || m_gradientType == CSSDeprecatedRadialGradient) {
-        Gradient::ColorStopVector result;
-        result.reserveInitialCapacity(m_stops.size());
+    bool hasColorFilter = style.hasAppleColorFilter();
 
+    if (m_gradientType == CSSDeprecatedLinearGradient || m_gradientType == CSSDeprecatedRadialGradient) {
+        GradientColorStops::StopVector result;
+        result.reserveInitialCapacity(m_stops.size());
+        
         for (auto& stop : m_stops) {
             float offset;
             if (stop.position->isPercentage())
@@ -313,17 +315,14 @@ Gradient::ColorStopVector CSSGradientValue::computeStops(GradientAdapter& gradie
             else
                 offset = stop.position->floatValue(CSSUnitType::CSS_NUMBER);
 
-            Color color = stop.resolvedColor;
-            if (style.hasAppleColorFilter())
-                style.appleColorFilter().transformColor(color);
-            result.uncheckedAppend({ offset, color });
+            result.uncheckedAppend({ offset, hasColorFilter ? style.colorByApplyingColorFilter(stop.resolvedColor) : stop.resolvedColor });
         }
 
-        std::stable_sort(result.begin(), result.end(), [] (const Gradient::ColorStop& a, const Gradient::ColorStop& b) {
+        std::stable_sort(result.begin(), result.end(), [] (const GradientColorStop& a, const GradientColorStop& b) {
             return a.offset < b.offset;
         });
 
-        return result;
+        return GradientColorStops::Sorted { WTFMove(result) };
     }
 
     size_t numStops = m_stops.size();
@@ -334,11 +333,7 @@ Gradient::ColorStopVector CSSGradientValue::computeStops(GradientAdapter& gradie
     for (size_t i = 0; i < numStops; ++i) {
         auto& stop = m_stops[i];
 
-        Color color = stop.resolvedColor;
-        if (style.hasAppleColorFilter())
-            style.appleColorFilter().transformColor(color);
-
-        stops[i].color = color;
+        stops[i].color = hasColorFilter ? style.colorByApplyingColorFilter(stop.resolvedColor) : stop.resolvedColor;
 
         if (stop.position) {
             auto& positionValue = *stop.position;
@@ -554,12 +549,12 @@ Gradient::ColorStopVector CSSGradientValue::computeStops(GradientAdapter& gradie
     if (stops.size() > 1 && (*stops.first().offset < 0 || *stops.last().offset > 1))
         gradientAdapter.normalizeStopsAndEndpointsOutsideRange(stops, m_colorInterpolationMethod);
     
-    Gradient::ColorStopVector result;
+    GradientColorStops::StopVector result;
     result.reserveInitialCapacity(stops.size());
     for (auto& stop : stops)
-        result.uncheckedAppend({ *stop.offset, stop.color });
+        result.uncheckedAppend({ *stop.offset, WTFMove(stop.color) });
 
-    return result;
+    return GradientColorStops::Sorted { WTFMove(result) };
 }
 
 static float positionFromValue(const CSSPrimitiveValue* value, const CSSToLengthConversionData& conversionData, const FloatSize& size, bool isHorizontal)
@@ -867,9 +862,7 @@ Ref<Gradient> CSSLinearGradientValue::createGradient(RenderElement& renderer, co
     LinearGradientAdapter adapter { data };
     auto stops = computeStops(adapter, conversionData, renderer.style(), 1);
 
-    auto gradient = Gradient::create(WTFMove(data), colorInterpolationMethod());
-    gradient->setSortedColorStops(WTFMove(stops));
-    return gradient;
+    return Gradient::create(WTFMove(data), colorInterpolationMethod(), GradientSpreadMethod::Pad, WTFMove(stops));
 }
 
 bool CSSLinearGradientValue::equals(const CSSLinearGradientValue& other) const
@@ -1201,9 +1194,7 @@ Ref<Gradient> CSSRadialGradientValue::createGradient(RenderElement& renderer, co
     RadialGradientAdapter adapter { data };
     auto stops = computeStops(adapter, conversionData, renderer.style(), maxExtent);
 
-    auto gradient = Gradient::create(WTFMove(data), colorInterpolationMethod());
-    gradient->setSortedColorStops(WTFMove(stops));
-    return gradient;
+    return Gradient::create(WTFMove(data), colorInterpolationMethod(), GradientSpreadMethod::Pad, WTFMove(stops));
 }
 
 bool CSSRadialGradientValue::equals(const CSSRadialGradientValue& other) const
@@ -1275,9 +1266,7 @@ Ref<Gradient> CSSConicGradientValue::createGradient(RenderElement& renderer, con
     ConicGradientAdapter adapter;
     auto stops = computeStops(adapter, conversionData, renderer.style(), 1);
 
-    auto gradient = Gradient::create(WTFMove(data), colorInterpolationMethod());
-    gradient->setSortedColorStops(WTFMove(stops));
-    return gradient;
+    return Gradient::create(WTFMove(data), colorInterpolationMethod(), GradientSpreadMethod::Pad, WTFMove(stops));
 }
 
 bool CSSConicGradientValue::equals(const CSSConicGradientValue& other) const

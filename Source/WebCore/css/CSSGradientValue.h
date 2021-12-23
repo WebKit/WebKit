@@ -104,7 +104,7 @@ protected:
     {
     }
 
-    template<typename GradientAdapter> Gradient::ColorStopVector computeStops(GradientAdapter&, const CSSToLengthConversionData&, const RenderStyle&, float maxLengthForRepeat);
+    template<typename GradientAdapter> GradientColorStops computeStops(GradientAdapter&, const CSSToLengthConversionData&, const RenderStyle&, float maxLengthForRepeat);
 
     auto firstX() const { return m_firstX.get(); }
     auto firstY() const { return m_firstY.get(); }

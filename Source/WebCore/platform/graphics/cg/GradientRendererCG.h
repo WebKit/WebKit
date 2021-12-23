@@ -27,13 +27,14 @@
 
 #include "ColorComponents.h"
 #include "ColorInterpolationMethod.h"
-#include "GradientColorStop.h"
 #include <CoreGraphics/CoreGraphics.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
+
+class GradientColorStops;
 
 struct ColorConvertedToInterpolationColorSpaceStop {
     float offset;
@@ -42,7 +43,7 @@ struct ColorConvertedToInterpolationColorSpaceStop {
 
 class GradientRendererCG {
 public:
-    GradientRendererCG(ColorInterpolationMethod, const GradientColorStopVector&);
+    GradientRendererCG(ColorInterpolationMethod, const GradientColorStops&);
 
     void drawLinearGradient(CGContextRef, CGPoint startPoint, CGPoint endPoint, CGGradientDrawingOptions);
     void drawRadialGradient(CGContextRef, CGPoint startCenter, CGFloat startRadius, CGPoint endCenter, CGFloat endRadius, CGGradientDrawingOptions);
@@ -84,9 +85,9 @@ private:
 
     using Strategy = std::variant<Gradient, Shading>;
 
-    Strategy pickStrategy(ColorInterpolationMethod, const GradientColorStopVector&) const;
-    Strategy makeGradient(ColorInterpolationMethod, const GradientColorStopVector&) const;
-    Strategy makeShading(ColorInterpolationMethod, const GradientColorStopVector&) const;
+    Strategy pickStrategy(ColorInterpolationMethod, const GradientColorStops&) const;
+    Strategy makeGradient(ColorInterpolationMethod, const GradientColorStops&) const;
+    Strategy makeShading(ColorInterpolationMethod, const GradientColorStops&) const;
 
     Strategy m_strategy;
 };

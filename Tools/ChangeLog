@@ -1,3 +1,15 @@
+2021-12-23  Sam Weinig  <weinig@apple.com>
+
+        Encapsulate gradient color stops into a self contained class
+        https://bugs.webkit.org/show_bug.cgi?id=234583
+
+        Reviewed by Simon Fraser.
+
+        * TestRunnerShared/PlatformGTK.cmake: Added.
+        * TestRunnerShared/PlatformWPE.cmake: Added.
+        Keep GTK and WPE ports building by propogating glib.h header to the test runnner. Change
+        by Fujii Hironori.
+
 2021-12-23  Patrick Griffis  <pgriffis@igalia.com>
 
         [Flatpak] Revert filesystem permission change in r287396
