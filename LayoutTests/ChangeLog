@@ -1,3 +1,18 @@
+2021-12-23  Tim Nguyen  <ntim@apple.com>
+
+        Rebaseline getComputedStyle tests for iOS after r287356
+
+        Unreviewed test gardening.
+
+        Also combine results for ios-wk2 and ios, since they are the same, except ios is stale.
+
+        * platform/ios-wk2/fast/css/getComputedStyle/computed-style-expected.txt: Removed.
+        * platform/ios-wk2/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt: Removed.
+        * platform/ios-wk2/svg/css/getComputedStyle-basic-expected.txt: Removed.
+        * platform/ios/fast/css/getComputedStyle/computed-style-expected.txt:
+        * platform/ios/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+        * platform/ios/svg/css/getComputedStyle-basic-expected.txt:
+
 2021-12-22  Simon Fraser  <simon.fraser@apple.com>
 
         Share macOS code between ScrollAnimator::handleWheelEvent() and ScrollingEffectsController::handleWheelEvent()
