@@ -98,7 +98,8 @@ static bool extensionTabDidNavigateWasCalled;
 
 @end
 
-TEST(WKInspectorExtensionDelegate, ShowAndHideTabCallbacks)
+// FIXME: Re-enable this test once webkit.org/b/231847 is fixed.
+TEST(WKInspectorExtensionDelegate, DISABLED_ShowAndHideTabCallbacks)
 {
     resetGlobalState();
 

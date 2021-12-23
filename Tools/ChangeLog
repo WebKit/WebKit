@@ -1,3 +1,13 @@
+2021-12-22  Alex Christensen  <achristensen@webkit.org>
+
+        Disable WKInspectorExtensionDelegate.ShowAndHideTabCallbacks API test
+        webkit.org/b/231847
+
+        It seems to be timing out a lot everywhere.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WKInspectorExtensionDelegate.mm:
+        (TEST):
+
 2021-12-22  Sihui Liu  <sihui_liu@apple.com>
 
         WebsiteDataStore::excludeDirectoryFromBackup should set attribute for existing directories
