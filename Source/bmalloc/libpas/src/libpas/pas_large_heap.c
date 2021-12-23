@@ -97,7 +97,7 @@ static pas_allocation_result allocate_impl(pas_large_heap* heap,
     static const bool verbose = false;
     
     pas_allocation_result result;
-    pas_heap_type* type;
+    const pas_heap_type* type;
     pas_large_free_heap_config config;
     aligned_allocator_data data;
     
@@ -227,7 +227,7 @@ bool pas_large_heap_try_shrink(uintptr_t begin,
     pas_large_map_entry map_entry;
     pas_large_free_heap_config config;
     pas_large_heap* heap;
-    pas_heap_type* type;
+    const pas_heap_type* type;
     size_t alignment;
 
     pas_heap_lock_assert_held();

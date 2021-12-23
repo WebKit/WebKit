@@ -90,7 +90,6 @@ pas_heap_ref* createIsoHeapRefForSize(size_t size)
 }
 
 #if PAS_ENABLE_BMALLOC
-bmalloc_type gigacageType;
 pas_primitive_heap_ref gigacageHeapRef;
 
 void* gigacageAllocate(size_t size)
@@ -1135,7 +1134,7 @@ void addAllTests()
         TestScope iso(
             "bmalloc-gigacage",
             [] () {
-                gigacageType = BMALLOC_TYPE_INITIALIZER(1, 1, "Gigacage");
+                static const bmalloc_type gigacageType = BMALLOC_TYPE_INITIALIZER(1, 1, "Gigacage");
                 gigacageHeapRef = BMALLOC_AUXILIARY_HEAP_REF_INITIALIZER(&gigacageType);
 
                 size_t reservationSize = 1000000000;

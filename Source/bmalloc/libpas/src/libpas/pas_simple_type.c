@@ -41,7 +41,7 @@ void pas_simple_type_dump(pas_simple_type type, pas_stream* stream)
         pas_stream_printf(stream, ", Key = %p", pas_simple_type_key(type));
 }
 
-void pas_simple_type_as_heap_type_dump(pas_heap_type* type, pas_stream* stream)
+void pas_simple_type_as_heap_type_dump(const pas_heap_type* type, pas_stream* stream)
 {
     pas_simple_type_dump((pas_simple_type)type, stream);
 }

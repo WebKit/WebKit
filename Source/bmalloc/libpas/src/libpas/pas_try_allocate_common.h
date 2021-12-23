@@ -107,7 +107,7 @@ pas_try_allocate_common_impl_slow(
     pas_baseline_allocator_result baseline_allocator_result;
     pas_allocation_result result;
     pas_heap* heap;
-    pas_heap_type* type;
+    const pas_heap_type* type;
     pas_segregated_size_directory* directory;
     unsigned* cached_index;
 

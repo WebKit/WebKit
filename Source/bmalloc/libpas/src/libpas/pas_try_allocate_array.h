@@ -200,7 +200,7 @@ pas_try_allocate_array_impl_inline_only(
     static PAS_ALWAYS_INLINE pas_allocation_result name ## _by_count( \
         pas_heap_ref* heap_ref, size_t count, size_t alignment) \
     { \
-        pas_heap_type* type; \
+        const pas_heap_type* type; \
         size_t type_size; \
         size_t size; \
         \

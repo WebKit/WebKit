@@ -1,3 +1,69 @@
+2021-12-22  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [libpas] Make pas_heap_type constant
+        https://bugs.webkit.org/show_bug.cgi?id=234486
+
+        Reviewed by Filip Pizlo.
+
+        Currently, pas_heap_type data is placed in __DATA segment since it is not constant.
+        But they are actually a constant value, so we should put them in __DATA_CONST segment.
+
+        Still, we can have mutable type information if we want: we can const-cast the type
+        in each derived pas_heap_type's functions (and we should define these types with non
+        constant way). But currently, we have no such a type.
+
+        * bmalloc/IsoHeap.h:
+        (bmalloc::api::IsoHeap::provideHeap):
+        * bmalloc/bmalloc.cpp:
+        (bmalloc::api::mallocOutOfLine):
+        * libpas/src/libpas/bmalloc_heap.c:
+        * libpas/src/libpas/bmalloc_heap_innards.h:
+        * libpas/src/libpas/bmalloc_heap_ref.h:
+        * libpas/src/libpas/bmalloc_type.c:
+        (bmalloc_type_dump):
+        (bmalloc_type_as_heap_type_dump):
+        * libpas/src/libpas/bmalloc_type.h:
+        (bmalloc_type_size):
+        (bmalloc_type_alignment):
+        (bmalloc_type_name):
+        (bmalloc_type_as_heap_type_get_type_size):
+        (bmalloc_type_as_heap_type_get_type_alignment):
+        * libpas/src/libpas/iso_heap.c:
+        (iso_heap_ref_construct):
+        (iso_primitive_heap_ref_construct):
+        * libpas/src/libpas/iso_heap_ref.h:
+        * libpas/src/libpas/jit_heap_config.c:
+        (jit_type_dump):
+        * libpas/src/libpas/jit_heap_config.h:
+        (jit_type_size):
+        (jit_type_alignment):
+        * libpas/src/libpas/pas_heap.h:
+        * libpas/src/libpas/pas_heap_config.h:
+        * libpas/src/libpas/pas_heap_ref_prefix.h:
+        * libpas/src/libpas/pas_large_heap.c:
+        (allocate_impl):
+        (pas_large_heap_try_shrink):
+        * libpas/src/libpas/pas_simple_type.c:
+        (pas_simple_type_as_heap_type_dump):
+        * libpas/src/libpas/pas_simple_type.h:
+        (pas_simple_type_get_key_data):
+        (pas_simple_type_create_with_key_data):
+        (pas_simple_type_as_heap_type_get_type_size):
+        (pas_simple_type_as_heap_type_get_type_alignment):
+        * libpas/src/libpas/pas_try_allocate.h:
+        (pas_try_allocate_impl_casual_case):
+        * libpas/src/libpas/pas_try_allocate_array.h:
+        * libpas/src/libpas/pas_try_allocate_common.h:
+        (pas_try_allocate_common_impl_slow):
+        * libpas/src/libpas/pas_try_allocate_intrinsic.h:
+        * libpas/src/libpas/pas_try_reallocate.h:
+        (pas_try_reallocate_array_by_count):
+        * libpas/src/test/ExpendableMemoryTests.cpp:
+        * libpas/src/test/IsoHeapChaosTests.cpp:
+        (std::addAllTests):
+        * libpas/src/test/ThingyAndUtilityHeapAllocationTests.cpp:
+        (std::createIsolatedHeapRef):
+
 2021-12-19  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [libpas] Add macros to disable bmalloc core so that libpas can be enabled on 64-bit watchOS

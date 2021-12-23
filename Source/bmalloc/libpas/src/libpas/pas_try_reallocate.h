@@ -515,7 +515,7 @@ pas_try_reallocate_array_by_count(
     pas_reallocate_heap_teleport_rule teleport_rule,
     pas_reallocate_free_mode free_mode)
 {
-    pas_heap_type* type;
+    const pas_heap_type* type;
     size_t type_size;
     size_t new_size;
     

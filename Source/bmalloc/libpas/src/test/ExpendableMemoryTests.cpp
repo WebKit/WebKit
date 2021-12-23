@@ -38,7 +38,7 @@ using namespace std;
 
 namespace {
 
-bmalloc_type theType = BMALLOC_TYPE_INITIALIZER(42, 2, "foo");
+static const bmalloc_type theType = BMALLOC_TYPE_INITIALIZER(42, 2, "foo");
 pas_heap_ref theHeap = BMALLOC_HEAP_REF_INITIALIZER(&theType);
 
 void testPayloadImpl(pas_heap_ref& heap, bool firstRun)

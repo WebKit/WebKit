@@ -45,7 +45,7 @@
 
 PAS_BEGIN_EXTERN_C;
 
-void jit_type_dump(pas_heap_type* type, pas_stream* stream)
+void jit_type_dump(const pas_heap_type* type, pas_stream* stream)
 {
     PAS_ASSERT(!type);
     pas_stream_printf(stream, "JIT");

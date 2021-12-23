@@ -48,17 +48,17 @@ struct bmalloc_type {
 
 /* It's a bit better to use these getters instead of accessing the type struct directly because we want to be
    able to change the shape of the struct. */
-static inline size_t bmalloc_type_size(bmalloc_type* type)
+static inline size_t bmalloc_type_size(const bmalloc_type* type)
 {
     return type->size;
 }
 
-static inline size_t bmalloc_type_alignment(bmalloc_type* type)
+static inline size_t bmalloc_type_alignment(const bmalloc_type* type)
 {
     return type->alignment;
 }
 
-static inline const char* bmalloc_type_name(bmalloc_type* type)
+static inline const char* bmalloc_type_name(const bmalloc_type* type)
 {
     return type->name;
 }
@@ -68,19 +68,19 @@ PAS_API bmalloc_type* bmalloc_type_create(size_t size, size_t alignment, const c
 PAS_API bool bmalloc_type_try_name_dump(pas_stream* stream, const char* name);
 PAS_API void bmalloc_type_name_dump(pas_stream* stream, const char* name);
 
-PAS_API void bmalloc_type_dump(bmalloc_type* type, pas_stream* stream);
+PAS_API void bmalloc_type_dump(const bmalloc_type* type, pas_stream* stream);
 
-static inline size_t bmalloc_type_as_heap_type_get_type_size(pas_heap_type* type)
+static inline size_t bmalloc_type_as_heap_type_get_type_size(const pas_heap_type* type)
 {
-    return bmalloc_type_size((bmalloc_type*)type);
+    return bmalloc_type_size((const bmalloc_type*)type);
 }
 
-static inline size_t bmalloc_type_as_heap_type_get_type_alignment(pas_heap_type* type)
+static inline size_t bmalloc_type_as_heap_type_get_type_alignment(const pas_heap_type* type)
 {
-    return bmalloc_type_alignment((bmalloc_type*)type);
+    return bmalloc_type_alignment((const bmalloc_type*)type);
 }
 
-PAS_API void bmalloc_type_as_heap_type_dump(pas_heap_type* type, pas_stream* stream);
+PAS_API void bmalloc_type_as_heap_type_dump(const pas_heap_type* type, pas_stream* stream);
 
 PAS_END_EXTERN_C;
 

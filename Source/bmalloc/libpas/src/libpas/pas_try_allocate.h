@@ -53,7 +53,7 @@ pas_try_allocate_impl_casual_case(pas_heap_ref* heap_ref,
                                   pas_heap_config config,
                                   pas_try_allocate_common try_allocate_common)
 {
-    pas_heap_type* type;
+    const pas_heap_type* type;
     size_t type_size;
     pas_local_allocator_result allocator;
     unsigned allocator_index;

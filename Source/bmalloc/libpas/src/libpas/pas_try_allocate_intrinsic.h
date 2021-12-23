@@ -67,7 +67,7 @@ PAS_BEGIN_EXTERN_C;
             .index = 0, \
             .table_state = pas_heap_table_state_uninitialized, \
         }, \
-        .type = (pas_heap_type*)(primitive_type), \
+        .type = (const pas_heap_type*)(primitive_type), \
         .heap_ref = NULL, \
         .next_heap = PAS_COMPACT_PTR_INITIALIZER, \
         .config_kind = (passed_config).kind, \

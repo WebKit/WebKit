@@ -38,7 +38,7 @@
 
 PAS_BEGIN_EXTERN_C;
 
-bmalloc_type bmalloc_common_primitive_type = BMALLOC_TYPE_INITIALIZER(1, 1, "Common Primitive");
+const bmalloc_type bmalloc_common_primitive_type = BMALLOC_TYPE_INITIALIZER(1, 1, "Common Primitive");
 
 pas_intrinsic_heap_support bmalloc_common_primitive_heap_support =
     PAS_INTRINSIC_HEAP_SUPPORT_INITIALIZER;

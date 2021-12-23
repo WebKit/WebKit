@@ -144,7 +144,7 @@ void* iso_try_reallocate_dynamic_primitive(void* old_ptr,
 void iso_heap_ref_construct(pas_heap_ref* heap_ref,
                             pas_simple_type type)
 {
-    heap_ref->type = (pas_heap_type*)type;
+    heap_ref->type = (const pas_heap_type*)type;
     heap_ref->heap = NULL;
     heap_ref->allocator_index = 0;
 }
@@ -204,7 +204,7 @@ void iso_primitive_heap_ref_construct(pas_primitive_heap_ref* heap_ref,
 {
     PAS_ASSERT(pas_simple_type_size(type) == 1);
     PAS_ASSERT(pas_simple_type_alignment(type) == 1);
-    heap_ref->base.type = (pas_heap_type*)type;
+    heap_ref->base.type = (const pas_heap_type*)type;
     heap_ref->base.heap = NULL;
     heap_ref->base.allocator_index = 0;
     heap_ref->cached_index = UINT_MAX;

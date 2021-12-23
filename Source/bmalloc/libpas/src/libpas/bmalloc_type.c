@@ -102,7 +102,7 @@ void bmalloc_type_name_dump(pas_stream* stream, const char* name)
     pas_stream_printf(stream, "%s", name);
 }
 
-void bmalloc_type_dump(bmalloc_type* type, pas_stream* stream)
+void bmalloc_type_dump(const bmalloc_type* type, pas_stream* stream)
 {
     pas_stream_printf(
         stream, "Size = %zu, Alignment = %zu, Type = ",
@@ -111,9 +111,9 @@ void bmalloc_type_dump(bmalloc_type* type, pas_stream* stream)
     bmalloc_type_name_dump(stream, bmalloc_type_name(type));
 }
 
-void bmalloc_type_as_heap_type_dump(pas_heap_type* type, pas_stream* stream)
+void bmalloc_type_as_heap_type_dump(const pas_heap_type* type, pas_stream* stream)
 {
-    bmalloc_type_dump((bmalloc_type*)type, stream);
+    bmalloc_type_dump((const bmalloc_type*)type, stream);
 }
 
 #endif /* LIBPAS_ENABLED */

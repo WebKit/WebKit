@@ -73,10 +73,10 @@ static inline bool pas_simple_type_has_key(pas_simple_type type)
     return type >> PAS_SIMPLE_TYPE_DATA_BIT;
 }
 
-static inline pas_simple_type_with_key_data* pas_simple_type_get_key_data(pas_simple_type type)
+static inline const pas_simple_type_with_key_data* pas_simple_type_get_key_data(pas_simple_type type)
 {
     PAS_ASSERT(pas_simple_type_has_key(type));
-    return (pas_simple_type_with_key_data*)(type & PAS_SIMPLE_TYPE_DATA_PTR_MASK);
+    return (const pas_simple_type_with_key_data*)(type & PAS_SIMPLE_TYPE_DATA_PTR_MASK);
 }
 
 static inline pas_simple_type pas_simple_type_unwrap(pas_simple_type type)
@@ -118,7 +118,7 @@ static inline pas_simple_type pas_simple_type_create(size_t size, size_t alignme
 }
 
 static inline pas_simple_type pas_simple_type_create_with_key_data(
-    pas_simple_type_with_key_data* data)
+    const pas_simple_type_with_key_data* data)
 {
     pas_simple_type result;
     
@@ -132,17 +132,17 @@ static inline pas_simple_type pas_simple_type_create_with_key_data(
 
 PAS_API void pas_simple_type_dump(pas_simple_type type, pas_stream* stream);
 
-static inline size_t pas_simple_type_as_heap_type_get_type_size(pas_heap_type* type)
+static inline size_t pas_simple_type_as_heap_type_get_type_size(const pas_heap_type* type)
 {
     return pas_simple_type_size((pas_simple_type)type);
 }
 
-static inline size_t pas_simple_type_as_heap_type_get_type_alignment(pas_heap_type* type)
+static inline size_t pas_simple_type_as_heap_type_get_type_alignment(const pas_heap_type* type)
 {
     return pas_simple_type_alignment((pas_simple_type)type);
 }
 
-PAS_API void pas_simple_type_as_heap_type_dump(pas_heap_type* type, pas_stream* stream);
+PAS_API void pas_simple_type_as_heap_type_dump(const pas_heap_type* type, pas_stream* stream);
 
 PAS_END_EXTERN_C;
 

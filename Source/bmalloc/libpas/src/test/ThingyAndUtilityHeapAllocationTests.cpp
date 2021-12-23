@@ -379,7 +379,7 @@ private:
 pas_heap_ref* createIsolatedHeapRef(size_t size, size_t alignment)
 {
     pas_heap_ref* heapRef = new pas_heap_ref;
-    heapRef->type = reinterpret_cast<pas_heap_type*>(PAS_SIMPLE_TYPE_CREATE(size, alignment));
+    heapRef->type = reinterpret_cast<const pas_heap_type*>(PAS_SIMPLE_TYPE_CREATE(size, alignment));
     heapRef->heap = nullptr;
 #if TLC
     heapRef->allocator_index = 0;

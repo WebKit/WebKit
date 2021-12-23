@@ -33,7 +33,7 @@ PAS_BEGIN_EXTERN_C;
 
 #define BMALLOC_HEAP_REF_INITIALIZER(passed_type) \
     ((pas_heap_ref){ \
-         .type = (pas_heap_type*)(passed_type), \
+         .type = (const pas_heap_type*)(passed_type), \
          .heap = NULL, \
          .allocator_index = 0 \
      })

@@ -63,9 +63,9 @@ typedef struct pas_stream pas_stream;
 
 typedef void (*pas_heap_config_activate_callback)(void);
 
-typedef size_t (*pas_heap_config_get_type_size)(pas_heap_type*);
-typedef size_t (*pas_heap_config_get_type_alignment)(pas_heap_type*);
-typedef void (*pas_heap_config_dump_type)(pas_heap_type*, pas_stream* stream);
+typedef size_t (*pas_heap_config_get_type_size)(const pas_heap_type*);
+typedef size_t (*pas_heap_config_get_type_alignment)(const pas_heap_type*);
+typedef void (*pas_heap_config_dump_type)(const pas_heap_type*, pas_stream* stream);
 typedef pas_fast_megapage_kind (*pas_heap_config_fast_megapage_kind_func)(uintptr_t begin);
 typedef pas_page_base* (*pas_heap_config_page_header_func)(uintptr_t begin);
 typedef pas_aligned_allocation_result (*pas_heap_config_aligned_allocator)(

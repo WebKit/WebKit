@@ -45,7 +45,7 @@ typedef struct pas_segregated_page pas_segregated_page;
 struct pas_heap {
     pas_segregated_heap segregated_heap;
     pas_large_heap large_heap;
-    pas_heap_type* type;
+    const pas_heap_type* type;
     pas_heap_ref* heap_ref;
     pas_compact_heap_ptr next_heap;
     pas_heap_config_kind config_kind : 6;

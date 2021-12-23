@@ -51,18 +51,18 @@ PAS_BEGIN_EXTERN_C;
 
 PAS_API void jit_heap_config_activate(void);
 
-static PAS_ALWAYS_INLINE size_t jit_type_size(pas_heap_type* type)
+static PAS_ALWAYS_INLINE size_t jit_type_size(const pas_heap_type* type)
 {
     PAS_TESTING_ASSERT(!type);
     return 1;
 }
-static PAS_ALWAYS_INLINE size_t jit_type_alignment(pas_heap_type* type)
+static PAS_ALWAYS_INLINE size_t jit_type_alignment(const pas_heap_type* type)
 {
     PAS_TESTING_ASSERT(!type);
     return 1;
 }
 
-PAS_API void jit_type_dump(pas_heap_type* type, pas_stream* stream);
+PAS_API void jit_type_dump(const pas_heap_type* type, pas_stream* stream);
 
 PAS_API pas_page_base* jit_page_header_for_boundary_remote(pas_enumerator* enumerator, void* boundary);
 
