@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WebNotificationProvider.h"
 
+#include "DataFunctions.h"
 #include "StringFunctions.h"
 #include <WebKit/WKMutableArray.h>
 #include <WebKit/WKNotification.h>
@@ -95,7 +96,7 @@ void WebNotificationProvider::showWebNotification(WKPageRef page, WKNotification
     uint64_t identifier = WKNotificationGetID(notification);
     auto coreIdentifier = adoptWK(WKNotificationCopyCoreIDForTesting(notification));
 
-    auto addResult = m_owningManager.set(toWTFString(coreIdentifier.get()), notificationManager);
+    auto addResult = m_owningManager.set(dataToUUID(coreIdentifier.get()), notificationManager);
     ASSERT_UNUSED(addResult, addResult.isNewEntry);
 
     WKNotificationManagerProviderDidShowNotification(notificationManager, identifier);
@@ -103,9 +104,9 @@ void WebNotificationProvider::showWebNotification(WKPageRef page, WKNotification
 
 void WebNotificationProvider::closeWebNotification(WKNotificationRef notification)
 {
-    auto identifier = toWTFString(adoptWK(WKNotificationCopyCoreIDForTesting(notification)).get());
+    auto identifier = adoptWK(WKNotificationCopyCoreIDForTesting(notification));
 
-    auto notificationManager = m_owningManager.take(identifier);
+    auto notificationManager = m_owningManager.take(dataToUUID(identifier.get()));
     ASSERT(notificationManager);
     ASSERT(m_knownManagers.contains(notificationManager));
 
@@ -126,7 +127,7 @@ void WebNotificationProvider::removeNotificationManager(WKNotificationManagerRef
     auto protectedManager = m_knownManagers.take(manager);
     ASSERT(protectedManager);
 
-    auto toRemove = Vector<String> { };
+    auto toRemove = Vector<UUID> { };
     for (auto& iterator : m_owningManager) {
         if (iterator.value != manager)
             continue;
@@ -135,7 +136,7 @@ void WebNotificationProvider::removeNotificationManager(WKNotificationManagerRef
 
     auto array = adoptWK(WKMutableArrayCreate());
     for (auto& identifier : toRemove) {
-        WKArrayAppendItem(array.get(), toWK(identifier).get());
+        WKArrayAppendItem(array.get(), uuidToData(identifier).get());
         m_owningManager.remove(identifier);
     }
 
@@ -148,9 +149,9 @@ WKDictionaryRef WebNotificationProvider::notificationPermissions()
     return WKMutableDictionaryCreate();
 }
 
-void WebNotificationProvider::simulateWebNotificationClick(WKPageRef, WKStringRef notificationID)
+void WebNotificationProvider::simulateWebNotificationClick(WKPageRef, WKDataRef notificationID)
 {
-    auto identifier = toWTFString(notificationID);
+    auto identifier = dataToUUID(notificationID);
     ASSERT(m_owningManager.contains(identifier));
 
     WKNotificationManagerProviderDidClickNotification_b(m_owningManager.get(identifier), notificationID);
@@ -160,7 +161,7 @@ void WebNotificationProvider::reset()
 {
     for (auto iterator : m_owningManager) {
         auto array = adoptWK(WKMutableArrayCreate());
-        WKArrayAppendItem(array.get(), toWK(iterator.key).get());
+        WKArrayAppendItem(array.get(), uuidToData(iterator.key).get());
         WKNotificationManagerProviderDidCloseNotifications(iterator.value, array.get());
     }
 

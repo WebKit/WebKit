@@ -55,7 +55,7 @@ public:
     API::SecurityOrigin* origin() const { return m_origin.get(); }
     
     uint64_t notificationID() const { return identifier(); }
-    const String& coreNotificationID() const { return m_coreNotificationID; }
+    const UUID& coreNotificationID() const { return m_coreNotificationID; }
 
     WebPageProxyIdentifier pageIdentifier() const { return m_pageIdentifier; }
 
@@ -69,7 +69,7 @@ private:
     String m_lang;
     WebCore::NotificationDirection m_dir;
     RefPtr<API::SecurityOrigin> m_origin;
-    String m_coreNotificationID;
+    UUID m_coreNotificationID;
 
     WebPageProxyIdentifier m_pageIdentifier;
 };

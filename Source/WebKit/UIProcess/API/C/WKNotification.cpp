@@ -28,6 +28,7 @@
 
 #include "APISecurityOrigin.h"
 #include "WKAPICast.h"
+#include "WKData.h"
 #include "WKString.h"
 #include "WebNotification.h"
 #include <WebCore/NotificationDirection.h>
@@ -88,7 +89,9 @@ uint64_t WKNotificationGetID(WKNotificationRef notification)
     return toImpl(notification)->notificationID();
 }
 
-WKStringRef WKNotificationCopyCoreIDForTesting(WKNotificationRef notification)
+WKDataRef WKNotificationCopyCoreIDForTesting(WKNotificationRef notification)
 {
-    return toCopiedAPI(toImpl(notification)->coreNotificationID());
+    auto identifier = toImpl(notification)->coreNotificationID();
+    auto span = identifier.toSpan();
+    return WKDataCreate(span.data(), span.size());
 }

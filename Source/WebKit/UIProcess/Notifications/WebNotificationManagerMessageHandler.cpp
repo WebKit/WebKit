@@ -45,17 +45,17 @@ void WebNotificationManagerMessageHandler::showNotification(const WebCore::Notif
     m_webPageProxy.showNotification(data);
 }
 
-void WebNotificationManagerMessageHandler::cancelNotification(const String& notificationID)
+void WebNotificationManagerMessageHandler::cancelNotification(const UUID& notificationID)
 {
     m_webPageProxy.cancelNotification(notificationID);
 }
 
-void WebNotificationManagerMessageHandler::clearNotifications(const Vector<String>& notificationIDs)
+void WebNotificationManagerMessageHandler::clearNotifications(const Vector<UUID>& notificationIDs)
 {
     m_webPageProxy.clearNotifications(notificationIDs);
 }
 
-void WebNotificationManagerMessageHandler::didDestroyNotification(const String& notificationID)
+void WebNotificationManagerMessageHandler::didDestroyNotification(const UUID& notificationID)
 {
     m_webPageProxy.didDestroyNotification(notificationID);
 }

@@ -32,6 +32,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/RefPtr.h>
+#include <wtf/UUID.h>
 #include <wtf/Vector.h>
 #include <wtf/text/StringHash.h>
 
@@ -75,15 +76,15 @@ private:
     // Implemented in generated WebNotificationManagerMessageReceiver.cpp
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
     
-    void didShowNotification(const String& notificationID);
-    void didClickNotification(const String& notificationID);
-    void didCloseNotifications(const Vector<String>& notificationIDs);
+    void didShowNotification(const UUID& notificationID);
+    void didClickNotification(const UUID& notificationID);
+    void didCloseNotifications(const Vector<UUID>& notificationIDs);
     void didRemoveNotificationDecisions(const Vector<String>& originStrings);
 
     WebProcess& m_process;
 
 #if ENABLE(NOTIFICATIONS)
-    typedef HashMap<String, RefPtr<WebCore::Notification>> NotificationIDMap;
+    typedef HashMap<UUID, RefPtr<WebCore::Notification>> NotificationIDMap;
     NotificationIDMap m_notificationIDMap;
     
     HashMap<String, bool> m_permissionsMap;

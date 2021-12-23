@@ -94,7 +94,7 @@ public:
     void postSetBackingScaleFactor(double);
     void postSetWindowIsKey(bool);
     void postSetViewSize(double width, double height);
-    void postSimulateWebNotificationClick(WKStringRef notificationID);
+    void postSimulateWebNotificationClick(WKDataRef notificationID);
     void postSetAddsVisitedLinks(bool);
 
     // Geolocation.
@@ -228,6 +228,7 @@ void postPageMessage(const char* name);
 void postPageMessage(const char* name, bool value);
 void postPageMessage(const char* name, const char* value);
 void postPageMessage(const char* name, WKStringRef value);
+void postPageMessage(const char* name, WKDataRef value);
 void postPageMessage(const char* name, const void* value) = delete;
 
 void postSynchronousPageMessage(const char* name);

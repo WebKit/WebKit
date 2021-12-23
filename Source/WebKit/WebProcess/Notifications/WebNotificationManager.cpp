@@ -183,7 +183,7 @@ void WebNotificationManager::didDestroyNotification(Notification& notification, 
 #endif
 }
 
-void WebNotificationManager::didShowNotification(const String& notificationID)
+void WebNotificationManager::didShowNotification(const UUID& notificationID)
 {
 #if ENABLE(NOTIFICATIONS)
     RefPtr<Notification> notification = m_notificationIDMap.get(notificationID);
@@ -196,7 +196,7 @@ void WebNotificationManager::didShowNotification(const String& notificationID)
 #endif
 }
 
-void WebNotificationManager::didClickNotification(const String& notificationID)
+void WebNotificationManager::didClickNotification(const UUID& notificationID)
 {
 #if ENABLE(NOTIFICATIONS)
     RefPtr<Notification> notification = m_notificationIDMap.get(notificationID);
@@ -211,7 +211,7 @@ void WebNotificationManager::didClickNotification(const String& notificationID)
 #endif
 }
 
-void WebNotificationManager::didCloseNotifications(const Vector<String>& notificationIDs)
+void WebNotificationManager::didCloseNotifications(const Vector<UUID>& notificationIDs)
 {
 #if ENABLE(NOTIFICATIONS)
     size_t count = notificationIDs.size();

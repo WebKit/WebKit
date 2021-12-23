@@ -42,6 +42,17 @@
 
 namespace WTF {
 
+UUID::UUID()
+{
+    static_assert(sizeof(m_data) == 16);
+    cryptographicallyRandomValues(reinterpret_cast<unsigned char*>(&m_data), 16);
+}
+
+unsigned UUID::hash() const
+{
+    return StringHasher::hashMemory(reinterpret_cast<const unsigned char*>(&m_data), 16);
+}
+
 String createCanonicalUUIDString()
 {
     unsigned randomData[4];

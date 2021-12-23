@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,39 +23,33 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebNotificationProvider_h
-#define WebNotificationProvider_h
+#pragma once
 
-#include <WebKit/WKNotificationManager.h>
-#include <WebKit/WKNotificationProvider.h>
+#include <WebKit/WKData.h>
 #include <WebKit/WKRetainPtr.h>
-#include <wtf/HashMap.h>
-#include <wtf/HashSet.h>
 #include <wtf/UUID.h>
-#include <wtf/text/StringHash.h>
 
 namespace WTR {
 
-class WebNotificationProvider {
-public:
-    WebNotificationProvider();
-    ~WebNotificationProvider();
-    WKNotificationProviderV0 provider();
+WKDataRef dataValue(WKTypeRef);
+UUID dataToUUID(WKDataRef);
+WKRetainPtr<WKDataRef> uuidToData(const UUID&);
 
-    void showWebNotification(WKPageRef, WKNotificationRef);
-    void closeWebNotification(WKNotificationRef);
-    void addNotificationManager(WKNotificationManagerRef);
-    void removeNotificationManager(WKNotificationManagerRef);
-    WKDictionaryRef notificationPermissions();
-
-    void simulateWebNotificationClick(WKPageRef, WKDataRef notificationID);
-    void reset();
-
-private:
-    HashSet<WKRetainPtr<WKNotificationManagerRef>> m_knownManagers;
-    HashMap<UUID, WKNotificationManagerRef> m_owningManager;
-};
-
+inline WKDataRef dataValue(WKTypeRef value)
+{
+    return value && WKGetTypeID(value) == WKDataGetTypeID() ? static_cast<WKDataRef>(value) : nullptr;
 }
 
-#endif
+inline UUID dataToUUID(WKDataRef data)
+{
+    RELEASE_ASSERT(WKDataGetSize(data) == 16);
+    return UUID { Span<const uint8_t, 16> { WKDataGetBytes(data), 16 } };
+}
+
+inline WKRetainPtr<WKDataRef> uuidToData(const UUID& uuid)
+{
+    auto span = uuid.toSpan();
+    return adoptWK(WKDataCreate(span.data(), span.size()));
+}
+
+} // namespace WTR

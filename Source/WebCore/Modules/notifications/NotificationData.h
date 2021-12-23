@@ -26,6 +26,7 @@
 #pragma once
 
 #include <optional>
+#include <wtf/UUID.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -43,7 +44,7 @@ struct NotificationData {
     String language;
     WebCore::NotificationDirection direction;
     String originString;
-    String notificationID;
+    UUID notificationID;
 };
 
 template<class Encoder>
@@ -90,7 +91,7 @@ std::optional<NotificationData> NotificationData::decode(Decoder& decoder)
     if (!originString)
         return std::nullopt;
 
-    std::optional<String> notificationID;
+    std::optional<UUID> notificationID;
     decoder >> notificationID;
     if (!notificationID)
         return std::nullopt;

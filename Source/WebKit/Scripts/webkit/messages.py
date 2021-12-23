@@ -457,6 +457,7 @@ def forward_declarations_and_headers_for_replies(receiver):
         'MachSendRight',
         'MediaTime',
         'String',
+        'UUID',
     ])
 
     no_forward_declaration_types = types_that_cannot_be_forward_declared()
@@ -751,6 +752,7 @@ def headers_for_type(type):
         'Seconds': ['<wtf/Seconds.h>'],
         'String': ['<wtf/text/WTFString.h>'],
         'URL': ['<wtf/URLHash.h>'],
+        'UUID': ['<wtf/UUID.h>'],
         'WallTime': ['<wtf/WallTime.h>'],
         'WebCore::ArcData': ['<WebCore/InlinePathData.h>'],
         'WebCore::AutoplayEventFlags': ['<WebCore/AutoplayEvent.h>'],

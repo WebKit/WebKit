@@ -31,6 +31,7 @@
 #include "WebPageProxyIdentifier.h"
 #include <WebCore/NotificationClient.h>
 #include <wtf/HashMap.h>
+#include <wtf/UUID.h>
 #include <wtf/text/StringHash.h>
 
 namespace WebCore {
@@ -60,14 +61,14 @@ public:
     HashMap<String, bool> notificationPermissions();
 
     void show(WebPageProxy*, const WebCore::NotificationData&);
-    void cancel(WebPageProxy*, const String& pageNotificationID);
+    void cancel(WebPageProxy*, const UUID& pageNotificationID);
     void clearNotifications(WebPageProxy*);
-    void clearNotifications(WebPageProxy*, const Vector<String>& pageNotificationIDs);
-    void didDestroyNotification(WebPageProxy*, const String& pageNotificationID);
+    void clearNotifications(WebPageProxy*, const Vector<UUID>& pageNotificationIDs);
+    void didDestroyNotification(WebPageProxy*, const UUID& pageNotificationID);
 
     void providerDidShowNotification(uint64_t notificationID);
     void providerDidClickNotification(uint64_t notificationID);
-    void providerDidClickNotification(const String& notificationID);
+    void providerDidClickNotification(const UUID& notificationID);
     void providerDidCloseNotifications(API::Array* notificationIDs);
     void providerDidUpdateNotificationPolicy(const API::SecurityOrigin*, bool allowed);
     void providerDidRemoveNotificationPolicies(API::Array* origins);
@@ -78,8 +79,8 @@ public:
 private:
     explicit WebNotificationManagerProxy(WebProcessPool*);
 
-    typedef bool (*NotificationFilterFunction)(WebPageProxyIdentifier pageID, const String& pageNotificationID, WebPageProxyIdentifier desiredPageID, const Vector<String>& desiredPageNotificationIDs);
-    void clearNotifications(WebPageProxy*, const Vector<String>& pageNotificationIDs, NotificationFilterFunction);
+    typedef bool (*NotificationFilterFunction)(WebPageProxyIdentifier pageID, const UUID& pageNotificationID, WebPageProxyIdentifier desiredPageID, const Vector<UUID>& desiredPageNotificationIDs);
+    void clearNotifications(WebPageProxy*, const Vector<UUID>& pageNotificationIDs, NotificationFilterFunction);
 
     // WebContextSupplement
     void processPoolDestroyed() override;
@@ -88,8 +89,8 @@ private:
 
     std::unique_ptr<API::NotificationProvider> m_provider;
 
-    HashMap<uint64_t, String> m_globalNotificationMap;
-    HashMap<String, Ref<WebNotification>> m_notifications;
+    HashMap<uint64_t, UUID> m_globalNotificationMap;
+    HashMap<UUID, Ref<WebNotification>> m_notifications;
 };
 
 } // namespace WebKit

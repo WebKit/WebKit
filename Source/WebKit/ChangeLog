@@ -1,3 +1,73 @@
+2021-12-23  Brady Eidson  <beidson@apple.com>
+
+        Add WTF::UUID class which is natively a 128-bit integer
+        https://bugs.webkit.org/show_bug.cgi?id=234571
+
+        Reviewed by Alex Christensen.
+
+        Notifications - which are UUID identified - are now addressed by a UUID object instead of a v4 UUID string.
+        
+        * NetworkProcess/Notifications/NetworkNotificationManager.cpp:
+        (WebKit::NetworkNotificationManager::cancelNotification):
+        (WebKit::NetworkNotificationManager::clearNotifications):
+        (WebKit::NetworkNotificationManager::didDestroyNotification):
+        * NetworkProcess/Notifications/NetworkNotificationManager.h:
+
+        * Scripts/webkit/messages.py:
+        (forward_declarations_and_headers_for_replies):
+        (headers_for_type):
+
+        * Shared/Notifications/NotificationManagerMessageHandler.h:
+        * Shared/Notifications/NotificationManagerMessageHandler.messages.in:
+
+        * UIProcess/API/C/WKNotification.cpp:
+        (WKNotificationCopyCoreIDForTesting):
+        * UIProcess/API/C/WKNotification.h:
+
+        * UIProcess/API/C/WKNotificationManager.cpp:
+        (WKNotificationManagerProviderDidClickNotification_b):
+        * UIProcess/API/C/WKNotificationManager.h:
+
+        * UIProcess/Notifications/WebNotification.h:
+        (WebKit::WebNotification::coreNotificationID const):
+
+        * UIProcess/Notifications/WebNotificationManagerMessageHandler.cpp:
+        (WebKit::WebNotificationManagerMessageHandler::cancelNotification):
+        (WebKit::WebNotificationManagerMessageHandler::clearNotifications):
+        (WebKit::WebNotificationManagerMessageHandler::didDestroyNotification):
+        * UIProcess/Notifications/WebNotificationManagerMessageHandler.h:
+
+        * UIProcess/Notifications/WebNotificationManagerProxy.cpp:
+        (WebKit::WebNotificationManagerProxy::cancel):
+        (WebKit::WebNotificationManagerProxy::didDestroyNotification):
+        (WebKit::pageIDsMatch):
+        (WebKit::pageAndNotificationIDsMatch):
+        (WebKit::WebNotificationManagerProxy::clearNotifications):
+        (WebKit::WebNotificationManagerProxy::providerDidClickNotification):
+        (WebKit::WebNotificationManagerProxy::providerDidCloseNotifications):
+        * UIProcess/Notifications/WebNotificationManagerProxy.h:
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::cancelNotification):
+        (WebKit::WebPageProxy::clearNotifications):
+        (WebKit::WebPageProxy::didDestroyNotification):
+        * UIProcess/WebPageProxy.h:
+
+        * WebProcess/InjectedBundle/API/c/WKBundle.cpp:
+        (WKBundleCopyWebNotificationID):
+        * WebProcess/InjectedBundle/API/c/WKBundlePrivate.h:
+
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::webNotificationID):
+        * WebProcess/InjectedBundle/InjectedBundle.h:
+
+        * WebProcess/Notifications/WebNotificationManager.cpp:
+        (WebKit::WebNotificationManager::didShowNotification):
+        (WebKit::WebNotificationManager::didClickNotification):
+        (WebKit::WebNotificationManager::didCloseNotifications):
+        * WebProcess/Notifications/WebNotificationManager.h:
+        * WebProcess/Notifications/WebNotificationManager.messages.in:
+
 2021-12-23  Sihui Liu  <sihui_liu@apple.com>
 
         Ensure file handles used in FileSystemAccess API are closed

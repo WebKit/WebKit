@@ -106,22 +106,14 @@ private:
 };
 
 template <typename T>
-class UUIDIdentified : public IdentifiedBase<String, T> {
+class UUIDIdentified : public IdentifiedBase<UUID, T> {
 protected:
     UUIDIdentified()
-        : IdentifiedBase<String, T>(createCanonicalUUIDString())
+        : IdentifiedBase<UUID, T>(UUID::create())
     {
     }
 
-    UUIDIdentified(const UUIDIdentified& other)
-        : IdentifiedBase<String, T>(other.isolatedCopy())
-    {
-    }
-
-    explicit UUIDIdentified(const String& identifier)
-        : IdentifiedBase<String, T>(identifier.isolatedCopy())
-    {
-    }
+    UUIDIdentified(const UUIDIdentified&) = default;
 };
 
 } // namespace WTF

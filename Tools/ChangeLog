@@ -1,3 +1,41 @@
+2021-12-23  Brady Eidson  <beidson@apple.com>
+
+        Add WTF::UUID class which is natively a 128-bit integer
+        https://bugs.webkit.org/show_bug.cgi?id=234571
+
+        Reviewed by Alex Christensen.
+
+        Notifications - which are UUID identified - are now addressed by a UUID object instead of a v4 UUID string.
+
+        The way our C-API vends that UUID object is through a data object, so change WKTR to account for that.
+        
+        * WebKitTestRunner/DataFunctions.h: Copied from Source/WebKit/UIProcess/Notifications/WebNotificationManagerMessageHandler.h.
+        (WTR::dataValue):
+        (WTR::dataToUUID):
+        (WTR::uuidToData):
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::postSimulateWebNotificationClick):
+        (WTR::postPageMessage):
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.h:
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::simulateWebNotificationClick):
+        * WebKitTestRunner/TestController.h:
+
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::didReceiveMessageFromInjectedBundle):
+
+        * WebKitTestRunner/WebKitTestRunner.xcodeproj/project.pbxproj:
+
+        * WebKitTestRunner/WebNotificationProvider.cpp:
+        (WTR::WebNotificationProvider::showWebNotification):
+        (WTR::WebNotificationProvider::closeWebNotification):
+        (WTR::WebNotificationProvider::removeNotificationManager):
+        (WTR::WebNotificationProvider::simulateWebNotificationClick):
+        (WTR::WebNotificationProvider::reset):
+        * WebKitTestRunner/WebNotificationProvider.h:
+
 2021-12-23  Sam Weinig  <weinig@apple.com>
 
         Encapsulate gradient color stops into a self contained class

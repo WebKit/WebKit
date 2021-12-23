@@ -1,3 +1,44 @@
+2021-12-23  Brady Eidson  <beidson@apple.com>
+
+        Add WTF::UUID class which is natively a 128-bit integer
+        https://bugs.webkit.org/show_bug.cgi?id=234571
+
+        Reviewed by Alex Christensen.
+
+        This patch adds a new WTF::UUID class.
+        
+        For now, it is simply a wrapper around a 128-bit integer, and creating a new one primes that integer with
+        cryptographically random data.
+        
+        It can be encoded/decoded as well as used as a HashKey.
+        
+        And it will be a great utility to use as a unique object identifier for objects that logically exist
+        in multiple processes.
+        
+        On that note, it also changes "UUIDIdentifier" to use this new UUID class instead of a v4 UUID string.
+        
+        * wtf/Identified.h:
+        (WTF::UUIDIdentified::UUIDIdentified):
+
+        * wtf/UUID.cpp:
+        (WTF::UUID::UUID):
+        (WTF::UUID::toVector const):
+        (WTF::UUID::hash const):
+
+        * wtf/UUID.h:
+        (WTF::UUID::create):
+        (WTF::UUID::UUID):
+        (WTF::UUID::operator== const):
+        (WTF::UUID::data const):
+        (WTF::UUID::isHashTableDeletedValue const):
+        (WTF::UUIDHash::hash):
+        (WTF::UUIDHash::equal):
+        (WTF::HashTraits<UUID>::emptyValue):
+        (WTF::HashTraits<UUID>::constructDeletedValue):
+        (WTF::HashTraits<UUID>::isDeletedValue):
+        (WTF::UUID::encode const):
+        (WTF::UUID::decode):
+
 2021-12-23  Sihui Liu  <sihui_liu@apple.com>
 
         Ensure file handles used in FileSystemAccess API are closed

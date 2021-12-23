@@ -27,6 +27,7 @@
 #include "config.h"
 #include "TestInvocation.h"
 
+#include "DataFunctions.h"
 #include "DictionaryFunctions.h"
 #include "PlatformWebView.h"
 #include "TestController.h"
@@ -390,7 +391,7 @@ void TestInvocation::didReceiveMessageFromInjectedBundle(WKStringRef messageName
     }
 
     if (WKStringIsEqualToUTF8CString(messageName, "SimulateWebNotificationClick")) {
-        WKStringRef notificationID = stringValue(messageBody);
+        WKDataRef notificationID = dataValue(messageBody);
         TestController::singleton().simulateWebNotificationClick(notificationID);
         return;
     }

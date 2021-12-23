@@ -96,13 +96,13 @@ void WebNotificationManagerProxy::show(WebPageProxy* webPage, const WebCore::Not
     m_provider->show(*webPage, notification.get());
 }
 
-void WebNotificationManagerProxy::cancel(WebPageProxy* webPage, const String& pageNotificationID)
+void WebNotificationManagerProxy::cancel(WebPageProxy* webPage, const UUID& pageNotificationID)
 {
     if (auto webNotification = m_notifications.get(pageNotificationID))
         m_provider->cancel(*webNotification);
 }
     
-void WebNotificationManagerProxy::didDestroyNotification(WebPageProxy* webPage, const String& pageNotificationID)
+void WebNotificationManagerProxy::didDestroyNotification(WebPageProxy* webPage, const UUID& pageNotificationID)
 {
     if (auto webNotification = m_notifications.take(pageNotificationID)) {
         m_globalNotificationMap.remove(webNotification->notificationID());
@@ -110,27 +110,27 @@ void WebNotificationManagerProxy::didDestroyNotification(WebPageProxy* webPage, 
     }
 }
 
-static bool pageIDsMatch(WebPageProxyIdentifier pageID, const String&, WebPageProxyIdentifier desiredPageID, const Vector<String>&)
+static bool pageIDsMatch(WebPageProxyIdentifier pageID, const UUID&, WebPageProxyIdentifier desiredPageID, const Vector<UUID>&)
 {
     return pageID == desiredPageID;
 }
 
-static bool pageAndNotificationIDsMatch(WebPageProxyIdentifier pageID, const String& pageNotificationID, WebPageProxyIdentifier desiredPageID, const Vector<String>& desiredPageNotificationIDs)
+static bool pageAndNotificationIDsMatch(WebPageProxyIdentifier pageID, const UUID& pageNotificationID, WebPageProxyIdentifier desiredPageID, const Vector<UUID>& desiredPageNotificationIDs)
 {
     return pageID == desiredPageID && desiredPageNotificationIDs.contains(pageNotificationID);
 }
 
 void WebNotificationManagerProxy::clearNotifications(WebPageProxy* webPage)
 {
-    clearNotifications(webPage, Vector<String>(), pageIDsMatch);
+    clearNotifications(webPage, Vector<UUID>(), pageIDsMatch);
 }
 
-void WebNotificationManagerProxy::clearNotifications(WebPageProxy* webPage, const Vector<String>& pageNotificationIDs)
+void WebNotificationManagerProxy::clearNotifications(WebPageProxy* webPage, const Vector<UUID>& pageNotificationIDs)
 {
     clearNotifications(webPage, pageNotificationIDs, pageAndNotificationIDsMatch);
 }
 
-void WebNotificationManagerProxy::clearNotifications(WebPageProxy* webPage, const Vector<String>& pageNotificationIDs, NotificationFilterFunction filterFunction)
+void WebNotificationManagerProxy::clearNotifications(WebPageProxy* webPage, const Vector<UUID>& pageNotificationIDs, NotificationFilterFunction filterFunction)
 {
     auto targetPageProxyID = webPage->identifier();
 
@@ -139,7 +139,7 @@ void WebNotificationManagerProxy::clearNotifications(WebPageProxy* webPage, cons
 
     for (auto notification : m_notifications.values()) {
         auto pageProxyID = notification->pageIdentifier();
-        String coreNotificationID = notification->coreNotificationID();
+        auto coreNotificationID = notification->coreNotificationID();
         if (!filterFunction(pageProxyID, coreNotificationID, targetPageProxyID, pageNotificationIDs))
             continue;
 
@@ -193,7 +193,7 @@ void WebNotificationManagerProxy::providerDidClickNotification(uint64_t globalNo
     webPage->process().send(Messages::WebNotificationManager::DidClickNotification(it->value), 0);
 }
 
-void WebNotificationManagerProxy::providerDidClickNotification(const String& coreNotificationID)
+void WebNotificationManagerProxy::providerDidClickNotification(const UUID& coreNotificationID)
 {
     auto notification = m_notifications.get(coreNotificationID);
     if (!notification)
@@ -208,14 +208,14 @@ void WebNotificationManagerProxy::providerDidClickNotification(const String& cor
 
 void WebNotificationManagerProxy::providerDidCloseNotifications(API::Array* globalNotificationIDs)
 {
-    HashMap<WebPageProxy*, Vector<String>> pageNotificationIDs;
+    HashMap<WebPageProxy*, Vector<UUID>> pageNotificationIDs;
 
     size_t size = globalNotificationIDs->size();
     for (size_t i = 0; i < size; ++i) {
-        // The passed array might have uint64_t identifiers or String identifiers.
+        // The passed array might have uint64_t identifiers or UUID data identifiers.
         // Handle both.
 
-        String coreNotificationID;
+        std::optional<UUID> coreNotificationID;
         auto* intValue = globalNotificationIDs->at<API::UInt64>(i);
         if (intValue) {
             auto it = m_globalNotificationMap.find(intValue->value());
@@ -224,23 +224,27 @@ void WebNotificationManagerProxy::providerDidCloseNotifications(API::Array* glob
 
             coreNotificationID = it->value;
         } else {
-            auto* stringValue = globalNotificationIDs->at<API::String>(i);
-            if (!stringValue)
+            auto* dataValue = globalNotificationIDs->at<API::Data>(i);
+            if (!dataValue)
                 continue;
 
-            coreNotificationID = stringValue->string();
+            auto span = dataValue->dataReference();
+            if (span.size() != 16)
+                continue;
+
+            coreNotificationID = UUID { Span<const uint8_t, 16> { span.data(), 16 } };
         }
 
-        ASSERT(!coreNotificationID.isEmpty());
+        ASSERT(coreNotificationID);
 
-        auto notification = m_notifications.take(coreNotificationID);
+        auto notification = m_notifications.take(*coreNotificationID);
         if (!notification)
             continue;
 
         if (WebPageProxy* webPage = WebProcessProxy::webPage(notification->pageIdentifier())) {
             auto pageIt = pageNotificationIDs.find(webPage);
             if (pageIt == pageNotificationIDs.end()) {
-                Vector<String> newVector;
+                Vector<UUID> newVector;
                 newVector.reserveInitialCapacity(size);
                 pageIt = pageNotificationIDs.add(webPage, WTFMove(newVector)).iterator;
             }

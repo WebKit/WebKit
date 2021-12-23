@@ -38,9 +38,9 @@ private:
 
     void requestSystemNotificationPermission(const String&, CompletionHandler<void(bool)>&&) final;
     void showNotification(const WebCore::NotificationData&) final;
-    void cancelNotification(const String& notificationID) final;
-    void clearNotifications(const Vector<String>& notificationIDs) final;
-    void didDestroyNotification(const String& notificationID) final;
+    void cancelNotification(const UUID& notificationID) final;
+    void clearNotifications(const Vector<UUID>& notificationIDs) final;
+    void didDestroyNotification(const UUID& notificationID) final;
 
     WebPageProxy& m_webPageProxy;
 };

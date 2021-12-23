@@ -125,7 +125,7 @@ public:
     bool beforeUnloadReturnValue() const { return m_beforeUnloadReturnValue; }
     void setBeforeUnloadReturnValue(bool value) { m_beforeUnloadReturnValue = value; }
 
-    void simulateWebNotificationClick(WKStringRef notificationID);
+    void simulateWebNotificationClick(WKDataRef notificationID);
 
     // Geolocation.
     void setGeolocationPermission(bool);
