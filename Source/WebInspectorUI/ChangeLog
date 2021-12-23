@@ -1,3 +1,15 @@
+2021-12-23  Tim Nguyen  <ntim@apple.com>
+
+        Web Inspector: Dark mode: Make gradient editor angle input readable in dark mode
+        https://bugs.webkit.org/show_bug.cgi?id=234640
+
+        Reviewed by Devin Rousso.
+
+        Just use the native input styling, which is dark mode compatible by default.
+
+        * UserInterface/Views/GradientEditor.css:
+        (.gradient-editor > .gradient-angle > input[type="number"]):
+
 2021-12-21  Patrick Angle  <pangle@apple.com>
 
         Web Inspector: Assertion Failed removing subview in ContentViewContainer.prototype._disassociateFromContentView
