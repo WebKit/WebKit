@@ -705,6 +705,10 @@ class WebkitFlatpak:
         # For now this supports only files in the WebKit path
         return host_path.replace(self.source_root, self.sandbox_source_root)
 
+    @staticmethod
+    def get_user_runtime_dir():
+        return os.environ.get('XDG_RUNTIME_DIR', os.path.join('/run/user', str(os.getuid())))
+
     def run_in_sandbox(self, *args, **kwargs):
         if not self.setup_builddir():
             return 1
@@ -757,7 +761,12 @@ class WebkitFlatpak:
                            "--die-with-parent",
                            "--filesystem=host",
                            "--allow=devel",
+                           # FIXME: --session-bus is only a workaround for https://github.com/flatpak/flatpak/pull/4630
+                           "--session-bus",
+                           "--no-a11y-bus",
                            "--talk-name=org.a11y.Bus",
+                           # at-spi creates directories like `$XDG_RUNTIME_DIR/at-spi2-E6A5E1` on the host
+                           "--filesystem=" + self.get_user_runtime_dir(),
                            "--talk-name=org.gtk.vfs",
                            "--talk-name=org.gtk.vfs.*"]
 
