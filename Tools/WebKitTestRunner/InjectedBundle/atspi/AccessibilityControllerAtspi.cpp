@@ -29,6 +29,7 @@
 #include "AccessibilityController.h"
 
 #if HAVE(ACCESSIBILITY) && USE(ATSPI)
+#include "AccessibilityNotificationHandler.h"
 #include "AccessibilityUIElement.h"
 #include "InjectedBundle.h"
 #include "InjectedBundlePage.h"
@@ -41,6 +42,8 @@ namespace WTR {
 
 void AccessibilityController::resetToConsistentState()
 {
+    if (m_globalNotificationHandler)
+        removeNotificationListener();
 }
 
 static WebCore::AccessibilityObjectAtspi* findAccessibleObjectById(WebCore::AccessibilityObjectAtspi& axObject, const String& elementID)
@@ -105,12 +108,21 @@ RefPtr<AccessibilityUIElement> AccessibilityController::focusedElement()
 
 bool AccessibilityController::addNotificationListener(JSValueRef functionCallback)
 {
+    if (!functionCallback)
+        return false;
+
+    if (m_globalNotificationHandler)
+        return false;
+
+    m_globalNotificationHandler = makeUnique<AccessibilityNotificationHandler>(functionCallback);
     return true;
 }
 
 bool AccessibilityController::removeNotificationListener()
 {
-    return false;
+    ASSERT(m_globalNotificationHandler);
+    m_globalNotificationHandler = nullptr;
+    return true;
 }
 
 void AccessibilityController::updateIsolatedTreeMode()

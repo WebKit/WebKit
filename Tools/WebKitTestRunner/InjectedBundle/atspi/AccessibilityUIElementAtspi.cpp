@@ -27,6 +27,7 @@
 #include "AccessibilityUIElement.h"
 
 #if HAVE(ACCESSIBILITY) && USE(ATSPI)
+#include "AccessibilityNotificationHandler.h"
 #include "InjectedBundle.h"
 #include "InjectedBundlePage.h"
 #include <JavaScriptCore/JSStringRef.h>
@@ -1321,11 +1322,20 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::url()
 
 bool AccessibilityUIElement::addNotificationListener(JSValueRef functionCallback)
 {
-    return false;
+    if (!functionCallback)
+        return false;
+
+    if (m_notificationHandler)
+        return false;
+
+    m_notificationHandler = makeUnique<AccessibilityNotificationHandler>(functionCallback, m_element.get());
+    return true;
 }
 
 bool AccessibilityUIElement::removeNotificationListener()
 {
+    ASSERT(m_notificationHandler);
+    m_notificationHandler = nullptr;
     return true;
 }
 

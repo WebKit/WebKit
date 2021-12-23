@@ -78,6 +78,13 @@ public:
 
     void addAccessible(AccessibilityObjectAtspi&);
 
+#if ENABLE(DEVELOPER_MODE)
+    using NotificationObserverParameter = std::variant<std::nullptr_t, String, bool, unsigned, Ref<AccessibilityObjectAtspi>>;
+    using NotificationObserver = Function<void(AccessibilityObjectAtspi&, const char*, NotificationObserverParameter)>;
+    WEBCORE_EXPORT void addNotificationObserver(void*, NotificationObserver&&);
+    WEBCORE_EXPORT void removeNotificationObserver(void*);
+#endif
+
 private:
     void registerTrees() const;
     void initializeRegistry();
@@ -88,6 +95,16 @@ private:
     void removeAccessible(AccessibilityObjectAtspi&);
 
     bool shouldEmitSignal(const char* interface, const char* name, const char* detail = "");
+
+#if ENABLE(DEVELOPER_MODE)
+    void notifyStateChanged(AccessibilityObjectAtspi&, const char*, bool) const;
+    void notifySelectionChanged(AccessibilityObjectAtspi&) const;
+    void notifyTextChanged(AccessibilityObjectAtspi&) const;
+    void notifyTextCaretMoved(AccessibilityObjectAtspi&, unsigned) const;
+    void notifyChildrenChanged(AccessibilityObjectAtspi&, AccessibilityObjectAtspi&, ChildrenChanged) const;
+    void notifyValueChanged(AccessibilityObjectAtspi&) const;
+    void notifyLoadEvent(AccessibilityObjectAtspi&, const CString&) const;
+#endif
 
     static GDBusInterfaceVTable s_cacheFunctions;
 
@@ -101,6 +118,9 @@ private:
     unsigned m_cacheID { 0 };
     HashMap<String, AccessibilityObjectAtspi*> m_cache;
     bool m_inGetItems { false };
+#if ENABLE(DEVELOPER_MODE)
+    HashMap<void*, NotificationObserver> m_notificationObservers;
+#endif
 };
 
 } // namespace WebCore

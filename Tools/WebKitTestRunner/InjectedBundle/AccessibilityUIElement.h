@@ -59,6 +59,9 @@ typedef void* PlatformUIElement;
 namespace WTR {
 
 class AccessibilityController;
+#if USE(ATSPI)
+class AccessibilityNotificationHandler;
+#endif
 
 class AccessibilityUIElement : public JSWrappable {
 #if PLATFORM(COCOA)
@@ -435,6 +438,7 @@ private:
 #elif USE(ATSPI)
     static RefPtr<AccessibilityController> s_controller;
     RefPtr<WebCore::AccessibilityObjectAtspi> m_element;
+    std::unique_ptr<AccessibilityNotificationHandler> m_notificationHandler;
 #endif
 #endif
 };

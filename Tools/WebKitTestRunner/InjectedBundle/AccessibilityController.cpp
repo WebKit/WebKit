@@ -36,6 +36,10 @@
 #include <WebKit/WKBundlePage.h>
 #include <WebKit/WKBundlePagePrivate.h>
 
+#if USE(ATSPI)
+#include "AccessibilityNotificationHandler.h"
+#endif
+
 namespace WTR {
 
 Ref<AccessibilityController> AccessibilityController::create()

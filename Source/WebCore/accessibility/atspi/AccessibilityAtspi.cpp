@@ -345,6 +345,11 @@ void AccessibilityAtspi::parentChanged(AccessibilityObjectAtspi& atspiObject)
 void AccessibilityAtspi::childrenChanged(AccessibilityObjectAtspi& atspiObject, AccessibilityObjectAtspi& child, ChildrenChanged change)
 {
     RELEASE_ASSERT(isMainThread());
+
+#if ENABLE(DEVELOPER_MODE)
+    notifyChildrenChanged(atspiObject, child, change);
+#endif
+
     m_queue->dispatch([this, atspiObject = Ref { atspiObject }, child = Ref { child }, change] {
         if (!m_connection)
             return;
@@ -362,6 +367,11 @@ void AccessibilityAtspi::childrenChanged(AccessibilityObjectAtspi& atspiObject, 
 void AccessibilityAtspi::stateChanged(AccessibilityObjectAtspi& atspiObject, const char* name, bool value)
 {
     RELEASE_ASSERT(isMainThread());
+
+#if ENABLE(DEVELOPER_MODE)
+    notifyStateChanged(atspiObject, name, value);
+#endif
+
     m_queue->dispatch([this, atspiObject = Ref { atspiObject }, name = CString(name), value] {
         if (!m_connection)
             return;
@@ -377,6 +387,11 @@ void AccessibilityAtspi::stateChanged(AccessibilityObjectAtspi& atspiObject, con
 void AccessibilityAtspi::textChanged(AccessibilityObjectAtspi& atspiObject, const char* changeType, CString&& text, unsigned offset, unsigned length)
 {
     RELEASE_ASSERT(isMainThread());
+
+#if ENABLE(DEVELOPER_MODE)
+    notifyTextChanged(atspiObject);
+#endif
+
     m_queue->dispatch([this, atspiObject = Ref { atspiObject }, changeType = CString(changeType), text = WTFMove(text), offset, length] {
         if (!m_connection)
             return;
@@ -407,6 +422,11 @@ void AccessibilityAtspi::textAttributesChanged(AccessibilityObjectAtspi& atspiOb
 void AccessibilityAtspi::textCaretMoved(AccessibilityObjectAtspi& atspiObject, unsigned caretOffset)
 {
     RELEASE_ASSERT(isMainThread());
+
+#if ENABLE(DEVELOPER_MODE)
+    notifyTextCaretMoved(atspiObject, caretOffset);
+#endif
+
     m_queue->dispatch([this, atspiObject = Ref { atspiObject }, caretOffset] {
         if (!m_connection)
             return;
@@ -437,6 +457,11 @@ void AccessibilityAtspi::textSelectionChanged(AccessibilityObjectAtspi& atspiObj
 void AccessibilityAtspi::valueChanged(AccessibilityObjectAtspi& atspiObject, double value)
 {
     RELEASE_ASSERT(isMainThread());
+
+#if ENABLE(DEVELOPER_MODE)
+    notifyValueChanged(atspiObject);
+#endif
+
     m_queue->dispatch([this, atspiObject = Ref { atspiObject }, value] {
         if (!m_connection)
             return;
@@ -452,6 +477,11 @@ void AccessibilityAtspi::valueChanged(AccessibilityObjectAtspi& atspiObject, dou
 void AccessibilityAtspi::selectionChanged(AccessibilityObjectAtspi& atspiObject)
 {
     RELEASE_ASSERT(isMainThread());
+
+#if ENABLE(DEVELOPER_MODE)
+    notifySelectionChanged(atspiObject);
+#endif
+
     m_queue->dispatch([this, atspiObject = Ref { atspiObject }] {
         if (!m_connection)
             return;
@@ -467,6 +497,11 @@ void AccessibilityAtspi::selectionChanged(AccessibilityObjectAtspi& atspiObject)
 void AccessibilityAtspi::loadEvent(AccessibilityObjectAtspi& atspiObject, CString&& event)
 {
     RELEASE_ASSERT(isMainThread());
+
+#if ENABLE(DEVELOPER_MODE)
+    notifyLoadEvent(atspiObject, event);
+#endif
+
     m_queue->dispatch([this, atspiObject = Ref { atspiObject }, event = WTFMove(event)] {
         if (!m_connection)
             return;
@@ -712,6 +747,99 @@ PlatformRoleMap createPlatformRoleMap()
 }
 
 } // namespace Accessibility
+
+#if ENABLE(DEVELOPER_MODE)
+void AccessibilityAtspi::addNotificationObserver(void* context, NotificationObserver&& observer)
+{
+    m_notificationObservers.add(context, WTFMove(observer));
+}
+
+void AccessibilityAtspi::removeNotificationObserver(void* context)
+{
+    m_notificationObservers.remove(context);
+}
+
+void AccessibilityAtspi::notifyStateChanged(AccessibilityObjectAtspi& atspiObject, const char* name, bool value) const
+{
+    if (m_notificationObservers.isEmpty())
+        return;
+
+    auto notificationName = [&](const char* name) -> const char* {
+        if (!g_strcmp0(name, "checked"))
+            return "CheckedStateChanged";
+        if (!g_strcmp0(name, "invalid-entry"))
+            return "AXInvalidStatusChanged";
+        if (!g_strcmp0(name, "active"))
+            return "ActiveStateChanged";
+        if (!g_strcmp0(name, "busy"))
+            return "AXElementBusyChanged";
+        if (!g_strcmp0(name, "enabled"))
+            return "AXDisabledStateChanged";
+        if (!g_strcmp0(name, "expanded"))
+            return "AXExpandedChanged";
+        if (!g_strcmp0(name, "pressed"))
+            return "AXPressedStateChanged";
+        if (!g_strcmp0(name, "read-only"))
+            return "AXReadOnlyStatusChanged";
+        if (!g_strcmp0(name, "required"))
+            return "AXRequiredStatusChanged";
+        if (!g_strcmp0(name, "sensitive"))
+            return "AXSensitiveStateChanged";
+        if (!g_strcmp0(name, "focused") && value)
+            return "AXFocusedUIElementChanged";
+
+        return nullptr;
+    };
+
+    const char* notification = notificationName(name);
+    if (!notification)
+        return;
+
+    for (const auto& observer : m_notificationObservers.values())
+        observer(atspiObject, notification, value);
+}
+
+void AccessibilityAtspi::notifySelectionChanged(AccessibilityObjectAtspi& atspiObject) const
+{
+    for (const auto& observer : m_notificationObservers.values())
+        observer(atspiObject, "AXSelectedChildrenChanged", nullptr);
+}
+
+void AccessibilityAtspi::notifyTextChanged(AccessibilityObjectAtspi& atspiObject) const
+{
+    for (const auto& observer : m_notificationObservers.values())
+        observer(atspiObject, "AXTextChanged", nullptr);
+}
+
+void AccessibilityAtspi::notifyTextCaretMoved(AccessibilityObjectAtspi& atspiObject, unsigned caretOffset) const
+{
+    for (const auto& observer : m_notificationObservers.values())
+        observer(atspiObject, "AXTextCaretMoved", caretOffset);
+}
+
+void AccessibilityAtspi::notifyChildrenChanged(AccessibilityObjectAtspi& atspiObject, AccessibilityObjectAtspi& child, ChildrenChanged change) const
+{
+    const char* notification = change == ChildrenChanged::Added ? "AXChildrenAdded" : "AXChildrenRemoved";
+    for (const auto& observer : m_notificationObservers.values())
+        observer(atspiObject, notification, child);
+}
+
+void AccessibilityAtspi::notifyValueChanged(AccessibilityObjectAtspi& atspiObject) const
+{
+    for (const auto& observer : m_notificationObservers.values())
+        observer(atspiObject, "AXValueChanged", nullptr);
+}
+
+void AccessibilityAtspi::notifyLoadEvent(AccessibilityObjectAtspi& atspiObject, const CString& event) const
+{
+    if (event != "LoadComplete")
+        return;
+
+    for (const auto& observer : m_notificationObservers.values())
+        observer(atspiObject, "AXLoadComplete", nullptr);
+}
+
+#endif
 
 } // namespace WebCore
 

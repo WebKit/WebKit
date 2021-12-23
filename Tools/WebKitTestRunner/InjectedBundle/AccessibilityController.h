@@ -44,6 +44,9 @@
 namespace WTR {
 
 class AccessibilityUIElement;
+#if USE(ATSPI)
+class AccessibilityNotificationHandler;
+#endif
 
 class AccessibilityController : public JSWrappable {
 public:
@@ -99,6 +102,8 @@ private:
     RetainPtr<id> m_globalNotificationHandler;
 #elif USE(ATK)
     RefPtr<AccessibilityNotificationHandler> m_globalNotificationHandler;
+#elif USE(ATSPI)
+    std::unique_ptr<AccessibilityNotificationHandler> m_globalNotificationHandler;
 #endif
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)

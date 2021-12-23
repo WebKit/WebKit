@@ -45,6 +45,7 @@ list(APPEND WebKitTestRunnerInjectedBundle_SOURCES
     InjectedBundle/atk/AccessibilityUIElementAtk.cpp
 
     InjectedBundle/atspi/AccessibilityControllerAtspi.cpp
+    InjectedBundle/atspi/AccessibilityNotificationHandler.cpp
     InjectedBundle/atspi/AccessibilityUIElementAtspi.cpp
 
     InjectedBundle/gtk/ActivateFontsGtk.cpp
@@ -57,6 +58,7 @@ list(APPEND WebKitTestRunnerInjectedBundle_INCLUDE_DIRECTORIES
     ${ATK_INCLUDE_DIRS}
     ${GLIB_INCLUDE_DIRS}
     ${WebKitTestRunner_DIR}/InjectedBundle/atk
+    ${WebKitTestRunner_DIR}/InjectedBundle/atspi
     ${WebKitTestRunner_DIR}/InjectedBundle/gtk
 )
 
