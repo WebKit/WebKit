@@ -101,6 +101,9 @@ Ref<AccessibilityUIElement> AccessibilityController::rootElement()
 RefPtr<AccessibilityUIElement> AccessibilityController::focusedElement()
 {
     WKBundlePageRef page = InjectedBundle::singleton().page()->page();
+    if (!WKAccessibilityRootObject(page))
+        return nullptr;
+
     if (auto* element = static_cast<WebCore::AccessibilityObjectAtspi*>(WKAccessibilityFocusedObject(page)))
         return AccessibilityUIElement::create(element);
     return nullptr;
