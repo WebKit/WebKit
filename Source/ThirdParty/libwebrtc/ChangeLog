@@ -1,3 +1,61 @@
+2021-12-23  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r287382. rdar://problem/86855207
+
+    Fix WebKit Build issues when using system content path
+    https://bugs.webkit.org/show_bug.cgi?id=234624
+    
+    Reviewed by Filip Pizlo.
+    
+    Source/ThirdParty/ANGLE:
+    
+    Changed INSTALL_PATH on macOS builds to use a fully qualified .../WebCore.framework/Versions/A/Frameworks.
+    Deleted unused create-symlink-to-altroot.sh script.
+    
+    * Configurations/ANGLE-dynamic.xcconfig:
+    * scripts/create-symlink-to-altroot.sh: Removed.
+    
+    Source/ThirdParty/libwebrtc:
+    
+    Changed INSTALL_PATH on macOS builds to use fully qualified .../WebCore.framework/Versions/A/Frameworks.
+    
+    * Configurations/libwebrtc.xcconfig:
+    
+    Source/WebCore:
+    
+    Covered by existing tests.
+    
+    Added SYSTEM_CONTENT_PATH processing to WebCore's normal location.
+    
+    * Configurations/WebCore.xcconfig:
+    
+    Source/WebKit:
+    
+    Added SYSTEM_CONTENT_PATH processing to the nested frameworks path (UMBRELLA_FRAMEWORKS_DIR).
+    
+    * Configurations/BaseTarget.xcconfig:
+    * Configurations/WebKit.xcconfig:
+    
+    Source/WebKitLegacy/mac:
+    
+    Added SYSTEM_CONTENT_PATH processing to NORMAL_PRODUCTION_FRAMEWORKS_DIR.
+    
+    * Configurations/WebKitLegacy.xcconfig:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@287382 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-12-22  Michael Saboff  <msaboff@apple.com>
+
+            Fix WebKit Build issues when using system content path
+            https://bugs.webkit.org/show_bug.cgi?id=234624
+
+            Reviewed by Filip Pizlo.
+
+            Changed INSTALL_PATH on macOS builds to use fully qualified .../WebCore.framework/Versions/A/Frameworks.
+
+            * Configurations/libwebrtc.xcconfig:
+
 2021-12-16  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r287137. rdar://problem/86476583
