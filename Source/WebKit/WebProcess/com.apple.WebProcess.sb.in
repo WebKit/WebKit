@@ -1945,6 +1945,7 @@
         SYS_lseek
         SYS_lstat64
         SYS_madvise
+        SYS_memorystatus_control
         SYS_mincore
         SYS_mkdir
         SYS_mmap

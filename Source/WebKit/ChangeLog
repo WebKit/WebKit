@@ -1,3 +1,18 @@
+2021-12-23  Brent Fulgham  <bfulgham@apple.com>
+
+        Allow a necessary syscall in the WebContent sandbox
+        https://bugs.webkit.org/show_bug.cgi?id=234641
+        <rdar://problem/86808395>
+
+        Reviewed by Alan Bujtas.
+
+        Telemetry and testing logs indicate that we need to allow
+        'SYS_memorystatus_control' in our WebContent sandbox.
+
+        We allow this in all other sandboxes, so this was likely an oversight.
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2021-12-23  Brady Eidson  <beidson@apple.com>
 
         Add WTF::UUID class which is natively a 128-bit integer
