@@ -488,6 +488,34 @@ bool AccessibilityUIElement::isAttributeSettable(JSStringRef attribute)
     if (checkElementState(m_element.get(), WebCore::Atspi::State::Checkable))
         return true;
 
+    auto attributes = m_element->attributes();
+    String isReadOnly = attributes.get("readonly");
+    if (!isReadOnly.isEmpty())
+        return isReadOnly == "true" ? false : true;
+
+    // If we have a listbox or combobox and the value can be set, the options should be selectable.
+    unsigned elementRole;
+    s_controller->executeOnAXThreadAndWait([this, &elementRole] {
+        m_element->updateBackingStore();
+        elementRole = m_element->role();
+    });
+    switch (elementRole) {
+    case WebCore::Atspi::Role::ComboBox:
+    case WebCore::Atspi::Role::ListBox:
+        if (auto child = childAtIndex(0)) {
+            if (elementRole == WebCore::Atspi::Role::ComboBox) {
+                // First child is the menu.
+                child = child->childAtIndex(0);
+            }
+
+            if (child)
+                return checkElementState(child->m_element.get(), WebCore::Atspi::State::Selectable);
+        }
+        break;
+    default:
+        break;
+    }
+
     if (m_element->interfaces().contains(WebCore::AccessibilityObjectAtspi::Interface::Value)
         && checkElementState(m_element.get(), WebCore::Atspi::State::Focusable)) {
         double minimumValue, maximumValue;
