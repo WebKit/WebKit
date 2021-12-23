@@ -418,12 +418,7 @@ static void clearWebsiteDataStore(WKWebsiteDataStore *store)
     TestWebKitAPI::Util::run(&clearedStore);
 }
 
-// FIXME: Re-enable this test on Mac once webkit.org/232857 is resolved.
-#if PLATFORM(MAC) && !USE(APPLE_INTERNAL_SDK)
-TEST(WebPushD, DISABLED_HandleInjectedPush)
-#else
 TEST(WebPushD, HandleInjectedPush)
-#endif
 {
     [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
 

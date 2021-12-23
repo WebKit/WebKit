@@ -1,5 +1,14 @@
 2021-12-22  Alex Christensen  <achristensen@webkit.org>
 
+        Re-enable WebPushD.HandleInjectedPush API test
+        https://bugs.webkit.org/show_bug.cgi?id=234627
+
+        Reviewed by Brady Eidson.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WebPushDaemon.mm:
+
+2021-12-22  Alex Christensen  <achristensen@webkit.org>
+
         Disable WKInspectorExtensionDelegate.ShowAndHideTabCallbacks API test
         webkit.org/b/231847
 

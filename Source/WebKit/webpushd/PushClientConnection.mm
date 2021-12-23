@@ -80,8 +80,8 @@ const String& ClientConnection::hostAppCodeSigningIdentifier()
 {
     if (!m_hostAppCodeSigningIdentifier) {
 #if PLATFORM(MAC) && !USE(APPLE_INTERNAL_SDK)
-        // This isn't great, but currently the only user of webpushd in open source builds is TestWebKitAPI and codeSigningIdentifier returns the null String.
-        m_hostAppCodeSigningIdentifier = "TestWebKitAPI";
+        // This isn't great, but currently the only user of webpushd in open source builds is TestWebKitAPI and codeSigningIdentifier returns the null String on x86_64 Macs.
+        m_hostAppCodeSigningIdentifier = "com.apple.WebKit.TestWebKitAPI";
 #else
         if (!m_hostAppAuditToken)
             m_hostAppCodeSigningIdentifier = String();
@@ -110,7 +110,11 @@ bool ClientConnection::hostHasEntitlement(const char* entitlement)
 {
     if (!m_hostAppAuditToken)
         return false;
+#if !PLATFORM(MAC) || USE(APPLE_INTERNAL_SDK)
     return WTF::hasEntitlement(*m_hostAppAuditToken, entitlement);
+#else
+    return true;
+#endif
 }
 
 void ClientConnection::setDebugModeIsEnabled(bool enabled)

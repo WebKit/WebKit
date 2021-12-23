@@ -1,3 +1,20 @@
+2021-12-22  Alex Christensen  <achristensen@webkit.org>
+
+        Re-enable WebPushD.HandleInjectedPush API test
+        https://bugs.webkit.org/show_bug.cgi?id=234627
+
+        Reviewed by Brady Eidson.
+
+        I needed to make an entitlement check return true when using the non-internal SDK,
+        which can't sign private entitlements into a binary.  I also needed to make the fake
+        TestWebKitAPI code signing identifier match the identifier that arm64 Macs actually get,
+        or else m_testingPushMessages would not contain the right key in Daemon::getPendingPushMessages
+        on arm64 Macs.
+
+        * webpushd/PushClientConnection.mm:
+        (WebPushD::ClientConnection::hostAppCodeSigningIdentifier):
+        (WebPushD::ClientConnection::hostHasEntitlement):
+
 2021-12-22  Michael Saboff  <msaboff@apple.com>
 
         Fix WebKit Build issues when using system content path
