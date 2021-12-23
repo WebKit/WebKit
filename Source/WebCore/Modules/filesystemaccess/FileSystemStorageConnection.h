@@ -37,6 +37,7 @@ namespace WebCore {
 
 class FileSystemDirectoryHandle;
 class FileSystemFileHandle;
+class FileHandle;
 class FileSystemHandleCloseScope;
 class FileSystemSyncAccessHandle;
 template<typename> class ExceptionOr;
@@ -48,7 +49,7 @@ public:
     using SameEntryCallback = CompletionHandler<void(ExceptionOr<bool>&&)>;
     using GetHandleCallback = CompletionHandler<void(ExceptionOr<Ref<FileSystemHandleCloseScope>>&&)>;
     using ResolveCallback = CompletionHandler<void(ExceptionOr<Vector<String>>&&)>;
-    using GetAccessHandleCallback = CompletionHandler<void(ExceptionOr<std::pair<FileSystemSyncAccessHandleIdentifier, FileSystem::PlatformFileHandle>>&&)>;
+    using GetAccessHandleCallback = CompletionHandler<void(ExceptionOr<std::pair<FileSystemSyncAccessHandleIdentifier, FileHandle>>&&)>;
     using VoidCallback = CompletionHandler<void(ExceptionOr<void>&&)>;
     using GetHandleNamesCallback = CompletionHandler<void(ExceptionOr<Vector<String>>&&)>;
     using StringCallback = CompletionHandler<void(ExceptionOr<String>&&)>;

@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <WebCore/FileHandle.h>
 #include <fcntl.h>
 #include <wtf/FileSystem.h>
 
@@ -35,22 +36,21 @@ class Encoder;
 
 class SharedFileHandle {
 public:
-    static std::optional<SharedFileHandle> create(FileSystem::PlatformFileHandle);
+    static std::optional<SharedFileHandle> create(FileSystem::PlatformFileHandle&&);
 
     SharedFileHandle() = default;
-    FileSystem::PlatformFileHandle handle() { return m_handle; }
-    void close();
+    WebCore::FileHandle release() { return std::exchange(m_handle, { }); }
 
     void encode(Encoder&) const;
     static std::optional<SharedFileHandle> decode(Decoder&);
     
 private:
-    explicit SharedFileHandle(FileSystem::PlatformFileHandle handle)
-        : m_handle(handle)
+    explicit SharedFileHandle(FileSystem::PlatformFileHandle&& handle)
+        : m_handle(WTFMove(handle))
     {
     }
 
-    FileSystem::PlatformFileHandle m_handle { FileSystem::invalidPlatformFileHandle };
+    WebCore::FileHandle m_handle;
 };
 
 } // namespace IPC

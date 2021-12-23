@@ -79,17 +79,16 @@ void FileSystemFileHandle::createSyncAccessHandle(DOMPromiseDeferred<IDLInterfac
             return promise.reject(result.releaseException());
 
         auto [identifier, file] = result.releaseReturnValue();
-        if (file == FileSystem::invalidPlatformFileHandle)
+        if (!file)
             return promise.reject(Exception { UnknownError, "Invalid platform file handle"_s });
 
         auto* context = protectedThis->scriptExecutionContext();
         if (!context) {
-            FileSystem::closeFile(file);
             protectedThis->closeSyncAccessHandle(identifier, { });
             return promise.reject(Exception { InvalidStateError, "Context has stopped"_s });
         }
 
-        promise.resolve(FileSystemSyncAccessHandle::create(*context, protectedThis.get(), identifier, file));
+        promise.resolve(FileSystemSyncAccessHandle::create(*context, protectedThis.get(), identifier, WTFMove(file)));
     });
 }
 

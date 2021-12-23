@@ -32,6 +32,7 @@
 
 namespace WebCore {
 
+class FileHandle;
 class FileSystemSyncAccessHandle;
 class WorkerGlobalScope;
 class WorkerThread;
@@ -50,7 +51,7 @@ public:
     void didGetHandle(CallbackIdentifier, ExceptionOr<Ref<FileSystemHandleCloseScope>>&&);
     void didResolve(CallbackIdentifier, ExceptionOr<Vector<String>>&&);
     void completeStringCallback(CallbackIdentifier, ExceptionOr<String>&&);
-    void didCreateSyncAccessHandle(CallbackIdentifier, ExceptionOr<std::pair<FileSystemSyncAccessHandleIdentifier, FileSystem::PlatformFileHandle>>&&);
+    void didCreateSyncAccessHandle(CallbackIdentifier, ExceptionOr<std::pair<FileSystemSyncAccessHandleIdentifier, FileHandle>>&&);
     void completeVoidCallback(CallbackIdentifier, ExceptionOr<void>&& result);
     void didGetHandleNames(CallbackIdentifier, ExceptionOr<Vector<String>>&&);
 

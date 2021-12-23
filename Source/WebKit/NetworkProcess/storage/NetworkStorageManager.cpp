@@ -371,12 +371,7 @@ void NetworkStorageManager::createSyncAccessHandle(WebCore::FileSystemHandleIden
     if (!handle)
         return completionHandler(makeUnexpected(FileSystemStorageError::Unknown));
 
-    auto result = handle->createSyncAccessHandle();
-    auto fileHandle = result ? result.value().second : IPC::SharedFileHandle();
-    completionHandler(WTFMove(result));
-
-    // Close the file handle in network process.
-    fileHandle.close();
+    completionHandler(handle->createSyncAccessHandle());
 }
 
 void NetworkStorageManager::closeSyncAccessHandle(WebCore::FileSystemHandleIdentifier identifier, WebCore::FileSystemSyncAccessHandleIdentifier accessHandleIdentifier, CompletionHandler<void(std::optional<FileSystemStorageError>)>&& completionHandler)

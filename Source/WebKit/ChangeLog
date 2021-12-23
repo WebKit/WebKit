@@ -1,3 +1,32 @@
+2021-12-23  Sihui Liu  <sihui_liu@apple.com>
+
+        Ensure file handles used in FileSystemAccess API are closed
+        https://bugs.webkit.org/show_bug.cgi?id=234520
+
+        Reviewed by Darin Adler.
+
+        Replace FileSystem::PlatformFileHandle with WebCore::FileHandle in SharedFileHandle to ensure file handle get 
+        closed, if it's not released for use.
+
+        * NetworkProcess/storage/FileSystemStorageHandle.cpp:
+        (WebKit::FileSystemStorageHandle::createSyncAccessHandle):
+        * NetworkProcess/storage/NetworkStorageManager.cpp:
+        (WebKit::NetworkStorageManager::createSyncAccessHandle):
+        * Platform/IPC/SharedFileHandle.cpp:
+        (IPC::SharedFileHandle::create):
+        (IPC::SharedFileHandle::close): Deleted.
+        * Platform/IPC/SharedFileHandle.h:
+        (IPC::SharedFileHandle::release):
+        (IPC::SharedFileHandle::SharedFileHandle):
+        (IPC::SharedFileHandle::handle): Deleted.
+        (): Deleted.
+        * Platform/IPC/cocoa/SharedFileHandleCocoa.cpp:
+        (IPC::SharedFileHandle::create):
+        (IPC::SharedFileHandle::encode const):
+        (IPC::SharedFileHandle::decode):
+        * WebProcess/WebCoreSupport/WebFileSystemStorageConnection.cpp:
+        (WebKit::WebFileSystemStorageConnection::createSyncAccessHandle):
+
 2021-12-22  Alex Christensen  <achristensen@webkit.org>
 
         Re-enable WebPushD.HandleInjectedPush API test

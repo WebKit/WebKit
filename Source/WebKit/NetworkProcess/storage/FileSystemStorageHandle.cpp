@@ -172,7 +172,7 @@ Expected<FileSystemStorageHandle::AccessHandleInfo, FileSystemStorageError> File
     if (handle == FileSystem::invalidPlatformFileHandle)
         return makeUnexpected(FileSystemStorageError::Unknown);
 
-    auto ipcHandle = IPC::SharedFileHandle::create(handle);
+    auto ipcHandle = IPC::SharedFileHandle::create(std::exchange(handle, FileSystem::invalidPlatformFileHandle));
     if (!ipcHandle) {
         FileSystem::closeFile(handle);
         return makeUnexpected(FileSystemStorageError::BackendNotSupported);

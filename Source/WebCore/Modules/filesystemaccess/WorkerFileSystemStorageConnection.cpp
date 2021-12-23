@@ -237,7 +237,7 @@ void WorkerFileSystemStorageConnection::completeStringCallback(CallbackIdentifie
         callback(WTFMove(result));
 }
 
-void WorkerFileSystemStorageConnection::didCreateSyncAccessHandle(CallbackIdentifier callbackIdentifier, ExceptionOr<std::pair<FileSystemSyncAccessHandleIdentifier, FileSystem::PlatformFileHandle>>&& result)
+void WorkerFileSystemStorageConnection::didCreateSyncAccessHandle(CallbackIdentifier callbackIdentifier, ExceptionOr<std::pair<FileSystemSyncAccessHandleIdentifier, FileHandle>>&& result)
 {
     if (auto callback = m_getAccessHandlCallbacks.take(callbackIdentifier))
         callback(WTFMove(result));
@@ -259,10 +259,9 @@ void WorkerFileSystemStorageConnection::createSyncAccessHandle(FileSystemHandleI
 
     callOnMainThread([callbackIdentifier, workerThread = Ref { m_scope->thread() }, mainThreadConnection = m_mainThreadConnection, identifier]() mutable {
         auto mainThreadCallback = [callbackIdentifier, workerThread = WTFMove(workerThread)](auto result) mutable {
-            auto crossThreadResult = result;
             if (result.hasException())
-                crossThreadResult = crossThreadCopy(result.exception());
-            workerThread->runLoop().postTaskForMode([callbackIdentifier, result = WTFMove(crossThreadResult)] (auto& scope) mutable {
+                result = crossThreadCopy(result.exception());
+            workerThread->runLoop().postTaskForMode([callbackIdentifier, result = WTFMove(result)] (auto& scope) mutable {
                 if (auto connection = downcast<WorkerGlobalScope>(scope).fileSystemStorageConnection())
                     connection->didCreateSyncAccessHandle(callbackIdentifier, WTFMove(result));
             }, WorkerRunLoop::defaultMode());

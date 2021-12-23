@@ -35,20 +35,20 @@
 
 namespace WebCore {
 
-Ref<FileSystemSyncAccessHandle> FileSystemSyncAccessHandle::create(ScriptExecutionContext& context, FileSystemFileHandle& source, FileSystemSyncAccessHandleIdentifier identifier, FileSystem::PlatformFileHandle file)
+Ref<FileSystemSyncAccessHandle> FileSystemSyncAccessHandle::create(ScriptExecutionContext& context, FileSystemFileHandle& source, FileSystemSyncAccessHandleIdentifier identifier, FileHandle&& file)
 {
-    auto handle = adoptRef(*new FileSystemSyncAccessHandle(context, source, identifier, file));
+    auto handle = adoptRef(*new FileSystemSyncAccessHandle(context, source, identifier, WTFMove(file)));
     handle->suspendIfNeeded();
     return handle;
 }
 
-FileSystemSyncAccessHandle::FileSystemSyncAccessHandle(ScriptExecutionContext& context, FileSystemFileHandle& source, FileSystemSyncAccessHandleIdentifier identifier, FileSystem::PlatformFileHandle file)
+FileSystemSyncAccessHandle::FileSystemSyncAccessHandle(ScriptExecutionContext& context, FileSystemFileHandle& source, FileSystemSyncAccessHandleIdentifier identifier, FileHandle&& file)
     : ActiveDOMObject(&context)
     , m_source(source)
     , m_identifier(identifier)
-    , m_file(file)
+    , m_file(WTFMove(file))
 {
-    ASSERT(m_file != FileSystem::invalidPlatformFileHandle);
+    ASSERT(m_file);
 
     m_source->registerSyncAccessHandle(m_identifier, *this);
 }
@@ -88,7 +88,7 @@ void FileSystemSyncAccessHandle::truncate(unsigned long long size, DOMPromiseDef
         return promise.reject(Exception { InvalidStateError, "Context is invalid"_s });
 
     m_pendingPromises.append(WTFMove(promise));
-    WorkerGlobalScope::postFileSystemStorageTask([weakThis = WeakPtr { *this }, file = m_file, size, workerThread = Ref { scope->thread() }]() mutable {
+    WorkerGlobalScope::postFileSystemStorageTask([weakThis = WeakPtr { *this }, file = m_file.handle(), size, workerThread = Ref { scope->thread() }]() mutable {
         workerThread->runLoop().postTask([weakThis = WTFMove(weakThis), success = FileSystem::truncateFile(file, size)](auto&) mutable {
             if (weakThis)
                 weakThis->completePromise(success ? ExceptionOr<void> { } : Exception { UnknownError });
@@ -106,7 +106,7 @@ void FileSystemSyncAccessHandle::getSize(DOMPromiseDeferred<IDLUnsignedLongLong>
         return promise.reject(Exception { InvalidStateError, "Context is invalid"_s });
 
     m_pendingPromises.append(WTFMove(promise));
-    WorkerGlobalScope::postFileSystemStorageTask([weakThis = WeakPtr { *this }, file = m_file, workerThread = Ref { scope->thread() }]() mutable {
+    WorkerGlobalScope::postFileSystemStorageTask([weakThis = WeakPtr { *this }, file = m_file.handle(), workerThread = Ref { scope->thread() }]() mutable {
         workerThread->runLoop().postTask([weakThis = WTFMove(weakThis), success = FileSystem::fileSize(file)](auto&) mutable {
             if (weakThis)
                 weakThis->completePromise(success ? ExceptionOr<uint64_t> { success.value() } : Exception { UnknownError });
@@ -124,7 +124,7 @@ void FileSystemSyncAccessHandle::flush(DOMPromiseDeferred<void>&& promise)
         return promise.reject(Exception { InvalidStateError, "Context is invalid"_s });
 
     m_pendingPromises.append(WTFMove(promise));
-    WorkerGlobalScope::postFileSystemStorageTask([weakThis = WeakPtr { *this }, file = m_file, workerThread = Ref { scope->thread() }]() mutable {
+    WorkerGlobalScope::postFileSystemStorageTask([weakThis = WeakPtr { *this }, file = m_file.handle(), workerThread = Ref { scope->thread() }]() mutable {
         workerThread->runLoop().postTask([weakThis = WTFMove(weakThis), success = FileSystem::flushFile(file)](auto&) mutable {
             if (weakThis)
                 weakThis->completePromise(success ? ExceptionOr<void> { } : Exception { UnknownError });
@@ -149,20 +149,19 @@ void FileSystemSyncAccessHandle::closeInternal(CloseCallback&& callback)
     if (isClosing)
         return;
 
-    ASSERT(m_file != FileSystem::invalidPlatformFileHandle);
+    ASSERT(m_file);
     closeFile();
 }
 
 void FileSystemSyncAccessHandle::closeFile()
 {
-    if (m_file == FileSystem::invalidPlatformFileHandle)
+    if (!m_file)
         return;
 
     auto* scope = downcast<WorkerGlobalScope>(scriptExecutionContext());
     ASSERT(scope);
 
-    WorkerGlobalScope::postFileSystemStorageTask([weakThis = WeakPtr { *this }, file = std::exchange(m_file, FileSystem::invalidPlatformFileHandle), workerThread = Ref { scope->thread() }]() mutable {
-        FileSystem::closeFile(file);
+    WorkerGlobalScope::postFileSystemStorageTask([weakThis = WeakPtr { *this }, file = std::exchange(m_file, { }), workerThread = Ref { scope->thread() }]() mutable {
         workerThread->runLoop().postTask([weakThis = WTFMove(weakThis)](auto&) mutable {
             if (weakThis)
                 weakThis->didCloseFile();
@@ -212,11 +211,11 @@ ExceptionOr<unsigned long long> FileSystemSyncAccessHandle::read(BufferSource&& 
     if (!m_pendingPromises.isEmpty())
         return Exception { InvalidStateError, "Access handle has unfinished operation"_s };
 
-    int result = FileSystem::seekFile(m_file, options.at, FileSystem::FileSeekOrigin::Beginning);
+    int result = FileSystem::seekFile(m_file.handle(), options.at, FileSystem::FileSeekOrigin::Beginning);
     if (result == -1)
         return Exception { InvalidStateError, "Failed to read at offset"_s };
 
-    result = FileSystem::readFromFile(m_file, buffer.mutableData(), buffer.length());
+    result = FileSystem::readFromFile(m_file.handle(), buffer.mutableData(), buffer.length());
     if (result == -1)
         return Exception { InvalidStateError, "Failed to read from file"_s };
 
@@ -233,11 +232,11 @@ ExceptionOr<unsigned long long> FileSystemSyncAccessHandle::write(BufferSource&&
     if (!m_pendingPromises.isEmpty())
         return Exception { InvalidStateError, "Access handle has unfinished operation"_s };
 
-    int result = FileSystem::seekFile(m_file, options.at, FileSystem::FileSeekOrigin::Beginning);
+    int result = FileSystem::seekFile(m_file.handle(), options.at, FileSystem::FileSeekOrigin::Beginning);
     if (result == -1)
         return Exception { InvalidStateError, "Failed to write at offset"_s };
 
-    result = FileSystem::writeToFile(m_file, buffer.data(), buffer.length());
+    result = FileSystem::writeToFile(m_file.handle(), buffer.data(), buffer.length());
     if (result == -1)
         return Exception { InvalidStateError, "Failed to write to file"_s };
 

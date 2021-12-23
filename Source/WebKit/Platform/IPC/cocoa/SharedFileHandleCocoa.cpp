@@ -31,15 +31,15 @@
 
 namespace IPC {
 
-std::optional<SharedFileHandle> SharedFileHandle::create(FileSystem::PlatformFileHandle handle)
+std::optional<SharedFileHandle> SharedFileHandle::create(FileSystem::PlatformFileHandle&& handle)
 {
-    return SharedFileHandle { handle };
+    return SharedFileHandle { WTFMove(handle) };
 }
 
 void SharedFileHandle::encode(Encoder& encoder) const
 {
     mach_port_name_t fileport = MACH_PORT_NULL;
-    if (fileport_makeport(m_handle, &fileport) == -1) {
+    if (fileport_makeport(m_handle.handle(), &fileport) == -1) {
         encoder << MachPort();
         return;
     }
@@ -57,7 +57,7 @@ std::optional<SharedFileHandle> SharedFileHandle::decode(Decoder& decoder)
     if (fd == -1)
         return SharedFileHandle { };
 
-    return SharedFileHandle::create(fd);
+    return SharedFileHandle::create(WTFMove(fd));
 }
 
 } // namespace IPC

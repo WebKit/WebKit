@@ -149,8 +149,7 @@ void WebFileSystemStorageConnection::createSyncAccessHandle(WebCore::FileSystemH
         if (!result)
             return completionHandler(convertToException(result.error()));
 
-        auto resultValue = result.value();
-        completionHandler(std::pair { resultValue.first, resultValue.second.handle() });
+        completionHandler(std::pair { result.value().first, result.value().second.release() });
     });
 }
 

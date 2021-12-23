@@ -28,6 +28,7 @@
 #include "ActiveDOMObject.h"
 #include "BufferSource.h"
 #include "ExceptionOr.h"
+#include "FileHandle.h"
 #include "FileSystemSyncAccessHandleIdentifier.h"
 #include "IDLTypes.h"
 #include <wtf/Deque.h>
@@ -45,7 +46,7 @@ public:
         unsigned long long at;
     };
 
-    static Ref<FileSystemSyncAccessHandle> create(ScriptExecutionContext&, FileSystemFileHandle&, FileSystemSyncAccessHandleIdentifier, FileSystem::PlatformFileHandle);
+    static Ref<FileSystemSyncAccessHandle> create(ScriptExecutionContext&, FileSystemFileHandle&, FileSystemSyncAccessHandleIdentifier, FileHandle&&);
     ~FileSystemSyncAccessHandle();
 
     void truncate(unsigned long long size, DOMPromiseDeferred<void>&&);
@@ -59,7 +60,7 @@ public:
     void invalidate();
 
 private:
-    FileSystemSyncAccessHandle(ScriptExecutionContext&, FileSystemFileHandle&, FileSystemSyncAccessHandleIdentifier, FileSystem::PlatformFileHandle);
+    FileSystemSyncAccessHandle(ScriptExecutionContext&, FileSystemFileHandle&, FileSystemSyncAccessHandleIdentifier, FileHandle&&);
     bool isClosingOrClosed() const;
     using CloseCallback = CompletionHandler<void(ExceptionOr<void>&&)>;
     void closeInternal(CloseCallback&&);
@@ -75,7 +76,7 @@ private:
 
     Ref<FileSystemFileHandle> m_source;
     FileSystemSyncAccessHandleIdentifier m_identifier;
-    FileSystem::PlatformFileHandle m_file;
+    FileHandle m_file;
     std::optional<ExceptionOr<void>> m_closeResult;
     Vector<CloseCallback> m_closeCallbacks;
     using Promise = std::variant<DOMPromiseDeferred<void>, DOMPromiseDeferred<IDLUnsignedLongLong>>;

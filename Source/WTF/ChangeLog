@@ -1,3 +1,12 @@
+2021-12-23  Sihui Liu  <sihui_liu@apple.com>
+
+        Ensure file handles used in FileSystemAccess API are closed
+        https://bugs.webkit.org/show_bug.cgi?id=234520
+
+        Reviewed by Darin Adler.
+
+        * wtf/CrossThreadCopier.h:
+
 2021-12-22  Sihui Liu  <sihui_liu@apple.com>
 
         WebsiteDataStore::excludeDirectoryFromBackup should set attribute for existing directories
