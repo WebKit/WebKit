@@ -1,3 +1,53 @@
+2021-12-23  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r287326. rdar://problem/86855216
+
+    Fix symlinks for alternate root framework locations
+    https://bugs.webkit.org/show_bug.cgi?id=234567
+    
+    Reviewed by Filip Pizlo.
+    
+    Source/ThirdParty/ANGLE:
+    
+    Eliminated the creation of symlinks for ANGLE as it is under WebCore.
+    
+    * ANGLE.xcodeproj/project.pbxproj:
+    * Configurations/ANGLE-dynamic.xcconfig:
+    
+    Source/WebCore:
+    
+    Covered by existing tests.
+    
+    Moved OUTPUT_ALTERNATE_ROOT_PATH in create symlink script from outputFileListPaths to outputPaths.
+    
+    * WebCore.xcodeproj/project.pbxproj:
+    
+    Source/WebGPU:
+    
+    Moved OUTPUT_ALTERNATE_ROOT_PATH in create symlink script from outputFileListPaths to outputPaths.
+    
+    * WebGPU.xcodeproj/project.pbxproj:
+    
+    Source/WebInspectorUI:
+    
+    Moved OUTPUT_ALTERNATE_ROOT_PATH in create symlink script from outputFileListPaths to outputPaths.
+    
+    * WebInspectorUI.xcodeproj/project.pbxproj:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@287326 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-12-21  Michael Saboff  <msaboff@apple.com>
+
+            Fix symlinks for alternate root framework locations
+            https://bugs.webkit.org/show_bug.cgi?id=234567
+
+            Reviewed by Filip Pizlo.
+
+            Moved OUTPUT_ALTERNATE_ROOT_PATH in create symlink script from outputFileListPaths to outputPaths.
+
+            * WebGPU.xcodeproj/project.pbxproj:
+
 2021-12-16  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r287137. rdar://problem/86476583
