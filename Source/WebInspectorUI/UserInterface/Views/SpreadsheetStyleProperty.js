@@ -648,7 +648,7 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
 
     _addGradientTokens(tokens)
     {
-        let gradientRegex = /^(repeating-)?(linear|radial)-gradient$/i;
+        let gradientRegex = /^(repeating-)?(linear|radial|conic)-gradient$/i;
         let newTokens = [];
         let gradientStartIndex = NaN;
         let openParenthesis = 0;

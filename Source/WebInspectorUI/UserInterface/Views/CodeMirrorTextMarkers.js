@@ -111,7 +111,7 @@ function createCodeMirrorColorTextMarkers(codeMirror, range, options = {})
                 break;
         }
 
-        if (/(repeating-)?(linear|radial)-gradient$/.test(lineContent.substring(0, index)))
+        if (/(repeating-)?(linear|radial|conic)-gradient$/.test(lineContent.substring(0, index)))
             return false;
 
         // Act as a negative look-behind and disallow the color from being prefixing with certain characters.
@@ -128,7 +128,7 @@ function createCodeMirrorGradientTextMarkers(codeMirror, range, options = {})
     var start = range instanceof WI.TextRange ? range.startLine : 0;
     var end = range instanceof WI.TextRange ? range.endLine + 1 : codeMirror.lineCount();
 
-    var gradientRegex = /(repeating-)?(linear|radial)-gradient\s*\(\s*/g;
+    var gradientRegex = /(repeating-)?(linear|radial|conic)-gradient\s*\(\s*/g;
 
     for (var lineNumber = start; lineNumber < end; ++lineNumber) {
         var lineContent = codeMirror.getLine(lineNumber);

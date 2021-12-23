@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014, 2021 Apple Inc. All rights reserved.
  * Copyright (C) 2015 Devin Rousso <webkit@devinrousso.com>. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -45,6 +45,11 @@ WI.GradientEditor = class GradientEditor extends WI.Object
                 label: WI.UIString("Radial Gradient"),
                 repeats: false
             },
+            "conic-gradient": {
+                type: WI.ConicGradient,
+                label: WI.UIString("Conic Gradient"),
+                repeats: false
+            },
             "repeating-linear-gradient": {
                 type: WI.LinearGradient,
                 label: WI.UIString("Repeating Linear Gradient"),
@@ -54,7 +59,12 @@ WI.GradientEditor = class GradientEditor extends WI.Object
                 type: WI.RadialGradient,
                 label: WI.UIString("Repeating Radial Gradient"),
                 repeats: true
-            }
+            },
+            "repeating-conic-gradient": {
+                type: WI.ConicGradient,
+                label: WI.UIString("Repeating Conic Gradient"),
+                repeats: true
+            },
         };
         this._editingColor = false;
 
@@ -93,10 +103,10 @@ WI.GradientEditor = class GradientEditor extends WI.Object
         this._angleUnitsSelectElement.addEventListener("change", this._angleUnitsChanged.bind(this));
 
         const angleUnitsData = [
-            {name: WI.LinearGradient.AngleUnits.DEG, min: 0, max: 360, step: 1},
-            {name: WI.LinearGradient.AngleUnits.RAD, min: 0, max: 2 * Math.PI, step: 0.01},
-            {name: WI.LinearGradient.AngleUnits.GRAD, min: 0, max: 400, step: 1},
-            {name: WI.LinearGradient.AngleUnits.TURN, min: 0, max: 1, step: 0.01}
+            {name: WI.Gradient.AngleUnits.DEG, min: 0, max: 360, step: 1},
+            {name: WI.Gradient.AngleUnits.RAD, min: 0, max: 2 * Math.PI, step: 0.01},
+            {name: WI.Gradient.AngleUnits.GRAD, min: 0, max: 400, step: 1},
+            {name: WI.Gradient.AngleUnits.TURN, min: 0, max: 1, step: 0.01}
         ];
 
         this._angleUnitsConfiguration = new Map(angleUnitsData.map(({name, min, max, step}) => {
@@ -119,18 +129,22 @@ WI.GradientEditor = class GradientEditor extends WI.Object
 
         const isLinear = gradient instanceof WI.LinearGradient;
         const isRadial = gradient instanceof WI.RadialGradient;
-        console.assert(isLinear || isRadial);
-        if (!isLinear && !isRadial)
+        const isConic = gradient instanceof WI.ConicGradient;
+        console.assert(isLinear || isRadial || isConic);
+        if (!isLinear && !isRadial && !isConic)
             return;
 
         this._gradient = gradient;
         this._gradientSlider.stops = this._gradient.stops;
         if (isLinear) {
             this._gradientTypePicker.value = this._gradient.repeats ? "repeating-linear-gradient" : "linear-gradient";
-
             this._angleUnitsChanged();
-        } else
+        } else if (isRadial)
             this._gradientTypePicker.value = this._gradient.repeats ? "repeating-radial-gradient" : "radial-gradient";
+        else {
+            this._gradientTypePicker.value = this._gradient.repeats ? "repeating-conic-gradient" : "conic-gradient";
+            this._angleUnitsChanged();
+        }
 
         this._updateCSSClassForGradientType();
     }
@@ -185,12 +199,19 @@ WI.GradientEditor = class GradientEditor extends WI.Object
     {
         const descriptor = this._gradientTypes[this._gradientTypePicker.value];
         if (!(this._gradient instanceof descriptor.type)) {
-            if (descriptor.type === WI.LinearGradient) {
-                this._gradient = new WI.LinearGradient({value: 180, units: WI.LinearGradient.AngleUnits.DEG}, this._gradient.stops);
-
+            switch (descriptor.type) {
+            case WI.LinearGradient:
+                this._gradient = new WI.LinearGradient({value: 180, units: WI.Gradient.AngleUnits.DEG}, this._gradient.stops);
                 this._angleUnitsChanged();
-            } else
+                break;
+            case WI.RadialGradient:
                 this._gradient = new WI.RadialGradient("", this._gradient.stops);
+                break;
+            case WI.ConicGradient:
+                this._gradient = new WI.ConicGradient({value: 0, units: WI.Gradient.AngleUnits.DEG}, null, this._gradient.stops);
+                this._angleUnitsChanged();
+                break;
+            }
 
             this._updateCSSClassForGradientType();
         }

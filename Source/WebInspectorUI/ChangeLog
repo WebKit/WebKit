@@ -1,5 +1,51 @@
 2021-12-23  Tim Nguyen  <ntim@apple.com>
 
+        Web Inspector: Support conic gradients in gradient editor and autocompletion
+        https://bugs.webkit.org/show_bug.cgi?id=234562
+
+        Reviewed by Devin Rousso.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Controllers/CSSManager.js:
+        * UserInterface/Models/Gradient.js:
+        (WI.Gradient.angleFromString):
+        (WI.Gradient.fromString):
+        (WI.Gradient.prototype.get angleValue):
+        (WI.Gradient.prototype.set angleValue):
+        (WI.Gradient.prototype.get angleUnits):
+        (WI.Gradient.prototype.set angleUnits):
+        (WI.Gradient.prototype._angleValueForUnits):
+        (WI.Gradient):
+        (WI.LinearGradient.fromComponents):
+        (WI.LinearGradient.prototype.toString):
+        (WI.LinearGradient):
+        (WI.RadialGradient):
+        (WI.RadialGradient.fromComponents):
+        (WI.RadialGradient.prototype.get angleValue):
+        (WI.RadialGradient.prototype.set angleValue):
+        (WI.RadialGradient.prototype.get angleUnits):
+        (WI.RadialGradient.prototype.set angleUnits):
+        (WI.RadialGradient.prototype.copy):
+        (WI.RadialGradient.prototype.toString):
+        (WI.ConicGradient):
+        (WI.ConicGradient.fromComponents):
+        (WI.ConicGradient.prototype.copy):
+        (WI.ConicGradient.prototype.toString):
+        (WI.LinearGradient.prototype.set angleValue): Deleted.
+        (WI.LinearGradient.prototype.get angleValue): Deleted.
+        (WI.LinearGradient.prototype.set angleUnits): Deleted.
+        (WI.LinearGradient.prototype.get angleUnits): Deleted.
+        (WI.LinearGradient.prototype._angleValueForUnits): Deleted.
+        * UserInterface/Views/CodeMirrorTextMarkers.js:
+        * UserInterface/Views/GradientEditor.js:
+        (WI.GradientEditor):
+        (WI.GradientEditor.prototype.set gradient):
+        (WI.GradientEditor.prototype._gradientTypeChanged):
+        * UserInterface/Views/SpreadsheetStyleProperty.js:
+        (WI.SpreadsheetStyleProperty.prototype._addGradientTokens):
+
+2021-12-23  Tim Nguyen  <ntim@apple.com>
+
         Web Inspector: Dark mode: Make gradient editor angle input readable in dark mode
         https://bugs.webkit.org/show_bug.cgi?id=234640
 
