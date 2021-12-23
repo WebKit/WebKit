@@ -1,3 +1,12 @@
+2021-12-23  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] test fast/mediastream/get-display-media-settings.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=233879
+
+        Reviewed by Youenn Fablet.
+
+        * platform/glib/TestExpectations:
+
 2021-12-22  Aditya Keerthi  <akeerthi@apple.com>
 
         [iOS] metromile.com <select> dropdowns open twice

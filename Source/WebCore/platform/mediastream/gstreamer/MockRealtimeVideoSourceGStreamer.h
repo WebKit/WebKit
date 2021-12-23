@@ -42,7 +42,7 @@ private:
 
 class MockDisplayCaptureSourceGStreamer final : public RealtimeMediaSource, RealtimeMediaSource::VideoSampleObserver {
 public:
-    static CaptureSourceOrError create(const CaptureDevice&, const MediaConstraints*);
+    static CaptureSourceOrError create(const CaptureDevice&, String&&, const MediaConstraints*);
 
     void requestToEnd(Observer&) final;
 
@@ -51,7 +51,7 @@ protected:
     void videoSampleAvailable(MediaSample&, VideoSampleMetadata) final;
 
 private:
-    MockDisplayCaptureSourceGStreamer(Ref<MockRealtimeVideoSourceGStreamer>&&, CaptureDevice::DeviceType);
+    MockDisplayCaptureSourceGStreamer(Ref<MockRealtimeVideoSourceGStreamer>&&, String&&, CaptureDevice::DeviceType);
     ~MockDisplayCaptureSourceGStreamer();
 
     void startProducingData() final { m_source->start(); }

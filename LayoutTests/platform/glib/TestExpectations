@@ -1365,8 +1365,6 @@ webkit.org/b/227987 http/tests/media/media-stream/get-display-media-prompt.html 
 
 webkit.org/b/229055 http/wpt/webrtc/sframe-transform-error.html [ Failure ]
 
-webkit.org/b/233879 fast/mediastream/get-display-media-settings.html [ Failure ]
-
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of WebRTC-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
