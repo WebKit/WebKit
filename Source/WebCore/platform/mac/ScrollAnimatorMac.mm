@@ -51,22 +51,6 @@ ScrollAnimatorMac::ScrollAnimatorMac(ScrollableArea& scrollableArea)
 
 ScrollAnimatorMac::~ScrollAnimatorMac() = default;
 
-static bool rubberBandingEnabledForSystem()
-{
-    static bool initialized = false;
-    static bool enabled = true;
-    // Caches the result, which is consistent with other apps like the Finder, which all
-    // require a restart after changing this default.
-    if (!initialized) {
-        // Uses -objectForKey: and not -boolForKey: in order to default to true if the value wasn't set.
-        id value = [[NSUserDefaults standardUserDefaults] objectForKey:@"NSScrollViewRubberbanding"];
-        if ([value isKindOfClass:[NSNumber class]])
-            enabled = [value boolValue];
-        initialized = true;
-    }
-    return enabled;
-}
-
 bool ScrollAnimatorMac::isRubberBandInProgress() const
 {
     return m_scrollController.isRubberBandInProgress();
@@ -85,37 +69,21 @@ void ScrollAnimatorMac::handleWheelEventPhase(PlatformWheelEventPhase phase)
         m_scrollableArea.scrollbarsController().mayBeginScrollGesture();
 }
 
-bool ScrollAnimatorMac::shouldForwardWheelEventsToParent(const PlatformWheelEvent& wheelEvent) const
-{
-    if (std::abs(wheelEvent.deltaY()) >= std::abs(wheelEvent.deltaX()))
-        return !allowsVerticalStretching(wheelEvent);
-
-    return !allowsHorizontalStretching(wheelEvent);
-}
-    
 bool ScrollAnimatorMac::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
 {
     m_scrollableArea.scrollbarsController().setScrollbarAnimationsUnsuspendedByUserInteraction(true);
-
-    if (!wheelEvent.hasPreciseScrollingDeltas() || !rubberBandingEnabledForSystem())
-        return ScrollAnimator::handleWheelEvent(wheelEvent);
-
     m_scrollController.updateGestureInProgressState(wheelEvent);
 
-    // FIXME: This is somewhat roundabout hack to allow forwarding wheel events
-    // up to the parent scrollable area. It takes advantage of the fact that
-    // the base class implementation of handleWheelEvent will not accept the
-    // wheel event if there is nowhere to scroll.
-    if (shouldForwardWheelEventsToParent(wheelEvent)) {
-        bool didHandleEvent = ScrollAnimator::handleWheelEvent(wheelEvent);
-        if (didHandleEvent || (!wheelEvent.deltaX() && !wheelEvent.deltaY()))
-            handleWheelEventPhase(wheelEvent.phase());
-        return didHandleEvent;
-    }
+    // Events in the PlatformWheelEventPhase::MayBegin phase have no deltas, and therefore never passes through the scroll handling logic below.
+    // This causes us to return with an 'unhandled' return state, even though this event was successfully processed.
+    //
+    // We receive at least one PlatformWheelEventPhase::MayBegin when starting main-thread scrolling (see FrameView::wheelEvent), which can
+    // fool the scrolling thread into attempting to handle the scroll, unless we treat the event as handled here.
+    if (wheelEvent.phase() == PlatformWheelEventPhase::MayBegin)
+        return true;
 
-    bool didHandleEvent = m_scrollController.handleWheelEvent(wheelEvent);
-
-    if (didHandleEvent)
+    bool didHandleEvent = ScrollAnimator::handleWheelEvent(wheelEvent);
+    if (didHandleEvent || wheelEvent.delta().isZero())
         handleWheelEventPhase(wheelEvent.phase());
 
     return didHandleEvent;

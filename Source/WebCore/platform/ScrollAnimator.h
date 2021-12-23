@@ -124,6 +124,9 @@ public:
 
     ScrollAnimationStatus serviceScrollAnimation(MonotonicTime);
 
+protected:
+    bool handleSteppedScrolling(const PlatformWheelEvent&);
+
 private:
     void notifyPositionChanged(const FloatSize& delta);
 

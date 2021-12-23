@@ -174,8 +174,11 @@ bool ScrollingEffectsController::handleWheelEvent(const PlatformWheelEvent& whee
     // Reset unapplied overscroll because we may decide to remove delta at various points and put it into this value.
     auto delta = std::exchange(m_unappliedOverscrollDelta, { });
     delta += eventDelta;
-    // FIXME: This replicates what WheelEventDeltaFilter does. We should apply that to events in all phases, and remove axis locking here (webkit.org/b/231207).
-    delta = deltaAlignedToDominantAxis(delta);
+
+    if (wheelEvent.isGestureEvent()) {
+        // FIXME: This replicates what WheelEventDeltaFilter does. We should apply that to events in all phases, and remove axis locking here (webkit.org/b/231207).
+        delta = deltaAlignedToDominantAxis(delta);
+    }
 
     auto momentumPhase = wheelEvent.momentumPhase();
     

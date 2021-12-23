@@ -111,6 +111,8 @@ private:
     bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) override;
 
     // ScrollableArea interface.
+    bool hasSteppedScrolling() const final { return true; }
+
     void setScrollOffset(const ScrollOffset&) final;
 
     ScrollPosition scrollPosition() const final;

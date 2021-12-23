@@ -111,6 +111,9 @@ public:
     virtual void didEndScroll() { }
     virtual void didUpdateScroll() { }
 #endif
+    
+    // "Stepped scrolling" is used by RenderListBox; it implies that scrollbar->pixelStep() is not 1 and never has rubberbanding.
+    virtual bool hasSteppedScrolling() const { return false; }
 
     ScrollClamping scrollClamping() const { return m_scrollClamping; }
     void setScrollClamping(ScrollClamping clamping) { m_scrollClamping = clamping; }

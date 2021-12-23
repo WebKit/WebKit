@@ -38,7 +38,7 @@
                 eventSender.mouseMoveTo(80, 190);
                 eventSender.mouseUp();
 
-                await UIHelper.statelessMouseWheelScrollAt(80, 190, -1, 0);
+                await UIHelper.statelessMouseWheelScrollAt(80, 190, -3, 0);
 
                 let horizontalContainer = document.getElementById("horizontal-container");
                 expectTrue(horizontalContainer.scrollLeft == 200, "horizontal mouse wheel event snapped");
@@ -48,7 +48,7 @@
                 eventSender.mouseMoveTo(190, 270);
                 eventSender.mouseUp();
 
-                await UIHelper.statelessMouseWheelScrollAt(190, 270, 0, -1);
+                await UIHelper.statelessMouseWheelScrollAt(190, 270, 0, -3);
 
                 let verticalContainer = document.getElementById("vertical-container");
                 expectTrue(verticalContainer.scrollTop == 185, "vertical mouse wheel event snapped");

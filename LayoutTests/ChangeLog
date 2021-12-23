@@ -1,3 +1,16 @@
+2021-12-22  Simon Fraser  <simon.fraser@apple.com>
+
+        Share macOS code between ScrollAnimator::handleWheelEvent() and ScrollingEffectsController::handleWheelEvent()
+        https://bugs.webkit.org/show_bug.cgi?id=231238
+
+        Reviewed by Wenson Hsieh.
+
+        * css3/scroll-snap/scroll-snap-wheel-event.html: We need to scroll 3 clicks to get closer to the target snap point.
+        * platform/mac-wk1/fast/scrolling/latching/latching-and-wheel-events-expected.txt: Rebase already-failing
+        result (because ScrollingEffectsController::handleWheelEvent() doesn't scroll on the "begin" event).
+        * platform/mac-wk1/fast/scrolling/latching/overflow-in-iframe-latching-expected.txt: Ditto.
+        * platform/mac-wk1/fast/scrolling/latching/scroll-snap-latching-expected.txt: Ditto.
+
 2021-12-23  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] test fast/mediastream/get-display-media-settings.html fails

@@ -43,7 +43,6 @@ public:
     virtual ~ScrollAnimatorMac();
 
 private:
-    bool shouldForwardWheelEventsToParent(const PlatformWheelEvent&) const;
     bool handleWheelEvent(const PlatformWheelEvent&) final;
 
     void handleWheelEventPhase(PlatformWheelEventPhase) final;
