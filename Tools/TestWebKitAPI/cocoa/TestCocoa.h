@@ -50,6 +50,9 @@ static inline ::testing::AssertionResult assertNSObjectsAreEqual(const char* exp
 std::ostream& operator<<(std::ostream&, const CGRect&);
 bool operator==(const CGRect&, const CGRect&);
 
+constexpr CGFloat redColorComponents[4] = { 1, 0, 0, 1 };
+constexpr CGFloat blueColorComponents[4] = { 0, 0, 1, 1 };
+
 #endif
 
 #if PLATFORM(MAC) && !defined(NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES)

@@ -1663,7 +1663,7 @@ public:
 
     URL fallbackBaseURL() const;
 
-    ModalContainerObserver* modalContainerObserver();
+    WEBCORE_EXPORT ModalContainerObserver* modalContainerObserver();
     ModalContainerObserver* modalContainerObserverIfExists() const;
 
 protected:

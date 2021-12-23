@@ -30,6 +30,7 @@
 #include <wtf/Vector.h>
 #include <wtf/WeakHashSet.h>
 #include <wtf/WeakPtr.h>
+#include <wtf/text/AtomString.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -47,8 +48,10 @@ public:
     ModalContainerObserver();
     ~ModalContainerObserver();
 
-    bool shouldHide(const Element&);
+    inline bool shouldHide(const Element&) const;
     void updateModalContainerIfNeeded(const FrameView&);
+
+    inline void overrideSearchTermForTesting(const String&);
 
 private:
     void scheduleClickableElementCollection();
@@ -59,9 +62,20 @@ private:
 
     WeakHashSet<Element> m_elementsToIgnoreWhenSearching;
     WeakPtr<Element> m_container;
+    AtomString m_overrideSearchTermForTesting;
     Timer m_collectClickableElementsTimer;
     bool m_collectingClickableElements { false };
     bool m_hasAttemptedToFulfillPolicy { false };
 };
+
+inline void ModalContainerObserver::overrideSearchTermForTesting(const String& searchTerm)
+{
+    m_overrideSearchTermForTesting = searchTerm;
+}
+
+inline bool ModalContainerObserver::shouldHide(const Element& element) const
+{
+    return m_container == &element && !m_collectingClickableElements;
+}
 
 } // namespace WebCore

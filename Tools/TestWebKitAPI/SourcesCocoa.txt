@@ -159,6 +159,7 @@ Tests/WebKitCocoa/MediaSession.mm
 Tests/WebKitCocoa/MediaType.mm
 Tests/WebKitCocoa/MessagePortProviders.mm
 Tests/WebKitCocoa/ModalAlerts.mm
+Tests/WebKitCocoa/ModalContainerObservation.mm
 Tests/WebKitCocoa/NSAttributedStringWebKitAdditions.mm
 Tests/WebKitCocoa/NSFileManagerExtras.mm
 Tests/WebKitCocoa/Navigation.mm

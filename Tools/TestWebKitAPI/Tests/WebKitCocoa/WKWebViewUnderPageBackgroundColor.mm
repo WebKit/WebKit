@@ -39,9 +39,6 @@
     EXPECT_TRUE([actual isKindOfClass:[NSString class]]); \
     EXPECT_WK_STREQ(expected, (NSString *)actual);
 
-constexpr CGFloat redColorComponents[4] = { 1, 0, 0, 1 };
-constexpr CGFloat blueColorComponents[4] = { 0, 0, 1, 1 };
-
 static RetainPtr<CGColor> defaultBackgroundColor()
 {
 #if HAVE(OS_DARK_MODE_SUPPORT) && PLATFORM(MAC)

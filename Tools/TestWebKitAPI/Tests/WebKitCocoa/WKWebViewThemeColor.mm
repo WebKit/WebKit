@@ -38,9 +38,6 @@
     EXPECT_TRUE([actual isKindOfClass:[NSString class]]); \
     EXPECT_WK_STREQ(expected, (NSString *)actual);
 
-constexpr CGFloat redColorComponents[4] = { 1, 0, 0, 1 };
-constexpr CGFloat blueColorComponents[4] = { 0, 0, 1, 1 };
-
 TEST(WKWebViewThemeColor, MetaElementValidNameAndColor)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);

@@ -1049,6 +1049,7 @@
 		F45D3891215A7B4B002A2979 /* TestInspectorBar.mm in Sources */ = {isa = PBXBuildFile; fileRef = F45D3890215A7B4B002A2979 /* TestInspectorBar.mm */; };
 		F45E15732112CE2900307E82 /* KeyboardInputTestsIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = F45E15722112CE2900307E82 /* KeyboardInputTestsIOS.mm */; };
 		F45E15762112CE6200307E82 /* TestInputDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = F45E15752112CE6200307E82 /* TestInputDelegate.mm */; };
+		F45EB60427739F34003571AE /* TestModalContainerControls.mlmodelc in Copy Resources */ = {isa = PBXBuildFile; fileRef = F45EB60327739F2B003571AE /* TestModalContainerControls.mlmodelc */; };
 		F460F657261116EA0064F2B6 /* InjectedBundleHitTest.mm in Sources */ = {isa = PBXBuildFile; fileRef = F460F656261116EA0064F2B6 /* InjectedBundleHitTest.mm */; };
 		F460F65B261119580064F2B6 /* InjectedBundleHitTestPlugIn.mm in Sources */ = {isa = PBXBuildFile; fileRef = F460F659261117E70064F2B6 /* InjectedBundleHitTestPlugIn.mm */; };
 		F460F669261263370064F2B6 /* simple-responsive-page.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F460F668261262C70064F2B6 /* simple-responsive-page.html */; };
@@ -1103,6 +1104,7 @@
 		F4E0A2B82122847400AF7C7F /* TestFilePromiseReceiver.mm in Sources */ = {isa = PBXBuildFile; fileRef = F4E0A2B72122847400AF7C7F /* TestFilePromiseReceiver.mm */; };
 		F4E3D80820F70BB9007B58C5 /* significant-text-milestone-article.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F4E3D80720F708E4007B58C5 /* significant-text-milestone-article.html */; };
 		F4E7A66327222CA900E74D36 /* canvas-image-data.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F4E7A66227222BB100E74D36 /* canvas-image-data.html */; };
+		F4E86F8A2773DC1B003859A6 /* modal-container.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F4E86F892773DC06003859A6 /* modal-container.html */; };
 		F4EC8094260D30540010311D /* simple-image-overlay.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F4EC8093260D2E620010311D /* simple-image-overlay.html */; };
 		F4F137921D9B683E002BEC57 /* large-video-test-now-playing.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F4F137911D9B6832002BEC57 /* large-video-test-now-playing.html */; };
 		F4F405BC1D4C0D1C007A9707 /* full-size-autoplaying-video-with-audio.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F4F405BA1D4C0CF8007A9707 /* full-size-autoplaying-video-with-audio.html */; };
@@ -1472,6 +1474,7 @@
 				517E7E04151119C100D0B008 /* MemoryCachePruneWithinResourceLoadDelegate.html in Copy Resources */,
 				4971B1202453A88C0096994D /* missingTopFrameUniqueRedirectSameSiteStrictTableSchema.db in Copy Resources */,
 				51CD1C721B38D48400142CA5 /* modal-alerts-in-new-about-blank-window.html in Copy Resources */,
+				F4E86F8A2773DC1B003859A6 /* modal-container.html in Copy Resources */,
 				7A1458FC1AD5C07000E06772 /* mouse-button-listener.html in Copy Resources */,
 				33E79E06137B5FD900E32D99 /* mouse-move-listener.html in Copy Resources */,
 				9B59F12A2034086F009E63D5 /* mso-list-compat-mode.html in Copy Resources */,
@@ -1558,6 +1561,7 @@
 				524BBCA119E30C77002F1AF1 /* test.mp4 in Copy Resources */,
 				7AE9E5091AE5AE8B00CF874B /* test.pdf in Copy Resources */,
 				5C7101C725DD98B600686200 /* test_print.pdf in Copy Resources */,
+				F45EB60427739F34003571AE /* TestModalContainerControls.mlmodelc in Copy Resources */,
 				2E9896151D8F093800739892 /* text-and-password-inputs.html in Copy Resources */,
 				F4CD74C620FDACFA00DE3794 /* text-with-async-script.html in Copy Resources */,
 				F44C7A0520FAAE3C0014478C /* text-with-deferred-script.html in Copy Resources */,
@@ -3003,6 +3007,8 @@
 		F45E15722112CE2900307E82 /* KeyboardInputTestsIOS.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = KeyboardInputTestsIOS.mm; sourceTree = "<group>"; };
 		F45E15742112CE6200307E82 /* TestInputDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TestInputDelegate.h; sourceTree = "<group>"; };
 		F45E15752112CE6200307E82 /* TestInputDelegate.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = TestInputDelegate.mm; sourceTree = "<group>"; };
+		F45EB60327739F2B003571AE /* TestModalContainerControls.mlmodelc */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = TestModalContainerControls.mlmodelc; sourceTree = "<group>"; };
+		F45EB6062773C371003571AE /* ModalContainerObservation.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ModalContainerObservation.mm; sourceTree = "<group>"; };
 		F460F656261116EA0064F2B6 /* InjectedBundleHitTest.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = InjectedBundleHitTest.mm; sourceTree = "<group>"; };
 		F460F659261117E70064F2B6 /* InjectedBundleHitTestPlugIn.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = InjectedBundleHitTestPlugIn.mm; sourceTree = "<group>"; };
 		F460F65A2611183F0064F2B6 /* InjectedBundleHitTestProtocol.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = InjectedBundleHitTestProtocol.h; sourceTree = "<group>"; };
@@ -3071,6 +3077,7 @@
 		F4E0A2B72122847400AF7C7F /* TestFilePromiseReceiver.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = TestFilePromiseReceiver.mm; sourceTree = "<group>"; };
 		F4E3D80720F708E4007B58C5 /* significant-text-milestone-article.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "significant-text-milestone-article.html"; sourceTree = "<group>"; };
 		F4E7A66227222BB100E74D36 /* canvas-image-data.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "canvas-image-data.html"; sourceTree = "<group>"; };
+		F4E86F892773DC06003859A6 /* modal-container.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "modal-container.html"; sourceTree = "<group>"; };
 		F4EB4E8F2328AC3000574DAB /* NSItemProviderAdditions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = NSItemProviderAdditions.h; path = cocoa/NSItemProviderAdditions.h; sourceTree = SOURCE_ROOT; };
 		F4EB4E902328AC3000574DAB /* NSItemProviderAdditions.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = NSItemProviderAdditions.mm; path = cocoa/NSItemProviderAdditions.mm; sourceTree = SOURCE_ROOT; };
 		F4EC8093260D2E620010311D /* simple-image-overlay.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "simple-image-overlay.html"; sourceTree = "<group>"; };
@@ -3481,6 +3488,7 @@
 				51BE9E652376089500B4E117 /* MediaType.mm */,
 				5165FE03201EE617009F7EC3 /* MessagePortProviders.mm */,
 				51CD1C6A1B38CE3600142CA5 /* ModalAlerts.mm */,
+				F45EB6062773C371003571AE /* ModalContainerObservation.mm */,
 				1ABC3DED1899BE6D004F0626 /* Navigation.mm */,
 				6351992722275C6A00890AD3 /* NavigationAction.mm */,
 				5C8BC798218CF3E900813886 /* NetworkProcess.mm */,
@@ -4184,6 +4192,7 @@
 				31B76E4423299BA3007FED2C /* system-preview-trigger.html */,
 				313C3A0121E5677A00DBA86E /* SystemPreviewBlobNaming.html */,
 				F46D43AA26D7090300969E5E /* test.jpg */,
+				F45EB60327739F2B003571AE /* TestModalContainerControls.mlmodelc */,
 				2E9896141D8F092B00739892 /* text-and-password-inputs.html */,
 				F4CD74C520FDACF500DE3794 /* text-with-async-script.html */,
 				F44C7A0420FAAE320014478C /* text-with-deferred-script.html */,
@@ -4654,6 +4663,7 @@
 				CDC9442B1EF1FBD20059C3C4 /* mediastreamtrack-detached.html */,
 				4971B11F2453A87F0096994D /* missingTopFrameUniqueRedirectSameSiteStrictTableSchema.db */,
 				51CD1C711B38D48400142CA5 /* modal-alerts-in-new-about-blank-window.html */,
+				F4E86F892773DC06003859A6 /* modal-container.html */,
 				7A1458FB1AD5C03500E06772 /* mouse-button-listener.html */,
 				33E79E05137B5FCE00E32D99 /* mouse-move-listener.html */,
 				5797FE321EB15A8900B2F4A0 /* navigation-client-default-crypto.html */,

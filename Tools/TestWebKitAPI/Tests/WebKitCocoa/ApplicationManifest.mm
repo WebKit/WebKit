@@ -29,6 +29,7 @@
 
 #import "PlatformUtilities.h"
 #import "Test.h"
+#import "TestCocoa.h"
 #import "TestNavigationDelegate.h"
 #import "TestWKWebView.h"
 #import <WebCore/ApplicationManifest.h>
@@ -38,8 +39,6 @@
 #import <wtf/cocoa/VectorCocoa.h>
 
 namespace TestWebKitAPI {
-
-constexpr CGFloat redColorComponents[4] = { 1, 0, 0, 1 };
 
 TEST(ApplicationManifest, Coding)
 {

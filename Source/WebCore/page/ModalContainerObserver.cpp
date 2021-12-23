@@ -121,11 +121,16 @@ void ModalContainerObserver::updateModalContainerIfNeeded(const FrameView& view)
     if (!view.hasViewportConstrainedObjects())
         return;
 
-    auto* page = view.frame().page();
-    if (!page)
-        return;
+    auto searchTerm = ([&]() -> AtomString {
+        if (UNLIKELY(!m_overrideSearchTermForTesting.isNull()))
+            return m_overrideSearchTermForTesting;
 
-    auto& searchTerm = page->chrome().client().searchStringForModalContainerObserver();
+        if (auto* page = view.frame().page())
+            return page->chrome().client().searchStringForModalContainerObserver();
+
+        return nullAtom();
+    })();
+
     if (searchTerm.isNull())
         return;
 
@@ -434,11 +439,6 @@ std::pair<Vector<WeakPtr<HTMLElement>>, Vector<String>> ModalContainerObserver::
         }
     }
     return { WTFMove(classifiableControls), WTFMove(controlTextsToClassify) };
-}
-
-bool ModalContainerObserver::shouldHide(const Element& element)
-{
-    return &element == m_container && !m_collectingClickableElements;
 }
 
 } // namespace WebCore

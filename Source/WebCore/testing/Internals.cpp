@@ -149,6 +149,7 @@
 #include "MockLibWebRTCPeerConnection.h"
 #include "MockPageOverlay.h"
 #include "MockPageOverlayClient.h"
+#include "ModalContainerObserver.h"
 #include "NavigatorBeacon.h"
 #include "NavigatorMediaDevices.h"
 #include "NetworkLoadInformation.h"
@@ -6623,5 +6624,11 @@ RefPtr<PushSubscription> Internals::createPushSubscription(const String& endpoin
     return PushSubscription::create(PushSubscriptionData { WTFMove(myEndpoint), expirationTime, WTFMove(myServerVAPIDPublicKey), WTFMove(myClientECDHPublicKey), WTFMove(myAuth) });
 }
 #endif
+
+void Internals::overrideModalContainerSearchTermForTesting(const String& term)
+{
+    if (auto observer = contextDocument()->modalContainerObserver())
+        observer->overrideSearchTermForTesting(term);
+}
 
 } // namespace WebCore

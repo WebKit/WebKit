@@ -1,0 +1,187 @@
+/*
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#import "config.h"
+
+#import "PlatformUtilities.h"
+#import "TestProtocol.h"
+#import "TestWKWebView.h"
+#import "WKWebViewConfigurationExtras.h"
+#import <WebKit/WKPreferencesPrivate.h>
+#import <WebKit/WKWebViewConfigurationPrivate.h>
+#import <WebKit/WKWebpagePreferencesPrivate.h>
+#import <objc/runtime.h>
+#import <wtf/CompletionHandler.h>
+#import <wtf/FastMalloc.h>
+#import <wtf/SetForScope.h>
+
+typedef _WKModalContainerDecision(^ModalContainerDecisionHandler)(_WKModalContainerInfo *);
+
+@interface NSBundle (TestSupport)
+- (NSURL *)swizzled_URLForResource:(NSString *)name withExtension:(NSString *)extension;
+@end
+
+@implementation NSBundle (TestSupport)
+
+- (NSURL *)swizzled_URLForResource:(NSString *)name withExtension:(NSString *)extension
+{
+    if ([name isEqualToString:@"ModalContainerControls"] && [extension isEqualToString:@"mlmodelc"]) {
+        // Override the default CoreML model with a smaller dataset that's limited to testing purposes.
+        return [NSBundle.mainBundle URLForResource:@"TestModalContainerControls" withExtension:@"mlmodelc" subdirectory:@"TestWebKitAPI.resources"];
+    }
+    // Call through to the original method implementation if we're not specifically requesting ModalContainerControls.mlmodelc.
+    return [self swizzled_URLForResource:name withExtension:extension];
+}
+
+@end
+
+namespace TestWebKitAPI {
+
+class ClassifierModelSwizzler {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    ClassifierModelSwizzler()
+        : m_originalMethod(class_getInstanceMethod(NSBundle.class, @selector(URLForResource:withExtension:)))
+        , m_swizzledMethod(class_getInstanceMethod(NSBundle.class, @selector(swizzled_URLForResource:withExtension:)))
+    {
+        m_originalImplementation = method_getImplementation(m_originalMethod);
+        m_swizzledImplementation = method_getImplementation(m_swizzledMethod);
+        class_replaceMethod(NSBundle.class, @selector(swizzled_URLForResource:withExtension:), m_originalImplementation, method_getTypeEncoding(m_originalMethod));
+        class_replaceMethod(NSBundle.class, @selector(URLForResource:withExtension:), m_swizzledImplementation, method_getTypeEncoding(m_swizzledMethod));
+    }
+
+    ~ClassifierModelSwizzler()
+    {
+        class_replaceMethod(NSBundle.class, @selector(swizzled_URLForResource:withExtension:), m_swizzledImplementation, method_getTypeEncoding(m_originalMethod));
+        class_replaceMethod(NSBundle.class, @selector(URLForResource:withExtension:), m_originalImplementation, method_getTypeEncoding(m_swizzledMethod));
+    }
+
+private:
+    Method m_originalMethod;
+    Method m_swizzledMethod;
+    IMP m_originalImplementation;
+    IMP m_swizzledImplementation;
+};
+
+} // namespace TestWebKitAPI
+
+@interface ModalContainerWebView : TestWKWebView <WKUIDelegatePrivate>
+@end
+
+@implementation ModalContainerWebView {
+    std::unique_ptr<TestWebKitAPI::ClassifierModelSwizzler> _classifierModelSwizzler;
+    RetainPtr<TestNavigationDelegate> _navigationDelegate;
+    std::optional<_WKModalContainerDecision> _decision;
+    bool _doneWaitingForDecisionHandler;
+}
+
+- (instancetype)initWithFrame:(CGRect)frame configuration:(WKWebViewConfiguration *)configuration
+{
+    if (!(self = [super initWithFrame:frame configuration:configuration]))
+        return nil;
+
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [] {
+        [TestProtocol registerWithScheme:@"http"];
+    });
+
+    _classifierModelSwizzler = makeUnique<TestWebKitAPI::ClassifierModelSwizzler>();
+    _navigationDelegate = adoptNS([[TestNavigationDelegate alloc] init]);
+    _doneWaitingForDecisionHandler = true;
+    [self setNavigationDelegate:_navigationDelegate.get()];
+    [self setUIDelegate:self];
+    return self;
+}
+
+- (void)loadBundlePage:(NSString *)page andDecidePolicy:(_WKModalContainerDecision)decision
+{
+    SetForScope decisionScope { _decision, decision };
+    _doneWaitingForDecisionHandler = false;
+
+    NSURL *bundleURL = [NSBundle.mainBundle URLForResource:page withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+    NSURLRequest *fakeRequest = [NSURLRequest requestWithURL:[NSURL URLWithString:@"http://webkit.org"]];
+    [self loadSimulatedRequest:fakeRequest responseHTMLString:[NSString stringWithContentsOfURL:bundleURL]];
+
+    auto preferences = adoptNS([[WKWebpagePreferences alloc] init]);
+    [preferences _setModalContainerObservationPolicy:_WKWebsiteModalContainerObservationPolicyPrompt];
+    [_navigationDelegate waitForDidFinishNavigationWithPreferences:preferences.get()];
+
+    TestWebKitAPI::Util::run(&_doneWaitingForDecisionHandler);
+    [self waitForNextPresentationUpdate];
+}
+
+- (void)_webView:(WKWebView *)webView decidePolicyForModalContainer:(_WKModalContainerInfo *)containerInfo decisionHandler:(void (^)(_WKModalContainerDecision))handler
+{
+    handler(_decision.value_or(_WKModalContainerDecisionShow));
+    _doneWaitingForDecisionHandler = true;
+}
+
+@end
+
+namespace TestWebKitAPI {
+
+static RetainPtr<ModalContainerWebView> createModalContainerWebView()
+{
+    auto configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
+    return adoptNS([[ModalContainerWebView alloc] initWithFrame:CGRectMake(0, 0, 400, 400) configuration:configuration]);
+}
+
+TEST(ModalContainerObservation, HideAndAllowModalContainer)
+{
+    auto webView = createModalContainerWebView();
+    [webView loadBundlePage:@"modal-container" andDecidePolicy:_WKModalContainerDecisionHideAndAllow];
+    NSString *visibleText = [webView contentsAsString];
+    EXPECT_TRUE([visibleText containsString:@"Clicked on \"Yes\""]);
+    EXPECT_FALSE([visibleText containsString:@"Hello world"]);
+}
+
+TEST(ModalContainerObservation, HideAndDisallowModalContainer)
+{
+    auto webView = createModalContainerWebView();
+    [webView loadBundlePage:@"modal-container" andDecidePolicy:_WKModalContainerDecisionHideAndDisallow];
+    NSString *visibleText = [webView contentsAsString];
+    EXPECT_TRUE([visibleText containsString:@"Clicked on \"No\""]);
+    EXPECT_FALSE([visibleText containsString:@"Hello world"]);
+}
+
+TEST(ModalContainerObservation, HideAndIgnoreModalContainer)
+{
+    auto webView = createModalContainerWebView();
+    [webView loadBundlePage:@"modal-container" andDecidePolicy:_WKModalContainerDecisionHideAndIgnore];
+    NSString *visibleText = [webView contentsAsString];
+    EXPECT_FALSE([visibleText containsString:@"Clicked on"]);
+    EXPECT_FALSE([visibleText containsString:@"Hello world"]);
+}
+
+TEST(ModalContainerObservation, ShowModalContainer)
+{
+    auto webView = createModalContainerWebView();
+    [webView loadBundlePage:@"modal-container" andDecidePolicy:_WKModalContainerDecisionShow];
+    NSString *visibleText = [webView contentsAsString];
+    EXPECT_FALSE([visibleText containsString:@"Clicked on"]);
+    EXPECT_TRUE([visibleText containsString:@"Hello world"]);
+}
+
+} // namespace TestWebKitAPI

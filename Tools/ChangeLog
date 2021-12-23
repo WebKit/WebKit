@@ -1,3 +1,57 @@
+2021-12-23  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Add API testing support for modal container observation
+        https://bugs.webkit.org/show_bug.cgi?id=234610
+
+        Reviewed by Megan Gardner.
+
+        Add support for new API tests that exercise the modal container observation policy in webpage preferences, as
+        well as the UI delegate SPI method for deciding policies in detected modal containers.
+
+        * TestWebKitAPI/SourcesCocoa.txt:
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit/modal-container.html: Added.
+        * TestWebKitAPI/Tests/WebKitCocoa/ApplicationManifest.mm:
+
+        Non-unified-source build fix (see below).
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ModalContainerObservation.mm: Added.
+        (-[NSBundle swizzled_URLForResource:withExtension:]):
+        (TestWebKitAPI::ClassifierModelSwizzler::ClassifierModelSwizzler):
+        (TestWebKitAPI::ClassifierModelSwizzler::~ClassifierModelSwizzler):
+        (-[ModalContainerWebView initWithFrame:configuration:]):
+        (-[ModalContainerWebView loadBundlePage:andDecidePolicy:]):
+        (-[ModalContainerWebView _webView:decidePolicyForModalContainer:decisionHandler:]):
+        (TestWebKitAPI::createModalContainerWebView):
+        (TestWebKitAPI::TEST):
+
+        Add API tests to exercise each of the 4 modal container policy decisions in a simple modal container. Two key
+        pieces are needed in order to simulate the end-to-end flow for detecting and deciding policies for modal
+        containers:
+
+        1.      Add `internals.overrideModalContainerSearchTermForTesting()`, which allows script (through the
+                `internals` testing plugin) to set ModalContainerObserver's search term.
+
+        2.      Swizzle out `-[NSBundle URLForResource:withExtension:]` to return the file URL to TestWebKitAPI's
+                `TestModalContainerControls.mlmodelc`, instead of the real CoreML model.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/TestModalContainerControls.mlmodelc/analytics/coremldata.bin: Added.
+        * TestWebKitAPI/Tests/WebKitCocoa/TestModalContainerControls.mlmodelc/coremldata.bin: Copied from Source/WebCore/page/ModalContainerObserver.h.
+        * TestWebKitAPI/Tests/WebKitCocoa/TestModalContainerControls.mlmodelc/metadata.json: Added.
+
+        Add a mock CoreML model that's used to simulate classifier results in WebKit::ModalContainerControlClassifier.
+        See above for more details.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WKWebViewThemeColor.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/WKWebViewUnderPageBackgroundColor.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/WebProcessTerminate.mm:
+
+        More non-unified-source build fixes: hoist the definitions of `redColorComponents` and `blueColorComponents`
+        into the `USE(CG)` part of TestCocoa.h, and then import TestCocoa.h in these files. This avoids build failures
+        due to symbol redefinition when we add the new test file above.
+
+        * TestWebKitAPI/cocoa/TestCocoa.h:
+
 2021-12-23  Patrick Griffis  <pgriffis@igalia.com>
 
         [Flatpak] Fix a11y tests on some distros including Fedora

@@ -1228,6 +1228,8 @@ public:
     RefPtr<PushSubscription> createPushSubscription(const String& endpoint, std::optional<EpochTimeStamp> expirationTime, const ArrayBuffer& serverVAPIDPublicKey, const ArrayBuffer& clientECDHPublicKey, const ArrayBuffer& auth);
 #endif
 
+    void overrideModalContainerSearchTermForTesting(const String& term);
+
 private:
     explicit Internals(Document&);
     Document* contextDocument() const;
