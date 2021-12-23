@@ -1,3 +1,15 @@
+2021-12-22  Michael Saboff  <msaboff@apple.com>
+
+        Fix WebKit Build issues when using system content path
+        https://bugs.webkit.org/show_bug.cgi?id=234624
+
+        Reviewed by Filip Pizlo.
+
+        Added SYSTEM_CONTENT_PATH processing to the nested frameworks path (UMBRELLA_FRAMEWORKS_DIR).
+
+        * Configurations/BaseTarget.xcconfig:
+        * Configurations/WebKit.xcconfig:
+
 2021-12-22  Aditya Keerthi  <akeerthi@apple.com>
 
         [iOS] metromile.com <select> dropdowns open twice

@@ -1,3 +1,14 @@
+2021-12-22  Michael Saboff  <msaboff@apple.com>
+
+        Fix WebKit Build issues when using system content path
+        https://bugs.webkit.org/show_bug.cgi?id=234624
+
+        Reviewed by Filip Pizlo.
+
+        Changed INSTALL_PATH on macOS builds to use fully qualified .../WebCore.framework/Versions/A/Frameworks.
+
+        * Configurations/libwebrtc.xcconfig:
+
 2021-12-16  Michael Saboff  <msaboff@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=234173
