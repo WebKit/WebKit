@@ -596,8 +596,13 @@ void InlineDisplayContentBuilder::processBidiContent(const LineBuilder::LineCont
                 // some cases where the inline box has some content on the paragraph level (at bidi split) but line breaking renders it empty
                 // or their content is completely collapsed.
                 // Such inline boxes should also be handled here.
-                appendInlineDisplayBoxAtBidiBoundary(layoutBox, boxes);
-                createdDisplayBoxNodeForContainerBoxAndPushToAncestorStack(downcast<ContainerBox>(layoutBox), boxes.size() - 1, parentDisplayBoxNodeIndex, displayBoxTree, ancestorStack);
+                if (lineBox.hasContent()) {
+                    appendInlineDisplayBoxAtBidiBoundary(layoutBox, boxes);
+                    createdDisplayBoxNodeForContainerBoxAndPushToAncestorStack(downcast<ContainerBox>(layoutBox), boxes.size() - 1, parentDisplayBoxNodeIndex, displayBoxTree, ancestorStack);
+                } else {
+                    // FIXME: It's expected to not have any inline boxes on empty lines. They make the line taller. We should reconsider this.
+                    setInlineBoxGeometry(layoutBox, { { }, { } }, true);
+                }
                 continue;
             }
             ASSERT_NOT_REACHED();
