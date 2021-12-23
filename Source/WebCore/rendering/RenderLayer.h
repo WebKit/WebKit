@@ -513,7 +513,7 @@ public:
     void willRemoveChildWithBlendMode();
 #endif
 
-    const LayoutSize& offsetForInFlowPosition() const { return m_offsetForInFlowPosition; }
+    const LayoutSize& offsetForInFlowPosition() const { return m_offsetForPosition; }
 
     void clearClipRectsIncludingDescendants(ClipRectsType typeToClear = AllClipRectTypes);
     void clearClipRects(ClipRectsType typeToClear = AllClipRectTypes);
@@ -716,11 +716,11 @@ public:
     void setRepaintStatus(RepaintStatus status) { m_repaintStatus = status; }
     RepaintStatus repaintStatus() const { return static_cast<RepaintStatus>(m_repaintStatus); }
 
-    LayoutUnit staticInlinePosition() const { return m_staticInlinePosition; }
-    LayoutUnit staticBlockPosition() const { return m_staticBlockPosition; }
+    LayoutUnit staticInlinePosition() const { return m_offsetForPosition.width(); }
+    LayoutUnit staticBlockPosition() const { return m_offsetForPosition.height(); }
    
-    void setStaticInlinePosition(LayoutUnit position) { m_staticInlinePosition = position; }
-    void setStaticBlockPosition(LayoutUnit position) { m_staticBlockPosition = position; }
+    void setStaticInlinePosition(LayoutUnit position) { m_offsetForPosition.setWidth(position); }
+    void setStaticBlockPosition(LayoutUnit position) { m_offsetForPosition.setHeight(position); }
 
     bool hasTransform() const { return renderer().hasTransform(); }
     // Note that this transform has the transform-origin baked in.
@@ -1175,8 +1175,8 @@ private:
     // Only valid if m_repaintRectsValid is set (std::optional<> not used to avoid padding).
     LayerRepaintRects m_repaintRects;
 
-    // Our current relative position offset.
-    LayoutSize m_offsetForInFlowPosition;
+    // Our current relative or absolute position offset.
+    LayoutSize m_offsetForPosition;
 
     // Our (x,y) coordinates are in our parent layer's coordinate space.
     LayoutPoint m_topLeft;
@@ -1188,10 +1188,6 @@ private:
 
     Markable<ScrollingScope, IntegralMarkableTraits<ScrollingScope, 0>> m_boxScrollingScope;
     Markable<ScrollingScope, IntegralMarkableTraits<ScrollingScope, 0>> m_contentsScrollingScope;
-
-    // Cached normal flow values for absolute positioned elements with static left/top values.
-    LayoutUnit m_staticInlinePosition;
-    LayoutUnit m_staticBlockPosition;
 
     std::unique_ptr<TransformationMatrix> m_transform;
     
