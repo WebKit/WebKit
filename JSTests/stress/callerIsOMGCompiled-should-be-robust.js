@@ -1,2 +1,2 @@
-setUnhandledRejectionCallback(callerIsOMGCompiled);
+setUnhandledRejectionCallback(callerIsBBQOrOMGCompiled);
 Promise.reject();

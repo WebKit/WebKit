@@ -38,8 +38,8 @@
 #include "WasmFunctionCodeBlock.h"
 #include "WasmInstance.h"
 #include "WasmModuleInformation.h"
-#include "WasmOMGForOSREntryPlan.h"
 #include "WasmOMGPlan.h"
+#include "WasmOSREntryPlan.h"
 #include "WasmOperations.h"
 #include "WasmSignatureInlines.h"
 #include "WasmWorklist.h"
@@ -190,7 +190,7 @@ WASM_SLOW_PATH_DECL(loop_osr)
         WASM_RETURN_TWO(nullptr, nullptr);
     }
 
-    const auto doOSREntry = [&](Wasm::OMGForOSREntryCallee* osrEntryCallee) {
+    const auto doOSREntry = [&](Wasm::OSREntryCallee* osrEntryCallee) {
         if (osrEntryCallee->loopIndex() != osrEntryData.loopIndex)
             WASM_RETURN_TWO(nullptr, nullptr);
 
@@ -227,7 +227,7 @@ WASM_SLOW_PATH_DECL(loop_osr)
     }
 
     if (compile) {
-        Ref<Wasm::Plan> plan = adoptRef(*static_cast<Wasm::Plan*>(new Wasm::OMGForOSREntryPlan(instance->context(), Ref<Wasm::Module>(instance->module()), Ref<Wasm::Callee>(*callee), codeBlock->functionIndex(), osrEntryData.loopIndex, instance->memory()->mode(), Wasm::Plan::dontFinalize())));
+        Ref<Wasm::Plan> plan = adoptRef(*static_cast<Wasm::Plan*>(new Wasm::OSREntryPlan(instance->context(), Ref<Wasm::Module>(instance->module()), Ref<Wasm::Callee>(*callee), codeBlock->functionIndex(), osrEntryData.loopIndex, instance->memory()->mode(), Wasm::Plan::dontFinalize())));
         Wasm::ensureWorklist().enqueue(plan.copyRef());
         if (UNLIKELY(!Options::useConcurrentJIT()))
             plan->waitForCompletion();

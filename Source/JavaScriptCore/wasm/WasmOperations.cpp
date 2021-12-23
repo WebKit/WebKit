@@ -47,9 +47,9 @@
 #include "WasmInstance.h"
 #include "WasmMemory.h"
 #include "WasmModuleInformation.h"
-#include "WasmOMGForOSREntryPlan.h"
 #include "WasmOMGPlan.h"
 #include "WasmOSREntryData.h"
+#include "WasmOSREntryPlan.h"
 #include "WasmWorklist.h"
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/DataLog.h>
@@ -157,7 +157,7 @@ void loadValuesIntoBuffer(Probe::Context& context, const StackMap& values, uint6
 }
 
 SUPPRESS_ASAN
-static void doOSREntry(Instance* instance, Probe::Context& context, BBQCallee& callee, OMGForOSREntryCallee& osrEntryCallee, OSREntryData& osrEntryData)
+static void doOSREntry(Instance* instance, Probe::Context& context, BBQCallee& callee, OSREntryCallee& osrEntryCallee, OSREntryData& osrEntryData)
 {
     auto returnWithoutOSREntry = [&] {
         context.gpr(GPRInfo::argumentGPR0) = 0;
@@ -247,7 +247,7 @@ JSC_DEFINE_JIT_OPERATION(operationWasmTriggerOSREntryNow, void, (Probe::Context&
         return returnWithoutOSREntry();
     }
 
-    dataLogLnIf(Options::verboseOSR(), "Consider OMGForOSREntryPlan for [", functionIndex, "] loopIndex#", loopIndex, " with executeCounter = ", tierUp, " ", RawPointer(callee.replacement()));
+    dataLogLnIf(Options::verboseOSR(), "Consider OSREntryPlan for [", functionIndex, "] loopIndex#", loopIndex, " with executeCounter = ", tierUp, " ", RawPointer(callee.replacement()));
 
     if (!Options::useWebAssemblyOSR()) {
         if (shouldTriggerOMGCompile(tierUp, callee.replacement(), functionIndex))
@@ -307,7 +307,7 @@ JSC_DEFINE_JIT_OPERATION(operationWasmTriggerOSREntryNow, void, (Probe::Context&
         return returnWithoutOSREntry();
     }
 
-    if (OMGForOSREntryCallee* osrEntryCallee = callee.osrEntryCallee()) {
+    if (OSREntryCallee* osrEntryCallee = callee.osrEntryCallee()) {
         if (osrEntryCallee->loopIndex() == loopIndex)
             return doOSREntry(instance, context, callee, *osrEntryCallee, osrEntryData);
     }
@@ -322,7 +322,7 @@ JSC_DEFINE_JIT_OPERATION(operationWasmTriggerOSREntryNow, void, (Probe::Context&
             return returnWithoutOSREntry();
     }
 
-    if (OMGForOSREntryCallee* osrEntryCallee = callee.osrEntryCallee()) {
+    if (OSREntryCallee* osrEntryCallee = callee.osrEntryCallee()) {
         if (osrEntryCallee->loopIndex() == loopIndex)
             return doOSREntry(instance, context, callee, *osrEntryCallee, osrEntryData);
         tierUp.dontOptimizeAnytimeSoon(functionIndex);
@@ -347,7 +347,7 @@ JSC_DEFINE_JIT_OPERATION(operationWasmTriggerOSREntryNow, void, (Probe::Context&
             uint32_t currentLoopIndex = tierUp.outerLoops()[loopIndex];
             Locker locker { tierUp.getLock() };
 
-            // We already started OMGForOSREntryPlan.
+            // We already started OSREntryPlan.
             if (callee.didStartCompilingOSREntryCallee())
                 return false;
 
@@ -390,7 +390,7 @@ JSC_DEFINE_JIT_OPERATION(operationWasmTriggerOSREntryNow, void, (Probe::Context&
 
     if (startOSREntryCompilation) {
         dataLogLnIf(Options::verboseOSR(), "triggerOMGOSR for ", functionIndex);
-        Ref<Plan> plan = adoptRef(*new OMGForOSREntryPlan(instance->context(), Ref<Wasm::Module>(instance->module()), Ref<Wasm::BBQCallee>(callee), functionIndex, loopIndex, calleeGroup.mode(), Plan::dontFinalize()));
+        Ref<Plan> plan = adoptRef(*new OSREntryPlan(instance->context(), Ref<Wasm::Module>(instance->module()), Ref<Wasm::BBQCallee>(callee), functionIndex, loopIndex, calleeGroup.mode(), Plan::dontFinalize()));
         ensureWorklist().enqueue(plan.copyRef());
         if (UNLIKELY(!Options::useConcurrentJIT()))
             plan->waitForCompletion();
@@ -398,7 +398,7 @@ JSC_DEFINE_JIT_OPERATION(operationWasmTriggerOSREntryNow, void, (Probe::Context&
             tierUp.setOptimizationThresholdBasedOnCompilationResult(functionIndex, CompilationDeferred);
     }
 
-    OMGForOSREntryCallee* osrEntryCallee = callee.osrEntryCallee();
+    OSREntryCallee* osrEntryCallee = callee.osrEntryCallee();
     if (!osrEntryCallee) {
         tierUp.setOptimizationThresholdBasedOnCompilationResult(functionIndex, CompilationDeferred);
         return returnWithoutOSREntry();

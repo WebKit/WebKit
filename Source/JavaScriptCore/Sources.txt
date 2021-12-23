@@ -1098,8 +1098,8 @@ wasm/WasmMemoryMode.cpp
 wasm/WasmModule.cpp
 wasm/WasmModuleInformation.cpp
 wasm/WasmNameSectionParser.cpp
-wasm/WasmOMGForOSREntryPlan.cpp
 wasm/WasmOMGPlan.cpp
+wasm/WasmOSREntryPlan.cpp
 wasm/WasmOpcodeOrigin.cpp
 wasm/WasmOperations.cpp
 wasm/WasmPageCount.cpp

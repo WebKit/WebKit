@@ -1,3 +1,52 @@
+2021-12-22  Saam Barati  <sbarati@apple.com>
+
+        LLInt should loop OSR into BBQ and BBQ should loop OSR into OMG
+        https://bugs.webkit.org/show_bug.cgi?id=234542
+
+        Reviewed by Yusuke Suzuki.
+
+        It's a startup perf improvement on some Wasm benchmarks I'm running to have
+        Wasm LLInt do loop OSR entry into BBQ instead of OMG. This improves this
+        benchmark by 5%. There is probably more perf to be had here. Currently,
+        we're just OSR entering into B3 BBQ O1. However, in the future, we should
+        just compile a single Air BBQ Callee that allows for OSR entry at loop
+        boundaries. Maybe we can model this using EntrySwitch without any real
+        harm to throughput.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * assembler/MacroAssemblerCodeRef.cpp:
+        (JSC::shouldDumpDisassemblyFor):
+        * jsc.cpp:
+        (JSC_DEFINE_HOST_FUNCTION):
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::B3IRGenerator::B3IRGenerator):
+        (JSC::Wasm::parseAndCompile):
+        * wasm/WasmCallee.h:
+        (JSC::Wasm::Callee::setOSREntryCallee): Deleted.
+        * wasm/WasmCalleeGroup.h:
+        * wasm/WasmCompilationMode.cpp:
+        (JSC::Wasm::makeString):
+        * wasm/WasmCompilationMode.h:
+        (JSC::Wasm::isOSREntry):
+        (JSC::Wasm::isAnyBBQ):
+        (JSC::Wasm::isAnyOMG):
+        * wasm/WasmOMGForOSREntryPlan.cpp: Removed.
+        * wasm/WasmOMGForOSREntryPlan.h: Removed.
+        * wasm/WasmOSREntryPlan.cpp: Copied from Source/JavaScriptCore/wasm/WasmOMGForOSREntryPlan.cpp.
+        (JSC::Wasm::OSREntryPlan::OSREntryPlan):
+        (JSC::Wasm::OSREntryPlan::work):
+        (JSC::Wasm::OMGForOSREntryPlan::OMGForOSREntryPlan): Deleted.
+        (JSC::Wasm::OMGForOSREntryPlan::work): Deleted.
+        * wasm/WasmOSREntryPlan.h: Copied from Source/JavaScriptCore/wasm/WasmOMGForOSREntryPlan.h.
+        * wasm/WasmOperations.cpp:
+        (JSC::Wasm::doOSREntry):
+        (JSC::Wasm::JSC_DEFINE_JIT_OPERATION):
+        * wasm/WasmPlan.cpp:
+        (JSC::Wasm::Plan::updateCallSitesToCallUs):
+        * wasm/WasmSlowPaths.cpp:
+        (JSC::LLInt::WASM_SLOW_PATH_DECL):
+
 2021-12-22  Alex Christensen  <achristensen@webkit.org>
 
         Fix compiling with pickier compiler

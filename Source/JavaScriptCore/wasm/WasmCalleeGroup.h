@@ -163,7 +163,7 @@ private:
 #if ENABLE(WEBASSEMBLY_B3JIT)
     friend class BBQPlan;
     friend class OMGPlan;
-    friend class OMGForOSREntryPlan;
+    friend class OSREntryPlan;
 #endif
 
     CalleeGroup(Context*, MemoryMode, ModuleInformation&, RefPtr<LLIntCallees>);

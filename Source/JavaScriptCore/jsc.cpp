@@ -309,7 +309,7 @@ static JSC_DECLARE_HOST_FUNCTION(functionNoFTL);
 static JSC_DECLARE_HOST_FUNCTION(functionNoOSRExitFuzzing);
 static JSC_DECLARE_HOST_FUNCTION(functionOptimizeNextInvocation);
 static JSC_DECLARE_HOST_FUNCTION(functionNumberOfDFGCompiles);
-static JSC_DECLARE_HOST_FUNCTION(functionCallerIsOMGCompiled);
+static JSC_DECLARE_HOST_FUNCTION(functionCallerIsBBQOrOMGCompiled);
 static JSC_DECLARE_HOST_FUNCTION(functionJSCOptions);
 static JSC_DECLARE_HOST_FUNCTION(functionReoptimizationRetryCount);
 static JSC_DECLARE_HOST_FUNCTION(functionTransferArrayBuffer);
@@ -559,7 +559,7 @@ private:
         addFunction(vm, "noFTL", functionNoFTL, 1);
         addFunction(vm, "noOSRExitFuzzing", functionNoOSRExitFuzzing, 1);
         addFunction(vm, "numberOfDFGCompiles", functionNumberOfDFGCompiles, 1);
-        addFunction(vm, "callerIsOMGCompiled", functionCallerIsOMGCompiled, 0);
+        addFunction(vm, "callerIsBBQOrOMGCompiled", functionCallerIsBBQOrOMGCompiled, 0);
         addFunction(vm, "jscOptions", functionJSCOptions, 0);
         addFunction(vm, "optimizeNextInvocation", functionOptimizeNextInvocation, 1);
         addFunction(vm, "reoptimizationRetryCount", functionReoptimizationRetryCount, 1);
@@ -1886,7 +1886,7 @@ JSC_DEFINE_HOST_FUNCTION(functionNumberOfDFGCompiles, (JSGlobalObject* globalObj
     return JSValue::encode(numberOfDFGCompiles(globalObject, callFrame));
 }
 
-JSC_DEFINE_HOST_FUNCTION(functionCallerIsOMGCompiled, (JSGlobalObject* globalObject, CallFrame* callFrame))
+JSC_DEFINE_HOST_FUNCTION(functionCallerIsBBQOrOMGCompiled, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -1906,7 +1906,7 @@ JSC_DEFINE_HOST_FUNCTION(functionCallerIsOMGCompiled, (JSGlobalObject* globalObj
     ASSERT(wasmFrame.callerFrame()->callee().isWasm());
 #if ENABLE(WEBASSEMBLY)
     auto mode = wasmFrame.callerFrame()->callee().asWasmCallee()->compilationMode();
-    return JSValue::encode(jsBoolean(mode == Wasm::CompilationMode::OMGMode || mode == Wasm::CompilationMode::OMGForOSREntryMode));
+    return JSValue::encode(jsBoolean(isAnyBBQ(mode) || isAnyOMG(mode)));
 #endif
     RELEASE_ASSERT_NOT_REACHED();
 }

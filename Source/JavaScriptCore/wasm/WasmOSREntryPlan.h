@@ -39,7 +39,7 @@ class CallLinkInfo;
 
 namespace Wasm {
 
-class OMGForOSREntryPlan final : public Plan {
+class OSREntryPlan final : public Plan {
 public:
     using Base = Plan;
 
@@ -48,7 +48,7 @@ public:
     bool multiThreaded() const final { return false; }
 
     // Note: CompletionTask should not hold a reference to the Plan otherwise there will be a reference cycle.
-    OMGForOSREntryPlan(Context*, Ref<Module>&&, Ref<Callee>&&, uint32_t functionIndex, uint32_t loopIndex, MemoryMode, CompletionTask&&);
+    OSREntryPlan(Context*, Ref<Module>&&, Ref<Callee>&&, uint32_t functionIndex, uint32_t loopIndex, MemoryMode, CompletionTask&&);
 
 private:
     // For some reason friendship doesn't extend to parent classes...

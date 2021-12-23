@@ -141,13 +141,13 @@ void Plan::updateCallSitesToCallUs(const AbstractLocker& calleeGroupLocker, Call
             LLIntCallee& llintCallee = calleeGroup.m_llintCallees->at(i).get();
             if (JITCallee* replacementCallee = llintCallee.replacement(calleeGroup.mode()))
                 stageRepatch(replacementCallee->wasmToWasmCallsites());
-            if (OMGForOSREntryCallee* osrEntryCallee = llintCallee.osrEntryCallee(calleeGroup.mode()))
+            if (OSREntryCallee* osrEntryCallee = llintCallee.osrEntryCallee(calleeGroup.mode()))
                 stageRepatch(osrEntryCallee->wasmToWasmCallsites());
         }
         if (BBQCallee* bbqCallee = calleeGroup.bbqCallee(calleeGroupLocker, i)) {
             if (OMGCallee* replacementCallee = bbqCallee->replacement())
                 stageRepatch(replacementCallee->wasmToWasmCallsites());
-            if (OMGForOSREntryCallee* osrEntryCallee = bbqCallee->osrEntryCallee())
+            if (OSREntryCallee* osrEntryCallee = bbqCallee->osrEntryCallee())
                 stageRepatch(osrEntryCallee->wasmToWasmCallsites());
         }
     }
@@ -176,13 +176,13 @@ void Plan::updateCallSitesToCallUs(const AbstractLocker& calleeGroupLocker, Call
             LLIntCallee& llintCallee = calleeGroup.m_llintCallees->at(i).get();
             if (JITCallee* replacementCallee = llintCallee.replacement(calleeGroup.mode()))
                 repatchCalls(replacementCallee->wasmToWasmCallsites());
-            if (OMGForOSREntryCallee* osrEntryCallee = llintCallee.osrEntryCallee(calleeGroup.mode()))
+            if (OSREntryCallee* osrEntryCallee = llintCallee.osrEntryCallee(calleeGroup.mode()))
                 repatchCalls(osrEntryCallee->wasmToWasmCallsites());
         }
         if (BBQCallee* bbqCallee = calleeGroup.bbqCallee(calleeGroupLocker, i)) {
             if (OMGCallee* replacementCallee = bbqCallee->replacement())
                 repatchCalls(replacementCallee->wasmToWasmCallsites());
-            if (OMGForOSREntryCallee* osrEntryCallee = bbqCallee->osrEntryCallee())
+            if (OSREntryCallee* osrEntryCallee = bbqCallee->osrEntryCallee())
                 repatchCalls(osrEntryCallee->wasmToWasmCallsites());
         }
     }

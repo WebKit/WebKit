@@ -1,3 +1,12 @@
+2021-12-22  Saam Barati  <sbarati@apple.com>
+
+        LLInt should loop OSR into BBQ and BBQ should loop OSR into OMG
+        https://bugs.webkit.org/show_bug.cgi?id=234542
+
+        Reviewed by Yusuke Suzuki.
+
+        * wasm/wast-tests/harness.js:
+
 2021-12-19  Ross Kirsling  <ross.kirsling@sony.com>
 
         [JSC] OpPow should have a "small int exponent" fast path at lower tiers

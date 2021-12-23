@@ -535,7 +535,7 @@ private:
     FunctionParser<B3IRGenerator>* m_parser { nullptr };
     const ModuleInformation& m_info;
     const MemoryMode m_mode { MemoryMode::BoundsChecking };
-    const CompilationMode m_compilationMode { CompilationMode::BBQMode };
+    const CompilationMode m_compilationMode;
     const unsigned m_functionIndex { UINT_MAX };
     const unsigned m_loopIndexForOSREntry { UINT_MAX };
     TierUpCount* m_tierUp { nullptr };
@@ -782,7 +782,7 @@ B3IRGenerator::B3IRGenerator(const ModuleInformation& info, Procedure& procedure
 
     emitEntryTierUpCheck();
 
-    if (m_compilationMode == CompilationMode::OMGForOSREntryMode)
+    if (isOSREntry(m_compilationMode))
         m_currentBlock = m_proc.addBlock();
 }
 
@@ -3280,7 +3280,7 @@ Expected<std::unique_ptr<InternalFunction>, String> parseAndCompile(CompilationC
     // optLevel=1.
     procedure.setNeedsUsedRegisters(false);
     
-    procedure.setOptLevel(compilationMode == CompilationMode::BBQMode
+    procedure.setOptLevel(isAnyBBQ(compilationMode)
         ? Options::webAssemblyBBQB3OptimizationLevel()
         : Options::webAssemblyOMGOptimizationLevel());
 

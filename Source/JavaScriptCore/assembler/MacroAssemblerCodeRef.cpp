@@ -77,15 +77,10 @@ bool shouldDumpDisassemblyFor(Wasm::CompilationMode mode)
 {
     if (Options::asyncDisassembly() || Options::dumpDisassembly() || Options::dumpWasmDisassembly())
         return true;
-    switch (mode) {
-    case Wasm::CompilationMode::BBQMode:
+    if (Wasm::isAnyBBQ(mode))
         return Options::dumpBBQDisassembly();
-    case Wasm::CompilationMode::OMGMode:
-    case Wasm::CompilationMode::OMGForOSREntryMode:
+    if (Wasm::isAnyOMG(mode))
         return Options::dumpOMGDisassembly();
-    default:
-        break;
-    }
     return false;
 }
 
