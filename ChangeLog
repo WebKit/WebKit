@@ -1,3 +1,11 @@
+2021-12-23  ChangSeok Oh  <changseok@webkit.org>
+
+        Add changseok's github username.
+
+        Unreviewed.
+
+        * metadata/contributors.json:
+
 2021-12-15  Chris Lord  <clord@igalia.com>
 
         [GTK] Use libgbm and the ANGLE gbm backend to fix initialisation
