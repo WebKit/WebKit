@@ -1,3 +1,18 @@
+2021-12-22  Aditya Keerthi  <akeerthi@apple.com>
+
+        [iOS] metromile.com <select> dropdowns open twice
+        https://bugs.webkit.org/show_bug.cgi?id=234573
+        rdar://84011144
+
+        Reviewed by Wenson Hsieh.
+
+        Added a layout test to verify that only one <select> dropdown is
+        presented when refocusing the same <select> element with a different
+        size. If more than one dropdown is presented, the test times out.
+
+        * fast/forms/ios/refocus-select-after-size-change-expected.txt: Added.
+        * fast/forms/ios/refocus-select-after-size-change.html: Added.
+
 2021-12-22  Simon Fraser  <simon.fraser@apple.com>
 
         Convert css3/scroll-snap/scroll-snap-wheel-event.html to use monitorWheelEvents()

@@ -1,3 +1,41 @@
+2021-12-22  Aditya Keerthi  <akeerthi@apple.com>
+
+        [iOS] metromile.com <select> dropdowns open twice
+        https://bugs.webkit.org/show_bug.cgi?id=234573
+        rdar://84011144
+
+        Reviewed by Wenson Hsieh.
+
+        metromile.com calls focus() twice on the same <select> element, when one
+        is tapped. Note that calling focus() on an already focused element still
+        sends the ElementDidFocus message to the UIProcess, to support scenarios
+        where the initial call to focus did not bring up an input peripheral.
+        One example of such a scenario is when the initial call is not a result
+        of user interaction, however, there are additional scenarios that are
+        dependent on UIProcess state. This makes it difficult to ensure that
+        ElementDidFocus is only called when it is time to show an input peripheral.
+
+        `-[WKContentView _elementDidFocus:...]` already contains some logic to
+        prevent showing another input peripheral for the same element. This
+        logic was added in r168744, checking for the same element by comparing
+        input types and bounding rects.
+
+        However, in between the first and second call to focus(), the page
+        applies additional padding to the element, changing its bounding rect.
+        This results in `_elementDidFocus:` going past the same element check
+        and presenting another dropdown.
+
+        In the time since r168744 was written, a more robust mechanism to check
+        for the same element was added – ElementContext.
+
+        To fix, update the same element check to use ElementContext, ensuring an
+        attempt to present a new peripheral for the same element is not made.
+
+        Test: fast/forms/ios/refocus-select-after-size-change.html
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _elementDidFocus:userIsInteracting:blurPreviousNode:activityStateChanges:userObject:]):
+
 2021-12-22  Sihui Liu  <sihui_liu@apple.com>
 
         WebsiteDataStore::excludeDirectoryFromBackup should set attribute for existing directories
