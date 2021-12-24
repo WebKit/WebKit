@@ -416,7 +416,6 @@ public:
 
     FillRepeat backgroundRepeatX() const { return static_cast<FillRepeat>(m_backgroundData->background->repeatX()); }
     FillRepeat backgroundRepeatY() const { return static_cast<FillRepeat>(m_backgroundData->background->repeatY()); }
-    CompositeOperator backgroundComposite() const { return static_cast<CompositeOperator>(m_backgroundData->background->composite()); }
     FillAttachment backgroundAttachment() const { return static_cast<FillAttachment>(m_backgroundData->background->attachment()); }
     FillBox backgroundClip() const { return static_cast<FillBox>(m_backgroundData->background->clip()); }
     FillBox backgroundOrigin() const { return static_cast<FillBox>(m_backgroundData->background->origin()); }

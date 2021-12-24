@@ -1,3 +1,37 @@
+2021-12-24  Tim Nguyen  <ntim@apple.com>
+
+        Remove non-standard -webkit-background-composite CSS property
+        https://bugs.webkit.org/show_bug.cgi?id=234661
+
+        Reviewed by Simon Fraser.
+
+        * compositing/background-color/background-color-composite-expected.html: Removed.
+        * compositing/background-color/background-color-composite.html: Removed.
+        * fast/backgrounds/bgCompositeCopy-expected.txt: Removed.
+        * fast/backgrounds/bgCompositeCopy.html: Removed.
+        * fast/backgrounds/composite-highlight-is-invalid-expected.txt: Removed.
+        * fast/backgrounds/composite-highlight-is-invalid.html: Removed.
+        * fast/backgrounds/multiple-backgrounds-computed-style-expected.txt:
+        * fast/backgrounds/multiple-backgrounds-computed-style.html:
+        * fast/css/getComputedStyle/computed-style-expected.txt:
+        * fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+        * fast/css/getComputedStyle/resources/property-names.js:
+        * fast/multicol/body-stuck-with-dirty-bit-with-columns.html:
+        * platform/glib/fast/css/getComputedStyle/computed-style-expected.txt:
+        * platform/glib/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+        * platform/glib/svg/css/getComputedStyle-basic-expected.txt:
+        * platform/gtk/imported/w3c/web-platform-tests/css/cssom/getComputedStyle-detached-subtree-expected.txt:
+        * platform/ios/fast/css/getComputedStyle/computed-style-expected.txt:
+        * platform/ios/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+        * platform/ios/imported/w3c/web-platform-tests/css/css-cascade/all-prop-initial-xml-expected.txt:
+        * platform/ios/imported/w3c/web-platform-tests/css/cssom/getComputedStyle-detached-subtree-expected.txt:
+        * platform/ios/svg/css/getComputedStyle-basic-expected.txt:
+        * platform/mac/fast/css/getComputedStyle/computed-style-expected.txt:
+        * platform/mac/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+        * platform/mac/svg/css/getComputedStyle-basic-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/css/cssom/getComputedStyle-detached-subtree-expected.txt:
+        * svg/css/getComputedStyle-basic-expected.txt:
+
 2021-12-24  Simon Fraser  <simon.fraser@apple.com>
 
         Apply the scroll delta in the "began" wheel event

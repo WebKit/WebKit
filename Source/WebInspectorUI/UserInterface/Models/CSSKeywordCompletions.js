@@ -933,9 +933,6 @@ WI.CSSKeywordCompletions._propertyKeywordMap = {
     "scroll-snap-type": [
         "none", "mandatory", "proximity", "x", "y", "inline", "block", "both"
     ],
-    "-webkit-background-composite": [
-        "clear", "copy", "source-over", "source-in", "source-out", "source-atop", "destination-over", "destination-in", "destination-out", "destination-atop", "xor", "plus-darker", "plus-lighter"
-    ],
     "-webkit-mask-composite": [
         "clear", "copy", "source-over", "source-in", "source-out", "source-atop", "destination-over", "destination-in", "destination-out", "destination-atop", "xor", "plus-darker", "plus-lighter"
     ],

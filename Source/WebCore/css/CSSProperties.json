@@ -5229,32 +5229,6 @@
                 "fill-layer-property": true
             }
         },
-        "-webkit-background-composite": {
-            "values": [
-                "clear",
-                "copy",
-                "source-over",
-                "source-in",
-                "source-out",
-                "source-atop",
-                "destination-over",
-                "destination-in",
-                "destination-out",
-                "destination-atop",
-                "xor",
-                "plus-darker",
-                "highlight",
-                "plus-lighter"
-            ],
-            "codegen-properties": {
-                "name-for-methods": "Composite",
-                "fill-layer-property": true
-            },
-            "status": {
-                "status": "experimental",
-                "comment": "Partially subsumed by background-blend-mode."
-            }
-        },
         "-webkit-background-origin": {
             "codegen-properties": {
                 "name-for-methods": "Origin",

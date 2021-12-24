@@ -3160,12 +3160,12 @@ static RefPtr<CSSPrimitiveValue> consumeBackgroundClip(CSSParserTokenRange& rang
     return consumeIdent<CSSValueText, CSSValueWebkitText>(range);
 }
 
-static RefPtr<CSSPrimitiveValue> consumePrefixedBackgroundComposite(CSSParserTokenRange& range)
+static RefPtr<CSSPrimitiveValue> consumePrefixedMaskComposite(CSSParserTokenRange& range)
 {
     return consumeIdentRange(range, CSSValueClear, CSSValuePlusLighter);
 }
 
-static RefPtr<CSSPrimitiveValue> consumeBackgroundComposite(CSSParserTokenRange& range)
+static RefPtr<CSSPrimitiveValue> consumeMaskComposite(CSSParserTokenRange& range)
 {
     return consumeIdentRange(range, CSSValueAdd, CSSValueExclude);
 }
@@ -3248,10 +3248,9 @@ static RefPtr<CSSValue> consumeBackgroundComponent(CSSPropertyID property, CSSPa
     case CSSPropertyBackgroundOrigin:
         return consumeBackgroundBox(range);
     case CSSPropertyMaskComposite:
-        return consumeBackgroundComposite(range);
+        return consumeMaskComposite(range);
     case CSSPropertyWebkitMaskComposite:
-    case CSSPropertyWebkitBackgroundComposite:
-        return consumePrefixedBackgroundComposite(range);
+        return consumePrefixedMaskComposite(range);
     case CSSPropertyWebkitBackgroundClip:
     case CSSPropertyWebkitBackgroundOrigin:
     case CSSPropertyWebkitMaskClip:
@@ -4569,7 +4568,6 @@ RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, CSS
     case CSSPropertyBackgroundSize:
     case CSSPropertyWebkitBackgroundClip:
     case CSSPropertyWebkitBackgroundOrigin:
-    case CSSPropertyWebkitBackgroundComposite:
     case CSSPropertyWebkitBackgroundSize:
     case CSSPropertyMaskClip:
     case CSSPropertyWebkitMaskClip:

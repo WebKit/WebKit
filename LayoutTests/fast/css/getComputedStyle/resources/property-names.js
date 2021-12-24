@@ -14,7 +14,6 @@ var propertiesToTest = {
     "appearance": true,
     "-webkit-backface-visibility": true,
     "-webkit-background-clip": true,
-    "-webkit-background-composite": true,
     "-webkit-background-origin": true,
     "-webkit-background-size": true,
     "-webkit-border-horizontal-spacing": true,

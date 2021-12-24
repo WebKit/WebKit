@@ -2778,10 +2778,9 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
                 list->append(maskModeToCSSValue(currLayer->maskMode()));
             return list;
         }
-        case CSSPropertyWebkitBackgroundComposite:
         case CSSPropertyWebkitMaskComposite:
         case CSSPropertyMaskComposite: {
-            auto& layers = propertyID == CSSPropertyWebkitBackgroundComposite ? style.backgroundLayers() : style.maskLayers();
+            auto& layers = style.maskLayers();
             if (!layers.next())
                 return cssValuePool.createValue(layers.composite(), propertyID);
             auto list = CSSValueList::createCommaSeparated();

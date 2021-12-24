@@ -9,7 +9,6 @@ PASS test("backgroundImage", "background-image: url(data:image/png;base64,iVBORw
 PASS test("backgroundRepeat", "background-image: none, none, none, none; background-repeat: repeat-x, repeat-y, repeat, no-repeat;") is "repeat-x, repeat-y, repeat, no-repeat"
 PASS test("backgroundSize", "background-image: none, none, none; background-size: contain, cover, 20px 10%;") is "contain, cover, 20px 10%"
 PASS test("webkitBackgroundSize", "background-image: none, none, none; -webkit-background-size: contain, cover, 20px 10%;") is "contain, cover, 20px 10%"
-PASS test("webkitBackgroundComposite", "background-image: none, none, none; -webkit-background-composite: source-over, copy, destination-in") is "source-over, copy, destination-in"
 PASS test("backgroundAttachment", "background-image: none, none, none; background-attachment: fixed, scroll, local;") is "fixed, scroll, local"
 PASS test("backgroundClip", "background-image: none, none; background-clip: border-box, padding-box;") is "border-box, padding-box"
 PASS test("webkitBackgroundClip", "background-image: none, none; -webkit-background-clip: border-box, padding-box;") is "border-box, padding-box"
