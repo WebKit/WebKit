@@ -10,3 +10,6 @@ zig-build
 **/CMakeCache.txt
 CMakeCache.txt
 WebKitBuild
+ManualTests
+Websites
+WebDriverTests
