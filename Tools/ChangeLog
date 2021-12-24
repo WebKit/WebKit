@@ -1,3 +1,14 @@
+2021-12-23  Sihui Liu  <sihui_liu@apple.com>
+
+        Don't create LocalStorage database for read if it does not exist
+        https://bugs.webkit.org/show_bug.cgi?id=234569
+
+        Reviewed by Alex Christensen.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/LocalStorageDatabaseTracker.mm:
+        (-[LocalStorageUIDelegate webView:runJavaScriptAlertPanelWithMessage:initiatedByFrame:completionHandler:]):
+        (TEST):
+
 2021-12-23  Matt Woodrow  <mattwoodrow@apple.com>
 
         Check allowed network hosts list when we schedule the load in the network process

@@ -101,7 +101,10 @@ bool SQLiteStorageArea::isEmpty()
     if (m_cache)
         return m_cache->isEmpty();
 
-    if (!prepareDatabase())
+    if (!prepareDatabase(ShouldCreateIfNotExists::No))
+        return true;
+
+    if (!m_database)
         return true;
 
     auto statement = cachedStatement(StatementType::CountItems);
@@ -148,9 +151,13 @@ bool SQLiteStorageArea::createTableIfNecessary()
     return true;
 }
 
-bool SQLiteStorageArea::prepareDatabase()
+bool SQLiteStorageArea::prepareDatabase(ShouldCreateIfNotExists shouldCreateIfNotExists)
 {
     if (m_database && m_database->isOpen())
+        return true;
+
+    m_database = nullptr;
+    if (shouldCreateIfNotExists == ShouldCreateIfNotExists::No && !FileSystem::fileExists(m_path))
         return true;
 
     m_database = makeUnique<WebCore::SQLiteDatabase>();
@@ -224,8 +231,11 @@ Expected<String, StorageError> SQLiteStorageArea::getItem(const String& key)
 
 Expected<String, StorageError> SQLiteStorageArea::getItemFromDatabase(const String& key)
 {
-    if (!prepareDatabase())
+    if (!prepareDatabase(ShouldCreateIfNotExists::No))
         return makeUnexpected(StorageError::Database);
+
+    if (!m_database)
+        return makeUnexpected(StorageError::ItemNotFound);
 
     auto statement = cachedStatement(StatementType::GetItem);
     if (!statement || statement->bindText(1, key)) {
@@ -248,7 +258,7 @@ HashMap<String, String> SQLiteStorageArea::allItems()
 {
     ASSERT(!isMainRunLoop());
 
-    if (!prepareDatabase())
+    if (!prepareDatabase(ShouldCreateIfNotExists::No) || !m_database)
         return HashMap<String, String> { };
 
     HashMap<String, String> items;
@@ -296,11 +306,10 @@ Expected<void, StorageError> SQLiteStorageArea::setItem(IPC::Connection::UniqueI
 {
     ASSERT(!isMainRunLoop());
 
-    if (!prepareDatabase())
+    if (!prepareDatabase(ShouldCreateIfNotExists::Yes))
         return makeUnexpected(StorageError::Database);
 
     startTransactionIfNecessary();
-
     String oldValue;
     if (auto valueOrError = getItem(key))
         oldValue = valueOrError.value();
@@ -331,8 +340,11 @@ Expected<void, StorageError> SQLiteStorageArea::removeItem(IPC::Connection::Uniq
 {
     ASSERT(!isMainRunLoop());
 
-    if (!prepareDatabase())
+    if (!prepareDatabase(ShouldCreateIfNotExists::No))
         return makeUnexpected(StorageError::Database);
+
+    if (!m_database)
+        return makeUnexpected(StorageError::ItemNotFound);
 
     startTransactionIfNecessary();
     String oldValue;
@@ -359,7 +371,7 @@ Expected<void, StorageError> SQLiteStorageArea::clear(IPC::Connection::UniqueID 
 {
     ASSERT(!isMainRunLoop());
 
-    if (!prepareDatabase())
+    if (!prepareDatabase(ShouldCreateIfNotExists::No))
         return makeUnexpected(StorageError::Database);
 
     if (m_cache && m_cache->isEmpty())
@@ -367,6 +379,9 @@ Expected<void, StorageError> SQLiteStorageArea::clear(IPC::Connection::UniqueID 
 
     if (m_cache)
         m_cache->clear();
+
+    if (!m_database)
+        return makeUnexpected(StorageError::ItemNotFound);
 
     startTransactionIfNecessary();
     auto statement = cachedStatement(StatementType::DeleteAllItems);

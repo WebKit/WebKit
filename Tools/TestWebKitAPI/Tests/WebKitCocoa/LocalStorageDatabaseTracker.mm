@@ -29,18 +29,29 @@
 #import "PlatformUtilities.h"
 #import "Test.h"
 #import <WebKit/WKWebsiteDataRecordPrivate.h>
+#import <WebKit/WKWebsiteDataStorePrivate.h>
 #import <WebKit/WebKit.h>
+#import <WebKit/_WKWebsiteDataStoreConfiguration.h>
 #import <wtf/text/WTFString.h>
 
-@interface LocalStorageUIDelegate : NSObject <WKUIDelegate>
+@interface LocalStorageUIDelegate : NSObject <WKUIDelegate> {
+@private
+    NSString *expectedMessage;
+}
+- (void)setExpectedMessage:(NSString *)_expectedMessage;
 @end
 
 @implementation LocalStorageUIDelegate
 - (void)webView:(WKWebView *)webView runJavaScriptAlertPanelWithMessage:(NSString *)message initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)(void))completionHandler
 {
-    EXPECT_STREQ("testValue", message.UTF8String);
+    EXPECT_WK_STREQ(expectedMessage, message);
     readyToContinue = true;
     completionHandler();
+}
+
+- (void)setExpectedMessage:(NSString *)_expectedMessage
+{
+    expectedMessage = _expectedMessage;
 }
 @end
 
@@ -57,6 +68,7 @@ TEST(WKWebView, LocalStorageFetchDataRecords)
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
     auto uiDelegate = adoptNS([[LocalStorageUIDelegate alloc] init]);
     webView.get().UIDelegate = uiDelegate.get();
+    [uiDelegate.get() setExpectedMessage:@"testValue"];
     [webView loadHTMLString:@"<script>localStorage.setItem('testKey', 'testValue');alert(localStorage.getItem('testKey'));</script>" baseURL:[NSURL URLWithString:@"http://localhost"]];
     TestWebKitAPI::Util::run(&readyToContinue);
 
@@ -69,4 +81,33 @@ TEST(WKWebView, LocalStorageFetchDataRecords)
         EXPECT_STREQ("http://localhost", [origins objectAtIndex:0].UTF8String);
     }];
     TestWebKitAPI::Util::run(&readyToContinue);
+}
+
+TEST(WKWebView, LocalStorageNoRecordAfterGetItem)
+{
+    readyToContinue = false;
+    [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
+        readyToContinue = true;
+    }];
+    TestWebKitAPI::Util::run(&readyToContinue);
+
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    auto uiDelegate = adoptNS([[LocalStorageUIDelegate alloc] init]);
+    webView.get().UIDelegate = uiDelegate.get();
+    readyToContinue = false;
+    [uiDelegate.get() setExpectedMessage:@"null"];
+    [webView loadHTMLString:@"<script>alert(localStorage.getItem('testKey'));</script>" baseURL:[NSURL URLWithString:@"http://webkit.org"]];
+    TestWebKitAPI::Util::run(&readyToContinue);
+
+    readyToContinue = false;
+    [[WKWebsiteDataStore defaultDataStore] fetchDataRecordsOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] completionHandler:^(NSArray<WKWebsiteDataRecord *> *dataRecords) {
+        EXPECT_EQ(0u, dataRecords.count);
+        readyToContinue = true;
+    }];
+    TestWebKitAPI::Util::run(&readyToContinue);
+
+    RetainPtr<NSURL> url = [[[configuration websiteDataStore] _configuration] _webStorageDirectory];
+    NSArray *files = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:url.get().path error:nil];
+    EXPECT_EQ(0U, [files count]);
 }

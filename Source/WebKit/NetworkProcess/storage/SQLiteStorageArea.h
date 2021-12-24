@@ -52,7 +52,8 @@ private:
     Expected<void, StorageError> clear(IPC::Connection::UniqueID, StorageAreaImplIdentifier, const String& urlString) final;
 
     bool createTableIfNecessary();
-    bool prepareDatabase();
+    enum class ShouldCreateIfNotExists : bool { No, Yes };
+    bool prepareDatabase(ShouldCreateIfNotExists);
     void startTransactionIfNecessary();
 
     enum class StatementType : uint8_t {
