@@ -87,12 +87,20 @@ static NSString *const classifierOutputFeatureKey = @"label";
 
     auto tokens = adoptNS([NSMutableArray<NSString *> new]);
     [tokenizer enumerateTokensInRange:NSMakeRange(0, rawInput.length) usingBlock:[&](NSRange range, NLTokenizerAttributes attributes, BOOL *stop) {
-        if (attributes)
+        if (attributes & NLTokenizerAttributeNumeric)
             return;
 
         NSString *lowercaseToken = [rawInput substringWithRange:range].lowercaseString;
         if (!lowercaseToken.length)
             return;
+
+        if (attributes & (NLTokenizerAttributeSymbolic | NLTokenizerAttributeEmoji)) {
+            // We should consider using a memory-compact hash map if we need to add a large number of entries here in the future.
+            // For now, we only make an exception for the following symbols, so simply checking each string is sufficient.
+            if ([lowercaseToken isEqualToString:@"×"] || [lowercaseToken isEqualToString:@"✕"] || [lowercaseToken isEqualToString:@"✖"])
+                [tokens addObject:@"x"];
+            return;
+        }
 
         [tokens addObject:lowercaseToken];
     }];
@@ -130,7 +138,7 @@ ModalContainerControlClassifier& ModalContainerControlClassifier::sharedClassifi
     return *classifier.get();
 }
 
-static Vector<WebCore::ModalContainerControlType> computePredictions(MLModel *model, Vector<String>&& texts)
+static Vector<ModalContainerControlType> computePredictions(MLModel *model, Vector<String>&& texts)
 {
     ASSERT(!RunLoop::isMain());
     if (!model)

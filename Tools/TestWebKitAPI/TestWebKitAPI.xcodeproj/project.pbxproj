@@ -1044,6 +1044,7 @@
 		F456AB1C213EDBA300CB2CEF /* FontManagerTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = F456AB1B213EDBA300CB2CEF /* FontManagerTests.mm */; };
 		F457275E25578D06007ACA34 /* DisplayListTestsCG.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F457275D25578D06007ACA34 /* DisplayListTestsCG.cpp */; };
 		F457A9D6202D68AF00F7E9D5 /* DataTransfer.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F457A9B3202D535300F7E9D5 /* DataTransfer.html */; };
+		F458286027750525003ECCF3 /* modal-container-custom.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F458285F2775051B003ECCF3 /* modal-container-custom.html */; };
 		F45B63FB1F197F4A009D38B9 /* image-map.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F45B63FA1F197F33009D38B9 /* image-map.html */; };
 		F45B63FE1F19D410009D38B9 /* ActionSheetTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = F45B63FC1F19D410009D38B9 /* ActionSheetTests.mm */; };
 		F45D3891215A7B4B002A2979 /* TestInspectorBar.mm in Sources */ = {isa = PBXBuildFile; fileRef = F45D3890215A7B4B002A2979 /* TestInspectorBar.mm */; };
@@ -1474,6 +1475,7 @@
 				517E7E04151119C100D0B008 /* MemoryCachePruneWithinResourceLoadDelegate.html in Copy Resources */,
 				4971B1202453A88C0096994D /* missingTopFrameUniqueRedirectSameSiteStrictTableSchema.db in Copy Resources */,
 				51CD1C721B38D48400142CA5 /* modal-alerts-in-new-about-blank-window.html in Copy Resources */,
+				F458286027750525003ECCF3 /* modal-container-custom.html in Copy Resources */,
 				F4E86F8A2773DC1B003859A6 /* modal-container.html in Copy Resources */,
 				7A1458FC1AD5C07000E06772 /* mouse-button-listener.html in Copy Resources */,
 				33E79E06137B5FD900E32D99 /* mouse-move-listener.html in Copy Resources */,
@@ -3000,6 +3002,7 @@
 		F457275D25578D06007ACA34 /* DisplayListTestsCG.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = DisplayListTestsCG.cpp; path = cg/DisplayListTestsCG.cpp; sourceTree = "<group>"; };
 		F457A9B3202D535300F7E9D5 /* DataTransfer.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = DataTransfer.html; sourceTree = "<group>"; };
 		F457A9B6202D5CDC00F7E9D5 /* PasteMixedContent.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = PasteMixedContent.mm; sourceTree = "<group>"; };
+		F458285F2775051B003ECCF3 /* modal-container-custom.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "modal-container-custom.html"; sourceTree = "<group>"; };
 		F45B63FA1F197F33009D38B9 /* image-map.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "image-map.html"; sourceTree = "<group>"; };
 		F45B63FC1F19D410009D38B9 /* ActionSheetTests.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ActionSheetTests.mm; sourceTree = "<group>"; };
 		F45D388F215A7B4B002A2979 /* TestInspectorBar.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TestInspectorBar.h; sourceTree = "<group>"; };
@@ -4663,6 +4666,7 @@
 				CDC9442B1EF1FBD20059C3C4 /* mediastreamtrack-detached.html */,
 				4971B11F2453A87F0096994D /* missingTopFrameUniqueRedirectSameSiteStrictTableSchema.db */,
 				51CD1C711B38D48400142CA5 /* modal-alerts-in-new-about-blank-window.html */,
+				F458285F2775051B003ECCF3 /* modal-container-custom.html */,
 				F4E86F892773DC06003859A6 /* modal-container.html */,
 				7A1458FB1AD5C03500E06772 /* mouse-button-listener.html */,
 				33E79E05137B5FCE00E32D99 /* mouse-move-listener.html */,

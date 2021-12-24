@@ -1,3 +1,35 @@
+2021-12-23  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Modal container control classifier fails on some neutral controls that contain multiplication symbols
+        https://bugs.webkit.org/show_bug.cgi?id=234651
+
+        Reviewed by Tim Horton.
+
+        Add a new API test to exercise the change.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit/modal-container-custom.html: Added.
+
+        Add an alternate version of `modal-container.html` that allows each API test to present custom markup (as
+        innerHTML) inside a fixed position modal container; use this test page in the new API test.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ModalContainerObservation.mm:
+        (-[ModalContainerWebView loadBundlePage:andDecidePolicy:]):
+        (-[ModalContainerWebView evaluate:andDecidePolicy:]):
+        (-[ModalContainerWebView loadBundlePage:]):
+        (-[ModalContainerWebView _webView:decidePolicyForModalContainer:decisionHandler:]):
+        (-[ModalContainerWebView lastModalContainerInfo]):
+
+        Add a property to keep track of the most recent _WKModalContainerInfo we recieved via the modal container
+        decision handler, and use this to test for which types of controls are available, in both the new test as well
+        as existing tests.
+
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/TestModalContainerControls.mlmodelc/analytics/coremldata.bin:
+        * TestWebKitAPI/Tests/WebKitCocoa/TestModalContainerControls.mlmodelc/coremldata.bin:
+
+        Adjust the test CoreML model to classify "x" as the neutral control type.
+
 2021-12-23  Sihui Liu  <sihui_liu@apple.com>
 
         Don't create LocalStorage database for read if it does not exist

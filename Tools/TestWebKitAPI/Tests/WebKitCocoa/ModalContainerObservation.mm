@@ -32,12 +32,10 @@
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebpagePreferencesPrivate.h>
+#import <WebKit/_WKModalContainerInfo.h>
 #import <objc/runtime.h>
-#import <wtf/CompletionHandler.h>
 #import <wtf/FastMalloc.h>
 #import <wtf/SetForScope.h>
-
-typedef _WKModalContainerDecision(^ModalContainerDecisionHandler)(_WKModalContainerInfo *);
 
 @interface NSBundle (TestSupport)
 - (NSURL *)swizzled_URLForResource:(NSString *)name withExtension:(NSString *)extension;
@@ -88,11 +86,13 @@ private:
 } // namespace TestWebKitAPI
 
 @interface ModalContainerWebView : TestWKWebView <WKUIDelegatePrivate>
+@property (nonatomic, readonly) _WKModalContainerInfo *lastModalContainerInfo;
 @end
 
 @implementation ModalContainerWebView {
     std::unique_ptr<TestWebKitAPI::ClassifierModelSwizzler> _classifierModelSwizzler;
     RetainPtr<TestNavigationDelegate> _navigationDelegate;
+    RetainPtr<_WKModalContainerInfo> _lastModalContainerInfo;
     std::optional<_WKModalContainerDecision> _decision;
     bool _doneWaitingForDecisionHandler;
 }
@@ -120,6 +120,25 @@ private:
     SetForScope decisionScope { _decision, decision };
     _doneWaitingForDecisionHandler = false;
 
+    [self loadBundlePage:page];
+
+    TestWebKitAPI::Util::run(&_doneWaitingForDecisionHandler);
+    [self waitForNextPresentationUpdate];
+}
+
+- (void)evaluate:(NSString *)script andDecidePolicy:(_WKModalContainerDecision)decision
+{
+    SetForScope decisionScope { _decision, decision };
+    _doneWaitingForDecisionHandler = false;
+
+    [self objectByEvaluatingJavaScript:script];
+
+    TestWebKitAPI::Util::run(&_doneWaitingForDecisionHandler);
+    [self waitForNextPresentationUpdate];
+}
+
+- (void)loadBundlePage:(NSString *)page
+{
     NSURL *bundleURL = [NSBundle.mainBundle URLForResource:page withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
     NSURLRequest *fakeRequest = [NSURLRequest requestWithURL:[NSURL URLWithString:@"http://webkit.org"]];
     [self loadSimulatedRequest:fakeRequest responseHTMLString:[NSString stringWithContentsOfURL:bundleURL]];
@@ -127,15 +146,18 @@ private:
     auto preferences = adoptNS([[WKWebpagePreferences alloc] init]);
     [preferences _setModalContainerObservationPolicy:_WKWebsiteModalContainerObservationPolicyPrompt];
     [_navigationDelegate waitForDidFinishNavigationWithPreferences:preferences.get()];
-
-    TestWebKitAPI::Util::run(&_doneWaitingForDecisionHandler);
-    [self waitForNextPresentationUpdate];
 }
 
 - (void)_webView:(WKWebView *)webView decidePolicyForModalContainer:(_WKModalContainerInfo *)containerInfo decisionHandler:(void (^)(_WKModalContainerDecision))handler
 {
     handler(_decision.value_or(_WKModalContainerDecisionShow));
+    _lastModalContainerInfo = containerInfo;
     _doneWaitingForDecisionHandler = true;
+}
+
+- (_WKModalContainerInfo *)lastModalContainerInfo
+{
+    return _lastModalContainerInfo.get();
 }
 
 @end
@@ -148,6 +170,8 @@ static RetainPtr<ModalContainerWebView> createModalContainerWebView()
     return adoptNS([[ModalContainerWebView alloc] initWithFrame:CGRectMake(0, 0, 400, 400) configuration:configuration]);
 }
 
+constexpr auto allControlTypes = _WKModalContainerControlTypeNeutral | _WKModalContainerControlTypePositive | _WKModalContainerControlTypeNegative;
+
 TEST(ModalContainerObservation, HideAndAllowModalContainer)
 {
     auto webView = createModalContainerWebView();
@@ -155,6 +179,7 @@ TEST(ModalContainerObservation, HideAndAllowModalContainer)
     NSString *visibleText = [webView contentsAsString];
     EXPECT_TRUE([visibleText containsString:@"Clicked on \"Yes\""]);
     EXPECT_FALSE([visibleText containsString:@"Hello world"]);
+    EXPECT_EQ([webView lastModalContainerInfo].availableTypes, allControlTypes);
 }
 
 TEST(ModalContainerObservation, HideAndDisallowModalContainer)
@@ -164,6 +189,7 @@ TEST(ModalContainerObservation, HideAndDisallowModalContainer)
     NSString *visibleText = [webView contentsAsString];
     EXPECT_TRUE([visibleText containsString:@"Clicked on \"No\""]);
     EXPECT_FALSE([visibleText containsString:@"Hello world"]);
+    EXPECT_EQ([webView lastModalContainerInfo].availableTypes, allControlTypes);
 }
 
 TEST(ModalContainerObservation, HideAndIgnoreModalContainer)
@@ -173,6 +199,7 @@ TEST(ModalContainerObservation, HideAndIgnoreModalContainer)
     NSString *visibleText = [webView contentsAsString];
     EXPECT_FALSE([visibleText containsString:@"Clicked on"]);
     EXPECT_FALSE([visibleText containsString:@"Hello world"]);
+    EXPECT_EQ([webView lastModalContainerInfo].availableTypes, allControlTypes);
 }
 
 TEST(ModalContainerObservation, ShowModalContainer)
@@ -182,6 +209,17 @@ TEST(ModalContainerObservation, ShowModalContainer)
     NSString *visibleText = [webView contentsAsString];
     EXPECT_FALSE([visibleText containsString:@"Clicked on"]);
     EXPECT_TRUE([visibleText containsString:@"Hello world"]);
+    EXPECT_EQ([webView lastModalContainerInfo].availableTypes, allControlTypes);
+}
+
+TEST(ModalContainerObservation, ClassifyMultiplySymbol)
+{
+    auto webView = createModalContainerWebView();
+    [webView loadBundlePage:@"modal-container-custom"];
+    [webView evaluate:@"show(`<p>Hello world</p><button>×</button>`)" andDecidePolicy:_WKModalContainerDecisionHideAndIgnore];
+
+    EXPECT_FALSE([[webView contentsAsString] containsString:@"Hello world"]);
+    EXPECT_EQ([webView lastModalContainerInfo].availableTypes, _WKModalContainerControlTypeNeutral);
 }
 
 } // namespace TestWebKitAPI

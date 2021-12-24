@@ -1,3 +1,21 @@
+2021-12-23  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Modal container control classifier fails on some neutral controls that contain multiplication symbols
+        https://bugs.webkit.org/show_bug.cgi?id=234651
+
+        Reviewed by Tim Horton.
+
+        Treat several ASCII symbols that resemble the letter "x" (i.e. several types of multiplication signs) as the
+        letter "x" when massaging the raw text content of controls in modal containers into canonical form for the text
+        classifier. This allows such controls to be (correctly) tagged as "neutral" controls, for the purposes of
+        delegating modal container policy decisions to the WebKit client.
+
+        Test: ModalContainerObservation.ClassifyMultiplySymbol
+
+        * UIProcess/Cocoa/ModalContainerControlClassifier.mm:
+        (-[WKModalContainerClassifierInput initWithTokenizer:rawInput:]):
+        (WebKit::computePredictions):
+
 2021-12-23  Sihui Liu  <sihui_liu@apple.com>
 
         Don't create LocalStorage database for read if it does not exist
