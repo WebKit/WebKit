@@ -1,3 +1,15 @@
+2021-12-23  Sam Weinig  <weinig@apple.com>
+
+        Gradient color interpolation incorrect for colors with alpha (need to interpolate premultiplied colors)
+        https://bugs.webkit.org/show_bug.cgi?id=150940
+        <rdar://problem/25499232>
+
+        Reviewed by Simon Fraser.
+
+        Enable CSSGradientPremultipliedAlphaInterpolationEnabled by default.
+
+        * Scripts/Preferences/WebPreferencesExperimental.yaml:
+
 2021-12-23  Brady Eidson  <beidson@apple.com>
 
         Add WTF::UUID class which is natively a 128-bit integer
