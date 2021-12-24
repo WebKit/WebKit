@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,7 +29,7 @@
 #include "Strong.h"
 
 #include <wtf/Deque.h>
-#include <wtf/HashMap.h>
+#include <wtf/HashSet.h>
 #include <wtf/Lock.h>
 #include <wtf/Vector.h>
 
@@ -44,14 +44,26 @@ public:
     using Base = JSRunLoopTimer;
 
     struct TicketData {
+    private:
+        WTF_MAKE_FAST_ALLOCATED;
+    public:
+        TicketData(VM&, JSObject* scriptExecutionOwner, Vector<Strong<JSCell>>&& dependencies);
+
+        VM& vm();
+        JSObject* target();
+
+        void cancel();
+        bool isCancelled() const { return !scriptExecutionOwner.get(); }
+
         Vector<Strong<JSCell>> dependencies;
         Strong<JSObject> scriptExecutionOwner;
     };
 
+    using Ticket = TicketData*;
+
     void doWork(VM&) final;
 
-    using Ticket = JSObject*;
-    void addPendingWork(VM&, Ticket, Vector<Strong<JSCell>>&& dependencies);
+    Ticket addPendingWork(VM&, JSObject* target, Vector<Strong<JSCell>>&& dependencies);
     bool hasPendingWork(Ticket);
     bool hasDependancyInPendingWork(Ticket, JSCell* dependency);
     bool cancelPendingWork(Ticket);
@@ -61,7 +73,7 @@ public:
     // to make sure your memory ownership model won't leak memory when
     // this occurs. The easiest way is to make sure everything is either owned
     // by a GC'd value in dependencies or by the Task lambda.
-    using Task = Function<void(Ticket, TicketData&&)>;
+    using Task = Function<void(Ticket)>;
     void scheduleWorkSoon(Ticket, Task&&);
     void didResumeScriptExecutionOwner();
 
@@ -77,7 +89,13 @@ private:
     bool m_shouldStopRunLoopWhenAllTicketsFinish { false };
     bool m_currentlyRunningTask { false };
     Deque<std::tuple<Ticket, Task>> m_tasks WTF_GUARDED_BY_LOCK(m_taskLock);
-    HashMap<Ticket, TicketData> m_pendingTickets;
+    HashSet<std::unique_ptr<TicketData>> m_pendingTickets;
 };
+
+inline JSObject* DeferredWorkTimer::TicketData::target()
+{
+    ASSERT(!isCancelled());
+    return jsCast<JSObject*>(dependencies.last().get());
+}
 
 } // namespace JSC
