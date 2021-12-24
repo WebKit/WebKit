@@ -327,8 +327,6 @@ static unsigned atspiRole(AccessibilityRole role)
         return Atspi::Role::Definition;
     case AccessibilityRole::DocumentMath:
         return Atspi::Role::Math;
-    case AccessibilityRole::MathElement:
-        return Atspi::Role::MathFraction;
     case AccessibilityRole::LandmarkBanner:
     case AccessibilityRole::LandmarkComplementary:
     case AccessibilityRole::LandmarkContentInfo:
@@ -390,6 +388,7 @@ static unsigned atspiRole(AccessibilityRole role)
     case AccessibilityRole::ValueIndicator:
         return Atspi::Role::Unknown;
     case AccessibilityRole::ListMarker:
+    case AccessibilityRole::MathElement:
         RELEASE_ASSERT_NOT_REACHED();
     }
 
@@ -1026,6 +1025,11 @@ HashMap<String, String> AccessibilityObjectAtspi::attributes() const
     if (!keyShortcuts.isEmpty())
         map.add("keyshortcuts", keyShortcuts);
 
+    if (m_coreObject->isMathMultiscriptObject(AccessibilityMathMultiscriptObjectType::PreSuperscript) || m_coreObject->isMathMultiscriptObject(AccessibilityMathMultiscriptObjectType::PreSubscript))
+        map.add("multiscript-type", "pre");
+    else if (m_coreObject->isMathMultiscriptObject(AccessibilityMathMultiscriptObjectType::PostSuperscript) || m_coreObject->isMathMultiscriptObject(AccessibilityMathMultiscriptObjectType::PostSubscript))
+        map.add("multiscript-type", "post");
+
     return map;
 }
 
@@ -1258,6 +1262,32 @@ std::optional<unsigned> AccessibilityObjectAtspi::effectiveRole() const
             auto* renderer = m_coreObject->renderer();
             return renderer && renderer->isImage() ? Atspi::Role::Image : Atspi::Role::Text;
         });
+    case AccessibilityRole::MathElement:
+        if (m_axObject->isMathRow())
+            return Atspi::Role::Panel;
+        if (m_axObject->isMathTable())
+            return Atspi::Role::Table;
+        if (m_axObject->isMathTableRow())
+            return Atspi::Role::TableRow;
+        if (m_axObject->isMathTableCell())
+            return Atspi::Role::TableCell;
+        if (m_axObject->isMathSubscriptSuperscript() || m_axObject->isMathMultiscript())
+            return Atspi::Role::Section;
+        if (m_axObject->isMathFraction())
+            return Atspi::Role::MathFraction;
+        if (m_axObject->isMathSquareRoot() || m_coreObject->isMathRoot())
+            return Atspi::Role::MathRoot;
+        if (m_axObject->isMathScriptObject(AccessibilityMathScriptObjectType::Subscript)
+            || m_axObject->isMathMultiscriptObject(AccessibilityMathMultiscriptObjectType::PreSubscript)
+            || m_axObject->isMathMultiscriptObject(AccessibilityMathMultiscriptObjectType::PostSubscript))
+            return Atspi::Role::Subscript;
+        if (m_axObject->isMathScriptObject(AccessibilityMathScriptObjectType::Superscript)
+            || m_axObject->isMathMultiscriptObject(AccessibilityMathMultiscriptObjectType::PreSuperscript)
+            || m_axObject->isMathMultiscriptObject(AccessibilityMathMultiscriptObjectType::PostSuperscript))
+            return Atspi::Role::Superscript;
+        if (m_axObject->isMathToken())
+            return Atspi::Role::Static;
+        break;
     default:
         break;
     }
@@ -1287,9 +1317,28 @@ String AccessibilityObjectAtspi::effectiveRoleName() const
     case Atspi::Role::Image:
         return "image";
     case Atspi::Role::Text:
+    case Atspi::Role::Static:
         return "text";
     case Atspi::Role::InvalidRole:
         return "invalid";
+    case Atspi::Role::Panel:
+        return "panel";
+    case Atspi::Role::Table:
+        return "table";
+    case Atspi::Role::TableRow:
+        return "table row";
+    case Atspi::Role::TableCell:
+        return "table cell";
+    case Atspi::Role::Section:
+        return "section";
+    case Atspi::Role::MathFraction:
+        return "math fraction";
+    case Atspi::Role::MathRoot:
+        return "math root";
+    case Atspi::Role::Subscript:
+        return "subscript";
+    case Atspi::Role::Superscript:
+        return "superscript";
     default:
         break;
     }
@@ -1320,9 +1369,28 @@ const char* AccessibilityObjectAtspi::effectiveLocalizedRoleName() const
     case Atspi::Role::Image:
         return AccessibilityAtspi::localizedRoleName(AccessibilityRole::Image);
     case Atspi::Role::Text:
+    case Atspi::Role::Static:
         return AccessibilityAtspi::localizedRoleName(AccessibilityRole::StaticText);
     case Atspi::Role::InvalidRole:
         return _("invalid");
+    case Atspi::Role::Panel:
+        return AccessibilityAtspi::localizedRoleName(AccessibilityRole::Group);
+    case Atspi::Role::Table:
+        return AccessibilityAtspi::localizedRoleName(AccessibilityRole::Table);
+    case Atspi::Role::TableRow:
+        return AccessibilityAtspi::localizedRoleName(AccessibilityRole::Row);
+    case Atspi::Role::TableCell:
+        return AccessibilityAtspi::localizedRoleName(AccessibilityRole::Cell);
+    case Atspi::Role::Section:
+        return AccessibilityAtspi::localizedRoleName(AccessibilityRole::Div);
+    case Atspi::Role::MathFraction:
+        return _("math fraction");
+    case Atspi::Role::MathRoot:
+        return _("math root");
+    case Atspi::Role::Subscript:
+        return AccessibilityAtspi::localizedRoleName(AccessibilityRole::Subscript);
+    case Atspi::Role::Superscript:
+        return AccessibilityAtspi::localizedRoleName(AccessibilityRole::Superscript);
     default:
         break;
     }
