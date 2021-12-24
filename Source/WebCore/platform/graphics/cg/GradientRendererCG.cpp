@@ -40,6 +40,352 @@ GradientRendererCG::GradientRendererCG(ColorInterpolationMethod colorInterpolati
 
 // MARK: - Strategy selection.
 
+#if !HAVE(CORE_GRAPHICS_PREMULTIPLIED_INTERPOLATION_GRADIENT)
+
+enum class EmulatedAlphaPremuliplicationAnalysisResult {
+    UseGradientAsIs,
+    UseGradientWithAlphaTransforms,
+    UseShading
+};
+
+enum class AlphaType {
+    Opaque,
+    PartiallyTransparent,
+    FullyTransparent
+};
+
+static AlphaType classifyAlphaType(float alpha)
+{
+    if (alpha == 1.0f)
+        return AlphaType::Opaque;
+    if (alpha == 0.0f)
+        return AlphaType::FullyTransparent;
+    return AlphaType::PartiallyTransparent;
+}
+
+static EmulatedAlphaPremuliplicationAnalysisResult analyzeColorStopsForEmulatedAlphaPremuliplicationOppertunity(const GradientColorStops& stops)
+{
+    if (stops.size() < 2)
+        return EmulatedAlphaPremuliplicationAnalysisResult::UseGradientAsIs;
+
+    bool uniformAlpha = true;
+
+    auto& initialStop = *stops.begin();
+    auto previousStopAlpha = initialStop.color.alphaAsFloat();
+    auto previousStopAlphaType = classifyAlphaType(previousStopAlpha);
+
+    auto stopIterator = stops.begin();
+    ++stopIterator;
+
+    while (stopIterator != stops.end()) {
+        auto& stop = *stopIterator;
+
+        auto stopAlpha = stop.color.alphaAsFloat();
+        auto stopAlphaType = classifyAlphaType(stopAlpha);
+
+        switch (stopAlphaType) {
+        case AlphaType::Opaque:
+            switch (previousStopAlphaType) {
+            case AlphaType::Opaque:
+                break;
+            case AlphaType::PartiallyTransparent:
+                return EmulatedAlphaPremuliplicationAnalysisResult::UseShading;
+            case AlphaType::FullyTransparent:
+                uniformAlpha = false;
+                break;
+            }
+            break;
+
+        case AlphaType::PartiallyTransparent:
+            switch (previousStopAlphaType) {
+            case AlphaType::Opaque:
+                return EmulatedAlphaPremuliplicationAnalysisResult::UseShading;
+            case AlphaType::PartiallyTransparent:
+                if (previousStopAlpha != stopAlpha)
+                    return EmulatedAlphaPremuliplicationAnalysisResult::UseShading;
+                break;
+            case AlphaType::FullyTransparent:
+                uniformAlpha = false;
+                break;
+            }
+            break;
+
+        case AlphaType::FullyTransparent:
+            switch (previousStopAlphaType) {
+            case AlphaType::Opaque:
+            case AlphaType::PartiallyTransparent:
+                uniformAlpha = false;
+                break;
+
+            case AlphaType::FullyTransparent:
+                break;
+            }
+            break;
+        }
+
+        previousStopAlpha = stopAlpha;
+        previousStopAlphaType = stopAlphaType;
+
+        ++stopIterator;
+    }
+
+    return uniformAlpha ? EmulatedAlphaPremuliplicationAnalysisResult::UseGradientAsIs : EmulatedAlphaPremuliplicationAnalysisResult::UseGradientWithAlphaTransforms;
+}
+
+static GradientColorStops alphaTransformStopsToEmulateAlphaPremuliplication(const GradientColorStops& stops)
+{
+    // The following is the set of transforms that can be performed on a color stop list to transform it from one used with a premuliplied alpha gradient
+    // implmentation to one used by with an un-premultiplied gradient implementation.
+
+    // ... Opaque  -> Transparent -> Opaque  ...                                  ==>    ... Opaque  -> TRANSFORM{Transparent(PreviousChannels)} | ADDITION{Transparent(NextChannels)} -> Opaque  ...
+    // ... Partial -> Transparent -> Partial ...                                  ==>    ... Partial -> TRANSFORM{Transparent(PreviousChannels)} | ADDITION{Transparent(NextChannels)} -> Partial ...
+    // ... Opaque  -> Transparent -> Partial ...                                  ==>    ... Opaque  -> TRANSFORM{Transparent(PreviousChannels)} | ADDITION{Transparent(NextChannels)} -> Partial ...
+    // ... Partial -> Transparent -> Opaque  ...                                  ==>    ... Partial -> TRANSFORM{Transparent(PreviousChannels)} | ADDITION{Transparent(NextChannels)} -> Opaque  ...
+    //
+    // ... Opaque  -> Transparent -> Transparent -> Opaque  ...                   ==>    ... Opaque  -> TRANSFORM{Transparent(PreviousChannels)} -> TRANSFORM{Transparent(NextChannels)} -> Opaque  ...
+    // ... Partial -> Transparent -> Transparent -> Partial ...                   ==>    ... Partial -> TRANSFORM{Transparent(PreviousChannels)} -> TRANSFORM{Transparent(NextChannels)} -> Partial ...
+    // ... Opaque  -> Transparent -> Transparent -> Partial ...                   ==>    ... Opaque  -> TRANSFORM{Transparent(PreviousChannels)} -> TRANSFORM{Transparent(NextChannels)} -> Partial ...
+    // ... Partial -> Transparent -> Transparent -> Opaque  ...                   ==>    ... Partial -> TRANSFORM{Transparent(PreviousChannels)} -> TRANSFORM{Transparent(NextChannels)} -> Opaque  ...
+    //
+    // ... Opaque  -> Transparent -> Transparent -> Transparent -> Opaque  ...    ==>    ... Opaque  -> TRANSFORM{Transparent(PreviousChannels)} -> Transparent -> TRANSFORM{Transparent(NextChannels)} -> Opaque  ...
+    // ... Partial -> Transparent -> Transparent -> Transparent -> Partial ...    ==>    ... Partial -> TRANSFORM{Transparent(PreviousChannels)} -> Transparent -> TRANSFORM{Transparent(NextChannels)} -> Partial ...
+    // ... Opaque  -> Transparent -> Transparent -> Transparent -> Partial ...    ==>    ... Opaque  -> TRANSFORM{Transparent(PreviousChannels)} -> Transparent -> TRANSFORM{Transparent(NextChannels)} -> Partial ...
+    // ... Partial -> Transparent -> Transparent -> Transparent -> Opaque  ...    ==>    ... Partial -> TRANSFORM{Transparent(PreviousChannels)} -> Transparent -> TRANSFORM{Transparent(NextChannels)} -> Opaque  ...
+    //
+    // [ Transparent -> Opaque      ...                                           ==>    [ TRANSFORM{Transparent(NextChannels)} -> Opaque      ...
+    // [ Transparent -> Partial     ...                                           ==>    [ TRANSFORM{Transparent(NextChannels)} -> Partial     ...
+    // [ Transparent -> Transparent ...                                           ==>    [ Transparent                          -> Transparent ...
+    //
+    // ... Opaque       -> Transparent ]                                          ==>    ... Opaque      -> TRANSFORM{Transparent(PreviousChannels)} ]
+    // ... Partial      -> Transparent ]                                          ==>    ... Partial     -> TRANSFORM{Transparent(PreviousChannels)} ]
+    // ... Transparent  -> Transparent ]                                          ==>    ... Transparent -> Transparent                              ]
+
+    // For each stop the following actions are possible:
+    //      - Default           Append self
+    //      - Steal previous    Append previous.colorWithAlpha(0.0f)
+    //      - Steal next        Append next.colorWithAlpha(0.0f)
+    //      - Split             Append previous.colorWithAlpha(0.0f) + next.colorWithAlpha(0.0f)
+
+    ASSERT(stops.size() > 1);
+
+    // Special case when we only have two stops to avoid complicating the cases with more.
+    if (stops.size() == 2) {
+        // Illegal pairs (ruled out in analysis)
+        //   Opaque  -> Partial
+        //   Partial -> Opaque
+        //
+        // Possible pairs
+        //   Opaque      -> Opaque       (default, default)
+        //   Partial     -> Partial      (default, default)
+        //   Transparent -> Transparent  (default, default)
+        //   Opaque      -> Transparent  (default, steal previous)
+        //   Partial     -> Transparent  (default, steal previous)
+        //   Transparent -> Opaque       (steals next, default)
+        //   Transparent -> Partial      (steals next, default)
+
+        GradientColorStops::StopVector result;
+        result.reserveInitialCapacity(2);
+
+        auto& stop1 = stops.stops()[0];
+        auto& stop2 = stops.stops()[1];
+
+        auto stop1AlphaType = classifyAlphaType(stop1.color.alphaAsFloat());
+        auto stop2AlphaType = classifyAlphaType(stop2.color.alphaAsFloat());
+
+        switch (stop1AlphaType) {
+        case AlphaType::Opaque:
+        case AlphaType::PartiallyTransparent:
+            // ACTION (stop1): Default.
+            result.uncheckedAppend(stop1);
+
+            switch (stop2AlphaType) {
+            case AlphaType::Opaque:
+            case AlphaType::PartiallyTransparent:
+                // ACTION (stop2): Default.
+                result.uncheckedAppend(stop2);
+                break;
+            case AlphaType::FullyTransparent:
+                // ACTION (stop2): Steal previous.
+                result.uncheckedAppend({ stop2.offset, stop1.color.colorWithAlpha(0.0f) });
+                break;
+            }
+
+            break;
+
+        case AlphaType::FullyTransparent:
+            switch (stop2AlphaType) {
+            case AlphaType::Opaque:
+            case AlphaType::PartiallyTransparent:
+                // ACTION (stop1): Steal next.
+                result.uncheckedAppend({ stop1.offset, stop2.color.colorWithAlpha(0.0f) });
+                break;
+            case AlphaType::FullyTransparent:
+                // ACTION (stop1): Default.
+                result.uncheckedAppend(stop1);
+                break;
+            }
+            // ACTION (stop2): Default.
+            result.uncheckedAppend(stop2);
+            break;
+        }
+
+        return GradientColorStops::Sorted { WTFMove(result) };
+    }
+
+    GradientColorStops::StopVector result;
+
+    // 1. Handle first stop.
+    //
+    // [first stop matters]
+    //
+    // Illegal pairs (ruled out in analysis)
+    //   Opaque  -> Partial
+    //   Partial -> Opaque
+    //
+    // Possible pairs
+    //   Opaque      -> Opaque       (default)
+    //   Partial     -> Partial      (default)
+    //   Transparent -> Transparent  (default)
+    //   Opaque      -> Transparent  (default)
+    //   Partial     -> Transparent  (default)
+    //   Transparent -> Opaque       (steals next)
+    //   Transparent -> Partial      (steals next)
+
+    auto& firstStop = stops.stops()[0];
+    auto& secondStop = stops.stops()[1];
+
+    auto firstStopAlphaType = classifyAlphaType(firstStop.color.alphaAsFloat());
+    auto secondStopAlphaType = classifyAlphaType(secondStop.color.alphaAsFloat());
+
+    if (firstStopAlphaType == AlphaType::FullyTransparent && secondStopAlphaType != AlphaType::FullyTransparent) {
+        // ACTION: Steal next.
+        result.append({ firstStop.offset, secondStop.color.colorWithAlpha(0.0f) });
+    } else {
+        // ACTION: Default.
+        result.append(firstStop);
+    }
+
+    // 2. Handle middle stops.
+    //
+    // [middle stop matters]
+    //
+    // Illegal triplets (ruled out in analysis)
+    //   Opaque      -> Opaque      -> Partial
+    //   Opaque      -> Partial     -> Partial
+    //   Opaque      -> Partial     -> Opaque
+    //   Partial     -> Opaque      -> Opaque
+    //   Partial     -> Partial     -> Opaque
+    //   Partial     -> Opaque      -> Partial
+    //
+    // Possible triplets
+    //   Opaque      -> Opaque      -> Opaque       (default)
+    //   Partial     -> Partial     -> Partial      (default)
+    //   Opaque      -> Opaque      -> Transparent  (default)
+    //   Opaque      -> Partial     -> Transparent  (default)
+    //   Partial     -> Partial     -> Transparent  (default)
+    //   Partial     -> Opaque      -> Transparent  (default)
+    //   Transparent -> Opaque      -> Transparent  (default)
+    //   Transparent -> Partial     -> Transparent  (default)
+    //   Transparent -> Transparent -> Transparent  (default)
+    //   Opaque      -> Transparent -> Opaque       (splits, steals previous + next)
+    //   Opaque      -> Transparent -> Partial      (splits, steals previous + next)
+    //   Partial     -> Transparent -> Partial      (splits, steals previous + next)
+    //   Partial     -> Transparent -> Opaque       (splits, steals previous + next)
+    //   Transparent -> Transparent -> Opaque       (steals next)
+    //   Transparent -> Transparent -> Partial      (steals next)
+    //   Opaque      -> Transparent -> Transparent  (steals previous)
+    //   Partial     -> Transparent -> Transparent  (steals previous)
+
+    size_t previousStopIndex = 0;
+    size_t stopIndex = 1;
+    size_t nextStopIndex = 2;
+
+    for (; nextStopIndex < stops.size(); ++previousStopIndex, ++stopIndex, ++nextStopIndex) {
+        auto& previousStop = stops.stops()[previousStopIndex];
+        auto& stop = stops.stops()[stopIndex];
+        auto& nextStop = stops.stops()[nextStopIndex];
+
+        auto previousStopAlphaType = classifyAlphaType(previousStop.color.alphaAsFloat());
+        auto stopAlphaType = classifyAlphaType(stop.color.alphaAsFloat());
+        auto nextStopAlphaType = classifyAlphaType(nextStop.color.alphaAsFloat());
+
+        if (stopAlphaType == AlphaType::FullyTransparent) {
+            switch (previousStopAlphaType) {
+            case AlphaType::Opaque:
+            case AlphaType::PartiallyTransparent:
+                switch (nextStopAlphaType) {
+                case AlphaType::Opaque:
+                case AlphaType::PartiallyTransparent:
+                    // ACTION: Split.
+                    result.append({ stop.offset, previousStop.color.colorWithAlpha(0.0f) });
+                    result.append({ stop.offset, nextStop.color.colorWithAlpha(0.0f) });
+                    break;
+
+                case AlphaType::FullyTransparent:
+                    // ACTION: Steal previous.
+                    result.append({ stop.offset, previousStop.color.colorWithAlpha(0.0f) });
+                    break;
+                }
+                break;
+
+            case AlphaType::FullyTransparent:
+                switch (nextStopAlphaType) {
+                case AlphaType::Opaque:
+                case AlphaType::PartiallyTransparent:
+                    // ACTION: Steal next.
+                    result.append({ stop.offset, nextStop.color.colorWithAlpha(0.0f) });
+                    break;
+
+                case AlphaType::FullyTransparent:
+                    // ACTION: Default.
+                    result.append(stop);
+                    break;
+                }
+                break;
+            }
+        } else {
+            // ACTION: Default.
+            result.append(stop);
+        }
+    }
+
+    ASSERT(nextStopIndex == stops.size());
+
+    // 3. Handle last stop.
+    //
+    // [last stop matters]
+    //
+    // Illegal pairs (ruled out in analysis phase)
+    //   Opaque  -> Partial
+    //   Partial -> Opaque
+    //
+    // Possible pairs
+    //   Opaque      -> Opaque       (default)
+    //   Partial     -> Partial      (default)
+    //   Transparent -> Transparent  (default)
+    //   Opaque      -> Transparent  (steals previous)
+    //   Partial     -> Transparent  (steals previous)
+    //   Transparent -> Opaque       (default)
+    //   Transparent -> Partial      (default)
+
+    auto& secondToLastStop = stops.stops()[previousStopIndex];
+    auto& lastStop = stops.stops()[stopIndex];
+
+    auto secondToLastStopAlphaType = classifyAlphaType(secondToLastStop.color.alphaAsFloat());
+    auto lastStopAlphaType = classifyAlphaType(lastStop.color.alphaAsFloat());
+
+    if (lastStopAlphaType == AlphaType::FullyTransparent && secondToLastStopAlphaType != AlphaType::FullyTransparent) {
+        // ACTION: Steal previous.
+        result.append({ lastStop.offset, secondToLastStop.color.colorWithAlpha(0.0f) });
+    } else {
+        // ACTION: Default.
+        result.append(lastStop);
+    }
+
+    return GradientColorStops::Sorted { WTFMove(result) };
+}
+#endif
+
 GradientRendererCG::Strategy GradientRendererCG::pickStrategy(ColorInterpolationMethod colorInterpolationMethod, const GradientColorStops& stops) const
 {
     return WTF::switchOn(colorInterpolationMethod.colorSpace,
@@ -51,8 +397,14 @@ GradientRendererCG::Strategy GradientRendererCG::pickStrategy(ColorInterpolation
 #if HAVE(CORE_GRAPHICS_PREMULTIPLIED_INTERPOLATION_GRADIENT)
                 return makeGradient(colorInterpolationMethod, stops);
 #else
-                // FIXME: Use gradient strategy if none of the stops have alpha.
-                return makeShading(colorInterpolationMethod, stops);
+                switch (analyzeColorStopsForEmulatedAlphaPremuliplicationOppertunity(stops)) {
+                case EmulatedAlphaPremuliplicationAnalysisResult::UseGradientAsIs:
+                    return makeGradient({ ColorInterpolationMethod::SRGB { }, AlphaPremultiplication::Unpremultiplied }, stops);
+                case EmulatedAlphaPremuliplicationAnalysisResult::UseGradientWithAlphaTransforms:
+                    return makeGradient({ ColorInterpolationMethod::SRGB { }, AlphaPremultiplication::Unpremultiplied }, alphaTransformStopsToEmulateAlphaPremuliplication(stops));
+                case EmulatedAlphaPremuliplicationAnalysisResult::UseShading:
+                    return makeShading(colorInterpolationMethod, stops);
+                }
 #endif
             }
         },

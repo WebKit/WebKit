@@ -1,3 +1,21 @@
+2021-12-24  Sam Weinig  <weinig@apple.com>
+
+        On systems without CG support for alpha premultiplied gradients, the CGGradientRef path should still be used for the subset of gradients that can transformed
+        https://bugs.webkit.org/show_bug.cgi?id=234653
+
+        Reviewed by Simon Fraser.
+
+        Add tests of gradients that can render identically with both alpha premultiplied and non-premultiplied gradients
+        either using the same color stop list or a transformed one.
+
+        The main test page contains the alpha premultiplied gradients (which is the default now for CSS gradients), while
+        the -expected.html contains the alpha non-premultiplied gradients and has alpha premultiplied interpolation explicitly
+        disabled via a CSSGradientPremultipliedAlphaInterpolationEnabled=false comment command.
+
+        * fast/gradients/alpha-premultiplied-representable-by-unpremultiplied-expected.html: Added.
+        * fast/gradients/alpha-premultiplied-representable-by-unpremultiplied.html: Added.
+        * platform/glib/TestExpectations: Disable on non-CoreGraphics ports.
+
 2021-12-23  Alan Bujtas  <zalan@apple.com>
 
         REGRESSION(Containment) nullptr deref in RenderBox::styleDidChange
