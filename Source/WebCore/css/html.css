@@ -1300,7 +1300,7 @@ ruby, rt {
 
 rt {
     line-height: normal;
-    -webkit-text-emphasis: none;
+    text-emphasis: none;
 }
 
 ruby > rt {
