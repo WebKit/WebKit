@@ -124,6 +124,8 @@ if (NOT COMPILER_IS_CLANG_CL)
     add_definitions(-D_CRT_SECURE_CPP_OVERLOAD_STANDARD_NAMES=1)
 endif ()
 
+add_compile_options(-D_ENABLE_EXTENDED_ALIGNED_STORAGE)
+
 # Specify the source code encoding
 add_compile_options(/utf-8 /validate-charset)
 
