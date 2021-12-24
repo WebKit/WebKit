@@ -1,3 +1,14 @@
+2021-12-23  Alan Bujtas  <zalan@apple.com>
+
+        REGRESSION(Containment) nullptr deref in RenderBox::styleDidChange
+        https://bugs.webkit.org/show_bug.cgi?id=234647
+        <rdar://86841302>
+
+        Reviewed by Simon Fraser.
+
+        * fast/dynamic/document-elment-renderer-null-crash-expected.txt: Added.
+        * fast/dynamic/document-elment-renderer-null-crash.html: Added.
+
 2021-12-23  Tim Nguyen  <ntim@apple.com>
 
         Rebaseline getComputedStyle tests for iOS after r287356

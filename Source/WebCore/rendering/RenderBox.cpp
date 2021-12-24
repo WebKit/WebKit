@@ -350,33 +350,39 @@ void RenderBox::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle
         bool rootStyleChanged = false;
         bool viewDirectionOrWritingModeChanged = false;
         auto* rootRenderer = isBodyRenderer ? documentElementRenderer : nullptr;
-        if (!isBodyRenderer || !(shouldApplyAnyContainment(*this) || shouldApplyAnyContainment(*documentElementRenderer))) {
+
+        auto propagateWritingModeToRenderViewIfApplicable = [&] {
             // Propagate the new writing mode and direction up to the RenderView.
-            if (viewStyle.direction() != newStyle.direction() && (isDocElementRenderer || !documentElementRenderer->style().hasExplicitlySetDirection())) {
-                viewStyle.setDirection(newStyle.direction());
-                viewDirectionOrWritingModeChanged = true;
-                if (isBodyRenderer) {
-                    rootRenderer->mutableStyle().setDirection(newStyle.direction());
-                    rootStyleChanged = true;
-                }
-                setNeedsLayoutAndPrefWidthsRecalc();
+            if (!documentElementRenderer)
+                return;
+            if (!isBodyRenderer || !(shouldApplyAnyContainment(*this) || shouldApplyAnyContainment(*documentElementRenderer))) {
+                if (viewStyle.direction() != newStyle.direction() && (isDocElementRenderer || !documentElementRenderer->style().hasExplicitlySetDirection())) {
+                    viewStyle.setDirection(newStyle.direction());
+                    viewDirectionOrWritingModeChanged = true;
+                    if (isBodyRenderer) {
+                        rootRenderer->mutableStyle().setDirection(newStyle.direction());
+                        rootStyleChanged = true;
+                    }
+                    setNeedsLayoutAndPrefWidthsRecalc();
 
-                view().frameView().topContentDirectionDidChange();
-            }
-
-            if (viewStyle.writingMode() != newStyle.writingMode() && (isDocElementRenderer || !documentElementRenderer->style().hasExplicitlySetWritingMode())) {
-                viewStyle.setWritingMode(newStyle.writingMode());
-                viewDirectionOrWritingModeChanged = true;
-                view().setHorizontalWritingMode(newStyle.isHorizontalWritingMode());
-                view().markAllDescendantsWithFloatsForLayout();
-                if (isBodyRenderer) {
-                    rootStyleChanged = true;
-                    rootRenderer->mutableStyle().setWritingMode(newStyle.writingMode());
-                    rootRenderer->setHorizontalWritingMode(newStyle.isHorizontalWritingMode());
+                    view().frameView().topContentDirectionDidChange();
                 }
-                setNeedsLayoutAndPrefWidthsRecalc();
+
+                if (viewStyle.writingMode() != newStyle.writingMode() && (isDocElementRenderer || !documentElementRenderer->style().hasExplicitlySetWritingMode())) {
+                    viewStyle.setWritingMode(newStyle.writingMode());
+                    viewDirectionOrWritingModeChanged = true;
+                    view().setHorizontalWritingMode(newStyle.isHorizontalWritingMode());
+                    view().markAllDescendantsWithFloatsForLayout();
+                    if (isBodyRenderer) {
+                        rootStyleChanged = true;
+                        rootRenderer->mutableStyle().setWritingMode(newStyle.writingMode());
+                        rootRenderer->setHorizontalWritingMode(newStyle.isHorizontalWritingMode());
+                    }
+                    setNeedsLayoutAndPrefWidthsRecalc();
+                }
             }
-        }
+        };
+        propagateWritingModeToRenderViewIfApplicable();
 
 #if ENABLE(DARK_MODE_CSS)
         view().frameView().recalculateBaseBackgroundColor();
