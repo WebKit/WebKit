@@ -1,3 +1,13 @@
+2021-12-24  Simon Fraser  <simon.fraser@apple.com>
+
+        Apply the scroll delta in the "began" wheel event
+        https://bugs.webkit.org/show_bug.cgi?id=234645
+
+        Reviewed by Wenson Hsieh.
+
+        * Shared/WebWheelEventCoalescer.cpp:
+        (WebKit::WebWheelEventCoalescer::nextEventToDispatch): Fix logging typo.
+
 2021-12-23  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Modal container control classifier fails on some neutral controls that contain multiplication symbols

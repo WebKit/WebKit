@@ -26,6 +26,7 @@
 #include "config.h"
 #include "ScrollSnapAnimatorState.h"
 
+#include "Logging.h"
 #include "ScrollExtents.h"
 #include "ScrollingEffectsController.h"
 #include <wtf/MathExtras.h>
@@ -55,7 +56,7 @@ bool ScrollSnapAnimatorState::setupAnimationForState(ScrollSnapState state, cons
         float targetOffsetX, targetOffsetY;
         std::tie(targetOffsetX, m_activeSnapIndexX) = targetOffsetForStartOffset(ScrollEventAxis::Horizontal, scrollExtents, initialOffset.x(), targetOffset, pageScale, initialDelta.width());
         std::tie(targetOffsetY, m_activeSnapIndexY) = targetOffsetForStartOffset(ScrollEventAxis::Vertical, scrollExtents, initialOffset.y(), targetOffset, pageScale, initialDelta.height());
-
+        LOG_WITH_STREAM(ScrollAnimations, stream << "ScrollSnapAnimatorState::setupAnimationForState() - target offset " << targetOffset << " modified to " << FloatPoint(targetOffsetX, targetOffsetY));
         return FloatPoint { targetOffsetX, targetOffsetY };
     });
 

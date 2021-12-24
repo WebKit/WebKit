@@ -4,7 +4,7 @@ Initial state
 PASS outerScroller.scrollTop is 0
 PASS innerScroller.scrollTop is 0
 After scrolll
-PASS outerScroller.scrollTop is 200
+PASS outerScroller.scrollTop is 210
 PASS innerScroller.scrollTop is 0
 PASS successfullyParsed is true
 

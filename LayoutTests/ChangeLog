@@ -1,3 +1,40 @@
+2021-12-24  Simon Fraser  <simon.fraser@apple.com>
+
+        Apply the scroll delta in the "began" wheel event
+        https://bugs.webkit.org/show_bug.cgi?id=234645
+
+        Reviewed by Wenson Hsieh.
+
+        Fix various test issues, and rebase tests affected by the change.
+
+        * fast/scrolling/iframe-scrollable-after-back.html:
+        * fast/scrolling/overflow-scrollable-after-back.html: Applying the delta from the "began" event caused
+            multiple scroll events to fire, triggering multiple navigations (previously, event coalescing would result in a single
+            scroll for multiple "changed" events).
+            Fix by using UIHelper.mouseWheelScrollAt() and logging the scroll only once.
+        * fast/scrolling/latching/iframe-latch-small-deltas-expected.txt: Accumulated offset includes "began" delta.
+        * fast/scrolling/latching/iframe-latch-small-deltas.html: Ditto
+        * fast/scrolling/latching/latching-and-wheel-events-expected.txt: Ditto
+        * fast/scrolling/latching/overflow-in-iframe-latching-expected.txt: Ditto
+        * fast/scrolling/mac/momentum-animator-in-overflow.html: Remove comment.
+        * fast/scrolling/mac/momentum-animator-maybegin-stops.html: Ditto
+        * fast/scrolling/mac/momentum-animator.html: Ditto
+        * fast/scrolling/mac/momentum-event-sequence-expected.txt: Accumulated offset includes "began" delta.
+        * fast/scrolling/mac/momentum-event-sequence.html: Accumulated offset includes "began" delta.
+        * fast/scrolling/mac/rubberband-overflow-in-wheel-region.html: Wheel event coalescing resulted in
+            unpredictable behavior, so ensure there is one.
+        * platform/mac-wk1/fast/scrolling/latching/iframe-latch-small-deltas-expected.txt: Removed.
+        * platform/mac-wk1/fast/scrolling/latching/latching-and-wheel-events-expected.txt: Accumulated offset includes "began" delta.
+        * platform/mac-wk1/fast/scrolling/latching/overflow-in-iframe-latching-expected.txt: Ditto
+        * scrollingcoordinator/mac/latching/horizontal-overflow-in-vertical-overflow-expected.txt: Ditto
+        * scrollingcoordinator/mac/latching/horizontal-overflow-in-vertical-overflow.html: Ditto
+        * tiled-drawing/scrolling/fast-scroll-div-latched-mainframe-with-handler-expected.txt: Ditto
+        * tiled-drawing/scrolling/fast-scroll-select-latched-mainframe-expected.txt: Ditto
+        * tiled-drawing/scrolling/fast-scroll-select-latched-mainframe-with-handler-expected.txt: Ditto
+        * tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-2d-overflow.html: Test was designed with overlay scrollbars,
+        allowing for some between-snapoint slow that allowed an x delta to get applied. Fix to make room for scrollbars so that
+        snapping is always predictable.
+
 2021-12-24  Tim Nguyen  <ntim@apple.com>
 
         Unreviewed, r287356 followups and rebaselining for glib

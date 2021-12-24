@@ -20,7 +20,7 @@
                         type : "wheel",
                         viewX : 100,
                         viewY : 100,
-                        deltaY : -10, // Note that this delta is currently ignored.
+                        deltaY : -10,
                         phase : "began"
                     },
                     {
@@ -60,7 +60,7 @@
             };
 
             await UIHelper.mouseWheelSequence(wheelEventSquence);
-            shouldBe('window.scrollY', '46');
+            shouldBe('window.scrollY', '56');
         }
 
         async function scrollTest()

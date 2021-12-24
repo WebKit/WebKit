@@ -38,13 +38,13 @@
             await UIHelper.waitForScrollCompletion();
 
             debug('After scroll');
-            shouldBe('iframeTarget.contentWindow.pageYOffset', '400');
+            shouldBe('iframeTarget.contentWindow.pageYOffset', '410');
             shouldBe('window.pageYOffset', '200');
 
             await UIHelper.animationFrame();
 
             debug('After wait');
-            shouldBe('iframeTarget.contentWindow.pageYOffset', '400');
+            shouldBe('iframeTarget.contentWindow.pageYOffset', '410');
             shouldBe('window.pageYOffset', '200');
 
             eventSender.monitorWheelEvents({ resetLatching: false });
@@ -54,7 +54,7 @@
             eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'ended', 'none');
 
             await UIHelper.waitForScrollCompletion();
-            shouldBe('iframeTarget.contentWindow.pageYOffset', '380');
+            shouldBe('iframeTarget.contentWindow.pageYOffset', '400');
             shouldBe('window.pageYOffset', '200');
 
             finishJSTest();

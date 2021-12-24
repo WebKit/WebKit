@@ -129,7 +129,7 @@ std::optional<WebWheelEvent> WebWheelEventCoalescer::nextEventToDispatch()
 
 #if !LOG_DISABLED
     if (coalescedSequence->size() > 1)
-        LOG_WITH_STREAM(WheelEvents, stream << "WebWheelEventCoalescer::wheelEventWithCoalescing coalsesced " << *coalescedSequence << " into " << coalescedWebEvent);
+        LOG_WITH_STREAM(WheelEvents, stream << "WebWheelEventCoalescer::wheelEventWithCoalescing coalesced " << *coalescedSequence << " into " << coalescedWebEvent);
 #endif
 
     m_eventsBeingProcessed.append(WTFMove(coalescedSequence));

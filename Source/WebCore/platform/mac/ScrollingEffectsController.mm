@@ -141,7 +141,6 @@ bool ScrollingEffectsController::handleWheelEvent(const PlatformWheelEvent& whee
 
         stopRubberBandAnimation();
         updateRubberBandingState();
-        return true;
     }
 
     if (wheelEvent.phase() == PlatformWheelEventPhase::Ended) {
