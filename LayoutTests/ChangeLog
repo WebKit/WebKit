@@ -1,3 +1,53 @@
+2021-12-24  Tim Nguyen  <ntim@apple.com>
+
+        Remove non-standard -webkit-margin-collapse CSS property and longhands
+        https://bugs.webkit.org/show_bug.cgi?id=190788
+
+        Reviewed by Simon Fraser.
+
+        For fast/multicol/offset-top-left.html, reproduced the same visual result without
+        -webkit-border-collapse: separate. Unfortunately, offsetTop/offsetLeft aren't correct
+        in flipped writing mode despite correct visual results.
+
+        Filed webkit.org/b/234664 for the issue (which was pre-existing this patch).
+
+        * fast/block/margin-collapse/webkit-margin-collapse-container-expected.html: Removed.
+        * fast/block/margin-collapse/webkit-margin-collapse-container.html: Removed.
+        * fast/block/margin-collapse/webkit-margin-collapse-floats-expected.html: Removed.
+        * fast/block/margin-collapse/webkit-margin-collapse-floats.html: Removed.
+        * fast/block/margin-collapse/webkit-margin-collapse-separate-position-expected.txt: Removed.
+        * fast/block/margin-collapse/webkit-margin-collapse-separate-position.html: Removed.
+        * fast/block/margin-collapse/webkit-margin-collapse-siblings-bt-expected.html: Removed.
+        * fast/block/margin-collapse/webkit-margin-collapse-siblings-bt.html: Removed.
+        * fast/block/margin-collapse/webkit-margin-collapse-siblings-expected.html: Removed.
+        * fast/block/margin-collapse/webkit-margin-collapse-siblings.html: Removed.
+        * fast/css/getComputedStyle/computed-style-expected.txt:
+        * fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+        * fast/css/getComputedStyle/resources/property-names.js:
+        * fast/css/getPropertyValue-webkit-margin-collapse-expected.txt: Removed.
+        * fast/css/getPropertyValue-webkit-margin-collapse.html: Removed.
+        * fast/css/inherit-initial-shorthand-values-expected.txt:
+        * fast/css/inherit-initial-shorthand-values.html:
+        * fast/css/remove-shorthand-expected.txt:
+        * fast/css/remove-shorthand.html:
+        * fast/multicol/offset-top-left-expected.txt:
+        * fast/multicol/offset-top-left.html:
+        * fast/text/text-combine-crash.html:
+        * platform/glib/fast/css/getComputedStyle/computed-style-expected.txt:
+        * platform/glib/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+        * platform/glib/svg/css/getComputedStyle-basic-expected.txt:
+        * platform/gtk/imported/w3c/web-platform-tests/css/cssom/getComputedStyle-detached-subtree-expected.txt:
+        * platform/ios-wk2/imported/w3c/web-platform-tests/css/cssom/getComputedStyle-detached-subtree-expected.txt: Removed.
+        * platform/ios/fast/css/getComputedStyle/computed-style-expected.txt:
+        * platform/ios/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+        * platform/ios/imported/w3c/web-platform-tests/css/css-cascade/all-prop-initial-xml-expected.txt:
+        * platform/ios/imported/w3c/web-platform-tests/css/cssom/getComputedStyle-detached-subtree-expected.txt:
+        * platform/ios/svg/css/getComputedStyle-basic-expected.txt:
+        * platform/mac/fast/css/getComputedStyle/computed-style-expected.txt:
+        * platform/mac/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+        * platform/mac/svg/css/getComputedStyle-basic-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/css/cssom/getComputedStyle-detached-subtree-expected.txt:
+
 2021-12-24  Sam Weinig  <weinig@apple.com>
 
         On systems without CG support for alpha premultiplied gradients, the CGGradientRef path should still be used for the subset of gradients that can transformed

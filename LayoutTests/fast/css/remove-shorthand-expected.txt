@@ -53,9 +53,6 @@ and adds "".
 Removing margin
 removes "margin"
 and adds "".
-Removing -webkit-margin-collapse
-removes "-webkit-margin-before-collapse, -webkit-margin-after-collapse"
-and adds "".
 Removing -webkit-mask
 removes "mask-image, -webkit-mask-position-x, -webkit-mask-position-y, mask-repeat-x, mask-repeat-y, -webkit-mask"
 and adds "".

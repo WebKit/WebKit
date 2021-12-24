@@ -285,8 +285,6 @@ String StyleProperties::getPropertyValue(CSSPropertyID propertyID) const
         return get2Values(marginBlockShorthand());
     case CSSPropertyMarginInline:
         return get2Values(marginInlineShorthand());
-    case CSSPropertyWebkitMarginCollapse:
-        return getShorthandValue(webkitMarginCollapseShorthand());
     case CSSPropertyOverflow:
         return get2Values(overflowShorthand());
     case CSSPropertyOverscrollBehavior:

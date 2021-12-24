@@ -78,8 +78,6 @@ var propertiesToTest = {
     "-webkit-line-grid": true,
     "-webkit-line-snap": true,
     "-webkit-locale": true,
-    "-webkit-margin-after-collapse": true,
-    "-webkit-margin-before-collapse": true,
     "-webkit-mask-attachment": true,
     "-webkit-mask-box-image": true,
     "-webkit-mask-box-image-outset": true,

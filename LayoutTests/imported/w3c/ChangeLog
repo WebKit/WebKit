@@ -1,3 +1,13 @@
+2021-12-24  Tim Nguyen  <ntim@apple.com>
+
+        Remove non-standard -webkit-margin-collapse CSS property and longhands
+        https://bugs.webkit.org/show_bug.cgi?id=190788
+
+        Reviewed by Simon Fraser.
+
+        * web-platform-tests/css/css-cascade/all-prop-initial-xml-expected.txt:
+        * web-platform-tests/css/cssom/getComputedStyle-detached-subtree-expected.txt:
+
 2021-12-22  Antti Koivisto  <antti@apple.com>
 
         [:has() pseudo-class] :has() selector invalidation issue with toggling :checked

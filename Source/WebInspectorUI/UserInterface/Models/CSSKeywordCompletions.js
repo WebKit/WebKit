@@ -1096,18 +1096,6 @@ WI.CSSKeywordCompletions._propertyKeywordMap = {
     "-webkit-logical-width": [
         "auto", "intrinsic", "min-intrinsic", "min-content", "-webkit-min-content", "max-content", "-webkit-max-content", "-webkit-fill-available", "fit-content", "-webkit-fit-content", "calc()"
     ],
-    "-webkit-margin-after-collapse": [
-        "collapse", "separate", "discard",
-    ],
-    "-webkit-margin-before-collapse": [
-        "collapse", "separate", "discard",
-    ],
-    "-webkit-margin-bottom-collapse": [
-        "collapse", "separate", "discard",
-    ],
-    "-webkit-margin-top-collapse": [
-        "collapse", "separate", "discard",
-    ],
     "-webkit-max-logical-height": [
         "auto", "intrinsic", "min-intrinsic", "min-content", "-webkit-min-content", "max-content", "-webkit-max-content", "-webkit-fill-available", "fit-content", "-webkit-fit-content", "none", "calc()"
     ],

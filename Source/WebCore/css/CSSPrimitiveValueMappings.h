@@ -1804,42 +1804,6 @@ template<> inline CSSPrimitiveValue::operator ListStyleType() const
     }
 }
 
-template<> inline CSSPrimitiveValue::CSSPrimitiveValue(MarginCollapse e)
-    : CSSValue(PrimitiveClass)
-{
-    setPrimitiveUnitType(CSSUnitType::CSS_VALUE_ID);
-    switch (e) {
-    case MarginCollapse::Collapse:
-        m_value.valueID = CSSValueCollapse;
-        break;
-    case MarginCollapse::Separate:
-        m_value.valueID = CSSValueSeparate;
-        break;
-    case MarginCollapse::Discard:
-        m_value.valueID = CSSValueDiscard;
-        break;
-    }
-}
-
-template<> inline CSSPrimitiveValue::operator MarginCollapse() const
-{
-    ASSERT(isValueID());
-
-    switch (m_value.valueID) {
-    case CSSValueCollapse:
-        return MarginCollapse::Collapse;
-    case CSSValueSeparate:
-        return MarginCollapse::Separate;
-    case CSSValueDiscard:
-        return MarginCollapse::Discard;
-    default:
-        break;
-    }
-
-    ASSERT_NOT_REACHED();
-    return MarginCollapse::Collapse;
-}
-
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(MarqueeBehavior e)
     : CSSValue(PrimitiveClass)
 {

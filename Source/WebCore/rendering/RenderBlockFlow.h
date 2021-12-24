@@ -119,8 +119,6 @@ public:
         RenderBlockFlowRareData(const RenderBlockFlow& block)
             : m_margins(positiveMarginBeforeDefault(block), negativeMarginBeforeDefault(block), positiveMarginAfterDefault(block), negativeMarginAfterDefault(block))
             , m_lineBreakToAvoidWidow(-1)
-            , m_discardMarginBefore(false)
-            , m_discardMarginAfter(false)
             , m_didBreakAtLineToAvoidWidow(false)
         { 
         }
@@ -147,9 +145,7 @@ public:
         std::unique_ptr<LegacyRootInlineBox> m_lineGridBox;
 
         WeakPtr<RenderMultiColumnFlow> m_multiColumnFlow;
-        
-        bool m_discardMarginBefore : 1;
-        bool m_discardMarginAfter : 1;
+
         bool m_didBreakAtLineToAvoidWidow : 1;
     };
 
@@ -179,8 +175,6 @@ public:
         bool m_hasMarginAfterQuirk : 1;
         bool m_determinedMarginBeforeQuirk : 1;
 
-        bool m_discardMargin : 1;
-
         // These flags track the previous maximal positive and negative margins.
         LayoutUnit m_positiveMargin;
         LayoutUnit m_negativeMargin;
@@ -198,24 +192,21 @@ public:
         void setHasMarginBeforeQuirk(bool b) { m_hasMarginBeforeQuirk = b; }
         void setHasMarginAfterQuirk(bool b) { m_hasMarginAfterQuirk = b; }
         void setDeterminedMarginBeforeQuirk(bool b) { m_determinedMarginBeforeQuirk = b; }
-        void setPositiveMargin(LayoutUnit p) { ASSERT(!m_discardMargin); m_positiveMargin = p; }
-        void setNegativeMargin(LayoutUnit n) { ASSERT(!m_discardMargin); m_negativeMargin = n; }
+        void setPositiveMargin(LayoutUnit p) { m_positiveMargin = p; }
+        void setNegativeMargin(LayoutUnit n) { m_negativeMargin = n; }
         void setPositiveMarginIfLarger(LayoutUnit p)
         {
-            ASSERT(!m_discardMargin);
             if (p > m_positiveMargin)
                 m_positiveMargin = p;
         }
         void setNegativeMarginIfLarger(LayoutUnit n)
         {
-            ASSERT(!m_discardMargin);
             if (n > m_negativeMargin)
                 m_negativeMargin = n;
         }
 
-        void setMargin(LayoutUnit p, LayoutUnit n) { ASSERT(!m_discardMargin); m_positiveMargin = p; m_negativeMargin = n; }
+        void setMargin(LayoutUnit p, LayoutUnit n) { m_positiveMargin = p; m_negativeMargin = n; }
         void setCanCollapseMarginAfterWithChildren(bool collapse) { m_canCollapseMarginAfterWithChildren = collapse; }
-        void setDiscardMargin(bool value) { m_discardMargin = value; }
 
         bool atBeforeSideOfBlock() const { return m_atBeforeSideOfBlock; }
         bool canCollapseWithMarginBefore() const { return m_atBeforeSideOfBlock && m_canCollapseMarginBeforeWithChildren; }
@@ -228,7 +219,6 @@ public:
         bool hasMarginAfterQuirk() const { return m_hasMarginAfterQuirk; }
         LayoutUnit positiveMargin() const { return m_positiveMargin; }
         LayoutUnit negativeMargin() const { return m_negativeMargin; }
-        bool discardMargin() const { return m_discardMargin; }
         LayoutUnit margin() const { return m_positiveMargin - m_negativeMargin; }
     };
     LayoutUnit marginOffsetForSelfCollapsingBlock();
@@ -247,7 +237,7 @@ public:
 
     LayoutUnit clearFloatsIfNeeded(RenderBox& child, MarginInfo&, LayoutUnit oldTopPosMargin, LayoutUnit oldTopNegMargin, LayoutUnit yPos);
     LayoutUnit estimateLogicalTopPosition(RenderBox& child, const MarginInfo&, LayoutUnit& estimateWithoutPagination);
-    void marginBeforeEstimateForChild(RenderBox&, LayoutUnit&, LayoutUnit&, bool&) const;
+    void marginBeforeEstimateForChild(RenderBox&, LayoutUnit&, LayoutUnit&) const;
     void handleAfterSideOfBlock(LayoutUnit top, LayoutUnit bottom, MarginInfo&);
     void setCollapsedBottomMargin(const MarginInfo&);
 
@@ -431,23 +421,10 @@ protected:
 
         rareBlockFlowData()->m_margins = MarginValues(RenderBlockFlowRareData::positiveMarginBeforeDefault(*this) , RenderBlockFlowRareData::negativeMarginBeforeDefault(*this),
             RenderBlockFlowRareData::positiveMarginAfterDefault(*this), RenderBlockFlowRareData::negativeMarginAfterDefault(*this));
-        rareBlockFlowData()->m_discardMarginBefore = false;
-        rareBlockFlowData()->m_discardMarginAfter = false;
     }
 
     void setMaxMarginBeforeValues(LayoutUnit pos, LayoutUnit neg);
     void setMaxMarginAfterValues(LayoutUnit pos, LayoutUnit neg);
-
-    void setMustDiscardMarginBefore(bool = true);
-    void setMustDiscardMarginAfter(bool = true);
-
-    bool mustDiscardMarginBefore() const;
-    bool mustDiscardMarginAfter() const;
-
-    bool mustDiscardMarginBeforeForChild(const RenderBox&) const;
-    bool mustDiscardMarginAfterForChild(const RenderBox&) const;
-    bool mustSeparateMarginBeforeForChild(const RenderBox&) const;
-    bool mustSeparateMarginAfterForChild(const RenderBox&) const;
 
     void styleWillChange(StyleDifference, const RenderStyle& newStyle) override;
     void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;

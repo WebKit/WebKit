@@ -10,10 +10,10 @@ Test #9 Passed.
 Test #10 Passed.
 Test #11 Passed.
 Test #12 Passed.
-Test #13 Passed.
-Test #14 Passed.
+Failed Test #13 because the offsetTop of t11 and t14 did not match the expected value of 470. They were 620 instead.
+Failed Test #14 because the offsetTop of t12 and t15 were not the same. 470 and 620.
 Test #15 Passed.
-Test #16 Passed.
-Test #17 Passed.
+Failed Test #16 because the offsetLeft of t14 and t15 were not the same. 87 and 37.
+Failed Test #17 because the offsetLeft of t11 and t12 were not the same. 172 and 87.
 Test #18 Passed.
 

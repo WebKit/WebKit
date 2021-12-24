@@ -251,12 +251,6 @@ enum class UsedFloat : uint8_t {
     Right,
 };
 
-enum class MarginCollapse : uint8_t {
-    Collapse,
-    Separate,
-    Discard
-};
-
 // Box decoration attributes. Not inherited.
 
 enum class BoxDecorationBreak : uint8_t {
@@ -1306,7 +1300,6 @@ WTF::TextStream& operator<<(WTF::TextStream&, LineBreak);
 WTF::TextStream& operator<<(WTF::TextStream&, LineSnap);
 WTF::TextStream& operator<<(WTF::TextStream&, ListStylePosition);
 WTF::TextStream& operator<<(WTF::TextStream&, ListStyleType);
-WTF::TextStream& operator<<(WTF::TextStream&, MarginCollapse);
 WTF::TextStream& operator<<(WTF::TextStream&, MarqueeBehavior);
 WTF::TextStream& operator<<(WTF::TextStream&, MarqueeDirection);
 WTF::TextStream& operator<<(WTF::TextStream&, MaskMode);

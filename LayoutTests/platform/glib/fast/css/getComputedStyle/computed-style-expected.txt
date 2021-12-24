@@ -232,8 +232,6 @@ zoom: 1;
 -webkit-line-grid: none;
 -webkit-line-snap: none;
 -webkit-locale: auto;
--webkit-margin-after-collapse: collapse;
--webkit-margin-before-collapse: collapse;
 -webkit-mask-box-image: none;
 -webkit-mask-box-image-outset: 0;
 -webkit-mask-box-image-repeat: stretch;

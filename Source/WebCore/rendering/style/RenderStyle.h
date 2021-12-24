@@ -614,8 +614,6 @@ public:
     UserSelect userSelectIncludingInert() const { return effectiveInert() ? UserSelect::None : userSelect(); }
     UserSelect userSelect() const { return static_cast<UserSelect>(m_rareInheritedData->userSelect); }
     TextOverflow textOverflow() const { return static_cast<TextOverflow>(m_rareNonInheritedData->textOverflow); }
-    MarginCollapse marginBeforeCollapse() const { return static_cast<MarginCollapse>(m_rareNonInheritedData->marginBeforeCollapse); }
-    MarginCollapse marginAfterCollapse() const { return static_cast<MarginCollapse>(m_rareNonInheritedData->marginAfterCollapse); }
     WordBreak wordBreak() const { return static_cast<WordBreak>(m_rareInheritedData->wordBreak); }
     OverflowWrap overflowWrap() const { return static_cast<OverflowWrap>(m_rareInheritedData->overflowWrap); }
     NBSPMode nbspMode() const { return static_cast<NBSPMode>(m_rareInheritedData->nbspMode); }
@@ -1214,8 +1212,6 @@ public:
     void setUserDrag(UserDrag d) { SET_VAR(m_rareNonInheritedData, userDrag, static_cast<unsigned>(d)); }
     void setUserSelect(UserSelect s) { SET_VAR(m_rareInheritedData, userSelect, static_cast<unsigned>(s)); }
     void setTextOverflow(TextOverflow overflow) { SET_VAR(m_rareNonInheritedData, textOverflow, static_cast<unsigned>(overflow)); }
-    void setMarginBeforeCollapse(MarginCollapse c) { SET_VAR(m_rareNonInheritedData, marginBeforeCollapse, static_cast<unsigned>(c)); }
-    void setMarginAfterCollapse(MarginCollapse c) { SET_VAR(m_rareNonInheritedData, marginAfterCollapse, static_cast<unsigned>(c)); }
     void setWordBreak(WordBreak b) { SET_VAR(m_rareInheritedData, wordBreak, static_cast<unsigned>(b)); }
     void setOverflowWrap(OverflowWrap b) { SET_VAR(m_rareInheritedData, overflowWrap, static_cast<unsigned>(b)); }
     void setNBSPMode(NBSPMode b) { SET_VAR(m_rareInheritedData, nbspMode, static_cast<unsigned>(b)); }
@@ -1658,8 +1654,6 @@ public:
     static UserDrag initialUserDrag() { return UserDrag::Auto; }
     static UserSelect initialUserSelect() { return UserSelect::Text; }
     static TextOverflow initialTextOverflow() { return TextOverflow::Clip; }
-    static MarginCollapse initialMarginBeforeCollapse() { return MarginCollapse::Collapse; }
-    static MarginCollapse initialMarginAfterCollapse() { return MarginCollapse::Collapse; }
     static WordBreak initialWordBreak() { return WordBreak::Normal; }
     static OverflowWrap initialOverflowWrap() { return OverflowWrap::Normal; }
     static NBSPMode initialNBSPMode() { return NBSPMode::Normal; }

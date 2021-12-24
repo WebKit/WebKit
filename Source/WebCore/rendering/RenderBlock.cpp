@@ -492,8 +492,7 @@ bool RenderBlock::isSelfCollapsingBlock() const
     // (e) have specified that one of our margins can't collapse using a CSS extension
     if (logicalHeight() > 0
         || isTable() || borderAndPaddingLogicalHeight()
-        || style().logicalMinHeight().isPositive()
-        || style().marginBeforeCollapse() == MarginCollapse::Separate || style().marginAfterCollapse() == MarginCollapse::Separate)
+        || style().logicalMinHeight().isPositive())
         return false;
 
     Length logicalHeightLength = style().logicalHeight();

@@ -6321,63 +6321,6 @@
                 "url": "https://www.w3.org/TR/css-line-grid-1/#box-snap"
             }
         },
-        "-webkit-margin-after-collapse": {
-            "values": [
-                "collapse",
-                "separate",
-                "discard"
-            ],
-            "status": {
-                "status": "experimental"
-            }
-        },
-        "-webkit-margin-before-collapse": {
-            "values": [
-                "collapse",
-                "separate",
-                "discard"
-            ],
-            "status": {
-                "status": "experimental"
-            }
-        },
-        "-webkit-margin-bottom-collapse": {
-            "values": [
-                "collapse",
-                "separate",
-                "discard"
-            ],
-            "codegen-properties": {
-                "name-for-methods": "MarginAfterCollapse"
-            },
-            "status": {
-                "status": "experimental"
-            }
-        },
-        "-webkit-margin-top-collapse": {
-            "values": [
-                "collapse",
-                "separate",
-                "discard"
-            ],
-            "codegen-properties": {
-                "name-for-methods": "MarginBeforeCollapse"
-            },
-            "status": {
-                "status": "experimental"
-            }
-        },
-        "-webkit-margin-collapse": {
-            "codegen-properties": {
-                "longhands": [
-                    "-webkit-margin-before-collapse",
-                    "-webkit-margin-after-collapse"
-                ]
-            },
-            "status": {
-                "status": "experimental"
-            }
-        },
         "-webkit-marquee-direction": {
             "codegen-properties": {
                 "internal-only": true

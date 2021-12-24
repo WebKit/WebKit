@@ -3688,12 +3688,6 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
             auto size = !style.initialLetterHeight() ? cssValuePool.createIdentifierValue(CSSValueNormal) : cssValuePool.createValue(style.initialLetterHeight(), CSSUnitType::CSS_NUMBER);
             return cssValuePool.createValue(Pair::create(WTFMove(drop), WTFMove(size)));
         }
-        case CSSPropertyWebkitMarginBottomCollapse:
-        case CSSPropertyWebkitMarginAfterCollapse:
-            return cssValuePool.createValue(style.marginAfterCollapse());
-        case CSSPropertyWebkitMarginTopCollapse:
-        case CSSPropertyWebkitMarginBeforeCollapse:
-            return cssValuePool.createValue(style.marginBeforeCollapse());
 #if ENABLE(OVERFLOW_SCROLLING_TOUCH)
         case CSSPropertyWebkitOverflowScrolling:
             if (!style.useTouchOverflowScrolling())
@@ -4171,7 +4165,6 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
 
         /* Unimplemented -webkit- properties */
         case CSSPropertyWebkitBorderRadius:
-        case CSSPropertyWebkitMarginCollapse:
         case CSSPropertyWebkitMarqueeDirection:
         case CSSPropertyWebkitMarqueeIncrement:
         case CSSPropertyWebkitMarqueeRepetition:
