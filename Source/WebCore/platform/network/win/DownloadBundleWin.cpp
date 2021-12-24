@@ -41,11 +41,6 @@ static uint32_t magicNumber()
     return 0xDECAF4EA;
 }
 
-static void fileCloser(FILE* file) 
-{
-    fclose(file);
-};
-
 const String& fileExtension()
 {
     static const NeverDestroyed<String> extension { ".download"_s };
@@ -69,7 +64,7 @@ bool appendResumeData(const uint8_t* resumeBytes, uint32_t resumeLength, const S
         LOG_ERROR("Failed to open file %s to append resume data", bundlePath.ascii().data());
         return false;
     }
-    std::unique_ptr<FILE, decltype(&fileCloser)> bundle(bundlePtr, &fileCloser);
+    std::unique_ptr<FILE, decltype(&fclose)> bundle(bundlePtr, &fclose);
 
     if (fwrite(resumeBytes, 1, resumeLength, bundle.get()) != resumeLength) {
         LOG_ERROR("Failed to write resume data to the bundle - errno(%i)", errno);
@@ -104,7 +99,7 @@ bool extractResumeData(const String& bundlePath, Vector<uint8_t>& resumeData)
         LOG_ERROR("Failed to open file %s to get resume data", bundlePath.ascii().data());
         return false;
     }
-    std::unique_ptr<FILE, decltype(&fileCloser)> bundle(bundlePtr, &fileCloser);
+    std::unique_ptr<FILE, decltype(&fclose)> bundle(bundlePtr, &fclose);
 
     // Stat the file to get its size
     struct _stat64 fileStat;
