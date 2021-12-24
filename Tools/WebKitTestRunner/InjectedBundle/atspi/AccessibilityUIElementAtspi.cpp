@@ -371,6 +371,10 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::stringAttributeValue(JSStringRe
             value = checkElementState(m_element.get(), WebCore::Atspi::State::InvalidEntry) ? "true" : "false";
         return OpaqueJSString::tryCreate(value).leakRef();
     }
+    if (attributeName == "AXARIALive")
+        return OpaqueJSString::tryCreate(attributes.get("live")).leakRef();
+    if (attributeName == "AXARIARelevant")
+        return OpaqueJSString::tryCreate(attributes.get("relevant")).leakRef();
 
     return JSStringCreateWithCharacters(nullptr, 0);
 }
@@ -469,6 +473,8 @@ bool AccessibilityUIElement::boolAttributeValue(JSStringRef attribute)
         return m_element->interfaces().contains(WebCore::AccessibilityObjectAtspi::Interface::Table);
     if (attributeName == "AXInterfaceTableCell")
         return m_element->interfaces().contains(WebCore::AccessibilityObjectAtspi::Interface::TableCell);
+    if (attributeName == "AXARIAAtomic")
+        return m_element->attributes().get("atomic") == "true";
 
     return false;
 }
@@ -539,6 +545,16 @@ bool AccessibilityUIElement::isAttributeSupported(JSStringRef attribute)
         return attributes.contains("setsize");
     if (attributeName == "AXARIAPosInSet")
         return attributes.contains("posinset");
+    if (attributeName == "AXARIALive") {
+        auto value = attributes.get("live");
+        return !value.isEmpty() && value != "off";
+    }
+    if (attributeName == "AXARIARelevant")
+        return attributes.contains("relevant");
+    if (attributeName == "AXARIAAtomic")
+        return attributes.contains("atomic");
+    if (attributeName == "AXElementBusy")
+        return true;
 
     return false;
 }

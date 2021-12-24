@@ -1030,6 +1030,27 @@ HashMap<String, String> AccessibilityObjectAtspi::attributes() const
     else if (m_coreObject->isMathMultiscriptObject(AccessibilityMathMultiscriptObjectType::PostSuperscript) || m_coreObject->isMathMultiscriptObject(AccessibilityMathMultiscriptObjectType::PostSubscript))
         map.add("multiscript-type", "post");
 
+    if (auto* liveContainer = m_coreObject->liveRegionAncestor(false)) {
+        auto liveStatus = liveContainer->liveRegionStatus();
+        map.add("container-live", liveStatus);
+        auto relevant = liveContainer->liveRegionRelevant();
+        map.add("container-relevant", relevant);
+        bool isAtomic = liveContainer->liveRegionAtomic();
+        if (isAtomic)
+            map.add("container-atomic", "true");
+        const String& liveRole = roleString.isEmpty() ? computedRoleString : roleString;
+        if (!liveRole.isEmpty())
+            map.add("container-live-role", liveRole);
+
+        if (liveContainer == m_coreObject) {
+            map.add("live", liveStatus);
+            map.add("relevant", relevant);
+            if (isAtomic)
+                map.add("atomic", "true");
+        } else if (!isAtomic && m_coreObject->liveRegionAtomic())
+            map.add("atomic", "true");
+    }
+
     return map;
 }
 
