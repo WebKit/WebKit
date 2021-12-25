@@ -6619,12 +6619,6 @@
                 "url": "https://www.w3.org/TR/css-counter-styles-3/#counter-style-suffix"
             }
         },
-        "-webkit-svg-shadow": {
-            "codegen-properties": {
-                "skip-codegen": true
-            },
-            "status": "removed"
-        },
         "-webkit-text-combine": {
             "inherited": true,
             "values": [
