@@ -464,7 +464,7 @@
                 "url": "https://drafts.csswg.org/css-fonts-4/#font-variation-settings-def"
             }
         },
-        "-webkit-font-kerning": {
+        "font-kerning": {
             "inherited": true,
             "values": [
                 "auto",
@@ -473,7 +473,7 @@
             ],
             "codegen-properties": {
                 "aliases": [
-                    "font-kerning"
+                    "-webkit-font-kerning"
                 ],
                 "name-for-methods": "Kerning",
                 "font-property": true,

@@ -3480,7 +3480,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
             return cssValuePool.createValue(style.nbspMode());
         case CSSPropertyResize:
             return cssValuePool.createValue(style.resize());
-        case CSSPropertyWebkitFontKerning:
+        case CSSPropertyFontKerning:
             return cssValuePool.createValue(style.fontDescription().kerning());
         case CSSPropertyWebkitFontSmoothing:
             return cssValuePool.createValue(style.fontDescription().fontSmoothing());

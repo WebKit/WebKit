@@ -112,6 +112,7 @@ PASS flood-color
 PASS flood-opacity
 PASS font-family
 PASS font-feature-settings
+PASS font-kerning
 PASS font-optical-sizing
 PASS font-size
 PASS font-stretch
@@ -327,7 +328,6 @@ PASS -webkit-column-break-before
 PASS -webkit-column-break-inside
 PASS -webkit-column-progression
 PASS -webkit-cursor-visibility
-PASS -webkit-font-kerning
 PASS -webkit-font-smoothing
 PASS -webkit-hyphenate-character
 PASS -webkit-hyphenate-limit-after

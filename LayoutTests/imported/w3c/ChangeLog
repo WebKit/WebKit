@@ -1,5 +1,16 @@
 2021-12-24  Tim Nguyen  <ntim@apple.com>
 
+        Internally unprefix -webkit-font-kerning CSS property
+        https://bugs.webkit.org/show_bug.cgi?id=234673
+
+        Reviewed by Myles C. Maxfield.
+
+        Same to what was done in bug 234602 for text-emphasis CSS properties.
+
+        * web-platform-tests/css/css-cascade/all-prop-initial-xml-expected.txt:
+
+2021-12-24  Tim Nguyen  <ntim@apple.com>
+
         Remove non-standard -webkit-background-composite CSS property
         https://bugs.webkit.org/show_bug.cgi?id=234661
 

@@ -148,6 +148,8 @@ rect: style.getPropertyValue(flood-color) : rgb(0, 0, 0)
 rect: style.getPropertyCSSValue(flood-color) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(flood-opacity) : 1
 rect: style.getPropertyCSSValue(flood-opacity) : [object CSSPrimitiveValue]
+rect: style.getPropertyValue(font-kerning) : auto
+rect: style.getPropertyCSSValue(font-kerning) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(font-optical-sizing) : auto
 rect: style.getPropertyCSSValue(font-optical-sizing) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(font-size) : 16px
@@ -340,6 +342,12 @@ rect: style.getPropertyValue(text-anchor) : start
 rect: style.getPropertyCSSValue(text-anchor) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(text-decoration) : none
 rect: style.getPropertyCSSValue(text-decoration) : [object CSSPrimitiveValue]
+rect: style.getPropertyValue(text-emphasis-color) : rgb(0, 0, 0)
+rect: style.getPropertyCSSValue(text-emphasis-color) : [object CSSPrimitiveValue]
+rect: style.getPropertyValue(text-emphasis-position) : over right
+rect: style.getPropertyCSSValue(text-emphasis-position) : [object CSSValueList]
+rect: style.getPropertyValue(text-emphasis-style) : none
+rect: style.getPropertyCSSValue(text-emphasis-style) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(text-indent) : 0px
 rect: style.getPropertyCSSValue(text-indent) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(text-overflow) : clip
@@ -434,8 +442,6 @@ rect: style.getPropertyValue(-webkit-column-break-before) : auto
 rect: style.getPropertyCSSValue(-webkit-column-break-before) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-column-break-inside) : auto
 rect: style.getPropertyCSSValue(-webkit-column-break-inside) : [object CSSPrimitiveValue]
-rect: style.getPropertyValue(-webkit-font-kerning) : auto
-rect: style.getPropertyCSSValue(-webkit-font-kerning) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-font-smoothing) : auto
 rect: style.getPropertyCSSValue(-webkit-font-smoothing) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-hyphenate-character) : auto
@@ -652,6 +658,8 @@ g: style.getPropertyValue(flood-color) : rgb(0, 0, 0)
 g: style.getPropertyCSSValue(flood-color) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(flood-opacity) : 1
 g: style.getPropertyCSSValue(flood-opacity) : [object CSSPrimitiveValue]
+g: style.getPropertyValue(font-kerning) : auto
+g: style.getPropertyCSSValue(font-kerning) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(font-optical-sizing) : auto
 g: style.getPropertyCSSValue(font-optical-sizing) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(font-size) : 16px
@@ -844,6 +852,12 @@ g: style.getPropertyValue(text-anchor) : start
 g: style.getPropertyCSSValue(text-anchor) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(text-decoration) : none
 g: style.getPropertyCSSValue(text-decoration) : [object CSSPrimitiveValue]
+g: style.getPropertyValue(text-emphasis-color) : rgb(0, 0, 0)
+g: style.getPropertyCSSValue(text-emphasis-color) : [object CSSPrimitiveValue]
+g: style.getPropertyValue(text-emphasis-position) : over right
+g: style.getPropertyCSSValue(text-emphasis-position) : [object CSSValueList]
+g: style.getPropertyValue(text-emphasis-style) : none
+g: style.getPropertyCSSValue(text-emphasis-style) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(text-indent) : 0px
 g: style.getPropertyCSSValue(text-indent) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(text-overflow) : clip
@@ -938,8 +952,6 @@ g: style.getPropertyValue(-webkit-column-break-before) : auto
 g: style.getPropertyCSSValue(-webkit-column-break-before) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-column-break-inside) : auto
 g: style.getPropertyCSSValue(-webkit-column-break-inside) : [object CSSPrimitiveValue]
-g: style.getPropertyValue(-webkit-font-kerning) : auto
-g: style.getPropertyCSSValue(-webkit-font-kerning) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-font-smoothing) : auto
 g: style.getPropertyCSSValue(-webkit-font-smoothing) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-hyphenate-character) : auto

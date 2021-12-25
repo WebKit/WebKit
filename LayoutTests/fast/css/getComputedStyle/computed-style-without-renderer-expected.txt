@@ -74,6 +74,7 @@ flex-wrap: nowrap
 float: none
 flood-color: rgb(0, 0, 0)
 flood-opacity: 1
+font-kerning: auto
 font-size: 16px
 font-style: normal
 font-synthesis: weight style small-caps
@@ -166,6 +167,9 @@ table-layout: auto
 text-align: start
 text-anchor: start
 text-decoration: none
+text-emphasis-color: rgb(0, 0, 0)
+text-emphasis-position: over right
+text-emphasis-style: none
 text-indent: 0px
 text-overflow: clip
 text-rendering: auto
@@ -214,7 +218,6 @@ zoom: 1
 -webkit-column-break-after: auto
 -webkit-column-break-before: auto
 -webkit-column-break-inside: auto
--webkit-font-kerning: auto
 -webkit-font-smoothing: auto
 -webkit-hyphenate-character: auto
 -webkit-hyphenate-limit-after: auto

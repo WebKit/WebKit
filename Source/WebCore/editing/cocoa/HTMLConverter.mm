@@ -1013,7 +1013,7 @@ NSDictionary *HTMLConverter::computedAttributesForElement(Element& element)
     if (strokeColor)
         [attrs setObject:strokeColor.get() forKey:NSStrokeColorAttributeName];
 
-    String fontKerning = _caches->propertyValueForNode(element, CSSPropertyWebkitFontKerning);
+    String fontKerning = _caches->propertyValueForNode(element, CSSPropertyFontKerning);
     String letterSpacing = _caches->propertyValueForNode(element, CSSPropertyLetterSpacing);
     if (fontKerning.length() || letterSpacing.length()) {
         if (fontKerning == "none")

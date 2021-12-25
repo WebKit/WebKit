@@ -792,7 +792,7 @@ bool CSSParserFastPaths::isValidKeywordPropertyAndValue(CSSPropertyID propertyId
         return valueID == CSSValueNowrap || valueID == CSSValueWrap || valueID == CSSValueWrapReverse;
     case CSSPropertyWebkitHyphens:
         return valueID == CSSValueAuto || valueID == CSSValueNone || valueID == CSSValueManual;
-    case CSSPropertyWebkitFontKerning:
+    case CSSPropertyFontKerning:
         return valueID == CSSValueAuto || valueID == CSSValueNormal || valueID == CSSValueNone;
     case CSSPropertyWebkitFontSmoothing:
         return valueID == CSSValueAuto || valueID == CSSValueNone || valueID == CSSValueAntialiased || valueID == CSSValueSubpixelAntialiased;
@@ -928,6 +928,7 @@ bool CSSParserFastPaths::isKeywordPropertyID(CSSPropertyID propertyId)
     case CSSPropertyFlexDirection:
     case CSSPropertyFlexWrap:
     case CSSPropertyFloat:
+    case CSSPropertyFontKerning:
     case CSSPropertyFontVariantAlternates:
     case CSSPropertyFontVariantCaps:
     case CSSPropertyFontVariantPosition:
@@ -963,7 +964,6 @@ bool CSSParserFastPaths::isKeywordPropertyID(CSSPropertyID propertyId)
     case CSSPropertyWebkitBoxOrient:
     case CSSPropertyWebkitBoxPack:
     case CSSPropertyWebkitColumnAxis:
-    case CSSPropertyWebkitFontKerning:
     case CSSPropertyWebkitFontSmoothing:
     case CSSPropertyWebkitHyphens:
     case CSSPropertyWebkitLineAlign:
@@ -1009,13 +1009,11 @@ bool CSSParserFastPaths::isKeywordPropertyID(CSSPropertyID propertyId)
 
     // FIXME-NEWPARSER: Add the following unprefixed properties:
     // case CSSPropertyBackfaceVisibility:
-    // case CSSPropertyFontKerning:
     // case CSSPropertyHyphens:
     // case CSSPropertyOverflowAnchor:
     // case CSSPropertyScrollSnapType:
     // case CSSPropertyTextAlignLast:
     // case CSSPropertyTextCombineUpright:
-    // case CSSPropertyTextDecorationStyle:
     // case CSSPropertyTextJustify:
     // case CSSPropertyUserSelect:
 #if ENABLE(CSS_TRAILING_WORD)

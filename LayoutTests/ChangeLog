@@ -1,5 +1,33 @@
 2021-12-24  Tim Nguyen  <ntim@apple.com>
 
+        Internally unprefix -webkit-font-kerning CSS property
+        https://bugs.webkit.org/show_bug.cgi?id=234673
+
+        Reviewed by Myles C. Maxfield.
+
+        Same to what was done in bug 234602 for text-emphasis CSS properties.
+
+        * fast/css/getComputedStyle/computed-style-expected.txt:
+        * fast/css/getComputedStyle/computed-style-font-family-expected.txt:
+        * fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+        * fast/css/getComputedStyle/resources/property-names.js:
+        * platform/glib/fast/css/getComputedStyle/computed-style-expected.txt:
+        * platform/glib/fast/css/getComputedStyle/computed-style-font-family-expected.txt: Removed.
+        * platform/glib/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+        * platform/glib/svg/css/getComputedStyle-basic-expected.txt:
+        * platform/ios/fast/css/getComputedStyle/computed-style-expected.txt:
+        * platform/ios/fast/css/getComputedStyle/computed-style-font-family-expected.txt: Removed.
+        * platform/ios/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+        * platform/ios/imported/w3c/web-platform-tests/css/css-cascade/all-prop-initial-xml-expected.txt:
+        * platform/ios/svg/css/getComputedStyle-basic-expected.txt:
+        * platform/mac/fast/css/getComputedStyle/computed-style-expected.txt:
+        * platform/mac/fast/css/getComputedStyle/computed-style-font-family-expected.txt: Removed.
+        * platform/mac/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+        * platform/mac/svg/css/getComputedStyle-basic-expected.txt:
+        * svg/css/getComputedStyle-basic-expected.txt:
+
+2021-12-24  Tim Nguyen  <ntim@apple.com>
+
         Remove non-standard -webkit-background-composite CSS property
         https://bugs.webkit.org/show_bug.cgi?id=234661
 

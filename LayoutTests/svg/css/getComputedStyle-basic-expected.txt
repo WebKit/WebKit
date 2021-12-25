@@ -428,8 +428,6 @@ rect: style.getPropertyValue(-webkit-column-break-before) : auto
 rect: style.getPropertyCSSValue(-webkit-column-break-before) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-column-break-inside) : auto
 rect: style.getPropertyCSSValue(-webkit-column-break-inside) : [object CSSPrimitiveValue]
-rect: style.getPropertyValue(-webkit-font-kerning) : auto
-rect: style.getPropertyCSSValue(-webkit-font-kerning) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-font-smoothing) : auto
 rect: style.getPropertyCSSValue(-webkit-font-smoothing) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-hyphenate-character) : auto
@@ -944,8 +942,6 @@ g: style.getPropertyValue(-webkit-column-break-before) : auto
 g: style.getPropertyCSSValue(-webkit-column-break-before) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-column-break-inside) : auto
 g: style.getPropertyCSSValue(-webkit-column-break-inside) : [object CSSPrimitiveValue]
-g: style.getPropertyValue(-webkit-font-kerning) : auto
-g: style.getPropertyCSSValue(-webkit-font-kerning) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-font-smoothing) : auto
 g: style.getPropertyCSSValue(-webkit-font-smoothing) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-hyphenate-character) : auto
