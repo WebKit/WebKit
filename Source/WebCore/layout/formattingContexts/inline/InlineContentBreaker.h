@@ -151,7 +151,6 @@ private:
         AtHyphenationOpportunities     = 1 << 2
     };
     OptionSet<WordBreakRule> wordBreakBehavior(const RenderStyle&, bool hasWrapOpportunityAtPreviousPosition) const;
-    bool shouldKeepEndOfLineWhitespace(const ContinuousContent&) const;
     bool isInIntrinsicWidthMode() const { return !!m_intrinsicWidthMode; }
 
     std::optional<IntrinsicWidthMode> m_intrinsicWidthMode;

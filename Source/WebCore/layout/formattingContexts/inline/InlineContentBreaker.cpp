@@ -130,16 +130,6 @@ InlineContentBreaker::InlineContentBreaker(std::optional<IntrinsicWidthMode> int
 {
 }
 
-bool InlineContentBreaker::shouldKeepEndOfLineWhitespace(const ContinuousContent& continuousContent) const
-{
-    // Grab the style and check for white-space property to decide whether we should let this whitespace content overflow the current line.
-    // Note that the "keep" in this context means we let the whitespace content sit on the current line.
-    // It might very well get collapsed when we close the line (normal/nowrap/pre-line).
-    // See https://www.w3.org/TR/css-text-3/#white-space-property
-    auto whitespace = continuousContent.runs()[*firstTextRunIndex(continuousContent)].style.whiteSpace();
-    return whitespace == WhiteSpace::Normal || whitespace == WhiteSpace::NoWrap || whitespace == WhiteSpace::PreWrap || whitespace == WhiteSpace::PreLine;
-}
-
 InlineContentBreaker::Result InlineContentBreaker::processInlineContent(const ContinuousContent& candidateContent, const LineStatus& lineStatus)
 {
     ASSERT(!std::isnan(lineStatus.availableWidth));
@@ -174,7 +164,7 @@ InlineContentBreaker::Result InlineContentBreaker::processOverflowingContent(con
                 return InlineContentBreaker::Result { Result::Action::Keep };
             } else {
                 auto spaceRequired = continuousContent.logicalWidth() - continuousContent.trailingCollapsibleWidth();
-                if (lineStatus.hasFullyCollapsibleTrailingContent)
+                if (lineStatus.hasFullyCollapsibleTrailingContent || isVisuallyEmptyWhitespaceContent(continuousContent))
                     spaceRequired -= continuousContent.leadingCollapsibleWidth();
                 if (spaceRequired <= lineStatus.availableWidth)
                     return InlineContentBreaker::Result { Result::Action::Keep };
@@ -188,10 +178,14 @@ InlineContentBreaker::Result InlineContentBreaker::processOverflowingContent(con
             if (continuousContent.logicalWidth() <= lineStatus.availableWidth + lineStatus.collapsibleOrHangingWidth)
                 return InlineContentBreaker::Result { Result::Action::Keep };
         }
-        if (isVisuallyEmptyWhitespaceContent(continuousContent) && shouldKeepEndOfLineWhitespace(continuousContent)) {
+
+        if (isVisuallyEmptyWhitespaceContent(continuousContent)) {
             // This overflowing content apparently falls into the remove/hang end-of-line-spaces category.
             // see https://www.w3.org/TR/css-text-3/#white-space-property matrix
-            return InlineContentBreaker::Result { Result::Action::Keep };
+
+            // FIXME: Replace it with a hanging flag on the continuous content.
+            if (continuousContent.runs()[*firstTextRunIndex(continuousContent)].style.whiteSpace() == WhiteSpace::PreWrap)
+                return InlineContentBreaker::Result { Result::Action::Keep };
         }
         return { };
     };
