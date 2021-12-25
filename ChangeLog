@@ -1,3 +1,12 @@
+2021-12-25  Sergey Rubanov  <chi187@gmail.com>
+
+        Add my github username to contributors.json
+        https://bugs.webkit.org/show_bug.cgi?id=231666
+
+        Reviewed by Alexey Proskuryakov.
+
+        * metadata/contributors.json:
+
 2021-12-24  Simon Fraser  <simon.fraser@apple.com>
 
         Add __pycache__ and DerivedData to the .gitignore file
