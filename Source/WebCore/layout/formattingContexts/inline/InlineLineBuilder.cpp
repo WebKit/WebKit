@@ -341,7 +341,7 @@ LineBuilder::LineContent LineBuilder::layoutInlineContent(const InlineItemRange&
         , m_lineLogicalRect.topLeft()
         , m_lineLogicalRect.width()
         , m_line.contentLogicalWidth()
-        , m_line.hangingWhitespaceWidth()
+        , m_line.hangingTrailingContentWidth()
         , isLastLine
         , m_line.nonSpanningInlineLevelBoxCount()
         , computedVisualOrder()
@@ -860,7 +860,21 @@ LineBuilder::Result LineBuilder::handleInlineContent(InlineContentBreaker& inlin
     // While the floats are not considered to be on the line, they make the line contentful for line breaking.
     auto availableWidthForNewContent = availableWidth(inlineContent, m_line, lineLogicalRectForCandidateContent.width());
     auto lineHasContent = m_line.hasContent() || m_contentIsConstrainedByFloat;
-    auto lineStatus = InlineContentBreaker::LineStatus { m_line.contentLogicalRight(), availableWidthForNewContent, m_line.trimmableTrailingWidth(), m_line.trailingSoftHyphenWidth(), m_line.isTrailingRunFullyTrimmable(), lineHasContent, !m_wrapOpportunityList.isEmpty() };
+    auto trailingContentWidthToIgnore = [&] {
+        if (auto trimmableWidth = m_line.trimmableTrailingWidth()) {
+            ASSERT(!m_line.hangingTrailingContentWidth());
+            return trimmableWidth;
+        }
+        return m_line.hangingTrailingContentWidth();
+    };
+    auto lineStatus = InlineContentBreaker::LineStatus { m_line.contentLogicalRight()
+        , availableWidthForNewContent
+        , trailingContentWidthToIgnore()
+        , m_line.trailingSoftHyphenWidth()
+        , m_line.isTrailingRunFullyTrimmable()
+        , lineHasContent
+        , !m_wrapOpportunityList.isEmpty()
+    };
     auto result = inlineContentBreaker.processInlineContent(continuousInlineContent, lineStatus);
     auto& candidateRuns = continuousInlineContent.runs();
     if (result.action == InlineContentBreaker::Result::Action::Keep) {

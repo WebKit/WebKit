@@ -58,7 +58,7 @@ public:
     InlineLayoutUnit trimmableTrailingWidth() const { return m_trimmableTrailingContent.width(); }
     bool isTrailingRunFullyTrimmable() const { return m_trimmableTrailingContent.isTrailingRunFullyTrimmable(); }
 
-    InlineLayoutUnit hangingWhitespaceWidth() const { return m_hangingTrailingContent.width(); }
+    InlineLayoutUnit hangingTrailingContentWidth() const { return m_hangingTrailingContent.width(); }
 
     std::optional<InlineLayoutUnit> trailingSoftHyphenWidth() const { return m_trailingSoftHyphenWidth; }
     void addTrailingHyphen(InlineLayoutUnit hyphenLogicalWidth);

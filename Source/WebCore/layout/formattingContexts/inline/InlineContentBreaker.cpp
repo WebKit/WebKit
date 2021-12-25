@@ -166,28 +166,38 @@ InlineContentBreaker::Result InlineContentBreaker::processOverflowingContent(con
     ASSERT(!continuousContent.runs().isEmpty());
 
     ASSERT(continuousContent.logicalWidth() > lineStatus.availableWidth);
-    if (continuousContent.hasCollapsibleContent()) {
-        if (lineStatus.hasFullyCollapsibleTrailingContent && continuousContent.isFullyCollapsible()) {
-            // If this new content is fully collapsible, it should surely fit.
-            return { Result::Action::Keep, IsEndOfLine::No };
+    auto checkForTrailingContentFit = [&]() -> std::optional<InlineContentBreaker::Result> {
+        if (continuousContent.hasCollapsibleContent()) {
+            // Check if the content fits if we collapsed it.
+            if (continuousContent.isFullyCollapsible()) {
+                if (lineStatus.hasFullyCollapsibleTrailingContent || lineStatus.availableWidth >= 0) {
+                    // If this new content is fully collapsible, it should surely fit.
+                    return InlineContentBreaker::Result { Result::Action::Keep, IsEndOfLine::No };
+                }
+            }
+            auto spaceRequired = continuousContent.logicalWidth() - continuousContent.trailingCollapsibleWidth();
+            if (lineStatus.hasFullyCollapsibleTrailingContent)
+                spaceRequired -= continuousContent.leadingCollapsibleWidth();
+            if (spaceRequired <= lineStatus.availableWidth)
+                return InlineContentBreaker::Result { Result::Action::Keep, IsEndOfLine::No };
         }
-        // Check if the content fits if we collapsed it.
-        auto spaceRequired = continuousContent.logicalWidth() - continuousContent.trailingCollapsibleWidth();
-        if (lineStatus.hasFullyCollapsibleTrailingContent)
-            spaceRequired -= continuousContent.leadingCollapsibleWidth();
-        if (spaceRequired <= lineStatus.availableWidth)
-            return { Result::Action::Keep, IsEndOfLine::No };
-    } else if (lineStatus.collapsibleWidth && isNonContentRunsOnly(continuousContent)) {
-        // Let's see if the non-content runs fit when the line has trailing collapsible content.
-        // "text content <span style="padding: 1px"></span>" <- the <span></span> runs could fit after collapsing the trailing whitespace.
-        if (continuousContent.logicalWidth() <= lineStatus.availableWidth + lineStatus.collapsibleWidth)
-            return { Result::Action::Keep };
-    }
-    if (isVisuallyEmptyWhitespaceContent(continuousContent) && shouldKeepEndOfLineWhitespace(continuousContent)) {
-        // This overflowing content apparently falls into the remove/hang end-of-line-spaces category.
-        // see https://www.w3.org/TR/css-text-3/#white-space-property matrix
-        return { Result::Action::Keep };
-    }
+
+        auto canIgnoreNonContentTrailingRuns = lineStatus.collapsibleOrHangingWidth && isNonContentRunsOnly(continuousContent);
+        if (canIgnoreNonContentTrailingRuns) {
+            // Let's see if the non-content runs fit when the line has trailing collapsible/hanging content.
+            // "text content <span style="padding: 1px"></span>" <- the <span></span> runs could fit after collapsing the trailing whitespace.
+            if (continuousContent.logicalWidth() <= lineStatus.availableWidth + lineStatus.collapsibleOrHangingWidth)
+                return InlineContentBreaker::Result { Result::Action::Keep };
+        }
+        if (isVisuallyEmptyWhitespaceContent(continuousContent) && shouldKeepEndOfLineWhitespace(continuousContent)) {
+            // This overflowing content apparently falls into the remove/hang end-of-line-spaces category.
+            // see https://www.w3.org/TR/css-text-3/#white-space-property matrix
+            return InlineContentBreaker::Result { Result::Action::Keep };
+        }
+        return { };
+    };
+    if (auto result = checkForTrailingContentFit())
+        return *result;
 
     size_t overflowingRunIndex = 0;
     if (hasTextRun(continuousContent)) {

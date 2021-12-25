@@ -110,7 +110,8 @@ public:
     struct LineStatus {
         InlineLayoutUnit contentLogicalRight { 0 };
         InlineLayoutUnit availableWidth { 0 };
-        InlineLayoutUnit collapsibleWidth { 0 };
+        // Both of these types of trailing content may be ignored when checking for content fit.
+        InlineLayoutUnit collapsibleOrHangingWidth { 0 };
         std::optional<InlineLayoutUnit> trailingSoftHyphenWidth;
         bool hasFullyCollapsibleTrailingContent { false };
         bool hasContent { false };
