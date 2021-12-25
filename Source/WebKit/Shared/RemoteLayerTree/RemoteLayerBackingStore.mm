@@ -122,16 +122,13 @@ void RemoteLayerBackingStore::encode(IPC::Encoder& encoder) const
     } else if (m_frontBuffer.imageBuffer) {
         switch (m_type) {
         case Type::IOSurface:
-            if (auto* backend = m_frontBuffer.imageBuffer->ensureBackendCreated()) {
-                if (m_frontBuffer.imageBuffer->canMapBackingStore())
-                    handle = static_cast<AcceleratedImageBufferShareableMappedBackend&>(*backend).createImageBufferBackendHandle();
-                else
-                    handle = static_cast<AcceleratedImageBufferShareableBackend&>(*backend).createImageBufferBackendHandle();
-            }
+            if (m_frontBuffer.imageBuffer->canMapBackingStore())
+                handle = static_cast<AcceleratedImageBufferShareableMappedBackend&>(*m_frontBuffer.imageBuffer->ensureBackendCreated()).createImageBufferBackendHandle();
+            else
+                handle = static_cast<AcceleratedImageBufferShareableBackend&>(*m_frontBuffer.imageBuffer->ensureBackendCreated()).createImageBufferBackendHandle();
             break;
         case Type::Bitmap:
-            if (auto* backend = m_frontBuffer.imageBuffer->ensureBackendCreated())
-                handle = static_cast<UnacceleratedImageBufferShareableBackend&>(*backend).createImageBufferBackendHandle();
+            handle = static_cast<UnacceleratedImageBufferShareableBackend&>(*m_frontBuffer.imageBuffer->ensureBackendCreated()).createImageBufferBackendHandle();
             break;
         }
     }
@@ -140,10 +137,8 @@ void RemoteLayerBackingStore::encode(IPC::Encoder& encoder) const
 
 #if ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
     std::optional<ImageBufferBackendHandle> displayListHandle;
-    if (m_frontBuffer.displayListImageBuffer) {
-        if (auto* backend = m_frontBuffer.displayListImageBuffer->ensureBackendCreated())
-            displayListHandle = static_cast<CGDisplayListImageBufferBackend&>(*backend).createImageBufferBackendHandle();
-    }
+    if (m_frontBuffer.displayListImageBuffer)
+        displayListHandle = static_cast<CGDisplayListImageBufferBackend&>(*m_frontBuffer.displayListImageBuffer->ensureBackendCreated()).createImageBufferBackendHandle();
 
     encoder << displayListHandle;
 #endif

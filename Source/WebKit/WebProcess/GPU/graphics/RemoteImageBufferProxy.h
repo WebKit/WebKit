@@ -75,9 +75,8 @@ public:
 
     ImageBufferBackendHandle createImageBufferBackendHandle()
     {
-        if (ensureBackendCreated())
-            return m_backend->createImageBufferBackendHandle();
-        return { };
+        ensureBackendCreated();
+        return m_backend->createImageBufferBackendHandle();
     }
 
     WebCore::GraphicsContextFlushIdentifier lastSentFlushIdentifier() const { return m_sentFlushIdentifier; }
