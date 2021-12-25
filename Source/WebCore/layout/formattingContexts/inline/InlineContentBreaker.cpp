@@ -170,16 +170,15 @@ InlineContentBreaker::Result InlineContentBreaker::processOverflowingContent(con
         if (continuousContent.hasCollapsibleContent()) {
             // Check if the content fits if we collapsed it.
             if (continuousContent.isFullyCollapsible()) {
-                if (lineStatus.hasFullyCollapsibleTrailingContent || lineStatus.availableWidth >= 0) {
-                    // If this new content is fully collapsible, it should surely fit.
-                    return InlineContentBreaker::Result { Result::Action::Keep, IsEndOfLine::No };
-                }
+                // If this new content is fully collapsible, it should surely fit.
+                return InlineContentBreaker::Result { Result::Action::Keep };
+            } else {
+                auto spaceRequired = continuousContent.logicalWidth() - continuousContent.trailingCollapsibleWidth();
+                if (lineStatus.hasFullyCollapsibleTrailingContent)
+                    spaceRequired -= continuousContent.leadingCollapsibleWidth();
+                if (spaceRequired <= lineStatus.availableWidth)
+                    return InlineContentBreaker::Result { Result::Action::Keep };
             }
-            auto spaceRequired = continuousContent.logicalWidth() - continuousContent.trailingCollapsibleWidth();
-            if (lineStatus.hasFullyCollapsibleTrailingContent)
-                spaceRequired -= continuousContent.leadingCollapsibleWidth();
-            if (spaceRequired <= lineStatus.availableWidth)
-                return InlineContentBreaker::Result { Result::Action::Keep, IsEndOfLine::No };
         }
 
         auto canIgnoreNonContentTrailingRuns = lineStatus.collapsibleOrHangingWidth && isNonContentRunsOnly(continuousContent);
