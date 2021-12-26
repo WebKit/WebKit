@@ -452,7 +452,7 @@ void InlineItemsBuilder::handleTextContent(const InlineTextBox& inlineTextBox, I
     if (!contentLength)
         return inlineItems.append(InlineTextItem::createEmptyItem(inlineTextBox));
 
-    m_needsVisualReordering = m_needsVisualReordering || inlineTextBox.containsBidiText();
+    m_needsVisualReordering = m_needsVisualReordering || TextUtil::containsStrongDirectionalityText(text);
     auto& style = inlineTextBox.style();
     auto shouldPreserveSpacesAndTabs = TextUtil::shouldPreserveSpacesAndTabs(inlineTextBox);
     auto shouldPreserveNewline = TextUtil::shouldPreserveNewline(inlineTextBox);

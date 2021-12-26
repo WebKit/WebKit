@@ -37,18 +37,16 @@ namespace Layout {
 class InlineTextBox : public Box {
     WTF_MAKE_ISO_ALLOCATED(InlineTextBox);
 public:
-    InlineTextBox(String, bool canUseSimplifiedContentMeasuring, bool containsBidiText, RenderStyle&&, std::unique_ptr<RenderStyle>&& firstLineStyle = nullptr);
+    InlineTextBox(String, bool canUseSimplifiedContentMeasuring, RenderStyle&&, std::unique_ptr<RenderStyle>&& firstLineStyle = nullptr);
     virtual ~InlineTextBox() = default;
 
     String content() const { return m_content; }
     // FIXME: This should not be a box's property.
     bool canUseSimplifiedContentMeasuring() const { return m_canUseSimplifiedContentMeasuring; }
-    bool containsBidiText() const { return m_containsBidiText; }
 
 private:
     String m_content;
     bool m_canUseSimplifiedContentMeasuring { false };
-    bool m_containsBidiText { false };
 };
 
 }

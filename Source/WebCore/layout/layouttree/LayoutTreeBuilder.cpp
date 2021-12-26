@@ -134,7 +134,7 @@ std::unique_ptr<Box> TreeBuilder::createReplacedBox(std::optional<Box::ElementAt
 
 std::unique_ptr<Box> TreeBuilder::createTextBox(String text, bool canUseSimplifiedTextMeasuring, RenderStyle&& style)
 {
-    return makeUnique<InlineTextBox>(text, canUseSimplifiedTextMeasuring, TextUtil::containsStrongDirectionalityText(text), WTFMove(style));
+    return makeUnique<InlineTextBox>(text, canUseSimplifiedTextMeasuring, WTFMove(style));
 }
 
 std::unique_ptr<Box> TreeBuilder::createLineBreakBox(bool isOptional, RenderStyle&& style)

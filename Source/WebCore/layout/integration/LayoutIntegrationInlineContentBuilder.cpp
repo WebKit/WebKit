@@ -57,7 +57,7 @@ inline static float lineOverflowWidth(const RenderBlockFlow& flow, Layout::Inlin
     return lineContentWidth + endPadding;
 }
 
-InlineContentBuilder::InlineContentBuilder(const RenderBlockFlow& blockFlow, const BoxTree& boxTree)
+InlineContentBuilder::InlineContentBuilder(const RenderBlockFlow& blockFlow, BoxTree& boxTree)
     : m_blockFlow(blockFlow)
     , m_boxTree(boxTree)
 {
@@ -67,6 +67,18 @@ void InlineContentBuilder::build(Layout::InlineFormattingState& inlineFormatting
 {
     // FIXME: This might need a different approach with partial layout where the layout code needs to know about the boxes.
     inlineContent.boxes = WTFMove(inlineFormattingState.boxes());
+
+    auto updateIfTextRenderersNeedVisualReordering = [&] {
+        // FIXME: We may want to have a global, "is this a bidi paragraph" flag to avoid this loop for non-rtl, non-bidi content. 
+        for (auto& displayBox : inlineContent.boxes) {
+            auto& layoutBox = displayBox.layoutBox();
+            if (!is<Layout::InlineTextBox>(layoutBox))
+                continue;
+            if (displayBox.bidiLevel() != UBIDI_DEFAULT_LTR) 
+                downcast<RenderText>(m_boxTree.rendererForLayoutBox(layoutBox)).setNeedsVisualReordering();
+        }
+    };
+    updateIfTextRenderersNeedVisualReordering();
     createDisplayLines(inlineFormattingState, inlineContent);
 }
 

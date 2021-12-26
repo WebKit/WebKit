@@ -41,7 +41,7 @@ struct InlineContent;
 
 class InlineContentBuilder {
 public:
-    InlineContentBuilder(const RenderBlockFlow&, const BoxTree&);
+    InlineContentBuilder(const RenderBlockFlow&, BoxTree&);
 
     void build(Layout::InlineFormattingState&, InlineContent&) const;
 
@@ -49,7 +49,7 @@ private:
     void createDisplayLines(Layout::InlineFormattingState&, InlineContent&) const;
 
     const RenderBlockFlow& m_blockFlow;
-    const BoxTree& m_boxTree;
+    BoxTree& m_boxTree;
 };
 
 }
