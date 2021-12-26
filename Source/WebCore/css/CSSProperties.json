@@ -765,16 +765,11 @@
                     "value": "tb",
                     "status": "deprecated"
                 },
+                "horizontal-tb",
+                "vertical-lr",
+                "vertical-rl",
                 {
-                    "value": "horizontal-tb",
-                    "status": "unimplemented"
-                },
-                {
-                    "value": "vertical-rl",
-                    "status": "unimplemented"
-                },
-                {
-                    "value": "vertical-lr",
+                    "value": "sideways-lr",
                     "status": "unimplemented"
                 },
                 {
@@ -782,8 +777,8 @@
                     "status": "unimplemented"
                 },
                 {
-                    "value": "sideways-lr",
-                    "status": "unimplemented"
+                    "value": "horizontal-bt",
+                    "status": "non-standard"
                 }
             ],
             "codegen-properties": {
