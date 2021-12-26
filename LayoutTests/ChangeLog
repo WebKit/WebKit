@@ -1,3 +1,11 @@
+2021-12-25  Alan Bujtas  <zalan@apple.com>
+
+        [iOS] Rebaselining after r287440.
+
+        Unreviewed.
+
+        * platform/ios/fast/borders/rtl-border-01-expected.txt: Progression. Content does not overflow the line anymore.
+
 2021-12-24  Tim Nguyen  <ntim@apple.com>
 
         Internally unprefix -webkit-font-kerning CSS property

@@ -1,4 +1,4 @@
-layer at (0,0) size 812x688
+layer at (0,0) size 800x688
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x688
   RenderBlock {HTML} at (0,0) size 800x689
@@ -24,15 +24,15 @@ layer at (0,0) size 800x688
             text run at (0,6) width 604: "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut "
             text run at (603,6) width 148: "labore et dolore magna"
             text run at (0,38) width 441: "aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco "
-          RenderInline {SPAN} at (0,0) size 789x85 [border: (1px solid #0000FF) (10px solid #FFA500) (1px solid #0000FF) (10px solid #008000)]
+          RenderInline {SPAN} at (0,0) size 766x117 [border: (1px solid #0000FF) (10px solid #FFA500) (1px solid #0000FF) (10px solid #008000)]
             RenderText {#text} at (485,38) size 766x83
               text run at (485,38) width 242: "laboris nisi ut aliquip ex ea commodo"
               text run at (0,70) width 331: "consequat. Duis aute irure dolor in reprehenderit in "
               text run at (331,70) width 435: "voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur"
               text run at (0,102) width 149: "sint occaecat cupidatat "
               text run at (148,102) width 606: "non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor"
-          RenderText {#text} at (0,134) size 577x19
-            text run at (0,134) width 577: "sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore"
+          RenderText {#text} at (45,134) size 577x19
+            text run at (45,134) width 577: "sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore"
       RenderBlock {H1} at (0,349) size 784x21
         RenderText {#text} at (0,0) size 91x19
           text run at (0,0) width 91: "Right-to-Left"
