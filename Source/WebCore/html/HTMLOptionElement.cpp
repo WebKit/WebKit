@@ -176,10 +176,11 @@ void HTMLOptionElement::parseAttribute(const QualifiedName& name, const AtomStri
     } else
 #endif
     if (name == disabledAttr) {
-        bool oldDisabled = m_disabled;
-        m_disabled = !value.isNull();
-        if (oldDisabled != m_disabled) {
-            invalidateStyleForSubtree();
+        bool newDisabled = !value.isNull();
+        if (m_disabled != newDisabled) {
+            Style::PseudoClassChangeInvalidation disabledInvalidation(*this, CSSSelector::PseudoClassDisabled);
+            Style::PseudoClassChangeInvalidation enabledInvalidation(*this, CSSSelector::PseudoClassEnabled);
+            m_disabled = newDisabled;
             if (renderer() && renderer()->style().hasEffectiveAppearance())
                 renderer()->theme().stateChanged(*renderer(), ControlStates::States::Enabled);
         }

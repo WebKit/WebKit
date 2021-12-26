@@ -40,6 +40,7 @@
 #include "HTMLLegendElement.h"
 #include "HTMLParserIdioms.h"
 #include "HTMLTextAreaElement.h"
+#include "PseudoClassChangeInvalidation.h"
 #include "Quirks.h"
 #include "RenderBox.h"
 #include "RenderTheme.h"
@@ -143,10 +144,14 @@ bool HTMLFormControlElement::computeIsDisabledByFieldsetAncestor() const
 void HTMLFormControlElement::setAncestorDisabled(bool isDisabled)
 {
     ASSERT(computeIsDisabledByFieldsetAncestor() == isDisabled);
-    bool oldValue = m_disabledByAncestorFieldset;
+    if (m_disabledByAncestorFieldset == isDisabled)
+        return;
+
+    Style::PseudoClassChangeInvalidation disabledInvalidation(*this, CSSSelector::PseudoClassDisabled);
+    Style::PseudoClassChangeInvalidation enabledInvalidation(*this, CSSSelector::PseudoClassEnabled);
+
     m_disabledByAncestorFieldset = isDisabled;
-    if (oldValue != m_disabledByAncestorFieldset)
-        disabledStateChanged();
+    disabledStateChanged();
 }
 
 void HTMLFormControlElement::parseAttribute(const QualifiedName& name, const AtomString& value)
@@ -155,10 +160,13 @@ void HTMLFormControlElement::parseAttribute(const QualifiedName& name, const Ato
         formAttributeChanged();
     else if (name == disabledAttr) {
         if (canBeActuallyDisabled()) {
-            bool oldDisabled = m_disabled;
-            m_disabled = !value.isNull();
-            if (oldDisabled != m_disabled)
+            bool newDisabled = !value.isNull();
+            if (m_disabled != newDisabled) {
+                Style::PseudoClassChangeInvalidation disabledInvalidation(*this, CSSSelector::PseudoClassDisabled);
+                Style::PseudoClassChangeInvalidation enabledInvalidation(*this, CSSSelector::PseudoClassEnabled);
+                m_disabled = newDisabled;
                 disabledAttributeChanged();
+            }
         }
     } else if (name == readonlyAttr) {
         bool wasReadOnly = m_isReadOnly;
@@ -182,7 +190,6 @@ void HTMLFormControlElement::disabledAttributeChanged()
 void HTMLFormControlElement::disabledStateChanged()
 {
     updateWillValidateAndValidity();
-    invalidateStyleForSubtree();
     if (renderer() && renderer()->style().hasEffectiveAppearance())
         renderer()->theme().stateChanged(*renderer(), ControlStates::States::Enabled);
 }

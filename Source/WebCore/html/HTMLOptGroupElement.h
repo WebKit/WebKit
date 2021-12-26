@@ -52,6 +52,8 @@ private:
     bool accessKeyAction(bool sendMouseEvents) final;
 
     void recalcSelectOptions();
+
+    bool m_isDisabled { false };
 };
 
 } // namespace WebCore

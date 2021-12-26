@@ -1,8 +1,32 @@
 
 
-PASS Initial color
-PASS Set checked on checkbox
-PASS Unset checked on checkbox
-PASS Set selected on option
-PASS Unset selected on option
+PASS Before set checked on checkbox, testing subject
+PASS Set checked on checkbox, testing subject
+PASS Unset checked on checkbox, testing subject
+PASS Set select on option
+PASS Reset select
+PASS Before set disabled on checkbox, testing subject
+PASS Set disabled on checkbox, testing subject
+PASS Unset disabled on checkbox, testing subject
+PASS Before set disabled on checkbox, testing subject3
+PASS Set disabled on checkbox, testing subject3
+PASS Unset disabled on checkbox, testing subject3
+PASS Before set disabled on option, testing subject
+PASS Set disabled on option, testing subject
+PASS Unset disabled on option, testing subject
+PASS Before set disabled on option, testing subject3
+PASS Set disabled on option, testing subject3
+PASS Unset disabled on option, testing subject3
+PASS Before set disabled on optgroup, testing subject
+PASS Set disabled on optgroup, testing subject
+PASS Unset disabled on optgroup, testing subject
+PASS Before set disabled on optgroup, testing subject2
+PASS Set disabled on optgroup, testing subject2
+PASS Unset disabled on optgroup, testing subject2
+PASS Before set disabled on optgroup, testing subject3
+PASS Set disabled on optgroup, testing subject3
+PASS Unset disabled on optgroup, testing subject3
+PASS Before set disabled on optgroup, testing subject4
+PASS Set disabled on optgroup, testing subject4
+PASS Unset disabled on optgroup, testing subject4
 
