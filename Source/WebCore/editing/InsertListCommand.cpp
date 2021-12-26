@@ -166,6 +166,8 @@ void InsertListCommand::doApply()
                     // the beginning of the document to the endOfSelection everytime this code is executed.
                     // But not using index is hard because there are so many ways we can lose selection inside doApplyForSingleParagraph.
                     RefPtr<ContainerNode> scope;
+                    if (endOfSelection.isOrphan())
+                        return;
                     int indexForEndOfSelection = indexForVisiblePosition(endOfSelection, scope);
                     doApplyForSingleParagraph(forceCreateList, listTag, currentSelection);
                     if (endOfSelection.isNull() || endOfSelection.isOrphan() || startOfLastParagraph.isNull() || startOfLastParagraph.isOrphan()) {
