@@ -461,8 +461,6 @@ unsigned RenderStyle::hashForTextAutosizing() const
 {
     // FIXME: Not a very smart hash. Could be improved upon. See <https://bugs.webkit.org/show_bug.cgi?id=121131>.
     unsigned hash = m_rareNonInheritedData->effectiveAppearance;
-    hash ^= m_rareNonInheritedData->marginBeforeCollapse;
-    hash ^= m_rareNonInheritedData->marginAfterCollapse;
     hash ^= m_rareNonInheritedData->lineClamp.value();
     hash ^= m_rareInheritedData->overflowWrap;
     hash ^= m_rareInheritedData->nbspMode;
@@ -483,8 +481,6 @@ unsigned RenderStyle::hashForTextAutosizing() const
 bool RenderStyle::equalForTextAutosizing(const RenderStyle& other) const
 {
     return m_rareNonInheritedData->effectiveAppearance == other.m_rareNonInheritedData->effectiveAppearance
-        && m_rareNonInheritedData->marginBeforeCollapse == other.m_rareNonInheritedData->marginBeforeCollapse
-        && m_rareNonInheritedData->marginAfterCollapse == other.m_rareNonInheritedData->marginAfterCollapse
         && m_rareNonInheritedData->lineClamp == other.m_rareNonInheritedData->lineClamp
         && m_rareInheritedData->textSizeAdjust == other.m_rareInheritedData->textSizeAdjust
         && m_rareInheritedData->overflowWrap == other.m_rareInheritedData->overflowWrap
@@ -654,8 +650,6 @@ static bool rareNonInheritedDataChangeRequiresLayout(const StyleRareNonInherited
     ASSERT(&first != &second);
 
     if (first.effectiveAppearance != second.effectiveAppearance
-        || first.marginBeforeCollapse != second.marginBeforeCollapse
-        || first.marginAfterCollapse != second.marginAfterCollapse
         || first.lineClamp != second.lineClamp
         || first.initialLetter != second.initialLetter
         || first.textOverflow != second.textOverflow)

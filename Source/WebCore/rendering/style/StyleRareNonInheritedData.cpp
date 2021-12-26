@@ -193,11 +193,8 @@ inline StyleRareNonInheritedData::StyleRareNonInheritedData(const StyleRareNonIn
     , userDrag(o.userDrag)
     , textOverflow(o.textOverflow)
     , useSmoothScrolling(o.useSmoothScrolling)
-    , marginBeforeCollapse(o.marginBeforeCollapse)
-    , marginAfterCollapse(o.marginAfterCollapse)
     , appearance(o.appearance)
     , effectiveAppearance(o.effectiveAppearance)
-    , borderFit(o.borderFit)
     , textCombine(o.textCombine)
     , textDecorationStyle(o.textDecorationStyle)
     , aspectRatioType(o.aspectRatioType)
@@ -302,11 +299,8 @@ bool StyleRareNonInheritedData::operator==(const StyleRareNonInheritedData& o) c
         && userDrag == o.userDrag
         && textOverflow == o.textOverflow
         && useSmoothScrolling == o.useSmoothScrolling
-        && marginBeforeCollapse == o.marginBeforeCollapse
-        && marginAfterCollapse == o.marginAfterCollapse
         && appearance == o.appearance
         && effectiveAppearance == o.effectiveAppearance
-        && borderFit == o.borderFit
         && textCombine == o.textCombine
         && textDecorationStyle == o.textDecorationStyle
         && arePointingToEqualData(rotate, o.rotate)
