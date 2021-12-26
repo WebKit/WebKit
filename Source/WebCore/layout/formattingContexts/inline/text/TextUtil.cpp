@@ -249,7 +249,7 @@ LineBreakIteratorMode TextUtil::lineBreakIteratorMode(LineBreak lineBreak)
     return LineBreakIteratorMode::Default;
 }
 
-bool TextUtil::containsBidiText(StringView text)
+bool TextUtil::containsStrongDirectionalityText(StringView text)
 {
     if (text.is8Bit())
         return false;

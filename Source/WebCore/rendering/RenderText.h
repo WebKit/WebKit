@@ -146,8 +146,8 @@ public:
     int previousOffsetForBackwardDeletion(int current) const final;
     int nextOffset(int current) const final;
 
-    bool containsBidiText() const { return m_containsBidiText; }
-    void setContainsBidiText() { m_containsBidiText = true; }
+    bool needsVisualReordering() const { return m_needsVisualReordering; }
+    void setNeedsVisualReordering() { m_needsVisualReordering = true; }
 
     void momentarilyRevealLastTypedCharacter(unsigned offsetAfterLastTypedCharacter);
 
@@ -239,7 +239,7 @@ private:
                            // line boxes, and this hint will enable layoutInlineChildren to avoid
                            // just dirtying everything when character data is modified (e.g., appended/inserted
                            // or removed).
-    unsigned m_containsBidiText : 1;
+    unsigned m_needsVisualReordering : 1;
     unsigned m_isAllASCII : 1;
     unsigned m_canUseSimpleFontCodePath : 1;
     mutable unsigned m_knownToHaveNoOverflowAndNoFallbackFonts : 1;

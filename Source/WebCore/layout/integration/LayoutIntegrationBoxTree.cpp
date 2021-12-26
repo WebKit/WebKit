@@ -97,9 +97,9 @@ void BoxTree::buildTree()
             auto& textRenderer = downcast<RenderText>(childRenderer);
             auto style = RenderStyle::createAnonymousStyleWithDisplay(textRenderer.style(), DisplayType::Inline);
             auto text = style.textSecurity() == TextSecurity::None ? textRenderer.text() : RenderBlock::updateSecurityDiscCharacters(style, textRenderer.text());
-            auto containsBidiText = Layout::TextUtil::containsBidiText(text);
+            auto containsBidiText = Layout::TextUtil::containsStrongDirectionalityText(text);
             if (containsBidiText)
-                textRenderer.setContainsBidiText();
+                textRenderer.setNeedsVisualReordering();
             auto useSimplifiedTextMeasuring = textRenderer.canUseSimplifiedTextMeasuring() && (!firstLineStyle || firstLineStyle->fontCascade() == style.fontCascade());
             return makeUnique<Layout::InlineTextBox>(text, useSimplifiedTextMeasuring, containsBidiText, WTFMove(style), WTFMove(firstLineStyle));
         }

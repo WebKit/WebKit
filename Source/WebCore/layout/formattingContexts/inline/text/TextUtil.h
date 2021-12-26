@@ -64,7 +64,7 @@ public:
     static bool shouldPreserveSpacesAndTabs(const Box&);
     static bool shouldPreserveNewline(const Box&);
     static bool isWrappingAllowed(const RenderStyle&);
-    static bool containsBidiText(StringView);
+    static bool containsStrongDirectionalityText(StringView);
 };
 
 }
