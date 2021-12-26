@@ -171,6 +171,9 @@ InlineContentBreaker::Result InlineContentBreaker::processOverflowingContent(con
             }
         }
 
+        if (continuousContent.isHangingContent())
+            return InlineContentBreaker::Result { Result::Action::Keep };
+
         auto canIgnoreNonContentTrailingRuns = lineStatus.collapsibleOrHangingWidth && isNonContentRunsOnly(continuousContent);
         if (canIgnoreNonContentTrailingRuns) {
             // Let's see if the non-content runs fit when the line has trailing collapsible/hanging content.
@@ -179,14 +182,6 @@ InlineContentBreaker::Result InlineContentBreaker::processOverflowingContent(con
                 return InlineContentBreaker::Result { Result::Action::Keep };
         }
 
-        if (isVisuallyEmptyWhitespaceContent(continuousContent)) {
-            // This overflowing content apparently falls into the remove/hang end-of-line-spaces category.
-            // see https://www.w3.org/TR/css-text-3/#white-space-property matrix
-
-            // FIXME: Replace it with a hanging flag on the continuous content.
-            if (continuousContent.runs()[*firstTextRunIndex(continuousContent)].style.whiteSpace() == WhiteSpace::PreWrap)
-                return InlineContentBreaker::Result { Result::Action::Keep };
-        }
         return { };
     };
     if (auto result = checkForTrailingContentFit())
@@ -722,11 +717,19 @@ void InlineContentBreaker::ContinuousContent::append(const InlineTextItem& inlin
     m_trailingCollapsibleWidth = *collapsibleWidth == logicalWidth ? m_trailingCollapsibleWidth.value_or(0.f) + logicalWidth : *collapsibleWidth;
 }
 
+void InlineContentBreaker::ContinuousContent::append(const InlineTextItem& inlineTextItem, const RenderStyle& style, InlineLayoutUnit hangingWidth)
+{
+    appendToRunList(inlineTextItem, style, hangingWidth);
+    m_trailingHangingContentWidth = hangingWidth;
+    resetTrailingWhitespace();
+}
+
 void InlineContentBreaker::ContinuousContent::reset()
 {
     m_logicalWidth = { };
     m_leadingCollapsibleWidth = { };
     m_trailingCollapsibleWidth = { };
+    m_trailingHangingContentWidth = { };
     m_runs.clear();
 }
 }

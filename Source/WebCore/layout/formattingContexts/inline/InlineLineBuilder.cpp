@@ -202,6 +202,10 @@ inline void LineCandidate::InlineContent::appendInlineItem(const InlineItem& inl
         auto& inlineTextItem = downcast<InlineTextItem>(inlineItem);
         auto isWhitespace = inlineTextItem.isWhitespace();
 
+        auto isHangingContent = isWhitespace && style.whiteSpace() == WhiteSpace::PreWrap;
+        if (isHangingContent)
+            return m_continuousContent.append(inlineTextItem, style, logicalWidth);
+
         auto collapsibleWidth = [&]() -> std::optional<InlineLayoutUnit> {
             if (isWhitespace && !InlineTextItem::shouldPreserveSpacesAndTabs(inlineTextItem)) {
                 // Fully collapsible trailing content.

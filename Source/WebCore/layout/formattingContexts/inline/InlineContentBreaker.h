@@ -85,9 +85,11 @@ public:
         std::optional<InlineLayoutUnit> trailingCollapsibleWidth() const { return m_trailingCollapsibleWidth; }
         bool hasCollapsibleContent() const { return trailingCollapsibleWidth() || leadingCollapsibleWidth(); }
         bool isFullyCollapsible() const;
+        bool isHangingContent() const { return m_trailingHangingContentWidth && logicalWidth() == *m_trailingHangingContentWidth; }
 
         void append(const InlineItem&, const RenderStyle&, InlineLayoutUnit logicalWidth);
         void append(const InlineTextItem&, const RenderStyle&, InlineLayoutUnit logicalWidth, std::optional<InlineLayoutUnit> collapsibleWidth);
+        void append(const InlineTextItem&, const RenderStyle&, InlineLayoutUnit hangingWidth);
         void reset();
 
         struct Run {
@@ -110,6 +112,7 @@ public:
         InlineLayoutUnit m_logicalWidth { 0 };
         std::optional<InlineLayoutUnit> m_leadingCollapsibleWidth { };
         std::optional<InlineLayoutUnit> m_trailingCollapsibleWidth { };
+        std::optional<InlineLayoutUnit> m_trailingHangingContentWidth { };
     };
 
     struct LineStatus {
