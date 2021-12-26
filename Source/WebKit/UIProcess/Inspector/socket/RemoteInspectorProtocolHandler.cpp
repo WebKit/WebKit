@@ -60,7 +60,7 @@ public:
             return;
 
         URL requestURL { { }, page.pageLoadState().url() };
-        m_inspectorProtocolHandler.inspect(requestURL.hostAndPort(), parseInteger<int>(tokens[0]).value_or(0), parseInteger<int>(tokens[1]).value_or(0), tokens[2]);
+        m_inspectorProtocolHandler.inspect(requestURL.hostAndPort(), parseInteger<uint32_t>(tokens[0]).value_or(0), parseInteger<uint32_t>(tokens[1]).value_or(0), tokens[2]);
     }
     
     bool supportsAsyncReply() override

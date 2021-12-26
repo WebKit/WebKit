@@ -1,3 +1,15 @@
+2021-12-26  Yousuke Kimoto  <Yousuke.Kimoto@sony.com>
+
+        RemoteInspectorProtocolHandler::inspect() expects ConnectionID as uint32_t
+        https://bugs.webkit.org/show_bug.cgi?id=234657
+
+        Reviewed by Don Olmstead.
+
+        connectionID a parameter of ScriptMessageClient::didPostMessage() is casteed as <int>.
+        Since ConnectionID is define as uint32_t, it should be casted as <uint32_t>.
+
+        * UIProcess/Inspector/socket/RemoteInspectorProtocolHandler.cpp: Fixed cast for connectionID.
+
 2021-12-25  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r285088.
