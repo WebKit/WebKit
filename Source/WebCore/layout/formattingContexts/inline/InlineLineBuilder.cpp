@@ -193,25 +193,33 @@ LineCandidate::InlineContent::InlineContent(bool ignoreTrailingLetterSpacing)
 inline void LineCandidate::InlineContent::appendInlineItem(const InlineItem& inlineItem, const RenderStyle& style, InlineLayoutUnit logicalWidth)
 {
     ASSERT(inlineItem.isText() || inlineItem.isBox() || inlineItem.isInlineBoxStart() || inlineItem.isInlineBoxEnd());
-    auto collapsibleWidth = [&]() -> std::optional<InlineLayoutUnit> {
-        if (!inlineItem.isText())
-            return { };
-        auto& inlineTextItem = downcast<InlineTextItem>(inlineItem);
-        if (inlineTextItem.isWhitespace() && !InlineTextItem::shouldPreserveSpacesAndTabs(inlineTextItem)) {
-            // Fully collapsible trailing content.
-            return logicalWidth;
-        }
-        // Check for partially collapsible content.
-        if (m_ignoreTrailingLetterSpacing)
-            return { };
-        auto letterSpacing = style.letterSpacing();
-        if (letterSpacing <= 0)
-            return { };
-        ASSERT(logicalWidth > letterSpacing);
-        return letterSpacing;
-    };
-    m_continuousContent.append(inlineItem, style, logicalWidth, collapsibleWidth());
     m_hasInlineLevelBox = m_hasInlineLevelBox || inlineItem.isBox() || inlineItem.isInlineBoxStart();
+
+    if (inlineItem.isBox() || inlineItem.isInlineBoxStart() || inlineItem.isInlineBoxEnd())
+        return m_continuousContent.append(inlineItem, style, logicalWidth);
+
+    if (inlineItem.isText()) {
+        auto& inlineTextItem = downcast<InlineTextItem>(inlineItem);
+        auto isWhitespace = inlineTextItem.isWhitespace();
+
+        auto collapsibleWidth = [&]() -> std::optional<InlineLayoutUnit> {
+            if (isWhitespace && !InlineTextItem::shouldPreserveSpacesAndTabs(inlineTextItem)) {
+                // Fully collapsible trailing content.
+                return logicalWidth;
+            }
+            // Check for partially collapsible content.
+            if (m_ignoreTrailingLetterSpacing)
+                return { };
+            auto letterSpacing = style.letterSpacing();
+            if (letterSpacing <= 0)
+                return { };
+            ASSERT(logicalWidth > letterSpacing);
+            return letterSpacing;
+        };
+        m_continuousContent.append(inlineTextItem, style, logicalWidth, collapsibleWidth());
+        return;
+    }
+    ASSERT_NOT_REACHED();
 }
 
 inline void LineCandidate::InlineContent::reset()

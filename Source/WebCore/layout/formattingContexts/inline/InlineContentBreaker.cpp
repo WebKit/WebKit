@@ -163,9 +163,9 @@ InlineContentBreaker::Result InlineContentBreaker::processOverflowingContent(con
                 // If this new content is fully collapsible, it should surely fit.
                 return InlineContentBreaker::Result { Result::Action::Keep };
             } else {
-                auto spaceRequired = continuousContent.logicalWidth() - continuousContent.trailingCollapsibleWidth();
+                auto spaceRequired = continuousContent.logicalWidth() - continuousContent.trailingCollapsibleWidth().value_or(0.f);
                 if (lineStatus.hasFullyCollapsibleTrailingContent || isVisuallyEmptyWhitespaceContent(continuousContent))
-                    spaceRequired -= continuousContent.leadingCollapsibleWidth();
+                    spaceRequired -= continuousContent.leadingCollapsibleWidth().value_or(0.f);
                 if (spaceRequired <= lineStatus.availableWidth)
                     return InlineContentBreaker::Result { Result::Action::Keep };
             }
@@ -513,8 +513,8 @@ std::optional<InlineContentBreaker::OverflowingTextContent::BreakingPosition> In
     if (!isWrappableRun(overflowingRun))
         return { };
 
-    auto avilableWidth = std::max(0.0f, lineStatus.availableWidth - nonOverflowingContentWidth);
-    auto partialOverflowingRun = tryBreakingTextRun(runs, { overflowingRunIndex, true, lineStatus.contentLogicalRight + nonOverflowingContentWidth }, avilableWidth, lineStatus.hasWrapOpportunityAtPreviousPosition);
+    auto availableWidth = std::max(0.f, lineStatus.availableWidth - nonOverflowingContentWidth);
+    auto partialOverflowingRun = tryBreakingTextRun(runs, { overflowingRunIndex, true, lineStatus.contentLogicalRight + nonOverflowingContentWidth }, availableWidth, lineStatus.hasWrapOpportunityAtPreviousPosition);
     if (!partialOverflowingRun)
         return { };
     if (partialOverflowingRun->length)
@@ -536,8 +536,8 @@ std::optional<InlineContentBreaker::OverflowingTextContent::BreakingPosition> In
         if (!isWrappableRun(run))
             continue;
         ASSERT(run.inlineItem.isText());
-        auto avilableWidth = std::max(0.0f, lineStatus.availableWidth - previousContentWidth);
-        if (auto partialRun = tryBreakingTextRun(runs, { index, false, lineStatus.contentLogicalRight + previousContentWidth }, avilableWidth, lineStatus.hasWrapOpportunityAtPreviousPosition)) {
+        auto availableWidth = std::max(0.f, lineStatus.availableWidth - previousContentWidth);
+        if (auto partialRun = tryBreakingTextRun(runs, { index, false, lineStatus.contentLogicalRight + previousContentWidth }, availableWidth, lineStatus.hasWrapOpportunityAtPreviousPosition)) {
             // We know this run fits, so if breaking is allowed on the run, it should return a non-empty left-side
             // since it's either at hyphen position or the entire run is returned.
             ASSERT(partialRun->length);
@@ -679,26 +679,47 @@ OptionSet<InlineContentBreaker::WordBreakRule> InlineContentBreaker::wordBreakBe
     return includeHyphenationIfAllowed({ });
 }
 
-void InlineContentBreaker::ContinuousContent::append(const InlineItem& inlineItem, const RenderStyle& style, InlineLayoutUnit logicalWidth, std::optional<InlineLayoutUnit> collapsibleWidth)
+void InlineContentBreaker::ContinuousContent::appendToRunList(const InlineItem& inlineItem, const RenderStyle& style, InlineLayoutUnit logicalWidth)
 {
-    ASSERT(inlineItem.isText() || inlineItem.isBox() || inlineItem.isInlineBoxStart() || inlineItem.isInlineBoxEnd());
-    auto isLeadingCollapsible = collapsibleWidth && (m_runs.isEmpty() || isFullyCollapsible());
     m_runs.append({ inlineItem, style, logicalWidth });
     m_logicalWidth = clampTo<InlineLayoutUnit>(m_logicalWidth + logicalWidth);
+}
+
+void InlineContentBreaker::ContinuousContent::resetTrailingWhitespace()
+{
+    if (!m_leadingCollapsibleWidth)
+        m_leadingCollapsibleWidth = m_trailingCollapsibleWidth;
+    m_trailingCollapsibleWidth = { };
+}
+
+void InlineContentBreaker::ContinuousContent::append(const InlineItem& inlineItem, const RenderStyle& style, InlineLayoutUnit logicalWidth)
+{
+    ASSERT(inlineItem.isBox() || inlineItem.isInlineBoxStart() || inlineItem.isInlineBoxEnd());
+    appendToRunList(inlineItem, style, logicalWidth);
+    if (inlineItem.isBox()) {
+        // Inline boxes (whitespace-> <span></span>) do not prevent the trailing content from getting collapsed/hung
+        // but atomic inline level boxes do.
+        resetTrailingWhitespace();
+    }
+}
+
+void InlineContentBreaker::ContinuousContent::append(const InlineTextItem& inlineTextItem, const RenderStyle& style, InlineLayoutUnit logicalWidth, std::optional<InlineLayoutUnit> collapsibleWidth)
+{
     if (!collapsibleWidth) {
-        if (inlineItem.isText() || inlineItem.isBox()) {
-            // Inline boxes do not prevent the trailing content from getting collapsed.
-            m_trailingCollapsibleWidth = { };
-        }
+        appendToRunList(inlineTextItem, style, logicalWidth);
+        resetTrailingWhitespace();
         return;
     }
+
     ASSERT(*collapsibleWidth <= logicalWidth);
+    auto isLeadingCollapsible = collapsibleWidth && (!this->logicalWidth() || isFullyCollapsible());
+    appendToRunList(inlineTextItem, style, logicalWidth);
     if (isLeadingCollapsible) {
         ASSERT(!m_trailingCollapsibleWidth);
-        m_leadingCollapsibleWidth += *collapsibleWidth;
+        m_leadingCollapsibleWidth = m_leadingCollapsibleWidth.value_or(0.f) + *collapsibleWidth;
         return;
     }
-    m_trailingCollapsibleWidth = *collapsibleWidth == logicalWidth ? m_trailingCollapsibleWidth + logicalWidth : *collapsibleWidth;
+    m_trailingCollapsibleWidth = *collapsibleWidth == logicalWidth ? m_trailingCollapsibleWidth.value_or(0.f) + logicalWidth : *collapsibleWidth;
 }
 
 void InlineContentBreaker::ContinuousContent::reset()
