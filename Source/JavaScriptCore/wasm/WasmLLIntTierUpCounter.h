@@ -44,7 +44,13 @@ public:
         Compiled,
     };
 
-    LLIntTierUpCounter()
+    struct OSREntryData {
+        uint32_t loopIndex;
+        Vector<VirtualRegister> values;
+    };
+
+    LLIntTierUpCounter(HashMap<InstructionStream::Offset, OSREntryData>&& osrEntryData)
+        : m_osrEntryData(WTFMove(osrEntryData))
     {
         optimizeAfterWarmUp();
     }
@@ -69,11 +75,6 @@ public:
         else
             setNewThreshold(Options::thresholdForOMGOptimizeSoon());
     }
-
-    struct OSREntryData {
-        uint32_t loopIndex;
-        Vector<VirtualRegister> values;
-    };
 
     void addOSREntryDataForLoop(InstructionStream::Offset, OSREntryData&&);
 

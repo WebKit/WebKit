@@ -1244,7 +1244,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     wasm/WasmExceptionType.h
     wasm/WasmFaultSignalHandler.h
     wasm/WasmFormat.h
-    wasm/WasmFunctionCodeBlock.h
+    wasm/WasmFunctionCodeBlockGenerator.h
     wasm/WasmHandlerInfo.h
     wasm/WasmIndexOrName.h
     wasm/WasmLLIntTierUpCounter.h

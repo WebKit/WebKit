@@ -1,3 +1,66 @@
+2021-12-27  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Consider merging Wasm::FunctionCodeBlock and Wasm::LLIntCallee
+        https://bugs.webkit.org/show_bug.cgi?id=203691
+
+        Reviewed by Filip Pizlo.
+
+        This patch merges Wasm::FunctionCodeBlock into Wasm::LLIntCallee since both
+        are one-on-one and what they want to represent are the same. We change
+        Wasm::FunctionCodeBlock to Wasm::FunctionCodeBlockGenerator so that we can
+        use FixedVector in Wasm::LLIntCallee which makes Wasm::LLIntCallee small,
+        and this is similar to what JS side is doing (UnlinkedCodeBlockGenerator).
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * bytecode/BytecodeDumper.cpp:
+        (JSC::Wasm::BytecodeDumper::dumpBlock):
+        (JSC::Wasm::BytecodeDumper::dumpConstants):
+        (JSC::Wasm::BytecodeDumper::constantName const):
+        * bytecode/BytecodeDumper.h:
+        * interpreter/Interpreter.cpp:
+        (JSC::CatchInfo::CatchInfo):
+        * llint/LLIntOffsetsExtractor.cpp:
+        * llint/WebAssembly.asm:
+        * wasm/WasmCallee.cpp:
+        (JSC::Wasm::LLIntCallee::LLIntCallee):
+        (JSC::Wasm::LLIntCallee::outOfLineJumpOffset):
+        (JSC::Wasm::LLIntCallee::outOfLineJumpTarget):
+        (JSC::Wasm::LLIntCallee::linkExceptionHandlers): Deleted.
+        * wasm/WasmCallee.h:
+        (JSC::Wasm::Callee::llintFunctionCodeBlock const): Deleted.
+        * wasm/WasmFunctionCodeBlockGenerator.cpp: Renamed from Source/JavaScriptCore/wasm/WasmFunctionCodeBlock.cpp.
+        (JSC::Wasm::FunctionCodeBlockGenerator::setInstructions):
+        (JSC::Wasm::FunctionCodeBlockGenerator::addOutOfLineJumpTarget):
+        (JSC::Wasm::FunctionCodeBlockGenerator::outOfLineJumpOffset):
+        (JSC::Wasm::FunctionCodeBlockGenerator::addSignature):
+        (JSC::Wasm::FunctionCodeBlockGenerator::addJumpTable):
+        (JSC::Wasm::FunctionCodeBlockGenerator::numberOfJumpTables const):
+        * wasm/WasmFunctionCodeBlockGenerator.h: Renamed from Source/JavaScriptCore/wasm/WasmFunctionCodeBlock.h.
+        (JSC::Wasm::FunctionCodeBlockGenerator::FunctionCodeBlockGenerator):
+        (JSC::Wasm::FunctionCodeBlockGenerator::tierUpCounter):
+        * wasm/WasmGeneratorTraits.h:
+        * wasm/WasmLLIntGenerator.cpp:
+        (JSC::Wasm::parseAndCompileBytecode):
+        (JSC::Wasm::LLIntGenerator::LLIntGenerator):
+        (JSC::Wasm::LLIntGenerator::finalize):
+        (JSC::Wasm::LLIntGenerator::addLoop):
+        (JSC::Wasm::LLIntGenerator::addSwitch):
+        * wasm/WasmLLIntGenerator.h:
+        * wasm/WasmLLIntPlan.cpp:
+        (JSC::Wasm::LLIntPlan::compileFunction):
+        (JSC::Wasm::LLIntPlan::didCompleteCompilation):
+        * wasm/WasmLLIntPlan.h:
+        * wasm/WasmLLIntTierUpCounter.h:
+        (JSC::Wasm::LLIntTierUpCounter::LLIntTierUpCounter):
+        * wasm/WasmSlowPaths.cpp:
+        (JSC::LLInt::shouldJIT):
+        (JSC::LLInt::jitCompileAndSetHeuristics):
+        (JSC::LLInt::WASM_SLOW_PATH_DECL):
+        (JSC::LLInt::doWasmCallIndirect):
+        (JSC::LLInt::doWasmCallRef):
+
 2021-12-26  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Use SlowPathReturnType instead of EncodedMatchResult

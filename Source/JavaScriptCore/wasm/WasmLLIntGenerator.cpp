@@ -35,7 +35,7 @@
 #include "Label.h"
 #include "WasmCallingConvention.h"
 #include "WasmContextInlines.h"
-#include "WasmFunctionCodeBlock.h"
+#include "WasmFunctionCodeBlockGenerator.h"
 #include "WasmFunctionParser.h"
 #include "WasmGeneratorTraits.h"
 #include <variant>
@@ -193,7 +193,7 @@ public:
 
     LLIntGenerator(ModuleInformation&, unsigned functionIndex, const Signature&);
 
-    std::unique_ptr<FunctionCodeBlock> finalize();
+    std::unique_ptr<FunctionCodeBlockGenerator> finalize();
 
     template<typename ExpressionListA, typename ExpressionListB>
     void unifyValuesWithBlock(const ExpressionListA& destinations, const ExpressionListB& values)
@@ -500,7 +500,7 @@ private:
     bool m_usesExceptions { false };
 };
 
-Expected<std::unique_ptr<FunctionCodeBlock>, String> parseAndCompileBytecode(const uint8_t* functionStart, size_t functionLength, const Signature& signature, ModuleInformation& info, uint32_t functionIndex)
+Expected<std::unique_ptr<FunctionCodeBlockGenerator>, String> parseAndCompileBytecode(const uint8_t* functionStart, size_t functionLength, const Signature& signature, ModuleInformation& info, uint32_t functionIndex)
 {
     LLIntGenerator llintGenerator(info, functionIndex, signature);
     FunctionParser<LLIntGenerator> parser(llintGenerator, functionStart, functionLength, signature, info);
@@ -525,7 +525,7 @@ static ThreadSpecific<Buffer>& threadSpecificBuffer()
 }
 
 LLIntGenerator::LLIntGenerator(ModuleInformation& info, unsigned functionIndex, const Signature&)
-    : BytecodeGeneratorBase(makeUnique<FunctionCodeBlock>(functionIndex), 0)
+    : BytecodeGeneratorBase(makeUnique<FunctionCodeBlockGenerator>(functionIndex), 0)
     , m_info(info)
     , m_functionIndex(functionIndex)
 {
@@ -543,7 +543,7 @@ LLIntGenerator::LLIntGenerator(ModuleInformation& info, unsigned functionIndex, 
     WasmEnter::emit(this);
 }
 
-std::unique_ptr<FunctionCodeBlock> LLIntGenerator::finalize()
+std::unique_ptr<FunctionCodeBlockGenerator> LLIntGenerator::finalize()
 {
     RELEASE_ASSERT(m_codeBlock);
 
@@ -983,7 +983,7 @@ auto LLIntGenerator::addLoop(BlockSignature signature, Stack& enclosingStack, Co
 
     WasmLoopHint::emit(this);
 
-    m_codeBlock->tierUpCounter().addOSREntryDataForLoop(m_lastInstruction.offset(), { loopIndex, WTFMove(osrEntryData) });
+    m_codeBlock->tierUpCounter().add(m_lastInstruction.offset(), LLIntTierUpCounter::OSREntryData { loopIndex, WTFMove(osrEntryData) });
 
     return { };
 }
@@ -1226,7 +1226,7 @@ auto LLIntGenerator::addSwitch(ExpressionType condition, const Vector<ControlTyp
     materializeConstantsAndLocals(expressionStack);
 
     unsigned tableIndex = m_codeBlock->numberOfJumpTables();
-    FunctionCodeBlock::JumpTable& jumpTable = m_codeBlock->addJumpTable(targets.size() + 1);
+    auto& jumpTable = m_codeBlock->addJumpTable(targets.size() + 1);
 
     WasmSwitch::emit(this, condition, tableIndex);
 

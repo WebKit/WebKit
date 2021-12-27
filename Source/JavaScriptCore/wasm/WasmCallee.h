@@ -31,7 +31,7 @@
 #include "RegisterAtOffsetList.h"
 #include "WasmCompilationMode.h"
 #include "WasmFormat.h"
-#include "WasmFunctionCodeBlock.h"
+#include "WasmFunctionCodeBlockGenerator.h"
 #include "WasmHandlerInfo.h"
 #include "WasmIndexOrName.h"
 #include "WasmLLIntTierUpCounter.h"
@@ -64,8 +64,6 @@ public:
     bool hasExceptionHandlers() const { return !m_exceptionHandlers.isEmpty(); }
 
     void dump(PrintStream&) const;
-
-    virtual FunctionCodeBlock* llintFunctionCodeBlock() const { return nullptr; }
 
 protected:
     JS_EXPORT_PRIVATE Callee(Wasm::CompilationMode);
@@ -214,15 +212,58 @@ class LLIntCallee final : public Callee {
     friend LLIntOffsetsExtractor;
 
 public:
-    static Ref<LLIntCallee> create(std::unique_ptr<FunctionCodeBlock> codeBlock, size_t index, std::pair<const Name*, RefPtr<NameSection>>&& name)
+    static Ref<LLIntCallee> create(FunctionCodeBlockGenerator& generator, size_t index, std::pair<const Name*, RefPtr<NameSection>>&& name)
     {
-        return adoptRef(*new LLIntCallee(WTFMove(codeBlock), index, WTFMove(name)));
+        return adoptRef(*new LLIntCallee(generator, index, WTFMove(name)));
     }
 
     JS_EXPORT_PRIVATE void setEntrypoint(MacroAssemblerCodePtr<WasmEntryPtrTag>);
     JS_EXPORT_PRIVATE MacroAssemblerCodePtr<WasmEntryPtrTag> entrypoint() const final;
     JS_EXPORT_PRIVATE RegisterAtOffsetList* calleeSaveRegisters() final;
     JS_EXPORT_PRIVATE std::tuple<void*, void*> range() const final;
+
+    uint32_t functionIndex() const { return m_functionIndex; }
+    unsigned numVars() const { return m_numVars; }
+    unsigned numCalleeLocals() const { return m_numCalleeLocals; }
+    uint32_t numArguments() const { return m_numArguments; }
+    const FixedVector<Type>& constantTypes() const { return m_constantTypes; }
+    const FixedVector<uint64_t>& constants() const { return m_constants; }
+    const InstructionStream& instructions() const { return *m_instructions; }
+
+    ALWAYS_INLINE uint64_t getConstant(VirtualRegister reg) const { return m_constants[reg.toConstantIndex()]; }
+    ALWAYS_INLINE Type getConstantType(VirtualRegister reg) const
+    {
+        ASSERT(Options::dumpGeneratedWasmBytecodes());
+        return m_constantTypes[reg.toConstantIndex()];
+    }
+
+    InstructionStream::Offset numberOfJumpTargets() { return m_jumpTargets.size(); }
+    InstructionStream::Offset lastJumpTarget() { return m_jumpTargets.last(); }
+
+    const Instruction* outOfLineJumpTarget(const Instruction*);
+    InstructionStream::Offset outOfLineJumpOffset(InstructionStream::Offset);
+    InstructionStream::Offset outOfLineJumpOffset(const InstructionStream::Ref& instruction)
+    {
+        return outOfLineJumpOffset(instruction.offset());
+    }
+
+    inline InstructionStream::Offset bytecodeOffset(const Instruction* returnAddress)
+    {
+        const auto* instructionsBegin = m_instructions->at(0).ptr();
+        const auto* instructionsEnd = reinterpret_cast<const Instruction*>(reinterpret_cast<uintptr_t>(instructionsBegin) + m_instructions->size());
+        RELEASE_ASSERT(returnAddress >= instructionsBegin && returnAddress < instructionsEnd);
+        return returnAddress - instructionsBegin;
+    }
+
+    LLIntTierUpCounter& tierUpCounter() { return m_tierUpCounter; }
+
+    const Signature& signature(unsigned index) const
+    {
+        return *m_signatures[index];
+    }
+
+    const JumpTable& jumpTable(unsigned tableIndex) const;
+    unsigned numberOfJumpTables() const;
 
 #if ENABLE(WEBASSEMBLY_B3JIT)
     JITCallee* replacement(MemoryMode mode) { return m_replacements[static_cast<uint8_t>(mode)].get(); }
@@ -236,21 +277,34 @@ public:
     {
         m_osrEntryCallees[static_cast<uint8_t>(mode)] = WTFMove(osrEntryCallee);
     }
-
-    LLIntTierUpCounter& tierUpCounter() { return m_codeBlock->tierUpCounter(); }
-    FunctionCodeBlock* llintFunctionCodeBlock() const final { return m_codeBlock.get(); }
 #endif
 
-private:
-    LLIntCallee(std::unique_ptr<FunctionCodeBlock>, size_t index, std::pair<const Name*, RefPtr<NameSection>>&&);
+    using OutOfLineJumpTargets = HashMap<InstructionStream::Offset, int>;
 
-    void linkExceptionHandlers();
+private:
+    LLIntCallee(FunctionCodeBlockGenerator&, size_t index, std::pair<const Name*, RefPtr<NameSection>>&&);
+
+    uint32_t m_functionIndex { 0 };
+
+    // Used for the number of WebAssembly locals, as in https://webassembly.github.io/spec/core/syntax/modules.html#syntax-local
+    unsigned m_numVars { 0 };
+    // Number of VirtualRegister. The naming is unfortunate, but has to match UnlinkedCodeBlock
+    unsigned m_numCalleeLocals { 0 };
+    uint32_t m_numArguments { 0 };
+    FixedVector<Type> m_constantTypes;
+    FixedVector<uint64_t> m_constants;
+    std::unique_ptr<InstructionStream> m_instructions;
+    const void* m_instructionsRawPointer { nullptr };
+    FixedVector<InstructionStream::Offset> m_jumpTargets;
+    FixedVector<const Signature*> m_signatures;
+    OutOfLineJumpTargets m_outOfLineJumpTargets;
+    LLIntTierUpCounter m_tierUpCounter;
+    FixedVector<JumpTable> m_jumpTables;
 
 #if ENABLE(WEBASSEMBLY_B3JIT)
     RefPtr<JITCallee> m_replacements[Wasm::NumberOfMemoryModes];
     RefPtr<OSREntryCallee> m_osrEntryCallees[Wasm::NumberOfMemoryModes];
 #endif
-    std::unique_ptr<FunctionCodeBlock> m_codeBlock;
     MacroAssemblerCodePtr<WasmEntryPtrTag> m_entrypoint;
 };
 

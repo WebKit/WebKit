@@ -47,21 +47,30 @@ class BytecodeGeneratorBase;
 
 namespace Wasm {
 
+class LLIntCallee;
 class Signature;
 struct GeneratorTraits;
 
-// FIXME: Consider merging this with LLIntCallee
-// https://bugs.webkit.org/show_bug.cgi?id=203691
-class FunctionCodeBlock {
+struct JumpTableEntry {
+    int target { 0 };
+    unsigned startOffset;
+    unsigned dropCount;
+    unsigned keepCount;
+};
+
+using JumpTable = FixedVector<JumpTableEntry>;
+
+class FunctionCodeBlockGenerator {
     WTF_MAKE_FAST_ALLOCATED;
-    WTF_MAKE_NONCOPYABLE(FunctionCodeBlock);
+    WTF_MAKE_NONCOPYABLE(FunctionCodeBlockGenerator);
 
     friend BytecodeGeneratorBase<GeneratorTraits>;
     friend LLIntOffsetsExtractor;
     friend class LLIntGenerator;
+    friend class LLIntCallee;
 
 public:
-    FunctionCodeBlock(uint32_t functionIndex)
+    FunctionCodeBlockGenerator(uint32_t functionIndex)
         : m_functionIndex(functionIndex)
     {
     }
@@ -90,7 +99,6 @@ public:
     InstructionStream::Offset lastJumpTarget() { return m_jumpTargets.last(); }
 
     void addOutOfLineJumpTarget(InstructionStream::Offset, int target);
-    const Instruction* outOfLineJumpTarget(const Instruction*);
     InstructionStream::Offset outOfLineJumpOffset(InstructionStream::Offset);
     InstructionStream::Offset outOfLineJumpOffset(const InstructionStream::Ref& instruction)
     {
@@ -105,21 +113,11 @@ public:
         return returnAddress - instructionsBegin;
     }
 
-    LLIntTierUpCounter& tierUpCounter() { return m_tierUpCounter; }
+    HashMap<InstructionStream::Offset, LLIntTierUpCounter::OSREntryData>& tierUpCounter() { return m_tierUpCounter; }
 
     unsigned addSignature(const Signature&);
-    const Signature& signature(unsigned index) const;
 
-    struct JumpTableEntry {
-        int target { 0 };
-        unsigned startOffset;
-        unsigned dropCount;
-        unsigned keepCount;
-    };
-
-    using JumpTable = Vector<JumpTableEntry>;
     JumpTable& addJumpTable(size_t numberOfEntries);
-    const JumpTable& jumpTable(unsigned tableIndex) const;
     unsigned numberOfJumpTables() const;
 
     size_t numberOfExceptionHandlers() const { return m_exceptionHandlers.size(); }
@@ -143,7 +141,7 @@ private:
     Vector<InstructionStream::Offset> m_jumpTargets;
     Vector<const Signature*> m_signatures;
     OutOfLineJumpTargets m_outOfLineJumpTargets;
-    LLIntTierUpCounter m_tierUpCounter;
+    HashMap<InstructionStream::Offset, LLIntTierUpCounter::OSREntryData> m_tierUpCounter;
     Vector<JumpTable> m_jumpTables;
     Vector<UnlinkedHandlerInfo> m_exceptionHandlers;
 };

@@ -85,7 +85,7 @@ void LLIntPlan::compileFunction(uint32_t functionIndex)
     ASSERT_UNUSED(functionIndexSpace, m_moduleInformation->signatureIndexFromFunctionIndexSpace(functionIndexSpace) == signatureIndex);
 
     m_unlinkedWasmToWasmCalls[functionIndex] = Vector<UnlinkedWasmToWasmCall>();
-    Expected<std::unique_ptr<FunctionCodeBlock>, String> parseAndCompileResult = parseAndCompileBytecode(function.data.data(), function.data.size(), signature, m_moduleInformation.get(), functionIndex);
+    Expected<std::unique_ptr<FunctionCodeBlockGenerator>, String> parseAndCompileResult = parseAndCompileBytecode(function.data.data(), function.data.size(), signature, m_moduleInformation.get(), functionIndex);
 
     if (UNLIKELY(!parseAndCompileResult)) {
         Locker locker { m_lock };
@@ -115,7 +115,7 @@ void LLIntPlan::didCompleteCompilation()
             if (UNLIKELY(Options::dumpGeneratedWasmBytecodes()))
                 BytecodeDumper::dumpBlock(m_wasmInternalFunctions[i].get(), m_moduleInformation, WTF::dataFile());
 
-            m_calleesVector[i] = LLIntCallee::create(WTFMove(m_wasmInternalFunctions[i]), functionIndexSpace, m_moduleInformation->nameSection->get(functionIndexSpace));
+            m_calleesVector[i] = LLIntCallee::create(*m_wasmInternalFunctions[i], functionIndexSpace, m_moduleInformation->nameSection->get(functionIndexSpace));
             entrypoints[i] = jit.label();
 #if CPU(X86_64)
             CCallHelpers::Address calleeSlot(CCallHelpers::stackPointerRegister, CallFrameSlot::callee * static_cast<int>(sizeof(Register)) - sizeof(CPURegister));

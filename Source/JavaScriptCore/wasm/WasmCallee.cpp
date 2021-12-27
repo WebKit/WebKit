@@ -76,21 +76,28 @@ JITCallee::JITCallee(Wasm::CompilationMode compilationMode, Entrypoint&& entrypo
 {
 }
 
-LLIntCallee::LLIntCallee(std::unique_ptr<FunctionCodeBlock> codeBlock, size_t index, std::pair<const Name*, RefPtr<NameSection>>&& name)
+LLIntCallee::LLIntCallee(FunctionCodeBlockGenerator& generator, size_t index, std::pair<const Name*, RefPtr<NameSection>>&& name)
     : Callee(Wasm::CompilationMode::LLIntMode, index, WTFMove(name))
-    , m_codeBlock(WTFMove(codeBlock))
+    , m_functionIndex(generator.m_functionIndex)
+    , m_numVars(generator.m_numVars)
+    , m_numCalleeLocals(generator.m_numCalleeLocals)
+    , m_numArguments(generator.m_numArguments)
+    , m_constantTypes(WTFMove(generator.m_constantTypes))
+    , m_constants(WTFMove(generator.m_constants))
+    , m_instructions(WTFMove(generator.m_instructions))
+    , m_instructionsRawPointer(generator.m_instructionsRawPointer)
+    , m_jumpTargets(WTFMove(generator.m_jumpTargets))
+    , m_signatures(WTFMove(generator.m_signatures))
+    , m_outOfLineJumpTargets(WTFMove(generator.m_outOfLineJumpTargets))
+    , m_tierUpCounter(WTFMove(generator.m_tierUpCounter))
+    , m_jumpTables(WTFMove(generator.m_jumpTables))
 {
-    linkExceptionHandlers();
-}
-
-void LLIntCallee::linkExceptionHandlers()
-{
-    if (size_t count = m_codeBlock->numberOfExceptionHandlers()) {
+    if (size_t count = generator.numberOfExceptionHandlers()) {
         m_exceptionHandlers = FixedVector<HandlerInfo>(count);
         for (size_t i = 0; i < count; i++) {
-            const UnlinkedHandlerInfo& unlinkedHandler = m_codeBlock->exceptionHandler(i);
+            const UnlinkedHandlerInfo& unlinkedHandler = generator.exceptionHandler(i);
             HandlerInfo& handler = m_exceptionHandlers[i];
-            auto& instruction = *m_codeBlock->instructions().at(unlinkedHandler.m_target).ptr();
+            auto& instruction = *m_instructions->at(unlinkedHandler.m_target).ptr();
             CodeLocationLabel<ExceptionHandlerPtrTag> target;
             if (unlinkedHandler.m_type == HandlerType::Catch)
                 target = CodeLocationLabel<ExceptionHandlerPtrTag>(LLInt::handleWasmCatch(instruction.width<WasmOpcodeTraits>()).code());
@@ -135,6 +142,19 @@ RegisterAtOffsetList* LLIntCallee::calleeSaveRegisters()
 std::tuple<void*, void*> LLIntCallee::range() const
 {
     return { nullptr, nullptr };
+}
+
+InstructionStream::Offset LLIntCallee::outOfLineJumpOffset(InstructionStream::Offset bytecodeOffset)
+{
+    ASSERT(m_outOfLineJumpTargets.contains(bytecodeOffset));
+    return m_outOfLineJumpTargets.get(bytecodeOffset);
+}
+
+const Instruction* LLIntCallee::outOfLineJumpTarget(const Instruction* pc)
+{
+    int offset = bytecodeOffset(pc);
+    int target = outOfLineJumpOffset(offset);
+    return m_instructions->at(offset + target).ptr();
 }
 
 void OptimizingJITCallee::linkExceptionHandlers(Vector<UnlinkedHandlerInfo> unlinkedExceptionHandlers, Vector<CodeLocationLabel<ExceptionHandlerPtrTag>> exceptionHandlerLocations)

@@ -28,7 +28,7 @@
 #if ENABLE(WEBASSEMBLY)
 
 #include "WasmEntryPlan.h"
-#include "WasmFunctionCodeBlock.h"
+#include "WasmFunctionCodeBlockGenerator.h"
 
 namespace JSC {
 
@@ -87,7 +87,7 @@ private:
     bool prepareImpl() final;
     void didCompleteCompilation() WTF_REQUIRES_LOCK(m_lock) final;
 
-    Vector<std::unique_ptr<FunctionCodeBlock>> m_wasmInternalFunctions;
+    Vector<std::unique_ptr<FunctionCodeBlockGenerator>> m_wasmInternalFunctions;
     const Ref<LLIntCallee>* m_callees { nullptr };
     Vector<Ref<LLIntCallee>> m_calleesVector;
     EmbedderEntrypointCalleeMap m_embedderCallees;

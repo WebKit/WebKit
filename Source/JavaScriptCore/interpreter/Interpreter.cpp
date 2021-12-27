@@ -545,8 +545,8 @@ CatchInfo::CatchInfo(const Wasm::HandlerInfo* handler, const Wasm::Callee* calle
     if (m_valid) {
         m_type = HandlerType::Catch;
         m_nativeCode = handler->m_nativeCode;
-        if (const Wasm::FunctionCodeBlock* codeBlock = callee->llintFunctionCodeBlock())
-            m_catchPCForInterpreter = codeBlock->instructions().at(handler->m_target).ptr();
+        if (callee->compilationMode() == Wasm::CompilationMode::LLIntMode)
+            m_catchPCForInterpreter = static_cast<const Wasm::LLIntCallee*>(callee)->instructions().at(handler->m_target).ptr();
         else
             m_catchPCForInterpreter = nullptr;
     }

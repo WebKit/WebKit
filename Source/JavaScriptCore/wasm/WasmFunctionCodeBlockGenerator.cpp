@@ -25,7 +25,7 @@
 
 
 #include "config.h"
-#include "WasmFunctionCodeBlock.h"
+#include "WasmFunctionCodeBlockGenerator.h"
 
 #if ENABLE(WEBASSEMBLY)
 
@@ -33,55 +33,38 @@
 
 namespace JSC { namespace Wasm {
 
-void FunctionCodeBlock::setInstructions(std::unique_ptr<InstructionStream> instructions)
+void FunctionCodeBlockGenerator::setInstructions(std::unique_ptr<InstructionStream> instructions)
 {
     m_instructions = WTFMove(instructions);
     m_instructionsRawPointer = m_instructions->rawPointer();
 }
 
-void FunctionCodeBlock::addOutOfLineJumpTarget(InstructionStream::Offset bytecodeOffset, int target)
+void FunctionCodeBlockGenerator::addOutOfLineJumpTarget(InstructionStream::Offset bytecodeOffset, int target)
 {
     RELEASE_ASSERT(target);
     m_outOfLineJumpTargets.set(bytecodeOffset, target);
 }
 
-InstructionStream::Offset FunctionCodeBlock::outOfLineJumpOffset(InstructionStream::Offset bytecodeOffset)
+InstructionStream::Offset FunctionCodeBlockGenerator::outOfLineJumpOffset(InstructionStream::Offset bytecodeOffset)
 {
     ASSERT(m_outOfLineJumpTargets.contains(bytecodeOffset));
     return m_outOfLineJumpTargets.get(bytecodeOffset);
 }
 
-const Instruction* FunctionCodeBlock::outOfLineJumpTarget(const Instruction* pc)
-{
-    int offset = bytecodeOffset(pc);
-    int target = outOfLineJumpOffset(offset);
-    return m_instructions->at(offset + target).ptr();
-}
-
-unsigned FunctionCodeBlock::addSignature(const Signature& signature)
+unsigned FunctionCodeBlockGenerator::addSignature(const Signature& signature)
 {
     unsigned index = m_signatures.size();
     m_signatures.append(&signature);
     return index;
 }
 
-const Signature& FunctionCodeBlock::signature(unsigned index) const
-{
-    return *m_signatures[index];
-}
-
-auto FunctionCodeBlock::addJumpTable(size_t numberOfEntries) -> JumpTable&
+auto FunctionCodeBlockGenerator::addJumpTable(size_t numberOfEntries) -> JumpTable&
 {
     m_jumpTables.append(JumpTable(numberOfEntries));
     return m_jumpTables.last();
 }
 
-auto FunctionCodeBlock::jumpTable(unsigned tableIndex) const -> const JumpTable&
-{
-    return m_jumpTables[tableIndex];
-}
-
-unsigned FunctionCodeBlock::numberOfJumpTables() const
+unsigned FunctionCodeBlockGenerator::numberOfJumpTables() const
 {
     return m_jumpTables.size();
 }

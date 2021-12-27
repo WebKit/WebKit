@@ -1082,7 +1082,7 @@ wasm/WasmEmbedder.h
 wasm/WasmEntryPlan.cpp
 wasm/WasmFaultSignalHandler.cpp
 wasm/WasmFormat.cpp
-wasm/WasmFunctionCodeBlock.cpp
+wasm/WasmFunctionCodeBlockGenerator.cpp
 wasm/WasmGlobal.cpp
 wasm/WasmHandlerInfo.cpp
 wasm/WasmIndexOrName.cpp

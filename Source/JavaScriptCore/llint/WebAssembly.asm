@@ -113,7 +113,7 @@ end
 
 macro checkSwitchToJIT(increment, action)
     loadp CodeBlock[cfr], ws0
-    baddis increment, Wasm::FunctionCodeBlock::m_tierUpCounter + Wasm::LLIntTierUpCounter::m_counter[ws0], .continue
+    baddis increment, Wasm::LLIntCallee::m_tierUpCounter + Wasm::LLIntTierUpCounter::m_counter[ws0], .continue
     action()
     .continue:
 end
@@ -277,7 +277,7 @@ end
 
 macro restoreStackPointerAfterCall()
     loadp CodeBlock[cfr], ws1
-    loadi Wasm::FunctionCodeBlock::m_numCalleeLocals[ws1], ws1
+    loadi Wasm::LLIntCallee::m_numCalleeLocals[ws1], ws1
     lshiftp 3, ws1
     addp maxFrameExtentForSlowPathCall, ws1
     subp cfr, ws1, sp
@@ -297,7 +297,7 @@ macro wasmPrologue(codeBlockGetter, codeBlockSetter, loadWasmInstance)
     codeBlockSetter(ws0)
 
     # Get new sp in ws1 and check stack height.
-    loadi Wasm::FunctionCodeBlock::m_numCalleeLocals[ws0], ws1
+    loadi Wasm::LLIntCallee::m_numCalleeLocals[ws0], ws1
     lshiftp 3, ws1
     addp maxFrameExtentForSlowPathCall, ws1
     subp cfr, ws1, ws1
@@ -322,10 +322,10 @@ macro wasmPrologue(codeBlockGetter, codeBlockSetter, loadWasmInstance)
     checkSwitchToJITForPrologue(ws0)
 
     # Set up the PC.
-    loadp Wasm::FunctionCodeBlock::m_instructionsRawPointer[ws0], PB
+    loadp Wasm::LLIntCallee::m_instructionsRawPointer[ws0], PB
     move 0, PC
 
-    loadi Wasm::FunctionCodeBlock::m_numVars[ws0], ws1
+    loadi Wasm::LLIntCallee::m_numVars[ws0], ws1
     subi NumberOfWasmArguments + CalleeSaveSpaceAsVirtualRegisters, ws1
     btiz ws1, .zeroInitializeLocalsDone
     negi ws1
@@ -389,9 +389,9 @@ macro loadConstantOrVariable(ctx, index, loader)
         jmp .done
     .constant:
         loadp CodeBlock[cfr], t6
-        loadp Wasm::FunctionCodeBlock::m_constants + VectorBufferOffset[t6], t6
+        loadp Wasm::LLIntCallee::m_constants[t6], t6
         subp firstConstantIndex, index
-        loader([t6, index, 8])
+        loader((constexpr (Int64FixedVector::Storage::offsetOfData()))[t6, index, 8])
     .done:
     end)
 end
@@ -507,7 +507,6 @@ end
 macro wasmCodeBlockGetter(targetRegister)
     loadp Callee[cfr], targetRegister
     andp ~3, targetRegister
-    loadp Wasm::LLIntCallee::m_codeBlock[targetRegister], targetRegister
 end
 
 op(wasm_function_prologue, macro ()
@@ -621,7 +620,7 @@ _wasm_enter:
     traceExecution()
     checkStackPointerAlignment(t2, 0xdead00e1)
     loadp CodeBlock[cfr], t2                // t2<CodeBlock> = cfr.CodeBlock
-    loadi Wasm::FunctionCodeBlock::m_numVars[t2], t2      // t2<size_t> = t2<CodeBlock>.m_numVars
+    loadi Wasm::LLIntCallee::m_numVars[t2], t2      // t2<size_t> = t2<CodeBlock>.m_numVars
     subq CalleeSaveSpaceAsVirtualRegisters + NumberOfWasmArguments, t2
     btiz t2, .opEnterDone
     move cfr, t1
@@ -670,26 +669,26 @@ wasmOp(switch, WasmSwitch, macro(ctx)
     wgetu(ctx, m_tableIndex, t1)
 
     loadp CodeBlock[cfr], t2
-    loadp Wasm::FunctionCodeBlock::m_jumpTables + VectorBufferOffset[t2], t2
-    muli sizeof Wasm::FunctionCodeBlock::JumpTable, t1
+    loadp Wasm::LLIntCallee::m_jumpTables[t2], t2
+    muli sizeof Wasm::JumpTable, t1
     addp t1, t2
 
-    loadi VectorSizeOffset[t2], t3
+    loadp (constexpr (WasmJumpTableFixedVector::Storage::offsetOfData()))[t2], t2
+    loadi Wasm::JumpTable::Storage::m_size[t2], t3
     bib t0, t3, .inBounds
 
 .outOfBounds:
     subi t3, 1, t0
 
 .inBounds:
-    loadp VectorBufferOffset[t2], t2
-    muli sizeof Wasm::FunctionCodeBlock::JumpTableEntry, t0
+    muli sizeof Wasm::JumpTableEntry, t0
 
-    loadi Wasm::FunctionCodeBlock::JumpTableEntry::startOffset[t2, t0], t1
-    loadi Wasm::FunctionCodeBlock::JumpTableEntry::dropCount[t2, t0], t3
-    loadi Wasm::FunctionCodeBlock::JumpTableEntry::keepCount[t2, t0], t5
+    loadi (constexpr (Wasm::JumpTable::Storage::offsetOfData())) + Wasm::JumpTableEntry::startOffset[t2, t0], t1
+    loadi (constexpr (Wasm::JumpTable::Storage::offsetOfData())) + Wasm::JumpTableEntry::dropCount[t2, t0], t3
+    loadi (constexpr (Wasm::JumpTable::Storage::offsetOfData())) + Wasm::JumpTableEntry::keepCount[t2, t0], t5
     dropKeep(t1, t3, t5)
 
-    loadis Wasm::FunctionCodeBlock::JumpTableEntry::target[t2, t0], t3
+    loadis (constexpr (Wasm::JumpTable::Storage::offsetOfData())) + Wasm::JumpTableEntry::target[t2, t0], t3
     assert(macro(ok) btinz t3, .ok end)
     wasmDispatchIndirect(t3)
 end)
@@ -833,7 +832,7 @@ macro slowPathForWasmCall(ctx, slowPath, storeWasmInstance)
             move PB, wasmInstance
             loadi ArgumentCountIncludingThis + TagOffset[cfr], PC
             loadp CodeBlock[cfr], PB
-            loadp Wasm::FunctionCodeBlock::m_instructionsRawPointer[PB], PB
+            loadp Wasm::LLIntCallee::m_instructionsRawPointer[PB], PB
 
             wgetu(ctx, m_stackOffset, ws1)
             lshifti 3, ws1
@@ -2853,7 +2852,7 @@ macro commonCatchImpl(ctx, storeWasmInstance)
     reloadMemoryRegistersFromInstance(wasmInstance, ws0, ws1)
 
     loadp CodeBlock[cfr], PB
-    loadp Wasm::FunctionCodeBlock::m_instructionsRawPointer[PB], PB
+    loadp Wasm::LLIntCallee::m_instructionsRawPointer[PB], PB
     loadp VM::targetInterpreterPCForThrow[t3], PC
     subp PB, PC
 
