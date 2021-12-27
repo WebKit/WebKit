@@ -46,11 +46,13 @@ public:
     void setPath(String&&);
 
     const String& path() const { return m_path; }
-    const String& parentUniqueName() const { return m_parentUniqueName; }
     GVariant* reference() const;
+    GVariant* parentReference() const;
     GVariant* applicationReference() const;
     AccessibilityAtspi& atspi() const { return m_atspi; }
     AccessibilityObjectAtspi* child() const;
+    void childAdded(AccessibilityObjectAtspi&);
+    void childRemoved(AccessibilityObjectAtspi&);
 
     void serialize(GVariantBuilder*) const;
 

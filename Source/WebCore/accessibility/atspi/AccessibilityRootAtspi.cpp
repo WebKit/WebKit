@@ -60,10 +60,9 @@ GDBusInterfaceVTable AccessibilityRootAtspi::s_accessibleFunctions = {
         else if (!g_strcmp0(methodName, "GetState")) {
             GVariantBuilder builder = G_VARIANT_BUILDER_INIT(G_VARIANT_TYPE("(au)"));
 
-            uint64_t atspiStates = (G_GUINT64_CONSTANT(1) << Atspi::State::ManagesDescendants);
             g_variant_builder_open(&builder, G_VARIANT_TYPE("au"));
-            g_variant_builder_add(&builder, "u", static_cast<uint32_t>(atspiStates & 0xffffffff));
-            g_variant_builder_add(&builder, "u", static_cast<uint32_t>(atspiStates >> 32));
+            g_variant_builder_add(&builder, "u", 0);
+            g_variant_builder_add(&builder, "u", 0);
             g_variant_builder_close(&builder);
 
             g_dbus_method_invocation_return_value(invocation, g_variant_builder_end(&builder));
@@ -128,7 +127,7 @@ GDBusInterfaceVTable AccessibilityRootAtspi::s_accessibleFunctions = {
         if (!g_strcmp0(propertyName, "AccessibleId"))
             return g_variant_new_string("");
         if (!g_strcmp0(propertyName, "Parent"))
-            return g_variant_new("(so)", rootObject.m_parentUniqueName.utf8().data(), rootObject.m_parentPath.utf8().data());
+            return rootObject.parentReference();
         if (!g_strcmp0(propertyName, "ChildCount")) {
             auto childCount = Accessibility::retrieveValueFromMainThread<int32_t>([&rootObject]() -> int32_t {
                 return rootObject.child() ? 1 : 0;
@@ -223,6 +222,7 @@ void AccessibilityRootAtspi::embedded(const char* parentUniqueName, const char* 
     RELEASE_ASSERT(!isMainThread());
     m_parentUniqueName = parentUniqueName;
     m_parentPath = parentPath;
+    m_atspi.parentChanged(*this);
     if (!m_isTreeRegistered.load() && m_atspi.hasEventListeners())
         registerTree();
 }
@@ -239,6 +239,12 @@ GVariant* AccessibilityRootAtspi::reference() const
 {
     RELEASE_ASSERT(!isMainThread());
     return g_variant_new("(so)", m_atspi.uniqueName(), m_path.utf8().data());
+}
+
+GVariant* AccessibilityRootAtspi::parentReference() const
+{
+    RELEASE_ASSERT(!isMainThread());
+    return g_variant_new("(so)", m_parentUniqueName.utf8().data(), m_parentPath.utf8().data());
 }
 
 AccessibilityObjectAtspi* AccessibilityRootAtspi::child() const
@@ -260,12 +266,22 @@ AccessibilityObjectAtspi* AccessibilityRootAtspi::child() const
     return rootObject ? rootObject->wrapper() : nullptr;
 }
 
+void AccessibilityRootAtspi::childAdded(AccessibilityObjectAtspi& child)
+{
+    m_atspi.childrenChanged(*this, child, AccessibilityAtspi::ChildrenChanged::Added);
+}
+
+void AccessibilityRootAtspi::childRemoved(AccessibilityObjectAtspi& child)
+{
+    m_atspi.childrenChanged(*this, child, AccessibilityAtspi::ChildrenChanged::Removed);
+}
+
 void AccessibilityRootAtspi::serialize(GVariantBuilder* builder) const
 {
     RELEASE_ASSERT(!isMainThread());
     g_variant_builder_add(builder, "(so)", m_atspi.uniqueName(), m_path.utf8().data());
-    g_variant_builder_add(builder, "(so)", m_parentUniqueName.utf8().data(), "/org/a11y/atspi/accessible/root");
-    g_variant_builder_add(builder, "(so)", m_parentUniqueName.utf8().data(), m_parentPath.utf8().data());
+    g_variant_builder_add(builder, "@(so)", applicationReference());
+    g_variant_builder_add(builder, "@(so)", parentReference());
 
     g_variant_builder_add(builder, "i", 0);
     g_variant_builder_add(builder, "i", Accessibility::retrieveValueFromMainThread<int32_t>([this]() -> int32_t {
@@ -284,9 +300,8 @@ void AccessibilityRootAtspi::serialize(GVariantBuilder* builder) const
     g_variant_builder_add(builder, "s", "");
 
     GVariantBuilder states = G_VARIANT_BUILDER_INIT(G_VARIANT_TYPE("au"));
-    uint64_t atspiStates = (G_GUINT64_CONSTANT(1) << Atspi::State::ManagesDescendants);
-    g_variant_builder_add(&states, "u", static_cast<uint32_t>(atspiStates & 0xffffffff));
-    g_variant_builder_add(&states, "u", static_cast<uint32_t>(atspiStates >> 32));
+    g_variant_builder_add(&states, "u", 0);
+    g_variant_builder_add(&states, "u", 0);
     g_variant_builder_add(builder, "@au", g_variant_builder_end(&states));
 }
 

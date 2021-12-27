@@ -58,8 +58,10 @@ public:
     String registerHyperlink(AccessibilityObjectAtspi&, Vector<std::pair<GDBusInterfaceInfo*, GDBusInterfaceVTable*>>&&);
 
     void parentChanged(AccessibilityObjectAtspi&);
+    void parentChanged(AccessibilityRootAtspi&);
     enum class ChildrenChanged { Added, Removed };
     void childrenChanged(AccessibilityObjectAtspi&, AccessibilityObjectAtspi&, ChildrenChanged);
+    void childrenChanged(AccessibilityRootAtspi&, AccessibilityObjectAtspi&, ChildrenChanged);
 
     void stateChanged(AccessibilityObjectAtspi&, const char*, bool);
 

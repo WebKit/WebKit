@@ -342,6 +342,16 @@ void AccessibilityAtspi::parentChanged(AccessibilityObjectAtspi& atspiObject)
     });
 }
 
+void AccessibilityAtspi::parentChanged(AccessibilityRootAtspi& rootObject)
+{
+    RELEASE_ASSERT(!isMainThread());
+    if (!m_connection)
+        return;
+
+    g_dbus_connection_emit_signal(m_connection.get(), nullptr, rootObject.path().utf8().data(), "org.a11y.atspi.Event.Object", "PropertyChange",
+        g_variant_new("(siiva{sv})", "accessible-parent", 0, 0, rootObject.parentReference(), nullptr), nullptr);
+}
+
 void AccessibilityAtspi::childrenChanged(AccessibilityObjectAtspi& atspiObject, AccessibilityObjectAtspi& child, ChildrenChanged change)
 {
     RELEASE_ASSERT(isMainThread());
@@ -361,6 +371,20 @@ void AccessibilityAtspi::childrenChanged(AccessibilityObjectAtspi& atspiObject, 
         g_dbus_connection_emit_signal(m_connection.get(), nullptr, atspiObject->path().utf8().data(), "org.a11y.atspi.Event.Object", "ChildrenChanged",
             g_variant_new("(siiv(so))", change == ChildrenChanged::Added ? "add" : "remove", child->indexInParentForChildrenChanged(change),
             0, g_variant_new("(so)", uniqueName(), child->path().utf8().data()), uniqueName(), atspiObject->path().utf8().data()), nullptr);
+    });
+}
+
+void AccessibilityAtspi::childrenChanged(AccessibilityRootAtspi& rootObject, AccessibilityObjectAtspi& child, ChildrenChanged change)
+{
+    RELEASE_ASSERT(isMainThread());
+
+    m_queue->dispatch([this, rootObject = Ref { rootObject }, child = Ref { child }, change] {
+        if (!m_connection)
+            return;
+
+        g_dbus_connection_emit_signal(m_connection.get(), nullptr, rootObject->path().utf8().data(), "org.a11y.atspi.Event.Object", "ChildrenChanged",
+            g_variant_new("(siiv(so))", change == ChildrenChanged::Added ? "add" : "remove", 0,
+            0, g_variant_new("(so)", uniqueName(), child->path().utf8().data()), uniqueName(), rootObject->path().utf8().data()), nullptr);
     });
 }
 

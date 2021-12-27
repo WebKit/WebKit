@@ -259,15 +259,9 @@ static void testAccessibleBasicHierarchy(AccessibilityTest* test, gconstpointer)
         "  </body>"
         "</html>",
         nullptr);
-#if USE(ATSPI)
-    // In atspi implementation the root object doesn't emit children-changed because it
-    // always has ManagesDescendants in state.
-    test->waitUntilLoadFinished();
-#else
     // Check that children-changed::remove is emitted on the root object on navigation,
     // and the a11y hierarchy is updated.
     test->waitUntilChildrenRemoved(rootObject.get());
-#endif
 
     documentWeb = test->findDocumentWeb(testApp.get());
     g_assert_true(ATSPI_IS_ACCESSIBLE(documentWeb.get()));

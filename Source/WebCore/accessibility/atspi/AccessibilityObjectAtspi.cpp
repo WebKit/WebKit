@@ -136,6 +136,7 @@ void AccessibilityObjectAtspi::cacheDestroyed()
     if (!m_isRegistered.load())
         return;
 
+    m_root.childRemoved(*this);
     m_root.atspi().unregisterObject(*this);
 }
 
@@ -146,8 +147,12 @@ void AccessibilityObjectAtspi::elementDestroyed()
     if (!m_isRegistered.load())
         return;
 
-    if (m_parent && *m_parent)
-        m_parent.value()->childRemoved(*this);
+    if (m_parent) {
+        if (*m_parent)
+            m_parent.value()->childRemoved(*this);
+        else
+            m_root.childRemoved(*this);
+    }
 
     m_root.atspi().unregisterObject(*this);
 }
@@ -558,8 +563,12 @@ void AccessibilityObjectAtspi::setParent(std::optional<AccessibilityObjectAtspi*
         return;
 
     m_root.atspi().parentChanged(*this);
-    if (m_parent && *m_parent)
-        m_parent.value()->childAdded(*this);
+    if (m_parent) {
+        if (*m_parent)
+            m_parent.value()->childAdded(*this);
+        else
+            m_root.childAdded(*this);
+    }
 }
 
 std::optional<AccessibilityObjectAtspi*> AccessibilityObjectAtspi::parent() const
@@ -1207,7 +1216,7 @@ void AccessibilityObjectAtspi::serialize(GVariantBuilder* builder) const
 {
     RELEASE_ASSERT(!isMainThread());
     g_variant_builder_add(builder, "(so)", m_root.atspi().uniqueName(), m_path.utf8().data());
-    g_variant_builder_add(builder, "(so)", m_root.parentUniqueName().utf8().data(), "/org/a11y/atspi/accessible/root");
+    g_variant_builder_add(builder, "@(so)", m_root.applicationReference());
     g_variant_builder_add(builder, "@(so)", parentReference());
 
     g_variant_builder_add(builder, "i", indexInParent());
