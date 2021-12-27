@@ -520,9 +520,7 @@ LineBuilder::InlineItemRange LineBuilder::close(const InlineItemRange& needsLayo
             if (!isConditionalHanging)
                 m_line.removeHangingGlyphs();
         }
-    } else
-        m_line.visuallyCollapseHangingOverflowingGlyphs(horizontalAvailableSpace);
-
+    }
     auto horizontalAlignment = root().style().textAlign();
     auto runsExpandHorizontally = horizontalAlignment == TextAlignMode::Justify && !isLastLine;
     if (runsExpandHorizontally)

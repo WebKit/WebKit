@@ -66,7 +66,6 @@ public:
     enum class ShouldApplyTrailingWhiteSpaceFollowedByBRQuirk { No, Yes };
     void removeTrailingTrimmableContent(ShouldApplyTrailingWhiteSpaceFollowedByBRQuirk);
     void removeHangingGlyphs();
-    void visuallyCollapseHangingOverflowingGlyphs(InlineLayoutUnit horizontalAvailableSpace);
     void applyRunExpansion(InlineLayoutUnit horizontalAvailableSpace);
 
     struct Run {
@@ -140,7 +139,6 @@ public:
         bool hasCollapsedTrailingWhitespace() const { return m_trailingWhitespaceType == TrailingWhitespace::Collapsed; }
         TrailingWhitespace trailingWhitespaceType(const InlineTextItem&) const;
         void removeTrailingWhitespace();
-        InlineLayoutUnit visuallyCollapseTrailingWhitespace(InlineLayoutUnit tryCollapsingThisMuchSpace);
 
         bool hasTrailingLetterSpacing() const;
         InlineLayoutUnit trailingLetterSpacing() const;

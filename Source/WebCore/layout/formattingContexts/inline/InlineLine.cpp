@@ -200,44 +200,6 @@ void Line::removeHangingGlyphs()
     m_hangingTrailingContent.reset();
 }
 
-void Line::visuallyCollapseHangingOverflowingGlyphs(InlineLayoutUnit horizontalAvailableSpace)
-{
-    ASSERT(m_trimmableTrailingContent.isEmpty());
-    // If white-space is set to pre-wrap, the UA must
-    // ...
-    // It may also visually collapse the character advance widths of any that would otherwise overflow.
-    auto overflowWidth = contentLogicalWidth() - horizontalAvailableSpace;
-    if (overflowWidth <= 0)
-        return;
-    // Let's just find the trailing pre-wrap whitespace content for now (e.g check if there are multiple trailing runs with
-    // different set of white-space values and decide if the in-between pre-wrap content should be collapsed as well.)
-    auto trimmedContentWidth = InlineLayoutUnit { };
-    for (auto& run : makeReversedRange(m_runs)) {
-        if (!run.shouldTrailingWhitespaceHang())
-            break;
-        auto visuallyCollapsibleInlineItem = run.isLineSpanningInlineBoxStart() || run.isInlineBoxStart() || run.isInlineBoxEnd() || run.hasTrailingWhitespace();
-        if (!visuallyCollapsibleInlineItem)
-            break;
-        ASSERT(!run.hasCollapsibleTrailingWhitespace());
-        auto trimmableWidth = InlineLayoutUnit { };
-        if (run.isText()) {
-            // FIXME: We should always collapse the run at a glyph boundary as the spec indicates: "collapse the character advance widths of any that would otherwise overflow"
-            // and the trimmed width should be capped at std::min(run.trailingWhitespaceWidth(), overflowWidth) for text runs. Both FF and Chrome agree.
-            trimmableWidth = run.visuallyCollapseTrailingWhitespace(overflowWidth);
-        } else {
-            trimmableWidth = run.logicalWidth();
-            run.shrinkHorizontally(trimmableWidth);
-        }
-        trimmedContentWidth += trimmableWidth;
-        overflowWidth -= trimmableWidth;
-        if (overflowWidth <= 0)
-            break;
-    }
-    // FIXME: Add support for incremental reset, where the hanging whitespace partially overflows.
-    m_hangingTrailingContent.reset();
-    m_contentLogicalWidth -= trimmedContentWidth;
-}
-
 void Line::append(const InlineItem& inlineItem, const RenderStyle& style, InlineLayoutUnit logicalWidth)
 {
     if (inlineItem.isText())
@@ -667,21 +629,9 @@ void Line::Run::removeTrailingWhitespace()
     ASSERT(m_textContent->length);
     constexpr size_t trailingTrimmableContentLength = 1;
     m_textContent->length -= trailingTrimmableContentLength;
-    visuallyCollapseTrailingWhitespace(m_trailingWhitespaceWidth);
-}
-
-InlineLayoutUnit Line::Run::visuallyCollapseTrailingWhitespace(InlineLayoutUnit tryCollapsingThisMuchSpace)
-{
-    ASSERT(hasTrailingWhitespace());
-    // This is just a visual adjustment, the text length should remain the same.
-    auto trimmedWidth = std::min(tryCollapsingThisMuchSpace, m_trailingWhitespaceWidth);
-    shrinkHorizontally(trimmedWidth);
-    m_trailingWhitespaceWidth -= trimmedWidth;
-    if (!m_trailingWhitespaceWidth) {
-        // We trimmed the trailing whitespace completely.
-        m_trailingWhitespaceType = TrailingWhitespace::None;
-    }
-    return trimmedWidth;
+    shrinkHorizontally(m_trailingWhitespaceWidth);
+    m_trailingWhitespaceWidth = { };
+    m_trailingWhitespaceType = TrailingWhitespace::None;
 }
 
 }
