@@ -54,6 +54,12 @@ inline void decodeResult(SlowPathReturnType result, const void*& a, const void*&
     b = reinterpret_cast<void*>(result.b);
 }
 
+inline void decodeResult(SlowPathReturnType result, size_t& a, size_t& b)
+{
+    a = static_cast<size_t>(result.a);
+    b = static_cast<size_t>(result.b);
+}
+
 #else // USE(JSVALUE32_64)
 typedef int64_t SlowPathReturnType;
 
@@ -79,6 +85,14 @@ inline void decodeResult(SlowPathReturnType result, const void*& a, const void*&
     u.i = result;
     a = u.pair.a;
     b = u.pair.b;
+}
+
+inline void decodeResult(SlowPathReturnType result, size_t& a, size_t& b)
+{
+    SlowPathReturnTypeEncoding u;
+    u.i = result;
+    a = bitwise_cast<size_t>(u.pair.a);
+    b = bitwise_cast<size_t>(u.pair.b);
 }
 #endif // USE(JSVALUE32_64)
 
