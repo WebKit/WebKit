@@ -118,6 +118,7 @@ public:
     unsigned colorSpace : 1; // ColorSpace
     unsigned speakAs : 4; // ESpeakAs
     unsigned hyphens : 2; // Hyphens
+    unsigned textCombine : 1; // text-combine-upright
     unsigned textEmphasisFill : 1; // TextEmphasisFill
     unsigned textEmphasisMark : 3; // TextEmphasisMark
     unsigned textEmphasisPosition : 4; // TextEmphasisPosition

@@ -202,7 +202,6 @@ public:
     unsigned useSmoothScrolling : 1; // ScrollBehavior
     unsigned appearance : 6; // EAppearance
     unsigned effectiveAppearance : 6; // EAppearance
-    unsigned textCombine : 1; // CSS3 text-combine properties
 
     unsigned textDecorationStyle : 3; // TextDecorationStyle
 

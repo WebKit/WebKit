@@ -709,9 +709,6 @@ static bool rareNonInheritedDataChangeRequiresLayout(const StyleRareNonInherited
         // Don't return; keep looking for another change
     }
 
-    if (first.textCombine != second.textCombine)
-        return true;
-
     if (first.breakBefore != second.breakBefore
         || first.breakAfter != second.breakAfter
         || first.breakInside != second.breakInside)
@@ -778,6 +775,7 @@ static bool rareInheritedDataChangeRequiresLayout(const StyleRareInheritedData& 
         || first.hyphenationLimitAfter != second.hyphenationLimitAfter
         || first.hyphenationString != second.hyphenationString
         || first.rubyPosition != second.rubyPosition
+        || first.textCombine != second.textCombine
         || first.textEmphasisMark != second.textEmphasisMark
         || first.textEmphasisPosition != second.textEmphasisPosition
         || first.textEmphasisCustomMark != second.textEmphasisCustomMark

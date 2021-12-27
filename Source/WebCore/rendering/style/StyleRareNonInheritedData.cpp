@@ -92,7 +92,6 @@ StyleRareNonInheritedData::StyleRareNonInheritedData()
     , useSmoothScrolling(static_cast<unsigned>(RenderStyle::initialUseSmoothScrolling()))
     , appearance(static_cast<unsigned>(RenderStyle::initialAppearance()))
     , effectiveAppearance(static_cast<unsigned>(RenderStyle::initialAppearance()))
-    , textCombine(static_cast<unsigned>(RenderStyle::initialTextCombine()))
     , textDecorationStyle(static_cast<unsigned>(RenderStyle::initialTextDecorationStyle()))
     , aspectRatioType(static_cast<unsigned>(RenderStyle::initialAspectRatioType()))
 #if ENABLE(CSS_COMPOSITING)
@@ -195,7 +194,6 @@ inline StyleRareNonInheritedData::StyleRareNonInheritedData(const StyleRareNonIn
     , useSmoothScrolling(o.useSmoothScrolling)
     , appearance(o.appearance)
     , effectiveAppearance(o.effectiveAppearance)
-    , textCombine(o.textCombine)
     , textDecorationStyle(o.textDecorationStyle)
     , aspectRatioType(o.aspectRatioType)
 #if ENABLE(CSS_COMPOSITING)
@@ -301,7 +299,6 @@ bool StyleRareNonInheritedData::operator==(const StyleRareNonInheritedData& o) c
         && useSmoothScrolling == o.useSmoothScrolling
         && appearance == o.appearance
         && effectiveAppearance == o.effectiveAppearance
-        && textCombine == o.textCombine
         && textDecorationStyle == o.textDecorationStyle
         && arePointingToEqualData(rotate, o.rotate)
         && arePointingToEqualData(scale, o.scale)

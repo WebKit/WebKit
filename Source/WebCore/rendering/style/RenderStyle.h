@@ -694,7 +694,7 @@ public:
     bool hasPositionedMask() const { return m_rareNonInheritedData->mask->hasImage(); }
     bool hasMask() const { return m_rareNonInheritedData->mask->hasImage() || m_rareNonInheritedData->maskBoxImage.hasImage(); }
 
-    TextCombine textCombine() const { return static_cast<TextCombine>(m_rareNonInheritedData->textCombine); }
+    TextCombine textCombine() const { return static_cast<TextCombine>(m_rareInheritedData->textCombine); }
     bool hasTextCombine() const { return textCombine() != TextCombine::None; }
 
     const TabSize& tabSize() const { return m_rareInheritedData->tabSize; }
@@ -1248,7 +1248,7 @@ public:
     void setTranslate(RefPtr<TranslateTransformOperation>&&);
 
     void setSpeakAs(OptionSet<SpeakAs> s) { SET_VAR(m_rareInheritedData, speakAs, s.toRaw()); }
-    void setTextCombine(TextCombine v) { SET_VAR(m_rareNonInheritedData, textCombine, static_cast<unsigned>(v)); }
+    void setTextCombine(TextCombine v) { SET_VAR(m_rareInheritedData, textCombine, static_cast<unsigned>(v)); }
     void setTextDecorationColor(const Color& c) { SET_VAR(m_rareNonInheritedData, textDecorationColor, c); }
     void setTextEmphasisColor(const Color& c) { SET_VAR(m_rareInheritedData, textEmphasisColor, c); }
     void setTextEmphasisFill(TextEmphasisFill fill) { SET_VAR(m_rareInheritedData, textEmphasisFill, static_cast<unsigned>(fill)); }

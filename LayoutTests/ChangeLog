@@ -1,3 +1,17 @@
+2021-12-26  Tim Nguyen  <ntim@apple.com>
+
+        Make -webkit-text-combine an inherited property
+        https://bugs.webkit.org/show_bug.cgi?id=234694
+
+        Reviewed by Simon Fraser.
+
+        There are also WPT that already exist for the standard version (text-combine-upright):
+        - css/css-writing-modes/text-combine-upright-inherit-all-001.html
+        - css/css-writing-modes/text-combine-upright-inherit-all-002.html
+
+        * fast/text/text-combine-inherited-expected.html: Added.
+        * fast/text/text-combine-inherited.html: Added.
+
 2021-12-25  Alan Bujtas  <zalan@apple.com>
 
         [iOS] Rebaselining after r287440.

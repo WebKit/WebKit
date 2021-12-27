@@ -97,6 +97,7 @@ StyleRareInheritedData::StyleRareInheritedData()
     , userSelect(static_cast<unsigned>(RenderStyle::initialUserSelect()))
     , speakAs(RenderStyle::initialSpeakAs().toRaw())
     , hyphens(static_cast<unsigned>(Hyphens::Manual))
+    , textCombine(static_cast<unsigned>(RenderStyle::initialTextCombine()))
     , textEmphasisFill(static_cast<unsigned>(TextEmphasisFill::Filled))
     , textEmphasisMark(static_cast<unsigned>(TextEmphasisMark::None))
     , textEmphasisPosition(static_cast<unsigned>(RenderStyle::initialTextEmphasisPosition().toRaw()))
@@ -197,6 +198,7 @@ inline StyleRareInheritedData::StyleRareInheritedData(const StyleRareInheritedDa
     , userSelect(o.userSelect)
     , speakAs(o.speakAs)
     , hyphens(o.hyphens)
+    , textCombine(o.textCombine)
     , textEmphasisFill(o.textEmphasisFill)
     , textEmphasisMark(o.textEmphasisMark)
     , textEmphasisPosition(o.textEmphasisPosition)
@@ -320,6 +322,7 @@ bool StyleRareInheritedData::operator==(const StyleRareInheritedData& o) const
         && hyphenationLimitBefore == o.hyphenationLimitBefore
         && hyphenationLimitAfter == o.hyphenationLimitAfter
         && hyphenationLimitLines == o.hyphenationLimitLines
+        && textCombine == o.textCombine
         && textEmphasisFill == o.textEmphasisFill
         && textEmphasisMark == o.textEmphasisMark
         && textEmphasisPosition == o.textEmphasisPosition
