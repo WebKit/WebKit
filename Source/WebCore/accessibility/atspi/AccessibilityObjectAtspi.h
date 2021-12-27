@@ -246,6 +246,7 @@ private:
     Atomic<bool> m_isRegistered { false };
     String m_path;
     String m_hyperlinkPath;
+    int64_t m_lastSelectionChangedTime { -1 };
     mutable std::atomic<bool> m_hasListMarkerAtStart;
     mutable int m_indexInParent { -1 };
     mutable Lock m_rootLock;

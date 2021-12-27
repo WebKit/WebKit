@@ -224,6 +224,15 @@ bool AccessibilityObjectAtspi::clearSelection() const
 void AccessibilityObjectAtspi::selectionChanged()
 {
     RELEASE_ASSERT(isMainThread());
+
+    // selectionChanged can be called multiple times by WebCore, so ensure we don't
+    // emit it if the last one happened in the same run loop iteration.
+    auto* source = g_main_current_source();
+    int64_t sourceTime = source ? g_source_get_time(source) : -1;
+    if (sourceTime <= m_lastSelectionChangedTime)
+        return;
+
+    m_lastSelectionChangedTime = sourceTime;
     m_root.atspi().selectionChanged(*this);
 }
 
