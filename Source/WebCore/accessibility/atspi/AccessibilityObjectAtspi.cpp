@@ -1318,6 +1318,20 @@ std::optional<unsigned> AccessibilityObjectAtspi::effectiveRole() const
         if (m_axObject->isMathToken())
             return Atspi::Role::Static;
         break;
+    case AccessibilityRole::ListItem: {
+        bool inheritsPresentationalRole = Accessibility::retrieveValueFromMainThread<bool>([this]() -> bool {
+            if (m_coreObject)
+                m_coreObject->updateBackingStore();
+
+            if (!m_coreObject)
+                return Atspi::Role::InvalidRole;
+
+            return m_coreObject->inheritsPresentationalRole();
+        });
+        if (inheritsPresentationalRole)
+            return Atspi::Role::Section;
+        break;
+    }
     default:
         break;
     }
@@ -1496,6 +1510,12 @@ AccessibilityObjectInclusion AccessibilityObject::accessibilityPlatformIncludesO
     // Entries and password fields have extraneous children which we want to ignore.
     if (parent->isPasswordField() || parent->isTextControl())
         return AccessibilityObjectInclusion::IgnoreObject;
+
+    // List items inheriting presentational are ignored, but their content exposed.
+    // Since we expose text in the parent, we need to expose presentational list items
+    // with a different role (section).
+    if (roleValue() == AccessibilityRole::ListItem && inheritsPresentationalRole())
+        return AccessibilityObjectInclusion::IncludeObject;
 
     return AccessibilityObjectInclusion::DefaultBehavior;
 }
