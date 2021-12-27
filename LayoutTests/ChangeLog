@@ -1,3 +1,18 @@
+2021-12-27  Tim Nguyen  <ntim@apple.com>
+
+        Consolidate computed-style-*.txt and getComputedStyle-basic-expected.txt test results
+
+        Unreviewed test gardening.
+
+        The results in the non-platform directory are stale, the platform/mac/ results are the most recent ones.
+
+        * fast/css/getComputedStyle/computed-style-expected.txt:
+        * fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+        * platform/mac/fast/css/getComputedStyle/computed-style-expected.txt: Removed.
+        * platform/mac/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt: Removed.
+        * platform/mac/svg/css/getComputedStyle-basic-expected.txt: Removed.
+        * svg/css/getComputedStyle-basic-expected.txt:
+
 2021-12-26  Alan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Do not trim the hanging trailing content
