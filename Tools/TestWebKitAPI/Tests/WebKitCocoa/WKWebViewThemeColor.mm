@@ -25,7 +25,6 @@
 
 #import "config.h"
 
-#import "CocoaColor.h"
 #import "TestCocoa.h"
 #import "TestWKWebView.h"
 #import <WebKit/WKPreferencesPrivate.h>

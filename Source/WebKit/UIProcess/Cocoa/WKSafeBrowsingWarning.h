@@ -23,8 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "CocoaColor.h"
 #import "WKFoundation.h"
+#import <WebCore/ColorCocoa.h>
 #import <variant>
 #import <wtf/CompletionHandler.h>
 #import <wtf/RefPtr.h>
@@ -55,10 +55,10 @@ using RectType = CGRect;
 @interface WKSafeBrowsingBox : ViewType {
 @package
 #if PLATFORM(MAC)
-    RetainPtr<CocoaColor> _backgroundColor;
+    RetainPtr<WebCore::CocoaColor> _backgroundColor;
 #endif
 }
-- (void)setSafeBrowsingBackgroundColor:(CocoaColor *)color;
+- (void)setSafeBrowsingBackgroundColor:(WebCore::CocoaColor *)color;
 @end
 
 #if PLATFORM(MAC)

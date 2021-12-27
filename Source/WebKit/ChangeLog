@@ -1,3 +1,37 @@
+2021-12-26  Sam Weinig  <weinig@apple.com>
+
+        Replace WebKit/CocoaColor.h with WebCore/ColorCocoa.h, not confusing at all
+        https://bugs.webkit.org/show_bug.cgi?id=234693
+
+        Reviewed by Simon Fraser.
+
+        We don't need both. The WebCore one can work for both.
+
+        * Platform/cocoa/CocoaColor.h: Removed.
+        * Shared/Cocoa/ArgumentCodersCocoa.mm:
+        (IPC::typeFromObject):
+        (IPC::encodeColorInternal):
+        (IPC::encodeObject):
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView themeColor]):
+        (-[WKWebView underPageBackgroundColor]):
+        (-[WKWebView setUnderPageBackgroundColor:]):
+        (-[WKWebView _themeColor]):
+        (-[WKWebView _pageExtendedBackgroundColor]):
+        (-[WKWebView _sampledPageTopColor]):
+        * UIProcess/API/Cocoa/_WKApplicationManifest.mm:
+        (-[_WKApplicationManifest initWithCoder:]):
+        (-[_WKApplicationManifest themeColor]):
+        * UIProcess/Cocoa/WKSafeBrowsingWarning.h:
+        * UIProcess/Cocoa/WKSafeBrowsingWarning.mm:
+        (colorForItem):
+        (-[WKSafeBrowsingBox setSafeBrowsingBackgroundColor:]):
+        (-[WKSafeBrowsingWarning showDetailsClicked]):
+        (-[WKSafeBrowsingTextView initWithAttributedString:forWarning:]):
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (WebKit::PDFPlugin::PDFPlugin):
+
 2021-12-26  Yousuke Kimoto  <Yousuke.Kimoto@sony.com>
 
         RemoteInspectorProtocolHandler::inspect() expects ConnectionID as uint32_t

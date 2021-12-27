@@ -26,7 +26,6 @@
 #import "config.h"
 #import "_WKApplicationManifestInternal.h"
 
-#import "CocoaColor.h"
 #import <WebCore/ApplicationManifest.h>
 #import <WebCore/ApplicationManifestParser.h>
 #import <WebCore/Color.h>
@@ -156,7 +155,7 @@ static std::optional<WebCore::ApplicationManifest::Icon> makeVectorElement(const
     URL scopeURL = [aDecoder decodeObjectOfClass:[NSURL class] forKey:@"scope"];
     NSInteger display = [aDecoder decodeIntegerForKey:@"display"];
     URL startURL = [aDecoder decodeObjectOfClass:[NSURL class] forKey:@"start_url"];
-    CocoaColor *themeColor = [aDecoder decodeObjectOfClass:[CocoaColor class] forKey:@"theme_color"];
+    WebCore::CocoaColor *themeColor = [aDecoder decodeObjectOfClass:[WebCore::CocoaColor class] forKey:@"theme_color"];
     NSArray<_WKApplicationManifestIcon *> *icons = [aDecoder decodeObjectOfClasses:[NSSet setWithArray:@[[NSArray class], [_WKApplicationManifestIcon class]]] forKey:@"icons"];
 
     WebCore::ApplicationManifest coreApplicationManifest {
@@ -238,7 +237,7 @@ static NSString *nullableNSString(const WTF::String& string)
     return _applicationManifest->applicationManifest().startURL;
 }
 
-- (CocoaColor *)themeColor
+- (WebCore::CocoaColor *)themeColor
 {
     return cocoaColor(_applicationManifest->applicationManifest().themeColor).autorelease();
 }
@@ -313,7 +312,7 @@ static NSString *nullableNSString(const WTF::String& string)
     return nil;
 }
 
-- (CocoaColor *)themeColor
+- (WebCore::CocoaColor *)themeColor
 {
     return nil;
 }

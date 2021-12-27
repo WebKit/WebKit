@@ -29,7 +29,6 @@
 #if ENABLE(PDFKIT_PLUGIN)
 
 #import "ArgumentCoders.h"
-#import "CocoaColor.h"
 #import "DataReference.h"
 #import "FrameInfoData.h"
 #import "Logging.h"
@@ -62,6 +61,7 @@
 #import <WebCore/CSSPropertyNames.h>
 #import <WebCore/Chrome.h>
 #import <WebCore/Color.h>
+#import <WebCore/ColorCocoa.h>
 #import <WebCore/ColorSerialization.h>
 #import <WebCore/Cursor.h>
 #import <WebCore/DictionaryLookup.h>
@@ -656,7 +656,7 @@ inline PDFPlugin::PDFPlugin(WebFrame& frame, HTMLPlugInElement* pluginElement)
         auto* document = frame.coreFrame()->document();
 
         // FIXME: <rdar://problem/75332948> get the background color from PDFKit instead of hardcoding it
-        document->bodyOrFrameset()->setInlineStyleProperty(WebCore::CSSPropertyBackgroundColor, WebCore::serializationForHTML(WebCore::roundAndClampToSRGBALossy([CocoaColor grayColor].CGColor)));
+        document->bodyOrFrameset()->setInlineStyleProperty(WebCore::CSSPropertyBackgroundColor, WebCore::serializationForHTML(WebCore::roundAndClampToSRGBALossy([WebCore::CocoaColor grayColor].CGColor)));
     }
 
     if (supportsForms()) {

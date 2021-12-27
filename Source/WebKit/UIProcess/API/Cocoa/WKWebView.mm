@@ -30,7 +30,6 @@
 #import "APIFrameTreeNode.h"
 #import "APIPageConfiguration.h"
 #import "APISerializedScriptValue.h"
-#import "CocoaColor.h"
 #import "CocoaImage.h"
 #import "CompletionHandlerCallChecker.h"
 #import "ContentAsStringIncludesChildFrames.h"
@@ -1776,17 +1775,17 @@ static _WKSelectionAttributes selectionAttributes(const WebKit::EditorState& edi
     return wrapper(_page->loadFile(URL.absoluteString, readAccessURL.absoluteString, isAppInitiated));
 }
 
-- (CocoaColor *)themeColor
+- (WebCore::CocoaColor *)themeColor
 {
     return cocoaColorOrNil(_page->themeColor()).autorelease();
 }
 
-- (CocoaColor *)underPageBackgroundColor
+- (WebCore::CocoaColor *)underPageBackgroundColor
 {
     return cocoaColor(_page->underPageBackgroundColor()).autorelease();
 }
 
-- (void)setUnderPageBackgroundColor:(CocoaColor *)underPageBackgroundColorOverride
+- (void)setUnderPageBackgroundColor:(WebCore::CocoaColor *)underPageBackgroundColorOverride
 {
     _page->setUnderPageBackgroundColorOverride(WebCore::roundAndClampToSRGBALossy(underPageBackgroundColorOverride.CGColor));
 }
@@ -3326,18 +3325,18 @@ static inline OptionSet<WebKit::FindOptions> toFindOptions(_WKFindOptions wkFind
 }
 
 // FIXME: Remove old `-[WKWebView _themeColor]` SPI <rdar://76662644>
-- (CocoaColor *)_themeColor
+- (WebCore::CocoaColor *)_themeColor
 {
     return [self themeColor];
 }
 
 // FIXME: Remove old `-[WKWebView _pageExtendedBackgroundColor]` SPI <rdar://77789732>
-- (CocoaColor *)_pageExtendedBackgroundColor
+- (WebCore::CocoaColor *)_pageExtendedBackgroundColor
 {
     return cocoaColorOrNil(_page->pageExtendedBackgroundColor()).autorelease();
 }
 
-- (CocoaColor *)_sampledPageTopColor
+- (WebCore::CocoaColor *)_sampledPageTopColor
 {
     return cocoaColorOrNil(_page->sampledPageTopColor()).autorelease();
 }

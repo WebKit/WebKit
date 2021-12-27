@@ -29,7 +29,6 @@
 #if PLATFORM(COCOA)
 
 #import "ArgumentCodersCF.h"
-#import "CocoaColor.h"
 #import "CocoaFont.h"
 #import "CoreTextHelpers.h"
 #import <CoreText/CTFont.h>
@@ -172,7 +171,7 @@ static NSType typeFromObject(id object)
     // Specific classes handled.
     if ([object isKindOfClass:[NSArray class]])
         return NSType::Array;
-    if ([object isKindOfClass:[CocoaColor class]])
+    if ([object isKindOfClass:[WebCore::CocoaColor class]])
         return NSType::Color;
     if ([object isKindOfClass:[NSData class]])
         return NSType::Data;
@@ -261,7 +260,7 @@ static std::optional<RetainPtr<id>> decodeArrayInternal(Decoder& decoder, NSArra
 
 #pragma mark - NSColor / UIColor
 
-static inline void encodeColorInternal(Encoder& encoder, CocoaColor *color)
+static inline void encodeColorInternal(Encoder& encoder, WebCore::CocoaColor *color)
 {
     encoder << colorFromCocoaColor(color);
 }
@@ -491,7 +490,7 @@ void encodeObject(Encoder& encoder, id object)
         encodeArrayInternal(encoder, static_cast<NSArray *>(object));
         return;
     case NSType::Color:
-        encodeColorInternal(encoder, static_cast<CocoaColor *>(object));
+        encodeColorInternal(encoder, static_cast<WebCore::CocoaColor *>(object));
         return;
     case NSType::Dictionary:
         encodeDictionaryInternal(encoder, static_cast<NSDictionary *>(object));
