@@ -35,6 +35,8 @@
 #include <WebCore/AccessibilityAtspiEnums.h>
 #include <WebCore/AccessibilityObjectAtspi.h>
 #include <WebKit/WKBundleFrame.h>
+#include <wtf/HashSet.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/URL.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
@@ -564,6 +566,52 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::parameterizedAttributeNames()
     return JSStringCreateWithCharacters(nullptr, 0);
 }
 
+static String xmlRoleValueString(const String& xmlRoles)
+{
+    static NeverDestroyed<HashSet<String, ASCIICaseInsensitiveHash>> regionRoles = HashSet<String, ASCIICaseInsensitiveHash>({
+        "doc-acknowledgments",
+        "doc-afterword",
+        "doc-appendix",
+        "doc-bibliography",
+        "doc-chapter",
+        "doc-conclusion",
+        "doc-credits",
+        "doc-endnotes",
+        "doc-epilogue",
+        "doc-errata",
+        "doc-foreword",
+        "doc-glossary",
+        "doc-glossref",
+        "doc-index",
+        "doc-introduction",
+        "doc-pagelist",
+        "doc-part",
+        "doc-preface",
+        "doc-prologue",
+        "doc-toc",
+        "region"
+    });
+
+    if (regionRoles->contains(xmlRoles))
+        return "AXLandmarkRegion"_s;
+    if (equalLettersIgnoringASCIICase(xmlRoles, "banner"))
+        return "AXLandmarkBanner"_s;
+    if (equalLettersIgnoringASCIICase(xmlRoles, "complementary"))
+        return "AXLandmarkComplementary"_s;
+    if (equalLettersIgnoringASCIICase(xmlRoles, "contentinfo"))
+        return "AXLandmarkContentInfo"_s;
+    if (equalLettersIgnoringASCIICase(xmlRoles, "form"))
+        return "AXLandmarkForm"_s;
+    if (equalLettersIgnoringASCIICase(xmlRoles, "main"))
+        return "AXLandmarkMain"_s;
+    if (equalLettersIgnoringASCIICase(xmlRoles, "navigation"))
+        return "AXLandmarkNavigation"_s;
+    if (equalLettersIgnoringASCIICase(xmlRoles, "search"))
+        return "AXLandmarkSearch"_s;
+
+    return { };
+}
+
 static String roleValueToString(unsigned roleValue)
 {
     switch (roleValue) {
@@ -742,7 +790,8 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::role()
         m_element->updateBackingStore();
         roleValue = m_element->role();
     });
-    auto roleValueString = roleValueToString(roleValue);
+
+    auto roleValueString = roleValue == WebCore::Atspi::Role::Landmark ? xmlRoleValueString(m_element->attributes().get("xml-roles")) : roleValueToString(roleValue);
     if (roleValueString.isEmpty())
         return JSStringCreateWithCharacters(nullptr, 0);
 
