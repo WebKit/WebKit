@@ -1033,11 +1033,6 @@ public:
         store32(src2, Address(dest, offset.m_value + 4));
     }
 
-    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD_WITH_RETURN(load64WithAddressOffsetPatch, DataLabel32);
-    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD_WITH_RETURN(load64WithCompactAddressOffsetPatch, DataLabelCompact);
-    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD_WITH_RETURN(store64WithAddressOffsetPatch, DataLabel32);
-    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD_WITH_RETURN(storePtrWithPatch, DataLabelPtr);
-
     void zeroExtend8To32(RegisterID src, RegisterID dest)
     {
         m_assembler.slliInsn<56>(dest, src);
@@ -1933,15 +1928,72 @@ public:
 
     MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD_WITH_RETURN(branchPtr, Jump);
 
-    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD_WITH_RETURN(moveWithPatch, DataLabel32);
-    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD_WITH_RETURN(moveWithPatch, DataLabelPtr);
+    DataLabel32 moveWithPatch(TrustedImm32 imm, RegisterID dest)
+    {
+        RISCV64Assembler::ImmediateLoader imml(RISCV64Assembler::ImmediateLoader::Placeholder, imm.m_value);
 
-    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD_WITH_RETURN(branch32WithPatch, Jump);
-    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD_WITH_RETURN(branchPtrWithPatch, Jump);
+        DataLabel32 label(this);
+        imml.moveInto(m_assembler, dest);
+        return label;
+    }
 
-    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD_WITH_RETURN(patchableBranch8, PatchableJump);
-    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD_WITH_RETURN(patchableBranch32, PatchableJump);
-    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD_WITH_RETURN(patchableBranch64, PatchableJump);
+    DataLabelPtr moveWithPatch(TrustedImmPtr imm, RegisterID dest)
+    {
+        RISCV64Assembler::ImmediateLoader imml(RISCV64Assembler::ImmediateLoader::Placeholder, int64_t(imm.asIntptr()));
+
+        DataLabelPtr label(this);
+        imml.moveInto(m_assembler, dest);
+        return label;
+    }
+
+    DataLabelPtr storePtrWithPatch(TrustedImmPtr initialValue, Address address)
+    {
+        auto temp = temps<Data, Memory>();
+        RISCV64Assembler::ImmediateLoader imml(RISCV64Assembler::ImmediateLoader::Placeholder, int64_t(initialValue.asIntptr()));
+        DataLabelPtr label(this);
+        imml.moveInto(m_assembler, temp.data());
+
+        auto resolution = resolveAddress(address, temp.memory());
+        m_assembler.sdInsn(resolution.base, temp.data(), Imm::S(resolution.offset));
+        return label;
+    }
+
+    DataLabelPtr storePtrWithPatch(Address address)
+    {
+        return storePtrWithPatch(TrustedImmPtr(nullptr), address);
+    }
+
+    Jump branch32WithPatch(RelationalCondition cond, Address address, DataLabel32& dataLabel, TrustedImm32 initialRightValue = TrustedImm32(0))
+    {
+        auto temp = temps<Data, Memory>();
+        auto resolution = resolveAddress(address, temp.memory());
+        m_assembler.lwInsn(temp.memory(), resolution.base, Imm::I(resolution.offset));
+
+        dataLabel = moveWithPatch(initialRightValue, temp.data());
+        return makeBranch(cond, temp.memory(), temp.data());
+    }
+
+    Jump branchPtrWithPatch(RelationalCondition cond, Address address, DataLabelPtr& dataLabel, TrustedImmPtr initialRightValue = TrustedImmPtr(nullptr))
+    {
+        auto temp = temps<Data, Memory>();
+        auto resolution = resolveAddress(address, temp.memory());
+        m_assembler.ldInsn(temp.memory(), resolution.base, Imm::I(resolution.offset));
+
+        dataLabel = moveWithPatch(initialRightValue, temp.data());
+        return makeBranch(cond, temp.memory(), temp.data());
+    }
+
+    Jump branchPtrWithPatch(RelationalCondition cond, RegisterID lhs, DataLabelPtr& dataLabel, TrustedImmPtr initialRightValue = TrustedImmPtr(nullptr))
+    {
+        auto temp = temps<Data>();
+        dataLabel = moveWithPatch(initialRightValue, temp.data());
+        return makeBranch(cond, lhs, temp.data());
+    }
+
+    PatchableJump patchableBranch64(RelationalCondition cond, RegisterID left, RegisterID right)
+    {
+        return PatchableJump(branch64(cond, left, right));
+    }
 
     MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD_WITH_RETURN(branchFloat, Jump);
     MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD_WITH_RETURN(branchDouble, Jump);

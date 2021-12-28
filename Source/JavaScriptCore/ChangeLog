@@ -1,5 +1,29 @@
 2021-12-28  Zan Dobersek  <zdobersek@igalia.com>
 
+        [RISCV64] Add MacroAssemblerRISCV64 operations with patchable elements
+        https://bugs.webkit.org/show_bug.cgi?id=234635
+
+        Reviewed by Yusuke Suzuki.
+
+        Add MacroAssemblerRISCV64 implementations for operations that generate
+        patchable code sections. This covers moves, stores and branches.
+
+        For moves and stores of pointer values, the patchable section is
+        achieved by generating a immediate loader instruction sequence with all
+        the placeholder instructions (nops) included.
+
+        Some methods that had their noop implementations provided until now have
+        been removed since they are not necessary anymore.
+
+        * assembler/MacroAssemblerRISCV64.h:
+        (JSC::MacroAssemblerRISCV64::moveWithPatch):
+        (JSC::MacroAssemblerRISCV64::storePtrWithPatch):
+        (JSC::MacroAssemblerRISCV64::branch32WithPatch):
+        (JSC::MacroAssemblerRISCV64::branchPtrWithPatch):
+        (JSC::MacroAssemblerRISCV64::patchableBranch64):
+
+2021-12-28  Zan Dobersek  <zdobersek@igalia.com>
+
         [RISCV64] Enable signal-based VM traps for CPU(RISCV64)
         https://bugs.webkit.org/show_bug.cgi?id=234719
 
