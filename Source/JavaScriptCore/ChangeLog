@@ -1,3 +1,21 @@
+2021-12-28  Zan Dobersek  <zdobersek@igalia.com>
+
+        [RISCV64] Define HAVE_MACHINE_CONTEXT, provide mcontext_t accessors for CPU(RISCV64)
+        https://bugs.webkit.org/show_bug.cgi?id=234718
+
+        Reviewed by Yusuke Suzuki.
+
+        Define HAVE_MACHINE_CONTEXT for RISCV64. In the MachineContext.h
+        header, CPU(RISCV64)-specific accessors into the mcontext_t struct
+        are also provided.
+
+        * runtime/MachineContext.h:
+        (JSC::MachineContext::stackPointerImpl):
+        (JSC::MachineContext::framePointerImpl):
+        (JSC::MachineContext::instructionPointerImpl):
+        (JSC::MachineContext::argumentPointer<1>):
+        (JSC::MachineContext::llintInstructionPointer):
+
 2021-12-27  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Consider merging Wasm::FunctionCodeBlock and Wasm::LLIntCallee

@@ -1,3 +1,12 @@
+2021-12-28  Zan Dobersek  <zdobersek@igalia.com>
+
+        [RISCV64] Define HAVE_MACHINE_CONTEXT, provide mcontext_t accessors for CPU(RISCV64)
+        https://bugs.webkit.org/show_bug.cgi?id=234718
+
+        Reviewed by Yusuke Suzuki.
+
+        * wtf/PlatformHave.h: Define HAVE_MACHINE_CONTEXT for CPU(RISCV64).
+
 2021-12-23  Sam Weinig  <weinig@apple.com>
 
         Gradient color interpolation incorrect for colors with alpha (need to interpolate premultiplied colors)
