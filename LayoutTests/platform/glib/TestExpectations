@@ -1176,6 +1176,8 @@ webkit.org/b/234118 svg/custom/filter-update-different-root.html [ ImageOnlyFail
 webkit.org/b/234118 svg/filters/color-space-conversion.svg [ ImageOnlyFailure ]
 webkit.org/b/234118 svg/filters/container-with-filters.svg [ ImageOnlyFailure ]
 
+webkit.org/b/234709 svg/filters/feImage-element-primitive-subregion.svg [ ImageOnlyFailure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of SVG-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -1891,6 +1893,9 @@ http/tests/model/ [ Skip ]
 
 # The DocumentTimeline.maximumFrameRate property which this test is about is not available on GTK/WPE.
 webanimations/frame-rate/document-timeline-maximum-frame-rate.html [ Skip ]
+
+# OT-SVG is not implemented on GTK/WPE
+fast/text/otsvg-canvas.html [ ImageOnlyFailure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of UNSUPPORTED tests.
