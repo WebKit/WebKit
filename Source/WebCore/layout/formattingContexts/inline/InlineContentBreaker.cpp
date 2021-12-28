@@ -84,7 +84,7 @@ static inline std::optional<size_t> nextTextRunIndex(const InlineContentBreaker:
     return { };
 }
 
-static inline bool isVisuallyEmptyWhitespaceContent(const InlineContentBreaker::ContinuousContent& continuousContent)
+static inline bool isWhitespaceOnlyContent(const InlineContentBreaker::ContinuousContent& continuousContent)
 {
     // [<span></span> ] [<span> </span>] [ <span style="padding: 0px;"></span>] are all considered visually empty whitespace content.
     // [<span style="border: 1px solid red"></span> ] while this is whitespace content only, it is not considered visually empty.
@@ -92,7 +92,6 @@ static inline bool isVisuallyEmptyWhitespaceContent(const InlineContentBreaker::
     auto hasWhitespace = false;
     for (auto& run : continuousContent.runs()) {
         auto& inlineItem = run.inlineItem;
-        // FIXME: check if visual decoration makes a difference here e.g. padding border.
         if (inlineItem.isInlineBoxStart() || inlineItem.isInlineBoxEnd())
             continue;
         auto isWhitespace = inlineItem.isText() && downcast<InlineTextItem>(inlineItem).isWhitespace();
@@ -159,16 +158,16 @@ InlineContentBreaker::Result InlineContentBreaker::processOverflowingContent(con
     auto checkForTrailingContentFit = [&]() -> std::optional<InlineContentBreaker::Result> {
         if (continuousContent.hasCollapsibleContent()) {
             // Check if the content fits if we collapsed it.
-            if (continuousContent.isFullyCollapsible()) {
-                // If this new content is fully collapsible, it should surely fit.
+            if (continuousContent.isFullyCollapsible() || isWhitespaceOnlyContent(continuousContent)) {
+                // If this new content is fully collapsible (including when it is enclosed by an inline box with overflowing decoration)
+                // it should not be wrapped to the next line (as it either fits/or gets fully collapsed).
                 return InlineContentBreaker::Result { Result::Action::Keep };
-            } else {
-                auto spaceRequired = continuousContent.logicalWidth() - continuousContent.trailingCollapsibleWidth().value_or(0.f);
-                if (lineStatus.hasFullyCollapsibleTrailingContent || isVisuallyEmptyWhitespaceContent(continuousContent))
-                    spaceRequired -= continuousContent.leadingCollapsibleWidth().value_or(0.f);
-                if (spaceRequired <= lineStatus.availableWidth)
-                    return InlineContentBreaker::Result { Result::Action::Keep };
             }
+            auto spaceRequired = continuousContent.logicalWidth() - continuousContent.trailingCollapsibleWidth().value_or(0.f);
+            if (lineStatus.hasFullyCollapsibleTrailingContent)
+                spaceRequired -= continuousContent.leadingCollapsibleWidth().value_or(0.f);
+            if (spaceRequired <= lineStatus.availableWidth)
+                return InlineContentBreaker::Result { Result::Action::Keep };
         }
 
         if (continuousContent.isHangingContent())

@@ -1,3 +1,15 @@
+2021-12-28  Alan Bujtas  <zalan@apple.com>
+
+        REGRESSION(r287440) Do not wrap the content for a collapsed whitespace
+        https://bugs.webkit.org/show_bug.cgi?id=234710
+
+        Reviewed by Antti Koivisto.
+
+        * fast/inline/trailing-whitespace-content-with-overflowing-inline-box-expected.html: Added.
+        * fast/inline/trailing-whitespace-content-with-overflowing-inline-box.html: Added.
+        * platform/ios/fast/borders/rtl-border-01-expected.txt: Redo rebaselining. While the content visually looks
+        odd (overflowing inline box), it is the expected behavior.
+
 2021-12-28  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [selectors] Import two :focus-visible tests from WPT
