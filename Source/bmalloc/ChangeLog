@@ -1,3 +1,17 @@
+2021-12-27  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [libpas] Use thread_switch instead of sched_yield
+        https://bugs.webkit.org/show_bug.cgi?id=234712
+
+        Reviewed by Filip Pizlo.
+
+        Previously, we received internal reports that sched_yield waits for a long time, and causing a pause
+        in the client of JavaScriptCore, and we switched it to thread_switch in bmalloc::Mutex. We should do
+        the same thing in libpas too.
+
+        * libpas/src/libpas/pas_lock.c:
+        (pas_lock_lock_slow):
+
 2021-12-22  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [libpas] Make pas_heap_type constant

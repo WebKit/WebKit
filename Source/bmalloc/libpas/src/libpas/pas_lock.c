@@ -28,6 +28,10 @@
 #if LIBPAS_ENABLED
 
 #include "pas_lock.h"
+#if PAS_OS(DARWIN)
+#include <mach/mach_traps.h>
+#include <mach/thread_switch.h>
+#endif
 
 #if PAS_USE_SPINLOCKS
 
@@ -54,8 +58,14 @@ PAS_NEVER_INLINE void pas_lock_lock_slow(pas_lock* lock)
             return;
     }
 
-    while (!pas_compare_and_swap_bool_weak(&lock->lock, false, true))
+    while (!pas_compare_and_swap_bool_weak(&lock->lock, false, true)) {
+#if PAS_OS(DARWIN)
+        const mach_msg_timeout_t timeoutInMS = 1;
+        thread_switch(MACH_PORT_NULL, SWITCH_OPTION_DEPRESS, timeoutInMS);
+#else
         sched_yield();
+#endif
+    }
 }
 
 #endif /* PAS_USE_SPINLOCKS */
