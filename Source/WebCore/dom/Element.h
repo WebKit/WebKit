@@ -213,7 +213,7 @@ public:
     // This does not update layout, and uses absoluteBoundingBoxRect().
     WEBCORE_EXPORT IntRect boundingBoxInRootViewCoordinates() const;
 
-    std::optional<std::pair<RenderObject*, FloatRect>> boundingAbsoluteRectWithoutLayout();
+    std::optional<std::pair<RenderObject*, FloatRect>> boundingAbsoluteRectWithoutLayout() const;
 
     WEBCORE_EXPORT FloatRect boundingClientRect();
 

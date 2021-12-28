@@ -1678,7 +1678,7 @@ LayoutRect Element::absoluteEventHandlerBounds(bool& includesFixedPositionElemen
     return absoluteEventBoundsOfElementAndDescendants(includesFixedPositionElements);
 }
 
-static std::optional<std::pair<RenderObject*, LayoutRect>> listBoxElementBoundingBox(Element& element)
+static std::optional<std::pair<RenderObject*, LayoutRect>> listBoxElementBoundingBox(const Element& element)
 {
     HTMLSelectElement* selectElement;
     bool isGroup;
@@ -1742,14 +1742,13 @@ Ref<DOMRectList> Element::getClientRects()
     return DOMRectList::create(quads);
 }
 
-std::optional<std::pair<RenderObject*, FloatRect>> Element::boundingAbsoluteRectWithoutLayout()
+std::optional<std::pair<RenderObject*, FloatRect>> Element::boundingAbsoluteRectWithoutLayout() const
 {
     RenderObject* renderer = this->renderer();
     Vector<FloatQuad> quads;
     if (isSVGElement() && renderer && !renderer->isSVGRootOrLegacySVGRoot()) {
         // Get the bounding rectangle from the SVG model.
-        SVGElement& svgElement = downcast<SVGElement>(*this);
-        if (auto localRect = svgElement.getBoundingBox())
+        if (auto localRect = downcast<SVGElement>(*this).getBoundingBox())
             quads.append(renderer->localToAbsoluteQuad(*localRect));
     } else if (auto pair = listBoxElementBoundingBox(*this)) {
         renderer = pair.value().first;
