@@ -1,3 +1,99 @@
+2021-12-28  Sam Weinig  <weinig@apple.com>
+
+        Update wpt css/css-color tests
+        https://bugs.webkit.org/show_bug.cgi?id=234684
+
+        Reviewed by Darin Adler.
+
+        Updates tests.
+
+        * resources/resource-files.json:
+        * web-platform-tests/css/css-color/META.yml:
+        * web-platform-tests/css/css-color/body-opacity-0-to-1-stacking-context-expected.html: Added.
+        * web-platform-tests/css/css-color/body-opacity-0-to-1-stacking-context.html: Added.
+        * web-platform-tests/css/css-color/color-contrast-001-expected.html: Added.
+        * web-platform-tests/css/css-color/color-contrast-001.html: Added.
+        * web-platform-tests/css/css-color/color-mix-basic-001-expected.html: Added.
+        * web-platform-tests/css/css-color/color-mix-basic-001.html: Added.
+        * web-platform-tests/css/css-color/color-mix-basic-001.tentative-expected.txt: Removed.
+        * web-platform-tests/css/css-color/color-mix-basic-001.tentative.html: Removed.
+        * web-platform-tests/css/css-color/color-mix-non-srgb-001-expected.html: Added.
+        * web-platform-tests/css/css-color/color-mix-non-srgb-001.html: Added.
+        * web-platform-tests/css/css-color/color-mix-percents-01-expected.html: Added.
+        * web-platform-tests/css/css-color/color-mix-percents-01.html: Added.
+        * web-platform-tests/css/css-color/color-mix-percents-02-expected.html: Added.
+        * web-platform-tests/css/css-color/color-mix-percents-02.html: Added.
+        * web-platform-tests/css/css-color/display-p3-001-expected.html: Added.
+        * web-platform-tests/css/css-color/display-p3-001.html: Added.
+        * web-platform-tests/css/css-color/display-p3-002-expected.html: Added.
+        * web-platform-tests/css/css-color/display-p3-002.html: Added.
+        * web-platform-tests/css/css-color/display-p3-003-expected.html: Added.
+        * web-platform-tests/css/css-color/display-p3-003.html: Added.
+        * web-platform-tests/css/css-color/display-p3-004-expected.html: Added.
+        * web-platform-tests/css/css-color/display-p3-004.html: Added.
+        * web-platform-tests/css/css-color/display-p3-005-expected.html: Added.
+        * web-platform-tests/css/css-color/display-p3-005.html: Added.
+        * web-platform-tests/css/css-color/display-p3-006-expected.html: Added.
+        * web-platform-tests/css/css-color/display-p3-006.html: Added.
+        * web-platform-tests/css/css-color/inline-opacity-float-child-expected.xht: Added.
+        * web-platform-tests/css/css-color/inline-opacity-float-child.html: Added.
+        * web-platform-tests/css/css-color/oklab-001.html:
+        * web-platform-tests/css/css-color/oklab-002.html:
+        * web-platform-tests/css/css-color/oklab-003.html:
+        * web-platform-tests/css/css-color/oklab-004.html:
+        * web-platform-tests/css/css-color/oklab-005.html:
+        * web-platform-tests/css/css-color/oklab-006.html:
+        * web-platform-tests/css/css-color/oklab-007.html:
+        * web-platform-tests/css/css-color/oklab-008.html:
+        * web-platform-tests/css/css-color/oklch-001.html:
+        * web-platform-tests/css/css-color/oklch-002.html:
+        * web-platform-tests/css/css-color/oklch-003.html:
+        * web-platform-tests/css/css-color/oklch-004.html:
+        * web-platform-tests/css/css-color/oklch-005.html:
+        * web-platform-tests/css/css-color/oklch-006.html:
+        * web-platform-tests/css/css-color/oklch-007.html:
+        * web-platform-tests/css/css-color/oklch-008.html:
+        * web-platform-tests/css/css-color/parsing/color-computed-expected.txt:
+        * web-platform-tests/css/css-color/parsing/color-computed.html:
+        * web-platform-tests/css/css-color/parsing/color-contrast-computed-expected.txt: Added.
+        * web-platform-tests/css/css-color/parsing/color-contrast-computed.html: Added.
+        * web-platform-tests/css/css-color/parsing/color-contrast-invalid-expected.txt: Added.
+        * web-platform-tests/css/css-color/parsing/color-contrast-invalid.html: Added.
+        * web-platform-tests/css/css-color/parsing/color-contrast-valid-expected.txt: Added.
+        * web-platform-tests/css/css-color/parsing/color-contrast-valid.html: Added.
+        * web-platform-tests/css/css-color/parsing/color-invalid-expected.txt:
+        * web-platform-tests/css/css-color/parsing/color-invalid.html:
+        * web-platform-tests/css/css-color/parsing/color-mix-computed-expected.txt: Added.
+        * web-platform-tests/css/css-color/parsing/color-mix-computed.html: Added.
+        * web-platform-tests/css/css-color/parsing/color-mix-invalid-expected.txt: Added.
+        * web-platform-tests/css/css-color/parsing/color-mix-invalid.html: Added.
+        * web-platform-tests/css/css-color/parsing/color-mix-valid-expected.txt: Added.
+        * web-platform-tests/css/css-color/parsing/color-mix-valid.html: Added.
+        * web-platform-tests/css/css-color/parsing/color-valid-expected.txt:
+        * web-platform-tests/css/css-color/parsing/color-valid.html:
+        * web-platform-tests/css/css-color/parsing/relative-color-computed-expected.txt: Added.
+        * web-platform-tests/css/css-color/parsing/relative-color-computed.html: Added.
+        * web-platform-tests/css/css-color/parsing/relative-color-invalid-expected.txt: Added.
+        * web-platform-tests/css/css-color/parsing/relative-color-invalid.html: Added.
+        * web-platform-tests/css/css-color/parsing/relative-color-valid-expected.txt: Added.
+        * web-platform-tests/css/css-color/parsing/relative-color-valid.html: Added.
+        * web-platform-tests/css/css-color/parsing/system-color-valid-expected.txt:
+        * web-platform-tests/css/css-color/parsing/system-color-valid.html:
+        * web-platform-tests/css/css-color/parsing/w3c-import.log:
+        * web-platform-tests/css/css-color/predefined-001.html:
+        * web-platform-tests/css/css-color/predefined-002.html:
+        * web-platform-tests/css/css-color/predefined-005.html:
+        * web-platform-tests/css/css-color/predefined-006.html:
+        * web-platform-tests/css/css-color/predefined-013-expected.html: Removed.
+        * web-platform-tests/css/css-color/predefined-013.html: Removed.
+        * web-platform-tests/css/css-color/predefined-016.html:
+        * web-platform-tests/css/css-color/srgb-linear-003.html:
+        * web-platform-tests/css/css-color/srgb-linear-004.html:
+        * web-platform-tests/css/css-color/t31-color-text-a-expected-mismatch.xht: Added.
+        * web-platform-tests/css/css-color/t31-color-text-a-expected.xht: Removed.
+        * web-platform-tests/css/css-color/t421-rgb-values-meaning-b-expected.html:
+        * web-platform-tests/css/css-color/w3c-import.log:
+
 2021-12-28  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [selectors] Import two :focus-visible tests from WPT

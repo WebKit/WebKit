@@ -15,9 +15,18 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/parsing/color-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-color/parsing/color-contrast-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-color/parsing/color-contrast-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-color/parsing/color-contrast-valid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/parsing/color-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-color/parsing/color-mix-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-color/parsing/color-mix-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-color/parsing/color-mix-valid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/parsing/color-valid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/parsing/opacity-computed.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/parsing/opacity-invalid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/parsing/opacity-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-color/parsing/relative-color-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-color/parsing/relative-color-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-color/parsing/relative-color-valid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/parsing/system-color-valid.html

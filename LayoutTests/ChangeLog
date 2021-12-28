@@ -1,3 +1,18 @@
+2021-12-28  Sam Weinig  <weinig@apple.com>
+
+        Update wpt css/css-color tests
+        https://bugs.webkit.org/show_bug.cgi?id=234684
+
+        Reviewed by Darin Adler.
+
+        * TestExpectations:
+        Update expectations to match updated tests. One test that was marked as failing is now passing (because the test
+        was changed) and two new tests are known failures with corresponding annotated bugs.
+
+        * platform/gtk/TestExpectations:
+        Add two new tests that are only failing on the GTK bots due to a small floating point issue that needs further
+        investigation.
+
 2021-12-28  Alan Bujtas  <zalan@apple.com>
 
         REGRESSION(r287440) Do not wrap the content for a collapsed whitespace
