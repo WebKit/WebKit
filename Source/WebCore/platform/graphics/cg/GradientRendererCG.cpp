@@ -409,8 +409,7 @@ GradientRendererCG::Strategy GradientRendererCG::pickStrategy(ColorInterpolation
             }
         },
         [&] (const auto&) -> Strategy {
-            // FIXME: Add support for the other interpolation color spaces.
-            RELEASE_ASSERT_NOT_REACHED();
+            return makeShading(colorInterpolationMethod, stops);
         }
     );
 }

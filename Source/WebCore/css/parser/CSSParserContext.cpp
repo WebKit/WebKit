@@ -108,6 +108,7 @@ CSSParserContext::CSSParserContext(const Document& document, const URL& sheetBas
     , containerQueriesEnabled { document.settings().cssContainerQueriesEnabled() }
     , overflowClipEnabled { document.settings().overflowClipEnabled() }
     , gradientPremultipliedAlphaInterpolationEnabled { document.settings().cssGradientPremultipliedAlphaInterpolationEnabled() }
+    , gradientInterpolationColorSpacesEnabled { document.settings().cssGradientInterpolationColorSpacesEnabled() }
 #if ENABLE(ATTACHMENT_ELEMENT)
     , attachmentEnabled { RuntimeEnabledFeatures::sharedFeatures().attachmentElementEnabled() }
 #endif
@@ -156,6 +157,7 @@ bool operator==(const CSSParserContext& a, const CSSParserContext& b)
         && a.containerQueriesEnabled == b.containerQueriesEnabled
         && a.overflowClipEnabled == b.overflowClipEnabled
         && a.gradientPremultipliedAlphaInterpolationEnabled == b.gradientPremultipliedAlphaInterpolationEnabled
+        && a.gradientInterpolationColorSpacesEnabled == b.gradientInterpolationColorSpacesEnabled
 #if ENABLE(ATTACHMENT_ELEMENT)
         && a.attachmentEnabled == b.attachmentEnabled
 #endif
@@ -164,7 +166,7 @@ bool operator==(const CSSParserContext& a, const CSSParserContext& b)
 
 void add(Hasher& hasher, const CSSParserContext& context)
 {
-    unsigned bits = context.isHTMLDocument                  << 0
+    uint64_t bits = context.isHTMLDocument                  << 0
         | context.hasDocumentSecurityOrigin                 << 1
         | context.isContentOpaque                           << 2
         | context.useSystemAppearance                       << 3
@@ -197,11 +199,12 @@ void add(Hasher& hasher, const CSSParserContext& context)
         | context.containerQueriesEnabled                   << 24
         | context.overflowClipEnabled                       << 25
         | context.gradientPremultipliedAlphaInterpolationEnabled << 26
+        | context.gradientInterpolationColorSpacesEnabled   << 27
 #if ENABLE(ATTACHMENT_ELEMENT)
-        | context.attachmentEnabled                         << 27
+        | context.attachmentEnabled                         << 28
 #endif
-        | context.accentColorEnabled                        << 28
-        | context.mode                                      << 29; // This is multiple bits, so keep it last.
+        | context.accentColorEnabled                        << 29
+        | context.mode                                      << 30; // This is multiple bits, so keep it last.
     add(hasher, context.baseURL, context.charset, bits);
 }
 

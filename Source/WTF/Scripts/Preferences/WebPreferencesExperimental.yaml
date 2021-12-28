@@ -284,6 +284,18 @@ CSSCustomPropertiesAndValuesEnabled:
     WebCore:
       default: false
 
+CSSGradientInterpolationColorSpacesEnabled:
+  type: bool
+  humanReadableName: "CSS Gradient Interpolation Color Spaces"
+  humanReadableDescription: "Enable custom interpolation in CSS gradients"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 CSSGradientPremultipliedAlphaInterpolationEnabled:
   type: bool
   humanReadableName: "CSS Gradient Premultiplied Alpha Interpolation"

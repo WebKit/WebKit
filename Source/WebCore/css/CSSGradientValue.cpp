@@ -651,6 +651,75 @@ bool CSSGradientValue::equals(const CSSGradientValue& other) const
         && m_colorInterpolationMethod == other.m_colorInterpolationMethod;
 }
 
+static void appendHueInterpolationMethod(StringBuilder& builder, HueInterpolationMethod hueInterpolationMethod)
+{
+    switch (hueInterpolationMethod) {
+    case HueInterpolationMethod::Shorter:
+        break;
+    case HueInterpolationMethod::Longer:
+        builder.append(" longer hue");
+        break;
+    case HueInterpolationMethod::Increasing:
+        builder.append(" increasing hue");
+        break;
+    case HueInterpolationMethod::Decreasing:
+        builder.append(" decreasing hue");
+        break;
+    case HueInterpolationMethod::Specified:
+        builder.append(" specified hue");
+        break;
+    }
+}
+
+static bool appendColorInterpolationMethod(StringBuilder& builder, ColorInterpolationMethod colorInterpolationMethod, bool needsLeadingSpace)
+{
+    return WTF::switchOn(colorInterpolationMethod.colorSpace,
+        [&] (const ColorInterpolationMethod::HSL& hsl) {
+            builder.append(needsLeadingSpace ? " " : "", "in hsl");
+            appendHueInterpolationMethod(builder, hsl.hueInterpolationMethod);
+            return true;
+        },
+        [&] (const ColorInterpolationMethod::HWB& hwb) {
+            builder.append(needsLeadingSpace ? " " : "", "in hwb");
+            appendHueInterpolationMethod(builder, hwb.hueInterpolationMethod);
+            return true;
+        },
+        [&] (const ColorInterpolationMethod::LCH& lch) {
+            builder.append(needsLeadingSpace ? " " : "", "in lch");
+            appendHueInterpolationMethod(builder, lch.hueInterpolationMethod);
+            return true;
+        },
+        [&] (const ColorInterpolationMethod::Lab&) {
+            builder.append(needsLeadingSpace ? " " : "", "in lab");
+            return true;
+        },
+        [&] (const ColorInterpolationMethod::OKLCH& oklch) {
+            builder.append(needsLeadingSpace ? " " : "", "in oklch");
+            appendHueInterpolationMethod(builder, oklch.hueInterpolationMethod);
+            return true;
+        },
+        [&] (const ColorInterpolationMethod::OKLab&) {
+            builder.append(needsLeadingSpace ? " " : "", "in oklab");
+            return true;
+        },
+        [&] (const ColorInterpolationMethod::SRGB&) {
+            return false;
+        },
+        [&] (const ColorInterpolationMethod::SRGBLinear&) {
+            builder.append(needsLeadingSpace ? " " : "", "in srgb-linear");
+            return true;
+        },
+        [&] (const ColorInterpolationMethod::XYZD50&) {
+            builder.append(needsLeadingSpace ? " " : "", "in xyz-d50");
+            return true;
+        },
+        [&] (const ColorInterpolationMethod::XYZD65&) {
+            builder.append(needsLeadingSpace ? " " : "", "in xyz-d65");
+            return true;
+        }
+    );
+}
+
 static void appendGradientStops(StringBuilder& builder, const Vector<CSSGradientColorStop, 2>& stops)
 {
     for (auto& stop : stops) {
@@ -716,6 +785,9 @@ String CSSLinearGradientValue::customCSSText() const
             appendSpaceSeparatedOptionalCSSPtrText(result, firstX(), firstY());
             wroteSomething = true;
         }
+
+        if (appendColorInterpolationMethod(result, colorInterpolationMethod(), wroteSomething))
+            wroteSomething = true;
 
         for (auto& stop : stops()) {
             if (wroteSomething)
@@ -942,6 +1014,9 @@ String CSSRadialGradientValue::customCSSText() const
             appendSpaceSeparatedOptionalCSSPtrText(result, firstX(), firstY());
             wroteSomething = true;
         }
+
+        if (appendColorInterpolationMethod(result, colorInterpolationMethod(), wroteSomething))
+            wroteSomething = true;
 
         if (wroteSomething)
             result.append(", ");
@@ -1226,6 +1301,9 @@ String CSSConicGradientValue::customCSSText() const
         appendSpaceSeparatedOptionalCSSPtrText(result, firstX(), firstY());
         wroteSomething = true;
     }
+
+    if (appendColorInterpolationMethod(result, colorInterpolationMethod(), wroteSomething))
+        wroteSomething = true;
 
     if (wroteSomething)
         result.append(", ");

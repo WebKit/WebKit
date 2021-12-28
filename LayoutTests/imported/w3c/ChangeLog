@@ -1,5 +1,22 @@
 2021-12-28  Sam Weinig  <weinig@apple.com>
 
+        Support color interpolation methods for CSS Gradients
+        https://bugs.webkit.org/show_bug.cgi?id=234711
+
+        Reviewed by Simon Fraser.
+
+        Add parsing and serialization tests that exercise the new support for the <color-interpolation-method>
+        production in CSS gradients. 
+
+        * web-platform-tests/css/css-images/parsing/gradient-interpolation-method-computed-expected.txt: Added.
+        * web-platform-tests/css/css-images/parsing/gradient-interpolation-method-computed.html: Added.
+        * web-platform-tests/css/css-images/parsing/gradient-interpolation-method-invalid-expected.txt: Added.
+        * web-platform-tests/css/css-images/parsing/gradient-interpolation-method-invalid.html: Added.
+        * web-platform-tests/css/css-images/parsing/gradient-interpolation-method-valid-expected.txt: Added.
+        * web-platform-tests/css/css-images/parsing/gradient-interpolation-method-valid.html: Added.
+
+2021-12-28  Sam Weinig  <weinig@apple.com>
+
         Update wpt css/css-color tests
         https://bugs.webkit.org/show_bug.cgi?id=234684
 
