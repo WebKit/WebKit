@@ -2093,15 +2093,59 @@ public:
         return PatchableJump(branch64(cond, left, right));
     }
 
-    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD_WITH_RETURN(branchFloat, Jump);
-    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD_WITH_RETURN(branchDouble, Jump);
-    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD_WITH_RETURN(branchDoubleNonZero, Jump);
-    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD_WITH_RETURN(branchDoubleZeroOrNaN, Jump);
+    Jump branchFloat(DoubleCondition cond, FPRegisterID lhs, FPRegisterID rhs)
+    {
+        return branchFP<32>(cond, lhs, rhs);
+    }
+
+    Jump branchDouble(DoubleCondition cond, FPRegisterID lhs, FPRegisterID rhs)
+    {
+        return branchFP<64>(cond, lhs, rhs);
+    }
+
+    Jump branchDoubleNonZero(FPRegisterID reg, FPRegisterID)
+    {
+        m_assembler.fcvtInsn<RISCV64Assembler::FCVTType::D, RISCV64Assembler::FCVTType::L>(fpTempRegister, RISCV64Registers::zero);
+        return branchFP<64>(DoubleNotEqualAndOrdered, reg, fpTempRegister);
+    }
+
+    Jump branchDoubleZeroOrNaN(FPRegisterID reg, FPRegisterID)
+    {
+        m_assembler.fcvtInsn<RISCV64Assembler::FCVTType::D, RISCV64Assembler::FCVTType::L>(fpTempRegister, RISCV64Registers::zero);
+        return branchFP<64>(DoubleEqualOrUnordered, reg, fpTempRegister);
+    }
 
     enum BranchTruncateType { BranchIfTruncateFailed, BranchIfTruncateSuccessful };
-    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD_WITH_RETURN(branchTruncateDoubleToInt32, Jump);
+    Jump branchTruncateDoubleToInt32(FPRegisterID src, RegisterID dest, BranchTruncateType branchType = BranchIfTruncateFailed)
+    {
+        auto temp = temps<Data>();
+        m_assembler.fcvtInsn<RISCV64Assembler::FPRoundingMode::RTZ, RISCV64Assembler::FCVTType::L, RISCV64Assembler::FCVTType::D>(dest, src);
+        m_assembler.signExtend<32>(temp.data(), dest);
+        m_assembler.xorInsn(temp.data(), dest, temp.data());
+        if (branchType == BranchIfTruncateFailed)
+            m_assembler.sltuInsn(temp.data(), RISCV64Registers::zero, temp.data());
+        else
+            m_assembler.sltiuInsn(temp.data(), temp.data(), Imm::I<1>());
 
-    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(branchConvertDoubleToInt32);
+        m_assembler.maskRegister<32>(dest);
+        return makeBranch(NotEqual, temp.data(), RISCV64Registers::zero);
+    }
+
+    void branchConvertDoubleToInt32(FPRegisterID src, RegisterID dest, JumpList& failureCases, FPRegisterID, bool negZeroCheck = true)
+    {
+        auto temp = temps<Data>();
+        m_assembler.fcvtInsn<RISCV64Assembler::FCVTType::W, RISCV64Assembler::FCVTType::D>(temp.data(),  src);
+        m_assembler.fcvtInsn<RISCV64Assembler::FCVTType::D, RISCV64Assembler::FCVTType::W>(fpTempRegister, temp.data());
+        m_assembler.maskRegister<32>(dest, temp.data());
+        failureCases.append(branchFP<64>(DoubleNotEqualOrUnordered, src, fpTempRegister));
+
+        if (negZeroCheck) {
+            Jump resultIsNonZero = makeBranch(NotEqual, temp.data(), RISCV64Registers::zero);
+            m_assembler.fmvInsn<RISCV64Assembler::FMVType::X, RISCV64Assembler::FMVType::D>(temp.data(), src);
+            failureCases.append(makeBranch(LessThan, temp.data(), RISCV64Registers::zero));
+            resultIsNonZero.link(this);
+        }
+    }
 
     Call call(PtrTag)
     {
@@ -2813,6 +2857,74 @@ private:
             m_assembler.sltuInsn(dest, RISCV64Registers::zero, src);
             break;
         }
+    }
+
+    template<unsigned fpSize, bool invert = false>
+    Jump branchFP(DoubleCondition cond, FPRegisterID lhs, FPRegisterID rhs)
+    {
+        auto temp = temps<Data>();
+        JumpList unorderedJump;
+
+        m_assembler.fclassInsn<fpSize>(temp.data(), lhs);
+        m_assembler.andiInsn(temp.data(), temp.data(), Imm::I<0b1100000000>());
+        unorderedJump.append(makeBranch(NotEqual, temp.data(), RISCV64Registers::zero));
+
+        m_assembler.fclassInsn<fpSize>(temp.data(), rhs);
+        m_assembler.andiInsn(temp.data(), temp.data(), Imm::I<0b1100000000>());
+        unorderedJump.append(makeBranch(NotEqual, temp.data(), RISCV64Registers::zero));
+
+        switch (cond) {
+        case DoubleEqualAndOrdered:
+        case DoubleEqualOrUnordered:
+            m_assembler.feqInsn<fpSize>(temp.data(), lhs, rhs);
+            break;
+        case DoubleNotEqualAndOrdered:
+        case DoubleNotEqualOrUnordered:
+            m_assembler.feqInsn<fpSize>(temp.data(), lhs, rhs);
+            m_assembler.xoriInsn(temp.data(), temp.data(), Imm::I<1>());
+            break;
+        case DoubleGreaterThanAndOrdered:
+        case DoubleGreaterThanOrUnordered:
+            m_assembler.fltInsn<fpSize>(temp.data(), rhs, lhs);
+            break;
+        case DoubleGreaterThanOrEqualAndOrdered:
+        case DoubleGreaterThanOrEqualOrUnordered:
+            m_assembler.fleInsn<fpSize>(temp.data(), rhs, lhs);
+            break;
+        case DoubleLessThanAndOrdered:
+        case DoubleLessThanOrUnordered:
+            m_assembler.fltInsn<fpSize>(temp.data(), lhs, rhs);
+            break;
+        case DoubleLessThanOrEqualAndOrdered:
+        case DoubleLessThanOrEqualOrUnordered:
+            m_assembler.fleInsn<fpSize>(temp.data(), lhs, rhs);
+            break;
+        }
+
+        Jump end = jump();
+        unorderedJump.link(this);
+
+        switch (cond) {
+        case DoubleEqualAndOrdered:
+        case DoubleNotEqualAndOrdered:
+        case DoubleGreaterThanAndOrdered:
+        case DoubleGreaterThanOrEqualAndOrdered:
+        case DoubleLessThanAndOrdered:
+        case DoubleLessThanOrEqualAndOrdered:
+            m_assembler.addiInsn(temp.data(), RISCV64Registers::zero, Imm::I<0>());
+            break;
+        case DoubleEqualOrUnordered:
+        case DoubleNotEqualOrUnordered:
+        case DoubleGreaterThanOrUnordered:
+        case DoubleGreaterThanOrEqualOrUnordered:
+        case DoubleLessThanOrUnordered:
+        case DoubleLessThanOrEqualOrUnordered:
+            m_assembler.addiInsn(temp.data(), RISCV64Registers::zero, Imm::I<1>());
+            break;
+        }
+
+        end.link(this);
+        return makeBranch(invert ? Equal : NotEqual, temp.data(), RISCV64Registers::zero);
     }
 
     template<unsigned fpSize, RISCV64Assembler::FPRoundingMode RM>

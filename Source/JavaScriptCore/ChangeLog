@@ -1,5 +1,26 @@
 2021-12-28  Zan Dobersek  <zdobersek@igalia.com>
 
+        [RISCV64] Add MacroAssemblerRISCV64 operations for floating-point branches
+        https://bugs.webkit.org/show_bug.cgi?id=234631
+
+        Reviewed by Yusuke Suzuki.
+
+        Add the floating-point branching operation implementations in
+        MacroAssemblerRISCV64. Unordered status of values is determined through
+        the fclass instruction and then handled as appropriate for the desired
+        condition.
+
+        * assembler/MacroAssemblerRISCV64.h:
+        (JSC::MacroAssemblerRISCV64::branchFloat):
+        (JSC::MacroAssemblerRISCV64::branchDouble):
+        (JSC::MacroAssemblerRISCV64::branchDoubleNonZero):
+        (JSC::MacroAssemblerRISCV64::branchDoubleZeroOrNaN):
+        (JSC::MacroAssemblerRISCV64::branchTruncateDoubleToInt32):
+        (JSC::MacroAssemblerRISCV64::branchConvertDoubleToInt32):
+        (JSC::MacroAssemblerRISCV64::branchFP):
+
+2021-12-28  Zan Dobersek  <zdobersek@igalia.com>
+
         [RISCV64] Add MacroAssemblerRISCV64 operations for testing, comparison
         https://bugs.webkit.org/show_bug.cgi?id=234630
 
