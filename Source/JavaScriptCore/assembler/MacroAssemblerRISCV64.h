@@ -1568,7 +1568,10 @@ public:
     }
 
     template<PtrTag tag>
-    static void replaceWithVMHalt(CodeLocationLabel<tag>) { }
+    static void replaceWithVMHalt(CodeLocationLabel<tag> instructionStart)
+    {
+        Assembler::replaceWithVMHalt(instructionStart.dataLocation());
+    }
 
     template<PtrTag startTag, PtrTag destTag>
     static void replaceWithJump(CodeLocationLabel<startTag> instructionStart, CodeLocationLabel<destTag> destination)

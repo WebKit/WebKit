@@ -1647,6 +1647,13 @@ public:
         cacheFlush(location, sizeof(uint32_t) * 2);
     }
 
+    static void replaceWithVMHalt(void* where)
+    {
+        uint32_t* location = reinterpret_cast<uint32_t*>(where);
+        location[0] = RISCV64Instructions::SD::construct(RISCV64Registers::zero, RISCV64Registers::zero, SImmediate::v<SImmediate, 0>());
+        cacheFlush(location, sizeof(uint32_t));
+    }
+
     static void replaceWithJump(void* from, void* to)
     {
         uint32_t* location = reinterpret_cast<uint32_t*>(from);

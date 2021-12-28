@@ -1,5 +1,25 @@
 2021-12-28  Zan Dobersek  <zdobersek@igalia.com>
 
+        [RISCV64] Enable signal-based VM traps for CPU(RISCV64)
+        https://bugs.webkit.org/show_bug.cgi?id=234719
+
+        Reviewed by Yusuke Suzuki.
+
+        Enable signal-based VM traps on RISCV64. On Linux, this depends on
+        generating a SIGSEGV or SIGBUS signal. The former can be generated
+        through a simple storage instruction that sources the address from
+        the zero register.
+
+        This storage instruction is generated on the desired location through
+        the RISCV64Assembler::replaceWithVMHalt() method.
+
+        * assembler/MacroAssemblerRISCV64.h:
+        (JSC::MacroAssemblerRISCV64::replaceWithVMHalt):
+        * assembler/RISCV64Assembler.h:
+        (JSC::RISCV64Assembler::replaceWithVMHalt):
+
+2021-12-28  Zan Dobersek  <zdobersek@igalia.com>
+
         [RISCV64] Define HAVE_MACHINE_CONTEXT, provide mcontext_t accessors for CPU(RISCV64)
         https://bugs.webkit.org/show_bug.cgi?id=234718
 
