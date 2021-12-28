@@ -1,3 +1,18 @@
+2021-12-28  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [selectors] Import two :focus-visible tests from WPT
+        https://bugs.webkit.org/show_bug.cgi?id=234720
+
+        Reviewed by Sergio Villar Senin.
+
+        The tests were added in https://github.com/web-platform-tests/wpt/pull/32000
+        and are related to :focus-visible and accesskey.
+        They don't work on WebKit due to webkit.org/b/234139, though they work properly on wpt.fyi.
+
+        * web-platform-tests/css/selectors/focus-visible-024.html: Added.
+        * web-platform-tests/css/selectors/focus-visible-025.html: Added.
+        * web-platform-tests/css/selectors/w3c-import.log:
+
 2021-12-26  Antti Koivisto  <antti@apple.com>
 
         [:has() pseudo-class] Support :disabled and :enabled pseudo-class invalidation

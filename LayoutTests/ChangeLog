@@ -1,3 +1,14 @@
+2021-12-28  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [selectors] Import two :focus-visible tests from WPT
+        https://bugs.webkit.org/show_bug.cgi?id=234720
+
+        Reviewed by Sergio Villar Senin.
+
+        Skip the new imported tests as they fail due to webkit.org/b/234139.
+
+        * TestExpectations:
+
 2021-12-27  Arcady Goldmints-Orlov  <agoldmints@igalia.com>
 
         [GLIB] Update test expectations and baselines. Unreviewed test gardening.
