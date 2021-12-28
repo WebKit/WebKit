@@ -262,7 +262,7 @@ InlineLayoutUnit LineBoxBuilder::constructAndAlignInlineLevelBoxes(LineBox& line
                 else {
                     auto& formattingState = layoutState().formattingStateForInlineFormattingContext(downcast<ContainerBox>(layoutBox));
                     auto& lastLine = formattingState.lines().last();
-                    auto inlineBlockBaseline = lastLine.lineBoxRect().top() + lastLine.baseline();
+                    auto inlineBlockBaseline = lastLine.top() + lastLine.baseline();
                     ascent = inlineLevelBoxGeometry.marginBefore() + inlineLevelBoxGeometry.borderBefore() + inlineLevelBoxGeometry.paddingBefore().value_or(0) + inlineBlockBaseline;
                 }
             } else if (layoutBox.isReplacedBox())

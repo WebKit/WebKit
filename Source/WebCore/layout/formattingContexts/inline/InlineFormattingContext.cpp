@@ -186,8 +186,8 @@ LayoutUnit InlineFormattingContext::usedContentHeight() const
     auto& lines = formattingState().lines();
     // Even empty content generates a line.
     ASSERT(!lines.isEmpty());
-    auto top = LayoutUnit { lines.first().lineBoxRect().top() };
-    auto bottom = LayoutUnit { lines.last().lineBoxRect().bottom() + formattingState().clearGapAfterLastLine() };
+    auto top = LayoutUnit { lines.first().top() };
+    auto bottom = LayoutUnit { lines.last().bottom() + formattingState().clearGapAfterLastLine() };
 
     auto floatingContext = FloatingContext { *this, formattingState().floatingState() };
     if (auto floatBottom = floatingContext.bottom()) {
@@ -306,7 +306,7 @@ void InlineFormattingContext::computeStaticPositionForOutOfFlowContent(const For
             // This is the first (non-float)child. Let's place it to the left of the first box.
             // <div><img style="position: absolute">text content</div>
             ASSERT(boxes.size());
-            outOfFlowGeometry.setLogicalTopLeft({ boxes[0].left(), lines[0].lineBoxRect().top() });
+            outOfFlowGeometry.setLogicalTopLeft({ boxes[0].left(), lines[0].top() });
             continue;
         }
 
@@ -347,27 +347,27 @@ void InlineFormattingContext::computeStaticPositionForOutOfFlowContent(const For
                         ? BoxGeometry::borderBoxLeft(inlineBoxBoxGeometry) + inlineBoxBoxGeometry.contentBoxLeft()
                         : BoxGeometry::borderBoxRect(inlineBoxBoxGeometry).right();
                 }
-                outOfFlowGeometry.setLogicalTopLeft({ left, lines[previousBox.lineIndex()].lineBoxRect().top() });
+                outOfFlowGeometry.setLogicalTopLeft({ left, lines[previousBox.lineIndex()].top() });
                 return;
             }
 
             if (nextBox) {
                 // The out of flow box is placed at the beginning of the next line (where the first box on the line is).
                 // <div>text<br><img style="position: absolute"><img style="position: absolute">content</div>
-                outOfFlowGeometry.setLogicalTopLeft({ nextBox->left(), lines[nextBox->lineIndex()].lineBoxRect().top() });
+                outOfFlowGeometry.setLogicalTopLeft({ nextBox->left(), lines[nextBox->lineIndex()].top() });
                 return;
             }
 
-            auto& lastLineLogicalRect = lines[previousBox.lineIndex()].lineBoxRect();
+            auto& lastLine = lines[previousBox.lineIndex()];
             // This out-of-flow box is the last box.
             // FIXME: Use isLineBreak instead to cover preserved new lines too.
             if (previousBox.layoutBox().isLineBreakBox()) {
                 // <div>text<br><img style="position: absolute"><img style="position: absolute"></div>
-                outOfFlowGeometry.setLogicalTopLeft({ lastLineLogicalRect.left(), lastLineLogicalRect.bottom() });
+                outOfFlowGeometry.setLogicalTopLeft({ lastLine.left(), lastLine.bottom() });
                 return;
             }
             // FIXME: We may need to check if this box actually fits the last line and move it over to the "next" line.
-            outOfFlowGeometry.setLogicalTopLeft({ previousBox.right(), lastLineLogicalRect.top() });
+            outOfFlowGeometry.setLogicalTopLeft({ previousBox.right(), lastLine.top() });
         };
         placeOutOfFlowBoxAfterPreviousInFlowBox();
     }

@@ -376,7 +376,7 @@ void showInlineTreeAndRuns(TextStream& stream, const LayoutState& layoutState, c
         auto& line = lines[lineIndex];
         auto& lineBoxRect = line.lineBoxRect();
         auto enclosingTopAndBottom = line.enclosingTopAndBottom();
-        stream << "line at (" << lineBoxRect.left() << "," << lineBoxRect.top() << ") size (" << lineBoxRect.width() << "x" << lineBoxRect.height() << ") baseline (" << line.baseline() << ") enclosing top (" << enclosingTopAndBottom.top << ") bottom (" << enclosingTopAndBottom.bottom << ")";
+        stream << "line at (" << lineBoxRect.x() << "," << lineBoxRect.y() << ") size (" << lineBoxRect.width() << "x" << lineBoxRect.height() << ") baseline (" << line.baseline() << ") enclosing top (" << enclosingTopAndBottom.top << ") bottom (" << enclosingTopAndBottom.bottom << ")";
         stream.nextLine();
 
         addSpacing();

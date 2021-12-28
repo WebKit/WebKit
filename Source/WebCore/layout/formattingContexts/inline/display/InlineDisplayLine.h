@@ -37,37 +37,44 @@ class Line {
 public:
     struct EnclosingTopAndBottom {
         // This values encloses the root inline box and any other inline level box's border box.
-        Layout::InlineLayoutUnit top { 0 };
-        Layout::InlineLayoutUnit bottom { 0 };
+        float top { 0 };
+        float bottom { 0 };
     };
-    Line(const Layout::InlineRect& lineBoxRect, const Layout::InlineRect& scrollableOverflow, EnclosingTopAndBottom, Layout::InlineLayoutUnit aligmentBaseline, Layout::InlineLayoutUnit contentLeft, Layout::InlineLayoutUnit contentWidth);
+    Line(const FloatRect& lineBoxRect, const FloatRect& scrollableOverflow, EnclosingTopAndBottom, float aligmentBaseline, float contentLeft, float contentWidth);
 
-    const Layout::InlineRect& lineBoxRect() const { return m_lineBoxRect; }
-    const Layout::InlineRect& scrollableOverflow() const { return m_scrollableOverflow; }
+    float left() const { return m_lineBoxRect.x(); }
+    float right() const { return m_lineBoxRect.maxX(); }
+    float top() const { return m_lineBoxRect.y(); }
+    float bottom() const { return m_lineBoxRect.maxY(); }
+
+    FloatPoint topLeft() const { return m_lineBoxRect.location(); }
+
+    const FloatRect& lineBoxRect() const { return m_lineBoxRect; }
+    const FloatRect& scrollableOverflow() const { return m_scrollableOverflow; }
 
     EnclosingTopAndBottom enclosingTopAndBottom() const { return m_enclosingTopAndBottom; }
 
-    Layout::InlineLayoutUnit baseline() const { return m_aligmentBaseline; }
+    float baseline() const { return m_aligmentBaseline; }
 
-    Layout::InlineLayoutUnit contentLeft() const { return m_contentLeft; }
-    Layout::InlineLayoutUnit contentWidth() const { return m_contentWidth; }
+    float contentLeft() const { return m_contentLeft; }
+    float contentWidth() const { return m_contentWidth; }
 
-    void moveVertically(Layout::InlineLayoutUnit offset) { m_lineBoxRect.moveVertically(offset); }
+    void moveVertically(float offset) { m_lineBoxRect.move({ { }, offset }); }
 
 private:
     // This is line box geometry (see https://www.w3.org/TR/css-inline-3/#line-box).
-    Layout::InlineRect m_lineBoxRect;
-    Layout::InlineRect m_scrollableOverflow;
+    FloatRect m_lineBoxRect;
+    FloatRect m_scrollableOverflow;
     // Enclosing top and bottom includes all inline level boxes (border box) vertically.
     // While the line box usually enclose them as well, its vertical geometry is based on
     // the layout bounds of the inline level boxes which may be different when line-height is present.
     EnclosingTopAndBottom m_enclosingTopAndBottom;
-    Layout::InlineLayoutUnit m_aligmentBaseline { 0 };
-    Layout::InlineLayoutUnit m_contentLeft { 0 };
-    Layout::InlineLayoutUnit m_contentWidth { 0 };
+    float m_aligmentBaseline { 0 };
+    float m_contentLeft { 0 };
+    float m_contentWidth { 0 };
 };
 
-inline Line::Line(const Layout::InlineRect& lineBoxRect, const Layout::InlineRect& scrollableOverflow, EnclosingTopAndBottom enclosingTopAndBottom, Layout::InlineLayoutUnit aligmentBaseline, Layout::InlineLayoutUnit contentLeft, Layout::InlineLayoutUnit contentWidth)
+inline Line::Line(const FloatRect& lineBoxRect, const FloatRect& scrollableOverflow, EnclosingTopAndBottom enclosingTopAndBottom, float aligmentBaseline, float contentLeft, float contentWidth)
     : m_lineBoxRect(lineBoxRect)
     , m_scrollableOverflow(scrollableOverflow)
     , m_enclosingTopAndBottom(enclosingTopAndBottom)

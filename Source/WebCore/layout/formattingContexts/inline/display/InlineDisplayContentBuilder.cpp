@@ -93,10 +93,9 @@ DisplayBoxes InlineDisplayContentBuilder::build(const LineBuilder::LineContent& 
     boxes.reserveInitialCapacity(lineContent.runs.size() + lineBox.nonRootInlineLevelBoxes().size() + 1);
 
     m_lineIndex = lineIndex;
-    auto lineBoxRect = displayLine.lineBoxRect();
     // Every line starts with a root box, even the empty ones.
     auto rootInlineBoxRect = lineBox.logicalRectForRootInlineBox();
-    rootInlineBoxRect.moveBy(lineBoxRect.topLeft());
+    rootInlineBoxRect.moveBy(displayLine.topLeft());
     boxes.append({ m_lineIndex, InlineDisplay::Box::Type::RootInlineBox, root(), UBIDI_DEFAULT_LTR, rootInlineBoxRect, rootInlineBoxRect, { }, { }, lineBox.rootInlineBox().hasContent() });
 
     auto contentNeedsBidiReordering = !lineContent.visualOrderList.isEmpty();
@@ -104,7 +103,7 @@ DisplayBoxes InlineDisplayContentBuilder::build(const LineBuilder::LineContent& 
         processBidiContent(lineContent, lineBox, displayLine, boxes);
     else
         processNonBidiContent(lineContent, lineBox, displayLine, boxes);
-    processOverflownRunsForEllipsis(boxes, lineBoxRect.right());
+    processOverflownRunsForEllipsis(boxes, displayLine.right());
     collectInkOverflowForInlineBoxes(boxes);
     return boxes;
 }
@@ -325,14 +324,13 @@ void InlineDisplayContentBuilder::processNonBidiContent(const LineBuilder::LineC
         hasContent = hasContent || lineRun.isText() || lineRun.isBox();
     ASSERT(root().style().isLeftToRightDirection() || !hasContent);
 #endif
-    auto lineBoxRect = displayLine.lineBoxRect();
-    auto contentStartInVisualOrder = lineBoxRect.left() + displayLine.contentLeft();
+    auto contentStartInVisualOrder = displayLine.left() + displayLine.contentLeft();
 
     for (auto& lineRun : lineContent.runs) {
         auto& layoutBox = lineRun.layoutBox();
 
         auto visualRectRelativeToRoot = [&](auto logicalRect) {
-            logicalRect.moveBy({ contentStartInVisualOrder, lineBoxRect.top() });
+            logicalRect.moveBy({ contentStartInVisualOrder, displayLine.top() });
             return logicalRect;
         };
 
@@ -542,8 +540,7 @@ void InlineDisplayContentBuilder::processBidiContent(const LineBuilder::LineCont
     auto displayBoxTree = DisplayBoxTree { };
     ancestorStack.push({ }, root());
 
-    auto lineBoxRect = displayLine.lineBoxRect();
-    auto contentStartInVisualOrder = lineBoxRect.left() + displayLine.contentLeft();
+    auto contentStartInVisualOrder = displayLine.left() + displayLine.contentLeft();
     auto createDisplayBoxesInVisualOrder = [&] {
 
         auto contentRightInVisualOrder = contentStartInVisualOrder;
@@ -560,7 +557,7 @@ void InlineDisplayContentBuilder::processBidiContent(const LineBuilder::LineCont
 
             auto visualRectRelativeToRoot = [&](auto logicalRect) {
                 logicalRect.setLeft(contentRightInVisualOrder);
-                logicalRect.moveVertically(lineBoxRect.top());
+                logicalRect.moveVertically(displayLine.top());
                 return logicalRect;
             };
 
@@ -646,7 +643,7 @@ void InlineDisplayContentBuilder::processBidiContent(const LineBuilder::LineCont
             auto contentRightInVisualOrder = contentStartInVisualOrder;
 
             for (auto childDisplayBoxNodeIndex : displayBoxTree.root().children)
-                adjustVisualGeometryForDisplayBox(childDisplayBoxNodeIndex, contentRightInVisualOrder, lineBoxRect.top(), displayBoxTree, boxes, lineBox, isFirstLastIndexesMap);
+                adjustVisualGeometryForDisplayBox(childDisplayBoxNodeIndex, contentRightInVisualOrder, displayLine.top(), displayBoxTree, boxes, lineBox, isFirstLastIndexesMap);
         };
         adjustVisualGeometryWithInlineBoxes();
     }
