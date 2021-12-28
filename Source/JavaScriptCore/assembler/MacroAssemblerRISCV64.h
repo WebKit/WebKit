@@ -1552,10 +1552,6 @@ public:
         m_assembler.fmvInsn<RISCV64Assembler::FMVType::D, RISCV64Assembler::FMVType::X>(dest, src);
     }
 
-    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(compare8);
-    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(compare32);
-    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(compare64);
-
     template<PtrTag resultTag, PtrTag locationTag>
     static FunctionPtr<resultTag> readCallTarget(CodeLocationCall<locationTag> call)
     {
@@ -1722,9 +1718,111 @@ public:
         m_assembler.jalrInsn(RISCV64Registers::zero, RISCV64Registers::x1, Imm::I<0>());
     }
 
-    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(test8);
-    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(test32);
-    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(test64);
+    void compare8(RelationalCondition cond, Address address, TrustedImm32 imm, RegisterID dest)
+    {
+        auto temp = temps<Data, Memory>();
+        auto resolution = resolveAddress(address, temp.memory());
+        m_assembler.lbInsn(temp.memory(), resolution.base, Imm::I(resolution.offset));
+        loadImmediate(imm, temp.data());
+        compareFinalize(cond, temp.memory(), temp.data(), dest);
+    }
+
+    void compare32(RelationalCondition cond, RegisterID lhs, RegisterID rhs, RegisterID dest)
+    {
+        auto temp = temps<Data, Memory>();
+        m_assembler.signExtend<32>(temp.memory(), lhs);
+        m_assembler.signExtend<32>(temp.data(), rhs);
+        compareFinalize(cond, temp.memory(), temp.data(), dest);
+    }
+
+    void compare32(RelationalCondition cond, RegisterID lhs, TrustedImm32 imm, RegisterID dest)
+    {
+        auto temp = temps<Data, Memory>();
+        m_assembler.signExtend<32>(temp.memory(), lhs);
+        loadImmediate(imm, temp.data());
+        compareFinalize(cond, temp.memory(), temp.data(), dest);
+    }
+
+    void compare32(RelationalCondition cond, Address address, RegisterID rhs, RegisterID dest)
+    {
+        auto temp = temps<Data, Memory>();
+        auto resolution = resolveAddress(address, temp.memory());
+        m_assembler.lwInsn(temp.memory(), resolution.base, Imm::I(resolution.offset));
+        m_assembler.signExtend<32>(temp.data(), rhs);
+        compareFinalize(cond, temp.memory(), temp.data(), dest);
+    }
+
+    void compare64(RelationalCondition cond, RegisterID lhs, RegisterID rhs, RegisterID dest)
+    {
+        compareFinalize(cond, lhs, rhs, dest);
+    }
+
+    void compare64(RelationalCondition cond, RegisterID lhs, TrustedImm32 imm, RegisterID dest)
+    {
+        auto temp = temps<Data>();
+        loadImmediate(imm, temp.data());
+        compareFinalize(cond, lhs, temp.data(), dest);
+    }
+
+    void test8(ResultCondition cond, Address address, TrustedImm32 imm, RegisterID dest)
+    {
+        auto temp = temps<Data, Memory>();
+        auto resolution = resolveAddress(address, temp.memory());
+        m_assembler.lbuInsn(temp.data(), resolution.base, Imm::I(resolution.offset));
+        m_assembler.andiInsn(temp.data(), temp.data(), Imm::I(imm.m_value & 0xff));
+        testFinalize(cond, temp.data(), dest);
+    }
+
+    void test32(ResultCondition cond, RegisterID lhs, RegisterID rhs, RegisterID dest)
+    {
+        auto temp = temps<Data>();
+        m_assembler.andInsn(temp.data(), lhs, rhs);
+        m_assembler.maskRegister<32>(temp.data());
+        testFinalize(cond, temp.data(), dest);
+    }
+
+    void test32(ResultCondition cond, RegisterID lhs, TrustedImm32 imm, RegisterID dest)
+    {
+        auto temp = temps<Data>();
+        if (!Imm::isValid<Imm::IType>(imm.m_value)) {
+            loadImmediate(imm, temp.data());
+            m_assembler.andInsn(temp.data(), lhs, temp.data());
+        } else
+            m_assembler.andiInsn(temp.data(), lhs, Imm::I(imm.m_value));
+        m_assembler.maskRegister<32>(temp.data());
+        testFinalize(cond, temp.data(), dest);
+    }
+
+    void test32(ResultCondition cond, Address address, TrustedImm32 imm, RegisterID dest)
+    {
+        auto temp = temps<Data, Memory>();
+        auto resolution = resolveAddress(address, temp.memory());
+        m_assembler.lwuInsn(temp.memory(), resolution.base, Imm::I(resolution.offset));
+
+        if (!Imm::isValid<Imm::IType>(imm.m_value)) {
+            loadImmediate(imm, temp.data());
+            m_assembler.andInsn(temp.data(), temp.memory(), temp.data());
+        } else
+            m_assembler.andiInsn(temp.data(), temp.memory(), Imm::I(imm.m_value));
+        testFinalize(cond, temp.data(), dest);
+    }
+
+    void test64(ResultCondition cond, RegisterID lhs, RegisterID rhs, RegisterID dest)
+    {
+        m_assembler.andInsn(dest, lhs, rhs);
+        testFinalize(cond, dest, dest);
+    }
+
+    void test64(ResultCondition cond, RegisterID lhs, TrustedImm32 imm, RegisterID dest)
+    {
+        auto temp = temps<Data>();
+        if (!Imm::isValid<Imm::IType>(imm.m_value)) {
+            loadImmediate(imm, temp.data());
+            m_assembler.andInsn(dest, lhs, temp.data());
+        } else
+            m_assembler.andiInsn(dest, lhs, Imm::I(imm.m_value));
+        testFinalize(cond, dest, dest);
+    }
 
     Jump branch8(RelationalCondition cond, Address address, TrustedImm32 imm)
     {
@@ -2655,6 +2753,66 @@ private:
                 }
             });
         return Jump(label);
+    }
+
+    void compareFinalize(RelationalCondition cond, RegisterID lhs, RegisterID rhs, RegisterID dest)
+    {
+        switch (cond) {
+        case Equal:
+            m_assembler.xorInsn(dest, lhs, rhs);
+            m_assembler.sltiuInsn(dest, dest, Imm::I<1>());
+            break;
+        case NotEqual:
+            m_assembler.xorInsn(dest, lhs, rhs);
+            m_assembler.sltuInsn(dest, RISCV64Registers::zero, dest);
+            break;
+        case Above:
+            m_assembler.sltuInsn(dest, rhs, lhs);
+            break;
+        case AboveOrEqual:
+            m_assembler.sltuInsn(dest, lhs, rhs);
+            m_assembler.xoriInsn(dest, dest, Imm::I<1>());
+            break;
+        case Below:
+            m_assembler.sltuInsn(dest, lhs, rhs);
+            break;
+        case BelowOrEqual:
+            m_assembler.sltuInsn(dest, rhs, lhs);
+            m_assembler.xoriInsn(dest, dest, Imm::I<1>());
+            break;
+        case GreaterThan:
+            m_assembler.sltInsn(dest, rhs, lhs);
+            break;
+        case GreaterThanOrEqual:
+            m_assembler.sltInsn(dest, lhs, rhs);
+            m_assembler.xoriInsn(dest, dest, Imm::I<1>());
+            break;
+        case LessThan:
+            m_assembler.sltInsn(dest, lhs, rhs);
+            break;
+        case LessThanOrEqual:
+            m_assembler.sltInsn(dest, rhs, lhs);
+            m_assembler.xoriInsn(dest, dest, Imm::I<1>());
+            break;
+        }
+    }
+
+    void testFinalize(ResultCondition cond, RegisterID src, RegisterID dest)
+    {
+        switch (cond) {
+        case Overflow:
+        case Signed:
+        case PositiveOrZero:
+            // None of the above should be used for testing operations.
+            RELEASE_ASSERT_NOT_REACHED();
+            break;
+        case Zero:
+            m_assembler.sltiuInsn(dest, src, Imm::I<1>());
+            break;
+        case NonZero:
+            m_assembler.sltuInsn(dest, RISCV64Registers::zero, src);
+            break;
+        }
     }
 
     template<unsigned fpSize, RISCV64Assembler::FPRoundingMode RM>

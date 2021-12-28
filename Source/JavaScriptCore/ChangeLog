@@ -1,5 +1,33 @@
 2021-12-28  Zan Dobersek  <zdobersek@igalia.com>
 
+        [RISCV64] Add MacroAssemblerRISCV64 operations for testing, comparison
+        https://bugs.webkit.org/show_bug.cgi?id=234630
+
+        Reviewed by Yusuke Suzuki.
+
+        Add MacroAssemblerRISCV64 implementations for the different variants of
+        compare and test instructions.
+
+        For comparisons, the implementations set up the two values in separate
+        registers and perform the comparison per the inquired relation, writing
+        out the result into the destination register.
+
+        For tests, the two values are set up and put through the bitwise AND,
+        with the result evaluated and the destination register filled out
+        according to the inquired result condition.
+
+        * assembler/MacroAssemblerRISCV64.h:
+        (JSC::MacroAssemblerRISCV64::compare8):
+        (JSC::MacroAssemblerRISCV64::compare32):
+        (JSC::MacroAssemblerRISCV64::compare64):
+        (JSC::MacroAssemblerRISCV64::test8):
+        (JSC::MacroAssemblerRISCV64::test32):
+        (JSC::MacroAssemblerRISCV64::test64):
+        (JSC::MacroAssemblerRISCV64::compareFinalize):
+        (JSC::MacroAssemblerRISCV64::testFinalize):
+
+2021-12-28  Zan Dobersek  <zdobersek@igalia.com>
+
         [RISCV64] Add MacroAssemblerRISCV64 operations with patchable elements
         https://bugs.webkit.org/show_bug.cgi?id=234635
 
