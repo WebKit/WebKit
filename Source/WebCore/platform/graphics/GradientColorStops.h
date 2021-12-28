@@ -90,11 +90,12 @@ public:
 
     template<typename MapFunction> GradientColorStops mapColors(MapFunction&& mapFunction) const
     {
-        GradientColorStops result;
-        result.m_stops.reserveInitialCapacity(size());
-        for (auto& stop : m_stops)
-            result.m_stops.uncheckedAppend({ stop.offset, mapFunction(stop.color) });
-        return result;
+        return {
+            m_stops.map<StopVector>([&] (const GradientColorStop& stop) -> GradientColorStop {
+                return { stop.offset, mapFunction(stop.color) };
+            }),
+            m_isSorted
+        };
     }
 
     const StopVector& stops() const { return m_stops; }
@@ -103,6 +104,12 @@ public:
     template<typename Decoder> static std::optional<GradientColorStops> decode(Decoder&);
 
 private:
+    GradientColorStops(StopVector stops, bool isSorted)
+        : m_stops { WTFMove(stops) }
+        , m_isSorted { isSorted }
+    {
+    }
+
 #if ASSERT_ENABLED
     bool validateIsSorted() const
     {

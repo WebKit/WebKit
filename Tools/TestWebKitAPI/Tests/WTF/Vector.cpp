@@ -1458,5 +1458,17 @@ TEST(WTF_Vector, ConstructorFromRawPointerAndSize)
     EXPECT_EQ(vector[3], 4);
     EXPECT_EQ(vector[4], 5);
 }
-    
+
+TEST(WTF_Vector, MapCustomReturnType)
+{
+    Vector<int> input { 1, 2 };
+    Vector<float, 2> output = input.map<Vector<float, 2>>([] (int value) {
+        return static_cast<float>(value);
+    });
+
+    ASSERT_EQ(output.size(), input.size());
+    EXPECT_FLOAT_EQ(output[0], 1.0f);
+    EXPECT_FLOAT_EQ(output[1], 2.0f);
+}
+
 } // namespace TestWebKitAPI

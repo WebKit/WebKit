@@ -1,3 +1,16 @@
+2021-12-28  Sam Weinig  <weinig@apple.com>
+
+        Enhance Vector::map to allow specifying what kind of Vector to return (e.g. inline capacity, overflow, etc.)
+        https://bugs.webkit.org/show_bug.cgi?id=234683
+
+        Reviewed by Darin Adler.
+
+        * wtf/Vector.h:
+        (WTF::Vector::map const):
+        Add an overload of Vector::map() that allows specifying the type of the result Vector. To make this
+        work without giving up the argument deduction in the common case, SFINAE is used to determine which
+        overload to use.
+
 2021-12-28  Zan Dobersek  <zdobersek@igalia.com>
 
         [RISCV64] Enable signal-based VM traps for CPU(RISCV64)
