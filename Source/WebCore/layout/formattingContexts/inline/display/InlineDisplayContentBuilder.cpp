@@ -109,7 +109,7 @@ DisplayBoxes InlineDisplayContentBuilder::build(const LineBuilder::LineContent& 
     return boxes;
 }
 
-static inline bool computeBoxShadowInkOverflow(const RenderStyle& style, InlineRect& inkOverflow)
+static inline bool computeBoxShadowInkOverflow(const RenderStyle& style, FloatRect& inkOverflow)
 {
     auto topBoxShadow = LayoutUnit { };
     auto bottomBoxShadow = LayoutUnit { };
@@ -120,7 +120,7 @@ static inline bool computeBoxShadowInkOverflow(const RenderStyle& style, InlineR
     style.getBoxShadowInlineDirectionExtent(leftBoxShadow, rightBoxShadow);
     if (!topBoxShadow && !bottomBoxShadow && !leftBoxShadow && !rightBoxShadow)
         return false;
-    inkOverflow.inflate(InlineLayoutUnit { topBoxShadow }, InlineLayoutUnit { rightBoxShadow }, InlineLayoutUnit { bottomBoxShadow }, InlineLayoutUnit { leftBoxShadow });
+    inkOverflow.inflate(leftBoxShadow.toFloat(), topBoxShadow.toFloat(), rightBoxShadow.toFloat(), bottomBoxShadow.toFloat());
     return true;
 }
 
@@ -206,7 +206,7 @@ void InlineDisplayContentBuilder::appendAtomicInlineLevelDisplayBox(const Line::
 
     auto& layoutBox = lineRun.layoutBox();
     auto inkOverflow = [&] {
-        auto inkOverflow = borderBoxRect;
+        auto inkOverflow = FloatRect { borderBoxRect };
         computeBoxShadowInkOverflow(!m_lineIndex ? layoutBox.firstLineStyle() : layoutBox.style(), inkOverflow);
         // Atomic inline box contribute to their inline box parents ink overflow at all times (e.g. <span><img></span>).
         m_contentHasInkOverflow = m_contentHasInkOverflow || &layoutBox.parent() != &root();
@@ -256,7 +256,7 @@ void InlineDisplayContentBuilder::appendInlineBoxDisplayBox(const Line::Run& lin
     }
 
     auto inkOverflow = [&] {
-        auto inkOverflow = inlineBoxBorderBox;
+        auto inkOverflow = FloatRect { inlineBoxBorderBox };
         m_contentHasInkOverflow = computeBoxShadowInkOverflow(!m_lineIndex ? layoutBox.firstLineStyle() : layoutBox.style(), inkOverflow) || m_contentHasInkOverflow;
         return inkOverflow;
     };
@@ -283,7 +283,7 @@ void InlineDisplayContentBuilder::appendSpanningInlineBoxDisplayBox(const Line::
 
     auto& layoutBox = lineRun.layoutBox();
     auto inkOverflow = [&] {
-        auto inkOverflow = inlineBoxBorderBox;
+        auto inkOverflow = FloatRect { inlineBoxBorderBox };
         m_contentHasInkOverflow = computeBoxShadowInkOverflow(!m_lineIndex ? layoutBox.firstLineStyle() : layoutBox.style(), inkOverflow) || m_contentHasInkOverflow;
         return inkOverflow;
     };
@@ -523,7 +523,7 @@ void InlineDisplayContentBuilder::adjustVisualGeometryForDisplayBox(size_t displ
     afterInlineBoxContent();
 
     auto computeInkOverflow = [&] {
-        auto inkOverflow = displayBox.rect();
+        auto inkOverflow = FloatRect { displayBox.rect() };
         m_contentHasInkOverflow = computeBoxShadowInkOverflow(!m_lineIndex ? layoutBox.firstLineStyle() : layoutBox.style(), inkOverflow) || m_contentHasInkOverflow;
         displayBox.adjustInkOverflow(inkOverflow);
     };
@@ -659,8 +659,7 @@ void InlineDisplayContentBuilder::processOverflownRunsForEllipsis(DisplayBoxes& 
     auto& rootInlineBox = boxes[0];
     ASSERT(rootInlineBox.isRootInlineBox());
 
-    auto rootInlineBoxRect = rootInlineBox.rect();
-    if (rootInlineBoxRect.right() <= lineBoxRight) {
+    if (rootInlineBox.right() <= lineBoxRight) {
         ASSERT(boxes.last().right() <= lineBoxRight);
         return;
     }
@@ -705,7 +704,7 @@ void InlineDisplayContentBuilder::processOverflownRunsForEllipsis(DisplayBoxes& 
     for (auto index = firstTruncatedBoxIndex + 1; index < boxes.size(); ++index)
         boxes[index].moveHorizontally(contentRight - boxes[index].left());
     // And append the ellipsis box as the trailing item.
-    auto ellispisBoxRect = InlineRect { rootInlineBoxRect.top(), contentRight, ellipsisWidth, rootInlineBoxRect.height() };
+    auto ellispisBoxRect = InlineRect { rootInlineBox.top(), contentRight, ellipsisWidth, rootInlineBox.height() };
     boxes.append({ m_lineIndex
         , InlineDisplay::Box::Type::Ellipsis
         , root()

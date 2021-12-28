@@ -284,7 +284,7 @@ void showInlineContent(TextStream& stream, const InlineContent& inlineContent, s
             else
                 stream << "Generic inline level box";
             stream
-                << " at (" << rect.left() << "," << rect.top() << ")"
+                << " at (" << rect.x() << "," << rect.y() << ")"
                 << " size (" << rect.width() << "x" << rect.height() << ")";
             stream.nextLine();
         };

@@ -397,7 +397,7 @@ void showInlineTreeAndRuns(TextStream& stream, const LayoutState& layoutState, c
             else
                 stream << "Generic inline level box";
             stream
-                << " at (" << rect.left() << "," << rect.top() << ")"
+                << " at (" << rect.x() << "," << rect.y() << ")"
                 << " size (" << rect.width() << "x" << rect.height() << ")";
             stream.nextLine();
         };

@@ -196,6 +196,7 @@ public:
     }
     void inflate(float d) { inflateX(d); inflateY(d); }
     void inflate(FloatSize size) { inflateX(size.width()); inflateY(size.height()); }
+    void inflate(float dx, float dy, float dmaxX, float dmaxY);
 
     void scale(float s) { scale(s, s); }
     WEBCORE_EXPORT void scale(float sx, float sy);
@@ -292,6 +293,14 @@ inline FloatRect FloatRect::infiniteRect()
 inline bool FloatRect::isInfinite() const
 {
     return *this == infiniteRect();
+}
+
+inline void FloatRect::inflate(float deltaX, float deltaY, float deltaMaxX, float deltaMaxY)
+{
+    setX(x() - deltaX);
+    setY(y() - deltaY);
+    setWidth(width() + deltaX + deltaMaxX);
+    setHeight(height() + deltaY + deltaMaxY);
 }
 
 FloatRect normalizeRect(const FloatRect&);

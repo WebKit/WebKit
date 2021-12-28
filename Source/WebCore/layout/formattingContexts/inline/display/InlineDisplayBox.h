@@ -74,7 +74,7 @@ struct Box {
         First = 1 << 0,
         Last  = 1 << 1
     };
-    Box(size_t lineIndex, Type, const Layout::Box&, UBiDiLevel, const Layout::InlineRect&, const Layout::InlineRect& inkOverflow, Expansion, std::optional<Text> = std::nullopt, bool hasContent = true, OptionSet<PositionWithinInlineLevelBox> = { });
+    Box(size_t lineIndex, Type, const Layout::Box&, UBiDiLevel, const FloatRect&, const FloatRect& inkOverflow, Expansion, std::optional<Text> = std::nullopt, bool hasContent = true, OptionSet<PositionWithinInlineLevelBox> = { });
 
     bool isText() const { return m_type == Type::Text; }
     bool isEllipsis() const { return m_type == Type::Ellipsis; }
@@ -95,42 +95,42 @@ struct Box {
 
     bool hasContent() const { return m_hasContent; }
 
-    const Layout::InlineRect& rect() const { return m_physicalRect; }
-    const Layout::InlineRect& inkOverflow() const { return m_inkOverflow; }
+    const FloatRect& rect() const { return m_physicalRect; }
+    const FloatRect& inkOverflow() const { return m_inkOverflow; }
 
-    Layout::InlineLayoutUnit top() const { return rect().top(); }
-    Layout::InlineLayoutUnit bottom() const { return rect().bottom(); }
-    Layout::InlineLayoutUnit left() const { return rect().left(); }
-    Layout::InlineLayoutUnit right() const { return rect().right(); }
+    float top() const { return rect().y(); }
+    float bottom() const { return rect().maxY(); }
+    float left() const { return rect().x(); }
+    float right() const { return rect().maxX(); }
 
-    Layout::InlineLayoutUnit width() const { return rect().width(); }
-    Layout::InlineLayoutUnit height() const { return rect().height(); }
+    float width() const { return rect().width(); }
+    float height() const { return rect().height(); }
 
-    void moveVertically(Layout::InlineLayoutUnit offset)
+    void moveVertically(float offset)
     {
-        m_physicalRect.moveVertically(offset);
-        m_inkOverflow.moveVertically(offset);
+        m_physicalRect.move({ { }, offset });
+        m_inkOverflow.move({ { }, offset });
     }
-    void moveHorizontally(Layout::InlineLayoutUnit offset)
+    void moveHorizontally(float offset)
     {
-        m_physicalRect.moveHorizontally(offset);
-        m_inkOverflow.moveHorizontally(offset);
+        m_physicalRect.move({ offset, { } });
+        m_inkOverflow.move({ offset, { } });
     }
-    void adjustInkOverflow(const Layout::InlineRect& childBorderBox) { return m_inkOverflow.expandToContain(childBorderBox); }
-    void truncate(Layout::InlineLayoutUnit truncatedwidth = 0.f);
-    void setLeft(Layout::InlineLayoutUnit pysicalLeft)
+    void adjustInkOverflow(const FloatRect& childBorderBox) { return m_inkOverflow.uniteEvenIfEmpty(childBorderBox); }
+    void truncate(float truncatedwidth = 0.f);
+    void setLeft(float pysicalLeft)
     {
         auto offset = pysicalLeft - left();
-        m_physicalRect.setLeft(pysicalLeft);
-        m_inkOverflow.setLeft(m_inkOverflow.left() + offset);
+        m_physicalRect.setX(pysicalLeft);
+        m_inkOverflow.setX(m_inkOverflow.x() + offset);
     }
-    void setRight(Layout::InlineLayoutUnit physicalRight)
+    void setRight(float physicalRight)
     {
         auto offset = physicalRight - right();
-        m_physicalRect.setRight(physicalRight);
-        m_inkOverflow.setRight(m_inkOverflow.right() + offset);
+        m_physicalRect.shiftMaxXEdgeTo(physicalRight);
+        m_inkOverflow.shiftMaxXEdgeTo(m_inkOverflow.maxY() + offset);
     }
-    void setRect(const Layout::InlineRect& rect, const Layout::InlineRect& inkOverflow)
+    void setRect(const FloatRect& rect, const FloatRect& inkOverflow)
     {
         m_physicalRect = rect;
         m_inkOverflow = inkOverflow;
@@ -142,7 +142,7 @@ struct Box {
 
     struct Expansion {
         ExpansionBehavior behavior { DefaultExpansion };
-        Layout::InlineLayoutUnit horizontalExpansion { 0 };
+        float horizontalExpansion { 0 };
     };
     Expansion expansion() const { return m_expansion; }
 
@@ -163,8 +163,8 @@ private:
     const Type m_type { Type::GenericInlineLevelBox };
     CheckedRef<const Layout::Box> m_layoutBox;
     UBiDiLevel m_bidiLevel { UBIDI_DEFAULT_LTR };
-    Layout::InlineRect m_physicalRect;
-    Layout::InlineRect m_inkOverflow;
+    FloatRect m_physicalRect;
+    FloatRect m_inkOverflow;
     bool m_hasContent : 1;
     bool m_isFirstForLayoutBox : 1;
     bool m_isLastForLayoutBox : 1;
@@ -172,7 +172,7 @@ private:
     std::optional<Text> m_text;
 };
 
-inline Box::Box(size_t lineIndex, Type type, const Layout::Box& layoutBox, UBiDiLevel bidiLevel, const Layout::InlineRect& physicalRect, const Layout::InlineRect& inkOverflow, Expansion expansion, std::optional<Text> text, bool hasContent, OptionSet<PositionWithinInlineLevelBox> positionWithinInlineLevelBox)
+inline Box::Box(size_t lineIndex, Type type, const Layout::Box& layoutBox, UBiDiLevel bidiLevel, const FloatRect& physicalRect, const FloatRect& inkOverflow, Expansion expansion, std::optional<Text> text, bool hasContent, OptionSet<PositionWithinInlineLevelBox> positionWithinInlineLevelBox)
     : m_lineIndex(lineIndex)
     , m_type(type)
     , m_layoutBox(layoutBox)
@@ -196,10 +196,10 @@ inline Box::Text::Text(size_t start, size_t length, const String& originalConten
 {
 }
 
-inline void Box::truncate(Layout::InlineLayoutUnit truncatedwidth)
+inline void Box::truncate(float truncatedwidth)
 {
     m_physicalRect.setWidth(truncatedwidth);
-    m_inkOverflow.setRight(m_physicalRect.right());
+    m_inkOverflow.shiftMaxXEdgeTo(m_physicalRect.maxY());
 }
 
 }
