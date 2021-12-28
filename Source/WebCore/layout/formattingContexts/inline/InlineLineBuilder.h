@@ -61,7 +61,7 @@ public:
         InlineLayoutPoint lineLogicalTopLeft;
         InlineLayoutUnit lineLogicalWidth { 0 };
         InlineLayoutUnit contentLogicalWidth { 0 };
-        InlineLayoutUnit hangingWhitespaceWidth { 0 };
+        InlineLayoutUnit hangingContentWidth { 0 };
         bool isLastLineWithInlineContent { true };
         size_t nonSpanningInlineLevelBoxCount { 0 };
         Vector<int32_t> visualOrderList;
