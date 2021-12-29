@@ -938,6 +938,17 @@ LineBuilder::Result LineBuilder::handleInlineContent(InlineContentBreaker& inlin
     if (result.action == InlineContentBreaker::Result::Action::Wrap) {
         ASSERT(result.isEndOfLine == InlineContentBreaker::IsEndOfLine::Yes);
         // This continuous content can't be placed on the current line. Nothing to commit at this time.
+        // However there are cases when, due to whitespace collapsing, this overflowing content should not be separated from
+        // the content on the line.
+        // <div>X <span> X</span></div>
+        // If the second 'X' overflows the line, the trailing whitespace gets trimmed which introduces a stray inline box
+        // on the first line ('X <span>' and 'X</span>' first and second line respectively).
+        // In such cases we need to revert the content on the line to a previous wrapping opportunity to keep such content together.
+        auto needsRevert = m_line.trimmableTrailingWidth() && !m_line.runs().isEmpty() && m_line.runs().last().isInlineBoxStart();
+        if (needsRevert && m_wrapOpportunityList.size() > 1) {
+            m_wrapOpportunityList.removeLast();
+            return { InlineContentBreaker::IsEndOfLine::Yes, { rebuildLine(layoutRange, *m_wrapOpportunityList.last()), true } };
+        }
         return { InlineContentBreaker::IsEndOfLine::Yes, { }, { }, eligibleOverflowWidthAsLeading() };
     }
     if (result.action == InlineContentBreaker::Result::Action::WrapWithHyphen) {
