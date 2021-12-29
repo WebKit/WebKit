@@ -35,6 +35,7 @@
 #include "CSSSelectorList.h"
 #include "HTMLNames.h"
 #include "MediaQueryEvaluator.h"
+#include "RuleSetBuilder.h"
 #include "SecurityOrigin.h"
 #include "SelectorChecker.h"
 #include "SelectorFilter.h"
@@ -318,11 +319,11 @@ std::optional<DynamicMediaQueryEvaluationChanges> RuleSet::evaluateDynamicMediaQ
 
     auto& ruleSet = m_mediaQueryInvalidationRuleSetCache.ensure(collectedChanges.changedQueryIndexes, [&] {
         auto ruleSet = RuleSet::create();
-        for (auto* featureVector : collectedChanges.ruleFeatures) {
-            for (auto& feature : *featureVector)
-                ruleSet->addRule(*feature.styleRule, feature.selectorIndex, feature.selectorListIndex);
+        RuleSetBuilder builder(ruleSet, MediaQueryEvaluator(true));
+        for (auto* rules : collectedChanges.affectedRules) {
+            for (auto& rule : *rules)
+                builder.addStyleRule(rule);
         }
-        ruleSet->shrinkToFit();
         return ruleSet;
     }).iterator->value;
 
@@ -357,7 +358,7 @@ RuleSet::CollectedMediaQueryChanges RuleSet::evaluateDynamicMediaQueryRules(cons
                 affectedRulePositionsAndResults.add(position, result);
 
             collectedChanges.changedQueryIndexes.append(i);
-            collectedChanges.ruleFeatures.append(&dynamicRules.ruleFeatures);
+            collectedChanges.affectedRules.append(&dynamicRules.affectedRules);
         }
     }
 

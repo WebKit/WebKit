@@ -74,14 +74,20 @@ bool isHasPseudoClassMatchElement(MatchElement matchElement)
     }
 }
 
-RuleFeature::RuleFeature(const RuleData& ruleData, std::optional<MatchElement> matchElement)
+RuleAndSelector::RuleAndSelector(const RuleData& ruleData)
     : styleRule(&ruleData.styleRule())
     , selectorIndex(ruleData.selectorIndex())
     , selectorListIndex(ruleData.selectorListIndex())
-    , matchElement(matchElement)
 {
     ASSERT(selectorIndex == ruleData.selectorIndex());
     ASSERT(selectorListIndex == ruleData.selectorListIndex());
+}
+
+
+RuleFeature::RuleFeature(const RuleData& ruleData, MatchElement matchElement)
+    : RuleAndSelector(ruleData)
+    , matchElement(matchElement)
+{
 }
 
 static MatchElement computeNextMatchElement(MatchElement matchElement, CSSSelector::RelationType relation)

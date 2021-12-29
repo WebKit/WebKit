@@ -55,24 +55,32 @@ enum class MatchElement : uint8_t {
 };
 constexpr unsigned matchElementCount = static_cast<unsigned>(MatchElement::Host) + 1;
 
-struct RuleFeature {
-    RuleFeature(const RuleData&, std::optional<MatchElement> = std::nullopt);
+// For MSVC.
+#pragma pack(push, 4)
+struct RuleAndSelector {
+    RuleAndSelector(const RuleData&);
 
     RefPtr<const StyleRule> styleRule;
     uint16_t selectorIndex; // Keep in sync with RuleData's selectorIndex size.
     uint16_t selectorListIndex; // Keep in sync with RuleData's selectorListIndex size.
-    std::optional<MatchElement> matchElement { };
+};
+
+struct RuleFeature : public RuleAndSelector {
+    RuleFeature(const RuleData&, MatchElement);
+
+    MatchElement matchElement;
 };
 static_assert(sizeof(RuleFeature) <= 16, "RuleFeature is a frquently alocated object. Keep it small.");
 
 struct RuleFeatureWithInvalidationSelector : public RuleFeature {
-    RuleFeatureWithInvalidationSelector(const RuleData& data, std::optional<MatchElement> matchElement = std::nullopt, const CSSSelector* invalidationSelector = nullptr)
-        : RuleFeature(data, WTFMove(matchElement))
+    RuleFeatureWithInvalidationSelector(const RuleData& data, MatchElement matchElement, const CSSSelector* invalidationSelector = nullptr)
+        : RuleFeature(data, matchElement)
         , invalidationSelector(invalidationSelector)
     { }
 
     const CSSSelector* invalidationSelector { nullptr };
 };
+#pragma pack(pop)
 
 using PseudoClassInvalidationKey = std::tuple<unsigned, uint8_t, AtomString>;
 
@@ -94,8 +102,8 @@ struct RuleFeatureSet {
     HashSet<AtomString> attributeCanonicalLocalNamesInRules;
     HashSet<AtomString> attributeLocalNamesInRules;
     HashSet<AtomString> contentAttributeNamesInRules;
-    RuleFeatureVector siblingRules;
-    RuleFeatureVector uncommonAttributeRules;
+    Vector<RuleAndSelector> siblingRules;
+    Vector<RuleAndSelector> uncommonAttributeRules;
 
     HashMap<AtomString, std::unique_ptr<RuleFeatureVector>> tagRules;
     HashMap<AtomString, std::unique_ptr<RuleFeatureVector>> idRules;

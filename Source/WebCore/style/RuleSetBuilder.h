@@ -33,13 +33,13 @@ public:
     ~RuleSetBuilder();
 
     void addRulesFromSheet(const StyleSheetContents&, const MediaQuerySet* sheetQuery = nullptr);
+    void addStyleRule(const StyleRule&);
 
 private:
     RuleSetBuilder(const MediaQueryEvaluator&);
 
     void addRulesFromSheetContents(const StyleSheetContents&);
     void addChildRules(const Vector<RefPtr<StyleRuleBase>>&);
-    void addStyleRule(const StyleRule&);
     void disallowDynamicMediaQueryEvaluationIfNeeded();
 
     void registerLayers(const Vector<CascadeLayerName>&);
@@ -58,7 +58,7 @@ private:
         struct DynamicContext {
             Ref<const MediaQuerySet> set;
             Vector<size_t> affectedRulePositions { };
-            RuleFeatureVector ruleFeatures { };
+            HashSet<Ref<const StyleRule>> affectedRules { };
         };
         Vector<DynamicContext> dynamicContextStack { };
 

@@ -371,8 +371,7 @@ void RuleSetBuilder::MediaQueryCollector::pop(const MediaQuerySet* set)
 
         if (collectDynamic) {
             rules.affectedRulePositions.appendVector(dynamicContextStack.last().affectedRulePositions);
-            rules.ruleFeatures = WTFMove(dynamicContextStack.last().ruleFeatures);
-            rules.ruleFeatures.shrinkToFit();
+            rules.affectedRules = copyToVector(dynamicContextStack.last().affectedRules);
         } else
             rules.requiresFullReset = true;
 
@@ -389,7 +388,7 @@ void RuleSetBuilder::MediaQueryCollector::addRuleIfNeeded(const RuleData& ruleDa
 
     auto& context = dynamicContextStack.last();
     context.affectedRulePositions.append(ruleData.position());
-    context.ruleFeatures.append({ ruleData });
+    context.affectedRules.add(ruleData.styleRule());
 }
 
 }

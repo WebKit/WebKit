@@ -127,7 +127,8 @@ void ScopeRuleSets::collectRulesFromUserStyleSheets(const Vector<RefPtr<CSSStyle
     }
 }
 
-static RefPtr<RuleSet> makeRuleSet(const RuleFeatureVector& rules)
+template<typename Rules>
+RefPtr<RuleSet> makeRuleSet(const Rules& rules)
 {
     size_t size = rules.size();
     if (!size)
@@ -242,8 +243,7 @@ static Vector<InvalidationRuleSet>* ensureInvalidationRuleSets(const KeyType& ke
         std::array<RefPtr<RuleSet>, matchElementCount> matchElementArray;
         std::array<Vector<const CSSSelector*>, matchElementCount> invalidationSelectorArray;
         for (auto& feature : *features) {
-            RELEASE_ASSERT(feature.matchElement);
-            auto arrayIndex = static_cast<unsigned>(*feature.matchElement);
+            auto arrayIndex = static_cast<unsigned>(feature.matchElement);
             RELEASE_ASSERT(arrayIndex < matchElementArray.size());
 
             auto& ruleSet = matchElementArray[arrayIndex];
