@@ -35,6 +35,14 @@ namespace WebCore {
 enum class ColorSpace : uint8_t {
     A98RGB,
     DisplayP3,
+    ExtendedA98RGB,
+    ExtendedDisplayP3,
+    ExtendedLinearSRGB,
+    ExtendedProPhotoRGB,
+    ExtendedRec2020,
+    ExtendedSRGB,
+    HSL,
+    HWB,
     LCH,
     Lab,
     LinearSRGB,
@@ -53,6 +61,14 @@ WEBCORE_EXPORT TextStream& operator<<(TextStream&, ColorSpace);
 template<typename> struct ColorSpaceMapping;
 template<typename T> struct ColorSpaceMapping<A98RGB<T>> { static constexpr auto colorSpace { ColorSpace::A98RGB }; };
 template<typename T> struct ColorSpaceMapping<DisplayP3<T>> { static constexpr auto colorSpace { ColorSpace::DisplayP3 }; };
+template<typename T> struct ColorSpaceMapping<ExtendedA98RGB<T>> { static constexpr auto colorSpace { ColorSpace::ExtendedA98RGB }; };
+template<typename T> struct ColorSpaceMapping<ExtendedDisplayP3<T>> { static constexpr auto colorSpace { ColorSpace::ExtendedDisplayP3 }; };
+template<typename T> struct ColorSpaceMapping<ExtendedLinearSRGBA<T>> { static constexpr auto colorSpace { ColorSpace::ExtendedLinearSRGB }; };
+template<typename T> struct ColorSpaceMapping<ExtendedProPhotoRGB<T>> { static constexpr auto colorSpace { ColorSpace::ExtendedProPhotoRGB }; };
+template<typename T> struct ColorSpaceMapping<ExtendedRec2020<T>> { static constexpr auto colorSpace { ColorSpace::ExtendedRec2020 }; };
+template<typename T> struct ColorSpaceMapping<ExtendedSRGBA<T>> { static constexpr auto colorSpace { ColorSpace::ExtendedSRGB }; };
+template<typename T> struct ColorSpaceMapping<HSLA<T>> { static constexpr auto colorSpace { ColorSpace::HSL }; };
+template<typename T> struct ColorSpaceMapping<HWBA<T>> { static constexpr auto colorSpace { ColorSpace::HWB }; };
 template<typename T> struct ColorSpaceMapping<LCHA<T>> { static constexpr auto colorSpace { ColorSpace::LCH }; };
 template<typename T> struct ColorSpaceMapping<Lab<T>> { static constexpr auto colorSpace { ColorSpace::Lab }; };
 template<typename T> struct ColorSpaceMapping<LinearSRGBA<T>> { static constexpr auto colorSpace { ColorSpace::LinearSRGB }; };
@@ -74,6 +90,22 @@ template<typename T, typename Functor> constexpr decltype(auto) callWithColorTyp
         return std::invoke(std::forward<Functor>(functor), makeFromComponents<A98RGB<T>>(components));
     case ColorSpace::DisplayP3:
         return std::invoke(std::forward<Functor>(functor), makeFromComponents<DisplayP3<T>>(components));
+    case ColorSpace::ExtendedA98RGB:
+        return std::invoke(std::forward<Functor>(functor), makeFromComponents<ExtendedA98RGB<T>>(components));
+    case ColorSpace::ExtendedDisplayP3:
+        return std::invoke(std::forward<Functor>(functor), makeFromComponents<ExtendedDisplayP3<T>>(components));
+    case ColorSpace::ExtendedLinearSRGB:
+        return std::invoke(std::forward<Functor>(functor), makeFromComponents<ExtendedLinearSRGBA<T>>(components));
+    case ColorSpace::ExtendedProPhotoRGB:
+        return std::invoke(std::forward<Functor>(functor), makeFromComponents<ExtendedProPhotoRGB<T>>(components));
+    case ColorSpace::ExtendedRec2020:
+        return std::invoke(std::forward<Functor>(functor), makeFromComponents<ExtendedRec2020<T>>(components));
+    case ColorSpace::ExtendedSRGB:
+        return std::invoke(std::forward<Functor>(functor), makeFromComponents<ExtendedSRGBA<T>>(components));
+    case ColorSpace::HSL:
+        return std::invoke(std::forward<Functor>(functor), makeFromComponents<HSLA<T>>(components));
+    case ColorSpace::HWB:
+        return std::invoke(std::forward<Functor>(functor), makeFromComponents<HWBA<T>>(components));
     case ColorSpace::LCH:
         return std::invoke(std::forward<Functor>(functor), makeFromComponents<LCHA<T>>(components));
     case ColorSpace::Lab:
@@ -110,6 +142,14 @@ template<> struct EnumTraits<WebCore::ColorSpace> {
         WebCore::ColorSpace,
         WebCore::ColorSpace::A98RGB,
         WebCore::ColorSpace::DisplayP3,
+        WebCore::ColorSpace::ExtendedA98RGB,
+        WebCore::ColorSpace::ExtendedDisplayP3,
+        WebCore::ColorSpace::ExtendedLinearSRGB,
+        WebCore::ColorSpace::ExtendedProPhotoRGB,
+        WebCore::ColorSpace::ExtendedRec2020,
+        WebCore::ColorSpace::ExtendedSRGB,
+        WebCore::ColorSpace::HSL,
+        WebCore::ColorSpace::HWB,
         WebCore::ColorSpace::LCH,
         WebCore::ColorSpace::Lab,
         WebCore::ColorSpace::LinearSRGB,

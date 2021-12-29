@@ -46,6 +46,19 @@ template<const CFStringRef& colorSpaceNameGlobalConstant> static CGColorSpaceRef
     return colorSpace.get().get();
 }
 
+#if HAVE(CORE_GRAPHICS_CREATE_EXTENDED_COLOR_SPACE)
+template<const CFStringRef& colorSpaceNameGlobalConstant> static CGColorSpaceRef extendedNamedColorSpace()
+{
+    static NeverDestroyed<RetainPtr<CGColorSpaceRef>> colorSpace;
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [] {
+        colorSpace.get() = adoptCF(CGColorSpaceCreateExtended(namedColorSpace<colorSpaceNameGlobalConstant>()));
+        ASSERT(colorSpace.get());
+    });
+    return colorSpace.get().get();
+}
+#endif
+
 CGColorSpaceRef sRGBColorSpaceRef()
 {
     return namedColorSpace<kCGColorSpaceSRGB>();
@@ -65,6 +78,41 @@ CGColorSpaceRef displayP3ColorSpaceRef()
 }
 #endif
 
+#if HAVE(CORE_GRAPHICS_EXTENDED_ADOBE_RGB_1998_COLOR_SPACE)
+CGColorSpaceRef extendedAdobeRGB1998ColorSpaceRef()
+{
+    return extendedNamedColorSpace<kCGColorSpaceAdobeRGB1998>();
+}
+#endif
+
+#if HAVE(CORE_GRAPHICS_EXTENDED_DISPLAY_P3_COLOR_SPACE)
+CGColorSpaceRef extendedDisplayP3ColorSpaceRef()
+{
+    return namedColorSpace<kCGColorSpaceExtendedDisplayP3>();
+}
+#endif
+
+#if HAVE(CORE_GRAPHICS_EXTENDED_ITUR_2020_COLOR_SPACE)
+CGColorSpaceRef extendedITUR_2020ColorSpaceRef()
+{
+    return namedColorSpace<kCGColorSpaceExtendedITUR_2020>();
+}
+#endif
+
+#if HAVE(CORE_GRAPHICS_EXTENDED_LINEAR_SRGB_COLOR_SPACE)
+CGColorSpaceRef extendedLinearSRGBColorSpaceRef()
+{
+    return namedColorSpace<kCGColorSpaceExtendedLinearSRGB>();
+}
+#endif
+
+#if HAVE(CORE_GRAPHICS_EXTENDED_ROMMRGB_COLOR_SPACE)
+CGColorSpaceRef extendedROMMRGBColorSpaceRef()
+{
+    return extendedNamedColorSpace<kCGColorSpaceROMMRGB>();
+}
+#endif
+
 #if HAVE(CORE_GRAPHICS_EXTENDED_SRGB_COLOR_SPACE)
 CGColorSpaceRef extendedSRGBColorSpaceRef()
 {
@@ -76,14 +124,6 @@ CGColorSpaceRef extendedSRGBColorSpaceRef()
 CGColorSpaceRef ITUR_2020ColorSpaceRef()
 {
     return namedColorSpace<kCGColorSpaceITUR_2020>();
-}
-#endif
-
-#if HAVE(CORE_GRAPHICS_LAB_COLOR_SPACE)
-CGColorSpaceRef labColorSpaceRef()
-{
-    // FIXME: Add support for conversion to Lab on supported platforms.
-    return nullptr;
 }
 #endif
 
@@ -107,18 +147,22 @@ CGColorSpaceRef xyzD50ColorSpaceRef()
     return namedColorSpace<kCGColorSpaceGenericXYZ>();
 }
 
-// FIXME: Figure out how to create a CoreGraphics XYZ-D65 color space and add a xyzD65ColorSpaceRef().
+// FIXME: Figure out how to create a CoreGraphics XYZ-D65 color space and add a xyzD65ColorSpaceRef(). Perhaps CGColorSpaceCreateCalibratedRGB() with identify black point, D65 white point, and identity matrix.
 
 #endif
 
 std::optional<ColorSpace> colorSpaceForCGColorSpace(CGColorSpaceRef colorSpace)
 {
+    // First test for the four most common spaces, sRGB, Extended sRGB, DisplayP3 and Linear sRGB, and then test
+    // the reset in alphabetical order.
+    // FIXME: Consider using a HashMap (with CFHash based keys) rather than the linear set of tests.
+
     if (CGColorSpaceEqualToColorSpace(colorSpace, sRGBColorSpaceRef()))
         return ColorSpace::SRGB;
 
-#if HAVE(CORE_GRAPHICS_ADOBE_RGB_1998_COLOR_SPACE)
-    if (CGColorSpaceEqualToColorSpace(colorSpace, adobeRGB1998ColorSpaceRef()))
-        return ColorSpace::A98RGB;
+#if HAVE(CORE_GRAPHICS_EXTENDED_SRGB_COLOR_SPACE)
+    if (CGColorSpaceEqualToColorSpace(colorSpace, extendedSRGBColorSpaceRef()))
+        return ColorSpace::ExtendedSRGB;
 #endif
 
 #if HAVE(CORE_GRAPHICS_DISPLAY_P3_COLOR_SPACE)
@@ -131,9 +175,35 @@ std::optional<ColorSpace> colorSpaceForCGColorSpace(CGColorSpaceRef colorSpace)
         return ColorSpace::LinearSRGB;
 #endif
 
-#if HAVE(CORE_GRAPHICS_ROMMRGB_COLOR_SPACE)
-    if (CGColorSpaceEqualToColorSpace(colorSpace, ROMMRGBColorSpaceRef()))
-        return ColorSpace::ProPhotoRGB;
+
+#if HAVE(CORE_GRAPHICS_ADOBE_RGB_1998_COLOR_SPACE)
+    if (CGColorSpaceEqualToColorSpace(colorSpace, adobeRGB1998ColorSpaceRef()))
+        return ColorSpace::A98RGB;
+#endif
+
+#if HAVE(CORE_GRAPHICS_EXTENDED_ADOBE_RGB_1998_COLOR_SPACE)
+    if (CGColorSpaceEqualToColorSpace(colorSpace, extendedAdobeRGB1998ColorSpaceRef()))
+        return ColorSpace::ExtendedA98RGB;
+#endif
+
+#if HAVE(CORE_GRAPHICS_EXTENDED_DISPLAY_P3_COLOR_SPACE)
+    if (CGColorSpaceEqualToColorSpace(colorSpace, extendedDisplayP3ColorSpaceRef()))
+        return ColorSpace::ExtendedDisplayP3;
+#endif
+
+#if HAVE(CORE_GRAPHICS_EXTENDED_LINEAR_SRGB_COLOR_SPACE)
+    if (CGColorSpaceEqualToColorSpace(colorSpace, extendedLinearSRGBColorSpaceRef()))
+        return ColorSpace::ExtendedLinearSRGB;
+#endif
+
+#if HAVE(CORE_GRAPHICS_EXTENDED_ITUR_2020_COLOR_SPACE)
+    if (CGColorSpaceEqualToColorSpace(colorSpace, extendedITUR_2020ColorSpaceRef()))
+        return ColorSpace::ExtendedRec2020;
+#endif
+
+#if HAVE(CORE_GRAPHICS_EXTENDED_ROMMRGB_COLOR_SPACE)
+    if (CGColorSpaceEqualToColorSpace(colorSpace, extendedROMMRGBColorSpaceRef()))
+        return ColorSpace::ExtendedProPhotoRGB;
 #endif
 
 #if HAVE(CORE_GRAPHICS_ITUR_2020_COLOR_SPACE)
@@ -141,12 +211,17 @@ std::optional<ColorSpace> colorSpaceForCGColorSpace(CGColorSpaceRef colorSpace)
         return ColorSpace::Rec2020;
 #endif
 
+#if HAVE(CORE_GRAPHICS_ROMMRGB_COLOR_SPACE)
+    if (CGColorSpaceEqualToColorSpace(colorSpace, ROMMRGBColorSpaceRef()))
+        return ColorSpace::ProPhotoRGB;
+#endif
+
 #if HAVE(CORE_GRAPHICS_XYZ_COLOR_SPACE)
     if (CGColorSpaceEqualToColorSpace(colorSpace, xyzD50ColorSpaceRef()))
         return ColorSpace::XYZ_D50;
 #endif
 
-    // FIXME: Add support for ColorSpace::Lab ColorSpace::XYZ_D65 to support more direct conversions.
+    // FIXME: Add support for remaining color spaces to support more direct conversions.
 
     return std::nullopt;
 }

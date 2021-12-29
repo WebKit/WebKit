@@ -39,6 +39,30 @@ TextStream& operator<<(TextStream& ts, ColorSpace colorSpace)
     case ColorSpace::DisplayP3:
         ts << "DisplayP3";
         break;
+    case ColorSpace::ExtendedA98RGB:
+        ts << "Extended A98-RGB";
+        break;
+    case ColorSpace::ExtendedDisplayP3:
+        ts << "Extended DisplayP3";
+        break;
+    case ColorSpace::ExtendedLinearSRGB:
+        ts << "Extended Linear sRGB";
+        break;
+    case ColorSpace::ExtendedProPhotoRGB:
+        ts << "Extended ProPhotoRGB";
+        break;
+    case ColorSpace::ExtendedRec2020:
+        ts << "Extended Rec2020";
+        break;
+    case ColorSpace::ExtendedSRGB:
+        ts << "Extended sRGB";
+        break;
+    case ColorSpace::HSL:
+        ts << "HSL";
+        break;
+    case ColorSpace::HWB:
+        ts << "HWB";
+        break;
     case ColorSpace::LCH:
         ts << "LCH";
         break;
@@ -46,7 +70,7 @@ TextStream& operator<<(TextStream& ts, ColorSpace colorSpace)
         ts << "Lab";
         break;
     case ColorSpace::LinearSRGB:
-        ts << "LinearSRGB";
+        ts << "Linear sRGB";
         break;
     case ColorSpace::OKLCH:
         ts << "OKLCH";

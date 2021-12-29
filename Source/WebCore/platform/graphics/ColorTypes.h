@@ -317,7 +317,7 @@ struct SRGBADescriptor {
 template<typename T> using SRGBA = BoundedGammaEncoded<T, SRGBADescriptor>;
 template<typename T> using LinearSRGBA = BoundedLinearEncoded<T, SRGBADescriptor>;
 template<typename T> using ExtendedSRGBA = ExtendedGammaEncoded<T, SRGBADescriptor>;
-template<typename T> using LinearExtendedSRGBA = ExtendedLinearEncoded<T, SRGBADescriptor>;
+template<typename T> using ExtendedLinearSRGBA = ExtendedLinearEncoded<T, SRGBADescriptor>;
 
 
 struct A98RGBDescriptor {
@@ -339,6 +339,8 @@ struct A98RGBDescriptor {
 
 template<typename T> using A98RGB = BoundedGammaEncoded<T, A98RGBDescriptor>;
 template<typename T> using LinearA98RGB = BoundedLinearEncoded<T, A98RGBDescriptor>;
+template<typename T> using ExtendedA98RGB = ExtendedGammaEncoded<T, A98RGBDescriptor>;
+template<typename T> using ExtendedLinearA98RGB = ExtendedLinearEncoded<T, A98RGBDescriptor>;
 
 
 struct DisplayP3Descriptor {
@@ -360,6 +362,8 @@ struct DisplayP3Descriptor {
 
 template<typename T> using DisplayP3 = BoundedGammaEncoded<T, DisplayP3Descriptor>;
 template<typename T> using LinearDisplayP3 = BoundedLinearEncoded<T, DisplayP3Descriptor>;
+template<typename T> using ExtendedDisplayP3 = ExtendedGammaEncoded<T, DisplayP3Descriptor>;
+template<typename T> using ExtendedLinearDisplayP3 = ExtendedLinearEncoded<T, DisplayP3Descriptor>;
 
 
 struct ProPhotoRGBDescriptor {
@@ -381,6 +385,8 @@ struct ProPhotoRGBDescriptor {
 
 template<typename T> using ProPhotoRGB = BoundedGammaEncoded<T, ProPhotoRGBDescriptor>;
 template<typename T> using LinearProPhotoRGB = BoundedLinearEncoded<T, ProPhotoRGBDescriptor>;
+template<typename T> using ExtendedProPhotoRGB = ExtendedGammaEncoded<T, ProPhotoRGBDescriptor>;
+template<typename T> using ExtendedLinearProPhotoRGB = ExtendedLinearEncoded<T, ProPhotoRGBDescriptor>;
 
 
 struct Rec2020Descriptor {
@@ -402,6 +408,8 @@ struct Rec2020Descriptor {
 
 template<typename T> using Rec2020 = BoundedGammaEncoded<T, Rec2020Descriptor>;
 template<typename T> using LinearRec2020 = BoundedLinearEncoded<T, Rec2020Descriptor>;
+template<typename T> using ExtendedRec2020 = ExtendedGammaEncoded<T, Rec2020Descriptor>;
+template<typename T> using ExtendedLinearRec2020 = ExtendedLinearEncoded<T, Rec2020Descriptor>;
 
 
 // MARK: - Lab Color Type.

@@ -379,6 +379,22 @@ ColorComponents<float, 4> convertColorComponents(ColorSpace inputColorSpace, Col
             return asColorComponents(convertColor<A98RGB<float>>(inputColor));
         case ColorSpace::DisplayP3:
             return asColorComponents(convertColor<DisplayP3<float>>(inputColor));
+        case ColorSpace::ExtendedA98RGB:
+            return asColorComponents(convertColor<ExtendedA98RGB<float>>(inputColor));
+        case ColorSpace::ExtendedDisplayP3:
+            return asColorComponents(convertColor<ExtendedDisplayP3<float>>(inputColor));
+        case ColorSpace::ExtendedLinearSRGB:
+            return asColorComponents(convertColor<ExtendedLinearSRGBA<float>>(inputColor));
+        case ColorSpace::ExtendedProPhotoRGB:
+            return asColorComponents(convertColor<ExtendedProPhotoRGB<float>>(inputColor));
+        case ColorSpace::ExtendedRec2020:
+            return asColorComponents(convertColor<ExtendedRec2020<float>>(inputColor));
+        case ColorSpace::ExtendedSRGB:
+            return asColorComponents(convertColor<ExtendedSRGBA<float>>(inputColor));
+        case ColorSpace::HSL:
+            return asColorComponents(convertColor<HSLA<float>>(inputColor));
+        case ColorSpace::HWB:
+            return asColorComponents(convertColor<HWBA<float>>(inputColor));
         case ColorSpace::LCH:
             return asColorComponents(convertColor<LCHA<float>>(inputColor));
         case ColorSpace::Lab:

@@ -44,16 +44,32 @@ WEBCORE_EXPORT CGColorSpaceRef adobeRGB1998ColorSpaceRef();
 WEBCORE_EXPORT CGColorSpaceRef displayP3ColorSpaceRef();
 #endif
 
+#if HAVE(CORE_GRAPHICS_EXTENDED_ADOBE_RGB_1998_COLOR_SPACE)
+WEBCORE_EXPORT CGColorSpaceRef extendedAdobeRGB1998ColorSpaceRef();
+#endif
+
+#if HAVE(CORE_GRAPHICS_EXTENDED_DISPLAY_P3_COLOR_SPACE)
+WEBCORE_EXPORT CGColorSpaceRef extendedDisplayP3ColorSpaceRef();
+#endif
+
+#if HAVE(CORE_GRAPHICS_EXTENDED_ITUR_2020_COLOR_SPACE)
+WEBCORE_EXPORT CGColorSpaceRef extendedITUR_2020ColorSpaceRef();
+#endif
+
+#if HAVE(CORE_GRAPHICS_EXTENDED_LINEAR_SRGB_COLOR_SPACE)
+WEBCORE_EXPORT CGColorSpaceRef extendedLinearSRGBColorSpaceRef();
+#endif
+
+#if HAVE(CORE_GRAPHICS_EXTENDED_ROMMRGB_COLOR_SPACE)
+WEBCORE_EXPORT CGColorSpaceRef extendedROMMRGBColorSpaceRef();
+#endif
+
 #if HAVE(CORE_GRAPHICS_EXTENDED_SRGB_COLOR_SPACE)
 WEBCORE_EXPORT CGColorSpaceRef extendedSRGBColorSpaceRef();
 #endif
 
 #if HAVE(CORE_GRAPHICS_ITUR_2020_COLOR_SPACE)
 WEBCORE_EXPORT CGColorSpaceRef ITUR_2020ColorSpaceRef();
-#endif
-
-#if HAVE(CORE_GRAPHICS_LAB_COLOR_SPACE)
-WEBCORE_EXPORT CGColorSpaceRef labColorSpaceRef();
 #endif
 
 #if HAVE(CORE_GRAPHICS_LINEAR_SRGB_COLOR_SPACE)
@@ -73,44 +89,86 @@ std::optional<ColorSpace> colorSpaceForCGColorSpace(CGColorSpaceRef);
 static inline CGColorSpaceRef cachedNullableCGColorSpace(ColorSpace colorSpace)
 {
     switch (colorSpace) {
+    case ColorSpace::SRGB:
+        return sRGBColorSpaceRef();
+
     case ColorSpace::A98RGB:
 #if HAVE(CORE_GRAPHICS_ADOBE_RGB_1998_COLOR_SPACE)
         return adobeRGB1998ColorSpaceRef();
 #else
         return nullptr;
 #endif
+
     case ColorSpace::DisplayP3:
 #if HAVE(CORE_GRAPHICS_DISPLAY_P3_COLOR_SPACE)
         return displayP3ColorSpaceRef();
 #else
         return nullptr;
 #endif
-    case ColorSpace::Lab:
-#if HAVE(CORE_GRAPHICS_LAB_COLOR_SPACE)
-        return labColorSpaceRef();
+
+    case ColorSpace::ExtendedA98RGB:
+#if HAVE(CORE_GRAPHICS_EXTENDED_ADOBE_RGB_1998_COLOR_SPACE)
+        return extendedAdobeRGB1998ColorSpaceRef();
 #else
         return nullptr;
 #endif
+
+    case ColorSpace::ExtendedDisplayP3:
+#if HAVE(CORE_GRAPHICS_EXTENDED_DISPLAY_P3_COLOR_SPACE)
+        return extendedDisplayP3ColorSpaceRef();
+#else
+        return nullptr;
+#endif
+
+    case ColorSpace::ExtendedLinearSRGB:
+#if HAVE(CORE_GRAPHICS_EXTENDED_LINEAR_SRGB_COLOR_SPACE)
+        return extendedLinearSRGBColorSpaceRef();
+#else
+        return nullptr;
+#endif
+
+    case ColorSpace::ExtendedProPhotoRGB:
+#if HAVE(CORE_GRAPHICS_EXTENDED_ROMMRGB_COLOR_SPACE)
+        return extendedROMMRGBColorSpaceRef();
+#else
+        return nullptr;
+#endif
+
+    case ColorSpace::ExtendedRec2020:
+#if HAVE(CORE_GRAPHICS_EXTENDED_ITUR_2020_COLOR_SPACE)
+        return extendedITUR_2020ColorSpaceRef();
+#else
+        return nullptr;
+#endif
+
+    case ColorSpace::ExtendedSRGB:
+#if HAVE(CORE_GRAPHICS_EXTENDED_SRGB_COLOR_SPACE)
+        return extendedSRGBColorSpaceRef();
+#else
+        return nullptr;
+#endif
+
     case ColorSpace::LinearSRGB:
 #if HAVE(CORE_GRAPHICS_LINEAR_SRGB_COLOR_SPACE)
         return linearSRGBColorSpaceRef();
 #else
         return nullptr;
 #endif
+
     case ColorSpace::ProPhotoRGB:
 #if HAVE(CORE_GRAPHICS_ROMMRGB_COLOR_SPACE)
         return ROMMRGBColorSpaceRef();
 #else
         return nullptr;
 #endif
+
     case ColorSpace::Rec2020:
 #if HAVE(CORE_GRAPHICS_ITUR_2020_COLOR_SPACE)
         return ITUR_2020ColorSpaceRef();
 #else
         return nullptr;
 #endif
-    case ColorSpace::SRGB:
-        return sRGBColorSpaceRef();
+
     case ColorSpace::XYZ_D50:
 #if HAVE(CORE_GRAPHICS_XYZ_COLOR_SPACE)
         return xyzD50ColorSpaceRef();
@@ -118,8 +176,11 @@ static inline CGColorSpaceRef cachedNullableCGColorSpace(ColorSpace colorSpace)
         return nullptr;
 #endif
 
-    // FIXME: Add support for these once CoreGraphics supports it.
+    // FIXME: Add support for these once/if CoreGraphics adds support for it.
+    case ColorSpace::HSL:
+    case ColorSpace::HWB:
     case ColorSpace::LCH:
+    case ColorSpace::Lab:
     case ColorSpace::OKLCH:
     case ColorSpace::OKLab:
     case ColorSpace::XYZ_D65:
