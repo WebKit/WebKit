@@ -1,3 +1,15 @@
+2021-12-28  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GTK] fast/mediastream/media-element-current-time.html is failing since added in r256346
+        https://bugs.webkit.org/show_bug.cgi?id=208120
+
+        Reviewed by Philippe Normand.
+
+        Wait 10ms after play() to give time to the engine to have the pipeline position going forward.
+
+        * fast/mediastream/media-element-current-time.html:
+        * platform/glib/TestExpectations:
+
 2021-12-28  Sam Weinig  <weinig@apple.com>
 
         Update wpt css/css-color tests
