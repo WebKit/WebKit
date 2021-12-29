@@ -245,7 +245,7 @@ layer at (0,0) size 800x716
                   RenderImage {IMG} at (0,0) size 175x270
                 RenderText {#text} at (0,0) size 0x0
                 RenderText {#text} at (0,0) size 0x0
-                RenderInline {A} at (0,0) size 161x19
+                RenderInline {A} at (0,0) size 168x49
                   RenderText {#text} at (0,0) size 0x0
                   RenderImage {IMG} at (7,270) size 161x30
                 RenderText {#text} at (0,0) size 0x0
