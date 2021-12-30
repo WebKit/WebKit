@@ -56,7 +56,7 @@ ScriptExecutionContext* executionContext(JSC::JSGlobalObject* globalObject)
 {
     if (!globalObject || !globalObject->inherits<JSDOMGlobalObject>(globalObject->vm()))
         return nullptr;
-    return jsCast<JSDOMGlobalObject*>(globalObject)->scriptExecutionContext();
+    return JSC::jsCast<JSDOMGlobalObject*>(globalObject)->scriptExecutionContext();
 }
 
 } // namespace WebCore

@@ -34,6 +34,8 @@ class DOMWindow;
 class ResourceError;
 class ResourceResponse;
 
+struct WebAgentContext;
+
 class WebConsoleAgent : public Inspector::InspectorConsoleAgent {
 protected:
     explicit WebConsoleAgent(WebAgentContext&);

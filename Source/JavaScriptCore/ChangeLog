@@ -1,3 +1,12 @@
+2021-12-30  Adrian Perez de Castro  <aperez@igalia.com>
+
+        Non-unified build fixes, end-of-year 2021 edition
+        https://bugs.webkit.org/show_bug.cgi?id=234755
+
+        Unreviewed non-unified build fixes.
+
+        * runtime/DeferredWorkTimer.h: Add missing JSCast.h header.
+
 2021-12-28  Zan Dobersek  <zdobersek@igalia.com>
 
         [RISCV64] Add MacroAssemblerRISCV64 operations for floating-point branches

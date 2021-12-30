@@ -44,6 +44,7 @@
 #include "InspectorPageAgent.h"
 #include "InstrumentingAgents.h"
 #include "JSDOMWindow.h"
+#include "JSExecState.h"
 #include "PageDebugger.h"
 #include "PageHeapAgent.h"
 #include "RenderView.h"

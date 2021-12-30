@@ -46,6 +46,7 @@
 #include "JSDOMPoint.h"
 #include "JSDOMQuad.h"
 #include "JSDOMRect.h"
+#include "JSExecState.h"
 #include "JSFile.h"
 #include "JSFileList.h"
 #include "JSIDBSerializationGlobalObject.h"

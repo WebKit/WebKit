@@ -27,6 +27,8 @@
 #include "WebInjectedScriptManager.h"
 
 #include "CommandLineAPIModule.h"
+#include "DOMWindow.h"
+#include "JSExecState.h"
 
 namespace WebCore {
 

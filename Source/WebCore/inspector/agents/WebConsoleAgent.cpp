@@ -29,6 +29,8 @@
 
 #include "CommandLineAPIHost.h"
 #include "DOMWindow.h"
+#include "InspectorWebAgentBase.h"
+#include "JSExecState.h"
 #include "Logging.h"
 #include "ResourceError.h"
 #include "ResourceResponse.h"
