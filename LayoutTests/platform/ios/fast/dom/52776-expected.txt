@@ -40,12 +40,10 @@ layer at (0,0) size 800x1828
             text run at (784,0) width 0 RTL: "\x{202C}\x{202C}"
         RenderBlock {DIV} at (0,276) size 784x20
           RenderText {#text} at (784,0) size 0x19
-            text run at (784,0) width 0: "\x{202A}"
-            text run at (784,0) width 0 RTL: "\x{202A}"
+            text run at (784,0) width 0 RTL: "\x{202A}\x{202A}"
         RenderBlock {DIV} at (0,296) size 784x20
           RenderText {#text} at (784,0) size 0x19
-            text run at (784,0) width 0 RTL: "\x{202B}"
-            text run at (784,0) width 0 RTL: "\x{202B}"
+            text run at (784,0) width 0 RTL: "\x{202B}\x{202B}"
         RenderBlock {P} at (0,332) size 784x20
           RenderText {#text} at (496,0) size 288x19
             text run at (496,0) width 5 RTL: "."
@@ -56,12 +54,12 @@ layer at (0,0) size 800x1828
             text run at (761,0) width 23: "\x{202C}abc"
         RenderBlock {DIV} at (0,388) size 784x20
           RenderText {#text} at (761,0) size 23x19
+            text run at (761,0) width 1 RTL: "\x{202A}"
             text run at (761,0) width 23: "\x{202A}abc"
-            text run at (784,0) width 0 RTL: "\x{202A}"
         RenderBlock {DIV} at (0,408) size 784x20
           RenderText {#text} at (761,0) size 23x19
+            text run at (761,0) width 1 RTL: "\x{202B}"
             text run at (761,0) width 23: "\x{202B}abc"
-            text run at (784,0) width 0 RTL: "\x{202B}"
         RenderBlock {P} at (0,444) size 784x20
           RenderText {#text} at (490,0) size 294x19
             text run at (490,0) width 5 RTL: "."
@@ -82,15 +80,13 @@ layer at (0,0) size 800x1828
             text run at (537,0) width 247: "Nested unicode bidi control characters"
         RenderBlock {DIV} at (0,592) size 784x20
           RenderText {#text} at (770,0) size 14x19
-            text run at (770,0) width 1: "\x{202A}"
             text run at (770,0) width 1 RTL: "\x{202C}"
-            text run at (770,0) width 14: "\x{202A}b!"
+            text run at (770,0) width 14: "\x{202A}\x{202A}b!"
         RenderBlock {DIV} at (0,612) size 784x20
           RenderText {#text} at (770,0) size 14x19
             text run at (770,0) width 1 RTL: "\x{202C}"
             text run at (770,0) width 6 RTL: "!"
-            text run at (776,0) width 8: "\x{202B}b"
-            text run at (784,0) width 0 RTL: "\x{202B}"
+            text run at (776,0) width 8: "\x{202B}\x{202B}b"
         RenderBlock {DIV} at (0,632) size 784x20
           RenderText {#text} at (770,0) size 14x19
             text run at (770,0) width 6 RTL: "!\x{202C}"
@@ -98,25 +94,20 @@ layer at (0,0) size 800x1828
         RenderBlock {DIV} at (0,652) size 784x20
           RenderText {#text} at (763,0) size 21x19
             text run at (763,0) width 1 RTL: "\x{202C}"
-            text run at (763,0) width 9: "1"
+            text run at (763,0) width 9: "\x{202C}1"
             text run at (771,0) width 6 RTL: "!"
             text run at (776,0) width 8: "\x{202B}c"
-            text run at (784,0) width 0 RTL: "\x{202C}"
         RenderBlock {P} at (0,688) size 784x20
           RenderText {#text} at (500,0) size 284x19
             text run at (500,0) width 5 RTL: "."
             text run at (504,0) width 280: "Start with different directionality characters"
         RenderBlock {DIV} at (0,724) size 784x20
           RenderText {#text} at (760,0) size 24x19
-            text run at (760,0) width 0 RTL: "\x{202B}"
-            text run at (760,0) width 0 RTL: "\x{202C}"
-            text run at (760,0) width 8: "\x{202A}1"
-            text run at (768,0) width 0 RTL: "\x{202C}"
-            text run at (768,0) width 16: "12"
+            text run at (760,0) width 0 RTL: "\x{202C}\x{202B}"
+            text run at (760,0) width 24: "12\x{202C}\x{202A}1"
         RenderBlock {DIV} at (0,744) size 784x20
           RenderText {#text} at (768,0) size 16x19
-            text run at (768,0) width 0 RTL: "\x{202A}"
-            text run at (768,0) width 0 RTL: "\x{202C}"
+            text run at (768,0) width 0 RTL: "\x{202C}\x{202A}"
             text run at (768,0) width 16: "12"
         RenderBlock {DIV} at (0,764) size 784x24
           RenderText {#text} at (767,1) size 17x19
@@ -129,16 +120,14 @@ layer at (0,0) size 800x1828
             text run at (765,1) width 19 RTL: "\x{683}\x{684}\x{202C}"
         RenderBlock {DIV} at (0,812) size 784x20
           RenderText {#text} at (771,0) size 13x19
-            text run at (771,0) width 1 RTL: "\x{202A}"
-            text run at (771,0) width 13 RTL: "\x{1}\x{202C}"
+            text run at (771,0) width 13 RTL: "\x{1}\x{202C}\x{202A}"
         RenderBlock {DIV} at (0,832) size 784x20
           RenderText {#text} at (761,0) size 23x19
-            text run at (761,0) width 23: "abc\x{202C}"
-            text run at (784,0) width 0 RTL: "\x{202A}"
+            text run at (761,0) width 1 RTL: "\x{202C}\x{202A}"
+            text run at (761,0) width 23: "abc"
         RenderBlock {DIV} at (0,852) size 784x20
           RenderText {#text} at (769,0) size 15x19
-            text run at (769,0) width 1 RTL: "\x{202A}"
-            text run at (769,0) width 15 RTL: "\x{5D0}\x{5D1}\x{202C}"
+            text run at (769,0) width 15 RTL: "\x{5D0}\x{5D1}\x{202C}\x{202A}"
       RenderBlock {DIV} at (0,888) size 784x872
         RenderBlock {P} at (0,0) size 784x20
           RenderText {#text} at (0,0) size 87x19

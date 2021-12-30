@@ -625,8 +625,8 @@ layer at (0,0) size 785x7588
               RenderTableRow {TR} at (0,2) size 190x20
                 RenderTableCell {TD} at (2,2) size 186x20 [r=0 c=0 rs=1 cs=1]
                   RenderText {#text} at (1,1) size 184x18
-                    text run at (1,1) width 10 RTL: ")."
-                    text run at (10,1) width 175: "Center table (fixed margins"
+                    text run at (1,1) width 5 RTL: "."
+                    text run at (5,1) width 180: "Center table (fixed margins)"
         RenderBlock {DIV} at (2,246) size 765x226 [border: (4px solid #800080)]
           RenderBlock {DIV} at (351,6) size 408x26 [border: (2px solid #0000FF)]
             RenderText {#text} at (138,4) size 266x18
@@ -662,8 +662,8 @@ layer at (0,0) size 785x7588
               RenderTableRow {TR} at (0,2) size 396x20
                 RenderTableCell {TD} at (2,2) size 392x20 [r=0 c=0 rs=1 cs=1]
                   RenderText {#text} at (207,1) size 184x18
-                    text run at (207,1) width 10 RTL: ")."
-                    text run at (216,1) width 175: "Center table (fixed margins"
+                    text run at (207,1) width 5 RTL: "."
+                    text run at (211,1) width 180: "Center table (fixed margins)"
         RenderBlock {DIV} at (2,472) size 765x226 [border: (4px solid #008000)]
           RenderBlock {DIV} at (6,6) size 753x26 [border: (2px solid #0000FF)]
             RenderText {#text} at (4,4) size 207x18
@@ -699,8 +699,8 @@ layer at (0,0) size 785x7588
               RenderTableRow {TR} at (0,2) size 190x20
                 RenderTableCell {TD} at (2,2) size 186x20 [r=0 c=0 rs=1 cs=1]
                   RenderText {#text} at (1,1) size 184x18
-                    text run at (1,1) width 10 RTL: ")."
-                    text run at (10,1) width 175: "Center table (fixed margins"
+                    text run at (1,1) width 5 RTL: "."
+                    text run at (5,1) width 180: "Center table (fixed margins)"
         RenderBlock {DIV} at (2,698) size 765x226 [border: (4px solid #800080)]
           RenderBlock {DIV} at (6,6) size 408x26 [border: (2px solid #0000FF)]
             RenderText {#text} at (4,4) size 283x18
@@ -736,8 +736,8 @@ layer at (0,0) size 785x7588
               RenderTableRow {TR} at (0,2) size 396x20
                 RenderTableCell {TD} at (2,2) size 392x20 [r=0 c=0 rs=1 cs=1]
                   RenderText {#text} at (207,1) size 184x18
-                    text run at (207,1) width 10 RTL: ")."
-                    text run at (216,1) width 175: "Center table (fixed margins"
+                    text run at (207,1) width 5 RTL: "."
+                    text run at (211,1) width 180: "Center table (fixed margins)"
         RenderBlock {DIV} at (2,924) size 765x226 [border: (4px solid #008000)]
           RenderBlock {DIV} at (6,6) size 753x26 [border: (2px solid #0000FF)]
             RenderText {#text} at (262,4) size 229x18
@@ -773,8 +773,8 @@ layer at (0,0) size 785x7588
               RenderTableRow {TR} at (0,2) size 190x20
                 RenderTableCell {TD} at (2,2) size 186x20 [r=0 c=0 rs=1 cs=1]
                   RenderText {#text} at (1,1) size 184x18
-                    text run at (1,1) width 10 RTL: ")."
-                    text run at (10,1) width 175: "Center table (fixed margins"
+                    text run at (1,1) width 5 RTL: "."
+                    text run at (5,1) width 180: "Center table (fixed margins)"
         RenderBlock {DIV} at (2,1150) size 765x226 [border: (4px solid #800080)]
           RenderBlock {DIV} at (178,6) size 409x26 [border: (2px solid #0000FF)]
             RenderText {#text} at (53,4) size 302x18
@@ -810,8 +810,8 @@ layer at (0,0) size 785x7588
               RenderTableRow {TR} at (0,2) size 396x20
                 RenderTableCell {TD} at (2,2) size 392x20 [r=0 c=0 rs=1 cs=1]
                   RenderText {#text} at (207,1) size 184x18
-                    text run at (207,1) width 10 RTL: ")."
-                    text run at (216,1) width 175: "Center table (fixed margins"
+                    text run at (207,1) width 5 RTL: "."
+                    text run at (211,1) width 180: "Center table (fixed margins)"
         RenderBlock {DIV} at (2,1376) size 765x226 [border: (4px solid #008000)]
           RenderBlock {DIV} at (6,6) size 753x26 [border: (2px solid #0000FF)]
             RenderText {#text} at (533,4) size 216x18
@@ -847,8 +847,8 @@ layer at (0,0) size 785x7588
               RenderTableRow {TR} at (0,2) size 190x20
                 RenderTableCell {TD} at (2,2) size 186x20 [r=0 c=0 rs=1 cs=1]
                   RenderText {#text} at (1,1) size 184x18
-                    text run at (1,1) width 10 RTL: ")."
-                    text run at (10,1) width 175: "Center table (fixed margins"
+                    text run at (1,1) width 5 RTL: "."
+                    text run at (5,1) width 180: "Center table (fixed margins)"
         RenderBlock {DIV} at (2,1602) size 765x226 [border: (4px solid #800080)]
           RenderBlock {DIV} at (351,6) size 408x26 [border: (2px solid #0000FF)]
             RenderText {#text} at (112,4) size 292x18
@@ -884,12 +884,12 @@ layer at (0,0) size 785x7588
               RenderTableRow {TR} at (0,2) size 396x20
                 RenderTableCell {TD} at (2,2) size 392x20 [r=0 c=0 rs=1 cs=1]
                   RenderText {#text} at (207,1) size 184x18
-                    text run at (207,1) width 10 RTL: ")."
-                    text run at (216,1) width 175: "Center table (fixed margins"
+                    text run at (207,1) width 5 RTL: "."
+                    text run at (211,1) width 180: "Center table (fixed margins)"
         RenderBlock {P} at (2,1844) size 765x18
           RenderText {#text} at (390,0) size 375x18
-            text run at (390,0) width 10 RTL: ")."
-            text run at (399,0) width 366: "This is a test using TABLE cells (all in the RTL direction"
+            text run at (390,0) width 5 RTL: "."
+            text run at (394,0) width 371: "This is a test using TABLE cells (all in the RTL direction)"
         RenderTable {TABLE} at (2,1878) size 765x232 [border: (2px solid #0000FF)]
           RenderTableSection {TBODY} at (2,2) size 761x228
             RenderTableRow {TR} at (0,2) size 761x224
@@ -928,8 +928,8 @@ layer at (0,0) size 785x7588
                     RenderTableRow {TR} at (0,2) size 190x20
                       RenderTableCell {TD} at (2,2) size 186x20 [r=0 c=0 rs=1 cs=1]
                         RenderText {#text} at (1,1) size 184x18
-                          text run at (1,1) width 10 RTL: ")."
-                          text run at (10,1) width 175: "Center table (fixed margins"
+                          text run at (1,1) width 5 RTL: "."
+                          text run at (5,1) width 180: "Center table (fixed margins)"
         RenderTable {TABLE} at (2,2110) size 765x232 [border: (2px solid #0000FF)]
           RenderTableSection {TBODY} at (2,2) size 761x228
             RenderTableRow {TR} at (0,2) size 761x224
@@ -968,8 +968,8 @@ layer at (0,0) size 785x7588
                     RenderTableRow {TR} at (0,2) size 396x20
                       RenderTableCell {TD} at (2,2) size 392x20 [r=0 c=0 rs=1 cs=1]
                         RenderText {#text} at (207,1) size 184x18
-                          text run at (207,1) width 10 RTL: ")."
-                          text run at (216,1) width 175: "Center table (fixed margins"
+                          text run at (207,1) width 5 RTL: "."
+                          text run at (211,1) width 180: "Center table (fixed margins)"
         RenderTable {TABLE} at (2,2342) size 765x232 [border: (2px solid #0000FF)]
           RenderTableSection {TBODY} at (2,2) size 761x228
             RenderTableRow {TR} at (0,2) size 761x224
@@ -1008,8 +1008,8 @@ layer at (0,0) size 785x7588
                     RenderTableRow {TR} at (0,2) size 190x20
                       RenderTableCell {TD} at (2,2) size 186x20 [r=0 c=0 rs=1 cs=1]
                         RenderText {#text} at (1,1) size 184x18
-                          text run at (1,1) width 10 RTL: ")."
-                          text run at (10,1) width 175: "Center table (fixed margins"
+                          text run at (1,1) width 5 RTL: "."
+                          text run at (5,1) width 180: "Center table (fixed margins)"
         RenderTable {TABLE} at (2,2574) size 765x232 [border: (2px solid #0000FF)]
           RenderTableSection {TBODY} at (2,2) size 761x228
             RenderTableRow {TR} at (0,2) size 761x224
@@ -1048,8 +1048,8 @@ layer at (0,0) size 785x7588
                     RenderTableRow {TR} at (0,2) size 396x20
                       RenderTableCell {TD} at (2,2) size 392x20 [r=0 c=0 rs=1 cs=1]
                         RenderText {#text} at (207,1) size 184x18
-                          text run at (207,1) width 10 RTL: ")."
-                          text run at (216,1) width 175: "Center table (fixed margins"
+                          text run at (207,1) width 5 RTL: "."
+                          text run at (211,1) width 180: "Center table (fixed margins)"
         RenderTable {TABLE} at (2,2806) size 765x232 [border: (2px solid #0000FF)]
           RenderTableSection {TBODY} at (2,2) size 761x228
             RenderTableRow {TR} at (0,2) size 761x224
@@ -1088,8 +1088,8 @@ layer at (0,0) size 785x7588
                     RenderTableRow {TR} at (0,2) size 190x20
                       RenderTableCell {TD} at (2,2) size 186x20 [r=0 c=0 rs=1 cs=1]
                         RenderText {#text} at (1,1) size 184x18
-                          text run at (1,1) width 10 RTL: ")."
-                          text run at (10,1) width 175: "Center table (fixed margins"
+                          text run at (1,1) width 5 RTL: "."
+                          text run at (5,1) width 180: "Center table (fixed margins)"
         RenderTable {TABLE} at (2,3038) size 765x232 [border: (2px solid #0000FF)]
           RenderTableSection {TBODY} at (2,2) size 761x228
             RenderTableRow {TR} at (0,2) size 761x224
@@ -1128,8 +1128,8 @@ layer at (0,0) size 785x7588
                     RenderTableRow {TR} at (0,2) size 396x20
                       RenderTableCell {TD} at (2,2) size 392x20 [r=0 c=0 rs=1 cs=1]
                         RenderText {#text} at (207,1) size 184x18
-                          text run at (207,1) width 10 RTL: ")."
-                          text run at (216,1) width 175: "Center table (fixed margins"
+                          text run at (207,1) width 5 RTL: "."
+                          text run at (211,1) width 180: "Center table (fixed margins)"
         RenderTable {TABLE} at (2,3270) size 765x232 [border: (2px solid #0000FF)]
           RenderTableSection {TBODY} at (2,2) size 761x228
             RenderTableRow {TR} at (0,2) size 761x224
@@ -1168,8 +1168,8 @@ layer at (0,0) size 785x7588
                     RenderTableRow {TR} at (0,2) size 190x20
                       RenderTableCell {TD} at (2,2) size 186x20 [r=0 c=0 rs=1 cs=1]
                         RenderText {#text} at (1,1) size 184x18
-                          text run at (1,1) width 10 RTL: ")."
-                          text run at (10,1) width 175: "Center table (fixed margins"
+                          text run at (1,1) width 5 RTL: "."
+                          text run at (5,1) width 180: "Center table (fixed margins)"
         RenderTable {TABLE} at (2,3502) size 765x232 [border: (2px solid #0000FF)]
           RenderTableSection {TBODY} at (2,2) size 761x228
             RenderTableRow {TR} at (0,2) size 761x224
@@ -1208,5 +1208,5 @@ layer at (0,0) size 785x7588
                     RenderTableRow {TR} at (0,2) size 396x20
                       RenderTableCell {TD} at (2,2) size 392x20 [r=0 c=0 rs=1 cs=1]
                         RenderText {#text} at (207,1) size 184x18
-                          text run at (207,1) width 10 RTL: ")."
-                          text run at (216,1) width 175: "Center table (fixed margins"
+                          text run at (207,1) width 5 RTL: "."
+                          text run at (211,1) width 180: "Center table (fixed margins)"

@@ -29,7 +29,7 @@ layer at (0,0) size 800x600
         RenderText {#text} at (211,36) size 5x18
           text run at (211,36) width 5: " "
         RenderBR {BR} at (215,36) size 1x18
-        RenderInline {BDO} at (0,0) size 0x0
+        RenderInline {BDO} at (0,0) size 0x18
         RenderText {#text} at (0,0) size 0x0
         RenderBR {BR} at (0,54) size 0x18
         RenderInline {BDO} at (0,0) size 12x18

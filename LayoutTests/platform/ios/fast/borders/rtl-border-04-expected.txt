@@ -22,7 +22,7 @@ layer at (0,0) size 800x364
             text run at (21,6) width 604: "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut "
             text run at (624,6) width 148: "labore et dolore magna"
             text run at (45,38) width 442: "aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco "
-          RenderInline {SPAN} at (0,0) size 774x85 [border: (1px solid #0000FF) (10px solid #FFA500) (1px solid #0000FF) (10px solid #008000)]
+          RenderInline {SPAN} at (0,0) size 775x85 [border: (1px solid #0000FF) (10px solid #FFA500) (1px solid #0000FF) (10px solid #008000)]
             RenderText {#text} at (486,38) size 766x83
               text run at (486,38) width 241: "laboris nisi ut aliquip ex ea commodo"
               text run at (6,70) width 332: "consequat. Duis aute irure dolor in reprehenderit in "
