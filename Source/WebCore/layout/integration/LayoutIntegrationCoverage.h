@@ -57,7 +57,7 @@ enum class AvoidanceReason : uint64_t {
     FlowHasLineBoxContainProperty                = 1LLU  << 16,
     FlowIsNotTopToBottom                         = 1LLU  << 17,
     // Unused                                    = 1LLU  << 18,
-    FlowHasRTLOrdering                           = 1LLU  << 19,
+    // Unused                                    = 1LLU  << 19,
     FlowHasLineAlignEdges                        = 1LLU  << 20,
     FlowHasLineSnap                              = 1LLU  << 21,
     FlowHasTextEmphasisFillOrMark                = 1LLU  << 22,

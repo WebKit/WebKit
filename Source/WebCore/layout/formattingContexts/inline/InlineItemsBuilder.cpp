@@ -174,10 +174,19 @@ static void replaceNonPreservedNewLineCharactersAndAppend(const InlineTextBox& i
 struct BidiContext {
     EUnicodeBidi unicodeBidi;
     bool isLeftToRightDirection { false };
+    bool isBlockLevel { false };
 };
 using BidiContextStack = Vector<BidiContext>;
-static inline void handleEnterExitBidiContext(StringBuilder& paragraphContentBuilder, EUnicodeBidi unicodeBidi, bool isLTR, bool isEnteringBidi, BidiContextStack& bidiContextStack)
+
+enum class EnterExitType : uint8_t {
+    EnteringBlock,
+    ExitingBlock,
+    EnteringInlineBox,
+    ExitingInlineBox
+};
+static inline void handleEnterExitBidiContext(StringBuilder& paragraphContentBuilder, EUnicodeBidi unicodeBidi, bool isLTR, EnterExitType enterExitType, BidiContextStack& bidiContextStack)
 {
+    auto isEnteringBidi = enterExitType == EnterExitType::EnteringBlock || enterExitType == EnterExitType::EnteringInlineBox;
     switch (unicodeBidi) {
     case EUnicodeBidi::UBNormal:
         // The box does not open an additional level of embedding with respect to the bidirectional algorithm.
@@ -208,14 +217,16 @@ static inline void handleEnterExitBidiContext(StringBuilder& paragraphContentBui
         ASSERT_NOT_REACHED();
     }
 
-    isEnteringBidi ? bidiContextStack.append({ unicodeBidi, isLTR }) : bidiContextStack.removeLast();
+    isEnteringBidi ? bidiContextStack.append({ unicodeBidi, isLTR, enterExitType == EnterExitType::EnteringBlock }) : bidiContextStack.removeLast();
 }
 
 using InlineItemOffsetList = Vector<std::optional<size_t>>;
 static inline void buildBidiParagraph(const RenderStyle& rootStyle, const InlineItems& inlineItems,  StringBuilder& paragraphContentBuilder, InlineItemOffsetList& inlineItemOffsetList)
 {
     auto bidiContextStack = BidiContextStack { };
-    handleEnterExitBidiContext(paragraphContentBuilder, rootStyle.unicodeBidi(), rootStyle.isLeftToRightDirection(), true, bidiContextStack);
+    handleEnterExitBidiContext(paragraphContentBuilder, rootStyle.unicodeBidi(), rootStyle.isLeftToRightDirection(), EnterExitType::EnteringBlock, bidiContextStack);
+    if (rootStyle.rtlOrdering() != Order::Logical)
+        handleEnterExitBidiContext(paragraphContentBuilder, EUnicodeBidi::Override, rootStyle.isLeftToRightDirection(), EnterExitType::EnteringBlock, bidiContextStack);
 
     const Box* lastInlineTextBox = nullptr;
     size_t inlineTextBoxOffset = 0;
@@ -249,7 +260,12 @@ static inline void buildBidiParagraph(const RenderStyle& rootStyle, const Inline
             }
             inlineItemOffsetList.uncheckedAppend({ paragraphContentBuilder.length() });
             auto isEnteringBidi = inlineItem.isInlineBoxStart();
-            handleEnterExitBidiContext(paragraphContentBuilder, style.unicodeBidi(), style.isLeftToRightDirection(), isEnteringBidi, bidiContextStack);
+            handleEnterExitBidiContext(paragraphContentBuilder
+                , style.unicodeBidi()
+                , style.isLeftToRightDirection()
+                , isEnteringBidi ? EnterExitType::EnteringInlineBox : EnterExitType::ExitingInlineBox
+                , bidiContextStack
+            );
         } else if (inlineItem.isSoftLineBreak()) {
             // FIXME: Unwind the bidi stack for soft line break too.
             appendTextBasedContent();
@@ -257,10 +273,21 @@ static inline void buildBidiParagraph(const RenderStyle& rootStyle, const Inline
         } else if (inlineItem.isHardLineBreak()) {
             auto copyOfBidiStack = bidiContextStack;
 
+            size_t blockLevelBidiContextIndex = 0;
             auto unwindBidiContextStack = [&] {
                 // Unwind all the way up to the block entry.
-                for (size_t index = copyOfBidiStack.size(); index-- > 1;)
-                    handleEnterExitBidiContext(paragraphContentBuilder, copyOfBidiStack[index].unicodeBidi, copyOfBidiStack[index].isLeftToRightDirection, false, bidiContextStack);
+                ASSERT(!bidiContextStack.isEmpty());
+                size_t unwindingIndex = copyOfBidiStack.size() - 1; 
+                while (unwindingIndex && !copyOfBidiStack[unwindingIndex].isBlockLevel) {
+                    handleEnterExitBidiContext(paragraphContentBuilder
+                        , copyOfBidiStack[unwindingIndex].unicodeBidi
+                        , copyOfBidiStack[unwindingIndex].isLeftToRightDirection
+                        , EnterExitType::ExitingInlineBox
+                        , bidiContextStack
+                    );
+                    --unwindingIndex;
+                }
+                blockLevelBidiContextIndex = unwindingIndex; 
             };
             unwindBidiContextStack();
 
@@ -268,8 +295,14 @@ static inline void buildBidiParagraph(const RenderStyle& rootStyle, const Inline
             paragraphContentBuilder.append(newlineCharacter);
 
             auto rewindBidiContextStack = [&] {
-                for (size_t index = 1; index < copyOfBidiStack.size(); ++index)
-                    handleEnterExitBidiContext(paragraphContentBuilder, copyOfBidiStack[index].unicodeBidi, copyOfBidiStack[index].isLeftToRightDirection, true, bidiContextStack);
+                for (size_t index = blockLevelBidiContextIndex + 1; index < copyOfBidiStack.size(); ++index) {
+                    handleEnterExitBidiContext(paragraphContentBuilder
+                        , copyOfBidiStack[index].unicodeBidi
+                        , copyOfBidiStack[index].isLeftToRightDirection
+                        , EnterExitType::EnteringInlineBox
+                        , bidiContextStack
+                    );
+                }
             };
             rewindBidiContextStack();
         } else if (inlineItem.isWordBreakOpportunity()) {

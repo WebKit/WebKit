@@ -125,9 +125,6 @@ static void printReason(AvoidanceReason reason, TextStream& stream)
     case AvoidanceReason::FlowIsNotTopToBottom:
         stream << "non top-to-bottom flow";
         break;
-    case AvoidanceReason::FlowHasRTLOrdering:
-        stream << "-webkit-rtl-ordering";
-        break;
     case AvoidanceReason::FlowHasLineAlignEdges:
         stream << "-webkit-line-align edges";
         break;
@@ -438,8 +435,6 @@ static OptionSet<AvoidanceReason> canUseForStyle(const RenderElement& renderer, 
         SET_REASON_AND_RETURN_IF_NEEDED(FlowMayNotBeLTR, reasons, includeReasons);
     if (style.writingMode() != WritingMode::TopToBottom)
         SET_REASON_AND_RETURN_IF_NEEDED(FlowIsNotTopToBottom, reasons, includeReasons);
-    if (style.rtlOrdering() != Order::Logical)
-        SET_REASON_AND_RETURN_IF_NEEDED(FlowHasRTLOrdering, reasons, includeReasons);
     if (style.textEmphasisFill() != TextEmphasisFill::Filled || style.textEmphasisMark() != TextEmphasisMark::None)
         SET_REASON_AND_RETURN_IF_NEEDED(FlowHasTextEmphasisFillOrMark, reasons, includeReasons);
     if (style.hasPseudoStyle(PseudoId::FirstLetter))
