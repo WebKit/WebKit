@@ -64,7 +64,7 @@ public:
     void removedFromAncestor(RemovalType, ContainerNode&) final;
 
     const String& ensureUniqueIdentifier();
-    bool hasEnclosingImage() const;
+    RefPtr<HTMLImageElement> enclosingImageElement() const;
 
     WEBCORE_EXPORT String attachmentTitle() const;
     String attachmentTitleForDisplay() const;

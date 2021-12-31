@@ -4231,7 +4231,7 @@ void Editor::notifyClientOfAttachmentUpdates()
 
     for (auto& identifier : insertedAttachmentIdentifiers) {
         if (auto attachment = m_document.attachmentForIdentifier(identifier))
-            client()->didInsertAttachmentWithIdentifier(identifier, attachment->attributeWithoutSynchronization(HTMLNames::srcAttr), attachment->hasEnclosingImage());
+            client()->didInsertAttachmentWithIdentifier(identifier, attachment->attributeWithoutSynchronization(HTMLNames::srcAttr), attachment->enclosingImageElement());
         else
             ASSERT_NOT_REACHED();
     }

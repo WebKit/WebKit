@@ -365,6 +365,24 @@ static NSData *testPDFData()
     observer.expectAttachmentUpdates(removed, inserted);
 }
 
+- (NSString *)ensureAttachmentForImageElement
+{
+    __block bool doneWaitingForAttachmentInsertion = false;
+    [self performAfterReceivingMessage:@"inserted" action:^{
+        doneWaitingForAttachmentInsertion = true;
+    }];
+
+    const char *scriptForEnsuringAttachmentIdentifier = \
+        "const identifier = HTMLAttachmentElement.getAttachmentIdentifier(document.querySelector('img'));"
+        "setTimeout(() => webkit.messageHandlers.testHandler.postMessage('inserted'), 0);"
+        "identifier";
+
+    RetainPtr attachmentIdentifier = [self stringByEvaluatingJavaScript:@(scriptForEnsuringAttachmentIdentifier)];
+    TestWebKitAPI::Util::run(&doneWaitingForAttachmentInsertion);
+
+    return attachmentIdentifier.autorelease();
+}
+
 @end
 
 @implementation NSData (AttachmentTesting)
@@ -1407,22 +1425,11 @@ TEST(WKAttachmentTests, AddAttachmentToConnectedImageElement)
     auto webView = webViewForTestingAttachments();
     [webView _synchronouslyExecuteEditCommand:@"InsertHTML" argument:@"<img></img>"];
 
-    __block bool doneWaitingForAttachmentInsertion = false;
-    [webView performAfterReceivingMessage:@"inserted" action:^{
-        doneWaitingForAttachmentInsertion = true;
-    }];
-
-    const char *scriptForEnsuringAttachmentIdentifier = \
-        "const identifier = HTMLAttachmentElement.getAttachmentIdentifier(document.querySelector('img'));"
-        "setTimeout(() => webkit.messageHandlers.testHandler.postMessage('inserted'), 0);"
-        "identifier";
-
     ObserveAttachmentUpdatesForScope observer(webView.get());
-    NSString *attachmentIdentifier = [webView stringByEvaluatingJavaScript:@(scriptForEnsuringAttachmentIdentifier)];
+    NSString *attachmentIdentifier = [webView ensureAttachmentForImageElement];
     auto attachment = retainPtr([webView _attachmentForIdentifier:attachmentIdentifier]);
     EXPECT_WK_STREQ(attachmentIdentifier, [attachment uniqueIdentifier]);
     EXPECT_WK_STREQ(attachmentIdentifier, [webView stringByEvaluatingJavaScript:@"document.querySelector('img').attachmentIdentifier"]);
-    Util::run(&doneWaitingForAttachmentInsertion);
     observer.expectAttachmentUpdates(@[ ], @[ attachment.get() ]);
 
     auto firstImage = adoptNS([[NSFileWrapper alloc] initWithURL:testImageFileURL() options:0 error:nil]);
@@ -1531,6 +1538,37 @@ TEST(WKAttachmentTests, CopyAndPasteBetweenWebViews)
     EXPECT_WK_STREQ("application/octet-stream", pastedFileInfo.contentType);
     EXPECT_WK_STREQ("public.directory", pastedFolderInfo.contentType);
     EXPECT_WK_STREQ("application/zip", pastedArchiveInfo.contentType);
+}
+
+TEST(WKAttachmentTests, CopyAndPasteImageBetweenWebViews)
+{
+    auto image = adoptNS([[NSFileWrapper alloc] initWithURL:testImageFileURL() options:0 error:nil]);
+    [image setPreferredFilename:@"icon.png"];
+    RetainPtr originalData = [image regularFileContents];
+
+    @autoreleasepool {
+        auto sourceView = webViewForTestingAttachments();
+        [sourceView _synchronouslyExecuteEditCommand:@"InsertHTML" argument:@"<img></img>"];
+
+        auto attachment = [sourceView _attachmentForIdentifier:[sourceView ensureAttachmentForImageElement]];
+        [attachment synchronouslySetFileWrapper:image.get() newContentType:@"image/png" error:nil];
+        [sourceView waitForImageElementSizeToBecome:CGSizeMake(215, 174)];
+
+        EXPECT_WK_STREQ("icon.png", [sourceView valueOfAttribute:@"alt" forQuerySelector:@"img"]);
+        [sourceView selectAll:nil];
+        [sourceView _synchronouslyExecuteEditCommand:@"Copy" argument:nil];
+        [sourceView waitForNextPresentationUpdate];
+    }
+
+    auto destinationView = webViewForTestingAttachments();
+    ObserveAttachmentUpdatesForScope observer(destinationView.get());
+    [destinationView _synchronouslyExecuteEditCommand:@"Paste" argument:nil];
+    EXPECT_EQ(1U, observer.observer().inserted.count);
+
+    auto pastedAttachmentInfo = [observer.observer().inserted.firstObject info];
+    EXPECT_WK_STREQ("image/png", pastedAttachmentInfo.contentType);
+    EXPECT_WK_STREQ("icon.png", pastedAttachmentInfo.name);
+    EXPECT_TRUE([originalData isEqualToData:pastedAttachmentInfo.data]);
 }
 
 TEST(WKAttachmentTests, AttachmentIdentifierOfClonedAttachment)

@@ -152,9 +152,12 @@ const String& HTMLAttachmentElement::ensureUniqueIdentifier()
     return m_uniqueIdentifier;
 }
 
-bool HTMLAttachmentElement::hasEnclosingImage() const
+RefPtr<HTMLImageElement> HTMLAttachmentElement::enclosingImageElement() const
 {
-    return is<HTMLImageElement>(shadowHost());
+    if (auto hostElement = shadowHost(); is<HTMLImageElement>(hostElement))
+        return downcast<HTMLImageElement>(hostElement);
+
+    return { };
 }
 
 void HTMLAttachmentElement::parseAttribute(const QualifiedName& name, const AtomString& value)
@@ -203,10 +206,15 @@ String HTMLAttachmentElement::attachmentPath() const
 
 void HTMLAttachmentElement::updateAttributes(std::optional<uint64_t>&& newFileSize, const String& newContentType, const String& newFilename)
 {
-    if (!newFilename.isNull())
+    if (!newFilename.isNull()) {
+        if (RefPtr enclosingImage = enclosingImageElement())
+            enclosingImage->setAttributeWithoutSynchronization(HTMLNames::altAttr, newFilename);
         setAttributeWithoutSynchronization(HTMLNames::titleAttr, newFilename);
-    else
+    } else {
+        if (RefPtr enclosingImage = enclosingImageElement())
+            enclosingImage->removeAttribute(HTMLNames::altAttr);
         removeAttribute(HTMLNames::titleAttr);
+    }
 
     if (!newContentType.isNull())
         setAttributeWithoutSynchronization(HTMLNames::typeAttr, newContentType);
@@ -229,8 +237,11 @@ static bool mimeTypeIsSuitableForInlineImageAttachment(const String& mimeType)
 
 void HTMLAttachmentElement::updateEnclosingImageWithData(const String& contentType, Ref<FragmentedSharedBuffer>&& buffer)
 {
-    auto* hostElement = shadowHost();
-    if (!is<HTMLImageElement>(hostElement) || !buffer->size())
+    if (buffer->isEmpty())
+        return;
+
+    RefPtr enclosingImage = enclosingImageElement();
+    if (!enclosingImage)
         return;
 
     String mimeType = contentType;
@@ -242,7 +253,7 @@ void HTMLAttachmentElement::updateEnclosingImageWithData(const String& contentTy
     if (!mimeTypeIsSuitableForInlineImageAttachment(mimeType))
         return;
 
-    hostElement->setAttributeWithoutSynchronization(HTMLNames::srcAttr, DOMURL::createObjectURL(document(), Blob::create(&document(), buffer->extractData(), mimeType)));
+    enclosingImage->setAttributeWithoutSynchronization(HTMLNames::srcAttr, DOMURL::createObjectURL(document(), Blob::create(&document(), buffer->extractData(), mimeType)));
 }
 
 void HTMLAttachmentElement::updateThumbnail(const RefPtr<Image>& thumbnail)

@@ -1,3 +1,18 @@
+2021-12-31  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Updating the file name of attachment-backed images should automatically set the `alt` attribute
+        https://bugs.webkit.org/show_bug.cgi?id=234747
+        rdar://85899879
+
+        Reviewed by Darin Adler.
+
+        Add a new API test to exercise this scenario -- i.e. copying an attachment-backed image in one web view, pasting
+        it into another web view, and confirming that the pasted attachment preserves the _WKAttachment file name.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WKAttachmentTests.mm:
+        (-[TestWKWebView ensureAttachmentForImageElement]):
+        (TestWebKitAPI::TEST):
+
 2021-12-30  Jean-Yves Avenard  <jya@apple.com>
 
         SharedBuffer::takeData() is still dangerous
