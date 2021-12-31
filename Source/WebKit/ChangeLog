@@ -1,3 +1,58 @@
+2021-12-31  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Refactor some Cocoa-specific code in WebCore::FontAttributes to be platform-agnostic
+        https://bugs.webkit.org/show_bug.cgi?id=234757
+
+        See comments below (as well as WebCore/ChangeLog) for more details.
+
+        Reviewed by Darin Adler.
+
+        * Platform/cocoa/CocoaFont.h: Removed.
+
+        Move this file into WebCore, as `FontCocoa.h`.
+
+        * Shared/Cocoa/ArgumentCodersCocoa.mm:
+        * Shared/Cocoa/CoreTextHelpers.h:
+        * Shared/Cocoa/CoreTextHelpers.mm:
+
+        Adjust a few places that currently import CocoaFont.h to import WebCore/FontCocoa.h instead. Additonally, change
+        CocoaFont to WebCore::CocoaFont where necessary.
+
+        * Shared/Cocoa/WebCoreArgumentCodersCocoa.mm:
+        (IPC::ArgumentCoder<WebCore::FontAttributes>::encodePlatformData): Deleted.
+        (IPC::ArgumentCoder<WebCore::FontAttributes>::decodePlatformData): Deleted.
+
+        Remove platform-specific FontAttributes encoding/decoding logic. This is no longer needed, since we just
+        propagate a Font instead of an NSFont or UIFont.
+
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<RefPtr<Font>>::encode):
+        (IPC::ArgumentCoder<RefPtr<Font>>::decode):
+
+        Add argument coders for `RefPtr<Font>` that encode the font only if it's non-null.
+
+        (IPC::ArgumentCoder<FontAttributes>::encode):
+        (IPC::ArgumentCoder<FontAttributes>::decode):
+
+        Remove the calls to `encodePlatformData/decodePlatformData`, and instead encode the `RefPtr<WebCore::Font>`.
+
+        * Shared/WebCoreArgumentCoders.h:
+        * Shared/playstation/WebCoreArgumentCodersPlayStation.cpp:
+        (IPC::ArgumentCoder<FontAttributes>::encodePlatformData): Deleted.
+        (IPC::ArgumentCoder<FontAttributes>::decodePlatformData): Deleted.
+        * Shared/soup/WebCoreArgumentCodersSoup.cpp:
+        (IPC::ArgumentCoder<FontAttributes>::encodePlatformData): Deleted.
+        (IPC::ArgumentCoder<FontAttributes>::decodePlatformData): Deleted.
+        * Shared/win/WebCoreArgumentCodersWin.cpp:
+        (IPC::ArgumentCoder<FontAttributes>::encodePlatformData): Deleted.
+        (IPC::ArgumentCoder<FontAttributes>::decodePlatformData): Deleted.
+
+        Remove some method stubs that are now unnecessary.
+
+        * UIProcess/Cocoa/WKSafeBrowsingWarning.mm:
+        (fontOfSize):
+        * WebKit.xcodeproj/project.pbxproj:
+
 2021-12-26  Sam Weinig  <weinig@apple.com>
 
         Replace WebKit/CocoaColor.h with WebCore/ColorCocoa.h, not confusing at all

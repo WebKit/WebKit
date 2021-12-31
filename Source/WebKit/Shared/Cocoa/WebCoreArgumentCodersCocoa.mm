@@ -440,18 +440,6 @@ bool ArgumentCoder<WebCore::DictionaryPopupInfo>::decodePlatformData(Decoder& de
     return true;
 }
 
-void ArgumentCoder<WebCore::FontAttributes>::encodePlatformData(Encoder& encoder, const WebCore::FontAttributes& attributes)
-{
-    encoder << attributes.font;
-}
-
-std::optional<WebCore::FontAttributes> ArgumentCoder<WebCore::FontAttributes>::decodePlatformData(Decoder& decoder, WebCore::FontAttributes& attributes)
-{
-    if (!IPC::decode(decoder, attributes.font))
-        return std::nullopt;
-    return attributes;
-}
-
 void ArgumentCoder<Ref<WebCore::Font>>::encodePlatformData(Encoder& encoder, const Ref<WebCore::Font>& font)
 {
     const auto& platformData = font->platformData();

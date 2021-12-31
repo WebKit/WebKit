@@ -65,12 +65,6 @@
 
 namespace WebCore {
 
-void Editor::platformFontAttributesAtSelectionStart(FontAttributes& attributes, const RenderStyle& style) const
-{
-    if (auto ctFont = style.fontCascade().primaryFont().getCTFont())
-        attributes.font = (__bridge id)ctFont;
-}
-
 static RefPtr<SharedBuffer> archivedDataForAttributedString(NSAttributedString *attributedString)
 {
     if (!attributedString.length)

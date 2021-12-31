@@ -27,22 +27,10 @@
 #include "WebCoreArgumentCoders.h"
 
 #include <WebCore/Font.h>
-#include <WebCore/FontAttributes.h>
 
 namespace IPC {
 
 using namespace WebCore;
-
-void ArgumentCoder<FontAttributes>::encodePlatformData(Encoder&, const FontAttributes&)
-{
-    ASSERT_NOT_REACHED();
-}
-
-std::optional<FontAttributes> ArgumentCoder<FontAttributes>::decodePlatformData(Decoder&, FontAttributes&)
-{
-    ASSERT_NOT_REACHED();
-    return std::nullopt;
-}
 
 void ArgumentCoder<Ref<Font>>::encodePlatformData(Encoder& encoder, const Ref<Font>& font)
 {

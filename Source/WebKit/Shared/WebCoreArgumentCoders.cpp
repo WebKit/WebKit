@@ -1071,6 +1071,31 @@ static WARN_UNUSED_RETURN bool decodeOptionalImage(Decoder& decoder, RefPtr<Imag
     return decodeImage(decoder, image);
 }
 
+void ArgumentCoder<RefPtr<Font>>::encode(Encoder& encoder, const RefPtr<Font>& font)
+{
+    encoder << !!font;
+    if (font)
+        encoder << Ref { *font };
+}
+
+std::optional<RefPtr<Font>> ArgumentCoder<RefPtr<Font>>::decode(Decoder& decoder)
+{
+    std::optional<bool> hasFont;
+    decoder >> hasFont;
+    if (!hasFont)
+        return std::nullopt;
+
+    if (!hasFont.value())
+        return std::make_optional(nullptr);
+
+    std::optional<Ref<Font>> font;
+    decoder >> font;
+    if (!font)
+        return std::nullopt;
+
+    return { WTFMove(*font) };
+}
+
 void ArgumentCoder<Ref<Font>>::encode(Encoder& encoder, const Ref<WebCore::Font>& font)
 {
     encoder << font->origin();
@@ -2910,12 +2935,7 @@ void ArgumentCoder<FontAttributes>::encode(Encoder& encoder, const FontAttribute
     encoder << attributes.backgroundColor << attributes.foregroundColor << attributes.fontShadow << attributes.hasUnderline << attributes.hasStrikeThrough << attributes.textLists;
     encoder << attributes.horizontalAlignment;
     encoder << attributes.subscriptOrSuperscript;
-
-    if (attributes.encodingRequiresPlatformData()) {
-        encoder << true;
-        encodePlatformData(encoder, attributes);
-        return;
-    }
+    encoder << attributes.font;
 }
 
 std::optional<FontAttributes> ArgumentCoder<FontAttributes>::decode(Decoder& decoder)
@@ -2946,11 +2966,12 @@ std::optional<FontAttributes> ArgumentCoder<FontAttributes>::decode(Decoder& dec
     if (!decoder.decode(attributes.subscriptOrSuperscript))
         return std::nullopt;
 
-    bool hasPlatformData;
-    if (!decoder.decode(hasPlatformData))
+    std::optional<RefPtr<Font>> font;
+    decoder >> font;
+    if (!font)
         return std::nullopt;
-    if (hasPlatformData)
-        return decodePlatformData(decoder, attributes);
+
+    attributes.font = WTFMove(*font);
 
     return attributes;
 }

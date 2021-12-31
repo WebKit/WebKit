@@ -26,9 +26,9 @@
 #import "config.h"
 #import "WKSafeBrowsingWarning.h"
 
-#import "CocoaFont.h"
 #import "PageClient.h"
 #import "SafeBrowsingWarning.h"
+#import <WebCore/FontCocoa.h>
 #import <WebCore/LocalizedStrings.h>
 #import <WebCore/WebCoreObjCExtras.h>
 #import <wtf/URL.h>
@@ -78,7 +78,7 @@ enum class WarningTextSize : uint8_t {
     Body
 };
 
-static CocoaFont *fontOfSize(WarningTextSize size)
+static WebCore::CocoaFont *fontOfSize(WarningTextSize size)
 {
 #if PLATFORM(MAC)
     switch (size) {

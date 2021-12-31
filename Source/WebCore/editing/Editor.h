@@ -631,7 +631,6 @@ private:
     static RefPtr<SharedBuffer> dataInRTFDFormat(NSAttributedString *);
     static RefPtr<SharedBuffer> dataInRTFFormat(NSAttributedString *);
 #endif
-    void platformFontAttributesAtSelectionStart(FontAttributes&, const RenderStyle&) const;
 
     void scheduleEditorUIUpdate();
 

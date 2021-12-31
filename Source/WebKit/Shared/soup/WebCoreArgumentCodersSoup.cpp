@@ -36,7 +36,6 @@
 #include <WebCore/Credential.h>
 #include <WebCore/DictionaryPopupInfo.h>
 #include <WebCore/Font.h>
-#include <WebCore/FontAttributes.h>
 #include <WebCore/ResourceError.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/ResourceResponse.h>
@@ -212,17 +211,6 @@ bool ArgumentCoder<Credential>::decodePlatformData(Decoder& decoder, Credential&
 
     credential = Credential(certificate->get(), persistence);
     return true;
-}
-
-void ArgumentCoder<FontAttributes>::encodePlatformData(Encoder&, const FontAttributes&)
-{
-    ASSERT_NOT_REACHED();
-}
-
-std::optional<FontAttributes> ArgumentCoder<FontAttributes>::decodePlatformData(Decoder&, FontAttributes&)
-{
-    ASSERT_NOT_REACHED();
-    return std::nullopt;
 }
 
 void ArgumentCoder<DictionaryPopupInfo>::encodePlatformData(Encoder&, const DictionaryPopupInfo&)

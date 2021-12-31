@@ -3997,10 +3997,6 @@ void Editor::scheduleEditorUIUpdate()
 
 #if !PLATFORM(COCOA)
 
-void Editor::platformFontAttributesAtSelectionStart(FontAttributes&, const RenderStyle&) const
-{
-}
-
 String Editor::platformContentTypeForBlobType(const String& type) const
 {
     return type;
@@ -4044,6 +4040,10 @@ static Vector<TextList> editableTextListsAtPositionInDescendingOrder(const Posit
 
 FontAttributes Editor::fontAttributesAtSelectionStart()
 {
+    FontAttributes attributes;
+    bool hasMultipleFonts = false; // FIXME (190120): Add `hasMultipleFonts` as a member in `FontAttributes`.
+    attributes.font = fontForSelection(hasMultipleFonts);
+
     RefPtr<Node> nodeToRemove;
     auto nodeRemovalScope = makeScopeExit([&nodeToRemove]() {
         if (nodeToRemove)
@@ -4055,9 +4055,6 @@ FontAttributes Editor::fontAttributesAtSelectionStart()
         return { };
 
     ScriptDisallowedScope::InMainThread scriptDisallowedScope;
-
-    FontAttributes attributes;
-    platformFontAttributesAtSelectionStart(attributes, *style);
 
     // FIXME: for now, always report the colors after applying -apple-color-filter. In future not all clients
     // may want this, so we may have to add a setting to control it. See also editingAttributedStringFromRange().

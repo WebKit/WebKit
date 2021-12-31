@@ -392,6 +392,11 @@ template<> struct ArgumentCoder<WebCore::Cursor> {
     static WARN_UNUSED_RETURN bool decode(Decoder&, WebCore::Cursor&);
 };
 
+template<> struct ArgumentCoder<RefPtr<WebCore::Font>> {
+    static void encode(Encoder&, const RefPtr<WebCore::Font>&);
+    static std::optional<RefPtr<WebCore::Font>> decode(Decoder&);
+};
+
 template<> struct ArgumentCoder<Ref<WebCore::Font>> {
     static void encode(Encoder&, const Ref<WebCore::Font>&);
     static std::optional<Ref<WebCore::Font>> decode(Decoder&);
@@ -730,8 +735,6 @@ template<> struct ArgumentCoder<RefPtr<WebCore::SecurityOrigin>> {
 template<> struct ArgumentCoder<WebCore::FontAttributes> {
     static void encode(Encoder&, const WebCore::FontAttributes&);
     static std::optional<WebCore::FontAttributes> decode(Decoder&);
-    static void encodePlatformData(Encoder&, const WebCore::FontAttributes&);
-    static std::optional<WebCore::FontAttributes> decodePlatformData(Decoder&, WebCore::FontAttributes&);
 };
 
 #if ENABLE(ATTACHMENT_ELEMENT)

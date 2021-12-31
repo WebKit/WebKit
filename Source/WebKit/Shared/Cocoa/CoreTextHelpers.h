@@ -25,7 +25,7 @@
 
 #pragma once
 
-#import "CocoaFont.h"
+#import <WebCore/FontCocoa.h>
 #import <wtf/RetainPtr.h>
 
 #if USE(APPKIT)
@@ -36,6 +36,6 @@
 
 namespace WebKit {
 
-CocoaFont *fontWithAttributes(NSDictionary *attributes, CGFloat size);
+WebCore::CocoaFont *fontWithAttributes(NSDictionary *attributes, CGFloat size);
 
 }
