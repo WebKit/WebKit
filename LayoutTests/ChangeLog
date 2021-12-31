@@ -1,3 +1,12 @@
+2021-12-31  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GTK][WPE] Unreviewed test gardening, move several fast/scrolling tests failures to GLIB
+        https://bugs.webkit.org/show_bug.cgi?id=234759
+
+        * platform/glib/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/wpe/TestExpectations:
+
 2021-12-30  Diego Pino Garcia  <dpino@igalia.com>
 
         [GLIB] Unreviewed test gardening, update state of flakey tests

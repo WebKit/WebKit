@@ -2380,6 +2380,15 @@ imported/w3c/web-platform-tests/html/canvas/offscreen/wide-gamut-canvas/ [ Skip 
 
 storage/indexeddb/structured-clone-image-data-display-p3.html [ Skip ]
 
+# UIScriptController
+webkit.org/b/205159 fast/scrolling/overflow-scroll-past-max.html [ Crash ]
+
+# Timing out due to missing functionality.
+webkit.org/b/212202 fast/scrolling/arrow-key-scroll-in-rtl-document.html [ Skip ]
+webkit.org/b/212202 fast/scrolling/iframe-scrollable-after-back.html [ Skip ]
+webkit.org/b/212202 fast/scrolling/programmatic-scroll-to-zero-zero.html [ Skip ]
+webkit.org/b/212202 fast/scrolling/rtl-point-in-iframe.html [ Skip ]
+
 # Failing after r277073.
 webkit.org/b/225462 imported/w3c/web-platform-tests/css/css-backgrounds/background-repeat-space-10.html [ ImageOnlyFailure ]
 webkit.org/b/225462 imported/w3c/web-platform-tests/css/css-backgrounds/background-repeat-space-1a.html [ ImageOnlyFailure ]
