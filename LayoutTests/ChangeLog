@@ -1,3 +1,13 @@
+2021-12-31  Alan Bujtas  <zalan@apple.com>
+
+        REGRESSION (r287028): Incorrect root inline box horizontal position when text-align offset is present
+        https://bugs.webkit.org/show_bug.cgi?id=234767
+
+        Reviewed by Antti Koivisto.
+
+        * fast/text/root-inline-box-offset-with-text-align-expected.html: Added.
+        * fast/text/root-inline-box-offset-with-text-align.html: Added.
+
 2021-12-31  Diego Pino Garcia  <dpino@igalia.com>
 
         [GTK][WPE] Unreviewed test gardening, move several fast/scrolling tests failures to GLIB

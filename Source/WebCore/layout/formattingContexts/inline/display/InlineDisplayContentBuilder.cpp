@@ -95,7 +95,9 @@ DisplayBoxes InlineDisplayContentBuilder::build(const LineBuilder::LineContent& 
     m_lineIndex = lineIndex;
     // Every line starts with a root box, even the empty ones.
     auto rootInlineBoxRect = lineBox.logicalRectForRootInlineBox();
-    rootInlineBoxRect.moveBy(displayLine.topLeft());
+    rootInlineBoxRect.moveHorizontally(displayLine.left() + displayLine.contentLeft());
+    rootInlineBoxRect.moveVertically(displayLine.top());
+
     boxes.append({ m_lineIndex, InlineDisplay::Box::Type::RootInlineBox, root(), UBIDI_DEFAULT_LTR, rootInlineBoxRect, rootInlineBoxRect, { }, { }, lineBox.rootInlineBox().hasContent() });
 
     auto contentNeedsBidiReordering = !lineContent.visualOrderList.isEmpty();
