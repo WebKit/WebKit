@@ -361,10 +361,6 @@ TextDecorationPainter TextBoxPainter::createDecorationPainter(const StyledMarked
 
     updateGraphicsContext(context, markedText.style.textStyles);
 
-    bool isCombinedText = textBox().isCombinedText();
-    if (isCombinedText)
-        context.concatCTM(rotation(m_paintRect, Clockwise));
-
     // Note that if the text is truncated, we let the thing being painted in the truncation
     // draw its own decoration.
     GraphicsContextStateSaver stateSaver { context, false };
@@ -396,22 +392,26 @@ TextDecorationPainter TextBoxPainter::createDecorationPainter(const StyledMarked
 
 void TextBoxPainter::paintBackgroundDecorations(TextDecorationPainter& decorationPainter, const StyledMarkedText& markedText, const FloatRect& snappedSelectionRect)
 {
+    bool isCombinedText = textBox().isCombinedText();
+    if (isCombinedText)
+        m_paintInfo.context().concatCTM(rotation(m_paintRect, Clockwise));
+
     decorationPainter.paintBackgroundDecorations(m_paintTextRun.subRun(markedText.startOffset, markedText.endOffset - markedText.startOffset), textOriginFromPaintRect(snappedSelectionRect), snappedSelectionRect.location());
 
-    if (textBox().isCombinedText()) {
-        GraphicsContext& context = m_paintInfo.context();
-        context.concatCTM(rotation(m_paintRect, Counterclockwise));
-    }
+    if (isCombinedText)
+        m_paintInfo.context().concatCTM(rotation(m_paintRect, Counterclockwise));
 }
 
 void TextBoxPainter::paintForegroundDecorations(TextDecorationPainter& decorationPainter, const FloatRect& snappedSelectionRect)
 {
+    bool isCombinedText = textBox().isCombinedText();
+    if (isCombinedText)
+        m_paintInfo.context().concatCTM(rotation(m_paintRect, Clockwise));
+
     decorationPainter.paintForegroundDecorations(snappedSelectionRect.location());
 
-    if (textBox().isCombinedText()) {
-        GraphicsContext& context = m_paintInfo.context();
-        context.concatCTM(rotation(m_paintRect, Counterclockwise));
-    }
+    if (isCombinedText)
+        m_paintInfo.context().concatCTM(rotation(m_paintRect, Counterclockwise));
 }
 
 void TextBoxPainter::paintCompositionUnderlines()

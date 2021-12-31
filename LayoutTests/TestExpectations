@@ -4207,7 +4207,6 @@ webkit.org/b/212046 imported/w3c/web-platform-tests/css/css-flexbox/scrollbars-a
 webkit.org/b/212046 imported/w3c/web-platform-tests/css/css-flexbox/scrollbars.html [ ImageOnlyFailure ]
 
 # text-combine-upright bugs
-webkit.org/b/234707 imported/w3c/web-platform-tests/css/css-writing-modes/text-combine-upright-decorations-001.html [ ImageOnlyFailure ]
 webkit.org/b/234704 imported/w3c/web-platform-tests/css/css-writing-modes/text-combine-upright-layout-rules-001.html [ ImageOnlyFailure ]
 webkit.org/b/164510 imported/w3c/web-platform-tests/css/css-writing-modes/text-combine-upright-line-breaking-rules-001.html [ ImageOnlyFailure ]
 webkit.org/b/234704 imported/w3c/web-platform-tests/css/css-writing-modes/text-combine-upright-value-all-001.html [ ImageOnlyFailure ]
