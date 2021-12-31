@@ -393,7 +393,7 @@ WI.RadialGradient = class RadialGradient extends WI.Gradient
 
     set angleValue(value)
     {
-        console.assert(false, "CSS conic gradients do not have an angle");
+        console.assert(false, "CSS radial gradients do not have an angle");
     }
 
     get angleUnits()
@@ -403,7 +403,7 @@ WI.RadialGradient = class RadialGradient extends WI.Gradient
 
     set angleUnits(units)
     {
-        console.assert(false, "CSS conic gradients do not have an angle");
+        console.assert(false, "CSS radial gradients do not have an angle");
     }
 
     copy()

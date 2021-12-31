@@ -1,3 +1,15 @@
+2021-12-31  Tim Nguyen  <ntim@apple.com>
+
+        Web Inspector: fix assert text in Gradient.js
+
+        Unreviewed.
+
+        Wrong assert text was added in r287409, it should be radial instead of conic gradients.
+
+        * UserInterface/Models/Gradient.js:
+        (WI.RadialGradient.prototype.set angleValue):
+        (WI.RadialGradient.prototype.set angleUnits):
+
 2021-12-24  Tim Nguyen  <ntim@apple.com>
 
         Remove non-standard -webkit-background-composite CSS property
