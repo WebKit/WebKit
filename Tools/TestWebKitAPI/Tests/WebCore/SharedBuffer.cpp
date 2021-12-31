@@ -199,7 +199,7 @@ static void checkBuffer(const uint8_t* buffer, size_t bufferLength, const char* 
 {
     // expected is null terminated, buffer is not.
     size_t length = strlen(expected);
-    EXPECT_EQ(length, bufferLength);
+    ASSERT_EQ(length, bufferLength);
     for (size_t i = 0; i < length; ++i)
         EXPECT_EQ(buffer[i], expected[i]);
 }
@@ -301,6 +301,18 @@ TEST_F(FragmentedSharedBufferTest, read)
         builder.append(&simpleText[i], 2);
     EXPECT_EQ(builder.size(), strlen(simpleText));
     check(builder.take());
+}
+
+TEST_F(FragmentedSharedBufferTest, extractData)
+{
+    const char* const simpleText = "This is a simple test.";
+    auto original = SharedBuffer::create(simpleText, strlen(simpleText));
+    auto copy = original->copy();
+    auto vector = copy->extractData();
+    EXPECT_TRUE(copy->isEmpty());
+    EXPECT_FALSE(original->isEmpty());
+    ASSERT_TRUE(original->hasOneSegment());
+    EXPECT_GT(original->begin()->segment->size(), 0u);
 }
 
 #if ENABLE(MHTML)

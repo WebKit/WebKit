@@ -1,3 +1,14 @@
+2021-12-30  Jean-Yves Avenard  <jya@apple.com>
+
+        SharedBuffer::takeData() is still dangerous
+        https://bugs.webkit.org/show_bug.cgi?id=234724
+        rdar://problem/86957233
+
+        Reviewed by Darin Adler.
+
+        * TestWebKitAPI/Tests/WebCore/SharedBuffer.cpp:
+        (TestWebKitAPI::TEST_F):
+
 2021-12-28  Sam Weinig  <weinig@apple.com>
 
         Enhance Vector::map to allow specifying what kind of Vector to return (e.g. inline capacity, overflow, etc.)

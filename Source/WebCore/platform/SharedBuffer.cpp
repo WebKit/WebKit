@@ -137,7 +137,7 @@ Vector<uint8_t> FragmentedSharedBuffer::takeData()
         return { };
 
     Vector<uint8_t> combinedData;
-    if (hasOneSegment() && std::holds_alternative<Vector<uint8_t>>(m_segments[0].segment->m_immutableData))
+    if (hasOneSegment() && std::holds_alternative<Vector<uint8_t>>(m_segments[0].segment->m_immutableData) && m_segments[0].segment->hasOneRef())
         combinedData = std::exchange(std::get<Vector<uint8_t>>(m_segments[0].segment->m_immutableData), Vector<uint8_t>());
     else
         combinedData = combineSegmentsData(m_segments, m_size);
