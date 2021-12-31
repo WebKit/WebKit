@@ -69,6 +69,7 @@ bool isValidMarkerStyleProperty(CSSPropertyID id)
     case CSSPropertyListStyle:
     case CSSPropertyOverflowWrap:
     case CSSPropertyTabSize:
+    case CSSPropertyTextCombineUpright:
     case CSSPropertyTextDecorationSkipInk:
     case CSSPropertyTextEmphasis:
     case CSSPropertyTextEmphasisColor:

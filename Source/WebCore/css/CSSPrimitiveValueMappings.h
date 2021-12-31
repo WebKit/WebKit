@@ -3102,8 +3102,8 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(TextCombine e)
     case TextCombine::None:
         m_value.valueID = CSSValueNone;
         break;
-    case TextCombine::Horizontal:
-        m_value.valueID = CSSValueHorizontal;
+    case TextCombine::All:
+        m_value.valueID = CSSValueAll;
         break;
     }
 }
@@ -3115,8 +3115,9 @@ template<> inline CSSPrimitiveValue::operator TextCombine() const
     switch (m_value.valueID) {
     case CSSValueNone:
         return TextCombine::None;
-    case CSSValueHorizontal:
-        return TextCombine::Horizontal;
+    case CSSValueAll:
+    case CSSValueHorizontal: // -webkit-text-combine only
+        return TextCombine::All;
     default:
         break;
     }

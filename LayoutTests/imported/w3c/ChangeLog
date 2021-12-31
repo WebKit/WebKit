@@ -1,3 +1,23 @@
+2021-12-27  Tim Nguyen  <ntim@apple.com>
+
+        Implement text-combine-upright property
+        https://bugs.webkit.org/show_bug.cgi?id=150821
+
+        Reviewed by Dean Jackson.
+
+        * web-platform-tests/css/css-cascade/all-prop-initial-xml-expected.txt:
+        * web-platform-tests/css/css-pseudo/parsing/marker-supported-properties-expected.txt:
+        * web-platform-tests/css/css-pseudo/parsing/marker-supported-properties-in-animation-expected.txt:
+        * web-platform-tests/css/css-writing-modes/inheritance-expected.txt:
+        * web-platform-tests/css/css-writing-modes/parsing/text-combine-upright-computed-expected.txt:
+        * web-platform-tests/css/css-writing-modes/parsing/text-combine-upright-valid-expected.txt:
+        * web-platform-tests/css/css-writing-modes/text-combine-upright-parsing-digits-001-expected.txt:
+        * web-platform-tests/css/css-writing-modes/text-combine-upright-parsing-digits-002-expected.txt:
+        * web-platform-tests/css/css-writing-modes/text-combine-upright-parsing-invalid-001-expected.txt:
+        * web-platform-tests/css/css-writing-modes/text-combine-upright-parsing-invalid-002-expected.txt:
+        * web-platform-tests/css/css-writing-modes/text-combine-upright-parsing-valid-001-expected.txt:
+        * web-platform-tests/css/cssom/getComputedStyle-detached-subtree-expected.txt:
+
 2021-12-28  Sam Weinig  <weinig@apple.com>
 
         Support color interpolation methods for CSS Gradients

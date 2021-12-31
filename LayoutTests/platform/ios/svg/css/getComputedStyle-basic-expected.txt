@@ -340,6 +340,8 @@ rect: style.getPropertyValue(text-align) : start
 rect: style.getPropertyCSSValue(text-align) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(text-anchor) : start
 rect: style.getPropertyCSSValue(text-anchor) : [object CSSPrimitiveValue]
+rect: style.getPropertyValue(text-combine-upright) : none
+rect: style.getPropertyCSSValue(text-combine-upright) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(text-decoration) : none
 rect: style.getPropertyCSSValue(text-decoration) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(text-emphasis-color) : rgb(0, 0, 0)
@@ -488,8 +490,6 @@ rect: style.getPropertyValue(-webkit-print-color-adjust) : economy
 rect: style.getPropertyCSSValue(-webkit-print-color-adjust) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-rtl-ordering) : logical
 rect: style.getPropertyCSSValue(-webkit-rtl-ordering) : [object CSSPrimitiveValue]
-rect: style.getPropertyValue(-webkit-text-combine) : none
-rect: style.getPropertyCSSValue(-webkit-text-combine) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-text-fill-color) : rgb(0, 0, 0)
 rect: style.getPropertyCSSValue(-webkit-text-fill-color) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-text-orientation) : mixed
@@ -850,6 +850,8 @@ g: style.getPropertyValue(text-align) : start
 g: style.getPropertyCSSValue(text-align) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(text-anchor) : start
 g: style.getPropertyCSSValue(text-anchor) : [object CSSPrimitiveValue]
+g: style.getPropertyValue(text-combine-upright) : none
+g: style.getPropertyCSSValue(text-combine-upright) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(text-decoration) : none
 g: style.getPropertyCSSValue(text-decoration) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(text-emphasis-color) : rgb(0, 0, 0)
@@ -998,8 +1000,6 @@ g: style.getPropertyValue(-webkit-print-color-adjust) : economy
 g: style.getPropertyCSSValue(-webkit-print-color-adjust) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-rtl-ordering) : logical
 g: style.getPropertyCSSValue(-webkit-rtl-ordering) : [object CSSPrimitiveValue]
-g: style.getPropertyValue(-webkit-text-combine) : none
-g: style.getPropertyCSSValue(-webkit-text-combine) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-text-fill-color) : rgb(0, 0, 0)
 g: style.getPropertyCSSValue(-webkit-text-fill-color) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-text-orientation) : mixed

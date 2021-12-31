@@ -722,7 +722,7 @@ void LegacyLineLayout::computeInlineDirectionPositionsForLine(LegacyRootInlineBo
 static inline ExpansionBehavior expansionBehaviorForInlineTextBox(RenderBlockFlow& block, LegacyInlineTextBox& textBox, BidiRun* previousRun, BidiRun* nextRun, TextAlignMode textAlign, bool isAfterExpansion)
 {
     // Tatechuyoko is modeled as the Object Replacement Character (U+FFFC), which can never have expansion opportunities inside nor intrinsically adjacent to it.
-    if (textBox.renderer().style().textCombine() == TextCombine::Horizontal)
+    if (textBox.renderer().style().textCombine() == TextCombine::All)
         return ForbidLeftExpansion | ForbidRightExpansion;
 
     ExpansionBehavior result = 0;

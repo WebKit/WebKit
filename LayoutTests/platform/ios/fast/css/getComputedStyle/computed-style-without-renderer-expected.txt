@@ -170,6 +170,7 @@ tab-size: 8
 table-layout: auto
 text-align: start
 text-anchor: start
+text-combine-upright: none
 text-decoration: none
 text-emphasis-color: rgb(0, 0, 0)
 text-emphasis-position: over right
@@ -244,7 +245,6 @@ zoom: 1
 -webkit-nbsp-mode: normal
 -webkit-print-color-adjust: economy
 -webkit-rtl-ordering: logical
--webkit-text-combine: none
 -webkit-text-fill-color: rgb(0, 0, 0)
 -webkit-text-orientation: mixed
 -webkit-text-security: none

@@ -1114,6 +1114,13 @@ after
 before
 inter-character
 
+// -webkit-text-combine
+// horizontal
+
+// text-combine-upright
+// all
+// none
+
 // text-emphasis-position
 over
 under

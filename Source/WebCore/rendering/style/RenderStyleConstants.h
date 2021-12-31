@@ -313,7 +313,7 @@ enum class TableLayoutType : uint8_t {
 
 enum class TextCombine : uint8_t {
     None,
-    Horizontal
+    All
 };
 
 enum class FillAttachment : uint8_t {

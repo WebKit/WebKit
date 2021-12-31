@@ -18,7 +18,7 @@ PASS Property font-weight value '900' in ::marker
 PASS Property line-height value '50px' in ::marker
 PASS Property white-space value 'nowrap' in ::marker
 PASS Property color value 'rgb(0, 100, 200)' in ::marker
-FAIL Property text-combine-upright value 'all' in ::marker assert_true: text-combine-upright doesn't seem to be supported in the computed style expected true got false
+PASS Property text-combine-upright value 'all' in ::marker
 PASS Property unicode-bidi value 'plaintext' in ::marker
 PASS Property direction value 'rtl' in ::marker
 PASS Property content value '"foo"' in ::marker

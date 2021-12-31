@@ -18,7 +18,7 @@ PASS Animation of font-weight in ::marker
 PASS Animation of line-height in ::marker
 FAIL Animation of white-space in ::marker assert_equals: expected "nowrap" but got "pre"
 FAIL Animation of color in ::marker assert_equals: expected "rgb(50, 150, 100)" but got "rgb(0, 0, 0)"
-FAIL Animation of text-combine-upright in ::marker assert_true: text-combine-upright doesn't seem to be supported in the computed style expected true got false
+PASS Animation of text-combine-upright in ::marker
 PASS Animation of unicode-bidi in ::marker
 PASS Animation of direction in ::marker
 FAIL Animation of content in ::marker assert_equals: expected "\"bar\"" but got "normal"
@@ -62,7 +62,7 @@ PASS Transition of font-weight in ::marker
 PASS Transition of line-height in ::marker
 PASS Transition of white-space in ::marker
 PASS Transition of color in ::marker
-FAIL Transition of text-combine-upright in ::marker assert_true: text-combine-upright doesn't seem to be supported in the computed style expected true got false
+PASS Transition of text-combine-upright in ::marker
 PASS Transition of unicode-bidi in ::marker
 PASS Transition of direction in ::marker
 PASS Transition of content in ::marker

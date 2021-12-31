@@ -1032,7 +1032,7 @@ TextStream& operator<<(TextStream& ts, TextCombine textCombine)
 {
     switch (textCombine) {
     case TextCombine::None: ts << "none"; break;
-    case TextCombine::Horizontal: ts << "horizontal"; break;
+    case TextCombine::All: ts << "all"; break;
     }
     return ts;
 }

@@ -810,6 +810,8 @@ bool CSSParserFastPaths::isValidKeywordPropertyAndValue(CSSPropertyID propertyId
         return valueID == CSSValueBefore || valueID == CSSValueAfter || valueID == CSSValueInterCharacter;
     case CSSPropertyWebkitTextCombine:
         return valueID == CSSValueNone || valueID == CSSValueHorizontal;
+    case CSSPropertyTextCombineUpright:
+        return valueID == CSSValueNone || valueID == CSSValueAll;
     case CSSPropertyWebkitTextSecurity: // disc | circle | square | none
         return valueID == CSSValueDisc || valueID == CSSValueCircle || valueID == CSSValueSquare || valueID == CSSValueNone;
     case CSSPropertyTransformStyle:
@@ -976,6 +978,7 @@ bool CSSParserFastPaths::isKeywordPropertyID(CSSPropertyID propertyId)
     case CSSPropertyWebkitRtlOrdering:
     case CSSPropertyWebkitRubyPosition:
     case CSSPropertyWebkitTextCombine:
+    case CSSPropertyTextCombineUpright:
     case CSSPropertyTextDecorationStyle:
     case CSSPropertyWebkitTextOrientation:
     case CSSPropertyWebkitTextSecurity:

@@ -281,6 +281,7 @@ PASS tab-size
 PASS table-layout
 PASS text-align
 PASS text-anchor
+PASS text-combine-upright
 PASS text-decoration
 PASS text-decoration-color
 PASS text-decoration-line

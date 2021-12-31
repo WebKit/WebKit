@@ -97,7 +97,7 @@ var propertiesToTest = {
     "perspective-origin": true,
     "-webkit-print-color-adjust": true,
     "-webkit-rtl-ordering": true,
-    "-webkit-text-combine": true,
+    "text-combine-upright": true,
     "-webkit-text-decorations-in-effect": true,
     "text-emphasis-color": true,
     "text-emphasis-position": true,

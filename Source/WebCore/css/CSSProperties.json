@@ -6625,7 +6625,24 @@
                     "-epub-text-combine"
                 ]
             },
-            "status": "non-standard"
+            "status": {
+                "status": "obsolete",
+                "comment": "Use text-combine-upright instead."
+            }
+        },
+        "text-combine-upright": {
+            "inherited": true,
+            "codegen-properties": {
+                "name-for-methods": "TextCombine"
+            },
+            "values": [
+                "none",
+                "all"
+            ],
+            "specification": {
+                "category": "css-writing-modes",
+                "url": "https://www.w3.org/TR/css-writing-modes-3/#propdef-direction"
+            }
         },
         "-webkit-text-align-last": {
             "inherited": true,
