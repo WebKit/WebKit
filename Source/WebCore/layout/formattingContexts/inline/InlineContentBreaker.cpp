@@ -208,26 +208,17 @@ InlineContentBreaker::Result InlineContentBreaker::processOverflowingContent(con
                 auto leadingTextRunIndex = *firstTextRunIndex(continuousContent);
                 auto& leadingTextRun = continuousContent.runs()[leadingTextRunIndex];
                 auto& inlineTextItem = downcast<InlineTextItem>(leadingTextRun.inlineItem);
-                auto firstCodePointLength = [&]() -> size_t {
-                    auto textContent = inlineTextItem.inlineTextBox().content();
-                    if (textContent.is8Bit())
-                        return 1;
-                    UChar32 character;
-                    size_t endOfCodePoint = 0;
-                    U16_NEXT(textContent.characters16(), endOfCodePoint, textContent.length(), character);
-                    return endOfCodePoint;
-                }();
+                auto firstCharacterLength = TextUtil::firstUserPerceivedCharacterLength(inlineTextItem);
+                ASSERT(firstCharacterLength > 0);
 
-                if (inlineTextItem.length() <= firstCodePointLength) {
-                    if (continuousContent.runs().size() == 1) {
-                        // Let's return single, leading text items as is.
+                if (inlineTextItem.length() <= firstCharacterLength) {
+                    if (continuousContent.runs().size() == 1)
                         return Result { Result::Action::Keep, IsEndOfLine::Yes };
-                    }
                     return Result { Result::Action::Break, IsEndOfLine::Yes, Result::PartialTrailingContent { leadingTextRunIndex, { } } };
                 }
 
-                auto firstCodePointWidth = TextUtil::width(inlineTextItem, leadingTextRun.style.fontCascade(), inlineTextItem.start(), inlineTextItem.start() + firstCodePointLength, lineStatus.contentLogicalRight);
-                return Result { Result::Action::Break, IsEndOfLine::Yes, Result::PartialTrailingContent { leadingTextRunIndex, PartialRun { firstCodePointLength, firstCodePointWidth } } };
+                auto firstCharacterWidth = TextUtil::width(inlineTextItem, leadingTextRun.style.fontCascade(), inlineTextItem.start(), inlineTextItem.start() + firstCharacterLength, lineStatus.contentLogicalRight);
+                return Result { Result::Action::Break, IsEndOfLine::Yes, Result::PartialTrailingContent { leadingTextRunIndex, PartialRun { firstCharacterLength, firstCharacterWidth } } };
             }
             if (trailingContent->overflows && lineStatus.hasContent) {
                 // We managed to break a run with overflow but the line already has content. Let's wrap it to the next line.

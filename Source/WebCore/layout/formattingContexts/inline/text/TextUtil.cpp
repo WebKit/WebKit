@@ -36,6 +36,7 @@
 #include "RenderBox.h"
 #include "RenderStyle.h"
 #include "SurrogatePairAwareTextIterator.h"
+#include <wtf/text/TextBreakIterator.h>
 
 namespace WebCore {
 namespace Layout {
@@ -272,6 +273,27 @@ bool TextUtil::containsStrongDirectionalityText(StringView text)
     }
 
     return false;
+}
+
+size_t TextUtil::firstUserPerceivedCharacterLength(const InlineTextItem& inlineTextItem)
+{
+    auto& inlineTextBox = inlineTextItem.inlineTextBox();
+    auto textContent = inlineTextBox.content();
+    RELEASE_ASSERT(!textContent.isEmpty());
+
+    if (textContent.is8Bit())
+        return 1;
+    if (inlineTextBox.canUseSimpleFontCodePath()) {
+        UChar32 character;
+        size_t endOfCodePoint = 0;
+        U16_NEXT(textContent.characters16(), endOfCodePoint, textContent.length(), character);
+        return endOfCodePoint;
+    }
+    auto graphemeClustersIterator = NonSharedCharacterBreakIterator { textContent };
+    auto nextPosition = ubrk_following(graphemeClustersIterator, inlineTextItem.start());
+    if (nextPosition == UBRK_DONE)
+        return inlineTextItem.length();
+    return nextPosition - inlineTextItem.start();
 }
 
 }

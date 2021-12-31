@@ -65,6 +65,8 @@ public:
     static bool shouldPreserveNewline(const Box&);
     static bool isWrappingAllowed(const RenderStyle&);
     static bool containsStrongDirectionalityText(StringView);
+
+    static size_t firstUserPerceivedCharacterLength(const InlineTextItem&);
 };
 
 }

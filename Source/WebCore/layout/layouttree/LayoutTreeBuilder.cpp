@@ -132,9 +132,9 @@ std::unique_ptr<Box> TreeBuilder::createReplacedBox(std::optional<Box::ElementAt
     return makeUnique<ReplacedBox>(elementAttributes, WTFMove(style));
 }
 
-std::unique_ptr<Box> TreeBuilder::createTextBox(String text, bool canUseSimplifiedTextMeasuring, RenderStyle&& style)
+std::unique_ptr<Box> TreeBuilder::createTextBox(String text, bool canUseSimplifiedTextMeasuring, bool canUseSimpleFontCodePath,  RenderStyle&& style)
 {
-    return makeUnique<InlineTextBox>(text, canUseSimplifiedTextMeasuring, WTFMove(style));
+    return makeUnique<InlineTextBox>(text, canUseSimplifiedTextMeasuring, canUseSimpleFontCodePath, WTFMove(style));
 }
 
 std::unique_ptr<Box> TreeBuilder::createLineBreakBox(bool isOptional, RenderStyle&& style)
@@ -171,9 +171,9 @@ std::unique_ptr<Box> TreeBuilder::createLayoutBox(const ContainerBox& parentCont
         String text = textRenderer.text();
         auto useSimplifiedTextMeasuring = canUseSimplifiedTextMeasuring(text, parentContainer.style().fontCascade(), parentContainer.style().collapseWhiteSpace());
         if (parentContainer.style().display() == DisplayType::Inline)
-            childLayoutBox = createTextBox(text, useSimplifiedTextMeasuring, RenderStyle::clone(parentContainer.style()));
+            childLayoutBox = createTextBox(text, useSimplifiedTextMeasuring, textRenderer.canUseSimpleFontCodePath(), RenderStyle::clone(parentContainer.style()));
         else
-            childLayoutBox = createTextBox(text, useSimplifiedTextMeasuring, RenderStyle::createAnonymousStyleWithDisplay(parentContainer.style(), DisplayType::Inline));
+            childLayoutBox = createTextBox(text, useSimplifiedTextMeasuring, textRenderer.canUseSimpleFontCodePath(), RenderStyle::createAnonymousStyleWithDisplay(parentContainer.style(), DisplayType::Inline));
     } else {
         auto& renderer = downcast<RenderElement>(childRenderer);
         auto displayType = renderer.style().display();

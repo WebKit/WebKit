@@ -67,7 +67,7 @@ private:
     std::unique_ptr<Box> createLayoutBox(const ContainerBox& parentContainer, const RenderObject& childRenderer);
 
     std::unique_ptr<Box> createReplacedBox(std::optional<Box::ElementAttributes>, RenderStyle&&);
-    std::unique_ptr<Box> createTextBox(String text, bool canUseSimplifiedTextMeasuring, RenderStyle&&);
+    std::unique_ptr<Box> createTextBox(String text, bool canUseSimplifiedTextMeasuring, bool canUseSimpleFontCodePath, RenderStyle&&);
     std::unique_ptr<Box> createLineBreakBox(bool isOptional, RenderStyle&&);
     std::unique_ptr<ContainerBox> createContainer(std::optional<Box::ElementAttributes>, RenderStyle&&);
 };
