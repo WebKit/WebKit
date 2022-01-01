@@ -17,6 +17,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/support/100x100-lime.png
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/support/100x100-red.png
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/support/DejaVuSerif-webfont.woff
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/support/WidthTest-Regular.otf
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/support/bg-red-1col-2row-320x320.png
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/support/bg-red-1col-3row-320x320.png
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/support/bg-red-2col-2row-320x320.png
@@ -137,6 +138,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/support/swatch-teal.png
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/support/swatch-yellow.png
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/support/tcu-font.otf
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/support/tcy.css
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/support/test-bl.png
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/support/test-br.png
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/support/test-tl.png
@@ -151,6 +153,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/support/text-orientation-upright-vrl-002.png
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/support/text-orientation.js
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/support/vertical-form.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/support/width-test.css
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/support/wm-propagation-body-003-exp-res.png
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/support/wm-propagation-body-035-exp-res.png
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/support/world.png

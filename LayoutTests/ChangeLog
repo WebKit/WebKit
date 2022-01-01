@@ -1,3 +1,15 @@
+2021-12-31  Tim Nguyen  <ntim@apple.com>
+
+        Re-import css/css-writing-modes WPT
+        https://bugs.webkit.org/show_bug.cgi?id=234764
+
+        Reviewed by Dean Jackson.
+
+        Upstream commit: https://github.com/web-platform-tests/wpt/commit/e433ff38f5230f3fec9c6fd434b942c7bffbfc67
+
+        * TestExpectations:
+        * platform/gtk/TestExpectations:
+
 2021-12-31  Alan Bujtas  <zalan@apple.com>
 
         REGRESSION (r287028): Incorrect root inline box horizontal position when text-align offset is present

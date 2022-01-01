@@ -1,3 +1,128 @@
+2021-12-31  Tim Nguyen  <ntim@apple.com>
+
+        Re-import css/css-writing-modes WPT
+        https://bugs.webkit.org/show_bug.cgi?id=234764
+
+        Reviewed by Dean Jackson.
+
+        Upstream commit: https://github.com/web-platform-tests/wpt/commit/e433ff38f5230f3fec9c6fd434b942c7bffbfc67
+
+        * resources/resource-files.json:
+        * web-platform-tests/css/css-writing-modes/astral-bidi/adlam-anti-ref-expected-mismatch.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/astral-bidi/adlam-anti-ref-expected.html.
+        * web-platform-tests/css/css-writing-modes/astral-bidi/cypriot-anti-ref-expected-mismatch.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/astral-bidi/cypriot-anti-ref-expected.html.
+        * web-platform-tests/css/css-writing-modes/astral-bidi/w3c-import.log:
+        * web-platform-tests/css/css-writing-modes/bidi-dynamic-iframe-001-expected.html: Added.
+        * web-platform-tests/css/css-writing-modes/bidi-dynamic-iframe-001.html: Added.
+        * web-platform-tests/css/css-writing-modes/bidi-plaintext-br-001-expected.html: Added.
+        * web-platform-tests/css/css-writing-modes/bidi-plaintext-br-001.html: Added.
+        * web-platform-tests/css/css-writing-modes/block-flow-direction-slr-062.xht:
+        * web-platform-tests/css/css-writing-modes/block-flow-direction-srl-061.xht:
+        * web-platform-tests/css/css-writing-modes/block-flow-direction-vlr-022.xht:
+        * web-platform-tests/css/css-writing-modes/block-flow-direction-vrl-021.xht:
+        * web-platform-tests/css/css-writing-modes/crashtests/orthogonal-percent-height-multicol-crash.html: Added.
+        * web-platform-tests/css/css-writing-modes/crashtests/orthogonal-scroll-percent-height-crash.html: Added.
+        * web-platform-tests/css/css-writing-modes/crashtests/orthogonal-table-in-flex-crash.html: Added.
+        * web-platform-tests/css/css-writing-modes/crashtests/w3c-import.log: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/astral-bidi/w3c-import.log.
+        * web-platform-tests/css/css-writing-modes/crashtests/wm-body-propagation-crash.html: Added.
+        * web-platform-tests/css/css-writing-modes/direction-propagation-body-contain-root-expected.html: Added.
+        * web-platform-tests/css/css-writing-modes/direction-propagation-body-contain-root.html: Added.
+        * web-platform-tests/css/css-writing-modes/dynamic-offset-rtl-001-expected.html: Added.
+        * web-platform-tests/css/css-writing-modes/dynamic-offset-rtl-001.html: Added.
+        * web-platform-tests/css/css-writing-modes/dynamic-offset-rtl-002-expected.html: Added.
+        * web-platform-tests/css/css-writing-modes/dynamic-offset-rtl-002.html: Added.
+        * web-platform-tests/css/css-writing-modes/dynamic-offset-vrl-001-expected.html: Added.
+        * web-platform-tests/css/css-writing-modes/dynamic-offset-vrl-001.html: Added.
+        * web-platform-tests/css/css-writing-modes/dynamic-offset-vrl-002-expected.html: Added.
+        * web-platform-tests/css/css-writing-modes/dynamic-offset-vrl-002.html: Added.
+        * web-platform-tests/css/css-writing-modes/dynamic-offset-vrl-rtl-001-expected.html: Added.
+        * web-platform-tests/css/css-writing-modes/dynamic-offset-vrl-rtl-001.html: Added.
+        * web-platform-tests/css/css-writing-modes/dynamic-offset-vrl-rtl-002-expected.html: Added.
+        * web-platform-tests/css/css-writing-modes/dynamic-offset-vrl-rtl-002.html: Added.
+        * web-platform-tests/css/css-writing-modes/full-width-001-expected-mismatch.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/full-width-001-expected.html.
+        * web-platform-tests/css/css-writing-modes/full-width-002-expected-mismatch.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/full-width-002-expected.html.
+        * web-platform-tests/css/css-writing-modes/full-width-003-expected-mismatch.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/full-width-003-expected.html.
+        * web-platform-tests/css/css-writing-modes/inline-box-orthogonal-child-with-margins-expected.html:
+        * web-platform-tests/css/css-writing-modes/inline-box-orthogonal-child-with-margins.html:
+        * web-platform-tests/css/css-writing-modes/line-box-height-vlr-003.xht:
+        * web-platform-tests/css/css-writing-modes/line-box-height-vlr-005.xht:
+        * web-platform-tests/css/css-writing-modes/line-box-height-vlr-007.xht:
+        * web-platform-tests/css/css-writing-modes/line-box-height-vlr-009.xht:
+        * web-platform-tests/css/css-writing-modes/line-box-height-vlr-011.xht:
+        * web-platform-tests/css/css-writing-modes/line-box-height-vlr-013.xht:
+        * web-platform-tests/css/css-writing-modes/line-box-height-vlr-021.xht:
+        * web-platform-tests/css/css-writing-modes/line-box-height-vlr-023.xht:
+        * web-platform-tests/css/css-writing-modes/line-box-height-vrl-002.xht:
+        * web-platform-tests/css/css-writing-modes/line-box-height-vrl-004.xht:
+        * web-platform-tests/css/css-writing-modes/line-box-height-vrl-006.xht:
+        * web-platform-tests/css/css-writing-modes/line-box-height-vrl-008.xht:
+        * web-platform-tests/css/css-writing-modes/line-box-height-vrl-010.xht:
+        * web-platform-tests/css/css-writing-modes/line-box-height-vrl-012.xht:
+        * web-platform-tests/css/css-writing-modes/logical-physical-mapping-001-expected.html: Added.
+        * web-platform-tests/css/css-writing-modes/logical-physical-mapping-001.html: Added.
+        * web-platform-tests/css/css-writing-modes/padding-percent-orthogonal-dynamic-expected.txt: Added.
+        * web-platform-tests/css/css-writing-modes/padding-percent-orthogonal-dynamic.html: Added.
+        * web-platform-tests/css/css-writing-modes/replaced-content-image-004-expected.html: Added.
+        * web-platform-tests/css/css-writing-modes/replaced-content-image-004.html: Added.
+        * web-platform-tests/css/css-writing-modes/sizing-orthog-vrl-in-htb-013-expected.xht:
+        * web-platform-tests/css/css-writing-modes/sizing-orthog-vrl-in-htb-013.xht:
+        * web-platform-tests/css/css-writing-modes/slr-alongside-vlr-floats-expected.html:
+        * web-platform-tests/css/css-writing-modes/slr-alongside-vlr-floats.html:
+        * web-platform-tests/css/css-writing-modes/srl-alongside-vrl-floats-expected.html:
+        * web-platform-tests/css/css-writing-modes/srl-alongside-vrl-floats.html:
+        * web-platform-tests/css/css-writing-modes/support/WidthTest-Regular.otf: Added.
+        * web-platform-tests/css/css-writing-modes/support/tcy.css: Added.
+        (.tcy):
+        (.fake-tcy):
+        * web-platform-tests/css/css-writing-modes/support/w3c-import.log:
+        * web-platform-tests/css/css-writing-modes/support/width-test.css: Added.
+        (@font-face):
+        (.test):
+        * web-platform-tests/css/css-writing-modes/text-combine-upright-break-inside-001-expected.html: Added.
+        * web-platform-tests/css/css-writing-modes/text-combine-upright-break-inside-001.html: Added.
+        * web-platform-tests/css/css-writing-modes/text-combine-upright-break-inside-001a-expected.html: Added.
+        * web-platform-tests/css/css-writing-modes/text-combine-upright-break-inside-001a.html: Added.
+        * web-platform-tests/css/css-writing-modes/text-combine-upright-compression-001-expected.html: Added.
+        * web-platform-tests/css/css-writing-modes/text-combine-upright-compression-001.html: Added.
+        * web-platform-tests/css/css-writing-modes/text-combine-upright-compression-002-expected.html: Added.
+        * web-platform-tests/css/css-writing-modes/text-combine-upright-compression-002.html: Added.
+        * web-platform-tests/css/css-writing-modes/text-combine-upright-compression-003-expected.html: Added.
+        * web-platform-tests/css/css-writing-modes/text-combine-upright-compression-003.html: Added.
+        * web-platform-tests/css/css-writing-modes/text-combine-upright-compression-004-expected.html: Added.
+        * web-platform-tests/css/css-writing-modes/text-combine-upright-compression-004.html: Added.
+        * web-platform-tests/css/css-writing-modes/text-combine-upright-compression-005-expected.html: Added.
+        * web-platform-tests/css/css-writing-modes/text-combine-upright-compression-005.html: Added.
+        * web-platform-tests/css/css-writing-modes/text-combine-upright-compression-005a-expected.html: Added.
+        * web-platform-tests/css/css-writing-modes/text-combine-upright-compression-005a.html: Added.
+        * web-platform-tests/css/css-writing-modes/text-combine-upright-compression-006-expected.html: Added.
+        * web-platform-tests/css/css-writing-modes/text-combine-upright-compression-006.html: Added.
+        * web-platform-tests/css/css-writing-modes/text-combine-upright-compression-006a-expected.html: Added.
+        * web-platform-tests/css/css-writing-modes/text-combine-upright-compression-006a.html: Added.
+        * web-platform-tests/css/css-writing-modes/text-combine-upright-compression-007-expected.html: Added.
+        * web-platform-tests/css/css-writing-modes/text-combine-upright-compression-007.html: Added.
+        * web-platform-tests/css/css-writing-modes/text-orientation-upright-directionality-001-expected.html: Added.
+        * web-platform-tests/css/css-writing-modes/text-orientation-upright-directionality-001.html: Added.
+        * web-platform-tests/css/css-writing-modes/text-shadow-orientation-upright-001-expected.html: Added.
+        * web-platform-tests/css/css-writing-modes/text-shadow-orientation-upright-001.html: Added.
+        * web-platform-tests/css/css-writing-modes/vlr-text-orientation-sideways-alongside-vlr-floats-expected.html:
+        * web-platform-tests/css/css-writing-modes/vlr-text-orientation-sideways-alongside-vlr-floats.html:
+        * web-platform-tests/css/css-writing-modes/vrl-inline-paint-invalidation-expected.html: Added.
+        * web-platform-tests/css/css-writing-modes/vrl-inline-paint-invalidation.html: Added.
+        * web-platform-tests/css/css-writing-modes/vrl-text-orientation-sideways-alongside-vrl-floats-expected.html:
+        * web-platform-tests/css/css-writing-modes/vrl-text-orientation-sideways-alongside-vrl-floats.html:
+        * web-platform-tests/css/css-writing-modes/w3c-import.log:
+        * web-platform-tests/css/css-writing-modes/wm-propagation-body-computed-direction-001-expected.txt: Added.
+        * web-platform-tests/css/css-writing-modes/wm-propagation-body-computed-direction-001.html: Added.
+        * web-platform-tests/css/css-writing-modes/wm-propagation-body-computed-direction-002-expected.txt: Added.
+        * web-platform-tests/css/css-writing-modes/wm-propagation-body-computed-direction-002.html: Added.
+        * web-platform-tests/css/css-writing-modes/wm-propagation-body-contain-root-expected.html: Added.
+        * web-platform-tests/css/css-writing-modes/wm-propagation-body-contain-root.html: Added.
+        * web-platform-tests/css/css-writing-modes/wm-propagation-body-dynamic-change-001.html:
+        * web-platform-tests/css/css-writing-modes/wm-propagation-body-dynamic-change-002-expected.html:
+        * web-platform-tests/css/css-writing-modes/wm-propagation-body-dynamic-change-002.html:
+        * web-platform-tests/css/css-writing-modes/wm-propagation-body-dynamic-change-003-expected.html: Added.
+        * web-platform-tests/css/css-writing-modes/wm-propagation-body-dynamic-change-003.html: Added.
+        * web-platform-tests/css/css-writing-modes/wm-propagation-svg-root-scrollbar.svg:
+
 2021-12-27  Tim Nguyen  <ntim@apple.com>
 
         Implement text-combine-upright property
