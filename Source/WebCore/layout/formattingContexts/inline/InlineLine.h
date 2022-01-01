@@ -47,7 +47,7 @@ public:
 
     void append(const InlineItem&, const RenderStyle&, InlineLayoutUnit logicalWidth);
 
-    bool hasContent() const { return !m_runs.isEmpty() && !m_runs.last().isLineSpanningInlineBoxStart(); }
+    bool hasContent() const;
 
     bool contentNeedsBidiReordering() const { return m_hasNonDefaultBidiLevelRun; }
 
@@ -232,6 +232,16 @@ private:
     InlineLayoutUnit m_clonedEndDecorationWidthForInlineBoxRuns { 0 };
     bool m_hasNonDefaultBidiLevelRun { false };
 };
+
+
+inline bool Line::hasContent() const
+{
+    for (auto& run : makeReversedRange(m_runs)) {
+        if (run.isText() || run.isBox() || run.isLineBreak())
+            return true;
+    }
+    return false;
+}
 
 inline void Line::TrimmableTrailingContent::reset()
 {

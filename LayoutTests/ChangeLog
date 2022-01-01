@@ -1,5 +1,15 @@
 2022-01-01  Alan Bujtas  <zalan@apple.com>
 
+        [LFC][IFC] Unexpected line break with leading collapsed whitespace
+        https://bugs.webkit.org/show_bug.cgi?id=234786
+
+        Reviewed by Antti Koivisto.
+
+        * fast/inline/unexpected-line-break-on-empty-content-expected.html: Added.
+        * fast/inline/unexpected-line-break-on-empty-content.html: Added.
+
+2022-01-01  Alan Bujtas  <zalan@apple.com>
+
         [LFC][IFC] Incorrect word-spacing gaps between RTL runs
         https://bugs.webkit.org/show_bug.cgi?id=234771
 
