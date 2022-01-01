@@ -28,7 +28,6 @@
 #include "Internals.h"
 
 #include "AXObjectCache.h"
-#include "ActivityState.h"
 #include "AddEventListenerOptions.h"
 #include "AnimationTimeline.h"
 #include "ApplicationCacheStorage.h"
@@ -5348,50 +5347,32 @@ bool Internals::requestedMetal(WebGLRenderingContext& context)
 
 void Internals::setPageVisibility(bool isVisible)
 {
-    auto* document = contextDocument();
-    if (!document || !document->page())
-        return;
-    auto& page = *document->page();
-    auto state = page.activityState();
-
-    if (!isVisible)
-        state.remove(ActivityState::IsVisible);
-    else
-        state.add(ActivityState::IsVisible);
-
-    page.setActivityState(state);
+    updatePageActivityState(ActivityState::IsVisible, isVisible);
 }
 
 void Internals::setPageIsFocusedAndActive(bool isFocusedAndActive)
 {
-    auto* document = contextDocument();
-    if (!document || !document->page())
-        return;
-    auto& page = *document->page();
-    auto state = page.activityState();
-
-    if (!isFocusedAndActive)
-        state.remove({ ActivityState::IsFocused, ActivityState::WindowIsActive });
-    else
-        state.add({ ActivityState::IsFocused, ActivityState::WindowIsActive });
-
-    page.setActivityState(state);
+    updatePageActivityState({ ActivityState::IsFocused, ActivityState::WindowIsActive }, isFocusedAndActive);
 }
 
 void Internals::setPageIsInWindow(bool isInWindow)
 {
-    auto* document = contextDocument();
-    if (!document || !document->page())
+    updatePageActivityState(ActivityState::IsInWindow, isInWindow);
+}
+
+void Internals::updatePageActivityState(OptionSet<ActivityState::Flag> statesToChange, bool newValue)
+{
+    auto* page = contextDocument() ? contextDocument()->page() : nullptr;
+    if (!page)
         return;
-    auto& page = *document->page();
-    auto state = page.activityState();
+    auto state = page->activityState();
 
-    if (!isInWindow)
-        state.remove({ ActivityState::IsInWindow });
+    if (!newValue)
+        state.remove(statesToChange);
     else
-        state.add({ ActivityState::IsInWindow });
+        state.add(statesToChange);
 
-    page.setActivityState(state);
+    page->setActivityState(state);
 }
 
 bool Internals::isPageActive() const

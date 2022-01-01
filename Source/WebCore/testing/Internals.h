@@ -26,6 +26,7 @@
 
 #pragma once
 
+#include "ActivityState.h"
 #include "CSSComputedStyleDeclaration.h"
 #include "ContextDestructionObserver.h"
 #include "Cookie.h"
@@ -1234,6 +1235,8 @@ private:
     explicit Internals(Document&);
     Document* contextDocument() const;
     Frame* frame() const;
+
+    void updatePageActivityState(OptionSet<ActivityState::Flag> statesToChange, bool newValue);
 
     ExceptionOr<RenderedDocumentMarker*> markerAt(Node&, const String& markerType, unsigned index);
     ExceptionOr<ScrollableArea*> scrollableAreaForNode(Node*) const;
