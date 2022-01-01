@@ -152,7 +152,7 @@ void InlineDisplayContentBuilder::appendTextDisplayBox(const Line::Run& lineRun,
         return text->needsHyphen ? makeString(content.substring(text->start, text->length), style.hyphenString()) : String();
     };
     boxes.append({ m_lineIndex
-        , InlineDisplay::Box::Type::Text
+        , lineRun.isWordSeparator() ? InlineDisplay::Box::Type::WordSeparator : InlineDisplay::Box::Type::Text
         , layoutBox
         , lineRun.bidiLevel()
         , textRunRect
@@ -483,8 +483,9 @@ void InlineDisplayContentBuilder::adjustVisualGeometryForDisplayBox(size_t displ
 
             contentRightInVisualOrder += boxMarginLeft + displayBox.width() + boxMarginRight;
         } else {
-            displayBox.setLeft(contentRightInVisualOrder);
-            contentRightInVisualOrder += displayBox.width();
+            auto wordSpacingMargin = displayBox.isWordSeparator() ? layoutBox.style().fontCascade().wordSpacing() : 0.0f;
+            displayBox.setLeft(contentRightInVisualOrder + wordSpacingMargin);
+            contentRightInVisualOrder += displayBox.width() + wordSpacingMargin;
         }
         return;
     }
@@ -566,8 +567,11 @@ void InlineDisplayContentBuilder::processBidiContent(const LineBuilder::LineCont
             auto parentDisplayBoxNodeIndex = ensureDisplayBoxForContainer(layoutBox.parent(), displayBoxTree, ancestorStack, boxes);
             if (lineRun.isText()) {
                 auto visualRect = visualRectRelativeToRoot(lineBox.logicalRectForTextRun(lineRun));
+                auto wordSpacingMargin = lineRun.isWordSeparator() ? layoutBox.style().fontCascade().wordSpacing() : 0.0f;
+
+                visualRect.moveHorizontally(wordSpacingMargin);
                 appendTextDisplayBox(lineRun, visualRect, boxes);
-                contentRightInVisualOrder += visualRect.width();
+                contentRightInVisualOrder += visualRect.width() + wordSpacingMargin;
                 displayBoxTree.append(parentDisplayBoxNodeIndex, boxes.size() - 1);
                 continue;
             }

@@ -61,6 +61,7 @@ struct Box {
 
     enum class Type {
         Text,
+        WordSeparator,
         Ellipsis,
         SoftLineBreak,
         LineBreakBox,
@@ -76,7 +77,8 @@ struct Box {
     };
     Box(size_t lineIndex, Type, const Layout::Box&, UBiDiLevel, const FloatRect&, const FloatRect& inkOverflow, Expansion, std::optional<Text> = std::nullopt, bool hasContent = true, OptionSet<PositionWithinInlineLevelBox> = { });
 
-    bool isText() const { return m_type == Type::Text; }
+    bool isText() const { return m_type == Type::Text || isWordSeparator(); }
+    bool isWordSeparator() const { return m_type == Type::WordSeparator; }
     bool isEllipsis() const { return m_type == Type::Ellipsis; }
     bool isSoftLineBreak() const { return m_type == Type::SoftLineBreak; }
     bool isTextOrSoftLineBreak() const { return isText() || isSoftLineBreak(); }
@@ -89,7 +91,6 @@ struct Box {
     bool isGenericInlineLevelBox() const { return m_type == Type::GenericInlineLevelBox; }
     bool isInlineLevelBox() const { return isAtomicInlineLevelBox() || isLineBreakBox() || isInlineBox() || isGenericInlineLevelBox(); }
     bool isNonRootInlineLevelBox() const { return isInlineLevelBox() && !isRootInlineBox(); }
-    Type type() const { return m_type; }
 
     UBiDiLevel bidiLevel() const { return m_bidiLevel; }
 

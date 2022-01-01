@@ -71,6 +71,7 @@ public:
     struct Run {
         enum class Type : uint8_t {
             Text,
+            WordSeparator,
             HardLineBreak,
             SoftLineBreak,
             WordBreakOpportunity,
@@ -80,7 +81,8 @@ public:
             LineSpanningInlineBoxStart
         };
 
-        bool isText() const { return m_type == Type::Text; }
+        bool isText() const { return m_type == Type::Text || isWordSeparator(); }
+        bool isWordSeparator() const { return m_type == Type::WordSeparator; }
         bool isBox() const { return m_type == Type::AtomicBox; }
         bool isLineBreak() const { return isHardLineBreak() || isSoftLineBreak(); }
         bool isSoftLineBreak() const  { return m_type == Type::SoftLineBreak; }

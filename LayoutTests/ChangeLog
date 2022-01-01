@@ -1,3 +1,13 @@
+2022-01-01  Alan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Incorrect word-spacing gaps between RTL runs
+        https://bugs.webkit.org/show_bug.cgi?id=234771
+
+        Reviewed by Antti Koivisto.
+
+        * fast/text/word-spacing-rtl-expected.html: Added.
+        * fast/text/word-spacing-rtl.html: Added.
+
 2021-12-31  Tim Nguyen  <ntim@apple.com>
 
         Re-import css/css-writing-modes WPT
