@@ -395,7 +395,6 @@ public:
         m_displayBoxNodes.append({ });
     }
 
-    bool hasInlineBox() const { return m_displayBoxNodes.size() > 1; }
     const Node& root() const { return m_displayBoxNodes.first(); }
     Node& at(size_t index) { return m_displayBoxNodes[index]; }
     const Node& at(size_t index) const { return m_displayBoxNodes[index]; }
@@ -544,6 +543,7 @@ void InlineDisplayContentBuilder::processBidiContent(const LineBuilder::LineCont
     ancestorStack.push({ }, root());
 
     auto contentStartInVisualOrder = displayLine.left() + displayLine.contentLeft();
+    auto hasInlineBox = false;
     auto createDisplayBoxesInVisualOrder = [&] {
 
         auto contentRightInVisualOrder = contentStartInVisualOrder;
@@ -565,6 +565,7 @@ void InlineDisplayContentBuilder::processBidiContent(const LineBuilder::LineCont
             };
 
             auto parentDisplayBoxNodeIndex = ensureDisplayBoxForContainer(layoutBox.parent(), displayBoxTree, ancestorStack, boxes);
+            hasInlineBox = hasInlineBox || parentDisplayBoxNodeIndex || lineRun.isInlineBoxStart() || lineRun.isLineSpanningInlineBoxStart();
             if (lineRun.isText()) {
                 auto visualRect = visualRectRelativeToRoot(lineBox.logicalRectForTextRun(lineRun));
                 auto wordSpacingMargin = lineRun.isWordSeparator() ? layoutBox.style().fontCascade().wordSpacing() : 0.0f;
@@ -618,7 +619,10 @@ void InlineDisplayContentBuilder::processBidiContent(const LineBuilder::LineCont
     };
     createDisplayBoxesInVisualOrder();
 
-    if (displayBoxTree.hasInlineBox()) {
+    auto handleInlineBoxes = [&] {
+        if (!hasInlineBox)
+            return;
+
         IsFirstLastIndexesMap isFirstLastIndexesMap;
         auto computeIsFirstIsLastBox = [&] {
             ASSERT(boxes[0].isRootInlineBox());
@@ -652,7 +656,8 @@ void InlineDisplayContentBuilder::processBidiContent(const LineBuilder::LineCont
                 adjustVisualGeometryForDisplayBox(childDisplayBoxNodeIndex, contentRightInVisualOrder, displayLine.top(), displayBoxTree, boxes, lineBox, isFirstLastIndexesMap);
         };
         adjustVisualGeometryWithInlineBoxes();
-    }
+    };
+    handleInlineBoxes();
 }
 
 void InlineDisplayContentBuilder::processOverflownRunsForEllipsis(DisplayBoxes& boxes, InlineLayoutUnit lineBoxRight)
