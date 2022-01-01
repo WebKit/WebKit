@@ -1,5 +1,18 @@
 2021-12-31  Wenson Hsieh  <wenson_hsieh@apple.com>
 
+        Include a few more tag names to search when running modal container detection
+        https://bugs.webkit.org/show_bug.cgi?id=234652
+
+        Reviewed by Darin Adler.
+
+        Add an API test that's representative of the website where modal container observation failed (due to the search
+        term being inside a `b` element).
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ModalContainerObservation.mm:
+        (TestWebKitAPI::TEST):
+
+2021-12-31  Wenson Hsieh  <wenson_hsieh@apple.com>
+
         Updating the file name of attachment-backed images should automatically set the `alt` attribute
         https://bugs.webkit.org/show_bug.cgi?id=234747
         rdar://85899879

@@ -222,4 +222,14 @@ TEST(ModalContainerObservation, ClassifyMultiplySymbol)
     EXPECT_EQ([webView lastModalContainerInfo].availableTypes, _WKModalContainerControlTypeNeutral);
 }
 
+TEST(ModalContainerObservation, DetectSearchTermInBoldTag)
+{
+    auto webView = createModalContainerWebView();
+    [webView loadBundlePage:@"modal-container-custom"];
+    [webView evaluate:@"show(`<b>Hello world</b><a href='#'>Yes</a><a href='#'>No</a>`)" andDecidePolicy:_WKModalContainerDecisionHideAndIgnore];
+
+    EXPECT_FALSE([[webView contentsAsString] containsString:@"Hello world"]);
+    EXPECT_EQ([webView lastModalContainerInfo].availableTypes, _WKModalContainerControlTypePositive | _WKModalContainerControlTypeNegative);
+}
+
 } // namespace TestWebKitAPI

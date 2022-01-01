@@ -49,6 +49,7 @@
 #include "RenderView.h"
 #include "SimulatedClickOptions.h"
 #include "Text.h"
+#include <wtf/RobinHoodHashSet.h>
 #include <wtf/Scope.h>
 #include <wtf/URL.h>
 
@@ -94,14 +95,33 @@ ModalContainerObserver::~ModalContainerObserver() = default;
 static bool matchesSearchTerm(const Text& textNode, const AtomString& searchTerm)
 {
     RefPtr parent = textNode.parentElementInComposedTree();
-    bool shouldSearchNode = ([&] {
-        if (!is<HTMLElement>(parent.get()))
-            return false;
 
-        return parent->hasTagName(HTMLNames::aTag) || parent->hasTagName(HTMLNames::divTag) || parent->hasTagName(HTMLNames::pTag) || parent->hasTagName(HTMLNames::spanTag) || parent->hasTagName(HTMLNames::sectionTag);
-    })();
+    static NeverDestroyed tagNamesToSearch = [] {
+        static constexpr std::array tags {
+            &HTMLNames::aTag,
+            &HTMLNames::divTag,
+            &HTMLNames::pTag,
+            &HTMLNames::spanTag,
+            &HTMLNames::sectionTag,
+            &HTMLNames::bTag,
+            &HTMLNames::iTag,
+            &HTMLNames::uTag,
+            &HTMLNames::liTag,
+            &HTMLNames::h1Tag,
+            &HTMLNames::h2Tag,
+            &HTMLNames::h3Tag,
+            &HTMLNames::h4Tag,
+            &HTMLNames::h5Tag,
+            &HTMLNames::h6Tag,
+        };
+        MemoryCompactLookupOnlyRobinHoodHashSet<AtomString> set;
+        set.reserveInitialCapacity(std::size(tags));
+        for (auto& tag : tags)
+            set.add(tag->get().localName());
+        return set;
+    }();
 
-    if (!shouldSearchNode)
+    if (!is<HTMLElement>(parent.get()) || !tagNamesToSearch.get().contains(downcast<HTMLElement>(*parent).localName()))
         return false;
 
     if (LIKELY(!textNode.data().containsIgnoringASCIICase(searchTerm)))
