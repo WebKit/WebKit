@@ -31,6 +31,8 @@
 #import "PlatformUtilities.h"
 #import "Test.h"
 #import "TestWKWebView.h"
+#import <WebCore/ColorCocoa.h>
+#import <WebCore/FontCocoa.h>
 #import <WebKit/WKUIDelegatePrivate.h>
 #import <cmath>
 #import <pal/spi/cocoa/NSAttributedStringSPI.h>
@@ -85,17 +87,7 @@
 
 @end
 
-#if PLATFORM(MAC)
-#define PlatformColor NSColor
-#define PlatformFont NSFont
-#else
-#define PlatformColor UIColor
-#define PlatformFont UIFont
-#endif
-
 namespace TestWebKitAPI {
-
-enum class Nullity : uint8_t { Null, NonNull };
 
 struct ListExpectation {
     NSString *markerFormat { nil };
@@ -103,52 +95,30 @@ struct ListExpectation {
 };
 
 struct ParagraphStyleExpectation {
-    NSTextAlignment alignment;
+    NSTextAlignment alignment { NSTextAlignmentNatural };
     Vector<ListExpectation> textLists;
 };
 
 struct ColorExpectation {
-    ColorExpectation(CGFloat redValue, CGFloat greenValue, CGFloat blueValue, CGFloat alphaValue)
-        : red(redValue)
-        , green(greenValue)
-        , blue(blueValue)
-        , alpha(alphaValue)
-        , nullity(Nullity::NonNull)
-    {
-    }
-
-    ColorExpectation() = default;
-
     CGFloat red { 0 };
     CGFloat green { 0 };
     CGFloat blue { 0 };
     CGFloat alpha { 0 };
-    Nullity nullity { Nullity::Null };
 };
 
 struct ShadowExpectation {
-    ShadowExpectation(CGFloat opacityValue, CGFloat blurRadiusValue)
-        : opacity(opacityValue)
-        , blurRadius(blurRadiusValue)
-        , nullity(Nullity::NonNull)
-    {
-    }
-
-    ShadowExpectation() = default;
-
     CGFloat opacity { 0 };
     CGFloat blurRadius { 0 };
-    Nullity nullity { Nullity::Null };
 };
 
 struct FontExpectation {
-    const char* fontName;
-    CGFloat fontSize;
+    const char* fontName { nullptr };
+    CGFloat fontSize { 0 };
 };
 
-static void checkColor(PlatformColor *color, ColorExpectation&& expectation)
+static void checkColor(WebCore::CocoaColor *color, std::optional<ColorExpectation> expectation)
 {
-    if (expectation.nullity == Nullity::Null) {
+    if (!expectation) {
         EXPECT_NULL(color);
         return;
     }
@@ -160,15 +130,15 @@ static void checkColor(PlatformColor *color, ColorExpectation&& expectation)
     CGFloat observedBlue = 0;
     CGFloat observedAlpha = 0;
     [color getRed:&observedRed green:&observedGreen blue:&observedBlue alpha:&observedAlpha];
-    EXPECT_EQ(expectation.red, std::round(observedRed * 255));
-    EXPECT_EQ(expectation.green, std::round(observedGreen * 255));
-    EXPECT_EQ(expectation.blue, std::round(observedBlue * 255));
-    EXPECT_LT(std::abs(expectation.alpha - observedAlpha), 0.0001);
+    EXPECT_EQ(expectation->red, std::round(observedRed * 255));
+    EXPECT_EQ(expectation->green, std::round(observedGreen * 255));
+    EXPECT_EQ(expectation->blue, std::round(observedBlue * 255));
+    EXPECT_LT(std::abs(expectation->alpha - observedAlpha), 0.0001);
 }
 
-static void checkShadow(NSShadow *shadow, ShadowExpectation&& expectation)
+static void checkShadow(NSShadow *shadow, std::optional<ShadowExpectation> expectation)
 {
-    if (expectation.nullity == Nullity::Null) {
+    if (!expectation) {
         EXPECT_NULL(shadow);
         return;
     }
@@ -177,11 +147,11 @@ static void checkShadow(NSShadow *shadow, ShadowExpectation&& expectation)
 
     CGFloat observedAlpha = 0;
     [shadow.shadowColor getRed:nullptr green:nullptr blue:nullptr alpha:&observedAlpha];
-    EXPECT_LT(std::abs(expectation.opacity - observedAlpha), 0.0001);
-    EXPECT_EQ(expectation.blurRadius, shadow.shadowBlurRadius);
+    EXPECT_LT(std::abs(expectation->opacity - observedAlpha), 0.0001);
+    EXPECT_EQ(expectation->blurRadius, shadow.shadowBlurRadius);
 }
 
-static void checkFont(PlatformFont *font, FontExpectation&& expectation)
+static void checkFont(WebCore::CocoaFont *font, FontExpectation expectation)
 {
     EXPECT_WK_STREQ(expectation.fontName, font.fontName);
     EXPECT_EQ(expectation.fontSize, font.pointSize);
@@ -219,10 +189,10 @@ TEST(FontAttributes, FontAttributesAfterChangingSelection)
     {
         [webView selectElementWithIdentifier:@"one"];
         NSDictionary *attributes = [webView fontAttributesAfterNextPresentationUpdate];
-        checkColor(attributes[NSForegroundColorAttributeName], { 227, 36, 0, 1 });
-        checkColor(attributes[NSBackgroundColorAttributeName], { 255, 199, 119, 1 });
+        checkColor(attributes[NSForegroundColorAttributeName], { { 227, 36, 0, 1 } });
+        checkColor(attributes[NSBackgroundColorAttributeName], { { 255, 199, 119, 1 } });
         checkFont(attributes[NSFontAttributeName], { "Helvetica-Bold", 48 });
-        checkShadow(attributes[NSShadowAttributeName], { });
+        checkShadow(attributes[NSShadowAttributeName], std::nullopt);
         checkParagraphStyles(attributes[NSParagraphStyleAttributeName], { NSTextAlignmentNatural, { } });
         EXPECT_EQ(NSUnderlineStyleSingle, [attributes[NSStrikethroughStyleAttributeName] integerValue]);
         EXPECT_EQ(NSUnderlineStyleNone, [attributes[NSUnderlineStyleAttributeName] integerValue]);
@@ -231,10 +201,10 @@ TEST(FontAttributes, FontAttributesAfterChangingSelection)
     {
         [webView selectElementWithIdentifier:@"two"];
         NSDictionary *attributes = [webView fontAttributesAfterNextPresentationUpdate];
-        checkColor(attributes[NSForegroundColorAttributeName], { 102, 157, 52, 1 });
-        checkColor(attributes[NSBackgroundColorAttributeName], { 255, 197, 171, 1 });
+        checkColor(attributes[NSForegroundColorAttributeName], { { 102, 157, 52, 1 } });
+        checkColor(attributes[NSBackgroundColorAttributeName], { { 255, 197, 171, 1 } });
         checkFont(attributes[NSFontAttributeName], { "Helvetica-Bold", 48 });
-        checkShadow(attributes[NSShadowAttributeName], { 0.470588, 5 });
+        checkShadow(attributes[NSShadowAttributeName], { { 0.470588, 5 } });
         checkParagraphStyles(attributes[NSParagraphStyleAttributeName], { NSTextAlignmentNatural, { } });
         EXPECT_EQ(NSUnderlineStyleNone, [attributes[NSStrikethroughStyleAttributeName] integerValue]);
         EXPECT_EQ(NSUnderlineStyleSingle, [attributes[NSUnderlineStyleAttributeName] integerValue]);
@@ -243,8 +213,8 @@ TEST(FontAttributes, FontAttributesAfterChangingSelection)
     {
         [webView selectElementWithIdentifier:@"three"];
         NSDictionary *attributes = [webView fontAttributesAfterNextPresentationUpdate];
-        checkColor(attributes[NSForegroundColorAttributeName], { 255, 106, 0, 1 });
-        checkColor(attributes[NSBackgroundColorAttributeName], { });
+        checkColor(attributes[NSForegroundColorAttributeName], { { 255, 106, 0, 1 } });
+        checkColor(attributes[NSBackgroundColorAttributeName], std::nullopt);
         checkFont(attributes[NSFontAttributeName], { "Menlo-Italic", 18 });
         checkShadow(attributes[NSShadowAttributeName], { });
         checkParagraphStyles(attributes[NSParagraphStyleAttributeName], { NSTextAlignmentCenter, { } });
@@ -255,10 +225,10 @@ TEST(FontAttributes, FontAttributesAfterChangingSelection)
     {
         [webView selectElementWithIdentifier:@"four"];
         NSDictionary *attributes = [webView fontAttributesAfterNextPresentationUpdate];
-        checkColor(attributes[NSForegroundColorAttributeName], { 255, 255, 255, 1 });
-        checkColor(attributes[NSBackgroundColorAttributeName], { 0, 0, 0, 1 });
+        checkColor(attributes[NSForegroundColorAttributeName], { { 255, 255, 255, 1 } });
+        checkColor(attributes[NSBackgroundColorAttributeName], { { 0, 0, 0, 1 } });
         checkFont(attributes[NSFontAttributeName], { "Avenir-Book", 24 });
-        checkShadow(attributes[NSShadowAttributeName], { });
+        checkShadow(attributes[NSShadowAttributeName], std::nullopt);
         checkParagraphStyles(attributes[NSParagraphStyleAttributeName], { NSTextAlignmentCenter, { } });
         EXPECT_EQ(NSUnderlineStyleNone, [attributes[NSStrikethroughStyleAttributeName] integerValue]);
         EXPECT_EQ(NSUnderlineStyleNone, [attributes[NSUnderlineStyleAttributeName] integerValue]);
@@ -267,10 +237,10 @@ TEST(FontAttributes, FontAttributesAfterChangingSelection)
     {
         [webView selectElementWithIdentifier:@"five"];
         NSDictionary *attributes = [webView fontAttributesAfterNextPresentationUpdate];
-        checkColor(attributes[NSForegroundColorAttributeName], { 131, 16, 0, 1 });
-        checkColor(attributes[NSBackgroundColorAttributeName], { });
+        checkColor(attributes[NSForegroundColorAttributeName], { { 131, 16, 0, 1 } });
+        checkColor(attributes[NSBackgroundColorAttributeName], std::nullopt);
         checkFont(attributes[NSFontAttributeName], { "TimesNewRomanPS-BoldMT", 24 });
-        checkShadow(attributes[NSShadowAttributeName], { });
+        checkShadow(attributes[NSShadowAttributeName], std::nullopt);
         checkParagraphStyles(attributes[NSParagraphStyleAttributeName], { NSTextAlignmentCenter, { } });
         EXPECT_EQ(NSUnderlineStyleNone, [attributes[NSStrikethroughStyleAttributeName] integerValue]);
         EXPECT_EQ(NSUnderlineStyleNone, [attributes[NSUnderlineStyleAttributeName] integerValue]);
@@ -279,8 +249,8 @@ TEST(FontAttributes, FontAttributesAfterChangingSelection)
     {
         [webView selectElementWithIdentifier:@"six"];
         NSDictionary *attributes = [webView fontAttributesAfterNextPresentationUpdate];
-        checkColor(attributes[NSForegroundColorAttributeName], { 255, 64, 19, 1 });
-        checkColor(attributes[NSBackgroundColorAttributeName], { });
+        checkColor(attributes[NSForegroundColorAttributeName], { { 255, 64, 19, 1 } });
+        checkColor(attributes[NSBackgroundColorAttributeName], std::nullopt);
         checkFont(attributes[NSFontAttributeName], { "Avenir-Black", 18 });
         checkShadow(attributes[NSShadowAttributeName], { });
         checkParagraphStyles(attributes[NSParagraphStyleAttributeName], { NSTextAlignmentLeft, {{ NSTextListMarkerDisc, 1 }} });
@@ -291,10 +261,10 @@ TEST(FontAttributes, FontAttributesAfterChangingSelection)
     {
         [webView selectElementWithIdentifier:@"seven"];
         NSDictionary *attributes = [webView fontAttributesAfterNextPresentationUpdate];
-        checkColor(attributes[NSForegroundColorAttributeName], { 235, 235, 235, 1 });
-        checkColor(attributes[NSBackgroundColorAttributeName], { 78, 122, 39, 1 });
+        checkColor(attributes[NSForegroundColorAttributeName], { { 235, 235, 235, 1 } });
+        checkColor(attributes[NSBackgroundColorAttributeName], { { 78, 122, 39, 1 } });
         checkFont(attributes[NSFontAttributeName], { "Avenir-BookOblique", 12 });
-        checkShadow(attributes[NSShadowAttributeName], { });
+        checkShadow(attributes[NSShadowAttributeName], std::nullopt);
         checkParagraphStyles(attributes[NSParagraphStyleAttributeName], { NSTextAlignmentLeft, {{ NSTextListMarkerDisc, 1 }} });
         EXPECT_EQ(NSUnderlineStyleNone, [attributes[NSStrikethroughStyleAttributeName] integerValue]);
         EXPECT_EQ(NSUnderlineStyleNone, [attributes[NSUnderlineStyleAttributeName] integerValue]);
@@ -303,10 +273,10 @@ TEST(FontAttributes, FontAttributesAfterChangingSelection)
     {
         [webView selectElementWithIdentifier:@"eight"];
         NSDictionary *attributes = [webView fontAttributesAfterNextPresentationUpdate];
-        checkColor(attributes[NSForegroundColorAttributeName], { });
-        checkColor(attributes[NSBackgroundColorAttributeName], { });
+        checkColor(attributes[NSForegroundColorAttributeName], std::nullopt);
+        checkColor(attributes[NSBackgroundColorAttributeName], std::nullopt);
         checkFont(attributes[NSFontAttributeName], { "Avenir-Book", 12 });
-        checkShadow(attributes[NSShadowAttributeName], { });
+        checkShadow(attributes[NSShadowAttributeName], std::nullopt);
         checkParagraphStyles(attributes[NSParagraphStyleAttributeName], { NSTextAlignmentLeft, {{ NSTextListMarkerDecimal, 1 }} });
         EXPECT_EQ(NSUnderlineStyleNone, [attributes[NSStrikethroughStyleAttributeName] integerValue]);
         EXPECT_EQ(NSUnderlineStyleNone, [attributes[NSUnderlineStyleAttributeName] integerValue]);
@@ -315,10 +285,10 @@ TEST(FontAttributes, FontAttributesAfterChangingSelection)
     {
         [webView selectElementWithIdentifier:@"nine"];
         NSDictionary *attributes = [webView fontAttributesAfterNextPresentationUpdate];
-        checkColor(attributes[NSForegroundColorAttributeName], { });
-        checkColor(attributes[NSBackgroundColorAttributeName], { });
+        checkColor(attributes[NSForegroundColorAttributeName], std::nullopt);
+        checkColor(attributes[NSBackgroundColorAttributeName], std::nullopt);
         checkFont(attributes[NSFontAttributeName], { "Georgia", 36 });
-        checkShadow(attributes[NSShadowAttributeName], { 0.658824, 9 });
+        checkShadow(attributes[NSShadowAttributeName], { { 0.658824, 9 } });
         checkParagraphStyles(attributes[NSParagraphStyleAttributeName], { NSTextAlignmentLeft, {{ NSTextListMarkerDecimal, 1 }} });
         EXPECT_EQ(NSUnderlineStyleNone, [attributes[NSStrikethroughStyleAttributeName] integerValue]);
         EXPECT_EQ(NSUnderlineStyleNone, [attributes[NSUnderlineStyleAttributeName] integerValue]);
@@ -327,10 +297,10 @@ TEST(FontAttributes, FontAttributesAfterChangingSelection)
     {
         [webView selectElementWithIdentifier:@"ten"];
         NSDictionary *attributes = [webView fontAttributesAfterNextPresentationUpdate];
-        checkColor(attributes[NSForegroundColorAttributeName], { });
-        checkColor(attributes[NSBackgroundColorAttributeName], { });
+        checkColor(attributes[NSForegroundColorAttributeName], std::nullopt);
+        checkColor(attributes[NSBackgroundColorAttributeName], std::nullopt);
         checkFont(attributes[NSFontAttributeName], { "Avenir-BookOblique", 18 });
-        checkShadow(attributes[NSShadowAttributeName], { });
+        checkShadow(attributes[NSShadowAttributeName], std::nullopt);
         checkParagraphStyles(attributes[NSParagraphStyleAttributeName], { NSTextAlignmentRight, { } });
         EXPECT_EQ(NSUnderlineStyleNone, [attributes[NSStrikethroughStyleAttributeName] integerValue]);
         EXPECT_EQ(NSUnderlineStyleNone, [attributes[NSUnderlineStyleAttributeName] integerValue]);
@@ -339,10 +309,10 @@ TEST(FontAttributes, FontAttributesAfterChangingSelection)
     {
         [webView selectElementWithIdentifier:@"eleven"];
         NSDictionary *attributes = [webView fontAttributesAfterNextPresentationUpdate];
-        checkColor(attributes[NSForegroundColorAttributeName], { });
-        checkColor(attributes[NSBackgroundColorAttributeName], { });
+        checkColor(attributes[NSForegroundColorAttributeName], std::nullopt);
+        checkColor(attributes[NSBackgroundColorAttributeName], std::nullopt);
         checkFont(attributes[NSFontAttributeName], { "Menlo-Regular", 20 });
-        checkShadow(attributes[NSShadowAttributeName], { });
+        checkShadow(attributes[NSShadowAttributeName], std::nullopt);
         checkParagraphStyles(attributes[NSParagraphStyleAttributeName], { NSTextAlignmentRight, { } });
         EXPECT_EQ(NSUnderlineStyleNone, [attributes[NSStrikethroughStyleAttributeName] integerValue]);
         EXPECT_EQ(NSUnderlineStyleNone, [attributes[NSUnderlineStyleAttributeName] integerValue]);

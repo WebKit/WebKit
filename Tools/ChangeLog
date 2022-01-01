@@ -1,3 +1,25 @@
+2022-01-01  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Cocoa] Simplify some FontAttributes API tests
+        https://bugs.webkit.org/show_bug.cgi?id=234770
+
+        Reviewed by Darin Adler.
+
+        Simplify some of the logic around FontAttributes.FontAttributesAfterChangingSelection:
+        1.  Instead of defining PlatformColor/PlatformFont, use CocoaColor/CocoaFont from WebCore.
+        2.  Remove the `Nullity` flag in ShadowExpectation and ColorExpectation (and use `std::optional` instead to
+            indicate that the shadow or font attribute should be null).
+        3.  Change a several rvalue references to be plain values instead (when passinng expectation structs that only
+            contain a handful of scalar values).
+
+        * TestWebKitAPI/Tests/WebKitCocoa/FontAttributes.mm:
+        (TestWebKitAPI::checkColor):
+        (TestWebKitAPI::checkShadow):
+        (TestWebKitAPI::checkFont):
+        (TestWebKitAPI::TEST):
+        (TestWebKitAPI::ColorExpectation::ColorExpectation): Deleted.
+        (TestWebKitAPI::ShadowExpectation::ShadowExpectation): Deleted.
+
 2021-12-31  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Include a few more tag names to search when running modal container detection
