@@ -1,5 +1,21 @@
 2022-01-01  Wenson Hsieh  <wenson_hsieh@apple.com>
 
+        Modal containers are incorrectly detected in navigation elements and fixed document elements
+        https://bugs.webkit.org/show_bug.cgi?id=234669
+        rdar://87030613
+
+        Reviewed by Darin Adler.
+
+        Add several new API tests to exercise the changes.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ModalContainerObservation.mm:
+        (-[ModalContainerWebView initWithFrame:configuration:]):
+        (-[ModalContainerWebView loadHTML:]):
+        (-[ModalContainerWebView _webView:decidePolicyForModalContainer:decisionHandler:]):
+        (TestWebKitAPI::TEST):
+
+2022-01-01  Wenson Hsieh  <wenson_hsieh@apple.com>
+
         [Cocoa] Simplify some FontAttributes API tests
         https://bugs.webkit.org/show_bug.cgi?id=234770
 

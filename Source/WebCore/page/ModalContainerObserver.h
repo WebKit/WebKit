@@ -54,6 +54,8 @@ public:
     inline void overrideSearchTermForTesting(const String&);
 
 private:
+    friend class ModalContainerPolicyDecisionScope;
+
     void scheduleClickableElementCollection();
     void collectClickableElementsTimerFired();
     void revealModalContainer();

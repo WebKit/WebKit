@@ -49,6 +49,7 @@
 #include "RenderView.h"
 #include "SimulatedClickOptions.h"
 #include "Text.h"
+#include <wtf/Noncopyable.h>
 #include <wtf/RobinHoodHashSet.h>
 #include <wtf/Scope.h>
 #include <wtf/URL.h>
@@ -130,6 +131,20 @@ static bool matchesSearchTerm(const Text& textNode, const AtomString& searchTerm
     return true;
 }
 
+static AccessibilityRole accessibilityRole(const HTMLElement& element)
+{
+    return AccessibilityObject::ariaRoleToWebCoreRole(element.attributeWithoutSynchronization(HTMLNames::roleAttr));
+}
+
+static bool isInsideNavigationElement(const Text& textNode)
+{
+    for (auto& parent : ancestorsOfType<HTMLElement>(textNode)) {
+        if (parent.hasTagName(HTMLNames::navTag) || accessibilityRole(parent) == AccessibilityRole::LandmarkNavigation)
+            return true;
+    }
+    return false;
+}
+
 void ModalContainerObserver::updateModalContainerIfNeeded(const FrameView& view)
 {
     if (m_container)
@@ -155,6 +170,9 @@ void ModalContainerObserver::updateModalContainerIfNeeded(const FrameView& view)
         return;
 
     for (auto& renderer : *view.viewportConstrainedObjects()) {
+        if (renderer.isDocumentElementRenderer())
+            continue;
+
         RefPtr element = renderer.element();
         if (!element || is<HTMLBodyElement>(*element) || element->isDocumentNode())
             continue;
@@ -164,6 +182,9 @@ void ModalContainerObserver::updateModalContainerIfNeeded(const FrameView& view)
 
         for (auto& textRenderer : descendantsOfType<RenderText>(renderer)) {
             if (RefPtr textNode = textRenderer.textNode(); textNode && matchesSearchTerm(*textNode, searchTerm)) {
+                if (isInsideNavigationElement(*textNode))
+                    break;
+
                 m_container = element.get();
                 element->invalidateStyle();
                 scheduleClickableElementCollection();
@@ -171,11 +192,6 @@ void ModalContainerObserver::updateModalContainerIfNeeded(const FrameView& view)
             }
         }
     }
-}
-
-static AccessibilityRole accessibilityRole(const HTMLElement& element)
-{
-    return AccessibilityObject::ariaRoleToWebCoreRole(element.attributeWithoutSynchronization(HTMLNames::roleAttr));
 }
 
 static bool isClickableControl(const HTMLElement& element)
@@ -281,13 +297,41 @@ void ModalContainerObserver::scheduleClickableElementCollection()
     m_collectClickableElementsTimer.startOneShot(200_ms);
 }
 
+class ModalContainerPolicyDecisionScope {
+    WTF_MAKE_NONCOPYABLE(ModalContainerPolicyDecisionScope);
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    ModalContainerPolicyDecisionScope(Document& document)
+        : m_document { document }
+    {
+    }
+
+    ModalContainerPolicyDecisionScope(ModalContainerPolicyDecisionScope&&) = default;
+
+    ~ModalContainerPolicyDecisionScope()
+    {
+        if (m_continueHidingModalContainerAfterScope || !m_document)
+            return;
+
+        if (auto observer = m_document->modalContainerObserverIfExists())
+            observer->revealModalContainer();
+    }
+
+    void continueHidingModalContainerAfterScope() { m_continueHidingModalContainerAfterScope = true; }
+    Document* document() const { return m_document.get(); }
+
+private:
+    WeakPtr<Document> m_document;
+    bool m_continueHidingModalContainerAfterScope { false };
+};
+
 void ModalContainerObserver::collectClickableElementsTimerFired()
 {
     if (!m_container)
         return;
 
-    m_container->document().eventLoop().queueTask(TaskSource::InternalAsyncTask, [observer = this, weakDocument = WeakPtr { m_container->document() }]() mutable {
-        RefPtr document = weakDocument.get();
+    m_container->document().eventLoop().queueTask(TaskSource::InternalAsyncTask, [observer = this, decisionScope = ModalContainerPolicyDecisionScope { m_container->document() }]() mutable {
+        RefPtr document = decisionScope.document();
         if (!document)
             return;
 
@@ -306,11 +350,8 @@ void ModalContainerObserver::collectClickableElementsTimerFired()
             return;
         }
 
-        page->chrome().client().classifyModalContainerControls(WTFMove(controlTextsToClassify), [weakDocument = WTFMove(weakDocument), observer, controls = WTFMove(classifiableControls)] (auto&& types) mutable {
-            if (types.size() != controls.size())
-                return;
-
-            RefPtr document = weakDocument.get();
+        page->chrome().client().classifyModalContainerControls(WTFMove(controlTextsToClassify), [decisionScope = WTFMove(decisionScope), observer, controls = WTFMove(classifiableControls)] (auto&& types) mutable {
+            RefPtr document = decisionScope.document();
             if (!document)
                 return;
 
@@ -324,6 +365,9 @@ void ModalContainerObserver::collectClickableElementsTimerFired()
                 ASSERT_NOT_REACHED();
                 return;
             }
+
+            if (types.size() != controls.size())
+                return;
 
             struct ClassifiedControls {
                 Vector<WeakPtr<HTMLElement>> positive;
@@ -395,26 +439,26 @@ void ModalContainerObserver::collectClickableElementsTimerFired()
                 return;
 
             auto clickableControlTypes = classifiedControls.types();
-            if (clickableControlTypes.isEmpty()) {
-                observer->revealModalContainer();
+            if (clickableControlTypes.isEmpty())
                 return;
-            }
 
-            page->chrome().client().decidePolicyForModalContainer(clickableControlTypes, [weakDocument = WTFMove(weakDocument), observer, classifiedControls = WTFMove(classifiedControls)](auto decision) mutable {
-                RefPtr document = weakDocument.get();
+            page->chrome().client().decidePolicyForModalContainer(clickableControlTypes, [decisionScope = WTFMove(decisionScope), observer, classifiedControls = WTFMove(classifiedControls)](auto decision) mutable {
+                RefPtr document = decisionScope.document();
                 if (!document)
                     return;
 
-                if (observer != document->modalContainerObserverIfExists())
-                    return;
-
-                if (decision == ModalContainerDecision::Show) {
-                    observer->revealModalContainer();
+                if (observer != document->modalContainerObserverIfExists()) {
+                    ASSERT_NOT_REACHED();
                     return;
                 }
 
+                if (decision == ModalContainerDecision::Show)
+                    return;
+
                 if (RefPtr controlToClick = classifiedControls.controlToClick(decision))
                     controlToClick->dispatchSimulatedClick(nullptr, SendMouseUpDownEvents, DoNotShowPressedLook);
+
+                decisionScope.continueHidingModalContainerAfterScope();
             });
         });
     });

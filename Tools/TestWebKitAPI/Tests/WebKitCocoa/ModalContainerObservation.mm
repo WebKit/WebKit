@@ -24,6 +24,7 @@
  */
 
 #import "config.h"
+#import "Test.h"
 
 #import "PlatformUtilities.h"
 #import "TestProtocol.h"
@@ -86,6 +87,7 @@ private:
 } // namespace TestWebKitAPI
 
 @interface ModalContainerWebView : TestWKWebView <WKUIDelegatePrivate>
+@property (nonatomic) _WKModalContainerDecision decision;
 @property (nonatomic, readonly) _WKModalContainerInfo *lastModalContainerInfo;
 @end
 
@@ -93,7 +95,6 @@ private:
     std::unique_ptr<TestWebKitAPI::ClassifierModelSwizzler> _classifierModelSwizzler;
     RetainPtr<TestNavigationDelegate> _navigationDelegate;
     RetainPtr<_WKModalContainerInfo> _lastModalContainerInfo;
-    std::optional<_WKModalContainerDecision> _decision;
     bool _doneWaitingForDecisionHandler;
 }
 
@@ -107,6 +108,7 @@ private:
         [TestProtocol registerWithScheme:@"http"];
     });
 
+    _decision = _WKModalContainerDecisionShow;
     _classifierModelSwizzler = makeUnique<TestWebKitAPI::ClassifierModelSwizzler>();
     _navigationDelegate = adoptNS([[TestNavigationDelegate alloc] init]);
     _doneWaitingForDecisionHandler = true;
@@ -148,9 +150,26 @@ private:
     [_navigationDelegate waitForDidFinishNavigationWithPreferences:preferences.get()];
 }
 
+- (void)loadHTML:(NSString *)html
+{
+    NSURLRequest *fakeRequest = [NSURLRequest requestWithURL:[NSURL URLWithString:@"http://webkit.org"]];
+    [self loadSimulatedRequest:fakeRequest responseHTMLString:html];
+
+    auto preferences = adoptNS([[WKWebpagePreferences alloc] init]);
+    [preferences _setModalContainerObservationPolicy:_WKWebsiteModalContainerObservationPolicyPrompt];
+    [_navigationDelegate waitForDidFinishNavigationWithPreferences:preferences.get()];
+}
+
+- (void)waitForText:(NSString *)text
+{
+    TestWebKitAPI::Util::waitForConditionWithLogging([&]() -> bool {
+        return [self.contentsAsString containsString:text];
+    }, 3, @"Timed out waiting for '%@'", text);
+}
+
 - (void)_webView:(WKWebView *)webView decidePolicyForModalContainer:(_WKModalContainerInfo *)containerInfo decisionHandler:(void (^)(_WKModalContainerDecision))handler
 {
-    handler(_decision.value_or(_WKModalContainerDecisionShow));
+    handler(_decision);
     _lastModalContainerInfo = containerInfo;
     _doneWaitingForDecisionHandler = true;
 }
@@ -230,6 +249,43 @@ TEST(ModalContainerObservation, DetectSearchTermInBoldTag)
 
     EXPECT_FALSE([[webView contentsAsString] containsString:@"Hello world"]);
     EXPECT_EQ([webView lastModalContainerInfo].availableTypes, _WKModalContainerControlTypePositive | _WKModalContainerControlTypeNegative);
+}
+
+TEST(ModalContainerObservation, IgnoreFixedDocumentElement)
+{
+    auto webView = createModalContainerWebView();
+    [webView setDecision:_WKModalContainerDecisionHideAndIgnore];
+    [webView loadHTML:@("<head>"
+        "<script>internals.overrideModalContainerSearchTermForTesting('foo')</script>"
+        "<style>html { position: fixed; width: 100%; height: 100%; top: 0; left: 0; }</style>"
+        "</head><body><h1>foo bar</h1></body>")];
+
+    EXPECT_TRUE([[webView contentsAsString] containsString:@"foo bar"]);
+    EXPECT_NULL([webView lastModalContainerInfo]);
+}
+
+TEST(ModalContainerObservation, IgnoreNavigationElements)
+{
+    auto webView = createModalContainerWebView();
+    [webView setDecision:_WKModalContainerDecisionHideAndIgnore];
+    [webView loadBundlePage:@"modal-container-custom"];
+    [webView objectByEvaluatingJavaScript:@"show(`<nav>hello world 1</nav><div role='navigation'>hello world 2</div>`)"];
+    [webView waitForNextPresentationUpdate];
+
+    EXPECT_TRUE([[webView contentsAsString] containsString:@"hello world 1"]);
+    EXPECT_TRUE([[webView contentsAsString] containsString:@"hello world 2"]);
+    EXPECT_NULL([webView lastModalContainerInfo]);
+}
+
+TEST(ModalContainerObservation, ShowModalContainerAfterFalsePositive)
+{
+    auto webView = createModalContainerWebView();
+    [webView setDecision:_WKModalContainerDecisionHideAndIgnore];
+    [webView loadBundlePage:@"modal-container-custom"];
+    [webView objectByEvaluatingJavaScript:@"show(`<div>hello world</div><a href='https://apple.com'>Click here</a>`)"];
+    [webView waitForNextPresentationUpdate];
+    [webView waitForText:@"hello world"];
+    EXPECT_NULL([webView lastModalContainerInfo]);
 }
 
 } // namespace TestWebKitAPI
