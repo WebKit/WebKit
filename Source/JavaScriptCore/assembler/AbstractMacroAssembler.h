@@ -899,12 +899,6 @@ public:
         AssemblerType::relinkJump(jump.dataLocation(), destination.dataLocation());
     }
     
-    template<PtrTag jumpTag>
-    static void repatchJumpToNop(CodeLocationJump<jumpTag> jump)
-    {
-        AssemblerType::relinkJumpToNop(jump.dataLocation());
-    }
-
     template<PtrTag callTag, PtrTag destTag>
     static void repatchNearCall(CodeLocationNearCall<callTag> nearCall, CodeLocationLabel<destTag> destination)
     {

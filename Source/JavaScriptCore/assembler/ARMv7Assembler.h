@@ -2332,11 +2332,6 @@ public:
         cacheFlush(reinterpret_cast<uint16_t*>(from) - 5, 5 * sizeof(uint16_t));
     }
 
-    static void relinkJumpToNop(void* from)
-    {
-        relinkJump(from, from);
-    }
-    
     static void relinkCall(void* from, void* to)
     {
         ASSERT(!(reinterpret_cast<intptr_t>(from) & 1));

@@ -1,5 +1,29 @@
 2022-01-02  Zan Dobersek  <zdobersek@igalia.com>
 
+        Remove unused AbstractMacroAssembler::repatchJumpToNop() function
+        https://bugs.webkit.org/show_bug.cgi?id=234777
+
+        Reviewed by Yusuke Suzuki.
+
+        Remove the unused AbstractMacroAssembler::repatchJumpToNop() function,
+        along with the underlying relinkJumpToNop() functions on ISA-specific
+        assembler classes.
+
+        * assembler/ARM64Assembler.h:
+        (JSC::ARM64Assembler::relinkJumpToNop): Deleted.
+        * assembler/ARMv7Assembler.h:
+        (JSC::ARMv7Assembler::relinkJumpToNop): Deleted.
+        * assembler/AbstractMacroAssembler.h:
+        (JSC::AbstractMacroAssembler::repatchJumpToNop): Deleted.
+        * assembler/MIPSAssembler.h:
+        (JSC::MIPSAssembler::relinkJumpToNop): Deleted.
+        * assembler/RISCV64Assembler.h:
+        (JSC::RISCV64Assembler::relinkJumpToNop): Deleted.
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::relinkJumpToNop): Deleted.
+
+2022-01-02  Zan Dobersek  <zdobersek@igalia.com>
+
         [RISCV64] Make DFG, FTL, B3, WASM buildable on CPU(RISCV64)
         https://bugs.webkit.org/show_bug.cgi?id=234775
 

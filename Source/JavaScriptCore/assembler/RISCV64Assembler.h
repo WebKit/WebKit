@@ -1635,11 +1635,6 @@ public:
         cacheFlush(location, sizeof(uint32_t) * 2);
     }
 
-    static void relinkJumpToNop(void*)
-    {
-        RELEASE_ASSERT_NOT_REACHED();
-    }
-
     static void relinkCall(void* from, void* to)
     {
         uint32_t* location = reinterpret_cast<uint32_t*>(from);

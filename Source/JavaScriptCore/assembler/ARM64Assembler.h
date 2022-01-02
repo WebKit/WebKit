@@ -2883,11 +2883,6 @@ public:
         cacheFlush(from, sizeof(int));
     }
     
-    static void relinkJumpToNop(void* from)
-    {
-        relinkJump(from, static_cast<char*>(from) + 4);
-    }
-    
     static void relinkCall(void* from, void* to)
     {
         relinkJumpOrCall<BranchType_CALL>(reinterpret_cast<int*>(from) - 1, reinterpret_cast<const int*>(from) - 1, to);
