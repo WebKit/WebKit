@@ -27,7 +27,7 @@ set(JavaScriptCore_PRIVATE_INCLUDE_DIRECTORIES
     "${JAVASCRIPTCORE_DIR}/dfg"
     "${JAVASCRIPTCORE_DIR}/disassembler"
     "${JAVASCRIPTCORE_DIR}/disassembler/ARM64"
-    "${JAVASCRIPTCORE_DIR}/disassembler/udis86"
+    "${JAVASCRIPTCORE_DIR}/disassembler/zydis/Zydis"
     "${JAVASCRIPTCORE_DIR}/domjit"
     "${JAVASCRIPTCORE_DIR}/ftl"
     "${JAVASCRIPTCORE_DIR}/heap"
@@ -187,23 +187,6 @@ foreach (_file ${JavaScriptCore_SCRIPTS_SOURCES})
         VERBATIM)
     list(APPEND JavaScriptCore_SCRIPTS ${JavaScriptCore_SCRIPTS_DIR}/${_script})
 endforeach ()
-
-set(UDIS_GEN_DEP
-    disassembler/udis86/optable.xml
-    disassembler/udis86/ud_itab.py
-    disassembler/udis86/ud_opcode.py
-)
-
-add_custom_command(
-    OUTPUT ${JavaScriptCore_DERIVED_SOURCES_DIR}/udis86_itab.c ${JavaScriptCore_DERIVED_SOURCES_DIR}/udis86_itab.h
-    DEPENDS ${UDIS_GEN_DEP}
-    WORKING_DIRECTORY ${JavaScriptCore_DERIVED_SOURCES_DIR}
-    COMMAND ${PYTHON_EXECUTABLE} ${JAVASCRIPTCORE_DIR}/disassembler/udis86/ud_itab.py ${JAVASCRIPTCORE_DIR}/disassembler/udis86/optable.xml ${JavaScriptCore_DERIVED_SOURCES_DIR}
-    VERBATIM)
-
-list(APPEND JavaScriptCore_HEADERS
-    ${JavaScriptCore_DERIVED_SOURCES_DIR}/udis86_itab.h
-)
 
 # This is the default build variant for Xcode builds.
 set(BUILD_VARIANTS
@@ -1522,6 +1505,29 @@ else ()
 endif ()
 
 WEBKIT_COMPUTE_SOURCES(JavaScriptCore)
+list(APPEND JavaScriptCore_SOURCES
+    disassembler/zydis/Zydis/Zycore.c
+    disassembler/zydis/Zydis/ZycoreAllocator.c
+    disassembler/zydis/Zydis/ZycoreBitset.c
+    disassembler/zydis/Zydis/ZycoreFormat.c
+    disassembler/zydis/Zydis/ZycoreList.c
+    disassembler/zydis/Zydis/ZycoreString.c
+    disassembler/zydis/Zydis/ZycoreVector.c
+    disassembler/zydis/Zydis/Zydis.c
+    disassembler/zydis/Zydis/ZydisDecoder.c
+    disassembler/zydis/Zydis/ZydisDecoderData.c
+    disassembler/zydis/Zydis/ZydisFormatter.c
+    disassembler/zydis/Zydis/ZydisFormatterATT.c
+    disassembler/zydis/Zydis/ZydisFormatterBase.c
+    disassembler/zydis/Zydis/ZydisFormatterBuffer.c
+    disassembler/zydis/Zydis/ZydisFormatterIntel.c
+    disassembler/zydis/Zydis/ZydisMetaInfo.c
+    disassembler/zydis/Zydis/ZydisMnemonic.c
+    disassembler/zydis/Zydis/ZydisRegister.c
+    disassembler/zydis/Zydis/ZydisSharedData.c
+    disassembler/zydis/Zydis/ZydisString.c
+    disassembler/zydis/Zydis/ZydisUtils.c
+)
 WEBKIT_FRAMEWORK(JavaScriptCore)
 WEBKIT_FRAMEWORK_TARGET(JavaScriptCore)
 

@@ -2602,7 +2602,7 @@ void testMemoryFence()
     auto code = compileProc(proc);
     CHECK_EQ(invoke<int>(*code), 42);
     if (isX86())
-        checkUsesInstruction(*code, "lock or $0x0, (%rsp)");
+        checkUsesInstruction(*code, "lock orl $0x0, (%rsp)");
     if (isARM64())
         checkUsesInstruction(*code, dmbIsh);
     checkDoesNotUseInstruction(*code, "mfence");

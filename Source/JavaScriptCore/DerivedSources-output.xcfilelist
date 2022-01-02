@@ -112,5 +112,4 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/inspector/InspectorFrontendD
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/inspector/InspectorFrontendDispatchers.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/inspector/InspectorProtocolObjects.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/inspector/InspectorProtocolObjects.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/udis86_itab.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/yarr/YarrCanonicalizeUnicode.cpp

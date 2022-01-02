@@ -68,7 +68,6 @@ JavaScriptCore_SCRIPTS_DIR = $(JavaScriptCore)/Scripts
 
 .PHONY : all
 all : \
-    udis86_itab.h \
     InjectedScriptSource.h \
     JSCBuiltins.h \
     Lexer.lut.h \
@@ -247,11 +246,6 @@ RegExpJitTables.h: yarr/create_regex_tables
 
 KeywordLookup.h: KeywordLookupGenerator.py Keywords.table
 	$(PYTHON) $^ > $@
-
-# udis86 instruction tables
-
-udis86_itab.h: $(JavaScriptCore)/disassembler/udis86/ud_itab.py $(JavaScriptCore)/disassembler/udis86/optable.xml
-	$(PYTHON) $(JavaScriptCore)/disassembler/udis86/ud_itab.py $(JavaScriptCore)/disassembler/udis86/optable.xml .
 
 # Bytecode files
 

@@ -1,3 +1,25 @@
+2021-12-31  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Replace UDIS86 with Zydis
+        https://bugs.webkit.org/show_bug.cgi?id=234765
+
+        Reviewed by Michael Saboff.
+
+        UDIS86 is not updated from 2014. Since it is missing relatively new SIMD opcodes,
+        we cannot disassemble these opcodes when implementing Wasm SIMD.
+        This patch replaces UDIS86 with Zydis, which is actively developed and used in
+        SpiderMonkey too. It is under MIT license.
+
+        This patch imports Zydis v3.2.1.
+
+            1. Import header and C files of Zydis and Zycore in a flattened manner.
+            2. Add directory names to the files (e.g. `Zydis/Decoder.c` => `ZydisDecoder.c`) to make it easy to build in JSC build.
+            3. Replace header includes from `#include <Zydis/XXX.h>` to `#include "ZydisXXX.h"`.
+            4. Fix compile errors with our stricter compiler flags.
+            5. Remove Zycore API files and ZycoreArgParse.[hc] since they are not used.
+
+        We didn't add files to Sources.txt since unified builds do not support C files currently.
+
 2022-01-01  Jeff Miller  <jeffm@apple.com>
 
         Update user-visible copyright strings to include 2022

@@ -12,7 +12,6 @@ list(APPEND JavaScriptCore_UNIFIED_SOURCE_LIST_FILES
 )
 
 list(APPEND JavaScriptCore_PRIVATE_INCLUDE_DIRECTORIES
-    ${JAVASCRIPTCORE_DIR}/disassembler/udis86
     ${JAVASCRIPTCORE_DIR}/inspector/cocoa
     ${JAVASCRIPTCORE_DIR}/inspector/remote/cocoa
 )

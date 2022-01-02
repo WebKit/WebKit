@@ -272,8 +272,9 @@ _PATH_RULES_SPECIFIER = [
       "+pep8/W291",  # Trailing white space
       "+whitespace/carriage_return"]),
 
-    ([  # Source/JavaScriptCore/disassembler/udis86/ is generated code.
-      os.path.join('Source', 'JavaScriptCore', 'disassembler', 'udis86')],
+    ([
+      # Source/JavaScriptCore/disassembler/zydis/ is third-party code.
+      os.path.join('Source', 'JavaScriptCore', 'disassembler', 'zydis')],
      ["-readability/naming/underscores",
       "-whitespace/declaration",
       "-whitespace/indent"]),

@@ -26,18 +26,42 @@
 #include "config.h"
 #include "Disassembler.h"
 
-#if ENABLE(UDIS86)
+#if ENABLE(ZYDIS)
 
 #include "MacroAssemblerCodeRef.h"
-#include "UDis86Disassembler.h"
+#include "Zydis.h"
 
 namespace JSC {
 
 bool tryToDisassemble(const MacroAssemblerCodePtr<DisassemblyPtrTag>& codePtr, size_t size, const char* prefix, PrintStream& out)
 {
-    return tryToDisassembleWithUDis86(codePtr, size, prefix, out);
+    ZydisDecoder decoder;
+    ZydisDecoderInit(&decoder, ZYDIS_MACHINE_MODE_LONG_64, ZYDIS_ADDRESS_WIDTH_64);
+
+    ZydisFormatter formatter;
+    ZydisFormatterInit(&formatter, ZYDIS_FORMATTER_STYLE_ATT);
+    ZydisFormatterSetProperty(&formatter, ZYDIS_FORMATTER_PROP_FORCE_SIZE, ZYAN_TRUE);
+    ZydisFormatterSetProperty(&formatter, ZYDIS_FORMATTER_PROP_HEX_UPPERCASE, ZYAN_FALSE);
+    ZydisFormatterSetProperty(&formatter, ZYDIS_FORMATTER_PROP_ADDR_PADDING_ABSOLUTE, ZYDIS_PADDING_DISABLED);
+    ZydisFormatterSetProperty(&formatter, ZYDIS_FORMATTER_PROP_ADDR_PADDING_RELATIVE, ZYDIS_PADDING_DISABLED);
+    ZydisFormatterSetProperty(&formatter, ZYDIS_FORMATTER_PROP_DISP_PADDING, ZYDIS_PADDING_DISABLED);
+    ZydisFormatterSetProperty(&formatter, ZYDIS_FORMATTER_PROP_IMM_PADDING, ZYDIS_PADDING_DISABLED);
+
+    const auto* data = codePtr.dataLocation<unsigned char*>();
+    ZyanUSize offset = 0;
+    ZydisDecodedInstruction instruction;
+    char formatted[1024];
+    while (ZYAN_SUCCESS(ZydisDecoderDecodeBuffer(&decoder, data + offset, size - offset, &instruction))) {
+        if (ZYAN_SUCCESS(ZydisFormatterFormatInstruction(&formatter, &instruction, formatted, sizeof(formatted), bitwise_cast<unsigned long long>(data + offset))))
+            out.printf("%s%#16llx: %s\n", prefix, static_cast<unsigned long long>(bitwise_cast<uintptr_t>(data + offset)), formatted);
+        else
+            out.printf("%s%#16llx: failed-to-format\n", prefix, static_cast<unsigned long long>(bitwise_cast<uintptr_t>(data + offset)));
+        offset += instruction.length;
+    }
+
+    return true;
 }
 
 } // namespace JSC
 
-#endif // ENABLE(UDIS86)
+#endif // ENABLE(ZYDIS)

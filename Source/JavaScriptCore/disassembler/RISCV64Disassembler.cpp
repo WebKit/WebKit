@@ -639,10 +639,7 @@ bool tryToDisassemble(const MacroAssemblerCodePtr<DisassemblyPtrTag>& codePtr, s
     size_t byteCount = size;
 
     while (byteCount) {
-        std::array<char, 20> pcString;
-        snprintf(pcString.data(), pcString.size(), "0x%lx", reinterpret_cast<uintptr_t>(currentPC));
-
-        out.printf("%s%16s: <%08x> %s\n", prefix, pcString.data(), *currentPC,
+        out.printf("%s%#16llx: <%08x> %s\n", prefix, static_cast<unsigned long long>(bitwise_cast<uintptr_t>(currentPC)), *currentPC,
             RISCV64Disassembler::disassembleOpcode(currentPC).data());
 
         ++currentPC;

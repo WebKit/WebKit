@@ -621,8 +621,8 @@
 /* If possible, try to enable a disassembler. This is optional. We proceed in two
    steps: first we try to find some disassembler that we can use, and then we
    decide if the high-level disassembler API can be enabled. */
-#if !defined(ENABLE_UDIS86) && ENABLE(JIT) && CPU(X86_64) && !USE(CAPSTONE)
-#define ENABLE_UDIS86 1
+#if !defined(ENABLE_ZYDIS) && ENABLE(JIT) && CPU(X86_64) && !USE(CAPSTONE)
+#define ENABLE_ZYDIS 1
 #endif
 
 #if !defined(ENABLE_ARM64_DISASSEMBLER) && ENABLE(JIT) && CPU(ARM64) && !USE(CAPSTONE)
@@ -633,7 +633,7 @@
 #define ENABLE_RISCV64_DISASSEMBLER 1
 #endif
 
-#if !defined(ENABLE_DISASSEMBLER) && (ENABLE(UDIS86) || ENABLE(ARM64_DISASSEMBLER) || ENABLE(RISCV64_DISASSEMBLER) || (ENABLE(JIT) && USE(CAPSTONE)))
+#if !defined(ENABLE_DISASSEMBLER) && (ENABLE(ZYDIS) || ENABLE(ARM64_DISASSEMBLER) || ENABLE(RISCV64_DISASSEMBLER) || (ENABLE(JIT) && USE(CAPSTONE)))
 #define ENABLE_DISASSEMBLER 1
 #endif
 
