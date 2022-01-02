@@ -456,6 +456,27 @@ InlineIterator::LeafBoxIterator LineLayout::boxFor(const RenderElement& renderEl
     return InlineIterator::boxFor(*m_inlineContent, *firstIndex);
 }
 
+InlineIterator::InlineBoxIterator LineLayout::firstInlineBoxFor(const RenderInline& renderInline) const
+{
+    if (!m_inlineContent)
+        return { };
+
+    auto& layoutBox = m_boxTree.layoutBoxForRenderer(renderInline);
+    auto* box = m_inlineContent->firstBoxForLayoutBox(layoutBox);
+    if (!box)
+        return { };
+
+    return InlineIterator::inlineBoxFor(*m_inlineContent, *box);
+}
+
+InlineIterator::InlineBoxIterator LineLayout::firstRootInlineBox() const
+{
+    if (!m_inlineContent || !m_inlineContent->hasContent())
+        return { };
+
+    return InlineIterator::inlineBoxFor(*m_inlineContent, m_inlineContent->boxes[0]);
+}
+
 InlineIterator::LineIterator LineLayout::firstLine() const
 {
     if (!m_inlineContent)
@@ -541,7 +562,24 @@ void LineLayout::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
     if (!m_inlineContent)
         return;
 
-    if (paintInfo.phase != PaintPhase::Foreground && paintInfo.phase != PaintPhase::EventRegion && paintInfo.phase != PaintPhase::TextClip && paintInfo.phase != PaintPhase::Selection)
+    auto paintPhase = paintInfo.phase;
+
+    auto shouldPaintForPhase = [&] {
+        switch (paintPhase) {
+        case PaintPhase::Foreground:
+        case PaintPhase::EventRegion:
+        case PaintPhase::TextClip:
+        case PaintPhase::Selection:
+        case PaintPhase::Outline:
+        case PaintPhase::ChildOutlines:
+        case PaintPhase::SelfOutline:
+            return true;
+        default:
+            return false;
+        }
+    };
+
+    if (!shouldPaintForPhase())
         return;
 
     auto damageRect = paintInfo.rect;
@@ -556,7 +594,21 @@ void LineLayout::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
         return damageRect.maxY() > rect.y() && damageRect.y() < rect.maxY();
     };
 
+    auto shouldPaintBoxForPhase = [&](auto& box) {
+        switch (paintPhase) {
+        case PaintPhase::ChildOutlines: return box.isNonRootInlineBox();
+        case PaintPhase::SelfOutline: return box.isRootInlineBox();
+        case PaintPhase::Outline: return box.isInlineBox();
+        default: return true;
+        }
+    };
+
+    ListHashSet<RenderInline*> outlineObjects;
+
     for (auto& box : m_inlineContent->boxesForRect(damageRect)) {
+        if (!shouldPaintBoxForPhase(box))
+            continue;
+
         if (box.isLineBreak())
             continue;
 
@@ -564,7 +616,11 @@ void LineLayout::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
             if (!hasDamage(box))
                 continue;
 
-            InlineBoxPainter painter(*m_inlineContent, box, paintInfo, paintOffset);
+            PaintInfo inlineBoxPaintInfo(paintInfo);
+            inlineBoxPaintInfo.phase = paintPhase == PaintPhase::ChildOutlines ? PaintPhase::Outline : paintPhase;
+            inlineBoxPaintInfo.outlineObjects = &outlineObjects;
+
+            InlineBoxPainter painter(*m_inlineContent, box, inlineBoxPaintInfo, paintOffset);
             painter.paint();
             continue;
         }
@@ -584,6 +640,9 @@ void LineLayout::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
                 renderBox.paintAsInlineBlock(paintInfo, paintOffset);
         }
     }
+
+    for (auto* renderInline : outlineObjects)
+        renderInline->paintOutline(paintInfo, paintOffset);
 }
 
 bool LineLayout::hitTest(const HitTestRequest& request, HitTestResult& result, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction hitTestAction)

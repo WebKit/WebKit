@@ -27,6 +27,7 @@
 #include "InlineIteratorInlineBox.h"
 
 #include "LayoutIntegrationLineLayout.h"
+#include "RenderInline.h"
 
 namespace WebCore {
 namespace InlineIterator {
@@ -104,6 +105,22 @@ InlineBoxIterator& InlineBoxIterator::traversePreviousInlineBox()
         path.traversePreviousInlineBox();
     });
     return *this;
+}
+
+InlineBoxIterator firstInlineBoxFor(const RenderInline& renderInline)
+{
+    if (auto* lineLayout = LayoutIntegration::LineLayout::containing(renderInline))
+        return lineLayout->firstInlineBoxFor(renderInline);
+
+    return { BoxLegacyPath { renderInline.firstLineBox() } };
+}
+
+InlineBoxIterator firstRootInlineBoxFor(const RenderBlockFlow& block)
+{
+    if (auto* lineLayout = block.modernLineLayout())
+        return lineLayout->firstRootInlineBox();
+
+    return { BoxLegacyPath { block.firstRootBox() } };
 }
 
 InlineBoxIterator inlineBoxFor(const LegacyInlineFlowBox& legacyInlineFlowBox)

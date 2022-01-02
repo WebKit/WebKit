@@ -69,6 +69,9 @@ private:
     const InlineBox& get() const { return downcast<InlineBox>(m_box); }
 };
 
+InlineBoxIterator firstInlineBoxFor(const RenderInline&);
+InlineBoxIterator firstRootInlineBoxFor(const RenderBlockFlow&);
+
 InlineBoxIterator inlineBoxFor(const LegacyInlineFlowBox&);
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 InlineBoxIterator inlineBoxFor(const LayoutIntegration::InlineContent&, const InlineDisplay::Box&);

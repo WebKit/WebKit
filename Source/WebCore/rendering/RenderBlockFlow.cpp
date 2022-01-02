@@ -3449,10 +3449,12 @@ VisiblePosition RenderBlockFlow::positionForPoint(const LayoutPoint& point, cons
 void RenderBlockFlow::addFocusRingRectsForInlineChildren(Vector<LayoutRect>& rects, const LayoutPoint& additionalOffset, const RenderLayerModelObject*)
 {
     ASSERT(childrenInline());
-    for (auto* curr = firstRootBox(); curr; curr = curr->nextRootBox()) {
-        LayoutUnit top = std::max(curr->lineTop(), LayoutUnit(curr->top()));
-        LayoutUnit bottom = std::min(curr->lineBottom(), LayoutUnit(curr->top() + curr->height()));
-        LayoutRect rect { LayoutUnit(additionalOffset.x() + curr->x()), additionalOffset.y() + top, LayoutUnit(curr->width()), bottom - top };
+    for (auto box = InlineIterator::firstRootInlineBoxFor(*this); box; box.traverseNextInlineBox()) {
+        auto line = box->line();
+        // FIXME: This is mixing physical and logical coordinates.
+        LayoutUnit top = std::max(line->top(), LayoutUnit(box->rect().y()));
+        LayoutUnit bottom = std::min(line->bottom(), LayoutUnit(box->rect().maxY()));
+        LayoutRect rect { LayoutUnit(additionalOffset.x() + box->rect().x()), additionalOffset.y() + top, LayoutUnit(box->rect().width()), bottom - top };
         if (!rect.isEmpty())
             rects.append(rect);
     }

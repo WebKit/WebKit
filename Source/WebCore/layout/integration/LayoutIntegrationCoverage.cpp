@@ -89,9 +89,6 @@ static void printReason(AvoidanceReason reason, TextStream& stream)
     case AvoidanceReason::FlowHasHorizonalWritingMode:
         stream << "horizontal writing mode";
         break;
-    case AvoidanceReason::ContentHasOutline:
-        stream << "outline";
-        break;
     case AvoidanceReason::ContentIsRuby:
         stream << "ruby";
         break;
@@ -474,8 +471,6 @@ static OptionSet<AvoidanceReason> canUseForRenderInlineChild(const RenderInline&
     if (style.boxDecorationBreak() == BoxDecorationBreak::Clone)
         SET_REASON_AND_RETURN_IF_NEEDED(BoxDecorationBreakClone, reasons, includeReasons);
 #endif
-    if (style.hasOutline())
-        SET_REASON_AND_RETURN_IF_NEEDED(ContentHasOutline, reasons, includeReasons);
     if (renderInline.isInFlowPositioned())
         SET_REASON_AND_RETURN_IF_NEEDED(ChildBoxIsFloatingOrPositioned, reasons, includeReasons);
     if (renderInline.containingBlock()->style().lineBoxContain() != RenderStyle::initialLineBoxContain())
@@ -606,8 +601,6 @@ OptionSet<AvoidanceReason> canUseForLineLayoutWithReason(const RenderBlockFlow& 
     }
     if (!flow.isHorizontalWritingMode())
         SET_REASON_AND_RETURN_IF_NEEDED(FlowHasHorizonalWritingMode, reasons, includeReasons);
-    if (flow.hasOutline())
-        SET_REASON_AND_RETURN_IF_NEEDED(ContentHasOutline, reasons, includeReasons);
     if (flow.isRubyText() || flow.isRubyBase())
         SET_REASON_AND_RETURN_IF_NEEDED(ContentIsRuby, reasons, includeReasons);
     if (!flow.style().hangingPunctuation().isEmpty())

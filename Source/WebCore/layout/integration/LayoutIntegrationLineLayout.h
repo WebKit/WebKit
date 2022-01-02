@@ -28,6 +28,7 @@
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
 #include "FloatRect.h"
+#include "InlineIteratorInlineBox.h"
 #include "InlineIteratorLine.h"
 #include "InlineIteratorTextBox.h"
 #include "LayoutIntegrationBoxTree.h"
@@ -101,6 +102,8 @@ public:
 
     InlineIterator::TextBoxIterator textBoxesFor(const RenderText&) const;
     InlineIterator::LeafBoxIterator boxFor(const RenderElement&) const;
+    InlineIterator::InlineBoxIterator firstInlineBoxFor(const RenderInline&) const;
+    InlineIterator::InlineBoxIterator firstRootInlineBox() const;
     InlineIterator::LineIterator firstLine() const;
     InlineIterator::LineIterator lastLine() const;
 

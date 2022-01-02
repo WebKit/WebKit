@@ -39,6 +39,7 @@
 #include "HitTestLocation.h"
 #include "HitTestResult.h"
 #include "ImageBuffer.h"
+#include "InlineIteratorInlineBox.h"
 #include "InlineWalker.h"
 #include "LayoutRepainter.h"
 #include "LegacyInlineElementBox.h"
@@ -1347,7 +1348,7 @@ void RenderBlock::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOffs
             // in the same layer. 
             if (!inlineEnclosedInSelfPaintingLayer && !hasLayer())
                 containingBlock->addContinuationWithOutline(inlineRenderer);
-            else if (!inlineRenderer->firstLineBox() || (!inlineEnclosedInSelfPaintingLayer && hasLayer()))
+            else if (!InlineIterator::firstInlineBoxFor(*inlineRenderer) || (!inlineEnclosedInSelfPaintingLayer && hasLayer()))
                 inlineRenderer->paintOutline(paintInfo, paintOffset - locationOffset() + inlineRenderer->containingBlock()->location());
         }
         paintContinuationOutlines(paintInfo, paintOffset);
