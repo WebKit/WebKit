@@ -315,6 +315,15 @@ TEST_F(FragmentedSharedBufferTest, extractData)
     EXPECT_GT(original->begin()->segment->size(), 0u);
 }
 
+TEST_F(FragmentedSharedBufferTest, copyIsContiguous)
+{
+    EXPECT_TRUE(SharedBuffer::create()->copy()->isContiguous());
+    EXPECT_FALSE(FragmentedSharedBuffer::create()->copy()->isContiguous());
+    const char* const simpleText = "This is a simple test.";
+    EXPECT_TRUE(SharedBuffer::create(simpleText, strlen(simpleText))->copy()->isContiguous());
+    EXPECT_FALSE(FragmentedSharedBuffer::create(simpleText, strlen(simpleText))->copy()->isContiguous());
+}
+
 #if ENABLE(MHTML)
 // SharedBufferChunkReader unit-tests -------------------------------------
 template< typename T, size_t N >

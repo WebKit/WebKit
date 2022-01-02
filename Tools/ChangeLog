@@ -1,3 +1,14 @@
+2022-01-01  Jean-Yves Avenard  <jya@apple.com>
+
+        make SharedBuffer::copy() return a contiguous SharedBuffer
+        https://bugs.webkit.org/show_bug.cgi?id=234622
+        rdar://problem/86829527
+
+        Reviewed by Darin Adler.
+
+        * TestWebKitAPI/Tests/WebCore/SharedBuffer.cpp:
+        (TestWebKitAPI::TEST_F):
+
 2022-01-01  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Modal containers are incorrectly detected in navigation elements and fixed document elements

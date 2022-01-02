@@ -231,6 +231,8 @@ void FragmentedSharedBuffer::clear()
 
 Ref<FragmentedSharedBuffer> FragmentedSharedBuffer::copy() const
 {
+    if (m_contiguous)
+        return m_segments.size() ? SharedBuffer::create(m_segments[0].segment.copyRef()) : SharedBuffer::create();
     Ref<FragmentedSharedBuffer> clone = adoptRef(*new FragmentedSharedBuffer);
     clone->m_size = m_size;
     clone->m_segments.reserveInitialCapacity(m_segments.size());
