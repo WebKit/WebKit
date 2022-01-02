@@ -229,8 +229,8 @@ void LineLayout::updateInlineBoxDimensions(const RenderInline& renderInline)
     auto& boxGeometry = m_layoutState.ensureGeometryForBox(m_boxTree.layoutBoxForRenderer(renderInline));
 
     // Check if this renderer is part of a continuation and adjust horizontal margin/border/padding accordingly.
-    auto shouldNotRetainBorderPaddingAndMarginStart = renderInline.parent()->isAnonymousBlock() && renderInline.isContinuation();
-    auto shouldNotRetainBorderPaddingAndMarginEnd = renderInline.parent()->isAnonymousBlock() && !renderInline.isContinuation() && renderInline.inlineContinuation();
+    auto shouldNotRetainBorderPaddingAndMarginStart = renderInline.isContinuation();
+    auto shouldNotRetainBorderPaddingAndMarginEnd = !renderInline.isContinuation() && renderInline.inlineContinuation();
 
     boxGeometry.setVerticalMargin({ });
     auto isLeftToRightDirection = renderInline.style().isLeftToRightDirection();

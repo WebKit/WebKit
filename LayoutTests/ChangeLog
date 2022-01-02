@@ -1,3 +1,13 @@
+2022-01-02  Alan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Nested inline box continuation fails to omit margin/border/padding start/end values
+        https://bugs.webkit.org/show_bug.cgi?id=234789
+
+        Reviewed by Antti Koivisto.
+
+        * fast/inline/unexpected-start-end-decoration-with-nested-continuation-expected.html: Added.
+        * fast/inline/unexpected-start-end-decoration-with-nested-continuation.html: Added.
+
 2022-01-01  Antoine Quint  <graouts@webkit.org>
 
         "animation" shorthand does not parse values in the right order

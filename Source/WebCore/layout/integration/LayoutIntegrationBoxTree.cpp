@@ -122,27 +122,25 @@ void BoxTree::buildTree()
             return makeUnique<Layout::ReplacedBox>(Layout::Box::ElementAttributes { Layout::Box::ElementType::GenericElement }, WTFMove(style), WTFMove(firstLineStyle));
 
         if (is<RenderInline>(childRenderer)) {
-            if (childRenderer.parent()->isAnonymousBlock()) {
-                // This looks like continuation renderer.
-                auto& renderInline = downcast<RenderInline>(childRenderer);
-                auto shouldNotRetainBorderPaddingAndMarginStart = renderInline.isContinuation();
-                auto shouldNotRetainBorderPaddingAndMarginEnd = !renderInline.isContinuation() && renderInline.inlineContinuation();
-                auto adjustStyleForContinuation = [&] (auto& styleToAdjust) {
-                    if (shouldNotRetainBorderPaddingAndMarginStart) {
-                        styleToAdjust.setMarginStart(RenderStyle::initialMargin());
-                        styleToAdjust.resetBorderLeft();
-                        styleToAdjust.setPaddingLeft(RenderStyle::initialPadding());
-                    }
-                    if (shouldNotRetainBorderPaddingAndMarginEnd) {
-                        styleToAdjust.setMarginEnd(RenderStyle::initialMargin());
-                        styleToAdjust.resetBorderRight();
-                        styleToAdjust.setPaddingRight(RenderStyle::initialPadding());
-                    }
-                };
-                adjustStyleForContinuation(style);
-                if (firstLineStyle)
-                    adjustStyleForContinuation(*firstLineStyle);
-            }
+            // This looks like continuation renderer.
+            auto& renderInline = downcast<RenderInline>(childRenderer);
+            auto shouldNotRetainBorderPaddingAndMarginStart = renderInline.isContinuation();
+            auto shouldNotRetainBorderPaddingAndMarginEnd = !renderInline.isContinuation() && renderInline.inlineContinuation();
+            auto adjustStyleForContinuation = [&] (auto& styleToAdjust) {
+                if (shouldNotRetainBorderPaddingAndMarginStart) {
+                    styleToAdjust.setMarginStart(RenderStyle::initialMargin());
+                    styleToAdjust.resetBorderLeft();
+                    styleToAdjust.setPaddingLeft(RenderStyle::initialPadding());
+                }
+                if (shouldNotRetainBorderPaddingAndMarginEnd) {
+                    styleToAdjust.setMarginEnd(RenderStyle::initialMargin());
+                    styleToAdjust.resetBorderRight();
+                    styleToAdjust.setPaddingRight(RenderStyle::initialPadding());
+                }
+            };
+            adjustStyleForContinuation(style);
+            if (firstLineStyle)
+                adjustStyleForContinuation(*firstLineStyle);
             return makeUnique<Layout::ContainerBox>(Layout::Box::ElementAttributes { Layout::Box::ElementType::GenericElement }, WTFMove(style), WTFMove(firstLineStyle));
         }
 
