@@ -1,3 +1,16 @@
+2022-01-01  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GTK] Unreviewed test gardening, update flakey tests expectations
+        https://bugs.webkit.org/show_bug.cgi?id=234760
+
+        Remove tests that have been constantly passing for the last 4000 revisions, as well as update state of tests 
+        that have been constantly failing with a single state.
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/fast/events/wheel/wheelevent-in-horizontal-scrollbar-in-rtl-expected.txt:
+        * platform/gtk/fast/events/wheel/wheelevent-in-vertical-scrollbar-in-rtl-expected.txt:
+        * platform/wpe/TestExpectations:
+
 2022-01-01  Alan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Unexpected line break with leading collapsed whitespace
