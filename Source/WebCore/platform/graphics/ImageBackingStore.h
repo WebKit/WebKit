@@ -233,6 +233,7 @@ private:
         return PackedColor::ARGB { result }.value;
     }
 
+    // m_pixels type should be identical to the one set in ImageBackingStoreCairo.cpp
     RefPtr<FragmentedSharedBuffer::DataSegment> m_pixels;
     uint32_t* m_pixelsPtr { nullptr };
     IntSize m_size;

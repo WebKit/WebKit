@@ -317,7 +317,7 @@ public:
         m_bytesToSkip = std::max(numBytes - bytesToSkip, static_cast<long>(0));
     }
 
-    bool decode(const FragmentedSharedBuffer::DataSegment& data, bool onlySize)
+    bool decode(const SharedBuffer& data, bool onlySize)
     {
         m_decodingSizeOnly = onlySize;
 

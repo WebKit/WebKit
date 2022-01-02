@@ -76,9 +76,8 @@ public:
         if (m_encodedDataStatus == EncodedDataStatus::Error)
             return;
 
-        auto contiguousData = data.makeContiguous();
-        if (contiguousData->data())
-            m_data = contiguousData->begin()->segment.copyRef();
+        m_data = data.makeContiguous();
+
         if (m_encodedDataStatus == EncodedDataStatus::TypeAvailable) {
             m_decodingSizeFromSetData = true;
             tryDecodeSize(allDataReceived);
@@ -194,7 +193,7 @@ public:
     std::optional<IntPoint> hotSpot() const override { return std::nullopt; }
 
 protected:
-    RefPtr<FragmentedSharedBuffer::DataSegment> m_data;
+    RefPtr<const SharedBuffer> m_data;
     Vector<ScalableImageDecoderFrame, 1> m_frameBufferCache WTF_GUARDED_BY_LOCK(m_lock);
     mutable Lock m_lock;
     bool m_premultiplyAlpha;
