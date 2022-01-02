@@ -632,7 +632,7 @@ Vector<Strong<JSObject>> KeyframeEffect::getKeyframes(JSGlobalObject& lexicalGlo
     // 2. Let keyframes be the result of applying the procedure to compute missing keyframe offsets to the keyframes for this keyframe effect.
 
     // 3. For each keyframe in keyframes perform the following steps:
-    if (m_parsedKeyframes.isEmpty() && m_blendingKeyframesSource != BlendingKeyframesSource::WebAnimation) {
+    if (m_parsedKeyframes.isEmpty() && m_blendingKeyframesSource != BlendingKeyframesSource::WebAnimation && m_blendingKeyframes.containsAnimatableProperty()) {
         auto* target = m_target.get();
         auto* renderer = this->renderer();
 

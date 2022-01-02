@@ -1,3 +1,14 @@
+2022-01-02  Antoine Quint  <graouts@webkit.org>
+
+        [Web Animations] getKeyframes() should return an empty object when there are no animatable properties in @keyframes rule
+        https://bugs.webkit.org/show_bug.cgi?id=234793
+
+        Reviewed by Dean Jackson.
+
+        Mark a new WPT progression.
+
+        * web-platform-tests/css/css-animations/KeyframeEffect-getKeyframes.tentative-expected.txt:
+
 2022-01-01  Antoine Quint  <graouts@webkit.org>
 
         "animation" shorthand does not parse values in the right order

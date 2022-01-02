@@ -91,7 +91,8 @@ public:
     void addProperty(CSSPropertyID prop) { m_properties.add(prop); }
     bool containsProperty(CSSPropertyID prop) const { return m_properties.contains(prop); }
     const HashSet<CSSPropertyID>& properties() const { return m_properties; }
-    
+    bool containsAnimatableProperty() const;
+
     void clear();
     bool isEmpty() const { return m_keyframes.isEmpty(); }
     size_t size() const { return m_keyframes.size(); }
