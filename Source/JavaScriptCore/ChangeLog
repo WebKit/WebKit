@@ -1,5 +1,32 @@
 2022-01-02  Zan Dobersek  <zdobersek@igalia.com>
 
+        [RISCV64] Enable building LLInt WebAssembly via the riscv64 offlineasm backend
+        https://bugs.webkit.org/show_bug.cgi?id=234776
+
+        Reviewed by Yusuke Suzuki.
+
+        Sprinkle RISCV64 conditions around WebAssembly.asm as appropriate.
+        For division, we can reuse the divi(s)/divq(s) instructions already
+        available in offlineasm. RISC-V additionally provides remainder
+        instructions, so the necessary offlineasm instructions are added
+        and used for RISCV64.
+
+        In the offlineasm riscv64 backend, the division and remainder
+        instruction handling is improved to properly cover signed and unsigned
+        variants. For other instructions used in LLint WebAssembly
+        implementation like left or right rotation, trailing- or leading-zero
+        counting, order-based floating-point comparison, load-reserved and
+        store-conditional operations, the riscv64WASMPlaceholder helper is used
+        to generate an ebreak instruction that will halt the program at runtime
+        but will not throw a build-time error. Proper implementations will be
+        provided once WebAssembly support on RISCV64 is taken up.
+
+        * llint/WebAssembly.asm:
+        * offlineasm/instructions.rb:
+        * offlineasm/riscv64.rb:
+
+2022-01-02  Zan Dobersek  <zdobersek@igalia.com>
+
         [RISCV64] Get testmasm building for CPU(RISCV64)
         https://bugs.webkit.org/show_bug.cgi?id=234774
 

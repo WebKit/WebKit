@@ -113,6 +113,10 @@ def riscv64RaiseUnsupported
     raise "Not supported for RISCV64"
 end
 
+def riscv64WASMPlaceholder
+    $asm.puts "ebreak"
+end
+
 def riscv64LoadInstruction(size)
     case size
     when :b
@@ -335,8 +339,14 @@ def riscv64EmitMulDivArithmetic(operands, size, operation)
         case operation
         when :mul
             size == :w ? "mulw" : "mul"
-        when :div
+        when :divu
             size == :w ? "divuw" : "divu"
+        when :div
+            size == :w ? "divw" : "div"
+        when :remu
+            size == :w ? "remuw" : "remu"
+        when :rem
+            size == :w ? "remw" : "rem"
         else
             raise "Unsupported arithmetic operation"
         end
@@ -1545,11 +1555,21 @@ class Instruction
         when "mulp", "mulq"
             riscv64EmitMulDivArithmetic(operands, :d, :mul)
         when "divi"
-            riscv64EmitMulDivArithmetic(operands, :w, :div)
+            riscv64EmitMulDivArithmetic(operands, :w, :divu)
         when "divq"
+            riscv64EmitMulDivArithmetic(operands, :d, :divu)
+        when "divis"
+            riscv64EmitMulDivArithmetic(operands, :w, :div)
+        when "divqs"
             riscv64EmitMulDivArithmetic(operands, :d, :div)
-        when "divis", "divqs"
-            riscv64RaiseUnsupported
+        when "remi"
+            riscv64EmitMulDivArithmetic(operands, :w, :remu)
+        when "remq"
+            riscv64EmitMulDivArithmetic(operands, :d, :rem)
+        when "remis"
+            riscv64EmitMulDivArithmetic(operands, :w, :rem)
+        when "remqs"
+            riscv64EmitMulDivArithmetic(operands, :d, :rem)
         when "negi"
             riscv64EmitComplementOperation(operands, :w, :neg)
         when "negp", "negq"
@@ -1939,9 +1959,9 @@ class Instruction
                 riscv64RaiseMismatchedOperands(operands)
             end
         when "lrotatei", "lrotateq"
-            riscv64RaiseUnsupported
+            riscv64WASMPlaceholder
         when "rrotatei", "rrotateq"
-            riscv64RaiseUnsupported
+            riscv64WASMPlaceholder
         when "moved"
             riscv64EmitFPOperation(operands, "fmv.d")
         when "loadf"
@@ -2033,9 +2053,9 @@ class Instruction
         when "cd2f"
             riscv64EmitFPConvertOperation(operands, :d, :s, :none)
         when "tzcnti", "tzcntq"
-            riscv64RaiseUnsupported
+            riscv64WASMPlaceholder
         when "lzcnti", "lzcntq"
-            riscv64RaiseUnsupported
+            riscv64WASMPlaceholder
         when "andf"
             riscv64EmitFPBitwiseOperation(operands, :s, "and")
         when "andd"
@@ -2057,7 +2077,7 @@ class Instruction
         when "cfgteq"
             riscv64EmitFPCompare(operands, :s, :gteq)
         when "cfnequn"
-            riscv64EmitFPCompare(operands, :s, :nequn)
+            riscv64WASMPlaceholder
         when "cdeq"
             riscv64EmitFPCompare(operands, :d, :eq)
         when "cdneq"
@@ -2071,7 +2091,7 @@ class Instruction
         when "cdgteq"
             riscv64EmitFPCompare(operands, :d, :gteq)
         when "cdnequn"
-            riscv64EmitFPCompare(operands, :d, :nequn)
+            riscv64WASMPlaceholder
         when "fi2f"
             riscv64EmitFPCopy(operands, :s)
         when "ff2i"
@@ -2083,9 +2103,9 @@ class Instruction
         when "tls_loadp", "tls_storep"
             riscv64RaiseUnsupported
         when "loadlinkacqb", "loadlinkacqh", "loadlinkacqi", "loadlinkacqq"
-            riscv64RaiseUnsupported
+            riscv64WASMPlaceholder
         when "storecondrelb", "storecondrelh", "storecondreli", "storecondrelq"
-            riscv64RaiseUnsupported
+            riscv64WASMPlaceholder
         when "atomicxchgaddb", "atomicxchgaddh", "atomicxchgaddi", "atomicxchgaddq"
             riscv64RaiseUnsupported
         when "atomicxchgclearb", "atomicxchgclearh", "atomicxchgcleari", "atomicxchgclearq"

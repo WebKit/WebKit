@@ -32,7 +32,7 @@ end
 
 if X86_64
     const NumberOfWasmArgumentGPRs = 6
-elsif ARM64 or ARM64E
+elsif ARM64 or ARM64E or RISCV64
     const NumberOfWasmArgumentGPRs = 8
 else
     error
@@ -50,7 +50,7 @@ const boundsCheckingSize = csr4
 # This must match the definition in LowLevelInterpreter.asm
 if X86_64
     const PB = csr2
-elsif ARM64 or ARM64E
+elsif ARM64 or ARM64E or RISCV64
     const PB = csr7
 else
     error
@@ -198,7 +198,7 @@ macro preserveCalleeSavesUsedByWasm()
     subp CalleeSaveSpaceStackAligned, sp
     if ARM64 or ARM64E
         emit "stp x19, x26, [x29, #-16]"
-    elsif X86_64
+    elsif X86_64 or RISCV64
         storep PB, -0x8[cfr]
         storep wasmInstance, -0x10[cfr]
     else
@@ -212,7 +212,7 @@ macro restoreCalleeSavesUsedByWasm()
     # to be observable within the same Wasm module.
     if ARM64 or ARM64E
         emit "ldp x19, x26, [x29, #-16]"
-    elsif X86_64
+    elsif X86_64 or RISCV64
         loadp -0x8[cfr], PB
         loadp -0x10[cfr], wasmInstance
     else
@@ -996,7 +996,7 @@ wasmOp(i32_div_s, WasmI32DivS, macro (ctx)
         # https://bugs.webkit.org/show_bug.cgi?id=203692
         cdqi
         idivi t1
-    elsif ARM64 or ARM64E
+    elsif ARM64 or ARM64E or RISCV64
         divis t1, t0
     else
         error
@@ -1019,7 +1019,7 @@ wasmOp(i32_div_u, WasmI32DivU, macro (ctx)
     if X86_64
         xori t2, t2
         udivi t1
-    elsif ARM64 or ARM64E
+    elsif ARM64 or ARM64E or RISCV64
         divi t1, t0
     else
         error
@@ -1052,6 +1052,8 @@ wasmOp(i32_rem_s, WasmI32RemS, macro (ctx)
         divis t1, t0, t2
         muli t1, t2
         subi t0, t2, t2
+    elsif RISCV64
+        remis t1, t0
     else
         error
     end
@@ -1076,6 +1078,8 @@ wasmOp(i32_rem_u, WasmI32RemU, macro (ctx)
         divi t1, t0, t2
         muli t1, t2
         subi t0, t2, t2
+    elsif RISCV64
+        remi t1, t0
     else
         error
     end
@@ -1115,7 +1119,7 @@ wasmOp(i64_div_s, WasmI64DivS, macro (ctx)
         # https://bugs.webkit.org/show_bug.cgi?id=203692
         cqoq
         idivq t1
-    elsif ARM64 or ARM64E
+    elsif ARM64 or ARM64E or RISCV64
         divqs t1, t0
     else
         error
@@ -1138,7 +1142,7 @@ wasmOp(i64_div_u, WasmI64DivU, macro (ctx)
     if X86_64
         xorq t2, t2
         udivq t1
-    elsif ARM64 or ARM64E
+    elsif ARM64 or ARM64E or RISCV64
         divq t1, t0
     else
         error
@@ -1171,6 +1175,8 @@ wasmOp(i64_rem_s, WasmI64RemS, macro (ctx)
         divqs t1, t0, t2
         mulq t1, t2
         subq t0, t2, t2
+    elsif RISCV64
+        remqs t1, t0
     else
         error
     end
@@ -1195,6 +1201,8 @@ wasmOp(i64_rem_u, WasmI64RemU, macro (ctx)
         divq t1, t0, t2
         mulq t1, t2
         subq t0, t2, t2
+    elsif RISCV64
+        remq t1, t0
     else
         error
     end
@@ -1596,7 +1604,7 @@ wasmOp(f32_convert_u_i64, WasmF32ConvertUI64, macro (ctx)
     mloadq(ctx, m_operand, t0)
     if X86_64
         cq2f t0, t1, ft0
-    elsif ARM64 or ARM64E
+    elsif ARM64 or ARM64E or RISCV64
         cq2f t0, ft0
     else
         error
@@ -1608,7 +1616,7 @@ wasmOp(f64_convert_u_i64, WasmF64ConvertUI64, macro (ctx)
     mloadq(ctx, m_operand, t0)
     if X86_64
         cq2d t0, t1, ft0
-    elsif ARM64 or ARM64E
+    elsif ARM64 or ARM64E or RISCV64
         cq2d t0, ft0
     else
         error
