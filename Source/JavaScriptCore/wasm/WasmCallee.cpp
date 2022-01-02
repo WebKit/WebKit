@@ -128,7 +128,7 @@ RegisterAtOffsetList* LLIntCallee::calleeSaveRegisters()
         registers.set(GPRInfo::regCS0); // Wasm::Instance
 #if CPU(X86_64)
         registers.set(GPRInfo::regCS2); // PB
-#elif CPU(ARM64)
+#elif CPU(ARM64) || CPU(RISCV64)
         registers.set(GPRInfo::regCS7); // PB
 #else
 #error Unsupported architecture.

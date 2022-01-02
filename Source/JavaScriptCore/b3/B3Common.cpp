@@ -72,7 +72,7 @@ bool shouldSaveIRBeforePhase()
 
 std::optional<GPRReg> pinnedExtendedOffsetAddrRegister()
 {
-#if CPU(ARM64)
+#if CPU(ARM64) || CPU(RISCV64)
     return MacroAssembler::dataTempRegister;
 #elif CPU(X86_64)
     return std::nullopt;

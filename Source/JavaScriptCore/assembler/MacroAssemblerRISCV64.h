@@ -1829,6 +1829,8 @@ public:
         testFinalize(cond, dest, dest);
     }
 
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(setCarry);
+
     Jump branch8(RelationalCondition cond, Address address, TrustedImm32 imm)
     {
         auto temp = temps<Data, Memory>();

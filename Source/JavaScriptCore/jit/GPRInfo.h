@@ -879,6 +879,8 @@ public:
     static constexpr GPRReg wasmScratchGPR0 = RISCV64Registers::x6; // regT9
     static constexpr GPRReg wasmScratchGPR1 = RISCV64Registers::x7; // regT10
 
+    static constexpr GPRReg patchpointScratchRegister = RISCV64Registers::x30; // Should match dataTempRegister
+
     static GPRReg toRegister(unsigned index)
     {
         ASSERT(index < numberOfRegisters);

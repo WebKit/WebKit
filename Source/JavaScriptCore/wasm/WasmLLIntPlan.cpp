@@ -119,7 +119,7 @@ void LLIntPlan::didCompleteCompilation()
             entrypoints[i] = jit.label();
 #if CPU(X86_64)
             CCallHelpers::Address calleeSlot(CCallHelpers::stackPointerRegister, CallFrameSlot::callee * static_cast<int>(sizeof(Register)) - sizeof(CPURegister));
-#elif CPU(ARM64)
+#elif CPU(ARM64) || CPU(RISCV64)
             CCallHelpers::Address calleeSlot(CCallHelpers::stackPointerRegister, CallFrameSlot::callee * static_cast<int>(sizeof(Register)) - sizeof(CallerFrameAndPC));
 #else
 #error Unsupported architecture.

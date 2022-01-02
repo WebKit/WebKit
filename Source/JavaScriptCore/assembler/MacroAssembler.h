@@ -1459,7 +1459,7 @@ public:
         add32(TrustedImm32(address.offset), address.base, dest);
     }
 
-#if CPU(X86_64) || CPU(ARM64)
+#if CPU(X86_64) || CPU(ARM64) || CPU(RISCV64)
     void lea64(Address address, RegisterID dest)
     {
         add64(TrustedImm32(address.offset), address.base, dest);

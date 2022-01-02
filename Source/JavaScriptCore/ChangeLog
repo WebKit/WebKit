@@ -1,5 +1,45 @@
 2022-01-02  Zan Dobersek  <zdobersek@igalia.com>
 
+        [RISCV64] Make DFG, FTL, B3, WASM buildable on CPU(RISCV64)
+        https://bugs.webkit.org/show_bug.cgi?id=234775
+
+        Reviewed by Yusuke Suzuki.
+
+        Enable building DFG, FTL, B3 and WASM subsystems on 64-bit RISC-V.
+        Necessary guards and missing bits are added to make things buildable,
+        but actual enabling of these features at build-time is left for later.
+        Even when enabled at build-time in the future, there'll likey be open
+        issues that will require disabling different features at run-time.
+
+        MacroAssemblerRISCV64::setCarry() no-op method is added for now. Carry
+        flag retrieval isn't exactly possible on RISC-V, so the uses of it will
+        have to be addressed some other way.
+
+        The patchpointScratchRegister value is defined for CPU(RISCV64). As
+        on ARM64, the value matches MacroAssemblerRISCV64::dataTempRegister.
+
+        In B3, we follow ARM64 in the pinned extended-offset-address use and
+        stack argument lowering.
+
+        in WASM, we can again mirror ARM64 around LLInt callee registers and
+        slots as well as executing the epilogue of a OSR-entry callee.
+
+        * assembler/MacroAssembler.h: Provide lea64() for CPU(RISCV64) as well.
+        * assembler/MacroAssemblerRISCV64.h:
+        * b3/B3Common.cpp:
+        (JSC::B3::pinnedExtendedOffsetAddrRegister):
+        * b3/air/AirLowerStackArgs.cpp:
+        (JSC::B3::Air::lowerStackArgs):
+        * jit/GPRInfo.h:
+        * wasm/WasmCallee.cpp:
+        (JSC::Wasm::LLIntCallee::calleeSaveRegisters):
+        * wasm/WasmLLIntPlan.cpp:
+        (JSC::Wasm::LLIntPlan::didCompleteCompilation):
+        * wasm/WasmOperations.cpp:
+        (JSC::Wasm::doOSREntry):
+
+2022-01-02  Zan Dobersek  <zdobersek@igalia.com>
+
         [RISCV64] Enable building LLInt WebAssembly via the riscv64 offlineasm backend
         https://bugs.webkit.org/show_bug.cgi?id=234776
 
