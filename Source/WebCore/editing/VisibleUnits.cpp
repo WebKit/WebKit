@@ -752,7 +752,7 @@ static VisiblePosition startPositionForLine(const VisiblePosition& c, LineEndpoi
     InlineIterator::LineLogicalOrderCache orderCache;
 
     Node* startNode = nullptr;
-    auto startRun = mode == UseLogicalOrdering ? InlineIterator::firstLeafOnLineInLogicalOrderWithNode(line, orderCache) : line->firstRun();
+    auto startRun = mode == UseLogicalOrdering ? InlineIterator::firstLeafOnLineInLogicalOrderWithNode(line, orderCache) : line->firstLeafBox();
     // Generated content (e.g. list markers and CSS :before and :after pseudoelements) have no corresponding DOM element,
     // and so cannot be represented by a VisiblePosition. Use whatever follows instead.
     while (true) {
@@ -824,7 +824,7 @@ static VisiblePosition endPositionForLine(const VisiblePosition& c, LineEndpoint
     InlineIterator::LineLogicalOrderCache orderCache;
 
     Node* endNode = nullptr;
-    auto endRun = mode == UseLogicalOrdering ? InlineIterator::lastLeafOnLineInLogicalOrder(line, orderCache) : line->lastRun();
+    auto endRun = mode == UseLogicalOrdering ? InlineIterator::lastLeafOnLineInLogicalOrder(line, orderCache) : line->lastLeafBox();
     // Generated content (e.g. list markers and CSS :before and :after pseudoelements) have no corresponding DOM element,
     // and so cannot be represented by a VisiblePosition. Use whatever precedes instead.
     while (true) {
@@ -973,7 +973,7 @@ VisiblePosition previousLinePosition(const VisiblePosition& visiblePosition, int
         line = run->line()->previous();
         // We want to skip zero height boxes.
         // This could happen in case it is a LegacyRootInlineBox with trailing floats.
-        if (!line || !line->logicalHeight() || !line->firstRun())
+        if (!line || !line->logicalHeight() || !line->firstLeafBox())
             line = { };
     }
 
@@ -1026,7 +1026,7 @@ VisiblePosition nextLinePosition(const VisiblePosition& visiblePosition, int lin
         line = run->line()->next();
         // We want to skip zero height boxes.
         // This could happen in case it is a LegacyRootInlineBox with trailing floats.
-        if (!line || !line->logicalHeight() || !line->firstRun())
+        if (!line || !line->logicalHeight() || !line->firstLeafBox())
             line = { };
     }
 

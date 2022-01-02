@@ -95,7 +95,7 @@ public:
 
     bool atEnd() const { return m_lineIndex == lines().size(); }
 
-    BoxModernPath firstRun() const
+    BoxModernPath firstLeafBox() const
     {
         if (!line().boxCount())
             return { *m_inlineContent };
@@ -105,7 +105,7 @@ public:
         return runIterator;
     }
 
-    BoxModernPath lastRun() const
+    BoxModernPath lastLeafBox() const
     {
         auto boxCount = line().boxCount();
         if (!boxCount)

@@ -81,8 +81,8 @@ public:
 
     bool isFirst() const;
 
-    LeafBoxIterator firstRun() const;
-    LeafBoxIterator lastRun() const;
+    LeafBoxIterator firstLeafBox() const;
+    LeafBoxIterator lastLeafBox() const;
 
     LineIterator next() const;
     LineIterator previous() const;

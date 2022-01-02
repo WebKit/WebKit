@@ -101,17 +101,17 @@ LineIterator Line::previous() const
     return LineIterator(*this).traversePrevious();
 }
 
-LeafBoxIterator Line::firstRun() const
+LeafBoxIterator Line::firstLeafBox() const
 {
     return WTF::switchOn(m_pathVariant, [](auto& path) -> LeafBoxIterator {
-        return { path.firstRun() };
+        return { path.firstLeafBox() };
     });
 }
 
-LeafBoxIterator Line::lastRun() const
+LeafBoxIterator Line::lastLeafBox() const
 {
     return WTF::switchOn(m_pathVariant, [](auto& path) -> LeafBoxIterator {
-        return { path.lastRun() };
+        return { path.lastLeafBox() };
     });
 }
 
@@ -126,8 +126,8 @@ LeafBoxIterator Line::closestRunForLogicalLeftPosition(int leftPosition, bool ed
         return run && run->renderer().node() && run->renderer().node()->hasEditableStyle();
     };
 
-    auto firstRun = this->firstRun();
-    auto lastRun = this->lastRun();
+    auto firstRun = this->firstLeafBox();
+    auto lastRun = this->lastLeafBox();
 
     if (firstRun != lastRun) {
         if (firstRun->isLineBreak())
@@ -179,7 +179,7 @@ RenderObject::HighlightState Line::selectionState() const
         return RenderObject::None;
 
     auto state = RenderObject::None;
-    for (auto box = firstRun(); box; box.traverseNextOnLine()) {
+    for (auto box = firstLeafBox(); box; box.traverseNextOnLine()) {
         auto boxState = box->selectionState();
         if ((boxState == RenderObject::HighlightState::Start && state == RenderObject::HighlightState::End)
             || (boxState == RenderObject::HighlightState::End && state == RenderObject::HighlightState::Start))
@@ -199,7 +199,7 @@ RenderObject::HighlightState Line::selectionState() const
 
 LeafBoxIterator Line::firstSelectedBox() const
 {
-    for (auto box = firstRun(); box; box.traverseNextOnLine()) {
+    for (auto box = firstLeafBox(); box; box.traverseNextOnLine()) {
         if (box->selectionState() != RenderObject::HighlightState::None)
             return box;
     }
@@ -208,7 +208,7 @@ LeafBoxIterator Line::firstSelectedBox() const
 
 LeafBoxIterator Line::lastSelectedBox() const
 {
-    for (auto box = lastRun(); box; box.traversePreviousOnLine()) {
+    for (auto box = lastLeafBox(); box; box.traversePreviousOnLine()) {
         if (box->selectionState() != RenderObject::HighlightState::None)
             return box;
     }

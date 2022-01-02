@@ -3254,8 +3254,8 @@ void RenderBlockFlow::clearTruncation()
 
 bool RenderBlockFlow::containsNonZeroBidiLevel() const
 {
-    for (auto* root = firstRootBox(); root; root = root->nextRootBox()) {
-        for (auto* box = root->firstLeafDescendant(); box; box = box->nextLeafOnLine()) {
+    for (auto line = InlineIterator::firstLineFor(*this); line; line.traverseNext()) {
+        for (auto box = line->firstLeafBox(); box; box = box.traverseNextOnLine()) {
             if (box->bidiLevel())
                 return true;
         }
@@ -3363,7 +3363,7 @@ VisiblePosition RenderBlockFlow::positionForPointWithInlineChildren(const Layout
         if (fragment && line->legacyRootInlineBox() && line->legacyRootInlineBox()->containingFragment() != fragment)
             continue;
 
-        if (!line->firstRun())
+        if (!line->firstLeafBox())
             continue;
         if (!firstLineWithChildren)
             firstLineWithChildren = line;
@@ -3378,7 +3378,7 @@ VisiblePosition RenderBlockFlow::positionForPointWithInlineChildren(const Layout
         if (pointInLogicalContents.y() < line->selectionBottom() || (blocksAreFlipped && pointInLogicalContents.y() == line->selectionBottom())) {
             if (linesAreFlipped) {
                 auto nextLineWithChildren = line->next();
-                while (nextLineWithChildren && !nextLineWithChildren->firstRun())
+                while (nextLineWithChildren && !nextLineWithChildren->firstLeafBox())
                     nextLineWithChildren.traverseNext();
 
                 if (nextLineWithChildren && nextLineWithChildren->legacyRootInlineBox() && nextLineWithChildren->legacyRootInlineBox()->isFirstAfterPageBreak()
@@ -3403,7 +3403,7 @@ VisiblePosition RenderBlockFlow::positionForPointWithInlineChildren(const Layout
             LayoutUnit firstLineWithChildrenTop = std::min(firstLineWithChildren->selectionTopForHitTesting(), LayoutUnit(firstLineWithChildren->top()));
             if (pointInLogicalContents.y() < firstLineWithChildrenTop
                 || (blocksAreFlipped && pointInLogicalContents.y() == firstLineWithChildrenTop)) {
-                auto run = firstLineWithChildren->firstRun();
+                auto run = firstLineWithChildren->firstLeafBox();
                 if (run->isLineBreak()) {
                     if (auto next = run->nextOnLineIgnoringLineBreak())
                         run = next;

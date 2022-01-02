@@ -75,12 +75,12 @@ public:
 
     bool atEnd() const { return !m_rootInlineBox; }
 
-    BoxLegacyPath firstRun() const
+    BoxLegacyPath firstLeafBox() const
     {
         return { m_rootInlineBox->firstLeafDescendant() };
     }
 
-    BoxLegacyPath lastRun() const
+    BoxLegacyPath lastLeafBox() const
     {
         return { m_rootInlineBox->lastLeafDescendant() };
     }
