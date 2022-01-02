@@ -635,6 +635,7 @@ Vector<Strong<JSObject>> KeyframeEffect::getKeyframes(JSGlobalObject& lexicalGlo
     if (m_parsedKeyframes.isEmpty() && m_blendingKeyframesSource != BlendingKeyframesSource::WebAnimation && m_blendingKeyframes.containsAnimatableProperty()) {
         auto* target = m_target.get();
         auto* renderer = this->renderer();
+        auto* lastStyleChangeEventStyle = targetStyleable()->lastStyleChangeEventStyle();
 
         auto computedStyleExtractor = ComputedStyleExtractor(target, false, m_pseudoId);
 
@@ -661,15 +662,20 @@ Vector<Strong<JSObject>> KeyframeEffect::getKeyframes(JSGlobalObject& lexicalGlo
             auto outputKeyframe = convertDictionaryToJS(lexicalGlobalObject, *jsCast<JSDOMGlobalObject*>(&lexicalGlobalObject), computedKeyframe);
 
             // 3. For each animation property-value pair specified on keyframe, declaration, perform the following steps:
+            auto isFirstOrLastKeyframe = !keyframe.key() || keyframe.key() == 1;
+            auto& properties = isFirstOrLastKeyframe ? m_blendingKeyframes.properties() : keyframe.properties();
             auto& style = *keyframe.style();
-            for (auto cssPropertyId : keyframe.properties()) {
+            for (auto cssPropertyId : properties) {
                 if (cssPropertyId == CSSPropertyCustom)
                     continue;
                 // 1. Let property name be the result of applying the animation property name to IDL attribute name algorithm to the property name of declaration.
                 auto propertyName = CSSPropertyIDToIDLAttributeName(cssPropertyId);
                 // 2. Let IDL value be the result of serializing the property value of declaration by passing declaration to the algorithm to serialize a CSS value.
                 String idlValue = "";
-                if (auto cssValue = computedStyleExtractor.valueForPropertyInStyle(style, cssPropertyId, renderer))
+                if (isFirstOrLastKeyframe && !keyframe.properties().contains(cssPropertyId) && lastStyleChangeEventStyle) {
+                    if (auto cssValue = computedStyleExtractor.valueForPropertyInStyle(*lastStyleChangeEventStyle, cssPropertyId, renderer))
+                        idlValue = cssValue->cssText();
+                } else if (auto cssValue = computedStyleExtractor.valueForPropertyInStyle(style, cssPropertyId, renderer))
                     idlValue = cssValue->cssText();
                 // 3. Let value be the result of converting IDL value to an ECMAScript String value.
                 auto value = toJS<IDLDOMString>(lexicalGlobalObject, idlValue);

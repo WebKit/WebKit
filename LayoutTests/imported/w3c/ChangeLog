@@ -1,5 +1,16 @@
 2022-01-02  Antoine Quint  <graouts@webkit.org>
 
+        [Web Animations] getKeyframes() should ensure that all properties are present on 0% and 100% keyframes
+        https://bugs.webkit.org/show_bug.cgi?id=234795
+
+        Reviewed by Dean Jackson.
+
+        Mark a WPT progressions.
+
+        * web-platform-tests/css/css-animations/KeyframeEffect-getKeyframes.tentative-expected.txt:
+
+2022-01-02  Antoine Quint  <graouts@webkit.org>
+
         [Web Animations] getKeyframes() should return an empty object when there are no animatable properties in @keyframes rule
         https://bugs.webkit.org/show_bug.cgi?id=234793
 
