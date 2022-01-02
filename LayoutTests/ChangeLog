@@ -1,3 +1,17 @@
+2022-01-01  Antoine Quint  <graouts@webkit.org>
+
+        "animation" shorthand does not parse values in the right order
+        https://bugs.webkit.org/show_bug.cgi?id=234788
+
+        Reviewed by Dean Jackson.
+
+        Update the order in which animation-name is serialized in the "animation" shorthand
+        for some non-WPT tests.
+
+        * fast/css/longhand-overrides-shorthand-prefixing-expected.txt:
+        * fast/css/longhand-overrides-shorthand-prefixing.html:
+        * fast/css/transform-inline-style-remove-expected.txt:
+
 2022-01-01  Diego Pino Garcia  <dpino@igalia.com>
 
         [GTK] Unreviewed test gardening, update flakey tests expectations
