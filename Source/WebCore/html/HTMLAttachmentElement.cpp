@@ -207,11 +207,11 @@ String HTMLAttachmentElement::attachmentPath() const
 void HTMLAttachmentElement::updateAttributes(std::optional<uint64_t>&& newFileSize, const String& newContentType, const String& newFilename)
 {
     if (!newFilename.isNull()) {
-        if (RefPtr enclosingImage = enclosingImageElement())
+        if (auto enclosingImage = enclosingImageElement())
             enclosingImage->setAttributeWithoutSynchronization(HTMLNames::altAttr, newFilename);
         setAttributeWithoutSynchronization(HTMLNames::titleAttr, newFilename);
     } else {
-        if (RefPtr enclosingImage = enclosingImageElement())
+        if (auto enclosingImage = enclosingImageElement())
             enclosingImage->removeAttribute(HTMLNames::altAttr);
         removeAttribute(HTMLNames::titleAttr);
     }
@@ -240,7 +240,7 @@ void HTMLAttachmentElement::updateEnclosingImageWithData(const String& contentTy
     if (buffer->isEmpty())
         return;
 
-    RefPtr enclosingImage = enclosingImageElement();
+    auto enclosingImage = enclosingImageElement();
     if (!enclosingImage)
         return;
 
