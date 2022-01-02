@@ -178,8 +178,7 @@ TextUtil::WordBreakLeft TextUtil::breakWord(const InlineTextBox& inlineTextBox, 
             // When the substring does not fit, the right side is supposed to be the start of the surrogate pair if applicable, unless startPosition falls between surrogate pair.
             right = middle;
             U16_SET_CP_START(text, 0, right);
-            if (right < startPosition)
-                return { };
+            ASSERT(right >= startPosition);
         } else {
             right = middle + 1;
             leftSideWidth = width;
@@ -285,9 +284,10 @@ size_t TextUtil::firstUserPerceivedCharacterLength(const InlineTextItem& inlineT
         return 1;
     if (inlineTextBox.canUseSimpleFontCodePath()) {
         UChar32 character;
-        size_t endOfCodePoint = 0;
+        size_t endOfCodePoint = inlineTextItem.start();
         U16_NEXT(textContent.characters16(), endOfCodePoint, textContent.length(), character);
-        return endOfCodePoint;
+        ASSERT(endOfCodePoint > inlineTextItem.start());
+        return endOfCodePoint - inlineTextItem.start();
     }
     auto graphemeClustersIterator = NonSharedCharacterBreakIterator { textContent };
     auto nextPosition = ubrk_following(graphemeClustersIterator, inlineTextItem.start());
