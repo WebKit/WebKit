@@ -2973,7 +2973,7 @@ bool WebViewImpl::readSelectionFromPasteboard(NSPasteboard *pasteboard)
 id WebViewImpl::validRequestorForSendAndReturnTypes(NSString *sendType, NSString *returnType)
 {
     EditorState editorState = m_page->editorState();
-    bool isValidSendType = false;
+    bool isValidSendType = !sendType;
 
     if (sendType && !editorState.selectionIsNone) {
         if (editorState.isInPlugin)

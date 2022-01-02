@@ -1917,6 +1917,7 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         WebCore::legacyPDFPasteboardType(), WebCore::legacyURLPasteboardType(), WebCore::legacyRTFDPasteboardType(), WebCore::legacyRTFPasteboardType(),
         WebCore::legacyStringPasteboardType(), WebCore::legacyColorPasteboardType(), (NSString *)kUTTypePNG,
     ];
+ALLOW_DEPRECATED_DECLARATIONS_END
     return types.get().get();
 }
 

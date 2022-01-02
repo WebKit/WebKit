@@ -1,3 +1,18 @@
+2022-01-02  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [WebKit2] Camera continuity is disabled in richly editable content
+        https://bugs.webkit.org/show_bug.cgi?id=234773
+        rdar://46323417
+
+        Reviewed by Darin Adler.
+
+        Add an API test to verify that the result of `-validRequestorForSendType:returnType:` isn't always `nil` in the
+        case where there is no send type.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/mac/NSResponderTests.mm: Added.
+        (TestWebKitAPI::TEST):
+
 2022-01-01  Jean-Yves Avenard  <jya@apple.com>
 
         make SharedBuffer::copy() return a contiguous SharedBuffer

@@ -1,3 +1,21 @@
+2022-01-02  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [WebKit2] Camera continuity is disabled in richly editable content
+        https://bugs.webkit.org/show_bug.cgi?id=234773
+        rdar://46323417
+
+        Reviewed by Darin Adler.
+
+        `-[WKWebView validRequestorForSendType:returnType:]` currently never returns a nonnull result when the given
+        send type is nil, because `WebViewImpl::validRequestorForSendAndReturnTypes` only sets `isValidSendType` to
+        anything other than false if `sendType` is nonnull. Instead of doing this, we should match legacy WebKit
+        behavior by treating the send type as "valid" if it's nil.
+
+        Test: NSResponderTests.ValidRequestorForReturnTypes
+
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::validRequestorForSendAndReturnTypes):
+
 2022-01-01  Jeff Miller  <jeffm@apple.com>
 
         Update user-visible copyright strings to include 2022
