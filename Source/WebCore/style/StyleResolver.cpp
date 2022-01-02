@@ -321,46 +321,61 @@ void Resolver::keyframeStylesForAnimation(const Element& element, const RenderSt
     if (it == m_keyframesRuleMap.end())
         return;
 
+    auto timingFunctionForKeyframe = [](Ref<StyleRuleKeyframe> keyframe) -> RefPtr<const TimingFunction> {
+        if (auto timingFunctionCSSValue = keyframe->properties().getPropertyCSSValue(CSSPropertyAnimationTimingFunction)) {
+            if (auto timingFunction = TimingFunction::createFromCSSValue(*timingFunctionCSSValue))
+                return timingFunction;
+        }
+        return &CubicBezierTimingFunction::defaultTimingFunction();
+    };
+
+    HashSet<RefPtr<const TimingFunction>> timingFunctions;
+    auto uniqueTimingFunctionForKeyframe = [&](Ref<StyleRuleKeyframe> keyframe) -> RefPtr<const TimingFunction> {
+        auto timingFunction = timingFunctionForKeyframe(keyframe);
+        for (auto existingTimingFunction : timingFunctions) {
+            if (arePointingToEqualData(timingFunction, existingTimingFunction))
+                return existingTimingFunction;
+        }
+        timingFunctions.add(timingFunction);
+        return timingFunction;
+    };
+
     const StyleRuleKeyframes* keyframesRule = it->value.get();
-
     auto* keyframes = &keyframesRule->keyframes();
-    Vector<Ref<StyleRuleKeyframe>> newKeyframesIfNecessary;
 
-    bool hasDuplicateKeys = false;
-    HashSet<double> keyframeKeys;
-    for (auto& keyframe : *keyframes) {
-        for (auto key : keyframe->keys()) {
-            if (!keyframeKeys.add(key)) {
-                hasDuplicateKeys = true;
-                break;
+    using KeyframeUniqueKey = std::pair<double, RefPtr<const TimingFunction>>;
+    auto hasDuplicateKeys = [&]() -> bool {
+        HashSet<KeyframeUniqueKey> uniqueKeyframeKeys;
+        for (auto& keyframe : *keyframes) {
+            auto timingFunction = uniqueTimingFunctionForKeyframe(keyframe);
+            for (auto key : keyframe->keys()) {
+                if (!uniqueKeyframeKeys.add({ key, timingFunction }))
+                    return true;
             }
         }
-        if (hasDuplicateKeys)
-            break;
-    }
+        return false;
+    }();
 
     // FIXME: If HashMaps could have Ref<> as value types, we wouldn't need
     // to copy the HashMap into a Vector.
+    Vector<Ref<StyleRuleKeyframe>> newKeyframesIfNecessary;
     if (hasDuplicateKeys) {
-        // Merge duplicate key times.
-        HashMap<double, RefPtr<StyleRuleKeyframe>> keyframesMap;
-
-        for (auto& originalKeyframe : keyframesRule->keyframes()) {
+        // Merge keyframes with a similar offset and timing function.
+        HashMap<KeyframeUniqueKey, RefPtr<StyleRuleKeyframe>> keyframesMap;
+        for (auto& originalKeyframe : *keyframes) {
+            auto timingFunction = uniqueTimingFunctionForKeyframe(originalKeyframe);
             for (auto key : originalKeyframe->keys()) {
-                if (auto keyframe = keyframesMap.get(key))
+                if (auto keyframe = keyframesMap.get({ key, timingFunction }))
                     keyframe->mutableProperties().mergeAndOverrideOnConflict(originalKeyframe->properties());
                 else {
-                    auto StyleRuleKeyframe = StyleRuleKeyframe::create(MutableStyleProperties::create());
-                    StyleRuleKeyframe.ptr()->setKey(key);
-                    StyleRuleKeyframe.ptr()->mutableProperties().mergeAndOverrideOnConflict(originalKeyframe->properties());
-                    keyframesMap.set(key, StyleRuleKeyframe.ptr());
+                    auto styleRuleKeyframe = StyleRuleKeyframe::create(MutableStyleProperties::create());
+                    styleRuleKeyframe.ptr()->setKey(key);
+                    styleRuleKeyframe.ptr()->mutableProperties().mergeAndOverrideOnConflict(originalKeyframe->properties());
+                    keyframesMap.set({ key, timingFunction }, styleRuleKeyframe.ptr());
+                    newKeyframesIfNecessary.append(styleRuleKeyframe);
                 }
             }
         }
-
-        for (auto& keyframe : keyframesMap.values())
-            newKeyframesIfNecessary.append(*keyframe.get());
-
         keyframes = &newKeyframesIfNecessary;
     }
 

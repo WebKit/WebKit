@@ -639,6 +639,22 @@ Vector<Strong<JSObject>> KeyframeEffect::getKeyframes(JSGlobalObject& lexicalGlo
 
         auto computedStyleExtractor = ComputedStyleExtractor(target, false, m_pseudoId);
 
+        // We need to establish which properties are implicit for 0% and 100%.
+        HashSet<CSSPropertyID> zeroKeyframeProperties = m_blendingKeyframes.properties();
+        HashSet<CSSPropertyID> oneKeyframeProperties = m_blendingKeyframes.properties();
+        zeroKeyframeProperties.remove(CSSPropertyCustom);
+        oneKeyframeProperties.remove(CSSPropertyCustom);
+        for (size_t i = 0; i < m_blendingKeyframes.size(); ++i) {
+            auto& keyframe = m_blendingKeyframes[i];
+            if (!keyframe.key()) {
+                for (auto cssPropertyId : keyframe.properties())
+                    zeroKeyframeProperties.remove(cssPropertyId);
+            } else if (keyframe.key() == 1) {
+                for (auto cssPropertyId : keyframe.properties())
+                    oneKeyframeProperties.remove(cssPropertyId);
+            }
+        }
+
         for (size_t i = 0; i < m_blendingKeyframes.size(); ++i) {
             // 1. Initialize a dictionary object, output keyframe, using the following definition:
             //
@@ -661,27 +677,43 @@ Vector<Strong<JSObject>> KeyframeEffect::getKeyframes(JSGlobalObject& lexicalGlo
 
             auto outputKeyframe = convertDictionaryToJS(lexicalGlobalObject, *jsCast<JSDOMGlobalObject*>(&lexicalGlobalObject), computedKeyframe);
 
-            // 3. For each animation property-value pair specified on keyframe, declaration, perform the following steps:
-            auto isFirstOrLastKeyframe = !keyframe.key() || keyframe.key() == 1;
-            auto& properties = isFirstOrLastKeyframe ? m_blendingKeyframes.properties() : keyframe.properties();
-            auto& style = *keyframe.style();
-            for (auto cssPropertyId : properties) {
-                if (cssPropertyId == CSSPropertyCustom)
-                    continue;
+            auto addPropertyToKeyframe = [&](CSSPropertyID cssPropertyId, String idlValue) {
                 // 1. Let property name be the result of applying the animation property name to IDL attribute name algorithm to the property name of declaration.
                 auto propertyName = CSSPropertyIDToIDLAttributeName(cssPropertyId);
                 // 2. Let IDL value be the result of serializing the property value of declaration by passing declaration to the algorithm to serialize a CSS value.
-                String idlValue = "";
-                if (isFirstOrLastKeyframe && !keyframe.properties().contains(cssPropertyId) && lastStyleChangeEventStyle) {
-                    if (auto cssValue = computedStyleExtractor.valueForPropertyInStyle(*lastStyleChangeEventStyle, cssPropertyId, renderer))
-                        idlValue = cssValue->cssText();
-                } else if (auto cssValue = computedStyleExtractor.valueForPropertyInStyle(style, cssPropertyId, renderer))
-                    idlValue = cssValue->cssText();
                 // 3. Let value be the result of converting IDL value to an ECMAScript String value.
                 auto value = toJS<IDLDOMString>(lexicalGlobalObject, idlValue);
                 // 4. Call the [[DefineOwnProperty]] internal method on output keyframe with property name property name,
                 //    Property Descriptor { [[Writable]]: true, [[Enumerable]]: true, [[Configurable]]: true, [[Value]]: value } and Boolean flag false.
                 JSObject::defineOwnProperty(outputKeyframe, &lexicalGlobalObject, AtomString(propertyName).impl(), PropertyDescriptor(value, 0), false);
+            };
+
+            // 3. For each animation property-value pair specified on keyframe, declaration, perform the following steps:
+            auto& style = *keyframe.style();
+            for (auto cssPropertyId : keyframe.properties()) {
+                if (cssPropertyId == CSSPropertyCustom)
+                    continue;
+                String idlValue = "";
+                if (auto cssValue = computedStyleExtractor.valueForPropertyInStyle(style, cssPropertyId, renderer))
+                    idlValue = cssValue->cssText();
+                addPropertyToKeyframe(cssPropertyId, idlValue);
+            }
+
+            // Now add the implicit properties in case there are any and we're dealing with a 0% or 100% keyframe.
+            if (lastStyleChangeEventStyle) {
+                if (!keyframe.key()) {
+                    for (auto cssPropertyId : zeroKeyframeProperties) {
+                        if (auto cssValue = computedStyleExtractor.valueForPropertyInStyle(*lastStyleChangeEventStyle, cssPropertyId, renderer))
+                            addPropertyToKeyframe(cssPropertyId, cssValue->cssText());
+                    }
+                    zeroKeyframeProperties.clear();
+                } else if (keyframe.key() == 1) {
+                    for (auto cssPropertyId : oneKeyframeProperties) {
+                        if (auto cssValue = computedStyleExtractor.valueForPropertyInStyle(*lastStyleChangeEventStyle, cssPropertyId, renderer))
+                            addPropertyToKeyframe(cssPropertyId, cssValue->cssText());
+                    }
+                    oneKeyframeProperties.clear();
+                }
             }
 
             // 5. Append output keyframe to result.
