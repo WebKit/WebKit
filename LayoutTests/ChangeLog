@@ -1,5 +1,13 @@
 2022-01-02  Diego Pino Garcia  <dpino@igalia.com>
 
+        [GTK] Unreviewed test gardening, emit baseline for imported/w3c/web-platform-tests/css/selectors/focus-visible-002.html
+        https://bugs.webkit.org/show_bug.cgi?id=224967
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/imported/w3c/web-platform-tests/css/selectors/focus-visible-002-expected.txt: Added.
+
+2022-01-02  Diego Pino Garcia  <dpino@igalia.com>
+
         [WPE] [Debug] Unreviewed test gardening, remove WebXR tests failures no longer crashing
         https://bugs.webkit.org/show_bug.cgi?id=225379
 
