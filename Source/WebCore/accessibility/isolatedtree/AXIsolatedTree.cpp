@@ -209,6 +209,8 @@ Ref<AXIsolatedObject> AXIsolatedTree::createSubtree(AXCoreObject& axObject, AXID
         return object;
     }
 
+    ASSERT(axObject.wrapper());
+
     NodeChange nodeChange { object, nullptr };
     if (attachWrapper)
         object->attachPlatformWrapper(axObject.wrapper());
