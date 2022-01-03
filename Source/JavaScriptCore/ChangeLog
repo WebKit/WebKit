@@ -1,3 +1,17 @@
+2022-01-03  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Fix length of Intl.NumberFormat.formatRange and Intl.PluralRules.selectRange
+        https://bugs.webkit.org/show_bug.cgi?id=234806
+
+        Reviewed by Alexey Shvayka.
+
+        These length's numbers are wrong. This patch fixes them.
+
+        * runtime/IntlNumberFormatPrototype.cpp:
+        (JSC::IntlNumberFormatPrototype::finishCreation):
+        * runtime/IntlPluralRulesPrototype.cpp:
+        (JSC::IntlPluralRulesPrototype::finishCreation):
+
 2022-01-02  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Use emitPutProperty / emitGetPropertyValue consistently to handle private names in edge cases

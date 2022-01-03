@@ -32,5 +32,6 @@ function shouldBe(actual, expected) {
 
 if (Intl.PluralRules.prototype.selectRange) {
     const pl = new Intl.PluralRules("sl");
+    shouldBe(pl.selectRange.length, 2);
     shouldBe("few", pl.selectRange(102, 201));
 }

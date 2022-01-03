@@ -1386,12 +1386,33 @@ test/intl402/NumberFormat/prototype/format/useGrouping-extended-en-IN.js:
 test/intl402/NumberFormat/prototype/format/value-decimal-string.js:
   default: 'Test262Error: Expected SameValue(«1», «1.0000000000000001») to be true'
   strict mode: 'Test262Error: Expected SameValue(«1», «1.0000000000000001») to be true'
+test/intl402/NumberFormat/prototype/formatRange/builtin.js:
+  default: 'Test262Error: The [[Class]] internal property of a built-in function must be "Function". Expected SameValue(«[object Undefined]», «[object Function]») to be true'
+  strict mode: 'Test262Error: The [[Class]] internal property of a built-in function must be "Function". Expected SameValue(«[object Undefined]», «[object Function]») to be true'
+test/intl402/NumberFormat/prototype/formatRange/en-US.js:
+  default: "TypeError: nf.formatRange is not a function. (In 'nf.formatRange(3, 5)', 'nf.formatRange' is undefined)"
+  strict mode: "TypeError: nf.formatRange is not a function. (In 'nf.formatRange(3, 5)', 'nf.formatRange' is undefined)"
+test/intl402/NumberFormat/prototype/formatRange/invoked-as-func.js:
+  default: 'Test262Error: Expected SameValue(«undefined», «function») to be true'
+  strict mode: 'Test262Error: Expected SameValue(«undefined», «function») to be true'
 test/intl402/NumberFormat/prototype/formatRange/length.js:
-  default: 'Test262Error: descriptor value should be 2'
-  strict mode: 'Test262Error: descriptor value should be 2'
+  default: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(obj, name)')"
+  strict mode: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(obj, name)')"
+test/intl402/NumberFormat/prototype/formatRange/name.js:
+  default: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(obj, name)')"
+  strict mode: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(obj, name)')"
+test/intl402/NumberFormat/prototype/formatRange/nan-arguments-throws.js:
+  default: 'Test262Error: Expected a RangeError but got a TypeError'
+  strict mode: 'Test262Error: Expected a RangeError but got a TypeError'
+test/intl402/NumberFormat/prototype/formatRange/prop-desc.js:
+  default: 'Test262Error: `typeof Intl.NumberFormat.prototype.formatRange` is `function` Expected SameValue(«undefined», «function») to be true'
+  strict mode: 'Test262Error: `typeof Intl.NumberFormat.prototype.formatRange` is `function` Expected SameValue(«undefined», «function») to be true'
 test/intl402/NumberFormat/prototype/formatRange/pt-PT.js:
-  default: 'Test262Error: Expected SameValue(«3 - 5 €», «3 - 5 €») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«3 - 5 €», «3 - 5 €») to be true'
+  default: "TypeError: nf.formatRange is not a function. (In 'nf.formatRange(3, 5)', 'nf.formatRange' is undefined)"
+  strict mode: "TypeError: nf.formatRange is not a function. (In 'nf.formatRange(3, 5)', 'nf.formatRange' is undefined)"
+test/intl402/NumberFormat/prototype/formatRange/x-greater-than-y-throws.js:
+  default: 'Test262Error: Expected a RangeError but got a TypeError'
+  strict mode: 'Test262Error: Expected a RangeError but got a TypeError'
 test/intl402/NumberFormat/prototype/formatRangeToParts/builtin.js:
   default: 'Test262Error: The [[Class]] internal property of a built-in function must be "Function". Expected SameValue(«[object Undefined]», «[object Function]») to be true'
   strict mode: 'Test262Error: The [[Class]] internal property of a built-in function must be "Function". Expected SameValue(«[object Undefined]», «[object Function]») to be true'
@@ -1447,17 +1468,26 @@ test/intl402/NumberFormat/prototype/formatToParts/signDisplay-negative-zh-TW.js:
   default: 'Test262Error: -0.0001 (negative): length Expected SameValue(«2», «1») to be true'
   strict mode: 'Test262Error: -0.0001 (negative): length Expected SameValue(«2», «1») to be true'
 test/intl402/PluralRules/prototype/selectRange/default-en-us.js:
-  default: 'Test262Error: Expected SameValue(«other», «few») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«other», «few») to be true'
+  default: "TypeError: pr.selectRange is not a function. (In 'pr.selectRange(102, 201)', 'pr.selectRange' is undefined)"
+  strict mode: "TypeError: pr.selectRange is not a function. (In 'pr.selectRange(102, 201)', 'pr.selectRange' is undefined)"
+test/intl402/PluralRules/prototype/selectRange/invoked-as-func.js:
+  default: 'Test262Error: Expected SameValue(«undefined», «function») to be true'
+  strict mode: 'Test262Error: Expected SameValue(«undefined», «function») to be true'
 test/intl402/PluralRules/prototype/selectRange/length.js:
-  default: 'Test262Error: descriptor value should be 2'
-  strict mode: 'Test262Error: descriptor value should be 2'
+  default: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(obj, name)')"
+  strict mode: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(obj, name)')"
+test/intl402/PluralRules/prototype/selectRange/name.js:
+  default: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(obj, name)')"
+  strict mode: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(obj, name)')"
 test/intl402/PluralRules/prototype/selectRange/nan-arguments-throws.js:
-  default: 'Test262Error: NaN/Number Expected a RangeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: NaN/Number Expected a RangeError to be thrown but no exception was thrown at all'
-test/intl402/PluralRules/prototype/selectRange/undefined-arguments-throws.js:
-  default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
+  default: 'Test262Error: NaN/Number Expected a RangeError but got a TypeError'
+  strict mode: 'Test262Error: NaN/Number Expected a RangeError but got a TypeError'
+test/intl402/PluralRules/prototype/selectRange/prop-desc.js:
+  default: 'Test262Error: `typeof Intl.PluralRules.prototype.selectRange` is `function` Expected SameValue(«undefined», «function») to be true'
+  strict mode: 'Test262Error: `typeof Intl.PluralRules.prototype.selectRange` is `function` Expected SameValue(«undefined», «function») to be true'
+test/intl402/PluralRules/prototype/selectRange/x-greater-than-y-throws.js:
+  default: 'Test262Error: Expected a RangeError but got a TypeError'
+  strict mode: 'Test262Error: Expected a RangeError but got a TypeError'
 test/intl402/Temporal/PlainTime/prototype/toLocaleString/locales-undefined.js:
   default: 'TypeError: Temporal.PlainTime.prototype.valueOf must not be called. To compare PlainTime values, use Temporal.PlainTime.compare'
   strict mode: 'TypeError: Temporal.PlainTime.prototype.valueOf must not be called. To compare PlainTime values, use Temporal.PlainTime.compare'

@@ -63,6 +63,7 @@ if (nf.formatRange || nf.formatRangeToParts) {
         // Assert if called without nf
         let f = nf[method];
         shouldThrow(() => { f(1, 23) }, TypeError);
+        shouldBe(f.length, 2);
 
         // Assert normal call success
         shouldNotThrow(() => nf[method](1, 23));
