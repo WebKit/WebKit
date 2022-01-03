@@ -2477,6 +2477,7 @@ rendering/svg/RenderSVGHiddenContainer.cpp
 rendering/svg/RenderSVGImage.cpp
 rendering/svg/RenderSVGInline.cpp
 rendering/svg/RenderSVGInlineText.cpp
+rendering/svg/RenderSVGModelObject.cpp
 rendering/svg/RenderSVGPath.cpp
 rendering/svg/RenderSVGRect.cpp
 rendering/svg/RenderSVGResource.cpp

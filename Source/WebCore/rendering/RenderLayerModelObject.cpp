@@ -29,9 +29,11 @@
 #include "RenderLayerBacking.h"
 #include "RenderLayerCompositor.h"
 #include "RenderLayerScrollableArea.h"
+#include "RenderSVGModelObject.h"
 #include "RenderView.h"
 #include "Settings.h"
 #include "StyleScrollSnapPoints.h"
+#include "TransformState.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -228,6 +230,93 @@ void RenderLayerModelObject::suspendAnimations(MonotonicTime time)
         return;
     layer()->backing()->suspendAnimations(time);
 }
+
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+std::optional<LayoutRect> RenderLayerModelObject::computeVisibleRectInSVGContainer(const LayoutRect& rect, const RenderLayerModelObject* container, RenderObject::VisibleRectContext context) const
+{
+    // FIXME: [LBSE] Upstream RenderSVGBlock changes
+    // ASSERT(is<RenderSVGModelObject>(this) || is<RenderSVGBlock>(this));
+    ASSERT(is<RenderSVGModelObject>(this));
+
+    ASSERT(!style().hasInFlowPosition());
+    ASSERT(!view().frameView().layoutContext().isPaintOffsetCacheEnabled());
+
+    if (container == this)
+        return rect;
+
+    bool containerIsSkipped;
+    auto* localContainer = this->container(container, containerIsSkipped);
+    if (!localContainer)
+        return rect;
+
+    ASSERT_UNUSED(containerIsSkipped, !containerIsSkipped);
+
+    LayoutRect adjustedRect = rect;
+
+    // FIXME: [LBSE] Upstream RenderSVGForeignObject changes
+    // Move to origin of local coordinate system, if this is the first call to computeVisibleRectInContainer() originating
+    // from a SVG renderer (RenderSVGModelObject / RenderSVGBlock) or if we cross the boundary from HTML -> SVG via RenderSVGForeignObject.
+    // bool moveToOrigin = is<RenderSVGForeignObject>(renderer);
+    bool moveToOrigin = false;
+
+    /* FIXME: [LBSE] Upstream RenderObject changes
+    if (context.options.contains(RenderObject::VisibleRectContextOption::TranslateToSVGRendererOrigin)) {
+        context.options.remove(RenderObject::VisibleRectContextOption::TranslateToSVGRendererOrigin);
+        moveToOrigin = true;
+    }
+    */
+
+    if (moveToOrigin)
+        adjustedRect.moveBy(flooredLayoutPoint(objectBoundingBox().minXMinYCorner()));
+
+    if (auto* transform = layer()->transform())
+        adjustedRect = transform->mapRect(adjustedRect);
+
+    return localContainer->computeVisibleRectInContainer(adjustedRect, container, context);
+}
+
+void RenderLayerModelObject::mapLocalToSVGContainer(const RenderLayerModelObject* ancestorContainer, TransformState& transformState, OptionSet<MapCoordinatesMode> mode, bool* wasFixed) const
+{
+    // FIXME: [LBSE] Upstream RenderSVGBlock changes
+    // ASSERT(is<RenderSVGModelObject>(this) || is<RenderSVGBlock>(this));
+    ASSERT(is<RenderSVGModelObject>(this));
+    ASSERT(style().position() == PositionType::Static);
+
+    if (ancestorContainer == this)
+        return;
+
+    ASSERT(!view().frameView().layoutContext().isPaintOffsetCacheEnabled());
+
+    bool ancestorSkipped;
+    auto* container = this->container(ancestorContainer, ancestorSkipped);
+    if (!container)
+        return;
+
+    ASSERT_UNUSED(ancestorSkipped, !ancestorSkipped);
+
+    // If this box has a transform, it acts as a fixed position container for fixed descendants,
+    // and may itself also be fixed position. So propagate 'fixed' up only if this box is fixed position.
+    if (hasTransform())
+        mode.remove(IsFixed);
+
+    if (wasFixed)
+        *wasFixed = mode.contains(IsFixed);
+
+    auto containerOffset = offsetFromContainer(*container, LayoutPoint(transformState.mappedPoint()));
+
+    bool preserve3D = mode & UseTransforms && (container->style().preserves3D() || style().preserves3D());
+    if (mode & UseTransforms && shouldUseTransformFromContainer(container)) {
+        TransformationMatrix t;
+        getTransformFromContainer(container, containerOffset, t);
+        transformState.applyTransform(t, preserve3D ? TransformState::AccumulateTransform : TransformState::FlattenTransform);
+    } else
+        transformState.move(containerOffset.width(), containerOffset.height(), preserve3D ? TransformState::AccumulateTransform : TransformState::FlattenTransform);
+
+    mode.remove(ApplyContainerFlip);
+
+    container->mapLocalToContainer(ancestorContainer, transformState, mode, wasFixed);
+}
+#endif
 
 } // namespace WebCore
 
