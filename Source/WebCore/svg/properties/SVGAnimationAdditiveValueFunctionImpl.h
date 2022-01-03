@@ -81,10 +81,10 @@ public:
 
     void animate(SVGElement&, float progress, unsigned repeatCount, Color& animated)
     {
-        auto simpleAnimated = animated.toSRGBALossy<uint8_t>();
-        auto simpleFrom = m_animationMode == AnimationMode::To ? simpleAnimated : m_from.toSRGBALossy<uint8_t>();
-        auto simpleTo = m_to.toSRGBALossy<uint8_t>();
-        auto simpleToAtEndOfDuration = toAtEndOfDuration().toSRGBALossy<uint8_t>();
+        auto simpleAnimated = animated.toColorTypeLossy<SRGBA<uint8_t>>().resolved();
+        auto simpleFrom = m_animationMode == AnimationMode::To ? simpleAnimated : m_from.toColorTypeLossy<SRGBA<uint8_t>>().resolved();
+        auto simpleTo = m_to.toColorTypeLossy<SRGBA<uint8_t>>().resolved();
+        auto simpleToAtEndOfDuration = toAtEndOfDuration().toColorTypeLossy<SRGBA<uint8_t>>().resolved();
         
         float red = Base::animate(progress, repeatCount, simpleFrom.red, simpleTo.red, simpleToAtEndOfDuration.red, simpleAnimated.red);
         float green = Base::animate(progress, repeatCount, simpleFrom.green, simpleTo.green, simpleToAtEndOfDuration.green, simpleAnimated.green);
@@ -103,8 +103,8 @@ public:
         if (!toColor.isValid())
             return { };
             
-        auto simpleFrom = fromColor.toSRGBALossy<uint8_t>();
-        auto simpleTo = toColor.toSRGBALossy<uint8_t>();
+        auto simpleFrom = fromColor.toColorTypeLossy<SRGBA<uint8_t>>().resolved();
+        auto simpleTo = toColor.toColorTypeLossy<SRGBA<uint8_t>>().resolved();
 
         float red = simpleFrom.red - simpleTo.red;
         float green = simpleFrom.green - simpleTo.green;
@@ -116,8 +116,8 @@ public:
 private:
     void addFromAndToValues(SVGElement&) override
     {
-        auto simpleFrom = m_from.toSRGBALossy<uint8_t>();
-        auto simpleTo = m_to.toSRGBALossy<uint8_t>();
+        auto simpleFrom = m_from.toColorTypeLossy<SRGBA<uint8_t>>().resolved();
+        auto simpleTo = m_to.toColorTypeLossy<SRGBA<uint8_t>>().resolved();
 
         // Ignores any alpha and sets alpha on result to 100% opaque.
         m_to = makeFromComponentsClamping<SRGBA<uint8_t>>(simpleTo.red + simpleFrom.red, simpleTo.green + simpleFrom.green, simpleTo.blue + simpleFrom.blue);

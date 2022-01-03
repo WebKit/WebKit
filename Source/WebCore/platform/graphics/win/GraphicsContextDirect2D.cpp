@@ -365,7 +365,7 @@ void GraphicsContextPlatformPrivate::rotate(float angle)
 
 D2D1_COLOR_F GraphicsContextDirect2D::colorWithGlobalAlpha(const Color& color) const
 {
-    auto [r, g, b, a] = color.toSRGBALossy<float>();
+    auto [r, g, b, a] = color.toColorTypeLossy<SRGBA<float>>().resolved();
     return D2D1::ColorF(r, g, b, a * m_data->currentGlobalAlpha());
 }
 

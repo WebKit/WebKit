@@ -147,12 +147,12 @@ static std::pair<CGColorSpaceRef, ColorComponents<float, 4>> convertToCGCompatib
     if (!cgColorSpace) {
 #if HAVE(CORE_GRAPHICS_EXTENDED_SRGB_COLOR_SPACE)
         auto componentsConvertedToExtendedSRGBA = callWithColorType(components, colorSpace, [] (const auto& color) {
-            return asColorComponents(convertColor<ExtendedSRGBA<float>>(color));
+            return asColorComponents(convertColor<ExtendedSRGBA<float>>(color).resolved());
         });
         return { extendedSRGBColorSpaceRef(), componentsConvertedToExtendedSRGBA };
 #else
         auto componentsConvertedToSRGBA = callWithColorType(components, colorSpace, [] (const auto& color) {
-            return asColorComponents(convertColor<SRGBA<float>>(color));
+            return asColorComponents(convertColor<SRGBA<float>>(color).resolved());
         });
         return { sRGBColorSpaceRef(), componentsConvertedToSRGBA };
 #endif
@@ -163,7 +163,7 @@ static std::pair<CGColorSpaceRef, ColorComponents<float, 4>> convertToCGCompatib
 
 static RetainPtr<CGColorRef> createCGColor(const Color& color)
 {
-    auto [colorSpace, components] = color.colorSpaceAndComponents();
+    auto [colorSpace, components] = color.colorSpaceAndResolvedColorComponents();
     auto [cgColorSpace, cgCompatibleComponents] = convertToCGCompatibleComponents(colorSpace, components);
     
     auto [c1, c2, c3, c4] = cgCompatibleComponents;

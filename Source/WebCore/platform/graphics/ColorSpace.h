@@ -80,7 +80,7 @@ template<typename T> struct ColorSpaceMapping<SRGBA<T>> { static constexpr auto 
 template<typename T> struct ColorSpaceMapping<XYZA<T, WhitePoint::D50>> { static constexpr auto colorSpace { ColorSpace::XYZ_D50 }; };
 template<typename T> struct ColorSpaceMapping<XYZA<T, WhitePoint::D65>> { static constexpr auto colorSpace { ColorSpace::XYZ_D65 }; };
 
-template<typename ColorType> constexpr ColorSpace ColorSpaceFor = ColorSpaceMapping<ColorType>::colorSpace;
+template<typename ColorType> constexpr ColorSpace ColorSpaceFor = ColorSpaceMapping<CanonicalColorType<ColorType>>::colorSpace;
 
 
 template<typename T, typename Functor> constexpr decltype(auto) callWithColorType(const ColorComponents<T, 4>& components, ColorSpace colorSpace, Functor&& functor)

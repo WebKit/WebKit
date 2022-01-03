@@ -354,7 +354,7 @@ void ViewGestureController::beginSwipeGesture(WebBackForwardListItem* targetItem
         if (color.isValid()) {
             m_backgroundColorForCurrentSnapshot = color;
             if (!m_currentSwipeSnapshotPattern) {
-                auto [red, green, blue, alpha] = color.toSRGBALossy<float>();
+                auto [red, green, blue, alpha] = color.toColorTypeLossy<SRGBA<float>>().resolved();
 #if USE(GTK4)
                 GdkRGBA rgba = { red, green, blue, alpha };
                 m_currentSwipeSnapshotPattern = adoptGRef(gsk_color_node_new(&rgba, &bounds));

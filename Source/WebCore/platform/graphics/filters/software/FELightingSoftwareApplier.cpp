@@ -326,7 +326,7 @@ void FELightingSoftwareApplier::applyPlatform(const LightingData& data)
 {
     LightSource::PaintingData paintingData;
 
-    auto [r, g, b, a] = data.lightingColor.toColorComponentsInColorSpace(*data.operatingColorSpace);
+    auto [r, g, b, a] = data.lightingColor.toResolvedColorComponentsInColorSpace(*data.operatingColorSpace);
     paintingData.initialLightingData.colorVector = FloatPoint3D(r, g, b);
 
     data.lightSource->initPaintingData(*data.filter, *data.result, paintingData);

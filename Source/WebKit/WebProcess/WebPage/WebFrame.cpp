@@ -671,7 +671,7 @@ bool WebFrame::getDocumentBackgroundColor(double* red, double* green, double* bl
     if (!bgColor.isValid())
         return false;
 
-    auto [r, g, b, a] = bgColor.toSRGBALossy<float>();
+    auto [r, g, b, a] = bgColor.toColorTypeLossy<SRGBA<float>>().resolved();
     *red = r;
     *green = g;
     *blue = b;

@@ -1,3 +1,20 @@
+2022-01-03  Sam Weinig  <weinig@apple.com>
+
+        Add resolved/unresolved color type accessors to require users to be explicit about whether they will handle missing/none color components
+        https://bugs.webkit.org/show_bug.cgi?id=234798
+
+        Reviewed by Antti Koivisto.
+
+        * TestWebKitAPI/Tests/WebCore/ColorTests.cpp:
+        (TestWebKitAPI::TEST):
+        Replace uses of Color::toSRGBALossy<>() with Color::toColorTypeLossy<SRGBA<>>() and add
+        calls to resolved() to access color components. Also update to new name of colorSpaceAndComponents(),
+        colorSpaceAndResolvedColorComponents().
+
+        * TestWebKitAPI/Tests/WebCore/cocoa/TestGraphicsContextGLCocoa.mm:
+        (TestWebKitAPI::changeContextContents):
+        Replace unnecessary use of colorSpaceAndComponents() with the more common toColorTypeLossy<WebCore::SRGBA<float>>().resolved().
+
 2022-01-03  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Undownloaded iCloud Photos are inserted as broken images when attachment element is enabled

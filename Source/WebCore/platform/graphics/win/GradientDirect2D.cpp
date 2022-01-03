@@ -58,7 +58,7 @@ ID2D1Brush* Gradient::createBrush(ID2D1RenderTarget* renderTarget)
     gradientStops.reserveInitialCapacity(m_stops.size());
     for (auto& stop : m_stops) {
         // FIXME: Add support for non-sRGBA color spaces.
-        auto [r, g, b, a] stop.color.toSRGBALossy<float>();
+        auto [r, g, b, a] stop.color.toColorTypeLossy<SRGBA<float>>().resolved();
         gradientStops.gradientStops.uncheckedAppend(D2D1::GradientStop(stop.offset, D2D1::ColorF(r, g, b, a)));
     }
 

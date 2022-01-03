@@ -165,7 +165,7 @@ void GraphicsContextCG::drawDotsForDocumentMarker(const FloatRect& rect, Documen
     static constexpr auto spellingPatternColor = Color::red;
     static constexpr auto grammarPatternColor = Color::darkGreen;
 
-    auto [r, g, b, a] = style.mode == DocumentMarkerLineStyle::Mode::Grammar ? grammarPatternColor : spellingPatternColor;
+    auto [r, g, b, a] = style.mode == DocumentMarkerLineStyle::Mode::Grammar ? grammarPatternColor.resolved() : spellingPatternColor.resolved();
     CGContextSetRGBStrokeColor(context, r, g, b, a);
 
     CGAffineTransform userToBase = getUserToBaseCTM(context);

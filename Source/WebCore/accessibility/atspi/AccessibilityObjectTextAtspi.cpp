@@ -275,7 +275,7 @@ String AccessibilityObjectAtspi::text() const
 
 #if ENABLE(INPUT_TYPE_COLOR)
     if (axObject->roleValue() == AccessibilityRole::ColorWell) {
-        auto color = convertColor<SRGBA<float>>(axObject->colorValue());
+        auto color = convertColor<SRGBA<float>>(axObject->colorValue()).resolved();
         GUniquePtr<char> colorString(g_strdup_printf("rgb %7.5f %7.5f %7.5f 1", color.red, color.green, color.blue));
         return String::fromUTF8(colorString.get());
     }
@@ -824,13 +824,13 @@ AccessibilityObjectAtspi::TextAttributes AccessibilityObjectAtspi::textAttribute
 
             auto bgColor = style.visitedDependentColor(CSSPropertyBackgroundColor);
             if (bgColor.isValid() && bgColor.isVisible()) {
-                auto [r, g, b, a] = bgColor.toSRGBALossy<uint8_t>();
+                auto [r, g, b, a] = bgColor.toColorTypeLossy<SRGBA<uint8_t>>().resolved();
                 addAttributeIfNeeded("bg-color"_s, makeString(r, ',', g, ',', b));
             }
 
             auto fgColor = style.visitedDependentColor(CSSPropertyColor);
             if (fgColor.isValid() && fgColor.isVisible()) {
-                auto [r, g, b, a] = fgColor.toSRGBALossy<uint8_t>();
+                auto [r, g, b, a] = fgColor.toColorTypeLossy<SRGBA<uint8_t>>().resolved();
                 addAttributeIfNeeded("fg-color"_s, makeString(r, ',', g, ',', b));
             }
 

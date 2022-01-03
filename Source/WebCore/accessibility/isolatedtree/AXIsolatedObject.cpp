@@ -807,7 +807,7 @@ String AXIsolatedObject::computedLabel()
 
 SRGBA<uint8_t> AXIsolatedObject::colorValue() const
 {
-    return colorAttributeValue(AXPropertyName::ColorValue).toSRGBALossy<uint8_t>();
+    return colorAttributeValue(AXPropertyName::ColorValue).toColorTypeLossy<SRGBA<uint8_t>>();
 }
 
 AXCoreObject* AXIsolatedObject::accessibilityHitTest(const IntPoint& point) const

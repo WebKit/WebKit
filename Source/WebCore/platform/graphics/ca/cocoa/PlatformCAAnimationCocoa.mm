@@ -424,7 +424,7 @@ void PlatformCAAnimationCocoa::setFromValue(const Color& value)
 {
     if (!isBasicAnimation())
         return;
-    auto [r, g, b, a] = value.toSRGBALossy<uint8_t>();
+    auto [r, g, b, a] = value.toColorTypeLossy<SRGBA<uint8_t>>().resolved();
     [static_cast<CABasicAnimation *>(m_animation.get()) setFromValue:@[@(r), @(g), @(b), @(a)]];
 }
 
@@ -467,7 +467,7 @@ void PlatformCAAnimationCocoa::setToValue(const Color& value)
 {
     if (!isBasicAnimation())
         return;
-    auto [r, g, b, a] = value.toSRGBALossy<uint8_t>();
+    auto [r, g, b, a] = value.toColorTypeLossy<SRGBA<uint8_t>>().resolved();
     [static_cast<CABasicAnimation *>(m_animation.get()) setToValue:@[@(r), @(g), @(b), @(a)]];
 }
 
@@ -524,7 +524,7 @@ void PlatformCAAnimationCocoa::setValues(const Vector<Color>& value)
         return;
 
     [static_cast<CAKeyframeAnimation *>(m_animation.get()) setValues:createNSArray(value, [] (auto& color) {
-        auto [r, g, b, a] = color.template toSRGBALossy<uint8_t>();
+        auto [r, g, b, a] = color.template toColorTypeLossy<SRGBA<uint8_t>>().resolved();
         return @[@(r), @(g), @(b), @(a)];
     }).get()];
 }

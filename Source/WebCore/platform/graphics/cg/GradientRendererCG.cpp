@@ -472,8 +472,7 @@ GradientRendererCG::Strategy GradientRendererCG::makeGradient(ColorInterpolation
     // extended sRGB for all gradients.
     if (hasOnlyBoundedSRGBColorStops(stops)) {
         for (const auto& stop : stops) {
-            auto [colorSpace, components] = stop.color.colorSpaceAndComponents();
-            auto [r, g, b, a] = components;
+            auto [r, g, b, a] = stop.color.toColorTypeLossy<SRGBA<float>>().resolved();
             colorComponents.uncheckedAppend(r);
             colorComponents.uncheckedAppend(g);
             colorComponents.uncheckedAppend(b);
@@ -488,9 +487,9 @@ GradientRendererCG::Strategy GradientRendererCG::makeGradient(ColorInterpolation
 
         for (const auto& stop : stops) {
 #if HAVE(CORE_GRAPHICS_EXTENDED_SRGB_COLOR_SPACE)
-            auto [r, g, b, a] = stop.color.toColorTypeLossy<ExtendedSRGBA<float>>();
+            auto [r, g, b, a] = stop.color.toColorTypeLossy<ExtendedSRGBA<float>>().resolved();
 #else
-            auto [r, g, b, a] = stop.color.toColorTypeLossy<SRGBA<float>>();
+            auto [r, g, b, a] = stop.color.toColorTypeLossy<SRGBA<float>>().resolved();
 #endif
             colorComponents.uncheckedAppend(r);
             colorComponents.uncheckedAppend(g);
@@ -546,7 +545,7 @@ void GradientRendererCG::Shading::shadingFunction(void* info, const CGFloat* in,
         makeFromComponents<InterpolationSpaceColorType>(stop1.colorComponents), offset);
 
     // 4. Convert to the output color space.
-    auto interpolatedColorConvertedToOutputSpace = asColorComponents(convertColor<OutputSpaceColorType>(interpolatedColor));
+    auto interpolatedColorConvertedToOutputSpace = asColorComponents(convertColor<OutputSpaceColorType>(interpolatedColor).resolved());
 
     // 5. Write color components to 'out' pointer.
     for (size_t componentIndex = 0; componentIndex < interpolatedColorConvertedToOutputSpace.size(); ++componentIndex)
@@ -560,7 +559,7 @@ GradientRendererCG::Strategy GradientRendererCG::makeShading(ColorInterpolationM
             return WTF::switchOn(colorInterpolationMethod.colorSpace,
                 [&] (auto& colorSpace) -> ColorComponents<float, 4> {
                     using ColorType = typename std::remove_reference_t<decltype(colorSpace)>::ColorType;
-                    return asColorComponents(color.template toColorTypeLossy<ColorType>());
+                    return asColorComponents(color.template toColorTypeLossy<ColorType>().resolved());
                 }
             );
         };

@@ -123,9 +123,9 @@ void ImageBufferCairoImageSurfaceBackend::platformTransformColorSpace(const std:
         unsigned* row = reinterpret_cast_ptr<unsigned*>(dataSrc + stride * y);
         for (int x = 0; x < logicalSize().width(); x++) {
             unsigned* pixel = row + x;
-            auto pixelComponents = unpremultiplied(asSRGBA(PackedColor::ARGB { *pixel }));
-            pixelComponents = { lookUpTable[pixelComponents.red], lookUpTable[pixelComponents.green], lookUpTable[pixelComponents.blue], pixelComponents.alpha };
-            *pixel = PackedColor::ARGB { premultipliedCeiling(pixelComponents) }.value;
+            auto pixelComponents = unpremultiplied(asSRGBA(PackedColor::ARGB { *pixel })).resolved();
+            auto transformedPixelComponents = SRGBA<uint8_t> { lookUpTable[pixelComponents.red], lookUpTable[pixelComponents.green], lookUpTable[pixelComponents.blue], pixelComponents.alpha };
+            *pixel = PackedColor::ARGB { premultipliedCeiling(transformedPixelComponents) }.value;
         }
     }
     cairo_surface_mark_dirty_rectangle(m_surface.get(), 0, 0, logicalSize().width(), logicalSize().height());

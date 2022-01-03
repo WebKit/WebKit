@@ -52,6 +52,7 @@ struct ColorComponents {
     constexpr auto map(F&& function) const -> ColorComponents<decltype(function(std::declval<T>())), N>;
 
     constexpr ColorComponents& operator+=(const ColorComponents&);
+    constexpr ColorComponents& operator/=(T);
 
     constexpr ColorComponents operator+(T) const;
     constexpr ColorComponents operator/(T) const;
@@ -98,6 +99,13 @@ template<typename T, size_t N>
 constexpr ColorComponents<T, N>& ColorComponents<T, N>::operator+=(const ColorComponents& rhs)
 {
     *this = mapColorComponents([](T c1, T c2) { return c1 + c2; }, *this, rhs);
+    return *this;
+}
+
+template<typename T, size_t N>
+constexpr ColorComponents<T, N>& ColorComponents<T, N>::operator/=(T rhs)
+{
+    *this = (*this / rhs);
     return *this;
 }
 

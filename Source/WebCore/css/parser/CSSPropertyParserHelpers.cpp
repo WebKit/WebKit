@@ -1531,7 +1531,7 @@ static Color parseRelativeRGBParameters(CSSParserTokenRange& args, const CSSPars
     if (!originColor.isValid())
         return { };
 
-    auto originColorAsSRGB = originColor.toColorTypeLossy<SRGBA<float>>();
+    auto originColorAsSRGB = originColor.toColorTypeLossy<SRGBA<float>>().resolved();
 
     CSSCalcSymbolTable symbolTable {
         { CSSValueR, CSSUnitType::CSS_PERCENTAGE, originColorAsSRGB.red * 100.0 },
@@ -1659,7 +1659,7 @@ static Color parseRelativeHSLParameters(CSSParserTokenRange& args, const CSSPars
     if (!originColor.isValid())
         return { };
 
-    auto originColorAsHSL = originColor.toColorTypeLossy<HSLA<float>>();
+    auto originColorAsHSL = originColor.toColorTypeLossy<HSLA<float>>().resolved();
 
     CSSCalcSymbolTable symbolTable {
         { CSSValueH, CSSUnitType::CSS_DEG, originColorAsHSL.hue },
@@ -1773,7 +1773,7 @@ static Color parseRelativeHWBParameters(CSSParserTokenRange& args, const CSSPars
     if (!originColor.isValid())
         return { };
 
-    auto originColorAsHWB = originColor.toColorTypeLossy<HWBA<float>>();
+    auto originColorAsHWB = originColor.toColorTypeLossy<HWBA<float>>().resolved();
 
     CSSCalcSymbolTable symbolTable {
         { CSSValueH, CSSUnitType::CSS_DEG, originColorAsHWB.hue },
@@ -1849,7 +1849,7 @@ static Color parseRelativeLabParameters(CSSParserTokenRange& args, const CSSPars
     if (!originColor.isValid())
         return { };
 
-    auto originColorAsLab = originColor.toColorTypeLossy<ColorType>();
+    auto originColorAsLab = originColor.toColorTypeLossy<ColorType>().resolved();
 
     CSSCalcSymbolTable symbolTable {
         { CSSValueL, CSSUnitType::CSS_PERCENTAGE, originColorAsLab.lightness },
@@ -1929,7 +1929,7 @@ static Color parseRelativeLCHParameters(CSSParserTokenRange& args, const CSSPars
     if (!originColor.isValid())
         return { };
 
-    auto originColorAsLCH = originColor.toColorTypeLossy<ColorType>();
+    auto originColorAsLCH = originColor.toColorTypeLossy<ColorType>().resolved();
 
     CSSCalcSymbolTable symbolTable {
         { CSSValueL, CSSUnitType::CSS_PERCENTAGE, originColorAsLCH.lightness },
@@ -2007,7 +2007,7 @@ template<typename ColorType> static Color parseRelativeColorFunctionForRGBTypes(
 
     consumeIdentRaw(args);
 
-    auto originColorAsColorType = originColor.toColorTypeLossy<ColorType>();
+    auto originColorAsColorType = originColor.toColorTypeLossy<ColorType>().resolved();
 
     CSSCalcSymbolTable symbolTable {
         { CSSValueR, CSSUnitType::CSS_PERCENTAGE, originColorAsColorType.red * 100.0 },
@@ -2068,7 +2068,7 @@ template<typename ColorType> static Color parseRelativeColorFunctionForXYZTypes(
 
     consumeIdentRaw(args);
 
-    auto originColorAsXYZ = originColor.toColorTypeLossy<ColorType>();
+    auto originColorAsXYZ = originColor.toColorTypeLossy<ColorType>().resolved();
 
     CSSCalcSymbolTable symbolTable {
         { CSSValueX, CSSUnitType::CSS_NUMBER, originColorAsXYZ.x },
@@ -2449,7 +2449,7 @@ template<typename InterpolationMethod> static Color mixColorComponentsUsingColor
     auto convertedColor2 = color2.template toColorTypeLossy<ColorType>();
 
     // 2. Colors are then interpolated in the specified color space, as described in CSS Color 4 § 13 Interpolation. [...]
-    auto mixedColor = interpolateColorComponents<AlphaPremultiplication::Premultiplied>(interpolationMethod, convertedColor1, mixPercentages.p1 / 100.0, convertedColor2, mixPercentages.p2 / 100.0);
+    auto mixedColor = interpolateColorComponents<AlphaPremultiplication::Premultiplied>(interpolationMethod, convertedColor1, mixPercentages.p1 / 100.0, convertedColor2, mixPercentages.p2 / 100.0).resolved();
 
     // 3. If an alpha multiplier was produced during percentage normalization, the alpha component of the interpolated result
     //    is multiplied by the alpha multiplier.

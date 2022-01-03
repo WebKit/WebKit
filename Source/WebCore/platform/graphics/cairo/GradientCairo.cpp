@@ -45,7 +45,7 @@ void Gradient::stopsChanged()
 
 static void addColorStopRGBA(cairo_pattern_t *gradient, GradientColorStop stop, float globalAlpha)
 {
-    auto [r, g, b, a] = stop.color.toSRGBALossy<float>();
+    auto [r, g, b, a] = stop.color.toColorTypeLossy<SRGBA<float>>().resolved();
     cairo_pattern_add_color_stop_rgba(gradient, stop.offset, r, g, b, a * globalAlpha);
 }
 
@@ -55,7 +55,7 @@ typedef struct point_t {
 
 static void setCornerColorRGBA(cairo_pattern_t* gradient, int id, GradientColorStop stop, float globalAlpha)
 {
-    auto [r, g, b, a] = stop.color.toSRGBALossy<float>();
+    auto [r, g, b, a] = stop.color.toColorTypeLossy<SRGBA<float>>().resolved();
     cairo_mesh_pattern_set_corner_color_rgba(gradient, id, r, g, b, a * globalAlpha);
 }
 

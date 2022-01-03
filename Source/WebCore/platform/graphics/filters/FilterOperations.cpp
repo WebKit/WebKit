@@ -111,7 +111,7 @@ bool FilterOperations::transformColor(Color& color) const
     if (color.isSemantic())
         return false;
 
-    auto sRGBAColor = color.toSRGBALossy<float>();
+    auto sRGBAColor = color.toColorTypeLossy<SRGBA<float>>();
 
     for (auto& operation : m_operations) {
         if (!operation->transformColor(sRGBAColor))
@@ -130,7 +130,7 @@ bool FilterOperations::inverseTransformColor(Color& color) const
     if (color.isSemantic())
         return false;
 
-    auto sRGBAColor = color.toSRGBALossy<float>();
+    auto sRGBAColor = color.toColorTypeLossy<SRGBA<float>>();
 
     for (auto& operation : m_operations) {
         if (!operation->inverseTransformColor(sRGBAColor))

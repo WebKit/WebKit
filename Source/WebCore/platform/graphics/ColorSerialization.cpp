@@ -188,7 +188,7 @@ template<typename ColorType> static String serializationUsingColorFunction(const
 {
     static_assert(std::is_same_v<typename ColorType::ComponentType, float>);
 
-    auto [c1, c2, c3, alpha] = color;
+    auto [c1, c2, c3, alpha] = color.resolved();
     if (WTF::areEssentiallyEqual(alpha, 1.0f))
         return makeString("color(", serialization(ColorSpaceFor<ColorType>), ' ', c1, ' ', c2, ' ', c3, ')');
     return makeString("color(", serialization(ColorSpaceFor<ColorType>), ' ', c1, ' ', c2, ' ', c3, " / ", alpha, ')');
@@ -374,7 +374,7 @@ String serializationForRenderTreeAsText(const HWBA<float>& color, bool useColorF
 String serializationForCSS(const LCHA<float>& color, bool)
 {
     // https://www.w3.org/TR/css-color-4/#serializing-lab-lch
-    auto [c1, c2, c3, alpha] = color;
+    auto [c1, c2, c3, alpha] = color.resolved();
     if (WTF::areEssentiallyEqual(alpha, 1.0f))
         return makeString("lch(", c1, "% ", c2, ' ', c3, ')');
     return makeString("lch(", c1, "% ", c2, ' ', c3, " / ", alpha, ')');
@@ -395,7 +395,7 @@ String serializationForRenderTreeAsText(const LCHA<float>& color, bool useColorF
 String serializationForCSS(const Lab<float>& color, bool)
 {
     // https://www.w3.org/TR/css-color-4/#serializing-lab-lch
-    auto [c1, c2, c3, alpha] = color;
+    auto [c1, c2, c3, alpha] = color.resolved();
     if (WTF::areEssentiallyEqual(alpha, 1.0f))
         return makeString("lab(", c1, "% ", c2, ' ', c3, ')');
     return makeString("lab(", c1, "% ", c2, ' ', c3, " / ", alpha, ')');
@@ -432,7 +432,7 @@ String serializationForRenderTreeAsText(const LinearSRGBA<float>& color, bool)
 
 String serializationForCSS(const OKLCHA<float>& color, bool)
 {
-    auto [c1, c2, c3, alpha] = color;
+    auto [c1, c2, c3, alpha] = color.resolved();
     if (WTF::areEssentiallyEqual(alpha, 1.0f))
         return makeString("oklch(", c1, "% ", c2, ' ', c3, ')');
     return makeString("oklch(", c1, "% ", c2, ' ', c3, " / ", alpha, ')');
@@ -452,7 +452,7 @@ String serializationForRenderTreeAsText(const OKLCHA<float>& color, bool useColo
 
 String serializationForCSS(const OKLab<float>& color, bool)
 {
-    auto [c1, c2, c3, alpha] = color;
+    auto [c1, c2, c3, alpha] = color.resolved();
     if (WTF::areEssentiallyEqual(alpha, 1.0f))
         return makeString("oklab(", c1, "% ", c2, ' ', c3, ')');
     return makeString("oklab(", c1, "% ", c2, ' ', c3, " / ", alpha, ')');
@@ -543,7 +543,7 @@ String serializationForCSS(SRGBA<uint8_t> color, bool useColorFunctionSerializat
     if (useColorFunctionSerialization)
         return serializationUsingColorFunction(color);
 
-    auto [red, green, blue, alpha] = color;
+    auto [red, green, blue, alpha] = color.resolved();
     switch (alpha) {
     case 0:
         return makeString("rgba(", red, ", ", green, ", ", blue, ", 0)");
@@ -559,7 +559,7 @@ String serializationForHTML(SRGBA<uint8_t> color, bool useColorFunctionSerializa
     if (useColorFunctionSerialization)
         return serializationUsingColorFunction(color);
 
-    auto [red, green, blue, alpha] = color;
+    auto [red, green, blue, alpha] = color.resolved();
     if (alpha == 0xFF)
         return makeString('#', hex(red, 2, Lowercase), hex(green, 2, Lowercase), hex(blue, 2, Lowercase));
     return serializationForCSS(color);
@@ -570,7 +570,7 @@ String serializationForRenderTreeAsText(SRGBA<uint8_t> color, bool useColorFunct
     if (useColorFunctionSerialization)
         return serializationUsingColorFunction(color);
 
-    auto [red, green, blue, alpha] = color;
+    auto [red, green, blue, alpha] = color.resolved();
     if (alpha < 0xFF)
         return makeString('#', hex(red, 2), hex(green, 2), hex(blue, 2), hex(alpha, 2));
     return makeString('#', hex(red, 2), hex(green, 2), hex(blue, 2));

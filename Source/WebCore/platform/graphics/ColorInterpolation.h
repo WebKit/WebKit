@@ -101,7 +101,7 @@ template<AlphaPremultiplication alphaPremultiplication, typename InterpolationMe
 typename InterpolationMethodColorSpace::ColorType interpolateColorComponents(InterpolationMethodColorSpace interpolationMethodColorSpace, typename InterpolationMethodColorSpace::ColorType color1, double color1Multiplier, typename InterpolationMethodColorSpace::ColorType color2, double color2Multiplier)
 {
     // 1. Apply pre-interpolation transforms (hue fixup for polar color spaces, alpha premultiplication if required).
-    auto [normalizedColorComponents1, normalizedColorComponents2] = preInterpolationNormalization<alphaPremultiplication>(interpolationMethodColorSpace, asColorComponents(color1), asColorComponents(color2));
+    auto [normalizedColorComponents1, normalizedColorComponents2] = preInterpolationNormalization<alphaPremultiplication>(interpolationMethodColorSpace, asColorComponents(color1.resolved()), asColorComponents(color2.resolved()));
 
     // 2. Interpolate using the normalized components.
     auto interpolatedColorComponents = mapColorComponents([&] (auto componentFromColor1, auto componentFromColor2) -> float {

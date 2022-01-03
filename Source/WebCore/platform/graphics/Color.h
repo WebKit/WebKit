@@ -101,10 +101,10 @@ public:
 
     ColorSpace colorSpace() const;
 
-    bool isOpaque() const { return isOutOfLine() ? asOutOfLine().alpha() == 1.0 : asInline().alpha == 255; }
-    bool isVisible() const { return isOutOfLine() ? asOutOfLine().alpha() > 0.0 : asInline().alpha > 0; }
-    uint8_t alphaByte() const { return isOutOfLine() ? convertFloatAlphaTo<uint8_t>(asOutOfLine().alpha()) : asInline().alpha; }
-    float alphaAsFloat() const { return isOutOfLine() ? asOutOfLine().alpha() : convertByteAlphaTo<float>(asInline().alpha); }
+    bool isOpaque() const { return isOutOfLine() ? asOutOfLine().resolvedAlpha() == 1.0 : asInline().resolved().alpha == 255; }
+    bool isVisible() const { return isOutOfLine() ? asOutOfLine().resolvedAlpha() > 0.0 : asInline().resolved().alpha > 0; }
+    uint8_t alphaByte() const { return isOutOfLine() ? convertFloatAlphaTo<uint8_t>(asOutOfLine().resolvedAlpha()) : asInline().resolved().alpha; }
+    float alphaAsFloat() const { return isOutOfLine() ? asOutOfLine().resolvedAlpha() : convertByteAlphaTo<float>(asInline().resolved().alpha); }
 
     WEBCORE_EXPORT double luminance() const;
     WEBCORE_EXPORT double lightness() const; // FIXME: Replace remaining uses with luminance.
@@ -115,15 +115,10 @@ public:
     // or precision of ColorType is smaller than the current underlying type.
     template<typename ColorType> ColorType toColorTypeLossy() const;
 
-    // This will convert the underlying color into sRGB, potentially lossily if the gamut
-    // or precision of sRGB is smaller than the current underlying type. This is a convenience
-    // wrapper around toColorTypeLossy<>().
-    template<typename T> SRGBA<T> toSRGBALossy() const { return toColorTypeLossy<SRGBA<T>>(); }
+    ColorComponents<float, 4> toResolvedColorComponentsInColorSpace(ColorSpace) const;
+    ColorComponents<float, 4> toResolvedColorComponentsInColorSpace(const DestinationColorSpace&) const;
 
-    ColorComponents<float, 4> toColorComponentsInColorSpace(ColorSpace) const;
-    ColorComponents<float, 4> toColorComponentsInColorSpace(const DestinationColorSpace&) const;
-
-    WEBCORE_EXPORT std::pair<ColorSpace, ColorComponents<float, 4>> colorSpaceAndComponents() const;
+    WEBCORE_EXPORT std::pair<ColorSpace, ColorComponents<float, 4>> colorSpaceAndResolvedColorComponents() const;
 
     WEBCORE_EXPORT Color lightened() const;
     WEBCORE_EXPORT Color darkened() const;
@@ -194,8 +189,10 @@ private:
             return adoptRef(*new OutOfLineComponents(components));
         }
 
-        float alpha() const { return m_components[3]; }
-        ColorComponents<float, 4> components() const { return m_components; }
+        float unresolvedAlpha() const { return m_components[3]; }
+        float resolvedAlpha() const { return std::isnan(m_components[3]) ? 0 : m_components[3]; }
+        ColorComponents<float, 4> unresolvedComponents() const { return m_components; }
+        ColorComponents<float, 4> resolvedComponents() const { return resolveColorComponents(m_components); }
 
     private:
         OutOfLineComponents(ColorComponents<float, 4> components)
@@ -292,7 +289,7 @@ inline bool operator!=(const Color& a, const Color& b)
 inline bool outOfLineComponentssEqual(const Color& a, const Color& b)
 {
     if (a.isOutOfLine() && b.isOutOfLine())
-        return a.asOutOfLine().components() == b.asOutOfLine().components() && a.colorSpace() == b.colorSpace() && a.flags() == b.flags();
+        return a.asOutOfLine().unresolvedComponents() == b.asOutOfLine().unresolvedComponents() && a.colorSpace() == b.colorSpace() && a.flags() == b.flags();
 
     ASSERT(a.isOutOfLine() || b.isOutOfLine());
     return false;
@@ -303,7 +300,7 @@ inline bool outOfLineComponentssEqualIgnoringSemanticColor(const Color& a, const
     if (a.isOutOfLine() && b.isOutOfLine()) {
         auto aFlags = a.flags() - Color::FlagsIncludingPrivate::Semantic;
         auto bFlags = b.flags() - Color::FlagsIncludingPrivate::Semantic;
-        return a.asOutOfLine().components() == b.asOutOfLine().components() && a.colorSpace() == b.colorSpace() && aFlags == bFlags;
+        return a.asOutOfLine().unresolvedComponents() == b.asOutOfLine().unresolvedComponents() && a.colorSpace() == b.colorSpace() && aFlags == bFlags;
     }
 
     ASSERT(a.isOutOfLine() || b.isOutOfLine());
@@ -334,14 +331,14 @@ inline Color::Color(std::optional<SRGBA<uint8_t>> color, OptionSet<Flags> flags)
 template<typename ColorType, typename std::enable_if_t<IsColorTypeWithComponentType<ColorType, float>>*>
 inline Color::Color(const ColorType& color, OptionSet<Flags> flags)
 {
-    setOutOfLineComponents(OutOfLineComponents::create(asColorComponents(color)), ColorSpaceFor<ColorType>, toFlagsIncludingPrivate(flags));
+    setOutOfLineComponents(OutOfLineComponents::create(asColorComponents(color.unresolved())), ColorSpaceFor<ColorType>, toFlagsIncludingPrivate(flags));
 }
 
 template<typename ColorType, typename std::enable_if_t<IsColorTypeWithComponentType<ColorType, float>>*>
 inline Color::Color(const std::optional<ColorType>& color, OptionSet<Flags> flags)
 {
     if (color)
-        setOutOfLineComponents(OutOfLineComponents::create(asColorComponents(*color)), ColorSpaceFor<ColorType>, toFlagsIncludingPrivate(flags));
+        setOutOfLineComponents(OutOfLineComponents::create(asColorComponents(color->unresolved())), ColorSpaceFor<ColorType>, toFlagsIncludingPrivate(flags));
 }
 
 inline Color::Color(Ref<OutOfLineComponents>&& outOfLineComponents, ColorSpace colorSpace, OptionSet<Flags> flags)
@@ -373,7 +370,7 @@ inline Color::~Color()
 inline unsigned Color::hash() const
 {
     if (isOutOfLine())
-        return computeHash(asOutOfLine().components(), colorSpace(), flags().toRaw());
+        return computeHash(asOutOfLine().unresolvedComponents(), colorSpace(), flags().toRaw());
     return computeHash(asPackedInline().value, flags().toRaw());
 }
 
@@ -400,7 +397,7 @@ inline ColorSpace Color::colorSpace() const
 template<typename Functor> decltype(auto) Color::callOnUnderlyingType(Functor&& functor) const
 {
     if (isOutOfLine())
-        return callWithColorType(asOutOfLine().components(), colorSpace(), std::forward<Functor>(functor));
+        return callWithColorType(asOutOfLine().unresolvedComponents(), colorSpace(), std::forward<Functor>(functor));
     return std::invoke(std::forward<Functor>(functor), asInline());
 }
 
@@ -565,7 +562,7 @@ template<class Encoder> void Color::encode(Encoder& encoder) const
         encoder << colorSpace();
 
         auto& outOfLineComponents = asOutOfLine();
-        auto [c1, c2, c3, alpha] = outOfLineComponents.components();
+        auto [c1, c2, c3, alpha] = outOfLineComponents.unresolvedComponents();
         encoder << c1;
         encoder << c2;
         encoder << c3;

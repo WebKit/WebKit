@@ -63,7 +63,7 @@ private:
     static inline int pixelArrayIndex(int x, int y, int width) { return (y * width + x) * 4; }
     static inline PackedColor::RGBA makePixelValueFromColorComponents(const ColorComponents<uint8_t, 4>& components) { return PackedColor::RGBA { makeFromComponents<SRGBA<uint8_t>>(components) }; }
 
-    static inline ColorComponents<uint8_t, 4> makeColorComponentsfromPixelValue(PackedColor::RGBA pixel) { return asColorComponents(asSRGBA(pixel)); }
+    static inline ColorComponents<uint8_t, 4> makeColorComponentsfromPixelValue(PackedColor::RGBA pixel) { return asColorComponents(asSRGBA(pixel).resolved()); }
     static inline ColorComponents<uint8_t, 4> minOrMax(const ColorComponents<uint8_t, 4>& a, const ColorComponents<uint8_t, 4>& b, MorphologyOperatorType);
     static inline ColorComponents<uint8_t, 4> columnExtremum(const Uint8ClampedArray& srcPixelArray, int x, int yStart, int yEnd, int width, MorphologyOperatorType);
     static inline ColorComponents<uint8_t, 4> kernelExtremum(const ColumnExtrema& kernel, MorphologyOperatorType);

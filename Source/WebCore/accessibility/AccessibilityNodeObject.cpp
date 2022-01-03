@@ -1977,7 +1977,7 @@ SRGBA<uint8_t> AccessibilityNodeObject::colorValue() const
     if (!is<HTMLInputElement>(node()))
         return Color::transparentBlack;
 
-    return downcast<HTMLInputElement>(*node()).valueAsColor().toSRGBALossy<uint8_t>();
+    return downcast<HTMLInputElement>(*node()).valueAsColor().toColorTypeLossy<SRGBA<uint8_t>>();
 #endif
 }
 

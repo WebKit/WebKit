@@ -92,14 +92,14 @@ static AtkAttributeSet* getAttributeSetForAccessibilityObject(const Accessibilit
 
     Color bgColor = style->visitedDependentColor(CSSPropertyBackgroundColor);
     if (bgColor.isValid()) {
-        auto [r, g, b, a] = bgColor.toSRGBALossy<uint8_t>();
+        auto [r, g, b, a] = bgColor.toColorTypeLossy<SRGBA<uint8_t>>().resolved();
         buffer.reset(g_strdup_printf("%i,%i,%i", r, g, b));
         result = addToAtkAttributeSet(result, atk_text_attribute_get_name(ATK_TEXT_ATTR_BG_COLOR), buffer.get());
     }
 
     Color fgColor = style->visitedDependentColor(CSSPropertyColor);
     if (fgColor.isValid()) {
-        auto [r, g, b, a] = fgColor.toSRGBALossy<uint8_t>();
+        auto [r, g, b, a] = fgColor.toColorTypeLossy<SRGBA<uint8_t>>().resolved();
         buffer.reset(g_strdup_printf("%i,%i,%i", r, g, b));
         result = addToAtkAttributeSet(result, atk_text_attribute_get_name(ATK_TEXT_ATTR_FG_COLOR), buffer.get());
     }
@@ -439,7 +439,7 @@ static gchar* webkitAccessibleTextGetText(AtkText* text, gint startOffset, gint 
 
 #if ENABLE(INPUT_TYPE_COLOR)
     if (coreObject->roleValue() == AccessibilityRole::ColorWell) {
-        auto color = convertColor<SRGBA<float>>(coreObject->colorValue());
+        auto color = convertColor<SRGBA<float>>(coreObject->colorValue()).resolved();
         return g_strdup_printf("rgb %7.5f %7.5f %7.5f 1", color.red, color.green, color.blue);
     }
 #endif

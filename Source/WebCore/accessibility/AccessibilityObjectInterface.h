@@ -1585,7 +1585,7 @@ inline AXCoreObject::AXValue AXCoreObject::value()
         return isSelected();
 
     if (isColorWell()) {
-        auto color = convertColor<SRGBA<float>>(colorValue());
+        auto color = convertColor<SRGBA<float>>(colorValue()).resolved();
         return makeString("rgb ", String::numberToStringFixedPrecision(color.red, 6, KeepTrailingZeros), " ", String::numberToStringFixedPrecision(color.green, 6, KeepTrailingZeros), " ", String::numberToStringFixedPrecision(color.blue, 6, KeepTrailingZeros), " 1");
     }
 

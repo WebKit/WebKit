@@ -92,19 +92,19 @@ bool BasicColorMatrixFilterOperation::transformColor(SRGBA<float>& color) const
 {
     switch (m_type) {
     case GRAYSCALE: {
-        color = makeFromComponentsClamping<SRGBA<float>>(grayscaleColorMatrix(m_amount).transformedColorComponents(asColorComponents(color)));
+        color = makeFromComponentsClamping<SRGBA<float>>(grayscaleColorMatrix(m_amount).transformedColorComponents(asColorComponents(color.resolved())));
         return true;
     }
     case SEPIA: {
-        color = makeFromComponentsClamping<SRGBA<float>>(sepiaColorMatrix(m_amount).transformedColorComponents(asColorComponents(color)));
+        color = makeFromComponentsClamping<SRGBA<float>>(sepiaColorMatrix(m_amount).transformedColorComponents(asColorComponents(color.resolved())));
         return true;
     }
     case HUE_ROTATE: {
-        color = makeFromComponentsClamping<SRGBA<float>>(hueRotateColorMatrix(m_amount).transformedColorComponents(asColorComponents(color)));
+        color = makeFromComponentsClamping<SRGBA<float>>(hueRotateColorMatrix(m_amount).transformedColorComponents(asColorComponents(color.resolved())));
         return true;
     }
     case SATURATE: {
-        color = makeFromComponentsClamping<SRGBA<float>>(saturationColorMatrix(m_amount).transformedColorComponents(asColorComponents(color)));
+        color = makeFromComponentsClamping<SRGBA<float>>(saturationColorMatrix(m_amount).transformedColorComponents(asColorComponents(color.resolved())));
         return true;
     }
     default:
@@ -155,7 +155,7 @@ bool BasicComponentTransferFilterOperation::transformColor(SRGBA<float>& color) 
 {
     switch (m_type) {
     case OPACITY:
-        color.alpha *= m_amount;
+        color = colorWithOverriddenAlpha(color, std::clamp<float>(color.resolved().alpha * m_amount, 0.0f, 1.0f));
         return true;
     case INVERT: {
         float oneMinusAmount = 1.0f - m_amount;
@@ -296,7 +296,7 @@ static ColorComponents<float, 4> hueRotate(const ColorComponents<float, 4>& colo
 
 bool InvertLightnessFilterOperation::transformColor(SRGBA<float>& color) const
 {
-    auto hueRotatedSRGBAComponents = hueRotate(asColorComponents(color), 0.5f);
+    auto hueRotatedSRGBAComponents = hueRotate(asColorComponents(color.resolved()), 0.5f);
     
     // Apply the matrix. See rdar://problem/41146650 for how this matrix was derived.
     constexpr ColorMatrix<5, 3> toDarkModeMatrix {
@@ -316,7 +316,7 @@ bool InvertLightnessFilterOperation::inverseTransformColor(SRGBA<float>& color) 
         -0.049f, -1.347f,  0.146f, 0.0f, 1.25f,
         -0.049f, -0.097f, -1.104f, 0.0f, 1.25f
     };
-    auto convertedToLightModeComponents = toLightModeMatrix.transformedColorComponents(asColorComponents(color));
+    auto convertedToLightModeComponents = toLightModeMatrix.transformedColorComponents(asColorComponents(color.resolved()));
 
     auto hueRotatedSRGBAComponents = hueRotate(convertedToLightModeComponents, 0.5f);
 

@@ -76,7 +76,7 @@ void copyContextProperties(cairo_t* srcCr, cairo_t* dstCr)
 
 void setSourceRGBAFromColor(cairo_t* context, const Color& color)
 {
-    auto [r, g, b, a] = color.toSRGBALossy<float>();
+    auto [r, g, b, a] = color.toColorTypeLossy<SRGBA<float>>().resolved();
     cairo_set_source_rgba(context, r, g, b, a);
 }
 

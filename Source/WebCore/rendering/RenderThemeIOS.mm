@@ -1307,7 +1307,7 @@ void RenderThemeIOS::paintButtonDecorations(const RenderObject& box, const Paint
 static bool shouldUseConvexGradient(const Color& backgroundColor)
 {
     // FIXME: This should probably be using luminance.
-    auto [r, g, b, a] = backgroundColor.toSRGBALossy<float>();
+    auto [r, g, b, a] = backgroundColor.toColorTypeLossy<SRGBA<float>>().resolved();
     float largestNonAlphaChannel = std::max({ r, g, b });
     return a > 0.5 && largestNonAlphaChannel < 0.5;
 }

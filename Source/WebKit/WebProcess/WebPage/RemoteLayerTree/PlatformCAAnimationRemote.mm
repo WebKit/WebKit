@@ -681,7 +681,7 @@ static RetainPtr<NSObject> animationValueFromKeyframeValue(const PlatformCAAnima
     return WTF::switchOn(keyframeValue,
         [&](const float number) -> RetainPtr<NSObject> { return @(number); },
         [&](const WebCore::Color color) -> RetainPtr<NSObject> {
-            auto [r, g, b, a] =  color.toSRGBALossy<uint8_t>();
+            auto [r, g, b, a] =  color.toColorTypeLossy<SRGBA<uint8_t>>().resolved();
             return @[ @(r), @(g), @(b), @(a) ];
         },
         [&](const WebCore::FloatPoint3D point) -> RetainPtr<NSObject> {

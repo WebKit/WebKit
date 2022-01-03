@@ -152,7 +152,7 @@ public:
         if (!a)
             return;
 
-        auto pixel = asSRGBA(PackedColor::ARGB { *dest });
+        auto pixel = asSRGBA(PackedColor::ARGB { *dest }).resolved();
 
         if (a >= 255 || !pixel.alpha) {
             setPixel(dest, r, g, b, a);
@@ -160,7 +160,7 @@ public:
         }
 
         if (!m_premultiplyAlpha)
-            pixel = premultipliedFlooring(pixel);
+            pixel = premultipliedFlooring(pixel).resolved();
 
         uint8_t d = 255 - a;
 

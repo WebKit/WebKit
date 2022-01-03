@@ -94,9 +94,8 @@ static ::testing::AssertionResult changeContextContents(TestedGraphicsContextGLC
 {
     context.markContextChanged();
     WebCore::Color expected { iteration % 2 ? WebCore::Color::green : WebCore::Color::yellow };
-    auto [colorSpace, components] = expected.colorSpaceAndComponents();
-    UNUSED_VARIABLE(colorSpace);
-    context.clearColor(components[0], components[1], components[2], components[3]);
+    auto [r, g, b, a] = expected.toColorTypeLossy<WebCore::SRGBA<float>>().resolved();
+    context.clearColor(r, g, b, a);
     context.clear(WebCore::GraphicsContextGL::COLOR_BUFFER_BIT);
     uint8_t gotValues[4] = { };
     auto sampleAt = context.getInternalFramebufferSize();

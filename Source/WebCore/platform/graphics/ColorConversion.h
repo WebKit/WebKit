@@ -37,8 +37,8 @@ enum class ColorSpace : uint8_t;
 template<typename Output, typename Input> Output convertColor(const Input& color);
 
 // Conversion functions for raw color components with associated color spaces.
-ColorComponents<float, 4> convertColorComponents(ColorSpace inputColorSpace, ColorComponents<float, 4> inputColorComponents, ColorSpace outputColorSpace);
-ColorComponents<float, 4> convertColorComponents(ColorSpace inputColorSpace, ColorComponents<float, 4> inputColorComponents, const DestinationColorSpace& outputColorSpace);
+ColorComponents<float, 4> convertAndResolveColorComponents(ColorSpace inputColorSpace, ColorComponents<float, 4> inputColorComponents, ColorSpace outputColorSpace);
+ColorComponents<float, 4> convertAndResolveColorComponents(ColorSpace inputColorSpace, ColorComponents<float, 4> inputColorComponents, const DestinationColorSpace& outputColorSpace);
 
 
 // All color types, other than XYZA or those inheriting from RGBType, must implement
@@ -57,7 +57,7 @@ template<typename Output, typename Input, typename = void> struct ColorConversio
 
 template<typename Output, typename Input> inline Output convertColor(const Input& color)
 {
-    return ColorConversion<Output, Input>::convert(color);
+    return ColorConversion<CanonicalColorType<Output>, CanonicalColorType<Input>>::convert(color);
 }
 
 
@@ -208,7 +208,7 @@ private:
 
         using InputWithReplacement = ColorTypeWithReplacementComponent<Input, float>;
         if constexpr (std::is_same_v<InputWithReplacement, Output>)
-            return makeFromComponents<InputWithReplacement>(asColorComponents(color).map([](uint8_t value) -> float { return value / 255.0f; }));
+            return makeFromComponents<InputWithReplacement>(asColorComponents(color.resolved()).map([](uint8_t value) -> float { return value / 255.0f; }));
         else
             return convertColor<Output>(convertColor<InputWithReplacement>(color));
     }
@@ -219,31 +219,31 @@ private:
 
         using OutputWithReplacement = ColorTypeWithReplacementComponent<Output, float>;
         if constexpr (std::is_same_v<OutputWithReplacement, Input>)
-            return makeFromComponents<Output>(asColorComponents(color).map([](float value) -> uint8_t { return std::clamp(std::lround(value * 255.0f), 0l, 255l); }));
+            return makeFromComponents<Output>(asColorComponents(color.resolved()).map([](float value) -> uint8_t { return std::clamp(std::lround(value * 255.0f), 0l, 255l); }));
         else
             return convertColor<Output>(convertColor<OutputWithReplacement>(color));
     }
 
     template<typename ColorType> static inline constexpr auto toLinearEncoded(const ColorType& color) -> typename ColorType::LinearCounterpart
     {
-        auto [c1, c2, c3, alpha] = color;
+        auto [c1, c2, c3, alpha] = color.resolved();
         return { ColorType::TransferFunction::toLinear(c1), ColorType::TransferFunction::toLinear(c2), ColorType::TransferFunction::toLinear(c3), alpha };
     }
 
     template<typename ColorType> static inline constexpr auto toGammaEncoded(const ColorType& color) -> typename ColorType::GammaEncodedCounterpart
     {
-        auto [c1, c2, c3, alpha] = color;
+        auto [c1, c2, c3, alpha] = color.resolved();
         return { ColorType::TransferFunction::toGammaEncoded(c1), ColorType::TransferFunction::toGammaEncoded(c2), ColorType::TransferFunction::toGammaEncoded(c3), alpha };
     }
 
     template<typename ColorType> static inline constexpr auto toExtended(const ColorType& color) -> typename ColorType::ExtendedCounterpart
     {
-        return makeFromComponents<typename ColorType::ExtendedCounterpart>(asColorComponents(color));
+        return makeFromComponents<typename ColorType::ExtendedCounterpart>(asColorComponents(color.resolved()));
     }
 
     template<typename ColorType> static inline constexpr auto toBounded(const ColorType& color) -> typename ColorType::BoundedCounterpart
     {
-        return makeFromComponentsClampingExceptAlpha<typename ColorType::BoundedCounterpart>(asColorComponents(color));
+        return makeFromComponentsClampingExceptAlpha<typename ColorType::BoundedCounterpart>(asColorComponents(color.resolved()));
     }
 
     static inline constexpr Output handleRGBFamilyConversion(const Input& color)
@@ -312,7 +312,7 @@ private:
         // have sufficient testing coverage to notice any adverse effects.
 
         auto applyMatrices = [](const Input& color, auto... matrices) {
-            return makeFromComponentsClampingExceptAlpha<Output>(applyMatricesToColorComponents(asColorComponents(color), matrices...));
+            return makeFromComponentsClampingExceptAlpha<Output>(applyMatricesToColorComponents(asColorComponents(color.resolved()), matrices...));
         };
 
         if constexpr (Input::whitePoint == Output::whitePoint) {
