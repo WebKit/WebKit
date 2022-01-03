@@ -1345,35 +1345,95 @@ static Ref<CSSValue> fontVariantEastAsianPropertyValue(FontVariantEastAsianVaria
     return valueList;
 }
 
+Ref<CSSPrimitiveValue> ComputedStyleExtractor::valueForAnimationDuration(double duration)
+{
+    return CSSValuePool::singleton().createValue(duration, CSSUnitType::CSS_S);
+}
+
+Ref<CSSPrimitiveValue> ComputedStyleExtractor::valueForAnimationDelay(double delay)
+{
+    return CSSValuePool::singleton().createValue(delay, CSSUnitType::CSS_S);
+}
+
+Ref<CSSPrimitiveValue> ComputedStyleExtractor::valueForAnimationIterationCount(double iterationCount)
+{
+    if (iterationCount == Animation::IterationCountInfinite)
+        return CSSValuePool::singleton().createIdentifierValue(CSSValueInfinite);
+    return CSSValuePool::singleton().createValue(iterationCount, CSSUnitType::CSS_NUMBER);
+}
+
+Ref<CSSPrimitiveValue> ComputedStyleExtractor::valueForAnimationDirection(Animation::AnimationDirection direction)
+{
+    switch (direction) {
+    case Animation::AnimationDirectionNormal:
+        return CSSValuePool::singleton().createIdentifierValue(CSSValueNormal);
+    case Animation::AnimationDirectionAlternate:
+        return CSSValuePool::singleton().createIdentifierValue(CSSValueAlternate);
+    case Animation::AnimationDirectionReverse:
+        return CSSValuePool::singleton().createIdentifierValue(CSSValueReverse);
+    case Animation::AnimationDirectionAlternateReverse:
+        return CSSValuePool::singleton().createIdentifierValue(CSSValueAlternateReverse);
+    }
+}
+
+Ref<CSSPrimitiveValue> ComputedStyleExtractor::valueForAnimationFillMode(AnimationFillMode fillMode)
+{
+    switch (fillMode) {
+    case AnimationFillMode::None:
+        return CSSValuePool::singleton().createIdentifierValue(CSSValueNone);
+    case AnimationFillMode::Forwards:
+        return CSSValuePool::singleton().createIdentifierValue(CSSValueForwards);
+    case AnimationFillMode::Backwards:
+        return CSSValuePool::singleton().createIdentifierValue(CSSValueBackwards);
+    case AnimationFillMode::Both:
+        return CSSValuePool::singleton().createIdentifierValue(CSSValueBoth);
+    }
+}
+
+Ref<CSSPrimitiveValue> ComputedStyleExtractor::valueForAnimationPlayState(AnimationPlayState playState)
+{
+    switch (playState) {
+    case AnimationPlayState::Playing:
+        return CSSValuePool::singleton().createIdentifierValue(CSSValueRunning);
+    case AnimationPlayState::Paused:
+        return CSSValuePool::singleton().createIdentifierValue(CSSValuePaused);
+    }
+}
+
+Ref<CSSPrimitiveValue> ComputedStyleExtractor::valueForAnimationName(const Animation::Name& name)
+{
+    if (name.isIdentifier)
+        return CSSValuePool::singleton().createCustomIdent(name.string);
+    return CSSValuePool::singleton().createValue(name.string, CSSUnitType::CSS_STRING);
+}
+
 static Ref<CSSValueList> delayValue(const AnimationList* animationList)
 {
-    auto& cssValuePool = CSSValuePool::singleton();
     auto list = CSSValueList::createCommaSeparated();
     if (animationList) {
         for (size_t i = 0; i < animationList->size(); ++i)
-            list->append(cssValuePool.createValue(animationList->animation(i).delay(), CSSUnitType::CSS_S));
+            list->append(ComputedStyleExtractor::valueForAnimationDelay(animationList->animation(i).delay()));
     } else {
         // Note that initialAnimationDelay() is used for both transitions and animations
-        list->append(cssValuePool.createValue(Animation::initialDelay(), CSSUnitType::CSS_S));
+        list->append(ComputedStyleExtractor::valueForAnimationDelay(Animation::initialDelay()));
     }
     return list;
 }
 
 static Ref<CSSValueList> durationValue(const AnimationList* animationList)
 {
-    auto& cssValuePool = CSSValuePool::singleton();
     auto list = CSSValueList::createCommaSeparated();
     if (animationList) {
         for (size_t i = 0; i < animationList->size(); ++i)
-            list->append(cssValuePool.createValue(animationList->animation(i).duration(), CSSUnitType::CSS_S));
+            list->append(ComputedStyleExtractor::valueForAnimationDuration(animationList->animation(i).duration()));
     } else {
         // Note that initialAnimationDuration() is used for both transitions and animations
-        list->append(cssValuePool.createValue(Animation::initialDuration(), CSSUnitType::CSS_S));
+        list->append(ComputedStyleExtractor::valueForAnimationDuration(Animation::initialDuration()));
     }
     return list;
 }
 
-static Ref<CSSValue> createTimingFunctionValue(const TimingFunction& timingFunction)
+Ref<CSSValue> ComputedStyleExtractor::valueForAnimationTimingFunction(const TimingFunction& timingFunction)
 {
     switch (timingFunction.type()) {
     case TimingFunction::CubicBezierFunction: {
@@ -1418,10 +1478,10 @@ static Ref<CSSValueList> timingFunctionValue(const AnimationList* animationList)
     auto list = CSSValueList::createCommaSeparated();
     if (animationList) {
         for (size_t i = 0; i < animationList->size(); ++i)
-            list->append(createTimingFunctionValue(*animationList->animation(i).timingFunction()));
+            list->append(ComputedStyleExtractor::valueForAnimationTimingFunction(*animationList->animation(i).timingFunction()));
     } else
         // Note that initialAnimationTimingFunction() is used for both transitions and animations
-        list->append(createTimingFunctionValue(Animation::initialTimingFunction()));
+        list->append(ComputedStyleExtractor::valueForAnimationTimingFunction(Animation::initialTimingFunction()));
     return list;
 }
 
@@ -3512,22 +3572,8 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
             auto list = CSSValueList::createCommaSeparated();
             const AnimationList* t = style.animations();
             if (t) {
-                for (size_t i = 0; i < t->size(); ++i) {
-                    switch (t->animation(i).direction()) {
-                    case Animation::AnimationDirectionNormal:
-                        list->append(cssValuePool.createIdentifierValue(CSSValueNormal));
-                        break;
-                    case Animation::AnimationDirectionAlternate:
-                        list->append(cssValuePool.createIdentifierValue(CSSValueAlternate));
-                        break;
-                    case Animation::AnimationDirectionReverse:
-                        list->append(cssValuePool.createIdentifierValue(CSSValueReverse));
-                        break;
-                    case Animation::AnimationDirectionAlternateReverse:
-                        list->append(cssValuePool.createIdentifierValue(CSSValueAlternateReverse));
-                        break;
-                    }
-                }
+                for (size_t i = 0; i < t->size(); ++i)
+                    list->append(valueForAnimationDirection(t->animation(i).direction()));
             } else
                 list->append(cssValuePool.createIdentifierValue(CSSValueNormal));
             return list;
@@ -3538,22 +3584,8 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
             auto list = CSSValueList::createCommaSeparated();
             const AnimationList* t = style.animations();
             if (t) {
-                for (size_t i = 0; i < t->size(); ++i) {
-                    switch (t->animation(i).fillMode()) {
-                    case AnimationFillMode::None:
-                        list->append(cssValuePool.createIdentifierValue(CSSValueNone));
-                        break;
-                    case AnimationFillMode::Forwards:
-                        list->append(cssValuePool.createIdentifierValue(CSSValueForwards));
-                        break;
-                    case AnimationFillMode::Backwards:
-                        list->append(cssValuePool.createIdentifierValue(CSSValueBackwards));
-                        break;
-                    case AnimationFillMode::Both:
-                        list->append(cssValuePool.createIdentifierValue(CSSValueBoth));
-                        break;
-                    }
-                }
+                for (size_t i = 0; i < t->size(); ++i)
+                    list->append(valueForAnimationFillMode(t->animation(i).fillMode()));
             } else
                 list->append(cssValuePool.createIdentifierValue(CSSValueNone));
             return list;
@@ -3562,13 +3594,8 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
             auto list = CSSValueList::createCommaSeparated();
             const AnimationList* t = style.animations();
             if (t) {
-                for (size_t i = 0; i < t->size(); ++i) {
-                    double iterationCount = t->animation(i).iterationCount();
-                    if (iterationCount == Animation::IterationCountInfinite)
-                        list->append(cssValuePool.createIdentifierValue(CSSValueInfinite));
-                    else
-                        list->append(cssValuePool.createValue(iterationCount, CSSUnitType::CSS_NUMBER));
-                }
+                for (size_t i = 0; i < t->size(); ++i)
+                    list->append(valueForAnimationIterationCount(t->animation(i).iterationCount()));
             } else
                 list->append(cssValuePool.createValue(Animation::initialIterationCount(), CSSUnitType::CSS_NUMBER));
             return list;
@@ -3577,13 +3604,8 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
             auto list = CSSValueList::createCommaSeparated();
             const AnimationList* t = style.animations();
             if (t) {
-                for (size_t i = 0; i < t->size(); ++i) {
-                    auto& name = t->animation(i).name();
-                    if (name.isIdentifier)
-                        list->append(cssValuePool.createCustomIdent(name.string));
-                    else
-                        list->append(cssValuePool.createValue(name.string, CSSUnitType::CSS_STRING));
-                }
+                for (size_t i = 0; i < t->size(); ++i)
+                    list->append(valueForAnimationName(t->animation(i).name()));
             } else
                 list->append(cssValuePool.createIdentifierValue(CSSValueNone));
             return list;
@@ -3592,16 +3614,8 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
             auto list = CSSValueList::createCommaSeparated();
             const AnimationList* t = style.animations();
             if (t) {
-                for (size_t i = 0; i < t->size(); ++i) {
-                    switch (t->animation(i).playState()) {
-                    case AnimationPlayState::Playing:
-                        list->append(cssValuePool.createIdentifierValue(CSSValueRunning));
-                        break;
-                    case AnimationPlayState::Paused:
-                        list->append(cssValuePool.createIdentifierValue(CSSValuePaused));
-                        break;
-                    }
-                }
+                for (size_t i = 0; i < t->size(); ++i)
+                    list->append(valueForAnimationPlayState(t->animation(i).playState()));
             } else
                 list->append(cssValuePool.createIdentifierValue(CSSValueRunning));
             return list;
@@ -3815,7 +3829,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
                     auto& animation = animationList->animation(i);
                     list->append(createTransitionPropertyValue(animation));
                     list->append(cssValuePool.createValue(animation.duration(), CSSUnitType::CSS_S));
-                    list->append(createTimingFunctionValue(*animation.timingFunction()));
+                    list->append(valueForAnimationTimingFunction(*animation.timingFunction()));
                     list->append(cssValuePool.createValue(animation.delay(), CSSUnitType::CSS_S));
                     transitionsList->append(WTFMove(list));
                 }
@@ -3826,7 +3840,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
             // transition-property default value.
             list->append(cssValuePool.createIdentifierValue(CSSValueAll));
             list->append(cssValuePool.createValue(Animation::initialDuration(), CSSUnitType::CSS_S));
-            list->append(createTimingFunctionValue(Animation::initialTimingFunction()));
+            list->append(valueForAnimationTimingFunction(Animation::initialTimingFunction()));
             list->append(cssValuePool.createValue(Animation::initialDelay(), CSSUnitType::CSS_S));
             return list;
         }

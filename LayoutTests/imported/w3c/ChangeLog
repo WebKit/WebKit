@@ -1,5 +1,18 @@
 2022-01-02  Antoine Quint  <graouts@webkit.org>
 
+        "animation" shorthand should list all longhand values when serializing
+        https://bugs.webkit.org/show_bug.cgi?id=234792
+
+        Reviewed by Darin Adler.
+
+        Mark 20 new WPT progressions.
+
+        * web-platform-tests/css/css-animations/parsing/animation-shorthand-expected.txt:
+        * web-platform-tests/css/css-animations/parsing/animation-valid-expected.txt:
+        * web-platform-tests/css/css-animations/style-animation-parsing-expected.txt:
+
+2022-01-02  Antoine Quint  <graouts@webkit.org>
+
         [Web Animations] getKeyframes() should handle multiple 0% and 100% keyframes
         https://bugs.webkit.org/show_bug.cgi?id=234799
 

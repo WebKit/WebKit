@@ -20,6 +20,7 @@
 
 #pragma once
 
+#include "Animation.h"
 #include "CSSStyleDeclaration.h"
 #include "RenderStyleConstants.h"
 #include "SVGRenderStyleDefs.h"
@@ -76,6 +77,15 @@ public:
     static Ref<CSSPrimitiveValue> fontStretchFromStyleValue(FontSelectionValue);
     static Ref<CSSFontStyleValue> fontNonKeywordStyleFromStyleValue(FontSelectionValue);
     static Ref<CSSFontStyleValue> fontStyleFromStyleValue(std::optional<FontSelectionValue>, FontStyleAxis);
+
+    static Ref<CSSPrimitiveValue> valueForAnimationDuration(double);
+    static Ref<CSSValue> valueForAnimationTimingFunction(const TimingFunction&);
+    static Ref<CSSPrimitiveValue> valueForAnimationDelay(double);
+    static Ref<CSSPrimitiveValue> valueForAnimationIterationCount(double);
+    static Ref<CSSPrimitiveValue> valueForAnimationDirection(Animation::AnimationDirection);
+    static Ref<CSSPrimitiveValue> valueForAnimationFillMode(AnimationFillMode);
+    static Ref<CSSPrimitiveValue> valueForAnimationPlayState(AnimationPlayState);
+    static Ref<CSSPrimitiveValue> valueForAnimationName(const Animation::Name&);
 
 private:
     // The styled element is either the element passed into

@@ -19,7 +19,7 @@ transform origin (after):
 transform origin X (after):
 transform origin Y (after):
 
-animation (before): 5s ease-in-out infinite alternate test
+animation (before): 5s ease-in-out 0s infinite alternate none running test
 animation name (before): test
 animation duration (before): 5s
 animation timing function (before): ease-in-out

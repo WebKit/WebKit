@@ -1,3 +1,16 @@
+2022-01-02  Antoine Quint  <graouts@webkit.org>
+
+        "animation" shorthand should list all longhand values when serializing
+        https://bugs.webkit.org/show_bug.cgi?id=234792
+
+        Reviewed by Darin Adler.
+
+        Add the initial longhand values for some non-WPT tests that expected them to be
+        absent in the shorthand serialization.
+
+        * fast/css/longhand-overrides-shorthand-prefixing.html:
+        * fast/css/transform-inline-style-remove-expected.txt:
+
 2022-01-03  Youenn Fablet  <youenn@apple.com>
 
         FetchRequest.clone does not need to be called with the current context
