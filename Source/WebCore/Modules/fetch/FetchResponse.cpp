@@ -48,7 +48,7 @@ static inline bool isNullBodyStatus(int status)
     return status == 101 || status == 204 || status == 205 || status == 304;
 }
 
-Ref<FetchResponse> FetchResponse::create(ScriptExecutionContext& context, std::optional<FetchBody>&& body, FetchHeaders::Guard guard, ResourceResponse&& response)
+Ref<FetchResponse> FetchResponse::create(ScriptExecutionContext* context, std::optional<FetchBody>&& body, FetchHeaders::Guard guard, ResourceResponse&& response)
 {
     bool isSynthetic = response.type() == ResourceResponse::Type::Default || response.type() == ResourceResponse::Type::Error;
     bool isOpaque = response.tainting() == ResourceResponse::Tainting::Opaque;
@@ -127,7 +127,7 @@ ExceptionOr<Ref<FetchResponse>> FetchResponse::create(ScriptExecutionContext& co
     // FIXME: Implement.
     
     // 12. Return r.
-    auto r = adoptRef(*new FetchResponse(context, WTFMove(extractedBody), WTFMove(headers), { }));
+    auto r = adoptRef(*new FetchResponse(&context, WTFMove(extractedBody), WTFMove(headers), { }));
     r->suspendIfNeeded();
 
     r->m_contentType = contentType;
@@ -143,7 +143,7 @@ ExceptionOr<Ref<FetchResponse>> FetchResponse::create(ScriptExecutionContext& co
 
 Ref<FetchResponse> FetchResponse::error(ScriptExecutionContext& context)
 {
-    auto response = adoptRef(*new FetchResponse(context, { }, FetchHeaders::create(FetchHeaders::Guard::Immutable), { }));
+    auto response = adoptRef(*new FetchResponse(&context, { }, FetchHeaders::create(FetchHeaders::Guard::Immutable), { }));
     response->suspendIfNeeded();
     response->m_internalResponse.setType(Type::Error);
     return response;
@@ -159,7 +159,7 @@ ExceptionOr<Ref<FetchResponse>> FetchResponse::redirect(ScriptExecutionContext& 
         return Exception { TypeError, "Redirection URL contains credentials"_s };
     if (!ResourceResponse::isRedirectionStatusCode(status))
         return Exception { RangeError, makeString("Status code ", status, "is not a redirection status code") };
-    auto redirectResponse = adoptRef(*new FetchResponse(context, { }, FetchHeaders::create(FetchHeaders::Guard::Immutable), { }));
+    auto redirectResponse = adoptRef(*new FetchResponse(&context, { }, FetchHeaders::create(FetchHeaders::Guard::Immutable), { }));
     redirectResponse->suspendIfNeeded();
     redirectResponse->m_internalResponse.setHTTPStatusCode(status);
     redirectResponse->m_internalResponse.setHTTPHeaderField(HTTPHeaderName::Location, requestURL.string());
@@ -167,7 +167,7 @@ ExceptionOr<Ref<FetchResponse>> FetchResponse::redirect(ScriptExecutionContext& 
     return redirectResponse;
 }
 
-FetchResponse::FetchResponse(ScriptExecutionContext& context, std::optional<FetchBody>&& body, Ref<FetchHeaders>&& headers, ResourceResponse&& response)
+FetchResponse::FetchResponse(ScriptExecutionContext* context, std::optional<FetchBody>&& body, Ref<FetchHeaders>&& headers, ResourceResponse&& response)
     : FetchBodyOwner(context, WTFMove(body), WTFMove(headers))
     , m_internalResponse(WTFMove(response))
 {
@@ -175,18 +175,14 @@ FetchResponse::FetchResponse(ScriptExecutionContext& context, std::optional<Fetc
 
 ExceptionOr<Ref<FetchResponse>> FetchResponse::clone()
 {
-    if (isContextStopped())
-        return Exception { InvalidStateError, "Context is stopped"_s };
-
     if (isDisturbedOrLocked())
         return Exception { TypeError, "Body is disturbed or locked"_s };
 
-    ASSERT(scriptExecutionContext());
-    auto& context = *scriptExecutionContext();
-
     // If loading, let's create a stream so that data is teed on both clones.
     if (isLoading() && !m_readableStreamSource) {
-        auto* globalObject = context.globalObject();
+        auto* context = scriptExecutionContext();
+
+        auto* globalObject = context ? context->globalObject() : nullptr;
         if (!globalObject)
             return Exception { InvalidStateError, "Context is stopped"_s };
 
@@ -199,7 +195,7 @@ ExceptionOr<Ref<FetchResponse>> FetchResponse::clone()
     if (m_internalResponse.type() == ResourceResponse::Type::Default)
         m_internalResponse.setHTTPHeaderFields(HTTPHeaderMap { headers().internalHeaders() });
 
-    auto clone = FetchResponse::create(context, std::nullopt, headers().guard(), ResourceResponse { m_internalResponse });
+    auto clone = FetchResponse::create(scriptExecutionContext(), std::nullopt, headers().guard(), ResourceResponse { m_internalResponse });
     clone->cloneBody(*this);
     clone->m_opaqueLoadIdentifier = m_opaqueLoadIdentifier;
     clone->m_bodySizeWithPadding = m_bodySizeWithPadding;
@@ -254,7 +250,7 @@ void FetchResponse::fetch(ScriptExecutionContext& context, FetchRequest& request
 
     InspectorInstrumentation::willFetch(context, request.url().string());
 
-    auto response = adoptRef(*new FetchResponse(context, FetchBody { }, FetchHeaders::create(FetchHeaders::Guard::Immutable), { }));
+    auto response = adoptRef(*new FetchResponse(&context, FetchBody { }, FetchHeaders::create(FetchHeaders::Guard::Immutable), { }));
     response->suspendIfNeeded();
 
     response->body().consumer().setAsLoading();

@@ -73,7 +73,7 @@ public:
 
     const String& integrity() const { return m_options.integrity; }
 
-    ExceptionOr<Ref<FetchRequest>> clone(ScriptExecutionContext&);
+    ExceptionOr<Ref<FetchRequest>> clone();
 
     const FetchOptions& fetchOptions() const { return m_options; }
     const ResourceRequest& internalRequest() const { return m_request; }
@@ -85,7 +85,7 @@ public:
     void setNavigationPreloadIdentifier(FetchIdentifier identifier) { m_navigationPreloadIdentifier = identifier; }
 
 private:
-    FetchRequest(ScriptExecutionContext&, std::optional<FetchBody>&&, Ref<FetchHeaders>&&, ResourceRequest&&, FetchOptions&&, String&& referrer);
+    FetchRequest(ScriptExecutionContext*, std::optional<FetchBody>&&, Ref<FetchHeaders>&&, ResourceRequest&&, FetchOptions&&, String&& referrer);
 
     ExceptionOr<void> initializeOptions(const Init&);
     ExceptionOr<void> initializeWith(FetchRequest&, Init&&);
@@ -103,7 +103,7 @@ private:
     FetchIdentifier m_navigationPreloadIdentifier;
 };
 
-inline FetchRequest::FetchRequest(ScriptExecutionContext& context, std::optional<FetchBody>&& body, Ref<FetchHeaders>&& headers, ResourceRequest&& request, FetchOptions&& options, String&& referrer)
+inline FetchRequest::FetchRequest(ScriptExecutionContext* context, std::optional<FetchBody>&& body, Ref<FetchHeaders>&& headers, ResourceRequest&& request, FetchOptions&& options, String&& referrer)
     : FetchBodyOwner(context, WTFMove(body), WTFMove(headers))
     , m_request(WTFMove(request))
     , m_options(WTFMove(options))

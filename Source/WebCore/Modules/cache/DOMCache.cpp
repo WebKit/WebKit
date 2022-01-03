@@ -83,7 +83,7 @@ static Ref<FetchResponse> createResponse(ScriptExecutionContext& context, const 
 {
     auto resourceResponse = record.response;
     resourceResponse.setSource(ResourceResponse::Source::DOMCache);
-    auto response = FetchResponse::create(context, std::nullopt, record.responseHeadersGuard, WTFMove(resourceResponse));
+    auto response = FetchResponse::create(&context, std::nullopt, record.responseHeadersGuard, WTFMove(resourceResponse));
     response->setBodyData(copyResponseBody(record.responseBody), record.responseBodySize);
     return response;
 }

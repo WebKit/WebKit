@@ -72,7 +72,7 @@ public:
     const String& contentType() const { return m_contentType; }
 
 protected:
-    FetchBodyOwner(ScriptExecutionContext&, std::optional<FetchBody>&&, Ref<FetchHeaders>&&);
+    FetchBodyOwner(ScriptExecutionContext*, std::optional<FetchBody>&&, Ref<FetchHeaders>&&);
 
     const FetchBody& body() const { return *m_body; }
     FetchBody& body() { return *m_body; }

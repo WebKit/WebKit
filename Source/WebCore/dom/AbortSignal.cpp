@@ -39,7 +39,7 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(AbortSignal);
 
-Ref<AbortSignal> AbortSignal::create(ScriptExecutionContext& context)
+Ref<AbortSignal> AbortSignal::create(ScriptExecutionContext* context)
 {
     return adoptRef(*new AbortSignal(context));
 }
@@ -50,11 +50,11 @@ Ref<AbortSignal> AbortSignal::abort(JSDOMGlobalObject& globalObject, ScriptExecu
     ASSERT(reason);
     if (reason.isUndefined())
         reason = toJS(&globalObject, &globalObject, DOMException::create(AbortError));
-    return adoptRef(*new AbortSignal(context, Aborted::Yes, reason));
+    return adoptRef(*new AbortSignal(&context, Aborted::Yes, reason));
 }
 
-AbortSignal::AbortSignal(ScriptExecutionContext& context, Aborted aborted, JSC::JSValue reason)
-    : ContextDestructionObserver(&context)
+AbortSignal::AbortSignal(ScriptExecutionContext* context, Aborted aborted, JSC::JSValue reason)
+    : ContextDestructionObserver(context)
     , m_aborted(aborted == Aborted::Yes)
     , m_reason(reason)
 {

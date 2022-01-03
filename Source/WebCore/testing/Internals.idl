@@ -305,6 +305,8 @@ enum HEVCParameterCodec {
     required DOMPointReadOnly bottomLeft;
 };
 
+typedef (FetchRequest or FetchResponse) FetchObject;
+
 [
     ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
     LegacyNoInterfaceObject,
@@ -336,6 +338,8 @@ enum HEVCParameterCodec {
     undefined setOverrideCachePolicy(CachePolicy policy);
     undefined setOverrideResourceLoadPriority(ResourceLoadPriority priority);
     undefined setStrictRawResourceValidationPolicyDisabled(boolean disabled);
+
+    boolean isFetchObjectContextStopped(FetchObject object);
 
     undefined clearBackForwardCache();
     unsigned long backForwardCacheSize();

@@ -32,6 +32,7 @@ typedef (FetchRequest or USVString) RequestInfo;
 
 [
     ActiveDOMObject,
+    ExportMacro=WEBCORE_EXPORT,
     Exposed=(Window,Worker),
     GenerateIsReachable=Impl,
     InterfaceName=Request,
@@ -57,7 +58,7 @@ typedef (FetchRequest or USVString) RequestInfo;
     // readonly attribute boolean isHistoryNavigation;
     readonly attribute AbortSignal signal;
 
-    [CallWith=ScriptExecutionContext, NewObject] FetchRequest clone();
+    [NewObject] FetchRequest clone();
 };
 
 FetchRequest includes FetchBody;

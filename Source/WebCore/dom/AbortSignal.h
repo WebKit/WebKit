@@ -42,7 +42,7 @@ class ScriptExecutionContext;
 class AbortSignal final : public RefCounted<AbortSignal>, public EventTargetWithInlineData, private ContextDestructionObserver {
     WTF_MAKE_ISO_ALLOCATED_EXPORT(AbortSignal, WEBCORE_EXPORT);
 public:
-    static Ref<AbortSignal> create(ScriptExecutionContext&);
+    static Ref<AbortSignal> create(ScriptExecutionContext*);
 
     static Ref<AbortSignal> abort(JSDOMGlobalObject&, ScriptExecutionContext&, JSC::JSValue reason);
 
@@ -66,7 +66,7 @@ public:
 
 private:
     enum class Aborted : bool { No, Yes };
-    explicit AbortSignal(ScriptExecutionContext&, Aborted = Aborted::No, JSC::JSValue reason = JSC::jsUndefined());
+    explicit AbortSignal(ScriptExecutionContext*, Aborted = Aborted::No, JSC::JSValue reason = JSC::jsUndefined());
 
     // EventTarget.
     EventTargetInterface eventTargetInterface() const final { return AbortSignalEventTargetInterfaceType; }

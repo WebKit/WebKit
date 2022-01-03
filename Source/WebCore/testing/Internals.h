@@ -68,6 +68,7 @@ class Document;
 class Element;
 class EventListener;
 class ExtendableEvent;
+class FetchRequest;
 class FetchResponse;
 class File;
 class Frame;
@@ -189,6 +190,9 @@ public:
     enum class ResourceLoadPriority { ResourceLoadPriorityVeryLow, ResourceLoadPriorityLow, ResourceLoadPriorityMedium, ResourceLoadPriorityHigh, ResourceLoadPriorityVeryHigh };
     void setOverrideResourceLoadPriority(ResourceLoadPriority);
     void setStrictRawResourceValidationPolicyDisabled(bool);
+
+    using FetchObject = std::variant<RefPtr<FetchRequest>, RefPtr<FetchResponse>>;
+    bool isFetchObjectContextStopped(const FetchObject&);
 
     void clearMemoryCache();
     void pruneMemoryCacheToSize(unsigned size);

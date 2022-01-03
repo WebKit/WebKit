@@ -41,8 +41,8 @@
 
 namespace WebCore {
 
-FetchBodyOwner::FetchBodyOwner(ScriptExecutionContext& context, std::optional<FetchBody>&& body, Ref<FetchHeaders>&& headers)
-    : ActiveDOMObject(&context)
+FetchBodyOwner::FetchBodyOwner(ScriptExecutionContext* context, std::optional<FetchBody>&& body, Ref<FetchHeaders>&& headers)
+    : ActiveDOMObject(context)
     , m_body(WTFMove(body))
     , m_headers(WTFMove(headers))
 {

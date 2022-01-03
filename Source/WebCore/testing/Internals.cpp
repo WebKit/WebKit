@@ -78,6 +78,7 @@
 #include "EventNames.h"
 #include "ExtendableEvent.h"
 #include "ExtensionStyleSheets.h"
+#include "FetchRequest.h"
 #include "FetchResponse.h"
 #include "File.h"
 #include "FloatQuad.h"
@@ -916,6 +917,15 @@ void Internals::setOverrideResourceLoadPriority(ResourceLoadPriority priority)
 void Internals::setStrictRawResourceValidationPolicyDisabled(bool disabled)
 {
     frame()->loader().setStrictRawResourceValidationPolicyDisabledForTesting(disabled);
+}
+
+bool Internals::isFetchObjectContextStopped(const FetchObject& object)
+{
+    return switchOn(object, [](const RefPtr<FetchRequest>& request) {
+        return request->isContextStopped();
+    }, [](auto& response) {
+        return response->isContextStopped();
+    });
 }
 
 void Internals::clearMemoryCache()

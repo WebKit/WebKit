@@ -1,3 +1,14 @@
+2022-01-03  Youenn Fablet  <youenn@apple.com>
+
+        FetchRequest.clone does not need to be called with the current context
+        https://bugs.webkit.org/show_bug.cgi?id=234515
+
+        Reviewed by Darin Adler.
+
+        * http/wpt/fetch/clone-realm-expected.txt:
+        * http/wpt/fetch/clone-realm.html:
+        * http/wpt/fetch/resources/clone-realm-iframe.html: Added.
+
 2022-01-02  Diego Pino Garcia  <dpino@igalia.com>
 
         [GTK] Unreviewed test gardening, update baseline for imported/w3c/web-platform-tests/html/infrastructure/safe-passing-of-structured-data/transfer-errors.window.html
