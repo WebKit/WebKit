@@ -855,6 +855,8 @@ ExceptionOr<void> KeyframeEffect::processKeyframes(JSGlobalObject& lexicalGlobal
 
     clearBlendingKeyframes();
 
+    invalidate();
+
     return { };
 }
 
