@@ -78,14 +78,7 @@ public:
     static Ref<CSSFontStyleValue> fontNonKeywordStyleFromStyleValue(FontSelectionValue);
     static Ref<CSSFontStyleValue> fontStyleFromStyleValue(std::optional<FontSelectionValue>, FontStyleAxis);
 
-    static Ref<CSSPrimitiveValue> valueForAnimationDuration(double);
-    static Ref<CSSValue> valueForAnimationTimingFunction(const TimingFunction&);
-    static Ref<CSSPrimitiveValue> valueForAnimationDelay(double);
-    static Ref<CSSPrimitiveValue> valueForAnimationIterationCount(double);
-    static Ref<CSSPrimitiveValue> valueForAnimationDirection(Animation::AnimationDirection);
-    static Ref<CSSPrimitiveValue> valueForAnimationFillMode(AnimationFillMode);
-    static Ref<CSSPrimitiveValue> valueForAnimationPlayState(AnimationPlayState);
-    static Ref<CSSPrimitiveValue> valueForAnimationName(const Animation::Name&);
+    static void addValueForAnimationPropertyToList(CSSValueList&, CSSPropertyID, const Animation*);
 
 private:
     // The styled element is either the element passed into

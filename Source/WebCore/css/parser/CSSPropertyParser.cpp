@@ -1658,27 +1658,10 @@ bool CSSPropertyParser::consumeAnimationShorthand(const StylePropertyShorthand& 
         // FIXME: This will make invalid longhands, see crbug.com/386459
         for (size_t i = 0; i < longhandCount; ++i) {
             if (!parsedLonghand[i]) {
-                auto property = shorthand.properties()[i];
-                if (property == CSSPropertyAnimationDuration)
-                    longhands[i]->append(ComputedStyleExtractor::valueForAnimationDuration(Animation::initialDuration()));
-                else if (property == CSSPropertyAnimationTimingFunction)
-                    longhands[i]->append(ComputedStyleExtractor::valueForAnimationTimingFunction(CubicBezierTimingFunction::defaultTimingFunction()));
-                else if (property == CSSPropertyAnimationDelay)
-                    longhands[i]->append(ComputedStyleExtractor::valueForAnimationDelay(Animation::initialDelay()));
-                else if (property == CSSPropertyAnimationIterationCount)
-                    longhands[i]->append(ComputedStyleExtractor::valueForAnimationIterationCount(Animation::initialIterationCount()));
-                else if (property == CSSPropertyAnimationDirection)
-                    longhands[i]->append(ComputedStyleExtractor::valueForAnimationDirection(Animation::initialDirection()));
-                else if (property == CSSPropertyAnimationFillMode)
-                    longhands[i]->append(ComputedStyleExtractor::valueForAnimationFillMode(Animation::initialFillMode()));
-                else if (property == CSSPropertyAnimationPlayState)
-                    longhands[i]->append(ComputedStyleExtractor::valueForAnimationPlayState(Animation::initialPlayState()));
-                else if (property == CSSPropertyAnimationName)
-                    longhands[i]->append(ComputedStyleExtractor::valueForAnimationName(Animation::initialName()));
-                else {
-                    ASSERT(shorthand.id() == CSSPropertyTransition);
+                if (shorthand.id() == CSSPropertyTransition)
                     longhands[i]->append(CSSValuePool::singleton().createImplicitInitialValue());
-                }
+                else
+                    ComputedStyleExtractor::addValueForAnimationPropertyToList(*longhands[i], shorthand.properties()[i], nullptr);
             }
             parsedLonghand[i] = false;
         }
