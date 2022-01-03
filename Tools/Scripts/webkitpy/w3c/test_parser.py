@@ -83,9 +83,13 @@ class TestParser(object):
         if ref_contents is not None:
             self.ref_doc = Parser(ref_contents)
 
-        # First check if it's a reftest
         matches = self.reference_links_of_type('match') + self.reference_links_of_type('mismatch')
-        if matches:
+
+        # Manual tests may also have properties that make them look like non-manual reference or JS
+        # tests, so exclude them first.
+        if self.is_wpt_manualtest() and not self.is_reference_filename():
+            test_info = {'test': self.filename, 'manualtest': True}
+        elif matches:
             if len(matches) > 1:
                 # FIXME: Is this actually true? We should fix this.
                 _log.warning('Multiple references are not supported. Importing the first ref defined in %s',
@@ -120,9 +124,6 @@ class TestParser(object):
                     reference_relpath = self.filesystem.relpath(self.filesystem.dirname(self.filename), self.filesystem.dirname(ref_file)) + self.filesystem.sep
                     test_info['reference_support_info'] = {'reference_relpath': reference_relpath, 'files': reference_support_files}
 
-        # we check for wpt manual test before checking for jstest, as some WPT manual tests can be classified as CSS JS tests
-        elif self.is_wpt_manualtest() and not self.is_reference_filename():
-            test_info = {'test': self.filename, 'manualtest': True}
         elif self.is_jstest():
             test_info = {'test': self.filename, 'jstest': True}
         elif self.is_reference_filename():
