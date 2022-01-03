@@ -151,13 +151,20 @@ TextUtil::WordBreakLeft TextUtil::breakWord(const InlineTextBox& inlineTextBox, 
     ASSERT(length);
 
     auto text = inlineTextBox.content();
-    auto surrogatePairAwareIndex = [&] (auto index) {
-        // We should never break in the middle of a surrogate pair. They are considered one joint entity.
-        auto offset = index + 1;
-        U16_SET_CP_LIMIT(text, 0, offset, text.length());
+    auto userPerceivedCharacterBoundaryAlignedIndex = [&] (auto index) {
+        if (text.is8Bit())
+            return index;
+        auto alignedStartIndex = index;
+        U16_SET_CP_START(text, startPosition, alignedStartIndex);
+        ASSERT(alignedStartIndex >= startPosition);
+        return alignedStartIndex;
+    };
 
-        // Returns the index at trail.
-        return offset - 1;
+    auto nextUserPerceivedCharacterIndex = [&] (auto index) {
+        if (text.is8Bit())
+            return index + 1;
+        U16_FWD_1(text, index, length);
+        return index;
     };
 
     auto left = startPosition;
@@ -165,22 +172,21 @@ TextUtil::WordBreakLeft TextUtil::breakWord(const InlineTextBox& inlineTextBox, 
     // Adjust the range so that we can pick a reasonable midpoint.
     auto averageCharacterWidth = InlineLayoutUnit { textWidth / length };
     unsigned offset = toLayoutUnit(2 * availableWidth / averageCharacterWidth).toUnsigned();
-    auto right = surrogatePairAwareIndex(std::min<unsigned>(left + offset, (startPosition + length - 1)));
+    auto right = userPerceivedCharacterBoundaryAlignedIndex(std::min<unsigned>(left + offset, (startPosition + length - 1)));
     // Preserve the left width for the final split position so that we don't need to remeasure the left side again.
     auto leftSideWidth = InlineLayoutUnit { 0 };
     while (left < right) {
-        auto middle = surrogatePairAwareIndex((left + right) / 2);
-        auto width = TextUtil::width(inlineTextBox, fontCascade, startPosition, middle + 1, contentLogicalLeft);
+        auto middle = userPerceivedCharacterBoundaryAlignedIndex((left + right) / 2);
+        ASSERT(middle >= left && middle < right);
+        auto endOfMiddleCharacter = nextUserPerceivedCharacterIndex(middle);
+        auto width = TextUtil::width(inlineTextBox, fontCascade, startPosition, endOfMiddleCharacter, contentLogicalLeft);
         if (width < availableWidth) {
-            left = middle + 1;
+            left = endOfMiddleCharacter;
             leftSideWidth = width;
-        } else if (width > availableWidth) {
-            // When the substring does not fit, the right side is supposed to be the start of the surrogate pair if applicable, unless startPosition falls between surrogate pair.
+        } else if (width > availableWidth)
             right = middle;
-            U16_SET_CP_START(text, 0, right);
-            ASSERT(right >= startPosition);
-        } else {
-            right = middle + 1;
+        else {
+            right = endOfMiddleCharacter;
             leftSideWidth = width;
             break;
         }
