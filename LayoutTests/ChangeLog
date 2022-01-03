@@ -1,3 +1,11 @@
+2022-01-02  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GTK] Unreviewed test gardening, update baseline for imported/w3c/web-platform-tests/html/infrastructure/safe-passing-of-structured-data/transfer-errors.window.html
+        https://bugs.webkit.org/show_bug.cgi?id=207258
+
+        * platform/glib/TestExpectations:
+        * platform/glib/imported/w3c/web-platform-tests/html/infrastructure/safe-passing-of-structured-data/transfer-errors.window-expected.txt:
+
 2022-01-02  Manuel Rego Casasnovas  <rego@igalia.com>
 
         Access key should work on focusable element.
