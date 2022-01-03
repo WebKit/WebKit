@@ -1,5 +1,16 @@
 2022-01-03  Antoine Quint  <graouts@webkit.org>
 
+        [Web Animations] changing the effect of a transition should no longer have it marked as running
+        https://bugs.webkit.org/show_bug.cgi?id=234823
+
+        Reviewed by Dean Jackson.
+
+        Mark WPT progression.
+
+        * web-platform-tests/css/css-transitions/CSSTransition-effect.tentative-expected.txt:
+
+2022-01-03  Antoine Quint  <graouts@webkit.org>
+
         [Web Animations] calling setKeyframes() on a running CSS Transition has no immediate effect
         https://bugs.webkit.org/show_bug.cgi?id=234818
 
