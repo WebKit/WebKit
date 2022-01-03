@@ -1,6 +1,6 @@
-# ScriptExtensions-13.0.0.txt
-# Date: 2020-01-22, 00:07:43 GMT
-# © 2020 Unicode®, Inc.
+# ScriptExtensions-14.0.0.txt
+# Date: 2021-06-04, 02:19:38 GMT
+# © 2021 Unicode®, Inc.
 # Unicode and the Unicode Logo are registered trademarks of Unicode, Inc. in the U.S. and other countries.
 # For terms of use, see http://www.unicode.org/terms_of_use.html
 #
@@ -11,10 +11,10 @@
 # with more than one script, but with a limited number of scripts.
 # For each code point, there is one or more property values.  Each such value is a Script property value.
 # For more information, see:
-#   UAX #24, Unicode Script Property: http://www.unicode.org/reports/tr24/
+#   UAX #24, Unicode Script Property: https://www.unicode.org/reports/tr24/
 #     Especially the sections:
-#       http://www.unicode.org/reports/tr24/#Assignment_Script_Values
-#       http://www.unicode.org/reports/tr24/#Assignment_ScriptX_Values
+#       https://www.unicode.org/reports/tr24/#Assignment_Script_Values
+#       https://www.unicode.org/reports/tr24/#Assignment_ScriptX_Values
 #
 # Each Script_Extensions value in this file consists of a set
 # of one or more abbreviated Script property values. The ordering of the
@@ -119,6 +119,14 @@
 
 # ================================================
 
+# Script_Extensions=Syrc
+
+1DFA          ; Syrc # Mn       COMBINING DOT BELOW LEFT
+
+# Total code points: 1
+
+# ================================================
+
 # Script_Extensions=Arab Copt
 
 102E0         ; Arab Copt # Mn       COPTIC EPACT THOUSANDS MARK
@@ -133,6 +141,15 @@
 06D4          ; Arab Rohg # Po       ARABIC FULL STOP
 
 # Total code points: 1
+
+# ================================================
+
+# Script_Extensions=Arab Nkoo
+
+FD3E          ; Arab Nkoo # Pe       ORNATE LEFT PARENTHESIS
+FD3F          ; Arab Nkoo # Ps       ORNATE RIGHT PARENTHESIS
+
+# Total code points: 2
 
 # ================================================
 
@@ -186,10 +203,10 @@ A9CF          ; Bugi Java # Lm       JAVANESE PANGRANGKEP
 
 # Script_Extensions=Cprt Linb
 
-10100..10102  ; Cprt Linb # Po   [3] AEGEAN WORD SEPARATOR LINE..AEGEAN CHECK MARK
+10102         ; Cprt Linb # Po       AEGEAN CHECK MARK
 10137..1013F  ; Cprt Linb # So   [9] AEGEAN WEIGHT BASE UNIT..AEGEAN MEASURE THIRD SUBUNIT
 
-# Total code points: 12
+# Total code points: 10
 
 # ================================================
 
@@ -342,6 +359,14 @@ FF9E..FF9F    ; Hira Kana # Lm   [2] HALFWIDTH KATAKANA VOICED SOUND MARK..HALFW
 
 # ================================================
 
+# Script_Extensions=Mani Ougr
+
+10AF2         ; Mani Ougr # Po       MANICHAEAN PUNCTUATION DOUBLE DOT WITHIN DOT
+
+# Total code points: 1
+
+# ================================================
+
 # Script_Extensions=Mong Phag
 
 1802..1803    ; Mong Phag # Po   [2] MONGOLIAN COMMA..MONGOLIAN FULL STOP
@@ -380,6 +405,14 @@ FF9E..FF9F    ; Hira Kana # Lm   [2] HALFWIDTH KATAKANA VOICED SOUND MARK..HALFW
 1040..1049    ; Cakm Mymr Tale # Nd  [10] MYANMAR DIGIT ZERO..MYANMAR DIGIT NINE
 
 # Total code points: 10
+
+# ================================================
+
+# Script_Extensions=Cpmn Cprt Linb
+
+10100..10101  ; Cpmn Cprt Linb # Po   [2] AEGEAN WORD SEPARATOR LINE..AEGEAN WORD SEPARATOR DOT
+
+# Total code points: 2
 
 # ================================================
 
@@ -449,16 +482,6 @@ A92E          ; Kali Latn Mymr # Po       KAYAH LI SIGN CWI
 
 # ================================================
 
-# Script_Extensions=Arab Rohg Syrc Thaa Yezi
-
-060C          ; Arab Rohg Syrc Thaa Yezi # Po       ARABIC COMMA
-061B          ; Arab Rohg Syrc Thaa Yezi # Po       ARABIC SEMICOLON
-061F          ; Arab Rohg Syrc Thaa Yezi # Po       ARABIC QUESTION MARK
-
-# Total code points: 3
-
-# ================================================
-
 # Script_Extensions=Bopo Hang Hani Hira Kana
 
 3003          ; Bopo Hang Hani Hira Kana # Po       DITTO MARK
@@ -471,6 +494,15 @@ A92E          ; Kali Latn Mymr # Po       KAYAH LI SIGN CWI
 FE45..FE46    ; Bopo Hang Hani Hira Kana # Po   [2] SESAME DOT..WHITE SESAME DOT
 
 # Total code points: 10
+
+# ================================================
+
+# Script_Extensions=Arab Nkoo Rohg Syrc Thaa Yezi
+
+060C          ; Arab Nkoo Rohg Syrc Thaa Yezi # Po       ARABIC COMMA
+061B          ; Arab Nkoo Rohg Syrc Thaa Yezi # Po       ARABIC SEMICOLON
+
+# Total code points: 2
 
 # ================================================
 
@@ -513,9 +545,9 @@ FF64..FF65    ; Bopo Hang Hani Hira Kana Yiii # Po   [2] HALFWIDTH IDEOGRAPHIC C
 
 # ================================================
 
-# Script_Extensions=Adlm Arab Mand Mani Phlp Rohg Sogd Syrc
+# Script_Extensions=Adlm Arab Nkoo Rohg Syrc Thaa Yezi
 
-0640          ; Adlm Arab Mand Mani Phlp Rohg Sogd Syrc # Lm       ARABIC TATWEEL
+061F          ; Adlm Arab Nkoo Rohg Syrc Thaa Yezi # Po       ARABIC QUESTION MARK
 
 # Total code points: 1
 
@@ -524,6 +556,14 @@ FF64..FF65    ; Bopo Hang Hani Hira Kana Yiii # Po   [2] HALFWIDTH IDEOGRAPHIC C
 # Script_Extensions=Beng Deva Gran Knda Nand Orya Telu Tirh
 
 1CF2          ; Beng Deva Gran Knda Nand Orya Telu Tirh # Lo       VEDIC SIGN ARDHAVISARGA
+
+# Total code points: 1
+
+# ================================================
+
+# Script_Extensions=Adlm Arab Mand Mani Ougr Phlp Rohg Sogd Syrc
+
+0640          ; Adlm Arab Mand Mani Ougr Phlp Rohg Sogd Syrc # Lm       ARABIC TATWEEL
 
 # Total code points: 1
 
