@@ -59,6 +59,8 @@ WORKDIR /webkit
 
 RUN mkdir -p /output/lib /output/include /output/include/JavaScriptCore /output/include/wtf /output/include/bmalloc
 
+ARG WEBKIT_RELEASE_TYPE=Release
+
 # | Explanation                                                                                    |                                                Flag 
 # -----------------------------------------------------------------------------------------------------------------------------------------------------
 # | Use the "JSCOnly" WebKit port                                                                  |                                  -DPORT="JSCOnly" |
@@ -75,7 +77,7 @@ RUN --mount=type=tmpfs,target=/webkitbuild \
     cmake \
     -DPORT="JSCOnly" \
     -DENABLE_STATIC_JSC=ON \
-    -DCMAKE_BUILD_TYPE=relwithdebuginfo \
+    -DCMAKE_BUILD_TYPE=$WEBKIT_RELEASE_TYPE \
     -DUSE_THIN_ARCHIVES=OFF \
     -DENABLE_FTL_JIT=ON \
     -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
@@ -84,7 +86,7 @@ RUN --mount=type=tmpfs,target=/webkitbuild \
     -DCMAKE_C_COMPILER=$(which clang-12) \ 
     /webkit && \
     cd /webkitbuild && \
-    CFLAGS="$CFLAGS -ffat-lto-objects" CXXFLAGS="$CXXFLAGS -ffat-lto-objects" cmake --build /webkitbuild --config relwithdebuginfo -- "jsc" -j$(nproc) && \
+    CFLAGS="$CFLAGS -ffat-lto-objects" CXXFLAGS="$CXXFLAGS -ffat-lto-objects" cmake --build /webkitbuild --config $WEBKIT_RELEASE_TYPE -- "jsc" -j$(nproc) && \
     cp -r $WEBKIT_OUT_DIR/lib/*.a /output/lib && \
     cp $WEBKIT_OUT_DIR/*.h /output/include && \
     find $WEBKIT_OUT_DIR/JavaScriptCore/Headers/JavaScriptCore/ -name "*.h" -exec cp {} /output/include/JavaScriptCore/ \; && \
