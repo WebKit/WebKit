@@ -2095,72 +2095,6 @@ test/language/expressions/class/elements/nested-direct-eval-err-contains-argumen
 test/language/expressions/class/elements/nested-private-direct-eval-err-contains-arguments.js:
   default: 'Test262Error: Expected a SyntaxError but got a ReferenceError'
   strict mode: 'Test262Error: Expected a SyntaxError but got a ReferenceError'
-test/language/expressions/compound-assignment/S11.13.2_A5.10_T1.js:
-  default: "ReferenceError: Can't find variable: x"
-test/language/expressions/compound-assignment/S11.13.2_A5.10_T2.js:
-  default: "ReferenceError: Can't find variable: x"
-test/language/expressions/compound-assignment/S11.13.2_A5.10_T3.js:
-  default: "ReferenceError: Can't find variable: x"
-test/language/expressions/compound-assignment/S11.13.2_A5.11_T1.js:
-  default: "ReferenceError: Can't find variable: x"
-test/language/expressions/compound-assignment/S11.13.2_A5.11_T2.js:
-  default: "ReferenceError: Can't find variable: x"
-test/language/expressions/compound-assignment/S11.13.2_A5.11_T3.js:
-  default: "ReferenceError: Can't find variable: x"
-test/language/expressions/compound-assignment/S11.13.2_A5.1_T1.js:
-  default: "ReferenceError: Can't find variable: x"
-test/language/expressions/compound-assignment/S11.13.2_A5.1_T2.js:
-  default: "ReferenceError: Can't find variable: x"
-test/language/expressions/compound-assignment/S11.13.2_A5.1_T3.js:
-  default: "ReferenceError: Can't find variable: x"
-test/language/expressions/compound-assignment/S11.13.2_A5.2_T1.js:
-  default: "ReferenceError: Can't find variable: x"
-test/language/expressions/compound-assignment/S11.13.2_A5.2_T2.js:
-  default: "ReferenceError: Can't find variable: x"
-test/language/expressions/compound-assignment/S11.13.2_A5.2_T3.js:
-  default: "ReferenceError: Can't find variable: x"
-test/language/expressions/compound-assignment/S11.13.2_A5.3_T1.js:
-  default: "ReferenceError: Can't find variable: x"
-test/language/expressions/compound-assignment/S11.13.2_A5.3_T2.js:
-  default: "ReferenceError: Can't find variable: x"
-test/language/expressions/compound-assignment/S11.13.2_A5.3_T3.js:
-  default: "ReferenceError: Can't find variable: x"
-test/language/expressions/compound-assignment/S11.13.2_A5.4_T1.js:
-  default: "ReferenceError: Can't find variable: x"
-test/language/expressions/compound-assignment/S11.13.2_A5.4_T2.js:
-  default: "ReferenceError: Can't find variable: x"
-test/language/expressions/compound-assignment/S11.13.2_A5.4_T3.js:
-  default: "ReferenceError: Can't find variable: x"
-test/language/expressions/compound-assignment/S11.13.2_A5.5_T1.js:
-  default: "ReferenceError: Can't find variable: x"
-test/language/expressions/compound-assignment/S11.13.2_A5.5_T2.js:
-  default: "ReferenceError: Can't find variable: x"
-test/language/expressions/compound-assignment/S11.13.2_A5.5_T3.js:
-  default: "ReferenceError: Can't find variable: x"
-test/language/expressions/compound-assignment/S11.13.2_A5.6_T1.js:
-  default: "ReferenceError: Can't find variable: x"
-test/language/expressions/compound-assignment/S11.13.2_A5.6_T2.js:
-  default: "ReferenceError: Can't find variable: x"
-test/language/expressions/compound-assignment/S11.13.2_A5.6_T3.js:
-  default: "ReferenceError: Can't find variable: x"
-test/language/expressions/compound-assignment/S11.13.2_A5.7_T1.js:
-  default: "ReferenceError: Can't find variable: x"
-test/language/expressions/compound-assignment/S11.13.2_A5.7_T2.js:
-  default: "ReferenceError: Can't find variable: x"
-test/language/expressions/compound-assignment/S11.13.2_A5.7_T3.js:
-  default: "ReferenceError: Can't find variable: x"
-test/language/expressions/compound-assignment/S11.13.2_A5.8_T1.js:
-  default: "ReferenceError: Can't find variable: x"
-test/language/expressions/compound-assignment/S11.13.2_A5.8_T2.js:
-  default: "ReferenceError: Can't find variable: x"
-test/language/expressions/compound-assignment/S11.13.2_A5.8_T3.js:
-  default: "ReferenceError: Can't find variable: x"
-test/language/expressions/compound-assignment/S11.13.2_A5.9_T1.js:
-  default: "ReferenceError: Can't find variable: x"
-test/language/expressions/compound-assignment/S11.13.2_A5.9_T2.js:
-  default: "ReferenceError: Can't find variable: x"
-test/language/expressions/compound-assignment/S11.13.2_A5.9_T3.js:
-  default: "ReferenceError: Can't find variable: x"
 test/language/expressions/compound-assignment/S11.13.2_A7.10_T4.js:
   default: 'Test262Error: Expected true but got false'
   strict mode: 'Test262Error: Expected true but got false'
@@ -2246,39 +2180,15 @@ test/language/expressions/object/scope-meth-param-rest-elem-var-open.js:
   default: 'Test262Error: Expected SameValue(«outside», «inside») to be true'
 test/language/expressions/object/scope-setter-body-lex-distinc.js:
   default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/expressions/postfix-decrement/S11.3.2_A5_T1.js:
-  default: "ReferenceError: Can't find variable: x"
-test/language/expressions/postfix-decrement/S11.3.2_A5_T2.js:
-  default: "ReferenceError: Can't find variable: x"
-test/language/expressions/postfix-decrement/S11.3.2_A5_T3.js:
-  default: "ReferenceError: Can't find variable: x"
 test/language/expressions/postfix-decrement/S11.3.2_A6_T3.js:
   default: 'Test262Error: Expected true but got false'
   strict mode: 'Test262Error: Expected true but got false'
-test/language/expressions/postfix-increment/S11.3.1_A5_T1.js:
-  default: "ReferenceError: Can't find variable: x"
-test/language/expressions/postfix-increment/S11.3.1_A5_T2.js:
-  default: "ReferenceError: Can't find variable: x"
-test/language/expressions/postfix-increment/S11.3.1_A5_T3.js:
-  default: "ReferenceError: Can't find variable: x"
 test/language/expressions/postfix-increment/S11.3.1_A6_T3.js:
   default: 'Test262Error: Expected true but got false'
   strict mode: 'Test262Error: Expected true but got false'
-test/language/expressions/prefix-decrement/S11.4.5_A5_T1.js:
-  default: "ReferenceError: Can't find variable: x"
-test/language/expressions/prefix-decrement/S11.4.5_A5_T2.js:
-  default: "ReferenceError: Can't find variable: x"
-test/language/expressions/prefix-decrement/S11.4.5_A5_T3.js:
-  default: "ReferenceError: Can't find variable: x"
 test/language/expressions/prefix-decrement/S11.4.5_A6_T3.js:
   default: 'Test262Error: Expected true but got false'
   strict mode: 'Test262Error: Expected true but got false'
-test/language/expressions/prefix-increment/S11.4.4_A5_T1.js:
-  default: "ReferenceError: Can't find variable: x"
-test/language/expressions/prefix-increment/S11.4.4_A5_T2.js:
-  default: "ReferenceError: Can't find variable: x"
-test/language/expressions/prefix-increment/S11.4.4_A5_T3.js:
-  default: "ReferenceError: Can't find variable: x"
 test/language/expressions/prefix-increment/S11.4.4_A6_T3.js:
   default: 'Test262Error: Expected true but got false'
   strict mode: 'Test262Error: Expected true but got false'

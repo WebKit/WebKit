@@ -1,5 +1,21 @@
 2022-01-03  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] Read-modify-write operation's second put-to-scope should not throw error if binding does not exist
+        https://bugs.webkit.org/show_bug.cgi?id=234813
+
+        Reviewed by Alexey Shvayka.
+
+        This patch fixes a bug throwing RefereceError when read-modify-write's read operation removes binding from object.
+        Throwing error should happen only when evaluating it under strict mode.
+
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::PostfixNode::emitResolve):
+        (JSC::PrefixNode::emitResolve):
+        (JSC::ReadModifyResolveNode::emitBytecode):
+        (JSC::ShortCircuitReadModifyResolveNode::emitBytecode):
+
+2022-01-03  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] Fix length of Intl.NumberFormat.formatRange and Intl.PluralRules.selectRange
         https://bugs.webkit.org/show_bug.cgi?id=234806
 

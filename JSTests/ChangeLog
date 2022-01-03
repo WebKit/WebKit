@@ -1,5 +1,18 @@
 2022-01-03  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] Read-modify-write operation's second put-to-scope should not throw error if binding does not exist
+        https://bugs.webkit.org/show_bug.cgi?id=234813
+
+        Reviewed by Alexey Shvayka.
+
+        * stress/global-object-read-modify-write-remove-at-get-strict.js: Added.
+        (shouldThrow):
+        * stress/global-object-read-modify-write-remove-at-get.js: Added.
+        (shouldBe):
+        * test262/expectations.yaml:
+
+2022-01-03  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] Fix length of Intl.NumberFormat.formatRange and Intl.PluralRules.selectRange
         https://bugs.webkit.org/show_bug.cgi?id=234806
 
