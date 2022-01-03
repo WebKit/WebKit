@@ -22,7 +22,7 @@ PASS Property text-combine-upright value 'all' in ::marker
 PASS Property unicode-bidi value 'plaintext' in ::marker
 PASS Property direction value 'rtl' in ::marker
 PASS Property content value '"foo"' in ::marker
-FAIL Property animation value '1s linear 2s infinite alternate forwards paused anim' in ::marker assert_equals: expected "1s linear 2s infinite alternate forwards paused anim" but got ""
+PASS Property animation value '1s linear 2s infinite alternate forwards paused anim' in ::marker
 PASS Property animation-delay value '1s' in ::marker
 PASS Property animation-direction value 'alternate' in ::marker
 PASS Property animation-duration value '2s' in ::marker

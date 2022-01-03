@@ -1485,6 +1485,27 @@ static Ref<CSSValueList> timingFunctionValue(const AnimationList* animationList)
     return list;
 }
 
+static Ref<CSSValueList> animationShorthandValue(const AnimationList* animationList)
+{
+    auto parentList = CSSValueList::createCommaSeparated();
+    if (animationList) {
+        for (size_t i = 0; i < animationList->size(); ++i) {
+            const auto& animation = animationList->animation(i);
+            auto childList = CSSValueList::createSpaceSeparated();
+            childList->append(ComputedStyleExtractor::valueForAnimationDuration(animation.duration()));
+            childList->append(ComputedStyleExtractor::valueForAnimationTimingFunction(*animation.timingFunction()));
+            childList->append(ComputedStyleExtractor::valueForAnimationDelay(animation.delay()));
+            childList->append(ComputedStyleExtractor::valueForAnimationIterationCount(animation.iterationCount()));
+            childList->append(ComputedStyleExtractor::valueForAnimationDirection(animation.direction()));
+            childList->append(ComputedStyleExtractor::valueForAnimationFillMode(animation.fillMode()));
+            childList->append(ComputedStyleExtractor::valueForAnimationPlayState(animation.playState()));
+            childList->append(ComputedStyleExtractor::valueForAnimationName(animation.name()));
+            parentList->append(childList);
+        }
+    }
+    return parentList;
+}
+
 static Ref<CSSValue> createLineBoxContainValue(OptionSet<LineBoxContain> lineBoxContain)
 {
     if (!lineBoxContain)
@@ -3566,6 +3587,8 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
             if (style.boxSizing() == BoxSizing::ContentBox)
                 return cssValuePool.createIdentifierValue(CSSValueContentBox);
             return cssValuePool.createIdentifierValue(CSSValueBorderBox);
+        case CSSPropertyAnimation:
+            return animationShorthandValue(style.animations());
         case CSSPropertyAnimationDelay:
             return delayValue(style.animations());
         case CSSPropertyAnimationDirection: {
@@ -4098,7 +4121,6 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
 
         /* Unimplemented CSS 3 properties (including CSS3 shorthand properties) */
         case CSSPropertyAll:
-        case CSSPropertyAnimation:
         case CSSPropertyTextEmphasis:
             break;
 
