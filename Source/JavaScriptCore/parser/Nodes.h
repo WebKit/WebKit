@@ -1561,15 +1561,13 @@ namespace JSC {
         bool m_rightHasAssignments : 1;
     };
 
-    class ShortCircuitReadModifyDotNode final : public ExpressionNode, public ThrowableSubExpressionData {
+    class ShortCircuitReadModifyDotNode final : public BaseDotNode, public ThrowableSubExpressionData {
     public:
-        ShortCircuitReadModifyDotNode(const JSTokenLocation&, ExpressionNode* base, const Identifier&, Operator, ExpressionNode* right, bool rightHasAssignments, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd);
+        ShortCircuitReadModifyDotNode(const JSTokenLocation&, ExpressionNode* base, const Identifier&, DotType, Operator, ExpressionNode* right, bool rightHasAssignments, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd);
 
     private:
         RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = nullptr) final;
 
-        ExpressionNode* m_base;
-        const Identifier& m_ident;
         ExpressionNode* m_right;
         Operator m_operator;
         bool m_rightHasAssignments : 1;

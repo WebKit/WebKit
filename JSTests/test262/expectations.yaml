@@ -2151,27 +2151,6 @@ test/language/statements/class/elements/nested-private-direct-eval-err-contains-
 test/language/statements/class/elements/privatefieldset-evaluation-order-1.js:
   default: 'Test262Error: Expected a ReferenceError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: Expected a ReferenceError to be thrown but no exception was thrown at all'
-test/language/statements/class/elements/privatefieldset-evaluation-order-3.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «pass») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «pass») to be true'
-test/language/statements/class/elements/privatefieldset-typeerror-10.js:
-  default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
-test/language/statements/class/elements/privatefieldset-typeerror-11.js:
-  default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
-test/language/statements/class/elements/privatefieldset-typeerror-6.js:
-  default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
-test/language/statements/class/elements/privatefieldset-typeerror-7.js:
-  default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
-test/language/statements/class/elements/privatefieldset-typeerror-8.js:
-  default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
-test/language/statements/class/elements/privatefieldset-typeerror-9.js:
-  default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
 test/language/statements/class/subclass/default-constructor-spread-override.js:
   default: 'Test262Error: @@iterator invoked'
   strict mode: 'Test262Error: @@iterator invoked'

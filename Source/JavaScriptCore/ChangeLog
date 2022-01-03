@@ -1,3 +1,19 @@
+2022-01-02  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Use emitPutProperty / emitGetPropertyValue consistently to handle private names in edge cases
+        https://bugs.webkit.org/show_bug.cgi?id=234794
+
+        Reviewed by Alexey Shvayka.
+
+        This patch consistently uses emitPutProperty / emitGetPropertyValue so that we handle private names
+        in edge cases.
+
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::TaggedTemplateNode::emitBytecode):
+        (JSC::ForInNode::emitLoopHeader):
+        (JSC::ForOfNode::emitBytecode):
+        (JSC::AssignmentElementNode::bindValue const):
+
 2022-01-02  Zan Dobersek  <zdobersek@igalia.com>
 
         Remove unused AbstractMacroAssembler::repatchJumpToNop() function
