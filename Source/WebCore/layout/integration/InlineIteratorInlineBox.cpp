@@ -109,17 +109,19 @@ InlineBoxIterator& InlineBoxIterator::traversePreviousInlineBox()
 
 InlineBoxIterator firstInlineBoxFor(const RenderInline& renderInline)
 {
+#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
     if (auto* lineLayout = LayoutIntegration::LineLayout::containing(renderInline))
         return lineLayout->firstInlineBoxFor(renderInline);
-
+#endif
     return { BoxLegacyPath { renderInline.firstLineBox() } };
 }
 
 InlineBoxIterator firstRootInlineBoxFor(const RenderBlockFlow& block)
 {
+#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
     if (auto* lineLayout = block.modernLineLayout())
         return lineLayout->firstRootInlineBox();
-
+#endif
     return { BoxLegacyPath { block.firstRootBox() } };
 }
 
