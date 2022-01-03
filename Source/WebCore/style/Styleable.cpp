@@ -479,9 +479,7 @@ static void updateCSSTransitionsForStyleableAndProperty(const Styleable& styleab
         } else if (CSSPropertyAnimation::propertiesEqual(property, previouslyRunningTransition->reversingAdjustedStartStyle(), afterChangeStyle)) {
             // 3. Otherwise, if the reversing-adjusted start value of the running transition is the same as the value of the property in the after-change
             //    style (see the section on reversing of transitions for why these case exists), implementations must cancel the running transition
-            previouslyRunningTransition->cancelFromStyle();
-
-            // and start a new transition whose:
+            //    and start a new transition whose:
             //   - reversing-adjusted start value is the end value of the running transition,
             //   - reversing shortening factor is the absolute value, clamped to the range [0, 1], of the sum of:
             //       1. the output of the timing function of the old transition at the time of the style change event, times the reversing shortening factor of the old transition
@@ -502,12 +500,10 @@ static void updateCSSTransitionsForStyleableAndProperty(const Styleable& styleab
             auto delay = matchingBackingAnimation->delay() < 0 ? Seconds(matchingBackingAnimation->delay()) * reversingShorteningFactor : Seconds(matchingBackingAnimation->delay());
             auto duration = Seconds(matchingBackingAnimation->duration()) * reversingShorteningFactor;
 
+            previouslyRunningTransition->cancelFromStyle();
             styleable.ensureRunningTransitionsByProperty().set(property, CSSTransition::create(styleable, property, generationTime, *matchingBackingAnimation, &previouslyRunningTransitionCurrentStyle, afterChangeStyle, delay, duration, reversingAdjustedStartStyle, reversingShorteningFactor));
         } else {
-            // 4. Otherwise, implementations must cancel the running transition
-            previouslyRunningTransition->cancelFromStyle();
-
-            // and start a new transition whose:
+            // 4. Otherwise, implementations must cancel the running transition and start a new transition whose:
             //   - start time is the time of the style change event plus the matching transition delay,
             //   - end time is the start time plus the matching transition duration,
             //   - start value is the current value of the property in the running transition,
@@ -518,6 +514,7 @@ static void updateCSSTransitionsForStyleableAndProperty(const Styleable& styleab
             auto duration = Seconds(matchingBackingAnimation->duration());
             auto& reversingAdjustedStartStyle = currentStyle;
             auto reversingShorteningFactor = 1;
+            previouslyRunningTransition->cancelFromStyle();
             styleable.ensureRunningTransitionsByProperty().set(property, CSSTransition::create(styleable, property, generationTime, *matchingBackingAnimation, &previouslyRunningTransitionCurrentStyle, afterChangeStyle, delay, duration, reversingAdjustedStartStyle, reversingShorteningFactor));
         }
     }

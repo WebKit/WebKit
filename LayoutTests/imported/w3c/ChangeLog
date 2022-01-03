@@ -1,5 +1,18 @@
 2022-01-03  Antoine Quint  <graouts@webkit.org>
 
+        [Web Animations] reversing factor should be computed before canceling the previous transition
+        https://bugs.webkit.org/show_bug.cgi?id=234821
+
+        Reviewed by Dean Jackson.
+
+        Mark WPT progressions.
+
+        * web-platform-tests/css/css-transitions/CSSTransition-currentTime.tentative-expected.txt:
+        * web-platform-tests/css/css-transitions/CSSTransition-effect.tentative-expected.txt:
+        * web-platform-tests/css/css-transitions/KeyframeEffect-setKeyframes.tentative-expected.txt:
+
+2022-01-03  Antoine Quint  <graouts@webkit.org>
+
         Support the "animation" shorthand property in the computed style
         https://bugs.webkit.org/show_bug.cgi?id=234785
 

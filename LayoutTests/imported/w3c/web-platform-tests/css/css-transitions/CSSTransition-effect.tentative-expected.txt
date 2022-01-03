@@ -8,5 +8,5 @@ PASS After setting a new keyframe effect with a shorter duration, the transition
 PASS After setting a new keyframe effect targeting different properties, the transition continues to report the original transition property
 PASS After setting a new keyframe effect on a play-pending transition, the transition remains pending
 PASS A transition with no effect still returns the original transitionProperty
-FAIL A transition with a replaced effect still exhibits the regular transition reversing behavior assert_approx_equals: expected 80240.33876954127 +/- 1 but got 100000
+PASS A transition with a replaced effect still exhibits the regular transition reversing behavior
 
