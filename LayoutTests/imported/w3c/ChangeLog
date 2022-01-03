@@ -1,3 +1,10 @@
+2022-01-03  Antoine Quint  <graouts@webkit.org>
+
+        Unreviewed test gardening, this test progressed in the way it fails but the test expectation
+        wasn't updated.
+
+        * web-platform-tests/css/css-transitions/KeyframeEffect-setKeyframes.tentative-expected.txt:
+
 2022-01-03  Antti Koivisto  <antti@apple.com>
 
         [:has() pseudo-class] Style invalidation for :valid and :invalid
