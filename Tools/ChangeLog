@@ -1,3 +1,17 @@
+2022-01-03  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Undownloaded iCloud Photos are inserted as broken images when attachment element is enabled
+        https://bugs.webkit.org/show_bug.cgi?id=234803
+        rdar://82318259
+
+        Reviewed by Darin Adler.
+
+        Add a new API test to exercise the change. See WebCore/ChangeLog for more information.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WKAttachmentTests.mm:
+        (nonexistentFilePath):
+        (TestWebKitAPI::TEST):
+
 2022-01-03  Martin Robinson  <mrobinson@webkit.org>
 
         A manual test was imported with the WPT css-transforms test suite

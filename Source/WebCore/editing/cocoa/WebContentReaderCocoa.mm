@@ -711,7 +711,8 @@ static Ref<HTMLElement> attachmentForFilePath(Frame& frame, const String& path, 
         return attachment;
     }
 
-    bool isDirectory = FileSystem::fileTypeFollowingSymlinks(path) == FileSystem::FileType::Directory;
+    auto fileType = FileSystem::fileTypeFollowingSymlinks(path);
+    bool isDirectory = fileType == FileSystem::FileType::Directory;
     String contentType = typeForAttachmentElement(explicitContentType);
     if (contentType.isEmpty()) {
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
@@ -726,12 +727,14 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     }
 
     std::optional<uint64_t> fileSizeForDisplay;
-    if (!isDirectory)
+    if (fileType && !isDirectory)
         fileSizeForDisplay = FileSystem::fileSize(path).value_or(0);
 
     frame.editor().registerAttachmentIdentifier(attachment->ensureUniqueIdentifier(), contentType, path);
 
-    if (contentTypeIsSuitableForInlineImageRepresentation(contentType)) {
+    if (!fileType)
+        attachment->setAttributeWithoutSynchronization(HTMLNames::progressAttr, AtomString::number(0));
+    else if (contentTypeIsSuitableForInlineImageRepresentation(contentType)) {
         auto image = HTMLImageElement::create(document);
         image->setAttributeWithoutSynchronization(HTMLNames::srcAttr, DOMURL::createObjectURL(document, File::create(document.ptr(), path)));
         image->setAttachmentElement(WTFMove(attachment));

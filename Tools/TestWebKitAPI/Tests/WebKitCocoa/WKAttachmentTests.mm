@@ -511,7 +511,13 @@ BOOL isCompletelyTransparent(NSImage *image)
     return true;
 }
 
-#endif
+static NSString *nonexistentFilePath(NSString *extension)
+{
+    auto nonexistentFileName = [NSString stringWithFormat:@"%@.%@", NSUUID.UUID.UUIDString, extension];
+    return [NSTemporaryDirectory() stringByAppendingPathComponent:nonexistentFileName];
+}
+
+#endif // PLATFORM(MAC)
 
 #if PLATFORM(IOS_FAMILY)
 
@@ -1670,6 +1676,32 @@ TEST(WKAttachmentTestsMac, InsertPastedFileURLsAsAttachments)
         EXPECT_TRUE([removedAttachments containsObject:[insertedAttachments firstObject]]);
         EXPECT_TRUE([removedAttachments containsObject:[insertedAttachments lastObject]]);
     }
+}
+
+TEST(WKAttachmentTestsMac, InsertNonExistentImageFileAsAttachment)
+{
+    NSPasteboard *pasteboard = [NSPasteboard generalPasteboard];
+    [pasteboard clearContents];
+    [pasteboard declareTypes:@[NSFilenamesPboardType] owner:nil];
+
+    RetainPtr filePath = nonexistentFilePath(@"jpg");
+    [pasteboard setPropertyList:@[filePath.get()] forType:NSFilenamesPboardType];
+
+    RetainPtr<NSArray<_WKAttachment *>> insertedAttachments;
+    auto webView = webViewForTestingAttachments();
+    {
+        ObserveAttachmentUpdatesForScope observer(webView.get());
+        [webView _synchronouslyExecuteEditCommand:@"Paste" argument:nil];
+        insertedAttachments = [observer.observer() inserted];
+        EXPECT_EQ(1U, [insertedAttachments count]);
+    }
+
+    [webView expectElementCount:1 querySelector:@"ATTACHMENT"];
+    [webView expectElementCount:0 querySelector:@"IMG"];
+    EXPECT_WK_STREQ("0", [webView stringByEvaluatingJavaScript:@"document.querySelector('attachment').getAttribute('progress')"]);
+    EXPECT_WK_STREQ([filePath lastPathComponent], [webView stringByEvaluatingJavaScript:@"document.querySelector('attachment').getAttribute('title')"]);
+    EXPECT_WK_STREQ("image/jpeg", [webView stringByEvaluatingJavaScript:@"document.querySelector('attachment').getAttribute('type')"]);
+    EXPECT_FALSE([[webView objectByEvaluatingJavaScript:@"document.querySelector('attachment').hasAttribute('subtitle')"] boolValue]);
 }
 
 TEST(WKAttachmentTestsMac, InsertDroppedFilePromisesAsAttachments)
