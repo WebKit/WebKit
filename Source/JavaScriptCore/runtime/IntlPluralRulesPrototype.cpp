@@ -110,10 +110,16 @@ JSC_DEFINE_HOST_FUNCTION(intlPluralRulesPrototypeFuncSelectRange, (JSGlobalObjec
     if (!pluralRules)
         return JSValue::encode(throwTypeError(globalObject, scope, "Intl.PluralRules.prototype.selectRange called on value that's not a PluralRules"_s));
 
-    double start = callFrame->argument(0).toNumber(globalObject);
+    JSValue startValue = callFrame->argument(0);
+    JSValue endValue = callFrame->argument(1);
+
+    if (startValue.isUndefined() || endValue.isUndefined())
+        return throwVMTypeError(globalObject, scope, "start or end is undefined"_s);
+
+    double start = startValue.toNumber(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
 
-    double end = callFrame->argument(1).toNumber(globalObject);
+    double end = endValue.toNumber(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
 
     RELEASE_AND_RETURN(scope, JSValue::encode(pluralRules->selectRange(globalObject, start, end)));

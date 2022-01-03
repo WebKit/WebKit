@@ -1,5 +1,21 @@
 2022-01-03  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] Fix Intl.PluralRules.selectRange input validation
+        https://bugs.webkit.org/show_bug.cgi?id=234817
+
+        Reviewed by Alexey Shvayka.
+
+        Add specified argument validation[1] to Intl.PluralRules.selectRange.
+
+        [1]: https://tc39.es/proposal-intl-numberformat-v3/out/pluralrules/proposed.html#sec-intl.pluralrules.prototype.selectrange
+
+        * runtime/IntlPluralRules.cpp:
+        (JSC::IntlPluralRules::selectRange const):
+        * runtime/IntlPluralRulesPrototype.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+
+2022-01-03  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] Update UCD to Unicode 14.0.0
         https://bugs.webkit.org/show_bug.cgi?id=234811
 

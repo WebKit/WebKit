@@ -1,5 +1,16 @@
 2022-01-03  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] Fix Intl.PluralRules.selectRange input validation
+        https://bugs.webkit.org/show_bug.cgi?id=234817
+
+        Reviewed by Alexey Shvayka.
+
+        * stress/intl-pluralrules-select-range-validate-inputs.js: Added.
+        (shouldThrow):
+        (Intl.PluralRules.prototype.selectRange.shouldThrow):
+
+2022-01-03  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] Update UCD to Unicode 14.0.0
         https://bugs.webkit.org/show_bug.cgi?id=234811
 
