@@ -149,30 +149,50 @@ TextUtil::WordBreakLeft TextUtil::breakWord(const InlineTextBox& inlineTextBox, 
 {
     ASSERT(availableWidth >= 0);
     ASSERT(length);
-
     auto text = inlineTextBox.content();
-    auto userPerceivedCharacterBoundaryAlignedIndex = [&] (auto index) {
+    auto contentUsesSimpleFontCodePath = inlineTextBox.canUseSimpleFontCodePath();
+
+    auto graphemeClustersIterator = std::optional<NonSharedCharacterBreakIterator> { };
+    if (!contentUsesSimpleFontCodePath)
+        graphemeClustersIterator.emplace(text);
+
+    auto userPerceivedCharacterBoundaryAlignedIndex = [&] (auto index) -> size_t {
         if (text.is8Bit())
             return index;
-        auto alignedStartIndex = index;
-        U16_SET_CP_START(text, startPosition, alignedStartIndex);
-        ASSERT(alignedStartIndex >= startPosition);
-        return alignedStartIndex;
+        if (contentUsesSimpleFontCodePath) {
+            auto alignedStartIndex = index;
+            U16_SET_CP_START(text, startPosition, alignedStartIndex);
+            ASSERT(alignedStartIndex >= startPosition);
+            return alignedStartIndex;
+        }
+        ASSERT(graphemeClustersIterator.has_value());
+        if (ubrk_isBoundary(*graphemeClustersIterator, index))
+            return index;
+        auto boundaryIndex = ubrk_preceding(*graphemeClustersIterator, index);
+        return boundaryIndex == UBRK_DONE ? startPosition : boundaryIndex;
     };
 
-    auto nextUserPerceivedCharacterIndex = [&] (auto index) {
+    auto nextUserPerceivedCharacterIndex = [&] (auto index) -> size_t {
         if (text.is8Bit())
             return index + 1;
-        U16_FWD_1(text, index, length);
-        return index;
+        if (contentUsesSimpleFontCodePath) {
+            U16_FWD_1(text, index, length);
+            return index;
+        }
+        ASSERT(graphemeClustersIterator.has_value());
+        auto nextPosition = ubrk_following(*graphemeClustersIterator, index);
+        return nextPosition == UBRK_DONE ? startPosition + length - 1 : nextPosition;
     };
 
     auto left = startPosition;
-    // Pathological case of (extremely)long string and narrow lines.
-    // Adjust the range so that we can pick a reasonable midpoint.
-    auto averageCharacterWidth = InlineLayoutUnit { textWidth / length };
-    unsigned offset = toLayoutUnit(2 * availableWidth / averageCharacterWidth).toUnsigned();
-    auto right = userPerceivedCharacterBoundaryAlignedIndex(std::min<unsigned>(left + offset, (startPosition + length - 1)));
+    auto right = left + length - 1;
+    if (contentUsesSimpleFontCodePath) {
+        // Pathological case of (extremely)long string and narrow lines.
+        // Adjust the range so that we can pick a reasonable midpoint.
+        auto averageCharacterWidth = InlineLayoutUnit { textWidth / length };
+        size_t startOffset = 2 * availableWidth / averageCharacterWidth;
+        right = userPerceivedCharacterBoundaryAlignedIndex(std::min(left + startOffset, right));
+    }
     // Preserve the left width for the final split position so that we don't need to remeasure the left side again.
     auto leftSideWidth = InlineLayoutUnit { 0 };
     while (left < right) {
