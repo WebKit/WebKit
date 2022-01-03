@@ -28,7 +28,7 @@ verifyFormatParts(
 );
 verifyFormatParts(
   nf.formatToParts(-0.0001),
-  [{"type":"minusSign","value":"-"},{"type":"integer","value":"0"},{"type":"decimal","value":","},{"type":"fraction","value":"00"},{"type":"literal","value":" "},{"type":"currency","value":"$"}],
+  [{"type":"integer","value":"0"},{"type":"decimal","value":","},{"type":"fraction","value":"00"},{"type":"literal","value":" "},{"type":"currency","value":"$"}],
   "negativeNearZero"
 );
 verifyFormatParts(

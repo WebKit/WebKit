@@ -1,4 +1,5 @@
 // Copyright 2021 the V8 project authors. All rights reserved.
+// Copyright 2021 Apple Inc. All rights reserved.
 // This code is governed by the BSD license found in the LICENSE file.
 /*---
 esid: sec-intl.numberformat.prototype.resolvedoptions
@@ -9,7 +10,7 @@ features: [Intl.NumberFormat-v3]
 var options;
 
 options = new Intl.NumberFormat([], {}).resolvedOptions();
-assert.sameValue(options.roundingMode, 'halfExpand (default)');
+assert.sameValue(options.roundingMode, 'halfExpand', 'default');
 
 options = new Intl.NumberFormat([], {roundingMode: 'ceil'}).resolvedOptions();
 assert.sameValue(options.roundingMode, 'ceil');

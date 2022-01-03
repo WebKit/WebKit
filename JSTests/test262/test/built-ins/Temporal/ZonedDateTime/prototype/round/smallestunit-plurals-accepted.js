@@ -5,7 +5,7 @@
 esid: sec-temporal.zoneddatetime.prototype.round
 description: Plural units are accepted as well for the smallestUnit option
 includes: [temporalHelpers.js]
-features: [Temporal]
+features: [Temporal, arrow-function]
 ---*/
 
 const datetime = new Temporal.ZonedDateTime(1_000_000_000_987_654_321n, "UTC");
@@ -19,3 +19,4 @@ const validUnits = [
   "nanosecond",
 ];
 TemporalHelpers.checkPluralUnitsAccepted((smallestUnit) => datetime.round({ smallestUnit }), validUnits);
+TemporalHelpers.checkPluralUnitsAccepted((smallestUnit) => datetime.round(smallestUnit), validUnits);

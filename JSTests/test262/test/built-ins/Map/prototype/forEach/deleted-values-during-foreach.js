@@ -1,7 +1,7 @@
 // Copyright (C) 2015 the V8 project authors. All rights reserved.
 // This code is governed by the BSD license found in the LICENSE file.
 /*---
-es6id: 23.1.3.5
+esid: sec-map.prototype.forEach
 description: >
   Map state with deleted values during forEach.
 info: |

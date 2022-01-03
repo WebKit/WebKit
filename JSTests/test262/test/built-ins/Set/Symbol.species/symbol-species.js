@@ -2,11 +2,11 @@
 // See LICENSE for details.
 
 /*---
-info: |
- Set has a property at `Symbol.species`
 esid: sec-get-set-@@species
-author: Sam Mikes
 description: Set[Symbol.species] exists per spec
+info: |
+  Set has a property at `Symbol.species`
+author: Sam Mikes
 includes: [propertyHelper.js]
 features: [Symbol.species]
 ---*/

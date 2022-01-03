@@ -5,7 +5,7 @@
 esid: sec-temporal.instant.prototype.round
 description: Plural units are accepted as well for the smallestUnit option
 includes: [temporalHelpers.js]
-features: [Temporal]
+features: [Temporal, arrow-function]
 ---*/
 
 const instant = new Temporal.Instant(1_000_000_000_987_654_321n);
@@ -18,3 +18,4 @@ const validUnits = [
   "nanosecond",
 ];
 TemporalHelpers.checkPluralUnitsAccepted((smallestUnit) => instant.round({ smallestUnit }), validUnits);
+TemporalHelpers.checkPluralUnitsAccepted((smallestUnit) => instant.round(smallestUnit), validUnits);

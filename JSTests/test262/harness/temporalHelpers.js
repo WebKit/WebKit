@@ -29,6 +29,29 @@ var TemporalHelpers = {
   },
 
   /*
+   * assertDurationsEqual(actual, expected[, description]):
+   *
+   * Shorthand for asserting that each field of a Temporal.Duration is equal to
+   * the corresponding field in another Temporal.Duration.
+   */
+  assertDurationsEqual(actual, expected, description = "") {
+    assert(expected instanceof Temporal.Duration, `${description} expected value should be a Temporal.Duration`);
+    TemporalHelpers.assertDuration(actual, expected.years, expected.months, expected.weeks, expected.days, expected.hours, expected.minutes, expected.seconds, expected.milliseconds, expected.microseconds, expected.nanoseconds, description);
+  },
+
+  /*
+   * assertInstantsEqual(actual, expected[, description]):
+   *
+   * Shorthand for asserting that two Temporal.Instants are of the correct type
+   * and equal according to their equals() methods.
+   */
+  assertInstantsEqual(actual, expected, description = "") {
+    assert(expected instanceof Temporal.Instant, `${description} expected value should be a Temporal.Instant`);
+    assert(actual instanceof Temporal.Instant, `${description} instanceof`);
+    assert(actual.equals(expected), `${description} equals method`);
+  },
+
+  /*
    * assertPlainDate(date, year, ..., nanosecond[, description[, era, eraYear]]):
    *
    * Shorthand for asserting that each field of a Temporal.PlainDate is equal to
@@ -71,6 +94,20 @@ var TemporalHelpers = {
   },
 
   /*
+   * assertPlainDateTimesEqual(actual, expected[, description]):
+   *
+   * Shorthand for asserting that two Temporal.PlainDateTimes are of the correct
+   * type, equal according to their equals() methods, and additionally that
+   * their calendars are the same value.
+   */
+  assertPlainDateTimesEqual(actual, expected, description = "") {
+    assert(expected instanceof Temporal.PlainDateTime, `${description} expected value should be a Temporal.PlainDateTime`);
+    assert(actual instanceof Temporal.PlainDateTime, `${description} instanceof`);
+    assert(actual.equals(expected), `${description} equals method`);
+    assert.sameValue(actual.calendar, expected.calendar, `${description} calendar same value`);
+  },
+
+  /*
    * assertPlainMonthDay(monthDay, monthCode, day[, description [, referenceISOYear]]):
    *
    * Shorthand for asserting that each field of a Temporal.PlainMonthDay is
@@ -102,6 +139,18 @@ var TemporalHelpers = {
   },
 
   /*
+   * assertPlainTimesEqual(actual, expected[, description]):
+   *
+   * Shorthand for asserting that two Temporal.PlainTimes are of the correct
+   * type and equal according to their equals() methods.
+   */
+  assertPlainTimesEqual(actual, expected, description = "") {
+    assert(expected instanceof Temporal.PlainTime, `${description} expected value should be a Temporal.PlainTime`);
+    assert(actual instanceof Temporal.PlainTime, `${description} instanceof`);
+    assert(actual.equals(expected), `${description} equals method`);
+  },
+
+  /*
    * assertPlainYearMonth(yearMonth, year, month, monthCode[, description[, era, eraYear]]):
    *
    * Shorthand for asserting that each field of a Temporal.PlainYearMonth is
@@ -116,6 +165,21 @@ var TemporalHelpers = {
     assert.sameValue(yearMonth.year, year, `${description} year result`);
     assert.sameValue(yearMonth.month, month, `${description} month result`);
     assert.sameValue(yearMonth.monthCode, monthCode, `${description} monthCode result`);
+  },
+
+  /*
+   * assertZonedDateTimesEqual(actual, expected[, description]):
+   *
+   * Shorthand for asserting that two Temporal.ZonedDateTimes are of the correct
+   * type, equal according to their equals() methods, and additionally that
+   * their time zones and calendars are the same value.
+   */
+  assertZonedDateTimesEqual(actual, expected, description = "") {
+    assert(expected instanceof Temporal.ZonedDateTime, `${description} expected value should be a Temporal.ZonedDateTime`);
+    assert(actual instanceof Temporal.ZonedDateTime, `${description} instanceof`);
+    assert(actual.equals(expected), `${description} equals method`);
+    assert.sameValue(actual.timeZone, expected.timeZone, `${description} time zone same value`);
+    assert.sameValue(actual.calendar, expected.calendar, `${description} calendar same value`);
   },
 
   /*
@@ -282,24 +346,17 @@ var TemporalHelpers = {
     validSingularUnits.forEach((unit) => {
       const singularValue = func(unit);
       const pluralValue = func(plurals[unit]);
+      const desc = `Plural ${plurals[unit]} produces the same result as singular ${unit}`;
       if (singularValue instanceof Temporal.Duration) {
-        assert.sameValue(pluralValue.years, singularValue.years, "years value");
-        assert.sameValue(pluralValue.months, singularValue.months, "months value");
-        assert.sameValue(pluralValue.weeks, singularValue.weeks, "weeks value");
-        assert.sameValue(pluralValue.days, singularValue.days, "days value");
-        assert.sameValue(pluralValue.hours, singularValue.hours, "hours value");
-        assert.sameValue(pluralValue.minutes, singularValue.minutes, "minutes value");
-        assert.sameValue(pluralValue.seconds, singularValue.seconds, "seconds value");
-        assert.sameValue(pluralValue.milliseconds, singularValue.milliseconds, "milliseconds value");
-        assert.sameValue(pluralValue.microseconds, singularValue.microseconds, "microseconds value");
-        assert.sameValue(pluralValue.nanoseconds, singularValue.nanoseconds, "nanoseconds value");
-      } else if (
-        singularValue instanceof Temporal.Instant ||
-        singularValue instanceof Temporal.PlainDateTime ||
-        singularValue instanceof Temporal.PlainTime ||
-        singularValue instanceof Temporal.ZonedDateTime
-      ) {
-        assert(pluralValue.equals(singularValue), "Temporal objects equal");
+        TemporalHelpers.assertDurationsEqual(pluralValue, singularValue, desc);
+      } else if (singularValue instanceof Temporal.Instant) {
+        TemporalHelpers.assertInstantsEqual(pluralValue, singularValue, desc);
+      } else if (singularValue instanceof Temporal.PlainDateTime) {
+        TemporalHelpers.assertPlainDateTimesEqual(pluralValue, singularValue, desc);
+      } else if (singularValue instanceof Temporal.PlainTime) {
+        TemporalHelpers.assertPlainTimesEqual(pluralValue, singularValue, desc);
+      } else if (singularValue instanceof Temporal.ZonedDateTime) {
+        TemporalHelpers.assertZonedDateTimesEqual(pluralValue, singularValue, desc);
       } else {
         assert.sameValue(pluralValue, singularValue);
       }
@@ -885,13 +942,43 @@ var TemporalHelpers = {
         return "dateadd-undef-options";
       }
 
-      dateAdd(one, two, options) {
+      dateAdd(date, duration, options) {
         this.dateAddCallCount++;
         assert.sameValue(options, undefined, "dateAdd shouldn't be called with options");
-        return super.dateAdd(one, two, options);
+        return super.dateAdd(date, duration, options);
       }
     }
     return new CalendarDateAddUndefinedOptions();
+  },
+
+  /*
+   * A custom calendar that asserts its dateAdd() method is called with a
+   * PlainDate instance. Optionally, it also asserts that the PlainDate instance
+   * is the specific object `this.specificPlainDate`, if it is set by the
+   * calling code.
+   */
+  calendarDateAddPlainDateInstance() {
+    class CalendarDateAddPlainDateInstance extends Temporal.Calendar {
+      constructor() {
+        super("iso8601");
+        this.dateAddCallCount = 0;
+        this.specificPlainDate = undefined;
+      }
+
+      toString() {
+        return "dateadd-plain-date-instance";
+      }
+
+      dateAdd(date, duration, options) {
+        this.dateAddCallCount++;
+        assert(date instanceof Temporal.PlainDate, "dateAdd() should be called with a PlainDate instance");
+        if (this.dateAddCallCount === 1 && this.specificPlainDate) {
+          assert.sameValue(date, this.specificPlainDate, `dateAdd() should be called first with the specific PlainDate instance ${this.specificPlainDate}`);
+        }
+        return super.dateAdd(date, duration, options);
+      }
+    }
+    return new CalendarDateAddPlainDateInstance();
   },
 
   /*

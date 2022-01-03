@@ -2,11 +2,11 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
+esid: sec-set.prototype-@@tostringtag
 description: >
     `Object.prototype.getOwnPropertyDescriptor` should reflect the value and
     writability of the @@toStringTag attribute.
 includes: [propertyHelper.js]
-es6id: 23.2.3.12
 features: [Symbol.toStringTag]
 ---*/
 

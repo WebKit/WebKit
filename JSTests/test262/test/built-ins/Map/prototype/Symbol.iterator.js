@@ -1,7 +1,7 @@
 // Copyright (C) 2014 the V8 project authors. All rights reserved.
 // This code is governed by the BSD license found in the LICENSE file.
 /*---
-es6id: 23.1.3.12
+esid: sec-map.prototype-@@iterator
 description: Initial state of the Symbol.iterator property
 info: |
   The initial value of the @@iterator property is the same function object as

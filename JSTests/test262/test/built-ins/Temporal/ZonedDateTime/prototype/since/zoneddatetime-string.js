@@ -8,7 +8,8 @@ includes: [temporalHelpers.js]
 features: [Temporal]
 ---*/
 
-const instance = new Temporal.ZonedDateTime(0n, "UTC");
+const timeZone = new Temporal.TimeZone("UTC");
+const instance = new Temporal.ZonedDateTime(0n, timeZone);
 
 let str = "1970-01-01T00:00";
 assert.throws(RangeError, () => instance.since(str), "bare date-time string is not a ZonedDateTime");
@@ -17,17 +18,17 @@ assert.throws(RangeError, () => instance.since(str), "date-time + Z is not a Zon
 str = "1970-01-01T00:00+01:00";
 assert.throws(RangeError, () => instance.since(str), "date-time + offset is not a ZonedDateTime");
 
-str = "1970-01-01T00:00[Europe/Berlin]";
+str = "1970-01-01T00:00[+01:00]";
 const result1 = instance.since(str);
 TemporalHelpers.assertDuration(result1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, "date-time + IANA annotation preserves wall time in the time zone");
 
-str = "1970-01-01T00:00Z[Europe/Berlin]";
+str = "1970-01-01T00:00Z[+01:00]";
 const result2 = instance.since(str);
 TemporalHelpers.assertDuration(result2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, "date-time + Z + IANA annotation preserves exact time in the time zone");
 
-str = "1970-01-01T00:00+01:00[Europe/Berlin]";
+str = "1970-01-01T00:00+01:00[+01:00]";
 const result3 = instance.since(str);
 TemporalHelpers.assertDuration(result3, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, "date-time + offset + IANA annotation ensures both exact and wall time match");
 
-str = "1970-01-01T00:00-04:15[Europe/Berlin]";
+str = "1970-01-01T00:00-04:15[+01:00]";
 assert.throws(RangeError, () => instance.since(str), "date-time + offset + IANA annotation throws if wall time and exact time mismatch");

@@ -1,19 +1,17 @@
-// Copyright (C) 2020 Igalia, S.L. All rights reserved.
+// Copyright (C) 2021 Igalia, S.L. All rights reserved.
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-esid: sec-temporal-instant-objects
+esid: sec-temporal-instant-prototype
 description: The "prototype" property of Temporal.Instant
 includes: [propertyHelper.js]
 features: [Temporal]
 ---*/
 
-const { Instant } = Temporal;
+assert.sameValue(typeof Temporal.Instant.prototype, "object");
+assert.notSameValue(Temporal.Instant.prototype, null);
 
-assert.sameValue(typeof Instant.prototype, "object");
-assert.notSameValue(Instant.prototype, null);
-
-verifyProperty(Instant, "prototype", {
+verifyProperty(Temporal.Instant, "prototype", {
   writable: false,
   enumerable: false,
   configurable: false,

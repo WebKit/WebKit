@@ -11,7 +11,6 @@ const values = [
   undefined,
   null,
   true,
-  "string",
   Symbol(),
   1,
   2n,

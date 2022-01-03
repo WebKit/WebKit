@@ -22,6 +22,7 @@ skip:
     - class-static-block
     - callable-boundary-realms
     - FinalizationRegistry.prototype.cleanupSome
+    - Intl.DurationFormat
   paths:
     - test/built-ins/Temporal/Calendar
     - test/built-ins/Temporal/Instant/prototype/toZonedDateTime

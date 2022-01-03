@@ -15,10 +15,9 @@ assert.sameValue(typeof ArrayBuffer.prototype.resize, 'function');
 
 testWithTypedArrayConstructors(function(TA) {
   var BPE = TA.BYTES_PER_ELEMENT;
-  var NaNvalue = (TA === Float32Array || TA === Float64Array) ? NaN : 0;
   var buffer = new ArrayBuffer(BPE * 3, {maxByteLength: BPE * 4});
   var sample = new TA(buffer);
-  var finalElement, finalResult, expectedElements, expectedIndices, expectedArrays;
+  var finalResult, expectedElements, expectedIndices, expectedArrays;
   var elements, indices, arrays, result;
 
   elements = [];
@@ -28,13 +27,11 @@ testWithTypedArrayConstructors(function(TA) {
     if (elements.length === 0) {
       try {
         buffer.resize(2 * BPE);
-        finalElement = undefined;
-        finalResult = NaNvalue;
+        finalResult = undefined;
         expectedElements = [0, 0];
         expectedIndices = [0, 1];
         expectedArrays = [sample, sample];
       } catch (_) {
-        finalElement = 0;
         finalResult = 2;
         expectedElements = [0, 0, 0];
         expectedIndices = [0, 1, 2];
@@ -49,9 +46,9 @@ testWithTypedArrayConstructors(function(TA) {
     return index;
   });
 
-  assert.compareArray(elements, [0, 0, finalElement], 'elements (shrink)');
-  assert.compareArray(indices, [0, 1, 2], 'indices (shrink)');
-  assert.compareArray(arrays, [sample, sample, sample], 'arrays (shrink)');
+  assert.compareArray(elements, expectedElements, 'elements (shrink)');
+  assert.compareArray(indices, expectedIndices, 'indices (shrink)');
+  assert.compareArray(arrays, expectedArrays, 'arrays (shrink)');
   assert.compareArray(result, [0, 1, finalResult], 'result (shrink)');
 
   elements = [];

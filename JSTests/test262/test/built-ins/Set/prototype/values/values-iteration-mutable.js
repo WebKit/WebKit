@@ -2,12 +2,12 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-  description: >
-      When an item is added to the set after the iterator is created but before
-      the iterator is "done" (as defined by 23.2.5.2.1), the new item should be
-      accessible via iteration. When an item is added to the set after the
-      iterator is "done", the new item should not be accessible via iteration.
-  es6id: 23.2.3.10
+esid: sec-set.prototype.values
+description: >
+    When an item is added to the set after the iterator is created but before
+    the iterator is "done" (as defined by 23.2.5.2.1), the new item should be
+    accessible via iteration. When an item is added to the set after the
+    iterator is "done", the new item should not be accessible via iteration.
 ---*/
 
 var set = new Set();

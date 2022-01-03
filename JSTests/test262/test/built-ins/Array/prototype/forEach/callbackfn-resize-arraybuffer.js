@@ -17,7 +17,7 @@ testWithTypedArrayConstructors(function(TA) {
   var BPE = TA.BYTES_PER_ELEMENT;
   var buffer = new ArrayBuffer(BPE * 3, {maxByteLength: BPE * 4});
   var sample = new TA(buffer);
-  var finalElement, expectedElements, expectedIndices, expectedArrays;
+  var expectedElements, expectedIndices, expectedArrays;
   var elements, indices, arrays, result;
 
   elements = [];
@@ -27,12 +27,10 @@ testWithTypedArrayConstructors(function(TA) {
     if (elements.length === 0) {
       try {
         buffer.resize(2 * BPE);
-        finalElement = undefined;
         expectedElements = [0, 0];
         expectedIndices = [0, 1];
         expectedArrays = [sample, sample];
       } catch (_) {
-        finalElement = 0;
         expectedElements = [0, 0, 0];
         expectedIndices = [0, 1, 2];
         expectedArrays = [sample, sample, sample];
@@ -44,9 +42,9 @@ testWithTypedArrayConstructors(function(TA) {
     arrays.push(array);
   });
 
-  assert.compareArray(elements, [0, 0, finalElement], 'elements (shrink)');
-  assert.compareArray(indices, [0, 1, 2], 'indices (shrink)');
-  assert.compareArray(arrays, [sample, sample, sample], 'arrays (shrink)');
+  assert.compareArray(elements, expectedElements, 'elements (shrink)');
+  assert.compareArray(indices, expectedIndices, 'indices (shrink)');
+  assert.compareArray(arrays, expectedArrays, 'arrays (shrink)');
   assert.sameValue(result, undefined, 'result (shrink)');
 
   elements = [];

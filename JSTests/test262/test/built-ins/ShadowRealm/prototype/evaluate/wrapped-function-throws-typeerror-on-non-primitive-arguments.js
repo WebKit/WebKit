@@ -16,6 +16,12 @@ assert.sameValue(
 const r = new ShadowRealm();
 const wrappedFunction = r.evaluate('() => {}');
 
+assert.sameValue(
+  typeof wrappedFunction,
+  'function',
+  'This test must fail if wrappedFunction is not a function'
+);
+
 assert.throws(TypeError, () => wrappedFunction(1, globalThis), 'globalThis');
 assert.throws(TypeError, () => wrappedFunction(1, []), 'array literal');
 assert.throws(TypeError, () => wrappedFunction(1, {

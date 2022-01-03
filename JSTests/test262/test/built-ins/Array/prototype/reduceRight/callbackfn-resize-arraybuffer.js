@@ -11,7 +11,8 @@ testWithTypedArrayConstructors(function(TA) {
   var BPE = TA.BYTES_PER_ELEMENT;
   var buffer = new ArrayBuffer(BPE * 3, {maxByteLength: BPE * 3});
   var sample = new TA(buffer);
-  var secondNext, expectedPrevs, expectedNexts, expectedIndices, expectedArrays;
+  var expectedPrevsShrink, expectedNextsShrink, expectedIndicesShrink, expectedArraysShrink;
+  var expectedPrevsGrow, expectedNextsGrow, expectedIndicesGrow, expectedArraysGrow;
   var prevs, nexts, indices, arrays, result;
 
   prevs = [];
@@ -22,17 +23,19 @@ testWithTypedArrayConstructors(function(TA) {
     if (prevs.length === 0) {
       try {
         buffer.resize(BPE);
-        secondNext = undefined;
-        expectedPrevs = [262];
-        expectedNexts = [0];
-        expectedIndices = [0];
-        expectedArrays = [sample];
+        expectedPrevsShrink = [262, 2];
+        expectedNextsShrink = [0, 0];
+        expectedIndicesShrink = [2, 0];
+        expectedArraysShrink = [sample, sample];
+        expectedPrevsGrow = [262];
+        expectedNextsGrow = [0];
+        expectedIndicesGrow = [0];
+        expectedArraysGrow = [sample];
       } catch (_) {
-        secondNext = 0;
-        expectedPrevs = [262, 2, 1];
-        expectedNexts = [0, 0, 0];
-        expectedIndices = [2, 1, 0];
-        expectedArrays = [sample, sample, sample];
+        expectedPrevsShrink = expectedPrevsGrow = [262, 2, 1];
+        expectedNextsShrink = expectedNextsGrow = [0, 0, 0];
+        expectedIndicesShrink = expectedIndicesGrow = [2, 1, 0];
+        expectedArraysShrink = expectedArraysGrow = [sample, sample, sample];
       }
     }
 
@@ -43,10 +46,10 @@ testWithTypedArrayConstructors(function(TA) {
     return index;
   }, 262);
 
-  assert.compareArray(prevs, [262, 2, 1], 'prevs (shrink)');
-  assert.compareArray(nexts, [0, secondNext, 0], 'nexts (shrink)');
-  assert.compareArray(indices, [2, 1, 0], 'indices (shrink)');
-  assert.compareArray(arrays, [sample, sample, sample], 'arrays (shrink)');
+  assert.compareArray(prevs, expectedPrevsShrink, 'prevs (shrink)');
+  assert.compareArray(nexts, expectedNextsShrink, 'nexts (shrink)');
+  assert.compareArray(indices, expectedIndicesShrink, 'indices (shrink)');
+  assert.compareArray(arrays, expectedArraysShrink, 'arrays (shrink)');
   assert.sameValue(result, 0, 'result (shrink)');
 
   prevs = [];
@@ -67,9 +70,9 @@ testWithTypedArrayConstructors(function(TA) {
     return index;
   }, 262);
 
-  assert.compareArray(prevs, expectedPrevs, 'prevs (grow)');
-  assert.compareArray(nexts, expectedNexts, 'nexts (grow)');
-  assert.compareArray(indices, expectedIndices, 'indices (grow)');
-  assert.compareArray(arrays, expectedArrays, 'arrays (grow)');
-  assert.sameValue(result, expectedIndices[expectedIndices.length - 1], 'result (grow)');
+  assert.compareArray(prevs, expectedPrevsGrow, 'prevs (grow)');
+  assert.compareArray(nexts, expectedNextsGrow, 'nexts (grow)');
+  assert.compareArray(indices, expectedIndicesGrow, 'indices (grow)');
+  assert.compareArray(arrays, expectedArraysGrow, 'arrays (grow)');
+  assert.sameValue(result, expectedIndicesGrow[expectedIndicesGrow.length - 1], 'result (grow)');
 });

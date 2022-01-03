@@ -10,7 +10,7 @@ features: [Intl.NumberFormat-v3]
 
 const nf = new Intl.NumberFormat("de-DE", { style: "currency", currency: "USD", currencySign: "accounting", signDisplay: "negative" });
 assert.sameValue(nf.format(-987), "-987,00 $");
-assert.sameValue(nf.format(-0.0001), "-0,00 $");
+assert.sameValue(nf.format(-0.0001), "0,00 $");
 assert.sameValue(nf.format(-0), "0,00 $");
 assert.sameValue(nf.format(0), "0,00 $");
 assert.sameValue(nf.format(0.0001), "0,00 $");

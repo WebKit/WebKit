@@ -1,3 +1,14 @@
+2022-01-03  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Update test262
+        https://bugs.webkit.org/show_bug.cgi?id=234807
+
+        Reviewed by Alexey Shvayka.
+
+        * test262/config.yaml:
+        * test262/expectations.yaml:
+        * test262/test262-Revision.txt:
+
 2022-01-02  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Use emitPutProperty / emitGetPropertyValue consistently to handle private names in edge cases
