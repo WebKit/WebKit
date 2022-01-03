@@ -85,7 +85,7 @@ public:
     virtual bool typeMismatch() const;
     virtual bool valueMissing() const;
     virtual String validationMessage() const;
-    virtual bool isValid() const;
+    virtual bool computeValidity() const;
     virtual void setCustomValidity(const String&);
 
     void formAttributeTargetChanged();

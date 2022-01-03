@@ -405,7 +405,6 @@ void HTMLFormControlElement::updateWillValidateAndValidity()
     m_willValidate = newWillValidate;
 
     updateValidity();
-    invalidateStyleForSubtree();
 
     if (!m_willValidate && !wasValid) {
         removeInvalidElementToAncestorFromInsertionPoint(*this, parentNode());
@@ -503,9 +502,6 @@ void HTMLFormControlElement::focusAndShowValidationMessage()
 
 inline bool HTMLFormControlElement::isValidFormControlElement() const
 {
-    // If the following assertion fails, updateValidity() is not called
-    // correctly when something which changes validity is updated.
-    ASSERT(m_isValid == isValid());
     return m_isValid;
 }
 
@@ -533,28 +529,29 @@ void HTMLFormControlElement::updateValidity()
         return;
 
     bool willValidate = this->willValidate();
-    bool wasValid = m_isValid;
+    bool newIsValid = this->computeValidity();
 
-    m_isValid = isValid();
+    if (newIsValid != m_isValid) {
+        Style::PseudoClassChangeInvalidation styleInvalidation(*this, { CSSSelector::PseudoClassValid, CSSSelector::PseudoClassInvalid });
 
-    if (willValidate && m_isValid != wasValid) {
-        // Update style for pseudo classes such as :valid :invalid.
-        invalidateStyleForSubtree();
+        m_isValid = newIsValid;
 
-        if (!m_isValid) {
-            if (isConnected())
-                addInvalidElementToAncestorFromInsertionPoint(*this, parentNode());
-            if (HTMLFormElement* form = this->form())
-                form->registerInvalidAssociatedFormControl(*this);
-        } else {
-            if (isConnected())
-                removeInvalidElementToAncestorFromInsertionPoint(*this, parentNode());
-            if (HTMLFormElement* form = this->form())
-                form->removeInvalidAssociatedFormControlIfNeeded(*this);
+        if (willValidate) {
+            if (!m_isValid) {
+                if (isConnected())
+                    addInvalidElementToAncestorFromInsertionPoint(*this, parentNode());
+                if (HTMLFormElement* form = this->form())
+                    form->registerInvalidAssociatedFormControl(*this);
+            } else {
+                if (isConnected())
+                    removeInvalidElementToAncestorFromInsertionPoint(*this, parentNode());
+                if (HTMLFormElement* form = this->form())
+                    form->removeInvalidAssociatedFormControlIfNeeded(*this);
+            }
         }
     }
 
-    // Updates only if this control already has a validtion message.
+    // Updates only if this control already has a validation message.
     if (m_validationMessage && m_validationMessage->isVisible()) {
         // Calls updateVisibleValidationMessage() even if m_isValid is not
         // changed because a validation message can be chagned.

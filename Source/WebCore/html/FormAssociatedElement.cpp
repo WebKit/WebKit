@@ -253,7 +253,7 @@ bool FormAssociatedElement::typeMismatch() const
     return false;
 }
 
-bool FormAssociatedElement::isValid() const
+bool FormAssociatedElement::computeValidity() const
 {
     bool someError = typeMismatch() || stepMismatch() || rangeUnderflow() || rangeOverflow()
         || tooShort() || tooLong() || patternMismatch() || valueMissing() || hasBadInput() || customError();

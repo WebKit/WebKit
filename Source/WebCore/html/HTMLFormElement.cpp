@@ -666,17 +666,23 @@ void HTMLFormElement::registerInvalidAssociatedFormControl(const HTMLFormControl
     ASSERT_WITH_MESSAGE(!is<HTMLFieldSetElement>(formControlElement), "FieldSet are never candidates for constraint validation.");
     ASSERT(static_cast<const Element&>(formControlElement).matchesInvalidPseudoClass());
 
+    std::optional<Style::PseudoClassChangeInvalidation> styleInvalidation;
     if (m_invalidAssociatedFormControls.computesEmpty())
-        invalidateStyleForSubtree();
+        styleInvalidation.emplace(*this, std::initializer_list<CSSSelector::PseudoClassType> { CSSSelector::PseudoClassValid, CSSSelector::PseudoClassInvalid });
+
     m_invalidAssociatedFormControls.add(const_cast<HTMLFormControlElement&>(formControlElement));
 }
 
 void HTMLFormElement::removeInvalidAssociatedFormControlIfNeeded(const HTMLFormControlElement& formControlElement)
 {
-    if (m_invalidAssociatedFormControls.remove(formControlElement)) {
-        if (m_invalidAssociatedFormControls.computesEmpty())
-            invalidateStyleForSubtree();
-    }
+    if (!m_invalidAssociatedFormControls.contains(formControlElement))
+        return;
+
+    std::optional<Style::PseudoClassChangeInvalidation> styleInvalidation;
+    if (m_invalidAssociatedFormControls.computeSize() == 1)
+        styleInvalidation.emplace(*this, std::initializer_list<CSSSelector::PseudoClassType> { CSSSelector::PseudoClassValid, CSSSelector::PseudoClassInvalid });
+
+    m_invalidAssociatedFormControls.remove(formControlElement);
 }
 
 bool HTMLFormElement::isURLAttribute(const Attribute& attribute) const
