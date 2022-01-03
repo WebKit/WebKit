@@ -7,7 +7,7 @@ RUN apt-get update && apt-get install --no-install-recommends -y wget gnupg2 cur
 
 RUN wget https://apt.llvm.org/llvm.sh --no-check-certificate
 RUN chmod +x llvm.sh
-RUN ./llvm.sh 12
+RUN ./llvm.sh 13
 
 # Use the same version of LLVM/clang used to build Zig
 # This prevents the allocation failure
@@ -15,8 +15,8 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
     bc \
     build-essential \
     ca-certificates \
-    clang-12 \
-    clang-format-12 \
+    clang-13 \
+    clang-format-13 \
     cmake \
     cpio \
     curl \
@@ -26,13 +26,13 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
     git \
     gnupg2 \
     icu-devtools \ 
-    libc++-12-dev \
-    libc++abi-12-dev \
-    libclang-12-dev \
+    libc++-13-dev \
+    libc++abi-13-dev \
+    libclang-13-dev \
     libicu-dev \
-    liblld-12-dev \
+    liblld-13-dev \
     libssl-dev \
-    lld-12 \
+    lld-13 \
     make \
     ninja-build \
     perl \
@@ -43,16 +43,16 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
     unzip \
     wget
 
-RUN update-alternatives --install /usr/bin/ld ld /usr/bin/lld-12 90 && \
-    update-alternatives --install /usr/bin/cc cc /usr/bin/clang-12 90 && \
-    update-alternatives --install /usr/bin/cpp cpp /usr/bin/clang++-12 90 && \
-    update-alternatives --install /usr/bin/c++ c++ /usr/bin/clang++-12 90
+RUN update-alternatives --install /usr/bin/ld ld /usr/bin/lld-13 90 && \
+    update-alternatives --install /usr/bin/cc cc /usr/bin/clang-13 90 && \
+    update-alternatives --install /usr/bin/cpp cpp /usr/bin/clang++-13 90 && \
+    update-alternatives --install /usr/bin/c++ c++ /usr/bin/clang++-13 90
 
 
 ENV WEBKIT_OUT_DIR=/webkitbuild
 
-ENV CC=clang-12 
-ENV CXX=clang++-12
+ENV CC=clang-13 
+ENV CXX=clang++-13
 
 COPY . /webkit
 WORKDIR /webkit
@@ -82,8 +82,8 @@ RUN --mount=type=tmpfs,target=/webkitbuild \
     -DENABLE_FTL_JIT=ON \
     -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
     -G Ninja \ 
-    -DCMAKE_CXX_COMPILER=$(which clang++-12) \
-    -DCMAKE_C_COMPILER=$(which clang-12) \ 
+    -DCMAKE_CXX_COMPILER=$(which clang++-13) \
+    -DCMAKE_C_COMPILER=$(which clang-13) \ 
     /webkit && \
     cd /webkitbuild && \
     CFLAGS="$CFLAGS -ffat-lto-objects" CXXFLAGS="$CXXFLAGS -ffat-lto-objects" cmake --build /webkitbuild --config $WEBKIT_RELEASE_TYPE -- "jsc" -j$(nproc) && \
