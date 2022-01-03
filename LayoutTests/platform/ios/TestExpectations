@@ -968,6 +968,7 @@ fast/forms/range/range-type-change-onchange.html
 fast/forms/restore-selection-after-layout.html [ Skip ]
 fast/forms/search-event-delay.html [ Skip ]
 fast/forms/select-accesskey.html [ Skip ]
+fast/dom/accesskey-focus-element.html [ Skip ]
 fast/forms/select-cache-desynchronization.html [ Skip ]
 fast/forms/select-double-onchange.html [ Skip ]
 fast/forms/select-popup-pagekeys.html [ Skip ]

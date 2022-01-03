@@ -388,12 +388,6 @@ void HTMLSelectElement::optionElementChildrenChanged()
         cache->childrenChanged(this);
 }
 
-bool HTMLSelectElement::accessKeyAction(bool sendMouseEvents)
-{
-    focus();
-    return dispatchSimulatedClick(0, sendMouseEvents ? SendMouseUpDownEvents : SendNoEvents);
-}
-
 void HTMLSelectElement::setMultiple(bool multiple)
 {
     bool oldMultiple = this->multiple();

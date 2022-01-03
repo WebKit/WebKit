@@ -31,7 +31,6 @@
         accessibilityController.focusedElement.childAtIndex(0).childAtIndex(0).press();
         setTimeout(function() {
 
-            startElement = accessibilityController.focusedElement.childAtIndex(0);
             resultElement = containerElement.uiElementForSearchPredicate(startElement, true, "AXVisitedLinkSearchKey", "", false);
             shouldBe("resultElement.boolAttributeValue('AXVisited')", "true");
             shouldBe("resultElement.childAtIndex(0).stringValue", "'AXValue: link'");

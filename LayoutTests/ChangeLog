@@ -1,3 +1,25 @@
+2022-01-02  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        Access key should work on focusable element.
+        https://bugs.webkit.org/show_bug.cgi?id=72359
+
+        Reviewed by Darin Adler.
+
+        Add new test to check the behavior of accesskey on focusable and not focusable DIV, together with other elements
+        like INPUT, SELECT and A.
+        Update expectations for fast/forms/access-key.html test, as now more elements are focused than before.
+        Apart from that we had to modify accessibility/mac/search-predicate-visited-links.html as that was pressing a link
+        and the link is now focused.
+
+        This will make us also pass css/selectors/focus-visible-024.html from WPT, but that test cannot run properly on WebKit
+        due to webkit.org/b/234139.
+
+        * accessibility/mac/search-predicate-visited-links.html: Update test due to change of behavior.
+        * fast/dom/accesskey-focus-element-expected.txt: Added.
+        * fast/dom/accesskey-focus-element.html: Added.
+        * fast/forms/access-key-expected.txt: Update expectations.
+        * platform/ios/TestExpectations: Skip new accesskey test.
+
 2022-01-02  Diego Pino Garcia  <dpino@igalia.com>
 
         [GTK] Unreviewed test gardening, emit baseline for imported/w3c/web-platform-tests/css/selectors/focus-visible-002.html

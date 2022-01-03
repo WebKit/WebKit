@@ -271,11 +271,6 @@ void HTMLAnchorElement::parseAttribute(const QualifiedName& name, const AtomStri
         HTMLElement::parseAttribute(name, value);
 }
 
-bool HTMLAnchorElement::accessKeyAction(bool sendMouseEvents)
-{
-    return dispatchSimulatedClick(0, sendMouseEvents ? SendMouseUpDownEvents : SendNoEvents);
-}
-
 bool HTMLAnchorElement::isURLAttribute(const Attribute& attribute) const
 {
     return attribute.name().localName() == hrefAttr || HTMLElement::isURLAttribute(attribute);

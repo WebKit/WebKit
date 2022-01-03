@@ -645,6 +645,8 @@ void HTMLElement::click()
 
 bool HTMLElement::accessKeyAction(bool sendMouseEvents)
 {
+    if (isFocusable())
+        focus();
     return dispatchSimulatedClick(nullptr, sendMouseEvents ? SendMouseUpDownEvents : SendNoEvents);
 }
 

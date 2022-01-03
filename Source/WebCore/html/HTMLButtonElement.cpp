@@ -223,13 +223,6 @@ bool HTMLButtonElement::appendFormData(DOMFormData& formData)
     return true;
 }
 
-bool HTMLButtonElement::accessKeyAction(bool sendMouseEvents)
-{
-    focus();
-
-    return dispatchSimulatedClick(0, sendMouseEvents ? SendMouseUpDownEvents : SendNoEvents);
-}
-
 bool HTMLButtonElement::isURLAttribute(const Attribute& attribute) const
 {
     return attribute.name() == formactionAttr || HTMLFormControlElement::isURLAttribute(attribute);
