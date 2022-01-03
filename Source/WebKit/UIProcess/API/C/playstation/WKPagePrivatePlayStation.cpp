@@ -42,7 +42,7 @@ static void drawPageBackground(cairo_t* ctx, const std::optional<WebCore::Color>
     if (!backgroundColor || backgroundColor.value().isVisible())
         return;
 
-    auto [r, g, b, a] = backgroundColor.value().toColorTypeLossy<SRGBA<uint8_t>>().resolved();
+    auto [r, g, b, a] = backgroundColor.value().toColorTypeLossy<WebCore::SRGBA<uint8_t>>().resolved();
 
     cairo_set_source_rgba(ctx, r, g, b, a);
     cairo_rectangle(ctx, rect.x(), rect.y(), rect.width(), rect.height());
