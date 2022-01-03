@@ -36,6 +36,8 @@ namespace Style {
 class PseudoClassChangeInvalidation {
 public:
     PseudoClassChangeInvalidation(Element&, CSSSelector::PseudoClassType, InvalidationScope = InvalidationScope::All);
+    PseudoClassChangeInvalidation(Element&, std::initializer_list<CSSSelector::PseudoClassType>, InvalidationScope = InvalidationScope::All);
+
     ~PseudoClassChangeInvalidation();
 
 private:
@@ -57,6 +59,17 @@ inline PseudoClassChangeInvalidation::PseudoClassChangeInvalidation(Element& ele
     if (!m_isEnabled)
         return;
     computeInvalidation(pseudoClassType, invalidationScope);
+    invalidateStyleWithRuleSets();
+}
+
+inline PseudoClassChangeInvalidation::PseudoClassChangeInvalidation(Element& element, std::initializer_list<CSSSelector::PseudoClassType> pseudoClasses, Style::InvalidationScope invalidationScope)
+    : m_isEnabled(element.needsStyleInvalidation())
+    , m_element(element)
+{
+    if (!m_isEnabled)
+        return;
+    for (auto pseudoClass : pseudoClasses)
+        computeInvalidation(pseudoClass, invalidationScope);
     invalidateStyleWithRuleSets();
 }
 

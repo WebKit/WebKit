@@ -147,8 +147,7 @@ void HTMLFormControlElement::setAncestorDisabled(bool isDisabled)
     if (m_disabledByAncestorFieldset == isDisabled)
         return;
 
-    Style::PseudoClassChangeInvalidation disabledInvalidation(*this, CSSSelector::PseudoClassDisabled);
-    Style::PseudoClassChangeInvalidation enabledInvalidation(*this, CSSSelector::PseudoClassEnabled);
+    Style::PseudoClassChangeInvalidation disabledInvalidation(*this, { CSSSelector::PseudoClassDisabled, CSSSelector::PseudoClassEnabled });
 
     m_disabledByAncestorFieldset = isDisabled;
     disabledStateChanged();
@@ -162,8 +161,7 @@ void HTMLFormControlElement::parseAttribute(const QualifiedName& name, const Ato
         if (canBeActuallyDisabled()) {
             bool newDisabled = !value.isNull();
             if (m_disabled != newDisabled) {
-                Style::PseudoClassChangeInvalidation disabledInvalidation(*this, CSSSelector::PseudoClassDisabled);
-                Style::PseudoClassChangeInvalidation enabledInvalidation(*this, CSSSelector::PseudoClassEnabled);
+                Style::PseudoClassChangeInvalidation disabledInvalidation(*this, { CSSSelector::PseudoClassDisabled, CSSSelector::PseudoClassEnabled });
                 m_disabled = newDisabled;
                 disabledAttributeChanged();
             }

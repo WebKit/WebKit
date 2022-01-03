@@ -89,14 +89,11 @@ void HTMLOptGroupElement::parseAttribute(const QualifiedName& name, const AtomSt
     if (name == disabledAttr) {
         bool newDisabled = !value.isNull();
         if (m_isDisabled != newDisabled) {
-            Style::PseudoClassChangeInvalidation disabledInvalidation(*this, CSSSelector::PseudoClassDisabled);
-            Style::PseudoClassChangeInvalidation enabledInvalidation(*this, CSSSelector::PseudoClassEnabled);
+            Style::PseudoClassChangeInvalidation disabledInvalidation(*this, { CSSSelector::PseudoClassDisabled, CSSSelector::PseudoClassEnabled });
 
             Vector<Style::PseudoClassChangeInvalidation> optionInvalidation;
-            for (auto& descendant : descendantsOfType<HTMLOptionElement>(*this)) {
-                optionInvalidation.append({ descendant, CSSSelector::PseudoClassDisabled });
-                optionInvalidation.append({ descendant, CSSSelector::PseudoClassEnabled });
-            }
+            for (auto& descendant : descendantsOfType<HTMLOptionElement>(*this))
+                optionInvalidation.append({ descendant, { CSSSelector::PseudoClassDisabled, CSSSelector::PseudoClassEnabled } });
 
             m_isDisabled = newDisabled;
         }

@@ -847,22 +847,20 @@ void Element::setFocus(bool flag, FocusVisibility visibility)
 {
     if (flag == focused())
         return;
-    {
-        Style::PseudoClassChangeInvalidation focusStyleInvalidation(*this, CSSSelector::PseudoClassFocus);
-        Style::PseudoClassChangeInvalidation focusVisibleStyleInvalidation(*this, CSSSelector::PseudoClassFocusVisible);
-        document().userActionElements().setFocused(*this, flag);
+    
+    Style::PseudoClassChangeInvalidation focusStyleInvalidation(*this, { CSSSelector::PseudoClassFocus, CSSSelector::PseudoClassFocusVisible });
+    document().userActionElements().setFocused(*this, flag);
 
-        // Shadow host with a slot that contain focused element is not considered focused.
-        for (auto* root = containingShadowRoot(); root; root = root->host()->containingShadowRoot()) {
-            root->setContainsFocusedElement(flag);
-            root->host()->invalidateStyle();
-        }
-
-        for (auto* element = this; element; element = element->parentElementInComposedTree())
-            element->setHasFocusWithin(flag);
-
-        setHasFocusVisible(flag && (visibility == FocusVisibility::Visible || shouldAlwaysHaveFocusVisibleWhenFocused(*this)));
+    // Shadow host with a slot that contain focused element is not considered focused.
+    for (auto* root = containingShadowRoot(); root; root = root->host()->containingShadowRoot()) {
+        root->setContainsFocusedElement(flag);
+        root->host()->invalidateStyle();
     }
+
+    for (auto* element = this; element; element = element->parentElementInComposedTree())
+        element->setHasFocusWithin(flag);
+
+    setHasFocusVisible(flag && (visibility == FocusVisibility::Visible || shouldAlwaysHaveFocusVisibleWhenFocused(*this)));
 }
 
 void Element::setHasFocusVisible(bool flag)
