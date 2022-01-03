@@ -235,17 +235,6 @@ void DeclarativeAnimation::cancelFromStyle()
     disassociateFromOwningElement();
 }
 
-void DeclarativeAnimation::setEffect(RefPtr<AnimationEffect>&& newEffect)
-{
-    if (effect() == newEffect)
-        return;
-
-    WebAnimation::setEffect(WTFMove(newEffect));
-
-    if (auto styleable = owningElement())
-        styleable->removeDeclarativeAnimationFromListsForOwningElement(*this);
-}
-
 AnimationEffectPhase DeclarativeAnimation::phaseWithoutEffect() const
 {
     // This shouldn't be called if we actually have an effect.
