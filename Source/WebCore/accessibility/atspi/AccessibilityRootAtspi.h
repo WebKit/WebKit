@@ -33,7 +33,7 @@ namespace WebCore {
 class AccessibilityObjectAtspi;
 class Page;
 
-class AccessibilityRootAtspi final : public ThreadSafeRefCounted<AccessibilityRootAtspi> {
+class AccessibilityRootAtspi final : public ThreadSafeRefCounted<AccessibilityRootAtspi, WTF::DestructionThread::Main> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static Ref<AccessibilityRootAtspi> create(Page&, AccessibilityAtspi&);
