@@ -1,3 +1,14 @@
+2022-01-04  Kate Cheney  <katherine_cheney@apple.com>
+
+        Partial revert of https://trac.webkit.org/changeset/287371/webkit
+
+        RS by John Wilander.
+
+        Keep logging in for test debugging purposes.
+
+        * NetworkProcess/NetworkSession.cpp:
+        (WebKit::NetworkSession::setPrivateClickMeasurementAppBundleIDForTesting):
+
 2022-01-04  Tim Horton  <timothy_horton@apple.com>
 
         Momentum Event Dispatcher: Disable noisy logging

@@ -467,6 +467,8 @@ void NetworkSession::setPrivateClickMeasurementAppBundleIDForTesting(String&& ap
 {
 #if PLATFORM(COCOA)
     auto appBundleID = WebCore::applicationBundleIdentifier();
+    if (!isRunningTest(appBundleID))
+        WTFLogAlways("isRunningTest() returned false. appBundleID is %s.", appBundleID.isEmpty() ? "empty" : appBundleID.utf8().data());
     RELEASE_ASSERT(isRunningTest(WebCore::applicationBundleIdentifier()));
 #endif
     privateClickMeasurement().setPrivateClickMeasurementAppBundleIDForTesting(WTFMove(appBundleIDForTesting));
