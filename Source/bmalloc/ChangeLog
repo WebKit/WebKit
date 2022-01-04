@@ -1,3 +1,14 @@
+2022-01-04  Philippe Normand  <pnormand@igalia.com>
+
+        [PAS] constant-logical-operand clang warnings
+        https://bugs.webkit.org/show_bug.cgi?id=234814
+
+        Reviewed by Martin Robinson.
+
+        * libpas/src/libpas/pas_config_prefix.h: Use double exclamation marks in declarations to
+        force the compiler to interpret them as booleans and avoid constant-logical-operand
+        warnings.
+
 2021-12-27  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [libpas] Use thread_switch instead of sched_yield
