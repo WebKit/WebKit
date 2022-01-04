@@ -792,8 +792,12 @@ uint64_t AccessibilityObjectAtspi::state() const
         if (m_coreObject->canSetFocusAttribute())
             addState(Atspi::State::Focusable);
 
-        if (m_coreObject->isFocused())
+        if (m_coreObject->isFocused() && !m_coreObject->activeDescendant())
             addState(Atspi::State::Focused);
+        else if (m_coreObject->isActiveDescendantOfFocusedContainer()) {
+            addState(Atspi::State::Focusable);
+            addState(Atspi::State::Focused);
+        }
 
         if (m_coreObject->canSetValueAttribute()) {
             if (m_coreObject->supportsChecked())
