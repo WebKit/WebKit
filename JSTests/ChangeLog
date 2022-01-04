@@ -1,5 +1,23 @@
 2022-01-03  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        Array.prototype.toLocaleString does not respect deletion of Object.prototype.toLocaleString
+        https://bugs.webkit.org/show_bug.cgi?id=232723
+
+        Reviewed by Alexey Shvayka.
+
+        * ChakraCore/test/Array/toLocaleString.baseline-jsc:
+        * stress/array-tolocalestring-delete-tolocalestring.js: Added.
+        (shouldThrow):
+        * stress/array-tolocalestring-empty-separator.js: Added.
+        (shouldBe):
+        * stress/array-tolocalestring-options.js: Added.
+        (shouldBe):
+        * stress/array-tolocalestring-undefined-null.js: Added.
+        (shouldBe):
+        (shouldBe.toLocaleString):
+
+2022-01-03  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] Fix Intl.PluralRules.selectRange input validation
         https://bugs.webkit.org/show_bug.cgi?id=234817
 

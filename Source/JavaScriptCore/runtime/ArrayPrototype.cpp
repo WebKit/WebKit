@@ -676,49 +676,105 @@ JSC_DEFINE_HOST_FUNCTION(arrayProtoFuncToString, (JSGlobalObject* globalObject, 
     RELEASE_AND_RETURN(scope, JSValue::encode(joiner.join(globalObject)));
 }
 
+static JSString* toLocaleString(JSGlobalObject* globalObject, JSValue value, JSValue locales, JSValue options)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSValue toLocaleStringMethod = value.get(globalObject, vm.propertyNames->toLocaleString);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    auto callData = getCallData(vm, toLocaleStringMethod);
+    if (callData.type == CallData::Type::None) {
+        throwTypeError(globalObject, scope, "toLocaleString is not callable"_s);
+        return { };
+    }
+
+    MarkedArgumentBufferWithSize<2> arguments;
+    arguments.append(locales);
+    arguments.append(options);
+    ASSERT(!arguments.hasOverflowed());
+
+    JSValue result = call(globalObject, toLocaleStringMethod, callData, value, arguments);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    RELEASE_AND_RETURN(scope, result.toString(globalObject));
+}
+
+// https://tc39.es/ecma402/#sup-array.prototype.tolocalestring
 JSC_DEFINE_HOST_FUNCTION(arrayProtoFuncToLocaleString, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     JSValue thisValue = callFrame->thisValue().toThis(globalObject, ECMAMode::strict());
 
+    JSValue locales = callFrame->argument(0);
+    JSValue options = callFrame->argument(1);
+
+    // 1. Let array be ? ToObject(this value).
     JSObject* thisObject = thisValue.toObject(globalObject);
-    RETURN_IF_EXCEPTION(scope, encodedJSValue());
-    uint64_t length = static_cast<uint64_t>(toLength(globalObject, thisObject));
-    RETURN_IF_EXCEPTION(scope, encodedJSValue());
-    if (length > std::numeric_limits<unsigned>::max()) {
-        throwOutOfMemoryError(globalObject, scope);
-        return encodedJSValue();
-    }
+    RETURN_IF_EXCEPTION(scope, { });
 
     StringRecursionChecker checker(globalObject, thisObject);
     EXCEPTION_ASSERT(!scope.exception() || checker.earlyReturnValue());
     if (JSValue earlyReturnValue = checker.earlyReturnValue())
         return JSValue::encode(earlyReturnValue);
 
-    JSStringJoiner stringJoiner(globalObject, ',', static_cast<uint32_t>(length));
-    RETURN_IF_EXCEPTION(scope, encodedJSValue());
+    // 2. Let len be ? ToLength(? Get(array, "length")).
+    uint64_t length = static_cast<uint64_t>(toLength(globalObject, thisObject));
+    RETURN_IF_EXCEPTION(scope, { });
 
-    ArgList arguments(callFrame);
-    for (unsigned i = 0; i < length; ++i) {
-        JSValue element = thisObject->getIndex(globalObject, i);
-        RETURN_IF_EXCEPTION(scope, encodedJSValue());
-        if (element.isUndefinedOrNull())
-            element = jsEmptyString(vm);
-        else {
-            JSValue conversionFunction = element.get(globalObject, vm.propertyNames->toLocaleString);
-            RETURN_IF_EXCEPTION(scope, encodedJSValue());
-            auto callData = getCallData(vm, conversionFunction);
-            if (callData.type != CallData::Type::None) {
-                element = call(globalObject, conversionFunction, callData, element, arguments);
-                RETURN_IF_EXCEPTION(scope, encodedJSValue());
-            }
-        }
-        stringJoiner.append(globalObject, element);
-        RETURN_IF_EXCEPTION(scope, encodedJSValue());
+    // 3. Let separator be the String value for the list-separator String appropriate for
+    // the host environment's current locale (this is derived in an implementation-defined way).
+    const LChar comma = ',';
+    JSString* separator = jsSingleCharacterString(vm, comma);
+
+    // 4. Let R be the empty String.
+    if (!length)
+        return JSValue::encode(jsEmptyString(vm));
+
+    // 5. Let k be 0.
+    JSValue element0 = thisObject->getIndex(globalObject, 0);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    // 6. Repeat, while k < len,
+    // 6.a. If k > 0, then
+    // 6.a.i. Set R to the string-concatenation of R and separator.
+
+    JSString* r = nullptr;
+    if (element0.isUndefinedOrNull())
+        r = jsEmptyString(vm);
+    else {
+        r = toLocaleString(globalObject, element0, locales, options);
+        RETURN_IF_EXCEPTION(scope, { });
     }
 
-    RELEASE_AND_RETURN(scope, JSValue::encode(stringJoiner.join(globalObject)));
+    // 8. Let k be 1.
+    // 9. Repeat, while k < len
+    // 9.e Increase k by 1..
+    for (uint64_t k = 1; k < length; ++k) {
+        // 6.b. Let nextElement be ? Get(array, ! ToString(k)).
+        JSValue element = thisObject->getIndex(globalObject, k);
+        RETURN_IF_EXCEPTION(scope, { });
+
+        // c. If nextElement is not undefined or null, then
+        JSString* next = nullptr;
+        if (element.isUndefinedOrNull())
+            next = jsEmptyString(vm);
+        else {
+            // i. Let S be ? ToString(? Invoke(nextElement, "toLocaleString", « locales, options »)).
+            // ii. Set R to the string-concatenation of R and S.
+            next = toLocaleString(globalObject, element, locales, options);
+            RETURN_IF_EXCEPTION(scope, { });
+        }
+
+        // d. Increase k by 1.
+        r = jsString(globalObject, r, separator, next);
+        RETURN_IF_EXCEPTION(scope, { });
+    }
+
+    // 7. Return R.
+    return JSValue::encode(r);
 }
 
 static JSValue slowJoin(JSGlobalObject* globalObject, JSObject* thisObject, JSString* separator, uint64_t length)
@@ -747,7 +803,7 @@ static JSValue slowJoin(JSGlobalObject* globalObject, JSObject* thisObject, JSSt
     // 9.e Increase k by 1..
     for (uint64_t k = 1; k < length; ++k) {
         // b. Let element be ? Get(O, ! ToString(k)).
-        JSValue element = thisObject->get(globalObject, Identifier::fromString(vm, AtomString::number(k)));
+        JSValue element = thisObject->getIndex(globalObject, k);
         RETURN_IF_EXCEPTION(scope, { });
 
         // c. If element is undefined or null, let next be the empty String; otherwise, let next be ? ToString(element).
