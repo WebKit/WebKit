@@ -1,3 +1,15 @@
+2022-01-04  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        WebAssembly i32.atomic.wait timeout value incorrectly interpreted by factor 1000
+        https://bugs.webkit.org/show_bug.cgi?id=234833
+
+        Reviewed by Michael Saboff.
+
+        Wasm atomics' timeout should be interpreted as nanoseconds.
+
+        * wasm/WasmOperations.cpp:
+        (JSC::Wasm::wait):
+
 2022-01-03  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Unreviewed, fix build failure

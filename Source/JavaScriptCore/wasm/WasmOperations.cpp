@@ -827,10 +827,8 @@ template<typename ValueType>
 static int32_t wait(VM& vm, ValueType* pointer, ValueType expectedValue, int64_t timeoutInNanoseconds)
 {
     Seconds timeout = Seconds::infinity();
-    if (timeoutInNanoseconds >= 0) {
-        int64_t timeoutInMilliseconds = timeoutInNanoseconds / 1000;
-        timeout = Seconds::fromMilliseconds(timeoutInMilliseconds);
-    }
+    if (timeoutInNanoseconds >= 0)
+        timeout = Seconds::fromNanoseconds(timeoutInNanoseconds);
     bool didPassValidation = false;
     ParkingLot::ParkResult result;
     {
