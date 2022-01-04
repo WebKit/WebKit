@@ -1,3 +1,55 @@
+2022-01-04  Arcady Goldmints-Orlov  <agoldmints@igalia.com>
+
+        [WPE] Update test baselines after recent LFC-related changes.
+        https://bugs.webkit.org/show_bug.cgi?id=234853
+
+        Unreviewed test gardening.
+
+        This updates WPE test baselines to account for the changes in
+        r283550, r283875, r284303, r286107, r286133, r286848, r286928, r287453, r287482, and r287485.
+
+        * platform/gtk/fast/backgrounds/border-radius-split-background-expected.txt: Copied from LayoutTests/platform/glib/fast/backgrounds/border-radius-split-background-expected.txt.
+        * platform/gtk/fast/backgrounds/border-radius-split-background-image-expected.txt: Copied from LayoutTests/platform/glib/fast/backgrounds/border-radius-split-background-image-expected.txt.
+        * platform/gtk/fast/borders/border-image-outset-split-inline-expected.txt: Copied from LayoutTests/platform/glib/fast/borders/border-image-outset-split-inline-expected.txt.
+        * platform/gtk/fast/borders/border-styles-split-expected.txt: Copied from LayoutTests/platform/glib/fast/borders/border-styles-split-expected.txt.
+        * platform/wpe/fast/backgrounds/border-radius-split-background-expected.txt: Renamed from LayoutTests/platform/glib/fast/backgrounds/border-radius-split-background-expected.txt.
+        * platform/wpe/fast/backgrounds/border-radius-split-background-image-expected.txt: Renamed from LayoutTests/platform/glib/fast/backgrounds/border-radius-split-background-image-expected.txt.
+        * platform/wpe/fast/block/basic/016-expected.txt:
+        * platform/wpe/fast/borders/bidi-012-expected.txt:
+        * platform/wpe/fast/borders/border-image-outset-split-inline-expected.txt: Renamed from LayoutTests/platform/glib/fast/borders/border-image-outset-split-inline-expected.txt.
+        * platform/wpe/fast/borders/border-styles-split-expected.txt: Renamed from LayoutTests/platform/glib/fast/borders/border-styles-split-expected.txt.
+        * platform/wpe/fast/borders/rtl-border-04-expected.txt:
+        * platform/wpe/fast/borders/rtl-border-05-expected.txt:
+        * platform/wpe/fast/box-shadow/basic-shadows-expected.txt:
+        * platform/wpe/fast/css/first-line-text-decoration-expected.txt:
+        * platform/wpe/fast/css/first-line-text-decoration-inherited-from-parent-expected.txt:
+        * platform/wpe/fast/css/text-overflow-ellipsis-bidi-expected.txt:
+        * platform/wpe/fast/css/text-overflow-input-expected.txt:
+        * platform/wpe/fast/dom/52776-expected.txt:
+        * platform/wpe/fast/dom/HTMLElement/bdo-expected.txt:
+        * platform/wpe/fast/inline-block/003-expected.txt:
+        * platform/wpe/fast/text/cg-fallback-bolding-expected.txt:
+        * platform/wpe/fast/text/firstline/001-expected.txt:
+        * platform/wpe/fast/text/fixed-pitch-control-characters-expected.txt:
+        * platform/wpe/fast/text/format-control-expected.txt:
+        * platform/wpe/fast/text/in-rendered-text-rtl-expected.txt:
+        * platform/wpe/fast/text/international/bidi-L2-run-reordering-expected.txt:
+        * platform/wpe/fast/text/international/bidi-LDB-2-CSS-expected.txt:
+        * platform/wpe/fast/text/international/bidi-LDB-2-HTML-expected.txt:
+        * platform/wpe/fast/text/international/bidi-LDB-2-formatting-characters-expected.txt:
+        * platform/wpe/fast/text/international/bidi-european-terminators-expected.txt:
+        * platform/wpe/fast/text/international/bidi-ignored-for-first-child-inline-expected.txt:
+        * platform/wpe/fast/text/international/bidi-layout-across-linebreak-expected.txt:
+        * platform/wpe/fast/text/international/bidi-listbox-expected.txt:
+        * platform/wpe/fast/text/international/bidi-menulist-expected.txt:
+        * platform/wpe/fast/text/international/bidi-neutral-run-expected.txt:
+        * platform/wpe/fast/text/international/bidi-override-expected.txt:
+        * platform/wpe/fast/text/international/rtl-white-space-pre-wrap-expected.txt:
+        * platform/wpe/fast/text/text-letter-spacing-expected.txt:
+        * platform/wpe/fast/text/whitespace/pre-wrap-overflow-selection-expected.txt:
+        * platform/wpe/http/tests/misc/acid3-expected.txt:
+        * platform/wpe/tables/mozilla/core/bloomberg-expected.txt:
+
 2022-01-04  Jer Noble  <jer.noble@apple.com>
 
         [Cocoa] Hang in AVTrackPrivateAVFObjCImpl::bitrate()
