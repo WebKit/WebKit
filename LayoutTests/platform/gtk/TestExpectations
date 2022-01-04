@@ -150,6 +150,7 @@ webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/line-breaking/l
 webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/line-break/line-break-strict-011.xht [ ImageOnlyFailure ]
 webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/line-break/line-break-strict-012.xht [ ImageOnlyFailure ]
 
+webkit.org/b/234831 imported/w3c/web-platform-tests/css/css-contain/contain-paint-004.html [ ImageOnlyFailure ]
 # Download
 
 webkit.org/b/219530 fast/dom/HTMLAnchorElement/anchor-download-user-triggered-synthetic-click.html [ Failure ]
