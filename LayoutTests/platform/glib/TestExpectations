@@ -1429,6 +1429,7 @@ webkit.org/b/208104 imported/w3c/web-platform-tests/content-security-policy/scri
 webkit.org/b/208104 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/execution-timing/085.html [ Failure Pass ]
 
 webkit.org/b/210226 imported/w3c/web-platform-tests/IndexedDB/interleaved-cursors-large.html [ Failure ]
+webkit.org/b/210226 imported/w3c/web-platform-tests/IndexedDB/interleaved-cursors-small.html [ Failure ]
 
 webkit.org/b/210274 imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/none-load-from-cache-storage.https.html [ Failure Pass ]
 webkit.org/b/210541 imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/require-corp-load-from-cache-storage.https.html [ Failure Pass ]
@@ -2277,7 +2278,6 @@ webkit.org/b/208368 imported/w3c/web-platform-tests/wasm/jsapi/constructor/insta
 webkit.org/b/208633 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/sizes/parse-a-sizes-attribute-width-1000px.html [ Failure ]
 webkit.org/b/209720 fast/css-generated-content/initial-letter-pagination-raised-rl.html [ ImageOnlyFailure ]
 webkit.org/b/209720 fast/css-grid-layout/grid-align-baseline-vertical.html [ Failure ]
-webkit.org/b/210226 imported/w3c/web-platform-tests/IndexedDB/interleaved-cursors-small.html [ Failure ]
 webkit.org/b/211614 imported/w3c/web-platform-tests/wasm/jsapi/constructor/instantiate.any.worker.html [ Failure Pass ]
 webkit.org/b/211940 fast/text/multiple-codeunit-vertical-upright-2.html [ ImageOnlyFailure ]
 webkit.org/b/211940 fast/text/multiple-codeunit-vertical-upright.html [ ImageOnlyFailure ]

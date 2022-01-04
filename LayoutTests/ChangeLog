@@ -1,3 +1,19 @@
+2022-01-03  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GTK] Unreviewed test gardening, remove pending test failures filed under webkit.org/b/208292
+        https://bugs.webkit.org/show_bug.cgi?id=208292
+
+        Removed from GTK test expectations:
+        imported/w3c/web-platform-tests/IndexedDB/fire-error-event-exception.html
+        imported/w3c/web-platform-tests/IndexedDB/fire-success-event-exception.html
+
+        Removed from WPE test expectations:
+        imported/w3c/web-platform-tests/IndexedDB/interleaved-cursors-small.html
+
+        * platform/glib/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/wpe/TestExpectations:
+
 2022-01-03  Alan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Incorrect word-spacing gaps when logical order != visual order (bidi)

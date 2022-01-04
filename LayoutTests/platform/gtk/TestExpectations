@@ -1132,9 +1132,6 @@ webkit.org/b/170484 swipe/main-frame-pinning-requirement.html [ Timeout ]
 
 webkit.org/b/202232 fast/forms/validation-message-appearance.html [ Failure ]
 
-webkit.org/b/208292 imported/w3c/web-platform-tests/IndexedDB/fire-error-event-exception.html [ Failure ]
-webkit.org/b/208292 imported/w3c/web-platform-tests/IndexedDB/fire-success-event-exception.html [ Failure ]
-
 webkit.org/b/208809 imported/w3c/web-platform-tests/css/WOFF2/blocks-extraneous-data-001.xht [ ImageOnlyFailure ]
 webkit.org/b/208809 imported/w3c/web-platform-tests/css/WOFF2/blocks-extraneous-data-002.xht [ ImageOnlyFailure ]
 webkit.org/b/208809 imported/w3c/web-platform-tests/css/WOFF2/blocks-extraneous-data-003.xht [ ImageOnlyFailure ]

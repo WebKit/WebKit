@@ -1414,8 +1414,6 @@ Bug(WPE) media/crash-closing-page-with-media-as-plugin-fallback.html [ Timeout ]
 Bug(WPE) media/media-playback-page-visibility.html [ Timeout ]
 Bug(WPE) media/video-canvas-createPattern.html [ Failure ]
 
-webkit.org/b/210226 imported/w3c/web-platform-tests/IndexedDB/interleaved-cursors-small.html [ Failure ]
-
 webkit.org/b/230277 imported/w3c/web-platform-tests/css/css-transforms/backface-visibility-hidden-006.html [ ImageOnlyFailure ]
 webkit.org/b/230277 imported/w3c/web-platform-tests/css/css-transforms/composited-under-rotateY-180deg-clip-perspective.html [ ImageOnlyFailure ]
 webkit.org/b/230277 imported/w3c/web-platform-tests/css/css-transforms/scrollable-scroll-3d-transform-z.html [ ImageOnlyFailure ]
