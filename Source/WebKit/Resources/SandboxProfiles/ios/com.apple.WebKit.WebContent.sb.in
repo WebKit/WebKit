@@ -1321,7 +1321,7 @@
         SYS_umask))
 
 (when (defined? 'syscall-unix)
-    (deny syscall-unix (with send-signal SIGKILL))
+    (deny syscall-unix (with telemetry) (with send-signal SIGKILL))
     (allow syscall-unix
         (syscall-unix-only-in-use-during-launch)
         (syscall-unix-in-use-after-launch))
