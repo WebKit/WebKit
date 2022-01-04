@@ -1,3 +1,26 @@
+2022-01-04  Simon Fraser  <simon.fraser@apple.com>
+
+        "canceled" wheel events to non-zero deltas cause scrolling jumps in PDFs and CodeMirror
+        https://bugs.webkit.org/show_bug.cgi?id=234825
+
+        Reviewed by Tim Horton.
+
+        On some macOS versions, interrupting a momentum scroll via a two-finger tap on the trackpad can
+        result in the following sequence of wheel events: momentumPhase:end -> phase:mayBegin -> phase:cancelled,
+        and that last canceled event can have non-zero deltas (rdar://86653042).
+
+        Protect against this by zeroing out the deltas for cancelled wheel events when constructing WebEvents
+        from NSEvents. Code in Element::dispatchWheelEvent() ensures that we don't dispatch wheel events with
+        zero deltas to script, fixing CodeMirror.
+
+        Jumps only affected PDFs (and scrollable selects) because those are the code paths that don't go via
+        ScrollingEffectsController, which already ignores Cancelled events.
+
+        Test: fast/scrolling/mac/canceled-event-with-non-zero-deltas.html
+
+        * Shared/mac/WebEventFactory.mm:
+        (WebKit::WebEventFactory::createWebWheelEvent):
+
 2022-01-04  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Use ICU instead of relying on hard-coded string equality checks in ModalContainerControlClassifier
