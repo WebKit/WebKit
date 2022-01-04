@@ -1612,12 +1612,8 @@ Color RenderElement::selectionBackgroundColor() const
 
 bool RenderElement::getLeadingCorner(FloatPoint& point, bool& insideFixed) const
 {
-    // When scrolling elements into view, ignore sticky offsets and scroll to the static
-    // position of the element. See: https://drafts.csswg.org/css-position/#stickypos-scroll.
-    OptionSet<MapCoordinatesMode> localToAbsoluteMode { UseTransforms, IgnoreStickyOffsets };
-
     if (!isInline() || isReplaced()) {
-        point = localToAbsolute(FloatPoint(), localToAbsoluteMode, &insideFixed);
+        point = localToAbsolute(FloatPoint(), UseTransforms, &insideFixed);
         return true;
     }
 
@@ -1643,7 +1639,7 @@ bool RenderElement::getLeadingCorner(FloatPoint& point, bool& insideFixed) const
         ASSERT(o);
 
         if (!o->isInline() || o->isReplaced()) {
-            point = o->localToAbsolute(FloatPoint(), localToAbsoluteMode, &insideFixed);
+            point = o->localToAbsolute(FloatPoint(), UseTransforms, &insideFixed);
             return true;
         }
 
@@ -1657,7 +1653,7 @@ bool RenderElement::getLeadingCorner(FloatPoint& point, bool& insideFixed) const
                     point.move(textRenderer.linesBoundingBox().x(), run->line()->top());
             } else if (is<RenderBox>(*o))
                 point.moveBy(downcast<RenderBox>(*o).location());
-            point = o->container()->localToAbsolute(point, localToAbsoluteMode, &insideFixed);
+            point = o->container()->localToAbsolute(point, UseTransforms, &insideFixed);
             return true;
         }
     }
@@ -1673,12 +1669,8 @@ bool RenderElement::getLeadingCorner(FloatPoint& point, bool& insideFixed) const
 
 bool RenderElement::getTrailingCorner(FloatPoint& point, bool& insideFixed) const
 {
-    // When scrolling elements into view, ignore sticky offsets and scroll to the static
-    // position of the element. See: https://drafts.csswg.org/css-position/#stickypos-scroll.
-    OptionSet<MapCoordinatesMode> localToAbsoluteMode { UseTransforms, IgnoreStickyOffsets };
-
     if (!isInline() || isReplaced()) {
-        point = localToAbsolute(LayoutPoint(downcast<RenderBox>(*this).size()), localToAbsoluteMode, &insideFixed);
+        point = localToAbsolute(LayoutPoint(downcast<RenderBox>(*this).size()), UseTransforms, &insideFixed);
         return true;
     }
 
@@ -1709,7 +1701,7 @@ bool RenderElement::getTrailingCorner(FloatPoint& point, bool& insideFixed) cons
                 point.moveBy(linesBox.maxXMaxYCorner());
             } else
                 point.moveBy(downcast<RenderBox>(*o).frameRect().maxXMaxYCorner());
-            point = o->container()->localToAbsolute(point, localToAbsoluteMode, &insideFixed);
+            point = o->container()->localToAbsolute(point, UseTransforms, &insideFixed);
             return true;
         }
     }
