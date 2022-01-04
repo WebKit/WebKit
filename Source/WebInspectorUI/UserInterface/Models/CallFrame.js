@@ -64,6 +64,17 @@ WI.CallFrame = class CallFrame
     get blackboxed() { return this._blackboxed; }
     get isConsoleEvaluation() { return this._isConsoleEvaluation; }
 
+    isEqual(other)
+    {
+        if (!other)
+            return false;
+
+        if (this._sourceCodeLocation && other._sourceCodeLocation)
+            return this._sourceCodeLocation.isEqual(other._sourceCodeLocation);
+
+        return false;
+    }
+
     saveIdentityToCookie()
     {
         // Do nothing. The call frame is torn down when the inspector closes, and

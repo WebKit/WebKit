@@ -1,5 +1,49 @@
 2022-01-04  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Sources: expanding a grouping of blackboxed call frames should be persistent
+        https://bugs.webkit.org/show_bug.cgi?id=234614
+        <rdar://problem/86989232>
+
+        Reviewed by Patrick Angle.
+
+        If the developer has explicitly decided to show blackboxed call frames, we should respect
+        that decision. Requiring them to re-expand after _every_ debugger action is very hostile.
+        So long as the blackboxed call frames remain the same we should persist the expansion. Only
+        if the location of those blackboxed frames changes should we re-collapse.
+
+        * UserInterface/Controllers/DebuggerManager.js:
+        (WI.DebuggerManager):
+        (WI.DebuggerManager.prototype.rememberBlackboxedCallFrameGroupToAutoExpand): Added.
+        (WI.DebuggerManager.prototype.shouldAutoExpandBlackboxedCallFrameGroup): Added.
+        (WI.DebuggerManager.prototype._didResumeInternal):
+        * UserInterface/Views/BlackboxedGroupTreeElement.js:
+        (WI.BlackboxedGroupTreeElement.prototype.expand):
+        Keep a list of blackboxed call frame groupings that have been expanded by the developer.
+        Use this list to decide whether "new" blackboxed call frame grouping should be auto-expanded
+        by default (i.e. if every `WI.CallFrame` is identical with something in the list). Clear the
+        list when resuming, as we're only trying to keep expanded blackboxed call frame groupings
+        within the same call stack (i.e. while stepping).
+
+        * UserInterface/Base/Utilities.js:
+        (Array.prototype.groupBy): Deleted.
+        * UserInterface/Views/ThreadTreeElement.js:
+        (WI.ThreadTreeElement.prototype.refresh):
+        Remove the custom `Array.prototype.groupBy` since it's no longer needed (and there's now a
+        builtin function with the same name). Instead, just keep an index of the first blackboxed
+        call frame and iterate until either the end of the call stack or a non-blackboxed call frame
+        is found, `slice`ing from the saved index to the current item to make a blackboxed call
+        frame group. If that blackboxed call frame group should be auto-expanded (see above), create
+        a `WI.CallFrameTreeElement` for each blackboxed call frame instead of one `WI.BlackboxedGroupTreeElement`.
+
+        * UserInterface/Models/CallFrame.js:
+        (WI.CallFrame.prototype.isEqual): Added.
+        Add a convenience function to compare two `WI.CallFrame`. Right now it just looks at the
+        `WI.SourceCodeLocation`, since for most purposes that's really how one would identify a
+        `WI.CallFrame` (i.e. it's probably more important to know "is this the same spot in code"
+        as opposed to "do we have the same `this` object").
+
+2022-01-04  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Add icon for collapsed blackboxed section
         https://bugs.webkit.org/show_bug.cgi?id=219806
         <rdar://problem/72240360>

@@ -57,16 +57,35 @@ WI.ThreadTreeElement = class ThreadTreeElement extends WI.GeneralTreeElement
         let activeCallFrameTreeElement = null;
 
         let renderCallFrames = (callFrames, shouldSelectActiveFrame) => {
-            if (WI.settings.experimentalCollapseBlackboxedCallFrames.value)
-                callFrames = callFrames.groupBy((callFrame) => callFrame.blackboxed);
+            let blackboxedCallFrameGroupStartIndex = undefined;
 
-            for (let callFrameOrBlackboxedGroup of callFrames) {
-                if (Array.isArray(callFrameOrBlackboxedGroup)) {
-                    this.appendChild(new WI.BlackboxedGroupTreeElement(callFrameOrBlackboxedGroup));
+            // Add one extra iteration to handle call stacks that start blackboxed.
+            for (let i = 0; i < callFrames.length + 1; ++i) {
+                let callFrame = callFrames[i];
+
+                if (callFrame?.blackboxed && WI.settings.experimentalCollapseBlackboxedCallFrames.value) {
+                    blackboxedCallFrameGroupStartIndex ??= i;
                     continue;
                 }
-                let callFrameTreeElement = new WI.CallFrameTreeElement(callFrameOrBlackboxedGroup);
-                if (shouldSelectActiveFrame && callFrameOrBlackboxedGroup === activeCallFrame)
+
+                if (blackboxedCallFrameGroupStartIndex !== undefined) {
+                    let blackboxedCallFrameGroup = callFrames.slice(blackboxedCallFrameGroupStartIndex, i);
+                    blackboxedCallFrameGroupStartIndex = undefined;
+
+                    if (!WI.debuggerManager.shouldAutoExpandBlackboxedCallFrameGroup(blackboxedCallFrameGroup)) {
+                        this.appendChild(new WI.BlackboxedGroupTreeElement(blackboxedCallFrameGroup));
+                        continue;
+                    }
+
+                    for (let blackboxedCallFrame of blackboxedCallFrameGroup)
+                        this.appendChild(new WI.CallFrameTreeElement(blackboxedCallFrame));
+                }
+
+                if (!callFrame)
+                    continue;
+
+                let callFrameTreeElement = new WI.CallFrameTreeElement(callFrame);
+                if (shouldSelectActiveFrame && callFrame === activeCallFrame)
                     activeCallFrameTreeElement = callFrameTreeElement;
                 this.appendChild(callFrameTreeElement);
             }

@@ -27,7 +27,7 @@ WI.BlackboxedGroupTreeElement = class BlackboxedGroupTreeElement extends WI.Gene
 {
     constructor(callFrames)
     {
-        console.assert(Array.isArray(callFrames) && callFrames.length && callFrames.every((callFrame) => callFrame instanceof WI.CallFrame));
+        console.assert(!WI.debuggerManager.shouldAutoExpandBlackboxedCallFrameGroup(callFrames), callFrames);
 
         const classNames = ["blackboxed-group"];
         const title = WI.UIString("Blackboxed", "Blackboxed @ Debugger Call Stack", "Part of the 'Blackboxed - %d call frames' label shown in the debugger call stack when paused instead of subsequent call frames that have been blackboxed.");
@@ -48,6 +48,8 @@ WI.BlackboxedGroupTreeElement = class BlackboxedGroupTreeElement extends WI.Gene
 
     expand()
     {
+        WI.debuggerManager.rememberBlackboxedCallFrameGroupToAutoExpand(this._callFrames);
+
         let index = this.parent.children.indexOf(this);
         for (let i = this._callFrames.length - 1; i >= 0; --i)
             this.parent.insertChild(new WI.CallFrameTreeElement(this._callFrames[i]), index);
