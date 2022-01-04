@@ -1,5 +1,13 @@
 2022-01-03  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        Unreviewed, fix build failure
+        https://bugs.webkit.org/show_bug.cgi?id=232723
+
+        * runtime/ArrayPrototype.cpp:
+        (JSC::toLocaleString):
+
+2022-01-03  Yusuke Suzuki  <ysuzuki@apple.com>
+
         Array.prototype.toLocaleString does not respect deletion of Object.prototype.toLocaleString
         https://bugs.webkit.org/show_bug.cgi?id=232723
 

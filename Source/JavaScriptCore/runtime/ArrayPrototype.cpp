@@ -690,7 +690,7 @@ static JSString* toLocaleString(JSGlobalObject* globalObject, JSValue value, JSV
         return { };
     }
 
-    MarkedArgumentBufferWithSize<2> arguments;
+    MarkedArgumentBuffer arguments;
     arguments.append(locales);
     arguments.append(options);
     ASSERT(!arguments.hasOverflowed());
