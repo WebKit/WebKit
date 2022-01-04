@@ -158,7 +158,7 @@ class PullRequest(Command):
                 opened=None if existing_pr.opened else True
             )
             if not pr:
-                sys.stderr.write("Failed to update pull-request '{}'\n".format(candidates[0]))
+                sys.stderr.write("Failed to update pull-request '{}'\n".format(existing_pr))
                 return 1
             print("Updated '{}'!".format(pr))
         else:
