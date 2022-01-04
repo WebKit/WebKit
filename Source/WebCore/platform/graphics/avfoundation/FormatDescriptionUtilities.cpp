@@ -49,7 +49,7 @@ FloatSize presentationSizeFromFormatDescription(CMFormatDescriptionRef formatDes
 {
     if (!formatDescription)
         return { };
-    
+
     return FloatSize(PAL::CMVideoFormatDescriptionGetPresentationDimensions(formatDescription, true, true));
 }
 
@@ -58,29 +58,35 @@ std::optional<PlatformVideoColorSpace> colorSpaceFromFormatDescription(CMFormatD
     if (!formatDescription)
         return std::nullopt;
 
+    auto safeCFStringEquals = [] (CFStringRef one, CFStringRef two) -> bool {
+        if (!one || !two)
+            return false;
+        return CFStringCompare(one, two, 0) == kCFCompareEqualTo;
+    };
+
     PlatformVideoColorSpace colorSpace;
     if (auto primaries = static_cast<CFStringRef>(PAL::CMFormatDescriptionGetExtension(formatDescription, PAL::get_CoreMedia_kCMFormatDescriptionExtension_ColorPrimaries()))) {
-        if (CFStringCompare(primaries, PAL::get_CoreMedia_kCMFormatDescriptionColorPrimaries_ITU_R_709_2(), 0) == kCFCompareEqualTo)
+        if (safeCFStringEquals(primaries, PAL::get_CoreMedia_kCMFormatDescriptionColorPrimaries_ITU_R_709_2()))
             colorSpace.primaries = PlatformVideoColorPrimaries::Bt709;
-        else if (CFStringCompare(primaries, PAL::get_CoreMedia_kCMFormatDescriptionColorPrimaries_EBU_3213(), 0) == kCFCompareEqualTo)
+        else if (safeCFStringEquals(primaries, PAL::get_CoreMedia_kCMFormatDescriptionColorPrimaries_EBU_3213()))
             colorSpace.primaries = PlatformVideoColorPrimaries::Bt470bg;
-        else if (CFStringCompare(primaries, PAL::get_CoreMedia_kCMFormatDescriptionColorPrimaries_SMPTE_C(), 0) == kCFCompareEqualTo)
+        else if (safeCFStringEquals(primaries, PAL::get_CoreMedia_kCMFormatDescriptionColorPrimaries_SMPTE_C()))
             colorSpace.primaries = PlatformVideoColorPrimaries::Smpte170m;
     }
 
     if (auto transfer = static_cast<CFStringRef>(PAL::CMFormatDescriptionGetExtension(formatDescription, PAL::get_CoreMedia_kCMFormatDescriptionExtension_TransferFunction()))) {
-        if (CFStringCompare(transfer, PAL::get_CoreMedia_kCMFormatDescriptionTransferFunction_ITU_R_709_2(), 0) == kCFCompareEqualTo)
+        if (safeCFStringEquals(transfer, PAL::get_CoreMedia_kCMFormatDescriptionTransferFunction_ITU_R_709_2()))
             colorSpace.transfer = PlatformVideoTransferCharacteristics::Bt709;
-        else if (CFStringCompare(transfer, PAL::get_CoreMedia_kCMFormatDescriptionTransferFunction_sRGB(), 0) == kCFCompareEqualTo)
+        else if (safeCFStringEquals(transfer, PAL::get_CoreMedia_kCMFormatDescriptionTransferFunction_sRGB()))
             colorSpace.transfer = PlatformVideoTransferCharacteristics::Iec6196621;
     }
 
     if (auto matrix = static_cast<CFStringRef>(PAL::CMFormatDescriptionGetExtension(formatDescription, PAL::get_CoreMedia_kCMFormatDescriptionExtension_YCbCrMatrix()))) {
-        if (CFStringCompare(matrix, PAL::get_CoreMedia_kCVImageBufferYCbCrMatrix_ITU_R_709_2(), 0) == kCFCompareEqualTo)
+        if (safeCFStringEquals(matrix, PAL::get_CoreMedia_kCVImageBufferYCbCrMatrix_ITU_R_709_2()))
             colorSpace.matrix = PlatformVideoMatrixCoefficients::Bt709;
-        else if (CFStringCompare(matrix, PAL::get_CoreMedia_kCVImageBufferYCbCrMatrix_ITU_R_601_4(), 0) == kCFCompareEqualTo)
+        else if (safeCFStringEquals(matrix, PAL::get_CoreMedia_kCVImageBufferYCbCrMatrix_ITU_R_601_4()))
             colorSpace.matrix = PlatformVideoMatrixCoefficients::Bt470bg;
-        else if (CFStringCompare(matrix, PAL::get_CoreMedia_kCMFormatDescriptionYCbCrMatrix_SMPTE_240M_1995(), 0) == kCFCompareEqualTo)
+        else if (safeCFStringEquals(matrix, PAL::get_CoreMedia_kCMFormatDescriptionYCbCrMatrix_SMPTE_240M_1995()))
             colorSpace.matrix = PlatformVideoMatrixCoefficients::Smpte170m;
     }
 
