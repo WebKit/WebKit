@@ -1,3 +1,15 @@
+2022-01-04  Alex Christensen  <achristensen@webkit.org>
+
+        Re-enable URLSchemeHandler.Leaks1 API test
+        https://bugs.webkit.org/show_bug.cgi?id=234625
+
+        Reviewed by Darin Adler.
+
+        The test seems to not time out any more.  I think it has been fixed without re-enabling the test.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WKURLSchemeHandler-leaks.mm:
+        (TEST):
+
 2022-01-03  Sam Weinig  <weinig@apple.com>
 
         Add resolved/unresolved color type accessors to require users to be explicit about whether they will handle missing/none color components
