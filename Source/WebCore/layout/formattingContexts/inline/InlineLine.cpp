@@ -288,7 +288,8 @@ void Line::appendTextContent(const InlineTextItem& inlineTextItem, const RenderS
             return true;
         if (lastRun.hasCollapsedTrailingWhitespace())
             return true;
-        if (inlineTextItem.isWordSeparator() && style.fontCascade().wordSpacing())
+        if (style.fontCascade().wordSpacing()
+            && (inlineTextItem.isWordSeparator() || (lastRun.isWordSeparator() && lastRun.bidiLevel() != UBIDI_DEFAULT_LTR)))
             return true;
         if (inlineTextItem.isZeroWidthSpaceSeparator())
             return true;
