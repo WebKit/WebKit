@@ -101,8 +101,11 @@ static void fallbackFontsForRunWithIterator(HashSet<const Font*>& fallbackFonts,
                 character = u_toupper(character);
 
             auto glyphData = fontCascade.glyphDataForCharacter(character, isRTL);
-            if (glyphData.glyph && glyphData.font && glyphData.font != &primaryFont && glyphData.font->widthForGlyph(glyphData.glyph))
-                fallbackFonts.add(glyphData.font);
+            if (glyphData.glyph && glyphData.font && glyphData.font != &primaryFont) {
+                auto isNonSpacingMark = U_MASK(u_charType(character)) & U_GC_MN_MASK;
+                if (isNonSpacingMark || glyphData.font->widthForGlyph(glyphData.glyph))
+                    fallbackFonts.add(glyphData.font);
+            }
         };
         addFallbackFontForCharacterIfApplicable(currentCharacter);
         textIterator.advance(clusterLength);
