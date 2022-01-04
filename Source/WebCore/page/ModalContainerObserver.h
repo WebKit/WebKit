@@ -28,6 +28,7 @@
 #include "Timer.h"
 #include <wtf/FastMalloc.h>
 #include <wtf/Vector.h>
+#include <wtf/WeakHashMap.h>
 #include <wtf/WeakHashSet.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/AtomString.h>
@@ -39,6 +40,7 @@ class Document;
 class Element;
 class FrameView;
 class HTMLElement;
+class HTMLFrameOwnerElement;
 
 class ModalContainerObserver {
     WTF_MAKE_FAST_ALLOCATED;
@@ -59,11 +61,17 @@ private:
     void scheduleClickableElementCollection();
     void collectClickableElementsTimerFired();
     void revealModalContainer();
+    void setContainer(Element&, HTMLFrameOwnerElement* = nullptr);
+    void searchForModalContainerOnBehalfOfFrameOwnerIfNeeded(HTMLFrameOwnerElement&);
+
+    Element* container() const;
+    HTMLFrameOwnerElement* frameOwnerForControls() const;
 
     std::pair<Vector<WeakPtr<HTMLElement>>, Vector<String>> collectClickableElements();
 
     WeakHashSet<Element> m_elementsToIgnoreWhenSearching;
-    WeakPtr<Element> m_container;
+    std::pair<WeakPtr<Element>, WeakPtr<HTMLFrameOwnerElement>> m_containerAndFrameOwnerForControls;
+    WeakHashMap<HTMLFrameOwnerElement, WeakPtr<Element>> m_frameOwnersAndContainersToSearchAgain;
     AtomString m_overrideSearchTermForTesting;
     Timer m_collectClickableElementsTimer;
     bool m_collectingClickableElements { false };
@@ -77,7 +85,7 @@ inline void ModalContainerObserver::overrideSearchTermForTesting(const String& s
 
 inline bool ModalContainerObserver::shouldHide(const Element& element) const
 {
-    return m_container == &element && !m_collectingClickableElements;
+    return container() == &element && !m_collectingClickableElements;
 }
 
 } // namespace WebCore

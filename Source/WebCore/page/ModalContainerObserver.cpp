@@ -60,17 +60,12 @@ static constexpr size_t maxLengthForClickableElementText = 100;
 
 bool ModalContainerObserver::isNeededFor(const Document& document)
 {
-    RefPtr documentLoader = document.loader();
-    if (!documentLoader || documentLoader->modalContainerObservationPolicy() == ModalContainerObservationPolicy::Disabled)
+    RefPtr topDocumentLoader = document.topDocument().loader();
+    if (!topDocumentLoader || topDocumentLoader->modalContainerObservationPolicy() == ModalContainerObservationPolicy::Disabled)
         return false;
 
-    if (!document.url().protocolIsInHTTPFamily())
+    if (!document.topDocument().url().protocolIsInHTTPFamily())
         return false;
-
-    if (!document.isTopDocument()) {
-        // FIXME (234446): Need to properly support subframes.
-        return false;
-    }
 
     if (document.inDesignMode() || !is<HTMLDocument>(document))
         return false;
@@ -82,6 +77,11 @@ bool ModalContainerObserver::isNeededFor(const Document& document)
     auto* page = frame->page();
     if (!page || page->isEditable())
         return false;
+
+    if (RefPtr owner = document.ownerElement()) {
+        auto observer = owner->document().modalContainerObserverIfExists();
+        return observer && observer->m_frameOwnersAndContainersToSearchAgain.contains(*owner);
+    }
 
     return true;
 }
@@ -145,12 +145,43 @@ static bool isInsideNavigationElement(const Text& textNode)
     return false;
 }
 
+static bool containsMatchingText(RenderLayerModelObject& renderer, const AtomString& searchTerm)
+{
+    for (auto& textRenderer : descendantsOfType<RenderText>(renderer)) {
+        if (RefPtr textNode = textRenderer.textNode(); textNode && matchesSearchTerm(*textNode, searchTerm))
+            return !isInsideNavigationElement(*textNode);
+    }
+    return false;
+}
+
+void ModalContainerObserver::searchForModalContainerOnBehalfOfFrameOwnerIfNeeded(HTMLFrameOwnerElement& owner)
+{
+    auto containerToSearchAgain = m_frameOwnersAndContainersToSearchAgain.take(owner);
+    if (!containerToSearchAgain)
+        return;
+
+    if (!m_elementsToIgnoreWhenSearching.remove(*containerToSearchAgain))
+        return;
+
+    if (RefPtr view = owner.document().view())
+        updateModalContainerIfNeeded(*view);
+}
+
 void ModalContainerObserver::updateModalContainerIfNeeded(const FrameView& view)
 {
-    if (m_container)
+    if (container())
         return;
 
     if (m_hasAttemptedToFulfillPolicy)
+        return;
+
+    if (RefPtr owner = view.frame().ownerElement()) {
+        if (auto parentObserver = owner->document().modalContainerObserverIfExists())
+            parentObserver->searchForModalContainerOnBehalfOfFrameOwnerIfNeeded(*owner);
+        return;
+    }
+
+    if (!view.frame().isMainFrame())
         return;
 
     if (!view.hasViewportConstrainedObjects())
@@ -173,6 +204,9 @@ void ModalContainerObserver::updateModalContainerIfNeeded(const FrameView& view)
         if (renderer.isDocumentElementRenderer())
             continue;
 
+        if (renderer.style().visibility() == Visibility::Hidden)
+            continue;
+
         RefPtr element = renderer.element();
         if (!element || is<HTMLBodyElement>(*element) || element->isDocumentNode())
             continue;
@@ -180,18 +214,52 @@ void ModalContainerObserver::updateModalContainerIfNeeded(const FrameView& view)
         if (!m_elementsToIgnoreWhenSearching.add(*element).isNewEntry)
             continue;
 
-        for (auto& textRenderer : descendantsOfType<RenderText>(renderer)) {
-            if (RefPtr textNode = textRenderer.textNode(); textNode && matchesSearchTerm(*textNode, searchTerm)) {
-                if (isInsideNavigationElement(*textNode))
-                    break;
+        if (containsMatchingText(renderer, searchTerm)) {
+            setContainer(*element);
+            return;
+        }
 
-                m_container = element.get();
-                element->invalidateStyle();
-                scheduleClickableElementCollection();
+        for (auto& frameOwner : descendantsOfType<HTMLFrameOwnerElement>(*element)) {
+            RefPtr contentFrame = frameOwner.contentFrame();
+            if (!contentFrame)
+                continue;
+
+            auto renderView = contentFrame->contentRenderer();
+            if (!renderView)
+                continue;
+
+            if (containsMatchingText(*renderView, searchTerm)) {
+                setContainer(*element, &frameOwner);
                 return;
+            }
+
+            if (auto frameView = contentFrame->view(); frameView && !frameView->isVisuallyNonEmpty()) {
+                // If the subframe content has not become visually non-empty yet, search the subframe again later.
+                m_frameOwnersAndContainersToSearchAgain.add(frameOwner, *element);
             }
         }
     }
+}
+
+void ModalContainerObserver::setContainer(Element& newContainer, HTMLFrameOwnerElement* frameOwner)
+{
+    if (container())
+        container()->invalidateStyle();
+
+    m_containerAndFrameOwnerForControls = { { newContainer }, { frameOwner } };
+
+    newContainer.invalidateStyle();
+    scheduleClickableElementCollection();
+}
+
+Element* ModalContainerObserver::container() const
+{
+    return m_containerAndFrameOwnerForControls.first.get();
+}
+
+HTMLFrameOwnerElement* ModalContainerObserver::frameOwnerForControls() const
+{
+    return m_containerAndFrameOwnerForControls.second.get();
 }
 
 static bool isClickableControl(const HTMLElement& element)
@@ -327,15 +395,15 @@ private:
 
 void ModalContainerObserver::collectClickableElementsTimerFired()
 {
-    if (!m_container)
+    if (!container())
         return;
 
-    m_container->document().eventLoop().queueTask(TaskSource::InternalAsyncTask, [observer = this, decisionScope = ModalContainerPolicyDecisionScope { m_container->document() }]() mutable {
+    container()->document().eventLoop().queueTask(TaskSource::InternalAsyncTask, [observer = this, decisionScope = ModalContainerPolicyDecisionScope { container()->document() }]() mutable {
         RefPtr document = decisionScope.document();
         if (!document)
             return;
 
-        if (observer != document->modalContainerObserverIfExists() || !observer->m_container.get()) {
+        if (observer != document->modalContainerObserverIfExists() || !observer->container()) {
             ASSERT_NOT_REACHED();
             return;
         }
@@ -466,13 +534,14 @@ void ModalContainerObserver::collectClickableElementsTimerFired()
 
 void ModalContainerObserver::revealModalContainer()
 {
-    if (auto container = std::exchange(m_container, { }))
+    auto [container, frameOwner] = std::exchange(m_containerAndFrameOwnerForControls, { });
+    if (container)
         container->invalidateStyle();
 }
 
 std::pair<Vector<WeakPtr<HTMLElement>>, Vector<String>> ModalContainerObserver::collectClickableElements()
 {
-    Ref container = *m_container;
+    Ref container = *this->container();
     m_collectingClickableElements = true;
     auto exitCollectClickableElementsScope = makeScopeExit([&] {
         m_collectingClickableElements = false;
@@ -482,8 +551,23 @@ std::pair<Vector<WeakPtr<HTMLElement>>, Vector<String>> ModalContainerObserver::
     container->invalidateStyle();
     container->document().updateLayoutIgnorePendingStylesheets();
 
+    auto containerForControls = ([&]() -> RefPtr<Element> {
+        auto frameOwner = frameOwnerForControls();
+        if (!frameOwner)
+            return container.ptr();
+
+        auto contentDocument = frameOwner->contentDocument();
+        if (!contentDocument)
+            return { };
+
+        return contentDocument->documentElement();
+    })();
+
+    if (!containerForControls)
+        return { };
+
     Vector<Ref<HTMLElement>> clickableControls;
-    for (auto& child : descendantsOfType<HTMLElement>(container)) {
+    for (auto& child : descendantsOfType<HTMLElement>(*containerForControls)) {
         if (isClickableControl(child))
             clickableControls.append(child);
     }

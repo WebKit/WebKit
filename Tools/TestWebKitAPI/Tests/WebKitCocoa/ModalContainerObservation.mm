@@ -288,4 +288,14 @@ TEST(ModalContainerObservation, ShowModalContainerAfterFalsePositive)
     EXPECT_NULL([webView lastModalContainerInfo]);
 }
 
+TEST(ModalContainerObservation, ModalContainerInSubframe)
+{
+    auto webView = createModalContainerWebView();
+    [webView setDecision:_WKModalContainerDecisionHideAndIgnore];
+    [webView loadBundlePage:@"modal-container-custom"];
+    [webView evaluate:@"show(`<p>subframe test</p><iframe srcdoc='<h2>hello world</h2><button>YES</button>'></iframe>`)" andDecidePolicy:_WKModalContainerDecisionHideAndIgnore];
+    EXPECT_FALSE([[webView contentsAsString] containsString:@"subframe test"]);
+    EXPECT_EQ([webView lastModalContainerInfo].availableTypes, _WKModalContainerControlTypePositive);
+}
+
 } // namespace TestWebKitAPI

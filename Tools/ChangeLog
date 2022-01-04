@@ -1,3 +1,16 @@
+2022-01-04  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        ModalContainerObserver should search for text in subframes
+        https://bugs.webkit.org/show_bug.cgi?id=234446
+        rdar://86897770
+
+        Reviewed by Tim Horton.
+
+        Add an API test to exercise the change. See WebCore/ChangLog for more details.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ModalContainerObservation.mm:
+        (TestWebKitAPI::TEST):
+
 2022-01-04  Jonathan Bedard  <jbedard@apple.com>
 
         [git-webkit] Open closed pull-request when running pr (Follow-up fix)
