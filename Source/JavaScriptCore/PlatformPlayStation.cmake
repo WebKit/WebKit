@@ -15,7 +15,7 @@ if (${CMAKE_GENERATOR} MATCHES "Visual Studio")
         disassembler/zydis/Zydis/ZycoreList.c
         disassembler/zydis/Zydis/ZycoreString.c
         disassembler/zydis/Zydis/ZycoreVector.c
-        disassembler/zydis/Zydis/ZycoreZycore.c
+        disassembler/zydis/Zydis/Zycore.c
         disassembler/zydis/Zydis/Zydis.c
         disassembler/zydis/Zydis/ZydisDecoder.c
         disassembler/zydis/Zydis/ZydisDecoderData.c
