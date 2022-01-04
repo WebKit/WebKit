@@ -241,7 +241,12 @@ TEST(WKInspectorExtensionDelegate, InspectedPageNavigatedCallbacks)
     TestWebKitAPI::Util::run(&pendingCallbackWasCalled);
 }
 
+// FIXME: Re-enable this test for debug once webkit.org/b/231847 is fixed.
+#if !defined(NDEBUG)
+TEST(WKInspectorExtensionDelegate, DISABLED_ExtensionTabNavigatedCallbacks)
+#else
 TEST(WKInspectorExtensionDelegate, ExtensionTabNavigatedCallbacks)
+#endif
 {
     resetGlobalState();
 
