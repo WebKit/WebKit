@@ -1343,7 +1343,7 @@ unsigned AccessibilityObjectAtspi::role() const
 {
     RELEASE_ASSERT(!isMainThread());
     if (!m_axObject)
-        return Atspi::Role::Unknown;
+        return Atspi::Role::InvalidRole;
 
     if (auto effective = effectiveRole())
         return *effective;
