@@ -1,3 +1,15 @@
+2022-01-03  Per Arne Vollan  <pvollan@apple.com>
+
+        [macOS] Initialize sandbox before initializing WebKit process
+        https://bugs.webkit.org/show_bug.cgi?id=234827
+
+        Reviewed by Brent Fulgham.
+
+        The sandbox should be initialized as early as possible in WebKit processes.
+
+        * Shared/AuxiliaryProcess.cpp:
+        (WebKit::AuxiliaryProcess::initialize):
+
 2022-01-03  Stephan Szabo  <stephan.szabo@sony.com>
 
         [PlayStation] Build fix after r287552

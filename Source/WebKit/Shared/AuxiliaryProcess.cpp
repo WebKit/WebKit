@@ -78,10 +78,10 @@ void AuxiliaryProcess::initialize(const AuxiliaryProcessInitializationParameters
     m_priorityBoostMessage = parameters.priorityBoostMessage;
 #endif
 
-    initializeProcess(parameters);
-
     SandboxInitializationParameters sandboxParameters;
     initializeSandbox(parameters, sandboxParameters);
+
+    initializeProcess(parameters);
 
 #if !LOG_DISABLED || !RELEASE_LOG_DISABLED
     WTF::logChannels().initializeLogChannelsIfNecessary();
