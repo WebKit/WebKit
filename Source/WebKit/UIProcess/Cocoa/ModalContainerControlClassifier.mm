@@ -27,6 +27,8 @@
 #import "ModalContainerControlClassifier.h"
 
 #import <WebCore/ModalContainerTypes.h>
+#import <unicode/uspoof.h>
+
 #import <pal/cocoa/CoreMLSoftLink.h>
 #import <pal/cocoa/NaturalLanguageSoftLink.h>
 
@@ -74,6 +76,36 @@ static NSString *const classifierOutputFeatureKey = @"label";
 
 @end
 
+namespace WebKit {
+
+class SpoofChecker {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    ~SpoofChecker()
+    {
+        if (m_checker)
+            uspoof_close(m_checker);
+    }
+
+    bool areConfusable(NSString *potentialSpoofString, const char* stringToSpoof)
+    {
+        return checker() && uspoof_areConfusableUTF8(checker(), potentialSpoofString.UTF8String, -1, stringToSpoof, -1, &m_status);
+    }
+
+private:
+    USpoofChecker* checker()
+    {
+        if (!m_checker && m_status == U_ZERO_ERROR)
+            m_checker = uspoof_open(&m_status);
+        return m_checker;
+    }
+
+    UErrorCode m_status { U_ZERO_ERROR };
+    USpoofChecker* m_checker { nullptr };
+};
+
+} // namespace WebKit
+
 @implementation WKModalContainerClassifierInput {
     RetainPtr<NSString> _canonicalInput;
 }
@@ -95,10 +127,11 @@ static NSString *const classifierOutputFeatureKey = @"label";
             return;
 
         if (attributes & (NLTokenizerAttributeSymbolic | NLTokenizerAttributeEmoji)) {
-            // We should consider using a memory-compact hash map if we need to add a large number of entries here in the future.
-            // For now, we only make an exception for the following symbols, so simply checking each string is sufficient.
-            if ([lowercaseToken isEqualToString:@"×"] || [lowercaseToken isEqualToString:@"✕"] || [lowercaseToken isEqualToString:@"✖"])
+            WebKit::SpoofChecker checker;
+            if ([lowercaseToken isEqualToString:@"✕"] || [lowercaseToken isEqualToString:@"✖"] || checker.areConfusable(lowercaseToken, "x") || checker.areConfusable(lowercaseToken, "X")) {
+                // ICU does not consider two unicode symbols to be confusable with the letter x, but for the purposes of the classifier we need to treat them as if they were.
                 [tokens addObject:@"x"];
+            }
             return;
         }
 

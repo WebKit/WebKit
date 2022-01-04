@@ -1,5 +1,18 @@
 2022-01-04  Wenson Hsieh  <wenson_hsieh@apple.com>
 
+        Use ICU instead of relying on hard-coded string equality checks in ModalContainerControlClassifier
+        https://bugs.webkit.org/show_bug.cgi?id=234677
+
+        Reviewed by Tim Horton.
+
+        Augment the existing API test so that it additionally tests a symbol ("small roman numeral ten") that would not
+        have been covered as one of the three hard-coded symbol strings in the earlier fix.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ModalContainerObservation.mm:
+        (TestWebKitAPI::TEST):
+
+2022-01-04  Wenson Hsieh  <wenson_hsieh@apple.com>
+
         ModalContainerObserver should search for text in subframes
         https://bugs.webkit.org/show_bug.cgi?id=234446
         rdar://86897770

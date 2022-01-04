@@ -1,3 +1,28 @@
+2022-01-04  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Use ICU instead of relying on hard-coded string equality checks in ModalContainerControlClassifier
+        https://bugs.webkit.org/show_bug.cgi?id=234677
+
+        Reviewed by Tim Horton.
+
+        Followup to r287420 - use ICU to check for more strings that resemble either the lowercase or uppercase letter
+        "x", rather than relying on a hard-coded set of symbols. Note that ICU's "confusables" list currently does not
+        consider both ✖ and ✕ to be lookalikes to the letter "x"; since these symbols are actually known to appear in
+        modal containers on several websites, we'll still need to check for these two symbols separately.
+
+        Test: ModalContainerObservation.ClassifyMultiplySymbol
+
+        * UIProcess/Cocoa/ModalContainerControlClassifier.mm:
+        (WebKit::SpoofChecker::~SpoofChecker):
+
+        Add a helper class that wraps calls to `uspoof_areConfusableUTF8`, and also ensures balanced calls to
+        `uspoof_open` and `uspoof_close` when creating a new ICU spoof checker. Use this in the
+        WKModalContainerClassifierInput class below to check for more types of strings that look like the letter "x".
+
+        (WebKit::SpoofChecker::areConfusable):
+        (WebKit::SpoofChecker::checker):
+        (-[WKModalContainerClassifierInput initWithTokenizer:rawInput:]):
+
 2022-01-04  Per Arne Vollan  <pvollan@apple.com>
 
         [iOS][WP] Add telemetry for syscall violations

@@ -234,11 +234,16 @@ TEST(ModalContainerObservation, ShowModalContainer)
 TEST(ModalContainerObservation, ClassifyMultiplySymbol)
 {
     auto webView = createModalContainerWebView();
-    [webView loadBundlePage:@"modal-container-custom"];
-    [webView evaluate:@"show(`<p>Hello world</p><button>×</button>`)" andDecidePolicy:_WKModalContainerDecisionHideAndIgnore];
+    auto runTest = [&] (NSString *symbol) {
+        [webView loadBundlePage:@"modal-container-custom"];
+        NSString *scriptToEvaluate = [NSString stringWithFormat:@"show(`<p>Hello world</p><button>%@</button>`)", symbol];
+        [webView evaluate:scriptToEvaluate andDecidePolicy:_WKModalContainerDecisionHideAndIgnore];
 
-    EXPECT_FALSE([[webView contentsAsString] containsString:@"Hello world"]);
-    EXPECT_EQ([webView lastModalContainerInfo].availableTypes, _WKModalContainerControlTypeNeutral);
+        EXPECT_FALSE([[webView contentsAsString] containsString:@"Hello world"]);
+        EXPECT_EQ([webView lastModalContainerInfo].availableTypes, _WKModalContainerControlTypeNeutral);
+    };
+    runTest(@"✕");
+    runTest(@"⨯");
 }
 
 TEST(ModalContainerObservation, DetectSearchTermInBoldTag)
