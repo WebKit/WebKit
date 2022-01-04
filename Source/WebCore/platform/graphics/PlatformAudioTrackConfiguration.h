@@ -25,58 +25,47 @@
 
 #pragma once
 
-#include "PlatformVideoColorPrimaries.h"
-#include "PlatformVideoMatrixCoefficients.h"
-#include "PlatformVideoTransferCharacteristics.h"
-#include <optional>
-#include <wtf/FastMalloc.h>
+#if ENABLE(VIDEO)
+
+#include "PlatformTrackConfiguration.h"
 
 namespace WebCore {
 
-struct PlatformVideoColorSpace {
-    WTF_MAKE_STRUCT_FAST_ALLOCATED;
-    std::optional<PlatformVideoColorPrimaries> primaries;
-    std::optional<PlatformVideoTransferCharacteristics> transfer;
-    std::optional<PlatformVideoMatrixCoefficients> matrix;
-    std::optional<bool> fullRange;
+struct PlatformAudioTrackConfiguration : PlatformTrackConfiguration {
+    uint32_t sampleRate { 0 };
+    uint32_t numberOfChannels { 0 };
+    uint64_t bitrate { 0 };
+
     template <class Encoder> void encode(Encoder&) const;
-    template <class Decoder> static WARN_UNUSED_RETURN bool decode(Decoder&, PlatformVideoColorSpace&);
+    template <class Decoder> static WARN_UNUSED_RETURN bool decode(Decoder&, PlatformAudioTrackConfiguration&);
 };
 
-inline bool operator==(const PlatformVideoColorSpace& a, const PlatformVideoColorSpace& b)
+inline bool operator==(const PlatformAudioTrackConfiguration& a, const PlatformAudioTrackConfiguration& b)
 {
-    return a.primaries == b.primaries
-        && a.transfer == b.transfer
-        && a.matrix == b.matrix
-        && a.fullRange == b.fullRange;
-}
-
-inline bool operator!=(const PlatformVideoColorSpace& a, const PlatformVideoColorSpace& b)
-{
-    return !(a == b);
+    return a.codec == b.codec
+        && a.sampleRate == b.sampleRate
+        && a.numberOfChannels == b.numberOfChannels
+        && a.bitrate == b.bitrate;
 }
 
 template <class Encoder>
-void PlatformVideoColorSpace::encode(Encoder& encoder) const
+void PlatformAudioTrackConfiguration::encode(Encoder& encoder) const
 {
-    encoder << primaries;
-    encoder << transfer;
-    encoder << matrix;
-    encoder << fullRange;
+    encoder << codec;
+    encoder << sampleRate;
+    encoder << numberOfChannels;
+    encoder << bitrate;
 }
 
 template <class Decoder>
-bool PlatformVideoColorSpace::decode(Decoder& decoder, PlatformVideoColorSpace& colorSpace)
+bool PlatformAudioTrackConfiguration::decode(Decoder& decoder, PlatformAudioTrackConfiguration& configuration)
 {
-    if (!decoder.decode(colorSpace.primaries))
-        return false;
-    if (!decoder.decode(colorSpace.transfer))
-        return false;
-    if (!decoder.decode(colorSpace.matrix))
-        return false;
-    if (!decoder.decode(colorSpace.fullRange))
-        return false;
-    return true;
+    return decoder.decode(configuration.codec)
+        && decoder.decode(configuration.sampleRate)
+        && decoder.decode(configuration.numberOfChannels)
+        && decoder.decode(configuration.bitrate);
 }
 
 }
+
+#endif

@@ -30,6 +30,8 @@
 
 #import "FormatDescriptionUtilities.h"
 #import "MediaSelectionGroupAVFObjC.h"
+#import "PlatformAudioTrackConfiguration.h"
+#import "PlatformVideoTrackConfiguration.h"
 #import "SharedBuffer.h"
 #import <AVFoundation/AVAssetTrack.h>
 #import <AVFoundation/AVMediaSelectionGroup.h>
@@ -37,6 +39,7 @@
 #import <AVFoundation/AVPlayerItem.h>
 #import <AVFoundation/AVPlayerItemTrack.h>
 #import <objc/runtime.h>
+#import <wtf/RunLoop.h>
 
 #import <pal/cf/CoreMediaSoftLink.h>
 #import <pal/cocoa/AVFoundationSoftLink.h>
@@ -48,24 +51,49 @@
 
 namespace WebCore {
 
+static NSArray* assetTrackConfigurationKeyNames()
+{
+    static NSArray* keys = [[NSArray alloc] initWithObjects:@"formatDescriptions", @"estimatedDataRate", @"nominalFrameRate", nil];
+    return keys;
+}
+
 AVTrackPrivateAVFObjCImpl::AVTrackPrivateAVFObjCImpl(AVPlayerItemTrack* track)
     : m_playerItemTrack(track)
     , m_assetTrack([track assetTrack])
 {
+    initializeAssetTrack();
 }
 
 AVTrackPrivateAVFObjCImpl::AVTrackPrivateAVFObjCImpl(AVAssetTrack* track)
     : m_assetTrack(track)
 {
+    initializeAssetTrack();
 }
 
 AVTrackPrivateAVFObjCImpl::AVTrackPrivateAVFObjCImpl(MediaSelectionOptionAVFObjC& option)
     : m_mediaSelectionOption(&option)
+    , m_assetTrack(option.assetTrack())
 {
+    initializeAssetTrack();
 }
 
 AVTrackPrivateAVFObjCImpl::~AVTrackPrivateAVFObjCImpl()
 {
+}
+
+void AVTrackPrivateAVFObjCImpl::initializeAssetTrack()
+{
+    if (!m_assetTrack)
+        return;
+
+    [m_assetTrack loadValuesAsynchronouslyForKeys:assetTrackConfigurationKeyNames() completionHandler:[weakThis = WeakPtr(this)] () mutable {
+        callOnMainRunLoop([weakThis = WTFMove(weakThis)] {
+            if (weakThis && weakThis->m_audioTrackConfigurationObserver)
+                (*weakThis->m_audioTrackConfigurationObserver)();
+            if (weakThis && weakThis->m_videoTrackConfigurationObserver)
+                (*weakThis->m_videoTrackConfigurationObserver)();
+        });
+    }];
 }
     
 bool AVTrackPrivateAVFObjCImpl::enabled() const
@@ -232,6 +260,28 @@ String AVTrackPrivateAVFObjCImpl::languageForAVMediaSelectionOption(AVMediaSelec
     return language;
 }
 
+PlatformVideoTrackConfiguration AVTrackPrivateAVFObjCImpl::videoTrackConfiguration() const
+{
+    return {
+        { codec() },
+        width(),
+        height(),
+        colorSpace(),
+        framerate(),
+        bitrate(),
+    };
+}
+
+PlatformAudioTrackConfiguration AVTrackPrivateAVFObjCImpl::audioTrackConfiguration() const
+{
+    return {
+        { codec() },
+        sampleRate(),
+        numberOfChannels(),
+        bitrate(),
+    };
+}
+
 int AVTrackPrivateAVFObjCImpl::trackID() const
 {
     if (m_assetTrack)
@@ -256,7 +306,7 @@ static AVAssetTrack* assetTrackFor(const AVTrackPrivateAVFObjCImpl& impl)
 static CMFormatDescriptionRef formatDescriptionFor(const AVTrackPrivateAVFObjCImpl& impl)
 {
     auto assetTrack = assetTrackFor(impl);
-    if (!assetTrack || !assetTrack.formatDescriptions.count)
+    if (!assetTrack || [assetTrack statusOfValueForKey:@"formatDescriptions" error:nil] != AVKeyValueStatusLoaded || !assetTrack.formatDescriptions.count)
         return nullptr;
     return static_cast<CMFormatDescriptionRef>(assetTrack.formatDescriptions[0]);
 }
@@ -291,10 +341,12 @@ PlatformVideoColorSpace AVTrackPrivateAVFObjCImpl::colorSpace() const
 
 double AVTrackPrivateAVFObjCImpl::framerate() const
 {
-    if (auto assetTrack = assetTrackFor(*this))
-        return assetTrack.nominalFrameRate;
-    ASSERT_NOT_REACHED();
-    return 0;
+    auto assetTrack = assetTrackFor(*this);
+    if (!assetTrack)
+        return 0;
+    if ([assetTrack statusOfValueForKey:@"nominalFrameRate" error:nil] != AVKeyValueStatusLoaded)
+        return 0;
+    return assetTrack.nominalFrameRate;
 }
 
 uint32_t AVTrackPrivateAVFObjCImpl::sampleRate() const
@@ -327,6 +379,8 @@ uint64_t AVTrackPrivateAVFObjCImpl::bitrate() const
 {
     auto assetTrack = assetTrackFor(*this);
     if (!assetTrack)
+        return 0;
+    if ([assetTrack statusOfValueForKey:@"estimatedDataRate" error:nil] != AVKeyValueStatusLoaded)
         return 0;
     if (!std::isfinite(assetTrack.estimatedDataRate))
         return 0;

@@ -26,6 +26,7 @@
 #pragma once
 
 #include "AudioTrackPrivateClient.h"
+#include "PlatformAudioTrackConfiguration.h"
 #include "TrackPrivateBase.h"
 #include <wtf/Function.h>
 
@@ -64,18 +65,16 @@ public:
 
     using EnabledChangedCallback = Function<void(AudioTrackPrivate&, bool enabled)>;
     void setEnabledChangedCallback(EnabledChangedCallback&& callback) { m_enabledChangedCallback = WTFMove(callback); }
-    
-    String codec() const { return m_codec; }
-    void setCodec(String&& codec) { m_codec = WTFMove(codec); }
-    
-    uint32_t sampleRate() const { return m_sampleRate; }
-    void setSampleRate(uint32_t sampleRate) { m_sampleRate = sampleRate; }
-    
-    uint32_t numberOfChannels() const { return m_numberOfChannels; }
-    void setNumberOfChannels(uint32_t numberOfChannels) { m_numberOfChannels = numberOfChannels; }
-    
-    uint64_t bitrate() const { return m_bitrate; }
-    void setBitrate(uint64_t bitrate) { m_bitrate = bitrate; }
+
+    const PlatformAudioTrackConfiguration& configuration() const { return m_configuration; }
+    void setConfiguration(PlatformAudioTrackConfiguration&& configuration)
+    {
+        if (configuration == m_configuration)
+            return;
+        m_configuration = WTFMove(configuration);
+        if (m_client)
+            m_client->configurationChanged(m_configuration);
+    }
 
 #if !RELEASE_LOG_DISABLED
     const char* logClassName() const override { return "AudioTrackPrivate"; }
@@ -87,10 +86,7 @@ protected:
 private:
     WeakPtr<AudioTrackPrivateClient> m_client;
     bool m_enabled { false };
-    String m_codec;
-    uint32_t m_sampleRate { 0 };
-    uint32_t m_numberOfChannels { 0 };
-    uint64_t m_bitrate { 0 };
+    PlatformAudioTrackConfiguration m_configuration;
     EnabledChangedCallback m_enabledChangedCallback;
 };
 

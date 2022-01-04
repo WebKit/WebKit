@@ -33,7 +33,7 @@
 #include "GPUConnectionToWebProcess.h"
 #include "MediaPlayerPrivateRemoteMessages.h"
 #include "RemoteMediaPlayerProxy.h"
-#include "TrackPrivateRemoteConfiguration.h"
+#include "VideoTrackPrivateRemoteConfiguration.h"
 
 namespace WebKit {
 
@@ -54,23 +54,20 @@ RemoteVideoTrackProxy::~RemoteVideoTrackProxy()
     m_trackPrivate->clearClient();
 }
 
-TrackPrivateRemoteConfiguration RemoteVideoTrackProxy::configuration()
+VideoTrackPrivateRemoteConfiguration RemoteVideoTrackProxy::configuration()
 {
-    TrackPrivateRemoteConfiguration configuration { };
-    configuration.trackId = m_trackPrivate->id();
-    configuration.label = m_trackPrivate->label();
-    configuration.language = m_trackPrivate->language();
-    configuration.trackIndex = m_trackPrivate->trackIndex();
-    configuration.startTimeVariance = m_trackPrivate->startTimeVariance();
-    configuration.selected = m_trackPrivate->selected();
-    configuration.videoKind = m_trackPrivate->kind();
-    configuration.codec = m_trackPrivate->codec();
-    configuration.width = m_trackPrivate->width();
-    configuration.height = m_trackPrivate->height();
-    configuration.colorSpace = m_trackPrivate->colorSpace();
-    configuration.framerate = m_trackPrivate->framerate();
-    configuration.bitrate = m_trackPrivate->bitrate();
-    return configuration;
+    return {
+        {
+            m_trackPrivate->id(),
+            m_trackPrivate->label(),
+            m_trackPrivate->language(),
+            m_trackPrivate->startTimeVariance(),
+            m_trackPrivate->trackIndex(),
+        },
+        m_trackPrivate->selected(),
+        m_trackPrivate->kind(),
+        m_trackPrivate->configuration(),
+    };
 }
 
 void RemoteVideoTrackProxy::updateConfiguration()

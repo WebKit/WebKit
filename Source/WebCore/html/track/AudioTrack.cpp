@@ -171,6 +171,11 @@ void AudioTrack::enabledChanged(bool enabled)
     });
 }
 
+void AudioTrack::configurationChanged(const PlatformAudioTrackConfiguration& configuration)
+{
+    m_configuration->setState(configuration);
+}
+
 void AudioTrack::idChanged(const AtomString& id)
 {
     setId(id);
@@ -231,10 +236,7 @@ void AudioTrack::updateKindFromPrivate()
 
 void AudioTrack::updateConfigurationFromPrivate()
 {
-    m_configuration->setCodec(m_private->codec());
-    m_configuration->setSampleRate(m_private->sampleRate());
-    m_configuration->setNumberOfChannels(m_private->numberOfChannels());
-    m_configuration->setBitrate(m_private->bitrate());
+    m_configuration->setState(m_private->configuration());
 }
 
 #if !RELEASE_LOG_DISABLED

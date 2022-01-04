@@ -79,6 +79,7 @@ private:
 
     // AudioTrackPrivateClient
     void enabledChanged(bool) final;
+    void configurationChanged(const PlatformAudioTrackConfiguration&) final;
 
     // TrackPrivateBaseClient
     void idChanged(const AtomString&) final;

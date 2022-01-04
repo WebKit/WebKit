@@ -25,21 +25,42 @@
 
 #pragma once
 
-#include "TrackPrivateBaseClient.h"
+#if ENABLE(GPU_PROCESS)
 
-#if ENABLE(VIDEO)
+#include "TrackPrivateRemoteConfiguration.h"
+#include <WebCore/VideoTrackPrivate.h>
 
-namespace WebCore {
+namespace WebKit {
 
-class AudioTrackPrivate;
-struct PlatformAudioTrackConfiguration;
+struct VideoTrackPrivateRemoteConfiguration : TrackPrivateRemoteConfiguration {
+    bool selected;
+    WebCore::VideoTrackPrivate::Kind kind { WebCore::VideoTrackPrivate::Kind::None };
+    WebCore::PlatformVideoTrackConfiguration trackConfiguration;
 
-class AudioTrackPrivateClient : public TrackPrivateBaseClient {
-public:
-    virtual void enabledChanged(bool) = 0;
-    virtual void configurationChanged(const PlatformAudioTrackConfiguration&) = 0;
+    template<class Encoder>
+    void encode(Encoder& encoder) const
+    {
+        TrackPrivateRemoteConfiguration::encode(encoder);
+        encoder << selected;
+        encoder << kind;
+        encoder << trackConfiguration;
+    }
+
+    template <class Decoder>
+    static bool WARN_UNUSED_RETURN decode(Decoder& decoder, VideoTrackPrivateRemoteConfiguration& configuration)
+    {
+        if (!TrackPrivateRemoteConfiguration::decode(decoder, configuration))
+            return false;
+        if (!decoder.decode(configuration.selected))
+            return false;
+        if (!decoder.decode(configuration.kind))
+            return false;
+        if (!decoder.decode(configuration.trackConfiguration))
+            return false;
+        return true;
+    }
 };
 
-}
+} // namespace WebKit
 
 #endif

@@ -25,19 +25,14 @@
 
 #pragma once
 
-#include "TrackPrivateBaseClient.h"
-
 #if ENABLE(VIDEO)
+
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-class AudioTrackPrivate;
-struct PlatformAudioTrackConfiguration;
-
-class AudioTrackPrivateClient : public TrackPrivateBaseClient {
-public:
-    virtual void enabledChanged(bool) = 0;
-    virtual void configurationChanged(const PlatformAudioTrackConfiguration&) = 0;
+struct PlatformTrackConfiguration {
+    String codec;
 };
 
 }

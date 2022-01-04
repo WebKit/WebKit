@@ -33,16 +33,28 @@
 namespace WebCore {
 
 AudioTrackPrivateAVFObjC::AudioTrackPrivateAVFObjC(AVPlayerItemTrack* track)
-    : m_impl(makeUnique<AVTrackPrivateAVFObjCImpl>(track))
+    : AudioTrackPrivateAVFObjC(makeUnique<AVTrackPrivateAVFObjCImpl>(track))
 {
-    resetPropertiesFromTrack();
+}
+
+AudioTrackPrivateAVFObjC::AudioTrackPrivateAVFObjC(AVAssetTrack* track)
+    : AudioTrackPrivateAVFObjC(makeUnique<AVTrackPrivateAVFObjCImpl>(track))
+{
 }
 
 AudioTrackPrivateAVFObjC::AudioTrackPrivateAVFObjC(MediaSelectionOptionAVFObjC& option)
-    : m_impl(makeUnique<AVTrackPrivateAVFObjCImpl>(option))
+    : AudioTrackPrivateAVFObjC(makeUnique<AVTrackPrivateAVFObjCImpl>(option))
 {
+}
+
+AudioTrackPrivateAVFObjC::AudioTrackPrivateAVFObjC(std::unique_ptr<AVTrackPrivateAVFObjCImpl>&& impl)
+    : m_impl(WTFMove(impl))
+    , m_audioTrackConfigurationObserver([this] { audioTrackConfigurationChanged(); })
+{
+    m_impl->setAudioTrackConfigurationObserver(m_audioTrackConfigurationObserver);
     resetPropertiesFromTrack();
 }
+
 
 void AudioTrackPrivateAVFObjC::resetPropertiesFromTrack()
 {
@@ -55,11 +67,12 @@ void AudioTrackPrivateAVFObjC::resetPropertiesFromTrack()
     setId(m_impl->id());
     setLabel(m_impl->label());
     setLanguage(m_impl->language());
-    setCodec(m_impl->codec());
-    setSampleRate(m_impl->sampleRate());
-    setNumberOfChannels(m_impl->numberOfChannels());
-    setBitrate(m_impl->bitrate());
+    setConfiguration(m_impl->audioTrackConfiguration());
+}
 
+void AudioTrackPrivateAVFObjC::audioTrackConfigurationChanged()
+{
+    setConfiguration(m_impl->audioTrackConfiguration());
 }
 
 void AudioTrackPrivateAVFObjC::setPlayerItemTrack(AVPlayerItemTrack *track)
@@ -71,12 +84,6 @@ void AudioTrackPrivateAVFObjC::setPlayerItemTrack(AVPlayerItemTrack *track)
 AVPlayerItemTrack* AudioTrackPrivateAVFObjC::playerItemTrack()
 {
     return m_impl->playerItemTrack();
-}
-
-AudioTrackPrivateAVFObjC::AudioTrackPrivateAVFObjC(AVAssetTrack* track)
-    : m_impl(makeUnique<AVTrackPrivateAVFObjCImpl>(track))
-{
-    resetPropertiesFromTrack();
 }
 
 void AudioTrackPrivateAVFObjC::setAssetTrack(AVAssetTrack *track)

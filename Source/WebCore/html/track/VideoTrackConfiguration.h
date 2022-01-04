@@ -27,25 +27,25 @@
 
 #if ENABLE(VIDEO)
 
+#include "PlatformVideoTrackConfiguration.h"
 #include "VideoColorSpace.h"
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-struct VideoTrackConfigurationInit {
-    String codec;
-    uint32_t width { 0 };
-    uint32_t height { 0 };
-    RefPtr<VideoColorSpace> colorSpace;
-    double framerate { 0 };
-    uint64_t bitrate { 0 };
-};
+using VideoTrackConfigurationInit = PlatformVideoTrackConfiguration;
 
 class VideoTrackConfiguration : public RefCounted<VideoTrackConfiguration> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static Ref<VideoTrackConfiguration> create(VideoTrackConfigurationInit&& init) { return adoptRef(*new VideoTrackConfiguration(WTFMove(init))); }
     static Ref<VideoTrackConfiguration> create() { return adoptRef(*new VideoTrackConfiguration()); }
+
+    void setState(const VideoTrackConfigurationInit& state)
+    {
+        m_state = state;
+        m_colorSpace->setState(m_state.colorSpace);
+    }
 
     String codec() const { return m_state.codec; }
     void setCodec(String codec) { m_state.codec = codec; }
@@ -56,8 +56,8 @@ public:
     uint32_t height() const { return m_state.height; }
     void setHeight(uint32_t height) { m_state.height = height; }
 
-    RefPtr<VideoColorSpace> colorSpace() const { return m_state.colorSpace; }
-    void setColorSpace(RefPtr<VideoColorSpace>&& colorSpace) { m_state.colorSpace = WTFMove(colorSpace); }
+    Ref<VideoColorSpace> colorSpace() const { return m_colorSpace; }
+    void setColorSpace(Ref<VideoColorSpace>&& colorSpace) { m_colorSpace = WTFMove(colorSpace); }
 
     double framerate() const { return m_state.framerate; }
     void setFramerate(double framerate) { m_state.framerate = framerate; }
@@ -68,11 +68,16 @@ public:
 private:
     VideoTrackConfiguration(VideoTrackConfigurationInit&& init)
         : m_state(init)
+        , m_colorSpace(VideoColorSpace::create(init.colorSpace))
     {
     }
-    VideoTrackConfiguration() = default;
+    VideoTrackConfiguration()
+        : m_colorSpace(VideoColorSpace::create())
+    {
+    }
 
     VideoTrackConfigurationInit m_state;
+    Ref<VideoColorSpace> m_colorSpace;
 };
 
 }

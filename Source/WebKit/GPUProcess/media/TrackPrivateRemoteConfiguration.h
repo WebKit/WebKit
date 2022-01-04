@@ -27,8 +27,6 @@
 
 #if ENABLE(GPU_PROCESS)
 
-#include <WebCore/AudioTrackPrivate.h>
-#include <WebCore/VideoTrackPrivate.h>
 #include <wtf/MediaTime.h>
 
 namespace WebKit {
@@ -40,21 +38,6 @@ struct TrackPrivateRemoteConfiguration {
     MediaTime startTimeVariance { MediaTime::zeroTime() };
     int trackIndex;
 
-    bool enabled;
-    WebCore::AudioTrackPrivate::Kind audioKind { WebCore::AudioTrackPrivate::Kind::None };
-
-    bool selected;
-    WebCore::VideoTrackPrivate::Kind videoKind { WebCore::VideoTrackPrivate::Kind::None };
-
-    String codec;
-    uint32_t width;
-    uint32_t height;
-    WebCore::PlatformVideoColorSpace colorSpace;
-    double framerate;
-    uint64_t bitrate;
-    uint32_t sampleRate;
-    uint32_t numberOfChannels;
-
     template<class Encoder>
     void encode(Encoder& encoder) const
     {
@@ -63,127 +46,16 @@ struct TrackPrivateRemoteConfiguration {
         encoder << language;
         encoder << startTimeVariance;
         encoder << trackIndex;
-        encoder << enabled;
-        encoder << audioKind;
-        encoder << selected;
-        encoder << videoKind;
-        encoder << codec;
-        encoder << width;
-        encoder << height;
-        encoder << colorSpace;
-        encoder << framerate;
-        encoder << bitrate;
-        encoder << sampleRate;
-        encoder << numberOfChannels;
     }
 
     template <class Decoder>
-    static std::optional<TrackPrivateRemoteConfiguration> decode(Decoder& decoder)
+    static bool decode(Decoder& decoder, TrackPrivateRemoteConfiguration& configuration)
     {
-        std::optional<AtomString> trackId;
-        decoder >> trackId;
-        if (!trackId)
-            return std::nullopt;
-
-        std::optional<AtomString> label;
-        decoder >> label;
-        if (!label)
-            return std::nullopt;
-
-        std::optional<AtomString> language;
-        decoder >> language;
-        if (!language)
-            return std::nullopt;
-
-        std::optional<MediaTime> startTimeVariance;
-        decoder >> startTimeVariance;
-        if (!startTimeVariance)
-            return std::nullopt;
-
-        std::optional<int> trackIndex;
-        decoder >> trackIndex;
-        if (!trackIndex)
-            return std::nullopt;
-
-        std::optional<bool> enabled;
-        decoder >> enabled;
-        if (!enabled)
-            return std::nullopt;
-
-        std::optional<WebCore::AudioTrackPrivate::Kind> audioKind;
-        decoder >> audioKind;
-        if (!audioKind)
-            return std::nullopt;
-
-        std::optional<bool> selected;
-        decoder >> selected;
-        if (!selected)
-            return std::nullopt;
-
-        std::optional<WebCore::VideoTrackPrivate::Kind> videoKind;
-        decoder >> videoKind;
-        if (!videoKind)
-            return std::nullopt;
-
-        std::optional<String> codec;
-        decoder >> codec;
-        if (!codec)
-            return std::nullopt;
-
-        std::optional<uint32_t> width;
-        decoder >> width;
-        if (!width)
-            return std::nullopt;
-
-        std::optional<uint32_t> height;
-        decoder >> height;
-        if (!height)
-            return std::nullopt;
-
-        std::optional<WebCore::PlatformVideoColorSpace> colorSpace;
-        decoder >> colorSpace;
-        if (!colorSpace)
-            return std::nullopt;
-
-        std::optional<double> framerate;
-        decoder >> framerate;
-        if (!framerate)
-            return std::nullopt;
-
-        std::optional<uint64_t> bitrate;
-        decoder >> bitrate;
-        if (!bitrate)
-            return std::nullopt;
-        
-        std::optional<uint32_t> sampleRate;
-        decoder >> sampleRate;
-        if (!sampleRate)
-            return std::nullopt;
-
-        std::optional<uint32_t> numberOfChannels;
-        decoder >> numberOfChannels;
-        if (!numberOfChannels)
-            return std::nullopt;
-
-        return {{
-            WTFMove(*trackId),
-            WTFMove(*label),
-            WTFMove(*language),
-            WTFMove(*startTimeVariance),
-            *trackIndex,
-            *enabled,
-            *audioKind,
-            *selected,
-            *videoKind,
-            WTFMove(*codec),
-            *width,
-            *height,
-            WTFMove(*colorSpace),
-            *framerate,
-            *bitrate,
-            *sampleRate,
-            *numberOfChannels,
-        }};
+        return decoder.decode(configuration.trackId)
+            && decoder.decode(configuration.label)
+            && decoder.decode(configuration.language)
+            && decoder.decode(configuration.startTimeVariance)
+            && decoder.decode(configuration.trackIndex);
     }
 };
 

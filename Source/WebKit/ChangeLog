@@ -1,3 +1,46 @@
+2022-01-04  Jer Noble  <jer.noble@apple.com>
+
+        [Cocoa] Hang in AVTrackPrivateAVFObjCImpl::bitrate()
+        https://bugs.webkit.org/show_bug.cgi?id=234753
+
+        Reviewed by Eric Carlson.
+
+        Propagate changes to TrackConfigurations upwards from the GPU process -> WebContent process.
+
+        * GPUProcess/media/AudioTrackPrivateRemoteConfiguration.h:
+        (WebKit::AudioTrackPrivateRemoteConfiguration::encode const):
+        (WebKit::AudioTrackPrivateRemoteConfiguration::decode):
+        * GPUProcess/media/RemoteAudioTrackProxy.cpp:
+        (WebKit::RemoteAudioTrackProxy::configuration):
+        (WebKit::RemoteAudioTrackProxy::configurationChanged):
+        * GPUProcess/media/RemoteAudioTrackProxy.h:
+        * GPUProcess/media/RemoteVideoTrackProxy.cpp:
+        (WebKit::RemoteVideoTrackProxy::configuration):
+        * GPUProcess/media/RemoteVideoTrackProxy.h:
+        * GPUProcess/media/TrackPrivateRemoteConfiguration.h:
+        (WebKit::TrackPrivateRemoteConfiguration::encode const):
+        (WebKit::TrackPrivateRemoteConfiguration::decode):
+        * GPUProcess/media/VideoTrackPrivateRemoteConfiguration.h:
+        (WebKit::VideoTrackPrivateRemoteConfiguration::encode const):
+        (WebKit::VideoTrackPrivateRemoteConfiguration::decode):
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/GPU/media/AudioTrackPrivateRemote.cpp:
+        (WebKit::AudioTrackPrivateRemote::AudioTrackPrivateRemote):
+        (WebKit::AudioTrackPrivateRemote::updateConfiguration):
+        * WebProcess/GPU/media/AudioTrackPrivateRemote.h:
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.cpp:
+        (WebKit::MediaPlayerPrivateRemote::addRemoteAudioTrack):
+        (WebKit::MediaPlayerPrivateRemote::remoteAudioTrackConfigurationChanged):
+        (WebKit::MediaPlayerPrivateRemote::addRemoteVideoTrack):
+        (WebKit::MediaPlayerPrivateRemote::remoteVideoTrackConfigurationChanged):
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.h:
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.messages.in:
+        * WebProcess/GPU/media/VideoTrackPrivateRemote.cpp:
+        (WebKit::VideoTrackPrivateRemote::VideoTrackPrivateRemote):
+        (WebKit::VideoTrackPrivateRemote::updateConfiguration):
+        * WebProcess/GPU/media/VideoTrackPrivateRemote.h:
+        (WebKit::VideoTrackPrivateRemote::create):
+
 2022-01-03  Per Arne Vollan  <pvollan@apple.com>
 
         [macOS] Initialize sandbox before initializing WebKit process

@@ -1525,6 +1525,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/PixelBuffer.h
     platform/graphics/PixelBufferFormat.h
     platform/graphics/PixelFormat.h
+    platform/graphics/PlatformAudioTrackConfiguration.h
     platform/graphics/PlatformColorSpace.h
     platform/graphics/PlatformDisplay.h
     platform/graphics/PlatformImage.h
@@ -1534,9 +1535,11 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/PlatformMediaResourceLoader.h
     platform/graphics/PlatformTextTrack.h
     platform/graphics/PlatformTimeRanges.h
+    platform/graphics/PlatformTrackConfiguration.h
     platform/graphics/PlatformVideoColorPrimaries.h
     platform/graphics/PlatformVideoColorSpace.h
     platform/graphics/PlatformVideoMatrixCoefficients.h
+    platform/graphics/PlatformVideoTrackConfiguration.h
     platform/graphics/PlatformVideoTransferCharacteristics.h
     platform/graphics/Region.h
     platform/graphics/RemoteGraphicsContextGLProxyBase.h
