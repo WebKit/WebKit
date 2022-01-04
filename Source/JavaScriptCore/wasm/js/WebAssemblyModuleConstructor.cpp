@@ -37,6 +37,7 @@
 #include "JSWebAssemblyHelpers.h"
 #include "JSWebAssemblyModule.h"
 #include "ObjectConstructor.h"
+#include "WasmModule.h"
 #include "WasmModuleInformation.h"
 #include "WebAssemblyModulePrototype.h"
 #include <wtf/StdLibExtras.h>

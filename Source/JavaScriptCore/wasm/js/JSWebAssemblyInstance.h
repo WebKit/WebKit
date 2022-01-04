@@ -28,7 +28,6 @@
 #if ENABLE(WEBASSEMBLY)
 
 #include "JSDestructibleObject.h"
-#include "JSWebAssemblyCalleeGroup.h"
 #include "JSWebAssemblyGlobal.h"
 #include "JSWebAssemblyMemory.h"
 #include "JSWebAssemblyTable.h"
@@ -114,7 +113,6 @@ private:
 
     WriteBarrier<JSGlobalObject> m_globalObject;
     WriteBarrier<JSWebAssemblyModule> m_module;
-    WriteBarrier<JSWebAssemblyCalleeGroup> m_calleeGroup;
     WriteBarrier<WebAssemblyModuleRecord> m_moduleRecord;
     WriteBarrier<JSWebAssemblyMemory> m_memory;
     FixedVector<WriteBarrier<JSWebAssemblyTable>> m_tables;

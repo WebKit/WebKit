@@ -1113,7 +1113,6 @@ wasm/js/JSToWasm.cpp
 wasm/js/JSToWasm.h
 wasm/js/JSToWasmICCallee.cpp
 wasm/js/JSWebAssembly.cpp
-wasm/js/JSWebAssemblyCalleeGroup.cpp
 wasm/js/JSWebAssemblyCompileError.cpp
 wasm/js/JSWebAssemblyException.cpp
 wasm/js/JSWebAssemblyGlobal.cpp

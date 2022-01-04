@@ -81,7 +81,6 @@ void JSWebAssemblyInstance::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 
     Base::visitChildren(thisObject, visitor);
     visitor.append(thisObject->m_module);
-    visitor.append(thisObject->m_calleeGroup);
     visitor.append(thisObject->m_moduleRecord);
     visitor.append(thisObject->m_memory);
     for (auto& table : thisObject->m_tables)
@@ -117,23 +116,6 @@ void JSWebAssemblyInstance::finalizeCreation(VM& vm, JSGlobalObject* globalObjec
     }
 
     RELEASE_ASSERT(wasmCalleeGroup->isSafeToRun(memoryMode()));
-    JSWebAssemblyCalleeGroup* jsCalleeGroup = m_module->calleeGroup(memoryMode());
-    if (jsCalleeGroup) {
-        // A CalleeGroup might have already been compiled. If so, it means
-        // that the CalleeGroup we are trying to compile must be the same
-        // because we will never compile a CalleeGroup again once it's
-        // runnable.
-        ASSERT(&jsCalleeGroup->calleeGroup() == wasmCalleeGroup.ptr());
-        m_calleeGroup.set(vm, this, jsCalleeGroup);
-    } else {
-        jsCalleeGroup = JSWebAssemblyCalleeGroup::create(vm, WTFMove(wasmCalleeGroup), module()->module().moduleInformation());
-        if (UNLIKELY(!jsCalleeGroup->runnable())) {
-            throwException(globalObject, scope, createJSWebAssemblyLinkError(globalObject, vm, jsCalleeGroup->errorMessage()));
-            return;
-        }
-        m_calleeGroup.set(vm, this, jsCalleeGroup);
-        m_module->setCalleeGroup(vm, memoryMode(), jsCalleeGroup);
-    }
 
     // In the module loader case, we will initialize all memory modes with the initial LLInt compilation
     // results, so that later when memory imports become available, the appropriate CalleeGroup can be used.
@@ -148,19 +130,13 @@ void JSWebAssemblyInstance::finalizeCreation(VM& vm, JSGlobalObject* globalObjec
             if (i == static_cast<uint8_t>(initialMode))
                 continue;
             Wasm::MemoryMode memoryMode = static_cast<Wasm::MemoryMode>(i);
-            RefPtr<Wasm::CalleeGroup> calleeGroup = module()->module().calleeGroupFor(memoryMode);
-            jsCalleeGroup = JSWebAssemblyCalleeGroup::create(vm, calleeGroup.releaseNonNull(), module()->module().moduleInformation());
-            if (UNLIKELY(!jsCalleeGroup->runnable())) {
-                throwException(globalObject, scope, createJSWebAssemblyLinkError(globalObject, vm, jsCalleeGroup->errorMessage()));
-                return;
-            }
-            m_module->setCalleeGroup(vm, memoryMode, jsCalleeGroup);
+            module()->module().calleeGroupFor(memoryMode); // Materialize Wasm::CalleeGroup.
         }
     }
 
     for (unsigned importFunctionNum = 0; importFunctionNum < instance().numImportFunctions(); ++importFunctionNum) {
         auto* info = instance().importFunctionInfo(importFunctionNum);
-        info->wasmToEmbedderStub = m_calleeGroup->wasmToEmbedderStub(importFunctionNum);
+        info->wasmToEmbedderStub = m_module->wasmToEmbedderStub(importFunctionNum);
     }
 
     m_moduleRecord->prepareLink(vm, this);

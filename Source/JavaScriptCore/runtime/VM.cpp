@@ -77,7 +77,6 @@
 #include "JSSet.h"
 #include "JSSourceCode.h"
 #include "JSTemplateObjectDescriptor.h"
-#include "JSWebAssemblyCalleeGroup.h"
 #include "LLIntData.h"
 #include "LLIntExceptions.h"
 #include "MarkedBlockInlines.h"
@@ -270,9 +269,6 @@ VM::VM(VMType vmType, HeapType heapType, WTF::RunLoop* runLoop, bool* success)
     evalExecutableStructure.set(*this, EvalExecutable::createStructure(*this, nullptr, jsNull()));
     programExecutableStructure.set(*this, ProgramExecutable::createStructure(*this, nullptr, jsNull()));
     functionExecutableStructure.set(*this, FunctionExecutable::createStructure(*this, nullptr, jsNull()));
-#if ENABLE(WEBASSEMBLY)
-    webAssemblyCalleeGroupStructure.set(*this, JSWebAssemblyCalleeGroup::createStructure(*this, nullptr, jsNull()));
-#endif
     moduleProgramExecutableStructure.set(*this, ModuleProgramExecutable::createStructure(*this, nullptr, jsNull()));
     regExpStructure.set(*this, RegExp::createStructure(*this, nullptr, jsNull()));
     symbolStructure.set(*this, Symbol::createStructure(*this, nullptr, jsNull()));

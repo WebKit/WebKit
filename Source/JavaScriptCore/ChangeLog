@@ -1,5 +1,46 @@
 2022-01-04  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] Remove JSWebAssemblyCalleeGroup cell
+        https://bugs.webkit.org/show_bug.cgi?id=234780
+
+        Reviewed by Saam Barati.
+
+        This cell is not observable to users. And this cell just holds Wasm-to-JS stubs,
+        but it is the same to all memory modes. Thus, we should just generate it in VM-linked
+        Wasm::Module (it means, we should have it in JSWebAssemblyModule), and we do not need
+        to have / allocate JSWebAssemblyCalleeGroup cell.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * heap/Heap.cpp:
+        (JSC::Heap::Heap):
+        (JSC::Heap::finalizeUnconditionalFinalizers):
+        (JSC::Heap::deleteAllCodeBlocks):
+        * heap/Heap.h:
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        * runtime/VM.h:
+        * wasm/WasmBinding.h:
+        * wasm/js/JSWebAssemblyCalleeGroup.cpp: Removed.
+        * wasm/js/JSWebAssemblyCalleeGroup.h: Removed.
+        * wasm/js/JSWebAssemblyInstance.cpp:
+        (JSC::JSWebAssemblyInstance::visitChildrenImpl):
+        (JSC::JSWebAssemblyInstance::finalizeCreation):
+        * wasm/js/JSWebAssemblyInstance.h:
+        * wasm/js/JSWebAssemblyModule.cpp:
+        (JSC::JSWebAssemblyModule::createStub):
+        (JSC::JSWebAssemblyModule::visitChildrenImpl):
+        (JSC::JSWebAssemblyModule::clearJSCallICs):
+        (JSC::JSWebAssemblyModule::finalizeUnconditionally):
+        (JSC::JSWebAssemblyModule::generateWasmToJSStubs):
+        (JSC::JSWebAssemblyModule::calleeGroup): Deleted.
+        (JSC::JSWebAssemblyModule::setCalleeGroup): Deleted.
+        * wasm/js/JSWebAssemblyModule.h:
+        * wasm/js/WebAssemblyModuleConstructor.cpp:
+        * wasm/js/WebAssemblyWrapperFunction.h:
+
+2022-01-04  Yusuke Suzuki  <ysuzuki@apple.com>
+
         WebAssembly i32.atomic.wait timeout value incorrectly interpreted by factor 1000
         https://bugs.webkit.org/show_bug.cgi?id=234833
 
