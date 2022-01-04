@@ -27,22 +27,20 @@
 
 #if ENABLE(VIDEO)
 
+#include "PlatformAudioTrackConfiguration.h"
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-struct AudioTrackConfigurationInit {
-    String codec;
-    uint32_t sampleRate { 0 };
-    uint32_t numberOfChannels { 0 };
-    uint64_t bitrate { 0 };
-};
+using AudioTrackConfigurationInit = PlatformAudioTrackConfiguration;
 
 class AudioTrackConfiguration : public RefCounted<AudioTrackConfiguration> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static Ref<AudioTrackConfiguration> create(AudioTrackConfigurationInit&& init) { return adoptRef(*new AudioTrackConfiguration(WTFMove(init))); }
     static Ref<AudioTrackConfiguration> create() { return adoptRef(*new AudioTrackConfiguration()); }
+
+    void setState(const AudioTrackConfigurationInit& state) { m_state = state; }
 
     String codec() const { return m_state.codec; }
     void setCodec(String codec) { m_state.codec = codec; }

@@ -31,6 +31,7 @@
 #include "AudioTrackPrivate.h"
 #include "PlatformVideoColorSpace.h"
 #include "VideoTrackPrivate.h"
+#include <wtf/Observer.h>
 #include <wtf/Ref.h>
 #include <wtf/RetainPtr.h>
 
@@ -45,8 +46,10 @@ typedef const struct opaqueCMFormatDescription* CMFormatDescriptionRef;
 namespace WebCore {
 
 class MediaSelectionOptionAVFObjC;
+struct PlatformVideoTrackConfiguration;
+struct PlatformAudioTrackConfiguration;
 
-class AVTrackPrivateAVFObjCImpl {
+class AVTrackPrivateAVFObjCImpl : public CanMakeWeakPtr<AVTrackPrivateAVFObjCImpl> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit AVTrackPrivateAVFObjCImpl(AVPlayerItemTrack*);
@@ -71,6 +74,20 @@ public:
 
     int trackID() const;
 
+    static String languageForAVAssetTrack(AVAssetTrack*);
+    static String languageForAVMediaSelectionOption(AVMediaSelectionOption *);
+
+    PlatformVideoTrackConfiguration videoTrackConfiguration() const;
+    using VideoTrackConfigurationObserver = Observer<void()>;
+    void setVideoTrackConfigurationObserver(VideoTrackConfigurationObserver& observer) { m_videoTrackConfigurationObserver = observer; }
+
+    PlatformAudioTrackConfiguration audioTrackConfiguration() const;
+    using AudioTrackConfigurationObserver = Observer<void()>;
+    void setAudioTrackConfigurationObserver(AudioTrackConfigurationObserver& observer) { m_audioTrackConfigurationObserver = observer; }
+
+private:
+    void initializeAssetTrack();
+
     String codec() const;
     uint32_t width() const;
     uint32_t height() const;
@@ -79,14 +96,13 @@ public:
     uint64_t bitrate() const;
     uint32_t sampleRate() const;
     uint32_t numberOfChannels() const;
-    static String languageForAVAssetTrack(AVAssetTrack*);
-    static String languageForAVMediaSelectionOption(AVMediaSelectionOption *);
 
-private:
     RetainPtr<AVPlayerItemTrack> m_playerItemTrack;
-    RetainPtr<AVAssetTrack> m_assetTrack;
     RetainPtr<AVPlayerItem> m_playerItem;
     RefPtr<MediaSelectionOptionAVFObjC> m_mediaSelectionOption;
+    RetainPtr<AVAssetTrack> m_assetTrack;
+    WeakPtr<VideoTrackConfigurationObserver> m_videoTrackConfigurationObserver;
+    WeakPtr<AudioTrackConfigurationObserver> m_audioTrackConfigurationObserver;
 };
 
 }

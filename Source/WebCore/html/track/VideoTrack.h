@@ -83,7 +83,7 @@ private:
 
     // VideoTrackPrivateClient
     void selectedChanged(bool) final;
-    void configurationChanged() final { updateConfigurationFromPrivate(); }
+    void configurationChanged(const PlatformVideoTrackConfiguration&) final;
 
     // TrackPrivateBaseClient
     void idChanged(const AtomString&) final;

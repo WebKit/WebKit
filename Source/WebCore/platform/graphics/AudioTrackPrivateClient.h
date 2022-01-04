@@ -32,10 +32,12 @@
 namespace WebCore {
 
 class AudioTrackPrivate;
+struct PlatformAudioTrackConfiguration;
 
 class AudioTrackPrivateClient : public TrackPrivateBaseClient {
 public:
     virtual void enabledChanged(bool) = 0;
+    virtual void configurationChanged(const PlatformAudioTrackConfiguration&) = 0;
 };
 
 }

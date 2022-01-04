@@ -29,11 +29,11 @@
 
 #if ENABLE(GPU_PROCESS)
 
+#include "AudioTrackPrivateRemoteConfiguration.h"
 #include "Connection.h"
 #include "GPUConnectionToWebProcess.h"
 #include "MediaPlayerPrivateRemoteMessages.h"
 #include "RemoteMediaPlayerProxy.h"
-#include "TrackPrivateRemoteConfiguration.h"
 
 namespace WebKit {
 
@@ -54,26 +54,19 @@ RemoteAudioTrackProxy::~RemoteAudioTrackProxy()
     m_trackPrivate->clearClient();
 }
 
-TrackPrivateRemoteConfiguration RemoteAudioTrackProxy::configuration()
+AudioTrackPrivateRemoteConfiguration RemoteAudioTrackProxy::configuration()
 {
     return {
-        m_trackPrivate->id(),
-        m_trackPrivate->label(),
-        m_trackPrivate->language(),
-        m_trackPrivate->startTimeVariance(),
-        m_trackPrivate->trackIndex(),
+        {
+            m_trackPrivate->id(),
+            m_trackPrivate->label(),
+            m_trackPrivate->language(),
+            m_trackPrivate->startTimeVariance(),
+            m_trackPrivate->trackIndex(),
+        },
         m_trackPrivate->enabled(),
         m_trackPrivate->kind(),
-        false,
-        WebCore::VideoTrackPrivate::Kind::None,
-        m_trackPrivate->codec(),
-        0,
-        0,
-        { },
-        0,
-        m_trackPrivate->bitrate(),
-        m_trackPrivate->sampleRate(),
-        m_trackPrivate->numberOfChannels(),
+        m_trackPrivate->configuration(),
     };
 }
 
@@ -95,6 +88,11 @@ void RemoteAudioTrackProxy::enabledChanged(bool enabled)
     if (enabled == m_enabled)
         return;
     m_enabled = enabled;
+    configurationChanged();
+}
+
+void RemoteAudioTrackProxy::configurationChanged(const PlatformAudioTrackConfiguration& configuration)
+{
     configurationChanged();
 }
 

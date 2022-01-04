@@ -164,6 +164,11 @@ void VideoTrack::selectedChanged(bool selected)
     });
 }
 
+void VideoTrack::configurationChanged(const PlatformVideoTrackConfiguration& configuration)
+{
+    m_configuration->setState(configuration);
+}
+
 void VideoTrack::idChanged(const AtomString& id)
 {
     setId(id);
@@ -262,12 +267,7 @@ void VideoTrack::updateKindFromPrivate()
 
 void VideoTrack::updateConfigurationFromPrivate()
 {
-    m_configuration->setCodec(m_private->codec());
-    m_configuration->setWidth(m_private->width());
-    m_configuration->setHeight(m_private->height());
-    m_configuration->setColorSpace(VideoColorSpace::create(m_private->colorSpace()));
-    m_configuration->setFramerate(m_private->framerate());
-    m_configuration->setBitrate(m_private->bitrate());
+    m_configuration->setState(m_private->configuration());
 }
 
 #if !RELEASE_LOG_DISABLED

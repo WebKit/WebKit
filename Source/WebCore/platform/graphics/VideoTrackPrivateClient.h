@@ -31,10 +31,12 @@
 
 namespace WebCore {
 
+struct PlatformVideoTrackConfiguration;
+
 class VideoTrackPrivateClient : public TrackPrivateBaseClient {
 public:
     virtual void selectedChanged(bool) = 0;
-    virtual void configurationChanged() = 0;
+    virtual void configurationChanged(const PlatformVideoTrackConfiguration&) = 0;
 };
 
 }

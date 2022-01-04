@@ -40,6 +40,8 @@ VideoTrackPrivateWebM::VideoTrackPrivateWebM(webm::TrackEntry&& trackEntry)
 {
     if (m_track.is_enabled.is_present())
         setSelected(m_track.is_enabled.value());
+
+    updateConfiguration();
 }
 
 AtomString VideoTrackPrivateWebM::id() const
@@ -143,6 +145,17 @@ double VideoTrackPrivateWebM::framerate() const
         return video.frame_rate.value();
 
     return 0;
+}
+
+void VideoTrackPrivateWebM::updateConfiguration()
+{
+    PlatformVideoTrackConfiguration configuration {
+        { .codec = codec() },
+        .width = width(),
+        .height = height(),
+        .framerate = framerate(),
+    };
+    setConfiguration(WTFMove(configuration));
 }
 
 }

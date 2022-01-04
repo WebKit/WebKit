@@ -574,7 +574,7 @@ FloatSize MediaPlayerPrivateRemote::naturalSize() const
     return m_cachedState.naturalSize;
 }
 
-void MediaPlayerPrivateRemote::addRemoteAudioTrack(TrackPrivateRemoteIdentifier identifier, TrackPrivateRemoteConfiguration&& configuration)
+void MediaPlayerPrivateRemote::addRemoteAudioTrack(TrackPrivateRemoteIdentifier identifier, AudioTrackPrivateRemoteConfiguration&& configuration)
 {
     auto addResult = m_audioTracks.ensure(identifier, [&] {
         return AudioTrackPrivateRemote::create(m_manager.gpuProcessConnection(), m_id, identifier, WTFMove(configuration));
@@ -604,7 +604,7 @@ void MediaPlayerPrivateRemote::removeRemoteAudioTrack(TrackPrivateRemoteIdentifi
     }
 }
 
-void MediaPlayerPrivateRemote::remoteAudioTrackConfigurationChanged(TrackPrivateRemoteIdentifier identifier, TrackPrivateRemoteConfiguration&& configuration)
+void MediaPlayerPrivateRemote::remoteAudioTrackConfigurationChanged(TrackPrivateRemoteIdentifier identifier, AudioTrackPrivateRemoteConfiguration&& configuration)
 {
     ASSERT(m_audioTracks.contains(identifier));
 
@@ -732,7 +732,7 @@ void MediaPlayerPrivateRemote::removeGenericCue(TrackPrivateRemoteIdentifier ide
         track->removeGenericCue(InbandGenericCue::create(WTFMove(cueData)));
 }
 
-void MediaPlayerPrivateRemote::addRemoteVideoTrack(TrackPrivateRemoteIdentifier identifier, TrackPrivateRemoteConfiguration&& configuration)
+void MediaPlayerPrivateRemote::addRemoteVideoTrack(TrackPrivateRemoteIdentifier identifier, VideoTrackPrivateRemoteConfiguration&& configuration)
 {
     auto addResult = m_videoTracks.ensure(identifier, [&] {
         return VideoTrackPrivateRemote::create(m_manager.gpuProcessConnection(), m_id, identifier, WTFMove(configuration));
@@ -762,7 +762,7 @@ void MediaPlayerPrivateRemote::removeRemoteVideoTrack(TrackPrivateRemoteIdentifi
     }
 }
 
-void MediaPlayerPrivateRemote::remoteVideoTrackConfigurationChanged(TrackPrivateRemoteIdentifier identifier, TrackPrivateRemoteConfiguration&& configuration)
+void MediaPlayerPrivateRemote::remoteVideoTrackConfigurationChanged(TrackPrivateRemoteIdentifier identifier, VideoTrackPrivateRemoteConfiguration&& configuration)
 {
     ASSERT(m_videoTracks.contains(identifier));
 

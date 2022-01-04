@@ -1,3 +1,194 @@
+2022-01-04  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r287574. rdar://problem/86855896
+
+    [Cocoa] Hang in AVTrackPrivateAVFObjCImpl::bitrate()
+    https://bugs.webkit.org/show_bug.cgi?id=234753
+    
+    Reviewed by Eric Carlson.
+    
+    Source/WebCore:
+    
+    In r286908, WebCore added new queries onto existing AVAssetTrack objects; however, querying
+    those properties will block if data for those properties is not yet available. The media element
+    could block moving to the HAVE_METADATA state until those properties are fully loaded, however
+    this might regress PLT, so instead, we will check the load state of those properties before returning
+    values.
+    
+    However, to make the properties exposed through VideoTrackConfiguration.idl/AudioTrackConfiguration.idl
+    dynamic, changes need to be signaled and propagated upward through the layers between AVAssetTrack and
+    the DOM. Rather than make individual notifications for each property in a Configuration struct, make one
+    notification that handles any change to the Configuration struct at all and push that upward to clients.
+    
+    Since these properties are being grouped together at a lower-level, they do not need to be tracked
+    individually, and Video/AudioTrackConfigurationInit can just be aliased to a platform-defined struct.
+    
+    * html/track/AudioTrack.cpp:
+    (WebCore::AudioTrack::configurationChanged):
+    (WebCore::AudioTrack::updateConfigurationFromPrivate):
+    * html/track/AudioTrack.h:
+    * html/track/AudioTrackConfiguration.h:
+    (WebCore::AudioTrackConfiguration::setState):
+    (): Deleted.
+    * html/track/VideoTrack.cpp:
+    (WebCore::VideoTrack::configurationChanged):
+    (WebCore::VideoTrack::updateConfigurationFromPrivate):
+    * html/track/VideoTrack.h:
+    * html/track/VideoTrackConfiguration.h:
+    (WebCore::VideoTrackConfiguration::setState):
+    (WebCore::VideoTrackConfiguration::colorSpace const):
+    (WebCore::VideoTrackConfiguration::setColorSpace):
+    (WebCore::VideoTrackConfiguration::VideoTrackConfiguration):
+    (): Deleted.
+    * platform/graphics/AudioTrackPrivate.h:
+    (WebCore::AudioTrackPrivate::configuration const):
+    (WebCore::AudioTrackPrivate::setConfiguration):
+    (WebCore::AudioTrackPrivate::codec const): Deleted.
+    (WebCore::AudioTrackPrivate::setCodec): Deleted.
+    (WebCore::AudioTrackPrivate::sampleRate const): Deleted.
+    (WebCore::AudioTrackPrivate::setSampleRate): Deleted.
+    (WebCore::AudioTrackPrivate::numberOfChannels const): Deleted.
+    (WebCore::AudioTrackPrivate::setNumberOfChannels): Deleted.
+    (WebCore::AudioTrackPrivate::bitrate const): Deleted.
+    (WebCore::AudioTrackPrivate::setBitrate): Deleted.
+    * platform/graphics/AudioTrackPrivateClient.h:
+    * platform/graphics/PlatformVideoColorSpace.h:
+    (WebCore::operator==):
+    (WebCore::operator!=):
+    * platform/graphics/VideoTrackPrivate.h:
+    (WebCore::VideoTrackPrivate::configuration const):
+    (WebCore::VideoTrackPrivate::setConfiguration):
+    (WebCore::VideoTrackPrivate::codec const): Deleted.
+    (WebCore::VideoTrackPrivate::setCodec): Deleted.
+    (WebCore::VideoTrackPrivate::width const): Deleted.
+    (WebCore::VideoTrackPrivate::setWidth): Deleted.
+    (WebCore::VideoTrackPrivate::height const): Deleted.
+    (WebCore::VideoTrackPrivate::setHeight): Deleted.
+    (WebCore::VideoTrackPrivate::colorSpace const): Deleted.
+    (WebCore::VideoTrackPrivate::setColorSpace): Deleted.
+    (WebCore::VideoTrackPrivate::framerate const): Deleted.
+    (WebCore::VideoTrackPrivate::setFramerate): Deleted.
+    (WebCore::VideoTrackPrivate::bitrate const): Deleted.
+    (WebCore::VideoTrackPrivate::setBitrate): Deleted.
+    * platform/graphics/VideoTrackPrivateClient.h:
+    * platform/graphics/avfoundation/AVTrackPrivateAVFObjCImpl.h:
+    (WebCore::AVTrackPrivateAVFObjCImpl::setVideoTrackConfigurationObserver):
+    (WebCore::AVTrackPrivateAVFObjCImpl::setAudioTrackConfigurationObserver):
+    * platform/graphics/avfoundation/AVTrackPrivateAVFObjCImpl.mm:
+    (WebCore::assetTrackConfigurationKeyNames):
+    (WebCore::AVTrackPrivateAVFObjCImpl::AVTrackPrivateAVFObjCImpl):
+    (WebCore::AVTrackPrivateAVFObjCImpl::initializeAssetTrack):
+    (WebCore::AVTrackPrivateAVFObjCImpl::videoTrackConfiguration const):
+    (WebCore::AVTrackPrivateAVFObjCImpl::audioTrackConfiguration const):
+    * platform/graphics/avfoundation/objc/AudioTrackPrivateAVFObjC.h:
+    * platform/graphics/avfoundation/objc/AudioTrackPrivateAVFObjC.mm:
+    (WebCore::AudioTrackPrivateAVFObjC::AudioTrackPrivateAVFObjC):
+    (WebCore::AudioTrackPrivateAVFObjC::resetPropertiesFromTrack):
+    (WebCore::AudioTrackPrivateAVFObjC::audioTrackConfigurationChanged):
+    * platform/graphics/avfoundation/objc/VideoTrackPrivateAVFObjC.cpp:
+    (WebCore::VideoTrackPrivateAVFObjC::VideoTrackPrivateAVFObjC):
+    (WebCore::VideoTrackPrivateAVFObjC::resetPropertiesFromTrack):
+    (WebCore::VideoTrackPrivateAVFObjC::videoTrackConfigurationChanged):
+    * platform/graphics/avfoundation/objc/VideoTrackPrivateAVFObjC.h:
+    * platform/graphics/avfoundation/objc/VideoTrackPrivateMediaSourceAVFObjC.mm:
+    (WebCore::VideoTrackPrivateMediaSourceAVFObjC::resetPropertiesFromTrack):
+    * platform/graphics/cocoa/VideoTrackPrivateWebM.cpp:
+    (WebCore::VideoTrackPrivateWebM::VideoTrackPrivateWebM):
+    (WebCore::VideoTrackPrivateWebM::updateConfiguration):
+    * platform/graphics/cocoa/VideoTrackPrivateWebM.h:
+    
+    Source/WebKit:
+    
+    Propagate changes to TrackConfigurations upwards from the GPU process -> WebContent process.
+    
+    * GPUProcess/media/AudioTrackPrivateRemoteConfiguration.h:
+    (WebKit::AudioTrackPrivateRemoteConfiguration::encode const):
+    (WebKit::AudioTrackPrivateRemoteConfiguration::decode):
+    * GPUProcess/media/RemoteAudioTrackProxy.cpp:
+    (WebKit::RemoteAudioTrackProxy::configuration):
+    (WebKit::RemoteAudioTrackProxy::configurationChanged):
+    * GPUProcess/media/RemoteAudioTrackProxy.h:
+    * GPUProcess/media/RemoteVideoTrackProxy.cpp:
+    (WebKit::RemoteVideoTrackProxy::configuration):
+    * GPUProcess/media/RemoteVideoTrackProxy.h:
+    * GPUProcess/media/TrackPrivateRemoteConfiguration.h:
+    (WebKit::TrackPrivateRemoteConfiguration::encode const):
+    (WebKit::TrackPrivateRemoteConfiguration::decode):
+    * GPUProcess/media/VideoTrackPrivateRemoteConfiguration.h:
+    (WebKit::VideoTrackPrivateRemoteConfiguration::encode const):
+    (WebKit::VideoTrackPrivateRemoteConfiguration::decode):
+    * WebKit.xcodeproj/project.pbxproj:
+    * WebProcess/GPU/media/AudioTrackPrivateRemote.cpp:
+    (WebKit::AudioTrackPrivateRemote::AudioTrackPrivateRemote):
+    (WebKit::AudioTrackPrivateRemote::updateConfiguration):
+    * WebProcess/GPU/media/AudioTrackPrivateRemote.h:
+    * WebProcess/GPU/media/MediaPlayerPrivateRemote.cpp:
+    (WebKit::MediaPlayerPrivateRemote::addRemoteAudioTrack):
+    (WebKit::MediaPlayerPrivateRemote::remoteAudioTrackConfigurationChanged):
+    (WebKit::MediaPlayerPrivateRemote::addRemoteVideoTrack):
+    (WebKit::MediaPlayerPrivateRemote::remoteVideoTrackConfigurationChanged):
+    * WebProcess/GPU/media/MediaPlayerPrivateRemote.h:
+    * WebProcess/GPU/media/MediaPlayerPrivateRemote.messages.in:
+    * WebProcess/GPU/media/VideoTrackPrivateRemote.cpp:
+    (WebKit::VideoTrackPrivateRemote::VideoTrackPrivateRemote):
+    (WebKit::VideoTrackPrivateRemote::updateConfiguration):
+    * WebProcess/GPU/media/VideoTrackPrivateRemote.h:
+    (WebKit::VideoTrackPrivateRemote::create):
+    
+    LayoutTests:
+    
+    Now that these properties are dynamic, test them with `testExpectedEventually`.
+    
+    * media/track/audio-track-configuration.html:
+    * media/track/video-track-alternate-groups-expected.txt:
+    * media/track/video-track-configuration.html:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@287574 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-01-04  Jer Noble  <jer.noble@apple.com>
+
+            [Cocoa] Hang in AVTrackPrivateAVFObjCImpl::bitrate()
+            https://bugs.webkit.org/show_bug.cgi?id=234753
+
+            Reviewed by Eric Carlson.
+
+            Propagate changes to TrackConfigurations upwards from the GPU process -> WebContent process.
+
+            * GPUProcess/media/AudioTrackPrivateRemoteConfiguration.h:
+            (WebKit::AudioTrackPrivateRemoteConfiguration::encode const):
+            (WebKit::AudioTrackPrivateRemoteConfiguration::decode):
+            * GPUProcess/media/RemoteAudioTrackProxy.cpp:
+            (WebKit::RemoteAudioTrackProxy::configuration):
+            (WebKit::RemoteAudioTrackProxy::configurationChanged):
+            * GPUProcess/media/RemoteAudioTrackProxy.h:
+            * GPUProcess/media/RemoteVideoTrackProxy.cpp:
+            (WebKit::RemoteVideoTrackProxy::configuration):
+            * GPUProcess/media/RemoteVideoTrackProxy.h:
+            * GPUProcess/media/TrackPrivateRemoteConfiguration.h:
+            (WebKit::TrackPrivateRemoteConfiguration::encode const):
+            (WebKit::TrackPrivateRemoteConfiguration::decode):
+            * GPUProcess/media/VideoTrackPrivateRemoteConfiguration.h:
+            (WebKit::VideoTrackPrivateRemoteConfiguration::encode const):
+            (WebKit::VideoTrackPrivateRemoteConfiguration::decode):
+            * WebKit.xcodeproj/project.pbxproj:
+            * WebProcess/GPU/media/AudioTrackPrivateRemote.cpp:
+            (WebKit::AudioTrackPrivateRemote::AudioTrackPrivateRemote):
+            (WebKit::AudioTrackPrivateRemote::updateConfiguration):
+            * WebProcess/GPU/media/AudioTrackPrivateRemote.h:
+            * WebProcess/GPU/media/MediaPlayerPrivateRemote.cpp:
+            (WebKit::MediaPlayerPrivateRemote::addRemoteAudioTrack):
+            (WebKit::MediaPlayerPrivateRemote::remoteAudioTrackConfigurationChanged):
+            (WebKit::MediaPlayerPrivateRemote::addRemoteVideoTrack):
+            (WebKit::MediaPlayerPrivateRemote::remoteVideoTrackConfigurationChanged):
+            * WebProcess/GPU/media/MediaPlayerPrivateRemote.h:
+            * WebProcess/GPU/media/MediaPlayerPrivateRemote.messages.in:
+            * WebProcess/GPU/media/VideoTrackPrivateRemote.cpp:
+            (WebKit::VideoTrackPrivateRemote::VideoTrackPrivateRemote):
+            (WebKit::VideoTrackPrivateRemote::updateConfiguration):
+            * WebProcess/GPU/media/VideoTrackPrivateRemote.h:
+            (WebKit::VideoTrackPrivateRemote::create):
+
 2021-12-16  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r287146. rdar://problem/86550488

@@ -67,8 +67,9 @@ namespace WebKit {
 
 class RemoteAudioSourceProvider;
 class UserData;
+struct AudioTrackPrivateRemoteConfiguration;
 struct TextTrackPrivateRemoteConfiguration;
-struct TrackPrivateRemoteConfiguration;
+struct VideoTrackPrivateRemoteConfiguration;
 
 class MediaPlayerPrivateRemote final
     : public WebCore::MediaPlayerPrivateInterface
@@ -117,13 +118,13 @@ public:
 
     void currentTimeChanged(const MediaTime&, const MonotonicTime&, bool);
 
-    void addRemoteAudioTrack(TrackPrivateRemoteIdentifier, TrackPrivateRemoteConfiguration&&);
+    void addRemoteAudioTrack(TrackPrivateRemoteIdentifier, AudioTrackPrivateRemoteConfiguration&&);
     void removeRemoteAudioTrack(TrackPrivateRemoteIdentifier);
-    void remoteAudioTrackConfigurationChanged(TrackPrivateRemoteIdentifier, TrackPrivateRemoteConfiguration&&);
+    void remoteAudioTrackConfigurationChanged(TrackPrivateRemoteIdentifier, AudioTrackPrivateRemoteConfiguration&&);
 
-    void addRemoteVideoTrack(TrackPrivateRemoteIdentifier, TrackPrivateRemoteConfiguration&&);
+    void addRemoteVideoTrack(TrackPrivateRemoteIdentifier, VideoTrackPrivateRemoteConfiguration&&);
     void removeRemoteVideoTrack(TrackPrivateRemoteIdentifier);
-    void remoteVideoTrackConfigurationChanged(TrackPrivateRemoteIdentifier, TrackPrivateRemoteConfiguration&&);
+    void remoteVideoTrackConfigurationChanged(TrackPrivateRemoteIdentifier, VideoTrackPrivateRemoteConfiguration&&);
 
     void addRemoteTextTrack(TrackPrivateRemoteIdentifier, TextTrackPrivateRemoteConfiguration&&);
     void removeRemoteTextTrack(TrackPrivateRemoteIdentifier);

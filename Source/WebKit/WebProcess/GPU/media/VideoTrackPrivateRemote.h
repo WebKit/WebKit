@@ -28,7 +28,6 @@
 
 #if ENABLE(GPU_PROCESS)
 
-#include "TrackPrivateRemoteConfiguration.h"
 #include "TrackPrivateRemoteIdentifier.h"
 #include <WebCore/MediaPlayerIdentifier.h>
 #include <WebCore/VideoTrackPrivate.h>
@@ -37,18 +36,18 @@ namespace WebKit {
 
 class GPUProcessConnection;
 class MediaPlayerPrivateRemote;
-struct TrackPrivateRemoteConfiguration;
+struct VideoTrackPrivateRemoteConfiguration;
 
 class VideoTrackPrivateRemote
     : public WebCore::VideoTrackPrivate {
     WTF_MAKE_NONCOPYABLE(VideoTrackPrivateRemote)
 public:
-    static Ref<VideoTrackPrivateRemote> create(GPUProcessConnection& gpuProcessConnection, WebCore::MediaPlayerIdentifier playerIdentifier, TrackPrivateRemoteIdentifier idendifier, TrackPrivateRemoteConfiguration&& configuration)
+    static Ref<VideoTrackPrivateRemote> create(GPUProcessConnection& gpuProcessConnection, WebCore::MediaPlayerIdentifier playerIdentifier, TrackPrivateRemoteIdentifier idendifier, VideoTrackPrivateRemoteConfiguration&& configuration)
     {
         return adoptRef(*new VideoTrackPrivateRemote(gpuProcessConnection, playerIdentifier, idendifier, WTFMove(configuration)));
     }
 
-    void updateConfiguration(TrackPrivateRemoteConfiguration&&);
+    void updateConfiguration(VideoTrackPrivateRemoteConfiguration&&);
 
     using VideoTrackKind = WebCore::VideoTrackPrivate::Kind;
     VideoTrackKind kind() const final { return m_kind; }
@@ -57,15 +56,9 @@ public:
     AtomString language() const final { return m_language; }
     int trackIndex() const final { return m_trackIndex; }
     MediaTime startTimeVariance() const final { return m_startTimeVariance; }
-    String codec() const final { return m_codec; }
-    uint32_t width() const final { return m_width; }
-    uint32_t height() const final { return m_height; }
-    WebCore::PlatformVideoColorSpace colorSpace() const final { return m_colorSpace; }
-    double framerate() const final { return m_framerate; }
-    uint64_t bitrate() const final { return m_bitrate; }
 
 private:
-    VideoTrackPrivateRemote(GPUProcessConnection&, WebCore::MediaPlayerIdentifier, TrackPrivateRemoteIdentifier, TrackPrivateRemoteConfiguration&&);
+    VideoTrackPrivateRemote(GPUProcessConnection&, WebCore::MediaPlayerIdentifier, TrackPrivateRemoteIdentifier, VideoTrackPrivateRemoteConfiguration&&);
 
     void setSelected(bool) final;
 
@@ -76,12 +69,6 @@ private:
     AtomString m_label;
     AtomString m_language;
     int m_trackIndex { -1 };
-    String m_codec;
-    uint32_t m_width { 0 };
-    uint32_t m_height { 0 };
-    WebCore::PlatformVideoColorSpace m_colorSpace;
-    double m_framerate { 0 };
-    uint64_t m_bitrate { 0 };
     MediaTime m_startTimeVariance { MediaTime::zeroTime() };
     TrackPrivateRemoteIdentifier m_idendifier;
 };

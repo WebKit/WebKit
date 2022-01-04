@@ -40,7 +40,10 @@ class VideoColorSpace : public RefCounted<VideoColorSpace> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static Ref<VideoColorSpace> create() { return adoptRef(*new VideoColorSpace()); };
+    static Ref<VideoColorSpace> create(const VideoColorSpaceInit& init) { return adoptRef(*new VideoColorSpace(init)); }
     static Ref<VideoColorSpace> create(VideoColorSpaceInit&& init) { return adoptRef(*new VideoColorSpace(WTFMove(init))); }
+
+    void setState(const VideoColorSpaceInit& state) { m_state = state; }
 
     const std::optional<VideoColorPrimaries>& primaries() const { return m_state.primaries; }
     void setPrimaries(std::optional<VideoColorPrimaries>&& primaries) { m_state.primaries = WTFMove(primaries); }
@@ -56,6 +59,10 @@ public:
 
 private:
     VideoColorSpace() = default;
+    VideoColorSpace(const VideoColorSpaceInit& init)
+        : m_state(init)
+    {
+    }
     VideoColorSpace(VideoColorSpaceInit&& init)
         : m_state(WTFMove(init))
     {

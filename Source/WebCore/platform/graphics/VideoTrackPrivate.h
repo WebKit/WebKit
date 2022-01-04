@@ -27,7 +27,7 @@
 
 #if ENABLE(VIDEO)
 
-#include "PlatformVideoColorSpace.h"
+#include "PlatformVideoTrackConfiguration.h"
 #include "TrackPrivateBase.h"
 #include "VideoTrackPrivateClient.h"
 #include <wtf/Function.h>
@@ -62,36 +62,23 @@ public:
     using SelectedChangedCallback = Function<void(VideoTrackPrivate&, bool selected)>;
     void setSelectedChangedCallback(SelectedChangedCallback&& callback) { m_selectedChangedCallback = WTFMove(callback); }
 
-    virtual String codec() const { return m_codec; }
-    virtual void setCodec(String&& codec) { m_codec = WTFMove(codec); }
-    
-    virtual uint32_t width() const { return m_width; }
-    virtual void setWidth(uint32_t width) { m_width = width; }
-    
-    virtual uint32_t height() const { return m_height; }
-    virtual void setHeight(uint32_t height) { m_height = height; }
-    
-    virtual PlatformVideoColorSpace colorSpace() const { return m_colorSpace; }
-    virtual void setColorSpace(PlatformVideoColorSpace&& colorSpace) { m_colorSpace = WTFMove(colorSpace); }
-    
-    virtual double framerate() const { return m_framerate; }
-    virtual void setFramerate(double framerate) { m_framerate = framerate; }
-    
-    virtual uint64_t bitrate() const { return m_bitrate; }
-    virtual void setBitrate(uint64_t bitrate) { m_bitrate = bitrate; }
-    
+    const PlatformVideoTrackConfiguration& configuration() const { return m_configuration; }
+    void setConfiguration(PlatformVideoTrackConfiguration&& configuration)
+    {
+        if (configuration == m_configuration)
+            return;
+        m_configuration = WTFMove(configuration);
+        if (m_client)
+            m_client->configurationChanged(m_configuration);
+    }
+
 protected:
     VideoTrackPrivate() = default;
 
 private:
     WeakPtr<VideoTrackPrivateClient> m_client { nullptr };
     bool m_selected { false };
-    String m_codec;
-    uint32_t m_width { 0 };
-    uint32_t m_height { 0 };
-    PlatformVideoColorSpace m_colorSpace;
-    double m_framerate { 0 };
-    uint64_t m_bitrate { 0 };
+    PlatformVideoTrackConfiguration m_configuration;
 
     SelectedChangedCallback m_selectedChangedCallback;
 };

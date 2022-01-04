@@ -29,6 +29,7 @@
 #if ENABLE(VIDEO)
 
 #include "VideoTrackPrivateAVF.h"
+#include <wtf/Observer.h>
 
 OBJC_CLASS AVAssetTrack;
 OBJC_CLASS AVPlayerItem;
@@ -75,9 +76,14 @@ private:
     explicit VideoTrackPrivateAVFObjC(AVPlayerItemTrack*);
     explicit VideoTrackPrivateAVFObjC(AVAssetTrack*);
     explicit VideoTrackPrivateAVFObjC(MediaSelectionOptionAVFObjC&);
+    explicit VideoTrackPrivateAVFObjC(std::unique_ptr<AVTrackPrivateAVFObjCImpl>&&);
 
     void resetPropertiesFromTrack();
+    void videoTrackConfigurationChanged();
     std::unique_ptr<AVTrackPrivateAVFObjCImpl> m_impl;
+
+    using VideoTrackConfigurationObserver = Observer<void()>;
+    VideoTrackConfigurationObserver m_videoTrackConfigurationObserver;
 };
 
 }

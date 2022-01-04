@@ -42,6 +42,19 @@ struct PlatformVideoColorSpace {
     template <class Decoder> static WARN_UNUSED_RETURN bool decode(Decoder&, PlatformVideoColorSpace&);
 };
 
+inline bool operator==(const PlatformVideoColorSpace& a, const PlatformVideoColorSpace& b)
+{
+    return a.primaries == b.primaries
+        && a.transfer == b.transfer
+        && a.matrix == b.matrix
+        && a.fullRange == b.fullRange;
+}
+
+inline bool operator!=(const PlatformVideoColorSpace& a, const PlatformVideoColorSpace& b)
+{
+    return !(a == b);
+}
+
 template <class Encoder>
 void PlatformVideoColorSpace::encode(Encoder& encoder) const
 {
