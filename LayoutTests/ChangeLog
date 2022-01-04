@@ -1,3 +1,16 @@
+2022-01-04  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [selectors] :focus-visible not matching on accessKey focus after focusing something via mouse
+        https://bugs.webkit.org/show_bug.cgi?id=234077
+        <rdar://problem/86572561>
+
+        Reviewed by Antti Koivisto.
+
+        Writing an internal test as WPT tests for this don't work due to webkit.org/b/234139.
+
+        * fast/selectors/focus-visible-accesskey-expected.txt: Added.
+        * fast/selectors/focus-visible-accesskey.html: Added.
+
 2022-01-03  Diego Pino Garcia  <dpino@igalia.com>
 
         [GTK] Unreviewed test gardening, remove pending test failures filed under webkit.org/b/208292

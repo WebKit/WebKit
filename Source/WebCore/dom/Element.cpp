@@ -3097,7 +3097,9 @@ void Element::focus(const FocusOptions& options)
             return;
 
         FocusOptions optionsWithVisibility = options;
-        if (!document->wasLastFocusByClick())
+        if (options.trigger == FocusTrigger::Bindings && document->wasLastFocusByClick())
+            optionsWithVisibility.visibility = FocusVisibility::Invisible;
+        else
             optionsWithVisibility.visibility = FocusVisibility::Visible;
 
         // Focus and change event handlers can cause us to lose our last ref.
@@ -3108,6 +3110,12 @@ void Element::focus(const FocusOptions& options)
     }
 
     newTarget->findTargetAndUpdateFocusAppearance(options.selectionRestorationMode, options.preventScroll ? SelectionRevealMode::DoNotReveal : SelectionRevealMode::Reveal);
+}
+
+void Element::focusForBindings(FocusOptions&& options)
+{
+    options.trigger = FocusTrigger::Bindings;
+    focus(WTFMove(options));
 }
 
 void Element::findTargetAndUpdateFocusAppearance(SelectionRestorationMode selectionMode, SelectionRevealMode revealMode)
