@@ -619,6 +619,7 @@ std::pair<std::optional<Database::SourceEarliestTimeToSend>, std::optional<Datab
         || scopedStatement->step() != SQLITE_ROW) {
         RELEASE_LOG_ERROR(PrivateClickMeasurement, "Database::earliestTimesToSend, error message: %" PUBLIC_LOG_STRING, m_database.lastErrorMsg());
         ASSERT_NOT_REACHED();
+        return { };
     }
 
     std::optional<SourceEarliestTimeToSend> earliestTimeToSendToSource;

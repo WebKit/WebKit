@@ -1,5 +1,27 @@
 2022-01-04  Kate Cheney  <katherine_cheney@apple.com>
 
+        CrashTracer: com.apple.WebKit.Networking at com.apple.WebKit: WebKit::ResourceLoadStatisticsDatabaseStore::cookieAccess
+        https://bugs.webkit.org/show_bug.cgi?id=234852
+        <rdar://problem/87068976>
+
+        Reviewed by Brent Fulgham.
+
+        Return early if a sqlite statement is null or fails to bind because this
+        will cause a crash when trying to step. Even in cases where it won't
+        crash, we should not continue in the function because this may have
+        undefined behavior.
+
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.cpp:
+        (WebKit::ResourceLoadStatisticsDatabaseStore::cookieAccess):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::getThirdPartyDataForSpecificFirstPartyDomains const):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::clearUserInteraction):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::includeTodayAsOperatingDateIfNecessary):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::insertExpiredStatisticForTesting):
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementDatabase.cpp:
+        (WebKit::PCM::Database::earliestTimesToSend):
+
+2022-01-04  Kate Cheney  <katherine_cheney@apple.com>
+
         Partial revert of https://trac.webkit.org/changeset/287371/webkit
 
         RS by John Wilander.

@@ -938,6 +938,7 @@ Vector<WebResourceLoadStatisticsStore::ThirdPartyDataForSpecificFirstParty> Reso
         || scopedStatement->bindInt(3, thirdPartyDomainID) != SQLITE_OK) {
         RELEASE_LOG_ERROR(Network, "ResourceLoadStatisticsDatabaseStore::getThirdPartyDataForSpecificFirstPartyDomain, error message: %" PUBLIC_LOG_STRING, m_database.lastErrorMsg());
         ASSERT_NOT_REACHED();
+        return { };
     }
     Vector<WebResourceLoadStatisticsStore::ThirdPartyDataForSpecificFirstParty> thirdPartyDataForSpecificFirstPartyDomains;
     while (scopedStatement->step() == SQLITE_ROW) {
@@ -1570,6 +1571,7 @@ void ResourceLoadStatisticsDatabaseStore::clearUserInteraction(const Registrable
         || removeStorageAccess->step() != SQLITE_DONE) {
         ITP_RELEASE_LOG_ERROR(m_sessionID, "%p - ResourceLoadStatisticsDatabaseStore::clearUserInteraction failed to bind, error message: %" PRIVATE_LOG_STRING, this, m_database.lastErrorMsg());
         ASSERT_NOT_REACHED();
+        return;
     }
 
     // Update cookie blocking unconditionally since a call to hasHadUserInteraction()
@@ -2056,6 +2058,7 @@ CookieAccess ResourceLoadStatisticsDatabaseStore::cookieAccess(const SubResource
     if (!statement || statement->bindText(1, subresourceDomain.string()) != SQLITE_OK) {
         ITP_RELEASE_LOG_ERROR(m_sessionID, "%p - ResourceLoadStatisticsDatabaseStore::cookieAccess failed to bind, error message: %" PRIVATE_LOG_STRING, this, m_database.lastErrorMsg());
         ASSERT_NOT_REACHED();
+        return CookieAccess::CannotRequest;
     }
 
     bool hasNoEntry = statement->step() != SQLITE_ROW;
@@ -2759,6 +2762,7 @@ void ResourceLoadStatisticsDatabaseStore::includeTodayAsOperatingDateIfNecessary
             || deleteLeastRecentOperatingDateStatement->step() != SQLITE_DONE) {
             ITP_RELEASE_LOG_ERROR(m_sessionID, "%p - ResourceLoadStatisticsDatabaseStore::includeTodayAsOperatingDateIfNecessary deleteLeastRecentOperatingDateStatement failed to step, error message: %" PRIVATE_LOG_STRING, this, m_database.lastErrorMsg());
             ASSERT_NOT_REACHED();
+            return;
         }
     }
     
@@ -2770,6 +2774,7 @@ void ResourceLoadStatisticsDatabaseStore::includeTodayAsOperatingDateIfNecessary
         || insertOperatingDateStatement->step() != SQLITE_DONE) {
         ITP_RELEASE_LOG_ERROR(m_sessionID, "%p - ResourceLoadStatisticsDatabaseStore::includeTodayAsOperatingDateIfNecessary insertOperatingDateStatement failed to step, error message: %" PRIVATE_LOG_STRING, this, m_database.lastErrorMsg());
         ASSERT_NOT_REACHED();
+        return;
     }
 
     updateOperatingDatesParameters();
@@ -2822,6 +2827,7 @@ void ResourceLoadStatisticsDatabaseStore::insertExpiredStatisticForTesting(const
             || insertOperatingDateStatement->step() != SQLITE_DONE) {
             ITP_RELEASE_LOG_ERROR(m_sessionID, "%p - ResourceLoadStatisticsDatabaseStore::insertExpiredStatisticForTesting insertOperatingDateStatement failed to step, error message: %" PRIVATE_LOG_STRING, this, m_database.lastErrorMsg());
             ASSERT_NOT_REACHED();
+            return;
         }
         insertOperatingDateStatement->reset();
     }
