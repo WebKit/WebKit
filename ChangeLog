@@ -1,3 +1,17 @@
+2022-01-04  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        clang-format: Change SpaceAfterTemplateKeyword to false
+        https://bugs.webkit.org/show_bug.cgi?id=234655
+
+        Reviewed by Don Olmstead.
+
+        Bug 183302 added the initial .clang-format file which were
+        including SpaceAfterTemplateKeyword:true. However, even though it
+        is undocumented, typical WebKit code is using a style having no
+        space ater the `template` keyword.
+
+        * .clang-format:
+
 2022-01-01  Jeff Miller  <jeffm@apple.com>
 
         Update user-visible copyright strings to include 2022
