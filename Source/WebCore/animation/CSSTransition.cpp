@@ -68,6 +68,12 @@ void CSSTransition::resolve(RenderStyle& targetStyle, const Style::ResolutionCon
     m_currentStyle = RenderStyle::clonePtr(targetStyle);
 }
 
+void CSSTransition::animationDidFinish()
+{
+    if (auto owningElement = this->owningElement())
+        owningElement->removeDeclarativeAnimationFromListsForOwningElement(*this);
+}
+
 void CSSTransition::setTimingProperties(Seconds delay, Seconds duration)
 {
     suspendEffectInvalidation();

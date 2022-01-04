@@ -59,6 +59,7 @@ private:
     void setTimingProperties(Seconds delay, Seconds duration);
     Ref<AnimationEventBase> createEvent(const AtomString& eventType, double elapsedTime, const String& pseudoId, std::optional<Seconds> timelineTime) final;
     void resolve(RenderStyle& targetStyle, const Style::ResolutionContext&, std::optional<Seconds>) final;
+    void animationDidFinish() final;
 
     CSSPropertyID m_property;
     MonotonicTime m_generationTime;
