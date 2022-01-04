@@ -1,3 +1,19 @@
+2022-01-04  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Add icon for collapsed blackboxed section
+        https://bugs.webkit.org/show_bug.cgi?id=219806
+        <rdar://problem/72240360>
+
+        Reviewed by Patrick Angle.
+
+        * UserInterface/Views/BlackboxedGroupTreeElement.css:
+        (.tree-outline .item.blackboxed-group .icon):
+        (@media (prefers-color-scheme: dark) .tree-outline .item.blackboxed-group .icon):
+        Use `Hide.svg#black` and `Hide.svg#white`.
+
+        * UserInterface/Images/TypeIcons.svg:
+        Remove `#Blackboxed-dark` and `#Blackboxed-light`.
+
 2021-12-31  Tim Nguyen  <ntim@apple.com>
 
         Web Inspector: fix assert text in Gradient.js

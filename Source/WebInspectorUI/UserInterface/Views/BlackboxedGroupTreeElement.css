@@ -29,11 +29,11 @@
 }
 
 .tree-outline .item.blackboxed-group .icon {
-    content: url(../Images/TypeIcons.svg#Blackboxed-light);
+    content: url(../Images/Hide.svg#black);
 }
 
 @media (prefers-color-scheme: dark) {
     .tree-outline .item.blackboxed-group .icon {
-        content: url(../Images/TypeIcons.svg#Blackboxed-dark);
+        content: url(../Images/Hide.svg#white);
     }
 }
