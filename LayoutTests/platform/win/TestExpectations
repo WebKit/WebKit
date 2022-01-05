@@ -911,6 +911,7 @@ imported/w3c/web-platform-tests/audio-output [ Skip ]
 
 fast/speechrecognition/start-recognition-after-gum.html [ Skip ]
 fast/speechrecognition/start-recognition-after-denied-gum.html [ Skip ]
+fast/speechrecognition/start-recognition-without-devices.html [ Skip ]
 
 # needs enhanced eventSender.contextMenu() return value
 #webkit.org/b/45021 media/context-menu-actions.html

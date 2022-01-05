@@ -10880,8 +10880,10 @@ void WebPageProxy::requestUserMediaPermissionForSpeechRecognition(FrameIdentifie
 {
 #if ENABLE(MEDIA_STREAM)
     auto captureDevice = SpeechRecognitionCaptureSource::findCaptureDevice();
-    if (!captureDevice)
+    if (!captureDevice) {
         completionHandler(false);
+        return;
+    }
 
     userMediaPermissionRequestManager().checkUserMediaPermissionForSpeechRecognition(frameIdentifier, requestingOrigin, topOrigin, *captureDevice, WTFMove(completionHandler));
 #else
