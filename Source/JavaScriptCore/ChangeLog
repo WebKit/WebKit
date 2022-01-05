@@ -1,3 +1,42 @@
+2022-01-05  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r285978. rdar://problem/87124911
+
+    [JSC] TypedArray GetArrayLength should not use Reuse
+    https://bugs.webkit.org/show_bug.cgi?id=233299
+    rdar://85502079
+    
+    Reviewed by Robin Morisset.
+    
+    JSTests:
+    
+    * stress/get-array-length-reuse.js: Added.
+    (foo):
+    
+    Source/JavaScriptCore:
+    
+    We should not perform OSR exit after assigning a value to a reused register, otherwise,
+    OSR exit cannot recover the proper value. Now TypedArray GetArrayLength can perform
+    OSR exit after loading a length, so we should not use reused register for length.
+    
+    * dfg/DFGSpeculativeJIT.cpp:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@285978 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-11-17  Yusuke Suzuki  <ysuzuki@apple.com>
+
+            [JSC] TypedArray GetArrayLength should not use Reuse
+            https://bugs.webkit.org/show_bug.cgi?id=233299
+            rdar://85502079
+
+            Reviewed by Robin Morisset.
+
+            We should not perform OSR exit after assigning a value to a reused register, otherwise,
+            OSR exit cannot recover the proper value. Now TypedArray GetArrayLength can perform
+            OSR exit after loading a length, so we should not use reused register for length.
+
+            * dfg/DFGSpeculativeJIT.cpp:
+
 2021-11-11  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r283300. rdar://problem/85259264

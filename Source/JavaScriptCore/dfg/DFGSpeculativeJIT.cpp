@@ -8358,7 +8358,7 @@ void SpeculativeJIT::compileGetArrayLength(Node* node)
     default: {
         ASSERT(node->arrayMode().isSomeTypedArrayView());
         SpeculateCellOperand base(this, node->child1());
-        GPRTemporary result(this, Reuse, base);
+        GPRTemporary result(this);
         GPRReg baseGPR = base.gpr();
         GPRReg resultGPR = result.gpr();
 #if USE(LARGE_TYPED_ARRAYS)
