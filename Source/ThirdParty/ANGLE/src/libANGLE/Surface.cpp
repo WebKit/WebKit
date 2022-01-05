@@ -33,7 +33,8 @@ SurfaceState::SurfaceState(const egl::Config *configIn, const AttributeMap &attr
       config((configIn != nullptr) ? new egl::Config(*configIn) : nullptr),
       attributes(attributesIn),
       timestampsEnabled(false),
-      directComposition(false)
+      directComposition(false),
+      swapBehavior(EGL_NONE)
 {
     directComposition = attributes.get(EGL_DIRECT_COMPOSITION_ANGLE, EGL_FALSE) == EGL_TRUE;
 }
@@ -88,7 +89,6 @@ Surface::Surface(EGLint surfaceType,
       // FIXME: Determine actual pixel aspect ratio
       mPixelAspectRatio(static_cast<EGLint>(1.0 * EGL_DISPLAY_SCALING)),
       mRenderBuffer(EGL_BACK_BUFFER),
-      mSwapBehavior(EGL_NONE),
       mOrientation(0),
       mTexture(nullptr),
       mColorFormat(config->renderTargetFormat),
@@ -170,7 +170,7 @@ Error Surface::destroyImpl(const Display *display)
 
 void Surface::postSwap(const gl::Context *context)
 {
-    if (mRobustResourceInitialization && mSwapBehavior != EGL_BUFFER_PRESERVED)
+    if (mRobustResourceInitialization && mState.swapBehavior != EGL_BUFFER_PRESERVED)
     {
         mInitState = gl::InitState::MayNeedInit;
         onStateChange(angle::SubjectMessage::SubjectChanged);
@@ -205,7 +205,7 @@ Error Surface::initialize(const Display *display)
 
     // Initialized here since impl is nullptr in the constructor.
     // Must happen after implementation initialize for Android.
-    mSwapBehavior = mImplementation->getSwapBehavior();
+    mState.swapBehavior = mImplementation->getSwapBehavior();
 
     if (mBuftype == EGL_IOSURFACE_ANGLE)
     {
@@ -394,7 +394,7 @@ void Surface::setSwapBehavior(EGLenum behavior)
 {
     // Behaviour is set but ignored
     UNIMPLEMENTED();
-    mSwapBehavior = behavior;
+    mState.swapBehavior = behavior;
 }
 
 void Surface::setFixedWidth(EGLint width)
@@ -426,7 +426,7 @@ EGLenum Surface::getRenderBuffer() const
 
 EGLenum Surface::getSwapBehavior() const
 {
-    return mSwapBehavior;
+    return mState.swapBehavior;
 }
 
 TextureFormat Surface::getTextureFormat() const
@@ -607,7 +607,7 @@ Error Surface::getBufferAge(const gl::Context *context, EGLint *age) const
 {
     // When EGL_BUFFER_PRESERVED, the previous frame contents are copied to
     // current frame, so the buffer age is always 1.
-    if (mSwapBehavior == EGL_BUFFER_PRESERVED)
+    if (mState.swapBehavior == EGL_BUFFER_PRESERVED)
     {
         if (age != nullptr)
         {
@@ -792,7 +792,7 @@ egl::Error Surface::lockSurfaceKHR(const egl::Display *display, const AttributeM
         EGL_LOCK_USAGE_HINT_KHR, (EGL_READ_SURFACE_BIT_KHR | EGL_WRITE_SURFACE_BIT_KHR));
 
     bool preservePixels = ((attributes.getAsInt(EGL_MAP_PRESERVE_PIXELS_KHR, false) == EGL_TRUE) ||
-                           (mSwapBehavior == EGL_BUFFER_PRESERVED));
+                           (mState.swapBehavior == EGL_BUFFER_PRESERVED));
 
     return mImplementation->lockSurface(display, lockBufferUsageHint, preservePixels,
                                         &mLockBufferPtr, &mLockBufferPitch);

@@ -1317,6 +1317,14 @@ ANGLE_EXPORT void GL_APIENTRY GL_MaxShaderCompilerThreadsKHR(GLuint count);
 
 // GL_KHR_texture_compression_astc_sliced_3d
 
+// GL_MESA_framebuffer_flip_y
+ANGLE_EXPORT void GL_APIENTRY GL_FramebufferParameteriMESA(GLenum target,
+                                                           GLenum pname,
+                                                           GLint param);
+ANGLE_EXPORT void GL_APIENTRY GL_GetFramebufferParameterivMESA(GLenum target,
+                                                               GLenum pname,
+                                                               GLint *params);
+
 // GL_NV_fence
 ANGLE_EXPORT void GL_APIENTRY GL_DeleteFencesNV(GLsizei n, const GLuint *fences);
 ANGLE_EXPORT void GL_APIENTRY GL_FinishFenceNV(GLuint fence);

@@ -69,7 +69,7 @@ class EGLMultiContextTest : public ANGLETest
                             EGL_RENDERABLE_TYPE,
                             clientVersion,
                             EGL_SURFACE_TYPE,
-                            EGL_WINDOW_BIT,
+                            EGL_WINDOW_BIT | EGL_PBUFFER_BIT,
                             EGL_NONE};
 
         result = eglChooseConfig(dpy, attribs, config, 1, &count);
@@ -124,6 +124,47 @@ TEST_P(EGLMultiContextTest, TestContextDestroySimple)
     EXPECT_EGL_TRUE(eglMakeCurrent(dpy, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT));
     EXPECT_EGL_TRUE(eglDestroyContext(dpy, context1));
     EXPECT_EGL_SUCCESS();
+}
+
+// Test that an error is generated when using EGL objects after calling eglTerminate.
+TEST_P(EGLMultiContextTest, NegativeTestAfterEglTerminate)
+{
+    EGLWindow *window = getEGLWindow();
+    EGLDisplay dpy    = window->getDisplay();
+
+    EGLConfig config = EGL_NO_CONFIG_KHR;
+    EXPECT_TRUE(chooseConfig(dpy, &config));
+
+    EGLContext context = EGL_NO_CONTEXT;
+    EXPECT_TRUE(createContext(dpy, config, &context));
+    ASSERT_EGL_SUCCESS() << "eglCreateContext failed.";
+
+    EGLSurface drawSurface = EGL_NO_SURFACE;
+    EXPECT_TRUE(createPbufferSurface(dpy, config, 2560, 1080, &drawSurface));
+    ASSERT_EGL_SUCCESS() << "eglCreatePbufferSurface failed.";
+
+    EGLSurface readSurface = EGL_NO_SURFACE;
+    EXPECT_TRUE(createPbufferSurface(dpy, config, 2560, 1080, &readSurface));
+    ASSERT_EGL_SUCCESS() << "eglCreatePbufferSurface failed.";
+
+    EXPECT_EGL_TRUE(eglMakeCurrent(dpy, drawSurface, readSurface, context));
+    EXPECT_EGL_SUCCESS();
+
+    // Terminate the display
+    EXPECT_EGL_TRUE(eglTerminate(dpy));
+    EXPECT_EGL_SUCCESS();
+
+    // Try to use invalid handles
+    EGLint value;
+    eglQuerySurface(dpy, drawSurface, EGL_SWAP_BEHAVIOR, &value);
+    EXPECT_EGL_ERROR(EGL_BAD_SURFACE);
+    eglQuerySurface(dpy, readSurface, EGL_HEIGHT, &value);
+    EXPECT_EGL_ERROR(EGL_BAD_SURFACE);
+
+    // Cleanup
+    EXPECT_EGL_TRUE(eglMakeCurrent(dpy, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT));
+    EXPECT_EGL_SUCCESS();
+    window->destroyGL();
 }
 
 // Test that a compute shader running in one thread will still work when rendering is happening in
@@ -290,11 +331,17 @@ void main()
 }
 
 // Test that repeated EGL init + terminate with improper cleanup doesn't cause an OOM crash.
-// To reproduce the memleak issue changes need to be made to "EGLWindow::destroyGL" as shown here ->
-// https://chromium-review.googlesource.com/c/angle/angle/+/3294581/5/util/EGLWindow.cpp
+// To reproduce the OOM error -
+//     1. Increase the loop count to a large number
+//     2. Run the test without the rest of the code in change 3329273
 TEST_P(EGLMultiContextTest, RepeatedEglInitAndTerminate)
 {
-    ANGLE_SKIP_TEST_IF(!IsAndroid() || !IsVulkan());
+    // GL and GLES drivers don't seem to perform appropriate cleanup
+    // SwiftShader fails with "Extension not supported" error on the bots
+    ANGLE_SKIP_TEST_IF(!IsVulkan() || isSwiftshader());
+
+    // Release all resources in parent thread
+    getEGLWindow()->destroyGL();
 
     EGLDisplay dpy;
     EGLSurface srf;
@@ -324,6 +371,8 @@ TEST_P(EGLMultiContextTest, RepeatedEglInitAndTerminate)
             EXPECT_PIXEL_EQ(0, 0, 255, 0, 0, 255);
 
             eglTerminate(dpy);
+            EXPECT_EGL_SUCCESS();
+            eglReleaseThread();
             EXPECT_EGL_SUCCESS();
             dpy = EGL_NO_DISPLAY;
             srf = EGL_NO_SURFACE;

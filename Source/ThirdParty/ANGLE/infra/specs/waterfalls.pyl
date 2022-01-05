@@ -217,7 +217,7 @@
         ],
         'test_suites': {
           # Clang-Win/ASAN has issues with dEQP's exceptions. http://crbug.com/1268912
-          'gtest_tests': 'swangle_non_deqp_gtests',
+          'gtest_tests': 'swangle_non_deqp_slow_gtests',
         },
       },
       'win10-x86-swiftshader': {

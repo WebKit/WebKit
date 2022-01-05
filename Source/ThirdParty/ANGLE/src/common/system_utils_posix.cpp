@@ -19,6 +19,8 @@
 #else
 #    include <sys/resource.h>
 #endif
+#include <grp.h>
+#include <pwd.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <sys/wait.h>
@@ -103,9 +105,53 @@ std::string GetModuleDirectory()
 class PosixLibrary : public Library
 {
   public:
-    PosixLibrary(const std::string &fullPath, int extraFlags)
+    PosixLibrary(const std::string &fullPath, int extraFlags, std::string *errorOut)
         : mModule(dlopen(fullPath.c_str(), RTLD_NOW | extraFlags))
-    {}
+    {
+        if (mModule)
+        {
+            if (errorOut)
+            {
+                *errorOut = fullPath;
+            }
+        }
+        else if (errorOut)
+        {
+            *errorOut = "dlopen(";
+            *errorOut += fullPath;
+            *errorOut += ") failed with error: ";
+            *errorOut += dlerror();
+            struct stat sfile;
+            if (-1 == stat(fullPath.c_str(), &sfile))
+            {
+                *errorOut += ", stat() call failed.";
+            }
+            else
+            {
+                *errorOut += ", stat() info: ";
+                struct passwd *pwuser = getpwuid(sfile.st_uid);
+                if (pwuser)
+                {
+                    *errorOut += "owner: ";
+                    *errorOut += pwuser->pw_name;
+                    *errorOut += ", ";
+                }
+                struct group *grpnam = getgrgid(sfile.st_gid);
+                if (grpnam)
+                {
+                    *errorOut += "group: ";
+                    *errorOut += grpnam->gr_name;
+                    *errorOut += ", ";
+                }
+                *errorOut += "perms: ";
+                *errorOut += std::to_string(sfile.st_mode);
+                *errorOut += ", links: ";
+                *errorOut += std::to_string(sfile.st_nlink);
+                *errorOut += ", size: ";
+                *errorOut += std::to_string(sfile.st_size);
+            }
+        }
+    }
 
     ~PosixLibrary() override
     {
@@ -141,37 +187,28 @@ class PosixLibrary : public Library
     void *mModule = nullptr;
 };
 
-std::string GetSharedLibraryName(const char *libraryName, SearchType searchType)
-{
-    std::string libraryWithExtension = std::string(libraryName) + "." + GetSharedLibraryExtension();
-
-    std::string directory;
-    if (searchType == SearchType::ModuleDir)
-    {
-#if ANGLE_PLATFORM_IOS
-        // On iOS, shared libraries must be loaded from within the app bundle.
-        directory = GetExecutableDirectory() + "/Frameworks/";
-#else
-        directory = GetModuleDirectory();
-#endif
-    }
-
-    std::string fullPath = directory + libraryWithExtension;
-#if ANGLE_PLATFORM_IOS
-    // On iOS, dlopen needs a suffix on the framework name to work.
-    fullPath = fullPath + "/" + libraryName;
-#endif
-
-    return fullPath;
-}
-
 Library *OpenSharedLibrary(const char *libraryName, SearchType searchType)
 {
-    std::string libraryWithExtension = std::string(libraryName) + "." + GetSharedLibraryExtension();
-    return OpenSharedLibraryWithExtension(libraryWithExtension.c_str(), searchType);
+    return OpenSharedLibraryAndGetError(libraryName, searchType, nullptr);
 }
 
 Library *OpenSharedLibraryWithExtension(const char *libraryName, SearchType searchType)
+{
+    return OpenSharedLibraryWithExtensionAndGetError(libraryName, searchType, nullptr);
+}
+
+Library *OpenSharedLibraryAndGetError(const char *libraryName,
+                                      SearchType searchType,
+                                      std::string *errorOut)
+{
+    std::string libraryWithExtension = std::string(libraryName) + "." + GetSharedLibraryExtension();
+    return OpenSharedLibraryWithExtensionAndGetError(libraryWithExtension.c_str(), searchType,
+                                                     errorOut);
+}
+
+Library *OpenSharedLibraryWithExtensionAndGetError(const char *libraryName,
+                                                   SearchType searchType,
+                                                   std::string *errorOut)
 {
     std::string directory;
     if (searchType == SearchType::ModuleDir)
@@ -195,7 +232,8 @@ Library *OpenSharedLibraryWithExtension(const char *libraryName, SearchType sear
     // On iOS, dlopen needs a suffix on the framework name to work.
     fullPath = fullPath + "/" + libraryName;
 #endif
-    return new PosixLibrary(fullPath, extraFlags);
+
+    return new PosixLibrary(fullPath, extraFlags, errorOut);
 }
 
 bool IsDirectory(const char *filename)
@@ -291,7 +329,8 @@ void SegfaultHandlerFunction(int sig, siginfo_t *info, void *unused)
 void PosixPageFaultHandler::handle(int sig, siginfo_t *info, void *unused)
 {
     bool found = false;
-    if ((sig == SIGSEGV || sig == SIGBUS) && info->si_code == SEGV_ACCERR)
+    if ((sig == SIGSEGV || sig == SIGBUS) &&
+        (info->si_code == SEGV_ACCERR || info->si_code == SEGV_MAPERR))
     {
         found = mCallback(reinterpret_cast<uintptr_t>(info->si_addr)) ==
                 PageFaultHandlerRangeType::InRange;

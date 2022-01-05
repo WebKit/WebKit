@@ -828,11 +828,14 @@ bool EGLWindow::makeCurrent()
 
 bool EGLWindow::makeCurrent(EGLContext context)
 {
-    if (eglMakeCurrent(mDisplay, mSurface, mSurface, context) == EGL_FALSE ||
-        eglGetError() != EGL_SUCCESS)
+    if (isGLInitialized())
     {
-        fprintf(stderr, "Error during eglMakeCurrent.\n");
-        return false;
+        if (eglMakeCurrent(mDisplay, mSurface, mSurface, context) == EGL_FALSE ||
+            eglGetError() != EGL_SUCCESS)
+        {
+            fprintf(stderr, "Error during eglMakeCurrent.\n");
+            return false;
+        }
     }
 
     return true;

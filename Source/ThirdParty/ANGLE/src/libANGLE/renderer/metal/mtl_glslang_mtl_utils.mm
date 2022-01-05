@@ -332,8 +332,7 @@ void GenerateTransformFeedbackEmulationOutputs(
             "device float* ANGLE_" + bufferName + " [[buffer(" + Str(bindingPoint) + ")]]";
     }
 
-    std::string xfbOut = "#if TRANSFORM_FEEDBACK_ENABLED\n    if (ANGLE_" +
-                         std::string(sh::kUniformsVar) + ".ANGLE_xfbActiveUnpaused != 0)\n    {\n";
+    std::string xfbOut  = "#if TRANSFORM_FEEDBACK_ENABLED\n    {\n";
     size_t outputOffset = 0;
     for (size_t varyingIndex = 0; varyingIndex < varyings.size(); ++varyingIndex)
     {

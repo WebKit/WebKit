@@ -2339,6 +2339,8 @@ void Texture::onSubjectStateChange(angle::SubjectIndex index, angle::SubjectMess
             // points to the newly allocated buffer and update the texture descriptor set.
             signalDirtyState(DIRTY_BIT_IMPLEMENTATION);
             break;
+        case angle::SubjectMessage::BufferVkStorageChanged:
+            break;
         default:
             UNREACHABLE();
             break;

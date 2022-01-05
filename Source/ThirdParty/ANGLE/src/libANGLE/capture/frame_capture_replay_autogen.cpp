@@ -862,6 +862,12 @@ void FrameCaptureShared::ReplayCall(gl::Context *context,
                 params.getParam("pname", ParamType::TGLenum, 1).value.GLenumVal,
                 params.getParam("param", ParamType::TGLint, 2).value.GLintVal);
             break;
+        case angle::EntryPoint::GLFramebufferParameteriMESA:
+            context->framebufferParameteriMESA(
+                params.getParam("target", ParamType::TGLenum, 0).value.GLenumVal,
+                params.getParam("pname", ParamType::TGLenum, 1).value.GLenumVal,
+                params.getParam("param", ParamType::TGLint, 2).value.GLintVal);
+            break;
         case angle::EntryPoint::GLFramebufferRenderbuffer:
             context->framebufferRenderbuffer(
                 params.getParam("target", ParamType::TGLenum, 0).value.GLenumVal,
@@ -1176,6 +1182,13 @@ void FrameCaptureShared::ReplayCall(gl::Context *context,
             break;
         case angle::EntryPoint::GLGetFramebufferParameteriv:
             context->getFramebufferParameteriv(
+                params.getParam("target", ParamType::TGLenum, 0).value.GLenumVal,
+                params.getParam("pname", ParamType::TGLenum, 1).value.GLenumVal,
+                replayContext->getReadBufferPointer<GLint *>(
+                    params.getParam("params", ParamType::TGLintPointer, 2)));
+            break;
+        case angle::EntryPoint::GLGetFramebufferParameterivMESA:
+            context->getFramebufferParameterivMESA(
                 params.getParam("target", ParamType::TGLenum, 0).value.GLenumVal,
                 params.getParam("pname", ParamType::TGLenum, 1).value.GLenumVal,
                 replayContext->getReadBufferPointer<GLint *>(

@@ -8,6 +8,7 @@ import("../../../gni/angle.gni")
 
 angle_shared_library("angle_restricted_trace_loader") {
   sources = [
+    "restricted_traces_autogen.h",
     "restricted_traces_export.h",
     "trace_egl_loader_autogen.cpp",
     "trace_egl_loader_autogen.h",
@@ -27,49 +28,45 @@ angle_trace_fixture("angle_restricted_trace_fixture") {
   public_configs = [ "$angle_root:no_gl_prototypes" ]
 }
 
-_trace_json = read_file("restricted_traces.json", "json")
-_trace_targets = []
+# Imports "angle_restricted_traces"
+import("restricted_traces_autogen.gni")
+_traces = []
+_trace_headers = []
 
-foreach(_trace_and_version, _trace_json.traces) {
-  _trace_and_version_arr = []
-  _trace_and_version_arr = string_split(_trace_and_version)
-  _trace = _trace_and_version_arr[0]
-  _trace_json_path = "$_trace/$_trace.json"
-  _trace_data = []
-  _trace_data = read_file(_trace_json_path, "json")
-  _target = "angle_restricted_trace_$_trace"
-  _trace_extra_cpp =
-      "${_trace}/${_trace}_context${_trace_data.WindowSurfaceContextID}.cpp"
+foreach(_trace_data, angle_restricted_traces) {
+  _trace = _trace_data[0]
+  _trace_ctx = _trace_data[1]
+  _target = "angle_restricted_trace_${_trace}"
 
   angle_trace(_target) {
-    # TODO(jmadill): Include context file in TraceFiles. http://anglebug.com/5133
-    sources =
-        rebase_path(_trace_data.TraceFiles, ".", _trace) + [ _trace_extra_cpp ]
-
-    data = [
-      "$_trace/$_trace.json",
-      "$_trace/$_trace.angledata.gz",
-    ]
+    sources = _trace_data[2]
+    data = _trace_data[3]
+    trace_prefix = _trace_data[4]
     fixture = ":angle_restricted_trace_fixture"
   }
 
-  _trace_targets += [ ":$_target" ]
+  _traces += [ ":${_target}" ]
+  _trace_headers += [ ":${_target}_headers" ]
 }
 
 angle_shared_library("angle_restricted_traces") {
   testonly = true
 
-  sources = [ "restricted_traces_export.h" ]
+  sources = [
+    "restricted_traces_autogen.cpp",
+    "restricted_traces_autogen.h",
+    "restricted_traces_export.h",
+  ]
 
   data = [ "restricted_traces.json" ]
 
-  data_deps = _trace_targets
+  data_deps = _traces
   defines = [ "ANGLE_TRACE_IMPLEMENTATION" ]
 
   deps = [
-    "$angle_root:angle_common",
-    "$angle_root/util:angle_util",
-  ]
+           "$angle_root:angle_common",
+           "$angle_root/util:angle_util",
+         ] + _trace_headers
 
   public_deps = [ ":angle_restricted_trace_loader" ]
 }

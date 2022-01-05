@@ -14,6 +14,7 @@
 #include "libANGLE/renderer/DisplayImpl.h"
 #include "libANGLE/renderer/vulkan/ResourceVk.h"
 #include "libANGLE/renderer/vulkan/vk_cache_utils.h"
+#include "libANGLE/renderer/vulkan/vk_helpers.h"
 #include "libANGLE/renderer/vulkan/vk_utils.h"
 
 namespace rx
@@ -44,6 +45,10 @@ class ShareGroupVk : public ShareGroupImpl
         mResourceUseLists.emplace_back(std::move(resourceUseList));
     }
 
+    vk::BufferPool *getDefaultBufferPool(RendererVk *renderer, uint32_t memoryTypeIndex);
+    void pruneDefaultBufferPools(RendererVk *renderer);
+    bool isDueForBufferPoolPrune();
+
   private:
     // ANGLE uses a PipelineLayout cache to store compatible pipeline layouts.
     PipelineLayoutCache mPipelineLayoutCache;
@@ -57,6 +62,11 @@ class ShareGroupVk : public ShareGroupImpl
     // List of resources currently used that need to be freed when any ContextVk in this
     // ShareGroupVk submits the next command.
     std::vector<vk::ResourceUseList> mResourceUseLists;
+
+    // The per shared group buffer pools that all buffers should sub-allocate from.
+    vk::BufferPoolPointerArray mDefaultBufferPools;
+    // The system time when last pruneEmptyBuffer gets called.
+    double mLastPruneTime;
 };
 
 class DisplayVk : public DisplayImpl, public vk::Context

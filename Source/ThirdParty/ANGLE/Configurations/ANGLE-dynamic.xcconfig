@@ -30,7 +30,7 @@ DYLIB_INSTALL_NAME_BASE_USE_ALTERNATE_FRAMEWORKS_DIR_YES = $(DYLIB_INSTALL_NAME_
 DYLIB_INSTALL_NAME_BASE_WK_RELOCATABLE_FRAMEWORKS_ = $(DYLIB_INSTALL_NAME_BASE);
 DYLIB_INSTALL_NAME_BASE_WK_RELOCATABLE_FRAMEWORKS_YES = @loader_path/../../../;
 
-HEADER_SEARCH_PATHS = include src src/common/third_party/numerics third_party/base src/common/third_party/base third_party/zlib/google ${DERIVED_FILES_DIR};
+HEADER_SEARCH_PATHS = ${DERIVED_FILES_DIR} include src src/common/third_party/numerics third_party/base src/common/third_party/base third_party/zlib/google ${DERIVED_FILES_DIR};
 
 ANGLE_HEADERS_FOLDER_PATH = /usr/local/include/ANGLE;
 

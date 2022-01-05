@@ -3611,7 +3611,7 @@
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"$(DERIVED_FILE_DIR)/mtl_default_shaders_compiled.inc",
+				"$(DERIVED_FILE_DIR)/libANGLE/renderer/metal/mtl_default_shaders_compiled.inc",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;

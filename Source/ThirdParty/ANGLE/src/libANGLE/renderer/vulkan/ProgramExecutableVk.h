@@ -195,6 +195,8 @@ class ProgramExecutableVk
     {
         return mUniformBufferDescriptorType == VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC;
     }
+    bool usesDynamicShaderStorageBufferDescriptors() const { return false; }
+    bool usesDynamicAtomicCounterBufferDescriptors() const { return false; }
 
     bool areImmutableSamplersCompatible(
         const ImmutableSamplerIndexMap &immutableSamplerIndexMap) const

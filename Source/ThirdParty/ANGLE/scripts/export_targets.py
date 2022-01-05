@@ -155,7 +155,7 @@ def flattened_target(target_name: str, descs: dict, stop_at_lib: bool =True) -> 
                     # the value of "public" can be a string instead of a list.
                     existing = flattened.get(k, [])
                     if isinstance(existing, str):
-                        existing = [existing]
+                      existing = [existing]
                     flattened[k] = sortedi(set(existing + v))
                 else:
                     #flattened.setdefault(k, v)
@@ -231,9 +231,9 @@ IGNORED_INCLUDES = {
     b'vulkan_xcb.h',
     b'vulkan_xlib.h',
     b'vulkan_xlib_xrandr.h',
-    # rapidjson adds these include stubs into their documentation
-    # comments. Since the script doesn't skip comments they are
-    # erroneously marked as valid includes
+# rapidjson adds these include stubs into their documentation
+# comments. Since the script doesn't skip comments they are
+# erroneously marked as valid includes
     b'rapidjson/...',
     # Validation layers support building with robin hood hashing, but we are not enabling that
     # See http://anglebug.com/5791
@@ -298,7 +298,7 @@ def has_all_includes(target_name: str, descs: dict) -> bool:
                 #print('  acceptable_sources:')
                 #for x in sorted(acceptable_sources):
                 #    print('   ', x)
-                print('Warning in {}: {}: Invalid include: {}'.format(target_name, cur_file, include), file=sys.stderr)
+                print('Warning in {}: {}: Included file must be listed in the GN target or its public dependency: {}'.format(target_name, cur_file, include), file=sys.stderr)
                 ret = False
             #print('Looks valid:', m.group())
             continue

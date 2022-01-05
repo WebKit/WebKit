@@ -927,6 +927,10 @@ EXPORTS
 
     ; GL_KHR_texture_compression_astc_sliced_3d
 
+    ; GL_MESA_framebuffer_flip_y
+    glFramebufferParameteriMESA
+    glGetFramebufferParameterivMESA
+
     ; GL_NV_fence
     glDeleteFencesNV
     glFinishFenceNV

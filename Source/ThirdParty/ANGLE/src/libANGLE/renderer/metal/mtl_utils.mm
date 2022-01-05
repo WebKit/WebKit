@@ -832,7 +832,7 @@ AutoObjCPtr<id<MTLLibrary>> CreateShaderLibrary(
         [nsSource ANGLE_MTL_AUTORELEASE];
         *errorOut = std::move(nsError);
 
-        return [library ANGLE_MTL_AUTORELEASE];
+        return library;
     }
 }
 
@@ -1252,17 +1252,9 @@ bool SupportsAppleGPUFamily(id<MTLDevice> device, uint8_t appleFamily)
             case 5:
                 family = MTLGPUFamilyApple5;
                 break;
-                
 #    if TARGET_OS_IOS || (TARGET_OS_OSX && __MAC_OS_X_VERSION_MAX_ALLOWED >= 110000)
             case 6:
-                if (@available(ios 14.0, macOS 10.15, *))
-                {
-                    family = MTLGPUFamilyApple6;
-                }
-                else
-                {
-                    return false;
-                }
+                family = MTLGPUFamilyApple6;
                 break;
 #    endif
             default:

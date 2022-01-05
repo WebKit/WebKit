@@ -221,8 +221,6 @@ inline std::string Str(int i)
     return strstr.str();
 }
 
-size_t FormatStringIntoVector(const char *fmt, va_list vararg, std::vector<char> &buffer);
-
 template <typename T>
 std::string ToString(const T &value)
 {
@@ -394,6 +392,9 @@ inline bool IsLittleEndian()
 #else
 #    define ANGLE_FORMAT_PRINTF(fmt, args)
 #endif
+
+ANGLE_FORMAT_PRINTF(1,0)
+size_t FormatStringIntoVector(const char *fmt, va_list vararg, std::vector<char> &buffer);
 
 // Format messes up the # inside the macro.
 // clang-format off

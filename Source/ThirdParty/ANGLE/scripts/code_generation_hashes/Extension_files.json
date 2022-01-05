@@ -1,6 +1,6 @@
 {
   "doc/ExtensionSupport.md":
-    "14185ec747682e4a338a9fae6972e3f1",
+    "23b3eee41ecb931f736e9a78e03c9741",
   "scripts/cl.xml":
     "f923201d4ea3e1130763b19fa7faa7a2",
   "scripts/egl.xml":
@@ -22,17 +22,17 @@
   "scripts/extension_data/swiftshader_win10_gles1.json":
     "fbf1c3dc83570c1e3fffdbee313bca30",
   "scripts/gl.xml":
-    "a442a7aeff3a2f0a1fba52ee08089500",
+    "467556b6f73fd024b08b703d0be83999",
   "scripts/gl_angle_ext.xml":
     "474989440f980a079935dff3ab4d7b24",
   "scripts/registry_xml.py":
-    "d3b720c24c32f53d46191cffa1618d28",
+    "b1893c003352dec25d4cd54e2b385925",
   "scripts/wgl.xml":
     "c36001431919e1c435f1215a85f7e1db",
   "src/libANGLE/gen_extensions.py":
     "db7ed1c2245bba536e074a1cf2bb2590",
   "src/libANGLE/gles_extensions_autogen.cpp":
-    "bec449f60a36c7615aaa331bada604a7",
+    "6c765b092edffcda3a114e3fb587df3a",
   "src/libANGLE/gles_extensions_autogen.h":
-    "c33d6d019b639cd64a1723bded359e2c"
+    "8ca4513c8c187b2baa2872c7653c5086"
 }

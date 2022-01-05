@@ -4957,6 +4957,17 @@ void GL_APIENTRY glMaxShaderCompilerThreadsKHR(GLuint count)
 
 // GL_KHR_texture_compression_astc_sliced_3d
 
+// GL_MESA_framebuffer_flip_y
+void GL_APIENTRY glFramebufferParameteriMESA(GLenum target, GLenum pname, GLint param)
+{
+    return GL_FramebufferParameteriMESA(target, pname, param);
+}
+
+void GL_APIENTRY glGetFramebufferParameterivMESA(GLenum target, GLenum pname, GLint *params)
+{
+    return GL_GetFramebufferParameterivMESA(target, pname, params);
+}
+
 // GL_NV_fence
 void GL_APIENTRY glDeleteFencesNV(GLsizei n, const GLuint *fences)
 {

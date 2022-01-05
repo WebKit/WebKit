@@ -8571,6 +8571,61 @@ void GL_APIENTRY GL_MaxShaderCompilerThreadsKHR(GLuint count)
 
 // GL_KHR_texture_compression_astc_sliced_3d
 
+// GL_MESA_framebuffer_flip_y
+void GL_APIENTRY GL_FramebufferParameteriMESA(GLenum target, GLenum pname, GLint param)
+{
+    Context *context = GetValidGlobalContext();
+    EVENT(context, GLFramebufferParameteriMESA, "context = %d, target = %s, pname = %s, param = %d",
+          CID(context), GLenumToString(GLenumGroup::FramebufferTarget, target),
+          GLenumToString(GLenumGroup::FramebufferParameterName, pname), param);
+
+    if (context)
+    {
+        std::unique_lock<angle::GlobalMutex> shareContextLock = GetContextLock(context);
+        bool isCallValid =
+            (context->skipValidation() ||
+             ValidateFramebufferParameteriMESA(
+                 context, angle::EntryPoint::GLFramebufferParameteriMESA, target, pname, param));
+        if (isCallValid)
+        {
+            context->framebufferParameteriMESA(target, pname, param);
+        }
+        ANGLE_CAPTURE(FramebufferParameteriMESA, isCallValid, context, target, pname, param);
+    }
+    else
+    {
+        GenerateContextLostErrorOnCurrentGlobalContext();
+    }
+}
+
+void GL_APIENTRY GL_GetFramebufferParameterivMESA(GLenum target, GLenum pname, GLint *params)
+{
+    Context *context = GetValidGlobalContext();
+    EVENT(context, GLGetFramebufferParameterivMESA,
+          "context = %d, target = %s, pname = %s, params = 0x%016" PRIxPTR "", CID(context),
+          GLenumToString(GLenumGroup::FramebufferTarget, target),
+          GLenumToString(GLenumGroup::FramebufferAttachmentParameterName, pname),
+          (uintptr_t)params);
+
+    if (context)
+    {
+        std::unique_lock<angle::GlobalMutex> shareContextLock = GetContextLock(context);
+        bool isCallValid                                      = (context->skipValidation() ||
+                            ValidateGetFramebufferParameterivMESA(
+                                context, angle::EntryPoint::GLGetFramebufferParameterivMESA, target,
+                                pname, params));
+        if (isCallValid)
+        {
+            context->getFramebufferParameterivMESA(target, pname, params);
+        }
+        ANGLE_CAPTURE(GetFramebufferParameterivMESA, isCallValid, context, target, pname, params);
+    }
+    else
+    {
+        GenerateContextLostErrorOnCurrentGlobalContext();
+    }
+}
+
 // GL_NV_fence
 void GL_APIENTRY GL_DeleteFencesNV(GLsizei n, const GLuint *fences)
 {

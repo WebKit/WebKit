@@ -782,6 +782,10 @@ Display::Display(EGLenum platform, EGLNativeDisplayType displayId, Device *eglDe
       mConfigSet(),
       mContextSet(),
       mStreamSet(),
+      mInvalidImageSet(),
+      mInvalidStreamSet(),
+      mInvalidSurfaceSet(),
+      mInvalidSyncSet(),
       mInitialized(false),
       mDeviceLost(false),
       mCaps(),
@@ -1005,6 +1009,52 @@ Error Display::initialize()
     return NoError();
 }
 
+Error Display::destroyInvalidEglObjects()
+{
+    // Destroy invalid EGL objects
+
+    ImageSet images     = {};
+    StreamSet streams   = {};
+    SurfaceSet surfaces = {};
+    SyncSet syncs       = {};
+    {
+        // Retrieve objects to be destroyed
+        std::lock_guard<std::mutex> lock(mInvalidEglObjectsMutex);
+        images   = mInvalidImageSet;
+        streams  = mInvalidStreamSet;
+        surfaces = mInvalidSurfaceSet;
+        syncs    = mInvalidSyncSet;
+
+        // Update invalid object sets
+        mInvalidImageSet.clear();
+        mInvalidStreamSet.clear();
+        mInvalidSurfaceSet.clear();
+        mInvalidSyncSet.clear();
+    }
+
+    while (!images.empty())
+    {
+        destroyImageImpl(*images.begin(), &images);
+    }
+
+    while (!streams.empty())
+    {
+        destroyStreamImpl(*streams.begin(), &streams);
+    }
+
+    while (!surfaces.empty())
+    {
+        ANGLE_TRY(destroySurfaceImpl(*surfaces.begin(), &surfaces));
+    }
+
+    while (!syncs.empty())
+    {
+        destroySyncImpl(*syncs.begin(), &syncs);
+    }
+
+    return NoError();
+}
+
 Error Display::terminate(Thread *thread, TerminateReason terminateReason)
 {
     mIsTerminated = true;
@@ -1016,10 +1066,30 @@ Error Display::terminate(Thread *thread, TerminateReason terminateReason)
 
     // EGL 1.5 Specification
     // 3.2 Initialization
-    // If contexts or surfaces, created with respect to dpy are current (see section 3.7.3) to any
-    // thread, then they are not actually destroyed while they remain current. If other resources
-    // created with respect to dpy are in use by any current context or surface, then they are also
-    // not destroyed until the corresponding context or surface is no longer current.
+    // Termination marks all EGL-specific resources, such as contexts and surfaces, associated
+    // with the specified display for deletion. Handles to all such resources are invalid as soon
+    // as eglTerminate returns
+    // Cache EGL objects that are no longer valid
+    // TODO (http://www.anglebug.com/6798): Invalidate context handles as well.
+    {
+        std::lock_guard<std::mutex> lock(mInvalidEglObjectsMutex);
+
+        mInvalidImageSet.insert(mImageSet.begin(), mImageSet.end());
+        mImageSet.clear();
+
+        mInvalidStreamSet.insert(mStreamSet.begin(), mStreamSet.end());
+        mStreamSet.clear();
+
+        mInvalidSurfaceSet.insert(mState.surfaceSet.begin(), mState.surfaceSet.end());
+        mState.surfaceSet.clear();
+
+        mInvalidSyncSet.insert(mSyncSet.begin(), mSyncSet.end());
+        mSyncSet.clear();
+    }
+
+    // All EGL objects, except contexts, have been marked invalid by the block above and will be
+    // cleaned up during eglReleaseThread. If no contexts are current on any thread, perform the
+    // cleanup right away.
     for (gl::Context *context : mContextSet)
     {
         if (context->getRefCount() > 0)
@@ -1052,25 +1122,8 @@ Error Display::terminate(Thread *thread, TerminateReason terminateReason)
     ASSERT(mGlobalTextureShareGroupUsers == 0 && mTextureManager == nullptr);
     ASSERT(mGlobalSemaphoreShareGroupUsers == 0 && mSemaphoreManager == nullptr);
 
-    while (!mImageSet.empty())
-    {
-        destroyImage(*mImageSet.begin());
-    }
-
-    while (!mStreamSet.empty())
-    {
-        destroyStream(*mStreamSet.begin());
-    }
-
-    while (!mSyncSet.empty())
-    {
-        destroySync(*mSyncSet.begin());
-    }
-
-    while (!mState.surfaceSet.empty())
-    {
-        ANGLE_TRY(destroySurface(*mState.surfaceSet.begin()));
-    }
+    // Now that contexts have been destroyed, clean up any remaining invalid objects
+    ANGLE_TRY(destroyInvalidEglObjects());
 
     mConfigSet.clear();
 
@@ -1102,7 +1155,8 @@ Error Display::prepareForCall()
 
 Error Display::releaseThread()
 {
-    return mImplementation->releaseThread();
+    ANGLE_TRY(mImplementation->releaseThread());
+    return destroyInvalidEglObjects();
 }
 
 std::vector<const Config *> Display::getConfigs(const egl::AttributeMap &attribs) const
@@ -1490,7 +1544,7 @@ Error Display::restoreLostDevice()
     return mImplementation->restoreLostDevice(this);
 }
 
-Error Display::destroySurface(Surface *surface)
+Error Display::destroySurfaceImpl(Surface *surface, SurfaceSet *surfaces)
 {
     if (surface->getType() == EGL_WINDOW_BIT)
     {
@@ -1512,22 +1566,24 @@ Error Display::destroySurface(Surface *surface)
         ASSERT(surfaceRemoved);
     }
 
-    mState.surfaceSet.erase(surface);
+    auto iter = surfaces->find(surface);
+    ASSERT(iter != surfaces->end());
+    surfaces->erase(iter);
     ANGLE_TRY(surface->onDestroy(this));
     return NoError();
 }
 
-void Display::destroyImage(egl::Image *image)
+void Display::destroyImageImpl(Image *image, ImageSet *images)
 {
-    auto iter = mImageSet.find(image);
-    ASSERT(iter != mImageSet.end());
+    auto iter = images->find(image);
+    ASSERT(iter != images->end());
     (*iter)->release(this);
-    mImageSet.erase(iter);
+    images->erase(iter);
 }
 
-void Display::destroyStream(egl::Stream *stream)
+void Display::destroyStreamImpl(Stream *stream, StreamSet *streams)
 {
-    mStreamSet.erase(stream);
+    streams->erase(stream);
     SafeDelete(stream);
 }
 
@@ -1630,12 +1686,32 @@ Error Display::destroyContext(Thread *thread, gl::Context *context)
     return NoError();
 }
 
-void Display::destroySync(egl::Sync *sync)
+void Display::destroySyncImpl(Sync *sync, SyncSet *syncs)
 {
-    auto iter = mSyncSet.find(sync);
-    ASSERT(iter != mSyncSet.end());
+    auto iter = syncs->find(sync);
+    ASSERT(iter != syncs->end());
     (*iter)->release(this);
-    mSyncSet.erase(iter);
+    syncs->erase(iter);
+}
+
+void Display::destroyImage(Image *image)
+{
+    return destroyImageImpl(image, &mImageSet);
+}
+
+void Display::destroyStream(Stream *stream)
+{
+    return destroyStreamImpl(stream, &mStreamSet);
+}
+
+Error Display::destroySurface(Surface *surface)
+{
+    return destroySurfaceImpl(surface, &mState.surfaceSet);
+}
+
+void Display::destroySync(Sync *sync)
+{
+    return destroySyncImpl(sync, &mSyncSet);
 }
 
 bool Display::isDeviceLost() const

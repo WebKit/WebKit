@@ -679,6 +679,11 @@ class ContextVk : public ContextImpl, public vk::Context, public MultisampleText
 
     void flushDescriptorSetUpdates();
 
+    vk::BufferPool *getDefaultBufferPool(uint32_t memoryTypeIndex)
+    {
+        return mShareGroupVk->getDefaultBufferPool(mRenderer, memoryTypeIndex);
+    }
+
   private:
     // Dirty bits.
     enum DirtyBitType : size_t

@@ -235,6 +235,9 @@ struct Extensions
     // GL_NV_framebuffer_blit
     bool framebufferBlitNV = false;
 
+    // GL_MESA_framebuffer_flip_y
+    bool framebufferFlipYMESA = false;
+
     // GL_EXT_geometry_shader
     bool geometryShaderEXT = false;
 

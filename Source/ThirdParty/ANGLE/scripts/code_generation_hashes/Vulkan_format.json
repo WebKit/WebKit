@@ -6,7 +6,7 @@
   "src/libANGLE/renderer/vulkan/gen_vk_format_table.py":
     "6e4c403c145549c0baa69d65b5e73152",
   "src/libANGLE/renderer/vulkan/vk_format_map.json":
-    "7a376275a743f535839d92bfe7b23ee0",
+    "39f2bdd9574a0f1b6666862ef104297f",
   "src/libANGLE/renderer/vulkan/vk_format_table_autogen.cpp":
-    "6b08957da13a3277addb46cb690b8313"
+    "4bd34086514c7cecc764a8f7c8b50d48"
 }

@@ -8743,6 +8743,52 @@ CallCapture CaptureMaxShaderCompilerThreadsKHR(const State &glState, bool isCall
     return CallCapture(angle::EntryPoint::GLMaxShaderCompilerThreadsKHR, std::move(paramBuffer));
 }
 
+CallCapture CaptureFramebufferParameteriMESA(const State &glState,
+                                             bool isCallValid,
+                                             GLenum target,
+                                             GLenum pname,
+                                             GLint param)
+{
+    ParamBuffer paramBuffer;
+
+    paramBuffer.addEnumParam("target", GLenumGroup::FramebufferTarget, ParamType::TGLenum, target);
+    paramBuffer.addEnumParam("pname", GLenumGroup::FramebufferParameterName, ParamType::TGLenum,
+                             pname);
+    paramBuffer.addValueParam("param", ParamType::TGLint, param);
+
+    return CallCapture(angle::EntryPoint::GLFramebufferParameteriMESA, std::move(paramBuffer));
+}
+
+CallCapture CaptureGetFramebufferParameterivMESA(const State &glState,
+                                                 bool isCallValid,
+                                                 GLenum target,
+                                                 GLenum pname,
+                                                 GLint *params)
+{
+    ParamBuffer paramBuffer;
+
+    paramBuffer.addEnumParam("target", GLenumGroup::FramebufferTarget, ParamType::TGLenum, target);
+    paramBuffer.addEnumParam("pname", GLenumGroup::FramebufferAttachmentParameterName,
+                             ParamType::TGLenum, pname);
+
+    if (isCallValid)
+    {
+        ParamCapture paramsParam("params", ParamType::TGLintPointer);
+        InitParamValue(ParamType::TGLintPointer, params, &paramsParam.value);
+        CaptureGetFramebufferParameterivMESA_params(glState, isCallValid, target, pname, params,
+                                                    &paramsParam);
+        paramBuffer.addParam(std::move(paramsParam));
+    }
+    else
+    {
+        ParamCapture paramsParam("params", ParamType::TGLintPointer);
+        InitParamValue(ParamType::TGLintPointer, static_cast<GLint *>(nullptr), &paramsParam.value);
+        paramBuffer.addParam(std::move(paramsParam));
+    }
+
+    return CallCapture(angle::EntryPoint::GLGetFramebufferParameterivMESA, std::move(paramBuffer));
+}
+
 CallCapture CaptureDeleteFencesNV(const State &glState,
                                   bool isCallValid,
                                   GLsizei n,

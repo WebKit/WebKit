@@ -14208,10 +14208,9 @@ void main() {
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 }
 
+// Test that vector and matrix scalarization does not affect rendering.
 TEST_P(GLSLTest, VectorAndMatrixScalarizationDoesNotAffectRendering)
 {
-    ANGLE_SKIP_TEST_IF(IsWindows() && IsNVIDIA() && (IsOpenGL() || IsOpenGLES()));
-
     constexpr char kFS[] = R"(
 precision mediump float;
 

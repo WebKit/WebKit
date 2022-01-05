@@ -1603,7 +1603,7 @@ angle::Result WindowSurfaceVk::swapImpl(const gl::Context *context,
 
     if (mNeedToAcquireNextSwapchainImage)
     {
-        // Acquire the next image (previously deferred).  The image may not have been already
+        // Acquire the next image (previously deferred). The image may not have been already
         // acquired if there was no rendering done at all to the default framebuffer in this frame,
         // for example if all rendering was done to FBOs.
         ANGLE_VK_TRACE_EVENT_AND_MARKER(contextVk, "Acquire Swap Image Before Swap");
@@ -1650,7 +1650,7 @@ angle::Result WindowSurfaceVk::doDeferredAcquireNextImage(const gl::Context *con
     DisplayVk *displayVk = vk::GetImpl(context->getDisplay());
 
     // TODO(jmadill): Expose in CommandQueueInterface, or manage in CommandQueue. b/172704839
-    if (contextVk->getFeatures().asyncCommandQueue.enabled)
+    if (contextVk->getRenderer()->isAsyncCommandQueueEnabled())
     {
         VkResult result = contextVk->getRenderer()->getLastPresentResult(mSwapchain);
 
@@ -1680,6 +1680,16 @@ angle::Result WindowSurfaceVk::doDeferredAcquireNextImage(const gl::Context *con
         }
         ANGLE_VK_TRY(contextVk, result);
     }
+
+    // Invalidate the color image if the swap behavior is EGL_BUFFER_DESTROYED.
+    // Also invalidate the multi-sample color image.
+    // In swapImpl(), optimizeRenderPassForPresent() does this for depth/stencil content.
+    if (mState.swapBehavior == EGL_BUFFER_DESTROYED)
+    {
+        mSwapchainImages[mCurrentSwapchainImageIndex].image.invalidateSubresourceContent(
+            contextVk, gl::LevelIndex(0), 0, 1);
+    }
+    mColorImageMS.invalidateSubresourceContent(contextVk, gl::LevelIndex(0), 0, 1);
 
     RendererVk *renderer = contextVk->getRenderer();
     ANGLE_TRY(renderer->syncPipelineCacheVk(displayVk, context));
@@ -2100,6 +2110,13 @@ angle::Result WindowSurfaceVk::drawOverlay(ContextVk *contextVk, SwapchainImage 
 
 egl::Error WindowSurfaceVk::getBufferAge(const gl::Context *context, EGLint *age)
 {
+    // Set age to 0 if swap behavior is EGL_BUFFER_DESTROYED.
+    if (age != nullptr && mState.swapBehavior == EGL_BUFFER_DESTROYED)
+    {
+        *age = 0;
+        return egl::NoError();
+    }
+
     if (mNeedToAcquireNextSwapchainImage)
     {
         // Acquire the current image if needed.

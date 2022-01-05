@@ -721,6 +721,8 @@
 #define glPopDebugGroupKHR t_glPopDebugGroupKHR
 #define glPushDebugGroupKHR t_glPushDebugGroupKHR
 #define glMaxShaderCompilerThreadsKHR t_glMaxShaderCompilerThreadsKHR
+#define glFramebufferParameteriMESA t_glFramebufferParameteriMESA
+#define glGetFramebufferParameterivMESA t_glGetFramebufferParameterivMESA
 #define glDeleteFencesNV t_glDeleteFencesNV
 #define glFinishFenceNV t_glFinishFenceNV
 #define glGenFencesNV t_glGenFencesNV
@@ -1594,6 +1596,9 @@ ANGLE_TRACE_LOADER_EXPORT extern PFNGLPOPDEBUGGROUPKHRPROC t_glPopDebugGroupKHR;
 ANGLE_TRACE_LOADER_EXPORT extern PFNGLPUSHDEBUGGROUPKHRPROC t_glPushDebugGroupKHR;
 ANGLE_TRACE_LOADER_EXPORT extern PFNGLMAXSHADERCOMPILERTHREADSKHRPROC
     t_glMaxShaderCompilerThreadsKHR;
+ANGLE_TRACE_LOADER_EXPORT extern PFNGLFRAMEBUFFERPARAMETERIMESAPROC t_glFramebufferParameteriMESA;
+ANGLE_TRACE_LOADER_EXPORT extern PFNGLGETFRAMEBUFFERPARAMETERIVMESAPROC
+    t_glGetFramebufferParameterivMESA;
 ANGLE_TRACE_LOADER_EXPORT extern PFNGLDELETEFENCESNVPROC t_glDeleteFencesNV;
 ANGLE_TRACE_LOADER_EXPORT extern PFNGLFINISHFENCENVPROC t_glFinishFenceNV;
 ANGLE_TRACE_LOADER_EXPORT extern PFNGLGENFENCESNVPROC t_glGenFencesNV;

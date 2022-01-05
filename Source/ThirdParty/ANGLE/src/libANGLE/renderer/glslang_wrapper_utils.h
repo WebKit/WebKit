@@ -168,7 +168,7 @@ void GlslangGetShaderSpirvCode(const GlslangSourceOptions &options,
 
 angle::Result GlslangTransformSpirvCode(const GlslangSpirvOptions &options,
                                         const ShaderInterfaceVariableInfoMap &variableInfoMap,
-                                        const angle::qBlob &initialSpirvBlob,
+                                        const angle::spirv::Blob &initialSpirvBlob,
                                         angle::spirv::Blob *spirvBlobOut);
 #endif
 

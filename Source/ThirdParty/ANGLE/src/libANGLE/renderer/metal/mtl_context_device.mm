@@ -53,14 +53,14 @@ ContextDevice::~ContextDevice()
 AutoObjCPtr<id<MTLSamplerState>> ContextDevice::newSamplerStateWithDescriptor(
     MTLSamplerDescriptor *descriptor) const
 {
-    return [get() newSamplerStateWithDescriptor:descriptor];
+    return adoptObjCObj([get() newSamplerStateWithDescriptor:descriptor]);
 }
 
 AutoObjCPtr<id<MTLTexture>> ContextDevice::newTextureWithDescriptor(
     MTLTextureDescriptor *descriptor) const
 {
 
-    auto resource = [get() newTextureWithDescriptor:descriptor];
+    auto resource = adoptObjCObj([get() newTextureWithDescriptor:descriptor]);
     setOwnerWithIdentity(resource);
     return resource;
 }
@@ -70,13 +70,15 @@ AutoObjCPtr<id<MTLTexture>> ContextDevice::newTextureWithDescriptor(
     IOSurfaceRef iosurface,
     NSUInteger plane) const
 {
-    return [get() newTextureWithDescriptor:descriptor iosurface:iosurface plane:plane];
+    return adoptObjCObj([get() newTextureWithDescriptor:descriptor
+                                              iosurface:iosurface
+                                                  plane:plane]);
 }
 
 AutoObjCPtr<id<MTLBuffer>> ContextDevice::newBufferWithLength(NSUInteger length,
                                                               MTLResourceOptions options) const
 {
-    auto resource = [get() newBufferWithLength:length options:options];
+    auto resource = adoptObjCObj([get() newBufferWithLength:length options:options]);
     setOwnerWithIdentity(resource);
     return resource;
 }
@@ -85,7 +87,7 @@ AutoObjCPtr<id<MTLBuffer>> ContextDevice::newBufferWithBytes(const void *pointer
                                                              NSUInteger length,
                                                              MTLResourceOptions options) const
 {
-    auto resource = [get() newBufferWithBytes:pointer length:length options:options];
+    auto resource = adoptObjCObj([get() newBufferWithBytes:pointer length:length options:options]);
     setOwnerWithIdentity(resource);
     return resource;
 }
@@ -94,14 +96,14 @@ AutoObjCPtr<id<MTLComputePipelineState>> ContextDevice::newComputePipelineStateW
     id<MTLFunction> computeFunction,
     __autoreleasing NSError **error) const
 {
-    return [get() newComputePipelineStateWithFunction:computeFunction error:error];
+    return adoptObjCObj([get() newComputePipelineStateWithFunction:computeFunction error:error]);
 }
 
 AutoObjCPtr<id<MTLRenderPipelineState>> ContextDevice::newRenderPipelineStateWithDescriptor(
     MTLRenderPipelineDescriptor *descriptor,
     __autoreleasing NSError **error) const
 {
-    return [get() newRenderPipelineStateWithDescriptor:descriptor error:error];
+    return adoptObjCObj([get() newRenderPipelineStateWithDescriptor:descriptor error:error]);
 }
 
 AutoObjCPtr<id<MTLLibrary>> ContextDevice::newLibraryWithSource(
@@ -109,18 +111,18 @@ AutoObjCPtr<id<MTLLibrary>> ContextDevice::newLibraryWithSource(
     MTLCompileOptions *options,
     __autoreleasing NSError **error) const
 {
-    return [get() newLibraryWithSource:source options:options error:error];
+    return adoptObjCObj([get() newLibraryWithSource:source options:options error:error]);
 }
 
 AutoObjCPtr<id<MTLDepthStencilState>> ContextDevice::newDepthStencilStateWithDescriptor(
     MTLDepthStencilDescriptor *descriptor) const
 {
-    return [get() newDepthStencilStateWithDescriptor:descriptor];
+    return adoptObjCObj([get() newDepthStencilStateWithDescriptor:descriptor]);
 }
 
 AutoObjCPtr<id<MTLSharedEvent>> ContextDevice::newSharedEvent() const
 {
-    return [get() newSharedEvent];
+    return adoptObjCObj([get() newSharedEvent]);
 }
 
 void ContextDevice::setOwnerWithIdentity(id<MTLResource> resource) const

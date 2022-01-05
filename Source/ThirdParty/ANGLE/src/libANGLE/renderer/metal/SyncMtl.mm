@@ -35,10 +35,7 @@ void Sync::onDestroy()
 
 angle::Result Sync::initialize(ContextMtl *contextMtl)
 {
-    ANGLE_MTL_OBJC_SCOPE
-    {
-        mMetalSharedEvent = [contextMtl->getMetalDevice().newSharedEvent() ANGLE_MTL_AUTORELEASE];
-    }
+    ANGLE_MTL_OBJC_SCOPE { mMetalSharedEvent = contextMtl->getMetalDevice().newSharedEvent(); }
 
     mSetCounter = mMetalSharedEvent.get().signaledValue;
 

@@ -41,11 +41,14 @@ struct ConversionBuffer
     vk::DynamicBuffer data;
 };
 
-enum BufferUpdateType
+enum class BufferUpdateType
 {
     StorageRedefined,
     ContentsUpdate,
 };
+
+VkBufferUsageFlags GetDefaultBufferUsageFlags(RendererVk *renderer);
+size_t GetDefaultBufferAlignment(RendererVk *renderer);
 
 class BufferVk : public BufferImpl
 {
@@ -104,18 +107,17 @@ class BufferVk : public BufferImpl
 
     void onDataChanged() override;
 
-    vk::BufferHelper &getBufferAndOffset(VkDeviceSize *offsetOut)
+    vk::BufferHelper &getBuffer()
     {
         ASSERT(isBufferValid());
-        *offsetOut = mBufferOffset;
-        // Every place try to use the buffer, it will have to call this API to get hold of the
-        // underline BufferHelper object. So this is the safe place to tell that this has ever been
-        // referenced by GPU command, whether pending submission or not.
+        // Always mark the BufferHelper as referenced by the GPU, whether or not there's a pending
+        // submission, since this function is only called when trying to get the underlying
+        // BufferHelper object so it can be used in a command.
         mHasBeenReferencedByGPU = true;
-        return *mBuffer;
+        return *mBuffer.get();
     }
 
-    bool isBufferValid() const { return mBuffer && mBuffer->valid(); }
+    bool isBufferValid() const { return mBuffer.get() != nullptr; }
     bool isCurrentlyInUse(ContextVk *contextVk) const;
 
     angle::Result mapImpl(ContextVk *contextVk, GLbitfield access, void **mapPtr);
@@ -224,11 +226,11 @@ class BufferVk : public BufferImpl
         size_t offset;
     };
 
-    vk::BufferHelper *mBuffer;
-    VkDeviceSize mBufferOffset;
+    std::unique_ptr<vk::BufferHelper> mBuffer;
 
-    // Pool of BufferHelpers for mBuffer to acquire from
-    vk::DynamicBuffer mBufferPool;
+    uint32_t mMemoryTypeIndex;
+    // Memory/Usage property that will be used for memory allocation.
+    VkMemoryPropertyFlags mMemoryPropertyFlags;
 
     // DynamicBuffer to aid map operations of buffers when they are not host visible.
     vk::DynamicBuffer mHostVisibleBufferPool;

@@ -364,10 +364,10 @@
             "buffer": "R16_FLOAT"
         },
         "R8G8_USCALED": {
-            "buffer": "R16G16_FLOAT"
+            "buffer": ["R8G8B8_USCALED", "R16G16_FLOAT"]
         },
         "R8G8_SSCALED": {
-            "buffer": "R16G16_FLOAT"
+            "buffer": ["R8G8B8_SSCALED", "R16G16_FLOAT"]
         },
         "R8G8B8_UNORM": {
             "image": "R8G8B8A8_UNORM",
@@ -378,10 +378,10 @@
             "buffer": "R8G8B8A8_SNORM"
         },
         "R8G8B8_USCALED": {
-            "buffer": ["R16G16B16_FLOAT", "R16G16B16A16_FLOAT"]
+            "buffer": ["R8G8B8A8_USCALED", "R16G16B16_FLOAT", "R16G16B16A16_FLOAT"]
         },
         "R8G8B8_SSCALED": {
-            "buffer": ["R16G16B16_FLOAT", "R16G16B16A16_FLOAT"]
+            "buffer": ["R8G8B8A8_SSCALED", "R16G16B16_FLOAT", "R16G16B16A16_FLOAT"]
         },
         "R8G8B8A8_USCALED": {
             "buffer": "R16G16B16A16_FLOAT"
@@ -399,27 +399,27 @@
             "buffer_compressed": "R16_FLOAT"
         },
         "R16G16_USCALED": {
-            "buffer": "R32G32_FLOAT",
+            "buffer": ["R16G16B16_USCALED", "R32G32_FLOAT"],
             "buffer_compressed": "R16G16_FLOAT"
         },
         "R16G16_SSCALED": {
-            "buffer": "R32G32_FLOAT",
+            "buffer": ["R16G16B16_SSCALED", "R32G32_FLOAT"],
             "buffer_compressed": "R16G16_FLOAT"
         },
         "R16G16B16_UNORM": {
-            "buffer": "R32G32B32_FLOAT",
+            "buffer": ["R16G16B16A16_UNORM", "R32G32B32_FLOAT"],
             "buffer_compressed": ["R16G16B16_FLOAT", "R16G16B16A16_FLOAT"]
         },
         "R16G16B16_SNORM": {
-            "buffer": "R32G32B32_FLOAT",
+            "buffer": ["R16G16B16A16_SNORM", "R32G32B32_FLOAT"],
             "buffer_compressed": ["R16G16B16_FLOAT", "R16G16B16A16_FLOAT"]
         },
         "R16G16B16_USCALED": {
-            "buffer": "R32G32B32_FLOAT",
+            "buffer": ["R16G16B16A16_USCALED", "R32G32B32_FLOAT"],
             "buffer_compressed": ["R16G16B16_FLOAT", "R16G16B16A16_FLOAT"]
         },
         "R16G16B16_SSCALED": {
-            "buffer": "R32G32B32_FLOAT",
+            "buffer": ["R16G16B16A16_SSCALED", "R32G32B32_FLOAT"],
             "buffer_compressed": ["R16G16B16_FLOAT", "R16G16B16A16_FLOAT"]
         },
         "R16G16B16A16_USCALED": {

@@ -1272,11 +1272,8 @@ AutoObjCPtr<id<MTLDepthStencilState>> StateCache::getDepthStencilState(
         auto ite = mDepthStencilStates.find(desc);
         if (ite == mDepthStencilStates.end())
         {
-            AutoObjCObj<MTLDepthStencilDescriptor> objCDesc = ToObjC(desc);
-            AutoObjCPtr<id<MTLDepthStencilState>> newState =
-                [device.newDepthStencilStateWithDescriptor(objCDesc) ANGLE_MTL_AUTORELEASE];
-
-            auto re = mDepthStencilStates.insert(std::make_pair(desc, newState));
+            auto re = mDepthStencilStates.insert(
+                std::make_pair(desc, device.newDepthStencilStateWithDescriptor(ToObjC(desc))));
             if (!re.second)
             {
                 return nil;
@@ -1303,10 +1300,8 @@ AutoObjCPtr<id<MTLSamplerState>> StateCache::getSamplerState(const mtl::ContextD
                 // Runtime sampler compare mode is not supported, fallback to never.
                 objCDesc.get().compareFunction = MTLCompareFunctionNever;
             }
-            AutoObjCPtr<id<MTLSamplerState>> newState =
-                [device.newSamplerStateWithDescriptor(objCDesc) ANGLE_MTL_AUTORELEASE];
-
-            auto re = mSamplerStates.insert(std::make_pair(desc, newState));
+            auto re = mSamplerStates.insert(
+                std::make_pair(desc, device.newSamplerStateWithDescriptor(objCDesc)));
             if (!re.second)
                 return nil;
 

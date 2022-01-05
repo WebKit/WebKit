@@ -78,6 +78,7 @@ using data from registry_xml.py and gl.xml.
 | [GL_EXT_frag_depth](https://khronos.org/registry/OpenGL/extensions/EXT/EXT_frag_depth.txt) | &#10004; | &#10004; | &#10004; | &#10004; | &#10004; | &#10004; |
 | [GL_ANGLE_framebuffer_blit](https://khronos.org/registry/OpenGL/extensions/ANGLE/ANGLE_framebuffer_blit.txt) | &#10004; | &#10004; | &#10004; | &#10004; | &#10004; | &#10004; |
 | [GL_NV_framebuffer_blit](https://khronos.org/registry/OpenGL/extensions/NV/NV_framebuffer_blit.txt) | &#10004; | &#10004; | &#10004; | &#10004; | &#10004; | &#10004; |
+| [GL_MESA_framebuffer_flip_y](https://khronos.org/registry/OpenGL/extensions/MESA/MESA_framebuffer_flip_y.txt) | &#10060; | &#10060; | &#10060; | &#10060; | &#10060; | &#10060; |
 | [GL_EXT_geometry_shader](https://khronos.org/registry/OpenGL/extensions/EXT/EXT_geometry_shader.txt) | &#10004; | &#10004; | &#10060; | &#10060; | &#10060; | &#10060; |
 | [GL_OES_geometry_shader](https://khronos.org/registry/OpenGL/extensions/OES/OES_geometry_shader.txt) | &#10004; | &#10004; | &#10060; | &#10060; | &#10060; | &#10060; |
 | [GL_OES_get_program_binary](https://khronos.org/registry/OpenGL/extensions/OES/OES_get_program_binary.txt) | &#10004; | &#10004; | &#10004; | &#10004; | &#10004; | &#10004; |

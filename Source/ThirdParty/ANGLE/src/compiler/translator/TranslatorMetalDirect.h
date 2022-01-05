@@ -13,16 +13,6 @@ namespace sh
 {
 
 constexpr const char kUniformsVar[]               = "angleUniforms";
-constexpr const char kViewport[]                  = "viewport";
-constexpr const char kHalfRenderArea[]            = "halfRenderArea";
-constexpr const char kFlipXY[]                    = "flipXY";
-constexpr const char kNegFlipXY[]                 = "negFlipXY";
-constexpr const char kClipDistancesEnabled[]      = "clipDistancesEnabled";
-constexpr const char kXfbActiveUnpaused[]         = "xfbActiveUnpaused";
-constexpr const char kXfbVerticesPerDraw[]        = "xfbVerticesPerDraw";
-constexpr const char kXfbBufferOffsets[]          = "xfbBufferOffsets";
-constexpr const char kAcbBufferOffsets[]          = "acbBufferOffsets";
-constexpr const char kDepthRange[]                = "depthRange";
 constexpr const char kUnassignedAttributeString[] = " __unassigned_attribute__";
 
 class DriverUniform;
@@ -165,7 +155,6 @@ class TranslatorMetalDirect : public TCompiler
     TranslatorMetalDirect *getAsTranslatorMetalDirect() override { return this; }
 #endif
 
-    void enableEmulatedInstanceID(bool e) { mEmulatedInstanceID = e; }
     TranslatorMetalReflection *getTranslatorMetalReflection() { return &translatorMetalReflection; }
 
   protected:
@@ -196,8 +185,6 @@ class TranslatorMetalDirect : public TCompiler
 
     ANGLE_NO_DISCARD TIntermSwizzle *getDriverUniformNegFlipYRef(
         DriverUniform &driverUniforms) const;
-
-    bool mEmulatedInstanceID = false;
 
     TranslatorMetalReflection translatorMetalReflection = {};
 };

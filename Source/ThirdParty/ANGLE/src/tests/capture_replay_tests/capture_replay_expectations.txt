@@ -95,7 +95,6 @@
 # ES3
 6180 : BlitFramebufferTest.BlitDepthStencilPixelByPixel/* = NOT_RUN
 6180 : GLSLTest_ES3.UnsuccessfulRelinkWithBindAttribLocation/* = NOT_RUN
-1274316 : SimpleStateChangeTestES3.RespecifyBufferAfterBeginTransformFeedback/* = NOT_RUN
 
 # This test only exists on Win64
 6180 WIN : BufferDataOverflowTest.VertexBufferIntegerOverflow/* = NOT_RUN

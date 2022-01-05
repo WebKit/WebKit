@@ -216,6 +216,9 @@
     /* GL_KHR_texture_compression_astc_hdr */                                                      \
     /* GL_KHR_texture_compression_astc_ldr */                                                      \
     /* GL_KHR_texture_compression_astc_sliced_3d */                                                \
+    /* GL_MESA_framebuffer_flip_y */                                                               \
+    void framebufferParameteriMESA(GLenum target, GLenum pname, GLint param);                      \
+    void getFramebufferParameterivMESA(GLenum target, GLenum pname, GLint *params);                \
     /* GL_NV_EGL_stream_consumer_external */                                                       \
     /* GL_NV_depth_buffer_float2 */                                                                \
     /* GL_NV_fence */                                                                              \

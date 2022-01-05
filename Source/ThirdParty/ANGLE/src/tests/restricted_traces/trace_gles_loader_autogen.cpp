@@ -756,6 +756,8 @@ ANGLE_TRACE_LOADER_EXPORT PFNGLOBJECTPTRLABELKHRPROC t_glObjectPtrLabelKHR;
 ANGLE_TRACE_LOADER_EXPORT PFNGLPOPDEBUGGROUPKHRPROC t_glPopDebugGroupKHR;
 ANGLE_TRACE_LOADER_EXPORT PFNGLPUSHDEBUGGROUPKHRPROC t_glPushDebugGroupKHR;
 ANGLE_TRACE_LOADER_EXPORT PFNGLMAXSHADERCOMPILERTHREADSKHRPROC t_glMaxShaderCompilerThreadsKHR;
+ANGLE_TRACE_LOADER_EXPORT PFNGLFRAMEBUFFERPARAMETERIMESAPROC t_glFramebufferParameteriMESA;
+ANGLE_TRACE_LOADER_EXPORT PFNGLGETFRAMEBUFFERPARAMETERIVMESAPROC t_glGetFramebufferParameterivMESA;
 ANGLE_TRACE_LOADER_EXPORT PFNGLDELETEFENCESNVPROC t_glDeleteFencesNV;
 ANGLE_TRACE_LOADER_EXPORT PFNGLFINISHFENCENVPROC t_glFinishFenceNV;
 ANGLE_TRACE_LOADER_EXPORT PFNGLGENFENCESNVPROC t_glGenFencesNV;
@@ -2013,6 +2015,10 @@ void LoadGLES(LoadProc loadProc)
         reinterpret_cast<PFNGLPUSHDEBUGGROUPKHRPROC>(loadProc("glPushDebugGroupKHR"));
     t_glMaxShaderCompilerThreadsKHR = reinterpret_cast<PFNGLMAXSHADERCOMPILERTHREADSKHRPROC>(
         loadProc("glMaxShaderCompilerThreadsKHR"));
+    t_glFramebufferParameteriMESA = reinterpret_cast<PFNGLFRAMEBUFFERPARAMETERIMESAPROC>(
+        loadProc("glFramebufferParameteriMESA"));
+    t_glGetFramebufferParameterivMESA = reinterpret_cast<PFNGLGETFRAMEBUFFERPARAMETERIVMESAPROC>(
+        loadProc("glGetFramebufferParameterivMESA"));
     t_glDeleteFencesNV = reinterpret_cast<PFNGLDELETEFENCESNVPROC>(loadProc("glDeleteFencesNV"));
     t_glFinishFenceNV  = reinterpret_cast<PFNGLFINISHFENCENVPROC>(loadProc("glFinishFenceNV"));
     t_glGenFencesNV    = reinterpret_cast<PFNGLGENFENCESNVPROC>(loadProc("glGenFencesNV"));

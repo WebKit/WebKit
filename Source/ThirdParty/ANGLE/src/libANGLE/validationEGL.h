@@ -107,32 +107,40 @@ typename std::enable_if<std::is_enum<PackedT>::value, PackedT>::type PackParam(F
     return FromEGLenum<PackedT>(from);
 }
 
-// Second case: handling other types.
-template <typename PackedT, typename FromT>
-typename std::enable_if<!std::is_enum<PackedT>::value,
-                        typename std::remove_reference<PackedT>::type>::type
-PackParam(FromT from);
-
-template <>
-inline const AttributeMap PackParam<const AttributeMap &, const EGLint *>(const EGLint *attribs)
+// This and the next 2 template specializations handle distinguishing between EGLint, EGLAttrib
+// and other. This is needed because on some architectures EGLint and EGLAttrib are not the same
+// base type. Previously the code conditionally compiled 2 specializations on 64 bit but it turns
+// out on WatchOS the assumption about 32/64 bit and if EGLint and ELGAttrib are the same or
+// different did not hold.
+template <typename PackedT,
+          typename FromT,
+          typename std::enable_if<!std::is_enum<PackedT>::value>::type *              = nullptr,
+          typename std::enable_if<std::is_same<FromT, const EGLint *>::value>::type * = nullptr>
+typename std::remove_reference<PackedT>::type PackParam(FromT attribs)
 {
     return AttributeMap::CreateFromIntArray(attribs);
 }
 
-template <>
-inline const AttributeMap PackParam<const AttributeMap &, const EGLAttrib *>(
-    const EGLAttrib *attribs)
+template <typename PackedT,
+          typename FromT,
+          typename std::enable_if<!std::is_enum<PackedT>::value>::type *                 = nullptr,
+          typename std::enable_if<!std::is_same<FromT, const EGLint *>::value>::type *   = nullptr,
+          typename std::enable_if<std::is_same<FromT, const EGLAttrib *>::value>::type * = nullptr>
+typename std::remove_reference<PackedT>::type PackParam(FromT attribs)
 {
     return AttributeMap::CreateFromAttribArray(attribs);
 }
 
-template <typename PackedT, typename FromT>
-inline typename std::enable_if<!std::is_enum<PackedT>::value,
-                               typename std::remove_reference<PackedT>::type>::type
-PackParam(FromT from)
+template <typename PackedT,
+          typename FromT,
+          typename std::enable_if<!std::is_enum<PackedT>::value>::type *                  = nullptr,
+          typename std::enable_if<!std::is_same<FromT, const EGLint *>::value>::type *    = nullptr,
+          typename std::enable_if<!std::is_same<FromT, const EGLAttrib *>::value>::type * = nullptr>
+typename std::remove_reference<PackedT>::type PackParam(FromT attribs)
 {
-    return static_cast<PackedT>(from);
+    return static_cast<PackedT>(attribs);
 }
+
 }  // namespace egl
 
 #define ANGLE_EGL_VALIDATE(THREAD, EP, OBJ, RETURN_TYPE, ...)                              \

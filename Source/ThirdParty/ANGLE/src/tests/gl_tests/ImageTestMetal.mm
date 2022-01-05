@@ -32,7 +32,7 @@ constexpr EGLint kDefaultAttribs[]            = {
 class ScopeMetalTextureRef : angle::NonCopyable
 {
   public:
-    explicit ScopeMetalTextureRef(id<MTLTexture> surface) : mSurface(surface) {}
+    explicit ScopeMetalTextureRef(id<MTLTexture> &&surface) : mSurface(surface) {}
 
     ~ScopeMetalTextureRef()
     {
@@ -113,9 +113,7 @@ ScopeMetalTextureRef CreateMetalTexture2D(id<MTLDevice> deviceMtl,
                                                                                     mipmapped:NO];
         desc.usage                 = MTLTextureUsageShaderRead | MTLTextureUsageRenderTarget;
 
-        id<MTLTexture> texture = [deviceMtl newTextureWithDescriptor:desc];
-
-        ScopeMetalTextureRef re(texture);
+        ScopeMetalTextureRef re([deviceMtl newTextureWithDescriptor:desc]);
         return re;
     }
 }

@@ -59,6 +59,7 @@ _metal_backend_sources = [
   "mtl_common.mm",
   "mtl_context_device.h",
   "mtl_context_device.mm",
+  "mtl_default_shaders_compiled.inc",
   "mtl_format_table_autogen.mm",
   "mtl_format_utils.h",
   "mtl_format_utils.mm",

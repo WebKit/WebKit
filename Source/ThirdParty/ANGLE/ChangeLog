@@ -1,3 +1,62 @@
+2022-01-05  Kyle Piddington  <kpiddington@apple.com>
+
+        Roll ANGLE to aabfe8747d 12-17-2021
+        https://bugs.webkit.org/show_bug.cgi?id=234523
+
+        Reviewed by Kenneth Russell.
+
+        The changelog has been removed to improve readability.
+        The following ANGLE commits were merged: 
+
+        aabfe8747 Metal: Use the context device to Texture::resize
+        34ea81111 Reland "Vulkan: Don't expose MSRTT on SwiftShader"
+        624e3c3d5 Fix dangerous use of AutoObjCPtr after ownership identity change
+        4a148e9d9 Revert "Vulkan: Suppress VUID-vkCmdDraw-blendEnable"
+        ede0b8b71 Avoid ANGLE_MTL_AUTORELEASE inside ASSERT, it leaks on Release
+        cb4f441c8 Roll vulkan-deps from 39f3a18bdfbe to 5568048d205e (8 revisions)
+        2f78b48db Roll Chromium from 14ca75d254a5 to 81decb7250e1 (191 revisions)
+        001221f0e Metal: upstream fix from WebKit for texture leak.
+        dca434bdc Roll Chromium from 3f6c88f5581a to 14ca75d254a5 (401 revisions)
+        b9f2d9cc1 Use text expectations to skip a test
+        6c894e829 Vulkan: Replace BufferVk::getBufferAndOffset() with getBuffer()
+        f2736f6dc Tests: Add My Talking Tom Friends trace.
+        a93a3930b Vulkan: Track enabled in VertexArray
+        83a670ab0 Vulkan: Implement BufferPool using VMA's virtual allocator
+        836797166 Vulkan: Dirty vertex buffers if default attrib values changed
+        543f5750f (origin/chromium/4771) Vulkan: Disable protected memory for ARM
+        c7446ac42 Add support for GL_MESA_framebuffer_flip_y 1/*
+        60383b41e Tests: Add Dota Underlords trace.
+        f26687a03 Tests: Add My Talking Tom 2 trace.
+        438de17ee Roll vulkan-deps from a8221eed5970 to 39f3a18bdfbe (5 revisions)
+        e7413adff system_utils_posix: Check for SEGV_MAPERR si_code.
+        6e5fd8165 Support more ImageLayout in ConvertImageLayoutToGLImageLayout
+        b26bb13ab Metal: Remove references to xfbActiveUnpaused uniform
+        bb5bab031 Roll Chromium from 2dae07eeb163 to 3f6c88f5581a (414 revisions)
+        c4d434b91 Metal: Enable OES_fbo_render_mipmap
+        670679918 Metal: Fix Webkit warnings in ANGLE build
+        bda493258 Add guards for 64 bit types on 32bit systems
+        e7c9dbb88 Skip SimpleStateChangeTestES3.OutOfBoundsByteAttribute on Pixel4 GLES
+        89e11878b Vulkan: Fix the UAF issue with BufferData
+        ee1d3cf74 Metal: Integrate Metal Binary Shader generation
+        3e7e2758f Metal: Fix macOS ANGLE build on Catalina (10.15) SDK
+        05a44dd24 Vulkan: Set content undefined on eglSwapBuffers
+        26fa0fe68 Tests: Add Asphalt 9 trace
+        5275f487e Vulkan: Disable async command queue with Vulkan SCBs
+        feb599ad8 Invalidate EGL handles during eglTerminate
+        32e23bb9d Expand WebGLCompressedTextureAvailabilityTest
+        d6b9a2597 end2end_tests: Add SwS + AsyncQueue testing.
+        a0eb6146c Update warning message for invalid include
+        cac81f077 Return full error info when opening a library with dlopen
+        90c3038e5 Vulkan: Fix desc set updates with Vulkan SCBs
+        8419f4fcd Roll vulkan-deps from c03890076954 to a8221eed5970 (2 revisions)
+        db367bd71 Roll Chromium from 0c0a3654694f to 2dae07eeb163 (450 revisions)
+        bfc7f09ae Revert "Upgrade restricted traces to new trace format."
+        800c6971c Modified buffer fallback format to smaller storage format
+        709d87278 Revert "Trace Tests: Remove auto-generated code."
+        3da54250b Skip MultithreadingTest.MultiContextDrawWithSwapBuffers
+        7f1a0f89b Switch to non-deprecated bbagent, remove defunct experiments.
+        9d49d8438 Add WebGLCompressedTextureAvailabilityTest
+	
 2022-01-05  Michael Saboff  <msaboff@apple.com>
 
         REGRESSION (r287382): libANGLE is built into a wrong location on iOS

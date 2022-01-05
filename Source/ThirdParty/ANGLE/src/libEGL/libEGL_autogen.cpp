@@ -42,14 +42,13 @@ void EnsureEGLLoaded()
         return;
     }
 
-    EntryPointsLib().reset(
-        angle::OpenSharedLibrary(ANGLE_GLESV2_LIBRARY_NAME, angle::SearchType::ModuleDir));
+    std::string errorOut;
+    EntryPointsLib().reset(angle::OpenSharedLibraryAndGetError(
+        ANGLE_GLESV2_LIBRARY_NAME, angle::SearchType::ModuleDir, &errorOut));
     angle::LoadEGL_EGL(GlobalLoad);
     if (!EGL_GetPlatformDisplay)
     {
-        fprintf(stderr, "Error loading EGL entry points from: %s\n",
-                angle::GetSharedLibraryName(ANGLE_GLESV2_LIBRARY_NAME, angle::SearchType::ModuleDir)
-                    .c_str());
+        fprintf(stderr, "Error loading EGL entry points: %s\n", errorOut.c_str());
     }
     else
     {

@@ -1528,8 +1528,8 @@ angle::Result UtilsVk::convertIndexBuffer(ContextVk *contextVk,
                                     &descriptorSet));
 
     std::array<VkDescriptorBufferInfo, 2> buffers = {{
-        {dst->getBuffer().getHandle(), 0, VK_WHOLE_SIZE},
-        {src->getBuffer().getHandle(), 0, VK_WHOLE_SIZE},
+        {dst->getBuffer().getHandle(), dst->getOffset(), dst->getSize()},
+        {src->getBuffer().getHandle(), src->getOffset(), src->getSize()},
     }};
 
     VkWriteDescriptorSet writeInfo = {};
@@ -1594,10 +1594,12 @@ angle::Result UtilsVk::convertIndexIndirectBuffer(ContextVk *contextVk,
                                     &descriptorPoolBinding, &descriptorSet));
 
     std::array<VkDescriptorBufferInfo, 4> buffers = {{
-        {dstIndexBuf->getBuffer().getHandle(), 0, VK_WHOLE_SIZE},
-        {srcIndexBuf->getBuffer().getHandle(), 0, VK_WHOLE_SIZE},
-        {srcIndirectBuf->getBuffer().getHandle(), 0, VK_WHOLE_SIZE},
-        {dstIndirectBuf->getBuffer().getHandle(), 0, VK_WHOLE_SIZE},
+        {dstIndexBuf->getBuffer().getHandle(), dstIndexBuf->getOffset(), dstIndexBuf->getSize()},
+        {srcIndexBuf->getBuffer().getHandle(), srcIndexBuf->getOffset(), srcIndexBuf->getSize()},
+        {srcIndirectBuf->getBuffer().getHandle(), srcIndirectBuf->getOffset(),
+         srcIndirectBuf->getSize()},
+        {dstIndirectBuf->getBuffer().getHandle(), dstIndirectBuf->getOffset(),
+         dstIndirectBuf->getSize()},
     }};
 
     VkWriteDescriptorSet writeInfo = {};
@@ -1664,10 +1666,14 @@ angle::Result UtilsVk::convertLineLoopIndexIndirectBuffer(
                                     &descriptorPoolBinding, &descriptorSet));
 
     std::array<VkDescriptorBufferInfo, 4> buffers = {{
-        {dstIndexBuffer->getBuffer().getHandle(), 0, VK_WHOLE_SIZE},
-        {srcIndexBuffer->getBuffer().getHandle(), 0, VK_WHOLE_SIZE},
-        {srcIndirectBuffer->getBuffer().getHandle(), 0, VK_WHOLE_SIZE},
-        {dstIndirectBuffer->getBuffer().getHandle(), 0, VK_WHOLE_SIZE},
+        {dstIndexBuffer->getBuffer().getHandle(), dstIndexBuffer->getOffset(),
+         dstIndexBuffer->getSize()},
+        {srcIndexBuffer->getBuffer().getHandle(), srcIndexBuffer->getOffset(),
+         srcIndexBuffer->getSize()},
+        {srcIndirectBuffer->getBuffer().getHandle(), srcIndirectBuffer->getOffset(),
+         srcIndirectBuffer->getSize()},
+        {dstIndirectBuffer->getBuffer().getHandle(), dstIndirectBuffer->getOffset(),
+         dstIndirectBuffer->getSize()},
     }};
 
     VkWriteDescriptorSet writeInfo = {};
@@ -1706,16 +1712,16 @@ angle::Result UtilsVk::convertLineLoopIndexIndirectBuffer(
 angle::Result UtilsVk::convertLineLoopArrayIndirectBuffer(
     ContextVk *contextVk,
     vk::BufferHelper *srcIndirectBuffer,
-    vk::BufferHelper *destIndirectBuffer,
-    vk::BufferHelper *destIndexBuffer,
+    vk::BufferHelper *dstIndirectBuffer,
+    vk::BufferHelper *dstIndexBuffer,
     const ConvertLineLoopArrayIndirectParameters &params)
 {
     ANGLE_TRY(ensureConvertIndirectLineLoopResourcesInitialized(contextVk));
 
     vk::CommandBufferAccess access;
     access.onBufferComputeShaderRead(srcIndirectBuffer);
-    access.onBufferComputeShaderWrite(destIndirectBuffer);
-    access.onBufferComputeShaderWrite(destIndexBuffer);
+    access.onBufferComputeShaderWrite(dstIndirectBuffer);
+    access.onBufferComputeShaderWrite(dstIndexBuffer);
 
     vk::CommandBuffer *commandBuffer;
     ANGLE_TRY(contextVk->getOutsideRenderPassCommandBuffer(access, &commandBuffer));
@@ -1726,9 +1732,12 @@ angle::Result UtilsVk::convertLineLoopArrayIndirectBuffer(
                                     &descriptorPoolBinding, &descriptorSet));
 
     std::array<VkDescriptorBufferInfo, 3> buffers = {{
-        {srcIndirectBuffer->getBuffer().getHandle(), 0, VK_WHOLE_SIZE},
-        {destIndirectBuffer->getBuffer().getHandle(), 0, VK_WHOLE_SIZE},
-        {destIndexBuffer->getBuffer().getHandle(), 0, VK_WHOLE_SIZE},
+        {srcIndirectBuffer->getBuffer().getHandle(), srcIndirectBuffer->getOffset(),
+         srcIndirectBuffer->getSize()},
+        {dstIndirectBuffer->getBuffer().getHandle(), dstIndirectBuffer->getOffset(),
+         dstIndirectBuffer->getSize()},
+        {dstIndexBuffer->getBuffer().getHandle(), dstIndexBuffer->getOffset(),
+         dstIndexBuffer->getSize()},
     }};
 
     VkWriteDescriptorSet writeInfo = {};
@@ -1889,8 +1898,8 @@ angle::Result UtilsVk::convertVertexBufferImpl(ContextVk *contextVk,
 
     VkWriteDescriptorSet writeInfo    = {};
     VkDescriptorBufferInfo buffers[2] = {
-        {dst->getBuffer().getHandle(), 0, VK_WHOLE_SIZE},
-        {src->getBuffer().getHandle(), 0, VK_WHOLE_SIZE},
+        {dst->getBuffer().getHandle(), dst->getOffset(), dst->getSize()},
+        {src->getBuffer().getHandle(), src->getOffset(), src->getSize()},
     };
     static_assert(kConvertVertexDestinationBinding + 1 == kConvertVertexSourceBinding,
                   "Update write info");
@@ -2635,8 +2644,8 @@ angle::Result UtilsVk::stencilBlitResolveNoShaderExport(ContextVk *contextVk,
 
     VkDescriptorBufferInfo bufferInfo = {};
     bufferInfo.buffer                 = blitBuffer.get().getBuffer().getHandle();
-    bufferInfo.offset                 = 0;
-    bufferInfo.range                  = VK_WHOLE_SIZE;
+    bufferInfo.offset                 = blitBuffer.get().getOffset();
+    bufferInfo.range                  = blitBuffer.get().getSize();
 
     VkDescriptorImageInfo samplerInfo = {};
     samplerInfo.sampler = params.linear ? mLinearSampler.getHandle() : mPointSampler.getHandle();
@@ -3419,8 +3428,8 @@ angle::Result UtilsVk::cullOverlayWidgets(ContextVk *contextVk,
 
     VkDescriptorBufferInfo bufferInfo = {};
     bufferInfo.buffer                 = enabledWidgetsBuffer->getBuffer().getHandle();
-    bufferInfo.offset                 = 0;
-    bufferInfo.range                  = VK_WHOLE_SIZE;
+    bufferInfo.offset                 = enabledWidgetsBuffer->getOffset();
+    bufferInfo.range                  = enabledWidgetsBuffer->getSize();
 
     VkWriteDescriptorSet writeInfos[2] = {};
     writeInfos[0].sType                = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
@@ -3505,12 +3514,12 @@ angle::Result UtilsVk::drawOverlay(ContextVk *contextVk,
 
     VkDescriptorBufferInfo bufferInfos[2] = {};
     bufferInfos[0].buffer                 = textWidgetsBuffer->getBuffer().getHandle();
-    bufferInfos[0].offset                 = 0;
-    bufferInfos[0].range                  = VK_WHOLE_SIZE;
+    bufferInfos[0].offset                 = textWidgetsBuffer->getOffset();
+    bufferInfos[0].range                  = textWidgetsBuffer->getSize();
 
     bufferInfos[1].buffer = graphWidgetsBuffer->getBuffer().getHandle();
-    bufferInfos[1].offset = 0;
-    bufferInfos[1].range  = VK_WHOLE_SIZE;
+    bufferInfos[1].offset = graphWidgetsBuffer->getOffset();
+    bufferInfos[1].range  = graphWidgetsBuffer->getSize();
 
     VkWriteDescriptorSet writeInfos[5] = {};
     writeInfos[0].sType                = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;

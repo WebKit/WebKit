@@ -45,6 +45,7 @@ bool IsNVIDIAShield();
 // GPU vendors.
 bool IsIntel();
 bool IsAMD();
+bool IsApple();
 bool IsARM();
 bool IsNVIDIA();
 bool IsQualcomm();
@@ -121,19 +122,23 @@ struct CombinedPrintToStringParamName
 
 #define ANGLE_ALL_TEST_PLATFORMS_ES1                                                   \
     ES1_D3D11(), ES1_OPENGL(), ES1_OPENGLES(), ES1_VULKAN(), ES1_VULKAN_SWIFTSHADER(), \
-        WithAsyncCommandQueueFeatureVulkan(ES1_VULKAN())
+        WithAsyncCommandQueueFeatureVulkan(ES1_VULKAN()),                              \
+        WithAsyncCommandQueueFeatureVulkan(ES1_VULKAN_SWIFTSHADER())
 
 #define ANGLE_ALL_TEST_PLATFORMS_ES2                                                               \
     ES2_D3D9(), ES2_D3D11(), ES2_OPENGL(), ES2_OPENGLES(), ES2_VULKAN(), ES2_VULKAN_SWIFTSHADER(), \
-        ES2_METAL(), WithAsyncCommandQueueFeatureVulkan(ES2_VULKAN())
+        ES2_METAL(), WithAsyncCommandQueueFeatureVulkan(ES2_VULKAN()),                             \
+        WithAsyncCommandQueueFeatureVulkan(ES2_VULKAN_SWIFTSHADER())
 
 #define ANGLE_ALL_TEST_PLATFORMS_ES3                                                   \
     ES3_D3D11(), ES3_OPENGL(), ES3_OPENGLES(), ES3_VULKAN(), ES3_VULKAN_SWIFTSHADER(), \
-        ES3_METAL(), WithAsyncCommandQueueFeatureVulkan(ES3_VULKAN())
+        ES3_METAL(), WithAsyncCommandQueueFeatureVulkan(ES3_VULKAN()),                 \
+        WithAsyncCommandQueueFeatureVulkan(ES3_VULKAN_SWIFTSHADER())
 
 #define ANGLE_ALL_TEST_PLATFORMS_ES31                                                       \
     ES31_D3D11(), ES31_OPENGL(), ES31_OPENGLES(), ES31_VULKAN(), ES31_VULKAN_SWIFTSHADER(), \
-        WithAsyncCommandQueueFeatureVulkan(ES31_VULKAN())
+        WithAsyncCommandQueueFeatureVulkan(ES31_VULKAN()),                                  \
+        WithAsyncCommandQueueFeatureVulkan(ES31_VULKAN_SWIFTSHADER())
 
 #define ANGLE_ALL_TEST_PLATFORMS_ES32 \
     ES32_VULKAN(), WithAsyncCommandQueueFeatureVulkan(ES32_VULKAN())

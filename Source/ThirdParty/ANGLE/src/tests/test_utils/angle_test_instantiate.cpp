@@ -367,6 +367,11 @@ bool IsAMD()
     return HasSystemVendorID(kVendorID_AMD);
 }
 
+bool IsApple()
+{
+    return HasSystemVendorID(kVendorID_Apple);
+}
+
 bool IsARM()
 {
     return HasSystemVendorID(kVendorID_ARM);

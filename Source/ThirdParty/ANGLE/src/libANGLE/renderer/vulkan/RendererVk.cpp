@@ -47,7 +47,6 @@ constexpr bool kExposeNonConformantExtensionsAndVersions = true;
 #else
 constexpr bool kExposeNonConformantExtensionsAndVersions = false;
 #endif
-
 }  // anonymous namespace
 
 namespace rx
@@ -173,8 +172,6 @@ constexpr const char *kSkippedMessages[] = {
     "VUID-VkImageViewCreateInfo-pNext-01585",
     // https://anglebug.com/6262
     "VUID-vkCmdClearAttachments-baseArrayLayer-00018",
-    // http://anglebug.com/6355
-    "VUID-vkCmdDraw-blendEnable-04727",
     // http://anglebug.com/6442
     "UNASSIGNED-CoreValidation-Shader-InterfaceTypeMismatch",
     // http://anglebug.com/6514
@@ -346,6 +343,13 @@ constexpr SkippedSyncvalMessage kSkippedSyncvalMessages[] = {
      "prior_usage: SYNC_COLOR_ATTACHMENT_OUTPUT_COLOR_ATTACHMENT_WRITE, write_barriers: 0, "
      "command: vkCmdBeginRenderPass, seq_no: 8,",
      "", false},
+    // With Vulkan secondary command buffers:
+    {"SYNC-HAZARD-READ_AFTER_WRITE",
+     "Recorded access info (recorded_usage: SYNC_FRAGMENT_SHADER_SHADER_STORAGE_READ, command: "
+     "vkCmdDraw, seq_no: 1, reset_no: 1). Access info (prior_usage: "
+     "SYNC_COLOR_ATTACHMENT_OUTPUT_COLOR_ATTACHMENT_WRITE, write_barriers: 0, command: "
+     "vkCmdBeginRenderPass, seq_no:",
+     "", false},
     // From: TracePerfTest.Run/vulkan_aztec_ruins
     {"SYNC-HAZARD-READ_AFTER_WRITE",
      "type: VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, imageLayout: VK_IMAGE_LAYOUT_GENERAL, "
@@ -393,6 +397,39 @@ constexpr SkippedSyncvalMessage kSkippedSyncvalMessages[] = {
      "SYNC_EARLY_FRAGMENT_TESTS_DEPTH_STENCIL_ATTACHMENT_WRITE, prior_usage: "
      "SYNC_IMAGE_LAYOUT_TRANSITION",
      "", false},
+    // From various tests. The validation layer does not calculate the exact vertexCounts that's
+    // been
+    // accessed. http://anglebug.com/6725
+    {"SYNC-HAZARD-READ_AFTER_WRITE", "vkCmdDrawIndexed: Hazard READ_AFTER_WRITE for vertex",
+     "usage: SYNC_VERTEX_ATTRIBUTE_INPUT_VERTEX_ATTRIBUTE_READ", false},
+    {"SYNC-HAZARD-READ_AFTER_WRITE", "vkCmdDrawIndexedIndirect: Hazard READ_AFTER_WRITE for vertex",
+     "usage: SYNC_VERTEX_ATTRIBUTE_INPUT_VERTEX_ATTRIBUTE_READ", false},
+    {"SYNC-HAZARD-READ_AFTER_WRITE", "vkCmdDrawIndirect: Hazard READ_AFTER_WRITE for vertex",
+     "usage: SYNC_VERTEX_ATTRIBUTE_INPUT_VERTEX_ATTRIBUTE_READ", false},
+    {"SYNC-HAZARD-READ_AFTER_WRITE", "vkCmdDrawIndexedIndirect: Hazard READ_AFTER_WRITE for index",
+     "usage: SYNC_INDEX_INPUT_INDEX_READ", false},
+    {"SYNC-HAZARD-WRITE_AFTER_READ", "vkCmdDraw: Hazard WRITE_AFTER_READ for VkBuffer",
+     "Access info (usage: SYNC_VERTEX_SHADER_SHADER_STORAGE_WRITE, prior_usage: "
+     "SYNC_VERTEX_ATTRIBUTE_INPUT_VERTEX_ATTRIBUTE_READ",
+     false},
+    {"SYNC-HAZARD-WRITE_AFTER_READ", "vkCmdDispatch: Hazard WRITE_AFTER_READ for VkBuffer",
+     "Access info (usage: SYNC_COMPUTE_SHADER_SHADER_STORAGE_WRITE, prior_usage: "
+     "SYNC_VERTEX_ATTRIBUTE_INPUT_VERTEX_ATTRIBUTE_READ",
+     false},
+    // From: MultisampledRenderToTextureES3Test.TransformFeedbackTest. http://anglebug.com/6725
+    {"SYNC-HAZARD-WRITE_AFTER_WRITE", "vkCmdBeginRenderPass: Hazard WRITE_AFTER_WRITE in subpass",
+     "write_barriers: "
+     "SYNC_TRANSFORM_FEEDBACK_EXT_TRANSFORM_FEEDBACK_COUNTER_READ_EXT|SYNC_TRANSFORM_FEEDBACK_EXT_"
+     "TRANSFORM_FEEDBACK_COUNTER_WRITE_EXT",
+     false},
+    // From: TracePerfTest.Run/vulkan_swiftshader_manhattan_31. These failures appears related to
+    // dynamic uniform buffers. The failures are gone if I force mUniformBufferDescriptorType to
+    // VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER. My guess is that syncval is not doing a fine grain enough
+    // range tracking with dynamic uniform buffers. http://anglebug.com/6725
+    {"SYNC-HAZARD-WRITE_AFTER_READ", "usage: SYNC_VERTEX_SHADER_UNIFORM_READ", "", false},
+    {"SYNC-HAZARD-READ_AFTER_WRITE", "usage: SYNC_VERTEX_SHADER_UNIFORM_READ", "", false},
+    {"SYNC-HAZARD-WRITE_AFTER_READ", "type: VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC", "", false},
+    {"SYNC-HAZARD-READ_AFTER_WRITE", "type: VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC", "", false},
 };
 
 enum class DebugMessageReport
@@ -1002,7 +1039,7 @@ void RendererVk::onDestroy(vk::Context *context)
 {
     {
         std::lock_guard<std::mutex> lock(mCommandQueueMutex);
-        if (mFeatures.asyncCommandQueue.enabled)
+        if (isAsyncCommandQueueEnabled())
         {
             mCommandProcessor.destroy(context);
         }
@@ -2137,14 +2174,19 @@ angle::Result RendererVk::initializeDevice(DisplayVk *displayVk, uint32_t queueF
     ANGLE_VK_CHECK(displayVk, queueFamily.getDeviceQueueCount() > 0,
                    VK_ERROR_INITIALIZATION_FAILED);
 
+    // We enable protected context only if both supportsProtectedMemory and device also supports
+    // protected. There are cases we have to disable supportsProtectedMemory feature due to driver
+    // bugs.
+    bool enableProtectedContent =
+        queueFamily.supportsProtected() && getFeatures().supportsProtectedMemory.enabled;
+
     uint32_t queueCount = std::min(queueFamily.getDeviceQueueCount(),
                                    static_cast<uint32_t>(egl::ContextPriority::EnumCount));
 
     uint32_t queueCreateInfoCount              = 1;
     VkDeviceQueueCreateInfo queueCreateInfo[1] = {};
     queueCreateInfo[0].sType                   = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
-    queueCreateInfo[0].flags =
-        queueFamily.supportsProtected() ? VK_DEVICE_QUEUE_CREATE_PROTECTED_BIT : 0;
+    queueCreateInfo[0].flags = enableProtectedContent ? VK_DEVICE_QUEUE_CREATE_PROTECTED_BIT : 0;
     queueCreateInfo[0].queueFamilyIndex = queueFamilyIndex;
     queueCreateInfo[0].queueCount       = queueCount;
     queueCreateInfo[0].pQueuePriorities = vk::QueueFamily::kQueuePriorities;
@@ -2178,9 +2220,9 @@ angle::Result RendererVk::initializeDevice(DisplayVk *displayVk, uint32_t queueF
 #endif  // defined(ANGLE_SHARED_LIBVULKAN)
 
     vk::DeviceQueueMap graphicsQueueMap =
-        queueFamily.initializeQueueMap(mDevice, queueFamily.supportsProtected(), 0, queueCount);
+        queueFamily.initializeQueueMap(mDevice, enableProtectedContent, 0, queueCount);
 
-    if (mFeatures.asyncCommandQueue.enabled)
+    if (isAsyncCommandQueueEnabled())
     {
         ANGLE_TRY(mCommandProcessor.init(displayVk, graphicsQueueMap));
     }
@@ -2532,9 +2574,12 @@ void RendererVk::initFeatures(DisplayVk *displayVk,
         ANGLE_FEATURE_CONDITION(&mFeatures, provokingVertex, true);
     }
 
+    // http://b/208458772. ARM driver supports this protected memory extension but we are seeing
+    // excessive load/store unit activity when this extension is enabled, even if not been used.
+    // Disable this extension on ARM platform until we resolve this performance issue.
     // http://anglebug.com/3965
     ANGLE_FEATURE_CONDITION(&mFeatures, supportsProtectedMemory,
-                            (mProtectedMemoryFeatures.protectedMemory == VK_TRUE));
+                            (mProtectedMemoryFeatures.protectedMemory == VK_TRUE) && !isARM);
 
     // http://anglebug.com/6692
     ANGLE_FEATURE_CONDITION(&mFeatures, supportsHostQueryReset,
@@ -2801,13 +2846,17 @@ void RendererVk::initFeatures(DisplayVk *displayVk,
 
     // Feature disabled due to driver bugs:
     //
-    // - Swiftshader on mac: http://anglebug.com/4937
+    // - Swiftshader:
+    //   * Failure on mac: http://anglebug.com/4937
+    //   * OOM: http://crbug.com/1263046
     // - Intel on windows: http://anglebug.com/5032
     // - AMD on windows: http://crbug.com/1132366
-    ANGLE_FEATURE_CONDITION(
-        &mFeatures, enableMultisampledRenderToTexture,
-        mFeatures.supportsMultisampledRenderToSingleSampled.enabled ||
-            !(IsApple() && isSwiftShader) && !(IsWindows() && (isIntel || isAMD)));
+    //
+    // Note that emulation of GL_EXT_multisampled_render_to_texture is only really useful on tiling
+    // hardware, but is exposed on desktop platforms purely to increase testing coverage.
+    ANGLE_FEATURE_CONDITION(&mFeatures, enableMultisampledRenderToTexture,
+                            mFeatures.supportsMultisampledRenderToSingleSampled.enabled ||
+                                (!isSwiftShader && !(IsWindows() && (isIntel || isAMD))));
 
     // Currently we enable cube map arrays based on the imageCubeArray Vk feature.
     // TODO: Check device caps for full cube map array support. http://anglebug.com/5143
@@ -2877,6 +2926,16 @@ void RendererVk::initFeatures(DisplayVk *displayVk,
     platform->overrideFeaturesVk(platform, &mFeatures);
 
     ApplyFeatureOverrides(&mFeatures, displayVk->getState());
+
+    // Disable async command queue when using Vulkan secondary command buffers temporarily to avoid
+    // threading hazards with ContextVk::mCommandPool.  Note that this is done even if the feature
+    // is enabled through an override.
+    // TODO: Investigate whether async command queue is useful with Vulkan secondary command buffers
+    // and enable the feature.  http://anglebug.com/6811
+    if (!vk::CommandBuffer::ExecutesInline())
+    {
+        mFeatures.asyncCommandQueue.enabled = false;
+    }
 }
 
 angle::Result RendererVk::initPipelineCache(DisplayVk *display,
@@ -3134,7 +3193,7 @@ angle::Result RendererVk::queueSubmitOneOff(vk::Context *context,
     std::lock_guard<std::mutex> commandQueueLock(mCommandQueueMutex);
 
     Serial submitQueueSerial;
-    if (mFeatures.asyncCommandQueue.enabled)
+    if (isAsyncCommandQueueEnabled())
     {
         submitQueueSerial = mCommandProcessor.reserveSubmitSerial();
         ANGLE_TRY(mCommandProcessor.queueSubmitOneOff(
@@ -3382,7 +3441,7 @@ angle::Result RendererVk::submitFrame(vk::Context *context,
 {
     std::lock_guard<std::mutex> commandQueueLock(mCommandQueueMutex);
 
-    if (mFeatures.asyncCommandQueue.enabled)
+    if (isAsyncCommandQueueEnabled())
     {
         *submitSerialOut = mCommandProcessor.reserveSubmitSerial();
 
@@ -3418,7 +3477,7 @@ void RendererVk::handleDeviceLost()
 {
     std::lock_guard<std::mutex> lock(mCommandQueueMutex);
 
-    if (mFeatures.asyncCommandQueue.enabled)
+    if (isAsyncCommandQueueEnabled())
     {
         mCommandProcessor.handleDeviceLost(this);
     }
@@ -3432,7 +3491,7 @@ angle::Result RendererVk::finishToSerial(vk::Context *context, Serial serial)
 {
     std::lock_guard<std::mutex> lock(mCommandQueueMutex);
 
-    if (mFeatures.asyncCommandQueue.enabled)
+    if (isAsyncCommandQueueEnabled())
     {
         ANGLE_TRY(mCommandProcessor.finishToSerial(context, serial, getMaxFenceWaitTimeNs()));
     }
@@ -3452,7 +3511,7 @@ angle::Result RendererVk::waitForSerialWithUserTimeout(vk::Context *context,
     ANGLE_TRACE_EVENT0("gpu.angle", "RendererVk::waitForSerialWithUserTimeout");
 
     std::lock_guard<std::mutex> lock(mCommandQueueMutex);
-    if (mFeatures.asyncCommandQueue.enabled)
+    if (isAsyncCommandQueueEnabled())
     {
         ANGLE_TRY(mCommandProcessor.waitForSerialWithUserTimeout(context, serial, timeout, result));
     }
@@ -3468,7 +3527,7 @@ angle::Result RendererVk::finish(vk::Context *context, bool hasProtectedContent)
 {
     std::lock_guard<std::mutex> lock(mCommandQueueMutex);
 
-    if (mFeatures.asyncCommandQueue.enabled)
+    if (isAsyncCommandQueueEnabled())
     {
         ANGLE_TRY(mCommandProcessor.waitIdle(context, getMaxFenceWaitTimeNs()));
     }
@@ -3486,7 +3545,7 @@ angle::Result RendererVk::checkCompletedCommands(vk::Context *context)
     // TODO: https://issuetracker.google.com/169788986 - would be better if we could just wait
     // for the work we need but that requires QueryHelper to use the actual serial for the
     // query.
-    if (mFeatures.asyncCommandQueue.enabled)
+    if (isAsyncCommandQueueEnabled())
     {
         ANGLE_TRY(mCommandProcessor.checkCompletedCommands(context));
     }
@@ -3506,7 +3565,7 @@ angle::Result RendererVk::flushRenderPassCommands(vk::Context *context,
     ANGLE_TRACE_EVENT0("gpu.angle", "RendererVk::flushRenderPassCommands");
 
     std::lock_guard<std::mutex> lock(mCommandQueueMutex);
-    if (mFeatures.asyncCommandQueue.enabled)
+    if (isAsyncCommandQueueEnabled())
     {
         ANGLE_TRY(mCommandProcessor.flushRenderPassCommands(context, hasProtectedContent,
                                                             renderPass, renderPassCommands));
@@ -3527,7 +3586,7 @@ angle::Result RendererVk::flushOutsideRPCommands(vk::Context *context,
     ANGLE_TRACE_EVENT0("gpu.angle", "RendererVk::flushOutsideRPCommands");
 
     std::lock_guard<std::mutex> lock(mCommandQueueMutex);
-    if (mFeatures.asyncCommandQueue.enabled)
+    if (isAsyncCommandQueueEnabled())
     {
         ANGLE_TRY(mCommandProcessor.flushOutsideRPCommands(context, hasProtectedContent,
                                                            outsideRPCommands));
@@ -3548,7 +3607,7 @@ VkResult RendererVk::queuePresent(vk::Context *context,
     std::lock_guard<std::mutex> lock(mCommandQueueMutex);
 
     VkResult result = VK_SUCCESS;
-    if (mFeatures.asyncCommandQueue.enabled)
+    if (isAsyncCommandQueueEnabled())
     {
         result = mCommandProcessor.queuePresent(priority, presentInfo);
     }
@@ -3668,6 +3727,28 @@ void RendererVk::onDeallocateHandle(vk::HandleType handleType)
 {
     std::lock_guard<std::mutex> localLock(mActiveHandleCountsMutex);
     mActiveHandleCounts.onDeallocate(handleType);
+}
+
+VkDeviceSize RendererVk::getPreferedBufferBlockSize(uint32_t memoryTypeIndex) const
+{
+    VkDeviceSize preferredBlockSize;
+    if (mFeatures.preferredLargeHeapBlockSize4MB.enabled)
+    {
+        // This number matches Chromium and was picked by looking at memory usage of
+        // Android apps. The allocator will start making blocks at 1/8 the max size
+        // and builds up block size as needed before capping at the max set here.
+        preferredBlockSize = 4 * 1024 * 1024;
+    }
+    else
+    {
+        preferredBlockSize = 32ull * 1024 * 1024;
+    }
+
+    // Try not to exceed 1/64 of heap size to begin with.
+    const VkDeviceSize heapSize = getMemoryProperties().getHeapSizeForMemoryType(memoryTypeIndex);
+    preferredBlockSize          = std::min(heapSize / 64, preferredBlockSize);
+
+    return preferredBlockSize;
 }
 
 namespace vk

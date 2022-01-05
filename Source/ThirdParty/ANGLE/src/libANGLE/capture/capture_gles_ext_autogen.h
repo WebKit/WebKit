@@ -1913,6 +1913,18 @@ angle::CallCapture CaptureMaxShaderCompilerThreadsKHR(const State &glState,
 
 // GL_KHR_texture_compression_astc_sliced_3d
 
+// GL_MESA_framebuffer_flip_y
+angle::CallCapture CaptureFramebufferParameteriMESA(const State &glState,
+                                                    bool isCallValid,
+                                                    GLenum target,
+                                                    GLenum pname,
+                                                    GLint param);
+angle::CallCapture CaptureGetFramebufferParameterivMESA(const State &glState,
+                                                        bool isCallValid,
+                                                        GLenum target,
+                                                        GLenum pname,
+                                                        GLint *params);
+
 // GL_NV_fence
 angle::CallCapture CaptureDeleteFencesNV(const State &glState,
                                          bool isCallValid,
@@ -4626,6 +4638,12 @@ void CapturePushDebugGroupKHR_message(const State &glState,
                                       GLsizei length,
                                       const GLchar *message,
                                       angle::ParamCapture *paramCapture);
+void CaptureGetFramebufferParameterivMESA_params(const State &glState,
+                                                 bool isCallValid,
+                                                 GLenum target,
+                                                 GLenum pname,
+                                                 GLint *params,
+                                                 angle::ParamCapture *paramCapture);
 void CaptureDeleteFencesNV_fencesPacked(const State &glState,
                                         bool isCallValid,
                                         GLsizei n,

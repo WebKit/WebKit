@@ -439,7 +439,7 @@ void RendererVk::ensureCapsInitialized() const
     // This query is applicable to render passes, but the `inheritedQueries` feature may not be
     // present.  The extension is not exposed in that case.
     // We use secondary command buffers almost everywhere and they require a feature to be
-    // able to execute in the presence of queries.  As a result, we won't support queries
+    // able to execute in the presence of queries.  As a result, we won't support timestamp queries
     // unless that feature is available.
     if (vk::CommandBuffer::SupportsQueries(mPhysicalDeviceFeatures))
     {

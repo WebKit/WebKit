@@ -1895,6 +1895,18 @@ bool ValidateMaxShaderCompilerThreadsKHR(const Context *context,
 
 // GL_KHR_texture_compression_astc_sliced_3d
 
+// GL_MESA_framebuffer_flip_y
+bool ValidateFramebufferParameteriMESA(const Context *context,
+                                       angle::EntryPoint entryPoint,
+                                       GLenum target,
+                                       GLenum pname,
+                                       GLint param);
+bool ValidateGetFramebufferParameterivMESA(const Context *context,
+                                           angle::EntryPoint entryPoint,
+                                           GLenum target,
+                                           GLenum pname,
+                                           const GLint *params);
+
 // GL_NV_fence
 bool ValidateDeleteFencesNV(const Context *context,
                             angle::EntryPoint entryPoint,

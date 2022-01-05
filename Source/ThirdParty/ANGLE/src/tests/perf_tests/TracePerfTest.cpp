@@ -11,7 +11,6 @@
 #include "common/PackedEnums.h"
 #include "common/string_utils.h"
 #include "common/system_utils.h"
-#include "restricted_traces/restricted_traces_export.h"
 #include "tests/perf_tests/ANGLEPerfTest.h"
 #include "tests/perf_tests/ANGLEPerfTestArgs.h"
 #include "tests/perf_tests/DrawCallPerfParams.h"
@@ -19,6 +18,8 @@
 #include "util/egl_loader_autogen.h"
 #include "util/png_utils.h"
 #include "util/test_utils.h"
+
+#include "restricted_traces/restricted_traces_autogen.h"
 
 #include <rapidjson/document.h>
 #include <rapidjson/istreamwrapper.h>
@@ -1151,6 +1152,11 @@ TracePerfTest::TracePerfTest(const TracePerfParams &params)
         addExtensionPrerequisite("GL_OES_EGL_image_external");
     }
 
+    if (traceNameIs("asphalt_9"))
+    {
+        addExtensionPrerequisite("GL_KHR_texture_compression_astc_ldr");
+    }
+
     ASSERT(mParams.surfaceType == SurfaceType::Window || gEnableAllTraceTests);
     ASSERT(mParams.eglParameters.deviceType == EGL_PLATFORM_ANGLE_DEVICE_TYPE_HARDWARE_ANGLE ||
            gEnableAllTraceTests);
@@ -1930,17 +1936,15 @@ void RegisterTraceTests()
     }
 
     // Load JSON data.
-    std::vector<std::string> traces;
-    {
-        std::stringstream tracesJsonStream;
-        tracesJsonStream << rootTracePath << GetPathSeparator() << "restricted_traces.json";
-        std::string tracesJsonPath = tracesJsonStream.str();
+    std::stringstream tracesJsonStream;
+    tracesJsonStream << rootTracePath << GetPathSeparator() << "restricted_traces.json";
+    std::string tracesJsonPath = tracesJsonStream.str();
 
-        if (!LoadTraceNamesFromJSON(tracesJsonPath, &traces))
-        {
-            ERR() << "Unable to load traces from JSON file: " << tracesJsonPath;
-            return;
-        }
+    std::vector<std::string> traces;
+    if (!LoadTraceNamesFromJSON(tracesJsonPath, &traces))
+    {
+        ERR() << "Unable to load traces from JSON file: " << tracesJsonPath;
+        return;
     }
 
     std::vector<TraceInfo> traceInfos;
@@ -1954,8 +1958,9 @@ void RegisterTraceTests()
         TraceInfo traceInfo = {};
         if (!LoadTraceInfoFromJSON(trace, traceJsonPath, &traceInfo))
         {
-            ERR() << "Unable to load traced data from JSON file: " << traceJsonPath;
-            return;
+            static_assert(sizeof(TraceInfo) == sizeof(trace_angle::TraceInfo), "Size mismatch");
+            trace_angle::TraceInfo autogenFormatInfo = trace_angle::GetTraceInfo(trace.c_str());
+            memcpy(&traceInfo, &autogenFormatInfo, sizeof(TraceInfo));
         }
 
         traceInfos.push_back(traceInfo);

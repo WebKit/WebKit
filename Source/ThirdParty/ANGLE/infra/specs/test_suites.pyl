@@ -987,6 +987,23 @@
       },
     },
 
+    'swangle_end2end_slow_tests': {
+      'angle_end2end_tests': {
+        'args': [
+          'angle_end2end_tests',
+          '--bot-mode',
+          '--gtest_filter=*Vulkan_SwiftShader*',
+        ],
+        'linux_args': [
+          '--xvfb',
+        ],
+        'use_isolated_scripts_api': True,
+        'swarming': {
+          'shards': 4,
+        },
+      },
+    },
+
     'swangle_end2end_tests': {
       'angle_end2end_tests': {
         'args': [
@@ -1110,8 +1127,8 @@
       'swangle_end2end_tests',
     ],
 
-    'swangle_non_deqp_gtests': [
-      'swangle_end2end_tests',
+    'swangle_non_deqp_slow_gtests': [
+      'swangle_end2end_slow_tests',
     ],
 
     'swangle_slow_gtests': [
