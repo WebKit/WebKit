@@ -1,5 +1,44 @@
 2022-01-05  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r286283. rdar://problem/87125362
+
+    [JSC] jumpForTypedArrayOutOfBounds should use asAnyInt since it uses isAnyInt
+    https://bugs.webkit.org/show_bug.cgi?id=233610
+    rdar://85820476
+    
+    Reviewed by Saam Barati.
+    
+    JSTests:
+    
+    * stress/anyint-index.js: Added.
+    (foo):
+    
+    Source/JavaScriptCore:
+    
+    Since we are using isAnyInt, then we should use asAnyInt. asUInt32 will crash
+    if the value is double AnyInt etc.
+    
+    * dfg/DFGSpeculativeJIT.cpp:
+    (JSC::DFG::SpeculativeJIT::jumpForTypedArrayOutOfBounds):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@286283 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-11-29  Yusuke Suzuki  <ysuzuki@apple.com>
+
+            [JSC] jumpForTypedArrayOutOfBounds should use asAnyInt since it uses isAnyInt
+            https://bugs.webkit.org/show_bug.cgi?id=233610
+            rdar://85820476
+
+            Reviewed by Saam Barati.
+
+            Since we are using isAnyInt, then we should use asAnyInt. asUInt32 will crash
+            if the value is double AnyInt etc.
+
+            * dfg/DFGSpeculativeJIT.cpp:
+            (JSC::DFG::SpeculativeJIT::jumpForTypedArrayOutOfBounds):
+
+2022-01-05  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r286275. rdar://problem/87125258
 
     [JSC] slice should be aware of TerminationException
