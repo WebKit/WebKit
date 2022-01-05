@@ -117,16 +117,16 @@ layer at (0,0) size 785x1820
           text run at (330,0) width 121: "it wasn't right-to-left"
       RenderBlock {P} at (0,1460) size 769x20 [bgcolor=#EEEEEE]
         RenderInline {SPAN} at (0,0) size 0x19
-          RenderText {#text} at (160,0) size 0x19
-            text run at (160,0) width 0 RTL: "Hello, world"
+          RenderText {#text} at (160,0) size -21x19
+            text run at (160,0) width -21 RTL: "Hello, world"
       RenderBlock {P} at (0,1496) size 769x20 [bgcolor=#FFFFFF]
         RenderText {#text} at (0,0) size 435x19
           text run at (0,0) width 311: "The next line tests a large negative line spacing, and "
           text run at (311,0) width 124: "should just print a 'd'"
       RenderBlock {P} at (0,1532) size 769x20 [bgcolor=#EEEEEE]
         RenderInline {SPAN} at (0,0) size 0x19
-          RenderText {#text} at (160,0) size 0x19
-            text run at (160,0) width 0 RTL: "Hello, world"
+          RenderText {#text} at (160,0) size -38325x19
+            text run at (160,0) width -38325 RTL: "Hello, world"
       RenderBlock {P} at (0,1568) size 769x40 [bgcolor=#FFFFFF]
         RenderText {#text} at (0,0) size 694x39
           text run at (0,0) width 142: "Now, opacity as well - "

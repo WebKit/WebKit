@@ -156,15 +156,15 @@ layer at (183,129) size 143x16 scrollX 177 scrollWidth 320
       text run at (-177,0) width 320: "Lorem ipsum dolor sit amet, consectetur adipiscing elit"
 layer at (183,129) size 143x16
   RenderBlock {DIV} at (0,0) size 143x16
-layer at (340,129) size 146x16 scrollX 174 scrollWidth 320
+layer at (340,129) size 146x16 scrollX 175 scrollWidth 321
   RenderBlock {DIV} at (2,3) size 146x16
     RenderText {#text} at (-174,0) size 320x16
       text run at (-174,0) width 320: "Lorem ipsum dolor sit amet, consectetur adipiscing elit"
-layer at (511,129) size 143x16 scrollX 177 scrollWidth 320
+layer at (511,129) size 143x16 scrollX 178 scrollWidth 321
   RenderBlock {DIV} at (0,0) size 143x16
     RenderText {#text} at (-177,0) size 320x16
       text run at (-177,0) width 320: "Lorem ipsum dolor sit amet, consectetur adipiscing elit"
-layer at (12,155) size 146x16 scrollX 239 scrollWidth 385
+layer at (12,155) size 146x16 scrollX 240 scrollWidth 386
   RenderBlock {DIV} at (2,3) size 146x16
     RenderText {#text} at (-239,0) size 385x16
       text run at (-239,0) width 385 RTL: "\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}"

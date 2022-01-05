@@ -460,3 +460,6 @@ accessibility/auto-fill-types.html [ Skip ] # Timeout
 accessibility/notification-listeners.html [ Skip ] # Timeout
 accessibility/range-alter-by-percent.html [ Skip ] # Timeout
 accessibility/range-alter-by-step.html [ Skip ] # Timeout
+
+accessibility/aria-roledescription.html [ Timeout ]
+accessibility/visible-elements.html [ Timeout ]

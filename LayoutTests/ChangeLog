@@ -1,3 +1,22 @@
+2022-01-04  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo] Unreviewed test gardening
+
+        * platform/wincairo-wk1/TestExpectations:
+        * platform/wincairo/TestExpectations:
+        * platform/wincairo/fast/css/text-overflow-input-expected.txt:
+        * platform/wincairo/fast/dom/52776-expected.txt:
+        * platform/wincairo/fast/dom/HTMLElement/bdo-expected.txt:
+        * platform/wincairo/fast/inline-block/003-expected.txt:
+        * platform/wincairo/fast/text/fixed-pitch-control-characters-expected.txt:
+        * platform/wincairo/fast/text/international/bidi-LDB-2-formatting-characters-expected.txt:
+        * platform/wincairo/fast/text/international/bidi-ignored-for-first-child-inline-expected.txt:
+        * platform/wincairo/fast/text/international/bidi-layout-across-linebreak-expected.txt:
+        * platform/wincairo/fast/text/international/bidi-neutral-run-expected.txt:
+        * platform/wincairo/fast/text/international/bidi-override-expected.txt:
+        * platform/wincairo/fast/text/text-letter-spacing-expected.txt:
+        * platform/wincairo/fast/text/whitespace/pre-wrap-overflow-selection-expected.txt:
+
 2022-01-04  Simon Fraser  <simon.fraser@apple.com>
 
         "canceled" wheel events to non-zero deltas cause scrolling jumps in PDFs and CodeMirror
