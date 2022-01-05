@@ -1463,7 +1463,12 @@ void ComputedStyleExtractor::addValueForAnimationPropertyToList(CSSValueList& li
         list.append(valueForAnimationPlayState(animation ? animation->playState() : Animation::initialPlayState()));
     else if (property == CSSPropertyAnimationName)
         list.append(valueForAnimationName(animation ? animation->name() : Animation::initialName()));
-    else if (property == CSSPropertyAnimationTimingFunction || property == CSSPropertyTransitionTimingFunction) {
+    else if (property == CSSPropertyTransitionProperty) {
+        if (animation)
+            list.append(createTransitionPropertyValue(*animation));
+        else
+            list.append(CSSValuePool::singleton().createIdentifierValue(CSSValueAll));
+    } else if (property == CSSPropertyAnimationTimingFunction || property == CSSPropertyTransitionTimingFunction) {
         if (animation)
             list.append(valueForAnimationTimingFunction(*animation->timingFunction()));
         else

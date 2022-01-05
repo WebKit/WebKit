@@ -1,3 +1,22 @@
+2022-01-04  Antoine Quint  <graouts@webkit.org>
+
+        WPT test css/css-transitions/parsing/transition-shorthand.html has failures
+        https://bugs.webkit.org/show_bug.cgi?id=234856
+
+        Reviewed by Dean Jackson.
+
+        This historical test transitions/transitions-parsing.html is wrong and WPT has exhaustive
+        coverage for parsing of transition properties, so let's remove it.
+
+        Rebaselining some other tests.
+
+        * fast/css/shorthand-mismatched-list-crash-expected.txt:
+        * fast/css/shorthand-mismatched-list-crash.html:
+        * fast/css/transform-inline-style-expected.txt:
+        * fast/css/transform-inline-style-remove-expected.txt:
+        * transitions/transitions-parsing-expected.txt: Removed.
+        * transitions/transitions-parsing.html: Removed.
+
 2022-01-04  Diego Pino Garcia  <dpino@igalia.com>
 
         [WPE] fast/scrolling/rtl-scrollbars-alternate-body-dir-attr-does-not-update-scrollbar-placement-2.html is a flaky failure

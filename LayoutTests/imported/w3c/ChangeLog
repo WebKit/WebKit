@@ -1,5 +1,16 @@
 2022-01-04  Antoine Quint  <graouts@webkit.org>
 
+        WPT test css/css-transitions/parsing/transition-shorthand.html has failures
+        https://bugs.webkit.org/show_bug.cgi?id=234856
+
+        Reviewed by Dean Jackson.
+
+        Mark WPT progressions, all tests in css/css-transitions/parsing/transition-shorthand.html now pass.
+
+        * web-platform-tests/css/css-transitions/parsing/transition-shorthand-expected.txt:
+
+2022-01-04  Antoine Quint  <graouts@webkit.org>
+
         [Web Animations] changing the timing of a transition such that it's finished should no longer have it marked as running
         https://bugs.webkit.org/show_bug.cgi?id=234823
 

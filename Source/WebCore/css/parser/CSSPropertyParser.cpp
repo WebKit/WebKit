@@ -1657,12 +1657,8 @@ bool CSSPropertyParser::consumeAnimationShorthand(const StylePropertyShorthand& 
 
         // FIXME: This will make invalid longhands, see crbug.com/386459
         for (size_t i = 0; i < longhandCount; ++i) {
-            if (!parsedLonghand[i]) {
-                if (shorthand.id() == CSSPropertyTransition)
-                    longhands[i]->append(CSSValuePool::singleton().createImplicitInitialValue());
-                else
-                    ComputedStyleExtractor::addValueForAnimationPropertyToList(*longhands[i], shorthand.properties()[i], nullptr);
-            }
+            if (!parsedLonghand[i])
+                ComputedStyleExtractor::addValueForAnimationPropertyToList(*longhands[i], shorthand.properties()[i], nullptr);
             parsedLonghand[i] = false;
         }
     } while (consumeCommaIncludingWhitespace(m_range));
