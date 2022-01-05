@@ -1582,8 +1582,6 @@ webkit.org/b/219247 imported/w3c/web-platform-tests/compat/webkit-box-clamp-bott
 
 webkit.org/b/216162 [ Debug ] imported/w3c/web-platform-tests/encoding/textdecoder-fatal-single-byte.any.worker.html [ Timeout ]
 
-webkit.org/b/206503 [ Debug ] imported/w3c/web-platform-tests/html/dom/idlharness.worker.html [ Pass Timeout Failure ]
-
 webkit.org/b/224668 imported/w3c/web-platform-tests/html/semantics/interfaces.html [ Failure Pass ]
 
 webkit.org/b/193322 imported/w3c/web-platform-tests/fetch/content-type/script.window.html [ Failure ]
