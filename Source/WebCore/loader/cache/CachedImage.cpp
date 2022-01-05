@@ -234,7 +234,7 @@ bool CachedImage::willPaintBrokenImage() const
     return errorOccurred() && m_shouldPaintBrokenImage;
 }
 
-Image* CachedImage::image()
+Image* CachedImage::image() const
 {
     if (errorOccurred() && m_shouldPaintBrokenImage) {
         // Returning the 1x broken image is non-ideal, but we cannot reliably access the appropriate
@@ -271,7 +271,7 @@ Image* CachedImage::imageForRenderer(const RenderObject* renderer)
 
 bool CachedImage::hasSVGImage() const
 {
-    return m_image && m_image->drawsSVGImage();
+    return image() && image()->isSVGImage();
 }
 
 void CachedImage::setContainerContextForClient(const CachedImageClient& client, const LayoutSize& containerSize, float containerZoom, const URL& imageURL)

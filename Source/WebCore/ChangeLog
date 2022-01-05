@@ -1,5 +1,36 @@
 2022-01-05  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r287286. rdar://problem/87124952
+
+    Don't include SVGImageForContainers in allCachedSVGImages
+    https://bugs.webkit.org/show_bug.cgi?id=234364
+    
+    Patch by Matt Woodrow <mattwoodrow@apple.com> on 2021-12-20
+    Reviewed by Dean Jackson.
+    
+    * loader/cache/CachedImage.cpp:
+    (WebCore::CachedImage::image const):
+    (WebCore::CachedImage::hasSVGImage const):
+    (WebCore::CachedImage::image): Deleted.
+    * loader/cache/CachedImage.h:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@287286 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-12-20  Matt Woodrow  <mattwoodrow@apple.com>
+
+            Don't include SVGImageForContainers in allCachedSVGImages
+            https://bugs.webkit.org/show_bug.cgi?id=234364
+
+            Reviewed by Dean Jackson.
+
+            * loader/cache/CachedImage.cpp:
+            (WebCore::CachedImage::image const):
+            (WebCore::CachedImage::hasSVGImage const):
+            (WebCore::CachedImage::image): Deleted.
+            * loader/cache/CachedImage.h:
+
+2022-01-05  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r287240. rdar://problem/86026618
 
     Fix pointer to blob data in BlobResourceHandle::readDataSync()
