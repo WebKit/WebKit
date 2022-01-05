@@ -28,6 +28,7 @@
 #include "CallLinkInfo.h"
 #include "JITCode.h"
 #include "JITCodeMap.h"
+#include "StructureStubInfo.h"
 #include <wtf/CompactPointerTuple.h>
 
 #if ENABLE(JIT)
@@ -100,6 +101,25 @@ public:
     JITConstantPool m_constantPool;
     std::unique_ptr<PCToCodeOriginMap> m_pcToCodeOriginMap;
     bool m_isShareable { true };
+};
+
+class BaselineJITData final : public TrailingArray<BaselineJITData, void*> {
+    WTF_MAKE_FAST_ALLOCATED;
+    friend class LLIntOffsetsExtractor;
+public:
+    using Base = TrailingArray<BaselineJITData, void*>;
+
+    static std::unique_ptr<BaselineJITData> create(unsigned poolSize)
+    {
+        return std::unique_ptr<BaselineJITData> { new (NotNull, fastMalloc(Base::allocationSize(poolSize))) BaselineJITData(poolSize) };
+    }
+
+    explicit BaselineJITData(unsigned size)
+        : Base(size)
+    {
+    }
+
+    FixedVector<StructureStubInfo> m_stubInfos;
 };
 
 } // namespace JSC

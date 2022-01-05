@@ -34,11 +34,6 @@
 
 namespace JSC {
 
-void CallFrameShuffleData::setupCalleeSaveRegisters(CodeBlock* codeBlock)
-{
-    setupCalleeSaveRegisters(codeBlock->calleeSaveRegisters());
-}
-
 void CallFrameShuffleData::setupCalleeSaveRegisters(const RegisterAtOffsetList* registerSaveLocations)
 {
     RegisterSet calleeSaveRegisters { RegisterSet::vmCalleeSaveRegisters() };

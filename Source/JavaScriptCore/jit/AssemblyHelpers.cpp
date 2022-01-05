@@ -45,11 +45,11 @@
 
 namespace JSC {
 
-ExecutableBase* AssemblyHelpers::executableFor(const CodeOrigin& codeOrigin)
+ExecutableBase* AssemblyHelpers::executableFor(CodeBlock* codeBlock, const CodeOrigin& codeOrigin)
 {
     auto* inlineCallFrame = codeOrigin.inlineCallFrame();
     if (!inlineCallFrame)
-        return m_codeBlock->ownerExecutable();
+        return codeBlock->ownerExecutable();
     return inlineCallFrame->baselineCodeBlock->ownerExecutable();
 }
 
@@ -1372,7 +1372,7 @@ void AssemblyHelpers::emitSaveOrCopyLLIntBaselineCalleeSavesFor(CodeBlock* codeB
 {
     ASSERT_UNUSED(codeBlock, codeBlock);
     ASSERT(JITCode::isBaselineCode(codeBlock->jitType()));
-    ASSERT(codeBlock->calleeSaveRegisters() == &RegisterAtOffsetList::llintBaselineCalleeSaveRegisters());
+    ASSERT(codeBlock->jitCode()->calleeSaveRegisters() == &RegisterAtOffsetList::llintBaselineCalleeSaveRegisters());
 
     const RegisterAtOffsetList* calleeSaves = &RegisterAtOffsetList::llintBaselineCalleeSaveRegisters();
     RegisterSet dontSaveRegisters = RegisterSet(RegisterSet::stackRegisters());

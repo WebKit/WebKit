@@ -477,10 +477,8 @@ LLINT_SLOW_PATH_DECL(loop_osr)
     if (UNLIKELY(Options::returnEarlyFromInfiniteLoopsForFuzzing() && codeBlock->loopHintsAreEligibleForFuzzingEarlyReturn())) {
         uintptr_t* ptr = vm.getLoopHintExecutionCounter(pc);
         *ptr += codeBlock->llintExecuteCounter().m_activeThreshold;
-        if (*ptr >= Options::earlyReturnFromInfiniteLoopsLimit()) {
-            codeBlock->ensureJITData(ConcurrentJSLocker(codeBlock->m_lock)); // We're returning to the OSR entry code here, which expects that m_jitData is not null.
+        if (*ptr >= Options::earlyReturnFromInfiniteLoopsLimit())
             LLINT_RETURN_TWO(LLInt::fuzzerReturnEarlyFromLoopHintEntrypoint().code().executableAddress(), callFrame->topOfFrame());
-        }
     }
     
     

@@ -77,7 +77,7 @@ void compile(State& state, Safepoint::Result& safepointResult)
     RegisterAtOffsetList registerOffsets = state.proc->calleeSaveRegisterAtOffsetList();
     if (shouldDumpDisassembly())
         dataLog(tierName, "Unwind info for ", CodeBlockWithJITType(codeBlock, JITType::FTLJIT), ": ", registerOffsets, "\n");
-    codeBlock->setCalleeSaveRegisters(WTFMove(registerOffsets));
+    state.jitCode->m_calleeSaveRegisters = RegisterAtOffsetList(WTFMove(registerOffsets));
     ASSERT(!(state.proc->frameSize() % sizeof(EncodedJSValue)));
     state.jitCode->common.frameRegisterCount = state.proc->frameSize() / sizeof(EncodedJSValue);
 

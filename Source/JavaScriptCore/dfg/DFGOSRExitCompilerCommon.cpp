@@ -230,7 +230,7 @@ static MacroAssemblerCodePtr<JSEntryPtrTag> callerReturnPC(CodeBlock* baselineCo
 
 CCallHelpers::Address calleeSaveSlot(InlineCallFrame* inlineCallFrame, CodeBlock* baselineCodeBlock, GPRReg calleeSave)
 {
-    const RegisterAtOffsetList* calleeSaves = baselineCodeBlock->calleeSaveRegisters();
+    const RegisterAtOffsetList* calleeSaves = baselineCodeBlock->jitCode()->calleeSaveRegisters();
     for (unsigned i = 0; i < calleeSaves->size(); i++) {
         RegisterAtOffset entry = calleeSaves->at(i);
         if (entry.reg() != calleeSave)
@@ -314,7 +314,7 @@ void reifyInlinedCallFrames(CCallHelpers& jit, const OSRExitBase& exit)
         } else if (trueCaller) {
             CodeBlock* baselineCodeBlockForCaller = jit.baselineCodeBlockFor(*trueCaller);
             jit.storePtr(CCallHelpers::TrustedImmPtr(baselineCodeBlockForCaller->metadataTable()), calleeSaveSlot(inlineCallFrame, baselineCodeBlock, JIT::s_metadataGPR));
-            jit.storePtr(CCallHelpers::TrustedImmPtr(baselineCodeBlockForCaller->baselineJITConstantPool()), calleeSaveSlot(inlineCallFrame, baselineCodeBlock, JIT::s_constantsGPR));
+            jit.storePtr(CCallHelpers::TrustedImmPtr(baselineCodeBlockForCaller->baselineJITData()), calleeSaveSlot(inlineCallFrame, baselineCodeBlock, JIT::s_constantsGPR));
         }
 
         if (!inlineCallFrame->isVarargs())
@@ -407,7 +407,7 @@ void adjustAndJumpToTarget(VM& vm, CCallHelpers& jit, const OSRExitBase& exit)
         jumpTarget = destination.retagged<OSRExitPtrTag>().executableAddress();
     } else {
         jit.move(CCallHelpers::TrustedImmPtr(codeBlockForExit->metadataTable()), JIT::s_metadataGPR);
-        jit.move(CCallHelpers::TrustedImmPtr(codeBlockForExit->baselineJITConstantPool()), JIT::s_constantsGPR);
+        jit.move(CCallHelpers::TrustedImmPtr(codeBlockForExit->baselineJITData()), JIT::s_constantsGPR);
 
         BytecodeIndex exitIndex = exit.m_codeOrigin.bytecodeIndex();
         MacroAssemblerCodePtr<JSEntryPtrTag> destination;

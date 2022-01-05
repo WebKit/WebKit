@@ -53,7 +53,6 @@ public:
     GPRReg numberTagRegister { InvalidGPRReg };
 #endif
 
-    void setupCalleeSaveRegisters(CodeBlock*);
     void setupCalleeSaveRegisters(const RegisterAtOffsetList*);
     ValueRecovery callee;
 };

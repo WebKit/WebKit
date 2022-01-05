@@ -10395,7 +10395,7 @@ IGNORE_CLANG_WARNINGS_END
                         shuffleData.args.append(ValueRecovery::constant(jsUndefined()));
                     shuffleData.numPassedArgs = numPassedArgs;
                     shuffleData.numParameters = jit.codeBlock()->numParameters();
-                    shuffleData.setupCalleeSaveRegisters(jit.codeBlock());
+                    shuffleData.setupCalleeSaveRegisters(state->jitCode->calleeSaveRegisters());
                     
                     auto* callLinkInfo = state->jitCode->common.addCallLinkInfo(semanticNodeOrigin);
                     callLinkInfo->setUpCall(CallLinkInfo::DirectTailCall, InvalidGPRReg);
@@ -10555,7 +10555,7 @@ IGNORE_CLANG_WARNINGS_END
                 shuffleData.numPassedArgs = numArgs;
                 shuffleData.numParameters = jit.codeBlock()->numParameters();
                 
-                shuffleData.setupCalleeSaveRegisters(jit.codeBlock());
+                shuffleData.setupCalleeSaveRegisters(state->jitCode->calleeSaveRegisters());
 
                 auto* callLinkInfo = state->jitCode->common.addCallLinkInfo(codeOrigin);
                 callLinkInfo->setUpCall(CallLinkInfo::TailCall, GPRInfo::regT0);
@@ -10904,7 +10904,7 @@ IGNORE_CLANG_WARNINGS_END
                 CCallHelpers::Jump done;
                 if (isTailCall) {
                     slowPath = callLinkInfo->emitTailCallFastPath(jit, GPRInfo::regT0, scopedLambda<void()>([&]{
-                        jit.emitRestoreCalleeSaves();
+                        jit.emitRestoreCalleeSavesFor(state->jitCode->calleeSaveRegisters());
                         jit.prepareForTailCallSlow();
                     }));
                 } else {
@@ -10916,7 +10916,7 @@ IGNORE_CLANG_WARNINGS_END
                 auto slowPathStart = jit.label();
 
                 if (isTailCall)
-                    jit.emitRestoreCalleeSaves();
+                    jit.emitRestoreCalleeSavesFor(state->jitCode->calleeSaveRegisters());
                 jit.move(CCallHelpers::TrustedImmPtr(jit.codeBlock()->globalObjectFor(semanticNodeOrigin)), GPRInfo::regT3);
                 callLinkInfo->emitSlowPath(*vm, jit);
                 
@@ -11185,7 +11185,7 @@ IGNORE_CLANG_WARNINGS_END
                 CCallHelpers::Jump done;
                 if (isTailCall) {
                     slowPath = callLinkInfo->emitTailCallFastPath(jit, GPRInfo::regT0, scopedLambda<void()>([&]{
-                        jit.emitRestoreCalleeSaves();
+                        jit.emitRestoreCalleeSavesFor(state->jitCode->calleeSaveRegisters());
                         jit.prepareForTailCallSlow();
                     }));
                 } else {
@@ -11197,7 +11197,7 @@ IGNORE_CLANG_WARNINGS_END
                 auto slowPathStart = jit.label();
 
                 if (isTailCall)
-                    jit.emitRestoreCalleeSaves();
+                    jit.emitRestoreCalleeSavesFor(state->jitCode->calleeSaveRegisters());
                 jit.move(CCallHelpers::TrustedImmPtr(jit.codeBlock()->globalObjectFor(semanticNodeOrigin)), GPRInfo::regT3);
                 callLinkInfo->emitSlowPath(*vm, jit);
                 

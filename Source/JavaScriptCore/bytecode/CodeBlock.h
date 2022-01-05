@@ -95,6 +95,7 @@ class MetadataTable;
 class RegisterAtOffsetList;
 class StructureStubInfo;
 class BaselineJITCode;
+class BaselineJITData;
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(CodeBlockRareData);
 
@@ -246,7 +247,7 @@ public:
 
     std::optional<BytecodeIndex> bytecodeIndexFromCallSiteIndex(CallSiteIndex);
 
-    // Because we might throw out baseline JIT code and all its baseline JIT data (m_jitData),
+    // Because we might throw out baseline JIT code and all its baseline JIT data (m_baselineJITData),
     // you need to be careful about the lifetime of when you use the return value of this function.
     // The return value may have raw pointers into this data structure that gets thrown away.
     // Specifically, you need to ensure that no GC can be finalized (typically that means no
@@ -255,29 +256,9 @@ public:
     void getICStatusMap(ICStatusMap& result);
     
 #if ENABLE(JIT)
-    struct JITData {
-        WTF_MAKE_STRUCT_FAST_ALLOCATED;
-        friend class LLIntOffsetsExtractor;
-
-        FixedVector<StructureStubInfo> m_stubInfos;
-        bool m_hasCalleeSaveRegisters { false };
-        RegisterAtOffsetList m_calleeSaveRegisters;
-
-        FixedVector<void*> m_jitConstantPool;
-        static ptrdiff_t offsetOfJITConstantPool() { return OBJECT_OFFSETOF(JITData, m_jitConstantPool); }
-    };
-
     void setupWithUnlinkedBaselineCode(Ref<BaselineJITCode>);
 
-    JITData& ensureJITData(const ConcurrentJSLocker& locker)
-    {
-        if (LIKELY(m_jitData))
-            return *m_jitData;
-        return ensureJITDataSlow(locker);
-    }
-    JITData& ensureJITDataSlow(const ConcurrentJSLocker&);
-
-    static ptrdiff_t offsetOfJITData() { return OBJECT_OFFSETOF(CodeBlock, m_jitData); }
+    static ptrdiff_t offsetOfBaselineJITData() { return OBJECT_OFFSETOF(CodeBlock, m_baselineJITData); }
 
     StructureStubInfo* addOptimizingStubInfo(AccessType, CodeOrigin);
 
@@ -293,15 +274,12 @@ public:
 
     std::optional<CodeOrigin> findPC(void* pc);
 
-    void setCalleeSaveRegisters(RegisterSet);
-    void setCalleeSaveRegisters(RegisterAtOffsetList&&);
-
     // We call this when we want to reattempt compiling something with the baseline JIT. Ideally
     // the baseline JIT would not add data to CodeBlock, but instead it would put its data into
     // a newly created JITCode, which could be thrown away if we bail on JIT compilation. Then we
     // would be able to get rid of this silly function.
     // FIXME: https://bugs.webkit.org/show_bug.cgi?id=159061
-    void resetJITData();
+    void resetBaselineJITData();
 #endif // ENABLE(JIT)
 
     void unlinkIncomingCalls();
@@ -554,10 +532,10 @@ public:
 #if ENABLE(JIT)
     SimpleJumpTable& baselineSwitchJumpTable(int tableIndex);
     StringJumpTable& baselineStringSwitchJumpTable(int tableIndex);
-    void* baselineJITConstantPool()
+    BaselineJITData* baselineJITData()
     {
-        RELEASE_ASSERT(m_jitData && jitType() == JITType::BaselineJIT);
-        return m_jitData->m_jitConstantPool.storage();
+        RELEASE_ASSERT(jitType() == JITType::BaselineJIT);
+        return m_baselineJITData.get();
     }
 #endif
     size_t numberOfUnlinkedSwitchJumpTables() const { return m_unlinkedCode->numberOfUnlinkedSwitchJumpTables(); }
@@ -633,15 +611,13 @@ public:
     void countReoptimization();
 
 #if !ENABLE(C_LOOP)
-    const RegisterAtOffsetList* calleeSaveRegisters() const;
-
     static unsigned numberOfLLIntBaselineCalleeSaveRegisters() { return RegisterSet::llintBaselineCalleeSaveRegisters().numberOfSetRegisters(); }
     static size_t llintBaselineCalleeSaveSpaceAsVirtualRegisters();
-    size_t calleeSaveSpaceAsVirtualRegisters();
+    static size_t calleeSaveSpaceAsVirtualRegisters(const RegisterAtOffsetList&);
 #else
     static unsigned numberOfLLIntBaselineCalleeSaveRegisters() { return 0; }
     static size_t llintBaselineCalleeSaveSpaceAsVirtualRegisters() { return 1; };
-    size_t calleeSaveSpaceAsVirtualRegisters() { return 0; }
+    static size_t calleeSaveSpaceAsVirtualRegisters(const RegisterAtOffsetList&) { return 0; }
 #endif
 
 #if ENABLE(JIT)
@@ -960,7 +936,7 @@ private:
     RefPtr<JITCode> m_jitCode;
 #if ENABLE(JIT)
 public:
-    std::unique_ptr<JITData> m_jitData;
+    std::unique_ptr<BaselineJITData> m_baselineJITData;
 private:
 #endif
 #if ENABLE(DFG_JIT)

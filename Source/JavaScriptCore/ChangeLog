@@ -1,3 +1,109 @@
+2022-01-04  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Remove m_calleeSaveRegisters from CodeBlock::JITData and rename it to BaselineJITData
+        https://bugs.webkit.org/show_bug.cgi?id=234555
+
+        Reviewed by Saam Barati.
+
+        This patch removes m_calleeSaveRegisters from CodeBlock::JITData, and moving it to each JITCode.
+        This is reasonable since m_calleeSaveRegisters information belongs to JITCode, not CodeBlock.
+        And in LLInt, Baseline, and DFG cases, m_calleeSaveRegisters is the same. So we do not have this
+        field in these JITCode. Only FTL can have m_calleeSaveRegisters.
+
+        By removing m_calleeSaveRegisters from CodeBlock::JITData, now it only includes Baseline JIT related
+        data. So this patch renames CodeBlock::JITData to BaselineJITData.
+
+        We also use TrailingArray for BaselineJITData so that we can remove one level indirection when loading
+        JITConstantPool from JITData.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::setupWithUnlinkedBaselineCode):
+        (JSC::CodeBlock::~CodeBlock):
+        (JSC::CodeBlock::propagateTransitions):
+        (JSC::CodeBlock::finalizeJITInlineCaches):
+        (JSC::CodeBlock::getICStatusMap):
+        (JSC::CodeBlock::findStubInfo):
+        (JSC::CodeBlock::resetBaselineJITData):
+        (JSC::CodeBlock::stronglyVisitStrongReferences):
+        (JSC::CodeBlock::calleeSaveSpaceAsVirtualRegisters):
+        (JSC::CodeBlock::findPC):
+        (JSC::CodeBlock::ensureJITDataSlow): Deleted.
+        (JSC::CodeBlock::setCalleeSaveRegisters): Deleted.
+        (JSC::CodeBlock::resetJITData): Deleted.
+        (JSC::CodeBlock::calleeSaveRegisters const): Deleted.
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::offsetOfBaselineJITData):
+        (JSC::CodeBlock::baselineJITData):
+        (JSC::CodeBlock::calleeSaveSpaceAsVirtualRegisters):
+        (JSC::CodeBlock::JITData::offsetOfJITConstantPool): Deleted.
+        (JSC::CodeBlock::ensureJITData): Deleted.
+        (JSC::CodeBlock::offsetOfJITData): Deleted.
+        (JSC::CodeBlock::baselineJITConstantPool): Deleted.
+        * bytecode/Repatch.cpp:
+        (JSC::linkPolymorphicCall):
+        * dfg/DFGJITCompiler.h:
+        (JSC::DFG::JITCompiler::emitRestoreCalleeSaves):
+        (JSC::DFG::JITCompiler::emitSaveCalleeSaves):
+        * dfg/DFGOSREntry.cpp:
+        (JSC::DFG::prepareOSREntry):
+        * dfg/DFGOSRExit.cpp:
+        (JSC::DFG::OSRExit::compileExit):
+        * dfg/DFGOSRExitCompilerCommon.cpp:
+        (JSC::DFG::calleeSaveSlot):
+        (JSC::DFG::reifyInlinedCallFrames):
+        (JSC::DFG::adjustAndJumpToTarget):
+        * dfg/DFGPlan.cpp:
+        (JSC::DFG::Plan::compileInThreadImpl):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::emitCall):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::emitCall):
+        * dfg/DFGStackLayoutPhase.cpp:
+        (JSC::DFG::StackLayoutPhase::run):
+        * ftl/FTLCompile.cpp:
+        (JSC::FTL::compile):
+        * ftl/FTLJITCode.h:
+        (JSC::FTL::JITCode::calleeSaveRegisters const):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileCompareStrictEq):
+        * ftl/FTLOSRExitCompiler.cpp:
+        (JSC::FTL::compileStub):
+        * interpreter/StackVisitor.cpp:
+        (JSC::StackVisitor::Frame::calleeSaveRegistersForUnwinding):
+        * jit/AssemblyHelpers.cpp:
+        (JSC::AssemblyHelpers::executableFor):
+        (JSC::AssemblyHelpers::emitSaveOrCopyLLIntBaselineCalleeSavesFor):
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::emitSaveThenMaterializeTagRegisters):
+        (JSC::AssemblyHelpers::emitSaveCalleeSavesFor): Deleted.
+        (JSC::AssemblyHelpers::emitRestoreCalleeSavesFor): Deleted.
+        (JSC::AssemblyHelpers::emitSaveCalleeSaves): Deleted.
+        (JSC::AssemblyHelpers::emitRestoreCalleeSaves): Deleted.
+        * jit/BaselineJITCode.h:
+        * jit/CallFrameShuffleData.cpp:
+        * jit/CallFrameShuffleData.h:
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        (JSC::JIT::emitMaterializeMetadataAndConstantPoolRegisters):
+        (JSC::JIT::emitSaveCalleeSaves):
+        (JSC::JIT::compileAndLinkWithoutFinalizing):
+        * jit/JIT.h:
+        * jit/JITCode.cpp:
+        (JSC::JITCode::calleeSaveRegisters const):
+        * jit/JITCode.h:
+        * jit/JITInlines.h:
+        (JSC::JIT::loadConstant):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_catch):
+        * jit/RegisterAtOffsetList.cpp:
+        (JSC::RegisterAtOffsetList::dfgCalleeSaveRegisters):
+        * jit/RegisterAtOffsetList.h:
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * llint/LowLevelInterpreter.asm:
+        * tools/VMInspector.cpp:
+        (JSC::VMInspector::dumpRegisters):
+
 2022-01-04  Stephan Szabo  <stephan.szabo@sony.com>
 
         [PlayStation] Fix non-ninja build of zydis

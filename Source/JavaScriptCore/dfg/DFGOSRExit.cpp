@@ -738,8 +738,8 @@ void OSRExit::compileExit(CCallHelpers& jit, VM& vm, const OSRExit& exit, const 
         CCallHelpers::framePointerRegister, CCallHelpers::stackPointerRegister);
 
     // Restore the DFG callee saves and then save the ones the baseline JIT uses.
-    jit.emitRestoreCalleeSaves();
-    jit.emitSaveCalleeSavesFor(jit.baselineCodeBlock());
+    jit.emitRestoreCalleeSavesFor(jit.codeBlock()->jitCode()->calleeSaveRegisters());
+    jit.emitSaveCalleeSavesFor(jit.baselineCodeBlock()->jitCode()->calleeSaveRegisters());
 
     // The tag registers are needed to materialize recoveries below.
     jit.emitMaterializeTagCheckRegisters();
@@ -770,7 +770,7 @@ void OSRExit::compileExit(CCallHelpers& jit, VM& vm, const OSRExit& exit, const 
         if (operand.isTmp())
             continue;
 
-        if (operand.isLocal() && operand.toLocal() < static_cast<int>(jit.baselineCodeBlock()->calleeSaveSpaceAsVirtualRegisters()))
+        if (operand.isLocal() && operand.toLocal() < static_cast<int>(CodeBlock::calleeSaveSpaceAsVirtualRegisters(*jit.baselineCodeBlock()->jitCode()->calleeSaveRegisters())))
             continue;
 
         switch (recovery.technique()) {

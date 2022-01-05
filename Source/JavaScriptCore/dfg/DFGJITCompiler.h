@@ -302,6 +302,16 @@ public:
 
     VM& vm() { return m_graph.m_vm; }
 
+    void emitRestoreCalleeSaves()
+    {
+        emitRestoreCalleeSavesFor(&RegisterAtOffsetList::dfgCalleeSaveRegisters());
+    }
+
+    void emitSaveCalleeSaves()
+    {
+        emitSaveCalleeSavesFor(&RegisterAtOffsetList::dfgCalleeSaveRegisters());
+    }
+
 private:
     friend class OSRExitJumpPlaceholder;
     

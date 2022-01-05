@@ -273,7 +273,7 @@ std::optional<RegisterAtOffsetList> StackVisitor::Frame::calleeSaveRegistersForU
 #endif // ENABLE(WEBASSEMBLY)
 
     if (CodeBlock* codeBlock = this->codeBlock())
-        return *codeBlock->calleeSaveRegisters();
+        return *codeBlock->jitCode()->calleeSaveRegisters();
 
     return std::nullopt;
 }

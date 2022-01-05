@@ -893,6 +893,7 @@ namespace JSC {
 
         void emitMaterializeMetadataAndConstantPoolRegisters();
 
+        void emitSaveCalleeSaves();
         void emitRestoreCalleeSaves();
 
         static bool reportCompileTimes();

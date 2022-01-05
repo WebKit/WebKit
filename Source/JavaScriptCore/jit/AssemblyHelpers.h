@@ -316,34 +316,13 @@ public:
     void emitSave(const RegisterAtOffsetList&);
     void emitRestore(const RegisterAtOffsetList&);
 
-    void emitSaveCalleeSavesFor(CodeBlock* codeBlock)
-    {
-        ASSERT(codeBlock);
-
-        const RegisterAtOffsetList* calleeSaves = codeBlock->calleeSaveRegisters();
-        emitSaveCalleeSavesFor(calleeSaves);
-    }
-
     void emitSaveCalleeSavesFor(const RegisterAtOffsetList* calleeSaves);
     
     enum RestoreTagRegisterMode { UseExistingTagRegisterContents, CopyBaselineCalleeSavedRegistersFromBaseFrame };
 
     void emitSaveOrCopyLLIntBaselineCalleeSavesFor(CodeBlock*, VirtualRegister offsetVirtualRegister, RestoreTagRegisterMode, GPRReg temp1, GPRReg temp2, GPRReg temp3);
-    
-    void emitRestoreCalleeSavesFor(CodeBlock* codeBlock)
-    {
-        ASSERT(codeBlock);
-
-        const RegisterAtOffsetList* calleeSaves = codeBlock->calleeSaveRegisters();
-        emitRestoreCalleeSavesFor(calleeSaves);
-    }
 
     void emitRestoreCalleeSavesFor(const RegisterAtOffsetList* calleeSaves);
-
-    void emitSaveCalleeSaves()
-    {
-        emitSaveCalleeSavesFor(codeBlock());
-    }
 
     void emitSaveThenMaterializeTagRegisters()
     {
@@ -356,11 +335,6 @@ public:
 #endif
         emitMaterializeTagCheckRegisters();
 #endif
-    }
-    
-    void emitRestoreCalleeSaves()
-    {
-        emitRestoreCalleeSavesFor(codeBlock());
     }
 
     void emitRestoreSavedTagRegisters()
@@ -1580,7 +1554,7 @@ public:
         return codeBlock()->globalObjectFor(codeOrigin);
     }
     
-    ExecutableBase* executableFor(const CodeOrigin& codeOrigin);
+    ExecutableBase* executableFor(CodeBlock*, const CodeOrigin&);
     
     CodeBlock* baselineCodeBlockFor(const CodeOrigin& codeOrigin)
     {

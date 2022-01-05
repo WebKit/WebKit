@@ -80,6 +80,16 @@ const RegisterAtOffsetList& RegisterAtOffsetList::llintBaselineCalleeSaveRegiste
     return result.get();
 }
 
+const RegisterAtOffsetList& RegisterAtOffsetList::dfgCalleeSaveRegisters()
+{
+    static std::once_flag onceKey;
+    static LazyNeverDestroyed<RegisterAtOffsetList> result;
+    std::call_once(onceKey, [] {
+        result.construct(RegisterSet::dfgCalleeSaveRegisters());
+    });
+    return result.get();
+}
+
 } // namespace JSC
 
 #endif // ENABLE(ASSEMBLER)

@@ -181,7 +181,7 @@ static void compileStub(VM& vm, unsigned exitID, JITCode* jitCode, OSRExit& exit
         sizeof(EncodedJSValue) * (
             exit.m_descriptor->m_values.size() + numMaterializations + maxMaterializationNumArguments) +
         requiredScratchMemorySizeInBytes() +
-        codeBlock->calleeSaveRegisters()->size() * sizeof(uint64_t));
+        codeBlock->jitCode()->calleeSaveRegisters()->size() * sizeof(uint64_t));
     EncodedJSValue* scratch = scratchBuffer ? static_cast<EncodedJSValue*>(scratchBuffer->dataBuffer()) : nullptr;
     EncodedJSValue* materializationPointers = scratch + exit.m_descriptor->m_values.size();
     EncodedJSValue* materializationArguments = materializationPointers + numMaterializations;
@@ -390,8 +390,8 @@ static void compileStub(VM& vm, unsigned exitID, JITCode* jitCode, OSRExit& exit
     
     // Before we start messing with the frame, we need to set aside any registers that the
     // FTL code was preserving.
-    for (unsigned i = codeBlock->calleeSaveRegisters()->size(); i--;) {
-        RegisterAtOffset entry = codeBlock->calleeSaveRegisters()->at(i);
+    for (unsigned i = codeBlock->jitCode()->calleeSaveRegisters()->size(); i--;) {
+        RegisterAtOffset entry = codeBlock->jitCode()->calleeSaveRegisters()->at(i);
         jit.load64(
             MacroAssembler::Address(MacroAssembler::framePointerRegister, entry.offset()),
             GPRInfo::regT0);
@@ -402,7 +402,7 @@ static void compileStub(VM& vm, unsigned exitID, JITCode* jitCode, OSRExit& exit
 
     // First set up SP so that our data doesn't get clobbered by signals.
     unsigned conservativeStackDelta =
-        (exit.m_descriptor->m_values.numberOfLocals() + baselineCodeBlock->calleeSaveSpaceAsVirtualRegisters()) * sizeof(Register) +
+        (exit.m_descriptor->m_values.numberOfLocals() + CodeBlock::calleeSaveSpaceAsVirtualRegisters(*baselineCodeBlock->jitCode()->calleeSaveRegisters())) * sizeof(Register) +
         maxFrameExtentForSlowPathCall;
     conservativeStackDelta = WTF::roundUpToMultipleOf(
         stackAlignmentBytes(), conservativeStackDelta);
@@ -412,13 +412,13 @@ static void compileStub(VM& vm, unsigned exitID, JITCode* jitCode, OSRExit& exit
     jit.checkStackPointerAlignment();
 
     RegisterSet allFTLCalleeSaves = RegisterSet::ftlCalleeSaveRegisters();
-    const RegisterAtOffsetList* baselineCalleeSaves = baselineCodeBlock->calleeSaveRegisters();
+    const RegisterAtOffsetList* baselineCalleeSaves = baselineCodeBlock->jitCode()->calleeSaveRegisters();
 
     for (Reg reg = Reg::first(); reg <= Reg::last(); reg = reg.next()) {
         if (!allFTLCalleeSaves.get(reg)) {
             continue;
         }
-        unsigned unwindIndex = codeBlock->calleeSaveRegisters()->indexOf(reg);
+        unsigned unwindIndex = codeBlock->jitCode()->calleeSaveRegisters()->indexOf(reg);
         const RegisterAtOffset* baselineRegisterOffset = baselineCalleeSaves->find(reg);
 
         if (reg.isGPR()) {
@@ -453,7 +453,7 @@ static void compileStub(VM& vm, unsigned exitID, JITCode* jitCode, OSRExit& exit
         }
     }
 
-    size_t baselineVirtualRegistersForCalleeSaves = baselineCodeBlock->calleeSaveSpaceAsVirtualRegisters();
+    size_t baselineVirtualRegistersForCalleeSaves = CodeBlock::calleeSaveSpaceAsVirtualRegisters(*baselineCodeBlock->jitCode()->calleeSaveRegisters());
 
     if (exit.m_codeOrigin.inlineStackContainsActiveCheckpoint()) {
         EncodedJSValue* tmpScratch = scratch + exit.m_descriptor->m_values.tmpIndex(0);

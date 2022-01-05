@@ -274,8 +274,7 @@ void JIT::privateCompileMainPass()
         if (opcodeID != op_catch) {
             loadPtr(addressFor(CallFrameSlot::codeBlock), regT0);
             loadPtr(Address(regT0, CodeBlock::offsetOfMetadataTable()), regT1);
-            loadPtr(Address(regT0, CodeBlock::offsetOfJITData()), regT0);
-            loadPtr(Address(regT0, CodeBlock::JITData::offsetOfJITConstantPool()), regT2);
+            loadPtr(Address(regT0, CodeBlock::offsetOfBaselineJITData()), regT2);
 
             auto metadataOK = branchPtr(Equal, regT1, s_metadataGPR);
             breakpoint();
@@ -702,8 +701,12 @@ void JIT::emitMaterializeMetadataAndConstantPoolRegisters()
 {
     loadPtr(addressFor(CallFrameSlot::codeBlock), regT0);
     loadPtr(Address(regT0, CodeBlock::offsetOfMetadataTable()), s_metadataGPR);
-    loadPtr(Address(regT0, CodeBlock::offsetOfJITData()), regT0);
-    loadPtr(Address(regT0, CodeBlock::JITData::offsetOfJITConstantPool()), s_constantsGPR);
+    loadPtr(Address(regT0, CodeBlock::offsetOfBaselineJITData()), s_constantsGPR);
+}
+
+void JIT::emitSaveCalleeSaves()
+{
+    Base::emitSaveCalleeSavesFor(&RegisterAtOffsetList::llintBaselineCalleeSaveRegisters());
 }
 
 void JIT::emitRestoreCalleeSaves()
@@ -782,7 +785,7 @@ void JIT::compileAndLinkWithoutFinalizing(JITCompilationEffort effort)
     move(regT1, stackPointerRegister);
     checkStackPointerAlignment();
 
-    emitSaveCalleeSavesFor(&RegisterAtOffsetList::llintBaselineCalleeSaveRegisters());
+    emitSaveCalleeSaves();
     emitMaterializeTagCheckRegisters();
     emitMaterializeMetadataAndConstantPoolRegisters();
 

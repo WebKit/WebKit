@@ -26,6 +26,8 @@
 #include "config.h"
 #include "JITCode.h"
 
+#include "FTLJITCode.h"
+
 #include <wtf/PrintStream.h>
 
 namespace JSC {
@@ -93,6 +95,26 @@ FTL::ForOSREntryJITCode* JITCode::ftlForOSREntry()
 
 void JITCode::shrinkToFit(const ConcurrentJSLocker&)
 {
+}
+
+const RegisterAtOffsetList* JITCode::calleeSaveRegisters() const
+{
+    switch (jitType()) {
+#if ENABLE(FTL_JIT)
+    case JITType::FTLJIT:
+        return static_cast<const FTL::JITCode*>(this)->calleeSaveRegisters();
+#endif
+#if ENABLE(DFG_JIT)
+    case JITType::DFGJIT:
+        return &RegisterAtOffsetList::dfgCalleeSaveRegisters();
+#endif
+    default:
+#if !ENABLE(C_LOOP)
+        return &RegisterAtOffsetList::llintBaselineCalleeSaveRegisters();
+#else
+        return nullptr;
+#endif
+    }
 }
 
 JITCodeWithCodeRef::JITCodeWithCodeRef(JITType jitType)

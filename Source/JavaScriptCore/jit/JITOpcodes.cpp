@@ -1064,8 +1064,7 @@ void JIT::emit_op_catch(const Instruction* currentInstruction)
     // So we replenish it here.
     {
         loadPtr(addressFor(CallFrameSlot::codeBlock), regT0);
-        loadPtr(Address(regT0, CodeBlock::offsetOfJITData()), regT0);
-        loadPtr(Address(regT0, CodeBlock::JITData::offsetOfJITConstantPool()), s_constantsGPR);
+        loadPtr(Address(regT0, CodeBlock::offsetOfBaselineJITData()), s_constantsGPR);
     }
 
     callOperationNoExceptionCheck(operationRetrieveAndClearExceptionIfCatchable, &vm());

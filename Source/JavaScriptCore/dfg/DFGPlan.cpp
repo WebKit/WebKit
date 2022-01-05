@@ -198,8 +198,6 @@ Plan::CompilationPath Plan::compileInThreadImpl()
         parse(dfg);
     }
 
-    m_codeBlock->setCalleeSaveRegisters(RegisterSet::dfgCalleeSaveRegisters());
-
     bool changed = false;
 
 #define RUN_PHASE(phase)                                         \

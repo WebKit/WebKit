@@ -30,6 +30,7 @@
 #include "CodeOrigin.h"
 #include "JSCJSValue.h"
 #include "MacroAssemblerCodeRef.h"
+#include "RegisterAtOffsetList.h"
 #include "RegisterSet.h"
 
 
@@ -227,6 +228,8 @@ public:
     bool isShared() const { return m_shareAttribute == ShareAttribute::Shared; }
 
     virtual PCToCodeOriginMap* pcToCodeOriginMap() { return nullptr; }
+
+    const RegisterAtOffsetList* calleeSaveRegisters() const;
 
 private:
     JITType m_jitType;

@@ -784,11 +784,9 @@ void CodeBlock::setupWithUnlinkedBaselineCode(Ref<BaselineJITCode> jitCode)
 
     {
         ConcurrentJSLocker locker(m_lock);
-        auto& jitData = ensureJITData(locker);
-
-        RELEASE_ASSERT(jitData.m_jitConstantPool.isEmpty());
-        jitData.m_jitConstantPool = FixedVector<void*>(jitCode->m_constantPool.size());
-        jitData.m_stubInfos = FixedVector<StructureStubInfo>(jitCode->m_unlinkedStubInfos.size());
+        ASSERT(!m_baselineJITData);
+        m_baselineJITData = BaselineJITData::create(jitCode->m_constantPool.size());
+        m_baselineJITData->m_stubInfos = FixedVector<StructureStubInfo>(jitCode->m_unlinkedStubInfos.size());
         for (auto& unlinkedCallLinkInfo : jitCode->m_unlinkedCalls) {
             CallLinkInfo* callLinkInfo = getCallLinkInfoForBytecodeIndex(locker, unlinkedCallLinkInfo.bytecodeIndex);
             ASSERT(callLinkInfo);
@@ -799,24 +797,24 @@ void CodeBlock::setupWithUnlinkedBaselineCode(Ref<BaselineJITCode> jitCode)
             auto entry = jitCode->m_constantPool.at(i);
             switch (entry.type()) {
             case JITConstantPool::Type::GlobalObject:
-                jitData.m_jitConstantPool[i] = m_globalObject.get();
+                m_baselineJITData->at(i) = m_globalObject.get();
                 break;
             case JITConstantPool::Type::StructureStubInfo: {
                 unsigned index = bitwise_cast<uintptr_t>(entry.pointer());
                 UnlinkedStructureStubInfo& unlinkedStubInfo = jitCode->m_unlinkedStubInfos[index];
-                StructureStubInfo& stubInfo = jitData.m_stubInfos[index];
+                StructureStubInfo& stubInfo = m_baselineJITData->m_stubInfos[index];
                 stubInfo.initializeFromUnlinkedStructureStubInfo(this, unlinkedStubInfo);
-                jitData.m_jitConstantPool[i] = &stubInfo;
+                m_baselineJITData->at(i) = &stubInfo;
                 break;
             }
             case JITConstantPool::Type::FunctionDecl: {
                 unsigned index = bitwise_cast<uintptr_t>(entry.pointer());
-                jitData.m_jitConstantPool[i] = functionDecl(index);
+                m_baselineJITData->at(i) = functionDecl(index);
                 break;
             }
             case JITConstantPool::Type::FunctionExpr: {
                 unsigned index = bitwise_cast<uintptr_t>(entry.pointer());
-                jitData.m_jitConstantPool[i] = functionExpr(index);
+                m_baselineJITData->at(i) = functionExpr(index);
                 break;
             }
             }
@@ -905,7 +903,7 @@ CodeBlock::~CodeBlock()
     // destructors.
 
 #if ENABLE(JIT)
-    if (auto* jitData = m_jitData.get()) {
+    if (auto* jitData = m_baselineJITData.get()) {
         for (auto& stubInfo : jitData->m_stubInfos) {
             stubInfo.aboutToDie();
             stubInfo.deref();
@@ -1249,7 +1247,7 @@ void CodeBlock::propagateTransitions(const ConcurrentJSLocker&, Visitor& visitor
 
 #if ENABLE(JIT)
     if (JITCode::isJIT(jitType())) {
-        if (auto* jitData = m_jitData.get()) {
+        if (auto* jitData = m_baselineJITData.get()) {
             for (auto& stubInfo : jitData->m_stubInfos)
                 stubInfo.propagateTransitions(visitor);
         }
@@ -1582,20 +1580,9 @@ void CodeBlock::finalizeLLIntInlineCaches()
 }
 
 #if ENABLE(JIT)
-CodeBlock::JITData& CodeBlock::ensureJITDataSlow(const ConcurrentJSLocker&)
-{
-    ASSERT(!m_jitData);
-    auto jitData = makeUnique<JITData>();
-    // calleeSaveRegisters() can access m_jitData without taking a lock from Baseline JIT. This is OK since JITData::m_calleeSaveRegisters is filled in DFG and FTL CodeBlocks.
-    // But we should not see garbage pointer in that case. We ensure JITData::m_calleeSaveRegisters is initialized as nullptr before exposing it to BaselineJIT by store-store-fence.
-    WTF::storeStoreFence();
-    m_jitData = WTFMove(jitData);
-    return *m_jitData;
-}
-
 void CodeBlock::finalizeJITInlineCaches()
 {
-    if (auto* jitData = m_jitData.get()) {
+    if (auto* jitData = m_baselineJITData.get()) {
         for (auto& stubInfo : jitData->m_stubInfos) {
             ConcurrentJSLockerBase locker(NoLockingNecessary);
             stubInfo.visitWeakReferences(locker, this);
@@ -1699,7 +1686,7 @@ void CodeBlock::getICStatusMap(const ConcurrentJSLocker&, ICStatusMap& result)
     }
 #if ENABLE(JIT)
     if (JITCode::isJIT(jitType())) {
-        if (auto* jitData = m_jitData.get()) {
+        if (auto* jitData = m_baselineJITData.get()) {
             for (auto& stubInfo : jitData->m_stubInfos)
                 result.add(stubInfo.codeOrigin, ICStatus()).iterator->value.stubInfo = &stubInfo;
         }
@@ -1738,7 +1725,7 @@ void CodeBlock::getICStatusMap(ICStatusMap& result)
 StructureStubInfo* CodeBlock::findStubInfo(CodeOrigin codeOrigin)
 {
     ConcurrentJSLocker locker(m_lock);
-    if (auto* jitData = m_jitData.get()) {
+    if (auto* jitData = m_baselineJITData.get()) {
         for (auto& stubInfo : jitData->m_stubInfos) {
             if (stubInfo.codeOrigin == codeOrigin)
                 return &stubInfo;
@@ -1786,32 +1773,12 @@ CallLinkInfo* CodeBlock::getCallLinkInfoForBytecodeIndex(const ConcurrentJSLocke
     return nullptr;
 }
 
-void CodeBlock::setCalleeSaveRegisters(RegisterSet registerSet)
-{
-    auto calleeSaveRegisters = RegisterAtOffsetList(registerSet);
-
-    ConcurrentJSLocker locker(m_lock);
-    auto& jitData = ensureJITData(locker);
-    jitData.m_calleeSaveRegisters = WTFMove(calleeSaveRegisters);
-    WTF::storeStoreFence();
-    jitData.m_hasCalleeSaveRegisters = true;
-}
-
-void CodeBlock::setCalleeSaveRegisters(RegisterAtOffsetList&& registerAtOffsetList)
-{
-    ConcurrentJSLocker locker(m_lock);
-    auto& jitData = ensureJITData(locker);
-    jitData.m_calleeSaveRegisters = WTFMove(registerAtOffsetList);
-    WTF::storeStoreFence();
-    jitData.m_hasCalleeSaveRegisters = true;
-}
-
-void CodeBlock::resetJITData()
+void CodeBlock::resetBaselineJITData()
 {
     RELEASE_ASSERT(!JITCode::isJIT(jitType()));
     ConcurrentJSLocker locker(m_lock);
     
-    if (auto* jitData = m_jitData.get()) {
+    if (auto* jitData = m_baselineJITData.get()) {
         // We can clear these because no other thread will have references to any stub infos, call
         // link infos, or by val infos if we don't have JIT code. Attempts to query these data
         // structures using the concurrent API (getICStatusMap and friends) will return nothing if we
@@ -1832,7 +1799,7 @@ void CodeBlock::resetJITData()
         // We can clear this because the DFG's queries to these data structures are guarded by whether
         // there is JIT code.
 
-        m_jitData = nullptr;
+        m_baselineJITData = nullptr;
     }
 }
 #endif
@@ -1878,7 +1845,7 @@ void CodeBlock::stronglyVisitStrongReferences(const ConcurrentJSLocker& locker, 
     });
 
 #if ENABLE(JIT)
-    if (auto* jitData = m_jitData.get()) {
+    if (auto* jitData = m_baselineJITData.get()) {
         for (auto& stubInfo : jitData->m_stubInfos)
             stubInfo.visitAggregate(visitor);
     }
@@ -2478,18 +2445,6 @@ unsigned CodeBlock::reoptimizationRetryCounter() const
 }
 
 #if !ENABLE(C_LOOP)
-const RegisterAtOffsetList* CodeBlock::calleeSaveRegisters() const
-{
-#if ENABLE(JIT)
-    if (auto* jitData = m_jitData.get()) {
-        if (jitData->m_hasCalleeSaveRegisters)
-            return &jitData->m_calleeSaveRegisters;
-    }
-#endif
-    return &RegisterAtOffsetList::llintBaselineCalleeSaveRegisters();
-}
-
-    
 static size_t roundCalleeSaveSpaceAsVirtualRegisters(size_t calleeSaveRegisters)
 {
 
@@ -2502,9 +2457,9 @@ size_t CodeBlock::llintBaselineCalleeSaveSpaceAsVirtualRegisters()
     return roundCalleeSaveSpaceAsVirtualRegisters(numberOfLLIntBaselineCalleeSaveRegisters());
 }
 
-size_t CodeBlock::calleeSaveSpaceAsVirtualRegisters()
+size_t CodeBlock::calleeSaveSpaceAsVirtualRegisters(const RegisterAtOffsetList& calleeSaveRegisters)
 {
-    return roundCalleeSaveSpaceAsVirtualRegisters(calleeSaveRegisters()->size());
+    return roundCalleeSaveSpaceAsVirtualRegisters(calleeSaveRegisters.size());
 }
 #endif
 
@@ -3515,7 +3470,7 @@ std::optional<CodeOrigin> CodeBlock::findPC(void* pc)
 
     {
         ConcurrentJSLocker locker(m_lock);
-        if (auto* jitData = m_jitData.get()) {
+        if (auto* jitData = m_baselineJITData.get()) {
             for (auto& stubInfo : jitData->m_stubInfos) {
                 if (stubInfo.containsPC(pc))
                     return stubInfo.codeOrigin;

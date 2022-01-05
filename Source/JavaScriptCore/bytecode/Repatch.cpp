@@ -1758,8 +1758,8 @@ void linkPolymorphicCall(JSGlobalObject* globalObject, CallFrame* callFrame, Cal
 
     if (!frameShuffler && callLinkInfo.isTailCall()) {
         // We strongly assume that calleeGPR is not a callee save register in the slow path.
-        ASSERT(!callerCodeBlock->calleeSaveRegisters()->find(calleeGPR));
-        stubJit.emitRestoreCalleeSaves();
+        ASSERT(!callerCodeBlock->jitCode()->calleeSaveRegisters()->find(calleeGPR));
+        stubJit.emitRestoreCalleeSavesFor(callerCodeBlock->jitCode()->calleeSaveRegisters());
     }
 
     CCallHelpers::JumpList slowPath;
