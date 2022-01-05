@@ -1,3 +1,10 @@
+2022-01-05  Tim Horton  <timothy_horton@apple.com>
+
+        Fix the build
+
+        * Shared/ios/WebIOSEventFactory.mm:
+        (WebIOSEventFactory::createWebWheelEvent):
+
 2022-01-05  Per Arne Vollan  <pvollan@apple.com>
 
         [iOS][WP] Unable to consume mach extension
