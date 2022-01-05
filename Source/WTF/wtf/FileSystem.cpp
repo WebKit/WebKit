@@ -305,16 +305,6 @@ void setMetadataURL(const String&, const String&, const String&)
 {
 }
 
-bool canExcludeFromBackup()
-{
-    return false;
-}
-
-bool excludeFromBackup(const String&)
-{
-    return false;
-}
-
 #endif
 
 MappedFileData::MappedFileData(const String& filePath, MappedFileMode mapMode, bool& success)
@@ -426,10 +416,17 @@ void makeSafeToUseMemoryMapForPath(const String&)
 #endif
 
 #if !PLATFORM(COCOA)
+
 String createTemporaryZipArchive(const String&)
 {
     return { };
 }
+
+bool excludeFromBackup(const String&)
+{
+    return false;
+}
+
 #endif
 
 MappedFileData mapToFile(const String& path, size_t bytesSize, Function<void(const Function<bool(Span<const uint8_t>)>&)>&& apply, PlatformFileHandle* outputHandle)

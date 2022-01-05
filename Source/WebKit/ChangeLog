@@ -1,3 +1,64 @@
+2022-01-05  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r287377. rdar://problem/86829012
+
+    WebsiteDataStore::excludeDirectoryFromBackup should set attribute for existing directories
+    https://bugs.webkit.org/show_bug.cgi?id=234404
+    
+    Reviewed by Youenn Fablet.
+    
+    Source/WebKit:
+    
+    createDirectoryAtURL returning false means directory cannot be created, but the cause can be that directory
+    already exists; so we should set exclude attribute on the directory no matter createDirectoryAtURL returns true
+    or false. Also, we can use existing FileSystem functions.
+    
+    API test: WKWebView.LocalStorageDirectoryExcludedFromBackup
+    
+    * UIProcess/WebsiteData/Cocoa/WebsiteDataStoreCocoa.mm:
+    (WebKit::WebsiteDataStore::excludeDirectoryFromBackup): Deleted.
+    * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+    (WebKit::WebsiteDataStore::parameters):
+    * UIProcess/WebsiteData/WebsiteDataStore.h:
+    
+    Source/WTF:
+    
+    * wtf/FileSystem.cpp:
+    (WTF::FileSystemImpl::excludeFromBackup):
+    (WTF::FileSystemImpl::canExcludeFromBackup): Deleted.
+    * wtf/FileSystem.h:
+    * wtf/cocoa/FileSystemCocoa.mm:
+    (WTF::FileSystemImpl::excludeFromBackup):
+    * wtf/mac/FileSystemMac.mm:
+    (WTF::FileSystem::canExcludeFromBackup): Deleted.
+    (WTF::FileSystem::excludeFromBackup): Deleted.
+    
+    Tools:
+    
+    * TestWebKitAPI/Tests/WebKitCocoa/LocalStoragePersistence.mm:
+    (TEST):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@287377 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-12-22  Sihui Liu  <sihui_liu@apple.com>
+
+            WebsiteDataStore::excludeDirectoryFromBackup should set attribute for existing directories
+            https://bugs.webkit.org/show_bug.cgi?id=234404
+
+            Reviewed by Youenn Fablet.
+
+            createDirectoryAtURL returning false means directory cannot be created, but the cause can be that directory
+            already exists; so we should set exclude attribute on the directory no matter createDirectoryAtURL returns true
+            or false. Also, we can use existing FileSystem functions.
+
+            API test: WKWebView.LocalStorageDirectoryExcludedFromBackup
+
+            * UIProcess/WebsiteData/Cocoa/WebsiteDataStoreCocoa.mm:
+            (WebKit::WebsiteDataStore::excludeDirectoryFromBackup): Deleted.
+            * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+            (WebKit::WebsiteDataStore::parameters):
+            * UIProcess/WebsiteData/WebsiteDataStore.h:
+
 2022-01-04  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r287413. rdar://problem/86808395

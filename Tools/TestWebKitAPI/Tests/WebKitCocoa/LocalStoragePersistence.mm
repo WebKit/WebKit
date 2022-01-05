@@ -39,6 +39,7 @@
 #import <WebKit/WebKit.h>
 #import <WebKit/_WKProcessPoolConfiguration.h>
 #import <WebKit/_WKUserStyleSheet.h>
+#import <WebKit/_WKWebsiteDataStoreConfiguration.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/text/WTFString.h>
 
@@ -452,3 +453,38 @@ TEST(WKWebView, LocalStorageGroup)
     runTest(true);
     runTest(false);
 }
+
+#if PLATFORM(IOS_FAMILY)
+
+TEST(WKWebView, LocalStorageDirectoryExcludedFromBackup)
+{
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    RetainPtr<NSURL> url = [[[configuration websiteDataStore] _configuration] _webStorageDirectory];
+    // Create a directory and make it not excluded.
+    [[NSFileManager defaultManager] createDirectoryAtURL:url.get() withIntermediateDirectories:YES attributes:nil error:nullptr];
+    [url.get() setResourceValue:@NO forKey:NSURLIsExcludedFromBackupKey error:nil];
+    NSNumber *isDirectoryExcluded = nil;
+    EXPECT_TRUE([url.get() getResourceValue:&isDirectoryExcluded forKey:NSURLIsExcludedFromBackupKey error:nil]);
+    EXPECT_FALSE(isDirectoryExcluded.boolValue);
+
+    auto delegate = adoptNS([[LocalStorageNavigationDelegate alloc] init]);
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    [webView setNavigationDelegate:delegate.get()];
+    didFinishNavigationBoolean = false;
+    NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+    [webView loadRequest:request];
+    TestWebKitAPI::Util::run(&didFinishNavigationBoolean);
+
+    bool finishedRunningScript = false;
+    [webView evaluateJavaScript:@"localStorage.getItem('key');" completionHandler: [&] (id result, NSError *) {
+        finishedRunningScript = true;
+    }];
+    TestWebKitAPI::Util::run(&finishedRunningScript);
+
+    // Create new url that has updated value.
+    url = [[[configuration websiteDataStore] _configuration] _webStorageDirectory];
+    EXPECT_TRUE([url.get() getResourceValue:&isDirectoryExcluded forKey:NSURLIsExcludedFromBackupKey error:nil]);
+    EXPECT_TRUE(isDirectoryExcluded.boolValue);
+}
+
+#endif

@@ -1903,12 +1903,13 @@ WebsiteDataStoreParameters WebsiteDataStore::parameters()
     auto localStorageDirectory = resolvedLocalStorageDirectory();
     if (!localStorageDirectory.isEmpty()) {
         parameters.localStorageDirectory = localStorageDirectory;
-#if PLATFORM(IOS_FAMILY)
-        excludeDirectoryFromBackup(localStorageDirectory);
-#endif
         // FIXME: SandboxExtension::createHandleForReadWriteDirectory resolves the directory, but that has already been done. Remove this duplicate work.
         if (auto handle = SandboxExtension::createHandleForReadWriteDirectory(localStorageDirectory))
             parameters.localStorageDirectoryExtensionHandle = WTFMove(*handle);
+#if PLATFORM(IOS_FAMILY)
+        FileSystem::makeAllDirectories(localStorageDirectory);
+        FileSystem::excludeFromBackup(localStorageDirectory);
+#endif
     }
 
     auto cacheStorageDirectory = this->cacheStorageDirectory();

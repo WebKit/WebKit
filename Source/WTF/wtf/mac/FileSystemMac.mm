@@ -57,18 +57,6 @@ void FileSystem::setMetadataURL(const String& path, const String& metadataURLStr
     });
 }
 
-bool FileSystem::canExcludeFromBackup()
-{
-    return true;
-}
-
-bool FileSystem::excludeFromBackup(const String& path)
-{
-    // It is critical to pass FALSE for excludeByPath because excluding by path requires root privileges.
-    CSBackupSetItemExcluded(FileSystem::pathAsURL(path).get(), TRUE, FALSE);
-    return true;
-}
-
 } // namespace WTF
 
 #endif // PLATFORM(MAC)
