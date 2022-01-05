@@ -32,7 +32,6 @@ imported/w3c/web-platform-tests/html/semantics/embedded-content/the-embed-elemen
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-area-element/area-coords.html [ Pass ]
 
 # Some Apple ports don't support RTL scrollbars.
-fast/scrolling/rtl-scrollbars-alternate-body-dir-attr-does-not-update-scrollbar-placement-2.html [ Pass ]
 fast/scrolling/rtl-scrollbars-alternate-body-dir-attr-does-not-update-scrollbar-placement.html [ Pass ]
 fast/scrolling/rtl-scrollbars-iframe-scrolled.html [ Pass ]
 fast/scrolling/rtl-scrollbars-listbox-scroll.html [ Pass ]
