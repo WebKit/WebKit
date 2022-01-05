@@ -1,5 +1,45 @@
 2022-01-05  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r285710. rdar://problem/87125070
+
+    REGRESSION(r285624) Using revert keyword with a css variable hits assert
+    https://bugs.webkit.org/show_bug.cgi?id=233031
+    rdar://85332271
+    
+    Reviewed by Tim Horton.
+    
+    Source/WebCore:
+    
+    Test: fast/selectors/variable-revert-crash.html
+    
+    * style/StyleBuilderState.h:
+    
+    Default initialization set the variable to a value that is not in the enumeration.
+    
+    LayoutTests:
+    
+    * fast/selectors/variable-revert-crash-expected.txt: Added.
+    * fast/selectors/variable-revert-crash.html: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@285710 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-11-12  Antti Koivisto  <antti@apple.com>
+
+            REGRESSION(r285624) Using revert keyword with a css variable hits assert
+            https://bugs.webkit.org/show_bug.cgi?id=233031
+            rdar://85332271
+
+            Reviewed by Tim Horton.
+
+            Test: fast/selectors/variable-revert-crash.html
+
+            * style/StyleBuilderState.h:
+
+            Default initialization set the variable to a value that is not in the enumeration.
+
+2022-01-05  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r284980. rdar://problem/84223894
 
     Fix CARingBuffer mix mode
