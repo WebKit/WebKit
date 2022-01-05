@@ -29,6 +29,7 @@
 
 #include "CSSRegisteredCustomProperty.h"
 #include "CanvasBase.h"
+#include "ClientOrigin.h"
 #include "Color.h"
 #include "ContainerNode.h"
 #include "CrossOriginOpenerPolicy.h"
@@ -49,6 +50,7 @@
 #include "RegistrableDomain.h"
 #include "RenderPtr.h"
 #include "ScriptExecutionContext.h"
+#include "SecurityOrigin.h"
 #include "StringWithDirection.h"
 #include "Supplementable.h"
 #include "Timer.h"
@@ -1382,6 +1384,7 @@ public:
 
     SecurityOrigin& securityOrigin() const { return *SecurityContext::securityOrigin(); }
     SecurityOrigin& topOrigin() const final { return topDocument().securityOrigin(); }
+    ClientOrigin clientOrigin() const { return { topOrigin().data(), securityOrigin().data() }; }
 
     inline bool isSameOriginAsTopDocument() const;
     bool shouldForceNoOpenerBasedOnCOOP() const;

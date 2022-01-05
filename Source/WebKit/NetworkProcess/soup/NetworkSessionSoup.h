@@ -63,7 +63,7 @@ public:
     void setProxySettings(const WebCore::SoupNetworkProxySettings&);
 
 private:
-    std::unique_ptr<WebSocketTask> createWebSocketTask(WebPageProxyIdentifier, NetworkSocketChannel&, const WebCore::ResourceRequest&, const String& protocol) final;
+    std::unique_ptr<WebSocketTask> createWebSocketTask(WebPageProxyIdentifier, NetworkSocketChannel&, const WebCore::ResourceRequest&, const String& protocol, const WebCore::ClientOrigin&) final;
     void clearCredentials() final;
 
     std::unique_ptr<WebCore::SoupNetworkSession> m_networkSession;

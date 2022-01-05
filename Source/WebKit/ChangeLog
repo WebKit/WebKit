@@ -1,5 +1,36 @@
 2022-01-05  Youenn Fablet  <youenn@apple.com>
 
+        Make sure secure websocket connections in service workers can trigger authentication challenge callbacks
+        https://bugs.webkit.org/show_bug.cgi?id=234809
+        <rdar://85888177>
+
+        Reviewed by Chris Dumez.
+
+        In case we are not using fast server trust evaluation, we are going to the UIProcess to check certificates.
+        This is an issue for web socket loads triggered for service workers that have an invalid certificate.
+        Before the patch, the challenge was not provided a top origin, so the default action would be triggered by UIProcess.
+        To make sure this is working as expected, we now always pass the origin if it is the same as the top origin for web socket challenges.
+        This makes sure we get a page with the same top origin and the challenge callback is called on the page.
+
+        Covered by updated tests.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        * NetworkProcess/NetworkConnectionToWebProcess.h:
+        * NetworkProcess/NetworkConnectionToWebProcess.messages.in:
+        * NetworkProcess/NetworkSession.cpp:
+        * NetworkProcess/NetworkSession.h:
+        * NetworkProcess/NetworkSocketChannel.cpp:
+        * NetworkProcess/NetworkSocketChannel.h:
+        * NetworkProcess/cocoa/NetworkSessionCocoa.h:
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        * NetworkProcess/cocoa/WebSocketTaskCocoa.h:
+        * NetworkProcess/cocoa/WebSocketTaskCocoa.mm:
+        * NetworkProcess/soup/NetworkSessionSoup.cpp:
+        * NetworkProcess/soup/NetworkSessionSoup.h:
+        * WebProcess/Network/WebSocketChannel.cpp:
+
+2022-01-05  Youenn Fablet  <youenn@apple.com>
+
         WebPageProxy::requestUserMediaPermissionForSpeechRecognition should return early in case of no capture devices
         https://bugs.webkit.org/show_bug.cgi?id=234837
         <rdar://87055505>
