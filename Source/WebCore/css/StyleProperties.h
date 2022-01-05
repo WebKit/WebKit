@@ -170,7 +170,6 @@ private:
     String getLayeredShorthandValue(const StylePropertyShorthand&) const;
     String get2Values(const StylePropertyShorthand&) const;
     String get4Values(const StylePropertyShorthand&) const;
-    String borderRadiusValue(const StylePropertyShorthand&) const;
     String borderSpacingValue(const StylePropertyShorthand&) const;
     String fontValue() const;
     String fontVariantValue() const;
