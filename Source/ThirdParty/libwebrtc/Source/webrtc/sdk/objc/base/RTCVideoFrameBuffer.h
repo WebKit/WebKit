@@ -25,6 +25,9 @@ RTC_OBJC_EXPORT
 
 - (id<RTCI420Buffer>)toI420;
 
+#if defined(WEBRTC_WEBKIT_BUILD)
+- (void)close;
+#endif
 @end
 
 NS_ASSUME_NONNULL_END
