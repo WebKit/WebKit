@@ -1,5 +1,30 @@
 2022-01-05  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r286153. rdar://problem/87124911
+
+    Skip new stress test get-array-length-reuse.js if memory-limited
+    https://bugs.webkit.org/show_bug.cgi?id=233299
+    rdar://85502079
+    
+    Patch by Michael Catanzaro <mcatanzaro@gnome.org> on 2021-11-24
+    Reviewed by Yusuke Suzuki.
+    
+    * stress/get-array-length-reuse.js:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@286153 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-11-24  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+            Skip new stress test get-array-length-reuse.js if memory-limited
+            https://bugs.webkit.org/show_bug.cgi?id=233299
+            rdar://85502079
+
+            Reviewed by Yusuke Suzuki.
+
+            * stress/get-array-length-reuse.js:
+
+2022-01-05  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r285978. rdar://problem/87124911
 
     [JSC] TypedArray GetArrayLength should not use Reuse
