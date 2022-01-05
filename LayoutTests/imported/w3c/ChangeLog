@@ -1,3 +1,13 @@
+2022-01-05  Martin Robinson  <mrobinson@webkit.org>
+
+        CSS `transform` property  should take into account transform reference box
+        https://bugs.webkit.org/show_bug.cgi?id=234144
+        <rdar://problem/86630206>
+
+        Reviewed by Darin Adler.
+
+        * web-platform-tests/css/css-transforms/transform-percent-009-expected.txt:
+
 2022-01-04  Antoine Quint  <graouts@webkit.org>
 
         WPT test css/css-transitions/parsing/transition-shorthand.html has failures
