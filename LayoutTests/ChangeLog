@@ -45,53 +45,6 @@
 
 2022-01-05  Russell Epstein  <repstein@apple.com>
 
-        Cherry-pick r287353. rdar://problem/87125345
-
-    Use requester when calling updateRequestAndAddExtraFields
-    https://bugs.webkit.org/show_bug.cgi?id=234507
-    <rdar://problem/85049490>
-    
-    Reviewed by Brent Fulgham.
-    
-    Source/WebCore:
-    
-    In case of navigation loads, the requester is the fetch request client.
-    As such, it should be the one used to determine whether the request is cross-origin is not.
-    Pass the requester to updateRequestAndAddExtraFields to do the correct computation.
-    Validate that some request fields are now correctly observed in service workers.
-    
-    Test: http/wpt/service-workers/navigation-iframe-site.https.html
-    
-    * loader/FrameLoader.cpp:
-    * loader/FrameLoader.h:
-    * testing/ServiceWorkerInternals.cpp:
-    * testing/ServiceWorkerInternals.h:
-    * testing/ServiceWorkerInternals.idl:
-    
-    LayoutTests:
-    
-    * http/wpt/service-workers/navigation-iframe-site-worker.js: Added.
-    * http/wpt/service-workers/navigation-iframe-site.https-expected.txt: Added.
-    * http/wpt/service-workers/navigation-iframe-site.https.html: Added.
-    * http/wpt/service-workers/resources/navigation-iframe-site-frame.html: Added.
-    
-    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@287353 268f45cc-cd09-0410-ab3c-d52691b4dbfc
-
-    2021-12-22  Youenn Fablet  <youenn@apple.com>
-
-            Use requester when calling updateRequestAndAddExtraFields
-            https://bugs.webkit.org/show_bug.cgi?id=234507
-            <rdar://problem/85049490>
-
-            Reviewed by Brent Fulgham.
-
-            * http/wpt/service-workers/navigation-iframe-site-worker.js: Added.
-            * http/wpt/service-workers/navigation-iframe-site.https-expected.txt: Added.
-            * http/wpt/service-workers/navigation-iframe-site.https.html: Added.
-            * http/wpt/service-workers/resources/navigation-iframe-site-frame.html: Added.
-
-2022-01-05  Russell Epstein  <repstein@apple.com>
-
         Cherry-pick r285710. rdar://problem/87125070
 
     REGRESSION(r285624) Using revert keyword with a css variable hits assert

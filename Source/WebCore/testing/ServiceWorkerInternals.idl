@@ -44,6 +44,4 @@
     readonly attribute long processIdentifier;
 
     Promise<boolean> lastNavigationWasAppInitiated();
-
-    boolean fetchEventIsSameSite(FetchEvent event);
 };

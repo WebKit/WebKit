@@ -62,8 +62,6 @@ public:
 
     void lastNavigationWasAppInitiated(Ref<DeferredPromise>&&);
 
-    bool fetchEventIsSameSite(FetchEvent&);
-
 private:
     explicit ServiceWorkerInternals(ServiceWorkerIdentifier);
 

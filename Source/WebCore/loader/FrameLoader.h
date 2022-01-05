@@ -318,7 +318,7 @@ public:
     bool alwaysAllowLocalWebarchive() const { return m_alwaysAllowLocalWebarchive; }
 
     // For subresource requests the FrameLoadType parameter has no effect and can be skipped.
-    void updateRequestAndAddExtraFields(ResourceRequest&, IsMainResource, FrameLoadType = FrameLoadType::Standard, ShouldUpdateAppInitiatedValue = ShouldUpdateAppInitiatedValue::Yes, Document* = nullptr);
+    void updateRequestAndAddExtraFields(ResourceRequest&, IsMainResource, FrameLoadType = FrameLoadType::Standard, ShouldUpdateAppInitiatedValue = ShouldUpdateAppInitiatedValue::Yes);
 
     void scheduleRefreshIfNeeded(Document&, const String& content, IsMetaRefresh);
 

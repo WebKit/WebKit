@@ -1356,7 +1356,7 @@ void FrameLoader::loadURL(FrameLoadRequest&& frameLoadRequest, const String& ref
     if (!referrer.isEmpty())
         request.setHTTPReferrer(referrer);
 
-    updateRequestAndAddExtraFields(request, IsMainResource::Yes, newLoadType, ShouldUpdateAppInitiatedValue::Yes, FrameLoader::IsServiceWorkerNavigationLoad::No, &frameLoadRequest.requester());
+    updateRequestAndAddExtraFields(request, IsMainResource::Yes, newLoadType);
 
     ASSERT(newLoadType != FrameLoadType::Same);
 
@@ -2905,7 +2905,7 @@ ResourceRequestCachePolicy FrameLoader::defaultRequestCachingPolicy(const Resour
     return ResourceRequestCachePolicy::UseProtocolCachePolicy;
 }
 
-void FrameLoader::updateRequestAndAddExtraFields(ResourceRequest& request, IsMainResource mainResource, FrameLoadType loadType, ShouldUpdateAppInitiatedValue shouldUpdate, Document* initiator)
+void FrameLoader::updateRequestAndAddExtraFields(ResourceRequest& request, IsMainResource mainResource, FrameLoadType loadType, ShouldUpdateAppInitiatedValue shouldUpdate)
 {
     // If the request came from a previous process due to process-swap-on-navigation then we should not modify the request.
     if (m_currentLoadContinuingState == LoadContinuingState::ContinuingWithRequest)
@@ -2923,16 +2923,14 @@ void FrameLoader::updateRequestAndAddExtraFields(ResourceRequest& request, IsMai
     }
 
     if (request.isSameSiteUnspecified()) {
-        if (!initiator) {
-            initiator = m_frame.document();
-            if (isMainResource) {
-                auto* ownerFrame = m_frame.tree().parent();
-                if (!ownerFrame && m_stateMachine.isDisplayingInitialEmptyDocument())
-                    ownerFrame = m_opener.get();
-                if (ownerFrame)
-                    initiator = ownerFrame->document();
-                ASSERT(ownerFrame || m_frame.isMainFrame());
-            }
+        auto* initiator = m_frame.document();
+        if (isMainResource) {
+            auto* ownerFrame = m_frame.tree().parent();
+            if (!ownerFrame && m_stateMachine.isDisplayingInitialEmptyDocument())
+                ownerFrame = m_opener.get();
+            if (ownerFrame)
+                initiator = ownerFrame->document();
+            ASSERT(ownerFrame || m_frame.isMainFrame());
         }
         addSameSiteInfoToRequestIfNeeded(request, initiator);
     }
@@ -3066,7 +3064,7 @@ void FrameLoader::loadPostRequest(FrameLoadRequest&& request, const String& refe
     workingResourceRequest.setHTTPMethod("POST");
     workingResourceRequest.setHTTPBody(inRequest.httpBody());
     workingResourceRequest.setHTTPContentType(contentType);
-    updateRequestAndAddExtraFields(workingResourceRequest, IsMainResource::Yes, loadType, ShouldUpdateAppInitiatedValue::Yes, FrameLoader::IsServiceWorkerNavigationLoad::No, &request.requester());
+    updateRequestAndAddExtraFields(workingResourceRequest, IsMainResource::Yes, loadType);
 
     if (Document* document = m_frame.document())
         document->contentSecurityPolicy()->upgradeInsecureRequestIfNeeded(workingResourceRequest, ContentSecurityPolicy::InsecureRequestType::Load);
