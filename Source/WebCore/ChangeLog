@@ -1,5 +1,32 @@
 2022-01-05  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r287240. rdar://problem/86026618
+
+    Fix pointer to blob data in BlobResourceHandle::readDataSync()
+    <https://webkit.org/b/234459>
+    <rdar://86026618>
+    
+    Reviewed by Chris Dumez.
+    
+    * platform/network/BlobResourceHandle.cpp:
+    (WebCore::BlobResourceHandle::readDataSync):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@287240 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-12-19  David Kilzer  <ddkilzer@apple.com>
+
+            Fix pointer to blob data in BlobResourceHandle::readDataSync()
+            <https://webkit.org/b/234459>
+            <rdar://86026618>
+
+            Reviewed by Chris Dumez.
+
+            * platform/network/BlobResourceHandle.cpp:
+            (WebCore::BlobResourceHandle::readDataSync):
+
+2022-01-05  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r287048. rdar://problem/87125012
 
     Adhere to DisplayList iterator's API contract in MemoryDisplayList::~InMemoryDisplayList()
