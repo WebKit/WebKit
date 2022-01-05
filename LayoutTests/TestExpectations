@@ -5074,6 +5074,8 @@ imported/w3c/web-platform-tests/css/css-shadow-parts/interaction-with-nested-pse
 
 webkit.org/b/234315 [ Debug ] fast/layers/top-layer-ancestor-opacity-and-transform-crash.html [ Skip ]
 
+webkit.org/b/183994 imported/w3c/web-platform-tests/css/cssom/css-style-attr-decl-block.html [ Failure ]
+
 # Plugins
 # FIXME: Remove these tests.
 plugins/ [ Skip ]
