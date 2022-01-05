@@ -138,7 +138,7 @@ WI.CSSKeywordCompletions.forPartialPropertyValue = function(text, propertyName, 
 
 WI.CSSKeywordCompletions.forProperty = function(propertyName)
 {
-    let acceptedKeywords = ["initial", "unset", "revert", "var()", "env()"];
+    let acceptedKeywords = ["initial", "unset", "revert", "revert-layer", "var()", "env()"];
 
     function addKeywordsForName(name) {
         let isNotPrefixed = name.charAt(0) !== "-";

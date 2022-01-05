@@ -1,3 +1,13 @@
+2022-01-05  Patrick Angle  <pangle@apple.com>
+
+        Web Inspector: revert-layer should be autocompleted
+        https://bugs.webkit.org/show_bug.cgi?id=234646
+
+        Reviewed by Devin Rousso.
+
+        * UserInterface/Controllers/CSSManager.js:
+        * UserInterface/Models/CSSKeywordCompletions.js:
+
 2022-01-04  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Sources: expanding a grouping of blackboxed call frames should be persistent
