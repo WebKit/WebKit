@@ -1,5 +1,16 @@
 2022-01-05  Chris Dumez  <cdumez@apple.com>
 
+        [ iOS ] imported/w3c/web-platform-tests/html/dom/idlharness.https.html is flaky failing after rebaselining
+        https://bugs.webkit.org/show_bug.cgi?id=230407
+        <rdar://problem/83242343>
+
+        Unreviewed, rebaseline test on iOS and unskip it.
+
+        * platform/ios-wk2/TestExpectations:
+        * platform/ios-wk2/imported/w3c/web-platform-tests/html/dom/idlharness.https-expected.txt:
+
+2022-01-05  Chris Dumez  <cdumez@apple.com>
+
         [ iOS Debug ] imported/w3c/web-platform-tests/html/dom/idlharness.worker.html is a flaky failure
         https://bugs.webkit.org/show_bug.cgi?id=231030
         <rdar://problem/83727147>
