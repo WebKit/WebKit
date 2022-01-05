@@ -1,5 +1,42 @@
 2022-01-05  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r287048. rdar://problem/87125012
+
+    Adhere to DisplayList iterator's API contract in MemoryDisplayList::~InMemoryDisplayList()
+    https://bugs.webkit.org/show_bug.cgi?id=234264
+    
+    Patch by Gabriel Nava Marino <gnavamarino@apple.com> on 2021-12-14
+    Reviewed by Myles C. Maxfield.
+    
+    The client is not adhearing to the DisplayList Iterator's API contract in MemoryDisplayList::~InMemoryDisplayList():
+    "Part of the iterator's API contract is that if the item is nullopt, you're not allowed to keep
+    iterating - doing this will lead to an infinite loop."
+    
+    Here we now do so by breaking out of iteration if the item is nullopt.
+    
+    * platform/graphics/displaylists/InMemoryDisplayList.cpp:
+    (WebCore::DisplayList::InMemoryDisplayList::~InMemoryDisplayList):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@287048 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-12-14  Gabriel Nava Marino  <gnavamarino@apple.com>
+
+            Adhere to DisplayList iterator's API contract in MemoryDisplayList::~InMemoryDisplayList()
+            https://bugs.webkit.org/show_bug.cgi?id=234264
+
+            Reviewed by Myles C. Maxfield.
+
+            The client is not adhearing to the DisplayList Iterator's API contract in MemoryDisplayList::~InMemoryDisplayList():
+            "Part of the iterator's API contract is that if the item is nullopt, you're not allowed to keep
+            iterating - doing this will lead to an infinite loop."
+
+            Here we now do so by breaking out of iteration if the item is nullopt.
+
+            * platform/graphics/displaylists/InMemoryDisplayList.cpp:
+            (WebCore::DisplayList::InMemoryDisplayList::~InMemoryDisplayList):
+
+2022-01-05  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r286940. rdar://problem/85388372
 
     Implement step 17 of main fetch algorithm

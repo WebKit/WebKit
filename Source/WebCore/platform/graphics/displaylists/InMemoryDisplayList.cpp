@@ -63,6 +63,8 @@ InMemoryDisplayList::~InMemoryDisplayList()
 {
     auto end = this->end();
     for (auto displayListItem : *this) {
+        if (!displayListItem)
+            break;
         auto item = displayListItem->item;
         ASSERT(item);
         if (!item)
