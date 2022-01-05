@@ -1,8 +1,4 @@
 
-PASS e.style['border-radius'] = "initial" should set the property value
-PASS e.style['border-radius'] = "inherit" should set the property value
-PASS e.style['border-radius'] = "unset" should set the property value
-PASS e.style['border-radius'] = "revert" should set the property value
 PASS e.style['border-radius'] = "1px" should set the property value
 PASS e.style['border-radius'] = "1px 5%" should set the property value
 PASS e.style['border-radius'] = "1px 2% 3px" should set the property value
