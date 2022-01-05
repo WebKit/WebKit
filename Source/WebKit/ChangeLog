@@ -1,3 +1,15 @@
+2022-01-05  Per Arne Vollan  <pvollan@apple.com>
+
+        [macOS][WP] Block sandbox access to syscall
+        https://bugs.webkit.org/show_bug.cgi?id=234846
+        <rdar://problem/87093120>
+
+        Reviewed by Brent Fulgham.
+
+        Block sandbox access to syscall which only is needed on MacCatalyst.
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2022-01-05  Youenn Fablet  <youenn@apple.com>
 
         Make sure secure websocket connections in service workers can trigger authentication challenge callbacks

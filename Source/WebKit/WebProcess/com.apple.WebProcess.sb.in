@@ -1945,7 +1945,9 @@
         SYS_lseek
         SYS_lstat64
         SYS_madvise
+#if !PLATFORM(MAC)
         SYS_memorystatus_control
+#endif
         SYS_mincore
         SYS_mkdir
         SYS_mmap
