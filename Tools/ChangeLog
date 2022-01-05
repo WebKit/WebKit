@@ -1,5 +1,64 @@
 2022-01-05  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r287039. rdar://problem/85015428
+
+    Move FTP disabling from NetworkLoad::start to NetworkDataTask::NetworkDataTask
+    https://bugs.webkit.org/show_bug.cgi?id=234280
+    Source/WebKit:
+    
+    <rdar://85015428>
+    
+    Reviewed by Brady Eidson.
+    
+    A NetworkLoad synchronously failing has caused several issues.
+    This issue is when a WKDownload is prevented in this way, we don't have a WKDownload in the UI process yet,
+    and we haven't assigned it an identifier in the network process yet either, so we dereference null and send
+    unreceived messages in many places.  To fix this issue, I move the FTP check to the NetworkDataTask constructor
+    like we do with blocked port checks and invalid URL checks.  I also found that there is a race condition with
+    CFNetwork also failing to load an empty FTP URL, so we need to prevent us from asking CFNetwork to start a load
+    for which we have scheduled a failure.
+    
+    Covered by an API test which used to hit all the horrible failures and now passes reliably.
+    
+    * NetworkProcess/NetworkCORSPreflightChecker.cpp:
+    (WebKit::NetworkCORSPreflightChecker::wasBlockedByDisabledFTP):
+    * NetworkProcess/NetworkCORSPreflightChecker.h:
+    * NetworkProcess/NetworkDataTask.cpp:
+    (WebKit::NetworkDataTask::NetworkDataTask):
+    (WebKit::NetworkDataTask::scheduleFailure):
+    * NetworkProcess/NetworkDataTask.h:
+    * NetworkProcess/NetworkLoad.cpp:
+    (WebKit::NetworkLoad::start):
+    (WebKit::NetworkLoad::wasBlockedByDisabledFTP):
+    * NetworkProcess/NetworkLoad.h:
+    * NetworkProcess/PingLoad.cpp:
+    (WebKit::PingLoad::wasBlockedByDisabledFTP):
+    * NetworkProcess/PingLoad.h:
+    * NetworkProcess/cocoa/NetworkDataTaskCocoa.mm:
+    (WebKit::NetworkDataTaskCocoa::resume):
+    * Shared/WebErrors.cpp:
+    (WebKit::ftpDisabledError):
+    * Shared/WebErrors.h:
+    
+    Tools:
+    
+    Reviewed by Brady Eidson.
+    
+    * TestWebKitAPI/Tests/WebKitCocoa/Download.mm:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@287039 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-12-14  Alex Christensen  <achristensen@webkit.org>
+
+            Move FTP disabling from NetworkLoad::start to NetworkDataTask::NetworkDataTask
+            https://bugs.webkit.org/show_bug.cgi?id=234280
+
+            Reviewed by Brady Eidson.
+
+            * TestWebKitAPI/Tests/WebKitCocoa/Download.mm:
+
+2022-01-05  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r284980. rdar://problem/84223894
 
     Fix CARingBuffer mix mode

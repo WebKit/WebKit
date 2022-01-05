@@ -32,6 +32,7 @@
 #include "NetworkLoadParameters.h"
 #include "NetworkProcess.h"
 #include "NetworkResourceLoader.h"
+#include "WebErrors.h"
 #include <WebCore/CrossOriginAccessControl.h>
 #include <WebCore/SecurityOrigin.h>
 
@@ -170,6 +171,11 @@ void NetworkCORSPreflightChecker::wasBlockedByRestrictions()
 {
     CORS_CHECKER_RELEASE_LOG("wasBlockedByRestrictions");
     m_completionCallback(ResourceError { errorDomainWebKitInternal, 0, m_parameters.originalRequest.url(), "Preflight response was blocked"_s, ResourceError::Type::AccessControl });
+}
+
+void NetworkCORSPreflightChecker::wasBlockedByDisabledFTP()
+{
+    m_completionCallback(ftpDisabledError(m_parameters.originalRequest));
 }
 
 NetworkTransactionInformation NetworkCORSPreflightChecker::takeInformation()

@@ -69,6 +69,7 @@ public:
     virtual void wasBlocked() = 0;
     virtual void cannotShowURL() = 0;
     virtual void wasBlockedByRestrictions() = 0;
+    virtual void wasBlockedByDisabledFTP() = 0;
 
     virtual bool shouldCaptureExtraNetworkLoadMetrics() const { return false; }
 
@@ -145,10 +146,11 @@ public:
 protected:
     NetworkDataTask(NetworkSession&, NetworkDataTaskClient&, const WebCore::ResourceRequest&, WebCore::StoredCredentialsPolicy, bool shouldClearReferrerOnHTTPSToHTTPRedirect, bool dataTaskIsForMainFrameNavigation);
 
-    enum FailureType {
-        BlockedFailure,
-        InvalidURLFailure,
-        RestrictedURLFailure
+    enum class FailureType : uint8_t {
+        Blocked,
+        InvalidURL,
+        RestrictedURL,
+        FTPDisabled
     };
     void scheduleFailure(FailureType);
 
@@ -172,6 +174,7 @@ protected:
     bool m_shouldClearReferrerOnHTTPSToHTTPRedirect { true };
     String m_suggestedFilename;
     bool m_dataTaskIsForMainFrameNavigation { false };
+    bool m_failureScheduled { false };
 };
 
 } // namespace WebKit
