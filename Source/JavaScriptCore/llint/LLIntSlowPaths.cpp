@@ -1443,7 +1443,7 @@ LLINT_SLOW_PATH_DECL(slow_path_has_private_name)
     auto propertyValue = getOperand(callFrame, bytecode.m_property);
     ASSERT(propertyValue.isSymbol());
     auto property = propertyValue.toPropertyKey(globalObject);
-    EXCEPTION_ASSERT(!throwScope.exception());
+    LLINT_CHECK_EXCEPTION();
 
     LLINT_RETURN(jsBoolean(asObject(baseValue)->hasPrivateField(globalObject, property)));
 }

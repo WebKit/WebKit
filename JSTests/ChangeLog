@@ -1,5 +1,44 @@
 2022-01-05  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r286249. rdar://problem/87124979
+
+    [JSC] private name operation should use RETURN_IF_EXCEPTION
+    https://bugs.webkit.org/show_bug.cgi?id=233577
+    rdar://85813869
+    
+    Reviewed by Mark Lam.
+    
+    JSTests:
+    
+    * stress/termination-error-in-private-name.js: Added.
+    (C):
+    
+    Source/JavaScriptCore:
+    
+    Because of TerminatedExecutionError, error can be thrown at any time.
+    
+    * jit/JITOperations.cpp:
+    (JSC::JSC_DEFINE_JIT_OPERATION):
+    (JSC::putPrivateNameOptimize):
+    (JSC::putPrivateName):
+    * llint/LLIntSlowPaths.cpp:
+    (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@286249 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-11-29  Yusuke Suzuki  <ysuzuki@apple.com>
+
+            [JSC] private name operation should use RETURN_IF_EXCEPTION
+            https://bugs.webkit.org/show_bug.cgi?id=233577
+            rdar://85813869
+
+            Reviewed by Mark Lam.
+
+            * stress/termination-error-in-private-name.js: Added.
+            (C):
+
+2022-01-05  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r286228. rdar://problem/87125189
 
     [JSC] GetTypedArrayLengthAsInt52 can get Array::Generic ArrayMode
