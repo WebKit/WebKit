@@ -2632,7 +2632,8 @@ void SpeculativeJIT::compileNewTypedArrayWithInt52Size(Node* node)
 
 void SpeculativeJIT::compileGetTypedArrayLengthAsInt52(Node* node)
 {
-    RELEASE_ASSERT(node->arrayMode().isSomeTypedArrayView());
+    // If arrayMode is ForceExit, we would not compile this node and hence, should not have arrived here.
+    DFG_ASSERT(m_graph, node, node->arrayMode().isSomeTypedArrayView());
     SpeculateCellOperand base(this, node->child1());
     GPRTemporary result(this, Reuse, base);
     GPRReg baseGPR = base.gpr();

@@ -5090,6 +5090,7 @@ IGNORE_CLANG_WARNINGS_END
 IGNORE_CLANG_WARNINGS_BEGIN("missing-noreturn")
     void compileGetTypedArrayLengthAsInt52()
     {
+        // If arrayMode is ForceExit, we would not compile this node and hence, should not have arrived here.
         RELEASE_ASSERT(m_node->arrayMode().isSomeTypedArrayView());
         // The preprocessor chokes on RELEASE_ASSERT(USE(LARGE_TYPED_ARRAYS)), this is equivalent.
         RELEASE_ASSERT(sizeof(size_t) == sizeof(uint64_t));

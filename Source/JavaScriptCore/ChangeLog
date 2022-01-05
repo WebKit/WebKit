@@ -1,5 +1,59 @@
 2022-01-05  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r286228. rdar://problem/87125189
+
+    [JSC] GetTypedArrayLengthAsInt52 can get Array::Generic ArrayMode
+    https://bugs.webkit.org/show_bug.cgi?id=233571
+    rdar://85812164
+    
+    Reviewed by Mark Lam.
+    
+    JSTests:
+    
+    * stress/get-typed-array-length-as-int52-generic.js: Added.
+    (foo.bar):
+    (foo):
+    
+    Source/JavaScriptCore:
+    
+    If speculation is not populated enough, then GetTypedArrayLengthAsInt52 can get Array::Generic.
+    In that case, we should convert it to Array::ForceExit as it is done in GetArrayLength.
+    And blessArrayOperation inserts ForceOSRExit. So GetTypedArrayLengthAsInt52 won't be compiled.
+    
+    * dfg/DFGClobberize.h:
+    (JSC::DFG::clobberize):
+    * dfg/DFGFixupPhase.cpp:
+    (JSC::DFG::FixupPhase::fixupNode):
+    * dfg/DFGSpeculativeJIT64.cpp:
+    (JSC::DFG::SpeculativeJIT::compileGetTypedArrayLengthAsInt52):
+    * ftl/FTLLowerDFGToB3.cpp:
+    (JSC::FTL::DFG::LowerDFGToB3::compileGetTypedArrayLengthAsInt52):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@286228 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-11-29  Yusuke Suzuki  <ysuzuki@apple.com>
+
+            [JSC] GetTypedArrayLengthAsInt52 can get Array::Generic ArrayMode
+            https://bugs.webkit.org/show_bug.cgi?id=233571
+            rdar://85812164
+
+            Reviewed by Mark Lam.
+
+            If speculation is not populated enough, then GetTypedArrayLengthAsInt52 can get Array::Generic.
+            In that case, we should convert it to Array::ForceExit as it is done in GetArrayLength.
+            And blessArrayOperation inserts ForceOSRExit. So GetTypedArrayLengthAsInt52 won't be compiled.
+
+            * dfg/DFGClobberize.h:
+            (JSC::DFG::clobberize):
+            * dfg/DFGFixupPhase.cpp:
+            (JSC::DFG::FixupPhase::fixupNode):
+            * dfg/DFGSpeculativeJIT64.cpp:
+            (JSC::DFG::SpeculativeJIT::compileGetTypedArrayLengthAsInt52):
+            * ftl/FTLLowerDFGToB3.cpp:
+            (JSC::FTL::DFG::LowerDFGToB3::compileGetTypedArrayLengthAsInt52):
+
+2022-01-05  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r285978. rdar://problem/87124911
 
     [JSC] TypedArray GetArrayLength should not use Reuse

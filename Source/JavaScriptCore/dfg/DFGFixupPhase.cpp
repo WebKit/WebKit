@@ -2159,7 +2159,7 @@ private:
             // We don't know how to handle generic and we only emit this in the Parser when we have checked the value is an Array/TypedArray.
             if (arrayMode.type() == Array::Generic)
                 arrayMode = arrayMode.withType(Array::ForceExit);
-            ASSERT(arrayMode.isSpecific() || arrayMode.type() == Array::ForceExit);
+            DFG_ASSERT(m_graph, node, arrayMode.isSpecific() || arrayMode.type() == Array::ForceExit);
             node->setArrayMode(arrayMode);
             blessArrayOperation(node->child1(), Edge(), node->child2(), lengthNeedsStorage);
 
@@ -2169,7 +2169,9 @@ private:
 
         case GetTypedArrayLengthAsInt52: {
             ArrayMode arrayMode = node->arrayMode().refine(m_graph, node, node->child1()->prediction(), ArrayMode::unusedIndexSpeculatedType);
-            ASSERT(arrayMode.isSomeTypedArrayView());
+            if (arrayMode.type() == Array::Generic)
+                arrayMode = arrayMode.withType(Array::ForceExit);
+            DFG_ASSERT(m_graph, node, arrayMode.isSomeTypedArrayView() || arrayMode.type() == Array::ForceExit);
             node->setArrayMode(arrayMode);
             blessArrayOperation(node->child1(), Edge(), node->child2(), lengthNeedsStorage);
 
