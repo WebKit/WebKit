@@ -1,3 +1,26 @@
+2022-01-04  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        ASSERTION FAILED: pathnames.size() == sandboxExtensionsHandleArray.size() in WebKit::WebPlatformStrategies::getPathnamesForType()
+        https://bugs.webkit.org/show_bug.cgi?id=234851
+        rdar://87100377
+
+        Reviewed by Darin Adler.
+
+        The new API test added r287547 (WKAttachmentTestsMac.InsertNonExistentImageFileAsAttachment) exercises inserting
+        a nonexistent file as a "progress" attachment element when the WebKit attachment API is enabled. This test is
+        the first on macOS that attempts to paste file paths pointing to nonexistent files on disk, and so it hits an
+        existing assertion due to the number of sandbox extensions opened underneath `getPasteboardPathnamesForType()`
+        not matching the number of file paths found on the pasteboard.
+
+        This assertion is benign, since we do not expect to be able to read from the missing file path in the web
+        process, so it's expected that we don't have a corresponding sandbox extension for missing files. To address
+        this, we adjust `WebPasteboardProxy::getPasteboardPathnamesForType()` such that it always returns an equal
+        number of path names and pathnames. Each missing path name simply corresponds to a `SandboxExtension::Handle`
+        with a null `m_sandboxExtension`, which is skipped in the web process upon consumption.
+
+        * UIProcess/Cocoa/WebPasteboardProxyCocoa.mm:
+        (WebKit::WebPasteboardProxy::getPasteboardPathnamesForType):
+
 2022-01-04  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, reverting r287374.

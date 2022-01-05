@@ -171,15 +171,14 @@ void WebPasteboardProxy::getPasteboardPathnamesForType(IPC::Connection& connecti
         Vector<SandboxExtension::Handle> sandboxExtensions;
         if (webProcessProxyForConnection(connection)) {
             PlatformPasteboard(pasteboardName).getPathnamesForType(pathnames, pasteboardType);
-#if PLATFORM(MAC)
             // On iOS, files are copied into app's container upon paste.
-            for (size_t i = 0; i < pathnames.size(); i++) {
-                auto& filename = pathnames[i];
+#if PLATFORM(MAC)
+            sandboxExtensions = pathnames.map([](auto& filename) {
                 if (![[NSFileManager defaultManager] fileExistsAtPath:filename])
-                    continue;
-                if (auto handle = SandboxExtension::createHandle(filename, SandboxExtension::Type::ReadOnly))
-                    sandboxExtensions.append(WTFMove(*handle));
-            }
+                    return SandboxExtension::Handle { };
+
+                return SandboxExtension::createHandle(filename, SandboxExtension::Type::ReadOnly).value_or(SandboxExtension::Handle { });
+            });
 #endif
         }
         completionHandler(WTFMove(pathnames), WTFMove(sandboxExtensions));
