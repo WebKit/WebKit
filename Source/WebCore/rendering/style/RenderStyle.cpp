@@ -1811,19 +1811,6 @@ float RenderStyle::usedPerspective(const RenderObject& object) const
     return object.document().settings().css3DTransformInteroperabilityEnabled() ? std::max(1.0f, perspective()) : perspective();
 }
 
-const Animation* RenderStyle::transitionForProperty(CSSPropertyID property) const
-{
-    auto* transitions = this->transitions();
-    if (!transitions)
-        return nullptr;
-    for (size_t i = 0, size = transitions->size(); i < size; ++i) {
-        auto& animation = transitions->animation(i);
-        if (animation.property().mode == Animation::TransitionMode::All || animation.property().id == property)
-            return &animation;
-    }
-    return nullptr;
-}
-
 const FontCascade& RenderStyle::fontCascade() const
 {
     return m_inheritedData->fontCascade;

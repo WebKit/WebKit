@@ -720,9 +720,6 @@ public:
     bool hasAnimations() const { return m_rareNonInheritedData->animations && m_rareNonInheritedData->animations->size() > 0; }
     bool hasTransitions() const { return m_rareNonInheritedData->transitions && m_rareNonInheritedData->transitions->size() > 0; }
 
-    // Return the first found Animation (including 'all' transitions).
-    const Animation* transitionForProperty(CSSPropertyID) const;
-
     TransformStyle3D transformStyle3D() const { return static_cast<TransformStyle3D>(m_rareNonInheritedData->transformStyle3D); }
     bool preserves3D() const { return transformStyle3D() == TransformStyle3D::Preserve3D; }
 
