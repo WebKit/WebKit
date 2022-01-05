@@ -341,11 +341,7 @@ RetainPtr<CFDataRef> WebPage::pdfSnapshotAtSize(IntRect rect, IntSize bitmapSize
 void WebPage::getProcessDisplayName(CompletionHandler<void(String&&)>&& completionHandler)
 {
 #if PLATFORM(MAC)
-#if ENABLE(SET_WEBCONTENT_PROCESS_INFORMATION_IN_NETWORK_PROCESS)
-    WebProcess::singleton().getProcessDisplayName(WTFMove(completionHandler));
-#else
     completionHandler(adoptCF((CFStringRef)_LSCopyApplicationInformationItem(kLSDefaultSessionID, _LSGetCurrentApplicationASN(), _kLSDisplayNameKey)).get());
-#endif
 #else
     completionHandler({ });
 #endif

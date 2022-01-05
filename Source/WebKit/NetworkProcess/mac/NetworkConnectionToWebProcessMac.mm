@@ -32,34 +32,14 @@
 namespace WebKit {
 
 #if PLATFORM(MAC)
-
 void NetworkConnectionToWebProcess::updateActivePages(const String& overrideDisplayName, const Vector<String>& activePagesOrigins, audit_token_t auditToken)
 {
-#if USE(APPLE_INTERNAL_SDK)
     auto asn = adoptCF(_LSCopyLSASNForAuditToken(kLSDefaultSessionID, auditToken));
     if (!overrideDisplayName)
         _LSSetApplicationInformationItem(kLSDefaultSessionID, asn.get(), CFSTR("LSActivePageUserVisibleOriginsKey"), (__bridge CFArrayRef)createNSArray(activePagesOrigins).get(), nullptr);
     else
         _LSSetApplicationInformationItem(kLSDefaultSessionID, asn.get(), _kLSDisplayNameKey, overrideDisplayName.createCFString().get(), nullptr);
-#else
-    // Setting and getting the display name of another process requires a private entitlement.
-    if (!!overrideDisplayName)
-        m_processDisplayName = overrideDisplayName;
-    UNUSED_PARAM(activePagesOrigins);
-    UNUSED_PARAM(auditToken);
-#endif
 }
-
-void NetworkConnectionToWebProcess::getProcessDisplayName(audit_token_t auditToken, CompletionHandler<void(const String&)>&& completionHandler)
-{
-#if USE(APPLE_INTERNAL_SDK)
-    auto asn = adoptCF(_LSCopyLSASNForAuditToken(kLSDefaultSessionID, auditToken));
-    return completionHandler(adoptCF((CFStringRef)_LSCopyApplicationInformationItem(kLSDefaultSessionID, asn.get(), _kLSDisplayNameKey)).get());
-#else
-    completionHandler(m_processDisplayName);
 #endif
-}
-
-#endif // PLATFORM(MAC)
 
 } // namespace WebKit

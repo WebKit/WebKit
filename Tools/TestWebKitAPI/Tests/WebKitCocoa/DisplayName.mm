@@ -53,7 +53,12 @@ static void checkUntilDisplayNameIs(WKWebView *webView, NSString *expectedName, 
     }];
 }
 
+// FIXME: Re-enable this test for Monterey+ once rdar://80353834 is resolved.
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 120000
+TEST(WebKit, DISABLED_CustomDisplayName)
+#else
 TEST(WebKit, CustomDisplayName)
+#endif
 {
     auto configuration = adoptNS([WKWebViewConfiguration new]);
     NSString *displayNameToSet = @"test display name";
@@ -66,7 +71,12 @@ TEST(WebKit, CustomDisplayName)
     Util::run(&done);
 }
 
+// FIXME: Re-enable this test for Monterey+ once rdar://80353834 is resolved.
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 120000
+TEST(WebKit, DISABLED_DefaultDisplayName)
+#else
 TEST(WebKit, DefaultDisplayName)
+#endif
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
     [webView synchronouslyLoadHTMLString:@"start web process"];
