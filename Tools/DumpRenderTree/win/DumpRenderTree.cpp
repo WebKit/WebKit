@@ -594,15 +594,11 @@ static void dumpHistoryItem(IWebHistoryItem* item, int indent, bool current)
     fputc('\n', testResult);
 
     unsigned kidsCount;
-    SAFEARRAY* arraryPtr;
-    if (FAILED(itemPrivate->children(&kidsCount, &arraryPtr)) || !kidsCount)
+    SAFEARRAY* arrayPtr;
+    if (FAILED(itemPrivate->children(&kidsCount, &arrayPtr)) || !kidsCount)
         return;
 
-    auto deleter = [](SAFEARRAY* arraryPtr) {
-        if (arraryPtr && SUCCEEDED(::SafeArrayUnlock(arraryPtr)))
-            ::SafeArrayDestroy(arraryPtr);
-    };
-    std::unique_ptr<SAFEARRAY, decltype(deleter)> array(arraryPtr, deleter);
+    std::unique_ptr<SAFEARRAY, decltype(&::SafeArrayDestroy)> array(arrayPtr, ::SafeArrayDestroy);
 
     Vector<COMPtr<IUnknown> > kidsVector;
 

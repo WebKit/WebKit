@@ -1,3 +1,19 @@
+2022-01-05  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win][DumpRenderTree] dumpHistoryItem leaks a SafeArray
+        https://bugs.webkit.org/show_bug.cgi?id=234870
+
+        Reviewed by Darin Adler.
+
+        r23462 added the following code.
+        > if (arrPtr && SUCCEEDED(::SafeArrayUnlock(arrPtr)))
+        >     ::SafeArrayDestroy(arrPtr);
+        However, the array wasn't locked. SafeArrayUnlock always failed.
+        Thus, SafeArrayDestroy wasn't called.
+
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (dumpHistoryItem): Don't use SafeArrayUnlock. Fixed a typo 'arrary'.
+
 2022-01-04  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, reverting r287374.
