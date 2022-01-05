@@ -37,6 +37,7 @@
 #include <wtf/Vector.h>
 
 #if PLATFORM(COCOA)
+#include "VersionChecks.h"
 #include <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #endif
 
@@ -250,9 +251,9 @@ private:
 static bool shouldSuppressThreadSafetyCheck()
 {
 #if PLATFORM(IOS_FAMILY)
-    return WebThreadIsEnabled() || applicationSDKVersion() < DYLD_IOS_VERSION_12_0;
+    return WebThreadIsEnabled() || !linkedOnOrAfter(WebCore::SDKVersion::FirstWithTimerThreadSafetyChecks);
 #elif PLATFORM(MAC)
-    return !isInWebProcess() && applicationSDKVersion() < DYLD_MACOSX_VERSION_10_14;
+    return !isInWebProcess() && !linkedOnOrAfter(WebCore::SDKVersion::FirstWithTimerThreadSafetyChecks);
 #else
     return false;
 #endif

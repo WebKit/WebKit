@@ -59,7 +59,7 @@ bool defaultPassiveTouchListenersAsDefaultOnDocument()
 
 bool defaultCSSOMViewScrollingAPIEnabled()
 {
-    static bool result = WebCore::IOSApplication::isIMDb() && applicationSDKVersion() < DYLD_IOS_VERSION_13_0;
+    static bool result = WebCore::IOSApplication::isIMDb() && !linkedOnOrAfter(WebCore::SDKVersion::FirstWithoutIMDbCSSOMViewScrollingQuirk);
     return !result;
 }
 
