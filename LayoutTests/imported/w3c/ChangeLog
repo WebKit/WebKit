@@ -1,5 +1,14 @@
 2022-01-05  Youenn Fablet  <youenn@apple.com>
 
+        MediaRecorder should support the bitsPerSecond option
+        https://bugs.webkit.org/show_bug.cgi?id=234784
+
+        Reviewed by Darin Adler.
+
+        * web-platform-tests/mediacapture-record/MediaRecorder-bitrate.https-expected.txt:
+
+2022-01-05  Youenn Fablet  <youenn@apple.com>
+
         Fetch using FormData with file doesn't go through Service Worker
         https://bugs.webkit.org/show_bug.cgi?id=187461
         <rdar://problem/41975544>

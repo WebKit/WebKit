@@ -103,7 +103,7 @@ MediaRecorder::MediaRecorder(Document& document, Ref<MediaStream>&& stream, Opti
     , m_stream(WTFMove(stream))
     , m_timeSliceTimer([this] { requestData(); })
 {
-    MediaRecorderPrivate::updateOptions(m_options);
+    computeInitialBitRates();
 
     m_tracks = WTF::map(m_stream->getTracks(), [] (auto&& track) -> Ref<MediaStreamTrackPrivate> {
         return track->privateTrack();
@@ -154,8 +154,14 @@ ExceptionOr<void> MediaRecorder::startRecording(std::optional<unsigned> timeSlic
     if (state() != RecordingState::Inactive)
         return Exception { InvalidStateError, "The MediaRecorder's state must be inactive in order to start recording"_s };
 
+    updateBitRates();
+
+    Options options;
+    options.audioBitsPerSecond = m_audioBitsPerSecond;
+    options.videoBitsPerSecond = m_videoBitsPerSecond;
+
     ASSERT(!m_private);
-    auto result = createMediaRecorderPrivate(*document(), m_stream->privateStream(), m_options);
+    auto result = createMediaRecorderPrivate(*document(), m_stream->privateStream(), options);
 
     if (result.hasException())
         return result.releaseException();
@@ -206,6 +212,8 @@ void MediaRecorder::stopRecording()
 {
     if (state() == RecordingState::Inactive)
         return;
+
+    updateBitRates();
 
     stopRecordingInternal();
     fetchData([this](auto&& buffer, auto& mimeType, auto timeCode) {
@@ -391,6 +399,13 @@ void MediaRecorder::trackEnabledChanged(MediaStreamTrackPrivate& track)
 bool MediaRecorder::virtualHasPendingActivity() const
 {
     return m_state != RecordingState::Inactive;
+}
+
+void MediaRecorder::computeBitRates(const MediaStreamPrivate* stream)
+{
+    auto bitRates = MediaRecorderPrivate::computeBitRates(m_options, stream);
+    m_audioBitsPerSecond = bitRates.audio;
+    m_videoBitsPerSecond = bitRates.video;
 }
 
 } // namespace WebCore

@@ -73,7 +73,11 @@ public:
     void trackMutedChanged(MediaStreamTrackPrivate& track) { checkTrackState(track); }
     void trackEnabledChanged(MediaStreamTrackPrivate& track) { checkTrackState(track); }
 
-    static void updateOptions(MediaRecorderPrivateOptions&);
+    struct BitRates {
+        unsigned audio;
+        unsigned video;
+    };
+    static BitRates computeBitRates(const MediaRecorderPrivateOptions&, const MediaStreamPrivate* = nullptr);
 
 protected:
     void setAudioSource(RefPtr<RealtimeMediaSource>&&);

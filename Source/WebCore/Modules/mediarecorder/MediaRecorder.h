@@ -75,8 +75,8 @@ public:
     ExceptionOr<void> pauseRecording();
     ExceptionOr<void> resumeRecording();
 
-    unsigned videoBitsPerSecond() const { return m_options.videoBitsPerSecond.value_or(0); }
-    unsigned audioBitsPerSecond() const { return m_options.audioBitsPerSecond.value_or(0); }
+    unsigned videoBitsPerSecond() const { return m_videoBitsPerSecond; }
+    unsigned audioBitsPerSecond() const { return m_audioBitsPerSecond; }
 
     MediaStream& stream() { return m_stream.get(); }
 
@@ -99,7 +99,7 @@ private:
     const char* activeDOMObjectName() const final;
     bool virtualHasPendingActivity() const final;
     
-        void stopRecordingInternal(CompletionHandler<void()>&& = [] { });
+    void stopRecordingInternal(CompletionHandler<void()>&& = [] { });
     void dispatchError(Exception&&);
 
     enum class TakePrivateRecorder { No, Yes };
@@ -118,6 +118,10 @@ private:
     void trackEnabledChanged(MediaStreamTrackPrivate&) final;
     void trackSettingsChanged(MediaStreamTrackPrivate&) final { };
 
+    void computeInitialBitRates() { computeBitRates(nullptr); }
+    void updateBitRates() { computeBitRates(&m_stream->privateStream()); }
+    void computeBitRates(const MediaStreamPrivate*);
+
     static CreatorFunction m_customCreator;
 
     Options m_options;
@@ -131,6 +135,9 @@ private:
     bool m_isActive { true };
     bool m_isFetchingData { false };
     Deque<FetchDataCallback> m_pendingFetchDataTasks;
+
+    unsigned m_audioBitsPerSecond { 0 };
+    unsigned m_videoBitsPerSecond { 0 };
 };
 
 } // namespace WebCore

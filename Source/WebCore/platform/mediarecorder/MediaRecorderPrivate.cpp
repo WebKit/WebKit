@@ -32,6 +32,8 @@
 
 namespace WebCore {
 
+constexpr unsigned SmallAudioBitRate = 8000;
+constexpr unsigned SmallVideoBitRate = 80000;
 constexpr unsigned LargeAudioBitRate = 192000;
 constexpr unsigned LargeVideoBitRate = 10000000;
 
@@ -100,13 +102,26 @@ void MediaRecorderPrivate::resume(CompletionHandler<void()>&& completionHandler)
     resumeRecording(WTFMove(completionHandler));
 }
 
-void MediaRecorderPrivate::updateOptions(MediaRecorderPrivateOptions& options)
+MediaRecorderPrivate::BitRates MediaRecorderPrivate::computeBitRates(const MediaRecorderPrivateOptions& options, const MediaStreamPrivate* stream)
 {
-    // FIXME: Add support for options.bitsPerSecond.
-    if (!options.audioBitsPerSecond)
-        options.audioBitsPerSecond = LargeAudioBitRate;
-    if (!options.videoBitsPerSecond)
-        options.videoBitsPerSecond = LargeVideoBitRate;
+    if (options.bitsPerSecond) {
+        bool hasAudio = stream ? stream->hasAudio() : true;
+        bool hasVideo = stream ? stream->hasVideo() : true;
+        auto totalBitsPerSecond = *options.bitsPerSecond;
+
+        if (hasAudio && hasVideo) {
+            auto audioBitsPerSecond =  std::min(LargeAudioBitRate, std::max(SmallAudioBitRate, totalBitsPerSecond / 10));
+            auto remainingBitsPerSecond = totalBitsPerSecond > audioBitsPerSecond ? (totalBitsPerSecond - audioBitsPerSecond) : 0;
+            return { audioBitsPerSecond, std::max(remainingBitsPerSecond, SmallVideoBitRate) };
+        }
+
+        if (hasAudio)
+            return { std::max(SmallAudioBitRate, totalBitsPerSecond), 0 };
+
+        return { 0, std::max(SmallVideoBitRate, totalBitsPerSecond) };
+    }
+
+    return { options.audioBitsPerSecond.value_or(LargeAudioBitRate), options.videoBitsPerSecond.value_or(LargeVideoBitRate) };
 }
 
 } // namespace WebCore
