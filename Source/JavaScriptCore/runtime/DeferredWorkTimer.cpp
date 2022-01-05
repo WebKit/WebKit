@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,6 +37,25 @@ namespace DeferredWorkTimerInternal {
 static const bool verbose = false;
 }
 
+inline DeferredWorkTimer::TicketData::TicketData(VM& vm, JSObject* scriptExecutionOwner, Vector<Strong<JSCell>>&& dependencies)
+    : dependencies(WTFMove(dependencies))
+    , scriptExecutionOwner(vm, scriptExecutionOwner)
+{
+}
+
+inline VM& DeferredWorkTimer::TicketData::vm()
+{
+    ASSERT(!isCancelled());
+    return target()->vm();
+}
+
+inline void DeferredWorkTimer::TicketData::cancel()
+{
+    scriptExecutionOwner.clear();
+    dependencies.clear();
+}
+
+
 DeferredWorkTimer::DeferredWorkTimer(VM& vm)
     : Base(vm)
 {
@@ -54,15 +73,23 @@ void DeferredWorkTimer::doWork(VM& vm)
 
     while (!m_tasks.isEmpty()) {
         auto [ticket, task] = m_tasks.takeFirst();
-        auto globalObject = ticket->structure(vm)->globalObject();
         dataLogLnIf(DeferredWorkTimerInternal::verbose, "Doing work on: ", RawPointer(ticket));
 
         auto pendingTicket = m_pendingTickets.find(ticket);
         // We may have already canceled this task or its owner may have been canceled.
         if (pendingTicket == m_pendingTickets.end())
             continue;
+        ASSERT(ticket == pendingTicket->get());
 
-        switch (globalObject->globalObjectMethodTable()->scriptExecutionStatus(globalObject, pendingTicket->value.scriptExecutionOwner.get())) {
+        if (ticket->isCancelled()) {
+            m_pendingTickets.remove(pendingTicket);
+            continue;
+        }
+
+        // We shouldn't access the TicketData to get this globalObject until
+        // after we confirm that the ticket is still valid (which we did above).
+        auto globalObject = ticket->target()->structure(vm)->globalObject();
+        switch (globalObject->globalObjectMethodTable()->scriptExecutionStatus(globalObject, ticket->scriptExecutionOwner.get())) {
         case ScriptExecutionStatus::Suspended:
             suspendedTasks.append(std::make_tuple(ticket, WTFMove(task)));
             continue;
@@ -75,8 +102,7 @@ void DeferredWorkTimer::doWork(VM& vm)
 
         // Remove ticket from m_pendingTickets since we are going to run it.
         // But we want to keep ticketData while running task since it ensures dependencies are strongly held.
-        auto ticketData = WTFMove(pendingTicket->value);
-        m_pendingTickets.remove(pendingTicket);
+        std::unique_ptr<TicketData> ticketData = m_pendingTickets.take(pendingTicket);
 
         // Allow tasks we are about to run to schedule work.
         m_currentlyRunningTask = true;
@@ -87,9 +113,9 @@ void DeferredWorkTimer::doWork(VM& vm)
             vm.finalizeSynchronousJSExecution();
 
             auto scope = DECLARE_CATCH_SCOPE(vm);
-            task(ticket, WTFMove(ticketData));
+            task(ticket);
+            ticketData = nullptr;
             if (Exception* exception = scope.exception()) {
-                auto* globalObject = ticket->globalObject();
                 scope.clearException();
                 globalObject->globalObjectMethodTable()->reportUncaughtExceptionAtEventLoop(globalObject, exception);
             }
@@ -102,6 +128,13 @@ void DeferredWorkTimer::doWork(VM& vm)
 
     while (!suspendedTasks.isEmpty())
         m_tasks.prepend(suspendedTasks.takeLast());
+
+    // It is theoretically possible that a client may cancel a pending ticket and
+    // never call scheduleWorkSoon() on it. As such, it would not be found when
+    // we iterated m_tasks above. We'll need to make sure to purge them here.
+    m_pendingTickets.removeIf([] (auto& ticket) {
+        return ticket->isCancelled();
+    });
 
     if (m_pendingTickets.isEmpty() && m_shouldStopRunLoopWhenAllTicketsFinish) {
         ASSERT(m_tasks.isEmpty());
@@ -118,38 +151,42 @@ void DeferredWorkTimer::runRunLoop()
         RunLoop::run();
 }
 
-void DeferredWorkTimer::addPendingWork(VM& vm, Ticket ticket, Vector<Strong<JSCell>>&& dependencies)
+DeferredWorkTimer::Ticket DeferredWorkTimer::addPendingWork(VM& vm, JSObject* target, Vector<Strong<JSCell>>&& dependencies)
 {
     ASSERT(vm.currentThreadIsHoldingAPILock() || (Thread::mayBeGCThread() && vm.heap.worldIsStopped()));
     for (unsigned i = 0; i < dependencies.size(); ++i)
-        ASSERT(dependencies[i].get() != ticket);
+        ASSERT(dependencies[i].get() != target);
 
-    auto globalObject = ticket->globalObject();
-    auto result = m_pendingTickets.ensure(ticket, [&] {
-        dataLogLnIf(DeferredWorkTimerInternal::verbose, "Adding new pending ticket: ", RawPointer(ticket));
-        JSObject* scriptExecutionOwner = globalObject->globalObjectMethodTable()->currentScriptExecutionOwner(globalObject);
-        dependencies.append(Strong<JSCell>(vm, ticket));
-        return TicketData { WTFMove(dependencies), Strong<JSObject>(vm, scriptExecutionOwner) };
-    });
-    if (!result.isNewEntry) {
-        dataLogLnIf(DeferredWorkTimerInternal::verbose, "Adding new dependencies for ticket: ", RawPointer(ticket));
-        result.iterator->value.dependencies.appendVector(WTFMove(dependencies));
-    }
+    auto* globalObject = target->globalObject();
+    JSObject* scriptExecutionOwner = globalObject->globalObjectMethodTable()->currentScriptExecutionOwner(globalObject);
+    dependencies.append(Strong<JSCell>(vm, target));
+
+    auto ticketData = makeUnique<TicketData>(vm, scriptExecutionOwner, WTFMove(dependencies));
+    Ticket ticket = ticketData.get();
+
+    dataLogLnIf(DeferredWorkTimerInternal::verbose, "Adding new pending ticket: ", RawPointer(ticket));
+    auto result = m_pendingTickets.add(WTFMove(ticketData));
+    RELEASE_ASSERT(result.isNewEntry);
+
+    return ticket;
 }
 
 bool DeferredWorkTimer::hasPendingWork(Ticket ticket)
 {
+    auto result = m_pendingTickets.find(ticket);
+    if (result == m_pendingTickets.end() || ticket->isCancelled())
+        return false;
     ASSERT(ticket->vm().currentThreadIsHoldingAPILock() || (Thread::mayBeGCThread() && ticket->vm().heap.worldIsStopped()));
-    return m_pendingTickets.contains(ticket);
+    return true;
 }
 
 bool DeferredWorkTimer::hasDependancyInPendingWork(Ticket ticket, JSCell* dependency)
 {
+    auto result = m_pendingTickets.find(ticket);
+    if (result == m_pendingTickets.end() || ticket->isCancelled())
+        return false;
     ASSERT(ticket->vm().currentThreadIsHoldingAPILock() || (Thread::mayBeGCThread() && ticket->vm().heap.worldIsStopped()));
-    ASSERT(m_pendingTickets.contains(ticket));
-
-    auto result = m_pendingTickets.get(ticket);
-    return result.dependencies.contains(dependency);
+    return (*result)->dependencies.contains(dependency);
 }
 
 void DeferredWorkTimer::scheduleWorkSoon(Ticket ticket, Task&& task)
@@ -162,11 +199,15 @@ void DeferredWorkTimer::scheduleWorkSoon(Ticket ticket, Task&& task)
 
 bool DeferredWorkTimer::cancelPendingWork(Ticket ticket)
 {
-    ASSERT(ticket->vm().currentThreadIsHoldingAPILock() || (Thread::mayBeGCThread() && ticket->vm().heap.worldIsStopped()));
-    bool result = m_pendingTickets.remove(ticket);
+    ASSERT(m_pendingTickets.contains(ticket));
+    ASSERT(ticket->isCancelled() || ticket->vm().currentThreadIsHoldingAPILock() || (Thread::mayBeGCThread() && ticket->vm().heap.worldIsStopped()));
 
-    if (result)
+    bool result = false;
+    if (!ticket->isCancelled()) {
         dataLogLnIf(DeferredWorkTimerInternal::verbose, "Canceling ticket: ", RawPointer(ticket));
+        ticket->cancel();
+        result = true;
+    }
 
     return result;
 }

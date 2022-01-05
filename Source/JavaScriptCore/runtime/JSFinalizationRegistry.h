@@ -106,6 +106,7 @@ private:
     // We use a separate list for no unregister values instead of a special key in the tables above because the HashMap has a tendency to reallocate under us when iterating...
     LiveRegistrations m_noUnregistrationLive;
     DeadRegistrations m_noUnregistrationDead;
+    bool m_hasAlreadyScheduledWork { false };
 };
 
 } // namespace JSC
