@@ -579,7 +579,7 @@ video/h263-2000
 video/jpeg
 video/mp1s
 video/mp2p
-video/mp2t
+video/mp2t			ts
 video/mp4			mp4
 video/mp4v-es
 video/mpv
