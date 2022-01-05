@@ -1,5 +1,44 @@
 2022-01-05  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r287313. rdar://problem/87124922
+
+    IPC streams should not accept 0-length stream buffers
+    https://bugs.webkit.org/show_bug.cgi?id=234552
+    <rdar://79725420>
+    
+    Patch by Kimmo Kinnunen <kkinnunen@apple.com> on 2021-12-21
+    Reviewed by Antti Koivisto.
+    
+    Make decoding 0-length stream buffers fail. These buffers are not useful.
+    
+    No new tests, tests need additional implementation, will be added
+    in subsequent commits.
+    
+    * Platform/IPC/StreamConnectionBuffer.cpp:
+    (IPC::StreamConnectionBuffer::StreamConnectionBuffer):
+    (IPC::StreamConnectionBuffer::decode):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@287313 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-12-21  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+            IPC streams should not accept 0-length stream buffers
+            https://bugs.webkit.org/show_bug.cgi?id=234552
+            <rdar://79725420>
+
+            Reviewed by Antti Koivisto.
+
+            Make decoding 0-length stream buffers fail. These buffers are not useful.
+
+            No new tests, tests need additional implementation, will be added
+            in subsequent commits.
+
+            * Platform/IPC/StreamConnectionBuffer.cpp:
+            (IPC::StreamConnectionBuffer::StreamConnectionBuffer):
+            (IPC::StreamConnectionBuffer::decode):
+
+2022-01-05  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r287039. rdar://problem/85015428
 
     Move FTP disabling from NetworkLoad::start to NetworkDataTask::NetworkDataTask
