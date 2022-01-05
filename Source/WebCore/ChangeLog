@@ -1,3 +1,43 @@
+2022-01-05  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r284980. rdar://problem/84223894
+
+    Fix CARingBuffer mix mode
+    https://bugs.webkit.org/show_bug.cgi?id=232427
+    Source/WebCore:
+    
+    Reviewed by Eric Carlson.
+    
+    Like done for Copy, we need to use the destination offset to write data properly.
+    
+    Covered by API test.
+    
+    * platform/audio/cocoa/CARingBuffer.cpp:
+    
+    Tools:
+    
+    <rdar://problem/84747657>
+    
+    Reviewed by Eric Carlson.
+    
+    * TestWebKitAPI/Tests/WebCore/CARingBuffer.cpp:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@284980 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-10-28  Youenn Fablet  <youenn@apple.com>
+
+            Fix CARingBuffer mix mode
+            https://bugs.webkit.org/show_bug.cgi?id=232427
+
+            Reviewed by Eric Carlson.
+
+            Like done for Copy, we need to use the destination offset to write data properly.
+
+            Covered by API test.
+
+            * platform/audio/cocoa/CARingBuffer.cpp:
+
 2021-12-21  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r287107. rdar://problem/85150486
