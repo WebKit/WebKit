@@ -1704,7 +1704,8 @@ RenderBoxModelObject* RenderObject::offsetParent() const
     
     // Return the nearest ancestor element of A for which at least one of the following is
     // true and stop this algorithm if such an ancestor is found:
-    //     * The computed value of the position property is not static.
+    //     * The element is a containing block of absolutely-positioned descendants (regardless
+    //       of whether there are any absolutely-positioned descendants).
     //     * It is the HTML body element.
     //     * The computed value of the position property of A is static and the ancestor
     //       is one of the following HTML elements: td, th, or table.
@@ -1713,7 +1714,7 @@ RenderBoxModelObject* RenderObject::offsetParent() const
     bool skipTables = isPositioned();
     float currZoom = style().effectiveZoom();
     auto current = parent();
-    while (current && (!current->element() || (!current->isPositioned() && !current->isBody()))) {
+    while (current && (!current->element() || (!current->canContainAbsolutelyPositionedObjects() && !current->isBody()))) {
         Element* element = current->element();
         if (!skipTables && element && (is<HTMLTableElement>(*element) || is<HTMLTableCellElement>(*element)))
             break;

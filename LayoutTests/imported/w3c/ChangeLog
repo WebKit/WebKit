@@ -1,3 +1,16 @@
+2022-01-05  Martin Robinson  <mrobinson@webkit.org>
+
+        Change offsetParent to match spec change
+        https://bugs.webkit.org/show_bug.cgi?id=161788
+        <rdar://problem/28230510>
+
+        Reviewed by Simon Fraser.
+
+        * web-platform-tests/css/css-contain/content-visibility/content-visibility-038-expected.txt: Rebase test that fails differently now.
+        * web-platform-tests/css/css-transforms/preserve-3d-flat-grouping-properties-containing-block-expected.txt: Ditto.
+        * web-platform-tests/css/cssom-view/offsetParent_element_test.html: Increase the test coverage for this test case.
+        * web-platform-tests/svg/extensibility/foreignObject/containing-block-expected.txt: Part of this test now passes.
+
 2022-01-05  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r285915.

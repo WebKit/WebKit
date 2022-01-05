@@ -20,9 +20,8 @@
             testRunner.dumpAsText();
         if (window.eventSender) {
             var target = document.getElementById("target");
-            var translationAmount = 50;
             var cancelPos = searchCancelButtonPosition(target);
-            eventSender.mouseMoveTo(cancelPos.x + translationAmount, cancelPos.y + translationAmount);
+            eventSender.mouseMoveTo(cancelPos.x, cancelPos.y);
             eventSender.mouseDown();
             eventSender.mouseUp();
             var result = document.getElementById("result");

@@ -1,3 +1,16 @@
+2022-01-05  Martin Robinson  <mrobinson@webkit.org>
+
+        Change offsetParent to match spec change
+        https://bugs.webkit.org/show_bug.cgi?id=161788
+        <rdar://problem/28230510>
+
+        Reviewed by Simon Fraser.
+
+        * fast/clip/hit-test-with-clip-path.html: Rewrite this test to use getBoundingClientRect.
+        * fast/forms/resources/common.js:
+        (searchCancelButtonPosition): Ditto.
+        * fast/forms/search-transformed.html: Ditto.
+
 2022-01-05  Youenn Fablet  <youenn@apple.com>
 
         WebPageProxy::requestUserMediaPermissionForSpeechRecognition should return early in case of no capture devices

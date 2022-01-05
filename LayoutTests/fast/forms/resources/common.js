@@ -106,8 +106,9 @@ function searchCancelButtonPositionRTL(element) {
 
 function searchCancelButtonPosition(element, isRTL = false) {
     var pos = {};
-    pos.x = element.offsetLeft + (isRTL ? 9 : (element.offsetWidth - 9));
-    pos.y = element.offsetTop + element.offsetHeight / 2;
+    let rect = element.getBoundingClientRect();
+    pos.x = rect.left + (isRTL ? 9 : (rect.width - 9));
+    pos.y = rect.top + rect.height / 2;
     return pos;
 }
 
