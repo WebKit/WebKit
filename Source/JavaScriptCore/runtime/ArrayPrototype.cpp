@@ -209,51 +209,49 @@ static ALWAYS_INLINE std::pair<SpeciesConstructResult, JSObject*> speciesConstru
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto exceptionResult = [] () {
-        return std::make_pair(SpeciesConstructResult::Exception, nullptr);
-    };
+    constexpr std::pair<SpeciesConstructResult, JSObject*> exceptionResult { SpeciesConstructResult::Exception, nullptr };
 
     // ECMA 9.4.2.3: https://tc39.github.io/ecma262/#sec-arrayspeciescreate
     JSValue constructor = jsUndefined();
     bool thisIsArray = isArray(globalObject, thisObject);
-    RETURN_IF_EXCEPTION(scope, exceptionResult());
+    RETURN_IF_EXCEPTION(scope, exceptionResult);
     if (LIKELY(thisIsArray)) {
         // Fast path in the normal case where the user has not set an own constructor and the Array.prototype.constructor is normal.
         // We need prototype check for subclasses of Array, which are Array objects but have a different prototype by default.
         bool isValid = speciesWatchpointIsValid(vm, thisObject);
-        scope.assertNoException();
+        RETURN_IF_EXCEPTION(scope, exceptionResult);
         if (LIKELY(isValid))
-            return std::make_pair(SpeciesConstructResult::FastPath, nullptr);
+            return std::pair { SpeciesConstructResult::FastPath, nullptr };
 
         constructor = thisObject->get(globalObject, vm.propertyNames->constructor);
-        RETURN_IF_EXCEPTION(scope, exceptionResult());
+        RETURN_IF_EXCEPTION(scope, exceptionResult);
         if (constructor.isConstructor(vm)) {
             JSObject* constructorObject = jsCast<JSObject*>(constructor);
             bool isArrayConstructorFromAnotherRealm = globalObject != constructorObject->globalObject(vm)
                 && constructorObject->inherits<ArrayConstructor>(vm);
             if (isArrayConstructorFromAnotherRealm)
-                return std::make_pair(SpeciesConstructResult::FastPath, nullptr);
+                return std::pair { SpeciesConstructResult::FastPath, nullptr };
         }
         if (constructor.isObject()) {
             constructor = constructor.get(globalObject, vm.propertyNames->speciesSymbol);
-            RETURN_IF_EXCEPTION(scope, exceptionResult());
+            RETURN_IF_EXCEPTION(scope, exceptionResult);
             if (constructor.isNull())
-                return std::make_pair(SpeciesConstructResult::FastPath, nullptr);
+                return std::pair { SpeciesConstructResult::FastPath, nullptr };
         }
     } else {
         // If isArray is false, return ? ArrayCreate(length).
-        return std::make_pair(SpeciesConstructResult::FastPath, nullptr);
+        return std::pair { SpeciesConstructResult::FastPath, nullptr };
     }
 
     if (constructor.isUndefined())
-        return std::make_pair(SpeciesConstructResult::FastPath, nullptr);
+        return std::pair { SpeciesConstructResult::FastPath, nullptr };
 
     MarkedArgumentBuffer args;
     args.append(jsNumber(length));
     ASSERT(!args.hasOverflowed());
     JSObject* newObject = construct(globalObject, constructor, args, "Species construction did not get a valid constructor");
-    RETURN_IF_EXCEPTION(scope, exceptionResult());
-    return std::make_pair(SpeciesConstructResult::CreatedObject, newObject);
+    RETURN_IF_EXCEPTION(scope, exceptionResult);
+    return std::pair { SpeciesConstructResult::CreatedObject, newObject };
 }
 
 JSC_DEFINE_HOST_FUNCTION(arrayProtoFuncSpeciesCreate, (JSGlobalObject* globalObject, CallFrame* callFrame))
@@ -1563,7 +1561,7 @@ JSC_DEFINE_HOST_FUNCTION(arrayProtoPrivateFuncConcatMemcpy, (JSGlobalObject* glo
 
     // We need to check the species constructor here since checking it in the JS wrapper is too expensive for the non-optimizing tiers.
     bool isValid = speciesWatchpointIsValid(vm, firstArray);
-    scope.assertNoException();
+    RETURN_IF_EXCEPTION(scope, { });
     if (UNLIKELY(!isValid))
         return JSValue::encode(jsNull());
 

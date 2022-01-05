@@ -1,5 +1,40 @@
 2022-01-05  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r286275. rdar://problem/87125258
+
+    [JSC] slice should be aware of TerminationException
+    https://bugs.webkit.org/show_bug.cgi?id=233593
+    rdar://85823844
+    
+    Reviewed by Mark Lam.
+    
+    JSTests:
+    
+    * stress/slice-termination-exception.js: Added.
+    (async infiniteLoop):
+    
+    Source/JavaScriptCore:
+    
+    Since termination exception can happen at any time, assertNoException is wrong.
+    
+    * runtime/ArrayPrototype.cpp:
+    (JSC::JSC_DEFINE_HOST_FUNCTION):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@286275 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-11-29  Yusuke Suzuki  <ysuzuki@apple.com>
+
+            [JSC] slice should be aware of TerminationException
+            https://bugs.webkit.org/show_bug.cgi?id=233593
+            rdar://85823844
+
+            Reviewed by Mark Lam.
+
+            * stress/slice-termination-exception.js: Added.
+            (async infiniteLoop):
+
+2022-01-05  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r286249. rdar://problem/87124979
 
     [JSC] private name operation should use RETURN_IF_EXCEPTION
