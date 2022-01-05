@@ -199,6 +199,7 @@
 		37FB72971DB2E82F00E41BE4 /* ContextMenuDefaultItemsHaveTags.mm in Sources */ = {isa = PBXBuildFile; fileRef = 37FB72951DB2E82F00E41BE4 /* ContextMenuDefaultItemsHaveTags.mm */; };
 		3FBD1B4A1D3D66AB00E6D6FA /* FullscreenLayoutConstraints.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 3FBD1B491D39D1DB00E6D6FA /* FullscreenLayoutConstraints.html */; };
 		3FCC4FE81EC4E8CA0076E37C /* PictureInPictureDelegate.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 3FCC4FE61EC4E87E0076E37C /* PictureInPictureDelegate.html */; };
+		4102EE1727845ED500D6BE74 /* ServiceWorkerRoutines.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4102EE1627845ED500D6BE74 /* ServiceWorkerRoutines.cpp */; };
 		411223C726035FBF00B0A0B6 /* WebRTC.mm in Sources */ = {isa = PBXBuildFile; fileRef = 411223C626035FBE00B0A0B6 /* WebRTC.mm */; };
 		41157237234B240C0050A1D1 /* GetUserMedia.mm in Sources */ = {isa = PBXBuildFile; fileRef = 41157236234B24040050A1D1 /* GetUserMedia.mm */; };
 		4135FB842011FAA700332139 /* InjectInternals_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4135FB832011FAA300332139 /* InjectInternals_Bundle.cpp */; };
@@ -1924,6 +1925,7 @@
 		3FBD1B491D39D1DB00E6D6FA /* FullscreenLayoutConstraints.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = FullscreenLayoutConstraints.html; sourceTree = "<group>"; };
 		3FCC4FE41EC4E8520076E37C /* PictureInPictureDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PictureInPictureDelegate.mm; sourceTree = "<group>"; };
 		3FCC4FE61EC4E87E0076E37C /* PictureInPictureDelegate.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = PictureInPictureDelegate.html; sourceTree = "<group>"; };
+		4102EE1627845ED500D6BE74 /* ServiceWorkerRoutines.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ServiceWorkerRoutines.cpp; sourceTree = "<group>"; };
 		411223C626035FBE00B0A0B6 /* WebRTC.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebRTC.mm; sourceTree = "<group>"; };
 		41157236234B24040050A1D1 /* GetUserMedia.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = GetUserMedia.mm; sourceTree = "<group>"; };
 		4135FB832011FAA300332139 /* InjectInternals_Bundle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = InjectInternals_Bundle.cpp; path = Tests/InjectInternals_Bundle.cpp; sourceTree = SOURCE_ROOT; };
@@ -3742,6 +3744,7 @@
 				4181C62C255A891100AEB0FF /* RTCRtpSFrameTransformerTests.cpp */,
 				CDCFA7A91E45122F00C2433D /* SampleMap.cpp */,
 				CE06DF9A1E1851F200E570C9 /* SecurityOrigin.cpp */,
+				4102EE1627845ED500D6BE74 /* ServiceWorkerRoutines.cpp */,
 				41973B5C1AF22875006C7B36 /* SharedBuffer.cpp */,
 				A17991891E1CA24100A505ED /* SharedBufferTest.cpp */,
 				A179918A1E1CA24100A505ED /* SharedBufferTest.h */,
@@ -5665,6 +5668,7 @@
 				1C90420C2326E03C00BEF91E /* SelectionByWord.mm in Sources */,
 				9B4B5EA522DEBE19001E3D5A /* SelectionModifyByParagraphBoundary.mm in Sources */,
 				5769C50B1D9B0002000847FB /* SerializedCryptoKeyWrap.mm in Sources */,
+				4102EE1727845ED500D6BE74 /* ServiceWorkerRoutines.cpp in Sources */,
 				7CCE7ECB1A411A7E00447C4C /* SetAndUpdateCacheModel.mm in Sources */,
 				7CCE7ECC1A411A7E00447C4C /* SetDocumentURI.mm in Sources */,
 				CE6E81A020A6935F00E2C80F /* SetTimeoutFunction.mm in Sources */,

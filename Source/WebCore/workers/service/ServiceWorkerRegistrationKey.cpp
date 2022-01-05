@@ -103,10 +103,15 @@ String ServiceWorkerRegistrationKey::toDatabaseKey() const
 std::optional<ServiceWorkerRegistrationKey> ServiceWorkerRegistrationKey::fromDatabaseKey(const String& key)
 {
     auto first = key.find(separatorCharacter, 0);
-    auto second = key.find(separatorCharacter, first + 1);
-    auto third = key.find(separatorCharacter, second + 1);
+    if (first == notFound)
+        return std::nullopt;
 
-    if (first == second || second == third)
+    auto second = key.find(separatorCharacter, first + 1);
+    if (second == notFound)
+        return std::nullopt;
+
+    auto third = key.find(separatorCharacter, second + 1);
+    if (third == notFound)
         return std::nullopt;
 
     std::optional<uint16_t> shortPort;

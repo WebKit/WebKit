@@ -588,6 +588,10 @@ String RegistrationDatabase::importRecords()
             RELEASE_LOG_ERROR(ServiceWorker, "RegistrationDatabase::importRecords: Failed to decode part of the registration");
             continue;
         }
+        if (key->topOrigin() != *topOrigin) {
+            RELEASE_LOG_ERROR(ServiceWorker, "RegistrationDatabase::importRecords: Inconsistent registration");
+            continue;
+        }
 
         auto script = scriptStorage().retrieve(*key, scriptURL);
         if (!script) {
