@@ -153,7 +153,7 @@ const String& NetworkRTCProvider::attributedBundleIdentifierFromPageIdentifier(W
     return m_attributedBundleIdentifiers.ensure(pageIdentifier, [&]() -> String {
         String value;
         callOnMainRunLoopAndWait([&] {
-            auto* session = m_connection->networkSession();
+            auto* session = m_connection ? m_connection->networkSession() : nullptr;
             if (session)
                 value = session->attributedBundleIdentifierFromPageIdentifier(pageIdentifier).isolatedCopy();
         });

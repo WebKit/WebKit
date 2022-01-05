@@ -1,3 +1,18 @@
+2022-01-05  Youenn Fablet  <youenn@apple.com>
+
+        NetworkRTCProvider::attributedBundleIdentifierFromPageIdentifier should check for m_connection
+        https://bugs.webkit.org/show_bug.cgi?id=234845
+        <rdar://82120356>
+
+        Reviewed by Eric Carlson.
+
+        NetworkRTCProvider may call attributedBundleIdentifierFromPageIdentifier in a background thread,
+        which will then hop to main thread to get its session.
+        NetworkRTCProvider might have been closed when getting to main thread so we need to check m_connection. 
+
+        * NetworkProcess/webrtc/NetworkRTCProvider.cpp:
+        (WebKit::NetworkRTCProvider::attributedBundleIdentifierFromPageIdentifier):
+
 2022-01-05  Tim Horton  <timothy_horton@apple.com>
 
         Momentum Event Dispatcher: Momentum tails may get truncated if the duration runs longer than the system's
