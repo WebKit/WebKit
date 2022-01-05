@@ -1,3 +1,38 @@
+2022-01-05  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r287642. rdar://problem/87072368
+
+    REGRESSION (r287382): libANGLE is built into a wrong location on iOS
+    https://bugs.webkit.org/show_bug.cgi?id=234857
+    
+    Reviewed by Saam Barati.
+    
+    Reverted to the prior logic to compute INSTALL_PATH.  Then added an optional prefix
+    for the alternate root framework location.
+    
+    Source/ThirdParty/ANGLE:
+    
+    * Configurations/ANGLE-dynamic.xcconfig:
+    
+    Source/ThirdParty/libwebrtc:
+    
+    * Configurations/libwebrtc.xcconfig:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@287642 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-01-05  Michael Saboff  <msaboff@apple.com>
+
+            REGRESSION (r287382): libANGLE is built into a wrong location on iOS
+            https://bugs.webkit.org/show_bug.cgi?id=234857
+
+            Reviewed by Saam Barati.
+
+            Reverted to the prior logic to compute INSTALL_PATH.  Then added an optional prefix
+            for the alternate root framework location.
+
+            * Configurations/libwebrtc.xcconfig:
+
 2021-12-23  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r287382. rdar://problem/86855207
