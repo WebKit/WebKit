@@ -438,6 +438,15 @@ WebWheelEvent WebEventFactory::createWebWheelEvent(NSEvent *event, NSView *windo
 
     auto ioHIDEventWallTime = WebCore::eventTimeStampSince1970(ioHIDEventTimestamp);
 
+    if (phase == WebWheelEvent::PhaseCancelled) {
+        deltaX = 0;
+        deltaY = 0;
+        wheelTicksX = 0;
+        wheelTicksY = 0;
+        unacceleratedScrollingDelta = { };
+        rawPlatformDelta = std::nullopt;
+    }
+
     return WebWheelEvent(WebEvent::Wheel, WebCore::IntPoint(position), WebCore::IntPoint(globalPosition), WebCore::FloatSize(deltaX, deltaY), WebCore::FloatSize(wheelTicksX, wheelTicksY),
         granularity, directionInvertedFromDevice, phase, momentumPhase, hasPreciseScrollingDeltas,
         scrollCount, unacceleratedScrollingDelta, modifiers, timestamp, ioHIDEventWallTime, rawPlatformDelta);
