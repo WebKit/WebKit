@@ -43,6 +43,7 @@ public:
     ~BlobLoader();
 
     void start(Blob&, ScriptExecutionContext*, FileReaderLoader::ReadType);
+    void start(const URL&, ScriptExecutionContext*, FileReaderLoader::ReadType);
 
     void cancel();
     bool isLoading() const { return m_loader && m_completionHandler; }
@@ -87,6 +88,13 @@ inline void BlobLoader::start(Blob& blob, ScriptExecutionContext* context, FileR
     ASSERT(!m_loader);
     m_loader = makeUnique<FileReaderLoader>(readType, this);
     m_loader->start(context, blob);
+}
+
+inline void BlobLoader::start(const URL& blobURL, ScriptExecutionContext* context, FileReaderLoader::ReadType readType)
+{
+    ASSERT(!m_loader);
+    m_loader = makeUnique<FileReaderLoader>(readType, this);
+    m_loader->start(context, blobURL);
 }
 
 inline void BlobLoader::didFinishLoading()

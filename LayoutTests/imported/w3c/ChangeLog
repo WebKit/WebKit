@@ -1,3 +1,15 @@
+2022-01-05  Youenn Fablet  <youenn@apple.com>
+
+        Fetch using FormData with file doesn't go through Service Worker
+        https://bugs.webkit.org/show_bug.cgi?id=187461
+        <rdar://problem/41975544>
+
+        Reviewed by Chris Dumez.
+
+        * web-platform-tests/fetch/api/response/response-consume-expected.txt:
+        * web-platform-tests/fetch/api/response/response-consume-stream.any-expected.txt:
+        * web-platform-tests/fetch/api/response/response-consume-stream.any.worker-expected.txt:
+
 2022-01-05  Martin Robinson  <mrobinson@webkit.org>
 
         Change offsetParent to match spec change

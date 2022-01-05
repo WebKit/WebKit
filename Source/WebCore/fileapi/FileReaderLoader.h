@@ -66,6 +66,7 @@ public:
     ~FileReaderLoader();
 
     WEBCORE_EXPORT void start(ScriptExecutionContext*, Blob&);
+    void start(ScriptExecutionContext*, const URL&);
     WEBCORE_EXPORT void cancel();
 
     // ThreadableLoaderClient

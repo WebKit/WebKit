@@ -30,6 +30,7 @@
 #include "FetchBodyConsumer.h"
 
 #include "DOMFormData.h"
+#include "FormDataConsumer.h"
 #include "HTTPHeaderField.h"
 #include "HTTPParsers.h"
 #include "JSBlob.h"
@@ -243,6 +244,8 @@ static void resolveWithTypeAndData(Ref<DeferredPromise>&& promise, FetchBodyCons
 void FetchBodyConsumer::clean()
 {
     m_buffer.reset();
+    if (m_formDataConsumer)
+        m_formDataConsumer->cancel();
     resetConsumePromise();
     if (m_sink) {
         m_sink->clearCallback();
@@ -253,6 +256,61 @@ void FetchBodyConsumer::clean()
 void FetchBodyConsumer::resolveWithData(Ref<DeferredPromise>&& promise, const String& contentType, const unsigned char* data, unsigned length)
 {
     resolveWithTypeAndData(WTFMove(promise), m_type, contentType, data, length);
+}
+
+void FetchBodyConsumer::resolveWithFormData(Ref<DeferredPromise>&& promise, const String& contentType, const FormData& formData, ScriptExecutionContext* context)
+{
+    if (auto sharedBuffer = formData.asSharedBuffer()) {
+        resolveWithData(WTFMove(promise), contentType, sharedBuffer->makeContiguous()->data(), sharedBuffer->size());
+        return;
+    }
+
+    if (!context)
+        return;
+
+    m_formDataConsumer = makeUnique<FormDataConsumer>(formData, *context, [this, promise = WTFMove(promise), contentType, builder = SharedBufferBuilder { }](auto&& result) mutable {
+        if (result.hasException()) {
+            promise->reject(result.releaseException());
+            return;
+        }
+
+        auto& value = result.returnValue();
+        if (value.empty()) {
+            auto buffer = builder.takeAsContiguous();
+            resolveWithData(WTFMove(promise), contentType, buffer->data(), buffer->size());
+            return;
+        }
+
+        builder.append(value);
+    });
+}
+
+void FetchBodyConsumer::consumeFormDataAsStream(const FormData& formData, FetchBodySource& source, ScriptExecutionContext* context)
+{
+    if (auto sharedBuffer = formData.asSharedBuffer()) {
+        if (source.enqueue(ArrayBuffer::tryCreate(sharedBuffer->makeContiguous()->data(), sharedBuffer->size())))
+            source.close();
+        return;
+    }
+
+    if (!context)
+        return;
+
+    m_formDataConsumer = makeUnique<FormDataConsumer>(formData, *context, [this, source = Ref { source }](auto&& result) {
+        if (result.hasException()) {
+            source->error(result.releaseException());
+            return;
+        }
+
+        auto& value = result.returnValue();
+        if (value.empty()) {
+            source->close();
+            return;
+        }
+
+        if (!source->enqueue(ArrayBuffer::tryCreate(value.data(), value.size())))
+            m_formDataConsumer->cancel();
+    });
 }
 
 void FetchBodyConsumer::extract(ReadableStream& stream, ReadableStreamToSharedBufferSink::Callback&& callback)
@@ -414,6 +472,14 @@ void FetchBodyConsumer::loadingSucceeded(const String& contentType)
         m_source->close();
         m_source = nullptr;
     }
+}
+
+FetchBodyConsumer FetchBodyConsumer::clone()
+{
+    FetchBodyConsumer clone { m_type };
+    clone.m_contentType = m_contentType;
+    clone.m_buffer = m_buffer;
+    return clone;
 }
 
 } // namespace WebCore

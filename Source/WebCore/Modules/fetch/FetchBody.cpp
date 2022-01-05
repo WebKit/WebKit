@@ -94,8 +94,7 @@ std::optional<FetchBody> FetchBody::fromFormData(ScriptExecutionContext& context
         return FetchBody { WTFMove(blob) };
     }
 
-    // FIXME: Support form data bodies.
-    return std::nullopt;
+    return FetchBody { Ref { formData } };
 }
 
 void FetchBody::arrayBuffer(FetchBodyOwner& owner, Ref<DeferredPromise>&& promise)
@@ -196,7 +195,7 @@ void FetchBody::consumeAsStream(FetchBodyOwner& owner, FetchBodySource& source)
         owner.loadBlob(blobBody(), nullptr);
         m_data = nullptr;
     } else if (isFormData())
-        source.error(Exception { NotSupportedError, "Not implemented"_s });
+        m_consumer.consumeFormDataAsStream(formDataBody(), source, owner.scriptExecutionContext());
     else if (m_consumer.hasData())
         closeStream = source.enqueue(m_consumer.takeAsArrayBuffer());
     else
@@ -234,14 +233,8 @@ void FetchBody::consumeBlob(FetchBodyOwner& owner, Ref<DeferredPromise>&& promis
 
 void FetchBody::consumeFormData(FetchBodyOwner& owner, Ref<DeferredPromise>&& promise)
 {
-    if (auto sharedBuffer = formDataBody().asSharedBuffer()) {
-        m_consumer.resolveWithData(WTFMove(promise), owner.contentType(), sharedBuffer->makeContiguous()->data(), sharedBuffer->size());
-        m_data = nullptr;
-    } else {
-        // FIXME: If the form data contains blobs, load them like we do other blobs.
-        // That will fix the last WPT test in response-consume.html.
-        promise->reject(NotSupportedError);
-    }
+    m_consumer.resolveWithFormData(WTFMove(promise), owner.contentType(), formDataBody(), owner.scriptExecutionContext());
+    m_data = nullptr;
 }
 
 void FetchBody::loadingFailed(const Exception& exception)
@@ -311,7 +304,7 @@ FetchBody::TakenData FetchBody::take()
 
 FetchBody FetchBody::clone()
 {
-    FetchBody clone(m_consumer);
+    FetchBody clone(m_consumer.clone());
 
     if (isArrayBuffer())
         clone.m_data = arrayBufferBody();

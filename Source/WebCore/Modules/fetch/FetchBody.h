@@ -94,7 +94,7 @@ private:
     explicit FetchBody(Ref<FormData>&& data) : m_data(WTFMove(data)) { }
     explicit FetchBody(String&& data) : m_data(WTFMove(data)) { }
     explicit FetchBody(Ref<const URLSearchParams>&& data) : m_data(WTFMove(data)) { }
-    explicit FetchBody(const FetchBodyConsumer& consumer) : m_consumer(consumer) { }
+    explicit FetchBody(FetchBodyConsumer&& consumer) : m_consumer(WTFMove(consumer)) { }
     explicit FetchBody(Ref<ReadableStream>&& stream) : m_readableStream(WTFMove(stream)) { }
 
     void consume(FetchBodyOwner&, Ref<DeferredPromise>&&);

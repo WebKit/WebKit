@@ -74,6 +74,11 @@ FileReaderLoader::~FileReaderLoader()
 
 void FileReaderLoader::start(ScriptExecutionContext* scriptExecutionContext, Blob& blob)
 {
+    start(scriptExecutionContext, blob.url());
+}
+
+void FileReaderLoader::start(ScriptExecutionContext* scriptExecutionContext, const URL& blobURL)
+{
     ASSERT(scriptExecutionContext);
 
     // The blob is read by routing through the request handling layer given a temporary public url.
@@ -82,7 +87,7 @@ void FileReaderLoader::start(ScriptExecutionContext* scriptExecutionContext, Blo
         failed(SecurityError);
         return;
     }
-    ThreadableBlobRegistry::registerBlobURL(scriptExecutionContext->securityOrigin(), scriptExecutionContext->policyContainer(), m_urlForReading, blob.url());
+    ThreadableBlobRegistry::registerBlobURL(scriptExecutionContext->securityOrigin(), scriptExecutionContext->policyContainer(), m_urlForReading, blobURL);
 
     // Construct and load the request.
     ResourceRequest request(m_urlForReading);

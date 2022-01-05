@@ -1,5 +1,27 @@
 2022-01-05  Youenn Fablet  <youenn@apple.com>
 
+        Fetch using FormData with file doesn't go through Service Worker
+        https://bugs.webkit.org/show_bug.cgi?id=187461
+        <rdar://problem/41975544>
+
+        Reviewed by Chris Dumez.
+
+        In addition to adding a test to http/wpt/fetch/request-consume-stream.html, we fix the other tests that should all be passing.
+        Add http/wpt/service-workers/form-data-upload.html and translate exiting http/tests scripts for the WPT server.
+
+        * http/wpt/fetch/request-consume-stream-expected.txt:
+        * http/wpt/fetch/request-consume-stream.html:
+        * http/wpt/service-workers/form-data-upload-expected.txt: Added.
+        * http/wpt/service-workers/form-data-upload-worker.js: Added.
+        * http/wpt/service-workers/form-data-upload.html: Added.
+        * http/wpt/service-workers/resources/create-temp-file-iframe.html: Added.
+        * http/wpt/service-workers/resources/reset-temp-file.py: Added.
+        * http/wpt/service-workers/resources/temp-file-utils.js: Added.
+        * http/wpt/service-workers/resources/touch-temp-file.py: Added.
+        * http/wpt/service-workers/resources/write-temp-file.py: Added.
+
+2022-01-05  Youenn Fablet  <youenn@apple.com>
+
         Make sure secure websocket connections in service workers can trigger authentication challenge callbacks
         https://bugs.webkit.org/show_bug.cgi?id=234809
         <rdar://85888177>

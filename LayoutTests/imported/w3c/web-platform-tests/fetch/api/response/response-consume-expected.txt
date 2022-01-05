@@ -38,5 +38,5 @@ PASS Consume response's body: from fetch to blob
 PASS Consume response's body: from fetch to text
 PASS Consume response's body: from fetch to arrayBuffer
 PASS Consume response's body: from fetch without correct type to formData (error case)
-FAIL Consume response's body: from multipart form data blob to formData promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
+PASS Consume response's body: from multipart form data blob to formData
 
