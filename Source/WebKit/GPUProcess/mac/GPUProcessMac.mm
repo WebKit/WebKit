@@ -35,7 +35,6 @@
 #import <WebCore/PlatformScreen.h>
 #import <WebCore/ScreenProperties.h>
 #import <pal/spi/cocoa/LaunchServicesSPI.h>
-#import <pal/spi/mac/HIServicesSPI.h>
 #import <sysexits.h>
 #import <wtf/MemoryPressureHandler.h>
 #import <wtf/ProcessPrivilege.h>
@@ -46,11 +45,7 @@ using namespace WebCore;
 
 void GPUProcess::initializeProcess(const AuxiliaryProcessInitializationParameters&)
 {
-#if PLATFORM(MAC) && !PLATFORM(MACCATALYST)
-    // Having a window server connection in this process would result in spin logs (<rdar://problem/13239119>).
-    OSStatus error = SetApplicationIsDaemon(true);
-    ASSERT_UNUSED(error, error == noErr);
-#endif
+    setApplicationIsDaemon();
 
 #if ENABLE(LOWER_FORMATREADERBUNDLE_CODESIGNING_REQUIREMENTS)
     // For testing in engineering builds, allow CoreMedia to load the MediaFormatReader bundle no matter its code signature.

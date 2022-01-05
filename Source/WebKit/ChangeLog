@@ -1,5 +1,24 @@
 2022-01-05  Per Arne Vollan  <pvollan@apple.com>
 
+        [macCatalyst][GPUP][NetworkProcess] Block WindowServer connections
+        https://bugs.webkit.org/show_bug.cgi?id=234432
+        <rdar://problem/85990387>
+
+        Reviewed by Brent Fulgham.
+
+        Block WindowServer connections on macCatalyst.
+
+        * GPUProcess/mac/GPUProcessMac.mm:
+        (WebKit::GPUProcess::initializeProcess):
+        * NetworkProcess/mac/NetworkProcessMac.mm:
+        (WebKit::NetworkProcess::initializeProcess):
+        * Shared/Cocoa/AuxiliaryProcessCocoa.mm:
+        (WebKit::AuxiliaryProcess::setApplicationIsDaemon):
+        * WebAuthnProcess/mac/WebAuthnProcessMac.mm:
+        (WebKit::WebAuthnProcess::initializeProcess):
+
+2022-01-05  Per Arne Vollan  <pvollan@apple.com>
+
         [macOS][WP] Block sandbox access to syscall
         https://bugs.webkit.org/show_bug.cgi?id=234846
         <rdar://problem/87093120>

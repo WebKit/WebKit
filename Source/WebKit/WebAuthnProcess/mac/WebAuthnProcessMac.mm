@@ -44,10 +44,7 @@ using namespace WebCore;
 
 void WebAuthnProcess::initializeProcess(const AuxiliaryProcessInitializationParameters&)
 {
-    // Having a window server connection in this process would result in spin logs (<rdar://problem/13239119>).
-    OSStatus error = SetApplicationIsDaemon(true);
-    ASSERT_UNUSED(error, error == noErr);
-
+    setApplicationIsDaemon();
     launchServicesCheckIn();
 }
 
