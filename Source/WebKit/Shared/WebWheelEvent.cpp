@@ -44,7 +44,7 @@ WebWheelEvent::WebWheelEvent(Type type, const IntPoint& position, const IntPoint
 }
 
 #if PLATFORM(COCOA)
-WebWheelEvent::WebWheelEvent(Type type, const IntPoint& position, const IntPoint& globalPosition, const FloatSize& delta, const FloatSize& wheelTicks, Granularity granularity, bool directionInvertedFromDevice, Phase phase, Phase momentumPhase, bool hasPreciseScrollingDeltas, uint32_t scrollCount, const WebCore::FloatSize& unacceleratedScrollingDelta, OptionSet<Modifier> modifiers, WallTime timestamp, WallTime ioHIDEventTimestamp, std::optional<WebCore::FloatSize> rawPlatformDelta)
+WebWheelEvent::WebWheelEvent(Type type, const IntPoint& position, const IntPoint& globalPosition, const FloatSize& delta, const FloatSize& wheelTicks, Granularity granularity, bool directionInvertedFromDevice, Phase phase, Phase momentumPhase, bool hasPreciseScrollingDeltas, uint32_t scrollCount, const WebCore::FloatSize& unacceleratedScrollingDelta, OptionSet<Modifier> modifiers, WallTime timestamp, WallTime ioHIDEventTimestamp, std::optional<WebCore::FloatSize> rawPlatformDelta, MomentumEndType momentumEndType)
     : WebEvent(type, modifiers, timestamp)
     , m_position(position)
     , m_globalPosition(globalPosition)
@@ -53,6 +53,7 @@ WebWheelEvent::WebWheelEvent(Type type, const IntPoint& position, const IntPoint
     , m_granularity(granularity)
     , m_phase(phase)
     , m_momentumPhase(momentumPhase)
+    , m_momentumEndType(momentumEndType)
     , m_directionInvertedFromDevice(directionInvertedFromDevice)
     , m_hasPreciseScrollingDeltas(hasPreciseScrollingDeltas)
     , m_ioHIDEventTimestamp(ioHIDEventTimestamp)
@@ -87,6 +88,7 @@ void WebWheelEvent::encode(IPC::Encoder& encoder) const
     encoder << m_delta;
     encoder << m_wheelTicks;
     encoder << m_granularity;
+    encoder << m_momentumEndType;
     encoder << m_directionInvertedFromDevice;
 #if PLATFORM(COCOA) || PLATFORM(GTK) || USE(LIBWPE)
     encoder << m_phase;
@@ -114,6 +116,8 @@ bool WebWheelEvent::decode(IPC::Decoder& decoder, WebWheelEvent& t)
     if (!decoder.decode(t.m_wheelTicks))
         return false;
     if (!decoder.decode(t.m_granularity))
+        return false;
+    if (!decoder.decode(t.m_momentumEndType))
         return false;
     if (!decoder.decode(t.m_directionInvertedFromDevice))
         return false;
