@@ -48,6 +48,14 @@ Animation::Animation()
     , m_timingFunctionSet(false)
     , m_compositeOperationSet(false)
     , m_isNone(false)
+    , m_delayFilled(false)
+    , m_directionFilled(false)
+    , m_durationFilled(false)
+    , m_fillModeFilled(false)
+    , m_iterationCountFilled(false)
+    , m_playStateFilled(false)
+    , m_propertyFilled(false)
+    , m_timingFunctionFilled(false)
 {
 }
 
@@ -75,6 +83,14 @@ Animation::Animation(const Animation& o)
     , m_timingFunctionSet(o.m_timingFunctionSet)
     , m_compositeOperationSet(o.m_compositeOperationSet)
     , m_isNone(o.m_isNone)
+    , m_delayFilled(o.m_delayFilled)
+    , m_directionFilled(o.m_directionFilled)
+    , m_durationFilled(o.m_durationFilled)
+    , m_fillModeFilled(o.m_fillModeFilled)
+    , m_iterationCountFilled(o.m_iterationCountFilled)
+    , m_playStateFilled(o.m_playStateFilled)
+    , m_propertyFilled(o.m_propertyFilled)
+    , m_timingFunctionFilled(o.m_timingFunctionFilled)
 {
 }
 

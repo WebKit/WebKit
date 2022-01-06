@@ -1,5 +1,21 @@
 2022-01-05  Antoine Quint  <graouts@webkit.org>
 
+        computed style for transition longhand properties is wrong
+        https://bugs.webkit.org/show_bug.cgi?id=234880
+
+        Reviewed by Antti Koivisto.
+
+        Mark WPT progressions.
+
+        * web-platform-tests/css/css-transitions/parsing/transition-delay-computed-expected.txt:
+        * web-platform-tests/css/css-transitions/parsing/transition-duration-computed-expected.txt:
+        * web-platform-tests/css/css-transitions/parsing/transition-property-computed-expected.txt:
+        * web-platform-tests/css/css-transitions/parsing/transition-timing-function-computed-expected.txt:
+        * web-platform-tests/css/css-transitions/transition-delay-001-expected.txt:
+        * web-platform-tests/css/css-transitions/transition-duration-001-expected.txt:
+
+2022-01-05  Antoine Quint  <graouts@webkit.org>
+
         Refactor computed style code for transition-property and the transition shorthand
         https://bugs.webkit.org/show_bug.cgi?id=234872
 

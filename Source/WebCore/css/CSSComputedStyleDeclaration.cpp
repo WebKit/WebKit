@@ -1434,29 +1434,37 @@ static Ref<CSSValue> valueForAnimationTimingFunction(const TimingFunction& timin
 
 void ComputedStyleExtractor::addValueForAnimationPropertyToList(CSSValueList& list, CSSPropertyID property, const Animation* animation)
 {
-    if (property == CSSPropertyAnimationDuration || property == CSSPropertyTransitionDuration)
-        list.append(valueForAnimationDuration(animation ? animation->duration() : Animation::initialDuration()));
-    else if (property == CSSPropertyAnimationDelay || property == CSSPropertyTransitionDelay)
-        list.append(valueForAnimationDelay(animation ? animation->delay() : Animation::initialDelay()));
-    else if (property == CSSPropertyAnimationIterationCount)
-        list.append(valueForAnimationIterationCount(animation ? animation->iterationCount() : Animation::initialIterationCount()));
-    else if (property == CSSPropertyAnimationDirection)
-        list.append(valueForAnimationDirection(animation ? animation->direction() : Animation::initialDirection()));
-    else if (property == CSSPropertyAnimationFillMode)
-        list.append(valueForAnimationFillMode(animation ? animation->fillMode() : Animation::initialFillMode()));
-    else if (property == CSSPropertyAnimationPlayState)
-        list.append(valueForAnimationPlayState(animation ? animation->playState() : Animation::initialPlayState()));
-    else if (property == CSSPropertyAnimationName)
+    if (property == CSSPropertyAnimationDuration || property == CSSPropertyTransitionDuration) {
+        if (!animation || !animation->isDurationFilled())
+            list.append(valueForAnimationDuration(animation ? animation->duration() : Animation::initialDuration()));
+    } else if (property == CSSPropertyAnimationDelay || property == CSSPropertyTransitionDelay) {
+        if (!animation || !animation->isDelayFilled())
+            list.append(valueForAnimationDelay(animation ? animation->delay() : Animation::initialDelay()));
+    } else if (property == CSSPropertyAnimationIterationCount) {
+        if (!animation || !animation->isIterationCountFilled())
+            list.append(valueForAnimationIterationCount(animation ? animation->iterationCount() : Animation::initialIterationCount()));
+    } else if (property == CSSPropertyAnimationDirection) {
+        if (!animation || !animation->isDirectionFilled())
+            list.append(valueForAnimationDirection(animation ? animation->direction() : Animation::initialDirection()));
+    } else if (property == CSSPropertyAnimationFillMode) {
+        if (!animation || !animation->isFillModeFilled())
+            list.append(valueForAnimationFillMode(animation ? animation->fillMode() : Animation::initialFillMode()));
+    } else if (property == CSSPropertyAnimationPlayState) {
+        if (!animation || !animation->isPlayStateFilled())
+            list.append(valueForAnimationPlayState(animation ? animation->playState() : Animation::initialPlayState()));
+    } else if (property == CSSPropertyAnimationName)
         list.append(valueForAnimationName(animation ? animation->name() : Animation::initialName()));
     else if (property == CSSPropertyTransitionProperty) {
-        if (animation)
-            list.append(createTransitionPropertyValue(*animation));
-        else
+        if (animation) {
+            if (!animation->isPropertyFilled())
+                list.append(createTransitionPropertyValue(*animation));
+        } else
             list.append(CSSValuePool::singleton().createIdentifierValue(CSSValueAll));
     } else if (property == CSSPropertyAnimationTimingFunction || property == CSSPropertyTransitionTimingFunction) {
-        if (animation)
-            list.append(valueForAnimationTimingFunction(*animation->timingFunction()));
-        else
+        if (animation) {
+            if (!animation->isTimingFunctionFilled())
+                list.append(valueForAnimationTimingFunction(*animation->timingFunction()));
+        } else
             list.append(valueForAnimationTimingFunction(CubicBezierTimingFunction::defaultTimingFunction()));
     } else
         ASSERT_NOT_REACHED();

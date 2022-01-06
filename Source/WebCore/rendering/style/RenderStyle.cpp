@@ -1778,18 +1778,6 @@ void RenderStyle::adjustTransitions()
 
     // Repeat patterns into layers that don't have some properties set.
     transitionList->fillUnsetProperties();
-
-    // Make sure there are no duplicate properties.
-    // This is an O(n^2) algorithm but the lists tend to be short, so it is probably OK.
-    for (size_t i = 0; i < transitionList->size(); ++i) {
-        for (size_t j = i + 1; j < transitionList->size(); ++j) {
-            if (transitionList->animation(i).property().id == transitionList->animation(j).property().id) {
-                // toss i
-                transitionList->remove(i);
-                j = i;
-            }
-        }
-    }
 }
 
 AnimationList& RenderStyle::ensureAnimations()

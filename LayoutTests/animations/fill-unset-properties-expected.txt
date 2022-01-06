@@ -1,9 +1,13 @@
-Testing webkitTransitionDuration: PASS
-Testing webkitTransitionProperty: PASS
-Testing webkitTransitionDelay: PASS
-Testing webkitTransitionTimingFunction: PASS
-Testing webkitAnimationName: PASS
-Testing webkitAnimationDuration: PASS
-Testing webkitAnimationDelay: PASS
-Testing webkitAnimationFillMode: PASS
+Testing transitionDuration: PASS
+Testing transitionProperty: PASS
+Testing transitionDelay: PASS
+Testing transitionTimingFunction: PASS
+Testing animationName: PASS
+Testing animationDuration: PASS
+Testing animationDelay: PASS
+Testing animationDirection: PASS
+Testing animationFillMode: PASS
+Testing animationPlayState: PASS
+Testing animationIterationCount: PASS
+Testing animationTimingFunction: PASS
 

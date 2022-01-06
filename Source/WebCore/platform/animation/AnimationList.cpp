@@ -50,14 +50,14 @@ AnimationList::AnimationList(const AnimationList& other, CopyBehavior copyBehavi
 void AnimationList::fillUnsetProperties()
 {
     size_t i;
-    FILL_UNSET_PROPERTY(isDelaySet, delay, setDelay);
-    FILL_UNSET_PROPERTY(isDirectionSet, direction, setDirection);
-    FILL_UNSET_PROPERTY(isDurationSet, duration, setDuration);
-    FILL_UNSET_PROPERTY(isFillModeSet, fillMode, setFillMode);
-    FILL_UNSET_PROPERTY(isIterationCountSet, iterationCount, setIterationCount);
-    FILL_UNSET_PROPERTY(isPlayStateSet, playState, setPlayState);
-    FILL_UNSET_PROPERTY(isTimingFunctionSet, timingFunction, setTimingFunction);
-    FILL_UNSET_PROPERTY(isPropertySet, property, setProperty);
+    FILL_UNSET_PROPERTY(isDelaySet, delay, fillDelay);
+    FILL_UNSET_PROPERTY(isDirectionSet, direction, fillDirection);
+    FILL_UNSET_PROPERTY(isDurationSet, duration, fillDuration);
+    FILL_UNSET_PROPERTY(isFillModeSet, fillMode, fillFillMode);
+    FILL_UNSET_PROPERTY(isIterationCountSet, iterationCount, fillIterationCount);
+    FILL_UNSET_PROPERTY(isPlayStateSet, playState, fillPlayState);
+    FILL_UNSET_PROPERTY(isTimingFunctionSet, timingFunction, fillTimingFunction);
+    FILL_UNSET_PROPERTY(isPropertySet, property, fillProperty);
 }
 
 bool AnimationList::operator==(const AnimationList& other) const

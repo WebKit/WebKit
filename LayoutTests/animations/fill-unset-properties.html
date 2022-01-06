@@ -6,34 +6,44 @@
     height: 50px;
     width: 200px;
     background-color: blue;
-    -webkit-transition-duration: 1s,2s;
-    -webkit-transition-property: opacity, left, opacity, top, width, opacity, height, opacity;
-    -webkit-transition-delay: 3s,4s,5s;
-    -webkit-transition-timing-function: linear;
-    -webkit-animation-name: a, b, c, d, e;
-    -webkit-animation-duration: 10s, 20s;
-    -webkit-animation-delay: 1s;
-    -webkit-animation-fill-mode: forwards, backwards;
+
+    transition-property: opacity, left, opacity, top, width, opacity, height, opacity;
+    transition-duration: 1s,2s;
+    transition-delay: 3s,4s,5s;
+    transition-timing-function: linear;
+    
+    animation-name: a, b, c, d, e;
+    animation-duration: 10s, 20s;
+    animation-delay: 1s;
+    animation-direction: normal, alternate, reverse, alternate-reverse;
+    animation-fill-mode: forwards, backwards;
+    animation-play-state: running, paused, running;
+    animation-iteration-count: 1, 2, 3;
+    animation-timing-function: linear;
 }
-@-webkit-keyframes a { }
-@-webkit-keyframes b { }
-@-webkit-keyframes c { }
-@-webkit-keyframes d { }
-@-webkit-keyframes e { }
+@keyframes a { }
+@keyframes b { }
+@keyframes c { }
+@keyframes d { }
+@keyframes e { }
 </style>
   <script type="text/javascript" charset="utf-8">
     if (window.testRunner)
         testRunner.dumpAsText();
   
     const kExpectedResults = [
-      { 'property': 'webkitTransitionDuration', 'value': '2s, 2s, 1s, 1s, 2s' },
-      { 'property': 'webkitTransitionProperty', 'value': 'left, top, width, height, opacity' },
-      { 'property': 'webkitTransitionDelay',    'value': '4s, 3s, 4s, 3s, 4s' },
-      { 'property': 'webkitTransitionTimingFunction', 'value': 'linear, linear, linear, linear, linear' },
-      { 'property': 'webkitAnimationName',      'value': 'a, b, c, d, e' },
-      { 'property': 'webkitAnimationDuration',  'value': '10s, 20s, 10s, 20s, 10s' },
-      { 'property': 'webkitAnimationDelay',     'value': '1s, 1s, 1s, 1s, 1s' },
-      { 'property': 'webkitAnimationFillMode',  'value': 'forwards, backwards, forwards, backwards, forwards' },
+      { 'property': 'transitionDuration', 'value': '1s, 2s' },
+      { 'property': 'transitionProperty', 'value': 'opacity, left, opacity, top, width, opacity, height, opacity' },
+      { 'property': 'transitionDelay',    'value': '3s, 4s, 5s' },
+      { 'property': 'transitionTimingFunction', 'value': 'linear' },
+      { 'property': 'animationName',      'value': 'a, b, c, d, e' },
+      { 'property': 'animationDuration',  'value': '10s, 20s' },
+      { 'property': 'animationDelay',     'value': '1s' },
+      { 'property': 'animationDirection', 'value': 'normal, alternate, reverse, alternate-reverse' },
+      { 'property': 'animationFillMode',  'value': 'forwards, backwards' },
+      { 'property': 'animationPlayState', 'value': 'running, paused, running' },
+      { 'property': 'animationIterationCount', 'value': '1, 2, 3' },
+      { 'property': 'animationTimingFunction', 'value': 'linear' }
     ];
     
     function start()

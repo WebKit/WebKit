@@ -70,15 +70,15 @@ public:
         return isEmpty() || (m_duration == 0 && m_delay <= 0);
     }
 
-    void clearDelay() { m_delaySet = false; }
-    void clearDirection() { m_directionSet = false; }
-    void clearDuration() { m_durationSet = false; }
-    void clearFillMode() { m_fillModeSet = false; }
-    void clearIterationCount() { m_iterationCountSet = false; }
+    void clearDelay() { m_delaySet = false; m_delayFilled = false; }
+    void clearDirection() { m_directionSet = false; m_directionFilled = false; }
+    void clearDuration() { m_durationSet = false; m_durationFilled = false; }
+    void clearFillMode() { m_fillModeSet = false; m_fillModeFilled = false; }
+    void clearIterationCount() { m_iterationCountSet = false; m_iterationCountFilled = false; }
     void clearName() { m_nameSet = false; }
-    void clearPlayState() { m_playStateSet = false; }
-    void clearProperty() { m_propertySet = false; }
-    void clearTimingFunction() { m_timingFunctionSet = false; }
+    void clearPlayState() { m_playStateSet = false; m_playStateFilled = false; }
+    void clearProperty() { m_propertySet = false; m_propertyFilled = false; }
+    void clearTimingFunction() { m_timingFunctionSet = false; m_timingFunctionFilled = false; }
     void clearCompositeOperation() { m_compositeOperationSet = false; }
 
     void clearAll()
@@ -159,6 +159,24 @@ public:
 
     void setIsNoneAnimation(bool n) { m_isNone = n; }
 
+    void fillDelay(double delay) { setDelay(delay); m_delayFilled = true; }
+    void fillDirection(AnimationDirection direction) { setDirection(direction); m_directionFilled = true; }
+    void fillDuration(double duration) { setDuration(duration); m_durationFilled = true; }
+    void fillFillMode(AnimationFillMode fillMode) { setFillMode(fillMode); m_fillModeFilled = true; }
+    void fillIterationCount(double iterationCount) { setIterationCount(iterationCount); m_iterationCountFilled = true; }
+    void fillPlayState(AnimationPlayState playState) { setPlayState(playState); m_playStateFilled = true; }
+    void fillProperty(TransitionProperty property) { setProperty(property); m_propertyFilled = true; }
+    void fillTimingFunction(RefPtr<TimingFunction>&& timingFunction) { setTimingFunction(WTFMove(timingFunction)); m_timingFunctionFilled = true; }
+
+    bool isDelayFilled() const { return m_delayFilled; }
+    bool isDirectionFilled() const { return m_directionFilled; }
+    bool isDurationFilled() const { return m_durationFilled; }
+    bool isFillModeFilled() const { return m_fillModeFilled; }
+    bool isIterationCountFilled() const { return m_iterationCountFilled; }
+    bool isPlayStateFilled() const { return m_playStateFilled; }
+    bool isPropertyFilled() const { return m_propertyFilled; }
+    bool isTimingFunctionFilled() const { return m_timingFunctionFilled; }
+
     Animation& operator=(const Animation&);
 
     // return true if all members of this class match (excluding m_next)
@@ -209,6 +227,15 @@ private:
     bool m_compositeOperationSet : 1;
 
     bool m_isNone : 1;
+
+    bool m_delayFilled : 1;
+    bool m_directionFilled : 1;
+    bool m_durationFilled : 1;
+    bool m_fillModeFilled : 1;
+    bool m_iterationCountFilled : 1;
+    bool m_playStateFilled : 1;
+    bool m_propertyFilled : 1;
+    bool m_timingFunctionFilled : 1;
 
 public:
     static double initialDelay() { return 0; }
