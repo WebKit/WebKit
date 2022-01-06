@@ -71,6 +71,11 @@ void RenderTextControl::styleDidChange(StyleDifference diff, const RenderStyle* 
         auto oldInnerTextStyle = textFormControlElement().createInnerTextStyle(*oldStyle);
         if (newInnerTextStyle != oldInnerTextStyle)
             innerTextRenderer->setStyle(WTFMove(newInnerTextStyle));
+        else if (diff == StyleDifference::RepaintIfTextOrBorderOrOutline || diff == StyleDifference::Repaint) {
+            // Repaint is expected to be propagated down to the shadow tree when non-inherited style property changes
+            // (e.g. text-decoration-color) since that's where the value actually takes effect.
+            innerTextRenderer->repaint();
+        }
     }
     textFormControlElement().updatePlaceholderVisibility();
 }

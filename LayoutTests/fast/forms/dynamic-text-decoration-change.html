@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<script src="../../resources/ui-helper.js"></script>
+<style>
+input {
+  width: 500px;
+  font-size: 18px;
+  text-decoration-line: underline;
+  text-decoration-color: red;
+  outline: none;
+}
+</style>
+<input id=changeThis type='text' value="PASS if underline color changes">
+<pre id=result></pre>
+<script>
+if (window.testRunner) {
+  testRunner.waitUntilDone();
+  testRunner.dumpAsText(true);
+}
+setTimeout(async () => {
+  await UIHelper.renderingUpdate();
+  if (window.internals)
+    internals.startTrackingRepaints();
+  changeThis.style.textDecorationColor = "green";
+  document.body.offsetHeight;
+  if (internals) {
+    result.textContent = internals.repaintRectsAsText().length ? "PASS" : "FAIL -no repaint happened";
+    internals.stopTrackingRepaints();
+  }
+  if (window.testRunner)
+    testRunner.notifyDone();
+}, 0);
+</script>

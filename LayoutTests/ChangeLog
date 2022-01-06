@@ -1,3 +1,14 @@
+2022-01-05  Alan Bujtas  <zalan@apple.com>
+
+        Text-decoration color not changing back after input blur with outline removed
+        https://bugs.webkit.org/show_bug.cgi?id=234800
+        <rdar://problem/87145636>
+
+        Reviewed by Antti Koivisto.
+
+        * fast/forms/dynamic-text-decoration-change-expected.html: Added.
+        * fast/forms/dynamic-text-decoration-change.html: Added.
+
 2021-10-30  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [GPU Process] Small ImageBuffers cause the web process to crash
