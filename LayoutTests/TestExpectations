@@ -2361,7 +2361,7 @@ webkit.org/b/231292 imported/w3c/web-platform-tests/html/semantics/interactive-e
 webkit.org/b/231292 imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/top-layer-parent-overflow-clip.html [ ImageOnlyFailure ]
 webkit.org/b/231292 imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/top-layer-parent-overflow-scroll.html [ ImageOnlyFailure ]
 # Needs layer re-parenting
-webkit.org/b/231292 imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/top-layer-parent-transform.html [ Skip ]
+webkit.org/b/231292 [ Debug ] imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/top-layer-parent-transform.html [ Skip ]
 
 # Assertion failure in MessagePort::contextDestroyed, usually attributed to later tests
 webkit.org/b/94458 http/tests/security/MessagePort/event-listener-context.html [ Skip ]

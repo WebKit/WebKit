@@ -1,3 +1,11 @@
+2022-01-06  Alan Bujtas  <zalan@apple.com>
+
+        Tighten test expectation for imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/top-layer-parent-transform.html
+
+        Unreviewed.
+
+        * TestExpectations: Test passes fine in Release -this is an assertion issue in Debug.
+
 2022-01-06  Chris Dumez  <cdumez@apple.com>
 
         Drop implementation for COOP / COEP violation reporting
