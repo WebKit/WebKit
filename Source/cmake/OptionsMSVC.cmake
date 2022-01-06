@@ -103,6 +103,10 @@ add_compile_options(
     /wd4996 # Your code uses a function, class member, variable, or typedef that's marked deprecated
 
     /wd5205 # delete of an abstract class 'type-name' that has a non-virtual destructor results in undefined behavior
+
+    /wd5054 # operator 'operator-name': deprecated between enumerations of different types
+
+    /wd5055 # operator 'operator-name': deprecated between enumerations and floating-point types
 )
 
 # Create pdb files for debugging purposes, also for Release builds
