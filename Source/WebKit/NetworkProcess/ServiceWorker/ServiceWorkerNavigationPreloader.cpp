@@ -201,11 +201,15 @@ void ServiceWorkerNavigationPreloader::didComplete()
 {
     m_networkLoad = nullptr;
 
-    if (auto callback = std::exchange(m_responseCallback, { }))
-        callback();
+    auto responseCallback = std::exchange(m_responseCallback, { });
+    auto bodyCallback = std::exchange(m_bodyCallback, { });
 
-    if (m_bodyCallback)
-        m_bodyCallback({ }, 0);
+    // After calling responseCallback or bodyCallback, |this| might be destroyed.
+    if (responseCallback)
+        responseCallback();
+
+    if (bodyCallback)
+        bodyCallback({ }, 0);
 }
 
 void ServiceWorkerNavigationPreloader::waitForResponse(ResponseCallback&& callback)

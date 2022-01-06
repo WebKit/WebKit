@@ -1,3 +1,16 @@
+2022-01-06  Youenn Fablet  <youenn@apple.com>
+
+        ServiceWorkerNavigationPreloader::didComplete should make sure to call its bodyCallback
+        https://bugs.webkit.org/show_bug.cgi?id=234884
+
+        Reviewed by Alex Christensen.
+
+        Covered by existing tests.
+
+        * NetworkProcess/ServiceWorker/ServiceWorkerNavigationPreloader.cpp:
+        Call to responseCallback may destroy the ServiceWorkerNavigationPreloader.
+        To make sure to call its bodyCallback, we move it in the stack before calling responseCallback.
+
 2021-10-30  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [GPU Process] Small ImageBuffers cause the web process to crash
