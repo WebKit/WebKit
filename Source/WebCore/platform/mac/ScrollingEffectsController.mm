@@ -447,7 +447,7 @@ void ScrollingEffectsController::startRubberBandAnimationIfNecessary()
     bool willOverscroll = targetOffset != contrainedOffset;
 
     auto stretchAmount = m_client.stretchAmount();
-    if (stretchAmount.isZero() && !willOverscroll)
+    if (stretchAmount.isZero() && !willOverscroll && m_stretchScrollForce.isZero())
         return;
 
     auto initialVelocity = m_momentumVelocity;

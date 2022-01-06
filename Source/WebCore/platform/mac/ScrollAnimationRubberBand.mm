@@ -91,7 +91,8 @@ void ScrollAnimationRubberBand::serviceAnimation(MonotonicTime currentTime)
         roundToDevicePixelTowardZero(elasticDeltaForTimeDelta(m_initialOverscroll.height(), -m_initialVelocity.height(), elapsedTime))
     };
 
-    bool animationComplete = rubberBandOffset.isZero();
+    // We might be rubberbanding away from an edge and back, so wait a frame or two before checking for completion.
+    bool animationComplete = rubberBandOffset.isZero() && elapsedTime > 24_ms;
     m_currentOffset = m_targetOffset + rubberBandOffset;
 
     m_client.scrollAnimationDidUpdate(*this, m_currentOffset);
