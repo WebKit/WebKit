@@ -86,7 +86,7 @@ private:
     void equalizeTailGaps();
 
     // Once consumed, this delta *must* be dispatched in an event.
-    WebCore::FloatSize consumeDeltaForCurrentTime();
+    std::optional<WebCore::FloatSize> consumeDeltaForCurrentTime();
 
     WebCore::FloatSize offsetAtTime(Seconds);
     std::pair<WebCore::FloatSize, WebCore::FloatSize> computeNextDelta(WebCore::FloatSize currentUnacceleratedDelta);
@@ -125,6 +125,7 @@ private:
     std::optional<WallTime> m_lastScrollTimestamp;
     std::optional<WebWheelEvent> m_lastIncomingEvent;
     WebCore::RectEdges<bool> m_lastRubberBandableEdges;
+    bool m_isInOverriddenPlatformMomentumGesture { false };
 
     struct {
         bool active { false };

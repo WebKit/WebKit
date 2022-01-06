@@ -87,8 +87,23 @@ bool MomentumEventDispatcher::handleWheelEvent(WebCore::PageIdentifier pageIdent
         // momentumPhase == PhaseEnded that interrupts.
         bool eventShouldInterruptGesture = !isMomentumEvent || event.momentumPhase() != WebWheelEvent::PhaseChanged;
 
-        if (pageIdentifierChanged || eventShouldInterruptGesture)
+        if (event.momentumPhase() == WebWheelEvent::PhaseEnded) {
+#if ENABLE(MOMENTUM_EVENT_DISPATCHER_TEMPORARY_LOGGING)
+            RELEASE_LOG(ScrollAnimations, "MomentumEventDispatcher saw momentum ended phase, interrupted=%d", static_cast<int>(event.momentumEndType()));
+#endif
+
+            // Ignore momentumPhase == PhaseEnded if it was due to the natural
+            // end of the animation (as opposed to interruption by placing fingers
+            // on the trackpad), so that our momentum is not cut short if the
+            // deceleration runs longer than the system curve.
+            if (event.momentumEndType() == WebWheelEvent::MomentumEndType::Natural)
+                eventShouldInterruptGesture = false;
+        }
+
+        if (pageIdentifierChanged || eventShouldInterruptGesture) {
+            RELEASE_LOG(ScrollAnimations, "MomentumEventDispatcher interrupting synthetic momentum phase");
             didEndMomentumPhase();
+        }
     }
 
     if (event.phase() == WebWheelEvent::PhaseBegan || event.phase() == WebWheelEvent::PhaseChanged) {
@@ -100,18 +115,26 @@ bool MomentumEventDispatcher::handleWheelEvent(WebCore::PageIdentifier pageIdent
 #endif
     }
 
-    if (eventShouldStartSyntheticMomentumPhase(pageIdentifier, event))
+    if (eventShouldStartSyntheticMomentumPhase(pageIdentifier, event)) {
         didStartMomentumPhase(pageIdentifier, event);
+        m_isInOverriddenPlatformMomentumGesture = true;
+    }
 
-    bool isMomentumEventDuringSyntheticGesture = isMomentumEvent && m_currentGesture.active;
+    // Consume any incoming momentum events while we're generating a synthetic
+    // momentum gesture *or* a platform momentum phase that was overridden
+    // is still running after we finished the synthetic gesture.
+    bool shouldIgnoreIncomingPlatformEvent = isMomentumEvent && (m_isInOverriddenPlatformMomentumGesture || m_currentGesture.active);
+
+    if (event.momentumPhase() == WebWheelEvent::PhaseEnded)
+        m_isInOverriddenPlatformMomentumGesture = false;
 
 #if ENABLE(MOMENTUM_EVENT_DISPATCHER_TEMPORARY_LOGGING)
-    if (isMomentumEventDuringSyntheticGesture)
+    if (shouldIgnoreIncomingPlatformEvent)
         m_currentGesture.accumulatedEventOffset += event.delta();
 
     auto combinedPhase = (event.phase() << 8) | (event.momentumPhase());
     m_currentLogState.totalEventOffset += event.delta().height();
-    if (!isMomentumEventDuringSyntheticGesture) {
+    if (!shouldIgnoreIncomingPlatformEvent) {
         // Log events that we don't block to the generated offsets log as well,
         // even though we didn't technically generate them, just passed them through.
         m_currentLogState.totalGeneratedOffset += event.delta().height();
@@ -121,8 +144,7 @@ bool MomentumEventDispatcher::handleWheelEvent(WebCore::PageIdentifier pageIdent
     
 #endif
 
-    // Consume any normal momentum events while we're inside a synthetic momentum gesture.
-    return isMomentumEventDuringSyntheticGesture;
+    return shouldIgnoreIncomingPlatformEvent;
 }
 
 static float appKitScrollMultiplierForEvent(const WebWheelEvent& event)
@@ -170,7 +192,8 @@ void MomentumEventDispatcher::dispatchSyntheticMomentumEvent(WebWheelEvent::Phas
         m_lastIncomingEvent->modifiers(),
         time,
         time,
-        { });
+        { },
+        WebWheelEvent::MomentumEndType::Unknown);
     m_dispatcher.internalWheelEvent(m_currentGesture.pageIdentifier, syntheticEvent, m_lastRubberBandableEdges, EventDispatcher::WheelEventOrigin::MomentumEventDispatcher);
 
 #if ENABLE(MOMENTUM_EVENT_DISPATCHER_TEMPORARY_LOGGING)
@@ -223,7 +246,7 @@ void MomentumEventDispatcher::didEndMomentumPhase()
     dispatchSyntheticMomentumEvent(WebWheelEvent::PhaseEnded, { });
 
 #if ENABLE(MOMENTUM_EVENT_DISPATCHER_TEMPORARY_LOGGING)
-    RELEASE_LOG(ScrollAnimations, "MomentumEventDispatcher saw momentum end phase with total offset %.1f %.1f, duration %f (event offset would have been %.1f %.1f) (tail index %d of %zu)", m_currentGesture.currentOffset.width(), m_currentGesture.currentOffset.height(), (MonotonicTime::now() - m_currentGesture.startTime).seconds(), m_currentGesture.accumulatedEventOffset.width(), m_currentGesture.accumulatedEventOffset.height(), m_currentGesture.currentTailDeltaIndex, m_currentGesture.tailDeltaTable.size());
+    RELEASE_LOG(ScrollAnimations, "MomentumEventDispatcher ending synthetic momentum phase with total offset %.1f %.1f, duration %f (event offset would have been %.1f %.1f) (tail index %d of %zu)", m_currentGesture.currentOffset.width(), m_currentGesture.currentOffset.height(), (MonotonicTime::now() - m_currentGesture.startTime).seconds(), m_currentGesture.accumulatedEventOffset.width(), m_currentGesture.accumulatedEventOffset.height(), m_currentGesture.currentTailDeltaIndex, m_currentGesture.tailDeltaTable.size());
     m_dispatcher.queue().dispatchAfter(1_s, [this] {
         flushLog();
     });
@@ -242,7 +265,7 @@ void MomentumEventDispatcher::setScrollingAccelerationCurve(WebCore::PageIdentif
 #if ENABLE(MOMENTUM_EVENT_DISPATCHER_TEMPORARY_LOGGING)
     WTF::TextStream stream(WTF::TextStream::LineMode::SingleLine);
     stream << curve;
-    RELEASE_LOG(ScrollAnimations, "MomentumEventDispatcher set curve %s", stream.release().utf8().data());
+    RELEASE_LOG(ScrollAnimations, "MomentumEventDispatcher set curve %{public}s", stream.release().utf8().data());
 #endif
 }
 
@@ -299,7 +322,7 @@ void MomentumEventDispatcher::pageScreenDidChange(WebCore::PageIdentifier pageID
         startDisplayLink();
 }
 
-WebCore::FloatSize MomentumEventDispatcher::consumeDeltaForCurrentTime()
+std::optional<WebCore::FloatSize> MomentumEventDispatcher::consumeDeltaForCurrentTime()
 {
     WebCore::FloatSize delta;
 
@@ -311,7 +334,7 @@ WebCore::FloatSize MomentumEventDispatcher::consumeDeltaForCurrentTime()
         if (m_currentGesture.currentTailDeltaIndex < m_currentGesture.tailDeltaTable.size())
             delta = -m_currentGesture.tailDeltaTable[m_currentGesture.currentTailDeltaIndex++];
         else
-            delta = { };
+            return std::nullopt;
     }
 
     m_currentGesture.currentOffset += delta;
@@ -331,7 +354,16 @@ void MomentumEventDispatcher::displayWasRefreshed(WebCore::PlatformDisplayID dis
     if (!displayProperties || displayID != displayProperties->displayID)
         return;
 
-    dispatchSyntheticMomentumEvent(WebWheelEvent::PhaseChanged, consumeDeltaForCurrentTime());
+    auto delta = consumeDeltaForCurrentTime();
+    if (!delta) {
+#if ENABLE(MOMENTUM_EVENT_DISPATCHER_TEMPORARY_LOGGING)
+        RELEASE_LOG(ScrollAnimations, "MomentumEventDispatcher completed synthetic momentum phase");
+#endif
+        didEndMomentumPhase();
+        return;
+    }
+
+    dispatchSyntheticMomentumEvent(WebWheelEvent::PhaseChanged, *delta);
 }
 
 void MomentumEventDispatcher::didReceiveScrollEventWithInterval(WebCore::FloatSize size, Seconds frameInterval)
