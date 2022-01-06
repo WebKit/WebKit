@@ -4050,6 +4050,22 @@ void Element::setLastStyleChangeEventStyle(PseudoId pseudoId, std::unique_ptr<co
         ensureAnimationRareData(pseudoId).setLastStyleChangeEventStyle(WTFMove(style));
 }
 
+void Element::cssAnimationsDidUpdate(PseudoId pseudoId)
+{
+    ensureAnimationRareData(pseudoId).cssAnimationsDidUpdate();
+}
+
+void Element::keyframesRuleDidChange(PseudoId pseudoId)
+{
+    ensureAnimationRareData(pseudoId).keyframesRuleDidChange();
+}
+
+bool Element::hasPendingKeyframesUpdate(PseudoId pseudoId) const
+{
+    auto* data = animationRareData(pseudoId);
+    return data && data->hasPendingKeyframesUpdate();
+}
+
 void Element::disconnectFromResizeObservers()
 {
     auto* observerData = resizeObserverData();

@@ -1541,6 +1541,7 @@ public:
     Vector<RefPtr<WebAnimation>> matchingAnimations(const Function<bool(Element&)>&);
     DocumentTimelinesController* timelinesController() const { return m_timelinesController.get(); }
     WEBCORE_EXPORT DocumentTimelinesController& ensureTimelinesController();
+    void keyframesRuleDidChange(const String& name);
 
     void addTopLayerElement(Element&);
     void removeTopLayerElement(Element&);

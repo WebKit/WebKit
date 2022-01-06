@@ -46,6 +46,8 @@ public:
 
     void effectTimingWasUpdatedUsingBindings(OptionalEffectTiming);
     void effectKeyframesWereSetUsingBindings();
+    void keyframesRuleDidChange();
+    void updateKeyframesIfNeeded(const RenderStyle* oldStyle, const RenderStyle& newStyle, const Style::ResolutionContext&);
 
 private:
     CSSAnimation(const Styleable&, const Animation&);
@@ -59,7 +61,7 @@ private:
     void setBindingsStartTime(std::optional<double>) final;
     ExceptionOr<void> bindingsReverse() final;
 
-    enum class Property : uint8_t {
+    enum class Property : uint16_t {
         Name = 1 << 0,
         Duration = 1 << 1,
         TimingFunction = 1 << 2,
@@ -67,7 +69,8 @@ private:
         Direction = 1 << 4,
         PlayState = 1 << 5,
         Delay = 1 << 6,
-        FillMode = 1 << 7
+        FillMode = 1 << 7,
+        Keyframes = 1 << 8
     };
 
     String m_animationName;

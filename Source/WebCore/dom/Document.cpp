@@ -33,6 +33,7 @@
 #include "Attr.h"
 #include "BeforeUnloadEvent.h"
 #include "CDATASection.h"
+#include "CSSAnimation.h"
 #include "CSSFontSelector.h"
 #include "CSSParser.h"
 #include "CSSStyleDeclaration.h"
@@ -8567,6 +8568,24 @@ Vector<RefPtr<WebAnimation>> Document::matchingAnimations(const Function<bool(El
     });
 
     return animations;
+}
+
+void Document::keyframesRuleDidChange(const String& name)
+{
+    for (auto* animation : WebAnimation::instances()) {
+        if (!is<CSSAnimation>(animation) || !animation->isRelevant())
+            continue;
+
+        auto& cssAnimation = downcast<CSSAnimation>(*animation);
+        if (cssAnimation.animationName() != name)
+            continue;
+
+        auto owningElement = cssAnimation.owningElement();
+        if (!owningElement || !owningElement->element.isConnected() || &owningElement->element.document() != this)
+            continue;
+
+        cssAnimation.keyframesRuleDidChange();
+    }
 }
 
 void Document::addTopLayerElement(Element& element)

@@ -151,7 +151,7 @@ void CSSStyleSheet::didMutateRuleFromCSSStyleDeclaration()
     didMutate();
 }
 
-void CSSStyleSheet::didMutateRules(RuleMutationType mutationType, WhetherContentsWereClonedForMutation contentsWereClonedForMutation, StyleRuleKeyframes* insertedKeyframesRule)
+void CSSStyleSheet::didMutateRules(RuleMutationType mutationType, WhetherContentsWereClonedForMutation contentsWereClonedForMutation, StyleRuleKeyframes* insertedKeyframesRule, const String& modifiedKeyframesRuleName)
 {
     ASSERT(m_contents->isMutable());
     ASSERT(m_contents->hasOneClient());
@@ -168,6 +168,21 @@ void CSSStyleSheet::didMutateRules(RuleMutationType mutationType, WhetherContent
         }
         scope->didChangeActiveStyleSheetCandidates();
         return;
+    }
+
+    if (mutationType == RuleInsertion && !contentsWereClonedForMutation && !scope->activeStyleSheetsContains(this)) {
+        if (insertedKeyframesRule) {
+            if (auto* resolver = scope->resolverIfExists())
+                resolver->addKeyframeStyle(*insertedKeyframesRule);
+            return;
+        }
+        scope->didChangeActiveStyleSheetCandidates();
+        return;
+    }
+
+    if (mutationType == KeyframesRuleMutation) {
+        if (auto* ownerDocument = this->ownerDocument())
+            ownerDocument->keyframesRuleDidChange(modifiedKeyframesRuleName);
     }
 
     scope->didChangeStyleSheetContents();
@@ -401,9 +416,10 @@ CSSStyleSheet::RuleMutationScope::RuleMutationScope(CSSStyleSheet* sheet, RuleMu
 
 CSSStyleSheet::RuleMutationScope::RuleMutationScope(CSSRule* rule)
     : m_styleSheet(rule ? rule->parentStyleSheet() : nullptr)
-    , m_mutationType(OtherMutation)
+    , m_mutationType(is<CSSKeyframesRule>(rule) ? KeyframesRuleMutation : OtherMutation)
     , m_contentsWereClonedForMutation(ContentsWereNotClonedForMutation)
     , m_insertedKeyframesRule(nullptr)
+    , m_modifiedKeyframesRuleName(is<CSSKeyframesRule>(rule) ? downcast<CSSKeyframesRule>(*rule).name() : emptyString())
 {
     if (m_styleSheet)
         m_contentsWereClonedForMutation = m_styleSheet->willMutateRules();
@@ -412,7 +428,7 @@ CSSStyleSheet::RuleMutationScope::RuleMutationScope(CSSRule* rule)
 CSSStyleSheet::RuleMutationScope::~RuleMutationScope()
 {
     if (m_styleSheet)
-        m_styleSheet->didMutateRules(m_mutationType, m_contentsWereClonedForMutation, m_insertedKeyframesRule);
+        m_styleSheet->didMutateRules(m_mutationType, m_contentsWereClonedForMutation, m_insertedKeyframesRule, m_modifiedKeyframesRuleName);
 }
 
 }

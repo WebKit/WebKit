@@ -145,6 +145,11 @@ struct Styleable {
         element.setLastStyleChangeEventStyle(pseudoId, WTFMove(style));
     }
 
+    void keyframesRuleDidChange() const
+    {
+        element.keyframesRuleDidChange(pseudoId);
+    }
+
     void elementWasRemoved() const;
 
     void willChangeRenderer() const;

@@ -532,6 +532,10 @@ public:
     const RenderStyle* lastStyleChangeEventStyle(PseudoId) const;
     void setLastStyleChangeEventStyle(PseudoId, std::unique_ptr<const RenderStyle>&&);
 
+    void cssAnimationsDidUpdate(PseudoId);
+    void keyframesRuleDidChange(PseudoId);
+    bool hasPendingKeyframesUpdate(PseudoId) const;
+
     bool isInTopLayer() const { return hasNodeFlag(NodeFlag::IsInTopLayer); }
     void addToTopLayer();
     void removeFromTopLayer();

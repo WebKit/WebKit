@@ -230,7 +230,7 @@ void Styleable::updateCSSAnimations(const RenderStyle* currentStyle, const Rende
 
     auto* currentAnimationList = newStyle.animations();
     auto* previousAnimationList = keyframeEffectStack.cssAnimationList();
-    if (previousAnimationList && !previousAnimationList->isEmpty() && newStyle.hasAnimations() && *(previousAnimationList) == *(newStyle.animations()))
+    if (!element.hasPendingKeyframesUpdate(pseudoId) && previousAnimationList && !previousAnimationList->isEmpty() && newStyle.hasAnimations() && *(previousAnimationList) == *(newStyle.animations()))
         return;
 
     CSSAnimationCollection newAnimations;
@@ -257,6 +257,9 @@ void Styleable::updateCSSAnimations(const RenderStyle* currentStyle, const Rende
                     // Timing properties or play state may have changed so we need to update the backing animation with
                     // the Animation found in the current style.
                     previousAnimation->setBackingAnimation(currentAnimation);
+                    // Keyframes may have been cleared if the @keyframes rules was changed since
+                    // the last style update, so we must ensure keyframes are picked up.
+                    previousAnimation->updateKeyframesIfNeeded(currentStyle, newStyle, resolutionContext);
                     newAnimations.add(previousAnimation);
                     // Remove the matched animation from the list of previous animations so we may not match it again.
                     previousAnimations.remove(previousAnimation);
@@ -281,6 +284,8 @@ void Styleable::updateCSSAnimations(const RenderStyle* currentStyle, const Rende
     setAnimationsCreatedByMarkup(WTFMove(newAnimations));
 
     keyframeEffectStack.setCSSAnimationList(currentAnimationList);
+
+    element.cssAnimationsDidUpdate(pseudoId);
 }
 
 static KeyframeEffect* keyframeEffectForElementAndProperty(const Styleable& styleable, CSSPropertyID property)

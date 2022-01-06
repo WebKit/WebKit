@@ -169,6 +169,8 @@ public:
 
     void stopAcceleratingTransformRelatedProperties(UseAcceleratedAction);
 
+    void keyframesRuleDidChange();
+
 private:
     KeyframeEffect(Element*, PseudoId);
 

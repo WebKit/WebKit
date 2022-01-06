@@ -784,6 +784,13 @@ ExceptionOr<void> KeyframeEffect::setKeyframes(JSGlobalObject& lexicalGlobalObje
     return processKeyframesResult;
 }
 
+void KeyframeEffect::keyframesRuleDidChange()
+{
+    ASSERT(is<CSSAnimation>(animation()));
+    clearBlendingKeyframes();
+    invalidate();
+}
+
 ExceptionOr<void> KeyframeEffect::processKeyframes(JSGlobalObject& lexicalGlobalObject, Strong<JSObject>&& keyframesInput)
 {
     // 1. If object is null, return an empty sequence of keyframes.

@@ -23,5 +23,5 @@ FAIL KeyframeEffect.getKeyframes() returns expected values for animations with C
 PASS KeyframeEffect.getKeyframes() returns expected values for animations with CSS variables as keyframe values in a shorthand property
 PASS KeyframeEffect.getKeyframes() returns expected values for animations with a CSS variable which is overriden by the value in keyframe
 FAIL KeyframeEffect.getKeyframes() returns expected values for animations with only custom property in a keyframe assert_equals: value for 'transform' on Keyframe #0 should match expected "translate(100px)" but got "matrix(1, 0, 0, 1, 100, 0)"
-FAIL KeyframeEffect.getKeyframes() reflects changes to @keyframes rules assert_equals: value for 'left' on Keyframes reflects the updated @keyframes rule should match expected "200px" but got "100px"
+PASS KeyframeEffect.getKeyframes() reflects changes to @keyframes rules
 
