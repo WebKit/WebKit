@@ -51,12 +51,7 @@ namespace WebKit {
 
 void NetworkProcess::initializeProcess(const AuxiliaryProcessInitializationParameters&)
 {
-#if PLATFORM(MAC) && !PLATFORM(MACCATALYST)
-    // Having a window server connection in this process would result in spin logs (<rdar://problem/13239119>).
-    OSStatus error = SetApplicationIsDaemon(true);
-    ASSERT_UNUSED(error, error == noErr);
-#endif
-
+    setApplicationIsDaemon();
     launchServicesCheckIn();
 }
 
