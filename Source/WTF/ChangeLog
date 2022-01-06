@@ -1,3 +1,13 @@
+2022-01-05  John Wilander  <wilander@apple.com>
+
+        Change version number for HAVE_RSA_PSS_OID
+        https://bugs.webkit.org/show_bug.cgi?id=234904
+        <rdar://86646280>
+
+        Reviewed by Alex Christensen.
+
+        * wtf/PlatformHave.h:
+
 2022-01-05  Tim Horton  <timothy_horton@apple.com>
 
         Momentum Event Dispatcher: Momentum tails may get truncated if the duration runs longer than the system's
