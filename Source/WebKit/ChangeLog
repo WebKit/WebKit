@@ -1,3 +1,16 @@
+2022-01-05  Devin Rousso  <drousso@apple.com>
+
+        REGRESSION(r285521): `errors` provided to `ApplePaySession.prototype.completeCouponCodeChange` are ignored
+        https://bugs.webkit.org/show_bug.cgi?id=234893
+        <rdar://problem/86780827>
+
+        Reviewed by Tim Horton.
+
+        * Platform/cocoa/PaymentAuthorizationPresenter.mm:
+        (WebKit::PaymentAuthorizationPresenter::completeCouponCodeChange):
+        Make sure to actually set the `errors` of the `PKPaymentRequestCouponCodeUpdate` using the
+        `errors` inside `ApplePayShippingMethodUpdate`. This was accidentally removed in r285521.
+
 2022-01-05  Tim Horton  <timothy_horton@apple.com>
 
         Move more SDK checks to linkedOnOrAfter()

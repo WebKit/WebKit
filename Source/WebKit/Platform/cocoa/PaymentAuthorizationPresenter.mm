@@ -291,6 +291,7 @@ void PaymentAuthorizationPresenter::completeCouponCodeChange(std::optional<WebCo
     }
 
     auto couponCodeUpdate = adoptNS([PAL::allocPKPaymentRequestCouponCodeUpdateInstance() initWithPaymentSummaryItems:WebCore::platformSummaryItems(WTFMove(update->newTotal), WTFMove(update->newLineItems))]);
+    [couponCodeUpdate setErrors:toNSErrors(WTFMove(update->errors)).get()];
 #if HAVE(PASSKIT_DEFAULT_SHIPPING_METHOD)
     [couponCodeUpdate setAvailableShippingMethods:toPKShippingMethods(WTFMove(update->newShippingMethods))];
 #else
