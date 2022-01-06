@@ -100,7 +100,7 @@ void MockContentFilter::responseReceived(const ResourceResponse&)
     maybeDetermineStatus(DecisionPoint::AfterResponse);
 }
 
-void MockContentFilter::addData(const uint8_t*, int)
+void MockContentFilter::addData(const SharedBuffer&)
 {
     maybeDetermineStatus(DecisionPoint::AfterAddData);
 }

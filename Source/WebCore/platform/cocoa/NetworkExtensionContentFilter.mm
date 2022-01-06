@@ -145,12 +145,12 @@ void NetworkExtensionContentFilter::responseReceived(const ResourceResponse& res
     semaphore.wait();
 }
 
-void NetworkExtensionContentFilter::addData(const uint8_t* data, int length)
+void NetworkExtensionContentFilter::addData(const SharedBuffer& data)
 {
-    RetainPtr<NSData> copiedData { [NSData dataWithBytes:(void*)data length:length] };
+    auto nsData = data.createNSData();
 
     BinarySemaphore semaphore;
-    [m_neFilterSource receivedData:copiedData.get() decisionHandler:[this, &semaphore](NEFilterSourceStatus status, NSDictionary *decisionInfo) {
+    [m_neFilterSource receivedData:nsData.get() decisionHandler:[this, &semaphore](NEFilterSourceStatus status, NSDictionary *decisionInfo) {
         handleDecision(status, replacementDataFromDecisionInfo(decisionInfo));
         semaphore.signal();
     }];

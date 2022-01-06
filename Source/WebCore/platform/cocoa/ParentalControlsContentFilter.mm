@@ -94,10 +94,10 @@ void ParentalControlsContentFilter::responseReceived(const ResourceResponse& res
     updateFilterState();
 }
 
-void ParentalControlsContentFilter::addData(const uint8_t* data, int length)
+void ParentalControlsContentFilter::addData(const SharedBuffer& data)
 {
     ASSERT(![m_replacementData length]);
-    m_replacementData = [m_webFilterEvaluator addData:[NSData dataWithBytesNoCopy:(void*)data length:length freeWhenDone:NO]];
+    m_replacementData = [m_webFilterEvaluator addData:data.createNSData().get()];
     updateFilterState();
     ASSERT(needsMoreData() || [m_replacementData length]);
 }

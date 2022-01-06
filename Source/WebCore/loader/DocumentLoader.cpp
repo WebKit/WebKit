@@ -1325,7 +1325,7 @@ void DocumentLoader::dataReceived(CachedResource& resource, const SharedBuffer& 
 void DocumentLoader::dataReceived(const SharedBuffer& buffer)
 {
 #if ENABLE(CONTENT_FILTERING)
-    if (m_contentFilter && !m_contentFilter->continueAfterDataReceived(buffer.data(), buffer.size()))
+    if (m_contentFilter && !m_contentFilter->continueAfterDataReceived(buffer))
         return;
 #endif
 

@@ -145,14 +145,14 @@ bool ContentFilter::continueAfterResponseReceived(const ResourceResponse& respon
     return m_state != State::Blocked;
 }
 
-bool ContentFilter::continueAfterDataReceived(const uint8_t* data, int length)
+bool ContentFilter::continueAfterDataReceived(const SharedBuffer& data)
 {
     Ref<ContentFilterClient> protectedClient { m_client };
 
     if (m_state == State::Filtering) {
-        LOG(ContentFiltering, "ContentFilter received %d bytes of data from <%s>.\n", length, m_mainResource->url().string().ascii().data());
-        forEachContentFilterUntilBlocked([data, length](PlatformContentFilter& contentFilter) {
-            contentFilter.addData(data, length);
+        LOG(ContentFiltering, "ContentFilter received %zu bytes of data from <%s>.\n", data.size(), m_mainResource->url().string().ascii().data());
+        forEachContentFilterUntilBlocked([data = Ref { data }](auto& contentFilter) {
+            contentFilter.addData(data);
         });
 
         if (m_state == State::Allowed)

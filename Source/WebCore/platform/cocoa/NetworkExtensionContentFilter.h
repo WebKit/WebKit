@@ -49,7 +49,7 @@ public:
 
     void willSendRequest(ResourceRequest&, const ResourceResponse&) override;
     void responseReceived(const ResourceResponse&) override;
-    void addData(const uint8_t* data, int length) override;
+    void addData(const SharedBuffer&) override;
     void finishedAddingData() override;
     Ref<FragmentedSharedBuffer> replacementData() const override;
     ContentFilterUnblockHandler unblockHandler() const override;
