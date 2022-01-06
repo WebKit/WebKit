@@ -168,11 +168,12 @@ static void testWebsiteDataConfiguration(WebsiteDataTest* test, gconstpointer)
 
     test->loadURI(kServer->getURIForPath("/empty").data());
     test->waitUntilLoadFinished();
-    test->runJavaScriptAndWaitUntilFinished("window.localStorage.clear();", nullptr);
+    test->runJavaScriptAndWaitUntilFinished("window.localStorage.myproperty = 42;", nullptr);
     GUniquePtr<char> localStorageDirectory(g_build_filename(Test::dataDirectory(), "local-storage", nullptr));
     g_assert_cmpstr(localStorageDirectory.get(), ==, webkit_website_data_manager_get_local_storage_directory(test->m_manager));
     test->assertFileIsCreated(localStorageDirectory.get());
     g_assert_true(g_file_test(localStorageDirectory.get(), G_FILE_TEST_IS_DIR));
+    test->runJavaScriptAndWaitUntilFinished("window.localStorage.clear();", nullptr);
 
     test->loadURI(kServer->getURIForPath("/empty").data());
     test->waitUntilLoadFinished();
