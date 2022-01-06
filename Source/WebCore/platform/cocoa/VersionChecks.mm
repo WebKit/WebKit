@@ -35,14 +35,8 @@ namespace WebCore {
 
 bool linkedOnOrAfter(SDKVersion sdkVersion)
 {
-#if PLATFORM(IOS_FAMILY)
-    bool isSafari = WebCore::IOSApplication::isMobileSafari();
-#elif PLATFORM(MAC)
-    bool isSafari = WebCore::MacApplication::isSafari();
-#endif
-
-    if (isSafari)
-        return true;
+    if (auto overrideValue = linkedOnOrAfterOverride())
+        return *overrideValue == LinkedOnOrAfterOverride::AfterEverything;
 
     auto sdkVersionAsInteger = static_cast<uint32_t>(sdkVersion);
     return sdkVersionAsInteger && applicationSDKVersion() >= sdkVersionAsInteger;

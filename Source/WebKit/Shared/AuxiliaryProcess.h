@@ -38,6 +38,7 @@
 
 #if PLATFORM(COCOA)
 #include <wtf/RetainPtr.h>
+#include <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #endif
 
 OBJC_CLASS NSDictionary;
@@ -195,6 +196,7 @@ struct AuxiliaryProcessInitializationParameters {
     WebCore::AuxiliaryProcessType processType;
 #if PLATFORM(COCOA)
     OSObjectPtr<xpc_object_t> priorityBoostMessage;
+    std::optional<LinkedOnOrAfterOverride> clientLinkedOnOrAfterOverride;
 #endif
 };
 

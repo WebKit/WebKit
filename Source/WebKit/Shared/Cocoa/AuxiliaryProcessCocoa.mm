@@ -78,6 +78,7 @@ void AuxiliaryProcess::platformInitialize(const AuxiliaryProcessInitializationPa
 
     WebCore::setApplicationBundleIdentifier(parameters.clientBundleIdentifier);
     setApplicationSDKVersion(parameters.clientSDKVersion);
+    setLinkedOnOrAfterOverride(parameters.clientLinkedOnOrAfterOverride);
 }
 
 void AuxiliaryProcess::didReceiveInvalidMessage(IPC::Connection&, IPC::MessageName messageName)

@@ -1,3 +1,35 @@
+2022-01-06  Tim Horton  <timothy_horton@apple.com>
+
+        Separate "linked-on-or-{before, after}-everything" override from the SDK version
+        https://bugs.webkit.org/show_bug.cgi?id=234930
+
+        Reviewed by Wenson Hsieh.
+
+        * Shared/AuxiliaryProcess.h:
+        * Shared/Cocoa/AuxiliaryProcessCocoa.mm:
+        (WebKit::AuxiliaryProcess::platformInitialize):
+        * Shared/EntryPointUtilities/Cocoa/XPCService/XPCServiceEntryPoint.h:
+        (WebKit::XPCServiceInitializer):
+        * Shared/EntryPointUtilities/Cocoa/XPCService/XPCServiceEntryPoint.mm:
+        (WebKit::XPCServiceInitializerDelegate::getLinkedOnOrAfterOverride):
+        Plumb the LOA override optional through process initialization (just like
+        we do for SDK version, because linkedOnOrAfter() is used VERY early in
+        JavaScriptCore initialization).
+
+        * UIProcess/API/Cocoa/WKProcessPool.mm:
+        (+[WKProcessPool _setLinkedOnOrBeforeEverythingForTesting]):
+        (+[WKProcessPool _setLinkedOnOrAfterEverythingForTesting]):
+        (+[WKProcessPool _setLinkedOnOrAfterEverything]):
+        * UIProcess/API/Cocoa/WKProcessPoolPrivate.h:
+        Expose non-testing SPI for Safari to opt in to "linked-on-or-after-everything"
+        so that we can (eventually) stop using a bundle identifier check.
+
+        * UIProcess/Launcher/cocoa/ProcessLauncherCocoa.mm:
+        (WebKit::ProcessLauncher::launchProcess):
+
+        * UIProcess/WebProcessPool.cpp:
+        Initialize the LOA override using the same logic we previously used in linkedOnOrAfter().
+
 2022-01-06  Youenn Fablet  <youenn@apple.com>
 
         Microphone device filtering heuristic is too harsh

@@ -1,3 +1,23 @@
+2022-01-06  Tim Horton  <timothy_horton@apple.com>
+
+        Separate "linked-on-or-{before, after}-everything" override from the SDK version
+        https://bugs.webkit.org/show_bug.cgi?id=234930
+
+        Reviewed by Wenson Hsieh.
+
+        * wtf/cocoa/RuntimeApplicationChecksCocoa.cpp:
+        (WTF::linkedOnOrAfterOverrideValue):
+        (WTF::setLinkedOnOrAfterOverride):
+        (WTF::linkedOnOrAfterOverride):
+        * wtf/cocoa/RuntimeApplicationChecksCocoa.h:
+        Add an explicit optional bit for "this application should pretend to be
+        linked on or {after, before} everything" instead of just overriding the
+        SDK version. This is a prerequisite for getting rid of applicationSDKVersion(),
+        which will happen in a future patch.
+
+        This is in WTF because linkedOnOrAfter() is going to move here in a
+        future patch as well.
+
 2022-01-06  Stephan Szabo  <stephan.szabo@sony.com>
 
         [PlayStation] Fix build break after r287698

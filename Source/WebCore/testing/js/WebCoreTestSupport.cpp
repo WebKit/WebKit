@@ -152,6 +152,7 @@ void setLinkedOnOrAfterEverythingForTesting()
 {
 #if PLATFORM(COCOA)
     setApplicationSDKVersion(std::numeric_limits<uint32_t>::max());
+    setLinkedOnOrAfterOverride(LinkedOnOrAfterOverride::AfterEverything);
 #endif
 }
 

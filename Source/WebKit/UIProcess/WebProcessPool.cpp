@@ -226,6 +226,15 @@ WebProcessPool::WebProcessPool(API::ProcessPoolConfiguration& configuration)
         Process::setIdentifier(WebCore::ProcessIdentifier::generate());
 #if PLATFORM(COCOA)
         determineITPState();
+
+        // This can be removed once Safari calls _setLinkedOnOrAfterEverything everywhere that WebKit deploys.
+#if PLATFORM(IOS_FAMILY)
+        bool isSafari = WebCore::IOSApplication::isMobileSafari();
+#elif PLATFORM(MAC)
+        bool isSafari = WebCore::MacApplication::isSafari();
+#endif
+        if (isSafari)
+            setLinkedOnOrAfterOverride(LinkedOnOrAfterOverride::AfterEverything);
 #endif
     });
 

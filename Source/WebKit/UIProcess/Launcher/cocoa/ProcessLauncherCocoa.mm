@@ -231,6 +231,9 @@ void ProcessLauncher::launchProcess()
         xpc_dictionary_set_fd(bootstrapMessage.get(), "stdout", STDOUT_FILENO);
         xpc_dictionary_set_fd(bootstrapMessage.get(), "stderr", STDERR_FILENO);
     }
+    
+    if (auto linkedOnOrAfterOverrideValue = linkedOnOrAfterOverride())
+        xpc_dictionary_set_bool(bootstrapMessage.get(), "client-linked-on-or-after-override", *linkedOnOrAfterOverrideValue == LinkedOnOrAfterOverride::AfterEverything);
 
     auto extraInitializationData = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
 

@@ -48,4 +48,20 @@ uint32_t applicationSDKVersion()
     return dyld_get_program_sdk_version();
 }
 
+static std::optional<LinkedOnOrAfterOverride>& linkedOnOrAfterOverrideValue()
+{
+    static NeverDestroyed<std::optional<LinkedOnOrAfterOverride>> linkedOnOrAfter;
+    return linkedOnOrAfter;
+}
+
+void setLinkedOnOrAfterOverride(std::optional<LinkedOnOrAfterOverride> linkedOnOrAfter)
+{
+    linkedOnOrAfterOverrideValue() = linkedOnOrAfter;
+}
+
+std::optional<LinkedOnOrAfterOverride> linkedOnOrAfterOverride()
+{
+    return linkedOnOrAfterOverrideValue();
+}
+
 }

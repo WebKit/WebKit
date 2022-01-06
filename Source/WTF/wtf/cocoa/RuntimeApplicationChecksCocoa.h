@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <optional>
 #include <wtf/Forward.h>
 
 // This contains the values with which to compare the return value of applicationSDKVersion().
@@ -37,7 +38,17 @@ namespace WTF {
 WTF_EXPORT_PRIVATE void setApplicationSDKVersion(uint32_t);
 WTF_EXPORT_PRIVATE uint32_t applicationSDKVersion();
 
+enum class LinkedOnOrAfterOverride : uint8_t {
+    BeforeEverything,
+    AfterEverything
+};
+WTF_EXPORT_PRIVATE void setLinkedOnOrAfterOverride(std::optional<LinkedOnOrAfterOverride>);
+WTF_EXPORT_PRIVATE std::optional<LinkedOnOrAfterOverride> linkedOnOrAfterOverride();
+
 }
 
 using WTF::setApplicationSDKVersion;
 using WTF::applicationSDKVersion;
+using WTF::LinkedOnOrAfterOverride;
+using WTF::setLinkedOnOrAfterOverride;
+using WTF::linkedOnOrAfterOverride;
