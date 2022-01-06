@@ -1,3 +1,46 @@
+2021-12-16  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkitbugspy] Initial library commit
+        https://bugs.webkit.org/show_bug.cgi?id=234400
+        <rdar://problem/86585683>
+
+        Reviewed by Dewei Zhu.
+
+        * Scripts/libraries/webkitbugspy/MANIFEST.in: Added.
+        * Scripts/libraries/webkitbugspy/README.md: Added.
+        * Scripts/libraries/webkitbugspy/setup.py: Added.
+        * Scripts/libraries/webkitbugspy/webkitbugspy/__init__.py: Added.
+        * Scripts/libraries/webkitbugspy/webkitbugspy/bugzilla.py: Added.
+        (Tracker): Bugzilla implementation of generic isssue tracker.
+        * Scripts/libraries/webkitbugspy/webkitbugspy/github.py: Added.
+        (Tracker): GitHub implementation of generic isssue tracker.
+        * Scripts/libraries/webkitbugspy/webkitbugspy/issue.py: Added.
+        (Issue): Dynamically fetched generic Issue object referencing parent Tracker.
+        (Issue.Comment): Issue comment including author and timestamp.
+        * Scripts/libraries/webkitbugspy/webkitbugspy/mocks/__init__.py: Added.
+        * Scripts/libraries/webkitbugspy/webkitbugspy/mocks/base.py: Added.
+        (Base): Base class for mocking http based issue trackers.
+        * Scripts/libraries/webkitbugspy/webkitbugspy/mocks/bugzilla.py: Added.
+        (Bugzilla): Partial mock of Bugzilla webserver.
+        * Scripts/libraries/webkitbugspy/webkitbugspy/mocks/data.py: Added.
+        * Scripts/libraries/webkitbugspy/webkitbugspy/mocks/github.py: Added.
+        (GitHub): Partial mock of GitHub webserver.
+        * Scripts/libraries/webkitbugspy/webkitbugspy/tests/__init__.py: Added.
+        * Scripts/libraries/webkitbugspy/webkitbugspy/tests/bugzilla_unittest.py: Added.
+        (TestBugzilla):
+        * Scripts/libraries/webkitbugspy/webkitbugspy/tests/github_unittest.py: Added.
+        (TestGitHub):
+        * Scripts/libraries/webkitbugspy/webkitbugspy/tests/user_unittest.py: Added.
+        (TestUser):
+        * Scripts/libraries/webkitbugspy/webkitbugspy/tracker.py: Added.
+        (Tracker): Generic base of all issue trackers.
+        * Scripts/libraries/webkitbugspy/webkitbugspy/user.py: Added.
+        (User): User object tied to specific tracker.
+        (User.Encoder): User JSON encoder.
+        (User.Mapping): Mapping of user alias to User object.
+        * Scripts/webkitpy/test/main.py:
+        (main): Add webkitbugspy to subdirectories to be tested.
+
 2022-01-05  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Modal container observer should detect and suppress elements that prevent user interaction
