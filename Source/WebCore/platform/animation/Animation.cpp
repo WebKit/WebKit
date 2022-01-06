@@ -94,35 +94,6 @@ Animation::Animation(const Animation& o)
 {
 }
 
-Animation& Animation::operator=(const Animation& o)
-{
-    m_name = o.m_name;
-    m_iterationCount = o.m_iterationCount;
-    m_delay = o.m_delay;
-    m_duration = o.m_duration;
-    m_timingFunction = o.m_timingFunction;
-    m_nameStyleScopeOrdinal = o.m_nameStyleScopeOrdinal;
-    m_property = o.m_property;
-    m_direction = o.m_direction;
-    m_fillMode = o.m_fillMode;
-    m_playState = o.m_playState;
-    m_compositeOperation = o.m_compositeOperation;
-
-    m_delaySet = o.m_delaySet;
-    m_directionSet = o.m_directionSet;
-    m_durationSet = o.m_durationSet;
-    m_fillModeSet = o.m_fillModeSet;
-    m_iterationCountSet = o.m_iterationCountSet;
-    m_nameSet = o.m_nameSet;
-    m_playStateSet = o.m_playStateSet;
-    m_propertySet = o.m_propertySet;
-    m_timingFunctionSet = o.m_timingFunctionSet;
-    m_compositeOperationSet = o.m_compositeOperationSet;
-    m_isNone = o.m_isNone;
-
-    return *this;
-}
-
 Animation::~Animation() = default;
 
 bool Animation::animationsMatch(const Animation& other, bool matchProperties) const

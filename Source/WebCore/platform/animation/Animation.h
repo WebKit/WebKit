@@ -177,8 +177,6 @@ public:
     bool isPropertyFilled() const { return m_propertyFilled; }
     bool isTimingFunctionFilled() const { return m_timingFunctionFilled; }
 
-    Animation& operator=(const Animation&);
-
     // return true if all members of this class match (excluding m_next)
     bool animationsMatch(const Animation&, bool matchProperties = true) const;
 
