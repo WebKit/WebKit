@@ -1,3 +1,14 @@
+2022-01-06  Youenn Fablet  <youenn@apple.com>
+
+        Microphone device filtering heuristic is too harsh
+        https://bugs.webkit.org/show_bug.cgi?id=234596
+        <rdar://problem/86803287>
+
+        Reviewed by Eric Carlson.
+
+        * UIProcess/WebPageProxy.cpp:
+        Disable filtering if audio capture happens in GPUProcess.
+
 2022-01-06  Tim Horton  <timothy_horton@apple.com>
 
         Always assume Safari is "linked-on-or-after" any SDK version

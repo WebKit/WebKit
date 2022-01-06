@@ -111,28 +111,30 @@ static bool deviceHasOutputStreams(AudioObjectID deviceID)
     return deviceHasStreams(deviceID, address);
 }
 
-static bool isValidCaptureDevice(const CoreAudioCaptureDevice& device)
+static bool isValidCaptureDevice(const CoreAudioCaptureDevice& device, bool filterTapEnabledDevices)
 {
-    // Ignore output devices that have input only for echo cancellation.
-    AudioObjectPropertyAddress address = {
-        kAudioDevicePropertyTapEnabled,
-        kAudioDevicePropertyScopeOutput,
+    if (filterTapEnabledDevices) {
+        // Ignore output devices that have input only for echo cancellation.
+        AudioObjectPropertyAddress address = {
+            kAudioDevicePropertyTapEnabled,
+            kAudioDevicePropertyScopeOutput,
 #if HAVE(AUDIO_OBJECT_PROPERTY_ELEMENT_MAIN)
-        kAudioObjectPropertyElementMain
+            kAudioObjectPropertyElementMain
 #else
-        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-        kAudioObjectPropertyElementMaster
-        ALLOW_DEPRECATED_DECLARATIONS_END
+            ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+            kAudioObjectPropertyElementMaster
+            ALLOW_DEPRECATED_DECLARATIONS_END
 #endif
-    };
-    if (AudioObjectHasProperty(device.deviceID(), &address)) {
-        RELEASE_LOG(WebRTC, "Ignoring output device that have input only for echo cancellation");
-        return false;
+        };
+        if (AudioObjectHasProperty(device.deviceID(), &address)) {
+            RELEASE_LOG(WebRTC, "Ignoring output device that have input only for echo cancellation");
+            return false;
+        }
     }
 
     // Ignore non-aggregable devices.
     UInt32 dataSize = 0;
-    address = {
+    AudioObjectPropertyAddress address = {
         kAudioObjectPropertyCreator,
         kAudioObjectPropertyScopeGlobal,
 #if HAVE(AUDIO_OBJECT_PROPERTY_ELEMENT_MAIN)
@@ -266,7 +268,7 @@ static inline bool hasDevice(const Vector<CoreAudioCaptureDevice>& devices, uint
     });
 }
 
-static inline Vector<CoreAudioCaptureDevice> computeAudioDeviceList()
+static inline Vector<CoreAudioCaptureDevice> computeAudioDeviceList(bool filterTapEnabledDevices)
 {
     AudioObjectPropertyAddress address = {
         kAudioHardwarePropertyDevices,
@@ -304,7 +306,7 @@ static inline Vector<CoreAudioCaptureDevice> computeAudioDeviceList()
             continue;
 
         auto microphoneDevice = CoreAudioCaptureDevice::create(deviceID, CaptureDevice::DeviceType::Microphone, { });
-        if (microphoneDevice && isValidCaptureDevice(microphoneDevice.value()))
+        if (microphoneDevice && isValidCaptureDevice(microphoneDevice.value(), filterTapEnabledDevices))
             audioDevices.append(WTFMove(microphoneDevice.value()));
     }
 
@@ -346,7 +348,7 @@ void CoreAudioCaptureDeviceManager::refreshAudioCaptureDevices(NotifyIfDevicesHa
 {
     ASSERT(isMainThread());
 
-    auto audioDevices = computeAudioDeviceList();
+    auto audioDevices = computeAudioDeviceList(m_filterTapEnabledDevices);
     bool haveDeviceChanges = audioDevices.size() != m_coreAudioCaptureDevices.size();
     if (!haveDeviceChanges) {
         for (size_t cptr = 0; cptr < audioDevices.size(); ++cptr) {
