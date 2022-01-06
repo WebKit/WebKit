@@ -68,10 +68,12 @@ private:
     HTMLFrameOwnerElement* frameOwnerForControls() const;
 
     std::pair<Vector<WeakPtr<HTMLElement>>, Vector<String>> collectClickableElements();
+    void hideUserInteractionBlockingElementIfNeeded();
 
     WeakHashSet<Element> m_elementsToIgnoreWhenSearching;
     std::pair<WeakPtr<Element>, WeakPtr<HTMLFrameOwnerElement>> m_containerAndFrameOwnerForControls;
     WeakHashMap<HTMLFrameOwnerElement, WeakPtr<Element>> m_frameOwnersAndContainersToSearchAgain;
+    WeakPtr<Element> m_userInteractionBlockingElement;
     AtomString m_overrideSearchTermForTesting;
     Timer m_collectClickableElementsTimer;
     bool m_collectingClickableElements { false };
@@ -85,7 +87,10 @@ inline void ModalContainerObserver::overrideSearchTermForTesting(const String& s
 
 inline bool ModalContainerObserver::shouldHide(const Element& element) const
 {
-    return container() == &element && !m_collectingClickableElements;
+    if (m_collectingClickableElements)
+        return false;
+
+    return m_userInteractionBlockingElement == &element || container() == &element;
 }
 
 } // namespace WebCore

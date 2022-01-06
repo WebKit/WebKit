@@ -256,6 +256,18 @@ TEST(ModalContainerObservation, DetectSearchTermInBoldTag)
     EXPECT_EQ([webView lastModalContainerInfo].availableTypes, _WKModalContainerControlTypePositive | _WKModalContainerControlTypeNegative);
 }
 
+TEST(ModalContainerObservation, HideUserInteractionBlockingElement)
+{
+    auto webView = createModalContainerWebView();
+    [webView loadBundlePage:@"modal-container-with-overlay" andDecidePolicy:_WKModalContainerDecisionHideAndIgnore];
+
+    EXPECT_FALSE([[webView contentsAsString] containsString:@"Hello world"]);
+    EXPECT_EQ([webView lastModalContainerInfo].availableTypes, _WKModalContainerControlTypePositive);
+
+    NSString *hitTestedText = [webView stringByEvaluatingJavaScript:@"document.elementFromPoint(50, 50).textContent"];
+    EXPECT_TRUE([hitTestedText containsString:@"Lorem"]);
+}
+
 TEST(ModalContainerObservation, IgnoreFixedDocumentElement)
 {
     auto webView = createModalContainerWebView();

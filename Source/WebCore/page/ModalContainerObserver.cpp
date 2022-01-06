@@ -32,6 +32,7 @@
 #include "Document.h"
 #include "DocumentLoader.h"
 #include "ElementIterator.h"
+#include "EventHandler.h"
 #include "EventLoop.h"
 #include "EventNames.h"
 #include "Frame.h"
@@ -42,6 +43,7 @@
 #include "HTMLElement.h"
 #include "HTMLImageElement.h"
 #include "HTMLInputElement.h"
+#include "HitTestResult.h"
 #include "ModalContainerTypes.h"
 #include "Page.h"
 #include "RenderDescendantIterator.h"
@@ -246,10 +248,23 @@ void ModalContainerObserver::setContainer(Element& newContainer, HTMLFrameOwnerE
     if (container())
         container()->invalidateStyle();
 
+    if (m_userInteractionBlockingElement)
+        m_userInteractionBlockingElement->invalidateStyle();
+
+    m_userInteractionBlockingElement = { };
     m_containerAndFrameOwnerForControls = { { newContainer }, { frameOwner } };
 
     newContainer.invalidateStyle();
     scheduleClickableElementCollection();
+
+    newContainer.document().eventLoop().queueTask(TaskSource::InternalAsyncTask, [weakContainer = WeakPtr { newContainer }]() mutable {
+        RefPtr container = weakContainer.get();
+        if (!container)
+            return;
+
+        if (auto observer = container->document().modalContainerObserverIfExists(); observer && container == observer->container())
+            observer->hideUserInteractionBlockingElementIfNeeded();
+    });
 }
 
 Element* ModalContainerObserver::container() const
@@ -532,11 +547,67 @@ void ModalContainerObserver::collectClickableElementsTimerFired()
     });
 }
 
+void ModalContainerObserver::hideUserInteractionBlockingElementIfNeeded()
+{
+    if (m_userInteractionBlockingElement) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    RefPtr container = this->container();
+    if (!container) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    RefPtr view = container->document().view();
+    if (!view)
+        return;
+
+    auto fixedPositionRect = view->rectForFixedPositionLayout();
+    if (fixedPositionRect.isEmpty())
+        return;
+
+    FixedVector locationsToHitTest {
+        fixedPositionRect.center(),
+        fixedPositionRect.minXMinYCorner() + LayoutSize { 1, 1 },
+        fixedPositionRect.maxXMinYCorner() + LayoutSize { -1, 1 },
+        fixedPositionRect.minXMaxYCorner() + LayoutSize { 1, -1 },
+        fixedPositionRect.maxXMaxYCorner() + LayoutSize { -1, -1 }
+    };
+
+    constexpr OptionSet hitTestTypes { HitTestRequest::Type::ReadOnly, HitTestRequest::Type::DisallowUserAgentShadowContent };
+
+    RefPtr<Element> foundElement;
+    for (auto& location : locationsToHitTest) {
+        auto hitTestResult = view->frame().eventHandler().hitTestResultAtPoint(location, hitTestTypes);
+        auto target = hitTestResult.targetElement();
+        if (!target || is<HTMLBodyElement>(*target) || target->isDocumentNode())
+            return;
+
+        if (foundElement && foundElement != target)
+            return;
+
+        auto renderer = target->renderer();
+        if (!renderer || renderer->firstChild() || !renderer->style().hasViewportConstrainedPosition() || renderer->isDocumentElementRenderer())
+            return;
+
+        if (!foundElement)
+            foundElement = WTFMove(target);
+    }
+
+    m_userInteractionBlockingElement = foundElement.get();
+    foundElement->invalidateStyle();
+}
+
 void ModalContainerObserver::revealModalContainer()
 {
     auto [container, frameOwner] = std::exchange(m_containerAndFrameOwnerForControls, { });
     if (container)
         container->invalidateStyle();
+
+    if (auto element = std::exchange(m_userInteractionBlockingElement, { }))
+        element->invalidateStyle();
 }
 
 std::pair<Vector<WeakPtr<HTMLElement>>, Vector<String>> ModalContainerObserver::collectClickableElements()
