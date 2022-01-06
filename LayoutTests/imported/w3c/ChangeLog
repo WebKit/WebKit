@@ -1,3 +1,24 @@
+2022-01-06  Martin Robinson  <mrobinson@webkit.org>
+
+        REGRESSION (r287323): [iOS] 9 imported/w3c/web-platform-tests/css/css-transforms tests consistently failing
+        https://bugs.webkit.org/show_bug.cgi?id=234908
+        <rdar://problem/87172770>
+
+        Reviewed by Simon Fraser.
+
+        Adjust WPT trasnform reference test fuzziness for iOS. In some cases the reference
+        matches more closely and in other cases slightly less closely.
+
+        * web-platform-tests/css/css-transforms/2d-rotate-001.html:
+        * web-platform-tests/css/css-transforms/css-skew-002.html:
+        * web-platform-tests/css/css-transforms/rotate_45deg.html:
+        * web-platform-tests/css/css-transforms/rotate_x_45deg.html:
+        * web-platform-tests/css/css-transforms/rotate_y_45deg.html:
+        * web-platform-tests/css/css-transforms/skew-test1.html:
+        * web-platform-tests/css/css-transforms/transform-percent-008.html:
+        * web-platform-tests/css/css-transforms/ttwf-transform-skewx-001.html:
+        * web-platform-tests/css/css-transforms/ttwf-transform-skewy-001.html:
+
 2022-01-05  Antoine Quint  <graouts@webkit.org>
 
         computed style for transition longhand properties is wrong
