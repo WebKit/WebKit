@@ -1580,6 +1580,7 @@
       "emails" : [
          "commit-queue@webkit.org"
       ],
+      "github" : "webkit-commit-queue",
       "name" : "Commit Queue",
       "status" : "bot"
    },
@@ -2192,6 +2193,14 @@
       "nicks" : [
          "dbatyai"
       ]
+   },
+   {
+      "emails" : [
+         "ews@webkit.org"
+      ],
+      "github" : "webkit-early-warning-system",
+      "name" : "EWS",
+      "status" : "bot"
    },
    {
       "emails" : [

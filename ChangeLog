@@ -1,3 +1,13 @@
+2022-01-05  Jonathan Bedard  <JonWBedard@gmail.com>
+
+        [EWS] Add  Commit Queue and EWS GitHub usernames
+        https://bugs.webkit.org/show_bug.cgi?id=234905
+        <rdar://problem/87169628>
+
+        Reviewed by Ryan Haddad.
+
+        * metadata/contributors.json:
+
 2022-01-04  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         clang-format: Change SpaceAfterTemplateKeyword to false
