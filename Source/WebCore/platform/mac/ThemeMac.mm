@@ -68,15 +68,25 @@ static BOOL themeWindowHasKeyAppearance;
 }
 @end
 
-@implementation WebCoreThemeView
+@implementation WebCoreThemeView {
+    RetainPtr<WebCoreThemeWindow> _window;
+}
+
+- (instancetype)init
+{
+    if (!(self = [super init]))
+        return nil;
+
+    // Using defer:YES prevents us from wasting any window server resources for this window, since we're not actually
+    // going to draw into it. The other arguments match what you get when calling -[NSWindow init].
+    _window = adoptNS([[WebCoreThemeWindow alloc] initWithContentRect:NSMakeRect(100, 100, 100, 100) styleMask:NSWindowStyleMaskBorderless backing:NSBackingStoreBuffered defer:YES]);
+
+    return self;
+}
 
 - (NSWindow *)window
 {
-    // Using defer:YES prevents us from wasting any window server resources for this window, since we're not actually
-    // going to draw into it. The other arguments match what you get when calling -[NSWindow init].
-    static WebCoreThemeWindow *window = [[WebCoreThemeWindow alloc] initWithContentRect:NSMakeRect(100, 100, 100, 100)
-        styleMask:NSWindowStyleMaskBorderless backing:NSBackingStoreBuffered defer:YES];
-    return window;
+    return _window.get();
 }
 
 - (BOOL)isFlipped
