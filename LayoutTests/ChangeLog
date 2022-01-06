@@ -1,3 +1,17 @@
+2022-01-06  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        REGRESSION(r281389): Text wraps unnecessarily within intrinsically-sized elements when using certain fonts and the inner HTML of the element contains a new line that is not preceded by a space
+        https://bugs.webkit.org/show_bug.cgi?id=232939
+        <rdar://problem/85254819>
+
+        Reviewed by Alan Bujtas.
+
+        The div:before { position: absolute; } is necessary to trigger this bug; I assume it's necessary to
+        opt-out of IFC.
+
+        * fast/text/newline-width-expected.html: Added.
+        * fast/text/newline-width.html: Added.
+
 2022-01-06  Tim Nguyen  <ntim@apple.com>
 
         Unprefix -webkit-print-color-adjust CSS property

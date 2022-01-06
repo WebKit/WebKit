@@ -313,13 +313,8 @@ inline void WidthIterator::advanceInternal(TextIterator& textIterator, GlyphBuff
         else
             widthOfCurrentFontRange += width;
 
-        if (FontCascade::treatAsSpace(character)) {
-            charactersTreatedAsSpace.constructAndAppend(
-                currentCharacterIndex,
-                character == ' ',
-                previousWidth,
-                width);
-        }
+        if (FontCascade::treatAsSpace(character))
+            charactersTreatedAsSpace.constructAndAppend(currentCharacterIndex, character == space, previousWidth, character == tabCharacter ? width : font.spaceWidth());
 
         if (m_accountForGlyphBounds) {
             bounds = font.boundsForGlyph(glyph);
