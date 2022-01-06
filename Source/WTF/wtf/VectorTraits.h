@@ -56,7 +56,7 @@ namespace WTF {
     };
 
     template<typename T>
-    struct VectorTraits : VectorTraitsBase<std::is_pod<T>::value, T> { };
+    struct VectorTraits : VectorTraitsBase<std::is_standard_layout_v<T> && std::is_trivial_v<T>, T> { };
 
     struct SimpleClassVectorTraits : VectorTraitsBase<false, void>
     {

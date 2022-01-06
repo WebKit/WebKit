@@ -315,7 +315,7 @@ CGContextRef IOSurface::ensurePlatformContext(const HostWindow* hostWindow)
         // but for an IOSurface-to-IOSurface copy, there should be no conversion.
         bitsPerComponent = 16;
         bitsPerPixel = 64;
-        bitmapInfo = kCGImageAlphaPremultipliedLast | kCGBitmapByteOrder16Host | kCGBitmapFloatComponents;
+        bitmapInfo = static_cast<CGBitmapInfo>(kCGImageAlphaPremultipliedLast) | static_cast<CGBitmapInfo>(kCGBitmapByteOrder16Host) | static_cast<CGBitmapInfo>(kCGBitmapFloatComponents);
         break;
 #endif
     case Format::YUV422:

@@ -1076,13 +1076,13 @@ TEST_F(WTF_URLParser, ParserDifferences)
     checkURL("a://A", {"a", "", "", "A", 0, "", "", "", "a://A"});
     checkURL("a://A:2", {"a", "", "", "A", 2, "", "", "", "a://A:2"});
     checkURL("a://A:2/", {"a", "", "", "A", 2, "/", "", "", "a://A:2/"});
-    checkURLDifferences(u8"asd://ß",
+    checkURLDifferences(reinterpret_cast<const char*>(u8"asd://ß"),
         {"asd", "", "", "%C3%83%C2%9F", 0, "", "", "", "asd://%C3%83%C2%9F"},
         {"", "", "", "", 0, "", "", "", "about:blank"}, TestTabs::No);
-    checkURLDifferences(u8"asd://ß:4",
+    checkURLDifferences(reinterpret_cast<const char*>(u8"asd://ß:4"),
         {"asd", "", "", "%C3%83%C2%9F", 4, "", "", "", "asd://%C3%83%C2%9F:4"},
         {"", "", "", "", 0, "", "", "", "about:blank"}, TestTabs::No);
-    checkURLDifferences(u8"asd://ß:4/",
+    checkURLDifferences(reinterpret_cast<const char*>(u8"asd://ß:4/"),
         {"asd", "", "", "%C3%83%C2%9F", 4, "/", "", "", "asd://%C3%83%C2%9F:4/"},
         {"", "", "", "", 0, "", "", "", "about:blank"}, TestTabs::No);
     checkURLDifferences("a://[A::b]:4",

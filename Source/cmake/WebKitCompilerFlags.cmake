@@ -383,7 +383,7 @@ int main() {
         #include <filesystem>
         int main() { std::filesystem::path p1(\"\"); std::filesystem::status(p1); }
     ")
-    set(CMAKE_REQUIRED_FLAGS "--std=c++17")
+    set(CMAKE_REQUIRED_FLAGS "--std=c++2a")
     check_cxx_source_compiles("${FILESYSTEM_TEST_SOURCE}" STD_FILESYSTEM_IS_AVAILABLE)
     if (NOT STD_FILESYSTEM_IS_AVAILABLE)
         set(EXPERIMENTAL_FILESYSTEM_TEST_SOURCE "
