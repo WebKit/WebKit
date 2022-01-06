@@ -86,6 +86,30 @@ void WorkerMessagePortChannelProvider::postMessageToRemote(MessageWithMessagePor
     });
 }
 
+class MainThreadCompletionHandler {
+public:
+    explicit MainThreadCompletionHandler(CompletionHandler<void()>&& completionHandler)
+        : m_completionHandler(WTFMove(completionHandler))
+    {
+    }
+    MainThreadCompletionHandler(MainThreadCompletionHandler&&) = default;
+    MainThreadCompletionHandler& operator=(MainThreadCompletionHandler&&) = default;
+
+    ~MainThreadCompletionHandler()
+    {
+        if (m_completionHandler)
+            complete();
+    }
+
+    void complete()
+    {
+        callOnMainThread(WTFMove(m_completionHandler));
+    }
+
+private:
+    CompletionHandler<void()> m_completionHandler;
+};
+
 void WorkerMessagePortChannelProvider::takeAllMessagesForPort(const MessagePortIdentifier& identifier, CompletionHandler<void(Vector<MessageWithMessagePorts>&&, Function<void()>&&)>&& callback)
 {
     uint64_t callbackIdentifier = ++m_lastCallbackIdentifier;
@@ -93,9 +117,9 @@ void WorkerMessagePortChannelProvider::takeAllMessagesForPort(const MessagePortI
 
     callOnMainThread([this, workerThread = RefPtr { m_scope.workerOrWorkletThread() }, callbackIdentifier, identifier]() mutable {
         MessagePortChannelProvider::singleton().takeAllMessagesForPort(identifier, [this, workerThread = WTFMove(workerThread), callbackIdentifier](Vector<MessageWithMessagePorts>&& messages, Function<void()>&& completionHandler) {
-            workerThread->runLoop().postTaskForMode([this, callbackIdentifier, messages = WTFMove(messages), completionHandler = WTFMove(completionHandler)](auto&) mutable {
+            workerThread->runLoop().postTaskForMode([this, callbackIdentifier, messages = WTFMove(messages), completionHandler = MainThreadCompletionHandler(WTFMove(completionHandler))](auto&) mutable {
                 m_takeAllMessagesCallbacks.take(callbackIdentifier)(WTFMove(messages), [completionHandler = WTFMove(completionHandler)]() mutable {
-                    callOnMainThread(WTFMove(completionHandler));
+                    completionHandler.complete();
                 });
             }, WorkerRunLoop::defaultMode());
         });
