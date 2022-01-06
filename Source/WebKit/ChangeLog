@@ -1,5 +1,34 @@
 2022-01-06  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r287648. rdar://problem/86870109
+
+    [iOS][WP] Unable to consume mach extension
+    https://bugs.webkit.org/show_bug.cgi?id=234889
+    <rdar://86870109>
+    
+    Reviewed by Brent Fulgham.
+    
+    The WebContent process on iOS is unable to consume mach extensions to the frontboard service.
+    
+    * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb.in:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@287648 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-01-05  Per Arne Vollan  <pvollan@apple.com>
+
+            [iOS][WP] Unable to consume mach extension
+            https://bugs.webkit.org/show_bug.cgi?id=234889
+            <rdar://86870109>
+
+            Reviewed by Brent Fulgham.
+
+            The WebContent process on iOS is unable to consume mach extensions to the frontboard service.
+
+            * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb.in:
+
+2022-01-06  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r287616. rdar://problem/85990387
 
     [macCatalyst][GPUP][NetworkProcess] Block WindowServer connections
