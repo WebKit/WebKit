@@ -1,5 +1,20 @@
 2022-01-05  Per Arne Vollan  <pvollan@apple.com>
 
+        REGRESSION(287556): Domain name not shown in Activity Monitor
+        https://bugs.webkit.org/show_bug.cgi?id=234903
+
+        Reviewed by Brent Fulgham.
+
+        After r287556, domain names are no longer shown in Activity Monitor. The Networking process is responsible for setting
+        process information on behalf of the WebContent process. Before r287556, this worked because a connection to the associated
+        mach service was established before entering the sandbox. After r287556 we explicitly need to allow access to the service,
+        since the sandbox has been applied when process information is set. In practice, access to the service was already allowed
+        before, since an open connection to the service was established before entering the sandbox.
+
+        * NetworkProcess/mac/com.apple.WebKit.NetworkProcess.sb.in:
+
+2022-01-05  Per Arne Vollan  <pvollan@apple.com>
+
         [iOS][WP] Allow syscall used on process launch
         https://bugs.webkit.org/show_bug.cgi?id=234898
         <rdar://86914492>
