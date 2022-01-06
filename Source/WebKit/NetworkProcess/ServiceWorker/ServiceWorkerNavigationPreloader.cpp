@@ -175,10 +175,10 @@ void ServiceWorkerNavigationPreloader::didReceiveResponse(ResourceResponse&& res
         callback();
 }
 
-void ServiceWorkerNavigationPreloader::didReceiveBuffer(Ref<FragmentedSharedBuffer>&& buffer, int reportedEncodedDataLength)
+void ServiceWorkerNavigationPreloader::didReceiveBuffer(const FragmentedSharedBuffer& buffer, int reportedEncodedDataLength)
 {
     if (m_bodyCallback)
-        m_bodyCallback(buffer->makeContiguous(), reportedEncodedDataLength);
+        m_bodyCallback(RefPtr { &buffer }, reportedEncodedDataLength);
 }
 
 void ServiceWorkerNavigationPreloader::didFinishLoading(const NetworkLoadMetrics& networkLoadMetrics)

@@ -41,6 +41,7 @@
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
 #include "ScriptExecutionContext.h"
+#include "SharedBuffer.h"
 #include "TextResourceDecoder.h"
 #include "ThreadableBlobRegistry.h"
 #include "ThreadableLoader.h"
@@ -168,16 +169,15 @@ void FileReaderLoader::didReceiveResponse(ResourceLoaderIdentifier, const Resour
         m_client->didStartLoading();
 }
 
-void FileReaderLoader::didReceiveData(const uint8_t* data, int dataLength)
+void FileReaderLoader::didReceiveData(const SharedBuffer& buffer)
 {
-    ASSERT(data);
-    ASSERT(dataLength > 0);
+    ASSERT(buffer.size());
 
     // Bail out if we already encountered an error.
     if (m_errorCode)
         return;
 
-    int length = dataLength;
+    int length = buffer.size();
     unsigned remainingBufferSpace = m_totalBytes - m_bytesLoaded;
     if (length > static_cast<long long>(remainingBufferSpace)) {
         // If the buffer has hit maximum size, it can't be grown any more.
@@ -186,7 +186,7 @@ void FileReaderLoader::didReceiveData(const uint8_t* data, int dataLength)
             return;
         }
         if (m_variableLength) {
-            unsigned newLength = m_totalBytes + static_cast<unsigned>(dataLength);
+            unsigned newLength = m_totalBytes + buffer.size();
             if (newLength < m_totalBytes) {
                 failed(NotReadableError);
                 return;
@@ -211,7 +211,7 @@ void FileReaderLoader::didReceiveData(const uint8_t* data, int dataLength)
     if (length <= 0)
         return;
 
-    memcpy(static_cast<char*>(m_rawData->data()) + m_bytesLoaded, data, length);
+    memcpy(static_cast<char*>(m_rawData->data()) + m_bytesLoaded, buffer.data(), length);
     m_bytesLoaded += length;
 
     m_isRawDataConverted = false;

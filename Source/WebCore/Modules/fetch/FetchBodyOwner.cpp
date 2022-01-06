@@ -298,11 +298,10 @@ void FetchBodyOwner::blobLoadingFailed()
     finishBlobLoading();
 }
 
-void FetchBodyOwner::blobChunk(const uint8_t* data, size_t size)
+void FetchBodyOwner::blobChunk(const SharedBuffer& buffer)
 {
-    ASSERT(data);
     ASSERT(m_readableStreamSource);
-    if (!m_readableStreamSource->enqueue(ArrayBuffer::tryCreate(data, size)))
+    if (!m_readableStreamSource->enqueue(buffer.tryCreateArrayBuffer()))
         stop();
 }
 

@@ -119,12 +119,12 @@ CurlMultipartHandle::CurlMultipartHandle(CurlMultipartHandleClient& client, cons
 
 }
 
-void CurlMultipartHandle::didReceiveData(const FragmentedSharedBuffer& buffer)
+void CurlMultipartHandle::didReceiveData(const SharedBuffer& buffer)
 {
     if (m_state == State::End)
         return; // The handler is closed down so ignore everything.
 
-    m_buffer.append(buffer.makeContiguous()->data(), buffer.size());
+    m_buffer.append(buffer.data(), buffer.size());
 
     while (processContent()) { }
 }

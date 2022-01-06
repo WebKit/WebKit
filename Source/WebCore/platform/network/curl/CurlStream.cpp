@@ -9,7 +9,7 @@
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
  * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
@@ -27,6 +27,7 @@
 #include "CurlStream.h"
 
 #include "CurlStreamScheduler.h"
+#include "SharedBuffer.h"
 #include "SocketStreamError.h"
 
 #if USE(CURL)
@@ -129,10 +130,10 @@ void CurlStream::tryToReceive()
     if (!m_curlHandle)
         return;
 
-    auto receiveBuffer = makeUniqueArray<uint8_t>(kReceiveBufferSize);
+    Vector<uint8_t> receiveBuffer(kReceiveBufferSize);
     size_t bytesReceived = 0;
 
-    auto errorCode = m_curlHandle->receive(receiveBuffer.get(), kReceiveBufferSize, bytesReceived);
+    auto errorCode = m_curlHandle->receive(receiveBuffer.data(), kReceiveBufferSize, bytesReceived);
     if (errorCode != CURLE_OK) {
         if (errorCode != CURLE_AGAIN)
             notifyFailure(errorCode);
@@ -143,8 +144,9 @@ void CurlStream::tryToReceive()
     if (!bytesReceived)
         destroyHandle();
 
-    m_scheduler.callClientOnMainThread(m_streamID, [streamID = m_streamID, buffer = WTFMove(receiveBuffer), length = bytesReceived](Client& client) mutable {
-        client.didReceiveData(streamID, buffer.get(), length);
+    receiveBuffer.resize(bytesReceived);
+    m_scheduler.callClientOnMainThread(m_streamID, [streamID = m_streamID, buffer = SharedBuffer::create(WTFMove(receiveBuffer))](Client& client) {
+        client.didReceiveData(streamID, buffer);
     });
 }
 

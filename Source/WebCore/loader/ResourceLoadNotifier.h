@@ -44,6 +44,7 @@ class ResourceError;
 class ResourceLoader;
 class ResourceRequest;
 class ResourceResponse;
+class SharedBuffer;
 
 class ResourceLoadNotifier {
     WTF_MAKE_NONCOPYABLE(ResourceLoadNotifier);
@@ -55,18 +56,18 @@ public:
 
     void willSendRequest(ResourceLoader*, ResourceRequest&, const ResourceResponse& redirectResponse);
     void didReceiveResponse(ResourceLoader*, const ResourceResponse&);
-    void didReceiveData(ResourceLoader*, const uint8_t*, int dataLength, int encodedDataLength);
+    void didReceiveData(ResourceLoader*, const SharedBuffer&, int encodedDataLength);
     void didFinishLoad(ResourceLoader*, const NetworkLoadMetrics&);
     void didFailToLoad(ResourceLoader*, const ResourceError&);
 
     void assignIdentifierToInitialRequest(ResourceLoaderIdentifier, DocumentLoader*, const ResourceRequest&);
     void dispatchWillSendRequest(DocumentLoader*, ResourceLoaderIdentifier, ResourceRequest&, const ResourceResponse& redirectResponse, const CachedResource*);
     void dispatchDidReceiveResponse(DocumentLoader*, ResourceLoaderIdentifier, const ResourceResponse&, ResourceLoader* = nullptr);
-    void dispatchDidReceiveData(DocumentLoader*, ResourceLoaderIdentifier, const uint8_t* data, int dataLength, int encodedDataLength);
+    void dispatchDidReceiveData(DocumentLoader*, ResourceLoaderIdentifier, const SharedBuffer*, int expectedDataLength, int encodedDataLength);
     void dispatchDidFinishLoading(DocumentLoader*, ResourceLoaderIdentifier, const NetworkLoadMetrics&, ResourceLoader*);
     void dispatchDidFailLoading(DocumentLoader*, ResourceLoaderIdentifier, const ResourceError&);
 
-    void sendRemainingDelegateMessages(DocumentLoader*, ResourceLoaderIdentifier, const ResourceRequest&, const ResourceResponse&, const uint8_t* data, int dataLength, int encodedDataLength, const ResourceError&);
+    void sendRemainingDelegateMessages(DocumentLoader*, ResourceLoaderIdentifier, const ResourceRequest&, const ResourceResponse&, const SharedBuffer*, int expectedDataLength, int encodedDataLength, const ResourceError&);
 
     bool isInitialRequestIdentifier(ResourceLoaderIdentifier identifier)
     {

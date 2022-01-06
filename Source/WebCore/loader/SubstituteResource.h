@@ -38,7 +38,7 @@ public:
     const URL& url() const { return m_url; }
     const ResourceResponse& response() const { return m_response; }
     FragmentedSharedBuffer& data() const { return static_reference_cast<FragmentedSharedBuffer>(Ref { *m_data.get() }); }
-    void append(const uint8_t* data, int length) { m_data.append(data, length); }
+    void append(const SharedBuffer& buffer) { m_data.append(buffer); }
     void clear() { m_data.empty(); }
 
     virtual void deliver(ResourceLoader& loader) { loader.deliverResponseAndData(m_response, m_data.copy()); }

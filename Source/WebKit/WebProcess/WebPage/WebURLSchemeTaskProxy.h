@@ -34,6 +34,7 @@ namespace WebCore {
 class ResourceError;
 class ResourceLoader;
 class ResourceResponse;
+class SharedBuffer;
 }
 
 namespace WebKit {
@@ -55,7 +56,7 @@ public:
 
     void didPerformRedirection(WebCore::ResourceResponse&&, WebCore::ResourceRequest&&, CompletionHandler<void(WebCore::ResourceRequest&&)>&&);
     void didReceiveResponse(const WebCore::ResourceResponse&);
-    void didReceiveData(size_t, const uint8_t* data);
+    void didReceiveData(const WebCore::SharedBuffer&);
     void didComplete(const WebCore::ResourceError&);
 
     WebCore::ResourceLoaderIdentifier identifier() const { return m_identifier; }

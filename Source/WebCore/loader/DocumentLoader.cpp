@@ -483,8 +483,8 @@ void DocumentLoader::finishedLoading()
         // If this is an empty document, it will not have actually been created yet. Commit dummy data so that
         // DocumentWriter::begin() gets called and creates the Document.
         if (!m_gotFirstByte)
-            commitData(0, 0);
-        
+            commitData(SharedBuffer::create());
+
         if (!frameLoader())
             return;
         frameLoader()->client().finishedLoading(this);
@@ -1157,8 +1157,8 @@ void DocumentLoader::continueAfterContentPolicy(PolicyAction policy)
     if (!isStopping() && m_substituteData.isValid() && isLoadingMainResource()) {
         auto content = m_substituteData.content();
         if (content && content->size()) {
-            content->forEachSegment([&](auto& segment) {
-                dataReceived(segment.data(), segment.size());
+            content->forEachSegmentAsSharedBuffer([&](auto&& buffer) {
+                dataReceived(buffer);
             });
         }
         if (isLoadingMainResource())
@@ -1171,7 +1171,7 @@ void DocumentLoader::continueAfterContentPolicy(PolicyAction policy)
     }
 }
 
-void DocumentLoader::commitLoad(const uint8_t* data, int length)
+void DocumentLoader::commitLoad(const SharedBuffer& data)
 {
     // Both unloading the old page and parsing the new page may execute JavaScript which destroys the datasource
     // by starting a new load, so retain temporarily.
@@ -1186,7 +1186,7 @@ void DocumentLoader::commitLoad(const uint8_t* data, int length)
     if (ArchiveFactory::isArchiveMIMEType(response().mimeType()))
         return;
 #endif
-    frameLoader->client().committedLoad(this, data, length);
+    frameLoader->client().committedLoad(this, data);
 
     if (isMultipartReplacingLoad())
         frameLoader->client().didReplaceMultipartContent();
@@ -1215,7 +1215,7 @@ static inline bool shouldUseActiveServiceWorkerFromParent(const Document& docume
 }
 #endif
 
-void DocumentLoader::commitData(const uint8_t* bytes, size_t length)
+void DocumentLoader::commitData(const SharedBuffer& data)
 {
     if (!m_gotFirstByte) {
         m_gotFirstByte = true;
@@ -1313,24 +1313,24 @@ void DocumentLoader::commitData(const uint8_t* bytes, size_t length)
 #endif
 
     ASSERT(m_frame->document()->parsing());
-    m_writer.addData(bytes, length);
+    m_writer.addData(data);
 }
 
-void DocumentLoader::dataReceived(CachedResource& resource, const uint8_t* data, int length)
+void DocumentLoader::dataReceived(CachedResource& resource, const SharedBuffer& buffer)
 {
     ASSERT_UNUSED(resource, &resource == m_mainResource);
-    dataReceived(data, length);
+    dataReceived(buffer);
 }
 
-void DocumentLoader::dataReceived(const uint8_t* data, int length)
+void DocumentLoader::dataReceived(const SharedBuffer& buffer)
 {
 #if ENABLE(CONTENT_FILTERING)
-    if (m_contentFilter && !m_contentFilter->continueAfterDataReceived(data, length))
+    if (m_contentFilter && !m_contentFilter->continueAfterDataReceived(buffer.data(), buffer.size()))
         return;
 #endif
 
-    ASSERT(data);
-    ASSERT(length);
+    ASSERT(buffer.data());
+    ASSERT(buffer.size());
     ASSERT(!m_response.isNull());
 
     // There is a bug in CFNetwork where callbacks can be dispatched even when loads are deferred.
@@ -1340,12 +1340,12 @@ void DocumentLoader::dataReceived(const uint8_t* data, int length)
 #endif
 
     if (m_identifierForLoadWithoutResourceLoader)
-        frameLoader()->notifier().dispatchDidReceiveData(this, m_identifierForLoadWithoutResourceLoader, data, length, -1);
+        frameLoader()->notifier().dispatchDidReceiveData(this, m_identifierForLoadWithoutResourceLoader, &buffer, buffer.size(), -1);
 
-    m_applicationCacheHost->mainResourceDataReceived(data, length, -1, false);
+    m_applicationCacheHost->mainResourceDataReceived(buffer, -1, false);
 
     if (!isMultipartReplacingLoad())
-        commitLoad(data, length);
+        commitLoad(buffer);
 }
 
 void DocumentLoader::setupForReplace()
@@ -1614,7 +1614,7 @@ bool DocumentLoader::maybeCreateArchive()
     m_writer.setMIMEType(mainResource.mimeType());
 
     ASSERT(m_frame->document());
-    commitData(m_parsedArchiveData->data(), mainResource.data().size());
+    commitData(*m_parsedArchiveData);
     return true;
 #endif
 }
@@ -2257,8 +2257,7 @@ void DocumentLoader::maybeFinishLoadingMultipartContent()
 
     frameLoader()->setupForReplace();
     m_committed = false;
-    RefPtr<FragmentedSharedBuffer> resourceData = mainResourceData();
-    commitLoad(resourceData->makeContiguous()->data(), resourceData->size());
+    commitLoad(mainResourceData()->makeContiguous());
 }
 
 void DocumentLoader::startIconLoading()
@@ -2410,9 +2409,9 @@ void DocumentLoader::enqueueSecurityPolicyViolationEvent(SecurityPolicyViolation
 }
 
 #if ENABLE(CONTENT_FILTERING)
-void DocumentLoader::dataReceivedThroughContentFilter(const uint8_t* data, int size)
+void DocumentLoader::dataReceivedThroughContentFilter(const SharedBuffer& buffer)
 {
-    dataReceived(data, size);
+    dataReceived(buffer);
 }
 
 void DocumentLoader::cancelMainResourceLoadForContentFilter(const ResourceError& error)

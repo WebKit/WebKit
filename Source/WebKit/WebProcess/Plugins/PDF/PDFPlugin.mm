@@ -94,6 +94,7 @@
 #import <WebCore/ScrollAnimator.h>
 #import <WebCore/ScrollbarTheme.h>
 #import <WebCore/Settings.h>
+#import <WebCore/SharedBuffer.h>
 #import <WebCore/WebAccessibilityObjectWrapperMac.h>
 #import <WebCore/WheelEventTestMonitor.h>
 #import <pal/spi/cg/CoreGraphicsSPI.h>
@@ -1191,7 +1192,7 @@ void PDFPlugin::PDFPluginStreamLoaderClient::didReceiveResponse(NetscapePlugInSt
     }
 }
 
-void PDFPlugin::PDFPluginStreamLoaderClient::didReceiveData(NetscapePlugInStreamLoader* loader, const uint8_t* data, int count)
+void PDFPlugin::PDFPluginStreamLoaderClient::didReceiveData(NetscapePlugInStreamLoader* loader, const SharedBuffer& data)
 {
     if (!m_pdfPlugin)
         return;
@@ -1200,7 +1201,7 @@ void PDFPlugin::PDFPluginStreamLoaderClient::didReceiveData(NetscapePlugInStream
     if (!request)
         return;
 
-    request->addData(data, count);
+    request->addData(data.data(), data.size());
 }
 
 void PDFPlugin::PDFPluginStreamLoaderClient::didFail(NetscapePlugInStreamLoader* loader, const ResourceError&)
@@ -1718,15 +1719,15 @@ void PDFPlugin::streamDidReceiveResponse(uint64_t streamID, const URL&, uint32_t
         m_isPostScript = true;
 }
 
-void PDFPlugin::streamDidReceiveData(uint64_t streamID, const uint8_t* bytes, int length)
+void PDFPlugin::streamDidReceiveData(uint64_t streamID, const SharedBuffer& buffer)
 {
     ASSERT_UNUSED(streamID, streamID == pdfDocumentRequestID);
 
     if (!m_data)
         m_data = adoptCF(CFDataCreateMutable(0, 0));
 
-    CFDataAppendBytes(m_data.get(), bytes, length);
-    m_streamedBytes += length;
+    CFDataAppendBytes(m_data.get(), buffer.data(), buffer.size());
+    m_streamedBytes += buffer.size();
 }
 
 void PDFPlugin::streamDidFinishLoading(uint64_t streamID)
@@ -1763,14 +1764,14 @@ void PDFPlugin::ensureDataBufferLength(uint64_t targetLength)
         CFDataIncreaseLength(m_data.get(), targetLength - currentLength);
 }
 
-void PDFPlugin::manualStreamDidReceiveData(const uint8_t* bytes, int length)
+void PDFPlugin::manualStreamDidReceiveData(const SharedBuffer& buffer)
 {
     if (!m_data)
         m_data = adoptCF(CFDataCreateMutable(0, 0));
 
-    ensureDataBufferLength(m_streamedBytes + length);
-    memcpy(CFDataGetMutableBytePtr(m_data.get()) + m_streamedBytes, bytes, length);
-    m_streamedBytes += length;
+    ensureDataBufferLength(m_streamedBytes + buffer.size());
+    memcpy(CFDataGetMutableBytePtr(m_data.get()) + m_streamedBytes, buffer.data(), buffer.size());
+    m_streamedBytes += buffer.size();
 
 #if HAVE(INCREMENTAL_PDF_APIS)
     // Keep our ranges-lookup-table compact by continuously updating its first range

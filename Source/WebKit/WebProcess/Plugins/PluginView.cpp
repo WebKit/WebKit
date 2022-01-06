@@ -127,7 +127,7 @@ private:
     // NetscapePluginStreamLoaderClient
     void willSendRequest(NetscapePlugInStreamLoader*, ResourceRequest&&, const ResourceResponse& redirectResponse, CompletionHandler<void(ResourceRequest&&)>&&) override;
     void didReceiveResponse(NetscapePlugInStreamLoader*, const ResourceResponse&) override;
-    void didReceiveData(NetscapePlugInStreamLoader*, const uint8_t*, int) override;
+    void didReceiveData(NetscapePlugInStreamLoader*, const SharedBuffer&) override;
     void didFail(NetscapePlugInStreamLoader*, const ResourceError&) override;
     void didFinishLoading(NetscapePlugInStreamLoader*) override;
 
@@ -235,9 +235,9 @@ void PluginView::Stream::didReceiveResponse(NetscapePlugInStreamLoader*, const R
     m_pluginView->m_plugin->streamDidReceiveResponse(m_streamID, responseURL, streamLength, lastModifiedDateMS(response), mimeType, headers, response.suggestedFilename());
 }
 
-void PluginView::Stream::didReceiveData(NetscapePlugInStreamLoader*, const uint8_t* bytes, int length)
+void PluginView::Stream::didReceiveData(NetscapePlugInStreamLoader*, const SharedBuffer& buffer)
 {
-    m_pluginView->m_plugin->streamDidReceiveData(m_streamID, bytes, length);
+    m_pluginView->m_plugin->streamDidReceiveData(m_streamID, buffer);
 }
 
 void PluginView::Stream::didFail(NetscapePlugInStreamLoader*, const ResourceError& error) 
@@ -374,7 +374,7 @@ void PluginView::manualLoadDidReceiveResponse(const ResourceResponse& response)
     m_plugin->manualStreamDidReceiveResponse(responseURL, streamLength, lastModifiedDateMS(response), mimeType, headers, response.suggestedFilename());
 }
 
-void PluginView::manualLoadDidReceiveData(const uint8_t* bytes, int length)
+void PluginView::manualLoadDidReceiveData(const SharedBuffer& buffer)
 {
     // The plug-in can be null here if it failed to initialize.
     if (!m_plugin)
@@ -382,11 +382,11 @@ void PluginView::manualLoadDidReceiveData(const uint8_t* bytes, int length)
 
     if (!m_isInitialized) {
         ASSERT(m_manualStreamState == ManualStreamState::HasReceivedResponse);
-        m_manualStreamData.append(bytes, length);
+        m_manualStreamData.append(buffer);
         return;
     }
 
-    m_plugin->manualStreamDidReceiveData(bytes, length);
+    m_plugin->manualStreamDidReceiveData(buffer);
 }
 
 void PluginView::manualLoadDidFinishLoading()
@@ -1171,9 +1171,9 @@ void PluginView::redeliverManualStream()
 
     // Deliver the data.
     if (m_manualStreamData) {
-        auto buffer = m_manualStreamData.take();
-        for (const auto& element : buffer.get())
-            manualLoadDidReceiveData(element.segment->data(), element.segment->size());
+        m_manualStreamData.take()->forEachSegmentAsSharedBuffer([&](auto&& buffer) {
+            manualLoadDidReceiveData(buffer);
+        });
     }
 
     if (m_manualStreamState == ManualStreamState::Finished)

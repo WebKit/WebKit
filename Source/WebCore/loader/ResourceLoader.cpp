@@ -299,9 +299,9 @@ void ResourceLoader::loadDataURL()
 
         auto dataSize = decodeResult->data.size();
         ResourceResponse dataResponse = ResourceResponse::dataURLResponse(url, decodeResult.value());
-        this->didReceiveResponse(dataResponse, [this, protectedThis = WTFMove(protectedThis), dataSize, data = SharedBuffer::create(WTFMove(decodeResult->data))]() mutable {
+        this->didReceiveResponse(dataResponse, [this, protectedThis = WTFMove(protectedThis), dataSize, data = SharedBuffer::create(WTFMove(decodeResult->data))]() {
             if (!this->reachedTerminalState() && dataSize && m_request.httpMethod() != "HEAD")
-                this->didReceiveBuffer(WTFMove(data), dataSize, DataPayloadWholeResource);
+                this->didReceiveBuffer(data, dataSize, DataPayloadWholeResource);
 
             if (!this->reachedTerminalState()) {
                 NetworkLoadMetrics emptyMetrics;
@@ -328,7 +328,7 @@ void ResourceLoader::willSwitchToSubstituteResource()
         m_handle->cancel();
 }
 
-void ResourceLoader::addDataOrBuffer(const uint8_t* data, unsigned length, FragmentedSharedBuffer* buffer, DataPayloadType dataPayloadType)
+void ResourceLoader::addBuffer(const FragmentedSharedBuffer& buffer, DataPayloadType dataPayloadType)
 {
     if (m_options.dataBufferingPolicy == DataBufferingPolicy::DoNotBufferData)
         return;
@@ -336,10 +336,7 @@ void ResourceLoader::addDataOrBuffer(const uint8_t* data, unsigned length, Fragm
     if (dataPayloadType == DataPayloadWholeResource)
         m_resourceData.reset();
 
-    if (buffer)
-        m_resourceData.append(*buffer);
-    else
-        m_resourceData.append(data, length);
+    m_resourceData.append(buffer);
 }
 
 const FragmentedSharedBuffer* ResourceLoader::resourceData() const
@@ -539,7 +536,7 @@ void ResourceLoader::didReceiveResponse(const ResourceResponse& r, CompletionHan
         frameLoader()->notifier().didReceiveResponse(this, m_response);
 }
 
-void ResourceLoader::didReceiveData(const uint8_t* data, unsigned length, long long encodedDataLength, DataPayloadType dataPayloadType)
+void ResourceLoader::didReceiveData(const SharedBuffer& buffer, long long encodedDataLength, DataPayloadType dataPayloadType)
 {
     // The following assertions are not quite valid here, since a subclass
     // might override didReceiveData in a way that invalidates them. This
@@ -547,30 +544,22 @@ void ResourceLoader::didReceiveData(const uint8_t* data, unsigned length, long l
     // ASSERT(con == connection);
     // ASSERT(!m_reachedTerminalState);
 
-    didReceiveDataOrBuffer(data, length, nullptr, encodedDataLength, dataPayloadType);
+    didReceiveBuffer(buffer, encodedDataLength, dataPayloadType);
 }
 
-void ResourceLoader::didReceiveBuffer(Ref<FragmentedSharedBuffer>&& buffer, long long encodedDataLength, DataPayloadType dataPayloadType)
+void ResourceLoader::didReceiveBuffer(const FragmentedSharedBuffer& buffer, long long encodedDataLength, DataPayloadType dataPayloadType)
 {
-    didReceiveDataOrBuffer(nullptr, 0, WTFMove(buffer), encodedDataLength, dataPayloadType);
-}
-
-void ResourceLoader::didReceiveDataOrBuffer(const uint8_t* data, unsigned length, RefPtr<FragmentedSharedBuffer>&& buffer, long long encodedDataLength, DataPayloadType dataPayloadType)
-{
-    // This method should only get data+length *OR* a FragmentedSharedBuffer.
-    ASSERT(!buffer || (!data && !length));
-
     // Protect this in this delegate method since the additional processing can do
     // anything including possibly derefing this; one example of this is Radar 3266216.
     Ref<ResourceLoader> protectedThis(*this);
 
-    addDataOrBuffer(data, length, buffer.get(), dataPayloadType);
+    addBuffer(buffer, dataPayloadType);
 
     // FIXME: If we get a resource with more than 2B bytes, this code won't do the right thing.
     // However, with today's computers and networking speeds, this won't happen in practice.
     // Could be an issue with a giant local file.
     if (m_options.sendLoadCallbacks == SendCallbackPolicy::SendCallbacks && m_frame)
-        frameLoader()->notifier().didReceiveData(this, buffer ? buffer->makeContiguous()->data() : data, buffer ? buffer->size() : length, static_cast<int>(encodedDataLength));
+        frameLoader()->notifier().didReceiveData(this, buffer.makeContiguous(), static_cast<int>(encodedDataLength));
 }
 
 void ResourceLoader::didFinishLoading(const NetworkLoadMetrics& networkLoadMetrics)
@@ -729,14 +718,14 @@ void ResourceLoader::didReceiveResponseAsync(ResourceHandle*, ResourceResponse&&
     didReceiveResponse(response, WTFMove(completionHandler));
 }
 
-void ResourceLoader::didReceiveData(ResourceHandle*, const uint8_t* data, unsigned length, int encodedDataLength)
+void ResourceLoader::didReceiveData(ResourceHandle*, const SharedBuffer& buffer, int encodedDataLength)
 {
-    didReceiveData(data, length, encodedDataLength, DataPayloadBytes);
+    didReceiveData(buffer, encodedDataLength, DataPayloadBytes);
 }
 
-void ResourceLoader::didReceiveBuffer(ResourceHandle*, Ref<FragmentedSharedBuffer>&& buffer, int encodedDataLength)
+void ResourceLoader::didReceiveBuffer(ResourceHandle*, const FragmentedSharedBuffer& buffer, int encodedDataLength)
 {
-    didReceiveBuffer(WTFMove(buffer), encodedDataLength, DataPayloadBytes);
+    didReceiveBuffer(buffer, encodedDataLength, DataPayloadBytes);
 }
 
 void ResourceLoader::didFinishLoading(ResourceHandle*, const NetworkLoadMetrics& metrics)

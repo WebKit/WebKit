@@ -46,7 +46,7 @@ public:
 
 private:
     WebPreviewLoaderClient(const String& fileName, const String& uti, WebCore::PageIdentifier);
-    void didReceiveBuffer(const WebCore::FragmentedSharedBuffer&) override;
+    void didReceiveData(const WebCore::SharedBuffer&) override;
     void didFinishLoading() override;
     void didFail() override;
     bool supportsPasswordEntry() const override { return true; }

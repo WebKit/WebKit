@@ -7,7 +7,7 @@
  * are met:
  *
  * 1.  Redistributions of source code must retain the above copyright
- *     notice, this list of conditions and the following disclaimer. 
+ *     notice, this list of conditions and the following disclaimer.
  * 2.  Redistributions in binary form must reproduce the above copyright
  *     notice, this list of conditions and the following disclaimer in the
  *     documentation and/or other materials provided with the distribution. 
@@ -50,7 +50,7 @@
 #endif
 
 #if PLATFORM(COCOA)
-#ifdef __OBJC__ 
+#ifdef __OBJC__
 #import <Foundation/Foundation.h>
 typedef id RemoteAXObjectRef;
 #else
@@ -98,7 +98,7 @@ class ResourceHandle;
 class ResourceRequest;
 class ResourceResponse;
 class SecurityOrigin;
-class FragmentedSharedBuffer;
+class SharedBuffer;
 class SubstituteData;
 class Widget;
 
@@ -214,9 +214,9 @@ public:
     virtual void willReplaceMultipartContent() = 0;
     virtual void didReplaceMultipartContent() = 0;
 
-    virtual void committedLoad(DocumentLoader*, const uint8_t*, int) = 0;
+    virtual void committedLoad(DocumentLoader*, const SharedBuffer&) = 0;
     virtual void finishedLoading(DocumentLoader*) = 0;
-    
+
     virtual void updateGlobalHistory() = 0;
     virtual void updateGlobalHistoryRedirectLinks() = 0;
 
@@ -272,7 +272,7 @@ public:
     virtual String userAgent(const URL&) const = 0;
 
     virtual String overrideContentSecurityPolicy() const { return String(); }
-    
+
     virtual void savePlatformDataToCachedFrame(CachedFrame*) = 0;
     virtual void transitionToCommittedFromCachedFrame(CachedFrame*) = 0;
 #if PLATFORM(IOS_FAMILY)
@@ -381,7 +381,7 @@ public:
 #endif
 
     virtual AllowsContentJavaScript allowsContentJavaScriptFromMostRecentNavigation() const { return AllowsContentJavaScript::Yes; }
-    
+
 #if ENABLE(APP_BOUND_DOMAINS)
     virtual bool shouldEnableInAppBrowserPrivacyProtections() const { return false; }
     virtual void notifyPageOfAppBoundBehavior() { }
@@ -390,7 +390,7 @@ public:
 #if ENABLE(PDFKIT_PLUGIN)
     virtual bool shouldUsePDFPlugin(const String&, StringView) const { return false; }
 #endif
-    
+
     virtual bool isParentProcessAFullWebBrowser() const { return false; }
 };
 

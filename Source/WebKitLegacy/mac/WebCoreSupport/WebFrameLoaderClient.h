@@ -48,10 +48,12 @@ class SessionID;
 namespace WebCore {
 class AuthenticationChallenge;
 class CachedFrame;
+class FragmentedSharedBuffer;
 class HistoryItem;
 class ProtectionSpace;
 class ResourceLoader;
 class ResourceRequest;
+class SharedBuffer;
 }
 
 class WebFrameLoaderClient : public WebCore::FrameLoaderClient, public CanMakeWeakPtr<WebFrameLoaderClient> {
@@ -151,7 +153,7 @@ private:
     void willReplaceMultipartContent() final { }
     void didReplaceMultipartContent() final;
 
-    void committedLoad(WebCore::DocumentLoader*, const uint8_t*, int) final;
+    void committedLoad(WebCore::DocumentLoader*, const WebCore::SharedBuffer&) final;
     void finishedLoading(WebCore::DocumentLoader*) final;
     void updateGlobalHistory() final;
     void updateGlobalHistoryRedirectLinks() final;

@@ -72,7 +72,7 @@ void WebServiceWorkerFetchTaskClient::didReceiveResponse(const ResourceResponse&
     m_connection->send(Messages::ServiceWorkerFetchTask::DidReceiveResponse { response, m_needsContinueDidReceiveResponseMessage }, m_fetchIdentifier);
 }
 
-void WebServiceWorkerFetchTaskClient::didReceiveData(Ref<FragmentedSharedBuffer>&& buffer)
+void WebServiceWorkerFetchTaskClient::didReceiveData(const SharedBuffer& buffer)
 {
     if (!m_connection)
         return;
@@ -80,14 +80,14 @@ void WebServiceWorkerFetchTaskClient::didReceiveData(Ref<FragmentedSharedBuffer>
     if (m_waitingForContinueDidReceiveResponseMessage) {
         if (!std::holds_alternative<SharedBufferBuilder>(m_responseData))
             m_responseData = SharedBufferBuilder();
-        std::get<SharedBufferBuilder>(m_responseData).append(WTFMove(buffer));
+        std::get<SharedBufferBuilder>(m_responseData).append(buffer);
         return;
     }
 
     if (m_isDownload)
-        m_connection->send(Messages::ServiceWorkerDownloadTask::DidReceiveData { buffer.get(), static_cast<int64_t>(buffer->size()) }, m_fetchIdentifier);
+        m_connection->send(Messages::ServiceWorkerDownloadTask::DidReceiveData { buffer, static_cast<int64_t>(buffer.size()) }, m_fetchIdentifier);
     else
-        m_connection->send(Messages::ServiceWorkerFetchTask::DidReceiveData { buffer.get(), static_cast<int64_t>(buffer->size()) }, m_fetchIdentifier);
+        m_connection->send(Messages::ServiceWorkerFetchTask::DidReceiveData { buffer, static_cast<int64_t>(buffer.size()) }, m_fetchIdentifier);
 }
 
 void WebServiceWorkerFetchTaskClient::didReceiveFormDataAndFinish(Ref<FormData>&& formData)
@@ -136,15 +136,15 @@ void WebServiceWorkerFetchTaskClient::didReceiveFormDataAndFinish(Ref<FormData>&
     });
 }
 
-void WebServiceWorkerFetchTaskClient::didReceiveBlobChunk(const uint8_t* data, size_t size)
+void WebServiceWorkerFetchTaskClient::didReceiveBlobChunk(const SharedBuffer& buffer)
 {
     if (!m_connection)
         return;
 
     if (m_isDownload)
-        m_connection->send(Messages::ServiceWorkerDownloadTask::DidReceiveData { { data, size }, static_cast<int64_t>(size) }, m_fetchIdentifier);
+        m_connection->send(Messages::ServiceWorkerDownloadTask::DidReceiveData { buffer, static_cast<int64_t>(buffer.size()) }, m_fetchIdentifier);
     else
-        m_connection->send(Messages::ServiceWorkerFetchTask::DidReceiveData { { data, size }, static_cast<int64_t>(size) }, m_fetchIdentifier);
+        m_connection->send(Messages::ServiceWorkerFetchTask::DidReceiveData { buffer , static_cast<int64_t>(buffer.size()) }, m_fetchIdentifier);
 }
 
 void WebServiceWorkerFetchTaskClient::didFinishBlobLoading()
@@ -228,7 +228,7 @@ void WebServiceWorkerFetchTaskClient::continueDidReceiveResponse()
         if (m_didFinish)
             didFinish();
     }, [this](const SharedBufferBuilder& buffer) {
-        didReceiveData(*buffer.get());
+        didReceiveData(buffer.copy()->makeContiguous());
         if (m_didFinish)
             didFinish();
     }, [this](Ref<FormData>& formData) {

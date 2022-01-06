@@ -51,7 +51,10 @@ ApplicationCacheResource::ApplicationCacheResource(URL&& url, ResourceResponse&&
 
 void ApplicationCacheResource::deliver(ResourceLoader& loader)
 {
-    loader.deliverResponseAndData(response(), m_path.isEmpty() ? data().makeContiguous() : SharedBuffer::createWithContentsOfFile(m_path));
+    if (m_path.isEmpty())
+        loader.deliverResponseAndData(response(), RefPtr { &data() });
+    else
+        loader.deliverResponseAndData(response(), SharedBuffer::createWithContentsOfFile(m_path));
 }
 
 void ApplicationCacheResource::addType(unsigned type) 

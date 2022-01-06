@@ -148,13 +148,13 @@ void FetchLoader::didReceiveResponse(ResourceLoaderIdentifier, const ResourceRes
     m_client.didReceiveResponse(response);
 }
 
-void FetchLoader::didReceiveData(const uint8_t* value, int size)
+void FetchLoader::didReceiveData(const SharedBuffer& buffer)
 {
     if (!m_consumer) {
-        m_client.didReceiveData(value, size);
+        m_client.didReceiveData(buffer);
         return;
     }
-    m_consumer->append(value, size);
+    m_consumer->append(buffer);
 }
 
 void FetchLoader::didFinishLoading(ResourceLoaderIdentifier)

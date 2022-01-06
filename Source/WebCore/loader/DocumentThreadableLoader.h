@@ -86,14 +86,14 @@ namespace WebCore {
         // CachedRawResourceClient
         void dataSent(CachedResource&, unsigned long long bytesSent, unsigned long long totalBytesToBeSent) override;
         void responseReceived(CachedResource&, const ResourceResponse&, CompletionHandler<void()>&&) override;
-        void dataReceived(CachedResource&, const uint8_t* data, int dataLength) override;
+        void dataReceived(CachedResource&, const SharedBuffer&) override;
         void redirectReceived(CachedResource&, ResourceRequest&&, const ResourceResponse&, CompletionHandler<void(ResourceRequest&&)>&&) override;
         void finishedTimingForWorkerLoad(CachedResource&, const ResourceTiming&) override;
         void finishedTimingForWorkerLoad(const ResourceTiming&);
         void notifyFinished(CachedResource&, const NetworkLoadMetrics&) override;
 
         void didReceiveResponse(ResourceLoaderIdentifier, const ResourceResponse&);
-        void didReceiveData(ResourceLoaderIdentifier, const uint8_t* data, int dataLength);
+        void didReceiveData(ResourceLoaderIdentifier, const SharedBuffer&);
         void didFinishLoading(ResourceLoaderIdentifier);
         void didFail(ResourceLoaderIdentifier, const ResourceError&);
         void makeCrossOriginAccessRequest(ResourceRequest&&);

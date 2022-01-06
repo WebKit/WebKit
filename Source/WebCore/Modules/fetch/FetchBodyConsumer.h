@@ -52,7 +52,7 @@ public:
 
     FetchBodyConsumer clone();
 
-    void append(const uint8_t* data, unsigned);
+    void append(const SharedBuffer&);
 
     bool hasData() const { return !!m_buffer; }
     const FragmentedSharedBuffer* data() const { return m_buffer.get().get(); }

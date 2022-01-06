@@ -608,7 +608,7 @@ public:
     void redirectReceived(PlatformMediaResource&, ResourceRequest&&, const ResourceResponse&, CompletionHandler<void(ResourceRequest&&)>&&) override;
     bool shouldCacheResponse(PlatformMediaResource&, const ResourceResponse&) override;
     void dataSent(PlatformMediaResource&, unsigned long long, unsigned long long) override;
-    void dataReceived(PlatformMediaResource&, Ref<FragmentedSharedBuffer>&&) override;
+    void dataReceived(PlatformMediaResource&, const SharedBuffer&) override;
     void accessControlCheckFailed(PlatformMediaResource&, const ResourceError&) override;
     void loadFailed(PlatformMediaResource&, const ResourceError&) override;
     void loadFinished(PlatformMediaResource&, const NetworkLoadMetrics&) override;
@@ -652,13 +652,13 @@ bool WebCoreNSURLSessionDataTaskClient::shouldCacheResponse(PlatformMediaResourc
     return [m_task resource:&resource shouldCacheResponse:response];
 }
 
-void WebCoreNSURLSessionDataTaskClient::dataReceived(PlatformMediaResource& resource, Ref<FragmentedSharedBuffer>&& buffer)
+void WebCoreNSURLSessionDataTaskClient::dataReceived(PlatformMediaResource& resource, const SharedBuffer& buffer)
 {
     Locker locker { m_taskLock };
     if (!m_task)
         return;
 
-    [m_task resource:&resource receivedData:WTFMove(buffer)];
+    [m_task resource:&resource receivedData:buffer.createNSData()];
 }
 
 void WebCoreNSURLSessionDataTaskClient::redirectReceived(PlatformMediaResource& resource, ResourceRequest&& request, const ResourceResponse& response, CompletionHandler<void(ResourceRequest&&)>&& completionHandler)
@@ -931,15 +931,14 @@ void WebCoreNSURLSessionDataTaskClient::loadFinished(PlatformMediaResource& reso
     return response.httpHeaderField(HTTPHeaderName::ContentRange).isEmpty();
 }
 
-- (void)resource:(PlatformMediaResource*)resource receivedData:(Ref<WebCore::FragmentedSharedBuffer>&&)data
+- (void)resource:(PlatformMediaResource*)resource receivedData:(RetainPtr<NSData>&&)data
 {
     ASSERT_UNUSED(resource, !resource || resource == _resource);
     [self.session addDelegateOperation:[strongSelf = RetainPtr { self }, data = WTFMove(data)] {
-        auto nsData = data->makeContiguous()->createNSData();
-        strongSelf.get().countOfBytesReceived += data->size();
+        strongSelf.get().countOfBytesReceived += [data length];
         id<NSURLSessionDataDelegate> dataDelegate = (id<NSURLSessionDataDelegate>)strongSelf.get().session.delegate;
         if ([dataDelegate respondsToSelector:@selector(URLSession:dataTask:didReceiveData:)])
-            [dataDelegate URLSession:(NSURLSession *)strongSelf.get().session dataTask:(NSURLSessionDataTask *)strongSelf.get() didReceiveData:nsData.get()];
+            [dataDelegate URLSession:(NSURLSession *)strongSelf.get().session dataTask:(NSURLSessionDataTask *)strongSelf.get() didReceiveData:data.get()];
     }];
 }
 

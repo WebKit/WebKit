@@ -243,7 +243,7 @@ bool CurlCacheManager::getCachedResponse(const String& url, ResourceResponse& re
     return false;
 }
 
-void CurlCacheManager::didReceiveData(ResourceHandle& job, const uint8_t* data, size_t size)
+void CurlCacheManager::didReceiveData(ResourceHandle& job, const SharedBuffer& data)
 {
     if (m_disabled)
         return;
@@ -255,11 +255,11 @@ void CurlCacheManager::didReceiveData(ResourceHandle& job, const uint8_t* data, 
         if (it->value->getJob() != &job)
             return;
 
-        if (!it->value->saveCachedData(data, size))
+        if (!it->value->saveCachedData(data.data(), data.size()))
             invalidateCacheEntry(url);
 
         else {
-            m_currentStorageSize += size;
+            m_currentStorageSize += data.size();
             m_LRUEntryList.prependOrMoveToFirst(url);
             makeRoomForNewEntry();
         }

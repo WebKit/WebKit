@@ -124,12 +124,12 @@ public:
         m_decoder = TextResourceDecoder::create("text/plain"_s, textEncoding, useDetector);
     }
 
-    void didReceiveData(const uint8_t* data, int dataLength) override
+    void didReceiveData(const SharedBuffer& buffer) override
     {
-        if (!dataLength)
+        if (buffer.isEmpty())
             return;
 
-        m_responseText.append(m_decoder->decode(data, dataLength));
+        m_responseText.append(m_decoder->decode(buffer.data(), buffer.size()));
     }
 
     void didFinishLoading(ResourceLoaderIdentifier) override
@@ -546,9 +546,8 @@ void InspectorNetworkAgent::didReceiveResponse(ResourceLoaderIdentifier identifi
             if (previousResourceData->hasContent())
                 m_resourcesData->setResourceContent(requestId, previousResourceData->content(), previousResourceData->base64Encoded());
             else if (previousResourceData->hasBufferedData()) {
-                auto previousBuffer = previousResourceData->buffer();
-                previousBuffer->forEachSegment([&](auto& segment) {
-                    m_resourcesData->maybeAddResourceData(requestId, segment.data(), segment.size());
+                previousResourceData->buffer()->forEachSegmentAsSharedBuffer([&](auto&& buffer) {
+                    m_resourcesData->maybeAddResourceData(requestId, buffer);
                 });
             }
             
@@ -574,7 +573,7 @@ void InspectorNetworkAgent::didReceiveResponse(ResourceLoaderIdentifier identifi
         didReceiveData(identifier, nullptr, cachedResource->encodedSize(), 0);
 }
 
-void InspectorNetworkAgent::didReceiveData(ResourceLoaderIdentifier identifier, const uint8_t* data, int dataLength, int encodedDataLength)
+void InspectorNetworkAgent::didReceiveData(ResourceLoaderIdentifier identifier, const SharedBuffer* data, int expectedDataLength, int encodedDataLength)
 {
     if (m_hiddenRequestIdentifiers.contains(identifier))
         return;
@@ -582,16 +581,16 @@ void InspectorNetworkAgent::didReceiveData(ResourceLoaderIdentifier identifier, 
     String requestId = IdentifiersFactory::requestId(identifier.toUInt64());
 
     if (data) {
-        NetworkResourcesData::ResourceData const* resourceData = m_resourcesData->maybeAddResourceData(requestId, data, dataLength);
+        NetworkResourcesData::ResourceData const* resourceData = m_resourcesData->maybeAddResourceData(requestId, *data);
 
         // For a synchronous XHR, if we didn't add data then we can apply it here as base64 encoded content.
         // Often the data is text and we would have a decoder, but for non-text we won't have a decoder.
         // Sync XHRs may not have a cached resource, while non-sync XHRs usually transfer data over on completion.
         if (m_loadingXHRSynchronously && resourceData && !resourceData->hasBufferedData() && !resourceData->cachedResource())
-            m_resourcesData->setResourceContent(requestId, base64EncodeToString(data, dataLength), true);
+            m_resourcesData->setResourceContent(requestId, base64EncodeToString(data->data(), data->size()), true);
     }
 
-    m_frontendDispatcher->dataReceived(requestId, timestamp(), dataLength, encodedDataLength);
+    m_frontendDispatcher->dataReceived(requestId, timestamp(), expectedDataLength, encodedDataLength);
 }
 
 void InspectorNetworkAgent::didFinishLoading(ResourceLoaderIdentifier identifier, DocumentLoader* loader, const NetworkLoadMetrics& networkLoadMetrics, ResourceLoader*)
@@ -1268,7 +1267,7 @@ Protocol::ErrorStringOr<void> InspectorNetworkAgent::interceptRequestWithRespons
     if (loader->reachedTerminalState())
         return makeUnexpected("Unable to fulfill request, it has already been processed"_s);
 
-    RefPtr<FragmentedSharedBuffer> data;
+    RefPtr<SharedBuffer> data;
     if (base64Encoded) {
         auto buffer = base64Decode(content);
         if (!buffer)
@@ -1293,9 +1292,9 @@ Protocol::ErrorStringOr<void> InspectorNetworkAgent::interceptRequestWithRespons
     }
     response.setHTTPHeaderFields(WTFMove(explicitHeaders));
     response.setHTTPHeaderField(HTTPHeaderName::ContentType, response.mimeType());
-    loader->didReceiveResponse(response, [loader, buffer = data.releaseNonNull()]() mutable {
+    loader->didReceiveResponse(response, [loader, buffer = data.releaseNonNull()]() {
         if (buffer->size())
-            loader->didReceiveBuffer(WTFMove(buffer), buffer->size(), DataPayloadWholeResource);
+            loader->didReceiveData(buffer, buffer->size(), DataPayloadWholeResource);
         loader->didFinishLoading(NetworkLoadMetrics());
     });
 

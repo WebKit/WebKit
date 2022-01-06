@@ -59,9 +59,10 @@ private:
     std::optional<size_t> platformSendInternal(const uint8_t*, size_t);
     bool sendPendingData();
 
+    // CurlStream::Client
     void didOpen(CurlStreamID) final;
     void didSendData(CurlStreamID, size_t) final;
-    void didReceiveData(CurlStreamID, const uint8_t*, size_t) final;
+    void didReceiveData(CurlStreamID, const SharedBuffer&) final;
     void didFail(CurlStreamID, CURLcode) final;
 
     bool isStreamInvalidated() { return m_streamID == invalidCurlStreamID; }

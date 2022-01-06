@@ -254,11 +254,10 @@ void NetworkLoad::notifyDidReceiveResponse(ResourceResponse&& response, Negotiat
     m_client.get().didReceiveResponse(WTFMove(response), WTFMove(completionHandler));
 }
 
-void NetworkLoad::didReceiveData(Ref<FragmentedSharedBuffer>&& buffer)
+void NetworkLoad::didReceiveData(const WebCore::SharedBuffer& buffer)
 {
     // FIXME: This should be the encoded data length, not the decoded data length.
-    auto size = buffer->size();
-    m_client.get().didReceiveBuffer(WTFMove(buffer), size);
+    m_client.get().didReceiveBuffer(buffer, buffer.size());
 }
 
 void NetworkLoad::didCompleteWithError(const ResourceError& error, const WebCore::NetworkLoadMetrics& networkLoadMetrics)

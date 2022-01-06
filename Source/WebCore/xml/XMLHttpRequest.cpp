@@ -1034,7 +1034,7 @@ Ref<TextResourceDecoder> XMLHttpRequest::createDecoder() const
     return TextResourceDecoder::create("text/plain", "UTF-8");
 }
 
-void XMLHttpRequest::didReceiveData(const uint8_t* data, int len)
+void XMLHttpRequest::didReceiveData(const SharedBuffer& buffer)
 {
     if (m_error)
         return;
@@ -1052,18 +1052,18 @@ void XMLHttpRequest::didReceiveData(const uint8_t* data, int len)
     if (useDecoder && !m_decoder)
         m_decoder = createDecoder();
 
-    if (!len)
+    if (buffer.isEmpty())
         return;
 
     if (useDecoder)
-        m_responseBuilder.append(m_decoder->decode(data, len));
+        m_responseBuilder.append(m_decoder->decode(buffer.data(), buffer.size()));
     else {
         // Buffer binary data.
-        m_binaryResponseBuilder.append(data, len);
+        m_binaryResponseBuilder.append(buffer);
     }
 
     if (!m_error) {
-        m_receivedLength += len;
+        m_receivedLength += buffer.size();
 
         if (readyState() != LOADING)
             changeState(LOADING);

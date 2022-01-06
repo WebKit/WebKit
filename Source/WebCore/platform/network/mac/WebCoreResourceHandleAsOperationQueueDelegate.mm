@@ -300,7 +300,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         // FIXME: https://bugs.webkit.org/show_bug.cgi?id=19793
         // -1 means we do not provide any data about transfer size to inspector so it would use
         // Content-Length headers or content size to show transfer size.
-        m_handle->client()->didReceiveBuffer(m_handle, SharedBuffer::create(data.get()), -1);
+        m_handle->client()->didReceiveData(m_handle, SharedBuffer::create(data.get()), -1);
     };
 
     [self callFunctionOnMainThread:WTFMove(work)];

@@ -231,14 +231,13 @@ void WorkerThreadableLoader::MainThreadBridge::didReceiveResponse(ResourceLoader
     }, m_taskMode);
 }
 
-void WorkerThreadableLoader::MainThreadBridge::didReceiveData(const uint8_t* data, int dataLength)
+void WorkerThreadableLoader::MainThreadBridge::didReceiveData(const SharedBuffer& data)
 {
-    Vector<uint8_t> buffer(data, dataLength);
-    m_loaderProxy.postTaskForModeToWorkerOrWorkletGlobalScope([protectedWorkerClientWrapper = Ref { *m_workerClientWrapper }, workerRequestIdentifier = m_workerRequestIdentifier, buffer = WTFMove(buffer)] (ScriptExecutionContext& context) mutable {
+    m_loaderProxy.postTaskForModeToWorkerOrWorkletGlobalScope([protectedWorkerClientWrapper = Ref { *m_workerClientWrapper }, workerRequestIdentifier = m_workerRequestIdentifier, buffer = Ref { data }] (ScriptExecutionContext& context) {
         ASSERT(context.isWorkerGlobalScope() || context.isWorkletGlobalScope());
-        protectedWorkerClientWrapper->didReceiveData(buffer.data(), buffer.size());
+        protectedWorkerClientWrapper->didReceiveData(buffer);
         if (is<WorkerGlobalScope>(context))
-            InspectorInstrumentation::didReceiveData(downcast<WorkerGlobalScope>(context), workerRequestIdentifier, buffer.data(), buffer.size());
+            InspectorInstrumentation::didReceiveData(downcast<WorkerGlobalScope>(context), workerRequestIdentifier, buffer);
     }, m_taskMode);
 }
 

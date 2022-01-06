@@ -33,7 +33,7 @@ class FragmentedSharedBuffer;
 class CurlMultipartHandleClient {
 public:
     virtual void didReceiveHeaderFromMultipart(const Vector<String>&) = 0;
-    virtual void didReceiveDataFromMultipart(Ref<FragmentedSharedBuffer>&&) = 0;
+    virtual void didReceiveDataFromMultipart(const SharedBuffer&) = 0;
 
 protected:
     ~CurlMultipartHandleClient() { }

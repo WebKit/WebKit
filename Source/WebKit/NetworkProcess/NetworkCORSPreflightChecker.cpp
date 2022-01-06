@@ -120,7 +120,7 @@ void NetworkCORSPreflightChecker::didReceiveResponse(WebCore::ResourceResponse&&
     completionHandler(PolicyAction::Use);
 }
 
-void NetworkCORSPreflightChecker::didReceiveData(Ref<WebCore::FragmentedSharedBuffer>&&)
+void NetworkCORSPreflightChecker::didReceiveData(const WebCore::SharedBuffer&)
 {
     CORS_CHECKER_RELEASE_LOG("didReceiveData");
 }

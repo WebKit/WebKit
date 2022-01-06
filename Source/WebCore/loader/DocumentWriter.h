@@ -36,6 +36,7 @@ namespace WebCore {
 class Document;
 class DocumentParser;
 class Frame;
+class SharedBuffer;
 class TextResourceDecoder;
 
 class DocumentWriter {
@@ -47,7 +48,7 @@ public:
 
     bool begin();
     bool begin(const URL&, bool dispatchWindowObjectAvailable = true, Document* ownerDocument = nullptr);
-    void addData(const uint8_t* bytes, size_t length);
+    void addData(const SharedBuffer&);
     void insertDataSynchronously(const String&); // For an internal use only to prevent the parser from yielding.
     WEBCORE_EXPORT void end();
 

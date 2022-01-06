@@ -138,7 +138,7 @@ Vector<uint8_t> FragmentedSharedBuffer::takeData()
 
     Vector<uint8_t> combinedData;
     if (hasOneSegment() && std::holds_alternative<Vector<uint8_t>>(m_segments[0].segment->m_immutableData) && m_segments[0].segment->hasOneRef())
-        combinedData = std::exchange(std::get<Vector<uint8_t>>(m_segments[0].segment->m_immutableData), Vector<uint8_t>());
+        combinedData = std::exchange(std::get<Vector<uint8_t>>(const_cast<DataSegment&>(m_segments[0].segment.get()).m_immutableData), Vector<uint8_t>());
     else
         combinedData = combineSegmentsData(m_segments, m_size);
 
@@ -248,6 +248,13 @@ void FragmentedSharedBuffer::forEachSegment(const Function<void(const Span<const
     auto segments = m_segments;
     for (auto& segment : segments)
         apply(Span { segment.segment->data(), segment.segment->size() });
+}
+
+void FragmentedSharedBuffer::forEachSegmentAsSharedBuffer(const Function<void(Ref<SharedBuffer>&&)>& apply) const
+{
+    auto protectedThis = Ref { *this };
+    for (auto& segment : m_segments)
+        apply(SharedBuffer::create(segment.segment.copyRef()));
 }
 
 bool FragmentedSharedBuffer::startsWith(const Span<const uint8_t>& prefix) const
@@ -415,7 +422,7 @@ SharedBuffer::SharedBuffer()
     m_contiguous = true;
 }
 
-SharedBuffer::SharedBuffer(Ref<DataSegment>&& segment)
+SharedBuffer::SharedBuffer(Ref<const DataSegment>&& segment)
 {
     m_size = segment->size();
     m_segments.append({ 0, WTFMove(segment) });
@@ -603,7 +610,7 @@ void SharedBufferBuilder::ensureBuffer()
         m_buffer = FragmentedSharedBuffer::create();
 }
 
-SharedBufferDataView::SharedBufferDataView(Ref<DataSegment>&& segment, size_t positionWithinSegment, std::optional<size_t> size)
+SharedBufferDataView::SharedBufferDataView(Ref<const DataSegment>&& segment, size_t positionWithinSegment, std::optional<size_t> size)
     : m_segment(WTFMove(segment))
     , m_positionWithinSegment(positionWithinSegment)
     , m_size(size ? *size : m_segment->size() - positionWithinSegment)
@@ -619,7 +626,7 @@ SharedBufferDataView::SharedBufferDataView(const SharedBufferDataView& other, si
 
 Ref<SharedBuffer> SharedBufferDataView::createSharedBuffer() const
 {
-    const Ref<DataSegment> segment = m_segment;
+    const Ref<const DataSegment> segment = m_segment;
     return SharedBuffer::create(DataSegment::Provider {
         [segment, data = data()]() { return data; },
         [size = size()]() { return size; }

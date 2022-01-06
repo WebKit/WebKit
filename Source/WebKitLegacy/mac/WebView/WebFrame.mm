@@ -977,7 +977,7 @@ static NSURL *createUniqueWebDataURL();
     auto* document = _private->coreFrame->document();
     document->setShouldCreateRenderers(_private->shouldCreateRenderers);
 
-    _private->coreFrame->loader().documentLoader()->commitData((const uint8_t*)[data bytes], [data length]);
+    _private->coreFrame->loader().documentLoader()->commitData(WebCore::SharedBuffer::create(data));
 }
 
 @end

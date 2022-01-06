@@ -36,6 +36,7 @@
 
 namespace WebCore {
 class CurlRequest;
+class SharedBuffer;
 }
 
 namespace WebKit {
@@ -68,7 +69,7 @@ private:
     Ref<WebCore::CurlRequest> createCurlRequest(WebCore::ResourceRequest&&, RequestStatus = RequestStatus::NewRequest);
     void curlDidSendData(WebCore::CurlRequest&, unsigned long long, unsigned long long) override;
     void curlDidReceiveResponse(WebCore::CurlRequest&, WebCore::CurlResponse&&) override;
-    void curlDidReceiveBuffer(WebCore::CurlRequest&, Ref<WebCore::FragmentedSharedBuffer>&&) override;
+    void curlDidReceiveData(WebCore::CurlRequest&, const WebCore::SharedBuffer&) override;
     void curlDidComplete(WebCore::CurlRequest&, WebCore::NetworkLoadMetrics&&) override;
     void curlDidFailWithError(WebCore::CurlRequest&, WebCore::ResourceError&&, WebCore::CertificateInfo&&) override;
 

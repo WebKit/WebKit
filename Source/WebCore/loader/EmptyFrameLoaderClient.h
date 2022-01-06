@@ -119,7 +119,7 @@ private:
     void willReplaceMultipartContent() final;
     void didReplaceMultipartContent() final;
 
-    void committedLoad(DocumentLoader*, const uint8_t*, int) final;
+    void committedLoad(DocumentLoader*, const SharedBuffer&) final;
     void finishedLoading(DocumentLoader*) final;
 
     ResourceError cancelledError(const ResourceRequest&) const final;

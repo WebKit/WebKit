@@ -50,7 +50,7 @@ private:
 
     void didReceiveResponse(const WebCore::ResourceResponse&) final;
     void didReceiveRedirection(const WebCore::ResourceResponse&) final;
-    void didReceiveData(Ref<WebCore::FragmentedSharedBuffer>&&) final;
+    void didReceiveData(const WebCore::SharedBuffer&) final;
     void didReceiveFormDataAndFinish(Ref<WebCore::FormData>&&) final;
     void didFail(const WebCore::ResourceError&) final;
     void didFinish() final;
@@ -60,8 +60,8 @@ private:
     void convertFetchToDownload() final;
 
     void cleanup();
-    
-    void didReceiveBlobChunk(const uint8_t* data, size_t);
+
+    void didReceiveBlobChunk(const WebCore::SharedBuffer&);
     void didFinishBlobLoading();
 
     struct BlobLoader final : WebCore::FetchLoaderClient {
@@ -69,7 +69,7 @@ private:
 
         // FetchLoaderClient API
         void didReceiveResponse(const WebCore::ResourceResponse&) final { }
-        void didReceiveData(const uint8_t* data, size_t size) final { client->didReceiveBlobChunk(data, size); }
+        void didReceiveData(const WebCore::SharedBuffer& data) final { client->didReceiveBlobChunk(data); }
         void didFail(const WebCore::ResourceError& error) final { client->didFail(error); }
         void didSucceed() final { client->didFinishBlobLoading(); }
 

@@ -43,7 +43,7 @@ namespace WebCore {
 class AuthenticationChallenge;
 class ResourceError;
 class ResourceResponse;
-class FragmentedSharedBuffer;
+class SharedBuffer;
 }
 
 namespace WebKit {
@@ -63,7 +63,7 @@ public:
     virtual void willPerformHTTPRedirection(WebCore::ResourceResponse&&, WebCore::ResourceRequest&&, RedirectCompletionHandler&&) = 0;
     virtual void didReceiveChallenge(WebCore::AuthenticationChallenge&&, NegotiatedLegacyTLS, ChallengeCompletionHandler&&) = 0;
     virtual void didReceiveResponse(WebCore::ResourceResponse&&, NegotiatedLegacyTLS, ResponseCompletionHandler&&) = 0;
-    virtual void didReceiveData(Ref<WebCore::FragmentedSharedBuffer>&&) = 0;
+    virtual void didReceiveData(const WebCore::SharedBuffer&) = 0;
     virtual void didCompleteWithError(const WebCore::ResourceError&, const WebCore::NetworkLoadMetrics&) = 0;
     virtual void didSendData(uint64_t totalBytesSent, uint64_t totalBytesExpectedToSend) = 0;
     virtual void wasBlocked() = 0;

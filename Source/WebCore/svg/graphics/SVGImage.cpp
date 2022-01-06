@@ -546,8 +546,8 @@ EncodedDataStatus SVGImage::dataChanged(bool allDataReceived)
         ASSERT(loader.activeDocumentLoader()); // DocumentLoader should have been created by frame->init().
         loader.activeDocumentLoader()->writer().setMIMEType("image/svg+xml");
         loader.activeDocumentLoader()->writer().begin(URL()); // create the empty document
-        data()->forEachSegment([&](auto& segment) {
-            loader.activeDocumentLoader()->writer().addData(segment.data(), segment.size());
+        data()->forEachSegmentAsSharedBuffer([&](auto&& buffer) {
+            loader.activeDocumentLoader()->writer().addData(buffer);
         });
         loader.activeDocumentLoader()->writer().end();
 

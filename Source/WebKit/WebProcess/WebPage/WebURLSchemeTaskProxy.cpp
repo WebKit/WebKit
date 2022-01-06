@@ -140,21 +140,21 @@ void WebURLSchemeTaskProxy::didReceiveResponse(const ResourceResponse& response)
     });
 }
 
-void WebURLSchemeTaskProxy::didReceiveData(size_t size, const uint8_t* data)
+void WebURLSchemeTaskProxy::didReceiveData(const WebCore::SharedBuffer& data)
 {
     if (!hasLoader())
         return;
 
     if (m_waitingForCompletionHandler) {
         WEBURLSCHEMETASKPROXY_RELEASE_LOG("didReceiveData: Received data during response processing, queuing it.");
-        queueTask([this, protectedThis = Ref { *this }, dataVector = Vector { data, size }] {
-            didReceiveData(dataVector.size(), dataVector.data());
+        queueTask([this, protectedThis = Ref { *this }, data = Ref { data }] {
+            didReceiveData(data);
         });
         return;
     }
 
     Ref protectedThis { *this };
-    m_coreLoader->didReceiveData(data, size, 0, DataPayloadType::DataPayloadBytes);
+    m_coreLoader->didReceiveData(data, 0, DataPayloadType::DataPayloadBytes);
     processNextPendingTask();
 }
 

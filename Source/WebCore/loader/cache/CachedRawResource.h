@@ -28,6 +28,7 @@ namespace WebCore {
 
 class CachedResourceClient;
 class ResourceTiming;
+class SharedBuffer;
 class SharedBufferDataView;
 
 class CachedRawResource final : public CachedResource {
@@ -52,7 +53,7 @@ public:
 private:
     void didAddClient(CachedResourceClient&) final;
     void updateBuffer(const FragmentedSharedBuffer&) final;
-    void updateData(const uint8_t* data, unsigned length) final;
+    void updateData(const SharedBuffer&) final;
     void finishLoading(const FragmentedSharedBuffer*, const NetworkLoadMetrics&) final;
 
     bool shouldIgnoreHTTPStatusCodeErrors() const override { return true; }
@@ -66,8 +67,8 @@ private:
     void switchClientsToRevalidatedResource() override;
     bool mayTryReplaceEncodedData() const override { return m_allowEncodedDataReplacement; }
 
-    std::optional<SharedBufferDataView> calculateIncrementalDataChunk(const FragmentedSharedBuffer*) const;
-    void notifyClientsDataWasReceived(const uint8_t* data, unsigned length);
+    std::optional<SharedBufferDataView> calculateIncrementalDataChunk(const SharedBuffer&) const;
+    void notifyClientsDataWasReceived(const SharedBuffer&);
     
 #if USE(QUICK_LOOK)
     void previewResponseReceived(const ResourceResponse&) final;

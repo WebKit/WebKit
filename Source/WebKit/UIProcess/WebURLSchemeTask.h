@@ -83,7 +83,7 @@ public:
     ExceptionType willPerformRedirection(WebCore::ResourceResponse&&, WebCore::ResourceRequest&&,  Function<void(WebCore::ResourceRequest&&)>&&);
     ExceptionType didPerformRedirection(WebCore::ResourceResponse&&, WebCore::ResourceRequest&&);
     ExceptionType didReceiveResponse(const WebCore::ResourceResponse&);
-    ExceptionType didReceiveData(Ref<WebCore::FragmentedSharedBuffer>&&);
+    ExceptionType didReceiveData(const WebCore::SharedBuffer&);
     ExceptionType didComplete(const WebCore::ResourceError&);
 
     void stop();

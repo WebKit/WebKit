@@ -358,12 +358,12 @@ void FetchResponse::BodyLoader::didReceiveResponse(const ResourceResponse& resou
         responseCallback(m_response);
 }
 
-void FetchResponse::BodyLoader::didReceiveData(const uint8_t* data, size_t size)
+void FetchResponse::BodyLoader::didReceiveData(const SharedBuffer& buffer)
 {
     ASSERT(m_response.m_readableStreamSource || m_consumeDataCallback);
 
     if (m_consumeDataCallback) {
-        Span chunk { data, size };
+        Span chunk { buffer.data(), buffer.size() };
         m_consumeDataCallback(&chunk);
         return;
     }
@@ -371,7 +371,7 @@ void FetchResponse::BodyLoader::didReceiveData(const uint8_t* data, size_t size)
     auto& source = *m_response.m_readableStreamSource;
 
     if (!source.isPulling()) {
-        m_response.body().consumer().append(data, size);
+        m_response.body().consumer().append(buffer);
         return;
     }
 
@@ -379,7 +379,7 @@ void FetchResponse::BodyLoader::didReceiveData(const uint8_t* data, size_t size)
         stop();
         return;
     }
-    if (!source.enqueue(ArrayBuffer::tryCreate(data, size))) {
+    if (!source.enqueue(buffer.tryCreateArrayBuffer())) {
         stop();
         return;
     }
@@ -463,7 +463,7 @@ void FetchResponse::setBodyData(ResponseData&& data, uint64_t bodySizeWithPaddin
 
 void FetchResponse::consumeChunk(Ref<JSC::Uint8Array>&& chunk)
 {
-    body().consumer().append(chunk->data(), chunk->byteLength());
+    body().consumer().append(SharedBuffer::create(chunk->data(), chunk->byteLength()));
 }
 
 void FetchResponse::consumeBodyAsStream()

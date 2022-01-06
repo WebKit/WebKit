@@ -39,6 +39,7 @@
 #include "Page.h"
 #include "ProgressTracker.h"
 #include "ResourceLoader.h"
+#include "SharedBuffer.h"
 
 #if USE(QUICK_LOOK)
 #include "QuickLook.h"
@@ -78,12 +79,12 @@ void ResourceLoadNotifier::didReceiveResponse(ResourceLoader* loader, const Reso
     dispatchDidReceiveResponse(loader->documentLoader(), loader->identifier(), r, loader);
 }
 
-void ResourceLoadNotifier::didReceiveData(ResourceLoader* loader, const uint8_t* data, int dataLength, int encodedDataLength)
+void ResourceLoadNotifier::didReceiveData(ResourceLoader* loader, const SharedBuffer& buffer, int encodedDataLength)
 {
     if (Page* page = m_frame.page())
-        page->progress().incrementProgress(loader->identifier(), dataLength);
+        page->progress().incrementProgress(loader->identifier(), buffer.size());
 
-    dispatchDidReceiveData(loader->documentLoader(), loader->identifier(), data, dataLength, encodedDataLength);
+    dispatchDidReceiveData(loader->documentLoader(), loader->identifier(), &buffer, buffer.size(), encodedDataLength);
 }
 
 void ResourceLoadNotifier::didFinishLoad(ResourceLoader* loader, const NetworkLoadMetrics& networkLoadMetrics)
@@ -153,13 +154,13 @@ void ResourceLoadNotifier::dispatchDidReceiveResponse(DocumentLoader* loader, Re
     InspectorInstrumentation::didReceiveResourceResponse(m_frame, identifier, loader, r, resourceLoader);
 }
 
-void ResourceLoadNotifier::dispatchDidReceiveData(DocumentLoader* loader, ResourceLoaderIdentifier identifier, const uint8_t* data, int dataLength, int encodedDataLength)
+void ResourceLoadNotifier::dispatchDidReceiveData(DocumentLoader* loader, ResourceLoaderIdentifier identifier, const SharedBuffer* buffer, int expectedDataLength, int encodedDataLength)
 {
     // Notifying the FrameLoaderClient may cause the frame to be destroyed.
     Ref<Frame> protect(m_frame);
-    m_frame.loader().client().dispatchDidReceiveContentLength(loader, identifier, dataLength);
+    m_frame.loader().client().dispatchDidReceiveContentLength(loader, identifier, expectedDataLength);
 
-    InspectorInstrumentation::didReceiveData(&m_frame, identifier, data, dataLength, encodedDataLength);
+    InspectorInstrumentation::didReceiveData(&m_frame, identifier, buffer ? *buffer : SharedBuffer::create(), encodedDataLength);
 }
 
 void ResourceLoadNotifier::dispatchDidFinishLoading(DocumentLoader* loader, ResourceLoaderIdentifier identifier, const NetworkLoadMetrics& networkLoadMetrics, ResourceLoader* resourceLoader)
@@ -180,7 +181,7 @@ void ResourceLoadNotifier::dispatchDidFailLoading(DocumentLoader* loader, Resour
     InspectorInstrumentation::didFailLoading(&m_frame, loader, identifier, error);
 }
 
-void ResourceLoadNotifier::sendRemainingDelegateMessages(DocumentLoader* loader, ResourceLoaderIdentifier identifier, const ResourceRequest& request, const ResourceResponse& response, const uint8_t* data, int dataLength, int encodedDataLength, const ResourceError& error)
+void ResourceLoadNotifier::sendRemainingDelegateMessages(DocumentLoader* loader, ResourceLoaderIdentifier identifier, const ResourceRequest& request, const ResourceResponse& response, const SharedBuffer* buffer, int expectedDataLength, int encodedDataLength, const ResourceError& error)
 {
     // If the request is null, willSendRequest cancelled the load. We should
     // only dispatch didFailLoading in this case.
@@ -193,8 +194,8 @@ void ResourceLoadNotifier::sendRemainingDelegateMessages(DocumentLoader* loader,
     if (!response.isNull())
         dispatchDidReceiveResponse(loader, identifier, response);
 
-    if (dataLength > 0)
-        dispatchDidReceiveData(loader, identifier, data, dataLength, encodedDataLength);
+    if (expectedDataLength > 0)
+        dispatchDidReceiveData(loader, identifier, buffer, expectedDataLength, encodedDataLength);
 
     if (error.isNull()) {
         NetworkLoadMetrics emptyMetrics;

@@ -185,9 +185,9 @@ void MediaFormatReader::didParseTracks(SourceBufferPrivateClient::Initialization
     ASSERT(!isMainRunLoop());
 
     Locker locker { m_parseTracksLock };
-    ASSERT(!m_parseTracksStatus);
-    ASSERT(m_duration.isInvalid());
-    ASSERT(m_trackReaders.isEmpty());
+    ASSERT(!m_parseTracksStatus || (m_init && errorCode));
+    ASSERT(m_duration.isInvalid() || (m_init && errorCode));
+    ASSERT(m_trackReaders.isEmpty() || (m_init && errorCode));
 
     ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER);
     if (errorCode)
@@ -221,6 +221,7 @@ void MediaFormatReader::didParseTracks(SourceBufferPrivateClient::Initialization
     }
 
     m_parseTracksCondition.notifyAll();
+    m_init = true;
 }
 
 void MediaFormatReader::didProvideMediaData(Ref<MediaSample>&& mediaSample, uint64_t trackID, const String&)

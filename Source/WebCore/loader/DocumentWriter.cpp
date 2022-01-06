@@ -264,7 +264,7 @@ void DocumentWriter::reportDataReceived()
     m_frame->document()->resolveStyle(Document::ResolveStyleType::Rebuild);
 }
 
-void DocumentWriter::addData(const uint8_t* bytes, size_t length)
+void DocumentWriter::addData(const SharedBuffer& data)
 {
     // FIXME: Change these to ASSERT once https://bugs.webkit.org/show_bug.cgi?id=80427 has been resolved.
     RELEASE_ASSERT(m_state != State::NotStarted);
@@ -273,7 +273,7 @@ void DocumentWriter::addData(const uint8_t* bytes, size_t length)
         return;
     }
     ASSERT(m_parser);
-    m_parser->appendBytes(*this, bytes, length);
+    m_parser->appendBytes(*this, data.data(), data.size());
 }
 
 void DocumentWriter::insertDataSynchronously(const String& markup)

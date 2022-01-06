@@ -37,6 +37,7 @@
 #include "FetchLoader.h"
 #include "FetchLoaderClient.h"
 #include "ResourceError.h"
+#include "SharedBuffer.h"
 
 namespace WebCore {
 
@@ -101,7 +102,7 @@ protected:
 
 private:
     // Blob loading routines
-    void blobChunk(const uint8_t*, size_t);
+    void blobChunk(const SharedBuffer&);
     void blobLoadingSucceeded();
     void blobLoadingFailed();
     void finishBlobLoading();
@@ -114,7 +115,7 @@ private:
 
         // FetchLoaderClient API
         void didReceiveResponse(const ResourceResponse&) final;
-        void didReceiveData(const uint8_t* data, size_t size) final { owner.blobChunk(data, size); }
+        void didReceiveData(const SharedBuffer& buffer) final { owner.blobChunk(buffer); }
         void didFail(const ResourceError&) final;
         void didSucceed() final { owner.blobLoadingSucceeded(); }
 

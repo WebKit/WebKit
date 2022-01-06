@@ -86,6 +86,7 @@ class PreviewConverter;
 class ResourceLoader;
 class FragmentedSharedBuffer;
 class SWClientConnection;
+class SharedBuffer;
 class SubresourceLoader;
 class SubstituteResource;
 class UserContentURLPattern;
@@ -377,7 +378,7 @@ public:
     void resetTiming() { m_loadTiming = { }; }
 
     // The WebKit layer calls this function when it's ready for the data to actually be added to the document.
-    WEBCORE_EXPORT void commitData(const uint8_t* bytes, size_t length);
+    WEBCORE_EXPORT void commitData(const SharedBuffer&);
 
     ApplicationCacheHost& applicationCacheHost() const;
     ApplicationCacheHost* applicationCacheHostUnlessBeingDestroyed() const;
@@ -477,7 +478,7 @@ private:
 
     void commitIfReady();
     void setMainDocumentError(const ResourceError&);
-    void commitLoad(const uint8_t*, int);
+    void commitLoad(const SharedBuffer&);
     void clearMainResourceLoader();
 
     void setupForReplace();
@@ -493,7 +494,7 @@ private:
     void mainReceivedError(const ResourceError&);
     WEBCORE_EXPORT void redirectReceived(CachedResource&, ResourceRequest&&, const ResourceResponse&, CompletionHandler<void(ResourceRequest&&)>&&) override;
     WEBCORE_EXPORT void responseReceived(CachedResource&, const ResourceResponse&, CompletionHandler<void()>&&) override;
-    WEBCORE_EXPORT void dataReceived(CachedResource&, const uint8_t* data, int length) override;
+    WEBCORE_EXPORT void dataReceived(CachedResource&, const SharedBuffer&) override;
     WEBCORE_EXPORT void notifyFinished(CachedResource&, const NetworkLoadMetrics&) override;
 #if USE(QUICK_LOOK)
     WEBCORE_EXPORT void previewResponseReceived(CachedResource&, const ResourceResponse&) override;
@@ -503,13 +504,13 @@ private:
 
 #if ENABLE(CONTENT_FILTERING)
     // ContentFilterClient
-    WEBCORE_EXPORT void dataReceivedThroughContentFilter(const uint8_t*, int) final;
+    WEBCORE_EXPORT void dataReceivedThroughContentFilter(const SharedBuffer&) final;
     WEBCORE_EXPORT ResourceError contentFilterDidBlock(ContentFilterUnblockHandler, String&& unblockRequestDeniedScript) final;
     WEBCORE_EXPORT void cancelMainResourceLoadForContentFilter(const ResourceError&) final;
     WEBCORE_EXPORT void handleProvisionalLoadFailureFromContentFilter(const URL& blockedPageURL, SubstituteData&) final;
 #endif
 
-    void dataReceived(const uint8_t* data, int length);
+    void dataReceived(const SharedBuffer&);
 
     bool maybeLoadEmpty();
 

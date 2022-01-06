@@ -122,9 +122,9 @@ private:
     CURL* setupTransfer() override;
     size_t willSendData(char*, size_t, size_t);
     size_t didReceiveHeader(String&&);
-    size_t didReceiveData(Ref<FragmentedSharedBuffer>&&);
+    size_t didReceiveData(const SharedBuffer&);
     void didReceiveHeaderFromMultipart(const Vector<String>&) override;
-    void didReceiveDataFromMultipart(Ref<FragmentedSharedBuffer>&&) override;
+    void didReceiveDataFromMultipart(const SharedBuffer&) override;
     void didCompleteTransfer(CURLcode) override;
     void didCancelTransfer() override;
     void finalizeTransfer();

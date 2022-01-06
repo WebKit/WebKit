@@ -36,6 +36,7 @@
 
 namespace WebCore {
 class NetworkLoadMetrics;
+class FragmentedSharedBuffer;
 }
 
 namespace WebKit {
@@ -54,7 +55,7 @@ public:
 
     using ResponseCallback = Function<void()>;
     void waitForResponse(ResponseCallback&&);
-    using BodyCallback = Function<void(RefPtr<WebCore::SharedBuffer>&&, int reportedEncodedDataLength)>;
+    using BodyCallback = Function<void(RefPtr<const WebCore::FragmentedSharedBuffer>&&, int reportedEncodedDataLength)>;
     void waitForBody(BodyCallback&&);
 
     const WebCore::ResourceError& error() const { return m_error; }
@@ -71,7 +72,7 @@ private:
     bool isAllowedToAskUserForCredentials() const final { return false; }
     void willSendRedirectedRequest(WebCore::ResourceRequest&&, WebCore::ResourceRequest&& redirectRequest, WebCore::ResourceResponse&& redirectResponse) final;
     void didReceiveResponse(WebCore::ResourceResponse&&, ResponseCompletionHandler&&) final;
-    void didReceiveBuffer(Ref<WebCore::FragmentedSharedBuffer>&&, int reportedEncodedDataLength) final;
+    void didReceiveBuffer(const WebCore::FragmentedSharedBuffer&, int reportedEncodedDataLength) final;
     void didFinishLoading(const WebCore::NetworkLoadMetrics&) final;
     void didFailLoading(const WebCore::ResourceError&) final;
     bool shouldCaptureExtraNetworkLoadMetrics() const final { return m_shouldCaptureExtraNetworkLoadMetrics; }

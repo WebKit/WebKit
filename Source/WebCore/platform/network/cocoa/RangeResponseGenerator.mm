@@ -132,7 +132,7 @@ void RangeResponseGenerator::giveResponseToTaskIfBytesInRangeReceived(WebCoreNSU
 
             size_t bytesFromThisViewToDeliver = std::min(bufferView.size(), range.end - byteIndex + 1);
             byteIndex += bytesFromThisViewToDeliver;
-            [task resource:nullptr receivedData:SharedBufferDataView(bufferView, bytesFromThisViewToDeliver).createSharedBuffer()];
+            [task resource:nullptr receivedData:SharedBufferDataView(bufferView, bytesFromThisViewToDeliver).createSharedBuffer()->createNSData()];
         }
         if (byteIndex >= range.end) {
             [task resourceFinished:nullptr metrics:NetworkLoadMetrics { }];
@@ -238,7 +238,7 @@ private:
         return false;
     }
 
-    void dataReceived(PlatformMediaResource&, Ref<FragmentedSharedBuffer>&& buffer) final
+    void dataReceived(PlatformMediaResource&, const SharedBuffer& buffer) final
     {
         ASSERT(isMainThread());
         if (!m_generator)
@@ -246,7 +246,7 @@ private:
         auto* data = m_generator->m_map.get(m_urlString);
         if (!data)
             return;
-        data->buffer.append(WTFMove(buffer));
+        data->buffer.append(buffer);
         m_generator->giveResponseToTasksWithFinishedRanges(*data);
     }
 

@@ -863,29 +863,29 @@ void NetworkResourceLoader::sendDidReceiveResponsePotentiallyInNewBrowsingContex
     });
 }
 
-void NetworkResourceLoader::didReceiveBuffer(Ref<FragmentedSharedBuffer>&& buffer, int reportedEncodedDataLength)
+void NetworkResourceLoader::didReceiveBuffer(const WebCore::FragmentedSharedBuffer& buffer, int reportedEncodedDataLength)
 {
     if (!m_numBytesReceived)
-        LOADER_RELEASE_LOG("didReceiveBuffer: Started receiving data (reportedEncodedDataLength=%d)", reportedEncodedDataLength);
-    m_numBytesReceived += buffer->size();
+        LOADER_RELEASE_LOG("didReceiveData: Started receiving data (reportedEncodedDataLength=%d)", reportedEncodedDataLength);
+    m_numBytesReceived += buffer.size();
 
     ASSERT(!m_cacheEntryForValidation);
 
     if (m_bufferedDataForCache) {
         // Prevent memory growth in case of streaming data and limit size of entries in the cache.
         const size_t maximumCacheBufferSize = m_cache->capacity() / 8;
-        if (m_bufferedDataForCache.size() + buffer->size() <= maximumCacheBufferSize)
-            m_bufferedDataForCache.append(buffer.get());
+        if (m_bufferedDataForCache.size() + buffer.size() <= maximumCacheBufferSize)
+            m_bufferedDataForCache.append(buffer);
         else
             m_bufferedDataForCache.reset();
     }
     if (isCrossOriginPrefetch())
         return;
     // FIXME: At least on OS X Yosemite we always get -1 from the resource handle.
-    unsigned encodedDataLength = reportedEncodedDataLength >= 0 ? reportedEncodedDataLength : buffer->size();
+    unsigned encodedDataLength = reportedEncodedDataLength >= 0 ? reportedEncodedDataLength : buffer.size();
 
     if (m_bufferedData) {
-        m_bufferedData.append(buffer.get());
+        m_bufferedData.append(buffer);
         m_bufferedDataEncodedDataLength += encodedDataLength;
         startBufferingTimerIfNeeded();
         return;
@@ -1273,7 +1273,7 @@ void NetworkResourceLoader::bufferingTimerFired()
     m_bufferedDataEncodedDataLength = 0;
 }
 
-void NetworkResourceLoader::sendBuffer(FragmentedSharedBuffer& buffer, size_t encodedDataLength)
+void NetworkResourceLoader::sendBuffer(const FragmentedSharedBuffer& buffer, size_t encodedDataLength)
 {
     ASSERT(!isSynchronous());
 

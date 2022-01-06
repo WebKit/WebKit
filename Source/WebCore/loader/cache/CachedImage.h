@@ -128,7 +128,7 @@ private:
     RefPtr<SharedBuffer> convertedDataIfNeeded(const FragmentedSharedBuffer* data) const;
     void didUpdateImageData();
     EncodedDataStatus updateImageData(bool allDataReceived);
-    void updateData(const uint8_t* data, unsigned length) override;
+    void updateData(const SharedBuffer&) override;
     void error(CachedResource::Status) override;
     void responseReceived(const ResourceResponse&) override;
 
@@ -169,7 +169,7 @@ private:
     void changedInRect(const Image&, const IntRect*);
     void scheduleRenderingUpdate(const Image&);
 
-    void updateBufferInternal(const FragmentedSharedBuffer&);
+    void updateBufferInternal(const SharedBuffer&);
 
     void didReplaceSharedBufferContents() override;
 

@@ -36,7 +36,7 @@
 #include "NetworkResourceLoader.h"
 #include "NetworkSession.h"
 #include "ServiceWorkerNavigationPreloader.h"
-#include "SharedBufferDataReference.h"
+#include "SharedBufferCopy.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebResourceLoaderMessages.h"
 #include "WebSWContextManagerConnectionMessages.h"
@@ -225,7 +225,7 @@ void ServiceWorkerFetchTask::processResponse(ResourceResponse&& response, bool n
         m_loader.setResponse(WTFMove(response));
 }
 
-void ServiceWorkerFetchTask::didReceiveData(const IPC::DataReference& data, int64_t encodedDataLength)
+void ServiceWorkerFetchTask::didReceiveData(const IPC::SharedBufferCopy& data, int64_t encodedDataLength)
 {
     if (m_isDone)
         return;
@@ -401,7 +401,7 @@ void ServiceWorkerFetchTask::loadBodyFromPreloader()
             didFinishWithMetrics(m_preloader->networkLoadMetrics());
             return;
         }
-        didReceiveData(IPC::DataReference { chunk->data(), chunk->size() }, length);
+        didReceiveData(Ref { const_cast<WebCore::FragmentedSharedBuffer&>(*chunk) }, length);
     });
 }
 

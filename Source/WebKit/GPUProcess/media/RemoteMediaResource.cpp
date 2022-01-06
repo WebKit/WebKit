@@ -31,6 +31,7 @@
 #include "RemoteMediaPlayerProxy.h"
 #include "RemoteMediaResourceManager.h"
 #include <WebCore/ResourceResponse.h>
+#include <WebCore/SharedBuffer.h>
 
 namespace WebKit {
 
@@ -96,10 +97,10 @@ void RemoteMediaResource::dataSent(uint64_t bytesSent, uint64_t totalBytesToBeSe
         m_client->dataSent(*this, bytesSent, totalBytesToBeSent);
 }
 
-void RemoteMediaResource::dataReceived(Ref<FragmentedSharedBuffer>&& data)
+void RemoteMediaResource::dataReceived(const SharedBuffer& data)
 {
     if (m_client)
-        m_client->dataReceived(*this, WTFMove(data));
+        m_client->dataReceived(*this, data);
 }
 
 void RemoteMediaResource::accessControlCheckFailed(const ResourceError& error)

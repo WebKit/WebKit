@@ -38,6 +38,7 @@ OBJC_CLASS NSMutableURLRequest;
 
 namespace WebCore {
 class RegistrableDomain;
+class SharedBuffer;
 }
 
 namespace WebKit {
@@ -62,7 +63,7 @@ public:
     void didNegotiateModernTLS(const URL&);
     void didCompleteWithError(const WebCore::ResourceError&, const WebCore::NetworkLoadMetrics&);
     void didReceiveResponse(WebCore::ResourceResponse&&, NegotiatedLegacyTLS, ResponseCompletionHandler&&);
-    void didReceiveData(Ref<WebCore::FragmentedSharedBuffer>&&);
+    void didReceiveData(const WebCore::SharedBuffer&);
 
     void willPerformHTTPRedirection(WebCore::ResourceResponse&&, WebCore::ResourceRequest&&, RedirectCompletionHandler&&);
     void transferSandboxExtensionToDownload(Download&);

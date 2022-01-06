@@ -79,7 +79,7 @@ public:
     const ResourceError& error() const { return m_error; }
 
     void didReceiveResponse(ResourceLoaderIdentifier, const ResourceResponse&) override;
-    void didReceiveData(const uint8_t* data, int dataLength) override;
+    void didReceiveData(const SharedBuffer&) override;
     void didFinishLoading(ResourceLoaderIdentifier) override;
     void didFail(const ResourceError&) override;
 

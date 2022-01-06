@@ -113,7 +113,7 @@ public:
     virtual String encoding() const { return String(); }
     virtual const TextResourceDecoder* textResourceDecoder() const { return nullptr; }
     virtual void updateBuffer(const FragmentedSharedBuffer&);
-    virtual void updateData(const uint8_t* data, unsigned length);
+    virtual void updateData(const SharedBuffer&);
     virtual void finishLoading(const FragmentedSharedBuffer*, const NetworkLoadMetrics&);
     virtual void error(CachedResource::Status);
 

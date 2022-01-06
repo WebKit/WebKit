@@ -28,6 +28,7 @@
 
 #pragma once
 
+#include "DataReference.h"
 #include <WebCore/SharedBuffer.h>
 
 namespace IPC {

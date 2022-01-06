@@ -71,7 +71,7 @@ public:
 
     // ThreadableLoaderClient
     void didReceiveResponse(ResourceLoaderIdentifier, const ResourceResponse&) override;
-    void didReceiveData(const uint8_t*, int) override;
+    void didReceiveData(const SharedBuffer&) override;
     void didFinishLoading(ResourceLoaderIdentifier) override;
     void didFail(const ResourceError&) override;
 

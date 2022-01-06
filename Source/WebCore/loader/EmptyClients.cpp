@@ -870,7 +870,7 @@ void EmptyFrameLoaderClient::didReplaceMultipartContent()
 {
 }
 
-void EmptyFrameLoaderClient::committedLoad(DocumentLoader*, const uint8_t*, int)
+void EmptyFrameLoaderClient::committedLoad(DocumentLoader*, const SharedBuffer&)
 {
 }
 

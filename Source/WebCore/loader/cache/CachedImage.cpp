@@ -468,7 +468,7 @@ inline void CachedImage::clearImage()
     m_updateImageDataCount = 0;
 }
 
-void CachedImage::updateBufferInternal(const FragmentedSharedBuffer& data)
+void CachedImage::updateBufferInternal(const SharedBuffer& data)
 {
     m_data = data.makeContiguous();
     setEncodedSize(m_data->size());
@@ -555,18 +555,18 @@ EncodedDataStatus CachedImage::updateImageData(bool allDataReceived)
     return result;
 }
 
-void CachedImage::updateBuffer(const FragmentedSharedBuffer& data)
+void CachedImage::updateBuffer(const FragmentedSharedBuffer& buffer)
 {
     ASSERT(dataBufferingPolicy() == DataBufferingPolicy::BufferData);
-    updateBufferInternal(data);
-    CachedResource::updateBuffer(data);
+    updateBufferInternal(buffer.makeContiguous());
+    CachedResource::updateBuffer(buffer);
 }
 
-void CachedImage::updateData(const uint8_t* data, unsigned length)
+void CachedImage::updateData(const SharedBuffer& data)
 {
     ASSERT(dataBufferingPolicy() == DataBufferingPolicy::DoNotBufferData);
-    updateBufferInternal(SharedBuffer::create(data, length));
-    CachedResource::updateData(data, length);
+    updateBufferInternal(data);
+    CachedResource::updateData(data);
 }
 
 void CachedImage::finishLoading(const FragmentedSharedBuffer* data, const NetworkLoadMetrics& metrics)

@@ -87,6 +87,7 @@ private:
     Vector<Ref<MediaTrackReader>> m_trackReaders WTF_GUARDED_BY_LOCK(m_parseTracksLock);
     RefPtr<const Logger> m_logger;
     const void* m_logIdentifier;
+    bool m_init { false };
 };
 
 constexpr MediaFormatReader::WrapperClass MediaFormatReader::wrapperClass()

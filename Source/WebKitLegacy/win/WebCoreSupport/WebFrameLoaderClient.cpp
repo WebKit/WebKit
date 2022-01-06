@@ -641,9 +641,9 @@ void WebFrameLoaderClient::didChangeTitle(DocumentLoader*)
     notImplemented();
 }
 
-void WebFrameLoaderClient::committedLoad(DocumentLoader* loader, const uint8_t* data, int length)
+void WebFrameLoaderClient::committedLoad(DocumentLoader* loader, const SharedBuffer& data)
 {
-    loader->commitData(data, length);
+    loader->commitData(data);
 
     // If the document is a stand-alone media document, now is the right time to cancel the WebKit load.
     // FIXME: This code should be shared across all ports. <http://webkit.org/b/48762>.

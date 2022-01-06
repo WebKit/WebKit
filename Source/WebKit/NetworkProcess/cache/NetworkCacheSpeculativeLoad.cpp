@@ -120,15 +120,15 @@ void SpeculativeLoad::didReceiveResponse(ResourceResponse&& receivedResponse, Re
     completionHandler(PolicyAction::Use);
 }
 
-void SpeculativeLoad::didReceiveBuffer(Ref<FragmentedSharedBuffer>&& buffer, int reportedEncodedDataLength)
+void SpeculativeLoad::didReceiveBuffer(const WebCore::FragmentedSharedBuffer& buffer, int reportedEncodedDataLength)
 {
     ASSERT(!m_cacheEntry);
 
     if (m_bufferedDataForCache) {
         // Prevent memory growth in case of streaming data.
         const size_t maximumCacheBufferSize = 10 * 1024 * 1024;
-        if (m_bufferedDataForCache.size() + buffer->size() <= maximumCacheBufferSize)
-            m_bufferedDataForCache.append(buffer.get());
+        if (m_bufferedDataForCache.size() + buffer.size() <= maximumCacheBufferSize)
+            m_bufferedDataForCache.append(buffer);
         else
             m_bufferedDataForCache.reset();
     }

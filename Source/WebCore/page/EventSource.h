@@ -84,7 +84,7 @@ private:
 
     // ThreadableLoaderClient
     void didReceiveResponse(ResourceLoaderIdentifier, const ResourceResponse&) final;
-    void didReceiveData(const uint8_t*, int) final;
+    void didReceiveData(const SharedBuffer&) final;
     void didFinishLoading(ResourceLoaderIdentifier) final;
     void didFail(const ResourceError&) final;
 

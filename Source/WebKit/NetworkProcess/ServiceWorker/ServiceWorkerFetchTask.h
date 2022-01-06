@@ -48,6 +48,7 @@ namespace IPC {
 class Connection;
 class Decoder;
 class FormDataReference;
+class SharedBufferCopy;
 }
 
 namespace WebCore {
@@ -93,7 +94,7 @@ private:
     enum class ShouldSetSource : bool { No, Yes };
     void didReceiveRedirectResponse(WebCore::ResourceResponse&&);
     void didReceiveResponse(WebCore::ResourceResponse&&, bool needsContinueDidReceiveResponseMessage);
-    void didReceiveData(const IPC::DataReference&, int64_t encodedDataLength);
+    void didReceiveData(const IPC::SharedBufferCopy&, int64_t encodedDataLength);
     void didReceiveFormData(const IPC::FormDataReference&);
     void didFinish();
     void didFinishWithMetrics(const WebCore::NetworkLoadMetrics&);

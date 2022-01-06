@@ -177,10 +177,10 @@ RenderPtr<RenderElement> HTMLModelElement::createElementRenderer(RenderStyle&& s
 
 // MARK: - CachedRawResourceClient
 
-void HTMLModelElement::dataReceived(CachedResource& resource, const uint8_t* data, int dataLength)
+void HTMLModelElement::dataReceived(CachedResource& resource, const SharedBuffer& buffer)
 {
     ASSERT_UNUSED(resource, &resource == m_resource);
-    m_data.append(data, dataLength);
+    m_data.append(buffer);
 }
 
 void HTMLModelElement::notifyFinished(CachedResource& resource, const NetworkLoadMetrics&)

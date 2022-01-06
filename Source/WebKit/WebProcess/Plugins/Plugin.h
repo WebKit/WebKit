@@ -54,12 +54,13 @@ class AffineTransform;
 class Element;
 class FloatPoint;
 class FloatSize;
+class FragmentedSharedBuffer;
 class GraphicsContext;
 class IntPoint;
 class IntRect;
 class IntSize;
 class Scrollbar;
-class FragmentedSharedBuffer;
+class SharedBuffer;
 }
 
 namespace WebKit {
@@ -160,7 +161,7 @@ public:
                                           uint32_t lastModifiedTime, const String& mimeType, const String& headers, const String& suggestedFileName) = 0;
 
     // Tells the plug-in that a stream did receive data.
-    virtual void streamDidReceiveData(uint64_t streamID, const uint8_t* bytes, int length) = 0;
+    virtual void streamDidReceiveData(uint64_t streamID, const WebCore::SharedBuffer&) = 0;
 
     // Tells the plug-in that a stream has finished loading.
     virtual void streamDidFinishLoading(uint64_t streamID) = 0;
@@ -173,7 +174,7 @@ public:
                                                 uint32_t lastModifiedTime, const String& mimeType, const String& headers, const String& suggestedFileName) = 0;
 
     // Tells the plug-in that the manual stream did receive data.
-    virtual void manualStreamDidReceiveData(const uint8_t* bytes, int length) = 0;
+    virtual void manualStreamDidReceiveData(const WebCore::SharedBuffer&) = 0;
 
     // Tells the plug-in that a stream has finished loading.
     virtual void manualStreamDidFinishLoading() = 0;

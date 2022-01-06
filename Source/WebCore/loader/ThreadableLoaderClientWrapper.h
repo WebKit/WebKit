@@ -66,10 +66,10 @@ public:
             m_client->didReceiveResponse(identifier, response);
     }
 
-    void didReceiveData(const uint8_t* data, int dataLength)
+    void didReceiveData(const SharedBuffer& buffer)
     {
         if (m_client)
-            m_client->didReceiveData(data, dataLength);
+            m_client->didReceiveData(buffer);
     }
 
     void didFinishLoading(ResourceLoaderIdentifier identifier)

@@ -438,20 +438,20 @@ void DocumentThreadableLoader::didReceiveResponse(ResourceLoaderIdentifier ident
     m_client->didReceiveResponse(identifier, response);
 }
 
-void DocumentThreadableLoader::dataReceived(CachedResource& resource, const uint8_t* data, int dataLength)
+void DocumentThreadableLoader::dataReceived(CachedResource& resource, const SharedBuffer& buffer)
 {
     ASSERT_UNUSED(resource, &resource == m_resource);
-    didReceiveData(m_resource->identifier(), data, dataLength);
+    didReceiveData(m_resource->identifier(), buffer);
 }
 
-void DocumentThreadableLoader::didReceiveData(ResourceLoaderIdentifier, const uint8_t* data, int dataLength)
+void DocumentThreadableLoader::didReceiveData(ResourceLoaderIdentifier, const SharedBuffer& buffer)
 {
     ASSERT(m_client);
 
     if (m_delayCallbacksForIntegrityCheck)
         return;
 
-    m_client->didReceiveData(data, dataLength);
+    m_client->didReceiveData(buffer);
 }
 
 void DocumentThreadableLoader::finishedTimingForWorkerLoad(CachedResource& resource, const ResourceTiming& resourceTiming)
@@ -494,20 +494,14 @@ void DocumentThreadableLoader::didFinishLoading(ResourceLoaderIdentifier identif
 
         if (options().filteringPolicy == ResponseFilteringPolicy::Disable) {
             m_client->didReceiveResponse(identifier, response);
-            if (auto* buffer = m_resource->resourceBuffer()) {
-                buffer->forEachSegment([&](auto& segment) {
-                    m_client->didReceiveData(segment.data(), segment.size());
-                });
-            }
+            if (auto* buffer = m_resource->resourceBuffer())
+                m_client->didReceiveData(*buffer);
         } else {
             ASSERT(response.type() == ResourceResponse::Type::Default);
 
             m_client->didReceiveResponse(identifier, ResourceResponse::filter(response, m_options.credentials == FetchOptions::Credentials::Include ? ResourceResponse::PerformExposeAllHeadersCheck::No : ResourceResponse::PerformExposeAllHeadersCheck::Yes));
-            if (auto* buffer = m_resource->resourceBuffer()) {
-                buffer->forEachSegment([&](auto& segment) {
-                    m_client->didReceiveData(segment.data(), segment.size());
-                });
-            }
+            if (auto* buffer = m_resource->resourceBuffer())
+                m_client->didReceiveData(*buffer);
         }
     }
 
@@ -668,11 +662,8 @@ void DocumentThreadableLoader::loadRequest(ResourceRequest&& request, SecurityCh
     }
     didReceiveResponse(identifier, response);
 
-    if (data) {
-        data->forEachSegment([&](auto& segment) {
-            didReceiveData(identifier, segment.data(), segment.size());
-        });
-    }
+    if (data)
+        didReceiveData(identifier, *data);
 
     const auto* timing = response.deprecatedNetworkLoadMetricsOrNull();
     auto resourceTiming = ResourceTiming::fromSynchronousLoad(requestURL, m_options.initiator, loadTiming, timing ? *timing : NetworkLoadMetrics::emptyMetrics(), response, securityOrigin());

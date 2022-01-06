@@ -61,7 +61,7 @@ private:
 
     // CachedRawResourceClient
     void responseReceived(CachedResource&, const ResourceResponse&, CompletionHandler<void()>&&) final;
-    void dataReceived(CachedResource&, const uint8_t*, int) final;
+    void dataReceived(CachedResource&, const SharedBuffer&) final;
     void notifyFinished(CachedResource&, const NetworkLoadMetrics&) final;
 
     void fulfillRequestWithResource(CachedResource&);
@@ -130,7 +130,7 @@ void CachedResourceMediaLoader::notifyFinished(CachedResource& resource, const N
     m_parent.loadFinished();
 }
 
-void CachedResourceMediaLoader::dataReceived(CachedResource& resource, const uint8_t*, int)
+void CachedResourceMediaLoader::dataReceived(CachedResource& resource, const SharedBuffer&)
 {
     ASSERT(&resource == m_resource);
     if (auto* data = resource.resourceBuffer())
@@ -156,7 +156,7 @@ private:
     void redirectReceived(PlatformMediaResource&, ResourceRequest&& request, const ResourceResponse&, CompletionHandler<void(ResourceRequest&&)>&& completionHandler) final { completionHandler(WTFMove(request)); }
     bool shouldCacheResponse(PlatformMediaResource&, const ResourceResponse&) final { return false; }
     void dataSent(PlatformMediaResource&, unsigned long long, unsigned long long) final { }
-    void dataReceived(PlatformMediaResource&, Ref<FragmentedSharedBuffer>&&) final;
+    void dataReceived(PlatformMediaResource&, const SharedBuffer&) final;
     void accessControlCheckFailed(PlatformMediaResource&, const ResourceError& error) final { loadFailed(error); }
     void loadFailed(PlatformMediaResource&, const ResourceError& error) final { loadFailed(error); }
     void loadFinished(PlatformMediaResource&, const NetworkLoadMetrics&) final { loadFinished(); }
@@ -211,9 +211,9 @@ void PlatformResourceMediaLoader::loadFinished()
     m_parent.loadFinished();
 }
 
-void PlatformResourceMediaLoader::dataReceived(PlatformMediaResource&, Ref<FragmentedSharedBuffer>&& buffer)
+void PlatformResourceMediaLoader::dataReceived(PlatformMediaResource&, const SharedBuffer& buffer)
 {
-    m_buffer.append(WTFMove(buffer));
+    m_buffer.append(buffer);
     m_parent.newDataStoredInSharedBuffer(*m_buffer.get());
 }
 

@@ -396,7 +396,7 @@ size_t CurlRequest::didReceiveHeader(String&& header)
 
 // called with data after all headers have been processed via headerCallback
 
-size_t CurlRequest::didReceiveData(Ref<FragmentedSharedBuffer>&& buffer)
+size_t CurlRequest::didReceiveData(const SharedBuffer& buffer)
 {
     if (isCompletedOrCancelled())
         return 0;
@@ -411,7 +411,7 @@ size_t CurlRequest::didReceiveData(Ref<FragmentedSharedBuffer>&& buffer)
         return CURL_WRITEFUNC_PAUSE;
     }
 
-    auto receiveBytes = buffer->size();
+    auto receiveBytes = buffer.size();
     m_totalReceivedSize += receiveBytes;
 
     writeDataToDownloadFileIfEnabled(buffer);
@@ -420,8 +420,8 @@ size_t CurlRequest::didReceiveData(Ref<FragmentedSharedBuffer>&& buffer)
         if (m_multipartHandle)
             m_multipartHandle->didReceiveData(buffer);
         else {
-            callClient([buffer = WTFMove(buffer)](CurlRequest& request, CurlRequestClient& client) mutable {
-                client.curlDidReceiveBuffer(request, WTFMove(buffer));
+            callClient([buffer = Ref { buffer }](CurlRequest& request, CurlRequestClient& client) {
+                client.curlDidReceiveData(request, buffer);
             });
         }
     }
@@ -444,16 +444,16 @@ void CurlRequest::didReceiveHeaderFromMultipart(const Vector<String>& headers)
     invokeDidReceiveResponse(response, Action::None);
 }
 
-void CurlRequest::didReceiveDataFromMultipart(Ref<FragmentedSharedBuffer>&& buffer)
+void CurlRequest::didReceiveDataFromMultipart(const SharedBuffer& buffer)
 {
     if (isCompletedOrCancelled())
         return;
 
-    auto receiveBytes = buffer->size();
+    auto receiveBytes = buffer.size();
 
     if (receiveBytes) {
-        callClient([buffer = WTFMove(buffer)](CurlRequest& request, CurlRequestClient& client) mutable {
-            client.curlDidReceiveBuffer(request, WTFMove(buffer));
+        callClient([buffer = Ref { buffer }](CurlRequest& request, CurlRequestClient& client) {
+            client.curlDidReceiveData(request, buffer);
         });
     }
 }

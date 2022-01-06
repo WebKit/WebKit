@@ -518,32 +518,15 @@ void SubresourceLoader::didReceiveResponsePolicy()
         completionHandler();
 }
 
-void SubresourceLoader::didReceiveData(const uint8_t* data, unsigned length, long long encodedDataLength, DataPayloadType dataPayloadType)
+void SubresourceLoader::didReceiveBuffer(const FragmentedSharedBuffer& buffer, long long encodedDataLength, DataPayloadType dataPayloadType)
 {
 #if USE(QUICK_LOOK)
     if (auto previewLoader = m_previewLoader.get()) {
-        if (previewLoader->didReceiveData(data, length))
+        if (previewLoader->didReceiveData(buffer.makeContiguous()))
             return;
     }
 #endif
 
-    didReceiveDataOrBuffer(data, length, nullptr, encodedDataLength, dataPayloadType);
-}
-
-void SubresourceLoader::didReceiveBuffer(Ref<FragmentedSharedBuffer>&& buffer, long long encodedDataLength, DataPayloadType dataPayloadType)
-{
-#if USE(QUICK_LOOK)
-    if (auto previewLoader = m_previewLoader.get()) {
-        if (previewLoader->didReceiveBuffer(buffer.get()))
-            return;
-    }
-#endif
-
-    didReceiveDataOrBuffer(nullptr, 0, WTFMove(buffer), encodedDataLength, dataPayloadType);
-}
-
-void SubresourceLoader::didReceiveDataOrBuffer(const uint8_t* data, int length, RefPtr<FragmentedSharedBuffer>&& buffer, long long encodedDataLength, DataPayloadType dataPayloadType)
-{
     ASSERT(m_resource);
 
     if (m_resource->response().httpStatusCode() >= 400 && !m_resource->shouldIgnoreHTTPStatusCodeErrors())
@@ -555,13 +538,13 @@ void SubresourceLoader::didReceiveDataOrBuffer(const uint8_t* data, int length, 
     // anything including removing the last reference to this object; one example of this is 3266216.
     Ref<SubresourceLoader> protectedThis(*this);
 
-    ResourceLoader::didReceiveDataOrBuffer(data, length, buffer.copyRef(), encodedDataLength, dataPayloadType);
+    ResourceLoader::didReceiveBuffer(buffer, encodedDataLength, dataPayloadType);
 
     if (!m_loadingMultipartContent) {
         if (auto* resourceData = this->resourceData())
             m_resource->updateBuffer(*resourceData);
         else
-            m_resource->updateData(buffer ? buffer->makeContiguous()->data() : data, buffer ? buffer->size() : length);
+            m_resource->updateData(buffer.makeContiguous());
     }
 }
 

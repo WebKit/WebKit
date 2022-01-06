@@ -9,7 +9,7 @@
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
  * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
@@ -33,6 +33,7 @@
 namespace WebCore {
 
 class CurlStreamScheduler;
+class SharedBuffer;
 class SocketStreamError;
 
 using CurlStreamID = uint16_t;
@@ -46,7 +47,7 @@ public:
     public:
         virtual void didOpen(CurlStreamID) = 0;
         virtual void didSendData(CurlStreamID, size_t) = 0;
-        virtual void didReceiveData(CurlStreamID, const uint8_t*, size_t) = 0;
+        virtual void didReceiveData(CurlStreamID, const SharedBuffer&) = 0;
         virtual void didFail(CurlStreamID, CURLcode) = 0;
     };
 

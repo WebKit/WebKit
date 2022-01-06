@@ -90,10 +90,10 @@ size_t NetworkResourcesData::ResourceData::dataLength() const
     return m_dataBuffer.size();
 }
 
-void NetworkResourcesData::ResourceData::appendData(const uint8_t* data, size_t dataLength)
+void NetworkResourcesData::ResourceData::appendData(const SharedBuffer& data)
 {
     ASSERT(!hasContent());
-    m_dataBuffer.append(data, dataLength);
+    m_dataBuffer.append(data);
 }
 
 unsigned NetworkResourcesData::ResourceData::decodeDataToContent()
@@ -221,7 +221,7 @@ static bool shouldBufferResourceData(const NetworkResourcesData::ResourceData& r
     return false;
 }
 
-NetworkResourcesData::ResourceData const* NetworkResourcesData::maybeAddResourceData(const String& requestId, const uint8_t* data, size_t dataLength)
+NetworkResourcesData::ResourceData const* NetworkResourcesData::maybeAddResourceData(const String& requestId, const SharedBuffer& data)
 {
     ResourceData* resourceData = resourceDataForRequestId(requestId);
     if (!resourceData)
@@ -230,15 +230,15 @@ NetworkResourcesData::ResourceData const* NetworkResourcesData::maybeAddResource
     if (!shouldBufferResourceData(*resourceData))
         return resourceData;
 
-    if (resourceData->dataLength() + dataLength > m_maximumSingleResourceContentSize)
+    if (resourceData->dataLength() + data.size() > m_maximumSingleResourceContentSize)
         m_contentSize -= resourceData->evictContent();
     if (resourceData->isContentEvicted())
         return resourceData;
 
-    if (ensureFreeSpace(dataLength) && !resourceData->isContentEvicted()) {
+    if (ensureFreeSpace(data.size()) && !resourceData->isContentEvicted()) {
         m_requestIdsDeque.append(requestId);
-        resourceData->appendData(data, dataLength);
-        m_contentSize += dataLength;
+        resourceData->appendData(data);
+        m_contentSize += data.size();
     }
 
     return resourceData;

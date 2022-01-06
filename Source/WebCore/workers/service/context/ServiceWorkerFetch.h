@@ -51,7 +51,7 @@ public:
 
     virtual void didReceiveRedirection(const ResourceResponse&) = 0;
     virtual void didReceiveResponse(const ResourceResponse&) = 0;
-    virtual void didReceiveData(Ref<FragmentedSharedBuffer>&&) = 0;
+    virtual void didReceiveData(const SharedBuffer&) = 0;
     virtual void didReceiveFormDataAndFinish(Ref<FormData>&&) = 0;
     virtual void didFail(const ResourceError&) = 0;
     virtual void didFinish() = 0;

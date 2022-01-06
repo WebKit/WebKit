@@ -142,16 +142,15 @@ void CurlResourceHandleDelegate::curlDidReceiveResponse(CurlRequest& request, Cu
     });
 }
 
-void CurlResourceHandleDelegate::curlDidReceiveBuffer(CurlRequest&, Ref<FragmentedSharedBuffer>&& buffer)
+void CurlResourceHandleDelegate::curlDidReceiveData(CurlRequest&, const SharedBuffer& buffer)
 {
     ASSERT(isMainThread());
 
     if (cancelledOrClientless())
         return;
 
-    auto contiguousBuffer = buffer->makeContiguous();
-    CurlCacheManager::singleton().didReceiveData(m_handle, contiguousBuffer->data(), buffer->size());
-    client()->didReceiveBuffer(&m_handle, WTFMove(contiguousBuffer), buffer->size());
+    CurlCacheManager::singleton().didReceiveData(m_handle, buffer);
+    client()->didReceiveBuffer(&m_handle, buffer, buffer.size());
 }
 
 void CurlResourceHandleDelegate::curlDidComplete(CurlRequest&, NetworkLoadMetrics&& metrics)

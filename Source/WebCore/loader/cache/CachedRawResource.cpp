@@ -48,12 +48,12 @@ CachedRawResource::CachedRawResource(CachedResourceRequest&& request, Type type,
     ASSERT(isMainOrMediaOrIconOrRawResource());
 }
 
-std::optional<SharedBufferDataView> CachedRawResource::calculateIncrementalDataChunk(const FragmentedSharedBuffer* data) const
+std::optional<SharedBufferDataView> CachedRawResource::calculateIncrementalDataChunk(const SharedBuffer& data) const
 {
     size_t previousDataLength = encodedSize();
-    if (!data || data->size() <= previousDataLength)
+    if (data.size() <= previousDataLength)
         return std::nullopt;
-    return data->getSomeData(previousDataLength);
+    return data.getSomeData(previousDataLength);
 }
 
 void CachedRawResource::updateBuffer(const FragmentedSharedBuffer& data)
@@ -72,7 +72,7 @@ void CachedRawResource::updateBuffer(const FragmentedSharedBuffer& data)
         previousDataSize += incrementalData.size();
 
         SetForScope<bool> notifyScope(m_inIncrementalDataNotify, true);
-        notifyClientsDataWasReceived(incrementalData.data(), incrementalData.size());
+        notifyClientsDataWasReceived(incrementalData.createSharedBuffer());
     }
     setEncodedSize(m_data->size());
 
@@ -89,11 +89,11 @@ void CachedRawResource::updateBuffer(const FragmentedSharedBuffer& data)
     }
 }
 
-void CachedRawResource::updateData(const uint8_t* data, unsigned length)
+void CachedRawResource::updateData(const SharedBuffer& buffer)
 {
     ASSERT(dataBufferingPolicy() == DataBufferingPolicy::DoNotBufferData);
-    notifyClientsDataWasReceived(data, length);
-    CachedResource::updateData(data, length);
+    notifyClientsDataWasReceived(buffer);
+    CachedResource::updateData(buffer);
 }
 
 void CachedRawResource::finishLoading(const FragmentedSharedBuffer* data, const NetworkLoadMetrics& metrics)
@@ -110,9 +110,9 @@ void CachedRawResource::finishLoading(const FragmentedSharedBuffer* data, const 
         if (data) {
             if (data != m_data.get())
                 m_data = data->makeContiguous();
-            if (auto incrementalData = calculateIncrementalDataChunk(data)) {
+            if (auto incrementalData = calculateIncrementalDataChunk(*m_data)) {
                 setEncodedSize(data->size());
-                notifyClientsDataWasReceived(incrementalData->data(), incrementalData->size());
+                notifyClientsDataWasReceived(incrementalData->createSharedBuffer());
             }
         } else
             m_data = nullptr;
@@ -130,15 +130,15 @@ void CachedRawResource::finishLoading(const FragmentedSharedBuffer* data, const 
     }
 }
 
-void CachedRawResource::notifyClientsDataWasReceived(const uint8_t* data, unsigned length)
+void CachedRawResource::notifyClientsDataWasReceived(const SharedBuffer& buffer)
 {
-    if (!length)
+    if (buffer.isEmpty())
         return;
 
     CachedResourceHandle<CachedRawResource> protectedThis(this);
     CachedResourceClientWalker<CachedRawResourceClient> w(m_clients);
     while (CachedRawResourceClient* c = w.next())
-        c->dataReceived(*this, data, length);
+        c->dataReceived(*this, buffer);
 }
 
 static void iterateRedirects(CachedResourceHandle<CachedRawResource>&& handle, CachedRawResourceClient& client, Vector<std::pair<ResourceRequest, ResourceResponse>>&& redirectsInReverseOrder, CompletionHandler<void(ResourceRequest&&)>&& completionHandler)
@@ -170,9 +170,9 @@ void CachedRawResource::didAddClient(CachedResourceClient& c)
             if (!hasClient(*client))
                 return;
             if (m_data) {
-                m_data->forEachSegment([&](auto& segment) {
+                m_data->forEachSegmentAsSharedBuffer([&](auto&& buffer) {
                     if (hasClient(*client))
-                        client->dataReceived(*this, segment.data(), segment.size());
+                        client->dataReceived(*this, buffer);
                 });
             }
             if (!hasClient(*client))

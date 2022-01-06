@@ -115,12 +115,12 @@ void WorkerFontLoadRequest::didReceiveResponse(ResourceLoaderIdentifier, const R
         m_errorOccurred = true;
 }
 
-void WorkerFontLoadRequest::didReceiveData(const uint8_t* data, int dataLength)
+void WorkerFontLoadRequest::didReceiveData(const SharedBuffer& buffer)
 {
     if (m_errorOccurred)
         return;
 
-    m_data.append(data, dataLength);
+    m_data.append(buffer);
 }
 
 void WorkerFontLoadRequest::didFinishLoading(ResourceLoaderIdentifier)

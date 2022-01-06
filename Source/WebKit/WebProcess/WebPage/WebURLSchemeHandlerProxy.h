@@ -35,6 +35,7 @@ class ResourceError;
 class ResourceLoader;
 class ResourceResponse;
 class ResourceRequest;
+class SharedBuffer;
 }
 
 namespace WebKit {
@@ -59,7 +60,7 @@ public:
 
     void taskDidPerformRedirection(WebCore::ResourceLoaderIdentifier, WebCore::ResourceResponse&&, WebCore::ResourceRequest&&, CompletionHandler<void(WebCore::ResourceRequest&&)>&&);
     void taskDidReceiveResponse(WebCore::ResourceLoaderIdentifier, const WebCore::ResourceResponse&);
-    void taskDidReceiveData(WebCore::ResourceLoaderIdentifier, size_t, const uint8_t* data);
+    void taskDidReceiveData(WebCore::ResourceLoaderIdentifier, const WebCore::SharedBuffer&);
     void taskDidComplete(WebCore::ResourceLoaderIdentifier, const WebCore::ResourceError&);
     void taskDidStopLoading(WebURLSchemeTaskProxy&);
 

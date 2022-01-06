@@ -99,9 +99,9 @@ void ApplicationCacheResourceLoader::responseReceived(CachedResource& resource, 
     m_applicationCacheResource = ApplicationCacheResource::create(m_resource->url(), response, m_type);
 }
 
-void ApplicationCacheResourceLoader::dataReceived(CachedResource&, const uint8_t* data, int length)
+void ApplicationCacheResourceLoader::dataReceived(CachedResource&, const SharedBuffer& buffer)
 {
-    m_applicationCacheResource->append(data, length);
+    m_applicationCacheResource->append(buffer);
 }
 
 void ApplicationCacheResourceLoader::redirectReceived(CachedResource&, ResourceRequest&& newRequest, const ResourceResponse&, CompletionHandler<void(ResourceRequest&&)>&& callback)

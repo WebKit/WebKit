@@ -172,7 +172,7 @@ void PingLoad::didReceiveResponse(ResourceResponse&& response, NegotiatedLegacyT
     didFinish({ }, response);
 }
 
-void PingLoad::didReceiveData(Ref<FragmentedSharedBuffer>&&)
+void PingLoad::didReceiveData(const SharedBuffer&)
 {
     PING_RELEASE_LOG("didReceiveData");
     ASSERT_NOT_REACHED();

@@ -443,12 +443,12 @@ void NetworkDataTaskCocoa::didCompleteWithError(const WebCore::ResourceError& er
         m_client->didCompleteWithError(error, networkLoadMetrics);
 }
 
-void NetworkDataTaskCocoa::didReceiveData(Ref<WebCore::FragmentedSharedBuffer>&& data)
+void NetworkDataTaskCocoa::didReceiveData(const WebCore::SharedBuffer& data)
 {
-    WTFEmitSignpost(m_task.get(), "DataTask", "received %zd bytes", data->size());
+    WTFEmitSignpost(m_task.get(), "DataTask", "received %zd bytes", data.size());
 
     if (m_client)
-        m_client->didReceiveData(WTFMove(data));
+        m_client->didReceiveData(data);
 }
 
 void NetworkDataTaskCocoa::didReceiveResponse(WebCore::ResourceResponse&& response, NegotiatedLegacyTLS negotiatedLegacyTLS, WebKit::ResponseCompletionHandler&& completionHandler)

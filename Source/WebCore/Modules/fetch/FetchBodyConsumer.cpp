@@ -378,13 +378,13 @@ void FetchBodyConsumer::resolve(Ref<DeferredPromise>&& promise, const String& co
     }
 }
 
-void FetchBodyConsumer::append(const uint8_t* data, unsigned size)
+void FetchBodyConsumer::append(const SharedBuffer& buffer)
 {
     if (m_source) {
-        m_source->enqueue(ArrayBuffer::tryCreate(data, size));
+        m_source->enqueue(buffer.tryCreateArrayBuffer());
         return;
     }
-    m_buffer.append(data, size);
+    m_buffer.append(buffer);
 }
 
 void FetchBodyConsumer::setData(Ref<FragmentedSharedBuffer>&& data)

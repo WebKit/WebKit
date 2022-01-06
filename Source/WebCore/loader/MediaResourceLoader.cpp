@@ -231,13 +231,13 @@ void MediaResource::dataSent(CachedResource& resource, unsigned long long bytesS
         m_client->dataSent(*this, bytesSent, totalBytesToBeSent);
 }
 
-void MediaResource::dataReceived(CachedResource& resource, const uint8_t* data, int dataLength)
+void MediaResource::dataReceived(CachedResource& resource, const SharedBuffer& buffer)
 {
     ASSERT_UNUSED(resource, &resource == m_resource);
 
     RefPtr<MediaResource> protectedThis(this);
     if (m_client)
-        m_client->dataReceived(*this, data, dataLength);
+        m_client->dataReceived(*this, buffer);
 }
 
 void MediaResource::notifyFinished(CachedResource& resource, const NetworkLoadMetrics& metrics)

@@ -177,7 +177,7 @@ ResourceError ServiceWorkerSoftUpdateLoader::processResponse(const ResourceRespo
     return { };
 }
 
-void ServiceWorkerSoftUpdateLoader::didReceiveBuffer(Ref<FragmentedSharedBuffer>&& buffer, int reportedEncodedDataLength)
+void ServiceWorkerSoftUpdateLoader::didReceiveBuffer(const WebCore::FragmentedSharedBuffer& buffer, int reportedEncodedDataLength)
 {
     if (!m_decoder) {
         if (!m_responseEncoding.isEmpty())
@@ -186,8 +186,10 @@ void ServiceWorkerSoftUpdateLoader::didReceiveBuffer(Ref<FragmentedSharedBuffer>
             m_decoder = TextResourceDecoder::create("text/javascript"_s, "UTF-8");
     }
 
-    if (auto size = buffer->size())
-        m_script.append(m_decoder->decode(buffer->makeContiguous()->data(), size));
+    buffer.forEachSegment([&](auto& segment) {
+        if (segment.size())
+            m_script.append(m_decoder->decode(segment.data(), segment.size()));
+    });
 }
 
 void ServiceWorkerSoftUpdateLoader::didFinishLoading(const WebCore::NetworkLoadMetrics&)
