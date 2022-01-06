@@ -19,7 +19,7 @@
 
 #pragma once
 
-#include "RenderSVGShape.h"
+#include "LegacyRenderSVGShape.h"
 #include "RenderStyleConstants.h"
 #include <wtf/TypeCasts.h>
 
@@ -60,7 +60,7 @@ public:
     virtual void removeClientFromCache(RenderElement&, bool markForInvalidation = true) = 0;
 
     virtual bool applyResource(RenderElement&, const RenderStyle&, GraphicsContext*&, OptionSet<RenderSVGResourceMode>) = 0;
-    virtual void postApplyResource(RenderElement&, GraphicsContext*&, OptionSet<RenderSVGResourceMode>, const Path*, const RenderSVGShape*) { }
+    virtual void postApplyResource(RenderElement&, GraphicsContext*&, OptionSet<RenderSVGResourceMode>, const Path*, const LegacyRenderSVGShape*) { }
     virtual FloatRect resourceBoundingBox(const RenderObject&) = 0;
 
     virtual RenderSVGResourceType resourceType() const = 0;

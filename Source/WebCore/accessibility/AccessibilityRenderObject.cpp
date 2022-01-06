@@ -73,6 +73,7 @@
 #include "HitTestResult.h"
 #include "Image.h"
 #include "LegacyRenderSVGRoot.h"
+#include "LegacyRenderSVGShape.h"
 #include "LocalizedStrings.h"
 #include "NodeList.h"
 #include "Page.h"
@@ -95,7 +96,6 @@
 #include "RenderMathMLBlock.h"
 #include "RenderMenuList.h"
 #include "RenderSVGRoot.h"
-#include "RenderSVGShape.h"
 #include "RenderTableCell.h"
 #include "RenderText.h"
 #include "RenderTextControl.h"
@@ -910,7 +910,7 @@ LayoutRect AccessibilityRenderObject::elementRect() const
 
 bool AccessibilityRenderObject::supportsPath() const
 {
-    return is<RenderText>(renderer()) || is<RenderSVGShape>(renderer());
+    return is<RenderText>(renderer()) || is<LegacyRenderSVGShape>(renderer());
 }
 
 Path AccessibilityRenderObject::elementPath() const
@@ -953,8 +953,8 @@ Path AccessibilityRenderObject::elementPath() const
         return PathUtilities::pathWithShrinkWrappedRects(pixelSnappedRects, 0);
     }
 
-    if (is<RenderSVGShape>(renderer()) && downcast<RenderSVGShape>(*m_renderer).hasPath()) {
-        Path path = downcast<RenderSVGShape>(*m_renderer).path();
+    if (is<LegacyRenderSVGShape>(renderer()) && downcast<LegacyRenderSVGShape>(*m_renderer).hasPath()) {
+        Path path = downcast<LegacyRenderSVGShape>(*m_renderer).path();
 
         // The SVG path is in terms of the parent's bounding box. The path needs to be offset to frame coordinates.
         if (auto svgRoot = ancestorsOfType<LegacyRenderSVGRoot>(*m_renderer).first()) {

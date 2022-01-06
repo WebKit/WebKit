@@ -242,7 +242,7 @@ bool RenderSVGResourceContainer::shouldTransformOnTextPainting(const RenderEleme
 // FIXME: This does not belong here.
 AffineTransform RenderSVGResourceContainer::transformOnNonScalingStroke(RenderObject* object, const AffineTransform& resourceTransform)
 {
-    if (!object->isSVGShape())
+    if (!object->isSVGShapeOrLegacySVGShape())
         return resourceTransform;
 
     SVGGraphicsElement* element = downcast<SVGGraphicsElement>(object->node());

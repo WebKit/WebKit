@@ -41,15 +41,15 @@ class RenderSVGPath;
 class RenderSVGResource;
 class SVGGraphicsElement;
 
-class RenderSVGShape : public LegacyRenderSVGModelObject {
-    WTF_MAKE_ISO_ALLOCATED(RenderSVGShape);
+class LegacyRenderSVGShape : public LegacyRenderSVGModelObject {
+    WTF_MAKE_ISO_ALLOCATED(LegacyRenderSVGShape);
 public:
     enum PointCoordinateSpace {
         GlobalCoordinateSpace,
         LocalCoordinateSpace
     };
-    RenderSVGShape(SVGGraphicsElement&, RenderStyle&&);
-    virtual ~RenderSVGShape();
+    LegacyRenderSVGShape(SVGGraphicsElement&, RenderStyle&&);
+    virtual ~LegacyRenderSVGShape();
 
     inline SVGGraphicsElement& graphicsElement() const;
 
@@ -101,7 +101,7 @@ private:
     const AffineTransform& localToParentTransform() const final { return m_localTransform; }
     AffineTransform localTransform() const final { return m_localTransform; }
 
-    bool isSVGShape() const final { return true; }
+    bool isLegacySVGShape() const final { return true; }
     bool canHaveChildren() const final { return false; }
     const char* renderName() const override { return "RenderSVGShape"; }
 
@@ -146,4 +146,4 @@ private:
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderSVGShape, isSVGShape())
+SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(LegacyRenderSVGShape, isLegacySVGShape())

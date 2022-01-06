@@ -336,6 +336,7 @@ public:
     virtual bool isSVGHiddenContainer() const { return false; }
     virtual bool isSVGPath() const { return false; }
     virtual bool isSVGShape() const { return false; }
+    virtual bool isLegacySVGShape() const { return false; }
     virtual bool isSVGText() const { return false; }
     virtual bool isSVGTextPath() const { return false; }
     virtual bool isSVGTSpan() const { return false; }
@@ -348,6 +349,7 @@ public:
     virtual bool isSVGResourceClipper() const { return false; }
     virtual bool isSVGResourceFilterPrimitive() const { return false; }
     bool isSVGRootOrLegacySVGRoot() const { return isSVGRoot() || isLegacySVGRoot(); }
+    bool isSVGShapeOrLegacySVGShape() const { return isSVGShape() || isLegacySVGShape(); }
     bool isRenderOrLegacyRenderSVGModelObject() const { return isRenderSVGModelObject() || isLegacyRenderSVGModelObject(); }
 
     // FIXME: Those belong into a SVG specific base-class for all renderers (see above)

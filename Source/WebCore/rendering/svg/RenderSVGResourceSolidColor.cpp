@@ -67,7 +67,7 @@ bool RenderSVGResourceSolidColor::applyResource(RenderElement& renderer, const R
     return true;
 }
 
-void RenderSVGResourceSolidColor::postApplyResource(RenderElement&, GraphicsContext*& context, OptionSet<RenderSVGResourceMode> resourceMode, const Path* path, const RenderSVGShape* shape)
+void RenderSVGResourceSolidColor::postApplyResource(RenderElement&, GraphicsContext*& context, OptionSet<RenderSVGResourceMode> resourceMode, const Path* path, const LegacyRenderSVGShape* shape)
 {
     ASSERT(context);
     ASSERT(!resourceMode.isEmpty());

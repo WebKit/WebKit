@@ -236,7 +236,7 @@ bool RenderSVGResourceClipper::drawContentIntoMaskImage(ImageBuffer& maskImageBu
         }
 
         // Only shapes, paths and texts are allowed for clipping.
-        if (!renderer->isSVGShape() && !renderer->isSVGText())
+        if (!renderer->isSVGShapeOrLegacySVGShape() && !renderer->isSVGText())
             continue;
 
         maskContext.setFillRule(newClipRule);
@@ -258,7 +258,7 @@ void RenderSVGResourceClipper::calculateClipContentRepaintRect()
         RenderObject* renderer = childNode->renderer();
         if (!childNode->isSVGElement() || !renderer)
             continue;
-        if (!renderer->isSVGShape() && !renderer->isSVGText() && !childNode->hasTagName(SVGNames::useTag))
+        if (!renderer->isSVGShapeOrLegacySVGShape() && !renderer->isSVGText() && !childNode->hasTagName(SVGNames::useTag))
             continue;
         const RenderStyle& style = renderer->style();
         if (style.display() == DisplayType::None || style.visibility() != Visibility::Visible)
@@ -294,7 +294,7 @@ bool RenderSVGResourceClipper::hitTestClipContent(const FloatRect& objectBoundin
         RenderObject* renderer = childNode->renderer();
         if (!childNode->isSVGElement() || !renderer)
             continue;
-        if (!renderer->isSVGShape() && !renderer->isSVGText() && !childNode->hasTagName(SVGNames::useTag))
+        if (!renderer->isSVGShapeOrLegacySVGShape() && !renderer->isSVGText() && !childNode->hasTagName(SVGNames::useTag))
             continue;
 
         IntPoint hitPoint;

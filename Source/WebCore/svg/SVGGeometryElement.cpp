@@ -24,8 +24,8 @@
 #include "SVGGeometryElement.h"
 
 #include "DOMPoint.h"
+#include "LegacyRenderSVGShape.h"
 #include "RenderSVGResource.h"
-#include "RenderSVGShape.h"
 #include "SVGDocumentExtensions.h"
 #include "SVGPathUtilities.h"
 #include "SVGPoint.h"
@@ -48,7 +48,7 @@ float SVGGeometryElement::getTotalLength() const
 {
     document().updateLayoutIgnorePendingStylesheets();
 
-    auto* renderer = downcast<RenderSVGShape>(this->renderer());
+    auto* renderer = downcast<LegacyRenderSVGShape>(this->renderer());
     if (!renderer)
         return 0;
 
@@ -59,7 +59,7 @@ ExceptionOr<Ref<SVGPoint>> SVGGeometryElement::getPointAtLength(float distance) 
 {
     document().updateLayoutIgnorePendingStylesheets();
 
-    auto* renderer = downcast<RenderSVGShape>(this->renderer());
+    auto* renderer = downcast<LegacyRenderSVGShape>(this->renderer());
     
     // Spec: If current element is a non-rendered element, throw an InvalidStateError.
     if (!renderer)
@@ -76,7 +76,7 @@ bool SVGGeometryElement::isPointInFill(DOMPointInit&& pointInit)
 {
     document().updateLayoutIgnorePendingStylesheets();
 
-    auto* renderer = downcast<RenderSVGShape>(this->renderer());
+    auto* renderer = downcast<LegacyRenderSVGShape>(this->renderer());
     if (!renderer)
         return false;
 
@@ -88,7 +88,7 @@ bool SVGGeometryElement::isPointInStroke(DOMPointInit&& pointInit)
 {
     document().updateLayoutIgnorePendingStylesheets();
 
-    auto* renderer = downcast<RenderSVGShape>(this->renderer());
+    auto* renderer = downcast<LegacyRenderSVGShape>(this->renderer());
     if (!renderer)
         return false;
 

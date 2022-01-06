@@ -230,7 +230,7 @@ bool AccessibilitySVGElement::computeAccessibilityIsIgnored() const
 
     // SVG shapes should not be included unless there's a concrete reason for inclusion.
     // https://rawgit.com/w3c/aria/master/svg-aam/svg-aam.html#exclude_elements
-    if (m_renderer->isSVGShape()) {
+    if (m_renderer->isSVGShapeOrLegacySVGShape()) {
         if (canSetFocusAttribute() || element()->hasEventListeners())
             return false;
         if (auto* svgParent = Accessibility::findAncestor<AccessibilityObject>(*this, true, [] (const AccessibilityObject& object) {
@@ -284,7 +284,7 @@ AccessibilityRole AccessibilitySVGElement::determineAccessibilityRole()
 
     Element* svgElement = element();
 
-    if (m_renderer->isSVGShape() || m_renderer->isSVGPath() || m_renderer->isSVGImage() || is<SVGUseElement>(svgElement))
+    if (m_renderer->isSVGShapeOrLegacySVGShape() || m_renderer->isSVGPath() || m_renderer->isSVGImage() || is<SVGUseElement>(svgElement))
         return AccessibilityRole::Image;
     if (m_renderer->isSVGForeignObject() || is<SVGGElement>(svgElement))
         return AccessibilityRole::Group;

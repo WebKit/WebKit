@@ -201,7 +201,7 @@ bool RenderSVGResourcePattern::applyResource(RenderElement& renderer, const Rend
     return true;
 }
 
-void RenderSVGResourcePattern::postApplyResource(RenderElement&, GraphicsContext*& context, OptionSet<RenderSVGResourceMode> resourceMode, const Path* path, const RenderSVGShape* shape)
+void RenderSVGResourcePattern::postApplyResource(RenderElement&, GraphicsContext*& context, OptionSet<RenderSVGResourceMode> resourceMode, const Path* path, const LegacyRenderSVGShape* shape)
 {
     ASSERT(context);
     ASSERT(!resourceMode.isEmpty());

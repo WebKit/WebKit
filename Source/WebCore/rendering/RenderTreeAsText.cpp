@@ -558,8 +558,8 @@ void write(TextStream& ts, const RenderObject& o, OptionSet<RenderAsTextFlag> be
         ts << "\n";
     };
 
-    if (is<RenderSVGShape>(o)) {
-        write(ts, downcast<RenderSVGShape>(o), behavior);
+    if (is<LegacyRenderSVGShape>(o)) {
+        write(ts, downcast<LegacyRenderSVGShape>(o), behavior);
         return;
     }
     if (is<RenderSVGGradientStop>(o)) {

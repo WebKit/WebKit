@@ -32,6 +32,7 @@
 #include "ColorSerialization.h"
 #include "GraphicsTypes.h"
 #include "LegacyRenderSVGRoot.h"
+#include "LegacyRenderSVGShapeInlines.h"
 #include "NodeRenderStyle.h"
 #include "RenderImage.h"
 #include "RenderIterator.h"
@@ -48,7 +49,6 @@
 #include "RenderSVGResourceRadialGradientInlines.h"
 #include "RenderSVGResourceSolidColor.h"
 #include "RenderSVGRoot.h"
-#include "RenderSVGShapeInlines.h"
 #include "RenderSVGText.h"
 #include "SVGCircleElement.h"
 #include "SVGElementTypeHelpers.h"
@@ -181,11 +181,11 @@ static void writeStyle(TextStream& ts, const RenderElement& renderer)
         writeNameValuePair(ts, "transform", renderer.localTransform());
     writeIfNotDefault(ts, "image rendering", style.imageRendering(), RenderStyle::initialImageRendering());
     writeIfNotDefault(ts, "opacity", style.opacity(), RenderStyle::initialOpacity());
-    if (is<RenderSVGShape>(renderer)) {
-        const auto& shape = downcast<RenderSVGShape>(renderer);
+    if (is<LegacyRenderSVGShape>(renderer)) {
+        const auto& shape = downcast<LegacyRenderSVGShape>(renderer);
 
         Color fallbackColor;
-        if (RenderSVGResource* strokePaintingResource = RenderSVGResource::strokePaintingResource(const_cast<RenderSVGShape&>(shape), shape.style(), fallbackColor)) {
+        if (RenderSVGResource* strokePaintingResource = RenderSVGResource::strokePaintingResource(const_cast<LegacyRenderSVGShape&>(shape), shape.style(), fallbackColor)) {
             TextStreamSeparator s(" ");
             ts << " [stroke={" << s;
             writeSVGPaintingResource(ts, strokePaintingResource);
@@ -216,7 +216,7 @@ static void writeStyle(TextStream& ts, const RenderElement& renderer)
             ts << "}]";
         }
 
-        if (RenderSVGResource* fillPaintingResource = RenderSVGResource::fillPaintingResource(const_cast<RenderSVGShape&>(shape), shape.style(), fallbackColor)) {
+        if (RenderSVGResource* fillPaintingResource = RenderSVGResource::fillPaintingResource(const_cast<LegacyRenderSVGShape&>(shape), shape.style(), fallbackColor)) {
             TextStreamSeparator s(" ");
             ts << " [fill={" << s;
             writeSVGPaintingResource(ts, fillPaintingResource);
@@ -250,7 +250,7 @@ static TextStream& writePositionAndStyle(TextStream& ts, const RenderElement& re
     return ts;
 }
 
-static TextStream& operator<<(TextStream& ts, const RenderSVGShape& shape)
+static TextStream& operator<<(TextStream& ts, const LegacyRenderSVGShape& shape)
 {
     writePositionAndStyle(ts, shape);
 
@@ -551,7 +551,7 @@ void writeSVGImage(TextStream& ts, const RenderSVGImage& image, OptionSet<Render
     writeResources(ts, image, behavior);
 }
 
-void write(TextStream& ts, const RenderSVGShape& shape, OptionSet<RenderAsTextFlag> behavior)
+void write(TextStream& ts, const LegacyRenderSVGShape& shape, OptionSet<RenderAsTextFlag> behavior)
 {
     writeStandardPrefix(ts, shape, behavior);
     ts << shape << "\n";

@@ -179,7 +179,7 @@ bool RenderSVGResourceGradient::applyResource(RenderElement& renderer, const Ren
     return true;
 }
 
-void RenderSVGResourceGradient::postApplyResource(RenderElement& renderer, GraphicsContext*& context, OptionSet<RenderSVGResourceMode> resourceMode, const Path* path, const RenderSVGShape* shape)
+void RenderSVGResourceGradient::postApplyResource(RenderElement& renderer, GraphicsContext*& context, OptionSet<RenderSVGResourceMode> resourceMode, const Path* path, const LegacyRenderSVGShape* shape)
 {
     ASSERT(context);
     ASSERT(!resourceMode.isEmpty());

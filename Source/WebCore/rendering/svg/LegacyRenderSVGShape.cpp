@@ -27,7 +27,7 @@
  */
 
 #include "config.h"
-#include "RenderSVGShape.h"
+#include "LegacyRenderSVGShape.h"
 
 #include "FloatPoint.h"
 #include "FloatQuad.h"
@@ -35,10 +35,10 @@
 #include "HitTestRequest.h"
 #include "HitTestResult.h"
 #include "LayoutRepainter.h"
+#include "LegacyRenderSVGShapeInlines.h"
 #include "PointerEventsHitRules.h"
 #include "RenderSVGResourceMarker.h"
 #include "RenderSVGResourceSolidColor.h"
-#include "RenderSVGShapeInlines.h"
 #include "SVGPathData.h"
 #include "SVGRenderingContext.h"
 #include "SVGResources.h"
@@ -49,9 +49,9 @@
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(RenderSVGShape);
+WTF_MAKE_ISO_ALLOCATED_IMPL(LegacyRenderSVGShape);
 
-RenderSVGShape::RenderSVGShape(SVGGraphicsElement& element, RenderStyle&& style)
+LegacyRenderSVGShape::LegacyRenderSVGShape(SVGGraphicsElement& element, RenderStyle&& style)
     : LegacyRenderSVGModelObject(element, WTFMove(style))
     , m_needsBoundariesUpdate(false) // Default is false, the cached rects are empty from the beginning.
     , m_needsShapeUpdate(true) // Default is true, so we grab a Path object once from SVGGraphicsElement.
@@ -59,9 +59,9 @@ RenderSVGShape::RenderSVGShape(SVGGraphicsElement& element, RenderStyle&& style)
 {
 }
 
-RenderSVGShape::~RenderSVGShape() = default;
+LegacyRenderSVGShape::~LegacyRenderSVGShape() = default;
 
-void RenderSVGShape::updateShapeFromElement()
+void LegacyRenderSVGShape::updateShapeFromElement()
 {
     m_path = createPath();
     processMarkerPositions();
@@ -70,7 +70,7 @@ void RenderSVGShape::updateShapeFromElement()
     m_strokeBoundingBox = calculateStrokeBoundingBox();
 }
 
-bool RenderSVGShape::isEmpty() const
+bool LegacyRenderSVGShape::isEmpty() const
 {
     // This function should never be called before assigning a new Path to m_path.
     // But this bug can happen if this renderer was created and its layout was not
@@ -79,12 +79,12 @@ bool RenderSVGShape::isEmpty() const
     return !hasPath() || path().isEmpty();
 }
 
-void RenderSVGShape::fillShape(GraphicsContext& context) const
+void LegacyRenderSVGShape::fillShape(GraphicsContext& context) const
 {
     context.fillPath(path());
 }
 
-void RenderSVGShape::strokeShape(GraphicsContext& context) const
+void LegacyRenderSVGShape::strokeShape(GraphicsContext& context) const
 {
     ASSERT(m_path);
     Path* usePath = m_path.get();
@@ -95,7 +95,7 @@ void RenderSVGShape::strokeShape(GraphicsContext& context) const
     context.strokePath(*usePath);
 }
 
-bool RenderSVGShape::shapeDependentStrokeContains(const FloatPoint& point, PointCoordinateSpace pointCoordinateSpace)
+bool LegacyRenderSVGShape::shapeDependentStrokeContains(const FloatPoint& point, PointCoordinateSpace pointCoordinateSpace)
 {
     ASSERT(m_path);
 
@@ -112,12 +112,12 @@ bool RenderSVGShape::shapeDependentStrokeContains(const FloatPoint& point, Point
     });
 }
 
-bool RenderSVGShape::shapeDependentFillContains(const FloatPoint& point, const WindRule fillRule) const
+bool LegacyRenderSVGShape::shapeDependentFillContains(const FloatPoint& point, const WindRule fillRule) const
 {
     return path().contains(point, fillRule);
 }
 
-bool RenderSVGShape::fillContains(const FloatPoint& point, bool requiresFill, const WindRule fillRule)
+bool LegacyRenderSVGShape::fillContains(const FloatPoint& point, bool requiresFill, const WindRule fillRule)
 {
     if (m_fillBoundingBox.isEmpty() || !m_fillBoundingBox.contains(point))
         return false;
@@ -129,7 +129,7 @@ bool RenderSVGShape::fillContains(const FloatPoint& point, bool requiresFill, co
     return shapeDependentFillContains(point, fillRule);
 }
 
-bool RenderSVGShape::strokeContains(const FloatPoint& point, bool requiresStroke)
+bool LegacyRenderSVGShape::strokeContains(const FloatPoint& point, bool requiresStroke)
 {
     if (strokeBoundingBox().isEmpty() || !strokeBoundingBox().contains(point))
         return false;
@@ -141,7 +141,7 @@ bool RenderSVGShape::strokeContains(const FloatPoint& point, bool requiresStroke
     return shapeDependentStrokeContains(point);
 }
 
-void RenderSVGShape::layout()
+void LegacyRenderSVGShape::layout()
 {
     StackStats::LayoutCheckPoint layoutCheckPoint;
     LayoutRepainter repainter(*this, SVGRenderSupport::checkForSVGRepaintDuringLayout(*this) && selfNeedsLayout());
@@ -174,7 +174,7 @@ void RenderSVGShape::layout()
     clearNeedsLayout();
 }
 
-Path* RenderSVGShape::nonScalingStrokePath(const Path* path, const AffineTransform& strokeTransform) const
+Path* LegacyRenderSVGShape::nonScalingStrokePath(const Path* path, const AffineTransform& strokeTransform) const
 {
     static NeverDestroyed<Path> tempPath;
 
@@ -184,7 +184,7 @@ Path* RenderSVGShape::nonScalingStrokePath(const Path* path, const AffineTransfo
     return &tempPath.get();
 }
 
-bool RenderSVGShape::setupNonScalingStrokeContext(AffineTransform& strokeTransform, GraphicsContextStateSaver& stateSaver)
+bool LegacyRenderSVGShape::setupNonScalingStrokeContext(AffineTransform& strokeTransform, GraphicsContextStateSaver& stateSaver)
 {
     std::optional<AffineTransform> inverse = strokeTransform.inverse();
     if (!inverse)
@@ -195,12 +195,12 @@ bool RenderSVGShape::setupNonScalingStrokeContext(AffineTransform& strokeTransfo
     return true;
 }
 
-AffineTransform RenderSVGShape::nonScalingStrokeTransform() const
+AffineTransform LegacyRenderSVGShape::nonScalingStrokeTransform() const
 {
     return graphicsElement().getScreenCTM(SVGLocatable::DisallowStyleUpdate);
 }
 
-bool RenderSVGShape::shouldGenerateMarkerPositions() const
+bool LegacyRenderSVGShape::shouldGenerateMarkerPositions() const
 {
     if (!style().svgStyle().hasMarkers())
         return false;
@@ -215,7 +215,7 @@ bool RenderSVGShape::shouldGenerateMarkerPositions() const
     return resources->markerStart() || resources->markerMid() || resources->markerEnd();
 }
 
-void RenderSVGShape::fillShape(const RenderStyle& style, GraphicsContext& originalContext)
+void LegacyRenderSVGShape::fillShape(const RenderStyle& style, GraphicsContext& originalContext)
 {
     GraphicsContext* context = &originalContext;
     Color fallbackColor;
@@ -231,7 +231,7 @@ void RenderSVGShape::fillShape(const RenderStyle& style, GraphicsContext& origin
     }
 }
 
-void RenderSVGShape::strokeShape(const RenderStyle& style, GraphicsContext& originalContext)
+void LegacyRenderSVGShape::strokeShape(const RenderStyle& style, GraphicsContext& originalContext)
 {
     GraphicsContext* context = &originalContext;
     Color fallbackColor;
@@ -247,7 +247,7 @@ void RenderSVGShape::strokeShape(const RenderStyle& style, GraphicsContext& orig
     }
 }
 
-void RenderSVGShape::strokeShape(GraphicsContext& context)
+void LegacyRenderSVGShape::strokeShape(GraphicsContext& context)
 {
     if (!style().hasVisibleStroke())
         return;
@@ -261,7 +261,7 @@ void RenderSVGShape::strokeShape(GraphicsContext& context)
     strokeShape(style(), context);
 }
 
-void RenderSVGShape::fillStrokeMarkers(PaintInfo& childPaintInfo)
+void LegacyRenderSVGShape::fillStrokeMarkers(PaintInfo& childPaintInfo)
 {
     auto paintOrder = RenderStyle::paintTypesForPaintOrder(style().paintOrder());
     for (unsigned i = 0; i < paintOrder.size(); ++i) {
@@ -280,7 +280,7 @@ void RenderSVGShape::fillStrokeMarkers(PaintInfo& childPaintInfo)
     }
 }
 
-void RenderSVGShape::paint(PaintInfo& paintInfo, const LayoutPoint&)
+void LegacyRenderSVGShape::paint(PaintInfo& paintInfo, const LayoutPoint&)
 {
     if (paintInfo.context().paintingDisabled() || paintInfo.phase != PaintPhase::Foreground
         || style().visibility() == Visibility::Hidden || isEmpty())
@@ -311,19 +311,19 @@ void RenderSVGShape::paint(PaintInfo& paintInfo, const LayoutPoint&)
 
 // This method is called from inside paintOutline() since we call paintOutline()
 // while transformed to our coord system, return local coords
-void RenderSVGShape::addFocusRingRects(Vector<LayoutRect>& rects, const LayoutPoint&, const RenderLayerModelObject*)
+void LegacyRenderSVGShape::addFocusRingRects(Vector<LayoutRect>& rects, const LayoutPoint&, const RenderLayerModelObject*)
 {
     LayoutRect rect = LayoutRect(repaintRectInLocalCoordinates());
     if (!rect.isEmpty())
         rects.append(rect);
 }
 
-bool RenderSVGShape::isPointInFill(const FloatPoint& point)
+bool LegacyRenderSVGShape::isPointInFill(const FloatPoint& point)
 {
     return shapeDependentFillContains(point, style().svgStyle().fillRule());
 }
 
-bool RenderSVGShape::isPointInStroke(const FloatPoint& point)
+bool LegacyRenderSVGShape::isPointInStroke(const FloatPoint& point)
 {
     if (!style().svgStyle().hasStroke())
         return false;
@@ -331,17 +331,17 @@ bool RenderSVGShape::isPointInStroke(const FloatPoint& point)
     return shapeDependentStrokeContains(point, LocalCoordinateSpace);
 }
 
-float RenderSVGShape::getTotalLength() const
+float LegacyRenderSVGShape::getTotalLength() const
 {
     return hasPath() ? path().length() : createPath()->length();
 }
 
-FloatPoint RenderSVGShape::getPointAtLength(float distance) const
+FloatPoint LegacyRenderSVGShape::getPointAtLength(float distance) const
 {
     return hasPath() ? path().pointAtLength(distance) : createPath()->pointAtLength(distance);
 }
 
-bool RenderSVGShape::nodeAtFloatPoint(const HitTestRequest& request, HitTestResult& result, const FloatPoint& pointInParent, HitTestAction hitTestAction)
+bool LegacyRenderSVGShape::nodeAtFloatPoint(const HitTestRequest& request, HitTestResult& result, const FloatPoint& pointInParent, HitTestAction hitTestAction)
 {
     // We only draw in the forground phase, so we only hit-test then.
     if (hitTestAction != HitTestForeground)
@@ -387,7 +387,7 @@ static inline RenderSVGResourceMarker* markerForType(SVGMarkerType type, RenderS
     return 0;
 }
 
-FloatRect RenderSVGShape::markerRect(float strokeWidth) const
+FloatRect LegacyRenderSVGShape::markerRect(float strokeWidth) const
 {
     ASSERT(!m_markerPositions.isEmpty());
 
@@ -408,12 +408,12 @@ FloatRect RenderSVGShape::markerRect(float strokeWidth) const
     return boundaries;
 }
 
-FloatRect RenderSVGShape::calculateObjectBoundingBox() const
+FloatRect LegacyRenderSVGShape::calculateObjectBoundingBox() const
 {
     return path().boundingRect();
 }
 
-FloatRect RenderSVGShape::calculateStrokeBoundingBox() const
+FloatRect LegacyRenderSVGShape::calculateStrokeBoundingBox() const
 {
     ASSERT(m_path);
     FloatRect strokeBoundingBox = m_fillBoundingBox;
@@ -425,14 +425,14 @@ FloatRect RenderSVGShape::calculateStrokeBoundingBox() const
                 Path* usePath = nonScalingStrokePath(m_path.get(), nonScalingTransform);
                 FloatRect strokeBoundingRect = usePath->strokeBoundingRect(Function<void(GraphicsContext&)> { [this] (GraphicsContext& context) {
                     SVGRenderSupport::applyStrokeStyleToContext(context, style(), *this);
-                }});
+                } });
                 strokeBoundingRect = inverse.value().mapRect(strokeBoundingRect);
                 strokeBoundingBox.unite(strokeBoundingRect);
             }
         } else {
             strokeBoundingBox.unite(path().strokeBoundingRect(Function<void(GraphicsContext&)> { [this] (GraphicsContext& context) {
                 SVGRenderSupport::applyStrokeStyleToContext(context, style(), *this);
-            }}));
+            } }));
         }
     }
 
@@ -442,7 +442,7 @@ FloatRect RenderSVGShape::calculateStrokeBoundingBox() const
     return strokeBoundingBox;
 }
 
-void RenderSVGShape::updateRepaintBoundingBox()
+void LegacyRenderSVGShape::updateRepaintBoundingBox()
 {
     m_repaintBoundingBoxExcludingShadow = strokeBoundingBox();
     SVGRenderSupport::intersectRepaintRectWithResources(*this, m_repaintBoundingBoxExcludingShadow);
@@ -450,13 +450,13 @@ void RenderSVGShape::updateRepaintBoundingBox()
     m_repaintBoundingBox = m_repaintBoundingBoxExcludingShadow;
 }
 
-float RenderSVGShape::strokeWidth() const
+float LegacyRenderSVGShape::strokeWidth() const
 {
     SVGLengthContext lengthContext(&graphicsElement());
     return lengthContext.valueForLength(style().strokeWidth());
 }
 
-bool RenderSVGShape::hasSmoothStroke() const
+bool LegacyRenderSVGShape::hasSmoothStroke() const
 {
     const SVGRenderStyle& svgStyle = style().svgStyle();
     return svgStyle.strokeDashArray().isEmpty()
@@ -465,7 +465,7 @@ bool RenderSVGShape::hasSmoothStroke() const
         && style().capStyle() == style().initialCapStyle();
 }
 
-void RenderSVGShape::drawMarkers(PaintInfo& paintInfo)
+void LegacyRenderSVGShape::drawMarkers(PaintInfo& paintInfo)
 {
     ASSERT(!m_markerPositions.isEmpty());
 
@@ -487,12 +487,12 @@ void RenderSVGShape::drawMarkers(PaintInfo& paintInfo)
     }
 }
 
-std::unique_ptr<Path> RenderSVGShape::createPath() const
+std::unique_ptr<Path> LegacyRenderSVGShape::createPath() const
 {
     return makeUnique<Path>(pathFromGraphicsElement(&graphicsElement()));
 }
 
-void RenderSVGShape::processMarkerPositions()
+void LegacyRenderSVGShape::processMarkerPositions()
 {
     m_markerPositions.clear();
 

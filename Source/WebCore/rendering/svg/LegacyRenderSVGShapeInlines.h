@@ -25,12 +25,12 @@
 
 #pragma once
 
-#include "RenderSVGShape.h"
+#include "LegacyRenderSVGShape.h"
 #include "SVGGraphicsElement.h"
 
 namespace WebCore {
 
-inline SVGGraphicsElement& RenderSVGShape::graphicsElement() const
+inline SVGGraphicsElement& LegacyRenderSVGShape::graphicsElement() const
 {
     return downcast<SVGGraphicsElement>(LegacyRenderSVGModelObject::element());
 }

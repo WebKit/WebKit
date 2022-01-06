@@ -38,7 +38,7 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(RenderSVGPath);
 
 RenderSVGPath::RenderSVGPath(SVGGraphicsElement& element, RenderStyle&& style)
-    : RenderSVGShape(element, WTFMove(style))
+    : LegacyRenderSVGShape(element, WTFMove(style))
 {
 }
 
@@ -46,7 +46,7 @@ RenderSVGPath::~RenderSVGPath() = default;
 
 void RenderSVGPath::updateShapeFromElement()
 {
-    RenderSVGShape::updateShapeFromElement();
+    LegacyRenderSVGShape::updateShapeFromElement();
     updateZeroLengthSubpaths();
 
     m_strokeBoundingBox = calculateUpdatedStrokeBoundingBox();
@@ -81,7 +81,7 @@ void RenderSVGPath::strokeShape(GraphicsContext& context) const
     if (!style().hasVisibleStroke())
         return;
 
-    RenderSVGShape::strokeShape(context);
+    LegacyRenderSVGShape::strokeShape(context);
 
     if (m_zeroLengthLinecapLocations.isEmpty())
         return;
@@ -104,7 +104,7 @@ void RenderSVGPath::strokeShape(GraphicsContext& context) const
 
 bool RenderSVGPath::shapeDependentStrokeContains(const FloatPoint& point, PointCoordinateSpace pointCoordinateSpace)
 {
-    if (RenderSVGShape::shapeDependentStrokeContains(point, pointCoordinateSpace))
+    if (LegacyRenderSVGShape::shapeDependentStrokeContains(point, pointCoordinateSpace))
         return true;
 
     for (size_t i = 0; i < m_zeroLengthLinecapLocations.size(); ++i) {
