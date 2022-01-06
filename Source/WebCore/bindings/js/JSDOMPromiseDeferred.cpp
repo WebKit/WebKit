@@ -55,6 +55,7 @@ void DeferredPromise::callFunction(JSGlobalObject& lexicalGlobalObject, ResolveM
 
     if (activeDOMObjectsAreSuspended()) {
         JSC::Strong<JSC::Unknown, ShouldStrongDestructorGrabLock::Yes> strongResolution(lexicalGlobalObject.vm(), resolution);
+        ASSERT(scriptExecutionContext()->eventLoop().isSuspended());
         scriptExecutionContext()->eventLoop().queueTask(TaskSource::Networking, [this, protectedThis = Ref { *this }, mode, strongResolution = WTFMove(strongResolution)]() mutable {
             if (shouldIgnoreRequestToFulfill())
                 return;
