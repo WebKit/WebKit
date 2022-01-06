@@ -1055,9 +1055,6 @@ void XMLHttpRequest::didReceiveData(const uint8_t* data, int len)
     if (!len)
         return;
 
-    if (len == -1)
-        len = strlen(reinterpret_cast<const char*>(data));
-
     if (useDecoder)
         m_responseBuilder.append(m_decoder->decode(data, len));
     else {

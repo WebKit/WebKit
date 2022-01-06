@@ -129,9 +129,6 @@ public:
         if (!dataLength)
             return;
 
-        if (dataLength == -1)
-            dataLength = strlen(reinterpret_cast<const char*>(data));
-
         m_responseText.append(m_decoder->decode(data, dataLength));
     }
 
