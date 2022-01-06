@@ -1,3 +1,15 @@
+2022-01-05  Brandon Stewart  <brandonstewart@apple.com>
+
+        border radii may have missing values
+        https://bugs.webkit.org/show_bug.cgi?id=234866
+
+        Reviewed by Antti Koivisto.
+
+        Add test to verify behavior of CSS border radii.
+
+        * fast/css/border-radius-invalid-pair-expected.txt: Added.
+        * fast/css/border-radius-invalid-pair.html: Added.
+
 2022-01-05  Megan Gardner  <megan_gardner@apple.com>
 
         Remove unneeded webkit specific CSS attribute for Image Control Menu.
