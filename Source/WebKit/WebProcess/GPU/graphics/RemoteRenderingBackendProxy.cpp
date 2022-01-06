@@ -127,7 +127,13 @@ bool RemoteRenderingBackendProxy::waitForDidFlush()
 
 void RemoteRenderingBackendProxy::createRemoteImageBuffer(ImageBuffer& imageBuffer)
 {
-    sendToStream(Messages::RemoteRenderingBackend::CreateImageBuffer(imageBuffer.truncatedLogicalSize(), imageBuffer.renderingMode(), imageBuffer.resolutionScale(), imageBuffer.colorSpace(), imageBuffer.pixelFormat(), imageBuffer.renderingResourceIdentifier()));
+    auto logicalSize = imageBuffer.logicalSize();
+    if (logicalSize.width() > 1 || logicalSize.height() > 1) {
+        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=225377 If we unconditionally use imageBuffer.logicalSize() here instead of imageBuffer.truncatedLogicalSize(),
+        // there may be a memory regression. See https://trac.webkit.org/changeset/287358/webkit
+        logicalSize = imageBuffer.truncatedLogicalSize();
+    }
+    sendToStream(Messages::RemoteRenderingBackend::CreateImageBuffer(logicalSize, imageBuffer.renderingMode(), imageBuffer.resolutionScale(), imageBuffer.colorSpace(), imageBuffer.pixelFormat(), imageBuffer.renderingResourceIdentifier()));
 }
 
 RefPtr<ImageBuffer> RemoteRenderingBackendProxy::createImageBuffer(const FloatSize& size, RenderingMode renderingMode, float resolutionScale, const DestinationColorSpace& colorSpace, PixelFormat pixelFormat)
