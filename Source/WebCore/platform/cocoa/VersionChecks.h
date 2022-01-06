@@ -112,7 +112,6 @@ enum class SDKVersion : uint32_t {
 #endif
 };
 
-enum class AssumeSafariIsAlwaysLinkedOnAfter : bool { No, Yes };
-WEBCORE_EXPORT bool linkedOnOrAfter(SDKVersion, AssumeSafariIsAlwaysLinkedOnAfter = AssumeSafariIsAlwaysLinkedOnAfter::Yes);
+WEBCORE_EXPORT bool linkedOnOrAfter(SDKVersion);
 
 }
