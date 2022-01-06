@@ -1094,17 +1094,6 @@ static Ref<CSSValue> createTransitionPropertyValue(const Animation& animation)
     return CSSValuePool::singleton().createIdentifierValue(CSSValueNone);
 }
 
-static Ref<CSSValueList> transitionPropertyValue(const AnimationList* animationList)
-{
-    auto list = CSSValueList::createCommaSeparated();
-    if (animationList) {
-        for (size_t i = 0; i < animationList->size(); ++i)
-            list->append(createTransitionPropertyValue(animationList->animation(i)));
-    } else
-        list->append(CSSValuePool::singleton().createIdentifierValue(CSSValueAll));
-    return list;
-}
-
 static Ref<CSSValueList> valueForScrollSnapType(const ScrollSnapType& type)
 {
     auto value = CSSValueList::createSpaceSeparated();
@@ -1484,15 +1473,14 @@ static Ref<CSSValueList> valueListForAnimationOrTransitionProperty(CSSPropertyID
     return list;
 }
 
-static Ref<CSSValueList> animationShorthandValue(const AnimationList* animationList)
+static Ref<CSSValueList> animationShorthandValue(CSSPropertyID property, const AnimationList* animationList)
 {
     auto parentList = CSSValueList::createCommaSeparated();
     if (animationList) {
         for (size_t i = 0; i < animationList->size(); ++i) {
             const auto& animation = animationList->animation(i);
             auto childList = CSSValueList::createSpaceSeparated();
-            auto shorthand = shorthandForProperty(CSSPropertyAnimation);
-            for (auto longhand : shorthand)
+            for (auto longhand : shorthandForProperty(property))
                 ComputedStyleExtractor::addValueForAnimationPropertyToList(childList.get(), longhand, &animation);
             parentList->append(childList);
         }
@@ -3582,7 +3570,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
                 return cssValuePool.createIdentifierValue(CSSValueContentBox);
             return cssValuePool.createIdentifierValue(CSSValueBorderBox);
         case CSSPropertyAnimation:
-            return animationShorthandValue(style.animations());
+            return animationShorthandValue(propertyID, style.animations());
         case CSSPropertyAnimationDelay:
         case CSSPropertyAnimationDirection:
         case CSSPropertyAnimationDuration:
@@ -3786,32 +3774,10 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         case CSSPropertyTransitionDelay:
         case CSSPropertyTransitionDuration:
         case CSSPropertyTransitionTimingFunction:
-            return valueListForAnimationOrTransitionProperty(propertyID, style.transitions());
         case CSSPropertyTransitionProperty:
-            return transitionPropertyValue(style.transitions());
-        case CSSPropertyTransition: {
-            if (auto* animationList = style.transitions()) {
-                auto transitionsList = CSSValueList::createCommaSeparated();
-                for (size_t i = 0; i < animationList->size(); ++i) {
-                    auto list = CSSValueList::createSpaceSeparated();
-                    auto& animation = animationList->animation(i);
-                    list->append(createTransitionPropertyValue(animation));
-                    list->append(cssValuePool.createValue(animation.duration(), CSSUnitType::CSS_S));
-                    list->append(valueForAnimationTimingFunction(*animation.timingFunction()));
-                    list->append(cssValuePool.createValue(animation.delay(), CSSUnitType::CSS_S));
-                    transitionsList->append(WTFMove(list));
-                }
-                return transitionsList;
-            }
-
-            auto list = CSSValueList::createSpaceSeparated();
-            // transition-property default value.
-            list->append(cssValuePool.createIdentifierValue(CSSValueAll));
-            list->append(cssValuePool.createValue(Animation::initialDuration(), CSSUnitType::CSS_S));
-            list->append(valueForAnimationTimingFunction(Animation::initialTimingFunction()));
-            list->append(cssValuePool.createValue(Animation::initialDelay(), CSSUnitType::CSS_S));
-            return list;
-        }
+            return valueListForAnimationOrTransitionProperty(propertyID, style.transitions());
+        case CSSPropertyTransition:
+            return animationShorthandValue(propertyID, style.transitions());
         case CSSPropertyPointerEvents:
             return cssValuePool.createValue(style.pointerEvents());
         case CSSPropertyWebkitLineGrid:

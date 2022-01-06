@@ -1,3 +1,15 @@
+2022-01-05  Antoine Quint  <graouts@webkit.org>
+
+        Refactor computed style code for transition-property and the transition shorthand
+        https://bugs.webkit.org/show_bug.cgi?id=234872
+
+        Reviewed by Antti Koivisto.
+
+        Rebaseline some test output.
+
+        * web-platform-tests/css/css-pseudo/first-letter-allowed-properties-expected.txt:
+        * web-platform-tests/css/css-pseudo/first-line-allowed-properties-expected.txt:
+
 2022-01-05  Youenn Fablet  <youenn@apple.com>
 
         MediaRecorder should support the bitsPerSecond option
