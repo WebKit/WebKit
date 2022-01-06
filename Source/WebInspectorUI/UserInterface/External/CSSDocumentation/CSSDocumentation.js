@@ -2271,7 +2271,7 @@ CSSDocumentation = {
         "url": "https://developer.mozilla.org/docs/Web/CSS/shape-margin"
     },
     "shape-outside": {
-        "description": "Specifies an orthogonal rotation to be applied to an image before it is laid out.",
+        "description": "Defines a shape around which adjacent inline content should wrap.",
         "syntax": "none | [ <shape-box> || <basic-shape> ] | <image>",
         "url": "https://developer.mozilla.org/docs/Web/CSS/shape-outside"
     },

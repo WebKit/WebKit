@@ -25,8 +25,11 @@
 # This script generates the file with CSS documentation shown in Web Inspector:
 # Source/WebInspectorUI/UserInterface/External/CSSDocumentation/CSSDocumentation.js
 #
-# The data comes from the VSCode custom data repository:
+# The upstream data comes from the VSCode custom data repository:
 # https://github.com/microsoft/vscode-custom-data/blob/main/web-data/data/browsers.css-data.json
+#
+# To overwrite descriptions and other CSS documentation fields obtained from the upstream data, update the file:
+# Source/WebInspectorUI/UserInterface/External/CSSDocumentation/CSSDocumentation-overrides.json
 
 import json
 import urllib.request
@@ -37,6 +40,7 @@ VSCODE_CSS_DATA_JSON_URL = "https://raw.githubusercontent.com/microsoft/vscode-c
 ROOT_DIR = (Path(__file__).parent / ".." / ".." / "..").resolve()
 OUTPUT_DIR = "Source/WebInspectorUI/UserInterface/External/CSSDocumentation"
 OUTPUT_FILENAME = "CSSDocumentation.js"
+CSS_DATA_OVERRIDES_JSON_PATH = Path(ROOT_DIR, OUTPUT_DIR, "CSSDocumentation-overrides.json").resolve()
 
 try:
     print(f"Downloading: {VSCODE_CSS_DATA_JSON_URL}")
@@ -52,14 +56,22 @@ except json.JSONDecodeError as err:
     print("Parsing failed\n{0}".format(err))
     exit()
 
+try:
+    print("Parsing local JSON with overrides")
+    overrides = json.load(open(CSS_DATA_OVERRIDES_JSON_PATH, "r"))
+except json.JSONDecodeError as err:
+    print("Parsing failed\n{0}".format(err))
+    exit()
+
 print("Extracting CSS property data")
 
 properties = {}
 for prop in data["properties"]:
     name = prop.get("name")
-    description = prop.get("description")
-    syntax = prop.get("syntax")
-    references = prop.get("references")
+    prop_override = overrides.get(name, {})
+    description = prop_override.get("description") or prop.get("description")
+    syntax = prop_override.get("syntax") or prop.get("syntax")
+    references = prop_override.get("references") or prop.get("references")
     url = ""
 
     if (references):
