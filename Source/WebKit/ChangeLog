@@ -1,5 +1,24 @@
 2022-01-06  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r287651. rdar://problem/86338105
+
+    Fix the build
+    
+    * Shared/ios/WebIOSEventFactory.mm:
+    (WebIOSEventFactory::createWebWheelEvent):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@287651 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-01-05  Tim Horton  <timothy_horton@apple.com>
+
+            Fix the build
+
+            * Shared/ios/WebIOSEventFactory.mm:
+            (WebIOSEventFactory::createWebWheelEvent):
+
+2022-01-06  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r287641. rdar://problem/86338105
 
     Momentum Event Dispatcher: Momentum tails may get truncated if the duration runs longer than the system's
