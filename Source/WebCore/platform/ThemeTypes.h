@@ -116,7 +116,7 @@ enum ControlPart {
 #if ENABLE(SERVICE_CONTROLS)
 constexpr ControlPart largestControlPart = ImageControlsButtonPart;
 #else
-constexpr ControlPart largestControlPart = CapsLockIndicatorPart
+constexpr ControlPart largestControlPart = CapsLockIndicatorPart;
 #endif
 
 
