@@ -1219,8 +1219,6 @@ webkit.org/b/230105 [ BigSur+ Debug arm64 ] imported/w3c/web-platform-tests/html
 
 webkit.org/b/230691 [ Release ] imported/w3c/web-platform-tests/html/cross-origin-opener-policy/iframe-popup-unsafe-none-to-unsafe-none.https.html [ Pass Failure ]
 
-webkit.org/b/232028 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/reporting/navigation-reporting/report-only-four-reports.https.html [ Pass Failure ]
-
 webkit.org/b/232105 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/iframe-popup-same-origin-to-same-origin.https.html [ Pass Failure Crash ]
 
 webkit.org/b/230113 [ BigSur+ Debug arm64 ] svg/animations/animate-elem-14-t-drt.html [ Pass Crash ]
@@ -1657,8 +1655,6 @@ webkit.org/b/231765 [ Release ] http/tests/resourceLoadStatistics/website-data-r
 webkit.org/b/231780 [ Debug ] imported/w3c/web-platform-tests/webrtc/simulcast/basic.https.html [ Pass Failure ]
 
 webkit.org/b/229569 [ Catalina Release ] imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-perfect-negotiation-stress-glare.https.html [ Pass Crash ]
-
-webkit.org/b/232337 [ Debug ] imported/w3c/web-platform-tests/html/cross-origin-opener-policy/reporting/navigation-reporting/reporting-coop-navigated-opener.https.html [ Pass Failure DumpJSConsoleLogInStdErr ]
 
 # Plugins
 # FIXME: Remove these tests.

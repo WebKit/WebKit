@@ -97,7 +97,6 @@ class CPUMonitor;
 class CertificateInfo;
 class PageGroup;
 class RegistrableDomain;
-class ReportingEndpointsCache;
 class ResourceRequest;
 class UserGestureToken;
 
@@ -344,7 +343,6 @@ public:
     RemoteWebLockRegistry& webLockRegistry() { return m_webLockRegistry.get(); }
     WebCookieJar& cookieJar() { return m_cookieJar.get(); }
     WebSocketChannelManager& webSocketChannelManager() { return m_webSocketChannelManager; }
-    WebCore::ReportingEndpointsCache& reportingEndpointsCache() { return m_reportingEndpointsCache.get(); }
 
 #if PLATFORM(IOS_FAMILY) && !PLATFORM(MACCATALYST)
     float backlightLevel() const { return m_backlightLevel; }
@@ -680,7 +678,6 @@ private:
     Ref<WebBroadcastChannelRegistry> m_broadcastChannelRegistry;
     Ref<RemoteWebLockRegistry> m_webLockRegistry;
     Ref<WebCookieJar> m_cookieJar;
-    Ref<WebCore::ReportingEndpointsCache> m_reportingEndpointsCache;
     WebSocketChannelManager m_webSocketChannelManager;
 
     RefPtr<LibWebRTCNetwork> m_libWebRTCNetwork;

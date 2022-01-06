@@ -145,7 +145,6 @@ class PointerCaptureController;
 class PointerLockController;
 class ProgressTracker;
 class RenderObject;
-class ReportingEndpointsCache;
 class ResourceUsageOverlay;
 class RenderingUpdateScheduler;
 class ScrollLatchingController;
@@ -319,8 +318,6 @@ public:
     WEBCORE_EXPORT void setRemoteInspectionNameOverride(const String&);
     void remoteInspectorInformationDidChange() const;
 #endif
-
-    ReportingEndpointsCache* reportingEndpointsCache() { return m_reportingEndpointsCache.get(); }
 
     Chrome& chrome() const { return *m_chrome; }
     DragCaretController& dragCaretController() const { return *m_dragCaretController; }
@@ -1268,7 +1265,6 @@ private:
     mutable MediaSessionGroupIdentifier m_mediaSessionGroupIdentifier;
 
     Ref<PermissionController> m_permissionController;
-    RefPtr<ReportingEndpointsCache> m_reportingEndpointsCache;
     UniqueRef<StorageProvider> m_storageProvider;
     UniqueRef<ModelPlayerProvider> m_modelPlayerProvider;
 

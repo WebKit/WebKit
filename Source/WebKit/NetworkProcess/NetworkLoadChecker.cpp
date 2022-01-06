@@ -165,17 +165,9 @@ static std::optional<ResourceError> performCORPCheck(const CrossOriginEmbedderPo
     if (auto error = validateCrossOriginResourcePolicy(CrossOriginEmbedderPolicyValue::UnsafeNone, embedderOrigin, url, response, forNavigation))
         return error;
 
-    if (embedderCOEP.reportOnlyValue == CrossOriginEmbedderPolicyValue::RequireCORP && !embedderCOEP.reportOnlyReportingEndpoint.isEmpty() && loader) {
-        if (auto error = validateCrossOriginResourcePolicy(embedderCOEP.reportOnlyValue, embedderOrigin, url, response, forNavigation))
-            loader->send(Messages::WebPage::SendCOEPCORPViolation { loader->frameID(), embedderOrigin.data(), embedderCOEP.reportOnlyReportingEndpoint, COEPDisposition::Reporting, loader->parameters().options.destination, loader->firstResponseURL() }, loader->pageID());
-    }
-
     if (embedderCOEP.value == CrossOriginEmbedderPolicyValue::RequireCORP) {
-        if (auto error = validateCrossOriginResourcePolicy(embedderCOEP.value, embedderOrigin, url, response, forNavigation)) {
-            if (loader && !embedderCOEP.reportingEndpoint.isEmpty())
-                loader->send(Messages::WebPage::SendCOEPCORPViolation { loader->frameID(), embedderOrigin.data(), embedderCOEP.reportingEndpoint, COEPDisposition::Enforce, loader->parameters().options.destination, loader->firstResponseURL() }, loader->pageID());
+        if (auto error = validateCrossOriginResourcePolicy(embedderCOEP.value, embedderOrigin, url, response, forNavigation))
             return error;
-        }
     }
     return std::nullopt;
 }

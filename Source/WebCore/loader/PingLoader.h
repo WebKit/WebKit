@@ -59,7 +59,6 @@ public:
     WEBCORE_EXPORT static void sendViolationReport(Frame&, const URL& reportURL, Ref<FormData>&& report, ViolationReportType);
 
     static String sanitizeURLForReport(const URL&);
-    static void sendReportToEndpoint(Frame&, const SecurityOriginData&, const String& endpoint, const String& type, const URL& reportURL, const String& userAgent, const Function<void(JSON::Object&)>& populateReportBody);
 
 private:
     enum class ShouldFollowRedirects { No, Yes };

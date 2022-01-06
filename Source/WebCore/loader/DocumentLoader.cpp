@@ -80,7 +80,6 @@
 #include "PolicyChecker.h"
 #include "ProgressTracker.h"
 #include "Quirks.h"
-#include "ReportingEndpointsCache.h"
 #include "ResourceHandle.h"
 #include "ResourceLoadObserver.h"
 #include "RuntimeEnabledFeatures.h"
@@ -635,11 +634,6 @@ void DocumentLoader::willSendRequest(ResourceRequest&& newRequest, const Resourc
         DOCUMENTLOADER_RELEASE_LOG("willSendRequest: With no provisional document loader");
 
     bool didReceiveRedirectResponse = !redirectResponse.isNull();
-    if (didReceiveRedirectResponse && m_frame->isMainFrame()) {
-        if (auto reportingEndpointsCache = m_frame->page() ? m_frame->page()->reportingEndpointsCache() : nullptr)
-            reportingEndpointsCache->addEndpointsFromResponse(redirectResponse);
-    }
-
     if (!frameLoader()->checkIfFormActionAllowedByCSP(newRequest.url(), didReceiveRedirectResponse, redirectResponse.url())) {
         DOCUMENTLOADER_RELEASE_LOG("willSendRequest: canceling - form action not allowed by CSP");
         cancelMainResourceLoad(frameLoader()->cancelledError(newRequest));
@@ -759,13 +753,7 @@ std::optional<CrossOriginOpenerPolicyEnforcementResult> DocumentLoader::doCrossO
 
     auto currentCoopEnforcementResult = CrossOriginOpenerPolicyEnforcementResult::from(m_frame->document()->url(), m_frame->document()->securityOrigin(), m_frame->document()->crossOriginOpenerPolicy(), m_triggeringAction.requester(), openerURL);
 
-    auto newCoopEnforcementResult = WebCore::doCrossOriginOpenerHandlingOfResponse(response, m_triggeringAction.requester(), m_contentSecurityPolicy.get(), frameLoader()->effectiveSandboxFlags(), frameLoader()->stateMachine().isDisplayingInitialEmptyDocument(), currentCoopEnforcementResult, [&](COOPDisposition disposition, const CrossOriginOpenerPolicy& responseCOOP, const SecurityOrigin& responseOrigin) {
-        // FIXME: Add the concept of browsing context group like in the specification instead of treating the whole process as a group.
-        if (Page::nonUtilityPageCount() > 1) {
-            sendViolationReportWhenNavigatingToCOOPResponse(*m_frame, responseCOOP, disposition, response.url(), currentCoopEnforcementResult.url, responseOrigin, currentCoopEnforcementResult.currentOrigin, m_request.httpReferrer(), m_request.httpUserAgent());
-            sendViolationReportWhenNavigatingAwayFromCOOPResponse(*m_frame, currentCoopEnforcementResult.crossOriginOpenerPolicy, disposition, currentCoopEnforcementResult.url, response.url(), currentCoopEnforcementResult.currentOrigin, responseOrigin, currentCoopEnforcementResult.isCurrentContextNavigationSource, m_request.httpUserAgent());
-        }
-    });
+    auto newCoopEnforcementResult = WebCore::doCrossOriginOpenerHandlingOfResponse(response, m_triggeringAction.requester(), m_contentSecurityPolicy.get(), frameLoader()->effectiveSandboxFlags(), frameLoader()->stateMachine().isDisplayingInitialEmptyDocument(), currentCoopEnforcementResult);
     if (!newCoopEnforcementResult) {
         cancelMainResourceLoad(frameLoader()->cancelledError(m_request));
         return std::nullopt;
@@ -923,11 +911,6 @@ void DocumentLoader::responseReceived(const ResourceResponse& response, Completi
 
     if (willLoadFallback)
         return;
-
-    if (m_frame->isMainFrame()) {
-        if (auto reportingEndpointsCache = m_frame->page() ? m_frame->page()->reportingEndpointsCache() : nullptr)
-            reportingEndpointsCache->addEndpointsFromResponse(response);
-    }
 
     ASSERT(m_identifierForLoadWithoutResourceLoader || m_mainResource);
     ResourceLoaderIdentifier identifier = m_identifierForLoadWithoutResourceLoader ? m_identifierForLoadWithoutResourceLoader : m_mainResource->identifier();
