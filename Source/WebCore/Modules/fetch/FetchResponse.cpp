@@ -243,7 +243,7 @@ void FetchResponse::fetch(ScriptExecutionContext& context, FetchRequest& request
         return;
     }
 
-    if (request.hasReadableStreamBody()) {
+    if (request.isReadableStreamBody()) {
         responseCallback(Exception { NotSupportedError, "ReadableStream uploading is not supported"_s });
         return;
     }

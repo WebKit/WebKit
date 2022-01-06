@@ -60,6 +60,7 @@ public:
 
     ExceptionOr<RefPtr<ReadableStream>> readableStream(JSC::JSGlobalObject&);
     bool hasReadableStreamBody() const { return m_body && m_body->hasReadableStream(); }
+    bool isReadableStreamBody() const { return m_body && m_body->isReadableStream(); }
 
     virtual void consumeBodyAsStream();
     virtual void feedStream() { }

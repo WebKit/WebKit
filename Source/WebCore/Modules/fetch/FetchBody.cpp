@@ -177,24 +177,19 @@ void FetchBody::consume(FetchBodyOwner& owner, Ref<DeferredPromise>&& promise)
 void FetchBody::consumeAsStream(FetchBodyOwner& owner, FetchBodySource& source)
 {
     bool closeStream = false;
-    if (isArrayBuffer()) {
+    if (isArrayBuffer())
         closeStream = source.enqueue(ArrayBuffer::tryCreate(arrayBufferBody().data(), arrayBufferBody().byteLength()));
-        m_data = nullptr;
-    } else if (isArrayBufferView()) {
+    else if (isArrayBufferView())
         closeStream = source.enqueue(ArrayBuffer::tryCreate(arrayBufferViewBody().baseAddress(), arrayBufferViewBody().byteLength()));
-        m_data = nullptr;
-    } else if (isText()) {
+    else if (isText()) {
         auto data = PAL::UTF8Encoding().encode(textBody(), PAL::UnencodableHandling::Entities);
         closeStream = source.enqueue(ArrayBuffer::tryCreate(data.data(), data.size()));
-        m_data = nullptr;
     } else if (isURLSearchParams()) {
         auto data = PAL::UTF8Encoding().encode(urlSearchParamsBody().toString(), PAL::UnencodableHandling::Entities);
         closeStream = source.enqueue(ArrayBuffer::tryCreate(data.data(), data.size()));
-        m_data = nullptr;
-    } else if (isBlob()) {
+    } else if (isBlob())
         owner.loadBlob(blobBody(), nullptr);
-        m_data = nullptr;
-    } else if (isFormData())
+    else if (isFormData())
         m_consumer.consumeFormDataAsStream(formDataBody(), source, owner.scriptExecutionContext());
     else if (m_consumer.hasData())
         closeStream = source.enqueue(m_consumer.takeAsArrayBuffer());
@@ -318,8 +313,7 @@ FetchBody FetchBody::clone()
         clone.m_data = textBody();
     else if (isURLSearchParams())
         clone.m_data = urlSearchParamsBody();
-
-    if (m_readableStream) {
+    else if (m_readableStream) {
         auto clones = m_readableStream->tee();
         if (clones) {
             m_readableStream = WTFMove(clones->first);
