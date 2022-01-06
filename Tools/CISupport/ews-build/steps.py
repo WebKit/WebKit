@@ -54,6 +54,8 @@ EWS_URL = 'https://ews.webkit.org/'
 RESULTS_DB_URL = 'https://results.webkit.org/'
 WithProperties = properties.WithProperties
 Interpolate = properties.Interpolate
+BRANCH_PR_RE = re.compile(r'^refs/pull/(?P<id>\d+)/merge$')
+GITHUB_REPOSITORIES = ['https://github.com/WebKit/WebKit']
 
 
 class BufferLogHeaderObserver(logobserver.BufferLogObserver):
@@ -69,7 +71,32 @@ class BufferLogHeaderObserver(logobserver.BufferLogObserver):
         return self._get(self.headers)
 
 
-class ConfigureBuild(buildstep.BuildStep):
+class GitHubMixin(object):
+    def pr_url(self, pr_number=None):
+        pr_number = pr_number or self.get_pull_request_number()
+        if not pr_number:
+            return ''
+        return '{}/pull/{}'.format(self.getProperty('repository', '-'), pr_number)
+
+    def get_pull_request_number(self):
+        pr_number = self.getProperty('pull_request')
+        if pr_number:
+            return int(pr_number)
+
+        if self.getProperty('event') != 'pull_request':
+            return None
+        if self.getProperty('repository') not in GITHUB_REPOSITORIES:
+            return None
+
+        match = BRANCH_PR_RE.match(self.getProperty('branch', ''))
+        if not match:
+            return None
+        pr_number = int(match.group('id'))
+        self.setProperty('pull_request', pr_number)
+        return pr_number
+
+
+class ConfigureBuild(buildstep.BuildStep, GitHubMixin):
     name = 'configure-build'
     description = ['configuring build']
     descriptionDone = ['Configured build']
@@ -109,6 +136,8 @@ class ConfigureBuild(buildstep.BuildStep):
             self.setProperty('additionalArguments', self.additionalArguments, 'config.json')
 
         self.add_patch_id_url()
+        self.add_pr_details()
+
         self.finished(SUCCESS)
         return defer.succeed(None)
 
@@ -116,6 +145,11 @@ class ConfigureBuild(buildstep.BuildStep):
         patch_id = self.getProperty('patch_id', '')
         if patch_id:
             self.addURL('Patch {}'.format(patch_id), Bugzilla.patch_url(patch_id))
+
+    def add_pr_details(self):
+        pr_number = self.get_pull_request_number()
+        if pr_number:
+            self.addURL('Pull request {}'.format(pr_number), self.pr_url(pr_number=pr_number))
 
 
 class CheckOutSource(git.Git):
