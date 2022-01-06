@@ -132,7 +132,6 @@ private:
 
     void computeIsDone() final;
 
-    Ref<WorkerOrWorkletGlobalScope> m_WorkerOrWorkletGlobalScope;
     Ref<ThreadableLoaderClientWrapper> m_workerClientWrapper;
     MainThreadBridge& m_bridge;
 };
