@@ -1,0 +1,33 @@
+<body>
+    <p>This test passes if it does not crash.</p>
+    <iframe srcdoc='
+        <html>
+            <style>
+                @media only screen and (max-width: 600px) {
+                    body {
+                        background-color: lightblue;
+                    }
+                }
+                .blurred-box {
+                    width: 100px;
+                    height: 100px;
+                    display: inline-block;
+                    background-color: green;
+                    filter: url(#blur-filter);
+                }
+            </style>
+            <body>
+                <svg style="display: none;">
+                    <filter id="blur-filter">
+                        <feGaussianBlur stdDeviation="2"/>
+                    </filter>
+                </svg>
+                <div class="blurred-box"></div>
+            </body>
+        </html>'>
+    </iframe>
+    <script>
+        if (window.testRunner)
+            window.testRunner.dumpAsText(true);
+    </script>
+</body>

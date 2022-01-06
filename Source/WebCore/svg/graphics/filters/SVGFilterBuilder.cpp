@@ -70,7 +70,7 @@ static ColorInterpolation colorInterpolationForElement(SVGElement& element)
         return renderer->style().svgStyle().colorInterpolationFilters();
 
     // Try to determine the property value from the computed style.
-    if (auto value = ComputedStyleExtractor(&element).propertyValue(CSSPropertyColorInterpolationFilters)) {
+    if (auto value = ComputedStyleExtractor(&element).propertyValue(CSSPropertyColorInterpolationFilters, DoNotUpdateLayout)) {
         if (is<CSSPrimitiveValue>(value))
             return downcast<CSSPrimitiveValue>(*value);
     }
