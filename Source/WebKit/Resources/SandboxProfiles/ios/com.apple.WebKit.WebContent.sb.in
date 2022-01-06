@@ -1183,6 +1183,7 @@
     (syscall-number
         SYS_bsdthread_register
         SYS_chdir
+        SYS_connect
         SYS_csops ;; used by Corefoundation initialization
         SYS_dup2
         SYS_fileport_makefd
