@@ -1,0 +1,13 @@
+<form method="post" id="myForm" action="https://localhost:9443/WebKit/service-workers/resources/">
+<script>
+function doTest()
+{
+    if (window.location.search !== "?post") {
+        window.location = "https://localhost:9443/WebKit/service-workers/resources/";
+        return;
+    }
+    myForm.submit();
+}
+
+doTest();
+</script>

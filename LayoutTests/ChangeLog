@@ -1,3 +1,18 @@
+2022-01-06  Russell Epstein  <repstein@apple.com>
+
+        Apply patch. rdar://problem/87125345
+
+    2022-01-06  Youenn Fablet  <youenn@apple.com>
+
+            Use requester when calling updateRequestAndAddExtraFields
+            https://bugs.webkit.org/show_bug.cgi?id=234507
+            <rdar://problem/85049490>
+
+            * http/wpt/service-workers/navigation-iframe-site-worker.js: Added.
+            * http/wpt/service-workers/navigation-iframe-site.https-expected.txt: Added.
+            * http/wpt/service-workers/navigation-iframe-site.https.html: Added.
+            * http/wpt/service-workers/resources/navigation-iframe-site-frame.html: Added.
+
 2022-01-05  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r287593. rdar://problem/86910670

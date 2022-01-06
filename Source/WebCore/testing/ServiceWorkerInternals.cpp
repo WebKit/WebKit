@@ -136,6 +136,11 @@ void ServiceWorkerInternals::lastNavigationWasAppInitiated(Ref<DeferredPromise>&
     });
 }
 
+bool ServiceWorkerInternals::fetchEventIsSameSite(FetchEvent& event)
+{
+    return event.request().internalRequest().isSameSite();
+}
+
 } // namespace WebCore
 
 #endif
