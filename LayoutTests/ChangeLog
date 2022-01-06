@@ -1,3 +1,14 @@
+2022-01-06  Alan Bujtas  <zalan@apple.com>
+
+        Ensure that the top layer is always anchored to the RenderView
+        https://bugs.webkit.org/show_bug.cgi?id=231292
+        <rdar://problem/83941854>
+
+        Reviewed by Simon Fraser.
+
+        * TestExpectations: offsetFromAncestorContainer expects no transformed renderer in-between the
+        dialog and the RenderView's layer. It will go away with the layer re-parenting work.
+
 2022-01-05  Antoine Quint  <graouts@webkit.org>
 
         computed style for transition longhand properties is wrong
