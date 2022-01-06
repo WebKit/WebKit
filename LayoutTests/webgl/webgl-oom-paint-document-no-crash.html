@@ -10,7 +10,7 @@ At the time of writing printing or snapshotting would access the "image buffer" 
 This would leading to crash if the allocation was denied.
 To ensure expected behavior, e.g. to observe the failure, the canvas should not be visible.
 To assert this, use div with border as indicator. Background cannot be used as printing
-disables the backgrounds and -webkit-print-color-adjust: exact is not respected in
+disables the backgrounds and print-color-adjust: exact is not respected in
 WTR printing mode.
 -->
 <div style="position: absolute; width: 300px; height: 150px; border:55px solid green;"></div>

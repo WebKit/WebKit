@@ -214,6 +214,7 @@ PASS perspective-origin-x
 PASS perspective-origin-y
 PASS pointer-events
 PASS position
+PASS print-color-adjust
 PASS quotes
 PASS r
 PASS resize
@@ -359,7 +360,6 @@ PASS -webkit-mask-size
 PASS -webkit-mask-source-type
 PASS -webkit-nbsp-mode
 PASS -webkit-overflow-scrolling
-PASS -webkit-print-color-adjust
 PASS -webkit-rtl-ordering
 PASS -webkit-ruby-position
 PASS -webkit-text-fill-color

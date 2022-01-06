@@ -303,7 +303,6 @@ WI.CSSKeywordCompletions.InheritedProperties = new Set([
     "-webkit-locale",
     "-webkit-nbsp-mode",
     "-webkit-overflow-scrolling",
-    "-webkit-print-color-adjust",
     "-webkit-rtl-ordering",
     "-webkit-ruby-position",
     "-webkit-text-align-last",
@@ -379,6 +378,7 @@ WI.CSSKeywordCompletions.InheritedProperties = new Set([
     "marker-start",
     "orphans",
     "pointer-events",
+    "print-color-adjust",
     "quotes",
     "resize",
     "shape-rendering",
@@ -1111,7 +1111,7 @@ WI.CSSKeywordCompletions._propertyKeywordMap = {
     "-webkit-overflow-scrolling": [
         "auto", "touch",
     ],
-    "-webkit-print-color-adjust": [
+    "print-color-adjust": [
         "economy", "exact",
     ],
     "-webkit-rtl-ordering": [

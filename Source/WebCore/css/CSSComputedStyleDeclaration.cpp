@@ -2999,7 +2999,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
             return cssValuePool.createValue(style.clear());
         case CSSPropertyColor:
             return cssValuePool.createColorValue(m_allowVisitedStyle ? style.visitedDependentColor(CSSPropertyColor) : style.color());
-        case CSSPropertyWebkitPrintColorAdjust:
+        case CSSPropertyPrintColorAdjust:
             return cssValuePool.createValue(style.printColorAdjust());
         case CSSPropertyWebkitColumnAxis:
             return cssValuePool.createValue(style.columnAxis());

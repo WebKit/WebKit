@@ -6493,8 +6493,12 @@
                 "enable-if": "ENABLE_DARK_MODE_CSS",
                 "high-priority": true
             },
+            "specification": {
+                "category": "css-color-adjust",
+                "url": "https://www.w3.org/TR/css-color-adjust/#color-scheme-prop"
+            },
             "status": {
-                "status": "in development",
+                "status": "supported",
                 "enabled-by-default": true
             }
         },
@@ -6571,13 +6575,22 @@
                 "url": "https://www.w3.org/TR/css-counter-styles-3/#counter-style-prefix"
             }
         },
-        "-webkit-print-color-adjust": {
+        "print-color-adjust": {
+            "codegen-properties": {
+                "aliases": [
+                    "-webkit-print-color-adjust",
+                    "color-adjust"
+                ]
+            },
             "inherited": true,
             "values": [
                 "exact",
                 "economy"
             ],
-            "status": "non-standard"
+            "specification": {
+                "category": "css-color-adjust",
+                "url": "https://www.w3.org/TR/css-color-adjust/#print-color-adjust"
+            }
         },
         "range": {
             "codegen-properties": {
@@ -7673,7 +7686,12 @@
         "css-color": {
             "shortname": "CSS Color",
             "longname": "CSS Color Module",
-            "url": "https://www.w3.org/TR/css3-color/"
+            "url": "https://www.w3.org/TR/css-color/"
+        },
+        "css-color-adjust": {
+            "shortname": "CSS Color Adjustment",
+            "longname": "CSS Color Adjustment Module",
+            "url": "https://www.w3.org/TR/css-color-adjust/"
         },
         "css-compositing": {
             "shortname": "CSS Compositing and Blending",
