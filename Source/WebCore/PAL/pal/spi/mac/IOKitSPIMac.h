@@ -81,12 +81,17 @@ enum {
     kIOHIDEventTypeDigitizer = 11,
     kIOHIDEventTypeNavigationSwipe = 16,
     kIOHIDEventTypeForce = 32,
-
 };
 typedef uint32_t IOHIDEventType;
 
 typedef uint32_t IOHIDEventField;
 typedef uint64_t IOHIDEventSenderID;
+
+
+enum {
+    kIOHIDEventScrollMomentumInterrupted = (1 << 4),
+};
+typedef uint8_t IOHIDEventScrollMomentumBits;
 
 #ifdef __LP64__
 typedef double IOHIDFloat;
@@ -103,6 +108,7 @@ static const IOHIDEventField kIOHIDEventFieldScrollY = (kIOHIDEventFieldScrollBa
 uint64_t IOHIDEventGetTimeStamp(IOHIDEventRef);
 IOHIDFloat IOHIDEventGetFloatValue(IOHIDEventRef, IOHIDEventField);
 IOHIDEventSenderID IOHIDEventGetSenderID(IOHIDEventRef);
+IOHIDEventScrollMomentumBits IOHIDEventGetScrollMomentum(IOHIDEventRef);
 
 WTF_EXTERN_C_END
 

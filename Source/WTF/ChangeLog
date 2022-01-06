@@ -1,3 +1,97 @@
+2022-01-06  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r287641. rdar://problem/86338105
+
+    Momentum Event Dispatcher: Momentum tails may get truncated if the duration runs longer than the system's
+    https://bugs.webkit.org/show_bug.cgi?id=234535
+    <rdar://problem/86338105>
+    
+    Reviewed by Simon Fraser.
+    
+    Source/WebKit:
+    
+    Currently, synthetic momentum dispatch is strictly tied to the duration
+    of the real platform momentum phase, which has two unfortunate implications:
+    
+    - if our phase runs shorter than the platform phase, we'll keep dispatching
+      zero-delta events until the platform momentum ends
+    
+    - more importantly, if our phase runs longer, it will be abruptly terminated
+      when the platform momentum ends
+    
+    In practice, our synthetic phase is very close in duration to the system one,
+    so the impact is minimal. But, to be safe, disentagle the two durations,
+    using a new bit from the platform to determine if the system momentum phase
+    was interrupted by the user (e.g. by tapping the trackpad) or naturally,
+    and ignoring the ended event in the natural case, allowing synthetic
+    events to continue being dispatched.
+    
+    * Shared/WebWheelEvent.cpp:
+    (WebKit::WebWheelEvent::WebWheelEvent):
+    (WebKit::WebWheelEvent::encode const):
+    (WebKit::WebWheelEvent::decode):
+    * Shared/WebWheelEvent.h:
+    (WebKit::WebWheelEvent::momentumEndType const):
+    * Shared/WebWheelEventCoalescer.cpp:
+    (WebKit::WebWheelEventCoalescer::coalesce):
+    Plumb momentumEndType along on WebWheelEvent. Platforms that don't
+    provide information about the interruption reason will always say Unknown.
+    
+    * Shared/mac/WebEventFactory.mm:
+    (WebKit::WebEventFactory::createWebWheelEvent):
+    Only bother looking up the CGEvent/IOHIDEvent once, and extract all
+    relevant details in one go.
+    
+    * WebProcess/WebPage/MomentumEventDispatcher.cpp:
+    (WebKit::MomentumEventDispatcher::handleWheelEvent):
+    Don't interrupt the synthetic momentum phase if the momentum-ended event
+    comes from the natural end of the deceleration instead of an interruption
+    (or an unknown reason).
+    
+    Keep track of whether we're in the middle of a platform momentum phase
+    that we chose (at momentum-begin time) to override. When deciding
+    whether to eat an incoming event, take *both* this new bit and whether
+    we are currently in the middle of a synthetic phase into account. It
+    is important to continue eating incoming events in the case where
+    the synthetic phase ended early (so `active` became false) but the
+    platform phase continues.
+    
+    (WebKit::MomentumEventDispatcher::dispatchSyntheticMomentumEvent):
+    (WebKit::MomentumEventDispatcher::didEndMomentumPhase):
+    Adjust some logging wording to be more precise.
+    
+    (WebKit::MomentumEventDispatcher::setScrollingAccelerationCurve):
+    Make this log public so that the curve value is visible in logs.
+    
+    (WebKit::MomentumEventDispatcher::consumeDeltaForCurrentTime):
+    Make consumeDeltaForCurrentTime inform the client via an optional when
+    we are at the end of the delta table.
+    
+    (WebKit::MomentumEventDispatcher::displayWasRefreshed):
+    Stop the synthetic momentum phase as soon as we run out of deltas.
+    
+    (WebKit::MomentumEventDispatcher::computeNextDelta):
+    * WebProcess/WebPage/MomentumEventDispatcher.h:
+    
+    Source/WTF:
+    
+    * wtf/PlatformHave.h:
+    Add a HAVE for kIOHIDEventScrollMomentumInterrupted.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@287641 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-01-05  Tim Horton  <timothy_horton@apple.com>
+
+            Momentum Event Dispatcher: Momentum tails may get truncated if the duration runs longer than the system's
+            https://bugs.webkit.org/show_bug.cgi?id=234535
+            <rdar://problem/86338105>
+
+            Reviewed by Simon Fraser.
+
+            * wtf/PlatformHave.h:
+            Add a HAVE for kIOHIDEventScrollMomentumInterrupted.
+
 2021-12-13  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r286858. rdar://problem/86423741
