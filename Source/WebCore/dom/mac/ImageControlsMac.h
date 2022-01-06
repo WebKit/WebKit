@@ -38,6 +38,7 @@ namespace ImageControlsMac {
 
 bool hasControls(const HTMLElement&);
 bool isImageControlsButtonElement(const Node&);
+bool isInsideImageControls(const Node&);
 void createImageControls(HTMLElement&);
 bool handleEvent(HTMLElement&, Event&);
 

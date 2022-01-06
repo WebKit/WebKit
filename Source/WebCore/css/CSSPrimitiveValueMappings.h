@@ -634,7 +634,8 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(ControlPart e)
 #endif
 #if ENABLE(SERVICE_CONTROLS)
     case ImageControlsButtonPart:
-        m_value.valueID = CSSValueInternalImageControlsButton;
+        ASSERT_NOT_REACHED();
+        m_value.valueID = CSSValueNone;
         break;
 #endif
 #if ENABLE(APPLE_PAY)

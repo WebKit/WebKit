@@ -57,6 +57,9 @@
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/StringConcatenateNumbers.h>
 
+#if ENABLE(SERVICE_CONTROLS)
+#include "ImageControlsMac.h"
+#endif
 
 #if ENABLE(DATALIST_ELEMENT)
 #include "HTMLDataListElement.h"
@@ -296,6 +299,11 @@ ControlPart RenderTheme::autoAppearanceForElement(const Element* elementPtr) con
     if (!elementPtr)
         return NoControlPart;
 
+#if ENABLE(SERVICE_CONTROLS)
+    if (isImageControl(*elementPtr))
+        return ImageControlsButtonPart;
+#endif
+    
     Ref element = *elementPtr;
 
     if (is<HTMLInputElement>(element)) {

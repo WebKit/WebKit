@@ -147,6 +147,10 @@ public:
     ReferrerPolicy referrerPolicy() const;
 
     bool allowsOrientationOverride() const;
+    
+#if ENABLE(SERVICE_CONTROLS)
+    WEBCORE_EXPORT bool hasImageControls() const;
+#endif
 
 protected:
     HTMLImageElement(const QualifiedName&, Document&, HTMLFormElement* = nullptr);
@@ -197,7 +201,6 @@ private:
     void updateImageControls();
     void tryCreateImageControls();
     void destroyImageControls();
-    bool hasImageControls() const;
     bool childShouldCreateRenderer(const Node&) const override;
 #endif
 

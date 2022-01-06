@@ -39,7 +39,7 @@ div#image-controls button#image-controls-button {
     
     display: block;
 
-    appearance: -internal-image-controls-button;
+    appearance: auto;
 
     transition: opacity 0.25s;
     opacity: 0.0;

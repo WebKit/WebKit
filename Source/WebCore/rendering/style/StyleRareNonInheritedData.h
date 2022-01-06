@@ -66,6 +66,8 @@ class StyleTransformData;
 
 struct LengthSize;
 
+constexpr int appearanceBitWidth = 7;
+
 // Page size type.
 // StyleRareNonInheritedData::pageSize is meaningful only when
 // StyleRareNonInheritedData::pageSizeType is PAGE_SIZE_RESOLVED.
@@ -200,8 +202,8 @@ public:
     unsigned userDrag : 2; // UserDrag
     unsigned textOverflow : 1; // Whether or not lines that spill out should be truncated with "..."
     unsigned useSmoothScrolling : 1; // ScrollBehavior
-    unsigned appearance : 6; // EAppearance
-    unsigned effectiveAppearance : 6; // EAppearance
+    unsigned appearance : appearanceBitWidth; // EAppearance
+    unsigned effectiveAppearance : appearanceBitWidth; // EAppearance
 
     unsigned textDecorationStyle : 3; // TextDecorationStyle
 

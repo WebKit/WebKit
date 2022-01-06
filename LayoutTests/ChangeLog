@@ -1,3 +1,25 @@
+2022-01-05  Megan Gardner  <megan_gardner@apple.com>
+
+        Remove unneeded webkit specific CSS attribute for Image Control Menu.
+        https://bugs.webkit.org/show_bug.cgi?id=234405
+
+        Reviewed by Darin Adler.
+
+        We need to move this test to be a mac specific one, as it now has mac specific 
+        test harnessing (using hasImageControls) and it is testing a feature that is only on mac.
+        Also changed the test to be resistent to the async nature of adding
+        the shadow dom elements, and checking the shadow dom directly rather than the resulting layout,
+        which is prone to pixel errors.
+
+        * TestExpectations:
+        * fast/images/image-controls-basic-expected.txt:
+        * fast/images/image-controls-basic.html: Removed.
+        * fast/images/mac/image-controls-basic-expected.txt: Added.
+        * fast/images/mac/image-controls-basic.html: Added.
+        * platform/mac-catalina/fast/images/image-controls-basic-expected.txt: Removed.
+        * platform/mac/TestExpectations:
+        * platform/mac/fast/images/image-controls-basic-expected.txt: Removed.
+
 2022-01-05  Ryan Haddad  <ryanhaddad@apple.com>
 
         [selectors] :focus-visible not matching on accessKey focus after focusing something via mouse

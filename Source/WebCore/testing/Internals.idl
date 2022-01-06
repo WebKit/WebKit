@@ -1075,6 +1075,7 @@ typedef (FetchRequest or FetchResponse) FetchObject;
     undefined setContentSizeCategory(ContentSizeCategory category);
 
     [Conditional=ATTACHMENT_ELEMENT] AttachmentThumbnailInfo attachmentThumbnailInfo(HTMLAttachmentElement element);
+    [Conditional=ATTACHMENT_ELEMENT, Conditional=SERVICE_CONTROLS] boolean hasImageControls(HTMLImageElement element);
 
     [Conditional=MEDIA_SESSION] double currentMediaSessionPosition(MediaSession session);
     [Conditional=MEDIA_SESSION] undefined sendMediaSessionAction(MediaSession session, MediaSessionActionDetails actionDetails);

@@ -30,6 +30,7 @@
 #include "ChromeClient.h"
 #include "Editor.h"
 #include "ElementIterator.h"
+#include "EventLoop.h"
 #include "EventNames.h"
 #include "FrameView.h"
 #include "HTMLAnchorElement.h"
@@ -313,8 +314,7 @@ void HTMLImageElement::parseAttribute(const QualifiedName& name, const AtomStrin
         if (!parseCompositeAndBlendOperator(value, m_compositeOperator, blendOp))
             m_compositeOperator = CompositeOperator::SourceOver;
 #if ENABLE(SERVICE_CONTROLS)
-    } else if (name == webkitimagemenuAttr) {
-        m_imageMenuEnabled = !value.isNull();
+    } else if (m_imageMenuEnabled) {
         updateImageControls();
 #endif
     } else if (name == loadingAttr) {
@@ -743,7 +743,9 @@ void HTMLImageElement::setAttachmentElement(Ref<HTMLAttachmentElement>&& attachm
 
     attachment->setInlineStyleProperty(CSSPropertyDisplay, CSSValueNone, true);
     ensureUserAgentShadowRoot().appendChild(WTFMove(attachment));
-    setAttributeWithoutSynchronization(webkitimagemenuAttr, emptyString());
+#if ENABLE(SERVICE_CONTROLS)
+    m_imageMenuEnabled = true;
+#endif
 }
 
 RefPtr<HTMLAttachmentElement> HTMLImageElement::attachmentElement() const
@@ -775,11 +777,13 @@ void HTMLImageElement::updateImageControls()
         return;
     if (!document().settings().imageControlsEnabled())
         return;
-    bool hasControls = hasImageControls();
-    if (!m_imageMenuEnabled && hasControls)
-        destroyImageControls();
-    else if (m_imageMenuEnabled && !hasControls)
-        tryCreateImageControls();
+    document().eventLoop().queueTask(TaskSource::InternalAsyncTask, [this, protectedThis = Ref { *this }] {
+        bool hasControls = hasImageControls();
+        if (!m_imageMenuEnabled && hasControls)
+            destroyImageControls();
+        else if (m_imageMenuEnabled && !hasControls)
+            tryCreateImageControls();
+    });
 }
 
 void HTMLImageElement::tryCreateImageControls()

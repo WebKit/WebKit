@@ -16,6 +16,7 @@ editing/pasteboard/mac [ Pass ]
 fast/dom/Range/mac [ Pass ]
 fast/scrolling/latching [ Pass ]
 model-element [ Pass ]
+fast/images/mac [ Pass ]
 
 # Disable plug-in tests on Apple Silicon
 [ arm64 ] compositing/plugins [ Skip ]

@@ -1135,6 +1135,7 @@ public:
     void setAccentColor(const Color& c) { SET_VAR(m_rareInheritedData, accentColor, c); SET_VAR(m_rareInheritedData, hasAutoAccentColor, false);  }
     void setHasAutoAccentColor() { SET_VAR(m_rareInheritedData, hasAutoAccentColor, true); SET_VAR(m_rareInheritedData, accentColor, currentColor()); }
     void setOpacity(float f) { float v = clampTo<float>(f, 0.f, 1.f); SET_VAR(m_rareNonInheritedData, opacity, v); }
+    static_assert(largestControlPart < 1 << appearanceBitWidth, "Control part must fit in storage bits");
     void setAppearance(ControlPart a) { SET_VAR(m_rareNonInheritedData, appearance, a); SET_VAR(m_rareNonInheritedData, effectiveAppearance, a); }
     void setEffectiveAppearance(ControlPart a) { SET_VAR(m_rareNonInheritedData, effectiveAppearance, a); }
     // For valid values of box-align see http://www.w3.org/TR/2009/WD-css3-flexbox-20090723/#alignment

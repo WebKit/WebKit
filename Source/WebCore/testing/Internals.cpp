@@ -6389,7 +6389,14 @@ ExceptionOr<Internals::AttachmentThumbnailInfo> Internals::attachmentThumbnailIn
 #endif
 }
 
+#if ENABLE(SERVICE_CONTROLS)
+bool Internals::hasImageControls(const HTMLImageElement& element) const
+{
+    return element.hasImageControls();
+}
 #endif
+
+#endif // ENABLE(ATTACHMENT_ELEMENT)
 
 #if ENABLE(MEDIA_SESSION)
 ExceptionOr<double> Internals::currentMediaSessionPosition(const MediaSession& session)

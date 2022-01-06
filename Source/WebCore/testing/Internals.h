@@ -1189,7 +1189,10 @@ public:
     };
 
     ExceptionOr<AttachmentThumbnailInfo> attachmentThumbnailInfo(const HTMLAttachmentElement&);
+#if ENABLE(SERVICE_CONTROLS)
+    bool hasImageControls(const HTMLImageElement&) const;
 #endif
+#endif // ENABLE(ATTACHMENT_ELEMENT)
 
 #if ENABLE(MEDIA_SESSION)
     ExceptionOr<double> currentMediaSessionPosition(const MediaSession&);

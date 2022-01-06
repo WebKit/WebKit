@@ -83,6 +83,10 @@
 #import <wtf/StdLibExtras.h>
 #import <wtf/text/StringBuilder.h>
 
+#if ENABLE(SERVICE_CONTROLS)
+#include "ImageControlsMac.h"
+#endif
+
 // FIXME: This should go into an SPI.h file in the spi directory.
 @interface NSTextFieldCell ()
 - (CFDictionaryRef)_coreUIDrawOptionsWithFrame:(NSRect)cellFrame inView:(NSView *)controlView includeFocus:(BOOL)includeFocus;
@@ -2308,6 +2312,11 @@ bool RenderThemeMac::paintImageControlsButton(const RenderObject& renderer, cons
 IntSize RenderThemeMac::imageControlsButtonSize() const
 {
     return IntSize(servicesRolloverButtonCell().cellSize);
+}
+
+bool RenderThemeMac::isImageControl(const Element& elementPtr) const
+{
+    return ImageControlsMac::isImageControlsButtonElement(elementPtr);
 }
 #endif
 

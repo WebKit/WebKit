@@ -73,6 +73,14 @@ bool isImageControlsButtonElement(const Node& node)
     return is<Element>(node) && downcast<Element>(node).getIdAttribute() == imageControlsButtonIdentifier();
 }
 
+bool isInsideImageControls(const Node& node)
+{
+    RefPtr host = node.shadowHost();
+    if (!is<HTMLElement>(host.get()) || !hasControls(downcast<HTMLElement>(*host)))
+        return false;
+    return is<Element>(node) && downcast<Element>(node).getIdAttribute() == imageControlsElementIdentifier();
+}
+
 void createImageControls(HTMLElement& element)
 {
     Ref document = element.document();

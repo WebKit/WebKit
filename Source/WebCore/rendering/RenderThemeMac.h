@@ -216,6 +216,7 @@ private:
 #if ENABLE(SERVICE_CONTROLS)
     bool paintImageControlsButton(const RenderObject&, const PaintInfo&, const IntRect&) final;
     IntSize imageControlsButtonSize() const final;
+    bool isImageControl(const Element&) const final;
 
     NSServicesRolloverButtonCell *servicesRolloverButtonCell() const;
 #endif

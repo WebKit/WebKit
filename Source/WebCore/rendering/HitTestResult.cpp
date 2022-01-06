@@ -54,6 +54,10 @@
 #include "VisibleUnits.h"
 #include "XLinkNames.h"
 
+#if ENABLE(SERVICE_CONTROLS)
+#include "ImageControlsMac.h"
+#endif
+
 namespace WebCore {
 
 using namespace HTMLNames;
@@ -335,6 +339,11 @@ RefPtr<Node> HitTestResult::nodeForImageData() const
 
     if (ImageOverlay::isInsideOverlay(*m_innerNonSharedNode))
         return m_innerNonSharedNode->shadowHost();
+    
+#if ENABLE(SERVICE_CONTROLS)
+    if (ImageControlsMac::isInsideImageControls(*m_innerNonSharedNode))
+        return m_innerNonSharedNode->shadowHost();
+#endif
 
     return m_innerNonSharedNode;
 }
