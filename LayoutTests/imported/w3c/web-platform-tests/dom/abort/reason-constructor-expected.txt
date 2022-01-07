@@ -1,0 +1,4 @@
+
+
+PASS AbortSignal.reason.constructor should be from iframe
+

@@ -13,4 +13,6 @@ PASS static aborting signal with reason should set signal.reason
 PASS throwIfAborted() should throw abort.reason if signal aborted
 PASS throwIfAborted() should throw primitive abort.reason if signal aborted
 PASS throwIfAborted() should not throw if signal not aborted
+PASS AbortSignal.reason returns the same DOMException
+PASS AbortController.signal.reason returns the same DOMException
 

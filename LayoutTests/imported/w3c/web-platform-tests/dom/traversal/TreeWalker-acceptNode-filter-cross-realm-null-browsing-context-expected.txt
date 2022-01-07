@@ -1,0 +1,3 @@
+
+PASS TreeWalker: NodeFilter from detached iframe works as expected
+

@@ -53,6 +53,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/Event-stopImmediatePropagation.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/Event-stopPropagation-cancel-bubbling.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/Event-subclasses-constructors.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/events/Event-timestamp-cross-realm-getter.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/Event-timestamp-high-resolution.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/Event-timestamp-high-resolution.https.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/Event-timestamp-safe-resolution.html
@@ -80,8 +81,11 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/document-level-wheel-event-listener-passive-by-default.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/event-disabled-dynamic.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/event-global-extra.window.js
+/LayoutTests/imported/w3c/web-platform-tests/dom/events/event-global-is-still-set-when-coercing-beforeunload-result.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/events/event-global-set-before-handleEvent-lookup.any.js
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/event-global.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/event-global.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/dom/events/focus-event-document-move.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/keypress-dispatch-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/legacy-pre-activation-behavior.window.js
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/relatedTarget.window.js

@@ -17,6 +17,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/dom/traversal/NodeFilter-constants.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/traversal/NodeIterator-removal.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/traversal/NodeIterator.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/traversal/TreeWalker-acceptNode-filter-cross-realm-null-browsing-context.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/traversal/TreeWalker-acceptNode-filter-cross-realm.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/traversal/TreeWalker-acceptNode-filter.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/traversal/TreeWalker-basic.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/traversal/TreeWalker-currentNode.html

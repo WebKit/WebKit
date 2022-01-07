@@ -5080,6 +5080,9 @@ webkit.org/b/234315 [ Debug ] fast/layers/top-layer-ancestor-opacity-and-transfo
 
 webkit.org/b/183994 imported/w3c/web-platform-tests/css/cssom/css-style-attr-decl-block.html [ Failure ]
 
+# Test is crashing in Debug builds since import.
+webkit.org/b/234977 [ Debug ] imported/w3c/web-platform-tests/dom/events/focus-event-document-move.html [ Skip ]
+
 # Plugins
 # FIXME: Remove these tests.
 plugins/ [ Skip ]

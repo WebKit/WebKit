@@ -1,0 +1,3 @@
+
+FAIL self.event is set before 'handleEvent' lookup assert_equals: expected (object) object "[object Event]" but got (undefined) undefined
+
