@@ -1,3 +1,23 @@
+2022-01-07  Kate Cheney  <katherine_cheney@apple.com>
+
+        CSP: strict-dynamic is causing incorrect and unexpected behavior
+        https://bugs.webkit.org/show_bug.cgi?id=234756
+        <rdar://problem/87018316>
+
+        Reviewed by Brent Fulgham.
+
+        Add tests with re-arranged ordering of the source expressions.
+
+        * http/tests/security/contentSecurityPolicy/resources/simpleSourcedScript.js: Added.
+        * http/tests/security/contentSecurityPolicy/strict-dynamic-mixed-order-host-list-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/strict-dynamic-mixed-order-host-list.html: Added.
+        * http/tests/security/contentSecurityPolicy/strict-dynamic-mixed-order-scheme-list-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/strict-dynamic-mixed-order-scheme-list.html: Added.
+        * http/tests/security/contentSecurityPolicy/strict-dynamic-mixed-order-self-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/strict-dynamic-mixed-order-self.html: Added.
+        * http/tests/security/contentSecurityPolicy/strict-dynamic-mixed-order-unsafe-inline-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/strict-dynamic-mixed-order-unsafe-inline.html: Added.
+
 2022-01-07  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, rebaseline imported/w3c/web-platform-tests/html/dom/idlharness.https.html properly on iOS platforms.

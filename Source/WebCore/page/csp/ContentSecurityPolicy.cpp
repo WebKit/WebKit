@@ -459,18 +459,19 @@ bool ContentSecurityPolicy::shouldPerformEarlyCSPCheck() const
     return false;
 }
 
-bool ContentSecurityPolicy::allowNonParserInsertedScripts(const URL& url, const OrdinalNumber& contextLine, const String& nonce, const StringView& scriptContent, ParserInserted parserInserted) const
+bool ContentSecurityPolicy::allowNonParserInsertedScripts(const URL& sourceURL, const URL& contextURL, const OrdinalNumber& contextLine, const String& nonce, const StringView& scriptContent, ParserInserted parserInserted) const
 {
     if (!shouldPerformEarlyCSPCheck())
         return true;
 
     auto handleViolatedDirective = [&] (const ContentSecurityPolicyDirective& violatedDirective) {
         TextPosition sourcePosition(contextLine, OrdinalNumber());
-        String consoleMessage = consoleMessageForViolation(ContentSecurityPolicyDirectiveNames::scriptSrc, violatedDirective, url, "Refused to load");
-        reportViolation(ContentSecurityPolicyDirectiveNames::scriptSrcElem, violatedDirective, url.string(), consoleMessage, String(), scriptContent, sourcePosition);
+        const char* message = sourceURL.isEmpty() ? "Refused to execute a script" : "Refused to load";
+        String consoleMessage = consoleMessageForViolation(ContentSecurityPolicyDirectiveNames::scriptSrc, violatedDirective, sourceURL, message);
+        reportViolation(ContentSecurityPolicyDirectiveNames::scriptSrcElem, violatedDirective, sourceURL.string(), consoleMessage, contextURL.string(), scriptContent, sourcePosition);
     };
 
-    return allScriptPoliciesAllow(handleViolatedDirective, url, nonce, scriptContent, parserInserted);
+    return allScriptPoliciesAllow(handleViolatedDirective, sourceURL, nonce, scriptContent, parserInserted);
 }
 
 bool ContentSecurityPolicy::allowInlineScript(const String& contextURL, const OrdinalNumber& contextLine, StringView scriptContent, Element& element, bool overrideContentSecurityPolicy) const

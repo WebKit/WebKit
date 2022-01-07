@@ -234,7 +234,7 @@ template<typename CharacterType> std::optional<ContentSecurityPolicySourceList::
         return source;
     }
 
-    if (skipExactlyIgnoringASCIICase(buffer, "'strict-dynamic'")) {
+    if (skipExactlyIgnoringASCIICase(buffer, "'strict-dynamic'") && (m_directiveName == ContentSecurityPolicyDirectiveNames::scriptSrc || m_directiveName == ContentSecurityPolicyDirectiveNames::scriptSrcElem)) {
         m_allowNonParserInsertedScripts = true;
         m_allowSelf = false;
         m_allowInline = false;
@@ -242,12 +242,12 @@ template<typename CharacterType> std::optional<ContentSecurityPolicySourceList::
     }
 
     if (skipExactlyIgnoringASCIICase(buffer, "'self'")) {
-        m_allowSelf = true;
+        m_allowSelf = !m_allowNonParserInsertedScripts;
         return source;
     }
 
     if (skipExactlyIgnoringASCIICase(buffer, "'unsafe-inline'")) {
-        m_allowInline = true;
+        m_allowInline = !m_allowNonParserInsertedScripts;
         return source;
     }
 
@@ -265,6 +265,9 @@ template<typename CharacterType> std::optional<ContentSecurityPolicySourceList::
         m_reportSample = true;
         return source;
     }
+
+    if (m_allowNonParserInsertedScripts)
+        return source;
 
     auto begin = buffer.position();
     auto beginHost = begin;
