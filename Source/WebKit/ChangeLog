@@ -1,3 +1,21 @@
+2022-01-07  Peng Liu  <peng.liu6@apple.com>
+
+        Clean up FullscreenClient
+        https://bugs.webkit.org/show_bug.cgi?id=233076
+
+        Reviewed by Jer Noble.
+
+        This patch is a follow-up to r285741.
+        - Get rid of `WKFullscreenClientView` and use `WKWebView` instead.
+
+        * UIProcess/Cocoa/FullscreenClient.h:
+        * UIProcess/Cocoa/FullscreenClient.mm:
+        (WebKit::FullscreenClient::FullscreenClient):
+        (WebKit::FullscreenClient::willEnterFullscreen):
+        (WebKit::FullscreenClient::didEnterFullscreen):
+        (WebKit::FullscreenClient::willExitFullscreen):
+        (WebKit::FullscreenClient::didExitFullscreen):
+
 2022-01-07  Per Arne Vollan  <pvollan@apple.com>
 
         [MacCatalyst] Add required syscall

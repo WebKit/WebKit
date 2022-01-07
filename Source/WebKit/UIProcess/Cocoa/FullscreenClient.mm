@@ -30,7 +30,7 @@
 
 namespace WebKit {
 
-FullscreenClient::FullscreenClient(WKFullscreenClientView *webView)
+FullscreenClient::FullscreenClient(WKWebView *webView)
     : m_webView(webView)
 {
 }
@@ -63,7 +63,7 @@ void FullscreenClient::willEnterFullscreen(WebPageProxy*)
     [m_webView didChangeValueForKey:@"fullscreenState"];
 #if PLATFORM(MAC)
     if (m_delegateMethods.webViewWillEnterFullscreen)
-        [m_delegate.get() _webViewWillEnterFullscreen:static_cast<NSView *>(m_webView)];
+        [m_delegate.get() _webViewWillEnterFullscreen:m_webView];
 #else
     if (m_delegateMethods.webViewWillEnterElementFullscreen)
         [m_delegate.get() _webViewWillEnterElementFullscreen:m_webView];
@@ -76,7 +76,7 @@ void FullscreenClient::didEnterFullscreen(WebPageProxy*)
     [m_webView didChangeValueForKey:@"fullscreenState"];
 #if PLATFORM(MAC)
     if (m_delegateMethods.webViewDidEnterFullscreen)
-        [m_delegate.get() _webViewDidEnterFullscreen:static_cast<NSView *>(m_webView)];
+        [m_delegate.get() _webViewDidEnterFullscreen:m_webView];
 #else
     if (m_delegateMethods.webViewDidEnterElementFullscreen)
         [m_delegate.get() _webViewDidEnterElementFullscreen:m_webView];
@@ -89,7 +89,7 @@ void FullscreenClient::willExitFullscreen(WebPageProxy*)
     [m_webView didChangeValueForKey:@"fullscreenState"];
 #if PLATFORM(MAC)
     if (m_delegateMethods.webViewWillExitFullscreen)
-        [m_delegate.get() _webViewWillExitFullscreen:static_cast<NSView *>(m_webView)];
+        [m_delegate.get() _webViewWillExitFullscreen:m_webView];
 #else
     if (m_delegateMethods.webViewWillExitElementFullscreen)
         [m_delegate.get() _webViewWillExitElementFullscreen:m_webView];
@@ -102,7 +102,7 @@ void FullscreenClient::didExitFullscreen(WebPageProxy*)
     [m_webView didChangeValueForKey:@"fullscreenState"];
 #if PLATFORM(MAC)
     if (m_delegateMethods.webViewDidExitFullscreen)
-        [m_delegate.get() _webViewDidExitFullscreen:static_cast<NSView *>(m_webView)];
+        [m_delegate.get() _webViewDidExitFullscreen:m_webView];
 #else
     if (m_delegateMethods.webViewDidExitElementFullscreen)
         [m_delegate.get() _webViewDidExitElementFullscreen:m_webView];
