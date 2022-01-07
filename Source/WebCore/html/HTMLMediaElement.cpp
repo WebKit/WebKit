@@ -4397,7 +4397,8 @@ bool HTMLMediaElement::setupAndCallJS(const JSSetupFunction& task)
 
     auto pendingActivity = makePendingActivity(*this);
     auto& world = ensureIsolatedWorld();
-    auto& scriptController = document().frame()->script();
+    Ref protectedFrame = *document().frame();
+    auto& scriptController = protectedFrame->script();
     auto* globalObject = JSC::jsCast<JSDOMGlobalObject*>(scriptController.globalObject(world));
     auto& vm = globalObject->vm();
     JSC::JSLockHolder lock(vm);
