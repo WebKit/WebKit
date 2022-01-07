@@ -769,9 +769,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     return _inlineMediaPlaybackRequiresPlaysInlineAttribute;
 }
 
-- (void)_setInlineMediaPlaybackRequiresPlaysInlineAttribute:(BOOL)requiresPlaysInlineAttribute
+- (void)_setInlineMediaPlaybackRequiresPlaysInlineAttribute:(BOOL)requires
 {
-    _inlineMediaPlaybackRequiresPlaysInlineAttribute = requiresPlaysInlineAttribute;
+    _inlineMediaPlaybackRequiresPlaysInlineAttribute = requires;
 }
 
 - (BOOL)_allowsInlineMediaPlaybackAfterFullscreen

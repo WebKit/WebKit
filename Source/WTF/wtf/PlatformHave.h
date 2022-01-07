@@ -113,14 +113,6 @@
 #endif
 #endif
 
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 120000
-#define HAVE_MISSING_STD_FILESYSTEM_PATH_CONSTRUCTOR 1
-#elif COMPILER(GCC)
-#if !GCC_VERSION_AT_LEAST(9, 0, 0)
-#define HAVE_MISSING_STD_FILESYSTEM_PATH_CONSTRUCTOR 1
-#endif
-#endif
-
 /* FIXME: Remove after CMake build enabled on Darwin */
 #if OS(DARWIN)
 #define HAVE_ERRNO_H 1

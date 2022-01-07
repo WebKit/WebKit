@@ -1,3 +1,15 @@
+2022-01-07  Alex Christensen  <achristensen@webkit.org>
+
+        Unreviewed, reverting r287698.
+
+        Broke an internal build
+
+        Reverted changeset:
+
+        "Start using C++20"
+        https://bugs.webkit.org/show_bug.cgi?id=233963
+        https://commits.webkit.org/r287698
+
 2022-01-07  Youenn Fablet  <youenn@apple.com>
 
         Use completion handlers for takeAllMessagesForPort methods

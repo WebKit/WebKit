@@ -48,24 +48,20 @@
 #include <wtf/StdFilesystem.h>
 #endif
 
-namespace WTF::FileSystemImpl {
+namespace WTF {
+
+namespace FileSystemImpl {
 
 #if HAVE(STD_FILESYSTEM) || HAVE(STD_EXPERIMENTAL_FILESYSTEM)
 
 static std::filesystem::path toStdFileSystemPath(StringView path)
 {
-#if HAVE(MISSING_STD_FILESYSTEM_PATH_CONSTRUCTOR)
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     return std::filesystem::u8path(path.utf8().data());
-    ALLOW_DEPRECATED_DECLARATIONS_END
-#else
-    return { std::u8string(reinterpret_cast<const char8_t*>(path.utf8().data())) };
-#endif
 }
 
 static String fromStdFileSystemPath(const std::filesystem::path& path)
 {
-    return String::fromUTF8(reinterpret_cast<const LChar*>(path.u8string().c_str()));
+    return String::fromUTF8(path.u8string().c_str());
 }
 
 #endif // HAVE(STD_FILESYSTEM) || HAVE(STD_EXPERIMENTAL_FILESYSTEM)
@@ -833,4 +829,5 @@ String pathByAppendingComponents(StringView path, const Vector<StringView>& comp
 
 #endif // HAVE(STD_FILESYSTEM) || HAVE(STD_EXPERIMENTAL_FILESYSTEM)
 
-} // namespace WTF::FileSystemImpl
+} // namespace FileSystemImpl
+} // namespace WTF

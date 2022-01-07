@@ -244,14 +244,12 @@ static void HandleDelegateSource(void*)
 
 class WebThreadDelegateMessageScope {
 public:
-    IGNORE_CLANG_WARNINGS_BEGIN("deprecated-volatile")
     WebThreadDelegateMessageScope() { ++webThreadDelegateMessageScopeCount; }
     ~WebThreadDelegateMessageScope()
     {
         ASSERT(webThreadDelegateMessageScopeCount);
         --webThreadDelegateMessageScopeCount;
     }
-    IGNORE_CLANG_WARNINGS_END
 };
 
 static void SendDelegateMessage(RetainPtr<NSInvocation>&& invocation)
