@@ -26,7 +26,7 @@
  */
 
 #include "config.h"
-#include "RenderSVGRect.h"
+#include "LegacyRenderSVGRect.h"
 
 #include "LegacyRenderSVGShapeInlines.h"
 #include "SVGElementTypeHelpers.h"
@@ -34,22 +34,22 @@
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(RenderSVGRect);
+WTF_MAKE_ISO_ALLOCATED_IMPL(LegacyRenderSVGRect);
 
-RenderSVGRect::RenderSVGRect(SVGRectElement& element, RenderStyle&& style)
+LegacyRenderSVGRect::LegacyRenderSVGRect(SVGRectElement& element, RenderStyle&& style)
     : LegacyRenderSVGShape(element, WTFMove(style))
     , m_usePathFallback(false)
 {
 }
 
-RenderSVGRect::~RenderSVGRect() = default;
+LegacyRenderSVGRect::~LegacyRenderSVGRect() = default;
 
-SVGRectElement& RenderSVGRect::rectElement() const
+SVGRectElement& LegacyRenderSVGRect::rectElement() const
 {
     return downcast<SVGRectElement>(LegacyRenderSVGShape::graphicsElement());
 }
 
-void RenderSVGRect::updateShapeFromElement()
+void LegacyRenderSVGRect::updateShapeFromElement()
 {
     // Before creating a new object we need to clear the cached bounding box
     // to avoid using garbage.
@@ -97,7 +97,7 @@ void RenderSVGRect::updateShapeFromElement()
 #endif
 }
 
-void RenderSVGRect::fillShape(GraphicsContext& context) const
+void LegacyRenderSVGRect::fillShape(GraphicsContext& context) const
 {
     if (m_usePathFallback) {
         LegacyRenderSVGShape::fillShape(context);
@@ -120,7 +120,7 @@ void RenderSVGRect::fillShape(GraphicsContext& context) const
     context.fillRect(m_fillBoundingBox);
 }
 
-void RenderSVGRect::strokeShape(GraphicsContext& context) const
+void LegacyRenderSVGRect::strokeShape(GraphicsContext& context) const
 {
     if (!style().hasVisibleStroke())
         return;
@@ -133,7 +133,7 @@ void RenderSVGRect::strokeShape(GraphicsContext& context) const
     context.strokeRect(m_fillBoundingBox, strokeWidth());
 }
 
-bool RenderSVGRect::shapeDependentStrokeContains(const FloatPoint& point, PointCoordinateSpace pointCoordinateSpace)
+bool LegacyRenderSVGRect::shapeDependentStrokeContains(const FloatPoint& point, PointCoordinateSpace pointCoordinateSpace)
 {
     // The optimized contains code below does not support non-smooth strokes so we need
     // to fall back to LegacyRenderSVGShape::shapeDependentStrokeContains in these cases.
@@ -146,14 +146,14 @@ bool RenderSVGRect::shapeDependentStrokeContains(const FloatPoint& point, PointC
     return m_outerStrokeRect.contains(point, FloatRect::InsideOrOnStroke) && !m_innerStrokeRect.contains(point, FloatRect::InsideButNotOnStroke);
 }
 
-bool RenderSVGRect::shapeDependentFillContains(const FloatPoint& point, const WindRule fillRule) const
+bool LegacyRenderSVGRect::shapeDependentFillContains(const FloatPoint& point, const WindRule fillRule) const
 {
     if (m_usePathFallback)
         return LegacyRenderSVGShape::shapeDependentFillContains(point, fillRule);
     return m_fillBoundingBox.contains(point.x(), point.y());
 }
 
-bool RenderSVGRect::isRenderingDisabled() const
+bool LegacyRenderSVGRect::isRenderingDisabled() const
 {
     // A width or height of zero disables rendering for the element, and results in an empty bounding box.
     return m_fillBoundingBox.isEmpty();

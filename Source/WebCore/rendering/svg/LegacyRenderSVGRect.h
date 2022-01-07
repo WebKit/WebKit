@@ -32,11 +32,11 @@
 
 namespace WebCore {
 
-class RenderSVGRect final : public LegacyRenderSVGShape {
-    WTF_MAKE_ISO_ALLOCATED(RenderSVGRect);
+class LegacyRenderSVGRect final : public LegacyRenderSVGShape {
+    WTF_MAKE_ISO_ALLOCATED(LegacyRenderSVGRect);
 public:
-    RenderSVGRect(SVGRectElement&, RenderStyle&&);
-    virtual ~RenderSVGRect();
+    LegacyRenderSVGRect(SVGRectElement&, RenderStyle&&);
+    virtual ~LegacyRenderSVGRect();
 
     SVGRectElement& rectElement() const;
 

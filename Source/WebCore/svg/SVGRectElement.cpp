@@ -23,7 +23,7 @@
 #include "config.h"
 #include "SVGRectElement.h"
 
-#include "RenderSVGRect.h"
+#include "LegacyRenderSVGRect.h"
 #include "RenderSVGResource.h"
 #include "SVGElementInlines.h"
 #include <wtf/IsoMallocInlines.h>
@@ -88,7 +88,7 @@ void SVGRectElement::svgAttributeChanged(const QualifiedName& attrName)
 
 RenderPtr<RenderElement> SVGRectElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
-    return createRenderer<RenderSVGRect>(*this, WTFMove(style));
+    return createRenderer<LegacyRenderSVGRect>(*this, WTFMove(style));
 }
 
 }
