@@ -1,3 +1,12 @@
+2022-01-07  Youenn Fablet  <youenn@apple.com>
+
+        Expose rvfc processingDuration for the WebRTC code path
+        https://bugs.webkit.org/show_bug.cgi?id=234949
+
+        Reviewed by Eric Carlson.
+
+        * webrtc/peerConnection-rvfc.html:
+
 2022-01-07  Simon Fraser  <simon.fraser@apple.com>
 
         REGRESSION (Safari 14): background-attachment: local does not work

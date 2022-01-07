@@ -53,6 +53,7 @@ promise_test(async (test) => {
     }
     assert_equals(metadata.width, 320);
     assert_greater_than(metadata.presentedFrames, presentedFrames);
+    assert_greater_than(metadata.processingDuration, 0);
 }, "Validate callbacks and metadata for peer connection tracks");
         </script>
     </body>

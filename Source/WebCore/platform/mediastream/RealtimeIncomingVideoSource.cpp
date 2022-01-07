@@ -115,6 +115,9 @@ VideoSampleMetadata RealtimeIncomingVideoSource::metadataFromVideoFrame(const we
         return a.receive_time() < b.receive_time();
     });
     metadata.receiveTime = Seconds::fromMicroseconds(lastPacketTimestamp->receive_time().us());
+    if (frame.processing_time())
+        metadata.processingDuration = Seconds::fromMilliseconds(frame.processing_time()->Elapsed().ms()).value();
+
     return metadata;
 }
 
