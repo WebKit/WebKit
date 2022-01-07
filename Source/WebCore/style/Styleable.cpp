@@ -316,6 +316,9 @@ static double transitionCombinedDuration(const Animation* transition)
 
 static bool transitionMatchesProperty(const Animation& transition, CSSPropertyID property)
 {
+    if (transition.isPropertyFilled())
+        return false;
+
     auto mode = transition.property().mode;
     if (mode == Animation::TransitionMode::None || mode == Animation::TransitionMode::UnknownProperty)
         return false;

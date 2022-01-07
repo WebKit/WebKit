@@ -1,3 +1,14 @@
+2022-01-07  Antoine Quint  <graouts@webkit.org>
+
+        Transitions without an explicit property-name should not be considered
+        https://bugs.webkit.org/show_bug.cgi?id=234960
+
+        Reviewed by Darin Adler.
+
+        Mark WPT progression.
+
+        * web-platform-tests/css/css-transitions/events-004-expected.txt:
+
 2022-01-07  Youenn Fablet  <youenn@apple.com>
 
         Allow storing form data responses in Cache Storage
