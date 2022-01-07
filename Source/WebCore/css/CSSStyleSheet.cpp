@@ -170,16 +170,6 @@ void CSSStyleSheet::didMutateRules(RuleMutationType mutationType, WhetherContent
         return;
     }
 
-    if (mutationType == RuleInsertion && !contentsWereClonedForMutation && !scope->activeStyleSheetsContains(this)) {
-        if (insertedKeyframesRule) {
-            if (auto* resolver = scope->resolverIfExists())
-                resolver->addKeyframeStyle(*insertedKeyframesRule);
-            return;
-        }
-        scope->didChangeActiveStyleSheetCandidates();
-        return;
-    }
-
     if (mutationType == KeyframesRuleMutation) {
         if (auto* ownerDocument = this->ownerDocument())
             ownerDocument->keyframesRuleDidChange(modifiedKeyframesRuleName);
