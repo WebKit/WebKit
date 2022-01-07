@@ -54,7 +54,7 @@ function test()
 
                         if (resource.url.endsWith("sample-resource.js")) {
                             InspectorTest.log("Found sample-resource.js.");
-                            InspectorTest.assert(resource.mimeType === "text/javascript", "sample-resource.js should have a text/javascript MIME type.");
+                            InspectorTest.assert(resource.mimeType === "text/javascript" || resource.mimeType === "application/javascript", "sample-resource.js should have a valid MIME type.");
 
                             let content = await getContentForResource(resource);
                             InspectorTest.expectEqual(content.data, "/* TEST JS */", "sample-resource.js should have the expected content.");
