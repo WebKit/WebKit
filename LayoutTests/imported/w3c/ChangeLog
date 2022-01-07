@@ -1,3 +1,20 @@
+2022-01-07  Chris Dumez  <cdumez@apple.com>
+
+        Resync web-platform-tests/webaudio from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=234981
+
+        Reviewed by Geoffrey Garen.
+
+        Resync web-platform-tests/webaudio from upstream 84b2be5b17e8542dea2.
+
+        * web-platform-tests/webaudio/the-audio-api/the-audiobuffer-interface/acquire-the-content-expected.txt: Added.
+        * web-platform-tests/webaudio/the-audio-api/the-audiobuffer-interface/acquire-the-content.html: Added.
+        * web-platform-tests/webaudio/the-audio-api/the-audiobuffer-interface/w3c-import.log:
+        * web-platform-tests/webaudio/the-audio-api/the-audiocontext-interface/w3c-import.log:
+        * web-platform-tests/webaudio/the-audio-api/the-periodicwave-interface/createPeriodicWaveInfiniteValuesThrows-expected.txt: Added.
+        * web-platform-tests/webaudio/the-audio-api/the-periodicwave-interface/createPeriodicWaveInfiniteValuesThrows.html: Added.
+        * web-platform-tests/webaudio/the-audio-api/the-periodicwave-interface/w3c-import.log:
+
 2022-01-07  Antoine Quint  <graouts@webkit.org>
 
         Inserting a new @keyframes rule does not start animations that already used this name
