@@ -64,11 +64,11 @@
 #import <WebCore/Quirks.h>
 #import <WebCore/RuntimeApplicationChecks.h>
 #import <WebCore/VelocityData.h>
-#import <WebCore/VersionChecks.h>
 #import <objc/message.h>
 #import <pal/spi/cocoa/NSAccessibilitySPI.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #import <wtf/text/TextStream.h>
 #import "AppKitSoftLink.h"
 
@@ -198,7 +198,7 @@ static NSArray *keyCommandsPlaceholderHackForEvernote(id self, SEL _cmd)
     [self addSubview:_fixedClippingView.get()];
     [_fixedClippingView addSubview:_rootContentView.get()];
 
-    if (!linkedOnOrAfter(WebCore::SDKVersion::FirstWithLazyGestureRecognizerInstallation))
+    if (!linkedOnOrAfter(SDKVersion::FirstWithLazyGestureRecognizerInstallation))
         [self setUpInteraction];
     [self setUserInteractionEnabled:YES];
 
@@ -222,7 +222,7 @@ static NSArray *keyCommandsPlaceholderHackForEvernote(id self, SEL _cmd)
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_applicationWillEnterForeground:) name:UIApplicationWillEnterForegroundNotification object:[UIApplication sharedApplication]];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_screenCapturedDidChange:) name:UIScreenCapturedDidChangeNotification object:[UIScreen mainScreen]];
 
-    if (WebCore::IOSApplication::isEvernote() && !linkedOnOrAfter(WebCore::SDKVersion::FirstWhereWKContentViewDoesNotOverrideKeyCommands))
+    if (WebCore::IOSApplication::isEvernote() && !linkedOnOrAfter(SDKVersion::FirstWhereWKContentViewDoesNotOverrideKeyCommands))
         class_addMethod(self.class, @selector(keyCommands), reinterpret_cast<IMP>(&keyCommandsPlaceholderHackForEvernote), method_getTypeEncoding(class_getInstanceMethod(self.class, @selector(keyCommands))));
 
     return self;

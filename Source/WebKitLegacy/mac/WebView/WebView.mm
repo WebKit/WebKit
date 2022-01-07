@@ -228,7 +228,6 @@
 #import <WebCore/UserScript.h>
 #import <WebCore/UserStyleSheet.h>
 #import <WebCore/ValidationBubble.h>
-#import <WebCore/VersionChecks.h>
 #import <WebCore/WebCoreJITOperations.h>
 #import <WebCore/WebCoreObjCExtras.h>
 #import <WebCore/WebCoreView.h>
@@ -269,6 +268,7 @@
 #import <wtf/StdLibExtras.h>
 #import <wtf/WeakObjCPtr.h>
 #import <wtf/WorkQueue.h>
+#import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/spi/darwin/dyldSPI.h>
 
@@ -1391,7 +1391,7 @@ static RetainPtr<NSString> createOutlookQuirksUserScriptContents()
 #if PLATFORM(IOS)
 static bool needsLaBanquePostaleQuirks()
 {
-    static bool needsQuirks = WebCore::IOSApplication::isLaBanquePostale() && !linkedOnOrAfter(WebCore::SDKVersion::FirstWithoutLaBanquePostaleQuirks);
+    static bool needsQuirks = WebCore::IOSApplication::isLaBanquePostale() && !linkedOnOrAfter(SDKVersion::FirstWithoutLaBanquePostaleQuirks);
     return needsQuirks;
 }
 

@@ -225,9 +225,9 @@
 #include <WebCore/CoreAudioCaptureDeviceManager.h>
 #include <WebCore/RunLoopObserver.h>
 #include <WebCore/SystemBattery.h>
-#include <WebCore/VersionChecks.h>
 #include <wtf/MachSendRight.h>
 #include <wtf/cocoa/Entitlements.h>
+#include <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #endif
 
 #if PLATFORM(MAC)
@@ -1327,7 +1327,7 @@ void WebPageProxy::maybeInitializeSandboxExtensionHandle(WebProcessProxy& proces
     }
 
 #if PLATFORM(COCOA)
-    if (!linkedOnOrAfter(WebCore::SDKVersion::FirstWithoutUnconditionalUniversalSandboxExtension))
+    if (!linkedOnOrAfter(SDKVersion::FirstWithoutUnconditionalUniversalSandboxExtension))
         willAcquireUniversalFileReadSandboxExtension(process);
 #endif
 
@@ -2637,7 +2637,7 @@ void WebPageProxy::makeViewBlankIfUnpaintedSinceLastLoadCommit()
 {
     if (!m_hasUpdatedRenderingAfterDidCommitLoad) {
 #if PLATFORM(COCOA)
-        static bool shouldMakeViewBlank = linkedOnOrAfter(WebCore::SDKVersion::FirstWithBlankViewOnJSPrompt);
+        static bool shouldMakeViewBlank = linkedOnOrAfter(SDKVersion::FirstWithBlankViewOnJSPrompt);
 #else
         static bool shouldMakeViewBlank = true;
 #endif

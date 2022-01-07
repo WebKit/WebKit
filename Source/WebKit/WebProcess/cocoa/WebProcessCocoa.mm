@@ -80,7 +80,6 @@
 #import <WebCore/SystemBattery.h>
 #import <WebCore/SystemSoundManager.h>
 #import <WebCore/UTIUtilities.h>
-#import <WebCore/VersionChecks.h>
 #import <WebCore/WebMAudioUtilitiesCocoa.h>
 #import <algorithm>
 #import <dispatch/dispatch.h>

@@ -127,7 +127,6 @@
 #import <WebCore/TextRecognitionResult.h>
 #import <WebCore/TouchAction.h>
 #import <WebCore/UTIUtilities.h>
-#import <WebCore/VersionChecks.h>
 #import <WebCore/VisibleSelection.h>
 #import <WebCore/WebCoreCALayerExtras.h>
 #import <WebCore/WebEvent.h>
@@ -148,6 +147,7 @@
 #import <wtf/SetForScope.h>
 #import <wtf/WeakObjCPtr.h>
 #import <wtf/cocoa/NSURLExtras.h>
+#import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/text/TextStream.h>
@@ -7777,7 +7777,7 @@ static bool canUseQuickboardControllerFor(UITextContentType type)
 - (BOOL)_shouldUseContextMenus
 {
 #if HAVE(LINK_PREVIEW) && USE(UICONTEXTMENU)
-    return linkedOnOrAfter(WebCore::SDKVersion::FirstThatHasUIContextMenuInteraction);
+    return linkedOnOrAfter(SDKVersion::FirstThatHasUIContextMenuInteraction);
 #endif
     return NO;
 }
@@ -9509,7 +9509,7 @@ static BOOL applicationIsKnownToIgnoreMouseEvents(const char* &warningVersion)
         return YES;
     }
 
-    if (!WebCore::linkedOnOrAfter(WebCore::SDKVersion::FirstVersionWithiOSAppsOnMacOS)) {
+    if (!linkedOnOrAfter(SDKVersion::FirstVersionWithiOSAppsOnMacOS)) {
         if (WebCore::IOSApplication::isFIFACompanion() // <rdar://problem/67093487>
             || WebCore::IOSApplication::isNoggin() // <rdar://problem/64830335>
             || WebCore::IOSApplication::isOKCupid() // <rdar://problem/65698496>
@@ -9521,7 +9521,7 @@ static BOOL applicationIsKnownToIgnoreMouseEvents(const char* &warningVersion)
         }
     }
 
-    if (!WebCore::linkedOnOrAfter(WebCore::SDKVersion::FirstThatSendsNativeMouseEvents)) {
+    if (!linkedOnOrAfter(SDKVersion::FirstThatSendsNativeMouseEvents)) {
         if (WebCore::IOSApplication::isPocketCity() // <rdar://problem/62273077>
             || WebCore::IOSApplication::isEssentialSkeleton() // <rdar://problem/62694519>
             || WebCore::IOSApplication::isESPNFantasySports() // <rdar://problem/64671543>

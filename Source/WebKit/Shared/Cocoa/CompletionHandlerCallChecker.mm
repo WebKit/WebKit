@@ -26,10 +26,10 @@
 #import "config.h"
 #import "CompletionHandlerCallChecker.h"
 
-#import <WebCore/VersionChecks.h>
 #import <mutex>
 #import <objc/runtime.h>
 #import <wtf/Ref.h>
+#import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 
 namespace WebKit {
 
@@ -65,7 +65,7 @@ static bool shouldThrowExceptionForDuplicateCompletionHandlerCall()
     static bool shouldThrowException;
     static std::once_flag once;
     std::call_once(once, [] {
-        shouldThrowException = linkedOnOrAfter(WebCore::SDKVersion::FirstWithExceptionsForDuplicateCompletionHandlerCalls);
+        shouldThrowException = linkedOnOrAfter(SDKVersion::FirstWithExceptionsForDuplicateCompletionHandlerCalls);
     });
     return shouldThrowException;
 }

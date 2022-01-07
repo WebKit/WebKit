@@ -45,7 +45,7 @@
 #include <wtf/text/StringBuilder.h>
 
 #if PLATFORM(COCOA)
-#include "VersionChecks.h"
+#include <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #endif
 
 namespace WebCore {

@@ -33,11 +33,11 @@
 #import <JavaScriptCore/InitializeThreading.h>
 #import <WebCore/Image.h>
 #import <WebCore/ThreadCheck.h>
-#import <WebCore/VersionChecks.h>
 #import <WebCore/WebCoreJITOperations.h>
 #import <wtf/MainThread.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/RunLoop.h>
+#import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 
 using namespace WebCore;
 
@@ -108,7 +108,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     static NeverDestroyed<RetainPtr<WebIconDatabase>> database;
     static dispatch_once_t once;
     dispatch_once(&once, ^ {
-        if (linkedOnOrAfter(WebCore::SDKVersion::FirstWithWebIconDatabaseWarning))
+        if (linkedOnOrAfter(SDKVersion::FirstWithWebIconDatabaseWarning))
             NSLog(@"+[WebIconDatabase sharedIconDatabase] is not API and should not be used. WebIconDatabase no longer handles icon loading and it will be removed in a future release.");
 
         database.get() = adoptNS([[WebIconDatabase alloc] init]);

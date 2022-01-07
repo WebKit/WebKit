@@ -29,16 +29,17 @@
 #import "AuxiliaryProcess.h"
 #import "Connection.h"
 #import "Logging.h"
-#import "TCCSoftLink.h"
 #import <WebCore/RegistrableDomain.h>
 #import <WebCore/RuntimeApplicationChecks.h>
-#import <WebCore/VersionChecks.h>
 #import <wtf/HashMap.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/RunLoop.h>
 #import <wtf/WorkQueue.h>
 #import <wtf/cocoa/Entitlements.h>
+#import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #import <wtf/text/StringHash.h>
+
+#import "TCCSoftLink.h"
 
 namespace WebKit {
 
@@ -124,7 +125,7 @@ void determineITPState()
     if (currentITPState != ITPState::Uninitialized)
         return;
 
-    bool appWasLinkedOnOrAfter = linkedOnOrAfter(WebCore::SDKVersion::FirstWithSessionCleanupByDefault);
+    bool appWasLinkedOnOrAfter = linkedOnOrAfter(SDKVersion::FirstWithSessionCleanupByDefault);
 
     itpQueue() = WorkQueue::create("com.apple.WebKit.itpCheckQueue");
     itpQueue()->dispatch([appWasLinkedOnOrAfter, bundleIdentifier = WebCore::applicationBundleIdentifier().isolatedCopy()] {

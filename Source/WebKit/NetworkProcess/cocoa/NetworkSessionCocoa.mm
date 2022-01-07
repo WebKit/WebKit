@@ -48,7 +48,6 @@
 #import <WebCore/ResourceRequest.h>
 #import <WebCore/ResourceResponse.h>
 #import <WebCore/SharedBuffer.h>
-#import <WebCore/VersionChecks.h>
 #import <WebCore/WebCoreURLResponse.h>
 #import <pal/spi/cf/CFNetworkSPI.h>
 #import <wtf/BlockPtr.h>
@@ -60,6 +59,7 @@
 #import <wtf/SoftLinking.h>
 #import <wtf/URL.h>
 #import <wtf/WeakObjCPtr.h>
+#import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/darwin/WeakLinking.h>
@@ -1107,7 +1107,7 @@ static NSURLSessionConfiguration *configurationForSessionID(PAL::SessionID sessi
         configuration = [NSURLSessionConfiguration defaultSessionConfiguration];
 
 #if PLATFORM(MAC)
-    bool preventCFNetworkClientCertificateLookup = linkedOnOrAfter(WebCore::SDKVersion::FirstWithoutClientCertificateLookup) || session.isEphemeral();
+    bool preventCFNetworkClientCertificateLookup = linkedOnOrAfter(SDKVersion::FirstWithoutClientCertificateLookup) || session.isEphemeral();
 #else
     bool preventCFNetworkClientCertificateLookup = true;
 #endif

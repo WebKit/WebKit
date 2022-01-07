@@ -35,7 +35,7 @@
 
 #if PLATFORM(MAC)
 #import "WebJavaScriptTextInputPanel.h"
-#import <WebCore/VersionChecks.h>
+#import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #endif
 
 #if PLATFORM(IOS_FAMILY)
@@ -216,7 +216,7 @@
 #if PLATFORM(MAC)
 - (NSUInteger)webView:(WebView *)webView dragDestinationActionMaskForDraggingInfo:(id <NSDraggingInfo>)draggingInfo
 {
-    if (!linkedOnOrAfter(WebCore::SDKVersion::FirstWithDropToNavigateDisallowedByDefault))
+    if (!linkedOnOrAfter(SDKVersion::FirstWithDropToNavigateDisallowedByDefault))
         return WebDragDestinationActionAny;
 
     return WebDragDestinationActionAny & ~WebDragDestinationActionLoad;

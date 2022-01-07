@@ -32,7 +32,7 @@ namespace WTF {
 
 static std::optional<uint32_t>& applicationSDKVersionOverride()
 {
-    static NeverDestroyed<std::optional<uint32_t>> version;
+    static std::optional<uint32_t> version;
     return version;
 }
 
@@ -50,7 +50,7 @@ uint32_t applicationSDKVersion()
 
 static std::optional<LinkedOnOrAfterOverride>& linkedOnOrAfterOverrideValue()
 {
-    static NeverDestroyed<std::optional<LinkedOnOrAfterOverride>> linkedOnOrAfter;
+    static std::optional<LinkedOnOrAfterOverride> linkedOnOrAfter;
     return linkedOnOrAfter;
 }
 
@@ -62,6 +62,15 @@ void setLinkedOnOrAfterOverride(std::optional<LinkedOnOrAfterOverride> linkedOnO
 std::optional<LinkedOnOrAfterOverride> linkedOnOrAfterOverride()
 {
     return linkedOnOrAfterOverrideValue();
+}
+
+bool linkedOnOrAfter(SDKVersion sdkVersion)
+{
+    if (auto overrideValue = linkedOnOrAfterOverride())
+        return *overrideValue == LinkedOnOrAfterOverride::AfterEverything;
+
+    auto sdkVersionAsInteger = static_cast<uint32_t>(sdkVersion);
+    return sdkVersionAsInteger && applicationSDKVersion() >= sdkVersionAsInteger;
 }
 
 }

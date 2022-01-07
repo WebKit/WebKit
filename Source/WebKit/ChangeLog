@@ -1,3 +1,76 @@
+2022-01-06  Tim Horton  <timothy_horton@apple.com>
+
+        Move linkedOnOrAfter() to WTF
+        https://bugs.webkit.org/show_bug.cgi?id=234942
+
+        Reviewed by Darin Adler.
+
+        * NetworkProcess/WebStorage/ios/LocalStorageDatabaseTrackerIOS.mm:
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.mm:
+        (WebKit::NetworkDataTaskCocoa::willPerformHTTPRedirection):
+        * NetworkProcess/cocoa/NetworkProcessCocoa.mm:
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (WebKit::configurationForSessionID):
+        * Shared/Cocoa/AuxiliaryProcessCocoa.mm:
+        (WebKit::AuxiliaryProcess::platformInitialize):
+        * Shared/Cocoa/CompletionHandlerCallChecker.mm:
+        (WebKit::shouldThrowExceptionForDuplicateCompletionHandlerCall):
+        * Shared/Cocoa/DefaultWebBrowserChecks.mm:
+        (WebKit::determineITPState):
+        * Shared/Cocoa/WebKit2InitializeCocoa.mm:
+        (WebKit::InitializeWebKit2):
+        * Shared/WebPreferencesDefaultValues.cpp:
+        (WebKit::defaultPassiveTouchListenersAsDefaultOnDocument):
+        (WebKit::defaultCSSOMViewScrollingAPIEnabled):
+        (WebKit::defaultPassiveWheelListenersAsDefaultOnDocument):
+        (WebKit::defaultWheelEventGesturesBecomeNonBlocking):
+        (WebKit::defaultOfflineWebApplicationCacheEnabled):
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageReload):
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (shouldAllowPictureInPictureMediaPlayback):
+        (shouldAllowSettingAnyXHRHeaderFromFileURLs):
+        (shouldRequireUserGestureToLoadVideo):
+        (shouldRestrictBaseURLSchemes):
+        (-[WKWebView _initializeWithConfiguration:]):
+        (-[WKWebView _setupPageConfiguration:]):
+        (-[WKWebView reload]):
+        (-[WKWebView takeSnapshotWithConfiguration:completionHandler:]):
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+        (defaultShouldDecidePolicyBeforeLoadingQuickLookPreview):
+        (-[WKWebViewConfiguration init]):
+        * UIProcess/API/Cocoa/WKWebsiteDataStore.mm:
+        (-[WKWebsiteDataStore init]):
+        * UIProcess/API/ios/WKWebViewIOS.mm:
+        (-[WKWebView _computedObscuredInset]):
+        * UIProcess/API/mac/WKWebViewMac.mm:
+        (-[WKWebView _web_dragDestinationActionForDraggingInfo:]):
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        * UIProcess/Inspector/mac/WKInspectorViewController.mm:
+        (-[WKInspectorViewController inspectorWKWebViewReload:]):
+        * UIProcess/RemoteLayerTree/RemoteScrollingCoordinatorProxy.cpp:
+        (WebKit::RemoteScrollingCoordinatorProxy::hasScrollableOrZoomedMainFrame const):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::maybeInitializeSandboxExtensionHandle):
+        (WebKit::WebPageProxy::makeViewBlankIfUnpaintedSinceLastLoadCommit):
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::createWebPage):
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::isMainThreadOrCheckDisabled):
+        * UIProcess/ios/WKContentView.mm:
+        (-[WKContentView _commonInitializationWithProcessPool:configuration:]):
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _shouldUseContextMenus]):
+        (applicationIsKnownToIgnoreMouseEvents):
+        * UIProcess/ios/WKScrollView.mm:
+        (-[WKScrollView _systemContentInset]):
+        * UIProcess/ios/WKStylusDeviceObserver.mm:
+        (-[WKStylusDeviceObserver start]):
+        (-[WKStylusDeviceObserver stop]):
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::desktopClassBrowsingRecommended):
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+
 2022-01-06  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Add a helper function that returns the value of a std::optional<T> or constructs T if needed

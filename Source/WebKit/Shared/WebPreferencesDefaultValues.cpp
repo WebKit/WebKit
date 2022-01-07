@@ -30,7 +30,6 @@
 #include <wtf/text/WTFString.h>
 
 #if PLATFORM(COCOA)
-#include <WebCore/VersionChecks.h>
 #include <pal/spi/cocoa/FeatureFlagsSPI.h>
 #include <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #endif
@@ -53,13 +52,13 @@ bool isFeatureFlagEnabled(const char*, bool defaultValue)
 
 bool defaultPassiveTouchListenersAsDefaultOnDocument()
 {
-    static bool result = linkedOnOrAfter(WebCore::SDKVersion::FirstThatDefaultsToPassiveTouchListenersOnDocument);
+    static bool result = linkedOnOrAfter(SDKVersion::FirstThatDefaultsToPassiveTouchListenersOnDocument);
     return result;
 }
 
 bool defaultCSSOMViewScrollingAPIEnabled()
 {
-    static bool result = WebCore::IOSApplication::isIMDb() && !linkedOnOrAfter(WebCore::SDKVersion::FirstWithoutIMDbCSSOMViewScrollingQuirk);
+    static bool result = WebCore::IOSApplication::isIMDb() && !linkedOnOrAfter(SDKVersion::FirstWithoutIMDbCSSOMViewScrollingQuirk);
     return !result;
 }
 
@@ -76,13 +75,13 @@ bool defaultAlternateFormControlDesignEnabled()
 
 bool defaultPassiveWheelListenersAsDefaultOnDocument()
 {
-    static bool result = linkedOnOrAfter(WebCore::SDKVersion::FirstThatDefaultsToPassiveWheelListenersOnDocument);
+    static bool result = linkedOnOrAfter(SDKVersion::FirstThatDefaultsToPassiveWheelListenersOnDocument);
     return result;
 }
 
 bool defaultWheelEventGesturesBecomeNonBlocking()
 {
-    static bool result = linkedOnOrAfter(WebCore::SDKVersion::FirstThatAllowsWheelEventGesturesToBecomeNonBlocking);
+    static bool result = linkedOnOrAfter(SDKVersion::FirstThatAllowsWheelEventGesturesToBecomeNonBlocking);
     return result;
 }
 
@@ -149,7 +148,7 @@ bool defaultAsyncOverflowScrollingEnabled()
 bool defaultOfflineWebApplicationCacheEnabled()
 {
 #if PLATFORM(COCOA)
-    static bool newSDK = linkedOnOrAfter(WebCore::SDKVersion::FirstWithApplicationCacheDisabledByDefault);
+    static bool newSDK = linkedOnOrAfter(SDKVersion::FirstWithApplicationCacheDisabledByDefault);
     return !newSDK;
 #else
     // FIXME: Other platforms should consider turning this off.

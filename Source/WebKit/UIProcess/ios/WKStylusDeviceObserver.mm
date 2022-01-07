@@ -30,9 +30,9 @@
 
 #import "WebProcessProxy.h"
 #import <UIKit/UIScribbleInteraction.h>
-#import <WebCore/VersionChecks.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/Seconds.h>
+#import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 
 static Seconds changeTimeInterval { 10_min };
 
@@ -82,7 +82,7 @@ static Seconds changeTimeInterval { 10_min };
     if (++_startCount > 1)
         return;
 
-    if (WebCore::linkedOnOrAfter(WebCore::SDKVersion::FirstThatObservesClassProperty))
+    if (linkedOnOrAfter(SDKVersion::FirstThatObservesClassProperty))
         [[UIScribbleInteraction class] addObserver:self forKeyPath:@"isPencilInputExpected" options:NSKeyValueObservingOptionInitial context:nil];
 }
 
@@ -92,7 +92,7 @@ static Seconds changeTimeInterval { 10_min };
     if (!_startCount || --_startCount)
         return;
 
-    if (WebCore::linkedOnOrAfter(WebCore::SDKVersion::FirstThatObservesClassProperty))
+    if (linkedOnOrAfter(SDKVersion::FirstThatObservesClassProperty))
         [[UIScribbleInteraction class] removeObserver:self forKeyPath:@"isPencilInputExpected"];
 }
 

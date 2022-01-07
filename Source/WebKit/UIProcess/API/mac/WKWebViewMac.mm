@@ -40,8 +40,8 @@
 #import "WebViewImpl.h"
 #import "_WKFrameHandleInternal.h"
 #import "_WKHitTestResultInternal.h"
-#import <WebCore/VersionChecks.h>
 #import <pal/spi/mac/NSTextFinderSPI.h>
+#import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 
 _WKOverlayScrollbarStyle toAPIScrollbarStyle(std::optional<WebCore::ScrollbarOverlayStyle> coreScrollbarStyle)
 {
@@ -1199,7 +1199,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     if ([uiDelegate respondsToSelector:@selector(_webView:dragDestinationActionMaskForDraggingInfo:)])
         return [uiDelegate _webView:self dragDestinationActionMaskForDraggingInfo:draggingInfo];
 
-    if (!linkedOnOrAfter(WebCore::SDKVersion::FirstWithDropToNavigateDisallowedByDefault))
+    if (!linkedOnOrAfter(SDKVersion::FirstWithDropToNavigateDisallowedByDefault))
         return WKDragDestinationActionAny;
 
     return WKDragDestinationActionAny & ~WKDragDestinationActionLoad;

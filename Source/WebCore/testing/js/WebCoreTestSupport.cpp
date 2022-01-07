@@ -51,7 +51,6 @@
 
 #if PLATFORM(COCOA)
 #include "UTIRegistry.h"
-#include "VersionChecks.h"
 #include <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #endif
 

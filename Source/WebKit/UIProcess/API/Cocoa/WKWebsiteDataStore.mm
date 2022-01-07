@@ -47,11 +47,11 @@
 #import "_WKWebsiteDataStoreDelegate.h"
 #import <WebCore/Credential.h>
 #import <WebCore/RegistrationDatabase.h>
-#import <WebCore/VersionChecks.h>
 #import <WebCore/WebCoreObjCExtras.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/URL.h>
 #import <wtf/WeakObjCPtr.h>
+#import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 
 class WebsiteDataStoreClient final : public WebKit::WebsiteDataStoreClient {
 public:
@@ -122,7 +122,7 @@ private:
 
 - (instancetype)init
 {
-    if (WebCore::linkedOnOrAfter(WebCore::SDKVersion::FirstWithWKWebsiteDataStoreInitReturningNil))
+    if (linkedOnOrAfter(SDKVersion::FirstWithWKWebsiteDataStoreInitReturningNil))
         [NSException raise:NSGenericException format:@"Calling [WKWebsiteDataStore init] is not supported."];
     
     if (!(self = [super init]))

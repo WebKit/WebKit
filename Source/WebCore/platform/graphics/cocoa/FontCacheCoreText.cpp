@@ -34,7 +34,6 @@
 #include "FontPaletteValues.h"
 #include "RenderThemeCocoa.h"
 #include "SystemFontDatabaseCoreText.h"
-#include "VersionChecks.h"
 #include <CoreText/SFNTLayoutTypes.h>
 #include <pal/spi/cf/CoreTextSPI.h>
 #include <wtf/HashSet.h>
@@ -43,6 +42,7 @@
 #include <wtf/MemoryPressureHandler.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/cf/TypeCastsCF.h>
+#include <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 
 // FIXME: This seems like it should be in PlatformHave.h.
 // FIXME: Likely we can remove this special case for watchOS and tvOS.

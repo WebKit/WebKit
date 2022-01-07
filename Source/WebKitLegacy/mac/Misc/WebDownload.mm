@@ -36,18 +36,18 @@
 #import <WebCore/NetworkStorageSession.h>
 #import <WebCore/ProtectionSpace.h>
 #import <WebCore/RuntimeApplicationChecks.h>
-#import <WebCore/VersionChecks.h>
 #import <WebKitLegacy/WebPanelAuthenticationHandler.h>
 #import <pal/spi/cocoa/NSURLDownloadSPI.h>
 #import <wtf/Assertions.h>
 #import <wtf/MainThread.h>
 #import <wtf/WorkQueue.h>
+#import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #import <wtf/spi/darwin/dyldSPI.h>
 
 static bool shouldCallOnNetworkThread()
 {
 #if PLATFORM(MAC)
-    static bool isOldEpsonSoftwareUpdater = WebCore::MacApplication::isEpsonSoftwareUpdater() && !linkedOnOrAfter(WebCore::SDKVersion::FirstWithDownloadDelegatesCalledOnTheMainThread);
+    static bool isOldEpsonSoftwareUpdater = WebCore::MacApplication::isEpsonSoftwareUpdater() && !linkedOnOrAfter(SDKVersion::FirstWithDownloadDelegatesCalledOnTheMainThread);
     return isOldEpsonSoftwareUpdater;
 #else
     return false;

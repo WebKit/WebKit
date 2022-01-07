@@ -41,7 +41,7 @@
 #include <WebCore/ScrollingStatePositionedNode.h>
 #include <WebCore/ScrollingStateTree.h>
 #include <WebCore/ScrollingTreeFrameScrollingNode.h>
-#include <WebCore/VersionChecks.h>
+#include <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 
 namespace WebKit {
 using namespace WebCore;
@@ -272,7 +272,7 @@ bool RemoteScrollingCoordinatorProxy::hasScrollableOrZoomedMainFrame() const
         return false;
 
 #if PLATFORM(IOS_FAMILY)
-    if (WebCore::IOSApplication::isEventbrite() && !linkedOnOrAfter(WebCore::SDKVersion::FirstThatSupportsOverflowHiddenOnMainFrame))
+    if (WebCore::IOSApplication::isEventbrite() && !linkedOnOrAfter(SDKVersion::FirstThatSupportsOverflowHiddenOnMainFrame))
         return true;
 #endif
 
