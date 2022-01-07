@@ -201,17 +201,23 @@ void Styleable::cancelDeclarativeAnimations() const
     }
 }
 
-static bool shouldConsiderAnimation(Element& element, const Animation& animation)
+static bool keyframesRuleExistsForAnimation(Element& element, const Animation& animation, const String& animationName)
 {
-    if (!animation.isValidAnimation())
+    auto* styleScope = Style::Scope::forOrdinal(element, animation.nameStyleScopeOrdinal());
+    return styleScope && styleScope->resolver().isAnimationNameValid(animationName);
+}
+
+bool Styleable::animationListContainsNewlyValidAnimation(const AnimationList& animations) const
+{
+    auto& keyframeEffectStack = ensureKeyframeEffectStack();
+    if (!keyframeEffectStack.hasInvalidCSSAnimationNames())
         return false;
 
-    auto& name = animation.name().string;
-    if (name == "none" || name.isEmpty())
-        return false;
-
-    if (auto* styleScope = Style::Scope::forOrdinal(element, animation.nameStyleScopeOrdinal()))
-        return styleScope->resolver().isAnimationNameValid(name);
+    for (auto& animation : animations) {
+        auto& name = animation->name().string;
+        if (name != "none" && !name.isEmpty() && keyframeEffectStack.containsInvalidCSSAnimationName(name) && keyframesRuleExistsForAnimation(element, animation.get(), name))
+            return true;
+    }
 
     return false;
 }
@@ -230,11 +236,13 @@ void Styleable::updateCSSAnimations(const RenderStyle* currentStyle, const Rende
 
     auto* currentAnimationList = newStyle.animations();
     auto* previousAnimationList = keyframeEffectStack.cssAnimationList();
-    if (!element.hasPendingKeyframesUpdate(pseudoId) && previousAnimationList && !previousAnimationList->isEmpty() && newStyle.hasAnimations() && *(previousAnimationList) == *(newStyle.animations()))
+    if (!element.hasPendingKeyframesUpdate(pseudoId) && previousAnimationList && !previousAnimationList->isEmpty() && newStyle.hasAnimations() && *(previousAnimationList) == *(newStyle.animations()) && !animationListContainsNewlyValidAnimation(*newStyle.animations()))
         return;
 
     CSSAnimationCollection newAnimations;
     auto& previousAnimations = animationsCreatedByMarkup();
+
+    keyframeEffectStack.clearInvalidCSSAnimationNames();
 
     // https://www.w3.org/TR/css-animations-1/#animations
     // The same @keyframes rule name may be repeated within an animation-name. Changes to the animation-name update existing
@@ -247,12 +255,21 @@ void Styleable::updateCSSAnimations(const RenderStyle* currentStyle, const Rende
     // first item in the list.
     if (currentAnimationList) {
         for (auto& currentAnimation : makeReversedRange(*currentAnimationList)) {
-            if (!shouldConsiderAnimation(this->element, currentAnimation.get()))
+            if (!currentAnimation->isValidAnimation())
                 continue;
+
+            auto& animationName = currentAnimation->name().string;
+            if (animationName == "none" || animationName.isEmpty())
+                continue;
+
+            if (!keyframesRuleExistsForAnimation(element, currentAnimation.get(), animationName)) {
+                keyframeEffectStack.addInvalidCSSAnimationName(animationName);
+                continue;
+            }
 
             bool foundMatchingAnimation = false;
             for (auto& previousAnimation : previousAnimations) {
-                if (previousAnimation->animationName() == currentAnimation->name().string) {
+                if (previousAnimation->animationName() == animationName) {
                     // Timing properties or play state may have changed so we need to update the backing animation with
                     // the Animation found in the current style.
                     previousAnimation->setBackingAnimation(currentAnimation.get());

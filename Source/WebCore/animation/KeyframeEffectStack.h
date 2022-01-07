@@ -59,13 +59,18 @@ public:
 
     void stopAcceleratingTransformRelatedProperties(UseAcceleratedAction);
 
+    void clearInvalidCSSAnimationNames();
+    bool hasInvalidCSSAnimationNames() const;
+    bool containsInvalidCSSAnimationName(const String&) const;
+    void addInvalidCSSAnimationName(const String&);
+
 private:
     void ensureEffectsAreSorted();
 
     Vector<WeakPtr<KeyframeEffect>> m_effects;
+    HashSet<String> m_invalidCSSAnimationNames;
     RefPtr<const AnimationList> m_cssAnimationList;
     bool m_isSorted { true };
-
 };
 
 } // namespace WebCore

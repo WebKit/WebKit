@@ -156,4 +156,24 @@ void KeyframeEffectStack::stopAcceleratingTransformRelatedProperties(UseAccelera
         effect->stopAcceleratingTransformRelatedProperties(useAcceleratedAction);
 }
 
+void KeyframeEffectStack::clearInvalidCSSAnimationNames()
+{
+    m_invalidCSSAnimationNames.clear();
+}
+
+bool KeyframeEffectStack::hasInvalidCSSAnimationNames() const
+{
+    return !m_invalidCSSAnimationNames.isEmpty();
+}
+
+bool KeyframeEffectStack::containsInvalidCSSAnimationName(const String& name) const
+{
+    return m_invalidCSSAnimationNames.contains(name);
+}
+
+void KeyframeEffectStack::addInvalidCSSAnimationName(const String& name)
+{
+    m_invalidCSSAnimationNames.add(name);
+}
+
 } // namespace WebCore

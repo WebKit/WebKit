@@ -1,5 +1,16 @@
 2022-01-07  Antoine Quint  <graouts@webkit.org>
 
+        Inserting a new @keyframes rule does not start animations that already used this name
+        https://bugs.webkit.org/show_bug.cgi?id=234955
+
+        Reviewed by Antti Koivisto.
+
+        Mark WPT progression.
+
+        * web-platform-tests/css/css-animations/Element-getAnimations.tentative-expected.txt:
+
+2022-01-07  Antoine Quint  <graouts@webkit.org>
+
         Transitions without an explicit property-name should not be considered
         https://bugs.webkit.org/show_bug.cgi?id=234960
 
