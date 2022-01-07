@@ -108,15 +108,14 @@ const emitters = {
         put(bin, "varuint32", section.data.length);
         for (const entry of section.data) {
             put(bin, "varint7", WASM.typeValue["func"]);
+
             put(bin, "varuint32", entry.params.length);
             for (const param of entry.params)
                 put(bin, "varint7", WASM.typeValue[param]);
-            if (entry.ret === "void")
-                put(bin, "varuint1", 0);
-            else {
-                put(bin, "varuint1", 1);
-                put(bin, "varint7", WASM.typeValue[entry.ret]);
-            }
+
+            put(bin, "varuint32", entry.ret.length);
+            for (const type of entry.ret)
+                put(bin, "varint7", WASM.typeValue[type]);
         }
     },
     Import: (section, bin) => {

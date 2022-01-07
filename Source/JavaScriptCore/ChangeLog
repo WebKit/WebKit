@@ -1,3 +1,29 @@
+2022-01-06  Saam Barati  <sbarati@apple.com>
+
+        preparePatchpointForExceptions needs to handle tuples
+        https://bugs.webkit.org/show_bug.cgi?id=234909
+
+        Reviewed by Yusuke Suzuki.
+
+        We got the offsets wrong when building a stackmap in B3IRGenerator
+        for exception sites. We need to index into StackmapGenerationParams
+        differently from indexing into the patchpoint's children. StackmapGenerationParams
+        reserves its first N entries for the N return values. The patchpoint's
+        children contains no results though, so we don't need to account for
+        the number of return values when indexing into the children() vector
+        of the PatchpointValue. To make this code simpler, we keep track of the
+        number of live values we need when throwing. These values are both
+        at the end of StackmapGenerationParams and at the end of the children()
+        vector. So we just look at the last "number of live values" in both
+        vectors to get the correct ValueRep and correct type. The code for
+        calls also didn't account for the fact that call arguments will be
+        appended after the live values we're building into a stackmap. This
+        patch fixes that code to always put the live values last.
+
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::PatchpointExceptionHandle::generate const):
+        (JSC::Wasm::B3IRGenerator::preparePatchpointForExceptions):
+
 2022-01-06  Alex Christensen  <achristensen@webkit.org>
 
         Start using C++20

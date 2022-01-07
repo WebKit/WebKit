@@ -46,10 +46,16 @@ const _normalizeFunctionSignature = (params, ret) => {
     assert.isArray(params);
     for (const p of params)
         assert.truthy(WASM.isValidValueType(p) || p === "void", `Type parameter ${p} needs a valid value type`);
-    if (typeof(ret) === "undefined")
-        ret = "void";
-    assert.isNotArray(ret, `Multiple return values not supported by WebAssembly yet`);
-    assert.truthy(WASM.isValidBlockType(ret), `Type return ${ret} must be valid block type`);
+    if (typeof ret === "undefined")
+        ret = [];
+    else if (typeof ret === "string") {
+        if (ret === "void")
+            ret = [];
+        else
+            ret = [ret];
+    }
+    for (let type of ret)
+        assert.truthy(WASM.isValidBlockType(type), `Type return ${type} must be valid block type`);
     return [params, ret];
 };
 
@@ -77,14 +83,19 @@ const _maybeRegisterType = (builder, type) => {
     const [params, ret] = _normalizeFunctionSignature(type.params, type.ret);
     assert.isNotUndef(typeSection, `Can not add type if a type section is not present`);
     // Try reusing an equivalent type from the type section.
-    types:
     for (let i = 0; i !== typeSection.data.length; ++i) {
-        const t = typeSection.data[i];
-        if (t.ret === ret && params.length === t.params.length) {
-            for (let j = 0; j !== t.params.length; ++j) {
-                if (params[j] !== t.params[j])
-                    continue types;
+        let shallowEqual = (a, b) => {
+            if (a.length !== b.length)
+                return false;
+            for (let i = 0; i < a.length; ++i) {
+                if (a[i] !== b[i])
+                    return false;
             }
+            return true;
+        };
+
+        const t = typeSection.data[i];
+        if (shallowEqual(ret, t.ret) && shallowEqual(params, t.params)) {
             type = i;
             break;
         }

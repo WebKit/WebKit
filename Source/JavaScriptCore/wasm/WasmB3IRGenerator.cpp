@@ -94,7 +94,7 @@ struct PatchpointExceptionHandle {
     static constexpr unsigned s_invalidCallSiteIndex =  std::numeric_limits<unsigned>::max();
 
     unsigned m_callSiteIndex { s_invalidCallSiteIndex };
-    unsigned m_offset;
+    unsigned m_numLiveValues;
 };
 
 class B3IRGenerator {
@@ -403,7 +403,7 @@ public:
     PartialResult WARN_UNUSED_RETURN addCallRef(const Signature&, Vector<ExpressionType>& args, ResultList& results);
     PartialResult WARN_UNUSED_RETURN addUnreachable();
     PartialResult WARN_UNUSED_RETURN emitIndirectCall(Value* calleeInstance, Value* calleeCode, const Signature&, Vector<ExpressionType>& args, ResultList&);
-    B3::Value* createCallPatchpoint(BasicBlock*, Origin, const Signature&, Vector<ExpressionType>& args, const ScopedLambda<void(PatchpointValue*)>& patchpointFunctor);
+    B3::Value* createCallPatchpoint(BasicBlock*, Origin, const Signature&, Vector<ExpressionType>& args, const ScopedLambda<void(PatchpointValue*, Box<PatchpointExceptionHandle>)>& patchpointFunctor);
 
     void dump(const ControlStack&, const Stack* expressionStack);
     void setParser(FunctionParser<B3IRGenerator>* parser) { m_parser = parser; };
@@ -583,12 +583,12 @@ void PatchpointExceptionHandle::generate(CCallHelpers& jit, const B3::StackmapGe
     if (m_callSiteIndex == s_invalidCallSiteIndex)
         return;
 
-    StackMap values;
-    if (params.value()->numChildren() >= m_offset) {
-        values = StackMap(params.value()->numChildren() - m_offset);
-        for (unsigned i = m_offset; i < params.value()->numChildren(); ++i)
-            values[i - m_offset] = OSREntryValue(params[i], params.value()->child(i)->type());
-    }
+    StackMap values(m_numLiveValues);
+    unsigned paramsOffset = params.size() - m_numLiveValues;
+    unsigned childrenOffset = params.value()->numChildren() - m_numLiveValues;
+    for (unsigned i = 0; i < m_numLiveValues; ++i)
+        values[i] = OSREntryValue(params[i + paramsOffset], params.value()->child(i + childrenOffset)->type());
+
     generator->addStackMap(m_callSiteIndex, WTFMove(values));
     jit.store32(CCallHelpers::TrustedImm32(m_callSiteIndex), CCallHelpers::tagFor(CallFrameSlot::argumentCountIncludingThis));
 }
@@ -1213,7 +1213,7 @@ auto B3IRGenerator::emitIndirectCall(Value* calleeInstance, Value* calleeCode, c
 
     B3::Type returnType = toB3ResultType(&signature);
     Value* callResult = createCallPatchpoint(m_currentBlock, origin(), signature, args,
-        scopedLambdaRef<void(PatchpointValue*)>([=] (PatchpointValue* patchpoint) -> void {
+        scopedLambdaRef<void(PatchpointValue*, Box<PatchpointExceptionHandle>)>([=] (PatchpointValue* patchpoint, Box<PatchpointExceptionHandle> handle) -> void {
             patchpoint->effects.writesPinned = true;
             patchpoint->effects.readsPinned = true;
             // We need to clobber all potential pinned registers since we might be leaving the instance.
@@ -1224,10 +1224,9 @@ auto B3IRGenerator::emitIndirectCall(Value* calleeInstance, Value* calleeCode, c
             patchpoint->clobberLate(PinnedRegisterInfo::get().toSave(MemoryMode::BoundsChecking));
 
             patchpoint->append(calleeCode, ValueRep::SomeRegister);
-            PatchpointExceptionHandle handle = preparePatchpointForExceptions(m_currentBlock, patchpoint);
             patchpoint->setGenerator([=] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
                 AllowMacroScratchRegisterUsage allowScratch(jit);
-                handle.generate(jit, params, this);
+                handle->generate(jit, params, this);
                 jit.call(params[params.proc().resultCount(returnType)].gpr(), WasmEntryPtrTag);
             });
         }));
@@ -2609,14 +2608,10 @@ PatchpointExceptionHandle B3IRGenerator::preparePatchpointForExceptions(BasicBlo
             liveValues.append(get(block, data.exception()));
     }
 
-    unsigned offset = patch->numChildren();
-    if (patch->type() != Void)
-        offset++;
-
     patch->effects.exitsSideways = true;
     patch->appendVectorWithRep(liveValues, ValueRep::LateColdAny);
 
-    return PatchpointExceptionHandle { m_callSiteIndex, offset };
+    return PatchpointExceptionHandle { m_callSiteIndex, static_cast<unsigned>(liveValues.size()) };
 }
 
 auto B3IRGenerator::addCatchToUnreachable(unsigned exceptionIndex, const Signature& signature, ControlType& data, ResultList& results) -> PartialResult
@@ -2915,7 +2910,7 @@ auto B3IRGenerator::addEndToUnreachable(ControlEntry& entry, const Stack& expres
 }
 
 
-B3::Value* B3IRGenerator::createCallPatchpoint(BasicBlock* block, Origin origin, const Signature& signature, Vector<ExpressionType>& args, const ScopedLambda<void(PatchpointValue*)>& patchpointFunctor)
+B3::Value* B3IRGenerator::createCallPatchpoint(BasicBlock* block, Origin origin, const Signature& signature, Vector<ExpressionType>& args, const ScopedLambda<void(PatchpointValue*, Box<PatchpointExceptionHandle>)>& patchpointFunctor)
 {
     Vector<B3::ConstrainedValue> constrainedArguments;
     CallInformation wasmCallInfo = wasmCallingConvention().callInformationFor(signature);
@@ -2924,12 +2919,16 @@ B3::Value* B3IRGenerator::createCallPatchpoint(BasicBlock* block, Origin origin,
 
     m_proc.requestCallArgAreaSizeInBytes(WTF::roundUpToMultipleOf(stackAlignmentBytes(), wasmCallInfo.headerAndArgumentStackSizeInBytes));
 
+    Box<PatchpointExceptionHandle> exceptionHandle = Box<PatchpointExceptionHandle>::create();
+
     B3::Type returnType = toB3ResultType(&signature);
     PatchpointValue* patchpoint = m_proc.add<PatchpointValue>(returnType, origin);
     patchpoint->clobberEarly(RegisterSet::macroScratchRegisters());
     patchpoint->clobberLate(RegisterSet::volatileRegistersForJSCall());
-    patchpointFunctor(patchpoint);
+    patchpointFunctor(patchpoint, exceptionHandle);
     patchpoint->appendVector(constrainedArguments);
+
+    *exceptionHandle = preparePatchpointForExceptions(block, patchpoint);
 
     if (returnType != B3::Void) {
         Vector<B3::ValueRep, 1> resultConstraints;
@@ -2985,17 +2984,16 @@ auto B3IRGenerator::addCall(uint32_t functionIndex, const Signature& signature, 
         m_currentBlock->appendNewControlValue(m_proc, B3::Branch, origin(), isWasmCall, FrequentedBlock(isWasmBlock), FrequentedBlock(isEmbedderBlock));
 
         Value* wasmCallResult = createCallPatchpoint(isWasmBlock, origin(), signature, args,
-            scopedLambdaRef<void(PatchpointValue*)>([=] (PatchpointValue* patchpoint) -> void {
+            scopedLambdaRef<void(PatchpointValue*, Box<PatchpointExceptionHandle>)>([=] (PatchpointValue* patchpoint, Box<PatchpointExceptionHandle> handle) -> void {
                 patchpoint->effects.writesPinned = true;
                 patchpoint->effects.readsPinned = true;
                 // We need to clobber all potential pinned registers since we might be leaving the instance.
                 // We pessimistically assume we could be calling to something that is bounds checking.
                 // FIXME: We shouldn't have to do this: https://bugs.webkit.org/show_bug.cgi?id=172181
                 patchpoint->clobberLate(PinnedRegisterInfo::get().toSave(MemoryMode::BoundsChecking));
-                PatchpointExceptionHandle handle = preparePatchpointForExceptions(isWasmBlock, patchpoint);
                 patchpoint->setGenerator([this, handle, unlinkedWasmToWasmCalls, functionIndex] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
                     AllowMacroScratchRegisterUsage allowScratch(jit);
-                    handle.generate(jit, params, this);
+                    handle->generate(jit, params, this);
                     CCallHelpers::Call call = jit.threadSafePatchableNearCall();
                     jit.addLinkTask([unlinkedWasmToWasmCalls, call, functionIndex] (LinkBuffer& linkBuffer) {
                         unlinkedWasmToWasmCalls->append({ linkBuffer.locationOfNearCall<WasmEntryPtrTag>(call), functionIndex });
@@ -3013,7 +3011,7 @@ auto B3IRGenerator::addCall(uint32_t functionIndex, const Signature& signature, 
             Load, pointerType(), origin(), instanceValue(), safeCast<int32_t>(Instance::offsetOfWasmToEmbedderStub(functionIndex)));
 
         Value* embedderCallResult = createCallPatchpoint(isEmbedderBlock, origin(), signature, args,
-            scopedLambdaRef<void(PatchpointValue*)>([=] (PatchpointValue* patchpoint) -> void {
+            scopedLambdaRef<void(PatchpointValue*, Box<PatchpointExceptionHandle>)>([=] (PatchpointValue* patchpoint, Box<PatchpointExceptionHandle> handle) -> void {
                 patchpoint->effects.writesPinned = true;
                 patchpoint->effects.readsPinned = true;
                 patchpoint->append(jumpDestination, ValueRep::SomeRegister);
@@ -3021,10 +3019,9 @@ auto B3IRGenerator::addCall(uint32_t functionIndex, const Signature& signature, 
                 // We pessimistically assume we could be calling to something that is bounds checking.
                 // FIXME: We shouldn't have to do this: https://bugs.webkit.org/show_bug.cgi?id=172181
                 patchpoint->clobberLate(PinnedRegisterInfo::get().toSave(MemoryMode::BoundsChecking));
-                PatchpointExceptionHandle handle = preparePatchpointForExceptions(isEmbedderBlock, patchpoint);
                 patchpoint->setGenerator([this, handle, returnType] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
                     AllowMacroScratchRegisterUsage allowScratch(jit);
-                    handle.generate(jit, params, this);
+                    handle->generate(jit, params, this);
                     jit.call(params[params.proc().resultCount(returnType)].gpr(), WasmEntryPtrTag);
                 });
             }));
@@ -3045,17 +3042,16 @@ auto B3IRGenerator::addCall(uint32_t functionIndex, const Signature& signature, 
     } else {
 
         Value* patch = createCallPatchpoint(m_currentBlock, origin(), signature, args,
-            scopedLambdaRef<void(PatchpointValue*)>([=] (PatchpointValue* patchpoint) -> void {
+            scopedLambdaRef<void(PatchpointValue*, Box<PatchpointExceptionHandle>)>([=] (PatchpointValue* patchpoint, Box<PatchpointExceptionHandle> handle) -> void {
                 patchpoint->effects.writesPinned = true;
                 patchpoint->effects.readsPinned = true;
 
                 // We need to clobber the size register since the LLInt always bounds checks
                 if (m_mode == MemoryMode::Signaling || m_info.memory.isShared())
                     patchpoint->clobberLate(RegisterSet { PinnedRegisterInfo::get().boundsCheckingSizeRegister });
-                PatchpointExceptionHandle handle = preparePatchpointForExceptions(m_currentBlock, patchpoint);
                 patchpoint->setGenerator([this, handle, unlinkedWasmToWasmCalls, functionIndex] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
                     AllowMacroScratchRegisterUsage allowScratch(jit);
-                    handle.generate(jit, params, this);
+                    handle->generate(jit, params, this);
                     CCallHelpers::Call call = jit.threadSafePatchableNearCall();
                     jit.addLinkTask([unlinkedWasmToWasmCalls, call, functionIndex] (LinkBuffer& linkBuffer) {
                         unlinkedWasmToWasmCalls->append({ linkBuffer.locationOfNearCall<WasmEntryPtrTag>(call), functionIndex });
