@@ -1,3 +1,15 @@
+2022-01-07  Alex Christensen  <achristensen@webkit.org>
+
+        Unreviewed, reverting r287718.
+
+        Broke an internal build
+
+        Reverted changeset:
+
+        "[PlayStation] Fix build break after r287698"
+        https://bugs.webkit.org/show_bug.cgi?id=234931
+        https://commits.webkit.org/r287718
+
 2022-01-06  Tim Horton  <timothy_horton@apple.com>
 
         Move linkedOnOrAfter() to WTF
