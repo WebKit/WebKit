@@ -2952,15 +2952,24 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     backingObject->updateChildrenIfNecessary();
     auto* axObject = backingObject->accessibilityHitTest(IntPoint(point));
 
+    id hit = nil;
     if (axObject) {
         if (axObject->isAttachment() && [axObject->wrapper() attachmentView])
             return [axObject->wrapper() attachmentView];
-        auto* widget = axObject->widget();
-        if (is<PluginViewBase>(widget))
-            return NSAccessibilityUnignoredAncestor(widget->accessibilityHitTest(IntPoint(point)));
-        return NSAccessibilityUnignoredAncestor(axObject->wrapper());
-    }
-    return NSAccessibilityUnignoredAncestor(self);
+
+        hit = Accessibility::retrieveAutoreleasedValueFromMainThread<id>([&axObject, &point] () -> RetainPtr<id> {
+            auto* widget = axObject->widget();
+            if (is<PluginViewBase>(widget))
+                return widget->accessibilityHitTest(IntPoint(point));
+            return nil;
+        });
+
+        if (!hit)
+            hit = axObject->wrapper();
+    } else
+        hit = self;
+
+    return NSAccessibilityUnignoredAncestor(hit);
 }
 
 ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
