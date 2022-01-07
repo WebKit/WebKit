@@ -1980,6 +1980,9 @@
         SYS_socket
         SYS_sysctlbyname
         SYS_thread_selfid
+#if !PLATFORM(MAC)
+        SYS_thread_selfusage
+#endif
         SYS_ulock_wait
         SYS_ulock_wake
         SYS_umask
