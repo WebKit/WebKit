@@ -35,15 +35,15 @@
 namespace WebKit {
 using namespace WebCore;
 
-Ref<NetworkSocketStream> NetworkSocketStream::create(NetworkProcess& networkProcess, URL&& url, PAL::SessionID sessionID, const String& credentialPartition, WebSocketIdentifier identifier, IPC::Connection& connection, SourceApplicationAuditToken&& auditData)
+Ref<NetworkSocketStream> NetworkSocketStream::create(NetworkProcess& networkProcess, URL&& url, PAL::SessionID sessionID, const String& credentialPartition, WebSocketIdentifier identifier, IPC::Connection& connection, SourceApplicationAuditToken&& auditData, bool shouldAcceptInsecureCertificates)
 {
-    return adoptRef(*new NetworkSocketStream(networkProcess, WTFMove(url), sessionID, credentialPartition, identifier, connection, WTFMove(auditData)));
+    return adoptRef(*new NetworkSocketStream(networkProcess, WTFMove(url), sessionID, credentialPartition, identifier, connection, WTFMove(auditData), shouldAcceptInsecureCertificates));
 }
 
-NetworkSocketStream::NetworkSocketStream(NetworkProcess& networkProcess, URL&& url, PAL::SessionID sessionID, const String& credentialPartition, WebSocketIdentifier identifier, IPC::Connection& connection, SourceApplicationAuditToken&& auditData)
+NetworkSocketStream::NetworkSocketStream(NetworkProcess& networkProcess, URL&& url, PAL::SessionID sessionID, const String& credentialPartition, WebSocketIdentifier identifier, IPC::Connection& connection, SourceApplicationAuditToken&& auditData, bool shouldAcceptInsecureCertificates)
     : m_identifier(identifier)
     , m_connection(connection)
-    , m_impl(SocketStreamHandleImpl::create(url, *this, sessionID, credentialPartition, WTFMove(auditData), NetworkStorageSessionProvider::create(networkProcess, sessionID).ptr()))
+    , m_impl(SocketStreamHandleImpl::create(url, *this, sessionID, credentialPartition, WTFMove(auditData), NetworkStorageSessionProvider::create(networkProcess, sessionID).ptr(), shouldAcceptInsecureCertificates))
     , m_delayFailTimer(*this, &NetworkSocketStream::sendDelayedFailMessage)
 {
 }

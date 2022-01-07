@@ -496,6 +496,24 @@ static void checkURLArgument(NSURL *url)
     _configuration->setShouldRunServiceWorkersOnMainThreadForTesting(shouldRunOnMainThread);
 }
 
+- (BOOL)_shouldAcceptInsecureCertificatesForWebSockets
+{
+#if !HAVE(NSURLSESSION_WEBSOCKET)
+    return _configuration->shouldAcceptInsecureCertificatesForWebSockets();
+#else
+    return false;
+#endif
+}
+
+- (void)_setShouldAcceptInsecureCertificatesForWebSockets:(BOOL)accept
+{
+#if !HAVE(NSURLSESSION_WEBSOCKET)
+    _configuration->setShouldAcceptInsecureCertificatesForWebSockets(accept);
+#else
+    UNUSED_PARAM(accept);
+#endif
+}
+
 - (void)setProxyConfiguration:(NSDictionary *)configuration
 {
     _configuration->setProxyConfiguration((__bridge CFDictionaryRef)[configuration copy]);

@@ -108,6 +108,9 @@ struct NetworkSessionCreationParameters {
     String pcmMachServiceName;
     String webPushMachServiceName;
     bool enablePrivateClickMeasurementDebugMode { false };
+#if !HAVE(NSURLSESSION_WEBSOCKET)
+    bool shouldAcceptInsecureCertificatesForWebSockets { false };
+#endif
 
     ResourceLoadStatisticsParameters resourceLoadStatisticsParameters;
 };

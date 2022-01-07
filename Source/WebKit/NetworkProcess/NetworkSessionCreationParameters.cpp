@@ -92,6 +92,9 @@ void NetworkSessionCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << pcmMachServiceName;
     encoder << webPushMachServiceName;
     encoder << enablePrivateClickMeasurementDebugMode;
+#if !HAVE(NSURLSESSION_WEBSOCKET)
+    encoder << shouldAcceptInsecureCertificatesForWebSockets;
+#endif
     encoder << resourceLoadStatisticsParameters;
 }
 
@@ -324,6 +327,13 @@ std::optional<NetworkSessionCreationParameters> NetworkSessionCreationParameters
     if (!enablePrivateClickMeasurementDebugMode)
         return std::nullopt;
 
+#if !HAVE(NSURLSESSION_WEBSOCKET)
+    std::optional<bool> shouldAcceptInsecureCertificatesForWebSockets;
+    decoder >> shouldAcceptInsecureCertificatesForWebSockets;
+    if (!shouldAcceptInsecureCertificatesForWebSockets)
+        return std::nullopt;
+#endif
+
     std::optional<ResourceLoadStatisticsParameters> resourceLoadStatisticsParameters;
     decoder >> resourceLoadStatisticsParameters;
     if (!resourceLoadStatisticsParameters)
@@ -382,6 +392,9 @@ std::optional<NetworkSessionCreationParameters> NetworkSessionCreationParameters
         , WTFMove(*pcmMachServiceName)
         , WTFMove(*webPushMachServiceName)
         , WTFMove(*enablePrivateClickMeasurementDebugMode)
+#if !HAVE(NSURLSESSION_WEBSOCKET)
+        , WTFMove(*shouldAcceptInsecureCertificatesForWebSockets)
+#endif
         , WTFMove(*resourceLoadStatisticsParameters)
     }};
 }

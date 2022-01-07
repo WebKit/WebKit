@@ -244,6 +244,10 @@ public:
 #if ENABLE(BUILT_IN_NOTIFICATIONS)
     NetworkNotificationManager& notificationManager() { return m_notificationManager; }
 #endif
+    
+#if !HAVE(NSURLSESSION_WEBSOCKET)
+    bool shouldAcceptInsecureCertificatesForWebSockets() const { return m_shouldAcceptInsecureCertificatesForWebSockets; }
+#endif
 
 protected:
     NetworkSession(NetworkProcess&, const NetworkSessionCreationParameters&);
@@ -330,6 +334,9 @@ protected:
 
 #if ENABLE(BUILT_IN_NOTIFICATIONS)
     NetworkNotificationManager m_notificationManager;
+#endif
+#if !HAVE(NSURLSESSION_WEBSOCKET)
+    bool m_shouldAcceptInsecureCertificatesForWebSockets { false };
 #endif
 };
 

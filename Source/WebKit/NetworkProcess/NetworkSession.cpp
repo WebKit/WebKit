@@ -132,6 +132,9 @@ NetworkSession::NetworkSession(NetworkProcess& networkProcess, const NetworkSess
 #if ENABLE(BUILT_IN_NOTIFICATIONS)
     , m_notificationManager(*this, parameters.webPushMachServiceName)
 #endif
+#if !HAVE(NSURLSESSION_WEBSOCKET)
+    , m_shouldAcceptInsecureCertificatesForWebSockets(parameters.shouldAcceptInsecureCertificatesForWebSockets)
+#endif
 {
     if (!m_sessionID.isEphemeral()) {
         String networkCacheDirectory = parameters.networkCacheDirectory;

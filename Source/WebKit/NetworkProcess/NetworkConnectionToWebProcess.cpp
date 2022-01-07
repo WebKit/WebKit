@@ -430,7 +430,12 @@ void NetworkConnectionToWebProcess::createSocketStream(URL&& url, String cachePa
 #if PLATFORM(COCOA)
     token = { m_networkProcess->sourceApplicationAuditData() };
 #endif
-    m_networkSocketStreams.add(identifier, NetworkSocketStream::create(m_networkProcess.get(), WTFMove(url), m_sessionID, cachePartition, identifier, m_connection, WTFMove(token)));
+    auto acceptInsecureCertificates = false;
+#if !HAVE(NSURLSESSION_WEBSOCKET)
+    if (auto* session = networkSession())
+        acceptInsecureCertificates = session->shouldAcceptInsecureCertificatesForWebSockets();
+#endif
+    m_networkSocketStreams.add(identifier, NetworkSocketStream::create(m_networkProcess.get(), WTFMove(url), m_sessionID, cachePartition, identifier, m_connection, WTFMove(token), acceptInsecureCertificates));
 }
 
 void NetworkConnectionToWebProcess::createSocketChannel(const ResourceRequest& request, const String& protocol, WebSocketIdentifier identifier,  WebPageProxyIdentifier webPageProxyID, const ClientOrigin& clientOrigin)

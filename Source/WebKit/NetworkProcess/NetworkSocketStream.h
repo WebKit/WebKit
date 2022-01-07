@@ -46,7 +46,7 @@ class NetworkProcess;
 
 class NetworkSocketStream : public RefCounted<NetworkSocketStream>, public IPC::MessageSender, public IPC::MessageReceiver, public WebCore::SocketStreamHandleClient {
 public:
-    static Ref<NetworkSocketStream> create(NetworkProcess&, URL&&, PAL::SessionID, const String& credentialPartition, WebCore::WebSocketIdentifier, IPC::Connection&, WebCore::SourceApplicationAuditToken&&);
+    static Ref<NetworkSocketStream> create(NetworkProcess&, URL&&, PAL::SessionID, const String& credentialPartition, WebCore::WebSocketIdentifier, IPC::Connection&, WebCore::SourceApplicationAuditToken&&, bool shouldAcceptInsecureCertificates);
     ~NetworkSocketStream();
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
@@ -68,7 +68,7 @@ private:
     IPC::Connection* messageSenderConnection() const final;
     uint64_t messageSenderDestinationID() const final;
 
-    NetworkSocketStream(NetworkProcess&, URL&&, PAL::SessionID, const String& credentialPartition, WebCore::WebSocketIdentifier, IPC::Connection&, WebCore::SourceApplicationAuditToken&&);
+    NetworkSocketStream(NetworkProcess&, URL&&, PAL::SessionID, const String& credentialPartition, WebCore::WebSocketIdentifier, IPC::Connection&, WebCore::SourceApplicationAuditToken&&, bool shouldAcceptInsecureCertificates);
 
     WebCore::WebSocketIdentifier m_identifier;
     IPC::Connection& m_connection;

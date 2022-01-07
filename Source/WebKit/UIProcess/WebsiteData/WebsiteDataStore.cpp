@@ -1891,6 +1891,9 @@ WebsiteDataStoreParameters WebsiteDataStore::parameters()
     networkSessionParameters.allowsHSTSWithUntrustedRootCertificate = m_configuration->allowsHSTSWithUntrustedRootCertificate();
     networkSessionParameters.pcmMachServiceName = m_configuration->pcmMachServiceName();
     networkSessionParameters.webPushMachServiceName = m_configuration->webPushMachServiceName();
+#if !HAVE(NSURLSESSION_WEBSOCKET)
+    networkSessionParameters.shouldAcceptInsecureCertificatesForWebSockets = m_configuration->shouldAcceptInsecureCertificatesForWebSockets();
+#endif
 
     parameters.networkSessionParameters = WTFMove(networkSessionParameters);
 

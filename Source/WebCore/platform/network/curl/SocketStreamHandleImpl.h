@@ -44,7 +44,7 @@ class StorageSessionProvider;
 
 class SocketStreamHandleImpl : public SocketStreamHandle, public CurlStream::Client {
 public:
-    static Ref<SocketStreamHandleImpl> create(const URL& url, SocketStreamHandleClient& client, PAL::SessionID, const String&, SourceApplicationAuditToken&&, const StorageSessionProvider* provider) { return adoptRef(*new SocketStreamHandleImpl(url, client, provider)); }
+    static Ref<SocketStreamHandleImpl> create(const URL& url, SocketStreamHandleClient& client, PAL::SessionID, const String&, SourceApplicationAuditToken&&, const StorageSessionProvider* provider, bool) { return adoptRef(*new SocketStreamHandleImpl(url, client, provider)); }
 
     virtual ~SocketStreamHandleImpl();
 
