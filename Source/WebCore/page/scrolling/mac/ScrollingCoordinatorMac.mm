@@ -123,6 +123,12 @@ void ScrollingCoordinatorMac::commitTreeStateIfNeeded()
     updateTiledScrollingIndicator();
 }
 
+void ScrollingCoordinatorMac::didScheduleRenderingUpdate()
+{
+    RefPtr<ThreadedScrollingTree> threadedScrollingTree = downcast<ThreadedScrollingTree>(scrollingTree());
+    threadedScrollingTree->didScheduleRenderingUpdate();
+}
+
 void ScrollingCoordinatorMac::willStartRenderingUpdate()
 {
     RefPtr<ThreadedScrollingTree> threadedScrollingTree = downcast<ThreadedScrollingTree>(scrollingTree());
@@ -150,7 +156,7 @@ void ScrollingCoordinatorMac::willStartPlatformRenderingUpdate()
 
 void ScrollingCoordinatorMac::didCompletePlatformRenderingUpdate()
 {
-    downcast<ThreadedScrollingTree>(scrollingTree())->didCompletePlatformRenderingUpdate();
+    downcast<ScrollingTreeMac>(scrollingTree())->didCompletePlatformRenderingUpdate();
     PlatformCALayerContentsDelayedReleaser::singleton().mainThreadCommitDidEnd();
 }
 

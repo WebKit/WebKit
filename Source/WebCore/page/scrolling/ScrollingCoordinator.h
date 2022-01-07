@@ -101,6 +101,7 @@ public:
     // Traverses the scrolling tree, setting layer positions to represent the current scrolled state.
     virtual void applyScrollingTreeLayerPositions() { }
 
+    virtual void didScheduleRenderingUpdate() { }
     virtual void willStartRenderingUpdate() { }
     virtual void didCompleteRenderingUpdate() { }
 

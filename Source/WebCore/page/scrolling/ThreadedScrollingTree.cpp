@@ -334,9 +334,16 @@ bool ThreadedScrollingTree::scrollingThreadIsActive()
     return hasProcessedWheelEventsRecently() || hasNodeWithActiveScrollAnimations();
 }
 
+void ThreadedScrollingTree::didScheduleRenderingUpdate()
+{
+    m_renderingUpdateWasScheduled = true;
+}
+
 void ThreadedScrollingTree::willStartRenderingUpdate()
 {
     ASSERT(isMainThread());
+
+    m_renderingUpdateWasScheduled = false;
 
     if (!scrollingThreadIsActive())
         return;
@@ -430,14 +437,6 @@ void ThreadedScrollingTree::waitForRenderingUpdateCompletionOrTimeout()
 
 void ThreadedScrollingTree::didCompleteRenderingUpdate()
 {
-    // macOS needs to wait for the CA commit (the "platform rendering update").
-#if !PLATFORM(MAC)
-    renderingUpdateComplete();
-#endif
-}
-
-void ThreadedScrollingTree::didCompletePlatformRenderingUpdate()
-{
     renderingUpdateComplete();
 }
 
@@ -490,9 +489,11 @@ void ThreadedScrollingTree::displayDidRefreshOnScrollingThread()
 
     switch (m_state) {
     case SynchronizationState::Idle: {
-        m_state = SynchronizationState::WaitingForRenderingUpdate;
-        constexpr auto maxStartRenderingUpdateDelay = 1_ms;
-        scheduleDelayedRenderingUpdateDetectionTimer(maxStartRenderingUpdateDelay);
+        if (m_renderingUpdateWasScheduled) {
+            m_state = SynchronizationState::WaitingForRenderingUpdate;
+            constexpr auto maxStartRenderingUpdateDelay = 1_ms;
+            scheduleDelayedRenderingUpdateDetectionTimer(maxStartRenderingUpdateDelay);
+        }
         break;
     }
     case SynchronizationState::WaitingForRenderingUpdate:
@@ -500,8 +501,6 @@ void ThreadedScrollingTree::displayDidRefreshOnScrollingThread()
     case SynchronizationState::Desynchronized:
         break;
     }
-    
-    storeScrollPositionsAtLastDisplayRefresh();
 }
 
 void ThreadedScrollingTree::displayDidRefresh(PlatformDisplayID displayID)
@@ -527,12 +526,9 @@ void ThreadedScrollingTree::removePendingScrollAnimationForNode(ScrollingNodeID 
     m_nodesWithPendingScrollAnimations.remove(nodeID);
 }
 
-void ThreadedScrollingTree::storeScrollPositionsAtLastDisplayRefresh()
+bool ThreadedScrollingTree::isScrollingSynchronizedWithMainThread()
 {
-    // Ideally this would be a tree walk for every scrolling node, but scrolling trees can get big so for now just do this for the root;
-    // ScrollingTreeFrameScrollingNodeMac::repositionScrollingLayers() uses the state to know whether it should force a commit.
-    if (auto* rootNode = this->rootNode())
-        rootNode->updateScrollPositionAtLastDisplayRefresh();
+    return m_state != SynchronizationState::Desynchronized;
 }
 
 } // namespace WebCore

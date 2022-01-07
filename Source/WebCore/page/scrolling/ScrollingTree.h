@@ -87,6 +87,7 @@ public:
     WEBCORE_EXPORT virtual ~ScrollingTree();
 
     virtual bool isThreadedScrollingTree() const { return false; }
+    virtual bool isScrollingTreeMac() const { return false; }
     virtual bool isRemoteScrollingTree() const { return false; }
     virtual bool isScrollingTreeIOS() const { return false; }
 
@@ -219,6 +220,8 @@ public:
 
     virtual void lockLayersForHitTesting() { }
     virtual void unlockLayersForHitTesting() { }
+
+    virtual bool isScrollingSynchronizedWithMainThread() WTF_REQUIRES_LOCK(m_treeLock) { return true; }
 
     virtual void willSendEventToMainThread(const PlatformWheelEvent&) { }
     virtual void waitForEventToBeProcessedByMainThread(const PlatformWheelEvent&) { };

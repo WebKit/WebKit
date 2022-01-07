@@ -242,6 +242,18 @@ void ScrollingTreeMac::unlockLayersForHitTesting()
     m_layerHitTestMutex.unlock();
 }
 
+void ScrollingTreeMac::didCompleteRenderingUpdate()
+{
+    bool hasActiveCATransaction = [CATransaction currentState];
+    if (!hasActiveCATransaction)
+        renderingUpdateComplete();
+}
+
+void ScrollingTreeMac::didCompletePlatformRenderingUpdate()
+{
+    renderingUpdateComplete();
+}
+
 void ScrollingTreeMac::applyLayerPositionsInternal()
 {
     if (ScrollingThread::isCurrentThread())

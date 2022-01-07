@@ -1503,6 +1503,14 @@ void Page::scheduleRenderingUpdateInternal()
     renderingUpdateScheduler().scheduleRenderingUpdate();
 }
 
+void Page::didScheduleRenderingUpdate()
+{
+#if ENABLE(ASYNC_SCROLLING)
+    if (auto* scrollingCoordinator = this->scrollingCoordinator())
+        scrollingCoordinator->didScheduleRenderingUpdate();
+#endif
+}
+
 void Page::computeUnfulfilledRenderingSteps(OptionSet<RenderingUpdateStep> requestedSteps)
 {
     // m_renderingUpdateRemainingSteps only has more than one entry for the re-entrant rendering update triggered by testing.

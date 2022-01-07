@@ -182,7 +182,7 @@ void ScrollingTreeFrameScrollingNodeMac::repositionScrollingLayers()
         // The main thread may already have set the same layer position, but here we need to trigger a scrolling thread commit to
         // ensure that the scroll happens even when the main thread commit is taking a long time. So make sure the layer property changes
         // when there has been a scroll position change.
-        if (scrollPositionAtLastDisplayRefresh() && scrollPositionAtLastDisplayRefresh().value() != currentScrollPosition())
+        if (!scrollingTree().isScrollingSynchronizedWithMainThread())
             layer.position = CGPointZero;
     }
 

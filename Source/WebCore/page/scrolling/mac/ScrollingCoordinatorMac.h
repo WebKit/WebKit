@@ -50,6 +50,7 @@ protected:
 private:
     void scheduleTreeStateCommit() final;
 
+    void didScheduleRenderingUpdate() final;
     void willStartRenderingUpdate() final;
     void didCompleteRenderingUpdate() final;
 
