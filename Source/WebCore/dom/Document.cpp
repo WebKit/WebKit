@@ -8555,7 +8555,7 @@ Vector<RefPtr<WebAnimation>> Document::matchingAnimations(const Function<bool(El
 
     Vector<RefPtr<WebAnimation>> animations;
     for (auto* animation : WebAnimation::instances()) {
-        if (!animation || !animation->isRelevant() || !is<KeyframeEffect>(animation->effect()))
+        if (!animation->isRelevant() || !is<KeyframeEffect>(animation->effect()))
             continue;
 
         auto* target = downcast<KeyframeEffect>(*animation->effect()).targetElementOrPseudoElement();
@@ -8573,7 +8573,7 @@ Vector<RefPtr<WebAnimation>> Document::matchingAnimations(const Function<bool(El
 void Document::keyframesRuleDidChange(const String& name)
 {
     for (auto* animation : WebAnimation::instances()) {
-        if (!is<CSSAnimation>(animation) || !animation->isRelevant())
+        if (!is<CSSAnimation>(*animation) || !animation->isRelevant())
             continue;
 
         auto& cssAnimation = downcast<CSSAnimation>(*animation);
