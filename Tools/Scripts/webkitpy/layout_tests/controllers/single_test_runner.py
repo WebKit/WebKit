@@ -349,7 +349,7 @@ class SingleTestRunner(object):
         test_output = self._driver.run_test(driver_input, self._stop_when_done)
 
         test_full_path = self._port.abspath_for_test(self._test_name)
-        test_result = self._compare_output_with_reference(reference_output, test_output, test_full_path, False)
+        test_result = self._compare_output_with_reference(reference_output, test_output, test_full_path, False, allow_fuzzy_tolerance=False)
 
         assert(reference_output)
         test_result_writer.write_test_result(self._filesystem, self._port, self._results_directory, self._test_name, test_output, reference_output, test_result.failures)
@@ -395,7 +395,7 @@ class SingleTestRunner(object):
         # https://web-platform-tests.org/writing-tests/reftests.html says "in the range" but isn't precise about whether the upper bound is included.
         return actualMaxDifference >= maxDifferenceMin and actualMaxDifference <= maxDifferenceMax and actualTotalPixels >= totalPixelsMin and actualTotalPixels <= totalPixelsMax
 
-    def _compare_output_with_reference(self, reference_driver_output, actual_driver_output, reference_filename, mismatch):
+    def _compare_output_with_reference(self, reference_driver_output, actual_driver_output, reference_filename, mismatch, allow_fuzzy_tolerance=True):
         total_test_time = reference_driver_output.test_time + actual_driver_output.test_time
         has_stderr = reference_driver_output.has_stderr() or actual_driver_output.has_stderr()
         failures = []
@@ -411,7 +411,9 @@ class SingleTestRunner(object):
         if not reference_driver_output.image_hash and not actual_driver_output.image_hash:
             failures.append(test_failures.FailureReftestNoImagesGenerated(reference_filename))
         elif mismatch:
-            fuzzy_tolerance = self._fuzzy_tolerance_for_reference(reference_filename)
+            fuzzy_tolerance = None
+            if allow_fuzzy_tolerance:
+                fuzzy_tolerance = self._fuzzy_tolerance_for_reference(reference_filename)
             if fuzzy_tolerance:
                 diff_result = self._port.diff_image(reference_driver_output.image, actual_driver_output.image, tolerance=0)
                 match_within_tolerance = self._test_passes_fuzzy_matching(fuzzy_tolerance, diff_result.fuzzy_data)
@@ -428,7 +430,9 @@ class SingleTestRunner(object):
             # ImageDiff has a hard coded color distance threshold even though tolerance=0 is specified.
             diff_result = self._port.diff_image(reference_driver_output.image, actual_driver_output.image, tolerance=0)
 
-            fuzzy_tolerance = self._fuzzy_tolerance_for_reference(reference_filename)
+            fuzzy_tolerance = None
+            if allow_fuzzy_tolerance:
+                fuzzy_tolerance = self._fuzzy_tolerance_for_reference(reference_filename)
             if fuzzy_tolerance:
                 diff_result.passed = self._test_passes_fuzzy_matching(fuzzy_tolerance, diff_result.fuzzy_data)
                 _log.debug('{} allowed fuzziness {}, actual difference {}: pass {}'.format(self._test_name, fuzzy_tolerance, diff_result.fuzzy_data, diff_result.passed))

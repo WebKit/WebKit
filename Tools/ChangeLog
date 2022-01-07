@@ -1,3 +1,17 @@
+2022-01-07  Tim Horton  <timothy_horton@apple.com>
+
+        A/B comparison tests fail trying to look up fuzzy match tolerance
+        https://bugs.webkit.org/show_bug.cgi?id=234974
+
+        Reviewed by Aditya Keerthi.
+
+        * Scripts/webkitpy/layout_tests/controllers/single_test_runner.py:
+        (SingleTestRunner._run_self_comparison_test):
+        (SingleTestRunner._compare_output_with_reference):
+        Disable fuzzy matching for A/B tests, because A) we don't really want it
+        and B) it crashes run-webkit-tests because there is no actual reference file
+        in which to find the tolerance value.
+
 2022-01-07  David Kilzer  <ddkilzer@apple.com>
 
         check-webkit-style: add checker for unexpected fall through after ASSERT_NOT_REACHED() statements
