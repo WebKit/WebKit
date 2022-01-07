@@ -23,6 +23,7 @@
 
 #pragma once
 
+#include "FilterResults.h"
 #include "ImageBuffer.h"
 #include "RenderSVGResourceContainer.h"
 #include "SVGFilter.h"
@@ -51,6 +52,7 @@ public:
     FloatRect drawingRegion;
     FloatSize scale;
     FilterDataState state { PaintingSource };
+    FilterResults results;
 };
 
 class GraphicsContext;

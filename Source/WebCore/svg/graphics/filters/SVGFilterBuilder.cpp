@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2009 Dirk Schulze <krit@webkit.org>
- * Copyright (C) 2021 Apple Inc.  All rights reserved.
+ * Copyright (C) 2021-2022 Apple Inc.  All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -41,7 +41,6 @@ void SVGFilterBuilder::setupBuiltinEffects(Ref<FilterEffect> sourceGraphic)
 {
     m_builtinEffects.add(SourceGraphic::effectName(), sourceGraphic.ptr());
     m_builtinEffects.add(SourceAlpha::effectName(), SourceAlpha::create(sourceGraphic));
-    addBuiltinEffects();
 }
 
 static OptionSet<FilterEffectGeometry::Flags> effectGeometryFlagsForElement(SVGElement& element)
@@ -102,13 +101,10 @@ RefPtr<FilterEffect> SVGFilterBuilder::buildFilterEffects(SVGFilterElement& filt
 #endif
 
         if (auto renderer = effectElement.renderer())
-            appendEffectToEffectReferences(effect.copyRef(), renderer);
+            appendEffectToEffectRenderer(*effect, *renderer);
 
         add(effectElement.result(), effect);
     }
-
-    if (!effect)
-        clearEffects();
 
     return effect;
 }
@@ -142,44 +138,9 @@ RefPtr<FilterEffect> SVGFilterBuilder::getEffectById(const AtomString& id) const
     return m_namedEffects.get(id);
 }
 
-void SVGFilterBuilder::appendEffectToEffectReferences(RefPtr<FilterEffect>&& effect, RenderObject* object)
+void SVGFilterBuilder::appendEffectToEffectRenderer(FilterEffect& effect, RenderObject& object)
 {
-    // The effect must be a newly created filter effect.
-    ASSERT(!m_effectReferences.contains(effect));
-    ASSERT(!object || !m_effectRenderer.contains(object));
-    m_effectReferences.add(effect, FilterEffectSet());
-
-    unsigned numberOfInputEffects = effect->inputEffects().size();
-
-    // It is not possible to add the same value to a set twice.
-    for (unsigned i = 0; i < numberOfInputEffects; ++i)
-        effectReferences(effect->inputEffect(i)).add(effect.get());
-
-    // If object is null, that means the element isn't attached for some
-    // reason, which in turn mean that certain types of invalidation will not
-    // work (the LayoutObject -> FilterEffect mapping will not be defined).
-    if (object)
-        m_effectRenderer.add(object, effect.get());
-}
-
-void SVGFilterBuilder::clearEffects()
-{
-    m_lastEffect = nullptr;
-    m_namedEffects.clear();
-    m_effectReferences.clear();
-    m_effectRenderer.clear();
-    addBuiltinEffects();
-}
-
-void SVGFilterBuilder::clearResultsRecursive(FilterEffect& effect)
-{
-    if (!effect.hasResult())
-        return;
-
-    effect.clearResult();
-
-    for (auto& reference : effectReferences(effect))
-        clearResultsRecursive(*reference);
+    m_effectRenderer.add(&object, &effect);
 }
 
 std::optional<FilterEffectGeometry> SVGFilterBuilder::effectGeometry(FilterEffect& effect) const

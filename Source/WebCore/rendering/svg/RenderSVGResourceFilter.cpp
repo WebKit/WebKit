@@ -215,7 +215,7 @@ void RenderSVGResourceFilter::postApplyResource(RenderElement& renderer, Graphic
 
     if (!filterData.boundaries.isEmpty()) {
         filterData.state = FilterData::Built;
-        context->drawFilteredImageBuffer(filterData.sourceGraphicBuffer.get(), filterData.drawingRegion, *filterData.filter);
+        context->drawFilteredImageBuffer(filterData.sourceGraphicBuffer.get(), filterData.drawingRegion, *filterData.filter, filterData.results);
     }
 
     LOG_WITH_STREAM(Filters, stream << "RenderSVGResourceFilter " << this << " postApplyResource done\n");
@@ -245,7 +245,7 @@ void RenderSVGResourceFilter::primitiveAttributeChanged(RenderObject* object, co
         // or none of them will be changed.
         if (!primitve->setFilterEffectAttribute(effect, attribute))
             return;
-        builder->clearResultsRecursive(*effect);
+        filterData->results.clearEffectResult(*effect);
 
         // Repaint the image on the screen.
         markClientForInvalidation(*objectFilterDataPair.key, RepaintInvalidation);

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc.  All rights reserved.
+ * Copyright (C) 2021-2022 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -40,6 +40,7 @@ class TextStream;
 namespace WebCore {
 
 class Filter;
+class FilterResults;
 
 enum class FilterRepresentation : uint8_t {
     TestOutput,
@@ -96,9 +97,8 @@ public:
     virtual bool supportsCoreImageRendering() const { return false; }
 #endif
 
-    virtual RefPtr<FilterImage> apply(const Filter&, FilterImage&) { return nullptr; }
+    virtual RefPtr<FilterImage> apply(const Filter&, FilterImage&, FilterResults&) { return nullptr; }
     virtual IntOutsets outsets() const { return { }; }
-    virtual void clearResult() { }
 
     virtual WTF::TextStream& externalRepresentation(WTF::TextStream&, FilterRepresentation = FilterRepresentation::TestOutput) const = 0;
 

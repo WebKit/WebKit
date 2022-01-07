@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2009 Dirk Schulze <krit@webkit.org>
  * Copyright (C) 2013 Google Inc. All rights reserved.
- * Copyright (C) 2021 Apple Inc.  All rights reserved.
+ * Copyright (C) 2021-2022 Apple Inc.  All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -32,6 +32,7 @@ namespace WebCore {
 
 class FilterEffect;
 class FilterImage;
+class FilterResults;
 
 class Filter : public FilterFunction {
     using FilterFunction::apply;
@@ -65,8 +66,8 @@ public:
 
     bool clampFilterRegionIfNeeded();
 
-    virtual RefPtr<FilterImage> apply(FilterImage* sourceImage) = 0;
-    WEBCORE_EXPORT RefPtr<FilterImage> apply(ImageBuffer* sourceImage, const FloatRect& sourceImageRect);
+    virtual RefPtr<FilterImage> apply(FilterImage* sourceImage, FilterResults&) = 0;
+    WEBCORE_EXPORT RefPtr<FilterImage> apply(ImageBuffer* sourceImage, const FloatRect& sourceImageRect, FilterResults&);
 
 protected:
     using FilterFunction::FilterFunction;

@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2009 Dirk Schulze <krit@webkit.org>
  * Copyright (C) 2013 Google Inc. All rights reserved.
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -49,7 +49,7 @@ public:
     RefPtr<FilterEffect> lastEffect() const final;
     FilterEffectVector effectsOfType(FilterFunction::Type) const final;
 
-    RefPtr<FilterImage> apply(FilterImage* sourceImage) final;
+    RefPtr<FilterImage> apply(FilterImage* sourceImage, FilterResults&) final;
 
     WTF::TextStream& externalRepresentation(WTF::TextStream&, FilterRepresentation) const final;
 
@@ -64,9 +64,8 @@ private:
 #endif
     FloatSize resolvedSize(const FloatSize&) const final;
 
-    RefPtr<FilterImage> apply(const Filter&, FilterImage& sourceImage) final;
+    RefPtr<FilterImage> apply(const Filter&, FilterImage& sourceImage, FilterResults&) final;
     IntOutsets outsets() const final;
-    void clearResult() final;
 
     FloatRect m_targetBoundingBox;
     SVGUnitTypes::SVGUnitType m_primitiveUnits;

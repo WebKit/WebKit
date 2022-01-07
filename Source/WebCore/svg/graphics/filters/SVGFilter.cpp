@@ -2,7 +2,7 @@
  * Copyright (C) 2009 Dirk Schulze <krit@webkit.org>
  * Copyright (C) Research In Motion Limited 2010. All rights reserved.
  * Copyright (C) 2013 Google Inc. All rights reserved.
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -23,6 +23,7 @@
 #include "config.h"
 #include "SVGFilter.h"
 
+#include "FilterResults.h"
 #include "SVGFilterBuilder.h"
 #include "SVGFilterElement.h"
 #include "SourceGraphic.h"
@@ -130,12 +131,12 @@ FilterEffectVector SVGFilter::effectsOfType(FilterFunction::Type filterType) con
     return copyToVector(effects);
 }
 
-RefPtr<FilterImage> SVGFilter::apply(const Filter&, FilterImage& sourceImage)
+RefPtr<FilterImage> SVGFilter::apply(const Filter&, FilterImage& sourceImage, FilterResults& results)
 {
-    return apply(&sourceImage);
+    return apply(&sourceImage, results);
 }
 
-RefPtr<FilterImage> SVGFilter::apply(FilterImage* sourceImage)
+RefPtr<FilterImage> SVGFilter::apply(FilterImage* sourceImage, FilterResults& results)
 {
     ASSERT(!m_expression.isEmpty());
 
@@ -146,8 +147,8 @@ RefPtr<FilterImage> SVGFilter::apply(FilterImage* sourceImage)
         auto geometry = term.geometry;
 
         if (effect->filterType() == FilterEffect::Type::SourceGraphic) {
-            if (auto result = effect->filterImage()) {
-                stack.append(result.releaseNonNull());
+            if (auto result = results.effectResult(effect)) {
+                stack.append({ *result });
                 continue;
             }
 
@@ -161,12 +162,7 @@ RefPtr<FilterImage> SVGFilter::apply(FilterImage* sourceImage)
         // Need to remove the inputs here in case the effect already has a result.
         auto inputs = effect->takeImageInputs(stack);
 
-        if (auto result = effect->filterImage()) {
-            stack.append(result.releaseNonNull());
-            continue;
-        }
-
-        auto result = term.effect->apply(*this, inputs, geometry);
+        auto result = term.effect->apply(*this, inputs, results, geometry);
         if (!result)
             return nullptr;
 
@@ -181,13 +177,6 @@ IntOutsets SVGFilter::outsets() const
 {
     ASSERT(lastEffect());
     return lastEffect()->outsets();
-}
-
-void SVGFilter::clearResult()
-{
-    ASSERT(!m_expression.isEmpty());
-    for (auto& term : m_expression)
-        term.effect->clearResult();
 }
 
 TextStream& SVGFilter::externalRepresentation(TextStream& ts, FilterRepresentation representation) const

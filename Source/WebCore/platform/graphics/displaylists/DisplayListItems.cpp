@@ -312,9 +312,9 @@ NO_RETURN_DUE_TO_ASSERT void DrawFilteredImageBuffer::apply(GraphicsContext&) co
     ASSERT_NOT_REACHED();
 }
 
-void DrawFilteredImageBuffer::apply(GraphicsContext& context, WebCore::ImageBuffer* sourceImage)
+void DrawFilteredImageBuffer::apply(GraphicsContext& context, ImageBuffer* sourceImage, FilterResults& results)
 {
-    context.drawFilteredImageBuffer(sourceImage, m_sourceImageRect, m_filter);
+    context.drawFilteredImageBuffer(sourceImage, m_sourceImageRect, m_filter, results);
 }
 
 static TextStream& operator<<(TextStream& ts, const DrawFilteredImageBuffer& item)

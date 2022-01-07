@@ -631,9 +631,9 @@ void GraphicsContext::drawConsumingImageBuffer(RefPtr<ImageBuffer> image, const 
     ImageBuffer::drawConsuming(WTFMove(image), *this, destination, source, options);
 }
 
-void GraphicsContext::drawFilteredImageBuffer(ImageBuffer* sourceImage, const FloatRect& sourceImageRect, Filter& filter)
+void GraphicsContext::drawFilteredImageBuffer(ImageBuffer* sourceImage, const FloatRect& sourceImageRect, Filter& filter, FilterResults& results)
 {
-    auto result = filter.apply(sourceImage, sourceImageRect);
+    auto result = filter.apply(sourceImage, sourceImageRect, results);
     if (!result)
         return;
     

@@ -222,10 +222,8 @@ void RenderLayerFilters::applyFilterEffect(GraphicsContext& destinationContext)
     ASSERT(inputContext());
     inputContext()->restore();
 
-    auto& filter = *m_filter;
-
-    destinationContext.drawFilteredImageBuffer(m_sourceImage.get(), m_filterRegion, filter);
-    filter.clearIntermediateResults();
+    FilterResults results;
+    destinationContext.drawFilteredImageBuffer(m_sourceImage.get(), m_filterRegion, *m_filter, results);
 
     LOG_WITH_STREAM(Filters, stream << "RenderLayerFilters " << this << " applyFilterEffect done\n");
 }

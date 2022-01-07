@@ -737,7 +737,7 @@ public:
     FloatRect destinationRect() const { return m_destinationRect; }
     bool isValid() const { return m_imageBufferIdentifier.isValid(); }
 
-    WEBCORE_EXPORT void apply(GraphicsContext&, WebCore::ImageBuffer&) const;
+    WEBCORE_EXPORT void apply(GraphicsContext&, ImageBuffer&) const;
 
     NO_RETURN_DUE_TO_ASSERT void apply(GraphicsContext&) const;
 
@@ -924,7 +924,7 @@ public:
     FloatRect sourceImageRect() const { return m_sourceImageRect; }
 
     NO_RETURN_DUE_TO_ASSERT void apply(GraphicsContext&) const;
-    WEBCORE_EXPORT void apply(GraphicsContext&, WebCore::ImageBuffer* sourceImage);
+    WEBCORE_EXPORT void apply(GraphicsContext&, ImageBuffer* sourceImage, FilterResults&);
 
     std::optional<FloatRect> globalBounds() const { return std::nullopt; }
     std::optional<FloatRect> localBounds(const GraphicsContext&) const { return m_sourceImageRect; }
@@ -1039,7 +1039,7 @@ public:
     // FIXME: We might want to validate ImagePaintingOptions.
     bool isValid() const { return m_imageBufferIdentifier.isValid(); }
 
-    WEBCORE_EXPORT void apply(GraphicsContext&, WebCore::ImageBuffer&) const;
+    WEBCORE_EXPORT void apply(GraphicsContext&, ImageBuffer&) const;
 
     NO_RETURN_DUE_TO_ASSERT void apply(GraphicsContext&) const;
 

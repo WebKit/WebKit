@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,8 +27,6 @@
 
 #include "Filter.h"
 #include "IntRectExtent.h"
-#include "LayoutRect.h"
-#include <wtf/TypeCasts.h>
 
 namespace WebCore {
 
@@ -57,8 +55,7 @@ public:
 
     IntOutsets outsets() const final;
 
-    void clearIntermediateResults();
-    RefPtr<FilterImage> apply(FilterImage* sourceImage) final;
+    RefPtr<FilterImage> apply(FilterImage* sourceImage, FilterResults&) final;
 
 private:
     CSSFilter(RenderingMode, const FloatSize& filterScale, ClipOperation, bool hasFilterThatMovesPixels, bool hasFilterThatShouldBeRestrictedBySecurityOrigin);

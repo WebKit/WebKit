@@ -30,6 +30,7 @@
 
 #include "RemoteDisplayListRecorderMessages.h"
 #include <WebCore/BitmapImage.h>
+#include <WebCore/FilterResults.h>
 
 namespace WebKit {
 using namespace WebCore;
@@ -255,7 +256,8 @@ void RemoteDisplayListRecorder::drawFilteredImageBuffer(std::optional<RenderingR
         }
     }
 
-    handleItem(DisplayList::DrawFilteredImageBuffer(sourceImageIdentifier, sourceImageRect, WTFMove(filter)), sourceImage.get());
+    FilterResults results;
+    handleItem(DisplayList::DrawFilteredImageBuffer(sourceImageIdentifier, sourceImageRect, WTFMove(filter)), sourceImage.get(), results);
 }
 
 void RemoteDisplayListRecorder::drawGlyphs(DisplayList::DrawGlyphs&& item)

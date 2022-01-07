@@ -146,12 +146,12 @@ void Recorder::setMiterLimit(float miterLimit)
     recordSetMiterLimit(miterLimit);
 }
 
-void Recorder::drawFilteredImageBuffer(ImageBuffer* sourceImage, const FloatRect& sourceImageRect, Filter& filter)
+void Recorder::drawFilteredImageBuffer(ImageBuffer* sourceImage, const FloatRect& sourceImageRect, Filter& filter, FilterResults& results)
 {
     appendStateChangeItemIfNecessary();
 
     if (sourceImage && !canDrawImageBuffer(*sourceImage)) {
-        GraphicsContext::drawFilteredImageBuffer(sourceImage, sourceImageRect, filter);
+        GraphicsContext::drawFilteredImageBuffer(sourceImage, sourceImageRect, filter, results);
         return;
     }
 
@@ -177,7 +177,7 @@ void Recorder::drawFilteredImageBuffer(ImageBuffer* sourceImage, const FloatRect
         );
 
         if (!isRecorded) {
-            GraphicsContext::drawFilteredImageBuffer(sourceImage, sourceImageRect, filter);
+            GraphicsContext::drawFilteredImageBuffer(sourceImage, sourceImageRect, filter, results);
             return;
         }
     }

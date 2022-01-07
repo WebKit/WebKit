@@ -3,7 +3,7 @@
  * Copyright (C) 2009 Dirk Schulze <krit@webkit.org>
  * Copyright (C) Research In Motion Limited 2010. All rights reserved.
  * Copyright (C) 2012 University of Szeged
- * Copyright (C) 2015-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2022 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -27,6 +27,7 @@
 #include "Filter.h"
 #include "FilterEffectApplier.h"
 #include "FilterEffectGeometry.h"
+#include "FilterResults.h"
 #include "ImageBuffer.h"
 #include "Logging.h"
 #include <wtf/text/TextStream.h>
@@ -99,17 +100,17 @@ void FilterEffect::correctPremultipliedInputs(const FilterImageVector& inputs) c
         input->correctPremultipliedPixelBuffer();
 }
 
-RefPtr<FilterImage> FilterEffect::apply(const Filter& filter, FilterImage& input)
+RefPtr<FilterImage> FilterEffect::apply(const Filter& filter, FilterImage& input, FilterResults& results)
 {
-    return apply(filter, FilterImageVector { Ref { input } });
+    return apply(filter, FilterImageVector { Ref { input } }, results);
 }
 
-RefPtr<FilterImage> FilterEffect::apply(const Filter& filter, const FilterImageVector& inputs, const std::optional<FilterEffectGeometry>& geometry)
+RefPtr<FilterImage> FilterEffect::apply(const Filter& filter, const FilterImageVector& inputs, FilterResults& results, const std::optional<FilterEffectGeometry>& geometry)
 {
     ASSERT(inputs.size() == numberOfImageInputs());
 
-    if (m_filterImage)
-        return m_filterImage;
+    if (auto result = results.effectResult(*this))
+        return result;
 
     auto primitiveSubregion = calculatePrimitiveSubregion(filter, inputs, geometry);
     auto imageRect = calculateImageRect(filter, inputs, primitiveSubregion);
@@ -126,8 +127,8 @@ RefPtr<FilterImage> FilterEffect::apply(const Filter& filter, const FilterImageV
     if (!applier)
         return nullptr;
 
-    m_filterImage = FilterImage::create(primitiveSubregion, imageRect, absoluteImageRect, isAlphaImage, isValidPremultiplied, filter.renderingMode(), imageColorSpace);
-    if (!m_filterImage)
+    auto result = FilterImage::create(primitiveSubregion, imageRect, absoluteImageRect, isAlphaImage, isValidPremultiplied, filter.renderingMode(), imageColorSpace);
+    if (!result)
         return nullptr;
 
     LOG_WITH_STREAM(Filters, stream
@@ -141,30 +142,17 @@ RefPtr<FilterImage> FilterEffect::apply(const Filter& filter, const FilterImageV
     if (isValidPremultiplied)
         correctPremultipliedInputs(inputs);
 
-    if (!applier->apply(filter, inputs, *m_filterImage))
-        m_filterImage = nullptr;
+    if (!applier->apply(filter, inputs, *result))
+        return nullptr;
 
-    return m_filterImage;
+    results.setEffectResult(*this, inputs, { *result });
+    return result;
 }
 
 FilterEffect& FilterEffect::inputEffect(unsigned number) const
 {
     ASSERT_WITH_SECURITY_IMPLICATION(number < m_inputEffects.size());
     return m_inputEffects.at(number);
-}
-
-void FilterEffect::clearResult()
-{
-    m_filterImage = nullptr;
-}
-
-void FilterEffect::clearResultsRecursive()
-{
-    // Clear all results, regardless that the current effect has
-    // a result. Can be used if an effect is in an erroneous state.
-    clearResult();
-    for (auto& effect : m_inputEffects)
-        effect->clearResultsRecursive();
 }
 
 TextStream& FilterEffect::externalRepresentation(TextStream& ts, FilterRepresentation representation) const

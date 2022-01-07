@@ -1,3 +1,14 @@
+2022-01-07  Said Abou-Hallawa  <said@apple.com>
+
+        [GPU Process] Remove the result FilterImage from FilterEffect
+        https://bugs.webkit.org/show_bug.cgi?id=232840
+        rdar://85425842
+
+        Reviewed by Darin Adler.
+
+        * GPUProcess/graphics/RemoteDisplayListRecorder.cpp:
+        (WebKit::RemoteDisplayListRecorder::drawFilteredImageBuffer):
+
 2022-01-07  Patrick Angle  <pangle@apple.com>
 
         [Cocoa] Web Driver: WebSocket over TLS failing over WebDriver with acceptInsecureCerts on Big Sur

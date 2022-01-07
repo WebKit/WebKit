@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2022 Apple Inc. All rights reserved.
  * Copyright (C) 2013 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -381,13 +381,7 @@ bool CSSFilter::supportsCoreImageRendering() const
 }
 #endif
 
-void CSSFilter::clearIntermediateResults()
-{
-    for (auto& function : m_functions)
-        function->clearResult();
-}
-
-RefPtr<FilterImage> CSSFilter::apply(FilterImage* sourceImage)
+RefPtr<FilterImage> CSSFilter::apply(FilterImage* sourceImage, FilterResults& results)
 {
     if (!sourceImage)
         return nullptr;
@@ -395,7 +389,7 @@ RefPtr<FilterImage> CSSFilter::apply(FilterImage* sourceImage)
     RefPtr<FilterImage> result = sourceImage;
 
     for (auto& function : m_functions) {
-        result = function->apply(*this, *result);
+        result = function->apply(*this, *result, results);
         if (!result)
             return nullptr;
     }

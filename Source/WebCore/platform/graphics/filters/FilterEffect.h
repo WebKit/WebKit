@@ -2,7 +2,7 @@
  * Copyright (C) 2008 Alex Mathews <possessedpenguinbob@gmail.com>
  * Copyright (C) 2009 Dirk Schulze <krit@webkit.org>
  * Copyright (C) Research In Motion Limited 2010. All rights reserved.
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -43,17 +43,12 @@ class FilterEffect : public FilterFunction {
     using FilterFunction::apply;
 
 public:
-    void clearResult() override;
-    void clearResultsRecursive();
-    bool hasResult() const { return m_filterImage; }
-
-    RefPtr<FilterImage> filterImage() const { return m_filterImage; }
     FilterImageVector takeImageInputs(FilterImageVector& stack) const;
 
     FilterEffectVector& inputEffects() { return m_inputEffects; }
     FilterEffect& inputEffect(unsigned) const;
 
-    RefPtr<FilterImage> apply(const Filter&, const FilterImageVector& inputs, const std::optional<FilterEffectGeometry>& = std::nullopt);
+    RefPtr<FilterImage> apply(const Filter&, const FilterImageVector& inputs, FilterResults&, const std::optional<FilterEffectGeometry>& = std::nullopt);
 
     const DestinationColorSpace& operatingColorSpace() const { return m_operatingColorSpace; }
     virtual void setOperatingColorSpace(const DestinationColorSpace& colorSpace) { m_operatingColorSpace = colorSpace; }
@@ -83,11 +78,9 @@ protected:
 
     virtual std::unique_ptr<FilterEffectApplier> createApplier(const Filter&) const = 0;
 
-    RefPtr<FilterImage> apply(const Filter&, FilterImage& input) override;
+    RefPtr<FilterImage> apply(const Filter&, FilterImage& input, FilterResults&) override;
 
     FilterEffectVector m_inputEffects;
-
-    RefPtr<FilterImage> m_filterImage;
 
     DestinationColorSpace m_operatingColorSpace { DestinationColorSpace::SRGB() };
 };

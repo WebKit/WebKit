@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2008 Alex Mathews <possessedpenguinbob@gmail.com>
  * Copyright (C) 2009 Dirk Schulze <krit@webkit.org>
- * Copyright (C) 2021 Apple Inc.  All rights reserved.
+ * Copyright (C) 2021-2022 Apple Inc.  All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -31,14 +31,13 @@
 
 namespace WebCore {
 
+class FilterEffect;
 class RenderObject;
 class SVGFilterElement;
 
 class SVGFilterBuilder {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    typedef HashSet<FilterEffect*> FilterEffectSet;
-
     SVGFilterBuilder() = default;
 
     void setTargetBoundingBox(const FloatRect& r) { m_targetBoundingBox = r; }
@@ -48,44 +47,22 @@ public:
     void setPrimitiveUnits(SVGUnitTypes::SVGUnitType units) { m_primitiveUnits = units; }
 
     void add(const AtomString& id, RefPtr<FilterEffect>);
-
     RefPtr<FilterEffect> getEffectById(const AtomString&) const;
-    FilterEffect* lastEffect() const { return m_lastEffect.get(); }
-
-    void appendEffectToEffectReferences(RefPtr<FilterEffect>&&, RenderObject*);
-
-    inline FilterEffectSet& effectReferences(FilterEffect& effect)
-    {
-        // Only allowed for effects belongs to this builder.
-        ASSERT(m_effectReferences.contains(&effect));
-        return m_effectReferences.find(&effect)->value;
-    }
 
     // Required to change the attributes of a filter during an svgAttributeChanged.
+    void appendEffectToEffectRenderer(FilterEffect&, RenderObject&);
     inline FilterEffect* effectByRenderer(RenderObject* object) { return m_effectRenderer.get(object); }
-
-    void clearEffects();
-    void clearResultsRecursive(FilterEffect&);
 
     void setupBuiltinEffects(Ref<FilterEffect> sourceGraphic);
     RefPtr<FilterEffect> buildFilterEffects(SVGFilterElement&);
     bool buildExpression(SVGFilterExpression&) const;
 
 private:
-    inline void addBuiltinEffects()
-    {
-        for (auto& effect : m_builtinEffects.values())
-            m_effectReferences.add(effect, FilterEffectSet());
-    }
-
     std::optional<FilterEffectGeometry> effectGeometry(FilterEffect&) const;
     bool buildEffectExpression(FilterEffect&, FilterEffectVector& stack, unsigned level, SVGFilterExpression&) const;
 
     HashMap<AtomString, RefPtr<FilterEffect>> m_builtinEffects;
     HashMap<AtomString, RefPtr<FilterEffect>> m_namedEffects;
-    // The value is a list, which contains those filter effects,
-    // which depends on the key filter effect.
-    HashMap<RefPtr<FilterEffect>, FilterEffectSet> m_effectReferences;
     HashMap<RenderObject*, FilterEffect*> m_effectRenderer;
 
     RefPtr<FilterEffect> m_lastEffect;
