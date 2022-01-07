@@ -1,3 +1,18 @@
+2022-01-07  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION (Safari 14): background-attachment: local does not work
+        https://bugs.webkit.org/show_bug.cgi?id=219324
+
+        Reviewed by Antti Koivisto.
+
+        Skip the test on platforms without async overflow scroll.
+
+        * TestExpectations:
+        * fast/repaint/background-attachment-local-scroll-expected.txt: Added.
+        * fast/repaint/background-attachment-local-scroll.html: Added.
+        * platform/ios-wk2/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+
 2022-01-07  Kate Cheney  <katherine_cheney@apple.com>
 
         Implement CSP strict-dynamic for module scripts

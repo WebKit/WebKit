@@ -2034,9 +2034,12 @@ bool RenderLayerBacking::needsRepaintOnCompositedScroll() const
     if (!hasScrollingLayer())
         return false;
 
+    if (renderer().style().hasAnyLocalBackground())
+        return true;
+
     if (auto scrollingCoordinator = m_owningLayer.page().scrollingCoordinator())
         return scrollingCoordinator->hasSynchronousScrollingReasons(m_scrollingNodeID);
-    
+
     return false;
 }
 

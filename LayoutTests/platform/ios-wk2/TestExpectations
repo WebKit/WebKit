@@ -41,6 +41,7 @@ fast/media/mq-prefers-reduced-motion-live-update.html [ Pass ]
 fast/media/mq-prefers-contrast.html [ Pass ]
 fast/media/mq-prefers-contrast-live-update.html [ Pass ]
 
+fast/repaint/background-attachment-local-scroll.html [ Pass ]
 fast/repaint/placeholder-after-caps-lock-hidden.html [ Pass ]
 
 fast/visual-viewport/rubberbanding-viewport-rects.html [ Pass ]

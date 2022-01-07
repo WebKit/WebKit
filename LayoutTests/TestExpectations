@@ -91,6 +91,7 @@ inspector/page/setScreenSizeOverride.html [ Skip ]
 compositing/shared-backing/overflow-scroll [ Skip ]
 compositing/scrolling/async-overflow-scrolling [ Skip ]
 compositing/layer-creation/clipping-scope [ Skip ]
+fast/repaint/background-attachment-local-scroll.html [ Skip ]
 
 # WebKit2 only.
 printing/printing-events.html [ Skip ]

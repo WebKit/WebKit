@@ -214,6 +214,7 @@ public:
     bool hasFixedBackgroundImage() const { return m_backgroundData->background->hasFixedImage(); }
 
     bool hasEntirelyFixedBackground() const;
+    bool hasAnyLocalBackground() const;
 
     bool hasAppearance() const { return appearance() != NoControlPart; }
     bool hasEffectiveAppearance() const { return effectiveAppearance() != NoControlPart; }
