@@ -1,3 +1,14 @@
+2022-01-07  Alan Bujtas  <zalan@apple.com>
+
+        Inline blocks that contain text with min-width, box-sizing: border-box incorrectly include the border in width calculation
+        https://bugs.webkit.org/show_bug.cgi?id=234935
+        <rdar://problem/87217423>
+
+        Reviewed by Antti Koivisto.
+
+        * fast/inline/min-max-width-and-preferred-width-expected.html: Added.
+        * fast/inline/min-max-width-and-preferred-width.html: Added.
+
 2022-01-07  Youenn Fablet  <youenn@apple.com>
 
         Expose rvfc processingDuration for the WebRTC code path

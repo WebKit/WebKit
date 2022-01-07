@@ -167,9 +167,10 @@ IntrinsicWidthConstraints InlineFormattingContext::computedIntrinsicWidthConstra
 
     collectContentIfNeeded();
 
-    auto constraints = formattingGeometry().constrainByMinMaxWidth(root(),
-        { ceiledLayoutUnit(computedIntrinsicWidthForConstraint(IntrinsicWidthMode::Minimum))
-        , ceiledLayoutUnit(computedIntrinsicWidthForConstraint(IntrinsicWidthMode::Maximum)) });
+    auto constraints = IntrinsicWidthConstraints {
+        ceiledLayoutUnit(computedIntrinsicWidthForConstraint(IntrinsicWidthMode::Minimum)),
+        ceiledLayoutUnit(computedIntrinsicWidthForConstraint(IntrinsicWidthMode::Maximum))
+    };
     formattingState().setIntrinsicWidthConstraints(constraints);
     return constraints;
 }
