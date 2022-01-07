@@ -410,33 +410,31 @@ WebWheelEvent WebEventFactory::createWebWheelEvent(NSEvent *event, NSView *windo
 
     auto modifiers = modifiersForEvent(event);
     auto timestamp = WebCore::eventTimeStampSince1970(event.timestamp);
-
-    auto ioHIDEventTimestamp = [&]() {
+    
+    auto ioHIDEventWallTime = timestamp;
+    std::optional<WebCore::FloatSize> rawPlatformDelta;
+    auto momentumEndType = WebWheelEvent::MomentumEndType::Unknown;
+    
+    ([&] {
         auto cgEvent = event.CGEvent;
         if (!cgEvent)
-            return event.timestamp;
+            return;
 
         auto ioHIDEvent = adoptCF(CGEventCopyIOHIDEvent(cgEvent));
         if (!ioHIDEvent)
-            return event.timestamp;
+            return;
 
         auto ioHIDEventTimestamp = IOHIDEventGetTimeStamp(ioHIDEvent.get()); // IOEventRef timestamp is mach_absolute_time units.
-        return MonotonicTime::fromMachAbsoluteTime(ioHIDEventTimestamp).secondsSinceEpoch().seconds();
-    }();
-
-    auto rawPlatformDelta = [&]() -> std::optional<WebCore::FloatSize> {
-        auto cgEvent = event.CGEvent;
-        if (!cgEvent)
-            return std::nullopt;
-
-        auto ioHIDEvent = adoptCF(CGEventCopyIOHIDEvent(cgEvent));
-        if (!ioHIDEvent)
-            return std::nullopt;
+        auto monotonicIOHIDEventTimestamp = MonotonicTime::fromMachAbsoluteTime(ioHIDEventTimestamp).secondsSinceEpoch().seconds();
+        ioHIDEventWallTime = WebCore::eventTimeStampSince1970(monotonicIOHIDEventTimestamp);
         
-        return { WebCore::FloatSize(-IOHIDEventGetFloatValue(ioHIDEvent.get(), kIOHIDEventFieldScrollX), -IOHIDEventGetFloatValue(ioHIDEvent.get(), kIOHIDEventFieldScrollY)) };
-    }();
+        rawPlatformDelta = { WebCore::FloatSize(-IOHIDEventGetFloatValue(ioHIDEvent.get(), kIOHIDEventFieldScrollX), -IOHIDEventGetFloatValue(ioHIDEvent.get(), kIOHIDEventFieldScrollY)) };
 
-    auto ioHIDEventWallTime = WebCore::eventTimeStampSince1970(ioHIDEventTimestamp);
+#if HAVE(PLATFORM_SCROLL_MOMENTUM_INTERRUPTION_REASON)
+        bool momentumWasInterrupted = IOHIDEventGetScrollMomentum(ioHIDEvent.get()) & kIOHIDEventScrollMomentumInterrupted;
+        momentumEndType = momentumWasInterrupted ? WebWheelEvent::MomentumEndType::Interrupted : WebWheelEvent::MomentumEndType::Natural;
+#endif
+    })();
 
     if (phase == WebWheelEvent::PhaseCancelled) {
         deltaX = 0;
@@ -449,7 +447,7 @@ WebWheelEvent WebEventFactory::createWebWheelEvent(NSEvent *event, NSView *windo
 
     return WebWheelEvent(WebEvent::Wheel, WebCore::IntPoint(position), WebCore::IntPoint(globalPosition), WebCore::FloatSize(deltaX, deltaY), WebCore::FloatSize(wheelTicksX, wheelTicksY),
         granularity, directionInvertedFromDevice, phase, momentumPhase, hasPreciseScrollingDeltas,
-        scrollCount, unacceleratedScrollingDelta, modifiers, timestamp, ioHIDEventWallTime, rawPlatformDelta);
+        scrollCount, unacceleratedScrollingDelta, modifiers, timestamp, ioHIDEventWallTime, rawPlatformDelta, momentumEndType);
 }
 
 WebKeyboardEvent WebEventFactory::createWebKeyboardEvent(NSEvent *event, bool handledByInputMethod, bool replacesSoftSpace, const Vector<WebCore::KeypressCommand>& commands)
