@@ -67,6 +67,7 @@ const unsigned WebInspectorUIProxy::initialWindowHeight = 650;
 WebInspectorUIProxy::WebInspectorUIProxy(WebPageProxy& inspectedPage)
     : m_inspectedPage(&inspectedPage)
     , m_inspectorClient(makeUnique<API::InspectorClient>())
+    , m_inspectedPageIdentifier(inspectedPage.identifier())
 #if PLATFORM(MAC)
     , m_closeFrontendAfterInactivityTimer(RunLoop::main(), this, &WebInspectorUIProxy::closeFrontendAfterInactivityTimerFired)
 #endif
@@ -448,7 +449,7 @@ void WebInspectorUIProxy::openLocalInspectorFrontend(bool canAttach, bool underT
     if (!m_inspectorPage)
         return;
 
-    m_inspectorPage->send(Messages::WebInspectorUI::EstablishConnection(m_inspectedPage->identifier(), infoForLocalDebuggable(), m_underTest, inspectionLevel()));
+    m_inspectorPage->send(Messages::WebInspectorUI::EstablishConnection(m_inspectedPageIdentifier, infoForLocalDebuggable(), m_underTest, inspectionLevel()));
 
     ASSERT(!m_isActiveFrontend);
     m_isActiveFrontend = true;

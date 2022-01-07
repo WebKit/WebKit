@@ -1,3 +1,20 @@
+2022-01-07  Patrick Angle  <pangle@apple.com>
+
+        REGRESSION(r286498): Web Inspector: Inspector^2 fails to load in release builds and crashes with an assertion in debug builds
+        https://bugs.webkit.org/show_bug.cgi?id=234968
+
+        Reviewed by Devin Rousso.
+
+        Inspector^2 would fail to open a local inspector frontend because m_inspectedPageIdentifier was not set before
+        it was used in `WebInspectorUIProxy::createFrontendPage`. To correct this, we now cache the inspected page
+        identifier immediately upon creating the WebInspectorUIProxy, instead of only in
+        `WebInspectorUIProxy::updateForNewPageProcess`. This also allows us to use the cached identifier in
+        `WebInspectorUIProxy::openLocalInspectorFrontend` as discussed in <http://webkit.org/b/233293#c5>.
+
+        * UIProcess/Inspector/WebInspectorUIProxy.cpp:
+        (WebKit::WebInspectorUIProxy::WebInspectorUIProxy):
+        (WebKit::WebInspectorUIProxy::openLocalInspectorFrontend):
+
 2022-01-07  Said Abou-Hallawa  <said@apple.com>
 
         [GPU Process] Remove the result FilterImage from FilterEffect
