@@ -1521,6 +1521,8 @@ webkit.org/b/232852 inspector/page/setShowPaintRects.html [ Skip ]
 # The DocumentTimeline.maximumFrameRate property which this test is about is only available in WK2.
 webanimations/frame-rate/document-timeline-maximum-frame-rate.html [ Skip ]
 
+webkit.org/b/231918 imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-autofocus-multiple-times.html [ Pass Failure ]
+
 # webkit.org/b/234105 Skip 2 imported/w3c/web-platform-tests/speech-api/SpeechSynthesis in mac wk1. 
 [ Catalina+ ] imported/w3c/web-platform-tests/speech-api/SpeechSynthesis-speak-events.html [ Skip ]
 [ Catalina+ ] imported/w3c/web-platform-tests/speech-api/SpeechSynthesis-pause-resume.tentative.html [ Skip ] 
