@@ -178,7 +178,8 @@ WebKit::WebWheelEvent WebIOSEventFactory::createWebWheelEvent(UIScrollEvent *eve
         { },
         timestamp,
         timestamp,
-        { }
+        { },
+        WebKit::WebWheelEvent::MomentumEndType::Unknown
     };
 }
 #endif
