@@ -553,8 +553,12 @@ void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearance
 #endif
 
     if (m_element) {
-        if (auto observer = m_element->document().modalContainerObserver(); observer && observer->shouldHide(*m_element))
-            style.setDisplay(DisplayType::None);
+        if (auto observer = m_element->document().modalContainerObserverIfExists()) {
+            if (observer->shouldHide(*m_element))
+                style.setDisplay(DisplayType::None);
+            if (observer->shouldMakeVerticallyScrollable(*m_element))
+                style.setOverflowY(Overflow::Auto);
+        }
     }
 
     adjustForSiteSpecificQuirks(style);

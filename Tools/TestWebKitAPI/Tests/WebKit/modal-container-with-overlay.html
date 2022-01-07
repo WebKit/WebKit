@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html style="overflow: hidden;">
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
@@ -7,6 +7,10 @@ body, html {
     margin: 0;
     background-color: #EFEFEF;
     font-family: system-ui;
+}
+
+body {
+    height: 3000px;
 }
 
 button {
@@ -58,7 +62,7 @@ if (window.internals)
     internals.overrideModalContainerSearchTermForTesting("hello world");
 </script>
 </head>
-<body>
+<body style="overflow: hidden;">
 <p id="content">Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.</p>
 <div id="overlay"></div>
 <div id="fixed">
@@ -67,6 +71,8 @@ if (window.internals)
 </div>
 <script>
 button.addEventListener("click", () => {
+    document.body.style.removeProperty("overflow");
+    document.documentElement.style.removeProperty("overflow");
     fixed.remove();
     overlay.remove();
 });

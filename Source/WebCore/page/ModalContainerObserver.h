@@ -50,6 +50,7 @@ public:
     ModalContainerObserver();
     ~ModalContainerObserver();
 
+    bool shouldMakeVerticallyScrollable(const Element&) const;
     inline bool shouldHide(const Element&) const;
     void updateModalContainerIfNeeded(const FrameView&);
 
@@ -63,6 +64,9 @@ private:
     void revealModalContainer();
     void setContainer(Element&, HTMLFrameOwnerElement* = nullptr);
     void searchForModalContainerOnBehalfOfFrameOwnerIfNeeded(HTMLFrameOwnerElement&);
+
+    void makeBodyAndDocumentElementScrollableIfNeeded();
+    void clearScrollabilityOverrides(Document&);
 
     Element* container() const;
     HTMLFrameOwnerElement* frameOwnerForControls() const;
@@ -78,6 +82,8 @@ private:
     Timer m_collectClickableElementsTimer;
     bool m_collectingClickableElements { false };
     bool m_hasAttemptedToFulfillPolicy { false };
+    bool m_makeBodyElementScrollable { false };
+    bool m_makeDocumentElementScrollable { false };
 };
 
 inline void ModalContainerObserver::overrideSearchTermForTesting(const String& searchTerm)

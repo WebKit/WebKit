@@ -1,3 +1,17 @@
+2022-01-07  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Teach modal container observer to make the body element scrollable if necessary
+        https://bugs.webkit.org/show_bug.cgi?id=234708
+        rdar://86960677
+
+        Reviewed by Tim Horton.
+
+        Adjust an existing API test to exercise the change.
+
+        * TestWebKitAPI/Tests/WebKit/modal-container-with-overlay.html:
+        * TestWebKitAPI/Tests/WebKitCocoa/ModalContainerObservation.mm:
+        (TestWebKitAPI::TEST):
+
 2022-01-07  Ryan Haddad  <ryanhaddad@apple.com>
 
         REGRESSION: TestWebKitAPI.PublicSuffix.IsPublicSuffix is failing on some bots

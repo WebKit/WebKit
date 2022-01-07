@@ -256,7 +256,7 @@ TEST(ModalContainerObservation, DetectSearchTermInBoldTag)
     EXPECT_EQ([webView lastModalContainerInfo].availableTypes, _WKModalContainerControlTypePositive | _WKModalContainerControlTypeNegative);
 }
 
-TEST(ModalContainerObservation, HideUserInteractionBlockingElement)
+TEST(ModalContainerObservation, HideUserInteractionBlockingElementAndMakeDocumentScrollable)
 {
     auto webView = createModalContainerWebView();
     [webView loadBundlePage:@"modal-container-with-overlay" andDecidePolicy:_WKModalContainerDecisionHideAndIgnore];
@@ -266,6 +266,8 @@ TEST(ModalContainerObservation, HideUserInteractionBlockingElement)
 
     NSString *hitTestedText = [webView stringByEvaluatingJavaScript:@"document.elementFromPoint(50, 50).textContent"];
     EXPECT_TRUE([hitTestedText containsString:@"Lorem"]);
+    EXPECT_WK_STREQ("auto", [webView stringByEvaluatingJavaScript:@"getComputedStyle(document.documentElement).overflowY"]);
+    EXPECT_WK_STREQ("auto", [webView stringByEvaluatingJavaScript:@"getComputedStyle(document.body).overflowY"]);
 }
 
 TEST(ModalContainerObservation, IgnoreFixedDocumentElement)

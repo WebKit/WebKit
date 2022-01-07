@@ -262,8 +262,12 @@ void ModalContainerObserver::setContainer(Element& newContainer, HTMLFrameOwnerE
         if (!container)
             return;
 
-        if (auto observer = container->document().modalContainerObserverIfExists(); observer && container == observer->container())
-            observer->hideUserInteractionBlockingElementIfNeeded();
+        auto observer = container->document().modalContainerObserverIfExists();
+        if (!observer || container != observer->container())
+            return;
+
+        observer->hideUserInteractionBlockingElementIfNeeded();
+        observer->makeBodyAndDocumentElementScrollableIfNeeded();
     });
 }
 
@@ -538,8 +542,10 @@ void ModalContainerObserver::collectClickableElementsTimerFired()
                 if (decision == ModalContainerDecision::Show)
                     return;
 
-                if (RefPtr controlToClick = classifiedControls.controlToClick(decision))
+                if (RefPtr controlToClick = classifiedControls.controlToClick(decision)) {
+                    observer->clearScrollabilityOverrides(*document);
                     controlToClick->dispatchSimulatedClick(nullptr, SendMouseUpDownEvents, DoNotShowPressedLook);
+                }
 
                 decisionScope.continueHidingModalContainerAfterScope();
             });
@@ -547,12 +553,62 @@ void ModalContainerObserver::collectClickableElementsTimerFired()
     });
 }
 
+void ModalContainerObserver::makeBodyAndDocumentElementScrollableIfNeeded()
+{
+    if (!container())
+        return;
+
+    Ref document = container()->document();
+    RefPtr view = document->view();
+    if (!view || view->isScrollable())
+        return;
+
+    document->updateLayoutIgnorePendingStylesheets();
+
+    auto visibleHeight = view->visibleSize().height();
+    auto shouldMakeElementScrollable = [visibleHeight] (Element* element) {
+        if (!element)
+            return false;
+
+        auto renderer = element->renderer();
+        if (!renderer || renderer->style().overflowY() != Overflow::Hidden)
+            return false;
+
+        return element->boundingClientRect().height() > visibleHeight;
+    };
+
+    if (!m_makeBodyElementScrollable) {
+        if (RefPtr body = document->body(); shouldMakeElementScrollable(body.get())) {
+            m_makeBodyElementScrollable = true;
+            body->invalidateStyle();
+        }
+    }
+
+    if (!m_makeDocumentElementScrollable) {
+        if (RefPtr documentElement = document->documentElement(); shouldMakeElementScrollable(documentElement.get())) {
+            m_makeDocumentElementScrollable = true;
+            documentElement->invalidateStyle();
+        }
+    }
+}
+
+void ModalContainerObserver::clearScrollabilityOverrides(Document& document)
+{
+    if (std::exchange(m_makeBodyElementScrollable, false)) {
+        if (auto element = document.body())
+            element->invalidateStyle();
+    }
+
+    if (std::exchange(m_makeDocumentElementScrollable, false)) {
+        if (auto element = document.documentElement())
+            element->invalidateStyle();
+    }
+}
+
 void ModalContainerObserver::hideUserInteractionBlockingElementIfNeeded()
 {
-    if (m_userInteractionBlockingElement) {
-        ASSERT_NOT_REACHED();
+    if (m_userInteractionBlockingElement)
         return;
-    }
 
     RefPtr container = this->container();
     if (!container) {
@@ -593,7 +649,7 @@ void ModalContainerObserver::hideUserInteractionBlockingElementIfNeeded()
             return;
 
         if (!foundElement)
-            foundElement = WTFMove(target);
+            foundElement = target;
     }
 
     m_userInteractionBlockingElement = foundElement.get();
@@ -603,8 +659,10 @@ void ModalContainerObserver::hideUserInteractionBlockingElementIfNeeded()
 void ModalContainerObserver::revealModalContainer()
 {
     auto [container, frameOwner] = std::exchange(m_containerAndFrameOwnerForControls, { });
-    if (container)
+    if (container) {
         container->invalidateStyle();
+        clearScrollabilityOverrides(container->document());
+    }
 
     if (auto element = std::exchange(m_userInteractionBlockingElement, { }))
         element->invalidateStyle();
@@ -658,6 +716,17 @@ std::pair<Vector<WeakPtr<HTMLElement>>, Vector<String>> ModalContainerObserver::
         }
     }
     return { WTFMove(classifiableControls), WTFMove(controlTextsToClassify) };
+}
+
+bool ModalContainerObserver::shouldMakeVerticallyScrollable(const Element& element) const
+{
+    if (m_makeBodyElementScrollable && element.document().body() == &element)
+        return true;
+
+    if (m_makeDocumentElementScrollable && element.document().documentElement() == &element)
+        return true;
+
+    return false;
 }
 
 } // namespace WebCore
