@@ -43,11 +43,10 @@ class InspectorCSSOMWrappers;
 class Resolver;
 
 struct InvalidationRuleSet {
-    MatchElement matchElement;
-    Ref<RuleSet> ruleSet;
+    RefPtr<RuleSet> ruleSet;
     Vector<const CSSSelector*> invalidationSelectors;
-
-    WTF_MAKE_FAST_ALLOCATED;
+    MatchElement matchElement;
+    IsNegation isNegation;
 };
 
 class ScopeRuleSets {

@@ -42,12 +42,14 @@ public:
 
 private:
     void computeInvalidation(const SpaceSplitString& oldClasses, const SpaceSplitString& newClasses);
-    void invalidateStyleWithRuleSets();
+    void invalidateBeforeChange();
+    void invalidateAfterChange();
 
     const bool m_isEnabled;
     Element& m_element;
 
-    Invalidator::MatchElementRuleSets m_matchElementRuleSets;
+    Invalidator::MatchElementRuleSets m_beforeChangeRuleSets;
+    Invalidator::MatchElementRuleSets m_afterChangeRuleSets;
 };
 
 inline ClassChangeInvalidation::ClassChangeInvalidation(Element& element, const SpaceSplitString& oldClasses, const SpaceSplitString& newClasses)
@@ -58,14 +60,14 @@ inline ClassChangeInvalidation::ClassChangeInvalidation(Element& element, const 
     if (!m_isEnabled)
         return;
     computeInvalidation(oldClasses, newClasses);
-    invalidateStyleWithRuleSets();
+    invalidateBeforeChange();
 }
 
 inline ClassChangeInvalidation::~ClassChangeInvalidation()
 {
     if (!m_isEnabled)
         return;
-    invalidateStyleWithRuleSets();
+    invalidateAfterChange();
 }
 
 }

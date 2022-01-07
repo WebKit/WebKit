@@ -240,37 +240,34 @@ static Vector<InvalidationRuleSet>* ensureInvalidationRuleSets(const KeyType& ke
         if (!features)
             return nullptr;
 
-        std::array<RefPtr<RuleSet>, matchElementCount> matchElementArray;
-        std::array<Vector<const CSSSelector*>, matchElementCount> invalidationSelectorArray;
-        for (auto& feature : *features) {
-            auto arrayIndex = static_cast<unsigned>(feature.matchElement);
-            RELEASE_ASSERT(arrayIndex < matchElementArray.size());
+        HashMap<std::tuple<uint8_t, bool, bool>, InvalidationRuleSet> invalidationRuleSetMap;
 
-            auto& ruleSet = matchElementArray[arrayIndex];
-            if (!ruleSet)
-                ruleSet = RuleSet::create();
-            ruleSet->addRule(*feature.styleRule, feature.selectorIndex, feature.selectorListIndex);
+        for (auto& feature : *features) {
+            auto key = std::tuple { static_cast<uint8_t>(feature.matchElement), static_cast<bool>(feature.isNegation), true };
+
+            auto& invalidationRuleSet = invalidationRuleSetMap.ensure(key, [&] {
+                return InvalidationRuleSet {
+                    RuleSet::create(),
+                    { },
+                    feature.matchElement,
+                    feature.isNegation,
+                };
+            }).iterator->value;
+
+            invalidationRuleSet.ruleSet->addRule(*feature.styleRule, feature.selectorIndex, feature.selectorListIndex);
+
             if constexpr (std::is_same<typename RuleFeatureVectorType::ValueType, RuleFeatureWithInvalidationSelector>::value) {
                 if (feature.invalidationSelector)
-                    invalidationSelectorArray[arrayIndex].append(feature.invalidationSelector);
+                    invalidationRuleSet.invalidationSelectors.append(feature.invalidationSelector);
             }
-        }
-
-        unsigned ruleSetCount = 0;
-        for (const auto& item : matchElementArray) {
-            if (item)
-                ++ruleSetCount;
         }
 
         auto invalidationRuleSets = makeUnique<Vector<InvalidationRuleSet>>();
-        invalidationRuleSets->reserveInitialCapacity(ruleSetCount);
+        invalidationRuleSets->reserveInitialCapacity(invalidationRuleSetMap.size());
 
-        for (unsigned i = 0; i < matchElementArray.size(); ++i) {
-            if (matchElementArray[i]) {
-                matchElementArray[i]->shrinkToFit();
-                invalidationRuleSets->uncheckedAppend({ static_cast<MatchElement>(i), matchElementArray[i].releaseNonNull(), WTFMove(invalidationSelectorArray[i]) });
-            }
-        }
+        for (auto& invalidationRuleSet : invalidationRuleSetMap.values())
+            invalidationRuleSets->uncheckedAppend(WTFMove(invalidationRuleSet));
+
         return invalidationRuleSets;
     }).iterator->value.get();
 }

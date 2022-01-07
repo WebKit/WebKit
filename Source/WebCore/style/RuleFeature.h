@@ -55,6 +55,8 @@ enum class MatchElement : uint8_t {
 };
 constexpr unsigned matchElementCount = static_cast<unsigned>(MatchElement::Host) + 1;
 
+enum class IsNegation : bool { No, Yes };
+
 // For MSVC.
 #pragma pack(push, 4)
 struct RuleAndSelector {
@@ -66,17 +68,15 @@ struct RuleAndSelector {
 };
 
 struct RuleFeature : public RuleAndSelector {
-    RuleFeature(const RuleData&, MatchElement);
+    RuleFeature(const RuleData&, MatchElement, IsNegation);
 
     MatchElement matchElement;
+    IsNegation isNegation; // Whether the selector is in a (non-paired) :not() context.
 };
 static_assert(sizeof(RuleFeature) <= 16, "RuleFeature is a frquently alocated object. Keep it small.");
 
 struct RuleFeatureWithInvalidationSelector : public RuleFeature {
-    RuleFeatureWithInvalidationSelector(const RuleData& data, MatchElement matchElement, const CSSSelector* invalidationSelector = nullptr)
-        : RuleFeature(data, matchElement)
-        , invalidationSelector(invalidationSelector)
-    { }
+    RuleFeatureWithInvalidationSelector(const RuleData&, MatchElement, IsNegation, const CSSSelector* invalidationSelector);
 
     const CSSSelector* invalidationSelector { nullptr };
 };
@@ -124,13 +124,13 @@ private:
     struct SelectorFeatures {
         bool hasSiblingSelector { false };
 
-        Vector<std::pair<AtomString, MatchElement>, 32> tags;
-        Vector<std::pair<AtomString, MatchElement>, 32> ids;
-        Vector<std::pair<AtomString, MatchElement>, 32> classes;
-        Vector<std::pair<const CSSSelector*, MatchElement>, 32> attributes;
-        Vector<std::pair<const CSSSelector*, MatchElement>, 32> pseudoClasses;
+        Vector<std::tuple<AtomString, MatchElement, IsNegation>, 32> tags;
+        Vector<std::tuple<AtomString, MatchElement, IsNegation>, 32> ids;
+        Vector<std::tuple<AtomString, MatchElement, IsNegation>, 32> classes;
+        Vector<std::tuple<const CSSSelector*, MatchElement, IsNegation>, 32> attributes;
+        Vector<std::tuple<const CSSSelector*, MatchElement, IsNegation>, 32> pseudoClasses;
     };
-    void recursivelyCollectFeaturesFromSelector(SelectorFeatures&, const CSSSelector&, MatchElement = MatchElement::Subject);
+    void recursivelyCollectFeaturesFromSelector(SelectorFeatures&, const CSSSelector&, MatchElement = MatchElement::Subject, IsNegation =  IsNegation::No);
 };
 
 bool isHasPseudoClassMatchElement(MatchElement);

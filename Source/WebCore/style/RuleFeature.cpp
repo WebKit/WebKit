@@ -84,9 +84,16 @@ RuleAndSelector::RuleAndSelector(const RuleData& ruleData)
 }
 
 
-RuleFeature::RuleFeature(const RuleData& ruleData, MatchElement matchElement)
+RuleFeature::RuleFeature(const RuleData& ruleData, MatchElement matchElement, IsNegation isNegation)
     : RuleAndSelector(ruleData)
     , matchElement(matchElement)
+    , isNegation(isNegation)
+{
+}
+
+RuleFeatureWithInvalidationSelector::RuleFeatureWithInvalidationSelector(const RuleData& data, MatchElement matchElement, IsNegation isNegation, const CSSSelector* invalidationSelector)
+    : RuleFeature(data, matchElement, isNegation)
+    , invalidationSelector(invalidationSelector)
 {
 }
 
@@ -200,7 +207,7 @@ static MatchElement computeSubSelectorMatchElement(MatchElement matchElement, co
     return matchElement;
 };
 
-void RuleFeatureSet::recursivelyCollectFeaturesFromSelector(SelectorFeatures& selectorFeatures, const CSSSelector& firstSelector, MatchElement matchElement)
+void RuleFeatureSet::recursivelyCollectFeaturesFromSelector(SelectorFeatures& selectorFeatures, const CSSSelector& firstSelector, MatchElement matchElement, IsNegation isNegation)
 {
     const CSSSelector* selector = &firstSelector;
     do {
@@ -209,18 +216,18 @@ void RuleFeatureSet::recursivelyCollectFeaturesFromSelector(SelectorFeatures& se
             if (matchElement == MatchElement::Parent || matchElement == MatchElement::Ancestor)
                 idsMatchingAncestorsInRules.add(selector->value());
             else if (isHasPseudoClassMatchElement(matchElement))
-                selectorFeatures.ids.append(std::make_pair(selector->value(), matchElement));
+                selectorFeatures.ids.append({ selector->value(), matchElement, isNegation });
         } else if (selector->match() == CSSSelector::Class)
-            selectorFeatures.classes.append(std::make_pair(selector->value(), matchElement));
+            selectorFeatures.classes.append({ selector->value(), matchElement, isNegation });
         else if (selector->match() == CSSSelector::Tag) {
             if (isHasPseudoClassMatchElement(matchElement))
-                selectorFeatures.tags.append(std::make_pair(selector->tagLowercaseLocalName(), matchElement));
+                selectorFeatures.tags.append({ selector->tagLowercaseLocalName(), matchElement, isNegation });
         } else if (selector->isAttributeSelector()) {
             auto& canonicalLocalName = selector->attributeCanonicalLocalName();
             auto& localName = selector->attribute().localName();
             attributeCanonicalLocalNamesInRules.add(canonicalLocalName);
             attributeLocalNamesInRules.add(localName);
-            selectorFeatures.attributes.append(std::make_pair(selector, matchElement));
+            selectorFeatures.attributes.append({ selector, matchElement, isNegation });
         } else if (selector->match() == CSSSelector::PseudoElement) {
             switch (selector->pseudoElementType()) {
             case CSSSelector::PseudoElementFirstLine:
@@ -234,18 +241,22 @@ void RuleFeatureSet::recursivelyCollectFeaturesFromSelector(SelectorFeatures& se
             }
         } else if (selector->match() == CSSSelector::PseudoClass) {
             if (!isLogicalCombinationPseudoClass(selector->pseudoClassType()))
-                selectorFeatures.pseudoClasses.append(std::make_pair(selector, matchElement));
+                selectorFeatures.pseudoClasses.append({ selector, matchElement, isNegation });
         }
 
         if (!selectorFeatures.hasSiblingSelector && selector->isSiblingSelector())
             selectorFeatures.hasSiblingSelector = true;
 
         if (const CSSSelectorList* selectorList = selector->selectorList()) {
+            auto subSelectorIsNegation = isNegation;
+            if (selector->match() == CSSSelector::PseudoClass && selector->pseudoClassType() == CSSSelector::PseudoClassNot)
+                subSelectorIsNegation = isNegation == IsNegation::No ? IsNegation::Yes : IsNegation::No;
+
             for (const CSSSelector* subSelector = selectorList->first(); subSelector; subSelector = CSSSelectorList::next(subSelector)) {
                 auto subSelectorMatchElement = computeSubSelectorMatchElement(matchElement, *selector, *subSelector);
                 if (!selectorFeatures.hasSiblingSelector && selector->isSiblingSelector())
                     selectorFeatures.hasSiblingSelector = true;
-                recursivelyCollectFeaturesFromSelector(selectorFeatures, *subSelector, subSelectorMatchElement);
+                recursivelyCollectFeaturesFromSelector(selectorFeatures, *subSelector, subSelectorMatchElement, subSelectorIsNegation);
             }
         }
 
@@ -306,10 +317,10 @@ void RuleFeatureSet::collectFeatures(const RuleData& ruleData)
 
     auto addToMap = [&](auto& map, auto& entries, auto hostAffectingNames) {
         for (auto& entry : entries) {
-            auto& [name, matchElement] = entry;
+            auto& [name, matchElement, isNegation] = entry;
             map.ensure(name, [] {
                 return makeUnique<RuleFeatureVector>();
-            }).iterator->value->append({ ruleData, matchElement });
+            }).iterator->value->append({ ruleData, matchElement, isNegation });
 
             setUsesMatchElement(matchElement);
 
@@ -324,23 +335,21 @@ void RuleFeatureSet::collectFeatures(const RuleData& ruleData)
     addToMap(idRules, selectorFeatures.ids, nullptr);
     addToMap(classRules, selectorFeatures.classes, &classesAffectingHost);
 
-    for (auto& selectorAndMatch : selectorFeatures.attributes) {
-        auto* selector = selectorAndMatch.first;
-        auto matchElement = selectorAndMatch.second;
+    for (auto& entry : selectorFeatures.attributes) {
+        auto [selector, matchElement, isNegation] = entry;
         attributeRules.ensure(selector->attribute().localName().convertToASCIILowercase(), [] {
             return makeUnique<Vector<RuleFeatureWithInvalidationSelector>>();
-        }).iterator->value->append({ ruleData, matchElement, selector });
+        }).iterator->value->append({ ruleData, matchElement, isNegation, selector });
         if (matchElement == MatchElement::Host)
             attributesAffectingHost.add(selector->attribute().localName().convertToASCIILowercase());
         setUsesMatchElement(matchElement);
     }
 
-    for (auto& selectorAndMatch : selectorFeatures.pseudoClasses) {
-        auto* selector = selectorAndMatch.first;
-        auto matchElement = selectorAndMatch.second;
+    for (auto& entry : selectorFeatures.pseudoClasses) {
+        auto [selector, matchElement, isNegation] = entry;
         pseudoClassRules.ensure(makePseudoClassInvalidationKey(*selector), [] {
             return makeUnique<Vector<RuleFeature>>();
-        }).iterator->value->append({ ruleData, matchElement });
+        }).iterator->value->append({ ruleData, matchElement, isNegation });
 
         if (matchElement == MatchElement::Host)
             pseudoClassesAffectingHost.add(selector->pseudoClassType());
