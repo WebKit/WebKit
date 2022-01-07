@@ -1,3 +1,13 @@
+2022-01-07  Ryan Haddad  <ryanhaddad@apple.com>
+
+        REGRESSION: TestWebKitAPI.PublicSuffix.IsPublicSuffix is failing on some bots
+        https://bugs.webkit.org/show_bug.cgi?id=234609
+
+        Unreviewed test gardening.
+
+        * TestWebKitAPI/Tests/WebCore/PublicSuffix.cpp:
+        (TestWebKitAPI::TEST_F): Disable failing subtest.
+
 2022-01-07  Alex Christensen  <achristensen@webkit.org>
 
         Unreviewed, reverting r287698.

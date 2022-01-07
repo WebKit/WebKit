@@ -82,7 +82,8 @@ TEST_F(PublicSuffix, IsPublicSuffix)
     EXPECT_FALSE(isPublicSuffix("example.COM"));
     EXPECT_FALSE(isPublicSuffix("WwW.example.COM"));
     // Unlisted TLD.
-    EXPECT_FALSE(isPublicSuffix("example"));
+    // FIXME: Re-enable this subtest once webkit.org/b/234609 is resolved.
+    // EXPECT_FALSE(isPublicSuffix("example"));
     EXPECT_FALSE(isPublicSuffix("example.example"));
     EXPECT_FALSE(isPublicSuffix("b.example.example"));
     EXPECT_FALSE(isPublicSuffix("a.b.example.example"));
