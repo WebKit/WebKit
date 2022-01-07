@@ -1,3 +1,16 @@
+2022-01-07  Patrick Angle  <pangle@apple.com>
+
+        Uncaught Exception: Cannot step over because debugger is not paused
+        https://bugs.webkit.org/show_bug.cgi?id=234575
+
+        Reviewed by Devin Rousso.
+
+        Previously keyboard shortcuts for advancing the debugger did not check to make sure that the debugger was
+        actually paused before attempting to step. This led to an uncaught exception in engineering builds. We now
+        enable and disable these keyboard shortcuts based on the whether or not the debugger is currently paused.
+
+        * UserInterface/Base/Main.js:
+
 2022-01-07  Alex Christensen  <achristensen@webkit.org>
 
         Unreviewed, reverting r287698.

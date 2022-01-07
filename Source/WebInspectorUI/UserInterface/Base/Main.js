@@ -132,6 +132,7 @@ WI.loaded = function()
 
     // Register for events.
     WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.Paused, WI._debuggerDidPause, WI);
+    WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.Resumed, WI._debuggerDidResume, WI);
     WI.domManager.addEventListener(WI.DOMManager.Event.InspectModeStateChanged, WI._inspectModeStateChanged, WI);
     WI.domManager.addEventListener(WI.DOMManager.Event.DOMNodeWasInspected, WI._domNodeWasInspected, WI);
     WI.domStorageManager.addEventListener(WI.DOMStorageManager.Event.DOMStorageObjectWasInspected, WI._domStorageWasInspected, WI);
@@ -341,6 +342,8 @@ WI.contentLoaded = function()
         WI.stepNextKeyboardShortcut = new WI.KeyboardShortcut(null, WI.KeyboardShortcut.Key.F9, WI.debuggerStepNext);
         WI.stepNextAlternateKeyboardShortcut = new WI.KeyboardShortcut(WI.KeyboardShortcut.Modifier.Shift | WI.KeyboardShortcut.Modifier.CommandOrControl, WI.KeyboardShortcut.Key.SingleQuote, WI.debuggerStepNext);
     }
+
+    WI._updateDebuggerKeyboardShortcuts();
 
     WI.settingsKeyboardShortcut = new WI.KeyboardShortcut(WI.KeyboardShortcut.Modifier.CommandOrControl, WI.KeyboardShortcut.Key.Comma, WI._handleSettingsKeyboardShortcut);
 
@@ -1669,8 +1672,32 @@ WI._handleDragOver = function(event)
 WI._debuggerDidPause = function(event)
 {
     WI.showSourcesTab({showScopeChainSidebar: WI.settings.showScopeChainOnPause.value});
+    WI._updateDebuggerKeyboardShortcuts();
 
     InspectorFrontendHost.bringToFront();
+};
+
+WI._debuggerDidResume = function(event)
+{
+    WI._updateDebuggerKeyboardShortcuts();
+};
+
+WI._updateDebuggerKeyboardShortcuts = function()
+{
+    let paused = WI.debuggerManager.paused;
+
+    WI.stepOverKeyboardShortcut.disabled = !paused;
+    WI.stepIntoKeyboardShortcut.disabled = !paused;
+    WI.stepOutKeyboardShortcut.disabled = !paused;
+    WI.stepOverAlternateKeyboardShortcut.disabled = !paused;
+    WI.stepIntoAlternateKeyboardShortcut.disabled = !paused;
+    WI.stepOutAlternateKeyboardShortcut.disabled = !paused;
+
+    // COMPATIBILITY (iOS 13.4): Debugger.stepNext did not exist.
+    if (InspectorBackend.hasCommand("Debugger.stepNext")) {
+        WI.stepNextKeyboardShortcut.disabled = !paused;
+        WI.stepNextAlternateKeyboardShortcut.disabled = !paused;
+    }
 };
 
 WI._frameWasAdded = function(event)
