@@ -1,3 +1,17 @@
+2022-01-07  Alexey Shvayka  <ashvayka@apple.com>
+
+        Remove obsolete DOM Level 2 "DOMFocusIn" / "DOMFocusOut" events
+        https://bugs.webkit.org/show_bug.cgi?id=234978
+
+        Reviewed by Geoff Garen.
+
+        * editing/deleting/insert-in-orphaned-selection-crash.html:
+        * fast/events/focusinout-expected.txt:
+        * fast/events/focusinout.html:
+        * fast/events/scoped/editing-commands.html:
+        * fast/forms/textarea/textarea-autofocus-removal-while-focusing-with-style.html:
+        * fast/forms/textarea/textarea-autofocus-removal-while-focusing.html:
+
 2022-01-07  Kate Cheney  <katherine_cheney@apple.com>
 
         CSP: strict-dynamic is causing incorrect and unexpected behavior

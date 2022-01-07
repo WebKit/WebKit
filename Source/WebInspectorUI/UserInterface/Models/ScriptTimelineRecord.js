@@ -212,8 +212,6 @@ WI.ScriptTimelineRecord.EventType.displayName = function(eventType, details, inc
         nameMap.set("DOMActivate", "DOM Activate");
         nameMap.set("DOMCharacterDataModified", "DOM Character Data Modified");
         nameMap.set("DOMContentLoaded", "DOM Content Loaded");
-        nameMap.set("DOMFocusIn", "DOM Focus In");
-        nameMap.set("DOMFocusOut", "DOM Focus Out");
         nameMap.set("DOMNodeInserted", "DOM Node Inserted");
         nameMap.set("DOMNodeInsertedIntoDocument", "DOM Node Inserted Into Document");
         nameMap.set("DOMNodeRemoved", "DOM Node Removed");

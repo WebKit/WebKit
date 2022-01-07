@@ -44,8 +44,6 @@ namespace WebCore {
     macro(DOMActivate) \
     macro(DOMCharacterDataModified) \
     macro(DOMContentLoaded) \
-    macro(DOMFocusIn) \
-    macro(DOMFocusOut) \
     macro(DOMNodeInserted) \
     macro(DOMNodeInsertedIntoDocument) \
     macro(DOMNodeRemoved) \

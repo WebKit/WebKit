@@ -29,22 +29,6 @@ function blurHandler(event)
     else
         writeFailed('result2', "Wrong event type");
 }
-
-function focusHandlerTwo(event)
-{
-    if (event.type == "DOMFocusIn")
-        writePass('result3');
-    else
-        writeFailed('result3', "Wrong event type");
-}
-
-function blurHandlerTwo(event)
-{
-    if (event.type == "DOMFocusOut")
-        writePass('result4');
-    else
-        writeFailed('result4', "Wrong event type");
-}
 </script>
 </head>
 <body onload="document.getElementById('field').focus();document.getElementById('field').blur()">
@@ -55,15 +39,11 @@ function blurHandlerTwo(event)
 
 <div id="result1">FAIL</div>
 <div id="result2">FAIL</div>
-<div id="result3">FAIL</div>
-<div id="result4">FAIL</div>
 <div id="result5">FAIL</div>
 <div id="result6">FAIL</div>
 
 <script>
 document.documentElement.addEventListener("focusin", focusHandler, false);
 document.documentElement.addEventListener("focusout", blurHandler, false);
-document.documentElement.addEventListener("DOMFocusIn", focusHandlerTwo, false);
-document.documentElement.addEventListener("DOMFocusOut", blurHandlerTwo, false);
 </script>
 
