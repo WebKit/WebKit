@@ -24,5 +24,5 @@ PASS Cache.put with a VARY:* Response
 PASS Cache.put with an embedded VARY:* Response
 PASS Cache.put should store Response.redirect() correctly
 PASS Cache.put called with simple Request and blob Response
-FAIL Cache.put called with simple Request and form data Response promise_test: Unhandled rejection with value: object "NotSupportedError: Not implemented"
+PASS Cache.put called with simple Request and form data Response
 

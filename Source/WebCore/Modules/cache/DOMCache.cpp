@@ -365,13 +365,8 @@ void DOMCache::put(RequestInfo&& info, Ref<FetchResponse>&& response, DOMPromise
         return;
     }
 
-    if (response->isBlobFormData()) {
-        promise.reject(Exception { NotSupportedError, "Not implemented"_s });
-        return;
-    }
-
-    // FIXME: for efficiency, we should load blobs directly instead of going through the readableStream path.
-    if (response->isBlobBody()) {
+    // FIXME: for efficiency, we should load blobs/form data directly instead of going through the readableStream path.
+    if (response->isBlobBody() || response->isBlobFormData()) {
         auto streamOrException = response->readableStream(*scriptExecutionContext()->globalObject());
         if (UNLIKELY(streamOrException.hasException())) {
             promise.reject(streamOrException.releaseException());

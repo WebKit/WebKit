@@ -1,3 +1,12 @@
+2022-01-07  Youenn Fablet  <youenn@apple.com>
+
+        Allow storing form data responses in Cache Storage
+        https://bugs.webkit.org/show_bug.cgi?id=234881
+
+        Reviewed by Alex Christensen.
+
+        * web-platform-tests/service-workers/cache-storage/window/cache-put.https-expected.txt:
+
 2022-01-07  Martin Robinson  <mrobinson@webkit.org>
 
         When transform-style: preserve-3d is used with a grouping property it should still create a containing block
