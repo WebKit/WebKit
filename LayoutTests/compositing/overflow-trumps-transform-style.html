@@ -1,36 +1,53 @@
-<!DOCTYPE html>
-
-<html>
-<head>
-  <style>
+<!DOCTYPE HTML>
+<style>
     .box {
-      height: 100px;
-      width: 100px;
-      margin: 10px;
-      background-color: blue;
+        width: 100px;
+        height: 100px;
     }
-  </style>
-  <script>
-    if (window.testRunner)
-      testRunner.dumpAsText();
+    .parent {
+        transform-style: preserve-3d;
+        transform: rotateY(45deg)
+    }
+    .child {
+        transform: rotateY(45deg);
+        background: lightblue
+    }
+</style>
 
-    function dumpResults()
-    {
-      var results = document.getElementById('layers');
-      
-      // Check the computed value.
-      results.innerText = window.getComputedStyle(document.getElementById('box1')).webkitTransformStyle + '\n';
-      results.innerText += window.getComputedStyle(document.getElementById('box2')).webkitTransformStyle + '\n';
-      
-      if (window.testRunner)
-        results.innerText += window.internals.layerTreeAsText(document);
+<p>Test that an element with mix-blend-mode other than normal forces the used value of transform-style to flat, but not the computed value..</p>
+
+<div class="parent box">
+    <div id="transform-style-preserve-3d" class="box child"></div>
+</div>
+
+<div class="parent box" style="transform-style: flat">
+    <div id="transform-style-flat" class="box child"></div>
+</div>
+
+<div class="parent box" style="overflow: hidden; transform-style: flat">
+    <div id="overflow-hidden-with-transform-style-flat" class="box child"></div>
+</div>
+
+<div class="parent box" style="overflow: hidden;">
+    <div id="overflow-hidden-with-transform-style-preserve-3d" class="box child"></div>
+</div>
+
+<script src="../resources/js-test.js"></script>
+<script>
+    function parentNodeTransformStyle(id) {
+        return getComputedStyle(document.getElementById(id).parentNode).transformStyle;
     }
-    window.addEventListener('load', dumpResults, false);
-  </script>
-</head>
-<body>
-<div class="box" id="box1" style="-webkit-transform: translateZ(1px); -webkit-transform-style: preserve-3d"></div>
-<div class="box" id="box2" style="-webkit-transform: translateZ(1px); -webkit-transform-style: preserve-3d; overflow: hidden"></div>
-<pre id="layers">Layer tree goes here in DRT</pre>
-</body>
-</html>
+
+    function getBoundingClientWidth(id) {
+        return document.getElementById(id).getBoundingClientRect().width;
+    }
+
+    shouldBeEqualToString("parentNodeTransformStyle('transform-style-preserve-3d')", "preserve-3d");
+    shouldBeEqualToString("parentNodeTransformStyle('transform-style-flat')", "flat");
+    shouldBeEqualToString("parentNodeTransformStyle('overflow-hidden-with-transform-style-preserve-3d')", "preserve-3d");
+    shouldBeEqualToString("parentNodeTransformStyle('overflow-hidden-with-transform-style-flat')", "flat");
+
+    shouldNotBe("getBoundingClientWidth('transform-style-preserve-3d')", "getBoundingClientWidth('transform-style-flat')");
+    shouldBe("getBoundingClientWidth('overflow-hidden-with-transform-style-flat')", "getBoundingClientWidth('transform-style-flat')");
+    shouldBe("getBoundingClientWidth('overflow-hidden-with-transform-style-preserve-3d')", "getBoundingClientWidth('transform-style-flat')");
+</script>

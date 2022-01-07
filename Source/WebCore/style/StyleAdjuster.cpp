@@ -500,19 +500,21 @@ void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearance
     if (style.hasPseudoStyle(PseudoId::FirstLetter))
         style.setUnique();
 
-    if (style.preserves3D() && (style.overflowX() != Overflow::Visible
-        || style.hasOpacity()
-        || style.overflowY() != Overflow::Visible
-        || style.hasClip()
-        || style.clipPath()
-        || style.hasFilter()
-        || style.hasIsolation()
-        || style.hasMask()
+    if (style.preserves3D()) {
+        bool forceToFlat = style.overflowX() != Overflow::Visible
+            || style.hasOpacity()
+            || style.overflowY() != Overflow::Visible
+            || style.hasClip()
+            || style.clipPath()
+            || style.hasFilter()
+            || style.hasIsolation()
+            || style.hasMask()
 #if ENABLE(FILTERS_LEVEL_2)
-        || style.hasBackdropFilter()
+            || style.hasBackdropFilter()
 #endif
-        || style.hasBlendMode()))
-        style.setTransformStyle3D(TransformStyle3D::Flat);
+            || style.hasBlendMode();
+        style.setTransformStyleForcedToFlat(forceToFlat);
+    }
 
     if (is<SVGElement>(m_element))
         adjustSVGElementStyle(style, downcast<SVGElement>(*m_element));

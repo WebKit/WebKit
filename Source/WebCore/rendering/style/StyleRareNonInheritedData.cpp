@@ -86,6 +86,7 @@ StyleRareNonInheritedData::StyleRareNonInheritedData()
     , touchActions(RenderStyle::initialTouchActions())
     , pageSizeType(PAGE_SIZE_AUTO)
     , transformStyle3D(static_cast<unsigned>(RenderStyle::initialTransformStyle3D()))
+    , transformStyleForcedToFlat(false)
     , backfaceVisibility(static_cast<unsigned>(RenderStyle::initialBackfaceVisibility()))
     , userDrag(static_cast<unsigned>(RenderStyle::initialUserDrag()))
     , textOverflow(static_cast<unsigned>(RenderStyle::initialTextOverflow()))
@@ -188,6 +189,7 @@ inline StyleRareNonInheritedData::StyleRareNonInheritedData(const StyleRareNonIn
     , touchActions(o.touchActions)
     , pageSizeType(o.pageSizeType)
     , transformStyle3D(o.transformStyle3D)
+    , transformStyleForcedToFlat(o.transformStyleForcedToFlat)
     , backfaceVisibility(o.backfaceVisibility)
     , userDrag(o.userDrag)
     , textOverflow(o.textOverflow)
@@ -293,6 +295,7 @@ bool StyleRareNonInheritedData::operator==(const StyleRareNonInheritedData& o) c
             || (!customPaintWatchedProperties && !o.customPaintWatchedProperties))
         && pageSizeType == o.pageSizeType
         && transformStyle3D == o.transformStyle3D
+        && transformStyleForcedToFlat == o.transformStyleForcedToFlat
         && backfaceVisibility == o.backfaceVisibility
         && userDrag == o.userDrag
         && textOverflow == o.textOverflow

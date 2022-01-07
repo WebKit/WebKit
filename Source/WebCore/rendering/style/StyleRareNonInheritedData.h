@@ -197,6 +197,7 @@ public:
 
     unsigned pageSizeType : 2; // PageSizeType
     unsigned transformStyle3D : 2; // TransformStyle3D
+    unsigned transformStyleForcedToFlat : 1; // The used value for transform-style is forced to flat by a grouping property.
     unsigned backfaceVisibility : 1; // BackfaceVisibility
 
     unsigned userDrag : 2; // UserDrag

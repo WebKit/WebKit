@@ -674,8 +674,9 @@ public:
     LengthPoint objectPosition() const { return m_rareNonInheritedData->objectPosition; }
 
     // Return true if any transform related property (currently transform, translate, scale, rotate, transformStyle3D or perspective)
-    // indicates that we are transforming.
-    bool hasTransformRelatedProperty() const { return hasTransform() || translate() || scale() || rotate() || preserves3D() || hasPerspective(); }
+    // indicates that we are transforming. The usedTransformStyle3D is not used here because in many cases (such as for deciding
+    // whether or not to establish a containing block), the computed value is what matters.
+    bool hasTransformRelatedProperty() const { return hasTransform() || translate() || scale() || rotate() || transformStyle3D() == TransformStyle3D::Preserve3D || hasPerspective(); }
 
     enum class TransformOperationOption : uint8_t {
         TransformOrigin = 1 << 0,
@@ -721,7 +722,8 @@ public:
     bool hasTransitions() const { return m_rareNonInheritedData->transitions && m_rareNonInheritedData->transitions->size() > 0; }
 
     TransformStyle3D transformStyle3D() const { return static_cast<TransformStyle3D>(m_rareNonInheritedData->transformStyle3D); }
-    bool preserves3D() const { return transformStyle3D() == TransformStyle3D::Preserve3D; }
+    TransformStyle3D usedTransformStyle3D() const { return static_cast<bool>(m_rareNonInheritedData->transformStyleForcedToFlat) ? TransformStyle3D::Flat : transformStyle3D(); }
+    bool preserves3D() const { return usedTransformStyle3D() == TransformStyle3D::Preserve3D; }
 
     BackfaceVisibility backfaceVisibility() const { return static_cast<BackfaceVisibility>(m_rareNonInheritedData->backfaceVisibility); }
     float perspective() const { return m_rareNonInheritedData->perspective; }
@@ -1294,6 +1296,7 @@ public:
     void adjustTransitions();
 
     void setTransformStyle3D(TransformStyle3D b) { SET_VAR(m_rareNonInheritedData, transformStyle3D, static_cast<unsigned>(b)); }
+    void setTransformStyleForcedToFlat(bool b) { SET_VAR(m_rareNonInheritedData, transformStyleForcedToFlat, static_cast<unsigned>(b)); }
     void setBackfaceVisibility(BackfaceVisibility b) { SET_VAR(m_rareNonInheritedData, backfaceVisibility, static_cast<unsigned>(b)); }
     void setPerspective(float p) { SET_VAR(m_rareNonInheritedData, perspective, p); }
     void setPerspectiveOriginX(Length&& length) { SET_VAR(m_rareNonInheritedData, perspectiveOriginX, WTFMove(length)); }

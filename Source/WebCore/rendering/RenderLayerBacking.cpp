@@ -1323,7 +1323,7 @@ void RenderLayerBacking::updateGeometry(const RenderLayer* compositedAncestor)
     auto primaryLayerPosition = primaryGraphicsLayerRect.location();
 
     // FIXME: reflections should force transform-style to be flat in the style: https://bugs.webkit.org/show_bug.cgi?id=106959
-    bool preserves3D = style.transformStyle3D() == TransformStyle3D::Preserve3D && !renderer().hasReflection();
+    bool preserves3D = style.preserves3D() && !renderer().hasReflection();
     if (m_contentsContainmentLayer) {
         m_contentsContainmentLayer->setPreserves3D(preserves3D);
         m_contentsContainmentLayer->setPosition(primaryLayerPosition);
@@ -1347,7 +1347,7 @@ void RenderLayerBacking::updateGeometry(const RenderLayer* compositedAncestor)
 
 #if ENABLE(CSS_TRANSFORM_STYLE_OPTIMIZED_3D)
     // FIXME: Take ancestry into account and remove unnecessary structural layers.
-    m_graphicsLayer->setIsSeparated(style.transformStyle3D() == TransformStyle3D::Optimized3D);
+    m_graphicsLayer->setIsSeparated(style.usedTransformStyle3D() == TransformStyle3D::Optimized3D);
 #endif
 
     // Compute renderer offset from primary graphics layer. Note that primaryGraphicsLayerRect is in parentGraphicsLayer's coordinate system which is not necessarily

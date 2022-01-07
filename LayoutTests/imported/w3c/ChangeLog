@@ -1,3 +1,13 @@
+2022-01-07  Martin Robinson  <mrobinson@webkit.org>
+
+        When transform-style: preserve-3d is used with a grouping property it should still create a containing block
+        https://bugs.webkit.org/show_bug.cgi?id=234145
+        <rdar://problem/86630387>
+
+        Reviewed by Simon Fraser.
+
+        * web-platform-tests/css/css-transforms/preserve-3d-flat-grouping-properties-containing-block-expected.txt:
+
 2022-01-06  Tim Nguyen  <ntim@apple.com>
 
         Unprefix -webkit-print-color-adjust CSS property

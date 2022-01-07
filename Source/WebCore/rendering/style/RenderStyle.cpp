@@ -1185,7 +1185,7 @@ bool RenderStyle::changeRequiresRecompositeLayer(const RenderStyle& other, Optio
         return true;
 
     if (m_rareNonInheritedData.ptr() != other.m_rareNonInheritedData.ptr()) {
-        if (m_rareNonInheritedData->transformStyle3D != other.m_rareNonInheritedData->transformStyle3D
+        if (usedTransformStyle3D() != other.usedTransformStyle3D()
             || m_rareNonInheritedData->backfaceVisibility != other.m_rareNonInheritedData->backfaceVisibility
             || m_rareNonInheritedData->perspective != other.m_rareNonInheritedData->perspective
             || m_rareNonInheritedData->perspectiveOriginX != other.m_rareNonInheritedData->perspectiveOriginX
