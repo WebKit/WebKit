@@ -1951,26 +1951,34 @@ bool RenderBlockFlow::containsFloat(RenderBox& renderer) const
 
 bool RenderBlockFlow::subtreeContainsFloat(RenderBox& renderer) const
 {
-    bool contains = m_floatingObjects && m_floatingObjects->set().contains<FloatingObjectHashTranslator>(renderer);
-    for (auto& block : childrenOfType<RenderBlock>(*this)) {
+    if (containsFloat(renderer))
+        return true;
+
+    for (auto& block : descendantsOfType<RenderBlock>(const_cast<RenderBlockFlow&>(*this))) {
         if (!is<RenderBlockFlow>(block))
             continue;
         auto& blockFlow = downcast<RenderBlockFlow>(block);
-        contains |= blockFlow.subtreeContainsFloat(renderer);
+        if (blockFlow.containsFloat(renderer))
+            return true;
     }
-    return contains;
+
+    return false;
 }
 
 bool RenderBlockFlow::subtreeContainsFloats() const
 {
-    bool contains = m_floatingObjects && !m_floatingObjects->set().isEmpty();
-    for (auto& block : childrenOfType<RenderBlock>(*this)) {
+    if (containsFloats())
+        return true;
+
+    for (auto& block : descendantsOfType<RenderBlock>(const_cast<RenderBlockFlow&>(*this))) {
         if (!is<RenderBlockFlow>(block))
             continue;
         auto& blockFlow = downcast<RenderBlockFlow>(block);
-        contains |= blockFlow.subtreeContainsFloats();
+        if (blockFlow.containsFloats())
+            return true;
     }
-    return contains;
+
+    return false;
 }
 
 void RenderBlockFlow::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
