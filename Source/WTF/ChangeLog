@@ -1,3 +1,18 @@
+2022-01-07  Tim Horton  <timothy_horton@apple.com>
+
+        Adopt linkedOnOrAfter() in more places
+        https://bugs.webkit.org/show_bug.cgi?id=234951
+
+        Reviewed by Wenson Hsieh.
+
+        * wtf/cocoa/LanguageCocoa.mm:
+        (WTF::canMinimizeLanguages):
+        Adopt linkedOnOrAfter and simplify.
+
+        * wtf/cocoa/RuntimeApplicationChecksCocoa.h:
+        The weird mismatch between the iOS and macOS values for FirstVersionThatSupportsInitConstructors
+        is correct; the iOS version was bumped in r202670.
+
 2022-01-07  Alex Christensen  <achristensen@webkit.org>
 
         Unreviewed, reverting r287698.

@@ -1,3 +1,22 @@
+2022-01-07  Tim Horton  <timothy_horton@apple.com>
+
+        Adopt linkedOnOrAfter() in more places
+        https://bugs.webkit.org/show_bug.cgi?id=234951
+
+        Reviewed by Wenson Hsieh.
+
+        * API/JSWrapperMap.mm:
+        (supportsInitMethodConstructors):
+        * API/tests/testapi.cpp:
+        (TestAPI::promiseDrainDoesNotEatExceptions):
+        * API/tests/testapi.mm:
+        (testMicrotaskWithFunction):
+        * runtime/JSLock.cpp:
+        (JSC::JSLock::willReleaseLock):
+        * runtime/ObjectPrototype.cpp:
+        (JSC::isPokerBros):
+        Adopt linkedOnOrAfter.
+
 2022-01-07  Alex Christensen  <achristensen@webkit.org>
 
         Unreviewed, reverting r287698.

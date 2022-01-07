@@ -317,7 +317,7 @@ inline static bool isPokerBros()
     auto bundleID = CFBundleGetIdentifier(CFBundleGetMainBundle());
     return bundleID
         && CFEqual(bundleID, CFSTR("com.kpgame.PokerBros"))
-        && applicationSDKVersion() < DYLD_IOS_VERSION_14_0;
+        && !linkedOnOrAfter(SDKVersion::FirstWithoutPokerBrosBuiltInTagQuirk);
 }
 #endif
 

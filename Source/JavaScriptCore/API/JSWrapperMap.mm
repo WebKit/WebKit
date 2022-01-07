@@ -50,11 +50,6 @@
 #if PLATFORM(APPLETV)
 #else
 static constexpr int32_t firstJavaScriptCoreVersionWithInitConstructorSupport = 0x21A0400; // 538.4.0
-#if PLATFORM(IOS_FAMILY)
-static constexpr uint32_t firstSDKVersionWithInitConstructorSupport = DYLD_IOS_VERSION_10_0;
-#elif PLATFORM(MAC)
-static constexpr uint32_t firstSDKVersionWithInitConstructorSupport = 0xA0A00; // OSX 10.10.0
-#endif
 #endif
 
 @class JSObjCClassInfo;
@@ -702,21 +697,17 @@ bool supportsInitMethodConstructors()
     // There are no old clients on Apple TV, so there's no need for backwards compatibility.
     return true;
 #else
-    // First check to see the version of JavaScriptCore we directly linked against.
-    static int32_t versionOfLinkTimeJavaScriptCore = 0;
-    if (!versionOfLinkTimeJavaScriptCore)
-        versionOfLinkTimeJavaScriptCore = NSVersionOfLinkTimeLibrary("JavaScriptCore");
-    // Only do the link time version comparison if we linked directly with JavaScriptCore
-    if (versionOfLinkTimeJavaScriptCore != -1)
-        return versionOfLinkTimeJavaScriptCore >= firstJavaScriptCoreVersionWithInitConstructorSupport;
+    static const bool supportsInitMethodConstructors = []() -> bool {
+        // First check to see the version of JavaScriptCore we directly linked against.
+        int32_t versionOfLinkTimeJavaScriptCore = NSVersionOfLinkTimeLibrary("JavaScriptCore");
 
-    // If we didn't link directly with JavaScriptCore,
-    // base our check on what SDK was used to build the application.
-    static uint32_t programSDKVersion = 0;
-    if (!programSDKVersion)
-        programSDKVersion = applicationSDKVersion();
+        // Only do the link time version comparison if we linked directly with JavaScriptCore
+        if (versionOfLinkTimeJavaScriptCore != -1)
+            return versionOfLinkTimeJavaScriptCore >= firstJavaScriptCoreVersionWithInitConstructorSupport;
 
-    return programSDKVersion >= firstSDKVersionWithInitConstructorSupport;
+        return linkedOnOrAfter(SDKVersion::FirstVersionThatSupportsInitConstructors);
+    }();
+    return supportsInitMethodConstructors;
 #endif
 }
 
