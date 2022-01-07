@@ -1,0 +1,16 @@
+This test makes sure that AccessibilityNodeObjects are properly detached when the node they point to is deleted.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Button role: AXRole: AXButton
+Button role after being detached: AXRole: AXInvalid
+PASS buttonRole != detachedRole is true
+Canvas button role: AXRole: AXButton
+PASS canvasButtonRole is buttonRole
+Canvas button role after being detached: AXRole: AXInvalid
+PASS detachedCanvasButtonRole is detachedRole
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
