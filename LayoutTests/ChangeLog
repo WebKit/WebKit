@@ -1,3 +1,10 @@
+2022-01-07  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, rebaseline imported/w3c/web-platform-tests/html/dom/idlharness.https.html properly on iOS platforms.
+
+        * platform/ios-wk2/imported/w3c/web-platform-tests/html/dom/idlharness.https-expected.txt:
+        * platform/ipad/imported/w3c/web-platform-tests/html/dom/idlharness.https-expected.txt:
+
 2022-01-07  Alan Bujtas  <zalan@apple.com>
 
         Inline blocks that contain text with min-width, box-sizing: border-box incorrectly include the border in width calculation
