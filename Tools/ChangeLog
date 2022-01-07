@@ -1,3 +1,41 @@
+2022-01-07  David Kilzer  <ddkilzer@apple.com>
+
+        check-webkit-style: add checker for unexpected fall through after ASSERT_NOT_REACHED() statements
+        <https://webkit.org/b/234932>
+        <rdar://87213520>
+
+        Reviewed by Brent Fulgham.
+
+        This checker only returns a confidence level of 4 (out of 5)
+        since there are too many different code patterns to check them
+        all perfectly using regular expressions.
+
+        Run new checker tests like this:
+        $ test-webkitpy webkitpy.style.checkers.cpp_unittest.CppStyleTest.test_debug_not_reached_assertion
+
+        Run this checker against a file or folder like this:
+        $ check-webkit-style --filter "-,+security/assertion_fallthrough" (file|folder)
+
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        (SingleLineView.__init__):
+        - Expose `trimmed_lines` as a property on SingleLineView.
+        (_FunctionState.body_view): Add.
+        - Add method to return a SingleLineView object containing the
+          body of the function.
+        (check_function_body): Add.
+        - New function to check for fall through after
+          ASSERT_NOT_REACHED() statements.
+        (process_line):
+        - Call check_function_body() to implement the new check.
+        (CppChecker.categories):
+        - Add 'security/assertion_fallthrough' to the list of known
+          checkers.
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py:
+        (CppStyleTestBase.perform_function_body_check): Add.
+        - Add method to call check_function_body() for testing.
+        (CppStyleTest.test_debug_not_reached_assertion): Add.
+        - Add tests for the new checker.
+
 2022-01-07  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Teach modal container observer to make the body element scrollable if necessary

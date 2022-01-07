@@ -338,6 +338,22 @@ class CppStyleTestBase(unittest.TestCase):
                                             error_collector)
         self.assertEqual(error_collector.results(), expected_warning)
 
+    def perform_function_body_check(self, file_name, lines, expected_warning):
+        file_extension = file_name.split('.')[1]
+        clean_lines = cpp_style.CleansedLines(lines.splitlines())
+        function_state = cpp_style._FunctionState(5)
+        error_collector = ErrorCollector(self.assertTrue)
+
+        for i in range(clean_lines.num_lines()):
+            cpp_style.detect_functions(clean_lines, i, function_state, error_collector)
+        self.assertEqual(function_state.in_a_function, True)
+        self.assertEqual(error_collector.results(), '')
+
+        class_state = cpp_style._ClassState()
+        cpp_style.check_function_body(file_name, file_extension, clean_lines, clean_lines.num_lines() - 1, class_state,
+                                      function_state, error_collector)
+        self.assertEqual(error_collector.results(), expected_warning)
+
     # Perform lint and compare the error message with "expected_message".
     def assert_lint(self, code, expected_message, file_name='foo.cpp'):
         self.assertEqual(expected_message, self.perform_single_line_lint(code, file_name))
@@ -1623,6 +1639,220 @@ class CppStyleTest(CppStyleTestBase):
                          'instead of strtok(...)'
                          ' for improved thread safety.'
                          '  [runtime/threadsafe_fn] [2]')
+
+    def test_debug_not_reached_assertion(self):
+        self.perform_function_body_check(
+            'foo.cpp',
+            'void f()\n'
+            '{\n'
+            '    if (auto createdHandle = SandboxExtension::createHandle(URL.fileSystemPath(), SandboxExtension::Type::ReadWrite))\n'
+            '        handle = WTFMove(*createdHandle);\n'
+            '    else\n'
+            '        ASSERT_NOT_REACHED();\n\n'
+            '    m_dataStore->networkProcess().send(Messages::NetworkProcess::PublishDownloadProgress(m_downloadID, URL, handle), 0);]\n'
+            '}',
+            'ASSERT_NOT_REACHED() statement fallthrough may result in unexpected code execution.'
+            '  [security/assertion_fallthrough] [4]')
+
+        self.perform_function_body_check(
+            'foo.cpp',
+            'void f()\n'
+            '{\n'
+            '    if (auto createdHandle = SandboxExtension::createHandle(URL.fileSystemPath(), SandboxExtension::Type::ReadWrite))\n'
+            '        handle = WTFMove(*createdHandle);\n'
+            '    else\n'
+            '        RELEASE_ASSERT_NOT_REACHED();\n\n'
+            '    m_dataStore->networkProcess().send(Messages::NetworkProcess::PublishDownloadProgress(m_downloadID, URL, handle), 0);]\n'
+            '}',
+            '')
+
+        self.perform_function_body_check(
+            'foo.cpp',
+            'void f()\n'
+            '{\n'
+            '    for (int i = 0; i < 10; ++i) {'
+            '        if (i % 2 == 0) {'
+            '            ASSERT_NOT_REACHED();\n'
+            '            continue;\n'
+            '        }\n'
+            '    }\n'
+            '}',
+            '')
+
+        self.perform_function_body_check(
+            'foo.cpp',
+            'void f(int i)\n'
+            '{\n'
+            '    if (i % 2 == 0) {'
+            '        ASSERT_NOT_REACHED();\n'
+            '        return;\n'
+            '    }\n'
+            '}',
+            '')
+
+        self.perform_function_body_check(
+            'foo.cpp',
+            'void f(int i)\n'
+            '{\n'
+            '    if (i % 2 == 0) {'
+            '        ASSERT_NOT_REACHED();\n'
+            '        completionHandler(nullptr);\n'
+            '        return;\n'
+            '    }\n'
+            '}',
+            '')
+
+        self.perform_function_body_check(
+            'foo.cpp',
+            'void f(int i)\n'
+            '{\n'
+            '    if (i % 2 == 0) {'
+            '        ASSERT_NOT_REACHED();\n'
+            '        failureBlock(nullptr);\n'
+            '        return;\n'
+            '    }\n'
+            '}',
+            '')
+
+        self.perform_function_body_check(
+            'foo.cpp',
+            'void f()\n'
+            '{\n'
+            '    ASSERT_NOT_REACHED();\n'
+            '    completionHandler(nullString());\n'
+            '}',
+            '')
+
+        self.perform_function_body_check(
+            'foo.cpp',
+            'void f(int i)\n'
+            '{\n'
+            '    if (i % 2 == 0) {\n'
+            '        ASSERT_NOT_REACHED();\n'
+            '        completionHandler(nullString());\n'
+            '    }\n'
+            '}',
+            '')
+
+        self.perform_function_body_check(
+            'foo.cpp',
+            'void f(int i)\n'
+            '{\n'
+            '    switch (i) {'
+            '    case 0:'
+            '        ASSERT_NOT_REACHED();\n'
+            '    }\n'
+            '    g();\n'
+            '}',
+            'ASSERT_NOT_REACHED() statement fallthrough may result in unexpected code execution.'
+            '  [security/assertion_fallthrough] [4]')
+
+        self.perform_function_body_check(
+            'foo.cpp',
+            'void f(int i)\n'
+            '{\n'
+            '    switch (i) {'
+            '    default:'
+            '        ASSERT_NOT_REACHED();\n'
+            '    }\n'
+            '    g();\n'
+            '}',
+            'ASSERT_NOT_REACHED() statement fallthrough may result in unexpected code execution.'
+            '  [security/assertion_fallthrough] [4]')
+
+        self.perform_function_body_check(
+            'foo.cpp',
+            'void f(int i)\n'
+            '{\n'
+            '    if (!i) {'
+            '        g();'
+            '    } else {'
+            '        ASSERT_NOT_REACHED();\n'
+            '    }\n'
+            '}',
+            '')
+
+        self.perform_function_body_check(
+            'foo.cpp',
+            'void f(int i)\n'
+            '{\n'
+            '    switch (i) {'
+            '    case 0:'
+            '        ASSERT_NOT_REACHED();\n'
+            '        break;\n'
+            '    }\n'
+            '}',
+            '')
+
+        self.perform_function_body_check(
+            'foo.cpp',
+            'void f(int i)\n'
+            '{\n'
+            '    switch (i) {'
+            '    default:'
+            '        ASSERT_NOT_REACHED();\n'
+            '        break;\n'
+            '    }\n'
+            '}',
+            '')
+
+        self.perform_function_body_check(
+            'foo.cpp',
+            'void f(int i)\n'
+            '{\n'
+            '    switch (i) {'
+            '    case 0:'
+            '        ASSERT_NOT_REACHED();\n'
+            '        m_completionHandler();\n'
+            '        break;\n'
+            '    }\n'
+            '}',
+            '')
+
+        self.perform_function_body_check(
+            'foo.cpp',
+            'void f(int i)\n'
+            '{\n'
+            '    switch (i) {'
+            '    default:'
+            '        ASSERT_NOT_REACHED();\n'
+            '        m_completionHandler();\n'
+            '        break;\n'
+            '    }\n'
+            '}',
+            '')
+
+        self.perform_function_body_check(
+            'foo.cpp',
+            'void f()\n'
+            '{\n'
+            '#if PLATFORM(COCOA)\n'
+            '    pageClient().clearTextIndicator(WebCore::TextIndicatorDismissalAnimation::FadeOut);\n'
+            '#else\n'
+            '    ASSERT_NOT_REACHED();\n'
+            '#endif\n'
+            '}',
+            '')
+
+        self.perform_function_body_check(
+            'foo.cpp',
+            'int f()\n'
+            '{\n'
+            '    ASSERT_NOT_REACHED();\n'
+            '    *errorCode = U_UNSUPPORTED_ERROR;\n'
+            '    return 0;\n'
+            '}',
+            '')
+
+        self.perform_function_body_check(
+            'foo.h',
+            'void f() { ASSERT_NOT_REACHED(); }',
+            '')
+        self.perform_function_body_check(
+            'foo.h',
+            'void* f() { ASSERT_NOT_REACHED(); return nullptr; }',
+            '')
+
 
     def test_debug_security_assertion(self):
         self.assert_lint(

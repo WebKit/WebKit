@@ -438,21 +438,21 @@ class SingleLineView(object):
           end_position: just after where to end (like a slice operation).
         """
         # Get the rows of interest.
-        trimmed_lines = lines[start_position.row:end_position.row + 1]
+        self.trimmed_lines = lines[start_position.row:end_position.row + 1]
 
         # Remove the columns on the last line that aren't included.
-        trimmed_lines[-1] = trimmed_lines[-1][:end_position.column]
+        self.trimmed_lines[-1] = self.trimmed_lines[-1][:end_position.column]
 
         # Remove the columns on the first line that aren't included.
-        trimmed_lines[0] = trimmed_lines[0][start_position.column:]
+        self.trimmed_lines[0] = self.trimmed_lines[0][start_position.column:]
 
         # Create a single line with all of the parameters.
-        self.single_line = ' '.join(trimmed_lines)
+        self.single_line = ' '.join(self.trimmed_lines)
 
         # Keep the row lengths, so we can calculate the original row number
         # given a column in the single line (adding 1 due to the space added
         # during the join).
-        self._row_lengths = [len(line) + 1 for line in trimmed_lines]
+        self._row_lengths = [len(line) + 1 for line in self.trimmed_lines]
         self._starting_row = start_position.row
 
     def convert_column_to_row(self, single_line_column_number):
@@ -599,6 +599,11 @@ class _FunctionState(object):
         """Returns the modifiers after the function declaration such as attributes."""
         elided = self._clean_lines.elided
         return SingleLineView(elided, self.parameter_end_position, self.body_start_position).single_line.strip()
+
+    def body_view(self):
+        """Returns the function body."""
+        elided = self._clean_lines.elided
+        return SingleLineView(elided, self.body_start_position, self.end_position)
 
     def attributes_after_definition(self, attribute_regex):
         return re.findall(attribute_regex, self.post_modifiers())
@@ -2042,6 +2047,44 @@ def check_function_definition(filename, file_extension, clean_lines, line_number
         if not match(path, _unix_path(filename)):
             error(line_number, 'build/export_macro', 5,
                   '%s should only appear in directories matching %s.' % (export_macro, path))
+
+
+def check_function_body(filename, file_extension, clean_lines, line_number, class_state, function_state, error):
+    """Check function bodies for style issues.
+
+    Args:
+       filename: Filename of the file that is being processed.
+       file_extension: The current file extension, without the leading dot.
+       clean_lines: A CleansedLines instance containing the file.
+       line_number: The number of the line to check.
+       function_state: Current function name and lines in body so far.
+       error: The function to call with any errors found.
+    """
+    if line_number != function_state.end_position.row:  # last line
+        return
+
+    function_body_view = function_state.body_view()
+    function_line_count = len(function_body_view.trimmed_lines)
+
+    # Check for uncontrolled fall-through after ASSERT_NOT_REACHED() statement.
+    for i in range(0, function_line_count):
+        current_line = function_body_view.trimmed_lines[i]
+        if not re.search(r'[^_]ASSERT_NOT_REACHED\(\);', current_line):
+            continue
+
+        min_index = max(0, i - 1)
+        max_index = min(function_line_count, i + 4)
+        partial_function_body = ' '.join(function_body_view.trimmed_lines[min_index:max_index])
+
+        if search(r'[^_]ASSERT_NOT_REACHED\(\);\s*(continue|return(\s+[^;]+)?);', partial_function_body) \
+                or search(r'[^_]ASSERT_NOT_REACHED\(\);(\s*#endif)?(\s*})+\s*$', partial_function_body) \
+                or search(r'[^_]ASSERT_NOT_REACHED\(\);(\s*completionHandler[^;]+;)?(\s*})+\s*$', partial_function_body) \
+                or search(r'[^_]ASSERT_NOT_REACHED\(\);(\s*[^;]+;)?\s*return(\s+[^;]+)?;', partial_function_body) \
+                or search(r'(default|case\s+.+):\s*[^_]ASSERT_NOT_REACHED\(\);(\s*[^;]+;)*\s*break;', partial_function_body):
+            continue
+
+        error(line_number - (function_line_count - (i + 1)), 'security/assertion_fallthrough', 4,
+              'ASSERT_NOT_REACHED() statement fallthrough may result in unexpected code execution.')
 
 
 def check_for_leaky_patterns(clean_lines, line_number, function_state, error):
@@ -4496,6 +4539,7 @@ def process_line(filename, file_extension,
     if asm_state.is_in_asm():  # Ignore further checks because asm blocks formatted differently.
         return
     check_function_definition(filename, file_extension, clean_lines, line, class_state, function_state, error)
+    check_function_body(filename, file_extension, clean_lines, line, class_state, function_state, error)
     check_for_leaky_patterns(clean_lines, line, function_state, error)
     check_for_multiline_comments_and_strings(clean_lines, line, error)
     check_style(clean_lines, line, file_extension, class_state, file_state, enum_state, error)
@@ -4655,6 +4699,7 @@ class CppChecker(object):
         'runtime/wtf_move',
         'runtime/wtf_never_destroyed',
         'security/assertion',
+        'security/assertion_fallthrough',
         'security/javascriptcore_wtf_blockptr',
         'security/missing_warn_unused_return',
         'security/printf',
