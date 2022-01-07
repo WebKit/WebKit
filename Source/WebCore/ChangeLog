@@ -1,5 +1,96 @@
 2022-01-07  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r286094. rdar://problem/87125111
+
+    Report the initiating url instead of the redirected one
+    https://bugs.webkit.org/show_bug.cgi?id=233037
+    
+    Patch by Carlos Garcia Campos <cgarcia@igalia.com> on 2021-11-20
+    Reviewed by Brent Fulgham.
+    
+    LayoutTests/imported/w3c:
+    
+    * web-platform-tests/content-security-policy/securitypolicyviolation/img-src-redirect.sub-expected.txt:
+    
+    Source/WebCore:
+    
+    As per the spec, blockedURI should use the requested URL of original request instead of redirected location.
+    
+    * loader/DocumentThreadableLoader.cpp:
+    (WebCore::DocumentThreadableLoader::isAllowedByContentSecurityPolicy):
+    * loader/SubresourceLoader.cpp:
+    (WebCore::SubresourceLoader::willSendRequestInternal):
+    * loader/cache/CachedResourceLoader.cpp:
+    (WebCore::CachedResourceLoader::allowedByContentSecurityPolicy const):
+    (WebCore::CachedResourceLoader::canRequestAfterRedirection const):
+    (WebCore::CachedResourceLoader::updateRequestAfterRedirection):
+    * loader/cache/CachedResourceLoader.h:
+    * page/csp/ContentSecurityPolicy.cpp:
+    (WebCore::ContentSecurityPolicy::allowChildContextFromSource const):
+    (WebCore::ContentSecurityPolicy::allowScriptFromSource const):
+    (WebCore::ContentSecurityPolicy::allowImageFromSource const):
+    (WebCore::ContentSecurityPolicy::allowStyleFromSource const):
+    (WebCore::ContentSecurityPolicy::allowFontFromSource const):
+    (WebCore::ContentSecurityPolicy::allowManifestFromSource const):
+    (WebCore::ContentSecurityPolicy::allowMediaFromSource const):
+    * page/csp/ContentSecurityPolicy.h:
+    
+    Source/WebKit:
+    
+    Pass pre-redirect URL to allowChildContextFromSource() and allowScriptFromSource().
+    
+    * NetworkProcess/NetworkLoadChecker.cpp:
+    (WebKit::NetworkLoadChecker::isAllowedByContentSecurityPolicy):
+    
+    LayoutTests:
+    
+    * TestExpectations: Unskip imported/w3c/web-platform-tests/content-security-policy/securitypolicyviolation/img-src-redirect.sub.html
+    * http/tests/security/contentSecurityPolicy/1.1/child-src/worker-redirect-blocked-expected.txt:
+    * http/tests/security/contentSecurityPolicy/audio-redirect-blocked-expected.txt:
+    * http/tests/security/contentSecurityPolicy/font-redirect-blocked-expected.txt:
+    * http/tests/security/contentSecurityPolicy/image-redirect-blocked-expected.txt:
+    * http/tests/security/contentSecurityPolicy/script-redirect-blocked-expected.txt:
+    * http/tests/security/contentSecurityPolicy/stylesheet-redirect-blocked-expected.txt:
+    * http/tests/security/contentSecurityPolicy/svg-font-redirect-blocked-expected.txt:
+    * http/tests/security/contentSecurityPolicy/svg-image-redirect-blocked-expected.txt:
+    * http/tests/security/contentSecurityPolicy/track-redirect-blocked-expected.txt:
+    * http/tests/security/contentSecurityPolicy/video-redirect-blocked-expected.txt:
+    * http/tests/security/contentSecurityPolicy/worker-blob-inherits-csp-importScripts-redirect-cross-origin-blocked-expected.txt:
+    * http/tests/security/contentSecurityPolicy/worker-csp-importScripts-redirect-cross-origin-blocked-expected.txt:
+    * http/tests/security/contentSecurityPolicy/xsl-redirect-blocked-expected.txt:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@286094 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-11-20  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+            Report the initiating url instead of the redirected one
+            https://bugs.webkit.org/show_bug.cgi?id=233037
+
+            Reviewed by Brent Fulgham.
+
+            As per the spec, blockedURI should use the requested URL of original request instead of redirected location.
+
+            * loader/DocumentThreadableLoader.cpp:
+            (WebCore::DocumentThreadableLoader::isAllowedByContentSecurityPolicy):
+            * loader/SubresourceLoader.cpp:
+            (WebCore::SubresourceLoader::willSendRequestInternal):
+            * loader/cache/CachedResourceLoader.cpp:
+            (WebCore::CachedResourceLoader::allowedByContentSecurityPolicy const):
+            (WebCore::CachedResourceLoader::canRequestAfterRedirection const):
+            (WebCore::CachedResourceLoader::updateRequestAfterRedirection):
+            * loader/cache/CachedResourceLoader.h:
+            * page/csp/ContentSecurityPolicy.cpp:
+            (WebCore::ContentSecurityPolicy::allowChildContextFromSource const):
+            (WebCore::ContentSecurityPolicy::allowScriptFromSource const):
+            (WebCore::ContentSecurityPolicy::allowImageFromSource const):
+            (WebCore::ContentSecurityPolicy::allowStyleFromSource const):
+            (WebCore::ContentSecurityPolicy::allowFontFromSource const):
+            (WebCore::ContentSecurityPolicy::allowManifestFromSource const):
+            (WebCore::ContentSecurityPolicy::allowMediaFromSource const):
+            * page/csp/ContentSecurityPolicy.h:
+
+2022-01-07  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r287604. rdar://problem/85966622
 
     Protect frame from destruction in HTMLMediaElement::setupAndCallJS
