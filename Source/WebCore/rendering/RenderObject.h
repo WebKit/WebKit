@@ -538,7 +538,7 @@ public:
 
     // Returns the containing block level element for this element.
     WEBCORE_EXPORT RenderBlock* containingBlock() const;
-    RenderBlock* containingBlockForObjectInFlow() const;
+    static RenderBlock* containingBlockForPositionType(PositionType, const RenderObject&);
 
     // Convert the given local point to absolute coordinates. If OptionSet<MapCoordinatesMode> includes UseTransforms, take transforms into account.
     WEBCORE_EXPORT FloatPoint localToAbsolute(const FloatPoint& localPoint = FloatPoint(), OptionSet<MapCoordinatesMode> = { }, bool* wasFixed = nullptr) const;

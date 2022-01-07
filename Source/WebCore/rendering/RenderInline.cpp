@@ -159,7 +159,7 @@ void RenderInline::styleWillChange(StyleDifference diff, const RenderStyle& newS
     // RenderInlines forward their absolute positioned descendants to their (non-anonymous) containing block.
     // Check if this non-anonymous containing block can hold the absolute positioned elements when the inline is no longer positioned.
     if (canContainAbsolutelyPositionedObjects() && newStyle.position() == PositionType::Static) {
-        auto* container = containingBlockForAbsolutePosition();
+        auto* container = RenderObject::containingBlockForPositionType(PositionType::Absolute, *this);
         if (container && !container->canContainAbsolutelyPositionedObjects())
             container->removePositionedObjects(nullptr, NewContainingBlock);
     }

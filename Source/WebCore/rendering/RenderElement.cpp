@@ -634,35 +634,6 @@ RenderPtr<RenderObject> RenderElement::detachRendererInternal(RenderObject& rend
     return RenderPtr<RenderObject>(&renderer);
 }
 
-static inline RenderBlock* nearestNonAnonymousContainingBlockIncludingSelf(RenderElement* renderer)
-{
-    while (renderer && (!is<RenderBlock>(*renderer) || renderer->isAnonymousBlock()))
-        renderer = renderer->containingBlock();
-    return downcast<RenderBlock>(renderer);
-}
-
-RenderBlock* RenderElement::containingBlockForFixedPosition() const
-{
-    auto* ancestor = parent();
-    while (ancestor && !ancestor->canContainFixedPositionObjects())
-        ancestor = ancestor->parent();
-    return nearestNonAnonymousContainingBlockIncludingSelf(ancestor);
-}
-
-RenderBlock* RenderElement::containingBlockForAbsolutePosition() const
-{
-    if (is<RenderInline>(*this) && style().position() == PositionType::Relative) {
-        // A relatively positioned RenderInline forwards its absolute positioned descendants to
-        // its nearest non-anonymous containing block (to avoid having positioned objects list in RenderInlines).
-        return nearestNonAnonymousContainingBlockIncludingSelf(parent());
-    }
-    auto* ancestor = parent();
-    while (ancestor && !ancestor->canContainAbsolutelyPositionedObjects())
-        ancestor = ancestor->parent();
-    // Make sure we only return non-anonymous RenderBlock as containing block.
-    return nearestNonAnonymousContainingBlockIncludingSelf(ancestor);
-}
-
 static void addLayers(RenderElement& renderer, RenderLayer* parentLayer, RenderElement*& newObject, RenderLayer*& beforeChild)
 {
     if (renderer.hasLayer()) {

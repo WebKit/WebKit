@@ -656,20 +656,65 @@ void RenderObject::setLayerNeedsFullRepaintForPositionedMovementLayout()
     downcast<RenderLayerModelObject>(*this).layer()->setRepaintStatus(NeedsFullRepaintForPositionedMovementLayout);
 }
 
+static inline RenderBlock* nearestNonAnonymousContainingBlockIncludingSelf(RenderElement* renderer)
+{
+    while (renderer && (!is<RenderBlock>(*renderer) || renderer->isAnonymousBlock()))
+        renderer = renderer->containingBlock();
+    return downcast<RenderBlock>(renderer);
+}
+
+RenderBlock* RenderObject::containingBlockForPositionType(PositionType positionType, const RenderObject& renderer)
+{
+    if (positionType == PositionType::Static || positionType == PositionType::Relative || positionType == PositionType::Sticky) {
+        auto containingBlockForObjectInFlow = [&] {
+            auto* ancestor = renderer.parent();
+            while (ancestor && ((ancestor->isInline() && !ancestor->isReplaced()) || !ancestor->isRenderBlock()))
+                ancestor = ancestor->parent();
+            return downcast<RenderBlock>(ancestor);
+        };
+        return containingBlockForObjectInFlow();
+    }
+
+    if (positionType == PositionType::Absolute) {
+        auto containingBlockForAbsolutePosition = [&] {
+            if (is<RenderInline>(renderer) && renderer.style().position() == PositionType::Relative) {
+                // A relatively positioned RenderInline forwards its absolute positioned descendants to
+                // its nearest non-anonymous containing block (to avoid having positioned objects list in RenderInlines).
+                return nearestNonAnonymousContainingBlockIncludingSelf(renderer.parent());
+            }
+            auto* ancestor = renderer.parent();
+            while (ancestor && !ancestor->canContainAbsolutelyPositionedObjects())
+                ancestor = ancestor->parent();
+            // Make sure we only return non-anonymous RenderBlock as containing block.
+            return nearestNonAnonymousContainingBlockIncludingSelf(ancestor);
+        };
+        return containingBlockForAbsolutePosition();
+    }
+
+    if (positionType == PositionType::Fixed) {
+        auto containingBlockForFixedPosition = [&] {
+            auto* ancestor = renderer.parent();
+            while (ancestor && !ancestor->canContainFixedPositionObjects())
+                ancestor = ancestor->parent();
+            return nearestNonAnonymousContainingBlockIncludingSelf(ancestor);
+        };
+        return containingBlockForFixedPosition();
+    }
+
+    ASSERT_NOT_REACHED();
+    return nullptr;
+}
+
 RenderBlock* RenderObject::containingBlock() const
 {
+    if (is<RenderText>(*this))
+        return containingBlockForPositionType(PositionType::Static, *this);
+
     auto containingBlockForRenderer = [](const auto& renderer) -> RenderBlock* {
         if (isInTopLayerOrBackdrop(renderer.style(), renderer.element()))
             return &renderer.view();
-        if (renderer.isAbsolutelyPositioned())
-            return renderer.containingBlockForAbsolutePosition();
-        if (renderer.isFixedPositioned())
-            return renderer.containingBlockForFixedPosition();
-        return renderer.containingBlockForObjectInFlow();
+        return containingBlockForPositionType(renderer.style().position(), renderer);
     };
-
-    if (is<RenderText>(*this))
-        return containingBlockForObjectInFlow();
 
     if (!parent() && is<RenderScrollbarPart>(*this)) {
         if (auto* scrollbarPart = downcast<RenderScrollbarPart>(*this).rendererOwningScrollbar())
@@ -677,14 +722,6 @@ RenderBlock* RenderObject::containingBlock() const
         return nullptr;
     }
     return containingBlockForRenderer(downcast<RenderElement>(*this));
-}
-
-RenderBlock* RenderObject::containingBlockForObjectInFlow() const
-{
-    auto* renderer = parent();
-    while (renderer && ((renderer->isInline() && !renderer->isReplaced()) || !renderer->isRenderBlock()))
-        renderer = renderer->parent();
-    return downcast<RenderBlock>(renderer);
 }
 
 void RenderObject::addPDFURLRect(PaintInfo& paintInfo, const LayoutPoint& paintOffset)

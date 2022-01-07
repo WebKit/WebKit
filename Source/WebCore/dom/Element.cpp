@@ -1585,7 +1585,7 @@ static bool layoutOverflowRectContainsAllDescendants(const RenderBox& renderBox)
     }
 
     // This renderer may have positioned descendants whose containing block is some ancestor.
-    if (auto* containingBlock = renderBox.containingBlockForAbsolutePosition()) {
+    if (auto* containingBlock = RenderObject::containingBlockForPositionType(PositionType::Absolute, renderBox)) {
         if (auto* positionedObjects = containingBlock->positionedObjects()) {
             for (auto* positionedBox : *positionedObjects) {
                 if (positionedBox == &renderBox)

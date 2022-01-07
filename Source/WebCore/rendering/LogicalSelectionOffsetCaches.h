@@ -89,9 +89,9 @@ public:
         ASSERT(rootBlock.isSelectionRoot());
 #endif
         // LogicalSelectionOffsetCaches should not be used on an orphaned tree.
-        m_containingBlockForFixedPosition.setBlock(rootBlock.containingBlockForFixedPosition(), nullptr);
-        m_containingBlockForAbsolutePosition.setBlock(rootBlock.containingBlockForAbsolutePosition(), nullptr);
-        m_containingBlockForInflowPosition.setBlock(rootBlock.containingBlockForObjectInFlow(), nullptr);
+        m_containingBlockForFixedPosition.setBlock(RenderObject::containingBlockForPositionType(PositionType::Fixed, rootBlock), nullptr);
+        m_containingBlockForAbsolutePosition.setBlock(RenderObject::containingBlockForPositionType(PositionType::Absolute, rootBlock), nullptr);
+        m_containingBlockForInflowPosition.setBlock(RenderObject::containingBlockForPositionType(PositionType::Static, rootBlock), nullptr);
     }
 
     LogicalSelectionOffsetCaches(RenderBlock& block, const LogicalSelectionOffsetCaches& cache)
