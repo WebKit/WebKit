@@ -281,14 +281,13 @@ static const int* checkboxMargins(NSControlSize controlSize)
     return margins[controlSize];
 }
 
-static LengthSize checkboxSize(const FontCascade& font, const LengthSize& zoomedSize, float zoomFactor)
+static LengthSize checkboxSize(const LengthSize& zoomedSize, float zoomFactor)
 {
     // If the width and height are both specified, then we have nothing to do.
     if (!zoomedSize.width.isIntrinsicOrAuto() && !zoomedSize.height.isIntrinsicOrAuto())
         return zoomedSize;
 
-    // Use the font size to determine the intrinsic width of the control.
-    return sizeFromFont(font, zoomedSize, zoomFactor, checkboxSizes());
+    return sizeFromNSControlSize(NSControlSizeSmall, zoomedSize, zoomFactor, checkboxSizes());
 }
 
 // Radio Buttons
@@ -322,14 +321,13 @@ static const int* radioMargins(NSControlSize controlSize)
     return margins[controlSize];
 }
 
-static LengthSize radioSize(const FontCascade& font, const LengthSize& zoomedSize, float zoomFactor)
+static LengthSize radioSize(const LengthSize& zoomedSize, float zoomFactor)
 {
     // If the width and height are both specified, then we have nothing to do.
     if (!zoomedSize.width.isIntrinsicOrAuto() && !zoomedSize.height.isIntrinsicOrAuto())
         return zoomedSize;
 
-    // Use the font size to determine the intrinsic width of the control.
-    return sizeFromFont(font, zoomedSize, zoomFactor, radioSizes());
+    return sizeFromNSControlSize(NSControlSizeSmall, zoomedSize, zoomFactor, radioSizes());
 }
     
 static void configureToggleButton(NSCell* cell, ControlPart buttonType, const ControlStates& states, const IntSize& zoomedSize, float zoomFactor, bool isStateChange)
@@ -822,9 +820,9 @@ LengthSize ThemeMac::controlSize(ControlPart part, const FontCascade& font, cons
 {
     switch (part) {
     case CheckboxPart:
-        return checkboxSize(font, zoomedSize, zoomFactor);
+        return checkboxSize(zoomedSize, zoomFactor);
     case RadioPart:
-        return radioSize(font, zoomedSize, zoomFactor);
+        return radioSize(zoomedSize, zoomFactor);
     case PushButtonPart:
         // Height is reset to auto so that specified heights can be ignored.
         return sizeFromFont(font, { zoomedSize.width, { } }, zoomFactor, buttonSizes());
