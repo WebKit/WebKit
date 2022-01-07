@@ -1,3 +1,14 @@
+2022-01-07  Kate Cheney  <katherine_cheney@apple.com>
+
+        Implement CSP strict-dynamic for module scripts
+        https://bugs.webkit.org/show_bug.cgi?id=234934
+        <rdar://problem/83728374>
+
+        Reviewed by Brent Fulgham.
+
+        * http/tests/security/contentSecurityPolicy/strict-dynamic-module-script-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/strict-dynamic-module-script.html: Added.
+
 2022-01-07  Aditya Keerthi  <akeerthi@apple.com>
 
         Checkboxes on PurpleAir map controls are much smaller in Safari than other browsers

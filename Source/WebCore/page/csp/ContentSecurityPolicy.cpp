@@ -459,13 +459,13 @@ bool ContentSecurityPolicy::shouldPerformEarlyCSPCheck() const
     return false;
 }
 
-bool ContentSecurityPolicy::allowNonParserInsertedScripts(const URL& url, const String& nonce, const StringView& scriptContent, ParserInserted parserInserted) const
+bool ContentSecurityPolicy::allowNonParserInsertedScripts(const URL& url, const OrdinalNumber& contextLine, const String& nonce, const StringView& scriptContent, ParserInserted parserInserted) const
 {
     if (!shouldPerformEarlyCSPCheck())
         return true;
 
     auto handleViolatedDirective = [&] (const ContentSecurityPolicyDirective& violatedDirective) {
-        TextPosition sourcePosition(OrdinalNumber::beforeFirst(), OrdinalNumber());
+        TextPosition sourcePosition(contextLine, OrdinalNumber());
         String consoleMessage = consoleMessageForViolation(ContentSecurityPolicyDirectiveNames::scriptSrc, violatedDirective, url, "Refused to load");
         reportViolation(ContentSecurityPolicyDirectiveNames::scriptSrcElem, violatedDirective, url.string(), consoleMessage, String(), scriptContent, sourcePosition);
     };

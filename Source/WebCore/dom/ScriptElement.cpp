@@ -304,7 +304,7 @@ bool ScriptElement::requestClassicScript(const String& sourceURL)
         m_element.document().willLoadScriptElement(scriptURL);
 
         const auto& contentSecurityPolicy = *m_element.document().contentSecurityPolicy();
-        if (!contentSecurityPolicy.allowNonParserInsertedScripts(scriptURL, m_element.nonce(), String(), m_parserInserted))
+        if (!contentSecurityPolicy.allowNonParserInsertedScripts(scriptURL, m_startLineNumber, m_element.nonce(), String(), m_parserInserted))
             return false;
 
         if (script->load(m_element.document(), scriptURL)) {
@@ -376,6 +376,9 @@ bool ScriptElement::requestModuleScript(const TextPosition& scriptStartPosition)
 
     ASSERT(m_element.document().contentSecurityPolicy());
     const auto& contentSecurityPolicy = *m_element.document().contentSecurityPolicy();
+    if (!contentSecurityPolicy.allowNonParserInsertedScripts(m_element.document().url(), m_startLineNumber, m_element.nonce(), sourceCode.source(), m_parserInserted))
+        return false;
+
     bool hasKnownNonce = contentSecurityPolicy.allowScriptWithNonce(nonce, m_element.isInUserAgentShadowTree());
     if (!contentSecurityPolicy.allowInlineScript(m_element.document().url().string(), m_startLineNumber, sourceCode.source(), m_element, hasKnownNonce))
         return false;
@@ -397,7 +400,7 @@ void ScriptElement::executeClassicScript(const ScriptSourceCode& sourceCode)
     if (!m_isExternalScript) {
         ASSERT(m_element.document().contentSecurityPolicy());
         const ContentSecurityPolicy& contentSecurityPolicy = *m_element.document().contentSecurityPolicy();
-        if (!contentSecurityPolicy.allowNonParserInsertedScripts(m_element.document().url(), m_element.nonce(), sourceCode.source(), m_parserInserted))
+        if (!contentSecurityPolicy.allowNonParserInsertedScripts(m_element.document().url(), m_startLineNumber, m_element.nonce(), sourceCode.source(), m_parserInserted))
             return;
 
         bool hasKnownNonce = contentSecurityPolicy.allowScriptWithNonce(m_element.nonce(), m_element.isInUserAgentShadowTree());

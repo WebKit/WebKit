@@ -101,7 +101,7 @@ public:
     bool allowJavaScriptURLs(const String& contextURL, const OrdinalNumber& contextLine, const String& code, bool overrideContentSecurityPolicy = false) const;
     bool allowInlineEventHandlers(const String& contextURL, const OrdinalNumber& contextLine, const String& code, Element*, bool overrideContentSecurityPolicy = false) const;
     bool allowInlineScript(const String& contextURL, const OrdinalNumber& contextLine, StringView scriptContent, Element&, bool overrideContentSecurityPolicy = false) const;
-    bool allowNonParserInsertedScripts(const URL&, const String&, const StringView&, ParserInserted) const;
+    bool allowNonParserInsertedScripts(const URL&, const OrdinalNumber&, const String&, const StringView&, ParserInserted) const;
     bool allowInlineStyle(const String& contextURL, const OrdinalNumber& contextLine, StringView styleContent, CheckUnsafeHashes, Element&, bool overrideContentSecurityPolicy = false) const;
 
     bool allowEval(JSC::JSGlobalObject*, LogToConsole, StringView codeContent, bool overrideContentSecurityPolicy = false) const;
