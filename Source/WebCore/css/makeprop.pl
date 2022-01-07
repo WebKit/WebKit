@@ -1067,8 +1067,8 @@ sub generateAnimationPropertyInitialValueSetter {
   my $setter = $propertiesWithStyleBuilderOptions{$name}{"setter"};
   my $initial = $propertiesWithStyleBuilderOptions{$name}{"initial"};
   $setterContent .= $indent . "list.animation(0)." . $setter . "(Animation::" . $initial . "());\n";
-  $setterContent .= $indent . "for (size_t i = 1; i < list.size(); ++i)\n";
-  $setterContent .= $indent . "    list.animation(i)." . getClearFunction($name) . "();\n";
+  $setterContent .= $indent . "for (auto& animation : list)\n";
+  $setterContent .= $indent . "    animation->" . getClearFunction($name) . "();\n";
 
   return $setterContent;
 }

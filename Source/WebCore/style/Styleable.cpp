@@ -246,17 +246,16 @@ void Styleable::updateCSSAnimations(const RenderStyle* currentStyle, const Rende
     // cause the existing animation for ‘a’ to become the second animation in the list and a new animation will be created for the
     // first item in the list.
     if (currentAnimationList) {
-        for (size_t i = currentAnimationList->size(); i > 0; --i) {
-            auto& currentAnimation = currentAnimationList->animation(i - 1);
-            if (!shouldConsiderAnimation(this->element, currentAnimation))
+        for (auto& currentAnimation : makeReversedRange(*currentAnimationList)) {
+            if (!shouldConsiderAnimation(this->element, currentAnimation.get()))
                 continue;
 
             bool foundMatchingAnimation = false;
             for (auto& previousAnimation : previousAnimations) {
-                if (previousAnimation->animationName() == currentAnimation.name().string) {
+                if (previousAnimation->animationName() == currentAnimation->name().string) {
                     // Timing properties or play state may have changed so we need to update the backing animation with
                     // the Animation found in the current style.
-                    previousAnimation->setBackingAnimation(currentAnimation);
+                    previousAnimation->setBackingAnimation(currentAnimation.get());
                     // Keyframes may have been cleared if the @keyframes rules was changed since
                     // the last style update, so we must ensure keyframes are picked up.
                     previousAnimation->updateKeyframesIfNeeded(currentStyle, newStyle, resolutionContext);
@@ -269,7 +268,7 @@ void Styleable::updateCSSAnimations(const RenderStyle* currentStyle, const Rende
             }
 
             if (!foundMatchingAnimation)
-                newAnimations.add(CSSAnimation::create(*this, currentAnimation, currentStyle, newStyle, resolutionContext));
+                newAnimations.add(CSSAnimation::create(*this, currentAnimation.get(), currentStyle, newStyle, resolutionContext));
         }
     }
 
@@ -342,11 +341,10 @@ static void compileTransitionPropertiesInStyle(const RenderStyle& style, HashSet
     if (!transitions)
         return;
 
-    for (size_t i = 0; i < transitions->size(); ++i) {
-        const auto& animation = transitions->animation(i);
-        auto mode = animation.property().mode;
+    for (const auto& animation : *transitions) {
+        auto mode = animation->property().mode;
         if (mode == Animation::TransitionMode::SingleProperty) {
-            auto property = animation.property().id;
+            auto property = animation->property().id;
             if (isShorthandCSSProperty(property)) {
                 for (auto longhand : shorthandForProperty(property))
                     transitionProperties.add(longhand);
@@ -375,10 +373,9 @@ static void updateCSSTransitionsForStyleableAndProperty(const Styleable& styleab
 
     const Animation* matchingBackingAnimation = nullptr;
     if (auto* transitions = newStyle.transitions()) {
-        for (size_t i = 0; i < transitions->size(); ++i) {
-            auto& backingAnimation = transitions->animation(i);
-            if (transitionMatchesProperty(backingAnimation, property))
-                matchingBackingAnimation = &backingAnimation;
+        for (auto& backingAnimation : *transitions) {
+            if (transitionMatchesProperty(backingAnimation.get(), property))
+                matchingBackingAnimation = backingAnimation.ptr();
         }
     }
 

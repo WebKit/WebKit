@@ -1474,8 +1474,8 @@ static Ref<CSSValueList> valueListForAnimationOrTransitionProperty(CSSPropertyID
 {
     auto list = CSSValueList::createCommaSeparated();
     if (animationList) {
-        for (size_t i = 0; i < animationList->size(); ++i)
-            ComputedStyleExtractor::addValueForAnimationPropertyToList(list.get(), property, &animationList->animation(i));
+        for (const auto& animation : *animationList)
+            ComputedStyleExtractor::addValueForAnimationPropertyToList(list.get(), property, animation.ptr());
     } else
         ComputedStyleExtractor::addValueForAnimationPropertyToList(list.get(), property, nullptr);
     return list;
@@ -1485,11 +1485,10 @@ static Ref<CSSValueList> animationShorthandValue(CSSPropertyID property, const A
 {
     auto parentList = CSSValueList::createCommaSeparated();
     if (animationList) {
-        for (size_t i = 0; i < animationList->size(); ++i) {
-            const auto& animation = animationList->animation(i);
+        for (const auto& animation : *animationList) {
             auto childList = CSSValueList::createSpaceSeparated();
             for (auto longhand : shorthandForProperty(property))
-                ComputedStyleExtractor::addValueForAnimationPropertyToList(childList.get(), longhand, &animation);
+                ComputedStyleExtractor::addValueForAnimationPropertyToList(childList.get(), longhand, animation.ptr());
             parentList->append(childList);
         }
     }

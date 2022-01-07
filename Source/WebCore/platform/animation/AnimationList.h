@@ -54,7 +54,14 @@ public:
 
     Animation& animation(size_t i) { return m_animations[i].get(); }
     const Animation& animation(size_t i) const { return m_animations[i].get(); }
-    
+
+    auto begin() const { return m_animations.begin(); }
+    auto end() const { return m_animations.end(); }
+
+    using const_reverse_iterator = Vector<Ref<Animation>>::const_reverse_iterator;
+    const_reverse_iterator rbegin() const { return m_animations.rbegin(); }
+    const_reverse_iterator rend() const { return m_animations.rend(); }
+
 private:
     AnimationList();
 
