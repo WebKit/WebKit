@@ -371,7 +371,7 @@ void RemoteLayerBackingStore::drawInContext(WebCore::GraphicsContext& context)
     WebCore::IntRect layerBounds(WebCore::IntPoint(), WebCore::expandedIntSize(m_size));
     if (!m_dirtyRegion.contains(layerBounds)) {
         ASSERT(m_backBuffer.imageBuffer);
-        context.drawImageBuffer(*m_backBuffer.imageBuffer, { {0, 0}, m_size }, { {0, 0}, m_size }, { WebCore::CompositeOperator::Copy });
+        context.drawImageBuffer(*m_backBuffer.imageBuffer, { 0, 0 }, { WebCore::CompositeOperator::Copy });
     }
 
     if (m_paintingRects.size() == 1)

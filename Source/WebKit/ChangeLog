@@ -1,3 +1,23 @@
+2022-01-07  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        ImageBuffer with floating point logicalSize() paints into a slightly truncated destination rect
+        https://bugs.webkit.org/show_bug.cgi?id=225377
+
+        Reviewed by Tim Horton.
+
+        This is the rest of https://bugs.webkit.org/show_bug.cgi?id=232470.
+
+        This is also a follow-up of https://bugs.webkit.org/show_bug.cgi?id=232515.
+
+        No new tests; the behavior change is covered by
+        fast/backgrounds/hidpi-bitmap-background-origin-on-subpixel-position.html
+        since Tim Horton reverted the workaround for this bug that he landed in r276945.
+
+        * Shared/RemoteLayerTree/RemoteLayerBackingStore.mm:
+        (WebKit::RemoteLayerBackingStore::drawInContext):
+        * WebProcess/GPU/graphics/RemoteRenderingBackendProxy.cpp:
+        (WebKit::RemoteRenderingBackendProxy::createRemoteImageBuffer):
+
 2022-01-07  Alex Christensen  <achristensen@webkit.org>
 
         Unreviewed, reverting r287698.
