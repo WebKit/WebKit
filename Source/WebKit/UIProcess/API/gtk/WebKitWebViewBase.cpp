@@ -2001,7 +2001,7 @@ static void webkitWebViewBaseTouchSwipe(WebKitWebViewBase* webViewBase, gdouble 
                 return;
         }
 
-        webkitWebViewBaseSynthesizeWheelEvent(webViewBase, event, -velocityX, -velocityY, x, y, WheelEventPhase::NoPhase, WheelEventPhase::Began);
+        webkitWebViewBaseSynthesizeWheelEvent(webViewBase, event, -velocityX / Scrollbar::pixelsPerLineStep(), velocityY / Scrollbar::pixelsPerLineStep(), x, y, WheelEventPhase::NoPhase, WheelEventPhase::Began);
     }
 }
 

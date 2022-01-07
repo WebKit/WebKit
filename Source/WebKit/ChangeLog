@@ -1,3 +1,19 @@
+2022-01-07  Chris Lord  <clord@igalia.com>
+
+        [GTK] REGRESSION: Kinetic scrolling via touch-screen behaves oddly
+        https://bugs.webkit.org/show_bug.cgi?id=234958
+
+        Reviewed by Michael Catanzaro.
+
+        The swipe signal handler didn't take into account
+        Scrollbar::pixelsPerLineStep() and also incorrectly negated the
+        vertical velocity. Ideally, touch scrolling would use precise wheel
+        events, but as the rest of the code works correctly and scales by this
+        amount, make the one-line change that conforms with the previous code.
+
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseTouchSwipe):
+
 2022-01-07  Patrick Angle  <pangle@apple.com>
 
         REGRESSION(r286498): Web Inspector: Inspector^2 fails to load in release builds and crashes with an assertion in debug builds
