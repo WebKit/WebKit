@@ -192,7 +192,7 @@ ResourceResponse ResourceResponseBase::filter(const ResourceResponse& response, 
     ASSERT(response.tainting() == Tainting::Cors);
     filteredResponse.setType(Type::Cors);
 
-    auto accessControlExposeHeaderSet = parseAccessControlAllowList<ASCIICaseInsensitiveHash>(response.httpHeaderField(HTTPHeaderName::AccessControlExposeHeaders)).value_or(HashSet<String, ASCIICaseInsensitiveHash> { });
+    auto accessControlExposeHeaderSet = valueOrDefault(parseAccessControlAllowList<ASCIICaseInsensitiveHash>(response.httpHeaderField(HTTPHeaderName::AccessControlExposeHeaders)));
     if (performCheck == PerformExposeAllHeadersCheck::Yes && accessControlExposeHeaderSet.contains("*"))
         return filteredResponse;
 
@@ -458,7 +458,7 @@ void ResourceResponseBase::sanitizeHTTPHeaderFieldsAccordingToTainting()
     case ResourceResponse::Tainting::Basic:
         break;
     case ResourceResponse::Tainting::Cors: {
-        auto corsSafeHeaderSet = parseAccessControlAllowList<ASCIICaseInsensitiveHash>(httpHeaderField(HTTPHeaderName::AccessControlExposeHeaders)).value_or(HashSet<String, ASCIICaseInsensitiveHash> { });
+        auto corsSafeHeaderSet = valueOrDefault(parseAccessControlAllowList<ASCIICaseInsensitiveHash>(httpHeaderField(HTTPHeaderName::AccessControlExposeHeaders)));
         if (corsSafeHeaderSet.contains("*"_str))
             return;
 

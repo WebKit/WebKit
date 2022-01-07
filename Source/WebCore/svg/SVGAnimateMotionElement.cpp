@@ -161,15 +161,15 @@ void SVGAnimateMotionElement::stopAnimation(SVGElement* targetElement)
 
 bool SVGAnimateMotionElement::calculateToAtEndOfDurationValue(const String& toAtEndOfDurationString)
 {
-    m_toPointAtEndOfDuration = parsePoint(toAtEndOfDurationString).value_or(FloatPoint { });
+    m_toPointAtEndOfDuration = valueOrDefault(parsePoint(toAtEndOfDurationString));
     return true;
 }
 
 bool SVGAnimateMotionElement::calculateFromAndToValues(const String& fromString, const String& toString)
 {
     m_toPointAtEndOfDuration = std::nullopt;
-    m_fromPoint = parsePoint(fromString).value_or(FloatPoint { });
-    m_toPoint = parsePoint(toString).value_or(FloatPoint { });
+    m_fromPoint = valueOrDefault(parsePoint(fromString));
+    m_toPoint = valueOrDefault(parsePoint(toString));
     return true;
 }
     
@@ -178,8 +178,8 @@ bool SVGAnimateMotionElement::calculateFromAndByValues(const String& fromString,
     m_toPointAtEndOfDuration = std::nullopt;
     if (animationMode() == AnimationMode::By && !isAdditive())
         return false;
-    m_fromPoint = parsePoint(fromString).value_or(FloatPoint { });
-    auto byPoint = parsePoint(byString).value_or(FloatPoint { });
+    m_fromPoint = valueOrDefault(parsePoint(fromString));
+    auto byPoint = valueOrDefault(parsePoint(byString));
     m_toPoint = FloatPoint(m_fromPoint.x() + byPoint.x(), m_fromPoint.y() + byPoint.y());
     return true;
 }

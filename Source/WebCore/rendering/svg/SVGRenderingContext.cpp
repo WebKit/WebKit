@@ -307,7 +307,7 @@ void SVGRenderingContext::clipToImageBuffer(GraphicsContext& context, const Affi
 
     // The mask image has been created in the absolute coordinate space, as the image should not be scaled.
     // So the actual masking process has to be done in the absolute coordinate space as well.
-    context.concatCTM(absoluteTransform.inverse().value_or(AffineTransform()));
+    context.concatCTM(valueOrDefault(absoluteTransform.inverse()));
     context.clipToImageBuffer(*imageBuffer, absoluteTargetRect);
     context.concatCTM(absoluteTransform);
 

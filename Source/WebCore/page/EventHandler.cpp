@@ -947,7 +947,7 @@ void EventHandler::updateSelectionForMouseDrag()
         return;
 
     constexpr OptionSet<HitTestRequest::Type> hitType {  HitTestRequest::Type::ReadOnly, HitTestRequest::Type::Active, HitTestRequest::Type::Move, HitTestRequest::Type::DisallowUserAgentShadowContent };
-    HitTestResult result(view->windowToContents(m_lastKnownMousePosition.value_or(IntPoint())));
+    HitTestResult result(view->windowToContents(valueOrDefault(m_lastKnownMousePosition)));
     document->hitTest(hitType, result);
     updateSelectionForMouseDrag(result);
 }
@@ -1307,7 +1307,7 @@ bool EventHandler::logicalScrollRecursively(ScrollLogicalDirection direction, Sc
 
 IntPoint EventHandler::lastKnownMousePosition() const
 {
-    return m_lastKnownMousePosition.value_or(IntPoint());
+    return valueOrDefault(m_lastKnownMousePosition);
 }
 
 RefPtr<Frame> EventHandler::subframeForHitTestResult(const MouseEventWithHitTestResults& hitTestResult)
@@ -1960,7 +1960,7 @@ bool EventHandler::handleMouseMoveEvent(const PlatformMouseEvent& platformMouseE
 #endif
 
     if (m_svgPan) {
-        downcast<SVGDocument>(*m_frame.document()).updatePan(m_frame.view()->windowToContents(m_lastKnownMousePosition.value_or(IntPoint())));
+        downcast<SVGDocument>(*m_frame.document()).updatePan(m_frame.view()->windowToContents(valueOrDefault(m_lastKnownMousePosition)));
         return true;
     }
 
@@ -2126,7 +2126,7 @@ bool EventHandler::handleMouseReleaseEvent(const PlatformMouseEvent& platformMou
 
     if (m_svgPan) {
         m_svgPan = false;
-        downcast<SVGDocument>(*m_frame.document()).updatePan(m_frame.view()->windowToContents(m_lastKnownMousePosition.value_or(IntPoint())));
+        downcast<SVGDocument>(*m_frame.document()).updatePan(m_frame.view()->windowToContents(valueOrDefault(m_lastKnownMousePosition)));
         return true;
     }
 
@@ -2864,7 +2864,7 @@ void EventHandler::processWheelEventForScrollSnap(const PlatformWheelEvent&, con
     
 IntPoint EventHandler::targetPositionInWindowForSelectionAutoscroll() const
 {
-    return m_lastKnownMousePosition.value_or(IntPoint());
+    return valueOrDefault(m_lastKnownMousePosition);
 }
     
 #endif // !PLATFORM(IOS_FAMILY)
@@ -3391,7 +3391,7 @@ void EventHandler::dispatchFakeMouseMoveEventSoonInQuad(const FloatQuad& quad)
     if (!view)
         return;
 
-    if (!quad.containsPoint(view->windowToContents(m_lastKnownMousePosition.value_or(IntPoint()))))
+    if (!quad.containsPoint(view->windowToContents(valueOrDefault(m_lastKnownMousePosition))))
         return;
 
     dispatchFakeMouseMoveEventSoon();
@@ -3420,7 +3420,7 @@ void EventHandler::fakeMouseMoveEventTimerFired()
     bool altKey;
     bool metaKey;
     PlatformKeyboardEvent::getCurrentModifierState(shiftKey, ctrlKey, altKey, metaKey);
-    PlatformMouseEvent fakeMouseMoveEvent(m_lastKnownMousePosition.value_or(IntPoint()), m_lastKnownMouseGlobalPosition, NoButton, PlatformEvent::MouseMoved, 0, shiftKey, ctrlKey, altKey, metaKey, WallTime::now(), 0, NoTap);
+    PlatformMouseEvent fakeMouseMoveEvent(valueOrDefault(m_lastKnownMousePosition), m_lastKnownMouseGlobalPosition, NoButton, PlatformEvent::MouseMoved, 0, shiftKey, ctrlKey, altKey, metaKey, WallTime::now(), 0, NoTap);
     mouseMoved(fakeMouseMoveEvent);
 }
 #endif // !ENABLE(IOS_TOUCH_EVENTS)
@@ -3446,7 +3446,7 @@ void EventHandler::hoverTimerFired()
 
     if (RefPtr document = m_frame.document()) {
         if (RefPtr view = m_frame.view()) {
-            HitTestResult result(view->windowToContents(m_lastKnownMousePosition.value_or(IntPoint())));
+            HitTestResult result(view->windowToContents(valueOrDefault(m_lastKnownMousePosition)));
             constexpr OptionSet<HitTestRequest::Type> hitType { HitTestRequest::Type::Move, HitTestRequest::Type::DisallowUserAgentShadowContent };
             document->hitTest(hitType, result);
             document->updateHoverActiveState(hitType, result.targetElement());

@@ -386,7 +386,7 @@ void MediaStreamTrack::applyConstraints(const std::optional<MediaTrackConstraint
             return;
         }
         m_promise->resolve();
-        m_constraints = constraints.value_or(MediaTrackConstraints { });
+        m_constraints = valueOrDefault(constraints);
     };
     m_private->applyConstraints(createMediaConstraints(constraints), WTFMove(completionHandler));
 }

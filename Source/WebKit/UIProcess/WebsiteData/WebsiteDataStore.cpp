@@ -1837,7 +1837,7 @@ WebsiteDataStoreParameters WebsiteDataStore::parameters()
     HashSet<WebCore::RegistrableDomain> appBoundDomains;
 #if ENABLE(APP_BOUND_DOMAINS)
     if (isAppBoundITPRelaxationEnabled)
-        appBoundDomains = appBoundDomainsIfInitialized().value_or(HashSet<WebCore::RegistrableDomain> { });
+        appBoundDomains = valueOrDefault(appBoundDomainsIfInitialized());
 #endif
     WebCore::RegistrableDomain resourceLoadStatisticsManualPrevalentResource;
     ResourceLoadStatisticsParameters resourceLoadStatisticsParameters = {

@@ -179,7 +179,7 @@ void RenderView::layout()
     if (!needsLayout())
         return;
 
-    LayoutStateMaintainer statePusher(*this, { }, false, m_pageLogicalSize.value_or(LayoutSize()).height(), m_pageLogicalHeightChanged);
+    LayoutStateMaintainer statePusher(*this, { }, false, valueOrDefault(m_pageLogicalSize).height(), m_pageLogicalHeightChanged);
 
     m_pageLogicalHeightChanged = false;
 

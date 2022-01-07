@@ -347,7 +347,7 @@ bool LegacyRenderSVGShape::nodeAtFloatPoint(const HitTestRequest& request, HitTe
     if (hitTestAction != HitTestForeground)
         return false;
 
-    FloatPoint localPoint = m_localTransform.inverse().value_or(AffineTransform()).mapPoint(pointInParent);
+    FloatPoint localPoint = valueOrDefault(m_localTransform.inverse()).mapPoint(pointInParent);
 
     if (!SVGRenderSupport::pointInClippingArea(*this, localPoint))
         return false;

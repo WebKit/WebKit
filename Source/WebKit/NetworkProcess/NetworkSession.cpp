@@ -607,7 +607,7 @@ void NetworkSession::unregisterSWServerConnection(WebSWServerConnection& connect
 SWServer& NetworkSession::ensureSWServer()
 {
     if (!m_swServer) {
-        auto info = m_serviceWorkerInfo.value_or(ServiceWorkerInfo { });
+        auto info = valueOrDefault(m_serviceWorkerInfo);
         auto path = info.databasePath;
         // There should already be a registered path for this PAL::SessionID.
         // If there's not, then where did this PAL::SessionID come from?

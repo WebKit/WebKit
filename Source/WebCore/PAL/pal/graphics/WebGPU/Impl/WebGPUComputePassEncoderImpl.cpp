@@ -81,7 +81,7 @@ void ComputePassEncoderImpl::endPass()
 void ComputePassEncoderImpl::setBindGroup(Index32 index, const BindGroup& bindGroup,
     std::optional<Vector<BufferDynamicOffset>>&& offsets)
 {
-    auto backingOffsets = offsets.value_or(Vector<BufferDynamicOffset> { });
+    auto backingOffsets = valueOrDefault(offsets);
     wgpuComputePassEncoderSetBindGroup(m_backing, index, m_convertToBackingContext->convertToBacking(bindGroup), static_cast<uint32_t>(backingOffsets.size()), backingOffsets.data());
 }
 

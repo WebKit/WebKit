@@ -177,7 +177,7 @@ InlineLayoutUnit LineBoxVerticalAligner::computeLineBoxLogicalHeight(LineBox& li
         case VerticalAlign::TextBottom: {
             // Note that text-bottom aligns with the inline box's font metrics bottom (descent) and not the layout bounds bottom.
             auto parentInlineBoxLayoutBounds = parentInlineBox.layoutBounds();
-            auto parentInlineBoxLogicalBottom = parentInlineBoxLayoutBounds.height() - parentInlineBoxLayoutBounds.descent + parentInlineBox.descent().value_or(InlineLayoutUnit());
+            auto parentInlineBoxLogicalBottom = parentInlineBoxLayoutBounds.height() - parentInlineBoxLayoutBounds.descent + valueOrDefault(parentInlineBox.descent());
             logicalTop = parentInlineBoxLogicalBottom - inlineLevelBox.layoutBounds().height();
             break;
         }
@@ -208,7 +208,7 @@ InlineLayoutUnit LineBoxVerticalAligner::computeLineBoxLogicalHeight(LineBox& li
     // The line box height computation is as follows:
     // 1. Stretch the line box with the non-line-box relative aligned inline box absolute top and bottom values.
     // 2. Check if the line box relative aligned inline boxes (top, bottom etc) have enough room and stretch the line box further if needed.
-    auto lineBoxLogicalHeight = maximumLogicalBottom.value_or(InlineLayoutUnit()) - minimumLogicalTop.value_or(InlineLayoutUnit());
+    auto lineBoxLogicalHeight = valueOrDefault(maximumLogicalBottom) - valueOrDefault(minimumLogicalTop);
     for (auto* lineBoxRelativeInlineLevelBox : lineBoxRelativeInlineLevelBoxes) {
         if (!formattingGeometry.inlineLevelBoxAffectsLineBox(*lineBoxRelativeInlineLevelBox, lineBox))
             continue;

@@ -596,6 +596,11 @@ template<typename OptionalType, class Callback> typename OptionalType::value_typ
     return optional ? *optional : callback();
 }
 
+template<typename OptionalType> auto valueOrDefault(OptionalType&& optionalValue)
+{
+    return optionalValue ? *std::forward<OptionalType>(optionalValue) : std::remove_reference_t<decltype(*optionalValue)> { };
+}
+
 } // namespace WTF
 
 #define WTFMove(value) std::move<WTF::CheckMoveParameter>(value)
@@ -622,3 +627,4 @@ using WTF::roundUpToMultipleOf;
 using WTF::safeCast;
 using WTF::tryBinarySearch;
 using WTF::valueOrCompute;
+using WTF::valueOrDefault;

@@ -1158,7 +1158,7 @@ bool CanvasRenderingContext2DBase::isPointInPathInternal(const Path& path, doubl
     if (!state.hasInvertibleTransform)
         return false;
 
-    auto transformedPoint = state.transform.inverse().value_or(AffineTransform()).mapPoint(FloatPoint(x, y));
+    auto transformedPoint = valueOrDefault(state.transform.inverse()).mapPoint(FloatPoint(x, y));
     if (!std::isfinite(transformedPoint.x()) || !std::isfinite(transformedPoint.y()))
         return false;
 
@@ -1173,7 +1173,7 @@ bool CanvasRenderingContext2DBase::isPointInStrokeInternal(const Path& path, dou
     if (!state.hasInvertibleTransform)
         return false;
 
-    auto transformedPoint = state.transform.inverse().value_or(AffineTransform()).mapPoint(FloatPoint(x, y));
+    auto transformedPoint = valueOrDefault(state.transform.inverse()).mapPoint(FloatPoint(x, y));
     if (!std::isfinite(transformedPoint.x()) || !std::isfinite(transformedPoint.y()))
         return false;
 

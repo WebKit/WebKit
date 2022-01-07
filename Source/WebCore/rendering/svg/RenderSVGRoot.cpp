@@ -418,7 +418,7 @@ LayoutRect RenderSVGRoot::clippedOverflowRect(const RenderLayerModelObject* repa
     if (style().visibility() != Visibility::Visible && !enclosingLayer()->hasVisibleContent())
         return LayoutRect();
 
-    auto repaintRect = LayoutRect(m_viewBoxTransform.inverse().value_or(AffineTransform()).mapRect(borderBoxRect()));
+    auto repaintRect = LayoutRect(valueOrDefault(m_viewBoxTransform.inverse()).mapRect(borderBoxRect()));
     return computeRect(repaintRect, repaintContainer, context);
 }
 
@@ -628,7 +628,7 @@ void RenderSVGRoot::applyTransform(TransformationMatrix& transform, const Render
 
 void RenderSVGRoot::absoluteRects(Vector<IntRect>& rects, const LayoutPoint& accumulatedOffset) const
 {
-    auto localRect = LayoutRect(m_supplementalLocalToParentTransform.inverse().value_or(AffineTransform()).mapRect(borderBoxRect()));
+    auto localRect = LayoutRect(valueOrDefault(m_supplementalLocalToParentTransform.inverse()).mapRect(borderBoxRect()));
     rects.append(snappedIntRect(accumulatedOffset, localRect.size()));
 }
 
@@ -638,7 +638,7 @@ void RenderSVGRoot::absoluteQuads(Vector<FloatQuad>& quads, bool* wasFixed) cons
     if (fragmentedFlow && fragmentedFlow->absoluteQuadsForBox(quads, wasFixed, this))
         return;
 
-    auto localRect = FloatRect(m_supplementalLocalToParentTransform.inverse().value_or(AffineTransform()).mapRect(borderBoxRect()));
+    auto localRect = FloatRect(valueOrDefault(m_supplementalLocalToParentTransform.inverse()).mapRect(borderBoxRect()));
     quads.append(localToAbsoluteQuad(localRect, UseTransforms, wasFixed));
 }
 

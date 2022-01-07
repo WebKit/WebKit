@@ -404,7 +404,7 @@ std::optional<ShadowBlur::LayerImageProperties> ShadowBlur::calculateLayerBoundi
     if (m_shadowsIgnoreTransforms && !transform.isIdentity()) {
         FloatQuad transformedPolygon = transform.mapQuad(FloatQuad(shadowedRect));
         transformedPolygon.move(m_offset);
-        layerRect = transform.inverse().value_or(AffineTransform()).mapQuad(transformedPolygon).boundingBox();
+        layerRect = valueOrDefault(transform.inverse()).mapQuad(transformedPolygon).boundingBox();
     } else {
         layerRect = shadowedRect;
         layerRect.move(m_offset);

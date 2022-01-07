@@ -2794,13 +2794,13 @@ bool Internals::isElementAlive(Document& document, uint64_t elementIdentifier) c
 uint64_t Internals::frameIdentifier(const Document& document) const
 {
     if (auto* page = document.page())
-        return page->mainFrame().loader().frameID().value_or(FrameIdentifier { }).toUInt64();
+        return valueOrDefault(page->mainFrame().loader().frameID()).toUInt64();
     return 0;
 }
 
 uint64_t Internals::pageIdentifier(const Document& document) const
 {
-    return document.pageID().value_or(PageIdentifier { }).toUInt64();
+    return valueOrDefault(document.pageID()).toUInt64();
 }
 
 bool Internals::isAnyWorkletGlobalScopeAlive() const

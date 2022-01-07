@@ -177,7 +177,7 @@ void WebPasteboardProxy::getPasteboardPathnamesForType(IPC::Connection& connecti
                 if (![[NSFileManager defaultManager] fileExistsAtPath:filename])
                     return SandboxExtension::Handle { };
 
-                return SandboxExtension::createHandle(filename, SandboxExtension::Type::ReadOnly).value_or(SandboxExtension::Handle { });
+                return valueOrDefault(SandboxExtension::createHandle(filename, SandboxExtension::Type::ReadOnly));
             });
 #endif
         }

@@ -118,7 +118,7 @@ NetworkStorageManager::NetworkStorageManager(PAL::SessionID sessionID, const Str
         m_customLocalStoragePath = customLocalStoragePath;
         if (!m_path.isEmpty()) {
             auto saltPath = FileSystem::pathByAppendingComponent(m_path, "salt");
-            m_salt = FileSystem::readOrMakeSalt(saltPath).value_or(FileSystem::Salt());
+            m_salt = valueOrDefault(FileSystem::readOrMakeSalt(saltPath));
         }
     });
 }

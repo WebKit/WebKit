@@ -154,7 +154,7 @@ public:
     WebProcessPool& processPool() const;
 
     bool isMatchingRegistrableDomain(const WebCore::RegistrableDomain& domain) const { return m_registrableDomain ? *m_registrableDomain == domain : false; }
-    WebCore::RegistrableDomain registrableDomain() const { return m_registrableDomain.value_or(WebCore::RegistrableDomain { }); }
+    WebCore::RegistrableDomain registrableDomain() const { return valueOrDefault(m_registrableDomain); }
     const std::optional<WebCore::RegistrableDomain>& optionalRegistrableDomain() const { return m_registrableDomain; }
 
     enum class WillShutDown : bool { No, Yes };

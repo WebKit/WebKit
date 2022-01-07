@@ -349,7 +349,7 @@ LayoutSize RenderBoxModelObject::relativePositionOffset() const
     // https://drafts.csswg.org/css-grid/#grid-item-sizing
     if (!style().left().isAuto() || !style().right().isAuto()) {
         LayoutUnit availableWidth = hasOverridingContainingBlockContentWidth()
-            ? overridingContainingBlockContentWidth().value_or(LayoutUnit()) : containingBlock()->availableWidth();
+            ? valueOrDefault(overridingContainingBlockContentWidth()) : containingBlock()->availableWidth();
         if (!style().left().isAuto()) {
             if (!style().right().isAuto() && !containingBlock()->style().isLeftToRightDirection())
                 offset.setWidth(-valueForLength(style().right(), !style().right().isFixed() ? availableWidth : 0_lu));

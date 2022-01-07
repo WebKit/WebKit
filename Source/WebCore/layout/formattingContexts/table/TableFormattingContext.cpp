@@ -123,8 +123,8 @@ void TableFormattingContext::setUsedGeometryForCells(LayoutUnit availableHorizon
 
             // FIXME: Find out if it is ok to use the regular padding here to align the content box inside a tall cell or we need to
             // use some kind of intrinsic padding similar to RenderTableCell.
-            auto paddingTop = cellBoxGeometry.paddingBefore().value_or(LayoutUnit { });
-            auto paddingBottom = cellBoxGeometry.paddingAfter().value_or(LayoutUnit { });
+            auto paddingTop = valueOrDefault(cellBoxGeometry.paddingBefore());
+            auto paddingBottom = valueOrDefault(cellBoxGeometry.paddingAfter());
             auto intrinsicPaddingTop = LayoutUnit { };
             auto intrinsicPaddingBottom = LayoutUnit { };
 

@@ -1007,7 +1007,7 @@ void MediaPlayerPrivateMediaStreamAVFObjC::paintCurrentFrameInContext(GraphicsCo
     if (!m_videoTransform)
         m_videoTransform = videoTransformationMatrix(*m_imagePainter.mediaSample);
     AffineTransform videoTransform = *m_videoTransform;
-    FloatRect transformedDestRect = videoTransform.inverse().value_or(AffineTransform()).mapRect(destRect);
+    FloatRect transformedDestRect = valueOrDefault(videoTransform.inverse()).mapRect(destRect);
     context.concatCTM(videoTransform);
     context.drawNativeImage(*image, imageRect.size(), transformedDestRect, imageRect);
 }

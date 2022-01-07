@@ -628,7 +628,7 @@ bool ResourceRequestBase::isSystemPreview() const
 
 SystemPreviewInfo ResourceRequestBase::systemPreviewInfo() const
 {
-    return m_systemPreviewInfo.value_or(SystemPreviewInfo { });
+    return valueOrDefault(m_systemPreviewInfo);
 }
 
 void ResourceRequestBase::setSystemPreviewInfo(const SystemPreviewInfo& info)

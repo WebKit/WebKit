@@ -106,7 +106,7 @@ LineBoxBuilder::LineBoxBuilder(const InlineFormattingContext& inlineFormattingCo
 LineBoxBuilder::LineBoxAndHeight LineBoxBuilder::build(const LineBuilder::LineContent& lineContent, size_t lineIndex)
 {
     auto& rootStyle = lineIndex ? rootBox().firstLineStyle() : rootBox().style();
-    auto rootInlineBoxAlignmentOffset = Layout::horizontalAlignmentOffset(rootStyle.textAlign(), lineContent, rootStyle.isLeftToRightDirection()).value_or(InlineLayoutUnit { });
+    auto rootInlineBoxAlignmentOffset = valueOrDefault(Layout::horizontalAlignmentOffset(rootStyle.textAlign(), lineContent, rootStyle.isLeftToRightDirection()));
     // FIXME: The overflowing hanging content should be part of the ink overflow.  
     auto lineBox = LineBox { rootBox(), rootInlineBoxAlignmentOffset, lineContent.contentLogicalWidth - lineContent.hangingContentWidth, lineIndex, lineContent.nonSpanningInlineLevelBoxCount };
     auto lineBoxLogicalHeight = constructAndAlignInlineLevelBoxes(lineBox, lineContent, lineIndex);

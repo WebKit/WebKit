@@ -83,7 +83,7 @@ ExceptionOr<void> SQLTransaction::executeSql(const String& sqlStatement, std::op
     else if (m_readOnly)
         permissions |= DatabaseAuthorizer::ReadOnlyMask;
 
-    auto statement = makeUnique<SQLStatement>(m_database, sqlStatement, arguments.value_or(Vector<SQLValue> { }), WTFMove(callback), WTFMove(callbackError), permissions);
+    auto statement = makeUnique<SQLStatement>(m_database, sqlStatement, valueOrDefault(arguments), WTFMove(callback), WTFMove(callbackError), permissions);
 
     if (m_database->deleted())
         statement->setDatabaseDeletedError();

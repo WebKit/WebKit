@@ -1010,7 +1010,7 @@ void RenderLayer::updateLayerPositions(RenderGeometryMap* geometryMap, OptionSet
                 } else if (shouldRepaintAfterLayout()) {
                     // FIXME: We will convert this to just take the old and new RepaintLayoutRects once
                     // we change other callers to use RepaintLayoutRects.
-                    auto resolvedOldRects = oldRects.value_or(LayerRepaintRects { });
+                    auto resolvedOldRects = valueOrDefault(oldRects);
                     renderer().repaintAfterLayoutIfNeeded(repaintContainer, resolvedOldRects.clippedOverflowRect, resolvedOldRects.outlineBoundsRect,
                         &newRects->clippedOverflowRect, &newRects->outlineBoundsRect);
                 }
@@ -3493,7 +3493,7 @@ void RenderLayer::paintLayerByApplyingTransform(GraphicsContext& context, const 
     LayoutSize adjustedSubpixelOffset = offsetForThisLayer - LayoutSize(devicePixelSnappedOffsetForThisLayer);
     LayerPaintingInfo transformedPaintingInfo(paintingInfo);
     transformedPaintingInfo.rootLayer = this;
-    transformedPaintingInfo.paintDirtyRect = LayoutRect(encloseRectToDevicePixels(transform.inverse().value_or(AffineTransform()).mapRect(paintingInfo.paintDirtyRect), deviceScaleFactor));
+    transformedPaintingInfo.paintDirtyRect = LayoutRect(encloseRectToDevicePixels(valueOrDefault(transform.inverse()).mapRect(paintingInfo.paintDirtyRect), deviceScaleFactor));
     transformedPaintingInfo.subpixelOffset = adjustedSubpixelOffset;
     paintLayerContentsAndReflection(context, transformedPaintingInfo, paintFlags);
 

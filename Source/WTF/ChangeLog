@@ -1,3 +1,18 @@
+2022-01-06  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Add a helper function that returns the value of a std::optional<T> or constructs T if needed
+        https://bugs.webkit.org/show_bug.cgi?id=234865
+
+        Reviewed by Darin Adler.
+
+        Add a new helper function that returns the value of a given `std::optional<Type>` if it exists, and otherwise
+        constructs and returns `Type { }`. Currently, the alternative to this is writing out the `Type { }` in full when
+        passing in an argument to `value_or`; using this avoids some redundancy and makes the expression a bit easier to
+        read.
+
+        * wtf/StdLibExtras.h:
+        (WTF::valueOrDefault):
+
 2022-01-06  Tim Horton  <timothy_horton@apple.com>
 
         Separate "linked-on-or-{before, after}-everything" override from the SDK version

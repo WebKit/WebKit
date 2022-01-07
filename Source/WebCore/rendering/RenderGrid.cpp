@@ -494,7 +494,7 @@ unsigned RenderGrid::computeAutoRepeatTracksCount(GridTrackSizingDirection direc
         if (maxSize.isSpecified()) {
             if (maxSize.isPercentOrCalculated())
                 containingBlockAvailableSize = isRowAxis ? containingBlockLogicalWidthForContent() : containingBlockLogicalHeightForContent(ExcludeMarginBorderPadding);
-            LayoutUnit maxSizeValue = valueForLength(maxSize, containingBlockAvailableSize.value_or(LayoutUnit()));
+            LayoutUnit maxSizeValue = valueForLength(maxSize, valueOrDefault(containingBlockAvailableSize));
             availableMaxSize = isRowAxis ? adjustContentBoxLogicalWidthForBoxSizing(maxSizeValue, maxSize.type()) : adjustContentBoxLogicalHeightForBoxSizing(maxSizeValue);
         }
 
@@ -509,7 +509,7 @@ unsigned RenderGrid::computeAutoRepeatTracksCount(GridTrackSizingDirection direc
         if (minSize.isSpecified()) {
             if (!containingBlockAvailableSize && minSize.isPercentOrCalculated())
                 containingBlockAvailableSize = isRowAxis ? containingBlockLogicalWidthForContent() : containingBlockLogicalHeightForContent(ExcludeMarginBorderPadding);
-            LayoutUnit minSizeValue = valueForLength(minSize, containingBlockAvailableSize.value_or(LayoutUnit()));
+            LayoutUnit minSizeValue = valueForLength(minSize, valueOrDefault(containingBlockAvailableSize));
             availableMinSize = isRowAxis ? adjustContentBoxLogicalWidthForBoxSizing(minSizeValue, minSize.type()) : adjustContentBoxLogicalHeightForBoxSizing(minSizeValue);
         } else if (shouldComputeMinSizeFromAspectRatio) {
             auto [logicalMinWidth, logicalMaxWidth] = computeMinMaxLogicalWidthFromAspectRatio();
@@ -518,7 +518,7 @@ unsigned RenderGrid::computeAutoRepeatTracksCount(GridTrackSizingDirection direc
         if (!maxSize.isSpecified())
             needsToFulfillMinimumSize = true;
 
-        availableSize = std::max(availableMinSize.value_or(LayoutUnit()), availableMaxSize.value_or(LayoutUnit()));
+        availableSize = std::max(valueOrDefault(availableMinSize), valueOrDefault(availableMaxSize));
     }
 
     LayoutUnit autoRepeatTracksSize;

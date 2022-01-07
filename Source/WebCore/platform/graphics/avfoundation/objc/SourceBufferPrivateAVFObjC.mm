@@ -1268,7 +1268,7 @@ void SourceBufferPrivateAVFObjC::willSeek()
 
 FloatSize SourceBufferPrivateAVFObjC::naturalSize()
 {
-    return m_cachedSize.value_or(FloatSize());
+    return valueOrDefault(m_cachedSize);
 }
 
 void SourceBufferPrivateAVFObjC::didBecomeReadyForMoreSamples(uint64_t trackID)

@@ -2048,13 +2048,13 @@ IntPoint PDFPlugin::convertFromRootViewToPlugin(const IntPoint& point) const
 IntPoint PDFPlugin::convertFromPDFViewToRootView(const IntPoint& point) const
 {
     IntPoint pointInPluginCoordinates(point.x(), size().height() - point.y());
-    return m_rootViewToPluginTransform.inverse().value_or(AffineTransform()).mapPoint(pointInPluginCoordinates);
+    return valueOrDefault(m_rootViewToPluginTransform.inverse()).mapPoint(pointInPluginCoordinates);
 }
 
 IntRect PDFPlugin::convertFromPDFViewToRootView(const IntRect& rect) const
 {
     IntRect rectInPluginCoordinates(rect.x(), rect.y(), rect.width(), rect.height());
-    return m_rootViewToPluginTransform.inverse().value_or(AffineTransform()).mapRect(rectInPluginCoordinates);
+    return valueOrDefault(m_rootViewToPluginTransform.inverse()).mapRect(rectInPluginCoordinates);
 }
 
 IntPoint PDFPlugin::convertFromRootViewToPDFView(const IntPoint& point) const
@@ -2087,7 +2087,7 @@ IntRect PDFPlugin::boundsOnScreen() const
         return { };
 
     FloatRect bounds = FloatRect(FloatPoint(), size());
-    FloatRect rectInRootViewCoordinates = m_rootViewToPluginTransform.inverse().value_or(AffineTransform()).mapRect(bounds);
+    FloatRect rectInRootViewCoordinates = valueOrDefault(m_rootViewToPluginTransform.inverse()).mapRect(bounds);
     auto* page = m_frame->coreFrame()->page();
     if (!page)
         return { };
@@ -2114,7 +2114,7 @@ void PDFPlugin::geometryDidChange(const IntSize& pluginSize, const IntRect&, con
         return;
 
     m_size = pluginSize;
-    m_rootViewToPluginTransform = pluginToRootViewTransform.inverse().value_or(AffineTransform());
+    m_rootViewToPluginTransform = valueOrDefault(pluginToRootViewTransform.inverse());
     [m_pdfLayerController setFrameSize:pluginSize];
 
     [CATransaction begin];

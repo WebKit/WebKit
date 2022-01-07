@@ -513,7 +513,7 @@ void HTMLAnchorElement::handleClick(Event& event)
     if (systemPreviewInfo.isPreview) {
         systemPreviewInfo.element.elementIdentifier = document().identifierForElement(*this);
         systemPreviewInfo.element.documentIdentifier = document().identifier();
-        systemPreviewInfo.element.webPageIdentifier = document().frame()->loader().pageID().value_or(PageIdentifier { });
+        systemPreviewInfo.element.webPageIdentifier = valueOrDefault(document().frame()->loader().pageID());
         if (auto* child = firstElementChild())
             systemPreviewInfo.previewRect = child->boundsInRootViewSpace();
     }

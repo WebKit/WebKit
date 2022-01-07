@@ -96,8 +96,8 @@
 #endif
 
 #undef CACHEDRESOURCELOADER_RELEASE_LOG
-#define PAGE_ID(frame) (frame.pageID().value_or(PageIdentifier()).toUInt64())
-#define FRAME_ID(frame) (frame.frameID().value_or(FrameIdentifier()).toUInt64())
+#define PAGE_ID(frame) (valueOrDefault(frame.pageID()).toUInt64())
+#define FRAME_ID(frame) (valueOrDefault(frame.frameID()).toUInt64())
 #define CACHEDRESOURCELOADER_RELEASE_LOG(fmt, ...) RELEASE_LOG(Network, "%p - CachedResourceLoader::" fmt, this, ##__VA_ARGS__)
 #define CACHEDRESOURCELOADER_RELEASE_LOG_WITH_FRAME(fmt, frame, ...) RELEASE_LOG(Network, "%p - [pageID=%" PRIu64 ", frameID=%" PRIu64 "] CachedResourceLoader::" fmt, this, PAGE_ID(frame), FRAME_ID(frame), ##__VA_ARGS__)
 

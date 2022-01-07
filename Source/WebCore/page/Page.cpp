@@ -2666,7 +2666,7 @@ Color Page::pageExtendedBackgroundColor() const
 
 Color Page::sampledPageTopColor() const
 {
-    return m_sampledPageTopColor.value_or(Color());
+    return valueOrDefault(m_sampledPageTopColor);
 }
 
 void Page::setUnderPageBackgroundColorOverride(Color&& underPageBackgroundColorOverride)
