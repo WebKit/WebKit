@@ -39,9 +39,7 @@ namespace StructureStubInfoInternal {
 static constexpr bool verbose = false;
 }
 
-StructureStubInfo::~StructureStubInfo()
-{
-}
+StructureStubInfo::~StructureStubInfo() = default;
 
 void StructureStubInfo::initGetByIdSelf(const ConcurrentJSLockerBase& locker, CodeBlock* codeBlock, Structure* inlineAccessBaseStructure, PropertyOffset offset, CacheableIdentifier identifier)
 {
@@ -90,7 +88,7 @@ void StructureStubInfo::deref()
 {
     switch (m_cacheType) {
     case CacheType::Stub:
-        delete u.stub;
+        m_stub.reset();
         return;
     case CacheType::Unset:
     case CacheType::GetByIdSelf:
@@ -108,7 +106,7 @@ void StructureStubInfo::aboutToDie()
 {
     switch (m_cacheType) {
     case CacheType::Stub:
-        u.stub->aboutToDie();
+        m_stub->aboutToDie();
         return;
     case CacheType::Unset:
     case CacheType::GetByIdSelf:
@@ -139,7 +137,7 @@ AccessGenerationResult StructureStubInfo::addAccessCase(
         AccessGenerationResult result;
         
         if (m_cacheType == CacheType::Stub) {
-            result = u.stub->addCase(locker, vm, codeBlock, *this, accessCase.releaseNonNull());
+            result = m_stub->addCase(locker, vm, codeBlock, *this, accessCase.releaseNonNull());
             
             if (StructureStubInfoInternal::verbose)
                 dataLog("Had stub, result: ", result, "\n");
@@ -176,7 +174,7 @@ AccessGenerationResult StructureStubInfo::addAccessCase(
             }
             
             setCacheType(locker, CacheType::Stub);
-            u.stub = access.release();
+            m_stub = WTFMove(access);
         }
         
         ASSERT(m_cacheType == CacheType::Stub);
@@ -202,7 +200,7 @@ AccessGenerationResult StructureStubInfo::addAccessCase(
         // PolymorphicAccess.
         clearBufferedStructures();
         
-        result = u.stub->regenerate(locker, vm, globalObject, codeBlock, ecmaMode, *this);
+        result = m_stub->regenerate(locker, vm, globalObject, codeBlock, ecmaMode, *this);
         
         if (StructureStubInfoInternal::verbose)
             dataLog("Regeneration result: ", result, "\n");
@@ -323,7 +321,7 @@ void StructureStubInfo::visitAggregateImpl(Visitor& visitor)
     case CacheType::GetByIdSelf:
         return;
     case CacheType::Stub:
-        u.stub->visitAggregate(visitor);
+        m_stub->visitAggregate(visitor);
         return;
     }
     
@@ -348,7 +346,7 @@ void StructureStubInfo::visitWeakReferences(const ConcurrentJSLockerBase& locker
     if (Structure* structure = inlineAccessBaseStructure(vm))
         isValid &= vm.heap.isMarked(structure);
     if (m_cacheType == CacheType::Stub)
-        isValid &= u.stub->visitWeak(vm);
+        isValid &= m_stub->visitWeak(vm);
 
     if (isValid)
         return;
@@ -364,7 +362,7 @@ void StructureStubInfo::propagateTransitions(Visitor& visitor)
         structure->markIfCheap(visitor);
 
     if (m_cacheType == CacheType::Stub)
-        u.stub->propagateTransitions(visitor);
+        m_stub->propagateTransitions(visitor);
 }
 
 template void StructureStubInfo::propagateTransitions(AbstractSlotVisitor&);
@@ -375,7 +373,7 @@ StubInfoSummary StructureStubInfo::summary(VM& vm) const
     StubInfoSummary takesSlowPath = StubInfoSummary::TakesSlowPath;
     StubInfoSummary simple = StubInfoSummary::Simple;
     if (m_cacheType == CacheType::Stub) {
-        PolymorphicAccess* list = u.stub;
+        PolymorphicAccess* list = m_stub.get();
         for (unsigned i = 0; i < list->size(); ++i) {
             const AccessCase& access = list->at(i);
             if (access.doesCalls(vm)) {
@@ -407,7 +405,7 @@ bool StructureStubInfo::containsPC(void* pc) const
 {
     if (m_cacheType != CacheType::Stub)
         return false;
-    return u.stub->containsPC(pc);
+    return m_stub->containsPC(pc);
 }
 
 ALWAYS_INLINE void StructureStubInfo::setCacheType(const ConcurrentJSLockerBase&, CacheType newCacheType)

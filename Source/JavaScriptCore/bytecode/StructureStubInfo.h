@@ -32,6 +32,7 @@
 #include "JITStubRoutine.h"
 #include "MacroAssembler.h"
 #include "Options.h"
+#include "PolymorphicAccess.h"
 #include "PutKind.h"
 #include "RegisterSet.h"
 #include "Structure.h"
@@ -350,19 +351,24 @@ private:
     };
 
 public:
-    CodeOrigin codeOrigin;
-    PropertyOffset byIdSelfOffset;
     static ptrdiff_t offsetOfByIdSelfOffset() { return OBJECT_OFFSETOF(StructureStubInfo, byIdSelfOffset); }
     static ptrdiff_t offsetOfInlineAccessBaseStructure() { return OBJECT_OFFSETOF(StructureStubInfo, m_inlineAccessBaseStructure); }
-    union {
-        PolymorphicAccess* stub;
-    } u;
+    static ptrdiff_t offsetOfCodePtr() { return OBJECT_OFFSETOF(StructureStubInfo, m_codePtr); }
+    static ptrdiff_t offsetOfDoneLocation() { return OBJECT_OFFSETOF(StructureStubInfo, doneLocation); }
+    static ptrdiff_t offsetOfSlowPathStartLocation() { return OBJECT_OFFSETOF(StructureStubInfo, slowPathStartLocation); }
+    static ptrdiff_t offsetOfSlowOperation() { return OBJECT_OFFSETOF(StructureStubInfo, m_slowOperation); }
+    static ptrdiff_t offsetOfCountdown() { return OBJECT_OFFSETOF(StructureStubInfo, countdown); }
+
     Structure* inlineAccessBaseStructure(VM& vm)
     {
         if (!m_inlineAccessBaseStructure)
             return nullptr;
         return vm.getStructure(m_inlineAccessBaseStructure);
     }
+
+    CodeOrigin codeOrigin;
+    PropertyOffset byIdSelfOffset;
+    std::unique_ptr<PolymorphicAccess> m_stub;
     StructureID m_inlineAccessBaseStructure { 0 };
 private:
     CacheableIdentifier m_identifier;
@@ -382,12 +388,6 @@ public:
     };
 
     MacroAssemblerCodePtr<JITStubRoutinePtrTag> m_codePtr;
-
-    static ptrdiff_t offsetOfCodePtr() { return OBJECT_OFFSETOF(StructureStubInfo, m_codePtr); }
-    static ptrdiff_t offsetOfDoneLocation() { return OBJECT_OFFSETOF(StructureStubInfo, doneLocation); }
-    static ptrdiff_t offsetOfSlowPathStartLocation() { return OBJECT_OFFSETOF(StructureStubInfo, slowPathStartLocation); }
-    static ptrdiff_t offsetOfSlowOperation() { return OBJECT_OFFSETOF(StructureStubInfo, m_slowOperation); }
-    static ptrdiff_t offsetOfCountdown() { return OBJECT_OFFSETOF(StructureStubInfo, countdown); }
 
     RegisterSet usedRegisters;
 

@@ -160,7 +160,7 @@ InByStatus InByStatus::computeForStubInfoWithoutExitSiteFeedback(const Concurren
     }
 
     case CacheType::Stub: {
-        PolymorphicAccess* list = stubInfo->u.stub;
+        PolymorphicAccess* list = stubInfo->m_stub.get();
         for (unsigned listIndex = 0; listIndex < list->size(); ++listIndex) {
             const AccessCase& access = list->at(listIndex);
             if (access.viaProxy())

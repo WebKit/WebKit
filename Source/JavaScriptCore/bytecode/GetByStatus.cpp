@@ -236,7 +236,7 @@ GetByStatus GetByStatus::computeForStubInfoWithoutExitSiteFeedback(
     }
         
     case CacheType::Stub: {
-        PolymorphicAccess* list = stubInfo->u.stub;
+        PolymorphicAccess* list = stubInfo->m_stub.get();
         if (list->size() == 1) {
             const AccessCase& access = list->at(0);
             switch (access.type()) {

@@ -1,3 +1,43 @@
+2022-01-07  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Clean up StructureStubInfo
+        https://bugs.webkit.org/show_bug.cgi?id=234943
+
+        Reviewed by Saam Barati.
+
+        Use std::unique_ptr<PolymorphicAccess> instead of raw pointer.
+
+        * bytecode/CheckPrivateBrandStatus.cpp:
+        (JSC::CheckPrivateBrandStatus::computeForStubInfoWithoutExitSiteFeedback):
+        * bytecode/DeleteByStatus.cpp:
+        (JSC::DeleteByStatus::computeForStubInfoWithoutExitSiteFeedback):
+        * bytecode/GetByStatus.cpp:
+        (JSC::GetByStatus::computeForStubInfoWithoutExitSiteFeedback):
+        * bytecode/InByStatus.cpp:
+        (JSC::InByStatus::computeForStubInfoWithoutExitSiteFeedback):
+        * bytecode/InstanceOfStatus.cpp:
+        (JSC::InstanceOfStatus::computeForStubInfo):
+        * bytecode/PutByStatus.cpp:
+        (JSC::PutByStatus::computeForStubInfo):
+        * bytecode/SetPrivateBrandStatus.cpp:
+        (JSC::SetPrivateBrandStatus::computeForStubInfoWithoutExitSiteFeedback):
+        * bytecode/StructureStubInfo.cpp:
+        (JSC::StructureStubInfo::deref):
+        (JSC::StructureStubInfo::aboutToDie):
+        (JSC::StructureStubInfo::addAccessCase):
+        (JSC::StructureStubInfo::visitAggregateImpl):
+        (JSC::StructureStubInfo::visitWeakReferences):
+        (JSC::StructureStubInfo::propagateTransitions):
+        (JSC::StructureStubInfo::summary const):
+        (JSC::StructureStubInfo::containsPC const):
+        (JSC::StructureStubInfo::~StructureStubInfo): Deleted.
+        * bytecode/StructureStubInfo.h:
+        (JSC::StructureStubInfo::offsetOfCodePtr):
+        (JSC::StructureStubInfo::offsetOfDoneLocation):
+        (JSC::StructureStubInfo::offsetOfSlowPathStartLocation):
+        (JSC::StructureStubInfo::offsetOfSlowOperation):
+        (JSC::StructureStubInfo::offsetOfCountdown):
+
 2022-01-06  Saam Barati  <sbarati@apple.com>
 
         preparePatchpointForExceptions needs to handle tuples

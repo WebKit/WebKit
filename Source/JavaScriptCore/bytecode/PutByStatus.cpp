@@ -188,7 +188,7 @@ PutByStatus PutByStatus::computeForStubInfo(const ConcurrentJSLocker& locker, Co
     }
         
     case CacheType::Stub: {
-        PolymorphicAccess* list = stubInfo->u.stub;
+        PolymorphicAccess* list = stubInfo->m_stub.get();
         
         PutByStatus result;
         result.m_state = Simple;
