@@ -845,6 +845,7 @@ public:
 #endif
 
     void setPageVisibility(bool isVisible);
+    void setPageIsFocused(bool);
     void setPageIsFocusedAndActive(bool);
     void setPageIsInWindow(bool);
     bool isPageActive() const;

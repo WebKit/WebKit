@@ -391,7 +391,7 @@ void PageClientImpl::notifyInputContextAboutDiscardedComposition()
 
 void PageClientImpl::assistiveTechnologyMakeFirstResponder()
 {
-    notImplemented();
+    [m_contentView becomeFirstResponder];
 }
 
 void PageClientImpl::makeFirstResponder()

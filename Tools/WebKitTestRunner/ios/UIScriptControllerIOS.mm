@@ -1326,6 +1326,11 @@ void UIScriptControllerIOS::setSuppressSoftwareKeyboard(bool suppressSoftwareKey
     webView()._suppressSoftwareKeyboard = suppressSoftwareKeyboard;
 }
 
+bool UIScriptControllerIOS::isWebContentFirstResponder() const
+{
+    return [webView() _contentViewIsFirstResponder];
+}
+
 }
 
 #endif // PLATFORM(IOS_FAMILY)

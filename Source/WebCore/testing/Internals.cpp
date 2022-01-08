@@ -5360,6 +5360,11 @@ void Internals::setPageVisibility(bool isVisible)
     updatePageActivityState(ActivityState::IsVisible, isVisible);
 }
 
+void Internals::setPageIsFocused(bool isFocused)
+{
+    updatePageActivityState(ActivityState::IsFocused, isFocused);
+}
+
 void Internals::setPageIsFocusedAndActive(bool isFocusedAndActive)
 {
     updatePageActivityState({ ActivityState::IsFocused, ActivityState::WindowIsActive }, isFocusedAndActive);

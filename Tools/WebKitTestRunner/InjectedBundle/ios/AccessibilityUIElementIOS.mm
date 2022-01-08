@@ -70,6 +70,7 @@ typedef void (*AXPostedNotificationCallback)(id element, NSString* notification,
 - (CGFloat)_accessibilityMinValue;
 - (CGFloat)_accessibilityMaxValue;
 - (void)_accessibilitySetValue:(NSString *)value;
+- (void)_accessibilitySetFocus:(BOOL)focus;
 - (void)_accessibilityActivate;
 - (UIAccessibilityTraits)_axSelectedTrait;
 - (UIAccessibilityTraits)_axTextAreaTrait;
@@ -1181,6 +1182,7 @@ bool AccessibilityUIElement::isInDescriptionListTerm() const
 
 void AccessibilityUIElement::takeFocus()
 {
+    [m_element _accessibilitySetFocus:YES];
 }
 
 void AccessibilityUIElement::takeSelection()

@@ -359,6 +359,7 @@ interface UIScriptController {
     undefined firstResponderSuppressionForWebView(boolean shouldSuppress);
     undefined makeWindowContentViewFirstResponder();
     readonly attribute boolean isWindowContentViewFirstResponder;
+    readonly attribute boolean isWebContentFirstResponder;
 
     undefined setHardwareKeyboardAttached(boolean attached);
 

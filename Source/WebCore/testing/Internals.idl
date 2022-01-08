@@ -885,6 +885,7 @@ typedef (FetchRequest or FetchResponse) FetchObject;
     [Conditional=WEBGL] boolean platformSupportsMetal(boolean isWebGL2);
 
     undefined setPageVisibility(boolean isVisible);
+    undefined setPageIsFocused(boolean isFocused);
     undefined setPageIsFocusedAndActive(boolean isFocused);
     undefined setPageIsInWindow(boolean isInWindow);
     boolean isPageActive();

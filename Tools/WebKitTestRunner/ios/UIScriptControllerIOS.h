@@ -168,6 +168,8 @@ private:
     void waitForSingleTapToReset() const;
     WebCore::FloatRect rectForMenuAction(CFStringRef) const;
     void singleTapAtPointWithModifiers(WebCore::FloatPoint location, Vector<String>&& modifierFlags, BlockPtr<void()>&&);
+
+    bool isWebContentFirstResponder() const override;
 };
 
 }
