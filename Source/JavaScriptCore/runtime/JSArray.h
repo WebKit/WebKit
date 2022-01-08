@@ -104,7 +104,7 @@ public:
     JS_EXPORT_PRIVATE void push(JSGlobalObject*, JSValue);
     JS_EXPORT_PRIVATE JSValue pop(JSGlobalObject*);
 
-    JSArray* fastSlice(JSGlobalObject*, unsigned startIndex, unsigned count);
+    static JSArray* fastSlice(JSGlobalObject*, JSObject* source, uint64_t startIndex, uint64_t count);
 
     bool canFastCopy(VM&, JSArray* otherArray);
     bool canDoFastIndexedAccess(VM&);

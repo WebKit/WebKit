@@ -1139,10 +1139,8 @@ JSC_DEFINE_HOST_FUNCTION(arrayProtoFuncSlice, (JSGlobalObject* globalObject, Cal
     if (UNLIKELY(speciesResult.first == SpeciesConstructResult::Exception))
         return { };
 
-    bool okToDoFastPath = speciesResult.first == SpeciesConstructResult::FastPath && isJSArray(thisObj) && length == toLength(globalObject, thisObj);
-    RETURN_IF_EXCEPTION(scope, { });
-    if (LIKELY(okToDoFastPath)) {
-        if (JSArray* result = asArray(thisObj)->fastSlice(globalObject, static_cast<uint32_t>(begin), static_cast<uint32_t>(end - begin)))
+    if (LIKELY(speciesResult.first == SpeciesConstructResult::FastPath)) {
+        if (JSArray* result = JSArray::fastSlice(globalObject, thisObj, begin, end - begin))
             return JSValue::encode(result);
     }
 
@@ -1235,10 +1233,8 @@ JSC_DEFINE_HOST_FUNCTION(arrayProtoFuncSplice, (JSGlobalObject* globalObject, Ca
         return JSValue::encode(jsUndefined());
 
     JSObject* result = nullptr;
-    bool okToDoFastPath = speciesResult.first == SpeciesConstructResult::FastPath && isJSArray(thisObj) && length == toLength(globalObject, thisObj);
-    RETURN_IF_EXCEPTION(scope, encodedJSValue());
-    if (LIKELY(okToDoFastPath))
-        result = asArray(thisObj)->fastSlice(globalObject, static_cast<uint32_t>(actualStart), static_cast<uint32_t>(actualDeleteCount));
+    if (LIKELY(speciesResult.first == SpeciesConstructResult::FastPath))
+        result = JSArray::fastSlice(globalObject, thisObj, actualStart, actualDeleteCount);
 
     if (!result) {
         if (speciesResult.first == SpeciesConstructResult::CreatedObject)

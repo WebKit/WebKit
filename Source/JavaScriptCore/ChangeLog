@@ -1,3 +1,40 @@
+2022-01-07  Alexey Shvayka  <ashvayka@apple.com>
+
+        Expand the set of objects we take JSArray::fastSlice() path for
+        https://bugs.webkit.org/show_bug.cgi?id=234539
+
+        Reviewed by Yusuke Suzuki.
+
+        Currently, Array.prototype's slice() / splice() methods take a fast path only for
+        JSArray source objects. With this change, gcSafeMemcpy-based path is taken for any
+        object with ordinary getOwnPropertySlotByIndex() method, which speeds up the common
+        case of `[].slice.call(arguments)` by 140% (in strict mode only, see ClonedArguments).
+
+        Also, once is https://webkit.org/b/234538 resolved, calling Array.prototype.slice()
+        on a static NodeList, which is a common idiom to acquire map() / filter() methods,
+        will become faster as well.
+
+        This patch was thoroughly evaluated to be spec-perfect and memory-safe:
+
+          - indexing mode check and holesMustForwardToPrototype() guarantee that there
+            are no observable userland code to be invoked;
+          - fastSlice() signature is upgraded to uint64_t so `nullptr` is returned in case
+            of large "length", resulting in a RangeError being thrown on the slow path;
+          - to handle the case of source array being shrinked after "length" lookup (see r175420),
+            OOB read check is moved to JSArray::fastSlice() and refined to rely on vectorLength()
+            so the double "length" lookup is avoided (added a test for this).
+
+        All this (and more) is well covered by the test262 suite.
+
+        This change improves Speedometer2/EmberJS-Debug-TodoMVC score by 0.5%: although the test
+        is slow on its own, `[].slice.call(arguments)` is performed ~56k times per run.
+
+        * runtime/ArrayPrototype.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::fastSlice):
+        * runtime/JSArray.h:
+
 2022-01-07  Tim Horton  <timothy_horton@apple.com>
 
         Adopt linkedOnOrAfter() in more places
