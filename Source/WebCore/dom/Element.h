@@ -571,8 +571,8 @@ public:
     bool dispatchSimulatedClick(Event* underlyingEvent, SimulatedClickMouseEventOptions = SendNoEvents, SimulatedClickVisualOptions = ShowPressedLook);
 
     // FIXME: Consider changing signature to accept Element* because all callers perform copyRef().
-    void dispatchFocusInEvent(RefPtr<Element>&& oldFocusedElement);
-    void dispatchFocusOutEvent(RefPtr<Element>&& newFocusedElement);
+    void dispatchFocusInEventIfNeeded(RefPtr<Element>&& oldFocusedElement);
+    void dispatchFocusOutEventIfNeeded(RefPtr<Element>&& newFocusedElement);
     virtual void dispatchFocusEvent(RefPtr<Element>&& oldFocusedElement, FocusDirection);
     virtual void dispatchBlurEvent(RefPtr<Element>&& newFocusedElement);
     void dispatchWebKitImageReadyEventForTesting();

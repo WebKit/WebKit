@@ -3182,14 +3182,18 @@ void Element::runFocusingStepsForAutofocus()
     focus();
 }
 
-void Element::dispatchFocusInEvent(RefPtr<Element>&& oldFocusedElement)
+void Element::dispatchFocusInEventIfNeeded(RefPtr<Element>&& oldFocusedElement)
 {
+    if (!document().hasListenerType(Document::FOCUSIN_LISTENER))
+        return;
     RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(ScriptDisallowedScope::InMainThread::isScriptAllowed() || !isInWebProcess());
     dispatchScopedEvent(FocusEvent::create(eventNames().focusinEvent, Event::CanBubble::Yes, Event::IsCancelable::No, document().windowProxy(), 0, WTFMove(oldFocusedElement)));
 }
 
-void Element::dispatchFocusOutEvent(RefPtr<Element>&& newFocusedElement)
+void Element::dispatchFocusOutEventIfNeeded(RefPtr<Element>&& newFocusedElement)
 {
+    if (!document().hasListenerType(Document::FOCUSOUT_LISTENER))
+        return;
     RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(ScriptDisallowedScope::InMainThread::isScriptAllowed() || !isInWebProcess());
     dispatchScopedEvent(FocusEvent::create(eventNames().focusoutEvent, Event::CanBubble::Yes, Event::IsCancelable::No, document().windowProxy(), 0, WTFMove(newFocusedElement)));
 }

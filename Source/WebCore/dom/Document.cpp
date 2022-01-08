@@ -4658,7 +4658,7 @@ bool Document::setFocusedElement(Element* element, const FocusOptions& options)
                 newFocusedElement = nullptr;
             }
 
-            oldFocusedElement->dispatchFocusOutEvent(newFocusedElement.copyRef()); // DOM level 3 bubbling blur event.
+            oldFocusedElement->dispatchFocusOutEventIfNeeded(newFocusedElement.copyRef()); // DOM level 3 bubbling blur event.
 
             if (m_focusedElement) {
                 // handler shifted focus
@@ -4723,7 +4723,7 @@ bool Document::setFocusedElement(Element* element, const FocusOptions& options)
             return false;
         }
 
-        m_focusedElement->dispatchFocusInEvent(oldFocusedElement.copyRef()); // DOM level 3 bubbling focus event.
+        m_focusedElement->dispatchFocusInEventIfNeeded(oldFocusedElement.copyRef()); // DOM level 3 bubbling focus event.
 
         if (m_focusedElement != newFocusedElement) {
             // handler shifted focus
@@ -5285,6 +5285,10 @@ void Document::addListenerTypeIfNeeded(const AtomString& eventType)
         addListenerType(FORCEUP_LISTENER);
     else if (eventType == eventNames().resizeEvent)
         addListenerType(RESIZE_LISTENER);
+    else if (eventType == eventNames().focusinEvent)
+        addListenerType(FOCUSIN_LISTENER);
+    else if (eventType == eventNames().focusoutEvent)
+        addListenerType(FOCUSOUT_LISTENER);
 }
 
 HTMLFrameOwnerElement* Document::ownerElement() const

@@ -906,7 +906,9 @@ public:
         FORCECHANGED_LISTENER                = 1 << 14,
         FORCEDOWN_LISTENER                   = 1 << 15,
         FORCEUP_LISTENER                     = 1 << 16,
-        RESIZE_LISTENER                      = 1 << 17
+        RESIZE_LISTENER                      = 1 << 17,
+        FOCUSIN_LISTENER                     = 1 << 18,
+        FOCUSOUT_LISTENER                    = 1 << 19,
     };
 
     bool hasListenerType(ListenerType listenerType) const { return (m_listenerTypes & listenerType); }
