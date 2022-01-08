@@ -69,7 +69,7 @@ public:
         EnforceIFrameAllowFullscreenRequirement,
         ExemptIFrameAllowFullscreenRequirement,
     };
-    WEBCORE_EXPORT void requestFullscreenForElement(Element*, FullscreenCheckType);
+    WEBCORE_EXPORT void requestFullscreenForElement(Ref<Element>&&, FullscreenCheckType);
 
     WEBCORE_EXPORT bool willEnterFullscreen(Element&);
     WEBCORE_EXPORT bool didEnterFullscreen();

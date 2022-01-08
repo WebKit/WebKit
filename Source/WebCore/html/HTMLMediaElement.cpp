@@ -6303,7 +6303,7 @@ void HTMLMediaElement::enterFullscreen(VideoFullscreenMode mode)
     if (document().settings().fullScreenEnabled() && mode == VideoFullscreenModeStandard) {
         m_temporarilyAllowingInlinePlaybackAfterFullscreen = false;
         m_waitingToEnterFullscreen = true;
-        document().fullscreenManager().requestFullscreenForElement(this, FullscreenManager::ExemptIFrameAllowFullscreenRequirement);
+        document().fullscreenManager().requestFullscreenForElement(*this, FullscreenManager::ExemptIFrameAllowFullscreenRequirement);
         return;
     }
 #endif

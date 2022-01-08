@@ -1,3 +1,13 @@
+2022-01-07  Alex Christensen  <achristensen@webkit.org>
+
+        Make FullscreenManager::requestFullscreenForElement more robust
+        https://bugs.webkit.org/show_bug.cgi?id=234995
+
+        Reviewed by Darin Adler.
+
+        * WebProcess/FullScreen/WebFullScreenManager.cpp:
+        (WebKit::WebFullScreenManager::requestEnterFullScreen):
+
 2022-01-07  Chris Lord  <clord@igalia.com>
 
         [GTK] REGRESSION: Kinetic scrolling via touch-screen behaves oddly
