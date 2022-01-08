@@ -137,6 +137,8 @@ public:
 
     bool isControlledByOffscreen() const;
 
+    WEBCORE_EXPORT static size_t maxActivePixelMemory();
+
 private:
     HTMLCanvasElement(const QualifiedName&, Document&);
 

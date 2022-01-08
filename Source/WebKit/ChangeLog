@@ -1,3 +1,16 @@
+2022-01-07  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [GPU Process] Can't getImageData on canvas larger than 4096x4096
+        https://bugs.webkit.org/show_bug.cgi?id=234321
+        <rdar://problem/83575501>
+
+        Reviewed by Tim Horton.
+
+        Consult the policy for how big a canvas can be, rather than hardcoding a number.
+
+        * GPUProcess/graphics/RemoteRenderingBackend.cpp:
+        (WebKit::RemoteRenderingBackend::updateSharedMemoryForGetPixelBufferHelper):
+
 2022-01-07  Alex Christensen  <achristensen@webkit.org>
 
         Make FullscreenManager::requestFullscreenForElement more robust

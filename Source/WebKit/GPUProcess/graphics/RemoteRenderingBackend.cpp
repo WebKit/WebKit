@@ -40,6 +40,7 @@
 #include "RemoteRenderingBackendMessages.h"
 #include "RemoteRenderingBackendProxyMessages.h"
 #include "WebCoreArgumentCoders.h"
+#include <WebCore/HTMLCanvasElement.h>
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/SystemTracing.h>
@@ -198,8 +199,8 @@ std::optional<SharedMemory::IPCHandle> RemoteRenderingBackend::updateSharedMemor
 {
     MESSAGE_CHECK_WITH_RETURN_VALUE(!m_getPixelBufferSharedMemory || byteCount > m_getPixelBufferSharedMemory->size(), std::nullopt, "The existing Shmem for getPixelBuffer() is already big enough to handle the request");
 
-    if (byteCount > 64 * MB) {
-        // Just a sanity check. A 4K image is 36MB.
+    if (byteCount > HTMLCanvasElement::maxActivePixelMemory()) {
+        // Just a sanity check.
         return std::nullopt;
     }
 

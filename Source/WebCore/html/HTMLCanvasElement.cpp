@@ -202,7 +202,7 @@ void HTMLCanvasElement::setSize(const IntSize& newSize)
     reset();
 }
 
-static inline size_t maxActivePixelMemory()
+size_t HTMLCanvasElement::maxActivePixelMemory()
 {
     if (maxActivePixelMemoryForTesting)
         return *maxActivePixelMemoryForTesting;
