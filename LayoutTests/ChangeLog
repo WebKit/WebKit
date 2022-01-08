@@ -1,3 +1,14 @@
+2022-01-08  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix some CSS filter interpolation issues
+        https://bugs.webkit.org/show_bug.cgi?id=235007
+
+        Reviewed by Antoine Quint.
+
+        imported/w3c/web-platform-tests/css/filter-effects/animation/filter-interpolation-004.html no longer asserts.
+
+        * TestExpectations:
+
 2022-01-07  Simon Fraser  <simon.fraser@apple.com>
 
         Import css/filter-effects web platform tests

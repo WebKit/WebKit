@@ -85,7 +85,20 @@ RefPtr<FilterOperation> BasicColorMatrixFilterOperation::blend(const FilterOpera
         
     const BasicColorMatrixFilterOperation* fromOperation = downcast<BasicColorMatrixFilterOperation>(from);
     double fromAmount = fromOperation ? fromOperation->amount() : passthroughAmount();
-    return BasicColorMatrixFilterOperation::create(WebCore::blend(fromAmount, m_amount, context), m_type);
+    double blendedAmount = WebCore::blend(fromAmount, m_amount, context);
+
+    switch (m_type) {
+    case GRAYSCALE:
+    case SEPIA:
+        blendedAmount = std::clamp(blendedAmount, 0.0, 1.0);
+        break;
+    case SATURATE:
+        blendedAmount = std::max(blendedAmount, 0.0);
+        break;
+    default:
+        break;
+    }
+    return BasicColorMatrixFilterOperation::create(blendedAmount, m_type);
 }
 
 bool BasicColorMatrixFilterOperation::transformColor(SRGBA<float>& color) const
@@ -148,7 +161,21 @@ RefPtr<FilterOperation> BasicComponentTransferFilterOperation::blend(const Filte
         
     const BasicComponentTransferFilterOperation* fromOperation = downcast<BasicComponentTransferFilterOperation>(from);
     double fromAmount = fromOperation ? fromOperation->amount() : passthroughAmount();
-    return BasicComponentTransferFilterOperation::create(WebCore::blend(fromAmount, m_amount, context), m_type);
+    double blendedAmount = WebCore::blend(fromAmount, m_amount, context);
+    
+    switch (m_type) {
+    case INVERT:
+    case OPACITY:
+        blendedAmount = std::clamp(blendedAmount, 0.0, 1.0);
+        break;
+    case BRIGHTNESS:
+    case CONTRAST:
+        blendedAmount = std::max(blendedAmount, 0.0);
+        break;
+    default:
+        break;
+    }
+    return BasicComponentTransferFilterOperation::create(blendedAmount, m_type);
 }
 
 bool BasicComponentTransferFilterOperation::transformColor(SRGBA<float>& color) const
@@ -344,7 +371,7 @@ RefPtr<FilterOperation> BlurFilterOperation::blend(const FilterOperation* from, 
 
     const BlurFilterOperation* fromOperation = downcast<BlurFilterOperation>(from);
     Length fromLength = fromOperation ? fromOperation->m_stdDeviation : Length(lengthType);
-    return BlurFilterOperation::create(WebCore::blend(fromLength, m_stdDeviation, context));
+    return BlurFilterOperation::create(WebCore::blend(fromLength, m_stdDeviation, context, ValueRange::NonNegative));
 }
     
 bool DropShadowFilterOperation::operator==(const FilterOperation& operation) const
@@ -373,7 +400,7 @@ RefPtr<FilterOperation> DropShadowFilterOperation::blend(const FilterOperation* 
     
     return DropShadowFilterOperation::create(
         WebCore::blend(fromLocation, m_location, context),
-        WebCore::blend(fromStdDeviation, m_stdDeviation, context),
+        std::max(WebCore::blend(fromStdDeviation, m_stdDeviation, context), 0),
         WebCore::blend(fromColor, m_color, context));
 }
 

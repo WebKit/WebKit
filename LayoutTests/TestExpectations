@@ -5046,7 +5046,6 @@ webkit.org/b/230004 imported/w3c/web-platform-tests/css/css-pseudo/selection-tex
 
 # css/filter-effects
 webkit.org/b/235000 [ Debug ] imported/w3c/web-platform-tests/css/filter-effects/animation/filter-interpolation-003.html [ Skip ]
-webkit.org/b/235000 [ Debug ] imported/w3c/web-platform-tests/css/filter-effects/animation/filter-interpolation-004.html [ Skip ]
 
 imported/w3c/web-platform-tests/css/filter-effects/backdrop-filter-basic-background-color.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/filter-effects/backdrop-filter-basic-opacity-2.html [ ImageOnlyFailure ]
@@ -5077,7 +5076,6 @@ imported/w3c/web-platform-tests/css/filter-effects/css-filters-animation-blur.ht
 imported/w3c/web-platform-tests/css/filter-effects/css-filters-animation-combined-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/filter-effects/css-filters-animation-contrast.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/filter-effects/css-filters-animation-invert.html [ ImageOnlyFailure ]
-
 imported/w3c/web-platform-tests/css/filter-effects/drop-shadow-clipped-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/filter-effects/effect-reference-after-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/filter-effects/effect-reference-delete.html [ ImageOnlyFailure ]
