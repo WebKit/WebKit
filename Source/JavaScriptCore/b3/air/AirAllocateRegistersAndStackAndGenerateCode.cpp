@@ -758,8 +758,8 @@ void GenerateAndAllocateRegisters::generate(CCallHelpers& jit)
                 ASSERT_UNUSED(jump, !jump.isSet());
 
                 allocNamed(earlyNextClobberedRegisters, true);
+                clobberedRegisters.merge(earlyNextClobberedRegisters);
                 clobber(clobberedRegisters);
-                clobber(earlyNextClobberedRegisters);
             } else {
                 ASSERT(needsToGenerate);
 

@@ -1,5 +1,13 @@
 2022-01-07  Saam Barati  <sbarati@apple.com>
 
+        Unreviewed. Appease an assertion that was broken by r287801 by slightly
+        refactoring code so we don't clobber the same named register twice.
+
+        * b3/air/AirAllocateRegistersAndStackAndGenerateCode.cpp:
+        (JSC::B3::Air::GenerateAndAllocateRegisters::generate):
+
+2022-01-07  Saam Barati  <sbarati@apple.com>
+
         Add support for Wasm exceptions in the Air generator
         https://bugs.webkit.org/show_bug.cgi?id=231211
         <rdar://problem/84132861>
