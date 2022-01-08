@@ -24,6 +24,7 @@
     "css/css-ui": "import", 
     "css/css-values": "import", 
     "css/cssom-view": "import", 
+    "css/filter-effects": "import", 
     "css/geometry": "import", 
     "css/selectors": "import", 
     "css/support": "import", 

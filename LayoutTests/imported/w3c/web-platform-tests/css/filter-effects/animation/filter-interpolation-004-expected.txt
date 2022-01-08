@@ -1,0 +1,202 @@
+
+FAIL CSS Transitions: property <filter> from [blur()] to [blur(10px)] at (-1) should be [blur(0px)] assert_equals: expected "blur ( 0px ) " but got "blur ( - 10px ) "
+PASS CSS Transitions: property <filter> from [blur()] to [blur(10px)] at (0) should be [blur()]
+PASS CSS Transitions: property <filter> from [blur()] to [blur(10px)] at (0.5) should be [blur(5px)]
+PASS CSS Transitions: property <filter> from [blur()] to [blur(10px)] at (1) should be [blur(10px)]
+PASS CSS Transitions: property <filter> from [blur()] to [blur(10px)] at (1.5) should be [blur(15px)]
+FAIL CSS Transitions with transition: all: property <filter> from [blur()] to [blur(10px)] at (-1) should be [blur(0px)] assert_equals: expected "blur ( 0px ) " but got "blur ( - 10px ) "
+PASS CSS Transitions with transition: all: property <filter> from [blur()] to [blur(10px)] at (0) should be [blur()]
+PASS CSS Transitions with transition: all: property <filter> from [blur()] to [blur(10px)] at (0.5) should be [blur(5px)]
+PASS CSS Transitions with transition: all: property <filter> from [blur()] to [blur(10px)] at (1) should be [blur(10px)]
+PASS CSS Transitions with transition: all: property <filter> from [blur()] to [blur(10px)] at (1.5) should be [blur(15px)]
+FAIL CSS Animations: property <filter> from [blur()] to [blur(10px)] at (-1) should be [blur(0px)] assert_equals: expected "blur ( 0px ) " but got "blur ( - 10px ) "
+PASS CSS Animations: property <filter> from [blur()] to [blur(10px)] at (0) should be [blur()]
+PASS CSS Animations: property <filter> from [blur()] to [blur(10px)] at (0.5) should be [blur(5px)]
+PASS CSS Animations: property <filter> from [blur()] to [blur(10px)] at (1) should be [blur(10px)]
+PASS CSS Animations: property <filter> from [blur()] to [blur(10px)] at (1.5) should be [blur(15px)]
+FAIL Web Animations: property <filter> from [blur()] to [blur(10px)] at (-1) should be [blur(0px)] assert_equals: expected "blur ( 0px ) " but got "blur ( - 10px ) "
+PASS Web Animations: property <filter> from [blur()] to [blur(10px)] at (0) should be [blur()]
+PASS Web Animations: property <filter> from [blur()] to [blur(10px)] at (0.5) should be [blur(5px)]
+PASS Web Animations: property <filter> from [blur()] to [blur(10px)] at (1) should be [blur(10px)]
+PASS Web Animations: property <filter> from [blur()] to [blur(10px)] at (1.5) should be [blur(15px)]
+FAIL CSS Transitions: property <filter> from [brightness(0)] to [brightness()] at (-1) should be [brightness(0)] assert_equals: expected "brightness ( 0 ) " but got "brightness ( - 1 ) "
+PASS CSS Transitions: property <filter> from [brightness(0)] to [brightness()] at (0) should be [brightness(0)]
+PASS CSS Transitions: property <filter> from [brightness(0)] to [brightness()] at (0.5) should be [brightness(0.5)]
+PASS CSS Transitions: property <filter> from [brightness(0)] to [brightness()] at (1) should be [brightness()]
+PASS CSS Transitions: property <filter> from [brightness(0)] to [brightness()] at (1.5) should be [brightness(1.5)]
+FAIL CSS Transitions with transition: all: property <filter> from [brightness(0)] to [brightness()] at (-1) should be [brightness(0)] assert_equals: expected "brightness ( 0 ) " but got "brightness ( - 1 ) "
+PASS CSS Transitions with transition: all: property <filter> from [brightness(0)] to [brightness()] at (0) should be [brightness(0)]
+PASS CSS Transitions with transition: all: property <filter> from [brightness(0)] to [brightness()] at (0.5) should be [brightness(0.5)]
+PASS CSS Transitions with transition: all: property <filter> from [brightness(0)] to [brightness()] at (1) should be [brightness()]
+PASS CSS Transitions with transition: all: property <filter> from [brightness(0)] to [brightness()] at (1.5) should be [brightness(1.5)]
+FAIL CSS Animations: property <filter> from [brightness(0)] to [brightness()] at (-1) should be [brightness(0)] assert_equals: expected "brightness ( 0 ) " but got "brightness ( - 1 ) "
+PASS CSS Animations: property <filter> from [brightness(0)] to [brightness()] at (0) should be [brightness(0)]
+PASS CSS Animations: property <filter> from [brightness(0)] to [brightness()] at (0.5) should be [brightness(0.5)]
+PASS CSS Animations: property <filter> from [brightness(0)] to [brightness()] at (1) should be [brightness()]
+PASS CSS Animations: property <filter> from [brightness(0)] to [brightness()] at (1.5) should be [brightness(1.5)]
+FAIL Web Animations: property <filter> from [brightness(0)] to [brightness()] at (-1) should be [brightness(0)] assert_equals: expected "brightness ( 0 ) " but got "brightness ( - 1 ) "
+PASS Web Animations: property <filter> from [brightness(0)] to [brightness()] at (0) should be [brightness(0)]
+PASS Web Animations: property <filter> from [brightness(0)] to [brightness()] at (0.5) should be [brightness(0.5)]
+PASS Web Animations: property <filter> from [brightness(0)] to [brightness()] at (1) should be [brightness()]
+PASS Web Animations: property <filter> from [brightness(0)] to [brightness()] at (1.5) should be [brightness(1.5)]
+FAIL CSS Transitions: property <filter> from [contrast(0)] to [contrast()] at (-1) should be [contrast(0)] assert_equals: expected "contrast ( 0 ) " but got "contrast ( - 1 ) "
+PASS CSS Transitions: property <filter> from [contrast(0)] to [contrast()] at (0) should be [contrast(0)]
+PASS CSS Transitions: property <filter> from [contrast(0)] to [contrast()] at (0.5) should be [contrast(0.5)]
+PASS CSS Transitions: property <filter> from [contrast(0)] to [contrast()] at (1) should be [contrast()]
+PASS CSS Transitions: property <filter> from [contrast(0)] to [contrast()] at (1.5) should be [contrast(1.5)]
+FAIL CSS Transitions with transition: all: property <filter> from [contrast(0)] to [contrast()] at (-1) should be [contrast(0)] assert_equals: expected "contrast ( 0 ) " but got "contrast ( - 1 ) "
+PASS CSS Transitions with transition: all: property <filter> from [contrast(0)] to [contrast()] at (0) should be [contrast(0)]
+PASS CSS Transitions with transition: all: property <filter> from [contrast(0)] to [contrast()] at (0.5) should be [contrast(0.5)]
+PASS CSS Transitions with transition: all: property <filter> from [contrast(0)] to [contrast()] at (1) should be [contrast()]
+PASS CSS Transitions with transition: all: property <filter> from [contrast(0)] to [contrast()] at (1.5) should be [contrast(1.5)]
+FAIL CSS Animations: property <filter> from [contrast(0)] to [contrast()] at (-1) should be [contrast(0)] assert_equals: expected "contrast ( 0 ) " but got "contrast ( - 1 ) "
+PASS CSS Animations: property <filter> from [contrast(0)] to [contrast()] at (0) should be [contrast(0)]
+PASS CSS Animations: property <filter> from [contrast(0)] to [contrast()] at (0.5) should be [contrast(0.5)]
+PASS CSS Animations: property <filter> from [contrast(0)] to [contrast()] at (1) should be [contrast()]
+PASS CSS Animations: property <filter> from [contrast(0)] to [contrast()] at (1.5) should be [contrast(1.5)]
+FAIL Web Animations: property <filter> from [contrast(0)] to [contrast()] at (-1) should be [contrast(0)] assert_equals: expected "contrast ( 0 ) " but got "contrast ( - 1 ) "
+PASS Web Animations: property <filter> from [contrast(0)] to [contrast()] at (0) should be [contrast(0)]
+PASS Web Animations: property <filter> from [contrast(0)] to [contrast()] at (0.5) should be [contrast(0.5)]
+PASS Web Animations: property <filter> from [contrast(0)] to [contrast()] at (1) should be [contrast()]
+PASS Web Animations: property <filter> from [contrast(0)] to [contrast()] at (1.5) should be [contrast(1.5)]
+FAIL CSS Transitions: property <filter> from [drop-shadow(0px 0px)] to [drop-shadow(20px 10px 30px green)] at (-1) should be [drop-shadow(-20px -10px blue)] assert_equals: expected "drop - shadow ( rgb ( 0 , 0 , 255 ) - 20px - 10px 0px ) " but got "drop - shadow ( rgba ( 0 , 0 , 0 , 0 ) - 20px - 10px - 30px ) "
+FAIL CSS Transitions: property <filter> from [drop-shadow(0px 0px)] to [drop-shadow(20px 10px 30px green)] at (0) should be [drop-shadow(0px 0px blue)] assert_equals: expected "drop - shadow ( rgb ( 0 , 0 , 255 ) 0px 0px 0px ) " but got "drop - shadow ( rgba ( 0 , 0 , 0 , 0 ) 0px 0px 0px ) "
+FAIL CSS Transitions: property <filter> from [drop-shadow(0px 0px)] to [drop-shadow(20px 10px 30px green)] at (0.5) should be [drop-shadow(10px 5px 15px rgb(0, 64, 128))] assert_equals: expected "drop - shadow ( rgb ( 0 , 64 , 128 ) 10px 5px 15px ) " but got "drop - shadow ( rgba ( 0 , 128 , 0 , 0.5 ) 10px 5px 15px ) "
+PASS CSS Transitions: property <filter> from [drop-shadow(0px 0px)] to [drop-shadow(20px 10px 30px green)] at (1) should be [drop-shadow(20px 10px 30px green)]
+PASS CSS Transitions: property <filter> from [drop-shadow(0px 0px)] to [drop-shadow(20px 10px 30px green)] at (1.5) should be [drop-shadow(30px 15px 45px rgb(0, 192, 0))]
+FAIL CSS Transitions with transition: all: property <filter> from [drop-shadow(0px 0px)] to [drop-shadow(20px 10px 30px green)] at (-1) should be [drop-shadow(-20px -10px blue)] assert_equals: expected "drop - shadow ( rgb ( 0 , 0 , 255 ) - 20px - 10px 0px ) " but got "drop - shadow ( rgba ( 0 , 0 , 0 , 0 ) - 20px - 10px - 30px ) "
+FAIL CSS Transitions with transition: all: property <filter> from [drop-shadow(0px 0px)] to [drop-shadow(20px 10px 30px green)] at (0) should be [drop-shadow(0px 0px blue)] assert_equals: expected "drop - shadow ( rgb ( 0 , 0 , 255 ) 0px 0px 0px ) " but got "drop - shadow ( rgba ( 0 , 0 , 0 , 0 ) 0px 0px 0px ) "
+FAIL CSS Transitions with transition: all: property <filter> from [drop-shadow(0px 0px)] to [drop-shadow(20px 10px 30px green)] at (0.5) should be [drop-shadow(10px 5px 15px rgb(0, 64, 128))] assert_equals: expected "drop - shadow ( rgb ( 0 , 64 , 128 ) 10px 5px 15px ) " but got "drop - shadow ( rgba ( 0 , 128 , 0 , 0.5 ) 10px 5px 15px ) "
+PASS CSS Transitions with transition: all: property <filter> from [drop-shadow(0px 0px)] to [drop-shadow(20px 10px 30px green)] at (1) should be [drop-shadow(20px 10px 30px green)]
+PASS CSS Transitions with transition: all: property <filter> from [drop-shadow(0px 0px)] to [drop-shadow(20px 10px 30px green)] at (1.5) should be [drop-shadow(30px 15px 45px rgb(0, 192, 0))]
+FAIL CSS Animations: property <filter> from [drop-shadow(0px 0px)] to [drop-shadow(20px 10px 30px green)] at (-1) should be [drop-shadow(-20px -10px blue)] assert_equals: expected "drop - shadow ( rgb ( 0 , 0 , 255 ) - 20px - 10px 0px ) " but got "drop - shadow ( rgba ( 0 , 0 , 0 , 0 ) - 20px - 10px - 30px ) "
+FAIL CSS Animations: property <filter> from [drop-shadow(0px 0px)] to [drop-shadow(20px 10px 30px green)] at (0) should be [drop-shadow(0px 0px blue)] assert_equals: expected "drop - shadow ( rgb ( 0 , 0 , 255 ) 0px 0px 0px ) " but got "drop - shadow ( rgba ( 0 , 0 , 0 , 0 ) 0px 0px 0px ) "
+FAIL CSS Animations: property <filter> from [drop-shadow(0px 0px)] to [drop-shadow(20px 10px 30px green)] at (0.5) should be [drop-shadow(10px 5px 15px rgb(0, 64, 128))] assert_equals: expected "drop - shadow ( rgb ( 0 , 64 , 128 ) 10px 5px 15px ) " but got "drop - shadow ( rgba ( 0 , 128 , 0 , 0.5 ) 10px 5px 15px ) "
+PASS CSS Animations: property <filter> from [drop-shadow(0px 0px)] to [drop-shadow(20px 10px 30px green)] at (1) should be [drop-shadow(20px 10px 30px green)]
+PASS CSS Animations: property <filter> from [drop-shadow(0px 0px)] to [drop-shadow(20px 10px 30px green)] at (1.5) should be [drop-shadow(30px 15px 45px rgb(0, 192, 0))]
+FAIL Web Animations: property <filter> from [drop-shadow(0px 0px)] to [drop-shadow(20px 10px 30px green)] at (-1) should be [drop-shadow(-20px -10px blue)] assert_equals: expected "drop - shadow ( rgb ( 0 , 0 , 255 ) - 20px - 10px 0px ) " but got "drop - shadow ( rgba ( 0 , 0 , 0 , 0 ) - 20px - 10px - 30px ) "
+FAIL Web Animations: property <filter> from [drop-shadow(0px 0px)] to [drop-shadow(20px 10px 30px green)] at (0) should be [drop-shadow(0px 0px blue)] assert_equals: expected "drop - shadow ( rgb ( 0 , 0 , 255 ) 0px 0px 0px ) " but got "drop - shadow ( rgba ( 0 , 0 , 0 , 0 ) 0px 0px 0px ) "
+FAIL Web Animations: property <filter> from [drop-shadow(0px 0px)] to [drop-shadow(20px 10px 30px green)] at (0.5) should be [drop-shadow(10px 5px 15px rgb(0, 64, 128))] assert_equals: expected "drop - shadow ( rgb ( 0 , 64 , 128 ) 10px 5px 15px ) " but got "drop - shadow ( rgba ( 0 , 128 , 0 , 0.5 ) 10px 5px 15px ) "
+PASS Web Animations: property <filter> from [drop-shadow(0px 0px)] to [drop-shadow(20px 10px 30px green)] at (1) should be [drop-shadow(20px 10px 30px green)]
+PASS Web Animations: property <filter> from [drop-shadow(0px 0px)] to [drop-shadow(20px 10px 30px green)] at (1.5) should be [drop-shadow(30px 15px 45px rgb(0, 192, 0))]
+FAIL CSS Transitions: property <filter> from [grayscale(0)] to [grayscale()] at (-1) should be [grayscale(0)] assert_equals: expected "grayscale ( 0 ) " but got "grayscale ( - 1 ) "
+PASS CSS Transitions: property <filter> from [grayscale(0)] to [grayscale()] at (0) should be [grayscale(0)]
+PASS CSS Transitions: property <filter> from [grayscale(0)] to [grayscale()] at (0.5) should be [grayscale(0.5)]
+PASS CSS Transitions: property <filter> from [grayscale(0)] to [grayscale()] at (1) should be [grayscale()]
+FAIL CSS Transitions: property <filter> from [grayscale(0)] to [grayscale()] at (1.5) should be [grayscale(1)] assert_equals: expected "grayscale ( 1 ) " but got "grayscale ( 1.5 ) "
+FAIL CSS Transitions with transition: all: property <filter> from [grayscale(0)] to [grayscale()] at (-1) should be [grayscale(0)] assert_equals: expected "grayscale ( 0 ) " but got "grayscale ( - 1 ) "
+PASS CSS Transitions with transition: all: property <filter> from [grayscale(0)] to [grayscale()] at (0) should be [grayscale(0)]
+PASS CSS Transitions with transition: all: property <filter> from [grayscale(0)] to [grayscale()] at (0.5) should be [grayscale(0.5)]
+PASS CSS Transitions with transition: all: property <filter> from [grayscale(0)] to [grayscale()] at (1) should be [grayscale()]
+FAIL CSS Transitions with transition: all: property <filter> from [grayscale(0)] to [grayscale()] at (1.5) should be [grayscale(1)] assert_equals: expected "grayscale ( 1 ) " but got "grayscale ( 1.5 ) "
+FAIL CSS Animations: property <filter> from [grayscale(0)] to [grayscale()] at (-1) should be [grayscale(0)] assert_equals: expected "grayscale ( 0 ) " but got "grayscale ( - 1 ) "
+PASS CSS Animations: property <filter> from [grayscale(0)] to [grayscale()] at (0) should be [grayscale(0)]
+PASS CSS Animations: property <filter> from [grayscale(0)] to [grayscale()] at (0.5) should be [grayscale(0.5)]
+PASS CSS Animations: property <filter> from [grayscale(0)] to [grayscale()] at (1) should be [grayscale()]
+FAIL CSS Animations: property <filter> from [grayscale(0)] to [grayscale()] at (1.5) should be [grayscale(1)] assert_equals: expected "grayscale ( 1 ) " but got "grayscale ( 1.5 ) "
+FAIL Web Animations: property <filter> from [grayscale(0)] to [grayscale()] at (-1) should be [grayscale(0)] assert_equals: expected "grayscale ( 0 ) " but got "grayscale ( - 1 ) "
+PASS Web Animations: property <filter> from [grayscale(0)] to [grayscale()] at (0) should be [grayscale(0)]
+PASS Web Animations: property <filter> from [grayscale(0)] to [grayscale()] at (0.5) should be [grayscale(0.5)]
+PASS Web Animations: property <filter> from [grayscale(0)] to [grayscale()] at (1) should be [grayscale()]
+FAIL Web Animations: property <filter> from [grayscale(0)] to [grayscale()] at (1.5) should be [grayscale(1)] assert_equals: expected "grayscale ( 1 ) " but got "grayscale ( 1.5 ) "
+PASS CSS Transitions: property <filter> from [hue-rotate()] to [hue-rotate(360deg)] at (-1) should be [hue-rotate(-360deg)]
+PASS CSS Transitions: property <filter> from [hue-rotate()] to [hue-rotate(360deg)] at (0) should be [hue-rotate()]
+PASS CSS Transitions: property <filter> from [hue-rotate()] to [hue-rotate(360deg)] at (0.5) should be [hue-rotate(180deg)]
+PASS CSS Transitions: property <filter> from [hue-rotate()] to [hue-rotate(360deg)] at (1) should be [hue-rotate(360deg)]
+PASS CSS Transitions: property <filter> from [hue-rotate()] to [hue-rotate(360deg)] at (1.5) should be [hue-rotate(540deg)]
+PASS CSS Transitions with transition: all: property <filter> from [hue-rotate()] to [hue-rotate(360deg)] at (-1) should be [hue-rotate(-360deg)]
+PASS CSS Transitions with transition: all: property <filter> from [hue-rotate()] to [hue-rotate(360deg)] at (0) should be [hue-rotate()]
+PASS CSS Transitions with transition: all: property <filter> from [hue-rotate()] to [hue-rotate(360deg)] at (0.5) should be [hue-rotate(180deg)]
+PASS CSS Transitions with transition: all: property <filter> from [hue-rotate()] to [hue-rotate(360deg)] at (1) should be [hue-rotate(360deg)]
+PASS CSS Transitions with transition: all: property <filter> from [hue-rotate()] to [hue-rotate(360deg)] at (1.5) should be [hue-rotate(540deg)]
+PASS CSS Animations: property <filter> from [hue-rotate()] to [hue-rotate(360deg)] at (-1) should be [hue-rotate(-360deg)]
+PASS CSS Animations: property <filter> from [hue-rotate()] to [hue-rotate(360deg)] at (0) should be [hue-rotate()]
+PASS CSS Animations: property <filter> from [hue-rotate()] to [hue-rotate(360deg)] at (0.5) should be [hue-rotate(180deg)]
+PASS CSS Animations: property <filter> from [hue-rotate()] to [hue-rotate(360deg)] at (1) should be [hue-rotate(360deg)]
+PASS CSS Animations: property <filter> from [hue-rotate()] to [hue-rotate(360deg)] at (1.5) should be [hue-rotate(540deg)]
+PASS Web Animations: property <filter> from [hue-rotate()] to [hue-rotate(360deg)] at (-1) should be [hue-rotate(-360deg)]
+PASS Web Animations: property <filter> from [hue-rotate()] to [hue-rotate(360deg)] at (0) should be [hue-rotate()]
+PASS Web Animations: property <filter> from [hue-rotate()] to [hue-rotate(360deg)] at (0.5) should be [hue-rotate(180deg)]
+PASS Web Animations: property <filter> from [hue-rotate()] to [hue-rotate(360deg)] at (1) should be [hue-rotate(360deg)]
+PASS Web Animations: property <filter> from [hue-rotate()] to [hue-rotate(360deg)] at (1.5) should be [hue-rotate(540deg)]
+FAIL CSS Transitions: property <filter> from [invert(0)] to [invert()] at (-1) should be [invert(0)] assert_equals: expected "invert ( 0 ) " but got "invert ( - 1 ) "
+PASS CSS Transitions: property <filter> from [invert(0)] to [invert()] at (0) should be [invert(0)]
+PASS CSS Transitions: property <filter> from [invert(0)] to [invert()] at (0.5) should be [invert(0.5)]
+PASS CSS Transitions: property <filter> from [invert(0)] to [invert()] at (1) should be [invert()]
+FAIL CSS Transitions: property <filter> from [invert(0)] to [invert()] at (1.5) should be [invert(1)] assert_equals: expected "invert ( 1 ) " but got "invert ( 1.5 ) "
+FAIL CSS Transitions with transition: all: property <filter> from [invert(0)] to [invert()] at (-1) should be [invert(0)] assert_equals: expected "invert ( 0 ) " but got "invert ( - 1 ) "
+PASS CSS Transitions with transition: all: property <filter> from [invert(0)] to [invert()] at (0) should be [invert(0)]
+PASS CSS Transitions with transition: all: property <filter> from [invert(0)] to [invert()] at (0.5) should be [invert(0.5)]
+PASS CSS Transitions with transition: all: property <filter> from [invert(0)] to [invert()] at (1) should be [invert()]
+FAIL CSS Transitions with transition: all: property <filter> from [invert(0)] to [invert()] at (1.5) should be [invert(1)] assert_equals: expected "invert ( 1 ) " but got "invert ( 1.5 ) "
+FAIL CSS Animations: property <filter> from [invert(0)] to [invert()] at (-1) should be [invert(0)] assert_equals: expected "invert ( 0 ) " but got "invert ( - 1 ) "
+PASS CSS Animations: property <filter> from [invert(0)] to [invert()] at (0) should be [invert(0)]
+PASS CSS Animations: property <filter> from [invert(0)] to [invert()] at (0.5) should be [invert(0.5)]
+PASS CSS Animations: property <filter> from [invert(0)] to [invert()] at (1) should be [invert()]
+FAIL CSS Animations: property <filter> from [invert(0)] to [invert()] at (1.5) should be [invert(1)] assert_equals: expected "invert ( 1 ) " but got "invert ( 1.5 ) "
+FAIL Web Animations: property <filter> from [invert(0)] to [invert()] at (-1) should be [invert(0)] assert_equals: expected "invert ( 0 ) " but got "invert ( - 1 ) "
+PASS Web Animations: property <filter> from [invert(0)] to [invert()] at (0) should be [invert(0)]
+PASS Web Animations: property <filter> from [invert(0)] to [invert()] at (0.5) should be [invert(0.5)]
+PASS Web Animations: property <filter> from [invert(0)] to [invert()] at (1) should be [invert()]
+FAIL Web Animations: property <filter> from [invert(0)] to [invert()] at (1.5) should be [invert(1)] assert_equals: expected "invert ( 1 ) " but got "invert ( 1.5 ) "
+FAIL CSS Transitions: property <filter> from [opacity(0)] to [opacity()] at (-1) should be [opacity(0)] assert_equals: expected "opacity ( 0 ) " but got "opacity ( - 1 ) "
+PASS CSS Transitions: property <filter> from [opacity(0)] to [opacity()] at (0) should be [opacity(0)]
+PASS CSS Transitions: property <filter> from [opacity(0)] to [opacity()] at (0.5) should be [opacity(0.5)]
+PASS CSS Transitions: property <filter> from [opacity(0)] to [opacity()] at (1) should be [opacity()]
+FAIL CSS Transitions: property <filter> from [opacity(0)] to [opacity()] at (1.5) should be [opacity(1)] assert_equals: expected "opacity ( 1 ) " but got "opacity ( 1.5 ) "
+FAIL CSS Transitions with transition: all: property <filter> from [opacity(0)] to [opacity()] at (-1) should be [opacity(0)] assert_equals: expected "opacity ( 0 ) " but got "opacity ( - 1 ) "
+PASS CSS Transitions with transition: all: property <filter> from [opacity(0)] to [opacity()] at (0) should be [opacity(0)]
+PASS CSS Transitions with transition: all: property <filter> from [opacity(0)] to [opacity()] at (0.5) should be [opacity(0.5)]
+PASS CSS Transitions with transition: all: property <filter> from [opacity(0)] to [opacity()] at (1) should be [opacity()]
+FAIL CSS Transitions with transition: all: property <filter> from [opacity(0)] to [opacity()] at (1.5) should be [opacity(1)] assert_equals: expected "opacity ( 1 ) " but got "opacity ( 1.5 ) "
+FAIL CSS Animations: property <filter> from [opacity(0)] to [opacity()] at (-1) should be [opacity(0)] assert_equals: expected "opacity ( 0 ) " but got "opacity ( - 1 ) "
+PASS CSS Animations: property <filter> from [opacity(0)] to [opacity()] at (0) should be [opacity(0)]
+PASS CSS Animations: property <filter> from [opacity(0)] to [opacity()] at (0.5) should be [opacity(0.5)]
+PASS CSS Animations: property <filter> from [opacity(0)] to [opacity()] at (1) should be [opacity()]
+FAIL CSS Animations: property <filter> from [opacity(0)] to [opacity()] at (1.5) should be [opacity(1)] assert_equals: expected "opacity ( 1 ) " but got "opacity ( 1.5 ) "
+FAIL Web Animations: property <filter> from [opacity(0)] to [opacity()] at (-1) should be [opacity(0)] assert_equals: expected "opacity ( 0 ) " but got "opacity ( - 1 ) "
+PASS Web Animations: property <filter> from [opacity(0)] to [opacity()] at (0) should be [opacity(0)]
+PASS Web Animations: property <filter> from [opacity(0)] to [opacity()] at (0.5) should be [opacity(0.5)]
+PASS Web Animations: property <filter> from [opacity(0)] to [opacity()] at (1) should be [opacity()]
+FAIL Web Animations: property <filter> from [opacity(0)] to [opacity()] at (1.5) should be [opacity(1)] assert_equals: expected "opacity ( 1 ) " but got "opacity ( 1.5 ) "
+FAIL CSS Transitions: property <filter> from [saturate(0)] to [saturate()] at (-1) should be [saturate(0)] assert_equals: expected "saturate ( 0 ) " but got "saturate ( - 1 ) "
+PASS CSS Transitions: property <filter> from [saturate(0)] to [saturate()] at (0) should be [saturate(0)]
+PASS CSS Transitions: property <filter> from [saturate(0)] to [saturate()] at (0.5) should be [saturate(0.5)]
+PASS CSS Transitions: property <filter> from [saturate(0)] to [saturate()] at (1) should be [saturate()]
+PASS CSS Transitions: property <filter> from [saturate(0)] to [saturate()] at (1.5) should be [saturate(1.5)]
+FAIL CSS Transitions with transition: all: property <filter> from [saturate(0)] to [saturate()] at (-1) should be [saturate(0)] assert_equals: expected "saturate ( 0 ) " but got "saturate ( - 1 ) "
+PASS CSS Transitions with transition: all: property <filter> from [saturate(0)] to [saturate()] at (0) should be [saturate(0)]
+PASS CSS Transitions with transition: all: property <filter> from [saturate(0)] to [saturate()] at (0.5) should be [saturate(0.5)]
+PASS CSS Transitions with transition: all: property <filter> from [saturate(0)] to [saturate()] at (1) should be [saturate()]
+PASS CSS Transitions with transition: all: property <filter> from [saturate(0)] to [saturate()] at (1.5) should be [saturate(1.5)]
+FAIL CSS Animations: property <filter> from [saturate(0)] to [saturate()] at (-1) should be [saturate(0)] assert_equals: expected "saturate ( 0 ) " but got "saturate ( - 1 ) "
+PASS CSS Animations: property <filter> from [saturate(0)] to [saturate()] at (0) should be [saturate(0)]
+PASS CSS Animations: property <filter> from [saturate(0)] to [saturate()] at (0.5) should be [saturate(0.5)]
+PASS CSS Animations: property <filter> from [saturate(0)] to [saturate()] at (1) should be [saturate()]
+PASS CSS Animations: property <filter> from [saturate(0)] to [saturate()] at (1.5) should be [saturate(1.5)]
+FAIL Web Animations: property <filter> from [saturate(0)] to [saturate()] at (-1) should be [saturate(0)] assert_equals: expected "saturate ( 0 ) " but got "saturate ( - 1 ) "
+PASS Web Animations: property <filter> from [saturate(0)] to [saturate()] at (0) should be [saturate(0)]
+PASS Web Animations: property <filter> from [saturate(0)] to [saturate()] at (0.5) should be [saturate(0.5)]
+PASS Web Animations: property <filter> from [saturate(0)] to [saturate()] at (1) should be [saturate()]
+PASS Web Animations: property <filter> from [saturate(0)] to [saturate()] at (1.5) should be [saturate(1.5)]
+FAIL CSS Transitions: property <filter> from [sepia(0)] to [sepia()] at (-1) should be [sepia(0)] assert_equals: expected "sepia ( 0 ) " but got "sepia ( - 1 ) "
+PASS CSS Transitions: property <filter> from [sepia(0)] to [sepia()] at (0) should be [sepia(0)]
+PASS CSS Transitions: property <filter> from [sepia(0)] to [sepia()] at (0.5) should be [sepia(0.5)]
+PASS CSS Transitions: property <filter> from [sepia(0)] to [sepia()] at (1) should be [sepia()]
+FAIL CSS Transitions: property <filter> from [sepia(0)] to [sepia()] at (1.5) should be [sepia(1)] assert_equals: expected "sepia ( 1 ) " but got "sepia ( 1.5 ) "
+FAIL CSS Transitions with transition: all: property <filter> from [sepia(0)] to [sepia()] at (-1) should be [sepia(0)] assert_equals: expected "sepia ( 0 ) " but got "sepia ( - 1 ) "
+PASS CSS Transitions with transition: all: property <filter> from [sepia(0)] to [sepia()] at (0) should be [sepia(0)]
+PASS CSS Transitions with transition: all: property <filter> from [sepia(0)] to [sepia()] at (0.5) should be [sepia(0.5)]
+PASS CSS Transitions with transition: all: property <filter> from [sepia(0)] to [sepia()] at (1) should be [sepia()]
+FAIL CSS Transitions with transition: all: property <filter> from [sepia(0)] to [sepia()] at (1.5) should be [sepia(1)] assert_equals: expected "sepia ( 1 ) " but got "sepia ( 1.5 ) "
+FAIL CSS Animations: property <filter> from [sepia(0)] to [sepia()] at (-1) should be [sepia(0)] assert_equals: expected "sepia ( 0 ) " but got "sepia ( - 1 ) "
+PASS CSS Animations: property <filter> from [sepia(0)] to [sepia()] at (0) should be [sepia(0)]
+PASS CSS Animations: property <filter> from [sepia(0)] to [sepia()] at (0.5) should be [sepia(0.5)]
+PASS CSS Animations: property <filter> from [sepia(0)] to [sepia()] at (1) should be [sepia()]
+FAIL CSS Animations: property <filter> from [sepia(0)] to [sepia()] at (1.5) should be [sepia(1)] assert_equals: expected "sepia ( 1 ) " but got "sepia ( 1.5 ) "
+FAIL Web Animations: property <filter> from [sepia(0)] to [sepia()] at (-1) should be [sepia(0)] assert_equals: expected "sepia ( 0 ) " but got "sepia ( - 1 ) "
+PASS Web Animations: property <filter> from [sepia(0)] to [sepia()] at (0) should be [sepia(0)]
+PASS Web Animations: property <filter> from [sepia(0)] to [sepia()] at (0.5) should be [sepia(0.5)]
+PASS Web Animations: property <filter> from [sepia(0)] to [sepia()] at (1) should be [sepia()]
+FAIL Web Animations: property <filter> from [sepia(0)] to [sepia()] at (1.5) should be [sepia(1)] assert_equals: expected "sepia ( 1 ) " but got "sepia ( 1.5 ) "
+

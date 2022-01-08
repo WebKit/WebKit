@@ -1,0 +1,8 @@
+
+PASS Property flood-opacity value '-1'
+PASS Property flood-opacity value '0.5'
+PASS Property flood-opacity value '3'
+PASS Property flood-opacity value '-100%'
+PASS Property flood-opacity value '50%'
+PASS Property flood-opacity value '300%'
+

@@ -1,0 +1,34 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/parsing/backdrop-filter-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/parsing/backdrop-filter-parsing-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/parsing/backdrop-filter-parsing-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/parsing/color-interpolation-filters-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/parsing/color-interpolation-filters-parsing-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/parsing/color-interpolation-filters-parsing-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/parsing/filter-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/parsing/filter-parsing-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/parsing/filter-parsing-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/parsing/flood-color-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/parsing/flood-color-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/parsing/flood-color-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/parsing/flood-opacity-computed.svg
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/parsing/flood-opacity-invalid.svg
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/parsing/flood-opacity-valid.svg
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/parsing/lighting-color-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/parsing/lighting-color-parsing-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/parsing/lighting-color-parsing-valid.html

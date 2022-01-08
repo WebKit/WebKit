@@ -1,0 +1,13 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x171
+  RenderBlock {HTML} at (0,0) size 800x171
+    RenderBody {BODY} at (8,8) size 784x155
+      RenderSVGRoot {svg} at (8,8) size 100x100
+        RenderSVGResourceFilter {filter} [id="f"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+        RenderSVGResourceClipper {clipPath} [id="c"] [clipPathUnits=userSpaceOnUse]
+          RenderSVGRect {rect} at (8,8) size 100x100 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
+        RenderSVGRect {rect} at (8,8) size 100x100 [fill={[type=SOLID] [color=#008000]}] [x=0.00] [y=0.00] [width=500.00] [height=500.00]
+          [clipPath="c"] RenderSVGResourceClipper {clipPath} at (0,0) size 100x100
+      RenderText {#text} at (0,0) size 0x0
+      RenderText {#text} at (0,0) size 0x0

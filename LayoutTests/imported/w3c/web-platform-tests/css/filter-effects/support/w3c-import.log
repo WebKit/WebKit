@@ -1,0 +1,62 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/support/1x1-green.png
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/support/1x1-lime.png
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/support/1x1-maroon.png
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/support/1x1-navy.png
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/support/1x1-red.png
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/support/1x1-white.png
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/support/60x60-gg-rr.png
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/support/60x60-green.png
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/support/README
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/support/a-green.css
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/support/b-green.css
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/support/c-red.css
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/support/cat.png
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/support/color-palette.png
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/support/div-with-filter.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/support/filter-external-002-filter.svg
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/support/filter-from-external-url.css
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/support/filtersubregion00.png
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/support/hueRotate.svg
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/support/import-green.css
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/support/import-red.css
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/support/pattern-grg-rgr-grg.png
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/support/pattern-grg-rrg-rgg.png
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/support/pattern-rgr-grg-rgr.png
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/support/pattern-tr.png
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/support/ruler-h-50%.png
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/support/ruler-h-50px.png
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/support/ruler-v-100px.png
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/support/ruler-v-50px.png
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/support/square-purple.png
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/support/square-teal.png
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/support/square-white.png
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/support/swatch-blue.png
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/support/swatch-green.png
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/support/swatch-lime.png
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/support/swatch-orange.png
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/support/swatch-red.png
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/support/swatch-teal.png
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/support/swatch-white.png
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/support/swatch-yellow.png
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/support/test-bl.png
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/support/test-br.png
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/support/test-inner-half-size.png
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/support/test-outer.png
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/support/test-tl.png
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/support/test-tr.png
