@@ -153,69 +153,68 @@ TextUtil::WordBreakLeft TextUtil::breakWord(const InlineTextBox& inlineTextBox, 
     ASSERT(availableWidth >= 0);
     ASSERT(length);
     auto text = inlineTextBox.content();
-    auto contentUsesSimpleFontCodePath = inlineTextBox.canUseSimpleFontCodePath();
 
-    auto graphemeClustersIterator = std::optional<NonSharedCharacterBreakIterator> { };
-    if (!contentUsesSimpleFontCodePath)
-        graphemeClustersIterator.emplace(text);
+    if (inlineTextBox.canUseSimpleFontCodePath()) {
 
-    auto userPerceivedCharacterBoundaryAlignedIndex = [&] (auto index) -> size_t {
-        if (text.is8Bit())
-            return index;
-        if (contentUsesSimpleFontCodePath) {
-            auto alignedStartIndex = index;
-            U16_SET_CP_START(text, startPosition, alignedStartIndex);
-            ASSERT(alignedStartIndex >= startPosition);
-            return alignedStartIndex;
-        }
-        ASSERT(graphemeClustersIterator.has_value());
-        if (ubrk_isBoundary(*graphemeClustersIterator, index))
-            return index;
-        auto boundaryIndex = ubrk_preceding(*graphemeClustersIterator, index);
-        return boundaryIndex == UBRK_DONE ? startPosition : boundaryIndex;
-    };
+        auto findBreakingPositionInSimpleText = [&] {
+            auto userPerceivedCharacterBoundaryAlignedIndex = [&] (auto index) -> size_t {
+                if (text.is8Bit())
+                    return index;
+                auto alignedStartIndex = index;
+                U16_SET_CP_START(text, startPosition, alignedStartIndex);
+                ASSERT(alignedStartIndex >= startPosition);
+                return alignedStartIndex;
+            };
 
-    auto nextUserPerceivedCharacterIndex = [&] (auto index) -> size_t {
-        if (text.is8Bit())
-            return index + 1;
-        if (contentUsesSimpleFontCodePath) {
-            U16_FWD_1(text, index, length);
-            return index;
-        }
-        ASSERT(graphemeClustersIterator.has_value());
-        auto nextPosition = ubrk_following(*graphemeClustersIterator, index);
-        return nextPosition == UBRK_DONE ? startPosition + length - 1 : nextPosition;
-    };
+            auto nextUserPerceivedCharacterIndex = [&] (auto index) -> size_t {
+                if (text.is8Bit())
+                    return index + 1;
+                U16_FWD_1(text, index, length);
+                return index;
+            };
 
-    auto left = startPosition;
-    auto right = left + length - 1;
-    if (contentUsesSimpleFontCodePath) {
-        // Pathological case of (extremely)long string and narrow lines.
-        // Adjust the range so that we can pick a reasonable midpoint.
-        auto averageCharacterWidth = InlineLayoutUnit { textWidth / length };
-        size_t startOffset = 2 * availableWidth / averageCharacterWidth;
-        right = userPerceivedCharacterBoundaryAlignedIndex(std::min(left + startOffset, right));
+            auto left = startPosition;
+            auto right = left + length - 1;
+            // Pathological case of (extremely)long string and narrow lines.
+            // Adjust the range so that we can pick a reasonable midpoint.
+            auto averageCharacterWidth = InlineLayoutUnit { textWidth / length };
+            size_t startOffset = 2 * availableWidth / averageCharacterWidth;
+            right = userPerceivedCharacterBoundaryAlignedIndex(std::min(left + startOffset, right));
+            // Preserve the left width for the final split position so that we don't need to remeasure the left side again.
+            auto leftSideWidth = InlineLayoutUnit { 0 };
+            while (left < right) {
+                auto middle = userPerceivedCharacterBoundaryAlignedIndex((left + right) / 2);
+                ASSERT(middle >= left && middle < right);
+                auto endOfMiddleCharacter = nextUserPerceivedCharacterIndex(middle);
+                auto width = TextUtil::width(inlineTextBox, fontCascade, startPosition, endOfMiddleCharacter, contentLogicalLeft);
+                if (width < availableWidth) {
+                    left = endOfMiddleCharacter;
+                    leftSideWidth = width;
+                } else if (width > availableWidth)
+                    right = middle;
+                else {
+                    right = endOfMiddleCharacter;
+                    leftSideWidth = width;
+                    break;
+                }
+            }
+            RELEASE_ASSERT(right >= startPosition);
+            return TextUtil::WordBreakLeft { right - startPosition, leftSideWidth };
+        };
+        return findBreakingPositionInSimpleText();
     }
-    // Preserve the left width for the final split position so that we don't need to remeasure the left side again.
-    auto leftSideWidth = InlineLayoutUnit { 0 };
-    while (left < right) {
-        auto middle = userPerceivedCharacterBoundaryAlignedIndex((left + right) / 2);
-        ASSERT(middle >= left && middle < right);
-        auto endOfMiddleCharacter = nextUserPerceivedCharacterIndex(middle);
-        auto width = TextUtil::width(inlineTextBox, fontCascade, startPosition, endOfMiddleCharacter, contentLogicalLeft);
-        if (width < availableWidth) {
-            left = endOfMiddleCharacter;
-            leftSideWidth = width;
-        } else if (width > availableWidth)
-            right = middle;
-        else {
-            right = endOfMiddleCharacter;
-            leftSideWidth = width;
-            break;
-        }
+
+    auto graphemeClusterIterator = NonSharedCharacterBreakIterator { StringView { text }.substring(startPosition, length) };
+    auto leftSide = TextUtil::WordBreakLeft { };
+    for (auto clusterStartPosition = ubrk_next(graphemeClusterIterator); clusterStartPosition != UBRK_DONE; clusterStartPosition = ubrk_next(graphemeClusterIterator)) {
+        auto width = TextUtil::width(inlineTextBox, fontCascade, startPosition, startPosition + clusterStartPosition, contentLogicalLeft);
+        if (width > availableWidth)
+            return leftSide;
+        leftSide = { static_cast<size_t>(clusterStartPosition), width };
     }
-    RELEASE_ASSERT(right >= startPosition);
-    return { right - startPosition, leftSideWidth };
+    // This content is not supposed to fit availableWidth.
+    ASSERT_NOT_REACHED();
+    return { };
 }
 
 unsigned TextUtil::findNextBreakablePosition(LazyLineBreakIterator& lineBreakIterator, unsigned startPosition, const RenderStyle& style)
