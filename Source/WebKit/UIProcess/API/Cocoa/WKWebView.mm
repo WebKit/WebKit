@@ -1642,13 +1642,13 @@ inline OptionSet<WebKit::FindOptions> toFindOptions(WKFindConfiguration *configu
     if (pdfConfiguration && !CGRectIsNull(pdfConfiguration.rect))
         floatRect = WebCore::FloatRect(pdfConfiguration.rect);
 
-    _page->drawToPDF(frameID, floatRect, [handler = makeBlockPtr(completionHandler)](const IPC::DataReference& pdfData) {
-        if (pdfData.empty()) {
+    _page->drawToPDF(frameID, floatRect, [handler = makeBlockPtr(completionHandler)](const IPC::SharedBufferCopy& pdfData) {
+        if (pdfData.isEmpty()) {
             handler(nil, createNSError(WKErrorUnknown).get());
             return;
         }
 
-        auto data = adoptCF(CFDataCreate(kCFAllocatorDefault, pdfData.data(), pdfData.size()));
+        auto data = pdfData.buffer()->createCFData();
         handler((NSData *)data.get(), nil);
     });
 }

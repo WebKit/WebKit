@@ -272,7 +272,7 @@ PlatformImagePtr ImageDecoderDirect2D::createFrameImageAtIndex(size_t index, Sub
     return bitmap;
 }
 
-void ImageDecoderDirect2D::setData(FragmentedSharedBuffer& data, bool allDataReceived)
+void ImageDecoderDirect2D::setData(const FragmentedSharedBuffer& data, bool allDataReceived)
 {
     if (!allDataReceived)
         return;
@@ -282,7 +282,8 @@ void ImageDecoderDirect2D::setData(FragmentedSharedBuffer& data, bool allDataRec
     if (!SUCCEEDED(hr))
         return;
 
-    char* dataPtr = const_cast<char*>(data.data());
+    Ref<SharedBuffer> buffer = data.makeContiguous();
+    char* dataPtr = const_cast<char*>(buffer->data());
     hr = stream->InitializeFromMemory(reinterpret_cast<BYTE*>(dataPtr), data.size());
     if (!SUCCEEDED(hr))
         return;

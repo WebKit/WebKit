@@ -26,10 +26,8 @@
 #include "config.h"
 #include "WebCoreArgumentCoders.h"
 
-#include "DataReference.h"
 #include "ShareableBitmap.h"
 #include "ShareableResource.h"
-#include "SharedBufferDataReference.h"
 #include "StreamConnectionEncoder.h"
 #include <JavaScriptCore/GenericTypedArrayViewInlines.h>
 #include <JavaScriptCore/JSGenericTypedArrayViewInlines.h>
@@ -85,6 +83,7 @@
 #include <WebCore/ServiceWorkerClientData.h>
 #include <WebCore/ServiceWorkerData.h>
 #include <WebCore/ShareData.h>
+#include <WebCore/SharedBuffer.h>
 #include <WebCore/TextCheckerClient.h>
 #include <WebCore/TextIndicator.h>
 #include <WebCore/TimingFunction.h>
@@ -103,7 +102,6 @@
 
 #if PLATFORM(IOS_FAMILY)
 #include <WebCore/SelectionGeometry.h>
-#include <WebCore/SharedBuffer.h>
 #endif // PLATFORM(IOS_FAMILY)
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
@@ -2980,7 +2978,7 @@ std::optional<FontAttributes> ArgumentCoder<FontAttributes>::decode(Decoder& dec
 
 void ArgumentCoder<SerializedAttachmentData>::encode(IPC::Encoder& encoder, const WebCore::SerializedAttachmentData& data)
 {
-    encoder << data.identifier << data.mimeType << IPC::SharedBufferDataReference { data.data.get() };
+    encoder << data.identifier << data.mimeType << data.data;
 }
 
 std::optional<SerializedAttachmentData> ArgumentCoder<WebCore::SerializedAttachmentData>::decode(IPC::Decoder& decoder)
@@ -2993,11 +2991,11 @@ std::optional<SerializedAttachmentData> ArgumentCoder<WebCore::SerializedAttachm
     if (!decoder.decode(mimeType))
         return std::nullopt;
 
-    IPC::DataReference data;
-    if (!decoder.decode(data))
+    RefPtr<SharedBuffer> buffer;
+    if (!decoder.decode(buffer))
         return std::nullopt;
 
-    return { { WTFMove(identifier), WTFMove(mimeType), WebCore::SharedBuffer::create(data.data(), data.size()) } };
+    return { { WTFMove(identifier), WTFMove(mimeType), buffer.releaseNonNull() } };
 }
 
 #endif // ENABLE(ATTACHMENT_ELEMENT)

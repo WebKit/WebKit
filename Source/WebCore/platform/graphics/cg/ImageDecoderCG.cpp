@@ -562,7 +562,7 @@ PlatformImagePtr ImageDecoderCG::createFrameImageAtIndex(size_t index, Subsampli
     return maskedImage ? maskedImage : image;
 }
 
-void ImageDecoderCG::setData(FragmentedSharedBuffer& data, bool allDataReceived)
+void ImageDecoderCG::setData(const FragmentedSharedBuffer& data, bool allDataReceived)
 {
     m_isAllDataReceived = allDataReceived;
 

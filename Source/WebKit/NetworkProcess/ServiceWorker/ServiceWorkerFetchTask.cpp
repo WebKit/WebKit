@@ -401,7 +401,7 @@ void ServiceWorkerFetchTask::loadBodyFromPreloader()
             didFinishWithMetrics(m_preloader->networkLoadMetrics());
             return;
         }
-        didReceiveData(Ref { const_cast<WebCore::FragmentedSharedBuffer&>(*chunk) }, length);
+        didReceiveData(IPC::SharedBufferCopy(const_cast<WebCore::FragmentedSharedBuffer&>(*chunk)), length);
     });
 }
 

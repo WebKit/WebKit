@@ -47,7 +47,7 @@ WEBPImageDecoder::WEBPImageDecoder(AlphaOption alphaOption, GammaAndColorProfile
 
 WEBPImageDecoder::~WEBPImageDecoder() = default;
 
-void WEBPImageDecoder::setData(FragmentedSharedBuffer& data, bool allDataReceived)
+void WEBPImageDecoder::setData(const FragmentedSharedBuffer& data, bool allDataReceived)
 {
     if (failed())
         return;

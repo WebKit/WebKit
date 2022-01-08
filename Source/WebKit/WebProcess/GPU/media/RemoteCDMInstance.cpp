@@ -85,7 +85,7 @@ void RemoteCDMInstance::setServerCertificate(Ref<WebCore::FragmentedSharedBuffer
         return;
     }
 
-    m_factory->gpuProcessConnection().connection().sendWithAsyncReply(Messages::RemoteCDMInstanceProxy::SetServerCertificate(certificate.get()), WTFMove(callback), m_identifier);
+    m_factory->gpuProcessConnection().connection().sendWithAsyncReply(Messages::RemoteCDMInstanceProxy::SetServerCertificate(IPC::SharedBufferCopy(WTFMove(certificate))), WTFMove(callback), m_identifier);
 }
 
 void RemoteCDMInstance::setStorageDirectory(const String& directory)

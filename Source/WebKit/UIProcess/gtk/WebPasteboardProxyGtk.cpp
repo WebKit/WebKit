@@ -57,7 +57,9 @@ void WebPasteboardProxy::readFilePaths(const String& pasteboardName, CompletionH
 
 void WebPasteboardProxy::readBuffer(const String& pasteboardName, const String& pasteboardType, CompletionHandler<void(IPC::SharedBufferCopy&&)>&& completionHandler)
 {
-    Clipboard::get(pasteboardName).readBuffer(pasteboardType.utf8().data(), WTFMove(completionHandler));
+    Clipboard::get(pasteboardName).readBuffer(pasteboardType.utf8().data(), [completionHandler = WTFMove(completionHandler)](auto&& buffer) mutable {
+        completionHandler(IPC::SharedBufferCopy(WTFMove(buffer)));
+    });
 }
 
 void WebPasteboardProxy::writeToClipboard(const String& pasteboardName, SelectionData&& selectionData)
@@ -90,14 +92,12 @@ void WebPasteboardProxy::didDestroyFrame(WebFrameProxy* frame)
 void WebPasteboardProxy::typesSafeForDOMToReadAndWrite(IPC::Connection&, const String& pasteboardName, const String& origin, std::optional<WebCore::PageIdentifier>, CompletionHandler<void(Vector<String>&&)>&& completionHandler)
 {
     auto& clipboard = Clipboard::get(pasteboardName);
-    clipboard.readBuffer(PasteboardCustomData::gtkType(), [&clipboard, origin, completionHandler = WTFMove(completionHandler)](IPC::SharedBufferCopy&& buffer) mutable {
+    clipboard.readBuffer(PasteboardCustomData::gtkType(), [&clipboard, origin, completionHandler = WTFMove(completionHandler)](auto&& buffer) mutable {
         ListHashSet<String> domTypes;
-        if (auto dataBuffer = buffer.buffer()) {
-            auto customData = PasteboardCustomData::fromSharedBuffer(*dataBuffer);
-            if (customData.origin() == origin) {
-                for (auto& type : customData.orderedTypes())
-                    domTypes.add(type);
-            }
+        auto customData = PasteboardCustomData::fromSharedBuffer(WTFMove(buffer));
+        if (customData.origin() == origin) {
+            for (auto& type : customData.orderedTypes())
+                domTypes.add(type);
         }
 
         clipboard.formats([domTypes = WTFMove(domTypes), completionHandler = WTFMove(completionHandler)](Vector<String>&& formats) mutable {

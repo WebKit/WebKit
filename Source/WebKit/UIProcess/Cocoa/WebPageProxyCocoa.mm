@@ -42,7 +42,6 @@
 #import "SafeBrowsingSPI.h"
 #import "SafeBrowsingWarning.h"
 #import "SharedBufferCopy.h"
-#import "SharedBufferDataReference.h"
 #import "SynapseSPI.h"
 #import "WebContextMenuProxy.h"
 #import "WebPage.h"

@@ -37,6 +37,7 @@
 #import "ProcessAssertion.h"
 #import "SandboxExtension.h"
 #import "SandboxInitializationParameters.h"
+#import "SharedBufferCopy.h"
 #import "WKAPICast.h"
 #import "WKBrowsingContextHandleInternal.h"
 #import "WKFullKeyboardAccessWatcher.h"
@@ -1247,16 +1248,16 @@ void WebProcess::systemDidWake()
 }
 #endif
 
-void WebProcess::consumeAudioComponentRegistrations(const IPC::DataReference& data)
+void WebProcess::consumeAudioComponentRegistrations(const IPC::SharedBufferCopy& data)
 {
     using namespace PAL;
 
     if (!PAL::isAudioToolboxCoreFrameworkAvailable() || !PAL::canLoad_AudioToolboxCore_AudioComponentApplyServerRegistrations())
         return;
 
-    auto registrations = adoptCF(CFDataCreate(kCFAllocatorDefault, data.data(), data.size()));
-    if (!registrations)
+    if (!data.buffer())
         return;
+    auto registrations = data.buffer()->createCFData();
 
     auto err = AudioComponentApplyServerRegistrations(registrations.get());
     if (noErr != err)

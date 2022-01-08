@@ -40,7 +40,6 @@
 #include "NetworkSession.h"
 #include "ResourceLoadInfo.h"
 #include "ServiceWorkerFetchTask.h"
-#include "SharedBufferDataReference.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebErrors.h"
 #include "WebLoaderStrategy.h"
@@ -1250,7 +1249,7 @@ void NetworkResourceLoader::bufferingTimerFired()
     if (m_bufferedData.isEmpty())
         return;
 
-    send(Messages::WebResourceLoader::DidReceiveData({ *m_bufferedData.get() }, m_bufferedDataEncodedDataLength));
+    send(Messages::WebResourceLoader::DidReceiveData(IPC::SharedBufferCopy(*m_bufferedData.get()), m_bufferedDataEncodedDataLength));
 
     m_bufferedData.empty();
     m_bufferedDataEncodedDataLength = 0;
@@ -1260,7 +1259,7 @@ void NetworkResourceLoader::sendBuffer(const FragmentedSharedBuffer& buffer, siz
 {
     ASSERT(!isSynchronous());
 
-    send(Messages::WebResourceLoader::DidReceiveData({ buffer }, encodedDataLength));
+    send(Messages::WebResourceLoader::DidReceiveData(IPC::SharedBufferCopy(buffer), encodedDataLength));
 }
 
 void NetworkResourceLoader::tryStoreAsCacheEntry()

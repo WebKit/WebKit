@@ -71,7 +71,7 @@ void RemoteCDMInstanceSessionProxy::requestLicense(LicenseType type, AtomString 
     }
 
     m_session->requestLicense(type, initDataType, initData.buffer().releaseNonNull(), [completion = WTFMove(completion)] (Ref<FragmentedSharedBuffer>&& message, const String& sessionId, bool needsIndividualization, CDMInstanceSession::SuccessValue succeeded) mutable {
-        completion(WTFMove(message), sessionId, needsIndividualization, succeeded == CDMInstanceSession::Succeeded);
+        completion(IPC::SharedBufferCopy(WTFMove(message)), sessionId, needsIndividualization, succeeded == CDMInstanceSession::Succeeded);
     });
 }
 
@@ -161,7 +161,7 @@ void RemoteCDMInstanceSessionProxy::sendMessage(CDMMessageType type, Ref<Fragmen
     if (!gpuConnectionToWebProcess)
         return;
 
-    gpuConnectionToWebProcess->connection().send(Messages::RemoteCDMInstanceSession::SendMessage(type, WTFMove(message)), m_identifier);
+    gpuConnectionToWebProcess->connection().send(Messages::RemoteCDMInstanceSession::SendMessage(type, IPC::SharedBufferCopy(WTFMove(message))), m_identifier);
 }
 
 void RemoteCDMInstanceSessionProxy::sessionIdChanged(const String& sessionId)

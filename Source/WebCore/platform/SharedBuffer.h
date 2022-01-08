@@ -34,6 +34,7 @@
 #include <wtf/Function.h>
 #include <wtf/Span.h>
 #include <wtf/ThreadSafeRefCounted.h>
+#include <wtf/TypeCasts.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
@@ -385,3 +386,7 @@ private:
 RefPtr<SharedBuffer> utf8Buffer(const String&);
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::SharedBuffer)
+    static bool isType(const WebCore::FragmentedSharedBuffer& buffer) { return buffer.isContiguous(); }
+SPECIALIZE_TYPE_TRAITS_END()

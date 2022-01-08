@@ -32,6 +32,7 @@
 #include "GPUProcess.h"
 #include "RemoteImageDecoderAVFManagerMessages.h"
 #include "RemoteImageDecoderAVFProxyMessages.h"
+#include "SharedBufferCopy.h"
 #include "WebCoreArgumentCoders.h"
 #include <WebCore/IOSurface.h>
 #include <WebCore/ImageDecoderAVFObjC.h>
@@ -45,9 +46,9 @@ RemoteImageDecoderAVFProxy::RemoteImageDecoderAVFProxy(GPUConnectionToWebProcess
 {
 }
 
-void RemoteImageDecoderAVFProxy::createDecoder(const IPC::DataReference& data, const String& mimeType, CompletionHandler<void(std::optional<ImageDecoderIdentifier>&&)>&& completionHandler)
+void RemoteImageDecoderAVFProxy::createDecoder(const IPC::SharedBufferCopy& data, const String& mimeType, CompletionHandler<void(std::optional<ImageDecoderIdentifier>&&)>&& completionHandler)
 {
-    auto imageDecoder = ImageDecoderAVFObjC::create(SharedBuffer::create(data.data(), data.size()), mimeType, AlphaOption::Premultiplied, GammaAndColorProfileOption::Ignored);
+    auto imageDecoder = ImageDecoderAVFObjC::create(data.safeBuffer(), mimeType, AlphaOption::Premultiplied, GammaAndColorProfileOption::Ignored);
 
     std::optional<ImageDecoderIdentifier> imageDecoderIdentifier;
     if (!imageDecoder)
@@ -93,7 +94,7 @@ void RemoteImageDecoderAVFProxy::setExpectedContentSize(ImageDecoderIdentifier i
     m_imageDecoders.get(identifier)->setExpectedContentSize(expectedContentSize);
 }
 
-void RemoteImageDecoderAVFProxy::setData(ImageDecoderIdentifier identifier, const IPC::DataReference& data, bool allDataReceived, CompletionHandler<void(size_t frameCount, const IntSize& size, bool hasTrack, std::optional<Vector<ImageDecoder::FrameInfo>>&&)>&& completionHandler)
+void RemoteImageDecoderAVFProxy::setData(ImageDecoderIdentifier identifier, const IPC::SharedBufferCopy& data, bool allDataReceived, CompletionHandler<void(size_t frameCount, const IntSize& size, bool hasTrack, std::optional<Vector<ImageDecoder::FrameInfo>>&&)>&& completionHandler)
 {
     ASSERT(m_imageDecoders.contains(identifier));
     if (!m_imageDecoders.contains(identifier)) {
@@ -102,7 +103,7 @@ void RemoteImageDecoderAVFProxy::setData(ImageDecoderIdentifier identifier, cons
     }
 
     auto imageDecoder = m_imageDecoders.get(identifier);
-    imageDecoder->setData(SharedBuffer::create(data.data(), data.size()), allDataReceived);
+    imageDecoder->setData(data.safeBuffer(), allDataReceived);
 
     auto frameCount = imageDecoder->frameCount();
 

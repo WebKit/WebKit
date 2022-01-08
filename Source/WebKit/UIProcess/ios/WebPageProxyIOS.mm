@@ -1009,7 +1009,7 @@ void WebPageProxy::handleSmartMagnificationInformationForPotentialTap(WebKit::Ta
     pageClient().handleSmartMagnificationInformationForPotentialTap(requestID, renderRect, fitEntireRect, viewportMinimumScale, viewportMaximumScale, nodeIsRootLevel);
 }
 
-std::pair<size_t, uint64_t> WebPageProxy::computePagesForPrintingAndDrawToPDF(FrameIdentifier frameID, const PrintInfo& printInfo, CompletionHandler<void(const IPC::DataReference&)>&& callback)
+std::pair<size_t, uint64_t> WebPageProxy::computePagesForPrintingAndDrawToPDF(FrameIdentifier frameID, const PrintInfo& printInfo, CompletionHandler<void(const IPC::SharedBufferCopy&)>&& callback)
 {
     if (!hasRunningProcess()) {
         callback({ });

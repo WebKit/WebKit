@@ -1,3 +1,119 @@
+2022-01-07  Jean-Yves Avenard  <jya@apple.com>
+
+        Remove IPC::SharedBufferDataReference and use IPC::SharedBufferCopy instead
+        https://bugs.webkit.org/show_bug.cgi?id=234921
+        rdar://problem/87196287
+
+        Reviewed by Youenn Fablet.
+
+        SharedBufferCopy didn't have to create a new SharedBuffer
+        and copy its content; its IPC decoder can instead wrap the underlying
+        SharedMemory into a SharedBuffer.
+        Having removed those copies and extra allocations there's no longer a
+        technical need to have both SharedBufferDataReference and SharedBufferCopy.
+
+        The biggest winners of this change are the images transferred over IPC.
+        We remove two memory allocation/copy the was occurring at both IPC
+        boundaries.
+
+        We also remove the need for SharedBufferCopy to use a contiguous
+        SharedBuffer. This makes the IPC encoding much more efficient.
+        Once transferred over IPC, with the current encoding implementation,
+        the SharedBufferCopy automatically becomes a contiguous SharedBuffer,
+        so calling makeContiguous() on the SharedBufferCopy is a no-op;
+        this allows for zero regression speed-wise from this change.
+
+        Fly-by changes: the PDF code uses IPC::DataReference object; the data
+        was copied into a CFData or a SharedBuffer. By using IPC::SharedBufferCopy
+        was can remove those copies as a SharedBuffer can be wrapped in a CFData.
+        In the future, it's likely where such code pattern was used; more
+        IPC::DataReference can be replaced broadly with IPC::SharedBufferCopy.
+
+        * GPUProcess/media/RemoteImageDecoderAVFProxy.cpp:
+        (WebKit::RemoteImageDecoderAVFProxy::createDecoder):
+        (WebKit::RemoteImageDecoderAVFProxy::setData):
+        * GPUProcess/media/RemoteImageDecoderAVFProxy.h:
+        * GPUProcess/media/RemoteImageDecoderAVFProxy.messages.in:
+        * GPUProcess/media/RemoteLegacyCDMSessionProxy.cpp:
+        (WebKit::convertToUint8Array):
+        (WebKit::convertToOptionalSharedBuffer):
+        (WebKit::RemoteLegacyCDMSessionProxy::generateKeyRequest):
+        (WebKit::RemoteLegacyCDMSessionProxy::update):
+        (WebKit::RemoteLegacyCDMSessionProxy::cachedKeyForKeyID):
+        (WebKit::RemoteLegacyCDMSessionProxy::sendMessage):
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        * NetworkProcess/ServiceWorker/ServiceWorkerDownloadTask.cpp:
+        (WebKit::ServiceWorkerDownloadTask::didReceiveData):
+        * Platform/IPC/HandleMessage.h:
+        * Platform/IPC/SharedBufferCopy.cpp:
+        (IPC::SharedBufferCopy::encode const):
+        (IPC::SharedBufferCopy::decode):
+        (IPC::SharedBufferCopy::safeBuffer const):
+        * Platform/IPC/SharedBufferCopy.h:
+        (IPC::SharedBufferCopy::SharedBufferCopy):
+        (IPC::SharedBufferCopy::buffer):
+        (IPC::SharedBufferCopy::buffer const):
+        (IPC::SharedBufferCopy::contiguousBuffer const):
+        * Platform/IPC/SharedBufferDataReference.cpp: Removed.
+        * Platform/IPC/SharedBufferDataReference.h: Removed.
+        * Scripts/webkit/messages.py:
+        (function_parameter_type):
+        (reply_arguments_type):
+        (message_to_struct_declaration):
+        (generate_message_handler):
+        * Shared/WebCompiledContentRuleListData.cpp:
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<SerializedAttachmentData>::encode):
+        (IPC::ArgumentCoder<WebCore::SerializedAttachmentData>::decode):
+        * Sources.txt:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView createPDFWithConfiguration:completionHandler:]):
+        * UIProcess/Cocoa/WebPageProxyCocoa.mm:
+        (WebKit::WebPageProxy::platformRegisterAttachment):
+        * UIProcess/Cocoa/WebProcessProxyCocoa.mm:
+        (WebKit::WebProcessProxy::sendAudioComponentRegistrations):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::CompletionHandler<void):
+        (WebKit::WebPageProxy::drawToPDF):
+        (WebKit::WebPageProxy::getLoadDecisionForIcon):
+        (WebKit::WebPageProxy::updateAttachmentAttributes):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebURLSchemeTask.cpp:
+        * UIProcess/ios/WKContentView.mm:
+        (-[WKContentView _wk_pageCountForPrintFormatter:]):
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::computePagesForPrintingAndDrawToPDF):
+        * WebProcess/GPU/media/RemoteImageDecoderAVF.cpp:
+        (WebKit::RemoteImageDecoderAVF::setData):
+        * WebProcess/GPU/media/RemoteImageDecoderAVF.h:
+        * WebProcess/GPU/media/RemoteImageDecoderAVFManager.cpp:
+        (WebKit::RemoteImageDecoderAVFManager::createImageDecoder):
+        * WebProcess/GPU/media/RemoteLegacyCDMSession.cpp:
+        (WebKit::convertToArrayBuffer):
+        * WebProcess/Network/WebResourceLoader.cpp:
+        (WebKit::WebResourceLoader::didReceiveData):
+        * WebProcess/Storage/WebServiceWorkerFetchTaskClient.cpp:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::getContentsAsMHTMLData):
+        (WebKit::WebPage::getSelectionAsWebArchiveData):
+        (WebKit::WebPage::getMainResourceDataOfFrame):
+        (WebKit::WebPage::getResourceDataFromFrame):
+        (WebKit::WebPage::getWebArchiveOfFrame):
+        (WebKit::WebPage::drawToPDF):
+        (WebKit::WebPage::drawPagesToPDF):
+        (WebKit::WebPage::didGetLoadDecisionForIcon):
+        (WebKit::WebPage::urlSchemeTaskDidReceiveData):
+        (WebKit::WebPage::updateAttachmentAttributes):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::drawToPDFiOS):
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebProcess.messages.in:
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::consumeAudioComponentRegistrations):
+
 2022-01-07  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [GPU Process] Can't getImageData on canvas larger than 4096x4096

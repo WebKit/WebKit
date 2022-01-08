@@ -38,7 +38,7 @@ GIFImageDecoder::GIFImageDecoder(AlphaOption alphaOption, GammaAndColorProfileOp
 
 GIFImageDecoder::~GIFImageDecoder() = default;
 
-void GIFImageDecoder::setData(FragmentedSharedBuffer& data, bool allDataReceived)
+void GIFImageDecoder::setData(const FragmentedSharedBuffer& data, bool allDataReceived)
 {
     if (failed())
         return;

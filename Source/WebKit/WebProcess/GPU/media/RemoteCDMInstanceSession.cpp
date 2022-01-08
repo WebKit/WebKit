@@ -56,7 +56,7 @@ void RemoteCDMInstanceSession::requestLicense(LicenseType type, const AtomString
         return;
     }
 
-    m_factory->gpuProcessConnection().connection().sendWithAsyncReply(Messages::RemoteCDMInstanceSessionProxy::RequestLicense(type, initDataType, WTFMove(initData)), [callback = WTFMove(callback)] (IPC::SharedBufferCopy&& message, const String& sessionId, bool needsIndividualization, bool succeeded) mutable {
+    m_factory->gpuProcessConnection().connection().sendWithAsyncReply(Messages::RemoteCDMInstanceSessionProxy::RequestLicense(type, initDataType, IPC::SharedBufferCopy(WTFMove(initData))), [callback = WTFMove(callback)] (IPC::SharedBufferCopy&& message, const String& sessionId, bool needsIndividualization, bool succeeded) mutable {
         if (!message.buffer()) {
             callback(SharedBuffer::create(), emptyString(), false, Failed);
             return;
@@ -72,7 +72,7 @@ void RemoteCDMInstanceSession::updateLicense(const String& sessionId, LicenseTyp
         return;
     }
 
-    m_factory->gpuProcessConnection().connection().sendWithAsyncReply(Messages::RemoteCDMInstanceSessionProxy::UpdateLicense(sessionId, type, WTFMove(response)), [callback = WTFMove(callback)] (bool sessionWasClosed, std::optional<KeyStatusVector>&& changedKeys, std::optional<double>&& changedExpiration, std::optional<Message>&& message, bool succeeded) mutable {
+    m_factory->gpuProcessConnection().connection().sendWithAsyncReply(Messages::RemoteCDMInstanceSessionProxy::UpdateLicense(sessionId, type, IPC::SharedBufferCopy(WTFMove(response))), [callback = WTFMove(callback)] (bool sessionWasClosed, std::optional<KeyStatusVector>&& changedKeys, std::optional<double>&& changedExpiration, std::optional<Message>&& message, bool succeeded) mutable {
         callback(sessionWasClosed, WTFMove(changedKeys), WTFMove(changedExpiration), WTFMove(message), succeeded ? Succeeded : Failed);
     }, m_identifier);
 }

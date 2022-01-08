@@ -199,7 +199,7 @@ PlatformImagePtr ImageDecoderGStreamer::createFrameImageAtIndex(size_t index, Su
     return nullptr;
 }
 
-void ImageDecoderGStreamer::setData(FragmentedSharedBuffer& data, bool)
+void ImageDecoderGStreamer::setData(const FragmentedSharedBuffer& data, bool)
 {
     pushEncodedData(data);
 }

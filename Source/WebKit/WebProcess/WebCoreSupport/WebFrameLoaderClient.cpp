@@ -42,7 +42,6 @@
 #include "NetworkProcessConnection.h"
 #include "NetworkResourceLoadParameters.h"
 #include "PluginView.h"
-#include "SharedBufferDataReference.h"
 #include "UserData.h"
 #include "WKBundleAPICast.h"
 #include "WebAutomationSessionProxy.h"

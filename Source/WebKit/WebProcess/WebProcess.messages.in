@@ -199,7 +199,7 @@ messages -> WebProcess LegacyReceiver NotRefCounted {
 #endif
 
 #if PLATFORM(COCOA)
-    ConsumeAudioComponentRegistrations(IPC::SharedBufferDataReference registrationData)
+    ConsumeAudioComponentRegistrations(IPC::SharedBufferCopy registrationData)
     AccessibilityPreferencesDidChange(struct WebKit::AccessibilityPreferences accessibilityPreferences)
 #endif
 

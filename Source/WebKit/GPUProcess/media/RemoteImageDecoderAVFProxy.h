@@ -27,7 +27,6 @@
 
 #if ENABLE(GPU_PROCESS) && HAVE(AVASSETREADER)
 
-#include "DataReference.h"
 #include "MessageReceiver.h"
 #include <WebCore/DestinationColorSpace.h>
 #include <WebCore/ImageDecoderAVFObjC.h>
@@ -36,6 +35,10 @@
 #include <wtf/HashMap.h>
 #include <wtf/MachSendRight.h>
 #include <wtf/WeakPtr.h>
+
+namespace IPC {
+class SharedBufferCopy;
+}
 
 namespace WebKit {
 class GPUConnectionToWebProcess;
@@ -53,10 +56,10 @@ public:
     bool allowsExitUnderMemoryPressure() const;
 
 private:
-    void createDecoder(const IPC::DataReference&, const String& mimeType, CompletionHandler<void(std::optional<WebCore::ImageDecoderIdentifier>&&)>&&);
+    void createDecoder(const IPC::SharedBufferCopy&, const String& mimeType, CompletionHandler<void(std::optional<WebCore::ImageDecoderIdentifier>&&)>&&);
     void deleteDecoder(WebCore::ImageDecoderIdentifier);
     void setExpectedContentSize(WebCore::ImageDecoderIdentifier, long long expectedContentSize);
-    void setData(WebCore::ImageDecoderIdentifier, const IPC::DataReference&, bool allDataReceived, CompletionHandler<void(size_t frameCount, const WebCore::IntSize& size, bool hasTrack, std::optional<Vector<WebCore::ImageDecoder::FrameInfo>>&&)>&&);
+    void setData(WebCore::ImageDecoderIdentifier, const IPC::SharedBufferCopy&, bool allDataReceived, CompletionHandler<void(size_t frameCount, const WebCore::IntSize& size, bool hasTrack, std::optional<Vector<WebCore::ImageDecoder::FrameInfo>>&&)>&&);
     void createFrameImageAtIndex(WebCore::ImageDecoderIdentifier, size_t index, CompletionHandler<void(std::optional<WTF::MachSendRight>&&, WebCore::DestinationColorSpace)>&&);
     void clearFrameBufferCache(WebCore::ImageDecoderIdentifier, size_t index);
 

@@ -30,7 +30,6 @@
 
 #include "ArgumentCoders.h"
 #include "DataReference.h"
-#include "SharedBufferDataReference.h"
 
 namespace WebKit {
 

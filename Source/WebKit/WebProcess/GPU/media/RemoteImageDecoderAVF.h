@@ -80,7 +80,7 @@ public:
     WebCore::PlatformImagePtr createFrameImageAtIndex(size_t, WebCore::SubsamplingLevel = WebCore::SubsamplingLevel::Default, const WebCore::DecodingOptions& = WebCore::DecodingOptions(WebCore::DecodingMode::Synchronous)) final;
 
     void setExpectedContentSize(long long) final;
-    void setData(WebCore::FragmentedSharedBuffer&, bool allDataReceived) final;
+    void setData(const WebCore::FragmentedSharedBuffer&, bool allDataReceived) final;
     bool isAllDataReceived() const final { return m_isAllDataReceived; }
     void clearFrameBufferCache(size_t) final;
 

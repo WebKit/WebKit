@@ -85,7 +85,6 @@
 #include "ProcessThrottler.h"
 #include "ProvisionalPageProxy.h"
 #include "SafeBrowsingWarning.h"
-#include "SharedBufferDataReference.h"
 #include "SpeechRecognitionPermissionManager.h"
 #include "SpeechRecognitionRemoteRealtimeMediaSource.h"
 #include "SpeechRecognitionRemoteRealtimeMediaSourceManager.h"
@@ -4396,10 +4395,14 @@ void WebPageProxy::getSamplingProfilerOutput(CompletionHandler<void(const String
     sendWithAsyncReply(Messages::WebPage::GetSamplingProfilerOutput(), WTFMove(callback));
 }
 
-static CompletionHandler<void(const std::optional<IPC::DataReference>& data)> toAPIDataCallback(CompletionHandler<void(API::Data*)>&& callback)
+static CompletionHandler<void(const std::optional<IPC::SharedBufferCopy>& data)> toAPIDataCallback(CompletionHandler<void(API::Data*)>&& callback)
 {
-    return [callback = WTFMove(callback)] (const std::optional<IPC::DataReference>& data) mutable {
-        callback(data ? API::Data::create(data->data(), data->size()).ptr() : nullptr);
+    return [callback = WTFMove(callback)] (const std::optional<IPC::SharedBufferCopy>& data) mutable {
+        if (!data) {
+            callback(nullptr);
+            return;
+        }
+        callback(API::Data::create(data->data(), data->size()).ptr());
     };
 }
 
@@ -8993,7 +8996,7 @@ void WebPageProxy::drawPagesForPrinting(WebFrameProxy* frame, const PrintInfo& p
 #endif
 
 #if PLATFORM(COCOA)
-void WebPageProxy::drawToPDF(FrameIdentifier frameID, const std::optional<FloatRect>& rect, CompletionHandler<void(const IPC::DataReference&)>&& callback)
+void WebPageProxy::drawToPDF(FrameIdentifier frameID, const std::optional<FloatRect>& rect, CompletionHandler<void(const IPC::SharedBufferCopy&)>&& callback)
 {
     if (!hasRunningProcess()) {
         callback({ });
@@ -9884,8 +9887,8 @@ void WebPageProxy::getLoadDecisionForIcon(const WebCore::LinkIcon& icon, Callbac
             sendWithAsyncReply(Messages::WebPage::DidGetLoadDecisionForIcon(false, loadIdentifier), [](auto) { });
             return;
         }
-        sendWithAsyncReply(Messages::WebPage::DidGetLoadDecisionForIcon(true, loadIdentifier), [callback = WTFMove(callback)](const IPC::DataReference& iconData) mutable {
-            callback(API::Data::create(iconData).get());
+        sendWithAsyncReply(Messages::WebPage::DidGetLoadDecisionForIcon(true, loadIdentifier), [callback = WTFMove(callback)](const IPC::SharedBufferCopy& iconData) mutable {
+            callback(API::Data::create(iconData.data(), iconData.size()).ptr());
         });
     });
 }
@@ -10118,11 +10121,7 @@ void WebPageProxy::insertAttachment(Ref<API::Attachment>&& attachment, Completio
 
 void WebPageProxy::updateAttachmentAttributes(const API::Attachment& attachment, CompletionHandler<void()>&& callback)
 {
-    IPC::SharedBufferDataReference dataReference;
-    if (auto data = attachment.enclosingImageData())
-        dataReference = { *data };
-
-    sendWithAsyncReply(Messages::WebPage::UpdateAttachmentAttributes(attachment.identifier(), attachment.fileSizeForDisplay(), attachment.contentType(), attachment.fileName(), WTFMove(dataReference)), WTFMove(callback));
+    sendWithAsyncReply(Messages::WebPage::UpdateAttachmentAttributes(attachment.identifier(), attachment.fileSizeForDisplay(), attachment.contentType(), attachment.fileName(), IPC::SharedBufferCopy(attachment.enclosingImageData())), WTFMove(callback));
 }
 
 #if HAVE(QUICKLOOK_THUMBNAILING)

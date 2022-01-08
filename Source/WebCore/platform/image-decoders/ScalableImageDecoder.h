@@ -70,7 +70,7 @@ public:
         return m_encodedDataStatus == EncodedDataStatus::Complete;
     }
 
-    void setData(FragmentedSharedBuffer& data, bool allDataReceived) override
+    void setData(const FragmentedSharedBuffer& data, bool allDataReceived) override
     {
         Locker locker { m_lock };
         if (m_encodedDataStatus == EncodedDataStatus::Error)

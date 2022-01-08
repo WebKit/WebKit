@@ -46,7 +46,7 @@ BMPImageDecoder::BMPImageDecoder(AlphaOption alphaOption, GammaAndColorProfileOp
 {
 }
 
-void BMPImageDecoder::setData(FragmentedSharedBuffer& data, bool allDataReceived)
+void BMPImageDecoder::setData(const FragmentedSharedBuffer& data, bool allDataReceived)
 {
     if (failed())
         return;

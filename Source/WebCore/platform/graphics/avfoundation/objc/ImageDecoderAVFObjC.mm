@@ -289,7 +289,7 @@ ImageDecoderAVFObjCSample* toSample(Iterator iter)
 
 #pragma mark - ImageDecoderAVFObjC
 
-RefPtr<ImageDecoderAVFObjC> ImageDecoderAVFObjC::create(FragmentedSharedBuffer& data, const String& mimeType, AlphaOption alphaOption, GammaAndColorProfileOption gammaAndColorProfileOption)
+RefPtr<ImageDecoderAVFObjC> ImageDecoderAVFObjC::create(const FragmentedSharedBuffer& data, const String& mimeType, AlphaOption alphaOption, GammaAndColorProfileOption gammaAndColorProfileOption)
 {
     // AVFoundation may not be available at runtime.
     if (!AVAssetMIMETypeCache::singleton().isAvailable())
@@ -301,7 +301,7 @@ RefPtr<ImageDecoderAVFObjC> ImageDecoderAVFObjC::create(FragmentedSharedBuffer& 
     return adoptRef(*new ImageDecoderAVFObjC(data, mimeType, alphaOption, gammaAndColorProfileOption));
 }
 
-ImageDecoderAVFObjC::ImageDecoderAVFObjC(FragmentedSharedBuffer& data, const String& mimeType, AlphaOption, GammaAndColorProfileOption)
+ImageDecoderAVFObjC::ImageDecoderAVFObjC(const FragmentedSharedBuffer& data, const String& mimeType, AlphaOption, GammaAndColorProfileOption)
     : ImageDecoder()
     , m_mimeType(mimeType)
     , m_uti(WebCore::UTIFromMIMEType(mimeType))
@@ -641,7 +641,7 @@ void ImageDecoderAVFObjC::setExpectedContentSize(long long expectedContentSize)
     m_loader.get().expectedContentSize = expectedContentSize;
 }
 
-void ImageDecoderAVFObjC::setData(FragmentedSharedBuffer& data, bool allDataReceived)
+void ImageDecoderAVFObjC::setData(const FragmentedSharedBuffer& data, bool allDataReceived)
 {
     [m_loader updateData:data.makeContiguous()->createNSData().get() complete:allDataReceived];
 

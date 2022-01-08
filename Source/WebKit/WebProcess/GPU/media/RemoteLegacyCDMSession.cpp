@@ -43,7 +43,7 @@ using namespace WebCore;
 static RefPtr<ArrayBuffer> convertToArrayBuffer(IPC::SharedBufferCopy&& buffer)
 {
     if (buffer.buffer())
-        return ArrayBuffer::create(buffer.data(), buffer.size());
+        return buffer.buffer()->tryCreateArrayBuffer();
     return nullptr;
 }
 
@@ -62,7 +62,7 @@ static IPC::SharedBufferCopy convertToSharedBufferCopy(T array)
 {
     if (!array)
         return { };
-    return { SharedBuffer::create(array->data(), array->byteLength()) };
+    return IPC::SharedBufferCopy(SharedBuffer::create(array->data(), array->byteLength()));
 }
 
 std::unique_ptr<RemoteLegacyCDMSession> RemoteLegacyCDMSession::create(WeakPtr<RemoteLegacyCDMFactory> factory, RemoteLegacyCDMSessionIdentifier&& identifier)

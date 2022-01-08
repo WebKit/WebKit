@@ -209,7 +209,7 @@ void WebResourceLoader::didReceiveData(const IPC::SharedBufferCopy& data, int64_
     if (UNLIKELY(m_interceptController.isIntercepting(m_coreLoader->identifier()))) {
         m_interceptController.defer(m_coreLoader->identifier(), [this, protectedThis = Ref { *this }, buffer = data.buffer(), encodedDataLength]() mutable {
             if (m_coreLoader)
-                didReceiveData(WTFMove(buffer), encodedDataLength);
+                didReceiveData(IPC::SharedBufferCopy(WTFMove(buffer)), encodedDataLength);
         });
         return;
     }
@@ -218,8 +218,7 @@ void WebResourceLoader::didReceiveData(const IPC::SharedBufferCopy& data, int64_
         WEBRESOURCELOADER_RELEASE_LOG("didReceiveData: Started receiving data");
     m_numBytesReceived += data.size();
 
-    auto buffer = data.buffer() ? Ref { *data.buffer() } : SharedBuffer::create();
-    m_coreLoader->didReceiveData(buffer, encodedDataLength, DataPayloadBytes);
+    m_coreLoader->didReceiveData(data.safeBuffer(), encodedDataLength, DataPayloadBytes);
 }
 
 void WebResourceLoader::didFinishResourceLoad(const NetworkLoadMetrics& networkLoadMetrics)

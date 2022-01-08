@@ -129,7 +129,7 @@ public:
     virtual PlatformImagePtr createFrameImageAtIndex(size_t, SubsamplingLevel = SubsamplingLevel::Default, const DecodingOptions& = DecodingOptions(DecodingMode::Synchronous)) = 0;
 
     virtual void setExpectedContentSize(long long) { }
-    virtual void setData(FragmentedSharedBuffer&, bool allDataReceived) = 0;
+    virtual void setData(const FragmentedSharedBuffer&, bool allDataReceived) = 0;
     virtual bool isAllDataReceived() const = 0;
     virtual void clearFrameBufferCache(size_t) = 0;
 
