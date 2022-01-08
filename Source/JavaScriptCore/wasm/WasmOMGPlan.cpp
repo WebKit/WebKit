@@ -33,6 +33,7 @@
 #include "WasmB3IRGenerator.h"
 #include "WasmCallee.h"
 #include "WasmCalleeRegistry.h"
+#include "WasmIRGeneratorHelpers.h"
 #include "WasmNameSection.h"
 #include "WasmSignatureInlines.h"
 #include <wtf/DataLog.h>

@@ -32,6 +32,7 @@
 #include "LinkBuffer.h"
 #include "WasmB3IRGenerator.h"
 #include "WasmCallee.h"
+#include "WasmIRGeneratorHelpers.h"
 #include "WasmMachineThreads.h"
 #include "WasmNameSection.h"
 #include "WasmSignatureInlines.h"

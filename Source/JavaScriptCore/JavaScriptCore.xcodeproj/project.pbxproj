@@ -900,6 +900,7 @@
 		52E65A1E27682771002B4C0A /* B3EstimateStaticExecutionCounts.h in Headers */ = {isa = PBXBuildFile; fileRef = 52E65A1B27682760002B4C0A /* B3EstimateStaticExecutionCounts.h */; };
 		52EED7942492B870008F4C93 /* FunctionAllowlist.h in Headers */ = {isa = PBXBuildFile; fileRef = 52EED7932492B868008F4C93 /* FunctionAllowlist.h */; };
 		52F6C35E1E71EB080081F4CC /* WebAssemblyWrapperFunction.h in Headers */ = {isa = PBXBuildFile; fileRef = 52F6C35C1E71EB080081F4CC /* WebAssemblyWrapperFunction.h */; };
+		52FDABC32788076B00C15B59 /* WasmIRGeneratorHelpers.h in Headers */ = {isa = PBXBuildFile; fileRef = 52FDABC22788076900C15B59 /* WasmIRGeneratorHelpers.h */; };
 		530A66B91FA3E78B0026A545 /* UnifiedSource3-mm.mm in Sources */ = {isa = PBXBuildFile; fileRef = 530A66B11FA3E77A0026A545 /* UnifiedSource3-mm.mm */; };
 		530A66BA1FA3E78B0026A545 /* UnifiedSource4-mm.mm in Sources */ = {isa = PBXBuildFile; fileRef = 530A66B81FA3E77E0026A545 /* UnifiedSource4-mm.mm */; };
 		530A66BB1FA3E78B0026A545 /* UnifiedSource5-mm.mm in Sources */ = {isa = PBXBuildFile; fileRef = 530A66B51FA3E77D0026A545 /* UnifiedSource5-mm.mm */; };
@@ -3760,6 +3761,7 @@
 		52EED7932492B868008F4C93 /* FunctionAllowlist.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FunctionAllowlist.h; sourceTree = "<group>"; };
 		52F6C35B1E71EB080081F4CC /* WebAssemblyWrapperFunction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebAssemblyWrapperFunction.cpp; path = js/WebAssemblyWrapperFunction.cpp; sourceTree = "<group>"; };
 		52F6C35C1E71EB080081F4CC /* WebAssemblyWrapperFunction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebAssemblyWrapperFunction.h; path = js/WebAssemblyWrapperFunction.h; sourceTree = "<group>"; };
+		52FDABC22788076900C15B59 /* WasmIRGeneratorHelpers.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WasmIRGeneratorHelpers.h; sourceTree = "<group>"; };
 		5300740C22DD6F6600B9ACB3 /* JSFinalizationRegistry.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSFinalizationRegistry.cpp; sourceTree = "<group>"; };
 		530A63401FA3E31C0026A545 /* SourcesCocoa.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SourcesCocoa.txt; sourceTree = "<group>"; };
 		530A63411FA3E31D0026A545 /* Sources.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Sources.txt; sourceTree = "<group>"; };
@@ -7305,6 +7307,7 @@
 				E38350092390D9370036316D /* WasmGlobal.h */,
 				148521D526EAEBDF00CC1D1A /* WasmHandlerInfo.cpp */,
 				148521D726EAEBFE00CC1D1A /* WasmHandlerInfo.h */,
+				52FDABC22788076900C15B59 /* WasmIRGeneratorHelpers.h */,
 				AD8FF3961EB5BD850087FF82 /* WasmIndexOrName.cpp */,
 				AD8FF3951EB5BD850087FF82 /* WasmIndexOrName.h */,
 				AD5C36DE1F699EB6000BCAAF /* WasmInstance.cpp */,
@@ -11160,6 +11163,7 @@
 				E3A32BC71FC83147007D7E76 /* WeakMapImpl.h in Headers */,
 				E393ADD81FE702D00022D681 /* WeakMapImplInlines.h in Headers */,
 				A7CA3AE617DA41AE006538AF /* WeakMapPrototype.h in Headers */,
+				52FDABC32788076B00C15B59 /* WasmIRGeneratorHelpers.h in Headers */,
 				539930C822AD3B9A0051CDE2 /* WeakObjectRefConstructor.h in Headers */,
 				539BFBAE22AD3C3A0023F4C0 /* WeakObjectRefPrototype.h in Headers */,
 				14E84FA114EE1ACC00D6D5D4 /* WeakSet.h in Headers */,

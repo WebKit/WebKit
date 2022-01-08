@@ -559,9 +559,6 @@ std::unique_ptr<FunctionCodeBlockGenerator> LLIntGenerator::finalize()
     RELEASE_ASSERT(usedBuffer.capacity() == oldCapacity);
     *threadSpecific = WTFMove(usedBuffer);
 
-    if (!m_usesExceptions)
-        m_info.m_functionDoesNotUseExceptions.quickSet(m_functionIndex);
-
     return WTFMove(m_codeBlock);
 }
 

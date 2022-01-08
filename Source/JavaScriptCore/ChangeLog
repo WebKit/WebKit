@@ -1,3 +1,88 @@
+2022-01-07  Saam Barati  <sbarati@apple.com>
+
+        Add support for Wasm exceptions in the Air generator
+        https://bugs.webkit.org/show_bug.cgi?id=231211
+        <rdar://problem/84132861>
+
+        Reviewed by Filip Pizlo.
+
+        This patch adds support to Air for Wasm exceptions. The implementation
+        is very similar to how we implement it in the B3 Wasm tier. This patch
+        shares code with the B3 tier where it can.
+        
+        This patch also fixes a bug where you the early clobbered registers
+        of a patchpoint could prevent the prior instruction from register allocating.
+        For example, you can have the instructions I1, I2. Where I2 clobbers the
+        entire register file. It doesn't mean I1 shouldn't be able to allocate
+        registers. Instead, the clobber should occur after I1 executes. This patch
+        fixes the issue.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * b3/air/AirAllocateRegistersAndStackAndGenerateCode.cpp:
+        (JSC::B3::Air::GenerateAndAllocateRegisters::generate):
+        * wasm/WasmAirIRGenerator.cpp:
+        (JSC::Wasm::AirIRGenerator::ControlData::ControlData):
+        (JSC::Wasm::AirIRGenerator::ControlData::isTry):
+        (JSC::Wasm::AirIRGenerator::ControlData::isCatch):
+        (JSC::Wasm::AirIRGenerator::ControlData::convertTryToCatch):
+        (JSC::Wasm::AirIRGenerator::ControlData::convertTryToCatchAll):
+        (JSC::Wasm::AirIRGenerator::ControlData::tryStart const):
+        (JSC::Wasm::AirIRGenerator::ControlData::tryEnd const):
+        (JSC::Wasm::AirIRGenerator::ControlData::tryDepth const):
+        (JSC::Wasm::AirIRGenerator::ControlData::catchKind const):
+        (JSC::Wasm::AirIRGenerator::ControlData::exception const):
+        (JSC::Wasm::AirIRGenerator::emitCallPatchpoint):
+        (JSC::Wasm::AirIRGenerator::addStackMap):
+        (JSC::Wasm::AirIRGenerator::takeStackmaps):
+        (JSC::Wasm::AirIRGenerator::takeExceptionHandlers):
+        (JSC::Wasm::AirIRGenerator::newTmp):
+        (JSC::Wasm::AirIRGenerator::emitPatchpoint):
+        (JSC::Wasm::AirIRGenerator::emitLoad):
+        (JSC::Wasm::AirIRGenerator::AirIRGenerator):
+        (JSC::Wasm::AirIRGenerator::finalizeEntrypoints):
+        (JSC::Wasm::AirIRGenerator::forEachLiveValue):
+        (JSC::Wasm::AirIRGenerator::emitLoopTierUpCheck):
+        (JSC::Wasm::AirIRGenerator::addTry):
+        (JSC::Wasm::AirIRGenerator::addCatch):
+        (JSC::Wasm::AirIRGenerator::addCatchAll):
+        (JSC::Wasm::AirIRGenerator::addCatchToUnreachable):
+        (JSC::Wasm::AirIRGenerator::addCatchAllToUnreachable):
+        (JSC::Wasm::AirIRGenerator::emitCatchImpl):
+        (JSC::Wasm::AirIRGenerator::addDelegate):
+        (JSC::Wasm::AirIRGenerator::addDelegateToUnreachable):
+        (JSC::Wasm::AirIRGenerator::addThrow):
+        (JSC::Wasm::AirIRGenerator::addRethrow):
+        (JSC::Wasm::AirIRGenerator::addEndToUnreachable):
+        (JSC::Wasm::AirIRGenerator::addCall):
+        (JSC::Wasm::AirIRGenerator::emitIndirectCall):
+        (JSC::Wasm::parseAndCompileAir):
+        (JSC::Wasm::AirIRGenerator::preparePatchpointForExceptions):
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::B3IRGenerator::insertEntrySwitch):
+        (JSC::Wasm::B3IRGenerator::emitCatchImpl):
+        (JSC::Wasm::B3IRGenerator::addThrow):
+        (JSC::Wasm::B3IRGenerator::addRethrow):
+        (JSC::Wasm::PatchpointExceptionHandle::generate const): Deleted.
+        (JSC::Wasm::buildEntryBufferForCatch): Deleted.
+        (JSC::Wasm::computeExceptionHandlerLocations): Deleted.
+        * wasm/WasmB3IRGenerator.h:
+        * wasm/WasmBBQPlan.cpp:
+        (JSC::Wasm::BBQPlan::compileFunction):
+        * wasm/WasmIRGeneratorHelpers.h: Added.
+        (JSC::Wasm::PatchpointExceptionHandle::generate const):
+        (JSC::Wasm::computeExceptionHandlerLocations):
+        (JSC::Wasm::emitRethrowImpl):
+        (JSC::Wasm::emitThrowImpl):
+        (JSC::Wasm::buildEntryBufferForCatch):
+        (JSC::Wasm::emitCatchPrologueShared):
+        * wasm/WasmLLIntGenerator.cpp:
+        (JSC::Wasm::LLIntGenerator::finalize):
+        * wasm/WasmModuleInformation.h:
+        * wasm/WasmOMGPlan.cpp:
+        * wasm/WasmOSREntryPlan.cpp:
+        * wasm/WasmStreamingParser.cpp:
+        (JSC::Wasm::StreamingParser::parseCodeSectionSize):
+
 2022-01-07  Alexey Shvayka  <ashvayka@apple.com>
 
         Expand the set of objects we take JSArray::fastSlice() path for

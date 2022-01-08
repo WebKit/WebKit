@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -48,6 +48,7 @@
 #include "WasmContextInlines.h"
 #include "WasmExceptionType.h"
 #include "WasmFunctionParser.h"
+#include "WasmIRGeneratorHelpers.h"
 #include "WasmInstance.h"
 #include "WasmMemory.h"
 #include "WasmOSREntryData.h"
@@ -132,14 +133,24 @@ public:
     using ResultList = Vector<ExpressionType, 8>;
 
     struct ControlData {
-        ControlData(B3::Origin origin, BlockSignature result, ResultList resultTmps, BlockType type, BasicBlock* continuation, BasicBlock* special = nullptr)
+        ControlData(B3::Origin, BlockSignature result, ResultList resultTmps, BlockType type, BasicBlock* continuation, BasicBlock* special = nullptr)
             : controlBlockType(type)
             , continuation(continuation)
             , special(special)
             , results(resultTmps)
             , returnType(result)
         {
-            UNUSED_PARAM(origin);
+        }
+
+        ControlData(B3::Origin, BlockSignature result, ResultList resultTmps, BlockType type, BasicBlock* continuation, unsigned tryStart, unsigned tryDepth)
+            : controlBlockType(type)
+            , continuation(continuation)
+            , special(nullptr)
+            , results(resultTmps)
+            , returnType(result)
+            , m_tryStart(tryStart)
+            , m_tryCatchDepth(tryDepth)
+        {
         }
 
         ControlData()
@@ -148,8 +159,8 @@ public:
 
         static bool isIf(const ControlData& control) { return control.blockType() == BlockType::If; }
         static bool isTry(const ControlData& control) { return control.blockType() == BlockType::Try; }
-        static bool isCatch(const ControlData& control) { return control.blockType() == BlockType::Catch; }
         static bool isAnyCatch(const ControlData& control) { return control.blockType() == BlockType::Catch; }
+        static bool isCatch(const ControlData& control) { return isAnyCatch(control) && control.catchKind() == CatchKind::Catch; }
         static bool isTopLevel(const ControlData& control) { return control.blockType() == BlockType::TopLevel; }
         static bool isLoop(const ControlData& control) { return control.blockType() == BlockType::Loop; }
         static bool isBlock(const ControlData& control) { return control.blockType() == BlockType::Block; }
@@ -221,6 +232,54 @@ public:
             return returnType->returnType(i);
         }
 
+        void convertTryToCatch(unsigned tryEndCallSiteIndex, TypedTmp exception)
+        {
+            ASSERT(blockType() == BlockType::Try);
+            controlBlockType = BlockType::Catch;
+            m_catchKind = CatchKind::Catch;
+            m_tryEnd = tryEndCallSiteIndex;
+            m_exception = exception;
+        }
+
+        void convertTryToCatchAll(unsigned tryEndCallSiteIndex, TypedTmp exception)
+        {
+            ASSERT(blockType() == BlockType::Try);
+            controlBlockType = BlockType::Catch;
+            m_catchKind = CatchKind::CatchAll;
+            m_tryEnd = tryEndCallSiteIndex;
+            m_exception = exception;
+        }
+
+        unsigned tryStart() const
+        {
+            ASSERT(controlBlockType == BlockType::Try || controlBlockType == BlockType::Catch);
+            return m_tryStart;
+        }
+
+        unsigned tryEnd() const
+        {
+            ASSERT(controlBlockType == BlockType::Catch);
+            return m_tryEnd;
+        }
+
+        unsigned tryDepth() const
+        {
+            ASSERT(controlBlockType == BlockType::Try || controlBlockType == BlockType::Catch);
+            return m_tryCatchDepth;
+        }
+
+        CatchKind catchKind() const
+        {
+            ASSERT(controlBlockType == BlockType::Catch);
+            return m_catchKind;
+        }
+
+        TypedTmp exception() const
+        {
+            ASSERT(controlBlockType == BlockType::Catch);
+            return m_exception;
+        }
+
     private:
         friend class AirIRGenerator;
         BlockType controlBlockType;
@@ -228,6 +287,11 @@ public:
         BasicBlock* special;
         ResultList results;
         BlockSignature returnType;
+        unsigned m_tryStart;
+        unsigned m_tryEnd;
+        unsigned m_tryCatchDepth;
+        CatchKind m_catchKind;
+        TypedTmp m_exception;
     };
 
     using ControlType = ControlData;
@@ -259,6 +323,8 @@ public:
     } while (0)
 
     AirIRGenerator(const ModuleInformation&, B3::Procedure&, InternalFunction*, Vector<UnlinkedWasmToWasmCall>&, MemoryMode, unsigned functionIndex, TierUpCount*, const Signature&);
+
+    void finalizeEntrypoints();
 
     PartialResult WARN_UNUSED_RETURN addArguments(const Signature&);
     PartialResult WARN_UNUSED_RETURN addLocal(Type, uint32_t);
@@ -349,7 +415,7 @@ public:
     PartialResult WARN_UNUSED_RETURN addCallRef(const Signature&, Vector<ExpressionType>& args, ResultList& results);
     PartialResult WARN_UNUSED_RETURN addUnreachable();
     PartialResult WARN_UNUSED_RETURN emitIndirectCall(TypedTmp calleeInstance, ExpressionType calleeCode, const Signature&, const Vector<ExpressionType>& args, ResultList&);
-    B3::PatchpointValue* WARN_UNUSED_RETURN emitCallPatchpoint(BasicBlock*, const Signature&, const ResultList& results, const Vector<TypedTmp>& args, Vector<ConstrainedTmp>&& extraArgs = { });
+    std::pair<B3::PatchpointValue*, PatchpointExceptionHandle> WARN_UNUSED_RETURN emitCallPatchpoint(BasicBlock*, const Signature&, const ResultList& results, const Vector<TypedTmp>& args, Vector<ConstrainedTmp> extraArgs = { });
 
     PartialResult addShift(Type, B3::Air::Opcode, ExpressionType value, ExpressionType shift, ExpressionType& result);
     PartialResult addIntegerSub(B3::Air::Opcode, ExpressionType lhs, ExpressionType rhs, ExpressionType& result);
@@ -361,9 +427,28 @@ public:
     void didFinishParsingLocals() { }
     void didPopValueFromStack() { }
 
+    Tmp emitCatchImpl(CatchKind, ControlType&, unsigned exceptionIndex = 0);
+    template <size_t inlineCapacity>
+    PatchpointExceptionHandle preparePatchpointForExceptions(B3::PatchpointValue*, Vector<ConstrainedTmp, inlineCapacity>& args);
+
     const Bag<B3::PatchpointValue*>& patchpoints() const
     {
         return m_patchpoints;
+    }
+
+    void addStackMap(unsigned callSiteIndex, StackMap&& stackmap)
+    {
+        m_stackmaps.add(CallSiteIndex(callSiteIndex), WTFMove(stackmap));
+    }
+
+    StackMaps&& takeStackmaps()
+    {
+        return WTFMove(m_stackmaps);
+    }
+
+    Vector<UnlinkedHandlerInfo>&& takeExceptionHandlers()
+    {
+        return WTFMove(m_exceptionHandlers);
     }
 
 private:
@@ -417,16 +502,6 @@ private:
 
     Tmp newTmp(B3::Bank bank)
     {
-        switch (bank) {
-        case B3::GP:
-            if (m_freeGPs.size())
-                return m_freeGPs.takeLast();
-            break;
-        case B3::FP:
-            if (m_freeFPs.size())
-                return m_freeFPs.takeLast();
-            break;
-        }
         return m_code.newTmp(bank);
     }
 
@@ -496,8 +571,14 @@ private:
         emitPatchpoint(basicBlock, patch, Vector<Tmp, 8> { result }, Vector<ConstrainedTmp>());
     }
 
+    template <size_t inlineSize>
+    void emitPatchpoint(BasicBlock* basicBlock, B3::PatchpointValue* patch, Tmp result, Vector<ConstrainedTmp, inlineSize>&& args)
+    {
+        emitPatchpoint(basicBlock, patch, Vector<Tmp, 8> { result }, WTFMove(args));
+    }
+
     template <typename ResultTmpType, size_t inlineSize>
-    void emitPatchpoint(BasicBlock* basicBlock, B3::PatchpointValue* patch, const Vector<ResultTmpType, 8>&  results, Vector<ConstrainedTmp, inlineSize>&& args)
+    void emitPatchpoint(BasicBlock* basicBlock, B3::PatchpointValue* patch, const Vector<ResultTmpType, 8>& results, Vector<ConstrainedTmp, inlineSize>&& args)
     {
         if (!m_patchpointSpecial)
             m_patchpointSpecial = static_cast<B3::PatchpointSpecial*>(m_code.addSpecial(makeUnique<B3::PatchpointSpecial>()));
@@ -549,7 +630,9 @@ private:
             B3::Value* dummyValue = m_proc.addConstant(B3::Origin(), tmp.tmp.isGP() ? B3::Int64 : B3::Double, 0);
             patch->append(dummyValue, tmp.rep);
             switch (tmp.rep.kind()) {
-            case B3::ValueRep::ColdAny: // B3::Value propagates ColdAny information and later Air will allocate appropriate stack.
+            // B3::Value propagates (Late)ColdAny information and later Air will allocate appropriate stack.
+            case B3::ValueRep::ColdAny: 
+            case B3::ValueRep::LateColdAny:
             case B3::ValueRep::SomeRegister:
                 inst.args.append(tmp.tmp);
                 break;
@@ -559,7 +642,6 @@ private:
                 inst.args.append(Tmp(tmp.rep.reg()));
                 break;
             case B3::ValueRep::StackArgument: {
-                ASSERT(!patch->effects.terminal);
                 Arg arg = Arg::callArg(tmp.rep.offsetFromSP());
                 append(basicBlock, tmp.tmp.isGP() ? Move : MoveDouble, tmp.tmp, arg);
                 ASSERT(arg.canRepresent(patch->child(i)->type()));
@@ -689,6 +771,23 @@ private:
         }
     }
 
+    void emitLoad(B3::Air::Opcode op, B3::Type type, Tmp base, size_t offset, Tmp result)
+    {
+        if (Arg::isValidAddrForm(offset, B3::widthForType(type)))
+            append(op, Arg::addr(base, offset), result);
+        else {
+            auto temp2 = g64();
+            append(Move, Arg::bigImm(offset), temp2);
+            append(Add64, temp2, base, temp2);
+            append(op, Arg::addr(temp2), result);
+        }
+    }
+
+    void emitLoad(Tmp base, size_t offset, TypedTmp result)
+    {
+        emitLoad(moveOpForValueType(result.type()), toB3Type(result.type()), base, offset, result.tmp());
+    }
+
     void emitThrowException(CCallHelpers&, ExceptionType);
 
     void emitEntryTierUpCheck();
@@ -737,6 +836,9 @@ private:
         return m_outerLoops.last();
     }
 
+    template <typename Function>
+    void forEachLiveValue(Function);
+
     FunctionParser<AirIRGenerator>* m_parser { nullptr };
     const ModuleInformation& m_info;
     const MemoryMode m_mode { MemoryMode::BoundsChecking };
@@ -748,15 +850,14 @@ private:
     Vector<uint32_t> m_outerLoops;
     BasicBlock* m_currentBlock { nullptr };
     BasicBlock* m_rootBlock { nullptr };
+    BasicBlock* m_mainEntrypointStart { nullptr };
     Vector<TypedTmp> m_locals;
     Vector<UnlinkedWasmToWasmCall>& m_unlinkedWasmToWasmCalls; // List each call site and the function index whose address it should be patched with.
     GPRReg m_memoryBaseGPR { InvalidGPRReg };
     GPRReg m_boundsCheckingSizeGPR { InvalidGPRReg };
     GPRReg m_wasmContextInstanceGPR { InvalidGPRReg };
+    GPRReg m_prologueWasmContextGPR { InvalidGPRReg };
     bool m_makesCalls { false };
-
-    Vector<Tmp, 8> m_freeGPs;
-    Vector<Tmp, 8> m_freeFPs;
 
     HashMap<BlockSignature, B3::Type> m_tupleMap;
     // This is only filled if we are dumping IR.
@@ -774,6 +875,15 @@ private:
     unsigned m_numImportFunctions;
 
     B3::PatchpointSpecial* m_patchpointSpecial { nullptr };
+
+    RefPtr<B3::Air::PrologueGenerator> m_prologueGenerator;
+
+    Vector<BasicBlock*> m_catchEntrypoints;
+
+    Checked<unsigned> m_tryCatchDepth { 0 };
+    Checked<unsigned> m_callSiteIndex { 0 };
+    StackMaps m_stackmaps;
+    Vector<UnlinkedHandlerInfo> m_exceptionHandlers;
 };
 
 // Memory accesses in WebAssembly have unsigned 32-bit offsets, whereas they have signed 32-bit offsets in B3.
@@ -847,11 +957,9 @@ AirIRGenerator::AirIRGenerator(const ModuleInformation& info, B3::Procedure& pro
         m_code.pinRegister(m_boundsCheckingSizeGPR);
     }
 
-    m_code.setNumEntrypoints(1);
+    m_prologueWasmContextGPR = Context::useFastTLS() ? wasmCallingConvention().prologueScratchGPRs[1] : m_wasmContextInstanceGPR;
 
-    GPRReg contextInstance = Context::useFastTLS() ? wasmCallingConvention().prologueScratchGPRs[1] : m_wasmContextInstanceGPR;
-
-    Ref<B3::Air::PrologueGenerator> prologueGenerator = createSharedTask<B3::Air::PrologueGeneratorFunction>([=] (CCallHelpers& jit, B3::Air::Code& code) {
+    m_prologueGenerator = createSharedTask<B3::Air::PrologueGeneratorFunction>([=] (CCallHelpers& jit, B3::Air::Code& code) {
         AllowMacroScratchRegisterUsage allowScratch(jit);
         code.emitDefaultPrologue(jit);
 
@@ -891,31 +999,39 @@ AirIRGenerator::AirIRGenerator(const ModuleInformation& info, B3::Procedure& pro
                 GPRReg scratch = wasmCallingConvention().prologueScratchGPRs[0];
 
                 if (Context::useFastTLS())
-                    jit.loadWasmContextInstance(contextInstance);
+                    jit.loadWasmContextInstance(m_prologueWasmContextGPR);
 
                 jit.addPtr(CCallHelpers::TrustedImm32(-checkSize), GPRInfo::callFrameRegister, scratch);
                 MacroAssembler::JumpList overflow;
                 if (UNLIKELY(needUnderflowCheck))
                     overflow.append(jit.branchPtr(CCallHelpers::Above, scratch, GPRInfo::callFrameRegister));
-                overflow.append(jit.branchPtr(CCallHelpers::Below, scratch, CCallHelpers::Address(contextInstance, Instance::offsetOfCachedStackLimit())));
+                overflow.append(jit.branchPtr(CCallHelpers::Below, scratch, CCallHelpers::Address(m_prologueWasmContextGPR, Instance::offsetOfCachedStackLimit())));
                 jit.addLinkTask([overflow] (LinkBuffer& linkBuffer) {
                     linkBuffer.link(overflow, CodeLocationLabel<JITThunkPtrTag>(Thunks::singleton().stub(throwStackOverflowFromWasmThunkGenerator).code()));
                 });
             } else if (m_usesInstanceValue && Context::useFastTLS()) {
                 // No overflow check is needed, but the instance values still needs to be correct.
-                jit.loadWasmContextInstance(contextInstance);
+                jit.loadWasmContextInstance(m_prologueWasmContextGPR);
+            }
+
+            if (m_catchEntrypoints.size()) {
+                GPRReg scratch = wasmCallingConvention().prologueScratchGPRs[0];
+                jit.loadPtr(CCallHelpers::Address(m_prologueWasmContextGPR, Instance::offsetOfOwner()), scratch);
+                jit.store64(scratch, CCallHelpers::Address(GPRInfo::callFrameRegister, CallFrameSlot::thisArgument * sizeof(Register)));
             }
         }
     });
 
-    m_code.setPrologueForEntrypoint(0, WTFMove(prologueGenerator));
-
     if (Context::useFastTLS()) {
         m_instanceValue = g64();
         // FIXME: Would be nice to only do this if we use instance value.
-        append(Move, Tmp(contextInstance), m_instanceValue);
+        append(Move, Tmp(m_prologueWasmContextGPR), m_instanceValue);
     } else
-        m_instanceValue = { Tmp(contextInstance), Types::I64 };
+        m_instanceValue = { Tmp(m_prologueWasmContextGPR), Types::I64 };
+
+    append(EntrySwitch);
+    m_mainEntrypointStart = m_code.addBlock();
+    m_currentBlock = m_mainEntrypointStart;
 
     ASSERT(!m_locals.size());
     m_locals.grow(signature.argumentCount());
@@ -952,6 +1068,35 @@ AirIRGenerator::AirIRGenerator(const ModuleInformation& info, B3::Procedure& pro
     }
 
     emitEntryTierUpCheck();
+}
+
+void AirIRGenerator::finalizeEntrypoints()
+{
+    unsigned numEntrypoints = 1 + m_catchEntrypoints.size();
+    m_proc.setNumEntrypoints(numEntrypoints);
+    m_code.setPrologueForEntrypoint(0, Ref<B3::Air::PrologueGenerator>(*m_prologueGenerator));
+
+    if (m_catchEntrypoints.size()) {
+        Ref<B3::Air::PrologueGenerator> catchPrologueGenerator = createSharedTask<B3::Air::PrologueGeneratorFunction>([this] (CCallHelpers& jit, B3::Air::Code& code) {
+            AllowMacroScratchRegisterUsage allowScratch(jit);
+            emitCatchPrologueShared(code, jit);
+
+            if (Context::useFastTLS()) {
+                // Shared prologue expects this in this register when entering the function using fast TLS.
+                jit.loadWasmContextInstance(m_prologueWasmContextGPR);
+            }
+        });
+
+        for (unsigned i = 0; i < m_catchEntrypoints.size(); ++i)
+            m_code.setPrologueForEntrypoint(1 + i, catchPrologueGenerator.copyRef());
+    }
+
+    BasicBlock::SuccessorList successors;
+    successors.append(m_mainEntrypointStart);
+    successors.appendVector(m_catchEntrypoints);
+
+    RELEASE_ASSERT(numEntrypoints == successors.size());
+    m_rootBlock->successors() = successors;
 }
 
 B3::Type AirIRGenerator::toB3ResultType(BlockSignature returnType)
@@ -1025,6 +1170,21 @@ void AirIRGenerator::emitThrowException(CCallHelpers& jit, ExceptionType type)
     jit.addLinkTask([jumpToExceptionStub] (LinkBuffer& linkBuffer) {
         linkBuffer.link(jumpToExceptionStub, CodeLocationLabel<JITThunkPtrTag>(Thunks::singleton().stub(throwExceptionFromWasmThunkGenerator).code()));
     });
+}
+
+template <typename Function>
+void AirIRGenerator::forEachLiveValue(Function function)
+{
+    for (const auto& local : m_locals)
+        function(local);
+    for (unsigned controlIndex = 0; controlIndex < m_parser->controlStack().size(); ++controlIndex) {
+        ControlData& data = m_parser->controlStack()[controlIndex].controlData;
+        Stack& expressionStack = m_parser->controlStack()[controlIndex].enclosedExpressionStack;
+        for (const auto& tmp : expressionStack)
+            function(tmp.value());
+        if (ControlType::isAnyCatch(data))
+            function(data.exception());
+    }
 }
 
 auto AirIRGenerator::addLocal(Type type, uint32_t count) -> PartialResult
@@ -2903,13 +3063,9 @@ void AirIRGenerator::emitLoopTierUpCheck(uint32_t loopIndex, const Stack& enclos
     Vector<ConstrainedTmp> patchArgs;
     patchArgs.append(countdownPtr);
 
-    for (auto& local : m_locals)
-        patchArgs.append(ConstrainedTmp(local, B3::ValueRep::ColdAny));
-    for (unsigned controlIndex = 0; controlIndex < m_parser->controlStack().size(); ++controlIndex) {
-        Stack& expressionStack = m_parser->controlStack()[controlIndex].enclosedExpressionStack;
-        for (TypedExpression value : expressionStack)
-            patchArgs.append(ConstrainedTmp(value.value(), B3::ValueRep::ColdAny));
-    }
+    forEachLiveValue([&] (Tmp tmp) {
+        patchArgs.append(ConstrainedTmp(tmp, B3::ValueRep::ColdAny));
+    });
     for (TypedExpression value : enclosingStack)
         patchArgs.append(ConstrainedTmp(value.value(), B3::ValueRep::ColdAny));
     for (TypedExpression value : newStack)
@@ -3012,57 +3168,173 @@ auto AirIRGenerator::addElseToUnreachable(ControlData& data) -> PartialResult
     return { };
 }
 
-// FIXME: Add support for Wasm exceptions in the Air generator
-// https://bugs.webkit.org/show_bug.cgi?id=231211
-auto AirIRGenerator::addTry(BlockSignature, Stack&, ControlType&, Stack&) -> PartialResult
+auto AirIRGenerator::addTry(BlockSignature signature, Stack& enclosingStack, ControlType& result, Stack& newStack) -> PartialResult
 {
+    ++m_tryCatchDepth;
+
+    BasicBlock* continuation = m_code.addBlock();
+    splitStack(signature, enclosingStack, newStack);
+    result = ControlData(origin(), signature, tmpsForSignature(signature), BlockType::Try, continuation, ++m_callSiteIndex, m_tryCatchDepth);
     return { };
 }
 
-auto AirIRGenerator::addCatch(unsigned, const Signature&, Stack&, ControlType&, ResultList&) -> PartialResult
+auto AirIRGenerator::addCatch(unsigned exceptionIndex, const Signature& signature, Stack& currentStack, ControlType& data, ResultList& results) -> PartialResult
 {
-    RELEASE_ASSERT_NOT_REACHED();
+    unifyValuesWithBlock(currentStack, data.results);
+    append(Jump);
+    m_currentBlock->setSuccessors(data.continuation);
+    return addCatchToUnreachable(exceptionIndex, signature, data, results);
+}
+
+auto AirIRGenerator::addCatchAll(Stack& currentStack, ControlType& data) -> PartialResult
+{
+    unifyValuesWithBlock(currentStack, data.results);
+    append(Jump);
+    m_currentBlock->setSuccessors(data.continuation);
+    return addCatchAllToUnreachable(data);
+}
+
+auto AirIRGenerator::addCatchToUnreachable(unsigned exceptionIndex, const Signature& signature, ControlType& data, ResultList& results) -> PartialResult
+{
+    Tmp buffer = emitCatchImpl(CatchKind::Catch, data, exceptionIndex);
+    for (unsigned i = 0; i < signature.argumentCount(); ++i) {
+        Type type = signature.argument(i);
+        TypedTmp tmp = tmpForType(type);
+        emitLoad(buffer, i * sizeof(uint64_t), tmp);
+        results.append(tmp);
+    }
     return { };
 }
 
-auto AirIRGenerator::addCatchToUnreachable(unsigned, const Signature&, ControlType&, ResultList&) -> PartialResult
+auto AirIRGenerator::addCatchAllToUnreachable(ControlType& data) -> PartialResult
 {
-    RELEASE_ASSERT_NOT_REACHED();
+    emitCatchImpl(CatchKind::CatchAll, data);
     return { };
 }
 
-auto AirIRGenerator::addCatchAll(Stack&, ControlType&) -> PartialResult
+Tmp AirIRGenerator::emitCatchImpl(CatchKind kind, ControlType& data, unsigned exceptionIndex)
 {
-    RELEASE_ASSERT_NOT_REACHED();
+    m_currentBlock = m_code.addBlock();
+    m_catchEntrypoints.append(m_currentBlock);
+
+    if (ControlType::isTry(data)) {
+        if (kind == CatchKind::Catch)
+            data.convertTryToCatch(++m_callSiteIndex, g64());
+        else
+            data.convertTryToCatchAll(++m_callSiteIndex, g64());
+    }
+    // We convert from "try" to "catch" ControlType above. This doesn't
+    // happen if ControlType is already a "catch". This can happen when
+    // we have multiple catches like "try {} catch(A){} catch(B){}...CatchAll(E){}".
+    // We just convert the first ControlType to a catch, then the others will
+    // use its fields.
+    ASSERT(ControlType::isAnyCatch(data));
+
+    HandlerType handlerType = kind == CatchKind::Catch ? HandlerType::Catch : HandlerType::CatchAll;
+    m_exceptionHandlers.append({ handlerType, data.tryStart(), data.tryEnd(), 0, m_tryCatchDepth, exceptionIndex });
+
+    restoreWebAssemblyGlobalState(RestoreCachedStackLimit::Yes, m_info.memory, instanceValue(), m_currentBlock);
+
+    unsigned indexInBuffer = 0;
+    auto loadFromScratchBuffer = [&] (TypedTmp result) {
+        size_t offset = sizeof(uint64_t) * indexInBuffer;
+        ++indexInBuffer;
+        Tmp bufferPtr = Tmp(GPRInfo::argumentGPR0);
+        emitLoad(bufferPtr, offset, result);
+    };
+    forEachLiveValue([&] (TypedTmp tmp) {
+        // We set our current ControlEntry's exception below after the patchpoint, it's
+        // not in the incoming buffer of live values.
+        auto toIgnore = data.exception();
+        if (tmp.tmp() != toIgnore.tmp())
+            loadFromScratchBuffer(tmp);
+    });
+
+    B3::PatchpointValue* patch = addPatchpoint(m_proc.addTuple({ B3::pointerType(), B3::pointerType() }));
+    patch->effects.exitsSideways = true;
+    patch->clobber(RegisterSet::macroScratchRegisters());
+    RegisterSet clobberLate = RegisterSet::volatileRegistersForJSCall();
+    clobberLate.add(GPRInfo::argumentGPR0);
+    patch->clobberLate(clobberLate);
+    patch->resultConstraints.append(B3::ValueRep::reg(GPRInfo::returnValueGPR));
+    patch->resultConstraints.append(B3::ValueRep::reg(GPRInfo::returnValueGPR2));
+    patch->setGenerator([=] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
+        AllowMacroScratchRegisterUsage allowScratch(jit);
+        jit.move(params[2].gpr(), GPRInfo::argumentGPR0);
+        CCallHelpers::Call call = jit.call(OperationPtrTag);
+        jit.addLinkTask([call] (LinkBuffer& linkBuffer) {
+            linkBuffer.link(call, FunctionPtr<OperationPtrTag>(operationWasmRetrieveAndClearExceptionIfCatchable));
+        });
+    });
+
+    Tmp exception = Tmp(GPRInfo::returnValueGPR);
+    Tmp buffer = Tmp(GPRInfo::returnValueGPR2);
+    emitPatchpoint(m_currentBlock, patch, Vector<Tmp, 8>::from(exception, buffer), Vector<ConstrainedTmp, 1>::from(instanceValue()));
+    append(Move, exception, data.exception());
+
+    return buffer;
+}
+
+auto AirIRGenerator::addDelegate(ControlType& target, ControlType& data) -> PartialResult
+{
+    return addDelegateToUnreachable(target, data);
+}
+
+auto AirIRGenerator::addDelegateToUnreachable(ControlType& target, ControlType& data) -> PartialResult
+{
+    unsigned targetDepth = 0;
+    if (ControlType::isTry(target))
+        targetDepth = target.tryDepth();
+
+    m_exceptionHandlers.append({ HandlerType::Delegate, data.tryStart(), ++m_callSiteIndex, 0, m_tryCatchDepth, targetDepth });
     return { };
 }
 
-auto AirIRGenerator::addCatchAllToUnreachable(ControlType&) -> PartialResult
+auto AirIRGenerator::addThrow(unsigned exceptionIndex, Vector<ExpressionType>& args, Stack&) -> PartialResult
 {
-    RELEASE_ASSERT_NOT_REACHED();
+    B3::PatchpointValue* patch = addPatchpoint(B3::Void);
+    patch->effects.terminal = true;
+    patch->clobber(RegisterSet::volatileRegistersForJSCall());
+
+    Vector<ConstrainedTmp, 8> patchArgs;
+    patchArgs.append(ConstrainedTmp(instanceValue(), B3::ValueRep::reg(GPRInfo::argumentGPR0)));
+    patchArgs.append(ConstrainedTmp(Tmp(GPRInfo::callFrameRegister), B3::ValueRep::reg(GPRInfo::argumentGPR1)));
+    for (unsigned i = 0; i < args.size(); ++i)
+        patchArgs.append(ConstrainedTmp(args[i], B3::ValueRep::stackArgument(i * sizeof(EncodedJSValue))));
+
+    PatchpointExceptionHandle handle = preparePatchpointForExceptions(patch, patchArgs);
+
+    patch->setGenerator([this, exceptionIndex, handle] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
+        AllowMacroScratchRegisterUsage allowScratch(jit);
+        handle.generate(jit, params, this);
+        emitThrowImpl(jit, exceptionIndex); 
+    });
+
+    emitPatchpoint(m_currentBlock, patch, Tmp(), WTFMove(patchArgs));
+
     return { };
 }
 
-auto AirIRGenerator::addDelegate(ControlType&, ControlType&) -> PartialResult
+auto AirIRGenerator::addRethrow(unsigned, ControlType& data) -> PartialResult
 {
-    RELEASE_ASSERT_NOT_REACHED();
-    return { };
-}
+    B3::PatchpointValue* patch = addPatchpoint(B3::Void);
+    patch->clobber(RegisterSet::volatileRegistersForJSCall());
+    patch->effects.terminal = true;
 
-auto AirIRGenerator::addDelegateToUnreachable(ControlType&, ControlType&) -> PartialResult
-{
-    RELEASE_ASSERT_NOT_REACHED();
-    return { };
-}
+    Vector<ConstrainedTmp, 3> patchArgs;
+    patchArgs.append(ConstrainedTmp(instanceValue(), B3::ValueRep::reg(GPRInfo::argumentGPR0)));
+    patchArgs.append(ConstrainedTmp(Tmp(GPRInfo::callFrameRegister), B3::ValueRep::reg(GPRInfo::argumentGPR1)));
+    patchArgs.append(ConstrainedTmp(data.exception(), B3::ValueRep::reg(GPRInfo::argumentGPR2)));
 
-auto AirIRGenerator::addThrow(unsigned exceptionIndex, Vector<ExpressionType>&, Stack&) -> PartialResult
-{
-    UNUSED_PARAM(exceptionIndex);
-    return { };
-}
+    PatchpointExceptionHandle handle = preparePatchpointForExceptions(patch, patchArgs);
+    patch->setGenerator([this, handle] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
+        AllowMacroScratchRegisterUsage allowScratch(jit);
+        handle.generate(jit, params, this);
+        emitRethrowImpl(jit);
+    });
 
-auto AirIRGenerator::addRethrow(unsigned, ControlType&) -> PartialResult
-{
+    emitPatchpoint(m_currentBlock, patch, Tmp(), WTFMove(patchArgs));
+
     return { };
 }
 
@@ -3209,7 +3481,8 @@ auto AirIRGenerator::addEndToUnreachable(ControlEntry& entry, const Stack& expre
     if (data.blockType() == BlockType::If) {
         append(data.special, Jump);
         data.special->setSuccessors(m_currentBlock);
-    }
+    } else if (data.blockType() == BlockType::Try || data.blockType() == BlockType::Catch)
+        --m_tryCatchDepth;
 
     if (data.blockType() == BlockType::Loop) {
         m_outerLoops.removeLast();
@@ -3233,7 +3506,7 @@ auto AirIRGenerator::addEndToUnreachable(ControlEntry& entry, const Stack& expre
     return { };
 }
 
-B3::PatchpointValue* AirIRGenerator::emitCallPatchpoint(BasicBlock* block, const Signature& signature, const ResultList& results, const Vector<TypedTmp>& args, Vector<ConstrainedTmp>&& patchArgs)
+std::pair<B3::PatchpointValue*, PatchpointExceptionHandle> AirIRGenerator::emitCallPatchpoint(BasicBlock* block, const Signature& signature, const ResultList& results, const Vector<TypedTmp>& args, Vector<ConstrainedTmp> patchArgs)
 {
     auto* patchpoint = addPatchpoint(toB3ResultType(&signature));
     patchpoint->effects.writesPinned = true;
@@ -3258,8 +3531,9 @@ B3::PatchpointValue* AirIRGenerator::emitCallPatchpoint(BasicBlock* block, const
             resultConstraints.append(B3::ValueRep(valueLocation));
         patchpoint->resultConstraints = WTFMove(resultConstraints);
     }
+    PatchpointExceptionHandle exceptionHandle = preparePatchpointForExceptions(patchpoint, patchArgs);
     emitPatchpoint(block, patchpoint, results, WTFMove(patchArgs));
-    return patchpoint;
+    return { patchpoint, exceptionHandle };
 }
 
 auto AirIRGenerator::addCall(uint32_t functionIndex, const Signature& signature, Vector<ExpressionType>& args, ResultList& results) -> PartialResult
@@ -3295,14 +3569,17 @@ auto AirIRGenerator::addCall(uint32_t functionIndex, const Signature& signature,
         m_currentBlock->setSuccessors(isWasmBlock, isEmbedderBlock);
 
         {
-            auto* patchpoint = emitCallPatchpoint(isWasmBlock, signature, results, args);
+            auto pair = emitCallPatchpoint(isWasmBlock, signature, results, args);
+            auto* patchpoint = pair.first;
+            auto exceptionHandle = pair.second;
             // We need to clobber all potential pinned registers since we might be leaving the instance.
             // We pessimistically assume we could be calling to something that is bounds checking.
             // FIXME: We shouldn't have to do this: https://bugs.webkit.org/show_bug.cgi?id=172181
             patchpoint->clobberLate(PinnedRegisterInfo::get().toSave(MemoryMode::BoundsChecking));
 
-            patchpoint->setGenerator([unlinkedWasmToWasmCalls, functionIndex] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
+            patchpoint->setGenerator([=] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
                 AllowMacroScratchRegisterUsage allowScratch(jit);
+                exceptionHandle.generate(jit, params, this);
                 CCallHelpers::Call call = jit.threadSafePatchableNearCall();
                 jit.addLinkTask([unlinkedWasmToWasmCalls, call, functionIndex] (LinkBuffer& linkBuffer) {
                     unlinkedWasmToWasmCalls->append({ linkBuffer.locationOfNearCall<WasmEntryPtrTag>(call), functionIndex });
@@ -3321,13 +3598,17 @@ auto AirIRGenerator::addCall(uint32_t functionIndex, const Signature& signature,
 
             Vector<ConstrainedTmp> jumpArgs;
             jumpArgs.append({ jumpDestination, B3::ValueRep::SomeRegister });
-            auto* patchpoint = emitCallPatchpoint(isEmbedderBlock, signature, results, args, WTFMove(jumpArgs));
+            auto pair = emitCallPatchpoint(isEmbedderBlock, signature, results, args, WTFMove(jumpArgs));
+            auto* patchpoint = pair.first;
+            auto exceptionHandle = pair.second;
+
             // We need to clobber all potential pinned registers since we might be leaving the instance.
             // We pessimistically assume we could be calling to something that is bounds checking.
             // FIXME: We shouldn't have to do this: https://bugs.webkit.org/show_bug.cgi?id=172181
             patchpoint->clobberLate(PinnedRegisterInfo::get().toSave(MemoryMode::BoundsChecking));
-            patchpoint->setGenerator([] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
+            patchpoint->setGenerator([=] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
                 AllowMacroScratchRegisterUsage allowScratch(jit);
+                exceptionHandle.generate(jit, params, this);
                 jit.call(params[params.proc().resultCount(params.value()->type())].gpr(), WasmEntryPtrTag);
             });
 
@@ -3339,12 +3620,15 @@ auto AirIRGenerator::addCall(uint32_t functionIndex, const Signature& signature,
         // The call could have been to another WebAssembly instance, and / or could have modified our Memory.
         restoreWebAssemblyGlobalState(RestoreCachedStackLimit::Yes, m_info.memory, currentInstance, continuation);
     } else {
-        auto* patchpoint = emitCallPatchpoint(m_currentBlock, signature, results, args);
+        auto pair = emitCallPatchpoint(m_currentBlock, signature, results, args);
+        auto* patchpoint = pair.first;
+        auto exceptionHandle = pair.second;
         // We need to clobber the size register since the LLInt always bounds checks
         if (m_mode == MemoryMode::Signaling || m_info.memory.isShared())
             patchpoint->clobberLate(RegisterSet { PinnedRegisterInfo::get().boundsCheckingSizeRegister });
-        patchpoint->setGenerator([unlinkedWasmToWasmCalls, functionIndex] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
+        patchpoint->setGenerator([=] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
             AllowMacroScratchRegisterUsage allowScratch(jit);
+            exceptionHandle.generate(jit, params, this);
             CCallHelpers::Call call = jit.threadSafePatchableNearCall();
             jit.addLinkTask([unlinkedWasmToWasmCalls, call, functionIndex] (LinkBuffer& linkBuffer) {
                 unlinkedWasmToWasmCalls->append({ linkBuffer.locationOfNearCall<WasmEntryPtrTag>(call), functionIndex });
@@ -3523,7 +3807,9 @@ auto AirIRGenerator::emitIndirectCall(TypedTmp calleeInstance, ExpressionType ca
     for (unsigned i = 0; i < signature.returnCount(); ++i)
         results.append(tmpForType(signature.returnType(i)));
 
-    auto* patchpoint = emitCallPatchpoint(m_currentBlock, signature, results, args, WTFMove(extraArgs));
+    auto pair = emitCallPatchpoint(m_currentBlock, signature, results, args, WTFMove(extraArgs));
+    auto* patchpoint = pair.first;
+    auto exceptionHandle = pair.second;
 
     // We need to clobber all potential pinned registers since we might be leaving the instance.
     // We pessimistically assume we're always calling something that is bounds checking so
@@ -3535,6 +3821,7 @@ auto AirIRGenerator::emitIndirectCall(TypedTmp calleeInstance, ExpressionType ca
 
     patchpoint->setGenerator([=] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
         AllowMacroScratchRegisterUsage allowScratch(jit);
+        exceptionHandle.generate(jit, params, this);
         jit.call(params[params.proc().resultCount(params.value()->type())].gpr(), WasmEntryPtrTag);
     });
 
@@ -3595,7 +3882,8 @@ Expected<std::unique_ptr<InternalFunction>, String> parseAndCompileAir(Compilati
     compilationContext.embedderEntrypointJIT = makeUnique<CCallHelpers>();
     compilationContext.wasmEntrypointJIT = makeUnique<CCallHelpers>();
 
-    B3::Procedure procedure;
+    compilationContext.procedure = makeUnique<B3::Procedure>();
+    auto& procedure = *compilationContext.procedure;
     Code& code = procedure.code();
 
     procedure.setOriginPrinter([] (PrintStream& out, B3::Origin origin) {
@@ -3615,24 +3903,26 @@ Expected<std::unique_ptr<InternalFunction>, String> parseAndCompileAir(Compilati
     FunctionParser<AirIRGenerator> parser(irGenerator, function.data.data(), function.data.size(), signature, info);
     WASM_FAIL_IF_HELPER_FAILS(parser.parse());
 
+    irGenerator.finalizeEntrypoints();
 
     for (BasicBlock* block : code) {
         for (size_t i = 0; i < block->numSuccessors(); ++i)
             block->successorBlock(i)->addPredecessor(block);
     }
 
-    {
-        if (UNLIKELY(shouldDumpIRAtEachPhase(B3::AirMode))) {
-            dataLogLn("Generated patchpoints");
-            for (B3::PatchpointValue** patch : irGenerator.patchpoints())
-                dataLogLn(deepDump(procedure, *patch));
-        }
-
-        B3::Air::prepareForGeneration(code);
-        B3::Air::generate(code, *compilationContext.wasmEntrypointJIT);
-        compilationContext.wasmEntrypointByproducts = procedure.releaseByproducts();
-        result->entrypoint.calleeSaveRegisters = code.calleeSaveRegisterAtOffsetList();
+    if (UNLIKELY(shouldDumpIRAtEachPhase(B3::AirMode))) {
+        dataLogLn("Generated patchpoints");
+        for (B3::PatchpointValue** patch : irGenerator.patchpoints())
+            dataLogLn(deepDump(procedure, *patch));
     }
+
+    B3::Air::prepareForGeneration(code);
+    B3::Air::generate(code, *compilationContext.wasmEntrypointJIT);
+
+    compilationContext.wasmEntrypointByproducts = procedure.releaseByproducts();
+    result->entrypoint.calleeSaveRegisters = code.calleeSaveRegisterAtOffsetList();
+    result->stackmaps = irGenerator.takeStackmaps();
+    result->exceptionHandlers = irGenerator.takeExceptionHandlers();
 
     return result;
 }
@@ -5176,6 +5466,24 @@ template<> auto AirIRGenerator::addOp<OpType::I64Add>(ExpressionType arg0, Expre
     result = g64();
     append(Add64, arg0, arg1, result);
     return { };
+}
+
+template <size_t inlineCapacity>
+PatchpointExceptionHandle AirIRGenerator::preparePatchpointForExceptions(B3::PatchpointValue* patch, Vector<ConstrainedTmp, inlineCapacity>& args)
+{
+    ++m_callSiteIndex;
+    if (!m_tryCatchDepth)
+        return { };
+
+    unsigned numLiveValues = 0;
+    forEachLiveValue([&] (Tmp tmp) {
+        ++numLiveValues;
+        args.append(ConstrainedTmp(tmp, B3::ValueRep::LateColdAny));
+    });
+
+    patch->effects.exitsSideways = true;
+
+    return PatchpointExceptionHandle { m_callSiteIndex, numLiveValues };
 }
 
 } } // namespace JSC::Wasm

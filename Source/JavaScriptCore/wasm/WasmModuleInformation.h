@@ -119,7 +119,6 @@ struct ModuleInformation : public ThreadSafeRefCounted<ModuleInformation> {
 
     BitVector m_declaredFunctions;
     BitVector m_declaredExceptions;
-    BitVector m_functionDoesNotUseExceptions;
     mutable BitVector m_referencedFunctions;
 };
 

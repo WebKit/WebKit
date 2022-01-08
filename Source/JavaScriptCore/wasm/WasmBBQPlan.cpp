@@ -36,6 +36,7 @@
 #include "WasmCallee.h"
 #include "WasmCalleeGroup.h"
 #include "WasmCalleeRegistry.h"
+#include "WasmIRGeneratorHelpers.h"
 #include "WasmSignatureInlines.h"
 #include "WasmTierUpCount.h"
 #include <wtf/DataLog.h>
@@ -202,8 +203,6 @@ std::unique_ptr<InternalFunction> BBQPlan::compileFunction(uint32_t functionInde
     // as BBQ Air bloats such lengthy Wasm code and will consume a large amount of executable memory.
     bool forceUsingB3 = false;
     if (Options::webAssemblyBBQAirModeThreshold() && m_moduleInformation->codeSectionSize >= Options::webAssemblyBBQAirModeThreshold())
-        forceUsingB3 = true;
-    else if (!m_moduleInformation->m_functionDoesNotUseExceptions.quickGet(functionIndex))
         forceUsingB3 = true;
     else if (!Options::wasmBBQUsesAir())
         forceUsingB3 = true;
