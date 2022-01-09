@@ -91,7 +91,7 @@ std::optional<SRGBA<uint8_t>> roundAndClampToSRGBALossy(CGColorRef color)
 Color Color::createAndLosslesslyConvertToSupportedColorSpace(CGColorRef color, OptionSet<Flags> flags)
 {
     auto sourceCGColorSpace = CGColorGetColorSpace(color);
-#if HAVE(CORE_GRAPHICS_XYZ_COLOR_SPACE)
+#if HAVE(CORE_GRAPHICS_XYZ_D50_COLOR_SPACE)
     auto destinationCGColorSpace = xyzD50ColorSpaceRef();
     auto destinationColorSpace = ColorSpace::XYZ_D50;
 #else

@@ -141,7 +141,7 @@ CGColorSpaceRef ROMMRGBColorSpaceRef()
 }
 #endif
 
-#if HAVE(CORE_GRAPHICS_XYZ_COLOR_SPACE)
+#if HAVE(CORE_GRAPHICS_XYZ_D50_COLOR_SPACE)
 CGColorSpaceRef xyzD50ColorSpaceRef()
 {
     return namedColorSpace<kCGColorSpaceGenericXYZ>();
@@ -216,7 +216,7 @@ std::optional<ColorSpace> colorSpaceForCGColorSpace(CGColorSpaceRef colorSpace)
         return ColorSpace::ProPhotoRGB;
 #endif
 
-#if HAVE(CORE_GRAPHICS_XYZ_COLOR_SPACE)
+#if HAVE(CORE_GRAPHICS_XYZ_D50_COLOR_SPACE)
     if (CGColorSpaceEqualToColorSpace(colorSpace, xyzD50ColorSpaceRef()))
         return ColorSpace::XYZ_D50;
 #endif
