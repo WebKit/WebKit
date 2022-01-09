@@ -562,7 +562,7 @@ static RefPtr<CSSValue> consumeFontVariationTag(CSSParserTokenRange& range)
     if (!tagValue)
         return nullptr;
     
-    return CSSFontVariationValue::create(tag, *tagValue);
+    return CSSFontVariationValue::create(tag, tagValue->value);
 }
     
 static RefPtr<CSSValue> consumeFontVariationSettings(CSSParserTokenRange& range)
@@ -1457,7 +1457,7 @@ static RefPtr<CSSValue> consumeCubicBezier(CSSParserTokenRange& range)
     CSSParserTokenRange args = consumeFunction(rangeCopy);
 
     auto x1 = consumeNumberRaw(args);
-    if (!x1 || *x1 < 0 || *x1 > 1)
+    if (!x1 || x1->value < 0 || x1->value > 1)
         return nullptr;
     
     if (!consumeCommaIncludingWhitespace(args))
@@ -1471,7 +1471,7 @@ static RefPtr<CSSValue> consumeCubicBezier(CSSParserTokenRange& range)
         return nullptr;
 
     auto x2 = consumeNumberRaw(args);
-    if (!x2 || *x2 < 0 || *x2 > 1)
+    if (!x2 || x2->value < 0 || x2->value > 1)
         return nullptr;
 
     if (!consumeCommaIncludingWhitespace(args))
@@ -1485,7 +1485,7 @@ static RefPtr<CSSValue> consumeCubicBezier(CSSParserTokenRange& range)
         return nullptr;
 
     range = rangeCopy;
-    return CSSCubicBezierTimingFunctionValue::create(*x1, *y1, *x2, *y2);
+    return CSSCubicBezierTimingFunctionValue::create(x1->value, y1->value, x2->value, y2->value);
 }
 
 static RefPtr<CSSValue> consumeSpringFunction(CSSParserTokenRange& range)
@@ -1496,17 +1496,17 @@ static RefPtr<CSSValue> consumeSpringFunction(CSSParserTokenRange& range)
 
     // Mass must be greater than 0.
     auto mass = consumeNumberRaw(args);
-    if (!mass || *mass <= 0)
+    if (!mass || mass->value <= 0)
         return nullptr;
     
     // Stiffness must be greater than 0.
     auto stiffness = consumeNumberRaw(args);
-    if (!stiffness || *stiffness <= 0)
+    if (!stiffness || stiffness->value <= 0)
         return nullptr;
     
     // Damping coefficient must be greater than or equal to 0.
     auto damping = consumeNumberRaw(args);
-    if (!damping || *damping < 0)
+    if (!damping || damping->value < 0)
         return nullptr;
     
     // Initial velocity may have any value.
@@ -1519,7 +1519,7 @@ static RefPtr<CSSValue> consumeSpringFunction(CSSParserTokenRange& range)
 
     range = rangeCopy;
 
-    return CSSSpringTimingFunctionValue::create(*mass, *stiffness, *damping, *initialVelocity);
+    return CSSSpringTimingFunctionValue::create(mass->value, stiffness->value, damping->value, initialVelocity->value);
 }
 
 static RefPtr<CSSValue> consumeAnimationTimingFunction(CSSParserTokenRange& range, const CSSParserContext& context)
@@ -1873,7 +1873,7 @@ static bool consumePerspective(CSSParserTokenRange& args, CSSParserMode cssParse
     }
 
     if (auto perspective = consumeNumberRaw(args, ValueRange::NonNegative)) {
-        transformValue->append(CSSPrimitiveValue::create(*perspective, CSSUnitType::CSS_PX));
+        transformValue->append(CSSPrimitiveValue::create(perspective->value, CSSUnitType::CSS_PX));
         return true;
     }
 
@@ -2341,7 +2341,7 @@ static RefPtr<CSSValue> consumeCursor(CSSParserTokenRange& range, const CSSParse
             if (!y)
                 return nullptr;
             // FIXME: Should we clamp or round instead of just casting from double to int?
-            hotSpot = IntPoint { static_cast<int>(*x), static_cast<int>(*y) };
+            hotSpot = IntPoint { static_cast<int>(x->value), static_cast<int>(y->value) };
         }
 
         if (!list)
@@ -2463,9 +2463,9 @@ static RefPtr<CSSPrimitiveValue> consumePerspective(CSSParserTokenRange& range, 
 
     // FIXME: Make this quirk only apply to the webkit prefixed version of the property.
     auto perspective = consumeNumberRaw(range);
-    if (!perspective || *perspective < 0)
+    if (!perspective || perspective->value < 0)
         return nullptr;
-    return CSSPrimitiveValue::create(*perspective, CSSUnitType::CSS_PX);
+    return CSSPrimitiveValue::create(perspective->value, CSSUnitType::CSS_PX);
 }
 
 static RefPtr<CSSValueList> consumeScrollSnapAlign(CSSParserTokenRange& range)
@@ -4523,7 +4523,7 @@ RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, CSS
     case CSSPropertyBorderEndEndRadius:
         return consumeBorderRadiusCorner(m_range, m_context.mode);
     case CSSPropertyWebkitBoxFlexGroup:
-        return consumeInteger(m_range, 0);
+        return consumeIntegerZeroAndGreater(m_range);
     case CSSPropertyOrder:
         return consumeInteger(m_range);
     case CSSPropertyTextUnderlinePosition:
@@ -4817,7 +4817,7 @@ static RefPtr<CSSValue> consumeCounterStylePad(CSSParserTokenRange& range, const
     RefPtr<CSSValue> symbol;
     while (!integer || !symbol) {
         if (!integer) {
-            integer = consumeInteger(range, 0);
+            integer = consumeIntegerZeroAndGreater(range);
             if (integer)
                 continue;
         }
@@ -4857,12 +4857,12 @@ static RefPtr<CSSValue> consumeCounterStyleAdditiveSymbols(CSSParserTokenRange& 
     auto values = CSSValueList::createCommaSeparated();
     std::optional<int> lastWeight;
     do {
-        auto integer = consumeInteger(range, 0);
+        auto integer = consumeIntegerZeroAndGreater(range);
         auto symbol = consumeCounterStyleSymbol(range, context);
         if (!integer) {
             if (!symbol)
                 return nullptr;
-            integer = consumeInteger(range, 0);
+            integer = consumeIntegerZeroAndGreater(range);
             if (!integer)
                 return nullptr;
         }
@@ -5007,14 +5007,14 @@ static RefPtr<CSSPrimitiveValue> consumeBasePaletteDescriptor(CSSParserTokenRang
 {
     if (auto result = consumeIdent<CSSValueLight, CSSValueDark>(range))
         return result;
-    return consumeInteger(range, 0);
+    return consumeIntegerZeroAndGreater(range);
 }
 
 static RefPtr<CSSValueList> consumeOverrideColorsDescriptor(CSSParserTokenRange& range, const CSSParserContext& context)
 {
     RefPtr<CSSValueList> list = CSSValueList::createCommaSeparated();
     do {
-        auto key = consumeInteger(range, 0);
+        auto key = consumeIntegerZeroAndGreater(range);
         if (!key)
             return nullptr;
 
@@ -5342,13 +5342,13 @@ bool CSSPropertyParser::consumeFlex(bool important)
         unsigned index = 0;
         while (!m_range.atEnd() && index++ < 3) {
             if (auto number = consumeNumberRaw(m_range)) {
-                if (*number < 0)
+                if (number->value < 0)
                     return false;
                 if (flexGrow == unsetValue)
-                    flexGrow = *number;
+                    flexGrow = number->value;
                 else if (flexShrink == unsetValue)
-                    flexShrink = *number;
-                else if (!*number) // flex only allows a basis of 0 (sans units) if flex-grow and flex-shrink values have already been set.
+                    flexShrink = number->value;
+                else if (!number->value) // flex only allows a basis of 0 (sans units) if flex-grow and flex-shrink values have already been set.
                     flexBasis = CSSPrimitiveValue::create(0, CSSUnitType::CSS_PX);
                 else
                     return false;

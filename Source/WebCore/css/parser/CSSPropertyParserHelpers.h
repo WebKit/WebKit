@@ -66,6 +66,14 @@ enum class NegativePercentagePolicy : bool { Forbid, Allow };
 enum class UnitlessQuirk { Allow, Forbid };
 enum class UnitlessZeroQuirk { Allow, Forbid };
 
+struct NumberRaw {
+    double value;
+};
+
+struct PercentRaw {
+    double value;
+};
+
 struct AngleRaw {
     CSSUnitType type;
     double value;
@@ -76,13 +84,17 @@ struct LengthRaw {
     double value;
 };
 
-using LengthOrPercentRaw = std::variant<LengthRaw, double>;
+using LengthOrPercentRaw = std::variant<LengthRaw, PercentRaw>;
+using NumberOrPercentRaw = std::variant<NumberRaw, PercentRaw>;
+using AngleOrNumberRaw = std::variant<AngleRaw, NumberRaw>;
 
-std::optional<int> consumeIntegerRaw(CSSParserTokenRange&, double minimumValue = -std::numeric_limits<double>::max());
-RefPtr<CSSPrimitiveValue> consumeInteger(CSSParserTokenRange&, double minimumValue = -std::numeric_limits<double>::max());
+std::optional<int> consumeIntegerRaw(CSSParserTokenRange&);
+RefPtr<CSSPrimitiveValue> consumeInteger(CSSParserTokenRange&);
+std::optional<int> consumeIntegerZeroAndGreaterRaw(CSSParserTokenRange&);
+RefPtr<CSSPrimitiveValue> consumeIntegerZeroAndGreater(CSSParserTokenRange&);
 std::optional<unsigned> consumePositiveIntegerRaw(CSSParserTokenRange&);
 RefPtr<CSSPrimitiveValue> consumePositiveInteger(CSSParserTokenRange&);
-std::optional<double> consumeNumberRaw(CSSParserTokenRange&, ValueRange = ValueRange::All);
+std::optional<NumberRaw> consumeNumberRaw(CSSParserTokenRange&, ValueRange = ValueRange::All);
 RefPtr<CSSPrimitiveValue> consumeNumber(CSSParserTokenRange&, ValueRange);
 RefPtr<CSSPrimitiveValue> consumeNumberOrPercent(CSSParserTokenRange&, ValueRange);
 std::optional<double> consumeFontWeightNumberRaw(CSSParserTokenRange&);
@@ -90,11 +102,11 @@ RefPtr<CSSPrimitiveValue> consumeFontWeightNumber(CSSParserTokenRange&);
 RefPtr<CSSPrimitiveValue> consumeFontWeightNumberWorkerSafe(CSSParserTokenRange&, CSSValuePool&);
 std::optional<LengthRaw> consumeLengthRaw(CSSParserTokenRange&, CSSParserMode, ValueRange, UnitlessQuirk = UnitlessQuirk::Forbid);
 RefPtr<CSSPrimitiveValue> consumeLength(CSSParserTokenRange&, CSSParserMode, ValueRange, UnitlessQuirk = UnitlessQuirk::Forbid);
-std::optional<double> consumePercentRaw(CSSParserTokenRange&, ValueRange = ValueRange::All);
+std::optional<PercentRaw> consumePercentRaw(CSSParserTokenRange&, ValueRange = ValueRange::All);
 RefPtr<CSSPrimitiveValue> consumePercent(CSSParserTokenRange&, ValueRange);
 RefPtr<CSSPrimitiveValue> consumePercentWorkerSafe(CSSParserTokenRange&, ValueRange, CSSValuePool&);
 std::optional<LengthOrPercentRaw> consumeLengthOrPercentRaw(CSSParserTokenRange&, CSSParserMode, ValueRange, UnitlessQuirk = UnitlessQuirk::Forbid);
-RefPtr<CSSPrimitiveValue> consumeLengthOrPercent(CSSParserTokenRange&, CSSParserMode, ValueRange, UnitlessQuirk = UnitlessQuirk::Forbid, bool allowsNegativePercentage = false);
+RefPtr<CSSPrimitiveValue> consumeLengthOrPercent(CSSParserTokenRange&, CSSParserMode, ValueRange, UnitlessQuirk = UnitlessQuirk::Forbid, NegativePercentagePolicy = NegativePercentagePolicy::Forbid);
 std::optional<AngleRaw> consumeAngleRaw(CSSParserTokenRange&, CSSParserMode, UnitlessQuirk = UnitlessQuirk::Forbid, UnitlessZeroQuirk = UnitlessZeroQuirk::Forbid);
 RefPtr<CSSPrimitiveValue> consumeAngle(CSSParserTokenRange&, CSSParserMode, UnitlessQuirk = UnitlessQuirk::Forbid, UnitlessZeroQuirk = UnitlessZeroQuirk::Forbid);
 RefPtr<CSSPrimitiveValue> consumeAngleWorkerSafe(CSSParserTokenRange&, CSSParserMode, CSSValuePool&, UnitlessQuirk = UnitlessQuirk::Forbid, UnitlessZeroQuirk = UnitlessZeroQuirk::Forbid);
