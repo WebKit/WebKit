@@ -307,7 +307,7 @@ bool Resolver::isAnimationNameValid(const String& name)
     return m_keyframesRuleMap.find(AtomString(name).impl()) != m_keyframesRuleMap.end();
 }
 
-const Vector<Ref<StyleRuleKeyframe>> Resolver::keyframeRulesForName(const AtomString& animationName)
+Vector<Ref<StyleRuleKeyframe>> Resolver::keyframeRulesForName(const AtomString& animationName) const
 {
     if (animationName.isEmpty())
         return { };
