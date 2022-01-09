@@ -106,8 +106,8 @@ public:
 
         const InlineDisplay::Box::Expansion& expansion() const { return m_expansion; }
 
-        bool hasTrailingWhitespace() const { return m_trailingWhitespaceType != TrailingWhitespace::None; }
-        InlineLayoutUnit trailingWhitespaceWidth() const { return m_trailingWhitespaceWidth; }
+        bool hasTrailingWhitespace() const { return m_trailingWhitespace.has_value(); }
+        InlineLayoutUnit trailingWhitespaceWidth() const { return m_trailingWhitespace ? m_trailingWhitespace->width : 0.f; }
 
         bool shouldTrailingWhitespaceHang() const;
         TextDirection inlineDirection() const;
@@ -131,15 +131,18 @@ public:
         void setExpansion(InlineDisplay::Box::Expansion expansion) { m_expansion = expansion; }
         void setNeedsHyphen(InlineLayoutUnit hyphenLogicalWidth);
 
-        enum class TrailingWhitespace {
-            None,
-            NotCollapsible,
-            Collapsible,
-            Collapsed
+        struct TrailingWhitespace {
+            enum class Type {
+                NotCollapsible,
+                Collapsible,
+                Collapsed
+            };
+            Type type { Type::NotCollapsible };
+            InlineLayoutUnit width { 0 };
         };
-        bool hasCollapsibleTrailingWhitespace() const { return m_trailingWhitespaceType == TrailingWhitespace::Collapsible || hasCollapsedTrailingWhitespace(); }
-        bool hasCollapsedTrailingWhitespace() const { return m_trailingWhitespaceType == TrailingWhitespace::Collapsed; }
-        TrailingWhitespace trailingWhitespaceType(const InlineTextItem&) const;
+        bool hasCollapsibleTrailingWhitespace() const { return m_trailingWhitespace && (m_trailingWhitespace->type == TrailingWhitespace::Type::Collapsible || hasCollapsedTrailingWhitespace()); }
+        bool hasCollapsedTrailingWhitespace() const { return m_trailingWhitespace && m_trailingWhitespace->type == TrailingWhitespace::Type::Collapsed; }
+        static std::optional<TrailingWhitespace::Type> trailingWhitespaceType(const InlineTextItem&);
         void removeTrailingWhitespace();
 
         bool hasTrailingLetterSpacing() const;
@@ -151,11 +154,10 @@ public:
         const RenderStyle& m_style;
         InlineLayoutUnit m_logicalLeft { 0 };
         InlineLayoutUnit m_logicalWidth { 0 };
-        TrailingWhitespace m_trailingWhitespaceType { TrailingWhitespace::None };
-        InlineLayoutUnit m_trailingWhitespaceWidth { 0 };
-        std::optional<Text> m_textContent;
         InlineDisplay::Box::Expansion m_expansion;
         UBiDiLevel m_bidiLevel { UBIDI_DEFAULT_LTR };
+        std::optional<TrailingWhitespace> m_trailingWhitespace { };
+        std::optional<Text> m_textContent;
     };
     using RunList = Vector<Run, 10>;
     const RunList& runs() const { return m_runs; }
@@ -249,17 +251,6 @@ inline void Line::HangingTrailingContent::reset()
 {
     m_width = { };
     m_length = { };
-}
-
-inline Line::Run::TrailingWhitespace Line::Run::trailingWhitespaceType(const InlineTextItem& inlineTextItem) const
-{
-    if (!inlineTextItem.isWhitespace())
-        return TrailingWhitespace::None;
-    if (InlineTextItem::shouldPreserveSpacesAndTabs(inlineTextItem))
-        return TrailingWhitespace::NotCollapsible;
-    if (inlineTextItem.length() == 1)
-        return TrailingWhitespace::Collapsible;
-    return TrailingWhitespace::Collapsed;
 }
 
 inline void Line::Run::setNeedsHyphen(InlineLayoutUnit hyphenLogicalWidth)

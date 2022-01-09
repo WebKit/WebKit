@@ -535,6 +535,17 @@ inline static Line::Run::Type toLineRunType(InlineItem::Type inlineItemType)
     return { };
 }
 
+std::optional<Line::Run::TrailingWhitespace::Type> Line::Run::trailingWhitespaceType(const InlineTextItem& inlineTextItem)
+{
+    if (!inlineTextItem.isWhitespace())
+        return { };
+    if (InlineTextItem::shouldPreserveSpacesAndTabs(inlineTextItem))
+        return { TrailingWhitespace::Type::NotCollapsible };
+    if (inlineTextItem.length() == 1)
+        return { TrailingWhitespace::Type::Collapsible };
+    return { TrailingWhitespace::Type::Collapsed };
+}
+
 Line::Run::Run(const InlineItem& inlineItem, const RenderStyle& style, InlineLayoutUnit logicalLeft, InlineLayoutUnit logicalWidth)
     : m_type(toLineRunType(inlineItem.type()))
     , m_layoutBox(&inlineItem.layoutBox())
@@ -570,8 +581,8 @@ Line::Run::Run(const InlineSoftLineBreakItem& softLineBreakItem, const RenderSty
     , m_layoutBox(&softLineBreakItem.layoutBox())
     , m_style(style)
     , m_logicalLeft(logicalLeft)
-    , m_textContent({ softLineBreakItem.position(), 1 })
     , m_bidiLevel(softLineBreakItem.bidiLevel())
+    , m_textContent({ softLineBreakItem.position(), 1 })
 {
 }
 
@@ -581,11 +592,16 @@ Line::Run::Run(const InlineTextItem& inlineTextItem, const RenderStyle& style, I
     , m_style(style)
     , m_logicalLeft(logicalLeft)
     , m_logicalWidth(logicalWidth)
-    , m_trailingWhitespaceType(trailingWhitespaceType(inlineTextItem))
-    , m_trailingWhitespaceWidth(m_trailingWhitespaceType != TrailingWhitespace::None ? logicalWidth : InlineLayoutUnit { })
-    , m_textContent({ inlineTextItem.start(), m_trailingWhitespaceType == TrailingWhitespace::Collapsed ? 1 : inlineTextItem.length() })
     , m_bidiLevel(inlineTextItem.bidiLevel())
 {
+    auto length = inlineTextItem.length();
+    auto whitespaceType = trailingWhitespaceType(inlineTextItem);
+    if (whitespaceType) {
+        m_trailingWhitespace = { *whitespaceType, logicalWidth };
+        if (*whitespaceType == TrailingWhitespace::Type::Collapsed)
+            length =  1;
+    }
+    m_textContent = { inlineTextItem.start(), length };
 }
 
 void Line::Run::expand(const InlineTextItem& inlineTextItem, InlineLayoutUnit logicalWidth)
@@ -596,15 +612,16 @@ void Line::Run::expand(const InlineTextItem& inlineTextItem, InlineLayoutUnit lo
     ASSERT(m_bidiLevel == inlineTextItem.bidiLevel());
 
     m_logicalWidth += logicalWidth;
-    m_trailingWhitespaceType = trailingWhitespaceType(inlineTextItem);
+    auto whitespaceType = trailingWhitespaceType(inlineTextItem);
 
-    if (m_trailingWhitespaceType == TrailingWhitespace::None) {
-        m_trailingWhitespaceWidth = { };
+    if (!whitespaceType) {
+        m_trailingWhitespace = { };
         m_textContent->length += inlineTextItem.length();
         return;
     }
-    m_trailingWhitespaceWidth += logicalWidth;
-    m_textContent->length += m_trailingWhitespaceType == TrailingWhitespace::Collapsed ? 1 : inlineTextItem.length();
+    auto whitespaceWidth = !m_trailingWhitespace ? logicalWidth : m_trailingWhitespace->width + logicalWidth;
+    m_trailingWhitespace = TrailingWhitespace { *whitespaceType, whitespaceWidth };
+    m_textContent->length += *whitespaceType == TrailingWhitespace::Type::Collapsed ? 1 : inlineTextItem.length();
 }
 
 bool Line::Run::hasTrailingLetterSpacing() const
@@ -628,14 +645,14 @@ void Line::Run::removeTrailingLetterSpacing()
 
 void Line::Run::removeTrailingWhitespace()
 {
+    ASSERT(m_trailingWhitespace);
     // According to https://www.w3.org/TR/css-text-3/#white-space-property matrix
     // Trimmable whitespace is always collapsible so the length of the trailing trimmable whitespace is always 1 (or non-existent).
     ASSERT(m_textContent->length);
     constexpr size_t trailingTrimmableContentLength = 1;
     m_textContent->length -= trailingTrimmableContentLength;
-    shrinkHorizontally(m_trailingWhitespaceWidth);
-    m_trailingWhitespaceWidth = { };
-    m_trailingWhitespaceType = TrailingWhitespace::None;
+    shrinkHorizontally(m_trailingWhitespace->width);
+    m_trailingWhitespace = { };
 }
 
 }
