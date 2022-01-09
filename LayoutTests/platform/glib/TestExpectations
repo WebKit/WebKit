@@ -372,7 +372,7 @@ webkit.org/b/232249 accessibility/video-element-url-attribute.html [ Failure ]
 
 webkit.org/b/232255 accessibility/math-has-non-presentational-children.html [ Failure ]
 
-webkit.org/b/232256 accessibility/auto-fill-crash.html [ Failure ]
+webkit.org/b/232256 accessibility/auto-fill-crash.html [ Timeout ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Accessibility-related bugs
@@ -805,8 +805,8 @@ webkit.org/b/233731 fast/mediastream/getDisplayMedia-size.html [ Failure ]
 
 webkit.org/b/233836 http/tests/media/media-blocked-by-willsendrequest.html [ Timeout ]
 
-webkit.org/b/234084 media/track/audio-track-configuration.html [ Failure ]
-webkit.org/b/234084 media/track/video-track-configuration.html [ Failure ]
+webkit.org/b/234084 media/track/audio-track-configuration.html [ Timeout ]
+webkit.org/b/234084 media/track/video-track-configuration.html [ Timeout ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of GStreamer-related bugs
@@ -2632,6 +2632,10 @@ webkit.org/b/232386 svg/as-object/embedded-svg-size-changes.html [ Timeout ]
 
 webkit.org/b/232967 fast/forms/auto-fill-button/input-auto-filled-and-obscured.html [ ImageOnlyFailure ]
 
+webkit.org/b/223830 inspector/debugger/csp-exceptions.html [ Timeout ]
+
+# This test not only fails but may end up leaving the setShowPaintRects setting enabled and affect other tests.
+webkit.org/b/233047 inspector/page/setShowPaintRects.html [ Skip ]
 # End: Common failures between GTK and WPE.
 
 #////////////////////////////////////////////////////////////////////////////////////////
