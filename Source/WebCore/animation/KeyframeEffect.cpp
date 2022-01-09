@@ -1048,8 +1048,11 @@ void KeyframeEffect::checkForMatchingTransformFunctionLists()
 
 bool KeyframeEffect::checkForMatchingFilterFunctionLists(CSSPropertyID propertyID, const std::function<const FilterOperations& (const RenderStyle&)>& filtersGetter) const
 {
-    if (m_blendingKeyframes.size() < 2 || !m_blendingKeyframes.containsProperty(propertyID))
+    if (!m_blendingKeyframes.containsProperty(propertyID))
         return false;
+
+    if (m_blendingKeyframes.size() < 2)
+        return true;
 
     // Empty filters match anything, so find the first non-empty entry as the reference.
     size_t numKeyframes = m_blendingKeyframes.size();

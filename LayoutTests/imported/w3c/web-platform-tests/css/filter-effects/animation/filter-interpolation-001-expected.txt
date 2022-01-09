@@ -65,12 +65,12 @@ PASS CSS Animations: property <filter> from neutral to [hue-rotate(20deg)] at (0
 PASS CSS Animations: property <filter> from neutral to [hue-rotate(20deg)] at (0.6) should be [hue-rotate(16deg)]
 PASS CSS Animations: property <filter> from neutral to [hue-rotate(20deg)] at (1) should be [hue-rotate(20deg)]
 PASS CSS Animations: property <filter> from neutral to [hue-rotate(20deg)] at (1.5) should be [hue-rotate(25deg)]
-FAIL Web Animations: property <filter> from neutral to [hue-rotate(20deg)] at (-0.5) should be [hue-rotate(5deg)] assert_equals: expected "hue - rotate ( 5deg ) " but got "hue - rotate ( 20deg ) "
-FAIL Web Animations: property <filter> from neutral to [hue-rotate(20deg)] at (0) should be [hue-rotate(10deg)] assert_equals: expected "hue - rotate ( 10deg ) " but got "hue - rotate ( 20deg ) "
-FAIL Web Animations: property <filter> from neutral to [hue-rotate(20deg)] at (0.3) should be [hue-rotate(13deg)] assert_equals: expected "hue - rotate ( 13deg ) " but got "hue - rotate ( 20deg ) "
-FAIL Web Animations: property <filter> from neutral to [hue-rotate(20deg)] at (0.6) should be [hue-rotate(16deg)] assert_equals: expected "hue - rotate ( 16deg ) " but got "hue - rotate ( 20deg ) "
+PASS Web Animations: property <filter> from neutral to [hue-rotate(20deg)] at (-0.5) should be [hue-rotate(5deg)]
+PASS Web Animations: property <filter> from neutral to [hue-rotate(20deg)] at (0) should be [hue-rotate(10deg)]
+PASS Web Animations: property <filter> from neutral to [hue-rotate(20deg)] at (0.3) should be [hue-rotate(13deg)]
+PASS Web Animations: property <filter> from neutral to [hue-rotate(20deg)] at (0.6) should be [hue-rotate(16deg)]
 PASS Web Animations: property <filter> from neutral to [hue-rotate(20deg)] at (1) should be [hue-rotate(20deg)]
-FAIL Web Animations: property <filter> from neutral to [hue-rotate(20deg)] at (1.5) should be [hue-rotate(25deg)] assert_equals: expected "hue - rotate ( 25deg ) " but got "hue - rotate ( 20deg ) "
+PASS Web Animations: property <filter> from neutral to [hue-rotate(20deg)] at (1.5) should be [hue-rotate(25deg)]
 PASS CSS Transitions: property <filter> from [initial] to [hue-rotate(20deg)] at (-0.5) should be [hue-rotate(-10deg)]
 PASS CSS Transitions: property <filter> from [initial] to [hue-rotate(20deg)] at (0) should be [hue-rotate(0deg)]
 PASS CSS Transitions: property <filter> from [initial] to [hue-rotate(20deg)] at (0.3) should be [hue-rotate(6deg)]
