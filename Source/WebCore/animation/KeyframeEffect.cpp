@@ -639,6 +639,28 @@ Vector<Strong<JSObject>> KeyframeEffect::getKeyframes(JSGlobalObject& lexicalGlo
 
         auto computedStyleExtractor = ComputedStyleExtractor(target, false, m_pseudoId);
 
+        auto keyframeRules = [&]() -> const Vector<Ref<StyleRuleKeyframe>> {
+            if (!is<CSSAnimation>(animation()))
+                return { };
+
+            auto& backingAnimation = downcast<CSSAnimation>(*animation()).backingAnimation();
+            auto* styleScope = Style::Scope::forOrdinal(*m_target, backingAnimation.nameStyleScopeOrdinal());
+            if (!styleScope)
+                return { };
+
+            return styleScope->resolver().keyframeRulesForName(m_blendingKeyframes.animationName());
+        }();
+
+        auto keyframeRuleForKey = [&](double key) -> StyleRuleKeyframe* {
+            for (auto& keyframeRule : keyframeRules) {
+                for (auto keyframeRuleKey : keyframeRule->keys()) {
+                    if (keyframeRuleKey == key)
+                        return keyframeRule.ptr();
+                }
+            }
+            return nullptr;
+        };
+
         // We need to establish which properties are implicit for 0% and 100%.
         HashSet<CSSPropertyID> zeroKeyframeProperties = m_blendingKeyframes.properties();
         HashSet<CSSPropertyID> oneKeyframeProperties = m_blendingKeyframes.properties();
@@ -690,12 +712,21 @@ Vector<Strong<JSObject>> KeyframeEffect::getKeyframes(JSGlobalObject& lexicalGlo
 
             // 3. For each animation property-value pair specified on keyframe, declaration, perform the following steps:
             auto& style = *keyframe.style();
+            auto* keyframeRule = keyframeRuleForKey(keyframe.key());
             for (auto cssPropertyId : keyframe.properties()) {
                 if (cssPropertyId == CSSPropertyCustom)
                     continue;
                 String idlValue = "";
-                if (auto cssValue = computedStyleExtractor.valueForPropertyInStyle(style, cssPropertyId, renderer))
-                    idlValue = cssValue->cssText();
+                if (keyframeRule) {
+                    if (auto cssValue = keyframeRule->properties().getPropertyCSSValue(cssPropertyId)) {
+                        if (!cssValue->hasVariableReferences())
+                            idlValue = keyframeRule->properties().getPropertyValue(cssPropertyId);
+                    }
+                }
+                if (idlValue.isEmpty()) {
+                    if (auto cssValue = computedStyleExtractor.valueForPropertyInStyle(style, cssPropertyId, renderer))
+                        idlValue = cssValue->cssText();
+                }
                 addPropertyToKeyframe(cssPropertyId, idlValue);
             }
 
