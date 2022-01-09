@@ -263,9 +263,7 @@ bool BuilderState::createFilterOperations(const CSSValue& inValue, FilterOperati
             int y = item.y->computeLength<int>(cssToLengthConversionData());
             IntPoint location(x, y);
             int blur = item.blur ? item.blur->computeLength<int>(cssToLengthConversionData()) : 0;
-            Color color;
-            if (item.color)
-                color = colorFromPrimitiveValueWithResolvedCurrentColor(*item.color);
+            auto color = item.color ? colorFromPrimitiveValueWithResolvedCurrentColor(*item.color) : m_style.color();
 
             operations.operations().append(DropShadowFilterOperation::create(location, blur, color.isValid() ? color : Color::transparentBlack));
             break;

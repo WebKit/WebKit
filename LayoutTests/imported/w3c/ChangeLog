@@ -1,5 +1,15 @@
 2022-01-08  Simon Fraser  <simon.fraser@apple.com>
 
+        If the drop-shadow filter has no color, it should use the value of the color property
+        https://bugs.webkit.org/show_bug.cgi?id=235012
+
+        Reviewed by Alan Bujtas.
+
+        * web-platform-tests/css/filter-effects/animation/filter-interpolation-004-expected.txt:
+        * web-platform-tests/css/filter-effects/parsing/filter-computed-expected.txt:
+
+2022-01-08  Simon Fraser  <simon.fraser@apple.com>
+
         Fix some CSS filter interpolation issues
         https://bugs.webkit.org/show_bug.cgi?id=235007
 

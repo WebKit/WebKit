@@ -266,11 +266,11 @@ PASS subRule.cssText is "drop-shadow(rgb(170, 187, 204) 0px 0px 0px)"
 
 Three values with zero length : drop-shadow(0 0 0)
 PASS filterStyle.length is 1
-PASS subRule.cssText is "drop-shadow(rgba(0, 0, 0, 0) 0px 0px 0px)"
+PASS subRule.cssText is "drop-shadow(rgb(0, 0, 0) 0px 0px 0px)"
 
 Two values no color : drop-shadow(1px 2px)
 PASS filterStyle.length is 1
-PASS subRule.cssText is "drop-shadow(rgba(0, 0, 0, 0) 1px 2px 0px)"
+PASS subRule.cssText is "drop-shadow(rgb(0, 0, 0) 1px 2px 0px)"
 
 Multiple operations : grayscale(0.5) sepia(0.25) saturate(0.75) hue-rotate(35deg) invert(0.2) opacity(0.9) blur(5px)
 PASS filterStyle.length is 7

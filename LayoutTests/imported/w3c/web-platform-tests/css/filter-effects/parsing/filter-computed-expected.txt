@@ -8,7 +8,7 @@ PASS Property filter value 'brightness()'
 PASS Property filter value 'contrast(0)'
 PASS Property filter value 'contrast(300%)'
 PASS Property filter value 'contrast()'
-FAIL Property filter value 'drop-shadow(1px 2px)' assert_equals: expected "drop-shadow(rgb(0, 255, 0) 1px 2px 0px)" but got "drop-shadow(rgba(0, 0, 0, 0) 1px 2px 0px)"
+PASS Property filter value 'drop-shadow(1px 2px)'
 PASS Property filter value 'drop-shadow(rgb(4, 5, 6) 1px 2px 0px)'
 PASS Property filter value 'grayscale(50%)'
 PASS Property filter value 'grayscale(2)'
