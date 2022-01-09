@@ -399,8 +399,6 @@ void Resolver::keyframeStylesForAnimation(const Element& element, const RenderSt
             list.insert(WTFMove(keyframeValue));
         }
     }
-
-    list.fillImplicitKeyframes(element, *this, elementStyle, context.parentStyle);
 }
 
 std::unique_ptr<RenderStyle> Resolver::pseudoStyleForElement(const Element& element, const PseudoElementRequest& pseudoElementRequest, const ResolutionContext& context)

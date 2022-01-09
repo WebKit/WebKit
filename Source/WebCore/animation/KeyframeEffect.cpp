@@ -639,6 +639,10 @@ Vector<Strong<JSObject>> KeyframeEffect::getKeyframes(JSGlobalObject& lexicalGlo
 
         auto computedStyleExtractor = ComputedStyleExtractor(target, false, m_pseudoId);
 
+        KeyframeList computedKeyframes(m_blendingKeyframes.animationName());
+        computedKeyframes.copyKeyframes(m_blendingKeyframes);
+        computedKeyframes.fillImplicitKeyframes(*m_target, m_target->styleResolver(), lastStyleChangeEventStyle, nullptr);
+
         auto keyframeRules = [&]() -> const Vector<Ref<StyleRuleKeyframe>> {
             if (!is<CSSAnimation>(animation()))
                 return { };
@@ -648,7 +652,7 @@ Vector<Strong<JSObject>> KeyframeEffect::getKeyframes(JSGlobalObject& lexicalGlo
             if (!styleScope)
                 return { };
 
-            return styleScope->resolver().keyframeRulesForName(m_blendingKeyframes.animationName());
+            return styleScope->resolver().keyframeRulesForName(computedKeyframes.animationName());
         }();
 
         auto keyframeRuleForKey = [&](double key) -> StyleRuleKeyframe* {
@@ -662,12 +666,12 @@ Vector<Strong<JSObject>> KeyframeEffect::getKeyframes(JSGlobalObject& lexicalGlo
         };
 
         // We need to establish which properties are implicit for 0% and 100%.
-        HashSet<CSSPropertyID> zeroKeyframeProperties = m_blendingKeyframes.properties();
-        HashSet<CSSPropertyID> oneKeyframeProperties = m_blendingKeyframes.properties();
+        HashSet<CSSPropertyID> zeroKeyframeProperties = computedKeyframes.properties();
+        HashSet<CSSPropertyID> oneKeyframeProperties = computedKeyframes.properties();
         zeroKeyframeProperties.remove(CSSPropertyCustom);
         oneKeyframeProperties.remove(CSSPropertyCustom);
-        for (size_t i = 0; i < m_blendingKeyframes.size(); ++i) {
-            auto& keyframe = m_blendingKeyframes[i];
+        for (size_t i = 0; i < computedKeyframes.size(); ++i) {
+            auto& keyframe = computedKeyframes[i];
             if (!keyframe.key()) {
                 for (auto cssPropertyId : keyframe.properties())
                     zeroKeyframeProperties.remove(cssPropertyId);
@@ -677,7 +681,7 @@ Vector<Strong<JSObject>> KeyframeEffect::getKeyframes(JSGlobalObject& lexicalGlo
             }
         }
 
-        for (size_t i = 0; i < m_blendingKeyframes.size(); ++i) {
+        for (size_t i = 0; i < computedKeyframes.size(); ++i) {
             // 1. Initialize a dictionary object, output keyframe, using the following definition:
             //
             // dictionary BaseComputedKeyframe {
@@ -687,7 +691,7 @@ Vector<Strong<JSObject>> KeyframeEffect::getKeyframes(JSGlobalObject& lexicalGlo
             //      CompositeOperationOrAuto composite = "auto";
             // };
 
-            auto& keyframe = m_blendingKeyframes[i];
+            auto& keyframe = computedKeyframes[i];
 
             // 2. Set offset, computedOffset, easing members of output keyframe to the respective values keyframe offset, computed keyframe offset,
             // and keyframe-specific timing function of keyframe.
@@ -695,7 +699,7 @@ Vector<Strong<JSObject>> KeyframeEffect::getKeyframes(JSGlobalObject& lexicalGlo
             computedKeyframe.offset = keyframe.key();
             computedKeyframe.computedOffset = keyframe.key();
             // For CSS transitions, all keyframes should return "linear" since the effect's global timing function applies.
-            computedKeyframe.easing = is<CSSTransition>(animation()) ? "linear" : timingFunctionForKeyframeAtIndex(i)->cssText();
+            computedKeyframe.easing = is<CSSTransition>(animation()) ? "linear" : timingFunctionForBlendingKeyframe(keyframe)->cssText();
 
             auto outputKeyframe = convertDictionaryToJS(lexicalGlobalObject, *jsCast<JSDOMGlobalObject*>(&lexicalGlobalObject), computedKeyframe);
 

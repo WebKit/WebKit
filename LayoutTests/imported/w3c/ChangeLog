@@ -1,5 +1,19 @@
 2022-01-09  Antoine Quint  <graouts@webkit.org>
 
+        Implicit keyframe for a CSS Animation should always use the underlying style
+        https://bugs.webkit.org/show_bug.cgi?id=235014
+
+        Reviewed by Antti Koivisto.
+
+        Add a new WPT which changes the underlying style for a property that is being
+        animated with an @keyframes rule that doesn't explicitly specify this value
+        on all keyframes.
+
+        * web-platform-tests/css/css-animations/animation-change-underlying-value-changed-in-flight-expected.txt: Added.
+        * web-platform-tests/css/css-animations/animation-change-underlying-value-changed-in-flight.html: Added.
+
+2022-01-09  Antoine Quint  <graouts@webkit.org>
+
         Interpolation for the "filter" property fails with a single keyframe
         https://bugs.webkit.org/show_bug.cgi?id=235019
 

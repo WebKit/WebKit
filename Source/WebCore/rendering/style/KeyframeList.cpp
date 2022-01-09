@@ -88,6 +88,8 @@ void KeyframeList::copyKeyframes(KeyframeList& other)
         KeyframeValue keyframeValue(keyframe.key(), RenderStyle::clonePtr(*keyframe.style()));
         for (auto propertyId : keyframe.properties())
             keyframeValue.addProperty(propertyId);
+        keyframeValue.setTimingFunction(keyframe.timingFunction());
+        keyframeValue.setCompositeOperation(keyframe.compositeOperation());
         insert(WTFMove(keyframeValue));
     }
 }
