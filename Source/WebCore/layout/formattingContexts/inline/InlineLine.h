@@ -120,9 +120,9 @@ public:
         friend class Line;
 
         Run(const InlineTextItem&, const RenderStyle&, InlineLayoutUnit logicalLeft, InlineLayoutUnit logicalWidth);
-        Run(const InlineSoftLineBreakItem&, InlineLayoutUnit logicalLeft);
+        Run(const InlineSoftLineBreakItem&, const RenderStyle&, InlineLayoutUnit logicalLeft);
         Run(const InlineItem&, const RenderStyle&, InlineLayoutUnit logicalLeft, InlineLayoutUnit logicalWidth);
-        Run(const InlineItem&, InlineLayoutUnit logicalLeft);
+        Run(const InlineItem&, const RenderStyle&, InlineLayoutUnit logicalLeft);
         Run(const InlineItem& lineSpanningInlineBoxItem, InlineLayoutUnit logicalLeft, InlineLayoutUnit logicalWidth);
 
         void expand(const InlineTextItem&, InlineLayoutUnit logicalWidth);
@@ -148,19 +148,13 @@ public:
 
         Type m_type { Type::Text };
         const Box* m_layoutBox { nullptr };
+        const RenderStyle& m_style;
         InlineLayoutUnit m_logicalLeft { 0 };
         InlineLayoutUnit m_logicalWidth { 0 };
         TrailingWhitespace m_trailingWhitespaceType { TrailingWhitespace::None };
         InlineLayoutUnit m_trailingWhitespaceWidth { 0 };
         std::optional<Text> m_textContent;
         InlineDisplay::Box::Expansion m_expansion;
-        struct Style {
-            bool shouldTrailingWhitespaceHang { false };
-            TextDirection inlineDirection { TextDirection::RTL };
-            InlineLayoutUnit letterSpacing { 0 };
-            bool hasTextCombine { false };
-        };
-        Style m_style { };
         UBiDiLevel m_bidiLevel { UBIDI_DEFAULT_LTR };
     };
     using RunList = Vector<Run, 10>;
@@ -176,8 +170,8 @@ private:
     void appendReplacedInlineLevelBox(const InlineItem&, const RenderStyle&, InlineLayoutUnit marginBoxLogicalWidth);
     void appendInlineBoxStart(const InlineItem&, const RenderStyle&, InlineLayoutUnit logicalWidth);
     void appendInlineBoxEnd(const InlineItem&, const RenderStyle&, InlineLayoutUnit logicalWidth);
-    void appendLineBreak(const InlineItem&);
-    void appendWordBreakOpportunity(const InlineItem&);
+    void appendLineBreak(const InlineItem&, const RenderStyle&);
+    void appendWordBreakOpportunity(const InlineItem&, const RenderStyle&);
 
     InlineLayoutUnit addBorderAndPaddingEndForInlineBoxDecorationClone(const InlineItem& inlineBoxStartItem);
     InlineLayoutUnit removeBorderAndPaddingEndForInlineBoxDecorationClone(const InlineItem& inlineBoxEndItem);
@@ -277,22 +271,22 @@ inline void Line::Run::setNeedsHyphen(InlineLayoutUnit hyphenLogicalWidth)
 
 inline bool Line::Run::shouldTrailingWhitespaceHang() const
 {
-    return m_style.shouldTrailingWhitespaceHang;
+    return m_style.whiteSpace() == WhiteSpace::PreWrap;
 }
 
 inline TextDirection Line::Run::inlineDirection() const
 {
-    return m_style.inlineDirection;
+    return m_style.direction();
 }
 
 inline InlineLayoutUnit Line::Run::letterSpacing() const
 {
-    return m_style.letterSpacing;
+    return m_style.letterSpacing();
 }
 
 inline bool Line::Run::hasTextCombine() const
 {
-    return m_style.hasTextCombine;
+    return m_style.hasTextCombine();
 }
 
 }

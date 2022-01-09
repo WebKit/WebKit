@@ -205,9 +205,9 @@ void Line::append(const InlineItem& inlineItem, const RenderStyle& style, Inline
     if (inlineItem.isText())
         appendTextContent(downcast<InlineTextItem>(inlineItem), style, logicalWidth);
     else if (inlineItem.isLineBreak())
-        appendLineBreak(inlineItem);
+        appendLineBreak(inlineItem, style);
     else if (inlineItem.isWordBreakOpportunity())
-        appendWordBreakOpportunity(inlineItem);
+        appendWordBreakOpportunity(inlineItem, style);
     else if (inlineItem.isInlineBoxStart())
         appendInlineBoxStart(inlineItem, style, logicalWidth);
     else if (inlineItem.isInlineBoxEnd())
@@ -372,21 +372,21 @@ void Line::appendReplacedInlineLevelBox(const InlineItem& inlineItem, const Rend
     appendNonReplacedInlineLevelBox(inlineItem, style, marginBoxLogicalWidth);
 }
 
-void Line::appendLineBreak(const InlineItem& inlineItem)
+void Line::appendLineBreak(const InlineItem& inlineItem, const RenderStyle& style)
 {
     m_trailingSoftHyphenWidth = { };
     if (inlineItem.isHardLineBreak()) {
         ++m_nonSpanningInlineLevelBoxCount;
-        return m_runs.append({ inlineItem, lastRunLogicalRight() });
+        return m_runs.append({ inlineItem, style, lastRunLogicalRight() });
     }
     // Soft line breaks (preserved new line characters) require inline text boxes for compatibility reasons.
     ASSERT(inlineItem.isSoftLineBreak());
-    m_runs.append({ downcast<InlineSoftLineBreakItem>(inlineItem), lastRunLogicalRight() });
+    m_runs.append({ downcast<InlineSoftLineBreakItem>(inlineItem), inlineItem.style(), lastRunLogicalRight() });
 }
 
-void Line::appendWordBreakOpportunity(const InlineItem& inlineItem)
+void Line::appendWordBreakOpportunity(const InlineItem& inlineItem, const RenderStyle& style)
 {
-    m_runs.append({ inlineItem, lastRunLogicalRight() });
+    m_runs.append({ inlineItem, style, lastRunLogicalRight() });
 }
 
 InlineLayoutUnit Line::addBorderAndPaddingEndForInlineBoxDecorationClone(const InlineItem& inlineBoxStartItem)
@@ -538,16 +538,17 @@ inline static Line::Run::Type toLineRunType(InlineItem::Type inlineItemType)
 Line::Run::Run(const InlineItem& inlineItem, const RenderStyle& style, InlineLayoutUnit logicalLeft, InlineLayoutUnit logicalWidth)
     : m_type(toLineRunType(inlineItem.type()))
     , m_layoutBox(&inlineItem.layoutBox())
+    , m_style(style)
     , m_logicalLeft(logicalLeft)
     , m_logicalWidth(logicalWidth)
-    , m_style({ { }, style.direction(), { }, { } })
     , m_bidiLevel(inlineItem.bidiLevel())
 {
 }
 
-Line::Run::Run(const InlineItem& zeroWidhtInlineItem, InlineLayoutUnit logicalLeft)
+Line::Run::Run(const InlineItem& zeroWidhtInlineItem, const RenderStyle& style, InlineLayoutUnit logicalLeft)
     : m_type(toLineRunType(zeroWidhtInlineItem.type()))
     , m_layoutBox(&zeroWidhtInlineItem.layoutBox())
+    , m_style(style)
     , m_logicalLeft(logicalLeft)
     , m_bidiLevel(zeroWidhtInlineItem.bidiLevel())
 {
@@ -556,6 +557,7 @@ Line::Run::Run(const InlineItem& zeroWidhtInlineItem, InlineLayoutUnit logicalLe
 Line::Run::Run(const InlineItem& lineSpanningInlineBoxItem, InlineLayoutUnit logicalLeft, InlineLayoutUnit logicalWidth)
     : m_type(Type::LineSpanningInlineBoxStart)
     , m_layoutBox(&lineSpanningInlineBoxItem.layoutBox())
+    , m_style(lineSpanningInlineBoxItem.style())
     , m_logicalLeft(logicalLeft)
     , m_logicalWidth(logicalWidth)
     , m_bidiLevel(lineSpanningInlineBoxItem.bidiLevel())
@@ -563,9 +565,10 @@ Line::Run::Run(const InlineItem& lineSpanningInlineBoxItem, InlineLayoutUnit log
     ASSERT(lineSpanningInlineBoxItem.isInlineBoxStart());
 }
 
-Line::Run::Run(const InlineSoftLineBreakItem& softLineBreakItem, InlineLayoutUnit logicalLeft)
+Line::Run::Run(const InlineSoftLineBreakItem& softLineBreakItem, const RenderStyle& style, InlineLayoutUnit logicalLeft)
     : m_type(Type::SoftLineBreak)
     , m_layoutBox(&softLineBreakItem.layoutBox())
+    , m_style(style)
     , m_logicalLeft(logicalLeft)
     , m_textContent({ softLineBreakItem.position(), 1 })
     , m_bidiLevel(softLineBreakItem.bidiLevel())
@@ -575,12 +578,12 @@ Line::Run::Run(const InlineSoftLineBreakItem& softLineBreakItem, InlineLayoutUni
 Line::Run::Run(const InlineTextItem& inlineTextItem, const RenderStyle& style, InlineLayoutUnit logicalLeft, InlineLayoutUnit logicalWidth)
     : m_type(inlineTextItem.isWordSeparator() ? Type::WordSeparator : Type::Text)
     , m_layoutBox(&inlineTextItem.layoutBox())
+    , m_style(style)
     , m_logicalLeft(logicalLeft)
     , m_logicalWidth(logicalWidth)
     , m_trailingWhitespaceType(trailingWhitespaceType(inlineTextItem))
     , m_trailingWhitespaceWidth(m_trailingWhitespaceType != TrailingWhitespace::None ? logicalWidth : InlineLayoutUnit { })
     , m_textContent({ inlineTextItem.start(), m_trailingWhitespaceType == TrailingWhitespace::Collapsed ? 1 : inlineTextItem.length() })
-    , m_style({ style.whiteSpace() == WhiteSpace::PreWrap, style.direction(), style.letterSpacing(), style.hasTextCombine() })
     , m_bidiLevel(inlineTextItem.bidiLevel())
 {
 }
