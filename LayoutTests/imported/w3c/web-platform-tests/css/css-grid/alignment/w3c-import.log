@@ -130,6 +130,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/alignment/grid-content-alignment-overflow-002.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/alignment/grid-content-alignment-second-pass-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/alignment/grid-content-alignment-second-pass-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/alignment/grid-content-alignment-with-abspos-001-expected.txt
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/alignment/grid-content-alignment-with-abspos-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/alignment/grid-content-alignment-with-span-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/alignment/grid-content-alignment-with-span-vertical-lr-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/alignment/grid-content-alignment-with-span-vertical-rl-001.html

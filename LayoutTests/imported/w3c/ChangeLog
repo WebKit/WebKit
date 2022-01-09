@@ -1,3 +1,60 @@
+2022-01-09  Ziran Sun  <zsun@igalia.com>
+
+        [css-grid] Resync web-platform-tests/css/css-grid tests from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=234879
+
+        Reviewed by Darin Adler.
+
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-align-self-img-002-expected.html:
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-align-self-img-last-baseline-002-expected.html:
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-align-self-last-baseline-002-expected.html:
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-align-self-rtl-last-baseline-003-expected.html:
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-align-self-rtl-last-baseline-004-expected.html:
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-align-self-vertWM-003-expected.html:
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-align-self-vertWM-004-expected.html:
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-align-self-vertWM-last-baseline-003-expected.html:
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-align-self-vertWM-last-baseline-004-expected.html:
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-justify-self-img-002-expected.html:
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-justify-self-img-last-baseline-002-expected.html:
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-justify-self-img-last-baseline-002.html:
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-justify-self-last-baseline-002-expected.html:
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-justify-self-rtl-last-baseline-003-expected.html:
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-justify-self-rtl-last-baseline-004-expected.html:
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-justify-self-vertWM-003-expected.html:
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-justify-self-vertWM-004-expected.html:
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-justify-self-vertWM-last-baseline-003-expected.html:
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-justify-self-vertWM-last-baseline-004-expected.html:
+        * web-platform-tests/css/css-grid/alignment/grid-container-auto-margins-scrollbars-001-expected.html:
+        * web-platform-tests/css/css-grid/alignment/grid-content-alignment-with-abspos-001-expected.txt: Added.
+        * web-platform-tests/css/css-grid/alignment/grid-content-alignment-with-abspos-001.html: Added.
+        * web-platform-tests/css/css-grid/alignment/self-baseline/w3c-import.log:
+        * web-platform-tests/css/css-grid/alignment/w3c-import.log:
+        * web-platform-tests/css/css-grid/grid-definition/w3c-import.log:
+        * web-platform-tests/css/css-grid/grid-items/grid-intrinsic-maximums-expected.html: Added.
+        * web-platform-tests/css/css-grid/grid-items/grid-intrinsic-maximums.html: Added.
+        * web-platform-tests/css/css-grid/grid-items/w3c-import.log:
+        * web-platform-tests/css/css-grid/grid-model/grid-container-scrollbars-sizing-002-expected.html:
+        * web-platform-tests/css/css-grid/grid-model/w3c-import.log:
+        * web-platform-tests/css/css-grid/layout-algorithm/flex-tracks-with-fractional-size-expected.xht: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-grid/placement/grid-placement-items-spanning-multiple-rows-expected.xht.
+        * web-platform-tests/css/css-grid/layout-algorithm/flex-tracks-with-fractional-size.html: Added.
+        * web-platform-tests/css/css-grid/layout-algorithm/w3c-import.log:
+        * web-platform-tests/css/css-grid/nested-grid-item-block-size-001-expected.html: Added.
+        * web-platform-tests/css/css-grid/nested-grid-item-block-size-001.html: Added.
+        * web-platform-tests/css/css-grid/parsing/grid-area-computed-expected.txt:
+        * web-platform-tests/css/css-grid/parsing/grid-area-computed.html:
+        * web-platform-tests/css/css-grid/placement/grid-placement-items-spanning-multiple-rows-001-expected.xht: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-grid/placement/grid-placement-items-spanning-multiple-rows-expected.xht.
+        * web-platform-tests/css/css-grid/placement/grid-placement-items-spanning-multiple-rows-001.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-grid/placement/grid-placement-items-spanning-multiple-rows.html.
+        * web-platform-tests/css/css-grid/placement/grid-placement-items-spanning-multiple-rows-002-expected.xht: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-grid/placement/grid-placement-items-spanning-multiple-rows-expected.xht.
+        * web-platform-tests/css/css-grid/placement/grid-placement-items-spanning-multiple-rows-002.html: Added.
+        * web-platform-tests/css/css-grid/placement/w3c-import.log:
+        * web-platform-tests/css/css-grid/subgrid/grid-subgridded-axis-auto-repeater-crash-001.html: Added.
+        * web-platform-tests/css/css-grid/subgrid/grid-subgridded-axis-auto-repeater-crash-002.html: Added.
+        * web-platform-tests/css/css-grid/subgrid/grid-template-invalid.html: Added.
+        * web-platform-tests/css/css-grid/subgrid/grid-template-valid.html: Added.
+        * web-platform-tests/css/css-grid/subgrid/w3c-import.log:
+        * web-platform-tests/css/css-grid/support/colors-8x16.png: Added.
+        * web-platform-tests/css/css-grid/support/w3c-import.log:
+
 2022-01-09  Antoine Quint  <graouts@webkit.org>
 
         translate() function in transform property should remove trailing 0 value when parsing
