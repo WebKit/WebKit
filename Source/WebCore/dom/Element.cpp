@@ -791,13 +791,13 @@ bool Element::isUserActionElementHasFocusWithin() const
     return document().userActionElements().hasFocusWithin(*this);
 }
 
-void Element::setActive(bool flag, bool pause, Style::InvalidationScope invalidationScope)
+void Element::setActive(bool value, bool pause, Style::InvalidationScope invalidationScope)
 {
-    if (flag == active())
+    if (value == active())
         return;
     {
-        Style::PseudoClassChangeInvalidation styleInvalidation(*this, CSSSelector::PseudoClassActive, invalidationScope);
-        document().userActionElements().setActive(*this, flag);
+        Style::PseudoClassChangeInvalidation styleInvalidation(*this, CSSSelector::PseudoClassActive, value, invalidationScope);
+        document().userActionElements().setActive(*this, value);
     }
 
     if (!renderer())
@@ -843,72 +843,72 @@ static bool shouldAlwaysHaveFocusVisibleWhenFocused(const Element& element)
     return element.isTextField() || element.isContentEditable() || is<HTMLSelectElement>(element);
 }
 
-void Element::setFocus(bool flag, FocusVisibility visibility)
+void Element::setFocus(bool value, FocusVisibility visibility)
 {
-    if (flag == focused())
+    if (value == focused())
         return;
     
-    Style::PseudoClassChangeInvalidation focusStyleInvalidation(*this, { CSSSelector::PseudoClassFocus, CSSSelector::PseudoClassFocusVisible });
-    document().userActionElements().setFocused(*this, flag);
+    Style::PseudoClassChangeInvalidation focusStyleInvalidation(*this, { { CSSSelector::PseudoClassFocus, value }, { CSSSelector::PseudoClassFocusVisible, value } });
+    document().userActionElements().setFocused(*this, value);
 
     // Shadow host with a slot that contain focused element is not considered focused.
     for (auto* root = containingShadowRoot(); root; root = root->host()->containingShadowRoot()) {
-        root->setContainsFocusedElement(flag);
+        root->setContainsFocusedElement(value);
         root->host()->invalidateStyle();
     }
 
     for (auto* element = this; element; element = element->parentElementInComposedTree())
-        element->setHasFocusWithin(flag);
+        element->setHasFocusWithin(value);
 
-    setHasFocusVisible(flag && (visibility == FocusVisibility::Visible || shouldAlwaysHaveFocusVisibleWhenFocused(*this)));
+    setHasFocusVisible(value && (visibility == FocusVisibility::Visible || shouldAlwaysHaveFocusVisibleWhenFocused(*this)));
 }
 
-void Element::setHasFocusVisible(bool flag)
+void Element::setHasFocusVisible(bool value)
 {
     if (!document().settings().focusVisibleEnabled())
         return;
 
 #if ASSERT_ENABLED
-    ASSERT(!flag || focused());
-    ASSERT(!focused() || !shouldAlwaysHaveFocusVisibleWhenFocused(*this) || flag);
+    ASSERT(!value || focused());
+    ASSERT(!focused() || !shouldAlwaysHaveFocusVisibleWhenFocused(*this) || value);
 #endif
 
-    if (hasFocusVisible() == flag)
+    if (hasFocusVisible() == value)
         return;
 
-    document().userActionElements().setHasFocusVisible(*this, flag);
+    document().userActionElements().setHasFocusVisible(*this, value);
 }
 
-void Element::setHasFocusWithin(bool flag)
+void Element::setHasFocusWithin(bool value)
 {
-    if (hasFocusWithin() == flag)
+    if (hasFocusWithin() == value)
         return;
     {
-        Style::PseudoClassChangeInvalidation styleInvalidation(*this, CSSSelector::PseudoClassFocusWithin);
-        document().userActionElements().setHasFocusWithin(*this, flag);
+        Style::PseudoClassChangeInvalidation styleInvalidation(*this, CSSSelector::PseudoClassFocusWithin, value);
+        document().userActionElements().setHasFocusWithin(*this, value);
     }
 }
 
-void Element::setHovered(bool flag, Style::InvalidationScope invalidationScope)
+void Element::setHovered(bool value, Style::InvalidationScope invalidationScope)
 {
-    if (flag == hovered())
+    if (value == hovered())
         return;
     {
-        Style::PseudoClassChangeInvalidation styleInvalidation(*this, CSSSelector::PseudoClassHover, invalidationScope);
-        document().userActionElements().setHovered(*this, flag);
+        Style::PseudoClassChangeInvalidation styleInvalidation(*this, CSSSelector::PseudoClassHover, value, invalidationScope);
+        document().userActionElements().setHovered(*this, value);
     }
 
     if (auto* style = renderStyle(); style && style->hasEffectiveAppearance())
         renderer()->theme().stateChanged(*renderer(), ControlStates::States::Hovered);
 }
 
-void Element::setBeingDragged(bool flag)
+void Element::setBeingDragged(bool value)
 {
-    if (flag == isBeingDragged())
+    if (value == isBeingDragged())
         return;
 
-    Style::PseudoClassChangeInvalidation styleInvalidation(*this, CSSSelector::PseudoClassDrag);
-    document().userActionElements().setBeingDragged(*this, flag);
+    Style::PseudoClassChangeInvalidation styleInvalidation(*this, CSSSelector::PseudoClassDrag, value);
+    document().userActionElements().setBeingDragged(*this, value);
 }
 
 inline ScrollAlignment toScrollAlignmentForInlineDirection(std::optional<ScrollLogicalPosition> position, WritingMode writingMode, bool isLTR)

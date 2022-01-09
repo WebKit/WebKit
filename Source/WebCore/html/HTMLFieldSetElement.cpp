@@ -183,7 +183,7 @@ void HTMLFieldSetElement::addInvalidDescendant(const HTMLFormControlElement& inv
 
     std::optional<Style::PseudoClassChangeInvalidation> styleInvalidation;
     if (m_invalidDescendants.computesEmpty())
-        styleInvalidation.emplace(*this, std::initializer_list<CSSSelector::PseudoClassType> { CSSSelector::PseudoClassValid, CSSSelector::PseudoClassInvalid });
+        emplace(styleInvalidation, *this, { { CSSSelector::PseudoClassValid, false }, { CSSSelector::PseudoClassInvalid, true } });
 
     m_invalidDescendants.add(invalidFormControlElement);
 }
@@ -195,7 +195,7 @@ void HTMLFieldSetElement::removeInvalidDescendant(const HTMLFormControlElement& 
 
     std::optional<Style::PseudoClassChangeInvalidation> styleInvalidation;
     if (m_invalidDescendants.computeSize() == 1)
-        styleInvalidation.emplace(*this, std::initializer_list<CSSSelector::PseudoClassType> { CSSSelector::PseudoClassValid, CSSSelector::PseudoClassInvalid });
+        emplace(styleInvalidation, *this, { { CSSSelector::PseudoClassValid, true }, { CSSSelector::PseudoClassInvalid, false } });
 
     m_invalidDescendants.remove(formControlElement);
 }

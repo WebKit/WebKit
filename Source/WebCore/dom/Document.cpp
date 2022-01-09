@@ -7457,33 +7457,33 @@ void Document::updateHoverActiveState(const HitTestRequest& request, Element* in
             elementsToSetHover.append(element);
     }
 
-    auto changeState = [](auto& elements, auto pseudoClassType, auto&& setter) {
+    auto changeState = [](auto& elements, auto pseudoClassType, auto value, auto&& setter) {
         if (elements.isEmpty())
             return;
 
-        Style::PseudoClassChangeInvalidation styleInvalidation { *elements.last(), pseudoClassType, Style::InvalidationScope::Descendants };
+        Style::PseudoClassChangeInvalidation styleInvalidation { *elements.last(), pseudoClassType, value, Style::InvalidationScope::Descendants };
 
         // We need to do descendant invalidation for each shadow tree separately as the style is per-scope.
         Vector<Style::PseudoClassChangeInvalidation> shadowDescendantStyleInvalidations;
         for (auto& element : elements) {
             if (hasShadowRootParent(*element))
-                shadowDescendantStyleInvalidations.append({ *element, pseudoClassType, Style::InvalidationScope::Descendants });
+                shadowDescendantStyleInvalidations.append({ *element, pseudoClassType, value, Style::InvalidationScope::Descendants });
         }
 
         for (auto& element : elements)
             setter(*element);
     };
 
-    changeState(elementsToClearActive, CSSSelector::PseudoClassActive, [](auto& element) {
+    changeState(elementsToClearActive, CSSSelector::PseudoClassActive, false, [](auto& element) {
         element.setActive(false, false, Style::InvalidationScope::SelfChildrenAndSiblings);
     });
-    changeState(elementsToSetActive, CSSSelector::PseudoClassActive, [](auto& element) {
+    changeState(elementsToSetActive, CSSSelector::PseudoClassActive, true, [](auto& element) {
         element.setActive(true, false, Style::InvalidationScope::SelfChildrenAndSiblings);
     });
-    changeState(elementsToClearHover, CSSSelector::PseudoClassHover, [](auto& element) {
+    changeState(elementsToClearHover, CSSSelector::PseudoClassHover, false, [](auto& element) {
         element.setHovered(false, Style::InvalidationScope::SelfChildrenAndSiblings);
     });
-    changeState(elementsToSetHover, CSSSelector::PseudoClassHover, [](auto& element) {
+    changeState(elementsToSetHover, CSSSelector::PseudoClassHover, true, [](auto& element) {
         element.setHovered(true, Style::InvalidationScope::SelfChildrenAndSiblings);
     });
 }

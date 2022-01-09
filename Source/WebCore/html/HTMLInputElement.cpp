@@ -975,17 +975,17 @@ bool HTMLInputElement::isTextType() const
     return m_inputType->isTextType();
 }
 
-void HTMLInputElement::setChecked(bool nowChecked)
+void HTMLInputElement::setChecked(bool isChecked)
 {
-    if (checked() == nowChecked)
+    if (checked() == isChecked)
         return;
 
-    m_inputType->willUpdateCheckedness(nowChecked);
+    m_inputType->willUpdateCheckedness(isChecked);
 
-    Style::PseudoClassChangeInvalidation checkedInvalidation(*this, CSSSelector::PseudoClassChecked);
+    Style::PseudoClassChangeInvalidation checkedInvalidation(*this, CSSSelector::PseudoClassChecked, isChecked);
 
     m_dirtyCheckednessFlag = true;
-    m_isChecked = nowChecked;
+    m_isChecked = isChecked;
 
     if (RadioButtonGroups* buttons = radioButtonGroups())
         buttons->updateCheckedState(*this);

@@ -178,14 +178,14 @@ void HTMLOptionElement::parseAttribute(const QualifiedName& name, const AtomStri
     if (name == disabledAttr) {
         bool newDisabled = !value.isNull();
         if (m_disabled != newDisabled) {
-            Style::PseudoClassChangeInvalidation disabledInvalidation(*this, { CSSSelector::PseudoClassDisabled, CSSSelector::PseudoClassEnabled });
+            Style::PseudoClassChangeInvalidation disabledInvalidation(*this, { { CSSSelector::PseudoClassDisabled, newDisabled },  { CSSSelector::PseudoClassEnabled, !newDisabled } });
             m_disabled = newDisabled;
             if (renderer() && renderer()->style().hasEffectiveAppearance())
                 renderer()->theme().stateChanged(*renderer(), ControlStates::States::Enabled);
         }
     } else if (name == selectedAttr) {
         // FIXME: Use PseudoClassChangeInvalidation in other elements that implement matchesDefaultPseudoClass().
-        Style::PseudoClassChangeInvalidation defaultInvalidation(*this, CSSSelector::PseudoClassDefault);
+        Style::PseudoClassChangeInvalidation defaultInvalidation(*this, CSSSelector::PseudoClassDefault, !value.isNull());
         m_isDefault = !value.isNull();
 
         // FIXME: This doesn't match what the HTML specification says.
@@ -233,7 +233,7 @@ void HTMLOptionElement::setSelectedState(bool selected)
     if (m_isSelected == selected)
         return;
 
-    Style::PseudoClassChangeInvalidation checkedInvalidation(*this, CSSSelector::PseudoClassChecked);
+    Style::PseudoClassChangeInvalidation checkedInvalidation(*this, CSSSelector::PseudoClassChecked, selected);
 
     m_isSelected = selected;
 

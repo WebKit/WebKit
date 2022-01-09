@@ -668,7 +668,7 @@ void HTMLFormElement::registerInvalidAssociatedFormControl(const HTMLFormControl
 
     std::optional<Style::PseudoClassChangeInvalidation> styleInvalidation;
     if (m_invalidAssociatedFormControls.computesEmpty())
-        styleInvalidation.emplace(*this, std::initializer_list<CSSSelector::PseudoClassType> { CSSSelector::PseudoClassValid, CSSSelector::PseudoClassInvalid });
+        emplace(styleInvalidation, *this, { { CSSSelector::PseudoClassValid, false }, { CSSSelector::PseudoClassInvalid, true } });
 
     m_invalidAssociatedFormControls.add(const_cast<HTMLFormControlElement&>(formControlElement));
 }
@@ -680,7 +680,7 @@ void HTMLFormElement::removeInvalidAssociatedFormControlIfNeeded(const HTMLFormC
 
     std::optional<Style::PseudoClassChangeInvalidation> styleInvalidation;
     if (m_invalidAssociatedFormControls.computeSize() == 1)
-        styleInvalidation.emplace(*this, std::initializer_list<CSSSelector::PseudoClassType> { CSSSelector::PseudoClassValid, CSSSelector::PseudoClassInvalid });
+        emplace(styleInvalidation, *this, { { CSSSelector::PseudoClassValid, true }, { CSSSelector::PseudoClassInvalid, false } });
 
     m_invalidAssociatedFormControls.remove(formControlElement);
 }

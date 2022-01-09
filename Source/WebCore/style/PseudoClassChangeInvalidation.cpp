@@ -51,7 +51,7 @@ static Vector<PseudoClassInvalidationKey, 4> makePseudoClassInvalidationKeys(CSS
     return keys;
 };
 
-void PseudoClassChangeInvalidation::computeInvalidation(CSSSelector::PseudoClassType pseudoClass, InvalidationScope invalidationScope)
+void PseudoClassChangeInvalidation::computeInvalidation(CSSSelector::PseudoClassType pseudoClass, bool value, InvalidationScope invalidationScope)
 {
     bool shouldInvalidateCurrent = false;
     bool mayAffectStyleInShadowTree = false;
@@ -72,10 +72,10 @@ void PseudoClassChangeInvalidation::computeInvalidation(CSSSelector::PseudoClass
         m_element.invalidateStyle();
 
     for (auto& key : makePseudoClassInvalidationKeys(pseudoClass, m_element))
-        collectRuleSets(key, invalidationScope);
+        collectRuleSets(key, value, invalidationScope);
 }
 
-void PseudoClassChangeInvalidation::collectRuleSets(const PseudoClassInvalidationKey& key, InvalidationScope invalidationScope)
+void PseudoClassChangeInvalidation::collectRuleSets(const PseudoClassInvalidationKey& key, bool value, InvalidationScope invalidationScope)
 {
     auto& ruleSets = m_element.styleResolver().ruleSets();
     auto* invalidationRuleSets = ruleSets.pseudoClassInvalidationRuleSets(key);
@@ -100,14 +100,24 @@ void PseudoClassChangeInvalidation::collectRuleSets(const PseudoClassInvalidatio
         if (!shouldInvalidate)
             continue;
 
-        Invalidator::addToMatchElementRuleSets(m_matchElementRuleSets, invalidationRuleSet);
+        bool invalidateBeforeChange = invalidationRuleSet.isNegation == IsNegation::Yes ? value : !value;
+        if (invalidateBeforeChange)
+            Invalidator::addToMatchElementRuleSets(m_beforeChangeRuleSets, invalidationRuleSet);
+        else
+            Invalidator::addToMatchElementRuleSets(m_afterChangeRuleSets, invalidationRuleSet);
     }
 }
 
-void PseudoClassChangeInvalidation::invalidateStyleWithRuleSets()
+void PseudoClassChangeInvalidation::invalidateBeforeChange()
 {
-    Invalidator::invalidateWithMatchElementRuleSets(m_element, m_matchElementRuleSets);
+    Invalidator::invalidateWithMatchElementRuleSets(m_element, m_beforeChangeRuleSets);
 }
+
+void PseudoClassChangeInvalidation::invalidateAfterChange()
+{
+    Invalidator::invalidateWithMatchElementRuleSets(m_element, m_afterChangeRuleSets);
+}
+
 
 }
 }
