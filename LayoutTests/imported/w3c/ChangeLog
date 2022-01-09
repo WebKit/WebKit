@@ -1,3 +1,14 @@
+2022-01-09  Antoine Quint  <graouts@webkit.org>
+
+        translate() function in transform property should remove trailing 0 value when parsing
+        https://bugs.webkit.org/show_bug.cgi?id=235016
+
+        Reviewed by Antti Koivisto.
+
+        Mark WPT progression.
+
+        * web-platform-tests/css/css-animations/KeyframeEffect-getKeyframes.tentative-expected.txt:
+
 2022-01-08  Antoine Quint  <graouts@webkit.org>
 
         [Web Animations] getKeyframes() for a CSS Animation should not use computed style for keyframes

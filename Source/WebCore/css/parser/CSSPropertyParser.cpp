@@ -1938,6 +1938,11 @@ static RefPtr<CSSValue> consumeTransformValue(CSSParserTokenRange& range, CSSPar
             parsedValue = consumeLengthOrPercent(args, cssParserMode, ValueRange::All);
             if (!parsedValue)
                 return nullptr;
+            if (is<CSSPrimitiveValue>(parsedValue)) {
+                auto isZero = downcast<CSSPrimitiveValue>(*parsedValue).isZero();
+                if (isZero && *isZero)
+                    parsedValue = nullptr;
+            }
         }
         break;
     case CSSValueTranslateZ:
