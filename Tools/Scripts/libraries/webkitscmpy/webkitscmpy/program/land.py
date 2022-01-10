@@ -232,9 +232,9 @@ class Land(Command):
             pull_request.comment(land_message)
 
         if args.defaults or Terminal.choose("Delete branch '{}'?".format(source_branch), default='Yes') == 'Yes':
-            regex = re.compile(r'^{}-(?P<count>\d+)$'.format(repository.branch))
-            for to_delete in repository.branches_for(remote='fork'):
-                if to_delete == source_branch or regex.match(to_delete):
+            regex = re.compile(r'^{}-(?P<count>\d+)$'.format(source_branch))
+            for to_delete in repository.branches_for(remote=remote_target):
+                if to_delete == source_branch or regex.match(to_delete) and remote_target == 'fork':
                     run([repository.executable(), 'branch', '-D', to_delete], cwd=repository.root_path)
                     run([repository.executable(), 'push', remote_target, '--delete', to_delete], cwd=repository.root_path)
         return 0
