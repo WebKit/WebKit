@@ -20,8 +20,10 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/common.sub.js
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/createImageBitmap-blob-invalidtype.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/createImageBitmap-bounds.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/createImageBitmap-colorSpaceConversion.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/createImageBitmap-drawImage-closed.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/createImageBitmap-drawImage.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/createImageBitmap-exif-orientation.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/createImageBitmap-flipY.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/createImageBitmap-in-worker-transfer.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/createImageBitmap-invalid-args.html
@@ -33,5 +35,14 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/imageBitmap-from-imageData-no-image-rotation-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/imageBitmap-from-imageData-no-image-rotation-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/imageBitmap-from-imageData-no-image-rotation.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/imageBitmapRendering-transferFromImageBitmap-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/imageBitmapRendering-transferFromImageBitmap-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/imageBitmapRendering-transferFromImageBitmap-flipped-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/imageBitmapRendering-transferFromImageBitmap-flipped-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/imageBitmapRendering-transferFromImageBitmap-flipped.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/imageBitmapRendering-transferFromImageBitmap-webgl-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/imageBitmapRendering-transferFromImageBitmap-webgl-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/imageBitmapRendering-transferFromImageBitmap-webgl.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/imageBitmapRendering-transferFromImageBitmap.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/transfer-worker.js
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/worker-onmessage-noop.js

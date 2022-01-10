@@ -16,9 +16,15 @@ None
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-details-element/auto-expand-ax-slot-recalc-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-details-element/auto-expand-details-element-fragment.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-details-element/auto-expand-window-find-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-details-element/closed-details-layout-apis.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-details-element/details-add-summary-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-details-element/details-add-summary-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-details-element/details-add-summary.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-details-element/details-findstring-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-details-element/details.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-details-element/display-table-with-rt-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-details-element/modified-details-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-details-element/nested-details-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-details-element/nested-top-layer-elements-in-details-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-details-element/toggleEvent.html

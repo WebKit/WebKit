@@ -19,6 +19,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/resources/img-data-src-nonspeculative.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/resources/img-src-crossorigin-nonspeculative.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/resources/img-src-nonspeculative.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/resources/img-src-referrerpolicy-no-referrer-nonspeculative.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/resources/img-srcset-nonspeculative.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/resources/link-no-rel-nonspeculative.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/resources/link-rel-alternate-stylesheet-nonspeculative.sub.html
@@ -31,6 +32,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/resources/link-rel-stylesheet-integrity-nonspeculative.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/resources/link-rel-stylesheet-nomatch-media-nonspeculative.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/resources/link-rel-stylesheet-nonspeculative.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/resources/link-rel-stylesheet-referrerpolicy-no-referrer-nonspeculative.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/resources/link-rel-stylesheet-type-text-css-nonspeculative.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/resources/link-rel-stylesheet-unsupported-type-nonspeculative.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/resources/math-font-face-script-src-nonspeculative.sub.html
@@ -39,6 +41,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/resources/meta-charset-script-src-nonspeculative.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/resources/meta-csp-img-src-asterisk-nonspeculative.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/resources/meta-csp-img-src-none-nonspeculative.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/resources/meta-referrer-no-referrer-img-src-nonspeculative.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/resources/meta-viewport-link-stylesheet-media-nonspeculative.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/resources/picture-source-br-img-nonspeculative.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/resources/picture-source-no-img-nonspeculative.sub.html
@@ -51,6 +54,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/resources/script-src-module-nonspeculative.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/resources/script-src-nomodule-nonspeculative.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/resources/script-src-nonspeculative.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/resources/script-src-referrerpolicy-no-referrer-nonspeculative.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/resources/script-src-type-application-ecmascript-nonspeculative.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/resources/script-src-unsupported-type-nonspeculative.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/resources/svg-image-href-nonspeculative.sub.html

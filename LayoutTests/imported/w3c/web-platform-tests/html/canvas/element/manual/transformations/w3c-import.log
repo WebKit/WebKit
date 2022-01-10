@@ -16,8 +16,10 @@ None
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/transformations/2d.transformation.getTransform.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/transformations/canvas_transformations_reset_001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/transformations/canvas_transformations_reset_001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/transformations/canvas_transformations_reset_001.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/transformations/canvas_transformations_scale_001-expected.htm
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/transformations/canvas_transformations_scale_001-ref.htm
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/transformations/canvas_transformations_scale_001.htm
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/transformations/transform_a-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/transformations/transform_a.html

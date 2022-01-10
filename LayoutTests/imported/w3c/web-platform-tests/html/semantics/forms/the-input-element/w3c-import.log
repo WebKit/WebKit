@@ -28,6 +28,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/datetime-local.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/datetime.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/defaultValue-clobbering.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/email-set-value.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/email.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/files.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/hidden-charset-case-sensitive-child.html
@@ -35,6 +36,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/hidden.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/image-click-form-data.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/image01-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/image01-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/image01.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/input-checkvalidity.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/input-height.html
@@ -68,6 +70,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/multiline-placeholder-crlf-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/multiline-placeholder-crlf.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/multiline-placeholder-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/multiline-placeholder-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/multiline-placeholder.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/number-disabled.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/number.html
@@ -80,8 +83,11 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/radio.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/range-2.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/range-intrinsic-size-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/range-intrinsic-size-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/range-intrinsic-size.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/range-restore-oninput-onchange-event.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/range-setattribute-value-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/range-setattribute-value-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/range-setattribute-value.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/range.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/required_attribute.html
@@ -89,6 +95,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/search_input.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/selection-pointer.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/selection.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/show-picker-cross-origin-iframe.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/show-picker.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/telephone.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/text.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/time-2.html

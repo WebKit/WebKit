@@ -15,6 +15,8 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/building-paths/canvas_complexshapes_arcto_001-expected.htm
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/building-paths/canvas_complexshapes_arcto_001-ref.htm
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/building-paths/canvas_complexshapes_arcto_001.htm
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/building-paths/canvas_complexshapes_beziercurveto_001-expected.htm
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/building-paths/canvas_complexshapes_beziercurveto_001-ref.htm
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/building-paths/canvas_complexshapes_beziercurveto_001.htm

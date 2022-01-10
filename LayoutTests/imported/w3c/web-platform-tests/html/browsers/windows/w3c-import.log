@@ -29,7 +29,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/windows/iframe-cross-origin-scaled-print.sub-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/windows/iframe-cross-origin-scaled-print.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/windows/iframe-nested-print-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/windows/iframe-nested-print-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/windows/iframe-nested-print.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/windows/iframe-nested-scaled-print-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/windows/noreferrer-null-opener.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/windows/noreferrer-window-name.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/windows/targeting-cross-origin-nested-browsing-contexts.html

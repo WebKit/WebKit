@@ -15,3 +15,7 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/resources/image-submit-click.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/resources/loadresolver.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/resources/range-restore-events.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/resources/show-picker-child-iframe.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/resources/text-restore-events.html

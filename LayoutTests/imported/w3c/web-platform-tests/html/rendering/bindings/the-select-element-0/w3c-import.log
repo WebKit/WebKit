@@ -15,4 +15,5 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/bindings/the-select-element-0/option-label-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/bindings/the-select-element-0/option-label-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/bindings/the-select-element-0/option-label.html

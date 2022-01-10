@@ -21,9 +21,11 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-popup-element/popup-element-removal-2.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-popup-element/popup-element-removal.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-popup-element/popup-focus.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-popup-element/popup-hidden-display-ref.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-popup-element/popup-hidden-display.tentative-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-popup-element/popup-hidden-display.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-popup-element/popup-initiallyopen-2.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-popup-element/popup-initiallyopen-display-ref.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-popup-element/popup-initiallyopen-display.tentative-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-popup-element/popup-initiallyopen-display.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-popup-element/popup-initiallyopen.tentative.html
@@ -32,11 +34,14 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-popup-element/popup-invoking-attribute.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-popup-element/popup-light-dismiss-on-scroll.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-popup-element/popup-light-dismiss.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-popup-element/popup-open-display-ref.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-popup-element/popup-open-display.tentative-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-popup-element/popup-open-display.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-popup-element/popup-open-overflow-display-ref.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-popup-element/popup-open-overflow-display.tentative-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-popup-element/popup-open-overflow-display.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-popup-element/popup-shadow-dom.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-popup-element/popup-stacking-context-ref.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-popup-element/popup-stacking-context.tentative-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-popup-element/popup-stacking-context.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-popup-element/popup-stacking.tentative.html

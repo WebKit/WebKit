@@ -1,0 +1,19 @@
+CONSOLE MESSAGE: Unsafe JavaScript attempt to initiate navigation for frame with URL 'about:blank' from frame with URL 'http://127.0.0.1:8800/html/browsers/browsing-the-web/navigating-across-documents/resources/child-navigates-parent-cross-origin-inner.html'. The frame attempting navigation is neither same-origin with the target, nor is it the target's parent or opener.
+
+CONSOLE MESSAGE: Unsafe JavaScript attempt to initiate navigation for frame with URL 'about:blank' from frame with URL 'http://127.0.0.1:8800/html/browsers/browsing-the-web/navigating-across-documents/resources/child-navigates-parent-cross-origin-inner.html?property=href'. The frame attempting navigation is neither same-origin with the target, nor is it the target's parent or opener.
+
+CONSOLE MESSAGE: Unsafe JavaScript attempt to initiate navigation for frame with URL 'about:blank' from frame with URL 'http://127.0.0.1:8800/html/browsers/browsing-the-web/navigating-across-documents/resources/child-navigates-parent-cross-origin-inner.html?property=replace'. The frame attempting navigation is neither same-origin with the target, nor is it the target's parent or opener.
+
+
+PASS Child document attempts to navigate cross-origin parent via location
+PASS Child document attempts to navigate cross-origin parent via location.hash
+PASS Child document attempts to navigate cross-origin parent via location.host
+PASS Child document attempts to navigate cross-origin parent via location.hostname
+PASS Child document attempts to navigate cross-origin parent via location.href
+PASS Child document attempts to navigate cross-origin parent via location.pathname
+PASS Child document attempts to navigate cross-origin parent via location.protocol
+PASS Child document attempts to navigate cross-origin parent via location.reload()
+FAIL Child document attempts to navigate cross-origin parent via location.replace() assert_array_equals: expected property 0 to be "error: SecurityError" but got "success" (expected array ["error: SecurityError"] got ["success"])
+PASS Child document attempts to navigate cross-origin parent via location.search
+PASS Child document attempts to navigate cross-origin parent via non-standard location property
+

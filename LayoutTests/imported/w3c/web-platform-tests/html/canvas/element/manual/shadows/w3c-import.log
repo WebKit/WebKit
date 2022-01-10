@@ -16,6 +16,7 @@ None
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/shadows/canvas_shadows_001.htm
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/shadows/canvas_shadows_002-expected.htm
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/shadows/canvas_shadows_002-ref.htm
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/shadows/canvas_shadows_002.htm
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/shadows/canvas_shadows_system_colors-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/shadows/canvas_shadows_system_colors-expected.html

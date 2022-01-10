@@ -17,4 +17,5 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/the-canvas-state/2d.state.saverestore.imageSmoothingEnabled.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/the-canvas-state/2d.zero.size.canvas.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/the-canvas-state/canvas_state_restore_001-expected.htm
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/the-canvas-state/canvas_state_restore_001-ref.htm
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/the-canvas-state/canvas_state_restore_001.htm

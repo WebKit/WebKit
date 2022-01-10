@@ -139,7 +139,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.rect.zero.6.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.roundrect.1.radius.dompoint.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.roundrect.1.radius.dompointinit.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.roundrect.1.radius.dompointinit.single.argument.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.roundrect.1.radius.double.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.roundrect.1.radius.double.single.argument.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.roundrect.2.radii.1.dompoint.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.roundrect.2.radii.1.dompointinit.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.roundrect.2.radii.1.double.html

@@ -101,6 +101,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/meta-inhead-insertion-mode.html
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/named-character-references-data.js
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/named-character-references.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/no-doctype-name.html
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/quotes-in-meta.html
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/template.js
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/test.js

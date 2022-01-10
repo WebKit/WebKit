@@ -14,9 +14,7 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/conformance-requirements/2d.coordinatespace.html
-/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/conformance-requirements/2d.coordinatespace.worker.js
-/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/conformance-requirements/2d.missingargs.html
-/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/conformance-requirements/2d.missingargs.worker.js
-/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/conformance-requirements/2d.voidreturn.html
-/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/conformance-requirements/2d.voidreturn.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/conformance-requirements/2d.conformance.requirements.basics.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/conformance-requirements/2d.conformance.requirements.basics.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/conformance-requirements/2d.conformance.requirements.missingargs.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/conformance-requirements/2d.conformance.requirements.missingargs.worker.js

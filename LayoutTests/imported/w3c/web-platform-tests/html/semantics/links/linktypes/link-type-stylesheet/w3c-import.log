@@ -18,5 +18,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/links/linktypes/link-type-stylesheet/process-stylesheet-linked-resource-ascii-case-insensitive-lower.css
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/links/linktypes/link-type-stylesheet/process-stylesheet-linked-resource-ascii-case-insensitive-mixed.css
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/links/linktypes/link-type-stylesheet/process-stylesheet-linked-resource-ascii-case-insensitive-other.css
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/links/linktypes/link-type-stylesheet/process-stylesheet-linked-resource-ascii-case-insensitive-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/links/linktypes/link-type-stylesheet/process-stylesheet-linked-resource-ascii-case-insensitive.css
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/links/linktypes/link-type-stylesheet/process-stylesheet-linked-resource-ascii-case-insensitive.html

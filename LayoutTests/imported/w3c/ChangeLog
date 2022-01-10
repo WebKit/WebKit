@@ -1,3 +1,15 @@
+2022-01-10  Chris Dumez  <cdumez@apple.com>
+
+        Resync web-platform-tests/html from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=234938
+
+        Reviewed by Geoff Garen.
+
+        Resync web-platform-tests/html from upstream 03ced021594abbd9e91.
+
+        * resources/resource-files.json:
+        * web-platform-tests/html/*: Updated.
+
 2022-01-10  Sam Weinig  <weinig@apple.com>
 
         [CSS Color 4] CSS color() function should not clamp channels to the 0-1 range

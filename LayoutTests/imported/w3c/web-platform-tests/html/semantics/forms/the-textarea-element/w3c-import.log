@@ -20,13 +20,15 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-textarea-element/multiline-placeholder-crlf-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-textarea-element/multiline-placeholder-crlf.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-textarea-element/multiline-placeholder-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-textarea-element/multiline-placeholder-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-textarea-element/multiline-placeholder.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-textarea-element/placeholder-white-space-notref.html
-/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-textarea-element/placeholder-white-space.tentative-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-textarea-element/placeholder-white-space.tentative-expected-mismatch.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-textarea-element/placeholder-white-space.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-textarea-element/textarea-maxlength.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-textarea-element/textarea-minlength.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-textarea-element/textarea-newline-bidi-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-textarea-element/textarea-newline-bidi-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-textarea-element/textarea-newline-bidi.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-textarea-element/textarea-placeholder-lineheight.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-textarea-element/textarea-setcustomvalidity.html
@@ -37,6 +39,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-textarea-element/value-defaultValue-textContent.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-textarea-element/wrap-enumerated-ascii-case-insensitive-child.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-textarea-element/wrap-enumerated-ascii-case-insensitive.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-textarea-element/wrap-reflect-1-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-textarea-element/wrap-reflect-1a-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-textarea-element/wrap-reflect-1a.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-textarea-element/wrap-reflect-1b-expected.html

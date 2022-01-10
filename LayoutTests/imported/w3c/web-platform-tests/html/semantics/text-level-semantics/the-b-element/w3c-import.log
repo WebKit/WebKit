@@ -14,6 +14,6 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/imported/w3c/web-platform-tests/html/semantics/text-level-semantics/the-b-element/b-usage-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/text-level-semantics/the-b-element/b-usage-expected-mismatch.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/text-level-semantics/the-b-element/b-usage-notref.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/text-level-semantics/the-b-element/b-usage.html

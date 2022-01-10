@@ -33,6 +33,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/sandboxing/sandbox-navigation-timing.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/sandboxing/sandbox-new-execution-context-iframe.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/sandboxing/sandbox-new-execution-context.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/sandboxing/sandbox-parse-noscript-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/sandboxing/sandbox-parse-noscript.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/sandboxing/sandbox-window-open-srcdoc.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/sandboxing/window-open-blank-from-different-initiator.html

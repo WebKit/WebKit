@@ -17,6 +17,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/the-select-element/option-add-label-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/the-select-element/option-add-label.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/the-select-element/option-checked-styling-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/the-select-element/option-checked-styling-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/the-select-element/option-checked-styling.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/the-select-element/option-empty-label-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/the-select-element/option-empty-label-to-empty-string-expected.html
@@ -24,11 +25,16 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/the-select-element/option-empty-label.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/the-select-element/option-label-and-text-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/the-select-element/option-label-and-text.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/the-select-element/option-label-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/the-select-element/option-only-label-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/the-select-element/option-only-label.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/the-select-element/option-rm-label-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/the-select-element/option-rm-label.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/the-select-element/select-invalidation-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/the-select-element/select-invalidation-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/the-select-element/select-invalidation.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/the-select-element/select-size-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/the-select-element/select-size-001.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/the-select-element/select-size-002-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/the-select-element/select-size-002.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/the-select-element/select-size-ref.html

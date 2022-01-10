@@ -15,9 +15,12 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/tools/gentest.py
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/tools/gentest_union.py
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/tools/gentestutils.py
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/tools/gentestutilsunion.py
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/tools/name2dir-canvas.yaml
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/tools/name2dir-offscreen.yaml
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/tools/name2dir.yaml
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/tools/spec.yaml
-/LayoutTests/imported/w3c/web-platform-tests/html/canvas/tools/templates-offscreen.yaml
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/tools/templates-new.yaml
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/tools/templates.yaml

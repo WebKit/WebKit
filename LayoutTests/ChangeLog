@@ -1,3 +1,16 @@
+2022-01-10  Chris Dumez  <cdumez@apple.com>
+
+        Resync web-platform-tests/html from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=234938
+
+        Reviewed by Geoff Garen.
+
+        Resync web-platform-tests/html from upstream 03ced021594abbd9e91.
+
+        * TestExpectations:
+        * platform/mac-wk2/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/input-valueasdate-expected.txt:
+        * tests-options.json:
+
 2022-01-10  Tim Nguyen  <ntim@apple.com>
 
         REGRESSION(r287683): <dialog> elements inside clipped/overflowed elements are no longer shown

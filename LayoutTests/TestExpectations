@@ -222,6 +222,7 @@ imported/w3c/web-platform-tests/speech-api/ [ Skip ]
 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/reporting
 imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/reporting-navigation.https.html
 imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/reporting-subresource-corp.https.html
+imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/reporting-to-document-reporting-endpoint.https.window.html
 imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/reporting-to-endpoint.https.html
 imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/reporting-to-frame-owner.https.html
 imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/reporting-to-worker-owner.https.html
@@ -764,6 +765,10 @@ imported/w3c/web-platform-tests/html/semantics/text-level-semantics/the-ruby-ele
 imported/w3c/web-platform-tests/html/semantics/document-metadata/the-link-element/link-rel-attribute-ascii-case-insensitive.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/form-controls/select-sizing-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/phrasing-content-0/font-element-text-decoration-color/001-x.xhtml [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/imageBitmapRendering-transferFromImageBitmap-webgl.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/tables/table-cell-nowrap-with-fixed-width.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/html/rendering/replaced-elements/embedded-content/cross-domain-iframe-in-multicol.sub.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/html/semantics/grouping-content/the-li-element/grouping-li-reftest-007.html [ ImageOnlyFailure ]
 
 # Cross-Origin-Embedder-Policy: credentialless is not supported.
 imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/credentialless
@@ -833,7 +838,20 @@ imported/w3c/web-platform-tests/cookies/schemeful-same-site/schemeful-iframe-sub
 imported/w3c/web-platform-tests/cookies/schemeful-same-site/schemeful-navigation.tentative.html [ Failure Pass ]
 imported/w3c/web-platform-tests/cookies/schemeful-same-site/schemeful-subresource.tentative.html [ Failure Pass ]
 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/microtasks/checkpoint-after-window-onerror-module.html [ Failure Pass ]
+imported/w3c/web-platform-tests/html/syntax/charset/without-inheritance.html [ Failure Pass ]
+imported/w3c/web-platform-tests/html/syntax/speculative-charset/speculative-script.tentative.html [ Failure Pass ]
 imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/page-load/base-href-script-src.tentative.html [ Failure Pass ]
+imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/page-load/img-src-loading-lazy.tentative.html [ Failure Pass ]
+imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/page-load/link-rel-alternate-stylesheet.tentative.html [ Failure Pass ]
+imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/page-load/link-rel-stylesheet-disabled.tentative.html [ Failure Pass ]
+imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/page-load/link-rel-stylesheet-nomatch-media.tentative.html [ Failure Pass ]
+imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/page-load/math-font-script-src.tentative.html [ Failure Pass ]
+imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/page-load/math-script-src.tentative.html [ Failure Pass ]
+imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/page-load/meta-csp-img-src-none.tentative.html [ Failure Pass ]
+imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/page-load/meta-viewport-link-stylesheet-media.tentative.html [ Failure Pass ]
+imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/page-load/picture-source-no-img.tentative.html [ Failure Pass ]
+imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/page-load/script-src-unsupported-type.tentative.html [ Failure Pass ]
+imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/page-load/svg-script-src.tentative.html [ Failure Pass ]
 imported/w3c/web-platform-tests/html/browsers/windows/targeting-cross-origin-nested-browsing-contexts.html [ Failure Pass ]
 imported/w3c/web-platform-tests/html/webappapis/update-rendering/child-document-raf-order.html [ Failure Pass ]
 imported/w3c/web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/img-aspect-ratio-lazy.tentative.html [ Failure Pass ]
@@ -853,6 +871,7 @@ imported/w3c/web-platform-tests/html/rendering/widgets/baseline-alignment-and-ov
 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-pointer-remove-source.html [ Failure Pass ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/cross-origin-to-whom.window.html [ Failure Pass ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/cross-origin-to-whom-part-2.window.html [ Failure Pass ]
+imported/w3c/web-platform-tests/html/semantics/forms/the-selectmenu-element/selectmenu-popup-position-with-zoom.tentative.html [ Failure Pass ]
 imported/w3c/web-platform-tests/content-security-policy/reporting-api/reporting-api-works-on-frame-ancestors.https.sub.html [ Failure Pass ]
 imported/w3c/web-platform-tests/user-timing/clearMarks.html [ Failure Pass ]
 imported/w3c/web-platform-tests/user-timing/mark.html [ Failure Pass ]
