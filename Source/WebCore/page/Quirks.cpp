@@ -817,7 +817,7 @@ bool Quirks::needsPreloadAutoQuirk() const
         return m_needsPreloadAutoQuirk.value();
 
     auto domain = RegistrableDomain(m_document->url()).string();
-    m_needsPreloadAutoQuirk = domain == "vimeo"_s;
+    m_needsPreloadAutoQuirk = domain == "vimeo.com"_s;
 
     return m_needsPreloadAutoQuirk.value();
 #else
