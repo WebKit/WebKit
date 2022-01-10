@@ -1,3 +1,14 @@
+2022-01-10  Antoine Quint  <graouts@webkit.org>
+
+        [Web Animations] getKeyframes() for a CSS Animation should not use computed style for keyframes (part 2)
+        https://bugs.webkit.org/show_bug.cgi?id=235028
+
+        Reviewed by Antti Koivisto.
+
+        Mark WPT progressions.
+
+        * web-platform-tests/css/css-animations/KeyframeEffect-getKeyframes.tentative-expected.txt:
+
 2022-01-09  Antoine Quint  <graouts@webkit.org>
 
         Unreviewed WPT update after https://github.com/web-platform-tests/wpt/pull/32222.
