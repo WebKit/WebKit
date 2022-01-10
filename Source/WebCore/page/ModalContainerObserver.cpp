@@ -59,6 +59,8 @@
 namespace WebCore {
 
 static constexpr size_t maxLengthForClickableElementText = 100;
+static constexpr double maxWidthForElementsThatLookClickable = 200;
+static constexpr double maxHeightForElementsThatLookClickable = 100;
 
 bool ModalContainerObserver::isNeededFor(const Document& document)
 {
@@ -295,7 +297,15 @@ HTMLFrameOwnerElement* ModalContainerObserver::frameOwnerForControls() const
     return m_containerAndFrameOwnerForControls.second.get();
 }
 
-static bool isClickableControl(const HTMLElement& element)
+static bool listensForUserActivation(const Element& element)
+{
+    return element.hasEventListeners(eventNames().clickEvent) || element.hasEventListeners(eventNames().mousedownEvent) || element.hasEventListeners(eventNames().mouseupEvent)
+        || element.hasEventListeners(eventNames().touchstartEvent) || element.hasEventListeners(eventNames().touchendEvent)
+        || element.hasEventListeners(eventNames().pointerdownEvent) || element.hasEventListeners(eventNames().pointerupEvent);
+}
+
+enum class ContainerListensForUserActivation : bool { No, Yes };
+static bool isClickableControl(const HTMLElement& element, ContainerListensForUserActivation containerListensForUserActivation)
 {
     if (element.isActuallyDisabled())
         return false;
@@ -326,9 +336,28 @@ static bool isClickableControl(const HTMLElement& element)
         return equalIgnoringFragmentIdentifier(element.document().url(), href) || !href.protocolIsInHTTPFamily();
     }
 
-    return element.hasEventListeners(eventNames().clickEvent) || element.hasEventListeners(eventNames().mousedownEvent) || element.hasEventListeners(eventNames().mouseupEvent)
-        || element.hasEventListeners(eventNames().touchstartEvent) || element.hasEventListeners(eventNames().touchendEvent)
-        || element.hasEventListeners(eventNames().pointerdownEvent) || element.hasEventListeners(eventNames().pointerupEvent);
+    if (listensForUserActivation(element))
+        return true;
+
+    if (containerListensForUserActivation == ContainerListensForUserActivation::No)
+        return false;
+
+    auto rendererAndRect = element.boundingAbsoluteRectWithoutLayout();
+    if (!rendererAndRect)
+        return false;
+
+    auto [renderer, rect] = *rendererAndRect;
+    if (!renderer || rect.isEmpty())
+        return false;
+
+    // If the modal container itself has event listeners for user activation, continue looking for elements that look like
+    // clickable elements (e.g. small nodes with pointer-style cursor).
+    if (renderer->style().cursor() == CursorType::Pointer) {
+        if (rect.width() <= maxWidthForElementsThatLookClickable && rect.height() <= maxHeightForElementsThatLookClickable)
+            return true;
+    }
+
+    return false;
 }
 
 static void removeParentOrChildElements(Vector<Ref<HTMLElement>>& elements)
@@ -709,9 +738,10 @@ std::pair<Vector<WeakPtr<HTMLElement>>, Vector<String>> ModalContainerObserver::
     if (!containerForControls)
         return { };
 
+    auto containerListensForUserActivation = listensForUserActivation(*containerForControls) ? ContainerListensForUserActivation::Yes : ContainerListensForUserActivation::No;
     Vector<Ref<HTMLElement>> clickableControls;
     for (auto& child : descendantsOfType<HTMLElement>(*containerForControls)) {
-        if (isClickableControl(child))
+        if (isClickableControl(child, containerListensForUserActivation))
             clickableControls.append(child);
     }
 

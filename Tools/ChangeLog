@@ -1,3 +1,17 @@
+2022-01-10  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Modal container observer should classify elements that are styled like clickable controls
+        https://bugs.webkit.org/show_bug.cgi?id=235022
+
+        Reviewed by Tim Horton.
+
+        Add a new API test to exercise the change, and adjust the test harness to allow tests using the harness to
+        additionally add an event listener on the modal container.
+
+        * TestWebKitAPI/Tests/WebKit/modal-container-custom.html:
+        * TestWebKitAPI/Tests/WebKitCocoa/ModalContainerObservation.mm:
+        (TestWebKitAPI::TEST):
+
 2022-01-10  Jonathan Bedard  <jbedard@apple.com>
 
         [git-webkit] Retain old commits in pull-request (Follow-up fix)

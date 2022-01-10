@@ -29,6 +29,13 @@ function show(markup) {
     fixedContainer.innerHTML = markup;
     fixedContainer.style.display = "block";
 }
+
+function showWithEventListener(markup, eventType, callback) {
+    const fixedContainer = document.getElementById("fixed");
+    fixedContainer.addEventListener(eventType, callback);
+    fixedContainer.innerHTML = markup;
+    fixedContainer.style.display = "block";
+}
 </script>
 </head>
 <body>

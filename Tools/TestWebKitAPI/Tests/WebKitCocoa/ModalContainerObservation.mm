@@ -328,4 +328,16 @@ TEST(ModalContainerObservation, DetectModalContainerAfterSettingText)
     EXPECT_EQ([webView lastModalContainerInfo].availableTypes, _WKModalContainerControlTypeNegative);
 }
 
+TEST(ModalContainerObservation, DetectControlsWithEventListenersOnModalContainer)
+{
+    auto webView = createModalContainerWebView();
+    [webView loadBundlePage:@"modal-container-custom"];
+    auto script = @"showWithEventListener(`<div>Hello world <span style='cursor: pointer;'>yes</span></div>`, 'click', () => window.testPassed = true)";
+    [webView evaluate:script andDecidePolicy:_WKModalContainerDecisionHideAndAllow];
+    [webView waitForNextPresentationUpdate];
+    EXPECT_FALSE([[webView contentsAsString] containsString:@"Hello world"]);
+    EXPECT_EQ([webView lastModalContainerInfo].availableTypes, _WKModalContainerControlTypePositive);
+    EXPECT_TRUE([[webView objectByEvaluatingJavaScript:@"window.testPassed"] boolValue]);
+}
+
 } // namespace TestWebKitAPI
