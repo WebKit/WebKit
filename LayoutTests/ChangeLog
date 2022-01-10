@@ -1,3 +1,15 @@
+2022-01-10  Chris Dumez  <cdumez@apple.com>
+
+        https://brianpeiris.github.io/spatial-audio-test/?ramped stops playing after a few seconds
+        https://bugs.webkit.org/show_bug.cgi?id=234979
+
+        Reviewed by Eric Carlson.
+
+        Add layout test coverage.
+
+        * webaudio/Panner/panner-cone-gain-nan-expected.txt: Added.
+        * webaudio/Panner/panner-cone-gain-nan.html: Added.
+
 2022-01-10  Cathie Chen  <cathiechen@igalia.com>
 
         ASSERTION FAILED in RenderLayer::updateClipRects
