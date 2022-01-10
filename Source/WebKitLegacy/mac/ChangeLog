@@ -1,3 +1,12 @@
+2022-01-10  Elliott Williams  <emw@apple.com>
+
+        postprocess-headers.sh: Avoid redundant processing to speed up incremental Xcode builds
+        https://bugs.webkit.org/show_bug.cgi?id=234941
+
+        Reviewed by Jonathan Bedard.
+
+        * postprocess-headers.sh:
+
 2022-01-07  Alex Christensen  <achristensen@webkit.org>
 
         Unreviewed, reverting r287698.

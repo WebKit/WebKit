@@ -26,10 +26,12 @@
 
 POSTPROCESS_HEADER_RULE="${SRCROOT}/Scripts/postprocess-header-rule"
 [[ -x "${POSTPROCESS_HEADER_RULE}" ]] || { echo "### Unable to find ${POSTPROCESS_HEADER_RULE}"; exit 1; }
+TIMESTAMP="${TARGET_TEMP_DIR}/postprocess-headers-timestamp"
 
 function rewrite_headers ()
 {
     for HEADER_PATH in "${1}/"*.h; do
+        [ "${TIMESTAMP}" -nt "${HEADER_PATH}" ] || \
         SCRIPT_HEADER_VISIBILITY="${2}" \
         SCRIPT_INPUT_FILE="${HEADER_PATH}" \
         SCRIPT_OUTPUT_FILE_0="${HEADER_PATH}" \
@@ -39,3 +41,4 @@ function rewrite_headers ()
 
 rewrite_headers "${TARGET_BUILD_DIR}/${PUBLIC_HEADERS_FOLDER_PATH}" Public
 rewrite_headers "${TARGET_BUILD_DIR}/${PRIVATE_HEADERS_FOLDER_PATH}" Private
+touch "${TIMESTAMP}"

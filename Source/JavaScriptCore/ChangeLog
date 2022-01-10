@@ -1,3 +1,20 @@
+2022-01-10  Elliott Williams  <emw@apple.com>
+
+        postprocess-headers.sh: Avoid redundant processing to speed up incremental Xcode builds
+        https://bugs.webkit.org/show_bug.cgi?id=234941
+
+        Reviewed by Jonathan Bedard.
+
+        On builds made with the legacy build system (currently any CLI build for Apple platforms),
+        postprocess-headers.sh always runs, even when no headers have been copied. PBXBuild doesn't
+        have the necessary granularity to let us avoid running it when there are no headers to copy,
+        however, this patch improves execution time by only running the postprocess rule when a
+        header has changed since the last time it ran.
+
+        This change reduces JavaScriptCore's null build time from ~18.3s to ~5.32s.
+
+        * postprocess-headers.sh: Added timestamp check
+
 2022-01-09  Sam Weinig  <weinig@apple.com>
 
         Remove support for Direct2D
