@@ -1,3 +1,13 @@
+2022-01-10  Youenn Fablet  <youenn@apple.com>
+
+        Compile out ENABLE_MEDIA_CAPTURE on WATCHOS and APPLETV
+        https://bugs.webkit.org/show_bug.cgi?id=234946
+        <rdar://87126228>
+
+        Reviewed by Sam Weinig.
+
+        * wtf/PlatformEnableCocoa.h:
+
 2022-01-09  Sam Weinig  <weinig@apple.com>
 
         Remove support for Direct2D
