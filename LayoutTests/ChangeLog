@@ -1,3 +1,14 @@
+2022-01-10  Tim Nguyen  <ntim@apple.com>
+
+        REGRESSION(r287683): <dialog> elements inside clipped/overflowed elements are no longer shown
+        https://bugs.webkit.org/show_bug.cgi?id=234984
+
+        Reviewed by Simon Fraser.
+
+        Enable relevant tests. Set the asserting test as Crash instead of Skipping.
+
+        * TestExpectations:
+
 2022-01-10  Simon Fraser  <simon.fraser@apple.com>
 
         REGRESSION (r287431): [Big Sur WK1] fast/scrolling/latching/iframe-latch-small-deltas.html is consistently failing
