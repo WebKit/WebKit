@@ -1,3 +1,16 @@
+2022-01-10  Per Arne Vollan  <pvollan@apple.com>
+
+        [MacCatalyst] Add syscalls from iOS sandbox
+        https://bugs.webkit.org/show_bug.cgi?id=234970
+        <rdar://problem/87262730>
+
+        Reviewed by Darin Adler.
+
+        Add syscalls from iOS sandbox that are not in the MacCatalyst sandbox, since these are potentially
+        still needed on MacCatalyst.
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2022-01-09  Sam Weinig  <weinig@apple.com>
 
         Remove support for Direct2D
