@@ -1,3 +1,14 @@
+2022-01-10  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION (r287431): [Big Sur WK1] fast/scrolling/latching/iframe-latch-small-deltas.html is consistently failing
+        https://bugs.webkit.org/show_bug.cgi?id=234996
+
+        Reviewed by Ryan Haddad.
+        
+        Move results from Catalina.
+
+        * platform/mac-bigsur-wk1/fast/scrolling/latching/iframe-latch-small-deltas-expected.txt: Renamed from LayoutTests/platform/mac-catalina-wk1/fast/scrolling/latching/iframe-latch-small-deltas-expected.txt.
+
 2022-01-10  Sam Weinig  <weinig@apple.com>
 
         [CSS Color 4] CSS color() function should not clamp channels to the 0-1 range
