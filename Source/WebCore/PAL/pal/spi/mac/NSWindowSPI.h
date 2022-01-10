@@ -29,6 +29,10 @@
 
 #if USE(APPLE_INTERNAL_SDK)
 
+#if HAVE(CPP20_INCOMPATIBLE_INTERNAL_HEADERS)
+#define CGCOLORTAGGEDPOINTER_H_
+#endif
+
 #import <AppKit/NSWindow_Private.h>
 
 #else

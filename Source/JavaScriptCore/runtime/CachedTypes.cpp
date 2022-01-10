@@ -395,7 +395,7 @@ static std::enable_if_t<!std::is_same<T, SourceType<T>>::value, SourceType<T>>&&
 
 template<typename Source>
 class CachedObject {
-    WTF_MAKE_NONCOPYABLE(CachedObject<Source>);
+    WTF_MAKE_NONCOPYABLE(CachedObject);
 
 public:
     using SourceType_ = Source;

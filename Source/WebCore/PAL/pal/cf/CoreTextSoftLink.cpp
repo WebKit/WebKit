@@ -24,6 +24,10 @@
 
 #include "config.h"
 
+#if HAVE(CPP20_INCOMPATIBLE_INTERNAL_HEADERS)
+#define CGCOLORTAGGEDPOINTER_H_
+#endif
+
 #include <pal/spi/cf/CoreTextSPI.h>
 #include <wtf/SoftLinking.h>
 

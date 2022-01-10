@@ -1,3 +1,19 @@
+2022-01-10  Alex Christensen  <achristensen@webkit.org>
+
+        Start using C++20
+        https://bugs.webkit.org/show_bug.cgi?id=233963
+
+        Reviewed by Yusuke Suzuki.
+
+        * Configurations/Base.xcconfig:
+        * wtf/DisallowCType.h:
+        * wtf/FileSystem.cpp:
+        (WTF::FileSystemImpl::toStdFileSystemPath):
+        (WTF::FileSystemImpl::fromStdFileSystemPath):
+        * wtf/PlatformHave.h:
+        * wtf/VectorTraits.h:
+        * wtf/text/StringOperators.h:
+
 2022-01-10  Youenn Fablet  <youenn@apple.com>
 
         Compile out ENABLE_MEDIA_CAPTURE on WATCHOS and APPLETV

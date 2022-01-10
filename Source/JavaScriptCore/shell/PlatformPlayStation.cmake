@@ -31,6 +31,6 @@ if (${CMAKE_GENERATOR} MATCHES "Visual Studio")
     set_source_files_properties(
         ../API/tests/CustomGlobalObjectClassTest.c
         ../API/tests/testapi.c
-        PROPERTIES COMPILE_FLAGS --std=gnu17
+        PROPERTIES COMPILE_FLAGS --std=gnu2a
     )
 endif ()

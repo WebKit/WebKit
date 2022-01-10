@@ -27,6 +27,15 @@
 
 #if USE(APPLE_INTERNAL_SDK)
 
+#define CGCOLORTAGGEDPOINTER_H_
+
+#if HAVE(CPP20_INCOMPATIBLE_INTERNAL_HEADERS)
+#ifndef GL_GLES_PROTOTYPES
+#define GL_GLES_PROTOTYPES 0
+#endif
+#include <ANGLE/entry_points_gles_ext_autogen.h>
+#endif
+
 #import <AppKit/NSInspectorBar.h>
 #import <AppKit/NSTextInputClient_Private.h>
 #import <AppKit/NSWindow_Private.h>

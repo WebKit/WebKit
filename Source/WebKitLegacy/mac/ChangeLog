@@ -1,3 +1,14 @@
+2022-01-10  Alex Christensen  <achristensen@webkit.org>
+
+        Start using C++20
+        https://bugs.webkit.org/show_bug.cgi?id=233963
+
+        Reviewed by Yusuke Suzuki.
+
+        * Configurations/Base.xcconfig:
+        * Configurations/WebKitLegacy.xcconfig:
+        * MigrateHeaders.make:
+
 2022-01-10  Elliott Williams  <emw@apple.com>
 
         postprocess-headers.sh: Avoid redundant processing to speed up incremental Xcode builds

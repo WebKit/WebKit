@@ -2913,13 +2913,12 @@ void Heap::addCoreConstraints()
     m_constraintSet->add(
         "O", "Output",
         MAKE_MARKING_CONSTRAINT_EXECUTOR_PAIR(([] (auto& visitor) {
-            using Visitor = decltype(visitor);
             Heap* heap = visitor.heap();
 
             // The `visitor2` argument is strangely named because the WinCairo port
             // gets confused  and thinks we're trying to capture the outer visitor
             // arg here. Giving it a unique name works around this issue.
-            auto callOutputConstraint = [] (Visitor& visitor2, HeapCell* heapCell, HeapCell::Kind) {
+            auto callOutputConstraint = [] (auto& visitor2, HeapCell* heapCell, HeapCell::Kind) {
                 SetRootMarkReasonScope rootScope(visitor2, RootMarkReason::Output);
                 VM& vm = visitor2.vm();
                 JSCell* cell = static_cast<JSCell*>(heapCell);
@@ -2927,7 +2926,7 @@ void Heap::addCoreConstraints()
             };
             
             auto add = [&] (auto& set) {
-                RefPtr<SharedTask<void(Visitor&)>> task = set.template forEachMarkedCellInParallel<Visitor>(callOutputConstraint);
+                RefPtr<SharedTask<void(decltype(visitor)&)>> task = set.template forEachMarkedCellInParallel<decltype(visitor)>(callOutputConstraint);
                 visitor.addParallelConstraintTask(task);
             };
 

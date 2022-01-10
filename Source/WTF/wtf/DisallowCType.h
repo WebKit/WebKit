@@ -40,8 +40,8 @@
 // Also generates errors on wx on Windows, presumably because these functions
 // are used from wx headers. On GTK+ for Mac many GTK+ files include <libintl.h>
 // or <glib/gi18n-lib.h>, which in turn include <xlocale/_ctype.h> which uses
-// isacii(). 
-#if !(OS(DARWIN) && PLATFORM(GTK)) && !defined(_LIBCPP_VERSION) && defined(__GLIBC__)
+// isacii(). Additionally, regex.h uses tolower on Linux.
+#if !PLATFORM(GTK) && !PLATFORM(WPE) && !defined(_LIBCPP_VERSION) && defined(__GLIBC__)
 
 #include <ctype.h>
 
