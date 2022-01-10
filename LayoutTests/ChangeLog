@@ -1,3 +1,40 @@
+2022-01-10  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][a11y] WTR: do not show html-id and toolkit attributes in test results
+        https://bugs.webkit.org/show_bug.cgi?id=235024
+
+        Reviewed by Adrian Perez de Castro.
+
+        Update results.
+
+        * accessibility/gtk/aria-autocomplete-expected.txt:
+        * accessibility/gtk/aria-current-expected.txt:
+        * accessibility/gtk/aria-keyshortcuts-expected.txt:
+        * accessibility/gtk/aria-readonly-propagated-expected.txt:
+        * accessibility/gtk/object-attributes-expected.txt:
+        * platform/glib/accessibility/content-editable-as-textarea-expected.txt: Renamed from LayoutTests/platform/gtk/accessibility/content-editable-as-textarea-expected.txt.
+        * platform/glib/accessibility/image-link-expected.txt: Renamed from LayoutTests/platform/wpe/accessibility/image-link-expected.txt.
+        * platform/glib/accessibility/image-map2-expected.txt: Renamed from LayoutTests/platform/gtk/accessibility/image-map2-expected.txt.
+        * platform/glib/accessibility/lists-expected.txt: Renamed from LayoutTests/platform/wpe/accessibility/lists-expected.txt.
+        * platform/glib/accessibility/table-attributes-expected.txt: Renamed from LayoutTests/platform/gtk/accessibility/table-attributes-expected.txt.
+        * platform/glib/accessibility/table-cell-spans-expected.txt: Renamed from LayoutTests/platform/gtk/accessibility/table-cell-spans-expected.txt.
+        * platform/glib/accessibility/table-cells-expected.txt: Renamed from LayoutTests/platform/gtk/accessibility/table-cells-expected.txt.
+        * platform/glib/accessibility/table-one-cell-expected.txt: Renamed from LayoutTests/platform/wpe/accessibility/table-one-cell-expected.txt.
+        * platform/glib/accessibility/table-sections-expected.txt: Renamed from LayoutTests/platform/gtk/accessibility/table-sections-expected.txt.
+        * platform/glib/accessibility/table-with-rules-expected.txt: Renamed from LayoutTests/platform/gtk/accessibility/table-with-rules-expected.txt.
+        * platform/glib/accessibility/transformed-element-expected.txt: Renamed from LayoutTests/platform/gtk/accessibility/transformed-element-expected.txt.
+        * platform/gtk/accessibility/gtk/xml-roles-exposed-expected.txt:
+        * platform/gtk/accessibility/image-link-expected.txt: Removed.
+        * platform/gtk/accessibility/lists-expected.txt: Removed.
+        * platform/gtk/accessibility/table-one-cell-expected.txt: Removed.
+        * platform/wpe/accessibility/image-map2-expected.txt: Removed.
+        * platform/wpe/accessibility/table-attributes-expected.txt: Removed.
+        * platform/wpe/accessibility/table-cell-spans-expected.txt: Removed.
+        * platform/wpe/accessibility/table-cells-expected.txt: Removed.
+        * platform/wpe/accessibility/table-sections-expected.txt: Removed.
+        * platform/wpe/accessibility/table-with-rules-expected.txt: Removed.
+        * platform/wpe/accessibility/transformed-element-expected.txt: Removed.
+
 2022-01-09  Ziran Sun  <zsun@igalia.com>
 
         [css-grid] Resync web-platform-tests/css/css-grid tests from upstream

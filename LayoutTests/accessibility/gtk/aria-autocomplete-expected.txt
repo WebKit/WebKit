@@ -5,67 +5,67 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 test1 supports autocompletion: false
-AXPlatformAttributes: computed-role:searchbox, xml-roles:searchbox, readonly:false, html-id:test1, tag:div, toolkit:WebKitGtk
+AXPlatformAttributes: computed-role:searchbox, readonly:false, tag:div, xml-roles:searchbox
 
 test2 supports autocompletion: false
-AXPlatformAttributes: computed-role:searchbox, xml-roles:searchbox, readonly:false, autocomplete:none, html-id:test2, tag:div, toolkit:WebKitGtk
+AXPlatformAttributes: autocomplete:none, computed-role:searchbox, readonly:false, tag:div, xml-roles:searchbox
 
 test3 supports autocompletion: false
-AXPlatformAttributes: computed-role:searchbox, xml-roles:searchbox, readonly:false, autocomplete:none, html-id:test3, tag:div, toolkit:WebKitGtk
+AXPlatformAttributes: autocomplete:none, computed-role:searchbox, readonly:false, tag:div, xml-roles:searchbox
 
 test4 supports autocompletion: false
-AXPlatformAttributes: computed-role:searchbox, xml-roles:searchbox, readonly:false, autocomplete:none, html-id:test4, tag:div, toolkit:WebKitGtk
+AXPlatformAttributes: autocomplete:none, computed-role:searchbox, readonly:false, tag:div, xml-roles:searchbox
 
 test5 supports autocompletion: true
-AXPlatformAttributes: computed-role:searchbox, xml-roles:searchbox, readonly:false, autocomplete:both, html-id:test5, tag:div, toolkit:WebKitGtk
+AXPlatformAttributes: autocomplete:both, computed-role:searchbox, readonly:false, tag:div, xml-roles:searchbox
 
 test6 supports autocompletion: true
-AXPlatformAttributes: computed-role:searchbox, xml-roles:searchbox, readonly:false, autocomplete:inline, html-id:test6, tag:div, toolkit:WebKitGtk
+AXPlatformAttributes: autocomplete:inline, computed-role:searchbox, readonly:false, tag:div, xml-roles:searchbox
 
 test7 supports autocompletion: true
-AXPlatformAttributes: computed-role:searchbox, xml-roles:searchbox, readonly:false, autocomplete:list, html-id:test7, tag:div, toolkit:WebKitGtk
+AXPlatformAttributes: autocomplete:list, computed-role:searchbox, readonly:false, tag:div, xml-roles:searchbox
 
 test8 supports autocompletion: false
-AXPlatformAttributes: computed-role:group, xml-roles:group, html-id:test8, tag:div, toolkit:WebKitGtk
+AXPlatformAttributes: computed-role:group, tag:div, xml-roles:group
 
 test9 supports autocompletion: false
-AXPlatformAttributes: computed-role:group, xml-roles:group, html-id:test9, tag:div, toolkit:WebKitGtk
+AXPlatformAttributes: computed-role:group, tag:div, xml-roles:group
 
 test10 supports autocompletion: false
-AXPlatformAttributes: computed-role:group, xml-roles:group, html-id:test10, tag:div, toolkit:WebKitGtk
+AXPlatformAttributes: computed-role:group, tag:div, xml-roles:group
 
 test11 supports autocompletion: false
-AXPlatformAttributes: computed-role:group, xml-roles:group, html-id:test11, tag:div, toolkit:WebKitGtk
+AXPlatformAttributes: computed-role:group, tag:div, xml-roles:group
 
 test12 supports autocompletion: false
-AXPlatformAttributes: computed-role:group, xml-roles:group, html-id:test12, tag:div, toolkit:WebKitGtk
+AXPlatformAttributes: computed-role:group, tag:div, xml-roles:group
 
 test13 supports autocompletion: false
-AXPlatformAttributes: computed-role:group, xml-roles:group, html-id:test13, tag:div, toolkit:WebKitGtk
+AXPlatformAttributes: computed-role:group, tag:div, xml-roles:group
 
 test14 supports autocompletion: false
-AXPlatformAttributes: computed-role:group, xml-roles:group, html-id:test14, tag:div, toolkit:WebKitGtk
+AXPlatformAttributes: computed-role:group, tag:div, xml-roles:group
 
 test15 supports autocompletion: false
-AXPlatformAttributes: computed-role:combobox, xml-roles:combobox, readonly:false, haspopup:listbox, html-id:test15, tag:div, toolkit:WebKitGtk
+AXPlatformAttributes: computed-role:combobox, haspopup:listbox, readonly:false, tag:div, xml-roles:combobox
 
 test16 supports autocompletion: false
-AXPlatformAttributes: computed-role:combobox, xml-roles:combobox, readonly:false, haspopup:listbox, autocomplete:none, html-id:test16, tag:div, toolkit:WebKitGtk
+AXPlatformAttributes: autocomplete:none, computed-role:combobox, haspopup:listbox, readonly:false, tag:div, xml-roles:combobox
 
 test17 supports autocompletion: false
-AXPlatformAttributes: computed-role:combobox, xml-roles:combobox, readonly:false, haspopup:listbox, autocomplete:none, html-id:test17, tag:div, toolkit:WebKitGtk
+AXPlatformAttributes: autocomplete:none, computed-role:combobox, haspopup:listbox, readonly:false, tag:div, xml-roles:combobox
 
 test18 supports autocompletion: false
-AXPlatformAttributes: computed-role:combobox, xml-roles:combobox, readonly:false, haspopup:listbox, autocomplete:none, html-id:test18, tag:div, toolkit:WebKitGtk
+AXPlatformAttributes: autocomplete:none, computed-role:combobox, haspopup:listbox, readonly:false, tag:div, xml-roles:combobox
 
 test19 supports autocompletion: true
-AXPlatformAttributes: computed-role:combobox, xml-roles:combobox, readonly:false, haspopup:listbox, autocomplete:both, html-id:test19, tag:div, toolkit:WebKitGtk
+AXPlatformAttributes: autocomplete:both, computed-role:combobox, haspopup:listbox, readonly:false, tag:div, xml-roles:combobox
 
 test20 supports autocompletion: true
-AXPlatformAttributes: computed-role:combobox, xml-roles:combobox, readonly:false, haspopup:listbox, autocomplete:inline, html-id:test20, tag:div, toolkit:WebKitGtk
+AXPlatformAttributes: autocomplete:inline, computed-role:combobox, haspopup:listbox, readonly:false, tag:div, xml-roles:combobox
 
 test21 supports autocompletion: true
-AXPlatformAttributes: computed-role:combobox, xml-roles:combobox, readonly:false, haspopup:listbox, autocomplete:list, html-id:test21, tag:div, toolkit:WebKitGtk
+AXPlatformAttributes: autocomplete:list, computed-role:combobox, haspopup:listbox, readonly:false, tag:div, xml-roles:combobox
 PASS successfullyParsed is true
 
 TEST COMPLETE

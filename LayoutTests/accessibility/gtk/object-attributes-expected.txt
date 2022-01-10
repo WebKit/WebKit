@@ -46,7 +46,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: computed-role:heading, level:1, tag:h1, toolkit:WebKitGtk
+AXPlatformAttributes: computed-role:heading, level:1, tag:h1
 ------------
 AXRole: AXHeading
 AXParent: AXWebArea
@@ -65,7 +65,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: computed-role:heading, level:2, tag:h2, toolkit:WebKitGtk
+AXPlatformAttributes: computed-role:heading, level:2, tag:h2
 ------------
 AXRole: AXHeading
 AXParent: AXWebArea
@@ -84,7 +84,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: computed-role:heading, level:3, tag:h3, toolkit:WebKitGtk
+AXPlatformAttributes: computed-role:heading, level:3, tag:h3
 ------------
 AXRole: AXHeading
 AXParent: AXWebArea
@@ -103,7 +103,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: computed-role:heading, level:4, tag:h4, toolkit:WebKitGtk
+AXPlatformAttributes: computed-role:heading, level:4, tag:h4
 ------------
 AXRole: AXHeading
 AXParent: AXWebArea
@@ -122,7 +122,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: computed-role:heading, level:5, tag:h5, toolkit:WebKitGtk
+AXPlatformAttributes: computed-role:heading, level:5, tag:h5
 ------------
 AXRole: AXHeading
 AXParent: AXWebArea
@@ -141,7 +141,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: computed-role:heading, level:6, tag:h6, toolkit:WebKitGtk
+AXPlatformAttributes: computed-role:heading, level:6, tag:h6
 ------------
 AXRole: AXSection
 AXParent: AXWebArea
@@ -160,7 +160,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: grabbed:true, toolkit:WebKitGtk
+AXPlatformAttributes: grabbed:true
 ------------
 AXRole: AXSection
 AXParent: AXWebArea
@@ -179,7 +179,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: tag:td, toolkit:WebKitGtk
+AXPlatformAttributes: tag:td
 ------------
 AXRole: AXSection
 AXParent: AXWebArea
@@ -198,7 +198,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: tag:td, toolkit:WebKitGtk
+AXPlatformAttributes: tag:td
 ------------
 AXRole: AXTable
 AXParent: AXWebArea
@@ -216,7 +216,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: computed-role:table, tag:table, toolkit:WebKitGtk
+AXPlatformAttributes: computed-role:table, tag:table
 ------------
 AXRole: AXDeletion
 AXParent: AXWebArea
@@ -235,7 +235,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: xml-roles:deletion, computed-role:deletion, tag:del, toolkit:WebKitGtk
+AXPlatformAttributes: computed-role:deletion, tag:del, xml-roles:deletion
 ------------
 AXRole: AXInsertion
 AXParent: AXWebArea
@@ -254,7 +254,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: xml-roles:insertion, computed-role:insertion, tag:ins, toolkit:WebKitGtk
+AXPlatformAttributes: computed-role:insertion, tag:ins, xml-roles:insertion
 ------------
 AXRole: AXStatic
 AXParent: AXWebArea
@@ -273,7 +273,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: computed-role:time, tag:time, toolkit:WebKitGtk
+AXPlatformAttributes: computed-role:time, tag:time
 ------------
 AXRole: AXParagraph
 AXParent: AXWebArea
@@ -292,7 +292,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: computed-role:paragraph, html-id:description, tag:p, toolkit:WebKitGtk
+AXPlatformAttributes: computed-role:paragraph, tag:p
 ------------
 
 PASS successfullyParsed is true

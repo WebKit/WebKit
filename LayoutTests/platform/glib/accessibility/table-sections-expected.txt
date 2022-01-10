@@ -34,7 +34,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: computed-role:columnheader, tag:th, toolkit:WPEWebKit
+AXPlatformAttributes: computed-role:columnheader, tag:th
 ------------
 AXRole: AXColumnHeader
 AXParent: AXRow
@@ -53,7 +53,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: computed-role:columnheader, tag:th, toolkit:WPEWebKit
+AXPlatformAttributes: computed-role:columnheader, tag:th
 ------------
 AXRole: AXCell
 AXParent: AXRow
@@ -72,7 +72,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: computed-role:cell, tag:td, toolkit:WPEWebKit
+AXPlatformAttributes: computed-role:cell, tag:td
 ------------
 
 
@@ -95,7 +95,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: computed-role:columnheader, tag:th, toolkit:WPEWebKit
+AXPlatformAttributes: computed-role:columnheader, tag:th
 ------------
 AXRole: AXRowHeader
 AXParent: AXRow
@@ -114,7 +114,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: computed-role:rowheader, tag:th, toolkit:WPEWebKit
+AXPlatformAttributes: computed-role:rowheader, tag:th
 ------------
 AXRole: AXRowHeader
 AXParent: AXRow
@@ -133,7 +133,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: computed-role:rowheader, tag:th, toolkit:WPEWebKit
+AXPlatformAttributes: computed-role:rowheader, tag:th
 ------------
 
 
@@ -164,7 +164,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: computed-role:columnheader, tag:th, toolkit:WPEWebKit
+AXPlatformAttributes: computed-role:columnheader, tag:th
 ------------
 AXRole: AXColumnHeader
 AXParent: AXRow
@@ -183,7 +183,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: computed-role:columnheader, tag:th, toolkit:WPEWebKit
+AXPlatformAttributes: computed-role:columnheader, tag:th
 ------------
 AXRole: AXCell
 AXParent: AXRow
@@ -202,7 +202,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: computed-role:cell, tag:td, toolkit:WPEWebKit
+AXPlatformAttributes: computed-role:cell, tag:td
 ------------
 AXRole: AXRowHeader
 AXParent: AXRow
@@ -221,7 +221,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: computed-role:rowheader, tag:th, toolkit:WPEWebKit
+AXPlatformAttributes: computed-role:rowheader, tag:th
 ------------
 AXRole: AXCell
 AXParent: AXRow
@@ -240,7 +240,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: computed-role:cell, tag:td, toolkit:WPEWebKit
+AXPlatformAttributes: computed-role:cell, tag:td
 ------------
 AXRole: AXCell
 AXParent: AXRow
@@ -259,7 +259,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: computed-role:cell, tag:td, toolkit:WPEWebKit
+AXPlatformAttributes: computed-role:cell, tag:td
 ------------
 AXRole: AXRowHeader
 AXParent: AXRow
@@ -278,7 +278,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: computed-role:rowheader, tag:th, toolkit:WPEWebKit
+AXPlatformAttributes: computed-role:rowheader, tag:th
 ------------
 AXRole: AXCell
 AXParent: AXRow
@@ -297,7 +297,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: computed-role:cell, tag:td, toolkit:WPEWebKit
+AXPlatformAttributes: computed-role:cell, tag:td
 ------------
 AXRole: AXCell
 AXParent: AXRow
@@ -316,7 +316,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: computed-role:cell, tag:td, toolkit:WPEWebKit
+AXPlatformAttributes: computed-role:cell, tag:td
 ------------
 AXRole: AXCell
 AXParent: AXRow
@@ -335,7 +335,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: computed-role:cell, tag:td, toolkit:WPEWebKit
+AXPlatformAttributes: computed-role:cell, tag:td
 ------------
 AXRole: AXCell
 AXParent: AXRow
@@ -354,7 +354,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: computed-role:cell, tag:td, toolkit:WPEWebKit
+AXPlatformAttributes: computed-role:cell, tag:td
 ------------
 AXRole: AXCell
 AXParent: AXRow
@@ -373,7 +373,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: computed-role:cell, tag:td, toolkit:WPEWebKit
+AXPlatformAttributes: computed-role:cell, tag:td
 ------------
 
 
@@ -404,7 +404,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: computed-role:columnheader, tag:th, toolkit:WPEWebKit
+AXPlatformAttributes: computed-role:columnheader, tag:th
 ------------
 AXRole: AXColumnHeader
 AXParent: AXRow
@@ -423,7 +423,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: computed-role:columnheader, tag:th, toolkit:WPEWebKit
+AXPlatformAttributes: computed-role:columnheader, tag:th
 ------------
 AXRole: AXCell
 AXParent: AXRow
@@ -442,7 +442,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: computed-role:cell, tag:td, toolkit:WPEWebKit
+AXPlatformAttributes: computed-role:cell, tag:td
 ------------
 
 
@@ -465,7 +465,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: computed-role:columnheader, tag:th, toolkit:WPEWebKit
+AXPlatformAttributes: computed-role:columnheader, tag:th
 ------------
 AXRole: AXRowHeader
 AXParent: AXRow
@@ -484,7 +484,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: computed-role:rowheader, tag:th, toolkit:WPEWebKit
+AXPlatformAttributes: computed-role:rowheader, tag:th
 ------------
 AXRole: AXRowHeader
 AXParent: AXRow
@@ -503,7 +503,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: computed-role:rowheader, tag:th, toolkit:WPEWebKit
+AXPlatformAttributes: computed-role:rowheader, tag:th
 ------------
 
 
@@ -534,7 +534,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: computed-role:columnheader, tag:th, toolkit:WPEWebKit
+AXPlatformAttributes: computed-role:columnheader, tag:th
 ------------
 AXRole: AXColumnHeader
 AXParent: AXRow
@@ -553,7 +553,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: computed-role:columnheader, tag:th, toolkit:WPEWebKit
+AXPlatformAttributes: computed-role:columnheader, tag:th
 ------------
 AXRole: AXCell
 AXParent: AXRow
@@ -572,7 +572,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: computed-role:cell, tag:td, toolkit:WPEWebKit
+AXPlatformAttributes: computed-role:cell, tag:td
 ------------
 AXRole: AXRowHeader
 AXParent: AXRow
@@ -591,7 +591,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: computed-role:rowheader, tag:th, toolkit:WPEWebKit
+AXPlatformAttributes: computed-role:rowheader, tag:th
 ------------
 AXRole: AXCell
 AXParent: AXRow
@@ -610,7 +610,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: computed-role:cell, tag:td, toolkit:WPEWebKit
+AXPlatformAttributes: computed-role:cell, tag:td
 ------------
 AXRole: AXCell
 AXParent: AXRow
@@ -629,7 +629,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: computed-role:cell, tag:td, toolkit:WPEWebKit
+AXPlatformAttributes: computed-role:cell, tag:td
 ------------
 AXRole: AXRowHeader
 AXParent: AXRow
@@ -648,7 +648,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: computed-role:rowheader, tag:th, toolkit:WPEWebKit
+AXPlatformAttributes: computed-role:rowheader, tag:th
 ------------
 AXRole: AXCell
 AXParent: AXRow
@@ -667,7 +667,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: computed-role:cell, tag:td, toolkit:WPEWebKit
+AXPlatformAttributes: computed-role:cell, tag:td
 ------------
 AXRole: AXCell
 AXParent: AXRow
@@ -686,7 +686,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: computed-role:cell, tag:td, toolkit:WPEWebKit
+AXPlatformAttributes: computed-role:cell, tag:td
 ------------
 AXRole: AXCell
 AXParent: AXRow
@@ -705,7 +705,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: computed-role:cell, tag:td, toolkit:WPEWebKit
+AXPlatformAttributes: computed-role:cell, tag:td
 ------------
 AXRole: AXCell
 AXParent: AXRow
@@ -724,7 +724,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: computed-role:cell, tag:td, toolkit:WPEWebKit
+AXPlatformAttributes: computed-role:cell, tag:td
 ------------
 AXRole: AXCell
 AXParent: AXRow
@@ -743,7 +743,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: computed-role:cell, tag:td, toolkit:WPEWebKit
+AXPlatformAttributes: computed-role:cell, tag:td
 ------------
 
 

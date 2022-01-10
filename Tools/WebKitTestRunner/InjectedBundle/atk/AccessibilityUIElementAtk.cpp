@@ -221,17 +221,26 @@ String attributeSetToString(AtkAttributeSet* attributeSet, String separator=", "
     if (!attributeSet)
         return String();
 
-    StringBuilder builder;
+    Vector<String> attributeList;
     for (AtkAttributeSet* attributes = attributeSet; attributes; attributes = attributes->next) {
         AtkAttribute* attribute = static_cast<AtkAttribute*>(attributes->data);
-        builder.append(attribute->name);
-        builder.append(':');
-        builder.append(attribute->value);
-        if (attributes->next)
-            builder.append(separator);
+        if (!g_strcmp0(attribute->name, "html-id") || !g_strcmp0(attribute->name, "toolkit"))
+            continue;
+
+        attributeList.append(makeString(attribute->name, ':', attribute->value));
     }
     atk_attribute_set_free(attributeSet);
 
+    std::sort(attributeList.begin(), attributeList.end(), WTF::codePointCompareLessThan);
+
+    StringBuilder builder;
+    bool isFirst = true;
+    for (const auto& attribute : attributeList) {
+        if (!isFirst)
+            builder.append(separator);
+        builder.append(attribute);
+        isFirst = false;
+    }
     return builder.toString();
 }
 

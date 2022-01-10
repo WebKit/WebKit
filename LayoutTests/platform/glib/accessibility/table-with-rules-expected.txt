@@ -21,7 +21,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: computed-role:table, html-id:testTable2, tag:table, toolkit:WPEWebKit
+AXPlatformAttributes: computed-role:table, tag:table
 
 AXRole: AXTable
 AXParent: AXWebArea
@@ -39,7 +39,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: computed-role:table, html-id:testTable3, tag:table, toolkit:WPEWebKit
+AXPlatformAttributes: computed-role:table, tag:table
 
 AXRole: AXTable
 AXParent: AXWebArea
@@ -57,7 +57,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: computed-role:table, html-id:testTable4, tag:table, toolkit:WPEWebKit
+AXPlatformAttributes: computed-role:table, tag:table
 
 AXRole: AXSection
 AXParent: AXWebArea
@@ -76,7 +76,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: tag:td, toolkit:WPEWebKit
+AXPlatformAttributes: tag:td
 
 AXRole: AXSection
 AXParent: AXWebArea
@@ -95,6 +95,6 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: tag:td, toolkit:WPEWebKit
+AXPlatformAttributes: tag:td
 
 

@@ -287,14 +287,19 @@ static String attributesOfElement(AccessibilityUIElement& element)
     // We append the platform attributes as a single line at the end.
     builder.append("AXPlatformAttributes: ");
     auto attributes = element.platformUIElement()->attributes();
+    auto keys = copyToVector(attributes.keys());
+    std::sort(keys.begin(), keys.end(), WTF::codePointCompareLessThan);
+
     bool isFirst = true;
-    for (const auto& it : attributes) {
+    for (const auto& key : keys) {
+        if (key == "id" || key == "toolkit")
+            continue;
+
         if (!isFirst)
             builder.append(", ");
         isFirst = false;
-        builder.append(it.key, ':', it.value);
+        builder.append(key, ':', attributes.get(key));
     }
-    builder.append('\n');
 
     return builder.toString();
 }
