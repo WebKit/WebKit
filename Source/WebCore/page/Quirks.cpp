@@ -179,14 +179,8 @@ bool Quirks::hasBrokenEncryptedMediaAPISupportQuirk() const
     if (m_hasBrokenEncryptedMediaAPISupportQuirk)
         return m_hasBrokenEncryptedMediaAPISupportQuirk.value();
 
-    auto domain = m_document->securityOrigin().domain().convertToASCIILowercase();
-
-    m_hasBrokenEncryptedMediaAPISupportQuirk = domain == "starz.com"
-        || domain.endsWith(".starz.com")
-        || domain == "youtube.com"
-        || domain.endsWith(".youtube.com")
-        || domain == "hulu.com"
-        || domain.endsWith("hulu.com");
+    auto domain = RegistrableDomain(m_document->url()).string();
+    m_hasBrokenEncryptedMediaAPISupportQuirk = domain == "starz.com"_s || domain == "youtube.com"_s || domain == "hulu.com"_s;
 
     return m_hasBrokenEncryptedMediaAPISupportQuirk.value();
 }
@@ -822,9 +816,8 @@ bool Quirks::needsPreloadAutoQuirk() const
     if (m_needsPreloadAutoQuirk)
         return m_needsPreloadAutoQuirk.value();
 
-    auto domain = m_document->securityOrigin().domain().convertToASCIILowercase();
-
-    m_needsPreloadAutoQuirk = domain == "vimeo.com" || domain.endsWith("vimeo.com");
+    auto domain = RegistrableDomain(m_document->url()).string();
+    m_needsPreloadAutoQuirk = domain == "vimeo"_s;
 
     return m_needsPreloadAutoQuirk.value();
 #else
