@@ -51,20 +51,8 @@ LegacyRenderSVGModelObject::LegacyRenderSVGModelObject(SVGElement& element, Rend
 {
 }
 
-LayoutRect LegacyRenderSVGModelObject::clippedOverflowRect(const RenderLayerModelObject* repaintContainer, VisibleRectContext context) const
+LayoutRect LegacyRenderSVGModelObject::clippedOverflowRect(const RenderLayerModelObject* repaintContainer, VisibleRectContext) const
 {
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
-    if (document().settings().layerBasedSVGEngineEnabled()) {
-        if (style().visibility() != Visibility::Visible && !enclosingLayer()->hasVisibleContent())
-            return LayoutRect();
-
-        ASSERT(!view().frameView().layoutContext().isPaintOffsetCacheEnabled());
-        return computeRect(visualOverflowRectEquivalent(), repaintContainer, context);
-    }
-#else
-    UNUSED_PARAM(context);
-#endif
-
     return SVGRenderSupport::clippedOverflowRectForRepaint(*this, repaintContainer);
 }
 
@@ -126,14 +114,6 @@ void LegacyRenderSVGModelObject::styleDidChange(StyleDifference diff, const Rend
 
 bool LegacyRenderSVGModelObject::nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation&, const LayoutPoint&, HitTestAction)
 {
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
-    if (document().settings().layerBasedSVGEngineEnabled()) {
-        // FIXME: [LBSE] Upstream LegacyRenderSVGModelObject inheritance changes (should inherit from RenderLayerModelObject).
-        notImplemented();
-        return false;
-    }
-#endif
-
     ASSERT_NOT_REACHED();
     return false;
 }
