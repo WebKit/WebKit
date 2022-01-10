@@ -179,7 +179,7 @@ bool RenderSVGResourceGradient::applyResource(RenderElement& renderer, const Ren
     return true;
 }
 
-void RenderSVGResourceGradient::postApplyResource(RenderElement& renderer, GraphicsContext*& context, OptionSet<RenderSVGResourceMode> resourceMode, const Path* path, const LegacyRenderSVGShape* shape)
+void RenderSVGResourceGradient::postApplyResource(RenderElement& renderer, GraphicsContext*& context, OptionSet<RenderSVGResourceMode> resourceMode, const Path* path, const RenderElement* shape)
 {
     ASSERT(context);
     ASSERT(!resourceMode.isEmpty());
@@ -207,20 +207,8 @@ void RenderSVGResourceGradient::postApplyResource(RenderElement& renderer, Graph
 #else
         UNUSED_PARAM(renderer);
 #endif
-    } else {
-        if (resourceMode.contains(RenderSVGResourceMode::ApplyToFill)) {
-            if (path)
-                context->fillPath(*path);
-            else if (shape)
-                shape->fillShape(*context);
-        }
-        if (resourceMode.contains(RenderSVGResourceMode::ApplyToStroke)) {
-            if (path)
-                context->strokePath(*path);
-            else if (shape)
-                shape->strokeShape(*context);
-        }
-    }
+    } else
+        fillAndStrokePathOrShape(*context, resourceMode, path, shape);
 
     context->restore();
 }

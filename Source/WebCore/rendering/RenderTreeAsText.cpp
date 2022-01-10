@@ -39,6 +39,7 @@
 #include "InlineIteratorTextBox.h"
 #include "LegacyInlineTextBox.h"
 #include "LegacyRenderSVGRoot.h"
+#include "LegacyRenderSVGShape.h"
 #include "Logging.h"
 #include "PrintContext.h"
 #include "PseudoElement.h"
@@ -64,6 +65,7 @@
 #include "RenderSVGPath.h"
 #include "RenderSVGResourceContainer.h"
 #include "RenderSVGRoot.h"
+#include "RenderSVGShape.h"
 #include "RenderSVGText.h"
 #include "RenderTableCell.h"
 #include "RenderView.h"
@@ -558,6 +560,12 @@ void write(TextStream& ts, const RenderObject& o, OptionSet<RenderAsTextFlag> be
         ts << "\n";
     };
 
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+    if (is<RenderSVGShape>(o)) {
+        write(ts, downcast<RenderSVGShape>(o), behavior);
+        return;
+    }
+#endif
     if (is<LegacyRenderSVGShape>(o)) {
         write(ts, downcast<LegacyRenderSVGShape>(o), behavior);
         return;

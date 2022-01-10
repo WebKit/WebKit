@@ -22,6 +22,7 @@
 #include "config.h"
 #include "SVGLineElement.h"
 
+#include "LegacyRenderSVGShape.h"
 #include "RenderSVGResource.h"
 #include "SVGLengthValue.h"
 #include <wtf/IsoMallocInlines.h>

@@ -96,6 +96,7 @@
 #include "RenderMathMLBlock.h"
 #include "RenderMenuList.h"
 #include "RenderSVGRoot.h"
+#include "RenderSVGShape.h"
 #include "RenderTableCell.h"
 #include "RenderText.h"
 #include "RenderTextControl.h"
@@ -910,7 +911,7 @@ LayoutRect AccessibilityRenderObject::elementRect() const
 
 bool AccessibilityRenderObject::supportsPath() const
 {
-    return is<RenderText>(renderer()) || is<LegacyRenderSVGShape>(renderer());
+    return is<RenderText>(renderer()) || (renderer() && renderer()->isSVGShapeOrLegacySVGShape());
 }
 
 Path AccessibilityRenderObject::elementPath() const
@@ -960,15 +961,24 @@ Path AccessibilityRenderObject::elementPath() const
         if (auto svgRoot = ancestorsOfType<LegacyRenderSVGRoot>(*m_renderer).first()) {
             LayoutPoint parentOffset = axObjectCache()->getOrCreate(&*svgRoot)->elementRect().location();
             path.transform(AffineTransform().translate(parentOffset.x(), parentOffset.y()));
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
-        } else if (auto svgRoot = ancestorsOfType<RenderSVGRoot>(*m_renderer).first()) {
-            LayoutPoint parentOffset = axObjectCache()->getOrCreate(&*svgRoot)->elementRect().location();
-            path.transform(AffineTransform().translate(parentOffset.x(), parentOffset.y()));
-#endif
         }
 
         return path;
     }
+
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+    if (is<RenderSVGShape>(renderer()) && downcast<RenderSVGShape>(*m_renderer).hasPath()) {
+        Path path = downcast<RenderSVGShape>(*m_renderer).path();
+
+        // The SVG path is in terms of the parent's bounding box. The path needs to be offset to frame coordinates.
+        if (auto svgRoot = ancestorsOfType<RenderSVGRoot>(*m_renderer).first()) {
+            LayoutPoint parentOffset = axObjectCache()->getOrCreate(&*svgRoot)->elementRect().location();
+            path.transform(AffineTransform().translate(parentOffset.x(), parentOffset.y()));
+        }
+
+        return path;
+    }
+#endif
 
     return Path();
 }

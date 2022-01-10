@@ -29,6 +29,7 @@
 
 #include "ElementAncestorIterator.h"
 #include "LegacyRenderSVGRoot.h"
+#include "LegacyRenderSVGShape.h"
 #include "NodeRenderStyle.h"
 #include "RenderChildIterator.h"
 #include "RenderElement.h"

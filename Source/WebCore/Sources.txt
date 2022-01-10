@@ -2494,6 +2494,7 @@ rendering/svg/RenderSVGResourcePattern.cpp
 rendering/svg/RenderSVGResourceRadialGradient.cpp
 rendering/svg/RenderSVGResourceSolidColor.cpp
 rendering/svg/RenderSVGRoot.cpp
+rendering/svg/RenderSVGShape.cpp
 rendering/svg/RenderSVGTSpan.cpp
 rendering/svg/RenderSVGText.cpp
 rendering/svg/RenderSVGTextPath.cpp

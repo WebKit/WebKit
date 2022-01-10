@@ -25,6 +25,7 @@
 #include "AffineTransform.h"
 #include "ElementIterator.h"
 #include "PathTraversalState.h"
+#include "RenderElement.h"
 #include "RenderSVGResource.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGImageElement.h"

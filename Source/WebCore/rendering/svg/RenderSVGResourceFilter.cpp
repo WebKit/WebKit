@@ -172,7 +172,7 @@ bool RenderSVGResourceFilter::applyResource(RenderElement& renderer, const Rende
     return true;
 }
 
-void RenderSVGResourceFilter::postApplyResource(RenderElement& renderer, GraphicsContext*& context, OptionSet<RenderSVGResourceMode> resourceMode, const Path*, const LegacyRenderSVGShape*)
+void RenderSVGResourceFilter::postApplyResource(RenderElement& renderer, GraphicsContext*& context, OptionSet<RenderSVGResourceMode> resourceMode, const Path*, const RenderElement*)
 {
     ASSERT(context);
     ASSERT_UNUSED(resourceMode, !resourceMode);
