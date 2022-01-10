@@ -322,7 +322,7 @@ Rebased 'eng/pr-branch' on 'main!'
 
             repo.staged['added.txt'] = 'added'
             self.assertEqual(0, program.main(
-                args=('pull-request', '-i', 'pr-branch', '-v'),
+                args=('pull-request', '-i', 'pr-branch', '-v', '--no-history'),
                 path=self.path,
             ))
 
@@ -358,7 +358,7 @@ Rebased 'eng/pr-branch' on 'main!'
             with OutputCapture(level=logging.INFO) as captured:
                 repo.staged['added.txt'] = 'diff'
                 self.assertEqual(0, program.main(
-                    args=('pull-request', '-v'),
+                    args=('pull-request', '-v', '--no-history'),
                     path=self.path,
                 ))
 
@@ -392,7 +392,7 @@ Rebased 'eng/pr-branch' on 'main!'
             with OutputCapture(level=logging.INFO) as captured, MockTerminal.input('n'):
                 repo.staged['added.txt'] = 'diff'
                 self.assertEqual(0, program.main(
-                    args=('pull-request', '-v'),
+                    args=('pull-request', '-v', '--no-history'),
                     path=self.path,
                 ))
 

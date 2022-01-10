@@ -21,6 +21,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import os
+import re
 import sys
 
 from .command import Command
@@ -53,6 +54,12 @@ class PullRequest(Command):
         parser.add_argument(
             '--defaults', '--no-defaults', action=arguments.NoAction, default=None,
             help='Do not prompt the user for defaults, always use (or do not use) them',
+        )
+        parser.add_argument(
+            '--with-history', '--no-history',
+            dest='history', default=None,
+            help='Create numbered branches to track the history of a change',
+            action=arguments.NoAction,
         )
 
     @classmethod
@@ -130,6 +137,22 @@ class PullRequest(Command):
         if run([repository.executable(), 'push', '-f', target, repository.branch], cwd=repository.root_path).returncode:
             sys.stderr.write("Failed to push '{}' to '{}'\n".format(repository.branch, target))
             return 1
+
+        if args.history or (target != 'origin' and args.history is None):
+            regex = re.compile(r'^{}-(?P<count>\d+)$'.format(repository.branch))
+            count = max([
+                int(regex.match(branch).group('count')) if regex.match(branch) else 0 for branch in
+                repository.branches_for(remote=target)
+            ] + [0]) + 1
+
+            history_branch = '{}-{}'.format(repository.branch, count)
+            log.info("Creating '{}' as a reference branch".format(history_branch))
+            if run([
+                repository.executable(), 'branch', history_branch, repository.branch,
+            ], cwd=repository.root_path).returncode or run([
+                repository.executable(), 'push', '-f', target, history_branch,
+            ], cwd=repository.root_path).returncode:
+                sys.stderr.write("Failed to create and push '{}' to '{}'\n".format(history_branch, target))
 
         if not rmt.pull_requests:
             sys.stderr.write("'{}' cannot generate pull-requests\n".format(rmt.url))
