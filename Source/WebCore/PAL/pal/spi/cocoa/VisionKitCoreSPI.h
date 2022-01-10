@@ -146,6 +146,10 @@ NS_ASSUME_NONNULL_END
 
 #endif
 
+@interface VKWKLineInfo (Staging_85139101)
+@property (nonatomic, readonly) BOOL shouldWrap;
+@end
+
 #if USE(APPLE_INTERNAL_SDK)
 #include <WebKitAdditions/VisionKitCoreSPIAdditions.h>
 #endif

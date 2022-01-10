@@ -5769,7 +5769,8 @@ static TextRecognitionLineData makeDataForLine(const Internals::ImageOverlayLine
         getQuad<Internals::ImageOverlayLine>(line),
         line.children.map([](auto& textChild) -> TextRecognitionWordData {
             return { textChild.text, getQuad<Internals::ImageOverlayText>(textChild), textChild.hasLeadingWhitespace };
-        })
+        }),
+        line.shouldWrap
     };
 }
 

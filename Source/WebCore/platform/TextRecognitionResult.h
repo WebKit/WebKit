@@ -81,14 +81,16 @@ template<class Decoder> std::optional<TextRecognitionWordData> TextRecognitionWo
 }
 
 struct TextRecognitionLineData {
-    TextRecognitionLineData(FloatQuad&& quad, Vector<TextRecognitionWordData>&& theChildren)
+    TextRecognitionLineData(FloatQuad&& quad, Vector<TextRecognitionWordData>&& theChildren, bool wrap)
         : normalizedQuad(WTFMove(quad))
         , children(WTFMove(theChildren))
+        , shouldWrap(wrap)
     {
     }
 
     FloatQuad normalizedQuad;
     Vector<TextRecognitionWordData> children;
+    bool shouldWrap { false };
 
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static std::optional<TextRecognitionLineData> decode(Decoder&);
@@ -114,6 +116,7 @@ template<class Encoder> void TextRecognitionLineData::encode(Encoder& encoder) c
 {
     encoder << normalizedQuad;
     encoder << children;
+    encoder << shouldWrap;
 }
 
 template<class Decoder> std::optional<TextRecognitionLineData> TextRecognitionLineData::decode(Decoder& decoder)
@@ -128,7 +131,12 @@ template<class Decoder> std::optional<TextRecognitionLineData> TextRecognitionLi
     if (!children)
         return std::nullopt;
 
-    return {{ WTFMove(*normalizedQuad), WTFMove(*children) }};
+    std::optional<bool> shouldWrap;
+    decoder >> shouldWrap;
+    if (!shouldWrap)
+        return std::nullopt;
+
+    return { { WTFMove(*normalizedQuad), WTFMove(*children), *shouldWrap } };
 }
 
 struct TextRecognitionBlockData {

@@ -192,6 +192,7 @@ IntRect containerRect(HTMLElement& element)
 struct LineElements {
     Ref<HTMLDivElement> line;
     Vector<Ref<HTMLElement>> children;
+    RefPtr<HTMLBRElement> lineBreak;
 };
 
 struct Elements {
@@ -253,10 +254,10 @@ static Elements updateSubtree(HTMLElement& element, const TextRecognitionResult&
             }
 
             ASSERT(classes.contains(imageOverlayLineClass()));
-            LineElements lineElements { childElement, { } };
+            Vector<Ref<HTMLElement>> lineChildren;
             for (auto& text : childrenOfType<HTMLDivElement>(childElement))
-                lineElements.children.append(text);
-            elements.lines.append(WTFMove(lineElements));
+                lineChildren.append(text);
+            elements.lines.append({ childElement, WTFMove(lineChildren), childrenOfType<HTMLBRElement>(childElement).first() });
         }
 
         bool canUseExistingElements = ([&] {
@@ -270,8 +271,14 @@ static Elements updateSubtree(HTMLElement& element, const TextRecognitionResult&
                 return false;
 
             for (size_t lineIndex = 0; lineIndex < result.lines.size(); ++lineIndex) {
-                auto& childResults = result.lines[lineIndex].children;
-                auto& childTextElements = elements.lines[lineIndex].children;
+                auto& lineResult = result.lines[lineIndex];
+                auto& childResults = lineResult.children;
+
+                auto& lineElements = elements.lines[lineIndex];
+                auto& childTextElements = lineElements.children;
+                if (lineResult.shouldWrap != !lineElements.lineBreak)
+                    return false;
+
                 if (childResults.size() != childTextElements.size())
                     return false;
 
@@ -317,7 +324,7 @@ static Elements updateSubtree(HTMLElement& element, const TextRecognitionResult&
             auto lineContainer = HTMLDivElement::create(document.get());
             lineContainer->classList().add(imageOverlayLineClass());
             rootContainer->appendChild(lineContainer);
-            LineElements lineElements { lineContainer, { } };
+            LineElements lineElements { lineContainer, { }, { } };
             lineElements.children.reserveInitialCapacity(line.children.size());
             for (size_t childIndex = 0; childIndex < line.children.size(); ++childIndex) {
                 auto& child = line.children[childIndex];
@@ -328,7 +335,11 @@ static Elements updateSubtree(HTMLElement& element, const TextRecognitionResult&
                 lineElements.children.uncheckedAppend(WTFMove(textContainer));
             }
 
-            lineContainer->appendChild(HTMLBRElement::create(document.get()));
+            if (!line.shouldWrap) {
+                lineElements.lineBreak = HTMLBRElement::create(document.get());
+                lineContainer->appendChild(*lineElements.lineBreak);
+            }
+
             elements.lines.uncheckedAppend(WTFMove(lineElements));
         }
 

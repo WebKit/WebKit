@@ -114,7 +114,11 @@ TextRecognitionResult makeTextRecognitionResult(VKImageAnalysis *analysis)
             searchLocation = matchLocation + childText.length();
             children.uncheckedAppend({ WTFMove(childText), floatQuad(child.quad), hasLeadingWhitespace });
         }
-        result.lines.uncheckedAppend({ floatQuad(line.quad), WTFMove(children) });
+        result.lines.uncheckedAppend({
+            floatQuad(line.quad),
+            WTFMove(children),
+            [line respondsToSelector:@selector(shouldWrap)] && [line shouldWrap]
+        });
         isFirstLine = false;
     }
 

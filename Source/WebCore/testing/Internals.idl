@@ -292,6 +292,7 @@ enum HEVCParameterCodec {
     required DOMPointReadOnly bottomRight;
     required DOMPointReadOnly bottomLeft;
     sequence<ImageOverlayText> children;
+    boolean shouldWrap = false;
 };
 
 [
