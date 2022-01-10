@@ -1,3 +1,20 @@
+2022-01-10  Sam Weinig  <weinig@apple.com>
+
+        [CSS Color 4] CSS color() function should not clamp channels to the 0-1 range
+        https://bugs.webkit.org/show_bug.cgi?id=234697
+
+        Reviewed by Darin Adler.
+
+        Update tests to include out of gamut examples for RGB types as well as some outside
+        allowed values for lab/lch/oklab/oklch types (in the latter we clamp as the spec requires.).
+
+        * css3/color/color-function-computed-style-expected.txt:
+        * css3/color/color-function-computed-style.html:
+        * css3/color/color-function-parsing-expected.txt:
+        * css3/color/color-function-parsing.html:
+        * fast/css/parsing-color-function-expected.txt:
+        * fast/css/parsing-color-function.html:
+
 2022-01-10  Arcady Goldmints-Orlov  <agoldmints@igalia.com>
 
         [GLIB] Update test expectations for new tests added in r287813

@@ -86,11 +86,11 @@ struct ColorInterpolationMethod {
     };
     struct SRGB {
         static constexpr auto interpolationColorSpace = ColorInterpolationColorSpace::SRGB;
-        using ColorType = WebCore::SRGBA<float>;
+        using ColorType = WebCore::ExtendedSRGBA<float>;
     };
     struct SRGBLinear {
         static constexpr auto interpolationColorSpace = ColorInterpolationColorSpace::SRGBLinear;
-        using ColorType = WebCore::LinearSRGBA<float>;
+        using ColorType = WebCore::ExtendedLinearSRGBA<float>;
     };
     struct XYZD50 {
         static constexpr auto interpolationColorSpace = ColorInterpolationColorSpace::XYZD50;

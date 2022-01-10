@@ -256,6 +256,10 @@
         test_computed_value(`color`, `color-mix(in ${colorSpace}, color(${colorSpace} .1 .2 .3 / .4) 30%, color(${colorSpace} .5 .6 .7 / .8) 90%)`, `color(${resultColorSpace} 0.44285715 0.54285717 0.64285713 / 0.7)`); // Scale down > 100% sum.
         test_computed_value(`color`, `color-mix(in ${colorSpace}, color(${colorSpace} .1 .2 .3 / .4) 12.5%, color(${colorSpace} .5 .6 .7 / .8) 37.5%)`, `color(${resultColorSpace} 0.44285715 0.54285717 0.64285713 / 0.35)`); // Scale up < 100% sum, causes alpha multiplication.
         test_computed_value(`color`, `color-mix(in ${colorSpace}, color(${colorSpace} .1 .2 .3 / .4) 0%, color(${colorSpace} .5 .6 .7 / .8))`, `color(${resultColorSpace} 0.5 0.6 0.7 / 0.8)`);
+
+        test_computed_value(`color`, `color-mix(in ${colorSpace}, color(${colorSpace} 2 3 4 / 5), color(${colorSpace} 4 6 8 / 10))`, `color(${resultColorSpace} 3 4.5 6)`);
+        test_computed_value(`color`, `color-mix(in ${colorSpace}, color(${colorSpace} -2 -3 -4), color(${colorSpace} -4 -6 -8))`, `color(${resultColorSpace} -3 -4.5 -6)`);
+        test_computed_value(`color`, `color-mix(in ${colorSpace}, color(${colorSpace} -2 -3 -4 / -5), color(${colorSpace} -4 -6 -8 / -10))`, `color(${resultColorSpace} 0 0 0 / 0)`);
     }
 </script>
 </body>

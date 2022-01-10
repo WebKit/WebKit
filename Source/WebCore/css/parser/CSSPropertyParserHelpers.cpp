@@ -2124,11 +2124,7 @@ static Color parseColorFunctionForRGBTypes(CSSParserTokenRange& args, ConsumerFo
     if (!args.atEnd())
         return { };
 
-    auto normalizedRed = std::clamp(channels[0], 0.0, 1.0);
-    auto normalizedGreen = std::clamp(channels[1], 0.0, 1.0);
-    auto normalizedBlue = std::clamp(channels[2], 0.0, 1.0);
-
-    return { ColorType { static_cast<float>(normalizedRed), static_cast<float>(normalizedGreen), static_cast<float>(normalizedBlue), static_cast<float>(*alpha) }, Color::Flags::UseColorFunctionSerialization };
+    return { ColorType { static_cast<float>(channels[0]), static_cast<float>(channels[1]), static_cast<float>(channels[2]), static_cast<float>(*alpha) }, Color::Flags::UseColorFunctionSerialization };
 }
 
 template<typename ColorType> static Color parseRelativeColorFunctionForRGBTypes(CSSParserTokenRange& args, Color originColor, const CSSParserContext& context)
@@ -2243,17 +2239,17 @@ static Color parseRelativeColorFunctionParameters(CSSParserTokenRange& args, con
 
     switch (args.peek().id()) {
     case CSSValueA98Rgb:
-        return parseRelativeColorFunctionForRGBTypes<A98RGB<float>>(args, WTFMove(originColor), context);
+        return parseRelativeColorFunctionForRGBTypes<ExtendedA98RGB<float>>(args, WTFMove(originColor), context);
     case CSSValueDisplayP3:
-        return parseRelativeColorFunctionForRGBTypes<DisplayP3<float>>(args, WTFMove(originColor), context);
+        return parseRelativeColorFunctionForRGBTypes<ExtendedDisplayP3<float>>(args, WTFMove(originColor), context);
     case CSSValueProphotoRgb:
-        return parseRelativeColorFunctionForRGBTypes<ProPhotoRGB<float>>(args, WTFMove(originColor), context);
+        return parseRelativeColorFunctionForRGBTypes<ExtendedProPhotoRGB<float>>(args, WTFMove(originColor), context);
     case CSSValueRec2020:
-        return parseRelativeColorFunctionForRGBTypes<Rec2020<float>>(args, WTFMove(originColor), context);
+        return parseRelativeColorFunctionForRGBTypes<ExtendedRec2020<float>>(args, WTFMove(originColor), context);
     case CSSValueSRGB:
-        return parseRelativeColorFunctionForRGBTypes<SRGBA<float>>(args, WTFMove(originColor), context);
+        return parseRelativeColorFunctionForRGBTypes<ExtendedSRGBA<float>>(args, WTFMove(originColor), context);
     case CSSValueSrgbLinear:
-        return parseRelativeColorFunctionForRGBTypes<LinearSRGBA<float>>(args, WTFMove(originColor), context);
+        return parseRelativeColorFunctionForRGBTypes<ExtendedLinearSRGBA<float>>(args, WTFMove(originColor), context);
     case CSSValueXyzD50:
         return parseRelativeColorFunctionForXYZTypes<XYZA<float, WhitePoint::D50>>(args, WTFMove(originColor), context);
     case CSSValueXyz:
@@ -2271,17 +2267,17 @@ static Color parseNonRelativeColorFunctionParameters(CSSParserTokenRange& args, 
 {
     switch (args.peek().id()) {
     case CSSValueA98Rgb:
-        return parseColorFunctionForRGBTypes<A98RGB<float>>(args, context);
+        return parseColorFunctionForRGBTypes<ExtendedA98RGB<float>>(args, context);
     case CSSValueDisplayP3:
-        return parseColorFunctionForRGBTypes<DisplayP3<float>>(args, context);
+        return parseColorFunctionForRGBTypes<ExtendedDisplayP3<float>>(args, context);
     case CSSValueProphotoRgb:
-        return parseColorFunctionForRGBTypes<ProPhotoRGB<float>>(args, context);
+        return parseColorFunctionForRGBTypes<ExtendedProPhotoRGB<float>>(args, context);
     case CSSValueRec2020:
-        return parseColorFunctionForRGBTypes<Rec2020<float>>(args, context);
+        return parseColorFunctionForRGBTypes<ExtendedRec2020<float>>(args, context);
     case CSSValueSRGB:
-        return parseColorFunctionForRGBTypes<SRGBA<float>>(args, context);
+        return parseColorFunctionForRGBTypes<ExtendedSRGBA<float>>(args, context);
     case CSSValueSrgbLinear:
-        return parseColorFunctionForRGBTypes<LinearSRGBA<float>>(args, context);
+        return parseColorFunctionForRGBTypes<ExtendedLinearSRGBA<float>>(args, context);
     case CSSValueXyzD50:
         return parseColorFunctionForXYZTypes<XYZA<float, WhitePoint::D50>>(args, context);
     case CSSValueXyz:

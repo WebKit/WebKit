@@ -43,18 +43,18 @@
         testComputed("background-color", `color(${color} .2 .2 25%)`, `color(${color} 0.2 0.2 0.25)`);
         testComputed("background-color", `color(${color} 0 0 0 / 1)`, `color(${color} 0 0 0)`);
         testComputed("background-color", `color(${color} 0% 0 0 / 0.5)`, `color(${color} 0 0 0 / 0.5)`);
-        testComputed("background-color", `color(${color} 20% 0 10/0.5)`, `color(${color} 0.2 0 1 / 0.5)`);
-        testComputed("background-color", `color(${color} 20% 0 10/50%)`, `color(${color} 0.2 0 1 / 0.5)`);
-        testComputed("background-color", `color(${color} 400% 0 10/50%)`, `color(${color} 1 0 1 / 0.5)`);
-        testComputed("background-color", `color(${color} 50% -160 160)`, `color(${color} 0.5 0 1)`);
-        testComputed("background-color", `color(${color} 50% -200 200)`, `color(${color} 0.5 0 1)`);
+        testComputed("background-color", `color(${color} 20% 0 10/0.5)`, `color(${color} 0.2 0 10 / 0.5)`);
+        testComputed("background-color", `color(${color} 20% 0 10/50%)`, `color(${color} 0.2 0 10 / 0.5)`);
+        testComputed("background-color", `color(${color} 400% 0 10/50%)`, `color(${color} 4 0 10 / 0.5)`);
+        testComputed("background-color", `color(${color} 50% -160 160)`, `color(${color} 0.5 -160 160)`);
+        testComputed("background-color", `color(${color} 50% -200 200)`, `color(${color} 0.5 -200 200)`);
         testComputed("background-color", `color(${color} 0 0 0 / -10%)`, `color(${color} 0 0 0 / 0)`);
         testComputed("background-color", `color(${color} 0 0 0 / 110%)`, `color(${color} 0 0 0)`);
         testComputed("background-color", `color(${color} 0 0 0 / 300%)`, `color(${color} 0 0 0)`);
-        testComputed("background-color", `color(${color} 50% -200)`, `color(${color} 0.5 0 0)`);
+        testComputed("background-color", `color(${color} 50% -200)`, `color(${color} 0.5 -200 0)`);
         testComputed("background-color", `color(${color} 50%)`, `color(${color} 0.5 0 0)`);
         testComputed("background-color", `color(${color})`, `color(${color} 0 0 0)`);
-        testComputed("background-color", `color(${color} 50% -200 / 0.5)`, `color(${color} 0.5 0 0 / 0.5)`);
+        testComputed("background-color", `color(${color} 50% -200 / 0.5)`, `color(${color} 0.5 -200 0 / 0.5)`);
         testComputed("background-color", `color(${color} 50% / 0.5)`, `color(${color} 0.5 0 0 / 0.5)`);
         testComputed("background-color", `color(${color} / 0.5)`, `color(${color} 0 0 0 / 0.5)`);
 
