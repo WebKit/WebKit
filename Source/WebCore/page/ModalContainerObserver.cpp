@@ -147,13 +147,22 @@ static bool isInsideNavigationElement(const Text& textNode)
     return false;
 }
 
-static bool containsMatchingText(RenderLayerModelObject& renderer, const AtomString& searchTerm)
+struct TextSearchResult {
+    bool foundMatch { false };
+    bool containsAnyText { false };
+};
+
+static TextSearchResult searchForMatch(RenderLayerModelObject& renderer, const AtomString& searchTerm)
 {
+    TextSearchResult result;
     for (auto& textRenderer : descendantsOfType<RenderText>(renderer)) {
-        if (RefPtr textNode = textRenderer.textNode(); textNode && matchesSearchTerm(*textNode, searchTerm))
-            return !isInsideNavigationElement(*textNode);
+        result.containsAnyText = true;
+        if (RefPtr textNode = textRenderer.textNode(); textNode && matchesSearchTerm(*textNode, searchTerm)) {
+            result.foundMatch = !isInsideNavigationElement(*textNode);
+            return result;
+        }
     }
-    return false;
+    return result;
 }
 
 void ModalContainerObserver::searchForModalContainerOnBehalfOfFrameOwnerIfNeeded(HTMLFrameOwnerElement& owner)
@@ -213,10 +222,15 @@ void ModalContainerObserver::updateModalContainerIfNeeded(const FrameView& view)
         if (!element || is<HTMLBodyElement>(*element) || element->isDocumentNode())
             continue;
 
-        if (!m_elementsToIgnoreWhenSearching.add(*element).isNewEntry)
+        if (m_elementsToIgnoreWhenSearching.contains(*element))
             continue;
 
-        if (containsMatchingText(renderer, searchTerm)) {
+        auto [foundMatch, containsAnyText] = searchForMatch(renderer, searchTerm);
+
+        if (containsAnyText)
+            m_elementsToIgnoreWhenSearching.add(*element);
+
+        if (foundMatch) {
             setContainer(*element);
             return;
         }
@@ -230,7 +244,7 @@ void ModalContainerObserver::updateModalContainerIfNeeded(const FrameView& view)
             if (!renderView)
                 continue;
 
-            if (containsMatchingText(*renderView, searchTerm)) {
+            if (searchForMatch(*renderView, searchTerm).foundMatch) {
                 setContainer(*element, &frameOwner);
                 return;
             }

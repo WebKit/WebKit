@@ -317,4 +317,15 @@ TEST(ModalContainerObservation, ModalContainerInSubframe)
     EXPECT_EQ([webView lastModalContainerInfo].availableTypes, _WKModalContainerControlTypePositive);
 }
 
+TEST(ModalContainerObservation, DetectModalContainerAfterSettingText)
+{
+    auto webView = createModalContainerWebView();
+    [webView loadBundlePage:@"modal-container-custom"];
+    [webView objectByEvaluatingJavaScript:@"show(`<div id='content'></div>`)"];
+    [webView waitForNextPresentationUpdate];
+    [webView evaluate:@"document.getElementById('content').innerHTML = `hello world <a href='#'>no</a>`" andDecidePolicy:_WKModalContainerDecisionHideAndIgnore];
+    EXPECT_FALSE([[webView contentsAsString] containsString:@"hello world"]);
+    EXPECT_EQ([webView lastModalContainerInfo].availableTypes, _WKModalContainerControlTypeNegative);
+}
+
 } // namespace TestWebKitAPI

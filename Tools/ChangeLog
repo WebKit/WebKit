@@ -1,3 +1,16 @@
+2022-01-10  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Modal container observer fails detection when rendered text is inserted after the container
+        https://bugs.webkit.org/show_bug.cgi?id=234752
+        rdar://87200177
+
+        Reviewed by Tim Horton.
+
+        Add a new API test to exercise the change.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ModalContainerObservation.mm:
+        (TestWebKitAPI::TEST):
+
 2022-01-10  Alex Christensen  <achristensen@webkit.org>
 
         Start using C++20
