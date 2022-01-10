@@ -128,33 +128,28 @@ void BitmapImage::setCurrentFrameDecodingStatusIfNecessary(DecodingStatus decodi
     m_currentFrameDecodingStatus = decodingStatus;
 }
 
-RefPtr<NativeImage> BitmapImage::frameImageAtIndexCacheIfNeeded(size_t index, SubsamplingLevel subsamplingLevel, const GraphicsContext* targetContext)
+RefPtr<NativeImage> BitmapImage::frameImageAtIndexCacheIfNeeded(size_t index, SubsamplingLevel subsamplingLevel)
 {
     if (!frameHasFullSizeNativeImageAtIndex(index, subsamplingLevel)) {
         LOG(Images, "BitmapImage::%s - %p - url: %s [subsamplingLevel was %d, resampling]", __FUNCTION__, this, sourceURL().string().utf8().data(), static_cast<int>(frameSubsamplingLevelAtIndex(index)));
         invalidatePlatformData();
     }
-#if USE(DIRECT2D)
-    m_source->setTargetContext(targetContext);
-#else
-    UNUSED_PARAM(targetContext);
-#endif
     return m_source->frameImageAtIndexCacheIfNeeded(index, subsamplingLevel);
 }
 
-RefPtr<NativeImage> BitmapImage::nativeImage(const GraphicsContext* targetContext)
+RefPtr<NativeImage> BitmapImage::nativeImage()
 {
-    return frameImageAtIndexCacheIfNeeded(0, SubsamplingLevel::Default, targetContext);
+    return frameImageAtIndexCacheIfNeeded(0, SubsamplingLevel::Default);
 }
 
-RefPtr<NativeImage> BitmapImage::nativeImageForCurrentFrame(const GraphicsContext* targetContext)
+RefPtr<NativeImage> BitmapImage::nativeImageForCurrentFrame()
 {
-    return frameImageAtIndexCacheIfNeeded(m_currentFrame, SubsamplingLevel::Default, targetContext);
+    return frameImageAtIndexCacheIfNeeded(m_currentFrame, SubsamplingLevel::Default);
 }
 
-RefPtr<NativeImage> BitmapImage::preTransformedNativeImageForCurrentFrame(bool respectOrientation, const GraphicsContext* targetContext)
+RefPtr<NativeImage> BitmapImage::preTransformedNativeImageForCurrentFrame(bool respectOrientation)
 {
-    auto image = nativeImageForCurrentFrame(targetContext);
+    auto image = nativeImageForCurrentFrame();
     if (!image)
         return image;
 
@@ -178,18 +173,18 @@ RefPtr<NativeImage> BitmapImage::preTransformedNativeImageForCurrentFrame(bool r
 }
 
 #if USE(CG)
-RefPtr<NativeImage> BitmapImage::nativeImageOfSize(const IntSize& size, const GraphicsContext* targetContext)
+RefPtr<NativeImage> BitmapImage::nativeImageOfSize(const IntSize& size)
 {
     size_t count = frameCount();
 
     for (size_t i = 0; i < count; ++i) {
-        auto image = frameImageAtIndexCacheIfNeeded(i, SubsamplingLevel::Default, targetContext);
+        auto image = frameImageAtIndexCacheIfNeeded(i, SubsamplingLevel::Default);
         if (image && image->size() == size)
             return image;
     }
 
     // Fallback to the first frame image if we can't find the right size
-    return frameImageAtIndexCacheIfNeeded(0, SubsamplingLevel::Default, targetContext);
+    return frameImageAtIndexCacheIfNeeded(0, SubsamplingLevel::Default);
 }
 
 Vector<Ref<NativeImage>> BitmapImage::framesNativeImages()
@@ -303,7 +298,7 @@ ImageDrawResult BitmapImage::draw(GraphicsContext& context, const FloatRect& des
             }
             return ImageDrawResult::DidRequestDecoding;
         } else {
-            image = frameImageAtIndexCacheIfNeeded(m_currentFrame, m_currentSubsamplingLevel, &context);
+            image = frameImageAtIndexCacheIfNeeded(m_currentFrame, m_currentSubsamplingLevel);
             LOG(Images, "BitmapImage::%s - %p - url: %s [an image frame will be decoded synchronously]", __FUNCTION__, this, sourceURL().string().utf8().data());
         }
         

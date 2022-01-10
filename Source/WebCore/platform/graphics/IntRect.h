@@ -48,12 +48,6 @@ typedef struct _NSRect NSRect;
 
 #if PLATFORM(WIN)
 typedef struct tagRECT RECT;
-
-struct D2D_RECT_U;
-typedef D2D_RECT_U D2D1_RECT_U;
-
-struct D2D_RECT_F;
-typedef D2D_RECT_F D2D1_RECT_F;
 #endif
 
 #if USE(CAIRO)
@@ -198,10 +192,6 @@ public:
 #if PLATFORM(WIN)
     IntRect(const RECT&);
     operator RECT() const;
-    explicit IntRect(const D2D1_RECT_F&);
-    IntRect(const D2D1_RECT_U&);
-    operator D2D1_RECT_F() const;
-    operator D2D1_RECT_U() const;
 #endif
 
 #if USE(CAIRO)

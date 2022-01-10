@@ -49,11 +49,6 @@
 #include <usp10.h>
 #endif
 
-#if USE(DIRECT2D)
-interface IDWriteFactory5;
-interface IDWriteGdiInterop;
-#endif
-
 namespace WebCore {
 
 class FontCache;

@@ -183,10 +183,6 @@
 #include <WebCore/PromisedAttachmentInfo.h>
 #endif
 
-#if USE(DIRECT2D)
-interface ID3D11Device1;
-#endif
-
 #if ENABLE(MEDIA_USAGE)
 #include <WebCore/MediaSessionIdentifier.h>
 #endif
@@ -1017,10 +1013,6 @@ public:
 
 #if PLATFORM(WIN)
     PlatformViewWidget viewWidget();
-#if USE(DIRECT2D)
-    ID3D11Device1* device() const;
-    void setDevice(ID3D11Device1*);
-#endif
 #endif
 #if USE(LIBWPE)
     struct wpe_view_backend* viewBackend();
@@ -3105,9 +3097,6 @@ private:
     RefPtr<RemoteMediaSessionCoordinatorProxy> m_mediaSessionCoordinatorProxy;
 #endif
 
-#if USE(DIRECT2D)
-    COMPtr<ID3D11Device1> m_device;
-#endif
     bool m_sessionStateWasRestoredByAPIRequest { false };
     bool m_isQuotaIncreaseDenied { false };
     bool m_isLayerTreeFrozenDueToSwipeAnimation { false };

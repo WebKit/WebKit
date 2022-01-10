@@ -30,11 +30,6 @@
 #include "FontMemoryResource.h"
 #include "SharedBuffer.h"
 
-#if USE(DIRECT2D)
-#include "DirectWriteUtilities.h"
-#include <dwrite_3.h>
-#endif
-
 namespace WebCore {
 
 struct BigEndianUShort { 
@@ -280,11 +275,6 @@ RefPtr<FontMemoryResource> renameAndActivateFont(const SharedBuffer& fontData, c
         RemoveFontMemResourceEx(fontHandle);
         return { };
     }
-
-#if USE(DIRECT2D)
-    HRESULT hr = DirectWrite::addFontFromDataToProcessCollection(rewrittenFontData);
-    ASSERT(SUCCEEDED(hr));
-#endif
 
     return FontMemoryResource::create(fontHandle);
 }

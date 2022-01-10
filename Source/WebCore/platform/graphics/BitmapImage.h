@@ -142,11 +142,11 @@ public:
 #endif
 #endif
 
-    WEBCORE_EXPORT RefPtr<NativeImage> nativeImage(const GraphicsContext* = nullptr) override;
-    RefPtr<NativeImage> nativeImageForCurrentFrame(const GraphicsContext* = nullptr) override;
-    RefPtr<NativeImage> preTransformedNativeImageForCurrentFrame(bool respectOrientation, const GraphicsContext* = nullptr) override;
+    WEBCORE_EXPORT RefPtr<NativeImage> nativeImage() override;
+    RefPtr<NativeImage> nativeImageForCurrentFrame() override;
+    RefPtr<NativeImage> preTransformedNativeImageForCurrentFrame(bool respectOrientation) override;
 #if USE(CG)
-    RefPtr<NativeImage> nativeImageOfSize(const IntSize&, const GraphicsContext* = nullptr) override;
+    RefPtr<NativeImage> nativeImageOfSize(const IntSize&) override;
     Vector<Ref<NativeImage>> framesNativeImages();
 #endif
 
@@ -158,7 +158,7 @@ private:
     WEBCORE_EXPORT BitmapImage(ImageObserver* = nullptr);
 
     RefPtr<NativeImage> frameImageAtIndex(size_t index) { return m_source->frameImageAtIndex(index); }
-    RefPtr<NativeImage> frameImageAtIndexCacheIfNeeded(size_t, SubsamplingLevel = SubsamplingLevel::Default, const GraphicsContext* = nullptr);
+    RefPtr<NativeImage> frameImageAtIndexCacheIfNeeded(size_t, SubsamplingLevel = SubsamplingLevel::Default);
 
     // Called to invalidate cached data. When |destroyAll| is true, we wipe out
     // the entire frame buffer cache and tell the image source to destroy

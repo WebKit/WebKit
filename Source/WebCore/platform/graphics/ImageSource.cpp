@@ -34,11 +34,6 @@
 #include <wtf/SystemTracing.h>
 #include <wtf/URL.h>
 
-#if USE(DIRECT2D)
-#include "GraphicsContext.h"
-#include "PlatformContextDirect2D.h"
-#endif
-
 namespace WebCore {
 
 ImageSource::ImageSource(BitmapImage* image, AlphaOption alphaOption, GammaAndColorProfileOption gammaAndColorProfileOption)
@@ -692,14 +687,6 @@ ImageOrientation ImageSource::frameOrientationAtIndex(size_t index)
 {
     return frameAtIndexCacheIfNeeded(index, ImageFrame::Caching::Metadata).orientation();
 }
-
-#if USE(DIRECT2D)
-void ImageSource::setTargetContext(const GraphicsContext* targetContext)
-{
-    if (isDecoderAvailable() && targetContext)
-        m_decoder->setTargetContext(targetContext->platformContext()->renderTarget());
-}
-#endif
 
 RefPtr<NativeImage> ImageSource::createFrameImageAtIndex(size_t index, SubsamplingLevel subsamplingLevel)
 {

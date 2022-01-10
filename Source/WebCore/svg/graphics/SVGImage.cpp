@@ -66,15 +66,6 @@
 #include "LocalDefaultSystemAppearance.h"
 #endif
 
-#if USE(DIRECT2D)
-#include "COMPtr.h"
-#include "Direct2DUtilities.h"
-#include "GraphicsContext.h"
-#include "ImageDecoderDirect2D.h"
-#include "PlatformContextDirect2D.h"
-#include <d2d1.h>
-#endif
-
 namespace WebCore {
 
 SVGImage::SVGImage(ImageObserver& observer)
@@ -217,12 +208,12 @@ ImageDrawResult SVGImage::drawForContainerInternal(GraphicsContext& context, con
     return result;
 }
 
-RefPtr<NativeImage> SVGImage::nativeImageForCurrentFrame(const GraphicsContext* targetContext)
+RefPtr<NativeImage> SVGImage::nativeImageForCurrentFrame()
 {
-    return nativeImage(targetContext);
+    return nativeImage();
 }
 
-RefPtr<NativeImage> SVGImage::nativeImage(const GraphicsContext*)
+RefPtr<NativeImage> SVGImage::nativeImage()
 {
     return nativeImage(size(), FloatRect(FloatPoint(), size()), DestinationColorSpace::SRGB());
 }

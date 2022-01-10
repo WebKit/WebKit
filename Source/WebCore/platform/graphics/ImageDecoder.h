@@ -133,10 +133,6 @@ public:
     virtual bool isAllDataReceived() const = 0;
     virtual void clearFrameBufferCache(size_t) = 0;
 
-#if USE(DIRECT2D)
-    virtual void setTargetContext(ID2D1RenderTarget*) = 0;
-#endif
-
 protected:
     ImageDecoder() = default;
 };

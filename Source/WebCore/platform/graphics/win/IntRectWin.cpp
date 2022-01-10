@@ -27,9 +27,7 @@
 #include "config.h"
 #include "IntRect.h"
 
-#include <d2d1.h>
 #include <windows.h>
-
 #include <wtf/MathExtras.h>
 
 namespace WebCore {
@@ -43,28 +41,6 @@ IntRect::operator RECT() const
 {
     RECT rect = { x(), y(), maxX(), maxY() };
     return rect;
-}
-
-IntRect::IntRect(const D2D1_RECT_F& r)
-    : m_location(IntPoint(clampToInteger(r.left), clampToInteger(r.top)))
-    , m_size(IntSize(clampToInteger(r.right - r.left), clampToInteger(r.bottom - r.top)))
-{
-}
-
-IntRect::IntRect(const D2D1_RECT_U& r)
-    : m_location(IntPoint(r.left, r.top))
-    , m_size(IntSize(r.right - r.left, r.bottom - r.top))
-{
-}
-
-IntRect::operator D2D1_RECT_F() const
-{
-    return D2D1::RectF(x(), y(), maxX(), maxY());
-}
-
-IntRect::operator D2D1_RECT_U() const
-{
-    return D2D1::RectU(x(), y(), maxX(), maxY());
 }
 
 }

@@ -1,3 +1,52 @@
+2022-01-09  Sam Weinig  <weinig@apple.com>
+
+        Remove support for Direct2D
+        https://bugs.webkit.org/show_bug.cgi?id=234999
+
+        Reviewed by Darin Adler.
+
+        Direct2D and FTW have not been building for over a year. It is
+        time to remove them.
+
+        * PlatformFTW.cmake: Removed.
+        * Shared/ShareableBitmap.cpp:
+        (WebKit::ShareableBitmap::Configuration::encode const):
+        (WebKit::ShareableBitmap::Configuration::decode):
+        (WebKit::ShareableBitmap::ShareableBitmap):
+        (WebKit::ShareableBitmap::~ShareableBitmap):
+        (WebKit::ShareableBitmap::numBytesForSize):
+        * Shared/ShareableBitmap.h:
+        (WebKit::ShareableBitmap::createPlatformImage):
+        (WebKit::ShareableBitmap::dxSurface): Deleted.
+        * Shared/win/ShareableBitmapDirect2D.cpp: Removed.
+        * UIProcess/BackingStore.cpp:
+        * UIProcess/WebPageProxy.cpp:
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/win/BackingStoreDirect2D.cpp: Removed.
+        * UIProcess/win/WebPageProxyWin.cpp:
+        (WebKit::WebPageProxy::device const): Deleted.
+        (WebKit::WebPageProxy::setDevice): Deleted.
+        * UIProcess/win/WebPopupMenuProxyWin.cpp:
+        (WebKit::WebPopupMenuProxyWin::showPopupMenu):
+        (WebKit::WebPopupMenuProxyWin::paint):
+        (WebKit::WebPopupMenuProxyWin::setupSwapChain): Deleted.
+        (WebKit::WebPopupMenuProxyWin::configureBackingStore): Deleted.
+        * UIProcess/win/WebPopupMenuProxyWin.h:
+        * UIProcess/win/WebView.cpp:
+        (WebKit::WebView::WebView):
+        (WebKit::WebView::onSizeEvent):
+        (WebKit::WebView::setupSwapChain): Deleted.
+        (WebKit::WebView::configureBackingStore): Deleted.
+        * UIProcess/win/WebView.h:
+        (WebKit::WebView::d3dDevice const): Deleted.
+        (WebKit::WebView::d3dImmediateContext const): Deleted.
+        * WebProcess/WebCoreSupport/WebPopupMenu.cpp:
+        (WebKit::WebPopupMenu::show):
+        * WebProcess/WebPage/CoordinatedGraphics/DrawingAreaCoordinatedGraphics.cpp:
+        (WebKit::DrawingAreaCoordinatedGraphics::display):
+        * WebProcess/WebPage/FindController.cpp:
+        (WebKit::FindController::getImageForFindMatch):
+
 2022-01-08  Tyler Wilcock  <tyler_w@apple.com>
 
         AX: AccessibilityObject::setFocused(true) should make the webpage focused, and make web content the first responder

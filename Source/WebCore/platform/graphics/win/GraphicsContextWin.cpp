@@ -28,8 +28,6 @@
 
 #if USE(CG)
 #include "GraphicsContextPlatformPrivateCG.h"
-#elif USE(DIRECT2D)
-#include "GraphicsContextPlatformPrivateDirect2D.h"
 #endif
 
 #include "AffineTransform.h"
@@ -39,7 +37,6 @@
 #include "Path.h"
 #include <wtf/MathExtras.h>
 #include <wtf/win/GDIObject.h>
-
 
 namespace WebCore {
 

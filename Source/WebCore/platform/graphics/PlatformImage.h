@@ -36,8 +36,6 @@ namespace WebCore {
 
 #if USE(CG)
 using PlatformImagePtr = RetainPtr<CGImageRef>;
-#elif USE(DIRECT2D)
-using PlatformImagePtr = COMPtr<ID2D1Bitmap>;
 #elif USE(CAIRO)
 using PlatformImagePtr = RefPtr<cairo_surface_t>;
 #endif

@@ -63,14 +63,14 @@ public:
     // Per render
     LayoutRect repaintRect() const { return m_repaintRect; }
 
-    GraphicsContext* beginFilterEffect(GraphicsContext& destinationContext, RenderElement&, const LayoutRect& filterBoxRect, const LayoutRect& dirtyRect, const LayoutRect& layerRepaintRect);
+    GraphicsContext* beginFilterEffect(RenderElement&, const LayoutRect& filterBoxRect, const LayoutRect& dirtyRect, const LayoutRect& layerRepaintRect);
     void applyFilterEffect(GraphicsContext& destinationContext);
 
 private:
     void notifyFinished(CachedResource&, const NetworkLoadMetrics&) final;
     void resetDirtySourceRect() { m_dirtySourceRect = LayoutRect(); }
     GraphicsContext* inputContext();
-    void allocateBackingStoreIfNeeded(const GraphicsContext& targetContext);
+    void allocateBackingStoreIfNeeded();
 
     RenderLayer& m_layer;
 

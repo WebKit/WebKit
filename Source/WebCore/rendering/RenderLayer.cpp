@@ -3227,7 +3227,7 @@ GraphicsContext* RenderLayer::setupFilters(GraphicsContext& destinationContext, 
 
     auto rootRelativeBounds = calculateLayerBounds(paintingInfo.rootLayer, offsetFromRoot, { });
 
-    GraphicsContext* filterContext = paintingFilters->beginFilterEffect(destinationContext, renderer(), enclosingIntRect(rootRelativeBounds), enclosingIntRect(paintingInfo.paintDirtyRect), enclosingIntRect(filterRepaintRect));
+    GraphicsContext* filterContext = paintingFilters->beginFilterEffect(renderer(), enclosingIntRect(rootRelativeBounds), enclosingIntRect(paintingInfo.paintDirtyRect), enclosingIntRect(filterRepaintRect));
     if (!filterContext)
         return nullptr;
 

@@ -33,10 +33,6 @@
 #include <CoreGraphics/CoreGraphics.h>
 #endif
 
-#if PLATFORM(WIN)
-#include <d2d1.h>
-#endif
-
 namespace TestWebKitAPI {
 
 static void testGetAndSet(WebCore::FloatSize size)
@@ -208,20 +204,6 @@ TEST(FloatSize, Casting)
 
     EXPECT_FLOAT_EQ(-22.3f, testCG.width());
     EXPECT_FLOAT_EQ(14.2f, testCG.height());
-#endif
-
-#if PLATFORM(WIN)
-    D2D1_SIZE_F d2dSize = test;
-
-    EXPECT_FLOAT_EQ(1024.0f, d2dSize.width);
-    EXPECT_FLOAT_EQ(768.0f, d2dSize.height);
-
-    D2D1_SIZE_F d2dSize2 = D2D1::SizeF(-22.3f, 14.2f);
-
-    WebCore::FloatSize testD2D(d2dSize2);
-
-    EXPECT_FLOAT_EQ(-22.3f, testD2D.width());
-    EXPECT_FLOAT_EQ(14.2f, testD2D.height());
 #endif
 }
 

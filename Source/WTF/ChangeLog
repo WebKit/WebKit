@@ -1,5 +1,14 @@
 2022-01-09  Sam Weinig  <weinig@apple.com>
 
+        Remove support for Direct2D
+        https://bugs.webkit.org/show_bug.cgi?id=234999
+
+        Reviewed by Darin Adler.
+
+        * wtf/PlatformFTW.cmake: Removed.
+
+2022-01-09  Sam Weinig  <weinig@apple.com>
+
         Add helpers to access CoreGraphics color spaces more easily in generic contexts
         https://bugs.webkit.org/show_bug.cgi?id=235004
 

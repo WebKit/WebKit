@@ -26,7 +26,7 @@
 #include "config.h"
 #include "CaptionUserPreferencesMediaAF.h"
 
-#if ENABLE(VIDEO) && !USE(DIRECT2D)
+#if ENABLE(VIDEO)
 
 #include "AudioTrackList.h"
 #include "ColorSerialization.h"
@@ -995,4 +995,4 @@ Vector<RefPtr<TextTrack>> CaptionUserPreferencesMediaAF::sortedTrackListForMenu(
     
 }
 
-#endif // ENABLE(VIDEO) && !USE(DIRECT2D)
+#endif // ENABLE(VIDEO)

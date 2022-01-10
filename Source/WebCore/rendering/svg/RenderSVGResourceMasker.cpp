@@ -84,7 +84,7 @@ bool RenderSVGResourceMasker::applyResource(RenderElement& renderer, const Rende
 #endif
 
         // FIXME (149470): This image buffer should not be unconditionally unaccelerated. Making it match the context breaks alpha masking, though.
-        maskerData->maskImage = SVGRenderingContext::createImageBuffer(repaintRect, absoluteTransform, maskColorSpace, RenderingMode::Unaccelerated, nullptr, context);
+        maskerData->maskImage = SVGRenderingContext::createImageBuffer(repaintRect, absoluteTransform, maskColorSpace, RenderingMode::Unaccelerated, nullptr);
         if (!maskerData->maskImage)
             return false;
 

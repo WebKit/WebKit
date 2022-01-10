@@ -43,15 +43,6 @@
 
 #if USE(CG)
 typedef struct CGContext PlatformGraphicsContext;
-#elif USE(DIRECT2D)
-interface ID2D1DCRenderTarget;
-interface ID2D1RenderTarget;
-interface ID2D1Factory;
-interface ID2D1SolidColorBrush;
-namespace WebCore {
-class PlatformContextDirect2D;
-}
-typedef WebCore::PlatformContextDirect2D PlatformGraphicsContext;
 #elif USE(CAIRO)
 namespace WebCore {
 class GraphicsContextCairo;
@@ -269,15 +260,6 @@ public:
     WEBCORE_EXPORT GraphicsContext() = default;
     WEBCORE_EXPORT virtual ~GraphicsContext();
 
-#if USE(DIRECT2D)
-    // FIXME: This should move to GraphicsContextDirect2D
-    enum class BitmapRenderingContextType : uint8_t {
-        CPUMemory,
-        GPUMemory
-    };
-    WEBCORE_EXPORT GraphicsContext(PlatformGraphicsContext*, BitmapRenderingContextType);
-#endif
-
     virtual bool hasPlatformContext() const { return false; }
     virtual PlatformGraphicsContext* platformContext() const { return nullptr; }
 
@@ -372,7 +354,7 @@ public:
     
     unsigned stackSize() const { return m_stack.size(); }
 
-#if USE(CG) || USE(DIRECT2D)
+#if USE(CG)
     // FIXME: Should these really be public GraphicsContext methods?
     virtual void applyStrokePattern() = 0;
     virtual void applyFillPattern() = 0;
@@ -555,26 +537,6 @@ public:
     // FIXME: This should not exist; we need a different place to
     // put code shared between Windows CG and Windows Cairo backends.
     virtual GraphicsContextPlatformPrivate* deprecatedPrivateContext() const { return nullptr; }
-#endif
-
-#if USE(DIRECT2D)
-    GraphicsContext(HDC, ID2D1DCRenderTarget**, RECT, bool hasAlpha = false); // FIXME: To be removed.
-
-    WEBCORE_EXPORT static ID2D1Factory* systemFactory();
-    WEBCORE_EXPORT static ID2D1RenderTarget* defaultRenderTarget();
-
-    WEBCORE_EXPORT void beginDraw();
-    D2D1_COLOR_F colorWithGlobalAlpha(const Color&) const;
-    WEBCORE_EXPORT void endDraw();
-    void flush();
-
-    ID2D1Brush* solidStrokeBrush() const;
-    ID2D1Brush* solidFillBrush() const;
-    ID2D1Brush* patternStrokeBrush() const;
-    ID2D1Brush* patternFillBrush() const;
-    ID2D1StrokeStyle* platformStrokeStyle() const;
-
-    ID2D1SolidColorBrush* brushWithColor(const Color&);
 #endif
 
 private:

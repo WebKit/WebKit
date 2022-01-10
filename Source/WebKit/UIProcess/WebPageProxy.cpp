@@ -278,10 +278,6 @@
 #include "SOAuthorizationCoordinator.h"
 #endif
 
-#if USE(DIRECT2D)
-#include <d3d11_1.h>
-#endif
-
 #if PLATFORM(IOS_FAMILY) && ENABLE(DEVICE_ORIENTATION)
 #include "WebDeviceOrientationUpdateProviderProxy.h"
 #endif

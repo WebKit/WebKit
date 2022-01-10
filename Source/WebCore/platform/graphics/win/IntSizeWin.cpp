@@ -26,9 +26,7 @@
 #include "config.h"
 #include "IntSize.h"
 
-#include <d2d1.h>
 #include <windows.h>
-
 #include <wtf/MathExtras.h>
 
 namespace WebCore {
@@ -43,28 +41,6 @@ IntSize::operator SIZE() const
 {
     SIZE s = {m_width, m_height};
     return s;
-}
-
-IntSize::IntSize(const D2D1_SIZE_U& s)
-    : m_width(s.width)
-    , m_height(s.height)
-{
-}
-
-IntSize::IntSize(const D2D1_SIZE_F& s)
-    : m_width(clampToInteger(s.width))
-    , m_height(clampToInteger(s.height))
-{
-}
-
-IntSize::operator D2D1_SIZE_U() const
-{
-    return D2D1::SizeU(m_width, m_height);
-}
-
-IntSize::operator D2D1_SIZE_F() const
-{
-    return D2D1::SizeF(m_width, m_height);
 }
 
 }

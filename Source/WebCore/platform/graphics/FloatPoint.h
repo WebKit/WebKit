@@ -43,11 +43,6 @@ typedef struct _NSPoint NSPoint;
 #endif
 #endif // PLATFORM(MAC)
 
-#if PLATFORM(WIN)
-struct D2D_POINT_2F;
-typedef D2D_POINT_2F D2D1_POINT_2F;
-#endif
-
 namespace WTF {
 class TextStream;
 }
@@ -190,11 +185,6 @@ public:
 #if PLATFORM(MAC) && !defined(NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES)
     WEBCORE_EXPORT FloatPoint(const NSPoint&);
     WEBCORE_EXPORT operator NSPoint() const;
-#endif
-
-#if PLATFORM(WIN)
-    WEBCORE_EXPORT FloatPoint(const D2D1_POINT_2F&);
-    WEBCORE_EXPORT operator D2D1_POINT_2F() const;
 #endif
 
     WEBCORE_EXPORT FloatPoint matrixTransform(const TransformationMatrix&) const;

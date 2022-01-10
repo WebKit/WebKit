@@ -39,10 +39,6 @@
 #include <cairo.h>
 #endif
 
-#if USE(DIRECT2D)
-#include <d2d1_1.h>
-#endif
-
 namespace WTR {
 
 static LPCWSTR hostWindowClassName = L"WTRWebViewHostWindow";

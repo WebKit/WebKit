@@ -82,7 +82,7 @@ void BifurcatedGraphicsContext::drawEllipse(const FloatRect& rect)
     m_secondaryContext.drawEllipse(rect);
 }
 
-#if USE(CG) || USE(DIRECT2D)
+#if USE(CG)
 void BifurcatedGraphicsContext::applyStrokePattern()
 {
     m_primaryContext.applyStrokePattern();
@@ -180,7 +180,7 @@ void BifurcatedGraphicsContext::strokeEllipse(const FloatRect& ellipse)
     m_secondaryContext.strokeEllipse(ellipse);
 }
 
-#if USE(CG) || USE(DIRECT2D)
+#if USE(CG)
 void BifurcatedGraphicsContext::setIsCALayerContext(bool isCALayerContext)
 {
     m_primaryContext.setIsCALayerContext(isCALayerContext);

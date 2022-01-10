@@ -1,3 +1,15 @@
+2022-01-09  Sam Weinig  <weinig@apple.com>
+
+        Remove support for Direct2D
+        https://bugs.webkit.org/show_bug.cgi?id=234999
+
+        Reviewed by Darin Adler.
+
+        Direct2D and FTW have not been building for over a year. It is
+        time to remove them.
+
+        * PlatformFTW.cmake: Removed.
+
 2022-01-07  Alex Christensen  <achristensen@webkit.org>
 
         Unreviewed, reverting r287698.

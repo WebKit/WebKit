@@ -32,10 +32,6 @@
 #include <CoreGraphics/CoreGraphics.h>
 #endif
 
-#if PLATFORM(WIN)
-#include <d2d1.h>
-#endif
-
 namespace TestWebKitAPI {
 
 static void testGetAndSet(WebCore::IntSize rect)
@@ -207,30 +203,6 @@ TEST(IntSize, Casting)
 
     EXPECT_EQ(-22, testCG.width());
     EXPECT_EQ(14, testCG.height());
-#endif
-
-#if PLATFORM(WIN)
-    D2D1_SIZE_U d2dSizeU = test;
-    EXPECT_EQ(1024, d2dSizeU.width);
-    EXPECT_EQ(768, d2dSizeU.height);
-
-    D2D1_SIZE_F d2dSizeF = test;
-    EXPECT_FLOAT_EQ(1024.0f, d2dSizeF.width);
-    EXPECT_FLOAT_EQ(768.0f, d2dSizeF.height);
-
-    D2D1_SIZE_F d2dSizeF2 = D2D1::SizeF(-22.3f, 14.6f);
-
-    WebCore::IntSize testD2D(d2dSizeF2);
-
-    EXPECT_EQ(-22, testD2D.width());
-    EXPECT_EQ(14, testD2D.height());
-
-    D2D1_SIZE_F d2dSizeU2 = D2D1::SizeF(-23, 16);
-
-    WebCore::IntSize testD2D2(d2dSizeU2);
-
-    EXPECT_EQ(-23, testD2D2.width());
-    EXPECT_EQ(16, testD2D2.height());
 #endif
 }
 

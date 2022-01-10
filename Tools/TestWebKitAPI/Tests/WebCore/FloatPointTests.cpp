@@ -36,10 +36,6 @@
 #include <CoreGraphics/CoreGraphics.h>
 #endif
 
-#if PLATFORM(WIN)
-#include <d2d1.h>
-#endif
-
 namespace TestWebKitAPI {
 
 static void testGetAndSet(WebCore::FloatPoint point)
@@ -578,20 +574,6 @@ TEST(FloatPoint, Casting)
 
     EXPECT_FLOAT_EQ(-22.3f, testCG.x());
     EXPECT_FLOAT_EQ(14.2f, testCG.y());
-#endif
-
-#if PLATFORM(WIN)
-    D2D_POINT_2F d2dPoint = a;
-
-    EXPECT_FLOAT_EQ(100.4f, d2dPoint.x);
-    EXPECT_FLOAT_EQ(199.9f, d2dPoint.y);
-
-    D2D_POINT_2F d2dPoint2 = D2D1::Point2F(-22.3f, 14.2f);
-
-    WebCore::FloatPoint testD2D(d2dPoint2);
-
-    EXPECT_FLOAT_EQ(-22.3f, testD2D.x());
-    EXPECT_FLOAT_EQ(14.2f, testD2D.y());
 #endif
 }
 

@@ -49,12 +49,6 @@ typedef struct _NSSize NSSize;
 
 #if PLATFORM(WIN)
 typedef struct tagSIZE SIZE;
-
-struct D2D_SIZE_U;
-typedef D2D_SIZE_U D2D1_SIZE_U;
-
-struct D2D_SIZE_F;
-typedef D2D_SIZE_F D2D1_SIZE_F;
 #endif
 
 namespace WTF {
@@ -166,10 +160,6 @@ public:
 #if PLATFORM(WIN)
     IntSize(const SIZE&);
     operator SIZE() const;
-    IntSize(const D2D1_SIZE_U&);
-    explicit IntSize(const D2D1_SIZE_F&); // don't do this implicitly since it's lossy;
-    operator D2D1_SIZE_U() const;
-    operator D2D1_SIZE_F() const;
 #endif
 
     String toJSONString() const;

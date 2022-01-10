@@ -33,10 +33,6 @@
 #include <CoreGraphics/CoreGraphics.h>
 #endif
 
-#if PLATFORM(WIN)
-#include <d2d1.h>
-#endif
-
 namespace TestWebKitAPI {
 
 static void testGetAndSet(WebCore::IntPoint point)
@@ -197,26 +193,6 @@ TEST(IntPoint, Cast)
     EXPECT_EQ(10, fromGDIPoint.x());
     EXPECT_EQ(20, fromGDIPoint.y());
     ASSERT_TRUE(a == fromGDIPoint);
-
-    D2D1_POINT_2F d2dPointF = a;
-
-    ASSERT_FLOAT_EQ(10.0f, d2dPointF.x);
-    ASSERT_FLOAT_EQ(20.0f, d2dPointF.y);
-
-    WebCore::IntPoint fromD2DPointF(d2dPointF);
-    EXPECT_EQ(10, fromD2DPointF.x());
-    EXPECT_EQ(20, fromD2DPointF.y());
-    ASSERT_TRUE(a == fromD2DPointF);
-
-    D2D1_POINT_2U d2dPointU = a;
-
-    ASSERT_FLOAT_EQ(10.0f, d2dPointU.x);
-    ASSERT_FLOAT_EQ(20.0f, d2dPointU.y);
-
-    WebCore::IntPoint fromD2DPointU(d2dPointU);
-    EXPECT_EQ(10, fromD2DPointU.x());
-    EXPECT_EQ(20, fromD2DPointU.y());
-    ASSERT_TRUE(a == fromD2DPointU);
 #endif
 }
 

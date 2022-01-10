@@ -122,9 +122,6 @@ public:
     WEBCORE_EXPORT Seconds frameDurationAtIndex(size_t);
     ImageOrientation frameOrientationAtIndex(size_t);
 
-#if USE(DIRECT2D)
-    void setTargetContext(const GraphicsContext*);
-#endif
     RefPtr<NativeImage> createFrameImageAtIndex(size_t, SubsamplingLevel = SubsamplingLevel::Default);
     RefPtr<NativeImage> frameImageAtIndex(size_t);
     RefPtr<NativeImage> frameImageAtIndexCacheIfNeeded(size_t, SubsamplingLevel = SubsamplingLevel::Default);

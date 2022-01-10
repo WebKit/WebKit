@@ -154,7 +154,7 @@ bool RenderSVGResourceFilter::applyResource(RenderElement& renderer, const Rende
 #else
     auto colorSpace = DestinationColorSpace::SRGB();
 #endif
-    auto sourceGraphic = SVGRenderingContext::createImageBuffer(filterData->drawingRegion, effectiveTransform, colorSpace, filterData->filter->renderingMode(), renderer.hostWindow(), context);
+    auto sourceGraphic = SVGRenderingContext::createImageBuffer(filterData->drawingRegion, effectiveTransform, colorSpace, filterData->filter->renderingMode(), renderer.hostWindow());
     if (!sourceGraphic) {
         ASSERT(m_rendererFilterDataMap.contains(&renderer));
         filterData->savedContext = context;

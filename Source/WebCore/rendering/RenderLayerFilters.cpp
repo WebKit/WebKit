@@ -129,24 +129,19 @@ GraphicsContext* RenderLayerFilters::inputContext()
     return m_sourceImage ? &m_sourceImage->context() : nullptr;
 }
 
-void RenderLayerFilters::allocateBackingStoreIfNeeded(const GraphicsContext& targetContext)
+void RenderLayerFilters::allocateBackingStoreIfNeeded()
 {
     auto& filter = *m_filter;
     auto logicalSize = filter.scaledByFilterScale(m_filterRegion.size());
 
     if (!m_sourceImage || m_sourceImage->logicalSize() != logicalSize) {
-#if USE(DIRECT2D)
-        m_sourceImage = ImageBuffer::create(logicalSize, filter.renderingMode(), &targetContext, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
-#else
-        UNUSED_PARAM(targetContext);
         m_sourceImage = ImageBuffer::create(logicalSize, filter.renderingMode(), ShouldUseDisplayList::No, RenderingPurpose::DOM, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8, m_layer.renderer().hostWindow());
-#endif
         if (auto context = inputContext())
             context->scale(filter.filterScale());
     }
 }
 
-GraphicsContext* RenderLayerFilters::beginFilterEffect(GraphicsContext& destinationContext, RenderElement& renderer, const LayoutRect& filterBoxRect, const LayoutRect& dirtyRect, const LayoutRect& layerRepaintRect)
+GraphicsContext* RenderLayerFilters::beginFilterEffect(RenderElement& renderer, const LayoutRect& filterBoxRect, const LayoutRect& dirtyRect, const LayoutRect& layerRepaintRect)
 {
     if (!m_filter)
         return nullptr;
@@ -200,7 +195,7 @@ GraphicsContext* RenderLayerFilters::beginFilterEffect(GraphicsContext& destinat
     resetDirtySourceRect();
 
     filter.setFilterRegion(m_filterRegion);
-    allocateBackingStoreIfNeeded(destinationContext);
+    allocateBackingStoreIfNeeded();
 
     auto* sourceGraphicsContext = inputContext();
     if (!sourceGraphicsContext)

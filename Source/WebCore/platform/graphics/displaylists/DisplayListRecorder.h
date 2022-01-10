@@ -189,7 +189,7 @@ private:
     bool hasPlatformContext() const final { return false; }
     PlatformGraphicsContext* platformContext() const final { return nullptr; }
 
-#if USE(CG) || USE(DIRECT2D)
+#if USE(CG)
     void setIsCALayerContext(bool) final { }
     bool isCALayerContext() const final { return false; }
     void setIsAcceleratedContext(bool) final { }
@@ -220,7 +220,7 @@ private:
     WEBCORE_EXPORT void strokeEllipse(const FloatRect&) final;
     WEBCORE_EXPORT void clearRect(const FloatRect&) final;
 
-#if USE(CG) || USE(DIRECT2D)
+#if USE(CG)
     WEBCORE_EXPORT void applyStrokePattern() final;
     WEBCORE_EXPORT void applyFillPattern() final;
 #endif

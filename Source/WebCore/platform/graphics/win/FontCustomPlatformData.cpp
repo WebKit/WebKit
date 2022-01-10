@@ -35,11 +35,6 @@
 #include <pal/spi/cg/CoreGraphicsSPI.h>
 #endif
 
-#if USE(DIRECT2D)
-#include "DirectWriteUtilities.h"
-#include <dwrite_3.h>
-#endif
-
 namespace WebCore {
 
 FontCustomPlatformData::FontCustomPlatformData(const String& name, FontPlatformData::CreationData&& creationData)
@@ -73,7 +68,7 @@ FontPlatformData FontCustomPlatformData::fontPlatformData(const FontDescription&
     logFont.lfUnderline = false;
     logFont.lfStrikeOut = false;
     logFont.lfCharSet = DEFAULT_CHARSET;
-#if USE(CG) || USE(CAIRO) || USE(DIRECT2D)
+#if USE(CG) || USE(CAIRO)
     logFont.lfOutPrecision = OUT_TT_ONLY_PRECIS;
 #else
     logFont.lfOutPrecision = OUT_TT_PRECIS;

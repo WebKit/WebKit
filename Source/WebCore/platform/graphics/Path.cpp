@@ -40,7 +40,6 @@
 
 namespace WebCore {
 
-#if !USE(DIRECT2D)
 float Path::length() const
 {
     PathTraversalState traversalState(PathTraversalState::Action::TotalLength);
@@ -51,7 +50,6 @@ float Path::length() const
 
     return traversalState.totalLength();
 }
-#endif
 
 #if !HAVE(CGPATH_GET_NUMBER_OF_ELEMENTS)
 
@@ -125,7 +123,7 @@ void Path::addRoundedRect(const FloatRoundedRect& r, RoundedRectStrategy strateg
     }
 
     if (strategy == RoundedRectStrategy::PreferNative) {
-#if USE(CG) || USE(DIRECT2D)
+#if USE(CG)
         platformAddPathForRoundedRect(rect, radii.topLeft(), radii.topRight(), radii.bottomLeft(), radii.bottomRight());
         return;
 #endif
@@ -524,7 +522,7 @@ std::optional<FloatRect> Path::boundingRectFromInlineData() const
 
 #endif
 
-#if !USE(CG) && !USE(DIRECT2D)
+#if !USE(CG)
 Path Path::polygonPathFromPoints(const Vector<FloatPoint>& points)
 {
     Path path;

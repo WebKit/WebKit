@@ -41,20 +41,6 @@
 #include <CoreGraphics/CGPath.h>
 typedef struct CGPath PlatformPath;
 
-#elif USE(DIRECT2D)
-#include "COMPtr.h"
-
-interface ID2D1Geometry;
-interface ID2D1GeometryGroup;
-interface ID2D1PathGeometry;
-interface ID2D1GeometrySink;
-
-typedef ID2D1GeometryGroup PlatformPath;
-
-namespace WebCore {
-class PlatformContextDirect2D;
-}
-
 #elif USE(CAIRO)
 #include "RefPtrCairo.h"
 
@@ -69,8 +55,6 @@ typedef PlatformPath* PlatformPathPtr;
 
 #if USE(CG)
 using PlatformPathStorageType = RetainPtr<CGMutablePathRef>;
-#elif USE(DIRECT2D)
-using PlatformPathStorageType = COMPtr<ID2D1GeometryGroup>;
 #else
 using PlatformPathStorageType = PlatformPathPtr;
 #endif
@@ -189,10 +173,7 @@ public:
 
     // To keep Path() cheap, it does not allocate a PlatformPath immediately
     // meaning Path::platformPath() can return null.
-#if USE(DIRECT2D)
-    FloatRect fastBoundingRectForStroke(const PlatformContextDirect2D&) const;
-    PlatformPathPtr platformPath() const { return m_path.get(); }
-#elif USE(CG)
+#if USE(CG)
     WEBCORE_EXPORT PlatformPathPtr platformPath() const;
 #elif USE(CAIRO)
     cairo_t* cairoPath() const { return m_path.get(); }
@@ -217,17 +198,8 @@ public:
 
     void addBeziersForRoundedRect(const FloatRect&, const FloatSize& topLeftRadius, const FloatSize& topRightRadius, const FloatSize& bottomLeftRadius, const FloatSize& bottomRightRadius);
 
-#if USE(CG) || USE(DIRECT2D)
+#if USE(CG)
     void platformAddPathForRoundedRect(const FloatRect&, const FloatSize& topLeftRadius, const FloatSize& topRightRadius, const FloatSize& bottomLeftRadius, const FloatSize& bottomRightRadius);
-#endif
-
-#if USE(DIRECT2D)
-    void appendGeometry(ID2D1Geometry*);
-    void createGeometryWithFillMode(WindRule, COMPtr<ID2D1GeometryGroup>&) const;
-
-    void openFigureAtCurrentPointIfNecessary();
-    void closeAnyOpenGeometries(unsigned figureEndStyle) const;
-    void clearGeometries();
 #endif
 
 #ifndef NDEBUG
@@ -278,12 +250,6 @@ private:
     RefPtr<cairo_t> m_path;
 #else
     mutable PlatformPathStorageType m_path;
-#endif
-
-#if USE(DIRECT2D)
-    Vector<ID2D1Geometry*> m_geometries;
-    mutable COMPtr<ID2D1GeometrySink> m_activePath;
-    mutable bool m_figureIsOpened { false };
 #endif
 
 #if ENABLE(INLINE_PATH_DATA)

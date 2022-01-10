@@ -47,8 +47,6 @@ typedef struct _cairo_rectangle cairo_rectangle_t;
 
 #if PLATFORM(WIN)
 typedef struct tagRECT RECT;
-struct D2D_RECT_F;
-typedef D2D_RECT_F D2D1_RECT_F;
 #endif
 
 namespace WTF {
@@ -222,12 +220,6 @@ public:
 #if USE(CAIRO)
     FloatRect(const cairo_rectangle_t&);
     operator cairo_rectangle_t() const;
-#endif
-
-#if PLATFORM(WIN)
-    WEBCORE_EXPORT FloatRect(const RECT&);
-    WEBCORE_EXPORT FloatRect(const D2D1_RECT_F&);
-    WEBCORE_EXPORT operator D2D1_RECT_F() const;
 #endif
 
     static FloatRect infiniteRect();

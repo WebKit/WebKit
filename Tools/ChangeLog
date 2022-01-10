@@ -1,3 +1,27 @@
+2022-01-09  Sam Weinig  <weinig@apple.com>
+
+        Remove support for Direct2D
+        https://bugs.webkit.org/show_bug.cgi?id=234999
+
+        Reviewed by Darin Adler.
+
+        Direct2D and FTW have not been building for over a year. It is
+        time to remove them.
+
+        * DumpRenderTree/PixelDumpSupport.cpp:
+        * DumpRenderTree/PlatformWin.cmake:
+        * DumpRenderTree/win/PixelDumpSupportDirect2D.cpp: Removed.
+        * DumpRenderTree/win/PixelDumpSupportDirect2D.h: Removed.
+        * DumpRenderTree/win/PixelDumpSupportWin.cpp:
+        (createBitmapContextFromWebView):
+        * PlatformFTW.cmake: Removed.
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::InjectedBundlePage::dumpDOMAsWebArchive):
+        * WebKitTestRunner/PlatformFTW.cmake: Removed.
+        * WebKitTestRunner/PlatformWebView.h:
+        * WebKitTestRunner/win/PlatformWebViewWin.cpp:
+        * WebKitTestRunner/win/TestInvocationDirect2D.cpp: Removed.
+
 2022-01-08  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Null pointer crash when calling into `-[WebView close]` in `-webView:didCommitLoadForFrame:`

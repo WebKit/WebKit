@@ -39,10 +39,6 @@
 #include <CoreGraphics/CoreGraphics.h>
 #endif
 
-#if PLATFORM(WIN)
-#include <d2d1.h>
-#endif
-
 namespace TestWebKitAPI {
 
 static void testGetAndSet(WebCore::AffineTransform& affineTransform)
@@ -127,19 +123,6 @@ TEST(AffineTransform, CGAffineTransformConstruction)
 {
     CGAffineTransform cgTransform = CGAffineTransformMake(6.0, 5.0, 4.0, 3.0, 2.0, 1.0);
     WebCore::AffineTransform test(cgTransform);
-
-    testValueConstruction(test);
-    testGetAndSet(test);
-
-    ASSERT_FALSE(test.isIdentity());
-}
-#endif
-
-#if PLATFORM(WIN)
-TEST(AffineTransform, D2D1MatrixConstruction)
-{
-    D2D1_MATRIX_3X2_F d2dTransform = D2D1::Matrix3x2F(6.0, 5.0, 4.0, 3.0, 2.0, 1.0);
-    WebCore::AffineTransform test(d2dTransform);
 
     testValueConstruction(test);
     testGetAndSet(test);
@@ -999,25 +982,6 @@ TEST(AffineTransform, CoreGraphicsCasting)
     WebCore::AffineTransform test3;
 
     ASSERT_FALSE(CGAffineTransformEqualToTransform(test, test3));
-}
-#endif
-
-#if PLATFORM(WIN)
-TEST(AffineTransform, Direct2DCasting)
-{
-    WebCore::AffineTransform transform(6.0, 5.0, 4.0, 3.0, 2.0, 1.0);
-
-    D2D1_MATRIX_3X2_F test = transform;
-    D2D1_MATRIX_3X2_F test2 = D2D1::Matrix3x2F(6.0, 5.0, 4.0, 3.0, 2.0, 1.0);
-
-    static const double epsilon = 0.0000001;
-
-    EXPECT_NEAR(test._11, test2._11, epsilon);
-    EXPECT_NEAR(test._12, test2._12, epsilon);
-    EXPECT_NEAR(test._21, test2._21, epsilon);
-    EXPECT_NEAR(test._22, test2._22, epsilon);
-    EXPECT_NEAR(test._31, test2._31, epsilon);
-    EXPECT_NEAR(test._32, test2._32, epsilon);
 }
 #endif
 

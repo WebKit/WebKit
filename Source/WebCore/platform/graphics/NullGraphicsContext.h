@@ -44,7 +44,7 @@ public:
     }
 
 private:
-#if USE(CG) || USE(DIRECT2D)
+#if USE(CG)
     void setIsCALayerContext(bool) final { }
     bool isCALayerContext() const final { return false; }
 #endif
@@ -57,7 +57,7 @@ private:
 
     void didUpdateState(const GraphicsContextState&, GraphicsContextState::StateChangeFlags) final { }
 
-#if USE(CG) || USE(DIRECT2D)
+#if USE(CG)
     void setIsAcceleratedContext(bool) final { }
 #endif
 
@@ -67,7 +67,7 @@ private:
 
     IntRect clipBounds() const final { return { }; }
 
-#if USE(CG) || USE(DIRECT2D)
+#if USE(CG)
     void applyStrokePattern() final { }
     void applyFillPattern() final { }
     void drawPath(const Path&) final { }

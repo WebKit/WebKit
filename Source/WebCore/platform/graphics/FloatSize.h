@@ -48,11 +48,6 @@ typedef struct _NSSize NSSize;
 #endif
 #endif // PLATFORM(MAC)
 
-#if PLATFORM(WIN)
-struct D2D_SIZE_F;
-typedef D2D_SIZE_F D2D1_SIZE_F;
-#endif
-
 namespace WTF {
 class TextStream;
 }
@@ -157,11 +152,6 @@ public:
 #if PLATFORM(MAC) && !defined(NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES)
     WEBCORE_EXPORT explicit FloatSize(const NSSize&); // don't do this implicitly since it's lossy
     operator NSSize() const;
-#endif
-
-#if PLATFORM(WIN)
-    WEBCORE_EXPORT FloatSize(const D2D1_SIZE_F&);
-    operator D2D1_SIZE_F() const;
 #endif
 
     String toJSONString() const;

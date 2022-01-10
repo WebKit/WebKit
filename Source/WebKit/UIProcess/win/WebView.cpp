@@ -68,14 +68,6 @@
 #include <cairo.h>
 #endif 
 
-#if USE(DIRECT2D)
-#include <WebCore/Direct2DUtilities.h>
-#include <d3d11_1.h>
-#include <directxcolors.h> 
-#include <dxgi.h>
-#endif
-
-
 namespace WebKit {
 using namespace WebCore;
 
@@ -243,11 +235,6 @@ WebView::WebView(RECT rect, const API::PageConfiguration& configuration, HWND pa
     m_page->initializeWebPage();
 
     IntSize windowSize(rect.right - rect.left, rect.bottom - rect.top);
-#if USE(DIRECT2D)
-    Direct2D::createDeviceAndContext(m_d3dDevice, m_immediateContext);
-    m_page->setDevice(m_d3dDevice.get());
-    setupSwapChain(windowSize);
-#endif
 
     if (m_page->drawingArea())
         m_page->drawingArea()->setSize(windowSize);
@@ -572,21 +559,6 @@ LRESULT WebView::onSizeEvent(HWND hwnd, UINT, WPARAM, LPARAM lParam, bool& handl
         m_page->drawingArea()->setSize(windowSize, m_nextResizeScrollOffset);
         m_nextResizeScrollOffset = IntSize();
     }
-
-#if USE(DIRECT2D)
-    if (m_swapChain) {
-        m_immediateContext->OMSetRenderTargets(0, nullptr, nullptr);
-
-        m_renderTargetView = nullptr;
-
-        // Preserve the existing buffer count (pass zero for count) and format (by passing DXGI_FORMAT_UNKNOWN).
-        // Automatically choose the width and height to match the client rect for the backing window (pass zeros for width/height).
-        HRESULT hr = m_swapChain->ResizeBuffers(0, 0, 0, DXGI_FORMAT_UNKNOWN, DXGI_SWAP_CHAIN_FLAG_GDI_COMPATIBLE);
-        RELEASE_ASSERT(SUCCEEDED(hr));
-
-        configureBackingStore(windowSize);
-    }
-#endif
 
     handled = true;
     return 0;
@@ -973,51 +945,5 @@ void WebView::setToolTip(const String& toolTip)
 
     ::SendMessage(m_toolTipWindow, TTM_ACTIVATE, !toolTip.isEmpty(), 0);
 }
-
-#if USE(DIRECT2D)
-void WebView::setupSwapChain(const WebCore::IntSize& size)
-{
-    if (!m_d3dDevice)
-        return;
-
-    m_swapChain = Direct2D::swapChainOfSizeForWindowAndDevice(size, m_window, m_d3dDevice);
-    RELEASE_ASSERT(m_swapChain);
-
-    auto factory = Direct2D::factoryForDXGIDevice(Direct2D::toDXGIDevice(m_d3dDevice));
-
-    factory->MakeWindowAssociation(m_window, 0);
-    configureBackingStore(size);
-}
-
-void WebView::configureBackingStore(const WebCore::IntSize& size)
-{
-    ASSERT(m_swapChain);
-    ASSERT(m_d3dDevice);
-    ASSERT(m_immediateContext);
-
-    // Create a render target view 
-    COMPtr<ID3D11Texture2D> backBuffer; 
-    HRESULT hr = m_swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&backBuffer)); 
-    RELEASE_ASSERT(SUCCEEDED(hr));
-
-    hr = m_d3dDevice->CreateRenderTargetView(backBuffer.get(), nullptr, &m_renderTargetView); 
-    RELEASE_ASSERT(SUCCEEDED(hr));
-
-    auto* renderTargetView = m_renderTargetView.get();
-    m_immediateContext->OMSetRenderTargets(1, &renderTargetView, nullptr);
-
-    // Setup the viewport 
-    D3D11_VIEWPORT viewport;
-    viewport.Width = (FLOAT)size.width();
-    viewport.Height = (FLOAT)size.height();
-    viewport.MinDepth = 0.0f;
-    viewport.MaxDepth = 1.0f;
-    viewport.TopLeftX = 0;
-    viewport.TopLeftY = 0;
-    m_immediateContext->RSSetViewports(1, &viewport);
-
-    m_immediateContext->ClearRenderTargetView(m_renderTargetView.get(), DirectX::Colors::MidnightBlue); 
-}
-#endif
 
 } // namespace WebKit

@@ -49,11 +49,6 @@ typedef struct tagXFORM XFORM;
 #endif
 #endif
 
-#if PLATFORM(WIN)
-struct D2D_MATRIX_3X2_F;
-typedef D2D_MATRIX_3X2_F D2D1_MATRIX_3X2_F;
-#endif
-
 namespace WTF {
 class TextStream;
 }
@@ -390,11 +385,6 @@ public:
 
 #if PLATFORM(WIN) || (PLATFORM(GTK) && OS(WINDOWS))
     operator XFORM() const;
-#endif
-
-#if PLATFORM(WIN)
-    TransformationMatrix(const D2D1_MATRIX_3X2_F&);
-    operator D2D1_MATRIX_3X2_F() const;
 #endif
 
     bool isIdentityOrTranslation() const

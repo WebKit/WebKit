@@ -36,13 +36,6 @@
 #if USE(CG)
 typedef struct CGPattern* CGPatternRef;
 typedef RetainPtr<CGPatternRef> PlatformPatternPtr;
-#elif USE(DIRECT2D)
-interface ID2D1BitmapBrush;
-typedef ID2D1BitmapBrush* PlatformPatternPtr;
-namespace WebCore {
-class PlatformContextDirect2D;
-}
-typedef WebCore::PlatformContextDirect2D PlatformGraphicsContext;
 #elif USE(CAIRO)
 typedef struct _cairo_pattern cairo_pattern_t;
 typedef cairo_pattern_t* PlatformPatternPtr;
@@ -77,11 +70,8 @@ public:
     const Parameters& parameters() const { return m_parameters; }
 
     // Pattern space is an abstract space that maps to the default user space by the transformation 'userSpaceTransform'
-#if !USE(DIRECT2D)
     PlatformPatternPtr createPlatformPattern(const AffineTransform& userSpaceTransform) const;
-#else
-    PlatformPatternPtr createPlatformPattern(const GraphicsContext&, float alpha, const AffineTransform& userSpaceTransform) const;
-#endif
+
     void setPatternSpaceTransform(const AffineTransform&);
     const AffineTransform& patternSpaceTransform() const { return m_parameters.patternSpaceTransform; };
     bool repeatX() const { return m_parameters.repeatX; }

@@ -39,17 +39,8 @@
 #include "GradientRendererCG.h"
 #endif
 
-#if USE(DIRECT2D)
-#include "COMPtr.h"
-#endif
-
 #if USE(CG)
 typedef struct CGContext* CGContextRef;
-#endif
-
-#if USE(DIRECT2D)
-interface ID2D1Brush;
-interface ID2D1RenderTarget;
 #endif
 
 #if USE(CAIRO)
@@ -118,10 +109,6 @@ public:
     void paint(CGContextRef);
 #endif
 
-#if USE(DIRECT2D)
-    ID2D1Brush* createBrush(ID2D1RenderTarget*);
-#endif
-
     template<typename Encoder> void encode(Encoder&) const;
     template<typename Decoder> static std::optional<Ref<Gradient>> decode(Decoder&);
 
@@ -138,10 +125,6 @@ private:
 
 #if USE(CG)
     std::optional<GradientRendererCG> m_platformRenderer;
-#endif
-
-#if USE(DIRECT2D)
-    COMPtr<ID2D1Brush> m_brush;
 #endif
 };
 

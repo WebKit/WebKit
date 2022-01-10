@@ -226,7 +226,7 @@ AffineTransform SVGRenderingContext::calculateTransformationToOutermostCoordinat
     return absoluteTransform;
 }
 
-RefPtr<ImageBuffer> SVGRenderingContext::createImageBuffer(const FloatRect& targetRect, const AffineTransform& absoluteTransform, const DestinationColorSpace& colorSpace, RenderingMode renderingMode, const HostWindow* hostWindow, const GraphicsContext* context)
+RefPtr<ImageBuffer> SVGRenderingContext::createImageBuffer(const FloatRect& targetRect, const AffineTransform& absoluteTransform, const DestinationColorSpace& colorSpace, RenderingMode renderingMode, const HostWindow* hostWindow)
 {
     IntRect paintRect = calculateImageBufferRect(targetRect, absoluteTransform);
     // Don't create empty ImageBuffers.
@@ -238,12 +238,7 @@ RefPtr<ImageBuffer> SVGRenderingContext::createImageBuffer(const FloatRect& targ
     if (ImageBuffer::sizeNeedsClamping(clampedSize, scale))
         clampedSize = clampedSize * scale;
 
-#if USE(DIRECT2D)
-    auto imageBuffer = ImageBuffer::create(clampedSize, renderingMode, context, 1, colorSpace, PixelFormat::BGRA8);
-#else
-    UNUSED_PARAM(context);
     auto imageBuffer = ImageBuffer::create(clampedSize, renderingMode, ShouldUseDisplayList::No, RenderingPurpose::DOM, 1, colorSpace, PixelFormat::BGRA8, hostWindow);
-#endif
     if (!imageBuffer)
         return nullptr;
 
@@ -256,7 +251,7 @@ RefPtr<ImageBuffer> SVGRenderingContext::createImageBuffer(const FloatRect& targ
     return imageBuffer;
 }
 
-RefPtr<ImageBuffer> SVGRenderingContext::createImageBuffer(const FloatRect& targetRect, const FloatRect& clampedRect, const DestinationColorSpace& colorSpace, RenderingMode renderingMode, const GraphicsContext* context)
+RefPtr<ImageBuffer> SVGRenderingContext::createImageBuffer(const FloatRect& targetRect, const FloatRect& clampedRect, const DestinationColorSpace& colorSpace, RenderingMode renderingMode)
 {
     IntSize clampedSize = roundedIntSize(clampedRect.size());
     FloatSize unclampedSize = roundedIntSize(targetRect.size());
@@ -265,12 +260,7 @@ RefPtr<ImageBuffer> SVGRenderingContext::createImageBuffer(const FloatRect& targ
     if (clampedSize.isEmpty())
         return nullptr;
 
-#if USE(DIRECT2D)
-    auto imageBuffer = ImageBuffer::create(clampedSize, renderingMode, context, 1, colorSpace, PixelFormat::BGRA8);
-#else
-    UNUSED_PARAM(context);
     auto imageBuffer = ImageBuffer::create(clampedSize, renderingMode, 1, colorSpace, PixelFormat::BGRA8);
-#endif
     if (!imageBuffer)
         return nullptr;
 

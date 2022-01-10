@@ -30,11 +30,6 @@
 #include "GraphicsContextCG.h"
 #define GraphicsContextWin GraphicsContextCG
 
-#elif USE(DIRECT2D)
-
-#include "GraphicsContextDirect2D.h"
-#define GraphicsContextWin GraphicsContextDirect2D
-
 #elif USE(CAIRO)
 
 #include "GraphicsContextCairo.h"

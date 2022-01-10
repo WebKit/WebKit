@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(VIDEO) && !USE(DIRECT2D)
+#if ENABLE(VIDEO)
 
 #include "CSSPropertyNames.h"
 #include "CaptionPreferencesDelegate.h"
@@ -120,4 +120,4 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(VIDEO) && !USE(DIRECT2D)
+#endif // ENABLE(VIDEO)

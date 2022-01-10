@@ -52,24 +52,15 @@ else ()
         CFNetwork
         CoreText
     )
-    if (${USE_DIRECT2D})
-        list(APPEND DumpRenderTree_SOURCES
-            win/PixelDumpSupportDirect2D.cpp
-        )
-        list(APPEND DumpRenderTree_LIBRARIES
-            D2d1
-        )
-    else ()
-        list(APPEND DumpRenderTree_PRIVATE_INCLUDE_DIRECTORIES
-            ${DumpRenderTree_DIR}/cg
-        )
-        list(APPEND DumpRenderTree_SOURCES
-            cg/PixelDumpSupportCG.cpp
-        )
-        list(APPEND DumpRenderTree_LIBRARIES
-            CoreGraphics
-        )
-    endif ()
+    list(APPEND DumpRenderTree_PRIVATE_INCLUDE_DIRECTORIES
+        ${DumpRenderTree_DIR}/cg
+    )
+    list(APPEND DumpRenderTree_SOURCES
+        cg/PixelDumpSupportCG.cpp
+    )
+    list(APPEND DumpRenderTree_LIBRARIES
+        CoreGraphics
+    )
 endif ()
 
 WEBKIT_ADD_PRECOMPILED_HEADER("DumpRenderTreePrefix.h" "win/DumpRenderTreePrefix.cpp" DumpRenderTree_SOURCES)

@@ -362,15 +362,11 @@ void PDFDocumentImage::drawPDFPage(GraphicsContext& context)
 
     context.translate(-m_cropBox.location());
 
-#if USE(DIRECT2D)
-    notImplemented();
-#else
     // CGPDF pages are indexed from 1.
 #if PLATFORM(COCOA)
     CGContextDrawPDFPageWithAnnotations(context.platformContext(), CGPDFDocumentGetPage(m_document.get(), 1), nullptr);
 #else
     CGContextDrawPDFPage(context.platformContext(), CGPDFDocumentGetPage(m_document.get(), 1));
-#endif
 #endif
 }
 

@@ -209,10 +209,6 @@
 #include "AcceleratedCompositingContext.h"
 #endif
 
-#if USE(DIRECT2D)
-#include <WebCore/PlatformContextDirect2D.h>
-#endif
-
 #if ENABLE(FULLSCREEN_API)
 #include <WebCore/FullScreenController.h>
 #endif
@@ -855,11 +851,6 @@ void WebView::deleteBackingStore()
         m_deleteBackingStoreTimerActive = false;
     }
     m_backingStoreBitmap = nullptr;
-#if USE(DIRECT2D)
-    m_backingStoreD2DBitmap = nullptr;
-    m_backingStoreGdiInterop = nullptr;
-    m_backingStoreRenderTarget = nullptr;
-#endif
     m_backingStoreDirtyRegion = nullptr;
     m_backingStoreSize.cx = m_backingStoreSize.cy = 0;
 }
@@ -873,20 +864,6 @@ bool WebView::ensureBackingStore()
     if (width > 0 && height > 0 && (width != m_backingStoreSize.cx || height != m_backingStoreSize.cy)) {
         deleteBackingStore();
 
-#if USE(DIRECT2D)
-        auto bitmapSize = D2D1::SizeF(width, height);
-        auto pixelSize = D2D1::SizeU(width, height);
-
-        if (!m_renderTarget) {
-            // Create a Direct2D render target.
-            auto renderTargetProperties = D2D1::RenderTargetProperties();
-            renderTargetProperties.usage = D2D1_RENDER_TARGET_USAGE_GDI_COMPATIBLE;
-            auto hwndRenderTargetProperties = D2D1::HwndRenderTargetProperties(m_viewWindow, pixelSize);
-            HRESULT hr = GraphicsContext::systemFactory()->CreateHwndRenderTarget(&renderTargetProperties, &hwndRenderTargetProperties, &m_renderTarget);
-            if (!SUCCEEDED(hr))
-                return false;
-        }
-#endif
         m_backingStoreSize.cx = width;
         m_backingStoreSize.cy = height;
         BitmapInfo bitmapInfo = BitmapInfo::createBottomUp(IntSize(m_backingStoreSize));
@@ -894,16 +871,6 @@ bool WebView::ensureBackingStore()
         void* pixels = NULL;
         m_backingStoreBitmap = SharedGDIObject<HBITMAP>::create(adoptGDIObject(::CreateDIBSection(0, &bitmapInfo, DIB_RGB_COLORS, &pixels, 0, 0)));
 
-#if USE(DIRECT2D)
-        HRESULT hr = m_renderTarget->CreateCompatibleRenderTarget(&bitmapSize, &pixelSize, nullptr, D2D1_COMPATIBLE_RENDER_TARGET_OPTIONS_GDI_COMPATIBLE, &m_backingStoreRenderTarget);
-        RELEASE_ASSERT(SUCCEEDED(hr));
-
-        hr = m_backingStoreRenderTarget->GetBitmap(&m_backingStoreD2DBitmap);
-        RELEASE_ASSERT(SUCCEEDED(hr));
-
-        hr = m_backingStoreRenderTarget->QueryInterface(__uuidof(ID2D1GdiInteropRenderTarget), (void**)&m_backingStoreGdiInterop);
-        RELEASE_ASSERT(SUCCEEDED(hr));
-#endif
         return true;
     }
 
@@ -978,16 +945,6 @@ void WebView::scrollBackingStore(FrameView* frameView, int logicalDx, int logica
     FloatRect clipRect(logicalClipRect);
     clipRect.scale(scaleFactor);
 
-#if USE(DIRECT2D)
-    RECT scrollRectWin(scrollViewRect);
-    RECT clipRectWin(enclosingIntRect(clipRect));
-    RECT updateRect;
-    ::ScrollWindowEx(m_viewWindow, dx, dy, &scrollRectWin, &clipRectWin, nullptr, &updateRect, 0);
-    ::InvalidateRect(m_viewWindow, &updateRect, FALSE);
-
-    if (m_uiDelegatePrivate)
-        m_uiDelegatePrivate->webViewScrolled(this);
-#else
     if (isAcceleratedCompositing()) {
         // FIXME: We should be doing something smarter here, like moving tiles around and painting
         // any newly-exposed tiles. <http://webkit.org/b/52714>
@@ -1039,7 +996,6 @@ void WebView::scrollBackingStore(FrameView* frameView, int logicalDx, int logica
 
     // Clean up.
     ::SelectObject(bitmapDC.get(), oldBitmap);
-#endif // USE(DIRECT2D)
 }
 
 void WebView::sizeChanged(const IntSize& newSize)
@@ -1066,20 +1022,6 @@ void WebView::sizeChanged(const IntSize& newSize)
 #elif USE(TEXTURE_MAPPER_GL)
     if (m_acceleratedCompositingContext)
         m_acceleratedCompositingContext->resizeRootLayer(newSize);
-#endif
-
-#if USE(DIRECT2D)
-    if (m_renderTarget) {
-        m_renderTarget->Resize(newSize);
-        return;
-    }
-
-    // Create a Direct2D render target.
-    auto renderTargetProperties = D2D1::RenderTargetProperties();
-    renderTargetProperties.usage = D2D1_RENDER_TARGET_USAGE_GDI_COMPATIBLE;
-    auto hwndRenderTargetProperties = D2D1::HwndRenderTargetProperties(m_viewWindow, newSize, D2D1_PRESENT_OPTIONS_IMMEDIATELY);
-    HRESULT hr = GraphicsContext::systemFactory()->CreateHwndRenderTarget(&renderTargetProperties, &hwndRenderTargetProperties, &m_renderTarget);
-    ASSERT(SUCCEEDED(hr));
 #endif
 }
 
@@ -1141,13 +1083,6 @@ void WebView::updateBackingStore(FrameView* frameView, HDC dc, bool backingStore
 
     LOCAL_GDI_COUNTER(0, __FUNCTION__);
 
-#if USE(DIRECT2D)
-    if (!m_backingStoreGdiInterop) {
-        HRESULT hr = m_backingStoreRenderTarget->QueryInterface(__uuidof(ID2D1GdiInteropRenderTarget), (void**)&m_backingStoreGdiInterop);
-        RELEASE_ASSERT(SUCCEEDED(hr));
-    }
-#endif
-
     GDIObject<HDC> bitmapDCObject;
 
     HDC bitmapDC = dc;
@@ -1158,10 +1093,6 @@ void WebView::updateBackingStore(FrameView* frameView, HDC dc, bool backingStore
         bitmapDC = bitmapDCObject.get();
         oldBitmap = ::SelectObject(bitmapDC, m_backingStoreBitmap->get());
         ASSERT(oldBitmap);
-#if USE(DIRECT2D)
-        HRESULT hr = m_backingStoreGdiInterop->GetDC(D2D1_DC_INITIALIZE_MODE_COPY, &bitmapDC);
-        RELEASE_ASSERT(SUCCEEDED(hr));
-#endif
     }
 
     if (m_backingStoreBitmap && (m_backingStoreDirtyRegion || backingStoreCompletelyDirty)) {
@@ -1185,12 +1116,8 @@ void WebView::updateBackingStore(FrameView* frameView, HDC dc, bool backingStore
         m_backingStoreDirtyRegion = nullptr;
     }
 
-    if (!dc) {
+    if (!dc)
         ::SelectObject(bitmapDC, oldBitmap);
-#if USE(DIRECT2D)
-        m_backingStoreGdiInterop->ReleaseDC(nullptr);
-#endif
-    }
 
     GdiFlush();
 
@@ -1223,69 +1150,6 @@ void WebView::performLayeredWindowUpdate()
     ::SelectObject(hdcMem.get(), hbmOld);
 
     m_needsDisplay = false;
-}
-
-void WebView::paintWithDirect2D()
-{
-#if USE(DIRECT2D)
-    Frame* coreFrame = core(m_mainFrame);
-    if (!coreFrame)
-        return;
-    FrameView* frameView = coreFrame->view();
-    frameView->updateLayoutAndStyleIfNeededRecursive();
-
-    if (!m_renderTarget) {
-        // Create a Direct2D render target.
-        auto renderTargetProperties = D2D1::RenderTargetProperties();
-        renderTargetProperties.usage = D2D1_RENDER_TARGET_USAGE_GDI_COMPATIBLE;
-
-        RECT rect;
-        ::GetClientRect(m_viewWindow, &rect);
-
-        IntRect clientRect(rect);
-
-        auto pixelSize = D2D1::SizeU(clientRect.width(), clientRect.height());
-
-        auto hwndRenderTargetProperties = D2D1::HwndRenderTargetProperties(m_viewWindow, pixelSize, D2D1_PRESENT_OPTIONS_IMMEDIATELY);
-        HRESULT hr = GraphicsContext::systemFactory()->CreateHwndRenderTarget(&renderTargetProperties, &hwndRenderTargetProperties, &m_renderTarget);
-        if (!SUCCEEDED(hr))
-            return;
-    }
-
-    RECT clientRect = {};
-    PlatformContextDirect2D platformContext(m_renderTarget.get());
-    GraphicsContextWin gc(&platformContext, GraphicsContext::BitmapRenderingContextType::GPUMemory);
-
-    {
-        m_renderTarget->SetTags(WEBKIT_DRAWING, __LINE__);
-        m_renderTarget->Clear();
-
-        // Direct2D honors the scale factor natively.
-        float scaleFactor = 1.0f;
-        float inverseScaleFactor = 1.0f / scaleFactor;
-
-        GetClientRect(m_viewWindow, &clientRect);
-
-        IntRect dirtyRectPixels(0, 0, clientRect.right, clientRect.bottom);
-        FloatRect logicalDirtyRectFloat = dirtyRectPixels;
-        logicalDirtyRectFloat.scale(inverseScaleFactor);
-        IntRect logicalDirtyRect(enclosingIntRect(logicalDirtyRectFloat));
-
-        if (frameView && frameView->frame().contentRenderer()) {
-            gc.save();
-            gc.scale(FloatSize(scaleFactor, scaleFactor));
-            gc.clip(logicalDirtyRect);
-            frameView->paint(gc, logicalDirtyRect);
-            if (m_shouldInvertColors)
-                gc.fillRect(logicalDirtyRect, Color::white, CompositeOperator::Difference);
-            gc.restore();
-        }
-    }
-
-    ::ValidateRect(m_viewWindow, &clientRect);
-#else
-    ASSERT_NOT_REACHED();
-#endif
 }
 
 void WebView::paint(HDC dc, LPARAM options)
@@ -1349,18 +1213,8 @@ void WebView::paint(HDC dc, LPARAM options)
 
     ::SelectObject(bitmapDC.get(), oldBitmap);
 
-    if (!dc) {
+    if (!dc)
         EndPaint(m_viewWindow, &ps);
-#if USE(DIRECT2D)
-        HRESULT hr = m_backingStoreRenderTarget->EndDraw();
-        // FIXME: Recognize and recover from error state:
-        RELEASE_ASSERT(SUCCEEDED(hr));
-#endif
-    }
-
-#if USE(DIRECT2D)
-    m_backingStoreGdiInterop->ReleaseDC(nullptr);
-#endif
 
     if (active())
         cancelDeleteBackingStoreSoon();
@@ -1402,10 +1256,6 @@ void WebView::paintIntoBackingStore(FrameView* frameView, HDC bitmapDC, const In
     FloatRect logicalDirtyRectFloat = dirtyRectPixels;
     logicalDirtyRectFloat.scale(inverseScaleFactor);    
     IntRect logicalDirtyRect(enclosingIntRect(logicalDirtyRectFloat));
-
-#if USE(DIRECT2D)
-    m_backingStoreRenderTarget = nullptr;
-#endif
 
     GraphicsContextWin gc(bitmapDC, m_transparent);
     gc.save();
@@ -2510,11 +2360,7 @@ LRESULT CALLBACK WebView::WebViewWndProc(HWND hWnd, UINT message, WPARAM wParam,
 
     switch (message) {
         case WM_PAINT: {
-#if USE(DIRECT2D)
-            webView->paintWithDirect2D();
-#else
             webView->paint(0, 0);
-#endif
             if (webView->usesLayeredWindow())
                 webView->performLayeredWindowUpdate();
             break;
@@ -5444,10 +5290,6 @@ HRESULT WebView::notifyPreferencesChanged(IWebNotification* notification)
     hr = prefsPrivate->acceleratedCompositingEnabled(&enabled);
     if (FAILED(hr))
         return hr;
-#if USE(DIRECT2D)
-    // Disable accelerated compositing for now.
-    enabled = false;
-#endif
     settings.setAcceleratedCompositingEnabled(enabled);
 
     hr = prefsPrivate->showDebugBorders(&enabled);
