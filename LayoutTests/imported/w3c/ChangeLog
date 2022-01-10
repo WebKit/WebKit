@@ -1,5 +1,12 @@
 2022-01-09  Antoine Quint  <graouts@webkit.org>
 
+        Unreviewed WPT update after https://github.com/web-platform-tests/wpt/pull/32222.
+
+        * web-platform-tests/css/css-transitions/transition-property-002-expected.txt:
+        * web-platform-tests/css/css-transitions/transition-property-002.html:
+
+2022-01-09  Antoine Quint  <graouts@webkit.org>
+
         Implicit keyframe for a CSS Animation should always use the underlying style
         https://bugs.webkit.org/show_bug.cgi?id=235014
 
