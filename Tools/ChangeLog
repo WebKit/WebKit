@@ -1,3 +1,24 @@
+2022-01-05  Jonathan Bedard  <jbedard@apple.com>
+
+        [EWS] Always invoke CleanGitRepo before CheckOutSource
+        https://bugs.webkit.org/show_bug.cgi?id=234882
+        <rdar://problem/87145396>
+
+        Reviewed by Aakash Jain.
+
+        * CISupport/ews-build/factories.py:
+        (Factory.__init__): Add CleanGitRepo step.
+        (StyleFactory.__init__): Ditto.
+        (WatchListFactory.__init__): Ditto.
+        (CommitQueueFactory.__init__): Specify default branch as 'master.'
+        * CISupport/ews-build/factories_unittest.py:
+        (TestExpectedBuildSteps):
+        * CISupport/ews-build/steps.py:
+        (CleanGitRepo.__init__): Accept default_branch and remote.
+        (CleanGitRepo.run): Construct commands with awareness of branch and remote,
+        check to see if a basename is specified.
+        * CISupport/ews-build/steps_unittest.py:
+
 2021-12-17  Jonathan Bedard  <jbedard@apple.com>
 
         [git-webkit] Retain old commits in pull-request

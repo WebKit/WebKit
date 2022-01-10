@@ -3574,17 +3574,22 @@ class CleanGitRepo(steps.ShellSequence):
     haltOnFailure = False
     flunkOnFailure = False
     logEnviron = False
-    # This somewhat quirky sequence of steps seems to clear up all the broken
-    # git situations we've gotten ourself into in the past.
-    command_list = [['git', 'clean', '-f', '-d'],  # Remove any left-over layout test results, added files, etc.
-                    ['git', 'fetch', 'origin'],  # Avoid updating the working copy to a stale revision.
-                    ['git', 'checkout', 'origin/master', '-f'],
-                    ['git', 'branch', '-D', 'master'],
-                    ['git', 'checkout', 'origin/master', '-b', 'master']]
+
+    def __init__(self, default_branch='main', remote='origin', **kwargs):
+        super(CleanGitRepo, self).__init__(timeout=5 * 60, **kwargs)
+        self.default_branch = default_branch
+        self.git_remote = remote
 
     def run(self):
+        branch = self.getProperty('basename', self.default_branch)
         self.commands = []
-        for command in self.command_list:
+        for command in [
+            ['git', 'clean', '-f', '-d'],  # Remove any left-over layout test results, added files, etc.
+            ['git', 'fetch', self.git_remote],  # Avoid updating the working copy to a stale revision.
+            ['git', 'checkout', '{}/{}'.format(self.git_remote, branch), '-f'],  # Checkout branch from specific remote
+            ['git', 'branch', '-D', '{}'.format(branch)],  # Delete any local cache of the specified branch
+            ['git', 'checkout', '{}/{}'.format(self.git_remote, branch), '-b', '{}'.format(branch)],  # Checkout local instance of branch from remote
+        ]:
             self.commands.append(util.ShellArg(command=command, logname='stdio'))
         return super(CleanGitRepo, self).run()
 

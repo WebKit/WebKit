@@ -48,6 +48,7 @@ class Factory(factory.BuildFactory):
             self.addStep(FindModifiedLayoutTests())
         self.addStep(ValidatePatch())
         self.addStep(PrintConfiguration())
+        self.addStep(CleanGitRepo())
         self.addStep(CheckOutSource())
         # CheckOutSource step pulls the latest revision, since we use alwaysUseLatest=True. Without alwaysUseLatest Buildbot will
         # automatically apply the patch to the repo, and that doesn't handle ChangeLogs well. See https://webkit.org/b/193138
@@ -64,6 +65,7 @@ class StyleFactory(factory.BuildFactory):
         self.addStep(ConfigureBuild(platform=platform, configuration=configuration, architectures=architectures, buildOnly=False, triggers=triggers, remotes=remotes, additionalArguments=additionalArguments))
         self.addStep(ValidatePatch())
         self.addStep(PrintConfiguration())
+        self.addStep(CleanGitRepo())
         self.addStep(CheckOutSource())
         self.addStep(FetchBranches())
         self.addStep(ShowIdentifier())
@@ -78,6 +80,7 @@ class WatchListFactory(factory.BuildFactory):
         self.addStep(ConfigureBuild(platform=platform, configuration=configuration, architectures=architectures, buildOnly=False, triggers=triggers, remotes=remotes, additionalArguments=additionalArguments))
         self.addStep(ValidatePatch())
         self.addStep(PrintConfiguration())
+        self.addStep(CleanGitRepo())
         self.addStep(CheckOutSource())
         self.addStep(FetchBranches())
         self.addStep(ShowIdentifier())
@@ -285,7 +288,7 @@ class CommitQueueFactory(factory.BuildFactory):
         self.addStep(ValidatePatch(verifycqplus=True))
         self.addStep(ValidateCommiterAndReviewer())
         self.addStep(PrintConfiguration())
-        self.addStep(CleanGitRepo())
+        self.addStep(CleanGitRepo(default_branch='master'))
         self.addStep(CheckOutSource(repourl='https://git.webkit.org/git/WebKit-https'))
         self.addStep(FetchBranches())
         self.addStep(ShowIdentifier())

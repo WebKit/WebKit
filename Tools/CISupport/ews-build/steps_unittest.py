@@ -4330,18 +4330,37 @@ class TestCleanGitRepo(BuildStepMixinAdditions, unittest.TestCase):
 
     def test_success(self):
         self.setupStep(CleanGitRepo())
+        self.setProperty('buildername', 'Style-EWS')
+
+        self.expectRemoteCommands(
+            ExpectShell(command=['git', 'clean', '-f', '-d'], workdir='wkdir', timeout=300, logEnviron=False) + 0
+            + ExpectShell.log('stdio', stdout=''),
+            ExpectShell(command=['git', 'fetch', 'origin'], workdir='wkdir', timeout=300, logEnviron=False) + 0
+            + ExpectShell.log('stdio', stdout=''),
+            ExpectShell(command=['git', 'checkout', 'origin/main', '-f'], workdir='wkdir', timeout=300, logEnviron=False) + 0
+            + ExpectShell.log('stdio', stdout='You are in detached HEAD state.'),
+            ExpectShell(command=['git', 'branch', '-D', 'main'], workdir='wkdir', timeout=300, logEnviron=False) + 0
+            + ExpectShell.log('stdio', stdout='Deleted branch main (was 57015967fef9).'),
+            ExpectShell(command=['git', 'checkout', 'origin/main', '-b', 'main'], workdir='wkdir', timeout=300, logEnviron=False) + 0
+            + ExpectShell.log('stdio', stdout="Switched to a new branch 'main'"),
+        )
+        self.expectOutcome(result=SUCCESS, state_string='Cleaned up git repository')
+        return self.runStep()
+
+    def test_success_master(self):
+        self.setupStep(CleanGitRepo(default_branch='master'))
         self.setProperty('buildername', 'Commit-Queue')
 
         self.expectRemoteCommands(
-            ExpectShell(command=['git', 'clean', '-f', '-d'], workdir='wkdir', timeout=1200, logEnviron=False) + 0
+            ExpectShell(command=['git', 'clean', '-f', '-d'], workdir='wkdir', timeout=300, logEnviron=False) + 0
             + ExpectShell.log('stdio', stdout=''),
-            ExpectShell(command=['git', 'fetch', 'origin'], workdir='wkdir', timeout=1200, logEnviron=False) + 0
+            ExpectShell(command=['git', 'fetch', 'origin'], workdir='wkdir', timeout=300, logEnviron=False) + 0
             + ExpectShell.log('stdio', stdout=''),
-            ExpectShell(command=['git', 'checkout', 'origin/master', '-f'], workdir='wkdir', timeout=1200, logEnviron=False) + 0
+            ExpectShell(command=['git', 'checkout', 'origin/master', '-f'], workdir='wkdir', timeout=300, logEnviron=False) + 0
             + ExpectShell.log('stdio', stdout='You are in detached HEAD state.'),
-            ExpectShell(command=['git', 'branch', '-D', 'master'], workdir='wkdir', timeout=1200, logEnviron=False) + 0
+            ExpectShell(command=['git', 'branch', '-D', 'master'], workdir='wkdir', timeout=300, logEnviron=False) + 0
             + ExpectShell.log('stdio', stdout='Deleted branch master (was 57015967fef9).'),
-            ExpectShell(command=['git', 'checkout', 'origin/master', '-b', 'master'], workdir='wkdir', timeout=1200, logEnviron=False) + 0
+            ExpectShell(command=['git', 'checkout', 'origin/master', '-b', 'master'], workdir='wkdir', timeout=300, logEnviron=False) + 0
             + ExpectShell.log('stdio', stdout="Switched to a new branch 'master'"),
         )
         self.expectOutcome(result=SUCCESS, state_string='Cleaned up git repository')
@@ -4352,20 +4371,39 @@ class TestCleanGitRepo(BuildStepMixinAdditions, unittest.TestCase):
         self.setProperty('buildername', 'Commit-Queue')
 
         self.expectRemoteCommands(
-            ExpectShell(command=['git', 'clean', '-f', '-d'], workdir='wkdir', timeout=1200, logEnviron=False) + 0
+            ExpectShell(command=['git', 'clean', '-f', '-d'], workdir='wkdir', timeout=300, logEnviron=False) + 0
             + ExpectShell.log('stdio', stdout=''),
-            ExpectShell(command=['git', 'fetch', 'origin'], workdir='wkdir', timeout=1200, logEnviron=False) + 128
+            ExpectShell(command=['git', 'fetch', 'origin'], workdir='wkdir', timeout=300, logEnviron=False) + 128
             + ExpectShell.log('stdio', stdout='fatal: unable to access https://github.com/WebKit/WebKit.git/: Could not resolve host: github.com'),
-            ExpectShell(command=['git', 'checkout', 'origin/master', '-f'], workdir='wkdir', timeout=1200, logEnviron=False) + 0
+            ExpectShell(command=['git', 'checkout', 'origin/main', '-f'], workdir='wkdir', timeout=300, logEnviron=False) + 0
             + ExpectShell.log('stdio', stdout='You are in detached HEAD state.'),
-            ExpectShell(command=['git', 'branch', '-D', 'master'], workdir='wkdir', timeout=1200, logEnviron=False) + 0
-            + ExpectShell.log('stdio', stdout='Deleted branch master (was 57015967fef9).'),
-            ExpectShell(command=['git', 'checkout', 'origin/master', '-b', 'master'], workdir='wkdir', timeout=1200, logEnviron=False) + 0
-            + ExpectShell.log('stdio', stdout="Switched to a new branch 'master'"),
+            ExpectShell(command=['git', 'branch', '-D', 'main'], workdir='wkdir', timeout=300, logEnviron=False) + 0
+            + ExpectShell.log('stdio', stdout='Deleted branch main (was 57015967fef9).'),
+            ExpectShell(command=['git', 'checkout', 'origin/main', '-b', 'main'], workdir='wkdir', timeout=300, logEnviron=False) + 0
+            + ExpectShell.log('stdio', stdout="Switched to a new branch 'main'"),
         )
         self.expectOutcome(result=FAILURE, state_string='Encountered some issues during cleanup')
         return self.runStep()
 
+    def test_branch(self):
+        self.setupStep(CleanGitRepo())
+        self.setProperty('buildername', 'Commit-Queue')
+        self.setProperty('basename', 'safari-612-branch')
+
+        self.expectRemoteCommands(
+            ExpectShell(command=['git', 'clean', '-f', '-d'], workdir='wkdir', timeout=300, logEnviron=False) + 0
+            + ExpectShell.log('stdio', stdout=''),
+            ExpectShell(command=['git', 'fetch', 'origin'], workdir='wkdir', timeout=300, logEnviron=False) + 0
+            + ExpectShell.log('stdio', stdout=''),
+            ExpectShell(command=['git', 'checkout', 'origin/safari-612-branch', '-f'], workdir='wkdir', timeout=300, logEnviron=False) + 0
+            + ExpectShell.log('stdio', stdout='You are in detached HEAD state.'),
+            ExpectShell(command=['git', 'branch', '-D', 'safari-612-branch'], workdir='wkdir', timeout=300, logEnviron=False) + 0
+            + ExpectShell.log('stdio', stdout='Deleted branch safari-612-branch (was 57015967fef9).'),
+            ExpectShell(command=['git', 'checkout', 'origin/safari-612-branch', '-b', 'safari-612-branch'], workdir='wkdir', timeout=300, logEnviron=False) + 0
+            + ExpectShell.log('stdio', stdout="Switched to a new branch 'safari-612-branch'"),
+        )
+        self.expectOutcome(result=SUCCESS, state_string='Cleaned up git repository')
+        return self.runStep()
 
 class TestFindModifiedChangeLogs(BuildStepMixinAdditions, unittest.TestCase):
     def setUp(self):
