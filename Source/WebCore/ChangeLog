@@ -1,3 +1,56 @@
+2022-01-10  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r287814. rdar://problem/86845512
+
+    Null pointer crash when calling into `-[WebView close]` in `-webView:didCommitLoadForFrame:`
+    https://bugs.webkit.org/show_bug.cgi?id=234994
+    rdar://86845512
+    
+    Reviewed by Chris Dumez and Geoff Garen.
+    
+    Source/WebCore:
+    
+    Add a null check in `FrameLoader::dispatchDidCommitLoad()` before calling into any methods on the frame's Page.
+    Since we called into the client layer to `dispatchDidCommitLoad()` immediately prior to this, a legacy WebKit
+    client may have already caused the page to be destroyed (e.g. by closing the web view). Since Frame's pointer
+    to Page is a WeakPtr, this triggers null derefs when attempting to call either `didCommitLoad()` or
+    `remoteInspectorInformationDidChange()`.
+    
+    Test: WebKitLegacy.CloseWhileCommittingLoad
+    
+    * loader/FrameLoader.cpp:
+    (WebCore::FrameLoader::dispatchDidCommitLoad):
+    
+    Tools:
+    
+    Add a new API test to exercise the fix.
+    
+    * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+    * TestWebKitAPI/Tests/WebKitCocoa/CloseWhileCommittingLoad.mm: Added.
+    (-[CloseWhileCommittingLoadDelegate webView:didCommitLoadForFrame:]):
+    (TestWebKitAPI::TEST):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@287814 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-01-08  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+            Null pointer crash when calling into `-[WebView close]` in `-webView:didCommitLoadForFrame:`
+            https://bugs.webkit.org/show_bug.cgi?id=234994
+            rdar://86845512
+
+            Reviewed by Chris Dumez and Geoff Garen.
+
+            Add a null check in `FrameLoader::dispatchDidCommitLoad()` before calling into any methods on the frame's Page.
+            Since we called into the client layer to `dispatchDidCommitLoad()` immediately prior to this, a legacy WebKit
+            client may have already caused the page to be destroyed (e.g. by closing the web view). Since Frame's pointer
+            to Page is a WeakPtr, this triggers null derefs when attempting to call either `didCommitLoad()` or
+            `remoteInspectorInformationDidChange()`.
+
+            Test: WebKitLegacy.CloseWhileCommittingLoad
+
+            * loader/FrameLoader.cpp:
+            (WebCore::FrameLoader::dispatchDidCommitLoad):
+
 2022-01-07  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r286094. rdar://problem/87125111
