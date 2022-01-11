@@ -1,3 +1,0 @@
-
-FAIL Fragment Navigation: fragment id should be percent-decoded assert_equals: expected 200 but got 0
-
