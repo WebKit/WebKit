@@ -27,14 +27,15 @@
     display: inline-block;
     width: 16px;
     height: 16px;
+    padding: 2px;
     background-color: var(--background-color-content);
     box-sizing: content-box;
     border: 1px solid var(--border-color);
     color: var(--glyph-color);
 }
 
-.alignment-editor .glyph:not(:last-child) {
-    border-inline-end-width: 0;
+.alignment-editor .glyph:not(:first-child) {
+    margin-inline-start: 2px;
 }
 
 .alignment-editor .glyph:active {
@@ -42,17 +43,14 @@
 }
 
 .alignment-editor .glyph.selected {
-    color: var(--glyph-color-active);
+    background-color: var(--glyph-color-active);
     border-color: var(--glyph-color-active);
-}
-
-.alignment-editor .glyph.selected + .glyph {
-    border-inline-start-color: var(--glyph-color-active);
+    color: var(--selected-foreground-color);
 }
 
 .alignment-editor .glyph.selected:active {
-    color: var(--glyph-color-active-pressed);
-    outline-color: var(--glyph-color-active-pressed);
+    background-color: var(--glyph-color-active-pressed);
+    border-color: var(--glyph-color-active-pressed);
 }
 
 .alignment-editor .glyph.rotate-left > svg {

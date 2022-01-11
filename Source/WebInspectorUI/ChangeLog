@@ -1,3 +1,25 @@
+2022-01-10  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Increase padding around icons in Alignment editor
+        https://bugs.webkit.org/show_bug.cgi?id=234036
+        <rdar://problem/86543279>
+
+        Reviewed by Devin Rousso.
+
+        Increase margin and padding around the icons, making the icons more visually appealing
+        and easier to distinguish and from each other.
+
+        * UserInterface/Images/AlignContentStretch.svg:
+        The gap between rectangles was only 0.5px. Increase it to 2px.
+
+        * UserInterface/Views/AlignmentEditor.css:
+        (.alignment-editor .glyph):
+        (.alignment-editor .glyph:not(:first-child)):
+        (.alignment-editor .glyph.selected):
+        (.alignment-editor .glyph.selected:active):
+        (.alignment-editor .glyph:not(:last-child)): Deleted.
+        (.alignment-editor .glyph.selected + .glyph): Deleted.
+
 2022-01-10  Alex Christensen  <achristensen@webkit.org>
 
         Start using C++20
