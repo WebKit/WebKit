@@ -677,7 +677,7 @@ B3IRGenerator::B3IRGenerator(const ModuleInformation& info, Procedure& procedure
     }
 
     {
-        auto* calleeMoveLocation = &compilation->calleeMoveLocation;
+        auto* calleeMoveLocations = &compilation->calleeMoveLocations;
         static_assert(CallFrameSlot::codeBlock * sizeof(Register) < WasmCallingConvention::headerSizeInBytes, "We rely on this here for now.");
         static_assert(CallFrameSlot::callee * sizeof(Register) < WasmCallingConvention::headerSizeInBytes, "We rely on this here for now.");
         B3::PatchpointValue* getCalleePatchpoint = m_currentBlock->appendNew<B3::PatchpointValue>(m_proc, B3::Int64, Origin());
@@ -687,8 +687,8 @@ B3IRGenerator::B3IRGenerator(const ModuleInformation& info, Procedure& procedure
             [=] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
                 GPRReg result = params[0].gpr();
                 MacroAssembler::DataLabelPtr moveLocation = jit.moveWithPatch(MacroAssembler::TrustedImmPtr(nullptr), result);
-                jit.addLinkTask([calleeMoveLocation, moveLocation] (LinkBuffer& linkBuffer) {
-                    *calleeMoveLocation = linkBuffer.locationOf<WasmEntryPtrTag>(moveLocation);
+                jit.addLinkTask([calleeMoveLocations, moveLocation] (LinkBuffer& linkBuffer) {
+                    calleeMoveLocations->append(linkBuffer.locationOf<WasmEntryPtrTag>(moveLocation));
                 });
             });
 
@@ -3138,7 +3138,7 @@ static bool shouldDumpIRFor(uint32_t functionIndex)
     return dumpAllowlist->shouldDumpWasmFunction(functionIndex);
 }
 
-Expected<std::unique_ptr<InternalFunction>, String> parseAndCompile(CompilationContext& compilationContext, const FunctionData& function, const Signature& signature, Vector<UnlinkedWasmToWasmCall>& unlinkedWasmToWasmCalls, unsigned& osrEntryScratchBufferSize, const ModuleInformation& info, MemoryMode mode, CompilationMode compilationMode, uint32_t functionIndex, uint32_t loopIndexForOSREntry, TierUpCount* tierUp)
+Expected<std::unique_ptr<InternalFunction>, String> parseAndCompileB3(CompilationContext& compilationContext, const FunctionData& function, const Signature& signature, Vector<UnlinkedWasmToWasmCall>& unlinkedWasmToWasmCalls, const ModuleInformation& info, MemoryMode mode, CompilationMode compilationMode, uint32_t functionIndex, uint32_t loopIndexForOSREntry, TierUpCount* tierUp)
 {
     auto result = makeUnique<InternalFunction>();
 
@@ -3175,7 +3175,7 @@ Expected<std::unique_ptr<InternalFunction>, String> parseAndCompile(CompilationC
         ? Options::webAssemblyBBQB3OptimizationLevel()
         : Options::webAssemblyOMGOptimizationLevel());
 
-    B3IRGenerator irGenerator(info, procedure, result.get(), unlinkedWasmToWasmCalls, osrEntryScratchBufferSize, mode, compilationMode, functionIndex, loopIndexForOSREntry, tierUp);
+    B3IRGenerator irGenerator(info, procedure, result.get(), unlinkedWasmToWasmCalls, result->osrEntryScratchBufferSize, mode, compilationMode, functionIndex, loopIndexForOSREntry, tierUp);
     FunctionParser<B3IRGenerator> parser(irGenerator, function.data.data(), function.data.size(), signature, info);
     WASM_FAIL_IF_HELPER_FAILS(parser.parse());
 

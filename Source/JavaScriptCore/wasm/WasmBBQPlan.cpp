@@ -64,13 +64,15 @@ bool BBQPlan::prepareImpl()
     const auto& functions = m_moduleInformation->functions;
     if (!tryReserveCapacity(m_wasmInternalFunctions, functions.size(), " WebAssembly functions")
         || !tryReserveCapacity(m_compilationContexts, functions.size(), " compilation contexts")
-        || !tryReserveCapacity(m_tierUpCounts, functions.size(), " tier-up counts"))
+        || !tryReserveCapacity(m_tierUpCounts, functions.size(), " tier-up counts")
+        || !tryReserveCapacity(m_allLoopEntrypoints, functions.size(), " loop entrypoints"))
         return false;
 
     m_wasmInternalFunctions.resize(functions.size());
     m_exceptionHandlerLocations.resize(functions.size());
     m_compilationContexts.resize(functions.size());
     m_tierUpCounts.resize(functions.size());
+    m_allLoopEntrypoints.resize(functions.size());
 
     return true;
 }
@@ -113,7 +115,8 @@ void BBQPlan::work(CompilationEffort effort)
     }
 
     Vector<CodeLocationLabel<ExceptionHandlerPtrTag>> exceptionHandlerLocations;
-    computeExceptionHandlerLocations(exceptionHandlerLocations, function.get(), context, linkBuffer);
+    Vector<CodeLocationLabel<WasmEntryPtrTag>> loopEntrypointLocations;
+    computeExceptionHandlerAndLoopEntrypointLocations(exceptionHandlerLocations, loopEntrypointLocations, function.get(), context, linkBuffer);
 
     computePCToCodeOriginMap(context, linkBuffer);
 
@@ -126,8 +129,9 @@ void BBQPlan::work(CompilationEffort effort)
 
     MacroAssemblerCodePtr<WasmEntryPtrTag> entrypoint;
     {
-        Ref<BBQCallee> callee = BBQCallee::create(WTFMove(function->entrypoint), functionIndexSpace, m_moduleInformation->nameSection->get(functionIndexSpace), WTFMove(tierUp), WTFMove(unlinkedWasmToWasmCalls), WTFMove(function->stackmaps), WTFMove(function->exceptionHandlers), WTFMove(exceptionHandlerLocations));
-        MacroAssembler::repatchPointer(function->calleeMoveLocation, CalleeBits::boxWasm(callee.ptr()));
+        Ref<BBQCallee> callee = BBQCallee::create(WTFMove(function->entrypoint), functionIndexSpace, m_moduleInformation->nameSection->get(functionIndexSpace), WTFMove(tierUp), WTFMove(unlinkedWasmToWasmCalls), WTFMove(function->stackmaps), WTFMove(function->exceptionHandlers), WTFMove(exceptionHandlerLocations), WTFMove(loopEntrypointLocations), function->osrEntryScratchBufferSize);
+        for (auto& moveLocation : function->calleeMoveLocations)
+            MacroAssembler::repatchPointer(moveLocation, CalleeBits::boxWasm(callee.ptr()));
         entrypoint = callee->entrypoint();
 
         if (context.pcToCodeOriginMap)
@@ -196,7 +200,6 @@ std::unique_ptr<InternalFunction> BBQPlan::compileFunction(uint32_t functionInde
     unsigned functionIndexSpace = m_moduleInformation->importFunctionCount() + functionIndex;
     ASSERT_UNUSED(functionIndexSpace, m_moduleInformation->signatureIndexFromFunctionIndexSpace(functionIndexSpace) == signatureIndex);
     Expected<std::unique_ptr<InternalFunction>, String> parseAndCompileResult;
-    unsigned osrEntryScratchBufferSize = 0;
 
     // FIXME: Some webpages use very large Wasm module, and it exhausts all executable memory in ARM64 devices since the size of executable memory region is only limited to 128MB.
     // The long term solution should be to introduce a Wasm interpreter. But as a short term solution, we introduce heuristics to switch back to BBQ B3 at the sacrifice of start-up time,
@@ -208,7 +211,7 @@ std::unique_ptr<InternalFunction> BBQPlan::compileFunction(uint32_t functionInde
         forceUsingB3 = true;
 
     if (forceUsingB3)
-        parseAndCompileResult = parseAndCompile(context, function, signature, unlinkedWasmToWasmCalls, osrEntryScratchBufferSize, m_moduleInformation.get(), m_mode, CompilationMode::BBQMode, functionIndex, UINT32_MAX, tierUp);
+        parseAndCompileResult = parseAndCompileB3(context, function, signature, unlinkedWasmToWasmCalls, m_moduleInformation.get(), m_mode, CompilationMode::BBQMode, functionIndex, UINT32_MAX, tierUp);
     else
         parseAndCompileResult = parseAndCompileAir(context, function, signature, unlinkedWasmToWasmCalls, m_moduleInformation.get(), m_mode, functionIndex, tierUp);
 
@@ -241,7 +244,7 @@ void BBQPlan::didCompleteCompilation()
                 return;
             }
 
-            computeExceptionHandlerLocations(m_exceptionHandlerLocations[functionIndex], function, context, linkBuffer);
+            computeExceptionHandlerAndLoopEntrypointLocations(m_exceptionHandlerLocations[functionIndex], m_allLoopEntrypoints[functionIndex], function, context, linkBuffer);
 
             computePCToCodeOriginMap(context, linkBuffer);
 
@@ -284,13 +287,16 @@ void BBQPlan::initializeCallees(const CalleeInitializer& callback)
         RefPtr<EmbedderEntrypointCallee> embedderEntrypointCallee;
         if (auto embedderToWasmFunction = m_embedderToWasmInternalFunctions.get(internalFunctionIndex)) {
             embedderEntrypointCallee = EmbedderEntrypointCallee::create(WTFMove(embedderToWasmFunction->entrypoint));
-            MacroAssembler::repatchPointer(embedderToWasmFunction->calleeMoveLocation, CalleeBits::boxWasm(embedderEntrypointCallee.get()));
+            for (auto& moveLocation : embedderToWasmFunction->calleeMoveLocations)
+                MacroAssembler::repatchPointer(moveLocation, CalleeBits::boxWasm(embedderEntrypointCallee.get()));
         }
 
         InternalFunction* function = m_wasmInternalFunctions[internalFunctionIndex].get();
         size_t functionIndexSpace = internalFunctionIndex + m_moduleInformation->importFunctionCount();
-        Ref<BBQCallee> wasmEntrypointCallee = BBQCallee::create(WTFMove(function->entrypoint), functionIndexSpace, m_moduleInformation->nameSection->get(functionIndexSpace), WTFMove(m_tierUpCounts[internalFunctionIndex]), WTFMove(m_unlinkedWasmToWasmCalls[internalFunctionIndex]), WTFMove(function->stackmaps), WTFMove(function->exceptionHandlers), WTFMove(m_exceptionHandlerLocations[internalFunctionIndex]));
-        MacroAssembler::repatchPointer(function->calleeMoveLocation, CalleeBits::boxWasm(wasmEntrypointCallee.ptr()));
+        Ref<BBQCallee> wasmEntrypointCallee = BBQCallee::create(WTFMove(function->entrypoint), functionIndexSpace, m_moduleInformation->nameSection->get(functionIndexSpace), WTFMove(m_tierUpCounts[internalFunctionIndex]), WTFMove(m_unlinkedWasmToWasmCalls[internalFunctionIndex]), WTFMove(function->stackmaps), WTFMove(function->exceptionHandlers), WTFMove(m_exceptionHandlerLocations[internalFunctionIndex]), WTFMove(m_allLoopEntrypoints[internalFunctionIndex]), function->osrEntryScratchBufferSize);
+
+        for (auto& moveLocation : function->calleeMoveLocations)
+            MacroAssembler::repatchPointer(moveLocation, CalleeBits::boxWasm(wasmEntrypointCallee.ptr()));
 
         if (m_compilationContexts[internalFunctionIndex].pcToCodeOriginMap)
             CalleeRegistry::singleton().addPCToCodeOriginMap(wasmEntrypointCallee.ptr(), WTFMove(m_compilationContexts[internalFunctionIndex].pcToCodeOriginMap));

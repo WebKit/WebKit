@@ -63,24 +63,32 @@ struct PatchpointExceptionHandle {
 };
 
 
-static inline void computeExceptionHandlerLocations(Vector<CodeLocationLabel<ExceptionHandlerPtrTag>>& handlers, const InternalFunction* function, const CompilationContext& context, LinkBuffer& linkBuffer)
+static inline void computeExceptionHandlerAndLoopEntrypointLocations(Vector<CodeLocationLabel<ExceptionHandlerPtrTag>>& handlers, Vector<CodeLocationLabel<WasmEntryPtrTag>>& loopEntrypoints, const InternalFunction* function, const CompilationContext& context, LinkBuffer& linkBuffer)
 {
     if (!context.procedure)
         return;
 
-    unsigned entrypointIndex = 0;
+    unsigned entrypointIndex = 1;
     unsigned numEntrypoints = context.procedure->numEntrypoints();
     for (const UnlinkedHandlerInfo& handlerInfo : function->exceptionHandlers) {
-        RELEASE_ASSERT(entrypointIndex < numEntrypoints);
         if (handlerInfo.m_type == HandlerType::Delegate) {
             handlers.append({ });
             continue;
         }
 
-        ++entrypointIndex;
+        RELEASE_ASSERT(entrypointIndex < numEntrypoints);
         handlers.append(linkBuffer.locationOf<ExceptionHandlerPtrTag>(context.procedure->code().entrypointLabel(entrypointIndex)));
+        ++entrypointIndex;
     }
-    RELEASE_ASSERT(entrypointIndex == numEntrypoints - 1);
+
+    for (; entrypointIndex < numEntrypoints; ++entrypointIndex)
+        loopEntrypoints.append(linkBuffer.locationOf<WasmEntryPtrTag>(context.procedure->code().entrypointLabel(entrypointIndex)));
+}
+
+static inline void computeExceptionHandlerLocations(Vector<CodeLocationLabel<ExceptionHandlerPtrTag>>& handlers, const InternalFunction* function, const CompilationContext& context, LinkBuffer& linkBuffer)
+{
+    Vector<CodeLocationLabel<WasmEntryPtrTag>> ignored;
+    computeExceptionHandlerAndLoopEntrypointLocations(handlers, ignored, function, context, linkBuffer);
 }
 
 static inline void emitRethrowImpl(CCallHelpers& jit)

@@ -180,63 +180,88 @@ WASM_SLOW_PATH_DECL(loop_osr)
 
     dataLogLnIf(Options::verboseOSR(), *callee, ": Entered loop_osr with tierUpCounter = ", callee->tierUpCounter());
 
-    unsigned loopOSREntryBytecodeOffset = callee->bytecodeOffset(pc);
-    const auto& osrEntryData = tierUpCounter.osrEntryDataForLoop(loopOSREntryBytecodeOffset);
-
     if (!tierUpCounter.checkIfOptimizationThresholdReached()) {
         dataLogLnIf(Options::verboseOSR(), "    JIT threshold should be lifted.");
         WASM_RETURN_TWO(nullptr, nullptr);
     }
 
-    const auto doOSREntry = [&](Wasm::OSREntryCallee* osrEntryCallee) {
-        if (osrEntryCallee->loopIndex() != osrEntryData.loopIndex)
+    unsigned loopOSREntryBytecodeOffset = callee->bytecodeOffset(pc);
+    const auto& osrEntryData = tierUpCounter.osrEntryDataForLoop(loopOSREntryBytecodeOffset);
+
+    if (Options::wasmLLIntTiersUpToBBQ()) {
+        if (!jitCompileAndSetHeuristics(callee, instance))
             WASM_RETURN_TWO(nullptr, nullptr);
 
-        size_t osrEntryScratchBufferSize = osrEntryCallee->osrEntryScratchBufferSize();
-        RELEASE_ASSERT(osrEntryScratchBufferSize == osrEntryData.values.size());
+        Wasm::BBQCallee* bbqCallee;
+        {
+            Locker locker { instance->calleeGroup()->m_lock };
+            bbqCallee = instance->calleeGroup()->bbqCallee(locker, callee->functionIndex());
+        }
+        RELEASE_ASSERT(bbqCallee);
+
+        size_t osrEntryScratchBufferSize = bbqCallee->osrEntryScratchBufferSize();
+        RELEASE_ASSERT(osrEntryScratchBufferSize >= osrEntryData.values.size());
         uint64_t* buffer = instance->context()->scratchBufferForSize(osrEntryScratchBufferSize);
         if (!buffer)
             WASM_RETURN_TWO(nullptr, nullptr);
+        RELEASE_ASSERT(osrEntryData.loopIndex < bbqCallee->loopEntrypoints().size());
 
         uint32_t index = 0;
         for (VirtualRegister reg : osrEntryData.values)
             buffer[index++] = READ(reg).encodedJSValue();
 
-        WASM_RETURN_TWO(buffer, osrEntryCallee->entrypoint().executableAddress());
-    };
+        WASM_RETURN_TWO(buffer, bbqCallee->loopEntrypoints()[osrEntryData.loopIndex].executableAddress());
+    } else {
+        const auto doOSREntry = [&](Wasm::OSREntryCallee* osrEntryCallee) {
+            if (osrEntryCallee->loopIndex() != osrEntryData.loopIndex)
+                WASM_RETURN_TWO(nullptr, nullptr);
 
-    if (auto* osrEntryCallee = callee->osrEntryCallee(instance->memory()->mode()))
-        return doOSREntry(osrEntryCallee);
+            size_t osrEntryScratchBufferSize = osrEntryCallee->osrEntryScratchBufferSize();
+            RELEASE_ASSERT(osrEntryScratchBufferSize == osrEntryData.values.size());
+            uint64_t* buffer = instance->context()->scratchBufferForSize(osrEntryScratchBufferSize);
+            if (!buffer)
+                WASM_RETURN_TWO(nullptr, nullptr);
 
-    bool compile = false;
-    {
-        Locker locker { tierUpCounter.m_lock };
-        switch (tierUpCounter.m_loopCompilationStatus) {
-        case Wasm::LLIntTierUpCounter::CompilationStatus::NotCompiled:
-            compile = true;
-            tierUpCounter.m_loopCompilationStatus = Wasm::LLIntTierUpCounter::CompilationStatus::Compiling;
-            break;
-        case Wasm::LLIntTierUpCounter::CompilationStatus::Compiling:
-            tierUpCounter.optimizeAfterWarmUp();
-            break;
-        case Wasm::LLIntTierUpCounter::CompilationStatus::Compiled:
-            break;
+            uint32_t index = 0;
+            for (VirtualRegister reg : osrEntryData.values)
+                buffer[index++] = READ(reg).encodedJSValue();
+
+            WASM_RETURN_TWO(buffer, osrEntryCallee->entrypoint().executableAddress());
+        };
+
+        if (auto* osrEntryCallee = callee->osrEntryCallee(instance->memory()->mode()))
+            return doOSREntry(osrEntryCallee);
+
+        bool compile = false;
+        {
+            Locker locker { tierUpCounter.m_lock };
+            switch (tierUpCounter.m_loopCompilationStatus) {
+            case Wasm::LLIntTierUpCounter::CompilationStatus::NotCompiled:
+                compile = true;
+                tierUpCounter.m_loopCompilationStatus = Wasm::LLIntTierUpCounter::CompilationStatus::Compiling;
+                break;
+            case Wasm::LLIntTierUpCounter::CompilationStatus::Compiling:
+                tierUpCounter.optimizeAfterWarmUp();
+                break;
+            case Wasm::LLIntTierUpCounter::CompilationStatus::Compiled:
+                break;
+            }
         }
+
+        if (compile) {
+            Ref<Wasm::Plan> plan = adoptRef(*static_cast<Wasm::Plan*>(new Wasm::OSREntryPlan(instance->context(), Ref<Wasm::Module>(instance->module()), Ref<Wasm::Callee>(*callee), callee->functionIndex(), osrEntryData.loopIndex, instance->memory()->mode(), Wasm::Plan::dontFinalize())));
+            Wasm::ensureWorklist().enqueue(plan.copyRef());
+            if (UNLIKELY(!Options::useConcurrentJIT()))
+                plan->waitForCompletion();
+            else
+                tierUpCounter.optimizeAfterWarmUp();
+        }
+
+        if (auto* osrEntryCallee = callee->osrEntryCallee(instance->memory()->mode()))
+            return doOSREntry(osrEntryCallee);
+
+        WASM_RETURN_TWO(nullptr, nullptr);
     }
-
-    if (compile) {
-        Ref<Wasm::Plan> plan = adoptRef(*static_cast<Wasm::Plan*>(new Wasm::OSREntryPlan(instance->context(), Ref<Wasm::Module>(instance->module()), Ref<Wasm::Callee>(*callee), callee->functionIndex(), osrEntryData.loopIndex, instance->memory()->mode(), Wasm::Plan::dontFinalize())));
-        Wasm::ensureWorklist().enqueue(plan.copyRef());
-        if (UNLIKELY(!Options::useConcurrentJIT()))
-            plan->waitForCompletion();
-        else
-            tierUpCounter.optimizeAfterWarmUp();
-    }
-
-    if (auto* osrEntryCallee = callee->osrEntryCallee(instance->memory()->mode()))
-        return doOSREntry(osrEntryCallee);
-
-    WASM_RETURN_TWO(nullptr, nullptr);
 }
 
 WASM_SLOW_PATH_DECL(epilogue_osr)

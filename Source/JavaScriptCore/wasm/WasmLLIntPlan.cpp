@@ -168,8 +168,8 @@ void LLIntPlan::didCompleteCompilation()
             Ref<EmbedderEntrypointCallee> callee = EmbedderEntrypointCallee::create(WTFMove(function->entrypoint));
             // FIXME: remove this repatchPointer - just pass in the callee directly
             // https://bugs.webkit.org/show_bug.cgi?id=166462
-            if (function->calleeMoveLocation)
-                MacroAssembler::repatchPointer(function->calleeMoveLocation, CalleeBits::boxWasm(callee.ptr()));
+            for (auto& moveLocation : function->calleeMoveLocations)
+                MacroAssembler::repatchPointer(moveLocation, CalleeBits::boxWasm(callee.ptr()));
 
             auto result = m_embedderCallees.add(functionIndex, WTFMove(callee));
             ASSERT_UNUSED(result, result.isNewEntry);

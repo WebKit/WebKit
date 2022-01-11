@@ -72,9 +72,8 @@ void OMGPlan::work(CompilationEffort)
     const Signature& signature = SignatureInformation::get(signatureIndex);
 
     Vector<UnlinkedWasmToWasmCall> unlinkedCalls;
-    unsigned osrEntryScratchBufferSize;
     CompilationContext context;
-    auto parseAndCompileResult = parseAndCompile(context, function, signature, unlinkedCalls, osrEntryScratchBufferSize, m_moduleInformation.get(), m_mode, CompilationMode::OMGMode, m_functionIndex, UINT32_MAX);
+    auto parseAndCompileResult = parseAndCompileB3(context, function, signature, unlinkedCalls, m_moduleInformation.get(), m_mode, CompilationMode::OMGMode, m_functionIndex, UINT32_MAX);
 
     if (UNLIKELY(!parseAndCompileResult)) {
         Locker locker { m_lock };
@@ -106,7 +105,8 @@ void OMGPlan::work(CompilationEffort)
     {
         ASSERT(m_calleeGroup.ptr() == m_module->calleeGroupFor(mode()));
         Ref<OMGCallee> callee = OMGCallee::create(WTFMove(omgEntrypoint), functionIndexSpace, m_moduleInformation->nameSection->get(functionIndexSpace), WTFMove(unlinkedCalls), WTFMove(internalFunction->stackmaps), WTFMove(internalFunction->exceptionHandlers), WTFMove(exceptionHandlerLocations));
-        MacroAssembler::repatchPointer(internalFunction->calleeMoveLocation, CalleeBits::boxWasm(callee.ptr()));
+        for (auto& moveLocation : internalFunction->calleeMoveLocations)
+            MacroAssembler::repatchPointer(moveLocation, CalleeBits::boxWasm(callee.ptr()));
         entrypoint = callee->entrypoint();
 
         if (context.pcToCodeOriginMap)

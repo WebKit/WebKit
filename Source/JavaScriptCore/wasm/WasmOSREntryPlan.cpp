@@ -77,8 +77,7 @@ void OSREntryPlan::work(CompilationEffort)
 
     Vector<UnlinkedWasmToWasmCall> unlinkedCalls;
     CompilationContext context;
-    unsigned osrEntryScratchBufferSize = 0;
-    auto parseAndCompileResult = parseAndCompile(context, function, signature, unlinkedCalls, osrEntryScratchBufferSize, m_moduleInformation.get(), m_mode, targetCompilationMode, m_functionIndex, m_loopIndex);
+    auto parseAndCompileResult = parseAndCompileB3(context, function, signature, unlinkedCalls, m_moduleInformation.get(), m_mode, targetCompilationMode, m_functionIndex, m_loopIndex);
 
     if (UNLIKELY(!parseAndCompileResult)) {
         Locker locker { m_lock };
@@ -105,9 +104,10 @@ void OSREntryPlan::work(CompilationEffort)
     omgEntrypoint.calleeSaveRegisters = WTFMove(internalFunction->entrypoint.calleeSaveRegisters);
 
     ASSERT(m_calleeGroup.ptr() == m_module->calleeGroupFor(mode()));
-    Ref<OSREntryCallee> callee = OSREntryCallee::create(targetCompilationMode, WTFMove(omgEntrypoint), functionIndexSpace, m_moduleInformation->nameSection->get(functionIndexSpace), osrEntryScratchBufferSize, m_loopIndex, WTFMove(unlinkedCalls), WTFMove(internalFunction->stackmaps), WTFMove(internalFunction->exceptionHandlers), WTFMove(exceptionHandlerLocations));
+    Ref<OSREntryCallee> callee = OSREntryCallee::create(targetCompilationMode, WTFMove(omgEntrypoint), functionIndexSpace, m_moduleInformation->nameSection->get(functionIndexSpace), internalFunction->osrEntryScratchBufferSize, m_loopIndex, WTFMove(unlinkedCalls), WTFMove(internalFunction->stackmaps), WTFMove(internalFunction->exceptionHandlers), WTFMove(exceptionHandlerLocations));
     {
-        MacroAssembler::repatchPointer(internalFunction->calleeMoveLocation, CalleeBits::boxWasm(callee.ptr()));
+        for (auto& moveLocation : internalFunction->calleeMoveLocations)
+            MacroAssembler::repatchPointer(moveLocation, CalleeBits::boxWasm(callee.ptr()));
 
         Locker locker { m_calleeGroup->m_lock };
         for (auto& call : callee->wasmToWasmCallsites()) {

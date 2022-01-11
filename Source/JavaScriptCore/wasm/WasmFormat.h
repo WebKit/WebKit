@@ -443,10 +443,11 @@ struct Entrypoint {
 
 struct InternalFunction {
     WTF_MAKE_STRUCT_FAST_ALLOCATED;
-    CodeLocationDataLabelPtr<WasmEntryPtrTag> calleeMoveLocation;
+    Vector<CodeLocationDataLabelPtr<WasmEntryPtrTag>> calleeMoveLocations;
     StackMaps stackmaps;
     Vector<UnlinkedHandlerInfo> exceptionHandlers;
     Entrypoint entrypoint;
+    unsigned osrEntryScratchBufferSize { 0 };
 };
 
 // WebAssembly direct calls and call_indirect use indices into "function index space". This space starts

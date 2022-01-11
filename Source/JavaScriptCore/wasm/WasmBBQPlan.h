@@ -87,6 +87,7 @@ private:
     HashMap<uint32_t, std::unique_ptr<InternalFunction>, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> m_embedderToWasmInternalFunctions;
     Vector<CompilationContext> m_compilationContexts;
     Vector<std::unique_ptr<TierUpCount>> m_tierUpCounts;
+    Vector<Vector<CodeLocationLabel<WasmEntryPtrTag>>> m_allLoopEntrypoints;
 
     RefPtr<CalleeGroup> m_calleeGroup { nullptr };
     uint32_t m_functionIndex;

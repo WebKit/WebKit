@@ -172,9 +172,9 @@ private:
 
 class BBQCallee final : public OptimizingJITCallee {
 public:
-    static Ref<BBQCallee> create(Wasm::Entrypoint&& entrypoint, size_t index, std::pair<const Name*, RefPtr<NameSection>>&& name, std::unique_ptr<TierUpCount>&& tierUpCount, Vector<UnlinkedWasmToWasmCall>&& unlinkedCalls, StackMaps&& stackmaps, Vector<UnlinkedHandlerInfo>&& exceptionHandlers, Vector<CodeLocationLabel<ExceptionHandlerPtrTag>>&& exceptionHandlerLocations)
+    static Ref<BBQCallee> create(Wasm::Entrypoint&& entrypoint, size_t index, std::pair<const Name*, RefPtr<NameSection>>&& name, std::unique_ptr<TierUpCount>&& tierUpCount, Vector<UnlinkedWasmToWasmCall>&& unlinkedCalls, StackMaps&& stackmaps, Vector<UnlinkedHandlerInfo>&& exceptionHandlers, Vector<CodeLocationLabel<ExceptionHandlerPtrTag>>&& exceptionHandlerLocations, Vector<CodeLocationLabel<WasmEntryPtrTag>>&& loopEntrypoints, unsigned osrEntryScratchBufferSize)
     {
-        return adoptRef(*new BBQCallee(WTFMove(entrypoint), index, WTFMove(name), WTFMove(tierUpCount), WTFMove(unlinkedCalls), WTFMove(stackmaps), WTFMove(exceptionHandlers), WTFMove(exceptionHandlerLocations)));
+        return adoptRef(*new BBQCallee(WTFMove(entrypoint), index, WTFMove(name), WTFMove(tierUpCount), WTFMove(unlinkedCalls), WTFMove(stackmaps), WTFMove(exceptionHandlers), WTFMove(exceptionHandlerLocations), WTFMove(loopEntrypoints), osrEntryScratchBufferSize));
     }
 
     OSREntryCallee* osrEntryCallee() { return m_osrEntryCallee.get(); }
@@ -194,16 +194,24 @@ public:
 
     TierUpCount* tierUpCount() { return m_tierUpCount.get(); }
 
+    const Vector<CodeLocationLabel<WasmEntryPtrTag>>& loopEntrypoints() { return m_loopEntrypoints; }
+
+    unsigned osrEntryScratchBufferSize() const { return m_osrEntryScratchBufferSize; }
+
 private:
-    BBQCallee(Wasm::Entrypoint&& entrypoint, size_t index, std::pair<const Name*, RefPtr<NameSection>>&& name, std::unique_ptr<TierUpCount>&& tierUpCount, Vector<UnlinkedWasmToWasmCall>&& unlinkedCalls, StackMaps&& stackmaps, Vector<UnlinkedHandlerInfo>&& exceptionHandlers, Vector<CodeLocationLabel<ExceptionHandlerPtrTag>>&& exceptionHandlerLocations)
+    BBQCallee(Wasm::Entrypoint&& entrypoint, size_t index, std::pair<const Name*, RefPtr<NameSection>>&& name, std::unique_ptr<TierUpCount>&& tierUpCount, Vector<UnlinkedWasmToWasmCall>&& unlinkedCalls, StackMaps&& stackmaps, Vector<UnlinkedHandlerInfo>&& exceptionHandlers, Vector<CodeLocationLabel<ExceptionHandlerPtrTag>>&& exceptionHandlerLocations, Vector<CodeLocationLabel<WasmEntryPtrTag>>&& loopEntrypoints, unsigned osrEntryScratchBufferSize)
         : OptimizingJITCallee(Wasm::CompilationMode::BBQMode, WTFMove(entrypoint), index, WTFMove(name), WTFMove(unlinkedCalls), WTFMove(stackmaps), WTFMove(exceptionHandlers), WTFMove(exceptionHandlerLocations))
         , m_tierUpCount(WTFMove(tierUpCount))
+        , m_loopEntrypoints(WTFMove(loopEntrypoints))
+        , m_osrEntryScratchBufferSize(osrEntryScratchBufferSize)
     {
     }
 
     RefPtr<OSREntryCallee> m_osrEntryCallee;
     RefPtr<OMGCallee> m_replacement;
     std::unique_ptr<TierUpCount> m_tierUpCount;
+    Vector<CodeLocationLabel<WasmEntryPtrTag>> m_loopEntrypoints;
+    unsigned m_osrEntryScratchBufferSize { 0 };
     bool m_didStartCompilingOSREntryCallee { false };
 };
 #endif
@@ -267,7 +275,7 @@ public:
 
 #if ENABLE(WEBASSEMBLY_B3JIT)
     JITCallee* replacement(MemoryMode mode) { return m_replacements[static_cast<uint8_t>(mode)].get(); }
-    void setReplacement(Ref<JITCallee>&& replacement, MemoryMode mode)
+    void setReplacement(Ref<OptimizingJITCallee>&& replacement, MemoryMode mode)
     {
         m_replacements[static_cast<uint8_t>(mode)] = WTFMove(replacement);
     }
@@ -302,7 +310,7 @@ private:
     FixedVector<JumpTable> m_jumpTables;
 
 #if ENABLE(WEBASSEMBLY_B3JIT)
-    RefPtr<JITCallee> m_replacements[Wasm::NumberOfMemoryModes];
+    RefPtr<OptimizingJITCallee> m_replacements[Wasm::NumberOfMemoryModes];
     RefPtr<OSREntryCallee> m_osrEntryCallees[Wasm::NumberOfMemoryModes];
 #endif
     MacroAssemblerCodePtr<WasmEntryPtrTag> m_entrypoint;

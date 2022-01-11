@@ -178,9 +178,9 @@ std::unique_ptr<InternalFunction> createJSToWasmWrapper(CCallHelpers& jit, const
     jit.emitZeroToCallFrameHeader(CallFrameSlot::codeBlock);
     MacroAssembler::DataLabelPtr calleeMoveLocation = jit.moveWithPatch(MacroAssembler::TrustedImmPtr(nullptr), GPRInfo::nonPreservedNonReturnGPR);
     jit.emitPutToCallFrameHeader(GPRInfo::nonPreservedNonReturnGPR, CallFrameSlot::callee);
-    CodeLocationDataLabelPtr<WasmEntryPtrTag>* linkedCalleeMove = &result->calleeMoveLocation;
+    Vector<CodeLocationDataLabelPtr<WasmEntryPtrTag>>* linkedCalleeMove = &result->calleeMoveLocations;
     jit.addLinkTask([=] (LinkBuffer& linkBuffer) {
-        *linkedCalleeMove = linkBuffer.locationOf<WasmEntryPtrTag>(calleeMoveLocation);
+        linkedCalleeMove->append(linkBuffer.locationOf<WasmEntryPtrTag>(calleeMoveLocation));
     });
 
     const PinnedRegisterInfo& pinnedRegs = PinnedRegisterInfo::get();

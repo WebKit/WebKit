@@ -322,7 +322,7 @@ public:
             return fail(__VA_ARGS__);             \
     } while (0)
 
-    AirIRGenerator(const ModuleInformation&, B3::Procedure&, InternalFunction*, Vector<UnlinkedWasmToWasmCall>&, MemoryMode, unsigned functionIndex, TierUpCount*, const Signature&);
+    AirIRGenerator(const ModuleInformation&, B3::Procedure&, InternalFunction*, Vector<UnlinkedWasmToWasmCall>&, MemoryMode, unsigned functionIndex, TierUpCount*, const Signature&, unsigned& osrEntryScratchBufferSize);
 
     void finalizeEntrypoints();
 
@@ -783,7 +783,7 @@ private:
         }
     }
 
-    void emitLoad(Tmp base, size_t offset, TypedTmp result)
+    void emitLoad(Tmp base, size_t offset, const TypedTmp& result)
     {
         emitLoad(moveOpForValueType(result.type()), toB3Type(result.type()), base, offset, result.tmp());
     }
@@ -791,7 +791,7 @@ private:
     void emitThrowException(CCallHelpers&, ExceptionType);
 
     void emitEntryTierUpCheck();
-    void emitLoopTierUpCheck(uint32_t loopIndex, const Stack& enclosingStack, const Stack& newStack);
+    void emitLoopTierUpCheck(uint32_t loopIndex, const Vector<TypedTmp>& liveValues);
 
     void emitWriteBarrierForJSWrapper();
     ExpressionType emitCheckAndPreparePointer(ExpressionType pointer, uint32_t offset, uint32_t sizeOfOp);
@@ -884,6 +884,9 @@ private:
     Checked<unsigned> m_callSiteIndex { 0 };
     StackMaps m_stackmaps;
     Vector<UnlinkedHandlerInfo> m_exceptionHandlers;
+
+    Vector<std::pair<BasicBlock*, Vector<TypedTmp>>> m_loopEntryVariableData;
+    unsigned& m_osrEntryScratchBufferSize;
 };
 
 // Memory accesses in WebAssembly have unsigned 32-bit offsets, whereas they have signed 32-bit offsets in B3.
@@ -929,7 +932,7 @@ void AirIRGenerator::restoreWasmContextInstance(BasicBlock* block, TypedTmp inst
     emitPatchpoint(block, patchpoint, Tmp(), instance);
 }
 
-AirIRGenerator::AirIRGenerator(const ModuleInformation& info, B3::Procedure& procedure, InternalFunction* compilation, Vector<UnlinkedWasmToWasmCall>& unlinkedWasmToWasmCalls, MemoryMode mode, unsigned functionIndex, TierUpCount* tierUp, const Signature& signature)
+AirIRGenerator::AirIRGenerator(const ModuleInformation& info, B3::Procedure& procedure, InternalFunction* compilation, Vector<UnlinkedWasmToWasmCall>& unlinkedWasmToWasmCalls, MemoryMode mode, unsigned functionIndex, TierUpCount* tierUp, const Signature& signature, unsigned& osrEntryScratchBufferSize)
     : m_info(info)
     , m_mode(mode)
     , m_functionIndex(functionIndex)
@@ -938,6 +941,7 @@ AirIRGenerator::AirIRGenerator(const ModuleInformation& info, B3::Procedure& pro
     , m_code(m_proc.code())
     , m_unlinkedWasmToWasmCalls(unlinkedWasmToWasmCalls)
     , m_numImportFunctions(info.importFunctionCount())
+    , m_osrEntryScratchBufferSize(osrEntryScratchBufferSize)
 {
     m_currentBlock = m_code.addBlock();
     m_rootBlock = m_currentBlock;
@@ -967,7 +971,7 @@ AirIRGenerator::AirIRGenerator(const ModuleInformation& info, B3::Procedure& pro
             GPRReg calleeGPR = wasmCallingConvention().prologueScratchGPRs[0];
             auto moveLocation = jit.moveWithPatch(MacroAssembler::TrustedImmPtr(nullptr), calleeGPR);
             jit.addLinkTask([compilation, moveLocation] (LinkBuffer& linkBuffer) {
-                compilation->calleeMoveLocation = linkBuffer.locationOf<WasmEntryPtrTag>(moveLocation);
+                compilation->calleeMoveLocations.append(linkBuffer.locationOf<WasmEntryPtrTag>(moveLocation));
             });
             jit.emitPutToCallFrameHeader(calleeGPR, CallFrameSlot::callee);
             jit.emitPutToCallFrameHeader(nullptr, CallFrameSlot::codeBlock);
@@ -1072,9 +1076,11 @@ AirIRGenerator::AirIRGenerator(const ModuleInformation& info, B3::Procedure& pro
 
 void AirIRGenerator::finalizeEntrypoints()
 {
-    unsigned numEntrypoints = 1 + m_catchEntrypoints.size();
+    unsigned numEntrypoints = Checked<unsigned>(1) + m_catchEntrypoints.size() + m_loopEntryVariableData.size();
     m_proc.setNumEntrypoints(numEntrypoints);
     m_code.setPrologueForEntrypoint(0, Ref<B3::Air::PrologueGenerator>(*m_prologueGenerator));
+    for (unsigned i = 1 + m_catchEntrypoints.size(); i < numEntrypoints; ++i)
+        m_code.setPrologueForEntrypoint(i, Ref<B3::Air::PrologueGenerator>(*m_prologueGenerator));
 
     if (m_catchEntrypoints.size()) {
         Ref<B3::Air::PrologueGenerator> catchPrologueGenerator = createSharedTask<B3::Air::PrologueGeneratorFunction>([this] (CCallHelpers& jit, B3::Air::Code& code) {
@@ -1094,6 +1100,25 @@ void AirIRGenerator::finalizeEntrypoints()
     BasicBlock::SuccessorList successors;
     successors.append(m_mainEntrypointStart);
     successors.appendVector(m_catchEntrypoints);
+
+    for (auto& pair : m_loopEntryVariableData) {
+        BasicBlock* loopBody = pair.first;
+        BasicBlock* entry = m_code.addBlock();
+        successors.append(entry);
+        m_currentBlock = entry;
+
+        auto& temps = pair.second;
+        m_osrEntryScratchBufferSize = std::max(m_osrEntryScratchBufferSize, static_cast<unsigned>(temps.size()));
+        Tmp basePtr = Tmp(GPRInfo::argumentGPR0);
+
+        for (size_t i = 0; i < temps.size(); ++i) {
+            size_t offset = static_cast<size_t>(i) * sizeof(uint64_t);
+            emitLoad(basePtr, offset, temps[i]);
+        }
+
+        append(Jump);
+        entry->setSuccessors(loopBody);
+    }
 
     RELEASE_ASSERT(numEntrypoints == successors.size());
     m_rootBlock->successors() = successors;
@@ -3033,7 +3058,7 @@ void AirIRGenerator::emitEntryTierUpCheck()
     emitPatchpoint(patch, Tmp(), countdownPtr);
 }
 
-void AirIRGenerator::emitLoopTierUpCheck(uint32_t loopIndex, const Stack& enclosingStack, const Stack& newStack)
+void AirIRGenerator::emitLoopTierUpCheck(uint32_t loopIndex, const Vector<TypedTmp>& liveValues)
 {
     uint32_t outerLoopIndex = this->outerLoopIndex();
     m_outerLoops.append(loopIndex);
@@ -3062,14 +3087,8 @@ void AirIRGenerator::emitLoopTierUpCheck(uint32_t loopIndex, const Stack& enclos
 
     Vector<ConstrainedTmp> patchArgs;
     patchArgs.append(countdownPtr);
-
-    forEachLiveValue([&] (Tmp tmp) {
-        patchArgs.append(ConstrainedTmp(tmp, B3::ValueRep::ColdAny));
-    });
-    for (TypedExpression value : enclosingStack)
-        patchArgs.append(ConstrainedTmp(value.value(), B3::ValueRep::ColdAny));
-    for (TypedExpression value : newStack)
-        patchArgs.append(ConstrainedTmp(value.value(), B3::ValueRep::ColdAny));
+    for (const TypedTmp& tmp : liveValues)
+        patchArgs.append(ConstrainedTmp(tmp.tmp(), B3::ValueRep::ColdAny));
 
     TierUpCount::TriggerReason* forceEntryTrigger = &(m_tierUp->osrEntryTriggers().last());
     static_assert(!static_cast<uint8_t>(TierUpCount::TriggerReason::DontTrigger), "the JIT code assumes non-zero means 'enter'");
@@ -3110,10 +3129,22 @@ AirIRGenerator::ControlData AirIRGenerator::addTopLevel(BlockSignature signature
 
 auto AirIRGenerator::addLoop(BlockSignature signature, Stack& enclosingStack, ControlType& block, Stack& newStack, uint32_t loopIndex) -> PartialResult
 {
+    RELEASE_ASSERT(loopIndex == m_loopEntryVariableData.size());
+
     BasicBlock* body = m_code.addBlock();
     BasicBlock* continuation = m_code.addBlock();
 
     splitStack(signature, enclosingStack, newStack);
+
+    Vector<TypedTmp> liveValues;
+    forEachLiveValue([&] (TypedTmp tmp) {
+        liveValues.append(tmp);
+    });
+    for (auto variable : enclosingStack)
+        liveValues.append(variable);
+    for (auto variable : newStack)
+        liveValues.append(variable);
+
     ResultList results;
     results.reserveInitialCapacity(newStack.size());
     for (auto item : newStack)
@@ -3124,7 +3155,9 @@ auto AirIRGenerator::addLoop(BlockSignature signature, Stack& enclosingStack, Co
     m_currentBlock->setSuccessors(body);
 
     m_currentBlock = body;
-    emitLoopTierUpCheck(loopIndex, enclosingStack, newStack);
+    emitLoopTierUpCheck(loopIndex, liveValues);
+
+    m_loopEntryVariableData.append(std::pair<BasicBlock*, Vector<TypedTmp>>(body, WTFMove(liveValues)));
 
     return { };
 }
@@ -3899,7 +3932,7 @@ Expected<std::unique_ptr<InternalFunction>, String> parseAndCompileAir(Compilati
     
     procedure.setOptLevel(Options::webAssemblyBBQAirOptimizationLevel());
 
-    AirIRGenerator irGenerator(info, procedure, result.get(), unlinkedWasmToWasmCalls, mode, functionIndex, tierUp, signature);
+    AirIRGenerator irGenerator(info, procedure, result.get(), unlinkedWasmToWasmCalls, mode, functionIndex, tierUp, signature, result->osrEntryScratchBufferSize);
     FunctionParser<AirIRGenerator> parser(irGenerator, function.data.data(), function.data.size(), signature, info);
     WASM_FAIL_IF_HELPER_FAILS(parser.parse());
 
