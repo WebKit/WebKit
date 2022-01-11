@@ -492,6 +492,7 @@ static void testAccessibleState(AccessibilityTest* test, gconstpointer)
         "    <input value='Disabled' disabled>"
         "    <input value='Read only' readonly>"
         "    <textarea rows=5 autofocus></textarea>"
+        "    <ul><li aria-current='step'>Current</li></ul>"
         "  </body>"
         "</html>",
         nullptr);
@@ -502,7 +503,7 @@ static void testAccessibleState(AccessibilityTest* test, gconstpointer)
 
     auto documentWeb = test->findDocumentWeb(testApp.get());
     g_assert_true(ATSPI_IS_ACCESSIBLE(documentWeb.get()));
-    g_assert_cmpint(atspi_accessible_get_child_count(documentWeb.get(), nullptr), ==, 2);
+    g_assert_cmpint(atspi_accessible_get_child_count(documentWeb.get(), nullptr), ==, 3);
 
     auto h1 = adoptGRef(atspi_accessible_get_child_at_index(documentWeb.get(), 0, nullptr));
     g_assert_true(ATSPI_IS_ACCESSIBLE(h1.get()));
@@ -686,6 +687,17 @@ static void testAccessibleState(AccessibilityTest* test, gconstpointer)
     // FIXME: ATK doesn't implement selectable text, but includes oprientation.
     g_assert_true(atspi_state_set_contains(stateSet.get(), ATSPI_STATE_HORIZONTAL));
 #endif
+
+    auto ul = adoptGRef(atspi_accessible_get_child_at_index(documentWeb.get(), 2, nullptr));
+    g_assert_true(ATSPI_IS_ACCESSIBLE(textArea.get()));
+    auto li = adoptGRef(atspi_accessible_get_child_at_index(ul.get(), 0, nullptr));
+    stateSet = adoptGRef(atspi_accessible_get_state_set(li.get()));
+    g_assert_cmpuint(AccessibilityTest::stateSetSize(stateSet.get()), ==, 5);
+    g_assert_true(atspi_state_set_contains(stateSet.get(), ATSPI_STATE_ACTIVE));
+    g_assert_true(atspi_state_set_contains(stateSet.get(), ATSPI_STATE_ENABLED));
+    g_assert_true(atspi_state_set_contains(stateSet.get(), ATSPI_STATE_SENSITIVE));
+    g_assert_true(atspi_state_set_contains(stateSet.get(), ATSPI_STATE_VISIBLE));
+    g_assert_true(atspi_state_set_contains(stateSet.get(), ATSPI_STATE_SHOWING));
 }
 
 static void testAccessibleStateChanged(AccessibilityTest* test, gconstpointer)

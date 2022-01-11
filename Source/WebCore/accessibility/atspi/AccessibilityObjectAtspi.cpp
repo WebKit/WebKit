@@ -789,6 +789,9 @@ uint64_t AccessibilityObjectAtspi::state() const
                 addState(Atspi::State::Showing);
         }
 
+        if (m_coreObject->isSelectedOptionActive() || m_coreObject->currentState() != AccessibilityCurrentState::False)
+            addState(Atspi::State::Active);
+
         if (m_coreObject->canSetFocusAttribute())
             addState(Atspi::State::Focusable);
 

@@ -410,6 +410,12 @@ double AccessibilityUIElement::numberAttributeValue(JSStringRef attribute)
     return 0;
 }
 
+JSRetainPtr<JSStringRef> AccessibilityUIElement::currentStateValue() const
+{
+    auto value = m_element->attributes().get("current");
+    return OpaqueJSString::tryCreate(!value.isNull() ? value : "false").leakRef();
+}
+
 JSValueRef AccessibilityUIElement::uiElementArrayAttributeValue(JSStringRef attribute) const
 {
     return nullptr;

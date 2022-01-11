@@ -126,6 +126,7 @@ void AXObjectCache::postPlatformNotification(AXCoreObject* coreObject, AXNotific
         wrapper->stateChanged("busy", coreObject->isBusy());
         break;
     case AXCurrentStateChanged:
+        wrapper->stateChanged("active", coreObject->currentState() != AccessibilityCurrentState::False);
         break;
     case AXRowExpanded:
         wrapper->stateChanged("expanded", true);
