@@ -364,11 +364,16 @@ NSArray *makeNSArray(const WebCore::AXCoreObject::AccessibilityChildrenVector& c
 
 - (WebCore::AXCoreObject*)axBackingObject
 {
+    if (isMainThread())
+        return m_axObject;
+
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-    if (AXObjectCache::isIsolatedTreeEnabled())
-        return m_isolatedObject;
+    ASSERT(AXObjectCache::isIsolatedTreeEnabled());
+    return m_isolatedObject;
+#else
+    ASSERT_NOT_REACHED();
+    return nullptr;
 #endif
-    return m_axObject;
 }
 
 - (BOOL)isIsolatedObject
