@@ -52,9 +52,7 @@ public:
     void cancelFromStyle();
 
     std::optional<double> bindingsStartTime() const final;
-    void setBindingsStartTime(std::optional<double>) override;
     std::optional<double> bindingsCurrentTime() const final;
-    ExceptionOr<void> setBindingsCurrentTime(std::optional<double>) final;
     WebAnimation::PlayState bindingsPlayState() const final;
     WebAnimation::ReplaceState bindingsReplaceState() const final;
     bool bindingsPending() const final;

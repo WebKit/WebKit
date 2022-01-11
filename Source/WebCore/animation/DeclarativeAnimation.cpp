@@ -138,22 +138,10 @@ std::optional<double> DeclarativeAnimation::bindingsStartTime() const
     return WebAnimation::bindingsStartTime();
 }
 
-void DeclarativeAnimation::setBindingsStartTime(std::optional<double> startTime)
-{
-    flushPendingStyleChanges();
-    return WebAnimation::setBindingsStartTime(startTime);
-}
-
 std::optional<double> DeclarativeAnimation::bindingsCurrentTime() const
 {
     flushPendingStyleChanges();
     return WebAnimation::bindingsCurrentTime();
-}
-
-ExceptionOr<void> DeclarativeAnimation::setBindingsCurrentTime(std::optional<double> currentTime)
-{
-    flushPendingStyleChanges();
-    return WebAnimation::setBindingsCurrentTime(currentTime);
 }
 
 WebAnimation::PlayState DeclarativeAnimation::bindingsPlayState() const

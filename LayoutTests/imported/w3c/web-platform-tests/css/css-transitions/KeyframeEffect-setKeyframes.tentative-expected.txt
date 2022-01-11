@@ -5,6 +5,6 @@ PASS A transition with no keyframes still returns the original transitionPropert
 PASS A transition with replaced keyframes animating the same property still exhibits normal reversing behavior.
 PASS A transition with replaced keyframes animating a different property still exhibits normal reversing behavior  (reversing from the base value).
 PASS A transition with replaced keyframes animating nothing still exhibits normal reversing behavior (reversing from the base value).
-FAIL A transition with replaced keyframes animating nothing on a property being controlled by another modified transition exhibits normal reversing behavior and reverses from the other transition's current value. assert_equals: The reversed transition gets its start value from the other transition controlling left expected "280px" but got "200px"
+PASS A transition with replaced keyframes animating nothing on a property being controlled by another modified transition exhibits normal reversing behavior and reverses from the other transition's current value.
 PASS A transition with replaced kefyrames and composite 'add' exhibits normal reversing behavior, and the effect is not double counted when calculating the before change style
 
