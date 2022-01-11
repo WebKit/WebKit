@@ -1,3 +1,44 @@
+2022-01-11  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r287360. rdar://problem/86743595
+
+    [WebAuthn] Set Web Authentication experimental feature flag as default true
+    https://bugs.webkit.org/show_bug.cgi?id=234533
+    <rdar://problem/86743595>
+    
+    Reviewed by Brent Fulgham.
+    
+    Source/WTF:
+    
+    The Web Authentication feature has been shipping for a while. Default value
+    for experimental feature flag should be true.
+    
+    * Scripts/Preferences/WebPreferencesExperimental.yaml:
+    
+    Tools:
+    
+    The Web Authentication feature has been shipping for a while. Default value for
+    experimental feature flag should be true.
+    
+    * TestWebKitAPI/Tests/WebKitCocoa/_WKWebAuthenticationPanel.mm:
+    (TestWebKitAPI::TEST):
+    (TestWebKitAPI::WebCore::webAuthenticationExperimentalFeature): Deleted.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@287360 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-12-22  J Pascoe  <j_pascoe@apple.com>
+
+            [WebAuthn] Set Web Authentication experimental feature flag as default true
+            https://bugs.webkit.org/show_bug.cgi?id=234533
+            <rdar://problem/86743595>
+
+            Reviewed by Brent Fulgham.
+
+            The Web Authentication feature has been shipping for a while. Default value
+            for experimental feature flag should be true.
+
+            * Scripts/Preferences/WebPreferencesExperimental.yaml:
+
 2022-01-05  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r287377. rdar://problem/86829012
