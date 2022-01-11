@@ -38,6 +38,7 @@
 #include "RenderLayerModelObject.h"
 #include "RenderSVGResource.h"
 #include "RenderView.h"
+#include "SVGElementInlines.h"
 #include "SVGGraphicsElement.h"
 #include "SVGLocatable.h"
 #include "SVGNames.h"

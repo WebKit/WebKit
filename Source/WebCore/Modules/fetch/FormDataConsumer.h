@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "ExceptionOr.h"
 #include "ScriptExecutionContextIdentifier.h"
 #include <wtf/FastMalloc.h>
 #include <wtf/Function.h>
@@ -36,6 +37,7 @@ namespace WebCore {
 
 class BlobLoader;
 class FormData;
+class ScriptExecutionContext;
 
 class FormDataConsumer : public CanMakeWeakPtr<FormDataConsumer> {
     WTF_MAKE_FAST_ALLOCATED;

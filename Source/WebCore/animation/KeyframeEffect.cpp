@@ -58,6 +58,7 @@
 #include "StylePendingResources.h"
 #include "StyleResolver.h"
 #include "StyleScope.h"
+#include "StyledElement.h"
 #include "TimingFunction.h"
 #include "TranslateTransformOperation.h"
 #include "WillChangeData.h"

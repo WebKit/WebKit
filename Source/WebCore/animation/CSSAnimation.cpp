@@ -29,6 +29,7 @@
 #include "Animation.h"
 #include "AnimationEvent.h"
 #include "InspectorInstrumentation.h"
+#include "KeyframeEffect.h"
 #include "RenderStyle.h"
 #include <wtf/IsoMallocInlines.h>
 
