@@ -390,11 +390,7 @@ WI.CSSStyleDeclaration = class CSSStyleDeclaration extends WI.Object
 
         this.markModified();
         let property = new WI.CSSProperty(propertyIndex, text, name, value, priority, enabled, overridden, implicit, anonymous, valid, styleSheetTextRange);
-
-        this._properties.insertAtIndex(property, propertyIndex);
-        for (let index = propertyIndex + 1; index < this._properties.length; index++)
-            this._properties[index].index = index;
-
+        this.insertProperty(property, propertyIndex);
         this.update(this._text, this._properties, this._styleSheetTextRange, {dontFireEvents: true, forceUpdate: true});
 
         return property;
@@ -420,6 +416,17 @@ WI.CSSStyleDeclaration = class CSSStyleDeclaration extends WI.Object
         }
 
         WI.cssManager.addModifiedStyle(this);
+    }
+
+    insertProperty(cssProperty, propertyIndex)
+    {
+        this._properties.insertAtIndex(cssProperty, propertyIndex);
+        for (let index = propertyIndex + 1; index < this._properties.length; index++)
+            this._properties[index].index = index;
+
+        // Invalidate cached properties.
+        this._enabledProperties = null;
+        this._visibleProperties = null;
     }
 
     removeProperty(cssProperty)

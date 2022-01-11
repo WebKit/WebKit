@@ -316,6 +316,35 @@ function test() {
         }
     });
 
+    suite.addTestCase({
+        name: "ModifyCSSProperty.ReplacePropertyName",
+        async test() {
+            let getMatchedStyleDeclaration = () => {
+                for (let rule of nodeStyles.matchedRules) {
+                    if (rule.selectorText === ".rule-e")
+                        return rule.style;
+                }
+                throw "No declaration found.";
+            };
+            let getProperty = (propertyName) => {
+                let styleDeclaration = getMatchedStyleDeclaration();
+                for (let property of styleDeclaration.properties) {
+                    if (property.name === propertyName)
+                        return property;
+                }
+                throw "No property found.";
+            };
+            let styleDeclaration = getMatchedStyleDeclaration();
+
+            let cssProperty = getProperty("color");
+            cssProperty.name = "";
+            InspectorTest.expectEqual(styleDeclaration.text, "", "Style declaration text should be empty.");
+
+            cssProperty.name = "border-color";
+            InspectorTest.expectEqual(styleDeclaration.text, `\n    border-color: darkseagreen;\n`, "Style declaration text should have new property name.");
+        }
+    });
+
     WI.domManager.requestDocument((documentNode) => {
         documentNode.querySelector("#x", (contentNodeId) => {
             if (contentNodeId) {
@@ -339,6 +368,6 @@ function test() {
 </head>
 <body onload="runTest()">
     <p>Testing that CSSStyleDeclaration update immediately after modifying its properties when it is not locked.</p>
-    <div id="x" class="test-node rule-a rule-b rule-c rule-d" style="width: 100px"></div>
+    <div id="x" class="test-node rule-a rule-b rule-c rule-d rule-e" style="width: 100px"></div>
 </body>
 </html>

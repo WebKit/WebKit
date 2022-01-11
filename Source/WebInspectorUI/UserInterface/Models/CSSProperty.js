@@ -256,6 +256,17 @@ WI.CSSProperty = class CSSProperty extends WI.Object
         if (name === this._name)
             return;
 
+        if (!name) {
+            // Deleting property name causes CSSProperty to be detached from CSSStyleDeclaration.
+            console.assert(!isNaN(this._index), this);
+            this._indexBeforeDetached = this._index;
+        } else if (!isNaN(this._indexBeforeDetached) && isNaN(this._index)) {
+            // Reattach CSSProperty.
+            console.assert(!this._ownerStyle.properties.includes(this), this);
+            this._ownerStyle.insertProperty(this, this._indexBeforeDetached);
+            this._indexBeforeDetached = NaN;
+        }
+
         this._markModified();
         this._name = name;
         this._updateStyleText();

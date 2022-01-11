@@ -1,3 +1,17 @@
+2022-01-11  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        REGRESSION (r283723): Web Inspector: CSS declarations unexpectedly removed when editing property value
+        https://bugs.webkit.org/show_bug.cgi?id=233195
+
+        Reviewed by Devin Rousso.
+
+        Test removing CSS property name.
+
+        * inspector/css/modify-css-property-expected.txt:
+        * inspector/css/modify-css-property.html:
+        * inspector/css/resources/modify-css-property.css:
+        (.rule-e):
+
 2022-01-11  Rob Buis  <rbuis@igalia.com>
 
         [CSS contain] Update css-contain tests from WPT
