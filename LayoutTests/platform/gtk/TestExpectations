@@ -1053,9 +1053,6 @@ webkit.org/b/119253 [ Debug ] fast/media/update-media-query-css-parser.html [ Ti
 
 webkit.org/b/127742 fast/spatial-navigation/snav-unit-overflow-and-scroll-in-direction.html [ Failure ]
 
-# Tests showing flakiness in the bot
-webkit.org/b/132182 css3/calc/transitions-dependent.html [ Failure ]
-
 webkit.org/b/132385 compositing/repaint/repaint-on-layer-grouping-change.html [ Failure Pass ]
 
 webkit.org/b/143985 editing/pasteboard/drop-text-events.html [ Failure ]

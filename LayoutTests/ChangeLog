@@ -1,3 +1,22 @@
+2022-01-11  Diego Pino Garcia  <dpino@igalia.com>
+
+        REGRESSION (Lazy tree creation): css3/calc/transitions-dependent.html is frequently failing
+        https://bugs.webkit.org/show_bug.cgi?id=126142
+        <rdar://problem/15725243>
+
+        Reviewed by Alexey Proskuryakov.
+
+        This test is no longer flaky, it has been consistently failing with fixed values.  Update
+        'innerTransition' expected values to match actual values.
+
+        The test code was modernized to make it pass in other browsers since getPropertyCSSValue()
+        is deprecated and no longer supported by Chrome or Firefox).
+
+        * TestExpectations:
+        * css3/calc/transitions-dependent-expected.txt:
+        * css3/calc/transitions-dependent.html:
+        * platform/gtk/TestExpectations:
+
 2022-01-10  Alan Bujtas  <zalan@apple.com>
 
         null ptr deref in WebCore::LayoutIntegration::LineLayout::collectOverflow()
