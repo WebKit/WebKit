@@ -1,3 +1,20 @@
+2022-01-11  Asumu Takikawa  <asumu@igalia.com>
+
+        [Wasm] Unify memory import handling in module loader and JS cases
+        https://bugs.webkit.org/show_bug.cgi?id=234116
+
+        Reviewed by Yusuke Suzuki.
+
+        Adjust Wasm WPT test expectations now that getter ordering tests
+        should pass.
+
+        * web-platform-tests/wasm/jsapi/constructor/instantiate.any-expected.txt:
+        * web-platform-tests/wasm/jsapi/constructor/instantiate.any.worker-expected.txt:
+        * web-platform-tests/wasm/jsapi/instance/constructor.any-expected.txt:
+        * web-platform-tests/wasm/jsapi/instance/constructor.any.worker-expected.txt:
+        * web-platform-tests/wasm/webapi/instantiateStreaming.any-expected.txt:
+        * web-platform-tests/wasm/webapi/instantiateStreaming.any.worker-expected.txt:
+
 2022-01-11  Antoine Quint  <graouts@webkit.org>
 
         css/css-transitions/KeyframeEffect-setKeyframes.tentative.html is a failure (part 2)

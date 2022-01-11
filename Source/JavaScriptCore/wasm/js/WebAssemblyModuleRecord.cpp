@@ -133,20 +133,6 @@ void WebAssemblyModuleRecord::initializeImportsAndExports(JSGlobalObject* global
     };
 
     for (const auto& import : moduleInformation.imports) {
-        // Validation and linking other than Wasm::ExternalKind::Function is already done in JSWebAssemblyInstance.
-        // Eventually we will move all the linking code in JSWebAssemblyInstance here and remove this switch statement.
-        switch (import.kind) {
-        case Wasm::ExternalKind::Function:
-        case Wasm::ExternalKind::Global:
-        case Wasm::ExternalKind::Table:
-        case Wasm::ExternalKind::Exception:
-            break;
-        case Wasm::ExternalKind::Memory:
-            if (creationMode == Wasm::CreationMode::FromJS)
-                continue;
-            break;
-        }
-
         Identifier moduleName = Identifier::fromString(vm, String::fromUTF8(import.module));
         Identifier fieldName = Identifier::fromString(vm, String::fromUTF8(import.field));
         JSValue value;
@@ -409,7 +395,6 @@ void WebAssemblyModuleRecord::initializeImportsAndExports(JSGlobalObject* global
             break;
         }
 
-        // Memory initialization will only occur here if the creation mode was through the module loader.
         case Wasm::ExternalKind::Memory:
             JSWebAssemblyMemory* memory = jsDynamicCast<JSWebAssemblyMemory*>(vm, value);
             // i. If v is not a WebAssembly.Memory object, throw a WebAssembly.LinkError.

@@ -1,3 +1,22 @@
+2022-01-11  Asumu Takikawa  <asumu@igalia.com>
+
+        [Wasm] Unify memory import handling in module loader and JS cases
+        https://bugs.webkit.org/show_bug.cgi?id=234116
+
+        Reviewed by Yusuke Suzuki.
+
+        Moves the memory import handling code to the Wasm module record and
+        use the strategy used by the module loader to handle memory in all
+        cases.
+
+        * wasm/WasmModule.cpp:
+        (JSC::Wasm::Module::copyInitialCalleeGroupToAllMemoryModes):
+        * wasm/js/JSWebAssemblyInstance.cpp:
+        (JSC::JSWebAssemblyInstance::finalizeCreation):
+        (JSC::JSWebAssemblyInstance::tryCreate):
+        * wasm/js/WebAssemblyModuleRecord.cpp:
+        (JSC::WebAssemblyModuleRecord::initializeImportsAndExports):
+
 2022-01-11  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Fix kind of error thrown by wasm module creation

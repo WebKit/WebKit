@@ -9,8 +9,8 @@ PASS Empty module with undefined imports argument: BufferSource argument
 PASS Empty module with undefined imports argument: Module argument
 PASS Empty module with empty imports argument: BufferSource argument
 PASS Empty module with empty imports argument: Module argument
-FAIL getter order for imports object: BufferSource argument assert_array_equals: expected property 1 to be "global1 getter" but got "memory getter" (expected array ["module getter", "global1 getter", "module2 getter", "global3 getter", "module getter", "memory getter", "module getter", "global2 getter"] got ["module getter", "memory getter", "module getter", "global1 getter", "module2 getter", "global3 getter", "module getter", "global2 getter"])
-FAIL getter order for imports object: Module argument assert_array_equals: expected property 1 to be "global1 getter" but got "memory getter" (expected array ["module getter", "global1 getter", "module2 getter", "global3 getter", "module getter", "memory getter", "module getter", "global2 getter"] got ["module getter", "memory getter", "module getter", "global1 getter", "module2 getter", "global3 getter", "module getter", "global2 getter"])
+PASS getter order for imports object: BufferSource argument
+PASS getter order for imports object: Module argument
 PASS imports: BufferSource argument
 PASS imports: Module argument
 PASS imports with empty module names: BufferSource argument

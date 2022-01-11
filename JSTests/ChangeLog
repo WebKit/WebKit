@@ -1,3 +1,17 @@
+2022-01-11  Asumu Takikawa  <asumu@igalia.com>
+
+        [Wasm] Unify memory import handling in module loader and JS cases
+        https://bugs.webkit.org/show_bug.cgi?id=234116
+
+        Reviewed by Yusuke Suzuki.
+
+        Add an instantiation test case that tests that instantiating the same
+        binary module twice will not crash.
+
+        * wasm/js-api/web-assembly-instantiate.js:
+        (assert.asyncTest.async test):
+        (assert.asyncTest):
+
 2022-01-10  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Unreviewed, add a bit more Intl.Locale hourCycle tests to investigate flakiness

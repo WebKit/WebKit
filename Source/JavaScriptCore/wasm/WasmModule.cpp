@@ -113,13 +113,16 @@ void Module::compileAsync(Context* context, MemoryMode mode, CalleeGroup::AsyncC
 
 void Module::copyInitialCalleeGroupToAllMemoryModes(MemoryMode initialMode)
 {
+    Locker locker { m_lock };
     ASSERT(m_calleeGroups[static_cast<uint8_t>(initialMode)]);
     const CalleeGroup& initialBlock = *m_calleeGroups[static_cast<uint8_t>(initialMode)];
     for (unsigned i = 0; i < Wasm::NumberOfMemoryModes; i++) {
         if (i == static_cast<uint8_t>(initialMode))
             continue;
-        Ref<CalleeGroup> newBlock = CalleeGroup::createFromExisting(static_cast<MemoryMode>(i), initialBlock);
-        m_calleeGroups[i] = WTFMove(newBlock);
+        // We should only try to copy the group here if it hasn't already been created.
+        // If it exists but is not runnable, it should get compiled during module evaluation.
+        if (auto& group = m_calleeGroups[i]; !group)
+            group = CalleeGroup::createFromExisting(static_cast<MemoryMode>(i), initialBlock);
     }
 }
 
