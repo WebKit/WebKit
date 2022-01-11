@@ -1,3 +1,13 @@
+2022-01-11  Martin Robinson  <mrobinson@webkit.org>
+
+        Some css-transforms tests assert in debug
+        https://bugs.webkit.org/show_bug.cgi?id=230079
+        <rdar://problem/83179970>
+
+        Reviewed by Simon Fraser.
+
+        * TestExpectations: Update expectations to note new passes.
+
 2022-01-11  Diego Pino Garcia  <dpino@igalia.com>
 
         REGRESSION (Lazy tree creation): css3/calc/transitions-dependent.html is frequently failing

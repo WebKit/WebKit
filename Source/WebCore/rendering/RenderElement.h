@@ -84,6 +84,7 @@ public:
     // Note that even if these 2 "canContain" functions return true for a particular renderer, it does not necessarily mean the renderer is the containing block (see containingBlockForAbsolute(Fixed)Position).
     bool canContainFixedPositionObjects() const;
     bool canContainAbsolutelyPositionedObjects() const;
+    bool canEstablishContainingBlockWithTransform() const;
 
     Color selectionColor(CSSPropertyID) const;
     std::unique_ptr<RenderStyle> selectionPseudoStyle() const;
@@ -455,7 +456,7 @@ inline Element* RenderElement::generatingElement() const
 inline bool RenderElement::canContainFixedPositionObjects() const
 {
     return isRenderView()
-        || (isRenderBlock() && hasTransform())
+        || (canEstablishContainingBlockWithTransform() && hasTransform())
         // FIXME: will-change should create containing blocks on inline boxes (bug 225035)
         || (isRenderBlock() && style().willChange() && style().willChange()->createsContainingBlockForOutOfFlowPositioned())
         || isSVGForeignObject()
@@ -466,13 +467,18 @@ inline bool RenderElement::canContainFixedPositionObjects() const
 inline bool RenderElement::canContainAbsolutelyPositionedObjects() const
 {
     return style().position() != PositionType::Static
-        || (isRenderBlock() && hasTransformRelatedProperty())
+        || (canEstablishContainingBlockWithTransform() && hasTransformRelatedProperty())
         // FIXME: will-change should create containing blocks on inline boxes (bug 225035)
         || (isRenderBlock() && style().willChange() && style().willChange()->createsContainingBlockForAbsolutelyPositioned())
         || isSVGForeignObject()
         || shouldApplyLayoutContainment(*this)
         || shouldApplyPaintContainment(*this)
         || isRenderView();
+}
+
+inline bool RenderElement::canEstablishContainingBlockWithTransform() const
+{
+    return isRenderBlock() || (isTablePart() && !isRenderTableCol());
 }
 
 inline bool RenderElement::createsGroupForStyle(const RenderStyle& style)
