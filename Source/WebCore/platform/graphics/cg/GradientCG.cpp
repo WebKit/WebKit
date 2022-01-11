@@ -160,9 +160,7 @@ void Gradient::paint(CGContextRef platformContext)
                 CGContextRestoreGState(platformContext);
         },
         [&] (const ConicData& data) {
-// FIXME: Seems like this should be HAVE(CG_CONTEXT_DRAW_CONIC_GRADIENT).
-// FIXME: Can we change tvOS to be like the other Cocoa platforms?
-#if PLATFORM(COCOA) && !PLATFORM(APPLETV)
+#if HAVE(CORE_GRAPHICS_CONIC_GRADIENTS)
             CGContextSaveGState(platformContext);
             CGContextTranslateCTM(platformContext, data.point0.x(), data.point0.y());
             CGContextRotateCTM(platformContext, (CGFloat)-M_PI_2);

@@ -179,8 +179,7 @@
 #define ENABLE_CSS_COMPOSITING 1
 #endif
 
-// FIXME: Seems likely this can be enabled for tvOS.
-#if !defined(ENABLE_CSS_CONIC_GRADIENTS) && !PLATFORM(APPLETV)
+#if !defined(ENABLE_CSS_CONIC_GRADIENTS)
 #define ENABLE_CSS_CONIC_GRADIENTS 1
 #endif
 

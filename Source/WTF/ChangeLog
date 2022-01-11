@@ -1,3 +1,15 @@
+2022-01-11  Sam Weinig  <weinig@apple.com>
+
+        Remove AppleTV specific disabling of conic gradients, its not necessary
+        https://bugs.webkit.org/show_bug.cgi?id=235041
+
+        Reviewed by Darin Adler.
+
+        Add HAVE_CORE_GRAPHICS_CONIC_GRADIENTS macro and use it to control ENABLE_CSS_CONIC_GRADIENTS.
+
+        * wtf/PlatformEnableCocoa.h:
+        * wtf/PlatformHave.h:
+
 2022-01-10  Alex Christensen  <achristensen@webkit.org>
 
         Start using C++20

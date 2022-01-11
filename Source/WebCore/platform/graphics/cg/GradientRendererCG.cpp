@@ -684,9 +684,7 @@ void GradientRendererCG::drawRadialGradient(CGContextRef platformContext, CGPoin
 
 void GradientRendererCG::drawConicGradient(CGContextRef platformContext, CGPoint center, CGFloat angle)
 {
-// FIXME: Seems like this should be HAVE(CG_CONTEXT_DRAW_CONIC_GRADIENT).
-// FIXME: Can we change tvOS to be like the other Cocoa platforms?
-#if PLATFORM(COCOA) && !PLATFORM(APPLETV)
+#if HAVE(CORE_GRAPHICS_CONIC_GRADIENTS)
     WTF::switchOn(m_strategy,
         [&] (Gradient& gradient) {
             CGContextDrawConicGradient(platformContext, gradient.gradient.get(), center, angle);
