@@ -1,3 +1,16 @@
+2022-01-11  Michael Saboff  <msaboff@apple.com>
+
+        Fixed installhdr build failures in WebCore and WebKitLegacy
+        https://bugs.webkit.org/show_bug.cgi?id=235059
+
+        Reviewed by Filip Pizlo.
+
+        On iOS, we need to create symbolic links for WebKitLegacy when using the SYSTEM_CONTENT_PATH.
+        Copied the creation script to the project and updated the configuration file accordingly.
+ 
+        * WebKitLegacy.xcodeproj/project.pbxproj:
+        * scripts/create-symlink-to-altroot.sh: Added.
+
 2022-01-10  Alex Christensen  <achristensen@webkit.org>
 
         Start using C++20

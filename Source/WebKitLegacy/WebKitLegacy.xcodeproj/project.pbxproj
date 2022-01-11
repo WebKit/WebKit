@@ -3080,6 +3080,7 @@
 				532424B1254905FE00A6975B /* Check For Inappropriate Files In Framework */,
 				1A3193D5191856E500E1CF89 /* Symlink WebKitPluginHost */,
 				537CF83A22EFBFB100C6EBB3 /* Check .xcfilelists */,
+				650473452789431C00AF78A2 /* Create Symlink to Alt Root Path */,
 			);
 			buildRules = (
 				535E08C322545B4C00DF00CA /* PBXBuildRule */,
@@ -3323,6 +3324,25 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "# Touch Info.plist to let Xcode know it needs to copy it into the built product\nif [[ \"${CONFIGURATION}\" != \"Production\" ]]; then\n    touch \"${PROJECT_DIR}/mac/Info.plist\";\nfi;\n";
+		};
+		650473452789431C00AF78A2 /* Create Symlink to Alt Root Path */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 8;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Create Symlink to Alt Root Path";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"${OUTPUT_ALTERNATE_ROOT_PATH}",
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/scripts/create-symlink-to-altroot.sh\"\n";
 		};
 		7C02321B251B9A8A00BA7BB6 /* Generate Preferences */ = {
 			isa = PBXShellScriptBuildPhase;
