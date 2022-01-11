@@ -72,7 +72,7 @@
 
 - (void)createTabWithName:(NSString *)tabName tabIconURL:(NSURL *)tabIconURL sourceURL:(NSURL *)sourceURL completionHandler:(void(^)(NSError *, NSString *))completionHandler
 {
-    _extension->createTab(tabName, tabIconURL, sourceURL, [protectedSelf = retainPtr(self), capturedBlock = makeBlockPtr(completionHandler)] (Expected<Inspector::ExtensionTabID, Inspector::ExtensionError> result) mutable {
+    _extension->createTab(tabName, { tabIconURL.baseURL, tabIconURL.relativeString }, { tabIconURL.baseURL, sourceURL.relativeString }, [protectedSelf = retainPtr(self), capturedBlock = makeBlockPtr(completionHandler)] (Expected<Inspector::ExtensionTabID, Inspector::ExtensionError> result) mutable {
         if (!result) {
             capturedBlock([NSError errorWithDomain:WKErrorDomain code:WKErrorUnknown userInfo:@{ NSLocalizedFailureReasonErrorKey: Inspector::extensionErrorToString(result.error())}], nil);
             return;

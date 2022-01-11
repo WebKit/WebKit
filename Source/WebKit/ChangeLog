@@ -1,3 +1,15 @@
+2022-01-11  BJ Burg  <bburg@apple.com>
+
+        [Cocoa] Inspector Extensions: tabIconURLs with custom scheme URLs are incorrectly loaded
+        https://bugs.webkit.org/show_bug.cgi?id=235045
+        <rdar://problem/87357027>
+
+        Reviewed by Darin Adler.
+
+        * UIProcess/API/Cocoa/_WKInspectorExtension.mm:
+        (-[_WKInspectorExtension createTabWithName:tabIconURL:sourceURL:completionHandler:]):
+        Construct a WTF::URL from the .baseURL and the .relativePath of the NSURL.
+
 2022-01-11  Adrian Perez de Castro  <aperez@igalia.com>
 
         Non-unified build fixes, early January 2022 edition
