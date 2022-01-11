@@ -78,11 +78,12 @@ static Vector<FloatQuad> floatQuads(NSArray<VKQuad *> *vkQuads)
 
 TextRecognitionResult makeTextRecognitionResult(VKImageAnalysis *analysis)
 {
-    NSArray<VKWKTextInfo *> *allLines = analysis.allLines;
+    NSArray<VKWKLineInfo *> *allLines = analysis.allLines;
     TextRecognitionResult result;
     result.lines.reserveInitialCapacity(allLines.count);
 
     bool isFirstLine = true;
+    size_t nextLineIndex = 1;
     for (VKWKLineInfo *line in allLines) {
         Vector<TextRecognitionWordData> children;
         NSArray<VKWKTextInfo *> *vkChildren = line.children;
@@ -114,12 +115,12 @@ TextRecognitionResult makeTextRecognitionResult(VKImageAnalysis *analysis)
             searchLocation = matchLocation + childText.length();
             children.uncheckedAppend({ WTFMove(childText), floatQuad(child.quad), hasLeadingWhitespace });
         }
-        result.lines.uncheckedAppend({
-            floatQuad(line.quad),
-            WTFMove(children),
-            [line respondsToSelector:@selector(shouldWrap)] && [line shouldWrap]
-        });
+        VKWKLineInfo *nextLine = nextLineIndex < allLines.count ? allLines[nextLineIndex] : nil;
+        // The `shouldWrap` property indicates whether or not a line should wrap, relative to the previous line.
+        bool hasTrailingNewline = nextLine && (![nextLine respondsToSelector:@selector(shouldWrap)] || ![nextLine shouldWrap]);
+        result.lines.uncheckedAppend({ floatQuad(line.quad), WTFMove(children), hasTrailingNewline });
         isFirstLine = false;
+        nextLineIndex++;
     }
 
 #if ENABLE(DATA_DETECTION)

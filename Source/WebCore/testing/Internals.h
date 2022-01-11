@@ -922,7 +922,7 @@ public:
         RefPtr<DOMPointReadOnly> bottomRight;
         RefPtr<DOMPointReadOnly> bottomLeft;
         Vector<ImageOverlayText> children;
-        bool shouldWrap { false };
+        bool hasTrailingNewline { true };
 
         ~ImageOverlayLine();
     };

@@ -276,7 +276,7 @@ static Elements updateSubtree(HTMLElement& element, const TextRecognitionResult&
 
                 auto& lineElements = elements.lines[lineIndex];
                 auto& childTextElements = lineElements.children;
-                if (lineResult.shouldWrap != !lineElements.lineBreak)
+                if (lineResult.hasTrailingNewline != static_cast<bool>(lineElements.lineBreak))
                     return false;
 
                 if (childResults.size() != childTextElements.size())
@@ -335,7 +335,7 @@ static Elements updateSubtree(HTMLElement& element, const TextRecognitionResult&
                 lineElements.children.uncheckedAppend(WTFMove(textContainer));
             }
 
-            if (!line.shouldWrap) {
+            if (line.hasTrailingNewline) {
                 lineElements.lineBreak = HTMLBRElement::create(document.get());
                 lineContainer->appendChild(*lineElements.lineBreak);
             }
