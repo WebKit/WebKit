@@ -129,7 +129,7 @@ bool RenderSVGResourceFilter::applyResource(RenderElement& renderer, const Rende
 
     // Create the SVGFilter object.
     filterData->builder = makeUnique<SVGFilterBuilder>();
-    filterData->filter = SVGFilter::create(filterElement(), *filterData->builder, renderingMode, filterScale, filterData->boundaries, targetBoundingBox);
+    filterData->filter = SVGFilter::create(filterElement(), *filterData->builder, renderingMode, filterScale, Filter::ClipOperation::Intersect, filterData->boundaries, targetBoundingBox);
     if (!filterData->filter) {
         m_rendererFilterDataMap.remove(&renderer);
         return false;

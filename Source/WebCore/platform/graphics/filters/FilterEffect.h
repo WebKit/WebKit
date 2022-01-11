@@ -23,11 +23,8 @@
 #pragma once
 
 #include "DestinationColorSpace.h"
-#include "FilterEffectVector.h"
 #include "FilterFunction.h"
-#include "FilterImage.h"
 #include "FilterImageVector.h"
-#include <wtf/Vector.h>
 
 namespace WTF {
 class TextStream;
@@ -38,20 +35,17 @@ namespace WebCore {
 class Filter;
 class FilterEffectApplier;
 class FilterEffectGeometry;
+class FilterResults;
 
 class FilterEffect : public FilterFunction {
     using FilterFunction::apply;
 
 public:
-    FilterImageVector takeImageInputs(FilterImageVector& stack) const;
-
-    FilterEffectVector& inputEffects() { return m_inputEffects; }
-    FilterEffect& inputEffect(unsigned) const;
-
-    RefPtr<FilterImage> apply(const Filter&, const FilterImageVector& inputs, FilterResults&, const std::optional<FilterEffectGeometry>& = std::nullopt);
-
     const DestinationColorSpace& operatingColorSpace() const { return m_operatingColorSpace; }
     virtual void setOperatingColorSpace(const DestinationColorSpace& colorSpace) { m_operatingColorSpace = colorSpace; }
+
+    FilterImageVector takeImageInputs(FilterImageVector& stack) const;
+    RefPtr<FilterImage> apply(const Filter&, const FilterImageVector& inputs, FilterResults&, const std::optional<FilterEffectGeometry>& = std::nullopt);
 
     WTF::TextStream& externalRepresentation(WTF::TextStream&, FilterRepresentation) const override;
 
@@ -79,8 +73,6 @@ protected:
     virtual std::unique_ptr<FilterEffectApplier> createApplier(const Filter&) const = 0;
 
     RefPtr<FilterImage> apply(const Filter&, FilterImage& input, FilterResults&) override;
-
-    FilterEffectVector m_inputEffects;
 
     DestinationColorSpace m_operatingColorSpace { DestinationColorSpace::SRGB() };
 };

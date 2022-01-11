@@ -2,7 +2,7 @@
  * Copyright (C) 2004, 2005, 2007 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005 Rob Buis <buis@kde.org>
  * Copyright (C) 2010 Dirk Schulze <krit@webkit.org>
- * Copyright (C) 2018-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2022 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -208,7 +208,7 @@ std::tuple<RefPtr<ImageBuffer>, FloatRect> SVGFEImageElement::imageBufferForEffe
     return { imageBuffer, imageRect };
 }
 
-RefPtr<FilterEffect> SVGFEImageElement::build(SVGFilterBuilder&) const
+RefPtr<FilterEffect> SVGFEImageElement::filterEffect(const SVGFilterBuilder&, const FilterEffectVector&) const
 {
     if (m_cachedImage)
         return FEImage::create(Ref { *m_cachedImage->imageForRenderer(renderer()) }, preserveAspectRatio());
@@ -227,4 +227,4 @@ void SVGFEImageElement::addSubresourceAttributeURLs(ListHashSet<URL>& urls) cons
     addSubresourceURL(urls, document().completeURL(href()));
 }
 
-}
+} // namespace WebCore

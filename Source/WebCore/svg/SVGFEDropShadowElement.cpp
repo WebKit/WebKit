@@ -1,6 +1,6 @@
 /*
  * Copyright (C) Research In Motion Limited 2011. All rights reserved.
- * Copyright (C) 2018-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2022 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -22,7 +22,6 @@
 #include "SVGFEDropShadowElement.h"
 
 #include "RenderStyle.h"
-#include "SVGFilterBuilder.h"
 #include "SVGNames.h"
 #include "SVGParserUtilities.h"
 #include "SVGRenderStyle.h"
@@ -97,12 +96,8 @@ void SVGFEDropShadowElement::svgAttributeChanged(const QualifiedName& attrName)
     SVGFilterPrimitiveStandardAttributes::svgAttributeChanged(attrName);
 }
 
-RefPtr<FilterEffect> SVGFEDropShadowElement::build(SVGFilterBuilder& filterBuilder) const
+RefPtr<FilterEffect> SVGFEDropShadowElement::filterEffect(const SVGFilterBuilder&, const FilterEffectVector&) const
 {
-    auto input1 = filterBuilder.getEffectById(in1());
-    if (!input1)
-        return nullptr;
-
     RenderObject* renderer = this->renderer();
     if (!renderer)
         return nullptr;
@@ -115,9 +110,7 @@ RefPtr<FilterEffect> SVGFEDropShadowElement::build(SVGFilterBuilder& filterBuild
     Color color = renderer->style().colorByApplyingColorFilter(svgStyle.floodColor());
     float opacity = svgStyle.floodOpacity();
 
-    auto effect = FEDropShadow::create(stdDeviationX(), stdDeviationY(), dx(), dy(), color, opacity);
-    effect->inputEffects() = { input1.releaseNonNull() };
-    return effect;
+    return FEDropShadow::create(stdDeviationX(), stdDeviationY(), dx(), dy(), color, opacity);
 }
 
-}
+} // namespace WebCore

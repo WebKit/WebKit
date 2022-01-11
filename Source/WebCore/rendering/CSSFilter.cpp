@@ -218,7 +218,7 @@ static RefPtr<FilterEffect> createSepiaEffect(const BasicColorMatrixFilterOperat
     return FEColorMatrix::create(FECOLORMATRIX_TYPE_MATRIX, WTFMove(inputParameters));
 }
 
-static RefPtr<SVGFilter> createSVGFilter(CSSFilter& filter, const ReferenceFilterOperation& filterOperation, RenderElement& renderer, const FloatRect& targetBoundingBox, FilterEffect& previousEffect)
+static RefPtr<SVGFilter> createSVGFilter(CSSFilter& filter, const ReferenceFilterOperation& filterOperation, RenderElement& renderer, const FloatRect& targetBoundingBox)
 {
     auto& referencedSVGResources = renderer.ensureReferencedSVGResources();
     auto* filterElement = referencedSVGResources.referencedFilterElement(renderer.document(), filterOperation);
@@ -232,7 +232,7 @@ static RefPtr<SVGFilter> createSVGFilter(CSSFilter& filter, const ReferenceFilte
     }
 
     SVGFilterBuilder builder;
-    return SVGFilter::create(*filterElement, builder, filter.renderingMode(), filter.filterScale(), filter.clipOperation(), targetBoundingBox, previousEffect);
+    return SVGFilter::create(*filterElement, builder, filter.renderingMode(), filter.filterScale(), filter.clipOperation(), targetBoundingBox, targetBoundingBox);
 }
 
 bool CSSFilter::buildFilterFunctions(RenderElement& renderer, const FilterOperations& operations, const FloatRect& targetBoundingBox)
@@ -240,7 +240,6 @@ bool CSSFilter::buildFilterFunctions(RenderElement& renderer, const FilterOperat
     m_functions.clear();
     m_outsets = { };
 
-    RefPtr<FilterEffect> previousEffect = SourceGraphic::create();
     RefPtr<SVGFilter> filter;
     
     for (auto& operation : operations.operations()) {
@@ -292,7 +291,7 @@ bool CSSFilter::buildFilterFunctions(RenderElement& renderer, const FilterOperat
             break;
 
         case FilterOperation::REFERENCE:
-            filter = createSVGFilter(*this, downcast<ReferenceFilterOperation>(*operation), renderer, targetBoundingBox, *previousEffect);
+            filter = createSVGFilter(*this, downcast<ReferenceFilterOperation>(*operation), renderer, targetBoundingBox);
             effect = nullptr;
             break;
 
@@ -300,24 +299,19 @@ bool CSSFilter::buildFilterFunctions(RenderElement& renderer, const FilterOperat
             break;
         }
 
-        if ((filter || effect) && m_functions.isEmpty()) {
-            ASSERT(previousEffect->filterType() == FilterEffect::Type::SourceGraphic);
-            m_functions.append({ *previousEffect });
-        }
+        if ((filter || effect) && m_functions.isEmpty())
+            m_functions.append(SourceGraphic::create());
         
         if (filter) {
             effect = filter->lastEffect();
             effect->setOperatingColorSpace(DestinationColorSpace::SRGB());
             m_functions.append(filter.releaseNonNull());
-            previousEffect = WTFMove(effect);
             continue;
         }
 
         if (effect) {
             effect->setOperatingColorSpace(DestinationColorSpace::SRGB());
-            effect->inputEffects() = { previousEffect.releaseNonNull() };
-            m_functions.append({ *effect });
-            previousEffect = WTFMove(effect);
+            m_functions.append(effect.releaseNonNull());
         }
     }
 

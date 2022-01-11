@@ -26,14 +26,12 @@ namespace WebCore {
 
 class SourceAlpha : public FilterEffect {
 public:
-    WEBCORE_EXPORT static Ref<SourceAlpha> create();
-    static Ref<SourceAlpha> create(FilterEffect&);
+    WEBCORE_EXPORT static Ref<SourceAlpha> create(const DestinationColorSpace& = DestinationColorSpace::SRGB());
 
     static AtomString effectName() { return FilterEffect::sourceAlphaName(); }
 
 private:
-    SourceAlpha();
-    explicit SourceAlpha(FilterEffect&);
+    explicit SourceAlpha(const DestinationColorSpace&);
 
     std::unique_ptr<FilterEffectApplier> createApplier(const Filter&) const override;
 

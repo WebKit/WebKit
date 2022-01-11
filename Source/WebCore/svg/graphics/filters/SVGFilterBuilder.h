@@ -25,7 +25,6 @@
 #include "SVGFilterExpression.h"
 #include "SVGUnitTypes.h"
 #include <wtf/HashMap.h>
-#include <wtf/HashSet.h>
 #include <wtf/text/AtomStringHash.h>
 #include <wtf/text/WTFString.h>
 
@@ -46,9 +45,6 @@ public:
     SVGUnitTypes::SVGUnitType primitiveUnits() const { return m_primitiveUnits; }
     void setPrimitiveUnits(SVGUnitTypes::SVGUnitType units) { m_primitiveUnits = units; }
 
-    void add(const AtomString& id, RefPtr<FilterEffect>);
-    RefPtr<FilterEffect> getEffectById(const AtomString&) const;
-
     // Required to change the attributes of a filter during an svgAttributeChanged.
     void appendEffectToEffectRenderer(FilterEffect&, RenderObject&);
     inline FilterEffect* effectByRenderer(RenderObject* object) { return m_effectRenderer.get(object); }
@@ -58,12 +54,22 @@ public:
     bool buildExpression(SVGFilterExpression&) const;
 
 private:
+    FilterEffect& sourceGraphic() const;
+    FilterEffect& sourceAlpha() const;
+
+    RefPtr<FilterEffect> namedEffect(const AtomString&) const;
+    std::optional<FilterEffectVector> namedEffects(Span<const AtomString>) const;
+
+    void addNamedEffect(const AtomString& id, Ref<FilterEffect>&&);
+    void setEffectInputs(FilterEffect&, FilterEffectVector&& inputs);
+
     std::optional<FilterEffectGeometry> effectGeometry(FilterEffect&) const;
     bool buildEffectExpression(FilterEffect&, FilterEffectVector& stack, unsigned level, SVGFilterExpression&) const;
 
-    HashMap<AtomString, RefPtr<FilterEffect>> m_builtinEffects;
-    HashMap<AtomString, RefPtr<FilterEffect>> m_namedEffects;
+    HashMap<AtomString, Ref<FilterEffect>> m_builtinEffects;
+    HashMap<AtomString, Ref<FilterEffect>> m_namedEffects;
     HashMap<RenderObject*, FilterEffect*> m_effectRenderer;
+    HashMap<Ref<FilterEffect>, FilterEffectVector> m_inputsMap;
 
     RefPtr<FilterEffect> m_lastEffect;
 

@@ -32,7 +32,7 @@ class SVGFilterBuilder;
 class SVGFELightElement : public SVGElement {
     WTF_MAKE_ISO_ALLOCATED(SVGFELightElement);
 public:
-    virtual Ref<LightSource> lightSource(SVGFilterBuilder&) const = 0;
+    virtual Ref<LightSource> lightSource(const SVGFilterBuilder&) const = 0;
     static SVGFELightElement* findLightElement(const SVGElement*);
 
     float azimuth() const { return m_azimuth->currentValue(); }

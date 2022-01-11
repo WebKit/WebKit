@@ -40,7 +40,7 @@ Ref<SVGFEPointLightElement> SVGFEPointLightElement::create(const QualifiedName& 
     return adoptRef(*new SVGFEPointLightElement(tagName, document));
 }
 
-Ref<LightSource> SVGFEPointLightElement::lightSource(SVGFilterBuilder& builder) const
+Ref<LightSource> SVGFEPointLightElement::lightSource(const SVGFilterBuilder& builder) const
 {
     FloatPoint3D position;
     if (builder.primitiveUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX) {

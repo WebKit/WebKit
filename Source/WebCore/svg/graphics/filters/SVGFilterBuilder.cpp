@@ -39,8 +39,8 @@ static constexpr unsigned maxCountChildNodes = 200;
 
 void SVGFilterBuilder::setupBuiltinEffects(Ref<FilterEffect> sourceGraphic)
 {
-    m_builtinEffects.add(SourceGraphic::effectName(), sourceGraphic.ptr());
-    m_builtinEffects.add(SourceAlpha::effectName(), SourceAlpha::create(sourceGraphic));
+    m_builtinEffects.add(SourceGraphic::effectName(), sourceGraphic);
+    m_builtinEffects.add(SourceAlpha::effectName(), SourceAlpha::create(sourceGraphic->operatingColorSpace()));
 }
 
 static OptionSet<FilterEffectGeometry::Flags> effectGeometryFlagsForElement(SVGElement& element)
@@ -83,12 +83,16 @@ RefPtr<FilterEffect> SVGFilterBuilder::buildFilterEffects(SVGFilterElement& filt
     if (filterElement.countChildNodes() > maxCountChildNodes)
         return nullptr;
 
-    RefPtr<FilterEffect> effect;
+    setEffectInputs(sourceAlpha(), FilterEffectVector { sourceGraphic() });
 
     for (auto& effectElement : childrenOfType<SVGFilterPrimitiveStandardAttributes>(filterElement)) {
-        effect = effectElement.build(*this);
+        auto inputs = namedEffects(effectElement.filterEffectInputsNames());
+        if (!inputs)
+            return nullptr;
+
+        auto effect = effectElement.filterEffect(*this, *inputs);
         if (!effect)
-            break;
+            return nullptr;
 
         if (auto flags = effectGeometryFlagsForElement(effectElement)) {
             auto effectBoundaries = SVGLengthContext::resolveRectangle<SVGFilterPrimitiveStandardAttributes>(&effectElement, m_primitiveUnits, m_targetBoundingBox);
@@ -103,39 +107,72 @@ RefPtr<FilterEffect> SVGFilterBuilder::buildFilterEffects(SVGFilterElement& filt
         if (auto renderer = effectElement.renderer())
             appendEffectToEffectRenderer(*effect, *renderer);
 
-        add(effectElement.result(), effect);
+        addNamedEffect(effectElement.result(), { *effect });
+        setEffectInputs(*effect, WTFMove(*inputs));
     }
 
-    return effect;
+    return m_lastEffect;
 }
 
-void SVGFilterBuilder::add(const AtomString& id, RefPtr<FilterEffect> effect)
+FilterEffect& SVGFilterBuilder::sourceGraphic() const
+{
+    return *m_builtinEffects.get(FilterEffect::sourceGraphicName());
+}
+
+FilterEffect& SVGFilterBuilder::sourceAlpha() const
+{
+    return *m_builtinEffects.get(FilterEffect::sourceAlphaName());
+}
+
+void SVGFilterBuilder::addNamedEffect(const AtomString& id, Ref<FilterEffect>&& effect)
 {
     if (id.isEmpty()) {
-        m_lastEffect = effect;
+        m_lastEffect = WTFMove(effect);
         return;
     }
 
     if (m_builtinEffects.contains(id))
         return;
 
-    m_lastEffect = effect;
-    m_namedEffects.set(id, m_lastEffect);
+    m_lastEffect = WTFMove(effect);
+    m_namedEffects.set(id, Ref { *m_lastEffect });
 }
 
-RefPtr<FilterEffect> SVGFilterBuilder::getEffectById(const AtomString& id) const
+RefPtr<FilterEffect> SVGFilterBuilder::namedEffect(const AtomString& id) const
 {
     if (id.isEmpty()) {
         if (m_lastEffect)
             return m_lastEffect;
 
-        return m_builtinEffects.get(SourceGraphic::effectName());
+        return &sourceGraphic();
     }
 
     if (m_builtinEffects.contains(id))
         return m_builtinEffects.get(id);
 
     return m_namedEffects.get(id);
+}
+
+std::optional<FilterEffectVector> SVGFilterBuilder::namedEffects(Span<const AtomString> names) const
+{
+    FilterEffectVector effects;
+
+    effects.reserveInitialCapacity(names.size());
+
+    for (auto& name : names) {
+        auto effect = namedEffect(name);
+        if (!effect)
+            return std::nullopt;
+
+        effects.uncheckedAppend(effect.releaseNonNull());
+    }
+
+    return effects;
+}
+
+void SVGFilterBuilder::setEffectInputs(FilterEffect& effect, FilterEffectVector&& inputs)
+{
+    m_inputsMap.set({ effect }, WTFMove(inputs));
 }
 
 void SVGFilterBuilder::appendEffectToEffectRenderer(FilterEffect& effect, RenderObject& object)
@@ -161,8 +198,8 @@ bool SVGFilterBuilder::buildEffectExpression(FilterEffect& effect, FilterEffectV
     
     expression.append({ effect, effectGeometry(effect), level });
 
-    for (auto& inputEffect : effect.inputEffects()) {
-        if (!buildEffectExpression(inputEffect, stack, level + 1, expression))
+    for (auto& input : m_inputsMap.get(effect)) {
+        if (!buildEffectExpression(input, stack, level + 1, expression))
             return false;
     }
 

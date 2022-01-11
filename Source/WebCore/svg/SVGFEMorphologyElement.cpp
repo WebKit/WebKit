@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2009 Dirk Schulze <krit@webkit.org>
- * Copyright (C) 2018-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2022 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -21,8 +21,7 @@
 #include "config.h"
 #include "SVGFEMorphologyElement.h"
 
-#include "FilterEffect.h"
-#include "SVGFilterBuilder.h"
+#include "FEMorphology.h"
 #include "SVGNames.h"
 #include "SVGParserUtilities.h"
 #include <wtf/IsoMallocInlines.h>
@@ -114,20 +113,12 @@ void SVGFEMorphologyElement::svgAttributeChanged(const QualifiedName& attrName)
     SVGFilterPrimitiveStandardAttributes::svgAttributeChanged(attrName);
 }
 
-RefPtr<FilterEffect> SVGFEMorphologyElement::build(SVGFilterBuilder& filterBuilder) const
+RefPtr<FilterEffect> SVGFEMorphologyElement::filterEffect(const SVGFilterBuilder&, const FilterEffectVector&) const
 {
-    auto input1 = filterBuilder.getEffectById(in1());
-    if (!input1)
+    if (radiusX() < 0 || radiusY() < 0)
         return nullptr;
 
-    float xRadius = radiusX();
-    float yRadius = radiusY();
-    if (xRadius < 0 || yRadius < 0)
-        return nullptr;
-
-    auto effect = FEMorphology::create(svgOperator(), xRadius, yRadius);
-    effect->inputEffects() = { input1.releaseNonNull() };
-    return effect;
+    return FEMorphology::create(svgOperator(), radiusX(), radiusY());
 }
 
 } // namespace WebCore

@@ -20,8 +20,6 @@
 #include "config.h"
 #include "SVGFESpotLightElement.h"
 
-#include "GeometryUtilities.h"
-#include "ImageBuffer.h"
 #include "SVGFilterBuilder.h"
 #include "SVGNames.h"
 #include "SpotLightSource.h"
@@ -40,7 +38,7 @@ Ref<SVGFESpotLightElement> SVGFESpotLightElement::create(const QualifiedName& ta
     return adoptRef(*new SVGFESpotLightElement(tagName, document));
 }
 
-Ref<LightSource> SVGFESpotLightElement::lightSource(SVGFilterBuilder& builder) const
+Ref<LightSource> SVGFESpotLightElement::lightSource(const SVGFilterBuilder& builder) const
 {
     FloatPoint3D position;
     FloatPoint3D pointsAt;

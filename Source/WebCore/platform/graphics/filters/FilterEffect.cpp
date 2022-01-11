@@ -149,12 +149,6 @@ RefPtr<FilterImage> FilterEffect::apply(const Filter& filter, const FilterImageV
     return result;
 }
 
-FilterEffect& FilterEffect::inputEffect(unsigned number) const
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(number < m_inputEffects.size());
-    return m_inputEffects.at(number);
-}
-
 TextStream& FilterEffect::externalRepresentation(TextStream& ts, FilterRepresentation representation) const
 {
     // FIXME: We should dump the subRegions of the filter primitives here later. This isn't
