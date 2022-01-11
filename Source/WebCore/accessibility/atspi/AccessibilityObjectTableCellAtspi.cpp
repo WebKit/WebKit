@@ -22,8 +22,8 @@
 
 #if ENABLE(ACCESSIBILITY) && USE(ATSPI)
 
+#include "AccessibilityAtspi.h"
 #include "AccessibilityAtspiEnums.h"
-#include "AccessibilityRootAtspi.h"
 #include <gio/gio.h>
 
 namespace WebCore {
@@ -67,7 +67,7 @@ GDBusInterfaceVTable AccessibilityObjectAtspi::s_tableCellFunctions = {
         if (!g_strcmp0(propertyName, "Table")) {
             auto* axObject = atspiObject->m_axObject;
             if (!axObject || !axObject->isTableCell())
-                return atspiObject->m_root.atspi().nullReference();
+                return AccessibilityAtspi::singleton().nullReference();
 
             AccessibilityObjectAtspi* wrapper = atspiObject.ptr();
             while (auto parent = wrapper->parent()) {
@@ -80,7 +80,7 @@ GDBusInterfaceVTable AccessibilityObjectAtspi::s_tableCellFunctions = {
                 if (axObject && axObject->isTable())
                     break;
             }
-            return wrapper ? wrapper->reference() : atspiObject->m_root.atspi().nullReference();
+            return wrapper ? wrapper->reference() : AccessibilityAtspi::singleton().nullReference();
         }
 
         g_set_error(error, G_IO_ERROR, G_IO_ERROR_NOT_SUPPORTED, "Unknown property '%s'", propertyName);

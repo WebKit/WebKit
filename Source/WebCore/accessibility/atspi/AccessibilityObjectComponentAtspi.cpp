@@ -22,6 +22,7 @@
 
 #if ENABLE(ACCESSIBILITY) && USE(ATSPI)
 #include "AXIsolatedObject.h"
+#include "AccessibilityAtspi.h"
 #include "AccessibilityAtspiEnums.h"
 #include "AccessibilityObjectInterface.h"
 #include "Document.h"
@@ -47,7 +48,7 @@ GDBusInterfaceVTable AccessibilityObjectAtspi::s_componentFunctions = {
             uint32_t coordinateType;
             g_variant_get(parameters, "(iiu)", &x, &y, &coordinateType);
             auto* wrapper = atspiObject->hitTest({ x, y }, coordinateType);
-            g_dbus_method_invocation_return_value(invocation, g_variant_new("(@(so))", wrapper ? wrapper->reference() : atspiObject->m_root.atspi().nullReference()));
+            g_dbus_method_invocation_return_value(invocation, g_variant_new("(@(so))", wrapper ? wrapper->reference() : AccessibilityAtspi::singleton().nullReference()));
         } else if (!g_strcmp0(methodName, "GetExtents")) {
             uint32_t coordinateType;
             g_variant_get(parameters, "(u)", &coordinateType);

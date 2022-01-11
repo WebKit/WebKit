@@ -59,6 +59,10 @@
 #include <wtf/linux/RealTimeThreads.h>
 #endif
 
+#if USE(ATSPI)
+#include <WebCore/AccessibilityAtspi.h>
+#endif
+
 namespace WebKit {
 
 using namespace WebCore;
@@ -129,7 +133,7 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
         WebCore::setApplicationName(parameters.applicationName);
 
 #if USE(ATSPI)
-    m_accessibility = makeUnique<AccessibilityAtspi>(parameters.accessibilityBusAddress);
+    AccessibilityAtspi::singleton().connect(parameters.accessibilityBusAddress);
 #endif
 }
 

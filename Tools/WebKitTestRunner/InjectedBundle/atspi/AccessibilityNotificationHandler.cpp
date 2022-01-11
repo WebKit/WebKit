@@ -33,7 +33,6 @@
 #include "JSWrapper.h"
 #include <JavaScriptCore/OpaqueJSString.h>
 #include <WebCore/AccessibilityObjectAtspi.h>
-#include <WebCore/AccessibilityRootAtspi.h>
 #include <WebKit/WKBundleFrame.h>
 #include <WebKit/WKBundlePage.h>
 #include <WebKit/WKBundlePagePrivate.h>
@@ -44,13 +43,11 @@ AccessibilityNotificationHandler::AccessibilityNotificationHandler(JSValueRef ca
     : m_callback(callback)
     , m_element(element)
 {
-    WKBundlePageRef page = InjectedBundle::singleton().page()->page();
-    WKBundleFrameRef mainFrame = WKBundlePageGetMainFrame(page);
+    WKBundleFrameRef mainFrame = WKBundlePageGetMainFrame(InjectedBundle::singleton().page()->page());
     JSContextRef jsContext = WKBundleFrameGetJavaScriptContext(mainFrame);
     JSValueProtect(jsContext, m_callback);
 
-    auto& atspi = m_element ? m_element->root().atspi() : static_cast<WebCore::AccessibilityObjectAtspi*>(WKAccessibilityRootObject(page))->root().atspi();
-    atspi.addNotificationObserver(this, [this](WebCore::AccessibilityObjectAtspi& element, const char* notificationName, WebCore::AccessibilityAtspi::NotificationObserverParameter parameter) {
+    WebCore::AccessibilityAtspi::singleton().addNotificationObserver(this, [this](WebCore::AccessibilityObjectAtspi& element, const char* notificationName, WebCore::AccessibilityAtspi::NotificationObserverParameter parameter) {
         if (m_element && m_element.get() != &element)
             return;
 
@@ -95,11 +92,9 @@ AccessibilityNotificationHandler::AccessibilityNotificationHandler(JSValueRef ca
 
 AccessibilityNotificationHandler::~AccessibilityNotificationHandler()
 {
-    WKBundlePageRef page = InjectedBundle::singleton().page()->page();
-    auto& atspi = m_element ? m_element->root().atspi() : static_cast<WebCore::AccessibilityObjectAtspi*>(WKAccessibilityRootObject(page))->root().atspi();
-    atspi.removeNotificationObserver(this);
+    WebCore::AccessibilityAtspi::singleton().removeNotificationObserver(this);
 
-    WKBundleFrameRef mainFrame = WKBundlePageGetMainFrame(page);
+    WKBundleFrameRef mainFrame = WKBundlePageGetMainFrame(InjectedBundle::singleton().page()->page());
     JSContextRef jsContext = WKBundleFrameGetJavaScriptContext(mainFrame);
     JSValueUnprotect(jsContext, m_callback);
 }

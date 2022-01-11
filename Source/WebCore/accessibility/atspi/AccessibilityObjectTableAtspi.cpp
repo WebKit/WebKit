@@ -22,7 +22,7 @@
 
 #if ENABLE(ACCESSIBILITY) && USE(ATSPI)
 
-#include "AccessibilityRootAtspi.h"
+#include "AccessibilityAtspi.h"
 #include "HTMLTableCaptionElement.h"
 #include "HTMLTableElement.h"
 #include "RenderElement.h"
@@ -42,7 +42,7 @@ GDBusInterfaceVTable AccessibilityObjectAtspi::s_tableFunctions = {
             int row, column;
             g_variant_get(parameters, "(ii)", &row, &column);
             auto* cell = row >= 0 && column >= 0 ? atspiObject->cell(row, column) : nullptr;
-            g_dbus_method_invocation_return_value(invocation, g_variant_new("(@(so))", cell ? cell->reference() : atspiObject->m_root.atspi().nullReference()));
+            g_dbus_method_invocation_return_value(invocation, g_variant_new("(@(so))", cell ? cell->reference() : AccessibilityAtspi::singleton().nullReference()));
         } else if (!g_strcmp0(methodName, "GetIndexAt")) {
             int row, column;
             g_variant_get(parameters, "(ii)", &row, &column);
@@ -75,12 +75,12 @@ GDBusInterfaceVTable AccessibilityObjectAtspi::s_tableFunctions = {
             int row;
             g_variant_get(parameters, "(i)", &row);
             auto* header = row >= 0 ? atspiObject->rowHeader(row) : nullptr;
-            g_dbus_method_invocation_return_value(invocation, g_variant_new("(@(so))", header ? header->reference() : atspiObject->m_root.atspi().nullReference()));
+            g_dbus_method_invocation_return_value(invocation, g_variant_new("(@(so))", header ? header->reference() : AccessibilityAtspi::singleton().nullReference()));
         } else if (!g_strcmp0(methodName, "GetColumnHeader")) {
             int column;
             g_variant_get(parameters, "(i)", &column);
             auto* header = column >= 0 ? atspiObject->columnHeader(column) : nullptr;
-            g_dbus_method_invocation_return_value(invocation, g_variant_new("(@(so))", header ? header->reference() : atspiObject->m_root.atspi().nullReference()));
+            g_dbus_method_invocation_return_value(invocation, g_variant_new("(@(so))", header ? header->reference() : AccessibilityAtspi::singleton().nullReference()));
         } else if (!g_strcmp0(methodName, "GetRowColumnExtentsAtIndex")) {
             int index;
             g_variant_get(parameters, "(i)", &index);
@@ -118,10 +118,10 @@ GDBusInterfaceVTable AccessibilityObjectAtspi::s_tableFunctions = {
             return g_variant_new_int32(atspiObject->columnCount());
         if (!g_strcmp0(propertyName, "Caption")) {
             auto* caption = atspiObject->tableCaption();
-            return caption ? caption->reference() : atspiObject->m_root.atspi().nullReference();
+            return caption ? caption->reference() : AccessibilityAtspi::singleton().nullReference();
         }
         if (!g_strcmp0(propertyName, "Summary"))
-            return atspiObject->m_root.atspi().nullReference();
+            return AccessibilityAtspi::singleton().nullReference();
         if (!g_strcmp0(propertyName, "NSelectedRows"))
             return g_variant_new_int32(0);
         if (!g_strcmp0(propertyName, "NSelectedColumns"))

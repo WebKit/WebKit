@@ -26,18 +26,31 @@
 #include <gio/gio.h>
 #include <glib/gi18n-lib.h>
 #include <wtf/MainThread.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/SetForScope.h>
 #include <wtf/SortedArrayMap.h>
 #include <wtf/UUID.h>
 
 namespace WebCore {
 
-AccessibilityAtspi::AccessibilityAtspi(const String& busAddress)
+AccessibilityAtspi& AccessibilityAtspi::singleton()
+{
+    static NeverDestroyed<AccessibilityAtspi> atspi;
+    return atspi;
+}
+
+AccessibilityAtspi::AccessibilityAtspi()
     : m_queue(WorkQueue::create("org.webkit.a11y"))
+{
+    RELEASE_ASSERT(isMainThread());
+}
+
+void AccessibilityAtspi::connect(const String& busAddress)
 {
     RELEASE_ASSERT(isMainThread());
     if (busAddress.isEmpty())
         return;
+
     m_queue->dispatch([this, busAddress = busAddress.isolatedCopy()] {
         GUniqueOutPtr<GError> error;
         m_connection = adoptGRef(g_dbus_connection_new_for_address_sync(busAddress.utf8().data(),
@@ -49,12 +62,6 @@ AccessibilityAtspi::AccessibilityAtspi(const String& busAddress)
         else
             g_warning("Can't connect to a11y bus: %s", error->message);
     });
-}
-
-AccessibilityAtspi::~AccessibilityAtspi()
-{
-    if (m_registry)
-        g_signal_handlers_disconnect_by_data(m_registry.get(), this);
 }
 
 void AccessibilityAtspi::registerTrees() const
@@ -218,6 +225,19 @@ GVariant* AccessibilityAtspi::nullReference() const
     return g_variant_new("(so)", uniqueName(), "/org/a11y/atspi/null");
 }
 
+GVariant* AccessibilityAtspi::applicationReference() const
+{
+    RELEASE_ASSERT(!isMainThread());
+
+    // The application is the same for all root objects, so just use the first root object that is already embedded.
+    for (auto* rootObject : m_rootObjects.keys()) {
+        if (!rootObject->path().isNull())
+            return rootObject->applicationReference();
+    }
+
+    return nullReference();
+}
+
 void AccessibilityAtspi::registerRoot(AccessibilityRootAtspi& rootObject, Vector<std::pair<GDBusInterfaceInfo*, GDBusInterfaceVTable*>>&& interfaces, CompletionHandler<void(const String&)>&& completionHandler)
 {
     RELEASE_ASSERT(isMainThread());
@@ -329,7 +349,7 @@ void AccessibilityAtspi::parentChanged(AccessibilityObjectAtspi& atspiObject)
             return;
 
         // Always emit parentChanged when the tree is registered because the atspi cache always consumes it.
-        if (!atspiObject->root().isTreeRegistered())
+        if (!atspiObject->isTreeRegistered())
             return;
 
         // Emit parentChanged only if the object is already registered, otherwise register the object,
@@ -365,7 +385,7 @@ void AccessibilityAtspi::childrenChanged(AccessibilityObjectAtspi& atspiObject, 
             return;
 
         // Always emit ChildrenChanged when the tree is registered because the atspi cache always consumes it.
-        if (!atspiObject->root().isTreeRegistered())
+        if (!atspiObject->isTreeRegistered())
             return;
 
         g_dbus_connection_emit_signal(m_connection.get(), nullptr, atspiObject->path().utf8().data(), "org.a11y.atspi.Event.Object", "ChildrenChanged",

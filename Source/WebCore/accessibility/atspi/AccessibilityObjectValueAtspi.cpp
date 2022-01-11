@@ -22,8 +22,8 @@
 
 #if ENABLE(ACCESSIBILITY) && USE(ATSPI)
 
+#include "AccessibilityAtspi.h"
 #include "AccessibilityObject.h"
-#include "AccessibilityRootAtspi.h"
 #include <gio/gio.h>
 
 namespace WebCore {
@@ -134,7 +134,7 @@ double AccessibilityObjectAtspi::minimumIncrement() const
 void AccessibilityObjectAtspi::valueChanged(double value)
 {
     RELEASE_ASSERT(isMainThread());
-    m_root.atspi().valueChanged(*this, value);
+    AccessibilityAtspi::singleton().valueChanged(*this, value);
 }
 
 } // namespace WebCore

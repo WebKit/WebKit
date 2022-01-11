@@ -22,7 +22,7 @@
 
 #if ENABLE(ACCESSIBILITY) && USE(ATSPI)
 
-#include "AccessibilityRootAtspi.h"
+#include "AccessibilityAtspi.h"
 #include <gio/gio.h>
 #include <wtf/unicode/CharacterNames.h>
 
@@ -41,7 +41,7 @@ GDBusInterfaceVTable AccessibilityObjectAtspi::s_hypertextFunctions = {
             int index;
             g_variant_get(parameters, "(i)", &index);
             auto* wrapper = index >= 0 ? atspiObject->hyperlink(index) : nullptr;
-            g_dbus_method_invocation_return_value(invocation, g_variant_new("(@(so))", wrapper ? wrapper->hyperlinkReference() : atspiObject->m_root.atspi().nullReference()));
+            g_dbus_method_invocation_return_value(invocation, g_variant_new("(@(so))", wrapper ? wrapper->hyperlinkReference() : AccessibilityAtspi::singleton().nullReference()));
         } else if (!g_strcmp0(methodName, "GetLinkIndex")) {
             int offset;
             g_variant_get(parameters, "(i)", &offset);

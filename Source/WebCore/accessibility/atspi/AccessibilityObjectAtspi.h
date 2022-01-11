@@ -38,10 +38,11 @@ class AccessibilityRootAtspi;
 
 class AccessibilityObjectAtspi final : public ThreadSafeRefCounted<AccessibilityObjectAtspi, WTF::DestructionThread::Main> {
 public:
-    static Ref<AccessibilityObjectAtspi> create(AXCoreObject*, AccessibilityRootAtspi&);
+    static Ref<AccessibilityObjectAtspi> create(AXCoreObject*, AccessibilityRootAtspi*);
     ~AccessibilityObjectAtspi() = default;
 
     bool registerObject();
+    bool isTreeRegistered() const;
 
     enum class Interface : uint16_t {
         Accessible = 1 << 0,
@@ -59,7 +60,6 @@ public:
     };
     const OptionSet<Interface>& interfaces() const { return m_interfaces; }
 
-    const AccessibilityRootAtspi& root() const { return m_root; }
     void setParent(std::optional<AccessibilityObjectAtspi*>);
     WEBCORE_EXPORT std::optional<AccessibilityObjectAtspi*> parent() const;
     GVariant* parentReference() const;
@@ -158,7 +158,9 @@ public:
     WEBCORE_EXPORT std::pair<std::optional<unsigned>, std::optional<unsigned>> cellPosition() const;
 
 private:
-    explicit AccessibilityObjectAtspi(AXCoreObject*, AccessibilityRootAtspi&);
+    AccessibilityObjectAtspi(AXCoreObject*, AccessibilityRootAtspi*);
+
+    AccessibilityRootAtspi* root();
 
     Vector<RefPtr<AccessibilityObjectAtspi>> wrapperVector(const Vector<RefPtr<AXCoreObject>>&) const;
     int indexInParent() const;
@@ -241,7 +243,7 @@ private:
     AXCoreObject* m_axObject { nullptr };
     AXCoreObject* m_coreObject { nullptr };
     OptionSet<Interface> m_interfaces;
-    AccessibilityRootAtspi& m_root;
+    AccessibilityRootAtspi* m_root { nullptr };
     std::optional<AccessibilityObjectAtspi*> m_parent;
     Atomic<bool> m_isRegistered { false };
     String m_path;
@@ -249,7 +251,6 @@ private:
     int64_t m_lastSelectionChangedTime { -1 };
     mutable std::atomic<bool> m_hasListMarkerAtStart;
     mutable int m_indexInParent { -1 };
-    mutable Lock m_rootLock;
 };
 
 } // namespace WebCore

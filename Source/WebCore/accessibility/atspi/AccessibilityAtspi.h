@@ -40,15 +40,18 @@ class AccessibilityRootAtspi;
 enum class AccessibilityRole;
 
 class AccessibilityAtspi {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_NONCOPYABLE(AccessibilityAtspi); WTF_MAKE_FAST_ALLOCATED;
+    friend NeverDestroyed<AccessibilityAtspi>;
 public:
-    AccessibilityAtspi(const String&);
-    ~AccessibilityAtspi();
+    WEBCORE_EXPORT static AccessibilityAtspi& singleton();
+
+    void connect(const String&);
 
     WEBCORE_EXPORT RunLoop& runLoop() const;
 
     const char* uniqueName() const;
     GVariant* nullReference() const;
+    GVariant* applicationReference() const;
     bool hasEventListeners() const { return !m_eventListeners.isEmpty(); }
 
     void registerRoot(AccessibilityRootAtspi&, Vector<std::pair<GDBusInterfaceInfo*, GDBusInterfaceVTable*>>&&, CompletionHandler<void(const String&)>&&);
@@ -88,6 +91,8 @@ public:
 #endif
 
 private:
+    AccessibilityAtspi();
+
     void registerTrees() const;
     void initializeRegistry();
     void addEventListener(const char* dbusName, const char* eventName);

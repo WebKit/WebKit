@@ -22,10 +22,10 @@
 
 #if ENABLE(ACCESSIBILITY) && USE(ATSPI)
 #include "AXObjectCache.h"
+#include "AccessibilityAtspi.h"
 #include "AccessibilityAtspiEnums.h"
 #include "AccessibilityObject.h"
 #include "AccessibilityObjectInterface.h"
-#include "AccessibilityRootAtspi.h"
 #include "Editing.h"
 #include "PlatformScreen.h"
 #include "RenderLayer.h"
@@ -381,7 +381,7 @@ void AccessibilityObjectAtspi::textInserted(const String& insertedText, const Vi
     auto offset = UTF16OffsetToUTF8(mapping, utf16Offset);
     auto utf8InsertedText = insertedText.utf8();
     auto insertedTextLength = g_utf8_strlen(utf8InsertedText.data(), -1);
-    m_root.atspi().textChanged(*this, "insert", WTFMove(utf8InsertedText), offset - insertedTextLength, insertedTextLength);
+    AccessibilityAtspi::singleton().textChanged(*this, "insert", WTFMove(utf8InsertedText), offset - insertedTextLength, insertedTextLength);
 }
 
 void AccessibilityObjectAtspi::textDeleted(const String& deletedText, const VisiblePosition& position)
@@ -397,7 +397,7 @@ void AccessibilityObjectAtspi::textDeleted(const String& deletedText, const Visi
     auto offset = UTF16OffsetToUTF8(mapping, utf16Offset);
     auto utf8DeletedText = deletedText.utf8();
     auto deletedTextLength = g_utf8_strlen(utf8DeletedText.data(), -1);
-    m_root.atspi().textChanged(*this, "delete", WTFMove(utf8DeletedText), offset, deletedTextLength);
+    AccessibilityAtspi::singleton().textChanged(*this, "delete", WTFMove(utf8DeletedText), offset, deletedTextLength);
 }
 
 IntPoint AccessibilityObjectAtspi::boundaryOffset(unsigned utf16Offset, TextGranularity granularity) const
@@ -798,10 +798,10 @@ void AccessibilityObjectAtspi::selectionChanged(const VisibleSelection& selectio
     auto mapping = offsetMapping(utf16Text);
     auto caretOffset = UTF16OffsetToUTF8(mapping, bounds.y());
     if (caretOffset <= length)
-        m_root.atspi().textCaretMoved(*this, caretOffset);
+        AccessibilityAtspi::singleton().textCaretMoved(*this, caretOffset);
 
     if (selection.isRange())
-        m_root.atspi().textSelectionChanged(*this);
+        AccessibilityAtspi::singleton().textSelectionChanged(*this);
 }
 
 AccessibilityObjectAtspi::TextAttributes AccessibilityObjectAtspi::textAttributes(std::optional<unsigned> utf16Offset, bool includeDefault) const
@@ -990,7 +990,7 @@ void AccessibilityObjectAtspi::textAttributesChanged()
     if (!m_interfaces.contains(Interface::Text))
         return;
 
-    m_root.atspi().textAttributesChanged(*this);
+    AccessibilityAtspi::singleton().textAttributesChanged(*this);
 }
 
 bool AccessibilityObjectAtspi::scrollToMakeVisible(int startOffset, int endOffset, uint32_t scrollType) const

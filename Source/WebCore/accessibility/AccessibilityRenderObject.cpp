@@ -3402,16 +3402,17 @@ AccessibilitySVGRoot* AccessibilityRenderObject::remoteSVGRootElement(CreationCh
     AXObjectCache* cache = frame.document()->axObjectCache();
     if (!cache)
         return nullptr;
-    AccessibilityObject* rootSVGObject = createIfNecessary == Create ? cache->getOrCreate(rendererRoot) : cache->get(rendererRoot);
-
-    ASSERT(!createIfNecessary || rootSVGObject);
-    if (!is<AccessibilitySVGRoot>(rootSVGObject))
-        return nullptr;
 
 #if USE(ATSPI)
     if (auto* page = document->page())
         page->setAccessibilityRootObject(createIfNecessary == Create ? axObjectCache()->document().page()->accessibilityRootObject() : nullptr);
 #endif
+
+    AccessibilityObject* rootSVGObject = createIfNecessary == Create ? cache->getOrCreate(rendererRoot) : cache->get(rendererRoot);
+
+    ASSERT(!createIfNecessary || rootSVGObject);
+    if (!is<AccessibilitySVGRoot>(rootSVGObject))
+        return nullptr;
 
     return downcast<AccessibilitySVGRoot>(rootSVGObject);
 }

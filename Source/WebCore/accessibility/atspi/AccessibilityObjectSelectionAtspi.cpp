@@ -22,7 +22,7 @@
 
 #if ENABLE(ACCESSIBILITY) && USE(ATSPI)
 
-#include "AccessibilityRootAtspi.h"
+#include "AccessibilityAtspi.h"
 
 namespace WebCore {
 
@@ -37,7 +37,7 @@ GDBusInterfaceVTable AccessibilityObjectAtspi::s_selectionFunctions = {
             int index;
             g_variant_get(parameters, "(i)", &index);
             auto* child = index >= 0 ? atspiObject->selectedChild(index) : nullptr;
-            g_dbus_method_invocation_return_value(invocation, g_variant_new("(@(so))", child ? child->reference() : atspiObject->m_root.atspi().nullReference()));
+            g_dbus_method_invocation_return_value(invocation, g_variant_new("(@(so))", child ? child->reference() : AccessibilityAtspi::singleton().nullReference()));
         } else if (!g_strcmp0(methodName, "SelectChild")) {
             int index;
             g_variant_get(parameters, "(i)", &index);
@@ -233,7 +233,7 @@ void AccessibilityObjectAtspi::selectionChanged()
         return;
 
     m_lastSelectionChangedTime = sourceTime;
-    m_root.atspi().selectionChanged(*this);
+    AccessibilityAtspi::singleton().selectionChanged(*this);
 }
 
 } // namespace WebCore

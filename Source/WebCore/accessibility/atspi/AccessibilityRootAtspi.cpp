@@ -34,14 +34,13 @@
 
 namespace WebCore {
 
-Ref<AccessibilityRootAtspi> AccessibilityRootAtspi::create(Page& page, AccessibilityAtspi& atspi)
+Ref<AccessibilityRootAtspi> AccessibilityRootAtspi::create(Page& page)
 {
-    return adoptRef(*new AccessibilityRootAtspi(page, atspi));
+    return adoptRef(*new AccessibilityRootAtspi(page));
 }
 
-AccessibilityRootAtspi::AccessibilityRootAtspi(Page& page, AccessibilityAtspi& atspi)
-    : m_atspi(atspi)
-    , m_page(page)
+AccessibilityRootAtspi::AccessibilityRootAtspi(Page& page)
+    : m_page(page)
 {
     RELEASE_ASSERT(isMainThread());
 }
@@ -92,7 +91,7 @@ GDBusInterfaceVTable AccessibilityRootAtspi::s_accessibleFunctions = {
                     return;
                 }
             }
-            g_dbus_method_invocation_return_value(invocation, g_variant_new("(@(so))", rootObject.atspi().nullReference()));
+            g_dbus_method_invocation_return_value(invocation, g_variant_new("(@(so))", AccessibilityAtspi::singleton().nullReference()));
         } else if (!g_strcmp0(methodName, "GetChildren")) {
             GVariantBuilder builder = G_VARIANT_BUILDER_INIT(G_VARIANT_TYPE("a(so)"));
             auto* child = Accessibility::retrieveValueFromMainThread<AccessibilityObjectAtspi*>([&rootObject]() -> AccessibilityObjectAtspi* {
@@ -174,13 +173,13 @@ void AccessibilityRootAtspi::registerObject(CompletionHandler<void(const String&
     interfaces.append({ const_cast<GDBusInterfaceInfo*>(&webkit_accessible_interface), &s_accessibleFunctions });
     interfaces.append({ const_cast<GDBusInterfaceInfo*>(&webkit_socket_interface), &s_socketFunctions });
     interfaces.append({ const_cast<GDBusInterfaceInfo*>(&webkit_component_interface), &s_componentFunctions });
-    m_atspi.registerRoot(*this, WTFMove(interfaces), WTFMove(completionHandler));
+    AccessibilityAtspi::singleton().registerRoot(*this, WTFMove(interfaces), WTFMove(completionHandler));
 }
 
 void AccessibilityRootAtspi::unregisterObject()
 {
     RELEASE_ASSERT(isMainThread());
-    m_atspi.unregisterRoot(*this);
+    AccessibilityAtspi::singleton().unregisterRoot(*this);
 
     if (m_page)
         m_page->setAccessibilityRootObject(nullptr);
@@ -222,8 +221,8 @@ void AccessibilityRootAtspi::embedded(const char* parentUniqueName, const char* 
     RELEASE_ASSERT(!isMainThread());
     m_parentUniqueName = parentUniqueName;
     m_parentPath = parentPath;
-    m_atspi.parentChanged(*this);
-    if (!m_isTreeRegistered.load() && m_atspi.hasEventListeners())
+    AccessibilityAtspi::singleton().parentChanged(*this);
+    if (!m_isTreeRegistered.load() && AccessibilityAtspi::singleton().hasEventListeners())
         registerTree();
 }
 
@@ -231,14 +230,14 @@ GVariant* AccessibilityRootAtspi::applicationReference() const
 {
     RELEASE_ASSERT(!isMainThread());
     if (m_parentUniqueName.isNull())
-        return m_atspi.nullReference();
+        return AccessibilityAtspi::singleton().nullReference();
     return g_variant_new("(so)", m_parentUniqueName.utf8().data(), "/org/a11y/atspi/accessible/root");
 }
 
 GVariant* AccessibilityRootAtspi::reference() const
 {
     RELEASE_ASSERT(!isMainThread());
-    return g_variant_new("(so)", m_atspi.uniqueName(), m_path.utf8().data());
+    return g_variant_new("(so)", AccessibilityAtspi::singleton().uniqueName(), m_path.utf8().data());
 }
 
 GVariant* AccessibilityRootAtspi::parentReference() const
@@ -268,18 +267,18 @@ AccessibilityObjectAtspi* AccessibilityRootAtspi::child() const
 
 void AccessibilityRootAtspi::childAdded(AccessibilityObjectAtspi& child)
 {
-    m_atspi.childrenChanged(*this, child, AccessibilityAtspi::ChildrenChanged::Added);
+    AccessibilityAtspi::singleton().childrenChanged(*this, child, AccessibilityAtspi::ChildrenChanged::Added);
 }
 
 void AccessibilityRootAtspi::childRemoved(AccessibilityObjectAtspi& child)
 {
-    m_atspi.childrenChanged(*this, child, AccessibilityAtspi::ChildrenChanged::Removed);
+    AccessibilityAtspi::singleton().childrenChanged(*this, child, AccessibilityAtspi::ChildrenChanged::Removed);
 }
 
 void AccessibilityRootAtspi::serialize(GVariantBuilder* builder) const
 {
     RELEASE_ASSERT(!isMainThread());
-    g_variant_builder_add(builder, "(so)", m_atspi.uniqueName(), m_path.utf8().data());
+    g_variant_builder_add(builder, "(so)", AccessibilityAtspi::singleton().uniqueName(), m_path.utf8().data());
     g_variant_builder_add(builder, "@(so)", applicationReference());
     g_variant_builder_add(builder, "@(so)", parentReference());
 
