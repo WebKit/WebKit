@@ -3,8 +3,8 @@ PASS Keyframes set using setKeyframes() are reflected in computed style for a ru
 PASS A transition with replaced keyframes still returns the original transitionProperty
 PASS A transition with no keyframes still returns the original transitionProperty
 PASS A transition with replaced keyframes animating the same property still exhibits normal reversing behavior.
-FAIL A transition with replaced keyframes animating a different property still exhibits normal reversing behavior  (reversing from the base value). undefined is not an object (evaluating 'reversedTransition.effect')
-FAIL A transition with replaced keyframes animating nothing still exhibits normal reversing behavior (reversing from the base value). undefined is not an object (evaluating 'reversedTransition.effect')
+PASS A transition with replaced keyframes animating a different property still exhibits normal reversing behavior  (reversing from the base value).
+PASS A transition with replaced keyframes animating nothing still exhibits normal reversing behavior (reversing from the base value).
 FAIL A transition with replaced keyframes animating nothing on a property being controlled by another modified transition exhibits normal reversing behavior and reverses from the other transition's current value. assert_equals: The reversed transition gets its start value from the other transition controlling left expected "280px" but got "200px"
-FAIL A transition with replaced kefyrames and composite 'add' exhibits normal reversing behavior, and the effect is not double counted when calculating the before change style assert_equals: The start value matches the 'before change' value expected "175px" but got "150px"
+PASS A transition with replaced kefyrames and composite 'add' exhibits normal reversing behavior, and the effect is not double counted when calculating the before change style
 

@@ -1,3 +1,14 @@
+2022-01-11  Antoine Quint  <graouts@webkit.org>
+
+        css/css-transitions/KeyframeEffect-setKeyframes.tentative.html is a failure
+        https://bugs.webkit.org/show_bug.cgi?id=235062
+
+        Reviewed by Dean Jackson.
+
+        Mark WPT progressions.
+
+        * web-platform-tests/css/css-transitions/KeyframeEffect-setKeyframes.tentative-expected.txt:
+
 2022-01-11  Tim Nguyen  <ntim@apple.com>
 
         ::backdrop pseudo element should react to associated element event listeners

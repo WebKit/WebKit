@@ -819,6 +819,8 @@ Vector<Strong<JSObject>> KeyframeEffect::getKeyframes(JSGlobalObject& lexicalGlo
 
 ExceptionOr<void> KeyframeEffect::setBindingsKeyframes(JSGlobalObject& lexicalGlobalObject, Strong<JSObject>&& keyframesInput)
 {
+    if (is<DeclarativeAnimation>(animation()))
+        downcast<DeclarativeAnimation>(*animation()).flushPendingStyleChanges();
     auto retVal = setKeyframes(lexicalGlobalObject, WTFMove(keyframesInput));
     if (!retVal.hasException() && is<CSSAnimation>(animation()))
         downcast<CSSAnimation>(*animation()).effectKeyframesWereSetUsingBindings();
