@@ -1,3 +1,61 @@
+2022-01-11  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r287884. rdar://problem/87206692
+
+    Fixed installhdr build failures in WebCore and WebKitLegacy
+    https://bugs.webkit.org/show_bug.cgi?id=235059
+    
+    Reviewed by Filip Pizlo.
+    
+    Source/WebCore:
+    
+    Reworked how SYSTEM_CONTENT_PATH is added to values to the minimum that is required for the build system.
+    Before this change, SYSTEM_CONTENT_PATH was added twice to some configuration variables due to is
+    incorrectly being added to NORMAL_WEBCORE_FRAMEWORKS_DIR.
+    
+    Also refactored the computation of JAVASCRIPTCORE_PRIVATE_HEADERS_DIR to use the newly added
+    INSTALL_PATH_PREFIX value.
+    
+    * Configurations/WebCore.xcconfig:
+    
+    Source/WebKitLegacy:
+    
+    On iOS, we need to create symbolic links for WebKitLegacy when using the SYSTEM_CONTENT_PATH.
+    Copied the creation script to the project and updated the configuration file accordingly.
+     
+    * WebKitLegacy.xcodeproj/project.pbxproj:
+    * scripts/create-symlink-to-altroot.sh: Added.
+    
+    Source/WebKitLegacy/mac:
+    
+    Refactored how INSTALL_PATH is calculated to simplify the logic for the macOS / iOS
+    location difference for the WebKitLegacy framework.  In WebKitLegacy.xcconfig, that
+    required changing NORMAL_PRODUCTION_FRAMEWORKS_DIR.
+    
+    Added the configuration values, ALTERNATE_ROOT_PATH and OUTPUT_ALTERNATE_ROOT_PATH, for
+    iOS builds to drive the newly added create symlinks script.
+    
+    Did the same rework as in WebCore configuration to eliminate using SYSTEM_CONTENT_PATH 
+    twice for some paths.
+    
+    * Configurations/WebKitLegacy.xcconfig:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@287884 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-01-11  Michael Saboff  <msaboff@apple.com>
+
+            Fixed installhdr build failures in WebCore and WebKitLegacy
+            https://bugs.webkit.org/show_bug.cgi?id=235059
+
+            Reviewed by Filip Pizlo.
+
+            On iOS, we need to create symbolic links for WebKitLegacy when using the SYSTEM_CONTENT_PATH.
+            Copied the creation script to the project and updated the configuration file accordingly.
+
+            * WebKitLegacy.xcodeproj/project.pbxproj:
+            * scripts/create-symlink-to-altroot.sh: Added.
+
 2021-12-09  Myles C. Maxfield  <mmaxfield@apple.com> and Don Olmstead  <don.olmstead@sony.com>
 
         Move TextCodec files from WebCore/platform/text to WebCore/PAL/text
