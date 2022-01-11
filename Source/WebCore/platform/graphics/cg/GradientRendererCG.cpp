@@ -54,7 +54,7 @@ enum class AlphaType {
     FullyTransparent
 };
 
-static AlphaType classifyAlphaType(float alpha)
+static constexpr AlphaType classifyAlphaType(float alpha)
 {
     if (alpha == 1.0f)
         return AlphaType::Opaque;
@@ -465,14 +465,26 @@ GradientRendererCG::Strategy GradientRendererCG::makeGradient(ColorInterpolation
     Vector<CGFloat, 4 * reservedStops> colorComponents;
     colorComponents.reserveInitialCapacity(numberOfStops * 4);
 
-    auto gradientColorSpace = sRGBColorSpaceRef();
+    auto cgColorSpace = [&] {
+        // FIXME: Now that we only ever use CGGradientCreateWithColorComponents, we should investigate
+        // if there is any real benefit to using sRGB when all the stops are bounded vs just using
+        // extended sRGB for all gradients.
+        if (hasOnlyBoundedSRGBColorStops(stops)) {
+            for (const auto& stop : stops) {
+                auto [r, g, b, a] = stop.color.toColorTypeLossy<SRGBA<float>>().resolved();
+                colorComponents.uncheckedAppend(r);
+                colorComponents.uncheckedAppend(g);
+                colorComponents.uncheckedAppend(b);
+                colorComponents.uncheckedAppend(a);
 
-    // FIXME: Now that we only ever use CGGradientCreateWithColorComponents, we should investigate
-    // if there is any real benefit to using sRGB when all the stops are bounded vs just using
-    // extended sRGB for all gradients.
-    if (hasOnlyBoundedSRGBColorStops(stops)) {
+                locations.uncheckedAppend(stop.offset);
+            }
+            return cachedCGColorSpace<ColorSpaceFor<SRGBA<float>>>();
+        }
+
+        using OutputSpaceColorType = std::conditional_t<HasCGColorSpaceMapping<ColorSpace::ExtendedSRGB>, ExtendedSRGBA<float>, SRGBA<float>>;
         for (const auto& stop : stops) {
-            auto [r, g, b, a] = stop.color.toColorTypeLossy<SRGBA<float>>().resolved();
+            auto [r, g, b, a] = stop.color.toColorTypeLossy<OutputSpaceColorType>().resolved();
             colorComponents.uncheckedAppend(r);
             colorComponents.uncheckedAppend(g);
             colorComponents.uncheckedAppend(b);
@@ -480,30 +492,13 @@ GradientRendererCG::Strategy GradientRendererCG::makeGradient(ColorInterpolation
 
             locations.uncheckedAppend(stop.offset);
         }
-    } else {
-#if HAVE(CORE_GRAPHICS_EXTENDED_SRGB_COLOR_SPACE)
-        gradientColorSpace = extendedSRGBColorSpaceRef();
-#endif
-
-        for (const auto& stop : stops) {
-#if HAVE(CORE_GRAPHICS_EXTENDED_SRGB_COLOR_SPACE)
-            auto [r, g, b, a] = stop.color.toColorTypeLossy<ExtendedSRGBA<float>>().resolved();
-#else
-            auto [r, g, b, a] = stop.color.toColorTypeLossy<SRGBA<float>>().resolved();
-#endif
-            colorComponents.uncheckedAppend(r);
-            colorComponents.uncheckedAppend(g);
-            colorComponents.uncheckedAppend(b);
-            colorComponents.uncheckedAppend(a);
-
-            locations.uncheckedAppend(stop.offset);
-        }
-    }
+        return cachedCGColorSpace<ColorSpaceFor<OutputSpaceColorType>>();
+    }();
 
 #if HAVE(CORE_GRAPHICS_GRADIENT_CREATE_WITH_OPTIONS)
-    return Gradient { adoptCF(CGGradientCreateWithColorComponentsAndOptions(gradientColorSpace, colorComponents.data(), locations.data(), numberOfStops, gradientOptionsDictionary(colorInterpolationMethod))) };
+    return Gradient { adoptCF(CGGradientCreateWithColorComponentsAndOptions(cgColorSpace, colorComponents.data(), locations.data(), numberOfStops, gradientOptionsDictionary(colorInterpolationMethod))) };
 #else
-    return Gradient { adoptCF(CGGradientCreateWithColorComponents(gradientColorSpace, colorComponents.data(), locations.data(), numberOfStops)) };
+    return Gradient { adoptCF(CGGradientCreateWithColorComponents(cgColorSpace, colorComponents.data(), locations.data(), numberOfStops)) };
 #endif
 }
 
@@ -513,11 +508,7 @@ template<typename InterpolationSpace, AlphaPremultiplication alphaPremultiplicat
 void GradientRendererCG::Shading::shadingFunction(void* info, const CGFloat* in, CGFloat* out)
 {
     using InterpolationSpaceColorType = typename InterpolationSpace::ColorType;
-#if HAVE(CORE_GRAPHICS_EXTENDED_SRGB_COLOR_SPACE)
-    using OutputSpaceColorType = ExtendedSRGBA<float>;
-#else
-    using OutputSpaceColorType = SRGBA<float>;
-#endif
+    using OutputSpaceColorType = std::conditional_t<HasCGColorSpaceMapping<ColorSpace::ExtendedSRGB>, ExtendedSRGBA<float>, SRGBA<float>>;
 
     auto* data = static_cast<GradientRendererCG::Shading::Data*>(info);
 
@@ -554,6 +545,8 @@ void GradientRendererCG::Shading::shadingFunction(void* info, const CGFloat* in,
 
 GradientRendererCG::Strategy GradientRendererCG::makeShading(ColorInterpolationMethod colorInterpolationMethod, const GradientColorStops& stops) const
 {
+    using OutputSpaceColorType = std::conditional_t<HasCGColorSpaceMapping<ColorSpace::ExtendedSRGB>, ExtendedSRGBA<float>, SRGBA<float>>;
+
     auto makeData = [&] (auto colorInterpolationMethod, auto& stops) {
         auto convertColorToColorInterpolationSpace = [&] (const Color& color, auto colorInterpolationMethod) -> ColorComponents<float, 4> {
             return WTF::switchOn(colorInterpolationMethod.colorSpace,
@@ -626,26 +619,25 @@ GradientRendererCG::Strategy GradientRendererCG::makeShading(ColorInterpolationM
             }
         };
 
-        static const CGFloat domain[2] = { 0, 1 };
-#if HAVE(CORE_GRAPHICS_EXTENDED_SRGB_COLOR_SPACE)
-        static const CGFloat range[8] = { -std::numeric_limits<float>::infinity(), std::numeric_limits<float>::infinity(), -std::numeric_limits<float>::infinity(), std::numeric_limits<float>::infinity(), -std::numeric_limits<float>::infinity(), std::numeric_limits<float>::infinity(), 0, 1 };
-#else
-        static const CGFloat range[8] = { 0, 1, 0, 1, 0, 1, 0, 1 };
-#endif
+        constexpr auto outputSpaceComponentInfo = OutputSpaceColorType::Model::componentInfo;
+
+        static constexpr std::array<CGFloat, 2> domain = { 0, 1 };
+        static constexpr std::array<CGFloat, 8> range = {
+            outputSpaceComponentInfo[0].min, outputSpaceComponentInfo[0].max,
+            outputSpaceComponentInfo[1].min, outputSpaceComponentInfo[1].max,
+            outputSpaceComponentInfo[2].min, outputSpaceComponentInfo[2].max,
+            0, 1
+        };
 
         Ref dataRefCopy = data;
-        return adoptCF(CGFunctionCreate(&dataRefCopy.leakRef(), 1, domain, 4, range, &callbacks));
+        return adoptCF(CGFunctionCreate(&dataRefCopy.leakRef(), domain.size() / 2, domain.data(), range.size() / 2, range.data(), &callbacks));
     };
 
     auto data = makeData(colorInterpolationMethod, stops);
     auto function = makeFunction(colorInterpolationMethod, data);
 
     // FIXME: Investigate using bounded sRGB when the input stops are all bounded sRGB.
-#if HAVE(CORE_GRAPHICS_EXTENDED_SRGB_COLOR_SPACE)
-    auto colorSpace = extendedSRGBColorSpaceRef();
-#else
-    auto colorSpace = sRGBColorSpaceRef();
-#endif
+    auto colorSpace = cachedCGColorSpace<ColorSpaceFor<OutputSpaceColorType>>();
 
     return Shading { WTFMove(data), WTFMove(function), colorSpace };
 }
