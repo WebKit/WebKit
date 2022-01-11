@@ -1,3 +1,104 @@
+2022-01-11  Rob Buis  <rbuis@igalia.com>
+
+        [CSS contain] Update css-contain tests from WPT
+        https://bugs.webkit.org/show_bug.cgi?id=235060
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        Update css/css-contain/ tests to commit 5d1525416b.
+
+        * resources/resource-files.json:
+        * web-platform-tests/css/css-contain/contain-inline-size-bfc-floats-001-expected.html: Added.
+        * web-platform-tests/css/css-contain/contain-inline-size-bfc-floats-001.html: Added.
+        * web-platform-tests/css/css-contain/contain-inline-size-bfc-floats-002-expected.html: Added.
+        * web-platform-tests/css/css-contain/contain-inline-size-bfc-floats-002.html: Added.
+        * web-platform-tests/css/css-contain/contain-inline-size-fieldset-expected.html: Added.
+        * web-platform-tests/css/css-contain/contain-inline-size-fieldset.html: Added.
+        * web-platform-tests/css/css-contain/contain-inline-size-flex-expected.xht: Added.
+        * web-platform-tests/css/css-contain/contain-inline-size-flex.html: Added.
+        * web-platform-tests/css/css-contain/contain-inline-size-flexitem-expected.xht: Added.
+        * web-platform-tests/css/css-contain/contain-inline-size-flexitem.html: Added.
+        * web-platform-tests/css/css-contain/contain-inline-size-grid-expected.xht: Added.
+        * web-platform-tests/css/css-contain/contain-inline-size-grid.html: Added.
+        * web-platform-tests/css/css-contain/contain-inline-size-legend-expected.html: Added.
+        * web-platform-tests/css/css-contain/contain-inline-size-legend.html: Added.
+        * web-platform-tests/css/css-contain/contain-inline-size-multicol-expected.xht: Added.
+        * web-platform-tests/css/css-contain/contain-inline-size-multicol.html: Added.
+        * web-platform-tests/css/css-contain/contain-inline-size-regular-container-expected.xht: Added.
+        * web-platform-tests/css/css-contain/contain-inline-size-regular-container.html: Added.
+        * web-platform-tests/css/css-contain/contain-inline-size-table-expected.xht: Added.
+        * web-platform-tests/css/css-contain/contain-inline-size-table.html: Added.
+        * web-platform-tests/css/css-contain/contain-inline-size-vertical-rl--expected.xht: Added.
+        * web-platform-tests/css/css-contain/contain-inline-size-vertical-rl-.html: Added.
+        * web-platform-tests/css/css-contain/content-visibility/content-visibility-026-expected.txt:
+        * web-platform-tests/css/css-contain/content-visibility/content-visibility-026.html:
+        * web-platform-tests/css/css-contain/content-visibility/content-visibility-055.html:
+        * web-platform-tests/css/css-contain/content-visibility/content-visibility-056-expected.html:
+        * web-platform-tests/css/css-contain/content-visibility/content-visibility-056.html:
+        * web-platform-tests/css/css-contain/content-visibility/content-visibility-059-expected.html: Removed.
+        * web-platform-tests/css/css-contain/content-visibility/content-visibility-059.html: Removed.
+        * web-platform-tests/css/css-contain/content-visibility/content-visibility-082-expected.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-056-expected.html.
+        * web-platform-tests/css/css-contain/content-visibility/content-visibility-082.html: Added.
+        * web-platform-tests/css/css-contain/content-visibility/content-visibility-083-expected.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-056-expected.html.
+        * web-platform-tests/css/css-contain/content-visibility/content-visibility-083.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-055.html.
+        * web-platform-tests/css/css-contain/content-visibility/content-visibility-084-expected.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-056-expected.html.
+        * web-platform-tests/css/css-contain/content-visibility/content-visibility-084.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-055.html.
+        * web-platform-tests/css/css-contain/content-visibility/content-visibility-hit-test-contents-crash.html: Added.
+        * web-platform-tests/css/css-contain/content-visibility/content-visibility-img-expected.txt: Added.
+        * web-platform-tests/css/css-contain/content-visibility/content-visibility-img.html: Added.
+        * web-platform-tests/css/css-contain/content-visibility/content-visibility-in-svg-000-crash.html: Added.
+        * web-platform-tests/css/css-contain/content-visibility/content-visibility-input-image-expected.txt: Added.
+        * web-platform-tests/css/css-contain/content-visibility/content-visibility-input-image.html: Added.
+        * web-platform-tests/css/css-contain/content-visibility/content-visibility-svg-expected.txt: Added.
+        * web-platform-tests/css/css-contain/content-visibility/content-visibility-svg.html: Added.
+        * web-platform-tests/css/css-contain/content-visibility/content-visibility-with-top-layer-000.tentative-expected.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-056-expected.html.
+        * web-platform-tests/css/css-contain/content-visibility/content-visibility-with-top-layer-000.tentative.html: Added.
+        * web-platform-tests/css/css-contain/content-visibility/content-visibility-with-top-layer-001.tentative-expected.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-056-expected.html.
+        * web-platform-tests/css/css-contain/content-visibility/content-visibility-with-top-layer-001.tentative.html: Added.
+        * web-platform-tests/css/css-contain/content-visibility/content-visibility-with-top-layer-002.tentative-expected.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-056-expected.html.
+        * web-platform-tests/css/css-contain/content-visibility/content-visibility-with-top-layer-002.tentative.html: Added.
+        * web-platform-tests/css/css-contain/content-visibility/content-visibility-with-top-layer-003.tentative-expected.html: Added.
+        * web-platform-tests/css/css-contain/content-visibility/content-visibility-with-top-layer-003.tentative.html: Added.
+        * web-platform-tests/css/css-contain/content-visibility/content-visibility-with-top-layer-004.tentative-expected.html: Added.
+        * web-platform-tests/css/css-contain/content-visibility/content-visibility-with-top-layer-004.tentative.html: Added.
+        * web-platform-tests/css/css-contain/content-visibility/contentvisibility-nestedslot-crash.html: Added.
+        * web-platform-tests/css/css-contain/content-visibility/document-element-computed-style-expected.txt: Added.
+        * web-platform-tests/css/css-contain/content-visibility/document-element-computed-style.html: Added.
+        * web-platform-tests/css/css-contain/content-visibility/hidden-execcommand-crash.html: Added.
+        * web-platform-tests/css/css-contain/content-visibility/hidden-pseudo-element-removed-crash.html: Added.
+        * web-platform-tests/css/css-contain/content-visibility/meter-selection-crash.html: Added.
+        * web-platform-tests/css/css-contain/content-visibility/resources/slot-content-visibility.html: Added.
+        * web-platform-tests/css/css-contain/content-visibility/resources/w3c-import.log:
+        * web-platform-tests/css/css-contain/content-visibility/slot-content-visibility-1-crash.html: Added.
+        * web-platform-tests/css/css-contain/content-visibility/slot-content-visibility-10-crash.html: Added.
+        * web-platform-tests/css/css-contain/content-visibility/slot-content-visibility-11-crash.html: Added.
+        * web-platform-tests/css/css-contain/content-visibility/slot-content-visibility-12-crash.html: Added.
+        * web-platform-tests/css/css-contain/content-visibility/slot-content-visibility-13-crash.html: Added.
+        * web-platform-tests/css/css-contain/content-visibility/slot-content-visibility-14-crash.html: Added.
+        * web-platform-tests/css/css-contain/content-visibility/slot-content-visibility-15-crash.html: Added.
+        * web-platform-tests/css/css-contain/content-visibility/slot-content-visibility-16-crash.html: Added.
+        * web-platform-tests/css/css-contain/content-visibility/slot-content-visibility-17-crash.html: Added.
+        * web-platform-tests/css/css-contain/content-visibility/slot-content-visibility-18-crash.html: Added.
+        * web-platform-tests/css/css-contain/content-visibility/slot-content-visibility-19-crash.html: Added.
+        * web-platform-tests/css/css-contain/content-visibility/slot-content-visibility-2-crash.html: Added.
+        * web-platform-tests/css/css-contain/content-visibility/slot-content-visibility-20-crash.html: Added.
+        * web-platform-tests/css/css-contain/content-visibility/slot-content-visibility-21-crash.html: Added.
+        * web-platform-tests/css/css-contain/content-visibility/slot-content-visibility-3-crash.html: Added.
+        * web-platform-tests/css/css-contain/content-visibility/slot-content-visibility-4-crash.html: Added.
+        * web-platform-tests/css/css-contain/content-visibility/slot-content-visibility-5-crash.html: Added.
+        * web-platform-tests/css/css-contain/content-visibility/slot-content-visibility-6-crash.html: Added.
+        * web-platform-tests/css/css-contain/content-visibility/slot-content-visibility-7-crash.html: Added.
+        * web-platform-tests/css/css-contain/content-visibility/slot-content-visibility-8-crash.html: Added.
+        * web-platform-tests/css/css-contain/content-visibility/slot-content-visibility-9-crash.html: Added.
+        * web-platform-tests/css/css-contain/content-visibility/w3c-import.log:
+        * web-platform-tests/css/css-contain/parsing/contain-computed-expected.txt:
+        * web-platform-tests/css/css-contain/parsing/contain-computed.html:
+        * web-platform-tests/css/css-contain/parsing/contain-invalid-expected.txt:
+        * web-platform-tests/css/css-contain/parsing/contain-invalid.html:
+        * web-platform-tests/css/css-contain/parsing/contain-valid-expected.txt:
+        * web-platform-tests/css/css-contain/parsing/contain-valid.html:
+        * web-platform-tests/css/css-contain/w3c-import.log:
+
 2022-01-11  Antoine Quint  <graouts@webkit.org>
 
         css/css-transitions/KeyframeEffect-setKeyframes.tentative.html is a failure

@@ -1,3 +1,12 @@
+2022-01-11  Rob Buis  <rbuis@igalia.com>
+
+        [CSS contain] Update css-contain tests from WPT
+        https://bugs.webkit.org/show_bug.cgi?id=235060
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        * TestExpectations:
+
 2022-01-11  Tim Nguyen  <ntim@apple.com>
 
         ::backdrop pseudo element should react to associated element event listeners
