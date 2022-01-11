@@ -262,7 +262,7 @@ angle::FormatID Format::MetalToAngleFormatID(MTLPixelFormat formatMtl)
             return angle::FormatID::ASTC_8x6_UNORM_BLOCK;
         case MTLPixelFormatASTC_8x8_LDR:
             return angle::FormatID::ASTC_8x8_UNORM_BLOCK;
-#    if TARGET_OS_IOS || TARGET_OS_TV || TARGET_OS_OSX
+#    if TARGET_OS_IOS || TARGET_OS_OSX
         case MTLPixelFormatASTC_10x10_HDR:
             return angle::FormatID::ASTC_10x10_UNORM_BLOCK;
         case MTLPixelFormatASTC_10x5_HDR:
@@ -291,7 +291,7 @@ angle::FormatID Format::MetalToAngleFormatID(MTLPixelFormat formatMtl)
             return angle::FormatID::ASTC_8x6_UNORM_BLOCK;
         case MTLPixelFormatASTC_8x8_HDR:
             return angle::FormatID::ASTC_8x8_UNORM_BLOCK;
-#    endif  // TARGET_OS_IOS || TARGET_OS_TV || TARGET_OS_OSX
+#    endif  // TARGET_OS_IOS || TARGET_OS_OSX
 #endif      // TARGET_OS_IPHONE || mac 11.0+
         default:
             return angle::FormatID::NONE;
@@ -1556,7 +1556,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             this->swizzled = false;
             break;
 
-#    if TARGET_OS_IOS || TARGET_OS_TV
+#    if TARGET_OS_IOS
         case angle::FormatID::ASTC_10x10_UNORM_BLOCK:
 
             if (display->supportsAppleGPUFamily(6))
@@ -1809,7 +1809,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             this->swizzled = false;
             break;
 
-#    elif TARGET_OS_WATCH
+#    elif TARGET_OS_WATCH || TARGET_OS_TV
         case angle::FormatID::ASTC_10x10_UNORM_BLOCK:
 
             this->metalFormat    = MTLPixelFormatASTC_10x10_LDR;
@@ -1936,7 +1936,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             this->swizzled = false;
             break;
 
-#    endif  // TARGET_OS_IOS || TARGET_OS_TV
+#    endif  // TARGET_OS_IOS
 #elif TARGET_OS_IPHONE && !TARGET_OS_MACCATALYST
         case angle::FormatID::ASTC_10x10_SRGB_BLOCK:
 
@@ -2298,7 +2298,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             this->swizzled = false;
             break;
 
-#    if TARGET_OS_IOS || TARGET_OS_TV
+#    if TARGET_OS_IOS
         case angle::FormatID::ASTC_10x10_UNORM_BLOCK:
 
             if (display->supportsAppleGPUFamily(6))
@@ -2551,7 +2551,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             this->swizzled = false;
             break;
 
-#    elif TARGET_OS_WATCH
+#    elif TARGET_OS_WATCH || TARGET_OS_TV
         case angle::FormatID::ASTC_10x10_UNORM_BLOCK:
 
             this->metalFormat    = MTLPixelFormatASTC_10x10_LDR;
@@ -2678,7 +2678,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             this->swizzled = false;
             break;
 
-#    endif  // TARGET_OS_IOS || TARGET_OS_TV
+#    endif  // TARGET_OS_IOS
 #endif      // TARGET_OS_IPHONE
 #if (TARGET_OS_OSX && (__MAC_OS_X_VERSION_MAX_ALLOWED >= 110000))
         case angle::FormatID::ASTC_10x10_SRGB_BLOCK:
@@ -5056,7 +5056,7 @@ void FormatTable::initNativeFormatCapsAutogen(const DisplayMtl *display)
                   /** colorRenderable*/ display->supportsAppleGPUFamily(1),
                   /** depthRenderable*/ false);
 
-#    if TARGET_OS_IOS || TARGET_OS_TV || TARGET_OS_OSX
+#    if TARGET_OS_IOS || TARGET_OS_OSX
     setFormatCaps(MTLPixelFormatASTC_10x10_HDR, /** filterable*/ display->supportsAppleGPUFamily(6),
                   /** writable*/ false, /** blendable*/ false, /** multisample*/ false,
                   /** resolve*/ false, /** colorRenderable*/ false, /** depthRenderable*/ false);
@@ -5113,7 +5113,7 @@ void FormatTable::initNativeFormatCapsAutogen(const DisplayMtl *display)
                   /** writable*/ false, /** blendable*/ false, /** multisample*/ false,
                   /** resolve*/ false, /** colorRenderable*/ false, /** depthRenderable*/ false);
 
-#    endif  // TARGET_OS_IOS || TARGET_OS_TV || mac 11.0+
+#    endif  // TARGET_OS_IOS || mac 11.0+
 #endif      // TARGET_OS_IPHONE && !TARGET_OS_MACCATALYST || mac 11.0+
 }
 
