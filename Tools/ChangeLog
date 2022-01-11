@@ -1,3 +1,16 @@
+2022-01-10  Dewei Zhu  <dewei_zhu@apple.com>
+
+        Revert r287861.
+        https://bugs.webkit.org/show_bug.cgi?id=235048
+        <rdar://problem/87360213>
+
+        Unreviewed revert.
+
+        Temporarily revert r287861(245905@main) which breaks git-webkit script when
+        invoked outside of a checkout directory.
+
+        * Scripts/git-webkit:
+
 2022-01-10  Jonathan Bedard  <jbedard@apple.com>
 
         [git-webkit] Use cwd as default path
