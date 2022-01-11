@@ -30,8 +30,7 @@
 #include "AffineTransform.h"
 #include "FloatRect.h"
 #include "RenderSVGModelObject.h"
-// FIXME: [LBSE] Upstream SVGBoundingBoxComputation
-// #include "SVGBoundingBoxComputation.h"
+#include "SVGBoundingBoxComputation.h"
 #include "SVGGraphicsElement.h"
 #include "SVGMarkerData.h"
 #include <memory>
@@ -80,15 +79,9 @@ public:
 
     FloatRect objectBoundingBox() const final { return m_fillBoundingBox; }
     FloatRect strokeBoundingBox() const final { return m_strokeBoundingBox; }
+    FloatRect repaintRectInLocalCoordinates() const final { return SVGBoundingBoxComputation::computeRepaintBoundingBox(*this); }
 
-    FloatRect repaintRectInLocalCoordinates() const final
-    {
-        // FIXME: [LBSE] Upstream SVGBoundingBoxComputation
-        // return SVGBoundingBoxComputation::computeRepaintBoundingBox(*this); }
-        return FloatRect();
-    }
-
-    FloatRect computeMarkerBoundingBox() const;
+    FloatRect computeMarkerBoundingBox(const SVGBoundingBoxComputation::DecorationOptions&) const;
 
 protected:
     void element() const = delete;

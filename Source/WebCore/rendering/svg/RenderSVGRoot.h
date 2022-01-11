@@ -26,8 +26,7 @@
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
 #include "FloatRect.h"
 #include "RenderReplaced.h"
-// FIXME: [LBSE] Upstream SVGBoundingBoxComputation
-// #include "SVGBoundingBoxComputation.h"
+#include "SVGBoundingBoxComputation.h"
 
 namespace WebCore {
 
@@ -72,21 +71,9 @@ public:
 
     FloatRect objectBoundingBox() const final { return m_objectBoundingBox; }
     FloatRect strokeBoundingBox() const final { return m_strokeBoundingBox; }
+    FloatRect repaintRectInLocalCoordinates() const final { return SVGBoundingBoxComputation::computeRepaintBoundingBox(*this); }
 
-    // FIXME: [LBSE] Mark final, add repaintBoundingBox() to RenderObject
-    FloatRect repaintBoundingBox() const
-    {
-        // FIXME: [LBSE] Upstream SVGBoundingBoxComputation
-        // return SVGBoundingBoxComputation::computeRepaintBoundingBox(*this);
-        return m_strokeBoundingBox;
-    }
-
-    LayoutRect visualOverflowRectEquivalent() const
-    {
-        // FIXME: [LBSE] Upstream SVGBoundingBoxComputation
-        // return SVGBoundingBoxComputation::computeVisualOverflowRect(*this);
-        return LayoutRect();
-    }
+    LayoutRect visualOverflowRectEquivalent() const { return SVGBoundingBoxComputation::computeVisualOverflowRect(*this); }
 
 private:
     void element() const = delete;

@@ -34,8 +34,7 @@
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
 #include "RenderLayer.h"
 #include "RenderLayerModelObject.h"
-// FIXME: [LBSE] Upstream SVGBoundingBoxComputation
-// #include "SVGBoundingBoxComputation.h"
+#include "SVGBoundingBoxComputation.h"
 #include "SVGElement.h"
 #include "SVGRenderSupport.h"
 
@@ -69,12 +68,7 @@ public:
     LayoutRect contentBoxRectEquivalent() const { return borderBoxRectEquivalent(); }
     LayoutRect frameRectEquivalent() const { return m_layoutRect; }
 
-    LayoutRect visualOverflowRectEquivalent() const
-    {
-        // FIXME: [LBSE] Upstream SVGBoundingBoxComputation
-        // return SVGBoundingBoxComputation::computeVisualOverflowRect(*this);
-        return LayoutRect();
-    }
+    LayoutRect visualOverflowRectEquivalent() const { return SVGBoundingBoxComputation::computeVisualOverflowRect(*this); }
 
     void applyTopLeftLocationOffsetEquivalent(LayoutPoint& point) const { point.moveBy(layoutLocation()); }
 

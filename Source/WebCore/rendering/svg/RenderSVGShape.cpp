@@ -400,7 +400,7 @@ static inline RenderSVGResourceMarker* markerForType(SVGMarkerType type, RenderS
     return 0;
 }
 
-FloatRect RenderSVGShape::computeMarkerBoundingBox() const
+FloatRect RenderSVGShape::computeMarkerBoundingBox(const SVGBoundingBoxComputation::DecorationOptions&) const
 {
     if (m_markerPositions.isEmpty())
         return FloatRect();
@@ -417,8 +417,11 @@ FloatRect RenderSVGShape::computeMarkerBoundingBox() const
     FloatRect boundaries;
     unsigned size = m_markerPositions.size();
     for (unsigned i = 0; i < size; ++i) {
-        if (RenderSVGResourceMarker* marker = markerForType(m_markerPositions[i].type, markerStart, markerMid, markerEnd))
+        if (auto* marker = markerForType(m_markerPositions[i].type, markerStart, markerMid, markerEnd)) {
+            // FIXME: [LBSE] Upstream RenderSVGResourceMarker changes
+            // boundaries.unite(marker->computeMarkerBoundingBox(options, marker->markerTransformation(m_markerPositions[i].origin, m_markerPositions[i].angle, strokeWidth())));
             boundaries.unite(marker->markerBoundaries(marker->markerTransformation(m_markerPositions[i].origin, m_markerPositions[i].angle, strokeWidth())));
+        }
     }
     return boundaries;
 }

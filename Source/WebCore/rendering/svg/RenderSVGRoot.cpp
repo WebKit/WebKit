@@ -193,16 +193,16 @@ void RenderSVGRoot::layout()
     // SVGLayerTransformUpdater transformUpdater(*this);
     updateLayerInformation();
 
-    /* FIXME: [LBSE] Upstream SVGContainerLayout / SVGBoundingBoxComputation
     {
+        /* FIXME: [LBSE] Upstream SVGContainerLayout
         SVGContainerLayout containerLayout(*this);
         containerLayout.layoutChildren(needsLayout || SVGRenderSupport::filtersForceContainerLayout(*this));
+        */
 
         SVGBoundingBoxComputation boundingBoxComputation(*this);
         m_objectBoundingBox = boundingBoxComputation.computeDecoratedBoundingBox(SVGBoundingBoxComputation::objectBoundingBoxDecoration);
         m_strokeBoundingBox = boundingBoxComputation.computeDecoratedBoundingBox(SVGBoundingBoxComputation::strokeBoundingBoxDecoration);
     }
-    */
 
     // FIXME: [LBSE] Upstream SVGContainerLayout -- remove SVGRenderSupport::layoutChildren.
     SVGRenderSupport::layoutChildren(*this, needsLayout);

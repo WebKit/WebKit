@@ -62,10 +62,6 @@ public:
 
     SVGElement& element() const { return downcast<SVGElement>(nodeForNonAnonymous()); }
 
-    // FIXME: [LBSE] Upstream SVGBoundingBoxComputation
-    // LayoutRect visualOverflowRectEquivalent() const { return SVGBoundingBoxComputation::computeVisualOverflowRect(*this); }
-    LayoutRect visualOverflowRectEquivalent() const { return LayoutRect(); }
-
 protected:
     LegacyRenderSVGModelObject(SVGElement&, RenderStyle&&);
 
