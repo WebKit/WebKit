@@ -1,6 +1,5 @@
-
 /*
- * Copyright (C) 2006-2022 Apple Inc.  All rights reserved.
+ * Copyright (C) 2022 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,22 +24,16 @@
  */
 
 #include "config.h"
-#include "IntRect.h"
+#include "FloatRect.h"
 
 #include <windows.h>
-#include <wtf/MathExtras.h>
 
 namespace WebCore {
 
-IntRect::IntRect(const RECT& r)
+FloatRect::FloatRect(const RECT& r)
     : m_location(r.left, r.top)
     , m_size(r.right - r.left, r.bottom - r.top)
 {
-}
-
-IntRect::operator RECT() const
-{
-    return { x(), y(), maxX(), maxY() };
 }
 
 }

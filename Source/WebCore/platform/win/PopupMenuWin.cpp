@@ -97,7 +97,7 @@ static void translatePoint(LPARAM& lParam, HWND from, HWND to)
     lParam = MAKELPARAM(pt.x, pt.y);
 }
 
-static FloatRect monitorFromHwnd(HWND hwnd)
+static IntRect monitorFromHwnd(HWND hwnd)
 {
     HMONITOR monitor = MonitorFromWindow(hwnd, MONITOR_DEFAULTTOPRIMARY);
     MONITORINFOEX monitorInfo;
@@ -305,7 +305,7 @@ void PopupMenuWin::calculatePositionAndSize(const IntRect& r, FrameView* v)
     } else
         ::MoveWindow(m_popup, absoluteScreenCoords.x(), absoluteScreenCoords.y(), absoluteScreenCoords.width(), absoluteScreenCoords.height(), false);
 
-    FloatRect screen = monitorFromHwnd(m_popup);
+    IntRect screen = monitorFromHwnd(m_popup);
     
     // Now we determine the actual location and measurements of the popup itself.
     // r is in absolute document coordinates, but we want to be in screen coordinates.

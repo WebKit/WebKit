@@ -42,6 +42,7 @@ list(APPEND WebCore_SOURCES
     platform/graphics/win/ComplexTextControllerUniscribe.cpp
     platform/graphics/win/DIBPixelData.cpp
     platform/graphics/win/DisplayRefreshMonitorWin.cpp
+    platform/graphics/win/FloatRectWin.cpp
     platform/graphics/win/FontCacheWin.cpp
     platform/graphics/win/FontDescriptionWin.cpp
     platform/graphics/win/FontPlatformDataWin.cpp
