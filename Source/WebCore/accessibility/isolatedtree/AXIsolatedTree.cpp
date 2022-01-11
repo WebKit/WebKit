@@ -97,6 +97,10 @@ Ref<AXIsolatedTree> AXIsolatedTree::create(AXObjectCache* axObjectCache)
 
     auto tree = adoptRef(*new AXIsolatedTree(axObjectCache));
 
+    auto& document = axObjectCache->document();
+    if (!document.view()->layoutContext().isInRenderTreeLayout() && !document.inRenderTreeUpdate() && !document.inStyleRecalc())
+        document.updateLayoutIgnorePendingStylesheets();
+
     // Generate the nodes of the tree and set its root and focused objects.
     // For this, we need the root and focused objects of the AXObject tree.
     auto* axRoot = axObjectCache->getOrCreate(axObjectCache->document().view());

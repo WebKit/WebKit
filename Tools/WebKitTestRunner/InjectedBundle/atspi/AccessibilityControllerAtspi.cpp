@@ -152,8 +152,11 @@ void AccessibilityController::executeOnAXThreadAndWait(Function<void()>&& functi
         function();
         done.store(true);
     });
-    while (!done.load())
-        g_main_context_iteration(nullptr, FALSE);
+    auto now = MonotonicTime::now();
+    while (!done.load()) {
+        if (MonotonicTime::now() - now >= 125_ms)
+            g_main_context_iteration(nullptr, FALSE);
+    }
 }
 
 void AccessibilityController::executeOnAXThread(Function<void()>&& function)
