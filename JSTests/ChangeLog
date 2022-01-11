@@ -1,3 +1,11 @@
+2022-01-10  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Unreviewed, add a bit more Intl.Locale hourCycle tests to investigate flakiness
+
+        * stress/intl-locale-info.js:
+        (let.l.new.Intl.Locale.shouldBe):
+        (shouldBe):
+
 2022-01-07  Alexey Shvayka  <ashvayka@apple.com>
 
         Expand the set of objects we take JSArray::fastSlice() path for
