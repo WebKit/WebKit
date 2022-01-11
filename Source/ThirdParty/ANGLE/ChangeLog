@@ -1,3 +1,53 @@
+2022-01-11  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r287894. rdar://problem/87417913
+
+    ANGLE: ASTC-HDR is not available on TVOS
+    https://bugs.webkit.org/show_bug.cgi?id=235076
+    
+    Reviewed by Dean Jackson.
+    
+    <rdar://87384038>
+    This is a follow on patch to https://bugs.webkit.org/show_bug.cgi?id=234164,
+    ASTC-HDR is only available on macOS and iOS, not tvOS or watchOS
+    	This patch fixes an internal build.
+    
+    * scripts/code_generation_hashes/Metal_format_table.json:
+    * src/libANGLE/renderer/metal/gen_mtl_format_table.py:
+    (gen_image_map_switch_astc_case_tv_watchos):
+    (gen_image_map_switch_string):
+    (gen_image_mtl_to_angle_switch_string):
+    (gen_image_map_switch_astc_case_watchos): Deleted.
+    (gen_image_map_switch_astc_case_watchos.gen_format_assign_code): Deleted.
+    * src/libANGLE/renderer/metal/mtl_format_table_autogen.mm:
+    (rx::mtl::Format::MetalToAngleFormatID):
+    (rx::mtl::Format::init):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@287894 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-01-11  Kyle Piddington  <kpiddington@apple.com>
+
+            ANGLE: ASTC-HDR is not available on TVOS
+            https://bugs.webkit.org/show_bug.cgi?id=235076
+
+            Reviewed by Dean Jackson.
+
+            <rdar://87384038>
+            This is a follow on patch to https://bugs.webkit.org/show_bug.cgi?id=234164,
+            ASTC-HDR is only available on macOS and iOS, not tvOS or watchOS
+    	This patch fixes an internal build.
+
+            * scripts/code_generation_hashes/Metal_format_table.json:
+            * src/libANGLE/renderer/metal/gen_mtl_format_table.py:
+            (gen_image_map_switch_astc_case_tv_watchos):
+            (gen_image_map_switch_string):
+            (gen_image_mtl_to_angle_switch_string):
+            (gen_image_map_switch_astc_case_watchos): Deleted.
+            (gen_image_map_switch_astc_case_watchos.gen_format_assign_code): Deleted.
+            * src/libANGLE/renderer/metal/mtl_format_table_autogen.mm:
+            (rx::mtl::Format::MetalToAngleFormatID):
+            (rx::mtl::Format::init):
+
 2021-12-16  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r287137. rdar://problem/86476583
