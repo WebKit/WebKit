@@ -1,3 +1,16 @@
+2022-01-11  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Fix kind of error thrown by wasm module creation
+        https://bugs.webkit.org/show_bug.cgi?id=235082
+
+        Reviewed by Michael Saboff.
+
+        It should throw WebAssembly.CompileError instead of WebAssembly.LinkError.
+        This fixes occasional failure in wasm imports-oom.js test.
+
+        * wasm/js/JSWebAssemblyModule.cpp:
+        (JSC::JSWebAssemblyModule::createStub):
+
 2022-01-11  Adrian Perez de Castro  <aperez@igalia.com>
 
         Non-unified build fixes, early January 2022 edition

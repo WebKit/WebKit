@@ -45,9 +45,7 @@ JSWebAssemblyModule* JSWebAssemblyModule::createStub(VM& vm, JSGlobalObject* glo
 {
     auto scope = DECLARE_THROW_SCOPE(vm);
     if (!result.has_value()) {
-        auto* error = createJSWebAssemblyCompileError(globalObject, vm, result.error());
-        RETURN_IF_EXCEPTION(scope, nullptr);
-        throwException(globalObject, scope, error);
+        throwException(globalObject, scope, createJSWebAssemblyCompileError(globalObject, vm, result.error()));
         return nullptr;
     }
 
@@ -58,7 +56,7 @@ JSWebAssemblyModule* JSWebAssemblyModule::createStub(VM& vm, JSGlobalObject* glo
     if (UNLIKELY(!error)) {
         switch (error.error()) {
         case Wasm::BindingFailure::OutOfMemory:
-            throwException(globalObject, scope, createJSWebAssemblyLinkError(globalObject, vm, "Out of executable memory"_s));
+            throwException(globalObject, scope, createJSWebAssemblyCompileError(globalObject, vm, "Out of executable memory"_s));
             return nullptr;
         }
         ASSERT_NOT_REACHED();
