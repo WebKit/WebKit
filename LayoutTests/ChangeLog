@@ -1,5 +1,14 @@
 2022-01-12  Robert Jenner  <Jenner@apple.com>
 
+        [ Win EWS ] webanimations/accelerated-animation-after-forward-filling-animation.html is a constant image only failure
+        https://bugs.webkit.org/show_bug.cgi?id=235126
+
+        Unreviewed test gardening.
+
+        * platform/win/TestExpectations: Adding ImageOnlyFailure expectation to speed up WindowsEWS.
+
+2022-01-12  Robert Jenner  <Jenner@apple.com>
+
         [ Win EWS ] webanimations/frame-rate/animation-frame-rate.html is a constant text failure
         https://bugs.webkit.org/show_bug.cgi?id=235124
 
