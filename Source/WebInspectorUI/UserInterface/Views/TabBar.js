@@ -153,7 +153,7 @@ WI.TabBar = class TabBar extends WI.View
 
             this._applyTabBarItemSizesAndPositions(afterTabSizesAndPositions);
 
-            this._tabContainer.addEventListener("webkitTransitionEnd", removeStylesListener);
+            this._tabContainer.addEventListener("transitionend", removeStylesListener);
         }
 
         function removeStyles()
@@ -166,7 +166,7 @@ WI.TabBar = class TabBar extends WI.View
 
             this._clearTabBarItemSizesAndPositions();
 
-            this._tabContainer.removeEventListener("webkitTransitionEnd", removeStylesListener);
+            this._tabContainer.removeEventListener("transitionend", removeStylesListener);
         }
 
         if (!options.suppressAnimations) {
@@ -283,7 +283,7 @@ WI.TabBar = class TabBar extends WI.View
             if (lastNormalTabBarItem !== this._selectedTabBarItem)
                 lastNormalTabBarItem.element.style.width = (parseFloat(lastNormalTabBarItem.element.style.width) + 1) + "px";
 
-            this._tabContainer.addEventListener("webkitTransitionEnd", removeStylesListener);
+            this._tabContainer.addEventListener("transitionend", removeStylesListener);
         }
 
         function removeStyles()
@@ -297,7 +297,7 @@ WI.TabBar = class TabBar extends WI.View
 
             this.updateLayout();
 
-            this._tabContainer.removeEventListener("webkitTransitionEnd", removeStylesListener);
+            this._tabContainer.removeEventListener("transitionend", removeStylesListener);
         }
 
         if (!options.suppressAnimations) {
@@ -625,7 +625,7 @@ WI.TabBar = class TabBar extends WI.View
 
                 this._applyTabBarItemSizesAndPositions(afterTabSizesAndPositions);
 
-                this._tabContainer.addEventListener("webkitTransitionEnd", removeStylesListener);
+                this._tabContainer.addEventListener("transitionend", removeStylesListener);
             }
 
             function removeStyles()
@@ -638,7 +638,7 @@ WI.TabBar = class TabBar extends WI.View
 
                 this.updateLayout();
 
-                this._tabContainer.removeEventListener("webkitTransitionEnd", removeStylesListener);
+                this._tabContainer.removeEventListener("transitionend", removeStylesListener);
 
                 resolve();
             }

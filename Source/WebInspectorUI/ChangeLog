@@ -1,5 +1,24 @@
 2022-01-12  Antoine Quint  <graouts@webkit.org>
 
+        Update Web Inspector to not use legacy webkit-prefixed transition events
+        https://bugs.webkit.org/show_bug.cgi?id=235119
+
+        Reviewed by Joseph Pecoraro.
+
+        Came across this while working on bug 235113, we shouldn't be using webkit-prefixed events.
+
+        * UserInterface/Views/TabBar.js:
+        (WI.TabBar.prototype.insertTabBarItem.animateTabs):
+        (WI.TabBar.prototype.insertTabBarItem.removeStyles):
+        (WI.TabBar.prototype.insertTabBarItem):
+        (WI.TabBar.prototype.removeTabBarItem.animateTabs):
+        (WI.TabBar.prototype.removeTabBarItem.removeStyles):
+        (WI.TabBar.prototype.removeTabBarItem):
+        (WI.TabBar.prototype._finishExpandingTabsAfterClose.):
+        (WI.TabBar.prototype._finishExpandingTabsAfterClose):
+
+2022-01-12  Antoine Quint  <graouts@webkit.org>
+
         Web Inspector should expose newer CSS Animations, CSS Transitions and Web Animations events
         https://bugs.webkit.org/show_bug.cgi?id=235117
 
