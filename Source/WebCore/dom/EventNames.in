@@ -43,8 +43,6 @@ TextEvent
 TransitionEvent
 UIEvent
 UIEvents interfaceName=UIEvent
-WebKitAnimationEvent
-WebKitTransitionEvent
 WheelEvent
 XMLHttpRequestProgressEvent
 ApplePayCancelEvent conditional=APPLE_PAY

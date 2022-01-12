@@ -970,8 +970,6 @@ JS_BINDING_IDLS := \
     $(WebCore)/dom/UIEvent.idl \
     $(WebCore)/dom/UIEventInit.idl \
     $(WebCore)/dom/VisibilityState.idl \
-    $(WebCore)/dom/WebKitAnimationEvent.idl \
-    $(WebCore)/dom/WebKitTransitionEvent.idl \
     $(WebCore)/dom/WheelEvent.idl \
     $(WebCore)/dom/XMLDocument.idl \
     $(WebCore)/fileapi/Blob.idl \

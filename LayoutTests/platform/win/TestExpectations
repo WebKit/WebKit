@@ -1769,7 +1769,6 @@ animations/transition-and-animation-2.html [ Pass Failure ]
 [ Debug ] animations/animation-direction-reverse-fill-mode.html [ Skip ] # Debug assertion
 [ Debug ] animations/animation-matrix-negative-scale-unmatrix.html [ Skip ] # Debug assertion
 [ Debug ] animations/added-while-suspended.html [ Skip ] # Debug assertion
-[ Debug ] animations/animation-events-create.html [ Skip ] # Debug assertion
 [ Debug ] animations/animation-end-event-short-iterations.html [ Skip ] # Debug assertion
 [ Debug ] animations/animation-shorthand-overriding.html [ Skip ] # Debug assertion
 [ Debug ] animations/animation-direction-reverse-hardware-opacity.html [ Skip ] # Debug assertion

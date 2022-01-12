@@ -1,5 +1,30 @@
 2022-01-12  Antoine Quint  <graouts@webkit.org>
 
+        Remove WebKitTransitionEvent and WebKitAnimationEvent
+        https://bugs.webkit.org/show_bug.cgi?id=235113
+
+        Reviewed by Dean Jackson.
+
+        Remove some tests specific to those two interfaces.
+
+        * animations/animation-events-create-expected.txt: Removed.
+        * animations/animation-events-create.html: Removed.
+        * fast/events/constructors/webkit-animation-event-constructor-expected.txt: Removed.
+        * fast/events/constructors/webkit-animation-event-constructor.html: Removed.
+        * fast/events/constructors/webkit-transition-event-constructor-expected.txt: Removed.
+        * fast/events/constructors/webkit-transition-event-constructor.html: Removed.
+        * js/dom/constructor-length.html:
+        * platform/glib/js/dom/constructor-length-expected.txt:
+        * platform/ios/js/dom/constructor-length-expected.txt:
+        * platform/mac/js/dom/constructor-length-expected.txt:
+        * platform/win/TestExpectations:
+        * platform/win/js/dom/constructor-length-expected.txt:
+        * platform/wincairo/js/dom/constructor-length-expected.txt:
+        * transitions/transition-end-event-create-expected.txt: Removed.
+        * transitions/transition-end-event-create.html: Removed.
+
+2022-01-12  Antoine Quint  <graouts@webkit.org>
+
         Update WPT for css/css-animations, css/css-transitions and web-animations
         https://bugs.webkit.org/show_bug.cgi?id=235111
 

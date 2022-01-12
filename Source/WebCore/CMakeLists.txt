@@ -968,8 +968,6 @@ set(WebCore_NON_SVG_IDL_FILES
     dom/UIEvent.idl
     dom/UIEventInit.idl
     dom/VisibilityState.idl
-    dom/WebKitAnimationEvent.idl
-    dom/WebKitTransitionEvent.idl
     dom/WheelEvent.idl
     dom/XMLDocument.idl
 

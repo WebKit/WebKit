@@ -29,6 +29,7 @@
 
 namespace WebCore {
 
+class Event;
 class HTMLElement;
 class Node;
 

@@ -2729,8 +2729,6 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebGLVertexArrayObject.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebGLVertexArrayObject.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebGLVertexArrayObjectOES.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebGLVertexArrayObjectOES.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebKitAnimationEvent.cpp
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebKitAnimationEvent.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebKitMediaKeyError.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebKitMediaKeyError.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebKitMediaKeyMessageEvent.cpp
@@ -2747,8 +2745,6 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebKitPlaybackTargetAvailabilityE
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebKitPlaybackTargetAvailabilityEvent.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebKitPoint.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebKitPoint.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebKitTransitionEvent.cpp
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebKitTransitionEvent.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebLock.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebLock.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebLockGrantedCallback.cpp
