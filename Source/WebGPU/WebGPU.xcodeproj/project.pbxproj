@@ -381,6 +381,7 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = NO;
+				DefaultBuildSystemTypeForWorkspace = Original;
 				LastUpgradeCheck = 1330;
 				TargetAttributes = {
 					1C023D3B27449070001DB734 = {

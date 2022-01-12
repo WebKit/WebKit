@@ -1,3 +1,12 @@
+2022-01-12  Elliott Williams  <emw@apple.com>
+
+        [Xcode] Configure each project for the legacy build system
+        https://bugs.webkit.org/show_bug.cgi?id=235091
+
+        Reviewed by Darin Adler.
+
+        * WebGPU.xcodeproj/project.pbxproj:
+
 2022-01-10  Alex Christensen  <achristensen@webkit.org>
 
         Start using C++20

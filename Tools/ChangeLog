@@ -1,3 +1,20 @@
+2022-01-12  Elliott Williams  <emw@apple.com>
+
+        [Xcode] Configure each project for the legacy build system
+        https://bugs.webkit.org/show_bug.cgi?id=235091
+
+        Reviewed by Darin Adler.
+
+        * ContentExtensionTester/ContentExtensionTester.xcodeproj/project.pbxproj:
+        * EditingHistory/EditingHistory.xcodeproj/project.pbxproj:
+        * FontWithFeatures/FontWithFeatures.xcodeproj/project.pbxproj:
+        * ImageDiff/ImageDiff.xcodeproj/project.pbxproj:
+        * MiniBrowser/MiniBrowser.xcodeproj/project.pbxproj:
+        * MiniBrowserSwiftUI/MiniBrowserSwiftUI.xcodeproj/project.pbxproj:
+        * MobileMiniBrowser/MobileMiniBrowser.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * WebEditingTester/WebEditingTester.xcodeproj/project.pbxproj:
+
 2022-01-12  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [macOS] [WK2] NSFontPanel UI (font color, text decorations, font shadow) doesn't update on selection change

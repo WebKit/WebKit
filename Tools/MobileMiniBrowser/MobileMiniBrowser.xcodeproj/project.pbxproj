@@ -288,6 +288,7 @@
 		CD1DAF8A1D709E3600017CF0 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				DefaultBuildSystemTypeForWorkspace = Original;
 				LastUpgradeCheck = 1000;
 				ORGANIZATIONNAME = WebKit;
 				TargetAttributes = {

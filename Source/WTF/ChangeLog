@@ -1,3 +1,15 @@
+2022-01-12  Elliott Williams  <emw@apple.com>
+
+        [Xcode] Configure each project for the legacy build system
+        https://bugs.webkit.org/show_bug.cgi?id=235091
+        
+        Beta versions of Xcode do not recognize the `-UseNewBuildSystem=NO` flag, so we need to
+        manually declare use of PBXBuild in our projects.
+
+        Reviewed by Darin Adler.
+
+        * WTF.xcodeproj/project.pbxproj:
+
 2022-01-12  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r287908.

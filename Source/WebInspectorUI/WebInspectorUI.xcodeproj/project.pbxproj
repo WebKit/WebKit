@@ -106,6 +106,7 @@
 		A54C224D148B23DE00373FA3 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				DefaultBuildSystemTypeForWorkspace = Original;
 				LastSwiftUpdateCheck = 0700;
 				LastUpgradeCheck = 1140;
 				ORGANIZATIONNAME = Apple;
