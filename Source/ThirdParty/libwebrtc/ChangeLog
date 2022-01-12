@@ -1,3 +1,15 @@
+2022-01-12  Youenn Fablet  <youenn@apple.com>
+
+        VP9-SVS no video stream from remote peer on some devices
+        https://bugs.webkit.org/show_bug.cgi?id=231074
+        <rdar://problem/84024646>
+
+        Reviewed by Eric Carlson.
+
+        * Source/webrtc/sdk/objc/components/video_codec/RTCDefaultVideoDecoderFactory.m:
+        (-[RTCDefaultVideoDecoderFactory initWithH265:vp9Profile0:vp9Profile2:vp9VTB:]):
+        Do not use VTIsHardwareDecodeSupported('vp09') to know whether WebProcess can use VTB since sandboxing can control this.
+
 2022-01-10  Alex Christensen  <achristensen@webkit.org>
 
         Start using C++20
