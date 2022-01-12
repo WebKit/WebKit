@@ -166,6 +166,17 @@ public:
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static std::optional<Color> decode(Decoder&);
 
+    // Returns the underlying color converted to pre-resolved 8-bit sRGBA, useful for debugging purposes.
+    struct DebugRGBA {
+        unsigned red;
+        unsigned green;
+        unsigned blue;
+        unsigned alpha;
+    };
+    DebugRGBA debugRGBA() const;
+
+    String debugDescription() const;
+
 private:
     class OutOfLineComponents : public ThreadSafeRefCounted<OutOfLineComponents> {
     public:

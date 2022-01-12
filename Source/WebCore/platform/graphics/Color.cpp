@@ -195,6 +195,17 @@ bool Color::isWhiteColor(const Color& color)
     });
 }
 
+Color::DebugRGBA Color::debugRGBA() const
+{
+    auto [r, g, b, a] = toColorTypeLossy<SRGBA<uint8_t>>().resolved();
+    return { r, g, b, a };
+}
+
+String Color::debugDescription() const
+{
+    return serializationForRenderTreeAsText(*this);
+}
+
 TextStream& operator<<(TextStream& ts, const Color& color)
 {
     return ts << serializationForRenderTreeAsText(color);
