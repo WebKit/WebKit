@@ -89,7 +89,61 @@ class GitHub(object):
         return '{}pull/{}'.format(repository_url, pr_number)
 
 
-class ConfigureBuild(buildstep.BuildStep):
+class Contributors(object):
+    url = 'https://raw.githubusercontent.com/WebKit/WebKit/main/metadata/contributors.json'
+    contributors = {}
+
+    @classmethod
+    def load_from_disk(cls):
+        cwd = os.path.abspath(os.path.dirname(__file__))
+        repo_root = os.path.dirname(os.path.dirname(os.path.dirname(cwd)))
+        contributors_path = os.path.join(repo_root, 'metadata/contributors.json')
+        try:
+            with open(contributors_path, 'rb') as contributors_json:
+                return json.load(contributors_json), None
+        except Exception as e:
+            return {}, 'Failed to load {}\n'.format(contributors_path)
+
+    @classmethod
+    def load_from_github(cls):
+        try:
+            response = requests.get(cls.url, timeout=60)
+            if response.status_code != 200:
+                return {}, 'Failed to access {} with status code: {}\n'.format(cls.url, response.status_code)
+            return response.json(), None
+        except Exception as e:
+            return {}, 'Failed to access {url}\n'.format(url=cls.url)
+
+    @classmethod
+    def load(cls):
+        errors = []
+        contributors_json, error = cls.load_from_github()
+        if error:
+            errors.append(error)
+
+        if not contributors_json:
+            contributors_json, error = cls.load_from_disk()
+            if error:
+                errors.append(error)
+
+        contributors = {}
+        for value in contributors_json:
+            name = value.get('name')
+            emails = value.get('emails')
+            github_username = value.get('github')
+            if name and emails:
+                bugzilla_email = emails[0].lower()  # We're requiring that the first email is the primary bugzilla email
+                contributors[bugzilla_email] = {'name': name, 'status': value.get('status')}
+            if github_username and name and emails:
+                contributors[github_username] = dict(
+                    printable='{} <{}>'.format(name, emails[0].lower()),
+                    status=value.get('status'),
+                    email=emails[0],
+                )
+        return contributors, errors
+
+
+class ConfigureBuild(buildstep.BuildStep, GitHubMixin):
     name = 'configure-build'
     description = ['configuring build']
     descriptionDone = ['Configured build']
@@ -958,44 +1012,10 @@ class ValidatePatch(buildstep.BuildStep, BugzillaMixin):
 class ValidateCommiterAndReviewer(buildstep.BuildStep):
     name = 'validate-commiter-and-reviewer'
     descriptionDone = ['Validated commiter and reviewer']
-    url = 'https://raw.githubusercontent.com/WebKit/WebKit/main/metadata/contributors.json'
-    contributors = {}
 
-    def load_contributors_from_disk(self):
-        cwd = os.path.abspath(os.path.dirname(__file__))
-        repo_root = os.path.dirname(os.path.dirname(os.path.dirname(cwd)))
-        contributors_path = os.path.join(repo_root, 'metadata/contributors.json')
-        try:
-            with open(contributors_path, 'rb') as contributors_json:
-                return json.load(contributors_json)
-        except Exception as e:
-            self._addToLog('stdio', 'Failed to load {}\n'.format(contributors_path))
-            return {}
-
-    def load_contributors_from_github(self):
-        try:
-            response = requests.get(self.url, timeout=60)
-            if response.status_code != 200:
-                self._addToLog('stdio', 'Failed to access {} with status code: {}\n'.format(self.url, response.status_code))
-                return {}
-            return response.json()
-        except Exception as e:
-            self._addToLog('stdio', 'Failed to access {url}\n'.format(url=self.url))
-            return {}
-
-    def load_contributors(self):
-        contributors_json = self.load_contributors_from_github()
-        if not contributors_json:
-            contributors_json = self.load_contributors_from_disk()
-
-        contributors = {}
-        for value in contributors_json:
-            name = value.get('name')
-            emails = value.get('emails')
-            if name and emails:
-                bugzilla_email = emails[0].lower()  # We're requiring that the first email is the primary bugzilla email
-                contributors[bugzilla_email] = {'name': name, 'status': value.get('status')}
-        return contributors
+    def __init__(self, *args, **kwargs):
+        super(ValidateCommiterAndReviewer, self).__init__(*args, **kwargs)
+        self.contributors = {}
 
     @defer.inlineCallbacks
     def _addToLog(self, logName, message):
@@ -1012,7 +1032,7 @@ class ValidateCommiterAndReviewer(buildstep.BuildStep):
 
     def fail_build(self, email, status):
         reason = '{} does not have {} permissions'.format(email, status)
-        comment = '{} does not have {} permissions according to {}.'.format(email, status, self.url)
+        comment = '{} does not have {} permissions according to {}.'.format(email, status, Contributors.url)
         comment += '\n\nRejecting attachment {} from commit queue.'.format(self.getProperty('patch_id', ''))
         self.setProperty('bugzilla_comment_text', comment)
 
@@ -1037,7 +1057,11 @@ class ValidateCommiterAndReviewer(buildstep.BuildStep):
         return contributor.get('name')
 
     def start(self):
-        self.contributors = self.load_contributors()
+        self.contributors, errors = Contributors.load()
+        for error in errors:
+            print(error)
+            self._addToLog('stdio', error)
+
         if not self.contributors:
             self.finished(FAILURE)
             self.descriptionDone = 'Failed to get contributors information'
