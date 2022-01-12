@@ -31,11 +31,9 @@
 
 #if !USE(ANGLE)
 #include "ExtensionsGLOpenGLCommon.h"
-#endif
 #if USE(OPENGL_ES)
 #include "ExtensionsGLOpenGLES.h"
 #endif
-#if !USE(ANGLE)
 #include "GraphicsContextGL.h"
 #endif
 #include "IntSize.h"
@@ -178,7 +176,7 @@ void WebXROpaqueFramebuffer::startFrame(const PlatformXR::Device::FrameData::Lay
 #else
     m_opaqueTexture = data.opaqueTexture;
 
-#if USE(OPENGL_ES)
+#if USE(OPENGL_ES) && !USE(ANGLE)
     auto& extensions = reinterpret_cast<ExtensionsGLOpenGLES&>(gl.getExtensions());
     if (m_attributes.antialias && extensions.isImagination()) {
         extensions.framebufferTexture2DMultisampleIMG(GL::FRAMEBUFFER, GL::COLOR_ATTACHMENT0, GL::TEXTURE_2D, m_opaqueTexture, 0, m_sampleCount);
@@ -269,14 +267,14 @@ bool WebXROpaqueFramebuffer::setupFramebuffer()
 
     // Set up color, depth and stencil formats
     bool hasDepthOrStencil = m_attributes.stencil || m_attributes.depth;
-#if USE(OPENGL_ES)
+#if USE(ANGLE)
+    bool platformSupportsPackedDepthStencil = true;
+    auto depthFormat = platformSupportsPackedDepthStencil ? GL::DEPTH24_STENCIL8 : GL::DEPTH_COMPONENT;
+    auto stencilFormat = GL::STENCIL_INDEX8;
+#elif USE(OPENGL_ES)
     auto& extensions = reinterpret_cast<ExtensionsGLOpenGLES&>(gl.getExtensions());
     bool platformSupportsPackedDepthStencil = hasDepthOrStencil && extensions.supports("GL_OES_packed_depth_stencil");
     auto depthFormat = platformSupportsPackedDepthStencil ? GL::DEPTH24_STENCIL8 : GL::DEPTH_COMPONENT16;
-    auto stencilFormat = GL::STENCIL_INDEX8;
-#elif USE(ANGLE)
-    bool platformSupportsPackedDepthStencil = true;
-    auto depthFormat = platformSupportsPackedDepthStencil ? GL::DEPTH24_STENCIL8 : GL::DEPTH_COMPONENT;
     auto stencilFormat = GL::STENCIL_INDEX8;
 #else
     auto& extensions = reinterpret_cast<ExtensionsGLOpenGLCommon&>(gl.getExtensions());
@@ -298,7 +296,7 @@ bool WebXROpaqueFramebuffer::setupFramebuffer()
         m_sampleCount = std::min(4, maxSampleCount);
     }
 
-#if USE(OPENGL_ES)
+#if USE(OPENGL_ES) && !USE(ANGLE)
     // Use multisampled_render_to_texture extension if available.
     if (m_attributes.antialias && extensions.isImagination()) {
         // framebufferTexture2DMultisampleIMG is set up in startFrame call.
