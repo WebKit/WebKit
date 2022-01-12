@@ -70,6 +70,7 @@ private:
     String m_parentUniqueName;
     String m_parentPath;
     Atomic<bool> m_isTreeRegistered { false };
+    mutable bool m_inChild { false };
 };
 
 } // namespace WebCore

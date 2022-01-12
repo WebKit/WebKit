@@ -23,6 +23,7 @@
 #include <wtf/CompletionHandler.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/HashMap.h>
+#include <wtf/ListHashSet.h>
 #include <wtf/Vector.h>
 #include <wtf/WorkQueue.h>
 #include <wtf/glib/GRefPtr.h>
@@ -99,7 +100,11 @@ private:
     void removeEventListener(const char* dbusName, const char* eventName);
 
     void ensureCache();
+    void addToCacheIfNeeded(AccessibilityObjectAtspi&);
+    void addToCacheIfPending(AccessibilityObjectAtspi&);
     void removeAccessible(AccessibilityObjectAtspi&);
+    void scheduleCacheUpdate();
+    void cacheUpdateTimerFired();
 
     bool shouldEmitSignal(const char* interface, const char* name, const char* detail = "");
 
@@ -124,7 +129,8 @@ private:
     HashMap<AccessibilityObjectAtspi*, Vector<unsigned, 20>> m_atspiHyperlinks;
     unsigned m_cacheID { 0 };
     HashMap<String, AccessibilityObjectAtspi*> m_cache;
-    bool m_inGetItems { false };
+    ListHashSet<RefPtr<AccessibilityObjectAtspi>> m_cacheUpdateList;
+    std::unique_ptr<RunLoop::Timer<AccessibilityAtspi>> m_cacheUpdateTimer;
 #if ENABLE(DEVELOPER_MODE)
     HashMap<void*, NotificationObserver> m_notificationObservers;
 #endif

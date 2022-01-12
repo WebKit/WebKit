@@ -31,6 +31,7 @@
 #include "Page.h"
 #include <glib/gi18n-lib.h>
 #include <wtf/MainThread.h>
+#include <wtf/SetForScope.h>
 
 namespace WebCore {
 
@@ -256,6 +257,8 @@ AccessibilityObjectAtspi* AccessibilityRootAtspi::child() const
     if (!frame.document())
         return nullptr;
 
+    SetForScope<bool> inChild(m_inChild, true);
+
     AXObjectCache::enableAccessibility();
     AXObjectCache* cache = frame.document()->axObjectCache();
     if (!cache)
@@ -267,6 +270,13 @@ AccessibilityObjectAtspi* AccessibilityRootAtspi::child() const
 
 void AccessibilityRootAtspi::childAdded(AccessibilityObjectAtspi& child)
 {
+    // Don't emit children changed when called from child() because that means the tree is being populated.
+    if (m_inChild || !m_isTreeRegistered.load())
+        return;
+
+    if (this->child() != &child)
+        return;
+
     AccessibilityAtspi::singleton().childrenChanged(*this, child, AccessibilityAtspi::ChildrenChanged::Added);
 }
 

@@ -534,17 +534,6 @@ bool AccessibilityObjectAtspi::registerObject()
         interfaces.append({ const_cast<GDBusInterfaceInfo*>(&webkit_table_interface), &s_tableFunctions });
     if (m_interfaces.contains(Interface::TableCell))
         interfaces.append({ const_cast<GDBusInterfaceInfo*>(&webkit_table_cell_interface), &s_tableCellFunctions });
-    if (!m_axObject) {
-        // Isolated tree hasn't been created yet, call AccessibilityRootAtspi::child()
-        // to create it before registering the object.
-        Accessibility::performFunctionOnMainThread([this] {
-            if (!m_coreObject)
-                return;
-
-            if (auto* atspiRoot = root())
-                atspiRoot->child();
-        });
-    }
 
     m_path = AccessibilityAtspi::singleton().registerObject(*this, WTFMove(interfaces));
     AccessibilityAtspi::singleton().addAccessible(*this);
