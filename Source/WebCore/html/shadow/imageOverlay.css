@@ -29,6 +29,7 @@ div#image-overlay {
     overflow: hidden;
     color: transparent;
     text-shadow: none;
+    text-indent: 0;
     text-align: center;
     font-family: system-ui;
 }

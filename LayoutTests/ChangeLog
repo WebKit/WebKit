@@ -1,3 +1,15 @@
+2022-01-12  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Live Text] Image overlay text is misaligned on rfi.fr
+        https://bugs.webkit.org/show_bug.cgi?id=235118
+
+        Reviewed by Aditya Keerthi.
+
+        Add a new test case to exercise the bug.
+
+        * fast/images/text-recognition/image-overlay-with-text-indent-expected.html: Added.
+        * fast/images/text-recognition/image-overlay-with-text-indent.html: Added.
+
 2022-01-12  Robert Jenner  <Jenner@apple.com>
 
         [ Win EWS ] webanimations/accelerated-animation-after-forward-filling-animation.html is a constant image only failure
