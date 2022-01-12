@@ -1,3 +1,22 @@
+2022-01-11  Mark Lam  <mark.lam@apple.com>
+
+        Update hashThreadState() to exclude __opaque_flags.
+        https://bugs.webkit.org/show_bug.cgi?id=235081
+        rdar://86282584
+
+        Reviewed by Keith Miller.
+
+        Removed some unused code.
+
+        * runtime/MachineContext.h:
+        (JSC::MachineContext::stackPointer):
+        (JSC::MachineContext::framePointer):
+        (JSC::MachineContext::instructionPointer):
+        (JSC::MachineContext::linkRegister):
+        (JSC::MachineContext::setStackPointer): Deleted.
+        (JSC::MachineContext::setFramePointer): Deleted.
+        (JSC::MachineContext::setLinkRegister): Deleted.
+
 2022-01-11  Asumu Takikawa  <asumu@igalia.com>
 
         [Wasm] Unify memory import handling in module loader and JS cases
