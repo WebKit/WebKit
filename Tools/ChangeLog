@@ -1,3 +1,15 @@
+2022-01-11  Geoffrey Garen  <ggaren@apple.com>
+
+        WebPageProxy destruction should not launch a network process
+        https://bugs.webkit.org/show_bug.cgi?id=235086
+
+        Reviewed by Alex Christensen.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/NetworkProcess.mm:
+        (TEST): Include WebView destruction in the test. Also do a little
+        run loop spinning, to give the test a better chance of failing when
+        async behavior does launch the Network process.
+
 2022-01-11  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][a11y] Web process crashes in some sites having SVG images

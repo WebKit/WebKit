@@ -87,11 +87,18 @@ TEST(WebKit, HTTPReferer)
 
 TEST(NetworkProcess, LaunchOnlyWhenNecessary)
 {
-    auto webView = adoptNS([WKWebView new]);
-    [webView configuration].websiteDataStore._resourceLoadStatisticsEnabled = YES;
-    [[webView configuration].processPool _registerURLSchemeAsSecure:@"test"];
-    [[webView configuration].processPool _registerURLSchemeAsBypassingContentSecurityPolicy:@"test"];
-    EXPECT_FALSE([[webView configuration].websiteDataStore _networkProcessExists]);
+    RetainPtr<WKWebsiteDataStore> websiteDataStore;
+
+    @autoreleasepool {
+        auto webView = adoptNS([WKWebView new]);
+        websiteDataStore = adoptNS([webView configuration].websiteDataStore);
+        [websiteDataStore _setResourceLoadStatisticsEnabled:YES];
+        [[webView configuration].processPool _registerURLSchemeAsSecure:@"test"];
+        [[webView configuration].processPool _registerURLSchemeAsBypassingContentSecurityPolicy:@"test"];
+    }
+
+    TestWebKitAPI::Util::spinRunLoop(10);
+    EXPECT_FALSE([websiteDataStore _networkProcessExists]);
 }
 
 TEST(NetworkProcess, CrashWhenNotAssociatedWithDataStore)

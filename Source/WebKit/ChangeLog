@@ -1,3 +1,16 @@
+2022-01-11  Geoffrey Garen  <ggaren@apple.com>
+
+        WebPageProxy destruction should not launch a network process
+        https://bugs.webkit.org/show_bug.cgi?id=235086
+
+        Reviewed by Alex Christensen.
+
+        Inspired by a backtrace in rdar://86706412.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::~WebPageProxy): No need to message the network
+        process requesting our removal if it doesn't exist.
+
 2022-01-11  Alex Christensen  <achristensen@webkit.org>
 
         Remove references to moved/deleted files in WebKit.xcodeproj
