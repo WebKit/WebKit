@@ -233,7 +233,9 @@ public:
 
     RenderBoxModelObject* continuation() const;
     WEBCORE_EXPORT RenderInline* inlineContinuation() const;
-    
+
+    static void forRendererAndContinuations(RenderBoxModelObject&, const std::function<void(RenderBoxModelObject&)>&);
+
     void insertIntoContinuationChainAfter(RenderBoxModelObject&);
     void removeFromContinuationChain();
 

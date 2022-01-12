@@ -3381,12 +3381,24 @@ void Element::willBecomeFullscreenElement()
         child.ancestorWillEnterFullscreen();
 }
 
-static inline RenderLayer* renderLayerForElement(Element& element)
+static void forEachRenderLayer(Element& element, const std::function<void(RenderLayer&)>& function)
 {
     auto* renderer = element.renderer();
-    if (!renderer || !renderer->hasLayer() || !is<RenderLayerModelObject>(renderer))
-        return nullptr;
-    return downcast<RenderLayerModelObject>(*renderer).layer();
+    if (!renderer || !is<RenderLayerModelObject>(renderer))
+        return;
+        
+    auto& layerModelObject = downcast<RenderLayerModelObject>(*renderer);
+
+    if (!is<RenderBoxModelObject>(layerModelObject)) {
+        if (layerModelObject.hasLayer())
+            function(*layerModelObject.layer());
+        return;
+    }
+
+    RenderBoxModelObject::forRendererAndContinuations(downcast<RenderBoxModelObject>(*renderer), [function](RenderBoxModelObject& renderer) {
+        if (renderer.hasLayer())
+            function(*renderer.layer());
+    });
 }
 
 void Element::addToTopLayer()
@@ -3394,8 +3406,9 @@ void Element::addToTopLayer()
     RELEASE_ASSERT(!isInTopLayer());
     ScriptDisallowedScope scriptDisallowedScope;
 
-    if (auto* layer = renderLayerForElement(*this))
-        layer->establishesTopLayerWillChange();
+    forEachRenderLayer(*this, [](RenderLayer& layer) {
+        layer.establishesTopLayerWillChange();
+    });
 
     document().addTopLayerElement(*this);
     setNodeFlag(NodeFlag::IsInTopLayer);
@@ -3405,8 +3418,9 @@ void Element::addToTopLayer()
     if (document().documentElement())
         document().documentElement()->invalidateStyleInternal();
 
-    if (auto* layer = renderLayerForElement(*this))
-        layer->establishesTopLayerDidChange();
+    forEachRenderLayer(*this, [](RenderLayer& layer) {
+        layer.establishesTopLayerDidChange();
+    });
 }
 
 void Element::removeFromTopLayer()
@@ -3414,8 +3428,9 @@ void Element::removeFromTopLayer()
     RELEASE_ASSERT(isInTopLayer());
     ScriptDisallowedScope scriptDisallowedScope;
 
-    if (auto* layer = renderLayerForElement(*this))
-        layer->establishesTopLayerWillChange();
+    forEachRenderLayer(*this, [](RenderLayer& layer) {
+        layer.establishesTopLayerWillChange();
+    });
 
     document().removeTopLayerElement(*this);
     clearNodeFlag(NodeFlag::IsInTopLayer);
@@ -3427,8 +3442,9 @@ void Element::removeFromTopLayer()
     if (auto* modalElement = document().activeModalDialog())
         modalElement->invalidateStyleInternal();
 
-    if (auto* layer = renderLayerForElement(*this))
-        layer->establishesTopLayerDidChange();
+    forEachRenderLayer(*this, [](RenderLayer& layer) {
+        layer.establishesTopLayerDidChange();
+    });
 }
 
 static PseudoElement* beforeOrAfterPseudoElement(const Element& host, PseudoId pseudoElementSpecifier)
