@@ -7,7 +7,7 @@ function test()
 {
     let suite = InspectorTest.createSyncSuite("WI.CSSKeywordCompletions");
 
-    function addTestForPartialPropertyName({name, description, text, allowEmptyPrefix, expectedCompletions, expectedCompletionCount}) {
+    function addTestForPartialPropertyName({name, description, text, caretPosition, allowEmptyPrefix, expectedCompletions, expectedCompletionCount}) {
         suite.addTestCase({
             name,
             description,
@@ -17,7 +17,7 @@ function test()
                 expectedCompletionCount ??= -1;
 
                 // FIXME: <webkit.org/b/227157> Styles: Support completions mid-token.
-                let caretPosition = text.length;
+                caretPosition ??= text.length;
                 let completionResults = WI.CSSKeywordCompletions.forPartialPropertyName(text, {caretPosition, allowEmptyPrefix});
 
                 if (expectedCompletionCount >= 0)
@@ -64,6 +64,15 @@ function test()
         description: "Test that for a more specific set of characters, there will be some number of matches.",
         text: "rang",
         expectedCompletions: ["range"],
+    });
+
+    // FIXME: This test will fail after addressing <webkit.org/b/227157> Styles: Support completions mid-token.
+    addTestForPartialPropertyName({
+        name: "WI.CSSKeywordCompletions.forPartialPropertyName.midTokenNoCompletions",
+        description: "Test that completions are not provided when the caret is positioned within the token.",
+        text: "margin",
+        caretPosition: 1,
+        expectedCompletionCount: 0,
     });
 
     function addTestForPartialPropertyValue({name, description, propertyName, text, caretPosition, expectedPrefix, expectedCompletions, expectedCompletionCount, additionalFunctionValueCompletionsProvider}) {

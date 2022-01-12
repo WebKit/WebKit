@@ -1,3 +1,14 @@
+2022-01-12  Razvan Caliman  <rcaliman@apple.com>
+
+        Web Inspector: Unhandled exception when moving cursor mid-token after receiving CSS property name completions
+        https://bugs.webkit.org/show_bug.cgi?id=234393
+        <rdar://problem/86578732>
+
+        Reviewed by Patrick Angle.
+
+        * inspector/unit-tests/css-keyword-completions-expected.txt:
+        * inspector/unit-tests/css-keyword-completions.html:
+
 2022-01-12  Robert Jenner  <Jenner@apple.com>
 
         [AppleWin] Some fast/shadow-dom/fullscreen-in-* tests are crashing after r287698

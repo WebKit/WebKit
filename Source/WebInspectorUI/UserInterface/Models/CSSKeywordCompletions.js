@@ -33,12 +33,11 @@ WI.CSSKeywordCompletions = {};
 
 WI.CSSKeywordCompletions.forPartialPropertyName = function(text, {caretPosition, allowEmptyPrefix, useFuzzyMatching} = {})
 {
-    caretPosition ??= text.length;
     allowEmptyPrefix ??= false;
 
     // FIXME: <webkit.org/b/227157> Styles: Support completions mid-token.
-    if (caretPosition !== caretPosition)
-        return {prefix: text, completions: []};
+    if (caretPosition !== text.length)
+        return {prefix: "", completions: []};
 
     if (!text.length && allowEmptyPrefix)
         return {prefix: text, completions: WI.cssManager.propertyNameCompletions.values};

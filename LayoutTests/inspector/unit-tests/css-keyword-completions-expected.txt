@@ -15,6 +15,10 @@ PASS: All expected completions were present.
 -- Running test case: WI.CSSKeywordCompletions.forPartialPropertyName.multipleCharacterMatches
 PASS: All expected completions were present.
 
+-- Running test case: WI.CSSKeywordCompletions.forPartialPropertyName.midTokenNoCompletions
+PASS: Expected exactly 0 completion results.
+PASS: All expected completions were present.
+
 -- Running test case: WI.CSSKeywordCompletions.forPartialPropertyValue.EmptyTop
 PASS: Expected result prefix to be ""
 PASS: All expected completions were present.

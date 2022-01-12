@@ -1,3 +1,32 @@
+2022-01-12  Razvan Caliman  <rcaliman@apple.com>
+
+        Web Inspector: Unhandled exception when moving cursor mid-token after receiving CSS property name completions
+        https://bugs.webkit.org/show_bug.cgi?id=234393
+        <rdar://problem/86578732>
+
+        Reviewed by Patrick Angle.
+
+        A faulty check for mid-token completions in `WI.CSSKeywordCompletions.forPartialPropertyName()`, which are still
+        unsupported, prevented an early return and completions were provided unexpectedly. This had knock-on effects in
+        `WI.SpreadsheetTextField` which is not set up to handle cases where the caret is placed within the completion query.
+        Calculating the adjusted caret position could return a negative index and throw an unhandled exception.
+
+        Web Inspector does not currently explicitly support mid-token completions. See https://webkit.org/b/227157
+
+        The implementation of fuzzy matching for CSS completions in https://webkit.org/b/234092
+        means that, unhindered, the completion provider for CSS property names _can_ return mid-token completions.
+        Typing a query like `margin`, then moving the caret to the beginning and correcting to `s|margin` will return
+        completions like `[s]croll-[margin]`. Accepting the completion results in a malformed `SpreadsheetTextField.value`
+        by concatenation within the prefix itself. As the user types mid-token, the prefix becomes ambiguous.
+
+        Fixing the condition in `WI.CSSKeywordCompletions.forPartialPropertyName()` now inhibits unintentional
+        mid-token completions when fuzzy matching is enabled.
+
+        * UserInterface/Models/CSSKeywordCompletions.js:
+        (WI.CSSKeywordCompletions.forPartialPropertyName):
+        * UserInterface/Views/SpreadsheetTextField.js:
+        (WI.SpreadsheetTextField.prototype._showSuggestionsView):
+
 2022-01-11  Nikita Vasilyev  <nvasilyev@apple.com>
 
         REGRESSION (r283723): Web Inspector: CSS declarations unexpectedly removed when editing property value
