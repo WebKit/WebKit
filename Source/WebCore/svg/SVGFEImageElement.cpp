@@ -198,7 +198,7 @@ std::tuple<RefPtr<ImageBuffer>, FloatRect> SVGFEImageElement::imageBufferForEffe
 
     auto imageRect = renderer->repaintRectInLocalCoordinates();
 
-    auto imageBuffer = SVGRenderingContext::createImageBuffer(imageRect, shearFreeAbsoluteTransform, DestinationColorSpace::SRGB(), RenderingMode::Unaccelerated);
+    auto imageBuffer = SVGRenderingContext::createImageBuffer(imageRect, shearFreeAbsoluteTransform, DestinationColorSpace::SRGB(), RenderingMode::Unaccelerated, renderer->hostWindow());
     if (!imageBuffer)
         return { };
 

@@ -159,8 +159,8 @@ private:
         auto iterator = m_resources.find(renderingResourceIdentifier);
         if (iterator == m_resources.end())
             return nullptr;
-        ASSERT(std::holds_alternative<Ref<T>>(iterator->value));
-        return std::get<Ref<T>>(iterator->value).ptr();
+        auto value = std::get_if<Ref<T>>(&iterator->value);
+        return value ? value->ptr() : nullptr;
     }
 
     template <typename T>

@@ -52,15 +52,15 @@ void RenderSVGResourceGradient::removeClientFromCache(RenderElement& client, boo
 }
 
 #if USE(CG)
-static inline bool createMaskAndSwapContextForTextGradient(GraphicsContext*& context, GraphicsContext*& savedContext, RefPtr<ImageBuffer>& imageBuffer, RenderObject* object)
+static inline bool createMaskAndSwapContextForTextGradient(GraphicsContext*& context, GraphicsContext*& savedContext, RefPtr<ImageBuffer>& imageBuffer, RenderElement& renderer)
 {
-    auto* textRootBlock = RenderSVGText::locateRenderSVGTextAncestor(*object);
+    auto* textRootBlock = RenderSVGText::locateRenderSVGTextAncestor(renderer);
     ASSERT(textRootBlock);
 
     AffineTransform absoluteTransform = SVGRenderingContext::calculateTransformationToOutermostCoordinateSystem(*textRootBlock);
     FloatRect repaintRect = textRootBlock->repaintRectInLocalCoordinates();
 
-    auto maskImage = SVGRenderingContext::createImageBuffer(repaintRect, absoluteTransform, DestinationColorSpace::SRGB(), context->renderingMode());
+    auto maskImage = SVGRenderingContext::createImageBuffer(repaintRect, absoluteTransform, DestinationColorSpace::SRGB(), context->renderingMode(), renderer.hostWindow());
     if (!maskImage)
         return false;
 
@@ -72,9 +72,9 @@ static inline bool createMaskAndSwapContextForTextGradient(GraphicsContext*& con
     return true;
 }
 
-static inline AffineTransform clipToTextMask(GraphicsContext& context, RefPtr<ImageBuffer>& imageBuffer, FloatRect& targetRect, RenderObject* object, bool boundingBoxMode, const AffineTransform& gradientTransform)
+static inline AffineTransform clipToTextMask(GraphicsContext& context, RefPtr<ImageBuffer>& imageBuffer, FloatRect& targetRect, RenderElement& renderer, bool boundingBoxMode, const AffineTransform& gradientTransform)
 {
-    auto* textRootBlock = RenderSVGText::locateRenderSVGTextAncestor(*object);
+    auto* textRootBlock = RenderSVGText::locateRenderSVGTextAncestor(renderer);
     ASSERT(textRootBlock);
 
     AffineTransform absoluteTransform = SVGRenderingContext::calculateTransformationToOutermostCoordinateSystem(*textRootBlock);
@@ -153,7 +153,7 @@ bool RenderSVGResourceGradient::applyResource(RenderElement& renderer, const Ren
 
     if (isPaintingText) {
 #if USE(CG)
-        if (!createMaskAndSwapContextForTextGradient(context, m_savedContext, m_imageBuffer, &renderer)) {
+        if (!createMaskAndSwapContextForTextGradient(context, m_savedContext, m_imageBuffer, renderer)) {
             context->restore();
             return false;
         }
@@ -196,7 +196,7 @@ void RenderSVGResourceGradient::postApplyResource(RenderElement& renderer, Graph
                 context = std::exchange(m_savedContext, nullptr);
 
                 FloatRect targetRect;
-                AffineTransform userspaceTransform = clipToTextMask(*context, m_imageBuffer, targetRect, &renderer, gradientUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX, gradientTransform());
+                AffineTransform userspaceTransform = clipToTextMask(*context, m_imageBuffer, targetRect, renderer, gradientUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX, gradientTransform());
 
                 context->setFillGradient(gradient, userspaceTransform);
                 context->fillRect(targetRect);

@@ -1,3 +1,13 @@
+2022-01-11  Said Abou-Hallawa  <said@apple.com>
+
+        [GPU Process] Make SVG resources create remote ImageBuffers for their drawing
+        https://bugs.webkit.org/show_bug.cgi?id=235073
+        rdar://87402419
+
+        Reviewed by Darin Adler.
+
+        * gpu-process/TestExpectations:
+
 2022-01-11  Diego Pino Garcia  <dpino@igalia.com>
 
         [GLIB] Unreviewed test gardening, emit baseline for WPT test websockets/interfaces/WebSocket/bufferedAmount/bufferedAmount-getting.html

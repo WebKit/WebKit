@@ -1,3 +1,18 @@
+2022-01-11  Said Abou-Hallawa  <said@apple.com>
+
+        [GPU Process] Make SVG resources create remote ImageBuffers for their drawing
+        https://bugs.webkit.org/show_bug.cgi?id=235073
+        rdar://87402419
+
+        Reviewed by Darin Adler.
+
+        * GPUProcess/graphics/QualifiedResourceHeap.h:
+        (WebKit::QualifiedResourceHeap::get const):
+        Do not assert here if the entry of the HashMap does not hold a variant
+        of the required type. We already return nullptr without assertion if there
+        is no entry for the required renderingResourceIdentifier. We should let
+        the caller decides what to do in the case of error.
+
 2022-01-11  Geoffrey Garen  <ggaren@apple.com>
 
         WebPageProxy destruction should not launch a network process
