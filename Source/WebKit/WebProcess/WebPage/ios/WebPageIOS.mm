@@ -189,11 +189,6 @@ static String plainTextForDisplay(const std::optional<SimpleRange>& range)
     return range ? plainTextForDisplay(*range) : emptyString();
 }
 
-void WebPage::platformInitialize()
-{
-    platformInitializeAccessibility();
-}
-
 void WebPage::platformDetach()
 {
     [m_mockAccessibilityElement setWebPage:nullptr];

@@ -927,6 +927,7 @@ public:
     void didEndUserTriggeredSelectionChanges();
 
 #if PLATFORM(COCOA)
+    void platformInitializeAccessibility();
     void registerUIProcessAccessibilityTokens(const IPC::DataReference& elemenToken, const IPC::DataReference& windowToken);
     WKAccessibilityWebPageObject* accessibilityRemoteObject();
     NSObject *accessibilityObjectForMainFramePlugin();
@@ -1507,7 +1508,7 @@ private:
     IPC::Connection* messageSenderConnection() const override;
     uint64_t messageSenderDestinationID() const override;
 
-    void platformInitialize();
+    void platformInitialize(const WebPageCreationParameters&);
     void platformReinitialize();
     void platformDetach();
     void getPlatformEditorState(WebCore::Frame&, EditorState&) const;
@@ -1529,7 +1530,6 @@ private:
     void updateViewportSizeForCSSViewportUnits();
 
     std::optional<FocusedElementInformation> focusedElementInformation();
-    void platformInitializeAccessibility();
     void generateSyntheticEditingCommand(SyntheticEditingCommandType);
     void handleSyntheticClick(WebCore::Node& nodeRespondingToClick, const WebCore::FloatPoint& location, OptionSet<WebKit::WebEvent::Modifier>, WebCore::PointerID = WebCore::mousePointerID);
     void completeSyntheticClick(WebCore::Node& nodeRespondingToClick, const WebCore::FloatPoint& location, OptionSet<WebKit::WebEvent::Modifier>, WebCore::SyntheticClickType, WebCore::PointerID = WebCore::mousePointerID);
