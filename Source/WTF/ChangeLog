@@ -1,3 +1,15 @@
+2022-01-12  Zan Dobersek  <zdobersek@igalia.com>
+
+        [WTF] Exclude any Linux-based platform in DisallowCType.h
+        https://bugs.webkit.org/show_bug.cgi?id=235104
+
+        Reviewed by Adrian Perez de Castro.
+
+        * wtf/DisallowCType.h: Exclude any Linux target from deploying macros
+        that prevent use of locale-dependent ctype functions in combination with
+        the glibc C library and a non-libc++ C++ library. This should thus also
+        cover the JSCOnly port when built on Linux.
+
 2021-11-29 Simon Fraser  <simon.fraser@apple.com>
 
         Serialize CSS <number> values with rounding, limited decimal precision, and no exponents per-spec
