@@ -4781,6 +4781,7 @@ pointerevents/mouse/pointer-button-and-buttons.html [ Failure ]
 pointerevents/mouse/pointer-capture.html [ Failure ]
 
 # webkit.org/b/234933 Multiple fast/shadow-dom/fullscreen-in-* tests are constant crashes and slowing down Windows EWS
+accessibility/insert-children-assert.html [ Crash ]
 fast/shadow-dom/fullscreen-in-shadow-event-should-propagate.html [ Crash ]
 fast/shadow-dom/fullscreen-in-shadow-full-screen-ancestor.html [ Crash ]
 fast/shadow-dom/fullscreen-in-shadow-fullscreenElement.html [ Crash ]
