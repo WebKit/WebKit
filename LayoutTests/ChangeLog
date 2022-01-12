@@ -1,3 +1,12 @@
+2022-01-12  Robert Jenner  <Jenner@apple.com>
+
+        [ iOS EWS ] imported/w3c/web-platform-tests/dom/events/focus-event-document-move.html is a constant text failure
+        https://bugs.webkit.org/show_bug.cgi?id=235150
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations:
+
 2022-01-12  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Live Text] Image overlay text is misaligned on rfi.fr
