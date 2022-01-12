@@ -1,3 +1,11 @@
+2022-01-11  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GLIB] Unreviewed test gardening, emit baseline for WPT test websockets/interfaces/WebSocket/bufferedAmount/bufferedAmount-getting.html
+        https://bugs.webkit.org/show_bug.cgi?id=235098
+
+        * platform/glib/TestExpectations:
+        * platform/glib/imported/w3c/web-platform-tests/websockets/interfaces/WebSocket/bufferedAmount/bufferedAmount-getting-expected.txt: Added.
+
 2021-11-29 Simon Fraser  <simon.fraser@apple.com> 
 
         Serialize CSS <number> values with rounding, limited decimal precision, and no exponents per-spec
