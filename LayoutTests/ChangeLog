@@ -1,3 +1,16 @@
+2022-01-12  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Live Text is sometimes horizontally clipped when injecting TextRecognitionBlockData
+        https://bugs.webkit.org/show_bug.cgi?id=235122
+
+        Reviewed by Devin Rousso.
+
+        Add a test to verify that a single, very long word in injected text recognition block data does not trigger
+        horizontal overflow.
+
+        * fast/images/text-recognition/image-overlay-block-horizontal-overflow-expected.html: Added.
+        * fast/images/text-recognition/image-overlay-block-horizontal-overflow.html: Added.
+
 2022-01-12  Robert Jenner  <Jenner@apple.com>
 
         [ iOS EWS ] imported/w3c/web-platform-tests/dom/events/focus-event-document-move.html is a constant text failure

@@ -522,7 +522,7 @@ void updateWithTextRecognitionResult(HTMLElement& element, const TextRecognition
 
     struct FontSizeAdjustmentState {
         Ref<HTMLElement> container;
-        float targetHeight;
+        FloatSize targetSize;
         float scale { initialScaleForFontSize };
         float minScale { minScaleForFontSize };
         float maxScale { maxScaleForFontSize };
@@ -541,7 +541,7 @@ void updateWithTextRecognitionResult(HTMLElement& element, const TextRecognition
         auto blockContainer = elements.blocks[index];
         auto bounds = fitElementToQuad(blockContainer.get(), convertToContainerCoordinates(block.normalizedQuad));
         blockContainer->setInlineStyleProperty(CSSPropertyFontSize, initialScaleForFontSize * bounds.size.height(), CSSUnitType::CSS_PX);
-        elementsToAdjust.uncheckedAppend({ WTFMove(blockContainer), bounds.size.height() });
+        elementsToAdjust.uncheckedAppend({ WTFMove(blockContainer), bounds.size });
     }
 
     unsigned currentIteration = 0;
@@ -563,7 +563,7 @@ void updateWithTextRecognitionResult(HTMLElement& element, const TextRecognition
                 continue;
             }
 
-            auto currentScore = textRenderer->linesBoundingBox().height() / state.targetHeight;
+            auto currentScore = (textRenderer->linesBoundingBox().size() / state.targetSize).maxDimension();
             if (currentScore < minTargetScore)
                 state.minScale = state.scale;
             else if (currentScore > maxTargetScore)
@@ -574,7 +574,7 @@ void updateWithTextRecognitionResult(HTMLElement& element, const TextRecognition
             }
 
             state.scale = (state.minScale + state.maxScale) / 2;
-            state.container->setInlineStyleProperty(CSSPropertyFontSize, state.targetHeight * state.scale, CSSUnitType::CSS_PX);
+            state.container->setInlineStyleProperty(CSSPropertyFontSize, state.targetSize.height() * state.scale, CSSUnitType::CSS_PX);
         }
 
         elementsToAdjust.removeAllMatching([](auto& state) {
@@ -584,7 +584,7 @@ void updateWithTextRecognitionResult(HTMLElement& element, const TextRecognition
         if (++currentIteration > iterationLimit) {
             // Fall back to the largest font size that still vertically fits within the container.
             for (auto& state : elementsToAdjust)
-                state.container->setInlineStyleProperty(CSSPropertyFontSize, state.targetHeight * state.minScale, CSSUnitType::CSS_PX);
+                state.container->setInlineStyleProperty(CSSPropertyFontSize, state.targetSize.height() * state.minScale, CSSUnitType::CSS_PX);
             break;
         }
     }
