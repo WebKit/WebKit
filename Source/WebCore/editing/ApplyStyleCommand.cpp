@@ -304,6 +304,9 @@ void ApplyStyleCommand::applyRelativeFontStyleChange(EditingStyle* style)
     if (end < start)
         std::swap(start, end);
 
+    if (start.treeScope() != end.treeScope())
+        return;
+
     // Join up any adjacent text nodes.
     if (is<Text>(start.deprecatedNode())) {
         joinChildTextNodes(start.deprecatedNode()->parentNode(), start, end);
@@ -344,7 +347,7 @@ void ApplyStyleCommand::applyRelativeFontStyleChange(EditingStyle* style)
 
     // Calculate loop end point.
     // If the end node is before the start node (can only happen if the end node is
-    // an ancestor of the start node), we gather nodes up to the next sibling of the end node
+    // an ancestor of the start node), we gather nodes up to the next sibling of the end node.
     RefPtr<Node> beyondEnd;
     ASSERT(start.deprecatedNode());
     ASSERT(end.deprecatedNode());
@@ -356,10 +359,17 @@ void ApplyStyleCommand::applyRelativeFontStyleChange(EditingStyle* style)
     start = start.upstream(); // Move upstream to ensure we do not add redundant spans.
     RefPtr startNode { start.deprecatedNode() };
 
-    // Make sure we're not already at the end or the next NodeTraversal::next() will traverse past it.
-    if (startNode == beyondEnd)
+    if (!startNode)
         return;
-
+    
+    // Ensure the startNode is not at or past the beyondEnd when node traversal
+    // is performed in the following loops below.
+    if (beyondEnd) {
+        auto treeOrderPos = treeOrder(*startNode, *beyondEnd);
+        if (is_gt(treeOrderPos) || is_eq(treeOrderPos))
+            return;
+    }
+    
     if (is<Text>(*startNode) && start.deprecatedEditingOffset() >= caretMaxOffset(*startNode)) {
         // Move out of text node if range does not include its characters.
         startNode = NodeTraversal::next(*startNode);
@@ -371,7 +381,7 @@ void ApplyStyleCommand::applyRelativeFontStyleChange(EditingStyle* style)
     // This ensures that changes to one node won't effect another.
     HashMap<Ref<Node>, float> startingFontSizes;
     for (auto node = startNode; node != beyondEnd; node = NodeTraversal::next(*node)) {
-        ASSERT(node);
+        RELEASE_ASSERT(node);
         startingFontSizes.set(*node, computedFontSize(node.get()));
     }
 
@@ -381,7 +391,8 @@ void ApplyStyleCommand::applyRelativeFontStyleChange(EditingStyle* style)
     RefPtr<Node> lastStyledNode;
     bool reachedEnd = false;
     for (auto node = startNode; node != beyondEnd && !reachedEnd; node = NodeTraversal::next(*node)) {
-        ASSERT(node);
+        RELEASE_ASSERT(node);
+
         RefPtr<HTMLElement> element;
         if (is<HTMLElement>(*node)) {
             // Only work on fully selected nodes.
