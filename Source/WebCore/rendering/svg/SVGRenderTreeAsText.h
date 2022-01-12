@@ -34,12 +34,13 @@ class AffineTransform;
 class Color;
 class FloatRect;
 class FloatSize;
+class LegacyRenderSVGContainer;
 class LegacyRenderSVGRoot;
 class LegacyRenderSVGShape;
 class Node;
 class RenderImage;
 class RenderObject;
-class LegacyRenderSVGContainer;
+class RenderSVGContainer;
 class RenderSVGGradientStop;
 class RenderSVGImage;
 class RenderSVGInlineText;
@@ -59,6 +60,9 @@ void write(WTF::TextStream&, const RenderSVGShape&, OptionSet<RenderAsTextFlag>)
 void writeSVGGradientStop(WTF::TextStream&, const RenderSVGGradientStop&, OptionSet<RenderAsTextFlag>);
 void writeSVGResourceContainer(WTF::TextStream&, const RenderSVGResourceContainer&, OptionSet<RenderAsTextFlag>);
 void writeSVGContainer(WTF::TextStream&, const LegacyRenderSVGContainer&, OptionSet<RenderAsTextFlag>);
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+void writeSVGContainer(WTF::TextStream&, const RenderSVGContainer&, OptionSet<RenderAsTextFlag>);
+#endif
 void writeSVGImage(WTF::TextStream&, const RenderSVGImage&, OptionSet<RenderAsTextFlag>);
 void writeSVGInlineText(WTF::TextStream&, const RenderSVGInlineText&, OptionSet<RenderAsTextFlag>);
 void writeSVGText(WTF::TextStream&, const RenderSVGText&, OptionSet<RenderAsTextFlag>);

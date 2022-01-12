@@ -22,6 +22,7 @@
 
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
 #include "RenderChildIterator.h"
+#include "RenderSVGContainer.h"
 #include "RenderSVGForeignObject.h"
 #include "RenderSVGImage.h"
 #include "RenderSVGInline.h"
@@ -63,9 +64,7 @@ FloatRect SVGBoundingBoxComputation::computeDecoratedBoundingBox(const SVGBoundi
 
     // - a container element (RenderSVGRoot / RenderSVGContainer)
     // - "use" (RenderSVGTransformableContainer)
-    // FIXME: [LBSE] Upstream new RenderSVGContainer implementation
-    // if (is<RenderSVGRoot>(m_renderer) || is<RenderSVGContainer>(m_renderer))
-    if (is<RenderSVGRoot>(m_renderer))
+    if (is<RenderSVGRoot>(m_renderer) || is<RenderSVGContainer>(m_renderer))
         return handleRootOrContainer(options, boundingBoxValid);
 
     // - "foreignObject"
@@ -141,10 +140,8 @@ FloatRect SVGBoundingBoxComputation::handleRootOrContainer(const SVGBoundingBoxC
         return layerTransform.isIdentity() ? std::nullopt : std::make_optional(WTFMove(layerTransform));
     };
 
-    auto uniteBoundingBoxRespectingValidity = [] (bool& boxValid, FloatRect& box, const RenderLayerModelObject& /* child */, const FloatRect& childBoundingBox) {
-        // FIXME: [LBSE] Upstream new RenderSVGContainer implementation
-        // bool isBoundingBoxValid = is<RenderSVGContainer>(child) ? downcast<RenderSVGContainer>(child).isObjectBoundingBoxValid() : true;
-        bool isBoundingBoxValid = true;
+    auto uniteBoundingBoxRespectingValidity = [] (bool& boxValid, FloatRect& box, const RenderLayerModelObject& child, const FloatRect& childBoundingBox) {
+        bool isBoundingBoxValid = is<RenderSVGContainer>(child) ? downcast<RenderSVGContainer>(child).isObjectBoundingBoxValid() : true;
         if (!isBoundingBoxValid)
             return;
 
@@ -168,16 +165,15 @@ FloatRect SVGBoundingBoxComputation::handleRootOrContainer(const SVGBoundingBoxC
     //    - Otherwise, set box to be the union of box and the result of invoking the algorithm to compute a bounding box with child
     //      as the element and the same values for space, fill, stroke, markers and clipped as the corresponding algorithm input values.
     for (auto& child : childrenOfType<RenderLayerModelObject>(m_renderer)) {
-        // FIXME: [LBSE] Upstream new RenderSVGContainer implementation
+        // FIXME: [LBSE] Upstream new RenderSVGHiddenContainer implementation
         // if (is<RenderSVGHiddenContainer>(child) || (is<RenderSVGShape>(child) && downcast<RenderSVGShape>(child).isRenderingDisabled()))
         if (is<RenderSVGShape>(child) && downcast<RenderSVGShape>(child).isRenderingDisabled())
             continue;
 
         SVGBoundingBoxComputation childBoundingBoxComputation(child);
         auto childBox = childBoundingBoxComputation.computeDecoratedBoundingBox(options);
-        // FIXME: Upstream new RenderSVGContainer implementation
-        // if (options.contains(DecorationOption::OverrideBoxWithFilterBoxForChildren) && is<RenderSVGContainer>(child))
-        //    childBoundingBoxComputation.adjustBoxForClippingAndEffects({ DecorationOption::OverrideBoxWithFilterBox }, childBox);
+        if (options.contains(DecorationOption::OverrideBoxWithFilterBoxForChildren) && is<RenderSVGContainer>(child))
+            childBoundingBoxComputation.adjustBoxForClippingAndEffects({ DecorationOption::OverrideBoxWithFilterBox }, childBox);
 
         if (auto layerTransform = transformationMatrixFromChild(child))
             childBox = layerTransform->mapRect(childBox);
@@ -200,7 +196,7 @@ FloatRect SVGBoundingBoxComputation::handleRootOrContainer(const SVGBoundingBoxC
     if (options.contains(DecorationOption::IncludeClippers) && m_renderer.hasNonVisibleOverflow()) {
         ASSERT(m_renderer.hasLayer());
 
-        // FIXME: [LBSE] Upstream new RenderSVGContainer / RenderSVGResourceMarker implementation
+        // FIXME: [LBSE] Upstream new RenderSVGViewportContainer / RenderSVGResourceMarker implementation
         // ASSERT(is<RenderSVGViewportContainer>(m_renderer) || is<RenderSVGResourceMarker>(m_renderer) || is<RenderSVGRoot>(m_renderer));
         ASSERT(is<RenderSVGRoot>(m_renderer));
 
