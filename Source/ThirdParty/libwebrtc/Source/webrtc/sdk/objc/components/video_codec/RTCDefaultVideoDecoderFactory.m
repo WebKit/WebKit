@@ -41,8 +41,8 @@
       _supportsVP9Profile0 = supportsVP9Profile0;
       _supportsVP9Profile2 = supportsVP9Profile2;
       // Use kCMVideoCodecType_VP9 once added to CMFormatDescription.h
-      _supportsVP9VTB = (supportsVP9Profile0 || supportsVP9Profile2) && (supportsVP9VTB || VTIsHardwareDecodeSupported('vp09'));
-;
+      _supportsVP9VTB = (supportsVP9Profile0 || supportsVP9Profile2) && supportsVP9VTB;
+
   }
   return self;
 }
