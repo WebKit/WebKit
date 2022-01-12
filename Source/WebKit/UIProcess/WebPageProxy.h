@@ -788,8 +788,6 @@ public:
 
     void setBaseWritingDirection(WebCore::WritingDirection);
 
-    std::optional<WebCore::FontAttributes> cachedFontAttributesAtSelectionStart() const { return m_cachedFontAttributesAtSelectionStart; }
-
 #if HAVE(TOUCH_BAR)
     const TouchBarMenuData& touchBarMenuData() const { return m_touchBarMenuData; }
 #endif
@@ -991,7 +989,6 @@ public:
 
 #if PLATFORM(MAC)
     void attributedSubstringForCharacterRangeAsync(const EditingRange&, CompletionHandler<void(const WebCore::AttributedString&, const EditingRange&)>&&);
-    void fontAtSelection(CompletionHandler<void(const FontInfo&, double, bool)>&&);
 
     void startWindowDrag();
     NSWindow *platformWindow();
@@ -2345,9 +2342,6 @@ private:
 
     void didReceiveEvent(uint32_t opaqueType, bool handled);
     void didUpdateRenderingAfterCommittingLoad();
-#if PLATFORM(MAC)
-    void fontAtSelectionCallback(const FontInfo&, double, bool, CallbackID);
-#endif
 #if PLATFORM(IOS_FAMILY)
     void interpretKeyEvent(const EditorState&, bool isCharEvent, CompletionHandler<void(bool)>&&);
     void showPlaybackTargetPicker(bool hasVideo, const WebCore::IntRect& elementRect, WebCore::RouteSharingPolicy, const String&);

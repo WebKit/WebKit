@@ -359,39 +359,6 @@ void WebPage::attributedSubstringForCharacterRangeAsync(const EditingRange& edit
     completionHandler({ WTFMove(attributedString), nil }, rangeToSend);
 }
 
-void WebPage::fontAtSelection(CompletionHandler<void(const FontInfo&, double, bool)>&& completionHandler)
-{
-    bool selectionHasMultipleFonts = false;
-    auto& frame = m_page->focusController().focusedOrMainFrame();
-
-    if (frame.selection().selection().isNone()) {
-        completionHandler({ }, 0, false);
-        return;
-    }
-
-    auto font = frame.editor().fontForSelection(selectionHasMultipleFonts);
-    if (!font) {
-        completionHandler({ }, 0, false);
-        return;
-    }
-
-    auto ctFont = font->getCTFont();
-    if (!ctFont) {
-        completionHandler({ }, 0, false);
-        return;
-    }
-
-    auto fontDescriptor = adoptCF(CTFontCopyFontDescriptor(ctFont));
-    if (!fontDescriptor) {
-        completionHandler({ }, 0, false);
-        return;
-    }
-
-    completionHandler({ adoptCF(CTFontDescriptorCopyAttributes(fontDescriptor.get())) }, CTFontGetSize(ctFont), selectionHasMultipleFonts);
-}
-    
-
-
 #if ENABLE(PDFKIT_PLUGIN)
 
 DictionaryPopupInfo WebPage::dictionaryPopupInfoForSelectionInPDFPlugin(PDFSelection *selection, PDFPlugin& pdfPlugin, NSDictionary *options, WebCore::TextIndicatorPresentationTransition presentationTransition)

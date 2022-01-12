@@ -177,6 +177,11 @@ static RetainPtr<TestWKWebView> webViewForTestingFontAttributes(NSString *testPa
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 320, 500)]);
     [webView synchronouslyLoadTestPageNamed:testPageName];
     [webView stringByEvaluatingJavaScript:@"document.body.focus()"];
+#if PLATFORM(MAC)
+    NSFontManager *fontManager = NSFontManager.sharedFontManager;
+    [[fontManager fontPanel:YES] setIsVisible:YES];
+    fontManager.target = webView.get();
+#endif
     return webView;
 }
 
@@ -185,6 +190,31 @@ TEST(FontAttributes, FontAttributesAfterChangingSelection)
     auto delegate = adoptNS([FontAttributesListener new]);
     auto webView = webViewForTestingFontAttributes(@"rich-text-attributes");
     [webView setUIDelegate:delegate.get()];
+
+    auto expectFontManagerState = [] (FontExpectation expectedFont, ColorExpectation expectedColor, std::optional<ShadowExpectation> expectedShadow, BOOL underline, BOOL strikeThrough, BOOL expectMultipleFonts) {
+#if PLATFORM(MAC)
+        NSFontManager *fontManager = NSFontManager.sharedFontManager;
+        NSFontPanel *fontPanel = NSFontPanel.sharedFontPanel;
+        if (expectedShadow) {
+            EXPECT_TRUE(fontPanel.hasShadow);
+            EXPECT_LT(std::abs(expectedShadow->opacity - fontPanel.shadowOpacity), 0.0001);
+            EXPECT_EQ(expectedShadow->blurRadius, fontPanel.shadowBlur);
+        } else
+            EXPECT_FALSE(fontPanel.hasShadow);
+        EXPECT_EQ(underline, fontPanel.hasUnderline);
+        EXPECT_EQ(strikeThrough, fontPanel.hasStrikeThrough);
+        checkColor([fontPanel.foregroundColor colorUsingColorSpace:NSColorSpace.sRGBColorSpace], { WTFMove(expectedColor) });
+        checkFont(fontManager.selectedFont, WTFMove(expectedFont));
+        EXPECT_EQ(expectMultipleFonts, fontManager.multiple);
+#else
+        UNUSED_PARAM(expectedFont);
+        UNUSED_PARAM(expectedColor);
+        UNUSED_PARAM(expectedShadow);
+        UNUSED_PARAM(underline);
+        UNUSED_PARAM(strikeThrough);
+        UNUSED_PARAM(expectMultipleFonts);
+#endif
+    };
 
     {
         [webView selectElementWithIdentifier:@"one"];
@@ -197,6 +227,7 @@ TEST(FontAttributes, FontAttributesAfterChangingSelection)
         EXPECT_EQ(NSUnderlineStyleSingle, [attributes[NSStrikethroughStyleAttributeName] integerValue]);
         EXPECT_EQ(NSUnderlineStyleNone, [attributes[NSUnderlineStyleAttributeName] integerValue]);
         EXPECT_EQ(0, [attributes[NSSuperscriptAttributeName] integerValue]);
+        expectFontManagerState({ "Helvetica-Bold", 48 }, { 227, 36, 0, 1 }, std::nullopt, NO, YES, NO);
     }
     {
         [webView selectElementWithIdentifier:@"two"];
@@ -209,6 +240,7 @@ TEST(FontAttributes, FontAttributesAfterChangingSelection)
         EXPECT_EQ(NSUnderlineStyleNone, [attributes[NSStrikethroughStyleAttributeName] integerValue]);
         EXPECT_EQ(NSUnderlineStyleSingle, [attributes[NSUnderlineStyleAttributeName] integerValue]);
         EXPECT_EQ(0, [attributes[NSSuperscriptAttributeName] integerValue]);
+        expectFontManagerState({ "Helvetica-Bold", 48 }, { 102, 157, 52, 1 }, { { 0.470588, 5 } }, YES, NO, NO);
     }
     {
         [webView selectElementWithIdentifier:@"three"];
@@ -221,6 +253,7 @@ TEST(FontAttributes, FontAttributesAfterChangingSelection)
         EXPECT_EQ(NSUnderlineStyleNone, [attributes[NSStrikethroughStyleAttributeName] integerValue]);
         EXPECT_EQ(NSUnderlineStyleNone, [attributes[NSUnderlineStyleAttributeName] integerValue]);
         EXPECT_EQ(0, [attributes[NSSuperscriptAttributeName] integerValue]);
+        expectFontManagerState({ "Menlo-Italic", 18 }, { 255, 106, 0, 1 }, std::nullopt, NO, NO, NO);
     }
     {
         [webView selectElementWithIdentifier:@"four"];
@@ -233,6 +266,7 @@ TEST(FontAttributes, FontAttributesAfterChangingSelection)
         EXPECT_EQ(NSUnderlineStyleNone, [attributes[NSStrikethroughStyleAttributeName] integerValue]);
         EXPECT_EQ(NSUnderlineStyleNone, [attributes[NSUnderlineStyleAttributeName] integerValue]);
         EXPECT_EQ(0, [attributes[NSSuperscriptAttributeName] integerValue]);
+        expectFontManagerState({ "Avenir-Book", 24 }, { 255, 255, 255, 1 }, std::nullopt, NO, NO, NO);
     }
     {
         [webView selectElementWithIdentifier:@"five"];
@@ -245,6 +279,7 @@ TEST(FontAttributes, FontAttributesAfterChangingSelection)
         EXPECT_EQ(NSUnderlineStyleNone, [attributes[NSStrikethroughStyleAttributeName] integerValue]);
         EXPECT_EQ(NSUnderlineStyleNone, [attributes[NSUnderlineStyleAttributeName] integerValue]);
         EXPECT_EQ(0, [attributes[NSSuperscriptAttributeName] integerValue]);
+        expectFontManagerState({ "TimesNewRomanPS-BoldMT", 24 }, { 131, 16, 0, 1 }, std::nullopt, NO, NO, NO);
     }
     {
         [webView selectElementWithIdentifier:@"six"];
@@ -257,6 +292,7 @@ TEST(FontAttributes, FontAttributesAfterChangingSelection)
         EXPECT_EQ(NSUnderlineStyleNone, [attributes[NSStrikethroughStyleAttributeName] integerValue]);
         EXPECT_EQ(NSUnderlineStyleNone, [attributes[NSUnderlineStyleAttributeName] integerValue]);
         EXPECT_EQ(0, [attributes[NSSuperscriptAttributeName] integerValue]);
+        expectFontManagerState({ "Avenir-Black", 18 }, { 255, 64, 19, 1 }, std::nullopt, NO, NO, NO);
     }
     {
         [webView selectElementWithIdentifier:@"seven"];
@@ -269,6 +305,7 @@ TEST(FontAttributes, FontAttributesAfterChangingSelection)
         EXPECT_EQ(NSUnderlineStyleNone, [attributes[NSStrikethroughStyleAttributeName] integerValue]);
         EXPECT_EQ(NSUnderlineStyleNone, [attributes[NSUnderlineStyleAttributeName] integerValue]);
         EXPECT_EQ(-1, [attributes[NSSuperscriptAttributeName] integerValue]);
+        expectFontManagerState({ "Avenir-BookOblique", 12 }, { 235, 235, 235, 1 }, std::nullopt, NO, NO, NO);
     }
     {
         [webView selectElementWithIdentifier:@"eight"];
@@ -281,6 +318,7 @@ TEST(FontAttributes, FontAttributesAfterChangingSelection)
         EXPECT_EQ(NSUnderlineStyleNone, [attributes[NSStrikethroughStyleAttributeName] integerValue]);
         EXPECT_EQ(NSUnderlineStyleNone, [attributes[NSUnderlineStyleAttributeName] integerValue]);
         EXPECT_EQ(1, [attributes[NSSuperscriptAttributeName] integerValue]);
+        expectFontManagerState({ "Avenir-Book", 12 }, { 0, 0, 0, 1 }, std::nullopt, NO, NO, NO);
     }
     {
         [webView selectElementWithIdentifier:@"nine"];
@@ -293,6 +331,7 @@ TEST(FontAttributes, FontAttributesAfterChangingSelection)
         EXPECT_EQ(NSUnderlineStyleNone, [attributes[NSStrikethroughStyleAttributeName] integerValue]);
         EXPECT_EQ(NSUnderlineStyleNone, [attributes[NSUnderlineStyleAttributeName] integerValue]);
         EXPECT_EQ(0, [attributes[NSSuperscriptAttributeName] integerValue]);
+        expectFontManagerState({ "Georgia", 36 }, { 0, 0, 0, 1 }, { { 0.658824, 9 } }, NO, NO, NO);
     }
     {
         [webView selectElementWithIdentifier:@"ten"];
@@ -305,6 +344,7 @@ TEST(FontAttributes, FontAttributesAfterChangingSelection)
         EXPECT_EQ(NSUnderlineStyleNone, [attributes[NSStrikethroughStyleAttributeName] integerValue]);
         EXPECT_EQ(NSUnderlineStyleNone, [attributes[NSUnderlineStyleAttributeName] integerValue]);
         EXPECT_EQ(0, [attributes[NSSuperscriptAttributeName] integerValue]);
+        expectFontManagerState({ "Avenir-BookOblique", 18 }, { 0, 0, 0, 1 }, std::nullopt, NO, NO, NO);
     }
     {
         [webView selectElementWithIdentifier:@"eleven"];
@@ -317,7 +357,13 @@ TEST(FontAttributes, FontAttributesAfterChangingSelection)
         EXPECT_EQ(NSUnderlineStyleNone, [attributes[NSStrikethroughStyleAttributeName] integerValue]);
         EXPECT_EQ(NSUnderlineStyleNone, [attributes[NSUnderlineStyleAttributeName] integerValue]);
         EXPECT_EQ(0, [attributes[NSSuperscriptAttributeName] integerValue]);
+        expectFontManagerState({ "Menlo-Regular", 20 }, { 0, 0, 0, 1 }, std::nullopt, NO, NO, NO);
     }
+#if PLATFORM(MAC)
+    [webView selectAll:nil];
+    [webView waitForNextPresentationUpdate];
+    EXPECT_TRUE(NSFontManager.sharedFontManager.multiple);
+#endif
 }
 
 TEST(FontAttributes, NestedTextListsWithHorizontalAlignment)

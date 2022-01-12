@@ -2559,6 +2559,11 @@ void WebPageProxy::requestFontAttributesAtSelectionStart(CompletionHandler<void(
     if (!hasRunningProcess())
         return callback({ });
 
+    if (auto attributes = m_cachedFontAttributesAtSelectionStart) {
+        callback(*attributes);
+        return;
+    }
+
     sendWithAsyncReply(Messages::WebPage::RequestFontAttributesAtSelectionStart(), [this, protectedThis = Ref { *this }, callback = WTFMove(callback)] (const WebCore::FontAttributes& attributes) mutable {
         m_cachedFontAttributesAtSelectionStart = attributes;
         callback(attributes);

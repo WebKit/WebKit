@@ -94,6 +94,7 @@ static RetainPtr<FontManagerTestWKWebView> webViewForFontManagerTesting(NSFontMa
     [webView synchronouslyLoadHTMLString:markup];
     [webView stringByEvaluatingJavaScript:@"document.body.focus()"];
     [webView _setEditable:YES];
+    [[fontManager fontPanel:YES] setIsVisible:YES];
     fontManager.target = webView.get();
     return webView;
 }
@@ -196,6 +197,15 @@ TEST(FontManagerTests, ChangeFontWithPanel)
     [fontPanel setIsVisible:YES];
     [webView waitForNextPresentationUpdate];
 
+    auto expectSameAttributes = [](NSFont *font1, NSFont *font2) {
+        auto fontAttributes1 = font1.fontDescriptor.fontAttributes;
+        auto fontAttributes2 = font2.fontDescriptor.fontAttributes;
+        BOOL attributesAreEqual = [fontAttributes1 isEqualToDictionary:fontAttributes2];
+        EXPECT_TRUE(attributesAreEqual);
+        if (!attributesAreEqual)
+            NSLog(@"Expected %@ to have the same attributes as %@", font1, font2);
+    };
+
     NSFont *largeHelveticaFont = [NSFont fontWithName:@"Helvetica" size:20];
     [fontPanel setPanelFont:largeHelveticaFont isMultiple:NO];
     [webView selectWord:nil];
@@ -204,7 +214,7 @@ TEST(FontManagerTests, ChangeFontWithPanel)
     EXPECT_WK_STREQ("Helvetica", [webView stylePropertyAtSelectionStart:@"font-family"]);
     EXPECT_WK_STREQ("20px", [webView stylePropertyAtSelectionStart:@"font-size"]);
     EXPECT_WK_STREQ("400", [webView stylePropertyAtSelectionStart:@"font-weight"]);
-    EXPECT_EQ(largeHelveticaFont, fontManager.selectedFont);
+    expectSameAttributes(largeHelveticaFont, fontManager.selectedFont);
 
     NSFont *smallBoldTimesFont = [fontManager fontWithFamily:@"Times New Roman" traits:NSBoldFontMask weight:NSFontWeightBold size:10];
     [fontPanel setPanelFont:smallBoldTimesFont isMultiple:NO];
@@ -214,7 +224,7 @@ TEST(FontManagerTests, ChangeFontWithPanel)
     EXPECT_WK_STREQ("\"Times New Roman\"", [webView stylePropertyAtSelectionStart:@"font-family"]);
     EXPECT_WK_STREQ("10px", [webView stylePropertyAtSelectionStart:@"font-size"]);
     EXPECT_WK_STREQ("700", [webView stylePropertyAtSelectionStart:@"font-weight"]);
-    EXPECT_EQ(smallBoldTimesFont, fontManager.selectedFont);
+    expectSameAttributes(smallBoldTimesFont, fontManager.selectedFont);
 
     NSFont *boldItalicArialFont = [fontManager fontWithFamily:@"Arial" traits:NSBoldFontMask | NSItalicFontMask weight:NSFontWeightBold size:14];
     [fontPanel setPanelFont:boldItalicArialFont isMultiple:NO];
@@ -224,7 +234,7 @@ TEST(FontManagerTests, ChangeFontWithPanel)
     EXPECT_WK_STREQ("Arial", [webView stylePropertyAtSelectionStart:@"font-family"]);
     EXPECT_WK_STREQ("14px", [webView stylePropertyAtSelectionStart:@"font-size"]);
     EXPECT_WK_STREQ("700", [webView stylePropertyAtSelectionStart:@"font-weight"]);
-    EXPECT_EQ(boldItalicArialFont, fontManager.selectedFont);
+    expectSameAttributes(boldItalicArialFont, fontManager.selectedFont);
 
     NSFont *largeItalicLightAvenirFont = [fontManager fontWithFamily:@"Avenir" traits:NSItalicFontMask weight:NSFontWeightLight size:24];
     [fontPanel setPanelFont:largeItalicLightAvenirFont isMultiple:NO];
@@ -234,7 +244,7 @@ TEST(FontManagerTests, ChangeFontWithPanel)
     EXPECT_WK_STREQ("Avenir-LightOblique", [webView stylePropertyAtSelectionStart:@"font-family"]);
     EXPECT_WK_STREQ("24px", [webView stylePropertyAtSelectionStart:@"font-size"]);
     EXPECT_WK_STREQ("400", [webView stylePropertyAtSelectionStart:@"font-weight"]);
-    EXPECT_EQ(largeItalicLightAvenirFont, fontManager.selectedFont);
+    expectSameAttributes(largeItalicLightAvenirFont, fontManager.selectedFont);
 }
 
 TEST(FontManagerTests, ChangeAttributesWithFontEffectsBox)
@@ -283,13 +293,14 @@ TEST(FontManagerTests, ChangeAttributesWithFontEffectsBox)
     [webView selectNextWord];
     fontPanel.shadowBlur = 8;
     fontPanel.shadowOpacity = 1;
+    fontPanel.shadowLength = 0.25;
     [fontPanel toggleShadow];
     EXPECT_WK_STREQ("baz", [webView selectedText]);
-    EXPECT_WK_STREQ("rgb(0, 0, 0) 0px 1.25px 8px", textShadowAroundSelection());
+    EXPECT_WK_STREQ("rgb(0, 0, 0) 0px 2.5px 8px", textShadowAroundSelection());
     {
         NSShadow *shadow = [webView typingAttributes][NSShadowAttributeName];
         EXPECT_EQ(shadow.shadowOffset.width, 0);
-        EXPECT_EQ(shadow.shadowOffset.height, 1.25);
+        EXPECT_EQ(shadow.shadowOffset.height, 2.5);
         EXPECT_EQ(shadow.shadowBlurRadius, 8);
         EXPECT_TRUE([shadow.shadowColor isEqual:[NSColor colorWithRed:0 green:0 blue:0 alpha:1]]);
     }
@@ -302,11 +313,12 @@ TEST(FontManagerTests, ChangeAttributesWithFontEffectsBox)
     [webView selectAll:nil];
     fontPanel.shadowBlur = 5;
     fontPanel.shadowOpacity = 0.2;
+    fontPanel.shadowLength = 0.5;
     [fontPanel toggleShadow];
     [fontPanel chooseUnderlineMenuItemWithTitle:@"single"];
     [fontPanel chooseStrikeThroughMenuItemWithTitle:@"single"];
     EXPECT_WK_STREQ("foo bar baz", [webView selectedText]);
-    EXPECT_WK_STREQ("rgba(0, 0, 0, 0.2) 0px 1.25px 5px", textShadowAroundSelection());
+    EXPECT_WK_STREQ("rgba(0, 0, 0, 0.2) 0px 5px 5px", textShadowAroundSelection());
     EXPECT_WK_STREQ("underline line-through", textDecorationsAroundSelection());
     {
         NSDictionary *typingAttributes = [webView typingAttributes];
@@ -315,7 +327,7 @@ TEST(FontManagerTests, ChangeAttributesWithFontEffectsBox)
 
         NSShadow *shadow = typingAttributes[NSShadowAttributeName];
         EXPECT_EQ(shadow.shadowOffset.width, 0);
-        EXPECT_EQ(shadow.shadowOffset.height, 1.25);
+        EXPECT_EQ(shadow.shadowOffset.height, 5);
         EXPECT_EQ(shadow.shadowBlurRadius, 5);
         EXPECT_TRUE([shadow.shadowColor isEqual:[NSColor colorWithRed:0 green:0 blue:0 alpha:0.2]]);
     }

@@ -954,7 +954,6 @@ public:
 
 #if PLATFORM(MAC)
     void attributedSubstringForCharacterRangeAsync(const EditingRange&, CompletionHandler<void(const WebCore::AttributedString&, const EditingRange&)>&&);
-    void fontAtSelection(CompletionHandler<void(const FontInfo&, double, bool)>&&);
     void requestAcceptsFirstMouse(int eventNumber, const WebKit::WebMouseEvent&);
 #endif
 

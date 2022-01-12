@@ -2930,7 +2930,13 @@ std::optional<RefPtr<SecurityOrigin>> ArgumentCoder<RefPtr<SecurityOrigin>>::dec
 
 void ArgumentCoder<FontAttributes>::encode(Encoder& encoder, const FontAttributes& attributes)
 {
-    encoder << attributes.backgroundColor << attributes.foregroundColor << attributes.fontShadow << attributes.hasUnderline << attributes.hasStrikeThrough << attributes.textLists;
+    encoder << attributes.backgroundColor;
+    encoder << attributes.foregroundColor;
+    encoder << attributes.fontShadow;
+    encoder << attributes.hasUnderline;
+    encoder << attributes.hasStrikeThrough;
+    encoder << attributes.hasMultipleFonts;
+    encoder << attributes.textLists;
     encoder << attributes.horizontalAlignment;
     encoder << attributes.subscriptOrSuperscript;
     encoder << attributes.font;
@@ -2938,30 +2944,49 @@ void ArgumentCoder<FontAttributes>::encode(Encoder& encoder, const FontAttribute
 
 std::optional<FontAttributes> ArgumentCoder<FontAttributes>::decode(Decoder& decoder)
 {
-    FontAttributes attributes;
-
-    if (!decoder.decode(attributes.backgroundColor))
+    std::optional<Color> backgroundColor;
+    decoder >> backgroundColor;
+    if (!backgroundColor)
         return std::nullopt;
 
-    if (!decoder.decode(attributes.foregroundColor))
+    std::optional<Color> foregroundColor;
+    decoder >> foregroundColor;
+    if (!foregroundColor)
         return std::nullopt;
 
-    if (!decoder.decode(attributes.fontShadow))
+    std::optional<FontShadow> fontShadow;
+    decoder >> fontShadow;
+    if (!fontShadow)
         return std::nullopt;
 
-    if (!decoder.decode(attributes.hasUnderline))
+    std::optional<bool> hasUnderline;
+    decoder >> hasUnderline;
+    if (!hasUnderline)
         return std::nullopt;
 
-    if (!decoder.decode(attributes.hasStrikeThrough))
+    std::optional<bool> hasStrikeThrough;
+    decoder >> hasStrikeThrough;
+    if (!hasStrikeThrough)
         return std::nullopt;
 
-    if (!decoder.decode(attributes.textLists))
+    std::optional<bool> hasMultipleFonts;
+    decoder >> hasMultipleFonts;
+    if (!hasMultipleFonts)
         return std::nullopt;
 
-    if (!decoder.decode(attributes.horizontalAlignment))
+    std::optional<Vector<TextList>> textLists;
+    decoder >> textLists;
+    if (!textLists)
         return std::nullopt;
 
-    if (!decoder.decode(attributes.subscriptOrSuperscript))
+    std::optional<FontAttributes::HorizontalAlignment> horizontalAlignment;
+    decoder >> horizontalAlignment;
+    if (!horizontalAlignment)
+        return std::nullopt;
+
+    std::optional<FontAttributes::SubscriptOrSuperscript> subscriptOrSuperscript;
+    decoder >> subscriptOrSuperscript;
+    if (!subscriptOrSuperscript)
         return std::nullopt;
 
     std::optional<RefPtr<Font>> font;
@@ -2969,9 +2994,7 @@ std::optional<FontAttributes> ArgumentCoder<FontAttributes>::decode(Decoder& dec
     if (!font)
         return std::nullopt;
 
-    attributes.font = WTFMove(*font);
-
-    return attributes;
+    return { { WTFMove(*font), WTFMove(*backgroundColor), WTFMove(*foregroundColor), WTFMove(*fontShadow), *subscriptOrSuperscript, *horizontalAlignment, WTFMove(*textLists), *hasUnderline, *hasStrikeThrough, *hasMultipleFonts } };
 }
 
 #if ENABLE(ATTACHMENT_ELEMENT)

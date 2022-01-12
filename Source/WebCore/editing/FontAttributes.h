@@ -90,6 +90,7 @@ struct FontAttributes {
     Vector<TextList> textLists;
     bool hasUnderline { false };
     bool hasStrikeThrough { false };
+    bool hasMultipleFonts { false };
 };
 
 } // namespace WebCore

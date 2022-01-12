@@ -4041,8 +4041,7 @@ static Vector<TextList> editableTextListsAtPositionInDescendingOrder(const Posit
 FontAttributes Editor::fontAttributesAtSelectionStart()
 {
     FontAttributes attributes;
-    bool hasMultipleFonts = false; // FIXME (190120): Add `hasMultipleFonts` as a member in `FontAttributes`.
-    attributes.font = fontForSelection(hasMultipleFonts);
+    attributes.font = fontForSelection(attributes.hasMultipleFonts);
 
     RefPtr<Node> nodeToRemove;
     auto nodeRemovalScope = makeScopeExit([&nodeToRemove]() {

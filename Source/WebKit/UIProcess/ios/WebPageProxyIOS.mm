@@ -1051,10 +1051,10 @@ void WebPageProxy::didUpdateEditorState(const EditorState& oldEditorState, const
     if (newEditorState.shouldIgnoreSelectionChanges)
         return;
     
+    updateFontAttributesAfterEditorStateChange();
     // We always need to notify the client on iOS to make sure the selection is redrawn,
     // even during composition to support phrase boundary gesture.
     pageClient().selectionDidChange();
-    updateFontAttributesAfterEditorStateChange();
 }
 
 void WebPageProxy::dispatchDidUpdateEditorState()

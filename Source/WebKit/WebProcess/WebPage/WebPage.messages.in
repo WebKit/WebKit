@@ -467,7 +467,6 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
 #endif
 #if PLATFORM(MAC)
     AttributedSubstringForCharacterRangeAsync(struct WebKit::EditingRange range) -> (struct WebCore::AttributedString string, struct WebKit::EditingRange range) Async
-    FontAtSelection() -> (struct WebKit::FontInfo fontInfo, double fontSize, bool selectionHasMultipleFonts) Async
     RequestAcceptsFirstMouse(int eventNumber, WebKit::WebMouseEvent event)
 #endif
 

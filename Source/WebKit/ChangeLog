@@ -1,3 +1,71 @@
+2022-01-12  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macOS] [WK2] NSFontPanel UI (font color, text decorations, font shadow) doesn't update on selection change
+        https://bugs.webkit.org/show_bug.cgi?id=190120
+        rdar://44897405
+
+        Reviewed by Darin Adler.
+
+        Currently, in WebKit2, there is no mechanism for updating the NSFontManager with new font attributes when the
+        selection changes. While we do update the selected NSFont, we do so by requesting font family and font size via
+        an IPC request, `FontAtSelection`, but this does not include attributes like underline, strike-through, color,
+        and text shadows.
+
+        Instead, we can remove this `FontAtSelection` IPC request mechanism entirely, and request `FontAttributes`. This
+        allows us to set the currently selected NSFont on the NSFontManager, and also update the font manager with the
+        full dictionary of font attributes.
+
+        Test: FontAttributes.FontAttributesAfterChangingSelection
+
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<FontAttributes>::encode):
+        (IPC::ArgumentCoder<FontAttributes>::decode):
+
+        Encode and decode the new `hasMultipleFonts` flag in FontAttributes. Additionally, take this opportunity to
+        modernize some of the decoding-side logic by decoding each member into a `std::optional` and creating the final
+        deserialized FontAttributes at the end.
+
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::updateFontManagerIfNeeded):
+
+        Rather than grabbing just the font family and font size using `fontAtSelection`, request FontAttributes instead
+        and convert it to a NSDictionary to call `-[NSFontManager setSelectedAttributes:isMultiple:]`.
+
+        (WebKit::WebViewImpl::typingAttributesWithCompletionHandler):
+        (WebKit::WebViewImpl::changeFontAttributesFromSender):
+        (WebKit::WebViewImpl::changeFontFromFontManager):
+
+        Remove code to update the font manager after changing font attributes. This is unnecessary because the process
+        of executing an edit command in order to change typing style will trigger an editor state update anyways, which
+        then causes us to request new font attributes.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::requestFontAttributesAtSelectionStart):
+
+        Move the check for cached fontattributes to WebPageProxy, from WebViewImpl. This allows us to get rid of a
+        helper function on WebPageProxy to grab the current cached font attributes.
+
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::didUpdateEditorState):
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::didUpdateEditorState):
+
+        Set cached FontAttributes (if present) *prior* to dispatching a selection change. This allows any subsequent
+        request for font attributes at the selection to return immediately with the result.
+
+        (WebKit::WebPageProxy::fontAtSelection): Deleted.
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
+        Remove the `FontAtSelectionCallback` IPC message (and all associated code). This codepath was previously only
+        exercised when updating the font panel on macOS, and is no longer necessary because we just use
+        `requestFontAttributesAtSelectionStart` instead, which allows us to grab not only the NSFont, but also all
+        platform typing attributes at the selection.
+
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::fontAtSelection): Deleted.
+
 2022-01-12  Alex Christensen  <achristensen@webkit.org>
 
         Build WebKitSwift when building with make or build-webkit
