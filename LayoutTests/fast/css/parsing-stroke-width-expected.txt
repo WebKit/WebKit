@@ -4,7 +4,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 PASS testComputedStyleInherited("stroke-width: 4px;") is "4px"
-FAIL testComputedStyleInherited("stroke-width: 0.01em;") should be 0.01em. Was 0.1599999964237213px.
+FAIL testComputedStyleInherited("stroke-width: 0.01em;") should be 0.01em. Was 0.16px.
 PASS testComputedStyleInherited("stroke-width: 10%;") is "10%"
 PASS testComputedStyle(";") is "1px"
 PASS test("stroke-width: 4px;") is "4px"

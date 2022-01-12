@@ -31,6 +31,7 @@ namespace WebCore {
 enum class CSSUnitType : uint8_t {
     CSS_UNKNOWN,
     CSS_NUMBER,
+    CSS_INTEGER,
     CSS_PERCENTAGE,
     CSS_EMS,
     CSS_EXS,

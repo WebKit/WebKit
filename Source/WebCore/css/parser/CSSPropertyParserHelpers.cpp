@@ -234,7 +234,7 @@ struct IntegerTypeKnownTokenTypeFunctionConsumer {
         ASSERT(range.peek().type() == FunctionToken);
 
         if (auto integer = IntegerTypeRawKnownTokenTypeFunctionConsumer<IntType, integerRange>::consume(range, symbolTable, valueRange, parserMode, unitless, unitlessZero))
-            return pool.createValue(*integer, CSSUnitType::CSS_NUMBER);
+            return pool.createValue(*integer, CSSUnitType::CSS_INTEGER);
         return nullptr;
     }
 };
@@ -247,7 +247,7 @@ struct IntegerTypeKnownTokenTypeNumberConsumer {
         ASSERT(range.peek().type() == NumberToken);
         
         if (auto integer = IntegerTypeRawKnownTokenTypeNumberConsumer<IntType, integerRange>::consume(range, symbolTable, valueRange, parserMode, unitless, unitlessZero))
-            return pool.createValue(*integer, CSSUnitType::CSS_NUMBER);
+            return pool.createValue(*integer, CSSUnitType::CSS_INTEGER);
         return nullptr;
     }
 };

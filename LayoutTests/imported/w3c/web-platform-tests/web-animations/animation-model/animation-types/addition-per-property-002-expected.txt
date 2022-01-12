@@ -121,18 +121,18 @@ PASS stop-color supports animating as color of #RGBa
 PASS stop-color supports animating as color of rgba()
 PASS stop-color supports animating as color of hsla()
 PASS stop-opacity (type: opacity) has testAddition function
-FAIL stop-opacity: [0, 1] number assert_equals: The value should be 0.6 at 0ms expected "0.6" but got "0.6000000238418579"
-FAIL stop-opacity: [0, 1] number (clamped) assert_equals: The value should be 1 at 0ms expected "1" but got "1.100000023841858"
+PASS stop-opacity: [0, 1] number
+FAIL stop-opacity: [0, 1] number (clamped) assert_equals: The value should be 1 at 0ms expected "1" but got "1.1"
 PASS stroke-dasharray (type: dasharray) has testAddition function
 PASS stroke-dasharray: dasharray
 PASS stroke-dasharray (type: discrete) has testAddition function
 PASS stroke-dasharray: "10px, 20px" onto "none"
 PASS stroke-dasharray: "none" onto "10px, 20px"
 PASS stroke-miterlimit (type: positiveNumber) has testAddition function
-FAIL stroke-miterlimit: positive number assert_equals: The value should be 2.2 at 0ms expected "2.2" but got "2.200000047683716"
+PASS stroke-miterlimit: positive number
 PASS stroke-opacity (type: opacity) has testAddition function
-FAIL stroke-opacity: [0, 1] number assert_equals: The value should be 0.6 at 0ms expected "0.6" but got "0.6000000238418579"
-FAIL stroke-opacity: [0, 1] number (clamped) assert_equals: The value should be 1 at 0ms expected "1" but got "1.100000023841858"
+PASS stroke-opacity: [0, 1] number
+FAIL stroke-opacity: [0, 1] number (clamped) assert_equals: The value should be 1 at 0ms expected "1" but got "1.1"
 PASS table-layout (type: discrete) has testAddition function
 PASS table-layout: "fixed" onto "auto"
 PASS table-layout: "auto" onto "fixed"

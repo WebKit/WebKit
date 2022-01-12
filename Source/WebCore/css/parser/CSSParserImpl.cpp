@@ -694,7 +694,7 @@ RefPtr<StyleRuleFontPaletteValues> CSSParserImpl::consumeFontPaletteValuesRule(C
     std::optional<FontPaletteIndex> basePalette;
     if (auto basePaletteValue = properties->getPropertyCSSValue(CSSPropertyBasePalette)) {
         const auto& primitiveValue = downcast<CSSPrimitiveValue>(*basePaletteValue);
-        if (primitiveValue.isNumber())
+        if (primitiveValue.isInteger())
             basePalette = FontPaletteIndex(primitiveValue.value<unsigned>());
         else if (primitiveValue.valueID() == CSSValueLight)
             basePalette = FontPaletteIndex(FontPaletteIndex::Type::Light);
@@ -707,7 +707,7 @@ RefPtr<StyleRuleFontPaletteValues> CSSParserImpl::consumeFontPaletteValuesRule(C
         const auto& list = downcast<CSSValueList>(*overrideColorsValue);
         for (const auto& item : list) {
             const auto& pair = downcast<CSSFontPaletteValuesOverrideColorsValue>(item.get());
-            if (!pair.key().isNumber())
+            if (!pair.key().isInteger())
                 continue;
             unsigned key = pair.key().value<unsigned>();
             Color color = pair.color().isRGBColor() ? pair.color().color() : StyleColor::colorFromKeyword(pair.color().valueID(), { });

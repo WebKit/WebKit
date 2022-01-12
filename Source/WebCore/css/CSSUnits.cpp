@@ -29,6 +29,7 @@ CSSUnitCategory unitCategory(CSSUnitType type)
 {
     switch (type) {
     case CSSUnitType::CSS_NUMBER:
+    case CSSUnitType::CSS_INTEGER:
         return CSSUnitCategory::Number;
     case CSSUnitType::CSS_PERCENTAGE:
         return CSSUnitCategory::Percent;
@@ -109,6 +110,7 @@ TextStream& operator<<(TextStream& ts, CSSUnitType unitType)
     switch (unitType) {
     case CSSUnitType::CSS_UNKNOWN: ts << "unknown"; break;
     case CSSUnitType::CSS_NUMBER: ts << "number"; break;
+    case CSSUnitType::CSS_INTEGER: ts << "integer"; break;
     case CSSUnitType::CSS_PERCENTAGE: ts << "percentage"; break;
     case CSSUnitType::CSS_EMS: ts << "ems"; break;
     case CSSUnitType::CSS_EXS: ts << "exs"; break;

@@ -14,8 +14,8 @@
             shouldBeEqualToString("window.getComputedStyle(testDiv).getPropertyValue('-webkit-filter')", "hue-rotate(150deg)");
 
             evalAndLog("testDiv.style['-webkit-filter'] = 'hue-rotate(calc(300rad/2))'");
-            shouldBeEqualToString("testDiv.style['-webkit-filter']", "hue-rotate(calc(8594.366926962348deg))");
-            shouldBeEqualToString("window.getComputedStyle(testDiv).getPropertyValue('-webkit-filter')", "hue-rotate(8594.366926962348deg)");
+            shouldBeEqualToString("testDiv.style['-webkit-filter']", "hue-rotate(calc(8594.366927deg))");
+            shouldBeEqualToString("window.getComputedStyle(testDiv).getPropertyValue('-webkit-filter')", "hue-rotate(8594.366927deg)");
 
             evalAndLog("testDiv.style['-webkit-filter'] = 'hue-rotate(calc(300grad/2))'");
             shouldBeEqualToString("testDiv.style['-webkit-filter']", "hue-rotate(calc(135deg))");

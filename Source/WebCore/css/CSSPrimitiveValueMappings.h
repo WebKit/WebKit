@@ -59,7 +59,7 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(short i)
 
 template<> inline CSSPrimitiveValue::operator short() const
 {
-    if (primitiveUnitType() == CSSUnitType::CSS_NUMBER)
+    if (primitiveType() == CSSUnitType::CSS_NUMBER || primitiveType() == CSSUnitType::CSS_INTEGER)
         return clampTo<short>(m_value.num);
 
     ASSERT_NOT_REACHED();
@@ -75,7 +75,7 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(unsigned short i)
 
 template<> inline CSSPrimitiveValue::operator unsigned short() const
 {
-    if (primitiveType() == CSSUnitType::CSS_NUMBER)
+    if (primitiveType() == CSSUnitType::CSS_NUMBER || primitiveType() == CSSUnitType::CSS_INTEGER)
         return value<unsigned short>();
 
     ASSERT_NOT_REACHED();
@@ -84,7 +84,7 @@ template<> inline CSSPrimitiveValue::operator unsigned short() const
 
 template<> inline CSSPrimitiveValue::operator int() const
 {
-    if (primitiveType() == CSSUnitType::CSS_NUMBER)
+    if (primitiveType() == CSSUnitType::CSS_NUMBER || primitiveType() == CSSUnitType::CSS_INTEGER)
         return value<int>();
 
     ASSERT_NOT_REACHED();
@@ -93,7 +93,7 @@ template<> inline CSSPrimitiveValue::operator int() const
 
 template<> inline CSSPrimitiveValue::operator unsigned() const
 {
-    if (primitiveType() == CSSUnitType::CSS_NUMBER)
+    if (primitiveType() == CSSUnitType::CSS_NUMBER || primitiveType() == CSSUnitType::CSS_INTEGER)
         return value<unsigned>();
 
     ASSERT_NOT_REACHED();
@@ -110,7 +110,7 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(float i)
 
 template<> inline CSSPrimitiveValue::operator float() const
 {
-    if (primitiveType() == CSSUnitType::CSS_NUMBER)
+    if (primitiveType() == CSSUnitType::CSS_NUMBER || primitiveType() == CSSUnitType::CSS_INTEGER)
         return value<float>();
 
     ASSERT_NOT_REACHED();
@@ -120,13 +120,13 @@ template<> inline CSSPrimitiveValue::operator float() const
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(LineClampValue i)
     : CSSValue(PrimitiveClass)
 {
-    setPrimitiveUnitType(i.isPercentage() ? CSSUnitType::CSS_PERCENTAGE : CSSUnitType::CSS_NUMBER);
+    setPrimitiveUnitType(i.isPercentage() ? CSSUnitType::CSS_PERCENTAGE : CSSUnitType::CSS_INTEGER);
     m_value.num = static_cast<double>(i.value());
 }
 
 template<> inline CSSPrimitiveValue::operator LineClampValue() const
 {
-    if (primitiveType() == CSSUnitType::CSS_NUMBER)
+    if (primitiveType() == CSSUnitType::CSS_INTEGER)
         return LineClampValue(value<int>(), LineClamp::LineCount);
 
     if (primitiveType() == CSSUnitType::CSS_PERCENTAGE)
@@ -219,7 +219,7 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(ColumnSpan columnSpan)
 template<> inline CSSPrimitiveValue::operator ColumnSpan() const
 {
     // Map 1 to none for compatibility reasons.
-    if (primitiveUnitType() == CSSUnitType::CSS_NUMBER && m_value.num == 1)
+    if ((primitiveUnitType() == CSSUnitType::CSS_NUMBER || primitiveUnitType() == CSSUnitType::CSS_INTEGER) && m_value.num == 1)
         return ColumnSpan::None;
 
     ASSERT(isValueID());

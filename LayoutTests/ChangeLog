@@ -1,3 +1,42 @@
+2021-11-29 Simon Fraser  <simon.fraser@apple.com> 
+
+        Serialize CSS <number> values with rounding, limited decimal precision, and no exponents per-spec
+        https://bugs.webkit.org/show_bug.cgi?id=218880
+
+        Reviewed by Darin Adler.
+
+        * css3/calc/font-size-fractional-expected.txt:
+        * css3/calc/simplification-expected.txt:
+        * css3/color-filters/color-filter-parsing.html:
+        * css3/filters/backdrop/backdropfilter-property-computed-style-expected.txt:
+        * css3/filters/backdrop/backdropfilter-property-computed-style.html:
+        * css3/filters/filter-property-computed-style-expected.txt:
+        * css3/filters/filter-property-computed-style.html:
+        * css3/filters/unprefixed-expected.txt:
+        * css3/filters/unprefixed.html:
+        * css3/scroll-snap/scroll-snap-property-computed-style-expected.txt:
+        * css3/scroll-snap/scroll-snap-property-computed-style.js:
+        * fast/css/calc-parsing-expected.txt:
+        * fast/css/calc-parsing-limits-expected.txt:
+        * fast/css/calc-parsing-limits.html:
+        * fast/css/calc-parsing.html:
+        * fast/css/calc-with-angle-time-frequency-expected.txt:
+        * fast/css/calc-with-angle-time-frequency.html:
+        * fast/css/large-value-csstext-expected.txt:
+        * fast/css/line-height-get-computed-style-expected.txt:
+        * fast/css/line-height-get-computed-style.html:
+        * fast/css/parsing-stroke-width-expected.txt:
+        * fast/css/round-trip-values-expected.txt:
+        * media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-volume-styles-expected.txt:
+        * media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-volume-styles.html:
+        * platform/ios-wk2/imported/w3c/web-platform-tests/html/rendering/pixel-length-attributes-expected.txt:
+        * platform/ios/fast/forms/search/search-zoom-computed-style-height-expected.txt:
+        * svg/css/parse-height-expected.txt:
+        * svg/css/parse-height.html:
+        * svg/css/parse-length-expected.txt:
+        * svg/css/parse-length.html:
+        * transitions/frames-timing-function-expected.txt:
+
 2022-01-11  Megan Gardner  <megan_gardner@apple.com>
 
         Rewrite touch and drag tests to be more robust.

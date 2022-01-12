@@ -78,6 +78,7 @@ static inline bool isValidCSSUnitTypeForDoubleConversion(CSSUnitType unitType)
     case CSSUnitType::CSS_MM:
     case CSSUnitType::CSS_MS:
     case CSSUnitType::CSS_NUMBER:
+    case CSSUnitType::CSS_INTEGER:
     case CSSUnitType::CSS_PC:
     case CSSUnitType::CSS_PERCENTAGE:
     case CSSUnitType::CSS_PT:
@@ -186,6 +187,7 @@ static inline bool isStringType(CSSUnitType type)
     case CSSUnitType::CSS_MM:
     case CSSUnitType::CSS_MS:
     case CSSUnitType::CSS_NUMBER:
+    case CSSUnitType::CSS_INTEGER:
     case CSSUnitType::CSS_PAIR:
     case CSSUnitType::CSS_PC:
     case CSSUnitType::CSS_PERCENTAGE:
@@ -545,6 +547,7 @@ void CSSPrimitiveValue::cleanup()
         break;
     case CSSUnitType::CSS_DIMENSION:
     case CSSUnitType::CSS_NUMBER:
+    case CSSUnitType::CSS_INTEGER:
     case CSSUnitType::CSS_PERCENTAGE:
     case CSSUnitType::CSS_EMS:
     case CSSUnitType::CSS_QUIRKY_EMS:
@@ -1103,7 +1106,7 @@ std::optional<double> CSSPrimitiveValue::doubleValueInternal(CSSUnitType request
             return std::nullopt;
     }
 
-    if (sourceUnitType == CSSUnitType::CSS_NUMBER) {
+    if (sourceUnitType == CSSUnitType::CSS_NUMBER || sourceUnitType == CSSUnitType::CSS_INTEGER) {
         // We interpret conversion from CSSUnitType::CSS_NUMBER in the same way as CSSParser::validUnit() while using non-strict mode.
         sourceUnitType = canonicalUnitTypeForCategory(targetCategory);
         if (sourceUnitType == CSSUnitType::CSS_UNKNOWN)
@@ -1143,6 +1146,11 @@ String CSSPrimitiveValue::stringValue() const
 }
 
 NEVER_INLINE String CSSPrimitiveValue::formatNumberValue(StringView suffix) const
+{
+    return makeString(FormattedCSSNumber::create(m_value.num), suffix);
+}
+
+NEVER_INLINE String CSSPrimitiveValue::formatIntegerValue(StringView suffix) const
 {
     if (m_value.num == std::numeric_limits<double>::infinity())
         return makeString("infinity", suffix);
@@ -1210,6 +1218,7 @@ String CSSPrimitiveValue::unitTypeString(CSSUnitType unitType)
 
         case CSSUnitType::CSS_UNKNOWN:
         case CSSUnitType::CSS_NUMBER:
+        case CSSUnitType::CSS_INTEGER:
         case CSSUnitType::CSS_DIMENSION:
         case CSSUnitType::CSS_STRING:
         case CSSUnitType::CSS_URI:
@@ -1244,6 +1253,8 @@ ALWAYS_INLINE String CSSPrimitiveValue::formatNumberForCustomCSSText() const
         return String();
     case CSSUnitType::CSS_NUMBER:
         return formatNumberValue("");
+    case CSSUnitType::CSS_INTEGER:
+        return formatIntegerValue("");
     case CSSUnitType::CSS_PERCENTAGE:
         return formatNumberValue("%");
     case CSSUnitType::CSS_EMS:
@@ -1435,6 +1446,7 @@ bool CSSPrimitiveValue::equals(const CSSPrimitiveValue& other) const
     case CSSUnitType::CSS_UNKNOWN:
         return false;
     case CSSUnitType::CSS_NUMBER:
+    case CSSUnitType::CSS_INTEGER:
     case CSSUnitType::CSS_PERCENTAGE:
     case CSSUnitType::CSS_EMS:
     case CSSUnitType::CSS_QUIRKY_EMS:

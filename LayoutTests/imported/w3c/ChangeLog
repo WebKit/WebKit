@@ -1,3 +1,40 @@
+2021-11-29 Simon Fraser  <simon.fraser@apple.com> 
+
+        Serialize CSS <number> values with rounding, limited decimal precision, and no exponents per-spec
+        https://bugs.webkit.org/show_bug.cgi?id=218880
+
+        Reviewed by Darin Adler.
+
+        * web-platform-tests/css/css-cascade/revert-val-006-expected.txt:
+        * web-platform-tests/css/css-cascade/revert-val-007-expected.txt:
+        * web-platform-tests/css/css-easing/cubic-bezier-timing-functions-output-expected.txt:
+        * web-platform-tests/css/css-fonts/parsing/font-computed-expected.txt:
+        * web-platform-tests/css/css-fonts/variations/at-font-face-descriptors-expected.txt:
+        * web-platform-tests/css/css-masking/clip-path/interpolation-expected.txt:
+        * web-platform-tests/css/css-shapes/basic-shape-interpolation-expected.txt:
+        * web-platform-tests/css/css-transforms/2d-rotate-js-expected.txt:
+        * web-platform-tests/css/css-transforms/animation/transform-interpolation-001-expected.txt:
+        * web-platform-tests/css/css-transforms/animation/transform-interpolation-inline-value-expected.txt:
+        * web-platform-tests/css/css-transforms/animation/transform-matrix-composition-expected.txt:
+        * web-platform-tests/css/css-values/acos-asin-atan-atan2-serialize-expected.txt:
+        * web-platform-tests/css/css-values/calc-numbers-expected.txt:
+        * web-platform-tests/css/css-values/hypot-pow-sqrt-invalid-expected.txt:
+        * web-platform-tests/css/css-values/minmax-angle-serialize-expected.txt:
+        * web-platform-tests/css/css-values/minmax-number-computed-expected.txt:
+        * web-platform-tests/css/css-values/minmax-number-serialize-expected.txt:
+        * web-platform-tests/css/css-variables/variable-presentation-attribute-expected.txt:
+        * web-platform-tests/css/cssom/getComputedStyle-line-height-expected.txt:
+        * web-platform-tests/css/motion/animation/offset-rotate-interpolation-expected.txt:
+        * web-platform-tests/html/rendering/dimension-attributes-expected.txt:
+        * web-platform-tests/html/rendering/pixel-length-attributes-expected.txt:
+        * web-platform-tests/web-animations/animation-model/animation-types/accumulation-per-property-001-expected.txt:
+        * web-platform-tests/web-animations/animation-model/animation-types/accumulation-per-property-002-expected.txt:
+        * web-platform-tests/web-animations/animation-model/animation-types/addition-per-property-001-expected.txt:
+        * web-platform-tests/web-animations/animation-model/animation-types/addition-per-property-002-expected.txt:
+        * web-platform-tests/web-animations/animation-model/animation-types/interpolation-per-property-001-expected.txt:
+        * web-platform-tests/web-animations/animation-model/animation-types/interpolation-per-property-002-expected.txt:
+        * web-platform-tests/web-animations/animation-model/keyframe-effects/effect-value-iteration-composite-operation-expected.txt:
+
 2022-01-11  Asumu Takikawa  <asumu@igalia.com>
 
         [Wasm] Unify memory import handling in module loader and JS cases

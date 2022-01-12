@@ -7,8 +7,8 @@ testDiv.style['-webkit-filter'] = 'hue-rotate(calc(300deg/2))'
 PASS testDiv.style['-webkit-filter'] is "hue-rotate(calc(150deg))"
 PASS window.getComputedStyle(testDiv).getPropertyValue('-webkit-filter') is "hue-rotate(150deg)"
 testDiv.style['-webkit-filter'] = 'hue-rotate(calc(300rad/2))'
-PASS testDiv.style['-webkit-filter'] is "hue-rotate(calc(8594.366926962348deg))"
-PASS window.getComputedStyle(testDiv).getPropertyValue('-webkit-filter') is "hue-rotate(8594.366926962348deg)"
+PASS testDiv.style['-webkit-filter'] is "hue-rotate(calc(8594.366927deg))"
+PASS window.getComputedStyle(testDiv).getPropertyValue('-webkit-filter') is "hue-rotate(8594.366927deg)"
 testDiv.style['-webkit-filter'] = 'hue-rotate(calc(300grad/2))'
 PASS testDiv.style['-webkit-filter'] is "hue-rotate(calc(135deg))"
 PASS window.getComputedStyle(testDiv).getPropertyValue('-webkit-filter') is "hue-rotate(135deg)"

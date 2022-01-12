@@ -67,7 +67,7 @@ CSSCalcPrimitiveValueNode::CSSCalcPrimitiveValueNode(Ref<CSSPrimitiveValue>&& va
 // FIXME: Use calcUnitCategory?
 bool CSSCalcPrimitiveValueNode::isNumericValue() const
 {
-    return m_value->isLength() || m_value->isNumber() || m_value->isPercentage() || m_value->isAngle()
+    return m_value->isLength() || m_value->isNumber() || m_value->isInteger() || m_value->isPercentage() || m_value->isAngle()
         || m_value->isTime() || m_value->isResolution() || m_value->isFlex() || m_value->isFrequency();
 }
 

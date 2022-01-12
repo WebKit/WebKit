@@ -141,10 +141,10 @@ PASS stop-color supports animating as color of #RGBa
 PASS stop-color supports animating as color of rgba()
 PASS stop-color supports animating as color of hsla()
 PASS stop-opacity (type: opacity) has testInterpolation function
-FAIL stop-opacity supports animating as a [0, 1] number assert_equals: The value should be 0.55 at 500ms expected "0.55" but got "0.550000011920929"
+PASS stop-opacity supports animating as a [0, 1] number
 PASS stroke-dasharray (type: dasharray) has testInterpolation function
 PASS stroke-dasharray supports animating as a percentage
-FAIL stroke-dasharray supports animating as a positive number assert_equals: The value should be 1.3px at 500ms expected "1.3px" but got "1.2999999523162842px"
+PASS stroke-dasharray supports animating as a positive number
 PASS stroke-dasharray supports animating as a dasharray (mismatched length)
 PASS stroke-dasharray supports animating as a dasharray (mixed lengths and percentages)
 PASS stroke-dasharray (type: discrete) has testInterpolation function
@@ -152,9 +152,9 @@ PASS stroke-dasharray uses discrete animation when animating between "none" and 
 PASS stroke-dasharray uses discrete animation when animating between "none" and "10px, 20px" with effect easing
 PASS stroke-dasharray uses discrete animation when animating between "none" and "10px, 20px" with keyframe easing
 PASS stroke-miterlimit (type: positiveNumber) has testInterpolation function
-FAIL stroke-miterlimit supports animating as a positive number assert_equals: The value should be 1.3 at 500ms expected "1.3" but got "1.2999999523162842"
+PASS stroke-miterlimit supports animating as a positive number
 PASS stroke-opacity (type: opacity) has testInterpolation function
-FAIL stroke-opacity supports animating as a [0, 1] number assert_equals: The value should be 0.55 at 500ms expected "0.55" but got "0.550000011920929"
+PASS stroke-opacity supports animating as a [0, 1] number
 PASS table-layout (type: discrete) has testInterpolation function
 PASS table-layout uses discrete animation when animating between "auto" and "fixed" with linear easing
 PASS table-layout uses discrete animation when animating between "auto" and "fixed" with effect easing

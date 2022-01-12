@@ -59,6 +59,7 @@ unsigned short DeprecatedCSSOMPrimitiveValue::primitiveType() const
     case CSSUnitType::CSS_GRAD:                         return CSS_GRAD;
     case CSSUnitType::CSS_HZ:                           return CSS_HZ;
     case CSSUnitType::CSS_IDENT:                        return CSS_IDENT;
+    case CSSUnitType::CSS_INTEGER:                      return CSS_NUMBER;
     case CSSUnitType::CustomIdent:                      return CSS_IDENT;
     case CSSUnitType::CSS_IN:                           return CSS_IN;
     case CSSUnitType::CSS_KHZ:                          return CSS_KHZ;

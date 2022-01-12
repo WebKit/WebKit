@@ -170,8 +170,8 @@ PASS empty-cells (type: discrete) has testAddition function
 PASS empty-cells: "hide" onto "show"
 PASS empty-cells: "show" onto "hide"
 PASS fill-opacity (type: opacity) has testAddition function
-FAIL fill-opacity: [0, 1] number assert_equals: The value should be 0.6 at 0ms expected "0.6" but got "0.6000000238418579"
-FAIL fill-opacity: [0, 1] number (clamped) assert_equals: The value should be 1 at 0ms expected "1" but got "1.100000023841858"
+PASS fill-opacity: [0, 1] number
+FAIL fill-opacity: [0, 1] number (clamped) assert_equals: The value should be 1 at 0ms expected "1" but got "1.1"
 PASS filter (type: filterList) has testAddition function
 FAIL filter: blur on blur assert_equals: The value should be blur(10px) blur(20px) at 0ms expected "blur(10px) blur(20px)" but got "blur(30px)"
 FAIL filter: different filter functions assert_equals: The value should be blur(10px) brightness(0.8) at 0ms expected "blur(10px) brightness(0.8)" but got "brightness(0.8)"
@@ -194,9 +194,9 @@ PASS flex-direction (type: discrete) has testAddition function
 PASS flex-direction: "row-reverse" onto "row"
 PASS flex-direction: "row" onto "row-reverse"
 PASS flex-grow (type: positiveNumber) has testAddition function
-FAIL flex-grow: positive number assert_equals: The value should be 2.2 at 0ms expected "2.2" but got "2.200000047683716"
+PASS flex-grow: positive number
 PASS flex-shrink (type: positiveNumber) has testAddition function
-FAIL flex-shrink: positive number assert_equals: The value should be 2.2 at 0ms expected "2.2" but got "2.200000047683716"
+PASS flex-shrink: positive number
 PASS flex-wrap (type: discrete) has testAddition function
 PASS flex-wrap: "wrap" onto "nowrap"
 PASS flex-wrap: "nowrap" onto "wrap"
@@ -208,8 +208,8 @@ PASS flood-color supports animating as color of #RGBa
 PASS flood-color supports animating as color of rgba()
 PASS flood-color supports animating as color of hsla()
 PASS flood-opacity (type: opacity) has testAddition function
-FAIL flood-opacity: [0, 1] number assert_equals: The value should be 0.6 at 0ms expected "0.6" but got "0.6000000238418579"
-FAIL flood-opacity: [0, 1] number (clamped) assert_equals: The value should be 1 at 0ms expected "1" but got "1.100000023841858"
+PASS flood-opacity: [0, 1] number
+FAIL flood-opacity: [0, 1] number (clamped) assert_equals: The value should be 1 at 0ms expected "1" but got "1.1"
 PASS font-stretch (type: percentage) has testAddition function
 PASS font-stretch: percentage
 PASS font-style (type: discrete) has testAddition function

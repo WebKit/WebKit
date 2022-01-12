@@ -35,6 +35,7 @@ CalculationCategory calcUnitCategory(CSSUnitType type)
 {
     switch (type) {
     case CSSUnitType::CSS_NUMBER:
+    case CSSUnitType::CSS_INTEGER:
         return CalculationCategory::Number;
     case CSSUnitType::CSS_EMS:
     case CSSUnitType::CSS_EXS:
@@ -97,6 +98,7 @@ CalculationCategory calculationCategoryForCombination(CSSUnitType type)
 {
     switch (type) {
     case CSSUnitType::CSS_NUMBER:
+    case CSSUnitType::CSS_INTEGER:
         return CalculationCategory::Number;
     case CSSUnitType::CSS_PX:
     case CSSUnitType::CSS_CM:
@@ -177,6 +179,7 @@ bool hasDoubleValue(CSSUnitType type)
 {
     switch (type) {
     case CSSUnitType::CSS_NUMBER:
+    case CSSUnitType::CSS_INTEGER:
     case CSSUnitType::CSS_PERCENTAGE:
     case CSSUnitType::CSS_EMS:
     case CSSUnitType::CSS_EXS:

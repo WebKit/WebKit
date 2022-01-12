@@ -45,9 +45,9 @@
                 testExpression('calc(100px * pow(2, pow(2, 2)))', 'calc(1600px)', '1600px');
                 testExpression('calc(1px * pow(2, 3))', 'calc(8px)', '8px')
                 testExpression('calc(100px * sqrt(100))', 'calc(1000px)', '1000px');
-                testExpression('calc(1px * sqrt(999))', 'calc(31.606961258558215px)', propertyName == 'width' ? '31.59375px' : '31.606962203979492px');
+                testExpression('calc(1px * sqrt(999))', 'calc(31.606961px)', propertyName == 'width' ? '31.59375px' : '31.606962px');
                 testExpression('calc(1px * pow(2, sqrt(100))', 'calc(1024px)', '1024px');
-                testExpression('hypot(4px, 5px, 7px, 9px)', 'hypot(13.076696830622021px)', propertyName == 'width' ? '13.0625px' : '13.076696395874023px');
+                testExpression('hypot(4px, 5px, 7px, 9px)', 'hypot(13.076697px)', propertyName == 'width' ? '13.0625px' : '13.076696px');
                 testExpression('hypot(3px, 4px)', 'hypot(5px)', '5px');
                 testExpression('calc(100px * hypot(3, 4))', 'calc(500px)', '500px');
                 testExpression('hypot(-5px)', 'hypot(5px)', '5px');

@@ -1069,9 +1069,9 @@ static Ref<CSSValue> valueForGridPosition(const GridPosition& position)
     auto list = CSSValueList::createSpaceSeparated();
     if (position.isSpan()) {
         list->append(cssValuePool.createIdentifierValue(CSSValueSpan));
-        list->append(cssValuePool.createValue(position.spanPosition(), CSSUnitType::CSS_NUMBER));
+        list->append(cssValuePool.createValue(position.spanPosition(), CSSUnitType::CSS_INTEGER));
     } else
-        list->append(cssValuePool.createValue(position.integerPosition(), CSSUnitType::CSS_NUMBER));
+        list->append(cssValuePool.createValue(position.integerPosition(), CSSUnitType::CSS_INTEGER));
 
     if (!position.namedGridLine().isNull())
         list->append(cssValuePool.createCustomIdent(position.namedGridLine()));
@@ -1940,8 +1940,8 @@ static Ref<CSSValue> counterToCSSValue(const RenderStyle& style, CSSPropertyID p
     auto list = CSSValueList::createSpaceSeparated();
     for (auto& keyValue : *map) {
         list->append(cssValuePool.createCustomIdent(keyValue.key));
-        double number = (propertyID == CSSPropertyCounterIncrement ? keyValue.value.incrementValue : keyValue.value.resetValue).value_or(0);
-        list->append(cssValuePool.createValue(number, CSSUnitType::CSS_NUMBER));
+        int number = (propertyID == CSSPropertyCounterIncrement ? keyValue.value.incrementValue : keyValue.value.resetValue).value_or(0);
+        list->append(cssValuePool.createValue(number, CSSUnitType::CSS_INTEGER));
     }
     return list;
 }
@@ -2976,11 +2976,11 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         case CSSPropertyWebkitBoxFlex:
             return cssValuePool.createValue(style.boxFlex(), CSSUnitType::CSS_NUMBER);
         case CSSPropertyWebkitBoxFlexGroup:
-            return cssValuePool.createValue(style.boxFlexGroup(), CSSUnitType::CSS_NUMBER);
+            return cssValuePool.createValue(style.boxFlexGroup(), CSSUnitType::CSS_INTEGER);
         case CSSPropertyWebkitBoxLines:
             return cssValuePool.createValue(style.boxLines());
         case CSSPropertyWebkitBoxOrdinalGroup:
-            return cssValuePool.createValue(style.boxOrdinalGroup(), CSSUnitType::CSS_NUMBER);
+            return cssValuePool.createValue(style.boxOrdinalGroup(), CSSUnitType::CSS_INTEGER);
         case CSSPropertyWebkitBoxOrient:
             return cssValuePool.createValue(style.boxOrient());
         case CSSPropertyWebkitBoxPack:
@@ -3097,7 +3097,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         case CSSPropertyPlaceSelf:
             return getCSSPropertyValuesForShorthandProperties(placeSelfShorthand());
         case CSSPropertyOrder:
-            return cssValuePool.createValue(style.order(), CSSUnitType::CSS_NUMBER);
+            return cssValuePool.createValue(style.order(), CSSUnitType::CSS_INTEGER);
         case CSSPropertyFloat:
             if (style.display() != DisplayType::None && style.hasOutOfFlowPosition())
                 return cssValuePool.createIdentifierValue(CSSValueNone);
@@ -3249,7 +3249,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         case CSSPropertyWebkitLineClamp:
             if (style.lineClamp().isNone())
                 return cssValuePool.createIdentifierValue(CSSValueNone);
-            return cssValuePool.createValue(style.lineClamp().value(), style.lineClamp().isPercentage() ? CSSUnitType::CSS_PERCENTAGE : CSSUnitType::CSS_NUMBER);
+            return cssValuePool.createValue(style.lineClamp().value(), style.lineClamp().isPercentage() ? CSSUnitType::CSS_PERCENTAGE : CSSUnitType::CSS_INTEGER);
         case CSSPropertyLineHeight:
             return lineHeightFromStyle(style);
         case CSSPropertyListStyleImage:
@@ -3335,7 +3335,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         case CSSPropertyOrphans:
             if (style.hasAutoOrphans())
                 return cssValuePool.createIdentifierValue(CSSValueAuto);
-            return cssValuePool.createValue(style.orphans(), CSSUnitType::CSS_NUMBER);
+            return cssValuePool.createValue(style.orphans(), CSSUnitType::CSS_INTEGER);
         case CSSPropertyOutlineColor:
             return m_allowVisitedStyle ? cssValuePool.createColorValue(style.visitedDependentColor(CSSPropertyOutlineColor)) : currentColorOrValidColor(&style, style.outlineColor());
         case CSSPropertyOutlineOffset:
@@ -3527,7 +3527,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         case CSSPropertyWidows:
             if (style.hasAutoWidows())
                 return cssValuePool.createIdentifierValue(CSSValueAuto);
-            return cssValuePool.createValue(style.widows(), CSSUnitType::CSS_NUMBER);
+            return cssValuePool.createValue(style.widows(), CSSUnitType::CSS_INTEGER);
         case CSSPropertyWidth:
             if (renderer && !renderer->isRenderOrLegacyRenderSVGModelObject()) {
                 // According to http://www.w3.org/TR/CSS2/visudet.html#the-width-property,
@@ -3569,7 +3569,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         case CSSPropertyZIndex:
             if (style.hasAutoSpecifiedZIndex())
                 return cssValuePool.createIdentifierValue(CSSValueAuto);
-            return cssValuePool.createValue(style.specifiedZIndex(), CSSUnitType::CSS_NUMBER);
+            return cssValuePool.createValue(style.specifiedZIndex(), CSSUnitType::CSS_INTEGER);
         case CSSPropertyZoom:
             return cssValuePool.createValue(style.zoom(), CSSUnitType::CSS_NUMBER);
         case CSSPropertyBoxSizing:

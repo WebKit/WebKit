@@ -13,11 +13,11 @@ PASS Testing 'direction'.
 FAIL Testing 'display'. assert_equals: Value Test. expected "block" but got "inline"
 FAIL Testing 'dominant-baseline'. assert_equals: Value Test. expected "use-script" but got "auto"
 FAIL Testing 'fill'. assert_equals: Default value. expected "black" but got "rgb(0, 0, 0)"
-FAIL Testing 'fill-opacity'. assert_equals: Value Test. expected "0.8" but got "0.800000011920929"
+PASS Testing 'fill-opacity'.
 PASS Testing 'fill-rule'.
 PASS Testing 'filter'.
 FAIL Testing 'flood-color'. assert_equals: Default value. expected "" but got "rgb(0, 0, 0)"
-FAIL Testing 'flood-opacity'. assert_equals: Value Test. expected "0.7" but got "0.699999988079071"
+PASS Testing 'flood-opacity'.
 FAIL Testing 'font-family'. assert_equals: Default value. expected "Times New Roman" but got "-webkit-standard"
 PASS Testing 'font-size'.
 FAIL Testing 'font-size-adjust'. assert_equals: Default value. expected "none" but got ""
@@ -29,18 +29,18 @@ FAIL Testing 'glyph-orientation-vertical'. assert_equals: Value Test. expected "
 FAIL Testing 'kerning'. assert_equals: Default value. expected "auto" but got "0"
 PASS Testing 'letter-spacing'.
 FAIL Testing 'lighting-color'. assert_equals: Default value. expected "" but got "rgb(255, 255, 255)"
-FAIL Testing 'opacity'. assert_equals: Value Test. expected "0.11" but got "0.10999999940395355"
+PASS Testing 'opacity'.
 FAIL Testing 'overflow'. assert_equals: Value Test. expected "hidden" but got "visible"
 FAIL Testing 'pointer-events'. assert_equals: Default value. expected "visiblePainted" but got "auto"
 FAIL Testing 'stop-color'. assert_equals: Default value. expected "" but got "rgb(0, 0, 0)"
-FAIL Testing 'stop-opacity'. assert_equals: Value Test. expected "0.225" but got "0.22499999403953552"
+PASS Testing 'stop-opacity'.
 FAIL Testing 'stroke'. assert_equals: Default value. expected "" but got "none"
 PASS Testing 'stroke-dasharray'.
 PASS Testing 'stroke-dashoffset'.
 PASS Testing 'stroke-linecap'.
 PASS Testing 'stroke-linejoin'.
 PASS Testing 'stroke-miterlimit'.
-FAIL Testing 'stroke-opacity'. assert_equals: Value Test. expected "0.221" but got "0.22100000083446503"
+PASS Testing 'stroke-opacity'.
 PASS Testing 'stroke-width'.
 PASS Testing 'text-anchor'.
 FAIL Testing 'text-decoration'. assert_equals: Value Test. expected "underline" but got "none"

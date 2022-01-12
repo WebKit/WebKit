@@ -1089,7 +1089,7 @@ inline bool BuilderConverter::createGridPosition(const CSSValue& value, GridPosi
     }
 
     int gridLineNumber = 0;
-    if (currentValue && currentValue->isNumber()) {
+    if (currentValue && currentValue->isInteger()) {
         gridLineNumber = currentValue->intValue();
         ++it;
         currentValue = it != values.end() ? &downcast<CSSPrimitiveValue>(it->get()) : nullptr;
