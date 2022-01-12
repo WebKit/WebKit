@@ -491,9 +491,6 @@ webkit.org/b/214682 imported/w3c/web-platform-tests/css/cssom/stylesheet-same-or
 
 webkit.org/b/216853 css3/font-synthesis-small-caps.html [ ImageOnlyFailure ]
 
-# Skipped in root TestExpectations for Debug config.
-webkit.org/b/209330 [ Release ] imported/w3c/web-platform-tests/css/css-cascade/all-prop-initial-xml.html [ Failure ]
-
 webkit.org/b/221308 [ Debug ] fast/selectors/matches-backtracking.html [ Timeout ]
 webkit.org/b/221308 [ Debug ] fast/selectors/is-backtracking.html [ Timeout ]
 
