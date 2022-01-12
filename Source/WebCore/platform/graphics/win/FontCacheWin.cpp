@@ -46,10 +46,6 @@
 #include <pal/spi/cg/CoreGraphicsSPI.h>
 #endif
 
-#if USE(DIRECT2D)
-#include <dwrite_3.h>
-#endif
-
 using std::min;
 
 namespace WebCore
@@ -539,7 +535,7 @@ static GDIObject<HFONT> createGDIFont(const AtomString& family, LONG desiredWeig
     matchData.m_chosen.lfUnderline = false;
     matchData.m_chosen.lfStrikeOut = false;
     matchData.m_chosen.lfCharSet = DEFAULT_CHARSET;
-#if USE(CG) || USE(CAIRO) || USE(DIRECT2D)
+#if USE(CG) || USE(CAIRO)
     matchData.m_chosen.lfOutPrecision = OUT_TT_ONLY_PRECIS;
 #else
     matchData.m_chosen.lfOutPrecision = OUT_TT_PRECIS;
@@ -679,8 +675,6 @@ std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDe
 
 #if USE(CG)
     bool fontCreationFailed = !result->cgFont();
-#elif USE(DIRECT2D)
-    bool fontCreationFailed = !result->dwFont();
 #elif USE(CAIRO)
     bool fontCreationFailed = !result->scaledFont();
 #endif

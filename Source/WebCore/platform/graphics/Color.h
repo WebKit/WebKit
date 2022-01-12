@@ -42,15 +42,6 @@
 typedef struct CGColor* CGColorRef;
 #endif
 
-#if PLATFORM(WIN)
-struct _D3DCOLORVALUE;
-typedef _D3DCOLORVALUE D3DCOLORVALUE;
-typedef D3DCOLORVALUE D2D_COLOR_F;
-typedef D2D_COLOR_F D2D1_COLOR_F;
-struct D2D_VECTOR_4F;
-typedef D2D_VECTOR_4F D2D1_VECTOR_4F;
-#endif
-
 #if PLATFORM(GTK)
 typedef struct _GdkRGBA GdkRGBA;
 #endif
@@ -146,12 +137,6 @@ public:
 
 #if USE(CG)
     WEBCORE_EXPORT static Color createAndPreserveColorSpace(CGColorRef, OptionSet<Flags> = { });
-#endif
-
-#if PLATFORM(WIN)
-    WEBCORE_EXPORT Color(D2D1_COLOR_F);
-    WEBCORE_EXPORT operator D2D1_COLOR_F() const;
-    WEBCORE_EXPORT operator D2D1_VECTOR_4F() const;
 #endif
 
     static constexpr auto transparentBlack = SRGBA<uint8_t> { };

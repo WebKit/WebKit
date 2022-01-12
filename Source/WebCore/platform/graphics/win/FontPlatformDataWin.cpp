@@ -33,10 +33,6 @@
 #include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
 
-#if USE(DIRECT2D)
-#include <dwrite_3.h>
-#endif
-
 using std::min;
 
 namespace WebCore {

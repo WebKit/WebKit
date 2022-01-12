@@ -1,3 +1,12 @@
+2022-01-11  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        Remove Direct2D code (part 2)
+        https://bugs.webkit.org/show_bug.cgi?id=235097
+
+        Reviewed by Yusuke Suzuki.
+
+        * pal/PlatformAppleWin.cmake:
+
 2022-01-10  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Add support for a -shouldWrap property when injecting Live Text
