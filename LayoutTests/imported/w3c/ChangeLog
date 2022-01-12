@@ -1,3 +1,61 @@
+2022-01-12  Sergio Villar Senin  <svillar@igalia.com>
+
+        [css-flexbox] Import WPT tests - January edition
+        https://bugs.webkit.org/show_bug.cgi?id=235102
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        This import brings some new tests. Apart from that several expectations were moved from FAIL to PASS.
+
+        * web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-content-002-expected.txt:
+        * web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-content-002.html:
+        * web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-content-004-expected.txt:
+        * web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-content-004.html:
+        * web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-content-006-expected.txt:
+        * web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-content-006.html:
+        * web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-content-008-expected.txt:
+        * web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-content-008.html:
+        * web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-self-002-expected.txt:
+        * web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-self-002.html:
+        * web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-self-004-expected.txt:
+        * web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-self-004.html:
+        * web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-self-006-expected.txt:
+        * web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-self-006.html:
+        * web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-self-008-expected.txt:
+        * web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-self-008.html:
+        * web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-justify-content-002-expected.txt:
+        * web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-justify-content-002.html:
+        * web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-justify-content-003-expected.txt:
+        * web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-justify-content-003.html:
+        * web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-justify-content-004-expected.txt:
+        * web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-justify-content-004.html:
+        * web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-justify-content-006-expected.txt:
+        * web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-justify-content-006.html:
+        * web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-justify-content-007-expected.txt:
+        * web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-justify-content-007.html:
+        * web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-justify-content-008-expected.txt:
+        * web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-justify-content-008.html:
+        * web-platform-tests/css/css-flexbox/abspos/w3c-import.log:
+        * web-platform-tests/css/css-flexbox/aspect-ratio-intrinsic-size-007-expected.html: Added.
+        * web-platform-tests/css/css-flexbox/aspect-ratio-intrinsic-size-007.html: Added.
+        * web-platform-tests/css/css-flexbox/fieldset-as-item-dynamic-expected.html: Added.
+        * web-platform-tests/css/css-flexbox/fieldset-as-item-dynamic.html: Added.
+        * web-platform-tests/css/css-flexbox/flex-basis-intrinsics-001-expected.txt:
+        * web-platform-tests/css/css-flexbox/flex-basis-intrinsics-001.html:
+        * web-platform-tests/css/css-flexbox/flex-grow-001-ref.xht: Added.
+        * web-platform-tests/css/css-flexbox/flex-minimum-width-flex-items-014.html:
+        * web-platform-tests/css/css-flexbox/flexbox-justify-content-wmvert-002-expected.txt:
+        * web-platform-tests/css/css-flexbox/flexbox-justify-content-wmvert-002.html:
+        * web-platform-tests/css/css-flexbox/flexbox-justify-content-wmvert-003-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/flexbox-justify-content-wmvert-003.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flexbox-justify-content-wmvert-002.html.
+        * web-platform-tests/css/css-flexbox/order/order-with-column-reverse-ref.html: Added.
+        * web-platform-tests/css/css-flexbox/order/order-with-row-reverse-ref.html: Added.
+        * web-platform-tests/css/css-flexbox/scrollbars-auto-expected.html:
+        * web-platform-tests/css/css-flexbox/scrollbars-expected.html:
+        * web-platform-tests/css/css-flexbox/support/large-green-rectangle.svg: Added.
+        * web-platform-tests/css/css-flexbox/support/w3c-import.log:
+        * web-platform-tests/css/css-flexbox/w3c-import.log:
+
 2022-01-12  Antoine Quint  <graouts@webkit.org>
 
         css/css-transitions/pseudo-elements-002.html WPT is a failure

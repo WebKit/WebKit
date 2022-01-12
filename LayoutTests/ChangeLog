@@ -1,3 +1,12 @@
+2022-01-12  Sergio Villar Senin  <svillar@igalia.com>
+
+        [css-flexbox] Import WPT tests - January edition
+        https://bugs.webkit.org/show_bug.cgi?id=235102
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        * TestExpectations: Skip a recently added test case that is failing.
+
 2022-01-12  Antoine Quint  <graouts@webkit.org>
 
         Remove WebKitTransitionEvent and WebKitAnimationEvent
