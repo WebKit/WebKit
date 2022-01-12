@@ -1045,8 +1045,11 @@ void KeyframeEffect::checkForMatchingTransformFunctionLists()
         }
     }
 
-    if (firstNonEmptyTransformKeyframeIndex == numKeyframes)
+    // All of the frames have an empty list of transform operations, so they match.
+    if (firstNonEmptyTransformKeyframeIndex == numKeyframes) {
+        m_transformFunctionListsMatch = true;
         return;
+    }
 
     const TransformOperations* firstVal = &m_blendingKeyframes[firstNonEmptyTransformKeyframeIndex].style()->transform();
     for (size_t i = firstNonEmptyTransformKeyframeIndex + 1; i < numKeyframes; ++i) {

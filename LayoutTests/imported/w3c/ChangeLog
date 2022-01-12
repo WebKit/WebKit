@@ -1,3 +1,12 @@
+2022-01-12  Martin Robinson  <mrobinson@webkit.org>
+
+        Interpolation during animation of two empty transform lists should always yield "none"
+        https://bugs.webkit.org/show_bug.cgi?id=235069
+
+        Reviewed by Antoine Quint.
+
+        * web-platform-tests/css/css-transforms/animation/list-interpolation-expected.txt: Update to show passes.
+
 2022-01-12  Youenn Fablet  <youenn@apple.com>
 
         New service worker API 'FetchEvent.handled' needs to be supported
