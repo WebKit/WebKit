@@ -2004,6 +2004,7 @@
         SYS_chmod
         SYS_connect
         SYS_fchmod
+        SYS_fileport_makeport
         SYS_fsync
         SYS_getegid
         SYS_getpriority ;; rdar://81727094. Required for CoreAudio AudioOutputUnitStart call. Remove when GPU process is enabled by default.
