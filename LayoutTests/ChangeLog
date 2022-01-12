@@ -1,3 +1,12 @@
+2022-01-12  Robert Jenner  <Jenner@apple.com>
+
+        [AppleWin] Some fast/shadow-dom/fullscreen-in-* tests are crashing after r287698
+        https://bugs.webkit.org/show_bug.cgi?id=234933
+
+        Unreviewed test gardening.
+
+        * platform/win/TestExpectations: Adding crash expectation to tests because they were slowing down Windows EWS.
+
 2022-01-12  Sergio Villar Senin  <svillar@igalia.com>
 
         [css-flexbox] Import WPT tests - January edition
