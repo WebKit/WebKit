@@ -33,8 +33,13 @@
 #include <wtf/CompletionHandler.h>
 #include <wtf/Expected.h>
 
+namespace JSC {
+class JSGlobalObject;
+}
+
 namespace WebCore {
 
+class DOMPromise;
 class FetchResponse;
 class ResourceError;
 
@@ -46,13 +51,14 @@ public:
         String clientId;
         String reservedClientId;
         String targetClientId;
+        RefPtr<DOMPromise> handled;
     };
 
     WEBCORE_EXPORT static Ref<FetchEvent> createForTesting(ScriptExecutionContext&);
 
-    static Ref<FetchEvent> create(const AtomString& type, Init&& initializer, IsTrusted isTrusted = IsTrusted::No)
+    static Ref<FetchEvent> create(JSC::JSGlobalObject& globalObject, const AtomString& type, Init&& initializer, IsTrusted isTrusted = IsTrusted::No)
     {
-        return adoptRef(*new FetchEvent(type, WTFMove(initializer), isTrusted));
+        return adoptRef(*new FetchEvent(globalObject, type, WTFMove(initializer), isTrusted));
     }
     ~FetchEvent();
 
@@ -67,6 +73,7 @@ public:
     const String& clientId() const { return m_clientId; }
     const String& reservedClientId() const { return m_reservedClientId; }
     const String& targetClientId() const { return m_targetClientId; }
+    DOMPromise& handled() const { return m_handled.get(); }
 
     bool respondWithEntered() const { return m_respondWithEntered; }
 
@@ -78,7 +85,7 @@ public:
     void setNavigationPreloadIdentifier(FetchIdentifier);
 
 private:
-    WEBCORE_EXPORT FetchEvent(const AtomString&, Init&&, IsTrusted);
+    WEBCORE_EXPORT FetchEvent(JSC::JSGlobalObject&, const AtomString&, Init&&, IsTrusted);
 
     void promiseIsSettled();
     void processResponse(Expected<Ref<FetchResponse>, std::optional<ResourceError>>&&);
@@ -93,6 +100,7 @@ private:
     bool m_waitToRespond { false };
     bool m_respondWithError { false };
     RefPtr<DOMPromise> m_respondPromise;
+    Ref<DOMPromise> m_handled;
 
     ResponseCallback m_onResponse;
 

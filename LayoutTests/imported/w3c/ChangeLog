@@ -1,3 +1,18 @@
+2022-01-12  Youenn Fablet  <youenn@apple.com>
+
+        New service worker API 'FetchEvent.handled' needs to be supported
+        https://bugs.webkit.org/show_bug.cgi?id=208185
+        <rdar://problem/59808975>
+
+        Reviewed by Chris Dumez.
+
+        * web-platform-tests/service-workers/service-worker/fetch-event-handled.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/fetch-event-handled.https.html:
+        * web-platform-tests/service-workers/service-worker/resources/fetch-event-handled-worker.js:
+        (try.event.handled.then):
+        (catch):
+        (send_message_to_client): Deleted.
+
 2021-11-29 Simon Fraser  <simon.fraser@apple.com> 
 
         Serialize CSS <number> values with rounding, limited decimal precision, and no exponents per-spec

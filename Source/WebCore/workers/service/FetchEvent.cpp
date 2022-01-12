@@ -42,15 +42,28 @@ Ref<FetchEvent> FetchEvent::createForTesting(ScriptExecutionContext& context)
 {
     FetchEvent::Init init;
     init.request = FetchRequest::create(context, { }, FetchHeaders::create(FetchHeaders::Guard::Immutable, { }), { }, { }, { });
-    return FetchEvent::create("fetch", WTFMove(init), Event::IsTrusted::Yes);
+    return FetchEvent::create(*context.globalObject(), "fetch", WTFMove(init), Event::IsTrusted::Yes);
 }
 
-FetchEvent::FetchEvent(const AtomString& type, Init&& initializer, IsTrusted isTrusted)
+static inline Ref<DOMPromise> retrieveHandledPromise(JSC::JSGlobalObject& globalObject, RefPtr<DOMPromise>&& promise)
+{
+    if (promise)
+        return promise.releaseNonNull();
+
+    JSC::JSLockHolder lock(globalObject.vm());
+
+    auto& jsDOMGlobalObject = *JSC::jsCast<JSDOMGlobalObject*>(&globalObject);
+    auto deferredPromise = DeferredPromise::create(jsDOMGlobalObject);
+    return DOMPromise::create(jsDOMGlobalObject, *JSC::jsCast<JSC::JSPromise*>(deferredPromise->promise()));
+}
+
+FetchEvent::FetchEvent(JSC::JSGlobalObject& globalObject, const AtomString& type, Init&& initializer, IsTrusted isTrusted)
     : ExtendableEvent(type, initializer, isTrusted)
     , m_request(initializer.request.releaseNonNull())
     , m_clientId(WTFMove(initializer.clientId))
     , m_reservedClientId(WTFMove(initializer.reservedClientId))
     , m_targetClientId(WTFMove(initializer.targetClientId))
+    , m_handled(retrieveHandledPromise(globalObject, WTFMove(initializer.handled)))
 {
 }
 
