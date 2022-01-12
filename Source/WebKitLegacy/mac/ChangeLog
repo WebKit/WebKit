@@ -1,3 +1,19 @@
+2022-01-12  Matt Woodrow  <mattwoodrow@apple.com>
+
+        _paintBehaviorForDestinationContext should consider kCGContextTypeDisplayList type contexts as potentially being snapshots
+        https://bugs.webkit.org/show_bug.cgi?id=234626
+        <rdar://83501315>
+
+        Reviewed by Simon Fraser.
+
+        _paintBehaviorForDestinationContext currently always returns `Normal` for contexts that aren't a bitmap context.
+        AppKit now provides a context that is of type kCGContextTypeDisplayList, and we want to still potentially consider it a
+        snapshot paint (if the other conditions below are met). This ensure images are sync decoded for consumers that just
+        want a single paint.
+
+        * WebView/WebFrame.mm:
+        (-[WebFrame _paintBehaviorForDestinationContext:]):
+
 2022-01-11  Michael Saboff  <msaboff@apple.com>
 
         Fixed installhdr build failures in WebCore and WebKitLegacy
