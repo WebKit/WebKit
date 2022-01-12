@@ -2450,6 +2450,12 @@ static inline bool hasValidStyleForProperty(Element& element, CSSPropertyID prop
 {
     if (element.styleValidity() != Style::Validity::Valid)
         return false;
+    if (element.isPseudoElement()) {
+        if (auto* host = downcast<PseudoElement>(element).hostElement()) {
+            if (host->styleValidity() != Style::Validity::Valid)
+                return false;
+        }
+    }
     if (element.document().hasPendingFullStyleRebuild())
         return false;
     if (!element.document().childNeedsStyleRecalc())
