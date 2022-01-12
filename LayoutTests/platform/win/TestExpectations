@@ -4788,3 +4788,5 @@ fast/shadow-dom/fullscreen-in-shadow-fullscreenElement.html [ Crash ]
 fast/shadow-dom/fullscreen-in-slot-fullscreenElement.html [ Crash ]
 
 webkit.org/b/235123 fast/css/contain-invalidate-if-disabled.html [ Failure ]
+
+webkit.org/b/235124 webanimations/frame-rate/animation-frame-rate.html [ Failure ]
