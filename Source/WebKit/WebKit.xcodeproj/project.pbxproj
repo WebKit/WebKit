@@ -4404,8 +4404,6 @@
 		517CF0E1163A486C00C2950E /* NetworkProcessConnectionMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = NetworkProcessConnectionMessageReceiver.cpp; path = DerivedSources/WebKit/NetworkProcessConnectionMessageReceiver.cpp; sourceTree = BUILT_PRODUCTS_DIR; };
 		517CF0E1163A486C00C2950F /* CacheStorageEngineConnectionMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CacheStorageEngineConnectionMessageReceiver.cpp; path = DerivedSources/WebKit/CacheStorageEngineConnectionMessageReceiver.cpp; sourceTree = BUILT_PRODUCTS_DIR; };
 		517CF0E2163A486C00C2950E /* NetworkProcessConnectionMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NetworkProcessConnectionMessages.h; path = DerivedSources/WebKit/NetworkProcessConnectionMessages.h; sourceTree = BUILT_PRODUCTS_DIR; };
-		518324782615B00D003F239E /* NetworkSchemeURLProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkSchemeURLProtocol.h; sourceTree = "<group>"; };
-		518324792615B00D003F239E /* NetworkSchemeURLProtocol.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = NetworkSchemeURLProtocol.mm; sourceTree = "<group>"; };
 		5183722023CE973A0003CF83 /* APIContentWorld.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIContentWorld.h; sourceTree = "<group>"; };
 		5183722123CE973A0003CF83 /* APIContentWorld.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = APIContentWorld.cpp; sourceTree = "<group>"; };
 		5183B3931379F85C00E8754E /* Shim.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Shim.xcconfig; sourceTree = "<group>"; };
@@ -6227,7 +6225,6 @@
 		CDE5552F2406B897008A3DDB /* RemoteLegacyCDMSessionProxyMessages.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteLegacyCDMSessionProxyMessages.h; sourceTree = "<group>"; };
 		CDE555302406B897008A3DDB /* RemoteLegacyCDMSessionMessagesReplies.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteLegacyCDMSessionMessagesReplies.h; sourceTree = "<group>"; };
 		CDE555312406B897008A3DDB /* RemoteLegacyCDMSessionProxyMessageReceiver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteLegacyCDMSessionProxyMessageReceiver.cpp; sourceTree = "<group>"; };
-		CDF17CC3260E8FAB00F0A4E8 /* WKGroupSession.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WKGroupSession.swift; sourceTree = "<group>"; };
 		CDF1B90D266F395E0007EC10 /* WKGroupSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WKGroupSession.swift; sourceTree = "<group>"; };
 		CDF1B90E266F395E0007EC10 /* GroupActivitiesSession.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GroupActivitiesSession.h; sourceTree = "<group>"; };
 		CDF1B90F266F395E0007EC10 /* GroupActivitiesCoordinator.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = GroupActivitiesCoordinator.mm; sourceTree = "<group>"; };
@@ -7382,7 +7379,6 @@
 		1ABC3DF21899E415004F0626 /* Cocoa */ = {
 			isa = PBXGroup;
 			children = (
-				CDF17C93260D3B5200F0A4E8 /* Coordinator */,
 				CDF1B90C266F395E0007EC10 /* GroupActivities */,
 				57FD316B22B3367E008D0E8B /* SOAuthorization */,
 				99C81D551C20DFBE005C4C82 /* AutomationClient.h */,
@@ -10173,8 +10169,6 @@
 				5321594F1DBAE6D70054AA3C /* NetworkDataTaskCocoa.h */,
 				5CBC9B8B1C65257300A8FDCF /* NetworkDataTaskCocoa.mm */,
 				7EC4F0F918E4A945008056AF /* NetworkProcessCocoa.mm */,
-				518324782615B00D003F239E /* NetworkSchemeURLProtocol.h */,
-				518324792615B00D003F239E /* NetworkSchemeURLProtocol.mm */,
 				532159501DBAE6D70054AA3C /* NetworkSessionCocoa.h */,
 				5C20CB9B1BB0DCD200895BB1 /* NetworkSessionCocoa.mm */,
 				41287D4C225C05C5009A3E26 /* WebSocketTaskCocoa.h */,
@@ -12380,15 +12374,6 @@
 			);
 			name = fullscreen;
 			sourceTree = "<group>";
-		};
-		CDF17C93260D3B5200F0A4E8 /* Coordinator */ = {
-			isa = PBXGroup;
-			children = (
-				CDF17CC3260E8FAB00F0A4E8 /* WKGroupSession.swift */,
-			);
-			name = Coordinator;
-			path = usr/local/include/WebKitAdditions;
-			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		CDF1B90C266F395E0007EC10 /* GroupActivities */ = {
 			isa = PBXGroup;
