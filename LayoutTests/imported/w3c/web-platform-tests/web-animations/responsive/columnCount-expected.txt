@@ -1,0 +1,3 @@
+
+FAIL column-count responsive to inherited column-count changes assert_equals: expected "3" but got "auto"
+

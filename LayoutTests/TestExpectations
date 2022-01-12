@@ -3936,6 +3936,7 @@ webkit.org/b/207260 imported/w3c/web-platform-tests/web-animations/timing-model/
 webkit.org/b/207262 imported/w3c/web-platform-tests/web-animations/timing-model/animations/sync-start-times.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/210963 imported/w3c/web-platform-tests/css/css-animations/animation-important-002.html [ ImageOnlyFailure ]
+webkit.org/b/235110 imported/w3c/web-platform-tests/css/css-animations/flip-running-animation-via-variable.html [ ImageOnlyFailure ]
 
 # These are references
 imported/w3c/web-platform-tests/css/css-transforms/transform-compound-notref-1.html [ Skip ]

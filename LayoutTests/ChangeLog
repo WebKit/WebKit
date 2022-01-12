@@ -1,3 +1,13 @@
+2022-01-12  Antoine Quint  <graouts@webkit.org>
+
+        Update WPT for css/css-animations, css/css-transitions and web-animations
+        https://bugs.webkit.org/show_bug.cgi?id=235111
+
+        Unreviewed WPT import.
+
+        * TestExpectations:
+        * platform/glib/TestExpectations:
+
 2022-01-12  Alan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Incorrect negative margin handling (both left/right) with RTL inline base direction

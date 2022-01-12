@@ -1,4 +1,5 @@
 
+FAIL Validate different value types that can be used to set start time promise_test: Unhandled rejection with value: object "NotSupportedError: Not implemented Error"
 PASS Setting the start time of an animation without an active timeline
 PASS Setting an unresolved start time an animation without an active timeline does not clear the current time
 PASS Setting the start time clears the hold time

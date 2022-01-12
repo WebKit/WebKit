@@ -1,0 +1,5 @@
+
+PASS Font size responsive to inherited changes at start
+PASS Font size responsive to inherited changes at end
+PASS Font size responsive to inherited changes
+

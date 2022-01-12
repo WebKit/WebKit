@@ -1543,7 +1543,6 @@ webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/availa
 webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/available-size-012.html [ Pass ]
 
 webkit.org/b/207260 imported/w3c/web-platform-tests/web-animations/timing-model/animations/update-playback-rate-fast.html [ Pass ]
-webkit.org/b/207260 imported/w3c/web-platform-tests/web-animations/timing-model/animations/update-playback-rate-slow.html [ Pass ]
 
 webkit.org/b/215799 imported/w3c/web-platform-tests/css/css-content/quotes-005.html [ ImageOnlyFailure ]
 

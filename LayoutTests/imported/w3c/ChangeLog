@@ -1,3 +1,179 @@
+2022-01-12  Antoine Quint  <graouts@webkit.org>
+
+        Update WPT for css/css-animations, css/css-transitions and web-animations
+        https://bugs.webkit.org/show_bug.cgi?id=235111
+
+        Unreviewed WPT import.
+
+        * resources/import-expectations.json:
+        * resources/resource-files.json:
+        * web-platform-tests/css/css-animations/animation-common-ref.html: Added.
+        * web-platform-tests/css/css-animations/animation-important-002-ref.html: Added.
+        * web-platform-tests/css/css-animations/animation-opacity-pause-and-set-time-ref.html: Added.
+        * web-platform-tests/css/css-animations/animation-pseudo-dynamic-001-ref.html: Added.
+        * web-platform-tests/css/css-animations/animation-transform-pause-and-set-time-ref.html: Added.
+        * web-platform-tests/css/css-animations/flip-running-animation-via-variable-expected.html: Added.
+        * web-platform-tests/css/css-animations/flip-running-animation-via-variable-ref.html: Added.
+        * web-platform-tests/css/css-animations/flip-running-animation-via-variable.html: Added.
+        * web-platform-tests/css/css-animations/keyframes-unrelated-custom-property-expected.txt: Added.
+        * web-platform-tests/css/css-animations/keyframes-unrelated-custom-property.html: Added.
+        * web-platform-tests/css/css-animations/nested-scale-animations-ref.html: Added.
+        * web-platform-tests/css/css-animations/simultaneous-animations-crash.html: Added.
+        * web-platform-tests/css/css-animations/svg-transform-animation-ref.html: Added.
+        * web-platform-tests/css/css-animations/transform-animation-under-large-scale-ref.html: Added.
+        * web-platform-tests/css/css-animations/translation-animation-subpixel-offset-ref.html: Added.
+        * web-platform-tests/css/css-animations/w3c-import.log:
+        * web-platform-tests/css/css-transitions/animations/change-duration-during-transition-expected.txt: Added.
+        * web-platform-tests/css/css-transitions/animations/change-duration-during-transition.html: Added.
+        * web-platform-tests/css/css-transitions/animations/color-transition-premultiplied-expected.txt: Added.
+        * web-platform-tests/css/css-transitions/animations/color-transition-premultiplied.html: Added.
+        * web-platform-tests/css/css-transitions/animations/move-after-transition-expected.txt: Added.
+        * web-platform-tests/css/css-transitions/animations/move-after-transition.html: Added.
+        * web-platform-tests/css/css-transitions/animations/text-shadow-composition-expected.txt:
+        * web-platform-tests/css/css-transitions/animations/text-shadow-composition.html:
+        * web-platform-tests/css/css-transitions/animations/text-shadow-interpolation-expected.txt:
+        * web-platform-tests/css/css-transitions/animations/text-shadow-interpolation.html:
+        * web-platform-tests/css/css-transitions/animations/transition-end-event-shorthands-expected.txt: Added.
+        * web-platform-tests/css/css-transitions/animations/transition-end-event-shorthands.html: Added.
+        * web-platform-tests/css/css-transitions/animations/transition-timing-function-expected.txt: Added.
+        * web-platform-tests/css/css-transitions/animations/transition-timing-function.html: Added.
+        * web-platform-tests/css/css-transitions/animations/w3c-import.log:
+        * web-platform-tests/css/css-transitions/changing-while-transition-004-expected.txt: Added.
+        * web-platform-tests/css/css-transitions/changing-while-transition-004.html: Added.
+        * web-platform-tests/css/css-transitions/crashtests/transition-large-word-spacing-001.html: Added.
+        * web-platform-tests/css/css-transitions/crashtests/w3c-import.log: Copied from LayoutTests/imported/w3c/web-platform-tests/web-animations/interfaces/Animatable/w3c-import.log.
+        * web-platform-tests/css/css-transitions/event-dispatch.tentative.html:
+        * web-platform-tests/css/css-transitions/no-transition-from-ua-to-blocking-stylesheet-ref.html: Added.
+        * web-platform-tests/css/css-transitions/retargetted-transition-with-box-sizing-expected.txt: Added.
+        * web-platform-tests/css/css-transitions/retargetted-transition-with-box-sizing.html: Added.
+        * web-platform-tests/css/css-transitions/root-color-transition-ref.html: Added.
+        * web-platform-tests/css/css-transitions/transition-after-animation-001-expected.txt: Added.
+        * web-platform-tests/css/css-transitions/transition-after-animation-001.html: Added.
+        * web-platform-tests/css/css-transitions/transition-delay-001.html:
+        * web-platform-tests/css/css-transitions/transition-duration-001.html:
+        * web-platform-tests/css/css-transitions/transition-duration-shorthand-expected.txt: Added.
+        * web-platform-tests/css/css-transitions/transition-duration-shorthand.html: Added.
+        * web-platform-tests/css/css-transitions/w3c-import.log:
+        * web-platform-tests/web-animations/META.yml:
+        * web-platform-tests/web-animations/animation-model/animation-types/accumulation-per-property-002-expected.txt:
+        * web-platform-tests/web-animations/animation-model/animation-types/addition-per-property-002-expected.txt:
+        * web-platform-tests/web-animations/animation-model/animation-types/interpolation-per-property-002-expected.txt:
+        * web-platform-tests/web-animations/animation-model/animation-types/property-list.js:
+        * web-platform-tests/web-animations/animation-model/animation-types/property-types.js:
+        (const.transformListType.testInterpolation):
+        * web-platform-tests/web-animations/idlharness.window-expected.txt:
+        * web-platform-tests/web-animations/idlharness.window.js:
+        * web-platform-tests/web-animations/interfaces/Animatable/getAnimations-iframe-expected.txt: Added.
+        * web-platform-tests/web-animations/interfaces/Animatable/getAnimations-iframe.html: Added.
+        * web-platform-tests/web-animations/interfaces/Animatable/w3c-import.log:
+        * web-platform-tests/web-animations/interfaces/Animation/commitStyles-crash.html: Added.
+        * web-platform-tests/web-animations/interfaces/Animation/constructor.html:
+        * web-platform-tests/web-animations/interfaces/Animation/onfinish.html:
+        * web-platform-tests/web-animations/interfaces/Animation/onremove.html:
+        * web-platform-tests/web-animations/interfaces/Animation/w3c-import.log:
+        * web-platform-tests/web-animations/interfaces/KeyframeEffect/processing-a-keyframes-argument-001-expected.txt:
+        * web-platform-tests/web-animations/interfaces/KeyframeEffect/processing-a-keyframes-argument-001.html:
+        * web-platform-tests/web-animations/responsive/assorted-lengths-expected.txt: Added.
+        * web-platform-tests/web-animations/responsive/assorted-lengths.html: Added.
+        * web-platform-tests/web-animations/responsive/backgroundPosition-expected.txt: Added.
+        * web-platform-tests/web-animations/responsive/backgroundPosition.html: Added.
+        * web-platform-tests/web-animations/responsive/backgroundSize-expected.txt: Added.
+        * web-platform-tests/web-animations/responsive/backgroundSize.html: Added.
+        * web-platform-tests/web-animations/responsive/baselineShift-expected.txt: Added.
+        * web-platform-tests/web-animations/responsive/baselineShift.html: Added.
+        * web-platform-tests/web-animations/responsive/borderImageWidth-expected.txt: Added.
+        * web-platform-tests/web-animations/responsive/borderImageWidth.html: Added.
+        * web-platform-tests/web-animations/responsive/borderRadius-expected.txt: Added.
+        * web-platform-tests/web-animations/responsive/borderRadius.html: Added.
+        * web-platform-tests/web-animations/responsive/borderWidth-expected.txt: Added.
+        * web-platform-tests/web-animations/responsive/borderWidth.html: Added.
+        * web-platform-tests/web-animations/responsive/boxShadow-expected.txt: Added.
+        * web-platform-tests/web-animations/responsive/boxShadow.html: Added.
+        * web-platform-tests/web-animations/responsive/clip-expected.txt: Added.
+        * web-platform-tests/web-animations/responsive/clip.html: Added.
+        * web-platform-tests/web-animations/responsive/columnCount-expected.txt: Added.
+        * web-platform-tests/web-animations/responsive/columnCount.html: Added.
+        * web-platform-tests/web-animations/responsive/columnGap-expected.txt: Added.
+        * web-platform-tests/web-animations/responsive/columnGap.html: Added.
+        * web-platform-tests/web-animations/responsive/d-expected.txt: Added.
+        * web-platform-tests/web-animations/responsive/d.html: Added.
+        * web-platform-tests/web-animations/responsive/font-size-adjust-expected.txt: Added.
+        * web-platform-tests/web-animations/responsive/font-size-adjust.html: Added.
+        * web-platform-tests/web-animations/responsive/fontSize-expected.txt: Added.
+        * web-platform-tests/web-animations/responsive/fontSize.html: Added.
+        * web-platform-tests/web-animations/responsive/fontWeight-expected.txt: Added.
+        * web-platform-tests/web-animations/responsive/fontWeight.html: Added.
+        * web-platform-tests/web-animations/responsive/lineHeight-expected.txt: Added.
+        * web-platform-tests/web-animations/responsive/lineHeight.html: Added.
+        * web-platform-tests/web-animations/responsive/minHeight-expected.txt: Added.
+        * web-platform-tests/web-animations/responsive/minHeight.html: Added.
+        * web-platform-tests/web-animations/responsive/offset-path-expected.txt: Added.
+        * web-platform-tests/web-animations/responsive/offset-path.html: Added.
+        * web-platform-tests/web-animations/responsive/offsetDistance-expected.txt: Added.
+        * web-platform-tests/web-animations/responsive/offsetDistance.html: Added.
+        * web-platform-tests/web-animations/responsive/offsetRotate-expected.txt: Added.
+        * web-platform-tests/web-animations/responsive/offsetRotate.html: Added.
+        * web-platform-tests/web-animations/responsive/opacity-expected.txt: Added.
+        * web-platform-tests/web-animations/responsive/opacity.html: Added.
+        * web-platform-tests/web-animations/responsive/perspective-expected.txt: Added.
+        * web-platform-tests/web-animations/responsive/perspective.html: Added.
+        * web-platform-tests/web-animations/responsive/rotate-expected.txt: Added.
+        * web-platform-tests/web-animations/responsive/rotate.html: Added.
+        * web-platform-tests/web-animations/responsive/rowGap-expected.txt: Added.
+        * web-platform-tests/web-animations/responsive/rowGap.html: Added.
+        * web-platform-tests/web-animations/responsive/shapeMargin-expected.txt: Added.
+        * web-platform-tests/web-animations/responsive/shapeMargin.html: Added.
+        * web-platform-tests/web-animations/responsive/shapeOutside-expected.txt: Added.
+        * web-platform-tests/web-animations/responsive/shapeOutside.html: Added.
+        * web-platform-tests/web-animations/responsive/strokeDasharray-expected.txt: Added.
+        * web-platform-tests/web-animations/responsive/strokeDasharray.html: Added.
+        * web-platform-tests/web-animations/responsive/text-size-adjust-expected.txt: Added.
+        * web-platform-tests/web-animations/responsive/text-size-adjust.html: Added.
+        * web-platform-tests/web-animations/responsive/textIndent-expected.txt: Added.
+        * web-platform-tests/web-animations/responsive/textIndent.html: Added.
+        * web-platform-tests/web-animations/responsive/to-color-change-expected.txt: Added.
+        * web-platform-tests/web-animations/responsive/to-color-change.html: Added.
+        * web-platform-tests/web-animations/responsive/to-inherited-change-expected.txt: Added.
+        * web-platform-tests/web-animations/responsive/to-inherited-change.html: Added.
+        * web-platform-tests/web-animations/responsive/to-style-change-expected.txt: Added.
+        * web-platform-tests/web-animations/responsive/to-style-change.html: Added.
+        * web-platform-tests/web-animations/responsive/transform-expected.txt: Added.
+        * web-platform-tests/web-animations/responsive/transform.html: Added.
+        * web-platform-tests/web-animations/responsive/translate-expected.txt: Added.
+        * web-platform-tests/web-animations/responsive/translate.html: Added.
+        * web-platform-tests/web-animations/responsive/verticalAlign-expected.txt: Added.
+        * web-platform-tests/web-animations/responsive/verticalAlign.html: Added.
+        * web-platform-tests/web-animations/responsive/w3c-import.log: Added.
+        * web-platform-tests/web-animations/testcommon.js:
+        (window.assert_time_greater_than_equal.window.assert_time_greater_than_equal):
+        * web-platform-tests/web-animations/timing-model/animations/finishing-an-animation.html:
+        * web-platform-tests/web-animations/timing-model/animations/infinite-duration-animation-ref.html: Added.
+        * web-platform-tests/web-animations/timing-model/animations/pausing-an-animation.html:
+        * web-platform-tests/web-animations/timing-model/animations/playing-an-animation.html:
+        * web-platform-tests/web-animations/timing-model/animations/reverse-running-animation-expected.html:
+        * web-platform-tests/web-animations/timing-model/animations/reverse-running-animation-ref.html: Added.
+        * web-platform-tests/web-animations/timing-model/animations/reverse-running-animation.html:
+        * web-platform-tests/web-animations/timing-model/animations/setting-the-current-time-of-an-animation-expected.txt:
+        * web-platform-tests/web-animations/timing-model/animations/setting-the-current-time-of-an-animation.html:
+        * web-platform-tests/web-animations/timing-model/animations/setting-the-start-time-of-an-animation-expected.txt:
+        * web-platform-tests/web-animations/timing-model/animations/setting-the-start-time-of-an-animation.html:
+        * web-platform-tests/web-animations/timing-model/animations/setting-the-timeline-of-an-animation-expected.txt:
+        * web-platform-tests/web-animations/timing-model/animations/setting-the-timeline-of-an-animation.html:
+        * web-platform-tests/web-animations/timing-model/animations/sync-start-times-ref.html: Added.
+        * web-platform-tests/web-animations/timing-model/animations/sync-start-times.html:
+        * web-platform-tests/web-animations/timing-model/animations/update-playback-rate-fast-expected.html:
+        * web-platform-tests/web-animations/timing-model/animations/update-playback-rate-fast-ref.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/web-animations/timing-model/animations/update-playback-rate-slow-expected.html.
+        * web-platform-tests/web-animations/timing-model/animations/update-playback-rate-fast.html:
+        * web-platform-tests/web-animations/timing-model/animations/update-playback-rate-slow.html: Removed.
+        * web-platform-tests/web-animations/timing-model/animations/update-playback-rate-zero-expected.html:
+        * web-platform-tests/web-animations/timing-model/animations/update-playback-rate-zero-ref.html: Added.
+        * web-platform-tests/web-animations/timing-model/animations/update-playback-rate-zero.html:
+        * web-platform-tests/web-animations/timing-model/animations/w3c-import.log:
+        * web-platform-tests/web-animations/timing-model/timelines/document-timelines.html:
+        * web-platform-tests/web-animations/timing-model/timelines/timelines-expected.txt:
+        * web-platform-tests/web-animations/timing-model/timelines/timelines.html:
+        * web-platform-tests/web-animations/timing-model/timelines/update-and-send-events-replacement.html:
+
 2022-01-12  Martin Robinson  <mrobinson@webkit.org>
 
         Interpolation during animation of two empty transform lists should always yield "none"

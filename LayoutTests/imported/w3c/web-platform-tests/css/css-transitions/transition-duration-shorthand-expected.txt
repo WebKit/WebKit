@@ -1,0 +1,3 @@
+
+PASS transition-duration when looking at shorthand properties should be correct
+

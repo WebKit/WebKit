@@ -1,0 +1,3 @@
+
+PASS offset-path responsive to inherited offset-path changes
+

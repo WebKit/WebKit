@@ -159,6 +159,7 @@
     "web-platform-tests/css/scroll-snap": "import", 
     "web-platform-tests/css/selectors": "import", 
     "web-platform-tests/css/support": "import", 
+    "web-platform-tests/css/web-animations": "import", 
     "web-platform-tests/custom-elements": "import", 
     "web-platform-tests/custom-elements/v0": "skip", 
     "web-platform-tests/docs": "import", 
