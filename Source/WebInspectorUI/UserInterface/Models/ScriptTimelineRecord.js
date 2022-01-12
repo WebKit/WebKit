@@ -220,6 +220,7 @@ WI.ScriptTimelineRecord.EventType.displayName = function(eventType, details, inc
         nameMap.set("addsourcebuffer", "Add Source Buffer");
         nameMap.set("addstream", "Add Stream");
         nameMap.set("addtrack", "Add Track");
+        nameMap.set("animationcancel", "Animation Cancel");
         nameMap.set("animationend", "Animation End");
         nameMap.set("animationiteration", "Animation Iteration");
         nameMap.set("animationstart", "Animation Start");
@@ -231,6 +232,7 @@ WI.ScriptTimelineRecord.EventType.displayName = function(eventType, details, inc
         nameMap.set("beforeload", "Before Load");
         nameMap.set("beforepaste", "Before Paste");
         nameMap.set("beforeunload", "Before Unload");
+        nameMap.set("cancel", "Animation Cancel");
         nameMap.set("canplay", "Can Play");
         nameMap.set("canplaythrough", "Can Play Through");
         nameMap.set("chargingchange", "Charging Change");
@@ -251,6 +253,7 @@ WI.ScriptTimelineRecord.EventType.displayName = function(eventType, details, inc
         nameMap.set("dragover", "Drag Over");
         nameMap.set("dragstart", "Drag Start");
         nameMap.set("durationchange", "Duration Change");
+        nameMap.set("finish", "Animation Finish");
         nameMap.set("focusin", "Focus In");
         nameMap.set("focusout", "Focus Out");
         nameMap.set("formdata", "Form submission or invocation of FormData()");
@@ -292,6 +295,7 @@ WI.ScriptTimelineRecord.EventType.displayName = function(eventType, details, inc
         nameMap.set("popstate", "Pop State");
         nameMap.set("ratechange", "Rate Change");
         nameMap.set("readystatechange", "Ready State Change");
+        nameMap.set("remove", "Animation Remove");
         nameMap.set("removesourcebuffer", "Remove Source Buffer");
         nameMap.set("removestream", "Remove Stream");
         nameMap.set("removetrack", "Remove Track");
@@ -314,7 +318,10 @@ WI.ScriptTimelineRecord.EventType.displayName = function(eventType, details, inc
         nameMap.set("touchend", "Touch End");
         nameMap.set("touchmove", "Touch Move");
         nameMap.set("touchstart", "Touch Start");
+        nameMap.set("transitioncancel", "Transition Cancel");
         nameMap.set("transitionend", "Transition End");
+        nameMap.set("transitionrun", "Transition Run");
+        nameMap.set("transitionstart", "Transition Start");
         nameMap.set("updateend", "Update End");
         nameMap.set("updateready", "Update Ready");
         nameMap.set("updatestart", "Update Start");

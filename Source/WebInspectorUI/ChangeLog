@@ -1,3 +1,16 @@
+2022-01-12  Antoine Quint  <graouts@webkit.org>
+
+        Web Inspector should expose newer CSS Animations, CSS Transitions and Web Animations events
+        https://bugs.webkit.org/show_bug.cgi?id=235117
+
+        Reviewed by Joseph Pecoraro.
+
+        Came across this while working on bug 235113, the more recent events added to
+        CSS Animations, CSS Transitions and Web Animations are not used in the Web Inspector.
+
+        * UserInterface/Models/ScriptTimelineRecord.js:
+        (WI.ScriptTimelineRecord.EventType.displayName):
+
 2022-01-12  Razvan Caliman  <rcaliman@apple.com>
 
         Web Inspector: Unhandled exception when moving cursor mid-token after receiving CSS property name completions
