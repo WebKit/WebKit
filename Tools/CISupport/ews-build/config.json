@@ -347,6 +347,13 @@
       "builderNames": ["Commit-Queue"]
     },
     {
+      "type": "AnyBranchScheduler", "name": "pullrequest",
+      "builderNames": [
+            "Services-EWS", "Style-EWS", "Style-EWS",
+            "WebKitPerl-Tests-EWS", "WebKitPy-Tests-EWS"
+      ]
+    },
+    {
       "type": "Triggerable", "name": "macos-catalina-debug-build-ews",
       "builderNames": ["macOS-Catalina-Debug-Build-EWS"]
     },
