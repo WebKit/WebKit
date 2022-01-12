@@ -1,3 +1,15 @@
+2022-01-12  Chris Lord  <clord@igalia.com>
+
+        [WPE] Enable WebGL ANGLE support
+        https://bugs.webkit.org/show_bug.cgi?id=235064
+
+        Reviewed by Alejandro G. Castro.
+
+        Add the USE_ANGLE_WEBGL option for WPE. This is currently incompatible
+        with WebXR as there isn't an ANGLE GL context code-path there.
+
+        * Source/cmake/OptionsWPE.cmake:
+
 2022-01-11  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         Remove Direct2D code (part 2)
