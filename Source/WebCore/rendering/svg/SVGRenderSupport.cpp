@@ -126,13 +126,13 @@ bool SVGRenderSupport::checkForSVGRepaintDuringLayout(const RenderElement& rende
     // When a parent container is transformed in SVG, all children will be painted automatically
     // so we are able to skip redundant repaint checks.
     auto parent = renderer.parent();
-    return !(is<RenderSVGContainer>(parent) && downcast<RenderSVGContainer>(*parent).didTransformToRootUpdate());
+    return !(is<LegacyRenderSVGContainer>(parent) && downcast<LegacyRenderSVGContainer>(*parent).didTransformToRootUpdate());
 }
 
 // Update a bounding box taking into account the validity of the other bounding box.
 static inline void updateObjectBoundingBox(FloatRect& objectBoundingBox, bool& objectBoundingBoxValid, const RenderObject* other, FloatRect otherBoundingBox)
 {
-    bool otherValid = is<RenderSVGContainer>(*other) ? downcast<RenderSVGContainer>(*other).isObjectBoundingBoxValid() : true;
+    bool otherValid = is<LegacyRenderSVGContainer>(*other) ? downcast<LegacyRenderSVGContainer>(*other).isObjectBoundingBoxValid() : true;
     if (!otherValid)
         return;
 

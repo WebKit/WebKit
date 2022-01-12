@@ -537,7 +537,7 @@ void writeSVGResourceContainer(TextStream& ts, const RenderSVGResourceContainer&
     writeChildren(ts, resource, behavior);
 }
 
-void writeSVGContainer(TextStream& ts, const RenderSVGContainer& container, OptionSet<RenderAsTextFlag> behavior)
+void writeSVGContainer(TextStream& ts, const LegacyRenderSVGContainer& container, OptionSet<RenderAsTextFlag> behavior)
 {
     // Currently RenderSVGResourceFilterPrimitive has no meaningful output.
     if (container.isSVGResourceFilterPrimitive())

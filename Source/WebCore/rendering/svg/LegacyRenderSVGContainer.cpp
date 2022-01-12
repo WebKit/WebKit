@@ -22,7 +22,7 @@
  */
 
 #include "config.h"
-#include "RenderSVGContainer.h"
+#include "LegacyRenderSVGContainer.h"
 
 #include "GraphicsContext.h"
 #include "HitTestRequest.h"
@@ -40,16 +40,16 @@
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(RenderSVGContainer);
+WTF_MAKE_ISO_ALLOCATED_IMPL(LegacyRenderSVGContainer);
 
-RenderSVGContainer::RenderSVGContainer(SVGElement& element, RenderStyle&& style)
+LegacyRenderSVGContainer::LegacyRenderSVGContainer(SVGElement& element, RenderStyle&& style)
     : LegacyRenderSVGModelObject(element, WTFMove(style))
 {
 }
 
-RenderSVGContainer::~RenderSVGContainer() = default;
+LegacyRenderSVGContainer::~LegacyRenderSVGContainer() = default;
 
-void RenderSVGContainer::layout()
+void LegacyRenderSVGContainer::layout()
 {
     StackStats::LayoutCheckPoint layoutCheckPoint;
     ASSERT(needsLayout());
@@ -88,13 +88,13 @@ void RenderSVGContainer::layout()
     clearNeedsLayout();
 }
 
-bool RenderSVGContainer::selfWillPaint()
+bool LegacyRenderSVGContainer::selfWillPaint()
 {
     auto* resources = SVGResourcesCache::cachedResourcesForRenderer(*this);
     return resources && resources->filter();
 }
 
-void RenderSVGContainer::paint(PaintInfo& paintInfo, const LayoutPoint&)
+void LegacyRenderSVGContainer::paint(PaintInfo& paintInfo, const LayoutPoint&)
 {
     if (paintInfo.context().paintingDisabled())
         return;
@@ -142,20 +142,20 @@ void RenderSVGContainer::paint(PaintInfo& paintInfo, const LayoutPoint&)
 }
 
 // addFocusRingRects is called from paintOutline and needs to be in the same coordinates as the paintOuline call
-void RenderSVGContainer::addFocusRingRects(Vector<LayoutRect>& rects, const LayoutPoint&, const RenderLayerModelObject*)
+void LegacyRenderSVGContainer::addFocusRingRects(Vector<LayoutRect>& rects, const LayoutPoint&, const RenderLayerModelObject*)
 {
     LayoutRect paintRectInParent = LayoutRect(localToParentTransform().mapRect(repaintRectInLocalCoordinates()));
     if (!paintRectInParent.isEmpty())
         rects.append(paintRectInParent);
 }
 
-void RenderSVGContainer::updateCachedBoundaries()
+void LegacyRenderSVGContainer::updateCachedBoundaries()
 {
     SVGRenderSupport::computeContainerBoundingBoxes(*this, m_objectBoundingBox, m_objectBoundingBoxValid, m_strokeBoundingBox, m_repaintBoundingBox);
     SVGRenderSupport::intersectRepaintRectWithResources(*this, m_repaintBoundingBox);
 }
 
-bool RenderSVGContainer::nodeAtFloatPoint(const HitTestRequest& request, HitTestResult& result, const FloatPoint& pointInParent, HitTestAction hitTestAction)
+bool LegacyRenderSVGContainer::nodeAtFloatPoint(const HitTestRequest& request, HitTestResult& result, const FloatPoint& pointInParent, HitTestAction hitTestAction)
 {
     // Give RenderSVGViewportContainer a chance to apply its viewport clip
     if (!pointIsInsideViewportClip(pointInParent))

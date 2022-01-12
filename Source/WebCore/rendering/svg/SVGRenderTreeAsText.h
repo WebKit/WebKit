@@ -39,7 +39,7 @@ class LegacyRenderSVGShape;
 class Node;
 class RenderImage;
 class RenderObject;
-class RenderSVGContainer;
+class LegacyRenderSVGContainer;
 class RenderSVGGradientStop;
 class RenderSVGImage;
 class RenderSVGInlineText;
@@ -58,7 +58,7 @@ void write(WTF::TextStream&, const RenderSVGShape&, OptionSet<RenderAsTextFlag>)
 #endif
 void writeSVGGradientStop(WTF::TextStream&, const RenderSVGGradientStop&, OptionSet<RenderAsTextFlag>);
 void writeSVGResourceContainer(WTF::TextStream&, const RenderSVGResourceContainer&, OptionSet<RenderAsTextFlag>);
-void writeSVGContainer(WTF::TextStream&, const RenderSVGContainer&, OptionSet<RenderAsTextFlag>);
+void writeSVGContainer(WTF::TextStream&, const LegacyRenderSVGContainer&, OptionSet<RenderAsTextFlag>);
 void writeSVGImage(WTF::TextStream&, const RenderSVGImage&, OptionSet<RenderAsTextFlag>);
 void writeSVGInlineText(WTF::TextStream&, const RenderSVGInlineText&, OptionSet<RenderAsTextFlag>);
 void writeSVGText(WTF::TextStream&, const RenderSVGText&, OptionSet<RenderAsTextFlag>);

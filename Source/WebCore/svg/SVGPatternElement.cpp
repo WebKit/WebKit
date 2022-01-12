@@ -30,7 +30,6 @@
 #include "GraphicsContext.h"
 #include "ImageBuffer.h"
 #include "PatternAttributes.h"
-#include "RenderSVGContainer.h"
 #include "RenderSVGResourcePattern.h"
 #include "SVGElementInlines.h"
 #include "SVGFitToViewBox.h"

@@ -33,7 +33,7 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(RenderSVGTransformableContainer);
 
 RenderSVGTransformableContainer::RenderSVGTransformableContainer(SVGGraphicsElement& element, RenderStyle&& style)
-    : RenderSVGContainer(element, WTFMove(style))
+    : LegacyRenderSVGContainer(element, WTFMove(style))
     , m_needsTransformUpdate(true)
     , m_didTransformToRootUpdate(false)
 {
@@ -75,7 +75,7 @@ bool RenderSVGTransformableContainer::calculateLocalTransform()
 
 SVGGraphicsElement& RenderSVGTransformableContainer::graphicsElement()
 {
-    return downcast<SVGGraphicsElement>(RenderSVGContainer::element());
+    return downcast<SVGGraphicsElement>(LegacyRenderSVGContainer::element());
 }
 
 }

@@ -47,9 +47,9 @@ void RenderSVGResourceMarker::layout()
         LegacyRenderSVGRoot::addResourceForClientInvalidation(this);
 
     // RenderSVGHiddenContainer overwrites layout(). We need the
-    // layouting of RenderSVGContainer for calculating  local
+    // layouting of LegacyRenderSVGContainer for calculating  local
     // transformations and repaint.
-    RenderSVGContainer::layout();
+    LegacyRenderSVGContainer::layout();
 }
 
 void RenderSVGResourceMarker::removeAllClientsFromCache(bool markForInvalidation)
@@ -70,7 +70,7 @@ void RenderSVGResourceMarker::applyViewportClip(PaintInfo& paintInfo)
 
 FloatRect RenderSVGResourceMarker::markerBoundaries(const AffineTransform& markerTransformation) const
 {
-    FloatRect coordinates = RenderSVGContainer::repaintRectInLocalCoordinates();
+    FloatRect coordinates = LegacyRenderSVGContainer::repaintRectInLocalCoordinates();
 
     // Map repaint rect into parent coordinate space, in which the marker boundaries have to be evaluated
     coordinates = localToParentTransform().mapRect(coordinates);
@@ -122,7 +122,7 @@ void RenderSVGResourceMarker::draw(PaintInfo& paintInfo, const AffineTransform& 
     PaintInfo info(paintInfo);
     GraphicsContextStateSaver stateSaver(info.context());
     info.applyTransform(transform);
-    RenderSVGContainer::paint(info, IntPoint());
+    LegacyRenderSVGContainer::paint(info, IntPoint());
 }
 
 AffineTransform RenderSVGResourceMarker::markerContentTransformation(const AffineTransform& contentTransformation, const FloatPoint& origin, float strokeWidth) const

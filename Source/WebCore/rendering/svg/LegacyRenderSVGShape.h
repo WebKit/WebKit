@@ -36,7 +36,6 @@ namespace WebCore {
 
 class FloatPoint;
 class GraphicsContextStateSaver;
-class RenderSVGContainer;
 class RenderSVGPath;
 class RenderSVGResource;
 class SVGGraphicsElement;

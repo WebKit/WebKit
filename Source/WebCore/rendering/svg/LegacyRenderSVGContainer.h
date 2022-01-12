@@ -28,10 +28,10 @@ namespace WebCore {
 
 class SVGElement;
 
-class RenderSVGContainer : public LegacyRenderSVGModelObject {
-    WTF_MAKE_ISO_ALLOCATED(RenderSVGContainer);
+class LegacyRenderSVGContainer : public LegacyRenderSVGModelObject {
+    WTF_MAKE_ISO_ALLOCATED(LegacyRenderSVGContainer);
 public:
-    virtual ~RenderSVGContainer();
+    virtual ~LegacyRenderSVGContainer();
 
     void paint(PaintInfo&, const LayoutPoint&) override;
     void setNeedsBoundariesUpdate() final { m_needsBoundariesUpdate = true; }
@@ -40,7 +40,7 @@ public:
     bool isObjectBoundingBoxValid() const { return m_objectBoundingBoxValid; }
 
 protected:
-    RenderSVGContainer(SVGElement&, RenderStyle&&);
+    LegacyRenderSVGContainer(SVGElement&, RenderStyle&&);
 
     const char* renderName() const override { return "RenderSVGContainer"; }
 
@@ -70,7 +70,7 @@ protected:
     void updateCachedBoundaries();
 
 private:
-    bool isSVGContainer() const final { return true; }
+    bool isLegacySVGContainer() const final { return true; }
 
     FloatRect m_objectBoundingBox;
     FloatRect m_strokeBoundingBox;
@@ -82,4 +82,4 @@ private:
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderSVGContainer, isSVGContainer())
+SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(LegacyRenderSVGContainer, isLegacySVGContainer())

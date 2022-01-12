@@ -20,13 +20,13 @@
 
 #pragma once
 
-#include "RenderSVGContainer.h"
+#include "LegacyRenderSVGContainer.h"
 
 namespace WebCore {
     
 class SVGGraphicsElement;
 
-class RenderSVGTransformableContainer final : public RenderSVGContainer {
+class RenderSVGTransformableContainer final : public LegacyRenderSVGContainer {
     WTF_MAKE_ISO_ALLOCATED(RenderSVGTransformableContainer);
 public:
     RenderSVGTransformableContainer(SVGGraphicsElement&, RenderStyle&&);
