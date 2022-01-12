@@ -635,16 +635,9 @@ HWND MediaPlayerPrivateMediaFoundation::hostWindow()
     return GetDesktopWindow();
 }
 
-void MediaPlayerPrivateMediaFoundation::invalidateFrameView()
+void MediaPlayerPrivateMediaFoundation::invalidateVideoArea()
 {
-    FrameView* view = nullptr;
-    if (!m_player || !m_player->cachedResourceLoader() || !m_player->cachedResourceLoader()->document())
-        return;
-    view = m_player->cachedResourceLoader()->document()->view();
-    if (!view)
-        return;
-
-    view->invalidate();
+    m_player->repaint();
 }
 
 void MediaPlayerPrivateMediaFoundation::addListener(MediaPlayerListener* listener)
@@ -1622,7 +1615,7 @@ HRESULT MediaPlayerPrivateMediaFoundation::CustomVideoPresenter::processInputNot
     if (m_mediaPlayer) {
         callOnMainThread([weakPtr = m_mediaPlayer->m_weakThis] {
             if (weakPtr)
-                weakPtr->invalidateFrameView();
+                weakPtr->invalidateVideoArea();
         });
     }
 
