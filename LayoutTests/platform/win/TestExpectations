@@ -4786,3 +4786,5 @@ fast/shadow-dom/fullscreen-in-shadow-event-should-propagate.html [ Crash ]
 fast/shadow-dom/fullscreen-in-shadow-full-screen-ancestor.html [ Crash ]
 fast/shadow-dom/fullscreen-in-shadow-fullscreenElement.html [ Crash ]
 fast/shadow-dom/fullscreen-in-slot-fullscreenElement.html [ Crash ]
+
+webkit.org/b/235123 fast/css/contain-invalidate-if-disabled.html [ Failure ]
