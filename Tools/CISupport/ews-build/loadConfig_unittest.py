@@ -31,6 +31,8 @@ import loadConfig
 
 
 class ConfigDotJSONTest(unittest.TestCase):
+    DUPLICATED_TRIGGERS = ['try', 'pullrequest']
+
     def get_config(self):
         cwd = os.path.dirname(os.path.abspath(__file__))
         with open(os.path.join(cwd, 'config.json'), 'r') as config:
@@ -72,7 +74,10 @@ class ConfigDotJSONTest(unittest.TestCase):
             if scheduler['name'] in triggered_by_schedulers:
                 continue
             for buildername in scheduler.get('builderNames'):
-                self.assertTrue(buildername not in builder_to_schduler_map, 'builder {} appears multiple times in schedulers.'.format(buildername))
+                if scheduler.get('name') in self.DUPLICATED_TRIGGERS and builder_to_schduler_map.get(buildername):
+                    self.assertTrue(builder_to_schduler_map[buildername] in self.DUPLICATED_TRIGGERS)
+                else:
+                    self.assertTrue(buildername not in builder_to_schduler_map, 'builder {} appears multiple times in schedulers.'.format(buildername))
                 builder_to_schduler_map[buildername] = scheduler.get('name')
 
     def test_schduler_contains_valid_builder_name(self):

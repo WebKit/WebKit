@@ -55,7 +55,8 @@ RESULTS_DB_URL = 'https://results.webkit.org/'
 WithProperties = properties.WithProperties
 Interpolate = properties.Interpolate
 BRANCH_PR_RE = re.compile(r'^refs/pull/(?P<id>\d+)/merge$')
-GITHUB_REPOSITORIES = ['https://github.com/WebKit/WebKit']
+GITHUB_URL = 'https://github.com/'
+GITHUB_PROJECTS = ['WebKit/WebKit']
 
 
 class BufferLogHeaderObserver(logobserver.BufferLogObserver):
@@ -71,32 +72,24 @@ class BufferLogHeaderObserver(logobserver.BufferLogObserver):
         return self._get(self.headers)
 
 
-class GitHubMixin(object):
-    def pr_url(self, pr_number=None):
-        pr_number = pr_number or self.get_pull_request_number()
-        if not pr_number:
+class GitHub(object):
+    @classmethod
+    def repository_urls(cls):
+        return [GITHUB_URL + project for project in GITHUB_PROJECTS]
+
+    @classmethod
+    def pr_url(cls, pr_number, repository_url=None):
+        if not repository_url:
+            repository_url = '{}{}'.format(GITHUB_URL, GITHUB_PROJECTS[0])
+
+        if repository_url not in GitHub.repository_urls():
             return ''
-        return '{}/pull/{}'.format(self.getProperty('repository', '-'), pr_number)
-
-    def get_pull_request_number(self):
-        pr_number = self.getProperty('pull_request')
-        if pr_number:
-            return int(pr_number)
-
-        if self.getProperty('event') != 'pull_request':
-            return None
-        if self.getProperty('repository') not in GITHUB_REPOSITORIES:
-            return None
-
-        match = BRANCH_PR_RE.match(self.getProperty('branch', ''))
-        if not match:
-            return None
-        pr_number = int(match.group('id'))
-        self.setProperty('pull_request', pr_number)
-        return pr_number
+        if not pr_number or not isinstance(pr_number, int):
+            return ''
+        return '{}pull/{}'.format(repository_url, pr_number)
 
 
-class ConfigureBuild(buildstep.BuildStep, GitHubMixin):
+class ConfigureBuild(buildstep.BuildStep):
     name = 'configure-build'
     description = ['configuring build']
     descriptionDone = ['Configured build']
@@ -147,9 +140,9 @@ class ConfigureBuild(buildstep.BuildStep, GitHubMixin):
             self.addURL('Patch {}'.format(patch_id), Bugzilla.patch_url(patch_id))
 
     def add_pr_details(self):
-        pr_number = self.get_pull_request_number()
+        pr_number = self.getProperty('github.number')
         if pr_number:
-            self.addURL('Pull request {}'.format(pr_number), self.pr_url(pr_number=pr_number))
+            self.addURL('Pull request {}'.format(pr_number), GitHub.pr_url(pr_number=pr_number, repository_url=self.getProperty('repository')) or '')
 
 
 class CheckOutSource(git.Git):
