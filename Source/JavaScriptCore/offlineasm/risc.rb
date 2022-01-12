@@ -475,7 +475,8 @@ def riscLowerMisplacedAddresses(list)
             annotation = node.annotation
             case node.opcode
             when "addi", "addis", "andi", "lshifti", "muli", "negi", "noti", "ori", "oris",
-                "rshifti", "urshifti", "subi", "subis", "xori", /^bi/, /^bti/, /^ci/, /^ti/
+                "rshifti", "urshifti", "subi", "subis", "xori", /^bi/, /^bti/, /^ci/, /^ti/,
+                /^baddi/, /^bsubi/, /^bmuli/
                 newList << node.riscCloneWithOperandsLowered(newList, postInstructions, "i")
             when "orh"
                 newList << node.riscCloneWithOperandsLowered(newList, postInstructions, "h")
