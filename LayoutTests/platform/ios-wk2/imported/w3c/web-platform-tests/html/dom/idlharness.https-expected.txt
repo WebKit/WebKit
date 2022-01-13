@@ -3825,7 +3825,7 @@ PASS HTMLScriptElement interface: attribute crossOrigin
 PASS HTMLScriptElement interface: attribute text
 PASS HTMLScriptElement interface: attribute integrity
 PASS HTMLScriptElement interface: attribute referrerPolicy
-FAIL HTMLScriptElement interface: operation supports(DOMString) assert_own_property: interface object missing static operation expected property "supports" missing
+PASS HTMLScriptElement interface: operation supports(DOMString)
 PASS HTMLScriptElement interface: attribute charset
 PASS HTMLScriptElement interface: attribute event
 PASS HTMLScriptElement interface: attribute htmlFor
@@ -3841,7 +3841,7 @@ PASS HTMLScriptElement interface: document.createElement("script") must inherit 
 PASS HTMLScriptElement interface: document.createElement("script") must inherit property "integrity" with the proper type
 PASS HTMLScriptElement interface: document.createElement("script") must inherit property "referrerPolicy" with the proper type
 PASS HTMLScriptElement interface: document.createElement("script") must inherit property "supports(DOMString)" with the proper type
-FAIL HTMLScriptElement interface: calling supports(DOMString) on document.createElement("script") with too few arguments must throw TypeError assert_own_property: interface object must have static operation as own property expected property "supports" missing
+PASS HTMLScriptElement interface: calling supports(DOMString) on document.createElement("script") with too few arguments must throw TypeError
 PASS HTMLScriptElement interface: document.createElement("script") must inherit property "charset" with the proper type
 PASS HTMLScriptElement interface: document.createElement("script") must inherit property "event" with the proper type
 PASS HTMLScriptElement interface: document.createElement("script") must inherit property "htmlFor" with the proper type

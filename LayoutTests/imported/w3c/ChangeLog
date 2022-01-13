@@ -1,3 +1,15 @@
+2022-01-13  Chris Dumez  <cdumez@apple.com>
+
+        Implement HTMLScriptElement.supports(type) method
+        https://bugs.webkit.org/show_bug.cgi?id=229929
+        <rdar://problem/82933899>
+
+        Reviewed by Geoff Garen and Darin Adler.
+
+        Rebaseline test now that more checks are passing.
+
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/script-supports-expected.txt:
+
 2022-01-13  Ziran Sun  <zsun@igalia.com>
 
         [css-grid] Fix rounding of distributed free space to flexible tracks

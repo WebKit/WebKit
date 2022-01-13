@@ -51,6 +51,8 @@ public:
     using HTMLElement::ref;
     using HTMLElement::deref;
 
+    static bool supports(StringView type) { return type == "classic" || type == "module"; }
+
 private:
     HTMLScriptElement(const QualifiedName&, Document&, bool wasInsertedByParser, bool alreadyStarted);
 
