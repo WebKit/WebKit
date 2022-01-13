@@ -1,3 +1,19 @@
+2022-01-13  Alejandro G. Castro  <alex@igalia.com>
+
+        [GTK][WPE][WebGL2] compilation fixes
+        https://bugs.webkit.org/show_bug.cgi?id=225563
+
+        Reviewed by Chris Lord.
+
+        Fix the compilation and add the ANGLE dependency, the architecture
+        is still not the final one but it is handy to use WebGL2 demos for
+        testing already.
+
+        * Source/cmake/OptionsGTK.cmake: Added dependency with ANGLE.
+        * Source/cmake/OptionsWPE.cmake: Added dependency with
+        ANGLE. Remove the default ENABLE_WEBGL2 because it is the same
+        default value in WebKitFeatures.cmake.
+
 2022-01-12  Chris Lord  <clord@igalia.com>
 
         [WPE] Fix building WebXR with ANGLE enabled

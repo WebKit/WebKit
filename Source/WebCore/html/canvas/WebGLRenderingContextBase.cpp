@@ -2818,11 +2818,6 @@ void WebGLRenderingContextBase::drawElements(GCGLenum mode, GCGLsizei count, GCG
         usesFallbackTexture = checkTextureCompleteness("drawElements", true);
 #endif
 
-#if USE(OPENGL) && ENABLE(WEBGL2)
-    if (isWebGL2())
-        m_context->primitiveRestartIndex(getRestartIndex(type));
-#endif
-
     {
         InspectorScopedShaderProgramHighlight scopedHighlight(*this, m_currentProgram.get());
 
@@ -8028,11 +8023,6 @@ void WebGLRenderingContextBase::drawElementsInstanced(GCGLenum mode, GCGLsizei c
     }
     if (!isGLES2NPOTStrict())
         checkTextureCompleteness("drawElementsInstanced", true);
-#endif
-
-#if USE(OPENGL) && ENABLE(WEBGL2)
-    if (isWebGL2())
-        static_cast<GraphicsContextGLOpenGL*>(m_context.get())->primitiveRestartIndex(getRestartIndex(type));
 #endif
 
     m_context->drawElementsInstanced(mode, count, type, static_cast<GCGLintptr>(offset), primcount);
