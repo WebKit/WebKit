@@ -1,3 +1,14 @@
+2022-01-12  John Wilander  <wilander@apple.com>
+
+        PCM: Same-site triggering events should support ephemeral measurement
+        https://bugs.webkit.org/show_bug.cgi?id=235160
+        <rdar://87423294>
+
+        Reviewed by Alex Christensen.
+
+        * http/tests/privateClickMeasurement/triggering-event-with-attribution-source-through-fetch-keepalive-ephemeral-expected.txt: Added.
+        * http/tests/privateClickMeasurement/triggering-event-with-attribution-source-through-fetch-keepalive-ephemeral.html: Added.
+
 2022-01-12  Diego Pino Garcia  <dpino@igalia.com>
 
         [GTK][WPE] Unreviewed test gardening, merge common WebRTC test failures
