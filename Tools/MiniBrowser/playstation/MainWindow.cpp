@@ -41,7 +41,7 @@ constexpr int FontSize = 32;
 
 using namespace toolkitten;
 
-MainWindow::MainWindow()
+MainWindow::MainWindow(const char* requestedURL)
 {
     IntSize size = Application::singleton().windowSize();
     auto windowWidth = size.w;
@@ -106,7 +106,7 @@ MainWindow::MainWindow()
     }});
 
     createNewWebView(nullptr);
-    activeWebView()->loadURL("https://webkit.org");
+    activeWebView()->loadURL(requestedURL ? requestedURL : "https://webkit.org");
 }
 
 void MainWindow::paintSelf(toolkitten::IntPoint)

@@ -1,3 +1,19 @@
+2022-01-13  Ross Kirsling  <ross.kirsling@sony.com>
+
+        PlayStation MiniBrowser should accept a command-line URL argument
+        https://bugs.webkit.org/show_bug.cgi?id=235193
+
+        Reviewed by Don Olmstead.
+
+        Windows MiniBrowser can be launched from the command line with a URL argument for the initial page to load;
+        this patch allows PlayStation MiniBrowser to do similarly.
+
+        * MiniBrowser/playstation/MainWindow.cpp:
+        (MainWindow::MainWindow):
+        * MiniBrowser/playstation/MainWindow.h:
+        * MiniBrowser/playstation/main.cpp:
+        (main):
+
 2022-01-13  Patrick Angle  <pangle@apple.com>
 
         Web Inspector: Implement `frameURL` option for `devtools.inspectedWindow.eval` command

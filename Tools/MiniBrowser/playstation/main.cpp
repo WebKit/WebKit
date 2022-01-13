@@ -76,7 +76,7 @@ private:
     }
 };
 
-int main(int, char *[])
+int main(int argc, char *argv[])
 {
     WKRunLoopInitializeMain();
 
@@ -84,7 +84,7 @@ int main(int, char *[])
     auto& app = Application::singleton();
     app.init(&applicationClient);
 
-    auto mainWindow = std::make_unique<MainWindow>();
+    auto mainWindow = std::make_unique<MainWindow>(argc > 1 ? argv[1] : nullptr);
     mainWindow->setFocused();
     app.setRootWidget(move(mainWindow));
 
