@@ -169,6 +169,8 @@
 		2EB29D5E1F762DB90023A5F1 /* dump-datatransfer-types.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 2EB29D5D1F762DA50023A5F1 /* dump-datatransfer-types.html */; };
 		2EBD9D0A2134730D002DA758 /* video.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 07CD32F72065B72A0064A4BE /* video.html */; };
 		2EC7034A26AF5E88002B2D37 /* KeyboardEventTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2EC7034926AF5E88002B2D37 /* KeyboardEventTests.mm */; };
+		2ED88823277125AB00DB7E99 /* WKInspectorExtensionEvaluateScriptOnPage.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 2ED8882127711F1200DB7E99 /* WKInspectorExtensionEvaluateScriptOnPage.html */; };
+		2ED88824277125AB00DB7E99 /* WKInspectorExtensionEvaluateScriptOnPageInnerFrame.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 2ED888222771203A00DB7E99 /* WKInspectorExtensionEvaluateScriptOnPageInnerFrame.html */; };
 		2EFF06C31D88621E0004BB30 /* large-video-offscreen.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 2EFF06C21D8862120004BB30 /* large-video-offscreen.html */; };
 		2EFF06C51D8867760004BB30 /* change-video-source-on-click.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 2EFF06C41D8867700004BB30 /* change-video-source-on-click.html */; };
 		2EFF06C71D886A580004BB30 /* change-video-source-on-end.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 2EFF06C61D886A560004BB30 /* change-video-source-on-end.html */; };
@@ -1634,6 +1636,8 @@
 				CE14F1A4181873B0001C2705 /* WillPerformClientRedirectToURLCrash.html in Copy Resources */,
 				468F2F942368DAF100F4B864 /* window-open-then-document-open.html in Copy Resources */,
 				A5E2027515B21F6E00C13E14 /* WindowlessWebViewWithMedia.html in Copy Resources */,
+				2ED88823277125AB00DB7E99 /* WKInspectorExtensionEvaluateScriptOnPage.html in Copy Resources */,
+				2ED88824277125AB00DB7E99 /* WKInspectorExtensionEvaluateScriptOnPageInnerFrame.html in Copy Resources */,
 			);
 			name = "Copy Resources";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1857,6 +1861,8 @@
 		2EB29D5D1F762DA50023A5F1 /* dump-datatransfer-types.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "dump-datatransfer-types.html"; sourceTree = "<group>"; };
 		2EC7034926AF5E88002B2D37 /* KeyboardEventTests.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = KeyboardEventTests.mm; sourceTree = "<group>"; };
 		2ECFF5541D9B12F800B55394 /* NowPlayingControlsTests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = NowPlayingControlsTests.mm; sourceTree = "<group>"; };
+		2ED8882127711F1200DB7E99 /* WKInspectorExtensionEvaluateScriptOnPage.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = WKInspectorExtensionEvaluateScriptOnPage.html; sourceTree = "<group>"; };
+		2ED888222771203A00DB7E99 /* WKInspectorExtensionEvaluateScriptOnPageInnerFrame.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = WKInspectorExtensionEvaluateScriptOnPageInnerFrame.html; sourceTree = "<group>"; };
 		2EFF06C21D8862120004BB30 /* large-video-offscreen.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "large-video-offscreen.html"; sourceTree = "<group>"; };
 		2EFF06C41D8867700004BB30 /* change-video-source-on-click.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "change-video-source-on-click.html"; sourceTree = "<group>"; };
 		2EFF06C61D886A560004BB30 /* change-video-source-on-end.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "change-video-source-on-end.html"; sourceTree = "<group>"; };
@@ -4252,6 +4258,8 @@
 				51714EB31CF8C761004723C4 /* WebProcessKillIDBCleanup-2.html */,
 				5120C83B1E674E350025B250 /* WebsiteDataStoreCustomPaths.html */,
 				2E131C171D83A97E001BA36C /* wide-autoplaying-video-with-audio.html */,
+				2ED8882127711F1200DB7E99 /* WKInspectorExtensionEvaluateScriptOnPage.html */,
+				2ED888222771203A00DB7E99 /* WKInspectorExtensionEvaluateScriptOnPageInnerFrame.html */,
 			);
 			name = Resources;
 			sourceTree = "<group>";

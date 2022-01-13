@@ -1,3 +1,16 @@
+2022-01-13  Patrick Angle  <pangle@apple.com>
+
+        Web Inspector: Implement `frameURL` option for `devtools.inspectedWindow.eval` command
+        https://bugs.webkit.org/show_bug.cgi?id=222568
+
+        Reviewed by Devin Rousso.
+
+        New test: Tools/TestWebKitAPI/Tests/WebKitCocoa/WKInspectorExtension.mm
+
+        Correct the API to indicate that `frameURL` and `contextSecurityOrigin` are nullable parameters.
+
+        * UIProcess/API/Cocoa/_WKInspectorExtension.h:
+
 2022-01-12  John Wilander  <wilander@apple.com>
 
         PCM: Same-site triggering events should support ephemeral measurement

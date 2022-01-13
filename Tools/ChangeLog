@@ -1,3 +1,19 @@
+2022-01-13  Patrick Angle  <pangle@apple.com>
+
+        Web Inspector: Implement `frameURL` option for `devtools.inspectedWindow.eval` command
+        https://bugs.webkit.org/show_bug.cgi?id=222568
+
+        Reviewed by Devin Rousso.
+
+        Add test coverage for evaluating script on an inspected page from an extension, including evaluating on an inner
+        frame.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/WKInspectorExtension.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/WKInspectorExtensionEvaluateScriptOnPage.html: Added.
+        * TestWebKitAPI/Tests/WebKitCocoa/WKInspectorExtensionEvaluateScriptOnPageInnerFrame.html: Added.
+
 2022-01-12  Jonathan Bedard  <jbedard@apple.com>
 
         [EWS] Load contributors from stand-alone class

@@ -30,6 +30,7 @@
 #import "DeprecatedGlobalValues.h"
 #import "TestCocoa.h"
 #import "TestInspectorURLSchemeHandler.h"
+#import "TestNavigationDelegate.h"
 #import "Utilities.h"
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
@@ -375,6 +376,129 @@ TEST(WKInspectorExtension, EvaluateScriptInExtensionTabCanReturnPromises)
     // Unregister the test extension.
     pendingCallbackWasCalled = false;
     [[webView _inspector] unregisterExtension:sharedInspectorExtension.get() completionHandler:^(NSError * _Nullable error) {
+        EXPECT_NULL(error);
+
+        pendingCallbackWasCalled = true;
+    }];
+    TestWebKitAPI::Util::run(&pendingCallbackWasCalled);
+}
+
+TEST(WKInspectorExtension, EvaluateScriptOnPage)
+{
+    resetGlobalState();
+
+    auto webViewConfiguration = adoptNS([WKWebViewConfiguration new]);
+    webViewConfiguration.get().preferences._developerExtrasEnabled = YES;
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+    auto uiDelegate = adoptNS([UIDelegateForTestingInspectorExtension new]);
+    auto navigationDelegate = adoptNS([[TestNavigationDelegate alloc] init]);
+
+    auto *testPageFileURL = [NSBundle.mainBundle URLForResource:@"WKInspectorExtensionEvaluateScriptOnPage" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+
+    [webView setUIDelegate:uiDelegate.get()];
+    [webView setNavigationDelegate:navigationDelegate.get()];
+    [webView loadFileURL:testPageFileURL allowingReadAccessToURL:testPageFileURL.URLByDeletingLastPathComponent];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    [[webView _inspector] show];
+    TestWebKitAPI::Util::run(&didAttachLocalInspectorCalled);
+
+    auto extensionID = [NSUUID UUID].UUIDString;
+    auto extensionBundleIdentifier = @"org.webkit.TestWebKitAPI.FourthExtension";
+    auto extensionDisplayName = @"FourthExtension";
+
+    // Register the test extension.
+    pendingCallbackWasCalled = false;
+    [[webView _inspector] registerExtensionWithID:extensionID extensionBundleIdentifier:extensionBundleIdentifier displayName:extensionDisplayName completionHandler:^(NSError *error, _WKInspectorExtension *extension) {
+        EXPECT_NULL(error);
+        EXPECT_NOT_NULL(extension);
+        sharedInspectorExtension = extension;
+
+        pendingCallbackWasCalled = true;
+    }];
+    TestWebKitAPI::Util::run(&pendingCallbackWasCalled);
+
+    auto extensionDelegate = adoptNS([InspectorExtensionDelegateForTestingInspectorExtension new]);
+    [sharedInspectorExtension setDelegate:extensionDelegate.get()];
+
+    // Create and show an extension tab.
+    auto iconURL = [NSURL URLWithString:@"test-resource://FourthExtension/InspectorExtension-TabIcon-30x30.png"];
+    auto sourceURL = [NSURL URLWithString:@"test-resource://FourthExtension/InspectorExtension-basic-tab.html"];
+
+    pendingCallbackWasCalled = false;
+    [sharedInspectorExtension createTabWithName:@"FourthExtension-Tab" tabIconURL:iconURL sourceURL:sourceURL completionHandler:^(NSError *error, NSString *extensionTabIdentifier) {
+        EXPECT_NULL(error);
+        EXPECT_NOT_NULL(extensionTabIdentifier);
+        sharedExtensionTabIdentifier = extensionTabIdentifier;
+
+        pendingCallbackWasCalled = true;
+    }];
+    TestWebKitAPI::Util::run(&pendingCallbackWasCalled);
+
+    pendingCallbackWasCalled = false;
+    didShowExtensionTabWasCalled = false;
+    [[webView _inspector] showExtensionTabWithIdentifier:sharedExtensionTabIdentifier.get() completionHandler:^(NSError *error) {
+        EXPECT_NULL(error);
+
+        pendingCallbackWasCalled = true;
+    }];
+    TestWebKitAPI::Util::run(&pendingCallbackWasCalled);
+    TestWebKitAPI::Util::run(&didShowExtensionTabWasCalled);
+
+    auto mainFrameSecretString = @"42-mainFrame";
+    auto innerFrameSecretString = @"42-innerFrame";
+    auto scriptSource = @"document.getElementById('secret').innerText";
+
+    // Test main frame evaluation.
+    pendingCallbackWasCalled = false;
+    [sharedInspectorExtension evaluateScript:scriptSource frameURL:nil contextSecurityOrigin:nil useContentScriptContext:false completionHandler:^(NSError *error, NSDictionary *result) {
+        EXPECT_NULL(error);
+        EXPECT_NOT_NULL(result);
+        EXPECT_NS_EQUAL(result, mainFrameSecretString);
+
+        pendingCallbackWasCalled = true;
+    }];
+    TestWebKitAPI::Util::run(&pendingCallbackWasCalled);
+
+    // Test main frame evaluation failure.
+    pendingCallbackWasCalled = false;
+    [sharedInspectorExtension evaluateScript:@"[].x.x" frameURL:nil contextSecurityOrigin:nil useContentScriptContext:false completionHandler:^(NSError *error, NSDictionary *result) {
+        EXPECT_NULL(result);
+        EXPECT_NOT_NULL(error);
+
+        pendingCallbackWasCalled = true;
+    }];
+    TestWebKitAPI::Util::run(&pendingCallbackWasCalled);
+
+    // Test loose frameURL evaluation.
+    auto *testPageInnerFrameFileURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@WKInspectorExtensionEvaluateScriptOnPageInnerFrame.html", [[testPageFileURL URLByDeletingLastPathComponent] absoluteString]]];
+
+    pendingCallbackWasCalled = false;
+    [sharedInspectorExtension evaluateScript:scriptSource frameURL:testPageInnerFrameFileURL contextSecurityOrigin:nil useContentScriptContext:false completionHandler:^(NSError *error, NSDictionary *result) {
+        EXPECT_NULL(error);
+        EXPECT_NOT_NULL(result);
+        EXPECT_NS_EQUAL(result, innerFrameSecretString);
+
+        pendingCallbackWasCalled = true;
+    }];
+    TestWebKitAPI::Util::run(&pendingCallbackWasCalled);
+
+    // Test strict frameURL evaluation.
+    auto *testPageInnerFrameStrictFileURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@?query=param#fragment", [testPageInnerFrameFileURL absoluteString]]];
+
+    pendingCallbackWasCalled = false;
+    [sharedInspectorExtension evaluateScript:scriptSource frameURL:testPageInnerFrameStrictFileURL contextSecurityOrigin:nil useContentScriptContext:false completionHandler:^(NSError *error, NSDictionary *result) {
+        EXPECT_NULL(error);
+        EXPECT_NOT_NULL(result);
+        EXPECT_NS_EQUAL(result, innerFrameSecretString);
+
+        pendingCallbackWasCalled = true;
+    }];
+    TestWebKitAPI::Util::run(&pendingCallbackWasCalled);
+
+    // Unregister the test extension.
+    pendingCallbackWasCalled = false;
+    [[webView _inspector] unregisterExtension:sharedInspectorExtension.get() completionHandler:^(NSError * error) {
         EXPECT_NULL(error);
 
         pendingCallbackWasCalled = true;

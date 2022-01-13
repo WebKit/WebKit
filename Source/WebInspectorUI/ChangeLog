@@ -1,3 +1,25 @@
+2022-01-13  Patrick Angle  <pangle@apple.com>
+
+        Web Inspector: Implement `frameURL` option for `devtools.inspectedWindow.eval` command
+        https://bugs.webkit.org/show_bug.cgi?id=222568
+
+        Reviewed by Devin Rousso.
+
+        New test: Tools/TestWebKitAPI/Tests/WebKitCocoa/WKInspectorExtension.mm
+
+        Add support for evaluating script from an extension in a specific frame on the page by referring to it by the
+        frame's URL. Frame URLs are matched in three steps, first looking for an exact URL match, including query
+        parameters and fragment identifier. If no match is found and the provided `options.frameURL` does not have any
+        fragment identifier or query parameters, a check is then made against each known frame again, this time
+        excluding their fragment identifier. If that check still fails to find a frame for the URL, we perform one more
+        pass, this time excluding the fragment identifier and query parameters for each known frame.
+
+        * UserInterface/Controllers/WebInspectorExtensionController.js:
+        (WI.WebInspectorExtensionController.prototype.evaluateScriptForExtension):
+        (WI.WebInspectorExtensionController.prototype.reloadForExtension):
+        - Drive-by removal of trailing spaces.
+        (WI.WebInspectorExtensionController.prototype._frameForFrameURL):
+
 2022-01-12  Elliott Williams  <emw@apple.com>
 
         [Xcode] Configure each project for the legacy build system

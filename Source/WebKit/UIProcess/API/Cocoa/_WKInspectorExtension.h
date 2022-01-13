@@ -63,7 +63,7 @@ WK_CLASS_AVAILABLE(macos(12.0))
  * scriptSource is treated as a top-level evaluation. By default, the script is evaluated in the inspected page's script context.
  * The inspected page ultimately controls its execution context and the result of this evaluation. Thus, the result shall be treated as untrusted input.
  */
-- (void)evaluateScript:(NSString *)scriptSource frameURL:(NSURL *)frameURL contextSecurityOrigin:(NSURL *)contextSecurityOrigin useContentScriptContext:(BOOL)useContentScriptContext completionHandler:(void(^)(NSError * _Nullable, id result))completionHandler;
+- (void)evaluateScript:(NSString *)scriptSource frameURL:(NSURL * _Nullable)frameURL contextSecurityOrigin:(NSURL * _Nullable)contextSecurityOrigin useContentScriptContext:(BOOL)useContentScriptContext completionHandler:(void(^)(NSError * _Nullable, id result))completionHandler;
 
 /**
  * @abstract Evaluates JavaScript in the context of a Web Inspector tab created by this _WKInspectorExtension.

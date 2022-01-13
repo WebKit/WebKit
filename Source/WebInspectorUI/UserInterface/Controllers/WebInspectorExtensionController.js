@@ -133,10 +133,10 @@ WI.WebInspectorExtensionController = class WebInspectorExtensionController exten
             return WI.WebInspectorExtension.ErrorCode.InvalidRequest;
         }
 
-        // FIXME: <rdar://problem/74180355> implement execution context selection options
-        if (frameURL) {
-            WI.reportInternalError("evaluateScriptForExtension: the 'frameURL' option is not yet implemented.");
-            return WI.WebInspectorExtension.ErrorCode.NotImplemented;
+        let frame = this._frameForFrameURL(frameURL);
+        if (!frame) {
+            WI.reportInternalError("evaluateScriptForExtension: No frame matched provided frameURL: " + frameURL);
+            return WI.WebInspectorExtension.ErrorCode.InvalidRequest;
         }
 
         if (contextSecurityOrigin) {
@@ -149,7 +149,12 @@ WI.WebInspectorExtensionController = class WebInspectorExtensionController exten
             return WI.WebInspectorExtension.ErrorCode.NotImplemented;
         }
 
-        let evaluationContext = WI.runtimeManager.activeExecutionContext;
+        let evaluationContext = frame.pageExecutionContext;
+        if (!evaluationContext) {
+            WI.reportInternalError("evaluateScriptForExtension: No 'pageExecutionContext' was present for frame with URL: " + frame.url);
+            return WI.WebInspectorExtension.ErrorCode.ContextDestroyed;
+        }
+
         return evaluationContext.target.RuntimeAgent.evaluate.invoke({
             expression: scriptSource,
             objectGroup: "extension-evaluation",
@@ -165,7 +170,7 @@ WI.WebInspectorExtensionController = class WebInspectorExtensionController exten
             return wasThrown ? {"error": resultOrError.description} : {"result": value};
         }).catch((error) => error.description);
     }
-    
+
     reloadForExtension(extensionID, {ignoreCache, userAgent, injectedScript} = {})
     {
         let extension = this._extensionForExtensionIDMap.get(extensionID);
@@ -184,14 +189,14 @@ WI.WebInspectorExtensionController = class WebInspectorExtensionController exten
             WI.reportInternalError("reloadForExtension: the 'injectedScript' option is not yet implemented.");
             return WI.WebInspectorExtension.ErrorCode.NotImplemented;
         }
-        
+
         let target = WI.assumingMainTarget();
         if (!target.hasCommand("Page.reload"))
             return WI.WebInspectorExtension.ErrorCode.InvalidRequest;
-        
+
         return target.PageAgent.reload.invoke({ignoreCache});
     }
-    
+
     showExtensionTab(extensionTabID, options = {})
     {
         let tabContentView = this._extensionTabContentViewForExtensionTabIDMap.get(extensionTabID);
@@ -391,6 +396,42 @@ WI.WebInspectorExtensionController = class WebInspectorExtensionController exten
         // This could happen if a smaller set of tabs are enabled for the inspection target.
         anchorTabIndex = visibleTabBarItems.length - 1;
         return {anchorTabType, anchorTabIndex, distanceFromAnchorTab};
+    }
+
+    _frameForFrameURL(frameURL)
+    {
+        if (!frameURL)
+            return WI.networkManager.mainFrame;
+
+        function findFrame(frameURL, adjustKnownFrameURL) {
+            return WI.networkManager.frames.find((knownFrame) => {
+                let knownFrameURL = new URL(knownFrame.url);
+                adjustKnownFrameURL?.(knownFrameURL);
+                return knownFrameURL.toString() === frameURL;
+            });
+        }
+
+        let frame = findFrame(frameURL);
+        if (frame)
+            return frame;
+
+        let frameURLParts = new URL(frameURL);
+        if (frameURLParts.hash.length)
+            return null;
+
+        frame = findFrame(frameURL, (knownFrameURL) => {
+            knownFrameURL.hash = "";
+        });
+        if (frame)
+            return frame;
+
+        if (frameURLParts.search.length)
+            return null;
+
+        return findFrame(frameURL, (knownFrameURL) => {
+            knownFrameURL.hash = "";
+            knownFrameURL.search = "";
+        });
     }
 
     _handleMainResourceDidChange(event)
