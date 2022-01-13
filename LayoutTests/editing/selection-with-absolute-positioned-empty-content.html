@@ -1,0 +1,26 @@
+<style>
+div {
+  font-family: Ahem;
+  font-size: 20px;
+  width: 220px;
+}
+
+span {
+  position: absolute;
+}
+</style>
+<div><a id=foobar style="color: black" href="">select this text<span></span></a> but not this</div>
+<pre id=result></pre>
+<script>
+if (window.internals)
+  internals.startTrackingRepaints();
+if (window.testRunner)
+  testRunner.dumpAsText();
+
+window.getSelection().selectAllChildren(foobar);
+
+if (window.internals) {
+  result.innerText = internals.repaintRectsAsText();
+  internals.stopTrackingRepaints();
+}
+</script>

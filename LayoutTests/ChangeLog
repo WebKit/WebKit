@@ -1,3 +1,14 @@
+2022-01-13  Alan Bujtas  <zalan@apple.com>
+
+        REGRESSION (r278561): Right clicking a link selects the full line with unrelated text
+        https://bugs.webkit.org/show_bug.cgi?id=235172
+        <rdar://84069534>
+
+        Reviewed by Dean Jackson.
+
+        * fast/editing/selection-with-absolute-positioned-empty-content-expected.txt: Added.
+        * fast/editing/selection-with-absolute-positioned-empty-content.html: Added.
+
 2022-01-10  Sergio Villar Senin  <svillar@igalia.com>
 
         [css-flexbox] Incorrect height of flex items with aspect-ratio whenever the cross axis intrinsic size is larger than the viewport
