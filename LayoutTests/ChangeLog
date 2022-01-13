@@ -1,3 +1,17 @@
+2022-01-13  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GTK] fast/events/overflow-viewport-renderer-deleted.html does not load
+        https://bugs.webkit.org/show_bug.cgi?id=176021
+
+        Unreviewed test gardening.
+
+        The test has its own baseline and was marked as Missing in
+        TestExpectations. The test passes if removing the WebKitGTK baseline
+        and the Missing expected result.
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/fast/events/overflow-viewport-renderer-deleted-expected.txt: Removed.
+
 2022-01-12  Diego Pino Garcia  <dpino@igalia.com>
 
         [WPE] Unreviewed test gardening, remove some tests expected to fail but passing

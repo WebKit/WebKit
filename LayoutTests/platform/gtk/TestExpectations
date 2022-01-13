@@ -1694,8 +1694,6 @@ webkit.org/b/175421 printing/width-overflow.html [ Failure ]
 
 webkit.org/b/175931 fast/canvas/webgl/no-info-log-for-simple-shaders.html [ Failure ]
 
-webkit.org/b/176021 fast/events/overflow-viewport-renderer-deleted.html [ Missing ]
-
 webkit.org/b/176648 fast/repaint/inline-outline-repaint.html [ ImageOnlyFailure ]
 
 webkit.org/b/177294 platform/gtk/fonts/fontconfig-aliasing-settings.html [ Failure ]
