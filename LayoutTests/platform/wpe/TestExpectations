@@ -946,40 +946,6 @@ Bug(WPE) security/contentSecurityPolicy/image-with-blob-url-allowed-by-img-src-s
 Bug(WPE) security/contentSecurityPolicy/image-with-blob-url-blocked-by-img-src-star.html [ Skip ]
 Bug(WPE) security/contentSecurityPolicy/video-with-blob-url-allowed-by-media-src-star.html [ Skip ]
 
-# accessibility/
-webkit.org/b/201983 accessibility/aria-checkbox-sends-notification.html [ Missing ]
-webkit.org/b/201983 accessibility/aria-combobox-hierarchy.html [ Missing ]
-webkit.org/b/201983 accessibility/aria-hidden-false-works-in-subtrees.html [ Missing ]
-webkit.org/b/201983 accessibility/aria-inherits-presentational.html [ Missing ]
-webkit.org/b/201983 accessibility/aria-menubar-menuitems.html [ Missing ]
-webkit.org/b/201983 accessibility/aria-role-on-label.html [ Missing ]
-webkit.org/b/201983 accessibility/aria-selected-menu-items.html [ Missing ]
-webkit.org/b/201983 accessibility/aria-selected.html [ Missing ]
-webkit.org/b/201983 accessibility/aria-switch-text.html [ Missing ]
-webkit.org/b/201983 accessibility/aria-table-hierarchy.html [ Missing ]
-webkit.org/b/201983 accessibility/content-editable-as-textarea.html [ Missing ]
-webkit.org/b/201983 accessibility/css-content-attribute.html [ Missing ]
-webkit.org/b/201983 accessibility/datetime-attribute.html [ Missing ]
-webkit.org/b/201983 accessibility/form-control-value-settable.html [ Missing ]
-webkit.org/b/201983 accessibility/generated-content-with-display-table-crash.html [ Missing ]
-webkit.org/b/201983 accessibility/image-with-alt-and-map.html [ Missing ]
-webkit.org/b/201983 accessibility/img-fallsback-to-title.html [ Missing ]
-webkit.org/b/201983 accessibility/math-fenced.html [ Missing ]
-webkit.org/b/201983 accessibility/math-foreign-content.html [ Missing ]
-webkit.org/b/201983 accessibility/math-mo-fences-and-separators.html [ Missing ]
-webkit.org/b/201983 accessibility/math-text.html [ Missing ]
-webkit.org/b/201983 accessibility/meter-element.html [ Missing ]
-webkit.org/b/201983 accessibility/platform-name.html [ Missing ]
-webkit.org/b/201983 accessibility/svg-element-with-aria-role.html [ Missing ]
-webkit.org/b/201983 accessibility/table-hierarchy.html [ Missing ]
-webkit.org/b/201983 accessibility/w3c-svg-content-language-attribute.html [ Missing ]
-webkit.org/b/201983 accessibility/w3c-svg-description-calculation.html [ Missing ]
-webkit.org/b/201983 accessibility/w3c-svg-elements-not-exposed.html [ Missing ]
-webkit.org/b/201983 accessibility/w3c-svg-name-calculation.html [ Missing ]
-webkit.org/b/201983 accessibility/w3c-svg-presentational-role.html [ Missing ]
-webkit.org/b/201983 accessibility/w3c-svg-roles.html [ Missing ]
-
-
 # WPT: css
 # ========
 

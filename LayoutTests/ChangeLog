@@ -1,3 +1,44 @@
+2022-01-12  Diego Pino Garcia  <dpino@igalia.com>
+
+        [WPE] Several accessibilty tests don't have expected results
+        https://bugs.webkit.org/show_bug.cgi?id=201983
+
+        Unreviewed test gardening.
+
+        These tests had a baseline for WebKitGTK which actually can be reused for WPE.
+
+        * platform/glib/accessibility/aria-checkbox-sends-notification-expected.txt: Renamed from LayoutTests/platform/gtk/accessibility/aria-checkbox-sends-notification-expected.txt.
+        * platform/glib/accessibility/aria-combobox-hierarchy-expected.txt: Renamed from LayoutTests/platform/gtk/accessibility/aria-combobox-hierarchy-expected.txt.
+        * platform/glib/accessibility/aria-hidden-false-works-in-subtrees-expected.txt: Renamed from LayoutTests/platform/gtk/accessibility/aria-hidden-false-works-in-subtrees-expected.txt.
+        * platform/glib/accessibility/aria-inherits-presentational-expected.txt: Renamed from LayoutTests/platform/gtk/accessibility/aria-inherits-presentational-expected.txt.
+        * platform/glib/accessibility/aria-menubar-menuitems-expected.txt: Renamed from LayoutTests/platform/gtk/accessibility/aria-menubar-menuitems-expected.txt.
+        * platform/glib/accessibility/aria-role-on-label-expected.txt: Renamed from LayoutTests/platform/gtk/accessibility/aria-role-on-label-expected.txt.
+        * platform/glib/accessibility/aria-selected-expected.txt: Renamed from LayoutTests/platform/gtk/accessibility/aria-selected-expected.txt.
+        * platform/glib/accessibility/aria-selected-menu-items-expected.txt: Renamed from LayoutTests/platform/gtk/accessibility/aria-selected-menu-items-expected.txt.
+        * platform/glib/accessibility/aria-switch-text-expected.txt: Renamed from LayoutTests/platform/gtk/accessibility/aria-switch-text-expected.txt.
+        * platform/glib/accessibility/aria-table-hierarchy-expected.txt: Renamed from LayoutTests/platform/gtk/accessibility/aria-table-hierarchy-expected.txt.
+        * platform/glib/accessibility/css-content-attribute-expected.txt: Renamed from LayoutTests/platform/gtk/accessibility/css-content-attribute-expected.txt.
+        * platform/glib/accessibility/datetime-attribute-expected.txt: Renamed from LayoutTests/platform/gtk/accessibility/datetime-attribute-expected.txt.
+        * platform/glib/accessibility/form-control-value-settable-expected.txt: Renamed from LayoutTests/platform/gtk/accessibility/form-control-value-settable-expected.txt.
+        * platform/glib/accessibility/generated-content-with-display-table-crash-expected.txt: Renamed from LayoutTests/platform/gtk/accessibility/generated-content-with-display-table-crash-expected.txt.
+        * platform/glib/accessibility/image-with-alt-and-map-expected.txt: Renamed from LayoutTests/platform/gtk/accessibility/image-with-alt-and-map-expected.txt.
+        * platform/glib/accessibility/img-fallsback-to-title-expected.txt: Renamed from LayoutTests/platform/gtk/accessibility/img-fallsback-to-title-expected.txt.
+        * platform/glib/accessibility/math-fenced-expected.txt: Renamed from LayoutTests/platform/gtk/accessibility/math-fenced-expected.txt.
+        * platform/glib/accessibility/math-foreign-content-expected.txt: Renamed from LayoutTests/platform/gtk/accessibility/math-foreign-content-expected.txt.
+        * platform/glib/accessibility/math-mo-fences-and-separators-expected.txt: Renamed from LayoutTests/platform/gtk/accessibility/math-mo-fences-and-separators-expected.txt.
+        * platform/glib/accessibility/math-text-expected.txt: Renamed from LayoutTests/platform/gtk/accessibility/math-text-expected.txt.
+        * platform/glib/accessibility/meter-element-expected.txt: Renamed from LayoutTests/platform/gtk/accessibility/meter-element-expected.txt.
+        * platform/glib/accessibility/platform-name-expected.txt: Renamed from LayoutTests/platform/gtk/accessibility/platform-name-expected.txt.
+        * platform/glib/accessibility/svg-element-with-aria-role-expected.txt: Renamed from LayoutTests/platform/gtk/accessibility/svg-element-with-aria-role-expected.txt.
+        * platform/glib/accessibility/table-hierarchy-expected.txt: Renamed from LayoutTests/platform/gtk/accessibility/table-hierarchy-expected.txt.
+        * platform/glib/accessibility/w3c-svg-content-language-attribute-expected.txt: Renamed from LayoutTests/platform/gtk/accessibility/w3c-svg-content-language-attribute-expected.txt.
+        * platform/glib/accessibility/w3c-svg-description-calculation-expected.txt: Renamed from LayoutTests/platform/gtk/accessibility/w3c-svg-description-calculation-expected.txt.
+        * platform/glib/accessibility/w3c-svg-elements-not-exposed-expected.txt: Renamed from LayoutTests/platform/gtk/accessibility/w3c-svg-elements-not-exposed-expected.txt.
+        * platform/glib/accessibility/w3c-svg-name-calculation-expected.txt: Renamed from LayoutTests/platform/gtk/accessibility/w3c-svg-name-calculation-expected.txt.
+        * platform/glib/accessibility/w3c-svg-presentational-role-expected.txt: Renamed from LayoutTests/platform/gtk/accessibility/w3c-svg-presentational-role-expected.txt.
+        * platform/glib/accessibility/w3c-svg-roles-expected.txt: Renamed from LayoutTests/platform/gtk/accessibility/w3c-svg-roles-expected.txt.
+        * platform/wpe/TestExpectations:
+
 2022-01-12  John Wilander  <wilander@apple.com>
 
         PCM: Same-site triggering events should support ephemeral measurement
