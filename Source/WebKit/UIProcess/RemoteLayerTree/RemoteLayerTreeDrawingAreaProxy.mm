@@ -71,12 +71,14 @@
         _displayLink.preferredFramesPerSecond = 60;
 
         if (drawingAreaProxy) {
-            auto minimumRefreshInterval = _displayLink.maximumRefreshRate;
-            if (minimumRefreshInterval > 0) {
-                auto& page = drawingAreaProxy->page();
-                if (auto displayId = page.displayId()) {
-                    WebCore::FramesPerSecond frameRate = std::round(1.0 / minimumRefreshInterval);
-                    page.windowScreenDidChange(*displayId, frameRate);
+            auto& page = drawingAreaProxy->page();
+            if (page.preferences().webAnimationsCustomFrameRateEnabled()) {
+                auto minimumRefreshInterval = _displayLink.maximumRefreshRate;
+                if (minimumRefreshInterval > 0) {
+                    if (auto displayId = page.displayId()) {
+                        WebCore::FramesPerSecond frameRate = std::round(1.0 / minimumRefreshInterval);
+                        page.windowScreenDidChange(*displayId, frameRate);
+                    }
                 }
             }
         }

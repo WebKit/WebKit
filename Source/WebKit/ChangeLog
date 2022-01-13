@@ -1,5 +1,18 @@
 2022-01-13  Per Arne Vollan  <pvollan@apple.com>
 
+        Avoid unnecessary call to windowScreenDidChange
+        https://bugs.webkit.org/show_bug.cgi?id=235198
+        <rdar://87458502>
+
+        Reviewed by Geoffrey Garen.
+
+        It is a page load performance progression to avoid this call in initWithDrawingAreaProxy.
+
+        * UIProcess/RemoteLayerTree/RemoteLayerTreeDrawingAreaProxy.mm:
+        (-[WKOneShotDisplayLinkHandler initWithDrawingAreaProxy:]):
+
+2022-01-13  Per Arne Vollan  <pvollan@apple.com>
+
         [iOS][Networking] Add access to required network service
         https://bugs.webkit.org/show_bug.cgi?id=235188
         <rdar://86781432>
