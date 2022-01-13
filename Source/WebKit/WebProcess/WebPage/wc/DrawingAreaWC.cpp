@@ -31,6 +31,7 @@
 #include "PlatformImageBufferShareableBackend.h"
 #include "RemoteWCLayerTreeHostProxy.h"
 #include "UpdateInfo.h"
+#include "WebFrame.h"
 #include "WebPageCreationParameters.h"
 #include "WebProcess.h"
 #include <WebCore/ConcreteImageBuffer.h>
@@ -42,7 +43,6 @@ using namespace WebCore;
 
 DrawingAreaWC::DrawingAreaWC(WebPage& webPage, const WebPageCreationParameters& parameters)
     : DrawingArea(DrawingAreaType::WC, parameters.drawingAreaIdentifier, webPage)
-    , m_rootLayerClient(webPage)
     , m_remoteWCLayerTreeHostProxy(makeUnique<RemoteWCLayerTreeHostProxy>(webPage, *this))
     , m_layerFactory(*this)
     , m_rootLayer(GraphicsLayer::create(graphicsLayerFactory(), this->m_rootLayerClient))
@@ -50,10 +50,7 @@ DrawingAreaWC::DrawingAreaWC(WebPage& webPage, const WebPageCreationParameters& 
     , m_commitQueue(WorkQueue::create("DrawingAreaWC CommitQueue"_s))
 {
     m_rootLayer->setName(MAKE_STATIC_STRING_IMPL("drawing area root"));
-    m_rootLayer->setDrawsContent(true);
-    m_rootLayer->setContentsOpaque(true);
     m_rootLayer->setSize(m_webPage.size());
-    m_rootLayer->setNeedsDisplay();
 }
 
 DrawingAreaWC::~DrawingAreaWC()
@@ -93,6 +90,17 @@ void DrawingAreaWC::attachViewOverlayGraphicsLayer(GraphicsLayer* layer)
     updateRootLayers();
 }
 
+void DrawingAreaWC::updatePreferences(const WebPreferencesStore&)
+{
+    Settings& settings = m_webPage.corePage()->settings();
+    settings.setAcceleratedCompositingForFixedPositionEnabled(settings.acceleratedCompositingEnabled());
+}
+
+bool DrawingAreaWC::shouldUseTiledBackingForFrameView(const WebCore::FrameView& frameView) const
+{
+    return frameView.frame().isMainFrame();
+}
+
 void DrawingAreaWC::setLayerTreeStateIsFrozen(bool isFrozen)
 {
     if (m_isRenderingSuspended == isFrozen)
@@ -122,41 +130,39 @@ void DrawingAreaWC::setNeedsDisplay()
 void DrawingAreaWC::setNeedsDisplayInRect(const IntRect& rect)
 {
     if (isCompositingMode())
-        m_rootLayer->setNeedsDisplayInRect(rect);
-    else
-        m_dirtyRegion.unite(rect);
+        return;
+    m_dirtyRegion.unite(rect);
     triggerRenderingUpdate();
 }
 
 void DrawingAreaWC::scroll(const IntRect& scrollRect, const IntSize& scrollDelta)
 {
     if (isCompositingMode())
-        m_rootLayer->setNeedsDisplayInRect(scrollRect);
-    else {
-        if (scrollRect != m_scrollRect) {
-            // Just repaint the entire current scroll rect, we'll scroll the new rect instead.
-            setNeedsDisplayInRect(m_scrollRect);
-            m_scrollRect = { };
-            m_scrollOffset = { };
-        }
-        // Get the part of the dirty region that is in the scroll rect.
-        Region dirtyRegionInScrollRect = intersect(scrollRect, m_dirtyRegion);
-        if (!dirtyRegionInScrollRect.isEmpty()) {
-            // There are parts of the dirty region that are inside the scroll rect.
-            // We need to subtract them from the region, move them and re-add them.
-            m_dirtyRegion.subtract(scrollRect);
-            // Move the dirty parts.
-            Region movedDirtyRegionInScrollRect = intersect(translate(dirtyRegionInScrollRect, scrollDelta), scrollRect);
-            // And add them back.
-            m_dirtyRegion.unite(movedDirtyRegionInScrollRect);
-        }
-        // Compute the scroll repaint region.
-        Region scrollRepaintRegion = subtract(scrollRect, translate(scrollRect, scrollDelta));
-        m_dirtyRegion.unite(scrollRepaintRegion);
-        m_scrollRect = scrollRect;
-        m_scrollOffset += scrollDelta;
-        triggerRenderingUpdate();
+        return;
+
+    if (scrollRect != m_scrollRect) {
+        // Just repaint the entire current scroll rect, we'll scroll the new rect instead.
+        setNeedsDisplayInRect(m_scrollRect);
+        m_scrollRect = { };
+        m_scrollOffset = { };
     }
+    // Get the part of the dirty region that is in the scroll rect.
+    Region dirtyRegionInScrollRect = intersect(scrollRect, m_dirtyRegion);
+    if (!dirtyRegionInScrollRect.isEmpty()) {
+        // There are parts of the dirty region that are inside the scroll rect.
+        // We need to subtract them from the region, move them and re-add them.
+        m_dirtyRegion.subtract(scrollRect);
+        // Move the dirty parts.
+        Region movedDirtyRegionInScrollRect = intersect(translate(dirtyRegionInScrollRect, scrollDelta), scrollRect);
+        // And add them back.
+        m_dirtyRegion.unite(movedDirtyRegionInScrollRect);
+    }
+    // Compute the scroll repaint region.
+    Region scrollRepaintRegion = subtract(scrollRect, translate(scrollRect, scrollDelta));
+    m_dirtyRegion.unite(scrollRepaintRegion);
+    m_scrollRect = scrollRect;
+    m_scrollOffset += scrollDelta;
+    triggerRenderingUpdate();
 }
 
 void DrawingAreaWC::triggerRenderingUpdate()
@@ -173,7 +179,7 @@ void DrawingAreaWC::triggerRenderingUpdate()
 static void flushLayerImageBuffers(WCUpateInfo& info)
 {
     for (auto& layerInfo : info.changedLayers) {
-        if (layerInfo.changes & WCLayerChange::BackingStore) {
+        if (layerInfo.changes & WCLayerChange::Background) {
             if (auto image = layerInfo.backingStore.imageBuffer()) {
                 if (auto flusher = image->createFlusher())
                     flusher->flush();
@@ -220,8 +226,10 @@ void DrawingAreaWC::sendUpdateAC()
     m_rootLayer->flushCompositingStateForThisLayerOnly();
 
     // Because our view-relative overlay root layer is not attached to the FrameView's GraphicsLayer tree, we need to flush it manually.
-    if (m_viewOverlayRootLayer)
-        m_viewOverlayRootLayer->flushCompositingState({ });
+    if (m_viewOverlayRootLayer) {
+        FloatRect visibleRect({ }, m_webPage.size());
+        m_viewOverlayRootLayer->flushCompositingState(visibleRect);
+    }
 
     m_updateInfo.rootLayer = m_rootLayer->primaryLayerID();
 
@@ -339,24 +347,6 @@ void DrawingAreaWC::didUpdate()
         m_hasDeferredRenderingUpdate = false;
         triggerRenderingUpdate();
     }
-}
-
-DrawingAreaWC::RootLayerClient::RootLayerClient(WebPage& webPage)
-    : m_webPage(webPage)
-{
-}
-
-void DrawingAreaWC::RootLayerClient::paintContents(const GraphicsLayer*, GraphicsContext& context, const FloatRect& rectToPaint, GraphicsLayerPaintBehavior)
-{
-    context.save();
-    context.clip(rectToPaint);
-    m_webPage.corePage()->mainFrame().view()->paint(context, enclosingIntRect(rectToPaint));
-    context.restore();
-}
-
-float DrawingAreaWC::RootLayerClient::deviceScaleFactor() const
-{
-    return m_webPage.corePage()->deviceScaleFactor();
 }
 
 } // namespace WebKit

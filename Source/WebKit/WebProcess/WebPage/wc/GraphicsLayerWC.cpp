@@ -1,4 +1,5 @@
 /*
+ * Copyright (C) 2010-2021 Apple Inc. All rights reserved.
  * Copyright (C) 2021 Sony Interactive Entertainment Inc.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,14 +28,124 @@
 #include "GraphicsLayerWC.h"
 
 #include "WCPlatformLayerGCGL.h"
+#include <WebCore/TransformState.h>
 
 namespace WebKit {
 using namespace WebCore;
+
+class WCTiledBacking final : public TiledBacking {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    WCTiledBacking(GraphicsLayerWC& owner)
+        : m_owner(owner) { }
+
+    bool paintAndFlush(WCLayerUpateInfo& update)
+    {
+        update.dirtyRect = enclosingIntRect(m_dirtyRect);
+        update.coverageRect = m_coverageRect;
+        m_dirtyRect = { };
+        auto& imageRect = update.dirtyRect;
+        if (imageRect.isEmpty())
+            return false;
+        auto image = m_owner.createImageBuffer(imageRect.size());
+        auto& context = image->context();
+        context.translate(-imageRect.x(), -imageRect.y());
+        m_owner.paintGraphicsLayerContents(context, update.dirtyRect);
+        image->flushDrawingContextAsync();
+        update.backingStore.setImageBuffer(WTFMove(image));
+        return true;
+    }
+
+    void setDirtyRect(const WebCore::FloatRect& rect)
+    {
+        m_dirtyRect.unite(rect);
+    }
+
+    bool hasDirtyRect()
+    {
+        return !m_dirtyRect.isEmpty();
+    }
+
+    TiledBacking* tiledBacking() const { return const_cast<WCTiledBacking*>(this); };
+
+    IntRect adjustCoverageRect(IntRect coverage)
+    {
+        int x = coverage.x() / tileSize().width() * tileSize().width();
+        int y = coverage.y() / tileSize().height() * tileSize().height();
+        int maxX = (coverage.maxX() + tileSize().width() - 1) / tileSize().width() * tileSize().width();
+        int maxY = (coverage.maxY() + tileSize().height() - 1) / tileSize().height() * tileSize().height();
+        IntRect newCoverage { x, y, maxX - x, maxY - y };
+        newCoverage.intersect(bounds());
+        return newCoverage;
+    }
+
+    // TiledBacking override
+    void setVisibleRect(const FloatRect&) final { }
+    FloatRect visibleRect() const final { return { }; };
+    void setLayoutViewportRect(std::optional<FloatRect>) final { }
+    void setCoverageRect(const FloatRect& rect) final
+    {
+        auto newCoverage = adjustCoverageRect(enclosingIntRect(rect));
+        WebCore::Region region(newCoverage);
+        region.subtract(m_coverageRect);
+        setDirtyRect(region.bounds());
+        m_coverageRect = newCoverage;
+        m_dirtyRect.intersect(m_coverageRect);
+    }
+    FloatRect coverageRect() const final { return { }; };
+    bool tilesWouldChangeForCoverageRect(const FloatRect&) const final { return false; }
+    void setTiledScrollingIndicatorPosition(const FloatPoint&) final { }
+    void setTopContentInset(float) final { }
+    void setVelocity(const VelocityData&) final { }
+    void setTileSizeUpdateDelayDisabledForTesting(bool) final { };
+    void setScrollability(Scrollability) final { }
+    void prepopulateRect(const FloatRect&) final { }
+    void setIsInWindow(bool) final { }
+    bool isInWindow() const final { return m_isInWindow; }
+    void setTileCoverage(TileCoverage) final { }
+    TileCoverage tileCoverage() const final { return { }; };
+    FloatRect adjustTileCoverageRect(const FloatRect& coverageRect, const FloatRect& previousVisibleRect, const FloatRect& currentVisibleRect, bool sizeChanged) final { return { }; };
+    FloatRect adjustTileCoverageRectForScrolling(const FloatRect& coverageRect, const FloatSize& newSize, const FloatRect& previousVisibleRect, const FloatRect& currentVisibleRect, float contentsScale) final { return { }; };
+    void willStartLiveResize() final { };
+    void didEndLiveResize() final { };
+    IntSize tileSize() const final { return { 512, 512 }; };
+    void revalidateTiles() final { }
+    void forceRepaint() final { }
+    IntRect tileGridExtent() const final { return { }; }
+    void setScrollingPerformanceTestingEnabled(bool flag) final { }
+    bool scrollingPerformanceTestingEnabled() const final { return false; };
+    double retainedTileBackingStoreMemory() const final { return 0; }
+    IntRect tileCoverageRect() const final { return { }; }
+    void setScrollingModeIndication(ScrollingModeIndication) final { }
+    void setHasMargins(bool marginTop, bool marginBottom, bool marginLeft, bool marginRight) final { }
+    bool hasMargins() const final { return false; };
+    bool hasHorizontalMargins() const final { return false; };
+    bool hasVerticalMargins() const final { return false; };
+    void setMarginSize(int) final { }
+    int topMarginHeight() const final { return 0; };
+    int bottomMarginHeight() const final { return 0; };
+    int leftMarginWidth() const final { return 0; };
+    int rightMarginWidth() const final { return 0; };
+    void setZoomedOutContentsScale(float) final { }
+    float zoomedOutContentsScale() const final { return 1; }
+    IntRect bounds() const final { return { { }, IntSize(m_owner.size()) }; };
+    IntRect boundsWithoutMargin() const final { return bounds(); };
+
+private:
+    bool m_isInWindow { false };
+    WebCore::IntRect m_coverageRect;
+    WebCore::FloatRect m_dirtyRect;
+    GraphicsLayerWC& m_owner;
+};
+
 
 GraphicsLayerWC::GraphicsLayerWC(Type layerType, GraphicsLayerClient& client, Observer& observer)
     : GraphicsLayer(layerType, client)
     , m_observer(&observer)
 {
+    m_tiledBacking = makeUnique<WCTiledBacking>(*this);
+    if (layerType == Type::Normal)
+        client.tiledBackingUsageChanged(this, true);
     m_observer->graphicsLayerAdded(*this);
 }
 
@@ -59,17 +170,16 @@ GraphicsLayer::PlatformLayerID GraphicsLayerWC::primaryLayerID() const
 
 void GraphicsLayerWC::setNeedsDisplay()
 {
-    if (!drawsContent())
-        return;
-    noteLayerPropertyChanged(WCLayerChange::BackingStore);
-    addRepaintRect({ { }, m_size });
+    setNeedsDisplayInRect({ { }, m_size }, ClipToLayer);
 }
 
-void GraphicsLayerWC::setNeedsDisplayInRect(const WebCore::FloatRect& rect, ShouldClipToLayer)
+void GraphicsLayerWC::setNeedsDisplayInRect(const WebCore::FloatRect& rect, ShouldClipToLayer shouldClip)
 {
     if (!drawsContent())
         return;
-    noteLayerPropertyChanged(WCLayerChange::BackingStore);
+
+    m_tiledBacking->setDirtyRect(rect);
+    noteLayerPropertyChanged(WCLayerChange::Background);
     addRepaintRect(rect);
 }
 
@@ -221,7 +331,7 @@ void GraphicsLayerWC::setBackgroundColor(const WebCore::Color& value)
     if (value == backgroundColor())
         return;
     GraphicsLayer::setBackgroundColor(value);
-    noteLayerPropertyChanged(WCLayerChange::BackgroundColor);
+    noteLayerPropertyChanged(WCLayerChange::Background);
 }
 
 void GraphicsLayerWC::setOpacity(float value)
@@ -253,7 +363,7 @@ void GraphicsLayerWC::setDrawsContent(bool value)
     if (value == drawsContent())
         return;
     GraphicsLayer::setDrawsContent(value);
-    noteLayerPropertyChanged(WCLayerChange::BackingStore);
+    noteLayerPropertyChanged(WCLayerChange::Background);
     updateDebugIndicators();
 }
 
@@ -374,25 +484,24 @@ void GraphicsLayerWC::setBackdropFiltersRect(const FloatRoundedRect& backdropFil
     noteLayerPropertyChanged(WCLayerChange::BackdropFilters);
 }
 
-void GraphicsLayerWC::noteLayerPropertyChanged(OptionSet<WCLayerChange> flags)
+void GraphicsLayerWC::noteLayerPropertyChanged(OptionSet<WCLayerChange> flags, ScheduleFlushOrNot scheduleFlush)
 {
     if (beingDestroyed())
         return;
     bool needsFlush = !m_uncommittedChanges;
     m_uncommittedChanges.add(flags);
-    if (needsFlush)
+    if (needsFlush && scheduleFlush == ScheduleFlush)
         client().notifyFlushRequired(this);
 }
 
-void GraphicsLayerWC::flushCompositingState(const FloatRect& rect)
+void GraphicsLayerWC::flushCompositingState(const FloatRect& passedVisibleRect)
 {
-    if (auto* mask = maskLayer())
-        mask->flushCompositingStateForThisLayerOnly();
-    if (auto* replica = replicaLayer())
-        replica->flushCompositingStateForThisLayerOnly();
-    flushCompositingStateForThisLayerOnly();
-    for (auto& child : children())
-        child->flushCompositingState(rect);
+    // passedVisibleRect doesn't contain the scrollbar area. Inflate it.
+    FloatRect visibleRect = passedVisibleRect;
+    visibleRect.inflate(20.f);
+    TransformState state(TransformState::UnapplyInverseTransformDirection, FloatQuad(visibleRect));
+    state.setSecondaryQuad(FloatQuad { visibleRect });
+    recursiveCommitChanges(state);
 }
 
 void GraphicsLayerWC::flushCompositingStateForThisLayerOnly()
@@ -437,17 +546,16 @@ void GraphicsLayerWC::flushCompositingStateForThisLayerOnly()
         update.backfaceVisibility = backfaceVisibility();
     if (update.changes & WCLayerChange::MasksToBounds)
         update.masksToBounds = masksToBounds();
-    if (update.changes & WCLayerChange::BackingStore) {
-        if (drawsContent() && contentsAreVisible() && !size().isEmpty()) {
-            auto image = m_observer->createImageBuffer(size());
-            FloatRect clipRect = { { }, size() };
-            paintGraphicsLayerContents(image->context(), clipRect);
-            image->flushDrawingContextAsync();
-            update.backingStore.setImageBuffer(WTFMove(image));
-
-            incrementRepaintCount();
-            update.changes.add(WCLayerChange::RepaintCount);
-        }
+    if (update.changes & WCLayerChange::Background) {
+        update.backgroundColor = backgroundColor();
+        if (drawsContent() && contentsAreVisible()) {
+            update.hasBackingStore = true;
+            if (m_tiledBacking->paintAndFlush(update)) {
+                incrementRepaintCount();
+                update.changes.add(WCLayerChange::RepaintCount);
+            }
+        } else
+            update.hasBackingStore = false;
     }
     if (update.changes & WCLayerChange::SolidColor)
         update.solidColor = m_solidColor;
@@ -460,8 +568,6 @@ void GraphicsLayerWC::flushCompositingStateForThisLayerOnly()
         update.showRepaintCounter = isShowingRepaintCounter();
         update.repaintCount = repaintCount();
     }
-    if (update.changes & WCLayerChange::BackgroundColor)
-        update.backgroundColor = backgroundColor();
     if (update.changes & WCLayerChange::Opacity)
         update.opacity = opacity();
     if (update.changes & WCLayerChange::Transform)
@@ -480,6 +586,126 @@ void GraphicsLayerWC::flushCompositingStateForThisLayerOnly()
             update.contentBufferIdentifiers = static_cast<WCPlatformLayerGCGL*>(m_platformLayer)->takeContentBufferIdentifiers();
     }
     m_observer->commitLayerUpateInfo(WTFMove(update));
+}
+
+TiledBacking* GraphicsLayerWC::tiledBacking() const
+{
+    return m_tiledBacking->tiledBacking();
+}
+
+RefPtr<WebCore::ImageBuffer> GraphicsLayerWC::createImageBuffer(WebCore::FloatSize size)
+{
+    return m_observer->createImageBuffer(size);
+}
+
+static inline bool accumulatesTransform(const GraphicsLayerWC& layer)
+{
+    return !layer.masksToBounds() && (layer.preserves3D() || (layer.parent() && layer.parent()->preserves3D()));
+}
+
+TransformationMatrix GraphicsLayerWC::transformByApplyingAnchorPoint(const TransformationMatrix& matrix) const
+{
+    if (matrix.isIdentity())
+        return matrix;
+
+    TransformationMatrix result;
+    FloatPoint3D absoluteAnchorPoint(anchorPoint());
+    absoluteAnchorPoint.scale(size().width(), size().height(), 1);
+    result.translate3d(absoluteAnchorPoint.x(), absoluteAnchorPoint.y(), absoluteAnchorPoint.z());
+    result.multiply(matrix);
+    result.translate3d(-absoluteAnchorPoint.x(), -absoluteAnchorPoint.y(), -absoluteAnchorPoint.z());
+    return result;
+}
+
+TransformationMatrix GraphicsLayerWC::layerTransform(const FloatPoint& position, const TransformationMatrix* customTransform) const
+{
+    TransformationMatrix transform;
+    transform.translate(position.x(), position.y());
+
+    TransformationMatrix currentTransform;
+    if (customTransform)
+        currentTransform = *customTransform;
+    else if (m_transform)
+        currentTransform = *m_transform;
+
+    transform.multiply(transformByApplyingAnchorPoint(currentTransform));
+
+    if (GraphicsLayer* parentLayer = parent()) {
+        if (parentLayer->hasNonIdentityChildrenTransform()) {
+            FloatPoint boundsOrigin = parentLayer->boundsOrigin();
+
+            FloatPoint3D parentAnchorPoint(parentLayer->anchorPoint());
+            parentAnchorPoint.scale(parentLayer->size().width(), parentLayer->size().height(), 1);
+            parentAnchorPoint += boundsOrigin;
+
+            transform.translateRight3d(-parentAnchorPoint.x(), -parentAnchorPoint.y(), -parentAnchorPoint.z());
+            transform = parentLayer->childrenTransform() * transform;
+            transform.translateRight3d(parentAnchorPoint.x(), parentAnchorPoint.y(), parentAnchorPoint.z());
+        }
+    }
+
+    return transform;
+}
+
+GraphicsLayerWC::VisibleAndCoverageRects GraphicsLayerWC::computeVisibleAndCoverageRect(TransformState& state, bool preserves3D) const
+{
+    FloatPoint position = approximatePosition();
+    client().customPositionForVisibleRectComputation(this, position);
+
+    TransformationMatrix layerTransform;
+    TransformationMatrix currentTransform;
+    if (client().getCurrentTransform(this, currentTransform))
+        layerTransform = this->layerTransform(position, &currentTransform);
+    else
+        layerTransform = this->layerTransform(position);
+
+    bool applyWasClamped;
+    TransformState::TransformAccumulation accumulation = preserves3D ? TransformState::AccumulateTransform : TransformState::FlattenTransform;
+    state.applyTransform(layerTransform, accumulation, &applyWasClamped);
+
+    bool mapWasClamped;
+    FloatRect clipRectForChildren = state.mappedQuad(&mapWasClamped).boundingBox();
+    FloatPoint boundsOrigin = m_boundsOrigin;
+    clipRectForChildren.move(boundsOrigin.x(), boundsOrigin.y());
+    
+    FloatRect clipRectForSelf(boundsOrigin, m_size);
+    if (!applyWasClamped && !mapWasClamped)
+        clipRectForSelf.intersect(clipRectForChildren);
+
+    if (masksToBounds()) {
+        ASSERT(accumulation == TransformState::FlattenTransform);
+        // Flatten, and replace the quad in the TransformState with one that is clipped to this layer's bounds.
+        state.flatten();
+        state.setQuad(clipRectForSelf);
+        if (state.isMappingSecondaryQuad())
+            state.setSecondaryQuad(FloatQuad { clipRectForSelf });
+    }
+
+    FloatRect coverageRect = clipRectForSelf;
+    auto quad = state.mappedSecondaryQuad(&mapWasClamped);
+    if (quad && !mapWasClamped && !applyWasClamped)
+        coverageRect = (*quad).boundingBox();
+
+    return { clipRectForSelf, coverageRect, currentTransform };
+}
+
+void GraphicsLayerWC::recursiveCommitChanges(const TransformState& state)
+{
+    TransformState localState = state;
+
+    bool accumulateTransform = accumulatesTransform(*this);
+    VisibleAndCoverageRects rects = computeVisibleAndCoverageRect(localState, accumulateTransform);
+    m_tiledBacking->setCoverageRect(rects.coverageRect);
+    if (m_tiledBacking->hasDirtyRect())
+        noteLayerPropertyChanged(WCLayerChange::Background, DontScheduleFlush);
+
+    flushCompositingStateForThisLayerOnly();
+    if (auto* mask = maskLayer())
+        static_cast<GraphicsLayerWC*>(mask)->recursiveCommitChanges(localState);
+    if (auto* replica = replicaLayer())
+        static_cast<GraphicsLayerWC*>(replica)->recursiveCommitChanges(localState);
+    for (auto& child : children())
+        static_cast<GraphicsLayerWC*>(child.ptr())->recursiveCommitChanges(localState);
 }
 
 } // namespace WebKit

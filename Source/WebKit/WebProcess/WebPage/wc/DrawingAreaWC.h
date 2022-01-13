@@ -57,6 +57,8 @@ private:
     void updateGeometry(uint64_t, WebCore::IntSize) override;
     void setRootCompositingLayer(WebCore::GraphicsLayer*) override;
     void attachViewOverlayGraphicsLayer(WebCore::GraphicsLayer*) override;
+    void updatePreferences(const WebPreferencesStore&) override;
+    bool shouldUseTiledBackingForFrameView(const WebCore::FrameView&) const override;
     // GraphicsLayerWC::Observer
     void graphicsLayerAdded(GraphicsLayerWC&) override;
     void graphicsLayerRemoved(GraphicsLayerWC&) override;
@@ -71,16 +73,7 @@ private:
     void sendUpdateNonAC();
     void updateRootLayers();
 
-    class RootLayerClient : public WebCore::GraphicsLayerClient {
-    public:
-        RootLayerClient(WebPage&);
-    private:
-        void paintContents(const WebCore::GraphicsLayer*, WebCore::GraphicsContext&, const WebCore::FloatRect& rectToPaint, WebCore::GraphicsLayerPaintBehavior) override;
-        float deviceScaleFactor() const override;
-        WebPage& m_webPage;
-    };
-
-    RootLayerClient m_rootLayerClient;
+    WebCore::GraphicsLayerClient m_rootLayerClient;
     std::unique_ptr<RemoteWCLayerTreeHostProxy> m_remoteWCLayerTreeHostProxy;
     WCLayerFactory m_layerFactory;
     DoublyLinkedList<GraphicsLayerWC> m_liveGraphicsLayers;

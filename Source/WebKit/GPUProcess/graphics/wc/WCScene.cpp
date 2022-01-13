@@ -36,7 +36,7 @@
 #include <WebCore/GraphicsContextGLOpenGL.h>
 #include <WebCore/TextureMapperLayer.h>
 #include <WebCore/TextureMapperPlatformLayer.h>
-#include <WebCore/TextureMapperTiledBackingStore.h>
+#include <WebCore/TextureMapperSparseBackingStore.h>
 
 namespace WebKit {
 
@@ -52,7 +52,7 @@ public:
     }
 
     WebCore::TextureMapperLayer texmapLayer;
-    RefPtr<WebCore::TextureMapperTiledBackingStore> backingStore;
+    std::optional<WebCore::TextureMapperSparseBackingStore> backingStore;
     std::unique_ptr<WebCore::TextureMapperLayer> backdropLayer;
 };
 
@@ -122,16 +122,27 @@ void WCScene::update(WCUpateInfo&& update)
             layer->texmapLayer.setBackfaceVisibility(layerUpdate.backfaceVisibility);
         if (layerUpdate.changes & WCLayerChange::MasksToBounds)
             layer->texmapLayer.setMasksToBounds(layerUpdate.masksToBounds);
-        if (layerUpdate.changes & WCLayerChange::BackingStore) {
-            auto bitmap = layerUpdate.backingStore.bitmap();
-            if (bitmap) {
-                layer->backingStore = WebCore::TextureMapperTiledBackingStore::create();
-                auto image = bitmap->createImage();
-                layer->backingStore->updateContents(*m_textureMapper, image.get(), bitmap->size(), { { }, bitmap->size() });
-                layer->texmapLayer.setBackingStore(layer->backingStore.get());
+        if (layerUpdate.changes & WCLayerChange::Background) {
+            if (layerUpdate.hasBackingStore) {
+                if (!layer->backingStore) {
+                    const int tileSize = 512;
+                    layer->backingStore.emplace<WebCore::TextureMapperSparseBackingStore>(tileSize);
+                    auto& backingStore = *layer->backingStore;
+                    layer->texmapLayer.setBackgroundColor({ });
+                    layer->texmapLayer.setBackingStore(&backingStore);
+                }
+                auto& backingStore = *layer->backingStore;
+                backingStore.setSize(WebCore::IntSize(layer->texmapLayer.size()));
+                backingStore.removeUncoveredTiles(layerUpdate.coverageRect);
+                auto bitmap = layerUpdate.backingStore.bitmap();
+                if (bitmap) {
+                    auto image = bitmap->createImage();
+                    backingStore.updateContents(*m_textureMapper, *image, layerUpdate.dirtyRect);
+                }
             } else {
+                layer->texmapLayer.setBackgroundColor(layerUpdate.backgroundColor);
                 layer->texmapLayer.setBackingStore(nullptr);
-                layer->backingStore = nullptr;
+                layer->backingStore = std::nullopt;
             }
         }
         if (layerUpdate.changes & WCLayerChange::SolidColor)
@@ -140,8 +151,6 @@ void WCScene::update(WCUpateInfo&& update)
             layer->texmapLayer.setDebugVisuals(layerUpdate.showDebugBorder, layerUpdate.debugBorderColor, layerUpdate.debugBorderWidth);
         if (layerUpdate.changes & WCLayerChange::RepaintCount)
             layer->texmapLayer.setRepaintCounter(layerUpdate.showRepaintCounter, layerUpdate.repaintCount);
-        if (layerUpdate.changes & WCLayerChange::BackgroundColor)
-            layer->texmapLayer.setBackgroundColor(layerUpdate.backgroundColor);
         if (layerUpdate.changes & WCLayerChange::Opacity)
             layer->texmapLayer.setOpacity(layerUpdate.opacity);
         if (layerUpdate.changes & WCLayerChange::Transform)

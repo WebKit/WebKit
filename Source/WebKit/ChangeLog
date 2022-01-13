@@ -1,3 +1,51 @@
+2022-01-12  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo] Tiling scroll support
+        https://bugs.webkit.org/show_bug.cgi?id=233676
+
+        Reviewed by Don Olmstead.
+
+        Added a new class WCTiledBacking that implements TiledBacking.
+
+        Copied computeVisibleAndCoverageRect,
+        transformByApplyingAnchorPoint and layerTransform from
+        GraphicsLayerAC.
+
+        * GPUProcess/graphics/wc/WCScene.cpp:
+        (WebKit::WCScene::update):
+        * WebProcess/WebPage/wc/DrawingAreaWC.cpp:
+        (WebKit::DrawingAreaWC::DrawingAreaWC):
+        (WebKit::DrawingAreaWC::updatePreferences):
+        (WebKit::DrawingAreaWC::shouldUseTiledBackingForFrameView const):
+        (WebKit::DrawingAreaWC::setNeedsDisplayInRect):
+        (WebKit::DrawingAreaWC::scroll):
+        (WebKit::flushLayerImageBuffers):
+        (WebKit::DrawingAreaWC::sendUpdateAC):
+        (WebKit::DrawingAreaWC::RootLayerClient::RootLayerClient): Deleted.
+        (WebKit::DrawingAreaWC::RootLayerClient::paintContents): Deleted.
+        (WebKit::DrawingAreaWC::RootLayerClient::deviceScaleFactor const): Deleted.
+        * WebProcess/WebPage/wc/DrawingAreaWC.h:
+        * WebProcess/WebPage/wc/GraphicsLayerWC.cpp:
+        (WebKit::GraphicsLayerWC::GraphicsLayerWC):
+        (WebKit::GraphicsLayerWC::setNeedsDisplay):
+        (WebKit::GraphicsLayerWC::setNeedsDisplayInRect):
+        (WebKit::GraphicsLayerWC::setBackgroundColor):
+        (WebKit::GraphicsLayerWC::setDrawsContent):
+        (WebKit::GraphicsLayerWC::noteLayerPropertyChanged):
+        (WebKit::GraphicsLayerWC::flushCompositingState):
+        (WebKit::GraphicsLayerWC::flushCompositingStateForThisLayerOnly):
+        (WebKit::GraphicsLayerWC::tiledBacking const):
+        (WebKit::GraphicsLayerWC::createImageBuffer):
+        (WebKit::accumulatesTransform):
+        (WebKit::GraphicsLayerWC::transformByApplyingAnchorPoint const):
+        (WebKit::GraphicsLayerWC::layerTransform const):
+        (WebKit::GraphicsLayerWC::computeVisibleAndCoverageRect const):
+        (WebKit::GraphicsLayerWC::recursiveCommitChanges):
+        * WebProcess/WebPage/wc/GraphicsLayerWC.h:
+        * WebProcess/WebPage/wc/WCUpateInfo.h:
+        (WebKit::WCLayerUpateInfo::encode const):
+        (WebKit::WCLayerUpateInfo::decode):
+
 2022-01-12  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, reverting r287944.
