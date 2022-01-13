@@ -44,7 +44,7 @@ from steps import (AnalyzeAPITestsResults, AnalyzeCompileWebKitResults, AnalyzeJ
                    AnalyzeLayoutTestsResults, ApplyPatch, ApplyWatchList, ArchiveBuiltProduct, ArchiveTestResults,
                    CheckOutSource, CheckOutSpecificRevision, CheckPatchRelevance, CheckPatchStatusOnEWSQueues, CheckStyle,
                    CleanBuild, CleanUpGitIndexLock, CleanGitRepo, CleanWorkingDirectory, CompileJSC, CompileJSCWithoutPatch,
-                   CompileWebKit, CompileWebKitWithoutPatch, ConfigureBuild, CreateLocalGITCommit,
+                   CompileWebKit, CompileWebKitWithoutPatch, ConfigureBuild, ConfigureBuild, Contributors, CreateLocalGITCommit,
                    DownloadBuiltProduct, DownloadBuiltProductFromMaster, EWS_BUILD_HOSTNAME, ExtractBuiltProduct, ExtractTestResults,
                    FetchBranches, FindModifiedChangeLogs, FindModifiedLayoutTests, GitResetHard,
                    InstallBuiltProduct, InstallGtkDependencies, InstallWpeDependencies,
@@ -4585,10 +4585,10 @@ class TestValidateCommiterAndReviewer(BuildStepMixinAdditions, unittest.TestCase
     def setUp(self):
         self.longMessage = True
 
-        def mock_load_contributors(cls, *args, **kwargs):
+        def mock_load_contributors(*args, **kwargs):
             return {'aakash_jain@apple.com': {'name': 'Aakash Jain', 'status': 'reviewer'},
-                    'committer@webkit.org': {'name': 'WebKit Committer', 'status': 'committer'}}
-        ValidateCommiterAndReviewer.load_contributors = mock_load_contributors
+                    'committer@webkit.org': {'name': 'WebKit Committer', 'status': 'committer'}}, []
+        Contributors.load = mock_load_contributors
         return self.setUpBuildStep()
 
     def tearDown(self):
@@ -4616,7 +4616,7 @@ class TestValidateCommiterAndReviewer(BuildStepMixinAdditions, unittest.TestCase
         self.setupStep(ValidateCommiterAndReviewer())
         self.setProperty('patch_id', '1234')
         self.setProperty('patch_committer', 'abc@webkit.org')
-        ValidateCommiterAndReviewer.load_contributors = lambda x: {}
+        Contributors.load = lambda: ({}, [])
         self.expectHidden(False)
         self.expectOutcome(result=FAILURE, state_string='Failed to get contributors information')
         return self.runStep()
@@ -4639,8 +4639,7 @@ class TestValidateCommiterAndReviewer(BuildStepMixinAdditions, unittest.TestCase
         return self.runStep()
 
     def test_load_contributors_from_disk(self):
-        ValidateCommiterAndReviewer._addToLog = lambda cls, logtype, log: sys.stdout.write(log)
-        contributors = filter(lambda element: element.get('name') == 'Aakash Jain', ValidateCommiterAndReviewer().load_contributors_from_disk())
+        contributors = filter(lambda element: element.get('name') == 'Aakash Jain', Contributors().load_from_disk()[0])
         self.assertEqual(list(contributors)[0]['emails'][0], 'aakash_jain@apple.com')
 
 
