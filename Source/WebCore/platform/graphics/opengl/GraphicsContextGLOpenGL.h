@@ -383,11 +383,6 @@ public:
     std::optional<PixelBuffer> readRenderingResultsForPainting();
     std::optional<PixelBuffer> readCompositedResultsForPainting();
 
-#if USE(OPENGL) && ENABLE(WEBGL2)
-    void primitiveRestartIndex(GCGLuint);
-#endif
-
-
     void setContextVisibility(bool) final;
 
     // Support for buffer creation and deletion

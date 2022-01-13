@@ -2383,16 +2383,6 @@ void GraphicsContextGLOpenGL::vertexAttribDivisor(GCGLuint index, GCGLuint divis
     getExtensions().vertexAttribDivisorANGLE(index, divisor);
 }
 
-#if HAVE(OPENGL_4) && ENABLE(WEBGL2)
-void GraphicsContextGLOpenGL::primitiveRestartIndex(GCGLuint index)
-{
-    if (!makeContextCurrent())
-        return;
-
-    ::glPrimitiveRestartIndex(index);
-}
-#endif
-
 void GraphicsContextGLOpenGL::bufferData(GCGLenum target, const void* data, GCGLenum usage, GCGLuint srcOffset, GCGLuint length)
 {
     UNUSED_PARAM(target);
