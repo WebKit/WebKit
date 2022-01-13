@@ -75,9 +75,9 @@ private:
     WebCore::MediaPlaybackTargetPickerMock& mockPicker();
 
     // MediaPlaybackTargetPicker::Client
-    void setPlaybackTarget(Ref<WebCore::MediaPlaybackTarget>&&) override;
-    void externalOutputDeviceAvailableDidChange(bool) override;
-    void playbackTargetPickerWasDismissed() override;
+    void setPlaybackTarget(Ref<WebCore::MediaPlaybackTarget>&&) final;
+    void externalOutputDeviceAvailableDidChange(bool) final;
+    void playbackTargetPickerWasDismissed() final;
 
     size_t find(WebMediaSessionManagerClient*, PlaybackTargetClientContextIdentifier);
 
