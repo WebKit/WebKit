@@ -1,3 +1,13 @@
+2022-01-13  Youenn Fablet  <youenn@apple.com>
+
+        imported/w3c/web-platform-tests/web-locks/clientids.tentative.https.html is consistently passing on bots
+        https://bugs.webkit.org/show_bug.cgi?id=235173
+
+        Unreviewed.
+
+        * platform/wk2/TestExpectations:
+        Unflake imported/w3c/web-platform-tests/web-locks/clientids.tentative.https.html TestExpectation.
+
 2022-01-13  Diego Pino Garcia  <dpino@igalia.com>
 
         [GTK] fast/events/overflow-viewport-renderer-deleted.html does not load
