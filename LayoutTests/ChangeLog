@@ -1,3 +1,10 @@
+2022-01-12  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo] Unreviewed test gardening
+
+        * platform/wincairo-wk1/TestExpectations:
+        * platform/wincairo/TestExpectations:
+
 2022-01-12  Diego Pino Garcia  <dpino@igalia.com>
 
         [GLIB] Unreviewed test gardening, emit baseline for WPT test css/css-cascade/all-prop-initial-xml.html
