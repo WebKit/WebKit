@@ -54,6 +54,10 @@ RefPtr<CSSFilter> CSSFilter::create(RenderElement& renderer, const FilterOperati
     if (!filter->buildFilterFunctions(renderer, operations, targetBoundingBox))
         return nullptr;
 
+#if USE(CORE_IMAGE)
+    if (!filter->supportsCoreImageRendering())
+        filter->setRenderingMode(RenderingMode::Unaccelerated);
+#endif
     return filter;
 }
 
@@ -237,14 +241,10 @@ static RefPtr<SVGFilter> createSVGFilter(CSSFilter& filter, const ReferenceFilte
 
 bool CSSFilter::buildFilterFunctions(RenderElement& renderer, const FilterOperations& operations, const FloatRect& targetBoundingBox)
 {
-    m_functions.clear();
-    m_outsets = { };
-
+    RefPtr<FilterEffect> effect;
     RefPtr<SVGFilter> filter;
-    
-    for (auto& operation : operations.operations()) {
-        RefPtr<FilterEffect> effect;
 
+    for (auto& operation : operations.operations()) {
         switch (operation->type()) {
         case FilterOperation::APPLE_INVERT_LIGHTNESS:
             ASSERT_NOT_REACHED(); // APPLE_INVERT_LIGHTNESS is only used in -apple-color-filter.
@@ -292,27 +292,22 @@ bool CSSFilter::buildFilterFunctions(RenderElement& renderer, const FilterOperat
 
         case FilterOperation::REFERENCE:
             filter = createSVGFilter(*this, downcast<ReferenceFilterOperation>(*operation), renderer, targetBoundingBox);
-            effect = nullptr;
             break;
 
         default:
             break;
         }
 
-        if ((filter || effect) && m_functions.isEmpty())
-            m_functions.append(SourceGraphic::create());
-        
-        if (filter) {
-            effect = filter->lastEffect();
-            effect->setOperatingColorSpace(DestinationColorSpace::SRGB());
-            m_functions.append(filter.releaseNonNull());
+        if (!filter && !effect)
             continue;
-        }
 
-        if (effect) {
-            effect->setOperatingColorSpace(DestinationColorSpace::SRGB());
+        if (m_functions.isEmpty())
+            m_functions.append(SourceGraphic::create());
+
+        if (filter)
+            m_functions.append(filter.releaseNonNull());
+        else
             m_functions.append(effect.releaseNonNull());
-        }
     }
 
     // If we didn't make any effects, tell our caller we are not valid.
@@ -320,25 +315,7 @@ bool CSSFilter::buildFilterFunctions(RenderElement& renderer, const FilterOperat
         return false;
 
     m_functions.shrinkToFit();
-
-#if USE(CORE_IMAGE)
-    if (!supportsCoreImageRendering())
-        setRenderingMode(RenderingMode::Unaccelerated);
-#endif
-
     return true;
-}
-
-RefPtr<FilterEffect> CSSFilter::lastEffect() const
-{
-    if (m_functions.isEmpty())
-        return nullptr;
-
-    auto& function = m_functions.last();
-    if (function->isSVGFilter())
-        return downcast<SVGFilter>(function.ptr())->lastEffect();
-
-    return downcast<FilterEffect>(function.ptr());
 }
 
 FilterEffectVector CSSFilter::effectsOfType(FilterFunction::Type filterType) const

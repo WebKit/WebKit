@@ -1,3 +1,41 @@
+2022-01-13  Said Abou-Hallawa  <said@apple.com>
+
+        Referenced SVG filter uses always sRGB color space for its result
+        https://bugs.webkit.org/show_bug.cgi?id=235159
+
+        Reviewed by Simon Fraser.
+
+        The new test defines a <feComponentTransfer> effect with linear component
+        functions. The values of these functions make the lookup tables have zeros
+        in the first 65 elements. The test applies the filter to a <div> with green
+        background. 
+
+        -- With sRGB color-space, the green channel value is 0x80. So the value
+           in the lookup table is not zero. So the result filter image in this 
+           case is a some green square.
+
+        -- With linearRGB color-space , the green channel value is 0x37. So the
+           value in the lookup table is zero. So the result filter image in this
+           case is a black square. 
+
+        Because the color-space will be linearRGB, the expected test case should
+        have black squares.
+
+        * css3/filters/reference-filter-color-space-expected.html: Added.
+        * css3/filters/reference-filter-color-space.html: Added.
+
+        * css3/filters/reference-filter-set-filter-regions.html:
+        * fast/gradients/conic-gradient-alpha-unpremultiplied.html:
+        * fast/gradients/conic-gradient-extended-stops.html:
+        * fast/gradients/conic-gradient.html:
+        * fast/gradients/conic-repeating-last-stop.html:
+        * fast/hidpi/filters-turbulence.html:
+        Add color-interpolation-filters="sRGB" to get the old result so they match
+        the expected pages.
+
+        * platform/win/TestExpectations:
+        LinearSRGB color space is not supported on Windows.
+
 2022-01-13  Alan Bujtas  <zalan@apple.com>
 
         REGRESSION (r278561): Right clicking a link selects the full line with unrelated text

@@ -44,7 +44,6 @@ public:
 
     const SVGFilterExpression& expression() const { return m_expression; }
     
-    RefPtr<FilterEffect> lastEffect() const final;
     FilterEffectVector effectsOfType(FilterFunction::Type) const final;
 
     RefPtr<FilterImage> apply(FilterImage* sourceImage, FilterResults&) final;
@@ -56,6 +55,8 @@ private:
     SVGFilter(const FloatRect& targetBoundingBox, SVGUnitTypes::SVGUnitType primitiveUnits, SVGFilterExpression&&);
 
     void setExpression(SVGFilterExpression&& expression) { m_expression = WTFMove(expression); }
+
+    RefPtr<FilterEffect> lastEffect() const;
 
 #if USE(CORE_IMAGE)
     bool supportsCoreImageRendering() const final;

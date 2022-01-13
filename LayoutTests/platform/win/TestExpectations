@@ -4792,3 +4792,6 @@ webkit.org/b/235123 fast/css/contain-invalidate-if-disabled.html [ Failure ]
 webkit.org/b/235124 webanimations/frame-rate/animation-frame-rate.html [ Failure ]
 
 webkit.org/b/235126 webanimations/accelerated-animation-after-forward-filling-animation.html [ ImageOnlyFailure ]
+
+# LinearSRGB color space is not supported on Windows.
+css3/filters/reference-filter-color-space.html [ Skip ]

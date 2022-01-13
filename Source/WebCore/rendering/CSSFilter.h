@@ -50,7 +50,6 @@ public:
     bool hasFilterThatMovesPixels() const { return m_hasFilterThatMovesPixels; }
     bool hasFilterThatShouldBeRestrictedBySecurityOrigin() const { return m_hasFilterThatShouldBeRestrictedBySecurityOrigin; }
 
-    RefPtr<FilterEffect> lastEffect() const final;
     FilterEffectVector effectsOfType(FilterFunction::Type) const final;
 
     IntOutsets outsets() const final;
