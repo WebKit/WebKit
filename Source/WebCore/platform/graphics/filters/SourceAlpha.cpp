@@ -21,6 +21,7 @@
 #include "config.h"
 #include "SourceAlpha.h"
 
+#include "ImageBuffer.h"
 #include "SourceAlphaSoftwareApplier.h"
 #include <wtf/text/TextStream.h>
 

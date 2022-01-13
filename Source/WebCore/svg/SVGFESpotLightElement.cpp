@@ -20,6 +20,9 @@
 #include "config.h"
 #include "SVGFESpotLightElement.h"
 
+#include "FilterEffectVector.h"
+#include "GeometryUtilities.h"
+#include "ImageBuffer.h"
 #include "SVGFilterBuilder.h"
 #include "SVGNames.h"
 #include "SpotLightSource.h"

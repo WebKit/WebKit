@@ -22,6 +22,7 @@
 #pragma once
 
 #include "FilterEffect.h"
+#include "FilterEffectVector.h"
 #include "SVGFilterExpression.h"
 #include "SVGUnitTypes.h"
 #include <wtf/HashMap.h>

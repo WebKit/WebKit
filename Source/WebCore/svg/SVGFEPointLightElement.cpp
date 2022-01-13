@@ -20,6 +20,7 @@
 #include "config.h"
 #include "SVGFEPointLightElement.h"
 
+#include "FilterEffectVector.h"
 #include "GeometryUtilities.h"
 #include "ImageBuffer.h"
 #include "PointLightSource.h"
