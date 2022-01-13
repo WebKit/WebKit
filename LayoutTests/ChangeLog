@@ -1,3 +1,17 @@
+2022-01-10  Sergio Villar Senin  <svillar@igalia.com>
+
+        [css-flexbox] Incorrect height of flex items with aspect-ratio whenever the cross axis intrinsic size is larger than the viewport
+        https://bugs.webkit.org/show_bug.cgi?id=234564
+        <rdar://problem/86958389>
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        Adjusted the canvas-css-size-after-height-change-with-display-flex.html test case and expectations so it behaves as other engines.
+
+        * TestExpectations: Unskipped a test that is passing now.
+        * fast/canvas/canvas-css-size-after-height-change-with-display-flex-expected.html:
+        * fast/canvas/canvas-css-size-after-height-change-with-display-flex.html:
+
 2022-01-13  Youenn Fablet  <youenn@apple.com>
 
         imported/w3c/web-platform-tests/web-locks/clientids.tentative.https.html is consistently passing on bots

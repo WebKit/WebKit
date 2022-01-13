@@ -146,6 +146,7 @@ private:
     LayoutPoint flowAwareLocationForChild(const RenderBox& child) const;
     bool childHasComputableAspectRatio(const RenderBox&) const;
     bool childHasComputableAspectRatioAndCrossSizeIsConsideredDefinite(const RenderBox&);
+    bool crossAxisIsPhysicalWidth() const;
     bool childCrossSizeShouldUseContainerCrossSize(const RenderBox& child) const;
     LayoutUnit computeCrossSizeForChildUsingContainerCrossSize(const RenderBox& child) const;
     void computeChildIntrinsicLogicalWidths(RenderObject&, LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const override;
