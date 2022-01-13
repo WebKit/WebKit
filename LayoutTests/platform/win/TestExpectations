@@ -637,6 +637,7 @@ fast/events/wheel/platform-wheelevent-paging-y-in-scrolling-page.html [ Skip ]
 # Pointer Lock is not implemented.
 pointer-lock/ [ Skip ]
 http/tests/pointer-lock/ [ Skip ]
+fast/js-promise/js-promise-invalid-context-access.html [ Skip ]
 
 # Datalist is unsupported on Windows
 accessibility/datalist.html [ WontFix ]

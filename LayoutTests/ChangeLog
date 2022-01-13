@@ -1,3 +1,17 @@
+2022-01-13  Gabriel Nava Marino  <gnavamarino@apple.com>
+
+        null ptr deref while trying to access DeferredPromise::promise()
+        https://bugs.webkit.org/show_bug.cgi?id=234447
+
+        Reviewed by Darin Adler.
+
+        * fast/js-promise/js-promise-from-detached-iframe-expected.txt: Renamed from LayoutTests/fast/js-promise-from-detached-iframe-expected.txt.
+        * fast/js-promise/js-promise-from-detached-iframe.html: Renamed from LayoutTests/fast/js-promise-from-detached-iframe.html.
+        * fast/js-promise/js-promise-invalid-context-access-expected.txt: Added.
+        * fast/js-promise/js-promise-invalid-context-access.html: Added.
+        * platform/ios/TestExpectations:
+        * platform/win/TestExpectations:
+
 2022-01-13  Said Abou-Hallawa  <said@apple.com>
 
         Referenced SVG filter uses always sRGB color space for its result

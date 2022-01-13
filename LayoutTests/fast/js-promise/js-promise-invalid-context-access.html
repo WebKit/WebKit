@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<script>
+function f0() {
+  var v46 = x76.contentWindow;
+  var v61 = v46.customElements;
+  v61.whenDefined("custom-b");
+}
+function f3() {
+  var v1 = document.createElement("col");
+  v1.requestPointerLock();
+  x46.toBlob(f3,"image/png",0);
+  document.onpointerlockerror = f0;
+  a = new Uint8Array(1024*1024*200); // gc
+}
+onload = () => {
+  if (window.testRunner)
+    testRunner.dumpAsText();
+  console.log("This test passes if it does not crash.");
+}
+</script>
+<details id="x9" ontoggle="f3()" open="">
+<video  onblur="f0()" src="x">
+<iframe id="x76" srcdoc="AAAAAAAA"></iframe>
+<canvas id="x46" contenteditable="true"></canvas>

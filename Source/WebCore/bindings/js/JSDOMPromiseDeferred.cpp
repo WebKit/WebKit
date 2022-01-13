@@ -44,6 +44,9 @@ using namespace JSC;
 
 JSC::JSValue DeferredPromise::promise() const
 {
+    if (isEmpty())
+        return jsUndefined();
+
     ASSERT(deferred());
     return deferred();
 }
