@@ -143,6 +143,7 @@ enum class PostTarget { Element, ObservableParent };
 
 class AXObjectCache {
     WTF_MAKE_NONCOPYABLE(AXObjectCache); WTF_MAKE_FAST_ALLOCATED;
+    friend class AXIsolatedTree;
     friend WTF::TextStream& operator<<(WTF::TextStream&, AXObjectCache&);
 public:
     explicit AXObjectCache(Document&);
@@ -429,7 +430,6 @@ protected:
     CharacterOffset characterOffsetForPoint(const IntPoint&);
     LayoutRect localCaretRectForCharacterOffset(RenderObject*&, const CharacterOffset&);
     bool shouldSkipBoundary(const CharacterOffset&, const CharacterOffset&);
-
 private:
     AccessibilityObject* rootWebArea();
     static AccessibilityObject* focusedImageMapUIElement(HTMLAreaElement*);
@@ -449,6 +449,7 @@ private:
     bool enqueuePasswordValueChangeNotification(AccessibilityObject*);
     void passwordNotificationPostTimerFired();
 
+    void processDeferredChildrenChangedList();
     void handleChildrenChanged(AccessibilityObject&);
     void handleMenuOpened(Node*);
     void handleLiveRegionCreated(Node*);
@@ -471,7 +472,7 @@ private:
     Element* currentModalNode();
     bool isNodeVisible(Node*) const;
     void handleModalChange(Element&);
-    
+
     Document& m_document;
     const std::optional<PageIdentifier> m_pageID; // constant for object's lifetime.
     HashMap<AXID, RefPtr<AccessibilityObject>> m_objects;

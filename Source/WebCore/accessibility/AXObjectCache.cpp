@@ -3211,12 +3211,18 @@ void AXObjectCache::performCacheUpdateTimerFired()
     // This is most likely the cause of problems with the isolated tree updates..
 }
 
+void AXObjectCache::processDeferredChildrenChangedList()
+{
+    for (auto& child : m_deferredChildrenChangedList)
+        handleChildrenChanged(*child);
+    m_deferredChildrenChangedList.clear();
+}
+
 void AXObjectCache::performDeferredCacheUpdate()
 {
     AXTRACE("AXObjectCache::performDeferredCacheUpdate");
     if (m_performingDeferredCacheUpdate)
         return;
-
     SetForScope<bool> performingDeferredCacheUpdate(m_performingDeferredCacheUpdate, true);
 
     for (auto* nodeChild : m_deferredChildrenChangedNodeList) {
@@ -3225,9 +3231,7 @@ void AXObjectCache::performDeferredCacheUpdate()
     }
     m_deferredChildrenChangedNodeList.clear();
 
-    for (auto& child : m_deferredChildrenChangedList)
-        handleChildrenChanged(*child);
-    m_deferredChildrenChangedList.clear();
+    processDeferredChildrenChangedList();
 
     for (auto* node : m_deferredTextChangedList)
         textChanged(node);

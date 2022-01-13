@@ -409,6 +409,8 @@ private:
     AXID m_pendingFocusedNodeID WTF_GUARDED_BY_LOCK(m_changeLogLock);
     AXID m_focusedNodeID;
     Lock m_changeLogLock;
+
+    bool m_creatingSubtree { false };
 };
 
 inline AXObjectCache* AXIsolatedTree::axObjectCache() const

@@ -33,6 +33,7 @@
 #include "FrameView.h"
 #include "Page.h"
 #include <wtf/NeverDestroyed.h>
+#include <wtf/SetForScope.h>
 
 namespace WebCore {
 
@@ -205,6 +206,10 @@ Ref<AXIsolatedObject> AXIsolatedTree::createSubtree(AXCoreObject& axObject, AXID
 {
     AXTRACE("AXIsolatedTree::createSubtree");
     ASSERT(isMainThread());
+
+    if (!m_creatingSubtree)
+        axObjectCache()->processDeferredChildrenChangedList();
+    SetForScope<bool> creatingSubtree(m_creatingSubtree, true);
 
     auto object = AXIsolatedObject::create(axObject, this, parentID);
     if (!object->objectID().isValid()) {
