@@ -1,5 +1,25 @@
 2022-01-13  Filip Pizlo  <fpizlo@apple.com>
 
+        [libpas] pas_segregated_page_lock_with_mode in try_lock mode should check that the page still uses the lock after the try_lock
+        https://bugs.webkit.org/show_bug.cgi?id=235203
+
+        Reviewed by Yusuke Suzuki.
+
+        The bug I was trying to find by assertions in bug 235190 is that lock_with_mode has an incorrect
+        implementation of the try_lock case. It forgets to check if the lock it acquired is the right one
+        after locking.
+
+        I don't know how to test this without writing a test that is very gross. It's a super subtle race
+        condition - one that would be hard to reliably trigger even if I used the race_test_hooks
+        functionality.
+
+        * libpas/src/libpas/pas_local_allocator.c:
+        (stop_impl):
+        * libpas/src/libpas/pas_segregated_page_inlines.h:
+        (pas_segregated_page_switch_lock_with_mode):
+
+2022-01-13  Filip Pizlo  <fpizlo@apple.com>
+
         [libpas] add assertions that we aren't switching to a NULL lock
         https://bugs.webkit.org/show_bug.cgi?id=235190
 
