@@ -1,3 +1,14 @@
+2022-01-13  Tim Horton  <timothy_horton@apple.com>
+
+        Fix a few Objective-C object leaks due to early returns in `init`
+        https://bugs.webkit.org/show_bug.cgi?id=235162
+        <rdar://problem/87489048>
+
+        Reviewed by Wenson Hsieh.
+
+        * Storage/WebDatabaseQuotaManager.mm:
+        (WebCore::if):
+
 2022-01-12  Matt Woodrow  <mattwoodrow@apple.com>
 
         _paintBehaviorForDestinationContext should consider kCGContextTypeDisplayList type contexts as potentially being snapshots

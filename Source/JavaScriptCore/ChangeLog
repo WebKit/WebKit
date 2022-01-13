@@ -1,3 +1,14 @@
+2022-01-13  Tim Horton  <timothy_horton@apple.com>
+
+        Fix a few Objective-C object leaks due to early returns in `init`
+        https://bugs.webkit.org/show_bug.cgi?id=235162
+        <rdar://problem/87489048>
+
+        Reviewed by Wenson Hsieh.
+
+        * API/JSValue.mm:
+        (-[JSValue initWithValue:inContext:]):
+
 2022-01-12  Mark Lam  <mark.lam@apple.com>
 
         [Re-landing] Update hashThreadState() to exclude __opaque_flags.

@@ -66,8 +66,10 @@ static double WebAVPlayerControllerLiveStreamSeekableTimeRangeMinimumDuration = 
 
 - (instancetype)init
 {
-    if (!getAVPlayerControllerClass())
+    if (!getAVPlayerControllerClass()) {
+        [self release];
         return nil;
+    }
 
     if (!(self = [super init]))
         return self;

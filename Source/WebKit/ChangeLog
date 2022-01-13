@@ -1,3 +1,14 @@
+2022-01-13  Tim Horton  <timothy_horton@apple.com>
+
+        Fix a few Objective-C object leaks due to early returns in `init`
+        https://bugs.webkit.org/show_bug.cgi?id=235162
+        <rdar://problem/87489048>
+
+        Reviewed by Wenson Hsieh.
+
+        * UIProcess/ios/WKHoverPlatter.mm:
+        (-[WKHoverPlatter initWithView:delegate:]):
+
 2022-01-13  Patrick Angle  <pangle@apple.com>
 
         Web Inspector: Implement `frameURL` option for `devtools.inspectedWindow.eval` command
