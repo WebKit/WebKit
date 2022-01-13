@@ -1,3 +1,66 @@
+2022-01-12  Filip Pizlo  <fpizlo@apple.com>
+
+        [libpas] thread_local_cache should not be allocated in the compact heap (cherry pick 11afcedfb5968f6894379ff1a41dd449ba7745f6)
+        https://bugs.webkit.org/show_bug.cgi?id=235096
+
+        Reviewed by Yusuke Suzuki.
+
+        Thread local caches can get quite large because of how libpas uses them, we can allocate one per
+        thread, and we reallocate them with exponential resizing, so there's a lot of wasted space and a
+        decent amount of fragmentation. This shows up as occasional crashes trying to allocate a thread local
+        cache out of the compact heap.
+
+        This moves thread local caches out of the compact heap. They were only ever there because partial views
+        sometimes need to point to the local_allocator's bitvector, but that's part of the thread local cache.
+        So, that means that either the partial views' bits pointer cannot be a compact pointer, or the
+        thread_local_cache needs to be in the compact heap. So, the thread_local_cache ended up in the compact
+        heap to keep that pointer small.
+
+        This change works around the problem: it's rare that the partial views' bits pointer points at
+        the local_allocator's bits, and none of the fast path cases where we access that pointer will ever see
+        it in that state. So, this makes the pointer either point to a utility-heap-allocated box that contains
+        the full pointer, or it points at the actual array allocated in the compact heap. The utility heap is
+        in the compact heap, so the compact pointer can point at either one. The implementation of this is
+        encapsulated as pas_lenient_compact_ptr. It's a bit gross; storing to it only works when you're holding
+        the heap lock, for example.
+
+        This is perf-neutral on Speedometer. This is perf-neutral on JS2 cli with full JSC isoheaps (i.e. the
+        patch from bug 231938). It's a 0.4% regression on RAMification with full JSC isoheaps, but I'm not
+        going to worry about that because trunk doesn't have full JSC isoheaps, and JSC isoheaps requires some
+        change like this to work reliably (currently it'll randomly run out of compact heap).
+
+        * bmalloc.xcodeproj/project.pbxproj:
+        * libpas/libpas.xcodeproj/project.pbxproj:
+        * libpas/src/libpas/pas_enumerate_segregated_heaps.c:
+        (enumerate_partial_view):
+        * libpas/src/libpas/pas_full_alloc_bits_inlines.h:
+        (pas_full_alloc_bits_create_for_partial_but_not_primordial):
+        (pas_full_alloc_bits_create_for_partial):
+        * libpas/src/libpas/pas_lenient_compact_ptr.h: Added.
+        * libpas/src/libpas/pas_lenient_compact_ptr_inlines.h: Added.
+        * libpas/src/libpas/pas_lenient_compact_unsigned_ptr.c: Added.
+        * libpas/src/libpas/pas_lenient_compact_unsigned_ptr.h: Added.
+        * libpas/src/libpas/pas_local_allocator.c:
+        (pas_local_allocator_move):
+        * libpas/src/libpas/pas_local_allocator_inlines.h:
+        (pas_local_allocator_set_up_free_bits):
+        (pas_local_allocator_start_allocating_in_primordial_partial_view):
+        (pas_local_allocator_bless_primordial_partial_view_before_stopping):
+        * libpas/src/libpas/pas_segregated_partial_view.c:
+        (pas_segregated_partial_view_create):
+        (compute_summary):
+        * libpas/src/libpas/pas_segregated_partial_view.h:
+        * libpas/src/libpas/pas_segregated_view_allocator_inlines.h:
+        (pas_segregated_view_will_start_allocating):
+        * libpas/src/libpas/pas_thread_local_cache.c:
+        (deallocate):
+        (allocate_cache):
+        * libpas/src/test/LotsOfHeapsAndThreads.cpp: Added.
+        (std::testLotsOfHeapsAndThreads):
+        (addLotsOfHeapsAndThreadsTests):
+        * libpas/src/test/TestHarness.cpp:
+        (main):
+
 2022-01-12  Elliott Williams  <emw@apple.com>
 
         [Xcode] Configure each project for the legacy build system

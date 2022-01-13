@@ -30,9 +30,9 @@
 #include "pas_thread_local_cache.h"
 
 #include "pas_all_heap_configs.h"
-#include "pas_compact_large_utility_free_heap.h"
 #include "pas_debug_heap.h"
 #include "pas_heap_lock.h"
+#include "pas_large_utility_free_heap.h"
 #include "pas_log.h"
 #include "pas_monotonic_time.h"
 #include "pas_scavenger.h"
@@ -63,12 +63,12 @@ static void deallocate(pas_thread_local_cache* thread_local_cache)
 {
     char* begin;
 
-    pas_compact_large_utility_free_heap_deallocate(
+    pas_large_utility_free_heap_deallocate(
         thread_local_cache->should_stop_bitvector,
         PAS_BITVECTOR_NUM_BYTES(thread_local_cache->allocator_index_capacity));
     
     begin = (char*)thread_local_cache;
-    pas_compact_large_utility_free_heap_deallocate(
+    pas_large_utility_free_heap_deallocate(
         begin,
         pas_thread_local_cache_size_for_allocator_index_capacity(
             thread_local_cache->allocator_index_capacity));
@@ -129,11 +129,11 @@ static pas_thread_local_cache* allocate_cache(unsigned allocator_index_capacity)
     if (verbose)
         printf("Cache size: %zu\n", size);
     
-    result = (pas_thread_local_cache*)pas_compact_large_utility_free_heap_allocate(size, "pas_thread_local_cache");
+    result = (pas_thread_local_cache*)pas_large_utility_free_heap_allocate(size, "pas_thread_local_cache");
 
     pas_zero_memory(result, size);
 
-    result->should_stop_bitvector = (unsigned int*)pas_compact_large_utility_free_heap_allocate(
+    result->should_stop_bitvector = (unsigned int*)pas_large_utility_free_heap_allocate(
         PAS_BITVECTOR_NUM_BYTES(allocator_index_capacity),
         "pas_thread_local_cache/should_stop_bitvector");
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Apple Inc. All rights reserved.
+ * Copyright (c) 2021-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -262,7 +262,7 @@ pas_segregated_view_will_start_allocating(pas_segregated_view view,
             unsigned end_word_index;
             unsigned word_index;
         
-            full_alloc_bits = pas_compact_tagged_unsigned_ptr_load_non_null(&partial->alloc_bits);
+            full_alloc_bits = pas_lenient_compact_unsigned_ptr_load_compact_non_null(&partial->alloc_bits);
         
             begin_word_index = partial->alloc_bits_offset;
             end_word_index = begin_word_index + partial->alloc_bits_size;

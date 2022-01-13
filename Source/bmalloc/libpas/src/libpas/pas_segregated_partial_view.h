@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2020 Apple Inc. All rights reserved.
+ * Copyright (c) 2019-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,9 +28,9 @@
 
 #include "pas_compact_segregated_shared_view_ptr.h"
 #include "pas_compact_segregated_size_directory_ptr.h"
-#include "pas_compact_tagged_unsigned_ptr.h"
-#include "pas_segregated_page_config.h"
+#include "pas_lenient_compact_unsigned_ptr.h"
 #include "pas_page_granule_use_count.h"
+#include "pas_segregated_page_config.h"
 #include "pas_segregated_view.h"
 #include "pas_utils.h"
 
@@ -48,7 +48,7 @@ struct pas_segregated_partial_view {
     
     pas_compact_segregated_shared_view_ptr shared_view;
     pas_compact_segregated_size_directory_ptr directory;
-    pas_compact_tagged_unsigned_ptr alloc_bits;
+    pas_lenient_compact_unsigned_ptr alloc_bits;
 
     /* The index can be small since we would never create a high-indexed partial view. That would not
        have a meaningful effect on the footprint of the directory.
