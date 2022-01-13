@@ -727,14 +727,22 @@ void GridTrackSizingAlgorithm::computeFlexSizedTracksGrowth(double flexFraction,
     size_t numFlexTracks = m_flexibleSizedTracksIndex.size();
     ASSERT(increments.size() == numFlexTracks);
     const Vector<GridTrack>& allTracks = tracks(m_direction);
+    // The flexFraction multiplied by the flex factor can result in a non-integer size. Since we floor the stretched size to fit in a LayoutUnit,
+    // we may lose the fractional part of the computation which can cause the entire free space not being distributed evenly. The leftover
+    // fractional part from every flexible track are accumulated here to avoid this issue.
+    double leftOverSize = 0;
     for (size_t i = 0; i < numFlexTracks; ++i) {
         unsigned trackIndex = m_flexibleSizedTracksIndex[i];
         const auto& trackSize = allTracks[trackIndex].cachedTrackSize();
         ASSERT(trackSize.maxTrackBreadth().isFlex());
         LayoutUnit oldBaseSize = allTracks[trackIndex].baseSize();
-        LayoutUnit newBaseSize = std::max(oldBaseSize, LayoutUnit(flexFraction * trackSize.maxTrackBreadth().flex()));
+        double frShare = flexFraction * trackSize.maxTrackBreadth().flex() + leftOverSize;
+        auto stretchedSize = LayoutUnit(frShare);
+        LayoutUnit newBaseSize = std::max(oldBaseSize, stretchedSize);
         increments[i] = newBaseSize - oldBaseSize;
         totalGrowth += increments[i];
+        // In the case that stretchedSize is greater than frShare, we floor it to 0 to avoid a negative leftover.
+        leftOverSize = std::max(frShare - stretchedSize.toDouble(), 0.0);
     }
 }
 

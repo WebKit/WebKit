@@ -1977,6 +1977,7 @@ webkit.org/b/228153 imported/w3c/web-platform-tests/css/css-grid/abspos/grid-ite
 webkit.org/b/228153 imported/w3c/web-platform-tests/css/css-grid/abspos/grid-positioned-item-dynamic-change-001.html [ ImageOnlyFailure ]
 webkit.org/b/228153 imported/w3c/web-platform-tests/css/css-grid/abspos/grid-positioned-item-dynamic-change-002.html [ ImageOnlyFailure ]
 webkit.org/b/228153 imported/w3c/web-platform-tests/css/css-grid/abspos/grid-positioned-item-dynamic-change-003.html [ ImageOnlyFailure ]
+webkit.org/b/235025 imported/w3c/web-platform-tests/css/css-grid/layout-algorithm/flex-tracks-with-fractional-size.html [ ImageOnlyFailure ]
 webkit.org/b/228153 imported/w3c/web-platform-tests/css/css-lists/content-property/marker-text-matches-armenian.html [ ImageOnlyFailure ]
 webkit.org/b/228153 imported/w3c/web-platform-tests/css/css-lists/content-property/marker-text-matches-decimal.html [ ImageOnlyFailure ]
 webkit.org/b/228153 imported/w3c/web-platform-tests/css/css-lists/content-property/marker-text-matches-decimal-leading-zero.html [ ImageOnlyFailure ]
