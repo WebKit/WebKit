@@ -216,13 +216,10 @@ void RuleFeatureSet::recursivelyCollectFeaturesFromSelector(SelectorFeatures& se
             if (matchElement == MatchElement::Parent || matchElement == MatchElement::Ancestor)
                 idsMatchingAncestorsInRules.add(selector->value());
             else if (isHasPseudoClassMatchElement(matchElement))
-                selectorFeatures.ids.append({ selector->value(), matchElement, isNegation });
+                selectorFeatures.ids.append({ selector, matchElement, isNegation });
         } else if (selector->match() == CSSSelector::Class)
-            selectorFeatures.classes.append({ selector->value(), matchElement, isNegation });
-        else if (selector->match() == CSSSelector::Tag) {
-            if (isHasPseudoClassMatchElement(matchElement))
-                selectorFeatures.tags.append({ selector->tagLowercaseLocalName(), matchElement, isNegation });
-        } else if (selector->isAttributeSelector()) {
+            selectorFeatures.classes.append({ selector, matchElement, isNegation });
+        else if (selector->isAttributeSelector()) {
             auto& canonicalLocalName = selector->attributeCanonicalLocalName();
             auto& localName = selector->attribute().localName();
             attributeCanonicalLocalNamesInRules.add(canonicalLocalName);
@@ -257,6 +254,9 @@ void RuleFeatureSet::recursivelyCollectFeaturesFromSelector(SelectorFeatures& se
                 if (!selectorFeatures.hasSiblingSelector && selector->isSiblingSelector())
                     selectorFeatures.hasSiblingSelector = true;
                 recursivelyCollectFeaturesFromSelector(selectorFeatures, *subSelector, subSelectorMatchElement, subSelectorIsNegation);
+
+                if (selector->match() == CSSSelector::PseudoClass && selector->pseudoClassType() == CSSSelector::PseudoClassHas)
+                    selectorFeatures.hasPseudoClasses.append({ subSelector, subSelectorMatchElement, isNegation });
             }
         }
 
@@ -276,12 +276,8 @@ PseudoClassInvalidationKey makePseudoClassInvalidationKey(CSSSelector::PseudoCla
     };
 };
 
-static PseudoClassInvalidationKey makePseudoClassInvalidationKey(const CSSSelector& selector)
+static PseudoClassInvalidationKey makePseudoClassInvalidationKey(CSSSelector::PseudoClassType pseudoClassType, const CSSSelector& selector)
 {
-    ASSERT(selector.match() == CSSSelector::PseudoClass);
-
-    auto pseudoClassType = selector.pseudoClassType();
-
     AtomString className;
     AtomString tagName;
     for (auto* simpleSelector = selector.firstInCompound(); simpleSelector; simpleSelector = simpleSelector->tagHistory()) {
@@ -303,7 +299,7 @@ static PseudoClassInvalidationKey makePseudoClassInvalidationKey(const CSSSelect
     if (!tagName.isEmpty() && tagName != starAtom())
         return makePseudoClassInvalidationKey(pseudoClassType, InvalidationKeyType::Tag, tagName);
 
-    return makePseudoClassInvalidationKey(selector.pseudoClassType(), InvalidationKeyType::Universal);
+    return makePseudoClassInvalidationKey(pseudoClassType, InvalidationKeyType::Universal);
 };
 
 void RuleFeatureSet::collectFeatures(const RuleData& ruleData)
@@ -317,7 +313,9 @@ void RuleFeatureSet::collectFeatures(const RuleData& ruleData)
 
     auto addToMap = [&](auto& map, auto& entries, auto hostAffectingNames) {
         for (auto& entry : entries) {
-            auto& [name, matchElement, isNegation] = entry;
+            auto& [selector, matchElement, isNegation] = entry;
+            auto& name = selector->value();
+
             map.ensure(name, [] {
                 return makeUnique<RuleFeatureVector>();
             }).iterator->value->append({ ruleData, matchElement, isNegation });
@@ -331,7 +329,6 @@ void RuleFeatureSet::collectFeatures(const RuleData& ruleData)
         }
     };
 
-    addToMap(tagRules, selectorFeatures.tags, nullptr);
     addToMap(idRules, selectorFeatures.ids, nullptr);
     addToMap(classRules, selectorFeatures.classes, &classesAffectingHost);
 
@@ -347,13 +344,23 @@ void RuleFeatureSet::collectFeatures(const RuleData& ruleData)
 
     for (auto& entry : selectorFeatures.pseudoClasses) {
         auto [selector, matchElement, isNegation] = entry;
-        pseudoClassRules.ensure(makePseudoClassInvalidationKey(*selector), [] {
+        pseudoClassRules.ensure(makePseudoClassInvalidationKey(selector->pseudoClassType(), *selector), [] {
             return makeUnique<Vector<RuleFeature>>();
         }).iterator->value->append({ ruleData, matchElement, isNegation });
 
         if (matchElement == MatchElement::Host)
             pseudoClassesAffectingHost.add(selector->pseudoClassType());
         pseudoClassTypes.add(selector->pseudoClassType());
+
+        setUsesMatchElement(matchElement);
+    }
+
+    for (auto& entry : selectorFeatures.hasPseudoClasses) {
+        auto [selector, matchElement, isNegation] = entry;
+        // The selector argument points to a selector inside :has() selector list instead of :has() itself.
+        hasPseudoClassRules.ensure(makePseudoClassInvalidationKey(CSSSelector::PseudoClassHas, *selector), [] {
+            return makeUnique<Vector<RuleFeatureWithInvalidationSelector>>();
+        }).iterator->value->append({ ruleData, matchElement, isNegation, selector });
 
         setUsesMatchElement(matchElement);
     }
@@ -377,7 +384,6 @@ void RuleFeatureSet::add(const RuleFeatureSet& other)
         }
     };
 
-    addMap(tagRules, other.tagRules);
     addMap(idRules, other.idRules);
 
     addMap(classRules, other.classRules);
@@ -389,6 +395,8 @@ void RuleFeatureSet::add(const RuleFeatureSet& other)
     addMap(pseudoClassRules, other.pseudoClassRules);
     pseudoClassesAffectingHost.add(other.pseudoClassesAffectingHost.begin(), other.pseudoClassesAffectingHost.end());
     pseudoClassTypes.add(other.pseudoClassTypes.begin(), other.pseudoClassTypes.end());
+
+    addMap(hasPseudoClassRules, other.hasPseudoClassRules);
 
     for (size_t i = 0; i < usedMatchElements.size(); ++i)
         usedMatchElements[i] = usedMatchElements[i] || other.usedMatchElements[i];
@@ -413,9 +421,9 @@ void RuleFeatureSet::clear()
     contentAttributeNamesInRules.clear();
     siblingRules.clear();
     uncommonAttributeRules.clear();
-    tagRules.clear();
     idRules.clear();
     classRules.clear();
+    hasPseudoClassRules.clear();
     classesAffectingHost.clear();
     attributeRules.clear();
     attributesAffectingHost.clear();
@@ -430,8 +438,6 @@ void RuleFeatureSet::shrinkToFit()
 {
     siblingRules.shrinkToFit();
     uncommonAttributeRules.shrinkToFit();
-    for (auto& rules : tagRules.values())
-        rules->shrinkToFit();
     for (auto& rules : idRules.values())
         rules->shrinkToFit();
     for (auto& rules : classRules.values())
@@ -439,6 +445,8 @@ void RuleFeatureSet::shrinkToFit()
     for (auto& rules : attributeRules.values())
         rules->shrinkToFit();
     for (auto& rules : pseudoClassRules.values())
+        rules->shrinkToFit();
+    for (auto& rules : hasPseudoClassRules.values())
         rules->shrinkToFit();
 }
 

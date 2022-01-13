@@ -62,13 +62,11 @@ public:
     RuleSet* sibling() const { return m_siblingRuleSet.get(); }
     RuleSet* uncommonAttribute() const { return m_uncommonAttributeRuleSet.get(); }
 
-    const Vector<InvalidationRuleSet>* tagInvalidationRuleSets(const AtomString&) const;
     const Vector<InvalidationRuleSet>* idInvalidationRuleSets(const AtomString&) const;
     const Vector<InvalidationRuleSet>* classInvalidationRuleSets(const AtomString&) const;
     const Vector<InvalidationRuleSet>* attributeInvalidationRuleSets(const AtomString&) const;
     const Vector<InvalidationRuleSet>* pseudoClassInvalidationRuleSets(const PseudoClassInvalidationKey&) const;
-
-    const Vector<InvalidationRuleSet>* invalidationRuleSetsForChildChange(const Element&);
+    const Vector<InvalidationRuleSet>* hasPseudoClassInvalidationRuleSets(const PseudoClassInvalidationKey&) const;
 
     bool hasComplexSelectorsForStyleAttribute() const;
 
@@ -101,11 +99,11 @@ private:
     mutable RuleFeatureSet m_features;
     mutable RefPtr<RuleSet> m_siblingRuleSet;
     mutable RefPtr<RuleSet> m_uncommonAttributeRuleSet;
-    mutable HashMap<AtomString, std::unique_ptr<Vector<InvalidationRuleSet>>> m_tagInvalidationRuleSets;
     mutable HashMap<AtomString, std::unique_ptr<Vector<InvalidationRuleSet>>> m_idInvalidationRuleSets;
     mutable HashMap<AtomString, std::unique_ptr<Vector<InvalidationRuleSet>>> m_classInvalidationRuleSets;
     mutable HashMap<AtomString, std::unique_ptr<Vector<InvalidationRuleSet>>> m_attributeInvalidationRuleSets;
     mutable HashMap<PseudoClassInvalidationKey, std::unique_ptr<Vector<InvalidationRuleSet>>> m_pseudoClassInvalidationRuleSets;
+    mutable HashMap<PseudoClassInvalidationKey, std::unique_ptr<Vector<InvalidationRuleSet>>> m_hasPseudoClassInvalidationRuleSets;
 
     mutable std::optional<bool> m_cachedHasComplexSelectorsForStyleAttribute;
 

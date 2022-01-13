@@ -221,11 +221,11 @@ void ScopeRuleSets::collectFeatures() const
     m_siblingRuleSet = makeRuleSet(m_features.siblingRules);
     m_uncommonAttributeRuleSet = makeRuleSet(m_features.uncommonAttributeRules);
 
-    m_tagInvalidationRuleSets.clear();
     m_idInvalidationRuleSets.clear();
     m_classInvalidationRuleSets.clear();
     m_attributeInvalidationRuleSets.clear();
     m_pseudoClassInvalidationRuleSets.clear();
+    m_hasPseudoClassInvalidationRuleSets.clear();
 
     m_cachedHasComplexSelectorsForStyleAttribute = std::nullopt;
 
@@ -272,11 +272,6 @@ static Vector<InvalidationRuleSet>* ensureInvalidationRuleSets(const KeyType& ke
     }).iterator->value.get();
 }
 
-const Vector<InvalidationRuleSet>* ScopeRuleSets::tagInvalidationRuleSets(const AtomString& tagName) const
-{
-    return ensureInvalidationRuleSets(tagName, m_tagInvalidationRuleSets, m_features.tagRules);
-}
-
 const Vector<InvalidationRuleSet>* ScopeRuleSets::idInvalidationRuleSets(const AtomString& id) const
 {
     return ensureInvalidationRuleSets(id, m_idInvalidationRuleSets, m_features.idRules);
@@ -295,6 +290,11 @@ const Vector<InvalidationRuleSet>* ScopeRuleSets::attributeInvalidationRuleSets(
 const Vector<InvalidationRuleSet>* ScopeRuleSets::pseudoClassInvalidationRuleSets(const PseudoClassInvalidationKey& pseudoClassKey) const
 {
     return ensureInvalidationRuleSets(pseudoClassKey, m_pseudoClassInvalidationRuleSets, m_features.pseudoClassRules);
+}
+
+const Vector<InvalidationRuleSet>* ScopeRuleSets::hasPseudoClassInvalidationRuleSets(const PseudoClassInvalidationKey& key) const
+{
+    return ensureInvalidationRuleSets(key, m_hasPseudoClassInvalidationRuleSets, m_features.hasPseudoClassRules);
 }
 
 bool ScopeRuleSets::hasComplexSelectorsForStyleAttribute() const

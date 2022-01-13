@@ -105,11 +105,12 @@ struct RuleFeatureSet {
     Vector<RuleAndSelector> siblingRules;
     Vector<RuleAndSelector> uncommonAttributeRules;
 
-    HashMap<AtomString, std::unique_ptr<RuleFeatureVector>> tagRules;
     HashMap<AtomString, std::unique_ptr<RuleFeatureVector>> idRules;
     HashMap<AtomString, std::unique_ptr<RuleFeatureVector>> classRules;
     HashMap<AtomString, std::unique_ptr<Vector<RuleFeatureWithInvalidationSelector>>> attributeRules;
     HashMap<PseudoClassInvalidationKey, std::unique_ptr<RuleFeatureVector>> pseudoClassRules;
+    HashMap<PseudoClassInvalidationKey, std::unique_ptr<Vector<RuleFeatureWithInvalidationSelector>>> hasPseudoClassRules;
+
     HashSet<AtomString> classesAffectingHost;
     HashSet<AtomString> attributesAffectingHost;
     HashSet<CSSSelector::PseudoClassType, IntHash<CSSSelector::PseudoClassType>, WTF::StrongEnumHashTraits<CSSSelector::PseudoClassType>> pseudoClassesAffectingHost;
@@ -124,13 +125,15 @@ private:
     struct SelectorFeatures {
         bool hasSiblingSelector { false };
 
-        Vector<std::tuple<AtomString, MatchElement, IsNegation>, 32> tags;
-        Vector<std::tuple<AtomString, MatchElement, IsNegation>, 32> ids;
-        Vector<std::tuple<AtomString, MatchElement, IsNegation>, 32> classes;
-        Vector<std::tuple<const CSSSelector*, MatchElement, IsNegation>, 32> attributes;
-        Vector<std::tuple<const CSSSelector*, MatchElement, IsNegation>, 32> pseudoClasses;
+        using InvalidationFeature = std::tuple<const CSSSelector*, MatchElement, IsNegation>;
+
+        Vector<InvalidationFeature> ids;
+        Vector<InvalidationFeature> classes;
+        Vector<InvalidationFeature> attributes;
+        Vector<InvalidationFeature> pseudoClasses;
+        Vector<InvalidationFeature> hasPseudoClasses;
     };
-    void recursivelyCollectFeaturesFromSelector(SelectorFeatures&, const CSSSelector&, MatchElement = MatchElement::Subject, IsNegation =  IsNegation::No);
+    void recursivelyCollectFeaturesFromSelector(SelectorFeatures&, const CSSSelector&, MatchElement = MatchElement::Subject, IsNegation = IsNegation::No);
 };
 
 bool isHasPseudoClassMatchElement(MatchElement);

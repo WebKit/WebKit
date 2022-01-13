@@ -53,6 +53,8 @@ private:
     Invalidator::MatchElementRuleSets m_afterChangeRuleSets;
 };
 
+Vector<PseudoClassInvalidationKey, 4> makePseudoClassInvalidationKeys(CSSSelector::PseudoClassType, const Element&);
+
 inline void emplace(std::optional<PseudoClassChangeInvalidation>& invalidation, Element& element, std::initializer_list<std::pair<CSSSelector::PseudoClassType, bool>> pseudoClasses)
 {
     invalidation.emplace(element, pseudoClasses);
