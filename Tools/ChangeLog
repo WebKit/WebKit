@@ -1,3 +1,18 @@
+2022-01-13  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Crash in Document::updateStyleIfNeeded() when removing a node containing the drag caret
+        https://bugs.webkit.org/show_bug.cgi?id=235184
+        rdar://74845918
+
+        Reviewed by Darin Adler.
+
+        Add a test to exercise the crash using drag and drop in WebKit2, on both iOS and macOS.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit/remove-node-on-drop.html: Added.
+        * TestWebKitAPI/Tests/WebKitCocoa/DragAndDropTests.mm:
+        (TEST):
+
 2022-01-13  Ross Kirsling  <ross.kirsling@sony.com>
 
         PlayStation MiniBrowser should accept a command-line URL argument

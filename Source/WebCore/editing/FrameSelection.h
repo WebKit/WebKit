@@ -105,6 +105,8 @@ public:
     void nodeWillBeRemoved(Node&);
 
 private:
+    void clearCaretPositionWithoutUpdatingStyle();
+
     VisiblePosition m_position;
 };
 
