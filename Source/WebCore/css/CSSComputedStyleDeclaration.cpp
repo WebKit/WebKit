@@ -75,6 +75,7 @@
 #include "StyleResolver.h"
 #include "StyleScope.h"
 #include "StyleScrollSnapPoints.h"
+#include "Styleable.h"
 #include "TouchAction.h"
 #include "WebKitFontFamilyNames.h"
 #include "WillChangeData.h"
@@ -2374,28 +2375,15 @@ static bool isLayoutDependent(CSSPropertyID propertyID, const RenderStyle* style
     }
 }
 
-Element* ComputedStyleExtractor::styledElement() const
+RenderElement* ComputedStyleExtractor::styledRenderer() const
 {
     if (!m_element)
         return nullptr;
-    PseudoElement* pseudoElement;
-    if (m_pseudoElementSpecifier == PseudoId::Before && (pseudoElement = m_element->beforePseudoElement()))
-        return pseudoElement;
-    if (m_pseudoElementSpecifier == PseudoId::After && (pseudoElement = m_element->afterPseudoElement()))
-        return pseudoElement;
-    return m_element.get();
-}
-
-RenderElement* ComputedStyleExtractor::styledRenderer() const
-{
-    auto* element = styledElement();
-    if (!element)
+    if (m_pseudoElementSpecifier != PseudoId::None)
+        return Styleable(*m_element, m_pseudoElementSpecifier).renderer();
+    if (m_element->hasDisplayContents())
         return nullptr;
-    if (m_pseudoElementSpecifier != PseudoId::None && element == m_element.get())
-        return nullptr;
-    if (element->hasDisplayContents())
-        return nullptr;
-    return element->renderer();
+    return m_element->renderer();
 }
 
 static bool isImplicitlyInheritedGridOrFlexProperty(CSSPropertyID propertyID)
@@ -2450,12 +2438,6 @@ static inline bool hasValidStyleForProperty(Element& element, CSSPropertyID prop
 {
     if (element.styleValidity() != Style::Validity::Valid)
         return false;
-    if (element.isPseudoElement()) {
-        if (auto* host = downcast<PseudoElement>(element).hostElement()) {
-            if (host->styleValidity() != Style::Validity::Valid)
-                return false;
-        }
-    }
     if (element.document().hasPendingFullStyleRebuild())
         return false;
     if (!element.document().childNeedsStyleRecalc())
@@ -2515,20 +2497,21 @@ static bool updateStyleIfNeededForProperty(Element& element, CSSPropertyID prope
     return true;
 }
 
-static inline const RenderStyle* computeRenderStyleForProperty(Element& element, PseudoId pseudoElementSpecifier, CSSPropertyID propertyID, std::unique_ptr<RenderStyle>& ownedStyle)
+static inline const RenderStyle* computeRenderStyleForProperty(Element& element, PseudoId pseudoElementSpecifier, CSSPropertyID propertyID, std::unique_ptr<RenderStyle>& ownedStyle, RenderElement* renderer)
 {
-    auto* renderer = element.renderer();
+    if (!renderer)
+        renderer = element.renderer();
 
     if (renderer && renderer->isComposited() && CSSPropertyAnimation::animationOfPropertyIsAccelerated(propertyID)) {
         ownedStyle = renderer->animatedStyle();
-        if (pseudoElementSpecifier != PseudoId::None && !element.isPseudoElement()) {
+        if (pseudoElementSpecifier != PseudoId::None) {
             // FIXME: This cached pseudo style will only exist if the animation has been run at least once.
             return ownedStyle->getCachedPseudoStyle(pseudoElementSpecifier);
         }
         return ownedStyle.get();
     }
 
-    return element.computedStyle(element.isPseudoElement() ? PseudoId::None : pseudoElementSpecifier);
+    return element.computedStyle(pseudoElementSpecifier);
 }
 
 static Ref<CSSValue> shapePropertyValue(const RenderStyle& style, const ShapeValue* shapeValue)
@@ -2666,17 +2649,14 @@ inline static bool isFlexOrGridItem(RenderObject* renderer)
 
 RefPtr<CSSValue> ComputedStyleExtractor::customPropertyValue(const String& propertyName)
 {
-    Element* styledElement = this->styledElement();
+    Element* styledElement = m_element.get();
     if (!styledElement)
         return nullptr;
     
-    if (updateStyleIfNeededForProperty(*styledElement, CSSPropertyCustom)) {
-        // Style update may change styledElement() to PseudoElement or back.
-        styledElement = this->styledElement();
-    }
+    updateStyleIfNeededForProperty(*styledElement, CSSPropertyCustom);
 
     std::unique_ptr<RenderStyle> ownedStyle;
-    auto* style = computeRenderStyleForProperty(*styledElement, m_pseudoElementSpecifier, CSSPropertyCustom, ownedStyle);
+    auto* style = computeRenderStyleForProperty(*styledElement, m_pseudoElementSpecifier, CSSPropertyCustom, ownedStyle, nullptr);
     if (!style)
         return nullptr;
 
@@ -2734,7 +2714,7 @@ static Ref<CSSFontValue> fontShorthandValueForSelectionProperties(const FontDesc
 
 RefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propertyID, EUpdateLayout updateLayout)
 {
-    auto* styledElement = this->styledElement();
+    auto* styledElement = m_element.get();
     if (!styledElement)
         return nullptr;
 
@@ -2745,30 +2725,25 @@ RefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propertyID,
     if (updateLayout) {
         Document& document = m_element->document();
 
-        if (updateStyleIfNeededForProperty(*styledElement, propertyID)) {
-            // Style update may change styledElement() to PseudoElement or back.
-            styledElement = this->styledElement();
-        }
+        updateStyleIfNeededForProperty(*styledElement, propertyID);
         renderer = styledRenderer();
 
         if (propertyID == CSSPropertyDisplay && !renderer && is<SVGElement>(*styledElement) && !downcast<SVGElement>(*styledElement).isValid())
             return nullptr;
 
-        style = computeRenderStyleForProperty(*styledElement, m_pseudoElementSpecifier, propertyID, ownedStyle);
+        style = computeRenderStyleForProperty(*styledElement, m_pseudoElementSpecifier, propertyID, ownedStyle, renderer);
 
         // FIXME: Some of these cases could be narrowed down or optimized better.
         forceFullLayout = isLayoutDependent(propertyID, style, renderer)
             || styledElement->isInShadowTree()
             || (document.styleScope().resolverIfExists() && document.styleScope().resolverIfExists()->hasViewportDependentMediaQueries() && document.ownerElement());
 
-        if (forceFullLayout) {
+        if (forceFullLayout)
             document.updateLayoutIgnorePendingStylesheets();
-            styledElement = this->styledElement();
-        }
     }
 
     if (!updateLayout || forceFullLayout) {
-        style = computeRenderStyleForProperty(*styledElement, m_pseudoElementSpecifier, propertyID, ownedStyle);
+        style = computeRenderStyleForProperty(*styledElement, m_pseudoElementSpecifier, propertyID, ownedStyle, renderer);
         renderer = styledRenderer();
     }
 
@@ -4410,11 +4385,11 @@ ExceptionOr<void> CSSComputedStyleDeclaration::setPropertyInternal(CSSPropertyID
 size_t ComputedStyleExtractor::getLayerCount(CSSPropertyID property)
 {
     ASSERT(property == CSSPropertyBackground || property == CSSPropertyMask);
-    if (!styledElement())
+    if (!m_element)
         return 0;
 
     std::unique_ptr<RenderStyle> ownedStyle;
-    const RenderStyle* style = computeRenderStyleForProperty(*styledElement(), m_pseudoElementSpecifier, property, ownedStyle);
+    const RenderStyle* style = computeRenderStyleForProperty(*m_element, m_pseudoElementSpecifier, property, ownedStyle, nullptr);
     if (!style)
         return 0;
 

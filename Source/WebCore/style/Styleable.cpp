@@ -98,13 +98,16 @@ RenderElement* Styleable::renderer() const
             return beforePseudoElement->renderer();
         break;
     case PseudoId::Marker:
-        if (is<RenderListItem>(element.renderer()))
-            return downcast<RenderListItem>(*element.renderer()).markerRenderer();
+        if (is<RenderListItem>(element.renderer())) {
+            auto* markerRenderer = downcast<RenderListItem>(*element.renderer()).markerRenderer();
+            if (markerRenderer && markerRenderer->style().hasContent())
+                return markerRenderer;
+        }
         break;
     case PseudoId::None:
         return element.renderer();
     default:
-        ASSERT_NOT_REACHED();
+        return nullptr;
     }
 
     return nullptr;

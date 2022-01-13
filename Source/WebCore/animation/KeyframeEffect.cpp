@@ -86,8 +86,8 @@ static Element* elementOrPseudoElementForStyleable(const std::optional<const Sty
 
 static inline void invalidateElement(const std::optional<const Styleable>& styleable)
 {
-    if (auto* elementOrPseudoElement = elementOrPseudoElementForStyleable(styleable))
-        elementOrPseudoElement->invalidateStyleInternal();
+    if (styleable)
+        styleable->element.invalidateStyleInternal();
 }
 
 static inline String CSSPropertyIDToIDLAttributeName(CSSPropertyID cssPropertyId)

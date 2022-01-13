@@ -81,14 +81,7 @@ public:
     static void addValueForAnimationPropertyToList(CSSValueList&, CSSPropertyID, const Animation*);
 
 private:
-    // The styled element is either the element passed into
-    // computedPropertyValue, or the PseudoElement for :before and :after if
-    // they exist.
-    Element* styledElement() const;
-
     // The renderer we should use for resolving layout-dependent properties.
-    // Note that it differs from styledElement()->renderer() in the case we have
-    // no pseudo-element.
     RenderElement* styledRenderer() const;
 
     RefPtr<CSSValue> svgPropertyValue(CSSPropertyID);
