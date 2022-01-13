@@ -549,23 +549,6 @@ Bug(GTK) compositing/visible-rect [ Skip ]
 webkit.org/b/85211 ietestcenter/css3/flexbox/flexbox-align-stretch-001.htm [ ImageOnlyFailure ]
 webkit.org/b/85212 ietestcenter/css3/flexbox/flexbox-layout-002.htm [ ImageOnlyFailure ]
 
-webkit.org/b/187064 webrtc/audio-peer-connection-g722.html
-webkit.org/b/187064 webrtc/captureCanvas-webrtc.html
-webkit.org/b/187064 webrtc/video-remote-mute.html
-webkit.org/b/187064 webrtc/video-addTransceiver.html
-webkit.org/b/187064 webrtc/peer-connection-track-end.html
-webkit.org/b/187064 webrtc/video.html
-webkit.org/b/187064 webrtc/video-addTrack.html
-webkit.org/b/187064 webrtc/video-rotation.html
-webkit.org/b/187064 webrtc/video-mute.html
-webkit.org/b/187064 webrtc/video-disabled-black.html
-webkit.org/b/187064 webrtc/video-with-data-channel.html
-webkit.org/b/187064 webrtc/video-replace-muted-track.html
-webkit.org/b/187064 webrtc/video-unmute.html
-webkit.org/b/187064 webrtc/datachannel/mdns-ice-candidates.html
-webkit.org/b/187064 webrtc/libwebrtc/descriptionGetters.html
-webkit.org/b/177533 webrtc/video-interruption.html
-
 # Skip the perf/ tests in debug builds
 Bug(GTK) [ Debug ] perf [ Skip ]
 

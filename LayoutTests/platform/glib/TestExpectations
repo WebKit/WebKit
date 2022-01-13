@@ -1353,8 +1353,6 @@ webkit.org/b/215005 webkit.org/b/218787 webrtc/h264-baseline.html [ Crash Timeou
 webkit.org/b/215007 [ Release ] webrtc/h264-high.html [ Timeout ]
 webkit.org/b/215007 [ Debug ] webrtc/h264-high.html [ Slow Failure ]
 
-webkit.org/b/187064 webrtc/video-rotation-no-cvo.html [ Failure Crash ]
-
 webkit.org/b/216538 webrtc/captureCanvas-webrtc-software-h264-baseline.html [ Slow Failure ]
 
 webkit.org/b/216763 webrtc/captureCanvas-webrtc-software-h264-high.html [ Crash Failure ]
@@ -2156,14 +2154,14 @@ webkit.org/b/186100 css3/color-filters/color-filter-color-property-list-item.htm
 webkit.org/b/186100 fast/hidpi/filters-turbulence.html [ ImageOnlyFailure ]
 webkit.org/b/187044 webanimations/opacity-animation-yields-compositing-span.html [ Failure ]
 
-webkit.org/b/187064 webrtc/libwebrtc/descriptionGetters.html
-webkit.org/b/187064 webrtc/datachannel/mdns-ice-candidates.html
-webkit.org/b/187064 webrtc/video-addTrack.html
-webkit.org/b/187064 webrtc/video-disabled-black.html
-webkit.org/b/187064 webrtc/video-remote-mute.html
-webkit.org/b/187064 webrtc/video-replace-muted-track.html
-webkit.org/b/187064 webrtc/video-rotation.html
-webkit.org/b/187064 webrtc/video-with-data-channel.html
+webkit.org/b/187064 webrtc/datachannel/mdns-ice-candidates.html [ Timeout ]
+webkit.org/b/187064 webrtc/video-addTrack.html [ Failure ]
+webkit.org/b/187064 webrtc/video-disabled-black.html [ Crash ]
+webkit.org/b/187064 webrtc/video-remote-mute.html [ Crash ]
+webkit.org/b/187064 webrtc/video-replace-muted-track.html [ Timeout ]
+webkit.org/b/187064 webrtc/video-rotation.html [ Failure ]
+webkit.org/b/187064 webrtc/video-rotation-no-cvo.html [ Failure ]
+webkit.org/b/187064 webrtc/video-with-data-channel.html [ Failure ]
 webkit.org/b/187064 imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-getStats.https.html [ Failure Pass ]
 
 webkit.org/b/187271 fast/text/emoji-with-joiner.html [ Failure ]
