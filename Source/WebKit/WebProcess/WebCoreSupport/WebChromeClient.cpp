@@ -1318,9 +1318,9 @@ String WebChromeClient::signedPublicKeyAndChallengeString(unsigned keySizeIndex,
 
 #if ENABLE(TELEPHONE_NUMBER_DETECTION) && PLATFORM(MAC)
 
-void WebChromeClient::handleTelephoneNumberClick(const String& number, const IntPoint& point)
+void WebChromeClient::handleTelephoneNumberClick(const String& number, const IntPoint& point, const IntRect& rect)
 {
-    m_page.handleTelephoneNumberClick(number, point);
+    m_page.handleTelephoneNumberClick(number, point, rect);
 }
 
 #endif

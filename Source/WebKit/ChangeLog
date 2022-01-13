@@ -1,3 +1,34 @@
+2022-01-12  Megan Gardner  <megan_gardner@apple.com>
+
+        Add to Contact menu item does nothing on mac.
+        https://bugs.webkit.org/show_bug.cgi?id=235154
+        rdar://80213097
+
+        Reviewed by Tim Horton.
+
+        Add to Context menu item for telephone numbers did not actually show the contact card.
+        This was because the delgate did not tell the menu where to display the card from, so it just failed.
+        Plumbing that information through fixes the issue.
+
+        * Platform/mac/MenuUtilities.h:
+        * Platform/mac/MenuUtilities.mm:
+        (-[WKEmptyPresenterHighlightDelegate initWithRect:]):
+        (-[WKEmptyPresenterHighlightDelegate revealContext:rectsForItem:]):
+        (-[WKEmptyPresenterHighlightDelegate revealContext:shouldUseDefaultHighlightForItem:]):
+        (WebKit::menuForTelephoneNumber):
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/mac/PageClientImplMac.h:
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::showTelephoneNumberMenu):
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::handleTelephoneNumberClick):
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::handleTelephoneNumberClick):
+
 2022-01-12  J Pascoe  <j_pascoe@apple.com>
 
         [WebAuthn] Fix freebie call without user gesture not being given
