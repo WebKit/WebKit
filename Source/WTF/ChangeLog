@@ -1,3 +1,20 @@
+2022-01-12  Mark Lam  <mark.lam@apple.com>
+
+        [Re-landing] Update hashThreadState() to exclude __opaque_flags.
+        https://bugs.webkit.org/show_bug.cgi?id=235081
+        rdar://86282584
+
+        Reviewed by Keith Miller.
+
+        The __opaque_flags may be used by the OS, and may be altered without our knowledge.
+        Hence, our hash should not include the __opaque_flags field.
+
+        Also remove some unused code.
+
+        * wtf/PlatformRegisters.h:
+        * wtf/threads/Signals.cpp:
+        (WTF::hashThreadState):
+
 2022-01-12  Elliott Williams  <emw@apple.com>
 
         [Xcode] Configure each project for the legacy build system
