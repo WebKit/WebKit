@@ -64,6 +64,11 @@ WI.CallFrame = class CallFrame
     get blackboxed() { return this._blackboxed; }
     get isConsoleEvaluation() { return this._isConsoleEvaluation; }
 
+    get displayName()
+    {
+        return this._functionName || WI.UIString("(anonymous function)");
+    }
+
     isEqual(other)
     {
         if (!other)

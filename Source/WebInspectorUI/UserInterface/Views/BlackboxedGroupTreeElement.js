@@ -39,12 +39,18 @@ WI.BlackboxedGroupTreeElement = class BlackboxedGroupTreeElement extends WI.Gene
 
         super(classNames, title, subtitle);
 
-        this.selectable = false;
         this.toggleOnClick = true;
         this._callFrames = callFrames;
     }
 
     // Public
+
+    get callFrames() { return this._callFrames; }
+
+    get expandable()
+    {
+        return true;
+    }
 
     expand()
     {
@@ -55,5 +61,17 @@ WI.BlackboxedGroupTreeElement = class BlackboxedGroupTreeElement extends WI.Gene
             this.parent.insertChild(new WI.CallFrameTreeElement(this._callFrames[i]), index);
 
         this.parent.removeChild(this);
+    }
+
+    onenter()
+    {
+        this.expand();
+        return true;
+    }
+
+    onspace()
+    {
+        this.expand();
+        return true;
     }
 };

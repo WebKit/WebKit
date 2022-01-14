@@ -237,7 +237,7 @@ WI.ConsoleMessageView = class ConsoleMessageView extends WI.Object
 
         if (hasStackTrace) {
             this._message.stackTrace.callFrames.forEach(function(frame) {
-                clipboardString += "\n\t" + (frame.functionName || WI.UIString("(anonymous function)"));
+                clipboardString += "\n\t" + frame.displayName;
                 if (frame.sourceCodeLocation)
                     clipboardString += " (" + frame.sourceCodeLocation.originalLocationString() + ")";
             });

@@ -30,7 +30,7 @@ WI.CallFrameTreeElement = class CallFrameTreeElement extends WI.GeneralTreeEleme
         console.assert(callFrame instanceof WI.CallFrame);
 
         let className = WI.CallFrameView.iconClassNameForCallFrame(callFrame);
-        let title = callFrame.functionName || WI.UIString("(anonymous function)");
+        let title = callFrame.displayName;
         const subtitle = null;
         super(["call-frame", className], title, subtitle, callFrame);
 

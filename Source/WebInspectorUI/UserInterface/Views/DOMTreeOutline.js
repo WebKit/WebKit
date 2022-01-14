@@ -184,7 +184,7 @@ WI.DOMTreeOutline = class DOMTreeOutline extends WI.TreeOutline
                 this.appendChild(treeElement);
                 node = node.nextSibling;
 
-                if (treeElement.hasChildren && !treeElement.expanded)
+                if (treeElement.expandable && !treeElement.expanded)
                     treeElement.expand();
             }
         }
