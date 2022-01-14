@@ -1815,8 +1815,14 @@ private:
                 return false;
             };
 
-            auto useIRC = [] {
-                return Options::airForceIRCAllocator() || !Options::airForceBriggsAllocator();
+            auto useIRC = [&] {
+                if (Options::airForceBriggsAllocator())
+                    return false;
+                if (m_code.forceIRCRegisterAllocation() || Options::airForceIRCAllocator())
+                    return true;
+                if (isARM64())
+                    return false;
+                return true;
             };
 
             if (m_code.numTmps(bank) < WTF::maxSizeForSmallInterferenceGraph) {

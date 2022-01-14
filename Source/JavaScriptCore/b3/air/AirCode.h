@@ -361,6 +361,9 @@ public:
     void emitEpilogue(CCallHelpers&);
 
     std::unique_ptr<GenerateAndAllocateRegisters> m_generateAndAllocateRegisters;
+
+    void setForceIRCRegisterAllocation() { m_forceIRC = true; }
+    bool forceIRCRegisterAllocation() { return m_forceIRC; }
     
 private:
     friend class ::JSC::B3::Procedure;
@@ -400,6 +403,7 @@ private:
     unsigned m_optLevel { defaultOptLevel() };
     bool m_stackIsAllocated { false };
     bool m_preserveB3Origins { true };
+    bool m_forceIRC { false };
     RegisterAtOffsetList m_uncorrectedCalleeSaveRegisterAtOffsetList;
     RegisterSet m_calleeSaveRegisters;
     StackSlot* m_calleeSaveStackSlot { nullptr };

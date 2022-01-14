@@ -1,3 +1,23 @@
+2022-01-14  Saam Barati  <sbarati@apple.com>
+
+        Use IRC for Wasm, and Briggs for JS on ARM64
+        https://bugs.webkit.org/show_bug.cgi?id=235235
+        <rdar://87090631>
+
+        Reviewed by Yusuke Suzuki and Robin Morisset.
+
+        When I turned on IRC for everything in r287218, we saw some
+        regressions on iOS on JetStream2. So, this patch makes it so
+        JS code on arm64 goes back to using Briggs, and Wasm will
+        use IRC.
+
+        * b3/air/AirAllocateRegistersByGraphColoring.cpp:
+        * b3/air/AirCode.h:
+        (JSC::B3::Air::Code::setForceIRCRegisterAllocation):
+        (JSC::B3::Air::Code::forceIRCRegisterAllocation):
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::parseAndCompileB3):
+
 2022-01-13  Zan Dobersek  <zdobersek@igalia.com>
 
         [RISCV64] riscv64 backend should lower offlineasm instructions
