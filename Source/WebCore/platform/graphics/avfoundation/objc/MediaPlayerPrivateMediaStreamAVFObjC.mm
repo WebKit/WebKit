@@ -247,7 +247,7 @@ static inline CGAffineTransform videoTransformationMatrix(MediaSample& sample)
 void MediaPlayerPrivateMediaStreamAVFObjC::videoSampleAvailable(MediaSample& sample, VideoSampleMetadata metadata)
 {
     auto presentationTime = MonotonicTime::now().secondsSinceEpoch();
-    processNewVideoSample(sample, sample.videoRotation() != m_videoRotation || sample.videoMirrored() != m_videoMirrored, metadata, presentationTime);
+    processNewVideoSample(sample, metadata, presentationTime);
     enqueueVideoSample(sample);
 }
 
@@ -277,19 +277,16 @@ void MediaPlayerPrivateMediaStreamAVFObjC::enqueueVideoSample(MediaSample& sampl
     m_sampleBufferDisplayLayer->enqueueSample(sample);
 }
 
-void MediaPlayerPrivateMediaStreamAVFObjC::processNewVideoSample(MediaSample& sample, bool hasChangedOrientation, VideoSampleMetadata metadata, Seconds presentationTime)
+void MediaPlayerPrivateMediaStreamAVFObjC::processNewVideoSample(MediaSample& sample, VideoSampleMetadata metadata, Seconds presentationTime)
 {
     if (!isMainThread()) {
         {
             Locker locker { m_currentVideoSampleLock };
             m_currentVideoSample = &sample;
         }
-        callOnMainThread([weakThis = WeakPtr { *this }, hasChangedOrientation, metadata, presentationTime]() mutable {
+        callOnMainThread([weakThis = WeakPtr { *this }, metadata, presentationTime]() mutable {
             if (!weakThis)
                 return;
-
-            if (hasChangedOrientation)
-                weakThis->m_videoTransform = { };
 
             RefPtr<MediaSample> sample;
             {
@@ -299,16 +296,13 @@ void MediaPlayerPrivateMediaStreamAVFObjC::processNewVideoSample(MediaSample& sa
             if (!sample)
                 return;
 
-            weakThis->processNewVideoSample(*sample, hasChangedOrientation, metadata, presentationTime);
+            weakThis->processNewVideoSample(*sample, metadata, presentationTime);
         });
         return;
     }
 
     if (!m_activeVideoTrack)
         return;
-
-    if (hasChangedOrientation)
-        m_videoTransform = { };
 
     if (!m_imagePainter.mediaSample || m_displayMode != PausedImage) {
         m_imagePainter.mediaSample = &sample;
@@ -721,7 +715,6 @@ void MediaPlayerPrivateMediaStreamAVFObjC::updateRenderingMode()
         return;
 
     scheduleDeferredTask([this] {
-        m_videoTransform = { };
         if (m_player)
             m_player->renderingModeChanged();
     });
@@ -1004,9 +997,7 @@ void MediaPlayerPrivateMediaStreamAVFObjC::paintCurrentFrameInContext(GraphicsCo
 
     auto& image = m_imagePainter.cgImage;
     FloatRect imageRect { FloatPoint::zero(), image->size() };
-    if (!m_videoTransform)
-        m_videoTransform = videoTransformationMatrix(*m_imagePainter.mediaSample);
-    AffineTransform videoTransform = *m_videoTransform;
+    AffineTransform videoTransform = videoTransformationMatrix(*m_imagePainter.mediaSample);
     FloatRect transformedDestRect = valueOrDefault(videoTransform.inverse()).mapRect(destRect);
     context.concatCTM(videoTransform);
     context.drawNativeImage(*image, imageRect.size(), transformedDestRect, imageRect);

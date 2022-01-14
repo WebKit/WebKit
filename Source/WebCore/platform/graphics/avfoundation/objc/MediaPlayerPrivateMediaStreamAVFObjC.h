@@ -136,7 +136,7 @@ private:
 
     void flushRenderers();
 
-    void processNewVideoSample(MediaSample&, bool hasChangedOrientation, VideoSampleMetadata, Seconds);
+    void processNewVideoSample(MediaSample&, VideoSampleMetadata, Seconds);
     void enqueueVideoSample(MediaSample&);
     void requestNotificationWhenReadyForVideoData();
 
@@ -248,7 +248,6 @@ private:
     float m_volume { 1 };
     DisplayMode m_displayMode { None };
     PlaybackState m_playbackState { PlaybackState::None };
-    std::optional<CGAffineTransform> m_videoTransform;
 
     // Used on both main thread and sample thread.
     std::unique_ptr<SampleBufferDisplayLayer> m_sampleBufferDisplayLayer;
