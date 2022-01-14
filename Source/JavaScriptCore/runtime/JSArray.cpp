@@ -729,15 +729,11 @@ JSArray* JSArray::fastSlice(JSGlobalObject* globalObject, JSObject* source, uint
 {
     VM& vm = globalObject->vm();
 
-    // FIXME: Avoid converting the source from CoW since we aren't modifying it.
-    // https://bugs.webkit.org/show_bug.cgi?id=234990
-    source->ensureWritable(vm);
-
     Structure* sourceStructure = source->structure(vm);
     if (sourceStructure->typeInfo().interceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero())
         return nullptr;
 
-    auto arrayType = source->indexingMode() | IsArray;
+    auto arrayType = source->indexingType() | IsArray;
     switch (arrayType) {
     case ArrayWithDouble:
     case ArrayWithInt32:

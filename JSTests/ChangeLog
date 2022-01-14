@@ -1,3 +1,12 @@
+2022-01-14  Alexey Shvayka  <ashvayka@apple.com>
+
+        JSArray::fastSlice() should not convert the source from CoW
+        https://bugs.webkit.org/show_bug.cgi?id=234990
+
+        Reviewed by Yusuke Suzuki.
+
+        * stress/array-slice-cow.js:
+
 2022-01-14  Justin Michaud  <justin_michaud@apple.com>
 
         Update libWABT
