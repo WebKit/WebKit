@@ -29,19 +29,12 @@
 #include "config.h"
 #include "NicosiaGCGLLayer.h"
 
-#if ENABLE(WEBGL) && USE(NICOSIA) && USE(TEXTURE_MAPPER)
+#if ENABLE(WEBGL) && USE(NICOSIA) && USE(TEXTURE_MAPPER) && !USE(ANGLE)
 
 #if USE(COORDINATED_GRAPHICS)
 #include "TextureMapperGL.h"
 #include "TextureMapperPlatformLayerBuffer.h"
 #include "TextureMapperPlatformLayerProxy.h"
-#endif
-
-#if USE(ANGLE)
-#include "ImageBuffer.h"
-#if USE(CAIRO)
-#include <cairo.h>
-#endif
 #endif
 
 #include "GLContext.h"
@@ -50,7 +43,7 @@ namespace Nicosia {
 
 using namespace WebCore;
 
-GCGLLayer::GCGLLayer(GraphicsContextGLType& context)
+GCGLLayer::GCGLLayer(GraphicsContextGLOpenGL& context)
     : m_context(context)
     , m_contentLayer(Nicosia::ContentLayer::create(Nicosia::ContentLayerTextureMapperImpl::createFactory(*this)))
 {
@@ -82,64 +75,15 @@ void GCGLLayer::swapBuffersIfNeeded()
 
     m_context.prepareTexture();
     IntSize textureSize(m_context.m_currentWidth, m_context.m_currentHeight);
-#if USE(ANGLE)
-    RefPtr<WebCore::ImageBuffer> imageBuffer = ImageBuffer::create(textureSize, RenderingMode::Unaccelerated, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
-    if (!imageBuffer)
-        return;
 
-    m_context.paintRenderingResultsToCanvas(*imageBuffer.get());
-#else
     TextureMapperGL::Flags flags = TextureMapperGL::ShouldFlipTexture;
     if (m_context.contextAttributes().alpha)
         flags |= TextureMapperGL::ShouldBlend;
-#endif
 
     {
         auto& proxy = downcast<Nicosia::ContentLayerTextureMapperImpl>(m_contentLayer->impl()).proxy();
-#if USE(ANGLE)
-        // FIXME: This is duplicated from NicosiaImageBufferPipe, but should be shared somehow.
-        auto proxyOperation =
-            [this, imageBuffer = WTFMove(imageBuffer)] () mutable {
-                auto nativeImage = ImageBuffer::sinkIntoNativeImage(WTFMove(imageBuffer));
-                if (!nativeImage)
-                    return;
-
-                auto size = nativeImage->size();
-                auto flags = nativeImage->hasAlpha() ? BitmapTexture::SupportsAlpha : BitmapTexture::NoFlag;
-
-                auto& proxy = downcast<Nicosia::ContentLayerTextureMapperImpl>(m_contentLayer->impl()).proxy();
-                Locker locker { proxy.lock() };
-
-                std::unique_ptr<TextureMapperPlatformLayerBuffer> layerBuffer = proxy.getAvailableBuffer(size, flags);
-
-                if (!layerBuffer) {
-                    auto texture = BitmapTextureGL::create(TextureMapperContextAttributes::get());
-                    texture->reset(size, flags);
-                    layerBuffer = makeUnique<TextureMapperPlatformLayerBuffer>(WTFMove(texture), nativeImage->hasAlpha() ? TextureMapperGL::ShouldBlend : TextureMapperGL::NoFlag);
-                }
-
-#if USE(CAIRO)
-                auto* surface = nativeImage->platformImage().get();
-                auto* imageData = cairo_image_surface_get_data(surface);
-                layerBuffer->textureGL().updateContents(imageData, IntRect(IntPoint(), size), IntPoint(), cairo_image_surface_get_stride(surface));
-#else
-                notImplemented();
-#endif
-
-                proxy.pushNextBuffer(WTFMove(layerBuffer));
-
-                m_context.markLayerComposited();
-            };
-
-        proxy.scheduleUpdateOnCompositorThread([proxyOperation] () mutable {
-            proxyOperation();
-        });
-
-        return;
-#else
         Locker locker { proxy.lock() };
         proxy.pushNextBuffer(makeUnique<TextureMapperPlatformLayerBuffer>(m_context.m_compositorTexture, textureSize, flags, m_context.m_internalColorFormat));
-#endif
     }
 
     m_context.markLayerComposited();
