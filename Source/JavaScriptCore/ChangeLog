@@ -1,3 +1,27 @@
+2022-01-13  Zan Dobersek  <zdobersek@igalia.com>
+
+        [RISCV64] riscv64 backend should lower offlineasm instructions
+        https://bugs.webkit.org/show_bug.cgi?id=234952
+        <rdar://problem/87440612>
+
+        Reviewed by Yusuke Suzuki.
+
+        In the riscv64 offlineasm backend, instead of handling higher-level
+        offlineasm instructions with different operand combinations and manually
+        juggling temp registers, use the approach of aggressively lowering these
+        opcodes into sequences of RISC-V instructions.
+
+        Addresses and immediate values are lowered into usable forms where
+        necessary. Different lowering phases handle any offlineasm instruction
+        so that the resulting opcodes can be, with accompanying operands, used
+        trivially to construct the RISC-V assembly.
+
+        Lowered RISC-V opcodes use the 'rv_' prefix so that they can be easily
+        diassociated from any offlineasm opcode that might share the same name.
+        The prefix is removed when the assembly is finally generated.
+
+        * offlineasm/riscv64.rb:
+
 2022-01-13  Saam Barati  <sbarati@apple.com>
 
         Link Wasm code on the same thread that JITs
