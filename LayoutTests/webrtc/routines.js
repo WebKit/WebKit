@@ -297,3 +297,30 @@ function setH264HighCodec(sdp)
         return (line.indexOf('a=fmtp') === -1 && line.indexOf('a=rtcp-fb') === -1 && line.indexOf('a=rtpmap') === -1) || line.indexOf(baselineNumber) !== -1;
     }).join('\r\n');
 }
+
+// Returns Uint8Array[4] of RGBA color.
+// p: [x, y] of 0..1 range.
+function getImageDataPixel(imageData, p)
+{
+    let xi = Math.floor(p[0] * imageData.width);
+    let yi = Math.floor(p[1] * imageData.height);
+    let i = (yi * imageData.width + xi) * 4;
+    return imageData.data.slice(i, i + 4);
+}
+
+// Asserts that ImageData instance contains mock camera image rendered by MiniBrowser and WebKitTestRunner.
+// Obtain full camera image of size `width`:
+//  await navigator.mediaDevices.getUserMedia({ video: { width: { exact: width } } });
+function assertImageDataContainsMockCameraImage(imageData)
+{
+    const white = [ 255, 255, 255, 255 ];
+    const yellow = [ 255, 255, 0, 255 ];
+    const cyan = [ 0, 255, 255, 255 ];
+    const lightGreen = [ 0, 128, 0, 255 ];
+
+    let err = 3;
+    assert_array_approx_equals(getImageDataPixel(imageData, [ 0.04, 0.7 ]), white, err, "white rect not found");
+    assert_array_approx_equals(getImageDataPixel(imageData, [ 0.08, 0.7 ]), yellow, err, "yellow rect not found");
+    assert_array_approx_equals(getImageDataPixel(imageData, [ 0.12, 0.7 ]), cyan, err, "cyan rect not found");
+    assert_array_approx_equals(getImageDataPixel(imageData, [ 0.16, 0.7 ]), lightGreen, err, "light green rect not found");
+}
