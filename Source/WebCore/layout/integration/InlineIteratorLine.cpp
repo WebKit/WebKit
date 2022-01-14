@@ -175,28 +175,31 @@ LayoutUnit Line::selectionHeightAdjustedForPrecedingBlock() const
 RenderObject::HighlightState Line::selectionState() const
 {
     auto& block = containingBlock();
-    if (block.selectionState() == RenderObject::None)
-        return RenderObject::None;
+    if (block.selectionState() == RenderObject::HighlightState::None)
+        return RenderObject::HighlightState::None;
 
-    auto state = RenderObject::None;
+    auto lineState = RenderObject::HighlightState::None;
     for (auto box = firstLeafBox(); box; box.traverseNextOnLine()) {
         auto boxState = box->selectionState();
-        if ((boxState == RenderObject::HighlightState::Start && state == RenderObject::HighlightState::End)
-            || (boxState == RenderObject::HighlightState::End && state == RenderObject::HighlightState::Start))
-            state = RenderObject::HighlightState::Both;
-        else if (state == RenderObject::HighlightState::None || ((boxState == RenderObject::HighlightState::Start || boxState == RenderObject::HighlightState::End)
-            && (state == RenderObject::HighlightState::None || state == RenderObject::HighlightState::Inside)))
-            state = boxState;
-        else if (boxState == RenderObject::HighlightState::None && state == RenderObject::HighlightState::Start) {
-            // We are past the end of the selection.
-            state = RenderObject::HighlightState::Both;
-        } else if (boxState == RenderObject::HighlightState::None && state == RenderObject::HighlightState::Inside)
-            state = RenderObject::HighlightState::End;
+        if (lineState == RenderObject::HighlightState::None)
+            lineState = boxState;
+        else if (lineState == RenderObject::HighlightState::Start) {
+            if (boxState == RenderObject::HighlightState::End || boxState == RenderObject::HighlightState::None)
+                lineState = RenderObject::HighlightState::Both;
+        } else if (lineState == RenderObject::HighlightState::Inside) {
+            if (boxState == RenderObject::HighlightState::Start || boxState == RenderObject::HighlightState::End)
+                lineState = boxState;
+            else if (boxState == RenderObject::HighlightState::None)
+                lineState = RenderObject::HighlightState::End;
+        } else if (lineState == RenderObject::HighlightState::End) {
+            if (boxState == RenderObject::HighlightState::Start)
+                lineState = RenderObject::HighlightState::Both;
+        }
 
-        if (state == RenderObject::HighlightState::Both)
+        if (lineState == RenderObject::HighlightState::Both)
             break;
     }
-    return state;
+    return lineState;
 }
 
 LeafBoxIterator Line::firstSelectedBox() const
