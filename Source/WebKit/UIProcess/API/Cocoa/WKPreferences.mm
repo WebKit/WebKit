@@ -1560,8 +1560,17 @@ static WebCore::EditableLinkBehavior toEditableLinkBehavior(_WKEditableLinkBehav
     return _preferences->notificationsEnabled();
 }
 
-@end
+- (void)_setModelDocumentEnabled:(BOOL)enabled
+{
+    _preferences->setModelDocumentEnabled(enabled);
+}
 
+- (BOOL)_modelDocumentEnabled
+{
+    return _preferences->modelDocumentEnabled();
+}
+
+@end
 
 @implementation WKPreferences (WKDeprecated)
 

@@ -30,10 +30,11 @@
 
 #import "WKPDFView.h"
 #import "WKUSDPreviewView.h"
-#import <WebKit/WKWebViewConfigurationPrivate.h>
 #import "WKWebViewInternal.h"
 #import "WebPageProxy.h"
 #import <WebCore/MIMETypeRegistry.h>
+#import <WebKit/WKPreferencesPrivate.h>
+#import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <wtf/FixedVector.h>
 #import <wtf/HashCountedSet.h>
 #import <wtf/HashMap.h>
@@ -54,8 +55,8 @@
         [self registerProvider:[WKPDFView class] forMIMEType:@(type)];
 #endif
 
-#if USE(SYSTEM_PREVIEW) && !HAVE(UIKIT_WEBKIT_INTERNALS) && !ENABLE(MODEL_ELEMENT)
-    if (configuration._systemPreviewEnabled) {
+#if USE(SYSTEM_PREVIEW) && !HAVE(UIKIT_WEBKIT_INTERNALS)
+    if (configuration._systemPreviewEnabled && !configuration.preferences._modelDocumentEnabled) {
         for (auto& type : WebCore::MIMETypeRegistry::usdMIMETypes())
             [self registerProvider:[WKUSDPreviewView class] forMIMEType:@(type)];
     }

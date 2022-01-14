@@ -1,3 +1,22 @@
+2022-01-14  Dean Jackson  <dino@apple.com>
+
+        REGRESSION:  ARKit example loads a page full of random symbols instead of a 3D model
+        https://bugs.webkit.org/show_bug.cgi?id=235254
+
+        Reviewed by Tim Horton.
+
+        When we enabled the ModelDocument support, we disabled the ContentProvider path.
+        This was a mistake - it has to be a runtime check.
+
+        * UIProcess/API/Cocoa/WKPreferences.mm: Expose the ModelDocumentEnabled WebPreference so that
+        it can be read from a WKWebViewConfiguration.
+        (-[WKPreferences _setModelDocumentEnabled:]):
+        (-[WKPreferences _modelDocumentEnabled]):
+        * UIProcess/API/Cocoa/WKPreferencesPrivate.h:
+        * UIProcess/Cocoa/WKWebViewContentProviderRegistry.mm: Rather than the compile-time test, check the
+        WebPreferences to see if ModelDocument is disabled.
+        (-[WKWebViewContentProviderRegistry initWithConfiguration:]):
+
 2022-01-14  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Avoid redundant text analysis requests when long pressing inside an image that contains Live Text
