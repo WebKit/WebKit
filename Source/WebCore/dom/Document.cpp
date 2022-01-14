@@ -8550,7 +8550,7 @@ Vector<RefPtr<WebAnimation>> Document::matchingAnimations(const Function<bool(El
         if (!animation->isRelevant() || !is<KeyframeEffect>(animation->effect()))
             continue;
 
-        auto* target = downcast<KeyframeEffect>(*animation->effect()).targetElementOrPseudoElement();
+        auto* target = downcast<KeyframeEffect>(*animation->effect()).target();
         if (target && target->isConnected() && &target->document() == this && function(*target))
             animations.append(animation);
     }

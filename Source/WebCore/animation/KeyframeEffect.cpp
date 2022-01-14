@@ -1415,7 +1415,7 @@ bool KeyframeEffect::isRunningAcceleratedTransformRelatedAnimation() const
 
 void KeyframeEffect::invalidate()
 {
-    LOG_WITH_STREAM(Animations, stream << "KeyframeEffect::invalidate on element " << ValueOrNull(targetElementOrPseudoElement()));
+    LOG_WITH_STREAM(Animations, stream << "KeyframeEffect::invalidate on element " << ValueOrNull(m_target.get()));
     invalidateElement(targetStyleable());
 }
 

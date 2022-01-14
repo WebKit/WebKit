@@ -4711,8 +4711,6 @@ Vector<RefPtr<WebAnimation>> Element::getAnimations(std::optional<GetAnimationsO
     // pseudo element.
     if (options && options->subtree) {
         return document().matchingAnimations([&] (Element& target) -> bool {
-            if (is<PseudoElement>(target))
-                return contains(downcast<PseudoElement>(target).hostElement());
             return contains(&target);
         });
     }
