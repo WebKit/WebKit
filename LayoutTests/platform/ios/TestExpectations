@@ -3454,3 +3454,9 @@ fast/text/design-system-ui-15.html [ Pass ]
 fast/text/design-system-ui-16.html [ Pass ]
 
 webkit.org/b/159755 fast/text/emoji-num-glyphs.html [ Pass ]
+
+# WPT css/css-pseudo import (webkit.org/b/235197)
+imported/w3c/web-platform-tests/css/css-pseudo/selection-background-painting-order.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-pseudo/selection-originating-decoration-color.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-pseudo/selection-originating-underline-order.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-pseudo/target-text-007.html [ Failure ]
