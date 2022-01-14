@@ -42,6 +42,7 @@ public:
     void registerObject(CompletionHandler<void(const String&)>&&);
     void unregisterObject();
     void registerTree();
+    void didUnregisterTree();
     bool isTreeRegistered() const { return m_isTreeRegistered.load(); }
     void setPath(String&&);
 

@@ -541,6 +541,12 @@ bool AccessibilityObjectAtspi::registerObject()
     return true;
 }
 
+void AccessibilityObjectAtspi::didUnregisterObject()
+{
+    m_isRegistered.store(false);
+    m_path = { };
+}
+
 const String& AccessibilityObjectAtspi::path()
 {
     RELEASE_ASSERT(!isMainThread());

@@ -205,10 +205,18 @@ void AccessibilityRootAtspi::registerTree()
     if (m_parentUniqueName.isNull())
         return;
 
+    if (m_isTreeRegistered.load())
+        return;
+
     registerSubtree(Accessibility::retrieveValueFromMainThread<AccessibilityObjectAtspi*>([this]() -> AccessibilityObjectAtspi* {
         return child();
     }));
     m_isTreeRegistered.store(true);
+}
+
+void AccessibilityRootAtspi::didUnregisterTree()
+{
+    m_isTreeRegistered.store(false);
 }
 
 void AccessibilityRootAtspi::setPath(String&& path)
@@ -223,7 +231,7 @@ void AccessibilityRootAtspi::embedded(const char* parentUniqueName, const char* 
     m_parentUniqueName = parentUniqueName;
     m_parentPath = parentPath;
     AccessibilityAtspi::singleton().parentChanged(*this);
-    if (!m_isTreeRegistered.load() && AccessibilityAtspi::singleton().hasEventListeners())
+    if (AccessibilityAtspi::singleton().hasClients())
         registerTree();
 }
 

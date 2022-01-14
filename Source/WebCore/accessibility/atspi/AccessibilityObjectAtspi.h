@@ -43,6 +43,7 @@ public:
 
     bool registerObject();
     bool isTreeRegistered() const;
+    void didUnregisterObject();
 
     enum class Interface : uint16_t {
         Accessible = 1 << 0,

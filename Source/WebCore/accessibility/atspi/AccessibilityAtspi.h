@@ -53,7 +53,7 @@ public:
     const char* uniqueName() const;
     GVariant* nullReference() const;
     GVariant* applicationReference() const;
-    bool hasEventListeners() const { return !m_eventListeners.isEmpty(); }
+    bool hasClients() const { return !m_clients.isEmpty(); }
 
     void registerRoot(AccessibilityRootAtspi&, Vector<std::pair<GDBusInterfaceInfo*, GDBusInterfaceVTable*>>&&, CompletionHandler<void(const String&)>&&);
     void unregisterRoot(AccessibilityRootAtspi&);
@@ -94,10 +94,11 @@ public:
 private:
     AccessibilityAtspi();
 
-    void registerTrees() const;
     void initializeRegistry();
     void addEventListener(const char* dbusName, const char* eventName);
     void removeEventListener(const char* dbusName, const char* eventName);
+    void addClient(const char* dbusName);
+    void removeClient(const char* dbusName);
 
     void ensureCache();
     void addToCacheIfNeeded(AccessibilityObjectAtspi&);
@@ -105,6 +106,7 @@ private:
     void removeAccessible(AccessibilityObjectAtspi&);
     void scheduleCacheUpdate();
     void cacheUpdateTimerFired();
+    void cacheClearTimerFired();
 
     bool shouldEmitSignal(const char* interface, const char* name, const char* detail = "");
 
@@ -127,10 +129,12 @@ private:
     HashMap<AccessibilityRootAtspi*, Vector<unsigned, 2>> m_rootObjects;
     HashMap<AccessibilityObjectAtspi*, Vector<unsigned, 20>> m_atspiObjects;
     HashMap<AccessibilityObjectAtspi*, Vector<unsigned, 20>> m_atspiHyperlinks;
+    HashMap<CString, unsigned> m_clients;
     unsigned m_cacheID { 0 };
     HashMap<String, AccessibilityObjectAtspi*> m_cache;
     ListHashSet<RefPtr<AccessibilityObjectAtspi>> m_cacheUpdateList;
     std::unique_ptr<RunLoop::Timer<AccessibilityAtspi>> m_cacheUpdateTimer;
+    std::unique_ptr<RunLoop::Timer<AccessibilityAtspi>> m_cacheClearTimer;
 #if ENABLE(DEVELOPER_MODE)
     HashMap<void*, NotificationObserver> m_notificationObservers;
 #endif
