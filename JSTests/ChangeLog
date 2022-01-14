@@ -1,3 +1,18 @@
+2022-01-14  Justin Michaud  <justin_michaud@apple.com>
+
+        Update libWABT
+        https://bugs.webkit.org/show_bug.cgi?id=235050
+
+        Update libWabt to support new simd instructions, and add stubs so that the 
+        wasm test runner can run in v8.
+
+        Reviewed by Yusuke Suzuki.
+
+        * wasm/assert.js:
+        * wasm/libwabt.js:
+        (WabtModule):
+        (set get if):
+
 2022-01-11  Asumu Takikawa  <asumu@igalia.com>
 
         [Wasm] Unify memory import handling in module loader and JS cases
