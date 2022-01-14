@@ -1,5 +1,16 @@
 2022-01-13  Chris Dumez  <cdumez@apple.com>
 
+        html/semantics/scripting-1/the-script-element/script-type-and-language-empty.html WPT test is failing
+        https://bugs.webkit.org/show_bug.cgi?id=235202
+
+        Reviewed by Darin Adler.
+
+        Rebaseline test that is now passing.
+
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/script-type-and-language-empty-expected.txt:
+
+2022-01-13  Chris Dumez  <cdumez@apple.com>
+
         Implement HTMLScriptElement.supports(type) method
         https://bugs.webkit.org/show_bug.cgi?id=229929
         <rdar://problem/82933899>

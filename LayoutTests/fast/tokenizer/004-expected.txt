@@ -168,5 +168,5 @@ empty string language, "text/javascript" type executed
 These scripts should not execute
 
 "javascript" language, "bogus" type
-empty string type, "bogus" language
+empty string type, "bogus" language executed
 empty string language, "bogus" type
