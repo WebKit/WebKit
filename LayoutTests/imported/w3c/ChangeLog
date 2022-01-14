@@ -1,3 +1,14 @@
+2022-01-14  Antti Koivisto  <antti@apple.com>
+
+        [:has() pseudo-class] Avoid O(n^2) in style invalidation with repeated DOM mutations
+        https://bugs.webkit.org/show_bug.cgi?id=234842
+        <rdar://problem/87397176>
+
+        Reviewed by Dean Jackson.
+
+        * web-platform-tests/css/selectors/invalidation/has-complexity-expected.txt: Added.
+        * web-platform-tests/css/selectors/invalidation/has-complexity.html: Added.
+
 2022-01-13  Antoine Quint  <graouts@webkit.org>
 
         Update WPT for css/css-pseudo

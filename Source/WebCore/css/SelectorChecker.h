@@ -95,6 +95,7 @@ public:
         std::optional<StyleScrollbarState> scrollbarState;
         AtomString nameForHightlightPseudoElement;
         const ContainerNode* scope { nullptr };
+        bool matchesAllScopes { false };
         Style::ScopeOrdinal styleScopeOrdinal { Style::ScopeOrdinal::Element };
         Style::SelectorMatchingState* selectorMatchingState { nullptr };
 

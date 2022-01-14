@@ -1084,7 +1084,7 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, const LocalCont
         case CSSSelector::PseudoClassRelativeScope: {
             const Node* contextualReferenceNode = !checkingContext.scope ? element.document().documentElement() : checkingContext.scope;
 
-            bool matches = &element == contextualReferenceNode;
+            bool matches = &element == contextualReferenceNode || checkingContext.matchesAllScopes;
 
             if (!matches && checkingContext.scope) {
                 if (element.isDescendantOf(*checkingContext.scope))
