@@ -1,3 +1,15 @@
+2022-01-14  J Pascoe  <j_pascoe@apple.com>
+
+        Expose way to encode CTAP commands with only the hash of ClientDataJSON
+        https://bugs.webkit.org/show_bug.cgi?id=235191
+        <rdar://problem/87557846>
+
+        Reviewed by Brent Fulgham.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/_WKWebAuthenticationPanel.mm:
+        (TestWebKitAPI::TEST):
+        Tests for new SPIs.
+
 2022-01-13  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Crash in Document::updateStyleIfNeeded() when removing a node containing the drag caret

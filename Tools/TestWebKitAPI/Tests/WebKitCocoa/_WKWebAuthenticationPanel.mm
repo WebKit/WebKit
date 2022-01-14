@@ -2168,6 +2168,40 @@ TEST(WebAuthenticationPanel, GetAllCredentialWithDisplayName)
     cleanUpKeychain("example.com");
 }
 
+TEST(WebAuthenticationPanel, EncodeCTAPAssertion)
+{
+    uint8_t hash[] = { 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04 };
+    auto nsHash = adoptNS([[NSData alloc] initWithBytes:hash length:sizeof(hash)]);
+    auto options = adoptNS([[_WKPublicKeyCredentialRequestOptions alloc] init]);
+
+    auto *command = [_WKWebAuthenticationPanel encodeGetAssertionCommandWithClientDataHash:nsHash.get() options: options.get() userVerificationAvailability:_WKWebAuthenticationUserVerificationAvailabilityNotSupported];
+
+    // Base64 of the following CBOR:
+    // 2, {1: "", 2: h'0102030401020304010203040102030401020304010203040102030401020304', 5: {"up": true}}
+    EXPECT_WK_STREQ([command base64EncodedStringWithOptions:0], "AqMBYAJYIAECAwQBAgMEAQIDBAECAwQBAgMEAQIDBAECAwQBAgMEBaFidXD1");
+}
+
+TEST(WebAuthenticationPanel, EncodeCTAPCreation)
+{
+    uint8_t hash[] = { 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04 };
+    auto nsHash = adoptNS([[NSData alloc] initWithBytes:hash length:sizeof(hash)]);
+    uint8_t identifier[] = { 0x01, 0x02, 0x03, 0x04 };
+    NSData *nsIdentifier = [NSData dataWithBytes:identifier length:sizeof(identifier)];
+    auto parameters = adoptNS([[_WKPublicKeyCredentialParameters alloc] initWithAlgorithm:@-7]);
+
+    auto rp = adoptNS([[_WKPublicKeyCredentialRelyingPartyEntity alloc] initWithName:@"example.com"]);
+    auto user = adoptNS([[_WKPublicKeyCredentialUserEntity alloc] initWithName:@"jappleseed@example.com" identifier:nsIdentifier displayName:@"J Appleseed"]);
+    NSArray<_WKPublicKeyCredentialParameters *> *publicKeyCredentialParamaters = @[ parameters.get() ];
+
+    auto options = adoptNS([[_WKPublicKeyCredentialCreationOptions alloc] initWithRelyingParty:rp.get() user:user.get() publicKeyCredentialParamaters:publicKeyCredentialParamaters]);
+
+    auto *command = [_WKWebAuthenticationPanel encodeMakeCredentialCommandWithClientDataHash:nsHash.get() options: options.get() userVerificationAvailability:_WKWebAuthenticationUserVerificationAvailabilityNotSupported];
+
+    // Base64 of the following CBOR:
+    // 1, {1: h'0102030401020304010203040102030401020304010203040102030401020304', 2: {"name": "example.com"}, 3: {"id": h'01020304', "name": "jappleseed@example.com", "displayName": "J Appleseed"}, 4: [{"alg": -7, "type": "public-key"}]}
+    EXPECT_WK_STREQ([command base64EncodedStringWithOptions:0], "AaQBWCABAgMEAQIDBAECAwQBAgMEAQIDBAECAwQBAgMEAQIDBAKhZG5hbWVrZXhhbXBsZS5jb20Do2JpZEQBAgMEZG5hbWV2amFwcGxlc2VlZEBleGFtcGxlLmNvbWtkaXNwbGF5TmFtZWtKIEFwcGxlc2VlZASBomNhbGcmZHR5cGVqcHVibGljLWtleQ==");
+}
+
 TEST(WebAuthenticationPanel, UpdateCredentialUsername)
 {
     reset();
