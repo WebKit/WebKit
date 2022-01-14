@@ -32,6 +32,7 @@
 #include "AXLogger.h"
 #include "AXObjectCache.h"
 #include "AccessibilityImageMapLink.h"
+#include "AccessibilityLabel.h"
 #include "AccessibilityList.h"
 #include "AccessibilityListBox.h"
 #include "AccessibilitySpinButton.h"
@@ -560,6 +561,13 @@ bool AccessibilityNodeObject::isMenuItem() const
     default:
         return false;
     }
+}
+
+bool AccessibilityNodeObject::isFileUploadButton() const
+{
+    if (is<HTMLInputElement>(m_node))
+        return downcast<HTMLInputElement>(m_node)->isFileUpload();
+    return false;
 }
 
 bool AccessibilityNodeObject::isNativeCheckboxOrRadio() const
@@ -1174,6 +1182,37 @@ bool AccessibilityNodeObject::isGenericFocusableElement() const
     return true;
 }
 
+AccessibilityObject* AccessibilityNodeObject::correspondingControlForLabelElement() const
+{
+    auto* labelElement = labelElementContainer();
+    if (!labelElement)
+        return nullptr;
+
+    auto correspondingControl = labelElement->control();
+    if (!correspondingControl)
+        return nullptr;
+
+    // Make sure the corresponding control isn't a descendant of this label that's in the middle of being destroyed.
+    if (correspondingControl->renderer() && !correspondingControl->renderer()->parent())
+        return nullptr;
+
+    return axObjectCache()->getOrCreate(correspondingControl.get());
+}
+
+AccessibilityObject* AccessibilityNodeObject::correspondingLabelForControlElement() const
+{
+    // ARIA: section 2A, bullet #3 says if aria-labeledby or aria-label appears, it should
+    // override the "label" element association.
+    if (hasTextAlternative())
+        return nullptr;
+
+    if (is<HTMLElement>(m_node)) {
+        if (HTMLLabelElement* label = labelForElement(downcast<HTMLElement>(m_node)))
+            return axObjectCache()->getOrCreate(label);
+    }
+    return nullptr;
+}
+
 HTMLLabelElement* AccessibilityNodeObject::labelForElement(Element* element) const
 {
     if (!is<HTMLElement>(*element) || !downcast<HTMLElement>(*element).isLabelable())
@@ -1309,7 +1348,21 @@ String AccessibilityNodeObject::textForLabelElement(Element* element) const
     
     return !result.isEmpty() ? result : accessibleNameForNode(label);
 }
-    
+
+HTMLLabelElement* AccessibilityNodeObject::labelElementContainer() const
+{
+    // The control element should not be considered part of the label.
+    if (isControl())
+        return nullptr;
+
+    // Find an ancestor label element.
+    for (auto* parentNode = m_node; parentNode; parentNode = parentNode->parentNode()) {
+        if (is<HTMLLabelElement>(*parentNode))
+            return downcast<HTMLLabelElement>(parentNode);
+    }
+    return nullptr;
+}
+
 void AccessibilityNodeObject::titleElementText(Vector<AccessibilityText>& textOrder) const
 {
     Node* node = this->node();
@@ -1331,6 +1384,47 @@ void AccessibilityNodeObject::titleElementText(Vector<AccessibilityText>& textOr
     AccessibilityObject* titleUIElement = this->titleUIElement();
     if (titleUIElement)
         textOrder.append(AccessibilityText(String(), AccessibilityTextSource::LabelByElement));
+}
+
+bool AccessibilityNodeObject::exposesTitleUIElement() const
+{
+    if (!isControl() && !isFigureElement())
+        return false;
+
+    // If this control is ignored (because it's invisible),
+    // then the label needs to be exposed so it can be visible to accessibility.
+    if (accessibilityIsIgnored())
+        return true;
+
+    // When controls have their own descriptions, the title element should be ignored.
+    if (hasTextAlternative())
+        return false;
+
+    // When <label> element has aria-label or aria-labelledby on it, we shouldn't expose it as the
+    // titleUIElement, otherwise its inner text will be announced by a screenreader.
+    if (isLabelable()) {
+        if (HTMLLabelElement* label = labelForElement(downcast<Element>(m_node))) {
+            if (!label->attributeWithoutSynchronization(aria_labelAttr).isEmpty())
+                return false;
+            if (AccessibilityObject* labelObject = axObjectCache()->getOrCreate(label)) {
+                if (!labelObject->ariaLabeledByAttribute().isEmpty())
+                    return false;
+                // To simplify instances where the labeling element includes widget descendants
+                // which it does not label.
+                if (is<AccessibilityLabel>(*labelObject)
+                    && downcast<AccessibilityLabel>(*labelObject).containsUnrelatedControls())
+                    return false;
+            }
+        }
+    }
+    return true;
+}
+
+bool AccessibilityNodeObject::hasTextAlternative() const
+{
+    // ARIA: section 2A, bullet #3 says if aria-labeledby or aria-label appears, it should
+    // override the "label" element association.
+    return ariaAccessibilityDescription().length();
 }
 
 void AccessibilityNodeObject::alternativeText(Vector<AccessibilityText>& textOrder) const

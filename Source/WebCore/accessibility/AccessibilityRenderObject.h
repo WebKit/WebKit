@@ -59,8 +59,6 @@ public:
     void init() override;
     
     bool isAttachment() const override;
-    bool isFileUploadButton() const override;
-
     bool isSelected() const override;
     bool isFocused() const override;
     bool isLoaded() const override;
@@ -96,8 +94,6 @@ public:
     AccessibilityObject* observableObject() const override;
     void linkedUIElements(AccessibilityChildrenVector&) const override;
     AccessibilityObject* titleUIElement() const override;
-    AccessibilityObject* correspondingControlForLabelElement() const override;
-    AccessibilityObject* correspondingLabelForControlElement() const override;
 
     bool supportsARIAOwns() const override;
     bool isPresentationalChildOfAriaRole() const override;
@@ -121,7 +117,6 @@ public:
 
     RenderView* topRenderer() const;
     RenderTextControl* textControl() const;
-    HTMLLabelElement* labelElementContainer() const;
     
     URL url() const override;
     PlainTextRange selectedTextRange() const override;
@@ -211,8 +206,6 @@ protected:
     AccessibilityRole determineAccessibilityRole() override;
     bool computeAccessibilityIsIgnored() const override;
 
-    bool exposesTitleUIElement() const override;
-
 #if ENABLE(MATHML)
     virtual bool isIgnoredElementWithinMathTree() const;
 #endif
@@ -224,7 +217,6 @@ private:
     void ariaListboxSelectedChildren(AccessibilityChildrenVector&);
     void ariaListboxVisibleChildren(AccessibilityChildrenVector&);
     bool isAllowedChildOfTree() const;
-    bool hasTextAlternative() const;
     String positionalDescriptionForMSAA() const;
     PlainTextRange documentBasedSelectedTextRange() const;
     Element* rootEditableElementForPosition(const Position&) const;

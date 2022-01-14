@@ -32,7 +32,6 @@
 #include "AXLogger.h"
 #include "AXObjectCache.h"
 #include "AccessibilityImageMapLink.h"
-#include "AccessibilityLabel.h"
 #include "AccessibilityListBox.h"
 #include "AccessibilitySVGRoot.h"
 #include "AccessibilitySpinButton.h"
@@ -547,16 +546,6 @@ bool AccessibilityRenderObject::isAttachment() const
     return isWidget && ariaRoleAttribute() == AccessibilityRole::Unknown;
 }
 
-bool AccessibilityRenderObject::isFileUploadButton() const
-{
-    if (m_renderer && is<HTMLInputElement>(m_renderer->node())) {
-        HTMLInputElement& input = downcast<HTMLInputElement>(*m_renderer->node());
-        return input.isFileUpload();
-    }
-    
-    return false;
-}
-
 bool AccessibilityRenderObject::isOffScreen() const
 {
     if (!m_renderer)
@@ -815,24 +804,6 @@ String AccessibilityRenderObject::stringValue() const
 bool AccessibilityRenderObject::canHavePlainText() const
 {
     return isARIAStaticText() || is<RenderText>(*m_renderer) || isTextControl();
-}
-
-HTMLLabelElement* AccessibilityRenderObject::labelElementContainer() const
-{
-    if (!m_renderer)
-        return nullptr;
-
-    // the control element should not be considered part of the label
-    if (isControl())
-        return nullptr;
-    
-    // find if this has a parent that is a label
-    for (Node* parentNode = m_renderer->node(); parentNode; parentNode = parentNode->parentNode()) {
-        if (is<HTMLLabelElement>(*parentNode))
-            return downcast<HTMLLabelElement>(parentNode);
-    }
-    
-    return nullptr;
 }
 
 // The boundingBox for elements within the remote SVG element needs to be offset by its position
@@ -1100,13 +1071,6 @@ void AccessibilityRenderObject::linkedUIElements(AccessibilityChildrenVector& li
         addRadioButtonGroupMembers(linkedUIElements);
 }
 
-bool AccessibilityRenderObject::hasTextAlternative() const
-{
-    // ARIA: section 2A, bullet #3 says if aria-labeledby or aria-label appears, it should
-    // override the "label" element association.
-    return ariaAccessibilityDescription().length();
-}
-
 bool AccessibilityRenderObject::hasPopup() const
 {
     // Return true if this has the aria-haspopup attribute, or if it has an ancestor of type link with the aria-haspopup attribute.
@@ -1156,41 +1120,6 @@ Vector<String> AccessibilityRenderObject::determineDropEffects() const
         return Vector<String> { webkitdropzone };
     
     return { };
-}
-    
-bool AccessibilityRenderObject::exposesTitleUIElement() const
-{
-    if (!isControl() && !isFigureElement())
-        return false;
-
-    // If this control is ignored (because it's invisible), 
-    // then the label needs to be exposed so it can be visible to accessibility.
-    if (accessibilityIsIgnored())
-        return true;
-    
-    // When controls have their own descriptions, the title element should be ignored.
-    if (hasTextAlternative())
-        return false;
-    
-    // When <label> element has aria-label or aria-labelledby on it, we shouldn't expose it as the
-    // titleUIElement, otherwise its inner text will be announced by a screenreader.
-    if (isLabelable()) {
-        if (HTMLLabelElement* label = labelForElement(downcast<Element>(node()))) {
-            if (!label->attributeWithoutSynchronization(aria_labelAttr).isEmpty())
-                return false;
-            if (AccessibilityObject* labelObject = axObjectCache()->getOrCreate(label)) {
-                if (!labelObject->ariaLabeledByAttribute().isEmpty())
-                    return false;
-                // To simplify instances where the labeling element includes widget descendants
-                // which it does not label.
-                if (is<AccessibilityLabel>(*labelObject)
-                    && downcast<AccessibilityLabel>(*labelObject).containsUnrelatedControls())
-                    return false;
-            }
-        }
-    }
-    
-    return true;
 }
 
 #if ENABLE(APPLE_PAY)
@@ -2819,42 +2748,6 @@ void AccessibilityRenderObject::handleActiveDescendantChanged()
     
         renderer()->document().axObjectCache()->postNotification(targetRenderer, AXObjectCache::AXActiveDescendantChanged);
     }
-}
-
-AccessibilityObject* AccessibilityRenderObject::correspondingControlForLabelElement() const
-{
-    HTMLLabelElement* labelElement = labelElementContainer();
-    if (!labelElement)
-        return nullptr;
-    
-    auto correspondingControl = labelElement->control();
-    if (!correspondingControl)
-        return nullptr;
-
-    // Make sure the corresponding control isn't a descendant of this label that's in the middle of being destroyed.
-    if (correspondingControl->renderer() && !correspondingControl->renderer()->parent())
-        return nullptr;
-    
-    return axObjectCache()->getOrCreate(correspondingControl.get());
-}
-
-AccessibilityObject* AccessibilityRenderObject::correspondingLabelForControlElement() const
-{
-    if (!m_renderer)
-        return nullptr;
-
-    // ARIA: section 2A, bullet #3 says if aria-labeledby or aria-label appears, it should
-    // override the "label" element association.
-    if (hasTextAlternative())
-        return nullptr;
-
-    Node* node = m_renderer->node();
-    if (is<HTMLElement>(node)) {
-        if (HTMLLabelElement* label = labelForElement(downcast<HTMLElement>(node)))
-            return axObjectCache()->getOrCreate(label);
-    }
-
-    return nullptr;
 }
 
 bool AccessibilityRenderObject::renderObjectIsObservable(RenderObject& renderer) const
