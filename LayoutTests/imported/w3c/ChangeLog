@@ -1,3 +1,13 @@
+2022-01-14  Chris Dumez  <cdumez@apple.com>
+
+        Regression(r281520) 3 subtests started failing on dom/traversal/TreeWalker-acceptNode-filter-cross-realm.html WPT test
+        https://bugs.webkit.org/show_bug.cgi?id=235153
+        <rdar://problem/87485756>
+
+        Unreviewed, revert r281520 since it regressed dom/traversal/TreeWalker-acceptNode-filter-cross-realm.html WPT test.
+
+        * web-platform-tests/geolocation-API/non-fully-active.https-expected.txt:
+
 2022-01-14  Antti Koivisto  <antti@apple.com>
 
         [:has() pseudo-class] Avoid O(n^2) in style invalidation with repeated DOM mutations

@@ -32,7 +32,6 @@ enum class TaskSource : uint8_t {
     DatabaseAccess,
     FileReading,
     FontLoading,
-    Geolocation,
     IdleTask,
     IndexedDB,
     MediaElement,

@@ -31,7 +31,6 @@
 #if ENABLE(GEOLOCATION)
 
 #include "Document.h"
-#include "EventLoop.h"
 #include "FeaturePolicy.h"
 #include "Frame.h"
 #include "GeoNotifier.h"
@@ -300,14 +299,8 @@ GeolocationPosition* Geolocation::lastPosition()
 
 void Geolocation::getCurrentPosition(Ref<PositionCallback>&& successCallback, RefPtr<PositionErrorCallback>&& errorCallback, PositionOptions&& options)
 {
-    if (!document() || !document()->isFullyActive()) {
-        if (errorCallback && errorCallback->scriptExecutionContext()) {
-            errorCallback->scriptExecutionContext()->eventLoop().queueTask(TaskSource::Geolocation, [errorCallback] {
-                errorCallback->handleEvent(GeolocationPositionError::create(GeolocationPositionError::POSITION_UNAVAILABLE, "Document is not fully active"_s));
-            });
-        }
+    if (!frame())
         return;
-    }
 
     auto notifier = GeoNotifier::create(*this, WTFMove(successCallback), WTFMove(errorCallback), WTFMove(options));
     startRequest(notifier.ptr());
@@ -317,14 +310,8 @@ void Geolocation::getCurrentPosition(Ref<PositionCallback>&& successCallback, Re
 
 int Geolocation::watchPosition(Ref<PositionCallback>&& successCallback, RefPtr<PositionErrorCallback>&& errorCallback, PositionOptions&& options)
 {
-    if (!document() || !document()->isFullyActive()) {
-        if (errorCallback && errorCallback->scriptExecutionContext()) {
-            errorCallback->scriptExecutionContext()->eventLoop().queueTask(TaskSource::Geolocation, [errorCallback] {
-                errorCallback->handleEvent(GeolocationPositionError::create(GeolocationPositionError::POSITION_UNAVAILABLE, "Document is not fully active"_s));
-            });
-        }
+    if (!frame())
         return 0;
-    }
 
     auto notifier = GeoNotifier::create(*this, WTFMove(successCallback), WTFMove(errorCallback), WTFMove(options));
     startRequest(notifier.ptr());

@@ -1,19 +1,11 @@
 
 
-FAIL parent's |this|, parent's method, parent's filter, parent's root assert_equals: expected function "function TypeError() {
+PASS parent's |this|, parent's method, parent's filter, parent's root
+PASS parent's |this|, parent's method, parent's filter, iframe's root
+PASS parent's |this|, parent's method, iframe's filter, iframe's root
+FAIL parent's |this|, iframes's method, iframe's filter, iframe's root assert_equals: expected function "function TypeError() {
     [native code]
 }" but got function "function TypeError() {
     [native code]
 }"
-FAIL parent's |this|, parent's method, parent's filter, iframe's root assert_equals: expected function "function TypeError() {
-    [native code]
-}" but got function "function TypeError() {
-    [native code]
-}"
-FAIL parent's |this|, parent's method, iframe's filter, iframe's root assert_equals: expected function "function TypeError() {
-    [native code]
-}" but got function "function TypeError() {
-    [native code]
-}"
-PASS parent's |this|, iframes's method, iframe's filter, iframe's root
 
