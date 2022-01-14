@@ -114,17 +114,17 @@ String HTMLOptionElement::text() const
 
 void HTMLOptionElement::setText(const String &text)
 {
-    Ref<HTMLOptionElement> protectedThis(*this);
+    Ref protectedThis { *this };
 
     // Changing the text causes a recalc of a select's items, which will reset the selected
     // index to the first item if the select is single selection with a menu list. We attempt to
     // preserve the selected item.
-    RefPtr<HTMLSelectElement> select = ownerSelectElement();
+    RefPtr select = ownerSelectElement();
     bool selectIsMenuList = select && select->usesMenuList();
     int oldSelectedIndex = selectIsMenuList ? select->selectedIndex() : -1;
 
     // Handle the common special case where there's exactly 1 child node, and it's a text node.
-    RefPtr<Node> child = firstChild();
+    RefPtr child = firstChild();
     if (is<Text>(child) && !child->nextSibling())
         downcast<Text>(*child).setData(text);
     else {
@@ -138,7 +138,7 @@ void HTMLOptionElement::setText(const String &text)
 
 bool HTMLOptionElement::accessKeyAction(bool)
 {
-    RefPtr<HTMLSelectElement> select = ownerSelectElement();
+    RefPtr select = ownerSelectElement();
     if (select) {
         select->accessKeySetSelectedIndex(index());
         return true;
@@ -150,7 +150,7 @@ int HTMLOptionElement::index() const
 {
     // It would be faster to cache the index, but harder to get it right in all cases.
 
-    RefPtr<HTMLSelectElement> selectElement = ownerSelectElement();
+    RefPtr selectElement = ownerSelectElement();
     if (!selectElement)
         return 0;
 
@@ -212,7 +212,7 @@ void HTMLOptionElement::setValue(const String& value)
 
 bool HTMLOptionElement::selected() const
 {
-    if (RefPtr<HTMLSelectElement> select = ownerSelectElement())
+    if (RefPtr select = ownerSelectElement())
         select->updateListItemSelectedStates();
     return m_isSelected;
 }
@@ -224,7 +224,7 @@ void HTMLOptionElement::setSelected(bool selected)
 
     setSelectedState(selected);
 
-    if (RefPtr<HTMLSelectElement> select = ownerSelectElement())
+    if (RefPtr select = ownerSelectElement())
         select->optionSelectionStateChanged(*this, selected);
 }
 
@@ -249,14 +249,20 @@ void HTMLOptionElement::childrenChanged(const ChildChange& change)
     for (auto& dataList : ancestorsOfType<HTMLDataListElement>(*this))
         dataList.optionElementChildrenChanged();
 #endif
-    if (RefPtr<HTMLSelectElement> select = ownerSelectElement())
+    if (RefPtr select = ownerSelectElement())
         select->optionElementChildrenChanged();
     HTMLElement::childrenChanged(change);
 }
 
 HTMLSelectElement* HTMLOptionElement::ownerSelectElement() const
 {
-    return const_cast<HTMLSelectElement*>(ancestorsOfType<HTMLSelectElement>(*this).first());
+    if (auto* parent = parentElement()) {
+        if (is<HTMLSelectElement>(*parent))
+            return downcast<HTMLSelectElement>(parent);
+        if (is<HTMLOptGroupElement>(*parent))
+            return downcast<HTMLOptGroupElement>(*parent).ownerSelectElement();
+    }
+    return nullptr;
 }
 
 String HTMLOptionElement::label() const
@@ -292,7 +298,7 @@ void HTMLOptionElement::willResetComputedStyle()
 
 String HTMLOptionElement::textIndentedToRespectGroupLabel() const
 {
-    RefPtr<ContainerNode> parent = parentNode();
+    RefPtr parent = parentNode();
     if (is<HTMLOptGroupElement>(parent))
         return "    " + displayLabel();
     return displayLabel();
@@ -311,7 +317,7 @@ bool HTMLOptionElement::isDisabledFormControl() const
 
 Node::InsertedIntoAncestorResult HTMLOptionElement::insertedIntoAncestor(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
 {
-    if (RefPtr<HTMLSelectElement> select = ownerSelectElement()) {
+    if (RefPtr select = ownerSelectElement()) {
         select->setRecalcListItems();
         select->updateValidity();
         // Do not call selected() since calling updateListItemSelectedStates()
@@ -329,7 +335,7 @@ Node::InsertedIntoAncestorResult HTMLOptionElement::insertedIntoAncestor(Inserti
 String HTMLOptionElement::collectOptionInnerText() const
 {
     StringBuilder text;
-    for (RefPtr<Node> node = firstChild(); node; ) {
+    for (RefPtr node = firstChild(); node; ) {
         if (is<Text>(*node))
             text.append(node->nodeValue());
         // Text nodes inside script elements are not part of the option text.

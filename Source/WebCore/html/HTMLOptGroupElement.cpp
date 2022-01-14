@@ -102,7 +102,7 @@ void HTMLOptGroupElement::parseAttribute(const QualifiedName& name, const AtomSt
 
 void HTMLOptGroupElement::recalcSelectOptions()
 {
-    if (RefPtr selectElement = ancestorsOfType<HTMLSelectElement>(*this).first()) {
+    if (RefPtr selectElement = ownerSelectElement()) {
         selectElement->setRecalcListItems();
         selectElement->updateValidity();
     }
@@ -122,12 +122,13 @@ String HTMLOptGroupElement::groupLabelText() const
     
 HTMLSelectElement* HTMLOptGroupElement::ownerSelectElement() const
 {
-    return const_cast<HTMLSelectElement*>(ancestorsOfType<HTMLSelectElement>(*this).first());
+    auto* parent = parentNode();
+    return is<HTMLSelectElement>(parent) ? downcast<HTMLSelectElement>(parent) : nullptr;
 }
 
 bool HTMLOptGroupElement::accessKeyAction(bool)
 {
-    RefPtr<HTMLSelectElement> select = ownerSelectElement();
+    RefPtr select = ownerSelectElement();
     // send to the parent to bring focus to the list box
     if (select && !select->focused())
         return select->accessKeyAction(false);
