@@ -1,3 +1,14 @@
+2022-01-13  Chris Dumez  <cdumez@apple.com>
+
+        Unable to have new lines in HTMLTextArea's placeholder text
+        https://bugs.webkit.org/show_bug.cgi?id=235205
+
+        Reviewed by Wenson Hsieh.
+
+        Unskip WPT tests that are no longer failing.
+
+        * TestExpectations:
+
 2022-01-13  Cameron McCormack  <heycam@apple.com>
 
         Only apply automatic minimum block-size aspect-ratio rules to non-replaced elements

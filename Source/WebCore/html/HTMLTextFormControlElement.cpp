@@ -131,26 +131,6 @@ void HTMLTextFormControlElement::forwardEvent(Event& event)
     innerTextElement()->defaultEventHandler(event);
 }
 
-String HTMLTextFormControlElement::strippedPlaceholder() const
-{
-    // According to the HTML5 specification, we need to remove CR and LF from
-    // the attribute value.
-    const AtomString& attributeValue = attributeWithoutSynchronization(placeholderAttr);
-    if (!attributeValue.contains(newlineCharacter) && !attributeValue.contains(carriageReturn))
-        return attributeValue;
-
-    StringBuilder stripped;
-    unsigned length = attributeValue.length();
-    stripped.reserveCapacity(length);
-    for (unsigned i = 0; i < length; ++i) {
-        UChar character = attributeValue[i];
-        if (character == newlineCharacter || character == carriageReturn)
-            continue;
-        stripped.append(character);
-    }
-    return stripped.toString();
-}
-
 static bool isNotLineBreak(UChar ch) { return ch != newlineCharacter && ch != carriageReturn; }
 
 bool HTMLTextFormControlElement::isPlaceholderEmpty() const

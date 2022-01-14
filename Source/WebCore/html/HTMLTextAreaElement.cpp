@@ -538,7 +538,7 @@ bool HTMLTextAreaElement::matchesReadWritePseudoClass() const
 
 void HTMLTextAreaElement::updatePlaceholderText()
 {
-    String placeholderText = strippedPlaceholder();
+    auto& placeholderText = attributeWithoutSynchronization(placeholderAttr);
     if (placeholderText.isEmpty()) {
         if (m_placeholder) {
             userAgentShadowRoot()->removeChild(*m_placeholder);

@@ -2189,4 +2189,14 @@ String HTMLInputElement::resultForDialogSubmit() const
     return m_inputType->resultForDialogSubmit();
 }
 
+String HTMLInputElement::placeholder() const
+{
+    // According to the HTML5 specification, we need to remove CR and LF from
+    // the attribute value.
+    String attributeValue = attributeWithoutSynchronization(placeholderAttr);
+    return attributeValue.removeCharacters([](UChar c) {
+        return c == newlineCharacter || c == carriageReturn;
+    });
+}
+
 } // namespace

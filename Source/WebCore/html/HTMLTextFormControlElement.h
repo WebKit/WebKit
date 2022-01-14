@@ -60,7 +60,6 @@ public:
     // The derived class should return true if placeholder processing is needed.
     bool isPlaceholderVisible() const { return m_isPlaceholderVisible; }
     virtual bool supportsPlaceholder() const = 0;
-    String strippedPlaceholder() const;
     virtual HTMLElement* placeholderElement() const = 0;
     void updatePlaceholderVisibility();
 

@@ -619,7 +619,7 @@ void TextFieldInputType::updatePlaceholderText()
     if (!supportsPlaceholder())
         return;
     ASSERT(element());
-    String placeholderText = element()->strippedPlaceholder();
+    String placeholderText = element()->placeholder();
     if (placeholderText.isEmpty()) {
         if (m_placeholder) {
             m_placeholder->parentNode()->removeChild(*m_placeholder);

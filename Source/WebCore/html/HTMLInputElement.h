@@ -177,6 +177,8 @@ public:
     bool isValidValue(const String&) const;
     bool hasDirtyValue() const { return !m_valueIfDirty.isNull(); };
 
+    String placeholder() const;
+
     String sanitizeValue(const String&) const;
 
     String localizeValue(const String&) const;
