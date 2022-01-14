@@ -334,7 +334,7 @@ void RenderLayerScrollableArea::scrollTo(const ScrollPosition& position)
     // We don't update compositing layers, because we need to do a deep update from the compositing ancestor.
     if (!view.frameView().layoutContext().isInRenderTreeLayout()) {
         // If we're in the middle of layout, we'll just update layers once layout has finished.
-        updateLayerPositionsAfterOverflowScroll();
+        m_layer.updateLayerPositionsAfterOverflowScroll();
 
         view.frameView().scheduleUpdateWidgetPositions();
 
@@ -1816,27 +1816,6 @@ void RenderLayerScrollableArea::scrollByRecursively(const IntSize& delta, Scroll
         // FIXME: If we didn't scroll the whole way, do we want to try looking at the frames ownerElement?
         // https://bugs.webkit.org/show_bug.cgi?id=28237
     }
-}
-
-void RenderLayerScrollableArea::updateLayerPositionsAfterDocumentScroll()
-{
-    ASSERT(&m_layer == m_layer.renderer().view().layer());
-
-    LOG(Scrolling, "RenderLayerScrollableArea::updateLayerPositionsAfterDocumentScroll");
-
-    RenderGeometryMap geometryMap(UseTransforms);
-    m_layer.updateLayerPositionsAfterScroll(&geometryMap);
-}
-
-void RenderLayerScrollableArea::updateLayerPositionsAfterOverflowScroll()
-{
-    RenderGeometryMap geometryMap(UseTransforms);
-    if (&m_layer != m_layer.renderer().view().layer())
-        geometryMap.pushMappingsToAncestor(m_layer.parent(), nullptr);
-
-    // FIXME: why is it OK to not check the ancestors of this layer in order to
-    // initialize the HasSeenViewportConstrainedAncestor and HasSeenAncestorWithOverflowClip flags?
-    m_layer.updateLayerPositionsAfterScroll(&geometryMap, RenderLayer::IsOverflowScroll);
 }
 
 bool RenderLayerScrollableArea::mockScrollbarsControllerEnabled() const

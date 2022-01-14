@@ -926,9 +926,15 @@ OptionSet<RenderLayer::UpdateLayerPositionsFlag> RenderLayer::flagsForUpdateLaye
     return flags;
 }
 
+void RenderLayer::willUpdateLayerPositions()
+{
+    renderer().document().markers().invalidateRectsForAllMarkers();
+}
+
 void RenderLayer::updateLayerPositionsAfterStyleChange()
 {
-    updateLayerPositions(nullptr, flagsForUpdateLayerPositions(*this));
+    willUpdateLayerPositions();
+    recursiveUpdateLayerPositions(nullptr, flagsForUpdateLayerPositions(*this));
 }
 
 void RenderLayer::updateLayerPositionsAfterLayout(bool isRelayoutingSubtree, bool didFullRepaint)
@@ -945,14 +951,16 @@ void RenderLayer::updateLayerPositionsAfterLayout(bool isRelayoutingSubtree, boo
     };
 
     LOG(Compositing, "RenderLayer %p updateLayerPositionsAfterLayout", this);
+    willUpdateLayerPositions();
+
     RenderGeometryMap geometryMap(UseTransforms);
     if (!isRenderViewLayer())
         geometryMap.pushMappingsToAncestor(parent(), nullptr);
 
-    updateLayerPositions(&geometryMap, updateLayerPositionFlags(isRelayoutingSubtree, didFullRepaint));
+    recursiveUpdateLayerPositions(&geometryMap, updateLayerPositionFlags(isRelayoutingSubtree, didFullRepaint));
 }
 
-void RenderLayer::updateLayerPositions(RenderGeometryMap* geometryMap, OptionSet<UpdateLayerPositionsFlag> flags)
+void RenderLayer::recursiveUpdateLayerPositions(RenderGeometryMap* geometryMap, OptionSet<UpdateLayerPositionsFlag> flags)
 {
     updateLayerPosition(&flags);
     if (m_scrollableArea)
@@ -1050,7 +1058,7 @@ void RenderLayer::updateLayerPositions(RenderGeometryMap* geometryMap, OptionSet
         flags.add(SeenCompositedScrollingLayer);
 
     for (RenderLayer* child = firstChild(); child; child = child->nextSibling())
-        child->updateLayerPositions(geometryMap, flags);
+        child->recursiveUpdateLayerPositions(geometryMap, flags);
 
     if (m_scrollableArea)
         m_scrollableArea->updateMarqueePosition();
@@ -1068,8 +1076,6 @@ void RenderLayer::updateLayerPositions(RenderGeometryMap* geometryMap, OptionSet
 
     if (geometryMap)
         geometryMap->popMappingsToAncestor(parent());
-
-    renderer().document().markers().invalidateRectsForAllMarkers();
 }
 
 LayoutRect RenderLayer::repaintRectIncludingNonCompositingDescendants() const
@@ -1152,7 +1158,31 @@ void RenderLayer::clearRepaintRects()
     m_repaintRectsValid = false;
 }
 
-void RenderLayer::updateLayerPositionsAfterScroll(RenderGeometryMap* geometryMap, OptionSet<UpdateLayerPositionsAfterScrollFlag> flags)
+void RenderLayer::updateLayerPositionsAfterOverflowScroll()
+{
+    RenderGeometryMap geometryMap(UseTransforms);
+    if (!isRenderViewLayer())
+        geometryMap.pushMappingsToAncestor(parent(), nullptr);
+
+    willUpdateLayerPositions();
+
+    // FIXME: why is it OK to not check the ancestors of this layer in order to
+    // initialize the HasSeenViewportConstrainedAncestor and HasSeenAncestorWithOverflowClip flags?
+    recursiveUpdateLayerPositionsAfterScroll(&geometryMap, RenderLayer::IsOverflowScroll);
+}
+
+void RenderLayer::updateLayerPositionsAfterDocumentScroll()
+{
+    ASSERT(isRenderViewLayer());
+    LOG(Scrolling, "RenderLayer::updateLayerPositionsAfterDocumentScroll");
+
+    willUpdateLayerPositions();
+
+    RenderGeometryMap geometryMap(UseTransforms);
+    recursiveUpdateLayerPositionsAfterScroll(&geometryMap);
+}
+
+void RenderLayer::recursiveUpdateLayerPositionsAfterScroll(RenderGeometryMap* geometryMap, OptionSet<UpdateLayerPositionsAfterScrollFlag> flags)
 {
     // FIXME: This shouldn't be needed, but there are some corner cases where
     // these flags are still dirty. Update so that the check below is valid.
@@ -1198,7 +1228,7 @@ void RenderLayer::updateLayerPositionsAfterScroll(RenderGeometryMap* geometryMap
     }
     
     for (RenderLayer* child = firstChild(); child; child = child->nextSibling())
-        child->updateLayerPositionsAfterScroll(geometryMap, flags);
+        child->recursiveUpdateLayerPositionsAfterScroll(geometryMap, flags);
 
     // We don't update our reflection as scrolling is a translation which does not change the size()
     // of an object, thus RenderReplica will still repaint itself properly as the layer position was
@@ -1209,8 +1239,6 @@ void RenderLayer::updateLayerPositionsAfterScroll(RenderGeometryMap* geometryMap
 
     if (shouldPushAndPopMappings)
         geometryMap->popMappingsToAncestor(parent());
-
-    renderer().document().markers().invalidateRectsForAllMarkers();
 }
 
 #if ENABLE(CSS_COMPOSITING)

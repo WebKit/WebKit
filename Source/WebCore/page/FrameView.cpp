@@ -2628,10 +2628,9 @@ void FrameView::updateLayerPositionsAfterScrolling()
         return;
 
     if (!layoutContext().isLayoutNested() && hasViewportConstrainedObjects()) {
-        if (RenderView* renderView = this->renderView()) {
+        if (auto* renderView = this->renderView()) {
             updateWidgetPositions();
-            if (auto* scrollableArea = renderView->layer()->scrollableArea())
-                scrollableArea->updateLayerPositionsAfterDocumentScroll();
+            renderView->layer()->updateLayerPositionsAfterDocumentScroll();
         }
     }
 }
