@@ -1,3 +1,14 @@
+2022-01-14  Alan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Incorrect root inline box position when non-empty atomic inline level child box has height: 0px
+        https://bugs.webkit.org/show_bug.cgi?id=235218
+        <rdar://84617690>
+
+        Reviewed by Antti Koivisto.
+
+        * fast/block/line-layout/non-empty-inline-block-with-zero-height-expected.html: Added.
+        * fast/block/line-layout/non-empty-inline-block-with-zero-height.html: Added.
+
 2022-01-14  Antti Koivisto  <antti@apple.com>
 
         [:has() pseudo-class] Avoid O(n^2) in style invalidation with repeated DOM mutations
