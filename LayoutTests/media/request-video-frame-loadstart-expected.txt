@@ -1,0 +1,6 @@
+
+RUN(video.requestVideoFrameCallback(callback))
+RUN(video.src = findMediaFile("video", "content/test"))
+Promise resolved OK
+END OF TEST
+

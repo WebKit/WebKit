@@ -1,3 +1,18 @@
+2022-01-14  Jer Noble  <jer.noble@apple.com>
+
+        [Cocoa] rVFC() isn't called for initial video load
+        https://bugs.webkit.org/show_bug.cgi?id=235006
+
+        Reviewed by Eric Carlson.
+
+        * media/request-video-frame-loadstart-expected.txt: Added.
+        * media/request-video-frame-loadstart.html: Added.
+        * media/request-video-frame-seek-expected.txt: Added.
+        * media/request-video-frame-seek.html: Added.
+        * platform/ios-wk2/TestExpectations:
+        * platform/mac-wk1/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+
 2022-01-14  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         gl.texImage2D upload of getUserMedia streams via <video> element fails

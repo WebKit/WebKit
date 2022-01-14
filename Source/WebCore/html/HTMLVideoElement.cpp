@@ -603,13 +603,16 @@ unsigned HTMLVideoElement::requestVideoFrameCallback(Ref<VideoFrameRequestCallba
 
 void HTMLVideoElement::cancelVideoFrameCallback(unsigned identifier)
 {
-    auto index = m_videoFrameRequests.findMatching([identifier](auto& request) { return request->identifier == identifier; });
-    if (index == notFound)
-        return;
-    if (m_isRunningVideoFrameRequests) {
-        m_videoFrameRequests[index]->cancelled = true;
+    // Search first the requests currently being serviced, and mark them as cancelled if found.
+    auto index = m_servicedVideoFrameRequests.findMatching([identifier](auto& request) { return request->identifier == identifier; });
+    if (index != notFound) {
+        m_servicedVideoFrameRequests[index]->cancelled = true;
         return;
     }
+
+    index = m_videoFrameRequests.findMatching([identifier](auto& request) { return request->identifier == identifier; });
+    if (index == notFound)
+        return;
     m_videoFrameRequests.remove(index);
 
     if (m_videoFrameRequests.isEmpty() && player())
@@ -631,6 +634,12 @@ void HTMLVideoElement::serviceRequestVideoFrameCallbacks(ReducedResolutionSecond
     if (!player())
         return;
 
+    // If the requestVideoFrameCallback is called before the readyState >= HaveCurrentData,
+    // calls to createImageBitmap() with this element will result in a failed promise. Delay
+    // notifying the callback until we reach the HaveCurrentData state.
+    if (readyState() < HAVE_CURRENT_DATA)
+        return;
+
     auto videoFrameMetadata = player()->videoFrameMetadata();
     if (!videoFrameMetadata || !document().domWindow())
         return;
@@ -639,20 +648,14 @@ void HTMLVideoElement::serviceRequestVideoFrameCallbacks(ReducedResolutionSecond
 
     Ref protectedThis { *this };
 
-    // We store the size before calling callbacks as we do not want to call newly added callbacks.
-    auto callbackCount = m_videoFrameRequests.size();
-
-    m_isRunningVideoFrameRequests = true;
-    for (size_t index = 0; index < callbackCount; ++index) {
-        auto& request = m_videoFrameRequests[index];
+    m_videoFrameRequests.swap(m_servicedVideoFrameRequests);
+    for (auto& request : m_servicedVideoFrameRequests) {
         if (!request->cancelled) {
             request->callback->handleEvent(std::round(now.milliseconds()), *videoFrameMetadata);
             request->cancelled = true;
         }
     }
-    m_isRunningVideoFrameRequests = false;
-
-    m_videoFrameRequests.removeAllMatching([](auto& callback) { return callback->cancelled; });
+    m_servicedVideoFrameRequests.clear();
 
     if (m_videoFrameRequests.isEmpty() && player())
         player()->stopVideoFrameMetadataGathering();

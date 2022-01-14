@@ -172,8 +172,8 @@ private:
         bool cancelled { false };
     };
     Vector<UniqueRef<VideoFrameRequest>> m_videoFrameRequests;
+    Vector<UniqueRef<VideoFrameRequest>> m_servicedVideoFrameRequests;
     unsigned m_nextVideoFrameRequestIndex { 0 };
-    bool m_isRunningVideoFrameRequests { false };
 };
 
 } // namespace WebCore

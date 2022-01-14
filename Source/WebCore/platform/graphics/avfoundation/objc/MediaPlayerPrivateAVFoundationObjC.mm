@@ -58,6 +58,7 @@
 #import "PlatformScreen.h"
 #import "PlatformTextTrack.h"
 #import "PlatformTimeRanges.h"
+#import "QueuedVideoOutput.h"
 #import "RuntimeApplicationChecks.h"
 #import "ScriptDisallowedScope.h"
 #import "SecurityOrigin.h"
@@ -205,16 +206,6 @@ enum MediaPlayerAVFoundationObservationContext {
 - (BOOL)resourceLoader:(AVAssetResourceLoader *)resourceLoader shouldWaitForLoadingOfRequestedResource:(AVAssetResourceLoadingRequest *)loadingRequest;
 @end
 
-@interface WebCoreAVFPullDelegate : NSObject<AVPlayerItemOutputPullDelegate> {
-    BinarySemaphore m_semaphore;
-}
-- (id)initWithPlayer:(WeakPtr<MediaPlayerPrivateAVFoundationObjC>&&)player;
-- (void)outputMediaDataWillChange:(AVPlayerItemOutput *)sender;
-- (void)outputSequenceWasFlushed:(AVPlayerItemOutput *)output;
-
-@property (nonatomic, readonly) BinarySemaphore& semaphore;
-@end
-
 namespace WebCore {
 static String convertEnumerationToString(AVPlayerTimeControlStatus enumerationValue)
 {
@@ -257,16 +248,6 @@ static dispatch_queue_t globalLoaderDelegateQueue()
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         globalQueue = dispatch_queue_create("WebCoreAVFLoaderDelegate queue", DISPATCH_QUEUE_SERIAL);
-    });
-    return globalQueue;
-}
-
-static dispatch_queue_t globalPullDelegateQueue()
-{
-    static dispatch_queue_t globalQueue;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        globalQueue = dispatch_queue_create("WebCoreAVFPullDelegate queue", DISPATCH_QUEUE_SERIAL);
     });
     return globalQueue;
 }
@@ -469,7 +450,8 @@ MediaPlayerPrivateAVFoundationObjC::~MediaPlayerPrivateAVFoundationObjC()
     for (auto& pair : m_resourceLoaderMap)
         pair.value->invalidate();
 
-    [m_videoOutput setDelegate:nil queue:0];
+    if (m_videoOutput)
+        m_videoOutput->invalidate();
 
     if (m_videoLayer)
         destroyVideoLayer();
@@ -702,7 +684,7 @@ bool MediaPlayerPrivateAVFoundationObjC::hasAvailableVideoFrame() const
     if (currentRenderingMode() == MediaRenderingMode::MediaRenderingToLayer)
         return m_cachedIsReadyForDisplay;
 
-    if (m_videoOutput && (m_lastPixelBuffer || [m_videoOutput hasNewPixelBufferForItemTime:[m_avPlayerItem currentTime]]))
+    if (m_videoOutput && (m_lastPixelBuffer || m_videoOutput->hasImageForTime(currentMediaTime())))
         return true;
 
     return m_videoFrameHasDrawn;
@@ -1444,34 +1426,30 @@ bool MediaPlayerPrivateAVFoundationObjC::platformPaused() const
 
 void MediaPlayerPrivateAVFoundationObjC::startVideoFrameMetadataGathering()
 {
-    ASSERT(!m_videoFrameMetadataGatheringObserver || m_avPlayer);
-    m_isGatheringVideoFrameMetadata = true;
+    // requestVideoFrameCallback() cares about the /next/ available frame. Pull the current frame from
+    // the QueuedVideoOutput so paints of the current frame succeed;
+    updateLastPixelBuffer();
 
-    // FIXME: We should use a CADisplayLink to get updates on rendering, for now we emulate with addPeriodicTimeObserverForInterval.
-    m_videoFrameMetadataGatheringObserver = [m_avPlayer addPeriodicTimeObserverForInterval:PAL::CMTimeMake(1, 60) queue:dispatch_get_main_queue() usingBlock:[weakThis = WeakPtr { *this }](CMTime currentTime) {
-        ensureOnMainThread([weakThis, currentTime] {
-            if (weakThis)
-                weakThis->checkNewVideoFrameMetadata(currentTime);
-        });
-    }];
+    m_currentImageChangedObserver = WTF::makeUnique<Observer<void()>>([this] {
+        m_currentImageChangedObserver = nullptr;
+        checkNewVideoFrameMetadata();
+    });
+
+    if (m_videoOutput)
+        m_videoOutput->addCurrentImageChangedObserver(*m_currentImageChangedObserver);
+
+    m_isGatheringVideoFrameMetadata = true;
 }
 
-void MediaPlayerPrivateAVFoundationObjC::checkNewVideoFrameMetadata(CMTime currentTime)
+void MediaPlayerPrivateAVFoundationObjC::checkNewVideoFrameMetadata()
 {
-    if (!updateLastPixelBuffer())
+    if (!m_isGatheringVideoFrameMetadata)
         return;
 
-    VideoFrameMetadata metadata;
-    metadata.width = m_cachedPresentationSize.width();
-    metadata.height = m_cachedPresentationSize.height();
-    metadata.presentedFrames = ++m_sampleCount;
-    metadata.mediaTime = PAL::CMTimeGetSeconds(currentTime);
-    // FIXME: presentationTime and expectedDisplayTime might not always have the same value, we should try getting more precise values.
-    metadata.presentationTime = MonotonicTime::now().secondsSinceEpoch().seconds();
-    metadata.expectedDisplayTime = metadata.presentationTime;
+    if (!updateLastPixelBuffer() && !m_videoFrameMetadata)
+        return;
 
-    m_videoFrameMetadata = metadata;
-    player()->onNewVideoFrameMetadata(WTFMove(metadata), m_lastPixelBuffer.get());
+    player()->onNewVideoFrameMetadata(WTFMove(*m_videoFrameMetadata), m_lastPixelBuffer.get());
 }
 
 void MediaPlayerPrivateAVFoundationObjC::stopVideoFrameMetadataGathering()
@@ -2517,17 +2495,17 @@ void MediaPlayerPrivateAVFoundationObjC::createVideoOutput()
     if (!m_avPlayerItem || m_videoOutput)
         return;
 
-    m_videoOutput = adoptNS([PAL::allocAVPlayerItemVideoOutputInstance() initWithPixelBufferAttributes:nil]);
+    m_videoOutput = QueuedVideoOutput::create(m_avPlayerItem.get(), m_avPlayer.get());
     ASSERT(m_videoOutput);
     if (!m_videoOutput) {
         ERROR_LOG(LOGIDENTIFIER, "-[AVPlayerItemVideoOutput initWithPixelBufferAttributes:] failed!");
         return;
     }
+    if (m_currentImageChangedObserver)
+        m_videoOutput->addCurrentImageChangedObserver(*m_currentImageChangedObserver);
 
-    m_videoOutputDelegate = adoptNS([[WebCoreAVFPullDelegate alloc] initWithPlayer:*this]);
-    [m_videoOutput setDelegate:m_videoOutputDelegate.get() queue:globalPullDelegateQueue()];
-
-    [m_avPlayerItem addOutput:m_videoOutput.get()];
+    if (m_waitForVideoOutputMediaDataWillChangeObserver)
+        m_videoOutput->addCurrentImageChangedObserver(*m_waitForVideoOutputMediaDataWillChangeObserver);
 
     setNeedsRenderingModeChanged();
 }
@@ -2537,19 +2515,19 @@ void MediaPlayerPrivateAVFoundationObjC::destroyVideoOutput()
     if (!m_videoOutput)
         return;
 
-    if (m_avPlayerItem)
-        [m_avPlayerItem removeOutput:m_videoOutput.get()];
-
     INFO_LOG(LOGIDENTIFIER);
 
-    m_videoOutput = 0;
+    m_videoOutput->invalidate();
+    m_videoOutput = nullptr;
+
+    m_videoFrameMetadata = { };
 
     setNeedsRenderingModeChanged();
 }
 
 bool MediaPlayerPrivateAVFoundationObjC::updateLastPixelBuffer()
 {
-    if (!m_avPlayerItem || readyState() < MediaPlayer::ReadyState::HaveCurrentData)
+    if (!m_avPlayerItem)
         return false;
 
     m_haveBeenAskedToPaint = true;
@@ -2558,12 +2536,25 @@ bool MediaPlayerPrivateAVFoundationObjC::updateLastPixelBuffer()
         createVideoOutput();
     ASSERT(m_videoOutput);
 
-    CMTime currentTime = [m_avPlayerItem currentTime];
+    auto currentTime = currentMediaTime();
 
-    if (![m_videoOutput hasNewPixelBufferForItemTime:currentTime])
+    if (!m_videoOutput->hasImageForTime(currentTime))
         return false;
 
-    m_lastPixelBuffer = adoptCF([m_videoOutput copyPixelBufferForItemTime:currentTime itemTimeForDisplay:nil]);
+    auto entry = m_videoOutput->takeVideoFrameEntryForTime(currentTime);
+    m_lastPixelBuffer = WTFMove(entry.pixelBuffer);
+
+    if (m_isGatheringVideoFrameMetadata) {
+        auto presentationTime = MonotonicTime::now().secondsSinceEpoch().seconds() - (currentTime - entry.displayTime).toDouble();
+        m_videoFrameMetadata = {
+            .width = static_cast<unsigned>(CVPixelBufferGetWidth(m_lastPixelBuffer.get())),
+            .height = static_cast<unsigned>(CVPixelBufferGetHeight(m_lastPixelBuffer.get())),
+            .presentedFrames = static_cast<unsigned>(++m_sampleCount),
+            .mediaTime = entry.displayTime.toDouble(),
+            .presentationTime = presentationTime,
+            .expectedDisplayTime = presentationTime,
+        };
+    }
 
     if (m_imageRotationSession)
         m_lastPixelBuffer = m_imageRotationSession->rotate(m_lastPixelBuffer.get());
@@ -2583,7 +2574,7 @@ bool MediaPlayerPrivateAVFoundationObjC::videoOutputHasAvailableFrame()
     if (!m_videoOutput)
         createVideoOutput();
 
-    return [m_videoOutput hasNewPixelBufferForItemTime:[m_avPlayerItem currentTime]];
+    return m_videoOutput->hasImageForTime(PAL::toMediaTime([m_avPlayerItem currentTime]));
 }
 
 void MediaPlayerPrivateAVFoundationObjC::updateLastImage(UpdateType type)
@@ -2601,7 +2592,7 @@ void MediaPlayerPrivateAVFoundationObjC::updateLastImage(UpdateType type)
     // Calls to copyPixelBufferForItemTime:itemTimeForDisplay: may return nil if the pixel buffer
     // for the requested time has already been retrieved. In this case, the last valid image (if any)
     // should be displayed.
-    if ((m_isGatheringVideoFrameMetadata || !updateLastPixelBuffer()) && (m_lastImage || !m_lastPixelBuffer))
+    if (!updateLastPixelBuffer() && (m_lastImage || !m_lastPixelBuffer))
         return;
 
     if (!m_pixelBufferConformer) {
@@ -2636,8 +2627,7 @@ void MediaPlayerPrivateAVFoundationObjC::paintWithVideoOutput(GraphicsContext& c
 
 RetainPtr<CVPixelBufferRef> MediaPlayerPrivateAVFoundationObjC::pixelBufferForCurrentTime()
 {
-    if (!m_isGatheringVideoFrameMetadata)
-        updateLastPixelBuffer();
+    updateLastPixelBuffer();
 
     return m_lastPixelBuffer;
 }
@@ -2668,7 +2658,11 @@ void MediaPlayerPrivateAVFoundationObjC::waitForVideoOutputMediaDataWillChange()
     std::optional<RunLoop::Timer<MediaPlayerPrivateAVFoundationObjC>> timeoutTimer;
 
     if (!m_runLoopNestingLevel) {
-        [m_videoOutput requestNotificationOfMediaDataChangeWithAdvanceInterval:0];
+        m_waitForVideoOutputMediaDataWillChangeObserver = WTF::makeUnique<Observer<void()>>([this, logIdentifier = LOGIDENTIFIER] () mutable {
+            if (m_runLoopNestingLevel)
+                RunLoop::main().stop();
+        });
+        m_videoOutput->addCurrentImageChangedObserver(*m_waitForVideoOutputMediaDataWillChangeObserver);
 
         timeoutTimer.emplace(RunLoop::main(), [&] {
             RunLoop::main().stop();
@@ -2695,15 +2689,7 @@ void MediaPlayerPrivateAVFoundationObjC::waitForVideoOutputMediaDataWillChange()
 
 void MediaPlayerPrivateAVFoundationObjC::outputMediaDataWillChange()
 {
-    if (m_runLoopNestingLevel) {
-        if (RunLoop::isMain())
-            RunLoop::main().stop();
-        else {
-            RunLoop::main().dispatch([] {
-                RunLoop::main().stop();
-            });
-        }
-    }
+    checkNewVideoFrameMetadata();
 }
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
@@ -4084,39 +4070,6 @@ NSArray* playerKVOProperties()
                 player->didCancelLoadingRequest(loadingRequest.get());
         });
     });
-}
-
-@end
-
-@implementation WebCoreAVFPullDelegate {
-    WeakPtr<WebCore::MediaPlayerPrivateAVFoundationObjC> _player;
-}
-
-@synthesize semaphore = m_semaphore;
-
-- (id)initWithPlayer:(WeakPtr<MediaPlayerPrivateAVFoundationObjC>&&)player
-{
-    self = [super init];
-    if (!self)
-        return nil;
-    _player = WTFMove(player);
-    return self;
-}
-
-- (void)outputMediaDataWillChange:(AVPlayerItemVideoOutput *)output
-{
-    UNUSED_PARAM(output);
-    m_semaphore.signal();
-    callOnMainThread([self, strongSelf = RetainPtr { self }] {
-        if (_player)
-            _player->outputMediaDataWillChange();
-    });
-}
-
-- (void)outputSequenceWasFlushed:(AVPlayerItemVideoOutput *)output
-{
-    UNUSED_PARAM(output);
-    // No-op.
 }
 
 @end

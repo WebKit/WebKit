@@ -1,3 +1,12 @@
+2022-01-14  Jer Noble  <jer.noble@apple.com>
+
+        [Cocoa] rVFC() isn't called for initial video load
+        https://bugs.webkit.org/show_bug.cgi?id=235006
+
+        Reviewed by Eric Carlson.
+
+        * pal/spi/cocoa/AVFoundationSPI.h:
+
 2022-01-13  Elliott Williams  <emw@apple.com>
 
         [XCBuild] Add "product dependencies" which influence workspace build order
