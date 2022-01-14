@@ -44,8 +44,7 @@
 #include "RenderSVGText.h"
 #include "RenderTreeBuilder.h"
 #include "RenderView.h"
-// FIXME: [LBSE] Upstream SVGContainerLayout
-// #include "SVGContainerLayout.h"
+#include "SVGContainerLayout.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGImage.h"
 #include "SVGRenderingContext.h"
@@ -194,18 +193,13 @@ void RenderSVGRoot::layout()
     updateLayerInformation();
 
     {
-        /* FIXME: [LBSE] Upstream SVGContainerLayout
         SVGContainerLayout containerLayout(*this);
         containerLayout.layoutChildren(needsLayout || SVGRenderSupport::filtersForceContainerLayout(*this));
-        */
 
         SVGBoundingBoxComputation boundingBoxComputation(*this);
         m_objectBoundingBox = boundingBoxComputation.computeDecoratedBoundingBox(SVGBoundingBoxComputation::objectBoundingBoxDecoration);
         m_strokeBoundingBox = boundingBoxComputation.computeDecoratedBoundingBox(SVGBoundingBoxComputation::strokeBoundingBoxDecoration);
     }
-
-    // FIXME: [LBSE] Upstream SVGContainerLayout -- remove SVGRenderSupport::layoutChildren.
-    SVGRenderSupport::layoutChildren(*this, needsLayout);
 
     if (!m_resourcesNeedingToInvalidateClients.isEmpty()) {
         // Invalidate resource clients, which may mark some nodes for layout.
@@ -216,10 +210,8 @@ void RenderSVGRoot::layout()
 
         m_isLayoutSizeChanged = false;
 
-        /* FIXME: [LBSE] Upstream SVGContainerLayout
         SVGContainerLayout containerLayout(*this);
         containerLayout.layoutChildren(false);
-        */
     }
 
     m_isLayoutSizeChanged = false;

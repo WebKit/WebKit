@@ -34,8 +34,7 @@
 #include "RenderLayer.h"
 #include "RenderTreeBuilder.h"
 #include "RenderView.h"
-// FIXME: [LBSE] Upstream SVGContainerLayout
-// #include "SVGContainerLayout.h"
+#include "SVGContainerLayout.h"
 #include "SVGRenderingContext.h"
 #include "SVGResources.h"
 #include "SVGResourcesCache.h"
@@ -88,17 +87,15 @@ void RenderSVGContainer::calculateViewport()
 
 void RenderSVGContainer::layoutChildren()
 {
-    // FIXME: [LBSE] Upstream SVGContainerLayout
-    // SVGContainerLayout containerLayout(*this);
-    // containerLayout.layoutChildren(selfNeedsLayout() || SVGRenderSupport::filtersForceContainerLayout(*this));
+    SVGContainerLayout containerLayout(*this);
+    containerLayout.layoutChildren(selfNeedsLayout() || SVGRenderSupport::filtersForceContainerLayout(*this));
 
     SVGBoundingBoxComputation boundingBoxComputation(*this);
     m_objectBoundingBox = boundingBoxComputation.computeDecoratedBoundingBox(SVGBoundingBoxComputation::objectBoundingBoxDecoration, &m_objectBoundingBoxValid);
     m_strokeBoundingBox = boundingBoxComputation.computeDecoratedBoundingBox(SVGBoundingBoxComputation::strokeBoundingBoxDecoration);
     setLayoutRect(enclosingLayoutRect(m_objectBoundingBox));
 
-    // FIXME: [LBSE] Upstream SVGContainerLayout
-    // containerLayout.positionChildrenRelativeToContainer();
+    containerLayout.positionChildrenRelativeToContainer();
 }
 
 void RenderSVGContainer::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
