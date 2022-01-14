@@ -1,3 +1,30 @@
+2022-01-14  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Fix WTF::UUID's potential collision with empty and deleted values
+        https://bugs.webkit.org/show_bug.cgi?id=235177
+
+        Reviewed by Chris Dumez.
+
+        Since cryptographicallyRandomValues generates random values, it is possible that it produces 0 or 1.
+        In that case, it conflicts with empty and deleted values of UUID for hash table. When it is generated
+        and used, it can break hash tables. This patch avoids that by picking 2 when we generate 0 or 1.
+
+        We also avoid using UInt128Impl and instead using UInt128. UInt128Impl is implementation, so we should
+        always use UInt128. UInt128 can be native __uint128_t when it is supported by the compiler: clang and
+        GCC on 64bit support it.
+
+        In this patch, we do not use strict UUID v4. This patch focuses on fixing the existing hash table corruption
+        bug, and we defer discussion about UUID v4 since it reduces usable bits from 128 to 122, which we need to
+        investigate the existing usage of UUID (and UUID string) in our tree.
+
+        * wtf/UUID.cpp:
+        (WTF::UUID::UUID):
+        * wtf/UUID.h:
+        (WTF::UUID::UUID):
+        (WTF::UUID::isHashTableDeletedValue const):
+        (WTF::UUID::encode const):
+        (WTF::UUID::decode):
+
 2022-01-13  Elliott Williams  <emw@apple.com>
 
         [XCBuild] Add "product dependencies" which influence workspace build order

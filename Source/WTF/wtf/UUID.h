@@ -40,6 +40,9 @@ class StringView;
 class UUID {
 WTF_MAKE_FAST_ALLOCATED;
 public:
+    static constexpr UInt128 emptyValue = 0;
+    static constexpr UInt128 deletedValue = 1;
+
     static UUID create()
     {
         return UUID { };
@@ -50,41 +53,38 @@ public:
         memcpy(&m_data, span.data(), 16);
     }
 
-    explicit UUID(UInt128Impl&& data)
+    explicit constexpr UUID(UInt128 data)
         : m_data(data)
     {
     }
-
-    UUID(const UUID&) = default;
 
     Span<const uint8_t, 16> toSpan() const
     {
         return Span<const uint8_t, 16> { reinterpret_cast<const uint8_t*>(&m_data), 16 };
     }
 
-    UUID& operator=(const UUID&) = default;
     bool operator==(const UUID& other) const { return m_data == other.m_data; }
 
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static std::optional<UUID> decode(Decoder&);
 
-    explicit UUID(HashTableDeletedValueType)
-        : m_data(1)
+    explicit constexpr UUID(HashTableDeletedValueType)
+        : m_data(deletedValue)
     {
     }
 
-    explicit UUID(HashTableEmptyValueType)
-        : m_data(0)
+    explicit constexpr UUID(HashTableEmptyValueType)
+        : m_data(emptyValue)
     {
     }
 
-    bool isHashTableDeletedValue() const { return m_data == 1; }
+    bool isHashTableDeletedValue() const { return m_data == deletedValue; }
     WTF_EXPORT_PRIVATE unsigned hash() const;
 
 private:
     WTF_EXPORT_PRIVATE UUID();
 
-    UInt128Impl m_data;
+    UInt128 m_data;
 };
 
 struct UUIDHash {
@@ -103,7 +103,7 @@ template<> struct DefaultHash<UUID> : UUIDHash { };
 template<class Encoder>
 void UUID::encode(Encoder& encoder) const
 {
-    encoder << UInt128High64(m_data) << UInt128Low64(m_data);
+    encoder << static_cast<uint64_t>(m_data >> 64) << static_cast<uint64_t>(m_data);
 }
 
 template<class Decoder>
@@ -119,9 +119,7 @@ std::optional<UUID> UUID::decode(Decoder& decoder)
     if (!low)
         return std::nullopt;
 
-    return { UUID {
-        MakeUInt128(*high, *low),
-    } };
+    return UUID { (static_cast<UInt128>(*high) << 64) | *low };
 }
 
 // Creates a UUID that consists of 32 hexadecimal digits and returns its canonical form.

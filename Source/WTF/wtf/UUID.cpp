@@ -45,7 +45,9 @@ namespace WTF {
 UUID::UUID()
 {
     static_assert(sizeof(m_data) == 16);
-    cryptographicallyRandomValues(reinterpret_cast<unsigned char*>(&m_data), 16);
+    do {
+        cryptographicallyRandomValues(reinterpret_cast<unsigned char*>(&m_data), 16);
+    } while (m_data == emptyValue || m_data == deletedValue);
 }
 
 unsigned UUID::hash() const
