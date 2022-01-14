@@ -27,6 +27,7 @@
 #import "LaunchServicesDatabaseManager.h"
 
 #import "LaunchServicesDatabaseXPCConstants.h"
+#import "Logging.h"
 #import "XPCEndpoint.h"
 #import <pal/spi/cocoa/LaunchServicesSPI.h>
 #import <wtf/cocoa/Entitlements.h>
@@ -79,6 +80,18 @@ bool LaunchServicesDatabaseManager::waitForDatabaseUpdate(Seconds timeout)
     if (m_hasReceivedLaunchServicesDatabase)
         return true;
     return m_semaphore.waitFor(timeout);
+}
+
+void LaunchServicesDatabaseManager::waitForDatabaseUpdate()
+{
+    auto startTime = MonotonicTime::now();
+    bool databaseUpdated = waitForDatabaseUpdate(5_s);
+    auto elapsedTime = MonotonicTime::now() - startTime;
+    if (elapsedTime > 0.5_s)
+        RELEASE_LOG_ERROR(Loading, "Waiting for Launch Services database update took %f seconds", elapsedTime.value());
+    ASSERT_UNUSED(databaseUpdated, databaseUpdated);
+    if (!databaseUpdated)
+        RELEASE_LOG_ERROR(Loading, "Timed out waiting for Launch Services database update.");
 }
 
 }

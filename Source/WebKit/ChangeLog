@@ -1,3 +1,22 @@
+2022-01-14  Per Arne Vollan  <pvollan@apple.com>
+
+        Inject Launch Services database before NSApplication is initialized
+        https://bugs.webkit.org/show_bug.cgi?id=235186
+        <rdar://87468788>
+
+        Reviewed by Chris Dumez and Simon Fraser.
+
+        To avoid the main thread getting stuck, the Launch Services database should be injected before NSApplication
+        is initialized, since the initialization now depends on the database.
+
+        * WebProcess/WebPage/Cocoa/WebPageCocoa.mm:
+        (WebKit::WebPage::platformDidReceiveLoadParameters):
+        * WebProcess/cocoa/LaunchServicesDatabaseManager.h:
+        * WebProcess/cocoa/LaunchServicesDatabaseManager.mm:
+        (WebKit::LaunchServicesDatabaseManager::waitForDatabaseUpdate):
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::platformInitializeWebProcess):
+
 2022-01-14  J Pascoe  <j_pascoe@apple.com>
 
         Expose way to encode CTAP commands with only the hash of ClientDataJSON
