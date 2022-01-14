@@ -1997,7 +1997,6 @@ private:
     bool hasAutoLeftAndRight() const { return left().isAuto() && right().isAuto(); }
     bool hasAutoTopAndBottom() const { return top().isAuto() && bottom().isAuto(); }
 
-    static bool isDisplayReplacedType(DisplayType);
     static bool isDisplayInlineType(DisplayType);
     static bool isDisplayFlexibleBox(DisplayType);
     static bool isDisplayGridBox(DisplayType);
@@ -2395,15 +2394,14 @@ inline void RenderStyle::getShadowBlockDirectionExtent(const ShadowData* shadow,
     return isHorizontalWritingMode() ? getShadowVerticalExtent(shadow, logicalTop, logicalBottom) : getShadowHorizontalExtent(shadow, logicalTop, logicalBottom);
 }
 
-inline bool RenderStyle::isDisplayReplacedType(DisplayType display)
-{
-    return display == DisplayType::InlineBlock || display == DisplayType::InlineBox || display == DisplayType::InlineFlex
-        || display == DisplayType::InlineGrid || display == DisplayType::InlineTable;
-}
-
 inline bool RenderStyle::isDisplayInlineType(DisplayType display)
 {
-    return display == DisplayType::Inline || isDisplayReplacedType(display);
+    return display == DisplayType::Inline
+        || display == DisplayType::InlineBlock
+        || display == DisplayType::InlineBox
+        || display == DisplayType::InlineFlex
+        || display == DisplayType::InlineGrid
+        || display == DisplayType::InlineTable;
 }
 
 inline bool RenderStyle::isDisplayFlexibleBox(DisplayType display)
