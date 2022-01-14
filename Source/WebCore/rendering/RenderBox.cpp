@@ -673,13 +673,12 @@ LayoutUnit RenderBox::constrainLogicalWidthInFragmentByMinMax(LayoutUnit logical
         logicalWidth = std::min(logicalWidth, computeLogicalWidthInFragmentUsing(MaxSize, styleToUse.logicalMaxWidth(), availableWidth, cb, fragment));
     if (allowIntrinsic == AllowIntrinsic::No && styleToUse.logicalMinWidth().isIntrinsic())
         return logicalWidth;
-    auto minLength = styleToUse.logicalMinWidth();
-    if (styleToUse.hasAspectRatio() && minLength.isAuto() && (styleToUse.logicalWidth().isAuto() || styleToUse.logicalWidth().isMinContent() || styleToUse.logicalWidth().isMaxContent()) && effectiveOverflowInlineDirection() == Overflow::Visible) {
+    auto logicalMinWidth = styleToUse.logicalMinWidth();
+    if (logicalMinWidth.isAuto() && shouldComputeLogicalWidthFromAspectRatio() && (styleToUse.logicalWidth().isAuto() || styleToUse.logicalWidth().isMinContent() || styleToUse.logicalWidth().isMaxContent()) && !is<RenderReplaced>(*this) && effectiveOverflowInlineDirection() == Overflow::Visible) {
         // Make sure we actually used the aspect ratio.
-        if (shouldComputeLogicalWidthFromAspectRatio())
-            minLength = Length(LengthType::MinContent);
+        logicalMinWidth = Length(LengthType::MinContent);
     }
-    return std::max(logicalWidth, computeLogicalWidthInFragmentUsing(MinSize, minLength, availableWidth, cb, fragment));
+    return std::max(logicalWidth, computeLogicalWidthInFragmentUsing(MinSize, logicalMinWidth, availableWidth, cb, fragment));
 }
 
 LayoutUnit RenderBox::constrainLogicalHeightByMinMax(LayoutUnit logicalHeight, std::optional<LayoutUnit> intrinsicContentHeight) const
@@ -690,7 +689,7 @@ LayoutUnit RenderBox::constrainLogicalHeightByMinMax(LayoutUnit logicalHeight, s
             logicalHeight = std::min(logicalHeight, maxH.value());
     }
     auto logicalMinHeight = styleToUse.logicalMinHeight();
-    if (logicalMinHeight.isAuto() && shouldComputeLogicalHeightFromAspectRatio() && intrinsicContentHeight && effectiveOverflowBlockDirection() == Overflow::Visible) {
+    if (logicalMinHeight.isAuto() && shouldComputeLogicalHeightFromAspectRatio() && intrinsicContentHeight && !is<RenderReplaced>(*this) && effectiveOverflowBlockDirection() == Overflow::Visible) {
         auto heightFromAspectRatio = blockSizeFromAspectRatio(horizontalBorderAndPaddingExtent(), verticalBorderAndPaddingExtent(), style().logicalAspectRatio(), style().boxSizingForAspectRatio(), logicalWidth()) - borderAndPaddingLogicalHeight();
         if (firstChild())
             heightFromAspectRatio = std::max(heightFromAspectRatio, *intrinsicContentHeight);

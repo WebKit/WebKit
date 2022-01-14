@@ -1,3 +1,18 @@
+2022-01-13  Cameron McCormack  <heycam@apple.com>
+
+        Only apply automatic minimum block-size aspect-ratio rules to non-replaced elements
+        https://bugs.webkit.org/show_bug.cgi?id=235058
+        <rdar://85505101>
+
+        Reviewed by Alan Bujtas.
+
+        Test that replaced elements with child content (in this case, a
+        <video> element's controls in the UA shadow tree) don't influence the
+        automatic minimum size calculation.
+
+        * fast/css/aspect-ratio-min-height-replaced-expected.html: Added.
+        * fast/css/aspect-ratio-min-height-replaced.html: Added.
+
 2022-01-13  Chris Dumez  <cdumez@apple.com>
 
         Implement HTMLScriptElement.supports(type) method
