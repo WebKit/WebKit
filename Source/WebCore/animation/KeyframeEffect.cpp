@@ -69,21 +69,6 @@
 namespace WebCore {
 using namespace JSC;
 
-static Element* elementOrPseudoElementForStyleable(const std::optional<const Styleable>& styleable)
-{
-    if (!styleable)
-        return nullptr;
-
-    switch (styleable->pseudoId) {
-    case PseudoId::Before:
-        return styleable->element.beforePseudoElement();
-    case PseudoId::After:
-        return styleable->element.afterPseudoElement();
-    default:
-        return &styleable->element;
-    }
-}
-
 static inline void invalidateElement(const std::optional<const Styleable>& styleable)
 {
     if (styleable)
@@ -1353,15 +1338,6 @@ ExceptionOr<void> KeyframeEffect::setPseudoElement(const String& pseudoElement)
 void KeyframeEffect::didChangeTargetStyleable(const std::optional<const Styleable>& previousTargetStyleable)
 {
     auto newTargetStyleable = targetStyleable();
-
-    // We must ensure a PseudoElement exists for this m_target / m_pseudoId pair if both are specified.
-    // FIXME: Ideally this wouldn't be necessary.
-    auto* newTargetElementOrPseudoElement = elementOrPseudoElementForStyleable(newTargetStyleable);
-    if (!newTargetElementOrPseudoElement && m_target.get() && m_pseudoId != PseudoId::None) {
-        // FIXME: We only support targeting ::before and ::after pseudo-elements at the moment.
-        if (m_pseudoId == PseudoId::Before || m_pseudoId == PseudoId::After)
-            newTargetElementOrPseudoElement = &m_target->ensurePseudoElement(m_pseudoId);
-    }
 
     if (auto* effectAnimation = animation())
         effectAnimation->effectTargetDidChange(previousTargetStyleable, newTargetStyleable);

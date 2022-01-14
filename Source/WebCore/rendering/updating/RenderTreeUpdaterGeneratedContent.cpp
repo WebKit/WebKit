@@ -121,7 +121,7 @@ void RenderTreeUpdater::GeneratedContent::updatePseudoElement(Element& current, 
         return nullptr;
     }();
 
-    if (!needsPseudoElement(update) && (!pseudoElement || !elementIsTargetedByKeyframeEffectRequiringPseudoElement(pseudoElement, pseudoId))) {
+    if (!needsPseudoElement(update) && !elementIsTargetedByKeyframeEffectRequiringPseudoElement(&current, pseudoId)) {
         if (pseudoElement) {
             if (pseudoId == PseudoId::Before)
                 removeBeforePseudoElement(current, m_updater.m_builder);
