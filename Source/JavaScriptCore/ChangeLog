@@ -1,3 +1,25 @@
+2022-01-13  Saam Barati  <sbarati@apple.com>
+
+        Link Wasm code on the same thread that JITs
+        https://bugs.webkit.org/show_bug.cgi?id=235201
+
+        Reviewed by Yusuke Suzuki and Mark Lam.
+
+        This is preparing us for the changes that'll be needed by
+        https://bugs.webkit.org/show_bug.cgi?id=235192.
+        
+        It should also be a small perf improvement, as we're now linking
+        in parallel instead of doing it after all compilations have finished.
+
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::parseAndCompileB3):
+        * wasm/WasmBBQPlan.cpp:
+        (JSC::Wasm::BBQPlan::prepareImpl):
+        (JSC::Wasm::BBQPlan::compileFunction):
+        (JSC::Wasm::BBQPlan::didCompleteCompilation):
+        (JSC::Wasm::BBQPlan::initializeCallees):
+        * wasm/WasmBBQPlan.h:
+
 2022-01-13  Elliott Williams  <emw@apple.com>
 
         [XCBuild] Add "product dependencies" which influence workspace build order

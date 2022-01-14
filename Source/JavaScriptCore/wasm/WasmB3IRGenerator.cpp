@@ -3150,7 +3150,6 @@ Expected<std::unique_ptr<InternalFunction>, String> parseAndCompileB3(Compilatio
     if (shouldDumpIRFor(functionIndex + info.importFunctionCount()))
         procedure.setShouldDumpIR();
 
-    compilationContext.wasmEntrypointJIT = makeUnique<CCallHelpers>();
 
     if (Options::useSamplingProfiler()) {
         // FIXME: We should do this based on VM relevant info.
