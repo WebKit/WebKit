@@ -31,7 +31,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
     expected_steps = {
         'Style-EWS': [
             'configure-build',
-            'validate-patch',
+            'validate-change',
             'configuration',
             'clean-up-git-repo',
             'clean-and-update-working-directory',
@@ -43,7 +43,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
         ],
         'Apply-WatchList-EWS': [
             'configure-build',
-            'validate-patch',
+            'validate-change',
             'configuration',
             'clean-up-git-repo',
             'clean-and-update-working-directory',
@@ -55,7 +55,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
         ],
         'GTK-Build-EWS': [
             'configure-build',
-            'validate-patch',
+            'validate-change',
             'configuration',
             'clean-up-git-repo',
             'clean-and-update-working-directory',
@@ -70,7 +70,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
         ],
         'GTK-WK2-Tests-EWS': [
             'configure-build',
-            'validate-patch',
+            'validate-change',
             'configuration',
             'clean-up-git-repo',
             'clean-and-update-working-directory',
@@ -89,7 +89,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
         ],
         'iOS-15-Build-EWS': [
             'configure-build',
-            'validate-patch',
+            'validate-change',
             'configuration',
             'clean-up-git-repo',
             'clean-and-update-working-directory',
@@ -102,7 +102,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
         ],
         'iOS-15-Simulator-Build-EWS': [
             'configure-build',
-            'validate-patch',
+            'validate-change',
             'configuration',
             'clean-up-git-repo',
             'clean-and-update-working-directory',
@@ -115,7 +115,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
         ],
         'iOS-15-Simulator-WK2-Tests-EWS': [
             'configure-build',
-            'validate-patch',
+            'validate-change',
             'configuration',
             'clean-up-git-repo',
             'clean-and-update-working-directory',
@@ -136,7 +136,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
         'macOS-AppleSilicon-Big-Sur-Debug-Build-EWS': [
             'configure-build',
             'check-patch-relevance',
-            'validate-patch',
+            'validate-change',
             'configuration',
             'clean-up-git-repo',
             'clean-and-update-working-directory',
@@ -149,7 +149,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
         ],
         'macOS-AppleSilicon-Big-Sur-Debug-WK2-Tests-EWS': [
             'configure-build',
-            'validate-patch',
+            'validate-change',
             'configuration',
             'clean-up-git-repo',
             'clean-and-update-working-directory',
@@ -169,7 +169,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
         ],
         'macOS-Catalina-Release-Build-EWS': [
             'configure-build',
-            'validate-patch',
+            'validate-change',
             'configuration',
             'clean-up-git-repo',
             'clean-and-update-working-directory',
@@ -183,7 +183,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
         'macOS-Catalina-Release-WK1-Tests-EWS': [
             'configure-build',
             'check-patch-relevance',
-            'validate-patch',
+            'validate-change',
             'configuration',
             'clean-up-git-repo',
             'clean-and-update-working-directory',
@@ -203,7 +203,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
         ],
         'macOS-Catalina-Release-WK2-Tests-EWS': [
             'configure-build',
-            'validate-patch',
+            'validate-change',
             'configuration',
             'clean-up-git-repo',
             'clean-and-update-working-directory',
@@ -224,7 +224,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
         'macOS-Release-WK2-Stress-Tests-EWS': [
             'configure-build',
             'find-modified-layout-tests',
-            'validate-patch',
+            'validate-change',
             'configuration',
             'clean-up-git-repo',
             'clean-and-update-working-directory',
@@ -242,7 +242,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
         ],
         'macOS-Catalina-Debug-Build-EWS': [
             'configure-build',
-            'validate-patch',
+            'validate-change',
             'configuration',
             'clean-up-git-repo',
             'clean-and-update-working-directory',
@@ -256,7 +256,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
         'macOS-Catalina-Debug-WK1-Tests-EWS': [
             'configure-build',
             'check-patch-relevance',
-            'validate-patch',
+            'validate-change',
             'configuration',
             'clean-up-git-repo',
             'clean-and-update-working-directory',
@@ -276,7 +276,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
         ],
         'watchOS-8-Build-EWS': [
             'configure-build',
-            'validate-patch',
+            'validate-change',
             'configuration',
             'clean-up-git-repo',
             'clean-and-update-working-directory',
@@ -289,7 +289,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
         ],
         'watchOS-8-Simulator-Build-EWS': [
             'configure-build',
-            'validate-patch',
+            'validate-change',
             'configuration',
             'clean-up-git-repo',
             'clean-and-update-working-directory',
@@ -302,7 +302,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
         ],
         'tvOS-15-Build-EWS': [
             'configure-build',
-            'validate-patch',
+            'validate-change',
             'configuration',
             'clean-up-git-repo',
             'clean-and-update-working-directory',
@@ -315,7 +315,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
         ],
         'tvOS-15-Simulator-Build-EWS': [
             'configure-build',
-            'validate-patch',
+            'validate-change',
             'configuration',
             'clean-up-git-repo',
             'clean-and-update-working-directory',
@@ -329,7 +329,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
         'Windows-EWS': [
             'configure-build',
             'check-patch-relevance',
-            'validate-patch',
+            'validate-change',
             'configuration',
             'clean-up-git-repo',
             'clean-and-update-working-directory',
@@ -339,13 +339,13 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'apply-patch',
             'kill-old-processes',
             'compile-webkit',
-            'validate-patch',
+            'validate-change',
             'layout-tests',
             'set-build-summary'
         ],
         'WinCairo-EWS': [
             'configure-build',
-            'validate-patch',
+            'validate-change',
             'configuration',
             'clean-up-git-repo',
             'clean-and-update-working-directory',
@@ -358,7 +358,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
         ],
         'WPE-EWS': [
             'configure-build',
-            'validate-patch',
+            'validate-change',
             'configuration',
             'clean-up-git-repo',
             'clean-and-update-working-directory',
@@ -373,7 +373,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
         'JSC-Tests-EWS': [
             'configure-build',
             'check-patch-relevance',
-            'validate-patch',
+            'validate-change',
             'configuration',
             'clean-up-git-repo',
             'clean-and-update-working-directory',
@@ -388,7 +388,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
         'JSC-MIPSEL-32bits-Build-EWS': [
             'configure-build',
             'check-patch-relevance',
-            'validate-patch',
+            'validate-change',
             'configuration',
             'clean-up-git-repo',
             'clean-and-update-working-directory',
@@ -402,7 +402,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
         'JSC-MIPSEL-32bits-Tests-EWS': [
             'configure-build',
             'check-patch-relevance',
-            'validate-patch',
+            'validate-change',
             'configuration',
             'clean-up-git-repo',
             'clean-and-update-working-directory',
@@ -418,7 +418,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
         'JSC-ARMv7-32bits-Build-EWS': [
             'configure-build',
             'check-patch-relevance',
-            'validate-patch',
+            'validate-change',
             'configuration',
             'clean-up-git-repo',
             'clean-and-update-working-directory',
@@ -432,7 +432,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
         'JSC-ARMv7-32bits-Tests-EWS': [
             'configure-build',
             'check-patch-relevance',
-            'validate-patch',
+            'validate-change',
             'configuration',
             'clean-up-git-repo',
             'clean-and-update-working-directory',
@@ -448,7 +448,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
         'JSC-i386-32bits-EWS': [
             'configure-build',
             'check-patch-relevance',
-            'validate-patch',
+            'validate-change',
             'configuration',
             'clean-up-git-repo',
             'clean-and-update-working-directory',
@@ -462,7 +462,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
         'Bindings-Tests-EWS': [
             'configure-build',
             'check-patch-relevance',
-            'validate-patch',
+            'validate-change',
             'configuration',
             'clean-up-git-repo',
             'clean-and-update-working-directory',
@@ -475,7 +475,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
         'WebKitPy-Tests-EWS': [
             'configure-build',
             'check-patch-relevance',
-            'validate-patch',
+            'validate-change',
             'configuration',
             'clean-up-git-repo',
             'clean-and-update-working-directory',
@@ -489,7 +489,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
         ],
         'WebKitPerl-Tests-EWS': [
             'configure-build',
-            'validate-patch',
+            'validate-change',
             'configuration',
             'clean-up-git-repo',
             'clean-and-update-working-directory',
@@ -501,7 +501,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
         ],
         'API-Tests-iOS-Simulator-EWS': [
             'configure-build',
-            'validate-patch',
+            'validate-change',
             'configuration',
             'clean-up-git-repo',
             'clean-and-update-working-directory',
@@ -516,7 +516,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
         ],
         'API-Tests-macOS-EWS': [
             'configure-build',
-            'validate-patch',
+            'validate-change',
             'configuration',
             'clean-up-git-repo',
             'clean-and-update-working-directory',
@@ -531,7 +531,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
         ],
         'API-Tests-GTK-EWS': [
             'configure-build',
-            'validate-patch',
+            'validate-change',
             'configuration',
             'clean-up-git-repo',
             'clean-and-update-working-directory',
@@ -548,7 +548,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
         'Services-EWS': [
             'configure-build',
             'check-patch-relevance',
-            'validate-patch',
+            'validate-change',
             'configuration',
             'clean-up-git-repo',
             'clean-and-update-working-directory',
@@ -564,7 +564,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
         ],
         'Commit-Queue': [
             'configure-build',
-            'validate-patch',
+            'validate-change',
             'validate-commiter-and-reviewer',
             'configuration',
             'clean-up-git-repo',
@@ -579,10 +579,10 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'kill-old-processes',
             'compile-webkit',
             'kill-old-processes',
-            'validate-patch',
+            'validate-change',
             'check-status-on-other-ewses',
             'layout-tests',
-            'validate-patch',
+            'validate-change',
             'clean-and-update-working-directory',
             'show-identifier',
             'update-working-directory',

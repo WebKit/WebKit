@@ -56,7 +56,7 @@ from steps import (AnalyzeAPITestsResults, AnalyzeCompileWebKitResults, AnalyzeJ
                    RunWebKitTestsWithoutPatch, RunWebKitTestsRedTree, RunWebKitTestsRepeatFailuresRedTree, RunWebKitTestsRepeatFailuresWithoutPatchRedTree,
                    RunWebKitTestsWithoutPatchRedTree, AnalyzeLayoutTestsResultsRedTree, TestWithFailureCount, ShowIdentifier,
                    Trigger, TransferToS3, UnApplyPatchIfRequired, UpdateWorkingDirectory, UploadBuiltProduct,
-                   UploadTestResults, ValidateChangeLogAndReviewer, ValidateCommiterAndReviewer, ValidatePatch, VerifyGitHubIntegrity)
+                   UploadTestResults, ValidateChangeLogAndReviewer, ValidateCommiterAndReviewer, ValidateChange, VerifyGitHubIntegrity)
 
 # Workaround for https://github.com/buildbot/buildbot/issues/4669
 from buildbot.test.fake.fakebuild import FakeBuild
@@ -4525,7 +4525,7 @@ class TestCreateLocalGITCommit(BuildStepMixinAdditions, unittest.TestCase):
         return rc
 
 
-class TestValidatePatch(BuildStepMixinAdditions, unittest.TestCase):
+class TestValidateChange(BuildStepMixinAdditions, unittest.TestCase):
     def setUp(self):
         return self.setUpBuildStep()
 
@@ -4543,28 +4543,81 @@ class TestValidatePatch(BuildStepMixinAdditions, unittest.TestCase):
                      "is_patch": 1,
                      "summary": "{}"}}'''.format(obsolete, title))
 
-    def test_skipped(self):
-        self.setupStep(ValidatePatch())
+    def get_pr(self, pr_number, title='Sample pull request', closed=False):
+        return dict(
+            number=pr_number,
+            state='closed' if closed else 'open',
+            title=title,
+            user=dict(login='JonWBedard'),
+            head=dict(
+                sha='7496f8ecc4cc8011f19c8cc1bc7b18fe4a88ad5c',
+                ref='eng/pull-request',
+                repo=dict(
+                    name='WebKit',
+                    full_name='JonWBedard/WebKit',
+                ),
+            ), base=dict(
+                sha='528b99575eebf7fa5b94f1fc51de81977f265005',
+                ref='main',
+                repo=dict(
+                    name='WebKit',
+                    full_name='WebKit/WebKit',
+                ),
+            ),
+        )
+
+    def test_skipped_patch(self):
+        self.setupStep(ValidateChange())
         self.setProperty('patch_id', '1234')
         self.setProperty('bug_id', '5678')
         self.setProperty('skip_validation', True)
-        self.expectOutcome(result=SKIPPED, state_string='Validated patch (skipped)')
+        self.expectOutcome(result=SKIPPED, state_string='Validated change (skipped)')
         return self.runStep()
 
-    def test_success(self):
-        self.setupStep(ValidatePatch(verifyBugClosed=False))
-        ValidatePatch.get_patch_json = lambda x, patch_id: self.get_patch()
+    def test_skipped_pr(self):
+        self.setupStep(ValidateChange())
+        self.setProperty('github.number', '1234')
+        self.setProperty('repository', 'https://github.com/WebKit/WebKit')
+        self.setProperty('skip_validation', True)
+        self.expectOutcome(result=SKIPPED, state_string='Validated change (skipped)')
+        return self.runStep()
+
+    def test_success_patch(self):
+        self.setupStep(ValidateChange(verifyBugClosed=False))
+        ValidateChange.get_patch_json = lambda x, patch_id: self.get_patch()
         self.setProperty('patch_id', '425806')
-        self.expectOutcome(result=SUCCESS, state_string='Validated patch')
+        self.expectOutcome(result=SUCCESS, state_string='Validated change')
+        rc = self.runStep()
+        self.assertEqual(self.getProperty('fast_commit_queue'), None, 'fast_commit_queue is unexpectedly set')
+        return rc
+
+    def test_success_pr(self):
+        self.setupStep(ValidateChange(verifyBugClosed=False))
+        ValidateChange.get_pr_json = lambda x, pull_request, repository_url=None: self.get_pr(pr_number=pull_request)
+        self.setProperty('github.number', '1234')
+        self.setProperty('repository', 'https://github.com/WebKit/WebKit')
+        self.setProperty('revision', '7496f8ecc4cc8011f19c8cc1bc7b18fe4a88ad5c')
+        self.expectOutcome(result=SUCCESS, state_string='Validated change')
         rc = self.runStep()
         self.assertEqual(self.getProperty('fast_commit_queue'), None, 'fast_commit_queue is unexpectedly set')
         return rc
 
     def test_obsolete_patch(self):
-        self.setupStep(ValidatePatch(verifyBugClosed=False))
-        ValidatePatch.get_patch_json = lambda x, patch_id: self.get_patch(obsolete=1)
+        self.setupStep(ValidateChange(verifyBugClosed=False))
+        ValidateChange.get_patch_json = lambda x, patch_id: self.get_patch(obsolete=1)
         self.setProperty('patch_id', '425806')
         self.expectOutcome(result=FAILURE, state_string='Patch 425806 is obsolete')
+        rc = self.runStep()
+        self.assertEqual(self.getProperty('fast_commit_queue'), None, 'fast_commit_queue is unexpectedly set')
+        return rc
+
+    def test_obsolete_pr(self):
+        self.setupStep(ValidateChange(verifyBugClosed=False))
+        ValidateChange.get_pr_json = lambda x, pull_request, repository_url=None: self.get_pr(pr_number=pull_request)
+        self.setProperty('github.number', '1234')
+        self.setProperty('repository', 'https://github.com/WebKit/WebKit')
+        self.setProperty('revision', '1ad60d45a112301f7b9f93dac06134524dae8480')
+        self.expectOutcome(result=FAILURE, state_string='Pull request 1234 (sha 1ad60d45) is obsolete')
         rc = self.runStep()
         self.assertEqual(self.getProperty('fast_commit_queue'), None, 'fast_commit_queue is unexpectedly set')
         return rc
@@ -4572,10 +4625,10 @@ class TestValidatePatch(BuildStepMixinAdditions, unittest.TestCase):
     def test_fast_cq_patches_trigger_fast_cq_mode(self):
         fast_cq_patch_titles = ('REVERT OF r1234', 'revert of r1234', '[fast-cq]Patch', '[FAST-cq] patch', 'fast-cq-patch', 'FAST-CQ Patch')
         for fast_cq_patch_title in fast_cq_patch_titles:
-            self.setupStep(ValidatePatch(verifyBugClosed=False))
-            ValidatePatch.get_patch_json = lambda x, patch_id: self.get_patch(title=fast_cq_patch_title)
+            self.setupStep(ValidateChange(verifyBugClosed=False))
+            ValidateChange.get_patch_json = lambda x, patch_id: self.get_patch(title=fast_cq_patch_title)
             self.setProperty('patch_id', '425806')
-            self.expectOutcome(result=SUCCESS, state_string='Validated patch')
+            self.expectOutcome(result=SUCCESS, state_string='Validated change')
             rc = self.runStep()
             self.assertEqual(self.getProperty('fast_commit_queue'), True, 'fast_commit_queue is not set, patch title: {}'.format(fast_cq_patch_title))
         return rc

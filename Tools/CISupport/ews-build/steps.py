@@ -54,9 +54,9 @@ EWS_URL = 'https://ews.webkit.org/'
 RESULTS_DB_URL = 'https://results.webkit.org/'
 WithProperties = properties.WithProperties
 Interpolate = properties.Interpolate
-BRANCH_PR_RE = re.compile(r'^refs/pull/(?P<id>\d+)/merge$')
 GITHUB_URL = 'https://github.com/'
 GITHUB_PROJECTS = ['WebKit/WebKit']
+HASH_LENGTH_TO_DISPLAY = 8
 
 
 class BufferLogHeaderObserver(logobserver.BufferLogObserver):
@@ -86,7 +86,95 @@ class GitHub(object):
             return ''
         if not pr_number or not isinstance(pr_number, int):
             return ''
-        return '{}pull/{}'.format(repository_url, pr_number)
+        return '{}/pull/{}'.format(repository_url, pr_number)
+
+    @classmethod
+    def api_url(cls, repository_url=None):
+        if not repository_url:
+            repository_url = '{}{}'.format(GITHUB_URL, GITHUB_PROJECTS[0])
+
+        if repository_url not in GitHub.repository_urls():
+            return ''
+        _, url_base = repository_url.split('://', 1)
+        host, path = url_base.split('/', 1)
+        return 'https://api.{}/repos/{}'.format(host, path)
+
+    @classmethod
+    def credentials(cls):
+        try:
+            passwords = json.load(open('passwords.json'))
+            return passwords.get('GITHUB_COM_USERNAME', None), passwords.get('GITHUB_COM_ACCESS_TOKEN', None)
+        except Exception as e:
+            print('Error reading GitHub credentials')
+            return None, None
+
+
+class GitHubMixin(object):
+    addURLs = False
+    pr_open_states = ['open']
+    pr_closed_states = ['closed']
+
+    def fetch_data_from_url_with_authentication(self, url):
+        response = None
+        try:
+            username, access_token = self.credentials()
+            auth = HTTPBasicAuth(username, access_token) if username and access_token else None
+            response = requests.get(
+                url, timeout=60, auth=auth,
+                headers=dict(Accept='application/vnd.github.v3+json'),
+            )
+            if response.status_code // 100 != 2:
+                self._addToLog('stdio', 'Accessed {url} with unexpected status code {status_code}.\n'.format(url=url, status_code=response.status_code))
+                return None
+        except Exception as e:
+            # Catching all exceptions here to safeguard access token.
+            self._addToLog('stdio', 'Failed to access {url}.\n'.format(url=url))
+            return None
+        return response
+
+    def get_pr_json(self, pr_number, repository_url=None):
+        api_url = GitHub.api_url(repository_url)
+        if not api_url:
+            return None
+
+        pr_url = '{}/pulls/{}'.format(api_url, pr_number)
+        content = self.fetch_data_from_url_with_authentication(pr_url)
+        if not content:
+            return None
+        try:
+            pr_json = content.json()
+        except Exception as e:
+            print('Failed to get pull request data from {}, error: {}'.format(pr_url, e))
+            return None
+        if not pr_json or len(pr_json) == 0:
+            return None
+        return pr_json
+
+    def _is_pr_closed(self, pr_number, repository_url=None):
+        if not pr_number:
+            self._addToLog('stdio', 'Skipping pull request status validation since pull request is None.\n')
+            return -1
+
+        pr_json = self.get_pr_json(pr_number, repository_url)
+        if not pr_json or not pr_json.get('state'):
+            self._addToLog('stdio', 'Unable to fetch pull request {}.\n'.format(pr_number))
+            return -1
+        if pr_json.get('state') in self.pr_closed_states:
+            return 1
+        return 0
+
+    def _is_pr_obsolete(self, pr_number, repository_url=None):
+        pr_json = self.get_pr_json(pr_number, repository_url)
+        if not pr_json:
+            self._addToLog('stdio', 'Unable to fetch pull request {}.\n'.format(pr_number))
+            return -1
+
+        pr_sha = pr_json.get('head', {}).get('sha', '')
+        if not pr_sha:
+            self._addToLog('stdio', 'Failed to fetch hash of pull request {}\n'.format(pr_number))
+            return -1
+
+        return 0 if pr_sha == self.getProperty('revision', '?') else 1
 
 
 class Contributors(object):
@@ -115,11 +203,15 @@ class Contributors(object):
             return {}, 'Failed to access {url}\n'.format(url=cls.url)
 
     @classmethod
-    def load(cls):
+    def load(cls, use_network=True):
         errors = []
-        contributors_json, error = cls.load_from_github()
-        if error:
-            errors.append(error)
+
+        if use_network:
+            contributors_json, error = cls.load_from_github()
+            if error:
+                errors.append(error)
+        else:
+            contributors_json = []
 
         if not contributors_json:
             contributors_json, error = cls.load_from_disk()
@@ -138,7 +230,7 @@ class Contributors(object):
                 contributors[github_username] = dict(
                     name=name,
                     status=value.get('status'),
-                    email=emails[0],
+                    email=emails[0].lower(),
                 )
         return contributors, errors
 
@@ -927,10 +1019,10 @@ class BugzillaMixin(object):
         return SUCCESS
 
 
-class ValidatePatch(buildstep.BuildStep, BugzillaMixin):
-    name = 'validate-patch'
-    description = ['validate-patch running']
-    descriptionDone = ['Validated patch']
+class ValidateChange(buildstep.BuildStep, BugzillaMixin, GitHubMixin):
+    name = 'validate-change'
+    description = ['validate-change running']
+    descriptionDone = ['Validated change']
     flunkOnFailure = True
     haltOnFailure = True
 
@@ -945,7 +1037,7 @@ class ValidatePatch(buildstep.BuildStep, BugzillaMixin):
     def getResultSummary(self):
         if self.results == FAILURE:
             return {'step': self.descriptionDone}
-        return super(ValidatePatch, self).getResultSummary()
+        return super(ValidateChange, self).getResultSummary()
 
     def doStepIf(self, step):
         return not self.getProperty('skip_validation', False)
@@ -959,54 +1051,105 @@ class ValidatePatch(buildstep.BuildStep, BugzillaMixin):
 
     def start(self):
         patch_id = self.getProperty('patch_id', '')
-        if not patch_id:
-            self._addToLog('stdio', 'No patch_id found. Unable to proceed without patch_id.\n')
-            self.descriptionDone = 'No patch id found'
+        pr_number = self.getProperty('github.number', '')
+
+        if not patch_id and not pr_number:
+            self._addToLog('stdio', 'No patch_id or pr_number found. Unable to proceed without one of them.\n')
+            self.descriptionDone = 'No change found'
             self.finished(FAILURE)
             return None
 
+        if patch_id and pr_number:
+            self._addToLog('stdio', 'Both patch_id and pr_number found. Unable to proceed with both.\n')
+            self.descriptionDone = 'Error: both PR and patch number found'
+            self.finished(FAILURE)
+            return None
+
+        if patch_id and not self.validate_bugzilla(patch_id):
+            return None
+        if pr_number and not self.validate_github(pr_number):
+            return None
+
+        if self.verifyBugClosed and patch_id:
+            self._addToLog('stdio', 'Bug is open.\n')
+        if self.verifyObsolete:
+            self._addToLog('stdio', 'Change is not obsolete.\n')
+        if self.verifyReviewDenied:
+            self._addToLog('stdio', 'Change has not been denied.\n')
+        if self.verifycqplus:
+            self._addToLog('stdio', 'Change is in commit queue.\n')
+            self._addToLog('stdio', 'Change has been reviewed.\n')
+        self.finished(SUCCESS)
+        return None
+
+    def validate_bugzilla(self, patch_id):
         bug_id = self.getProperty('bug_id', '') or self.get_bug_id_from_patch(patch_id)
 
         bug_closed = self._is_bug_closed(bug_id) if self.verifyBugClosed else 0
         if bug_closed == 1:
             self.skip_build('Bug {} is already closed'.format(bug_id))
-            return None
+            return False
 
         obsolete = self._is_patch_obsolete(patch_id) if self.verifyObsolete else 0
         if obsolete == 1:
             self.skip_build('Patch {} is obsolete'.format(patch_id))
-            return None
+            return False
 
         review_denied = self._is_patch_review_denied(patch_id) if self.verifyReviewDenied else 0
         if review_denied == 1:
             self.skip_build('Patch {} is marked r-'.format(patch_id))
-            return None
+            return False
 
         cq_plus = self._is_patch_cq_plus(patch_id) if self.verifycqplus else 1
         if cq_plus != 1:
             self.skip_build('Patch {} is not marked cq+.'.format(patch_id))
-            return None
+            return False
 
         acceptable_review_flag = self._does_patch_have_acceptable_review_flag(patch_id) if self.verifycqplus else 1
         if acceptable_review_flag != 1:
             self.skip_build('Patch {} does not have acceptable review flag.'.format(patch_id))
-            return None
+            return False
 
         if obsolete == -1 or review_denied == -1 or bug_closed == -1:
             self.finished(WARNINGS)
-            return None
+            return False
+        return True
 
-        if self.verifyBugClosed:
-            self._addToLog('stdio', 'Bug is open.\n')
-        if self.verifyObsolete:
-            self._addToLog('stdio', 'Patch is not obsolete.\n')
-        if self.verifyReviewDenied:
-            self._addToLog('stdio', 'Patch is not marked r-.\n')
-        if self.verifycqplus:
-            self._addToLog('stdio', 'Patch is marked cq+.\n')
-            self._addToLog('stdio', 'Patch have acceptable review flag.\n')
-        self.finished(SUCCESS)
-        return None
+    def validate_github(self, pr_number):
+        if not pr_number:
+            return False
+
+        repository_url = self.getProperty('repository', '')
+        title = self.getProperty('github.title', '')
+        owners = self.getProperty('owners', [])
+
+        if self.addURLs and title and repository_url:
+            self.addURL('[PR {}] {}'.format(pr_number, title), GitHub.pr_url(pr_number, repository_url))
+        if self.addURLs and owners:
+            contributors, errors = Contributors.load(use_network=False)
+            for error in errors:
+                print(error)
+                self._addToLog('stdio', error)
+            github_username = owners[0]
+            contributor = contributors.get(github_username, {})
+            display_name = contributor.get('email', github_username)
+            self.addURL('PR by: {}'.format(display_name), '{}{}'.format(GITHUB_URL, github_username))
+
+        pr_closed = self._is_pr_closed(pr_number, repository_url=repository_url) if self.verifyBugClosed else 0
+        if pr_closed == 1:
+            self.skip_build('Pull request {} is already closed'.format(pr_number))
+            return False
+
+        obsolete = self._is_pr_obsolete(pr_number, repository_url=repository_url) if self.verifyObsolete else 0
+        if obsolete == 1:
+            self.skip_build('Pull request {} (sha {}) is obsolete'.format(pr_number, self.getProperty('revision', '?')[:HASH_LENGTH_TO_DISPLAY]))
+            return False
+
+        if obsolete == -1 or pr_closed == -1:
+            self.finished(WARNINGS)
+            return False
+
+        return True
 
 
 class ValidateCommiterAndReviewer(buildstep.BuildStep):
@@ -1680,7 +1823,7 @@ class CompileWebKit(shell.Compile):
     def evaluateCommand(self, cmd):
         if cmd.didFail():
             self.setProperty('patchFailedToBuild', True)
-            steps_to_add = [UnApplyPatchIfRequired(), ValidatePatch(verifyBugClosed=False, addURLs=False)]
+            steps_to_add = [UnApplyPatchIfRequired(), ValidateChange(verifyBugClosed=False, addURLs=False)]
             platform = self.getProperty('platform')
             if platform == 'wpe':
                 steps_to_add.append(InstallWpeDependencies())
@@ -1960,9 +2103,9 @@ class RunJavaScriptCoreTests(shell.Test):
         else:
             self.setProperty('patchFailedTests', True)
             self.build.addStepsAfterCurrentStep([UnApplyPatchIfRequired(),
-                                                ValidatePatch(verifyBugClosed=False, addURLs=False),
+                                                ValidateChange(verifyBugClosed=False, addURLs=False),
                                                 CompileJSCWithoutPatch(),
-                                                ValidatePatch(verifyBugClosed=False, addURLs=False),
+                                                ValidateChange(verifyBugClosed=False, addURLs=False),
                                                 KillOldProcesses(),
                                                 RunJSCTestsWithoutPatch(),
                                                 AnalyzeJSCTestsResults()])
@@ -2385,7 +2528,7 @@ class RunWebKitTests(shell.Test):
                 ArchiveTestResults(),
                 UploadTestResults(),
                 ExtractTestResults(),
-                ValidatePatch(verifyBugClosed=False, addURLs=False),
+                ValidateChange(verifyBugClosed=False, addURLs=False),
                 KillOldProcesses(),
                 ReRunWebKitTests(),
             ])
@@ -2480,9 +2623,9 @@ class ReRunWebKitTests(RunWebKitTests):
                                                 UploadTestResults(identifier='rerun'),
                                                 ExtractTestResults(identifier='rerun'),
                                                 UnApplyPatchIfRequired(),
-                                                ValidatePatch(verifyBugClosed=False, addURLs=False),
+                                                ValidateChange(verifyBugClosed=False, addURLs=False),
                                                 CompileWebKitWithoutPatch(retry_build_on_failure=True),
-                                                ValidatePatch(verifyBugClosed=False, addURLs=False),
+                                                ValidateChange(verifyBugClosed=False, addURLs=False),
                                                 KillOldProcesses(),
                                                 RunWebKitTestsWithoutPatch()])
         return rc
@@ -2805,7 +2948,7 @@ class RunWebKitTestsRedTree(RunWebKitTests):
         rc = self.evaluateResult(cmd)
         next_steps = [ArchiveTestResults(), UploadTestResults(), ExtractTestResults()]
         if first_results_failing_tests:
-            next_steps.extend([ValidatePatch(verifyBugClosed=False, addURLs=False), KillOldProcesses(), RunWebKitTestsRepeatFailuresRedTree()])
+            next_steps.extend([ValidateChange(verifyBugClosed=False, addURLs=False), KillOldProcesses(), RunWebKitTestsRepeatFailuresRedTree()])
         elif first_results_flaky_tests:
             next_steps.append(AnalyzeLayoutTestsResultsRedTree())
         elif rc == SUCCESS or rc == WARNINGS:
@@ -2823,7 +2966,7 @@ class RunWebKitTestsRedTree(RunWebKitTests):
             if retry_count < AnalyzeLayoutTestsResultsRedTree.MAX_RETRY:
                 next_steps.append(AnalyzeLayoutTestsResultsRedTree())
             else:
-                next_steps.extend([UnApplyPatchIfRequired(), CompileWebKitWithoutPatch(retry_build_on_failure=True), ValidatePatch(verifyBugClosed=False, addURLs=False), RunWebKitTestsWithoutPatchRedTree()])
+                next_steps.extend([UnApplyPatchIfRequired(), CompileWebKitWithoutPatch(retry_build_on_failure=True), ValidateChange(verifyBugClosed=False, addURLs=False), RunWebKitTestsWithoutPatchRedTree()])
         if next_steps:
             self.build.addStepsAfterCurrentStep(next_steps)
         return rc
@@ -2853,8 +2996,8 @@ class RunWebKitTestsRepeatFailuresRedTree(RunWebKitTestsRedTree):
         next_steps = [ArchiveTestResults(), UploadTestResults(identifier='repeat-failures'), ExtractTestResults(identifier='repeat-failures')]
         if with_patch_repeat_failures_results_nonflaky_failures or with_patch_repeat_failures_timedout:
             self.setProperty('patchFailedTests', True)
-            next_steps.extend([ValidatePatch(verifyBugClosed=False, addURLs=False), KillOldProcesses(), UnApplyPatchIfRequired(), CompileWebKitWithoutPatch(retry_build_on_failure=True),
-                               ValidatePatch(verifyBugClosed=False, addURLs=False), RunWebKitTestsRepeatFailuresWithoutPatchRedTree()])
+            next_steps.extend([ValidateChange(verifyBugClosed=False, addURLs=False), KillOldProcesses(), UnApplyPatchIfRequired(), CompileWebKitWithoutPatch(retry_build_on_failure=True),
+                               ValidateChange(verifyBugClosed=False, addURLs=False), RunWebKitTestsRepeatFailuresWithoutPatchRedTree()])
         else:
             next_steps.append(AnalyzeLayoutTestsResultsRedTree())
         if next_steps:
@@ -3257,7 +3400,7 @@ class RunAPITests(TestWithFailureCount):
             self.build.results = SUCCESS
             self.build.buildFinished([message], SUCCESS)
         else:
-            self.build.addStepsAfterCurrentStep([ValidatePatch(verifyBugClosed=False, addURLs=False), KillOldProcesses(), ReRunAPITests()])
+            self.build.addStepsAfterCurrentStep([ValidateChange(verifyBugClosed=False, addURLs=False), KillOldProcesses(), ReRunAPITests()])
         return rc
 
 
@@ -3273,14 +3416,14 @@ class ReRunAPITests(RunAPITests):
             self.build.buildFinished([message], SUCCESS)
         else:
             self.setProperty('patchFailedTests', True)
-            steps_to_add = [UnApplyPatchIfRequired(), ValidatePatch(verifyBugClosed=False, addURLs=False)]
+            steps_to_add = [UnApplyPatchIfRequired(), ValidateChange(verifyBugClosed=False, addURLs=False)]
             platform = self.getProperty('platform')
             if platform == 'wpe':
                 steps_to_add.append(InstallWpeDependencies())
             elif platform == 'gtk':
                 steps_to_add.append(InstallGtkDependencies())
             steps_to_add.append(CompileWebKitWithoutPatch(retry_build_on_failure=True))
-            steps_to_add.append(ValidatePatch(verifyBugClosed=False, addURLs=False))
+            steps_to_add.append(ValidateChange(verifyBugClosed=False, addURLs=False))
             steps_to_add.append(KillOldProcesses())
             steps_to_add.append(RunAPITestsWithoutPatch())
             steps_to_add.append(AnalyzeAPITestsResults())

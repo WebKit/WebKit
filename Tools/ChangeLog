@@ -1,3 +1,44 @@
+2022-01-13  Jonathan Bedard  <jbedard@apple.com>
+
+        [EWS] Support pull-requests in ValidateChange
+        https://bugs.webkit.org/show_bug.cgi?id=234861
+        <rdar://problem/87114299>
+
+        Reviewed by Aakash Jain.
+
+        * CISupport/ews-build/factories.py:
+        (Factory.__init__): Rename ValidatePatch to ValidateChange.
+        (StyleFactory.__init__): Ditto.
+        (WatchListFactory.__init__): Ditto.
+        (WindowsFactory.__init__): Ditto.
+        (CommitQueueFactory.__init__): Ditto.
+        * CISupport/ews-build/factories_unittest.py:
+        (TestExpectedBuildSteps): Step name changed from validate-patch to validate-change.
+        * CISupport/ews-build/steps.py:
+        (GitHub.pr_url): Add missing /.
+        (GitHub.api_url): Convert a repository URL to the API url for that repository.
+        (GitHub.credentials): Access GitHub credentials from passwords.json.
+        (GitHubMixin):
+        (GitHubMixin.fetch_data_from_url_with_authentication):
+        (GitHubMixin.get_pr_json):
+        (GitHubMixin._is_pr_closed): Check if a pull-request is closed.
+        (GitHubMixin._is_pr_obsolete): Check if a pull-request is obsolete.
+        (ValidateChange): Renamed from ValidatePatch.
+        (ValidateChange.getResultSummary):
+        (ValidateChange.start): Invoke validate_bugzilla or validate_github.
+        (ValidateChange.validate_bugzilla): Check a bugzilla patch.
+        (ValidateChange.validate_github): Check a GitHub pull-request.
+        (CompileWebKit.evaluateCommand): Rename ValidatePatch to ValidateChange.
+        (RunJavaScriptCoreTests.evaluateCommand): Ditto.
+        (RunWebKitTests.evaluateCommand): Ditto.
+        (ReRunWebKitTests.evaluateCommand): Ditto.
+        (RunWebKitTestsRedTree.evaluateCommand): Ditto.
+        (RunWebKitTestsRepeatFailuresRedTree.evaluateCommand): Ditto.
+        (RunAPITests.evaluateCommand): Ditto.
+        (ReRunAPITests.evaluateCommand): Ditto.
+        (ValidatePatch): Renamed to ValidateChange.
+        * CISupport/ews-build/steps_unittest.py:
+
 2022-01-14  J Pascoe  <j_pascoe@apple.com>
 
         Expose way to encode CTAP commands with only the hash of ClientDataJSON

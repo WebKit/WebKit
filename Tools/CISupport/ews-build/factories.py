@@ -32,7 +32,7 @@ from steps import (ApplyPatch, ApplyWatchList, CheckOutSource, CheckOutSpecificR
                    RunEWSUnitTests, RunResultsdbpyTests, RunJavaScriptCoreTests, RunWebKit1Tests, RunWebKitPerlTests, RunWebKitPyPython2Tests,
                    RunWebKitPyPython3Tests, RunWebKitTests, RunWebKitTestsRedTree, RunWebKitTestsInStressMode, RunWebKitTestsInStressGuardmallocMode,
                    SetBuildSummary, ShowIdentifier, TriggerCrashLogSubmission, UpdateWorkingDirectory,
-                   ValidatePatch, ValidateChangeLogAndReviewer, ValidateCommiterAndReviewer, WaitForCrashCollection,
+                   ValidateChange, ValidateChangeLogAndReviewer, ValidateCommiterAndReviewer, WaitForCrashCollection,
                    InstallBuiltProduct, VerifyGitHubIntegrity)
 
 
@@ -46,7 +46,7 @@ class Factory(factory.BuildFactory):
             self.addStep(CheckPatchRelevance())
         if self.findModifiedLayoutTests:
             self.addStep(FindModifiedLayoutTests())
-        self.addStep(ValidatePatch())
+        self.addStep(ValidateChange())
         self.addStep(PrintConfiguration())
         self.addStep(CleanGitRepo())
         self.addStep(CheckOutSource())
@@ -63,7 +63,7 @@ class StyleFactory(factory.BuildFactory):
     def __init__(self, platform, configuration=None, architectures=None, triggers=None, remotes=None, additionalArguments=None, **kwargs):
         factory.BuildFactory.__init__(self)
         self.addStep(ConfigureBuild(platform=platform, configuration=configuration, architectures=architectures, buildOnly=False, triggers=triggers, remotes=remotes, additionalArguments=additionalArguments))
-        self.addStep(ValidatePatch())
+        self.addStep(ValidateChange())
         self.addStep(PrintConfiguration())
         self.addStep(CleanGitRepo())
         self.addStep(CheckOutSource())
@@ -78,7 +78,7 @@ class WatchListFactory(factory.BuildFactory):
     def __init__(self, platform, configuration=None, architectures=None, triggers=None, remotes=None, additionalArguments=None, **kwargs):
         factory.BuildFactory.__init__(self)
         self.addStep(ConfigureBuild(platform=platform, configuration=configuration, architectures=architectures, buildOnly=False, triggers=triggers, remotes=remotes, additionalArguments=additionalArguments))
-        self.addStep(ValidatePatch())
+        self.addStep(ValidateChange())
         self.addStep(PrintConfiguration())
         self.addStep(CleanGitRepo())
         self.addStep(CheckOutSource())
@@ -243,7 +243,7 @@ class WindowsFactory(Factory):
         Factory.__init__(self, platform=platform, configuration=configuration, architectures=architectures, buildOnly=False, triggers=triggers, additionalArguments=additionalArguments, checkRelevance=True)
         self.addStep(KillOldProcesses())
         self.addStep(CompileWebKit(skipUpload=True))
-        self.addStep(ValidatePatch(verifyBugClosed=False, addURLs=False))
+        self.addStep(ValidateChange(verifyBugClosed=False, addURLs=False))
         self.addStep(RunWebKit1Tests())
         self.addStep(SetBuildSummary())
 
@@ -285,7 +285,7 @@ class CommitQueueFactory(factory.BuildFactory):
     def __init__(self, platform, configuration=None, architectures=None, additionalArguments=None, **kwargs):
         factory.BuildFactory.__init__(self)
         self.addStep(ConfigureBuild(platform=platform, configuration=configuration, architectures=architectures, buildOnly=False, triggers=None, remotes=None, additionalArguments=additionalArguments))
-        self.addStep(ValidatePatch(verifycqplus=True))
+        self.addStep(ValidateChange(verifycqplus=True))
         self.addStep(ValidateCommiterAndReviewer())
         self.addStep(PrintConfiguration())
         self.addStep(CleanGitRepo(default_branch='master'))
@@ -300,10 +300,10 @@ class CommitQueueFactory(factory.BuildFactory):
         self.addStep(KillOldProcesses())
         self.addStep(CompileWebKit(skipUpload=True))
         self.addStep(KillOldProcesses())
-        self.addStep(ValidatePatch(addURLs=False, verifycqplus=True))
+        self.addStep(ValidateChange(addURLs=False, verifycqplus=True))
         self.addStep(CheckPatchStatusOnEWSQueues())
         self.addStep(RunWebKitTests())
-        self.addStep(ValidatePatch(addURLs=False, verifycqplus=True))
+        self.addStep(ValidateChange(addURLs=False, verifycqplus=True))
         self.addStep(CheckOutSource(repourl='https://git.webkit.org/git/WebKit-https'))
         self.addStep(ShowIdentifier())
         self.addStep(UpdateWorkingDirectory())
