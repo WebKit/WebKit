@@ -9,7 +9,24 @@
 /* Begin PBXBuildFile section */
 		1C60FF1614E6E3F7006CD77D /* localizedStrings.js in Resources */ = {isa = PBXBuildFile; fileRef = 1C60FF1314E6E35D006CD77D /* localizedStrings.js */; };
 		1C78EE1717611340002F6AA5 /* WebInspectorUI.c in Sources */ = {isa = PBXBuildFile; fileRef = 1C78EE1617611340002F6AA5 /* WebInspectorUI.c */; };
+		DDE9931A278D0D8000F60D26 /* libWebKitAdditions.a in Product Dependencies */ = {isa = PBXBuildFile; fileRef = DDE992FB278D078100F60D26 /* libWebKitAdditions.a */; };
+		DDE9931D278D0DA400F60D26 /* JavaScriptCore.framework in Product Dependencies */ = {isa = PBXBuildFile; fileRef = DDE9931C278D0D9900F60D26 /* JavaScriptCore.framework */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		DDE992FA278D076300F60D26 /* Product Dependencies */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 16;
+			files = (
+				DDE9931A278D0D8000F60D26 /* libWebKitAdditions.a in Product Dependencies */,
+				DDE9931D278D0DA400F60D26 /* JavaScriptCore.framework in Product Dependencies */,
+			);
+			name = "Product Dependencies";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		1C60FE2F14E5F3CD006CD77D /* Base.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Base.xcconfig; sourceTree = "<group>"; };
@@ -25,6 +42,8 @@
 		1C78EE1617611340002F6AA5 /* WebInspectorUI.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = WebInspectorUI.c; sourceTree = "<group>"; };
 		A1B89B8F221E021000EB4CEA /* SDKVariant.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = SDKVariant.xcconfig; sourceTree = "<group>"; };
 		A54C2257148B23DF00373FA3 /* WebInspectorUI.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WebInspectorUI.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		DDE992FB278D078100F60D26 /* libWebKitAdditions.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libWebKitAdditions.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		DDE9931C278D0D9900F60D26 /* JavaScriptCore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = JavaScriptCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
@@ -62,7 +81,9 @@
 		A54C224B148B23DE00373FA3 = {
 			isa = PBXGroup;
 			children = (
+				DDE9931C278D0D9900F60D26 /* JavaScriptCore.framework */,
 				1C60FE2E14E5F3CD006CD77D /* Configurations */,
+				DDE99320278D100000F60D26 /* Frameworks */,
 				A54C2258148B23DF00373FA3 /* Products */,
 				1C60FF1514E6E39B006CD77D /* Resources */,
 				1C60FFE014E79B0F006CD77D /* Scripts */,
@@ -79,6 +100,14 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		DDE99320278D100000F60D26 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				DDE992FB278D078100F60D26 /* libWebKitAdditions.a */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -86,6 +115,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = A54C226C148B23DF00373FA3 /* Build configuration list for PBXNativeTarget "WebInspectorUI" */;
 			buildPhases = (
+				DDE992FA278D076300F60D26 /* Product Dependencies */,
 				A54C2255148B23DF00373FA3 /* Resources */,
 				1C60FF1214E6D9AF006CD77D /* Copy User Interface Resources */,
 				1C78EE1417611302002F6AA5 /* Sources */,
@@ -147,7 +177,7 @@
 			name = "Copy User Interface Resources";
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "/usr/bin/perl \"${SRCROOT}/Scripts/copy-user-interface-resources.pl\"";
+			shellScript = "/usr/bin/perl \"${SRCROOT}/Scripts/copy-user-interface-resources.pl\"\n";
 		};
 		6577FFC9276ACA680011AEC8 /* Create Symlink to Alt Root Path */ = {
 			isa = PBXShellScriptBuildPhase;

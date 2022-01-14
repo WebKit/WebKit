@@ -1,3 +1,14 @@
+2022-01-13  Elliott Williams  <emw@apple.com>
+
+        [XCBuild] Add "product dependencies" which influence workspace build order
+        https://bugs.webkit.org/show_bug.cgi?id=235094
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Configurations/Base.xcconfig: Add EXCLUDED_SOURCE_FILE_NAMES
+        * Configurations/WTF.xcconfig: Inherit EXCLUDED_SOURCE_FILE_NAMES
+        * WTF.xcodeproj/project.pbxproj: Add Product Dependencies
+
 2022-01-12  Mark Lam  <mark.lam@apple.com>
 
         [Re-landing] Update hashThreadState() to exclude __opaque_flags.

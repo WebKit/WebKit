@@ -76,6 +76,7 @@
 			isa = PBXAggregateTarget;
 			buildConfigurationList = C0CE72891247E68600BC0EC4 /* Build configuration list for PBXAggregateTarget "Derived Sources" */;
 			buildPhases = (
+				DDB04F3C278E55D0008D3678 /* Product Dependencies */,
 				C0CE72841247E66800BC0EC4 /* Generate Derived Sources */,
 			);
 			dependencies = (
@@ -1922,6 +1923,8 @@
 		CEE4AE2B1A5DCF430002F49B /* UIKitSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = CEE4AE2A1A5DCF430002F49B /* UIKitSPI.h */; };
 		D3B9484711FF4B6500032B39 /* WebPopupMenu.h in Headers */ = {isa = PBXBuildFile; fileRef = D3B9484311FF4B6500032B39 /* WebPopupMenu.h */; };
 		D3B9484911FF4B6500032B39 /* WebSearchPopupMenu.h in Headers */ = {isa = PBXBuildFile; fileRef = D3B9484511FF4B6500032B39 /* WebSearchPopupMenu.h */; };
+		DDB04F3F278E55F1008D3678 /* JavaScriptCore.framework in Product Dependencies */ = {isa = PBXBuildFile; fileRef = 1AA1C7DE100E846E0078DEBC /* JavaScriptCore.framework */; };
+		DDE992F6278D071F00F60D26 /* libWebKitAdditions.a in Product Dependencies */ = {isa = PBXBuildFile; fileRef = DDE992F4278D06D900F60D26 /* libWebKitAdditions.a */; };
 		DF0C5F28252ECB8E00D921DB /* WKDownload.h in Headers */ = {isa = PBXBuildFile; fileRef = DF0C5F24252ECB8D00D921DB /* WKDownload.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DF0C5F2A252ECB8E00D921DB /* WKDownloadDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = DF0C5F26252ECB8E00D921DB /* WKDownloadDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DF0C5F2B252ED44000D921DB /* WKDownloadInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = DF0C5F25252ECB8E00D921DB /* WKDownloadInternal.h */; };
@@ -2396,6 +2399,28 @@
 				A78CCDDB193AC9F8005ECC25 /* com.apple.WebKit.Networking.sb in CopyFiles */,
 				57EFC77E2550EB8600F9477D /* com.apple.WebKit.WebAuthn.sb in CopyFiles */,
 			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		DDB04F3C278E55D0008D3678 /* Product Dependencies */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 16;
+			files = (
+				DDB04F3F278E55F1008D3678 /* JavaScriptCore.framework in Product Dependencies */,
+			);
+			name = "Product Dependencies";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		DDE992F2278D05FA00F60D26 /* Product Dependencies */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 16;
+			files = (
+				DDE992F6278D071F00F60D26 /* libWebKitAdditions.a in Product Dependencies */,
+			);
+			name = "Product Dependencies";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
@@ -6256,6 +6281,7 @@
 		D3B9484311FF4B6500032B39 /* WebPopupMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebPopupMenu.h; sourceTree = "<group>"; };
 		D3B9484411FF4B6500032B39 /* WebSearchPopupMenu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebSearchPopupMenu.cpp; sourceTree = "<group>"; };
 		D3B9484511FF4B6500032B39 /* WebSearchPopupMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebSearchPopupMenu.h; sourceTree = "<group>"; };
+		DDE992F4278D06D900F60D26 /* libWebKitAdditions.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libWebKitAdditions.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		DF0C5F23252ECB8D00D921DB /* WKDownload.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKDownload.mm; sourceTree = "<group>"; };
 		DF0C5F24252ECB8D00D921DB /* WKDownload.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKDownload.h; sourceTree = "<group>"; };
 		DF0C5F25252ECB8E00D921DB /* WKDownloadInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKDownloadInternal.h; sourceTree = "<group>"; };
@@ -9713,6 +9739,7 @@
 		5750F3292032D4E300389347 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				DDE992F4278D06D900F60D26 /* libWebKitAdditions.a */,
 				57A9FF15252C6AEF006A2040 /* libWTF.a */,
 				5750F32A2032D4E500389347 /* LocalAuthentication.framework */,
 				570DAAB0230273D200E8FC04 /* NearField.framework */,
@@ -14164,6 +14191,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 1DEB91AD08733DA50010E9CD /* Build configuration list for PBXNativeTarget "WebKit" */;
 			buildPhases = (
+				DDE992F2278D05FA00F60D26 /* Product Dependencies */,
 				1ADAE12F1919A90C00F48E21 /* Update Info.plist with version information */,
 				1A07D2F51919AA8A00ECDA16 /* Make Frameworks Symbolic Link */,
 				8DC2EF500486A6940098B216 /* Headers */,

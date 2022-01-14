@@ -46,6 +46,7 @@
 			isa = PBXAggregateTarget;
 			buildConfigurationList = 53B4BD0A1F68AF8900D2BEA3 /* Build configuration list for PBXAggregateTarget "Generate Unified Sources" */;
 			buildPhases = (
+				DDE99323278E4CCF00F60D26 /* Product Dependencies */,
 				53B4BD091F68AF8900D2BEA3 /* Generate Unified Sources */,
 			);
 			dependencies = (
@@ -76,6 +77,7 @@
 			isa = PBXAggregateTarget;
 			buildConfigurationList = 65788AA218B409EB00C189FF /* Build configuration list for PBXAggregateTarget "Offline Assembler" */;
 			buildPhases = (
+				DDE9930C278D083D00F60D26 /* Product Dependencies */,
 				65788AA018B409EB00C189FF /* Offline Assemble */,
 			);
 			dependencies = (
@@ -89,6 +91,7 @@
 			isa = PBXAggregateTarget;
 			buildConfigurationList = 65FB3F7709D11EBD00F49DEB /* Build configuration list for PBXAggregateTarget "Derived Sources" */;
 			buildPhases = (
+				DDE99311278D088800F60D26 /* Product Dependencies */,
 				65FB3F6509D11E9100F49DEB /* Generate Derived Sources */,
 				374F95C9205F9975002BF68F /* Make libWTF.a Symbolic Link */,
 			);
@@ -1605,7 +1608,6 @@
 		A7F9935F0FD7325100A0B2D0 /* JSONObject.h in Headers */ = {isa = PBXBuildFile; fileRef = A7F9935D0FD7325100A0B2D0 /* JSONObject.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A7FB61001040C38B0017A286 /* PropertyDescriptor.h in Headers */ = {isa = PBXBuildFile; fileRef = A7FB604B103F5EAB0017A286 /* PropertyDescriptor.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A7FCC26D17A0B6AA00786D1A /* FTLSwitchCase.h in Headers */ = {isa = PBXBuildFile; fileRef = A7FCC26C17A0B6AA00786D1A /* FTLSwitchCase.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		A8A4748E151A8306004123FF /* libWTF.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A8A4748D151A8306004123FF /* libWTF.a */; };
 		AD00659E1ECAC812000CA926 /* WasmLimits.h in Headers */ = {isa = PBXBuildFile; fileRef = AD00659D1ECAC7FE000CA926 /* WasmLimits.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		AD2FCBE31DB58DAD00B3E736 /* JSWebAssemblyCompileError.h in Headers */ = {isa = PBXBuildFile; fileRef = AD2FCBA71DB58DA400B3E736 /* JSWebAssemblyCompileError.h */; };
 		AD2FCBE51DB58DAD00B3E736 /* JSWebAssemblyInstance.h in Headers */ = {isa = PBXBuildFile; fileRef = AD2FCBA91DB58DA400B3E736 /* JSWebAssemblyInstance.h */; };
@@ -1818,6 +1820,10 @@
 		DCF3D56D1CD29476003D5C65 /* LazyPropertyInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = DCF3D5681CD29468003D5C65 /* LazyPropertyInlines.h */; };
 		DCFDFBD91D1F5D9B00FE3D72 /* B3BottomProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = DCFDFBD71D1F5D9800FE3D72 /* B3BottomProvider.h */; };
 		DCFDFBDA1D1F5D9E00FE3D72 /* B3TypeMap.h in Headers */ = {isa = PBXBuildFile; fileRef = DCFDFBD81D1F5D9800FE3D72 /* B3TypeMap.h */; };
+		DDB04F41278E569A008D3678 /* libWTF.a in Product Dependencies */ = {isa = PBXBuildFile; fileRef = 1498CAD3214656C400710879 /* libWTF.a */; };
+		DDB04F42278E56A2008D3678 /* libWTF.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1498CAD3214656C400710879 /* libWTF.a */; };
+		DDE99310278D087D00F60D26 /* libWebKitAdditions.a in Product Dependencies */ = {isa = PBXBuildFile; fileRef = DDE9930E278D086600F60D26 /* libWebKitAdditions.a */; };
+		DDE99312278D089000F60D26 /* libWebKitAdditions.a in Product Dependencies */ = {isa = PBXBuildFile; fileRef = DDE9930E278D086600F60D26 /* libWebKitAdditions.a */; };
 		DE26E9031CB5DD0500D2BE82 /* BuiltinExecutableCreator.h in Headers */ = {isa = PBXBuildFile; fileRef = DE26E9021CB5DD0500D2BE82 /* BuiltinExecutableCreator.h */; };
 		DEA7E2451BBC677F00D78440 /* JSTypedArrayViewPrototype.h in Headers */ = {isa = PBXBuildFile; fileRef = 53917E7C1B791106000EBD33 /* JSTypedArrayViewPrototype.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DFBC2CA625E6D5B90081BDD1 /* SymbolStubsForSafariCompatibility.mm in Sources */ = {isa = PBXBuildFile; fileRef = DFBC2CA525E6D5790081BDD1 /* SymbolStubsForSafariCompatibility.mm */; };
@@ -2404,6 +2410,39 @@
 				5DBB1525131D0BD70056AD36 /* minidom.js in Copy Support Script */,
 			);
 			name = "Copy Support Script";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		DDE9930C278D083D00F60D26 /* Product Dependencies */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 16;
+			files = (
+				DDE99310278D087D00F60D26 /* libWebKitAdditions.a in Product Dependencies */,
+			);
+			name = "Product Dependencies";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		DDE99311278D088800F60D26 /* Product Dependencies */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 16;
+			files = (
+				DDE99312278D089000F60D26 /* libWebKitAdditions.a in Product Dependencies */,
+			);
+			name = "Product Dependencies";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		DDE99323278E4CCF00F60D26 /* Product Dependencies */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 16;
+			files = (
+				DDB04F41278E569A008D3678 /* libWTF.a in Product Dependencies */,
+			);
+			name = "Product Dependencies";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
@@ -4878,7 +4917,6 @@
 		A7FB60A3103F7DC20017A286 /* PropertyDescriptor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PropertyDescriptor.cpp; sourceTree = "<group>"; };
 		A7FCC26C17A0B6AA00786D1A /* FTLSwitchCase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FTLSwitchCase.h; path = ftl/FTLSwitchCase.h; sourceTree = "<group>"; };
 		A7FF647A18C52E8500B55307 /* SpillRegistersMode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SpillRegistersMode.h; sourceTree = "<group>"; };
-		A8A4748D151A8306004123FF /* libWTF.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; name = libWTF.a; path = DerivedSources/JavaScriptCore/libWTF.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		A8E894310CD0602400367179 /* JSCallbackObjectFunctions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCallbackObjectFunctions.h; sourceTree = "<group>"; };
 		A8E894330CD0603F00367179 /* JSGlobalObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSGlobalObject.h; sourceTree = "<group>"; };
 		AD00659D1ECAC7FE000CA926 /* WasmLimits.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WasmLimits.h; sourceTree = "<group>"; };
@@ -5160,6 +5198,7 @@
 		DCF3D5681CD29468003D5C65 /* LazyPropertyInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LazyPropertyInlines.h; sourceTree = "<group>"; };
 		DCFDFBD71D1F5D9800FE3D72 /* B3BottomProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = B3BottomProvider.h; path = b3/B3BottomProvider.h; sourceTree = "<group>"; };
 		DCFDFBD81D1F5D9800FE3D72 /* B3TypeMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = B3TypeMap.h; path = b3/B3TypeMap.h; sourceTree = "<group>"; };
+		DDE9930E278D086600F60D26 /* libWebKitAdditions.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libWebKitAdditions.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		DE26E9021CB5DD0500D2BE82 /* BuiltinExecutableCreator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BuiltinExecutableCreator.h; sourceTree = "<group>"; };
 		DE26E9061CB5DD9600D2BE82 /* BuiltinExecutableCreator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BuiltinExecutableCreator.cpp; sourceTree = "<group>"; };
 		DE5A09FF1BA3AC3E003D4424 /* IntrinsicEmitter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IntrinsicEmitter.cpp; sourceTree = "<group>"; };
@@ -5781,8 +5820,8 @@
 				A731B25A130093880040A7FA /* Foundation.framework in Frameworks */,
 				932F5BD70822A1C700736975 /* libicucore.dylib in Frameworks */,
 				932F5BD60822A1C700736975 /* libobjc.dylib in Frameworks */,
-				A8A4748E151A8306004123FF /* libWTF.a in Frameworks */,
 				A5098B041C16AA0200087797 /* Security.framework in Frameworks */,
+				DDB04F42278E56A2008D3678 /* libWTF.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5889,8 +5928,8 @@
 				5D5D8AD00E0D0EBE00F9C692 /* libedit.dylib */,
 				9322A00306C341D3009067BB /* libicucore.dylib */,
 				51F0EC0705C86C9A00E6DF1B /* libobjc.dylib */,
+				DDE9930E278D086600F60D26 /* libWebKitAdditions.a */,
 				1498CAD3214656C400710879 /* libWTF.a */,
-				A8A4748D151A8306004123FF /* libWTF.a */,
 				371D842C17C98B6E00ECF994 /* libz.dylib */,
 				A5098B031C16AA0200087797 /* Security.framework */,
 			);

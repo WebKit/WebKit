@@ -1,3 +1,13 @@
+2022-01-13  Elliott Williams  <emw@apple.com>
+
+        [XCBuild] Add "product dependencies" which influence workspace build order
+        https://bugs.webkit.org/show_bug.cgi?id=235094
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Configurations/WebKit.xcconfig: Add EXCLUDED_SOURCE_FILE_NAMES
+        * WebKit.xcodeproj/project.pbxproj: Add Product Dependencies
+
 2022-01-13  Tim Horton  <timothy_horton@apple.com>
 
         Sometimes cannot scroll after using internal trackpad

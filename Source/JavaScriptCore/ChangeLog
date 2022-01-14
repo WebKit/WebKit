@@ -1,3 +1,31 @@
+2022-01-13  Elliott Williams  <emw@apple.com>
+
+        [XCBuild] Add "product dependencies" which influence workspace build order
+        https://bugs.webkit.org/show_bug.cgi?id=235094
+
+        Some ancillary targets (e.g. script-only targets like Derived Sources) do not have implicit
+        dependencies visible to Xcode. In workspace builds, we need to give XCBuild additional
+        information to ensure that they always run after their dependencies.
+
+        This patch adds "Product Dependencies" phases, which are Copy Files phases that copy the
+        _product_ of another dependency. The product names are also added to
+        EXCLUDED_SOURCE_FILE_NAMES, making the actual copy a no-op, but these phases give XCBuild
+        enough metadata to infer the relationship between targets.
+
+        For example, JavaScriptCore's "Generate Unified Sources" target depends on headers from WTF,
+        so it lists libWTF.a in its Product Dependencies. Xcode sees the relationship between the
+        target doing the copy (Generate Unified Sources) and the target which produces the product
+        (WTF) and schedules them accordingly.
+
+        Because these dependencies are _implicit_ and the copy phases are no-ops, they do not
+        influence command-line or production builds where each project is built separately.
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Configurations/Base.xcconfig: Add EXCLUDED_SOURCE_FILE_NAMES
+        * Configurations/JavaScriptCore.xcconfig: Inherit EXCLUDED_SOURCE_FILE_NAMES
+        * JavaScriptCore.xcodeproj/project.pbxproj: Add Product Dependencies
+
 2022-01-13  Tim Horton  <timothy_horton@apple.com>
 
         Fix a few Objective-C object leaks due to early returns in `init`
