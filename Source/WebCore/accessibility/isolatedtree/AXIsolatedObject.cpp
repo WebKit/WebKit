@@ -76,11 +76,11 @@ void AXIsolatedObject::initializeAttributeData(AXCoreObject& coreObject, bool is
     setProperty(AXPropertyName::AccessibilityDescription, object.accessibilityDescription().isolatedCopy());
 
     // For all objects besides the root, the ancestry flags should've been set by now.
-    ASSERT(isRoot ? true : object.ancestorFlagsAreInitialized());
-    auto ancestorFlags = object.ancestorFlags();
-    // Only store the object's ancestor flags if any are set (excluding the "is initialized" flag).
-    if (ancestorFlags ^ AXAncestorFlag::FlagsInitialized)
+    ASSERT(isRoot || object.ancestorFlagsAreInitialized());
+    if (object.ancestorFlagsAreInitialized())
         setProperty(AXPropertyName::AncestorFlags, object.ancestorFlags());
+    else
+        setProperty(AXPropertyName::AncestorFlags, object.computeAncestorFlagsWithTraversal());
 
     setProperty(AXPropertyName::BoundingBoxRect, object.boundingBoxRect());
     setProperty(AXPropertyName::ElementRect, object.elementRect());

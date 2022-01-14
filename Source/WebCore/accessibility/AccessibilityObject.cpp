@@ -146,6 +146,19 @@ OptionSet<AXAncestorFlag> AccessibilityObject::computeAncestorFlags() const
     return computedFlags;
 }
 
+OptionSet<AXAncestorFlag> AccessibilityObject::computeAncestorFlagsWithTraversal() const
+{
+    // If this object's flags are initialized, this traversal is unnecessary. Use AccessibilityObject::ancestorFlags() instead.
+    ASSERT(!ancestorFlagsAreInitialized());
+
+    OptionSet<AXAncestorFlag> computedFlags;
+    computedFlags.set(AXAncestorFlag::FlagsInitialized, true);
+    Accessibility::enumerateAncestors<AccessibilityObject>(*this, false, [&] (const AccessibilityObject& ancestor) {
+        computedFlags.add(ancestor.computeAncestorFlags());
+    });
+    return computedFlags;
+}
+
 void AccessibilityObject::initializeAncestorFlags(const OptionSet<AXAncestorFlag>& flags)
 {
     m_ancestorFlags.set(AXAncestorFlag::FlagsInitialized, true);

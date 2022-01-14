@@ -94,7 +94,10 @@ public:
 
     void addAncestorFlags(const OptionSet<AXAncestorFlag>& flags) { m_ancestorFlags.add(flags); }
     bool ancestorFlagsAreInitialized() const { return m_ancestorFlags.contains(AXAncestorFlag::FlagsInitialized); }
+    // Computes the flags that this object matches (no traversal is done).
     OptionSet<AXAncestorFlag> computeAncestorFlags() const;
+    // Computes the flags that this object and all ancestors match, traversing all the way to the root.
+    OptionSet<AXAncestorFlag> computeAncestorFlagsWithTraversal() const;
     void initializeAncestorFlags(const OptionSet<AXAncestorFlag>&);
     bool hasAncestorMatchingFlag(AXAncestorFlag) const;
     bool matchesAncestorFlag(AXAncestorFlag) const;

@@ -1641,6 +1641,16 @@ T* findAncestor(const T& object, bool includeSelf, const F& matches)
 void findMatchingObjects(AccessibilitySearchCriteria const&, AXCoreObject::AccessibilityChildrenVector&);
 
 template<typename T, typename F>
+void enumerateAncestors(const T& object, bool includeSelf, const F& lambda)
+{
+    if (includeSelf)
+        lambda(object);
+
+    if (auto* parent = object.parentObject())
+        enumerateAncestors(*parent, true, lambda);
+}
+
+template<typename T, typename F>
 void enumerateDescendants(T& object, bool includeSelf, const F& lambda)
 {
     if (includeSelf)
