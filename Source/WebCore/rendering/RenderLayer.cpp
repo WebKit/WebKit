@@ -1559,35 +1559,39 @@ void RenderLayer::updateDescendantDependentFlags()
     }
 
     if (m_visibleContentStatusDirty) {
-        if (renderer().style().visibility() == Visibility::Visible)
-            m_hasVisibleContent = true;
-        else {
-            // layer may be hidden but still have some visible content, check for this
-            m_hasVisibleContent = false;
-            RenderObject* r = renderer().firstChild();
-            while (r) {
-                if (r->style().visibility() == Visibility::Visible && !r->hasLayer()) {
-                    m_hasVisibleContent = true;
-                    break;
-                }
-                RenderObject* child = nullptr;
-                if (!r->hasLayer() && (child = r->firstChildSlow()))
-                    r = child;
-                else if (r->nextSibling())
-                    r = r->nextSibling();
-                else {
-                    do {
-                        r = r->parent();
-                        if (r == &renderer())
-                            r = nullptr;
-                    } while (r && !r->nextSibling());
-                    if (r)
-                        r = r->nextSibling();
-                }
-            }
-        }    
-        m_visibleContentStatusDirty = false; 
+        m_hasVisibleContent = computeHasVisibleContent();
+        m_visibleContentStatusDirty = false;
     }
+}
+
+bool RenderLayer::computeHasVisibleContent() const
+{
+    if (renderer().style().visibility() == Visibility::Visible)
+        return true;
+
+    // Layer's renderer has visibility:hidden, but some non-layer child may have visibility:visible.
+    RenderObject* r = renderer().firstChild();
+    while (r) {
+        if (r->style().visibility() == Visibility::Visible && !r->hasLayer())
+            return true;
+
+        RenderObject* child = nullptr;
+        if (!r->hasLayer() && (child = r->firstChildSlow()))
+            r = child;
+        else if (r->nextSibling())
+            r = r->nextSibling();
+        else {
+            do {
+                r = r->parent();
+                if (r == &renderer())
+                    r = nullptr;
+            } while (r && !r->nextSibling());
+            if (r)
+                r = r->nextSibling();
+        }
+    }
+
+    return false;
 }
 
 void RenderLayer::dirty3DTransformedDescendantStatus()
