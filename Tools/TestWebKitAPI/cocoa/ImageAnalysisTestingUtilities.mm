@@ -111,6 +111,9 @@
 
 @interface TestVKImageAnalysis : NSObject
 - (instancetype)initWithLines:(NSArray<VKWKLineInfo *> *)lines;
+#if HAVE(VK_IMAGE_ANALYSIS_FOR_MACHINE_READABLE_CODES)
+@property (nonatomic, weak) UIViewController *presentingViewControllerForMrcAction;
+#endif
 @end
 
 @implementation TestVKImageAnalysis {
@@ -129,6 +132,12 @@
 - (NSArray<VKWKLineInfo *> *)allLines
 {
     return _lines.get();
+}
+
+- (BOOL)hasResultsForAnalysisTypes:(VKAnalysisTypes)analysisTypes
+{
+    // We only simulate text results for the time being.
+    return analysisTypes == VKAnalysisTypeText && [_lines count];
 }
 
 @end

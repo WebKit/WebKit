@@ -1,3 +1,48 @@
+2022-01-14  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Avoid redundant text analysis requests when long pressing inside an image that contains Live Text
+        https://bugs.webkit.org/show_bug.cgi?id=235129
+        rdar://87366539
+
+        Reviewed by Tim Horton.
+
+        When long pressing over a non-Live-Text part of an image that otherwise contains Live Text, we currently trigger
+        Live Text analysis on the image a second time and re-inject the same text recognition results into the image
+        element. In addition to being unnecessary, this extra text analysis operation causes regular Live Text results
+        to be injected into images that already contain "block"-style recognized text results, replacing the blocks in
+        the process.
+
+        Address this by adding an optimization to avoid this unnecessary Live Text analysis and injection. See below for
+        more details.
+
+        Test: ImageAnalysisTests.AvoidRedundantTextRecognitionRequests
+
+        * Shared/ios/InteractionInformationAtPosition.h:
+        * Shared/ios/InteractionInformationAtPosition.mm:
+        (WebKit::InteractionInformationAtPosition::encode const):
+        (WebKit::InteractionInformationAtPosition::decode):
+
+        Add a new `elementContainsImageOverlay` bit to position information.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView imageAnalysisGestureDidBegin:]):
+
+        In the case where the image already contains an overlay, short-circuit logic to perform text analysis and inject
+        the results into the image, and instead directly call into the new helper method below to compute visual look up
+        results and invoke pending context menu completion handler blocks. We pass `YES` for `hasTextResults` here
+        because we know that the image already contains recognized text, due to the `elementContainsImageOverlay` being
+        set.
+
+        (-[WKContentView _completeImageAnalysisRequestForContextMenu:requestIdentifier:hasTextResults:]):
+
+        Factor out logic for requesting visual look up results on the image into a separate helper method.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::videoPositionInformation):
+        (WebKit::imagePositionInformation):
+
+        Set the `elementContainsImageOverlay` bit (see above).
+
 2022-01-14  Per Arne Vollan  <pvollan@apple.com>
 
         Inject Launch Services database before NSApplication is initialized

@@ -2780,6 +2780,8 @@ static std::optional<std::pair<RenderImage&, Image&>> imageRendererAndImage(Elem
 
 static void videoPositionInformation(WebPage& page, HTMLVideoElement& element, const InteractionInformationRequest& request, InteractionInformationAtPosition& info)
 {
+    info.elementContainsImageOverlay = ImageOverlay::hasOverlay(element);
+
     if (!element.paused())
         return;
 
@@ -2820,6 +2822,7 @@ static void imagePositionInformation(WebPage& page, Element& element, const Inte
     info.isImage = true;
     info.imageURL = element.document().completeURL(renderImage.cachedImage()->url().string());
     info.isAnimatedImage = image.isAnimated();
+    info.elementContainsImageOverlay = is<HTMLElement>(element) && ImageOverlay::hasOverlay(downcast<HTMLElement>(element));
 
     if (request.includeSnapshot || request.includeImageData)
         info.image = createShareableBitmap(renderImage, { screenSize() * page.corePage()->deviceScaleFactor(), AllowAnimatedImages::Yes, UseSnapshotForTransparentImages::Yes });

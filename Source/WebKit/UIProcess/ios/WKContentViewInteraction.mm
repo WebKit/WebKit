@@ -10395,6 +10395,11 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
         auto requestForTextSelection = [strongSelf createImageAnalyzerRequest:VKAnalysisTypeText image:cgImage.get()];
         auto requestForContextMenu = [strongSelf createImageAnalyzerRequest:VKAnalysisTypeVisualSearch | VKAnalysisTypeMachineReadableCode | VKAnalysisTypeAppClip image:cgImage.get()];
 
+        if (information.elementContainsImageOverlay) {
+            [strongSelf _completeImageAnalysisRequestForContextMenu:requestForContextMenu.get() requestIdentifier:requestIdentifier hasTextResults:YES];
+            return;
+        }
+
         auto textAnalysisStartTime = MonotonicTime::now();
         [[strongSelf imageAnalyzer] processRequest:requestForTextSelection.get() progressHandler:nil completionHandler:[requestIdentifier = WTFMove(requestIdentifier), weakSelf, elementContext, requestLocation, requestForContextMenu, gestureDeferralToken, textAnalysisStartTime] (VKImageAnalysis *result, NSError *error) mutable {
             auto strongSelf = weakSelf.get();
@@ -10422,37 +10427,42 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
                     return;
                 }
 
-                auto visualSearchAnalysisStartTime = MonotonicTime::now();
-                [[strongSelf imageAnalyzer] processRequest:requestForContextMenu.get() progressHandler:nil completionHandler:[requestIdentifier = WTFMove(requestIdentifier), weakSelf, hasTextResults, visualSearchAnalysisStartTime] (VKImageAnalysis *result, NSError *error) mutable {
-                    auto strongSelf = weakSelf.get();
-                    if (![strongSelf validateImageAnalysisRequestIdentifier:requestIdentifier])
-                        return;
-
-#if USE(QUICK_LOOK)
-                    BOOL hasVisualSearchResults = [result hasResultsForAnalysisTypes:VKAnalysisTypeVisualSearch];
-                    RELEASE_LOG(Images, "Image analysis completed in %.0f ms (request %" PRIu64 "; found visual search results? %d)", (MonotonicTime::now() - visualSearchAnalysisStartTime).milliseconds(), requestIdentifier.toUInt64(), hasVisualSearchResults);
-#else
-                    UNUSED_PARAM(visualSearchAnalysisStartTime);
-#endif
-                    if (!result || error) {
-                        [strongSelf _invokeAllActionsToPerformAfterPendingImageAnalysis:WebKit::ProceedWithTextSelectionInImage::No];
-                        return;
-                    }
-
-#if USE(QUICK_LOOK)
-                    strongSelf->_hasSelectableTextInImage = hasTextResults;
-                    strongSelf->_hasVisualSearchResults = hasVisualSearchResults;
-#else
-                    UNUSED_PARAM(hasTextResults);
-#endif
-#if USE(UICONTEXTMENU) && ENABLE(IMAGE_ANALYSIS_FOR_MACHINE_READABLE_CODES)
-                    [strongSelf _updateContextMenuForMachineReadableCodeForImageAnalysis:result];
-#endif // USE(UICONTEXTMENU) && ENABLE(IMAGE_ANALYSIS_FOR_MACHINE_READABLE_CODES)
-                    [strongSelf _invokeAllActionsToPerformAfterPendingImageAnalysis:WebKit::ProceedWithTextSelectionInImage::No];
-                }];
+                [strongSelf _completeImageAnalysisRequestForContextMenu:requestForContextMenu.get() requestIdentifier:requestIdentifier hasTextResults:hasTextResults];
             });
         }];
     } forRequest:request];
+}
+
+- (void)_completeImageAnalysisRequestForContextMenu:(VKImageAnalyzerRequest *)requestForContextMenu requestIdentifier:(WebKit::ImageAnalysisRequestIdentifier)requestIdentifier hasTextResults:(BOOL)hasTextResults
+{
+    auto visualSearchAnalysisStartTime = MonotonicTime::now();
+    [self.imageAnalyzer processRequest:requestForContextMenu progressHandler:nil completionHandler:[requestIdentifier = WTFMove(requestIdentifier), weakSelf = WeakObjCPtr<WKContentView>(self), hasTextResults, visualSearchAnalysisStartTime] (VKImageAnalysis *result, NSError *error) mutable {
+        auto strongSelf = weakSelf.get();
+        if (![strongSelf validateImageAnalysisRequestIdentifier:requestIdentifier])
+            return;
+
+#if USE(QUICK_LOOK)
+        BOOL hasVisualSearchResults = [result hasResultsForAnalysisTypes:VKAnalysisTypeVisualSearch];
+        RELEASE_LOG(Images, "Image analysis completed in %.0f ms (request %" PRIu64 "; found visual search results? %d)", (MonotonicTime::now() - visualSearchAnalysisStartTime).milliseconds(), requestIdentifier.toUInt64(), hasVisualSearchResults);
+#else
+        UNUSED_PARAM(visualSearchAnalysisStartTime);
+#endif
+        if (!result || error) {
+            [strongSelf _invokeAllActionsToPerformAfterPendingImageAnalysis:WebKit::ProceedWithTextSelectionInImage::No];
+            return;
+        }
+
+#if USE(QUICK_LOOK)
+        strongSelf->_hasSelectableTextInImage = hasTextResults;
+        strongSelf->_hasVisualSearchResults = hasVisualSearchResults;
+#else
+        UNUSED_PARAM(hasTextResults);
+#endif
+#if USE(UICONTEXTMENU) && ENABLE(IMAGE_ANALYSIS_FOR_MACHINE_READABLE_CODES)
+        [strongSelf _updateContextMenuForMachineReadableCodeForImageAnalysis:result];
+#endif // USE(UICONTEXTMENU) && ENABLE(IMAGE_ANALYSIS_FOR_MACHINE_READABLE_CODES)
+        [strongSelf _invokeAllActionsToPerformAfterPendingImageAnalysis:WebKit::ProceedWithTextSelectionInImage::No];
+    }];
 }
 
 - (void)imageAnalysisGestureDidFail:(WKImageAnalysisGestureRecognizer *)gestureRecognizer

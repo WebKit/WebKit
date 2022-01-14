@@ -1,3 +1,35 @@
+2022-01-14  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Avoid redundant text analysis requests when long pressing inside an image that contains Live Text
+        https://bugs.webkit.org/show_bug.cgi?id=235129
+        rdar://87366539
+
+        Reviewed by Tim Horton.
+
+        Add a new API test and refactor some existing tests.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ImageAnalysisTests.mm:
+        (swizzledLocationInView):
+        (-[TestWKWebView simulateImageAnalysisGesture:]):
+
+        Add a helper method to simulate the image analysis gesture recognizer being activated on iOS, and wait for image
+        analysis to finish.
+
+        (TestWebKitAPI::swizzledProcessRequestWithResults):
+        (TestWebKitAPI::TEST):
+
+        Add a new API test to verify that we make at most one extra VKImageAnalyzer request when invoking a non-Live-
+        Text part of the image a second time. Additionally, adjust an existing test (HandleImageAnalyzerErrors) to
+        verify that we invoke VKImageAnalyzer a total of two times during the course of one image analysis gesture (once
+        for Live Text recognition, and another for visual look up). This test currently passes with only a single check
+        because it ends too early (i.e. after only one round trip to the web process and back).
+
+        (TestWebKitAPI::swizzledLocationInView): Deleted.
+        * TestWebKitAPI/cocoa/ImageAnalysisTestingUtilities.mm:
+        (-[TestVKImageAnalysis hasResultsForAnalysisTypes:]):
+
+        Implement this method stub to avoid an unrecognized selector crash.
+
 2022-01-13  Jonathan Bedard  <jbedard@apple.com>
 
         [EWS] Support pull-requests in ValidateChange

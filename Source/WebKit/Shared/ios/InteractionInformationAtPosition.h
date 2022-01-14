@@ -81,6 +81,7 @@ struct InteractionInformationAtPosition {
 #if ENABLE(DATALIST_ELEMENT)
     bool preventTextInteraction { false };
 #endif
+    bool elementContainsImageOverlay { false };
     bool shouldNotUseIBeamInEditableContent { false };
     bool isImageOverlayText { false };
     bool isVerticalWritingMode { false };

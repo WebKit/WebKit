@@ -82,6 +82,7 @@ void InteractionInformationAtPosition::encode(IPC::Encoder& encoder) const
 #if ENABLE(DATALIST_ELEMENT)
     encoder << preventTextInteraction;
 #endif
+    encoder << elementContainsImageOverlay;
     encoder << shouldNotUseIBeamInEditableContent;
     encoder << isImageOverlayText;
     encoder << isVerticalWritingMode;
@@ -211,6 +212,9 @@ bool InteractionInformationAtPosition::decode(IPC::Decoder& decoder, Interaction
     if (!decoder.decode(result.preventTextInteraction))
         return false;
 #endif
+
+    if (!decoder.decode(result.elementContainsImageOverlay))
+        return false;
 
     if (!decoder.decode(result.shouldNotUseIBeamInEditableContent))
         return false;
