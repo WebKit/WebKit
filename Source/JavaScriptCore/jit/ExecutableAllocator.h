@@ -108,7 +108,10 @@ T endOfFixedExecutableMemoryPool()
     return bitwise_cast<T>(endOfFixedExecutableMemoryPoolImpl());
 }
 
-JS_EXPORT_PRIVATE bool isJITPC(void* pc);
+ALWAYS_INLINE bool isJITPC(void* pc)
+{
+    return g_jscConfig.startExecutableMemory <= pc && pc < g_jscConfig.endExecutableMemory;
+}
 
 JS_EXPORT_PRIVATE void dumpJITMemory(const void*, const void*, size_t);
 

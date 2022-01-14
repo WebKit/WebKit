@@ -1,5 +1,22 @@
 2022-01-14  Saam Barati  <sbarati@apple.com>
 
+        Make isJITPC fast
+        https://bugs.webkit.org/show_bug.cgi?id=235241
+
+        Reviewed by Yusuke Suzuki.
+
+        Make it an inlined function, and stop tagging g_jscConfig.startExecutableMemory
+        and g_jscConfig.endExecutableMemory, since they're in the Config page, and
+        not mutable after it's frozen.
+
+        * jit/ExecutableAllocator.cpp:
+        (JSC::initializeJITPageReservation):
+        (JSC::isJITPC): Deleted.
+        * jit/ExecutableAllocator.h:
+        (JSC::isJITPC):
+
+2022-01-14  Saam Barati  <sbarati@apple.com>
+
         Use IRC for Wasm, and Briggs for JS on ARM64
         https://bugs.webkit.org/show_bug.cgi?id=235235
         <rdar://87090631>
