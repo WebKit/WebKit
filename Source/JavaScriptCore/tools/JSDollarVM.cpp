@@ -66,9 +66,6 @@
 #if !USE(SYSTEM_MALLOC)
 #include <bmalloc/BPlatform.h>
 #if BUSE(LIBPAS)
-#ifndef PAS_BMALLOC
-#define PAS_BMALLOC 1
-#endif
 #include <bmalloc/pas_debug_spectrum.h>
 #include <bmalloc/pas_fd_stream.h>
 #include <bmalloc/pas_heap_lock.h>

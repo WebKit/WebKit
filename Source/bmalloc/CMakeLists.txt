@@ -6,8 +6,6 @@ set(bmalloc_PRIVATE_INCLUDE_DIRECTORIES
     "${BMALLOC_DIR}/libpas/src/libpas"
 )
 
-add_definitions(-DPAS_BMALLOC)
-
 set(bmalloc_SOURCES
     bmalloc/AllIsoHeaps.cpp
     bmalloc/Allocator.cpp
@@ -123,6 +121,9 @@ set(bmalloc_SOURCES
     libpas/src/libpas/pas_large_map.c
     libpas/src/libpas/pas_large_sharing_pool.c
     libpas/src/libpas/pas_large_utility_free_heap.c
+    libpas/src/libpas/pas_lenient_compact_ptr.h
+    libpas/src/libpas/pas_lenient_compact_ptr_inlines.h
+    libpas/src/libpas/pas_lenient_compact_unsigned_ptr.h
     libpas/src/libpas/pas_local_allocator.c
     libpas/src/libpas/pas_local_allocator_scavenger_data.c
     libpas/src/libpas/pas_local_view_cache.c
@@ -494,6 +495,7 @@ set(bmalloc_PUBLIC_HEADERS
     libpas/src/libpas/pas_large_sharing_pool_epoch_update_mode.h
     libpas/src/libpas/pas_large_sharing_pool.h
     libpas/src/libpas/pas_large_utility_free_heap.h
+    libpas/src/libpas/pas_lenient_compact_unsigned_ptr.c
     libpas/src/libpas/pas_line_word_config.h
     libpas/src/libpas/pas_list_direction.h
     libpas/src/libpas/pas_local_allocator_config_kind.h

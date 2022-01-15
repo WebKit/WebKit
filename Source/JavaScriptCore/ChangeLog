@@ -1,3 +1,21 @@
+2022-01-14  Yusuke Suzuki  <ysuzuki@apple.com> and Mikhail R. Gadelha  <mikhail@igalia.com>
+
+        [JSC] Fix Linux 64bit compilation
+        https://bugs.webkit.org/show_bug.cgi?id=235232
+
+        Reviewed by Saam Barati.
+
+        Define PAS_BMALLOC in all projects since JavaScriptCore includes some files which can require this macro variable.
+        Previously, JSDollarVM.cpp includes these files first, then at that time, we can define PAS_BMALLOC.
+        However, after enabling jit-heap, these files are included before JSDollarVM.cpp and include pas_config.h without
+        PAS_BMALLOC definition, which later causes the problem when including pas_lock.h since non PAS_BMALLOC libpas requires
+        darwin specific locking.
+
+        Since defining PAS_BMALLOC does not matter to whether using libpas or not, this patch just defines it globally.
+        And for Apple ports, we define this when we define BENABLE_LIBPAS.
+
+        * tools/JSDollarVM.cpp:
+
 2022-01-14  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Fix WebAssembly.Global's typename for "anyfunc"

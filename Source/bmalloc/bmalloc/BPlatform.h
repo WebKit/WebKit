@@ -326,6 +326,9 @@
 #if !defined(BENABLE_LIBPAS)
 #if BCPU(ADDRESS64) && (BOS(DARWIN) || (BOS(LINUX) && !BPLATFORM(GTK) && !BPLATFORM(WPE)))
 #define BENABLE_LIBPAS 1
+#ifndef PAS_BMALLOC
+#define PAS_BMALLOC 1
+#endif
 #else
 #define BENABLE_LIBPAS 0
 #endif

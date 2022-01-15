@@ -40,9 +40,6 @@
 #endif
 
 #if BUSE(LIBPAS)
-#ifndef PAS_BMALLOC
-#define PAS_BMALLOC 1
-#endif
 #include "iso_heap.h"
 #endif
 
