@@ -343,9 +343,6 @@ TextStream& operator<<(TextStream& stream, AXObjectCache::AXNotification notific
     case AXObjectCache::AXNotification::AXActiveDescendantChanged:
         stream << "AXActiveDescendantChanged";
         break;
-    case AXObjectCache::AXNotification::AXAriaAttributeChanged:
-        stream << "AXAriaAttributeChanged";
-        break;
     case AXObjectCache::AXNotification::AXAriaRoleChanged:
         stream << "AXAriaRoleChanged";
         break;

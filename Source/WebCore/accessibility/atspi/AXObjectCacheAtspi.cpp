@@ -157,8 +157,6 @@ void AXObjectCache::postPlatformNotification(AXCoreObject* coreObject, AXNotific
         if (auto* descendant = coreObject->activeDescendant())
             platformHandleFocusedUIElementChanged(nullptr, descendant->node());
         break;
-    case AXAriaAttributeChanged:
-        break;
     case AXAriaRoleChanged:
         break;
     case AXAutocorrectionOccured:
