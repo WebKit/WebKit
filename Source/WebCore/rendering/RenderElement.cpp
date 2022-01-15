@@ -1366,6 +1366,11 @@ bool RenderElement::isVisibleInDocumentRect(const IntRect& documentRect) const
     return true;
 }
 
+bool RenderElement::isInsideEntirelyHiddenLayer() const
+{
+    return style().visibility() != Visibility::Visible && !enclosingLayer()->hasVisibleContent();
+}
+
 void RenderElement::registerForVisibleInViewportCallback()
 {
     if (m_isRegisteredForVisibleInViewportCallback)

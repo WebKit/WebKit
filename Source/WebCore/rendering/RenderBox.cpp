@@ -2476,8 +2476,9 @@ void RenderBox::deleteLineBoxWrapper()
 
 LayoutRect RenderBox::clippedOverflowRect(const RenderLayerModelObject* repaintContainer, VisibleRectContext context) const
 {
-    if (style().visibility() != Visibility::Visible && !enclosingLayer()->hasVisibleContent())
-        return LayoutRect();
+    if (isInsideEntirelyHiddenLayer())
+        return { };
+
     LayoutRect r = visualOverflowRect();
     // FIXME: layoutDelta needs to be applied in parts before/after transforms and
     // repaint containers. https://bugs.webkit.org/show_bug.cgi?id=23308

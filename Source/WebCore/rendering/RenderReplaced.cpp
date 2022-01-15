@@ -788,8 +788,8 @@ bool RenderReplaced::isHighlighted(HighlightState state, const HighlightData& ra
 
 LayoutRect RenderReplaced::clippedOverflowRect(const RenderLayerModelObject* repaintContainer, VisibleRectContext context) const
 {
-    if (style().visibility() != Visibility::Visible && !enclosingLayer()->hasVisibleContent())
-        return LayoutRect();
+    if (isInsideEntirelyHiddenLayer())
+        return { };
 
     // The selectionRect can project outside of the overflowRect, so take their union
     // for repainting to avoid selection painting glitches.

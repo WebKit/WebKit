@@ -357,8 +357,8 @@ const AffineTransform& LegacyRenderSVGRoot::localToParentTransform() const
 
 LayoutRect LegacyRenderSVGRoot::clippedOverflowRect(const RenderLayerModelObject* repaintContainer, VisibleRectContext context) const
 {
-    if (style().visibility() != Visibility::Visible && !enclosingLayer()->hasVisibleContent())
-        return LayoutRect();
+    if (isInsideEntirelyHiddenLayer())
+        return { };
 
     FloatRect contentRepaintRect = m_localToBorderBoxTransform.mapRect(repaintRectInLocalCoordinates());
     contentRepaintRect.intersect(snappedIntRect(borderBoxRect()));

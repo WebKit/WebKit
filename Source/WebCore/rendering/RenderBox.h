@@ -217,7 +217,7 @@ public:
     LayoutRect applyVisualEffectOverflow(const LayoutRect&) const;
     void addOverflowFromChild(const RenderBox* child) { addOverflowFromChild(child, child->locationOffset()); }
     void addOverflowFromChild(const RenderBox* child, const LayoutSize& delta);
-    
+
     void updateLayerTransform();
 
     LayoutSize contentSize() const { return { contentWidth(), contentHeight() }; }

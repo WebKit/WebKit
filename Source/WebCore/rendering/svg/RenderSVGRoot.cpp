@@ -407,8 +407,8 @@ void RenderSVGRoot::updateFromStyle()
 
 LayoutRect RenderSVGRoot::clippedOverflowRect(const RenderLayerModelObject* repaintContainer, VisibleRectContext context) const
 {
-    if (style().visibility() != Visibility::Visible && !enclosingLayer()->hasVisibleContent())
-        return LayoutRect();
+    if (isInsideEntirelyHiddenLayer())
+        return { };
 
     auto repaintRect = LayoutRect(valueOrDefault(m_viewBoxTransform.inverse()).mapRect(borderBoxRect()));
     return computeRect(repaintRect, repaintContainer, context);
