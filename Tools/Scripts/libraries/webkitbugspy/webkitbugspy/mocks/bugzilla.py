@@ -1,4 +1,4 @@
-# Copyright (C) 2021 Apple Inc. All rights reserved.
+# Copyright (C) 2021-2022 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -29,7 +29,7 @@ from webkitbugspy import User
 from webkitcorepy import mocks
 
 
-class Bugzilla(Base):
+class Bugzilla(Base, mocks.Requests):
     top = None
 
     @classmethod
@@ -46,7 +46,8 @@ class Bugzilla(Base):
         )
 
     def __init__(self, hostname='bugs.example.com', users=None, issues=None):
-        super(Bugzilla, self).__init__(hostname, users=users, issues=issues)
+        Base.__init__(self, users=users, issues=issues)
+        mocks.Requests.__init__(self, hostname)
 
     def _user(self, url, username):
         user = self.users[username]

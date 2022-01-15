@@ -1,3 +1,53 @@
+2022-01-07  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkitbugspy] Support radar as issue tracker type
+        https://bugs.webkit.org/show_bug.cgi?id=234993
+        <rdar://problem/87276178>
+
+        Reviewed by Stephanie Lewis.
+
+        * Scripts/libraries/webkitbugspy/setup.py: Bump version.
+        * Scripts/libraries/webkitbugspy/webkitbugspy/__init__.py: Ditto.
+        * Scripts/libraries/webkitbugspy/webkitbugspy/mocks/__init__.py:
+        * Scripts/libraries/webkitbugspy/webkitbugspy/mocks/base.py:
+        (Base): Radar mock should not inherit from mocks.Requests.
+        * Scripts/libraries/webkitbugspy/webkitbugspy/mocks/bugzilla.py:
+        (Bugzilla): Inherit from both Base and mocks.Requests.
+        * Scripts/libraries/webkitbugspy/webkitbugspy/mocks/github.py:
+        (GitHub): Inherit from both Base and mocks.Requests.
+        * Scripts/libraries/webkitbugspy/webkitbugspy/mocks/radar.py: Added.
+        (AppleDirectoryUserEntry): Mock AppleDirectoryUserEntry from radarclient.
+        (AppleDirectoryQuery): Mock AppleDirectoryQuery from radarclient.
+        (RadarModel): Mock various Model objects from radarclient.
+        (RadarClient): Mock RadarClient from radarclient.
+        (Radar): Mock radarclient library.
+        (NoRadar): Mock unavailable radarclient library.
+        * Scripts/libraries/webkitbugspy/webkitbugspy/radar.py: Added.
+        (Tracker):
+        (Tracker.radarclient): Optionally import radarclient.
+        (Tracker.__init__):
+        (Tracker.authentication): Determine which authentication strategy to use.
+        (Tracker.from_string): Construct issue given Radar string
+        (Tracker.user): Find user given name, DSID or email.
+        (Tracker.issue): Construct issue given Radar ID.
+        (Tracker.populate): Populate Issue arguments.
+        * Scripts/libraries/webkitbugspy/webkitbugspy/tests/radar_unittest.py: Added.
+        (TestGitHub):
+        (TestGitHub.test_no_radar):
+        (TestGitHub.test_users):
+        (TestGitHub.test_link):
+        (TestGitHub.test_title):
+        (TestGitHub.test_timestamp):
+        (TestGitHub.test_creator):
+        (TestGitHub.test_description):
+        (TestGitHub.test_assignee):
+        (TestGitHub.test_comments):
+        (TestGitHub.test_watchers):
+        (TestGitHub.test_references):
+        (TestGitHub.test_reference_parse):
+        * Scripts/libraries/webkitbugspy/webkitbugspy/tracker.py:
+        (Tracker): Match single integer issue URLs.
+
 2022-01-14  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Avoid redundant text analysis requests when long pressing inside an image that contains Live Text

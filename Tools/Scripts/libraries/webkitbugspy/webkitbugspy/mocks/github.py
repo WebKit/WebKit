@@ -1,4 +1,4 @@
-# Copyright (C) 2021 Apple Inc. All rights reserved.
+# Copyright (C) 2021-2022 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -30,7 +30,7 @@ from webkitbugspy import User
 from webkitcorepy import mocks
 
 
-class GitHub(Base):
+class GitHub(Base, mocks.Requests):
     top = None
 
     @classmethod
@@ -50,7 +50,8 @@ class GitHub(Base):
         hostname, repo = hostname.split('/', 1)
         self.api_host = 'api.{hostname}/repos/{repo}'.format(hostname=hostname, repo=repo)
 
-        super(GitHub, self).__init__(hostname, 'api.{}'.format(hostname), users=users, issues=issues)
+        Base.__init__(self, users=users, issues=issues)
+        mocks.Requests.__init__(self, hostname, 'api.{}'.format(hostname))
 
         self._environment = None
 

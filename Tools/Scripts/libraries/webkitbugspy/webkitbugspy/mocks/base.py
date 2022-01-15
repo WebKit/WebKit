@@ -1,4 +1,4 @@
-# Copyright (C) 2021 Apple Inc. All rights reserved.
+# Copyright (C) 2021-2022 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -21,10 +21,9 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 from webkitbugspy import User
-from webkitcorepy import mocks
 
 
-class Base(mocks.Requests):
+class Base(object):
     @classmethod
     def transform_user(cls, user):
         return User(
@@ -33,12 +32,7 @@ class Base(mocks.Requests):
             emails=user.emails,
         )
 
-    def __init__(self, *hosts, **kwargs):
-        super(Base, self).__init__(*hosts)
-
-        users = kwargs.get('users', None)
-        issues = kwargs.get('issues', None)
-
+    def __init__(self, users=None, issues=None):
         self.users = User.Mapping()
         for user in users or []:
             self.users.add(type(self).transform_user(user))
