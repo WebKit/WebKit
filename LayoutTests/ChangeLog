@@ -1,3 +1,12 @@
+2022-01-14  Antoine Quint  <graouts@webkit.org>
+
+        Setting `content: normal` on a ::marker should make computed style return resolved values
+        https://bugs.webkit.org/show_bug.cgi?id=235222
+
+        Reviewed by Aditya Keerthi.
+
+        * platform/gtk/imported/w3c/web-platform-tests/css/css-pseudo/marker-computed-size-expected.txt:
+
 2022-01-14  Frederic Wang  <fwang@igalia.com>
 
         null ptr deref in WebCore::ReplaceSelectionCommand::moveNodeOutOfAncestor()

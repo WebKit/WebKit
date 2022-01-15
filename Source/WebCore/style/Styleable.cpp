@@ -100,7 +100,7 @@ RenderElement* Styleable::renderer() const
     case PseudoId::Marker:
         if (is<RenderListItem>(element.renderer())) {
             auto* markerRenderer = downcast<RenderListItem>(*element.renderer()).markerRenderer();
-            if (markerRenderer && markerRenderer->style().hasContent())
+            if (markerRenderer && !markerRenderer->style().hasEffectiveContentNone())
                 return markerRenderer;
         }
         break;

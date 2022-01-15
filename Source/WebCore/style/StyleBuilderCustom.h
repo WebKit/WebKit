@@ -1520,13 +1520,11 @@ inline void BuilderCustom::applyValueStroke(BuilderState& builderState, CSSValue
 inline void BuilderCustom::applyInitialContent(BuilderState& builderState)
 {
     builderState.style().clearContent();
-    builderState.style().setHasExplicitlyClearedContent(true);
+    builderState.style().setHasContentNone(false);
 }
 
 inline void BuilderCustom::applyInheritContent(BuilderState&)
 {
-    // FIXME: In CSS3, it will be possible to inherit content. In CSS2 it is not. This
-    // note is a reminder that eventually "inherit" needs to be supported.
 }
 
 inline void BuilderCustom::applyValueContent(BuilderState& builderState, CSSValue& value)
@@ -1535,7 +1533,7 @@ inline void BuilderCustom::applyValueContent(BuilderState& builderState, CSSValu
         const auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
         ASSERT_UNUSED(primitiveValue, primitiveValue.valueID() == CSSValueNormal || primitiveValue.valueID() == CSSValueNone);
         builderState.style().clearContent();
-        builderState.style().setHasExplicitlyClearedContent(true);
+        builderState.style().setHasContentNone(primitiveValue.valueID() == CSSValueNone);
         return;
     }
 

@@ -496,7 +496,7 @@ bool RenderThemeIOS::isControlStyled(const RenderStyle& style, const RenderStyle
 
 #if ENABLE(DATALIST_ELEMENT)
     if (style.effectiveAppearance() == ListButtonPart)
-        return style.hasContent() || style.hasExplicitlyClearedContent();
+        return style.hasContent() || style.hasEffectiveContentNone();
 #endif
 
     return RenderTheme::isControlStyled(style, userAgentStyle);

@@ -1471,13 +1471,13 @@ public:
     PathOperation* clipPath() const { return m_rareNonInheritedData->clipPath.get(); }
     static PathOperation* initialClipPath() { return nullptr; }
 
+    bool hasEffectiveContentNone() const { return !contentData() && (m_nonInheritedFlags.hasContentNone || styleType() == PseudoId::Before || styleType() == PseudoId::After); }
     bool hasContent() const { return contentData(); }
     const ContentData* contentData() const { return m_rareNonInheritedData->content.get(); }
     void setContent(std::unique_ptr<ContentData>, bool add);
     bool contentDataEquivalent(const RenderStyle* otherStyle) const { return const_cast<RenderStyle*>(this)->m_rareNonInheritedData->contentDataEquivalent(*const_cast<RenderStyle*>(otherStyle)->m_rareNonInheritedData); }
     void clearContent();
-    void setHasExplicitlyClearedContent(bool v) { m_nonInheritedFlags.hasExplicitlyClearedContent = v; }
-    bool hasExplicitlyClearedContent() const { return m_nonInheritedFlags.hasExplicitlyClearedContent; };
+    void setHasContentNone(bool v) { m_nonInheritedFlags.hasContentNone = v; }
     void setContent(const String&, bool add = false);
     void setContent(RefPtr<StyleImage>&&, bool add = false);
     void setContent(std::unique_ptr<CounterContent>, bool add = false);
@@ -1941,7 +1941,7 @@ private:
         unsigned firstChildState : 1;
         unsigned lastChildState : 1;
         unsigned isLink : 1;
-        unsigned hasExplicitlyClearedContent : 1;
+        unsigned hasContentNone : 1;
 
         unsigned styleType : 4; // PseudoId
         unsigned pseudoBits : (static_cast<unsigned>(PseudoId::FirstInternalPseudoId) - static_cast<unsigned>(PseudoId::FirstPublicPseudoId));
@@ -2078,7 +2078,7 @@ inline bool RenderStyle::NonInheritedFlags::operator==(const NonInheritedFlags& 
         && firstChildState == other.firstChildState
         && lastChildState == other.lastChildState
         && isLink == other.isLink
-        && hasExplicitlyClearedContent == other.hasExplicitlyClearedContent
+        && hasContentNone == other.hasContentNone
         && styleType == other.styleType
         && pseudoBits == other.pseudoBits;
 }
