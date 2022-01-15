@@ -30,3 +30,5 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/wasm/webapi/rejected-arg.any.js
 /LayoutTests/imported/w3c/web-platform-tests/wasm/webapi/status.any.js
 /LayoutTests/imported/w3c/web-platform-tests/wasm/webapi/status.py
+/LayoutTests/imported/w3c/web-platform-tests/wasm/webapi/wasm_stream_compile_test.html
+/LayoutTests/imported/w3c/web-platform-tests/wasm/webapi/wasm_stream_instantiate_test.html

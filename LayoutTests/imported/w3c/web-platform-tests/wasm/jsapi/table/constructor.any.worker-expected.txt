@@ -26,4 +26,8 @@ FAIL Stray argument WebAssembly.Table.prototype.constructor expects the second a
 PASS Proxy descriptor
 PASS Type conversion for descriptor.element
 PASS Order of evaluation for descriptor
+PASS initialize externref table with default value
+PASS initialize table with a wrong element value
+PASS initialize anyfunc table with default value
+PASS initialize anyfunc table with a bad default value
 

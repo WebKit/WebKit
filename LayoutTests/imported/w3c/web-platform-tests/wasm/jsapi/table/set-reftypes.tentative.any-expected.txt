@@ -1,4 +1,0 @@
-
-PASS Arguments for anyfunc table set
-PASS Arguments for externref table set
-

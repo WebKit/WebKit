@@ -14,4 +14,7 @@ PASS Out-of-range argument: 68719476736
 PASS Out-of-range argument: "0x100000000"
 PASS Out-of-range argument: object "[object Object]"
 PASS Stray argument
+PASS Grow with exported-function argument
+PASS Grow with non-function argument
+PASS Grow with JS-function argument
 

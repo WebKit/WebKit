@@ -1,0 +1,5 @@
+
+FAIL [] WebAssembly.Exception constructor expects the first argument to be a WebAssembly.Tag
+FAIL [i32 i64] WebAssembly.Exception constructor expects the first argument to be a WebAssembly.Tag
+FAIL [i32 i64 f32 f64] WebAssembly.Exception constructor expects the first argument to be a WebAssembly.Tag
+

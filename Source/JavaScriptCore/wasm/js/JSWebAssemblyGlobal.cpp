@@ -107,7 +107,7 @@ JSObject* JSWebAssemblyGlobal::type(JSGlobalObject* globalObject)
         break;
     default: {
         if (Wasm::isFuncref(valueType))
-            valueString = jsNontrivialString(vm, "funcref");
+            valueString = jsNontrivialString(vm, "anyfunc");
         else if (Wasm::isExternref(valueType))
             valueString = jsNontrivialString(vm, "externref");
         else

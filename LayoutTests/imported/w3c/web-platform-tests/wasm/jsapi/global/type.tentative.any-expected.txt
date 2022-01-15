@@ -7,9 +7,9 @@ PASS f32, mutable
 PASS f32, immutable
 PASS f64, mutable
 PASS f64, immutable
-PASS anyref, mutable
-PASS anyref, immutable
-PASS funcref, mutable
-PASS funcref, immutable
+PASS externref, mutable
+PASS externref, immutable
+PASS anyfunc, mutable
+PASS anyfunc, immutable
 PASS key ordering
 

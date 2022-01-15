@@ -1,7 +1,7 @@
 
 PASS Missing arguments: get
 PASS Branding: get
-FAIL Missing arguments: set assert_throws_js: function "() => table.set(0)" did not throw
+PASS Missing arguments: set
 PASS Branding: set
 PASS Basic
 PASS Growing
@@ -29,4 +29,6 @@ PASS Getting out-of-range argument: object "[object Object]"
 PASS Setting out-of-range argument: object "[object Object]"
 PASS Order of argument conversion
 PASS Stray argument
+PASS Arguments for anyfunc table set
+PASS Arguments for externref table set
 

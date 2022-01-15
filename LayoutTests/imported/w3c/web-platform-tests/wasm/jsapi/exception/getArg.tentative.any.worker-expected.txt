@@ -1,0 +1,11 @@
+
+FAIL Missing arguments assert_throws_js: function "() => exn.getArg(tag)" threw object "RangeError: WebAssembly.Exception.getArg(): Index out of range" ("RangeError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+PASS Invalid exception argument
+PASS Index out of bounds
+FAIL Getting out-of-range argument assert_throws_js: function "() => exn.getArg(tag, value)" threw object "RangeError: WebAssembly.Exception.getArg(): Index out of range" ("RangeError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+PASS getArg
+

@@ -22,6 +22,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/wasm/serialization/module/resources/echo-iframe.html
 /LayoutTests/imported/w3c/web-platform-tests/wasm/serialization/module/resources/echo-worker.js
 /LayoutTests/imported/w3c/web-platform-tests/wasm/serialization/module/resources/incrementer-iframe-domain.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/wasm/serialization/module/resources/incrementer-iframe-failure.html
 /LayoutTests/imported/w3c/web-platform-tests/wasm/serialization/module/resources/incrementer-iframe.html
 /LayoutTests/imported/w3c/web-platform-tests/wasm/serialization/module/resources/incrementer-popup.html
 /LayoutTests/imported/w3c/web-platform-tests/wasm/serialization/module/resources/incrementer-worker-with-channel.js
