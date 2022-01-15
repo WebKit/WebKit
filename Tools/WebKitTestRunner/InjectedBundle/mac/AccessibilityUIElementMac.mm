@@ -699,11 +699,20 @@ void AccessibilityUIElement::setValue(JSStringRef value)
 
 bool AccessibilityUIElement::isAttributeSettable(JSStringRef attribute)
 {
+    return isAttributeSettable([NSString stringWithJSStringRef:attribute]);
+}
+
+bool AccessibilityUIElement::isAttributeSettable(NSString *attribute) const
+{
+    bool value = false;
+
     BEGIN_AX_OBJC_EXCEPTIONS
-    return [m_element accessibilityIsAttributeSettable:[NSString stringWithJSStringRef:attribute]];
+    s_controller->executeOnAXThreadAndWait([this, &attribute, &value] {
+        value = [m_element accessibilityIsAttributeSettable:attribute];
+    });
     END_AX_OBJC_EXCEPTIONS
-    
-    return false;
+
+    return value;
 }
 
 bool AccessibilityUIElement::isAttributeSupported(JSStringRef attribute)
@@ -1636,20 +1645,12 @@ bool AccessibilityUIElement::removeNotificationListener()
 
 bool AccessibilityUIElement::isFocusable() const
 {
-    bool result = false;
-    BEGIN_AX_OBJC_EXCEPTIONS
-    result = [m_element accessibilityIsAttributeSettable:NSAccessibilityFocusedAttribute];
-    END_AX_OBJC_EXCEPTIONS
-    return result;
+    return isAttributeSettable(NSAccessibilityFocusedAttribute);
 }
 
 bool AccessibilityUIElement::isSelectable() const
 {
-    bool result = false;
-    BEGIN_AX_OBJC_EXCEPTIONS
-    result = [m_element accessibilityIsAttributeSettable:NSAccessibilitySelectedAttribute];
-    END_AX_OBJC_EXCEPTIONS
-    return result;
+    return isAttributeSettable(NSAccessibilitySelectedAttribute);
 }
 
 bool AccessibilityUIElement::isMultiSelectable() const

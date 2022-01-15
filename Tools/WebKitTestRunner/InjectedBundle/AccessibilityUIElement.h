@@ -135,9 +135,6 @@ public:
     RefPtr<AccessibilityUIElement> uiElementAttributeValue(JSStringRef attribute) const;
     bool boolAttributeValue(JSStringRef attribute);
 #if PLATFORM(MAC)
-    bool boolAttributeValue(NSString *attribute) const;
-    JSRetainPtr<JSStringRef> stringAttributeValue(NSString *attribute) const;
-    double numberAttributeValue(NSString *attribute) const;
     RetainPtr<id> attributeValue(NSString *) const;
     void attributeValueAsync(JSStringRef attribute, JSValueRef callback);
 #else
@@ -409,6 +406,10 @@ private:
 #if PLATFORM(MAC)
     RetainPtr<id> attributeValueForParameter(NSString *, id) const;
     RetainPtr<NSString> descriptionOfValue(id valueObject) const;
+    bool boolAttributeValue(NSString *attribute) const;
+    JSRetainPtr<JSStringRef> stringAttributeValue(NSString *attribute) const;
+    double numberAttributeValue(NSString *attribute) const;
+    bool isAttributeSettable(NSString *) const;
 #endif
 
 #if !PLATFORM(COCOA) && !USE(ATSPI)

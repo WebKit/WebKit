@@ -1,3 +1,21 @@
+2022-01-15  Tyler Wilcock  <tyler_w@apple.com>
+
+        AX: Fix disabled-controls-not-focusable.html in isolated tree mode by updating AXPropertyName::CanSetFocusAttribute when the disabled attribute changes
+        https://bugs.webkit.org/show_bug.cgi?id=235246
+
+        Reviewed by Chris Fleizach.
+
+        * WebKitTestRunner/InjectedBundle/AccessibilityUIElement.h:
+        * WebKitTestRunner/InjectedBundle/mac/AccessibilityUIElementMac.mm:
+        (WTR::AccessibilityUIElement::isAttributeSettable):
+        Use new isAttributeSettable(NSString *attribute) helper function.
+        (WTR::AccessibilityUIElement::isAttributeSettable const):
+        Added. Dispatches call to accessibilityIsAttributeSettable on the AX thread.
+
+        (WTR::AccessibilityUIElement::isFocusable const):
+        (WTR::AccessibilityUIElement::isSelectable const):
+        Use new isAttributeSettable to reduce repetition.
+
 2022-01-14  Jonathan Bedard  <jbedard@apple.com>
 
         [EWS] Only trigger builds for open and synchronize events

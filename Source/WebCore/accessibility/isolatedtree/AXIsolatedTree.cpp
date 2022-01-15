@@ -271,6 +271,9 @@ void AXIsolatedTree::updateNodeProperty(const AXCoreObject& axObject, AXProperty
 
     AXPropertyMap propertyMap;
     switch (property) {
+    case AXPropertyName::CanSetFocusAttribute:
+        propertyMap.set(AXPropertyName::CanSetFocusAttribute, axObject.canSetFocusAttribute());
+        break;
     case AXPropertyName::IsChecked:
         propertyMap.set(AXPropertyName::IsChecked, axObject.isChecked());
         break;

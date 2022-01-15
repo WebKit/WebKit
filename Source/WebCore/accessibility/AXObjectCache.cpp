@@ -1791,6 +1791,8 @@ void AXObjectCache::handleAttributeChange(const QualifiedName& attrName, Element
         handleAriaRoleChanged(element);
     else if (attrName == altAttr || attrName == titleAttr)
         textChanged(element);
+    else if (attrName == disabledAttr)
+        postNotification(element, AXObjectCache::AXDisabledStateChanged);
     else if (attrName == forAttr && is<HTMLLabelElement>(*element))
         labelChanged(element);
     else if (attrName == tabindexAttr)
@@ -3302,6 +3304,9 @@ void AXObjectCache::updateIsolatedTree(AXCoreObject& object, AXNotification noti
     case AXCheckedStateChanged:
         tree->updateNodeProperty(object, AXPropertyName::IsChecked);
         break;
+    case AXDisabledStateChanged:
+        tree->updateNodeProperty(object, AXPropertyName::CanSetFocusAttribute);
+        break;
     case AXSortDirectionChanged:
         tree->updateNodeProperty(object, AXPropertyName::SortDirection);
         break;
@@ -3373,6 +3378,9 @@ void AXObjectCache::updateIsolatedTree(const Vector<std::pair<RefPtr<AXCoreObjec
             break;
         case AXCheckedStateChanged:
             tree->updateNodeProperty(*notification.first, AXPropertyName::IsChecked);
+            break;
+        case AXDisabledStateChanged:
+            tree->updateNodeProperty(*notification.first, AXPropertyName::CanSetFocusAttribute);
             break;
         case AXSortDirectionChanged:
             tree->updateNodeProperty(*notification.first, AXPropertyName::SortDirection);
