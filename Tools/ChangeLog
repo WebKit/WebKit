@@ -1,3 +1,18 @@
+2022-01-14  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Occasional crash under -[UITargetedPreview initWithView:parameters:target:] when focusing form controls
+        https://bugs.webkit.org/show_bug.cgi?id=235248
+        rdar://79220540
+
+        Reviewed by Tim Horton and Aditya Keerthi.
+
+        Add an API test that exercises the crash by forcing `-resizableSnapshotViewFromRect:afterScreenUpdates:withCapInsets:`
+        to return nil via swizzling.
+
+        * TestWebKitAPI/Tests/ios/KeyboardInputTestsIOS.mm:
+        (TestWebKitAPI::nilResizableSnapshotViewFromRect):
+        (TestWebKitAPI::TEST):
+
 2022-01-07  Jonathan Bedard  <jbedard@apple.com>
 
         [webkitbugspy] Support radar as issue tracker type
