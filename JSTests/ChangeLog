@@ -1,5 +1,16 @@
 2022-01-15  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] Fix misc issues in WebAssembly.Exception
+        https://bugs.webkit.org/show_bug.cgi?id=235261
+
+        Reviewed by Alexey Shvayka.
+
+        * wasm/stress/create-tag-from.js:
+        * wasm/v8/exceptions-api.js:
+        (TestGetArg):
+
+2022-01-15  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] Upgrade test262
         https://bugs.webkit.org/show_bug.cgi?id=235263
 

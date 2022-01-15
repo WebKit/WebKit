@@ -47,7 +47,7 @@ const ClassInfo WebAssemblyExceptionPrototype::s_info = { "WebAssembly.Exception
 /* Source for WebAssemblyExceptionPrototype.lut.h
  @begin prototypeTableWebAssemblyException
  getArg   webAssemblyExceptionProtoFuncGetArg   Function 2
- is   webAssemblyExceptionProtoFuncIs   Function 1
+ is       webAssemblyExceptionProtoFuncIs       Function 1
  @end
  */
 
@@ -67,6 +67,7 @@ void WebAssemblyExceptionPrototype::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
     ASSERT(inherits(vm, info()));
+    JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
 }
 
 WebAssemblyExceptionPrototype::WebAssemblyExceptionPrototype(VM& vm, Structure* structure)
@@ -106,12 +107,14 @@ JSC_DEFINE_HOST_FUNCTION(webAssemblyExceptionProtoFuncGetArg, (JSGlobalObject* g
         return makeString("WebAssembly.Exception.getArg(): ", message);
     };
     const auto& typeError = [&](const auto& message) {
-        throwTypeError(globalObject, throwScope, formatMessage(message));
-        return encodedJSValue();
+        return throwVMTypeError(globalObject, throwScope, formatMessage(message));
     };
 
     JSWebAssemblyException* jsException = getException(globalObject, callFrame->thisValue());
-    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
+    RETURN_IF_EXCEPTION(throwScope, { });
+
+    if (UNLIKELY(callFrame->argumentCount() < 2))
+        return JSValue::encode(throwException(globalObject, throwScope, createNotEnoughArgumentsError(globalObject)));
 
     JSWebAssemblyTag* tag = getTag(vm, callFrame->argument(0));
     if (!tag)
@@ -121,10 +124,8 @@ JSC_DEFINE_HOST_FUNCTION(webAssemblyExceptionProtoFuncGetArg, (JSGlobalObject* g
         return typeError("First argument does not match the exception tag");
 
     uint32_t index = callFrame->argument(1).toUInt32(globalObject);
-    if (index >= tag->tag().parameterCount()) {
-        throwRangeError(globalObject, throwScope, formatMessage("Index out of range"));
-        return encodedJSValue();
-    }
+    if (index >= tag->tag().parameterCount())
+        return typeError("Index out of range");
 
     RELEASE_AND_RETURN(throwScope, JSValue::encode(jsException->getArg(globalObject, index)));
 }
@@ -135,13 +136,14 @@ JSC_DEFINE_HOST_FUNCTION(webAssemblyExceptionProtoFuncIs, (JSGlobalObject* globa
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
     JSWebAssemblyException* jsException = getException(globalObject, callFrame->thisValue());
-    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
+    RETURN_IF_EXCEPTION(throwScope, { });
+
+    if (UNLIKELY(callFrame->argumentCount() < 1))
+        return JSValue::encode(throwException(globalObject, throwScope, createNotEnoughArgumentsError(globalObject)));
 
     JSWebAssemblyTag* tag = getTag(vm, callFrame->argument(0));
-    if (!tag) {
-        throwTypeError(globalObject, throwScope, "WebAssembly.Exception.is(): First argument must be a WebAssembly.Tag");
-        return encodedJSValue();
-    }
+    if (!tag)
+        return throwVMTypeError(globalObject, throwScope, "WebAssembly.Exception.is(): First argument must be a WebAssembly.Tag");
 
     RELEASE_AND_RETURN(throwScope, JSValue::encode(jsBoolean(jsException->tag() == tag->tag())));
 }
