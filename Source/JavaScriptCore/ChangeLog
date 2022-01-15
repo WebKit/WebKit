@@ -1,3 +1,18 @@
+2022-01-14  Mark Lam  <mark.lam@apple.com>
+
+        JSStringJoiner's constructor should take a size_t length.
+        https://bugs.webkit.org/show_bug.cgi?id=235217
+        rdar://87538657
+
+        Reviewed by Yusuke Suzuki.
+
+        Also removed an unnecessary exception check in JSStringJoiner::append().
+        This is because appendWithoutSideEffects() cannot throw any exceptions.
+
+        * runtime/JSStringJoiner.h:
+        (JSC::JSStringJoiner::JSStringJoiner):
+        (JSC::JSStringJoiner::append):
+
 2022-01-14  Alexey Shvayka  <ashvayka@apple.com>
 
         JSArray::fastSlice() should not convert the source from CoW
