@@ -57,7 +57,7 @@ InlineLayoutUnit TextUtil::width(const InlineTextItem& inlineTextItem, const Fon
     return TextUtil::width(inlineTextItem.inlineTextBox(), fontCascade, from, to, contentLogicalLeft);
 }
 
-InlineLayoutUnit TextUtil::width(const InlineTextBox& inlineTextBox, const FontCascade& fontCascade, unsigned from, unsigned to, InlineLayoutUnit contentLogicalLeft)
+InlineLayoutUnit TextUtil::width(const InlineTextBox& inlineTextBox, const FontCascade& fontCascade, unsigned from, unsigned to, InlineLayoutUnit contentLogicalLeft, UseTrailingWhitespaceMeasuringOptimization useTrailingWhitespaceMeasuringOptimization)
 {
     if (from == to)
         return 0;
@@ -65,8 +65,11 @@ InlineLayoutUnit TextUtil::width(const InlineTextBox& inlineTextBox, const FontC
     auto text = inlineTextBox.content();
     ASSERT(to <= text.length());
     auto hasKerningOrLigatures = fontCascade.enableKerning() || fontCascade.requiresShaping();
-    auto measureWithEndSpace = hasKerningOrLigatures && to < text.length() && text[to] == ' ';
-    if (measureWithEndSpace)
+    // The "non-whitespace" + "whitespace" pattern is very common for inline content and since most of the "non-whitespace" runs end up with
+    // their "whitespace" pair on the line (notable exception is when trailing whitespace is trimmed).
+    // Including the trailing whitespace here enables us to cut the number of text measures when placing content on the line.
+    auto extendedMeasuring = useTrailingWhitespaceMeasuringOptimization == UseTrailingWhitespaceMeasuringOptimization::Yes && hasKerningOrLigatures && to < text.length() && text[to] == space;
+    if (extendedMeasuring)
         ++to;
     float width = 0;
     if (inlineTextBox.canUseSimplifiedContentMeasuring())
@@ -79,10 +82,19 @@ InlineLayoutUnit TextUtil::width(const InlineTextBox& inlineTextBox, const FontC
         width = fontCascade.width(run);
     }
 
-    if (measureWithEndSpace)
+    if (extendedMeasuring)
         width -= (fontCascade.spaceWidth() + fontCascade.wordSpacing());
 
     return std::isnan(width) ? 0.0f : std::isinf(width) ? maxInlineLayoutUnit() : width;
+}
+
+InlineLayoutUnit TextUtil::trailingWhitespaceWidth(const InlineTextBox& inlineTextBox, const FontCascade& fontCascade, size_t startPosition, size_t endPosition)
+{
+    auto text = inlineTextBox.content();
+    ASSERT(endPosition > startPosition + 1);
+    ASSERT(text[endPosition - 1] == space);
+    return width(inlineTextBox, fontCascade, startPosition, endPosition, { }, TextUtil::UseTrailingWhitespaceMeasuringOptimization::Yes) - 
+        width(inlineTextBox, fontCascade, startPosition, endPosition - 1, { }, TextUtil::UseTrailingWhitespaceMeasuringOptimization::No);
 }
 
 template <typename TextIterator>

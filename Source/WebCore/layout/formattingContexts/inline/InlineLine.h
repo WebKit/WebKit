@@ -143,11 +143,11 @@ public:
         bool hasCollapsibleTrailingWhitespace() const { return m_trailingWhitespace && (m_trailingWhitespace->type == TrailingWhitespace::Type::Collapsible || hasCollapsedTrailingWhitespace()); }
         bool hasCollapsedTrailingWhitespace() const { return m_trailingWhitespace && m_trailingWhitespace->type == TrailingWhitespace::Type::Collapsed; }
         static std::optional<TrailingWhitespace::Type> trailingWhitespaceType(const InlineTextItem&);
-        void removeTrailingWhitespace();
+        InlineLayoutUnit removeTrailingWhitespace();
 
         bool hasTrailingLetterSpacing() const;
         InlineLayoutUnit trailingLetterSpacing() const;
-        void removeTrailingLetterSpacing();
+        InlineLayoutUnit removeTrailingLetterSpacing();
 
         Type m_type { Type::Text };
         const Box* m_layoutBox { nullptr };
@@ -157,6 +157,7 @@ public:
         InlineDisplay::Box::Expansion m_expansion;
         UBiDiLevel m_bidiLevel { UBIDI_DEFAULT_LTR };
         std::optional<TrailingWhitespace> m_trailingWhitespace { };
+        std::optional<size_t> m_lastNonWhitespaceContentStart { };
         std::optional<Text> m_textContent;
     };
     using RunList = Vector<Run, 10>;
@@ -185,7 +186,7 @@ private:
     struct TrimmableTrailingContent {
         TrimmableTrailingContent(RunList&);
 
-        void addFullyTrimmableContent(size_t runIndex, InlineLayoutUnit trimmableWidth);
+        void addFullyTrimmableContent(size_t runIndex, InlineLayoutUnit trimmableContentOffset, InlineLayoutUnit trimmableWidth);
         void addPartiallyTrimmableContent(size_t runIndex, InlineLayoutUnit trimmableWidth);
         InlineLayoutUnit remove();
         InlineLayoutUnit removePartiallyTrimmableContent();
@@ -201,6 +202,7 @@ private:
         RunList& m_runs;
         std::optional<size_t> m_firstTrimmableRunIndex;
         bool m_hasFullyTrimmableContent { false };
+        InlineLayoutUnit m_trimmableContentOffset { 0 };
         InlineLayoutUnit m_fullyTrimmableWidth { 0 };
         InlineLayoutUnit m_partiallyTrimmableWidth { 0 };
     };
@@ -245,6 +247,7 @@ inline void Line::TrimmableTrailingContent::reset()
     m_firstTrimmableRunIndex = { };
     m_fullyTrimmableWidth = { };
     m_partiallyTrimmableWidth = { };
+    m_trimmableContentOffset = { };
 }
 
 inline void Line::HangingTrailingContent::reset()
