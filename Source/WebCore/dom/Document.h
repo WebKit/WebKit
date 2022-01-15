@@ -1548,6 +1548,7 @@ public:
     void addTopLayerElement(Element&);
     void removeTopLayerElement(Element&);
     const ListHashSet<Ref<Element>>& topLayerElements() const { return m_topLayerElements; }
+    bool hasTopLayerElement() const { return !m_topLayerElements.isEmpty(); }
 
     HTMLDialogElement* activeModalDialog() const;
 

@@ -786,25 +786,13 @@ void RenderLayer::rebuildZOrderLists(std::unique_ptr<Vector<RenderLayer*>>& posZ
         negZOrderList->shrinkToFit();
     }
 
-    if (isRenderViewLayer()) {
-        auto topLayerElements = renderer().document().topLayerElements();
-        for (auto& element : topLayerElements) {
-            RenderElement* renderer = element->renderer();
-            if (!renderer)
-                continue;
-            auto backdropRenderer = renderer->backdropRenderer();
-            if (backdropRenderer && backdropRenderer->hasLayer()) {
-                RenderLayer* layer = backdropRenderer->layer();
-                if (!posZOrderList)
-                    posZOrderList = makeUnique<Vector<RenderLayer*>>();
-                posZOrderList->append(layer);
-            }
-            if (renderer->hasLayer()) {
-                RenderLayer* layer = downcast<RenderLayerModelObject>(*renderer).layer();
-                if (!posZOrderList)
-                    posZOrderList = makeUnique<Vector<RenderLayer*>>();
-                posZOrderList->append(layer);
-            }
+    if (isRenderViewLayer() && renderer().document().hasTopLayerElement()) {
+        auto topLayerLayers = topLayerRenderLayers(renderer().view());
+        if (topLayerLayers.size()) {
+            if (!posZOrderList)
+                posZOrderList = makeUnique<Vector<RenderLayer*>>();
+
+            posZOrderList->appendVector(topLayerLayers);
         }
     }
 }
@@ -4003,6 +3991,25 @@ Element* RenderLayer::enclosingElement() const
             return e;
     }
     return nullptr;
+}
+
+Vector<RenderLayer*> RenderLayer::topLayerRenderLayers(RenderView& renderView)
+{
+    Vector<RenderLayer*> layers;
+    auto topLayerElements = renderView.document().topLayerElements();
+    for (auto& element : topLayerElements) {
+        auto* renderer = element->renderer();
+        if (!renderer)
+            continue;
+
+        auto backdropRenderer = renderer->backdropRenderer();
+        if (backdropRenderer && backdropRenderer->hasLayer())
+            layers.append(backdropRenderer->layer());
+
+        if (renderer->hasLayer())
+            layers.append(downcast<RenderLayerModelObject>(*renderer).layer());
+    }
+    return layers;
 }
 
 bool RenderLayer::establishesTopLayer() const

@@ -820,6 +820,8 @@ public:
 
     Element* enclosingElement() const;
 
+    static Vector<RenderLayer*> topLayerRenderLayers(RenderView&);
+
     bool establishesTopLayer() const;
     void establishesTopLayerWillChange();
     void establishesTopLayerDidChange();
