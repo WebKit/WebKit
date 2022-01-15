@@ -102,9 +102,7 @@ RetainPtr<CVPixelBufferRef> ImageRotationSessionVT::rotate(CVPixelBufferRef pixe
             (__bridge NSString *)kCVPixelBufferHeightKey: @(m_rotatedSize.height()),
             (__bridge NSString *)kCVPixelBufferPixelFormatTypeKey: @(m_pixelFormat),
             (__bridge NSString *)kCVPixelBufferCGImageCompatibilityKey: (m_isCGImageCompatible == IsCGImageCompatible::Yes ? @YES : @NO),
-#if PLATFORM(IOS_SIMULATOR) || PLATFORM(MAC)
             (__bridge NSString *)kCVPixelBufferIOSurfacePropertiesKey : @{ }
-#endif
         };
 
         CVPixelBufferPoolRef rawPool = nullptr;
@@ -119,7 +117,7 @@ RetainPtr<CVPixelBufferRef> ImageRotationSessionVT::rotate(CVPixelBufferRef pixe
     RetainPtr<CVPixelBufferRef> result;
     CVPixelBufferRef rawRotatedBuffer = nullptr;
     auto status = CVPixelBufferPoolCreatePixelBuffer(kCFAllocatorDefault, m_rotationPool.get(), &rawRotatedBuffer);
-    if (status != kCVReturnSuccess) {
+    if (status != kCVReturnSuccess || !rawRotatedBuffer) {
         RELEASE_LOG_ERROR(WebRTC, "ImageRotationSessionVT failed creating buffer from pool with error %d", status);
         return nullptr;
     }
