@@ -1,3 +1,34 @@
+2022-01-14  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r288041. rdar://problem/87627318
+
+    ANGLE: Supports32BitFloatFiltering is not supported on TVOS
+    https://bugs.webkit.org/show_bug.cgi?id=235239
+    
+    Reviewed by Darin Adler.
+    
+    <rdar://86457081>
+    Broke an internal build. Caused by https://trac.webkit.org/changeset/286323/webkit
+    
+    * src/libANGLE/renderer/metal/DisplayMtl.mm:
+    (rx::DisplayMtl::supports32BitFloatFiltering const):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@288041 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-01-14  Kyle Piddington  <kpiddington@apple.com>
+
+            ANGLE: Supports32BitFloatFiltering is not supported on TVOS
+            https://bugs.webkit.org/show_bug.cgi?id=235239
+
+            Reviewed by Darin Adler.
+
+            <rdar://86457081>
+            Broke an internal build. Caused by https://trac.webkit.org/changeset/286323/webkit
+
+            * src/libANGLE/renderer/metal/DisplayMtl.mm:
+            (rx::DisplayMtl::supports32BitFloatFiltering const):
+
 2022-01-11  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r287894. rdar://problem/87417913
