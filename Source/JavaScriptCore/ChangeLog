@@ -1,5 +1,24 @@
 2022-01-15  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] Fix Date functions' argument coercion
+        https://bugs.webkit.org/show_bug.cgi?id=235271
+
+        Reviewed by Alexey Shvayka.
+
+        Even if the input Date is NaN or the result looks like NaN, we need to coerce passed
+        arguments to Number[1] since it has observable side effect.
+
+        [1]: https://github.com/tc39/ecma262/pull/2136
+
+        * runtime/DatePrototype.cpp:
+        (JSC::applyToNumbersToTrashedArguments):
+        (JSC::fillStructuresUsingTimeArgs):
+        (JSC::fillStructuresUsingDateArgs):
+        (JSC::setNewValueFromTimeArgs):
+        (JSC::setNewValueFromDateArgs):
+
+2022-01-15  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] Fix misc issues in WebAssembly.Exception
         https://bugs.webkit.org/show_bug.cgi?id=235261
 

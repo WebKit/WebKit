@@ -606,42 +606,6 @@ test/annexB/language/global-code/switch-dflt-global-skip-early-err.js:
 test/built-ins/Date/UTC/fp-evaluation-order.js:
   default: 'Test262Error: order of operations / precision in MakeTime Expected SameValue(«NaN», «29312») to be true'
   strict mode: 'Test262Error: order of operations / precision in MakeTime Expected SameValue(«NaN», «29312») to be true'
-test/built-ins/Date/prototype/setDate/arg-coercion-order.js:
-  default: 'Test262Error: ToNumber invoked exactly once Expected SameValue(«0», «1») to be true'
-  strict mode: 'Test262Error: ToNumber invoked exactly once Expected SameValue(«0», «1») to be true'
-test/built-ins/Date/prototype/setHours/arg-coercion-order.js:
-  default: 'Test262Error: Expected [] and [valueOf hour, valueOf min, valueOf sec, valueOf ms] to have the same contents. '
-  strict mode: 'Test262Error: Expected [] and [valueOf hour, valueOf min, valueOf sec, valueOf ms] to have the same contents. '
-test/built-ins/Date/prototype/setMilliseconds/arg-coercion-order.js:
-  default: 'Test262Error: ToNumber invoked exactly once Expected SameValue(«0», «1») to be true'
-  strict mode: 'Test262Error: ToNumber invoked exactly once Expected SameValue(«0», «1») to be true'
-test/built-ins/Date/prototype/setMinutes/arg-coercion-order.js:
-  default: 'Test262Error: Expected [] and [valueOf min, valueOf sec, valueOf ms] to have the same contents. '
-  strict mode: 'Test262Error: Expected [] and [valueOf min, valueOf sec, valueOf ms] to have the same contents. '
-test/built-ins/Date/prototype/setMonth/arg-coercion-order.js:
-  default: 'Test262Error: Expected [] and [valueOf month, valueOf date] to have the same contents. '
-  strict mode: 'Test262Error: Expected [] and [valueOf month, valueOf date] to have the same contents. '
-test/built-ins/Date/prototype/setSeconds/arg-coercion-order.js:
-  default: 'Test262Error: Expected [] and [valueOf sec, valueOf ms] to have the same contents. '
-  strict mode: 'Test262Error: Expected [] and [valueOf sec, valueOf ms] to have the same contents. '
-test/built-ins/Date/prototype/setUTCDate/arg-coercion-order.js:
-  default: 'Test262Error: ToNumber invoked exactly once Expected SameValue(«0», «1») to be true'
-  strict mode: 'Test262Error: ToNumber invoked exactly once Expected SameValue(«0», «1») to be true'
-test/built-ins/Date/prototype/setUTCHours/arg-coercion-order.js:
-  default: 'Test262Error: Expected [] and [valueOf hour, valueOf min, valueOf sec, valueOf ms] to have the same contents. '
-  strict mode: 'Test262Error: Expected [] and [valueOf hour, valueOf min, valueOf sec, valueOf ms] to have the same contents. '
-test/built-ins/Date/prototype/setUTCMilliseconds/arg-coercion-order.js:
-  default: 'Test262Error: ToNumber invoked exactly once Expected SameValue(«0», «1») to be true'
-  strict mode: 'Test262Error: ToNumber invoked exactly once Expected SameValue(«0», «1») to be true'
-test/built-ins/Date/prototype/setUTCMinutes/arg-coercion-order.js:
-  default: 'Test262Error: Expected [] and [valueOf min, valueOf sec, valueOf ms] to have the same contents. '
-  strict mode: 'Test262Error: Expected [] and [valueOf min, valueOf sec, valueOf ms] to have the same contents. '
-test/built-ins/Date/prototype/setUTCMonth/arg-coercion-order.js:
-  default: 'Test262Error: Expected [] and [valueOf month, valueOf date] to have the same contents. '
-  strict mode: 'Test262Error: Expected [] and [valueOf month, valueOf date] to have the same contents. '
-test/built-ins/Date/prototype/setUTCSeconds/arg-coercion-order.js:
-  default: 'Test262Error: Expected [] and [valueOf sec, valueOf ms] to have the same contents. '
-  strict mode: 'Test262Error: Expected [] and [valueOf sec, valueOf ms] to have the same contents. '
 test/built-ins/Function/internals/Construct/derived-return-val-realm.js:
   default: 'Test262Error: Expected a TypeError but got a different error constructor with the same name'
   strict mode: 'Test262Error: Expected a TypeError but got a different error constructor with the same name'
