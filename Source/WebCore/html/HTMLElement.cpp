@@ -892,10 +892,10 @@ void HTMLElement::adjustDirectionalityIfNeededAfterChildrenChanged(Element* befo
     }
 }
 
-void HTMLElement::addHTMLLengthToStyle(MutableStyleProperties& style, CSSPropertyID propertyID, StringView value, AllowPercentage allowPercentage, UseCSSPXAsUnitType useCSSPX, IsMultiLength isMultiLength)
+void HTMLElement::addHTMLLengthToStyle(MutableStyleProperties& style, CSSPropertyID propertyID, StringView value, AllowPercentage allowPercentage, UseCSSPXAsUnitType useCSSPX, IsMultiLength isMultiLength, AllowZeroValue allowZeroValue)
 {
     auto dimensionValue = isMultiLength == IsMultiLength::No ? parseHTMLDimension(value) : parseHTMLMultiLength(value);
-    if (!dimensionValue)
+    if (!dimensionValue || (!dimensionValue->number && allowZeroValue == AllowZeroValue::No))
         return;
     if (dimensionValue->type == HTMLDimension::Type::Percentage) {
         if (allowPercentage == AllowPercentage::Yes)
@@ -909,9 +909,9 @@ void HTMLElement::addHTMLLengthToStyle(MutableStyleProperties& style, CSSPropert
 }
 
 // https://www.w3.org/TR/html4/sgml/dtd.html#Length, including pixel and percentage values.
-void HTMLElement::addHTMLLengthToStyle(MutableStyleProperties& style, CSSPropertyID propertyID, StringView value)
+void HTMLElement::addHTMLLengthToStyle(MutableStyleProperties& style, CSSPropertyID propertyID, StringView value, AllowZeroValue allowZeroValue)
 {
-    addHTMLLengthToStyle(style, propertyID, value, AllowPercentage::Yes, UseCSSPXAsUnitType::Yes, IsMultiLength::No);
+    addHTMLLengthToStyle(style, propertyID, value, AllowPercentage::Yes, UseCSSPXAsUnitType::Yes, IsMultiLength::No, allowZeroValue);
 }
 
 // https://www.w3.org/TR/html4/sgml/dtd.html#MultiLength, including pixel, percentage, and relative values.

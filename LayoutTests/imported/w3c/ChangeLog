@@ -1,3 +1,12 @@
+2022-01-15  Alan Bujtas  <zalan@apple.com>
+
+        web-platform-tests/html/rendering/dimension-attributes.html is failing when table width is set to 0px
+        https://bugs.webkit.org/show_bug.cgi?id=235267
+
+        Reviewed by Antti Koivisto.
+
+        * web-platform-tests/html/rendering/dimension-attributes-expected.txt:
+
 2022-01-14  Antoine Quint  <graouts@webkit.org>
 
         Setting `content: normal` on a ::marker should make computed style return resolved values

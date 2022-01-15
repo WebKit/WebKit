@@ -140,7 +140,8 @@ public:
 protected:
     HTMLElement(const QualifiedName& tagName, Document&, ConstructionType);
 
-    void addHTMLLengthToStyle(MutableStyleProperties&, CSSPropertyID, StringView value);
+    enum class AllowZeroValue : bool { No, Yes };
+    void addHTMLLengthToStyle(MutableStyleProperties&, CSSPropertyID, StringView value, AllowZeroValue = AllowZeroValue::Yes);
     void addHTMLMultiLengthToStyle(MutableStyleProperties&, CSSPropertyID, StringView value);
     void addHTMLPixelsToStyle(MutableStyleProperties&, CSSPropertyID, StringView value);
     void addHTMLNumberToStyle(MutableStyleProperties&, CSSPropertyID, StringView value);
@@ -177,7 +178,7 @@ private:
     enum class AllowPercentage : bool { No, Yes };
     enum class UseCSSPXAsUnitType : bool { No, Yes };
     enum class IsMultiLength : bool { No, Yes };
-    void addHTMLLengthToStyle(MutableStyleProperties&, CSSPropertyID, StringView value, AllowPercentage, UseCSSPXAsUnitType, IsMultiLength);
+    void addHTMLLengthToStyle(MutableStyleProperties&, CSSPropertyID, StringView value, AllowPercentage, UseCSSPXAsUnitType, IsMultiLength, AllowZeroValue = AllowZeroValue::Yes);
 };
 
 inline HTMLElement::HTMLElement(const QualifiedName& tagName, Document& document, ConstructionType type = CreateHTMLElement)

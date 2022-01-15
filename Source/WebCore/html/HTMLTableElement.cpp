@@ -307,7 +307,7 @@ static bool getBordersFromFrameAttributeValue(const AtomString& value, bool& bor
 void HTMLTableElement::collectPresentationalHintsForAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)
 {
     if (name == widthAttr)
-        addHTMLLengthToStyle(style, CSSPropertyWidth, value);
+        addHTMLLengthToStyle(style, CSSPropertyWidth, value, AllowZeroValue::No);
     else if (name == heightAttr)
         addHTMLLengthToStyle(style, CSSPropertyHeight, value);
     else if (name == borderAttr) 
