@@ -5291,3 +5291,6 @@ imported/blink/http/tests/plugins [ Skip ]
 imported/blink/plugins [ Skip ]
 js/dom/reflect-set-onto-dom.html [ Skip ]
 userscripts/user-script-plugin-document.html [ Skip ]
+
+# This is marked as passing on WK2.
+fast/canvas/large-getImageData.html [ Skip ]

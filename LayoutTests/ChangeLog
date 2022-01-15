@@ -1,3 +1,18 @@
+2022-01-13  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [macOS WK1] fast/canvas/large-getImageData.html is consistently failing
+        https://bugs.webkit.org/show_bug.cgi?id=235169
+
+        Unreviewed.
+
+        This test gets very close to the canvas memory limit. Because
+        JSC has no guarantees about when objects are collected, this test
+        has to be run in its own process, which means it requires WK2 and
+        <!-- webkit-test-runner [ runSingly=true ] -->.
+
+        * TestExpectations:
+        * platform/wk2/TestExpectations:
+
 2022-01-14  Jer Noble  <jer.noble@apple.com>
 
         [Cocoa] rVFC() isn't called for initial video load
