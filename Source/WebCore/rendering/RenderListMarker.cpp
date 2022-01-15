@@ -1467,9 +1467,8 @@ RenderListMarker::RenderListMarker(RenderListItem& listItem, RenderStyle&& style
     : RenderBox(listItem.document(), WTFMove(style), 0)
     , m_listItem(listItem)
 {
-    // init RenderObject attributes
-    setInline(true);   // our object is Inline
-    setReplaced(true); // pretend to be replaced
+    setInline(true);
+    setReplacedOrInlineBlock(true); // pretend to be replaced
 }
 
 RenderListMarker::~RenderListMarker()

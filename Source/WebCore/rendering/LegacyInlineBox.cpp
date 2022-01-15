@@ -183,7 +183,7 @@ void LegacyInlineBox::adjustPosition(float dx, float dy)
     if (renderer().isOutOfFlowPositioned())
         return;
 
-    if (renderer().isReplaced())
+    if (renderer().isReplacedOrInlineBlock())
         downcast<RenderBox>(renderer()).move(LayoutUnit(dx), LayoutUnit(dy));
 }
 
@@ -253,7 +253,7 @@ RenderObject::HighlightState LegacyInlineBox::selectionState() const
 bool LegacyInlineBox::canAccommodateEllipsis(bool ltr, int blockEdge, int ellipsisWidth) const
 {
     // Non-replaced elements can always accommodate an ellipsis.
-    if (!renderer().isReplaced())
+    if (!renderer().isReplacedOrInlineBlock())
         return true;
     
     IntRect boxRect(left(), 0, m_logicalWidth, 10);

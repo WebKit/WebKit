@@ -204,8 +204,8 @@ CGRect Frame::renderRectForPoint(CGPoint point, bool* isReplaced, float* fontSiz
             printf("%s %f %f %f %f\n", nodeName, rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
         }
 #endif
-        if (renderer->isRenderBlock() || renderer->isInlineBlockOrInlineTable() || renderer->isReplaced()) {
-            *isReplaced = renderer->isReplaced();
+        if (renderer->isRenderBlock() || renderer->isInlineBlockOrInlineTable() || renderer->isReplacedOrInlineBlock()) {
+            *isReplaced = renderer->isReplacedOrInlineBlock();
 #if CHECK_FONT_SIZE
             for (RenderObject* textRenderer = hitRenderer; textRenderer; textRenderer = textRenderer->traverseNext(hitRenderer)) {
                 if (textRenderer->isText()) {

@@ -1588,7 +1588,7 @@ Color RenderElement::selectionBackgroundColor() const
 
 bool RenderElement::getLeadingCorner(FloatPoint& point, bool& insideFixed) const
 {
-    if (!isInline() || isReplaced()) {
+    if (!isInline() || isReplacedOrInlineBlock()) {
         point = localToAbsolute(FloatPoint(), UseTransforms, &insideFixed);
         return true;
     }
@@ -1614,14 +1614,14 @@ bool RenderElement::getLeadingCorner(FloatPoint& point, bool& insideFixed) const
         }
         ASSERT(o);
 
-        if (!o->isInline() || o->isReplaced()) {
+        if (!o->isInline() || o->isReplacedOrInlineBlock()) {
             point = o->localToAbsolute(FloatPoint(), UseTransforms, &insideFixed);
             return true;
         }
 
         if (p->node() && p->node() == element() && is<RenderText>(*o) && !InlineIterator::firstTextBoxFor(downcast<RenderText>(*o))) {
             // do nothing - skip unrendered whitespace that is a child or next sibling of the anchor
-        } else if (is<RenderText>(*o) || o->isReplaced()) {
+        } else if (is<RenderText>(*o) || o->isReplacedOrInlineBlock()) {
             point = FloatPoint();
             if (is<RenderText>(*o)) {
                 auto& textRenderer = downcast<RenderText>(*o);
@@ -1645,7 +1645,7 @@ bool RenderElement::getLeadingCorner(FloatPoint& point, bool& insideFixed) const
 
 bool RenderElement::getTrailingCorner(FloatPoint& point, bool& insideFixed) const
 {
-    if (!isInline() || isReplaced()) {
+    if (!isInline() || isReplacedOrInlineBlock()) {
         point = localToAbsolute(LayoutPoint(downcast<RenderBox>(*this).size()), UseTransforms, &insideFixed);
         return true;
     }
@@ -1668,7 +1668,7 @@ bool RenderElement::getTrailingCorner(FloatPoint& point, bool& insideFixed) cons
             o = prev;
         }
         ASSERT(o);
-        if (is<RenderText>(*o) || o->isReplaced()) {
+        if (is<RenderText>(*o) || o->isReplacedOrInlineBlock()) {
             point = FloatPoint();
             if (is<RenderText>(*o)) {
                 LayoutRect linesBox = downcast<RenderText>(*o).linesBoundingBox();
@@ -1696,7 +1696,7 @@ LayoutRect RenderElement::absoluteAnchorRect(bool* insideFixed) const
     FloatPoint lowerRight = trailing;
 
     // Vertical writing modes might mean the leading point is not in the top left
-    if (!isInline() || isReplaced()) {
+    if (!isInline() || isReplacedOrInlineBlock()) {
         upperLeft = FloatPoint(std::min(leading.x(), trailing.x()), std::min(leading.y(), trailing.y()));
         lowerRight = FloatPoint(std::max(leading.x(), trailing.x()), std::max(leading.y(), trailing.y()));
     } // Otherwise, it's not obvious what to do.

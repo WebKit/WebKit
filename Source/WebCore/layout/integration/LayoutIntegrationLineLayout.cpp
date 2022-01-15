@@ -634,7 +634,7 @@ void LineLayout::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
             continue;
         }
 
-        if (auto& renderer = m_boxTree.rendererForLayoutBox(box.layoutBox()); is<RenderBox>(renderer) && renderer.isReplaced()) {
+        if (auto& renderer = m_boxTree.rendererForLayoutBox(box.layoutBox()); is<RenderBox>(renderer) && renderer.isReplacedOrInlineBlock()) {
             auto& renderBox = downcast<RenderBox>(renderer);
             if (!renderBox.hasSelfPaintingLayer() && paintInfo.shouldPaintWithinRoot(renderBox))
                 renderBox.paintAsInlineBlock(paintInfo, paintOffset);

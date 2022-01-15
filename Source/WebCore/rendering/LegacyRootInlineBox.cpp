@@ -677,7 +677,7 @@ void LegacyRootInlineBox::ascentAndDescentForBox(LegacyInlineBox& box, GlyphOver
 
     // Replaced boxes will return 0 for the line-height if line-box-contain says they are
     // not to be included.
-    if (box.renderer().isReplaced()) {
+    if (box.renderer().isReplacedOrInlineBlock()) {
         if (lineStyle().lineBoxContain().contains(LineBoxContain::Replaced)) {
             ascent = box.baselinePosition(baselineType());
             descent = roundToInt(box.lineHeight()) - ascent;
@@ -837,7 +837,7 @@ LayoutUnit LegacyRootInlineBox::verticalPositionForBox(LegacyInlineBox* box, Ver
         else if (verticalAlign == VerticalAlign::TextBottom) {
             verticalPosition += fontMetrics.descent(baselineType());
             // lineHeight - baselinePosition is always 0 for replaced elements (except inline blocks), so don't bother wasting time in that case.
-            if (!renderer->isReplaced() || renderer->isInlineBlockOrInlineTable())
+            if (!renderer->isReplacedOrInlineBlock() || renderer->isInlineBlockOrInlineTable())
                 verticalPosition -= (renderer->lineHeight(firstLine, lineDirection) - renderer->baselinePosition(baselineType(), firstLine, lineDirection));
         } else if (verticalAlign == VerticalAlign::BaselineMiddle)
             verticalPosition += -renderer->lineHeight(firstLine, lineDirection) / 2 + renderer->baselinePosition(baselineType(), firstLine, lineDirection);
@@ -861,7 +861,7 @@ LayoutUnit LegacyRootInlineBox::verticalPositionForBox(LegacyInlineBox* box, Ver
 
 bool LegacyRootInlineBox::includeLeadingForBox(LegacyInlineBox& box) const
 {
-    if (box.renderer().isReplaced() || (box.renderer().isTextOrLineBreak() && !box.behavesLikeText()))
+    if (box.renderer().isReplacedOrInlineBlock() || (box.renderer().isTextOrLineBreak() && !box.behavesLikeText()))
         return false;
 
     auto lineBoxContain = renderer().style().lineBoxContain();
@@ -870,7 +870,7 @@ bool LegacyRootInlineBox::includeLeadingForBox(LegacyInlineBox& box) const
 
 bool LegacyRootInlineBox::includeFontForBox(LegacyInlineBox& box) const
 {
-    if (box.renderer().isReplaced() || (box.renderer().isTextOrLineBreak() && !box.behavesLikeText()))
+    if (box.renderer().isReplacedOrInlineBlock() || (box.renderer().isTextOrLineBreak() && !box.behavesLikeText()))
         return false;
     
     if (!box.behavesLikeText() && is<LegacyInlineFlowBox>(box) && !downcast<LegacyInlineFlowBox>(box).hasTextChildren())
@@ -881,7 +881,7 @@ bool LegacyRootInlineBox::includeFontForBox(LegacyInlineBox& box) const
 
 bool LegacyRootInlineBox::includeGlyphsForBox(LegacyInlineBox& box) const
 {
-    if (box.renderer().isReplaced() || (box.renderer().isTextOrLineBreak() && !box.behavesLikeText()))
+    if (box.renderer().isReplacedOrInlineBlock() || (box.renderer().isTextOrLineBreak() && !box.behavesLikeText()))
         return false;
     
     if (!box.behavesLikeText() && is<LegacyInlineFlowBox>(box) && !downcast<LegacyInlineFlowBox>(box).hasTextChildren())
@@ -892,7 +892,7 @@ bool LegacyRootInlineBox::includeGlyphsForBox(LegacyInlineBox& box) const
 
 bool LegacyRootInlineBox::includeInitialLetterForBox(LegacyInlineBox& box) const
 {
-    if (box.renderer().isReplaced() || (box.renderer().isTextOrLineBreak() && !box.behavesLikeText()))
+    if (box.renderer().isReplacedOrInlineBlock() || (box.renderer().isTextOrLineBreak() && !box.behavesLikeText()))
         return false;
     
     if (!box.behavesLikeText() && is<LegacyInlineFlowBox>(box) && !downcast<LegacyInlineFlowBox>(box).hasTextChildren())
@@ -903,7 +903,7 @@ bool LegacyRootInlineBox::includeInitialLetterForBox(LegacyInlineBox& box) const
 
 bool LegacyRootInlineBox::includeMarginForBox(LegacyInlineBox& box) const
 {
-    if (box.renderer().isReplaced() || (box.renderer().isTextOrLineBreak() && !box.behavesLikeText()))
+    if (box.renderer().isReplacedOrInlineBlock() || (box.renderer().isTextOrLineBreak() && !box.behavesLikeText()))
         return false;
 
     return renderer().style().lineBoxContain().contains(LineBoxContain::InlineBox);

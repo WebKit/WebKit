@@ -2307,7 +2307,7 @@ static CSSValueID convertToColumnBreak(BreakInside value)
 
 static inline bool isNonReplacedInline(RenderObject& renderer)
 {
-    return renderer.isInline() && !renderer.isReplaced();
+    return renderer.isInline() && !renderer.isReplacedOrInlineBlock();
 }
 
 static bool isLayoutDependent(CSSPropertyID propertyID, const RenderStyle* style, RenderObject* renderer)

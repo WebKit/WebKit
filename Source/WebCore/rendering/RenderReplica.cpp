@@ -44,7 +44,8 @@ RenderReplica::RenderReplica(Document& document, RenderStyle&& style)
     // renderers being replicated, so they always report that they are inline, non-replaced.
     // However, we need transforms to be applied to replicas for reflections, so have to pass
     // the if (!isInline() || isReplaced()) check before setHasTransform().
-    setReplaced(true);
+    // FIXME: Is the comment above obsolete? Can't find a check of isReplacedOrInlineBlock guarding setHasTransform any more.
+    setReplacedOrInlineBlock(true);
 }
 
 RenderReplica::~RenderReplica() = default;

@@ -533,7 +533,7 @@ static OptionSet<AvoidanceReason> canUseForChild(const RenderBlockFlow& flow, co
 
     if (is<RenderBlockFlow>(child)) {
         auto& block = downcast<RenderBlockFlow>(child);
-        if (!block.isReplaced() || !block.isInline())
+        if (!block.isReplacedOrInlineBlock() || !block.isInline())
             SET_REASON_AND_RETURN_IF_NEEDED(FlowHasNonSupportedChild, reasons, includeReasons)
         if (block.isFloating() || block.isPositioned())
             SET_REASON_AND_RETURN_IF_NEEDED(ChildBoxIsFloatingOrPositioned, reasons, includeReasons)

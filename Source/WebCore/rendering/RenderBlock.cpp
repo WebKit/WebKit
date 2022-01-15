@@ -393,8 +393,8 @@ void RenderBlock::removePositionedObjectsIfNeeded(const RenderStyle& oldStyle, c
         // They will be inserted into our positioned objects list during layout.
         auto* containingBlock = parent();
         while (containingBlock && !is<RenderView>(*containingBlock)
-            && (containingBlock->style().position() == PositionType::Static || (containingBlock->isInline() && !containingBlock->isReplaced()))) {
-            if (containingBlock->style().position() == PositionType::Relative && containingBlock->isInline() && !containingBlock->isReplaced()) {
+            && (containingBlock->style().position() == PositionType::Static || (containingBlock->isInline() && !containingBlock->isReplacedOrInlineBlock()))) {
+            if (containingBlock->style().position() == PositionType::Relative && containingBlock->isInline() && !containingBlock->isReplacedOrInlineBlock()) {
                 containingBlock = containingBlock->containingBlock();
                 break;
             }
@@ -408,7 +408,8 @@ void RenderBlock::removePositionedObjectsIfNeeded(const RenderStyle& oldStyle, c
 void RenderBlock::styleWillChange(StyleDifference diff, const RenderStyle& newStyle)
 {
     const RenderStyle* oldStyle = hasInitializedStyle() ? &style() : nullptr;
-    setReplaced(newStyle.isDisplayInlineType());
+    // FIXME: Should change the expression below to newStyle.display() == DisplayType::InlineBlock.
+    setReplacedOrInlineBlock(newStyle.isDisplayInlineType());
     if (oldStyle)
         removePositionedObjectsIfNeeded(*oldStyle, newStyle);
     RenderBox::styleWillChange(diff, newStyle);
@@ -876,7 +877,7 @@ void RenderBlock::simplifiedNormalFlowLayout()
         ListHashSet<LegacyRootInlineBox*> lineBoxes;
         for (InlineWalker walker(downcast<RenderBlockFlow>(*this)); !walker.atEnd(); walker.advance()) {
             RenderObject& renderer = *walker.current();
-            if (!renderer.isOutOfFlowPositioned() && (renderer.isReplaced() || renderer.isFloating())) {
+            if (!renderer.isOutOfFlowPositioned() && (renderer.isReplacedOrInlineBlock() || renderer.isFloating())) {
                 RenderBox& box = downcast<RenderBox>(renderer);
                 box.layoutIfNeeded();
                 if (box.inlineBoxWrapper())
@@ -1180,7 +1181,7 @@ bool RenderBlock::paintChild(RenderBox& child, PaintInfo& paintInfo, const Layou
         return false;
     }
 
-    if (!child.isFloating() && child.isReplaced() && usePrintRect && child.height() <= view().printRect().height()) {
+    if (!child.isFloating() && child.isReplacedOrInlineBlock() && usePrintRect && child.height() <= view().printRect().height()) {
         // Paginate block-level replaced elements.
         if (absoluteChildY + child.height() > view().printRect().maxY()) {
             if (absoluteChildY < view().truncatedAt())
@@ -2176,7 +2177,7 @@ VisiblePosition RenderBlock::positionForPoint(const LayoutPoint& point, const Re
     if (isTable())
         return RenderBox::positionForPoint(point, fragment);
 
-    if (isReplaced()) {
+    if (isReplacedOrInlineBlock()) {
         // FIXME: This seems wrong when the object's writing-mode doesn't match the line's writing-mode.
         LayoutUnit pointLogicalLeft = isHorizontalWritingMode() ? point.x() : point.y();
         LayoutUnit pointLogicalTop = isHorizontalWritingMode() ? point.y() : point.x();
@@ -2429,7 +2430,7 @@ LayoutUnit RenderBlock::lineHeight(bool firstLine, LineDirectionMode direction, 
     // the base class.  If we're being queried as though we're the root line
     // box, then the fact that we're an inline-block is irrelevant, and we behave
     // just like a block.
-    if (isReplaced() && linePositionMode == PositionOnContainingLine)
+    if (isReplacedOrInlineBlock() && linePositionMode == PositionOnContainingLine)
         return RenderBox::lineHeight(firstLine, direction, linePositionMode);
 
     if (firstLine && view().usesFirstLineRules()) {
@@ -2447,7 +2448,7 @@ LayoutUnit RenderBlock::baselinePosition(FontBaseline baselineType, bool firstLi
     // the base class.  If we're being queried as though we're the root line
     // box, then the fact that we're an inline-block is irrelevant, and we behave
     // just like a block.
-    if (isReplaced() && linePositionMode == PositionOnContainingLine) {
+    if (isReplacedOrInlineBlock() && linePositionMode == PositionOnContainingLine) {
         // For "leaf" theme objects, let the theme decide what the baseline position is.
         // FIXME: Might be better to have a custom CSS property instead, so that if the theme
         // is turned off, checkboxes/radios will still have decent baselines.
@@ -2576,7 +2577,7 @@ RenderBlock* RenderBlock::firstLineBlock() const
         if (hasPseudo)
             break;
         RenderElement* parentBlock = firstLineBlock->parent();
-        if (firstLineBlock->isReplaced() || firstLineBlock->isFloating()
+        if (firstLineBlock->isReplacedOrInlineBlock() || firstLineBlock->isFloating()
             || !parentBlock || parentBlock->firstChild() != firstLineBlock || !isRenderBlockFlowOrRenderButton(*parentBlock))
             break;
         firstLineBlock = downcast<RenderBlock>(parentBlock);
@@ -2599,7 +2600,7 @@ static inline RenderBlock* findFirstLetterBlock(RenderBlock* start)
             return firstLetterBlock;
 
         RenderElement* parentBlock = firstLetterBlock->parent();
-        if (firstLetterBlock->isReplaced() || !parentBlock || parentBlock->firstChild() != firstLetterBlock
+        if (firstLetterBlock->isReplacedOrInlineBlock() || !parentBlock || parentBlock->firstChild() != firstLetterBlock
             || !isRenderBlockFlowOrRenderButton(*parentBlock))
             return nullptr;
         firstLetterBlock = downcast<RenderBlock>(parentBlock);
@@ -2647,7 +2648,7 @@ void RenderBlock::getFirstLetter(RenderObject*& firstLetter, RenderElement*& fir
                 break;
             }
             firstLetter = current.nextSibling();
-        } else if (current.isReplaced() || is<RenderButton>(current) || is<RenderMenuList>(current))
+        } else if (current.isReplacedOrInlineBlock() || is<RenderButton>(current) || is<RenderMenuList>(current))
             break;
         else if (current.isFlexibleBoxIncludingDeprecated() || current.isRenderGrid())
             firstLetter = current.nextSibling();

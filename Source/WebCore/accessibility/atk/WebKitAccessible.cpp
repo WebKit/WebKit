@@ -1209,7 +1209,7 @@ static guint16 interfaceMaskFromObject(AXCoreObject* coreObject)
         renderer = coreObject->renderer();
 
     // Hyperlink (links and embedded objects).
-    if (coreObject->isLink() || (renderer && renderer->isReplaced()))
+    if (coreObject->isLink() || (renderer && renderer->isReplacedOrInlineBlock()))
         interfaceMask |= 1 << WAIHyperlink;
 
     // Text, Editable Text & Hypertext

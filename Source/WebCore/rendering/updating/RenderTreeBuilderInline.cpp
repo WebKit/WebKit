@@ -50,7 +50,7 @@ static bool canUseAsParentForContinuation(const RenderObject* renderer)
 
 static RenderBoxModelObject* nextContinuation(RenderObject* renderer)
 {
-    if (is<RenderInline>(*renderer) && !renderer->isReplaced())
+    if (is<RenderInline>(*renderer) && !renderer->isReplacedOrInlineBlock())
         return downcast<RenderInline>(*renderer).continuation();
     return downcast<RenderBlock>(*renderer).inlineContinuation();
 }

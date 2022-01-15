@@ -639,7 +639,7 @@ static bool endsOfNodeAreVisuallyDistinctPositions(Node* node)
     if (is<HTMLTableElement>(*node))
         return false;
     
-    if (!node->renderer()->isReplaced() || !canHaveChildrenForEditing(*node) || !downcast<RenderBox>(*node->renderer()).height())
+    if (!node->renderer()->isReplacedOrInlineBlock() || !canHaveChildrenForEditing(*node) || !downcast<RenderBox>(*node->renderer()).height())
         return false;
 
     // There is a VisiblePosition inside an empty inline-block container.

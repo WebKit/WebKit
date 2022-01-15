@@ -206,7 +206,7 @@ void RenderBlockFlow::rebuildFloatingObjectSetFromIntrudingFloats()
         }
     }
 
-    // Inline blocks are covered by the isReplaced() check in the avoidFloats method.
+    // Inline blocks are covered by the isReplacedOrInlineBlock() check in the avoidFloats method.
     if (avoidsFloats() || isDocumentElementRenderer() || isRenderView() || isFloatingOrOutOfFlowPositioned() || isTableCell()) {
         if (m_floatingObjects)
             m_floatingObjects->clear();
@@ -3425,7 +3425,7 @@ VisiblePosition RenderBlockFlow::positionForPointWithInlineChildren(const Layout
         LayoutPoint point(pointInLogicalContents.x(), closestRun->line()->blockDirectionPointInLine());
         if (!isHorizontalWritingMode())
             point = point.transposedPoint();
-        if (closestRun->renderer().isReplaced())
+        if (closestRun->renderer().isReplacedOrInlineBlock())
             return positionForPointRespectingEditingBoundaries(*this, const_cast<RenderBox&>(downcast<RenderBox>(closestRun->renderer())), point);
         return const_cast<RenderObject&>(closestRun->renderer()).positionForPoint(point, nullptr);
     }
@@ -3997,7 +3997,7 @@ RenderObject* InlineMinMaxIterator::next()
     bool oldEndOfInline = endOfInline;
     endOfInline = false;
     do {
-        if (!oldEndOfInline && (current && !current->isFloating() && !current->isReplaced() && !current->isOutOfFlowPositioned()))
+        if (!oldEndOfInline && (current && !current->isFloating() && !current->isReplacedOrInlineBlock() && !current->isOutOfFlowPositioned()))
             result = current->firstChildSlow();
         else if (initial) {
             result = parent.firstChild();
@@ -4028,7 +4028,7 @@ RenderObject* InlineMinMaxIterator::next()
         if (!result)
             break;
 
-        if (!result->isOutOfFlowPositioned() && (result->isTextOrLineBreak() || result->isFloating() || result->isReplaced() || result->isRenderInline()))
+        if (!result->isOutOfFlowPositioned() && (result->isTextOrLineBreak() || result->isFloating() || result->isReplacedOrInlineBlock() || result->isRenderInline()))
             break;
 
         current = result;
@@ -4126,7 +4126,7 @@ void RenderBlockFlow::computeInlinePreferredLogicalWidths(LayoutUnit& minLogical
     bool addedStartPunctuationHang = false;
     
     while (RenderObject* child = childIterator.next()) {
-        bool autoWrap = child->isReplaced() ? child->parent()->style().autoWrap() :
+        bool autoWrap = child->isReplacedOrInlineBlock() ? child->parent()->style().autoWrap() :
             child->style().autoWrap();
         if (!child->isBR()) {
             // Step One: determine whether or not we need to terminate our current line.

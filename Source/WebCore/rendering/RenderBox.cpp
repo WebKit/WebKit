@@ -2400,7 +2400,7 @@ LayoutSize RenderBox::offsetFromContainer(RenderElement& container, const Layout
     if (isInFlowPositioned())
         offset += offsetForInFlowPosition();
 
-    if (!isInline() || isReplaced())
+    if (!isInline() || isReplacedOrInlineBlock())
         offset += topLeftLocationOffset();
 
     if (is<RenderBox>(container))
@@ -2457,7 +2457,7 @@ void RenderBox::positionLineBox(LegacyInlineElementBox& box)
         return;
     }
 
-    if (isReplaced()) {
+    if (isReplacedOrInlineBlock()) {
         setLocation(LayoutPoint(box.topLeft()));
         setInlineBoxWrapper(&box);
     }
@@ -3085,7 +3085,7 @@ RenderBox::LogicalExtentComputedValues RenderBox::computeLogicalHeight(LayoutUni
     computedValues.m_position = logicalTop;
 
     // Cell height is managed by the table and inline non-replaced elements do not support a height property.
-    if (isTableCell() || (isInline() && !isReplaced()))
+    if (isTableCell() || (isInline() && !isReplacedOrInlineBlock()))
         return computedValues;
 
     Length h;
@@ -3284,7 +3284,7 @@ bool RenderBox::skipContainingBlockForPercentHeightCalculation(const RenderBox& 
 
 bool RenderBox::shouldTreatChildAsReplacedInTableCells() const
 {
-    if (isReplaced())
+    if (isReplacedOrInlineBlock())
         return true;
     return element() && (element()->isFormControlElement() || is<HTMLImageElement>(element()));
 }
@@ -3849,7 +3849,7 @@ static void computeInlineStaticDistance(Length& logicalLeft, Length& logicalRigh
 
 void RenderBox::computePositionedLogicalWidth(LogicalExtentComputedValues& computedValues, RenderFragmentContainer* fragment) const
 {
-    if (isReplaced()) {
+    if (isReplacedOrInlineBlock()) {
         // FIXME: Positioned replaced elements inside a flow thread are not working properly
         // with variable width fragments (see https://bugs.webkit.org/show_bug.cgi?id=69896 ).
         computePositionedLogicalWidthReplaced(computedValues);
@@ -4239,7 +4239,7 @@ static void computeBlockStaticDistance(Length& logicalTop, Length& logicalBottom
 
 void RenderBox::computePositionedLogicalHeight(LogicalExtentComputedValues& computedValues) const
 {
-    if (isReplaced()) {
+    if (isReplacedOrInlineBlock()) {
         computePositionedLogicalHeightReplaced(computedValues);
         return;
     }
@@ -4923,7 +4923,7 @@ bool RenderBox::createsNewFormattingContext() const
 
 bool RenderBox::avoidsFloats() const
 {
-    return isReplaced() || isHR() || isLegend() || isFieldset() || createsNewFormattingContext();
+    return isReplacedOrInlineBlock() || isHR() || isLegend() || isFieldset() || createsNewFormattingContext();
 }
 
 void RenderBox::addVisualEffectOverflow()
@@ -5096,7 +5096,7 @@ bool RenderBox::hasUnsplittableScrollingOverflow() const
 
 bool RenderBox::isUnsplittableForPagination() const
 {
-    return isReplaced()
+    return isReplacedOrInlineBlock()
         || hasUnsplittableScrollingOverflow()
         || (parent() && isWritingModeRoot())
         || (isFloating() && style().styleType() == PseudoId::FirstLetter && style().initialLetterDrop() > 0)
@@ -5105,14 +5105,14 @@ bool RenderBox::isUnsplittableForPagination() const
 
 LayoutUnit RenderBox::lineHeight(bool /*firstLine*/, LineDirectionMode direction, LinePositionMode /*linePositionMode*/) const
 {
-    if (isReplaced())
+    if (isReplacedOrInlineBlock())
         return direction == HorizontalLine ? m_marginBox.top() + height() + m_marginBox.bottom() : m_marginBox.right() + width() + m_marginBox.left();
     return 0;
 }
 
 LayoutUnit RenderBox::baselinePosition(FontBaseline baselineType, bool /*firstLine*/, LineDirectionMode direction, LinePositionMode /*linePositionMode*/) const
 {
-    if (isReplaced()) {
+    if (isReplacedOrInlineBlock()) {
         auto result = roundToInt(direction == HorizontalLine ? m_marginBox.top() + height() + m_marginBox.bottom() : m_marginBox.right() + width() + m_marginBox.left());
         if (baselineType == AlphabeticBaseline)
             return result;

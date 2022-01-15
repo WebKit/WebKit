@@ -104,7 +104,7 @@ LegacyInlineIterator LineBreaker::nextLineBreak(InlineBidiResolver& resolver, Li
             context.handleFloat();
         } else if (context.currentObject()->isRenderInline()) {
             context.handleEmptyInline();
-        } else if (context.currentObject()->isReplaced()) {
+        } else if (context.currentObject()->isReplacedOrInlineBlock()) {
             context.handleReplaced();
         } else if (context.currentObject()->isText()) {
             if (context.handleText(wordMeasurements, m_hyphenated, consecutiveHyphenatedLines)) {

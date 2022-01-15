@@ -218,8 +218,8 @@ inline void BreakingContext::initializeForCurrentObject()
     if (m_nextObject && m_nextObject->parent() && !m_nextObject->parent()->isDescendantOf(renderer.parent()))
         m_includeEndWidth = true;
 
-    m_currWS = renderer.isReplaced() ? renderer.parent()->style().whiteSpace() : renderer.style().whiteSpace();
-    m_lastWS = m_lastObject->isReplaced() ? m_lastObject->parent()->style().whiteSpace() : m_lastObject->style().whiteSpace();
+    m_currWS = renderer.isReplacedOrInlineBlock() ? renderer.parent()->style().whiteSpace() : renderer.style().whiteSpace();
+    m_lastWS = m_lastObject->isReplacedOrInlineBlock() ? m_lastObject->parent()->style().whiteSpace() : m_lastObject->style().whiteSpace();
 
     m_autoWrap = RenderStyle::autoWrap(m_currWS);
     m_autoWrapWasEverTrueOnLine = m_autoWrapWasEverTrueOnLine || m_autoWrap;
@@ -1086,7 +1086,7 @@ inline bool BreakingContext::canBreakAtThisPosition()
         return false;
 
     // Avoid breaking before empty inlines (as long as the current object isn't replaced).
-    if (!m_current.renderer()->isReplaced() && is<RenderInline>(m_nextObject) && isEmptyInline(downcast<RenderInline>(*m_nextObject)))
+    if (!m_current.renderer()->isReplacedOrInlineBlock() && is<RenderInline>(m_nextObject) && isEmptyInline(downcast<RenderInline>(*m_nextObject)))
         return false;
 
     // Return early if we autowrap and the current character is a space as we will always want to break at such a position.
@@ -1150,7 +1150,7 @@ inline void BreakingContext::commitAndUpdateLineBreakIfNeeded()
 
     if (!m_current.renderer()->isFloatingOrOutOfFlowPositioned()) {
         m_lastObject = m_current.renderer();
-        if (m_lastObject->isReplaced() && m_autoWrap && !m_lastObject->isRubyRun() && (!m_lastObject->isImage() || m_allowImagesToBreak) && (!is<RenderListMarker>(*m_lastObject) || downcast<RenderListMarker>(*m_lastObject).isInside())) {
+        if (m_lastObject->isReplacedOrInlineBlock() && m_autoWrap && !m_lastObject->isRubyRun() && (!m_lastObject->isImage() || m_allowImagesToBreak) && (!is<RenderListMarker>(*m_lastObject) || downcast<RenderListMarker>(*m_lastObject).isInside())) {
             if (m_nextObject)
                 commitLineBreakAtCurrentWidth(*m_nextObject);
             else

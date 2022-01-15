@@ -196,7 +196,7 @@ static inline void notifyObserverWillExitObject(Observer* observer, RenderObject
 static inline bool isIteratorTarget(RenderObject* object)
 {
     ASSERT(object); // The iterator will of course return 0, but its not an expected argument to this function.
-    return object->isTextOrLineBreak() || object->isFloating() || object->isOutOfFlowPositioned() || object->isReplaced();
+    return object->isTextOrLineBreak() || object->isFloating() || object->isOutOfFlowPositioned() || object->isReplacedOrInlineBlock();
 }
 
 template <class Observer>

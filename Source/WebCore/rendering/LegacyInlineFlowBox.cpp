@@ -124,7 +124,7 @@ void LegacyInlineFlowBox::addToLine(LegacyInlineBox* child)
         const RenderStyle& parentStyle = lineStyle();
         const RenderStyle& childStyle = child->lineStyle();
         bool shouldClearDescendantsHaveSameLineHeightAndBaseline = false;
-        if (child->renderer().isReplaced())
+        if (child->renderer().isReplacedOrInlineBlock())
             shouldClearDescendantsHaveSameLineHeightAndBaseline = true;
         else if (child->behavesLikeText()) {
             if (child->renderer().isLineBreak() || child->renderer().parent() != &renderer()) {
@@ -169,7 +169,7 @@ void LegacyInlineFlowBox::addToLine(LegacyInlineBox* child)
             }
             if (childStyle->letterSpacing() < 0 || childStyle->textShadow() || childStyle->textEmphasisMark() != TextEmphasisMark::None || childStyle->hasPositiveStrokeWidth() || hasMarkers || !childStyle->textUnderlineOffset().isAuto() || !childStyle->textDecorationThickness().isAuto() || childStyle->textUnderlinePosition() != TextUnderlinePosition::Auto)
                 child->clearKnownToHaveNoOverflow();
-        } else if (child->renderer().isReplaced()) {
+        } else if (child->renderer().isReplacedOrInlineBlock()) {
             const RenderBox& box = downcast<RenderBox>(child->renderer());
             if (box.hasRenderOverflow() || box.hasSelfPaintingLayer())
                 child->clearKnownToHaveNoOverflow();
@@ -1209,7 +1209,7 @@ LayoutUnit LegacyInlineFlowBox::computeOverAnnotationAdjustment(LayoutUnit allow
         if (is<LegacyInlineFlowBox>(*child))
             result = std::max(result, downcast<LegacyInlineFlowBox>(*child).computeOverAnnotationAdjustment(allowedPosition));
         
-        if (child->renderer().isReplaced() && is<RenderRubyRun>(child->renderer()) && child->renderer().style().rubyPosition() == RubyPosition::Before) {
+        if (child->renderer().isReplacedOrInlineBlock() && is<RenderRubyRun>(child->renderer()) && child->renderer().style().rubyPosition() == RubyPosition::Before) {
             auto& rubyRun = downcast<RenderRubyRun>(child->renderer());
             RenderRubyText* rubyText = rubyRun.rubyText();
             if (!rubyText)
@@ -1257,7 +1257,7 @@ LayoutUnit LegacyInlineFlowBox::computeUnderAnnotationAdjustment(LayoutUnit allo
         if (is<LegacyInlineFlowBox>(*child))
             result = std::max(result, downcast<LegacyInlineFlowBox>(*child).computeUnderAnnotationAdjustment(allowedPosition));
 
-        if (child->renderer().isReplaced() && is<RenderRubyRun>(child->renderer()) && child->renderer().style().rubyPosition() == RubyPosition::After) {
+        if (child->renderer().isReplacedOrInlineBlock() && is<RenderRubyRun>(child->renderer()) && child->renderer().style().rubyPosition() == RubyPosition::After) {
             auto& rubyRun = downcast<RenderRubyRun>(child->renderer());
             RenderRubyText* rubyText = rubyRun.rubyText();
             if (!rubyText)

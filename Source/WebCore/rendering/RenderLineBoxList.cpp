@@ -332,7 +332,7 @@ void RenderLineBoxList::dirtyLinesFromChangedChild(RenderBoxModelObject& contain
         if (current->isFloatingOrOutOfFlowPositioned())
             continue;
 
-        if (current->isReplaced()) {
+        if (current->isReplacedOrInlineBlock()) {
             if (auto wrapper = downcast<RenderBox>(*current).inlineBoxWrapper())
                 box = &wrapper->root();
         } if (is<RenderLineBreak>(*current)) {

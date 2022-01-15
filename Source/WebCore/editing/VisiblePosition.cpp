@@ -132,7 +132,7 @@ Position VisiblePosition::leftVisuallyDistinctCandidate() const
         auto* renderer = &run->renderer();
 
         while (true) {
-            if ((renderer->isReplaced() || renderer->isBR()) && offset == run->rightmostCaretOffset())
+            if ((renderer->isReplacedOrInlineBlock() || renderer->isBR()) && offset == run->rightmostCaretOffset())
                 return run->isLeftToRightDirection() ? previousVisuallyDistinctCandidate(m_deepPosition) : nextVisuallyDistinctCandidate(m_deepPosition);
 
             if (!renderer->node()) {
@@ -298,7 +298,7 @@ Position VisiblePosition::rightVisuallyDistinctCandidate() const
         auto* renderer = &run->renderer();
 
         while (true) {
-            if ((renderer->isReplaced() || renderer->isBR()) && offset == run->leftmostCaretOffset())
+            if ((renderer->isReplacedOrInlineBlock() || renderer->isBR()) && offset == run->leftmostCaretOffset())
                 return run->isLeftToRightDirection() ? nextVisuallyDistinctCandidate(m_deepPosition) : previousVisuallyDistinctCandidate(m_deepPosition);
 
             if (!renderer->node()) {

@@ -523,8 +523,8 @@ void RenderLayer::removeOnlyThisLayer(LayerChangeTiming timing)
 
     // Remove the child reflection layer before moving other child layers.
     // The reflection layer should not be moved to the parent.
-    if (reflection())
-        removeChild(*reflectionLayer());
+    if (auto* reflectionLayer = this->reflectionLayer())
+        removeChild(*reflectionLayer);
 
     // Now walk our kids and reattach them to our parent.
     RenderLayer* current = m_first;

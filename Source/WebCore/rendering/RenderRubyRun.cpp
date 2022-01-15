@@ -50,7 +50,7 @@ RenderRubyRun::RenderRubyRun(Document& document, RenderStyle&& style)
     , m_lastCharacter(0)
     , m_secondToLastCharacter(0)
 {
-    setReplaced(true);
+    setReplacedOrInlineBlock(true);
     setInline(true);
 }
 

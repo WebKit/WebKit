@@ -387,7 +387,7 @@ public:
     // rest of the rendering tree will move to a similar model.
     virtual bool nodeAtFloatPoint(const HitTestRequest&, HitTestResult&, const FloatPoint& pointInParent, HitTestAction);
 
-    bool hasIntrinsicAspectRatio() const { return isReplaced() && (isImage() || isVideo() || isCanvas()); }
+    bool hasIntrinsicAspectRatio() const { return isReplacedOrInlineBlock() && (isImage() || isVideo() || isCanvas()); }
     bool isAnonymous() const { return m_bitfields.isAnonymous(); }
     bool isAnonymousBlock() const;
 
@@ -410,7 +410,7 @@ public:
     bool isTableRow() const { return m_bitfields.isTableRow(); }
     bool isRenderView() const  { return m_bitfields.isBox() && m_bitfields.isTextOrRenderView(); }
     bool isInline() const { return m_bitfields.isInline(); } // inline object
-    bool isReplaced() const { return m_bitfields.isReplaced(); } // a "replaced" element (see CSS)
+    bool isReplacedOrInlineBlock() const { return m_bitfields.isReplacedOrInlineBlock(); }
     bool isHorizontalWritingMode() const { return m_bitfields.horizontalWritingMode(); }
 
     bool hasReflection() const { return m_bitfields.hasRareData() && rareData().hasReflection(); }
@@ -506,7 +506,7 @@ public:
     void setIsBox() { m_bitfields.setIsBox(true); }
     void setIsTableRow() { m_bitfields.setIsTableRow(true); }
     void setIsRenderView() { ASSERT(isBox()); m_bitfields.setIsTextOrRenderView(true); }
-    void setReplaced(bool b = true) { m_bitfields.setIsReplaced(b); }
+    void setReplacedOrInlineBlock(bool b = true) { m_bitfields.setIsReplacedOrInlineBlock(b); }
     void setHorizontalWritingMode(bool b = true) { m_bitfields.setHorizontalWritingMode(b); }
     void setHasNonVisibleOverflow(bool b = true) { m_bitfields.setHasNonVisibleOverflow(b); }
     void setHasLayer(bool b = true) { m_bitfields.setHasLayer(b); }
@@ -858,7 +858,7 @@ private:
             , m_isBox(false)
             , m_isTableRow(false)
             , m_isInline(true)
-            , m_isReplaced(false)
+            , m_isReplacedOrInlineBlock(false)
             , m_isLineBreak(false)
             , m_horizontalWritingMode(true)
             , m_hasLayer(false)
@@ -890,7 +890,7 @@ private:
         ADD_BOOLEAN_BITFIELD(isBox, IsBox);
         ADD_BOOLEAN_BITFIELD(isTableRow, IsTableRow);
         ADD_BOOLEAN_BITFIELD(isInline, IsInline);
-        ADD_BOOLEAN_BITFIELD(isReplaced, IsReplaced);
+        ADD_BOOLEAN_BITFIELD(isReplacedOrInlineBlock, IsReplacedOrInlineBlock);
         ADD_BOOLEAN_BITFIELD(isLineBreak, IsLineBreak);
         ADD_BOOLEAN_BITFIELD(horizontalWritingMode, HorizontalWritingMode);
 
@@ -1200,7 +1200,7 @@ inline RenderObject* RenderObject::nextInFlowSibling() const
 
 inline bool RenderObject::isAtomicInlineLevelBox() const
 {
-    return style().isDisplayInlineType() && !(style().display() == DisplayType::Inline && !isReplaced());
+    return style().isDisplayInlineType() && !(style().display() == DisplayType::Inline && !isReplacedOrInlineBlock());
 }
 
 inline bool RenderObject::hasPotentiallyScrollableOverflow() const

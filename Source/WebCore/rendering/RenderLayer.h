@@ -439,7 +439,6 @@ public:
 
     bool hasReflection() const { return renderer().hasReflection(); }
     bool isReflection() const { return renderer().isReplica(); }
-    RenderReplica* reflection() const { return m_reflection.get(); }
     RenderLayer* reflectionLayer() const;
     bool isReflectionLayer(const RenderLayer&) const;
 

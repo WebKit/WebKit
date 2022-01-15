@@ -707,7 +707,7 @@ void LegacyLineLayout::computeInlineDirectionPositionsForLine(LegacyRootInlineBo
     updateLogicalInlinePositions(m_flow, lineLogicalLeft, lineLogicalRight, availableLogicalWidth, isFirstLine, shouldIndentText, 0);
     bool needsWordSpacing;
 
-    if (firstRun && firstRun->renderer().isReplaced()) {
+    if (firstRun && firstRun->renderer().isReplacedOrInlineBlock()) {
         RenderBox& renderBox = downcast<RenderBox>(firstRun->renderer());
         updateLogicalInlinePositions(m_flow, lineLogicalLeft, lineLogicalRight, availableLogicalWidth, isFirstLine, shouldIndentText, renderBox.logicalHeight());
     }
@@ -1741,7 +1741,7 @@ void LegacyLineLayout::layoutLineBoxes(bool relayoutChildren, LayoutUnit& repain
             if (!hasInlineChild && o.isInline())
                 hasInlineChild = true;
 
-            if (o.isReplaced() || o.isFloating() || o.isOutOfFlowPositioned()) {
+            if (o.isReplacedOrInlineBlock() || o.isFloating() || o.isOutOfFlowPositioned()) {
                 RenderBox& box = downcast<RenderBox>(o);
 
                 if (relayoutChildren || box.hasRelativeDimensions())

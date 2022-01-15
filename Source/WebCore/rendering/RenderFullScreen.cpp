@@ -54,7 +54,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(RenderFullScreenPlaceholder);
 RenderFullScreen::RenderFullScreen(Document& document, RenderStyle&& style)
     : RenderFlexibleBox(document, WTFMove(style))
 {
-    setReplaced(false); 
+    setReplacedOrInlineBlock(false);
 }
 
 RenderFullScreen::~RenderFullScreen()
