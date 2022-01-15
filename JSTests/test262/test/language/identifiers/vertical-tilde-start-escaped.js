@@ -7,8 +7,8 @@ description: Test VERTICAL TILDE (U+2E2F) is not recognized as ID_Start characte
 info: |
   VERTICAL TILDE is in General Category 'Lm' and [:Pattern_Syntax:].
 negative:
-  type: SyntaxError
   phase: parse
+  type: SyntaxError
 ---*/
 
 $DONOTEVALUATE();

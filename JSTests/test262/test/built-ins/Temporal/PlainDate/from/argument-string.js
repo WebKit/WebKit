@@ -5,9 +5,6 @@
 esid: sec-temporal.plaindate.from
 description: overflow property is extracted with string argument.
 info: |
-    1. If Type(_item_) is Object, then
-      1. ...
-      1. Return ? DateFromFields(_calendar_, _fields_, _options_).
     1. Perform ? ToTemporalOverflow(_options_).
 includes: [compareArray.js, temporalHelpers.js]
 features: [Temporal]

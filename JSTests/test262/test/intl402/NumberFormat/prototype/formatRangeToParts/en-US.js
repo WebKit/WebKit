@@ -6,6 +6,7 @@ esid: sec-Intl.NumberFormat-formatRangeToParts
 description: Basic tests for the en-US output of formatRangeToParts()
 locale: [en-US]
 features: [Intl.NumberFormat-v3]
+includes: [propertyHelper.js]
 ---*/
 
 // Utils functions
@@ -18,7 +19,11 @@ function* zip(a, b) {
 
 function compare(actual, expected) {
   for (const [i, actualEntry, expectedEntry] of zip(actual, expected)) {
-
+    // assertions
+    assert.sameValue(actualEntry.type, expectedEntry.type, `type for entry ${i}`);
+    assert.sameValue(actualEntry.value, expectedEntry.value, `value for entry ${i}`);
+    assert.sameValue(actualEntry.source, expectedEntry.source, `source for entry ${i}`);
+    
     //  1.1.25_4.a  Let O be ObjectCreate(%ObjectPrototype%).
     assert.sameValue(Object.getPrototypeOf(actualEntry), Object.prototype, `prototype for entry ${i}`);
     //  1.1.25_4.b Perform ! CreateDataPropertyOrThrow(O, "type", part.[[Type]])
@@ -27,11 +32,6 @@ function compare(actual, expected) {
     verifyProperty(actualEntry, 'value', {  enumerable: true, writable: true, configurable: true });
     //  1.1.25_4.d Perform ! CreateDataPropertyOrThrow(O, "source", part.[[Source]]).
     verifyProperty(actualEntry, 'source', {  enumerable: true, writable: true, configurable: true });
-
-    // assertions
-    assert.sameValue(actualEntry.type, expectedEntry.type, `type for entry ${i}`);
-    assert.sameValue(actualEntry.value, expectedEntry.value, `value for entry ${i}`);
-    assert.sameValue(actualEntry.source, expectedEntry.source, `source for entry ${i}`);
   }
 }
 
@@ -45,7 +45,7 @@ const nf = new Intl.NumberFormat("en-US", {
 compare(nf.formatRangeToParts(3, 5), [
   {type: "currency", value: "$", source: "startRange"},
   {type: "integer", value: "3", source: "startRange"},
-  {type: "literal", value: "–", source: "shared"},
+  {type: "literal", value: " – ", source: "shared"},
   {type: "currency", value: "$", source: "endRange"},
   {type: "integer", value: "5", source: "endRange"}
 ]);

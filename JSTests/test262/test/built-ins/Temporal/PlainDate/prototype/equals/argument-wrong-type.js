@@ -15,6 +15,3 @@ assert.throws(RangeError, () => instance.equals(true), "true");
 assert.throws(RangeError, () => instance.equals(""), "empty string");
 assert.throws(TypeError, () => instance.equals(Symbol()), "symbol");
 assert.throws(RangeError, () => instance.equals(1), "1");
-assert.throws(TypeError, () => instance.equals({}), "plain object");
-assert.throws(TypeError, () => instance.equals(Temporal.PlainDate), "Temporal.PlainDate");
-assert.throws(TypeError, () => instance.equals(Temporal.PlainDate.prototype), "Temporal.PlainDate.prototype");

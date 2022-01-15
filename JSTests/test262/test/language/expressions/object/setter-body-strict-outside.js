@@ -6,8 +6,8 @@ description: >
     Strict Mode - SyntaxError is thrown when an assignment to a
     reserved word is contained in strict code
 negative:
-  type: SyntaxError
   phase: parse
+  type: SyntaxError
 flags: [onlyStrict]
 ---*/
 

@@ -15,8 +15,8 @@ const nf = new Intl.NumberFormat("pt-PT", {
   maximumFractionDigits: 0,
 });
 
-assert.sameValue(nf.formatRange(3, 5), "3 - 5 €");
-assert.sameValue(nf.formatRange(2.9, 3.1), "~3 €");
+assert.sameValue(nf.formatRange(3, 5), "3 - 5\u00a0€");
+assert.sameValue(nf.formatRange(2.9, 3.1), "~3\u00a0€");
 
 
 // Basic example test pt-PT using signDisplay to always
@@ -26,12 +26,12 @@ const nf2 = new Intl.NumberFormat("pt-PT", {
   signDisplay: "always",
 });
 
-assert.sameValue(nf2.formatRange(2.9, 3.1), "+2,90 - 3,10 €");
+assert.sameValue(nf2.formatRange(2.9, 3.1), "+2,90 - 3,10\u00a0€");
 
 // Basic example test pt-PT string formatting
 const nf3 = new Intl.NumberFormat("pt-PT");
 const string1 = "987654321987654321";
 const string2 = "987654321987654322";
 
-assert.sameValue(nf3.formatRange(string1, string2), "987 654 321 987 654 321 - 987 654 321 987 654 322");
+assert.sameValue(nf3.formatRange(string1, string2), "987\u00a0654\u00a0321\u00a0987\u00a0654\u00a0321 - 987\u00a0654\u00a0321\u00a0987\u00a0654\u00a0322");
 

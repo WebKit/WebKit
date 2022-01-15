@@ -606,6 +606,42 @@ test/annexB/language/global-code/switch-dflt-global-skip-early-err.js:
 test/built-ins/Date/UTC/fp-evaluation-order.js:
   default: 'Test262Error: order of operations / precision in MakeTime Expected SameValue(«NaN», «29312») to be true'
   strict mode: 'Test262Error: order of operations / precision in MakeTime Expected SameValue(«NaN», «29312») to be true'
+test/built-ins/Date/prototype/setDate/arg-coercion-order.js:
+  default: 'Test262Error: ToNumber invoked exactly once Expected SameValue(«0», «1») to be true'
+  strict mode: 'Test262Error: ToNumber invoked exactly once Expected SameValue(«0», «1») to be true'
+test/built-ins/Date/prototype/setHours/arg-coercion-order.js:
+  default: 'Test262Error: Expected [] and [valueOf hour, valueOf min, valueOf sec, valueOf ms] to have the same contents. '
+  strict mode: 'Test262Error: Expected [] and [valueOf hour, valueOf min, valueOf sec, valueOf ms] to have the same contents. '
+test/built-ins/Date/prototype/setMilliseconds/arg-coercion-order.js:
+  default: 'Test262Error: ToNumber invoked exactly once Expected SameValue(«0», «1») to be true'
+  strict mode: 'Test262Error: ToNumber invoked exactly once Expected SameValue(«0», «1») to be true'
+test/built-ins/Date/prototype/setMinutes/arg-coercion-order.js:
+  default: 'Test262Error: Expected [] and [valueOf min, valueOf sec, valueOf ms] to have the same contents. '
+  strict mode: 'Test262Error: Expected [] and [valueOf min, valueOf sec, valueOf ms] to have the same contents. '
+test/built-ins/Date/prototype/setMonth/arg-coercion-order.js:
+  default: 'Test262Error: Expected [] and [valueOf month, valueOf date] to have the same contents. '
+  strict mode: 'Test262Error: Expected [] and [valueOf month, valueOf date] to have the same contents. '
+test/built-ins/Date/prototype/setSeconds/arg-coercion-order.js:
+  default: 'Test262Error: Expected [] and [valueOf sec, valueOf ms] to have the same contents. '
+  strict mode: 'Test262Error: Expected [] and [valueOf sec, valueOf ms] to have the same contents. '
+test/built-ins/Date/prototype/setUTCDate/arg-coercion-order.js:
+  default: 'Test262Error: ToNumber invoked exactly once Expected SameValue(«0», «1») to be true'
+  strict mode: 'Test262Error: ToNumber invoked exactly once Expected SameValue(«0», «1») to be true'
+test/built-ins/Date/prototype/setUTCHours/arg-coercion-order.js:
+  default: 'Test262Error: Expected [] and [valueOf hour, valueOf min, valueOf sec, valueOf ms] to have the same contents. '
+  strict mode: 'Test262Error: Expected [] and [valueOf hour, valueOf min, valueOf sec, valueOf ms] to have the same contents. '
+test/built-ins/Date/prototype/setUTCMilliseconds/arg-coercion-order.js:
+  default: 'Test262Error: ToNumber invoked exactly once Expected SameValue(«0», «1») to be true'
+  strict mode: 'Test262Error: ToNumber invoked exactly once Expected SameValue(«0», «1») to be true'
+test/built-ins/Date/prototype/setUTCMinutes/arg-coercion-order.js:
+  default: 'Test262Error: Expected [] and [valueOf min, valueOf sec, valueOf ms] to have the same contents. '
+  strict mode: 'Test262Error: Expected [] and [valueOf min, valueOf sec, valueOf ms] to have the same contents. '
+test/built-ins/Date/prototype/setUTCMonth/arg-coercion-order.js:
+  default: 'Test262Error: Expected [] and [valueOf month, valueOf date] to have the same contents. '
+  strict mode: 'Test262Error: Expected [] and [valueOf month, valueOf date] to have the same contents. '
+test/built-ins/Date/prototype/setUTCSeconds/arg-coercion-order.js:
+  default: 'Test262Error: Expected [] and [valueOf sec, valueOf ms] to have the same contents. '
+  strict mode: 'Test262Error: Expected [] and [valueOf sec, valueOf ms] to have the same contents. '
 test/built-ins/Function/internals/Construct/derived-return-val-realm.js:
   default: 'Test262Error: Expected a TypeError but got a different error constructor with the same name'
   strict mode: 'Test262Error: Expected a TypeError but got a different error constructor with the same name'
@@ -1026,12 +1062,57 @@ test/intl402/Locale/likely-subtags-grandfathered.js:
 test/intl402/Locale/prototype/minimize/removing-likely-subtags-first-adds-likely-subtags.js:
   default: 'Test262Error: "und".minimize() should be "en" Expected SameValue(«en-u-va-posix», «en») to be true'
   strict mode: 'Test262Error: "und".minimize() should be "en" Expected SameValue(«en-u-va-posix», «en») to be true'
+test/intl402/NumberFormat/prototype/format/format-rounding-increment-10.js:
+  default: 'Test262Error: Formatted value for 1.100, en-US-u-nu-arab and options {"roundingIncrement":10,"maximumFractionDigits":2} is ١٫١٠; expected ١٫١.'
+  strict mode: 'Test262Error: Formatted value for 1.100, en-US-u-nu-arab and options {"roundingIncrement":10,"maximumFractionDigits":2} is ١٫١٠; expected ١٫١.'
+test/intl402/NumberFormat/prototype/format/format-rounding-increment-100.js:
+  default: 'Test262Error: Formatted value for 1.100, en-US-u-nu-arab and options {"roundingIncrement":100,"maximumFractionDigits":3} is ١٫١٠٠; expected ١٫١.'
+  strict mode: 'Test262Error: Formatted value for 1.100, en-US-u-nu-arab and options {"roundingIncrement":100,"maximumFractionDigits":3} is ١٫١٠٠; expected ١٫١.'
+test/intl402/NumberFormat/prototype/format/format-rounding-increment-1000.js:
+  default: 'Test262Error: Formatted value for 1.100, en-US-u-nu-arab and options {"roundingIncrement":1000,"maximumFractionDigits":4} is ١٫١٠٠٠; expected ١٫١.'
+  strict mode: 'Test262Error: Formatted value for 1.100, en-US-u-nu-arab and options {"roundingIncrement":1000,"maximumFractionDigits":4} is ١٫١٠٠٠; expected ١٫١.'
+test/intl402/NumberFormat/prototype/format/format-rounding-increment-20.js:
+  default: 'Test262Error: Formatted value for 1.20, en-US-u-nu-arab and options {"roundingIncrement":20,"maximumFractionDigits":2} is ١٫٢٠; expected ١٫٢.'
+  strict mode: 'Test262Error: Formatted value for 1.20, en-US-u-nu-arab and options {"roundingIncrement":20,"maximumFractionDigits":2} is ١٫٢٠; expected ١٫٢.'
+test/intl402/NumberFormat/prototype/format/format-rounding-increment-200.js:
+  default: 'Test262Error: Formatted value for 1.20, en-US-u-nu-arab and options {"roundingIncrement":200,"maximumFractionDigits":3} is ١٫٢٠٠; expected ١٫٢.'
+  strict mode: 'Test262Error: Formatted value for 1.20, en-US-u-nu-arab and options {"roundingIncrement":200,"maximumFractionDigits":3} is ١٫٢٠٠; expected ١٫٢.'
+test/intl402/NumberFormat/prototype/format/format-rounding-increment-2000.js:
+  default: 'Test262Error: Formatted value for 1.20, en-US-u-nu-arab and options {"roundingIncrement":2000,"maximumFractionDigits":4} is ١٫٢٠٠٠; expected ١٫٢.'
+  strict mode: 'Test262Error: Formatted value for 1.20, en-US-u-nu-arab and options {"roundingIncrement":2000,"maximumFractionDigits":4} is ١٫٢٠٠٠; expected ١٫٢.'
+test/intl402/NumberFormat/prototype/format/format-rounding-increment-25.js:
+  default: 'Test262Error: Formatted value for 1.3750, en-US-u-nu-arab and options {"roundingIncrement":25,"maximumFractionDigits":2,"minimumFractionDigits":1} is ١٫٥٠; expected ١٫٥.'
+  strict mode: 'Test262Error: Formatted value for 1.3750, en-US-u-nu-arab and options {"roundingIncrement":25,"maximumFractionDigits":2,"minimumFractionDigits":1} is ١٫٥٠; expected ١٫٥.'
+test/intl402/NumberFormat/prototype/format/format-rounding-increment-250.js:
+  default: 'Test262Error: Formatted value for 1.2500, en-US-u-nu-arab and options {"roundingIncrement":250,"maximumFractionDigits":3,"minimumFractionDigits":1} is ١٫٢٥٠; expected ١٫٢٥.'
+  strict mode: 'Test262Error: Formatted value for 1.2500, en-US-u-nu-arab and options {"roundingIncrement":250,"maximumFractionDigits":3,"minimumFractionDigits":1} is ١٫٢٥٠; expected ١٫٢٥.'
+test/intl402/NumberFormat/prototype/format/format-rounding-increment-2500.js:
+  default: 'Test262Error: Formatted value for 1.2500, en-US-u-nu-arab and options {"roundingIncrement":2500,"maximumFractionDigits":4,"minimumFractionDigits":1} is ١٫٢٥٠٠; expected ١٫٢٥.'
+  strict mode: 'Test262Error: Formatted value for 1.2500, en-US-u-nu-arab and options {"roundingIncrement":2500,"maximumFractionDigits":4,"minimumFractionDigits":1} is ١٫٢٥٠٠; expected ١٫٢٥.'
+test/intl402/NumberFormat/prototype/format/format-rounding-increment-5.js:
+  default: 'Test262Error: Formatted value for 1.0750, en-US-u-nu-arab and options {"roundingIncrement":5,"maximumFractionDigits":2} is ١٫١٠; expected ١٫١.'
+  strict mode: 'Test262Error: Formatted value for 1.0750, en-US-u-nu-arab and options {"roundingIncrement":5,"maximumFractionDigits":2} is ١٫١٠; expected ١٫١.'
+test/intl402/NumberFormat/prototype/format/format-rounding-increment-50.js:
+  default: 'Test262Error: Formatted value for 1.500, en-US-u-nu-arab and options {"roundingIncrement":50,"maximumFractionDigits":2,"minimumFractionDigits":1} is ١٫٥٠; expected ١٫٥.'
+  strict mode: 'Test262Error: Formatted value for 1.500, en-US-u-nu-arab and options {"roundingIncrement":50,"maximumFractionDigits":2,"minimumFractionDigits":1} is ١٫٥٠; expected ١٫٥.'
+test/intl402/NumberFormat/prototype/format/format-rounding-increment-500.js:
+  default: 'Test262Error: Formatted value for 1.500, en-US-u-nu-arab and options {"roundingIncrement":500,"maximumFractionDigits":3,"minimumFractionDigits":1} is ١٫٥٠٠; expected ١٫٥.'
+  strict mode: 'Test262Error: Formatted value for 1.500, en-US-u-nu-arab and options {"roundingIncrement":500,"maximumFractionDigits":3,"minimumFractionDigits":1} is ١٫٥٠٠; expected ١٫٥.'
+test/intl402/NumberFormat/prototype/format/format-rounding-increment-5000.js:
+  default: 'Test262Error: Formatted value for 1.500, en-US-u-nu-arab and options {"roundingIncrement":5000,"maximumFractionDigits":4,"minimumFractionDigits":1} is ١٫٥٠٠٠; expected ١٫٥.'
+  strict mode: 'Test262Error: Formatted value for 1.500, en-US-u-nu-arab and options {"roundingIncrement":5000,"maximumFractionDigits":4,"minimumFractionDigits":1} is ١٫٥٠٠٠; expected ١٫٥.'
 test/intl402/NumberFormat/prototype/format/format-rounding-mode-half-ceil.js:
   default: 'Test262Error: Formatted value for -1.15, en-US-u-nu-arab and options {"useGrouping":false,"roundingMode":"halfCeil","maximumSignificantDigits":2} is ؜-١٫٢; expected ؜-١٫١.'
   strict mode: 'Test262Error: Formatted value for -1.15, en-US-u-nu-arab and options {"useGrouping":false,"roundingMode":"halfCeil","maximumSignificantDigits":2} is ؜-١٫٢; expected ؜-١٫١.'
 test/intl402/NumberFormat/prototype/format/format-rounding-mode-half-floor.js:
   default: 'Test262Error: Formatted value for 1.15, en-US-u-nu-arab and options {"useGrouping":false,"roundingMode":"halfFloor","maximumSignificantDigits":2} is ١٫٢; expected ١٫١.'
   strict mode: 'Test262Error: Formatted value for 1.15, en-US-u-nu-arab and options {"useGrouping":false,"roundingMode":"halfFloor","maximumSignificantDigits":2} is ١٫٢; expected ١٫١.'
+test/intl402/NumberFormat/prototype/format/format-rounding-priority-less-precision.js:
+  default: 'Test262Error: Formatted value for 1, en-US-u-nu-arab and options {"useGrouping":false,"roundingPriority":"lessPrecision","minimumSignificantDigits":2,"minimumFractionDigits":2} is ١; expected ١٫٠٠.'
+  strict mode: 'Test262Error: Formatted value for 1, en-US-u-nu-arab and options {"useGrouping":false,"roundingPriority":"lessPrecision","minimumSignificantDigits":2,"minimumFractionDigits":2} is ١; expected ١٫٠٠.'
+test/intl402/NumberFormat/prototype/format/format-rounding-priority-more-precision.js:
+  default: 'Test262Error: Formatted value for 1, en-US-u-nu-arab and options {"useGrouping":false,"roundingPriority":"morePrecision","minimumSignificantDigits":2,"minimumFractionDigits":2} is ١; expected ١٫٠٠.'
+  strict mode: 'Test262Error: Formatted value for 1, en-US-u-nu-arab and options {"useGrouping":false,"roundingPriority":"morePrecision","minimumSignificantDigits":2,"minimumFractionDigits":2} is ١; expected ١٫٠٠.'
 test/intl402/NumberFormat/prototype/format/signDisplay-negative-currency-de-DE.js:
   default: 'Test262Error: Expected SameValue(«-0,00 $», «0,00 $») to be true'
   strict mode: 'Test262Error: Expected SameValue(«-0,00 $», «0,00 $») to be true'
@@ -1897,12 +1978,24 @@ test/language/global-code/script-decl-var-err.js:
   strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
 test/language/identifier-resolution/assign-to-global-undefined.js:
   strict mode: Expected uncaught exception with name 'ReferenceError' but none was thrown
+test/language/identifiers/part-unicode-14.0.0-class-escaped.js:
+  default: "SyntaxError: Invalid unicode escape in identifier: '#_\\u0898'"
+  strict mode: "SyntaxError: Invalid unicode escape in identifier: '#_\\u0898'"
+test/language/identifiers/part-unicode-14.0.0-class.js:
+  default: "SyntaxError: Invalid character '\\u0898'"
+  strict mode: "SyntaxError: Invalid character '\\u0898'"
 test/language/identifiers/part-unicode-14.0.0-escaped.js:
   default: "SyntaxError: Invalid unicode escape in identifier: '_\\u0898'"
   strict mode: "SyntaxError: Invalid unicode escape in identifier: '_\\u0898'"
 test/language/identifiers/part-unicode-14.0.0.js:
   default: "SyntaxError: Invalid character '\\u0898'"
   strict mode: "SyntaxError: Invalid character '\\u0898'"
+test/language/identifiers/start-unicode-14.0.0-class-escaped.js:
+  default: "SyntaxError: Invalid unicode escape in identifier: '#\\u0870'"
+  strict mode: "SyntaxError: Invalid unicode escape in identifier: '#\\u0870'"
+test/language/identifiers/start-unicode-14.0.0-class.js:
+  default: "SyntaxError: Invalid character: '#'"
+  strict mode: "SyntaxError: Invalid character: '#'"
 test/language/identifiers/start-unicode-14.0.0-escaped.js:
   default: "SyntaxError: Invalid unicode escape in identifier: '\\u0870'"
   strict mode: "SyntaxError: Invalid unicode escape in identifier: '\\u0870'"
