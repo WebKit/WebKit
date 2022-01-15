@@ -1,3 +1,18 @@
+2022-01-14  Frederic Wang  <fwang@igalia.com>
+
+        null ptr deref in WebCore::ReplaceSelectionCommand::moveNodeOutOfAncestor()
+        https://bugs.webkit.org/show_bug.cgi?id=233463
+
+        Reviewed by Wenson Hsieh.
+
+        Add non-regression test.
+
+        * editing/execCommand/paste-as-quotation-disconnected-paragraph-ancestor-crash-expected.txt: Added.
+        * editing/execCommand/paste-as-quotation-disconnected-paragraph-ancestor-crash.html: Added.
+        * editing/execCommand/resources/paste-as-quotation-disconnected-paragraph-ancestor-crash-iframe.html: Added.
+        * platform/win/TestExpectations: Skip test on windows, as the test seems to shift expectations with text output
+        of other execCommand tests.
+
 2022-01-13  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [macOS WK1] fast/canvas/large-getImageData.html is consistently failing
