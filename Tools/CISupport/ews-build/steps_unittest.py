@@ -4852,6 +4852,39 @@ class TestShowIdentifier(BuildStepMixinAdditions, unittest.TestCase):
         self.assertEqual(self.getProperty('identifier'), '233175@main')
         return rc
 
+    def test_success_pull_request(self):
+        self.setupStep(ShowIdentifier())
+        self.setProperty('github.base.sha', '51a6aec9f664')
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        timeout=300,
+                        logEnviron=False,
+                        command=['python3', 'Tools/Scripts/git-webkit', 'find', '51a6aec9f664']) +
+            ExpectShell.log('stdio', stdout='Identifier: 233175@main') +
+            0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='Identifier: 233175@main')
+        rc = self.runStep()
+        self.assertEqual(self.getProperty('identifier'), '233175@main')
+        return rc
+
+    def test_prioritized(self):
+        self.setupStep(ShowIdentifier())
+        self.setProperty('ews_revision', '51a6aec9f664')
+        self.setProperty('github.base.sha', '9f66451a6aec')
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        timeout=300,
+                        logEnviron=False,
+                        command=['python3', 'Tools/Scripts/git-webkit', 'find', '51a6aec9f664']) +
+            ExpectShell.log('stdio', stdout='Identifier: 233175@main') +
+            0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='Identifier: 233175@main')
+        rc = self.runStep()
+        self.assertEqual(self.getProperty('identifier'), '233175@main')
+        return rc
+
     def test_failure(self):
         self.setupStep(ShowIdentifier())
         self.expectRemoteCommands(

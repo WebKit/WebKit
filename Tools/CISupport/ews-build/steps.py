@@ -407,9 +407,15 @@ class ShowIdentifier(shell.ShellCommand):
     def start(self):
         self.log_observer = logobserver.BufferLogObserver()
         self.addLogObserver('stdio', self.log_observer)
-        revision = self.getProperty('ews_revision', self.getProperty('got_revision'))
-        if not revision:
-            revision = 'HEAD'
+
+        revision = 'HEAD'
+        # Note that these properties are delibrately in priority order.
+        for property_ in ['ews_revision', 'github.base.sha', 'got_revision']:
+            candidate = self.getProperty(property_)
+            if candidate:
+                revision = candidate
+                break
+
         self.setCommand(['python3', 'Tools/Scripts/git-webkit', 'find', revision])
         return shell.ShellCommand.start(self)
 

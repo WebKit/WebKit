@@ -1,3 +1,16 @@
+2022-01-14  Jonathan Bedard  <jbedard@apple.com>
+
+        [EWS] ShowIdentifier should support pull-requests
+        https://bugs.webkit.org/show_bug.cgi?id=235252
+        <rdar://problem/87618736>
+
+        Reviewed by Aakash Jain.
+
+        * CISupport/ews-build/steps.py:
+        (ShowIdentifier.start): Extract revision from diverse set of properties.
+        (ShowIdentifier.evaluateCommand):
+        * CISupport/ews-build/steps_unittest.py:
+
 2022-01-14  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Occasional crash under -[UITargetedPreview initWithView:parameters:target:] when focusing form controls
