@@ -55,7 +55,7 @@ const ClassInfo WebAssemblyTablePrototype::s_info = { "WebAssembly.Table", &Base
  length webAssemblyTableProtoGetterLength ReadOnly|CustomAccessor
  grow   webAssemblyTableProtoFuncGrow   Function 1
  get    webAssemblyTableProtoFuncGet    Function 1
- set    webAssemblyTableProtoFuncSet    Function 2
+ set    webAssemblyTableProtoFuncSet    Function 1
  type   webAssemblyTableProtoFuncType   Function 0
  @end
  */

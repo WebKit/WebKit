@@ -1,3 +1,12 @@
+2022-01-15  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Fix misc WebAssembly.Table issues
+        https://bugs.webkit.org/show_bug.cgi?id=235262
+
+        Reviewed by Alexey Shvayka.
+
+        * wasm/js/WebAssemblyTablePrototype.cpp:
+
 2022-01-14  Yusuke Suzuki  <ysuzuki@apple.com> and Mikhail R. Gadelha  <mikhail@igalia.com>
 
         [JSC] Fix Linux 64bit compilation

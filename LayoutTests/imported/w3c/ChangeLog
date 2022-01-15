@@ -1,3 +1,29 @@
+2022-01-15  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Fix misc WebAssembly.Table issues
+        https://bugs.webkit.org/show_bug.cgi?id=235262
+
+        Reviewed by Alexey Shvayka.
+
+        Fix length of WebAssembly.Table.set from 2 to 1.
+        According to the spec[1], it should be 1 since the second argument is an optional.
+
+        Also fix stray argument test. Previously, it was stray argument. But after the update
+        of the wasm spec, the second argument of Table constructor can be used for initial value.
+        So, WebAssembly.Table "anyfunc" with {} initial value throws an error since it is not
+        a function. This fixes a test, passing null for the second argument, and adding third
+        stray argument for the stray argument test.
+
+        [1]: https://webassembly.github.io/spec/js-api/index.html#tables
+
+        * web-platform-tests/wasm/jsapi/idlharness.any-expected.txt:
+        * web-platform-tests/wasm/jsapi/idlharness.any.worker-expected.txt:
+        * web-platform-tests/wasm/jsapi/interface.any.js:
+        * web-platform-tests/wasm/jsapi/table/constructor.any-expected.txt:
+        * web-platform-tests/wasm/jsapi/table/constructor.any.js:
+        (test):
+        * web-platform-tests/wasm/jsapi/table/constructor.any.worker-expected.txt:
+
 2022-01-15  Alan Bujtas  <zalan@apple.com>
 
         web-platform-tests/html/rendering/dimension-attributes.html is failing when table width is set to 0px
