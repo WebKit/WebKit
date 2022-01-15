@@ -1,3 +1,15 @@
+2022-01-15  David Kilzer  <ddkilzer@apple.com>
+
+        Only use `diff --binary` switch on Windows
+        <https://webkit.org/b/235268>
+        <rdar://problem/87490487>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Scripts/VCSUtils.pm:
+        (mergeChangeLogs):
+        - Only pass `--binary` switch on Windows.
+
 2022-01-15  Frédéric Wang  <fwang@igalia.com>
 
         Bug 234910 - jsc_fuz/wktr: crash with exotic settings
