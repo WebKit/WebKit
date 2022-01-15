@@ -1,5 +1,19 @@
 2022-01-14  Jonathan Bedard  <jbedard@apple.com>
 
+        [EWS] Only trigger builds for open and synchronize events
+        https://bugs.webkit.org/show_bug.cgi?id=235249
+        <rdar://problem/87615392>
+
+        Reviewed by Aakash Jain.
+
+        * CISupport/ews-build/events.py:
+        (Events.stopService):
+        (GitHubEventHandlerNoEdits):
+        (GitHubEventHandlerNoEdits.handle_pull_request):
+        * CISupport/ews-build/master.cfg:
+
+2022-01-14  Jonathan Bedard  <jbedard@apple.com>
+
         [EWS] ShowIdentifier should support pull-requests
         https://bugs.webkit.org/show_bug.cgi?id=235252
         <rdar://problem/87618736>

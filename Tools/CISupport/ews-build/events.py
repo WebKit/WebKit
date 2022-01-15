@@ -27,6 +27,7 @@ import os
 import time
 
 from buildbot.util import service
+from buildbot.www.hooks.github import GitHubEventHandler
 from twisted.internet import defer
 from twisted.internet import reactor
 from twisted.internet.defer import succeed
@@ -214,3 +215,15 @@ class Events(service.BuildbotService):
         self._buildCompleteConsumer.stopConsuming()
         self._stepStartedConsumer.stopConsuming()
         self._stepFinishedConsumer.stopConsuming()
+
+
+class GitHubEventHandlerNoEdits(GitHubEventHandler):
+    ACTIONS_TO_TRIGGER_EWS = ('opened', 'synchronize')
+
+    def handle_pull_request(self, payload, event):
+        pr_number = payload['number']
+        action = payload.get('action')
+        if action not in self.ACTIONS_TO_TRIGGER_EWS:
+            log.msg('Action {} on PR #{} does not indicate code has been changed'.format(action, pr_number))
+            return ([], 'git')
+        return super(GitHubEventHandlerNoEdits, self).handle_pull_request(payload, event)
