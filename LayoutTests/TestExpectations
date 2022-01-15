@@ -4822,9 +4822,6 @@ imported/w3c/web-platform-tests/css/css-contain/content-visibility/animation-dis
 # Canvas doesn't get default aspect-ratio for width and height attributes.
 webkit.org/b/217529 imported/w3c/web-platform-tests/css/css-flexbox/canvas-contain-size.html [ ImageOnlyFailure ]
 
-# Content is painted on svg's padding area.
-webkit.org/b/425868 imported/w3c/web-platform-tests/css/css-contain/contain-size-replaced-002.html [ ImageOnlyFailure ]
-
 # Multicolumn does not paint the horizontal overflow area of a relative child.
 webkit.org/b/41796 imported/w3c/web-platform-tests/css/css-contain/contain-size-monolithic-002.html [ ImageOnlyFailure ]
 

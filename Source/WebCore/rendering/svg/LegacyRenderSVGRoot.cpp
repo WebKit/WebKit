@@ -224,7 +224,8 @@ bool LegacyRenderSVGRoot::shouldApplyViewportClip() const
 void LegacyRenderSVGRoot::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
     // An empty viewport disables rendering.
-    if (borderBoxRect().isEmpty())
+    bool clipViewport = shouldApplyViewportClip();
+    if (clipViewport && contentSize().isEmpty())
         return;
 
     // Don't paint, if the context explicitly disabled it.
@@ -269,7 +270,7 @@ void LegacyRenderSVGRoot::paintReplaced(PaintInfo& paintInfo, const LayoutPoint&
     childPaintInfo.context().save();
 
     // Apply initial viewport clip
-    if (shouldApplyViewportClip())
+    if (clipViewport)
         childPaintInfo.context().clip(snappedIntRect(overflowClipRect(paintOffset)));
 
     // Convert from container offsets (html renderers) to a relative transform (svg renderers).

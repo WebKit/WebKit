@@ -1,3 +1,12 @@
+2022-01-15  Rob Buis  <rbuis@igalia.com>
+
+        [css-contain] Fix contain-size-replaced-002.html
+        https://bugs.webkit.org/show_bug.cgi?id=235175
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        * TestExpectations:
+
 2022-01-14  Antoine Quint  <graouts@webkit.org>
 
         Setting `content: normal` on a ::marker should make computed style return resolved values
