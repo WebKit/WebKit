@@ -1,3 +1,16 @@
+2022-01-16  David Kilzer  <ddkilzer@apple.com>
+
+        REGRESSION (r286603): Leak of three NSMutableDictionary objects each time rx::DisplayMtl::getMetalDeviceMatchingAttribute() is called
+        <https://webkit.org/b/235278>
+        <rdar://problem/87653812>
+
+        Reviewed by Darin Adler.
+
+        * src/libANGLE/renderer/metal/DisplayMtl.mm:
+        (rx::DisplayMtl::getMetalDeviceMatchingAttribute):
+        - Make use of mtl::adoptObjCObj<> so these objects are relaseed
+          when the method returns.
+
 2022-01-14  Kyle Piddington  <kpiddington@apple.com>
 
         ANGLE: Supports32BitFloatFiltering is not supported on TVOS
