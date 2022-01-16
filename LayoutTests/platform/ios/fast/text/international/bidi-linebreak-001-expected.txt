@@ -16,4 +16,6 @@ layer at (0,0) size 800x164
         RenderText {#text} at (0,0) size 59x39
           text run at (0,0) width 30 RTL: "\x{5E9}\x{5D5}\x{5BC}\x{5E8}\x{5D4}"
           text run at (29,0) width 1: " "
-          text run at (0,20) width 59 RTL: "\x{5E9}\x{5D5}\x{5BC}\x{5E8}\x{5D4}\x{D}\x{5E9}\x{5D5}\x{5BC}\x{5E8}\x{5D4}"
+          text run at (0,20) width 30 RTL: "\x{5E9}\x{5D5}\x{5BC}\x{5E8}\x{5D4}"
+          text run at (29,20) width 1: "\x{D}"
+          text run at (29,20) width 30 RTL: "\x{5E9}\x{5D5}\x{5BC}\x{5E8}\x{5D4}"

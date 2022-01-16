@@ -78,7 +78,7 @@ enum class AvoidanceReason : uint64_t {
     ContentIsRenderQuote                         = 1LLU  << 37,
     FlowTextIsTextFragment                       = 1LLU  << 38,
     FlowTextIsSVGInlineText                      = 1LLU  << 39,
-    FlowHasComplexFontCodePath                   = 1LLU  << 40,
+    // Unused                                    = 1LLU  << 40,
     FeatureIsDisabled                            = 1LLU  << 41,
     FlowDoesNotEstablishInlineFormattingContext  = 1LLU  << 42,
     // Unused                                    = 1LLU  << 43,

@@ -161,9 +161,6 @@ static void printReason(AvoidanceReason reason, TextStream& stream)
     case AvoidanceReason::FlowTextIsSVGInlineText:
         stream << "SVGInlineText";
         break;
-    case AvoidanceReason::FlowHasComplexFontCodePath:
-        stream << "text with complex font codepath";
-        break;
     case AvoidanceReason::FlowHasLineBoxContainGlyphs:
         stream << "-webkit-line-box-contain: glyphs";
         break;
@@ -388,7 +385,6 @@ static OptionSet<AvoidanceReason> canUseForFontAndText(const RenderBoxModelObjec
     OptionSet<AvoidanceReason> reasons;
     // We assume that all lines have metrics based purely on the primary font.
     const auto& style = container.style();
-    auto& fontCascade = style.fontCascade();
     if (style.lineBoxContain().contains(LineBoxContain::Glyphs))
         SET_REASON_AND_RETURN_IF_NEEDED(FlowHasLineBoxContainGlyphs, reasons, includeReasons);
     for (const auto& textRenderer : childrenOfType<RenderText>(container)) {
@@ -401,15 +397,6 @@ static OptionSet<AvoidanceReason> canUseForFontAndText(const RenderBoxModelObjec
             SET_REASON_AND_RETURN_IF_NEEDED(FlowTextIsTextFragment, reasons, includeReasons);
         if (textRenderer.isSVGInlineText())
             SET_REASON_AND_RETURN_IF_NEEDED(FlowTextIsSVGInlineText, reasons, includeReasons);
-        if (!textRenderer.canUseSimpleFontCodePath()) {
-            // No need to check the code path at this point. We already know it can't be simple.
-            SET_REASON_AND_RETURN_IF_NEEDED(FlowHasComplexFontCodePath, reasons, includeReasons);
-        } else {
-            WebCore::TextRun run(String(textRenderer.text()));
-            run.setCharacterScanForCodePath(false);
-            if (fontCascade.codePath(run) != FontCascade::CodePath::Simple)
-                SET_REASON_AND_RETURN_IF_NEEDED(FlowHasComplexFontCodePath, reasons, includeReasons);
-        }
 
         if (checkForBidiCharacters == CheckForBidiCharacters::Yes) {
             if (auto textReasons = canUseForText(textRenderer.stringView(), includeReasons))
