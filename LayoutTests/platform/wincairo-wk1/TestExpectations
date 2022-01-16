@@ -459,3 +459,5 @@ accessibility/range-alter-by-step.html [ Skip ] # Timeout
 
 accessibility/aria-roledescription.html [ Timeout ]
 accessibility/visible-elements.html [ Timeout ]
+
+editing/execCommand/paste-as-quotation-disconnected-paragraph-ancestor-crash.html [ Skip ] # This test confuses DRT. See Bug 233463

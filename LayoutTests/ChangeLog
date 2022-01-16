@@ -1,3 +1,13 @@
+2022-01-16  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo] Unreviewed test gardening
+
+        After r288052 added editing/execCommand/paste-as-quotation-disconnected-paragraph-ancestor-crash.html,
+        WinCairo WK1 tests subsequent to the test case had been failing.
+        It looked like DRT output the result of the privous test case.
+
+        * platform/wincairo-wk1/TestExpectations: Skip the test case as well as AppleWin does.
+
 2022-01-15  Sam Weinig  <weinig@apple.com>
 
         CSS Gradients: interpolation mode should default to OKLab if any non-legacy color syntax colors are used in the stops
