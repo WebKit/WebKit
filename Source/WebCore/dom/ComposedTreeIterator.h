@@ -224,8 +224,8 @@ inline Node* firstChildInComposedTreeIgnoringUserAgentShadow(Node& node)
 {
     if (auto* shadowRoot = shadowRootIgnoringUserAgentShadow(node))
         return shadowRoot->firstChild();
-    if (is<HTMLSlotElement>(node)) {
-        if (auto* assignedNodes = downcast<HTMLSlotElement>(node).assignedNodes())
+    if (auto slot = dynamicDowncast<HTMLSlotElement>(node)) {
+        if (auto* assignedNodes = slot->assignedNodes())
             return assignedNodes->at(0).get();
     }
     return node.firstChild();

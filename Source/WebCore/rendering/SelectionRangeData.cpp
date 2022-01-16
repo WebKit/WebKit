@@ -74,8 +74,7 @@ static bool isValidRendererForSelection(const RenderObject& renderer, const Rend
 
 static RenderBlock* containingBlockBelowView(const RenderObject& renderer)
 {
-    auto* containingBlock = renderer.containingBlock();
-    return is<RenderView>(containingBlock) ? nullptr : containingBlock;
+    return dynamicDowncast<RenderView>(renderer.containingBlock());
 }
 
 static SelectionContext collectSelectionData(const RenderRange& selection, bool repaintDifference)

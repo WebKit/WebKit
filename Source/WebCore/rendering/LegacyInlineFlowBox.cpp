@@ -577,7 +577,7 @@ void LegacyInlineFlowBox::computeLogicalBoxHeights(LegacyRootInlineBox& rootBox,
         if (child->renderer().isOutOfFlowPositioned())
             continue; // Positioned placeholders don't affect calculations.
         
-        LegacyInlineFlowBox* inlineFlowBox = is<LegacyInlineFlowBox>(*child) ? downcast<LegacyInlineFlowBox>(child) : nullptr;
+        auto* inlineFlowBox = dynamicDowncast<LegacyInlineFlowBox>(*child);
         
         bool affectsAscent = false;
         bool affectsDescent = false;
@@ -667,7 +667,7 @@ static void placeChildInlineBoxesInBlockDirection(LegacyInlineFlowBox& inlineBox
             continue;
         }
 
-        LegacyInlineFlowBox* inlineFlowBox = is<LegacyInlineFlowBox>(*child) ? downcast<LegacyInlineFlowBox>(child) : nullptr;
+        auto* inlineFlowBox = dynamicDowncast<LegacyInlineFlowBox>(*child);
         bool childAffectsTopBottomPos = true;
 
         if (child->verticalAlign() == VerticalAlign::Top && verticalAlignApplies(child->renderer()))

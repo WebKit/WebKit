@@ -267,13 +267,10 @@ static WebCore::Node* firstNodeAfter(const WebCore::BoundaryPoint& point)
             result = 0;
         } else if (is<WebCore::RenderBlockFlow>(*renderer) || (is<RenderBlock>(*renderer) && downcast<RenderBlock>(*renderer).inlineContinuation())) {
             BOOL noCost = NO;
-            if (is<RenderBox>(*renderer)) {
-                RenderBox& asBox = renderer->enclosingBox();
-                RenderObject* parent = asBox.parent();
-                RenderBox* parentRenderBox = is<RenderBox>(parent) ? downcast<RenderBox>(parent) : nullptr;
-                if (parentRenderBox && asBox.width() == parentRenderBox->width()) {
+            if (auto renderBox = dynamicDowncast<RenderBox>(*renderer)) {
+                auto* parentRenderBox = dynamicDowncast<RenderBox>(renderBox->parent());
+                if (parentRenderBox && renderBox->width() == parentRenderBox->width())
                     noCost = YES;
-                }
             }
             result = (noCost ? 0 : 1);
         } else if (renderer->hasTransform()) {

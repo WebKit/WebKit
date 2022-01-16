@@ -256,8 +256,7 @@ WebPaymentCoordinator* WebPage::paymentCoordinator()
 {
     if (!m_page)
         return nullptr;
-    auto& client = m_page->paymentCoordinator().client();
-    return is<WebPaymentCoordinator>(client) ? downcast<WebPaymentCoordinator>(&client) : nullptr;
+    return dynamicDowncast<WebPaymentCoordinator>(m_page->paymentCoordinator().client());
 }
 #endif
 

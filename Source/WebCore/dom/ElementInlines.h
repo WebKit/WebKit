@@ -61,8 +61,7 @@ inline NamedNodeMap* Node::attributes() const
 
 inline Element* Node::parentElement() const
 {
-    ContainerNode* parent = parentNode();
-    return is<Element>(parent) ? downcast<Element>(parent) : nullptr;
+    return dynamicDowncast<Element>(parentNode());
 }
 
 inline const Element* Element::rootElement() const

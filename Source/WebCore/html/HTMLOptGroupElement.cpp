@@ -122,8 +122,7 @@ String HTMLOptGroupElement::groupLabelText() const
     
 HTMLSelectElement* HTMLOptGroupElement::ownerSelectElement() const
 {
-    auto* parent = parentNode();
-    return is<HTMLSelectElement>(parent) ? downcast<HTMLSelectElement>(parent) : nullptr;
+    return dynamicDowncast<HTMLSelectElement>(parentNode());
 }
 
 bool HTMLOptGroupElement::accessKeyAction(bool)

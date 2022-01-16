@@ -108,8 +108,8 @@ void BroadcastChannel::MainThreadBridge::ensureOnMainThread(Function<void(Docume
     ASSERT(context->isContextThread());
 
     Ref protectedThis { *this };
-    if (is<Document>(*context))
-        task(downcast<Document>(*context));
+    if (auto document = dynamicDowncast<Document>(*context))
+        task(*document);
     else {
         downcast<WorkerGlobalScope>(*context).thread().workerLoaderProxy().postTaskToLoader([protectedThis = WTFMove(protectedThis), task = WTFMove(task)](auto& context) {
             task(downcast<Document>(context));
@@ -265,8 +265,8 @@ bool BroadcastChannel::isEligibleForMessaging() const
     if (!context)
         return false;
 
-    if (is<Document>(*context))
-        return downcast<Document>(*context).isFullyActive();
+    if (auto document = dynamicDowncast<Document>(*context))
+        return document->isFullyActive();
 
     return !downcast<WorkerGlobalScope>(*context).isClosing();
 }

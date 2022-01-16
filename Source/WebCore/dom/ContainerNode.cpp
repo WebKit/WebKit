@@ -179,8 +179,8 @@ ALWAYS_INLINE bool ContainerNode::removeNodeWithScriptAssertion(Node& childToRem
         // FIXME: Merge these two code paths. It's a bug in the parser not to update connectedSubframeCount in time.
         disconnectSubframesIfNeeded(*this, DescendantsOnly);
     } else {
-        if (is<ContainerNode>(childToRemove))
-            disconnectSubframesIfNeeded(downcast<ContainerNode>(childToRemove), RootAndDescendants);
+        if (auto containerChild = dynamicDowncast<ContainerNode>(childToRemove))
+            disconnectSubframesIfNeeded(*containerChild, RootAndDescendants);
     }
 
     if (childToRemove.parentNode() != this)
@@ -276,25 +276,24 @@ static ALWAYS_INLINE void executeNodeInsertionWithScriptAssertion(ContainerNode&
 
 ExceptionOr<void> ContainerNode::removeSelfOrChildNodesForInsertion(Node& child, NodeVector& nodesForInsertion)
 {
-    if (!is<DocumentFragment>(child)) {
-        nodesForInsertion.append(child);
-        RefPtr oldParent = child.parentNode();
-        if (!oldParent)
+    if (auto fragment = dynamicDowncast<DocumentFragment>(child)) {
+        if (!fragment->hasChildNodes())
             return { };
-        return oldParent->removeChild(child);
+
+        auto removedChildNodes = fragment->removeAllChildrenWithScriptAssertion(ContainerNode::ChildChange::Source::API);
+        nodesForInsertion.swap(removedChildNodes);
+
+        fragment->rebuildSVGExtensionsElementsIfNecessary();
+        fragment->dispatchSubtreeModifiedEvent();
+
+        return { };
     }
 
-    auto& fragment = downcast<DocumentFragment>(child);
-    if (!fragment.hasChildNodes())
+    nodesForInsertion.append(child);
+    RefPtr oldParent = child.parentNode();
+    if (!oldParent)
         return { };
-
-    auto removedChildNodes = fragment.removeAllChildrenWithScriptAssertion(ContainerNode::ChildChange::Source::API);
-    nodesForInsertion.swap(removedChildNodes);
-
-    fragment.rebuildSVGExtensionsElementsIfNecessary();
-    fragment.dispatchSubtreeModifiedEvent();
-
-    return { };
+    return oldParent->removeChild(child);
 }
 
 // FIXME: This function must get a new name.
@@ -313,14 +312,14 @@ void ContainerNode::removeDetachedChildren()
 
 static inline void destroyRenderTreeIfNeeded(Node& child)
 {
-    bool isElement = is<Element>(child);
-    auto hasDisplayContents = isElement && downcast<Element>(child).hasDisplayContents();
+    auto childAsElement = dynamicDowncast<Element>(child);
+    auto hasDisplayContents = childAsElement && childAsElement->hasDisplayContents();
     if (!child.renderer() && !hasDisplayContents)
         return;
-    if (isElement)
-        RenderTreeUpdater::tearDownRenderers(downcast<Element>(child));
-    else if (is<Text>(child))
-        RenderTreeUpdater::tearDownRenderer(downcast<Text>(child));
+    if (childAsElement)
+        RenderTreeUpdater::tearDownRenderers(*childAsElement);
+    else if (auto text = dynamicDowncast<Text>(child))
+        RenderTreeUpdater::tearDownRenderer(*text);
 }
 
 void ContainerNode::takeAllChildrenFrom(ContainerNode* oldParent)
@@ -365,8 +364,8 @@ static bool containsIncludingHostElements(const Node& possibleAncestor, const No
             return true;
         const ContainerNode* parent = currentNode->parentNode();
         if (!parent) {
-            if (is<ShadowRoot>(currentNode))
-                parent = downcast<ShadowRoot>(currentNode)->host();
+            if (auto shadowRoot = dynamicDowncast<ShadowRoot>(currentNode))
+                parent = shadowRoot->host();
             else if (is<DocumentFragment>(*currentNode) && downcast<DocumentFragment>(*currentNode).isTemplateContent())
                 parent = static_cast<const TemplateContentDocumentFragment*>(currentNode)->host();
         }
@@ -399,8 +398,8 @@ static inline ExceptionOr<void> checkAcceptChild(ContainerNode& newParent, Node&
     if (shouldValidateChildParent == ShouldValidateChildParent::Yes && refChild && refChild->parentNode() != &newParent)
         return Exception { NotFoundError };
 
-    if (is<Document>(newParent)) {
-        if (!downcast<Document>(newParent).canAcceptChild(newChild, refChild, operation))
+    if (auto newParentDocument = dynamicDowncast<Document>(newParent)) {
+        if (!newParentDocument->canAcceptChild(newChild, refChild, operation))
             return Exception { HierarchyRequestError };
     } else if (!isChildTypeAllowed(newParent, newChild))
         return Exception { HierarchyRequestError };

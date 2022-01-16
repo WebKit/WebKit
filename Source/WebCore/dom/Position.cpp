@@ -185,7 +185,7 @@ Text* Position::containerText() const
 {
     switch (anchorType()) {
     case PositionIsOffsetInAnchor:
-        return m_anchorNode && is<Text>(*m_anchorNode) ? downcast<Text>(m_anchorNode.get()) : nullptr;
+        return dynamicDowncast<Text>(m_anchorNode.get());
     case PositionIsBeforeAnchor:
     case PositionIsAfterAnchor:
         return nullptr;

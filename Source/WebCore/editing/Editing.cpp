@@ -321,8 +321,7 @@ bool isInline(const Node* node)
 // knowing about these kinds of special cases.
 Element* enclosingBlock(Node* node, EditingBoundaryCrossingRule rule)
 {
-    Node* enclosingNode = enclosingNodeOfType(firstPositionInOrBeforeNode(node), isBlock, rule);
-    return is<Element>(enclosingNode) ? downcast<Element>(enclosingNode) : nullptr;
+    return dynamicDowncast<Element>(enclosingNodeOfType(firstPositionInOrBeforeNode(node), isBlock, rule));
 }
 
 TextDirection directionOfEnclosingBlock(const Position& position)

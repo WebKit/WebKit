@@ -61,7 +61,7 @@ private:
 };
 
 inline ChildChangeInvalidation::ChildChangeInvalidation(ContainerNode& container, const ContainerNode::ChildChange& childChange)
-    : m_parentElement(is<Element>(container) ? downcast<Element>(&container) : nullptr)
+    : m_parentElement(dynamicDowncast<Element>(container))
     , m_childChange(childChange)
     , m_isEnabled(m_parentElement ? m_parentElement->needsStyleInvalidation() : false)
     , m_needsHasInvalidation(m_isEnabled && Scope::forNode(*m_parentElement).usesHasPseudoClass())

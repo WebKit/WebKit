@@ -155,7 +155,7 @@ RenderTable* RenderTableCol::table() const
     auto table = parent();
     if (table && !is<RenderTable>(*table))
         table = table->parent();
-    return is<RenderTable>(table) ? downcast<RenderTable>(table) : nullptr;
+    return dynamicDowncast<RenderTable>(table);
 }
 
 RenderTableCol* RenderTableCol::enclosingColumnGroup() const

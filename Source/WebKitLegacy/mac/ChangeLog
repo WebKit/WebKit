@@ -1,3 +1,17 @@
+2022-01-15  Chris Dumez  <cdumez@apple.com>
+
+        Introduce dynamicDowncast<>() for convenience
+        https://bugs.webkit.org/show_bug.cgi?id=235259
+
+        Reviewed by Darin Adler.
+
+        Start adopting dynamicDowncast<>().
+
+        * DOM/DOMUIKitExtensions.mm:
+        (-[DOMHTMLElement structuralComplexityContribution]):
+        * WebView/WebHTMLRepresentation.mm:
+        (inputElementFromDOMElement):
+
 2022-01-13  Tim Horton  <timothy_horton@apple.com>
 
         Fix a few Objective-C object leaks due to early returns in `init`

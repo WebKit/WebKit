@@ -134,7 +134,7 @@ static bool outputMismatchingComplexLineInformationIfNeeded(TextStream& stream, 
     for (unsigned inlineBoxIndex = 0; inlineBoxIndex < inlineBoxes.size() && boxIndex < boxes.size(); ++inlineBoxIndex) {
         auto& box = boxes[boxIndex];
         auto* inlineBox = inlineBoxes[inlineBoxIndex];
-        auto* inlineTextBox = is<WebCore::LegacyInlineTextBox>(inlineBox) ? downcast<WebCore::LegacyInlineTextBox>(inlineBox) : nullptr;
+        auto* inlineTextBox = dynamicDowncast<WebCore::LegacyInlineTextBox>(inlineBox);
         bool matchingRuns = inlineTextBox ? checkForMatchingTextRuns(box, *inlineTextBox) : checkForMatchingNonTextRuns(box, *inlineBox);
 
         if (!matchingRuns) {

@@ -331,7 +331,7 @@ void RenderImage::updateInnerContentRect()
     IntSize containerSize(replacedContentRect().size());
     if (!containerSize.isEmpty()) {
         URL imageSourceURL;
-        if (HTMLImageElement* imageElement = is<HTMLImageElement>(element()) ? downcast<HTMLImageElement>(element()) : nullptr)
+        if (auto* imageElement = dynamicDowncast<HTMLImageElement>(element()))
             imageSourceURL = document().completeURL(imageElement->imageSourceURL());
         imageResource().setContainerContext(containerSize, imageSourceURL);
     }
@@ -666,7 +666,7 @@ ImageDrawResult RenderImage::paintIntoRect(PaintInfo& paintInfo, const FloatRect
     if (!img || img->isNull())
         return ImageDrawResult::DidNothing;
 
-    HTMLImageElement* imageElement = is<HTMLImageElement>(element()) ? downcast<HTMLImageElement>(element()) : nullptr;
+    auto* imageElement = dynamicDowncast<HTMLImageElement>(element());
 
     // FIXME: Document when image != img.get().
     Image* image = imageResource().image().get();

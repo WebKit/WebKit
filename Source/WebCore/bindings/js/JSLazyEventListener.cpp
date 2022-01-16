@@ -84,19 +84,12 @@ JSLazyEventListener::JSLazyEventListener(CreationArguments&& arguments, const UR
 #if ASSERT_ENABLED
 static inline bool isCloneInShadowTreeOfSVGUseElement(Node& originalNode, EventTarget& eventTarget)
 {
-    if (!eventTarget.isNode())
+    auto* element = dynamicDowncast<SVGElement>(eventTarget);
+    if (!element || !element->correspondingElement())
         return false;
 
-    auto& node = downcast<Node>(eventTarget);
-    if (!is<SVGElement>(node))
-        return false;
-
-    auto& element = downcast<SVGElement>(node);
-    if (!element.correspondingElement())
-        return false;
-
-    ASSERT(element.isInShadowTree());
-    return &originalNode == element.correspondingElement();
+    ASSERT(element->isInShadowTree());
+    return &originalNode == element->correspondingElement();
 }
 
 // This is to help find the underlying cause of <rdar://problem/24314027>.
@@ -131,7 +124,7 @@ JSObject* JSLazyEventListener::initializeJSFunction(ScriptExecutionContext& exec
     if (!document.frame())
         return nullptr;
 
-    Element* element = m_originalNode && !m_originalNode->isDocumentNode() && is<Element>(*m_originalNode) ? downcast<Element>(m_originalNode.get()) : nullptr;
+    auto* element =  dynamicDowncast<Element>(m_originalNode.get());
     if (!document.contentSecurityPolicy()->allowInlineEventHandlers(m_sourceURL.string(), m_sourcePosition.m_line, m_code, element))
         return nullptr;
 

@@ -1,3 +1,16 @@
+2022-01-15  Chris Dumez  <cdumez@apple.com>
+
+        Introduce dynamicDowncast<>() for convenience
+        https://bugs.webkit.org/show_bug.cgi?id=235259
+
+        Reviewed by Darin Adler.
+
+        Introduce dynamicDowncast<>() for convenience. It can result in more concise code for the common pattern
+        where we call `is<T>(x)` and then `downcast<T>(x)`.
+
+        * wtf/TypeCasts.h:
+        (WTF::dynamicDowncast):
+
 2022-01-14  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Fix WTF::UUID's potential collision with empty and deleted values

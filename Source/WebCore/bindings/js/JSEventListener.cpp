@@ -151,7 +151,7 @@ void JSEventListener::handleEvent(ScriptExecutionContext& scriptExecutionContext
         if (!window->wrapped().isCurrentlyDisplayedInFrame())
             return;
         if (wasCreatedFromMarkup()) {
-            Element* element = event.target()->isNode() && !downcast<Node>(*event.target()).isDocumentNode() && is<Element>(*event.target()) ? downcast<Element>(event.target()) : nullptr;
+            Element* element = event.target()->isNode() && !downcast<Node>(*event.target()).isDocumentNode() ? dynamicDowncast<Element>(*event.target()) : nullptr;
             if (!scriptExecutionContext.contentSecurityPolicy()->allowInlineEventHandlers(sourceURL().string(), sourcePosition().m_line, code(), element))
                 return;
         }

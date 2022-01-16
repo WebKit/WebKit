@@ -1057,7 +1057,7 @@ RenderBox* RenderBox::findAutoscrollable(RenderObject* renderer)
             renderer = renderer->parent();
     }
 
-    return is<RenderBox>(renderer) ? downcast<RenderBox>(renderer) : nullptr;
+    return dynamicDowncast<RenderBox>(renderer);
 }
 
 void RenderBox::panScroll(const IntPoint& source)

@@ -1781,7 +1781,7 @@ RenderBoxModelObject* RenderObject::offsetParent() const
         current = current->parent();
     }
 
-    return is<RenderBoxModelObject>(current) ? downcast<RenderBoxModelObject>(current) : nullptr;
+    return dynamicDowncast<RenderBoxModelObject>(current);
 }
 
 VisiblePosition RenderObject::createVisiblePosition(int offset, Affinity affinity) const

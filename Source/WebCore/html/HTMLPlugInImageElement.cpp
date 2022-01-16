@@ -74,7 +74,7 @@ HTMLPlugInImageElement::~HTMLPlugInImageElement()
 RenderEmbeddedObject* HTMLPlugInImageElement::renderEmbeddedObject() const
 {
     // HTMLObjectElement and HTMLEmbedElement may return arbitrary renderers when using fallback content.
-    return is<RenderEmbeddedObject>(renderer()) ? downcast<RenderEmbeddedObject>(renderer()) : nullptr;
+    return dynamicDowncast<RenderEmbeddedObject>(renderer());
 }
 
 bool HTMLPlugInImageElement::isImageType()

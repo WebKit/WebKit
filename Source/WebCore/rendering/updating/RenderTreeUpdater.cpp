@@ -65,7 +65,7 @@
 namespace WebCore {
 
 RenderTreeUpdater::Parent::Parent(ContainerNode& root)
-    : element(is<Document>(root) ? nullptr : downcast<Element>(&root))
+    : element(dynamicDowncast<Element>(root))
     , renderTreePosition(RenderTreePosition(*root.renderer()))
 {
 }

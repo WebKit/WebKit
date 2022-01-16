@@ -2296,7 +2296,7 @@ Node::InsertedIntoAncestorResult Element::insertedIntoAncestor(InsertionType ins
 
     bool becomeConnected = insertionType.connectedToDocument;
     TreeScope* newScope = &parentOfInsertedTree.treeScope();
-    HTMLDocument* newDocument = becomeConnected && is<HTMLDocument>(newScope->documentScope()) ? &downcast<HTMLDocument>(newScope->documentScope()) : nullptr;
+    auto* newDocument = becomeConnected ? dynamicDowncast<HTMLDocument>(newScope->documentScope()) : nullptr;
     if (!insertionType.treeScopeChanged)
         newScope = nullptr;
 
@@ -2358,7 +2358,7 @@ void Element::removedFromAncestor(RemovalType removalType, ContainerNode& oldPar
     if (oldParentOfRemovedTree.isInTreeScope()) {
         TreeScope* oldScope = &oldParentOfRemovedTree.treeScope();
         Document* oldDocument = removalType.disconnectedFromDocument ? &oldScope->documentScope() : nullptr;
-        HTMLDocument* oldHTMLDocument = oldDocument && is<HTMLDocument>(*oldDocument) ? &downcast<HTMLDocument>(*oldDocument) : nullptr;
+        auto* oldHTMLDocument = dynamicDowncast<HTMLDocument>(oldDocument);
         if (!removalType.treeScopeChanged)
             oldScope = nullptr;
 

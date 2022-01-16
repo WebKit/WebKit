@@ -801,14 +801,12 @@ Node::Editability Node::computeEditability(UserSelectAllTreatment treatment, Sho
 
 RenderBox* Node::renderBox() const
 {
-    RenderObject* renderer = this->renderer();
-    return is<RenderBox>(renderer) ? downcast<RenderBox>(renderer) : nullptr;
+    return dynamicDowncast<RenderBox>(renderer());
 }
 
 RenderBoxModelObject* Node::renderBoxModelObject() const
 {
-    RenderObject* renderer = this->renderer();
-    return is<RenderBoxModelObject>(renderer) ? downcast<RenderBoxModelObject>(renderer) : nullptr;
+    return dynamicDowncast<RenderBoxModelObject>(renderer());
 }
     
 LayoutRect Node::renderRect(bool* isReplaced)
@@ -1149,8 +1147,7 @@ Element* Node::shadowHost() const
 
 ShadowRoot* Node::containingShadowRoot() const
 {
-    ContainerNode& root = treeScope().rootNode();
-    return is<ShadowRoot>(root) ? downcast<ShadowRoot>(&root) : nullptr;
+    return dynamicDowncast<ShadowRoot>(treeScope().rootNode());
 }
 
 #if ASSERT_ENABLED
@@ -1644,8 +1641,8 @@ unsigned short Node::compareDocumentPosition(Node& otherNode)
     if (&otherNode == this)
         return DOCUMENT_POSITION_EQUIVALENT;
     
-    Attr* attr1 = is<Attr>(*this) ? downcast<Attr>(this) : nullptr;
-    Attr* attr2 = is<Attr>(otherNode) ? &downcast<Attr>(otherNode) : nullptr;
+    auto* attr1 = dynamicDowncast<Attr>(*this);
+    auto* attr2 = dynamicDowncast<Attr>(otherNode);
     
     Node* start1 = attr1 ? attr1->ownerElement() : this;
     Node* start2 = attr2 ? attr2->ownerElement() : &otherNode;

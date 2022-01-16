@@ -355,7 +355,7 @@ FontRanges CSSFontSelector::fontRangesForFamily(const FontDescription& fontDescr
 
     if (resolveGenericFamilyFirst)
         resolveAndAssignGenericFamily();
-    Document* document = is<Document>(m_context) ? &downcast<Document>(*m_context) : nullptr;
+    auto* document = dynamicDowncast<Document>(m_context.get());
     auto* face = m_cssFontFaceSet->fontFace(fontDescriptionForLookup->fontSelectionRequest(), familyForLookup);
     if (face) {
         if (document && RuntimeEnabledFeatures::sharedFeatures().webAPIStatisticsEnabled())

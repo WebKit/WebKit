@@ -57,11 +57,11 @@ void MessagePortChannelProvider::setSharedProvider(MessagePortChannelProvider& p
 
 MessagePortChannelProvider& MessagePortChannelProvider::fromContext(ScriptExecutionContext& context)
 {
-    if (is<Document>(context))
-        return downcast<Document>(context).messagePortChannelProvider();
+    if (auto document = dynamicDowncast<Document>(context))
+        return document->messagePortChannelProvider();
 
-    if (is<WorkletGlobalScope>(context))
-        return downcast<WorkletGlobalScope>(context).messagePortChannelProvider();
+    if (auto workletScope = dynamicDowncast<WorkletGlobalScope>(context))
+        return workletScope->messagePortChannelProvider();
 
     return downcast<WorkerGlobalScope>(context).messagePortChannelProvider();
 }

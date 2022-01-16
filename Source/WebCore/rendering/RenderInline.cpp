@@ -203,7 +203,7 @@ void RenderInline::styleDidChange(StyleDifference diff, const RenderStyle* oldSt
 bool RenderInline::mayAffectLayout() const
 {
     auto* parentStyle = &parent()->style();
-    RenderInline* parentRenderInline = is<RenderInline>(*parent()) ? downcast<RenderInline>(parent()) : nullptr;
+    auto* parentRenderInline = dynamicDowncast<RenderInline>(*parent());
     auto hasHardLineBreakChildOnly = firstChild() && firstChild() == lastChild() && firstChild()->isBR();
     bool checkFonts = document().inNoQuirksMode();
     auto mayAffectLayout = (parentRenderInline && parentRenderInline->mayAffectLayout())

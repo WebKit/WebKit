@@ -174,30 +174,26 @@ inline ContainerNode::ContainerNode(Document& document, ConstructionType type)
 
 inline unsigned Node::countChildNodes() const
 {
-    if (!is<ContainerNode>(*this))
-        return 0;
-    return downcast<ContainerNode>(*this).countChildNodes();
+    auto* containerNode = dynamicDowncast<ContainerNode>(*this);
+    return containerNode ? containerNode->countChildNodes() : 0;
 }
 
 inline Node* Node::traverseToChildAt(unsigned index) const
 {
-    if (!is<ContainerNode>(*this))
-        return nullptr;
-    return downcast<ContainerNode>(*this).traverseToChildAt(index);
+    auto* containerNode = dynamicDowncast<ContainerNode>(*this);
+    return containerNode ? containerNode->traverseToChildAt(index) : nullptr;
 }
 
 inline Node* Node::firstChild() const
 {
-    if (!is<ContainerNode>(*this))
-        return nullptr;
-    return downcast<ContainerNode>(*this).firstChild();
+    auto* containerNode = dynamicDowncast<ContainerNode>(*this);
+    return containerNode ? containerNode->firstChild() : nullptr;
 }
 
 inline Node* Node::lastChild() const
 {
-    if (!is<ContainerNode>(*this))
-        return nullptr;
-    return downcast<ContainerNode>(*this).lastChild();
+    auto* containerNode = dynamicDowncast<ContainerNode>(*this);
+    return containerNode ? containerNode->lastChild() : nullptr;
 }
 
 inline Node& Node::rootNode() const

@@ -210,7 +210,7 @@ unsigned RenderListItem::itemCountForOrderedList(const HTMLOListElement& list)
 void RenderListItem::updateValueNow() const
 {
     auto* list = enclosingList(*this);
-    auto* orderedList = is<HTMLOListElement>(list) ? downcast<HTMLOListElement>(list) : nullptr;
+    auto* orderedList = dynamicDowncast<HTMLOListElement>(list);
 
     // The start item is either the closest item before this one in the list that already has a value,
     // or the first item in the list if none have before this have values yet.

@@ -332,7 +332,7 @@ void DOMTimer::fired()
         nestedTimers->startTracking();
 
 #if ENABLE(CONTENT_CHANGE_OBSERVER)
-    ContentChangeObserver::DOMTimerScope observingScope(is<Document>(context) ? &downcast<Document>(context) : nullptr, *this);
+    ContentChangeObserver::DOMTimerScope observingScope(dynamicDowncast<Document>(context), *this);
 #endif
     m_action->execute(context);
 

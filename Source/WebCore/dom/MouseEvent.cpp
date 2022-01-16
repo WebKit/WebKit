@@ -203,7 +203,7 @@ RefPtr<Node> MouseEvent::toElement() const
         target = relatedTarget();
     else
         target = this->target();
-    return is<Node>(target) ? &downcast<Node>(*target) : nullptr;
+    return dynamicDowncast<Node>(target);
 }
 
 RefPtr<Node> MouseEvent::fromElement() const
@@ -214,7 +214,7 @@ RefPtr<Node> MouseEvent::fromElement() const
         target = this->target();
     else
         target = relatedTarget();
-    return is<Node>(target) ? &downcast<Node>(*target) : nullptr;
+    return dynamicDowncast<Node>(target);
 }
 
 } // namespace WebCore

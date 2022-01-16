@@ -72,8 +72,8 @@ private:
 
 inline unsigned Node::length() const
 {
-    if (is<CharacterData>(*this))
-        return downcast<CharacterData>(*this).length();
+    if (auto characterData = dynamicDowncast<CharacterData>(*this))
+        return characterData->length();
     return countChildNodes();
 }
 
