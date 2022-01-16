@@ -1,3 +1,18 @@
+2022-01-15  Sam Weinig  <weinig@apple.com>
+
+        CSS Gradients: interpolation mode should default to OKLab if any non-legacy color syntax colors are used in the stops
+        https://bugs.webkit.org/show_bug.cgi?id=235071
+
+        Reviewed by Darin Adler.
+
+        Add support for tests enabling the CSSGradientInterpolationColorSpacesEnabled preference.
+
+        * WebPreferences.cpp:
+        (WebPreferences::cssGradientInterpolationColorSpacesEnabled):
+        * WebPreferences.h:
+        * WebView.cpp:
+        (WebView::notifyPreferencesChanged):
+
 2022-01-09  Sam Weinig  <weinig@apple.com>
 
         Remove support for Direct2D

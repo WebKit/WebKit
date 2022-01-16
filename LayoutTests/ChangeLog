@@ -1,3 +1,14 @@
+2022-01-15  Sam Weinig  <weinig@apple.com>
+
+        CSS Gradients: interpolation mode should default to OKLab if any non-legacy color syntax colors are used in the stops
+        https://bugs.webkit.org/show_bug.cgi?id=235071
+
+        Reviewed by Darin Adler.
+
+        Update test to use an explicit interpolation method when using non-legacy colors to maintain srgb interpolation.
+
+        * css3/color/gradients.html:
+
 2022-01-15  Alan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Enable content with complex font codepath for IFC

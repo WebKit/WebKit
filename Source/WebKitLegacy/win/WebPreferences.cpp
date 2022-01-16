@@ -2637,6 +2637,11 @@ bool WebPreferences::canvasColorSpaceEnabled()
     return boolValueForKey("WebKitCanvasColorSpaceEnabled");
 }
 
+bool WebPreferences::cssGradientInterpolationColorSpacesEnabled()
+{
+    return boolValueForKey("WebKitCSSGradientInterpolationColorSpacesEnabled");
+}
+
 bool WebPreferences::cssGradientPremultipliedAlphaInterpolationEnabled()
 {
     return boolValueForKey("WebKitCSSGradientPremultipliedAlphaInterpolationEnabled");

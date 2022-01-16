@@ -58,15 +58,31 @@ inline bool operator==(const CSSGradientColorStop& a, const CSSGradientColorStop
     return compareCSSValuePtr(a.color, b.color) && compareCSSValuePtr(a.position, b.position);
 }
 
+struct CSSGradientColorInterpolationMethod {
+    enum class Default : bool { SRGB, OKLab };
+
+    ColorInterpolationMethod method;
+    Default defaultMethod;
+    
+    static CSSGradientColorInterpolationMethod legacyMethod(AlphaPremultiplication alphaPremultiplication)
+    {
+        return { { ColorInterpolationMethod::SRGB { }, alphaPremultiplication }, Default::SRGB };
+    }
+};
+
+inline bool operator==(const CSSGradientColorInterpolationMethod& a, const CSSGradientColorInterpolationMethod& b)
+{
+    return a.method == b.method && a.defaultMethod == b.defaultMethod;
+}
+
+using CSSGradientColorStopList = Vector<CSSGradientColorStop, 2>;
+
 class CSSGradientValue : public CSSImageGeneratorValue {
 public:
     void setFirstX(RefPtr<CSSPrimitiveValue>&& value) { m_firstX = WTFMove(value); }
     void setFirstY(RefPtr<CSSPrimitiveValue>&& value) { m_firstY = WTFMove(value); }
     void setSecondX(RefPtr<CSSPrimitiveValue>&& value) { m_secondX = WTFMove(value); }
     void setSecondY(RefPtr<CSSPrimitiveValue>&& value) { m_secondY = WTFMove(value); }
-    void addStop(CSSGradientColorStop&& stop) { m_stops.append(WTFMove(stop)); }
-    void doneAddingStops() { m_stops.shrinkToFit(); }
-    bool hasAtLeastTwoStops() const { return m_stops.size() >= 2; }
     void resolveRGBColors();
 
     CSSGradientType gradientType() const { return m_gradientType; }
@@ -82,8 +98,9 @@ public:
     Ref<CSSGradientValue> valueWithStylesResolved(Style::BuilderState&);
 
 protected:
-    CSSGradientValue(ClassType classType, CSSGradientRepeat repeat, CSSGradientType gradientType, ColorInterpolationMethod colorInterpolationMethod)
+    CSSGradientValue(ClassType classType, CSSGradientRepeat repeat, CSSGradientType gradientType, CSSGradientColorInterpolationMethod colorInterpolationMethod, CSSGradientColorStopList stops)
         : CSSImageGeneratorValue(classType)
+        , m_stops(WTFMove(stops))
         , m_gradientType(gradientType)
         , m_repeating(repeat == Repeating)
         , m_colorInterpolationMethod(colorInterpolationMethod)
@@ -124,19 +141,19 @@ private:
     RefPtr<CSSPrimitiveValue> m_firstY;
     RefPtr<CSSPrimitiveValue> m_secondX;
     RefPtr<CSSPrimitiveValue> m_secondY;
-    Vector<CSSGradientColorStop, 2> m_stops;
+    CSSGradientColorStopList m_stops;
     CSSGradientType m_gradientType;
     bool m_repeating { false };
-    ColorInterpolationMethod m_colorInterpolationMethod;
+    CSSGradientColorInterpolationMethod m_colorInterpolationMethod;
 
     mutable std::optional<bool> m_hasColorDerivedFromElement;
 };
 
 class CSSLinearGradientValue final : public CSSGradientValue {
 public:
-    static Ref<CSSLinearGradientValue> create(CSSGradientRepeat repeat, CSSGradientType gradientType, ColorInterpolationMethod colorInterpolationMethod)
+    static Ref<CSSLinearGradientValue> create(CSSGradientRepeat repeat, CSSGradientType gradientType, CSSGradientColorInterpolationMethod colorInterpolationMethod, CSSGradientColorStopList stops)
     {
-        return adoptRef(*new CSSLinearGradientValue(repeat, gradientType, colorInterpolationMethod));
+        return adoptRef(*new CSSLinearGradientValue(repeat, gradientType, colorInterpolationMethod, WTFMove(stops)));
     }
 
     void setAngle(Ref<CSSPrimitiveValue>&& value) { m_angle = WTFMove(value); }
@@ -154,8 +171,8 @@ public:
     bool equals(const CSSLinearGradientValue&) const;
 
 private:
-    CSSLinearGradientValue(CSSGradientRepeat repeat, CSSGradientType gradientType, ColorInterpolationMethod colorInterpolationMethod)
-        : CSSGradientValue(LinearGradientClass, repeat, gradientType, colorInterpolationMethod)
+    CSSLinearGradientValue(CSSGradientRepeat repeat, CSSGradientType gradientType, CSSGradientColorInterpolationMethod colorInterpolationMethod, CSSGradientColorStopList stops)
+        : CSSGradientValue(LinearGradientClass, repeat, gradientType, colorInterpolationMethod, WTFMove(stops))
     {
     }
 
@@ -170,9 +187,9 @@ private:
 
 class CSSRadialGradientValue final : public CSSGradientValue {
 public:
-    static Ref<CSSRadialGradientValue> create(CSSGradientRepeat repeat, CSSGradientType gradientType, ColorInterpolationMethod colorInterpolationMethod)
+    static Ref<CSSRadialGradientValue> create(CSSGradientRepeat repeat, CSSGradientType gradientType, CSSGradientColorInterpolationMethod colorInterpolationMethod, CSSGradientColorStopList stops)
     {
-        return adoptRef(*new CSSRadialGradientValue(repeat, gradientType, colorInterpolationMethod));
+        return adoptRef(*new CSSRadialGradientValue(repeat, gradientType, colorInterpolationMethod, WTFMove(stops)));
     }
 
     Ref<CSSRadialGradientValue> clone() const
@@ -197,8 +214,8 @@ public:
     bool equals(const CSSRadialGradientValue&) const;
 
 private:
-    CSSRadialGradientValue(CSSGradientRepeat repeat, CSSGradientType gradientType, ColorInterpolationMethod colorInterpolationMethod)
-        : CSSGradientValue(RadialGradientClass, repeat, gradientType, colorInterpolationMethod)
+    CSSRadialGradientValue(CSSGradientRepeat repeat, CSSGradientType gradientType, CSSGradientColorInterpolationMethod colorInterpolationMethod, CSSGradientColorStopList stops)
+        : CSSGradientValue(RadialGradientClass, repeat, gradientType, colorInterpolationMethod, WTFMove(stops))
     {
     }
 
@@ -230,9 +247,9 @@ private:
 
 class CSSConicGradientValue final : public CSSGradientValue {
 public:
-    static Ref<CSSConicGradientValue> create(CSSGradientRepeat repeat, ColorInterpolationMethod colorInterpolationMethod)
+    static Ref<CSSConicGradientValue> create(CSSGradientRepeat repeat, CSSGradientColorInterpolationMethod colorInterpolationMethod, CSSGradientColorStopList stops)
     {
-        return adoptRef(*new CSSConicGradientValue(repeat, colorInterpolationMethod));
+        return adoptRef(*new CSSConicGradientValue(repeat, colorInterpolationMethod, WTFMove(stops)));
     }
 
     Ref<CSSConicGradientValue> clone() const
@@ -250,8 +267,8 @@ public:
     bool equals(const CSSConicGradientValue&) const;
 
 private:
-    explicit CSSConicGradientValue(CSSGradientRepeat repeat, ColorInterpolationMethod colorInterpolationMethod)
-        : CSSGradientValue(ConicGradientClass, repeat, CSSConicGradient, colorInterpolationMethod)
+    explicit CSSConicGradientValue(CSSGradientRepeat repeat, CSSGradientColorInterpolationMethod colorInterpolationMethod, CSSGradientColorStopList stops)
+        : CSSGradientValue(ConicGradientClass, repeat, CSSConicGradient, colorInterpolationMethod, WTFMove(stops))
     {
     }
 

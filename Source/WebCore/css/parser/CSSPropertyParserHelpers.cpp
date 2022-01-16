@@ -3066,114 +3066,126 @@ static AlphaPremultiplication gradientAlphaPremultiplication(const CSSParserCont
 
 static RefPtr<CSSValue> consumeDeprecatedGradient(CSSParserTokenRange& args, const CSSParserContext& context)
 {
-    RefPtr<CSSGradientValue> result;
-    CSSValueID id = args.consumeIncludingWhitespace().id();
-    bool isDeprecatedRadialGradient = (id == CSSValueRadial);
-    if (isDeprecatedRadialGradient)
-        result = CSSRadialGradientValue::create(NonRepeating, CSSDeprecatedRadialGradient, { ColorInterpolationMethod::SRGB { }, gradientAlphaPremultiplication(context) });
-    else if (id == CSSValueLinear)
-        result = CSSLinearGradientValue::create(NonRepeating, CSSDeprecatedLinearGradient, { ColorInterpolationMethod::SRGB { }, gradientAlphaPremultiplication(context) });
-    if (!result || !consumeCommaIncludingWhitespace(args))
+    auto id = args.consumeIncludingWhitespace().id();
+    if (id != CSSValueRadial && id != CSSValueLinear)
+        return nullptr;
+    
+    if (!consumeCommaIncludingWhitespace(args))
         return nullptr;
 
-    auto point = consumeDeprecatedGradientPoint(args, true);
-    if (!point)
+    auto firstX = consumeDeprecatedGradientPoint(args, true);
+    if (!firstX)
         return nullptr;
-    result->setFirstX(WTFMove(point));
-    point = consumeDeprecatedGradientPoint(args, false);
-    if (!point)
+    auto firstY = consumeDeprecatedGradientPoint(args, false);
+    if (!firstY)
         return nullptr;
-    result->setFirstY(WTFMove(point));
 
     if (!consumeCommaIncludingWhitespace(args))
         return nullptr;
 
     // For radial gradients only, we now expect a numeric radius.
-    if (isDeprecatedRadialGradient) {
-        auto radius = consumeNumber(args, ValueRange::NonNegative);
-        if (!radius || !consumeCommaIncludingWhitespace(args))
+    RefPtr<CSSPrimitiveValue> firstRadius;
+    if (id == CSSValueRadial) {
+        firstRadius = consumeNumber(args, ValueRange::NonNegative);
+        if (!firstRadius || !consumeCommaIncludingWhitespace(args))
             return nullptr;
-        downcast<CSSRadialGradientValue>(result.get())->setFirstRadius(WTFMove(radius));
     }
 
-    point = consumeDeprecatedGradientPoint(args, true);
-    if (!point)
+    auto secondX = consumeDeprecatedGradientPoint(args, true);
+    if (!secondX)
         return nullptr;
-    result->setSecondX(WTFMove(point));
-    point = consumeDeprecatedGradientPoint(args, false);
-    if (!point)
+    auto secondY = consumeDeprecatedGradientPoint(args, false);
+    if (!secondY)
         return nullptr;
-    result->setSecondY(WTFMove(point));
 
     // For radial gradients only, we now expect the second radius.
-    if (isDeprecatedRadialGradient) {
+    RefPtr<CSSPrimitiveValue> secondRadius;
+    if (id == CSSValueRadial) {
         if (!consumeCommaIncludingWhitespace(args))
             return nullptr;
-        auto radius = consumeNumber(args, ValueRange::NonNegative);
-        if (!radius)
+        secondRadius = consumeNumber(args, ValueRange::NonNegative);
+        if (!secondRadius)
             return nullptr;
-        downcast<CSSRadialGradientValue>(result.get())->setSecondRadius(WTFMove(radius));
     }
 
-    CSSGradientColorStop stop;
+    CSSGradientColorStopList stops;
     while (consumeCommaIncludingWhitespace(args)) {
+        CSSGradientColorStop stop;
         if (!consumeDeprecatedGradientColorStop(args, stop, context))
             return nullptr;
-        result->addStop(WTFMove(stop));
+        stops.append(WTFMove(stop));
+    }
+    stops.shrinkToFit();
+
+    auto colorInterpolationMethod = CSSGradientColorInterpolationMethod::legacyMethod(gradientAlphaPremultiplication(context));
+
+    RefPtr<CSSGradientValue> result;
+    if (id == CSSValueRadial)
+        result = CSSRadialGradientValue::create(NonRepeating, CSSDeprecatedRadialGradient, colorInterpolationMethod, WTFMove(stops));
+    else if (id == CSSValueLinear)
+        result = CSSLinearGradientValue::create(NonRepeating, CSSDeprecatedLinearGradient, colorInterpolationMethod, WTFMove(stops));
+
+    result->setFirstX(WTFMove(firstX));
+    result->setFirstY(WTFMove(firstY));
+    result->setSecondX(WTFMove(secondX));
+    result->setSecondY(WTFMove(secondY));
+    if (id == CSSValueRadial) {
+        downcast<CSSRadialGradientValue>(*result).setFirstRadius(WTFMove(firstRadius));
+        downcast<CSSRadialGradientValue>(*result).setSecondRadius(WTFMove(secondRadius));
     }
 
-    result->doneAddingStops();
     return result;
 }
 
-static bool consumeGradientColorStops(CSSParserTokenRange& range, const CSSParserContext& context, CSSGradientValue& gradient)
+static std::optional<CSSGradientColorStopList> consumeGradientColorStops(CSSParserTokenRange& range, const CSSParserContext& context, CSSGradientType gradientType)
 {
-    bool supportsColorHints = gradient.gradientType() == CSSLinearGradient || gradient.gradientType() == CSSRadialGradient || gradient.gradientType() == CSSConicGradient;
+    bool supportsColorHints = gradientType == CSSLinearGradient || gradientType == CSSRadialGradient || gradientType == CSSConicGradient;
     
     auto consumeStopPosition = [&] {
-        return gradient.gradientType() == CSSConicGradient
+        return gradientType == CSSConicGradient
             ? consumeAngleOrPercent(range, context.mode, ValueRange::All, UnitlessQuirk::Forbid, UnitlessZeroQuirk::Allow)
             : consumeLengthOrPercent(range, context.mode, ValueRange::All);
     };
+
+    CSSGradientColorStopList stops;
 
     // The first color stop cannot be a color hint.
     bool previousStopWasColorHint = true;
     do {
         CSSGradientColorStop stop { consumeColor(range, context), consumeStopPosition(), { } };
         if (!stop.color && !stop.position)
-            return false;
+            return std::nullopt;
 
         // Two color hints in a row are not allowed.
         if (!stop.color && (!supportsColorHints || previousStopWasColorHint))
-            return false;
+            return std::nullopt;
         previousStopWasColorHint = !stop.color;
 
         // Stops with both a color and a position can have a second position, which shares the same color.
         if (stop.color && stop.position) {
             if (auto secondPosition = consumeStopPosition()) {
-                gradient.addStop(CSSGradientColorStop { stop });
+                stops.append(stop);
                 stop.position = WTFMove(secondPosition);
             }
         }
-        gradient.addStop(WTFMove(stop));
+        stops.append(WTFMove(stop));
     } while (consumeCommaIncludingWhitespace(range));
 
     // The last color stop cannot be a color hint.
     if (previousStopWasColorHint)
-        return false;
+        return std::nullopt;
 
     // Must have two or more stops to be valid.
-    if (!gradient.hasAtLeastTwoStops())
-        return false;
+    if (stops.size() < 2)
+        return std::nullopt;
 
-    gradient.doneAddingStops();
-    return true;
+    stops.shrinkToFit();
+
+    return { WTFMove(stops) };
 }
 
 static RefPtr<CSSValue> consumePrefixedRadialGradient(CSSParserTokenRange& args, const CSSParserContext& context, CSSGradientRepeat repeating)
 {
-    auto result = CSSRadialGradientValue::create(repeating, CSSPrefixedRadialGradient, { ColorInterpolationMethod::SRGB { }, gradientAlphaPremultiplication(context) });
-
     auto centerCoordinate = consumeOneOrTwoValuedPositionCoordinates(args, context.mode, UnitlessQuirk::Forbid);
     if (centerCoordinate && !consumeCommaIncludingWhitespace(args))
         return nullptr;
@@ -3184,23 +3196,28 @@ static RefPtr<CSSValue> consumePrefixedRadialGradient(CSSParserTokenRange& args,
         shape = consumeIdent<CSSValueCircle, CSSValueEllipse>(args);
 
     // Or, two lengths or percentages
+    RefPtr<CSSPrimitiveValue> horizontalSize;
+    RefPtr<CSSPrimitiveValue> verticalSize;
     if (!shape && !sizeKeyword) {
-        auto horizontalSize = consumeLengthOrPercent(args, context.mode, ValueRange::NonNegative);
-        RefPtr<CSSPrimitiveValue> verticalSize;
+        horizontalSize = consumeLengthOrPercent(args, context.mode, ValueRange::NonNegative);
         if (horizontalSize) {
             verticalSize = consumeLengthOrPercent(args, context.mode, ValueRange::NonNegative);
             if (!verticalSize)
                 return nullptr;
             consumeCommaIncludingWhitespace(args);
-            result->setEndHorizontalSize(WTFMove(horizontalSize));
-            result->setEndVerticalSize(WTFMove(verticalSize));
         }
-    } else {
+    } else
         consumeCommaIncludingWhitespace(args);
-    }
 
-    if (!consumeGradientColorStops(args, context, result))
+    auto stops = consumeGradientColorStops(args, context, CSSPrefixedRadialGradient);
+    if (!stops)
         return nullptr;
+
+    auto colorInterpolationMethod = CSSGradientColorInterpolationMethod::legacyMethod(gradientAlphaPremultiplication(context));
+    auto result = CSSRadialGradientValue::create(repeating, CSSPrefixedRadialGradient, colorInterpolationMethod, WTFMove(*stops));
+
+    result->setEndHorizontalSize(WTFMove(horizontalSize));
+    result->setEndVerticalSize(WTFMove(verticalSize));
 
     if (centerCoordinate) {
         result->setFirstX(centerCoordinate->x.copyRef());
@@ -3212,6 +3229,46 @@ static RefPtr<CSSValue> consumePrefixedRadialGradient(CSSParserTokenRange& args,
     result->setSizingBehavior(WTFMove(sizeKeyword));
 
     return result;
+}
+
+static CSSGradientColorInterpolationMethod computeGradientColorInterpolationMethod(const CSSParserContext& context, std::optional<ColorInterpolationMethod> parsedColorInterpolationMethod, const CSSGradientColorStopList& stops)
+{
+    if (!context.gradientInterpolationColorSpacesEnabled)
+        return CSSGradientColorInterpolationMethod::legacyMethod(gradientAlphaPremultiplication(context));
+
+    // We detect whether stops use legacy vs. non-legacy CSS color syntax using the following rules:
+    //  - A CSSValueID is always considered legacy since all keyword based colors are considered legacy by the spec.
+    //  - An actual Color value is considered legacy if it is stored as 8-bit sRGB.
+    //
+    // While this is accurate now, we should consider a more robust mechanism to detect this at parse
+    // time, perhaps keeping this information in the CSSPrimitiveValue itself.
+
+    auto defaultColorInterpolationMethod = CSSGradientColorInterpolationMethod::Default::SRGB;
+    for (auto& stop : stops) {
+        if (!stop.color)
+            continue;
+        if (stop.color->isValueID())
+            continue;
+        if (stop.color->isRGBColor() && stop.color->color().tryGetAsSRGBABytes())
+            continue;
+
+        defaultColorInterpolationMethod = CSSGradientColorInterpolationMethod::Default::OKLab;
+        break;
+    }
+
+    if (parsedColorInterpolationMethod)
+        return { *parsedColorInterpolationMethod, defaultColorInterpolationMethod };
+
+    switch (defaultColorInterpolationMethod) {
+    case CSSGradientColorInterpolationMethod::Default::SRGB:
+        return { { ColorInterpolationMethod::SRGB { }, gradientAlphaPremultiplication(context) }, defaultColorInterpolationMethod };
+
+    case CSSGradientColorInterpolationMethod::Default::OKLab:
+        return { { ColorInterpolationMethod::OKLab { }, AlphaPremultiplication::Premultiplied }, defaultColorInterpolationMethod };
+    }
+
+    ASSERT_NOT_REACHED();
+    return { { ColorInterpolationMethod::SRGB { }, gradientAlphaPremultiplication(context) }, defaultColorInterpolationMethod };
 }
 
 static RefPtr<CSSValue> consumeRadialGradient(CSSParserTokenRange& args, const CSSParserContext& context, CSSGradientRepeat repeating)
@@ -3300,10 +3357,12 @@ static RefPtr<CSSValue> consumeRadialGradient(CSSParserTokenRange& args, const C
     if ((shape || sizeKeyword || horizontalSize || position || colorInterpolationMethod) && !consumeCommaIncludingWhitespace(args))
         return nullptr;
 
-    auto result = CSSRadialGradientValue::create(repeating, CSSRadialGradient, colorInterpolationMethod.value_or(ColorInterpolationMethod { ColorInterpolationMethod::SRGB { }, gradientAlphaPremultiplication(context) }));
-
-    if (!consumeGradientColorStops(args, context, result))
+    auto stops = consumeGradientColorStops(args, context, CSSRadialGradient);
+    if (!stops)
         return nullptr;
+
+    auto computedColorInterpolationMethod = computeGradientColorInterpolationMethod(context, colorInterpolationMethod, *stops);
+    auto result = CSSRadialGradientValue::create(repeating, CSSRadialGradient, computedColorInterpolationMethod, WTFMove(*stops));
 
     result->setShape(WTFMove(shape));
     result->setSizingBehavior(WTFMove(sizeKeyword));
@@ -3356,10 +3415,12 @@ static RefPtr<CSSValue> consumePrefixedLinearGradient(CSSParserTokenRange& args,
     if (angleOrToSideOrCorner && !consumeCommaIncludingWhitespace(args))
         return nullptr;
 
-    auto result = CSSLinearGradientValue::create(repeating, CSSPrefixedLinearGradient, { ColorInterpolationMethod::SRGB { }, gradientAlphaPremultiplication(context) });
-
-    if (!consumeGradientColorStops(args, context, result))
+    auto stops = consumeGradientColorStops(args, context, CSSPrefixedLinearGradient);
+    if (!stops)
         return nullptr;
+
+    auto colorInterpolationMethod = CSSGradientColorInterpolationMethod::legacyMethod(gradientAlphaPremultiplication(context));
+    auto result = CSSLinearGradientValue::create(repeating, CSSPrefixedLinearGradient, colorInterpolationMethod, WTFMove(*stops));
 
     if (angleOrToSideOrCorner) {
         WTF::switchOn(*angleOrToSideOrCorner,
@@ -3435,11 +3496,13 @@ static RefPtr<CSSValue> consumeLinearGradient(CSSParserTokenRange& args, const C
             return nullptr;
     }
 
-    auto result = CSSLinearGradientValue::create(repeating, CSSLinearGradient, colorInterpolationMethod.value_or(ColorInterpolationMethod { ColorInterpolationMethod::SRGB { }, gradientAlphaPremultiplication(context) }));
-    
-    if (!consumeGradientColorStops(args, context, result))
+    auto stops = consumeGradientColorStops(args, context, CSSLinearGradient);
+    if (!stops)
         return nullptr;
 
+    auto computedColorInterpolationMethod = computeGradientColorInterpolationMethod(context, colorInterpolationMethod, *stops);
+    auto result = CSSLinearGradientValue::create(repeating, CSSLinearGradient, computedColorInterpolationMethod, WTFMove(*stops));
+    
     if (angleOrToSideOrCorner) {
         WTF::switchOn(*angleOrToSideOrCorner,
             [&] (AngleOrToSideOrCorner::Angle& angle) {
@@ -3501,10 +3564,12 @@ static RefPtr<CSSValue> consumeConicGradient(CSSParserTokenRange& args, const CS
             return nullptr;
     }
 
-    auto result = CSSConicGradientValue::create(repeating, colorInterpolationMethod.value_or(ColorInterpolationMethod { ColorInterpolationMethod::SRGB { }, gradientAlphaPremultiplication(context) }));
-
-    if (!consumeGradientColorStops(args, context, result))
+    auto stops = consumeGradientColorStops(args, context, CSSConicGradient);
+    if (!stops)
         return nullptr;
+
+    auto computedColorInterpolationMethod = computeGradientColorInterpolationMethod(context, colorInterpolationMethod, *stops);
+    auto result = CSSConicGradientValue::create(repeating, computedColorInterpolationMethod, WTFMove(*stops));
 
     if (angle)
         result->setAngle(WTFMove(angle));

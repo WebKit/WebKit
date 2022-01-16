@@ -1,3 +1,14 @@
+2022-01-15  Sam Weinig  <weinig@apple.com>
+
+        CSS Gradients: interpolation mode should default to OKLab if any non-legacy color syntax colors are used in the stops
+        https://bugs.webkit.org/show_bug.cgi?id=235071
+
+        Reviewed by Darin Adler.
+
+        * DumpRenderTree/TestOptions.cpp:
+        (WTR::TestOptions::defaults):
+        Add default for Windows WebKitLegacy testing which still requires it.
+
 2022-01-15  David Kilzer  <ddkilzer@apple.com>
 
         Only use `diff --binary` switch on Windows

@@ -2130,19 +2130,14 @@ ExceptionOr<void> HTMLInputElement::setSelectionRangeForBindings(int start, int 
 
 static Ref<CSSLinearGradientValue> autoFillStrongPasswordMaskImage()
 {
-    CSSGradientColorStop firstStop;
-    firstStop.color = CSSValuePool::singleton().createColorValue(Color::black);
-    firstStop.position = CSSValuePool::singleton().createValue(50, CSSUnitType::CSS_PERCENTAGE);
+    CSSGradientColorStopList stops {
+        { CSSValuePool::singleton().createColorValue(Color::black), CSSValuePool::singleton().createValue(50, CSSUnitType::CSS_PERCENTAGE), { } },
+        { CSSValuePool::singleton().createColorValue(Color::transparentBlack), CSSValuePool::singleton().createValue(100, CSSUnitType::CSS_PERCENTAGE), { } }
+    };
 
-    CSSGradientColorStop secondStop;
-    secondStop.color = CSSValuePool::singleton().createColorValue(Color::transparentBlack);
-    secondStop.position = CSSValuePool::singleton().createValue(100, CSSUnitType::CSS_PERCENTAGE);
-
-    auto gradient = CSSLinearGradientValue::create(CSSGradientRepeat::NonRepeating, CSSGradientType::CSSLinearGradient, { ColorInterpolationMethod::SRGB { }, AlphaPremultiplication::Unpremultiplied });
+    auto colorInterpolationMethod = CSSGradientColorInterpolationMethod::legacyMethod(AlphaPremultiplication::Unpremultiplied);
+    auto gradient = CSSLinearGradientValue::create(CSSGradientRepeat::NonRepeating, CSSGradientType::CSSLinearGradient, colorInterpolationMethod, WTFMove(stops));
     gradient->setAngle(CSSValuePool::singleton().createValue(90, CSSUnitType::CSS_DEG));
-    gradient->addStop(WTFMove(firstStop));
-    gradient->addStop(WTFMove(secondStop));
-    gradient->doneAddingStops();
     gradient->resolveRGBColors();
     return gradient;
 }
