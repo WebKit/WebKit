@@ -69,6 +69,8 @@ public:
     VolatilityState setVolatile(bool) override;
     void releaseBufferToPool() override;
 
+    void ensureNativeImagesHaveCopiedBackingStore() final;
+
     static constexpr RenderingMode renderingMode = RenderingMode::Accelerated;
 
 protected:

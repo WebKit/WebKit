@@ -139,6 +139,10 @@ public:
 
     WEBCORE_EXPORT static size_t maxActivePixelMemory();
 
+#if PLATFORM(COCOA)
+    GraphicsContext* drawingContext() const final;
+#endif
+
 private:
     HTMLCanvasElement(const QualifiedName&, Document&);
 
@@ -192,6 +196,9 @@ private:
     bool m_hasRelevantWebGLEventListener { false };
 #endif
     bool m_isSnapshotting { false };
+#if PLATFORM(COCOA)
+    mutable bool m_mustGuardAgainstUseByPendingLayerTransaction { false };
+#endif
 };
 
 } // namespace WebCore

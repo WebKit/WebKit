@@ -244,6 +244,12 @@ void ImageBufferIOSurfaceBackend::releaseBufferToPool()
     IOSurface::moveToPool(WTFMove(m_surface));
 }
 
+void ImageBufferIOSurfaceBackend::ensureNativeImagesHaveCopiedBackingStore()
+{
+    invalidateCachedNativeImage();
+    flushContext();
+}
+
 } // namespace WebCore
 
 #endif // HAVE(IOSURFACE)

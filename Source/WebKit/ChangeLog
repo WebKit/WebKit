@@ -1,3 +1,18 @@
+2022-01-16  Cameron McCormack  <heycam@apple.com>
+
+        Ensure in flight layer transactions don't accumulate further canvas drawing
+        https://bugs.webkit.org/show_bug.cgi?id=231163
+        <rdar://problem/83863292>
+
+        Reviewed by Simon Fraser.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::willCommitLayerTree):
+        (WebKit::WebPage::didFlushLayerTreeAtTime):
+        Inform the WebCore::Page about the state of the layer tree transaction
+        building.
+        * WebProcess/WebPage/WebPage.h:
+
 2022-01-15  Chris Dumez  <cdumez@apple.com>
 
         Introduce dynamicDowncast<>() for convenience
