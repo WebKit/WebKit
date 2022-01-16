@@ -1,3 +1,16 @@
+2022-01-16  David Kilzer  <ddkilzer@apple.com>
+
+        [WTF] Add TollFreeBridging.h to Xcode project
+
+        Unreviewed follow-up for r284038:
+
+           Switch WTF::bridge_cast to use type traits
+           <https://webkit.org/b/231467>
+           <rdar://problem/84050614>
+
+        * WTF.xcodeproj/project.pbxproj:
+        - Add TollFreeBridging.h to the project.
+
 2022-01-15  Chris Dumez  <cdumez@apple.com>
 
         Introduce dynamicDowncast<>() for convenience
