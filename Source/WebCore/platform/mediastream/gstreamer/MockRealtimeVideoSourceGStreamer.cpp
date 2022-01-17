@@ -52,7 +52,7 @@ CaptureSourceOrError MockRealtimeVideoSource::create(String&& deviceID, String&&
 
 CaptureSourceOrError MockDisplayCaptureSourceGStreamer::create(const CaptureDevice& device, String&& hashSalt, const MediaConstraints* constraints)
 {
-    auto mockSource = adoptRef(*new MockRealtimeVideoSourceGStreamer(String { device.persistentId() }, String { device.label() }, WTFMove(hashSalt)));
+    auto mockSource = adoptRef(*new MockRealtimeVideoSourceGStreamer(String { device.persistentId() }, String { device.label() }, String { hashSalt }));
 
     if (constraints) {
         if (auto error = mockSource->applyConstraints(*constraints))
