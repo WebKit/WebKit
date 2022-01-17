@@ -67,7 +67,7 @@ public:
 
     static const NetworkLoadMetrics& emptyMetrics();
 
-    NetworkLoadMetrics isolatedCopy() const;
+    WEBCORE_EXPORT NetworkLoadMetrics isolatedCopy() const;
 
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static std::optional<NetworkLoadMetrics> decode(Decoder&);

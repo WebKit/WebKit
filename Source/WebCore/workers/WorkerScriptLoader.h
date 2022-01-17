@@ -80,7 +80,7 @@ public:
 
     void didReceiveResponse(ResourceLoaderIdentifier, const ResourceResponse&) override;
     void didReceiveData(const SharedBuffer&) override;
-    void didFinishLoading(ResourceLoaderIdentifier) override;
+    void didFinishLoading(ResourceLoaderIdentifier, const NetworkLoadMetrics&) override;
     void didFail(const ResourceError&) override;
 
     void cancel();

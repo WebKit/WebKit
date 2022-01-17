@@ -94,7 +94,7 @@ void WebServiceWorkerFetchTaskClient::didReceiveFormDataAndFinish(Ref<FormData>&
 {
     if (auto sharedBuffer = formData->asSharedBuffer()) {
         didReceiveData(sharedBuffer.releaseNonNull());
-        didFinish();
+        didFinish({ });
         return;
     }
 
@@ -149,7 +149,7 @@ void WebServiceWorkerFetchTaskClient::didReceiveBlobChunk(const SharedBuffer& bu
 
 void WebServiceWorkerFetchTaskClient::didFinishBlobLoading()
 {
-    didFinish();
+    didFinish({ });
 
     std::exchange(m_blobLoader, std::nullopt);
 }
@@ -174,7 +174,7 @@ void WebServiceWorkerFetchTaskClient::didFail(const ResourceError& error)
     cleanup();
 }
 
-void WebServiceWorkerFetchTaskClient::didFinish()
+void WebServiceWorkerFetchTaskClient::didFinish(const NetworkLoadMetrics& metrics)
 {
     if (!m_connection)
         return;
@@ -183,13 +183,14 @@ void WebServiceWorkerFetchTaskClient::didFinish()
         RELEASE_LOG(ServiceWorker, "ServiceWorkerFrameLoaderClient::didFinish while waiting, fetch identifier %llu", m_fetchIdentifier.toUInt64());
 
         m_didFinish = true;
+        m_networkLoadMetrics = metrics.isolatedCopy();
         return;
     }
 
     if (m_isDownload)
         m_connection->send(Messages::ServiceWorkerDownloadTask::DidFinish { }, m_fetchIdentifier);
     else
-        m_connection->send(Messages::ServiceWorkerFetchTask::DidFinish { }, m_fetchIdentifier);
+        m_connection->send(Messages::ServiceWorkerFetchTask::DidFinish { metrics }, m_fetchIdentifier);
 
     cleanup();
 }
@@ -226,11 +227,11 @@ void WebServiceWorkerFetchTaskClient::continueDidReceiveResponse()
 
     switchOn(m_responseData, [this](std::nullptr_t&) {
         if (m_didFinish)
-            didFinish();
+            didFinish(m_networkLoadMetrics);
     }, [this](const SharedBufferBuilder& buffer) {
         didReceiveData(buffer.copy()->makeContiguous());
         if (m_didFinish)
-            didFinish();
+            didFinish(m_networkLoadMetrics);
     }, [this](Ref<FormData>& formData) {
         didReceiveFormDataAndFinish(WTFMove(formData));
     }, [this](UniqueRef<ResourceError>& error) {

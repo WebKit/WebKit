@@ -157,9 +157,9 @@ void FetchLoader::didReceiveData(const SharedBuffer& buffer)
     m_consumer->append(buffer);
 }
 
-void FetchLoader::didFinishLoading(ResourceLoaderIdentifier)
+void FetchLoader::didFinishLoading(ResourceLoaderIdentifier, const NetworkLoadMetrics& metrics)
 {
-    m_client.didSucceed();
+    m_client.didSucceed(metrics);
 }
 
 void FetchLoader::didFail(const ResourceError& error)

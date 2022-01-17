@@ -5709,6 +5709,11 @@ uint64_t Internals::responseSizeWithPadding(FetchResponse& response) const
     return response.bodySizeWithPadding();
 }
 
+const String& Internals::responseNetworkLoadMetricsProtocol(const FetchResponse& response)
+{
+    return response.networkLoadMetrics().protocol;
+}
+
 #if ENABLE(SERVICE_WORKER)
 void Internals::hasServiceWorkerRegistration(const String& clientURL, HasRegistrationPromise&& promise)
 {

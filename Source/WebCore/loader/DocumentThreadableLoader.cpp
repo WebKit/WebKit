@@ -429,7 +429,7 @@ void DocumentThreadableLoader::didReceiveResponse(ResourceLoaderIdentifier ident
         if (response.tainting() == ResourceResponse::Tainting::Opaque) {
             clearResource();
             if (m_client)
-                m_client->didFinishLoading(identifier);
+                m_client->didFinishLoading(identifier, { });
         }
         return;
     }
@@ -468,7 +468,7 @@ void DocumentThreadableLoader::finishedTimingForWorkerLoad(const ResourceTiming&
     m_client->didFinishTiming(resourceTiming);
 }
 
-void DocumentThreadableLoader::notifyFinished(CachedResource& resource, const NetworkLoadMetrics&)
+void DocumentThreadableLoader::notifyFinished(CachedResource& resource, const NetworkLoadMetrics& metrics)
 {
     ASSERT(m_client);
     ASSERT_UNUSED(resource, &resource == m_resource);
@@ -476,10 +476,10 @@ void DocumentThreadableLoader::notifyFinished(CachedResource& resource, const Ne
     if (m_resource->errorOccurred())
         didFail(m_resource->identifier(), m_resource->resourceError());
     else
-        didFinishLoading(m_resource->identifier());
+        didFinishLoading(m_resource->identifier(), metrics);
 }
 
-void DocumentThreadableLoader::didFinishLoading(ResourceLoaderIdentifier identifier)
+void DocumentThreadableLoader::didFinishLoading(ResourceLoaderIdentifier identifier, const NetworkLoadMetrics& metrics)
 {
     ASSERT(m_client);
 
@@ -504,7 +504,7 @@ void DocumentThreadableLoader::didFinishLoading(ResourceLoaderIdentifier identif
         }
     }
 
-    m_client->didFinishLoading(identifier);
+    m_client->didFinishLoading(identifier, metrics);
 }
 
 void DocumentThreadableLoader::didFail(ResourceLoaderIdentifier, const ResourceError& error)
@@ -617,7 +617,7 @@ void DocumentThreadableLoader::loadRequest(ResourceRequest&& request, SecurityCh
             // We don't want XMLHttpRequest to raise an exception for file:// resources, see <rdar://problem/4962298>.
             // FIXME: XMLHttpRequest quirks should be in XMLHttpRequest code, not in DocumentThreadableLoader.cpp.
             didReceiveResponse(identifier, response);
-            didFinishLoading(identifier);
+            didFinishLoading(identifier, { });
             return;
         }
         logErrorAndFail(error);
@@ -673,7 +673,7 @@ void DocumentThreadableLoader::loadRequest(ResourceRequest&& request, SecurityCh
             window->performance().addResourceTiming(WTFMove(resourceTiming));
     }
 
-    didFinishLoading(identifier);
+    didFinishLoading(identifier, { });
 }
 
 bool DocumentThreadableLoader::isAllowedByContentSecurityPolicy(const URL& url, ContentSecurityPolicy::RedirectResponseReceived redirectResponseReceived, const URL& preRedirectURL)

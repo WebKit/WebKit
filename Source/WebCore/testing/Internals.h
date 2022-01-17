@@ -889,6 +889,7 @@ public:
     void cacheStorageEngineRepresentation(DOMPromiseDeferred<IDLDOMString>&&);
     void setResponseSizeWithPadding(FetchResponse&, uint64_t size);
     uint64_t responseSizeWithPadding(FetchResponse&) const;
+    const String& responseNetworkLoadMetricsProtocol(const FetchResponse&);
 
     void updateQuotaBasedOnSpaceUsage();
 

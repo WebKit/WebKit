@@ -96,8 +96,7 @@ private:
     void didReceiveResponse(WebCore::ResourceResponse&&, bool needsContinueDidReceiveResponseMessage);
     void didReceiveData(const IPC::SharedBufferCopy&, int64_t encodedDataLength);
     void didReceiveFormData(const IPC::FormDataReference&);
-    void didFinish();
-    void didFinishWithMetrics(const WebCore::NetworkLoadMetrics&);
+    void didFinish(const WebCore::NetworkLoadMetrics&);
     void didFail(const WebCore::ResourceError&);
     void didNotHandle();
 

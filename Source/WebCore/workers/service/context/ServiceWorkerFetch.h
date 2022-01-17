@@ -37,6 +37,7 @@ class FetchEvent;
 struct FetchOptions;
 class FetchResponse;
 class FormData;
+class NetworkLoadMetrics;
 class ResourceError;
 class ResourceRequest;
 class ResourceResponse;
@@ -54,7 +55,7 @@ public:
     virtual void didReceiveData(const SharedBuffer&) = 0;
     virtual void didReceiveFormDataAndFinish(Ref<FormData>&&) = 0;
     virtual void didFail(const ResourceError&) = 0;
-    virtual void didFinish() = 0;
+    virtual void didFinish(const NetworkLoadMetrics&) = 0;
     virtual void didNotHandle() = 0;
     virtual void cancel() = 0;
     virtual void continueDidReceiveResponse() = 0;

@@ -923,7 +923,7 @@ void XMLHttpRequest::didFail(const ResourceError& error)
     networkError();
 }
 
-void XMLHttpRequest::didFinishLoading(ResourceLoaderIdentifier)
+void XMLHttpRequest::didFinishLoading(ResourceLoaderIdentifier, const NetworkLoadMetrics&)
 {
     Ref protectedThis { *this };
 

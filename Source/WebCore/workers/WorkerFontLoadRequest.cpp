@@ -123,7 +123,7 @@ void WorkerFontLoadRequest::didReceiveData(const SharedBuffer& buffer)
     m_data.append(buffer);
 }
 
-void WorkerFontLoadRequest::didFinishLoading(ResourceLoaderIdentifier)
+void WorkerFontLoadRequest::didFinishLoading(ResourceLoaderIdentifier, const NetworkLoadMetrics&)
 {
     m_isLoading = false;
 

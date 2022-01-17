@@ -221,7 +221,7 @@ void EventSource::didReceiveData(const SharedBuffer& buffer)
     parseEventStream();
 }
 
-void EventSource::didFinishLoading(ResourceLoaderIdentifier)
+void EventSource::didFinishLoading(ResourceLoaderIdentifier, const NetworkLoadMetrics&)
 {
     ASSERT(m_state == OPEN);
     ASSERT(m_requestInFlight);

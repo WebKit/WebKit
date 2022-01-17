@@ -64,7 +64,7 @@ private:
 
     void didReceiveResponse(ResourceLoaderIdentifier, const ResourceResponse&) final;
     void didReceiveData(const SharedBuffer&) final;
-    void didFinishLoading(ResourceLoaderIdentifier) final;
+    void didFinishLoading(ResourceLoaderIdentifier, const NetworkLoadMetrics&) final;
     void didFail(const ResourceError&) final;
 
     URL m_url;

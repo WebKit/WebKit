@@ -120,7 +120,7 @@ static void processResponse(Ref<Client>&& client, Expected<Ref<FetchResponse>, s
     client->didReceiveResponse(resourceResponse);
 
     if (response->isBodyReceivedByChunk()) {
-        response->consumeBodyReceivedByChunk([client = WTFMove(client)] (auto&& result) mutable {
+        response->consumeBodyReceivedByChunk([client = WTFMove(client), response = WeakPtr { response.get() }] (auto&& result) mutable {
             if (result.hasException()) {
                 auto error = FetchEvent::createResponseError(URL { }, result.exception().message(), ResourceError::IsSanitized::Yes);
                 client->didFail(error);
@@ -130,7 +130,7 @@ static void processResponse(Ref<Client>&& client, Expected<Ref<FetchResponse>, s
             if (auto* chunk = result.returnValue())
                 client->didReceiveData(SharedBuffer::create(chunk->data(), chunk->size()));
             else
-                client->didFinish();
+                client->didFinish(response ? response->networkLoadMetrics() : NetworkLoadMetrics { });
         });
         return;
     }
@@ -140,9 +140,9 @@ static void processResponse(Ref<Client>&& client, Expected<Ref<FetchResponse>, s
         client->didReceiveFormDataAndFinish(WTFMove(formData));
     }, [&] (Ref<SharedBuffer>& buffer) {
         client->didReceiveData(WTFMove(buffer));
-        client->didFinish();
+        client->didFinish(response->networkLoadMetrics());
     }, [&] (std::nullptr_t&) {
-        client->didFinish();
+        client->didFinish(response->networkLoadMetrics());
     });
 }
 

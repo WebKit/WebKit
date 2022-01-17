@@ -72,11 +72,11 @@ public:
             m_client->didReceiveData(buffer);
     }
 
-    void didFinishLoading(ResourceLoaderIdentifier identifier)
+    void didFinishLoading(ResourceLoaderIdentifier identifier, const NetworkLoadMetrics& metrics)
     {
         m_done = true;
         if (m_client)
-            m_client->didFinishLoading(identifier);
+            m_client->didFinishLoading(identifier, metrics);
     }
 
     void notifyIsDone(bool isDone)

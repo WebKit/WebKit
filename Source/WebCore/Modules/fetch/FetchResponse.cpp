@@ -279,11 +279,11 @@ const ResourceResponse& FetchResponse::filteredResponse() const
     return m_internalResponse;
 }
 
-void FetchResponse::BodyLoader::didSucceed()
+void FetchResponse::BodyLoader::didSucceed(const NetworkLoadMetrics& metrics)
 {
     ASSERT(m_response.hasPendingActivity());
     m_response.m_body->loadingSucceeded(m_response.contentType());
-
+    m_response.setNetworkLoadMetrics(metrics);
     if (m_response.m_readableStreamSource) {
         if (m_response.body().consumer().hasData())
             m_response.m_readableStreamSource->enqueue(m_response.body().consumer().takeAsArrayBuffer());

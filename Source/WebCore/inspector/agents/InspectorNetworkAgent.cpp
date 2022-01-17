@@ -132,7 +132,7 @@ public:
         m_responseText.append(m_decoder->decode(buffer.data(), buffer.size()));
     }
 
-    void didFinishLoading(ResourceLoaderIdentifier) override
+    void didFinishLoading(ResourceLoaderIdentifier, const NetworkLoadMetrics&) override
     {
         if (m_decoder)
             m_responseText.append(m_decoder->flush());

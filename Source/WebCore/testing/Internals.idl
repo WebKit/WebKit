@@ -941,6 +941,7 @@ typedef (FetchRequest or FetchResponse) FetchObject;
     Promise<DOMString> cacheStorageEngineRepresentation();
     undefined setResponseSizeWithPadding(FetchResponse response, unsigned long long size);
     unsigned long long responseSizeWithPadding(FetchResponse response);
+    DOMString responseNetworkLoadMetricsProtocol(FetchResponse response);
 
     DOMString blobInternalURL(Blob blob);
     Promise<boolean> isBlobInternalURLRegistered(DOMString url);

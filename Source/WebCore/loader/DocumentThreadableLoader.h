@@ -94,7 +94,7 @@ namespace WebCore {
 
         void didReceiveResponse(ResourceLoaderIdentifier, const ResourceResponse&);
         void didReceiveData(ResourceLoaderIdentifier, const SharedBuffer&);
-        void didFinishLoading(ResourceLoaderIdentifier);
+        void didFinishLoading(ResourceLoaderIdentifier, const NetworkLoadMetrics&);
         void didFail(ResourceLoaderIdentifier, const ResourceError&);
         void makeCrossOriginAccessRequest(ResourceRequest&&);
         void makeSimpleCrossOriginAccessRequest(ResourceRequest&&);

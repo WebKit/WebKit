@@ -218,7 +218,7 @@ void WorkerScriptLoader::didReceiveData(const SharedBuffer& buffer)
     m_script.append(m_decoder->decode(buffer.data(), buffer.size()));
 }
 
-void WorkerScriptLoader::didFinishLoading(ResourceLoaderIdentifier identifier)
+void WorkerScriptLoader::didFinishLoading(ResourceLoaderIdentifier identifier, const NetworkLoadMetrics&)
 {
     if (m_failed) {
         notifyError();
