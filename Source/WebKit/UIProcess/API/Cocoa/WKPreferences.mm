@@ -650,6 +650,16 @@ static _WKStorageBlockingPolicy toAPI(WebCore::StorageBlockingPolicy policy)
     _preferences->setMediaDevicesEnabled(enabled);
 }
 
+- (BOOL)_getUserMediaRequiresFocus
+{
+    return _preferences->getUserMediaRequiresFocus();
+}
+
+- (void)_setGetUserMediaRequiresFocus:(BOOL)enabled
+{
+    _preferences->setGetUserMediaRequiresFocus(enabled);
+}
+
 - (BOOL)_screenCaptureEnabled
 {
     return _preferences->screenCaptureEnabled();

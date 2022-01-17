@@ -3827,6 +3827,12 @@ void webkitSettingsSetMediaCaptureRequiresSecureConnection(WebKitSettings* setti
     priv->preferences->setMediaCaptureRequiresSecureConnection(required);
 }
 
+void webkitSettingsSetGetUserMediaRequiresFocus(WebKitSettings* settings, bool required)
+{
+    WebKitSettingsPrivate* priv = settings->priv;
+    priv->preferences->setGetUserMediaRequiresFocus(required);
+}
+
 /**
  * webkit_settings_get_media_content_types_requiring_hardware_support:
  * @settings: a #WebKitSettings

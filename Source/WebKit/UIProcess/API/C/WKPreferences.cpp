@@ -1526,6 +1526,16 @@ bool WKPreferencesGetMockCaptureDevicesEnabled(WKPreferencesRef preferencesRef)
     return toImpl(preferencesRef)->mockCaptureDevicesEnabled();
 }
 
+void WKPreferencesSetGetUserMediaRequiresFocus(WKPreferencesRef preferencesRef, bool enabled)
+{
+    toImpl(preferencesRef)->setGetUserMediaRequiresFocus(enabled);
+}
+
+bool WKPreferencesGetGetUserMediaRequiresFocus(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->getUserMediaRequiresFocus();
+}
+
 void WKPreferencesSetICECandidateFilteringEnabled(WKPreferencesRef preferencesRef, bool enabled)
 {
     toImpl(preferencesRef)->setICECandidateFilteringEnabled(enabled);

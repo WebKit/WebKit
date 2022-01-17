@@ -118,14 +118,19 @@ bool MediaDevices::computeUserGesturePriviledge(GestureAllowedRequest requestTyp
 
 void MediaDevices::getUserMedia(const StreamConstraints& constraints, Promise&& promise)
 {
+    auto audioConstraints = createMediaConstraints(constraints.audio);
+    auto videoConstraints = createMediaConstraints(constraints.video);
+
+    if (!audioConstraints.isValid && !videoConstraints.isValid) {
+        promise.reject(TypeError, "No constraints provided"_s);
+        return;
+    }
+
     auto* document = this->document();
     if (!document || !document->isFullyActive()) {
         promise.reject(Exception { InvalidStateError, "Document is not fully active"_s });
         return;
     }
-
-    auto audioConstraints = createMediaConstraints(constraints.audio);
-    auto videoConstraints = createMediaConstraints(constraints.video);
 
     bool isUserGesturePriviledged = false;
 
@@ -138,7 +143,86 @@ void MediaDevices::getUserMedia(const StreamConstraints& constraints, Promise&& 
     }
 
     auto request = UserMediaRequest::create(*document, { MediaStreamRequest::Type::UserMedia, WTFMove(audioConstraints), WTFMove(videoConstraints), isUserGesturePriviledged }, WTFMove(promise));
-    request->start();
+
+    if (!document->settings().getUserMediaRequiresFocus()) {
+        request->start();
+        return;
+    }
+
+    // FIXME: We use hidden while the spec is using focus, let's revisit when when spec is made clearer.
+    document->whenVisible([request = WTFMove(request)] {
+        if (request->isContextStopped())
+            return;
+        request->start();
+    });
+}
+
+static bool hasInvalidGetDisplayMediaConstraint(const MediaConstraints& constraints)
+{
+    // https://w3c.github.io/mediacapture-screen-share/#navigator-additions
+    // 1. Let constraints be the method's first argument.
+    // 2. For each member present in constraints whose value, value, is a dictionary, run the following steps:
+    //     1. If value contains a member named advanced, return a promise rejected with a newly created TypeError.
+    //     2. If value contains a member which in turn is a dictionary containing a member named either min or
+    //        exact, return a promise rejected with a newly created TypeError.
+    if (!constraints.isValid)
+        return false;
+
+    if (!constraints.advancedConstraints.isEmpty())
+        return true;
+
+    bool invalid = false;
+    constraints.mandatoryConstraints.filter([&invalid] (const MediaConstraint& constraint) mutable {
+        switch (constraint.constraintType()) {
+        case MediaConstraintType::Width:
+        case MediaConstraintType::Height: {
+            auto& intConstraint = downcast<IntConstraint>(constraint);
+            int value;
+            invalid = intConstraint.getExact(value) || intConstraint.getMin(value);
+            break;
+        }
+
+        case MediaConstraintType::AspectRatio:
+        case MediaConstraintType::FrameRate: {
+            auto& doubleConstraint = downcast<DoubleConstraint>(constraint);
+            double value;
+            invalid = doubleConstraint.getExact(value) || doubleConstraint.getMin(value);
+            break;
+        }
+
+        case MediaConstraintType::DisplaySurface:
+        case MediaConstraintType::LogicalSurface: {
+            auto& boolConstraint = downcast<BooleanConstraint>(constraint);
+            bool value;
+            invalid = boolConstraint.getExact(value);
+            break;
+        }
+
+        case MediaConstraintType::FacingMode:
+        case MediaConstraintType::DeviceId:
+        case MediaConstraintType::GroupId: {
+            auto& stringConstraint = downcast<StringConstraint>(constraint);
+            Vector<String> values;
+            invalid = stringConstraint.getExact(values);
+            break;
+        }
+
+        case MediaConstraintType::SampleRate:
+        case MediaConstraintType::SampleSize:
+        case MediaConstraintType::Volume:
+        case MediaConstraintType::EchoCancellation:
+            // Ignored.
+            break;
+
+        case MediaConstraintType::Unknown:
+            ASSERT_NOT_REACHED();
+            break;
+        }
+
+        return invalid;
+    });
+
+    return invalid;
 }
 
 void MediaDevices::getDisplayMedia(const DisplayMediaStreamConstraints& constraints, Promise&& promise)
@@ -153,7 +237,19 @@ void MediaDevices::getDisplayMedia(const DisplayMediaStreamConstraints& constrai
         return;
     }
 
-    auto request = UserMediaRequest::create(*document, { MediaStreamRequest::Type::DisplayMedia, { }, createMediaConstraints(constraints.video), isUserGesturePriviledged }, WTFMove(promise));
+    auto videoConstraints = createMediaConstraints(constraints.video);
+    if (hasInvalidGetDisplayMediaConstraint(videoConstraints)) {
+        promise.reject(Exception { TypeError, "getDisplayMedia must be called with valid constraints."_s });
+        return;
+    }
+
+    // FIXME: We use hidden while the spec is using focus, let's revisit when when spec is made clearer.
+    if (!document->isFullyActive() || document->topDocument().hidden()) {
+        promise.reject(Exception { InvalidStateError, "Document is not fully active or does not have focus"_s });
+        return;
+    }
+
+    auto request = UserMediaRequest::create(*document, { MediaStreamRequest::Type::DisplayMedia, { }, WTFMove(videoConstraints), isUserGesturePriviledged }, WTFMove(promise));
     request->start();
 }
 

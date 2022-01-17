@@ -696,6 +696,7 @@ TEST(GPUProcess, ExitsUnderMemoryPressureWebRTCCase)
         preferences._mediaCaptureRequiresSecureConnection = NO;
         configuration._mediaCaptureEnabled = YES;
         preferences._mockCaptureDevicesEnabled = YES;
+        preferences._getUserMediaRequiresFocus = NO;
     });
 }
 #endif // ENABLE(MEDIA_STREAM)

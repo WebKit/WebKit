@@ -429,6 +429,7 @@ public:
 
     WEBCORE_EXPORT Element* activeElement();
     WEBCORE_EXPORT bool hasFocus() const;
+    void whenVisible(Function<void()>&&);
 
     bool hasManifest() const;
     
@@ -2261,6 +2262,8 @@ private:
 #endif
 
     std::unique_ptr<ModalContainerObserver> m_modalContainerObserver;
+
+    Vector<Function<void()>> m_whenIsVisibleHandlers;
 };
 
 Element* eventTargetElementForDocument(Document*);

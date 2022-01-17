@@ -1,3 +1,44 @@
+2022-01-16  Youenn Fablet  <youenn@apple.com>
+
+        Enforce focus check for getUserMedia
+        https://bugs.webkit.org/show_bug.cgi?id=235026
+
+        Reviewed by Eric Carlson.
+
+        Disable focus flag for testing to not require to focus the window.
+
+        * TestWebKitAPI/Tests/WebKit/GetUserMedia.mm:
+        (TestWebKitAPI::initializeMediaCaptureConfiguration):
+        (TestWebKitAPI::doCaptureMuteTest):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/GetUserMediaNavigation.mm:
+        (TestWebKitAPI::initializeMediaCaptureConfiguration):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/GetUserMediaReprompt.mm:
+        (TestWebKitAPI::initializeMediaCaptureConfiguration):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/MediaStreamTrackDetached.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/UserMedia.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/AudioBufferSize.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/GPUProcess.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/GetDisplayMedia.mm:
+        (TestWebKitAPI::GetDisplayMediaTest::SetUp):
+        * TestWebKitAPI/Tests/WebKitCocoa/ProcessSwapOnNavigation.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/SpeechRecognition.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/UserMediaDisabled.mm:
+        (MediaCaptureDisabledTest::SetUp):
+        * TestWebKitAPI/Tests/WebKitCocoa/UserMediaSimulateFailedSandbox.mm:
+        (MediaCaptureSimulateFailedSandbox::SetUp):
+        * TestWebKitAPI/Tests/WebKitGLib/TestUIClient.cpp:
+        (testWebViewUserMediaEnumerateDevicesPermissionCheck):
+        (testWebViewUserMediaPermissionRequests):
+        (testWebViewAudioOnlyUserMediaPermissionRequests):
+
 2022-01-15  Sam Weinig  <weinig@apple.com>
 
         CSS Gradients: interpolation mode should default to OKLab if any non-legacy color syntax colors are used in the stops

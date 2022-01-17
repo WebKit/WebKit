@@ -162,6 +162,7 @@ TEST(WebKit2, SpeechRecognitionErrorWhenStartingAudioCaptureOnDifferentPage)
     preferences._mockCaptureDevicesEnabled = YES;
     preferences._speechRecognitionEnabled = YES;
     preferences._mediaCaptureRequiresSecureConnection = NO;
+    preferences._getUserMediaRequiresFocus = NO;
     auto delegate = adoptNS([[SpeechRecognitionUIDelegate alloc] init]);
     auto firstWebView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 100, 100) configuration:configuration.get()]);
     [firstWebView setUIDelegate:delegate.get()];

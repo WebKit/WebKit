@@ -1,3 +1,12 @@
+2022-01-16  Youenn Fablet  <youenn@apple.com>
+
+        Enforce focus check for getUserMedia
+        https://bugs.webkit.org/show_bug.cgi?id=235026
+
+        Reviewed by Eric Carlson.
+
+        * Scripts/Preferences/WebPreferencesInternal.yaml:
+
 2022-01-16  Lauro Moura  <lmoura@igalia.com>
 
         Fix C++20 build warnings with GCC

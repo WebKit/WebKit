@@ -1,3 +1,27 @@
+2022-01-16  Youenn Fablet  <youenn@apple.com> and Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Enforce focus check for getUserMedia
+        https://bugs.webkit.org/show_bug.cgi?id=235026
+
+        Reviewed by Eric Carlson.
+
+        Add setters/getters for the getUserMedia focus settings.
+
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetGetUserMediaRequiresFocus):
+        (WKPreferencesGetGetUserMediaRequiresFocus):
+        * UIProcess/API/C/WKPreferencesRefPrivate.h:
+        * UIProcess/API/Cocoa/WKPreferences.mm:
+        (-[WKPreferences _getUserMediaRequiresFocus]):
+        (-[WKPreferences _setGetUserMediaRequiresFocus:]):
+        * UIProcess/API/Cocoa/WKPreferencesPrivate.h:
+        * UIProcess/API/glib/WebKitSettings.cpp:
+        (webkitSettingsSetGetUserMediaRequiresFocus):
+        * UIProcess/API/glib/WebKitSettingsPrivate.h:
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseMap): Always add the WindowIsActive flag under xvfb.
+        (webkitWebViewBaseIsFocused): Always consider the view focused when WindowIsActive flag is present under xvfb.
+
 2022-01-16  Lauro Moura  <lmoura@igalia.com>
 
         Fix C++20 build warnings with GCC

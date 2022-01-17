@@ -85,99 +85,12 @@ SecurityOrigin* UserMediaRequest::topLevelDocumentOrigin() const
     return context ? &context->topOrigin() : nullptr;
 }
 
-static bool hasInvalidGetDisplayMediaConstraint(const MediaConstraints& constraints)
-{
-    // https://w3c.github.io/mediacapture-screen-share/#navigator-additions
-    // 1. Let constraints be the method's first argument.
-    // 2. For each member present in constraints whose value, value, is a dictionary, run the following steps:
-    //     1. If value contains a member named advanced, return a promise rejected with a newly created TypeError.
-    //     2. If value contains a member which in turn is a dictionary containing a member named either min or
-    //        exact, return a promise rejected with a newly created TypeError.
-    if (!constraints.isValid)
-        return false;
-
-    if (!constraints.advancedConstraints.isEmpty())
-        return true;
-
-    bool invalid = false;
-    constraints.mandatoryConstraints.filter([&invalid] (const MediaConstraint& constraint) mutable {
-        switch (constraint.constraintType()) {
-        case MediaConstraintType::Width:
-        case MediaConstraintType::Height: {
-            auto& intConstraint = downcast<IntConstraint>(constraint);
-            int value;
-            invalid = intConstraint.getExact(value) || intConstraint.getMin(value);
-            break;
-        }
-
-        case MediaConstraintType::AspectRatio:
-        case MediaConstraintType::FrameRate: {
-            auto& doubleConstraint = downcast<DoubleConstraint>(constraint);
-            double value;
-            invalid = doubleConstraint.getExact(value) || doubleConstraint.getMin(value);
-            break;
-        }
-
-        case MediaConstraintType::DisplaySurface:
-        case MediaConstraintType::LogicalSurface: {
-            auto& boolConstraint = downcast<BooleanConstraint>(constraint);
-            bool value;
-            invalid = boolConstraint.getExact(value);
-            break;
-        }
-
-        case MediaConstraintType::FacingMode:
-        case MediaConstraintType::DeviceId:
-        case MediaConstraintType::GroupId: {
-            auto& stringConstraint = downcast<StringConstraint>(constraint);
-            Vector<String> values;
-            invalid = stringConstraint.getExact(values);
-            break;
-        }
-
-        case MediaConstraintType::SampleRate:
-        case MediaConstraintType::SampleSize:
-        case MediaConstraintType::Volume:
-        case MediaConstraintType::EchoCancellation:
-            // Ignored.
-            break;
-
-        case MediaConstraintType::Unknown:
-            ASSERT_NOT_REACHED();
-            break;
-        }
-
-        return invalid;
-    });
-
-    return invalid;
-}
-
 void UserMediaRequest::start()
 {
     auto* context = scriptExecutionContext();
     ASSERT(context);
     if (!context) {
         deny(MediaAccessDenialReason::UserMediaDisabled);
-        return;
-    }
-
-    if (m_request.type == MediaStreamRequest::Type::DisplayMedia) {
-        if (hasInvalidGetDisplayMediaConstraint(m_request.videoConstraints)) {
-            deny(MediaAccessDenialReason::IllegalConstraint);
-            return;
-        }
-    }
-
-    // https://w3c.github.io/mediacapture-main/getusermedia.html#dom-mediadevices-getusermedia()
-    // 1. Let constraints be the method's first argument.
-    // 2. Let requestedMediaTypes be the set of media types in constraints with either a dictionary
-    //    value or a value of "true".
-    // 3. If requestedMediaTypes is the empty set, return a promise rejected with a TypeError. The word
-    //    "optional" occurs in the WebIDL due to WebIDL rules, but the argument must be supplied in order
-    //    for the call to succeed.
-    if (!m_request.audioConstraints.isValid && !m_request.videoConstraints.isValid) {
-        deny(MediaAccessDenialReason::NoConstraints);
         return;
     }
 
@@ -289,10 +202,6 @@ void UserMediaRequest::deny(MediaAccessDenialReason reason, const String& messag
 
     ExceptionCode code;
     switch (reason) {
-    case MediaAccessDenialReason::IllegalConstraint:
-        RELEASE_LOG(MediaStream, "UserMediaRequest::deny - invalid constraints");
-        code = TypeError;
-        break;
     case MediaAccessDenialReason::NoConstraints:
         RELEASE_LOG(MediaStream, "UserMediaRequest::deny - no constraints");
         code = TypeError;

@@ -1,5 +1,14 @@
 2022-01-16  Youenn Fablet  <youenn@apple.com>
 
+        Enforce focus check for getUserMedia
+        https://bugs.webkit.org/show_bug.cgi?id=235026
+
+        Reviewed by Eric Carlson.
+
+        * fast/mediastream/MediaDevices-getUserMedia-expected.txt:
+
+2022-01-16  Youenn Fablet  <youenn@apple.com>
+
         Queue a task to fire MediaStreamTrack ended event
         https://bugs.webkit.org/show_bug.cgi?id=235227
 

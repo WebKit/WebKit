@@ -1872,6 +1872,12 @@ void Document::visibilityStateChanged()
             MediaStreamTrack::updateCaptureAccordingToMutedState(*this);
     }
 #endif
+
+    if (!hidden()) {
+        auto callbacks = std::exchange(m_whenIsVisibleHandlers, { });
+        for (auto& callback : callbacks)
+            callback();
+    }
 }
 
 VisibilityState Document::visibilityState() const
@@ -9093,6 +9099,15 @@ TextStream& operator<<(TextStream& ts, const Document& document)
 {
     ts << document.debugDescription();
     return ts;
+}
+
+void Document::whenVisible(Function<void()>&& callback)
+{
+    if (hidden()) {
+        m_whenIsVisibleHandlers.append(WTFMove(callback));
+        return;
+    }
+    callback();
 }
 
 } // namespace WebCore

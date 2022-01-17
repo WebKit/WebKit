@@ -399,6 +399,10 @@ WK_EXPORT void WKPreferencesSetMockCaptureDevicesEnabled(WKPreferencesRef, bool)
 WK_EXPORT bool WKPreferencesGetMockCaptureDevicesEnabled(WKPreferencesRef);
 
 // Defaults to true.
+WK_EXPORT void WKPreferencesSetGetUserMediaRequiresFocus(WKPreferencesRef, bool);
+WK_EXPORT bool WKPreferencesGetGetUserMediaRequiresFocus(WKPreferencesRef);
+
+// Defaults to true.
 WK_EXPORT void WKPreferencesSetICECandidateFilteringEnabled(WKPreferencesRef, bool);
 WK_EXPORT bool WKPreferencesGetICECandidateFilteringEnabled(WKPreferencesRef);
 

@@ -293,6 +293,19 @@ FullScreenEnabled:
     WebCore:
       default: false
 
+GetUserMediaRequiresFocus:
+  type: bool
+  humanReadableName: "Require focus to start getUserMedia"
+  humanReadableDescription: "Require focus to start getUserMedia"
+  condition: ENABLE(MEDIA_STREAM)
+  defaultValue:
+    WebKitLegacy:
+      default: true
+    WebKit:
+      default: true
+    WebCore:
+      default: true
+
 ICECandidateFilteringEnabled:
   type: bool
   webcoreOnChange: iceCandidateFilteringEnabledChanged

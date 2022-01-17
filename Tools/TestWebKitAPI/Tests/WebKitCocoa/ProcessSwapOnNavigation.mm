@@ -6828,6 +6828,7 @@ TEST(ProcessSwap, GetUserMediaCaptureState)
     preferences._mediaCaptureRequiresSecureConnection = NO;
     webViewConfiguration.get()._mediaCaptureEnabled = YES;
     preferences._mockCaptureDevicesEnabled = YES;
+    preferences._getUserMediaRequiresFocus = NO;
 
     [webViewConfiguration setProcessPool:processPool.get()];
     auto handler = adoptNS([[PSONScheme alloc] init]);
