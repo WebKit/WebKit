@@ -6,8 +6,8 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 PASS tableCount is 2
 PASS linkCount is 3
 PASS imageCount is 4
-PASS inputCount is 5
-PASS controlCount is 12
+PASS buttonCount is 7
+PASS controlCount is 16
 PASS headingCount is 6
 PASS onscreenCount is 6
 PASS offscreenCount is 4

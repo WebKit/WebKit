@@ -1328,7 +1328,7 @@ bool AccessibilityNodeObject::isLabelable() const
     if (!node)
         return false;
     
-    return is<HTMLInputElement>(*node) || AccessibilityObject::isARIAInput(ariaRoleAttribute()) || isControl() || isProgressIndicator() || isMeter();
+    return is<HTMLInputElement>(*node) || isControl() || isProgressIndicator() || isMeter();
 }
 
 String AccessibilityNodeObject::textForLabelElement(Element* element) const

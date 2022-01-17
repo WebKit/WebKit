@@ -929,6 +929,7 @@ bool AccessibilityObject::isARIAControl(AccessibilityRole ariaRole)
     case AccessibilityRole::PopUpButton:
     case AccessibilityRole::Slider:
     case AccessibilityRole::TextArea:
+    case AccessibilityRole::ToggleButton:
         return true;
     default:
         return false;
