@@ -1,0 +1,40 @@
+<head>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+var results=[];
+function checkForPreload(url, shouldbe) {
+    var preloaded = internals.isPreloaded(url);
+    if ((preloaded && shouldbe) || (!preloaded && !shouldbe))
+        results.push("PASS\n");
+    else
+        results.push("FAIL\n");
+}
+function printResults(){
+    for(var i = 0; i < results.length; i++)
+        log.textContent += results[i];
+}
+    
+</script>
+<script src="http://127.0.0.1:8000/resources/slow-script.pl?delay=1000"></script>
+<script>
+checkForPreload("resources/small_mq.css?1", true);
+checkForPreload("resources/small_mq.css?2", true);
+checkForPreload("resources/small_mq.css?3", true);
+checkForPreload("resources/small_mq.css?4", true);
+checkForPreload("resources/small_mq.css?5", false);
+</script>
+<style>
+@import url("resources/small_mq.css?1");
+@import url("resources/small_mq.css?2") layer;
+@import url("resources/small_mq.css?3") layer(foo);
+@import url("resources/small_mq.css?4")  layer(foo bar) ;
+@import url("resources/small_mq.css?5") layer(foo) speech;
+</style>
+<body>
+<p>Preload scanner should preload @import rules with layers</p>
+<pre id=log></pre>
+<script>
+printResults();
+</script>

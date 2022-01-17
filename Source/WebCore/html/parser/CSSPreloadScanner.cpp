@@ -98,6 +98,7 @@ inline void CSSPreloadScanner::tokenize(UChar c)
         if (isASCIIAlpha(c)) {
             m_rule.clear();
             m_ruleValue.clear();
+            m_ruleConditions.clear();
             m_rule.append(c);
             m_state = Rule;
         } else
@@ -139,9 +140,17 @@ inline void CSSPreloadScanner::tokenize(UChar c)
         else if (c == '{')
             m_state = DoneParsingImportRules;
         else {
-            // FIXME: media rules
-            m_state = Initial;
+            m_state = RuleConditions;
+            m_ruleConditions.append(c);
         }
+        break;
+    case RuleConditions:
+        if (c == ';')
+            emitRule();
+        else if (c == '{')
+            m_state = DoneParsingImportRules;
+        else
+            m_ruleConditions.append(c);
         break;
     case DoneParsingImportRules:
         ASSERT_NOT_REACHED();
@@ -193,12 +202,31 @@ static String parseCSSStringOrURL(const UChar* characters, size_t length)
     return String(characters + offset, reducedLength);
 }
 
+static bool hasValidImportConditions(StringView conditions)
+{
+    if (conditions.isEmpty())
+        return true;
+
+    conditions = conditions.stripLeadingAndTrailingMatchedCharacters(isHTMLSpace<UChar>);
+
+    // FIXME: Support multiple conditions.
+    // FIXME: Support media queries.
+    // FIXME: Support supports().
+
+    auto end = conditions.find(')');
+    if (end != notFound)
+        return end == conditions.length() - 1 && conditions.startsWith("layer(");
+
+    return conditions == "layer";
+}
+
 void CSSPreloadScanner::emitRule()
 {
     StringView rule(m_rule.data(), m_rule.size());
     if (equalLettersIgnoringASCIICase(rule, "import")) {
         String url = parseCSSStringOrURL(m_ruleValue.data(), m_ruleValue.size());
-        if (!url.isEmpty()) {
+        StringView conditions(m_ruleConditions.data(), m_ruleConditions.size());
+        if (!url.isEmpty() && hasValidImportConditions(conditions)) {
             URL baseElementURL; // FIXME: This should be passed in from the HTMLPreloadScanner via scan(): without it we will get relative URLs wrong.
             // FIXME: Should this be including the charset in the preload request?
             m_requests->append(makeUnique<PreloadRequest>("css", url, baseElementURL, CachedResource::Type::CSSStyleSheet, String(), PreloadRequest::ModuleScript::No, ReferrerPolicy::EmptyString));
@@ -210,6 +238,7 @@ void CSSPreloadScanner::emitRule()
         m_state = DoneParsingImportRules;
     m_rule.clear();
     m_ruleValue.clear();
+    m_ruleConditions.clear();
 }
 
 }
