@@ -170,7 +170,7 @@ void AutomaticThread::start(const AbstractLocker&)
     
     Thread::create(
         name(),
-        [=] () {
+        [=, this] () {
             if (verbose)
                 dataLog(RawPointer(this), ": Running automatic thread!\n");
             

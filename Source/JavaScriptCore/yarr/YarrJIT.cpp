@@ -4282,7 +4282,7 @@ public:
         }
 
         if (!m_tryReadUnicodeCharacterCalls.isEmpty()) {
-            m_jit.addLinkTask([=] (LinkBuffer& linkBuffer) {
+            m_jit.addLinkTask([=, this] (LinkBuffer& linkBuffer) {
                 CodeLocationLabel<NoPtrTag> tryReadUnicodeCharacterHelper = linkBuffer.locationOf<NoPtrTag>(m_tryReadUnicodeCharacterEntry);
 
                 for (auto call : m_tryReadUnicodeCharacterCalls)
@@ -4401,7 +4401,7 @@ public:
         }
 
         if (!m_tryReadUnicodeCharacterCalls.isEmpty()) {
-            m_jit.addLinkTask([=] (LinkBuffer& linkBuffer) {
+            m_jit.addLinkTask([=, this] (LinkBuffer& linkBuffer) {
                 CodeLocationLabel<NoPtrTag> tryReadUnicodeCharacterHelper = linkBuffer.locationOf<NoPtrTag>(m_tryReadUnicodeCharacterEntry);
 
                 for (auto call : m_tryReadUnicodeCharacterCalls)

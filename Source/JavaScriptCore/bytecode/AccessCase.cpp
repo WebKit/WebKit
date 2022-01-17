@@ -2108,7 +2108,7 @@ void AccessCase::generateImpl(AccessGenerationState& state)
             bool callHasReturnValue = isGetter();
             restoreLiveRegistersFromStackForCall(spillState, callHasReturnValue);
 
-            jit.addLinkTask([=] (LinkBuffer& linkBuffer) {
+            jit.addLinkTask([=, this] (LinkBuffer& linkBuffer) {
                 this->as<GetterSetterAccessCase>().callLinkInfo()->setCodeLocations(
                     linkBuffer.locationOf<JSInternalPtrTag>(slowPathStart),
                     linkBuffer.locationOf<JSInternalPtrTag>(doneLocation));
@@ -2172,7 +2172,7 @@ void AccessCase::generateImpl(AccessGenerationState& state)
                 operationCall = jit.call(OperationPtrTag);
             else
                 operationCall = jit.call(CustomAccessorPtrTag);
-            jit.addLinkTask([=] (LinkBuffer& linkBuffer) {
+            jit.addLinkTask([=, this] (LinkBuffer& linkBuffer) {
                 if (Options::useJITCage()) {
                     if (m_type == CustomValueGetter || m_type == CustomAccessorGetter)
                         linkBuffer.link(operationCall, FunctionPtr<OperationPtrTag>(vmEntryCustomGetter));

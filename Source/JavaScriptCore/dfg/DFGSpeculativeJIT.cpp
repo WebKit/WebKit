@@ -5392,7 +5392,7 @@ void SpeculativeJIT::compileMathIC(Node* node, JITBinaryMathIC<Generator>* mathI
 
         auto done = m_jit.label();
 
-        addSlowPathGeneratorLambda([=, savePlans = WTFMove(savePlans)] () {
+        addSlowPathGeneratorLambda([=, this, savePlans = WTFMove(savePlans)] () {
             addICGenerationState->slowPathJumps.link(&m_jit);
             addICGenerationState->slowPathStart = m_jit.label();
 #if ENABLE(MATH_IC_STATS)
@@ -6015,7 +6015,7 @@ void SpeculativeJIT::compileMathIC(Node* node, JITUnaryMathIC<Generator>* mathIC
 
         auto done = m_jit.label();
 
-        addSlowPathGeneratorLambda([=, savePlans = WTFMove(savePlans)] () {
+        addSlowPathGeneratorLambda([=, this, savePlans = WTFMove(savePlans)] () {
             icGenerationState->slowPathJumps.link(&m_jit);
             icGenerationState->slowPathStart = m_jit.label();
 #if ENABLE(MATH_IC_STATS)

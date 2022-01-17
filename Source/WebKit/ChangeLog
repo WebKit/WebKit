@@ -1,3 +1,22 @@
+2022-01-16  Lauro Moura  <lmoura@igalia.com>
+
+        Fix C++20 build warnings with GCC
+        https://bugs.webkit.org/show_bug.cgi?id=235023
+
+        Reviewed by Alex Christensen.
+
+        Mostly related to deprecating operations between enums of different
+        types and not capturing this by default in lambdas.
+
+        * WebProcess/Inspector/WebInspector.cpp: Capture this in lambdas.
+        (WebKit::WebInspector::showConsole):
+        (WebKit::WebInspector::showResources):
+        (WebKit::WebInspector::showMainResourceForFrame):
+        (WebKit::WebInspector::startPageProfiling):
+        (WebKit::WebInspector::stopPageProfiling):
+        (WebKit::WebInspector::startElementSelection):
+        (WebKit::WebInspector::stopElementSelection):
+
 2022-01-16  Cameron McCormack  <heycam@apple.com>
 
         Ensure in flight layer transactions don't accumulate further canvas drawing

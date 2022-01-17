@@ -173,7 +173,7 @@ void WebInspector::showConsole()
 
     m_page->corePage()->inspectorController().show();
 
-    whenFrontendConnectionEstablished([=] {
+    whenFrontendConnectionEstablished([=, this] {
         m_frontendConnection->send(Messages::WebInspectorUI::ShowConsole(), 0);
     });
 }
@@ -185,7 +185,7 @@ void WebInspector::showResources()
 
     m_page->corePage()->inspectorController().show();
 
-    whenFrontendConnectionEstablished([=] {
+    whenFrontendConnectionEstablished([=, this] {
         m_frontendConnection->send(Messages::WebInspectorUI::ShowResources(), 0);
     });
 }
@@ -203,7 +203,7 @@ void WebInspector::showMainResourceForFrame(WebCore::FrameIdentifier frameIdenti
 
     String inspectorFrameIdentifier = m_page->corePage()->inspectorController().ensurePageAgent().frameId(frame->coreFrame());
 
-    whenFrontendConnectionEstablished([=] {
+    whenFrontendConnectionEstablished([=, this] {
         m_frontendConnection->send(Messages::WebInspectorUI::ShowMainResourceForFrame(inspectorFrameIdentifier), 0);
     });
 }
@@ -215,7 +215,7 @@ void WebInspector::startPageProfiling()
 
     m_page->corePage()->inspectorController().show();
 
-    whenFrontendConnectionEstablished([=] {
+    whenFrontendConnectionEstablished([=, this] {
         m_frontendConnection->send(Messages::WebInspectorUI::StartPageProfiling(), 0);
     });
 }
@@ -227,7 +227,7 @@ void WebInspector::stopPageProfiling()
 
     m_page->corePage()->inspectorController().show();
 
-    whenFrontendConnectionEstablished([=] {
+    whenFrontendConnectionEstablished([=, this] {
         m_frontendConnection->send(Messages::WebInspectorUI::StopPageProfiling(), 0);
     });
 }
@@ -237,7 +237,7 @@ void WebInspector::startElementSelection()
     if (!m_page->corePage())
         return;
 
-    whenFrontendConnectionEstablished([=] {
+    whenFrontendConnectionEstablished([=, this] {
         m_frontendConnection->send(Messages::WebInspectorUI::StartElementSelection(), 0);
     });
 }
@@ -247,7 +247,7 @@ void WebInspector::stopElementSelection()
     if (!m_page->corePage())
         return;
 
-    whenFrontendConnectionEstablished([=] {
+    whenFrontendConnectionEstablished([=, this] {
         m_frontendConnection->send(Messages::WebInspectorUI::StopElementSelection(), 0);
     });
 }

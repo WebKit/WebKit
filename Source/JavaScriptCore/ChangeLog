@@ -1,3 +1,100 @@
+2022-01-16  Lauro Moura  <lmoura@igalia.com>
+
+        Fix C++20 build warnings with GCC
+        https://bugs.webkit.org/show_bug.cgi?id=235023
+
+        Reviewed by Alex Christensen.
+
+        Mostly related to deprecating operations between enums of different
+        types and not capturing this by default in lambdas.
+
+        * assembler/X86Assembler.h: Casting enums to same type.
+        (JSC::X86Assembler::cmovcc):
+        (JSC::X86Assembler::jccRel32):
+        (JSC::X86Assembler::setccOpcode):
+        * b3/B3CheckSpecial.cpp: Capture this in lambda.
+        (JSC::B3::CheckSpecial::generate):
+        * b3/B3Type.cpp: Replace is_pod_v is is_standard_layout_v and
+        is_trivial_v
+        * bytecode/AccessCase.cpp: Capture this in lambda.
+        (JSC::AccessCase::generateImpl):
+        * bytecode/CallLinkInfo.cpp: Ditto.
+        (JSC::OptimizingCallLinkInfo::emitDirectFastPath):
+        (JSC::OptimizingCallLinkInfo::emitDirectTailCallFastPath):
+        (JSC::OptimizingCallLinkInfo::initializeDirectCall):
+        * dfg/DFGSpeculativeJIT.cpp: Ditto.
+        * dfg/DFGSpeculativeJIT64.cpp: Ditto.
+        (JSC::DFG::SpeculativeJIT::compile):
+        * jit/ICStats.h: Cast enums to same type.
+        (JSC::ICEvent::hash const):
+        * jit/JITArithmetic.cpp: Capture this in lambda.
+        (JSC::JIT::emitMathICSlow):
+        * jit/JITSizeStatistics.cpp: Ditto.
+        (JSC::JITSizeStatistics::markEnd):
+        * runtime/VM.cpp: Ditto.
+        (JSC::VM::deleteAllLinkedCode):
+        (JSC::VM::deleteAllCode):
+        (JSC::VM::shrinkFootprintWhenIdle):
+        * wasm/WasmAirIRGenerator.cpp: Ditto.
+        (JSC::Wasm::AirIRGenerator::AirIRGenerator):
+        (JSC::Wasm::AirIRGenerator::addTableGet):
+        (JSC::Wasm::AirIRGenerator::addTableSet):
+        (JSC::Wasm::AirIRGenerator::addTableInit):
+        (JSC::Wasm::AirIRGenerator::addTableFill):
+        (JSC::Wasm::AirIRGenerator::addTableCopy):
+        (JSC::Wasm::AirIRGenerator::addMemoryFill):
+        (JSC::Wasm::AirIRGenerator::addMemoryCopy):
+        (JSC::Wasm::AirIRGenerator::addMemoryInit):
+        (JSC::Wasm::AirIRGenerator::emitCheckAndPreparePointer):
+        (JSC::Wasm::AirIRGenerator::emitAtomicLoadOp):
+        (JSC::Wasm::AirIRGenerator::emitAtomicStoreOp):
+        (JSC::Wasm::AirIRGenerator::emitAtomicBinaryRMWOp):
+        (JSC::Wasm::AirIRGenerator::emitAtomicCompareExchange):
+        (JSC::Wasm::AirIRGenerator::atomicWait):
+        (JSC::Wasm::AirIRGenerator::atomicNotify):
+        (JSC::Wasm::AirIRGenerator::emitEntryTierUpCheck):
+        (JSC::Wasm::AirIRGenerator::emitLoopTierUpCheck):
+        (JSC::Wasm::AirIRGenerator::addCallIndirect):
+        (JSC::Wasm::AirIRGenerator::addCallRef):
+        (JSC::Wasm::AirIRGenerator::emitChecksForModOrDiv):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::I32TruncSF64>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::I32TruncSF32>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::I32TruncUF64>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::I32TruncUF32>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::I64TruncSF64>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::I64TruncUF64>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::I64TruncSF32>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::I64TruncUF32>):
+        * wasm/WasmB3IRGenerator.cpp: Ditto.
+        (JSC::Wasm::B3IRGenerator::B3IRGenerator):
+        (JSC::Wasm::B3IRGenerator::addTableGet):
+        (JSC::Wasm::B3IRGenerator::addTableSet):
+        (JSC::Wasm::B3IRGenerator::addTableInit):
+        (JSC::Wasm::B3IRGenerator::addTableFill):
+        (JSC::Wasm::B3IRGenerator::addTableCopy):
+        (JSC::Wasm::B3IRGenerator::emitIndirectCall):
+        (JSC::Wasm::B3IRGenerator::addMemoryFill):
+        (JSC::Wasm::B3IRGenerator::addMemoryInit):
+        (JSC::Wasm::B3IRGenerator::addMemoryCopy):
+        (JSC::Wasm::B3IRGenerator::fixupPointerPlusOffsetForAtomicOps):
+        (JSC::Wasm::B3IRGenerator::atomicWait):
+        (JSC::Wasm::B3IRGenerator::atomicNotify):
+        (JSC::Wasm::B3IRGenerator::emitEntryTierUpCheck):
+        (JSC::Wasm::B3IRGenerator::emitLoopTierUpCheck):
+        (JSC::Wasm::B3IRGenerator::addCall):
+        (JSC::Wasm::B3IRGenerator::addCallIndirect):
+        (JSC::Wasm::B3IRGenerator::addCallRef):
+        (JSC::Wasm::B3IRGenerator::emitChecksForModOrDiv):
+        (JSC::Wasm::B3IRGenerator::addOp<OpType::I32TruncSF64>):
+        (JSC::Wasm::B3IRGenerator::addOp<OpType::I32TruncSF32>):
+        (JSC::Wasm::B3IRGenerator::addOp<OpType::I32TruncUF64>):
+        (JSC::Wasm::B3IRGenerator::addOp<OpType::I32TruncUF32>):
+        (JSC::Wasm::B3IRGenerator::addOp<OpType::I64TruncSF64>):
+        (JSC::Wasm::B3IRGenerator::addOp<OpType::I64TruncUF64>):
+        (JSC::Wasm::B3IRGenerator::addOp<OpType::I64TruncSF32>):
+        (JSC::Wasm::B3IRGenerator::addOp<OpType::I64TruncUF32>):
+        * yarr/YarrJIT.cpp: Ditto.
+
 2022-01-15  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Fix Date functions' argument coercion

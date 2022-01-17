@@ -1073,12 +1073,9 @@ static const size_t ColorSchemeBits = 2;
 #endif
 
 static const size_t GridAutoFlowBits = 4;
-enum InternalGridAutoFlowAlgorithm {
+enum InternalGridAutoFlow {
     InternalAutoFlowAlgorithmSparse = 1 << 0,
     InternalAutoFlowAlgorithmDense  = 1 << 1,
-};
-
-enum InternalGridAutoFlowDirection {
     InternalAutoFlowDirectionRow    = 1 << 2,
     InternalAutoFlowDirectionColumn = 1 << 3
 };

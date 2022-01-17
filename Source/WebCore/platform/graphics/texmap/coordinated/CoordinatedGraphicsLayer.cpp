@@ -638,7 +638,7 @@ bool CoordinatedGraphicsLayer::shouldDirectlyCompositeImage(Image* image) const
     if (!image || !image->isBitmapImage())
         return false;
 
-    enum { MaxDimenstionForDirectCompositing = 2000 };
+    static constexpr float MaxDimenstionForDirectCompositing = 2000;
     if (image->width() > MaxDimenstionForDirectCompositing || image->height() > MaxDimenstionForDirectCompositing)
         return false;
 

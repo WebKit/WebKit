@@ -1,3 +1,16 @@
+2022-01-16  Lauro Moura  <lmoura@igalia.com>
+
+        Fix C++20 build warnings with GCC
+        https://bugs.webkit.org/show_bug.cgi?id=235023
+
+        Reviewed by Alex Christensen.
+
+        Mostly related to deprecating operations between enums of different
+        types and not capturing this by default in lambdas.
+
+        * wtf/AutomaticThread.cpp: Capture this in lambda.
+        (WTF::AutomaticThread::start):
+
 2022-01-16  David Kilzer  <ddkilzer@apple.com>
 
         [WTF] Add TollFreeBridging.h to Xcode project

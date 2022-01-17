@@ -74,13 +74,11 @@ struct ViewportArguments {
         CSSDeviceAdaptation
     } type;
 
-    enum {
-        ValueAuto = -1,
-        ValueDeviceWidth = -2,
-        ValueDeviceHeight = -3,
-        ValuePortrait = -4,
-        ValueLandscape = -5
-    };
+    static constexpr int ValueAuto = -1;
+    static constexpr int ValueDeviceWidth = -2;
+    static constexpr int ValueDeviceHeight = -3;
+    static constexpr int ValuePortrait = -4;
+    static constexpr int ValueLandscape = -5;
 
     explicit ViewportArguments(Type type = Implicit)
         : type(type)

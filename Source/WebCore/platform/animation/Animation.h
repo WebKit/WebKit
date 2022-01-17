@@ -129,7 +129,7 @@ public:
         bool isIdentifier { false };
     };
 
-    enum { IterationCountInfinite = -1 };
+    static constexpr double IterationCountInfinite = -1;
     double iterationCount() const { return m_iterationCount; }
     const Name& name() const { return m_name; }
     Style::ScopeOrdinal nameStyleScopeOrdinal() const { return m_nameStyleScopeOrdinal; }

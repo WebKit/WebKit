@@ -858,7 +858,7 @@ void JIT::emitMathICSlow(JITUnaryMathIC<Generator>* mathIC, const Instruction* c
 
     emitPutVirtualRegister(result, resultRegs);
 
-    addLinkTask([=] (LinkBuffer& linkBuffer) {
+    addLinkTask([=, this] (LinkBuffer& linkBuffer) {
         MathICGenerationState& mathICGenerationState = m_instructionToMathICGenerationState.find(currentInstruction)->value.get();
         mathIC->finalizeInlineCode(mathICGenerationState, linkBuffer);
     });
@@ -919,7 +919,7 @@ void JIT::emitMathICSlow(JITBinaryMathIC<Generator>* mathIC, const Instruction* 
 
     emitPutVirtualRegister(result, resultRegs);
 
-    addLinkTask([=] (LinkBuffer& linkBuffer) {
+    addLinkTask([=, this] (LinkBuffer& linkBuffer) {
         MathICGenerationState& mathICGenerationState = m_instructionToMathICGenerationState.find(currentInstruction)->value.get();
         mathIC->finalizeInlineCode(mathICGenerationState, linkBuffer);
     });

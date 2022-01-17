@@ -45,9 +45,9 @@ JITSizeStatistics::Marker JITSizeStatistics::markStart(String identifier, CCallH
 void JITSizeStatistics::markEnd(Marker marker, CCallHelpers& jit)
 {
     CCallHelpers::Label end = jit.labelIgnoringWatchpoints();
-    jit.addLinkTask([=] (LinkBuffer& linkBuffer) {
+    jit.addLinkTask([=, this] (LinkBuffer& linkBuffer) {
         size_t size = linkBuffer.locationOf<NoPtrTag>(end).untaggedExecutableAddress<char*>() - linkBuffer.locationOf<NoPtrTag>(marker.start).untaggedExecutableAddress<char*>();
-        linkBuffer.addMainThreadFinalizationTask([=] {
+        linkBuffer.addMainThreadFinalizationTask([=, this] {
             auto& entry = m_data.add(marker.identifier, Entry { }).iterator->value;
             ++entry.count;
             entry.totalBytes += size;

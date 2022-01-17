@@ -774,14 +774,14 @@ void VM::whenIdle(Function<void()>&& callback)
 
 void VM::deleteAllLinkedCode(DeleteAllCodeEffort effort)
 {
-    whenIdle([=] () {
+    whenIdle([=, this] () {
         heap.deleteAllCodeBlocks(effort);
     });
 }
 
 void VM::deleteAllCode(DeleteAllCodeEffort effort)
 {
-    whenIdle([=] () {
+    whenIdle([=, this] () {
         m_codeCache->clear();
         m_regExpCache->deleteAllCode();
         heap.deleteAllCodeBlocks(effort);
@@ -792,7 +792,7 @@ void VM::deleteAllCode(DeleteAllCodeEffort effort)
 
 void VM::shrinkFootprintWhenIdle()
 {
-    whenIdle([=] () {
+    whenIdle([=, this] () {
         sanitizeStackForVM(*this);
         deleteAllCode(DeleteAllCodeIfNotCollecting);
         heap.collectNow(Synchronousness::Sync, CollectionScope::Full);

@@ -335,17 +335,17 @@ private:
     
     TwoByteOpcodeID cmovcc(Condition cond)
     {
-        return (TwoByteOpcodeID)(OP2_CMOVCC + cond);
+        return (TwoByteOpcodeID)(OP2_CMOVCC + static_cast<TwoByteOpcodeID>(cond));
     }
 
     TwoByteOpcodeID jccRel32(Condition cond)
     {
-        return (TwoByteOpcodeID)(OP2_JCC_rel32 + cond);
+        return (TwoByteOpcodeID)(OP2_JCC_rel32 + static_cast<TwoByteOpcodeID>(cond));
     }
 
     TwoByteOpcodeID setccOpcode(Condition cond)
     {
-        return (TwoByteOpcodeID)(OP_SETCC + cond);
+        return (TwoByteOpcodeID)(OP_SETCC + static_cast<TwoByteOpcodeID>(cond));
     }
 
     typedef enum {

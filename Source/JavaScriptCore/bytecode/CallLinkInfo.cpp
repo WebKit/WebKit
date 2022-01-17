@@ -463,7 +463,7 @@ void OptimizingCallLinkInfo::emitDirectFastPath(CCallHelpers& jit)
     setUsesDataICs(UseDataIC::No);
 
     auto call = jit.nearCall();
-    jit.addLinkTask([=] (LinkBuffer& linkBuffer) {
+    jit.addLinkTask([=, this] (LinkBuffer& linkBuffer) {
         m_callLocation = linkBuffer.locationOfNearCall<JSInternalPtrTag>(call);
     });
     jit.addLateLinkTask([this] (LinkBuffer&) {
@@ -478,7 +478,7 @@ void OptimizingCallLinkInfo::emitDirectTailCallFastPath(CCallHelpers& jit, Scope
     setUsesDataICs(UseDataIC::No);
 
     auto fastPathStart = jit.label();
-    jit.addLinkTask([=] (LinkBuffer& linkBuffer) {
+    jit.addLinkTask([=, this] (LinkBuffer& linkBuffer) {
         m_fastPathStart = linkBuffer.locationOf<JSInternalPtrTag>(fastPathStart);
     });
 
@@ -488,7 +488,7 @@ void OptimizingCallLinkInfo::emitDirectTailCallFastPath(CCallHelpers& jit, Scope
 
     prepareForTailCall();
     auto call = jit.nearTailCall();
-    jit.addLinkTask([=] (LinkBuffer& linkBuffer) {
+    jit.addLinkTask([=, this] (LinkBuffer& linkBuffer) {
         m_callLocation = linkBuffer.locationOfNearCall<JSInternalPtrTag>(call);
     });
     jit.addLateLinkTask([this] (LinkBuffer&) {
@@ -504,7 +504,7 @@ void OptimizingCallLinkInfo::initializeDirectCall()
         RELEASE_ASSERT(fastPathStart());
         CCallHelpers::emitJITCodeOver(fastPathStart(), scopedLambda<void(CCallHelpers&)>([&](CCallHelpers& jit) {
             auto jump = jit.jump();
-            jit.addLinkTask([=] (LinkBuffer& linkBuffer) {
+            jit.addLinkTask([=, this] (LinkBuffer& linkBuffer) {
                 linkBuffer.link(jump, slowPathStart());
             });
         }), "initialize direct call");
