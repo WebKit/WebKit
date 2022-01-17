@@ -459,7 +459,7 @@ std::optional<InlineContentBreaker::PartialRun> InlineContentBreaker::tryBreakin
     }
 
     if (breakRules.contains(WordBreakRule::AtArbitraryPosition)) {
-        auto tryBreakingAtArbitraryPosition = [&]() -> PartialRun {
+        auto tryBreakingAtArbitraryPosition = [&]() -> std::optional<PartialRun> {
             if (!inlineTextItem.length()) {
                 // Empty text runs may be breakable based on style, but in practice we can't really split them any further.
                 return { };
@@ -472,18 +472,21 @@ std::optional<InlineContentBreaker::PartialRun> InlineContentBreaker::tryBreakin
                 if (nextTextRunIndex(runs, candidateTextRun.index)) {
                     // We are in-between text runs. It's okay to return the entire run triggering split at the very right edge.
                     auto trailingPartialRunWidth = TextUtil::width(inlineTextItem, fontCascade, candidateTextRun.logicalLeft);
-                    return { inlineTextItem.length(), trailingPartialRunWidth };
+                    return PartialRun { inlineTextItem.length(), trailingPartialRunWidth };
                 }
-                auto startPosition = inlineTextItem.start() + 1;
-                auto endPosition = inlineTextItem.end();
-                return { inlineTextItem.length() - 1, TextUtil::width(inlineTextItem, fontCascade, startPosition, endPosition, candidateTextRun.logicalLeft) };
+                if (inlineTextItem.length() > 1) {
+                    auto startPosition = inlineTextItem.start();
+                    auto endPosition = inlineTextItem.end() - 1;
+                    return PartialRun { inlineTextItem.length() - 1, TextUtil::width(inlineTextItem, fontCascade, startPosition, endPosition, candidateTextRun.logicalLeft) };
+                }
+                return { };
             }
             if (!lineHasRoomForContent) {
                 // Fast path for cases when there's no room at all. The content is breakable but we don't have space for it.
-                return { };
+                return PartialRun { };
             }
             auto wordBreak = TextUtil::breakWord(inlineTextItem, fontCascade, candidateRun.logicalWidth, availableWidth, candidateTextRun.logicalLeft);
-            return { wordBreak.length, wordBreak.logicalWidth };
+            return PartialRun { wordBreak.length, wordBreak.logicalWidth };
         };
         // With arbitrary breaking there's always a valid breaking position (even if it is before the first position).
         return tryBreakingAtArbitraryPosition();
