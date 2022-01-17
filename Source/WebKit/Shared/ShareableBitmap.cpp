@@ -41,6 +41,11 @@ ShareableBitmap::Handle::Handle()
 {
 }
 
+void ShareableBitmap::Handle::takeOwnershipOfMemory(MemoryLedger ledger) const
+{
+    m_handle.takeOwnershipOfMemory(ledger);
+}
+
 void ShareableBitmap::Handle::encode(IPC::Encoder& encoder) const
 {
     SharedMemory::IPCHandle ipcHandle(WTFMove(m_handle), numBytesForSize(m_size, m_configuration));

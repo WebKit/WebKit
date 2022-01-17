@@ -1,3 +1,27 @@
+2022-01-17  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        Frequent GPU process jetsams due to RemoteRenderingBackendProxy not claiming ownership of SharedMemory buffers
+        https://bugs.webkit.org/show_bug.cgi?id=235226
+
+        Reviewed by Simon Fraser.
+
+        Claim memory from SharedBitmaps and SharedMemory that RemoteRenderingBackendProxy
+        asks and receives from RemoteRenderingBackend. This is not very good,
+        as GPUP allocates most of the memory and thus might jetsam
+        before WP claims them. However, that is a bigger change to be done
+        after this one.
+
+        No new tests, hard to test currently.
+
+        * Shared/ShareableBitmap.cpp:
+        (WebKit::ShareableBitmap::Handle::takeOwnershipOfMemory const):
+        * Shared/ShareableBitmap.h:
+        * WebProcess/GPU/graphics/RemoteRenderingBackendProxy.cpp:
+        (WebKit::RemoteRenderingBackendProxy::getShareableBitmap):
+        (WebKit::RemoteRenderingBackendProxy::getFilteredImage):
+        * WebProcess/GPU/graphics/RemoteResourceCacheProxy.cpp:
+        (WebKit::RemoteResourceCacheProxy::recordNativeImageUse):
+
 2022-01-17  Youenn Fablet  <youenn@apple.com>
 
         Transmit network load metrics when service worker is using one of its network load to respond to FetchEvents

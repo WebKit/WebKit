@@ -175,6 +175,7 @@ SharedMemory* RemoteRenderingBackendProxy::sharedMemoryForGetPixelBuffer(size_t 
         sendSyncToStream(Messages::RemoteRenderingBackend::SemaphoreForGetPixelBuffer(), Messages::RemoteRenderingBackend::SemaphoreForGetPixelBuffer::Reply(semaphore));
 
     if (!handle.handle.isNull()) {
+        handle.handle.takeOwnershipOfMemory(MemoryLedger::Graphics);
         m_getPixelBufferSharedMemory = SharedMemory::map(handle.handle, SharedMemory::Protection::ReadOnly);
         m_getPixelBufferSharedMemoryLength = handle.dataSize;
     }
@@ -220,6 +221,7 @@ RefPtr<ShareableBitmap> RemoteRenderingBackendProxy::getShareableBitmap(Renderin
     auto sendResult = sendSyncToStream(Messages::RemoteRenderingBackend::GetShareableBitmapForImageBuffer(imageBuffer, preserveResolution), Messages::RemoteRenderingBackend::GetShareableBitmapForImageBuffer::Reply(handle));
     if (handle.isNull())
         return { };
+    handle.takeOwnershipOfMemory(MemoryLedger::Graphics);
     ASSERT_UNUSED(sendResult, sendResult);
     return ShareableBitmap::create(handle);
 }
@@ -233,6 +235,7 @@ RefPtr<Image> RemoteRenderingBackendProxy::getFilteredImage(RenderingResourceIde
     if (handle.isNull())
         return { };
 
+    handle.takeOwnershipOfMemory(MemoryLedger::Graphics);
     auto bitmap = ShareableBitmap::create(handle);
     if (!bitmap)
         return { };

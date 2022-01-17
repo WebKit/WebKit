@@ -58,6 +58,9 @@ public:
 
         bool isNull() const { return m_handle.isNull(); }
 
+        // Take ownership of the memory for process memory accounting purposes.
+        void takeOwnershipOfMemory(MemoryLedger) const;
+
         void clear();
 
         void encode(IPC::Encoder&) const;
