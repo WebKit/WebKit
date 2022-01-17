@@ -37,6 +37,7 @@ struct ClientOrigin {
 
     unsigned hash() const;
     bool operator==(const ClientOrigin&) const;
+    bool operator!=(const ClientOrigin& other) const { return !(*this == other); }
 
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static std::optional<ClientOrigin> decode(Decoder&);

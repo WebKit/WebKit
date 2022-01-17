@@ -1,0 +1,4 @@
+CONSOLE MESSAGE: Message received from other context
+CONSOLE MESSAGE: Message received from other context
+CONSOLE MESSAGE: PASS
+
