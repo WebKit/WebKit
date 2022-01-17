@@ -1,3 +1,14 @@
+2022-01-17  Sihui Liu  <sihui_liu@apple.com>
+
+        Add an API test to ensure indexedDB.databases() does not create files on disk
+        https://bugs.webkit.org/show_bug.cgi?id=235289
+
+        Reviewed by Darin Adler.
+
+        Add test coverage.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/IndexedDBPersistence.mm:
+
 2022-01-17  Youenn Fablet  <youenn@apple.com>
 
         Make ServiceWorkerClient.id a UUID instead of a string derived from a ScriptExecutionContextIdentifier
