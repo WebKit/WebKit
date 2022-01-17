@@ -333,11 +333,11 @@ static void overrideControlCharacters(Vector<UChar>& buffer, unsigned start, uns
     };
 
     // Code points 0x0 - 0x20 and 0x7F - 0xA0 are control character and shouldn't render. Map them to ZERO WIDTH SPACE.
-    overwriteCodePoints(0x0, 0x20, zeroWidthSpace);
-    overwriteCodePoints(0x7F, 0xA0, zeroWidthSpace);
+    overwriteCodePoints(nullCharacter, space, zeroWidthSpace);
+    overwriteCodePoints(deleteCharacter, noBreakSpace, zeroWidthSpace);
     overwriteCodePoint(softHyphen, zeroWidthSpace);
-    overwriteCodePoint('\n', space);
-    overwriteCodePoint('\t', space);
+    overwriteCodePoint(newlineCharacter, space);
+    overwriteCodePoint(tabCharacter, space);
     overwriteCodePoint(noBreakSpace, space);
     overwriteCodePoint(leftToRightMark, zeroWidthSpace);
     overwriteCodePoint(rightToLeftMark, zeroWidthSpace);
