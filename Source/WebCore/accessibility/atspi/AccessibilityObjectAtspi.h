@@ -23,9 +23,8 @@
 #include "AccessibilityAtspi.h"
 #include "AccessibilityObjectInterface.h"
 #include "IntRect.h"
-#include <wtf/Atomics.h>
 #include <wtf/OptionSet.h>
-#include <wtf/ThreadSafeRefCounted.h>
+#include <wtf/RefCounted.h>
 #include <wtf/text/CString.h>
 
 typedef struct _GDBusInterfaceVTable GDBusInterfaceVTable;
@@ -36,7 +35,7 @@ namespace WebCore {
 class AXCoreObject;
 class AccessibilityRootAtspi;
 
-class AccessibilityObjectAtspi final : public ThreadSafeRefCounted<AccessibilityObjectAtspi, WTF::DestructionThread::Main> {
+class AccessibilityObjectAtspi final : public RefCounted<AccessibilityObjectAtspi> {
 public:
     static Ref<AccessibilityObjectAtspi> create(AXCoreObject*, AccessibilityRootAtspi*);
     ~AccessibilityObjectAtspi() = default;
@@ -241,16 +240,15 @@ private:
     static GDBusInterfaceVTable s_tableFunctions;
     static GDBusInterfaceVTable s_tableCellFunctions;
 
-    AXCoreObject* m_axObject { nullptr };
     AXCoreObject* m_coreObject { nullptr };
     OptionSet<Interface> m_interfaces;
     AccessibilityRootAtspi* m_root { nullptr };
     std::optional<AccessibilityObjectAtspi*> m_parent;
-    Atomic<bool> m_isRegistered { false };
+    bool m_isRegistered { false };
     String m_path;
     String m_hyperlinkPath;
     int64_t m_lastSelectionChangedTime { -1 };
-    mutable std::atomic<bool> m_hasListMarkerAtStart;
+    mutable bool m_hasListMarkerAtStart;
     mutable int m_indexInParent { -1 };
 };
 

@@ -69,23 +69,8 @@ void AXObjectCache::platformPerformDeferredCacheUpdate()
     m_deferredParentChangedList.clear();
 }
 
-bool AXObjectCache::isIsolatedTreeEnabled()
-{
-    return true;
-}
-
-void AXObjectCache::initializeSecondaryAXThread()
-{
-}
-
-bool AXObjectCache::usedOnAXThread()
-{
-    return true;
-}
-
 void AXObjectCache::postPlatformNotification(AXCoreObject* coreObject, AXNotification notification)
 {
-    RELEASE_ASSERT(isMainThread());
     auto* wrapper = coreObject->wrapper();
     if (!wrapper)
         return;
@@ -218,7 +203,6 @@ void AXObjectCache::postPlatformNotification(AXCoreObject* coreObject, AXNotific
 
 void AXObjectCache::postTextStateChangePlatformNotification(AXCoreObject* coreObject, const AXTextStateChangeIntent&, const VisibleSelection& selection)
 {
-    RELEASE_ASSERT(isMainThread());
     if (!coreObject)
         coreObject = rootWebArea();
 
@@ -234,7 +218,6 @@ void AXObjectCache::postTextStateChangePlatformNotification(AXCoreObject* coreOb
 
 void AXObjectCache::postTextStateChangePlatformNotification(AccessibilityObject* coreObject, AXTextEditType editType, const String& text, const VisiblePosition& position)
 {
-    RELEASE_ASSERT(isMainThread());
     if (text.isEmpty())
         return;
 
@@ -263,7 +246,6 @@ void AXObjectCache::postTextStateChangePlatformNotification(AccessibilityObject*
 
 void AXObjectCache::postTextReplacementPlatformNotificationForTextControl(AXCoreObject* coreObject, const String& deletedText, const String& insertedText, HTMLTextFormControlElement&)
 {
-    RELEASE_ASSERT(isMainThread());
     if (!coreObject)
         coreObject = rootWebArea();
 
@@ -285,7 +267,6 @@ void AXObjectCache::postTextReplacementPlatformNotificationForTextControl(AXCore
 
 void AXObjectCache::postTextReplacementPlatformNotification(AXCoreObject* coreObject, AXTextEditType, const String& deletedText, AXTextEditType, const String& insertedText, const VisiblePosition& position)
 {
-    RELEASE_ASSERT(isMainThread());
     if (!coreObject)
         coreObject = rootWebArea();
 
@@ -307,7 +288,6 @@ void AXObjectCache::postTextReplacementPlatformNotification(AXCoreObject* coreOb
 
 void AXObjectCache::frameLoadingEventPlatformNotification(AccessibilityObject* coreObject, AXLoadingEvent loadingEvent)
 {
-    RELEASE_ASSERT(isMainThread());
     if (!coreObject)
         return;
 

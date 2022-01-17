@@ -33,7 +33,6 @@ GDBusInterfaceVTable AccessibilityObjectAtspi::s_valueFunctions = {
     nullptr,
     // get_property
     [](GDBusConnection*, const gchar*, const gchar*, const gchar*, const gchar* propertyName, GError** error, gpointer userData) -> GVariant* {
-        RELEASE_ASSERT(!isMainThread());
         auto atspiObject = Ref { *static_cast<AccessibilityObjectAtspi*>(userData) };
         atspiObject->updateBackingStore();
 
@@ -51,7 +50,6 @@ GDBusInterfaceVTable AccessibilityObjectAtspi::s_valueFunctions = {
     },
     // set_property,
     [](GDBusConnection*, const gchar*, const gchar*, const gchar*, const gchar* propertyName, GVariant* propertyValue, GError** error, gpointer userData) -> gboolean {
-        RELEASE_ASSERT(!isMainThread());
         auto atspiObject = Ref { *static_cast<AccessibilityObjectAtspi*>(userData) };
         atspiObject->updateBackingStore();
 
@@ -67,73 +65,50 @@ GDBusInterfaceVTable AccessibilityObjectAtspi::s_valueFunctions = {
 
 double AccessibilityObjectAtspi::currentValue() const
 {
-    RELEASE_ASSERT(!isMainThread());
-    if (!m_axObject)
-        return 0;
-
-    return m_axObject->valueForRange();
+    return m_coreObject ? m_coreObject->valueForRange() : 0;
 }
 
 bool AccessibilityObjectAtspi::setCurrentValue(double value)
 {
-    return Accessibility::retrieveValueFromMainThread<bool>([this, value]() -> bool {
-        if (m_coreObject)
-            m_coreObject->updateBackingStore();
+    if (!m_coreObject)
+        return false;
 
-        if (!m_coreObject)
-            return false;
+    if (!m_coreObject->canSetValueAttribute())
+        return false;
 
-        if (!m_coreObject->canSetValueAttribute())
-            return false;
+    if (m_coreObject->canSetNumericValue())
+        return m_coreObject->setValue(value);
 
-        if (m_coreObject->canSetNumericValue())
-            return m_coreObject->setValue(value);
-
-        return m_coreObject->setValue(String::numberToStringFixedPrecision(value));
-    });
+    return m_coreObject->setValue(String::numberToStringFixedPrecision(value));
 }
 
 double AccessibilityObjectAtspi::minimumValue() const
 {
-    RELEASE_ASSERT(!isMainThread());
-    if (!m_axObject)
-        return 0;
-
-    return m_axObject->minValueForRange();
+    return m_coreObject ? m_coreObject->minValueForRange() : 0;
 }
 
 double AccessibilityObjectAtspi::maximumValue() const
 {
-    RELEASE_ASSERT(!isMainThread());
-    if (!m_axObject)
-        return 0;
-
-    return m_axObject->maxValueForRange();
+    return m_coreObject ? m_coreObject->maxValueForRange() : 0;
 }
 
 double AccessibilityObjectAtspi::minimumIncrement() const
 {
-    return Accessibility::retrieveValueFromMainThread<float>([this]() -> float {
-        if (m_coreObject)
-            m_coreObject->updateBackingStore();
+    if (!m_coreObject)
+        return 0;
 
-        if (!m_coreObject)
-            return 0;
+    auto stepAttribute = static_cast<AccessibilityObject*>(m_coreObject)->getAttribute(HTMLNames::stepAttr);
+    if (!stepAttribute.isEmpty())
+        return stepAttribute.toFloat();
 
-        auto stepAttribute = static_cast<AccessibilityObject*>(m_coreObject)->getAttribute(HTMLNames::stepAttr);
-        if (!stepAttribute.isEmpty())
-            return stepAttribute.toFloat();
-
-        // If 'step' attribute is not defined, WebCore assumes a 5% of the range between
-        // minimum and maximum values. Implicit value of step should be one or larger.
-        float step = (m_coreObject->maxValueForRange() - m_coreObject->minValueForRange()) * 0.05;
-        return step < 1 ? 1 : step;
-    });
+    // If 'step' attribute is not defined, WebCore assumes a 5% of the range between
+    // minimum and maximum values. Implicit value of step should be one or larger.
+    float step = (m_coreObject->maxValueForRange() - m_coreObject->minValueForRange()) * 0.05;
+    return step < 1 ? 1 : step;
 }
 
 void AccessibilityObjectAtspi::valueChanged(double value)
 {
-    RELEASE_ASSERT(isMainThread());
     AccessibilityAtspi::singleton().valueChanged(*this, value);
 }
 

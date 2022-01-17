@@ -72,7 +72,7 @@ public:
     RefPtr<AccessibilityUIElement> elementAtPoint(int x, int y);
     RefPtr<AccessibilityUIElement> accessibleElementById(JSStringRef idAttribute);
 
-#if PLATFORM(COCOA) || USE(ATSPI)
+#if PLATFORM(COCOA)
     void executeOnAXThreadAndWait(Function<void()>&&);
     void executeOnAXThread(Function<void()>&&);
     void executeOnMainThread(Function<void()>&&);
@@ -109,10 +109,6 @@ private:
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     void updateIsolatedTreeMode();
 
-#if USE(ATSPI)
-    RunLoop& axRunLoop();
-#endif
-
 #if PLATFORM(COCOA)
     void spinMainRunLoop() const;
     // _AXUIElementUseSecondaryAXThread and _AXUIElementRequestServicedBySecondaryAXThread
@@ -122,9 +118,6 @@ private:
     bool m_useMockAXThread { false };
 #endif
     bool m_accessibilityIsolatedTreeMode { false };
-#if USE(ATSPI)
-    RunLoop* m_axRunLoop { nullptr };
-#endif
 #endif
 };
 

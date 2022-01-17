@@ -31,7 +31,6 @@ namespace WebCore {
 GDBusInterfaceVTable AccessibilityObjectAtspi::s_tableCellFunctions = {
     // method_call
     [](GDBusConnection*, const gchar*, const gchar*, const gchar*, const gchar* methodName, GVariant*, GDBusMethodInvocation* invocation, gpointer userData) {
-        RELEASE_ASSERT(!isMainThread());
         auto atspiObject = Ref { *static_cast<AccessibilityObjectAtspi*>(userData) };
         atspiObject->updateBackingStore();
 
@@ -52,7 +51,6 @@ GDBusInterfaceVTable AccessibilityObjectAtspi::s_tableCellFunctions = {
     },
     // get_property
     [](GDBusConnection*, const gchar*, const gchar*, const gchar*, const gchar* propertyName, GError** error, gpointer userData) -> GVariant* {
-        RELEASE_ASSERT(!isMainThread());
         auto atspiObject = Ref { *static_cast<AccessibilityObjectAtspi*>(userData) };
         atspiObject->updateBackingStore();
 
@@ -65,7 +63,7 @@ GDBusInterfaceVTable AccessibilityObjectAtspi::s_tableCellFunctions = {
         if (!g_strcmp0(propertyName, "RowSpan"))
             return g_variant_new_int32(atspiObject->rowSpan());
         if (!g_strcmp0(propertyName, "Table")) {
-            auto* axObject = atspiObject->m_axObject;
+            auto* axObject = atspiObject->m_coreObject;
             if (!axObject || !axObject->isTableCell())
                 return AccessibilityAtspi::singleton().nullReference();
 
@@ -76,7 +74,7 @@ GDBusInterfaceVTable AccessibilityObjectAtspi::s_tableCellFunctions = {
                     break;
 
                 wrapper->updateBackingStore();
-                axObject = wrapper->m_axObject;
+                axObject = wrapper->m_coreObject;
                 if (axObject && axObject->isTable())
                     break;
             }
@@ -94,57 +92,46 @@ GDBusInterfaceVTable AccessibilityObjectAtspi::s_tableCellFunctions = {
 
 Vector<RefPtr<AccessibilityObjectAtspi>> AccessibilityObjectAtspi::cellRowHeaders() const
 {
-    RELEASE_ASSERT(!isMainThread());
-    if (!m_axObject)
+    if (!m_coreObject)
         return { };
 
     // Only return headers for cells that are not headers.
     if (role() != Atspi::Role::TableCell)
         return { };
 
-    return wrapperVector(m_axObject->rowHeaders());
+    return wrapperVector(m_coreObject->rowHeaders());
 }
 
 Vector<RefPtr<AccessibilityObjectAtspi>> AccessibilityObjectAtspi::cellColumnHeaders() const
 {
-    RELEASE_ASSERT(!isMainThread());
-    if (!m_axObject)
+    if (!m_coreObject)
         return { };
 
     // Only return headers for cells that are not headers.
     if (role() != Atspi::Role::TableCell)
         return { };
 
-    return wrapperVector(m_axObject->columnHeaders());
+    return wrapperVector(m_coreObject->columnHeaders());
 }
 
 unsigned AccessibilityObjectAtspi::rowSpan() const
 {
-    RELEASE_ASSERT(!isMainThread());
-    if (!m_axObject)
-        return 0;
-
-    return m_axObject->rowIndexRange().second;
+    return m_coreObject ? m_coreObject->rowIndexRange().second : 0;
 }
 
 unsigned AccessibilityObjectAtspi::columnSpan() const
 {
-    RELEASE_ASSERT(!isMainThread());
-    if (!m_axObject)
-        return 0;
-
-    return m_axObject->columnIndexRange().second;
+    return m_coreObject ? m_coreObject->columnIndexRange().second : 0;
 }
 
 std::pair<std::optional<unsigned>, std::optional<unsigned>> AccessibilityObjectAtspi::cellPosition() const
 {
-    RELEASE_ASSERT(!isMainThread());
     std::pair<std::optional<unsigned>, std::optional<unsigned>> position;
-    if (!m_axObject)
+    if (!m_coreObject)
         return position;
 
-    position.first = m_axObject->rowIndexRange().first;
-    position.second = m_axObject->columnIndexRange().first;
+    position.first = m_coreObject->rowIndexRange().first;
+    position.second = m_coreObject->columnIndexRange().first;
 
     return position;
 }

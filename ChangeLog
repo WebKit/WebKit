@@ -1,3 +1,14 @@
+2022-01-17  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][a11y] Stop using isolated tree for the ATSPI implementation
+        https://bugs.webkit.org/show_bug.cgi?id=235229
+
+        Reviewed by Adrian Perez de Castro.
+
+        Do not enable isolated tree for ATSPI.
+
+        * Source/cmake/OptionsGTK.cmake:
+
 2022-01-14  Yusuke Suzuki  <ysuzuki@apple.com> and Mikhail R. Gadelha  <mikhail@igalia.com>
 
         [JSC] Fix Linux 64bit compilation

@@ -29,7 +29,6 @@ namespace WebCore {
 GDBusInterfaceVTable AccessibilityObjectAtspi::s_selectionFunctions = {
     // method_call
     [](GDBusConnection*, const gchar*, const gchar*, const gchar*, const gchar* methodName, GVariant* parameters, GDBusMethodInvocation* invocation, gpointer userData) {
-        RELEASE_ASSERT(!isMainThread());
         auto atspiObject = Ref { *static_cast<AccessibilityObjectAtspi*>(userData) };
         atspiObject->updateBackingStore();
 
@@ -62,7 +61,6 @@ GDBusInterfaceVTable AccessibilityObjectAtspi::s_selectionFunctions = {
     },
     // get_property
     [](GDBusConnection*, const gchar*, const gchar*, const gchar*, const gchar* propertyName, GError** error, gpointer userData) -> GVariant* {
-        RELEASE_ASSERT(!isMainThread());
         auto atspiObject = Ref { *static_cast<AccessibilityObjectAtspi*>(userData) };
         atspiObject->updateBackingStore();
 
@@ -80,151 +78,112 @@ GDBusInterfaceVTable AccessibilityObjectAtspi::s_selectionFunctions = {
 
 unsigned AccessibilityObjectAtspi::selectionCount() const
 {
-    return Accessibility::retrieveValueFromMainThread<unsigned>([this]() -> unsigned {
-        if (m_coreObject)
-            m_coreObject->updateBackingStore();
+    if (!m_coreObject)
+        return 0;
 
-        if (!m_coreObject)
-            return 0;
-
-        AccessibilityObject::AccessibilityChildrenVector selectedItems;
-        m_coreObject->selectedChildren(selectedItems);
-        return selectedItems.size();
-    });
+    AccessibilityObject::AccessibilityChildrenVector selectedItems;
+    m_coreObject->selectedChildren(selectedItems);
+    return selectedItems.size();
 }
 
 AccessibilityObjectAtspi* AccessibilityObjectAtspi::selectedChild(unsigned index) const
 {
-    auto* wrapper = Accessibility::retrieveValueFromMainThread<AccessibilityObjectAtspi*>([this, index]() -> AccessibilityObjectAtspi* {
-        if (m_coreObject)
-            m_coreObject->updateBackingStore();
+    if (!m_coreObject)
+        return nullptr;
 
-        if (!m_coreObject)
-            return nullptr;
+    AccessibilityObject::AccessibilityChildrenVector selectedItems;
+    m_coreObject->selectedChildren(selectedItems);
+    if (index >= selectedItems.size())
+        return nullptr;
 
-        AccessibilityObject::AccessibilityChildrenVector selectedItems;
-        m_coreObject->selectedChildren(selectedItems);
-        if (index >= selectedItems.size())
-            return nullptr;
-
-        return selectedItems[index]->wrapper();
-    });
-
-    return wrapper;
+    return selectedItems[index]->wrapper();
 }
 
 bool AccessibilityObjectAtspi::setChildSelected(unsigned index, bool selected) const
 {
-    return Accessibility::retrieveValueFromMainThread<bool>([this, index, selected]() -> bool {
-        if (m_coreObject)
-            m_coreObject->updateBackingStore();
+    if (!m_coreObject)
+        return false;
 
-        if (!m_coreObject)
-            return false;
+    const auto& children = m_coreObject->children();
+    if (index >= children.size())
+        return false;
 
-        const auto& children = m_coreObject->children();
-        if (index >= children.size())
-            return false;
+    if (!children[index]->canSetSelectedAttribute())
+        return false;
 
-        if (!children[index]->canSetSelectedAttribute())
-            return false;
-
-        children[index]->setSelected(selected);
-        return selected ? children[index]->isSelected() : !children[index]->isSelected();
-    });
+    children[index]->setSelected(selected);
+    return selected ? children[index]->isSelected() : !children[index]->isSelected();
 }
 
 bool AccessibilityObjectAtspi::deselectSelectedChild(unsigned index) const
 {
-    return Accessibility::retrieveValueFromMainThread<bool>([this, index]() -> bool {
-        if (m_coreObject)
-            m_coreObject->updateBackingStore();
+    if (!m_coreObject)
+        return false;
 
-        if (!m_coreObject)
-            return false;
+    AccessibilityObject::AccessibilityChildrenVector selectedItems;
+    m_coreObject->selectedChildren(selectedItems);
+    if (index >= selectedItems.size())
+        return false;
 
-        AccessibilityObject::AccessibilityChildrenVector selectedItems;
-        m_coreObject->selectedChildren(selectedItems);
-        if (index >= selectedItems.size())
-            return false;
+    if (!selectedItems[index]->canSetSelectedAttribute())
+        return false;
 
-        if (!selectedItems[index]->canSetSelectedAttribute())
-            return false;
-
-        selectedItems[index]->setSelected(false);
-        return !selectedItems[index]->isSelected();
-    });
+    selectedItems[index]->setSelected(false);
+    return !selectedItems[index]->isSelected();
 }
 
 bool AccessibilityObjectAtspi::isChildSelected(unsigned index) const
 {
-    return Accessibility::retrieveValueFromMainThread<bool>([this, index]() -> bool {
-        if (m_coreObject)
-            m_coreObject->updateBackingStore();
+    if (!m_coreObject)
+        return false;
 
-        if (!m_coreObject)
-            return false;
+    const auto& children = m_coreObject->children();
+    if (index >= children.size())
+        return false;
 
-        const auto& children = m_coreObject->children();
-        if (index >= children.size())
-            return false;
-
-        return children[index]->isSelected();
-    });
+    return children[index]->isSelected();
 }
 
 bool AccessibilityObjectAtspi::selectAll() const
 {
-    return Accessibility::retrieveValueFromMainThread<bool>([this]() -> bool {
-        if (m_coreObject)
-            m_coreObject->updateBackingStore();
+    if (!m_coreObject)
+        return false;
 
-        if (!m_coreObject)
-            return false;
+    if (!m_coreObject->isMultiSelectable() || !m_coreObject->canSetSelectedChildren())
+        return false;
 
-        if (!m_coreObject->isMultiSelectable() || !m_coreObject->canSetSelectedChildren())
-            return false;
+    const auto& children = m_coreObject->children();
+    unsigned selectableChildCount = 0;
+    for (const auto& child : children) {
+        if (child->canSetSelectedAttribute())
+            selectableChildCount++;
+    }
 
-        const auto& children = m_coreObject->children();
-        unsigned selectableChildCount = 0;
-        for (const auto& child : children) {
-            if (child->canSetSelectedAttribute())
-                selectableChildCount++;
-        }
+    if (!selectableChildCount)
+        return false;
 
-        if (!selectableChildCount)
-            return false;
-
-        m_coreObject->setSelectedChildren(children);
-        AccessibilityObject::AccessibilityChildrenVector selectedItems;
-        m_coreObject->selectedChildren(selectedItems);
-        return selectableChildCount == selectedItems.size();
-    });
+    m_coreObject->setSelectedChildren(children);
+    AccessibilityObject::AccessibilityChildrenVector selectedItems;
+    m_coreObject->selectedChildren(selectedItems);
+    return selectableChildCount == selectedItems.size();
 }
 
 bool AccessibilityObjectAtspi::clearSelection() const
 {
-    return Accessibility::retrieveValueFromMainThread<bool>([this]() -> bool {
-        if (m_coreObject)
-            m_coreObject->updateBackingStore();
+    if (!m_coreObject)
+        return false;
 
-        if (!m_coreObject)
-            return false;
+    if (!m_coreObject->canSetSelectedChildren())
+        return false;
 
-        if (!m_coreObject->canSetSelectedChildren())
-            return false;
-
-        m_coreObject->setSelectedChildren({ });
-        AccessibilityObject::AccessibilityChildrenVector selectedItems;
-        m_coreObject->selectedChildren(selectedItems);
-        return selectedItems.isEmpty();
-    });
+    m_coreObject->setSelectedChildren({ });
+    AccessibilityObject::AccessibilityChildrenVector selectedItems;
+    m_coreObject->selectedChildren(selectedItems);
+    return selectedItems.isEmpty();
 }
 
 void AccessibilityObjectAtspi::selectionChanged()
 {
-    RELEASE_ASSERT(isMainThread());
-
     // selectionChanged can be called multiple times by WebCore, so ensure we don't
     // emit it if the last one happened in the same run loop iteration.
     auto* source = g_main_current_source();

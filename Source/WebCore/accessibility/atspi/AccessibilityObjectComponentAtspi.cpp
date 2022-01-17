@@ -21,7 +21,6 @@
 #include "AccessibilityObjectAtspi.h"
 
 #if ENABLE(ACCESSIBILITY) && USE(ATSPI)
-#include "AXIsolatedObject.h"
 #include "AccessibilityAtspi.h"
 #include "AccessibilityAtspiEnums.h"
 #include "AccessibilityObjectInterface.h"
@@ -34,7 +33,6 @@ namespace WebCore {
 GDBusInterfaceVTable AccessibilityObjectAtspi::s_componentFunctions = {
     // method_call
     [](GDBusConnection*, const gchar*, const gchar*, const gchar*, const gchar* methodName, GVariant* parameters, GDBusMethodInvocation* invocation, gpointer userData) {
-        RELEASE_ASSERT(!isMainThread());
         auto atspiObject = Ref { *static_cast<AccessibilityObjectAtspi*>(userData) };
         atspiObject->updateBackingStore();
 
@@ -94,146 +92,121 @@ GDBusInterfaceVTable AccessibilityObjectAtspi::s_componentFunctions = {
 
 AccessibilityObjectAtspi* AccessibilityObjectAtspi::hitTest(const IntPoint& point, uint32_t coordinateType) const
 {
-    return Accessibility::retrieveValueFromMainThread<AccessibilityObjectAtspi*>([this, &point, coordinateType]() -> AccessibilityObjectAtspi* {
-        if (m_coreObject)
-            m_coreObject->updateBackingStore();
-
-        if (!m_coreObject)
-            return nullptr;
-
-        IntPoint convertedPoint = point;
-        if (auto* frameView = m_coreObject->documentFrameView()) {
-            switch (coordinateType) {
-            case Atspi::CoordinateType::ScreenCoordinates:
-                convertedPoint = frameView->screenToContents(point);
-                break;
-            case Atspi::CoordinateType::WindowCoordinates:
-                convertedPoint = frameView->windowToContents(point);
-                break;
-            case Atspi::CoordinateType::ParentCoordinates:
-                break;
-            }
-        }
-
-        m_coreObject->updateChildrenIfNecessary();
-        if (auto* coreObject = m_coreObject->accessibilityHitTest(convertedPoint))
-            return coreObject->wrapper();
-
+    if (!m_coreObject)
         return nullptr;
-    });
+
+    IntPoint convertedPoint = point;
+    if (auto* frameView = m_coreObject->documentFrameView()) {
+        switch (coordinateType) {
+        case Atspi::CoordinateType::ScreenCoordinates:
+            convertedPoint = frameView->screenToContents(point);
+            break;
+        case Atspi::CoordinateType::WindowCoordinates:
+            convertedPoint = frameView->windowToContents(point);
+            break;
+        case Atspi::CoordinateType::ParentCoordinates:
+            break;
+        }
+    }
+
+    m_coreObject->updateChildrenIfNecessary();
+    if (auto* coreObject = m_coreObject->accessibilityHitTest(convertedPoint))
+        return coreObject->wrapper();
+
+    return nullptr;
 }
 
 IntRect AccessibilityObjectAtspi::elementRect(uint32_t coordinateType) const
 {
-    return Accessibility::retrieveValueFromMainThread<IntRect>([this, coordinateType]() -> IntRect {
-        if (m_coreObject)
-            m_coreObject->updateBackingStore();
+    if (!m_coreObject)
+        return { };
 
-        if (!m_coreObject)
-            return { };
+    auto rect = snappedIntRect(m_coreObject->elementRect());
+    auto* frameView = m_coreObject->documentFrameView();
+    if (!frameView)
+        return rect;
 
-        auto rect = snappedIntRect(m_coreObject->elementRect());
-        auto* frameView = m_coreObject->documentFrameView();
-        if (!frameView)
-            return rect;
+    switch (coordinateType) {
+    case Atspi::CoordinateType::ScreenCoordinates:
+        return frameView->contentsToScreen(rect);
+    case Atspi::CoordinateType::WindowCoordinates:
+        return frameView->contentsToWindow(rect);
+    case Atspi::CoordinateType::ParentCoordinates:
+        return rect;
+    }
 
-        switch (coordinateType) {
-        case Atspi::CoordinateType::ScreenCoordinates:
-            return frameView->contentsToScreen(rect);
-        case Atspi::CoordinateType::WindowCoordinates:
-            return frameView->contentsToWindow(rect);
-        case Atspi::CoordinateType::ParentCoordinates:
-            return rect;
-        }
-
-        RELEASE_ASSERT_NOT_REACHED();
-    });
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 bool AccessibilityObjectAtspi::focus() const
 {
-    if (!m_axObject)
+    if (!m_coreObject)
         return false;
 
-    m_axObject->setFocused(true);
-    m_axObject->updateBackingStore();
-    return m_axObject->isFocused();
+    m_coreObject->setFocused(true);
+    m_coreObject->updateBackingStore();
+    return m_coreObject->isFocused();
 }
 
 float AccessibilityObjectAtspi::opacity() const
 {
-    return Accessibility::retrieveValueFromMainThread<float>([this]() -> float {
-        if (m_coreObject)
-            m_coreObject->updateBackingStore();
-
-        if (!m_coreObject)
-            return 1;
-
-        if (auto* renderer = m_coreObject->renderer())
-            return renderer->style().opacity();
-
+    if (!m_coreObject)
         return 1;
-    });
+
+    if (auto* renderer = m_coreObject->renderer())
+        return renderer->style().opacity();
+
+    return 1;
 }
 
 void AccessibilityObjectAtspi::scrollToMakeVisible(uint32_t scrollType) const
 {
-    Accessibility::performFunctionOnMainThread([this, scrollType] {
-        if (m_coreObject)
-            m_coreObject->updateBackingStore();
+    if (!m_coreObject)
+        return;
 
-        if (!m_coreObject)
-            return;
+    ScrollAlignment alignX;
+    ScrollAlignment alignY;
+    switch (scrollType) {
+    case Atspi::ScrollType::TopLeft:
+        alignX = ScrollAlignment::alignLeftAlways;
+        alignY = ScrollAlignment::alignTopAlways;
+        break;
+    case Atspi::ScrollType::BottomRight:
+        alignX = ScrollAlignment::alignRightAlways;
+        alignY = ScrollAlignment::alignBottomAlways;
+        break;
+    case Atspi::ScrollType::TopEdge:
+    case Atspi::ScrollType::BottomEdge:
+        // Align to a particular edge is not supported, it's always the closest edge.
+        alignX = ScrollAlignment::alignCenterIfNeeded;
+        alignY = ScrollAlignment::alignToEdgeIfNeeded;
+        break;
+    case Atspi::ScrollType::LeftEdge:
+    case Atspi::ScrollType::RightEdge:
+        // Align to a particular edge is not supported, it's always the closest edge.
+        alignX = ScrollAlignment::alignToEdgeIfNeeded;
+        alignY = ScrollAlignment::alignCenterIfNeeded;
+        break;
+    case Atspi::ScrollType::Anywhere:
+        alignX = ScrollAlignment::alignCenterIfNeeded;
+        alignY = ScrollAlignment::alignCenterIfNeeded;
+        break;
+    }
 
-        ScrollAlignment alignX;
-        ScrollAlignment alignY;
-        switch (scrollType) {
-        case Atspi::ScrollType::TopLeft:
-            alignX = ScrollAlignment::alignLeftAlways;
-            alignY = ScrollAlignment::alignTopAlways;
-            break;
-        case Atspi::ScrollType::BottomRight:
-            alignX = ScrollAlignment::alignRightAlways;
-            alignY = ScrollAlignment::alignBottomAlways;
-            break;
-        case Atspi::ScrollType::TopEdge:
-        case Atspi::ScrollType::BottomEdge:
-            // Align to a particular edge is not supported, it's always the closest edge.
-            alignX = ScrollAlignment::alignCenterIfNeeded;
-            alignY = ScrollAlignment::alignToEdgeIfNeeded;
-            break;
-        case Atspi::ScrollType::LeftEdge:
-        case Atspi::ScrollType::RightEdge:
-            // Align to a particular edge is not supported, it's always the closest edge.
-            alignX = ScrollAlignment::alignToEdgeIfNeeded;
-            alignY = ScrollAlignment::alignCenterIfNeeded;
-            break;
-        case Atspi::ScrollType::Anywhere:
-            alignX = ScrollAlignment::alignCenterIfNeeded;
-            alignY = ScrollAlignment::alignCenterIfNeeded;
-            break;
-        }
-
-        m_coreObject->scrollToMakeVisible({ SelectionRevealMode::Reveal, alignX, alignY, ShouldAllowCrossOriginScrolling::Yes });
-    });
+    m_coreObject->scrollToMakeVisible({ SelectionRevealMode::Reveal, alignX, alignY, ShouldAllowCrossOriginScrolling::Yes });
 }
 
 void AccessibilityObjectAtspi::scrollToPoint(const IntPoint& point, uint32_t coordinateType) const
 {
-    Accessibility::performFunctionOnMainThread([this, point, coordinateType] {
-        if (m_coreObject)
-            m_coreObject->updateBackingStore();
+    if (!m_coreObject)
+        return;
 
-        if (!m_coreObject)
-            return;
-
-        IntPoint convertedPoint(point);
-        if (coordinateType == Atspi::CoordinateType::ScreenCoordinates) {
-            if (auto* frameView = m_coreObject->documentFrameView())
-                convertedPoint = frameView->contentsToWindow(frameView->screenToContents(point));
-        }
-        m_coreObject->scrollToGlobalPoint(convertedPoint);
-    });
+    IntPoint convertedPoint(point);
+    if (coordinateType == Atspi::CoordinateType::ScreenCoordinates) {
+        if (auto* frameView = m_coreObject->documentFrameView())
+            convertedPoint = frameView->contentsToWindow(frameView->screenToContents(point));
+    }
+    m_coreObject->scrollToGlobalPoint(convertedPoint);
 }
 
 } // namespace WebCore

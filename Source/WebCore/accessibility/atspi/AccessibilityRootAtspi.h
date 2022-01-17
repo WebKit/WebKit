@@ -21,9 +21,8 @@
 
 #if ENABLE(ACCESSIBILITY) && USE(ATSPI)
 #include "IntRect.h"
-#include <wtf/Atomics.h>
 #include <wtf/FastMalloc.h>
-#include <wtf/ThreadSafeRefCounted.h>
+#include <wtf/RefCounted.h>
 #include <wtf/WeakPtr.h>
 
 typedef struct _GDBusInterfaceVTable GDBusInterfaceVTable;
@@ -33,7 +32,7 @@ namespace WebCore {
 class AccessibilityObjectAtspi;
 class Page;
 
-class AccessibilityRootAtspi final : public ThreadSafeRefCounted<AccessibilityRootAtspi, WTF::DestructionThread::Main> {
+class AccessibilityRootAtspi final : public RefCounted<AccessibilityRootAtspi> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static Ref<AccessibilityRootAtspi> create(Page&);
@@ -43,7 +42,7 @@ public:
     void unregisterObject();
     void registerTree();
     void didUnregisterTree();
-    bool isTreeRegistered() const { return m_isTreeRegistered.load(); }
+    bool isTreeRegistered() const { return m_isTreeRegistered; }
     void setPath(String&&);
 
     const String& path() const { return m_path; }
@@ -70,7 +69,7 @@ private:
     String m_path;
     String m_parentUniqueName;
     String m_parentPath;
-    Atomic<bool> m_isTreeRegistered { false };
+    bool m_isTreeRegistered { false };
     mutable bool m_inChild { false };
 };
 

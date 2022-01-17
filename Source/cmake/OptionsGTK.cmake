@@ -271,9 +271,7 @@ if (NOT EXISTS "${TOOLS_DIR}/glib/apply-build-revision-to-files.py")
     set(BUILD_REVISION "tarball")
 endif ()
 
-if (USE_ATSPI)
-    SET_AND_EXPOSE_TO_BUILD(ENABLE_ACCESSIBILITY_ISOLATED_TREE TRUE)
-else ()
+if (NOT USE_ATSPI)
     SET_AND_EXPOSE_TO_BUILD(USE_ATK TRUE)
 endif ()
 

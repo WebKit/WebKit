@@ -32,7 +32,6 @@ namespace WebCore {
 GDBusInterfaceVTable AccessibilityObjectAtspi::s_hyperlinkFunctions = {
     // method_call
     [](GDBusConnection*, const gchar*, const gchar*, const gchar*, const gchar* methodName, GVariant* parameters, GDBusMethodInvocation* invocation, gpointer userData) {
-        RELEASE_ASSERT(!isMainThread());
         auto atspiObject = Ref { *static_cast<AccessibilityObjectAtspi*>(userData) };
         atspiObject->updateBackingStore();
 
@@ -45,11 +44,10 @@ GDBusInterfaceVTable AccessibilityObjectAtspi::s_hyperlinkFunctions = {
             g_variant_get(parameters, "(i)", &index);
             g_dbus_method_invocation_return_value(invocation, g_variant_new("(s)", !index ? atspiObject->url().string().utf8().data() : ""));
         } else if (!g_strcmp0(methodName, "IsValid"))
-            g_dbus_method_invocation_return_value(invocation, g_variant_new("(b)", atspiObject->m_axObject ? TRUE : FALSE));
+            g_dbus_method_invocation_return_value(invocation, g_variant_new("(b)", atspiObject->m_coreObject ? TRUE : FALSE));
     },
     // get_property
     [](GDBusConnection*, const gchar*, const gchar*, const gchar*, const gchar* propertyName, GError** error, gpointer userData) -> GVariant* {
-        RELEASE_ASSERT(!isMainThread());
         auto atspiObject = Ref { *static_cast<AccessibilityObjectAtspi*>(userData) };
         atspiObject->updateBackingStore();
 
@@ -71,43 +69,37 @@ GDBusInterfaceVTable AccessibilityObjectAtspi::s_hyperlinkFunctions = {
 
 URL AccessibilityObjectAtspi::url() const
 {
-    AXCoreObject* axObject = isMainThread() ? m_coreObject : m_axObject;
-    return axObject ? axObject->url() : URL();
+    return m_coreObject ? m_coreObject->url() : URL();
 }
 
 unsigned AccessibilityObjectAtspi::offsetInParent() const
 {
-    return Accessibility::retrieveValueFromMainThread<unsigned>([this]() -> unsigned {
-        if (m_coreObject)
-            m_coreObject->updateBackingStore();
+    if (!m_coreObject)
+        return 0;
 
-        if (!m_coreObject)
-            return 0;
+    auto* parent = m_coreObject->parentObjectUnignored();
+    if (!parent || !parent->wrapper())
+        return 0;
 
-        auto* parent = m_coreObject->parentObjectUnignored();
-        if (!parent || !parent->wrapper())
-            return 0;
+    int index = -1;
+    const auto& children = parent->children();
+    for (const auto& child : children) {
+        if (child->accessibilityIsIgnored())
+            continue;
 
-        int index = -1;
-        const auto& children = parent->children();
-        for (const auto& child : children) {
-            if (child->accessibilityIsIgnored())
-                continue;
+        auto* wrapper = child->wrapper();
+        if (!wrapper || !wrapper->interfaces().contains(Interface::Hyperlink))
+            continue;
 
-            auto* wrapper = child->wrapper();
-            if (!wrapper || !wrapper->interfaces().contains(Interface::Hyperlink))
-                continue;
+        index++;
+        if (wrapper == this)
+            break;
+    }
 
-            index++;
-            if (wrapper == this)
-                break;
-        }
+    if (index == -1)
+        return 0;
 
-        if (index == -1)
-            return 0;
-
-        return parent->wrapper()->characterOffset(objectReplacementCharacter, index).value_or(0);
-    });
+    return parent->wrapper()->characterOffset(objectReplacementCharacter, index).value_or(0);
 }
 
 } // namespace WebCore

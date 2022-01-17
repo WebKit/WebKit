@@ -24,8 +24,8 @@
 #include <wtf/FastMalloc.h>
 #include <wtf/HashMap.h>
 #include <wtf/ListHashSet.h>
+#include <wtf/RunLoop.h>
 #include <wtf/Vector.h>
-#include <wtf/WorkQueue.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/GUniquePtr.h>
 
@@ -47,8 +47,6 @@ public:
     WEBCORE_EXPORT static AccessibilityAtspi& singleton();
 
     void connect(const String&);
-
-    WEBCORE_EXPORT RunLoop& runLoop() const;
 
     const char* uniqueName() const;
     GVariant* nullReference() const;
@@ -92,8 +90,15 @@ public:
 #endif
 
 private:
-    AccessibilityAtspi();
+    AccessibilityAtspi() = default;
 
+    struct PendingRootRegistration {
+        Ref<AccessibilityRootAtspi> root;
+        Vector<std::pair<GDBusInterfaceInfo*, GDBusInterfaceVTable*>> interfaces;
+        CompletionHandler<void(const String&)> completionHandler;
+    };
+
+    void didConnect(GRefPtr<GDBusConnection>&&);
     void initializeRegistry();
     void addEventListener(const char* dbusName, const char* eventName);
     void removeEventListener(const char* dbusName, const char* eventName);
@@ -122,9 +127,10 @@ private:
 
     static GDBusInterfaceVTable s_cacheFunctions;
 
-    Ref<WorkQueue> m_queue;
+    bool m_isConnecting { false };
     GRefPtr<GDBusConnection> m_connection;
     GRefPtr<GDBusProxy> m_registry;
+    Vector<PendingRootRegistration> m_pendingRootRegistrations;
     HashMap<CString, Vector<GUniquePtr<char*>>> m_eventListeners;
     HashMap<AccessibilityRootAtspi*, Vector<unsigned, 2>> m_rootObjects;
     HashMap<AccessibilityObjectAtspi*, Vector<unsigned, 20>> m_atspiObjects;
