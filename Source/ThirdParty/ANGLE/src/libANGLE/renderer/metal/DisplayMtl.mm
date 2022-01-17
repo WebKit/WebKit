@@ -245,15 +245,15 @@ mtl::AutoObjCPtr<id<MTLDevice>> DisplayMtl::getMetalDeviceMatchingAttribute(
     {
         if (device.removable)
         {
-            [externalGPUs.get() addObject:device];
+            [externalGPUs addObject:device];
         }
         else if (device.lowPower)
         {
-            [integratedGPUs.get() addObject:device];
+            [integratedGPUs addObject:device];
         }
         else
         {
-            [discreteGPUs.get() addObject:device];
+            [discreteGPUs addObject:device];
         }
     }
     // TODO(kpiddington: External GPU support. Do we prefer high power / low bandwidth for general
