@@ -1314,6 +1314,7 @@ void Page::didCommitLoad()
 
 #if ENABLE(IMAGE_ANALYSIS)
     resetTextRecognitionResults();
+    resetImageAnalysisQueue();
 #endif
 }
 
@@ -3615,8 +3616,17 @@ void Page::didFinishLoadingImageForElement(HTMLImageElement& element)
             return;
 
         frame->editor().revealSelectionIfNeededAfterLoadingImageForElement(element);
-        if (auto* page = frame->page(); element->document().frame() == frame)
+
+        if (element->document().frame() != frame)
+            return;
+
+        if (auto* page = frame->page()) {
+#if ENABLE(IMAGE_ANALYSIS)
+            if (auto* queue = page->imageAnalysisQueueIfExists())
+                queue->enqueueIfNeeded(element);
+#endif
             page->chrome().client().didFinishLoadingImageForElement(element);
+        }
     });
 }
 
@@ -3754,6 +3764,12 @@ ImageAnalysisQueue& Page::imageAnalysisQueue()
     if (!m_imageAnalysisQueue)
         m_imageAnalysisQueue = makeUnique<ImageAnalysisQueue>(*this);
     return *m_imageAnalysisQueue;
+}
+
+void Page::resetImageAnalysisQueue()
+{
+    if (auto previousQueue = std::exchange(m_imageAnalysisQueue, { }))
+        previousQueue->clear();
 }
 
 void Page::updateElementsWithTextRecognitionResults()

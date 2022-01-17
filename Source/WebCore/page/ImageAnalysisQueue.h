@@ -29,12 +29,13 @@
 
 #include <wtf/Deque.h>
 #include <wtf/FastMalloc.h>
+#include <wtf/WeakHashSet.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
 class Document;
-class HTMLElement;
+class HTMLImageElement;
 class Page;
 class Timer;
 
@@ -45,19 +46,18 @@ public:
     ~ImageAnalysisQueue();
 
     WEBCORE_EXPORT void enqueueAllImages(Document&, const String& identifier);
-    WEBCORE_EXPORT void clear();
+    void clear();
+
+    void enqueueIfNeeded(HTMLImageElement&);
 
 private:
     void resumeProcessing();
 
-    struct Task {
-        WeakPtr<HTMLElement> element;
-        String identifier;
-    };
-
+    String m_identifier;
     WeakPtr<Page> m_page;
     Timer m_resumeProcessingTimer;
-    Deque<Task> m_queue;
+    WeakHashSet<HTMLImageElement> m_queuedElements;
+    Deque<WeakPtr<HTMLImageElement>> m_queue;
     unsigned m_pendingRequestCount { 0 };
 };
 

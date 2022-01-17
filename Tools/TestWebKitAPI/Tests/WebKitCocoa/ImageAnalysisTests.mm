@@ -104,15 +104,21 @@ static RetainPtr<TestWKWebView> createWebViewWithTextRecognitionEnhancements()
     return adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 300, 300) configuration:configuration.get()]);
 }
 
-static void swizzledProcessRequestWithResults(id, SEL, VKImageAnalyzerRequest *, void (^)(double progress), void (^completion)(VKImageAnalysis *, NSError *))
+static void processRequestWithResults(id, SEL, VKImageAnalyzerRequest *, void (^)(double progress), void (^completion)(VKImageAnalysis *, NSError *))
 {
     gDidProcessRequestCount++;
     completion(createImageAnalysisWithSimpleFixedResults().get(), nil);
 }
 
+template <typename FunctionType>
+InstanceMethodSwizzler makeImageAnalysisRequestSwizzler(FunctionType function)
+{
+    return InstanceMethodSwizzler { PAL::getVKImageAnalyzerClass(), @selector(processRequest:progressHandler:completionHandler:), reinterpret_cast<IMP>(function) };
+}
+
 #if PLATFORM(IOS_FAMILY)
 
-static void swizzledProcessRequestWithError(id, SEL, VKImageAnalyzerRequest *, void (^)(double progress), void (^completion)(VKImageAnalysis *analysis, NSError *error))
+static void processRequestWithError(id, SEL, VKImageAnalyzerRequest *, void (^)(double progress), void (^completion)(VKImageAnalysis *analysis, NSError *error))
 {
     gDidProcessRequestCount++;
     completion(nil, [NSError errorWithDomain:NSCocoaErrorDomain code:1 userInfo:nil]);
@@ -120,7 +126,7 @@ static void swizzledProcessRequestWithError(id, SEL, VKImageAnalyzerRequest *, v
 
 TEST(ImageAnalysisTests, DoNotAnalyzeImagesInEditableContent)
 {
-    InstanceMethodSwizzler imageAnalysisRequestSwizzler { PAL::getVKImageAnalyzerClass(), @selector(processRequest:progressHandler:completionHandler:), reinterpret_cast<IMP>(swizzledProcessRequestWithError) };
+    auto requestSwizzler = makeImageAnalysisRequestSwizzler(processRequestWithError);
 
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 400, 400)]);
     [webView _setEditable:YES];
@@ -130,7 +136,7 @@ TEST(ImageAnalysisTests, DoNotAnalyzeImagesInEditableContent)
 
 TEST(ImageAnalysisTests, HandleImageAnalyzerErrors)
 {
-    InstanceMethodSwizzler imageAnalysisRequestSwizzler { PAL::getVKImageAnalyzerClass(), @selector(processRequest:progressHandler:completionHandler:), reinterpret_cast<IMP>(swizzledProcessRequestWithError) };
+    auto requestSwizzler = makeImageAnalysisRequestSwizzler(processRequestWithError);
 
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 400, 400)]);
     [webView synchronouslyLoadTestPageNamed:@"image"];
@@ -140,7 +146,7 @@ TEST(ImageAnalysisTests, HandleImageAnalyzerErrors)
 
 TEST(ImageAnalysisTests, DoNotCrashWhenHitTestingOutsideOfWebView)
 {
-    InstanceMethodSwizzler imageAnalysisRequestSwizzler { PAL::getVKImageAnalyzerClass(), @selector(processRequest:progressHandler:completionHandler:), reinterpret_cast<IMP>(swizzledProcessRequestWithError) };
+    auto requestSwizzler = makeImageAnalysisRequestSwizzler(processRequestWithError);
 
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 400, 400)]);
     [webView synchronouslyLoadTestPageNamed:@"image"];
@@ -151,7 +157,7 @@ TEST(ImageAnalysisTests, DoNotCrashWhenHitTestingOutsideOfWebView)
 
 TEST(ImageAnalysisTests, AvoidRedundantTextRecognitionRequests)
 {
-    InstanceMethodSwizzler imageAnalysisRequestSwizzler { PAL::getVKImageAnalyzerClass(), @selector(processRequest:progressHandler:completionHandler:), reinterpret_cast<IMP>(swizzledProcessRequestWithResults) };
+    auto requestSwizzler = makeImageAnalysisRequestSwizzler(processRequestWithResults);
 
     auto webView = createWebViewWithTextRecognitionEnhancements();
     [webView synchronouslyLoadTestPageNamed:@"image"];
@@ -166,7 +172,7 @@ TEST(ImageAnalysisTests, AvoidRedundantTextRecognitionRequests)
 
 TEST(ImageAnalysisTests, StartImageAnalysisWithoutIdentifier)
 {
-    InstanceMethodSwizzler imageAnalysisRequestSwizzler { PAL::getVKImageAnalyzerClass(), @selector(processRequest:progressHandler:completionHandler:), reinterpret_cast<IMP>(swizzledProcessRequestWithResults) };
+    auto requestSwizzler = makeImageAnalysisRequestSwizzler(processRequestWithResults);
 
     auto webView = createWebViewWithTextRecognitionEnhancements();
     [webView synchronouslyLoadTestPageNamed:@"multiple-images"];
@@ -177,6 +183,45 @@ TEST(ImageAnalysisTests, StartImageAnalysisWithoutIdentifier)
     EXPECT_EQ(overlaysAsText.count, 5U);
     for (NSString *overlayText in overlaysAsText)
         EXPECT_WK_STREQ(overlayText, @"Foo bar");
+}
+
+TEST(ImageAnalysisTests, AnalyzeDynamicallyLoadedImages)
+{
+    auto requestSwizzler = makeImageAnalysisRequestSwizzler(processRequestWithResults);
+
+    auto webView = createWebViewWithTextRecognitionEnhancements();
+    [webView synchronouslyLoadTestPageNamed:@"multiple-images"];
+    [webView _startImageAnalysis:nil];
+    [webView waitForImageAnalysisRequests:5];
+
+    [webView objectByEvaluatingJavaScript:@"appendImage('apple.gif')"];
+    [webView waitForImageAnalysisRequests:6];
+
+    [webView objectByEvaluatingJavaScript:@"appendImage('icon.png')"];
+    [webView waitForImageAnalysisRequests:7];
+
+    [webView objectByEvaluatingJavaScript:@"hideAllImages()"];
+    [webView waitForNextPresentationUpdate];
+    [webView objectByEvaluatingJavaScript:@"showAllImages()"];
+    [webView waitForNextPresentationUpdate];
+    EXPECT_EQ(gDidProcessRequestCount, 7U);
+}
+
+TEST(ImageAnalysisTests, ResetImageAnalysisAfterNavigation)
+{
+    auto requestSwizzler = makeImageAnalysisRequestSwizzler(processRequestWithResults);
+
+    auto webView = createWebViewWithTextRecognitionEnhancements();
+    [webView synchronouslyLoadTestPageNamed:@"multiple-images"];
+    [webView _startImageAnalysis:nil];
+    [webView waitForImageAnalysisRequests:5];
+
+    [webView synchronouslyLoadTestPageNamed:@"simple"];
+    [webView waitForNextPresentationUpdate];
+
+    [webView synchronouslyLoadTestPageNamed:@"multiple-images"];
+    [webView waitForNextPresentationUpdate];
+    EXPECT_EQ(gDidProcessRequestCount, 5U);
 }
 
 } // namespace TestWebKitAPI

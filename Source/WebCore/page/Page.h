@@ -915,6 +915,7 @@ public:
     WEBCORE_EXPORT bool hasCachedTextRecognitionResult(const HTMLElement&) const;
     void cacheTextRecognitionResult(const HTMLElement&, const IntRect& containerRect, const TextRecognitionResult&);
     void resetTextRecognitionResult(const HTMLElement&);
+    void resetImageAnalysisQueue();
 #endif
 
     WEBCORE_EXPORT PermissionController& permissionController();

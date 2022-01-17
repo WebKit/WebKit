@@ -19,6 +19,23 @@
                 }
                 return result;
             }
+
+            function appendImage(imageSource)
+            {
+                const image = document.createElement("img");
+                image.src = imageSource;
+                document.body.appendChild(image);
+            }
+
+            function hideAllImages()
+            {
+                Array.from(document.images).forEach(image => image.style.setProperty("display", "none"));
+            }
+
+            function showAllImages()
+            {
+                Array.from(document.images).forEach(image => image.style.removeProperty("display"));
+            }
         </script>
     </head>
     <body style='margin: 0px;'>
