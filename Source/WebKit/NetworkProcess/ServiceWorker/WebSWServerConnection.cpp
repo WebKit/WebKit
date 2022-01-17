@@ -175,6 +175,7 @@ std::unique_ptr<ServiceWorkerFetchTask> WebSWServerConnection::createFetchTask(N
 
         serviceWorkerRegistrationIdentifier = registration->identifier();
         controlClient(*loader.parameters().options.clientIdentifier, *registration, request);
+        loader.setResultingClientIdentifier(loader.parameters().options.clientIdentifier->toString());
     } else {
         if (!loader.parameters().serviceWorkerRegistrationIdentifier)
             return nullptr;

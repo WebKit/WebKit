@@ -35,6 +35,7 @@
 #include <wtf/ASCIICType.h>
 #include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/HexNumber.h>
+#include <wtf/text/StringToIntegerConversion.h>
 
 #if OS(DARWIN)
 #include <sys/sysctl.h>
@@ -45,9 +46,15 @@ namespace WTF {
 UUID::UUID()
 {
     static_assert(sizeof(m_data) == 16);
+    auto* data = reinterpret_cast<unsigned char*>(&m_data);
+
     do {
-        cryptographicallyRandomValues(reinterpret_cast<unsigned char*>(&m_data), 16);
+        cryptographicallyRandomValues(data, 16);
     } while (m_data == emptyValue || m_data == deletedValue);
+
+    // We sanitize the value so as not loosing any data when going to Version 4 UUIDs.
+    data[5] &= 0x0f;
+    data[11] &= 0xcf;
 }
 
 unsigned UUID::hash() const
@@ -55,10 +62,9 @@ unsigned UUID::hash() const
     return StringHasher::hashMemory(reinterpret_cast<const unsigned char*>(&m_data), 16);
 }
 
-String createCanonicalUUIDString()
+String UUID::toString() const
 {
-    unsigned randomData[4];
-    cryptographicallyRandomValues(reinterpret_cast<unsigned char*>(randomData), sizeof(randomData));
+    auto* randomData = reinterpret_cast<const unsigned*>(&m_data);
 
     // Format as Version 4 UUID.
     return makeString(
@@ -74,6 +80,65 @@ String createCanonicalUUIDString()
         hex(randomData[2] & 0x0000ffff, 4, Lowercase),
         hex(randomData[3], 8, Lowercase)
     );
+}
+
+std::optional<UUID> UUID::parse(StringView value)
+{
+    // Version 4 UUIDs have the form xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx with hexadecimal digits for x and one of 8, 9, A, or B for y.
+    if (value.length() != 36)
+        return { };
+
+    if (value[8] != '-' || value[13] != '-'  || value[14] != '4' || value[18] != '-' || value[23] != '-')
+        return { };
+
+    unsigned y = value[19];
+    if (y == '8' || y == '9')
+        y = y - '8';
+    else if (y == 'a' || y == 'A')
+        y = 2;
+    else if (y == 'b' || y == 'B')
+        y = 3;
+    else
+        return { };
+
+    auto firstValue = parseInteger<unsigned>(value.substring(0, 8), 16);
+    if (!firstValue)
+        return { };
+
+    auto secondValue = parseInteger<unsigned>(value.substring(9, 4), 16);
+    if (!secondValue)
+        return { };
+
+    auto thirdValue = parseInteger<unsigned>(value.substring(15, 3), 16);
+    if (!thirdValue)
+        return { };
+
+    auto fourthValue = parseInteger<unsigned>(value.substring(20, 3), 16);
+    if (!fourthValue)
+        return { };
+
+    auto fifthValue = parseInteger<unsigned>(value.substring(24, 4), 16);
+    if (!fifthValue)
+        return { };
+
+    auto sixthValue = parseInteger<unsigned>(value.substring(28, 8), 16);
+    if (!sixthValue)
+        return { };
+
+    UInt128 uuidValue;
+
+    auto* data = reinterpret_cast<unsigned*>(&uuidValue);
+    data[0] = *firstValue;
+    data[1] = (*secondValue << 16) | *thirdValue;
+    data[2] = ((*fourthValue << 16) | *fifthValue) + (y << 30);
+    data[3] = *sixthValue;
+
+    return UUID(WTFMove(uuidValue));
+}
+
+String createCanonicalUUIDString()
+{
+    return UUID::create().toString();
 }
 
 String bootSessionUUIDString()
@@ -97,31 +162,7 @@ String bootSessionUUIDString()
 
 bool isVersion4UUID(StringView value)
 {
-    // Version 4 UUIDs have the form xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx with hexadecimal digits for x and one of 8, 9, A, or B for y.
-    if (value.length() != 36)
-        return false;
-
-    for (auto cptr = 0; cptr < 36; ++cptr) {
-        if (cptr == 8 || cptr == 13 || cptr == 18 || cptr == 23) {
-            if (value[cptr] != '-')
-                return false;
-            continue;
-        }
-        if (cptr == 14) {
-            if (value[cptr] != '4')
-                return false;
-            continue;
-        }
-        if (cptr == 19) {
-            auto y = value[cptr];
-            if (y != '8' && y != '9' && y != 'a' && y != 'A' && y != 'b' && y != 'B')
-                return false;
-            continue;
-        }
-        if (!isASCIIHexDigit(value[cptr]))
-            return false;
-    }
-    return true;
+    return !!UUID::parse(value);
 }
 
 } // namespace WTF

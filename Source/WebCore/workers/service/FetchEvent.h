@@ -49,7 +49,7 @@ public:
     struct Init : ExtendableEventInit {
         RefPtr<FetchRequest> request;
         String clientId;
-        String reservedClientId;
+        String resultingClientId;
         String targetClientId;
         RefPtr<DOMPromise> handled;
     };
@@ -71,7 +71,7 @@ public:
 
     FetchRequest& request() { return m_request.get(); }
     const String& clientId() const { return m_clientId; }
-    const String& reservedClientId() const { return m_reservedClientId; }
+    const String& resultingClientId() const { return m_resultingClientId; }
     const String& targetClientId() const { return m_targetClientId; }
     DOMPromise& handled() const { return m_handled.get(); }
 
@@ -93,7 +93,7 @@ private:
 
     Ref<FetchRequest> m_request;
     String m_clientId;
-    String m_reservedClientId;
+    String m_resultingClientId;
     String m_targetClientId;
 
     bool m_respondWithEntered { false };

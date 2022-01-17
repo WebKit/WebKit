@@ -33,6 +33,7 @@
 #include "PushSubscription.h"
 #include "PushSubscriptionData.h"
 #include "SWContextManager.h"
+#include "ServiceWorkerClient.h"
 #include "ServiceWorkerRegistration.h"
 #include <wtf/ProcessID.h>
 
@@ -191,6 +192,11 @@ RefPtr<PushSubscription> ServiceWorkerInternals::createPushSubscription(const St
 bool ServiceWorkerInternals::fetchEventIsSameSite(FetchEvent& event)
 {
     return event.request().internalRequest().isSameSite();
+}
+
+String ServiceWorkerInternals::serviceWorkerClientInternalIdentifier(const ServiceWorkerClient& client)
+{
+    return client.identifier().toString();
 }
 
 } // namespace WebCore

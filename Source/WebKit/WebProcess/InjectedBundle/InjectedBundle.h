@@ -110,7 +110,7 @@ public:
     std::optional<UUID> webNotificationID(JSContextRef, JSValueRef);
     Ref<API::Data> createWebDataFromUint8Array(JSContextRef, JSValueRef);
     
-    typedef HashMap<uint64_t, String> DocumentIDToURLMap;
+    typedef HashMap<UUID, String> DocumentIDToURLMap;
     DocumentIDToURLMap liveDocumentURLs(bool excludeDocumentsInPageGroupPages);
 
     // Garbage collection API

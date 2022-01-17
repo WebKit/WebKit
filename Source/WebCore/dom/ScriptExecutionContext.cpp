@@ -112,7 +112,7 @@ public:
 };
 
 ScriptExecutionContext::ScriptExecutionContext()
-    : m_identifier(ScriptExecutionContextIdentifier::generateThreadSafe())
+    : m_identifier(ScriptExecutionContextIdentifier::generate())
 {
     Locker locker { allScriptExecutionContextsMapLock };
     allScriptExecutionContextsMap().add(m_identifier, this);

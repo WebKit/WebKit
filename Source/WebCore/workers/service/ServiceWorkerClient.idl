@@ -27,6 +27,7 @@
     Conditional=SERVICE_WORKER,
     CustomToJSObject,
     EnabledAtRuntime=ServiceWorkerEnabled,
+    ExportMacro=WEBCORE_EXPORT,
     Exposed=ServiceWorker,
     InterfaceName=Client,
 ] interface ServiceWorkerClient {

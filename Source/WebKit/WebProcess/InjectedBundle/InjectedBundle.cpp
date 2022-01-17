@@ -338,14 +338,14 @@ InjectedBundle::DocumentIDToURLMap InjectedBundle::liveDocumentURLs(bool exclude
     DocumentIDToURLMap result;
 
     for (const auto* document : Document::allDocuments())
-        result.add(document->identifier().object().toUInt64(), document->url().string());
+        result.add(document->identifier().object(), document->url().string());
 
     if (excludeDocumentsInPageGroupPages) {
         Page::forEachPage([&](Page& page) {
             for (auto* frame = &page.mainFrame(); frame; frame = frame->tree().traverseNext()) {
                 if (!frame->document())
                     continue;
-                result.remove(frame->document()->identifier().object().toUInt64());
+                result.remove(frame->document()->identifier().object());
             }
         });
     }

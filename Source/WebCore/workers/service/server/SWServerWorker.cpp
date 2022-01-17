@@ -231,6 +231,22 @@ std::optional<ServiceWorkerClientData> SWServerWorker::findClientByIdentifier(co
     return m_server->serviceWorkerClientWithOriginByID(origin(), clientId);
 }
 
+void SWServerWorker::findClientByVisibleIdentifier(const String& clientIdentifier, CompletionHandler<void(std::optional<WebCore::ServiceWorkerClientData>&&)>&& callback)
+{
+    if (!m_server) {
+        callback({ });
+        return;
+    }
+
+    auto internalIdentifier = m_server->clientIdFromVisibleClientId(clientIdentifier);
+    if (!internalIdentifier) {
+        callback({ });
+        return;
+    }
+
+    callback(findClientByIdentifier(internalIdentifier));
+}
+
 void SWServerWorker::matchAll(const ServiceWorkerClientQueryOptions& options, ServiceWorkerClientsMatchAllCallback&& callback)
 {
     ASSERT(m_server);

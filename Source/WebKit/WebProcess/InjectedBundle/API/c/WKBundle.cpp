@@ -129,7 +129,7 @@ WKArrayRef WKBundleGetLiveDocumentURLsForTesting(WKBundleRef bundleRef, bool exc
         auto documentIDKey = adoptWK(WKStringCreateWithUTF8CString("id"));
         auto documentURLKey = adoptWK(WKStringCreateWithUTF8CString("url"));
 
-        auto documentIDValue = adoptWK(WKUInt64Create(it.key));
+        auto documentIDValue = adoptWK(WebKit::toCopiedAPI(it.key.toString()));
         auto documentURLValue = adoptWK(WebKit::toCopiedAPI(it.value));
 
         WKDictionarySetItem(urlInfo.get(), documentIDKey.get(), documentIDValue.get());

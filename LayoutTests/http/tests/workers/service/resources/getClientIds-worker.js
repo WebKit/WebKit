@@ -3,7 +3,7 @@ self.addEventListener("message", (event) => {
     clients.matchAll({ includeUncontrolled : true }).then(function(clients) {
         let ids = [];
         for (let client of clients)
-            ids.push(client.id);
+            ids.push(self.internals.serviceWorkerClientInternalIdentifier(client));
         source.postMessage(ids);
     });
 });

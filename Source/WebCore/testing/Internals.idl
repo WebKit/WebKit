@@ -920,8 +920,8 @@ typedef (FetchRequest or FetchResponse) FetchObject;
     [Conditional=MEDIA_STREAM] boolean isMockRealtimeMediaSourceCenterEnabled();
     [Conditional=MEDIA_STREAM] boolean shouldAudioTrackPlay(AudioTrack track);
 
-    unsigned long long documentIdentifier(Document document);
-    boolean isDocumentAlive(unsigned long long documentIdentifier);
+    DOMString documentIdentifier(Document document);
+    boolean isDocumentAlive(DOMString documentIdentifier);
 
     readonly attribute unsigned long long storageAreaMapCount;
 
@@ -933,7 +933,7 @@ typedef (FetchRequest or FetchResponse) FetchObject;
     boolean isAnyWorkletGlobalScopeAlive();
 
     readonly attribute long processIdentifier;
-    DOMString serviceWorkerClientIdentifier(Document document);
+    DOMString serviceWorkerClientInternalIdentifier(Document document);
     Promise<undefined> storeRegistrationsOnDisk();
     Promise<double> sendH2Ping(DOMString url);
 

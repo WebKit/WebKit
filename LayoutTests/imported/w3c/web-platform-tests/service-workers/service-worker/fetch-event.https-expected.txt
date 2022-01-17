@@ -6,7 +6,7 @@ PASS Service Worker responds to fetch event using request fragment with string
 PASS Service Worker responds to fetch event with blob body
 PASS Service Worker responds to fetch event with the referrer URL
 PASS Service Worker responds to fetch event with an existing client id
-FAIL Service Worker responds to fetch event with the correct resulting client id assert_equals: Service Worker should respond with an empty resulting client id for subresource requests expected "Resulting Client ID Not Found" but got "Resulting Client ID Found: undefined"
+PASS Service Worker responds to fetch event with the correct resulting client id
 PASS Service Worker does not respond to fetch event
 PASS Service Worker responds to fetch event with null response body
 PASS Service Worker fetches other file in fetch event

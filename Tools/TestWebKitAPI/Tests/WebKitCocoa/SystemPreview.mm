@@ -37,19 +37,19 @@
 static bool hasTriggerInfo;
 static bool wasTriggered;
 static uint64_t elementID;
-static uint64_t documentID;
 static uint64_t pageID;
 
 @interface TestSystemPreviewTriggeredHandler : NSObject <WKScriptMessageHandler>
 @end
 
 @implementation TestSystemPreviewTriggeredHandler
+String documentID;
 
 - (void)userContentController:(WKUserContentController *)userContentController didReceiveScriptMessage:(WKScriptMessage *)message
 {
     if ([message.body[@"message"] isEqualToString:@"loaded"]) {
         elementID = [message.body[@"elementID"] unsignedIntValue];
-        documentID = [message.body[@"documentID"] unsignedIntValue];
+        documentID = message.body[@"documentID"];
         pageID = [message.body[@"pageID"] unsignedIntValue];
         hasTriggerInfo = true;
     } else if ([message.body[@"message"] isEqualToString:@"triggered"]) {

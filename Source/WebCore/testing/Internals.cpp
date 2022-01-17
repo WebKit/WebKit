@@ -2760,14 +2760,16 @@ unsigned Internals::numberOfResizeObservers(const Document& document) const
     return document.numberOfResizeObservers();
 }
 
-uint64_t Internals::documentIdentifier(const Document& document) const
+String Internals::documentIdentifier(const Document& document) const
 {
-    return document.identifier().object().toUInt64();
+    return document.identifier().object().toString();
 }
 
-bool Internals::isDocumentAlive(uint64_t documentIdentifier) const
+bool Internals::isDocumentAlive(const String& documentIdentifier) const
 {
-    return Document::allDocumentsMap().contains({ makeObjectIdentifier<ScriptExecutionContextIdentifierType>(documentIdentifier), Process::identifier() });
+    auto uuid = UUID::parse(documentIdentifier);
+    ASSERT(uuid);
+    return uuid ? Document::allDocumentsMap().contains({ *uuid, Process::identifier() }) : false;
 }
 
 uint64_t Internals::storageAreaMapCount() const
@@ -2806,7 +2808,7 @@ bool Internals::isAnyWorkletGlobalScopeAlive() const
     return WorkletGlobalScope::numberOfWorkletGlobalScopes();
 }
 
-String Internals::serviceWorkerClientIdentifier(const Document& document) const
+String Internals::serviceWorkerClientInternalIdentifier(const Document& document) const
 {
     return document.identifier().toString();
 }

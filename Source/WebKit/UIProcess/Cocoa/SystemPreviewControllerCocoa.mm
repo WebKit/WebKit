@@ -301,11 +301,16 @@ void SystemPreviewController::triggerSystemPreviewAction()
     page().systemPreviewActionTriggered(m_systemPreviewInfo, "_apple_ar_quicklook_button_tapped");
 }
 
-void SystemPreviewController::triggerSystemPreviewActionWithTargetForTesting(uint64_t elementID, uint64_t documentID, uint64_t pageID)
+void SystemPreviewController::triggerSystemPreviewActionWithTargetForTesting(uint64_t elementID, NSString* documentID, uint64_t pageID)
 {
+    auto uuid = UUID::parse(String(documentID));
+    ASSERT(uuid);
+    if (!uuid)
+        return;
+
     m_systemPreviewInfo.isPreview = true;
     m_systemPreviewInfo.element.elementIdentifier = makeObjectIdentifier<WebCore::ElementIdentifierType>(elementID);
-    m_systemPreviewInfo.element.documentIdentifier = WebCore::ScriptExecutionContextIdentifier { makeObjectIdentifier<WebCore::ScriptExecutionContextIdentifierType>(documentID), m_webPageProxy.process().coreProcessIdentifier() };
+    m_systemPreviewInfo.element.documentIdentifier = { *uuid, m_webPageProxy.process().coreProcessIdentifier() };
     m_systemPreviewInfo.element.webPageIdentifier = makeObjectIdentifier<WebCore::PageIdentifierType>(pageID);
     triggerSystemPreviewAction();
 }

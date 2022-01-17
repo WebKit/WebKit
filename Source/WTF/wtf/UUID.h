@@ -30,6 +30,7 @@
 
 #pragma once
 
+#include <wtf/Hasher.h>
 #include <wtf/Int128.h>
 #include <wtf/text/WTFString.h>
 
@@ -47,6 +48,8 @@ public:
     {
         return UUID { };
     }
+
+    WTF_EXPORT_PRIVATE static std::optional<UUID> parse(StringView);
 
     explicit UUID(Span<const uint8_t, 16> span)
     {
@@ -80,6 +83,7 @@ public:
 
     bool isHashTableDeletedValue() const { return m_data == deletedValue; }
     WTF_EXPORT_PRIVATE unsigned hash() const;
+    WTF_EXPORT_PRIVATE String toString() const;
 
 private:
     WTF_EXPORT_PRIVATE UUID();
@@ -120,6 +124,11 @@ std::optional<UUID> UUID::decode(Decoder& decoder)
         return std::nullopt;
 
     return UUID { (static_cast<UInt128>(*high) << 64) | *low };
+}
+
+inline void add(Hasher& hasher, const UUID& uuid)
+{
+    add(hasher, uuid.hash());
 }
 
 // Creates a UUID that consists of 32 hexadecimal digits and returns its canonical form.

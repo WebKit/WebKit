@@ -62,7 +62,7 @@ public:
     virtual void convertFetchToDownload() = 0;
 };
 
-void dispatchFetchEvent(Ref<Client>&&, ServiceWorkerGlobalScope&, std::optional<ScriptExecutionContextIdentifier>, ResourceRequest&&, String&& referrer, FetchOptions&&, FetchIdentifier, bool isServiceWorkerNavigationPreloadEnabled);
+void dispatchFetchEvent(Ref<Client>&&, ServiceWorkerGlobalScope&, ResourceRequest&&, String&& referrer, FetchOptions&&, FetchIdentifier, bool isServiceWorkerNavigationPreloadEnabled, String&& clientIdentifier, String&& resultingClientIdentifier);
 };
 
 } // namespace WebCore

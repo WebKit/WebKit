@@ -38,55 +38,26 @@
 
 namespace WebCore {
 
-static inline void didFinishGetRequest(ServiceWorkerGlobalScope& scope, DeferredPromise& promise, ExceptionOr<std::optional<ServiceWorkerClientData>>&& clientData)
+static inline void didFinishGetRequest(ServiceWorkerGlobalScope& scope, DeferredPromise& promise, std::optional<ServiceWorkerClientData>&& clientData)
 {
-    if (clientData.hasException()) {
-        promise.reject(clientData.releaseException());
-        return;
-    }
-    auto data = clientData.releaseReturnValue();
-    if (!data) {
+    if (!clientData) {
         promise.resolve();
         return;
     }
 
-    promise.resolve<IDLInterface<ServiceWorkerClient>>(ServiceWorkerClient::getOrCreate(scope, WTFMove(data.value())));
-}
-
-static std::optional<ScriptExecutionContextIdentifier> scriptExecutionContextIdentifierFromString(StringView string)
-{
-    ProcessIdentifier processIdentifier;
-    ObjectIdentifier<ScriptExecutionContextIdentifierType> contextIdentifier;
-    unsigned counter = 0;
-    for (auto item : string.split('-')) {
-        auto identifier = parseInteger<uint64_t>(item);
-        if (!identifier || !*identifier)
-            return std::nullopt;
-        if (!counter++)
-            processIdentifier = makeObjectIdentifier<ProcessIdentifierType>(*identifier);
-        else if (counter == 2)
-            contextIdentifier = makeObjectIdentifier<ScriptExecutionContextIdentifierType>(*identifier);
-    }
-    return (processIdentifier && contextIdentifier) ? std::make_optional(ScriptExecutionContextIdentifier { contextIdentifier, processIdentifier }) : std::nullopt;
+    promise.resolve<IDLInterface<ServiceWorkerClient>>(ServiceWorkerClient::getOrCreate(scope, WTFMove(*clientData)));
 }
 
 void ServiceWorkerClients::get(ScriptExecutionContext& context, const String& id, Ref<DeferredPromise>&& promise)
 {
-    auto identifier = scriptExecutionContextIdentifierFromString(id);
-    if (!identifier) {
-        promise->resolve();
-        return;
-    }
-    auto clientIdentifier = identifier.value();
-
     auto serviceWorkerIdentifier = downcast<ServiceWorkerGlobalScope>(context).thread().identifier();
 
     auto promisePointer = promise.ptr();
     m_pendingPromises.add(promisePointer, WTFMove(promise));
 
-    callOnMainThread([promisePointer, serviceWorkerIdentifier, clientIdentifier] () {
+    callOnMainThread([promisePointer, serviceWorkerIdentifier, id = id.isolatedCopy()] () {
         auto connection = SWContextManager::singleton().connection();
-        connection->findClientByIdentifier(serviceWorkerIdentifier, clientIdentifier, [promisePointer, serviceWorkerIdentifier] (auto&& clientData) {
+        connection->findClientByVisibleIdentifier(serviceWorkerIdentifier, id, [promisePointer, serviceWorkerIdentifier] (auto&& clientData) {
             SWContextManager::singleton().postTaskToServiceWorker(serviceWorkerIdentifier, [promisePointer, data = crossThreadCopy(clientData)] (auto& context) mutable {
                 if (auto promise = context.clients().m_pendingPromises.take(promisePointer))
                     didFinishGetRequest(context, *promise, WTFMove(data));

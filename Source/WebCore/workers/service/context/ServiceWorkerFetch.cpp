@@ -146,7 +146,7 @@ static void processResponse(Ref<Client>&& client, Expected<Ref<FetchResponse>, s
     });
 }
 
-void dispatchFetchEvent(Ref<Client>&& client, ServiceWorkerGlobalScope& globalScope, std::optional<ScriptExecutionContextIdentifier> clientId, ResourceRequest&& request, String&& referrer, FetchOptions&& options, FetchIdentifier fetchIdentifier, bool isServiceWorkerNavigationPreloadEnabled)
+void dispatchFetchEvent(Ref<Client>&& client, ServiceWorkerGlobalScope& globalScope, ResourceRequest&& request, String&& referrer, FetchOptions&& options, FetchIdentifier fetchIdentifier, bool isServiceWorkerNavigationPreloadEnabled, String&& clientIdentifier, String&& resultingClientIdentifier)
 {
     auto requestHeaders = FetchHeaders::create(FetchHeaders::Guard::Immutable, HTTPHeaderMap { request.httpHeaderFields() });
 
@@ -181,12 +181,8 @@ void dispatchFetchEvent(Ref<Client>&& client, ServiceWorkerGlobalScope& globalSc
 
     FetchEvent::Init init;
     init.request = WTFMove(fetchRequest);
-    if (isNavigation) {
-        // FIXME: Set reservedClientId.
-        if (clientId)
-            init.targetClientId = clientId->toString();
-    } else if (clientId)
-        init.clientId = clientId->toString();
+    init.resultingClientId = WTFMove(resultingClientIdentifier);
+    init.clientId = WTFMove(clientIdentifier);
     init.cancelable = true;
 
     auto& jsDOMGlobalObject = *JSC::jsCast<JSDOMGlobalObject*>(globalScope.globalObject());

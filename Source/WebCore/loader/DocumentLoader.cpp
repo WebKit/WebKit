@@ -2095,7 +2095,7 @@ void DocumentLoader::loadMainResource(ResourceRequest&& request)
 #if ENABLE(SERVICE_WORKER)
     if (!m_temporaryServiceWorkerClient) {
         // The main navigation load will trigger the registration of the temp client.
-        m_temporaryServiceWorkerClient = ScriptExecutionContextIdentifier::generateThreadSafe();
+        m_temporaryServiceWorkerClient = ScriptExecutionContextIdentifier::generate();
         ASSERT(!temporaryIdentifierToLoaderMap().contains(*m_temporaryServiceWorkerClient));
         temporaryIdentifierToLoaderMap().add(*m_temporaryServiceWorkerClient, this);
     }

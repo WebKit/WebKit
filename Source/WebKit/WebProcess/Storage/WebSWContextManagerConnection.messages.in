@@ -25,7 +25,7 @@
 messages -> WebSWContextManagerConnection NotRefCounted {
     InstallServiceWorker(struct WebCore::ServiceWorkerContextData contextData, struct WebCore::ServiceWorkerData workerData, String userAgent, enum:bool WebCore::WorkerThreadMode workerThreadMode)
     UpdateAppInitiatedValue(WebCore::ServiceWorkerIdentifier serviceWorkerIdentifier, enum:bool WebCore::LastNavigationWasAppInitiated lastNavigationWasAppInitiated)
-    StartFetch(WebCore::SWServerConnectionIdentifier serverConnectionIdentifier, WebCore::ServiceWorkerIdentifier serviceWorkerIdentifier, WebCore::FetchIdentifier fetchIdentifier, WebCore::ResourceRequest request, struct WebCore::FetchOptions options, IPC::FormDataReference requestBody, String referrer, bool isServiceWorkerNavigationPreloadEnabled)
+    StartFetch(WebCore::SWServerConnectionIdentifier serverConnectionIdentifier, WebCore::ServiceWorkerIdentifier serviceWorkerIdentifier, WebCore::FetchIdentifier fetchIdentifier, WebCore::ResourceRequest request, struct WebCore::FetchOptions options, IPC::FormDataReference requestBody, String referrer, bool isServiceWorkerNavigationPreloadEnabled, String clientIdentifer, String resutlingClientIdentifier)
     CancelFetch(WebCore::SWServerConnectionIdentifier serverConnectionIdentifier, WebCore::ServiceWorkerIdentifier serviceWorkerIdentifier, WebCore::FetchIdentifier fetchIdentifier)
     ContinueDidReceiveFetchResponse(WebCore::SWServerConnectionIdentifier serverConnectionIdentifier, WebCore::ServiceWorkerIdentifier serviceWorkerIdentifier, WebCore::FetchIdentifier fetchIdentifier)
     PostMessageToServiceWorker(WebCore::ServiceWorkerIdentifier destinationIdentifier, struct WebCore::MessageWithMessagePorts message, WebCore::ServiceWorkerOrClientData sourceData)
@@ -37,7 +37,6 @@ messages -> WebSWContextManagerConnection NotRefCounted {
 #if ENABLE(SHAREABLE_RESOURCE) && PLATFORM(COCOA)
     DidSaveScriptsToDisk(WebCore::ServiceWorkerIdentifier serviceWorkerIdentifier, WebCore::ScriptBuffer script, HashMap<URL, WebCore::ScriptBuffer> importedScripts);
 #endif
-    FindClientByIdentifierCompleted(uint64_t clientIdRequestIdentifier, std::optional<WebCore::ServiceWorkerClientData> data, bool hasSecurityError)
     MatchAllCompleted(uint64_t matchAllRequestIdentifier, Vector<WebCore::ServiceWorkerClientData> clientsData)
     SetUserAgent(String userAgent)
     UpdatePreferencesStore(struct WebKit::WebPreferencesStore store)

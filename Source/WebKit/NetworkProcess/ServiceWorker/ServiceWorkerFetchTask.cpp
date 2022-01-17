@@ -151,7 +151,12 @@ void ServiceWorkerFetchTask::startFetch()
     auto request = m_currentRequest;
     cleanHTTPRequestHeadersForAccessControl(request, m_loader.parameters().httpHeadersToKeep);
 
-    bool isSent = sendToServiceWorker(Messages::WebSWContextManagerConnection::StartFetch { m_serverConnectionIdentifier, m_serviceWorkerIdentifier, m_fetchIdentifier, request, options, IPC::FormDataReference { m_currentRequest.httpBody() }, referrer, m_preloader && m_preloader->isServiceWorkerNavigationPreloadEnabled() });
+    String clientIdentifier;
+    if (m_loader.parameters().options.mode != FetchOptions::Mode::Navigate) {
+        if (auto identifier = m_loader.parameters().options.clientIdentifier)
+            clientIdentifier = identifier->toString();
+    }
+    bool isSent = sendToServiceWorker(Messages::WebSWContextManagerConnection::StartFetch { m_serverConnectionIdentifier, m_serviceWorkerIdentifier, m_fetchIdentifier, request, options, IPC::FormDataReference { m_currentRequest.httpBody() }, referrer, m_preloader && m_preloader->isServiceWorkerNavigationPreloadEnabled(), clientIdentifier, m_loader.resultingClientIdentifier() });
     ASSERT_UNUSED(isSent, isSent);
 }
 

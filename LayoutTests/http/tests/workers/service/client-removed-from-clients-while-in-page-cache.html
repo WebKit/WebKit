@@ -65,12 +65,14 @@ navigator.serviceWorker.addEventListener("message", function(event) {
 });
 
 navigator.serviceWorker.register("resources/getClientIds-worker.js", { }).then(function(registration) {
-    topClientIdentifier = internals.serviceWorkerClientIdentifier(document);
+    if (!window.internals)
+        return;
+    topClientIdentifier = internals.serviceWorkerClientInternalIdentifier(document);
 
     worker = registration.installing;
     otherWindow = open("other_resources/test.html");
     otherWindow.onload = function() {
-      windowClientIdentifier = internals.serviceWorkerClientIdentifier(otherWindow.document);
+      windowClientIdentifier = internals.serviceWorkerClientInternalIdentifier(otherWindow.document);
       step = "BothClientsInitiallyActive"
       worker.postMessage("getClientIds");
     };

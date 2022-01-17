@@ -61,7 +61,7 @@ FetchEvent::FetchEvent(JSC::JSGlobalObject& globalObject, const AtomString& type
     : ExtendableEvent(type, initializer, isTrusted)
     , m_request(initializer.request.releaseNonNull())
     , m_clientId(WTFMove(initializer.clientId))
-    , m_reservedClientId(WTFMove(initializer.reservedClientId))
+    , m_resultingClientId(WTFMove(initializer.resultingClientId))
     , m_targetClientId(WTFMove(initializer.targetClientId))
     , m_handled(retrieveHandledPromise(globalObject, WTFMove(initializer.handled)))
 {

@@ -942,6 +942,8 @@ void SWServer::registerServiceWorkerClient(ClientOrigin&& clientOrigin, ServiceW
             updateAppInitiatedValueForWorkers(clientOrigin, data.lastNavigationWasAppInitiated);
     }
 
+    m_visibleClientIdToInternalClientIdMap.add(data.identifier.object().toString(), clientIdentifier);
+
     ASSERT(!m_clientsById.contains(clientIdentifier));
     m_clientsById.add(clientIdentifier, WTFMove(data));
 
@@ -979,8 +981,8 @@ void SWServer::unregisterServiceWorkerClient(const ClientOrigin& clientOrigin, S
     auto clientRegistrableDomain = clientOrigin.clientRegistrableDomain();
     auto appInitiatedValueBefore = clientIsAppInitiatedForRegistrableDomain(clientOrigin.clientRegistrableDomain());
 
-    bool wasRemoved = m_clientsById.remove(clientIdentifier);
-    ASSERT_UNUSED(wasRemoved, wasRemoved);
+    m_clientsById.remove(clientIdentifier);
+    m_visibleClientIdToInternalClientIdMap.remove(clientIdentifier.toString());
 
     auto clientsByRegistrableDomainIterator = m_clientsByRegistrableDomain.find(clientRegistrableDomain);
     ASSERT(clientsByRegistrableDomainIterator != m_clientsByRegistrableDomain.end());

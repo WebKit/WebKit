@@ -27,7 +27,7 @@ promise_test(async (test) => {
 }, "Setup worker");
 
 promise_test(async (test) => {
-    const serviceWorkerClientIdentifier = internals.serviceWorkerClientIdentifier(document);
+    const serviceWorkerClientIdentifier = internals.serviceWorkerClientInternalIdentifier(document);
     var promise = new Promise((resolve, reject) => {
         navigator.serviceWorker.addEventListener("message", test.step_func((event) => {
             assert_equals(event.data, "PASS");

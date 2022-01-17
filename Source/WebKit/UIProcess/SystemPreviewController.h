@@ -61,7 +61,7 @@ public:
 
     void triggerSystemPreviewAction();
 
-    void triggerSystemPreviewActionWithTargetForTesting(uint64_t elementID, uint64_t frameID, uint64_t pageID);
+    void triggerSystemPreviewActionWithTargetForTesting(uint64_t elementID, NSString* documentID, uint64_t pageID);
 
 private:
     WebPageProxy& m_webPageProxy;

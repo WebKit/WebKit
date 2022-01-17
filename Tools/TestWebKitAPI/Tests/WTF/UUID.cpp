@@ -31,3 +31,26 @@ TEST(WTF, BootSessionUUIDIdentity)
 {
     EXPECT_EQ(bootSessionUUIDString(), bootSessionUUIDString());
 }
+
+TEST(WTF, TestUUIDParsing)
+{
+    auto created  = UUID::create();
+    auto value = UUID::parse(created.toString());
+    EXPECT_TRUE(!!value);
+    EXPECT_EQ(created, *value);
+
+    // xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx
+    value = UUID::parse("12345678-9abc-5de0-89AB-0123456789ab");
+    EXPECT_FALSE(!!value);
+
+    value = UUID::parse("12345678-9abc-4dea-79AB-0123456789ab");
+    EXPECT_FALSE(!!value);
+
+    value = UUID::parse("12345678-9abc-4de0-89ab-0123456789ab");
+    EXPECT_TRUE(!!value);
+    EXPECT_TRUE(value->toString() == "12345678-9abc-4de0-89ab-0123456789ab");
+
+    value = UUID::parse("6ef944c1-5cb8-48aa-Ad12-C5f823f005c3");
+    EXPECT_TRUE(!!value);
+    EXPECT_TRUE(value->toString() == "6ef944c1-5cb8-48aa-ad12-c5f823f005c3");
+}
