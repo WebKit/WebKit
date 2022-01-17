@@ -802,8 +802,14 @@ webkit.org/b/233731 fast/mediastream/getDisplayMedia-size.html [ Failure ]
 
 webkit.org/b/233836 http/tests/media/media-blocked-by-willsendrequest.html [ Timeout ]
 
-webkit.org/b/234084 media/track/audio-track-configuration.html [ Timeout ]
-webkit.org/b/234084 media/track/video-track-configuration.html [ Timeout ]
+# Expected to pass when we enable playbin3 by default and update the SDK to GStreamer 1.20.
+webkit.org/b/234084 media/track/audio-track-configuration.html [ Failure ]
+
+# Even with playbin3 enabled there is still a failure here, h264parse is unable
+# to calculate the framerate of test.mp4 and the calculated bitrate tag is too
+# low, probably because we would need a playing pipeline to have better average
+# bitrate estimation.
+webkit.org/b/234084 media/track/video-track-configuration.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of GStreamer-related bugs

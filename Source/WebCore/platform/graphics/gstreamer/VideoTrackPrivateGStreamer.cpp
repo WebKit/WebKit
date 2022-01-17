@@ -30,6 +30,7 @@
 #include "VideoTrackPrivateGStreamer.h"
 
 #include "MediaPlayerPrivateGStreamer.h"
+#include <gst/pbutils/pbutils.h>
 
 namespace WebCore {
 
@@ -50,6 +51,116 @@ VideoTrackPrivateGStreamer::VideoTrackPrivateGStreamer(WeakPtr<MediaPlayerPrivat
         auto streamFlags = gst_stream_get_stream_flags(m_stream.get());
         gst_stream_set_stream_flags(m_stream.get(), static_cast<GstStreamFlags>(streamFlags | GST_STREAM_FLAG_SELECT));
     }
+
+    g_signal_connect_swapped(m_stream.get(), "notify::caps", G_CALLBACK(+[](VideoTrackPrivateGStreamer* track) {
+        track->updateConfigurationFromCaps();
+    }), this);
+    g_signal_connect_swapped(m_stream.get(), "notify::tags", G_CALLBACK(+[](VideoTrackPrivateGStreamer* track) {
+        track->updateConfigurationFromTags();
+    }), this);
+
+    updateConfigurationFromCaps();
+    updateConfigurationFromTags();
+}
+
+void VideoTrackPrivateGStreamer::updateConfigurationFromTags()
+{
+    auto tags = adoptGRef(gst_stream_get_tags(m_stream.get()));
+    unsigned bitrate;
+    if (!tags || !gst_tag_list_get_uint(tags.get(), GST_TAG_BITRATE, &bitrate))
+        return;
+
+    auto configuration = this->configuration();
+    configuration.bitrate = bitrate;
+    callOnMainThreadAndWait([&] {
+        setConfiguration(WTFMove(configuration));
+    });
+}
+
+void VideoTrackPrivateGStreamer::updateConfigurationFromCaps()
+{
+    auto caps = adoptGRef(gst_stream_get_caps(m_stream.get()));
+    if (!caps || !gst_caps_is_fixed(caps.get()))
+        return;
+
+    auto configuration = this->configuration();
+    GstVideoInfo info;
+    if (gst_video_info_from_caps(&info, caps.get())) {
+        if (GST_VIDEO_INFO_FPS_N(&info)) {
+            double framerate;
+            gst_util_fraction_to_double(GST_VIDEO_INFO_FPS_N(&info), GST_VIDEO_INFO_FPS_D(&info), &framerate);
+            configuration.framerate = framerate;
+        }
+        configuration.width = GST_VIDEO_INFO_WIDTH(&info);
+        configuration.height = GST_VIDEO_INFO_HEIGHT(&info);
+
+#ifndef GST_DISABLE_GST_DEBUG
+        GUniquePtr<char> colorimetry(gst_video_colorimetry_to_string(&GST_VIDEO_INFO_COLORIMETRY(&info)));
+#endif
+        PlatformVideoColorSpace colorSpace;
+        switch (GST_VIDEO_INFO_COLORIMETRY(&info).matrix) {
+        case GST_VIDEO_COLOR_MATRIX_RGB:
+            colorSpace.matrix = PlatformVideoMatrixCoefficients::Rgb;
+            break;
+        case GST_VIDEO_COLOR_MATRIX_BT709:
+            colorSpace.matrix = PlatformVideoMatrixCoefficients::Bt709;
+            break;
+        case GST_VIDEO_COLOR_MATRIX_BT601:
+            colorSpace.matrix = PlatformVideoMatrixCoefficients::Bt470bg;
+            break;
+        default:
+#ifndef GST_DISABLE_GST_DEBUG
+            GST_DEBUG("Unhandled colorspace matrix from %s", colorimetry.get());
+#endif
+            break;
+        }
+
+        switch (GST_VIDEO_INFO_COLORIMETRY(&info).transfer) {
+        case GST_VIDEO_TRANSFER_SRGB:
+            colorSpace.transfer = PlatformVideoTransferCharacteristics::Iec6196621;
+            break;
+        case GST_VIDEO_TRANSFER_BT709:
+            colorSpace.transfer = PlatformVideoTransferCharacteristics::Bt709;
+            break;
+#if GST_CHECK_VERSION(1, 18, 0)
+        case GST_VIDEO_TRANSFER_BT601:
+            colorSpace.transfer = PlatformVideoTransferCharacteristics::Smpte170m;
+            break;
+#endif
+        default:
+#ifndef GST_DISABLE_GST_DEBUG
+            GST_DEBUG("Unhandled colorspace transfer from %s", colorimetry.get());
+#endif
+            break;
+        }
+
+        switch (GST_VIDEO_INFO_COLORIMETRY(&info).primaries) {
+        case GST_VIDEO_COLOR_PRIMARIES_BT709:
+            colorSpace.primaries = PlatformVideoColorPrimaries::Bt709;
+            break;
+        case GST_VIDEO_COLOR_PRIMARIES_BT470BG:
+            colorSpace.primaries = PlatformVideoColorPrimaries::Bt470bg;
+            break;
+        case GST_VIDEO_COLOR_PRIMARIES_SMPTE170M:
+            colorSpace.primaries = PlatformVideoColorPrimaries::Smpte170m;
+            break;
+        default:
+#ifndef GST_DISABLE_GST_DEBUG
+            GST_DEBUG("Unhandled colorspace primaries from %s", colorimetry.get());
+#endif
+            break;
+        }
+        configuration.colorSpace = WTFMove(colorSpace);
+    }
+
+#if GST_CHECK_VERSION(1, 19, 0)
+    GUniquePtr<char> codec(gst_codec_utils_caps_get_mime_codec(caps.get()));
+    configuration.codec = codec.get();
+#endif
+
+    callOnMainThreadAndWait([&] {
+        setConfiguration(WTFMove(configuration));
+    });
 }
 
 VideoTrackPrivate::Kind VideoTrackPrivateGStreamer::kind() const

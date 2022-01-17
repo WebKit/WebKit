@@ -30,6 +30,7 @@
 #include "AudioTrackPrivateGStreamer.h"
 
 #include "MediaPlayerPrivateGStreamer.h"
+#include <gst/pbutils/pbutils.h>
 
 namespace WebCore {
 
@@ -50,6 +51,53 @@ AudioTrackPrivateGStreamer::AudioTrackPrivateGStreamer(WeakPtr<MediaPlayerPrivat
         auto streamFlags = gst_stream_get_stream_flags(m_stream.get());
         gst_stream_set_stream_flags(m_stream.get(), static_cast<GstStreamFlags>(streamFlags | GST_STREAM_FLAG_SELECT));
     }
+
+    g_signal_connect_swapped(m_stream.get(), "notify::caps", G_CALLBACK(+[](AudioTrackPrivateGStreamer* track) {
+        track->updateConfigurationFromCaps();
+    }), this);
+    g_signal_connect_swapped(m_stream.get(), "notify::tags", G_CALLBACK(+[](AudioTrackPrivateGStreamer* track) {
+        track->updateConfigurationFromTags();
+    }), this);
+
+    updateConfigurationFromCaps();
+    updateConfigurationFromTags();
+}
+
+void AudioTrackPrivateGStreamer::updateConfigurationFromTags()
+{
+    auto tags = adoptGRef(gst_stream_get_tags(m_stream.get()));
+    unsigned bitrate;
+    if (!tags || !gst_tag_list_get_uint(tags.get(), GST_TAG_BITRATE, &bitrate))
+        return;
+
+    auto configuration = this->configuration();
+    configuration.bitrate = bitrate;
+    callOnMainThreadAndWait([&] {
+        setConfiguration(WTFMove(configuration));
+    });
+}
+
+void AudioTrackPrivateGStreamer::updateConfigurationFromCaps()
+{
+    auto caps = adoptGRef(gst_stream_get_caps(m_stream.get()));
+    if (!caps || !gst_caps_is_fixed(caps.get()))
+        return;
+
+    auto configuration = this->configuration();
+    GstAudioInfo info;
+    if (gst_audio_info_from_caps(&info, caps.get())) {
+        configuration.sampleRate = GST_AUDIO_INFO_RATE(&info);
+        configuration.numberOfChannels = GST_AUDIO_INFO_CHANNELS(&info);
+    }
+
+#if GST_CHECK_VERSION(1, 19, 0)
+    GUniquePtr<char> codec(gst_codec_utils_caps_get_mime_codec(caps.get()));
+    configuration.codec = codec.get();
+#endif
+
+    callOnMainThreadAndWait([&] {
+        setConfiguration(WTFMove(configuration));
+    });
 }
 
 AudioTrackPrivate::Kind AudioTrackPrivateGStreamer::kind() const

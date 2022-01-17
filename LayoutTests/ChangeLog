@@ -1,3 +1,18 @@
+2022-01-17  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] tests media/track/audio-track-configuration.html and media/track/video-track-configuration.html fail
+        https://bugs.webkit.org/show_bug.cgi?id=234084
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        * media/track/audio-track-configuration.html: Add a timeout to each promise, allowing for
+        nicer actual results when a sub-set of the promises time out. Without this a single promise
+        timeout would make the entire test time out and the actual results would not be reported
+        properly.
+        * media/track/video-track-configuration.html: Ditto.
+        * platform/glib/TestExpectations: Update {audio,video}-track expectations, tests still
+        expected to fail but some improvements will be available when we switch to playbin3.
+
 2022-01-17  Youenn Fablet  <youenn@apple.com>
 
         Transmit network load metrics when service worker is using one of its network load to respond to FetchEvents
