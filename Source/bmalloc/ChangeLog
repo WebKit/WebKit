@@ -1,3 +1,12 @@
+2022-01-17  Xan Lopez  <xan@igalia.com>
+
+        [CMake] Fix bmalloc build
+        https://bugs.webkit.org/show_bug.cgi?id=235292
+
+        Unreviewed build fix.
+
+        * CMakeLists.txt: fix location of headers and source files.
+
 2022-01-14  Yusuke Suzuki  <ysuzuki@apple.com> and Mikhail R. Gadelha  <mikhail@igalia.com>
 
         [JSC] Fix Linux 64bit compilation
