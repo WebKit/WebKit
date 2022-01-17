@@ -203,11 +203,6 @@ bool MediaStreamTrack::mutedForBindings() const
     return m_muted;
 }
 
-auto MediaStreamTrack::readyState() const -> State
-{
-    return ended() ? State::Ended : State::Live;
-}
-
 bool MediaStreamTrack::ended() const
 {
     return m_ended || m_private->ended();
@@ -220,7 +215,13 @@ RefPtr<MediaStreamTrack> MediaStreamTrack::clone()
 
     ALWAYS_LOG(LOGIDENTIFIER);
 
-    return MediaStreamTrack::create(*scriptExecutionContext(), m_private->clone());
+    auto clone = MediaStreamTrack::create(*scriptExecutionContext(), m_private->clone());
+
+    clone->m_readyState = m_readyState;
+    if (clone->ended() && clone->m_readyState == State::Live)
+        trackEnded(clone->m_private);
+
+    return clone;
 }
 
 void MediaStreamTrack::stopTrack(StopMode mode)
@@ -235,8 +236,10 @@ void MediaStreamTrack::stopTrack(StopMode mode)
 
     // An 'ended' event is not posted if m_ended is true when trackEnded is called, so set it now if we are
     // not supposed to post the event.
-    if (mode == StopMode::Silently)
+    if (mode == StopMode::Silently) {
         m_ended = true;
+        m_readyState = State::Ended;
+    }
 
     m_private->endTrack();
     m_ended = true;
@@ -562,28 +565,30 @@ void MediaStreamTrack::trackEnded(MediaStreamTrackPrivate&)
     if (m_isCaptureTrack && m_private->type() == RealtimeMediaSource::Type::Audio)
         PlatformMediaSessionManager::sharedManager().removeAudioCaptureSource(*this);
 
-    // http://w3c.github.io/mediacapture-main/#life-cycle
-    // When a MediaStreamTrack track ends for any reason other than the stop() method being invoked, the User Agent must queue a task that runs the following steps:
-    // 1. If the track's readyState attribute has the value ended already, then abort these steps.
-    if (m_ended)
-        return;
-
     ALWAYS_LOG(LOGIDENTIFIER);
 
     if (m_isCaptureTrack && m_private->source().captureDidFail())
         scriptExecutionContext()->addConsoleMessage(MessageSource::JS, MessageLevel::Error, "A MediaStreamTrack ended due to a capture failure"_s);
 
-    // 2. Set track's readyState attribute to ended.
-    m_ended = true;
+    // http://w3c.github.io/mediacapture-main/#life-cycle
+    // When a MediaStreamTrack track ends for any reason other than the stop() method being invoked, the User Agent must queue a task that runs the following steps:
+    queueTaskKeepingObjectAlive(*this, TaskSource::Networking, [this, muted = m_private->muted()] {
+        // 1. If the track's readyState attribute has the value ended already, then abort these steps.
+        if (!isAllowedToRunScript() || m_readyState == State::Ended)
+            return;
 
-    if (scriptExecutionContext()->activeDOMObjectsAreSuspended() || scriptExecutionContext()->activeDOMObjectsAreStopped())
+        // 2. Set track's readyState attribute to ended.
+        m_readyState = State::Ended;
+
+        ALWAYS_LOG(LOGIDENTIFIER, "firing 'ended' event");
+
+        // 3. Notify track's source that track is ended so that the source may be stopped, unless other MediaStreamTrack objects depend on it.
+        // 4. Fire a simple event named ended at the object.
+        dispatchEvent(Event::create(eventNames().endedEvent, Event::CanBubble::No, Event::IsCancelable::No));
+    });
+
+    if (m_ended)
         return;
-
-    ALWAYS_LOG(LOGIDENTIFIER, "firing 'ended' event");
-
-    // 3. Notify track's source that track is ended so that the source may be stopped, unless other MediaStreamTrack objects depend on it.
-    // 4. Fire a simple event named ended at the object.
-    dispatchEvent(Event::create(eventNames().endedEvent, Event::CanBubble::No, Event::IsCancelable::No));
 
     for (auto& observer : m_observers)
         observer->trackDidEnd();
