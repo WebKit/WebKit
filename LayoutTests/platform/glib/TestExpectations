@@ -1214,7 +1214,6 @@ webkit.org/b/222753 fast/text/multi-code-unit-simple-path.html [ ImageOnlyFailur
 
 webkit.org/b/223402 fast/inline/hyphenation-when-overflow-wrap-is-break-word.html [ ImageOnlyFailure ]
 
-webkit.org/b/223416 fast/text/image-alt-text-bidi.html [ ImageOnlyFailure ]
 webkit.org/b/223416 fast/text/image-alt-text-bidi-2.html [ ImageOnlyFailure ]
 
 # Should pass once ICU >= 64.
@@ -1506,7 +1505,6 @@ webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/text-encoding/s
 webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/white-space/trailing-space-align-start.tentative.html [ Pass ]
 webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/line-break/line-break-anywhere-overrides-uax-behavior-013.html [ ImageOnlyFailure ]
 webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/line-break/line-break-anywhere-overrides-uax-behavior-014.html [ ImageOnlyFailure ]
-webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-cluster-001.html [ ImageOnlyFailure ]
 
 webkit.org/b/214299 imported/w3c/web-platform-tests/css/css-ui/outline-028.html [ ImageOnlyFailure ]
 webkit.org/b/214299 imported/w3c/web-platform-tests/css/css-ui/outline-with-padding-001.html [ ImageOnlyFailure ]
@@ -2001,7 +1999,6 @@ webkit.org/b/136159 fast/borders/hidpi-border-painting-groove.html [ ImageOnlyFa
 webkit.org/b/136159 fast/borders/hidpi-border-painting-ridge.html [ ImageOnlyFailure ]
 webkit.org/b/136537 fast/sub-pixel/client-width-height-snapping.html [ Failure ]
 webkit.org/b/137096 svg/text/alt-glyph-for-surrogate-pair.svg [ ImageOnlyFailure ]
-webkit.org/b/139486 fast/css3-text/css3-text-decoration/text-decoration-skip/decoration-skip-crash-fallback-svg.html [ ImageOnlyFailure ]
 webkit.org/b/139489 http/tests/css/link-css-disabled-value-with-slow-loading-sheet.html [ Failure Pass ]
 webkit.org/b/141837 fast/borders/border-painting-correctness-dashed.html [ ImageOnlyFailure ]
 webkit.org/b/141837 fast/borders/border-painting-correctness-dotted.html [ ImageOnlyFailure ]
@@ -2133,7 +2130,6 @@ webkit.org/b/176648 fast/text/mark-matches-broken-line-rendering.html [ ImageOnl
 webkit.org/b/176648 fast/text/mark-matches-rendering.html [ ImageOnlyFailure ]
 webkit.org/b/176648 svg/transforms/transformed-text-fill-gradient.html [ ImageOnlyFailure ]
 webkit.org/b/176649 fast/text/international/synthesized-italic-vertical.html [ ImageOnlyFailure ]
-webkit.org/b/177294 fast/text/fitzpatrick-combination.html [ ImageOnlyFailure ]
 webkit.org/b/177533 webrtc/video-interruption.html
 webkit.org/b/177936 fast/text/all-small-caps-whitespace.html [ ImageOnlyFailure ]
 webkit.org/b/177936 fast/text/regional-indicator-symobls.html [ Failure ]
@@ -2468,13 +2464,8 @@ webkit.org/b/207062 imported/w3c/web-platform-tests/media-source/mediasource-rep
 
 webkit.org/b/229346 webrtc/multi-audio.html [ Timeout Pass ]
 
-webkit.org/b/229347 imported/w3c/web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-cluster-002.html [ ImageOnlyFailure ]
-
 webkit.org/b/229715 [ Debug ] fast/mediastream/getDisplayMedia-max-constraints3.html [ Timeout ]
 webkit.org/b/229715 [ Debug ] fast/mediastream/screencapture-user-gesture.html [ Timeout ]
-
-webkit.org/b/229734 imported/w3c/web-platform-tests/css/css-text/line-break/line-break-normal-hyphens-002.html [ ImageOnlyFailure ]
-webkit.org/b/229734 imported/w3c/web-platform-tests/css/css-text/line-break/line-break-strict-hyphens-002.html [ ImageOnlyFailure ]
 
 webkit.org/b/229738 fast/text/whitespace/pre-break-word.html [ Failure ]
 webkit.org/b/229738 fast/text/whitespace/tab-character-basics.html [ Failure ]
