@@ -293,13 +293,34 @@ void JSExposedToWorkerAndWindowOwner::finalize(JSC::Handle<JSC::Unknown> handle,
     uncacheWrapper(world, &jsExposedToWorkerAndWindow->wrapped(), jsExposedToWorkerAndWindow);
 }
 
+#if ENABLE(BINDING_INTEGRITY)
+#if PLATFORM(WIN)
+#pragma warning(disable: 4483)
+extern "C" { extern void (*const __identifier("??_7ExposedToWorkerAndWindow@WebCore@@6B@")[])(); }
+#else
+extern "C" { extern void* _ZTVN7WebCore24ExposedToWorkerAndWindowE[]; }
+#endif
+#endif
+
 JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject*, JSDOMGlobalObject* globalObject, Ref<ExposedToWorkerAndWindow>&& impl)
 {
-    // If you hit this failure the interface definition has the ImplementationLacksVTable
-    // attribute. You should remove that attribute. If the class has subclasses
-    // that may be passed through this toJS() function you should use the SkipVTableValidation
-    // attribute to ExposedToWorkerAndWindow.
-    static_assert(!std::is_polymorphic<ExposedToWorkerAndWindow>::value, "ExposedToWorkerAndWindow is polymorphic but the IDL claims it is not");
+
+    if constexpr (std::is_polymorphic_v<ExposedToWorkerAndWindow>) {
+#if ENABLE(BINDING_INTEGRITY)
+        const void* actualVTablePointer = getVTablePointer(impl.ptr());
+#if PLATFORM(WIN)
+        void* expectedVTablePointer = __identifier("??_7ExposedToWorkerAndWindow@WebCore@@6B@");
+#else
+        void* expectedVTablePointer = &_ZTVN7WebCore24ExposedToWorkerAndWindowE[2];
+#endif
+
+        // If you hit this assertion you either have a use after free bug, or
+        // ExposedToWorkerAndWindow has subclasses. If ExposedToWorkerAndWindow has subclasses that get passed
+        // to toJS() we currently require ExposedToWorkerAndWindow you to opt out of binding hardening
+        // by adding the SkipVTableValidation attribute to the interface IDL definition
+        RELEASE_ASSERT(actualVTablePointer == expectedVTablePointer);
+#endif
+    }
     return createWrapper<ExposedToWorkerAndWindow>(globalObject, WTFMove(impl));
 }
 

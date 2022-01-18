@@ -26,7 +26,6 @@
 [
     Conditional=SERVICE_WORKER,
     ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
-    ImplementationLacksVTable,
     LegacyNoInterfaceObject,
 ] interface ServiceWorkerInternals {
     undefined setOnline(boolean isOnline);

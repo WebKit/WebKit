@@ -3837,7 +3837,6 @@ sub GetGnuVTableNameForInterface
     my $typename = $interface->type->name;
     my $templatePosition = index($typename, "<");
     return "" if $templatePosition != -1;
-    return "" if GetImplementationLacksVTableForInterface($interface);
     return "" if GetSkipVTableValidationForInterface($interface);
     return "_ZTV" . GetGnuMangledNameForInterface($interface);
 }
@@ -3900,7 +3899,6 @@ sub GetWinVTableNameForInterface
     my $typename = $interface->type->name;
     my $templatePosition = index($typename, "<");
     return "" if $templatePosition != -1;
-    return "" if GetImplementationLacksVTableForInterface($interface);
     return "" if GetSkipVTableValidationForInterface($interface);
     return "??_7" . GetWinMangledNameForInterface($interface) . "6B@";
 }
@@ -3911,12 +3909,6 @@ sub GetWinMangledNameForInterface
     my $typename = $interface->type->name;
     my $namespace = "WebCore";
     return $typename . "@" . $namespace . "@@";
-}
-
-sub GetImplementationLacksVTableForInterface
-{
-    my $interface = shift;
-    return $interface->extendedAttributes->{ImplementationLacksVTable};
 }
 
 sub GetSkipVTableValidationForInterface
@@ -5129,33 +5121,23 @@ END
         push(@implContent, "{\n");
         push(@implContent, <<END) if $vtableNameGnu;
 
+    if constexpr (std::is_polymorphic_v<${implType}>) {
 #if ENABLE(BINDING_INTEGRITY)
-    const void* actualVTablePointer = getVTablePointer(impl.ptr());
+        const void* actualVTablePointer = getVTablePointer(impl.ptr());
 #if PLATFORM(WIN)
-    void* expectedVTablePointer = ${vtableRefWin};
+        void* expectedVTablePointer = ${vtableRefWin};
 #else
-    void* expectedVTablePointer = ${vtableRefGnu};
+        void* expectedVTablePointer = ${vtableRefGnu};
 #endif
 
-    // If this fails ${implType} does not have a vtable, so you need to add the
-    // ImplementationLacksVTable attribute to the interface definition
-    static_assert(std::is_polymorphic<${implType}>::value, "${implType} is not polymorphic");
-
-    // If you hit this assertion you either have a use after free bug, or
-    // ${implType} has subclasses. If ${implType} has subclasses that get passed
-    // to toJS() we currently require $interfaceName you to opt out of binding hardening
-    // by adding the SkipVTableValidation attribute to the interface IDL definition
-    RELEASE_ASSERT(actualVTablePointer == expectedVTablePointer);
+        // If you hit this assertion you either have a use after free bug, or
+        // ${implType} has subclasses. If ${implType} has subclasses that get passed
+        // to toJS() we currently require $interfaceName you to opt out of binding hardening
+        // by adding the SkipVTableValidation attribute to the interface IDL definition
+        RELEASE_ASSERT(actualVTablePointer == expectedVTablePointer);
 #endif
+    }
 END
-        push(@implContent, <<END) if $interface->extendedAttributes->{ImplementationLacksVTable};
-    // If you hit this failure the interface definition has the ImplementationLacksVTable
-    // attribute. You should remove that attribute. If the class has subclasses
-    // that may be passed through this toJS() function you should use the SkipVTableValidation
-    // attribute to $interfaceName.
-    static_assert(!std::is_polymorphic<${implType}>::value, "${implType} is polymorphic but the IDL claims it is not");
-END
-
         push(@implContent, "    return createWrapper<${implType}>(globalObject, WTFMove(impl));\n");
         push(@implContent, "}\n\n");
 

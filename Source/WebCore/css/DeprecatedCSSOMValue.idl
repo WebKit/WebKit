@@ -22,7 +22,6 @@
     CustomIsReachable,
     CustomToJSObject,
     ExportToWrappedFunction,
-    ImplementationLacksVTable,
     InterfaceName=CSSValue,
     Exposed=Window
 ] interface DeprecatedCSSOMValue {

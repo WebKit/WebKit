@@ -19,7 +19,6 @@
 
 [
     ExportToWrappedFunction,
-    ImplementationLacksVTable,
     InterfaceName=Rect,
     Exposed=Window
 ] interface DeprecatedCSSOMRect {

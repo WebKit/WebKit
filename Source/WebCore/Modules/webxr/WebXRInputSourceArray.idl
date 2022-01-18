@@ -30,7 +30,6 @@
     Conditional=WEBXR,
     SecureContext,
     Exposed=Window,
-    ImplementationLacksVTable,
     InterfaceName=XRInputSourceArray
 ] interface WebXRInputSourceArray {
     iterable<WebXRInputSource>;

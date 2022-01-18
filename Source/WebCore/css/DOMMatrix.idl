@@ -29,7 +29,6 @@
     Exposed=(Window,Worker),
     LegacyWindowAlias=WebKitCSSMatrix,
     JSGenerateToNativeObject,
-    ImplementationLacksVTable
 ] interface DOMMatrix : DOMMatrixReadOnly {
     [CallWith=ScriptExecutionContext] constructor(optional (DOMString or sequence<unrestricted double>) init);
 

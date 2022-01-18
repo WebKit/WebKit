@@ -395,24 +395,22 @@ extern "C" { extern void* _ZTVN7WebCore37TestNamedAndIndexedSetterNoIdentifierE[
 JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject*, JSDOMGlobalObject* globalObject, Ref<TestNamedAndIndexedSetterNoIdentifier>&& impl)
 {
 
+    if constexpr (std::is_polymorphic_v<TestNamedAndIndexedSetterNoIdentifier>) {
 #if ENABLE(BINDING_INTEGRITY)
-    const void* actualVTablePointer = getVTablePointer(impl.ptr());
+        const void* actualVTablePointer = getVTablePointer(impl.ptr());
 #if PLATFORM(WIN)
-    void* expectedVTablePointer = __identifier("??_7TestNamedAndIndexedSetterNoIdentifier@WebCore@@6B@");
+        void* expectedVTablePointer = __identifier("??_7TestNamedAndIndexedSetterNoIdentifier@WebCore@@6B@");
 #else
-    void* expectedVTablePointer = &_ZTVN7WebCore37TestNamedAndIndexedSetterNoIdentifierE[2];
+        void* expectedVTablePointer = &_ZTVN7WebCore37TestNamedAndIndexedSetterNoIdentifierE[2];
 #endif
 
-    // If this fails TestNamedAndIndexedSetterNoIdentifier does not have a vtable, so you need to add the
-    // ImplementationLacksVTable attribute to the interface definition
-    static_assert(std::is_polymorphic<TestNamedAndIndexedSetterNoIdentifier>::value, "TestNamedAndIndexedSetterNoIdentifier is not polymorphic");
-
-    // If you hit this assertion you either have a use after free bug, or
-    // TestNamedAndIndexedSetterNoIdentifier has subclasses. If TestNamedAndIndexedSetterNoIdentifier has subclasses that get passed
-    // to toJS() we currently require TestNamedAndIndexedSetterNoIdentifier you to opt out of binding hardening
-    // by adding the SkipVTableValidation attribute to the interface IDL definition
-    RELEASE_ASSERT(actualVTablePointer == expectedVTablePointer);
+        // If you hit this assertion you either have a use after free bug, or
+        // TestNamedAndIndexedSetterNoIdentifier has subclasses. If TestNamedAndIndexedSetterNoIdentifier has subclasses that get passed
+        // to toJS() we currently require TestNamedAndIndexedSetterNoIdentifier you to opt out of binding hardening
+        // by adding the SkipVTableValidation attribute to the interface IDL definition
+        RELEASE_ASSERT(actualVTablePointer == expectedVTablePointer);
 #endif
+    }
     return createWrapper<TestNamedAndIndexedSetterNoIdentifier>(globalObject, WTFMove(impl));
 }
 

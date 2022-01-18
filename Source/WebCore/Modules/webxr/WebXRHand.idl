@@ -29,7 +29,6 @@
     GenerateIsReachable=ImplWebXRSessionRoot,
     SecureContext,
     Exposed=Window,
-    ImplementationLacksVTable,
     InterfaceName=XRHand
 ] interface WebXRHand {
     iterable<XRHandJoint, WebXRJointSpace>;

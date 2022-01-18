@@ -31,7 +31,6 @@
 
 [
     EnabledBySetting=DataTransferItemsEnabled,
-    ImplementationLacksVTable,
     Exposed=Window
 ] interface DataTransferItem {
     readonly attribute DOMString kind;

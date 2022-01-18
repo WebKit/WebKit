@@ -21,7 +21,6 @@
 [
     GenerateIsReachable=ReachableFromNavigator,
     LegacyUnenumerableNamedProperties,
-    ImplementationLacksVTable,
     InterfaceName=MimeTypeArray,
     Exposed=Window
 ] interface DOMMimeTypeArray {

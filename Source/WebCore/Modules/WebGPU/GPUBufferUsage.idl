@@ -28,7 +28,6 @@
 typedef [EnforceRange] unsigned long GPUBufferUsageFlags;
 [
     EnabledBySetting=WebGPU,
-    ImplementationLacksVTable,
     Exposed=(Window), /* https://bugs.webkit.org/show_bug.cgi?id=232542: DedicatedWorker */
     SecureContext
 ]

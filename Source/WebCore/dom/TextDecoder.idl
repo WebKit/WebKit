@@ -34,7 +34,6 @@ dictionary TextDecodeOptions {
 
 [
     Exposed=(Window,Worker),
-    ImplementationLacksVTable,
 ] interface TextDecoder {
     constructor(optional DOMString label = "utf-8", optional TextDecoderOptions options);
 

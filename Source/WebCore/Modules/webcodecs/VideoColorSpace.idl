@@ -26,7 +26,6 @@
 [
     Conditional=VIDEO,
     Exposed=(Window,Worker),
-    ImplementationLacksVTable,
 ]
 interface VideoColorSpace {
   readonly attribute VideoColorPrimaries? primaries;

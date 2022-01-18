@@ -30,7 +30,6 @@
     SecureContext,
     Exposed=Window,
     JSCustomMarkFunction,
-    ImplementationLacksVTable,
     InterfaceName=XRRigidTransform
 ] interface WebXRRigidTransform {
     constructor(optional DOMPointInit position, optional DOMPointInit orientation);

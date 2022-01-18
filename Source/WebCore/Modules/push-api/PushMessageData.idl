@@ -27,7 +27,6 @@
     Conditional=SERVICE_WORKER,
     EnabledAtRuntime=PushAPIEnabled,
     Exposed=ServiceWorker,
-    ImplementationLacksVTable,
 ] interface PushMessageData {
     ArrayBuffer arrayBuffer();
     [CallWith=ScriptExecutionContext] Blob blob();

@@ -25,7 +25,6 @@
 
 [
     Exposed=(Window,Worker),
-    ImplementationLacksVTable,
 ] interface TextMetrics {
     // FIXME: All the unrestricted float attributes below should be doubles.
 

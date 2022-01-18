@@ -30,7 +30,6 @@
     SecureContext,
     Exposed=Window,
     JSCustomMarkFunction,
-    ImplementationLacksVTable,
     InterfaceName=XRView
 ] interface WebXRView {
     readonly attribute XREye eye;

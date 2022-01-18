@@ -29,7 +29,6 @@
 [
     DoNotCheckConstants,
     Exposed=(Window,Worker),
-    ImplementationLacksVTable,
     Exception
 ] interface DOMException {
     constructor(optional DOMString message = "", optional DOMString name = "Error");

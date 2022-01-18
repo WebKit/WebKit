@@ -25,7 +25,6 @@
 
 [
     Conditional=LEGACY_ENCRYPTED_MEDIA,
-    ImplementationLacksVTable,
     EnabledBySetting=LegacyEncryptedMediaAPIEnabled,
     Exposed=Window
 ] interface WebKitMediaKeyError {

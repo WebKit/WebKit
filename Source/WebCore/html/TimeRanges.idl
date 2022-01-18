@@ -26,7 +26,6 @@
 [
     Conditional=VIDEO,
     ExportMacro=WEBCORE_EXPORT,
-    ImplementationLacksVTable,
     Exposed=Window
 ] interface TimeRanges {
     readonly attribute unsigned long length;

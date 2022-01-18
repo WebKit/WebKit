@@ -28,7 +28,6 @@
     Conditional=WEBXR_HANDS,
     SecureContext,
     Exposed=Window,
-    ImplementationLacksVTable,
     InterfaceName=XRJointPose
 ] interface WebXRJointPose : WebXRPose {
     readonly attribute float radius;

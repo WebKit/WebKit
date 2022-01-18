@@ -26,7 +26,6 @@
 [
     EnabledBySetting=WebXREnabled,
     Conditional=WEBXR,
-    ImplementationLacksVTable,
     InterfaceName=FakeXRInputController,
     LegacyNoInterfaceObject
 ] interface WebFakeXRInputController {

@@ -293,24 +293,22 @@ extern "C" { extern void* _ZTVN7WebCore38TestOverloadedConstructorsWithSequenceE
 JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject*, JSDOMGlobalObject* globalObject, Ref<TestOverloadedConstructorsWithSequence>&& impl)
 {
 
+    if constexpr (std::is_polymorphic_v<TestOverloadedConstructorsWithSequence>) {
 #if ENABLE(BINDING_INTEGRITY)
-    const void* actualVTablePointer = getVTablePointer(impl.ptr());
+        const void* actualVTablePointer = getVTablePointer(impl.ptr());
 #if PLATFORM(WIN)
-    void* expectedVTablePointer = __identifier("??_7TestOverloadedConstructorsWithSequence@WebCore@@6B@");
+        void* expectedVTablePointer = __identifier("??_7TestOverloadedConstructorsWithSequence@WebCore@@6B@");
 #else
-    void* expectedVTablePointer = &_ZTVN7WebCore38TestOverloadedConstructorsWithSequenceE[2];
+        void* expectedVTablePointer = &_ZTVN7WebCore38TestOverloadedConstructorsWithSequenceE[2];
 #endif
 
-    // If this fails TestOverloadedConstructorsWithSequence does not have a vtable, so you need to add the
-    // ImplementationLacksVTable attribute to the interface definition
-    static_assert(std::is_polymorphic<TestOverloadedConstructorsWithSequence>::value, "TestOverloadedConstructorsWithSequence is not polymorphic");
-
-    // If you hit this assertion you either have a use after free bug, or
-    // TestOverloadedConstructorsWithSequence has subclasses. If TestOverloadedConstructorsWithSequence has subclasses that get passed
-    // to toJS() we currently require TestOverloadedConstructorsWithSequence you to opt out of binding hardening
-    // by adding the SkipVTableValidation attribute to the interface IDL definition
-    RELEASE_ASSERT(actualVTablePointer == expectedVTablePointer);
+        // If you hit this assertion you either have a use after free bug, or
+        // TestOverloadedConstructorsWithSequence has subclasses. If TestOverloadedConstructorsWithSequence has subclasses that get passed
+        // to toJS() we currently require TestOverloadedConstructorsWithSequence you to opt out of binding hardening
+        // by adding the SkipVTableValidation attribute to the interface IDL definition
+        RELEASE_ASSERT(actualVTablePointer == expectedVTablePointer);
 #endif
+    }
     return createWrapper<TestOverloadedConstructorsWithSequence>(globalObject, WTFMove(impl));
 }
 

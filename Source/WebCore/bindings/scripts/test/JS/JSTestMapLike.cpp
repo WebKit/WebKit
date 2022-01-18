@@ -417,24 +417,22 @@ extern "C" { extern void* _ZTVN7WebCore11TestMapLikeE[]; }
 JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject*, JSDOMGlobalObject* globalObject, Ref<TestMapLike>&& impl)
 {
 
+    if constexpr (std::is_polymorphic_v<TestMapLike>) {
 #if ENABLE(BINDING_INTEGRITY)
-    const void* actualVTablePointer = getVTablePointer(impl.ptr());
+        const void* actualVTablePointer = getVTablePointer(impl.ptr());
 #if PLATFORM(WIN)
-    void* expectedVTablePointer = __identifier("??_7TestMapLike@WebCore@@6B@");
+        void* expectedVTablePointer = __identifier("??_7TestMapLike@WebCore@@6B@");
 #else
-    void* expectedVTablePointer = &_ZTVN7WebCore11TestMapLikeE[2];
+        void* expectedVTablePointer = &_ZTVN7WebCore11TestMapLikeE[2];
 #endif
 
-    // If this fails TestMapLike does not have a vtable, so you need to add the
-    // ImplementationLacksVTable attribute to the interface definition
-    static_assert(std::is_polymorphic<TestMapLike>::value, "TestMapLike is not polymorphic");
-
-    // If you hit this assertion you either have a use after free bug, or
-    // TestMapLike has subclasses. If TestMapLike has subclasses that get passed
-    // to toJS() we currently require TestMapLike you to opt out of binding hardening
-    // by adding the SkipVTableValidation attribute to the interface IDL definition
-    RELEASE_ASSERT(actualVTablePointer == expectedVTablePointer);
+        // If you hit this assertion you either have a use after free bug, or
+        // TestMapLike has subclasses. If TestMapLike has subclasses that get passed
+        // to toJS() we currently require TestMapLike you to opt out of binding hardening
+        // by adding the SkipVTableValidation attribute to the interface IDL definition
+        RELEASE_ASSERT(actualVTablePointer == expectedVTablePointer);
 #endif
+    }
     return createWrapper<TestMapLike>(globalObject, WTFMove(impl));
 }
 

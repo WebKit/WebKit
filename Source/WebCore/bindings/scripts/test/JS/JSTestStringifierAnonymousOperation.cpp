@@ -243,24 +243,22 @@ extern "C" { extern void* _ZTVN7WebCore33TestStringifierAnonymousOperationE[]; }
 JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject*, JSDOMGlobalObject* globalObject, Ref<TestStringifierAnonymousOperation>&& impl)
 {
 
+    if constexpr (std::is_polymorphic_v<TestStringifierAnonymousOperation>) {
 #if ENABLE(BINDING_INTEGRITY)
-    const void* actualVTablePointer = getVTablePointer(impl.ptr());
+        const void* actualVTablePointer = getVTablePointer(impl.ptr());
 #if PLATFORM(WIN)
-    void* expectedVTablePointer = __identifier("??_7TestStringifierAnonymousOperation@WebCore@@6B@");
+        void* expectedVTablePointer = __identifier("??_7TestStringifierAnonymousOperation@WebCore@@6B@");
 #else
-    void* expectedVTablePointer = &_ZTVN7WebCore33TestStringifierAnonymousOperationE[2];
+        void* expectedVTablePointer = &_ZTVN7WebCore33TestStringifierAnonymousOperationE[2];
 #endif
 
-    // If this fails TestStringifierAnonymousOperation does not have a vtable, so you need to add the
-    // ImplementationLacksVTable attribute to the interface definition
-    static_assert(std::is_polymorphic<TestStringifierAnonymousOperation>::value, "TestStringifierAnonymousOperation is not polymorphic");
-
-    // If you hit this assertion you either have a use after free bug, or
-    // TestStringifierAnonymousOperation has subclasses. If TestStringifierAnonymousOperation has subclasses that get passed
-    // to toJS() we currently require TestStringifierAnonymousOperation you to opt out of binding hardening
-    // by adding the SkipVTableValidation attribute to the interface IDL definition
-    RELEASE_ASSERT(actualVTablePointer == expectedVTablePointer);
+        // If you hit this assertion you either have a use after free bug, or
+        // TestStringifierAnonymousOperation has subclasses. If TestStringifierAnonymousOperation has subclasses that get passed
+        // to toJS() we currently require TestStringifierAnonymousOperation you to opt out of binding hardening
+        // by adding the SkipVTableValidation attribute to the interface IDL definition
+        RELEASE_ASSERT(actualVTablePointer == expectedVTablePointer);
 #endif
+    }
     return createWrapper<TestStringifierAnonymousOperation>(globalObject, WTFMove(impl));
 }
 

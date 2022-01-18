@@ -30,7 +30,6 @@
 
 // https://w3c.github.io/navigation-timing/#the-performancetiming-interface
 [
-    ImplementationLacksVTable,
     Exposed=Window
 ] interface PerformanceTiming {
     readonly attribute unsigned long long navigationStart;

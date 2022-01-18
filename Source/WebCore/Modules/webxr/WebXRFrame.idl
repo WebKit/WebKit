@@ -29,7 +29,6 @@
     Conditional=WEBXR,
     SecureContext,
     Exposed=Window,
-    ImplementationLacksVTable,
     InterfaceName=XRFrame
 ] interface WebXRFrame {
     [SameObject] readonly attribute WebXRSession session;

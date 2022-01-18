@@ -30,7 +30,6 @@
     Exposed=Window,
     JSCustomMarkFunction,
     CustomIsReachable,
-    ImplementationLacksVTable
 ] interface ResizeObserver {
     [CallWith=Document] constructor(ResizeObserverCallback callback);
 

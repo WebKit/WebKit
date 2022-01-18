@@ -27,7 +27,6 @@
     Conditional=PAYMENT_REQUEST,
     EnabledBySetting=PaymentRequestEnabled,
     Exposed=Window,
-    ImplementationLacksVTable,
     SecureContext
 ] interface PaymentAddress {
     [Default] object toJSON();

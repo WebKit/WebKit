@@ -25,7 +25,6 @@
 
 [
     Exposed=(Window,Worker),
-    ImplementationLacksVTable,
     GenerateAddOpaqueRoot=signal
 ] interface AbortController {
     [CallWith=ScriptExecutionContext] constructor();

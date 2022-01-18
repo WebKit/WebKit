@@ -840,24 +840,22 @@ extern "C" { extern void* _ZTVN7WebCore23TestConditionalIncludesE[]; }
 JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject*, JSDOMGlobalObject* globalObject, Ref<TestConditionalIncludes>&& impl)
 {
 
+    if constexpr (std::is_polymorphic_v<TestConditionalIncludes>) {
 #if ENABLE(BINDING_INTEGRITY)
-    const void* actualVTablePointer = getVTablePointer(impl.ptr());
+        const void* actualVTablePointer = getVTablePointer(impl.ptr());
 #if PLATFORM(WIN)
-    void* expectedVTablePointer = __identifier("??_7TestConditionalIncludes@WebCore@@6B@");
+        void* expectedVTablePointer = __identifier("??_7TestConditionalIncludes@WebCore@@6B@");
 #else
-    void* expectedVTablePointer = &_ZTVN7WebCore23TestConditionalIncludesE[2];
+        void* expectedVTablePointer = &_ZTVN7WebCore23TestConditionalIncludesE[2];
 #endif
 
-    // If this fails TestConditionalIncludes does not have a vtable, so you need to add the
-    // ImplementationLacksVTable attribute to the interface definition
-    static_assert(std::is_polymorphic<TestConditionalIncludes>::value, "TestConditionalIncludes is not polymorphic");
-
-    // If you hit this assertion you either have a use after free bug, or
-    // TestConditionalIncludes has subclasses. If TestConditionalIncludes has subclasses that get passed
-    // to toJS() we currently require TestConditionalIncludes you to opt out of binding hardening
-    // by adding the SkipVTableValidation attribute to the interface IDL definition
-    RELEASE_ASSERT(actualVTablePointer == expectedVTablePointer);
+        // If you hit this assertion you either have a use after free bug, or
+        // TestConditionalIncludes has subclasses. If TestConditionalIncludes has subclasses that get passed
+        // to toJS() we currently require TestConditionalIncludes you to opt out of binding hardening
+        // by adding the SkipVTableValidation attribute to the interface IDL definition
+        RELEASE_ASSERT(actualVTablePointer == expectedVTablePointer);
 #endif
+    }
     return createWrapper<TestConditionalIncludes>(globalObject, WTFMove(impl));
 }
 

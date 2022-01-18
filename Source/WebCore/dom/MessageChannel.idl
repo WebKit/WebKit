@@ -28,7 +28,6 @@
     Exposed=(Window,Worker),
     Conditional=CHANNEL_MESSAGING,
     JSCustomMarkFunction,
-    ImplementationLacksVTable
 ] interface MessageChannel {
     [CallWith=ScriptExecutionContext] constructor();
 

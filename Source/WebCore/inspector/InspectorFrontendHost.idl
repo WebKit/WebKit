@@ -31,7 +31,6 @@
  */
 
 [
-    ImplementationLacksVTable,
     LegacyNoInterfaceObject,
 ] interface InspectorFrontendHost {
     undefined loaded();

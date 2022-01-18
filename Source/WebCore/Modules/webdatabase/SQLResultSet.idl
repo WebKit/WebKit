@@ -27,7 +27,6 @@
  */
 
 [
-    ImplementationLacksVTable,
     EnabledAtRuntime=WebSQLEnabled,
     Exposed=Window
 ] interface SQLResultSet {

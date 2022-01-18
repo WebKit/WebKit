@@ -510,24 +510,22 @@ extern "C" { extern void* _ZTVN7WebCore20TestEnabledBySettingE[]; }
 JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject*, JSDOMGlobalObject* globalObject, Ref<TestEnabledBySetting>&& impl)
 {
 
+    if constexpr (std::is_polymorphic_v<TestEnabledBySetting>) {
 #if ENABLE(BINDING_INTEGRITY)
-    const void* actualVTablePointer = getVTablePointer(impl.ptr());
+        const void* actualVTablePointer = getVTablePointer(impl.ptr());
 #if PLATFORM(WIN)
-    void* expectedVTablePointer = __identifier("??_7TestEnabledBySetting@WebCore@@6B@");
+        void* expectedVTablePointer = __identifier("??_7TestEnabledBySetting@WebCore@@6B@");
 #else
-    void* expectedVTablePointer = &_ZTVN7WebCore20TestEnabledBySettingE[2];
+        void* expectedVTablePointer = &_ZTVN7WebCore20TestEnabledBySettingE[2];
 #endif
 
-    // If this fails TestEnabledBySetting does not have a vtable, so you need to add the
-    // ImplementationLacksVTable attribute to the interface definition
-    static_assert(std::is_polymorphic<TestEnabledBySetting>::value, "TestEnabledBySetting is not polymorphic");
-
-    // If you hit this assertion you either have a use after free bug, or
-    // TestEnabledBySetting has subclasses. If TestEnabledBySetting has subclasses that get passed
-    // to toJS() we currently require TestEnabledBySetting you to opt out of binding hardening
-    // by adding the SkipVTableValidation attribute to the interface IDL definition
-    RELEASE_ASSERT(actualVTablePointer == expectedVTablePointer);
+        // If you hit this assertion you either have a use after free bug, or
+        // TestEnabledBySetting has subclasses. If TestEnabledBySetting has subclasses that get passed
+        // to toJS() we currently require TestEnabledBySetting you to opt out of binding hardening
+        // by adding the SkipVTableValidation attribute to the interface IDL definition
+        RELEASE_ASSERT(actualVTablePointer == expectedVTablePointer);
 #endif
+    }
     return createWrapper<TestEnabledBySetting>(globalObject, WTFMove(impl));
 }
 

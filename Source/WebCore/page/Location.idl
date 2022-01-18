@@ -39,7 +39,6 @@
     ExportMacro=WEBCORE_EXPORT,
     GenerateIsReachable=ReachableFromDOMWindow,
     IsImmutablePrototypeExoticObject,
-    ImplementationLacksVTable,
     LegacyUnforgeable,
     Exposed=Window
 ] interface Location {

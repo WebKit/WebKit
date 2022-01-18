@@ -28,7 +28,6 @@
 [
     EnabledBySetting=PermissionsAPIEnabled,
     GenerateIsReachable=ReachableFromNavigator,
-    ImplementationLacksVTable,
     Exposed=(Window,Worker)
 ] interface Permissions {
     Promise<PermissionStatus> query(object permissionDesc);

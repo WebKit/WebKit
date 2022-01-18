@@ -859,24 +859,22 @@ extern "C" { extern void* _ZTVN7WebCore17TestDefaultToJSONE[]; }
 JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject*, JSDOMGlobalObject* globalObject, Ref<TestDefaultToJSON>&& impl)
 {
 
+    if constexpr (std::is_polymorphic_v<TestDefaultToJSON>) {
 #if ENABLE(BINDING_INTEGRITY)
-    const void* actualVTablePointer = getVTablePointer(impl.ptr());
+        const void* actualVTablePointer = getVTablePointer(impl.ptr());
 #if PLATFORM(WIN)
-    void* expectedVTablePointer = __identifier("??_7TestDefaultToJSON@WebCore@@6B@");
+        void* expectedVTablePointer = __identifier("??_7TestDefaultToJSON@WebCore@@6B@");
 #else
-    void* expectedVTablePointer = &_ZTVN7WebCore17TestDefaultToJSONE[2];
+        void* expectedVTablePointer = &_ZTVN7WebCore17TestDefaultToJSONE[2];
 #endif
 
-    // If this fails TestDefaultToJSON does not have a vtable, so you need to add the
-    // ImplementationLacksVTable attribute to the interface definition
-    static_assert(std::is_polymorphic<TestDefaultToJSON>::value, "TestDefaultToJSON is not polymorphic");
-
-    // If you hit this assertion you either have a use after free bug, or
-    // TestDefaultToJSON has subclasses. If TestDefaultToJSON has subclasses that get passed
-    // to toJS() we currently require TestDefaultToJSON you to opt out of binding hardening
-    // by adding the SkipVTableValidation attribute to the interface IDL definition
-    RELEASE_ASSERT(actualVTablePointer == expectedVTablePointer);
+        // If you hit this assertion you either have a use after free bug, or
+        // TestDefaultToJSON has subclasses. If TestDefaultToJSON has subclasses that get passed
+        // to toJS() we currently require TestDefaultToJSON you to opt out of binding hardening
+        // by adding the SkipVTableValidation attribute to the interface IDL definition
+        RELEASE_ASSERT(actualVTablePointer == expectedVTablePointer);
 #endif
+    }
     return createWrapper<TestDefaultToJSON>(globalObject, WTFMove(impl));
 }
 

@@ -30,7 +30,6 @@
 
 [
     Exposed=DedicatedWorker,
-    ImplementationLacksVTable,
 ] interface FileReaderSync {
     constructor();
 

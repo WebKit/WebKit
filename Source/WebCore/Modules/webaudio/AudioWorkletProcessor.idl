@@ -29,7 +29,6 @@
 [
     Conditional=WEB_AUDIO,
     Exposed=AudioWorklet,
-    ImplementationLacksVTable,
     JSCustomMarkFunction
 ] interface AudioWorkletProcessor {
     [CallWith=ScriptExecutionContext] constructor();

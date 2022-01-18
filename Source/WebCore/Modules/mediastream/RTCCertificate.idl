@@ -37,7 +37,6 @@ typedef (object or DOMString) AlgorithmIdentifier;
 [
     Conditional=WEB_RTC,
     EnabledBySetting=PeerConnectionEnabled,
-    ImplementationLacksVTable,
     Exposed=Window
 ] interface RTCCertificate {
     readonly attribute double expires;

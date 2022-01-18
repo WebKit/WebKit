@@ -1243,13 +1243,34 @@ void JSTestInterfaceOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* cont
     uncacheWrapper(world, &jsTestInterface->wrapped(), jsTestInterface);
 }
 
+#if ENABLE(BINDING_INTEGRITY)
+#if PLATFORM(WIN)
+#pragma warning(disable: 4483)
+extern "C" { extern void (*const __identifier("??_7TestInterface@WebCore@@6B@")[])(); }
+#else
+extern "C" { extern void* _ZTVN7WebCore13TestInterfaceE[]; }
+#endif
+#endif
+
 JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject*, JSDOMGlobalObject* globalObject, Ref<TestInterface>&& impl)
 {
-    // If you hit this failure the interface definition has the ImplementationLacksVTable
-    // attribute. You should remove that attribute. If the class has subclasses
-    // that may be passed through this toJS() function you should use the SkipVTableValidation
-    // attribute to TestInterface.
-    static_assert(!std::is_polymorphic<TestInterface>::value, "TestInterface is polymorphic but the IDL claims it is not");
+
+    if constexpr (std::is_polymorphic_v<TestInterface>) {
+#if ENABLE(BINDING_INTEGRITY)
+        const void* actualVTablePointer = getVTablePointer(impl.ptr());
+#if PLATFORM(WIN)
+        void* expectedVTablePointer = __identifier("??_7TestInterface@WebCore@@6B@");
+#else
+        void* expectedVTablePointer = &_ZTVN7WebCore13TestInterfaceE[2];
+#endif
+
+        // If you hit this assertion you either have a use after free bug, or
+        // TestInterface has subclasses. If TestInterface has subclasses that get passed
+        // to toJS() we currently require TestInterface you to opt out of binding hardening
+        // by adding the SkipVTableValidation attribute to the interface IDL definition
+        RELEASE_ASSERT(actualVTablePointer == expectedVTablePointer);
+#endif
+    }
     return createWrapper<TestInterface>(globalObject, WTFMove(impl));
 }
 

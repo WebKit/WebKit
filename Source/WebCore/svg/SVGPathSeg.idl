@@ -26,7 +26,6 @@
 
 [
     CustomToJSObject,
-    ImplementationLacksVTable,
     Exposed=Window
 ] interface SVGPathSeg {
     const unsigned short PATHSEG_UNKNOWN = 0;

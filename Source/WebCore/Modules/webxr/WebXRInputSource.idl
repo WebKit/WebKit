@@ -30,7 +30,6 @@
     Conditional=WEBXR,
     SecureContext,
     Exposed=Window,
-    ImplementationLacksVTable,
     InterfaceName=XRInputSource
 ] interface WebXRInputSource {
     readonly attribute XRHandedness handedness;

@@ -249,24 +249,22 @@ extern "C" { extern void* _ZTVN7WebCore25TestGenerateAddOpaqueRootE[]; }
 JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject*, JSDOMGlobalObject* globalObject, Ref<TestGenerateAddOpaqueRoot>&& impl)
 {
 
+    if constexpr (std::is_polymorphic_v<TestGenerateAddOpaqueRoot>) {
 #if ENABLE(BINDING_INTEGRITY)
-    const void* actualVTablePointer = getVTablePointer(impl.ptr());
+        const void* actualVTablePointer = getVTablePointer(impl.ptr());
 #if PLATFORM(WIN)
-    void* expectedVTablePointer = __identifier("??_7TestGenerateAddOpaqueRoot@WebCore@@6B@");
+        void* expectedVTablePointer = __identifier("??_7TestGenerateAddOpaqueRoot@WebCore@@6B@");
 #else
-    void* expectedVTablePointer = &_ZTVN7WebCore25TestGenerateAddOpaqueRootE[2];
+        void* expectedVTablePointer = &_ZTVN7WebCore25TestGenerateAddOpaqueRootE[2];
 #endif
 
-    // If this fails TestGenerateAddOpaqueRoot does not have a vtable, so you need to add the
-    // ImplementationLacksVTable attribute to the interface definition
-    static_assert(std::is_polymorphic<TestGenerateAddOpaqueRoot>::value, "TestGenerateAddOpaqueRoot is not polymorphic");
-
-    // If you hit this assertion you either have a use after free bug, or
-    // TestGenerateAddOpaqueRoot has subclasses. If TestGenerateAddOpaqueRoot has subclasses that get passed
-    // to toJS() we currently require TestGenerateAddOpaqueRoot you to opt out of binding hardening
-    // by adding the SkipVTableValidation attribute to the interface IDL definition
-    RELEASE_ASSERT(actualVTablePointer == expectedVTablePointer);
+        // If you hit this assertion you either have a use after free bug, or
+        // TestGenerateAddOpaqueRoot has subclasses. If TestGenerateAddOpaqueRoot has subclasses that get passed
+        // to toJS() we currently require TestGenerateAddOpaqueRoot you to opt out of binding hardening
+        // by adding the SkipVTableValidation attribute to the interface IDL definition
+        RELEASE_ASSERT(actualVTablePointer == expectedVTablePointer);
 #endif
+    }
     return createWrapper<TestGenerateAddOpaqueRoot>(globalObject, WTFMove(impl));
 }
 

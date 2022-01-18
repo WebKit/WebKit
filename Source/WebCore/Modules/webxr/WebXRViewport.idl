@@ -29,7 +29,6 @@
     Conditional=WEBXR,
     SecureContext,
     Exposed=Window,
-    ImplementationLacksVTable,
     InterfaceName=XRViewport
 ] interface WebXRViewport {
     readonly attribute long x;

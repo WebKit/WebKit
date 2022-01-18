@@ -25,7 +25,6 @@
 
 [
     LegacyNoInterfaceObject,
-    ImplementationLacksVTable,
     ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
 ] interface TypeConversions {
     attribute byte testByte;

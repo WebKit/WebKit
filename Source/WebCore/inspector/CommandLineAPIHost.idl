@@ -32,7 +32,6 @@
 
 [
     LegacyNoInterfaceObject,
-    ImplementationLacksVTable
 ] interface CommandLineAPIHost {
     undefined clearConsoleMessages();
     undefined copyText(DOMString text);

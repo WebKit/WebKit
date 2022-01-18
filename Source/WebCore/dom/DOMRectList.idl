@@ -25,7 +25,6 @@
 
 [
     ExportMacro=WEBCORE_EXPORT,
-    ImplementationLacksVTable,
     Exposed=Window
 ] interface DOMRectList {
     readonly attribute unsigned long length;

@@ -28,7 +28,6 @@
 [
     Conditional=SERVICE_WORKER,
     EnabledAtRuntime=PushAPIEnabled,
-    ImplementationLacksVTable,
     SecureContext,
     Exposed=(Window,Worker),
 ] interface PushSubscriptionOptions {

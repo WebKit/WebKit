@@ -25,7 +25,6 @@
 
 [
     EnabledAtRuntime=DirectoryUploadEnabled,
-    ImplementationLacksVTable,
     InterfaceName=FileSystem,
     Exposed=Window
 ] interface DOMFileSystem {

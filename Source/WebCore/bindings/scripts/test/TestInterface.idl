@@ -33,7 +33,6 @@
     CustomPut,
     Conditional=Condition1|Condition2,
     ExportMacro=WEBCORE_EXPORT,
-    ImplementationLacksVTable,
     Exposed=Window
 ] interface TestInterface {
     [CallWith=ScriptExecutionContext] constructor(DOMString str1, optional DOMString str2 = "defaultString");

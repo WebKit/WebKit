@@ -35,7 +35,6 @@ typedef (File or USVString) FormDataEntryValue;
     JSGenerateToNativeObject,
     JSGenerateToJSObject,
     InterfaceName=FormData,
-    ImplementationLacksVTable,
 ] interface DOMFormData {
     constructor(optional HTMLFormElement form);
 

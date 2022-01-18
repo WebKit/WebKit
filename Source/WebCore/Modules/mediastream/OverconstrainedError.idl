@@ -35,7 +35,6 @@
 // [https://w3c.github.io/mediacapture-main/#dfn-overconstrainederror]
 
 [
-    ImplementationLacksVTable,
     Conditional=MEDIA_STREAM,
     Exception,
     Exposed=Window

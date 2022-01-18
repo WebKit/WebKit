@@ -26,7 +26,6 @@
 // FIXME: This is specified as Exposed=(Window,Worker)
 [
     Conditional=WEBGL,
-    ImplementationLacksVTable,
     Exposed=Window
 ] interface WebGLActiveInfo {
     readonly attribute long size;

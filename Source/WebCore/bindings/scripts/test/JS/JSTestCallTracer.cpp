@@ -564,24 +564,22 @@ extern "C" { extern void* _ZTVN7WebCore14TestCallTracerE[]; }
 JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject*, JSDOMGlobalObject* globalObject, Ref<TestCallTracer>&& impl)
 {
 
+    if constexpr (std::is_polymorphic_v<TestCallTracer>) {
 #if ENABLE(BINDING_INTEGRITY)
-    const void* actualVTablePointer = getVTablePointer(impl.ptr());
+        const void* actualVTablePointer = getVTablePointer(impl.ptr());
 #if PLATFORM(WIN)
-    void* expectedVTablePointer = __identifier("??_7TestCallTracer@WebCore@@6B@");
+        void* expectedVTablePointer = __identifier("??_7TestCallTracer@WebCore@@6B@");
 #else
-    void* expectedVTablePointer = &_ZTVN7WebCore14TestCallTracerE[2];
+        void* expectedVTablePointer = &_ZTVN7WebCore14TestCallTracerE[2];
 #endif
 
-    // If this fails TestCallTracer does not have a vtable, so you need to add the
-    // ImplementationLacksVTable attribute to the interface definition
-    static_assert(std::is_polymorphic<TestCallTracer>::value, "TestCallTracer is not polymorphic");
-
-    // If you hit this assertion you either have a use after free bug, or
-    // TestCallTracer has subclasses. If TestCallTracer has subclasses that get passed
-    // to toJS() we currently require TestCallTracer you to opt out of binding hardening
-    // by adding the SkipVTableValidation attribute to the interface IDL definition
-    RELEASE_ASSERT(actualVTablePointer == expectedVTablePointer);
+        // If you hit this assertion you either have a use after free bug, or
+        // TestCallTracer has subclasses. If TestCallTracer has subclasses that get passed
+        // to toJS() we currently require TestCallTracer you to opt out of binding hardening
+        // by adding the SkipVTableValidation attribute to the interface IDL definition
+        RELEASE_ASSERT(actualVTablePointer == expectedVTablePointer);
 #endif
+    }
     return createWrapper<TestCallTracer>(globalObject, WTFMove(impl));
 }
 

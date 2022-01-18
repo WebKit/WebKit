@@ -29,7 +29,6 @@
     Conditional=WEBXR,
     SecureContext,
     Exposed=Window,
-    ImplementationLacksVTable,
     InterfaceName=XRRenderState
 ] interface WebXRRenderState {
     readonly attribute double depthNear;

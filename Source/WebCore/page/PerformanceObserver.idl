@@ -28,7 +28,6 @@
 [
     CustomIsReachable,
     Exposed=(Window,Worker),
-    ImplementationLacksVTable,
     JSCustomMarkFunction,
 ] interface PerformanceObserver {
     [CallWith=ScriptExecutionContext] constructor(PerformanceObserverCallback callback);

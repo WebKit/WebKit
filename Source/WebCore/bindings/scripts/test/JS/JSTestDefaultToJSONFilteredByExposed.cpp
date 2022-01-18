@@ -321,24 +321,22 @@ extern "C" { extern void* _ZTVN7WebCore34TestDefaultToJSONFilteredByExposedE[]; 
 JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject*, JSDOMGlobalObject* globalObject, Ref<TestDefaultToJSONFilteredByExposed>&& impl)
 {
 
+    if constexpr (std::is_polymorphic_v<TestDefaultToJSONFilteredByExposed>) {
 #if ENABLE(BINDING_INTEGRITY)
-    const void* actualVTablePointer = getVTablePointer(impl.ptr());
+        const void* actualVTablePointer = getVTablePointer(impl.ptr());
 #if PLATFORM(WIN)
-    void* expectedVTablePointer = __identifier("??_7TestDefaultToJSONFilteredByExposed@WebCore@@6B@");
+        void* expectedVTablePointer = __identifier("??_7TestDefaultToJSONFilteredByExposed@WebCore@@6B@");
 #else
-    void* expectedVTablePointer = &_ZTVN7WebCore34TestDefaultToJSONFilteredByExposedE[2];
+        void* expectedVTablePointer = &_ZTVN7WebCore34TestDefaultToJSONFilteredByExposedE[2];
 #endif
 
-    // If this fails TestDefaultToJSONFilteredByExposed does not have a vtable, so you need to add the
-    // ImplementationLacksVTable attribute to the interface definition
-    static_assert(std::is_polymorphic<TestDefaultToJSONFilteredByExposed>::value, "TestDefaultToJSONFilteredByExposed is not polymorphic");
-
-    // If you hit this assertion you either have a use after free bug, or
-    // TestDefaultToJSONFilteredByExposed has subclasses. If TestDefaultToJSONFilteredByExposed has subclasses that get passed
-    // to toJS() we currently require TestDefaultToJSONFilteredByExposed you to opt out of binding hardening
-    // by adding the SkipVTableValidation attribute to the interface IDL definition
-    RELEASE_ASSERT(actualVTablePointer == expectedVTablePointer);
+        // If you hit this assertion you either have a use after free bug, or
+        // TestDefaultToJSONFilteredByExposed has subclasses. If TestDefaultToJSONFilteredByExposed has subclasses that get passed
+        // to toJS() we currently require TestDefaultToJSONFilteredByExposed you to opt out of binding hardening
+        // by adding the SkipVTableValidation attribute to the interface IDL definition
+        RELEASE_ASSERT(actualVTablePointer == expectedVTablePointer);
 #endif
+    }
     return createWrapper<TestDefaultToJSONFilteredByExposed>(globalObject, WTFMove(impl));
 }
 

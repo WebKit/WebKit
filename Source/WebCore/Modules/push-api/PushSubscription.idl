@@ -29,7 +29,6 @@
     Conditional=SERVICE_WORKER,
     EnabledAtRuntime=PushAPIEnabled,
     ExportMacro=WEBCORE_EXPORT,
-    ImplementationLacksVTable,
     SecureContext,
     Exposed=(Window,Worker),
 ] interface PushSubscription {

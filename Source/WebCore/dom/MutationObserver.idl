@@ -30,7 +30,6 @@
 
 [
     CustomIsReachable,
-    ImplementationLacksVTable,
     LegacyWindowAlias=WebKitMutationObserver,
     JSCustomMarkFunction,
     Exposed=Window

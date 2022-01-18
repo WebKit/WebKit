@@ -28,7 +28,6 @@
     EnabledAtRuntime=ServiceWorkerEnabled,
     Exposed=ServiceWorker,
     GenerateIsReachable=Impl,
-    ImplementationLacksVTable,
     InterfaceName=Clients,
 ] interface ServiceWorkerClients {
     // The objects returned will be new instances every time

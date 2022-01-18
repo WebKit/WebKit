@@ -32,7 +32,6 @@
 
 [
     Exposed=(Window,Worker),
-    ImplementationLacksVTable
 ] interface TextEncoder {
     constructor();
 

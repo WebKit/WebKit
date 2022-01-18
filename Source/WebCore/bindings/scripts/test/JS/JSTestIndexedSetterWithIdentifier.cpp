@@ -359,24 +359,22 @@ extern "C" { extern void* _ZTVN7WebCore31TestIndexedSetterWithIdentifierE[]; }
 JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject*, JSDOMGlobalObject* globalObject, Ref<TestIndexedSetterWithIdentifier>&& impl)
 {
 
+    if constexpr (std::is_polymorphic_v<TestIndexedSetterWithIdentifier>) {
 #if ENABLE(BINDING_INTEGRITY)
-    const void* actualVTablePointer = getVTablePointer(impl.ptr());
+        const void* actualVTablePointer = getVTablePointer(impl.ptr());
 #if PLATFORM(WIN)
-    void* expectedVTablePointer = __identifier("??_7TestIndexedSetterWithIdentifier@WebCore@@6B@");
+        void* expectedVTablePointer = __identifier("??_7TestIndexedSetterWithIdentifier@WebCore@@6B@");
 #else
-    void* expectedVTablePointer = &_ZTVN7WebCore31TestIndexedSetterWithIdentifierE[2];
+        void* expectedVTablePointer = &_ZTVN7WebCore31TestIndexedSetterWithIdentifierE[2];
 #endif
 
-    // If this fails TestIndexedSetterWithIdentifier does not have a vtable, so you need to add the
-    // ImplementationLacksVTable attribute to the interface definition
-    static_assert(std::is_polymorphic<TestIndexedSetterWithIdentifier>::value, "TestIndexedSetterWithIdentifier is not polymorphic");
-
-    // If you hit this assertion you either have a use after free bug, or
-    // TestIndexedSetterWithIdentifier has subclasses. If TestIndexedSetterWithIdentifier has subclasses that get passed
-    // to toJS() we currently require TestIndexedSetterWithIdentifier you to opt out of binding hardening
-    // by adding the SkipVTableValidation attribute to the interface IDL definition
-    RELEASE_ASSERT(actualVTablePointer == expectedVTablePointer);
+        // If you hit this assertion you either have a use after free bug, or
+        // TestIndexedSetterWithIdentifier has subclasses. If TestIndexedSetterWithIdentifier has subclasses that get passed
+        // to toJS() we currently require TestIndexedSetterWithIdentifier you to opt out of binding hardening
+        // by adding the SkipVTableValidation attribute to the interface IDL definition
+        RELEASE_ASSERT(actualVTablePointer == expectedVTablePointer);
 #endif
+    }
     return createWrapper<TestIndexedSetterWithIdentifier>(globalObject, WTFMove(impl));
 }
 

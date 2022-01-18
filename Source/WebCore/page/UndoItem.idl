@@ -33,7 +33,6 @@
 
 [
     EnabledBySetting=UndoManagerAPIEnabled,
-    ImplementationLacksVTable,
     JSCustomMarkFunction,
     CustomIsReachable,
     Exposed=Window

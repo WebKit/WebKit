@@ -24,7 +24,6 @@
  */
 
 [
-    ImplementationLacksVTable,
     JSGenerateToJSObject,
     LegacyNoInterfaceObject,
 ] interface InspectorAuditDOMObject {

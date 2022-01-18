@@ -29,7 +29,6 @@
 typedef (DOMString? or unrestricted double) SQLValue;
 
 [
-    ImplementationLacksVTable,
     EnabledAtRuntime=WebSQLEnabled,
     Exposed=Window
 ] interface SQLResultSetRowList {

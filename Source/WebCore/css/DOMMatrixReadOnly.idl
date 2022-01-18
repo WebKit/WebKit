@@ -26,7 +26,6 @@
 [
     ExportMacro=WEBCORE_EXPORT,
     Exposed=(Window,Worker),
-    ImplementationLacksVTable
 ] interface DOMMatrixReadOnly {
     [CallWith=ScriptExecutionContext] constructor(optional (DOMString or sequence<unrestricted double>) init);
 

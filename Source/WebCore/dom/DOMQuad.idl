@@ -27,7 +27,6 @@
 
 [
     Exposed=(Window,Worker),
-    ImplementationLacksVTable,
     JSCustomMarkFunction
 ] interface DOMQuad {
     constructor(optional DOMPointInit p1, optional DOMPointInit p2, optional DOMPointInit p3, optional DOMPointInit p4);

@@ -27,7 +27,6 @@
 
 [
     Exposed=(Window,Worker),
-    ImplementationLacksVTable,
 ] interface PerformanceObserverEntryList {
     PerformanceEntryList getEntries();
     PerformanceEntryList getEntriesByType(DOMString type);
