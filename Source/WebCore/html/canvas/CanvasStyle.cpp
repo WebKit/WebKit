@@ -44,10 +44,6 @@
 #include "OffscreenCanvas.h"
 #endif
 
-#if USE(CG)
-#include <CoreGraphics/CGContext.h>
-#endif
-
 namespace WebCore {
 
 bool isCurrentColorString(const String& colorString)
@@ -58,12 +54,16 @@ bool isCurrentColorString(const String& colorString)
 Color parseColor(const String& colorString, CanvasBase& canvasBase)
 {
 #if ENABLE(OFFSCREEN_CANVAS)
-    if (canvasBase.isOffscreenCanvas())
+    if (is<OffscreenCanvas>(canvasBase))
         return CSSPropertyParserWorkerSafe::parseColor(colorString);
-#else
-    UNUSED_PARAM(canvasBase);
 #endif
-    Color color = CSSParser::parseColor(colorString);
+
+    Color color;
+    if (is<HTMLCanvasElement>(canvasBase))
+        color = CSSParser::parseColor(colorString, CSSParserContext { downcast<HTMLCanvasElement>(canvasBase).document() });
+    else
+        color = CSSParser::parseColorWithoutContext(colorString);
+
     if (color.isValid())
         return color;
     return CSSParser::parseSystemColor(colorString);
@@ -77,7 +77,7 @@ Color currentColor(CanvasBase& canvasBase)
     auto& canvas = downcast<HTMLCanvasElement>(canvasBase);
     if (!canvas.isConnected() || !canvas.inlineStyle())
         return Color::black;
-    Color color = CSSParser::parseColor(canvas.inlineStyle()->getPropertyValue(CSSPropertyColor));
+    Color color = CSSParser::parseColorWithoutContext(canvas.inlineStyle()->getPropertyValue(CSSPropertyColor));
     if (!color.isValid())
         return Color::black;
     return color;

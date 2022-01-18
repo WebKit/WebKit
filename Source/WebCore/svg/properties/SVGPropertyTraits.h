@@ -45,10 +45,10 @@ struct SVGPropertyTraits<bool> {
 template<>
 struct SVGPropertyTraits<Color> {
     static Color initialValue() { return Color(); }
-    static Color fromString(const String& string) { return CSSParser::parseColor(string.stripWhiteSpace()); }
+    static Color fromString(const String& string) { return CSSParser::parseColorWithoutContext(string.stripWhiteSpace()); }
     static std::optional<Color> parse(const QualifiedName&, const String& string)
     {
-        Color color = CSSParser::parseColor(string.stripWhiteSpace());
+        Color color = CSSParser::parseColorWithoutContext(string.stripWhiteSpace());
         if (!color.isValid())
             return std::nullopt;
         return color;

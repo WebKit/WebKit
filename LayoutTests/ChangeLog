@@ -1,3 +1,13 @@
+2022-01-18  Sam Weinig  <weinig@apple.com>
+
+        Canvas functions that take colors as strings don't support all the syntax that CSS supports
+        https://bugs.webkit.org/show_bug.cgi?id=235269
+
+        Reviewed by Darin Adler.
+
+        * fast/canvas/canvas-color-serialization.html:
+        Update doctype to set the correct CSS parsing mode which now needs to be set correctly for canvas color setting functions.
+
 2022-01-18  Patrick Griffis  <pgriffis@igalia.com>
 
         CSP: Improve handling of multiple policies

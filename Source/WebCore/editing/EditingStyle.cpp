@@ -439,7 +439,7 @@ static Color cssValueToColor(CSSValue* colorValue)
     if (primitiveColor.isRGBColor())
         return primitiveColor.color();
     
-    return CSSParser::parseColor(colorValue->cssText());
+    return CSSParser::parseColorWithoutContext(colorValue->cssText());
 }
 
 template<typename T>

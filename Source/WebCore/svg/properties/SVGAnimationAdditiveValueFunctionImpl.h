@@ -96,10 +96,10 @@ public:
 
     std::optional<float> calculateDistance(SVGElement&, const String& from, const String& to) const override
     {
-        Color fromColor = CSSParser::parseColor(from.stripWhiteSpace());
+        Color fromColor = CSSParser::parseColorWithoutContext(from.stripWhiteSpace());
         if (!fromColor.isValid())
             return { };
-        Color toColor = CSSParser::parseColor(to.stripWhiteSpace());
+        Color toColor = CSSParser::parseColorWithoutContext(to.stripWhiteSpace());
         if (!toColor.isValid())
             return { };
             

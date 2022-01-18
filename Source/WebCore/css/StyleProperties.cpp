@@ -347,7 +347,7 @@ std::optional<Color> StyleProperties::propertyAsColor(CSSPropertyID property) co
         return std::nullopt;
 
     auto& primitiveColor = downcast<CSSPrimitiveValue>(*colorValue);
-    return primitiveColor.isRGBColor() ? primitiveColor.color() : CSSParser::parseColor(colorValue->cssText());
+    return primitiveColor.isRGBColor() ? primitiveColor.color() : CSSParser::parseColorWithoutContext(colorValue->cssText());
 }
 
 CSSValueID StyleProperties::propertyAsValueID(CSSPropertyID property) const

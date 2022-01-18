@@ -94,7 +94,21 @@ bool CSSParser::parseSupportsCondition(const String& condition)
     return CSSSupportsParser::supportsCondition(parser.tokenizer()->tokenRange(), parser, CSSSupportsParser::ForWindowCSS) == CSSSupportsParser::Supported;
 }
 
-Color CSSParser::parseColor(const String& string, bool strict)
+Color CSSParser::parseColor(const String& string, const CSSParserContext& context)
+{
+    bool strict = !isQuirksModeBehavior(context.mode);
+    if (auto color = CSSParserFastPaths::parseSimpleColor(string, strict))
+        return *color;
+    auto value = parseSingleValue(CSSPropertyColor, string, context);
+    if (!is<CSSPrimitiveValue>(value))
+        return { };
+    auto& primitiveValue = downcast<CSSPrimitiveValue>(*value);
+    if (!primitiveValue.isRGBColor())
+        return { };
+    return primitiveValue.color();
+}
+
+Color CSSParser::parseColorWithoutContext(const String& string, bool strict)
 {
     if (auto color = CSSParserFastPaths::parseSimpleColor(string, strict))
         return *color;

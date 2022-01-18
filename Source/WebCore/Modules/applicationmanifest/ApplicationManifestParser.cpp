@@ -320,7 +320,7 @@ URL ApplicationManifestParser::parseScope(const JSON::Object& manifest, const UR
 
 Color ApplicationManifestParser::parseColor(const JSON::Object& manifest, const String& propertyName)
 {
-    return CSSParser::parseColor(parseGenericString(manifest, propertyName));
+    return CSSParser::parseColorWithoutContext(parseGenericString(manifest, propertyName));
 }
 
 String ApplicationManifestParser::parseGenericString(const JSON::Object& manifest, const String& propertyName)
