@@ -1,3 +1,18 @@
+2022-01-18  Sepand Parhami  <sparhami@apple.com>
+
+        AX: Improve support for aria-owns in aria trees
+        https://bugs.webkit.org/show_bug.cgi?id=233383
+
+        Reviewed by Chris Fleizach.
+
+        Adds test cases for additional specified behavior of aria-owns in trees as well as tests to
+        make sure incorrect aria-owns usage does not cause crashes.
+
+        * accessibility/mac/treeitem-row-delegation-expected.txt:
+        * accessibility/mac/treeitem-row-delegation-poorly-formed-expected.txt: Added.
+        * accessibility/mac/treeitem-row-delegation-poorly-formed.html: Added.
+        * accessibility/mac/treeitem-row-delegation.html:
+
 2022-01-18  Arcady Goldmints-Orlov  <agoldmints@igalia.com>
 
         [GLIB] Update test baselines after r288070.

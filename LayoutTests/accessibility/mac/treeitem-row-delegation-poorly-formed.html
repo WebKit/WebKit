@@ -1,0 +1,48 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/accessibility-helper.js"></script>
+</head>
+
+<body id="body">
+
+<div id="tree" role="tree">
+    <!-- Reference by a grandchild through a tree item -->
+    <div id="circular-ref-1" role="treeitem" aria-level="1" aria-expanded="true" tabindex="0">Jungle Animals
+        <div role="group" aria-owns="group1-item2"></div>
+    </div>
+    <div id="group1-item2" role="treeitem" aria-level="2" aria-expanded="true" aria-setsize="1" aria-posinset="2" aria-current="page">Cats
+        <div role="group" aria-owns="group2-item1"></div>
+    </div>
+    <div id="group2-item1" role="treeitem" aria-level="3" aria-posinset="1" aria-setsize="2" aria-current="page">Lions
+        <div role="group" aria-owns="circular-ref-1"></div>
+    </div>
+
+    <!-- Reference loop with a plain div -->
+    <div role="treeitem" aria-level="1" aria-expanded="false" tabindex="-1">Domestic Animals
+	<div id="circular-ref-2" role="group" aria-owns="plain-div"></div>
+        <div id="plain-div" aria-owns="circular-ref-2"></div>
+    </div>
+
+    <!-- Multiple aria-owning elements --> 
+    <div role="treeitem" aria-level="1" aria-expanded="false" tabindex="-1">Arctic Animals
+        <div role="group" aria-owns="doubly-referenced"></div>
+    </div>
+    <div role="treeitem" aria-level="1" aria-expanded="false" tabindex="-1">Sea Animals
+        <div role="group" aria-owns="doubly-referenced"></div>
+    </div>
+    <div id="doubly-referenced" role="treeitem" aria-level="2" tabindex="-1">Orca</div>
+</div>
+
+<script>
+    description("This tests that a treeitem with a group that uses aria-owns does not cause problems when poorly formed.");
+
+    if (window.accessibilityController) {
+       var tree = accessibilityController.accessibleElementById("tree");
+       shouldBe("tree.childrenCount", "7");
+    }
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>
