@@ -3387,7 +3387,7 @@ static std::optional<WebCore::ViewportArguments> viewportArgumentsFromDictionary
 
 - (void)_becomeFirstResponderWithSelectionMovingForward:(BOOL)selectingForward completionHandler:(void (^)(BOOL didBecomeFirstResponder))completionHandler
 {
-    typeof(completionHandler) completionHandlerCopy = nil;
+    decltype(completionHandler) completionHandlerCopy = nil;
     if (completionHandler)
         completionHandlerCopy = Block_copy(completionHandler);
 

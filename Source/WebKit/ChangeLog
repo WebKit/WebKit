@@ -1,5 +1,15 @@
 2022-01-18  Alex Christensen  <achristensen@webkit.org>
 
+        Use c++2a instead of gnu++2a for Cocoa builds
+        https://bugs.webkit.org/show_bug.cgi?id=234936
+
+        Reviewed by Sam Weinig.
+
+        * Configurations/Base.xcconfig:
+        * Configurations/BaseTarget.xcconfig:
+
+2022-01-18  Alex Christensen  <achristensen@webkit.org>
+
         Don't build WKGroupSession.swift when using Monterey public SDK
         https://bugs.webkit.org/show_bug.cgi?id=235324
 

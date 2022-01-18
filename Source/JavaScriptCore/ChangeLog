@@ -1,3 +1,14 @@
+2022-01-18  Alex Christensen  <achristensen@webkit.org>
+
+        Use c++2a instead of gnu++2a for Cocoa builds
+        https://bugs.webkit.org/show_bug.cgi?id=234936
+
+        Reviewed by Sam Weinig.
+
+        * Configurations/Base.xcconfig:
+        * Configurations/JavaScriptCore.xcconfig:
+        * DerivedSources.make:
+
 2022-01-18  Adrian Perez de Castro  <aperez@igalia.com>
 
         Non-unified build fails due to missing header in WasmCalleeGroup.cpp
