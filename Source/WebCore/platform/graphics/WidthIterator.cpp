@@ -616,29 +616,9 @@ void WidthIterator::applyCSSVisibilityRules(GlyphBuffer& glyphBuffer, unsigned g
 
         adjustForSyntheticBold(i);
 
-        if ((characterResponsibleForThisGlyph >= nullCharacter && characterResponsibleForThisGlyph < space)
-            || (characterResponsibleForThisGlyph >= deleteCharacter && characterResponsibleForThisGlyph < noBreakSpace)) {
-            deleteGlyph(i);
-            continue;
-        }
-
-        switch (characterResponsibleForThisGlyph) {
-        case softHyphen:
-        case leftToRightMark:
-        case rightToLeftMark:
-        case leftToRightEmbed:
-        case rightToLeftEmbed:
-        case leftToRightOverride:
-        case rightToLeftOverride:
-        case leftToRightIsolate:
-        case rightToLeftIsolate:
-        case zeroWidthNonJoiner:
-        case zeroWidthJoiner:
-        case popDirectionalFormatting:
-        case popDirectionalIsolate:
-        case firstStrongIsolate:
-        case objectReplacementCharacter:
-        case zeroWidthNoBreakSpace:
+        // https://drafts.csswg.org/css-text-3/#white-space-processing
+        // "Unsupported Default_ignorable characters must be ignored for text rendering."
+        if (FontCascade::isCharacterWhoseGlyphsShouldBeDeletedForTextRendering(characterResponsibleForThisGlyph)) {
             deleteGlyph(i);
             continue;
         }

@@ -1,3 +1,16 @@
+2022-01-17  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        REGRESSION(r281389): using font-variant-ligatures causes Unicode bidi isolation control characters to render
+        https://bugs.webkit.org/show_bug.cgi?id=235053
+        <rdar://problem/87425066>
+
+        Reviewed by Darin Adler.
+
+        * web-platform-tests/css/css-text/white-space/default-ignorable-complex-expected.html: Added.
+        * web-platform-tests/css/css-text/white-space/default-ignorable-complex.html: Added.
+        * web-platform-tests/css/css-text/white-space/default-ignorable-expected.html: Added.
+        * web-platform-tests/css/css-text/white-space/default-ignorable.html: Added.
+
 2022-01-17  Youenn Fablet  <youenn@apple.com>
 
         Make ServiceWorkerClient.id a UUID instead of a string derived from a ScriptExecutionContextIdentifier
