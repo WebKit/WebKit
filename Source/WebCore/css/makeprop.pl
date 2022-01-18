@@ -71,30 +71,22 @@ my %nameIsHighPriority;
 my %nameIsInherited;
 my %namePriorityShouldSink;
 my %logicalPropertyGroups;
-my %resolverKinds = (
+my %logicalPropertyGroupResolvers = (
     "logical" => {
-        "block" => "axis",
-        "inline" => "axis",
-        "block-start" => "side",
-        "block-end" => "side",
-        "inline-start" => "side",
-        "inline-end" => "side",
-        "start-start" => "corner",
-        "start-end" => "corner",
-        "end-start" => "corner",
-        "end-end" => "corner",
+        # Order matches LogicalBoxAxis enum in Source/WebCore/platform/text/WritingMode.h.
+        "axis" => ["inline", "block"],
+        # Order matches LogicalBoxSide enum in Source/WebCore/platform/text/WritingMode.h.
+        "side" => ["block-start", "inline-end", "block-end", "inline-start"],
+        # Order matches LogicalBoxCorner enum in Source/WebCore/platform/text/WritingMode.h.
+        "corner" => ["start-start", "start-end", "end-start", "end-end"],
     },
     "physical" => {
-        "horizontal" => "axis",
-        "vertical" => "axis",
-        "top" => "side",
-        "right" => "side",
-        "bottom" => "side",
-        "left" => "side",
-        "top-left" => "corner",
-        "top-right" => "corner",
-        "bottom-right" => "corner",
-        "bottom-left" => "corner",
+        # Order matches BoxAxis enum in Source/WebCore/platform/text/WritingMode.h.
+        "axis" => ["horizontal", "vertical"],
+        # Order matches BoxSide enum in Source/WebCore/platform/text/WritingMode.h.
+        "side" => ["top", "right", "bottom", "left"],
+        # Order matches BoxCorner enum in Source/WebCore/platform/text/WritingMode.h.
+        "corner" => ["top-left", "top-right", "bottom-right", "bottom-left"],
     },
 );
 my %propertiesWithStyleBuilderOptions;
@@ -136,16 +128,15 @@ for my $name (@allNames) {
 }
 
 while (my ($groupName, $logicalPropertyGroup) = each %logicalPropertyGroups) {
-    for my $logic (keys %resolverKinds) {
+    my $kind = $logicalPropertyGroup->{"kind"};
+    while (my ($logic, $resolversForLogic) = each %logicalPropertyGroupResolvers) {
         my $properties = $logicalPropertyGroup->{$logic};
         if (!$properties) {
             die "Logical property group \"$groupName\" has no \"$logic\" property.";
         }
-        while (my ($resolver, $kind) = each %{ $resolverKinds{$logic} }) {
-            if ($kind eq $logicalPropertyGroup->{"kind"}) {
-                if (!$properties->{$resolver}) {
-                    die "Logical property group \"$groupName\" requires a \"$resolver\" property.";
-                }
+        for my $resolver (@{ $resolversForLogic->{$kind} }) {
+            if (!$properties->{$resolver}) {
+                die "Logical property group \"$groupName\" requires a \"$resolver\" property.";
             }
         }
     }
@@ -319,11 +310,17 @@ sub addProperty($$)
                     my $resolver = $codegenProperties->{$codegenOptionName}{"resolver"};
                     my $kind;
                     my $logic;
-                    if ($kind = $resolverKinds{"logical"}{$resolver}) {
-                        $logic = "logical";
-                    } elsif ($kind = $resolverKinds{"physical"}{$resolver}) {
-                        $logic = "physical";
-                    } else {
+                    while (my ($currentLogic, $resolversForLogic) = each %logicalPropertyGroupResolvers) {
+                        while (my ($currentKind, $resolverList) = each %{ $resolversForLogic }) {
+                            for my $currentResolver (@{ $resolverList }) {
+                                if ($currentResolver eq $resolver) {
+                                    $kind = $currentKind;
+                                    $logic = $currentLogic;
+                                }
+                            }
+                        }
+                    }
+                    if (!$kind) {
                         die "Unrecognized resolver \"$resolver\" for codegen property \"$codegenOptionName\" for $name property.";
                     }
                     my $otherKind = $logicalPropertyGroups{$groupName}{"kind"};
@@ -726,17 +723,8 @@ for my $logicalPropertyGroup (values %logicalPropertyGroups) {
         my $kind = $logicalPropertyGroup->{"kind"};
         my $kindId = nameToId($kind);
         my $resolverEnum = "LogicalBox" . $kindId . "::" . nameToId($resolver);
-        my @physicals;
-        if ($kind eq "side") {
-            @physicals = ("top", "right", "bottom", "left");
-        } elsif ($kind eq "corner") {
-            @physicals = ("top-left", "top-right", "bottom-right", "bottom-left");
-        } elsif ($kind eq "axis") {
-            @physicals = ("horizontal", "vertical");
-        } else {
-            die "Property \"$name\" belongs to a logical property group of unrecognized kind \"$kind\".";
-        }
-        my @properties = map { "CSSProperty" . $nameToId{$logicalPropertyGroup->{"physical"}{$_}} } @physicals;
+        my $physicals = $logicalPropertyGroupResolvers{"physical"}->{$kind};
+        my @properties = map { "CSSProperty" . $nameToId{$logicalPropertyGroup->{"physical"}{$_}} } @{ $physicals };
         print GPERF "    case CSSPropertyID::CSSProperty" . $nameToId{$name} . ": {\n";
         print GPERF "        static constexpr CSSPropertyID properties[" . scalar(@properties) . "] = { " . join(", ", @properties) . " };\n";
         print GPERF "        return properties[static_cast<size_t>(mapLogical" . $kindId . "ToPhysical" . $kindId . "(textflow, " . $resolverEnum . "))];\n";
