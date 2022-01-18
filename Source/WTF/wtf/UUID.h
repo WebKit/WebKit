@@ -123,7 +123,11 @@ std::optional<UUID> UUID::decode(Decoder& decoder)
     if (!low)
         return std::nullopt;
 
-    return UUID { (static_cast<UInt128>(*high) << 64) | *low };
+    auto result = (static_cast<UInt128>(*high) << 64) | *low;
+    if (result == deletedValue)
+        return { };
+
+    return UUID { result };
 }
 
 // Creates a UUID that consists of 32 hexadecimal digits and returns its canonical form.
