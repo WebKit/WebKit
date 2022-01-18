@@ -1,3 +1,35 @@
+2022-01-17  ChangSeok Oh  <changseok@webkit.org>
+
+        [GTK] Implement form validation with gtk3 widgets in the UI process
+        https://bugs.webkit.org/show_bug.cgi?id=234629
+
+        Reviewed by Carlos Garcia Campos.
+
+        This change re-implements form validation with gtk3 widgets in the UI process.
+        The current form validation is implemented by using shadow DOM in the web process.
+        The overall design is similar to that of mac port but the gtk port adds
+        a callback of webkitWebViewBaseSetShouldNotifyFocusEvents to WebCore::ValidationBubble
+        to suppress a focus event triggered by the popover widget. Otherwise, the native
+        bubble does not display properly.
+        This change does not support gtk4 yet. A follow-up patch will add the gtk4 support.
+        To avoid complaints from the gtk4 EWS, we guard implementation of ValidationBubbleGtk
+        temporarily and install pageConfiguration.validationMessageClient for gtk3 only.
+        The gtk4 keeps using the shadow DOM bubble until having native bubble support.
+
+        * SourcesGTK.txt:
+        * UIProcess/API/gtk/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::createValidationBubble):
+        * UIProcess/API/gtk/PageClientImpl.h:
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::hideValidationMessage):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/gtk/WebPageProxyGtk.cpp:
+        (WebKit::WebPageProxy::showValidationMessage):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::m_appHighlightsVisible):
+
 2022-01-17  Youenn Fablet  <youenn@apple.com>
 
         Make ServiceWorkerClient.id a UUID instead of a string derived from a ScriptExecutionContextIdentifier

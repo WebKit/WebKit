@@ -387,7 +387,7 @@ public:
     virtual RefPtr<WebDateTimePicker> createDateTimePicker(WebPageProxy&) = 0;
 #endif
 
-#if PLATFORM(COCOA)
+#if PLATFORM(COCOA) || PLATFORM(GTK)
     virtual Ref<WebCore::ValidationBubble> createValidationBubble(const String& message, const WebCore::ValidationBubble::Settings&) = 0;
 #endif
 

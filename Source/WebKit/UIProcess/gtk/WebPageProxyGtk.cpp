@@ -85,6 +85,12 @@ void WebPageProxy::showEmojiPicker(const WebCore::IntRect& caretRect, Completion
     webkitWebViewBaseShowEmojiChooser(WEBKIT_WEB_VIEW_BASE(viewWidget()), caretRect, WTFMove(completionHandler));
 }
 
+void WebPageProxy::showValidationMessage(const WebCore::IntRect& anchorClientRect, const String& message)
+{
+    m_validationBubble = pageClient().createValidationBubble(message, { m_preferences->minimumFontSize() });
+    m_validationBubble->showRelativeTo(anchorClientRect);
+}
+
 void WebPageProxy::sendMessageToWebViewWithReply(UserMessage&& message, CompletionHandler<void(UserMessage&&)>&& completionHandler)
 {
     if (!WEBKIT_IS_WEB_VIEW(viewWidget())) {

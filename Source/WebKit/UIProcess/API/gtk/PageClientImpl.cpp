@@ -51,6 +51,7 @@
 #include <WebCore/GtkUtilities.h>
 #include <WebCore/NotImplemented.h>
 #include <WebCore/RefPtrCairo.h>
+#include <WebCore/ValidationBubble.h>
 #include <wtf/Compiler.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
@@ -292,6 +293,13 @@ RefPtr<WebDataListSuggestionsDropdown> PageClientImpl::createDataListSuggestions
     return WebDataListSuggestionsDropdownGtk::create(m_viewWidget, page);
 }
 #endif
+
+Ref<ValidationBubble> PageClientImpl::createValidationBubble(const String& message, const ValidationBubble::Settings& settings)
+{
+    return ValidationBubble::create(m_viewWidget, message, settings, [](GtkWidget* webView, bool shouldNotifyFocusEvents) {
+        webkitWebViewBaseSetShouldNotifyFocusEvents(WEBKIT_WEB_VIEW_BASE(webView), shouldNotifyFocusEvents);
+    });
+}
 
 void PageClientImpl::enterAcceleratedCompositingMode(const LayerTreeContext& layerTreeContext)
 {

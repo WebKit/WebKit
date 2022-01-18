@@ -1610,7 +1610,7 @@ public:
     // Form validation messages.
     void showValidationMessage(const WebCore::IntRect& anchorClientRect, const String& message);
     void hideValidationMessage();
-#if PLATFORM(COCOA)
+#if PLATFORM(COCOA) || PLATFORM(GTK)
     WebCore::ValidationBubble* validationBubble() const { return m_validationBubble.get(); } // For testing.
 #endif
 
@@ -2865,7 +2865,7 @@ private:
 #if ENABLE(DATE_AND_TIME_INPUT_TYPES)
     RefPtr<WebDateTimePicker> m_dateTimePicker;
 #endif
-#if PLATFORM(COCOA)
+#if PLATFORM(COCOA) || PLATFORM(GTK)
     RefPtr<WebCore::ValidationBubble> m_validationBubble;
 #endif
 

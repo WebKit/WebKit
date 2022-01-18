@@ -134,6 +134,7 @@ platform/gtk/RenderThemeScrollbar.cpp
 platform/gtk/ScrollbarThemeGtk.cpp
 platform/gtk/SelectionData.cpp
 platform/gtk/ThemeGtk.cpp
+platform/gtk/ValidationBubbleGtk.cpp
 platform/gtk/WidgetGtk.cpp
 
 platform/text/Hyphenation.cpp

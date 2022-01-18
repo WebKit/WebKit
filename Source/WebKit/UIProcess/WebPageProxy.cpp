@@ -9913,7 +9913,7 @@ void WebPageProxy::setUserInterfaceLayoutDirection(WebCore::UserInterfaceLayoutD
 
 void WebPageProxy::hideValidationMessage()
 {
-#if PLATFORM(COCOA)
+#if PLATFORM(COCOA) || PLATFORM(GTK)
     m_validationBubble = nullptr;
 #endif
 }
