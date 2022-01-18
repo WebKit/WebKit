@@ -93,7 +93,7 @@ then the patch can be either committed directly into the Subversion repository b
 who has write access to the Subversion repository,
 or via the commit queue which can be requested by setting cq? flag and approved by any WebKit committer by setting cq+.
 
-The Subvesion commit message should be created by `Tools/Scripts/commit-log-editor` based on the change log entries.
+The Subversion commit message should be created by `Tools/Scripts/commit-log-editor` based on the change log entries.
 `Tools/Scripts/webkit-patch land` does this automatically.
 
 ### Security Bugs in bugs.webkit.org
@@ -152,8 +152,8 @@ You can also use Xcode to build & debug WebKit. Open `WebKit.xcworkspace` at the
 In order to make Xcode use build files built by `make` command above,
 go to File > Workspace Settings... > Advanced... > Custom > Relative to Workspace
 and adjust the relative paths of Products and Intermediates to point to `WebKitBuild` directory.
-![Screenshot of XCode Workspace Settings](resources/xcode-workspace-settings.png)
-![Screenshot of XCode Workspace Settings - Advanced Build Location](resources/xcode-workspace-build-location.png)
+![Screenshot of Xcode Workspace Settings](resources/xcode-workspace-settings.png)
+![Screenshot of Xcode Workspace Settings - Advanced Build Location](resources/xcode-workspace-build-location.png)
 Note that debugging WebCore code typically requires attaching to the relevant WebContent process,
 not the application process, which is mostly running code in [Source/WebKit/UIProcess](https://trac.webkit.org/browser/webkit/trunk/Source/WebKit/UIProcess).
 Depending on what you’re debugging, you’d have to attach & debug different processes in the coalition.
@@ -416,7 +416,7 @@ This dashboard isn't great for investigating individual test failures,
 [results.webkit.org](http://results.webkit.org/) is a better tool for such investigations.
 It keeps track of individual test status by configuration over time.
 You can search individual tests by name or look at the historical results of entire test suites.
-These results will link back to the test runs in buildbot which are associated with a specific failure.
+These results will link back to the test runs in Buildbot which are associated with a specific failure.
 See layout tests section for more details on how to use these tools to investigate test failures observed on bots.
 
 FIXME: Add a section about downloading build products from build.webkit.org.
