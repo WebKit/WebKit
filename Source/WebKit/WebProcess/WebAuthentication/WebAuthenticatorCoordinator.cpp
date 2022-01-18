@@ -126,13 +126,15 @@ void WebAuthenticatorCoordinator::isUserVerifyingPlatformAuthenticatorAvailable(
 bool WebAuthenticatorCoordinator::processingUserGesture(const Frame& frame, const FrameIdentifier& frameID)
 {
     auto processingUserGesture = UserGestureIndicator::processingUserGestureForMedia();
-    if (!processingUserGesture && m_requireUserGesture)
+    bool processingUserGestureOrFreebie = processingUserGesture || !m_requireUserGesture;
+    if (!processingUserGestureOrFreebie)
         m_webPage.addConsoleMessage(frameID, MessageSource::Other, MessageLevel::Warning, "User gesture is not detected. To use the WebAuthn API, call 'navigator.credentials.create' or 'navigator.credentials.get' within user activated events."_s);
+
     if (processingUserGesture && m_requireUserGesture)
         m_requireUserGesture = false;
-    else
+    else if (!processingUserGesture)
         m_requireUserGesture = true;
-    return processingUserGesture || !m_requireUserGesture;
+    return processingUserGestureOrFreebie;
 }
 
 } // namespace WebKit
