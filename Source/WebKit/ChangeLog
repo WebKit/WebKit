@@ -1,5 +1,44 @@
 2022-01-18  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r287997. rdar://problem/87274541
+
+    Sometimes cannot scroll after using internal trackpad
+    https://bugs.webkit.org/show_bug.cgi?id=235206
+    <rdar://problem/87274541>
+    
+    Reviewed by Simon Fraser.
+    
+    * WebProcess/WebPage/MomentumEventDispatcher.cpp:
+    (WebKit::MomentumEventDispatcher::didStartMomentumPhase):
+    (WebKit::MomentumEventDispatcher::setScrollingAccelerationCurve):
+    * WebProcess/WebPage/MomentumEventDispatcher.h:
+    We store std::optional<ScrollingAccelerationCurve> in a map, but then
+    when looking at whether we have a curve (to decide whether or not to even
+    use MomentumEventDispatcher), we check if the map has *any* value for the
+    given page... even an unengaged optional. To fix, check if the optional is engaged.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@287997 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-01-13  Tim Horton  <timothy_horton@apple.com>
+
+            Sometimes cannot scroll after using internal trackpad
+            https://bugs.webkit.org/show_bug.cgi?id=235206
+            <rdar://problem/87274541>
+
+            Reviewed by Simon Fraser.
+
+            * WebProcess/WebPage/MomentumEventDispatcher.cpp:
+            (WebKit::MomentumEventDispatcher::didStartMomentumPhase):
+            (WebKit::MomentumEventDispatcher::setScrollingAccelerationCurve):
+            * WebProcess/WebPage/MomentumEventDispatcher.h:
+            We store std::optional<ScrollingAccelerationCurve> in a map, but then
+            when looking at whether we have a curve (to decide whether or not to even
+            use MomentumEventDispatcher), we check if the map has *any* value for the
+            given page... even an unengaged optional. To fix, check if the optional is engaged.
+
+2022-01-18  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r287957. rdar://problem/87327557
 
     [WebAuthn] Fix freebie call without user gesture not being given
