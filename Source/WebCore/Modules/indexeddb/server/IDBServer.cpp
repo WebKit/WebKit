@@ -530,6 +530,9 @@ void IDBServer::getAllDatabaseNamesAndVersions(IDBConnectionIdentifier serverCon
     HashSet<String> visitedDatabasePaths;
 
     for (auto& database : m_uniqueIDBDatabaseMap.values()) {
+        if (database->identifier().origin() != origin)
+            continue;
+
         auto path = database->filePath();
         if (!path.isEmpty())
             visitedDatabasePaths.add(path);
