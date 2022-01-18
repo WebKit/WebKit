@@ -16,7 +16,7 @@ layer at (0,0) size 800x600
         RenderBlock {DIV} at (14,14) size 756x54
           RenderText {#text} at (0,0) size 65x26
             text run at (0,0) width 65: "Tests: "
-          RenderBR {BR} at (0,0) size 0x0
+          RenderBR {BR} at (64,0) size 1x26
           RenderText {#text} at (0,27) size 642x26
             text run at (0,27) width 642: "Non-smart delete when deleting a word selected via the keyboard."
         RenderBlock {DIV} at (14,84) size 756x108
@@ -26,7 +26,7 @@ layer at (0,0) size 800x600
           RenderText {#text} at (0,27) size 715x53
             text run at (0,27) width 715: "The first word should be deleted. The space following it should remain. It"
             text run at (0,54) width 210: "should look like this: "
-          RenderBR {BR} at (210,54) size 0x26
+          RenderBR {BR} at (209,54) size 1x26
           RenderText {#text} at (0,81) size 97x26
             text run at (0,81) width 97: "\" bar baz\""
       RenderBlock {DIV} at (0,230) size 784x31

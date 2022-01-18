@@ -26,7 +26,7 @@ layer at (0,0) size 800x600
         RenderBlock {DIV} at (14,14) size 756x81
           RenderText {#text} at (0,0) size 65x26
             text run at (0,0) width 65: "Tests: "
-          RenderBR {BR} at (0,0) size 0x0
+          RenderBR {BR} at (64,0) size 1x26
           RenderText {#text} at (0,27) size 162x26
             text run at (0,27) width 162: "Fix for this bug: "
           RenderInline {A} at (0,0) size 558x26 [color=#0000EE]

@@ -18,11 +18,11 @@ layer at (0,0) size 800x600
         RenderBlock {DIV} at (14,14) size 756x108
           RenderText {#text} at (0,0) size 65x26
             text run at (0,0) width 65: "Tests: "
-          RenderBR {BR} at (0,0) size 0x0
+          RenderBR {BR} at (64,0) size 1x26
           RenderText {#text} at (0,27) size 742x80
             text run at (0,27) width 742: "Deleting when a selection starts in a blank line created by a block with a BR"
             text run at (0,54) width 730: "placeholder in it and extends to a character that is not at the end of a block."
-            text run at (0,81) width 736: "This ensures that some of our \"special-case\" code does not run for this case."
+            text run at (0,81) width 735: "This ensures that some of our \"special-case\" code does not run for this case."
         RenderBlock {DIV} at (14,138) size 756x81
           RenderText {#text} at (0,0) size 189x26
             text run at (0,0) width 189: "Expected Results: "

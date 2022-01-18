@@ -20,7 +20,7 @@ layer at (0,0) size 800x600
         RenderBlock {DIV} at (14,14) size 756x81
           RenderText {#text} at (0,0) size 65x26
             text run at (0,0) width 65: "Tests: "
-          RenderBR {BR} at (0,0) size 0x0
+          RenderBR {BR} at (64,0) size 1x26
           RenderText {#text} at (0,27) size 742x53
             text run at (0,27) width 742: "Deleting when a selection starts at the beginning of a paragraph preceded by"
             text run at (0,54) width 665: "a text element and extends into the middle of a following paragraph."
@@ -31,7 +31,7 @@ layer at (0,0) size 800x600
           RenderText {#text} at (0,27) size 747x80
             text run at (0,27) width 747: "Should see the three lines in the red box. First line should be \"one\". Next one"
             text run at (0,54) width 153: "should be \"ee\". "
-            text run at (153,54) width 593: "Next one should be \"four\". Insertion point should be blinking"
+            text run at (152,54) width 594: "Next one should be \"four\". Insertion point should be blinking"
             text run at (0,81) width 286: "at the start of the second line."
       RenderBlock {DIV} at (0,257) size 784x85
         RenderBlock {DIV} at (0,0) size 784x85 [border: (2px solid #FF0000)]

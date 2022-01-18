@@ -16,7 +16,7 @@ layer at (0,0) size 800x600
         RenderBlock {DIV} at (14,14) size 756x81
           RenderText {#text} at (0,0) size 65x26
             text run at (0,0) width 65: "Tests: "
-          RenderBR {BR} at (0,0) size 0x0
+          RenderBR {BR} at (64,0) size 1x26
           RenderText {#text} at (0,27) size 629x26
             text run at (0,27) width 629: "Delete at the end of document when there is a BR following a P. "
           RenderBR {BR} at (628,27) size 1x26
@@ -30,7 +30,7 @@ layer at (0,0) size 800x600
             text run at (0,27) width 240: "Red box with four lines. "
             text run at (239,27) width 481: "The second line is a nested red box with the word"
             text run at (0,54) width 81: "\"hello\". "
-            text run at (81,54) width 315: "The other three lines are empty. "
+            text run at (80,54) width 316: "The other three lines are empty. "
           RenderBR {BR} at (395,54) size 1x26
           RenderText {#text} at (0,81) size 468x26
             text run at (0,81) width 468: "Selection is a caret at the start of the fourth line."
