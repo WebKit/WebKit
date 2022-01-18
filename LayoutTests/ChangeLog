@@ -1,3 +1,45 @@
+2022-01-18  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r288078. rdar://problem/87662271
+
+    database names leak cross-origin within the same browser session
+    https://bugs.webkit.org/show_bug.cgi?id=233548
+    
+    Reviewed by Geoff Garen.
+    
+    Source/WebCore:
+    
+    Test: http/tests/security/getdatabases-crossorigin.html
+    
+    * Modules/indexeddb/server/IDBServer.cpp:
+    (WebCore::IDBServer::IDBServer::getAllDatabaseNamesAndVersions): When iterating the set of all open
+      UniqueIDBDatabases, only add them to the results list if their origins match.
+    
+    * page/ClientOrigin.h:
+    (WebCore::ClientOrigin::operator!= const):
+    
+    LayoutTests:
+    
+    * http/tests/security/getdatabases-crossorigin-expected.txt: Added.
+    * http/tests/security/getdatabases-crossorigin.html: Added.
+    * http/tests/security/resources/getdatabases-otherframe.html: Added.
+    * http/tests/security/resources/getdatabases-otherwindow.html: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@288078 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-01-16  Brady Eidson  <beidson@apple.com>
+
+            database names leak cross-origin within the same browser session
+            https://bugs.webkit.org/show_bug.cgi?id=233548
+
+            Reviewed by Geoff Garen.
+
+            * http/tests/security/getdatabases-crossorigin-expected.txt: Added.
+            * http/tests/security/getdatabases-crossorigin.html: Added.
+            * http/tests/security/resources/getdatabases-otherframe.html: Added.
+            * http/tests/security/resources/getdatabases-otherwindow.html: Added.
+
 2022-01-10  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][a11y] WTR: do not show html-id and toolkit attributes in test results
