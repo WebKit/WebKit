@@ -2284,12 +2284,11 @@ static RefPtr<CSSValue> consumeNoneOrURI(CSSParserTokenRange& range)
     return consumeUrl(range);
 }
 
-static RefPtr<CSSValue> consumeFlexBasis(CSSParserTokenRange& range, CSSParserMode cssParserMode)
+static RefPtr<CSSValue> consumeFlexBasis(CSSParserTokenRange& range, const CSSParserContext& context)
 {
-    // FIXME: Support intrinsic dimensions too.
-    if (range.peek().id() == CSSValueAuto || range.peek().id() == CSSValueContent)
+    if (identMatches<CSSValueAuto, CSSValueContent>(range.peek().id()) || validWidthOrHeightKeyword(range.peek().id(), context))
         return consumeIdent(range);
-    return consumeLengthOrPercent(range, cssParserMode, ValueRange::NonNegative);
+    return consumeLengthOrPercent(range, context.mode, ValueRange::NonNegative);
 }
 
 static RefPtr<CSSValue> consumeKerning(CSSParserTokenRange& range, CSSParserMode mode)
@@ -4458,7 +4457,7 @@ RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, CSS
     case CSSPropertyMarkerEnd:
         return consumeNoneOrURI(m_range);
     case CSSPropertyFlexBasis:
-        return consumeFlexBasis(m_range, m_context.mode);
+        return consumeFlexBasis(m_range, m_context);
     case CSSPropertyFlexGrow:
     case CSSPropertyFlexShrink:
         return consumeNumber(m_range, ValueRange::NonNegative);
