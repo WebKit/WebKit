@@ -85,7 +85,7 @@ sudo Tools/Scripts/configure-xcode-for-embedded-development
 
 Without this step, you will see the error message: "`target specifies product type ‘com.apple.product-type.tool’, but there’s no such product type for the ‘iphonesimulator’ platform.`" when building target `JSCLLIntOffsetsExtractor` of project `JavaScriptCore`.
 
-Run the following command to build a debug build with debugging symbols and assertions for embededded simulators:
+Run the following command to build a debug build with debugging symbols and assertions for embedded simulators:
 
 ```
 Tools/Scripts/build-webkit --debug --<platform>-simulator
