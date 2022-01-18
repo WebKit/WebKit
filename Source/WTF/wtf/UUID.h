@@ -126,11 +126,6 @@ std::optional<UUID> UUID::decode(Decoder& decoder)
     return UUID { (static_cast<UInt128>(*high) << 64) | *low };
 }
 
-inline void add(Hasher& hasher, const UUID& uuid)
-{
-    add(hasher, uuid.hash());
-}
-
 // Creates a UUID that consists of 32 hexadecimal digits and returns its canonical form.
 // The canonical form is displayed in 5 groups separated by hyphens, in the form 8-4-4-4-12 for a total of 36 characters.
 // The hexadecimal values "a" through "f" are output as lower case characters.

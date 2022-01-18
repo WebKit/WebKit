@@ -32,25 +32,53 @@ TEST(WTF, BootSessionUUIDIdentity)
     EXPECT_EQ(bootSessionUUIDString(), bootSessionUUIDString());
 }
 
+static String parseAndStringifyUUID(const String& value)
+{
+    auto uuid = UUID::parse(value);
+    if (!uuid)
+        return { };
+    return uuid->toString();
+}
+
 TEST(WTF, TestUUIDParsing)
 {
-    auto created  = UUID::create();
-    auto value = UUID::parse(created.toString());
-    EXPECT_TRUE(!!value);
-    EXPECT_EQ(created, *value);
-
     // xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx
-    value = UUID::parse("12345678-9abc-5de0-89AB-0123456789ab");
-    EXPECT_FALSE(!!value);
 
-    value = UUID::parse("12345678-9abc-4dea-79AB-0123456789ab");
-    EXPECT_FALSE(!!value);
+    EXPECT_FALSE(!!UUID::parse("12345678-9abc-5de0-89AB-0123456789ab"));
+    EXPECT_FALSE(!!UUID::parse("12345678-9abc-4dea-79AB-0123456789ab"));
+    EXPECT_FALSE(!!UUID::parse("12345678-9abc-4de0-7fff-0123456789ab"));
+    EXPECT_FALSE(!!UUID::parse("12345678-9abc-4de0-c0000-0123456789ab"));
 
-    value = UUID::parse("12345678-9abc-4de0-89ab-0123456789ab");
-    EXPECT_TRUE(!!value);
-    EXPECT_TRUE(value->toString() == "12345678-9abc-4de0-89ab-0123456789ab");
+    EXPECT_FALSE(!!UUID::parse("+ef944c1-5cb8-48aa-Ad12-C5f823f005c3"));
+    EXPECT_FALSE(!!UUID::parse("6ef944c1-+cb8-48aa-Ad12-C5f823f005c3"));
+    EXPECT_FALSE(!!UUID::parse("6ef944c1-5cb8-+8aa-Ad12-C5f823f005c3"));
+    EXPECT_FALSE(!!UUID::parse("6ef944c1-5cb8-48aa-+d12-C5f823f005c3"));
+    EXPECT_FALSE(!!UUID::parse("6ef944c1-5cb8-48aa-Ad12-+5f823f005c3"));
 
-    value = UUID::parse("6ef944c1-5cb8-48aa-Ad12-C5f823f005c3");
-    EXPECT_TRUE(!!value);
-    EXPECT_TRUE(value->toString() == "6ef944c1-5cb8-48aa-ad12-c5f823f005c3");
+    EXPECT_FALSE(!!UUID::parse("00000000-0000-4000-8000-000000000000"));
+    EXPECT_FALSE(!!UUID::parse("00000000-0000-4000-8000-000000000001"));
+
+    for (size_t cptr = 0; cptr < 100; ++cptr) {
+        auto createdUUID = UUID::create();
+        auto createdString = createdUUID.toString();
+        EXPECT_EQ(createdString.length(), 36u);
+        EXPECT_EQ(createdString[14], '4');
+        EXPECT_TRUE(createdString[19] == '8' || createdString[19] == '9' || createdString[19] == 'a' || createdString[19] == 'b');
+
+        auto uuid = UUID::parse(createdString);
+        EXPECT_TRUE(!!uuid);
+        EXPECT_EQ(*uuid, createdUUID);
+    }
+
+    String testNormal = "12345678-9abc-4de0-89ab-0123456789ab"_s;
+    EXPECT_EQ(parseAndStringifyUUID(testNormal), testNormal);
+
+    String test8000 = "12345678-9abc-4de0-8000-0123456789ab"_s;
+    EXPECT_EQ(parseAndStringifyUUID(test8000), test8000);
+
+    String testBfff = "12345678-9abc-4de0-Bfff-0123456789ab"_s;
+    EXPECT_EQ(parseAndStringifyUUID(testBfff), testBfff.convertToASCIILowercase());
+
+    String testAd12 = "6ef944c1-5cb8-48aa-Ad12-C5f823f005c3"_s;
+    EXPECT_EQ(parseAndStringifyUUID(testAd12), testAd12.convertToASCIILowercase());
 }

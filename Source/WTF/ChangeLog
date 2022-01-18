@@ -1,3 +1,18 @@
+2022-01-18  Youenn Fablet  <youenn@apple.com>
+
+        Make ServiceWorkerClient.id a UUID instead of a string derived from a ScriptExecutionContextIdentifier
+        https://bugs.webkit.org/show_bug.cgi?id=235070
+        <rdar://problem/87673540>
+
+        Reviewed by Darin Adler and Chris Dumez.
+
+        * wtf/UUID.cpp:
+        * wtf/UUID.h:
+        Use uint64_t logic to generate UUIDs and remove some reinterpret_cast.
+        Remove the Hasher add since we directly use UUID hash in WebCore.
+        Simplify parsing logic by using more parseIntegers and bit logic.
+        Also make sure we are not able to create empty/deleted UUID value from strings.
+
 2022-01-17  Youenn Fablet  <youenn@apple.com>
 
         Make ServiceWorkerClient.id a UUID instead of a string derived from a ScriptExecutionContextIdentifier

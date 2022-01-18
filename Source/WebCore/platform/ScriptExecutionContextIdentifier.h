@@ -37,18 +37,12 @@ public:
     static ProcessQualified generate() { return { UUID::create(), Process::identifier() }; }
 
     ProcessQualified()
-        : m_object(WTF::UInt128(0))
+        : m_object(UUID::emptyValue)
     {
     }
 
-    ProcessQualified(UUID&& object, ProcessIdentifier processIdentifier)
+    ProcessQualified(UUID object, ProcessIdentifier processIdentifier)
         : m_object(WTFMove(object))
-        , m_processIdentifier(processIdentifier)
-    {
-    }
-
-    ProcessQualified(const UUID& object, ProcessIdentifier processIdentifier)
-        : m_object(object)
         , m_processIdentifier(processIdentifier)
     {
     }
@@ -101,5 +95,15 @@ inline TextStream& operator<<(TextStream& ts, const ProcessQualified<UUID>& proc
 }
 
 using ScriptExecutionContextIdentifier = ProcessQualified<UUID>;
+
+}
+
+namespace WTF {
+
+template<>
+inline uint32_t computeHash(const WebCore::ScriptExecutionContextIdentifier& identifier)
+{
+    return identifier.object().hash();
+}
 
 }
