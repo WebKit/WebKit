@@ -1,3 +1,17 @@
+2022-01-18  ChangSeok Oh  <changseok@webkit.org>
+
+        [GTK] Implement native form validation bubbles for GTK4
+        https://bugs.webkit.org/show_bug.cgi?id=235303
+
+        Reviewed by Carlos Garcia Campos.
+
+        The gtk port using gtk3 supports a native validation bubble for the form validation
+        since r288104. This change brings the same support for gtk4.
+
+        * WebProcess/WebPage/WebPage.cpp: Enable pageConfiguration.validationMessageClient
+          for all gtk backends
+        (WebKit::m_appHighlightsVisible):
+
 2022-01-18  Alex Christensen  <achristensen@webkit.org>
 
         Build WebKitSwift when building with make or build-webkit

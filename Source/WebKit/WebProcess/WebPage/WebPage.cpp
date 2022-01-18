@@ -609,7 +609,7 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
     pageConfiguration.speechSynthesisClient = makeUnique<WebSpeechSynthesisClient>(*this);
 #endif
 
-#if PLATFORM(COCOA) || (PLATFORM(GTK) && !USE(GTK4))
+#if PLATFORM(COCOA) || PLATFORM(GTK)
     pageConfiguration.validationMessageClient = makeUnique<WebValidationMessageClient>(*this);
 #endif
 

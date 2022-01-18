@@ -28,6 +28,7 @@
 
 #if PLATFORM(GTK)
 
+#include "GtkVersioning.h"
 #include <glib.h>
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/text/WTFString.h>
@@ -45,7 +46,6 @@ ValidationBubble::ValidationBubble(GtkWidget* webView, const String& message, co
     , m_fontSize(std::max(settings.minimumFontSize, minFontSize))
     , m_shouldNotifyFocusEventsCallback(WTFMove(callback))
 {
-#if !USE(GTK4)
     GtkWidget* label = gtk_label_new(nullptr);
 
     // https://docs.gtk.org/Pango/pango_markup.html
@@ -65,18 +65,25 @@ ValidationBubble::ValidationBubble(GtkWidget* webView, const String& message, co
     gtk_label_set_lines(GTK_LABEL(label), 4);
     gtk_label_set_max_width_chars(GTK_LABEL(label), maxLabelWidthChars);
 
+#if USE(GTK4)
+    m_popover = gtk_popover_new();
+    gtk_popover_set_autohide(GTK_POPOVER(m_popover), FALSE);
+    gtk_popover_set_child(GTK_POPOVER(m_popover), label);
+
+    gtk_widget_set_parent(m_popover, webView);
+#else
     m_popover = gtk_popover_new(webView);
     gtk_popover_set_modal(GTK_POPOVER(m_popover), FALSE);
-    gtk_popover_set_position(GTK_POPOVER(m_popover), GTK_POS_TOP);
     gtk_popover_set_constrain_to(GTK_POPOVER(m_popover), GTK_POPOVER_CONSTRAINT_NONE);
 
     gtk_container_add(GTK_CONTAINER(m_popover), label);
     gtk_widget_show(label);
+#endif
+    gtk_popover_set_position(GTK_POPOVER(m_popover), GTK_POS_TOP);
 
     g_signal_connect_swapped(m_popover, "closed", G_CALLBACK(+[](ValidationBubble* validationBubble) {
         validationBubble->invalidate();
     }), this);
-#endif
 }
 
 ValidationBubble::~ValidationBubble()
@@ -86,29 +93,29 @@ ValidationBubble::~ValidationBubble()
 
 void ValidationBubble::invalidate()
 {
-#if !USE(GTK4)
     if (!m_popover)
         return;
 
     g_signal_handlers_disconnect_by_data(m_popover, this);
 
+#if USE(GTK4)
+    g_clear_pointer(&m_popover, gtk_widget_unparent);
+#else
     gtk_widget_destroy(m_popover);
     m_popover = nullptr;
+#endif
 
     m_shouldNotifyFocusEventsCallback(m_view, true);
-#endif
 }
 
 void ValidationBubble::showRelativeTo(const IntRect& anchorRect)
 {
-#if !USE(GTK4)
     m_shouldNotifyFocusEventsCallback(m_view, false);
 
     GdkRectangle rect(anchorRect);
     gtk_popover_set_pointing_to(GTK_POPOVER(m_popover), &rect);
 
     gtk_popover_popup(GTK_POPOVER(m_popover));
-#endif
 }
 
 } // namespace WebCore
