@@ -2,6 +2,6 @@ CONSOLE MESSAGE: Refused to apply a stylesheet because its hash, its nonce, or '
 
 Harness Error (TIMEOUT), message = null
 
-FAIL Should fire a securitypolicyviolation event assert_equals: expected "style-src 'nonce-nonceynonce'" but got "style-src-elem"
+PASS Should fire a securitypolicyviolation event
 NOTRUN Test that paragraph remains unmodified and error events received.
 Lorem ipsum

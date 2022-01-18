@@ -1,0 +1,4 @@
+
+PASS Test that style loads if allowed by proper hash values
+PASS Violation report status OK.
+

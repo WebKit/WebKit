@@ -1,3 +1,35 @@
+2022-01-18  Patrick Griffis  <pgriffis@igalia.com>
+
+        CSP: Improve handling of multiple policies
+        https://bugs.webkit.org/show_bug.cgi?id=235199
+
+        Reviewed by Kate Cheney.
+
+        Update test expectations, Some newly passing tests are no longer skipped and some have new reports.
+
+        * TestExpectations:
+        * http/tests/security/contentSecurityPolicy/1.1/module-scriptnonce-in-enforced-policy-and-not-in-report-only-expected.txt:
+        * http/tests/security/contentSecurityPolicy/1.1/module-scriptnonce-multiple-policies-expected.txt:
+        * http/tests/security/contentSecurityPolicy/1.1/scripthash-in-enforced-policy-and-not-in-report-only-expected.txt:
+        * http/tests/security/contentSecurityPolicy/1.1/scripthash-multiple-policies-expected.txt:
+        * http/tests/security/contentSecurityPolicy/1.1/scriptnonce-allowed-by-enforced-policy-and-blocked-by-report-policy-expected.txt:
+        * http/tests/security/contentSecurityPolicy/1.1/scriptnonce-allowed-by-enforced-policy-and-blocked-by-report-policy2-expected.txt:
+        * http/tests/security/contentSecurityPolicy/1.1/scriptnonce-allowed-by-legacy-enforced-policy-and-blocked-by-report-policy-expected.txt:
+        * http/tests/security/contentSecurityPolicy/1.1/scriptnonce-allowed-by-legacy-enforced-policy-and-blocked-by-report-policy2-expected.txt:
+        * http/tests/security/contentSecurityPolicy/1.1/scriptnonce-blocked-by-enforced-policy-and-allowed-by-report-policy-expected.txt:
+        * http/tests/security/contentSecurityPolicy/1.1/scriptnonce-blocked-by-enforced-policy-and-allowed-by-report-policy2-expected.txt:
+        * http/tests/security/contentSecurityPolicy/1.1/scriptnonce-blocked-by-legacy-enforced-policy-and-blocked-by-report-policy-expected.txt:
+        * http/tests/security/contentSecurityPolicy/1.1/scriptnonce-blocked-by-legacy-enforced-policy-and-blocked-by-report-policy2-expected.txt:
+        * http/tests/security/contentSecurityPolicy/1.1/scriptnonce-in-enforced-policy-and-not-in-report-only-expected.txt:
+        * http/tests/security/contentSecurityPolicy/1.1/scriptnonce-multiple-policies-expected.txt:
+        * http/tests/security/contentSecurityPolicy/inline-script-blocked-javascript-url-expected.txt:
+        * http/tests/security/contentSecurityPolicy/javascript-url-blocked-by-default-src-star-expected.txt:
+        * http/tests/security/contentSecurityPolicy/javascript-url-blocked-expected.txt:
+        * http/tests/security/contentSecurityPolicy/window-open-javascript-url-blocked-expected.txt:
+        * http/tests/security/contentSecurityPolicy/window-open-javascript-url-with-target-blocked-expected.txt:
+        * platform/glib/TestExpectations:
+        * platform/wk2/http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-css-in-iframe-report-only-expected.txt:
+
 2022-01-18  Sepand Parhami  <sparhami@apple.com>
 
         AX: Improve support for aria-owns in aria trees

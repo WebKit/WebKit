@@ -206,6 +206,7 @@ struct ResourceLoaderOptions : public FetchOptions {
     OptionSet<HTTPHeadersToKeepFromCleaning> httpHeadersToKeep;
     uint8_t maxRedirectCount { 20 };
     FetchIdentifier navigationPreloadIdentifier;
+    String nonce;
 
     SendCallbackPolicy sendLoadCallbacks : bitWidthOfSendCallbackPolicy;
     ContentSniffingPolicy sniffContent : bitWidthOfContentSniffingPolicy;

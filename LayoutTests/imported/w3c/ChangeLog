@@ -1,3 +1,18 @@
+2022-01-18  Patrick Griffis  <pgriffis@igalia.com>
+
+        CSP: Improve handling of multiple policies
+        https://bugs.webkit.org/show_bug.cgi?id=235199
+
+        Reviewed by Kate Cheney.
+
+        Add new test expectations with more passes.
+
+        * web-platform-tests/content-security-policy/script-src/script-src-multiple-policies-one-using-hashing-algorithms-expected.txt:
+        * web-platform-tests/content-security-policy/script-src/script-src-strict_dynamic_parser_inserted-expected.txt:
+        * web-platform-tests/content-security-policy/style-src/style-src-error-event-fires-expected.txt:
+        * web-platform-tests/content-security-policy/style-src/style-src-inline-style-nonce-blocked-error-event-expected.txt:
+        * web-platform-tests/content-security-policy/style-src/style-src-multiple-policies-multiple-hashing-algorithms-expected.txt: Added.
+
 2022-01-17  Sergio Villar Senin  <svillar@igalia.com>
 
         [css-flexbox] Add support for intrinsic sizes in flex-basis
