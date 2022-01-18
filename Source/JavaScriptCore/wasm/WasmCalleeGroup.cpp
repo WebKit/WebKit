@@ -28,6 +28,7 @@
 
 #if ENABLE(WEBASSEMBLY)
 
+#include "LinkBuffer.h"
 #include "WasmBBQPlan.h"
 #include "WasmCallee.h"
 #include "WasmLLIntPlan.h"

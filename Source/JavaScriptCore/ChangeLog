@@ -1,3 +1,11 @@
+2022-01-18  Adrian Perez de Castro  <aperez@igalia.com>
+
+        Non-unified build fails due to missing header in WasmCalleeGroup.cpp
+
+        Unreviewed non-unified build fix.
+
+        * wasm/WasmCalleeGroup.cpp: Add missing inclusion of the LinkBuffer.h header.
+
 2022-01-16  Lauro Moura  <lmoura@igalia.com>
 
         Fix C++20 build warnings with GCC
