@@ -262,9 +262,6 @@
             "contextsAllowed": ["interface", "namespace", "dictionary", "dictionary-member", "attribute", "operation", "constant"],
             "values": ["*"]
         },
-        "ImplementationLacksVTable": {
-            "contextsAllowed": ["interface"]
-        },
         "InterfaceName": {
             "contextsAllowed": ["interface", "namespace"],
             "values": ["*"]
