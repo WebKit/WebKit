@@ -188,6 +188,12 @@ void BaseAudioSharedUnit::stopProducingData()
     cleanupAudioUnit();
 }
 
+void BaseAudioSharedUnit::setIsProducingMicrophoneSamples(bool value)
+{
+    m_isProducingMicrophoneSamples = value;
+    isProducingMicrophoneSamplesChanged();
+}
+
 void BaseAudioSharedUnit::setIsRenderingAudio(bool value)
 {
     m_isRenderingAudio = value;

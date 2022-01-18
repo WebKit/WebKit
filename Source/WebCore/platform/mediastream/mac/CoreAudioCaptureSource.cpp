@@ -98,6 +98,7 @@ private:
     OSStatus startInternal() final;
     void stopInternal() final;
     bool isProducingData() const final { return m_ioUnitStarted; }
+    void isProducingMicrophoneSamplesChanged() final;
 
     OSStatus configureSpeakerProc();
     OSStatus configureMicrophoneProc();
@@ -113,6 +114,8 @@ private:
     void unduck();
 
     void verifyIsCapturing();
+
+    Seconds verifyCaptureInterval() { return isProducingMicrophoneSamples() ? 10_s : 2_s; }
 
     AudioUnit m_ioUnit { nullptr };
 
@@ -142,7 +145,6 @@ private:
     uint64_t m_microphoneProcsCalled { 0 };
     uint64_t m_microphoneProcsCalledLastTime { 0 };
     Timer m_verifyCapturingTimer;
-    static constexpr Seconds verifyCaptureInterval = 10_s;
 
     Lock m_speakerSamplesProducerLock;
     CoreAudioSpeakerSamplesProducer* m_speakerSamplesProducer WTF_GUARDED_BY_LOCK(m_speakerSamplesProducerLock) { nullptr };
@@ -507,11 +509,18 @@ OSStatus CoreAudioSharedUnit::startInternal()
 
     m_ioUnitStarted = true;
 
-    m_verifyCapturingTimer.startRepeating(verifyCaptureInterval);
+    m_verifyCapturingTimer.startRepeating(verifyCaptureInterval());
     m_microphoneProcsCalled = 0;
     m_microphoneProcsCalledLastTime = 0;
 
     return 0;
+}
+
+void CoreAudioSharedUnit::isProducingMicrophoneSamplesChanged()
+{
+    if (!isProducingData())
+        return;
+    m_verifyCapturingTimer.startRepeating(verifyCaptureInterval());
 }
 
 void CoreAudioSharedUnit::verifyIsCapturing()
