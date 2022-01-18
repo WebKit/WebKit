@@ -483,9 +483,11 @@ void RenderLayer::insertOnlyThisLayer(LayerChangeTiming timing)
     if (!m_parent && renderer().parent()) {
         // We need to connect ourselves when our renderer() has a parent.
         // Find our enclosingLayer and add ourselves.
-        RenderLayer* parentLayer = renderer().parent()->enclosingLayer();
-        ASSERT(parentLayer);
-        RenderLayer* beforeChild = parentLayer->reflectionLayer() != this ? renderer().parent()->findNextLayer(parentLayer, &renderer()) : nullptr;
+        auto* parentLayer = renderer().parent()->enclosingLayer();
+        if (!parentLayer)
+            return;
+
+        auto* beforeChild = parentLayer->reflectionLayer() != this ? renderer().parent()->findNextLayer(*parentLayer, &renderer()) : nullptr;
         parentLayer->addChild(*this, beforeChild);
     }
 
