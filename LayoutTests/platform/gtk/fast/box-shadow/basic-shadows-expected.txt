@@ -7,10 +7,10 @@ layer at (0,0) size 785x671
         RenderInline {SPAN} at (0,0) size 264x127 [border: (5px solid #000000)]
           RenderText {#text} at (5,16) size 55x17
             text run at (5,16) width 55: "This text"
-          RenderBR {BR} at (60,0) size 0x17
+          RenderBR {BR} at (60,16) size 0x17
           RenderText {#text} at (0,66) size 76x17
             text run at (0,66) width 76: "should have"
-          RenderBR {BR} at (76,50) size 0x17
+          RenderBR {BR} at (76,66) size 0x17
           RenderText {#text} at (0,116) size 259x17
             text run at (0,116) width 259: "a multi-line shadow with a border-radius."
         RenderText {#text} at (0,0) size 0x0

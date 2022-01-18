@@ -57,10 +57,10 @@ layer at (10,10) size 282x302 clip at (11,11) size 265x300 scrollHeight 1165
           text run at (10,11) width 136: "contenteditable for Mozilla"
       RenderText {#text} at (145,11) size 4x14
         text run at (145,11) width 4: " "
-      RenderInline {description} at (0,0) size 236x59
-        RenderText {#text} at (148,11) size 236x59
+      RenderInline {description} at (0,0) size 235x59
+        RenderText {#text} at (148,11) size 235x59
           text run at (148,11) width 88: "The folks art Q42,"
-          text run at (10,26) width 236: "creator of Quek (cute little avatar/chat) and Xopus"
+          text run at (10,26) width 235: "creator of Quek (cute little avatar/chat) and Xopus"
           text run at (10,41) width 227: "(browser-based WYSIWYG XML-editor) have"
           text run at (10,56) width 139: "released code that simulates..."
       RenderText {#text} at (0,0) size 0x0

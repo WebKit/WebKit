@@ -1,3 +1,175 @@
+2022-01-18  Arcady Goldmints-Orlov  <agoldmints@igalia.com>
+
+        [GLIB] Update test baselines after r288070 allowed LFC integration to work with the complex text path.
+        https://bugs.webkit.org/show_bug.cgi?id=235330
+
+        Unreviewed test gardening.
+
+        * platform/glib/fast/backgrounds/border-radius-split-background-expected.txt: Renamed from LayoutTests/platform/wpe/fast/backgrounds/border-radius-split-background-expected.txt.
+        * platform/glib/fast/backgrounds/border-radius-split-background-image-expected.txt: Renamed from LayoutTests/platform/wpe/fast/backgrounds/border-radius-split-background-image-expected.txt.
+        * platform/glib/fast/block/basic/013-expected.txt: Renamed from LayoutTests/platform/wpe/fast/block/basic/013-expected.txt.
+        * platform/glib/fast/block/float/br-with-clear-2-expected.txt: Renamed from LayoutTests/platform/wpe/fast/block/float/br-with-clear-2-expected.txt.
+        * platform/glib/fast/block/margin-collapse/block-inside-inline/001-expected.txt: Renamed from LayoutTests/platform/wpe/fast/block/margin-collapse/block-inside-inline/001-expected.txt.
+        * platform/glib/fast/block/margin-collapse/block-inside-inline/005-expected.txt: Renamed from LayoutTests/platform/wpe/fast/block/margin-collapse/block-inside-inline/005-expected.txt.
+        * platform/glib/fast/borders/border-image-outset-split-inline-expected.txt: Renamed from LayoutTests/platform/wpe/fast/borders/border-image-outset-split-inline-expected.txt.
+        * platform/glib/fast/borders/border-styles-split-expected.txt: Renamed from LayoutTests/platform/wpe/fast/borders/border-styles-split-expected.txt.
+        * platform/glib/fast/css/child-style-can-override-visited-style-expected.txt: Renamed from LayoutTests/platform/wpe/fast/css/child-style-can-override-visited-style-expected.txt.
+        * platform/glib/fast/css/named-images-expected.txt: Renamed from LayoutTests/platform/wpe/fast/css/named-images-expected.txt.
+        * platform/glib/fast/dom/HTMLMeterElement/meter-element-expected.txt: Renamed from LayoutTests/platform/wpe/fast/dom/HTMLMeterElement/meter-element-expected.txt.
+        * platform/glib/fast/dom/HTMLMeterElement/meter-element-repaint-on-update-value-expected.txt: Renamed from LayoutTests/platform/wpe/fast/dom/HTMLMeterElement/meter-element-repaint-on-update-value-expected.txt.
+        * platform/glib/fast/dom/HTMLMeterElement/meter-styles-expected.txt: Renamed from LayoutTests/platform/wpe/fast/dom/HTMLMeterElement/meter-styles-expected.txt.
+        * platform/glib/fast/dom/HTMLProgressElement/indeterminate-progress-001-expected.txt: Renamed from LayoutTests/platform/wpe/fast/dom/HTMLProgressElement/indeterminate-progress-001-expected.txt.
+        * platform/glib/fast/dom/HTMLProgressElement/progress-element-expected.txt: Renamed from LayoutTests/platform/wpe/fast/dom/HTMLProgressElement/progress-element-expected.txt.
+        * platform/glib/fast/encoding/charset-replacement-expected.txt: Renamed from LayoutTests/platform/wpe/fast/encoding/charset-replacement-expected.txt.
+        * platform/glib/fast/encoding/invalid-UTF-8-expected.txt: Renamed from LayoutTests/platform/wpe/fast/encoding/invalid-UTF-8-expected.txt.
+        * platform/glib/fast/images/image-map-anchor-children-expected.txt: Renamed from LayoutTests/platform/wpe/fast/images/image-map-anchor-children-expected.txt.
+        * platform/glib/fast/inline/002-expected.txt: Renamed from LayoutTests/platform/wpe/fast/inline/002-expected.txt.
+        * platform/glib/fast/invalid/018-expected.txt: Renamed from LayoutTests/platform/wpe/fast/invalid/018-expected.txt.
+        * platform/glib/fast/selectors/018b-expected.txt: Renamed from LayoutTests/platform/wpe/fast/selectors/018b-expected.txt.
+        * platform/glib/fast/table/table-display-types-strict-expected.txt: Renamed from LayoutTests/platform/wpe/fast/table/table-display-types-strict-expected.txt.
+        * platform/glib/fast/table/unbreakable-images-quirk-expected.txt: Renamed from LayoutTests/platform/wpe/fast/table/unbreakable-images-quirk-expected.txt.
+        * platform/glib/fast/text/basic/004-expected.txt: Renamed from LayoutTests/platform/wpe/fast/text/basic/004-expected.txt.
+        * platform/glib/fast/text/basic/012-expected.txt: Renamed from LayoutTests/platform/wpe/fast/text/basic/012-expected.txt.
+        * platform/glib/fast/text/cg-fallback-bolding-expected.txt: Renamed from LayoutTests/platform/wpe/fast/text/cg-fallback-bolding-expected.txt.
+        * platform/glib/fast/text/firstline/001-expected.txt: Renamed from LayoutTests/platform/wpe/fast/text/firstline/001-expected.txt.
+        * platform/glib/fast/text/indic-expected.txt:
+        * platform/glib/fast/text/international/bidi-layout-across-linebreak-expected.txt: Renamed from LayoutTests/platform/wpe/fast/text/international/bidi-layout-across-linebreak-expected.txt.
+        * platform/glib/fast/text/justify-nbsp-expected.txt:
+        * platform/glib/fast/text/whitespace/020-expected.txt: Renamed from LayoutTests/platform/wpe/fast/text/whitespace/020-expected.txt.
+        * platform/gtk/fast/backgrounds/border-radius-split-background-expected.txt: Removed.
+        * platform/gtk/fast/backgrounds/border-radius-split-background-image-expected.txt: Removed.
+        * platform/gtk/fast/block/basic/013-expected.txt: Removed.
+        * platform/gtk/fast/block/basic/014-expected.txt:
+        * platform/gtk/fast/block/basic/016-expected.txt:
+        * platform/gtk/fast/block/float/br-with-clear-2-expected.txt: Removed.
+        * platform/gtk/fast/block/margin-collapse/044-expected.txt:
+        * platform/gtk/fast/block/margin-collapse/block-inside-inline/001-expected.txt: Removed.
+        * platform/gtk/fast/block/margin-collapse/block-inside-inline/005-expected.txt: Removed.
+        * platform/gtk/fast/block/positioning/047-expected.txt:
+        * platform/gtk/fast/block/positioning/057-expected.txt:
+        * platform/gtk/fast/borders/bidi-012-expected.txt:
+        * platform/gtk/fast/borders/border-image-outset-split-inline-expected.txt: Removed.
+        * platform/gtk/fast/borders/border-styles-split-expected.txt: Removed.
+        * platform/gtk/fast/borders/rtl-border-04-expected.txt:
+        * platform/gtk/fast/box-shadow/basic-shadows-expected.txt:
+        * platform/gtk/fast/css-generated-content/012-expected.txt:
+        * platform/gtk/fast/css-generated-content/after-duplicated-after-split-expected.txt:
+        * platform/gtk/fast/css/child-style-can-override-visited-style-expected.txt: Removed.
+        * platform/gtk/fast/css/css1_forward_compatible_parsing-expected.txt:
+        * platform/gtk/fast/css/empty-inline-003-quirksmode-expected.txt:
+        * platform/gtk/fast/css/empty-inline-line-height-first-line-expected.txt:
+        * platform/gtk/fast/css/empty-inline-line-height-first-line-quirksmode-expected.txt:
+        * platform/gtk/fast/css/first-line-text-decoration-expected.txt:
+        * platform/gtk/fast/css/first-line-text-decoration-inherited-from-parent-expected.txt:
+        * platform/gtk/fast/css/font-face-opentype-expected.txt:
+        * platform/gtk/fast/css/named-images-expected.txt: Removed.
+        * platform/gtk/fast/css/pseudo-first-line-border-width-expected.txt:
+        * platform/gtk/fast/css/resize-corner-tracking-expected.txt:
+        * platform/gtk/fast/css/text-overflow-ellipsis-bidi-expected.txt:
+        * platform/gtk/fast/css/text-overflow-input-expected.txt:
+        * platform/gtk/fast/css/word-space-extra-expected.txt:
+        * platform/gtk/fast/dom/34176-expected.txt:
+        * platform/gtk/fast/dom/52776-expected.txt:
+        * platform/gtk/fast/dom/HTMLElement/bdo-expected.txt:
+        * platform/gtk/fast/dom/HTMLMeterElement/meter-element-expected.txt: Removed.
+        * platform/gtk/fast/dom/HTMLMeterElement/meter-element-repaint-on-update-value-expected.txt: Removed.
+        * platform/gtk/fast/dom/HTMLMeterElement/meter-styles-expected.txt: Removed.
+        * platform/gtk/fast/dom/HTMLProgressElement/indeterminate-progress-001-expected.txt: Removed.
+        * platform/gtk/fast/dom/HTMLProgressElement/native-progress-bar-expected.txt:
+        * platform/gtk/fast/dom/HTMLProgressElement/progress-element-expected.txt: Removed.
+        * platform/gtk/fast/encoding/charset-replacement-expected.txt: Removed.
+        * platform/gtk/fast/encoding/invalid-UTF-8-expected.txt: Removed.
+        * platform/gtk/fast/encoding/utf-16-big-endian-expected.txt:
+        * platform/gtk/fast/encoding/utf-16-little-endian-expected.txt:
+        * platform/gtk/fast/events/updateLayoutForHitTest-expected.txt:
+        * platform/gtk/fast/forms/auto-fill-button/input-contacts-auto-fill-button-expected.txt:
+        * platform/gtk/fast/forms/input-text-scroll-left-on-blur-expected.txt:
+        * platform/gtk/fast/forms/listbox-hit-test-zoomed-expected.txt:
+        * platform/gtk/fast/forms/placeholder-pseudo-style-expected.txt:
+        * platform/gtk/fast/forms/select-visual-hebrew-expected.txt:
+        * platform/gtk/fast/frames/onlyCommentInIFrame-expected.txt:
+        * platform/gtk/fast/images/image-map-anchor-children-expected.txt: Removed.
+        * platform/gtk/fast/inline-block/inline-block-vertical-align-expected.txt:
+        * platform/gtk/fast/inline/002-expected.txt: Removed.
+        * platform/gtk/fast/inline/drawStyledEmptyInlines-expected.txt:
+        * platform/gtk/fast/invalid/018-expected.txt: Removed.
+        * platform/gtk/fast/invalid/missing-end-tag-expected.txt:
+        * platform/gtk/fast/multicol/span/span-margin-collapsing-expected.txt:
+        * platform/gtk/fast/overflow/003-expected.txt:
+        * platform/gtk/fast/parser/entities-in-xhtml-expected.txt:
+        * platform/gtk/fast/parser/nofoo-tags-inside-paragraph-expected.txt:
+        * platform/gtk/fast/parser/open-comment-in-textarea-expected.txt:
+        * platform/gtk/fast/parser/xhtml-alternate-entities-expected.txt:
+        * platform/gtk/fast/repaint/line-layout-block-shrink-expected.txt:
+        * platform/gtk/fast/repaint/simple-line-layout-shrinking-content-expected.txt:
+        * platform/gtk/fast/replaced/inline-box-wrapper-handover-expected.txt:
+        * platform/gtk/fast/selectors/018b-expected.txt: Removed.
+        * platform/gtk/fast/selectors/visited-descendant-expected.txt:
+        * platform/gtk/fast/table/col-and-colgroup-offsets-expected.txt:
+        * platform/gtk/fast/table/table-continuation-outline-paint-crash-expected.txt:
+        * platform/gtk/fast/table/table-display-types-strict-expected.txt: Removed.
+        * platform/gtk/fast/table/unbreakable-images-quirk-expected.txt: Removed.
+        * platform/gtk/fast/text/atsui-multiple-renderers-expected.txt:
+        * platform/gtk/fast/text/atsui-negative-spacing-features-expected.txt:
+        * platform/gtk/fast/text/atsui-spacing-features-expected.txt:
+        * platform/gtk/fast/text/basic/004-expected.txt: Removed.
+        * platform/gtk/fast/text/basic/005-expected.txt:
+        * platform/gtk/fast/text/basic/012-expected.txt: Removed.
+        * platform/gtk/fast/text/basic/014-expected.txt:
+        * platform/gtk/fast/text/bidi-reverse-runs-crash-expected.txt:
+        * platform/gtk/fast/text/capitalize-boundaries-expected.txt:
+        * platform/gtk/fast/text/cg-fallback-bolding-expected.txt: Removed.
+        * platform/gtk/fast/text/fallback-traits-fixup-expected.txt:
+        * platform/gtk/fast/text/firstline/001-expected.txt: Removed.
+        * platform/gtk/fast/text/format-control-expected.txt:
+        * platform/gtk/fast/text/hyphenate-limit-before-after-expected.txt:
+        * platform/gtk/fast/text/in-rendered-text-rtl-expected.txt:
+        * platform/gtk/fast/text/international/arabic-justify-expected.txt:
+        * platform/gtk/fast/text/international/bidi-AN-after-L-expected.txt:
+        * platform/gtk/fast/text/international/bidi-AN-after-empty-run-expected.txt:
+        * platform/gtk/fast/text/international/bidi-CS-after-AN-expected.txt:
+        * platform/gtk/fast/text/international/bidi-L2-run-reordering-expected.txt:
+        * platform/gtk/fast/text/international/bidi-LDB-2-CSS-expected.txt:
+        * platform/gtk/fast/text/international/bidi-LDB-2-HTML-expected.txt:
+        * platform/gtk/fast/text/international/bidi-LDB-2-formatting-characters-expected.txt:
+        * platform/gtk/fast/text/international/bidi-control-chars-treated-as-ZWS-expected.txt:
+        * platform/gtk/fast/text/international/bidi-european-terminators-expected.txt:
+        * platform/gtk/fast/text/international/bidi-ignored-for-first-child-inline-expected.txt:
+        * platform/gtk/fast/text/international/bidi-innertext-expected.txt:
+        * platform/gtk/fast/text/international/bidi-layout-across-linebreak-expected.txt: Removed.
+        * platform/gtk/fast/text/international/bidi-linebreak-001-expected.txt:
+        * platform/gtk/fast/text/international/bidi-linebreak-002-expected.txt:
+        * platform/gtk/fast/text/international/bidi-linebreak-003-expected.txt:
+        * platform/gtk/fast/text/international/bidi-listbox-atsui-expected.txt:
+        * platform/gtk/fast/text/international/bidi-listbox-expected.txt:
+        * platform/gtk/fast/text/international/bidi-menulist-expected.txt:
+        * platform/gtk/fast/text/international/bidi-mirror-he-ar-expected.txt:
+        * platform/gtk/fast/text/international/bidi-neutral-directionality-paragraph-start-expected.txt:
+        * platform/gtk/fast/text/international/bidi-neutral-run-expected.txt:
+        * platform/gtk/fast/text/international/bidi-override-expected.txt:
+        * platform/gtk/fast/text/international/bold-bengali-expected.txt:
+        * platform/gtk/fast/text/international/danda-space-expected.txt:
+        * platform/gtk/fast/text/international/hebrew-vowels-expected.txt:
+        * platform/gtk/fast/text/international/hindi-whitespace-expected.txt:
+        * platform/gtk/fast/text/international/rtl-caret-expected.txt:
+        * platform/gtk/fast/text/international/rtl-white-space-pre-wrap-expected.txt:
+        * platform/gtk/fast/text/international/thai-baht-space-expected.txt:
+        * platform/gtk/fast/text/international/thai-line-breaks-expected.txt:
+        * platform/gtk/fast/text/midword-break-after-breakable-char-expected.txt:
+        * platform/gtk/fast/text/text-letter-spacing-expected.txt:
+        * platform/gtk/fast/text/unicode-variation-selector-expected.txt:
+        * platform/gtk/fast/text/wbr-expected.txt:
+        * platform/gtk/fast/text/whitespace/004-expected.txt:
+        * platform/gtk/fast/text/whitespace/005-expected.txt:
+        * platform/gtk/fast/text/whitespace/006-expected.txt:
+        * platform/gtk/fast/text/whitespace/007-expected.txt:
+        * platform/gtk/fast/text/whitespace/010-expected.txt:
+        * platform/gtk/fast/text/whitespace/011-expected.txt:
+        * platform/gtk/fast/text/whitespace/015-expected.txt:
+        * platform/gtk/fast/text/whitespace/016-expected.txt:
+        * platform/gtk/fast/text/whitespace/018-expected.txt:
+        * platform/gtk/fast/text/whitespace/020-expected.txt: Removed.
+
 2022-01-18  Tim Nguyen  <ntim@apple.com>
 
         Move dialog-form-submission-expected.txt iPad test expectations in correct directory

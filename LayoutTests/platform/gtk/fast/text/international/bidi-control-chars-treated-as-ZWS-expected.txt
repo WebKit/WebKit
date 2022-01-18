@@ -9,8 +9,7 @@ layer at (0,0) size 800x600
           text run at (0,18) width 36: "same."
       RenderBlock {DIV} at (0,36) size 784x36
         RenderText {#text} at (0,0) size 14x17
-          text run at (0,0) width 7: "a"
-          text run at (7,0) width 7: "\x{202D}e\x{300}"
+          text run at (0,0) width 14: "a\x{202D}e\x{300}"
         RenderBR {BR} at (14,0) size 0x17
         RenderText {#text} at (0,18) size 14x17
           text run at (0,18) width 14: "ae\x{300}"

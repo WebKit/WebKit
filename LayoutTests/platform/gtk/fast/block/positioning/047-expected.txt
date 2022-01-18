@@ -45,8 +45,8 @@ layer at (8,8) size 512x784
         RenderText {#text} at (63,2) size 483x53
           text run at (63,2) width 420: "the \"make text bigger\" button does not scale line-"
           text run at (0,31) width 254: "height when it scales font-size"
-      RenderText {#text} at (254,31) size 469x82
-        text run at (254,31) width 215: " (hit it a few times on this"
+      RenderText {#text} at (253,31) size 469x82
+        text run at (253,31) width 216: " (hit it a few times on this"
         text run at (0,60) width 454: "page). This is a crippling flaw for people who need to"
         text run at (0,89) width 317: "enlarge the fonts to read comfortably."
 layer at (547,180) size 200x32
