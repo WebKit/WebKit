@@ -59,7 +59,8 @@ bool MomentumEventDispatcher::eventShouldStartSyntheticMomentumPhase(WebCore::Pa
     if (event.momentumPhase() != WebWheelEvent::PhaseBegan)
         return false;
 
-    if (!m_accelerationCurves.contains(pageIdentifier)) {
+    auto curveIterator = m_accelerationCurves.find(pageIdentifier);
+    if (curveIterator == m_accelerationCurves.end() || !curveIterator->value) {
         RELEASE_LOG(ScrollAnimations, "MomentumEventDispatcher not using synthetic momentum phase: no acceleration curve");
         return false;
     }
