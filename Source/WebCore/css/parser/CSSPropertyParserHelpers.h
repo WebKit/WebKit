@@ -66,6 +66,8 @@ enum class NegativePercentagePolicy : bool { Forbid, Allow };
 enum class UnitlessQuirk { Allow, Forbid };
 enum class UnitlessZeroQuirk { Allow, Forbid };
 
+struct NoneRaw { };
+
 struct NumberRaw {
     double value;
 };
@@ -86,7 +88,11 @@ struct LengthRaw {
 
 using LengthOrPercentRaw = std::variant<LengthRaw, PercentRaw>;
 using NumberOrPercentRaw = std::variant<NumberRaw, PercentRaw>;
+using NumberOrNoneRaw = std::variant<NumberRaw, NoneRaw>;
+using PercentOrNoneRaw = std::variant<PercentRaw, NoneRaw>;
+using NumberOrPercentOrNoneRaw = std::variant<NumberRaw, PercentRaw, NoneRaw>;
 using AngleOrNumberRaw = std::variant<AngleRaw, NumberRaw>;
+using AngleOrNumberOrNoneRaw = std::variant<AngleRaw, NumberRaw, NoneRaw>;
 
 std::optional<int> consumeIntegerRaw(CSSParserTokenRange&);
 RefPtr<CSSPrimitiveValue> consumeInteger(CSSParserTokenRange&);

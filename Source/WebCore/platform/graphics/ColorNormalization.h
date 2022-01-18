@@ -43,6 +43,25 @@ template<typename ComponentType> struct WhitenessBlackness {
     ComponentType blackness;
 };
 
+template<typename ComponentType> static auto normalizeClampedWhitenessBlacknessDisallowingNone(ComponentType whiteness, ComponentType blackness) -> WhitenessBlackness<ComponentType>
+{
+    //   If the sum of these two arguments is greater than 100%, then at
+    //   computed-value time they are further normalized to add up to 100%, with
+    //   the same relative ratio.
+    if (auto sum = whiteness + blackness; sum >= 100)
+        return { whiteness * 100.0 / sum, blackness * 100.0 / sum };
+
+    return { whiteness, blackness };
+}
+
+template<typename ComponentType> static auto normalizeClampedWhitenessBlacknessAllowingNone(ComponentType whiteness, ComponentType blackness) -> WhitenessBlackness<ComponentType>
+{
+    if (std::isnan(whiteness) || std::isnan(blackness))
+        return { whiteness, blackness };
+
+    return normalizeClampedWhitenessBlacknessDisallowingNone(whiteness, blackness);
+}
+
 template<typename ComponentType> inline auto normalizeWhitenessBlackness(ComponentType whiteness, ComponentType blackness) -> WhitenessBlackness<ComponentType>
 {
     //   Values outside of these ranges are not invalid, but are clamped to the

@@ -35,6 +35,109 @@
 
 namespace WebCore {
 
+struct LegacyRGBComponent { float value; };
+struct NumericComponent { float value; };
+struct PercentageComponent { float value; };
+
+static LegacyRGBComponent legacyRGBComponent(float value)
+{
+    return { value };
+}
+
+static NumericComponent numericComponent(float value)
+{
+    return { value };
+}
+
+
+static PercentageComponent percentageComponent(float value)
+{
+    return { value };
+}
+
+};
+
+namespace WTF {
+
+template<> class StringTypeAdapter<WebCore::LegacyRGBComponent> {
+public:
+    StringTypeAdapter(WebCore::LegacyRGBComponent number)
+    {
+        if (std::isnan(number.value)) {
+            m_buffer = { 'n', 'o', 'n', 'e' };
+            m_length = 4;
+        } else {
+            auto valueAsByte = std::clamp(std::lround(number.value * 255.0f), 0l, 255l);
+            m_length = lengthOfIntegerAsString(valueAsByte);
+            writeIntegerToBuffer(valueAsByte, m_buffer.data());
+        }
+    }
+
+    unsigned length() const { return m_length; }
+    bool is8Bit() const { return true; }
+    template<typename CharacterType> void writeTo(CharacterType* destination) const { StringImpl::copyCharacters(destination, buffer(), m_length); }
+
+private:
+    const LChar* buffer() const { return reinterpret_cast<const LChar*>(&m_buffer[0]); }
+
+    std::array<char, 4> m_buffer;
+    unsigned m_length;
+};
+
+template<> class StringTypeAdapter<WebCore::NumericComponent> {
+public:
+    StringTypeAdapter(WebCore::NumericComponent number)
+    {
+        if (std::isnan(number.value)) {
+            m_buffer = { 'n', 'o', 'n', 'e' };
+            m_length = 4;
+        } else {
+            numberToString(number.value, m_buffer);
+            m_length = std::strlen(&m_buffer[0]);
+        }
+    }
+
+    unsigned length() const { return m_length; }
+    bool is8Bit() const { return true; }
+    template<typename CharacterType> void writeTo(CharacterType* destination) const { StringImpl::copyCharacters(destination, buffer(), m_length); }
+
+private:
+    const LChar* buffer() const { return reinterpret_cast<const LChar*>(&m_buffer[0]); }
+
+    NumberToStringBuffer m_buffer;
+    unsigned m_length;
+};
+
+template<> class StringTypeAdapter<WebCore::PercentageComponent> {
+public:
+    StringTypeAdapter(WebCore::PercentageComponent percentage)
+    {
+        if (std::isnan(percentage.value)) {
+            m_buffer = { 'n', 'o', 'n', 'e' };
+            m_length = 4;
+        } else {
+            numberToString(percentage.value, m_buffer);
+            m_length = std::strlen(&m_buffer[0]) + 1;
+            // Utilize the space used for the \0 which is no longer needed to store the percent sign.
+            m_buffer[m_length - 1] = '%';
+        }
+    }
+
+    unsigned length() const { return m_length; }
+    bool is8Bit() const { return true; }
+    template<typename CharacterType> void writeTo(CharacterType* destination) const { StringImpl::copyCharacters(destination, buffer(), m_length); }
+
+private:
+    const LChar* buffer() const { return reinterpret_cast<const LChar*>(&m_buffer[0]); }
+
+    NumberToStringBuffer m_buffer;
+    unsigned m_length;
+};
+
+}
+
+namespace WebCore {
+
 static String serializationForCSS(const A98RGB<float>&, bool useColorFunctionSerialization);
 static String serializationForHTML(const A98RGB<float>&, bool useColorFunctionSerialization);
 static String serializationForRenderTreeAsText(const A98RGB<float>&, bool useColorFunctionSerialization);
@@ -119,7 +222,6 @@ static String serializationForCSS(const XYZA<float, WhitePoint::D65>&, bool useC
 static String serializationForHTML(const XYZA<float, WhitePoint::D65>&, bool useColorFunctionSerialization);
 static String serializationForRenderTreeAsText(const XYZA<float, WhitePoint::D65>&, bool useColorFunctionSerialization);
 
-
 String serializationForCSS(const Color& color)
 {
     return color.callOnUnderlyingType([&] (auto underlyingColor) {
@@ -188,10 +290,10 @@ template<typename ColorType> static String serializationUsingColorFunction(const
 {
     static_assert(std::is_same_v<typename ColorType::ComponentType, float>);
 
-    auto [c1, c2, c3, alpha] = color.resolved();
+    auto [c1, c2, c3, alpha] = color.unresolved();
     if (WTF::areEssentiallyEqual(alpha, 1.0f))
-        return makeString("color(", serialization(ColorSpaceFor<ColorType>), ' ', c1, ' ', c2, ' ', c3, ')');
-    return makeString("color(", serialization(ColorSpaceFor<ColorType>), ' ', c1, ' ', c2, ' ', c3, " / ", alpha, ')');
+        return makeString("color(", serialization(ColorSpaceFor<ColorType>), ' ', numericComponent(c1), ' ', numericComponent(c2), ' ', numericComponent(c3), ')');
+    return makeString("color(", serialization(ColorSpaceFor<ColorType>), ' ', numericComponent(c1), ' ', numericComponent(c2), ' ', numericComponent(c3), " / ", numericComponent(alpha), ')');
 }
 
 static String serializationUsingColorFunction(const SRGBA<uint8_t>& color)
@@ -374,10 +476,10 @@ String serializationForRenderTreeAsText(const HWBA<float>& color, bool useColorF
 String serializationForCSS(const LCHA<float>& color, bool)
 {
     // https://www.w3.org/TR/css-color-4/#serializing-lab-lch
-    auto [c1, c2, c3, alpha] = color.resolved();
+    auto [c1, c2, c3, alpha] = color.unresolved();
     if (WTF::areEssentiallyEqual(alpha, 1.0f))
-        return makeString("lch(", c1, "% ", c2, ' ', c3, ')');
-    return makeString("lch(", c1, "% ", c2, ' ', c3, " / ", alpha, ')');
+        return makeString("lch(", percentageComponent(c1), ' ', numericComponent(c2), ' ', numericComponent(c3), ')');
+    return makeString("lch(", percentageComponent(c1), ' ', numericComponent(c2), ' ', numericComponent(c3), " / ", numericComponent(alpha), ')');
 }
 
 String serializationForHTML(const LCHA<float>& color, bool useColorFunctionSerialization)
@@ -395,10 +497,10 @@ String serializationForRenderTreeAsText(const LCHA<float>& color, bool useColorF
 String serializationForCSS(const Lab<float>& color, bool)
 {
     // https://www.w3.org/TR/css-color-4/#serializing-lab-lch
-    auto [c1, c2, c3, alpha] = color.resolved();
+    auto [c1, c2, c3, alpha] = color.unresolved();
     if (WTF::areEssentiallyEqual(alpha, 1.0f))
-        return makeString("lab(", c1, "% ", c2, ' ', c3, ')');
-    return makeString("lab(", c1, "% ", c2, ' ', c3, " / ", alpha, ')');
+        return makeString("lab(", percentageComponent(c1), ' ', numericComponent(c2), ' ', numericComponent(c3), ')');
+    return makeString("lab(", percentageComponent(c1), ' ', numericComponent(c2), ' ', numericComponent(c3), " / ", numericComponent(alpha), ')');
 }
 
 String serializationForHTML(const Lab<float>& color, bool useColorFunctionSerialization)
@@ -432,10 +534,10 @@ String serializationForRenderTreeAsText(const LinearSRGBA<float>& color, bool)
 
 String serializationForCSS(const OKLCHA<float>& color, bool)
 {
-    auto [c1, c2, c3, alpha] = color.resolved();
+    auto [c1, c2, c3, alpha] = color.unresolved();
     if (WTF::areEssentiallyEqual(alpha, 1.0f))
-        return makeString("oklch(", c1, "% ", c2, ' ', c3, ')');
-    return makeString("oklch(", c1, "% ", c2, ' ', c3, " / ", alpha, ')');
+        return makeString("oklch(", percentageComponent(c1), ' ', numericComponent(c2), ' ', numericComponent(c3), ')');
+    return makeString("oklch(", percentageComponent(c1), ' ', numericComponent(c2), ' ', numericComponent(c3), " / ", numericComponent(alpha), ')');
 }
 
 String serializationForHTML(const OKLCHA<float>& color, bool useColorFunctionSerialization)
@@ -452,10 +554,10 @@ String serializationForRenderTreeAsText(const OKLCHA<float>& color, bool useColo
 
 String serializationForCSS(const OKLab<float>& color, bool)
 {
-    auto [c1, c2, c3, alpha] = color.resolved();
+    auto [c1, c2, c3, alpha] = color.unresolved();
     if (WTF::areEssentiallyEqual(alpha, 1.0f))
-        return makeString("oklab(", c1, "% ", c2, ' ', c3, ')');
-    return makeString("oklab(", c1, "% ", c2, ' ', c3, " / ", alpha, ')');
+        return makeString("oklab(", percentageComponent(c1), ' ', numericComponent(c2), ' ', numericComponent(c3), ')');
+    return makeString("oklab(", percentageComponent(c1), ' ', numericComponent(c2), ' ', numericComponent(c3), " / ", numericComponent(alpha), ')');
 }
 
 String serializationForHTML(const OKLab<float>& color, bool useColorFunctionSerialization)
@@ -504,23 +606,6 @@ String serializationForRenderTreeAsText(const Rec2020<float>& color, bool)
 
 // MARK: SRGBA<float> overloads
 
-String serializationForCSS(const SRGBA<float>& color, bool)
-{
-    return serializationUsingColorFunction(color);
-}
-
-String serializationForHTML(const SRGBA<float>& color, bool)
-{
-    return serializationUsingColorFunction(color);
-}
-
-String serializationForRenderTreeAsText(const SRGBA<float>& color, bool)
-{
-    return serializationUsingColorFunction(color);
-}
-
-// MARK: SRGBA<uint8_t> overloads
-
 static char decimalDigit(unsigned number)
 {
     ASSERT(number < 10);
@@ -537,6 +622,39 @@ static std::array<char, 4> fractionDigitsForFractionalAlphaValue(uint8_t alpha)
         return { { decimalDigit(alpha * 10 / 0xFF), decimalDigit(thirdDigit), '\0', '\0' } };
     return { { decimalDigit((alpha * 10 + 0x7F) / 0xFF), '\0', '\0', '\0' } };
 }
+
+String serializationForCSS(const SRGBA<float>& color, bool useColorFunctionSerialization)
+{
+    if (useColorFunctionSerialization)
+        return serializationUsingColorFunction(color);
+
+    auto [red, green, blue, alpha] = color.unresolved();
+
+    if (std::isnan(alpha))
+        return makeString("rgba(", legacyRGBComponent(red), ' ', legacyRGBComponent(green), ' ', legacyRGBComponent(blue), " / none)");
+
+    auto normalizedAlpha = convertFloatAlphaTo<uint8_t>(alpha);
+    switch (normalizedAlpha) {
+    case 0:
+        return makeString("rgba(", legacyRGBComponent(red), ' ', legacyRGBComponent(green), ' ', legacyRGBComponent(blue), " / 0)");
+    case 0xFF:
+        return makeString("rgb(", legacyRGBComponent(red), ' ', legacyRGBComponent(green), ' ', legacyRGBComponent(blue), ')');
+    default:
+        return makeString("rgba(", legacyRGBComponent(red), ' ', legacyRGBComponent(green), ' ', legacyRGBComponent(blue), " / 0.", fractionDigitsForFractionalAlphaValue(normalizedAlpha).data(), ')');
+    }
+}
+
+String serializationForHTML(const SRGBA<float>& color, bool useColorFunctionSerialization)
+{
+    return serializationForCSS(color, useColorFunctionSerialization);
+}
+
+String serializationForRenderTreeAsText(const SRGBA<float>& color, bool useColorFunctionSerialization)
+{
+    return serializationForCSS(color, useColorFunctionSerialization);
+}
+
+// MARK: SRGBA<uint8_t> overloads
 
 String serializationForCSS(SRGBA<uint8_t> color, bool useColorFunctionSerialization)
 {

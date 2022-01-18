@@ -623,6 +623,7 @@ struct AngleRawKnownTokenTypeDimensionConsumer {
         return std::nullopt;
     }
 };
+
 struct AngleRawKnownTokenTypeNumberConsumer {
     static constexpr CSSParserTokenType tokenType = NumberToken;
     static std::optional<AngleRaw> consume(CSSParserTokenRange& range, const CSSCalcSymbolTable&, ValueRange, CSSParserMode parserMode, UnitlessQuirk unitless, UnitlessZeroQuirk unitlessZero)
@@ -731,6 +732,23 @@ struct ResolutionCSSPrimitiveValueWithKnownTokenTypeDimensionConsumer {
     }
 };
 
+// MARK: None (Raw)
+
+struct NoneRawKnownTokenTypeIdentConsumer {
+    static constexpr CSSParserTokenType tokenType = IdentToken;
+    static std::optional<NoneRaw> consume(CSSParserTokenRange& range, const CSSCalcSymbolTable&, ValueRange, CSSParserMode, UnitlessQuirk, UnitlessZeroQuirk)
+    {
+        ASSERT(range.peek().type() == IdentToken);
+
+        if (range.peek().id() == CSSValueNone) {
+            range.consumeIncludingWhitespace();
+            return NoneRaw { };
+        }
+
+        return std::nullopt;
+    }
+};
+
 // MARK: Specialized combination consumers.
 
 // FIXME: It would be good to find a way to synthesize this from an angle and number specific variants.
@@ -738,6 +756,8 @@ struct AngleOrNumberRawKnownTokenTypeIdentConsumer {
     static constexpr CSSParserTokenType tokenType = IdentToken;
     static std::optional<AngleOrNumberRaw> consume(CSSParserTokenRange& range, const CSSCalcSymbolTable& symbolTable, ValueRange, CSSParserMode, UnitlessQuirk, UnitlessZeroQuirk)
     {
+        ASSERT(range.peek().type() == IdentToken);
+
         if (auto variable = symbolTable.get(range.peek().id())) {
             switch (variable->type) {
             case CSSUnitType::CSS_DEG:
@@ -765,6 +785,8 @@ struct NumberOrPercentRawKnownTokenTypeIdentConsumer {
     static constexpr CSSParserTokenType tokenType = IdentToken;
     static std::optional<NumberOrPercentRaw> consume(CSSParserTokenRange& range, const CSSCalcSymbolTable& symbolTable, ValueRange valueRange, CSSParserMode, UnitlessQuirk, UnitlessZeroQuirk)
     {
+        ASSERT(range.peek().type() == IdentToken);
+
         if (auto variable = symbolTable.get(range.peek().id())) {
             switch (variable->type) {
             case CSSUnitType::CSS_PERCENTAGE:
@@ -810,17 +832,39 @@ static decltype(auto) applyTransform(T value)
 
 // Transformers:
 
-template<typename T>
+template<typename ResultType>
 struct IdentityTransformer {
-    using Result = T;
-    static T transform(T value) { return value; }
+    using Result = ResultType;
+    static Result transform(Result value) { return value; }
 };
 
-template<typename Parent, typename ResultType, typename VariantType>
-struct RawVariantTransformerBase {
-    using Result = ResultType;
+template<typename ResultType>
+struct RawIdentityTransformer {
+    using Result = std::optional<ResultType>;
 
-    static Result transform(VariantType value)
+    static Result transform(Result value) { return value; }
+
+    template<typename... Types>
+    static Result transform(const std::variant<Types...>& value)
+    {
+        return WTF::switchOn(value, [] (auto value) -> Result { return value; });
+    }
+
+    template<typename T>
+    static Result transform(std::optional<T> value)
+    {
+        if (value)
+            return transform(*value);
+        return std::nullopt;
+    }
+};
+
+template<typename Parent, typename ResultType>
+struct RawVariantTransformerBase {
+    using Result = std::optional<ResultType>;
+
+    template<typename... Types>
+    static Result transform(const std::variant<Types...>& value)
     {
         return WTF::switchOn(value, [] (auto value) { return Parent::transform(value); });
     }
@@ -839,22 +883,8 @@ struct RawVariantTransformerBase {
     }
 };
 
-struct AngleOrNumberRawToDegressTransformer : RawVariantTransformerBase<AngleOrNumberRawToDegressTransformer, std::optional<double>, AngleOrNumberRaw> {
-    using RawVariantTransformerBase<AngleOrNumberRawToDegressTransformer, std::optional<double>, AngleOrNumberRaw>::transform;
-
-    static double transform(AngleRaw angleRaw)
-    {
-        return CSSPrimitiveValue::computeDegrees(angleRaw.type, angleRaw.value);
-    }
-
-    static double transform(NumberRaw value)
-    {
-        return value.value;
-    }
-};
-
-struct NumberOrPercentDividedBy100Transformer : RawVariantTransformerBase<NumberOrPercentDividedBy100Transformer, std::optional<double>, NumberOrPercentRaw> {
-    using RawVariantTransformerBase<NumberOrPercentDividedBy100Transformer, std::optional<double>, NumberOrPercentRaw>::transform;
+struct NumberOrPercentDividedBy100Transformer : RawVariantTransformerBase<NumberOrPercentDividedBy100Transformer, double> {
+    using RawVariantTransformerBase<NumberOrPercentDividedBy100Transformer, double>::transform;
 
     static double transform(NumberRaw value)
     {
@@ -1007,14 +1037,17 @@ struct IntegerTypeConsumer {
 
 // MARK: Number
 
+template<typename T>
 struct NumberRawConsumer {
-    using Result = std::optional<NumberRaw>;
+    using Transformer = T;
+    using Result = typename Transformer::Result;
 
     using FunctionToken = NumberRawKnownTokenTypeFunctionConsumer;
     using NumberToken = NumberRawKnownTokenTypeNumberConsumer;
 };
 
-struct NumberRawAllowingSymbolTableIdentConsumer : NumberRawConsumer {
+template<typename Transformer>
+struct NumberRawAllowingSymbolTableIdentConsumer : NumberRawConsumer<Transformer> {
     using IdentToken = NumberRawKnownTokenTypeIdentConsumer;
 };
 
@@ -1027,14 +1060,17 @@ struct NumberConsumer {
 
 // MARK: Percent
 
+template<typename T>
 struct PercentRawConsumer {
-    using Result = std::optional<PercentRaw>;
+    using Transformer = T;
+    using Result = typename Transformer::Result;
 
     using FunctionToken = PercentRawKnownTokenTypeFunctionConsumer;
     using PercentageToken = PercentRawKnownTokenTypePercentConsumer;
 };
 
-struct PercentRawAllowingSymbolTableIdentConsumer : PercentRawConsumer {
+template<typename Transformer>
+struct PercentRawAllowingSymbolTableIdentConsumer : PercentRawConsumer<Transformer> {
     using IdentToken = PercentRawKnownTokenTypeIdentConsumer;
 };
 
@@ -1047,8 +1083,10 @@ struct PercentConsumer {
 
 // MARK: Length
 
+template<typename T>
 struct LengthRawConsumer {
-    using Result = std::optional<LengthRaw>;
+    using Transformer = T;
+    using Result = typename Transformer::Result;
 
     using FunctionToken = LengthRawKnownTokenTypeFunctionConsumer;
     using DimensionToken = LengthRawKnownTokenTypeDimensionConsumer;
@@ -1065,8 +1103,10 @@ struct LengthConsumer {
 
 // MARK: Angle
 
+template<typename T>
 struct AngleRawConsumer {
-    using Result = std::optional<AngleRaw>;
+    using Transformer = T;
+    using Result = typename Transformer::Result;
 
     using FunctionToken = AngleRawKnownTokenTypeFunctionConsumer;
     using NumberToken = AngleRawKnownTokenTypeNumberConsumer;
@@ -1119,29 +1159,13 @@ struct AngleOrPercentConsumer {
 
 // MARK: Length + Percent
 
-struct LengthOrPercentRawTransformer {
-    using Result = std::optional<LengthOrPercentRaw>;
-
-    template<typename T>
-    static std::optional<LengthOrPercentRaw> transform(T value)
-    {
-        if (value)
-            return { *value };
-        return std::nullopt;
-    }
-
-    static std::optional<LengthOrPercentRaw> transform(std::optional<LengthOrPercentRaw> value)
-    {
-        return value;
-    }
-};
-
+template<typename T>
 struct LengthOrPercentRawConsumer {
-    using Result = std::optional<LengthOrPercentRaw>;
-    using Transformer = LengthOrPercentRawTransformer;
+    using Transformer = T;
+    using Result = typename Transformer::Result;
 
     using FunctionToken = SameTokenMetaConsumer<
-        LengthOrPercentRawTransformer,
+        Transformer,
         PercentRawKnownTokenTypeFunctionConsumer,
         LengthRawKnownTokenTypeFunctionConsumer
     >;
@@ -1166,9 +1190,25 @@ struct AngleOrNumberRawConsumer {
     using DimensionToken = AngleRawKnownTokenTypeDimensionConsumer;
 };
 
-template<typename T>
-struct AngleOrNumberRawAllowingSymbolTableIdentConsumer : AngleOrNumberRawConsumer<T> {
+template<typename Transformer>
+struct AngleOrNumberRawAllowingSymbolTableIdentConsumer : AngleOrNumberRawConsumer<Transformer> {
     using IdentToken = AngleOrNumberRawKnownTokenTypeIdentConsumer;
+};
+
+// MARK: Angle + Number + None
+
+template<typename Transformer>
+struct AngleOrNumberOrNoneRawConsumer : AngleOrNumberRawConsumer<Transformer> {
+    using IdentToken = NoneRawKnownTokenTypeIdentConsumer;
+};
+
+template<typename Transformer>
+struct AngleOrNumberOrNoneRawAllowingSymbolTableIdentConsumer : AngleOrNumberRawConsumer<Transformer> {
+    using IdentToken = SameTokenMetaConsumer<
+        Transformer,
+        NoneRawKnownTokenTypeIdentConsumer,
+        AngleOrNumberRawKnownTokenTypeIdentConsumer
+    >;
 };
 
 // MARK: Number + Percent
@@ -1188,11 +1228,58 @@ struct NumberOrPercentRawConsumer {
 };
 
 
-template<typename T>
-struct NumberOrPercentRawAllowingSymbolTableIdentConsumer : NumberOrPercentRawConsumer<T> {
+template<typename Transformer>
+struct NumberOrPercentRawAllowingSymbolTableIdentConsumer : NumberOrPercentRawConsumer<Transformer> {
     using IdentToken = NumberOrPercentRawKnownTokenTypeIdentConsumer;
 };
 
+// MARK: Number + None
+
+template<typename Transformer>
+struct NumberOrNoneRawConsumer : NumberRawConsumer<Transformer> {
+    using IdentToken = NoneRawKnownTokenTypeIdentConsumer;
+};
+
+template<typename Transformer>
+struct NumberOrNoneRawAllowingSymbolTableIdentConsumer : NumberRawConsumer<Transformer> {
+    using IdentToken = SameTokenMetaConsumer<
+        Transformer,
+        NoneRawKnownTokenTypeIdentConsumer,
+        NumberRawKnownTokenTypeIdentConsumer
+    >;
+};
+
+// MARK: Percent + None
+
+template<typename Transformer>
+struct PercentOrNoneRawConsumer : PercentRawConsumer<Transformer> {
+    using IdentToken = NoneRawKnownTokenTypeIdentConsumer;
+};
+
+template<typename Transformer>
+struct PercentOrNoneRawAllowingSymbolTableIdentConsumer : PercentRawConsumer<Transformer> {
+    using IdentToken = SameTokenMetaConsumer<
+        Transformer,
+        NoneRawKnownTokenTypeIdentConsumer,
+        PercentRawKnownTokenTypeIdentConsumer
+    >;
+};
+
+// MARK: Number + Percent + None
+
+template<typename Transformer>
+struct NumberOrPercentOrNoneRawConsumer : NumberOrPercentRawConsumer<Transformer> {
+    using IdentToken = NoneRawKnownTokenTypeIdentConsumer;
+};
+
+template<typename Transformer>
+struct NumberOrPercentOrNoneRawAllowingSymbolTableIdentConsumer : NumberOrPercentRawConsumer<Transformer> {
+    using IdentToken = SameTokenMetaConsumer<
+        Transformer,
+        NoneRawKnownTokenTypeIdentConsumer,
+        NumberOrPercentRawKnownTokenTypeIdentConsumer
+    >;
+};
 
 // MARK: - Consumer functions - utilize consumer definitions above, giving more targetted interfaces and allowing exposure to other files.
 
@@ -1238,12 +1325,13 @@ RefPtr<CSSPrimitiveValue> consumePositiveInteger(CSSParserTokenRange& range)
 
 std::optional<NumberRaw> consumeNumberRaw(CSSParserTokenRange& range, ValueRange valueRange)
 {
-    return consumeMetaConsumer<NumberRawConsumer>(range, { }, valueRange, CSSParserMode::HTMLStandardMode, UnitlessQuirk::Forbid, UnitlessZeroQuirk::Forbid);
+    return consumeMetaConsumer<NumberRawConsumer<RawIdentityTransformer<NumberRaw>>>(range, { }, valueRange, CSSParserMode::HTMLStandardMode, UnitlessQuirk::Forbid, UnitlessZeroQuirk::Forbid);
 }
 
-static std::optional<NumberRaw> consumeNumberAllowingSymbolTableIdent(CSSParserTokenRange& range, const CSSCalcSymbolTable& symbolTable, ValueRange valueRange = ValueRange::All)
+template<typename Transformer = RawIdentityTransformer<NumberRaw>>
+static auto consumeNumberRawAllowingSymbolTableIdent(CSSParserTokenRange& range, const CSSCalcSymbolTable& symbolTable, ValueRange valueRange = ValueRange::All) -> typename Transformer::Result
 {
-    return consumeMetaConsumer<NumberRawAllowingSymbolTableIdentConsumer>(range, symbolTable, valueRange, CSSParserMode::HTMLStandardMode, UnitlessQuirk::Forbid, UnitlessZeroQuirk::Forbid);
+    return consumeMetaConsumer<NumberRawAllowingSymbolTableIdentConsumer<Transformer>>(range, symbolTable, valueRange, CSSParserMode::HTMLStandardMode, UnitlessQuirk::Forbid, UnitlessZeroQuirk::Forbid);
 }
 
 RefPtr<CSSPrimitiveValue> consumeNumber(CSSParserTokenRange& range, ValueRange valueRange)
@@ -1253,12 +1341,13 @@ RefPtr<CSSPrimitiveValue> consumeNumber(CSSParserTokenRange& range, ValueRange v
 
 std::optional<PercentRaw> consumePercentRaw(CSSParserTokenRange& range, ValueRange valueRange)
 {
-    return consumeMetaConsumer<PercentRawConsumer>(range, { }, valueRange, CSSParserMode::HTMLStandardMode, UnitlessQuirk::Forbid, UnitlessZeroQuirk::Forbid);
+    return consumeMetaConsumer<PercentRawConsumer<RawIdentityTransformer<PercentRaw>>>(range, { }, valueRange, CSSParserMode::HTMLStandardMode, UnitlessQuirk::Forbid, UnitlessZeroQuirk::Forbid);
 }
 
-static std::optional<PercentRaw> consumePercentAllowingSymbolTableIdent(CSSParserTokenRange& range, const CSSCalcSymbolTable& symbolTable, ValueRange valueRange = ValueRange::All)
+template<typename Transformer = RawIdentityTransformer<PercentRaw>>
+static auto consumePercentRawAllowingSymbolTableIdent(CSSParserTokenRange& range, const CSSCalcSymbolTable& symbolTable, ValueRange valueRange = ValueRange::All) -> typename Transformer::Result
 {
-    return consumeMetaConsumer<PercentRawAllowingSymbolTableIdentConsumer>(range, symbolTable, valueRange, CSSParserMode::HTMLStandardMode, UnitlessQuirk::Forbid, UnitlessZeroQuirk::Forbid);
+    return consumeMetaConsumer<PercentRawAllowingSymbolTableIdentConsumer<Transformer>>(range, symbolTable, valueRange, CSSParserMode::HTMLStandardMode, UnitlessQuirk::Forbid, UnitlessZeroQuirk::Forbid);
 }
 
 RefPtr<CSSPrimitiveValue> consumePercent(CSSParserTokenRange& range, ValueRange valueRange)
@@ -1273,7 +1362,7 @@ RefPtr<CSSPrimitiveValue> consumePercentWorkerSafe(CSSParserTokenRange& range, V
 
 std::optional<LengthRaw> consumeLengthRaw(CSSParserTokenRange& range, CSSParserMode parserMode, ValueRange valueRange, UnitlessQuirk unitless)
 {
-    return consumeMetaConsumer<LengthRawConsumer>(range, { }, valueRange, parserMode, unitless, UnitlessZeroQuirk::Forbid);
+    return consumeMetaConsumer<LengthRawConsumer<RawIdentityTransformer<LengthRaw>>>(range, { }, valueRange, parserMode, unitless, UnitlessZeroQuirk::Forbid);
 }
 
 RefPtr<CSSPrimitiveValue> consumeLength(CSSParserTokenRange& range, CSSParserMode parserMode, ValueRange valueRange, UnitlessQuirk unitless)
@@ -1283,7 +1372,7 @@ RefPtr<CSSPrimitiveValue> consumeLength(CSSParserTokenRange& range, CSSParserMod
 
 std::optional<AngleRaw> consumeAngleRaw(CSSParserTokenRange& range, CSSParserMode parserMode, UnitlessQuirk unitless, UnitlessZeroQuirk unitlessZero)
 {
-    return consumeMetaConsumer<AngleRawConsumer>(range, { }, ValueRange::All, parserMode, unitless, unitlessZero);
+    return consumeMetaConsumer<AngleRawConsumer<RawIdentityTransformer<AngleRaw>>>(range, { }, ValueRange::All, parserMode, unitless, unitlessZero);
 }
 
 RefPtr<CSSPrimitiveValue> consumeAngle(CSSParserTokenRange& range, CSSParserMode parserMode, UnitlessQuirk unitless, UnitlessZeroQuirk unitlessZero)
@@ -1313,7 +1402,7 @@ static RefPtr<CSSPrimitiveValue> consumeAngleOrPercent(CSSParserTokenRange& rang
 
 std::optional<LengthOrPercentRaw> consumeLengthOrPercentRaw(CSSParserTokenRange& range, CSSParserMode parserMode, ValueRange valueRange, UnitlessQuirk unitless)
 {
-    return consumeMetaConsumer<LengthOrPercentRawConsumer>(range, { }, valueRange, parserMode, unitless, UnitlessZeroQuirk::Forbid);
+    return consumeMetaConsumer<LengthOrPercentRawConsumer<RawIdentityTransformer<LengthOrPercentRaw>>>(range, { }, valueRange, parserMode, unitless, UnitlessZeroQuirk::Forbid);
 }
 
 // FIXME: This doesn't work with the current scheme due to the NegativePercentagePolicy parameter
@@ -1346,29 +1435,78 @@ RefPtr<CSSPrimitiveValue> consumeLengthOrPercent(CSSParserTokenRange& range, CSS
     return nullptr;
 }
 
-template<typename Transformer>
+template<typename Transformer = RawIdentityTransformer<AngleOrNumberRaw>>
 static auto consumeAngleOrNumberRaw(CSSParserTokenRange& range, CSSParserMode parserMode) -> typename Transformer::Result
 {
     return consumeMetaConsumer<AngleOrNumberRawConsumer<Transformer>>(range, { }, ValueRange::All, parserMode, UnitlessQuirk::Forbid, UnitlessZeroQuirk::Forbid);
 }
 
-template<typename Transformer>
+template<typename Transformer = RawIdentityTransformer<AngleOrNumberRaw>>
 static auto consumeAngleOrNumberRawAllowingSymbolTableIdent(CSSParserTokenRange& range, const CSSCalcSymbolTable& symbolTable, CSSParserMode parserMode) -> typename Transformer::Result
 {
     return consumeMetaConsumer<AngleOrNumberRawAllowingSymbolTableIdentConsumer<Transformer>>(range, symbolTable, ValueRange::All, parserMode, UnitlessQuirk::Forbid, UnitlessZeroQuirk::Forbid);
 }
 
-template<typename Transformer>
+template<typename Transformer = RawIdentityTransformer<AngleOrNumberOrNoneRaw>>
+static auto consumeAngleOrNumberOrNoneRaw(CSSParserTokenRange& range, CSSParserMode parserMode) -> typename Transformer::Result
+{
+    return consumeMetaConsumer<AngleOrNumberOrNoneRawConsumer<Transformer>>(range, { }, ValueRange::All, parserMode, UnitlessQuirk::Forbid, UnitlessZeroQuirk::Forbid);
+}
+
+template<typename Transformer = RawIdentityTransformer<AngleOrNumberOrNoneRaw>>
+static auto consumeAngleOrNumberOrNoneRawAllowingSymbolTableIdent(CSSParserTokenRange& range, const CSSCalcSymbolTable& symbolTable, CSSParserMode parserMode) -> typename Transformer::Result
+{
+    return consumeMetaConsumer<AngleOrNumberOrNoneRawAllowingSymbolTableIdentConsumer<Transformer>>(range, symbolTable, ValueRange::All, parserMode, UnitlessQuirk::Forbid, UnitlessZeroQuirk::Forbid);
+}
+
+template<typename Transformer = RawIdentityTransformer<NumberOrPercentRaw>>
 static auto consumeNumberOrPercentRaw(CSSParserTokenRange& range, ValueRange valueRange = ValueRange::All) -> typename Transformer::Result
 {
     return consumeMetaConsumer<NumberOrPercentRawConsumer<Transformer>>(range, { }, valueRange, CSSParserMode::HTMLStandardMode, UnitlessQuirk::Forbid, UnitlessZeroQuirk::Forbid);
 }
 
-template<typename Transformer>
-static auto consumeNumberOrPercentRawAllowingSymbolTableIdent(CSSParserTokenRange& range, const CSSCalcSymbolTable& symbolTable, ValueRange valueRange) -> typename Transformer::Result
+template<typename Transformer = RawIdentityTransformer<NumberOrPercentRaw>>
+static auto consumeNumberOrPercentRawAllowingSymbolTableIdent(CSSParserTokenRange& range, const CSSCalcSymbolTable& symbolTable, ValueRange valueRange = ValueRange::All) -> typename Transformer::Result
 {
     return consumeMetaConsumer<NumberOrPercentRawAllowingSymbolTableIdentConsumer<Transformer>>(range, symbolTable, valueRange, CSSParserMode::HTMLStandardMode, UnitlessQuirk::Forbid, UnitlessZeroQuirk::Forbid);
 }
+
+template<typename Transformer = RawIdentityTransformer<NumberOrNoneRaw>>
+static auto consumeNumberOrNoneRaw(CSSParserTokenRange& range, ValueRange valueRange = ValueRange::All) -> typename Transformer::Result
+{
+    return consumeMetaConsumer<NumberOrNoneRawConsumer<Transformer>>(range, { }, valueRange, CSSParserMode::HTMLStandardMode, UnitlessQuirk::Forbid, UnitlessZeroQuirk::Forbid);
+}
+
+template<typename Transformer = RawIdentityTransformer<NumberOrNoneRaw>>
+static auto consumeNumberOrNoneRawAllowingSymbolTableIdent(CSSParserTokenRange& range, const CSSCalcSymbolTable& symbolTable, ValueRange valueRange = ValueRange::All) -> typename Transformer::Result
+{
+    return consumeMetaConsumer<NumberOrNoneRawAllowingSymbolTableIdentConsumer<Transformer>>(range, symbolTable, valueRange, CSSParserMode::HTMLStandardMode, UnitlessQuirk::Forbid, UnitlessZeroQuirk::Forbid);
+}
+
+template<typename Transformer = RawIdentityTransformer<PercentOrNoneRaw>>
+static auto consumePercentOrNoneRaw(CSSParserTokenRange& range, ValueRange valueRange = ValueRange::All) -> typename Transformer::Result
+{
+    return consumeMetaConsumer<PercentOrNoneRawConsumer<Transformer>>(range, { }, valueRange, CSSParserMode::HTMLStandardMode, UnitlessQuirk::Forbid, UnitlessZeroQuirk::Forbid);
+}
+
+template<typename Transformer = RawIdentityTransformer<PercentOrNoneRaw>>
+static auto consumePercentOrNoneRawAllowingSymbolTableIdent(CSSParserTokenRange& range, const CSSCalcSymbolTable& symbolTable, ValueRange valueRange = ValueRange::All) -> typename Transformer::Result
+{
+    return consumeMetaConsumer<PercentOrNoneRawAllowingSymbolTableIdentConsumer<Transformer>>(range, symbolTable, valueRange, CSSParserMode::HTMLStandardMode, UnitlessQuirk::Forbid, UnitlessZeroQuirk::Forbid);
+}
+
+template<typename Transformer = RawIdentityTransformer<NumberOrPercentOrNoneRaw>>
+static auto consumeNumberOrPercentOrNoneRaw(CSSParserTokenRange& range, ValueRange valueRange = ValueRange::All) -> typename Transformer::Result
+{
+    return consumeMetaConsumer<NumberOrPercentOrNoneRawConsumer<Transformer>>(range, { }, valueRange, CSSParserMode::HTMLStandardMode, UnitlessQuirk::Forbid, UnitlessZeroQuirk::Forbid);
+}
+
+template<typename Transformer = RawIdentityTransformer<NumberOrPercentOrNoneRaw>>
+static auto consumeNumberOrPercentOrNoneRawAllowingSymbolTableIdent(CSSParserTokenRange& range, const CSSCalcSymbolTable& symbolTable, ValueRange valueRange = ValueRange::All) -> typename Transformer::Result
+{
+    return consumeMetaConsumer<NumberOrPercentOrNoneRawAllowingSymbolTableIdentConsumer<Transformer>>(range, symbolTable, valueRange, CSSParserMode::HTMLStandardMode, UnitlessQuirk::Forbid, UnitlessZeroQuirk::Forbid);
+}
+
 
 // FIXME: This needs a more clear name to indicate its behavior of dividing percents by 100 only if an explicit percent token, not if a result of a calc().
 RefPtr<CSSPrimitiveValue> consumeNumberOrPercent(CSSParserTokenRange& range, ValueRange valueRange)
@@ -1568,8 +1706,13 @@ static std::optional<double> consumeOptionalAlpha(CSSParserTokenRange& range)
     if (!consumeSlashIncludingWhitespace(range))
         return 1.0;
 
-    if (auto alphaParameter = consumeNumberOrPercentRaw<NumberOrPercentDividedBy100Transformer>(range))
-        return std::clamp(*alphaParameter, 0.0, 1.0);
+    if (auto alphaParameter = consumeNumberOrPercentOrNoneRaw(range)) {
+        return WTF::switchOn(*alphaParameter,
+            [] (NumberRaw number) { return std::clamp(number.value, 0.0, 1.0); },
+            [] (PercentRaw percent) { return std::clamp(percent.value / 100.0, 0.0, 1.0); },
+            [] (NoneRaw) { return std::numeric_limits<double>::quiet_NaN(); }
+        );
+    }
 
     return std::nullopt;
 }
@@ -1579,53 +1722,25 @@ static std::optional<double> consumeOptionalAlphaAllowingSymbolTableIdent(CSSPar
     if (!consumeSlashIncludingWhitespace(range))
         return 1.0;
 
-    if (auto alphaParameter = consumeNumberOrPercentRawAllowingSymbolTableIdent<NumberOrPercentDividedBy100Transformer>(range, symbolTable, ValueRange::All))
-        return std::clamp(*alphaParameter, 0.0, 1.0);
+    if (auto alphaParameter = consumeNumberOrPercentOrNoneRawAllowingSymbolTableIdent(range, symbolTable, ValueRange::All)) {
+        return WTF::switchOn(*alphaParameter,
+            [] (NumberRaw number) { return std::clamp(number.value, 0.0, 1.0); },
+            [] (PercentRaw percent) { return std::clamp(percent.value / 100.0, 0.0, 1.0); },
+            [] (NoneRaw) { return std::numeric_limits<double>::quiet_NaN(); }
+        );
+    }
 
     return std::nullopt;
 }
 
-static uint8_t normalizeRGBComponentNumber(NumberRaw value)
+static uint8_t normalizeRGBComponentToSRGBAByte(NumberRaw value)
 {
     return convertPrescaledSRGBAFloatToSRGBAByte(value.value);
 }
 
-static uint8_t normalizeRGBComponentPercentage(PercentRaw value)
+static uint8_t normalizeRGBComponentToSRGBAByte(PercentRaw value)
 {
     return convertPrescaledSRGBAFloatToSRGBAByte(value.value / 100.0 * 255.0);
-}
-
-struct RGBNormalizingTransformer : RawVariantTransformerBase<RGBNormalizingTransformer, std::optional<uint8_t>, NumberOrPercentRaw> {
-    using RawVariantTransformerBase<RGBNormalizingTransformer, std::optional<uint8_t>, NumberOrPercentRaw>::transform;
-
-    static uint8_t transform(NumberRaw value)
-    {
-        return normalizeRGBComponentNumber(value);
-    }
-
-    static uint8_t transform(PercentRaw value)
-    {
-        return normalizeRGBComponentPercentage(value);
-    }
-};
-
-static std::optional<uint8_t> consumeRelativeRGBComponent(CSSParserTokenRange& range, const CSSCalcSymbolTable& symbolTable)
-{
-    return consumeNumberOrPercentRawAllowingSymbolTableIdent<RGBNormalizingTransformer>(range, symbolTable, ValueRange::All);
-}
-
-enum class RGBComponentType { Number, Percentage };
-static uint8_t clampRGBComponent(double value, RGBComponentType componentType)
-{
-    switch (componentType) {
-    case RGBComponentType::Number:
-        return normalizeRGBComponentNumber({ value });
-    case RGBComponentType::Percentage:
-        return normalizeRGBComponentPercentage({ value });
-    }
-    
-    ASSERT_NOT_REACHED();
-    return 0;
 }
 
 enum class RGBOrHSLSeparatorSyntax { Commas, WhitespaceSlash };
@@ -1649,7 +1764,15 @@ static std::optional<double> consumeRGBOrHSLOptionalAlpha(CSSParserTokenRange& a
     if (!consumeRGBOrHSLAlphaSeparator(args, syntax))
         return 1.0;
 
-    return consumeNumberOrPercentRaw<NumberOrPercentDividedBy100Transformer>(args);
+    if (auto alphaParameter = consumeNumberOrPercentOrNoneRaw(args)) {
+        return WTF::switchOn(*alphaParameter,
+            [] (NumberRaw number) { return std::clamp(number.value, 0.0, 1.0); },
+            [] (PercentRaw percent) { return std::clamp(percent.value / 100.0, 0.0, 1.0); },
+            [] (NoneRaw) { return std::numeric_limits<double>::quiet_NaN(); }
+        );
+    }
+
+    return std::nullopt;
 }
 
 static Color parseRelativeRGBParameters(CSSParserTokenRange& args, const CSSParserContext& context)
@@ -1670,15 +1793,15 @@ static Color parseRelativeRGBParameters(CSSParserTokenRange& args, const CSSPars
         { CSSValueAlpha, CSSUnitType::CSS_PERCENTAGE, originColorAsSRGB.alpha * 100.0 }
     };
 
-    auto red = consumeRelativeRGBComponent(args, symbolTable);
+    auto red = consumeNumberOrPercentOrNoneRawAllowingSymbolTableIdent(args, symbolTable);
     if (!red)
         return { };
 
-    auto green = consumeRelativeRGBComponent(args, symbolTable);
+    auto green = consumeNumberOrPercentOrNoneRawAllowingSymbolTableIdent(args, symbolTable);
     if (!green)
         return { };
 
-    auto blue = consumeRelativeRGBComponent(args, symbolTable);
+    auto blue = consumeNumberOrPercentOrNoneRawAllowingSymbolTableIdent(args, symbolTable);
     if (!blue)
         return { };
 
@@ -1689,59 +1812,97 @@ static Color parseRelativeRGBParameters(CSSParserTokenRange& args, const CSSPars
     if (!args.atEnd())
         return { };
 
+    if (std::holds_alternative<NoneRaw>(*red) || std::holds_alternative<NoneRaw>(*green) || std::holds_alternative<NoneRaw>(*blue) || std::isnan(*alpha)) {
+        auto normalizeComponentAllowingNone = [] (auto component) {
+            return WTF::switchOn(component,
+                [] (PercentRaw percent) { return std::clamp(percent.value / 100.0, 0.0, 1.0); },
+                [] (NumberRaw number) { return std::clamp(number.value / 255.0, 0.0, 1.0); },
+                [] (NoneRaw) { return std::numeric_limits<double>::quiet_NaN(); }
+            );
+        };
+
+        auto normalizedRed = normalizeComponentAllowingNone(*red);
+        auto normalizedGreen = normalizeComponentAllowingNone(*green);
+        auto normalizedBlue = normalizeComponentAllowingNone(*blue);
+
+        // If any component uses "none", we store the value as a SRGBA<float> to allow for storage of the special value as NaN.
+        return SRGBA<float> { static_cast<float>(normalizedRed), static_cast<float>(normalizedGreen), static_cast<float>(normalizedBlue), static_cast<float>(*alpha) };
+    }
+
+    auto normalizeComponentDisallowingNone = [] (auto component) {
+        return WTF::switchOn(component,
+            [] (NumberRaw number) -> uint8_t { return normalizeRGBComponentToSRGBAByte(number); },
+            [] (PercentRaw percent) -> uint8_t { return normalizeRGBComponentToSRGBAByte(percent); },
+            [] (NoneRaw) -> uint8_t { ASSERT_NOT_REACHED(); return 0; }
+        );
+    };
+
+    auto normalizedRed = normalizeComponentDisallowingNone(*red);
+    auto normalizedGreen = normalizeComponentDisallowingNone(*green);
+    auto normalizedBlue = normalizeComponentDisallowingNone(*blue);
     auto normalizedAlpha = convertFloatAlphaTo<uint8_t>(*alpha);
 
-    return SRGBA<uint8_t> { *red, *green, *blue, normalizedAlpha };
+    return SRGBA<uint8_t> { normalizedRed, normalizedGreen, normalizedBlue, normalizedAlpha };
 }
 
 static Color parseNonRelativeRGBParameters(CSSParserTokenRange& args)
 {
-    struct InitialComponent {
+    struct Component {
+        enum class Type { Number, Percentage, Unknown };
+        
         double value;
-        RGBComponentType type;
+        Type type;
     };
 
-    auto consumeInitialComponent = [](auto& args) -> std::optional<InitialComponent> {
-        if (auto number = consumeNumberRaw(args))
-            return { { number->value, RGBComponentType::Number } };
-        if (auto percent = consumePercentRaw(args))
-            return { { percent->value, RGBComponentType::Percentage } };
-        return std::nullopt;
-    };
-
-    auto consumeComponent = [](auto& args, auto componentType) -> std::optional<double> {
-        switch (componentType) {
-        case RGBComponentType::Percentage:
-            if (auto percent = consumePercentRaw(args))
-                return percent->value;
+    auto consumeComponent = [](auto& args, auto previousComponentType) -> std::optional<Component> {
+        switch (previousComponentType) {
+        case Component::Type::Number:
+            if (auto component = consumeNumberOrNoneRaw(args)) {
+                return WTF::switchOn(*component,
+                    [] (NumberRaw number) -> Component { return { number.value, Component::Type::Number }; },
+                    [] (NoneRaw) -> Component { return { std::numeric_limits<double>::quiet_NaN(), Component::Type::Number }; }
+                );
+            }
             return std::nullopt;
-        case RGBComponentType::Number:
-            if (auto number = consumeNumberRaw(args))
-                return number->value;
+        case Component::Type::Percentage:
+            if (auto component = consumePercentOrNoneRaw(args)) {
+                return WTF::switchOn(*component,
+                    [] (PercentRaw percent) -> Component  { return { percent.value, Component::Type::Percentage }; },
+                    [] (NoneRaw) -> Component { return { std::numeric_limits<double>::quiet_NaN(), Component::Type::Percentage }; }
+                );
+            }
+            return std::nullopt;
+        case Component::Type::Unknown:
+            if (auto component = consumeNumberOrPercentOrNoneRaw(args)) {
+                return WTF::switchOn(*component,
+                    [] (NumberRaw number) -> Component { return { number.value, Component::Type::Number }; },
+                    [] (PercentRaw percent) -> Component  { return { percent.value, Component::Type::Percentage }; },
+                    [] (NoneRaw) -> Component { return { std::numeric_limits<double>::quiet_NaN(), Component::Type::Unknown }; }
+                );
+            }
             return std::nullopt;
         }
         RELEASE_ASSERT_NOT_REACHED();
     };
 
-    auto initialComponent = consumeInitialComponent(args);
-    if (!initialComponent)
+    auto red = consumeComponent(args, Component::Type::Unknown);
+    if (!red)
         return { };
 
-    auto componentType = initialComponent->type;
-    auto red = initialComponent->value;
-
     auto syntax = consumeCommaIncludingWhitespace(args) ? RGBOrHSLSeparatorSyntax::Commas : RGBOrHSLSeparatorSyntax::WhitespaceSlash;
-    
-    auto green = consumeComponent(args, componentType);
+
+    auto green = consumeComponent(args, red->type);
     if (!green)
         return { };
 
     if (!consumeRGBOrHSLSeparator(args, syntax))
         return { };
 
-    auto blue = consumeComponent(args, componentType);
+    auto blue = consumeComponent(args, green->type);
     if (!blue)
         return { };
+
+    auto resolvedComponentType = blue->type;
 
     auto alpha = consumeRGBOrHSLOptionalAlpha(args, syntax);
     if (!alpha)
@@ -1750,12 +1911,41 @@ static Color parseNonRelativeRGBParameters(CSSParserTokenRange& args)
     if (!args.atEnd())
         return { };
 
-    auto normalizedRed = clampRGBComponent(red, componentType);
-    auto normalizedGreen = clampRGBComponent(*green, componentType);
-    auto normalizedBlue = clampRGBComponent(*blue, componentType);
-    auto normalizedAlpha = convertFloatAlphaTo<uint8_t>(*alpha);
+    if (std::isnan(red->value) || std::isnan(green->value) || std::isnan(blue->value) || std::isnan(*alpha)) {
+        // "none" values are only allowed with the WhitespaceSlash syntax.
+        if (syntax != RGBOrHSLSeparatorSyntax::WhitespaceSlash)
+            return { };
 
-    return SRGBA<uint8_t> { normalizedRed, normalizedGreen, normalizedBlue, normalizedAlpha };
+        auto normalizeNumber = [] (double number) { return std::isnan(number) ? number : std::clamp(number / 255.0, 0.0, 1.0); };
+        auto normalizePercent = [] (double percent) { return std::isnan(percent) ? percent : std::clamp(percent / 100.0, 0.0, 1.0); };
+
+        // If any component uses "none", we store the value as a SRGBA<float> to allow for storage of the special value as NaN.
+        switch (resolvedComponentType) {
+        case Component::Type::Number:
+            return SRGBA<float> { static_cast<float>(normalizeNumber(red->value)), static_cast<float>(normalizeNumber(green->value)), static_cast<float>(normalizeNumber(blue->value)), static_cast<float>(*alpha) };
+        case Component::Type::Percentage:
+            return SRGBA<float> { static_cast<float>(normalizePercent(red->value)), static_cast<float>(normalizePercent(green->value)), static_cast<float>(normalizePercent(blue->value)), static_cast<float>(*alpha) };
+        case Component::Type::Unknown:
+            return SRGBA<float> { static_cast<float>(red->value), static_cast<float>(green->value), static_cast<float>(blue->value), static_cast<float>(*alpha) };
+        }
+
+        ASSERT_NOT_REACHED();
+        return { };
+    }
+
+    switch (resolvedComponentType) {
+    case Component::Type::Number:
+        return SRGBA<uint8_t> { normalizeRGBComponentToSRGBAByte(NumberRaw { red->value }), normalizeRGBComponentToSRGBAByte(NumberRaw { green->value }), normalizeRGBComponentToSRGBAByte(NumberRaw { blue->value }), convertFloatAlphaTo<uint8_t>(*alpha) };
+    case Component::Type::Percentage:
+        return SRGBA<uint8_t> { normalizeRGBComponentToSRGBAByte(PercentRaw { red->value }), normalizeRGBComponentToSRGBAByte(PercentRaw { green->value }), normalizeRGBComponentToSRGBAByte(PercentRaw { blue->value }), convertFloatAlphaTo<uint8_t>(*alpha) };
+    case Component::Type::Unknown:
+        // The only way the resolvedComponentType can be Component::Type::Unknown is if all the components are "none", which is handled above.
+        ASSERT_NOT_REACHED();
+        return { };
+    }
+
+    ASSERT_NOT_REACHED();
+    return { };
 }
 
 enum class RGBFunctionMode { RGB, RGBA };
@@ -1772,16 +1962,34 @@ template<RGBFunctionMode Mode> static Color parseRGBParameters(CSSParserTokenRan
     return parseNonRelativeRGBParameters(args);
 }
 
-static Color colorByNormalizingHSLComponents(double hue, double saturation, double lightness, double alpha)
+static Color colorByNormalizingHSLComponents(AngleOrNumberOrNoneRaw hue, PercentOrNoneRaw saturation, PercentOrNoneRaw lightness, double alpha, RGBOrHSLSeparatorSyntax syntax)
 {
-    auto normalizedHue = normalizeHue(hue);
-    auto normalizedSaturation = std::clamp(saturation, 0.0, 100.0);
-    auto normalizedLightness = std::clamp(lightness, 0.0, 100.0);
-    auto normalizedAlpha = std::clamp(alpha, 0.0, 1.0);
+    auto normalizedHue = WTF::switchOn(hue,
+        [] (AngleRaw angle) { return normalizeHue(CSSPrimitiveValue::computeDegrees(angle.type, angle.value)); },
+        [] (NumberRaw number) { return normalizeHue(number.value); },
+        [] (NoneRaw) { return std::numeric_limits<double>::quiet_NaN(); }
+    );
+    auto normalizedSaturation = WTF::switchOn(saturation,
+        [] (PercentRaw percent) { return std::clamp(percent.value, 0.0, 100.0); },
+        [] (NoneRaw) { return std::numeric_limits<double>::quiet_NaN(); }
+    );
+    auto normalizedLightness = WTF::switchOn(lightness,
+        [] (PercentRaw percent) { return std::clamp(percent.value, 0.0, 100.0); },
+        [] (NoneRaw) { return std::numeric_limits<double>::quiet_NaN(); }
+    );
+
+    if (std::isnan(normalizedHue) || std::isnan(normalizedSaturation) || std::isnan(normalizedLightness) || std::isnan(alpha)) {
+        // "none" values are only allowed with the WhitespaceSlash syntax.
+        if (syntax != RGBOrHSLSeparatorSyntax::WhitespaceSlash)
+            return { };
+
+        // If any component uses "none", we store the value as a HSLA<float> to allow for storage of the special value as NaN.
+        return HSLA<float> { static_cast<float>(normalizedHue), static_cast<float>(normalizedSaturation), static_cast<float>(normalizedLightness), static_cast<float>(alpha) };
+    }
 
     // NOTE: The explicit conversion to SRGBA<uint8_t> is intentional for performance (no extra allocation for
     // the extended color) and compatability, forcing serialiazation to use the rgb()/rgba() form.
-    return convertColor<SRGBA<uint8_t>>(HSLA<float> { static_cast<float>(normalizedHue), static_cast<float>(normalizedSaturation), static_cast<float>(normalizedLightness), static_cast<float>(normalizedAlpha) });
+    return convertColor<SRGBA<uint8_t>>(HSLA<float> { static_cast<float>(normalizedHue), static_cast<float>(normalizedSaturation), static_cast<float>(normalizedLightness), static_cast<float>(alpha) });
 }
 
 static Color parseRelativeHSLParameters(CSSParserTokenRange& args, const CSSParserContext& context)
@@ -1802,15 +2010,15 @@ static Color parseRelativeHSLParameters(CSSParserTokenRange& args, const CSSPars
         { CSSValueAlpha, CSSUnitType::CSS_PERCENTAGE, originColorAsHSL.alpha * 100.0 }
     };
 
-    auto hue = consumeAngleOrNumberRawAllowingSymbolTableIdent<AngleOrNumberRawToDegressTransformer>(args, symbolTable, context.mode);
+    auto hue = consumeAngleOrNumberOrNoneRawAllowingSymbolTableIdent(args, symbolTable, context.mode);
     if (!hue)
         return { };
 
-    auto saturation = consumePercentAllowingSymbolTableIdent(args, symbolTable);
+    auto saturation = consumePercentOrNoneRawAllowingSymbolTableIdent(args, symbolTable);
     if (!saturation)
         return { };
 
-    auto lightness = consumePercentAllowingSymbolTableIdent(args, symbolTable);
+    auto lightness = consumePercentOrNoneRawAllowingSymbolTableIdent(args, symbolTable);
     if (!lightness)
         return { };
 
@@ -1821,25 +2029,25 @@ static Color parseRelativeHSLParameters(CSSParserTokenRange& args, const CSSPars
     if (!args.atEnd())
         return { };
 
-    return colorByNormalizingHSLComponents(*hue, saturation->value, lightness->value, *alpha);
+    return colorByNormalizingHSLComponents(*hue, *saturation, *lightness, *alpha, RGBOrHSLSeparatorSyntax::WhitespaceSlash);
 }
 
 static Color parseNonRelativeHSLParameters(CSSParserTokenRange& args, const CSSParserContext& context)
 {
-    auto hue = consumeAngleOrNumberRaw<AngleOrNumberRawToDegressTransformer>(args, context.mode);
+    auto hue = consumeAngleOrNumberOrNoneRaw(args, context.mode);
     if (!hue)
         return { };
 
     auto syntax = consumeCommaIncludingWhitespace(args) ? RGBOrHSLSeparatorSyntax::Commas : RGBOrHSLSeparatorSyntax::WhitespaceSlash;
 
-    auto saturation = consumePercentRaw(args);
+    auto saturation = consumePercentOrNoneRaw(args);
     if (!saturation)
         return { };
 
     if (!consumeRGBOrHSLSeparator(args, syntax))
         return { };
 
-    auto lightness = consumePercentRaw(args);
+    auto lightness = consumePercentOrNoneRaw(args);
     if (!lightness)
         return { };
 
@@ -1850,7 +2058,7 @@ static Color parseNonRelativeHSLParameters(CSSParserTokenRange& args, const CSSP
     if (!args.atEnd())
         return { };
 
-    return colorByNormalizingHSLComponents(*hue, saturation->value, lightness->value, *alpha);
+    return colorByNormalizingHSLComponents(*hue, *saturation, *lightness, *alpha, syntax);
 }
 
 enum class HSLFunctionMode { HSL, HSLA };
@@ -1890,8 +2098,28 @@ static Color parseHWBParameters(CSSParserTokenRange& args, ConsumerForHue&& hueC
     if (!args.atEnd())
         return { };
 
-    auto normalizedHue = normalizeHue(*hue);
-    auto [normalizedWhitness, normalizedBlackness] = normalizeWhitenessBlackness(whiteness->value, blackness->value);
+    auto normalizedHue = WTF::switchOn(*hue,
+        [] (AngleRaw angle) { return normalizeHue(CSSPrimitiveValue::computeDegrees(angle.type, angle.value)); },
+        [] (NumberRaw number) { return normalizeHue(number.value); },
+        [] (NoneRaw) { return std::numeric_limits<double>::quiet_NaN(); }
+    );
+    auto clampedWhiteness = WTF::switchOn(*whiteness,
+        [] (PercentRaw percent) { return std::clamp(percent.value, 0.0, 100.0); },
+        [] (NoneRaw) { return std::numeric_limits<double>::quiet_NaN(); }
+    );
+    auto clampedBlackness = WTF::switchOn(*blackness,
+        [] (PercentRaw percent) { return std::clamp(percent.value, 0.0, 100.0); },
+        [] (NoneRaw) { return std::numeric_limits<double>::quiet_NaN(); }
+    );
+
+    if (std::isnan(normalizedHue) || std::isnan(clampedWhiteness) || std::isnan(clampedBlackness) || std::isnan(*alpha)) {
+        auto [normalizedWhitness, normalizedBlackness] = normalizeClampedWhitenessBlacknessAllowingNone(clampedWhiteness, clampedBlackness);
+
+        // If any component uses "none", we store the value as a HSLA<float> to allow for storage of the special value as NaN.
+        return HWBA<float> { static_cast<float>(normalizedHue), static_cast<float>(normalizedWhitness), static_cast<float>(normalizedBlackness), static_cast<float>(*alpha) };
+    }
+
+    auto [normalizedWhitness, normalizedBlackness] = normalizeClampedWhitenessBlacknessDisallowingNone(clampedWhiteness, clampedBlackness);
 
     // NOTE: The explicit conversion to SRGBA<uint8_t> is intentional for performance (no extra allocation for
     // the extended color) and compatability, forcing serialiazation to use the rgb()/rgba() form.
@@ -1916,8 +2144,8 @@ static Color parseRelativeHWBParameters(CSSParserTokenRange& args, const CSSPars
         { CSSValueAlpha, CSSUnitType::CSS_PERCENTAGE, originColorAsHWB.alpha * 100.0 }
     };
 
-    auto hueConsumer = [&symbolTable, &context](auto& args) { return consumeAngleOrNumberRawAllowingSymbolTableIdent<AngleOrNumberRawToDegressTransformer>(args, symbolTable, context.mode); };
-    auto whitenessAndBlacknessConsumer = [&symbolTable](auto& args) { return consumePercentAllowingSymbolTableIdent(args, symbolTable); };
+    auto hueConsumer = [&symbolTable, &context](auto& args) { return consumeAngleOrNumberOrNoneRawAllowingSymbolTableIdent(args, symbolTable, context.mode); };
+    auto whitenessAndBlacknessConsumer = [&symbolTable](auto& args) { return consumePercentOrNoneRawAllowingSymbolTableIdent(args, symbolTable); };
     auto alphaConsumer = [&symbolTable](auto& args) { return consumeOptionalAlphaAllowingSymbolTableIdent(args, symbolTable); };
 
     return parseHWBParameters(args, WTFMove(hueConsumer), WTFMove(whitenessAndBlacknessConsumer), WTFMove(alphaConsumer));
@@ -1925,8 +2153,8 @@ static Color parseRelativeHWBParameters(CSSParserTokenRange& args, const CSSPars
 
 static Color parseNonRelativeHWBParameters(CSSParserTokenRange& args, const CSSParserContext& context)
 {
-    auto hueConsumer = [&context](auto& args) { return consumeAngleOrNumberRaw<AngleOrNumberRawToDegressTransformer>(args, context.mode); };
-    auto whitenessAndBlacknessConsumer = [](auto& args) { return consumePercentRaw(args); };
+    auto hueConsumer = [&context](auto& args) { return consumeAngleOrNumberOrNoneRaw(args, context.mode); };
+    auto whitenessAndBlacknessConsumer = [](auto& args) { return consumePercentOrNoneRaw(args); };
     auto alphaConsumer = [](auto& args) { return consumeOptionalAlpha(args); };
 
     return parseHWBParameters(args, WTFMove(hueConsumer), WTFMove(whitenessAndBlacknessConsumer), WTFMove(alphaConsumer));
@@ -1968,9 +2196,20 @@ static Color parseLabParameters(CSSParserTokenRange& args, ConsumerForLightness&
     if (!args.atEnd())
         return { };
 
-    auto normalizedLightness = std::max(0.0, lightness->value);
+    auto normalizedLightness = WTF::switchOn(*lightness,
+        [] (PercentRaw percent) { return std::max(0.0, percent.value); },
+        [] (NoneRaw) { return std::numeric_limits<double>::quiet_NaN(); }
+    );
+    auto normalizedA = WTF::switchOn(*aValue,
+        [] (NumberRaw number) { return number.value; },
+        [] (NoneRaw) { return std::numeric_limits<double>::quiet_NaN(); }
+    );
+    auto normalizedB = WTF::switchOn(*bValue,
+        [] (NumberRaw number) { return number.value; },
+        [] (NoneRaw) { return std::numeric_limits<double>::quiet_NaN(); }
+    );
 
-    return ColorType { static_cast<float>(normalizedLightness), static_cast<float>(aValue->value), static_cast<float>(bValue->value), static_cast<float>(*alpha) };
+    return ColorType { static_cast<float>(normalizedLightness), static_cast<float>(normalizedA), static_cast<float>(normalizedB), static_cast<float>(*alpha) };
 }
 
 template<typename ColorType>
@@ -1992,8 +2231,8 @@ static Color parseRelativeLabParameters(CSSParserTokenRange& args, const CSSPars
         { CSSValueAlpha, CSSUnitType::CSS_PERCENTAGE, originColorAsLab.alpha * 100.0 }
     };
 
-    auto lightnessConsumer = [&symbolTable](auto& args) { return consumePercentAllowingSymbolTableIdent(args, symbolTable); };
-    auto abConsumer = [&symbolTable](auto& args) { return consumeNumberAllowingSymbolTableIdent(args, symbolTable); };
+    auto lightnessConsumer = [&symbolTable](auto& args) { return consumePercentOrNoneRawAllowingSymbolTableIdent(args, symbolTable); };
+    auto abConsumer = [&symbolTable](auto& args) { return consumeNumberOrNoneRawAllowingSymbolTableIdent(args, symbolTable); };
     auto alphaConsumer = [&symbolTable](auto& args) { return consumeOptionalAlphaAllowingSymbolTableIdent(args, symbolTable); };
 
     return parseLabParameters<ColorType>(args, WTFMove(lightnessConsumer), WTFMove(abConsumer), WTFMove(alphaConsumer));
@@ -2002,8 +2241,8 @@ static Color parseRelativeLabParameters(CSSParserTokenRange& args, const CSSPars
 template<typename ColorType>
 static Color parseNonRelativeLabParameters(CSSParserTokenRange& args)
 {
-    auto lightnessConsumer = [](auto& args) { return consumePercentRaw(args); };
-    auto abConsumer = [](auto& args) { return consumeNumberRaw(args); };
+    auto lightnessConsumer = [](auto& args) { return consumePercentOrNoneRaw(args); };
+    auto abConsumer = [](auto& args) { return consumeNumberOrNoneRaw(args); };
     auto alphaConsumer = [](auto& args) { return consumeOptionalAlpha(args); };
 
     return parseLabParameters<ColorType>(args, WTFMove(lightnessConsumer), WTFMove(abConsumer), WTFMove(alphaConsumer));
@@ -2046,9 +2285,19 @@ static Color parseLCHParameters(CSSParserTokenRange& args, ConsumerForLightness&
     if (!args.atEnd())
         return { };
 
-    auto normalizedLightness = std::max(0.0, lightness->value);
-    auto normalizedChroma = std::max(0.0, chroma->value);
-    auto normalizedHue = normalizeHue(*hue);
+    auto normalizedLightness = WTF::switchOn(*lightness,
+        [] (PercentRaw percent) { return std::max(0.0, percent.value); },
+        [] (NoneRaw) { return std::numeric_limits<double>::quiet_NaN(); }
+    );
+    auto normalizedChroma = WTF::switchOn(*chroma,
+        [] (NumberRaw number) { return std::max(0.0, number.value); },
+        [] (NoneRaw) { return std::numeric_limits<double>::quiet_NaN(); }
+    );
+    auto normalizedHue = WTF::switchOn(*hue,
+        [] (AngleRaw angle) { return normalizeHue(CSSPrimitiveValue::computeDegrees(angle.type, angle.value)); },
+        [] (NumberRaw number) { return normalizeHue(number.value); },
+        [] (NoneRaw) { return std::numeric_limits<double>::quiet_NaN(); }
+    );
 
     return ColorType { static_cast<float>(normalizedLightness), static_cast<float>(normalizedChroma), static_cast<float>(normalizedHue), static_cast<float>(*alpha) };
 }
@@ -2072,9 +2321,9 @@ static Color parseRelativeLCHParameters(CSSParserTokenRange& args, const CSSPars
         { CSSValueAlpha, CSSUnitType::CSS_PERCENTAGE, originColorAsLCH.alpha * 100.0 }
     };
 
-    auto lightnessConsumer = [&symbolTable](auto& args) { return consumePercentAllowingSymbolTableIdent(args, symbolTable); };
-    auto chromaConsumer = [&symbolTable](auto& args) { return consumeNumberAllowingSymbolTableIdent(args, symbolTable); };
-    auto hueConsumer = [&symbolTable, &context](auto& args) { return consumeAngleOrNumberRawAllowingSymbolTableIdent<AngleOrNumberRawToDegressTransformer>(args, symbolTable, context.mode); };
+    auto lightnessConsumer = [&symbolTable](auto& args) { return consumePercentOrNoneRawAllowingSymbolTableIdent(args, symbolTable); };
+    auto chromaConsumer = [&symbolTable](auto& args) { return consumeNumberOrNoneRawAllowingSymbolTableIdent(args, symbolTable); };
+    auto hueConsumer = [&symbolTable, &context](auto& args) { return consumeAngleOrNumberOrNoneRawAllowingSymbolTableIdent(args, symbolTable, context.mode); };
     auto alphaConsumer = [&symbolTable](auto& args) { return consumeOptionalAlphaAllowingSymbolTableIdent(args, symbolTable); };
 
     return parseLCHParameters<ColorType>(args, WTFMove(lightnessConsumer), WTFMove(chromaConsumer), WTFMove(hueConsumer), WTFMove(alphaConsumer));
@@ -2083,9 +2332,9 @@ static Color parseRelativeLCHParameters(CSSParserTokenRange& args, const CSSPars
 template<typename ColorType>
 static Color parseNonRelativeLCHParameters(CSSParserTokenRange& args, const CSSParserContext& context)
 {
-    auto lightnessConsumer = [](auto& args) { return consumePercentRaw(args); };
-    auto chromaConsumer = [](auto& args) { return consumeNumberRaw(args); };
-    auto hueConsumer = [&context](auto& args) { return consumeAngleOrNumberRaw<AngleOrNumberRawToDegressTransformer>(args, context.mode); };
+    auto lightnessConsumer = [](auto& args) { return consumePercentOrNoneRaw(args); };
+    auto chromaConsumer = [](auto& args) { return consumeNumberOrNoneRaw(args); };
+    auto hueConsumer = [&context](auto& args) { return consumeAngleOrNumberOrNoneRaw(args, context.mode); };
     auto alphaConsumer = [](auto& args) { return consumeOptionalAlpha(args); };
 
     return parseLCHParameters<ColorType>(args, WTFMove(lightnessConsumer), WTFMove(chromaConsumer), WTFMove(hueConsumer), WTFMove(alphaConsumer));
@@ -2114,7 +2363,12 @@ static Color parseColorFunctionForRGBTypes(CSSParserTokenRange& args, ConsumerFo
         auto value = rgbConsumer(args);
         if (!value)
             break;
-        channel = *value;
+
+        channel = WTF::switchOn(*value,
+            [] (PercentRaw percent) { return percent.value / 100.0; },
+            [] (NumberRaw number) { return number.value; },
+            [] (NoneRaw) { return std::numeric_limits<double>::quiet_NaN(); }
+        );
     }
 
     auto alpha = alphaConsumer(args);
@@ -2146,7 +2400,7 @@ template<typename ColorType> static Color parseRelativeColorFunctionForRGBTypes(
         { CSSValueAlpha, CSSUnitType::CSS_PERCENTAGE, originColorAsColorType.alpha * 100.0 }
     };
 
-    auto consumeRGB = [&symbolTable](auto& args) { return consumeNumberOrPercentRawAllowingSymbolTableIdent<NumberOrPercentDividedBy100Transformer>(args, symbolTable, ValueRange::All); };
+    auto consumeRGB = [&symbolTable](auto& args) { return consumeNumberOrPercentOrNoneRawAllowingSymbolTableIdent(args, symbolTable, ValueRange::All); };
     auto consumeAlpha = [&symbolTable](auto& args) { return consumeOptionalAlphaAllowingSymbolTableIdent(args, symbolTable); };
 
     return parseColorFunctionForRGBTypes<ColorType>(args, WTFMove(consumeRGB), WTFMove(consumeAlpha));
@@ -2162,7 +2416,7 @@ template<typename ColorType> static Color parseColorFunctionForRGBTypes(CSSParse
 
     consumeIdentRaw(args);
 
-    auto consumeRGB = [](auto& args) { return consumeNumberOrPercentRaw<NumberOrPercentDividedBy100Transformer>(args); };
+    auto consumeRGB = [](auto& args) { return consumeNumberOrPercentOrNoneRaw(args); };
     auto consumeAlpha = [](auto& args) { return consumeOptionalAlpha(args); };
 
     return parseColorFunctionForRGBTypes<ColorType>(args, WTFMove(consumeRGB), WTFMove(consumeAlpha));
@@ -2176,7 +2430,11 @@ static Color parseColorFunctionForXYZTypes(CSSParserTokenRange& args, ConsumerFo
         auto value = xyzConsumer(args);
         if (!value)
             break;
-        channel = value->value;
+
+        channel = WTF::switchOn(*value,
+            [] (NumberRaw number) { return number.value; },
+            [] (NoneRaw) { return std::numeric_limits<double>::quiet_NaN(); }
+        );
     }
 
     auto alpha = alphaConsumer(args);
@@ -2207,7 +2465,7 @@ template<typename ColorType> static Color parseRelativeColorFunctionForXYZTypes(
         { CSSValueAlpha, CSSUnitType::CSS_PERCENTAGE, originColorAsXYZ.alpha * 100.0 }
     };
 
-    auto consumeXYZ = [&symbolTable](auto& args) { return consumeNumberAllowingSymbolTableIdent(args, symbolTable); };
+    auto consumeXYZ = [&symbolTable](auto& args) { return consumeNumberOrNoneRawAllowingSymbolTableIdent(args, symbolTable); };
     auto consumeAlpha = [&symbolTable](auto& args) { return consumeOptionalAlphaAllowingSymbolTableIdent(args, symbolTable); };
 
     return parseColorFunctionForXYZTypes<ColorType>(args, WTFMove(consumeXYZ), WTFMove(consumeAlpha));
@@ -2222,7 +2480,7 @@ template<typename ColorType> static Color parseColorFunctionForXYZTypes(CSSParse
 
     consumeIdentRaw(args);
 
-    auto consumeXYZ = [](auto& args) { return consumeNumberRaw(args); };
+    auto consumeXYZ = [](auto& args) { return consumeNumberOrNoneRaw(args); };
     auto consumeAlpha = [](auto& args) { return consumeOptionalAlpha(args); };
 
     return parseColorFunctionForXYZTypes<ColorType>(args, WTFMove(consumeXYZ), WTFMove(consumeAlpha));

@@ -104,6 +104,21 @@
     test_valid_value(`color`, `rgb(from rebeccapurple r calc(b * .5 - g * .5) 10)`, `rgb(102, 51, 10)`);
     test_valid_value(`color`, `rgb(from rgb(20%, 40%, 60%, 80%) calc(r) calc(g) calc(b) / calc(alpha))`, `rgba(51, 102, 153, 0.8)`);
 
+    // Testing with 'none'.
+    // NOTE: Serialization of rgb() with 'none' components is still under discussion - https://github.com/w3c/csswg-drafts/issues/6959
+    test_valid_value(`color`, `rgb(from rebeccapurple none none none)`,                         `rgb(none none none)`);
+    test_valid_value(`color`, `rgb(from rebeccapurple none none none / none)`,                  `rgba(none none none / none)`);
+    test_valid_value(`color`, `rgb(from rebeccapurple r g none)`,                               `rgb(102 51 none)`);
+    test_valid_value(`color`, `rgb(from rebeccapurple r g none / alpha)`,                       `rgb(102 51 none)`);
+    test_valid_value(`color`, `rgb(from rebeccapurple r g b / none)`,                           `rgba(102 51 153 / none)`);
+    test_valid_value(`color`, `rgb(from rgb(20% 40% 60% / 80%) r g none / alpha)`,              `rgba(51 102 none / 0.8)`);
+    test_valid_value(`color`, `rgb(from rgb(20% 40% 60% / 80%) r g b / none)`,                  `rgba(51 102 153 / none)`);
+    // FIXME: Clarify with spec editors if 'none' should pass through to the constants.
+    test_valid_value(`color`, `rgb(from rgb(none none none) r g b)`,                            `rgb(0, 0, 0)`);
+    test_valid_value(`color`, `rgb(from rgb(none none none / none) r g b / alpha)`,             `rgba(0, 0, 0, 0)`);
+    test_valid_value(`color`, `rgb(from rgb(20% none 60%) r g b)`,                              `rgb(51, 0, 153)`);
+    test_valid_value(`color`, `rgb(from rgb(20% 40% 60% / none) r g b / alpha)`,                `rgba(51, 102, 153, 0)`);
+
 
     // hsl(from ...)
 
@@ -161,6 +176,22 @@
     test_valid_value(`color`, `hsl(from rebeccapurple calc(h) calc(s) calc(l))`, `rgb(102, 51, 153)`);
     test_valid_value(`color`, `hsl(from rgb(20%, 40%, 60%, 80%) calc(h) calc(s) calc(l) / calc(alpha))`, `rgba(51, 102, 153, 0.8)`);
 
+    // Testing with 'none'.
+    test_valid_value(`color`, `hsl(from rebeccapurple none none none)`,                         `rgb(0, 0, 0)`);
+    test_valid_value(`color`, `hsl(from rebeccapurple none none none / none)`,                  `rgba(0, 0, 0, 0)`);
+    test_valid_value(`color`, `hsl(from rebeccapurple h s none)`,                               `rgb(0, 0, 0)`);
+    test_valid_value(`color`, `hsl(from rebeccapurple h s none / alpha)`,                       `rgb(0, 0, 0)`);
+    test_valid_value(`color`, `hsl(from rebeccapurple h s l / none)`,                           `rgba(102, 51, 153, 0)`);
+    test_valid_value(`color`, `hsl(from rebeccapurple none s l / alpha)`,                       `rgb(153, 51, 51)`);
+    test_valid_value(`color`, `hsl(from hsl(120deg 20% 50% / .5) h s none / alpha)`,            `rgba(0, 0, 0, 0.5)`);
+    test_valid_value(`color`, `hsl(from hsl(120deg 20% 50% / .5) h s l / none)`,                `rgba(102, 153, 102, 0)`);
+    test_valid_value(`color`, `hsl(from hsl(120deg 20% 50% / .5) none s l / alpha)`,            `rgba(153, 102, 102, 0.5)`);
+    // FIXME: Clarify with spec editors if 'none' should pass through to the constants.
+    test_valid_value(`color`, `hsl(from hsl(none none none) h s l)`,                            `rgb(0, 0, 0)`);
+    test_valid_value(`color`, `hsl(from hsl(none none none / none) h s l / alpha)`,             `rgba(0, 0, 0, 0)`);
+    test_valid_value(`color`, `hsl(from hsl(120deg none 50% / .5) h s l)`,                      `rgb(128, 128, 128)`);
+    test_valid_value(`color`, `hsl(from hsl(120deg 20% 50% / none) h s l / alpha)`,             `rgba(102, 153, 102, 0)`);
+    test_valid_value(`color`, `hsl(from hsl(none 20% 50% / .5) h s l / alpha)`,                 `rgba(153, 102, 102, 0.5)`);
 
     // hwb(from ...)
 
@@ -218,6 +249,23 @@
     test_valid_value(`color`, `hwb(from rebeccapurple calc(h) calc(w) calc(b))`, `rgb(102, 51, 153)`);
     test_valid_value(`color`, `hwb(from rgb(20%, 40%, 60%, 80%) calc(h) calc(w) calc(b) / calc(alpha))`, `rgba(51, 102, 153, 0.8)`);
 
+    // Testing with 'none'.
+    test_valid_value(`color`, `hwb(from rebeccapurple none none none)`,                         `rgb(255, 0, 0)`);
+    test_valid_value(`color`, `hwb(from rebeccapurple none none none / none)`,                  `rgba(255, 0, 0, 0)`);
+    test_valid_value(`color`, `hwb(from rebeccapurple h w none)`,                               `rgb(153, 51, 255)`);
+    test_valid_value(`color`, `hwb(from rebeccapurple h w none / alpha)`,                       `rgb(153, 51, 255)`);
+    test_valid_value(`color`, `hwb(from rebeccapurple h w b / none)`,                           `rgba(102, 51, 153, 0)`);
+    test_valid_value(`color`, `hwb(from rebeccapurple none w b / alpha)`,                       `rgb(153, 51, 51)`);
+    test_valid_value(`color`, `hwb(from hwb(120deg 20% 50% / .5) h w none / alpha)`,            `rgba(51, 255, 51, 0.5)`);
+    test_valid_value(`color`, `hwb(from hwb(120deg 20% 50% / .5) h w b / none)`,                `rgba(51, 128, 51, 0)`);
+    test_valid_value(`color`, `hwb(from hwb(120deg 20% 50% / .5) none w b / alpha)`,            `rgba(128, 51, 51, 0.5)`);
+    // FIXME: Clarify with spec editors if 'none' should pass through to the constants.
+    test_valid_value(`color`, `hwb(from hwb(none none none) h w b)`,                            `rgb(255, 0, 0)`);
+    test_valid_value(`color`, `hwb(from hwb(none none none / none) h w b / alpha)`,             `rgba(255, 0, 0, 0)`);
+    test_valid_value(`color`, `hwb(from hwb(120deg none 50% / .5) h w b)`,                      `rgb(0, 128, 0)`);
+    test_valid_value(`color`, `hwb(from hwb(120deg 20% 50% / none) h w b / alpha)`,             `rgba(51, 128, 51, 0)`);
+    test_valid_value(`color`, `hwb(from hwb(none 20% 50% / .5) h w b / alpha)`,                 `rgba(128, 51, 51, 0.5)`);
+
     for (const colorSpace of [ "lab", "oklab" ]) {
         // Testing no modifications.
         test_valid_value(`color`, `${colorSpace}(from ${colorSpace}(25% 20 50) l a b)`, `${colorSpace}(25% 20 50)`);
@@ -265,6 +313,20 @@
         // Testing with calc().
         test_valid_value(`color`, `${colorSpace}(from ${colorSpace}(25% 20 50) calc(l) calc(a) calc(b))`, `${colorSpace}(25% 20 50)`);
         test_valid_value(`color`, `${colorSpace}(from ${colorSpace}(25% 20 50 / 40%) calc(l) calc(a) calc(b) / calc(alpha))`, `${colorSpace}(25% 20 50 / 0.4)`);
+
+        // Testing with 'none'.
+        test_valid_value(`color`, `${colorSpace}(from ${colorSpace}(25% 20 50) none none none)`, `${colorSpace}(none none none)`);
+        test_valid_value(`color`, `${colorSpace}(from ${colorSpace}(25% 20 50) none none none / none)`, `${colorSpace}(none none none / none)`);
+        test_valid_value(`color`, `${colorSpace}(from ${colorSpace}(25% 20 50) l a none)`, `${colorSpace}(25% 20 none)`);
+        test_valid_value(`color`, `${colorSpace}(from ${colorSpace}(25% 20 50) l a none / alpha)`, `${colorSpace}(25% 20 none)`);
+        test_valid_value(`color`, `${colorSpace}(from ${colorSpace}(25% 20 50) l a b / none)`, `${colorSpace}(25% 20 50 / none)`);
+        test_valid_value(`color`, `${colorSpace}(from ${colorSpace}(25% 20 50 / 40%) l a none / alpha)`, `${colorSpace}(25% 20 none / 0.4)`);
+        test_valid_value(`color`, `${colorSpace}(from ${colorSpace}(25% 20 50 / 40%) l a b / none)`, `${colorSpace}(25% 20 50 / none)`);
+        // FIXME: Clarify with spec editors if 'none' should pass through to the constants.
+        test_valid_value(`color`, `${colorSpace}(from ${colorSpace}(none none none) l a b)`, `${colorSpace}(0% 0 0)`);
+        test_valid_value(`color`, `${colorSpace}(from ${colorSpace}(none none none / none) l a b / alpha)`, `${colorSpace}(0% 0 0 / 0)`);
+        test_valid_value(`color`, `${colorSpace}(from ${colorSpace}(25% none 50) l a b)`, `${colorSpace}(25% 0 50)`);
+        test_valid_value(`color`, `${colorSpace}(from ${colorSpace}(25% 20 50 / none) l a b / alpha)`, `${colorSpace}(25% 20 50 / 0)`);
     }
 
     for (const colorSpace of [ "lch", "oklch" ]) {
@@ -330,6 +392,20 @@
         // Testing with calc().
         test_valid_value(`color`, `${colorSpace}(from ${colorSpace}(70% 45 30) calc(l) calc(c) calc(h))`, `${colorSpace}(70% 45 30)`);
         test_valid_value(`color`, `${colorSpace}(from ${colorSpace}(70% 45 30 / 40%) calc(l) calc(c) calc(h) / calc(alpha))`, `${colorSpace}(70% 45 30 / 0.4)`);
+
+        // Testing with 'none'.
+        test_valid_value(`color`, `${colorSpace}(from ${colorSpace}(70% 45 30) none none none)`,                                   `${colorSpace}(none none none)`);
+        test_valid_value(`color`, `${colorSpace}(from ${colorSpace}(70% 45 30) none none none / none)`,                            `${colorSpace}(none none none / none)`);
+        test_valid_value(`color`, `${colorSpace}(from ${colorSpace}(70% 45 30) l c none)`,                                         `${colorSpace}(70% 45 none)`);
+        test_valid_value(`color`, `${colorSpace}(from ${colorSpace}(70% 45 30) l c none / alpha)`,                                 `${colorSpace}(70% 45 none)`);
+        test_valid_value(`color`, `${colorSpace}(from ${colorSpace}(70% 45 30) l c h / none)`,                                     `${colorSpace}(70% 45 30 / none)`);
+        test_valid_value(`color`, `${colorSpace}(from ${colorSpace}(70% 45 30 / 40%) l c none / alpha)`,                           `${colorSpace}(70% 45 none / 0.4)`);
+        test_valid_value(`color`, `${colorSpace}(from ${colorSpace}(70% 45 30 / 40%) l c h / none)`,                               `${colorSpace}(70% 45 30 / none)`);
+        // FIXME: Clarify with spec editors if 'none' should pass through to the constants.
+        test_valid_value(`color`, `${colorSpace}(from ${colorSpace}(none none none) l c h)`,                                       `${colorSpace}(0% 0 0)`);
+        test_valid_value(`color`, `${colorSpace}(from ${colorSpace}(none none none / none) l c h / alpha)`,                        `${colorSpace}(0% 0 0 / 0)`);
+        test_valid_value(`color`, `${colorSpace}(from ${colorSpace}(70% none 30) l c h)`,                                          `${colorSpace}(70% 0 30)`);
+        test_valid_value(`color`, `${colorSpace}(from ${colorSpace}(70% 45 30 / none) l c h / alpha)`,                             `${colorSpace}(70% 45 30 / 0)`);
     }
 
     for (const colorSpace of [ "srgb", "srgb-linear", "a98-rgb", "rec2020", "prophoto-rgb" ]) {
@@ -403,6 +479,20 @@
         // Testing with calc().
         test_valid_value(`color`, `color(from color(${colorSpace} 0.7 0.5 0.3) ${colorSpace} calc(r) calc(g) calc(b))`,                        `color(${colorSpace} 0.7 0.5 0.3)`);
         test_valid_value(`color`, `color(from color(${colorSpace} 0.7 0.5 0.3 / 40%) ${colorSpace} calc(r) calc(g) calc(b) / calc(alpha))`,    `color(${colorSpace} 0.7 0.5 0.3 / 0.4)`);
+
+        // Testing with 'none'.
+        test_valid_value(`color`, `color(from color(${colorSpace} 0.7 0.5 0.3) ${colorSpace} none none none)`,                     `color(${colorSpace} none none none)`);
+        test_valid_value(`color`, `color(from color(${colorSpace} 0.7 0.5 0.3) ${colorSpace} none none none / none)`,              `color(${colorSpace} none none none / none)`);
+        test_valid_value(`color`, `color(from color(${colorSpace} 0.7 0.5 0.3) ${colorSpace} r g none)`,                           `color(${colorSpace} 0.7 0.5 none)`);
+        test_valid_value(`color`, `color(from color(${colorSpace} 0.7 0.5 0.3) ${colorSpace} r g none / alpha)`,                   `color(${colorSpace} 0.7 0.5 none)`);
+        test_valid_value(`color`, `color(from color(${colorSpace} 0.7 0.5 0.3) ${colorSpace} r g b / none)`,                       `color(${colorSpace} 0.7 0.5 0.3 / none)`);
+        test_valid_value(`color`, `color(from color(${colorSpace} 0.7 0.5 0.3 / 40%) ${colorSpace} r g none / alpha)`,             `color(${colorSpace} 0.7 0.5 none / 0.4)`);
+        test_valid_value(`color`, `color(from color(${colorSpace} 0.7 0.5 0.3 / 40%) ${colorSpace} r g b / none)`,                 `color(${colorSpace} 0.7 0.5 0.3 / none)`);
+        // FIXME: Clarify with spec editors if 'none' should pass through to the constants.
+        test_valid_value(`color`, `color(from color(${colorSpace} none none none) ${colorSpace} r g b)`,                           `color(${colorSpace} 0 0 0)`);
+        test_valid_value(`color`, `color(from color(${colorSpace} none none none / none) ${colorSpace} r g b / alpha)`,            `color(${colorSpace} 0 0 0 / 0)`);
+        test_valid_value(`color`, `color(from color(${colorSpace} 0.7 none 0.3) ${colorSpace} r g b)`,                             `color(${colorSpace} 0.7 0 0.3)`);
+        test_valid_value(`color`, `color(from color(${colorSpace} 0.7 0.5 0.3 / none) ${colorSpace} r g b / alpha)`,               `color(${colorSpace} 0.7 0.5 0.3 / 0)`);
     }
 
     for (const colorSpace of [ "xyz", "xyz-d50", "xyz-d65" ]) {
@@ -449,6 +539,20 @@
         // Testing with calc().
         test_valid_value(`color`, `color(from color(${colorSpace} 7 -20.5 100) ${colorSpace} calc(x) calc(y) calc(z))`,                        `color(${resultColorSpace} 7 -20.5 100)`);
         test_valid_value(`color`, `color(from color(${colorSpace} 7 -20.5 100 / 40%) ${colorSpace} calc(x) calc(y) calc(z) / calc(alpha))`,    `color(${resultColorSpace} 7 -20.5 100 / 0.4)`);
+
+        // Testing with 'none'.
+        test_valid_value(`color`, `color(from color(${colorSpace} 7 -20.5 100) ${colorSpace} none none none)`,                     `color(${resultColorSpace} none none none)`);
+        test_valid_value(`color`, `color(from color(${colorSpace} 7 -20.5 100) ${colorSpace} none none none / none)`,              `color(${resultColorSpace} none none none / none)`);
+        test_valid_value(`color`, `color(from color(${colorSpace} 7 -20.5 100) ${colorSpace} x y none)`,                           `color(${resultColorSpace} 7 -20.5 none)`);
+        test_valid_value(`color`, `color(from color(${colorSpace} 7 -20.5 100) ${colorSpace} x y none / alpha)`,                   `color(${resultColorSpace} 7 -20.5 none)`);
+        test_valid_value(`color`, `color(from color(${colorSpace} 7 -20.5 100) ${colorSpace} x y z / none)`,                       `color(${resultColorSpace} 7 -20.5 100 / none)`);
+        test_valid_value(`color`, `color(from color(${colorSpace} 7 -20.5 100 / 40%) ${colorSpace} x y none / alpha)`,             `color(${resultColorSpace} 7 -20.5 none / 0.4)`);
+        test_valid_value(`color`, `color(from color(${colorSpace} 7 -20.5 100 / 40%) ${colorSpace} x y z / none)`,                 `color(${resultColorSpace} 7 -20.5 100 / none)`);
+        // FIXME: Clarify with spec editors if 'none' should pass through to the constants.
+        test_valid_value(`color`, `color(from color(${colorSpace} none none none) ${colorSpace} x y z)`,                           `color(${resultColorSpace} 0 0 0)`);
+        test_valid_value(`color`, `color(from color(${colorSpace} none none none / none) ${colorSpace} x y z / alpha)`,            `color(${resultColorSpace} 0 0 0 / 0)`);
+        test_valid_value(`color`, `color(from color(${colorSpace} 7 none 100) ${colorSpace} x y z)`,                               `color(${resultColorSpace} 7 0 100)`);
+        test_valid_value(`color`, `color(from color(${colorSpace} 7 -20.5 100 / none) ${colorSpace} x y z / alpha)`,               `color(${resultColorSpace} 7 -20.5 100 / 0)`);
     }
 
     // Spec Examples
