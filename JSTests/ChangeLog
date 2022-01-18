@@ -1,3 +1,13 @@
+2022-01-18  Mark Lam  <mark.lam@apple.com>
+
+        Gardening: resolve test failure on CLoop.
+
+        Not reviewed.
+
+        Change test to not rely on WebAssembly.
+
+        * stress/max-typed-array-length-toString.js:
+
 2022-01-15  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Fix Date functions' argument coercion

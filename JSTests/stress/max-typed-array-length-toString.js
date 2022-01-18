@@ -1,11 +1,6 @@
-//@ skip if $architecture != "arm64" && $architecture != "x86-64"
-
 var exception;
 try {
-    var memory = new WebAssembly.Memory({
-        initial: 65536
-    });
-    new Uint8Array(memory.buffer).toString();
+    new Uint8Array(0x100000000).toString();
 } catch (e) {
     exception = e;
 }
