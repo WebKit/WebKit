@@ -141,7 +141,13 @@ void AudioMediaStreamTrackRendererUnit::stop()
 void AudioMediaStreamTrackRendererUnit::reset()
 {
     RELEASE_LOG(WebRTC, "AudioMediaStreamTrackRendererUnit::reset");
-    ASSERT(isMainThread());
+    if (!isMainThread()) {
+        callOnMainThread([weakThis = WeakPtr { this }] {
+            if (weakThis)
+                weakThis->reset();
+        });
+        return;
+    }
 
     m_resetObservers.forEach([](auto& observer) {
         observer();

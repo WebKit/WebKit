@@ -42,7 +42,7 @@ class AudioSampleBufferList;
 class CAAudioStreamDescription;
 class AudioMediaStreamTrackRendererInternalUnit;
 
-class AudioMediaStreamTrackRendererUnit : public BaseAudioMediaStreamTrackRendererUnit {
+class AudioMediaStreamTrackRendererUnit : public BaseAudioMediaStreamTrackRendererUnit, public CanMakeWeakPtr<AudioMediaStreamTrackRendererUnit, WeakPtrFactoryInitialization::Eager> {
 public:
     WEBCORE_EXPORT static AudioMediaStreamTrackRendererUnit& singleton();
 
