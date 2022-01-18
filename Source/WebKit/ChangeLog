@@ -1,3 +1,15 @@
+2022-01-18  Alex Christensen  <achristensen@webkit.org>
+
+        Copy com.apple.WebKit.adattributiond.sb into place with other iOS sandbox profiles
+        https://bugs.webkit.org/show_bug.cgi?id=235320
+        <rdar://87711220>
+
+        Reviewed by Per Arne Vollan.
+
+        Ever since r287100 we are using the sandbox profile, but it doesn't exist so we just crash.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
 2022-01-17  ChangSeok Oh  <changseok@webkit.org>
 
         [GTK] Implement form validation with gtk3 widgets in the UI process
