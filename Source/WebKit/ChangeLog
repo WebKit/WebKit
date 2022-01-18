@@ -1,5 +1,17 @@
 2022-01-18  Alex Christensen  <achristensen@webkit.org>
 
+        Build WebKitSwift when building with make or build-webkit
+        https://bugs.webkit.org/show_bug.cgi?id=235093
+
+        Reviewed by Alexey Proskuryakov.
+
+        For various internal reasons, we have to have no depency between the two,
+        but we command line builders want to build and test it just like everyone else.
+
+        * Makefile:
+
+2022-01-18  Alex Christensen  <achristensen@webkit.org>
+
         Use c++2a instead of gnu++2a for Cocoa builds
         https://bugs.webkit.org/show_bug.cgi?id=234936
 
