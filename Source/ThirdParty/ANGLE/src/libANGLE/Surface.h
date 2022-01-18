@@ -104,8 +104,8 @@ class Surface : public LabeledObject, public gl::FramebufferAttachmentObject
     void setFixedWidth(EGLint width);
     void setFixedHeight(EGLint height);
 
-    gl::Framebuffer *createDefaultFramebuffer(const gl::Context *context,
-                                              egl::Surface *readSurface);
+    std::unique_ptr<gl::Framebuffer> createDefaultFramebuffer(const gl::Context *context,
+                                                              egl::Surface *readSurface);
 
     const Config *getConfig() const;
 
@@ -214,8 +214,6 @@ class Surface : public LabeledObject, public gl::FramebufferAttachmentObject
             EGLenum buftype = EGL_NONE);
     ~Surface() override;
     rx::FramebufferAttachmentObjectImpl *getAttachmentImpl() const override;
-
-    gl::Framebuffer *createDefaultFramebuffer(const Display *display);
 
     // ANGLE-only method, used internally
     friend class gl::Texture;

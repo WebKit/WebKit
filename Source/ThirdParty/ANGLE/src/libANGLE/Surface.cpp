@@ -618,10 +618,10 @@ Error Surface::getBufferAge(const gl::Context *context, EGLint *age) const
     return mImplementation->getBufferAge(context, age);
 }
 
-gl::Framebuffer *Surface::createDefaultFramebuffer(const gl::Context *context,
-                                                   egl::Surface *readSurface)
+std::unique_ptr<gl::Framebuffer> Surface::createDefaultFramebuffer(const gl::Context *context,
+                                                                   egl::Surface *readSurface)
 {
-    return new gl::Framebuffer(context, this, readSurface);
+    return std::make_unique<gl::Framebuffer>(context, this, readSurface);
 }
 
 gl::InitState Surface::initState(const gl::ImageIndex & /*imageIndex*/) const
