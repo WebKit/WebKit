@@ -352,6 +352,12 @@ void FrameView::detachCustomScrollbars()
     m_scrollCorner = nullptr;
 }
 
+void FrameView::willBeDestroyed()
+{
+    setHasHorizontalScrollbar(false);
+    setHasVerticalScrollbar(false);
+}
+
 void FrameView::recalculateScrollbarOverlayStyle()
 {
     auto style = [this] {

@@ -1,3 +1,13 @@
+2021-10-09  Rob Buis  <rbuis@igalia.com>
+
+        Remove scrollbars explicitly when destroying render tree
+        https://bugs.webkit.org/show_bug.cgi?id=229274
+
+        Reviewed by Simon Fraser.
+
+        * editing/inserting/insert-html-crash-02-expected.txt: Added.
+        * editing/inserting/insert-html-crash-02.html: Added.
+
 2021-10-05  Chris Dumez  <cdumez@apple.com>
 
         ASSERT(m_callback->hasCallback()) under IntersectionObserver::notify()

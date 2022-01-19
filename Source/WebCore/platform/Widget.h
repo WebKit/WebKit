@@ -175,6 +175,8 @@ public:
     // the frame rects be the same no matter what transforms are applied.
     virtual bool transformsAffectFrameRect() { return true; }
 
+    virtual void willBeDestroyed() { }
+
 #if PLATFORM(COCOA)
     NSView* getOuterView() const;
 
