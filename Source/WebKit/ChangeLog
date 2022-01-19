@@ -1,3 +1,17 @@
+2022-01-12  Frédéric Wang  <fwang@igalia.com>
+
+        Protect DocumentLoader when a reference to its members is used.
+        https://bugs.webkit.org/show_bug.cgi?id=233464
+
+        Reviewed by Brady Eidson.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didFinishLoadForFrame): If the navigationID is obsolete, skip update
+        of the page load state to avoid failure of debug ASSERT.
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDidFinishLoad): Ensure that DocumentLoader loader
+        remains alive while DocumentLoader::m_request is used.
+
 2021-09-13  Chris Dumez  <cdumez@apple.com>
 
         Crash under WebPage::runJavaScript()

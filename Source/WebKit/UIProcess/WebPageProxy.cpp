@@ -5027,23 +5027,26 @@ void WebPageProxy::didFinishLoadForFrame(FrameIdentifier frameID, FrameInfoData&
 
     // FIXME: We should message check that navigationID is not zero here, but it's currently zero for some navigations through the back/forward cache.
     RefPtr<API::Navigation> navigation;
-    if (frame->isMainFrame() && navigationID)
+    if (frame->isMainFrame() && navigationID && navigationState().hasNavigation(navigationID))
         navigation = navigationState().navigation(navigationID);
 
-    auto transaction = m_pageLoadState.transaction();
-
     bool isMainFrame = frame->isMainFrame();
-    if (isMainFrame)
-        m_pageLoadState.didFinishLoad(transaction);
+    if (!isMainFrame || !navigationID || navigation) {
+        auto transaction = m_pageLoadState.transaction();
 
-    if (m_controlledByAutomation) {
-        if (auto* automationSession = process().processPool().automationSession())
-            automationSession->navigationOccurredForFrame(*frame);
+        if (isMainFrame)
+            m_pageLoadState.didFinishLoad(transaction);
+
+        if (m_controlledByAutomation) {
+            if (auto* automationSession = process().processPool().automationSession())
+                automationSession->navigationOccurredForFrame(*frame);
+        }
+
+        frame->didFinishLoad();
+
+        m_pageLoadState.commitChanges();
     }
 
-    frame->didFinishLoad();
-
-    m_pageLoadState.commitChanges();
     if (m_loaderClient)
         m_loaderClient->didFinishLoadForFrame(*this, *frame, navigation.get(), m_process->transformHandlesToObjects(userData.object()).get());
     else {

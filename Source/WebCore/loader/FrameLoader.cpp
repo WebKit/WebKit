@@ -2589,7 +2589,8 @@ void FrameLoader::checkLoadCompleteForThisFrame()
         if (auto domWindow = makeRefPtr(m_frame.document() ? m_frame.document()->domWindow() : nullptr))
             domWindow->performance().scheduleNavigationObservationTaskIfNeeded();
 
-        const ResourceError& error = m_documentLoader->mainDocumentError();
+        Ref protector = *m_documentLoader;
+        const ResourceError& error = protector->mainDocumentError();
 
         AXObjectCache::AXLoadingEvent loadingEvent;
         if (!error.isNull()) {
