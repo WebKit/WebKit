@@ -37,6 +37,7 @@ from twisted.web.http_headers import Headers
 from twisted.web.iweb import IBodyProducer
 from zope.interface import implementer
 
+custom_suffix = '-uat' if os.getenv('BUILDBOT_UAT') else ''
 
 @implementer(IBodyProducer)
 class JSONProducer(object):
@@ -74,7 +75,7 @@ class JSONProducer(object):
 
 class Events(service.BuildbotService):
 
-    EVENT_SERVER_ENDPOINT = b'https://ews.webkit.org/results/'
+    EVENT_SERVER_ENDPOINT = 'https://ews.webkit{}.org/results/'.format(custom_suffix).encode()
 
     def __init__(self, master_hostname, type_prefix='', name='Events'):
         """

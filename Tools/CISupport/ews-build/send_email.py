@@ -28,10 +28,11 @@ import socket
 from email.mime.text import MIMEText
 
 is_test_mode_enabled = os.getenv('BUILDBOT_PRODUCTION') is None
+custom_suffix = '-uat' if os.getenv('BUILDBOT_UAT') else ''
 
 CURRENT_HOSTNAME = socket.gethostname().strip()
 EWS_BUILD_HOSTNAME = 'ews-build.webkit.org'
-FROM_EMAIL = 'ews@webkit.org'
+FROM_EMAIL = 'ews@webkit{}.org'.format(custom_suffix)
 IGALIA_JSC_QUEUES_PATTERNS = ['armv7', 'mips', 'i386']
 IGALIA_GTK_WPE_QUEUES_PATTERNS = ['gtk', 'wpe']
 SERVER = 'localhost'

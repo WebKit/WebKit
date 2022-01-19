@@ -44,10 +44,11 @@ if sys.version_info < (3, 5):
     print('ERROR: Please use Python 3. This code is not compatible with Python 2.')
     sys.exit(1)
 
+custom_suffix = '-uat' if os.getenv('BUILDBOT_UAT') else ''
 BUG_SERVER_URL = 'https://bugs.webkit.org/'
 COMMITS_INFO_URL = 'https://commits.webkit.org/'
 S3URL = 'https://s3-us-west-2.amazonaws.com/'
-S3_RESULTS_URL = 'https://ews-build.s3-us-west-2.amazonaws.com/'
+S3_RESULTS_URL = 'https://ews-build{}.s3-us-west-2.amazonaws.com/'.format(custom_suffix)
 CURRENT_HOSTNAME = socket.gethostname().strip()
 EWS_BUILD_HOSTNAME = 'ews-build.webkit.org'
 EWS_URL = 'https://ews.webkit.org/'
