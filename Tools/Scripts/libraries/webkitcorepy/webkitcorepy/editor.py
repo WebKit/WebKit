@@ -74,6 +74,16 @@ class Editor(object):
         )
 
     @classmethod
+    def vi(cls):
+        from whichcraft import which
+        path = which('vi')
+        return cls(
+            name='vi',
+            path=path,
+            command=[path],
+        )
+
+    @classmethod
     def default(cls):
         from whichcraft import which
         path = which('open')
@@ -106,6 +116,7 @@ class Editor(object):
             Editor.atom(),
             Editor.xcode(),
             Editor.textedit(),
+            Editor.vi(),
             Editor.default(),
         ]:
             if not exists or program:

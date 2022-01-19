@@ -52,7 +52,7 @@ class TestSetup(testing.PathTestCase):
                 path=self.path,
             ))
 
-        self.assertEqual(captured.stdout.getvalue(), "Create a private fork of 'WebKit' belonging to 'username' ([Yes]/No): \n")
+        self.assertEqual(captured.stdout.getvalue(), "Create a private fork of 'WebKit' belonging to 'username' ([Yes]/No): \nSetup succeeded!\n")
         self.assertEqual(captured.stderr.getvalue(), '')
         self.assertEqual(
             captured.root.log.getvalue(),
@@ -78,7 +78,7 @@ Created a private fork of 'WebKit' belonging to 'username'!
             self.assertEqual('auto', config.get('color.branch', ''))
             self.assertEqual('true', config.get('pull.rebase', ''))
 
-        self.assertEqual(captured.stdout.getvalue(), '')
+        self.assertEqual(captured.stdout.getvalue(), 'Setup succeeded!\n')
         self.assertEqual(captured.stderr.getvalue(), '')
         self.assertEqual(
             captured.root.log.getvalue(),
@@ -123,9 +123,10 @@ Auto-color status, diff, and branch? ([Yes]/No):
 Pick a commit message editor:
     {}
 : 
-http based remotes will prompt for your password when pushing,
-would you like to convert to a ssh remote? ([Yes]/No): 
+http(s) based remotes will prompt for your password every time when pushing,
+it is recommended to convert to a ssh remote, would you like to convert to a ssh remote? ([Yes]/No): 
 Create a private fork of 'WebKit' belonging to 'username' ([Yes]/No): 
+Setup succeeded!
 '''.format('\n    '.join([
             '{}) {}'.format(
                 count + 1, programs[count] if count else '[{}]'.format(programs[count]),

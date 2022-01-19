@@ -83,9 +83,10 @@ def credentials(url, required=True, name=None, prompt=None, key_name='password')
         _cache[name] = (username, key)
 
     if keyring and (username_prompted or key_prompted):
-        sys.stderr.write('Store username and {} in system keyring for {}? (Y/N): '.format(key_name, url))
-        response = Terminal.input()
-        if response.lower() in ['y', 'yes', 'ok']:
+        if Terminal.choose(
+            'Store username and {} in system keyring for {}?'.format(key_name, url),
+            default='Yes',
+        ) == 'Yes':
             sys.stderr.write('Storing credentials...\n')
             keyring.set_password(url, 'username', username)
             keyring.set_password(url, username, key)
@@ -93,3 +94,29 @@ def credentials(url, required=True, name=None, prompt=None, key_name='password')
             sys.stderr.write('Credentials cached in process.\n')
 
     return username, key
+
+
+def delete_credentials(url, name=None):
+    global _cache
+
+    name = name or url.split('/')[2].replace('.', '_')
+    if name in _cache:
+        del _cache[name]
+
+    with OutputCapture():
+        try:
+            import keyring
+
+            username = None
+            try:
+                if keyring:
+                    username = keyring.get_password(url, 'username')
+            except (RuntimeError, AttributeError):
+                pass
+
+            for key in ['username', username]:
+                if key:
+                    keyring.delete_password(url, key)
+
+        except (CalledProcessError, ImportError):
+            pass

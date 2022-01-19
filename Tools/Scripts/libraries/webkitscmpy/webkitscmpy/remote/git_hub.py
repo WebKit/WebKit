@@ -25,10 +25,11 @@ import re
 import requests
 import six
 import sys
+import webkitcorepy
 
 from datetime import datetime
 from requests.auth import HTTPBasicAuth
-from webkitcorepy import credentials, decorators
+from webkitcorepy import decorators
 from webkitscmpy import Commit, Contributor, PullRequest
 from webkitscmpy.remote.scm import Scm
 from xml.dom import minidom
@@ -301,17 +302,26 @@ class GitHub(Scm):
         self.pull_requests = self.PRGenerator(self)
 
     def credentials(self, required=True):
-        username, token = credentials(
+        # FIXME: Should use webkitbugspy's impelementation
+        hostname = self.url.split('/')[2]
+        args = dict(
             url=self.api_url,
             required=required,
             name=self.url.split('/')[2].replace('.', '_').upper(),
             prompt='''GitHub's API
-Please generate a 'Personal access token' via 'Developer settings' with 'repo' and 'workflow' access
-for your {} user'''.format(self.url.split('/')[2]),
+        Please go to https://{host}/settings/tokens and generate a new 'Personal access token' via 'Developer settings'
+        with 'repo' and 'workflow' access and appropriate 'Expiration' for your {host} user'''.format(host=hostname),
             key_name='token',
         )
-        if username:
-            username = username.split('@')[0]
+
+        username, token = webkitcorepy.credentials(**args)
+        if username and '@' in username:
+            sys.stderr.write(
+                "Provided username contains an '@' symbol. Please make sure to enter your GitHub username, not an email associated with the account\n")
+            webkitcorepy.delete_credentials(url=args['url'], name=args['name'])
+            username, token = webkitcorepy.credentials(**args)
+        if username and '@' in username:
+            raise ValueError("GitHub usernames cannot have '@' in them")
         return username, token
 
     @property

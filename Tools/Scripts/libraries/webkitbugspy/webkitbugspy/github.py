@@ -24,13 +24,13 @@ import calendar
 import re
 import requests
 import sys
+import webkitcorepy
 
 from .issue import Issue
 from .tracker import Tracker as GenericTracker
 
 from datetime import datetime
 from requests.auth import HTTPBasicAuth
-from webkitcorepy import credentials, decorators
 
 
 class Tracker(GenericTracker):
@@ -66,13 +66,25 @@ class Tracker(GenericTracker):
         return None
 
     def credentials(self, required=True):
-        return credentials(
+        hostname = self.url.split('/')[2]
+        args = dict(
             url=self.api_url,
             required=required,
             name=self.url.split('/')[2].replace('.', '_').upper(),
-            prompt="GitHub's API\nPlease generate a 'Personal access token' via 'Developer settings' for your user",
+            prompt='''GitHub's API
+Please go to https://{host}/settings/tokens and generate a new 'Personal access token' via 'Developer settings'
+with 'repo' and 'workflow' access and appropriate 'Expiration' for your {host} user'''.format(host=hostname),
             key_name='token',
         )
+
+        username, token = webkitcorepy.credentials(**args)
+        if username and '@' in username:
+            sys.stderr.write("Provided username contains an '@' symbol. Please make sure to enter your GitHub username, not an email associated with the account\n")
+            webkitcorepy.delete_credentials(url=args['url'], name=args['name'])
+            username, token = webkitcorepy.credentials(**args)
+        if username and '@' in username:
+            raise ValueError("GitHub usernames cannot have '@' in them")
+        return username, token
 
     def request(self, path=None, params=None, headers=None, authenticated=None, paginate=True):
         headers = {key: value for key, value in headers.items()} if headers else dict()

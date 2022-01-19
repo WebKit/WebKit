@@ -1,3 +1,32 @@
+2022-01-10  Jonathan Bedard  <jbedard@apple.com>
+
+        [git-webkit] Improve setup usability
+        https://bugs.webkit.org/show_bug.cgi?id=235051
+        <rdar://problem/87367948>
+
+        Reviewed by Aakash Jain.
+
+        * Scripts/libraries/webkitbugspy/setup.py: Bump version.
+        * Scripts/libraries/webkitbugspy/webkitbugspy/__init__.py: Ditto.
+        * Scripts/libraries/webkitbugspy/webkitbugspy/github.py:
+        (Tracker.credentials): Retry credential prompt if the user provides an email.
+        * Scripts/libraries/webkitcorepy/setup.py: Bump version.
+        * Scripts/libraries/webkitcorepy/webkitcorepy/__init__.py: Ditto.
+        * Scripts/libraries/webkitcorepy/webkitcorepy/credentials.py:
+        (credentials): Use Terminal's choosing function.
+        (delete_credentials): Delete credentials for a service.
+        * Scripts/libraries/webkitcorepy/webkitcorepy/editor.py:
+        (Editor.vi): Add.
+        (Editor.programs): Add vi.
+        * Scripts/libraries/webkitscmpy/setup.py: Bump version.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/__init__.py: Ditto.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/program/setup.py:
+        (Setup.git): SSH replacement applies to http and https remotes.
+        (Setup.main): Include explicit conclusion messages.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/remote/git_hub.py:
+        (GitHub.credentials): Retry credential prompt if the user provides an email.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/setup_unittest.py:
+
 2022-01-19  Jon Lee  <jonlee554@gmail.com>
 
         Swap accelerated drawing flag between the two GPU Process iOS simulator bots

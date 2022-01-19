@@ -191,7 +191,7 @@ class Setup(Command):
         # Pushing to http repositories is difficult, offer to change http checkouts to ssh
         http_remote = local.Git.HTTP_REMOTE.match(repository.url())
         if http_remote and not args.defaults and Terminal.choose(
-            "http based remotes will prompt for your password when pushing,\nwould you like to convert to a ssh remote?",
+            "http(s) based remotes will prompt for your password every time when pushing,\nit is recommended to convert to a ssh remote, would you like to convert to a ssh remote?",
             default='Yes',
         ) == 'Yes':
             if run([
@@ -271,10 +271,14 @@ class Setup(Command):
     @classmethod
     def main(cls, args, repository, **kwargs):
         if isinstance(repository, local.Git):
-            return cls.git(args, repository, **kwargs)
+            result = cls.git(args, repository, **kwargs)
+            print('Setup failed' if result else 'Setup succeeded!')
+            return result
 
         if isinstance(repository, remote.GitHub):
-            return cls.github(args, repository, **kwargs)
+            result = cls.github(args, repository, **kwargs)
+            print('Setup failed' if result else 'Setup succeeded!')
+            return result
 
         sys.stderr.write('No setup required for {}\n'.format(
             getattr(repository, 'root_path', getattr(repository, 'url', '?')),

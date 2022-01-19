@@ -37,14 +37,14 @@ from webkitcorepy.output_capture import LoggerCapture, OutputCapture, OutputDupl
 from webkitcorepy.task_pool import TaskPool
 from webkitcorepy.terminal import Terminal
 from webkitcorepy.environment import Environment
-from webkitcorepy.credentials import credentials
+from webkitcorepy.credentials import credentials, delete_credentials
 from webkitcorepy.measure_time import MeasureTime
 from webkitcorepy.nested_fuzzy_dict import NestedFuzzyDict
 from webkitcorepy.call_by_need import CallByNeed
 from webkitcorepy.editor import Editor
 from webkitcorepy.file_lock import FileLock
 
-version = Version(0, 12, 5)
+version = Version(0, 12, 6)
 
 from webkitcorepy.autoinstall import Package, AutoInstall
 if sys.version_info > (3, 0):
