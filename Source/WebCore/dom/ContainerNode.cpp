@@ -112,7 +112,7 @@ ALWAYS_INLINE NodeVector ContainerNode::removeAllChildrenWithScriptAssertion(Chi
 
     disconnectSubframesIfNeeded(*this, DescendantsOnly);
 
-    ContainerNode::ChildChange childChange { ChildChange::Type::AllChildrenRemoved, nullptr, nullptr, source };
+    ContainerNode::ChildChange childChange { ChildChange::Type::AllChildrenRemoved, nullptr, nullptr, nullptr, source };
 
     WidgetHierarchyUpdatesSuspensionScope suspendWidgetHierarchyUpdates;
     ScriptDisallowedScope::InMainThread scriptDisallowedScope;
@@ -152,6 +152,7 @@ static ContainerNode::ChildChange makeChildChangeForRemoval(Node& childToRemove,
 
     return {
         changeType,
+        dynamicDowncast<Element>(childToRemove),
         ElementTraversal::previousSibling(childToRemove),
         ElementTraversal::nextSibling(childToRemove),
         source
@@ -225,7 +226,7 @@ enum class ReplacedAllChildren { No, Yes };
 static ContainerNode::ChildChange makeChildChangeForInsertion(ContainerNode& containerNode, Node& child, Node* beforeChild, ContainerNode::ChildChange::Source source, ReplacedAllChildren replacedAllChildren)
 {
     if (replacedAllChildren == ReplacedAllChildren::Yes)
-        return { ContainerNode::ChildChange::Type::AllChildrenReplaced, nullptr, nullptr, source };
+        return { ContainerNode::ChildChange::Type::AllChildrenReplaced, nullptr, nullptr, nullptr, source };
 
     auto changeType = [&] {
         if (is<Element>(child))
@@ -237,6 +238,7 @@ static ContainerNode::ChildChange makeChildChangeForInsertion(ContainerNode& con
 
     return {
         changeType,
+        dynamicDowncast<Element>(child),
         beforeChild ? ElementTraversal::previousSibling(*beforeChild) : ElementTraversal::lastChild(containerNode),
         !beforeChild || is<Element>(*beforeChild) ? downcast<Element>(beforeChild) : ElementTraversal::nextSibling(*beforeChild),
         source
@@ -826,30 +828,11 @@ ExceptionOr<void> ContainerNode::appendChild(ChildChange::Source source, Node& n
     return appendChild(newChild);
 }
 
-static bool affectsElements(const ContainerNode::ChildChange& change)
-{
-    switch (change.type) {
-    case ContainerNode::ChildChange::Type::ElementInserted:
-    case ContainerNode::ChildChange::Type::ElementRemoved:
-    case ContainerNode::ChildChange::Type::AllChildrenRemoved:
-    case ContainerNode::ChildChange::Type::AllChildrenReplaced:
-        return true;
-    case ContainerNode::ChildChange::Type::TextInserted:
-    case ContainerNode::ChildChange::Type::TextRemoved:
-    case ContainerNode::ChildChange::Type::TextChanged:
-    case ContainerNode::ChildChange::Type::NonContentsChildInserted:
-    case ContainerNode::ChildChange::Type::NonContentsChildRemoved:
-        return false;
-    }
-    ASSERT_NOT_REACHED();
-    return false;
-}
-
 void ContainerNode::childrenChanged(const ChildChange& change)
 {
     document().incDOMTreeVersion();
 
-    if (affectsElements(change))
+    if (change.affectsElements())
         document().invalidateAccessKeyCache();
 
     // FIXME: Unclear why it's always safe to skip this when parser is adding children.

@@ -315,23 +315,6 @@ bool HTMLOptionElement::isDisabledFormControl() const
     return downcast<HTMLOptGroupElement>(*parentNode()).isDisabledFormControl();
 }
 
-Node::InsertedIntoAncestorResult HTMLOptionElement::insertedIntoAncestor(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
-{
-    if (RefPtr select = ownerSelectElement()) {
-        select->setRecalcListItems();
-        select->updateValidity();
-        // Do not call selected() since calling updateListItemSelectedStates()
-        // at this time won't do the right thing. (Why, exactly?)
-        // FIXME: Might be better to call this unconditionally, always passing m_isSelected,
-        // rather than only calling it if we are selected.
-        if (m_isSelected)
-            select->optionSelectionStateChanged(*this, true);
-        select->scrollToSelection();
-    }
-
-    return HTMLElement::insertedIntoAncestor(insertionType, parentOfInsertedTree);
-}
-
 String HTMLOptionElement::collectOptionInnerText() const
 {
     StringBuilder text;

@@ -371,8 +371,47 @@ void HTMLSelectElement::updateListItemSelectedStates()
         recalcListItems();
 }
 
+CompletionHandlerCallingScope HTMLSelectElement::optionToSelectFromChildChangeScope(const ContainerNode::ChildChange& change, HTMLOptGroupElement* parentOptGroup)
+{
+    if (multiple())
+        return { };
+
+    auto getLastSelectedOption = [](HTMLOptGroupElement& optGroup) -> HTMLOptionElement* {
+        for (auto* option = Traversal<HTMLOptionElement>::lastChild(optGroup); option; option = Traversal<HTMLOptionElement>::previousSibling(*option)) {
+            if (option->selectedWithoutUpdate())
+                return option;
+        }
+        return nullptr;
+    };
+
+    RefPtr<HTMLOptionElement> optionToSelect;
+    if (change.type == ChildChange::Type::ElementInserted) {
+        if (is<HTMLOptionElement>(change.siblingChanged)) {
+            auto& option = downcast<HTMLOptionElement>(*change.siblingChanged);
+            if (option.selectedWithoutUpdate())
+                optionToSelect = &option;
+        } else if (!parentOptGroup && is<HTMLOptGroupElement>(change.siblingChanged))
+            optionToSelect = getLastSelectedOption(*downcast<HTMLOptGroupElement>(change.siblingChanged));
+    } else if (parentOptGroup && change.type == ContainerNode::ChildChange::Type::AllChildrenReplaced)
+        optionToSelect = getLastSelectedOption(*parentOptGroup);
+
+    return CompletionHandlerCallingScope { [optionToSelect = WTFMove(optionToSelect), isInsertion = change.isInsertion(), select = Ref { *this }] {
+        if (optionToSelect)
+            select->optionSelectionStateChanged(*optionToSelect, true);
+        else if (isInsertion)
+            select->scrollToSelection();
+    } };
+}
+
 void HTMLSelectElement::childrenChanged(const ChildChange& change)
 {
+    if (!change.affectsElements()) {
+        HTMLFormControlElementWithState::childrenChanged(change);
+        return;
+    }
+
+    auto selectOptionIfNecessaryScope = optionToSelectFromChildChangeScope(change);
+
     setRecalcListItems();
     updateValidity();
     m_lastOnChangeSelection.clear();

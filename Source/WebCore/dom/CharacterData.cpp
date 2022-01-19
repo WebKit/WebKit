@@ -78,6 +78,7 @@ static ContainerNode::ChildChange makeChildChange(CharacterData& characterData, 
 {
     return {
         ContainerNode::ChildChange::Type::TextChanged,
+        nullptr,
         ElementTraversal::previousSibling(characterData),
         ElementTraversal::nextSibling(characterData),
         source

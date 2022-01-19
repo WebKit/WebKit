@@ -77,6 +77,15 @@ const AtomString& HTMLOptGroupElement::formControlType() const
 
 void HTMLOptGroupElement::childrenChanged(const ChildChange& change)
 {
+    bool isRelevant = change.affectsElements();
+    RefPtr select = isRelevant ? ownerSelectElement() : nullptr;
+    if (!isRelevant || !select) {
+        HTMLElement::childrenChanged(change);
+        return;
+    }
+
+    auto selectOptionIfNecessaryScope = select->optionToSelectFromChildChangeScope(change, this);
+
     recalcSelectOptions();
     HTMLElement::childrenChanged(change);
 }

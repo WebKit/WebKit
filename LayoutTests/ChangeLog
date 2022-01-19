@@ -1,3 +1,14 @@
+2022-01-18  Chris Dumez  <cdumez@apple.com>
+
+        When inserting a selected <option> in a <select> element, its selected state should remain
+        https://bugs.webkit.org/show_bug.cgi?id=235237
+
+        Reviewed by Darin Adler.
+
+        Rebaseline WPT test that is now passing.
+
+        * platform/ios-wk2/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/select-validity-expected.txt:
+
 2022-01-18  Alan Bujtas  <zalan@apple.com>
 
         [LFC][Integration] Use IFC for preferred width computation for inline boxes

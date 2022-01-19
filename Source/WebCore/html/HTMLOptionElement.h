@@ -61,6 +61,7 @@ public:
     String textIndentedToRespectGroupLabel() const;
 
     void setSelectedState(bool);
+    bool selectedWithoutUpdate() const { return m_isSelected; }
 
 private:
     HTMLOptionElement(const QualifiedName&, Document&);
@@ -71,7 +72,6 @@ private:
 
     void parseAttribute(const QualifiedName&, const AtomString&) final;
 
-    InsertedIntoAncestorResult insertedIntoAncestor(InsertionType, ContainerNode&) final;
     bool accessKeyAction(bool) final;
 
     void childrenChanged(const ChildChange&) final;

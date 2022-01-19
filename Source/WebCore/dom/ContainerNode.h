@@ -80,6 +80,7 @@ public:
         enum class Source : bool { Parser, API };
 
         ChildChange::Type type;
+        Element* siblingChanged;
         Element* previousSiblingElement;
         Element* nextSiblingElement;
         ChildChange::Source source;
@@ -96,6 +97,25 @@ public:
             case ChildChange::Type::TextRemoved:
             case ChildChange::Type::TextChanged:
             case ChildChange::Type::AllChildrenRemoved:
+            case ChildChange::Type::NonContentsChildRemoved:
+                return false;
+            }
+            ASSERT_NOT_REACHED();
+            return false;
+        }
+
+        bool affectsElements() const
+        {
+            switch (type) {
+            case ChildChange::Type::ElementInserted:
+            case ChildChange::Type::ElementRemoved:
+            case ChildChange::Type::AllChildrenRemoved:
+            case ChildChange::Type::AllChildrenReplaced:
+                return true;
+            case ChildChange::Type::TextInserted:
+            case ChildChange::Type::TextRemoved:
+            case ChildChange::Type::TextChanged:
+            case ChildChange::Type::NonContentsChildInserted:
             case ChildChange::Type::NonContentsChildRemoved:
                 return false;
             }

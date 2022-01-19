@@ -1,5 +1,17 @@
 2022-01-18  Chris Dumez  <cdumez@apple.com>
 
+        When inserting a selected <option> in a <select> element, its selected state should remain
+        https://bugs.webkit.org/show_bug.cgi?id=235237
+
+        Reviewed by Darin Adler.
+
+        Rebaseline WPT tests that are now passing.
+
+        * web-platform-tests/html/semantics/forms/the-select-element/inserted-or-removed-expected.txt:
+        * web-platform-tests/html/semantics/forms/the-select-element/select-validity-expected.txt:
+
+2022-01-18  Chris Dumez  <cdumez@apple.com>
+
         input.labels doesn't work inside shadow DOM
         https://bugs.webkit.org/show_bug.cgi?id=235326
 

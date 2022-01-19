@@ -27,6 +27,7 @@
 
 #include "HTMLFormControlElementWithState.h"
 #include "TypeAhead.h"
+#include <wtf/CompletionHandler.h>
 
 namespace WebCore {
 
@@ -104,6 +105,8 @@ public:
     // For use in the implementation of HTMLOptionElement.
     void optionSelectionStateChanged(HTMLOptionElement&, bool optionIsSelected);
     bool allowsNonContiguousSelection() const { return m_allowsNonContiguousSelection; };
+
+    CompletionHandlerCallingScope optionToSelectFromChildChangeScope(const ChildChange&, HTMLOptGroupElement* parentOptGroup = nullptr);
 
 protected:
     HTMLSelectElement(const QualifiedName&, Document&, HTMLFormElement*);
