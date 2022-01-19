@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -228,8 +228,17 @@ public:
         if (*this == other)
             return true;
 
-        if (m_right->isInt32Constant() && other.m_right->isInt32Constant())
-            return (m_right->asInt32() + m_offset) == (other.m_right->asInt32() + other.m_offset);
+        if (m_right->isInt32Constant() && other.m_right->isInt32Constant()) {
+            int thisRight = m_right->asInt32();
+            int otherRight = other.m_right->asInt32();
+
+            if (sumOverflows<int>(thisRight, m_offset))
+                return false;
+            if (sumOverflows<int>(otherRight, other.m_offset))
+                return false;
+
+            return (thisRight + m_offset) == (otherRight + other.m_offset);
+        }
         return false;
     }
     
