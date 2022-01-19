@@ -1,7 +1,5 @@
 /*
- * <%= @warning %>
- *
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,33 +23,19 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "WebPreferencesPrivate.h"
+#pragma once
 
-#import "WebFeatureInternal.h"
-#import "WebPreferencesDefinitions.h"
-#import <wtf/ExperimentalFeatureNames.h>
-#import <wtf/NeverDestroyed.h>
-#import <wtf/RetainPtr.h>
+namespace WTF {
 
-using namespace WebKit;
+#if USE(APPLE_INTERNAL_SDK)
 
-@implementation WebPreferences (WebPrivateExperimentalFeatures)
+#include <WebKitAdditions/ExperimentalFeatureNameAdditions.h>
 
-+ (NSArray<WebFeature *> *)_experimentalFeatures
-{
-    static NeverDestroyed<RetainPtr<NSArray<WebFeature *>>> features = @[
-<%- for @pref in @exposedExperimentalFeatures do -%>
-<%- if @pref.condition -%>
-#if <%= @pref.condition %>
-<%- end -%>
-        adoptNS([[WebFeature alloc] initWithKey:@"<%= @pref.name %>" preferenceKey:@"<%= @pref.preferenceKey %>" name:@<%= @pref.humanReadableName %> details:@<%= @pref.humanReadableDescription %> defaultValue:DEFAULT_VALUE_FOR_<%= @pref.name %> hidden:<%= @pref.hidden %>]).get(),
-<%- if @pref.condition -%>
+#else
+
+#define WebKitAdditionsFeature1HumanReadableName "WebKitAdditions Feature"
+#define WebKitAdditionsFeature1HumanReadableDescription "WebKitAdditions Feature"
+
 #endif
-<%- end -%>
-<%- end -%>
-    ];
 
-    return features.get().get();
 }
-
-@end

@@ -106,8 +106,14 @@ class Preference
     @name = name
     @opts = opts
     @type = opts["type"]
-    @humanReadableName = '"' + (opts["humanReadableName"] || "") + '"'
-    @humanReadableDescription = '"' + (opts["humanReadableDescription"] || "") + '"'
+    @humanReadableName = (opts["humanReadableName"] || "")
+    if not humanReadableName.start_with? "WebKitAdditions"
+        @humanReadableName = '"' + humanReadableName + '"'
+    end
+    @humanReadableDescription = (opts["humanReadableDescription"] || "")
+    if not humanReadableDescription.start_with? "WebKitAdditions"
+        @humanReadableDescription = '"' + humanReadableDescription + '"'
+    end
     @getter = opts["getter"]
     @webcoreBinding = opts["webcoreBinding"]
     @webcoreName = opts["webcoreName"]

@@ -66,6 +66,7 @@ set(WTF_PUBLIC_HEADERS
     EnumClassOperatorOverloads.h
     EnumTraits.h
     Expected.h
+    ExperimentalFeatureNames.h
     ExportMacros.h
     FailureAction.h
     FastBitVector.h
