@@ -4834,7 +4834,7 @@ void Document::setCSSTarget(Element* targetNode)
 void Document::registerNodeListForInvalidation(LiveNodeList& list)
 {
     m_nodeListAndCollectionCounts[list.invalidationType()]++;
-    if (!list.isRootedAtDocument())
+    if (!list.isRootedAtTreeScope())
         return;
     ASSERT(!list.isRegisteredForInvalidationAtDocument());
     list.setRegisteredForInvalidationAtDocument(true);
@@ -4855,7 +4855,7 @@ void Document::unregisterNodeListForInvalidation(LiveNodeList& list)
 void Document::registerCollection(HTMLCollection& collection)
 {
     m_nodeListAndCollectionCounts[collection.invalidationType()]++;
-    if (collection.isRootedAtDocument())
+    if (collection.isRootedAtTreeScope())
         m_collectionsInvalidatedAtDocument.add(&collection);
 }
 
@@ -4863,7 +4863,7 @@ void Document::unregisterCollection(HTMLCollection& collection)
 {
     ASSERT(m_nodeListAndCollectionCounts[collection.invalidationType()]);
     m_nodeListAndCollectionCounts[collection.invalidationType()]--;
-    if (!collection.isRootedAtDocument())
+    if (!collection.isRootedAtTreeScope())
         return;
 
     m_collectionsInvalidatedAtDocument.remove(&collection);

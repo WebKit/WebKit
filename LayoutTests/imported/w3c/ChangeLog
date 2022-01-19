@@ -1,3 +1,15 @@
+2022-01-18  Chris Dumez  <cdumez@apple.com>
+
+        input.labels doesn't work inside shadow DOM
+        https://bugs.webkit.org/show_bug.cgi?id=235326
+
+        Reviewed by Darin Adler.
+
+        Rebaseline test that now has one extra passing subtest. This subtest was already passing in both
+        Gecko and Blink.
+
+        * web-platform-tests/html/semantics/forms/the-label-element/label-attributes.sub-expected.txt:
+
 2022-01-18  Sam Weinig  <weinig@apple.com>
 
         [CSS Color 4] Add support for "Missing"/"none" color components

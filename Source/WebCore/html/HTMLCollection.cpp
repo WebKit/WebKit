@@ -48,7 +48,7 @@ inline auto HTMLCollection::rootTypeFromCollectionType(CollectionType type) -> R
     case DocumentNamedItems:
     case DocumentAllNamedItems:
     case FormControls:
-        return HTMLCollection::IsRootedAtDocument;
+        return HTMLCollection::IsRootedAtTreeScope;
     case AllDescendants:
     case ByClass:
     case ByTag:

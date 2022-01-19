@@ -198,7 +198,7 @@ public:
             cache->invalidateCacheForDocument(oldDocument);
 
         for (auto& list : m_tagCollectionNSCache.values()) {
-            ASSERT(!list->isRootedAtDocument());
+            ASSERT(!list->isRootedAtTreeScope());
             list->invalidateCacheForDocument(oldDocument);
         }
 
