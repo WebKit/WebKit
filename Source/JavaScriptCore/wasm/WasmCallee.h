@@ -60,7 +60,7 @@ public:
     virtual std::tuple<void*, void*> range() const = 0;
 
 #if ENABLE(WEBASSEMBLY_B3JIT)
-    virtual void setOSREntryCallee(Ref<OMGForOSREntryCallee>&&)
+    virtual void setOSREntryCallee(Ref<OMGForOSREntryCallee>&&, MemoryMode)
     {
         RELEASE_ASSERT_NOT_REACHED();
     }
@@ -160,7 +160,7 @@ public:
     }
 
     OMGForOSREntryCallee* osrEntryCallee() { return m_osrEntryCallee.get(); }
-    void setOSREntryCallee(Ref<OMGForOSREntryCallee>&& osrEntryCallee) final
+    void setOSREntryCallee(Ref<OMGForOSREntryCallee>&& osrEntryCallee, MemoryMode) final
     {
         m_osrEntryCallee = WTFMove(osrEntryCallee);
     }
@@ -205,16 +205,16 @@ public:
     JS_EXPORT_PRIVATE std::tuple<void*, void*> range() const final;
 
 #if ENABLE(WEBASSEMBLY_B3JIT)
-    JITCallee* replacement() { return m_replacement.get(); }
-    void setReplacement(Ref<JITCallee>&& replacement)
+    JITCallee* replacement(MemoryMode mode) { return m_replacements[static_cast<uint8_t>(mode)].get(); }
+    void setReplacement(Ref<JITCallee>&& replacement, MemoryMode mode)
     {
-        m_replacement = WTFMove(replacement);
+        m_replacements[static_cast<uint8_t>(mode)] = WTFMove(replacement);
     }
 
-    OMGForOSREntryCallee* osrEntryCallee() { return m_osrEntryCallee.get(); }
-    void setOSREntryCallee(Ref<OMGForOSREntryCallee>&& osrEntryCallee) final
+    OMGForOSREntryCallee* osrEntryCallee(MemoryMode mode) { return m_osrEntryCallees[static_cast<uint8_t>(mode)].get(); }
+    void setOSREntryCallee(Ref<OMGForOSREntryCallee>&& osrEntryCallee, MemoryMode mode) final
     {
-        m_osrEntryCallee = WTFMove(osrEntryCallee);
+        m_osrEntryCallees[static_cast<uint8_t>(mode)] = WTFMove(osrEntryCallee);
     }
 
     LLIntTierUpCounter& tierUpCounter() { return m_codeBlock->tierUpCounter(); }
@@ -229,8 +229,8 @@ private:
     }
 
 #if ENABLE(WEBASSEMBLY_B3JIT)
-    RefPtr<JITCallee> m_replacement;
-    RefPtr<OMGForOSREntryCallee> m_osrEntryCallee;
+    RefPtr<JITCallee> m_replacements[Wasm::NumberOfMemoryModes];
+    RefPtr<OMGForOSREntryCallee> m_osrEntryCallees[Wasm::NumberOfMemoryModes];
 #endif
     std::unique_ptr<FunctionCodeBlock> m_codeBlock;
     MacroAssemblerCodePtr<WasmEntryPtrTag> m_entrypoint;

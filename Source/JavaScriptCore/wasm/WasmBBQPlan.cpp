@@ -146,7 +146,7 @@ void BBQPlan::work(CompilationEffort effort)
         {
             LLIntCallee& llintCallee = m_codeBlock->m_llintCallees->at(m_functionIndex).get();
             Locker locker { llintCallee.tierUpCounter().m_lock };
-            llintCallee.setReplacement(callee.copyRef());
+            llintCallee.setReplacement(callee.copyRef(), mode());
             llintCallee.tierUpCounter().m_compilationStatus = LLIntTierUpCounter::CompilationStatus::Compiled;
         }
     }
