@@ -171,7 +171,7 @@ public:
         return adoptRef(*new DocumentLoader(request, data));
     }
 
-    WEBCORE_EXPORT static DocumentLoader* fromTemporaryDocumentIdentifier(ScriptExecutionContextIdentifier);
+    WEBCORE_EXPORT static DocumentLoader* fromScriptExecutionContextIdentifier(ScriptExecutionContextIdentifier);
 
     WEBCORE_EXPORT virtual ~DocumentLoader();
 
@@ -439,6 +439,7 @@ public:
 
 #if ENABLE(SERVICE_WORKER)
     WEBCORE_EXPORT bool setControllingServiceWorkerRegistration(ServiceWorkerRegistrationData&&);
+    WEBCORE_EXPORT ScriptExecutionContextIdentifier resultingClientId() const;
 #endif
 
     bool lastNavigationWasAppInitiated() const { return m_lastNavigationWasAppInitiated; }
@@ -468,7 +469,7 @@ private:
 #if ENABLE(SERVICE_WORKER)
     void matchRegistration(const URL&, CompletionHandler<void(std::optional<ServiceWorkerRegistrationData>&&)>&&);
 #endif
-    void unregisterTemporaryServiceWorkerClient();
+    void unregisterReservedServiceWorkerClient();
 
     std::optional<CrossOriginOpenerPolicyEnforcementResult> doCrossOriginOpenerHandlingOfResponse(const ResourceResponse&);
 
@@ -688,8 +689,8 @@ private:
 
 #if ENABLE(SERVICE_WORKER)
     std::optional<ServiceWorkerRegistrationData> m_serviceWorkerRegistrationData;
-    std::optional<ScriptExecutionContextIdentifier> m_temporaryServiceWorkerClient;
 #endif
+    ScriptExecutionContextIdentifier m_resultingClientId;
 
 #if ASSERT_ENABLED
     bool m_hasEverBeenAttached { false };

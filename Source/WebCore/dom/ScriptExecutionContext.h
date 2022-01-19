@@ -89,7 +89,7 @@ class IDBConnectionProxy;
 
 class ScriptExecutionContext : public SecurityContext, public CanMakeWeakPtr<ScriptExecutionContext> {
 public:
-    ScriptExecutionContext();
+    explicit ScriptExecutionContext(ScriptExecutionContextIdentifier = { });
     virtual ~ScriptExecutionContext();
 
     virtual bool isDocument() const { return false; }

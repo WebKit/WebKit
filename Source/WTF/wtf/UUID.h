@@ -85,6 +85,8 @@ public:
     WTF_EXPORT_PRIVATE unsigned hash() const;
     WTF_EXPORT_PRIVATE String toString() const;
 
+    operator bool() const { return !!m_data; }
+
 private:
     WTF_EXPORT_PRIVATE UUID();
 

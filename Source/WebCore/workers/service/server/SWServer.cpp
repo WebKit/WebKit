@@ -942,7 +942,13 @@ void SWServer::registerServiceWorkerClient(ClientOrigin&& clientOrigin, ServiceW
             updateAppInitiatedValueForWorkers(clientOrigin, data.lastNavigationWasAppInitiated);
     }
 
-    m_visibleClientIdToInternalClientIdMap.add(data.identifier.object().toString(), clientIdentifier);
+    auto addResult = m_visibleClientIdToInternalClientIdMap.add(data.identifier.object().toString(), clientIdentifier);
+    if (!addResult.isNewEntry) {
+        ASSERT(m_visibleClientIdToInternalClientIdMap.get(data.identifier.object().toString()) == clientIdentifier);
+        ASSERT(m_clientsById.contains(clientIdentifier));
+        m_clientsById.set(clientIdentifier, WTFMove(data));
+        return;
+    }
 
     ASSERT(!m_clientsById.contains(clientIdentifier));
     m_clientsById.add(clientIdentifier, WTFMove(data));

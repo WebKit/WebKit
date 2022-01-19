@@ -138,7 +138,7 @@ void ModelDocumentParser::finish()
 }
 
 ModelDocument::ModelDocument(Frame* frame, const Settings& settings, const URL& url)
-    : HTMLDocument(frame, settings, url, { DocumentClass::Model })
+    : HTMLDocument(frame, settings, url, { }, { DocumentClass::Model })
 {
     if (frame)
         m_outgoingReferrer = frame->loader().outgoingReferrer();

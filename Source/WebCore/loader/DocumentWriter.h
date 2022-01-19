@@ -28,6 +28,7 @@
 
 #pragma once
 
+#include "ScriptExecutionContextIdentifier.h"
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
@@ -47,7 +48,7 @@ public:
     void replaceDocumentWithResultOfExecutingJavascriptURL(const String&, Document* ownerDocument);
 
     bool begin();
-    bool begin(const URL&, bool dispatchWindowObjectAvailable = true, Document* ownerDocument = nullptr);
+    bool begin(const URL&, bool dispatchWindowObjectAvailable = true, Document* ownerDocument = nullptr, ScriptExecutionContextIdentifier = { });
     void addData(const SharedBuffer&);
     void insertDataSynchronously(const String&); // For an internal use only to prevent the parser from yielding.
     WEBCORE_EXPORT void end();
@@ -67,7 +68,7 @@ public:
     void setDocumentWasLoadedAsPartOfNavigation();
 
 private:
-    Ref<Document> createDocument(const URL&);
+    Ref<Document> createDocument(const URL&, ScriptExecutionContextIdentifier);
     void clear();
 
     WeakPtr<Frame> m_frame;

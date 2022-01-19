@@ -178,7 +178,7 @@ void WebSWClientConnection::whenRegistrationReady(const SecurityOriginData& topO
 
 void WebSWClientConnection::setDocumentIsControlled(ScriptExecutionContextIdentifier documentIdentifier, ServiceWorkerRegistrationData&& data, CompletionHandler<void(bool)>&& completionHandler)
 {
-    auto* documentLoader = DocumentLoader::fromTemporaryDocumentIdentifier(documentIdentifier);
+    auto* documentLoader = DocumentLoader::fromScriptExecutionContextIdentifier(documentIdentifier);
     bool result = documentLoader ? documentLoader->setControllingServiceWorkerRegistration(WTFMove(data)) : false;
     completionHandler(result);
 }

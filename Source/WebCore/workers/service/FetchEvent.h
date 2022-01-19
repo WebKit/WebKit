@@ -50,7 +50,6 @@ public:
         RefPtr<FetchRequest> request;
         String clientId;
         String resultingClientId;
-        String targetClientId;
         RefPtr<DOMPromise> handled;
     };
 
@@ -72,7 +71,6 @@ public:
     FetchRequest& request() { return m_request.get(); }
     const String& clientId() const { return m_clientId; }
     const String& resultingClientId() const { return m_resultingClientId; }
-    const String& targetClientId() const { return m_targetClientId; }
     DOMPromise& handled() const { return m_handled.get(); }
 
     bool respondWithEntered() const { return m_respondWithEntered; }
@@ -94,7 +92,6 @@ private:
     Ref<FetchRequest> m_request;
     String m_clientId;
     String m_resultingClientId;
-    String m_targetClientId;
 
     bool m_respondWithEntered { false };
     bool m_waitToRespond { false };

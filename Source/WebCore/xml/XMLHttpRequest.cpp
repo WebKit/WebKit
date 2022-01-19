@@ -181,7 +181,7 @@ ExceptionOr<Document*> XMLHttpRequest::responseXML()
             m_responseDocument = nullptr;
         } else {
             if (isHTML)
-                m_responseDocument = HTMLDocument::create(nullptr, context.settings(), m_response.url());
+                m_responseDocument = HTMLDocument::create(nullptr, context.settings(), m_response.url(), { });
             else
                 m_responseDocument = XMLDocument::create(nullptr, context.settings(), m_response.url());
             m_responseDocument->overrideLastModified(m_response.lastModified());

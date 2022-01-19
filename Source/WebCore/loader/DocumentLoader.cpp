@@ -150,15 +150,15 @@ static void setAllDefersLoading(const ResourceLoaderMap& loaders, bool defers)
         loader->setDefersLoading(defers);
 }
 
-static HashMap<ScriptExecutionContextIdentifier, DocumentLoader*>& temporaryIdentifierToLoaderMap()
+static HashMap<ScriptExecutionContextIdentifier, DocumentLoader*>& scriptExecutionContextIdentifierToLoaderMap()
 {
     static NeverDestroyed<HashMap<ScriptExecutionContextIdentifier, DocumentLoader*>> map;
     return map.get();
 }
 
-DocumentLoader* DocumentLoader::fromTemporaryDocumentIdentifier(ScriptExecutionContextIdentifier identifier)
+DocumentLoader* DocumentLoader::fromScriptExecutionContextIdentifier(ScriptExecutionContextIdentifier identifier)
 {
-    return temporaryIdentifierToLoaderMap().get(identifier);
+    return scriptExecutionContextIdentifierToLoaderMap().get(identifier);
 }
 
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(DocumentLoader);
@@ -200,9 +200,9 @@ DocumentLoader::~DocumentLoader()
     clearMainResource();
 
 #if ENABLE(SERVICE_WORKER)
-    if (m_temporaryServiceWorkerClient) {
-        ASSERT(temporaryIdentifierToLoaderMap().contains(*m_temporaryServiceWorkerClient));
-        temporaryIdentifierToLoaderMap().remove(*m_temporaryServiceWorkerClient);
+    if (m_resultingClientId) {
+        ASSERT(scriptExecutionContextIdentifierToLoaderMap().contains(m_resultingClientId));
+        scriptExecutionContextIdentifierToLoaderMap().remove(m_resultingClientId);
     }
 #endif
 }
@@ -555,6 +555,11 @@ bool DocumentLoader::setControllingServiceWorkerRegistration(ServiceWorkerRegist
     return true;
 }
 
+ScriptExecutionContextIdentifier DocumentLoader::resultingClientId() const
+{
+    return m_resultingClientId;
+}
+
 void DocumentLoader::matchRegistration(const URL& url, SWClientConnection::RegistrationCallback&& callback)
 {
     auto shouldTryLoadingThroughServiceWorker = !frameLoader()->isReloadingFromOrigin() && m_frame->page() && RuntimeEnabledFeatures::sharedFeatures().serviceWorkerEnabled() && url.protocolIsInHTTPFamily();
@@ -589,8 +594,9 @@ void DocumentLoader::redirectReceived(CachedResource& resource, ResourceRequest&
 #if ENABLE(SERVICE_WORKER)
     if (m_serviceWorkerRegistrationData) {
         m_serviceWorkerRegistrationData = { };
-        unregisterTemporaryServiceWorkerClient();
+        unregisterReservedServiceWorkerClient();
     }
+
     willSendRequest(WTFMove(request), redirectResponse, [completionHandler = WTFMove(completionHandler), protectedThis = Ref { *this }, this] (auto&& request) mutable {
         ASSERT(!m_substituteData.isValid());
         if (request.isNull() || !m_mainDocumentError.isNull() || !m_frame) {
@@ -1202,7 +1208,7 @@ void DocumentLoader::commitData(const SharedBuffer& data)
 {
     if (!m_gotFirstByte) {
         m_gotFirstByte = true;
-        bool hasBegun = m_writer.begin(documentURL(), false);
+        bool hasBegun = m_writer.begin(documentURL(), false, nullptr, m_resultingClientId);
         if (!hasBegun)
             return;
 
@@ -1230,20 +1236,25 @@ void DocumentLoader::commitData(const SharedBuffer& data)
 #endif
 #if ENABLE(SERVICE_WORKER)
         if (RuntimeEnabledFeatures::sharedFeatures().serviceWorkerEnabled()) {
-            if (m_serviceWorkerRegistrationData && m_serviceWorkerRegistrationData->activeWorker) {
-                document.setActiveServiceWorker(ServiceWorker::getOrCreate(document, WTFMove(m_serviceWorkerRegistrationData->activeWorker.value())));
-                m_serviceWorkerRegistrationData = { };
-            } else if (auto* parent = document.parentDocument()) {
-                if (shouldUseActiveServiceWorkerFromParent(document, *parent))
-                    document.setActiveServiceWorker(parent->activeServiceWorker());
+            if (!document.securityOrigin().isUnique()) {
+                if (m_serviceWorkerRegistrationData && m_serviceWorkerRegistrationData->activeWorker) {
+                    document.setActiveServiceWorker(ServiceWorker::getOrCreate(document, WTFMove(m_serviceWorkerRegistrationData->activeWorker.value())));
+                    m_serviceWorkerRegistrationData = { };
+                } else if (auto* parent = document.parentDocument()) {
+                    if (shouldUseActiveServiceWorkerFromParent(document, *parent))
+                        document.setActiveServiceWorker(parent->activeServiceWorker());
+                }
             }
 
             if (m_frame->document()->activeServiceWorker() || document.url().protocolIsInHTTPFamily() || (document.page() && document.page()->isServiceWorkerPage()))
                 document.setServiceWorkerConnection(&ServiceWorkerProvider::singleton().serviceWorkerConnection());
 
-            // We currently unregister the temporary service worker client since we now registered the real document.
-            // FIXME: We should make the real document use the temporary client identifier.
-            unregisterTemporaryServiceWorkerClient();
+            if (m_resultingClientId) {
+                if (m_resultingClientId != document.identifier())
+                    unregisterReservedServiceWorkerClient();
+                scriptExecutionContextIdentifierToLoaderMap().remove(m_resultingClientId);
+                m_resultingClientId = { };
+            }
         }
 #endif
         // Call receivedFirstData() exactly once per load. We should only reach this point multiple times
@@ -2066,14 +2077,14 @@ void DocumentLoader::startLoadingMainResource()
     });
 }
 
-void DocumentLoader::unregisterTemporaryServiceWorkerClient()
+void DocumentLoader::unregisterReservedServiceWorkerClient()
 {
 #if ENABLE(SERVICE_WORKER)
-    if (!m_temporaryServiceWorkerClient || !RuntimeEnabledFeatures::sharedFeatures().serviceWorkerEnabled())
+    if (!m_resultingClientId || !RuntimeEnabledFeatures::sharedFeatures().serviceWorkerEnabled())
         return;
 
     auto& serviceWorkerConnection = ServiceWorkerProvider::singleton().serviceWorkerConnection();
-    serviceWorkerConnection.unregisterServiceWorkerClient(*m_temporaryServiceWorkerClient);
+    serviceWorkerConnection.unregisterServiceWorkerClient(m_resultingClientId);
 #endif
 }
 
@@ -2092,15 +2103,16 @@ void DocumentLoader::loadMainResource(ResourceRequest&& request)
         ContentSecurityPolicyImposition::SkipPolicyCheck,
         DefersLoadingPolicy::AllowDefersLoading,
         CachingPolicy::AllowCaching);
+
 #if ENABLE(SERVICE_WORKER)
-    if (!m_temporaryServiceWorkerClient) {
-        // The main navigation load will trigger the registration of the temp client.
-        m_temporaryServiceWorkerClient = ScriptExecutionContextIdentifier::generate();
-        ASSERT(!temporaryIdentifierToLoaderMap().contains(*m_temporaryServiceWorkerClient));
-        temporaryIdentifierToLoaderMap().add(*m_temporaryServiceWorkerClient, this);
-    }
-    mainResourceLoadOptions.clientIdentifier = m_temporaryServiceWorkerClient;
+    // The main navigation load will trigger the registration of the client.
+    if (m_resultingClientId)
+        scriptExecutionContextIdentifierToLoaderMap().remove(m_resultingClientId);
+    m_resultingClientId = ScriptExecutionContextIdentifier::generate();
+    ASSERT(!scriptExecutionContextIdentifierToLoaderMap().contains(m_resultingClientId));
+    scriptExecutionContextIdentifierToLoaderMap().add(m_resultingClientId, this);
 #endif
+
     CachedResourceRequest mainResourceRequest(WTFMove(request), mainResourceLoadOptions);
     if (!m_frame->isMainFrame() && m_frame->document()) {
         // If we are loading the main resource of a subframe, use the cache partition of the main document.
@@ -2212,7 +2224,7 @@ void DocumentLoader::clearMainResource()
     m_mainResource = nullptr;
     m_isContinuingLoadAfterProvisionalLoadStarted = false;
 
-    unregisterTemporaryServiceWorkerClient();
+    unregisterReservedServiceWorkerClient();
 }
 
 void DocumentLoader::subresourceLoaderFinishedLoadingOnePart(ResourceLoader& loader)
