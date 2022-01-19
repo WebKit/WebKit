@@ -1154,6 +1154,14 @@ window.UIHelper = class UIHelper {
         return new Promise(resolve => testRunner.runUIScript(`uiController.setViewScale(${scale})`, resolve));
     }
 
+    static setScrollViewKeyboardAvoidanceEnabled(enabled)
+    {
+        if (!this.isWebKit2())
+            return Promise.resolve();
+
+        return new Promise(resolve => testRunner.runUIScript(`uiController.setScrollViewKeyboardAvoidanceEnabled(${enabled})`, resolve));
+    }
+
     static resignFirstResponder()
     {
         if (!this.isWebKit2())

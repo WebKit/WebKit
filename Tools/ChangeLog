@@ -1,3 +1,23 @@
+2022-01-18  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        REGRESSION (r264352): Mail compose body field does not avoid the keyboard when scrolling after focus
+        https://bugs.webkit.org/show_bug.cgi?id=235331
+        rdar://79296770
+
+        Reviewed by Tim Horton.
+
+        Add support for a UIScriptController hook to override `firstResponderKeyboardAvoidanceEnabled` on WKScrollView.
+        See LayoutTests for more details.
+
+        * TestRunnerShared/UIScriptContext/Bindings/UIScriptController.idl:
+        * TestRunnerShared/UIScriptContext/UIScriptController.h:
+        (WTR::UIScriptController::setScrollViewKeyboardAvoidanceEnabled):
+        * WebKitTestRunner/ios/TestControllerIOS.mm:
+        (WTR::TestController::platformResetStateToConsistentValues):
+        * WebKitTestRunner/ios/UIScriptControllerIOS.h:
+        * WebKitTestRunner/ios/UIScriptControllerIOS.mm:
+        (WTR::UIScriptControllerIOS::setScrollViewKeyboardAvoidanceEnabled):
+
 2022-01-18  Don Olmstead  <don.olmstead@sony.com>
 
         Replace all uses of HAVE_ACCESSIBILITY with ENABLE_ACCESSIBILITY

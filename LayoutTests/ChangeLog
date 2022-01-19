@@ -1,3 +1,19 @@
+2022-01-18  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        REGRESSION (r264352): Mail compose body field does not avoid the keyboard when scrolling after focus
+        https://bugs.webkit.org/show_bug.cgi?id=235331
+        rdar://79296770
+
+        Reviewed by Tim Horton.
+
+        Add a layout test that (at least) exercises the newly added codepath, where focusing an editor when the scroll
+        view has `firstResponderKeyboardAvoidanceEnabled` set to NO will still allow us to scroll to the selection.
+
+        * editing/selection/ios/scroll-to-reveal-selection-with-keyboard-avoidance-disabled-expected.txt: Added.
+        * editing/selection/ios/scroll-to-reveal-selection-with-keyboard-avoidance-disabled.html: Added.
+        * resources/ui-helper.js:
+        (window.UIHelper.setScrollViewKeyboardAvoidanceEnabled):
+
 2022-01-18  Chris Dumez  <cdumez@apple.com>
 
         When inserting a selected <option> in a <select> element, its selected state should remain

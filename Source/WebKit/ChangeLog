@@ -1,3 +1,61 @@
+2022-01-18  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        REGRESSION (r264352): Mail compose body field does not avoid the keyboard when scrolling after focus
+        https://bugs.webkit.org/show_bug.cgi?id=235331
+        rdar://79296770
+
+        Reviewed by Tim Horton.
+
+        After r264352 added the call to `_page->scheduleFullEditorStateUpdate();` during element focus, scrolling to
+        reveal the selection in the focused body field in Mail stopped working. This is because Mail:
+
+        1.  Sets `firstResponderKeyboardAvoidanceEnabled` to NO on the WKScrollView, which prevents automatic inset
+            adjustment logic in UIKit from taking effect and adding the keyboard height to the bottom system content
+            inset.
+
+        2.  Manually sets `-contentScrollInset` on the WKScrollView during a UIKeyboardDidShowNotification, which occurs
+            after we've already attempted to zoom to the selection.
+
+        ...combined with the fact that without the call to `scheduleFullEditorStateUpdate()`, the next EditorState
+        would've arrived only after the keyboard animation finished.
+
+        The end result is that we don't end up avoiding the keyboard at all when focusing the body field in Mail
+        compose. While rdar://87733414 tracks refactoring logic in WebKit2 Mail compose to ensure that the content
+        scroll insets on WKScrollView are applied during UIKeyboardWillShowNotification instead of after the keyboard
+        has finished animating in, this patch provides a short-term workaround by restoring pre-r264352 behavior, with
+        respect to when the element is scrolled into view.
+
+        Test: editing/selection/ios/scroll-to-reveal-selection-with-keyboard-avoidance-disabled.html
+
+        * Platform/spi/ios/UIKitSPI.h:
+
+        Add a declaration for the `-firstResponderKeyboardAvoidanceEnabled` SPI property on non-internal iOS SDKs.
+
+        * UIProcess/API/ios/WKWebViewIOS.mm:
+        (-[WKWebView _keyboardDidShow:]):
+
+        Plumb this through to the WKContentView, so we can zoom/scroll to the focused element if needed.
+
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView cleanUpInteraction]):
+        (-[WKContentView _keyboardDidShow]):
+
+        If we previously deferred the call to `-_zoomToRevealFocusedElement` due to the keyboard still animating in,
+        schedule a call to it now on a 0-delay timer; this delay is necessary to ensure that this zoom occurs *after*
+        Mail has already set the content inset, which also happens underneath a "KeyboardDidShow" notification.
+
+        (-[WKContentView _zoomToRevealFocusedElement]):
+
+        In the case where the (presumably internal) client has set `firstResponderKeyboardAvoidanceEnabled` to NO and
+        the keyboard is animating in, defer the actual call into the web view to `-_zoomToRevealFocusedElement` until
+        after the keyboard animation is finished. This ensures compatibility with existant logic in Mail for manually
+        setting the content scroll inset on the WKScrollView after the keyboard animation is complete.
+
+        (-[WKContentView resetShouldZoomToFocusRectAfterShowingKeyboard]):
+        (-[WKContentView _elementDidBlur]):
+
 2022-01-18  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r288019.
