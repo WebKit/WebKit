@@ -135,7 +135,9 @@ class PullRequest(Command):
         target = 'fork' if isinstance(rmt, remote.GitHub) else 'origin'
         log.info("Pushing '{}' to '{}'...".format(repository.branch, target))
         if run([repository.executable(), 'push', '-f', target, repository.branch], cwd=repository.root_path).returncode:
-            sys.stderr.write("Failed to push '{}' to '{}'\n".format(repository.branch, target))
+            sys.stderr.write("Failed to push '{}' to '{}' (alias of '{}')\n".format(repository.branch, target, repository.url(name=target)))
+            sys.stderr.write("Your checkout may be mis-configured, try re-running 'git-webkit setup' or\n")
+            sys.stderr.write("your checkout may not have permission to push to '{}'\n".format(repository.url(name=target)))
             return 1
 
         if args.history or (target != 'origin' and args.history is None):

@@ -1,3 +1,17 @@
+2022-01-19  Jonathan Bedard  <jbedard@apple.com>
+
+        [git-webkit] Improve pr push error message
+        https://bugs.webkit.org/show_bug.cgi?id=235299
+        <rdar://problem/87721181>
+
+        Reviewed by Aakash Jain.
+
+        * Scripts/libraries/webkitscmpy/setup.py: Bump version.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/__init__.py: Ditto.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/program/pull_request.py:
+        (PullRequest.main): If `git push` fails, provide the user with options
+        for resolution.
+
 2022-01-19  Alex Christensen  <achristensen@webkit.org>
 
         Unreviewed, reverting r288147.
