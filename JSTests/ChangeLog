@@ -1,3 +1,10 @@
+2022-01-19  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        Unreviewed, skip new test max-typed-array-length-toString.js when memory-limited
+        https://bugs.webkit.org/show_bug.cgi?id=235217
+
+        * stress/max-typed-array-length-toString.js:
+
 2022-01-18  Mark Lam  <mark.lam@apple.com>
 
         Gardening: resolve test failure on CLoop.
