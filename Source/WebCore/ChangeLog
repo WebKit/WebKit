@@ -1,3 +1,19 @@
+2022-01-16  Brady Eidson  <beidson@apple.com>
+
+        database names leak cross-origin within the same browser session
+        https://bugs.webkit.org/show_bug.cgi?id=233548
+
+        Reviewed by Geoff Garen.
+
+        Test: http/tests/security/getdatabases-crossorigin.html
+
+        * Modules/indexeddb/server/IDBServer.cpp:
+        (WebCore::IDBServer::IDBServer::getAllDatabaseNamesAndVersions): When iterating the set of all open
+          UniqueIDBDatabases, only add them to the results list if their origins match.
+           
+        * page/ClientOrigin.h:
+        (WebCore::ClientOrigin::operator!= const):
+
 2021-12-18  Adrian Perez de Castro  <aperez@igalia.com>
 
         Unreviewed non-unified build fixes.

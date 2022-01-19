@@ -1,3 +1,15 @@
+2022-01-16  Brady Eidson  <beidson@apple.com>
+
+        database names leak cross-origin within the same browser session
+        https://bugs.webkit.org/show_bug.cgi?id=233548
+
+        Reviewed by Geoff Garen.
+
+        * http/tests/security/getdatabases-crossorigin-expected.txt: Added.
+        * http/tests/security/getdatabases-crossorigin.html: Added.
+        * http/tests/security/resources/getdatabases-otherframe.html: Added.
+        * http/tests/security/resources/getdatabases-otherwindow.html: Added.
+
 2021-10-01  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Disable new incumbent-window until it is fully implemented
