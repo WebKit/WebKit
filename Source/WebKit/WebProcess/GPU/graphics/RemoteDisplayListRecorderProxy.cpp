@@ -70,6 +70,16 @@ void RemoteDisplayListRecorderProxy::putPixelBuffer(const PixelBuffer& pixelBuff
     send(Messages::RemoteDisplayListRecorder::PutPixelBuffer(srcRect, destPoint, pixelBuffer, destFormat));
 }
 
+void RemoteDisplayListRecorderProxy::convertToLuminanceMask()
+{
+    send(Messages::RemoteDisplayListRecorder::ConvertToLuminanceMask());
+}
+
+void RemoteDisplayListRecorderProxy::transformToColorSpace(const WebCore::DestinationColorSpace& colorSpace)
+{
+    send(Messages::RemoteDisplayListRecorder::TransformToColorSpace(colorSpace));
+}
+
 bool RemoteDisplayListRecorderProxy::canDrawImageBuffer(const ImageBuffer& imageBuffer) const
 {
     return m_renderingBackend && m_renderingBackend->isCached(imageBuffer);

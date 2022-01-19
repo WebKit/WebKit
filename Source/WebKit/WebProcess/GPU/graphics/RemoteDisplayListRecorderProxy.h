@@ -49,6 +49,8 @@ public:
 
     void getPixelBuffer(const WebCore::PixelBufferFormat& outputFormat, const WebCore::IntRect& sourceRect) final;
     void putPixelBuffer(const WebCore::PixelBuffer&, const WebCore::IntRect& srcRect, const WebCore::IntPoint& destPoint, WebCore::AlphaPremultiplication destFormat) final;
+    void convertToLuminanceMask() final;
+    void transformToColorSpace(const WebCore::DestinationColorSpace&) final;
     void flushContext(WebCore::GraphicsContextFlushIdentifier) final;
 
 private:

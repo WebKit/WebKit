@@ -77,6 +77,8 @@ messages -> RemoteDisplayListRecorder NotRefCounted Stream {
     FillEllipse(WebCore::FloatRect rect)
     GetPixelBuffer(WebCore::IntRect srcRect, struct WebCore::PixelBufferFormat outputFormat)
     PutPixelBuffer(WebCore::IntRect srcRect, WebCore::IntPoint destPoint, WebCore::PixelBuffer pixelBuffer, enum:uint8_t WebCore::AlphaPremultiplication destFormat)
+    ConvertToLuminanceMask()
+    TransformToColorSpace(WebCore::DestinationColorSpace colorSpace)
     PaintFrameForMedia(WebCore::MediaPlayerIdentifier identifier, WebCore::FloatRect destination)
     StrokeRect(WebCore::FloatRect rect, float lineWidth)
 #if ENABLE(INLINE_PATH_DATA)

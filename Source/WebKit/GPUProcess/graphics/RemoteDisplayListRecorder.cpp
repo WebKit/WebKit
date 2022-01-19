@@ -459,6 +459,16 @@ void RemoteDisplayListRecorder::putPixelBuffer(const IntRect& srcRect, const Int
     m_imageBuffer->putPixelBuffer(pixelBuffer, srcRect, destPoint, destFormat);
 }
 
+void RemoteDisplayListRecorder::convertToLuminanceMask()
+{
+    m_imageBuffer->convertToLuminanceMask();
+}
+
+void RemoteDisplayListRecorder::transformToColorSpace(const WebCore::DestinationColorSpace& colorSpace)
+{
+    m_imageBuffer->transformToColorSpace(colorSpace);
+}
+
 void RemoteDisplayListRecorder::paintFrameForMedia(MediaPlayerIdentifier identifier, const FloatRect& destination)
 {
     m_renderingBackend->performWithMediaPlayerOnMainThread(identifier, [imageBuffer = RefPtr { m_imageBuffer.get() }, destination](MediaPlayer& player) {
