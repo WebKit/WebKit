@@ -186,6 +186,10 @@ void BaseAudioSharedUnit::stopProducingData()
 
     stopInternal();
     cleanupAudioUnit();
+
+    auto callbacks = std::exchange(m_whenNotRunningCallbacks, { });
+    for (auto& callback : callbacks)
+        callback();
 }
 
 void BaseAudioSharedUnit::setIsProducingMicrophoneSamples(bool value)
@@ -275,6 +279,15 @@ void BaseAudioSharedUnit::audioSamplesAvailable(const MediaTime& time, const Pla
         if (client->isProducingData())
             client->audioSamplesAvailable(time, data, description, numberOfFrames);
     }
+}
+
+void BaseAudioSharedUnit::whenAudioCaptureUnitIsNotRunning(Function<void()>&& callback)
+{
+    if (!isProducingData()) {
+        callback();
+        return;
+    }
+    m_whenNotRunningCallbacks.append(WTFMove(callback));
 }
 
 } // namespace WebCore

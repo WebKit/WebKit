@@ -1,3 +1,20 @@
+2022-01-19  Youenn Fablet  <youenn@apple.com>
+
+        [Cocoa] Do not change preferred AudioSession buffer size when VPIO is running
+        https://bugs.webkit.org/show_bug.cgi?id=235317
+        <rdar://87709485>
+
+        Reviewed by Eric Carlson.
+
+        When we stop capturing, we might still use the VPIO unit to render audio.
+        In that case, it might be problematic to increase the preferred buffer size as:
+        - Audio unit might stop running, hence stopping audio rendering
+        - Increasing the preferred buffer size might increase latency which is not a good thing in VPIO usecases.
+
+        * GPUProcess/media/RemoteAudioSessionProxy.cpp:
+        * GPUProcess/media/RemoteAudioSessionProxyManager.cpp:
+        * GPUProcess/media/RemoteAudioSessionProxyManager.h:
+
 2022-01-18  Megan Gardner  <megan_gardner@apple.com>
 
         Loupe sometimes flips to the bottom of the page when dragging the end of a selection to the top of a page with selection flipping.

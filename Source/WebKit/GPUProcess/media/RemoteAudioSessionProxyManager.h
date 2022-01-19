@@ -37,7 +37,7 @@ class GPUProcess;
 class RemoteAudioSessionProxy;
 
 class RemoteAudioSessionProxyManager
-    : private WebCore::AudioSession::InterruptionObserver
+    : public WebCore::AudioSession::InterruptionObserver
     , private WebCore::AudioSession::ConfigurationChangeObserver {
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -48,7 +48,7 @@ public:
     void removeProxy(RemoteAudioSessionProxy&);
 
     void updateCategory();
-    void setPreferredBufferSizeForProcess(RemoteAudioSessionProxy&, size_t);
+    void updatePreferredBufferSizeForProcess();
 
     bool tryToSetActiveForProcess(RemoteAudioSessionProxy&, bool);
 
@@ -56,6 +56,9 @@ public:
     const WebCore::AudioSession& session() const { return WebCore::AudioSession::sharedSession(); }
 
     void updatePresentingProcesses();
+
+    using WebCore::AudioSession::InterruptionObserver::weakPtrFactory;
+    using WeakValueType = WebCore::AudioSession::InterruptionObserver::WeakValueType;
 
 private:
     void beginAudioSessionInterruption() final;

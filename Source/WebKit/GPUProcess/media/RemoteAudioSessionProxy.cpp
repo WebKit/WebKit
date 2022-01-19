@@ -85,7 +85,7 @@ void RemoteAudioSessionProxy::setCategory(AudioSession::CategoryType category, R
 void RemoteAudioSessionProxy::setPreferredBufferSize(uint64_t size)
 {
     m_preferredBufferSize = size;
-    audioSessionManager().setPreferredBufferSizeForProcess(*this, size);
+    audioSessionManager().updatePreferredBufferSizeForProcess();
 }
 
 void RemoteAudioSessionProxy::tryToSetActive(bool active, SetActiveCompletion&& completion)

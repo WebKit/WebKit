@@ -79,6 +79,7 @@ public:
     virtual CapabilityValueOrRange sampleRateCapacities() const = 0;
 
     void devicesChanged(const Vector<CaptureDevice>&);
+    void whenAudioCaptureUnitIsNotRunning(Function<void()>&&);
 
 protected:
     void forEachClient(const Function<void(CoreAudioCaptureSource&)>&) const;
@@ -125,6 +126,7 @@ private:
     Lock m_audioThreadClientsLock;
 
     bool m_isProducingMicrophoneSamples { true };
+    Vector<Function<void()>> m_whenNotRunningCallbacks;
 };
 
 } // namespace WebCore
