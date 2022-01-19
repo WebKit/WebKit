@@ -1,3 +1,12 @@
+2022-01-18  Sergio Villar Senin  <svillar@igalia.com>
+
+        [css-flexbox] Add support for intrinsic sizes to the flex shorthand
+        https://bugs.webkit.org/show_bug.cgi?id=235314
+
+        Reviewed by Darin Adler.
+
+        * web-platform-tests/css/css-flexbox/parsing/flex-shorthand-expected.txt: Replaced FAIL by PASS expectations.
+
 2022-01-18  Chris Dumez  <cdumez@apple.com>
 
         When inserting a selected <option> in a <select> element, its selected state should remain

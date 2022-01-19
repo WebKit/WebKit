@@ -2284,9 +2284,14 @@ static RefPtr<CSSValue> consumeNoneOrURI(CSSParserTokenRange& range)
     return consumeUrl(range);
 }
 
+static bool isFlexBasisIdent(const WebCore::CSSValueID id, const CSSParserContext& context)
+{
+    return identMatches<CSSValueAuto, CSSValueContent>(id) || validWidthOrHeightKeyword(id, context);
+}
+
 static RefPtr<CSSValue> consumeFlexBasis(CSSParserTokenRange& range, const CSSParserContext& context)
 {
-    if (identMatches<CSSValueAuto, CSSValueContent>(range.peek().id()) || validWidthOrHeightKeyword(range.peek().id(), context))
+    if (isFlexBasisIdent(range.peek().id(), context))
         return consumeIdent(range);
     return consumeLengthOrPercent(range, context.mode, ValueRange::NonNegative);
 }
@@ -5352,7 +5357,7 @@ bool CSSPropertyParser::consumeFlex(bool important)
                 else
                     return false;
             } else if (!flexBasis) {
-                if (m_range.peek().id() == CSSValueAuto || m_range.peek().id() == CSSValueContent)
+                if (isFlexBasisIdent(m_range.peek().id(), m_context))
                     flexBasis = consumeIdent(m_range);
                 if (!flexBasis)
                     flexBasis = consumeLengthOrPercent(m_range, m_context.mode, ValueRange::NonNegative);
