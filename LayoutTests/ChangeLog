@@ -1,3 +1,13 @@
+2022-01-18  Megan Gardner  <megan_gardner@apple.com>
+
+        Loupe sometimes flips to the bottom of the page when dragging the end of a selection to the top of a page with selection flipping.
+        https://bugs.webkit.org/show_bug.cgi?id=235220
+
+        Reviewed by Tim Horton.
+
+        * fast/events/touch/ios/long-press-then-drag-up-to-change-selected-text-overflow-expected.txt: Added.
+        * fast/events/touch/ios/long-press-then-drag-up-to-change-selected-text-overflow.html: Added.
+
 2022-01-18  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         REGRESSION (r264352): Mail compose body field does not avoid the keyboard when scrolling after focus

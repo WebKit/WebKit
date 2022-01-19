@@ -1,3 +1,20 @@
+2022-01-18  Megan Gardner  <megan_gardner@apple.com>
+
+        Loupe sometimes flips to the bottom of the page when dragging the end of a selection to the top of a page with selection flipping.
+        https://bugs.webkit.org/show_bug.cgi?id=235220
+
+        Reviewed by Tim Horton.
+
+        When selecting on an EPUB in books, if you had a selection near the top of the page,
+        and you dragged the end of the selection past the start and into the upper margin, sometimes
+        this would result in the selection ending up on the previous page of content, which would result
+        in the loupe being pushed to the bottom of the page (because the selection was on the previous page
+        at the bottom), which is incorrect. The most solid way to keep this from happening is to clamp the selection
+        to the unobscured content rect, which will keep selection from reaching back to the previous page.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::rangeForPointInRootViewCoordinates):
+
 2022-01-18  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         REGRESSION (r264352): Mail compose body field does not avoid the keyboard when scrolling after focus
