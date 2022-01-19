@@ -477,8 +477,10 @@ void EditingStyle::init(Node* node, PropertiesToInclude propertiesToInclude)
     if (node && node->computedStyle()) {
         auto* renderStyle = node->computedStyle();
         removeTextFillAndStrokeColorsIfNeeded(renderStyle);
-        if (renderStyle->fontDescription().keywordSize())
-            m_mutableStyle->setProperty(CSSPropertyFontSize, computedStyleAtPosition.getFontSizeCSSValuePreferringKeyword()->cssText());
+        if (renderStyle->fontDescription().keywordSize()) {
+            if (auto cssValue = computedStyleAtPosition.getFontSizeCSSValuePreferringKeyword())
+                m_mutableStyle->setProperty(CSSPropertyFontSize, cssValue->cssText());
+        }
     }
 
     m_shouldUseFixedDefaultFontSize = computedStyleAtPosition.useFixedFontDefaultSize();
