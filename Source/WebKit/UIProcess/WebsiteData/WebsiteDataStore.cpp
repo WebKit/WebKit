@@ -1747,7 +1747,8 @@ void WebsiteDataStore::getNetworkProcessConnection(WebProcessProxy& webProcessPr
                     networkProcessIdentifier = networkProcessProxy->processIdentifier();
                     networkProcessState = networkProcessProxy->stateString();
                 }
-                RELEASE_ASSERT_NOT_REACHED_WITH_MESSAGE("WebsiteDataStore::getNetworkProcessConnection: Failed to get connection - networkProcessProxy=%p, networkProcessIdentifier=%d, processState=%s, webProcessProxy=%p, webProcessIdentifier=%d", networkProcessProxy.get(), networkProcessIdentifier, networkProcessState.utf8().data(), webProcessProxy.get(), webProcessProxy->processIdentifier());
+                RELEASE_LOG_ERROR(Process, "WebsiteDataStore::getNetworkProcessConnection: Failed to get connection - networkProcessProxy=%p, networkProcessIdentifier=%d, processState=%s, webProcessProxy=%p, webProcessIdentifier=%d", networkProcessProxy.get(), networkProcessIdentifier, networkProcessState.utf8().data(), webProcessProxy.get(), webProcessProxy->processIdentifier());
+                RELEASE_ASSERT_NOT_REACHED();
 #endif
             };
 
