@@ -1,3 +1,15 @@
+2022-01-19  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        Fix -Wreturn-type and -Wunused-parameter warnings, January 2022 edition
+        https://bugs.webkit.org/show_bug.cgi?id=235336
+
+        Reviewed by Adrian Perez de Castro.
+
+        * wasm/WasmCompilationMode.h:
+        (JSC::Wasm::isOSREntry):
+        (JSC::Wasm::isAnyBBQ):
+        (JSC::Wasm::isAnyOMG):
+
 2022-01-18  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Remove Wasm::Table's m_mask

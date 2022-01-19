@@ -44,7 +44,7 @@ bool validateP256DHPublicKey(Span<const uint8_t>)
     return false;
 }
 
-std::optional<Vector<uint8_t>> computeP256DHSharedSecret(Span<const uint8_t> publicKey, const P256DHKeyPair& keyPair)
+std::optional<Vector<uint8_t>> computeP256DHSharedSecret(Span<const uint8_t>, const P256DHKeyPair&)
 {
     return std::nullopt;
 }

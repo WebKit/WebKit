@@ -688,7 +688,7 @@ static double lengthOfViewportPhysicalAxisForLogicalAxis(LogicalBoxAxis logicalA
         return size.height();
     }
 
-    ASSERT_NOT_REACHED();
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 static double lengthOfViewportPhysicalAxisForLogicalAxis(LogicalBoxAxis logicalAxis, const FloatSize& size, const RenderView& renderView)

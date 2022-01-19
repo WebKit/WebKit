@@ -61,6 +61,8 @@ std::unique_ptr<FilterEffectApplier> FEComponentTransfer::createApplier(const Fi
 #if USE(CORE_IMAGE)
     if (filter.renderingMode() == RenderingMode::Accelerated)
         return FilterEffectApplier::create<FEComponentTransferCoreImageApplier>(*this);
+#else
+    UNUSED_PARAM(filter);
 #endif
     return FilterEffectApplier::create<FEComponentTransferSoftwareApplier>(*this);
 }

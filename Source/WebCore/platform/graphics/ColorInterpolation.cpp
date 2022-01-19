@@ -81,6 +81,7 @@ std::pair<float, float> fixupHueComponentsPriorToInterpolation(HueInterpolationM
     case HueInterpolationMethod::Specified:
         return normalizeAnglesUsingSpecifiedAlgorithm(component1, component2);
     }
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 }

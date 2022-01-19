@@ -126,6 +126,7 @@ inline Color interpolateColors(ColorInterpolationMethod colorInterpolationMethod
             case AlphaPremultiplication::Unpremultiplied:
                 return makeCanonicalColor(interpolateColorComponents<AlphaPremultiplication::Unpremultiplied>(colorSpace, color1.toColorTypeLossy<ColorType>(), color1Multiplier, color2.toColorTypeLossy<ColorType>(), color2Multiplier));
             }
+            RELEASE_ASSERT_NOT_REACHED();
         }
     );
 }

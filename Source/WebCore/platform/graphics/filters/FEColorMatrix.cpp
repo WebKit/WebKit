@@ -115,6 +115,8 @@ std::unique_ptr<FilterEffectApplier> FEColorMatrix::createApplier(const Filter& 
 #if USE(CORE_IMAGE)
     if (filter.renderingMode() == RenderingMode::Accelerated)
         return FilterEffectApplier::create<FEColorMatrixCoreImageApplier>(*this);
+#else
+    UNUSED_PARAM(filter);
 #endif
     return FilterEffectApplier::create<FEColorMatrixSoftwareApplier>(*this);
 }

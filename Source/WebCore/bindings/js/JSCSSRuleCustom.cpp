@@ -102,6 +102,7 @@ JSValue toJSNewlyCreated(JSGlobalObject*, JSDOMGlobalObject* globalObject, Ref<C
     case StyleRuleType::Margin:
         return createWrapper<CSSRule>(globalObject, WTFMove(rule));
     }
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 JSValue toJS(JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, CSSRule& object)

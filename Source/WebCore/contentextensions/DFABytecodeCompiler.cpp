@@ -105,6 +105,7 @@ static size_t toSizeT(DFABytecodeFlagsSize size)
     case DFABytecodeFlagsSize::UInt24:
         return UInt24Size;
     }
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 static size_t toSizeT(DFABytecodeActionSize size)
@@ -119,6 +120,7 @@ static size_t toSizeT(DFABytecodeActionSize size)
     case DFABytecodeActionSize::UInt32:
         return sizeof(uint32_t);
     }
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 static size_t appendActionBytecodeSize(uint64_t action)

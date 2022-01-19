@@ -1360,6 +1360,7 @@ static Ref<CSSPrimitiveValue> valueForAnimationDirection(Animation::AnimationDir
     case Animation::AnimationDirectionAlternateReverse:
         return CSSValuePool::singleton().createIdentifierValue(CSSValueAlternateReverse);
     }
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 static Ref<CSSPrimitiveValue> valueForAnimationFillMode(AnimationFillMode fillMode)
@@ -1374,6 +1375,7 @@ static Ref<CSSPrimitiveValue> valueForAnimationFillMode(AnimationFillMode fillMo
     case AnimationFillMode::Both:
         return CSSValuePool::singleton().createIdentifierValue(CSSValueBoth);
     }
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 static Ref<CSSPrimitiveValue> valueForAnimationPlayState(AnimationPlayState playState)
@@ -1384,6 +1386,7 @@ static Ref<CSSPrimitiveValue> valueForAnimationPlayState(AnimationPlayState play
     case AnimationPlayState::Paused:
         return CSSValuePool::singleton().createIdentifierValue(CSSValuePaused);
     }
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 static Ref<CSSPrimitiveValue> valueForAnimationName(const Animation::Name& name)

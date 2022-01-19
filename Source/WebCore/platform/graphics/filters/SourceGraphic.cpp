@@ -47,6 +47,8 @@ std::unique_ptr<FilterEffectApplier> SourceGraphic::createApplier(const Filter& 
     // FIXME: return SourceGraphicCoreImageApplier.
     if (filter.renderingMode() == RenderingMode::Accelerated)
         return FilterEffectApplier::create<SourceGraphicCoreImageApplier>(*this);
+#else
+    UNUSED_PARAM(filter);
 #endif
     return FilterEffectApplier::create<SourceGraphicSoftwareApplier>(*this);
 }
