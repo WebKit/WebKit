@@ -1400,7 +1400,25 @@ private:
         case ArithAbs: {
             if (node->child1().useKind() != Int32Use)
                 break;
-            setRelationship(Relationship(node, m_zero, Relationship::GreaterThan, -1));
+
+            // If ArithAbs cares about overflow, then INT32_MIN input will cause OSR exit.
+            // Thus we can safely say `x >= 0`.
+            if (shouldCheckOverflow(node->arithMode())) {
+                setRelationship(Relationship(node, m_zero, Relationship::GreaterThan, -1));
+                break;
+            }
+
+            // If ArithAbs does not care about overflow, it can return INT32_MIN if the input is INT32_MIN.
+            // If minValue is not INT32_MIN, we can still say it is `x >= 0`.
+            int minValue = std::numeric_limits<int>::min();
+            auto iter = m_relationships.find(node->child1().node());
+            if (iter != m_relationships.end()) {
+                for (Relationship relationship : iter->value)
+                    minValue = std::max(minValue, relationship.minValueOfLeft());
+            }
+
+            if (minValue > std::numeric_limits<int>::min())
+                setRelationship(Relationship(node, m_zero, Relationship::GreaterThan, -1));
             break;
         }
             
