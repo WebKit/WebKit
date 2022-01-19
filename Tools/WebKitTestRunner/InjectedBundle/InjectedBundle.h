@@ -36,7 +36,7 @@
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 
-#if HAVE(ACCESSIBILITY)
+#if ENABLE(ACCESSIBILITY)
 #include "AccessibilityController.h"
 #endif
 
@@ -57,7 +57,7 @@ public:
     GCController* gcController() { return m_gcController.get(); }
     EventSendingController* eventSendingController() { return m_eventSendingController.get(); }
     TextInputController* textInputController() { return m_textInputController.get(); }
-#if HAVE(ACCESSIBILITY)
+#if ENABLE(ACCESSIBILITY)
     AccessibilityController* accessibilityController() { return m_accessibilityController.get(); }
 #endif
 
@@ -172,7 +172,7 @@ private:
     WKRetainPtr<WKBundleRef> m_bundle;
     Vector<std::unique_ptr<InjectedBundlePage>> m_pages;
 
-#if HAVE(ACCESSIBILITY)
+#if ENABLE(ACCESSIBILITY)
     RefPtr<AccessibilityController> m_accessibilityController;
 #endif
     RefPtr<TestRunner> m_testRunner;

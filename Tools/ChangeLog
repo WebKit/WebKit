@@ -1,3 +1,47 @@
+2022-01-18  Don Olmstead  <don.olmstead@sony.com>
+
+        Replace all uses of HAVE_ACCESSIBILITY with ENABLE_ACCESSIBILITY
+        https://bugs.webkit.org/show_bug.cgi?id=235335
+
+        Reviewed by Ross Kirsling.
+
+        Does a find/replace in Tools to move from HAVE_ACCESSIBILITY to ENABLE_ACCESSIBILITY. The
+        same is done with HAVE(ACCESSIBILITY) with instances replaced by ENABLE(ACCESSIBILITY).
+
+        * DumpRenderTree/AccessibilityController.cpp:
+        * DumpRenderTree/AccessibilityController.h:
+        * DumpRenderTree/AccessibilityUIElement.cpp:
+        * DumpRenderTree/AccessibilityUIElement.h:
+        * MiniBrowser/wpe/main.cpp:
+        (main):
+        * WebKitTestRunner/InjectedBundle/AccessibilityController.h:
+        * WebKitTestRunner/InjectedBundle/AccessibilityUIElement.cpp:
+        * WebKitTestRunner/InjectedBundle/AccessibilityUIElement.h:
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::beginTesting):
+        (WTR::InjectedBundle::done):
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.h:
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::InjectedBundlePage::didClearWindowForFrame):
+        * WebKitTestRunner/InjectedBundle/atk/AccessibilityControllerAtk.cpp:
+        * WebKitTestRunner/InjectedBundle/atk/AccessibilityNotificationHandlerAtk.cpp:
+        * WebKitTestRunner/InjectedBundle/atk/AccessibilityNotificationHandlerAtk.h:
+        * WebKitTestRunner/InjectedBundle/atk/AccessibilityUIElementAtk.cpp:
+        * WebKitTestRunner/InjectedBundle/atspi/AccessibilityControllerAtspi.cpp:
+        * WebKitTestRunner/InjectedBundle/atspi/AccessibilityNotificationHandler.cpp:
+        * WebKitTestRunner/InjectedBundle/atspi/AccessibilityNotificationHandler.h:
+        * WebKitTestRunner/InjectedBundle/atspi/AccessibilityUIElementAtspi.cpp:
+        * WebKitTestRunner/InjectedBundle/mac/AccessibilityUIElementMac.mm:
+        * WebKitTestRunner/InjectedBundle/win/AccessibilityControllerWin.cpp:
+        * WebKitTestRunner/InjectedBundle/win/AccessibilityUIElementWin.cpp:
+        * wpe/backends/PlatformWPE.cmake:
+        * wpe/backends/ViewBackend.cpp:
+        (WPEToolingBackends::ViewBackend::dispatchInputKeyboardEvent):
+        * wpe/backends/ViewBackend.h:
+        * wpe/backends/atk/ViewBackendAtk.cpp:
+        * wpe/backends/atk/WebKitAccessibleApplication.cpp:
+        * wpe/backends/atk/WebKitAccessibleApplication.h:
+
 2022-01-18  Alex Christensen  <achristensen@webkit.org>
 
         Build WebKitSwift when building with make or build-webkit

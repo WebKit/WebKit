@@ -511,7 +511,7 @@ void InjectedBundle::beginTesting(WKDictionaryRef settings, BegingTestingMode te
     m_gcController = GCController::create();
     m_eventSendingController = EventSendingController::create();
     m_textInputController = TextInputController::create();
-#if HAVE(ACCESSIBILITY)
+#if ENABLE(ACCESSIBILITY)
     m_accessibilityController = AccessibilityController::create();
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     m_accessibilityController->setIsolatedTreeMode(m_accessibilityIsolatedTreeMode);
@@ -559,7 +559,7 @@ void InjectedBundle::done()
     page()->stopLoading();
     setTopLoadingFrame(0);
 
-#if HAVE(ACCESSIBILITY)
+#if ENABLE(ACCESSIBILITY)
     m_accessibilityController->resetToConsistentState();
 #endif
 

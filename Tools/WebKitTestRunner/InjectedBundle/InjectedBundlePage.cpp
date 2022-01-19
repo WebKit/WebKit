@@ -916,7 +916,7 @@ void InjectedBundlePage::didClearWindowForFrame(WKBundleFrameRef frame, WKBundle
     injectedBundle.gcController()->makeWindowObject(context);
     injectedBundle.eventSendingController()->makeWindowObject(context);
     injectedBundle.textInputController()->makeWindowObject(context);
-#if HAVE(ACCESSIBILITY)
+#if ENABLE(ACCESSIBILITY)
     injectedBundle.accessibilityController()->makeWindowObject(context);
 #endif
 

@@ -36,7 +36,7 @@ ViewBackend::ViewBackend(uint32_t width, uint32_t height)
 
 ViewBackend::~ViewBackend() = default;
 
-#if !(defined(HAVE_ACCESSIBILITY) && HAVE_ACCESSIBILITY)
+#if !(defined(ENABLE_ACCESSIBILITY) && ENABLE_ACCESSIBILITY)
 void ViewBackend::initializeAccessibility()
 {
 }
@@ -44,7 +44,7 @@ void ViewBackend::initializeAccessibility()
 void ViewBackend::updateAccessibilityState(uint32_t previousFlags)
 {
 }
-#endif // !HAVE(ACCESSIBILITY)
+#endif // !ENABLE(ACCESSIBILITY)
 
 void ViewBackend::setInputClient(std::unique_ptr<InputClient>&& client)
 {
@@ -81,7 +81,7 @@ void ViewBackend::dispatchInputAxisEvent(struct wpe_input_axis_event* event)
 
 void ViewBackend::dispatchInputKeyboardEvent(struct wpe_input_keyboard_event* event)
 {
-#if defined(HAVE_ACCESSIBILITY) && HAVE_ACCESSIBILITY
+#if defined(ENABLE_ACCESSIBILITY) && ENABLE_ACCESSIBILITY
     notifyAccessibilityKeyEventListeners(event);
 #endif
 

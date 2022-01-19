@@ -28,7 +28,7 @@
 #include "config.h"
 #include "AccessibilityNotificationHandler.h"
 
-#if HAVE(ACCESSIBILITY) && USE(ATSPI)
+#if ENABLE(ACCESSIBILITY) && USE(ATSPI)
 #include "InjectedBundlePage.h"
 #include "JSWrapper.h"
 #include <JavaScriptCore/OpaqueJSString.h>
@@ -101,4 +101,4 @@ AccessibilityNotificationHandler::~AccessibilityNotificationHandler()
 
 } // namespace WTR
 
-#endif // HAVE(ACCESSIBILITY) && USE(ATSPI)
+#endif // ENABLE(ACCESSIBILITY) && USE(ATSPI)

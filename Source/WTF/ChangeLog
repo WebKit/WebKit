@@ -1,3 +1,15 @@
+2022-01-18  Don Olmstead  <don.olmstead@sony.com>
+
+        Replace all uses of HAVE_ACCESSIBILITY with ENABLE_ACCESSIBILITY
+        https://bugs.webkit.org/show_bug.cgi?id=235335
+
+        Reviewed by Ross Kirsling.
+
+        Remove the setting of HAVE_ACCESSIBILITY. All code is now using ENABLE_ACCESSIBILITY
+        instead.
+
+        * wtf/PlatformHave.h:
+
 2022-01-18  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Unreviewed, disable jit-heap on non Darwin

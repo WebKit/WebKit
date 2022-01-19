@@ -25,7 +25,7 @@
 
 #include "config.h"
 
-#if HAVE(ACCESSIBILITY)
+#if ENABLE(ACCESSIBILITY)
 
 #include "AccessibilityUIElement.h"
 

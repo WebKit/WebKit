@@ -50,8 +50,8 @@ add_custom_command(
 
 if (ENABLE_ACCESSIBILITY)
     list(APPEND WPEToolingBackends_PRIVATE_DEFINITIONS
+        ENABLE_ACCESSIBILITY=1
         GLIB_VERSION_MIN_REQUIRED=GLIB_VERSION_2_40
-        HAVE_ACCESSIBILITY=1
     )
     list(APPEND WPEToolingBackends_LIBRARIES ATK::Bridge)
 endif ()

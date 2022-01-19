@@ -92,14 +92,14 @@ bool AccessibilityUIElement::isInList() const { return false; }
 #endif
     
 // Unsupported methods on various platforms. As they're implemented on other platforms this list should be modified.
-#if PLATFORM(COCOA) || !HAVE(ACCESSIBILITY)
+#if PLATFORM(COCOA) || !ENABLE(ACCESSIBILITY)
 JSRetainPtr<JSStringRef> AccessibilityUIElement::characterAtOffset(int) { return nullptr; }
 JSRetainPtr<JSStringRef> AccessibilityUIElement::wordAtOffset(int) { return nullptr; }
 JSRetainPtr<JSStringRef> AccessibilityUIElement::lineAtOffset(int) { return nullptr; }
 JSRetainPtr<JSStringRef> AccessibilityUIElement::sentenceAtOffset(int) { return nullptr; }
 #endif
 
-#if !PLATFORM(MAC) || !HAVE(ACCESSIBILITY)
+#if !PLATFORM(MAC) || !ENABLE(ACCESSIBILITY)
 int AccessibilityUIElement::lineIndexForTextMarker(AccessibilityTextMarker*) const { return -1; }
 RefPtr<AccessibilityTextMarkerRange> AccessibilityUIElement::textMarkerRangeForRange(unsigned, unsigned) { return nullptr; }
 RefPtr<AccessibilityTextMarkerRange> AccessibilityUIElement::selectedTextMarkerRange() { return nullptr; }
@@ -111,7 +111,7 @@ bool AccessibilityUIElement::isOnScreen() const { return true; }
 JSValueRef AccessibilityUIElement::mathRootRadicand() const { return { }; }
 #endif
 
-#if !PLATFORM(COCOA) || !HAVE(ACCESSIBILITY)
+#if !PLATFORM(COCOA) || !ENABLE(ACCESSIBILITY)
 RefPtr<AccessibilityUIElement> AccessibilityUIElement::focusedElement() const { return nullptr; }
 
 bool AccessibilityUIElement::hasDocumentRoleAncestor() const { return false; }
@@ -140,7 +140,7 @@ JSValueRef AccessibilityUIElement::detailsElements() const { return { }; }
 JSValueRef AccessibilityUIElement::errorMessageElements() const { return { }; }
 JSValueRef AccessibilityUIElement::imageOverlayElements() const { return { }; }
 JSRetainPtr<JSStringRef> AccessibilityUIElement::embeddedImageDescription() const { return nullptr; }
-#endif // !PLATFORM(COCOA) || !HAVE(ACCESSIBILITY)
+#endif // !PLATFORM(COCOA) || !ENABLE(ACCESSIBILITY)
 
 } // namespace WTR
 #endif // ENABLE(ACCESSIBILITY)

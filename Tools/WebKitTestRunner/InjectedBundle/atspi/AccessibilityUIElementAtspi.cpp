@@ -26,7 +26,7 @@
 #include "config.h"
 #include "AccessibilityUIElement.h"
 
-#if HAVE(ACCESSIBILITY) && USE(ATSPI)
+#if ENABLE(ACCESSIBILITY) && USE(ATSPI)
 #include "AccessibilityNotificationHandler.h"
 #include "InjectedBundle.h"
 #include "InjectedBundlePage.h"
@@ -1706,4 +1706,4 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::popupValue() const
 
 } // namespace WTR
 
-#endif // HAVE(ACCESSIBILITY) && USE(ATSPI)
+#endif // ENABLE(ACCESSIBILITY) && USE(ATSPI)

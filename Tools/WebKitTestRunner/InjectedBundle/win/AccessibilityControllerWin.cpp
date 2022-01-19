@@ -26,7 +26,7 @@
 #include "config.h"
 #include "AccessibilityController.h"
 
-#if HAVE(ACCESSIBILITY)
+#if ENABLE(ACCESSIBILITY)
 
 #include "AccessibilityUIElement.h"
 #include <WebCore/NotImplemented.h>
@@ -81,4 +81,4 @@ bool AccessibilityController::removeNotificationListener()
 
 } // namespace WTR
 
-#endif // HAVE(ACCESSIBILITY)
+#endif // ENABLE(ACCESSIBILITY)

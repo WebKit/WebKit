@@ -42,12 +42,12 @@ OBJC_CLASS NSArray;
 OBJC_CLASS NSString;
 #include <wtf/RetainPtr.h>
 using PlatformUIElement = id;
-#elif HAVE(ACCESSIBILITY) && USE(ATK)
+#elif ENABLE(ACCESSIBILITY) && USE(ATK)
 #include "AccessibilityNotificationHandlerAtk.h"
 #include <atk/atk.h>
 #include <wtf/glib/GRefPtr.h>
 typedef GRefPtr<AtkObject> PlatformUIElement;
-#elif HAVE(ACCESSIBILITY) && USE(ATSPI)
+#elif ENABLE(ACCESSIBILITY) && USE(ATSPI)
 namespace WebCore {
 class AccessibilityObjectAtspi;
 }
@@ -78,7 +78,7 @@ public:
 
 #if PLATFORM(COCOA)
     id platformUIElement() { return m_element.get(); }
-#elif HAVE(ACCESSIBILITY) && USE(ATSPI)
+#elif ENABLE(ACCESSIBILITY) && USE(ATSPI)
     PlatformUIElement platformUIElement() { return m_element.get(); }
 #else
     PlatformUIElement platformUIElement() { return m_element; }
@@ -417,7 +417,7 @@ private:
 #endif
 
     // A retained, platform specific object used to help manage notifications for this object.
-#if HAVE(ACCESSIBILITY)
+#if ENABLE(ACCESSIBILITY)
 #if PLATFORM(COCOA)
     RetainPtr<id> m_element;
     RetainPtr<id> m_notificationHandler;

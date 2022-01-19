@@ -43,7 +43,7 @@ OBJC_CLASS NSString;
 #include <WebCore/COMPtr.h>
 #include <oleacc.h>
 typedef COMPtr<IAccessible> PlatformUIElement;
-#elif HAVE(ACCESSIBILITY) && PLATFORM(GTK)
+#elif ENABLE(ACCESSIBILITY) && PLATFORM(GTK)
 #include "AccessibilityNotificationHandlerAtk.h"
 #include <atk/atk.h>
 typedef AtkObject* PlatformUIElement;
@@ -358,7 +358,7 @@ private:
     RetainPtr<id> m_notificationHandler;
 #endif
 
-#if HAVE(ACCESSIBILITY) && PLATFORM(GTK)
+#if ENABLE(ACCESSIBILITY) && PLATFORM(GTK)
     RefPtr<AccessibilityNotificationHandler> m_notificationHandler;
 #endif
 };

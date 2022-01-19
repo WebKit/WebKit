@@ -26,7 +26,7 @@
 #include "config.h"
 #include "AccessibilityUIElement.h"
 
-#if HAVE(ACCESSIBILITY)
+#if ENABLE(ACCESSIBILITY)
 
 #include <WebCore/NotImplemented.h>
 
@@ -1011,4 +1011,4 @@ bool AccessibilityUIElement::insertText(JSStringRef)
 
 } // namespace  WTF
 
-#endif // HAVE(ACCESSIBILITY)
+#endif // ENABLE(ACCESSIBILITY)

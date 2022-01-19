@@ -31,7 +31,7 @@
 #include <memory>
 #include <wpe/webkit.h>
 
-#if defined(HAVE_ACCESSIBILITY) && HAVE_ACCESSIBILITY
+#if defined(ENABLE_ACCESSIBILITY) && ENABLE_ACCESSIBILITY
 #include <atk/atk.h>
 #endif
 
@@ -299,7 +299,7 @@ int main(int argc, char *argv[])
     g_object_unref(settings);
 
     backendPtr->setInputClient(std::make_unique<InputClient>(loop, webView));
-#if defined(HAVE_ACCESSIBILITY) && HAVE_ACCESSIBILITY
+#if defined(ENABLE_ACCESSIBILITY) && ENABLE_ACCESSIBILITY
     auto* accessible = wpe_view_backend_dispatch_get_accessible(wpeBackend);
     if (ATK_IS_OBJECT(accessible))
         backendPtr->setAccessibleChild(ATK_OBJECT(accessible));

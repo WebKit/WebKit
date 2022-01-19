@@ -25,7 +25,7 @@
 
 #include "ViewBackend.h"
 
-#if defined(HAVE_ACCESSIBILITY) && HAVE_ACCESSIBILITY
+#if defined(ENABLE_ACCESSIBILITY) && ENABLE_ACCESSIBILITY
 
 #include "WebKitAccessibleApplication.h"
 #include <atk-bridge.h>
@@ -185,4 +185,4 @@ void ViewBackend::setAccessibleChild(AtkObject* child)
 
 } // namespace WPEToolingBackends
 
-#endif // HAVE(ACCESSIBILITY)
+#endif // ENABLE(ACCESSIBILITY)

@@ -19,7 +19,7 @@
 
 #pragma once
 
-#if HAVE(ACCESSIBILITY) && USE(ATK)
+#if ENABLE(ACCESSIBILITY) && USE(ATK)
 
 #include <JavaScriptCore/JSObjectRef.h>
 #include <atk/atk.h>
@@ -53,4 +53,4 @@ private:
 
 } // namespace WTR
 
-#endif // HAVE(ACCESSIBILITY) && USE(ATK)
+#endif // ENABLE(ACCESSIBILITY) && USE(ATK)

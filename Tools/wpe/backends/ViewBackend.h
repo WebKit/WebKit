@@ -28,7 +28,7 @@
 #include <memory>
 #include <wpe/fdo.h>
 
-#if defined(HAVE_ACCESSIBILITY) && HAVE_ACCESSIBILITY
+#if defined(ENABLE_ACCESSIBILITY) && ENABLE_ACCESSIBILITY
 typedef struct _AtkObject AtkObject;
 #endif
 
@@ -64,7 +64,7 @@ public:
         virtual bool dispatchTouchEvent(struct wpe_input_touch_event*) { return false; }
     };
     void setInputClient(std::unique_ptr<InputClient>&&);
-#if defined(HAVE_ACCESSIBILITY) && HAVE_ACCESSIBILITY
+#if defined(ENABLE_ACCESSIBILITY) && ENABLE_ACCESSIBILITY
     void setAccessibleChild(AtkObject*);
 #endif
 
@@ -76,7 +76,7 @@ protected:
 
     void initializeAccessibility();
     void updateAccessibilityState(uint32_t);
-#if defined(HAVE_ACCESSIBILITY) && HAVE_ACCESSIBILITY
+#if defined(ENABLE_ACCESSIBILITY) && ENABLE_ACCESSIBILITY
     static void notifyAccessibilityKeyEventListeners(struct wpe_input_keyboard_event* event);
 #endif
 
