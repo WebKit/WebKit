@@ -1,3 +1,15 @@
+2022-01-19  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        [WPE][GTK] ENABLE_JOURNALD_LOG has weird value
+        https://bugs.webkit.org/show_bug.cgi?id=235339
+
+        Reviewed by Philippe Normand.
+
+        Clean up the code that checks for journald.
+
+        * Source/cmake/OptionsGTK.cmake:
+        * Source/cmake/OptionsWPE.cmake:
+
 2022-01-18  Brandon Stewart  <brandonstewart@apple.com>
 
         Fix typos in Introduction.md
