@@ -2212,4 +2212,3 @@ imported/w3c/web-platform-tests/fetch/api/request/destination/fetch-destination-
 imported/w3c/web-platform-tests/pointerevents [ Skip ]
 pointerevents/mouse [ Failure ]
 
-webkit.org/b/235150 imported/w3c/web-platform-tests/dom/events/focus-event-document-move.html [ Failure ]
