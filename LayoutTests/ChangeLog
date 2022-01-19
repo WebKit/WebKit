@@ -1,3 +1,18 @@
+2022-01-19  Sam Sneddon  <gsnedders@apple.com>
+
+        Limit the deprecated CSSOMPrimitiveValue to formerly standardized unit types
+        https://bugs.webkit.org/show_bug.cgi?id=233651
+        <rdar://problem/85878291>
+
+        Reviewed by Darin Adler.
+
+        Updated/moved test to cover all modern length units, not just ic.
+
+        * fast/css/CSSPrimitiveValue-ic-expected.txt: Removed.
+        * fast/css/CSSPrimitiveValue-ic.html: Removed.
+        * fast/css/CSSPrimitiveValue-modern-length-expected.txt: Added.
+        * fast/css/CSSPrimitiveValue-modern-length.html: Added.
+
 2022-01-19  Jon Lee  <jonlee554@gmail.com>
 
         Unreviewed gardening of GPU Process bot

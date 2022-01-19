@@ -41,6 +41,36 @@ CSSUnitCategory unitCategory(CSSUnitType type)
     case CSSUnitType::CSS_PC:
     case CSSUnitType::CSS_Q:
     case CSSUnitType::CSS_IC:
+    case CSSUnitType::CSS_EMS:
+    case CSSUnitType::CSS_EXS:
+    case CSSUnitType::CSS_CHS:
+    case CSSUnitType::CSS_REMS:
+    case CSSUnitType::CSS_LHS:
+    case CSSUnitType::CSS_RLHS:
+    case CSSUnitType::CSS_VW:
+    case CSSUnitType::CSS_VH:
+    case CSSUnitType::CSS_VMIN:
+    case CSSUnitType::CSS_VMAX:
+    case CSSUnitType::CSS_VB:
+    case CSSUnitType::CSS_VI:
+    case CSSUnitType::CSS_SVW:
+    case CSSUnitType::CSS_SVH:
+    case CSSUnitType::CSS_SVMIN:
+    case CSSUnitType::CSS_SVMAX:
+    case CSSUnitType::CSS_SVB:
+    case CSSUnitType::CSS_SVI:
+    case CSSUnitType::CSS_LVW:
+    case CSSUnitType::CSS_LVH:
+    case CSSUnitType::CSS_LVMIN:
+    case CSSUnitType::CSS_LVMAX:
+    case CSSUnitType::CSS_LVB:
+    case CSSUnitType::CSS_LVI:
+    case CSSUnitType::CSS_DVW:
+    case CSSUnitType::CSS_DVH:
+    case CSSUnitType::CSS_DVMIN:
+    case CSSUnitType::CSS_DVMAX:
+    case CSSUnitType::CSS_DVB:
+    case CSSUnitType::CSS_DVI:
         return CSSUnitCategory::Length;
     case CSSUnitType::CSS_MS:
     case CSSUnitType::CSS_S:
@@ -58,7 +88,29 @@ CSSUnitCategory unitCategory(CSSUnitType type)
     case CSSUnitType::CSS_DPI:
     case CSSUnitType::CSS_DPCM:
         return CSSUnitCategory::Resolution;
-    default:
+    case CSSUnitType::CSS_ATTR:
+    case CSSUnitType::CSS_CALC:
+    case CSSUnitType::CSS_CALC_PERCENTAGE_WITH_LENGTH:
+    case CSSUnitType::CSS_CALC_PERCENTAGE_WITH_NUMBER:
+    case CSSUnitType::CSS_COUNTER:
+    case CSSUnitType::CSS_COUNTER_NAME:
+    case CSSUnitType::CSS_DIMENSION:
+    case CSSUnitType::CSS_FONT_FAMILY:
+    case CSSUnitType::CSS_FR:
+    case CSSUnitType::CSS_IDENT:
+    case CSSUnitType::CSS_PAIR:
+    case CSSUnitType::CSS_PROPERTY_ID:
+    case CSSUnitType::CSS_QUAD:
+    case CSSUnitType::CSS_QUIRKY_EMS:
+    case CSSUnitType::CSS_RECT:
+    case CSSUnitType::CSS_RGBCOLOR:
+    case CSSUnitType::CSS_SHAPE:
+    case CSSUnitType::CSS_STRING:
+    case CSSUnitType::CSS_UNICODE_RANGE:
+    case CSSUnitType::CSS_UNKNOWN:
+    case CSSUnitType::CSS_URI:
+    case CSSUnitType::CSS_VALUE_ID:
+    case CSSUnitType::CustomIdent:
         return CSSUnitCategory::Other;
     }
 }
@@ -80,7 +132,7 @@ CSSUnitType canonicalUnitTypeForCategory(CSSUnitCategory category)
         return CSSUnitType::CSS_HZ;
     case CSSUnitCategory::Resolution:
         return CSSUnitType::CSS_DPPX;
-    default:
+    case CSSUnitCategory::Other:
         return CSSUnitType::CSS_UNKNOWN;
     }
 }
