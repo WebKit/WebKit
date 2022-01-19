@@ -238,7 +238,8 @@ Ref<SharedBuffer> SharedBuffer::copy() const
 
 void SharedBuffer::forEachSegment(const Function<void(const Span<const uint8_t>&)>& apply) const
 {
-    for (auto& segment : m_segments)
+    auto segments = m_segments;
+    for (auto& segment : segments)
         apply(Span { segment.segment->data(), segment.segment->size() });
 }
 
