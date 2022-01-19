@@ -1,0 +1,35 @@
+<style>
+    .container {
+        width: 90px;
+        height: 90px;
+        display: inline-block;
+        background-color: black;
+        margin: 10px;
+    }
+    .box {
+        width: 100px;
+        height: 100px;
+        display: inline-block;
+        background-color: green;
+    }
+</style>
+<body>
+    <div>
+        <div class="container" style="transform: translate(-10px, -10px);">
+            <div class="box" style="transform: translate(10px, 10px);"></div>
+        </div>
+
+        <div class="container" style="transform: translate(30px, -10px);">
+            <div class="box" style="transform: translate(-20px, 10px);"></div>
+        </div>
+    </div>
+    <div>
+        <div class="container" style="transform: translate(-10px, 30px);">
+            <div class="box" style="transform: translate(10px, -20px);"></div>
+        </div>
+
+        <div class="container" style="transform: translate(30px, 30px);">
+            <div class="box" style="transform: translate(-20px, -20px);"></div>
+        </div>
+    </div>
+</body>

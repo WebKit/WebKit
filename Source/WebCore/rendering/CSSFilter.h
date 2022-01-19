@@ -30,10 +30,7 @@
 
 namespace WebCore {
 
-class FilterEffect;
 class FilterOperations;
-class GraphicsContext;
-class ReferenceFilterOperation;
 class RenderElement;
 class SourceGraphic;
 

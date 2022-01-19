@@ -120,9 +120,9 @@ FloatRect FEGaussianBlur::calculateImageRect(const Filter& filter, const FilterI
     return filter.clipToMaxEffectRect(imageRect, primitiveSubregion);
 }
 
-IntOutsets FEGaussianBlur::outsets() const
+IntOutsets FEGaussianBlur::outsets(const Filter& filter) const
 {
-    IntSize outsetSize = calculateOutsetSize({ m_stdX, m_stdY });
+    IntSize outsetSize = calculateOutsetSize(filter.resolvedSize({ m_stdX, m_stdY }));
     return { outsetSize.height(), outsetSize.width(), outsetSize.height(), outsetSize.width() };
 }
 

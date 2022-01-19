@@ -52,7 +52,6 @@ RefPtr<SVGFilter> SVGFilter::create(SVGFilterElement& filterElement, SVGFilterBu
     if (!filter->supportsCoreImageRendering())
         filter->setRenderingMode(RenderingMode::Unaccelerated);
 #endif
-
     return filter;
 }
 
@@ -96,13 +95,6 @@ bool SVGFilter::supportsCoreImageRendering() const
     return true;
 }
 #endif
-
-RefPtr<FilterEffect> SVGFilter::lastEffect() const
-{
-    if (m_expression.isEmpty())
-        return nullptr;
-    return m_expression.last().effect.ptr();
-}
 
 FilterEffectVector SVGFilter::effectsOfType(FilterFunction::Type filterType) const
 {
@@ -161,8 +153,10 @@ RefPtr<FilterImage> SVGFilter::apply(FilterImage* sourceImage, FilterResults& re
 
 IntOutsets SVGFilter::outsets() const
 {
-    ASSERT(lastEffect());
-    return lastEffect()->outsets();
+    IntOutsets outsets;
+    for (auto& term : m_expression)
+        outsets += term.effect->outsets(*this);
+    return outsets;
 }
 
 TextStream& SVGFilter::externalRepresentation(TextStream& ts, FilterRepresentation representation) const

@@ -1,0 +1,63 @@
+<style>
+    .box {
+        width: 100px;
+        height: 100px;
+        display: inline-block;
+        background-color: green;
+        margin: 10px;
+    }
+</style>
+<body>
+    <div>
+        <svg style="position: absolute; top: -999999px" xmlns="http://www.w3.org/2000/svg">
+            <filter id="svgDropShadow1">
+                <feOffset dx="-20" dy="-20" result="offsetSource"/>
+                <feFlood flood-color="black"/>
+                <feComposite in2="offsetSource" operator="in"/>
+                <feMerge>
+                    <feMergeNode/>
+                    <feMergeNode in="SourceGraphic"/>
+                </feMerge>
+            </filter>
+        </svg>
+        <div class="box" style="filter: url(#svgDropShadow1);"></div>
+        <svg style="position: absolute; top: -999999px" xmlns="http://www.w3.org/2000/svg">
+            <filter id="svgDropShadow2">
+                <feOffset dx="20" dy="-20" result="offsetSource"/>
+                <feFlood flood-color="black"/>
+                <feComposite in2="offsetSource" operator="in"/>
+                <feMerge>
+                    <feMergeNode/>
+                    <feMergeNode in="SourceGraphic"/>
+                </feMerge>
+            </filter>
+        </svg>
+        <div class="box" style="filter: url(#svgDropShadow2);"></div>
+    </div>
+    <div>
+        <svg style="position: absolute; top: -999999px" xmlns="http://www.w3.org/2000/svg">
+            <filter id="svgDropShadow3">
+                <feOffset dx="-20" dy="20" result="offsetSource"/>
+                <feFlood flood-color="black"/>
+                <feComposite in2="offsetSource" operator="in"/>
+                <feMerge>
+                    <feMergeNode/>
+                    <feMergeNode in="SourceGraphic"/>
+                </feMerge>
+            </filter>
+        </svg>
+        <div class="box" style="filter: url(#svgDropShadow3);"></div>
+        <svg style="position: absolute; top: -999999px" xmlns="http://www.w3.org/2000/svg">
+            <filter id="svgDropShadow4">
+                <feOffset dx="20" dy="20" result="offsetSource"/>
+                <feFlood flood-color="black"/>
+                <feComposite in2="offsetSource" operator="in"/>
+                <feMerge>
+                    <feMergeNode/>
+                    <feMergeNode in="SourceGraphic"/>
+                </feMerge>
+            </filter>
+        </svg>
+        <div class="box" style="filter: url(#svgDropShadow4);"></div>
+    </div>
+</body>

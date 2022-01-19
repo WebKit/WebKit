@@ -55,7 +55,7 @@ private:
 
     FloatRect calculateImageRect(const Filter&, const FilterImageVector& inputs, const FloatRect& primitiveSubregion) const override;
 
-    IntOutsets outsets() const override;
+    IntOutsets outsets(const Filter&) const override;
 
     std::unique_ptr<FilterEffectApplier> createApplier(const Filter&) const override;
 

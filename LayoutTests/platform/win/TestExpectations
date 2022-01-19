@@ -127,6 +127,7 @@ webkit.org/b/74716 css3/filters/animation-from-initial-values-with-color-matrix.
 webkit.org/b/74716 css3/filters/filter-is-on-subpixel-position.html [ Skip ]
 webkit.org/b/74716 css3/masking/clip-path-filter.html [ Skip ]
 webkit.org/b/74716 css3/filters/backdrop [ Skip ]
+webkit.org/b/74716 css3/filters/reference-filter-set-filter-regions.html [ Skip ]
 
 # platformLayerTreeAsText is only implemented for Cocoa ports.
 fast/harness/platform-layer-tree-as-text.html [ Skip ]

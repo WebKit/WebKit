@@ -32,8 +32,6 @@
 #include "FEDropShadow.h"
 #include "FEGaussianBlur.h"
 #include "FilterOperations.h"
-#include "GraphicsContext.h"
-#include "LengthFunctions.h"
 #include "Logging.h"
 #include "ReferencedSVGResources.h"
 #include "RenderElement.h"
@@ -235,8 +233,10 @@ static RefPtr<SVGFilter> createSVGFilter(CSSFilter& filter, const ReferenceFilte
         return nullptr;
     }
 
+    auto filterRegion = SVGLengthContext::resolveRectangle<SVGFilterElement>(filterElement, filterElement->filterUnits(), targetBoundingBox);
+
     SVGFilterBuilder builder;
-    return SVGFilter::create(*filterElement, builder, filter.renderingMode(), filter.filterScale(), filter.clipOperation(), targetBoundingBox, targetBoundingBox);
+    return SVGFilter::create(*filterElement, builder, filter.renderingMode(), filter.filterScale(), filter.clipOperation(), filterRegion, targetBoundingBox);
 }
 
 bool CSSFilter::buildFilterFunctions(RenderElement& renderer, const FilterOperations& operations, const FloatRect& targetBoundingBox)
@@ -371,12 +371,6 @@ RefPtr<FilterImage> CSSFilter::apply(FilterImage* sourceImage, FilterResults& re
 void CSSFilter::setFilterRegion(const FloatRect& filterRegion)
 {
     Filter::setFilterRegion(filterRegion);
-
-    for (auto& function : m_functions) {
-        if (function->isSVGFilter())
-            downcast<SVGFilter>(function.ptr())->setFilterRegion(filterRegion);
-    }
-
     clampFilterRegionIfNeeded();
 }
 
@@ -389,7 +383,7 @@ IntOutsets CSSFilter::outsets() const
         return m_outsets;
 
     for (auto& function : m_functions)
-        m_outsets += function->outsets();
+        m_outsets += function->outsets(*this);
     return m_outsets;
 }
 

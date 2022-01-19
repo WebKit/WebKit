@@ -52,7 +52,7 @@ private:
 
     FloatRect calculateImageRect(const Filter&, const FilterImageVector& inputs, const FloatRect& primitiveSubregion) const override;
 
-    IntOutsets outsets() const override;
+    IntOutsets outsets(const Filter&) const override;
 
     bool resultIsAlphaImage(const FilterImageVector& inputs) const override;
 

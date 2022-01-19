@@ -60,6 +60,23 @@ FloatRect FEOffset::calculateImageRect(const Filter& filter, const FilterImageVe
     return filter.clipToMaxEffectRect(imageRect, primitiveSubregion);
 }
 
+IntOutsets FEOffset::outsets(const Filter& filter) const
+{
+    auto offset = expandedIntSize(filter.resolvedSize({ m_dx, m_dy }));
+
+    IntOutsets outsets;
+    if (offset.height() < 0)
+        outsets.setTop(-offset.height());
+    else
+        outsets.setBottom(offset.height());
+    if (offset.width() < 0)
+        outsets.setLeft(-offset.width());
+    else
+        outsets.setRight(offset.width());
+
+    return outsets;
+}
+
 bool FEOffset::resultIsAlphaImage(const FilterImageVector& inputs) const
 {
     return inputs[0]->isAlphaImage();

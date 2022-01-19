@@ -56,14 +56,14 @@ private:
 
     void setExpression(SVGFilterExpression&& expression) { m_expression = WTFMove(expression); }
 
-    RefPtr<FilterEffect> lastEffect() const;
-
 #if USE(CORE_IMAGE)
     bool supportsCoreImageRendering() const final;
 #endif
     FloatSize resolvedSize(const FloatSize&) const final;
 
     RefPtr<FilterImage> apply(const Filter&, FilterImage& sourceImage, FilterResults&) final;
+
+    IntOutsets outsets(const Filter&) const final { return outsets(); }
     IntOutsets outsets() const final;
 
     FloatRect m_targetBoundingBox;

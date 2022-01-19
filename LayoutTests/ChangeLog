@@ -1,3 +1,21 @@
+2022-01-19  Said Abou-Hallawa  <said@apple.com>
+
+        filterRegion and outsets of referenced SVG filter are calculated incorrectly
+        https://bugs.webkit.org/show_bug.cgi?id=235338
+
+        Reviewed by Darin Adler.
+
+        * css3/filters/reference-filter-outsets-expected.html: Added.
+        * css3/filters/reference-filter-outsets.html: Added.
+
+        * css3/filters/reference-filter-set-filter-regions-expected.html:
+        * css3/filters/reference-filter-set-filter-regions.html:
+        The original expected page is wrong. To test the referenced SVG filter
+        correctly, the <div> element needs to move such that all its outsets are
+        not truncated.
+
+        * platform/win/TestExpectations:
+
 2022-01-18  Jon Lee  <jonlee554@gmail.com>
 
         Unreviewed gardening of GPU Process bot tests.

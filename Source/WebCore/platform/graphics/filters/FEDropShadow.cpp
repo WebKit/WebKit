@@ -61,7 +61,7 @@ FloatRect FEDropShadow::calculateImageRect(const Filter& filter, const FilterIma
     return filter.clipToMaxEffectRect(imageRect, primitiveSubregion);
 }
 
-IntOutsets FEDropShadow::outsets() const
+IntOutsets FEDropShadow::outsets(const Filter&) const
 {
     IntSize outsetSize = FEGaussianBlur::calculateOutsetSize({ m_stdX, m_stdY });
     return {
