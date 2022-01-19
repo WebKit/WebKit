@@ -1607,7 +1607,6 @@
 		416731D1212E0430001280EB /* bitstream.c in Sources */ = {isa = PBXBuildFile; fileRef = 41CBAFA7212E03AD00DE1E1D /* bitstream.c */; };
 		416731D2212E0430001280EB /* bitstream.h in Headers */ = {isa = PBXBuildFile; fileRef = 41CBAFA6212E03AD00DE1E1D /* bitstream.h */; };
 		416731D3212E0430001280EB /* denoising.h in Headers */ = {isa = PBXBuildFile; fileRef = 41CBAFA4212E03AC00DE1E1D /* denoising.h */; };
-		416731D4212E0430001280EB /* firstpass.c in Sources */ = {isa = PBXBuildFile; fileRef = 41CBAFA9212E03AD00DE1E1D /* firstpass.c */; };
 		416731D5212E0430001280EB /* mcomp.h in Headers */ = {isa = PBXBuildFile; fileRef = 41CBAFA5212E03AC00DE1E1D /* mcomp.h */; };
 		416731D6212E0430001280EB /* pickinter.c in Sources */ = {isa = PBXBuildFile; fileRef = 41CBAFAA212E03AD00DE1E1D /* pickinter.c */; };
 		416731D7212E0430001280EB /* vp8_quantize.c in Sources */ = {isa = PBXBuildFile; fileRef = 41CBAFA8212E03AD00DE1E1D /* vp8_quantize.c */; };
@@ -17580,7 +17579,6 @@
 				41EED7802152ED8E000F2A16 /* fdct_partial_neon.c in Sources */,
 				41C62941212E2F1E002313D4 /* filter.c in Sources */,
 				41C62942212E2F1E002313D4 /* findnearmv.c in Sources */,
-				416731D4212E0430001280EB /* firstpass.c in Sources */,
 				41CB0A5C215C90750097B8AA /* fwalsh_sse2.asm in Sources */,
 				41330A19212E2BDF00280939 /* fwd_txfm.c in Sources */,
 				41EED7832152ED8E000F2A16 /* fwd_txfm_neon.c in Sources */,
