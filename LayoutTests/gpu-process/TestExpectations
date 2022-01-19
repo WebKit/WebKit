@@ -1,3 +1,4 @@
+animations/steps-transform-rendering-updates.html
 animations/stop-animation-on-suspend.html [ Pass ]
 compositing/backgrounds/fixed-backgrounds.html
 compositing/backing/solid-color-with-paints-into-ancestor.html
@@ -43,11 +44,20 @@ css3/masking/mask-svg-no-fragmentId-tiled.html
 css3/masking/reference-clip-path-objectBoundingBox-buffer-clip.html
 editing/async-clipboard/clipboard-read-basic.html
 editing/async-clipboard/clipboard-read-text-from-platform.html
+editing/async-clipboard/clipboard-read-while-pasting.html
+editing/async-clipboard/clipboard-write-items-twice.html [ Timeout ]
 editing/input/composition-underline-color.html
+editing/pasteboard/4076267-3.html
+editing/pasteboard/5075944.html
+editing/pasteboard/5665299.html
+editing/pasteboard/dom-paste/dom-paste-confirmation.html
 editing/pasteboard/dom-paste/dom-paste-consecutive-confirmations.html
+editing/pasteboard/dom-paste/dom-paste-requires-user-gesture.html
+editing/pasteboard/paste-and-sanitize.html
 editing/pasteboard/paste-dark-mode-color-filtered.html
 editing/pasteboard/smart-paste-paragraph-002.html
-editing/selection/ios/change-selection-by-tapping-with-existing-selection.html [ Pass ]
+editing/pasteboard/smart-paste-paragraph-004.html
+editing/selection/ios/change-selection-by-tapping-with-existing-selection.html [ Pass Fail ]
 fast/attachment/attachment-border-should-stay-inside-attachment.html
 fast/backgrounds/background-opaque-clipped-gradients.html
 fast/backgrounds/generated-bck-image-with-small-relative-size.html
@@ -102,6 +112,7 @@ fast/images/exif-orientation-svg-feimage.html
 fast/images/sprite-sheet-image-draw.html
 fast/inline/inline-background-clip-text-multiline.html
 fast/masking/clip-path-inset-large-radii.html
+fast/mediastream/getUserMedia-to-canvas.html [ Crash ]
 fast/overflow/line-clamp-with-text-shadow.html
 fast/replaced/border-radius-clip.html [ Pass ]
 fast/selectors/read-only-read-write-input-basics.html [ Pass ]
@@ -113,8 +124,10 @@ fast/shadow-dom/svg-linear-gradient-dynamic-update-href-in-shadow-tree.html
 fast/shadow-dom/svg-linear-gradient-href-in-shadow-tree.html
 fast/shadow-dom/svg-radial-gradient-dynamic-update-href-in-shadow-tree.html
 fast/shadow-dom/svg-radial-gradient-href-in-shadow-tree.html
+fast/shapes/shape-outside-floats/shape-outside-image-fit-003.html
 fast/shapes/shape-outside-floats/shape-outside-polygon-zero-vertex.html
 fast/shapes/shape-outside-floats/shape-outside-relative-size-svg.html
+fast/speechrecognition/start-recognition-then-stop.html
 fast/sub-pixel/float-wrap-with-subpixel-top.html [ Pass ]
 fast/sub-pixel/sub-pixel-composited-layers.html [ Pass ]
 fast/text/chinese-font-name-aliases-2.html [ Pass ]
@@ -132,7 +145,7 @@ fast/text/user-installed-fonts/shadow-postscript-family.html [ Pass ]
 fast/transforms/skew-x-135deg-with-gradient.html
 fast/transforms/skew-y-135deg-with-gradient.html
 http/tests/app-privacy-report/user-attribution-post-request.html
-http/tests/appcache/fail-on-update-2.html [ Pass ]
+http/tests/appcache/fail-on-update-2.html [ Pass Fail ]
 http/tests/resourceLoadStatistics/operating-dates-all-website-data-removed.html
 http/tests/resourceLoadStatistics/website-data-removal-for-site-navigated-to-with-link-decoration.html
 http/tests/resourceLoadStatistics/website-data-removal-for-site-without-user-interaction.html
@@ -329,6 +342,7 @@ imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-ellipse-008.
 imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-svg-text-backdrop-filter.html
 imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-svg-text-font-loading.html
 imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-clip-exclude.html
+imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-data-url-image.html
 imported/w3c/web-platform-tests/css/css-multicol/multicol-block-no-clip-001.xht
 imported/w3c/web-platform-tests/css/css-multicol/multicol-block-no-clip-002.xht
 imported/w3c/web-platform-tests/css/css-multicol/multicol-clip-001.xht
@@ -609,6 +623,7 @@ imported/w3c/web-platform-tests/css/css-writing-modes/line-box-direction-vlr-010
 imported/w3c/web-platform-tests/css/css-writing-modes/line-box-direction-vlr-013.xht
 imported/w3c/web-platform-tests/css/css-writing-modes/line-box-direction-vlr-014.xht
 imported/w3c/web-platform-tests/css/css-writing-modes/line-box-direction-vlr-018.xht
+imported/w3c/web-platform-tests/css/css-writing-modes/line-box-direction-vlr-020.xht
 imported/w3c/web-platform-tests/css/css-writing-modes/line-box-direction-vrl-002.xht
 imported/w3c/web-platform-tests/css/css-writing-modes/line-box-direction-vrl-005.xht
 imported/w3c/web-platform-tests/css/css-writing-modes/line-box-direction-vrl-006.xht
@@ -641,10 +656,15 @@ imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/canvas-cr
 imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/createImageBitmap-drawImage.html [ Pass ]
 imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/createImageBitmap-flipY.html [ Pass ]
 imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-draw-high-bit-depth-images.html [ Pass ]
+imported/w3c/web-platform-tests/html/cross-origin-opener-policy/header-parsing.https.html [ Crash ]
+imported/w3c/web-platform-tests/html/cross-origin-opener-policy/iframe-popup-same-origin-allow-popups-to-same-origin-allow-popups.https.html [ Crash ]
 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/iframe-popup-same-origin-allow-popups-to-same-origin.https.html [ Crash ]
+imported/w3c/web-platform-tests/html/cross-origin-opener-policy/iframe-popup-same-origin-to-same-origin.https.html [ Crash ]
+imported/w3c/web-platform-tests/html/cross-origin-opener-policy/iframe-popup-same-origin-to-unsafe-none.https.html [ Crash ]
 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/iframe-popup-unsafe-none-to-same-origin.https.html [ Crash ]
 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/popup-same-origin-allow-popups-with-same-site.https.html [ Crash ]
 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/popup-same-origin-with-cross-origin.https.html [ Crash ]
+imported/w3c/web-platform-tests/html/cross-origin-opener-policy/popup-same-origin-with-same-site.https.html [ Crash ]
 imported/w3c/web-platform-tests/html/dom/documents/dom-tree-accessors/document.getElementsByName/document.getElementsByName-newelements.html [ Pass ]
 imported/w3c/web-platform-tests/html/rendering/bindings/the-select-element-0/option-label.html [ Pass ]
 imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/form-controls/select-sizing-001.html [ Pass ]
@@ -666,9 +686,12 @@ imported/w3c/web-platform-tests/html/semantics/text-level-semantics/the-a-elemen
 imported/w3c/web-platform-tests/html/semantics/text-level-semantics/the-b-element/b-usage.html [ Pass ]
 imported/w3c/web-platform-tests/html/semantics/text-level-semantics/the-ruby-element/ruby-usage.html [ Pass ]
 imported/w3c/web-platform-tests/html/webappapis/scripting/events/event-handler-javascript.html [ Pass ]
+imported/w3c/web-platform-tests/intersection-observer/timestamp.html
 imported/w3c/web-platform-tests/mathml/relations/css-styling/color-005.html
 imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-no-sink.https.html [ Pass ]
 imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-peerconnection.https.html [ Pass ]
+imported/w3c/web-platform-tests/mimesniff/mime-types/charset-parameter.window.html
+imported/w3c/web-platform-tests/selection/selection-select-all-move-input-crash.html
 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-request-redirect.https.html [ Pass ]
 imported/w3c/web-platform-tests/svg/extensibility/foreignObject/masked.html
 imported/w3c/web-platform-tests/web-animations/timing-model/animations/update-playback-rate-zero.html [ Pass ]
@@ -699,6 +722,7 @@ media/video-seek-to-current-time.html [ Pass ]
 media/video-src-blob-replay.html
 media/video-src-blob-using-open-panel.html [ Pass ]
 media/vp9.html [ Pass ]
+pointerevents/mouse/pointer-event-basic-properties.html [ Timeout ]
 scrollbars/scrollevent-iframe-no-scrolling.html [ Pass ]
 storage/indexeddb/connection-leak-private.html [ Pass ]
 storage/indexeddb/connection-leak.html [ Pass ]

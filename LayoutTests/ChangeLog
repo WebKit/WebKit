@@ -1,3 +1,9 @@
+2022-01-19  Jon Lee  <jonlee554@gmail.com>
+
+        Unreviewed gardening of GPU Process bot
+
+        * gpu-process/TestExpectations:
+
 2022-01-19  Robert Jenner  <Jenner@apple.com>
 
         Unreviewed, reverting r288197.
