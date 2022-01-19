@@ -1,3 +1,81 @@
+2022-01-19  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: blackboxed call frames should be grouped everywhere
+        https://bugs.webkit.org/show_bug.cgi?id=234648
+        <rdar://problem/87018103>
+
+        Reviewed by Patrick Angle.
+
+        * UserInterface/Controllers/CallFrameTreeController.js:
+        (WI.CallFrameTreeController.prototype.groupBlackboxedCallFrames): Added.
+        (WI.CallFrameTreeController.prototype.groupBlackboxedCallFrames.displayable): Added.
+        (WI.CallFrameTreeController.prototype.set callFrames): Added.
+        * UserInterface/Views/StackTraceView.js:
+        (WI.StackTraceView):
+        * UserInterface/Views/ThreadTreeElement.js:
+        (WI.ThreadTreeElement.prototype.refresh):
+        * UserInterface/Views/TimelineDataGrid.js:
+        (WI.TimelineDataGrid.prototype._createPopoverContent):
+        (WI.TimelineDataGrid.prototype._popoverCallStackTreeElementRemoved):
+        Centralize code for creating stack trace views so that the logic that groups blackboxed call
+        frames (and the associated `WI.BlackboxedGroupTreeElement`/`WI.BlackboxedGroupView`) can be
+        shared without duplication.
+
+        * UserInterface/Views/BlackboxedGroupTreeElement.js:
+        (WI.BlackboxedGroupTreeElement):
+        (WI.BlackboxedGroupTreeElement.prototype.expand):
+        (WI.BlackboxedGroupTreeElement.prototype.customTitleTooltip): Added.
+        Add a parameter to control whether to remember when expanding blackboxed call frame groups
+        so that they can later be auto-expanded. This is needed because that feature is intended so
+        that stepping doesn't re-collapse previously expanded blackboxed call frame groups. A more
+        technical reason is that non-debugging call stacks can live (i.e. be shown) for a long time
+        and therefore there's no good way to clear the remembered state, and we probably don't want
+        to have a previous expansion in the Timelines Tab or Canvas Tab suddenly cause all matching
+        blackboxed call frame groups in the Sources Tab to always be expanded.
+        Drive-by: Override the tooltip to explain that clicking shows the blackboxed call frames.
+
+        * UserInterface/Views/BlackboxedGroupView.js: Added.
+        (WI.BlackboxedGroupView):
+        (WI.BlackboxedGroupView.generateTitle):
+        (WI.BlackboxedGroupView.generateSubtitle):
+        (WI.BlackboxedGroupView.generateTooltip):
+        * UserInterface/Views/BlackboxedGroupView.css: Added.
+        (.blackboxed-group):
+        (.blackboxed-group > *):
+        (.blackboxed-group .icon):
+        (.blackboxed-group .subtitle):
+        (.blackboxed-group .separator):
+        (@media (prefers-color-scheme: dark) .blackboxed-group .icon):
+        (@media (prefers-color-scheme: dark) .blackboxed-group .subtitle):
+        (@media (prefers-color-scheme: dark) .blackboxed-group .separator):
+        Add a non-tree UI class for showing blackboxed call frame groups (just like how there's
+        `WI.CallFrameTreeElement` for tree UIs and `WI.CallFrameView` for non-tree UIs). Also
+        centralize the UI strings for all blackboxed call frame group UIs as `static` methods.
+
+        * UserInterface/Views/BlackboxedGroupTreeElement.css:
+        (.tree-outline .item.blackboxed-group.selected > *): Added.
+        (.tree-outline:not(:focus-within) .item.blackboxed-group.selected > *, body:is(.window-inactive, .window-docked-inactive) .tree-outline .item.blackboxed-group.selected > *): Added.
+        (.tree-outline .item.blackboxed-group): Deleted.
+        (.tree-outline .item.blackboxed-group:not(.selected) > *, .tree-outline:not(:focus-within) .item.blackboxed-group.selected > *, body:is(.window-inactive, .window-docked-inactive) .tree-outline .item.blackboxed-group.selected > *): Deleted.
+        (.tree-outline .item.blackboxed-group .icon): Deleted.
+        (@media (prefers-color-scheme: dark) .tree-outline .item.blackboxed-group .icon): Deleted.
+        Share styles from `UserInterface/Views/BlackboxedGroupView.css` since both share `.blackboxed-group`.
+
+        * UserInterface/Views/CallFrameTreeElement.js:
+        Drive-by: Combine optional parameters into an `options = {}` for current code cleanliness
+                  and greater flexibility for future changes.
+
+        * UserInterface/Views/Variables.css:
+        (:root):
+        * UserInterface/Views/CallFrameTreeElement.css:
+        (.tree-outline .item.call-frame.blackboxed:not(.selected)):
+        * UserInterface/Views/CallFrameView.css:
+        (.call-frame.blackboxed > .title,):
+        Drive-by: Rename `--blackboxed-tree-item-opacity` since it's now also used outside trees.
+
+        * UserInterface/Main.html:
+        * Localizations/en.lproj/localizedStrings.js:
+
 2022-01-18  Alex Christensen  <achristensen@webkit.org>
 
         Use c++2a instead of gnu++2a for Cocoa builds

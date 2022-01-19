@@ -25,7 +25,7 @@
 
 WI.CallFrameTreeElement = class CallFrameTreeElement extends WI.GeneralTreeElement
 {
-    constructor(callFrame, isAsyncBoundaryCallFrame)
+    constructor(callFrame, {isAsyncBoundaryCallFrame} = {})
     {
         console.assert(callFrame instanceof WI.CallFrame);
 
@@ -37,7 +37,7 @@ WI.CallFrameTreeElement = class CallFrameTreeElement extends WI.GeneralTreeEleme
         this._callFrame = callFrame;
         this._isActiveCallFrame = false;
 
-        this._isAsyncBoundaryCallFrame = isAsyncBoundaryCallFrame;
+        this._isAsyncBoundaryCallFrame = isAsyncBoundaryCallFrame || false;
          if (this._isAsyncBoundaryCallFrame) {
             this.addClassName("async-boundary");
             this.selectable = false;

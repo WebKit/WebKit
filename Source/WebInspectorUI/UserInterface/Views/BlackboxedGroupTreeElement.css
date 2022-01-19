@@ -23,26 +23,17 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-.tree-outline .item.blackboxed-group {
-    cursor: pointer;
+/* Styles shared with `WI.BlackboxedGroupView`. */
+
+.tree-outline .item.blackboxed-group.selected > * {
+    opacity: unset;
 }
 
-.tree-outline .item.blackboxed-group:not(.selected) > *,
 .tree-outline:not(:focus-within) .item.blackboxed-group.selected > *,
 body:is(.window-inactive, .window-docked-inactive) .tree-outline .item.blackboxed-group.selected > * {
-    opacity: var(--blackboxed-tree-item-opacity);
-}
-
-.tree-outline .item.blackboxed-group .icon {
-    content: url(../Images/Hide.svg#black);
+    opacity: var(--blackboxed-opacity);
 }
 
 body:not(.window-inactive, .window-docked-inactive) .tree-outline:focus-within .item.blackboxed-group.selected .icon {
     content: url(../Images/Hide.svg#white);
-}
-
-@media (prefers-color-scheme: dark) {
-    .tree-outline .item.blackboxed-group .icon {
-        content: url(../Images/Hide.svg#white);
-    }
 }
