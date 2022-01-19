@@ -1237,28 +1237,20 @@ NSTouchBar *WebViewImpl::textTouchBar() const
 
 static NSTextAlignment nsTextAlignmentFromTextAlignment(TextAlignment textAlignment)
 {
-    NSTextAlignment nsTextAlignment;
     switch (textAlignment) {
     case NoAlignment:
-        nsTextAlignment = NSTextAlignmentNatural;
-        break;
+        return NSTextAlignmentNatural;
     case LeftAlignment:
-        nsTextAlignment = NSTextAlignmentLeft;
-        break;
+        return NSTextAlignmentLeft;
     case RightAlignment:
-        nsTextAlignment = NSTextAlignmentRight;
-        break;
+        return NSTextAlignmentRight;
     case CenterAlignment:
-        nsTextAlignment = NSTextAlignmentCenter;
-        break;
+        return NSTextAlignmentCenter;
     case JustifiedAlignment:
-        nsTextAlignment = NSTextAlignmentJustified;
-        break;
-    default:
-        ASSERT_NOT_REACHED();
+        return NSTextAlignmentJustified;
     }
-
-    return nsTextAlignment;
+    ASSERT_NOT_REACHED();
+    return NSTextAlignmentNatural;
 }
 
 void WebViewImpl::updateTextTouchBar()
