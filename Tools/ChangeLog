@@ -1,3 +1,21 @@
+2022-01-15  Frédéric Wang  <fwang@igalia.com>
+
+        Bug 234910 - jsc_fuz/wktr: crash with exotic settings
+        https://bugs.webkit.org/show_bug.cgi?id=234910
+
+        Reviewed by Michael Saboff.
+
+        ASAN release build of WebKitTestRunner and DumpRenderTree may crash when loading the file
+        with content "<script>'a'+Math.floor()+'a';</script>" when the ASAN option
+        detect_stack_use_after_return=1 is set and when the JSC option slowPathAllocsBetweenGCs takes
+        to specific values. This is because the 'TestRendered' string of WTR::sendTestRenderedEvent
+        can be garbage collected. This patch fixes that issue by protecting that string. The fix has
+        been verified for all slowPathAllocsBetweenGCs values from 1 to 100.
+
+        * TestRunnerShared/ReftestFunctions.cpp:
+        (WTR::sendTestRenderedEvent): Protect "TestRendered" JSString from garbage collection until
+        the event is dispatched.
+
 2021-09-13  Chris Dumez  <cdumez@apple.com>
 
         Crash under WebPage::runJavaScript()

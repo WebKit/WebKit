@@ -36,9 +36,12 @@ void sendTestRenderedEvent(JSGlobalContextRef context)
         return;
     auto initializer = JSObjectMake(context, nullptr, nullptr);
     setProperty(context, initializer, "bubbles", true);
-    auto event = callConstructor(context, "Event", { makeValue(context, "TestRendered"), initializer });
+    auto value = makeValue(context, "TestRendered");
+    JSValueProtect(context, value);
+    auto event = callConstructor(context, "Event", { value, initializer });
     auto documentElement = objectProperty(context, JSContextGetGlobalObject(context), { "document", "documentElement" });
     call(context, documentElement, "dispatchEvent", { event });
+    JSValueUnprotect(context, value);
 }
 
 bool hasReftestWaitAttribute(JSGlobalContextRef context)
