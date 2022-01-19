@@ -1,3 +1,9 @@
+2022-01-18  Jon Lee  <jonlee554@gmail.com>
+
+        Unreviewed gardening of GPU Process bot tests.
+
+        * gpu-process/TestExpectations:
+
 2022-01-18  Megan Gardner  <megan_gardner@apple.com>
 
         Loupe sometimes flips to the bottom of the page when dragging the end of a selection to the top of a page with selection flipping.
