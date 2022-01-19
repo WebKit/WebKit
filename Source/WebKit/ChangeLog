@@ -1,3 +1,17 @@
+2022-01-18  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, reverting r288019.
+        https://bugs.webkit.org/show_bug.cgi?id=235341
+
+        Introduced debug assert
+
+        Reverted changeset:
+
+        "Inject Launch Services database before NSApplication is
+        initialized"
+        https://bugs.webkit.org/show_bug.cgi?id=235186
+        https://commits.webkit.org/r288019
+
 2022-01-18  ChangSeok Oh  <changseok@webkit.org>
 
         [GTK] Implement native form validation bubbles for GTK4

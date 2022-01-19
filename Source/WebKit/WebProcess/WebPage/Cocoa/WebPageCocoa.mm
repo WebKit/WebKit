@@ -27,6 +27,7 @@
 #import "WebPage.h"
 
 #import "InsertTextOptions.h"
+#import "LaunchServicesDatabaseManager.h"
 #import "LoadParameters.h"
 #import "PluginView.h"
 #import "UserMediaCaptureManager.h"
@@ -76,6 +77,21 @@ void WebPage::platformInitialize(const WebPageCreationParameters& parameters)
 
 void WebPage::platformDidReceiveLoadParameters(const LoadParameters& parameters)
 {
+#if HAVE(LSDATABASECONTEXT)
+    static bool hasWaitedForLaunchServicesDatabase = false;
+    if (!hasWaitedForLaunchServicesDatabase) {
+        auto startTime = WallTime::now();
+        bool databaseUpdated = LaunchServicesDatabaseManager::singleton().waitForDatabaseUpdate(5_s);
+        auto elapsedTime = WallTime::now() - startTime;
+        if (elapsedTime.value() > 0.5)
+            RELEASE_LOG(Loading, "Waiting for Launch Services database update took %f seconds", elapsedTime.value());
+        ASSERT_UNUSED(databaseUpdated, databaseUpdated);
+        if (!databaseUpdated)
+            RELEASE_LOG_ERROR(Loading, "Timed out waiting for Launch Services database update.");
+        hasWaitedForLaunchServicesDatabase = true;
+    }
+#endif
+
     m_dataDetectionContext = parameters.dataDetectionContext;
 
     consumeNetworkExtensionSandboxExtensions(parameters.networkExtensionSandboxExtensionHandles);
