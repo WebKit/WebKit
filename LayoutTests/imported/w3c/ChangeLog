@@ -1,3 +1,17 @@
+2022-01-19  Antti Koivisto  <antti@apple.com>
+
+        [:has() pseudo-class] Compute specificity correctly
+        https://bugs.webkit.org/show_bug.cgi?id=235351
+
+        Reviewed by Alexey Shvayka.
+
+        * web-platform-tests/css/selectors/has-complexity.html:
+
+        Fix specificity used in this test.
+
+        * web-platform-tests/css/selectors/has-specificity-expected.txt: Added.
+        * web-platform-tests/css/selectors/has-specificity.html: Added.
+
 2022-01-18  Sergio Villar Senin  <svillar@igalia.com>
 
         [css-flexbox] Add support for intrinsic sizes to the flex shorthand

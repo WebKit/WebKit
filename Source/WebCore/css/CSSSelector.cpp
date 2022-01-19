@@ -124,6 +124,7 @@ static unsigned simpleSelectorSpecificityInternal(const CSSSelector& simpleSelec
         case CSSSelector::PseudoClassIs:
         case CSSSelector::PseudoClassMatches:
         case CSSSelector::PseudoClassNot:
+        case CSSSelector::PseudoClassHas:
             return maxSpecificity(*simpleSelector.selectorList());
         case CSSSelector::PseudoClassWhere:
             return 0;
