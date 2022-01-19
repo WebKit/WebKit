@@ -1,3 +1,15 @@
+2022-01-19  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Fix YarrJIT backtrackCharacterClassNonGreedy breakpoint
+        https://bugs.webkit.org/show_bug.cgi?id=235348
+
+        Reviewed by Michael Saboff.
+
+        YarrJIT's backtrackCharacterClassNonGreedy breakpoint is actually reachable. We should subtract index (since it is already incremented),
+        and go to the normal nonGreedyFailures path.
+
+        * yarr/YarrJIT.cpp:
+
 2022-01-19  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         Fix -Wreturn-type and -Wunused-parameter warnings, January 2022 edition

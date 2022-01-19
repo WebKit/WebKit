@@ -1,3 +1,12 @@
+2022-01-19  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Fix YarrJIT backtrackCharacterClassNonGreedy breakpoint
+        https://bugs.webkit.org/show_bug.cgi?id=235348
+
+        Reviewed by Michael Saboff.
+
+        * stress/regexp-unicode-surrogate-pair-increment-should-involve-length-check.js:
+
 2022-01-19  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         Unreviewed, skip new test max-typed-array-length-toString.js when memory-limited

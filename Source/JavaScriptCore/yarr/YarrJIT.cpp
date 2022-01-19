@@ -2059,7 +2059,7 @@ class YarrGenerator final : public YarrJITInfo {
 
         if (!nonGreedyFailuresDecrementIndex.empty()) {
             nonGreedyFailuresDecrementIndex.link(&m_jit);
-            m_jit.breakpoint();
+            m_jit.sub32(MacroAssembler::TrustedImm32(1), m_regs.index);
         }
         nonGreedyFailures.link(&m_jit);
         m_jit.sub32(countRegister, m_regs.index);
