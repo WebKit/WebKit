@@ -1,3 +1,15 @@
+2022-01-18  Chris Dumez  <cdumez@apple.com>
+
+        Enable form.requestSubmit()
+        https://bugs.webkit.org/show_bug.cgi?id=235342
+
+        Reviewed by Darin Adler.
+
+        Enable form.requestSubmit(). This was fully implemented via Bug 197958 and it passes the WPT tests but
+        we never actually enabled it.
+
+        * Scripts/Preferences/WebPreferencesExperimental.yaml:
+
 2022-01-18  Don Olmstead  <don.olmstead@sony.com>
 
         Replace all uses of HAVE_ACCESSIBILITY with ENABLE_ACCESSIBILITY

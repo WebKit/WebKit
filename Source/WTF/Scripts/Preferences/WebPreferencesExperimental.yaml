@@ -1183,11 +1183,11 @@ RequestSubmitEnabled:
   humanReadableDescription: "Form requestSubmit method"
   defaultValue:
     WebKitLegacy:
-      default: false
+      default: true
     WebKit:
-      default: false
+      default: true
     WebCore:
-      default: false
+      default: true
 
 RequestVideoFrameCallbackEnabled:
   type: bool
