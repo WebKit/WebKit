@@ -1,3 +1,17 @@
+2022-01-19  Peng Liu  <peng.liu6@apple.com>
+
+        Add a data URL resource loader performance test
+        https://bugs.webkit.org/show_bug.cgi?id=235325
+
+        Reviewed by Eric Carlson.
+
+        This patch is a follow-up of r287899. In local tests, the time taken
+        by a video element to load a data URL is about 2x of the time to load
+        the binary form of the media file.
+
+        * media/video-src-blob-perf-expected.txt: Added.
+        * media/video-src-blob-perf.html: Added.
+
 2022-01-19  Rob Buis  <rbuis@igalia.com>
 
         Null check player in taintsOrigin

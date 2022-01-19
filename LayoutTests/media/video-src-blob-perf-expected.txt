@@ -1,0 +1,4 @@
+This tests that a video element loads a blob URL in a reasonable amount of time (should be shorter than 5x of the time to load the binary form of the media file).
+
+END OF TEST
+
