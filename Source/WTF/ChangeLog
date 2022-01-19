@@ -1,3 +1,14 @@
+2022-01-19  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Do not use pas utils outside of libpas
+        https://bugs.webkit.org/show_bug.cgi?id=235275
+
+        Reviewed by Darin Adler.
+
+        * wtf/MathExtras.h:
+        (WTF::reverseBits32):
+        (WTF::reverseBits64):
+
 2022-01-19  Alex Christensen  <achristensen@webkit.org>
 
         Allow experimental feature names to be hidden in WebKitAdditions

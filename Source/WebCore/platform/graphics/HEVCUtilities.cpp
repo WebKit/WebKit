@@ -30,29 +30,12 @@
 #include "SharedBuffer.h"
 #include <JavaScriptCore/DataView.h>
 #include <wtf/HexNumber.h>
+#include <wtf/MathExtras.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/SortedArrayMap.h>
 #include <wtf/text/StringToIntegerConversion.h>
 
-#if __has_include(<bmalloc/pas_utils.h>)
-#include <bmalloc/pas_utils.h>
-#endif
-
 namespace WebCore {
-
-static inline uint32_t reverseBits(uint32_t value)
-{
-#if __has_include(<bmalloc/pas_utils.h>)
-    return pas_reverse(value);
-#else
-    // From pas_reverse():
-    value = ((value & 0xaaaaaaaa) >> 1) | ((value & 0x55555555) << 1);
-    value = ((value & 0xcccccccc) >> 2) | ((value & 0x33333333) << 2);
-    value = ((value & 0xf0f0f0f0) >> 4) | ((value & 0x0f0f0f0f) << 4);
-    value = ((value & 0xff00ff00) >> 8) | ((value & 0x00ff00ff) << 8);
-    return (value >> 16) | (value << 16);
-#endif
-}
 
 std::optional<AVCParameters> parseAVCCodecParameters(StringView codecString)
 {
@@ -185,7 +168,7 @@ std::optional<HEVCParameters> parseHEVCCodecParameters(StringView codecString)
     auto compatibilityFlags = parseInteger<uint32_t>(*nextElement, 16);
     if (!compatibilityFlags)
         return std::nullopt;
-    parameters.generalProfileCompatibilityFlags = reverseBits(*compatibilityFlags);
+    parameters.generalProfileCompatibilityFlags = reverseBits32(*compatibilityFlags);
 
     if (++nextElement == codecSplit.end())
         return std::nullopt;
@@ -231,7 +214,7 @@ String createHEVCCodecParametersString(const HEVCParameters& parameters)
     // general_profile_compatibility_flag[ 31 ] as the most significant bit, followed by, general_profile_compatibility_flag[ 30 ],
     // and down to general_profile_compatibility_flag[ 0 ] as the least significant bit, where general_profile_compatibility_flag[ i ]
     // for i in the range of 0 to 31, inclusive, are specified in ISO/IEC 23008‐2, encoded in hexadecimal (leading zeroes may be omitted)
-    auto compatFlagParameter = hex(reverseBits(parameters.generalProfileCompatibilityFlags));
+    auto compatFlagParameter = hex(reverseBits32(parameters.generalProfileCompatibilityFlags));
 
     // * each of the 6 bytes of the constraint flags, starting from the byte containing the
     // general_progressive_source_flag, each encoded as a hexadecimal number, and the encoding

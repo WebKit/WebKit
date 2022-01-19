@@ -753,6 +753,23 @@ inline size_t countTrailingZeros(uint64_t v)
     return Mod67Position[((1 + ~v) & v) % 67];
 }
 
+inline uint32_t reverseBits32(uint32_t value)
+{
+#if COMPILER(GCC_COMPATIBLE) && CPU(ARM64)
+    uint32_t result;
+    asm ("rbit %w0, %w1"
+        : "=r"(result)
+        : "r"(value));
+    return result;
+#else
+    value = ((value & 0xaaaaaaaa) >> 1) | ((value & 0x55555555) << 1);
+    value = ((value & 0xcccccccc) >> 2) | ((value & 0x33333333) << 2);
+    value = ((value & 0xf0f0f0f0) >> 4) | ((value & 0x0f0f0f0f) << 4);
+    value = ((value & 0xff00ff00) >> 8) | ((value & 0x00ff00ff) << 8);
+    return (value >> 16) | (value << 16);
+#endif
+}
+
 } // namespace WTF
 
 using WTF::shuffleVector;
@@ -760,3 +777,4 @@ using WTF::clz;
 using WTF::ctz;
 using WTF::getLSBSet;
 using WTF::getMSBSet;
+using WTF::reverseBits32;
