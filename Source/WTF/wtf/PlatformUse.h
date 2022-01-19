@@ -354,7 +354,7 @@
 
 #if !defined(USE_LIBPAS_JIT_HEAP) && !USE(SYSTEM_MALLOC)
 #include <bmalloc/BPlatform.h>
-#if BENABLE(LIBPAS)
+#if BENABLE(LIBPAS) && OS(DARWIN)
 #define USE_LIBPAS_JIT_HEAP 1
 #endif
 #endif

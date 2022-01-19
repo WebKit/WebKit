@@ -1,3 +1,13 @@
+2022-01-18  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Unreviewed, disable jit-heap on non Darwin
+
+        On Linux etc., they have completely different steps to allocate executable memory.
+        Thus, the current jit-heap implementation does not work well. Temporarily disable it
+        on non Darwin OSes.
+
+        * wtf/PlatformUse.h:
+
 2022-01-18  Alex Christensen  <achristensen@webkit.org>
 
         Use c++2a instead of gnu++2a for Cocoa builds
