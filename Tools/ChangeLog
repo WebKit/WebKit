@@ -1,3 +1,27 @@
+2022-01-19  Jonathan Bedard  <jbedard@apple.com>
+
+        [EWS] Report basic statuses to GitHub
+        https://bugs.webkit.org/show_bug.cgi?id=235210
+        <rdar://problem/87576183>
+
+        Reviewed by Aakash Jain.
+
+        * CISupport/ews-build/events.py:
+        (Events.sendDataToEWS): Renamed from sendData.
+        (Events.sendDataToGitHub): Post status for a commit to GitHub.
+        (Events.extractProperty): We need to extract more than patchID from
+        build properties.
+        (Events.buildFinishedGitHub): Report the pass/failed state of a build to GitHub.
+        (Events.buildFinished): Every time a build finishes, send data to GitHub.
+        (Events.stepStartedGitHub): Update GitHub with the current step being run,
+        and a failure status if that's already known.
+        (Events.stepStarted): Every time a new step starts, send data to GitHub.
+        (Events.stepFinished):
+        (Events.sendData): Deleted.
+        (Events.getPatchID): Deleted.
+        * CISupport/ews-build/steps.py:
+        (GitHub.commit_status_url): Construct a status url for a commit in a repository.
+
 2022-01-10  Jonathan Bedard  <jbedard@apple.com>
 
         [git-webkit] Improve setup usability
