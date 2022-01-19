@@ -59,19 +59,21 @@ public:
 
     bool process(const Vector<RefPtr<AudioBus>>& inputs, Vector<Ref<AudioBus>>& outputs, const HashMap<String, std::unique_ptr<AudioFloatArray>>& paramValuesMap, bool& threwException);
 
-    void setProcessCallback(std::unique_ptr<JSCallbackDataStrong>&&);
+    void setProcessCallback(JSC::JSObject*);
 
+    JSValueInWrappedObject& processCallbackWrapper() { return m_processCallback; }
     JSValueInWrappedObject& jsInputsWrapper() { return m_jsInputs; }
     JSValueInWrappedObject& jsOutputsWrapper() { return m_jsOutputs; }
     JSValueInWrappedObject& jsParamValuesWrapper() { return m_jsParamValues; }
 
 private:
-    explicit AudioWorkletProcessor(const AudioWorkletProcessorConstructionData&);
+    explicit AudioWorkletProcessor(ScriptExecutionContext&, const AudioWorkletProcessorConstructionData&);
     void buildJSArguments(JSC::VM&, JSC::JSGlobalObject&, JSC::MarkedArgumentBufferBase&, const Vector<RefPtr<AudioBus>>& inputs, Vector<Ref<AudioBus>>& outputs, const HashMap<String, std::unique_ptr<AudioFloatArray>>& paramValuesMap);
 
+    ScriptExecutionContext& m_scriptExecutionContext;
     String m_name;
     Ref<MessagePort> m_port;
-    std::unique_ptr<JSCallbackDataStrong> m_processCallback;
+    JSValueInWrappedObject m_processCallback;
     JSValueInWrappedObject m_jsInputs;
     JSValueInWrappedObject m_jsOutputs;
     JSValueInWrappedObject m_jsParamValues;

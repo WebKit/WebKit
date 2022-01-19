@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="resources/callback-function-detached-frame-common.js"></script>
+
+<body>
+
+<canvas id="toBlobTestRoot" width="100" height="100"></canvas>
+
+<script>
+const IFRAME_SRC = "resources/callback-function-detached-frame-to-blob-iframe.html";
+
+promise_test(async t => {
+    window.__toBlob0Calls__ = 0;
+
+    const iframe = await createIframe(t, IFRAME_SRC);
+    iframe.contentWindow.toBlob("__toBlob0Calls__");
+
+    await sleep(100);
+
+    assert_equals(window.__toBlob0Calls__, 1);
+}, "Callback function, originated in an <iframe>, is invoked if <iframe> is connected");
+
+promise_test(async t => {
+    window.__toBlob1Calls__ = 0;
+
+    const iframe = await createIframe(t, IFRAME_SRC);
+    iframe.contentWindow.toBlob("__toBlob1Calls__", Function);
+
+    iframe.remove();
+    assert_equals(iframe.contentWindow, null);
+
+    await sleep(100);
+
+    assert_equals(window.__toBlob1Calls__, 1);
+}, "Callback function, originated in an <iframe> via main window's Function constructor, is invoked even if <iframe> is disconnected");
+
+promise_test(async t => {
+    window.__toBlob2Calls__ = 0;
+
+    const iframe = await createIframe(t, IFRAME_SRC);
+    iframe.contentWindow.toBlob("__toBlob2Calls__");
+
+    iframe.remove();
+    assert_equals(iframe.contentWindow, null);
+
+    await sleep(100);
+
+    assert_equals(window.__toBlob2Calls__, 0);
+}, "Callback function, originated in an <iframe>, is not invoked if <iframe> is disconnected");
+</script>

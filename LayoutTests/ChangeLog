@@ -1,3 +1,64 @@
+2022-01-19  Alexey Shvayka  <ashvayka@apple.com>
+
+        Callback functions / interfaces should use global object of its _value_ for errors and lifecycle
+        https://bugs.webkit.org/show_bug.cgi?id=232387
+
+        Reviewed by Geoff Garen.
+
+        * fast/dom/Geolocation/callback-to-deleted-context-expected.txt:
+        * fast/dom/Geolocation/callback-to-deleted-context.html:
+        * fast/dom/Geolocation/resources/callback-to-deleted-context-inner1.html:
+        Aligns test assertions with behavior of Blink and Gecko.
+
+        * fast/dom/Geolocation/disconnected-frame-expected.txt:
+        * fast/dom/Geolocation/disconnected-frame-permission-denied-expected.txt:
+        * fast/dom/Geolocation/disconnected-frame-permission-denied.html:
+        * fast/dom/Geolocation/disconnected-frame.html:
+        Aligns tests assertions with their initial descriptions.
+        While other browsers don't call error callback for a disconnected frame,
+        it seems like a useful thing to do.
+
+        * fast/events/detached-svg-parent-window-events-expected.txt:
+        * fast/events/detached-svg-parent-window-events.html:
+        Aligns test assertion with other browsers.
+        There is no reason why eval() wouldn't throw an error given the <iframe> is connected.
+
+        * fast/frames/resources/wrong-global-object.html: Removed.
+        * fast/frames/frame-window-as-callback-expected.txt:
+        * fast/frames/frame-window-as-callback.html:
+        Aligns test assertions with the spec and Blink / Gecko.
+
+        * fast/dom/callback-function-detached-frame-intersection-observer-expected.txt: Added.
+        * fast/dom/callback-function-detached-frame-intersection-observer.html: Added.
+        * fast/dom/callback-function-detached-frame-mutation-observer-expected.txt: Added.
+        * fast/dom/callback-function-detached-frame-mutation-observer.html: Added.
+        * fast/dom/callback-function-detached-frame-performance-observer-expected.txt: Added.
+        * fast/dom/callback-function-detached-frame-performance-observer.html: Added.
+        * fast/dom/callback-function-detached-frame-raf-expected.txt: Added.
+        * fast/dom/callback-function-detached-frame-raf.html: Added.
+        * fast/dom/callback-function-detached-frame-resize-observer-expected.txt: Added.
+        * fast/dom/callback-function-detached-frame-resize-observer.html: Added.
+        * fast/dom/callback-function-detached-frame-to-blob-expected.txt: Added.
+        * fast/dom/callback-function-detached-frame-to-blob.html: Added.
+        * fast/dom/callback-interface-detached-frame-node-filter-expected.txt: Added.
+        * fast/dom/callback-interface-detached-frame-node-filter.html: Added.
+        * fast/dom/callback-interface-detached-frame-xpathnsresolver-expected.txt: Added.
+        * fast/dom/callback-interface-detached-frame-xpathnsresolver.html: Added.
+        * fast/dom/resources/callback-function-detached-frame-common.js: Added.
+        * fast/dom/resources/callback-function-detached-frame-intersection-observer-iframe.html: Added.
+        * fast/dom/resources/callback-function-detached-frame-mutation-observer-iframe.html: Added.
+        * fast/dom/resources/callback-function-detached-frame-performance-observer-iframe.html: Added.
+        * fast/dom/resources/callback-function-detached-frame-raf-iframe.html: Added.
+        * fast/dom/resources/callback-function-detached-frame-resize-observer-iframe.html: Added.
+        * fast/dom/resources/callback-function-detached-frame-to-blob-iframe.html: Added.
+        * fast/dom/resources/callback-interface-detached-frame-node-filter-iframe.html: Added.
+        * fast/dom/resources/callback-interface-detached-frame-xpathnsresolver-iframe.html: Added.
+
+        * platform/mac-wk1/TestExpectations:
+        * platform/win/TestExpectations:
+        * platform/wincairo/TestExpectations:
+        IntersectionObserver / ResizeObserver are not enabled on these platforms.
+
 2022-01-19  Andres Gonzalez  <andresg_22@apple.com>
 
         Enable accessibility/mac/selection-element-tabbing-to-link.html since it is not flaky any longer.

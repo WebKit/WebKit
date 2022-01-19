@@ -1,3 +1,29 @@
+2022-01-19  Alexey Shvayka  <ashvayka@apple.com>
+
+        Callback functions / interfaces should use global object of its _value_ for errors and lifecycle
+        https://bugs.webkit.org/show_bug.cgi?id=232387
+
+        Reviewed by Geoff Garen.
+
+        Import WPT tests from https://github.com/web-platform-tests/wpt/pull/32449.
+
+        The remaining failures are due to unrelated spec compat issue with calling cross-realm ProxyObject / JSBoundFunction.
+
+        * web-platform-tests/dom/events/EventListener-handleEvent-cross-realm-expected.txt: Added.
+        * web-platform-tests/dom/events/EventListener-handleEvent-cross-realm.html: Added.
+        * web-platform-tests/dom/events/resources/empty-document.html: Added.
+        * web-platform-tests/dom/traversal/TreeWalker-acceptNode-filter-cross-realm-expected.txt:
+        * web-platform-tests/dom/traversal/TreeWalker-acceptNode-filter-cross-realm-null-browsing-context-expected.txt:
+        * web-platform-tests/dom/traversal/TreeWalker-acceptNode-filter-cross-realm-null-browsing-context.html:
+        * web-platform-tests/dom/traversal/TreeWalker-acceptNode-filter-cross-realm.html:
+        * web-platform-tests/dom/traversal/support/TreeWalker-acceptNode-filter-cross-realm-subframe.html: Removed.
+        * web-platform-tests/dom/traversal/support/empty-document.html: Added.
+        * web-platform-tests/domxpath/resolver-callback-interface-cross-realm-expected.txt: Added.
+        * web-platform-tests/domxpath/resolver-callback-interface-cross-realm.html: Added.
+        * web-platform-tests/domxpath/resources: Added.
+        * web-platform-tests/domxpath/resources/empty-document.html: Added.
+        * web-platform-tests/domxpath/resources/invalid_namespace_test.js: Added.
+
 2022-01-19  Antti Koivisto  <antti@apple.com>
 
         [:has() pseudo-class] Compute specificity correctly

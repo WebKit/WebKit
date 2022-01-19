@@ -201,13 +201,14 @@ ExceptionOr<Ref<AudioWorkletProcessor>> AudioWorkletProcessor::create(ScriptExec
     if (!constructionData)
         return Exception { TypeError, "No pending construction data for this worklet processor"_s };
 
-    return adoptRef(*new AudioWorkletProcessor(*constructionData));
+    return adoptRef(*new AudioWorkletProcessor(context, *constructionData));
 }
 
 AudioWorkletProcessor::~AudioWorkletProcessor() = default;
 
-AudioWorkletProcessor::AudioWorkletProcessor(const AudioWorkletProcessorConstructionData& constructionData)
-    : m_name(constructionData.name())
+AudioWorkletProcessor::AudioWorkletProcessor(ScriptExecutionContext& context, const AudioWorkletProcessorConstructionData& constructionData)
+    : m_scriptExecutionContext(context)
+    , m_name(constructionData.name())
     , m_port(constructionData.port())
 {
     ASSERT(!isMainThread());
@@ -236,7 +237,7 @@ bool AudioWorkletProcessor::process(const Vector<RefPtr<AudioBus>>& inputs, Vect
     DisableMallocRestrictionsForCurrentThreadScope disableMallocRestrictions;
 
     ASSERT(m_processCallback);
-    auto& globalObject = *m_processCallback->globalObject();
+    auto& globalObject = *jsCast<JSDOMGlobalObject*>(m_scriptExecutionContext.globalObject());
     ASSERT(globalObject.scriptExecutionContext());
     ASSERT(globalObject.scriptExecutionContext()->isContextThread());
 
@@ -247,7 +248,7 @@ bool AudioWorkletProcessor::process(const Vector<RefPtr<AudioBus>>& inputs, Vect
     buildJSArguments(vm, globalObject, args, inputs, outputs, paramValuesMap);
 
     NakedPtr<JSC::Exception> returnedException;
-    auto result = m_processCallback->invokeCallback(jsUndefined(), args, JSCallbackData::CallbackType::Object, Identifier::fromString(vm, "process"), returnedException);
+    auto result = JSCallbackData::invokeCallback(vm, asObject(m_processCallback), jsUndefined(), args, JSCallbackData::CallbackType::Object, Identifier::fromString(vm, "process"), returnedException);
     if (returnedException) {
         reportException(&globalObject, returnedException);
         threwException = true;
@@ -259,9 +260,9 @@ bool AudioWorkletProcessor::process(const Vector<RefPtr<AudioBus>>& inputs, Vect
     return result.toBoolean(&globalObject);
 }
 
-void AudioWorkletProcessor::setProcessCallback(std::unique_ptr<JSCallbackDataStrong>&& processCallback)
+void AudioWorkletProcessor::setProcessCallback(JSObject* processCallback)
 {
-    m_processCallback = WTFMove(processCallback);
+    m_processCallback = { processCallback };
 }
 
 } // namespace WebCore

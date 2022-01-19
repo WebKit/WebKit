@@ -55,6 +55,8 @@ ExceptionOr<unsigned short> NodeIteratorBase::acceptNode(Node& node)
 
     SetForScope<bool> isActive(m_isActive, true);
     auto callbackResult = m_filter->acceptNode(node);
+    if (callbackResult.type() == CallbackResultType::UnableToExecute)
+        return Exception { NotAllowedError, "Failed to execute 'acceptNode' on 'NodeFilter': The provided callback is no longer runnable."_s };
     if (callbackResult.type() == CallbackResultType::ExceptionThrown)
         return Exception { ExistingExceptionError };
     return callbackResult.releaseReturnValue();

@@ -1,0 +1,9 @@
+<!DOCTYPE html>
+
+<script>
+function toBlob(key, FunctionConstructor = Function) {
+    parent.toBlobTestRoot.toBlob(FunctionConstructor(`
+        top["${key}"]++;
+    `));
+}
+</script>

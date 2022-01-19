@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+
+<script>
+function createIntersectionObserver(FunctionConstructor = Function) {
+    const intersectionObserver = new parent.IntersectionObserver(new FunctionConstructor(`
+        if (this.isInitialEntry) {
+            this.isInitialEntry = false;
+            return;
+        }
+
+        this.callbackInvocations++;
+    `));
+
+    intersectionObserver.isInitialEntry = true;
+    intersectionObserver.callbackInvocations = 0;
+    intersectionObserver.observe(parent.intersectionObserverTestRoot, { threshold: 1 });
+
+    return intersectionObserver;
+}
+</script>

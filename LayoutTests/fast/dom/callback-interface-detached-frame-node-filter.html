@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="resources/callback-function-detached-frame-common.js"></script>
+
+<body>
+
+<div id="nodeIteratorTestRoot"></div>
+
+<script>
+const IFRAME_SRC = "resources/callback-interface-detached-frame-node-filter-iframe.html";
+
+promise_test(async t => {
+    window.__nodeFilter0Calls__ = 0;
+    const iframe = await createIframe(t, IFRAME_SRC);
+    const nodeIterator = iframe.contentWindow.createNodeIteratorWithCallableFilter("__nodeFilter0Calls__");
+
+    assert_equals(nodeIterator.nextNode(), nodeIteratorTestRoot);
+    assert_equals(window.__nodeFilter0Calls__, 1);
+}, "Callable callback interface, originated in an <iframe>, is invoked if <iframe> is connected");
+
+promise_test(async t => {
+    window.__nodeFilter1Calls__ = 0;
+    const iframe = await createIframe(t, IFRAME_SRC);
+    const nodeIterator = iframe.contentWindow.createNodeIteratorWithCallableFilter("__nodeFilter1Calls__", Function);
+
+    iframe.remove();
+    assert_equals(iframe.contentWindow, null);
+
+    assert_equals(nodeIterator.nextNode(), nodeIteratorTestRoot);
+    assert_equals(window.__nodeFilter1Calls__, 1);
+}, "Callable callback interface, originated in an <iframe> via main window's Function constructor, is invoked even if <iframe> is disconnected");
+
+promise_test(async t => {
+    window.__nodeFilter2Calls__ = 0;
+    const iframe = await createIframe(t, IFRAME_SRC);
+    const nodeIterator = iframe.contentWindow.createNodeIteratorWithCallableFilter("__nodeFilter2Calls__");
+
+    iframe.remove();
+    assert_equals(iframe.contentWindow, null);
+
+    assert_throws(() => { nodeIterator.nextNode(); });
+    assert_equals(window.__nodeFilter2Calls__, 0);
+}, "Callable callback interface, originated in an <iframe>, is not invoked if <iframe> is disconnected");
+
+promise_test(async t => {
+    window.__nodeFilter3Calls__ = 0;
+    const iframe = await createIframe(t, IFRAME_SRC);
+    const nodeIterator = iframe.contentWindow.createNodeIteratorWithNonCallableFilter0("__nodeFilter3Calls__");
+
+    iframe.remove();
+    assert_equals(iframe.contentWindow, null);
+
+    assert_throws(() => { nodeIterator.nextNode(); });
+    assert_equals(window.__nodeFilter3Calls__, 0);
+}, "Non-callable callback interface, originated in an <iframe> via object literal, is not invoked if <iframe> is disconnected even if its 'acceptNode' method is of main window");
+
+promise_test(async t => {
+    window.__nodeFilter4Calls__ = 0;
+    const iframe = await createIframe(t, IFRAME_SRC);
+    const nodeIterator = iframe.contentWindow.createNodeIteratorWithNonCallableFilter1("__nodeFilter4Calls__", iframe);
+
+    assert_throws(() => { nodeIterator.nextNode(); });
+    assert_equals(iframe.contentWindow, null);
+    assert_equals(window.__nodeFilter4Calls__, 0);
+}, "Non-callable callback interface, originated in an <iframe> via object literal, is not invoked even if <iframe> is disconnected during 'acceptNode' lookup");
+
+promise_test(async t => {
+    const iframe = await createIframe(t, IFRAME_SRC);
+    const nodeIterator = iframe.contentWindow.createNodeIteratorWithNonCallableFilter2();
+
+    iframe.remove();
+    assert_equals(iframe.contentWindow, null);
+
+    assert_equals(nodeIterator.nextNode(), nodeIteratorTestRoot);
+    assert_equals(nodeIterator.callbackInvocations, 1);
+}, "Non-callable callback interface, originated in an <iframe> via main window's Object constructor, is invoked if <iframe> is disconnected even if its 'acceptNode' method is of the <iframe>");
+
+function assert_throws(fn) {
+    let caughtError = false;
+    try { fn(); } catch { caughtError = true; }
+    assert_true(caughtError, "assert_throws");
+}
+</script>
