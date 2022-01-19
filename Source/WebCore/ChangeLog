@@ -1,3 +1,16 @@
+2022-01-04  Frédéric Wang  <fwang@igalia.com>
+
+        Protect frame from destruction in HTMLMediaElement::setupAndCallJS
+        https://bugs.webkit.org/show_bug.cgi?id=234259
+
+        Reviewed by Darin Adler.
+
+        Test: http/tests/media/media-element-frame-destroyed-crash.html
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::setupAndCallJS): Protect the frame before executing the JS code,
+        so that it is not destroyed before its associated ScriptController.
+
 2022-01-16  Brady Eidson  <beidson@apple.com>
 
         database names leak cross-origin within the same browser session

@@ -1,3 +1,19 @@
+2022-01-04  Frédéric Wang  <fwang@igalia.com>
+
+        Protect frame from destruction in HTMLMediaElement::setupAndCallJS
+        https://bugs.webkit.org/show_bug.cgi?id=234259
+
+        Reviewed by Darin Adler.
+
+        Add non-regression test, embedded in multiple iframes to make regression easily reproducible.
+
+        * http/conf/mime.types: Ensure that ts files are served with MIME type video/mp2t as that's required
+        to make the non-regression test work properly.
+        * http/tests/media/media-element-frame-destroyed-crash-expected.txt: Added.
+        * http/tests/media/media-element-frame-destroyed-crash.html: Added.
+        * http/tests/media/resources/empty.ts: Added.
+        * http/tests/media/resources/media-element-frame-destroyed-crash-subframe.html: Added.
+
 2022-01-16  Brady Eidson  <beidson@apple.com>
 
         database names leak cross-origin within the same browser session
