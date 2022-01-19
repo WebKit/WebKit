@@ -1,3 +1,12 @@
+2022-01-19  Andres Gonzalez  <andresg_22@apple.com>
+
+        Enable accessibility/mac/selection-element-tabbing-to-link.html since it is not flaky any longer.
+        https://bugs.webkit.org/show_bug.cgi?id=235333
+
+        Reviewed by Darin Adler.
+
+        * platform/mac/TestExpectations:
+
 2022-01-19  Said Abou-Hallawa  <said@apple.com>
 
         filterRegion and outsets of referenced SVG filter are calculated incorrectly
