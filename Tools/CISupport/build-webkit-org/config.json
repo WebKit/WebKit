@@ -343,13 +343,13 @@
                     {
                       "name": "Apple-iOS-15-Simulator-Release-GPUProcess-arm64-WK2-Tests", "factory": "TestAllButJSCFactory", "builddir": "ios-simulator-15-release-gpuprocess-arm64-tests-wk2",
                       "platform": "ios-simulator-15", "configuration": "release", "architectures": ["x86_64", "arm64"], "device_model": "iphone",
-                      "additionalArguments": ["--no-retry-failures", "--use-gpu-process"],
+                      "additionalArguments": ["--no-retry-failures", "--use-gpu-process", "--accelerated-drawing"],
                       "workernames": ["bot210"]
                     },
                     {
                       "name": "Apple-iOS-15-Simulator-Release-GPUProcess-WK2-Tests", "factory": "TestAllButJSCFactory", "builddir": "ios-simulator-15-release-gpuprocess-tests-wk2",
                       "platform": "ios-simulator-15", "configuration": "release", "architectures": ["x86_64", "arm64"], "device_model": "iphone",
-                      "additionalArguments": ["--no-retry-failures", "--use-gpu-process", "--accelerated-drawing"],
+                      "additionalArguments": ["--no-retry-failures", "--use-gpu-process"],
                       "workernames": ["bot600"]
                     },
                     {

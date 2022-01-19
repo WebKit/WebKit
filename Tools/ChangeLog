@@ -1,3 +1,14 @@
+2022-01-19  Jon Lee  <jonlee554@gmail.com>
+
+        Swap accelerated drawing flag between the two GPU Process iOS simulator bots
+        https://bugs.webkit.org/show_bug.cgi?id=235366
+
+        Reviewed by Alex Christensen.
+
+        * CISupport/build-webkit-org/config.json: Turn the accelerated-drawing flag on the arm64 bot, since that
+        represents the configuration closest to actual hardware. Turn it off on the Intel bot for now so that we
+        can see differences in results with accelerated drawing off as we fix bugs in tests.
+
 2022-01-19  Jonathan Bedard  <jbedard@apple.com>
 
         [git-webkit] Improve pr push error message
