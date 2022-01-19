@@ -52,10 +52,8 @@ public:
     uint32_t length() const { return m_length; }
 
     static ptrdiff_t offsetOfLength() { return OBJECT_OFFSETOF(Table, m_length); }
-    static ptrdiff_t offsetOfMask() { return OBJECT_OFFSETOF(Table, m_mask); }
 
     static uint32_t allocatedLength(uint32_t length);
-    uint32_t mask() const { return m_mask; }
 
     template<typename T> T* owner() const { return reinterpret_cast<T*>(m_owner); }
     void setOwner(JSObject* owner)
@@ -88,7 +86,6 @@ protected:
     void setLength(uint32_t);
 
     uint32_t m_length;
-    uint32_t m_mask;
     const TableElementType m_type;
     const std::optional<uint32_t> m_maximum;
 

@@ -1,3 +1,27 @@
+2022-01-18  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Remove Wasm::Table's m_mask
+        https://bugs.webkit.org/show_bug.cgi?id=235329
+
+        Reviewed by Mark Lam.
+
+        This patch removes m_mask in Wasm::Table.
+        The mask is removed in the other places, but forgot
+        removing that in Wasm::Table.
+
+        * wasm/WasmTable.cpp:
+        (JSC::Wasm::Table::setLength):
+        (JSC::Wasm::Table::clear):
+        (JSC::Wasm::Table::set):
+        (JSC::Wasm::Table::get const):
+        (JSC::Wasm::FuncRefTable::setFunction):
+        (JSC::Wasm::FuncRefTable::function const):
+        (JSC::Wasm::FuncRefTable::instance const):
+        * wasm/WasmTable.h:
+        (JSC::Wasm::Table::offsetOfLength):
+        (JSC::Wasm::Table::offsetOfMask): Deleted.
+        (JSC::Wasm::Table::mask const): Deleted.
+
 2022-01-18  Alex Christensen  <achristensen@webkit.org>
 
         Use c++2a instead of gnu++2a for Cocoa builds

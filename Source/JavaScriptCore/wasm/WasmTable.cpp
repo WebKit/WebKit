@@ -42,9 +42,7 @@ uint32_t Table::allocatedLength(uint32_t length)
 void Table::setLength(uint32_t length)
 {
     m_length = length;
-    m_mask = WTF::maskForSize(length);
     ASSERT(isValidLength(length));
-    ASSERT(m_mask == WTF::maskForSize(allocatedLength(length)));
 }
 
 Table::Table(uint32_t initial, std::optional<uint32_t> maximum, TableElementType type)
@@ -142,11 +140,11 @@ void Table::clear(uint32_t index)
     RELEASE_ASSERT(index < length());
     RELEASE_ASSERT(m_owner);
     if (auto* funcRefTable = asFuncrefTable()) {
-        funcRefTable->m_importableFunctions.get()[index & m_mask] = WasmToWasmImportableFunction();
-        ASSERT(funcRefTable->m_importableFunctions.get()[index & m_mask].signatureIndex == Wasm::Signature::invalidIndex); // We rely on this in compiled code.
-        funcRefTable->m_instances.get()[index & m_mask] = nullptr;
+        funcRefTable->m_importableFunctions.get()[index] = WasmToWasmImportableFunction();
+        ASSERT(funcRefTable->m_importableFunctions.get()[index].signatureIndex == Wasm::Signature::invalidIndex); // We rely on this in compiled code.
+        funcRefTable->m_instances.get()[index] = nullptr;
     }
-    m_jsValues.get()[index & m_mask].setStartingValue(jsNull());
+    m_jsValues.get()[index].setStartingValue(jsNull());
 }
 
 void Table::set(uint32_t index, JSValue value)
@@ -155,14 +153,14 @@ void Table::set(uint32_t index, JSValue value)
     RELEASE_ASSERT(isExternrefTable());
     RELEASE_ASSERT(m_owner);
     clear(index);
-    m_jsValues.get()[index & m_mask].set(m_owner->vm(), m_owner, value);
+    m_jsValues.get()[index].set(m_owner->vm(), m_owner, value);
 }
 
 JSValue Table::get(uint32_t index) const
 {
     RELEASE_ASSERT(index < length());
     RELEASE_ASSERT(m_owner);
-    return m_jsValues.get()[index & m_mask].get();
+    return m_jsValues.get()[index].get();
 }
 
 template<typename Visitor>
@@ -210,19 +208,19 @@ void FuncRefTable::setFunction(uint32_t index, JSObject* optionalWrapper, WasmTo
     RELEASE_ASSERT(m_owner);
     clear(index);
     if (optionalWrapper)
-        m_jsValues.get()[index & m_mask].set(m_owner->vm(), m_owner, optionalWrapper);
-    m_importableFunctions.get()[index & m_mask] = function;
-    m_instances.get()[index & m_mask] = instance;
+        m_jsValues.get()[index].set(m_owner->vm(), m_owner, optionalWrapper);
+    m_importableFunctions.get()[index] = function;
+    m_instances.get()[index] = instance;
 }
 
 const WasmToWasmImportableFunction& FuncRefTable::function(uint32_t index) const
 {
-    return m_importableFunctions.get()[index & m_mask];
+    return m_importableFunctions.get()[index];
 }
 
 Instance* FuncRefTable::instance(uint32_t index) const
 {
-    return m_instances.get()[index & m_mask];
+    return m_instances.get()[index];
 }
 
 void FuncRefTable::copyFunction(const FuncRefTable* srcTable, uint32_t dstIndex, uint32_t srcIndex)
