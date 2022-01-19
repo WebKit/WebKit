@@ -3,7 +3,7 @@ Tests that we are using the right global object for DOM callbacks.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS nextNodeError.constructor is f.contentWindow.TypeError
+PASS: Global object was the right one.
 PASS successfullyParsed is true
 
 TEST COMPLETE

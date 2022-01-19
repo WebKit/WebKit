@@ -1,3 +1,16 @@
+2022-01-19  Robert Jenner  <Jenner@apple.com>
+
+        Unreviewed, reverting r288197.
+
+        Broke a test, slowing down EWS
+
+        Reverted changeset:
+
+        "Callback functions / interfaces should use global object of
+        its _value_ for errors and lifecycle"
+        https://bugs.webkit.org/show_bug.cgi?id=232387
+        https://commits.webkit.org/r288197
+
 2022-01-19  Alex Christensen  <achristensen@webkit.org>
 
         [ResourceTiming] nextHopProtocol is exposed regardless of Timing-Allow-Origin

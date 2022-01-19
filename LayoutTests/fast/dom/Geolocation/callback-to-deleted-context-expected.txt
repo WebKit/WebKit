@@ -4,7 +4,7 @@ Tests that when a Geolocation request is made from a remote frame, and that fram
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS No callbacks invoked
+PASS Success callback invoked
 PASS successfullyParsed is true
 
 TEST COMPLETE
