@@ -1,3 +1,16 @@
+2022-01-18  Alan Bujtas  <zalan@apple.com>
+
+        [LFC][Integration] Use IFC for preferred width computation for inline boxes
+        https://bugs.webkit.org/show_bug.cgi?id=232620
+
+        Reviewed by Antti Koivisto.
+
+        * fast/text/hanging-punctuation-variable-font-size-expected.html: Adjust incorrect expected result (Both Chrome and Firefox agree).
+        * platform/ios/fast/css/word-space-extra-expected.txt: progression
+        * platform/mac/fast/css/word-space-extra-expected.txt: progression (matching Chrome).
+        * platform/mac/fast/text/international/003-expected.txt: progression (matching Chrome).
+        * platform/mac/fast/text/wbr-expected.txt: progression.
+
 2022-01-18  Arcady Goldmints-Orlov  <agoldmints@igalia.com>
 
         [GLIB] Update test baselines after r288070 allowed LFC integration to work with the complex text path.
