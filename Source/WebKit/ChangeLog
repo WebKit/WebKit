@@ -1,5 +1,9 @@
 2022-01-18  Russell Epstein  <repstein@apple.com>
 
+        Revert r287997. rdar://problem/87274541
+
+2022-01-18  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r287997. rdar://problem/87274541
 
     Sometimes cannot scroll after using internal trackpad
