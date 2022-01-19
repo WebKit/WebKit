@@ -254,6 +254,16 @@ protected:
         ASSERT(resolutionScale() == 1);
         m_remoteDisplayList.putPixelBuffer(pixelBuffer, srcRect, destPoint, destFormat);
     }
+    
+    void convertToLuminanceMask() final
+    {
+        m_remoteDisplayList.convertToLuminanceMask();
+    }
+
+    void transformToColorSpace(const WebCore::DestinationColorSpace& colorSpace) final
+    {
+        m_remoteDisplayList.transformToColorSpace(colorSpace);
+    }
 
     bool prefersPreparationForDisplay() final { return true; }
 
