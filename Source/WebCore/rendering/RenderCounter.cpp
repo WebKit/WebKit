@@ -291,7 +291,8 @@ static CounterInsertionPoint findPlaceForCounter(RenderElement& counterOwner, co
                         previousSibling = currentCounter;
                         // We are no longer interested in previous siblings of the currentRenderer or their children
                         // as counters they may have attached cannot be the previous sibling of the counter we are placing.
-                        currentRenderer = parentOrPseudoHostElement(*currentRenderer)->renderer();
+                        auto* parent = parentOrPseudoHostElement(*currentRenderer);
+                        currentRenderer = parent ? parent->renderer() : nullptr;
                         continue;
                     }
                 } else
