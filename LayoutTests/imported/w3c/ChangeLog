@@ -1,5 +1,16 @@
 2022-01-20  Antti Koivisto  <antti@apple.com>
 
+        [:has() pseudo-class] Ignore :visited inside :has()
+        https://bugs.webkit.org/show_bug.cgi?id=235404
+
+        Reviewed by Sam Weinig.
+
+        * web-platform-tests/css/selectors/has-visited-expected.html: Added.
+        * web-platform-tests/css/selectors/has-visited-ref.html: Added.
+        * web-platform-tests/css/selectors/has-visited.html: Added.
+
+2022-01-20  Antti Koivisto  <antti@apple.com>
+
         [:has pseudo-class] Support :has(:not(foo))
         https://bugs.webkit.org/show_bug.cgi?id=235399
 
