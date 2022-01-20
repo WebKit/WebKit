@@ -446,12 +446,24 @@ void CoreAudioSharedUnit::cleanupAudioUnit()
 
 OSStatus CoreAudioSharedUnit::reconfigureAudioUnit()
 {
+    ASSERT(isMainThread());
     OSStatus err;
     if (!hasAudioUnit())
         return 0;
 
     if (m_ioUnitStarted) {
+        CoreAudioSpeakerSamplesProducer* speakerSamplesProducer;
+        {
+            Locker locker { m_speakerSamplesProducerLock };
+            speakerSamplesProducer = m_speakerSamplesProducer;
+            m_speakerSamplesProducer = nullptr;
+        }
         err = PAL::AudioOutputUnitStop(m_ioUnit);
+        {
+            Locker locker { m_speakerSamplesProducerLock };
+            m_speakerSamplesProducer = speakerSamplesProducer;
+        }
+
         if (err) {
             RELEASE_LOG_ERROR(WebRTC, "CoreAudioSharedUnit::reconfigureAudioUnit(%p) AudioOutputUnitStop failed with error %d (%.4s)", this, (int)err, (char*)&err);
             return err;
