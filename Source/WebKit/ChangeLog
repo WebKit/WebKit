@@ -1,5 +1,42 @@
 2022-01-20  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r288293. rdar://problem/87777915
+
+    Prevent empty folders being created during install builds
+    rdar://87777915
+    
+    Patch by Elliott Williams <emw@apple.com> on 2022-01-20
+    Reviewed by Brady Eidson.
+    
+    The "Copy Daemon Plists" script phase has output files which aren't always written to. Since
+    Xcode mkdir-p's these output directories, it ends up creating an empty directory under some
+    circumstances. Fix by removing these declared outputs: since this script is install-only
+    and executes quickly, it's not really a problem to have it run redundantly.
+    
+    Once we use XCBuild everywhere, it can be rewritten as a Copy Files phase.
+    
+    * WebKit.xcodeproj/project.pbxproj:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@288293 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-01-20  Elliott Williams  <emw@apple.com>
+
+            Prevent empty folders being created during install builds
+            rdar://87777915
+
+            Reviewed by Brady Eidson.
+
+            The "Copy Daemon Plists" script phase has output files which aren't always written to. Since
+            Xcode mkdir-p's these output directories, it ends up creating an empty directory under some
+            circumstances. Fix by removing these declared outputs: since this script is install-only
+            and executes quickly, it's not really a problem to have it run redundantly.
+
+            Once we use XCBuild everywhere, it can be rewritten as a Copy Files phase.
+
+            * WebKit.xcodeproj/project.pbxproj:
+
+2022-01-20  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r287997. rdar://problem/87274541
 
     Sometimes cannot scroll after using internal trackpad
