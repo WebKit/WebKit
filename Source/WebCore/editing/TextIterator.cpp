@@ -2193,7 +2193,7 @@ inline size_t SearchBuffer::search(size_t& start)
     ASSERT(status == U_ZERO_ERROR);
 
     int matchStart = usearch_next(searcher, &status);
-    ASSERT(status == U_ZERO_ERROR);
+    ASSERT(U_SUCCESS(status));
 
 nextMatch:
     if (!(matchStart >= 0 && static_cast<size_t>(matchStart) < size)) {
