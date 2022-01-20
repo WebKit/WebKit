@@ -341,15 +341,16 @@ void AXIsolatedTree::updateChildren(AXCoreObject& axObject)
     auto removals = iterator->value;
 
     const auto& axChildren = axAncestor->children();
-    auto axChildrenIDs = axAncestor->childrenIDs();
+    auto axChildrenIDs = axAncestor->childrenIDs(false);
 
     bool updatedChild = false; // Set to true if at least one child's subtree is updated.
     for (size_t i = 0; i < axChildren.size() && i < axChildrenIDs.size(); ++i) {
+        ASSERT(axChildren[i]->objectID() == axChildrenIDs[i]);
+        ASSERT(axChildrenIDs[i].isValid());
         size_t index = removals.find(axChildrenIDs[i]);
         if (index != notFound)
             removals.remove(index);
         else {
-            ASSERT(axChildren[i]->objectID() == axChildrenIDs[i]);
             // This is a new child, add it to the tree.
             AXLOG("Adding a new child for:");
             AXLOG(axChildren[i]);

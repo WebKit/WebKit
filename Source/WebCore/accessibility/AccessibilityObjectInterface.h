@@ -1272,7 +1272,7 @@ public:
     virtual void addChildren() = 0;
     virtual void addChild(AXCoreObject*, DescendIfIgnored = DescendIfIgnored::Yes) = 0;
     virtual void insertChild(AXCoreObject*, unsigned, DescendIfIgnored = DescendIfIgnored::Yes) = 0;
-    Vector<AXID> childrenIDs();
+    Vector<AXID> childrenIDs(bool updateChildrenIfNecessary = true);
 
     virtual bool canHaveChildren() const = 0;
     virtual void updateChildrenIfNecessary() = 0;
@@ -1607,10 +1607,12 @@ inline void AXCoreObject::detachWrapper(AccessibilityDetachmentType detachmentTy
 }
 #endif
 
-inline Vector<AXID> AXCoreObject::childrenIDs()
+inline Vector<AXID> AXCoreObject::childrenIDs(bool updateChildrenIfNecessary)
 {
+    auto& kids = children(updateChildrenIfNecessary);
     Vector<AXID> childrenIDs;
-    for (const auto& child : children())
+    childrenIDs.reserveCapacity(kids.size());
+    for (const auto& child : kids)
         childrenIDs.append(child->objectID());
     return childrenIDs;
 }
