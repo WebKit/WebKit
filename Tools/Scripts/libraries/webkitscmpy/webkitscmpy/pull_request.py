@@ -139,6 +139,7 @@ class PullRequest(object):
         body=None, author=None,
         head=None, base=None,
         opened=None, generator=None, metadata=None,
+        url=None,
     ):
         self.number = number
         self.title = title
@@ -153,6 +154,7 @@ class PullRequest(object):
         self._metadata = metadata
         self._comments = None
         self.generator = generator
+        self.url = url
 
     @property
     def reviewers(self):

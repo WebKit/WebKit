@@ -1,5 +1,27 @@
 2022-01-19  Jonathan Bedard  <jbedard@apple.com>
 
+        [git-webkit] pull-request command should print the pr url
+        https://bugs.webkit.org/show_bug.cgi?id=235358
+        <rdar://problem/87793470>
+
+        Reviewed by Aakash Jain.
+
+        * Scripts/libraries/webkitscmpy/setup.py: Bump version.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/__init__.py: Ditto.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/mocks/local/git.py: Make created
+        and modified commits in tests have more issue-friendly titles.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/program/pull_request.py:
+        (PullRequest.main): Print out PullRequest URL.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/pull_request.py:
+        (PullRequest.__init__): Constructor may define printable URL.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/remote/bitbucket.py:
+        (BitBucket.PRGenerator.PullRequest): Set printable URL.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/remote/git_hub.py:
+        (GitHub.PRGenerator.PullRequest): Set printable URL.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/pull_request_unittest.py:
+
+2022-01-19  Jonathan Bedard  <jbedard@apple.com>
+
         [EWS] Report basic statuses to GitHub
         https://bugs.webkit.org/show_bug.cgi?id=235210
         <rdar://problem/87576183>

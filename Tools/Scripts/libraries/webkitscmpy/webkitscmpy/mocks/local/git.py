@@ -830,8 +830,8 @@ nothing to commit, working tree clean
             self.commits[self.branch].append(self.head)
 
         self.head.author = Contributor(self.config()['user.name'], [self.config()['user.email']])
-        self.head.message = '{} commit\nReviewed by Jonathan Bedard\n\n * {}\n'.format(
-            'Amended' if amend else 'Created',
+        self.head.message = '[Testing] {} commits\nReviewed by Jonathan Bedard\n\n * {}\n'.format(
+            'Amending' if amend else 'Creating',
             '\n * '.join(self.staged.keys()),
         )
         self.head.hash = hashlib.sha256(string_utils.encode(self.head.message)).hexdigest()[:40]

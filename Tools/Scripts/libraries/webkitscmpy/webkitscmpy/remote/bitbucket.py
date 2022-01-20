@@ -51,6 +51,7 @@ class BitBucket(Scm):
                 base=data['toRef']['displayId'],
                 opened=True if data.get('open') else (False if data.get('closed') else None),
                 generator=self,
+                url='{}/pull-requests/{}/overview'.format(self.repository.url, data['id']),
             )
 
             result._reviewers = []

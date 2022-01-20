@@ -281,7 +281,7 @@ class TestDoPullRequest(testing.PathTestCase):
                 path=self.path,
             ))
             self.assertDictEqual(repo.staged, {})
-            self.assertEqual(repo.head.hash, 'e4390abc95a2026370b8c9813b7e55c61c5d6ebb')
+            self.assertEqual(repo.head.hash, 'c28f53f7fabd7bd9535af890cb7dc473cb342999')
 
         self.assertEqual(
             '\n'.join([line for line in captured.root.log.getvalue().splitlines() if 'Mock process' not in line]),
@@ -303,7 +303,7 @@ Rebased 'eng/pr-branch' on 'main!'
             ))
             self.assertDictEqual(repo.modified, dict())
             self.assertDictEqual(repo.staged, dict())
-            self.assertEqual(repo.head.hash, 'd05082bf6707252aef3472692598a587ed3fb213')
+            self.assertEqual(repo.head.hash, '488ea15fdbafb3ddfe827f913776208ad3217d79')
 
         self.assertEqual(captured.stderr.getvalue(), "'{}' doesn't have a recognized remote\n".format(self.path))
         self.assertEqual(
@@ -329,7 +329,8 @@ Rebased 'eng/pr-branch' on 'main!'
         self.assertEqual(
             captured.stdout.getvalue(),
             "Created the local development branch 'eng/pr-branch'!\n"
-            "Created 'PR 1 | Created commit'!\n",
+            "Created 'PR 1 | [Testing] Creating commits'!\n"
+            "https://github.example.com/WebKit/WebKit/pulls/1\n",
         )
         self.assertEqual(captured.stderr.getvalue(), '')
         log = captured.root.log.getvalue().splitlines()
@@ -362,7 +363,11 @@ Rebased 'eng/pr-branch' on 'main!'
                     path=self.path,
                 ))
 
-        self.assertEqual(captured.stdout.getvalue(), "Updated 'PR 1 | Amended commit'!\n")
+        self.assertEqual(
+            captured.stdout.getvalue(),
+            "Updated 'PR 1 | [Testing] Amending commits'!\n"
+            "https://github.example.com/WebKit/WebKit/pulls/1\n",
+        )
         self.assertEqual(captured.stderr.getvalue(), '')
         log = captured.root.log.getvalue().splitlines()
         self.assertEqual(
@@ -400,9 +405,10 @@ Rebased 'eng/pr-branch' on 'main!'
 
         self.assertEqual(
             captured.stdout.getvalue(),
-            "'eng/pr-branch' is already associated with 'PR 1 | Created commit', which is closed.\n"
+            "'eng/pr-branch' is already associated with 'PR 1 | [Testing] Creating commits', which is closed.\n"
             'Would you like to create a new pull-request? (Yes/[No]): \n'
-            "Updated 'PR 1 | Amended commit'!\n",
+            "Updated 'PR 1 | [Testing] Amending commits'!\n"
+            "https://github.example.com/WebKit/WebKit/pulls/1\n",
         )
         self.assertEqual(captured.stderr.getvalue(), '')
         log = captured.root.log.getvalue().splitlines()
@@ -432,7 +438,8 @@ Rebased 'eng/pr-branch' on 'main!'
         self.assertEqual(
             captured.stdout.getvalue(),
             "Created the local development branch 'eng/pr-branch'!\n"
-            "Created 'PR 1 | Created commit'!\n",
+            "Created 'PR 1 | [Testing] Creating commits'!\n"
+            "https://bitbucket.example.com/projects/WEBKIT/repos/webkit/pull-requests/1/overview\n",
         )
         self.assertEqual(captured.stderr.getvalue(), '')
         log = captured.root.log.getvalue().splitlines()
@@ -467,7 +474,11 @@ Rebased 'eng/pr-branch' on 'main!'
                     path=self.path,
                 ))
 
-        self.assertEqual(captured.stdout.getvalue(), "Updated 'PR 1 | Amended commit'!\n")
+        self.assertEqual(
+            captured.stdout.getvalue(),
+            "Updated 'PR 1 | [Testing] Amending commits'!\n"
+            "https://bitbucket.example.com/projects/WEBKIT/repos/webkit/pull-requests/1/overview\n"
+        )
         self.assertEqual(captured.stderr.getvalue(), '')
         log = captured.root.log.getvalue().splitlines()
         self.assertEqual(
@@ -507,9 +518,10 @@ Rebased 'eng/pr-branch' on 'main!'
 
         self.assertEqual(
             captured.stdout.getvalue(),
-            "'eng/pr-branch' is already associated with 'PR 1 | Created commit', which is closed.\n"
+            "'eng/pr-branch' is already associated with 'PR 1 | [Testing] Creating commits', which is closed.\n"
             'Would you like to create a new pull-request? (Yes/[No]): \n'
-            "Updated 'PR 1 | Amended commit'!\n",
+            "Updated 'PR 1 | [Testing] Amending commits'!\n"
+            "https://bitbucket.example.com/projects/WEBKIT/repos/webkit/pull-requests/1/overview\n",
         )
         self.assertEqual(captured.stderr.getvalue(), '')
         log = captured.root.log.getvalue().splitlines()

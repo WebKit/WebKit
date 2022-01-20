@@ -198,5 +198,7 @@ class PullRequest(Command):
                 sys.stderr.write("Failed to create pull-request for '{}'\n".format(repository.branch))
                 return 1
             print("Created '{}'!".format(pr))
+        if pr.url:
+            print(pr.url)
 
         return 0
