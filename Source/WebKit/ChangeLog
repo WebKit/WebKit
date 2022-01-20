@@ -1,3 +1,9 @@
+2022-01-20  Adrian Perez de Castro  <aperez@igalia.com>
+
+        Unreviewed. Update OptionsGTK.cmake and NEWS for the 2.34.4 release
+
+        * gtk/NEWS: Add release notes for 2.34.4
+
 2021-11-30  Youenn Fablet  <youenn@apple.com>
 
         ServiceWorkerContainer does not respond well to network process crash
