@@ -1,3 +1,28 @@
+2021-10-25  Gabriel Nava Marino  <gnavamarino@apple.com>
+
+        ASSERT(node) triggered after surroundNodeRangeWithElement for node without editable style
+        https://bugs.webkit.org/show_bug.cgi?id=232133
+
+        Reviewed by Wenson Hsieh.
+        
+        If the last styled node was not parent node of a current text node, but we 
+        wish to style the text node, we will add a style span to surround the text node.
+        However, this requires the parent to have an editable style, or
+        we will not properly insert the span in the right location, which
+        later leads to a traversal into an invalid node. This change
+        makes it so we return early if the parent node does not have an
+        editable style, but modifying the existing
+        CompositeEditCommand::insertNodeBefore to return a boolean in the
+        early return case.
+
+        Test: fast/editing/apply-relative-font-style-change-crash-003.html
+
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::ApplyStyleCommand::surroundNodeRangeWithElement):
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::insertNodeBefore):
+        * editing/CompositeEditCommand.h:
+
 2021-10-23  Rob Buis  <rbuis@igalia.com>
 
         Null check in traverseNodesForSerialization
