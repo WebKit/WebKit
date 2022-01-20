@@ -1460,86 +1460,67 @@ BASE_MODES.each { |mode|
 }
 
 # Default set of tests to run; propagates the cfg to every callee.
-def defaultRunCfg(cfg)
+def defaultRunCfg(cfg, subsetOptions, *optionalTestSpecificOptions)
     cfg.freeze
-    if $mode == "quick"
-        defaultQuickRunCfg(cfg)
+    if not subsetOptions.has_key?(:ignoreQuickMode) and $mode == "quick"
+        defaultQuickRunCfg(cfg, *optionalTestSpecificOptions)
     else
-        runDefaultCfg(cfg)
-        runBytecodeCacheCfg(cfg)
-        runMiniModeCfg(cfg)
+        runDefaultCfg(cfg, *optionalTestSpecificOptions)
+        runBytecodeCacheCfg(cfg, *optionalTestSpecificOptions)
+        runMiniModeCfg(cfg, *optionalTestSpecificOptions)
         if $jitTests
-            runNoLLIntCfg(cfg)
-            runNoCJITValidatePhasesCfg(cfg)
-            runNoCJITCollectContinuouslyCfg(cfg) if shouldCollectContinuously?
-            runDFGEagerCfg(cfg)
-            if $mode != "basic"
-                runDFGEagerNoCJITValidateCfg(cfg)
-                runEagerJettisonNoCJITCfg(cfg)
+            if not subsetOptions.has_key?(:skipNoLLInt)
+                runNoLLIntCfg(cfg, *optionalTestSpecificOptions)
+            end
+            runNoCJITValidatePhasesCfg(cfg, *optionalTestSpecificOptions)
+            runNoCJITCollectContinuouslyCfg(cfg, *optionalTestSpecificOptions) if shouldCollectContinuously?
+            if not subsetOptions.has_key?(:skipEager)
+                runDFGEagerCfg(cfg)
+                if $mode != "basic"
+                    runDFGEagerNoCJITValidateCfg(cfg, *optionalTestSpecificOptions)
+                    runEagerJettisonNoCJITCfg(cfg, *optionalTestSpecificOptions)
+                end
             end
 
             return if !$isFTLPlatform
 
-            runNoFTLCfg(cfg)
-            runFTLEagerCfg(cfg)
-            runFTLEagerNoCJITValidateCfg(cfg) if $buildType == "release"
-            runFTLNoCJITSmallPoolCfg(cfg)
+            runNoFTLCfg(cfg, *optionalTestSpecificOptions)
+            if not subsetOptions.has_key?(:skipEager)
+                runFTLEagerCfg(cfg, *optionalTestSpecificOptions)
+                runFTLEagerNoCJITValidateCfg(cfg, *optionalTestSpecificOptions) if $buildType == "release"
+            end
+            runFTLNoCJITSmallPoolCfg(cfg, *optionalTestSpecificOptions)
 
             return if $mode == "basic"
 
-            runFTLNoCJITValidateCfg(cfg)
-            runFTLNoCJITB3O0Cfg(cfg)
-            runFTLNoCJITNoPutStackValidateCfg(cfg)
-            runFTLNoCJITNoInlineValidateCfg(cfg)
-            runFTLEagerNoCJITB3O1Cfg(cfg)
+            runFTLNoCJITValidateCfg(cfg, *optionalTestSpecificOptions)
+            runFTLNoCJITB3O0Cfg(cfg, *optionalTestSpecificOptions)
+            runFTLNoCJITNoPutStackValidateCfg(cfg, *optionalTestSpecificOptions)
+            runFTLNoCJITNoInlineValidateCfg(cfg, *optionalTestSpecificOptions)
+            if not subsetOptions.has_key?(:skipEager)
+                runFTLEagerNoCJITB3O1Cfg(cfg, *optionalTestSpecificOptions)
+            end
         end
     end
 end
 
 def defaultRun
-    defaultRunCfg({})
+    defaultRunCfg({}, {})
 end
 
 def defaultNoNoLLIntRun
-    if $mode == "quick"
-        defaultQuickRun
-    else
-        runDefault
-        if $jitTests
-            runNoCJITValidatePhases
-            runNoCJITCollectContinuously if shouldCollectContinuously?
-            runDFGEager
-            if $mode != "basic"
-                runDFGEagerNoCJITValidate
-                runEagerJettisonNoCJIT
-            end
-
-            return if !$isFTLPlatform
-
-            runNoFTL
-            runFTLNoCJITValidate
-            runFTLNoCJITSmallPool
-
-            return if $mode == "basic"
-
-            runFTLNoCJITB3O0
-            runFTLNoCJITNoPutStackValidate
-            runFTLNoCJITNoInlineValidate
-            runFTLEager
-            runFTLEagerNoCJITValidate if $buildType == "release"
-        end
-    end
+    defaultRunCfg({}, {:skipNoLLInt => true})
 end
 
-def defaultQuickRunCfg(cfg)
-    runDefaultCfg(cfg)
+def defaultQuickRunCfg(cfg, *optionalTestSpecificOptions)
+    runDefaultCfg(cfg, *optionalTestSpecificOptions)
     if $jitTests
-        runNoCJITValidateCfg(cfg)
+        runNoCJITValidateCfg(cfg, *optionalTestSpecificOptions)
 
         return if !$isFTLPlatform
 
-        runNoFTLCfg(cfg)
-        runFTLNoCJITValidateCfg(cfg)
+        runNoFTLCfg(cfg, *optionalTestSpecificOptions)
+        runFTLNoCJITValidateCfg(cfg, *optionalTestSpecificOptions)
     end
 end
 
@@ -1567,43 +1548,11 @@ end
 # for reasons that don't arise in the real world. It's used for tests that assert convergence
 # by counting recompilations.
 def defaultNoEagerRun(*optionalTestSpecificOptions)
-    runDefault(*optionalTestSpecificOptions)
-    if $jitTests
-        runNoLLInt(*optionalTestSpecificOptions)
-        runNoCJITValidatePhases(*optionalTestSpecificOptions)
-        runNoCJITCollectContinuously(*optionalTestSpecificOptions) if shouldCollectContinuously?
-
-        return if !$isFTLPlatform
-
-        runNoFTL(*optionalTestSpecificOptions)
-        runFTLNoCJITValidate(*optionalTestSpecificOptions)
-
-        return if $mode == "basic"
-
-        runFTLNoCJITNoInlineValidate(*optionalTestSpecificOptions)
-        runFTLNoCJITB3O0(*optionalTestSpecificOptions)
-    end
+    defaultRunCfg({}, { :skipEager => true }, *optionalTestSpecificOptions)
 end
 
 def defaultNoSamplingProfilerRun
-    runDefault
-    if $jitTests
-        runNoLLInt
-        runNoCJITValidatePhases
-        runNoCJITCollectContinuously if shouldCollectContinuously?
-        runDFGEager
-        runDFGEagerNoCJITValidate
-        runEagerJettisonNoCJIT
-
-        return if !$isFTLPlatform
-
-        runNoFTL
-        runFTLNoCJITNoPutStackValidate
-        runFTLNoCJITNoInlineValidate
-        runFTLEager
-        runFTLEagerNoCJITValidate if $buildType == "release"
-        runFTLNoCJITSmallPool
-    end
+    defaultRunCfg({}, { :ignoreQuickMode => true })
 end
 
 def runProfiler
@@ -2209,7 +2158,7 @@ def defaultRunNoisyTest
         :outputHandler => noisyOutputHandler,
         :errorHandler => noisyErrorHandler,
     }
-    defaultRunCfg(cfg)
+    defaultRunCfg(cfg, {})
 end
 
 def skip

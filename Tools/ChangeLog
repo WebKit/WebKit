@@ -1,3 +1,31 @@
+2022-01-20  Angelos Oikonomopoulos  <angelos@igalia.com>
+
+        [JSC] Further unification in run-jsc-stress-tests
+        https://bugs.webkit.org/show_bug.cgi?id=234343
+
+        Reviewed by Jonathan Bedard.
+
+        Extend defaultRunCfg to be able to omit a subset of the test
+        modes and change defaultNoNoLLIntRun, defaultNoEagerRun and
+        defaultNoSamplingProfilerRun to call into it.
+
+        When defaultNoNoLLIntRun was added in https://commits.webkit.org/176404@main,
+        it was a verbatim copy of defaultRun, except for the NoLLInt test
+        modes. It hasn't diverged further, so after this patch, the set of
+        tests executed remains the same.
+
+        When defaultNoEagerRun was added in https://commits.webkit.org/150033@main,
+        it was intended to be the same as defaultRun, minus the eager modes. It
+        hasn't been kept in sync, so this change results in few more testing modes for
+        the tests explicitly using defaultNoEagerRun.
+
+        defaultNoSamplingProfilerRun was ignoring quick mode and was dropping
+        runFTLNoCJITValidate when added in https://commits.webkit.org/171769@main.
+        This patch enables more test modes for the handful of tests that use
+        defaultNoSamplingProfilerRun.
+
+        * Scripts/run-jsc-stress-tests:
+
 2022-01-19  Jonathan Bedard  <jbedard@apple.com>
 
         [git-webkit] pull-request command should print the pr url
