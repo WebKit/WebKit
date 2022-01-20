@@ -1,3 +1,9 @@
+2022-01-19  Said Abou-Hallawa  <said@apple.com>
+
+        Unreviewed test gardening after after r288183
+
+        * platform/win/TestExpectations:
+
 2022-01-19  Chris Dumez  <cdumez@apple.com>
 
         [ iOS EWS ] imported/w3c/web-platform-tests/dom/events/focus-event-document-move.html is a constant text failure
