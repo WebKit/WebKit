@@ -503,7 +503,7 @@ const char* ServiceWorkerContainer::activeDOMObjectName() const
 SWClientConnection& ServiceWorkerContainer::ensureSWClientConnection()
 {
     ASSERT(scriptExecutionContext());
-    if (!m_swConnection) {
+    if (!m_swConnection || m_swConnection->isClosed()) {
         auto& context = *scriptExecutionContext();
         if (is<WorkerGlobalScope>(context))
             m_swConnection = &downcast<WorkerGlobalScope>(context).swClientConnection();

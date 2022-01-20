@@ -1,3 +1,20 @@
+2021-11-30  Youenn Fablet  <youenn@apple.com>
+
+        ServiceWorkerContainer does not respond well to network process crash
+        https://bugs.webkit.org/show_bug.cgi?id=233626
+
+        Reviewed by Chris Dumez.
+
+        Add a boolean to SWClientConnection to identify whether connection is closed.
+        ServiceWorkerContainer will retrieve a new connection if its existing connection is closed.
+        Covered by updated test.
+
+        * workers/service/SWClientConnection.h:
+        (WebCore::SWClientConnection::isClosed const):
+        (WebCore::SWClientConnection::setIsClosed):
+        * workers/service/ServiceWorkerContainer.cpp:
+        (WebCore::ServiceWorkerContainer::ensureSWClientConnection):
+
 2021-11-18  Frédéric Wang  <fwang@igalia.com>
 
         Nullptr crash in SimplifiedBackwardsTextIterator::range() via previousSentencePosition

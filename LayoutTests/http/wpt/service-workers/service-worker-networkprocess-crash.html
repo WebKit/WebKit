@@ -52,14 +52,16 @@ promise_test(async (test) => {
         testRunner.terminateNetworkProcess();
 
     let count = 0;
-    while (count++ < 20) {
+    while (count++ < 100) {
         const frame = await withFrame(scope + "/empty.html");
         if (frame.contentWindow.navigator.serviceWorker.controller)
             break;
         frame.remove();
         await new Promise(resolve => setTimeout(resolve, 50));
     }
-    assert_true(count < 20);
+    assert_true(count < 100);
+
+    await navigator.serviceWorker.getRegistration(scope);
 }, "Frame being controlled after network process crash");
 </script>
 </body>
