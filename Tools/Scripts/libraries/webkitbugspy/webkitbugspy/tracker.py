@@ -66,8 +66,15 @@ class Tracker(object):
                 return self.users.get(key)
         return None
 
+    @decorators.Memoize()
+    def me(self):
+        raise NotImplementedError()
+
     def issue(self, id):
         raise NotImplementedError()
 
     def populate(self, issue, member=None):
+        raise NotImplementedError()
+
+    def add_comment(self, issue, text):
         raise NotImplementedError()

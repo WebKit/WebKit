@@ -23,8 +23,9 @@
 import calendar
 import re
 import sys
+import time
 
-from webkitcorepy import Environment
+from webkitcorepy import Environment, decorators
 from webkitbugspy import Issue, Tracker as GenericTracker, User, name as library_name, version as library_version
 
 
@@ -81,8 +82,10 @@ class Tracker(GenericTracker):
             return user
         if not name or not username or not email:
             found = None
-            if username:
+            if isinstance(username, int):
                 found = self.library.AppleDirectoryQuery.user_entry_for_dsid(int(username))
+            elif username:
+                found = self.library.AppleDirectoryQuery.user_entry_for_attribute_value('uid', '{}@APPLECONNECT.APPLE.COM'.format(username))
             elif email:
                 found = self.library.AppleDirectoryQuery.user_entry_for_attribute_value('mail', email)
             elif name:
@@ -99,6 +102,11 @@ class Tracker(GenericTracker):
             username=username,
             emails=[email],
         )
+
+    @decorators.Memoize()
+    def me(self):
+        username = self.authentication().username()
+        return self.user(username=username)
 
     def issue(self, id):
         return Issue(id=int(id), tracker=self)
@@ -174,3 +182,29 @@ class Tracker(GenericTracker):
                 refs.add(candidate.link)
 
         return issue
+
+    def add_comment(self, issue, text):
+        if not self.client or not self.library:
+            sys.stderr.write('radarclient inaccessible on this machine\n')
+            return None
+
+        radar = self.client.radar_for_id(issue.id)
+        if not radar:
+            sys.stderr.write("Failed to fetch '{}'\n".format(issue.link))
+            return None
+
+        comment = self.library.DiagnosisEntry()
+        comment.text = text
+        radar.diagnosis.add(comment)
+        radar.commit_changes()
+
+        result = Issue.Comment(
+            user=self.me(),
+            timestamp=int(time.time()),
+            content=comment.text,
+        )
+        if not issue._comments:
+            self.populate(issue, 'comments')
+        issue._comments.append(result)
+
+        return result

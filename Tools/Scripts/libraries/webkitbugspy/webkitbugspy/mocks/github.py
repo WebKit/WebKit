@@ -21,12 +21,12 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import json
-import os
 import re
+import time
 
 from .base import Base
 
-from webkitbugspy import User
+from webkitbugspy import User, Issue
 from webkitcorepy import mocks
 
 
@@ -46,35 +46,26 @@ class GitHub(Base, mocks.Requests):
         from datetime import datetime, timedelta
         return datetime.utcfromtimestamp(timestamp - timedelta(hours=7).seconds).strftime('%Y-%m-%dT%H:%M:%SZ')
 
-    def __init__(self, hostname='github.example.com/WebKit/WebKit', users=None, issues=None):
+    def __init__(self, hostname='github.example.com/WebKit/WebKit', users=None, issues=None, environment=None):
         hostname, repo = hostname.split('/', 1)
         self.api_host = 'api.{hostname}/repos/{repo}'.format(hostname=hostname, repo=repo)
 
         Base.__init__(self, users=users, issues=issues)
         mocks.Requests.__init__(self, hostname, 'api.{}'.format(hostname))
 
-        self._environment = None
+        prefix = self.hosts[0].replace('.', '_').upper()
+        self._environment = environment or mocks.Environment(**{
+            '{}_USERNAME'.format(prefix): 'usernmae',
+            '{}_TOKEN'.format(prefix): 'token',
+        })
 
     def __enter__(self):
-        prefix = self.hosts[0].replace('.', '_').upper()
-        username_key = '{}_USERNAME'.format(prefix)
-        token_key = '{}_TOKEN'.format(prefix)
-        self._environment = {
-            username_key: os.environ.get(username_key),
-            token_key: os.environ.get(token_key),
-        }
-        os.environ[username_key] = 'username'
-        os.environ[token_key] = 'token'
-
+        self._environment.__enter__()
         return super(GitHub, self).__enter__()
 
     def __exit__(self, *args, **kwargs):
         result = super(GitHub, self).__exit__(*args, **kwargs)
-        for key in self._environment.keys():
-            if self._environment[key]:
-                os.environ[key] = self._environment[key]
-            else:
-                del os.environ[key]
+        self._environment.__exit__(*args, **kwargs)
         return result
 
     def _user(self, url, username):
@@ -124,6 +115,29 @@ class GitHub(Base, mocks.Requests):
             ) for comment in issue['comments']
         ])
 
+    def _post_comment(self, url, id, credentials, data):
+        user = self.users.get(credentials.username) if credentials else None
+        body = data.get('body')
+
+        if not user or id not in self.issues:
+            return mocks.Response.create404(url=url)
+        if not body:
+            return mocks.Response(status_code=400, url=url)
+
+        timestamp = time.time()
+        self.issues[id]['comments'].append(
+            Issue.Comment(user=user, timestamp=int(timestamp), content=body),
+        )
+
+        return mocks.Response.fromJson(
+            url=url, data=dict(
+                body=body,
+                user=dict(login=user.username),
+                updated_at=self.time_string(timestamp),
+                created_at=self.time_string(timestamp),
+            ),
+        )
+
     def _timelines(self, url, id):
         if id not in self.issues:
             return mocks.Response(
@@ -163,6 +177,8 @@ class GitHub(Base, mocks.Requests):
         match = re.match(r'{}/issues/(?P<id>\d+)/comments$'.format(self.api_host), stripped_url)
         if match and method == 'GET':
             return self._comments(url, int(match.group('id')))
+        if match and method == 'POST':
+            return self._post_comment(url, int(match.group('id')), auth, json)
 
         match = re.match(r'{}/issues/(?P<id>\d+)/timeline$'.format(self.api_host), stripped_url)
         if match and method == 'GET':

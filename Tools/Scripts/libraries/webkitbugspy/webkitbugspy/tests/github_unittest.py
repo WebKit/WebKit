@@ -20,10 +20,10 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import json
 import unittest
 
 from webkitbugspy import Issue, User, github, mocks
+from webkitcorepy import mocks as wkmocks
 
 
 class TestGitHub(unittest.TestCase):
@@ -105,15 +105,12 @@ class TestGitHub(unittest.TestCase):
             )
 
     def test_watcher_parse(self):
-        with mocks.GitHub(self.URL.split('://')[1], issues=mocks.ISSUES) as mock:
+        with mocks.GitHub(self.URL.split('://')[1], issues=mocks.ISSUES, environment=wkmocks.Environment(
+                GITHUB_EXAMPLE_COM_USERNAME='tcontributor',
+                GITHUB_EXAMPLE_COM_TOKEN='token',
+        )):
             tracker = github.Tracker(self.URL)
-            mock.issues[2]['comments'].append(
-                Issue.Comment(
-                    user=mocks.USERS['Tim Contributor'],
-                    timestamp=1639539630,
-                    content='Looks like @ffiler stumbled upon this in #3',
-                ),
-            )
+            tracker.issue(2).add_comment('Looks like @ffiler stumbled upon this in #3')
             self.assertEqual(
                 User.Encoder().default(tracker.issue(2).watchers), [
                     dict(name='Tim Contributor', username='tcontributor', emails=['tcontributor@example.com']),
@@ -130,13 +127,38 @@ class TestGitHub(unittest.TestCase):
             self.assertEqual(tracker.issue(3).references, [tracker.issue(2)])
 
     def test_reference_parse(self):
-        with mocks.GitHub(self.URL.split('://')[1], issues=mocks.ISSUES) as mock:
+        with mocks.GitHub(self.URL.split('://')[1], issues=mocks.ISSUES, environment=wkmocks.Environment(
+            GITHUB_EXAMPLE_COM_USERNAME='wwatcher',
+            GITHUB_EXAMPLE_COM_TOKEN='token',
+        )):
             tracker = github.Tracker(self.URL)
-            mock.issues[1]['comments'].append(
-                Issue.Comment(
-                    user=mocks.USERS['Wilma Watcher'],
-                    timestamp=1639539630,
-                    content='Is this related to #2?',
-                ),
-            )
+            tracker.issue(1).add_comment('Is this related to #2?')
             self.assertEqual(tracker.issue(1).references, [tracker.issue(2)])
+
+    def test_me(self):
+        with mocks.GitHub(self.URL.split('://')[1], issues=mocks.ISSUES, environment=wkmocks.Environment(
+            GITHUB_EXAMPLE_COM_USERNAME='tcontributor',
+            GITHUB_EXAMPLE_COM_TOKEN='token',
+        )):
+            self.assertEqual(
+                User.Encoder().default(github.Tracker(self.URL).me()),
+                dict(name='Tim Contributor', username='tcontributor', emails=['tcontributor@example.com']),
+            )
+
+    def test_add_comment(self):
+        with mocks.GitHub(self.URL.split('://')[1], issues=mocks.ISSUES, environment=wkmocks.Environment(
+            GITHUB_EXAMPLE_COM_USERNAME='tcontributor',
+            GITHUB_EXAMPLE_COM_TOKEN='token',
+        )):
+            issue = github.Tracker(self.URL).issue(1)
+            self.assertEqual(len(issue.comments), 2)
+
+            comment = issue.add_comment('Automated comment')
+            self.assertEqual(comment.content, 'Automated comment')
+            self.assertEqual(
+                User.Encoder().default(comment.user),
+                User.Encoder().default(github.Tracker(self.URL).me()),
+            )
+
+            self.assertEqual(len(issue.comments), 3)
+            self.assertEqual(len(github.Tracker(self.URL).issue(1).comments), 3)

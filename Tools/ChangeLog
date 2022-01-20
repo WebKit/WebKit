@@ -1,3 +1,87 @@
+2022-01-19  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkitbugspy] Support automated comments
+        https://bugs.webkit.org/show_bug.cgi?id=235371
+        <rdar://problem/87783426>
+
+        Reviewed by Dewei Zhu.
+
+        * Scripts/libraries/webkitbugspy/setup.py: Bump version.
+        * Scripts/libraries/webkitbugspy/webkitbugspy/__init__.py: Ditto.
+        * Scripts/libraries/webkitbugspy/webkitbugspy/bugzilla.py:
+        (Tracker.user): Add potential credentials to requests.
+        (Tracker.credentials): Explicitly call credentials from webkitcorepy. 
+        (Tracker._login_arguments): Create login query from credentials.
+        (Tracker.me): Return user based on credentials.
+        (Tracker.populate): Add potential credentials to requests.
+        (Tracker.add_comment): Add comment to bugzilla issue.
+        * Scripts/libraries/webkitbugspy/webkitbugspy/github.py:
+        (Tracker.me): Return user based on credentials.
+        (Tracker.add_comment): Add comment to GitHub issue.
+        * Scripts/libraries/webkitbugspy/webkitbugspy/issue.py:
+        (Issue.add_comment): Base class.
+        * Scripts/libraries/webkitbugspy/webkitbugspy/mocks/base.py:
+        (Base.add): We don't want to edit the original list of comments.
+        * Scripts/libraries/webkitbugspy/webkitbugspy/mocks/bugzilla.py:
+        (Bugzilla.__init__): Add optional Environment mock.
+        (Bugzilla.__enter__): Enter Environment mock.
+        (Bugzilla.__exit__): Exit Environment mock.
+        (Bugzilla._user): Use jsonlib instead of json.
+        (Bugzilla._user_for_credentials): Convert a credential string into
+        a User object.
+        (Bugzilla._issue): Use jsonlib instead of json.
+        (Bugzilla._see_also): Ditto.
+        (Bugzilla._comments): Ditto.
+        (Bugzilla._post_comment): Update mock issue database with posted comment.
+        (Bugzilla.request): Add credentials to each request, handle comment POST request.
+        * Scripts/libraries/webkitbugspy/webkitbugspy/mocks/github.py:
+        (GitHub.__init__): Add optional Environment mock.
+        (GitHub.__enter__): Enter Environment mock.
+        (GitHub.__exit__): Exit Environment mock.
+        (GitHub._post_comment): Update mock issue database with posted comment.
+        (GitHub.request): Handle comment POST request.
+        * Scripts/libraries/webkitbugspy/webkitbugspy/mocks/radar.py:
+        (AppleDirectoryQuery.user_entry_for_attribute_value): Map AppleConnect username
+        to user.
+        (RadarModel.CollectionProperty.__init__): Pass parent model in.
+        (RadarModel.CollectionProperty.add): Add an element to the collection.
+        (RadarModel.__init__): Pass self into CollectionProperty.
+        (RadarModel.commit_changes): Update mock issue database with issue contents.
+        (RadarClient.__init__): Accept authentication_strategy.
+        (Radar.AuthenticationStrategySystemAccount.__init__): Save username.
+        (Radar.AuthenticationStrategySystemAccount.username): Return username.
+        (Radar.AuthenticationStrategySPNego.username): Assume username from environment.
+        (Radar.DiagnosisEntry): Moved from RadarModel.DiagnosisEntry.
+        (Radar.transform_user): Add AppleConnect email.
+        (Radar.__init__): Pass authentication_strategy to RadarClient.
+        (RadarModel.DiagnosisEntry): Moved to Radar.DiagnosisEntry.
+        * Scripts/libraries/webkitbugspy/webkitbugspy/radar.py:
+        (Tracker.user): Support queries by AppleConnect username.
+        (Tracker.me): Use authentication to determine the logged in user.
+        (Tracker.add_comment): Add comment to Radar.
+        * Scripts/libraries/webkitbugspy/webkitbugspy/tests/bugzilla_unittest.py:
+        (TestBugzilla.test_reference_parse): Use add_comment.
+        (TestBugzilla.test_me): Added.
+        (TestBugzilla.test_add_comment): Added.
+        * Scripts/libraries/webkitbugspy/webkitbugspy/tests/github_unittest.py:
+        (TestGitHub.test_watcher_parse): Use add_comment.
+        (TestGitHub.test_reference_parse): Ditto.
+        (TestGitHub.test_me): Added.
+        (TestGitHub.test_add_comment): Added.
+        * Scripts/libraries/webkitbugspy/webkitbugspy/tests/radar_unittest.py:
+        (TestRadar): Renamed from TestGitHub.
+        (TestRadar.test_reference_parse): Use add_comment.
+        (TestRadar.test_me): Added.
+        (TestRadar.test_add_comment): Added.
+        (TestGitHub): Renamed TestRadar.
+        * Scripts/libraries/webkitbugspy/webkitbugspy/tracker.py:
+        (Tracker.me): Added.
+        (Tracker.add_comment): Added.
+        * Scripts/libraries/webkitcorepy/setup.py: Bump version.
+        * Scripts/libraries/webkitcorepy/webkitcorepy/mocks/__init__.py: Export mock environment, bump version.
+        * Scripts/libraries/webkitcorepy/webkitcorepy/mocks/environment.py: Added.
+        (Environment): Mock os.environ and reset credential cache.
+
 2022-01-20  Alex Christensen  <achristensen@webkit.org>
 
         [ iOS15 ] TestWebKitAPI.WebKit.ServerTrust and TestWebKitAPI.WebKit.FastServerTrust tests timing out

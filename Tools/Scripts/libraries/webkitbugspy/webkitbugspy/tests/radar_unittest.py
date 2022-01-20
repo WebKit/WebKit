@@ -23,9 +23,10 @@
 import unittest
 
 from webkitbugspy import Issue, User, radar, mocks
+from webkitcorepy import mocks as wkmocks
 
 
-class TestGitHub(unittest.TestCase):
+class TestRadar(unittest.TestCase):
     def test_no_radar(self):
         with mocks.NoRadar():
             tracker = radar.Tracker()
@@ -124,13 +125,29 @@ class TestGitHub(unittest.TestCase):
             self.assertEqual(tracker.issue(3).references, [tracker.issue(2)])
 
     def test_reference_parse(self):
-        with mocks.Radar(issues=mocks.ISSUES) as mock:
+        with wkmocks.Environment(RADAR_USERNAME='wwatcher'), mocks.Radar(issues=mocks.ISSUES) as mock:
             tracker = radar.Tracker()
-            mock.issues[1]['comments'].append(
-                Issue.Comment(
-                    user=mocks.USERS['Wilma Watcher'],
-                    timestamp=1639539630,
-                    content='Is this related to <rdar://2> ?',
-                ),
-            )
+            tracker.issue(1).add_comment('Is this related to <rdar://2> ?')
             self.assertEqual(tracker.issue(1).references, [tracker.issue(2)])
+
+    def test_me(self):
+        with wkmocks.Environment(RADAR_USERNAME='tcontributor'), mocks.Radar(issues=mocks.ISSUES):
+            self.assertEqual(
+                User.Encoder().default(radar.Tracker().me()),
+                dict(name='Tim Contributor', username=504, emails=['tcontributor@example.com']),
+            )
+
+    def test_add_comment(self):
+        with wkmocks.Environment(RADAR_USERNAME='tcontributor'), mocks.Radar(issues=mocks.ISSUES):
+            issue = radar.Tracker().issue(1)
+            self.assertEqual(len(issue.comments), 2)
+
+            comment = issue.add_comment('Automated comment')
+            self.assertEqual(comment.content, 'Automated comment')
+            self.assertEqual(
+                User.Encoder().default(comment.user),
+                User.Encoder().default(radar.Tracker().me()),
+            )
+
+            self.assertEqual(len(issue.comments), 3)
+            self.assertEqual(len(radar.Tracker().issue(1).comments), 3)

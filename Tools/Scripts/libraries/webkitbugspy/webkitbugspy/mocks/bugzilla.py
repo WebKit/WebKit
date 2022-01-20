@@ -22,15 +22,17 @@
 
 import json
 import re
+import time
 
 from .base import Base
 
-from webkitbugspy import User
+from webkitbugspy import User, Issue
 from webkitcorepy import mocks
 
 
 class Bugzilla(Base, mocks.Requests):
     top = None
+    CREDENTIAL_RE = re.compile(r'\??login=(?P<login>\S+)\&password=(?P<password>\S+)\&?$')
 
     @classmethod
     def time_string(cls, timestamp):
@@ -45,9 +47,28 @@ class Bugzilla(Base, mocks.Requests):
             emails=user.emails,
         )
 
-    def __init__(self, hostname='bugs.example.com', users=None, issues=None):
+    def __init__(self, hostname='bugs.example.com', users=None, issues=None, environment=None):
         Base.__init__(self, users=users, issues=issues)
         mocks.Requests.__init__(self, hostname)
+        self._comment_count = 1
+
+        prefix = self.hosts[0].replace('.', '_').upper()
+        self._environment = environment or mocks.Environment(**{
+            '{}_USERNAME'.format(prefix): 'usernmae',
+            '{}_PASSWORD'.format(prefix): 'password',
+        })
+
+        for issue in self.issues.values():
+            self._comment_count += (1 + len(issue.get('comments', [])))
+
+    def __enter__(self):
+        self._environment.__enter__()
+        return super(Bugzilla, self).__enter__()
+
+    def __exit__(self, *args, **kwargs):
+        result = super(Bugzilla, self).__exit__(*args, **kwargs)
+        self._environment.__exit__(*args, **kwargs)
+        return result
 
     def _user(self, url, username):
         user = self.users[username]
@@ -68,6 +89,14 @@ class Bugzilla(Base, mocks.Requests):
                 real_name=user.name,
             )],
         ), url=url)
+
+    def _user_for_credentials(self, credentials):
+        if not credentials:
+            return None
+        match = self.CREDENTIAL_RE.match(credentials)
+        if not match:
+            return None
+        return self.users.get(match.group('login'))
 
     def _issue(self, url, id):
         if id not in self.issues:
@@ -167,26 +196,50 @@ class Bugzilla(Base, mocks.Requests):
             ])},
         ), url=url)
 
+    def _post_comment(self, url, id, credentials, data):
+        comment = data.get('comment', None)
+        user = self._user_for_credentials(credentials)
+
+        if not user:
+            return mocks.Response(status_code=401, url=url)
+        if id not in self.issues:
+            return mocks.Response.create404(url=url)
+        if not comment:
+            return mocks.Response(status_code=400, url=url)
+
+        self.issues[id]['comments'].append(
+            Issue.Comment(user=user, timestamp=int(time.time()), content=comment),
+        )
+
+        self._comment_count += 1
+        return mocks.Response(
+            status_code=201,
+            text=json.dumps(dict(id=self._comment_count)),
+            url=url,
+        )
+
     def request(self, method, url, data=None, params=None, auth=None, json=None, **kwargs):
         if not url.startswith('http://') and not url.startswith('https://'):
             return mocks.Response.create404(url)
 
         stripped_url = url.split('://')[-1]
 
-        match = re.match(r'{}/rest/user\?names=(?P<username>\S+)$'.format(self.hosts[0]), stripped_url)
+        match = re.match(r'{}/rest/user\?(?P<credentials>login=\S+\&password=\S+\&)?names=(?P<username>\S+)$'.format(self.hosts[0]), stripped_url)
         if match and method == 'GET':
             return self._user(url, match.group('username'))
 
-        match = re.match(r'{}/rest/bug/(?P<id>\d+)$'.format(self.hosts[0]), stripped_url)
+        match = re.match(r'{}/rest/bug/(?P<id>\d+)(?P<credentials>\?login=\S+\&password=\S+)?$'.format(self.hosts[0]), stripped_url)
         if match and method == 'GET':
             return self._issue(url, int(match.group('id')))
 
-        match = re.match(r'{}/rest/bug/(?P<id>\d+)\?include_fields=see_also$'.format(self.hosts[0]), stripped_url)
+        match = re.match(r'{}/rest/bug/(?P<id>\d+)\?(?P<credentials>login=\S+\&password=\S+\&)?include_fields=see_also$'.format(self.hosts[0]), stripped_url)
         if match and method == 'GET':
             return self._see_also(url, int(match.group('id')))
 
-        match = re.match(r'{}/rest/bug/(?P<id>\d+)/comment$'.format(self.hosts[0]), stripped_url)
+        match = re.match(r'{}/rest/bug/(?P<id>\d+)/comment(?P<credentials>\?login=\S+\&password=\S+)?$'.format(self.hosts[0]), stripped_url)
         if match and method == 'GET':
             return self._comments(url, int(match.group('id')))
+        if match and method == 'POST':
+            return self._post_comment(url, int(match.group('id')), match.group('credentials'), json)
 
         return mocks.Response.create404(url)

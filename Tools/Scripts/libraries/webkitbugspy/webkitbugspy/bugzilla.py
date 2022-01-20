@@ -1,4 +1,4 @@
-# Copyright (C) 2021 Apple Inc. All rights reserved.
+# Copyright (C) 2021-2022 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -21,16 +21,16 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import calendar
-import os
 import re
 import requests
 import sys
+import time
+import webkitcorepy
 
 from .issue import Issue
 from .tracker import Tracker as GenericTracker
 
 from datetime import datetime
-from webkitcorepy import credentials, decorators, OutputCapture
 
 
 class Tracker(GenericTracker):
@@ -61,7 +61,13 @@ class Tracker(GenericTracker):
 
         if not username and not email:
             raise RuntimeError("Failed to find username for '{}'".format(name))
-        response = requests.get('{}/rest/user?names={}'.format(self.url, username or email or name))
+        response = requests.get('{url}/rest/user{query}'.format(
+            url=self.url,
+            query=self._login_arguments(
+                required=False,
+                query='names={name}'.format(name=username or email or name),
+            ),
+        ))
         response = response.json().get('users') if response.status_code // 100 == 2 else None
         if not response:
             return self.users.create(
@@ -84,11 +90,26 @@ class Tracker(GenericTracker):
         return None
 
     def credentials(self, required=True):
-        return credentials(
+        return webkitcorepy.credentials(
             url=self.url,
             required=required,
             prompt=self.url.split('//')[-1],
         )
+
+    def _login_arguments(self, required=False, query=None):
+        username, password = self.credentials(required=required)
+        if not username or not password:
+            return '?{}'.format(query) if query else ''
+        return '?login={username}&password={password}{query}'.format(
+            username=username,
+            password=password,
+            query='&{}'.format(query) if query else '',
+        )
+
+    @webkitcorepy.decorators.Memoize()
+    def me(self):
+        username, _ = self.credentials(required=True)
+        return self.user(username=username)
 
     def issue(self, id):
         return Issue(id=int(id), tracker=self)
@@ -97,7 +118,7 @@ class Tracker(GenericTracker):
         issue._link = '{}/show_bug.cgi?id={}'.format(self.url, issue.id)
 
         if member in ['title', 'timestamp', 'creator', 'opened', 'assignee', 'watchers']:
-            response = requests.get('{}/rest/bug/{}'.format(self.url, issue.id))
+            response = requests.get('{}/rest/bug/{}{}'.format(self.url, issue.id, self._login_arguments(required=False)))
             response = response.json().get('bugs', []) if response.status_code == 200 else None
             if response:
                 response = response[0]
@@ -128,7 +149,7 @@ class Tracker(GenericTracker):
                 sys.stderr.write("Failed to fetch '{}'\n".format(issue.link))
 
         if member in ['description', 'comments']:
-            response = requests.get('{}/rest/bug/{}/comment'.format(self.url, issue.id))
+            response = requests.get('{}/rest/bug/{}/comment{}'.format(self.url, issue.id, self._login_arguments(required=False)))
             if response.status_code == 200:
                 response = response.json().get('bugs', {}).get(str(issue.id), {}).get('comments', None)
             else:
@@ -158,7 +179,10 @@ class Tracker(GenericTracker):
                     issue._references.append(candidate)
                     refs.add(candidate.link)
 
-            response = requests.get('{}/rest/bug/{}?include_fields=see_also'.format(self.url, issue.id))
+            response = requests.get('{url}/rest/bug/{id}{query}'.format(
+                url=self.url, id=issue.id,
+                query=self._login_arguments(required=False, query='include_fields=see_also'),
+            ))
             response = response.json().get('bugs', []) if response.status_code == 200 else None
             if response:
                 for link in response[0].get('see_also', []):
@@ -171,3 +195,23 @@ class Tracker(GenericTracker):
                 sys.stderr.write("Failed to fetch related issues for '{}'\n".format(issue.link))
 
         return issue
+
+    def add_comment(self, issue, text):
+        response = requests.post(
+            '{}/rest/bug/{}/comment{}'.format(self.url, issue.id, self._login_arguments(required=True)),
+            json=dict(comment=text),
+        )
+        if response.status_code // 100 != 2:
+            sys.stderr.write("Failed to add comment to '{}'\n".format(issue))
+            return None
+
+        result = Issue.Comment(
+            user=self.me(),
+            timestamp=int(time.time()),
+            content=text,
+        )
+        if not issue._comments:
+            self.populate(issue, 'comments')
+        issue._comments.append(result)
+
+        return result

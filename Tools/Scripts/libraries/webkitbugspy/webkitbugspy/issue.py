@@ -132,6 +132,9 @@ class Issue(object):
             self.tracker.populate(self, 'references')
         return self._references or []
 
+    def add_comment(self, text):
+        return self.tracker.add_comment(self, text)
+
     def __hash__(self):
         return hash(self.link)
 

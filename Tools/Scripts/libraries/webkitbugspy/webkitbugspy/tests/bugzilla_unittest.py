@@ -19,11 +19,11 @@
 # CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
-import json
+import os
 import unittest
 
 from webkitbugspy import Issue, User, bugzilla, mocks
+from webkitcorepy import mocks as wkmocks
 
 
 class TestBugzilla(unittest.TestCase):
@@ -130,13 +130,38 @@ class TestBugzilla(unittest.TestCase):
             self.assertEqual(tracker.issue(3).references, [tracker.issue(2)])
 
     def test_reference_parse(self):
-        with mocks.Bugzilla(self.URL.split('://')[1], issues=mocks.ISSUES) as mock:
+        with mocks.Bugzilla(self.URL.split('://')[1], issues=mocks.ISSUES, environment=wkmocks.Environment(
+            BUGS_EXAMPLE_COM_USERNAME='wwatcher@example.com',
+            BUGS_EXAMPLE_COM_PASSWORD='password',
+        )):
             tracker = bugzilla.Tracker(self.URL)
-            mock.issues[1]['comments'].append(
-                Issue.Comment(
-                    user=mocks.USERS['Wilma Watcher'],
-                    timestamp=1639539630,
-                    content='Is this related to {}/show_bug.cgi?id=2?'.format(self.URL),
-                ),
-            )
+            tracker.issue(1).add_comment('Is this related to {}/show_bug.cgi?id=2?'.format(self.URL))
             self.assertEqual(tracker.issue(1).references, [tracker.issue(2)])
+
+    def test_me(self):
+        with mocks.Bugzilla(self.URL.split('://')[1], issues=mocks.ISSUES, environment=wkmocks.Environment(
+            BUGS_EXAMPLE_COM_USERNAME='tcontributor@example.com',
+            BUGS_EXAMPLE_COM_PASSWORD='password',
+        )):
+            self.assertEqual(
+                User.Encoder().default(bugzilla.Tracker(self.URL).me()),
+                dict(name='Tim Contributor', username='tcontributor@example.com', emails=['tcontributor@example.com']),
+            )
+
+    def test_add_comment(self):
+        with mocks.Bugzilla(self.URL.split('://')[1], issues=mocks.ISSUES, environment=wkmocks.Environment(
+                BUGS_EXAMPLE_COM_USERNAME='tcontributor@example.com',
+                BUGS_EXAMPLE_COM_PASSWORD='password',
+        )):
+            issue = bugzilla.Tracker(self.URL).issue(1)
+            self.assertEqual(len(issue.comments), 2)
+
+            comment = issue.add_comment('Automated comment')
+            self.assertEqual(comment.content, 'Automated comment')
+            self.assertEqual(
+                User.Encoder().default(comment.user),
+                User.Encoder().default(bugzilla.Tracker(self.URL).me()),
+            )
+
+            self.assertEqual(len(issue.comments), 3)
+            self.assertEqual(len(bugzilla.Tracker(self.URL).issue(1).comments), 3)

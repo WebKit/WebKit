@@ -19,6 +19,7 @@
 # CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+import copy
 
 from webkitbugspy import User
 
@@ -56,4 +57,4 @@ class Base(object):
             if user:
                 self.users.add(type(self).transform_user(user))
 
-        self.issues[id] = {key: value for key, value in bug_data.items()}
+        self.issues[id] = copy.deepcopy(bug_data)
