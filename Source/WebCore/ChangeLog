@@ -1,3 +1,16 @@
+2021-12-23  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] MediaPlayerPrivateGStreamer mishandles failure to create WebKitTextCombiner
+        https://bugs.webkit.org/show_bug.cgi?id=233230
+
+        Reviewed by Michael Catanzaro.
+
+        Gracefully fail when the subenc plugin is not available. It is optional, we should not
+        assert or crash if it's not found. Two warnings are logged already when it's not found.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::createGSTPlayBin):
+
 2021-12-22  Frédéric Wang  <fwang@igalia.com>
 
         null ptr deref in DocumentTimeline::animate

@@ -219,7 +219,7 @@ GstElement* webkitTextCombinerNew()
 {
     // The combiner relies on webvttenc, fail early if it's not there.
     if (!isGStreamerPluginAvailable("subenc")) {
-        WTFLogAlways("WebKit wasn't able to find a WebVTT encoder. Not continuing without platform support for subtitles.");
+        WTFLogAlways("WebKit wasn't able to find a WebVTT encoder. Subtitles handling will be degraded unless gst-plugins-bad is installed.");
         return nullptr;
     }
 

@@ -2703,9 +2703,8 @@ void MediaPlayerPrivateGStreamer::createGSTPlayBin(const URL& url)
     if (m_isLegacyPlaybin)
         g_signal_connect_swapped(m_pipeline.get(), "text-changed", G_CALLBACK(textChangedCallback), this);
 
-    GstElement* textCombiner = webkitTextCombinerNew();
-    ASSERT(textCombiner);
-    g_object_set(m_pipeline.get(), "text-stream-combiner", textCombiner, nullptr);
+    if (auto* textCombiner = webkitTextCombinerNew())
+        g_object_set(m_pipeline.get(), "text-stream-combiner", textCombiner, nullptr);
 
     m_textSink = webkitTextSinkNew(makeWeakPtr(*this));
     ASSERT(m_textSink);
