@@ -7966,6 +7966,9 @@ void WebPageProxy::resetStateAfterProcessExited(ProcessTerminationReason termina
     m_editorState = EditorState();
     m_cachedFontAttributesAtSelectionStart.reset();
 
+    if (terminationReason != ProcessTerminationReason::NavigationSwap)
+        m_provisionalPage = nullptr;
+
     if (terminationReason == ProcessTerminationReason::NavigationSwap)
         pageClient().processWillSwap();
     else

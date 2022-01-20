@@ -1,3 +1,21 @@
+2021-11-16  Chris Dumez  <cdumez@apple.com>
+
+        Crash under WebKit::WebPageProxy::commitProvisionalPage()
+        https://bugs.webkit.org/show_bug.cgi?id=233199
+        <rdar://57659921>
+
+        Reviewed by Youenn Fablet.
+
+        In the event where the committed WebProcess would crash while a cross-site provisional load
+        is going on in a provisional page / WebProcess, we would do a null dereference of the page's
+        drawing area when trying to commit the provisional page later on. We would also hit various
+        assertions in debug since the page's state gets completely reset when its WebProcess crashes.
+
+        To address the issue, we now clear the provisional page if the page's WebProcess crashes.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::resetStateAfterProcessExited):
+
 2021-09-29  Chris Dumez  <cdumez@apple.com>
 
         [ iOS Debug ] http/tests/xmlhttprequest/access-control-preflight-credential-sync.html is a flaky crash
