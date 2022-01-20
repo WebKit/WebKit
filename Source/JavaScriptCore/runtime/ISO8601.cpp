@@ -32,6 +32,7 @@
 #include <limits>
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/DateMath.h>
+#include <wtf/WallTime.h>
 #include <wtf/text/StringParsingBuffer.h>
 #include <wtf/unicode/CharacterNames.h>
 
@@ -1124,6 +1125,11 @@ Int128 ExactTime::difference(ExactTime other, unsigned increment, TemporalUnit u
 ExactTime ExactTime::round(unsigned increment, TemporalUnit unit, RoundingMode roundingMode) const
 {
     return ExactTime { round(m_epochNanoseconds, increment, unit, roundingMode) };
+}
+
+ExactTime ExactTime::now()
+{
+    return ExactTime { WTF::currentTimeInNanoseconds() };
 }
 
 } // namespace ISO8601

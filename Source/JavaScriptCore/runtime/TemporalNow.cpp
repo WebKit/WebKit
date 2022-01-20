@@ -25,12 +25,14 @@
 #include "JSGlobalObject.h"
 #include "JSObjectInlines.h"
 #include "ObjectPrototype.h"
+#include "TemporalInstant.h"
 #include "TemporalTimeZone.h"
 
 namespace JSC {
 
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(TemporalNow);
 
+static JSC_DECLARE_HOST_FUNCTION(temporalNowFuncInstant);
 static JSC_DECLARE_HOST_FUNCTION(temporalNowFuncTimeZone);
 
 } // namespace JSC
@@ -41,6 +43,7 @@ namespace JSC {
 
 /* Source for TemporalNow.lut.h
 @begin temporalNowTable
+    instant         temporalNowFuncInstant      DontEnum|Function 0
     timeZone        temporalNowFuncTimeZone     DontEnum|Function 0
 @end
 */
@@ -69,6 +72,12 @@ void TemporalNow::finishCreation(VM& vm)
     Base::finishCreation(vm);
     ASSERT(inherits(vm, info()));
     JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
+}
+
+// https://tc39.es/proposal-temporal/#sec-temporal.now.instant
+JSC_DEFINE_HOST_FUNCTION(temporalNowFuncInstant, (JSGlobalObject* globalObject, CallFrame*))
+{
+    return JSValue::encode(TemporalInstant::tryCreateIfValid(globalObject, ISO8601::ExactTime::now()));
 }
 
 // https://tc39.es/proposal-temporal/#sec-temporal.now.timezone

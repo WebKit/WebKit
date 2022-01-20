@@ -174,6 +174,8 @@ public:
     Int128 difference(ExactTime other, unsigned increment, TemporalUnit, RoundingMode) const;
     ExactTime round(unsigned increment, TemporalUnit, RoundingMode) const;
 
+    static ExactTime now();
+
 private:
     static constexpr Int128 dayRangeSeconds { 86400'00000000 }; // 1e8 days
     static constexpr Int128 nsPerMicrosecond { 1000 };

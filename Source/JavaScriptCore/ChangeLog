@@ -1,5 +1,21 @@
 2022-01-19  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] Implement Temporal.Now.instant()
+        https://bugs.webkit.org/show_bug.cgi?id=234836
+
+        Reviewed by Ross Kirsling.
+
+        This patch implements Temporal.Now.instant() since Temporal.Instant is now implemented.
+        It returns an instant which represents current wall time.
+
+        * runtime/ISO8601.cpp:
+        (JSC::ISO8601::ExactTime::now):
+        * runtime/ISO8601.h:
+        * runtime/TemporalNow.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+
+2022-01-19  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] Fix non-JIT Windows LLInt
         https://bugs.webkit.org/show_bug.cgi?id=235388
 

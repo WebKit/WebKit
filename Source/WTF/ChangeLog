@@ -1,3 +1,22 @@
+2022-01-19  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Implement Temporal.Now.instant()
+        https://bugs.webkit.org/show_bug.cgi?id=234836
+
+        Reviewed by Ross Kirsling.
+
+        Add currentTimeInNanoseconds implementation. Use clock_gettime for non Windows environment
+        since it is POSIX & it is supported in macOS after Sierra.
+
+        We also remove non-QueryPerformanceCounter path on Windows build since (1) it is supported in
+        all supported Windows versions now and (2) no ports are using that path.
+
+        * wtf/CurrentTime.cpp:
+        (WTF::currentTimeInNanoseconds):
+        (WTF::currentTime):
+        * wtf/PlatformUse.h:
+        * wtf/WallTime.h:
+
 2022-01-19  Saam Barati  <sbarati@apple.com>
 
         Update ARM64EHash

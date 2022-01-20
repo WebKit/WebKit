@@ -90,8 +90,6 @@ static double lowResUTCTime()
     return (dateTime.QuadPart - epochBias) / hundredsOfNanosecondsPerMillisecond;
 }
 
-#if USE(QUERY_PERFORMANCE_COUNTER)
-
 static LARGE_INTEGER qpcFrequency;
 static bool syncedTime;
 
@@ -198,50 +196,25 @@ static inline double currentTime()
     return utc / 1000.0;
 }
 
-#else
-
-static inline double currentTime()
+Int128 currentTimeInNanoseconds()
 {
-    static bool init = false;
-    static double lastTime;
-    static DWORD lastTickCount;
-    if (!init) {
-        lastTime = lowResUTCTime();
-        lastTickCount = GetTickCount();
-        init = true;
-        return lastTime;
-    }
-
-    DWORD tickCountNow = GetTickCount();
-    DWORD elapsed = tickCountNow - lastTickCount;
-    double timeNow = lastTime + (double)elapsed / 1000.;
-    if (elapsed >= 0x7FFFFFFF) {
-        lastTime = timeNow;
-        lastTickCount = tickCountNow;
-    }
-    return timeNow;
-}
-
-#endif // USE(QUERY_PERFORMANCE_COUNTER)
-
-#elif USE(GLIB)
-
-// Note: GTK on Windows will pick up the PLATFORM(WIN) implementation above which provides
-// better accuracy compared with Windows implementation of g_get_current_time:
-// (http://www.google.com/codesearch/p?hl=en#HHnNRjks1t0/glib-2.5.2/glib/gmain.c&q=g_get_current_time).
-// Non-Windows GTK builds could use gettimeofday() directly but for the sake of consistency lets use GTK function.
-static inline double currentTime()
-{
-    return static_cast<double>(g_get_real_time() / 1000000.0);
+    return static_cast<Int128>(currentTime() * 1'000'000'000);
 }
 
 #else
 
+Int128 currentTimeInNanoseconds()
+{
+    struct timespec ts { };
+    clock_gettime(CLOCK_REALTIME, &ts);
+    return (static_cast<Int128>(ts.tv_sec) * 1'000'000'000) + ts.tv_nsec;
+}
+
 static inline double currentTime()
 {
-    struct timeval now;
-    gettimeofday(&now, 0);
-    return now.tv_sec + now.tv_usec / 1000000.0;
+    struct timespec ts { };
+    clock_gettime(CLOCK_REALTIME, &ts);
+    return static_cast<double>(ts.tv_sec) + ts.tv_nsec / 1'000'000'000.0;
 }
 
 #endif

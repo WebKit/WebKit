@@ -86,11 +86,6 @@
 #define USE_WEBP 1
 #endif
 
-/* On Windows, use QueryPerformanceCounter by default */
-#if OS(WINDOWS)
-#define USE_QUERY_PERFORMANCE_COUNTER  1
-#endif
-
 #if PLATFORM(COCOA)
 #define USE_CF 1
 #endif

@@ -27,6 +27,7 @@
 
 #include <wtf/ClockType.h>
 #include <wtf/GenericTimeMixin.h>
+#include <wtf/Int128.h>
 
 namespace WTF {
 
@@ -76,6 +77,7 @@ struct WallTime::MarkableTraits {
 };
 
 WTF_EXPORT_PRIVATE void sleep(WallTime);
+WTF_EXPORT_PRIVATE Int128 currentTimeInNanoseconds();
 
 } // namespace WTF
 
