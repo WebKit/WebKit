@@ -1,3 +1,27 @@
+2022-01-08  Gabriel Nava Marino  <gnavamarino@apple.com>
+
+        null ptr deref in WebCore::ModifySelectionListLevelCommand::appendSiblingNodeRange
+        https://bugs.webkit.org/show_bug.cgi?id=234862
+
+        Reviewed by Darin Adler.
+
+        ModifySelectionListLevelCommand::appendSiblingNodeRange loops through nodes assuming
+        existence of siblings, which is not guaranteed, and can result in nullptr deref. Instead,
+        check for node existence as part of loop condition, and change raw pointer usage to RefPtr.
+
+        This addresses the crash but results in ASSERT(isEndOfParagraph(endOfParagraphToMove))
+        failing in CompositeEditCommand::moveParagraph. We modify WebCore::findEndOfParagraph
+        to check for HTMLBRElement nodes to avoid unexpectedly changing the AnchorType.
+
+        Test: http/tests/lists/list-new-parent-no-sibling-append.html
+
+        * editing/ModifySelectionListLevel.cpp:
+        (WebCore::ModifySelectionListLevelCommand::insertSiblingNodeRangeBefore):
+        (WebCore::ModifySelectionListLevelCommand::insertSiblingNodeRangeAfter):
+        (WebCore::ModifySelectionListLevelCommand::appendSiblingNodeRange):
+        * editing/VisibleUnits.cpp:
+        (WebCore::findEndOfParagraph):
+
 2022-01-05  Chris Dumez  <cdumez@apple.com>
 
         [ Monterey Debug arm64 ] ASSERTION FAILED: result == &worker ./workers/service/server/SWServer.cpp(837) : void WebCore::SWServer::workerContextTerminated(WebCore::SWServerWorker &)

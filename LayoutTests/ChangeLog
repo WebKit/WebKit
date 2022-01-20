@@ -1,3 +1,15 @@
+2022-01-08  Gabriel Nava Marino  <gnavamarino@apple.com>
+
+        null ptr deref in WebCore::ModifySelectionListLevelCommand::appendSiblingNodeRange
+        https://bugs.webkit.org/show_bug.cgi?id=234862
+
+        Reviewed by Darin Adler.
+
+        * http/tests/lists/list-new-parent-no-sibling-append-expected.txt: Added.
+        * http/tests/lists/list-new-parent-no-sibling-append.html: Added.
+        * platform/gtk/http/tests/lists/list-new-parent-no-sibling-append-expected.txt: Added.
+        * platform/win/http/tests/lists/list-new-parent-no-sibling-append-expected.txt: Added.
+
 2021-12-22  Frédéric Wang  <fwang@igalia.com>
 
         null ptr deref in DocumentTimeline::animate

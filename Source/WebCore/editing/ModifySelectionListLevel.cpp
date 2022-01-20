@@ -91,48 +91,52 @@ static bool getStartEndListChildren(const VisibleSelection& selection, Node*& st
 
 void ModifySelectionListLevelCommand::insertSiblingNodeRangeBefore(Node* startNode, Node* endNode, Node* refNode)
 {
-    Node* node = startNode;
-    while (1) {
-        Node* next = node->nextSibling();
+    RefPtr node = startNode;
+    while (node) {
+        RefPtr next = node->nextSibling();
         removeNode(*node);
         insertNodeBefore(*node, *refNode);
 
         if (node == endNode)
-            break;
+            return;
 
         node = next;
     }
+    ASSERT_NOT_REACHED();
 }
 
 void ModifySelectionListLevelCommand::insertSiblingNodeRangeAfter(Node* startNode, Node* endNode, Node* refNode)
 {
-    Node* node = startNode;
-    while (1) {
-        Node* next = node->nextSibling();
+    RefPtr node = startNode;
+    RefPtr refChild = refNode;
+    while (node) {
+        RefPtr next = node->nextSibling();
         removeNode(*node);
-        insertNodeAfter(*node, *refNode);
+        insertNodeAfter(*node, *refChild);
 
         if (node == endNode)
-            break;
+            return;
 
-        refNode = node;
+        refChild = node;
         node = next;
     }
+    ASSERT_NOT_REACHED();
 }
 
 void ModifySelectionListLevelCommand::appendSiblingNodeRange(Node* startNode, Node* endNode, Element* newParent)
 {
-    Node* node = startNode;
-    while (1) {
-        Node* next = node->nextSibling();
+    RefPtr node = startNode;
+    while (node) {
+        RefPtr next = node->nextSibling();
         removeNode(*node);
         appendNode(*node, *newParent);
 
         if (node == endNode)
-            break;
+            return;
 
         node = next;
     }
+    ASSERT_NOT_REACHED();
 }
 
 IncreaseSelectionListLevelCommand::IncreaseSelectionListLevelCommand(Document& document, Type listType)
