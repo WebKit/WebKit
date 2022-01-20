@@ -113,6 +113,7 @@ private:
     bool removeTargetRegistration(Element&);
     void removeAllTargets();
 
+    WeakPtr<Document> m_associatedDocument;
     WeakPtr<Document> m_implicitRootDocument;
     WeakPtr<ContainerNode> m_root;
     LengthBox m_rootMargin;

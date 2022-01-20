@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+
+<script>
+function createNodeIteratorWithCallableFilter(key, FunctionConstructor = Function) {
+    return parent.document.createNodeIterator(parent.nodeIteratorTestRoot, NodeFilter.SHOW_ELEMENT, new FunctionConstructor(`
+        top["${key}"]++;
+        return NodeFilter.FILTER_ACCEPT;
+    `));
+}
+
+function createNodeIteratorWithNonCallableFilter0(key) {
+    const nodeFilter = {
+        acceptNode: new parent.Function(`
+            top["${key}"]++;
+            return NodeFilter.FILTER_ACCEPT;
+        `),
+    };
+
+    return parent.document.createNodeIterator(parent.nodeIteratorTestRoot, NodeFilter.SHOW_ELEMENT, nodeFilter);
+}
+
+function createNodeIteratorWithNonCallableFilter1(key, iframe) {
+    const nodeFilter = {
+        get acceptNode() {
+            iframe.remove();
+
+            return () => {
+                top[key]++;
+                return NodeFilter.FILTER_ACCEPT;
+            };
+        },
+    };
+
+    return parent.document.createNodeIterator(parent.nodeIteratorTestRoot, NodeFilter.SHOW_ELEMENT, nodeFilter);
+}
+
+function createNodeIteratorWithNonCallableFilter2() {
+    const nodeFilter = new parent.Object;
+    nodeFilter.callbackInvocations = 0;
+    nodeFilter.acceptNode = function() {
+        nodeIterator.callbackInvocations++;
+        return NodeFilter.FILTER_ACCEPT;
+    };
+
+    const nodeIterator = parent.document.createNodeIterator(parent.nodeIteratorTestRoot, NodeFilter.SHOW_ELEMENT, nodeFilter);
+    nodeIterator.callbackInvocations = 0;
+    return nodeIterator;
+}
+</script>

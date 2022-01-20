@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+
+<script>
+function createPerformanceObserver(FunctionConstructor = Function) {
+    const performanceObserver = new parent.PerformanceObserver(new FunctionConstructor(`
+        this.callbackInvocations++;
+    `));
+
+    performanceObserver.callbackInvocations = 0;
+    performanceObserver.observe({ entryTypes: ["mark"] });
+
+    return performanceObserver;
+}
+</script>

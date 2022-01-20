@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="resources/callback-function-detached-frame-common.js"></script>
+
+<body>
+
+<script>
+const IFRAME_SRC = "resources/callback-function-detached-frame-performance-observer-iframe.html";
+
+promise_test(async t => {
+    const iframe = await createIframe(t, IFRAME_SRC);
+    const performanceObserver = iframe.contentWindow.createPerformanceObserver();
+
+    await sleep(100);
+    assert_equals(performanceObserver.callbackInvocations, 0);
+    performance.mark("foo");
+
+    await sleep(100);
+    assert_equals(performanceObserver.callbackInvocations, 1);
+}, "Callback function, originated in an <iframe>, is invoked if <iframe> is connected");
+
+promise_test(async t => {
+    const iframe = await createIframe(t, IFRAME_SRC);
+    const performanceObserver = iframe.contentWindow.createPerformanceObserver(Function);
+
+    await sleep(100);
+    assert_equals(performanceObserver.callbackInvocations, 0);
+
+    iframe.remove();
+    assert_equals(iframe.contentWindow, null);
+
+    performance.mark("foo");
+
+    await sleep(100);
+    assert_equals(performanceObserver.callbackInvocations, 1);
+}, "Callback function, originated in an <iframe> via main window's Function constructor, is invoked even if <iframe> is disconnected");
+
+promise_test(async t => {
+    const iframe = await createIframe(t, IFRAME_SRC);
+    const performanceObserver = iframe.contentWindow.createPerformanceObserver();
+
+    await sleep(100);
+    assert_equals(performanceObserver.callbackInvocations, 0);
+
+    iframe.remove();
+    assert_equals(iframe.contentWindow, null);
+
+    performance.mark("foo");
+
+    await sleep(100);
+    assert_equals(performanceObserver.callbackInvocations, 0);
+}, "Callback function, originated in an <iframe>, is not invoked if <iframe> is disconnected");
+</script>

@@ -60,6 +60,7 @@ public:
     ScriptModuleLoader& moduleLoader() { return *m_moduleLoader; }
 
     // ScriptExecutionContext.
+    ScriptExecutionContext* scriptExecutionContext() const final { return const_cast<WorkerOrWorkletGlobalScope*>(this); }
     EventLoopTaskGroup& eventLoop() final;
     bool isContextThread() const final;
     void postTask(Task&&) final; // Executes the task on context's thread asynchronously.
@@ -90,7 +91,6 @@ private:
     void derefScriptExecutionContext() final { deref(); }
 
     // EventTarget.
-    ScriptExecutionContext* scriptExecutionContext() const final { return const_cast<WorkerOrWorkletGlobalScope*>(this); }
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }
 

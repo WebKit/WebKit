@@ -1,0 +1,9 @@
+<!DOCTYPE html>
+
+<script>
+function raf(key, FunctionConstructor = Function) {
+    parent.requestAnimationFrame(FunctionConstructor(`
+        top["${key}"]++;
+    `));
+}
+</script>

@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+
+<script>
+function createMutationObserver(FunctionConstructor = Function) {
+    const mutationObserver = new parent.MutationObserver(new FunctionConstructor(`
+        this.callbackInvocations++;
+    `));
+
+    mutationObserver.callbackInvocations = 0;
+    mutationObserver.observe(parent.mutationObserverTestRoot, { childList: true });
+
+    return mutationObserver;
+}
+</script>

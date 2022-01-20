@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="resources/callback-function-detached-frame-common.js"></script>
+
+<body>
+
+<div id="intersectionObserverTestRoot" hidden></div>
+
+<script>
+const IFRAME_SRC = "resources/callback-function-detached-frame-intersection-observer-iframe.html";
+
+promise_test(async t => {
+    const iframe = await createIframe(t, IFRAME_SRC);
+    const intersectionObserver = iframe.contentWindow.createIntersectionObserver();
+
+    await sleep(100);
+    assert_equals(intersectionObserver.callbackInvocations, 0);
+    scheduleObservedIntersection();
+
+    await sleep(100);
+    assert_equals(intersectionObserver.callbackInvocations, 1);
+}, "Callback function, originated in an <iframe>, is invoked if <iframe> is connected");
+
+promise_test(async t => {
+    const iframe = await createIframe(t, IFRAME_SRC);
+    const intersectionObserver = iframe.contentWindow.createIntersectionObserver(Function);
+
+    await sleep(100);
+    assert_equals(intersectionObserver.callbackInvocations, 0);
+
+    iframe.remove();
+    assert_equals(iframe.contentWindow, null);
+
+    scheduleObservedIntersection();
+
+    await sleep(100);
+    assert_equals(intersectionObserver.callbackInvocations, 1);
+}, "Callback function, originated in an <iframe> via main window's Function constructor, is invoked even if <iframe> is disconnected");
+
+promise_test(async t => {
+    const iframe = await createIframe(t, IFRAME_SRC);
+    const intersectionObserver = iframe.contentWindow.createIntersectionObserver();
+
+    await sleep(100);
+    assert_equals(intersectionObserver.callbackInvocations, 0);
+
+    iframe.remove();
+    assert_equals(iframe.contentWindow, null);
+
+    scheduleObservedIntersection();
+
+    await sleep(100);
+    assert_equals(intersectionObserver.callbackInvocations, 0);
+}, "Callback function, originated in an <iframe>, is not invoked if <iframe> is disconnected");
+
+function scheduleObservedIntersection() {
+    intersectionObserverTestRoot.hidden = !intersectionObserverTestRoot.hidden;
+}
+</script>

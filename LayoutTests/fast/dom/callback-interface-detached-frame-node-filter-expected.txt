@@ -1,0 +1,8 @@
+
+PASS Callable callback interface, originated in an <iframe>, is invoked if <iframe> is connected
+PASS Callable callback interface, originated in an <iframe> via main window's Function constructor, is invoked even if <iframe> is disconnected
+PASS Callable callback interface, originated in an <iframe>, is not invoked if <iframe> is disconnected
+PASS Non-callable callback interface, originated in an <iframe> via object literal, is not invoked if <iframe> is disconnected even if its 'acceptNode' method is of main window
+PASS Non-callable callback interface, originated in an <iframe> via object literal, is not invoked even if <iframe> is disconnected during 'acceptNode' lookup
+PASS Non-callable callback interface, originated in an <iframe> via main window's Object constructor, is invoked if <iframe> is disconnected even if its 'acceptNode' method is of the <iframe>
+

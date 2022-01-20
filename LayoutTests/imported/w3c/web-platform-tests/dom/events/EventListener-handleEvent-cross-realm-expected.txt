@@ -1,0 +1,17 @@
+CONSOLE MESSAGE: TypeError: 'handleEvent' property of event listener should be callable
+CONSOLE MESSAGE: TypeError: 'handleEvent' property of event listener should be callable
+CONSOLE MESSAGE: TypeError: Proxy has already been revoked. No more operations are allowed to be performed on it
+CONSOLE MESSAGE: TypeError: Proxy has already been revoked. No more operations are allowed to be performed on it
+CONSOLE MESSAGE: TypeError: Proxy has already been revoked. No more operations are allowed to be performed on it
+
+
+PASS EventListener is cross-realm plain object without 'handleEvent' property
+PASS EventListener is cross-realm plain object with non-callable 'handleEvent' property
+FAIL EventListener is cross-realm plain object with revoked Proxy as 'handleEvent' property assert_equals: expected function "function TypeError() {
+    [native code]
+}" but got function "function TypeError() {
+    [native code]
+}"
+PASS EventListener is cross-realm non-callable revoked Proxy
+PASS EventListener is cross-realm callable revoked Proxy
+
