@@ -245,7 +245,7 @@ void InlineFormattingContext::lineLayout(InlineItems& inlineItems, LineBuilder::
                 overflowContent = { lineContent.partialTrailingContentLength, lineContent.overflowLogicalWidth };
             else if (lineContent.overflowLogicalWidth)
                 overflowContent = { { }, *lineContent.overflowLogicalWidth };
-            previousLine = LineBuilder::PreviousLine { lineContentRange, overflowContent };
+            previousLine = LineBuilder::PreviousLine { lineContentRange, !lineContent.runs.isEmpty() && lineContent.runs.last().isLineBreak(), overflowContent };
             continue;
         }
         // Floats prevented us placing any content on the line.
