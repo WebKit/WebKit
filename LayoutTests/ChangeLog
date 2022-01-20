@@ -1,3 +1,14 @@
+2022-01-20  Rob Buis  <rbuis@igalia.com>
+
+        Mark range boundary point containers
+        https://bugs.webkit.org/show_bug.cgi?id=233462
+
+        Reviewed by Darin Adler.
+
+        Add test that should have been part of r287131. Caught by Adrian.
+
+        * fast/dom/Range/delete-contents-crash.html: Added.
+
 2022-01-20  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         Implement WebGL GPU buffer texture upload path for Cocoa getUserMedia camera streams
