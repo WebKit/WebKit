@@ -1,3 +1,17 @@
+2022-01-20  Alex Christensen  <achristensen@webkit.org>
+
+        [ iOS15 ] TestWebKitAPI.WebKit.ServerTrust and TestWebKitAPI.WebKit.FastServerTrust tests timing out
+        https://bugs.webkit.org/show_bug.cgi?id=231320
+        <rdar://80352256>
+
+        Reviewed by Chris Dumez.
+
+        SecTrustCopyCertificateChain returns a CFArrayRef of SecCertificateRef, not CFData.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/Challenge.mm:
+        (verifyCertificateAndPublicKey):
+        (TestWebKitAPI::TEST):
+
 2022-01-20  Angelos Oikonomopoulos  <angelos@igalia.com>
 
         [JSC] Further unification in run-jsc-stress-tests
