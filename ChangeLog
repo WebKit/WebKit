@@ -1,3 +1,38 @@
+2022-01-20  Elliott Williams  <emw@apple.com>
+
+        [XCBuild] Build via the workspace with USE_WORKSPACE=YES
+        https://bugs.webkit.org/show_bug.cgi?id=235385
+        rdar://87489695
+
+        Reviewed by Alexey Proskuryakov.
+
+        Experimental XCBuild support is available by passing USE_WORKSPACE=YES to Make. This is
+        roughly equivalent to opening WebKit.xcworkspace and building a scheme in the IDE.
+
+        A workspace build is only one `xcodebuild` invocation, in contrast with the traditional
+        recursive-Make build that iterates through each project directory. As a result, workspace
+        builds are faster: the build system can schedule targets from different projects to build
+        simultaneously, and there's lower xcodebuild overhead.
+
+        Workspaces build _schemes_, which are a collection of targets. By default, Make looks for a
+        scheme whose name matches the source directory (Source/WebCore => build scheme "WebCore").
+        Makefiles can customize this by setting SCHEME.
+
+        At this time, there is no guarantee of correctness when building with USE_WORKSPACE=YES, and
+        workspace builds are not checked by builders.
+
+        * Makefile: Use workspace logic when USE_WORKSPACE=YES
+        * Makefile.shared: xcodebuild invocation logic for workspace builds
+        * Source/Makefile: Use workspace logic and set custom SCHEME name
+        * WebKit.xcworkspace/xcshareddata/WorkspaceSettings.xcsettings: Use XCBuild for workspace
+        builds
+        * WebKit.xcworkspace/xcshareddata/xcschemes/All Modules.xcscheme: Added, to correspond with
+        the top-level Makefile
+        * WebKit.xcworkspace/xcshareddata/xcschemes/All Source.xcscheme: Let XCBuild determine build
+        order
+        * WebKit.xcworkspace/xcshareddata/xcschemes/All Tools.xcscheme: Let XCBuild determine build
+        order
+
 2022-01-20  Don Olmstead  <don.olmstead@sony.com>
 
         [WinCairo] Make USE_CF conditional on ENABLE_WEBKIT_LEGACY

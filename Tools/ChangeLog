@@ -1,3 +1,13 @@
+2022-01-20  Elliott Williams  <emw@apple.com>
+
+        [XCBuild] Build via the workspace with USE_WORKSPACE=YES
+        https://bugs.webkit.org/show_bug.cgi?id=235385
+        rdar://87489695
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Makefile: Use workspace logic and set custom SCHEME name
+
 2022-01-20  Jonathan Bedard  <jbedard@apple.com>
 
         [EWS] Add CheckOutPullRequest step

@@ -1,3 +1,10 @@
+ifeq ($(USE_WORKSPACE),YES)
+
+include Makefile.shared
+SCHEME = All Modules
+
+else
+
 MODULES = Source Tools
 
 define build_target_for_each_module
@@ -31,3 +38,5 @@ clean:
 
 installsrc:
 	$(build_target_for_each_module)
+
+endif # USE_WORKSPACE

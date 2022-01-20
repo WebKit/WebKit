@@ -2,6 +2,17 @@ SCRIPTS_PATH ?= ../Tools/Scripts
 
 XCODE_OPTIONS = `perl -I$(SCRIPTS_PATH) -Mwebkitdirs -e 'print XcodeOptionString()' -- $(BUILD_WEBKIT_OPTIONS)` $${COLOR_DIAGNOSTICS_ARG} $(ARGS)
 
+ifeq ($(USE_WORKSPACE),YES)
+SCHEME ?= $(notdir $(CURDIR))
+XCODE_TARGET = -scheme "$(SCHEME)"
+WORKSPACE := $(firstword $(wildcard \
+	$(dir $(lastword $(MAKEFILE_LIST)))../Internal/WebKit/WebKit.xcworkspace \
+	$(dir $(lastword $(MAKEFILE_LIST)))WebKit.xcworkspace \
+	))
+else
+SCHEME =
+endif
+
 ifneq (,$(SDKROOT))
 	ifneq (,$(OVERRIDE_SDKROOT))
 		ifneq (default,$(OVERRIDE_SDKROOT))
@@ -33,17 +44,6 @@ endif
 ifeq (, $(findstring WK_USE_CCACHE, $(ARGS)))
 	ifneq (, $(shell which ccache))
 		XCODE_OPTIONS += WK_USE_CCACHE=YES
-	endif
-endif
-
-ifeq ($(findstring UseNewBuildSystem,$(ARGS)),)
-	CAN_USE_XCBUILD = $(shell perl -I$(SCRIPTS_PATH) -Mwebkitdirs -e 'print canUseXCBuild()')
-	ifeq ($(CAN_USE_XCBUILD),1)
-		# Temporarily disable default use of XCBuild until issues with it are ironed out.
-		#XCODE_OPTIONS += -UseNewBuildSystem=YES
-		XCODE_OPTIONS += -UseNewBuildSystem=NO
-	else
-		XCODE_OPTIONS += -UseNewBuildSystem=NO
 	endif
 endif
 
@@ -108,9 +108,9 @@ define invoke_xcode
 	( \
 		[[ -t 1 ]] && COLOR_DIAGNOSTICS_ARG="COLOR_DIAGNOSTICS=YES"; \
 		echo; \
-		echo "===== BUILDING $$(basename "$$(pwd)") ====="; \
+		echo "===== BUILDING $(if $(WORKSPACE),$(SCHEME),$(notdir $(CURDIR))) ====="; \
 		echo; \
-		$1 xcodebuild $2 $(OTHER_OPTIONS) $(XCODE_TARGET) $(XCODE_OPTIONS) $3 | $(OUTPUT_FILTER) && exit $${PIPESTATUS[0]} \
+		$1 xcodebuild $2 $(WORKSPACE:%=-workspace %) $(OTHER_OPTIONS) $(XCODE_TARGET) $(XCODE_OPTIONS) $3 | $(OUTPUT_FILTER) && exit $${PIPESTATUS[0]} \
 	)
 endef
 

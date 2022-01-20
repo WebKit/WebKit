@@ -1,3 +1,10 @@
+ifeq ($(USE_WORKSPACE),YES)
+
+include ../Makefile.shared
+SCHEME = All Source
+
+else
+
 WEBINSPECTORUI_MODULE =
 
 TO_LOWER = $(shell echo $(1) | tr [:upper:] [:lower:])
@@ -51,3 +58,5 @@ clean:
 installsrc:
 	@$(build_target_for_each_module)
 	cp -R ../Source/cmake $(SRCROOT)/Source/
+
+endif # USE_WORKSPACE
