@@ -168,10 +168,9 @@ void NetworkRTCProvider::createUDPSocket(LibWebRTCSocketIdentifier identifier, c
 
 #if PLATFORM(COCOA)
     if (m_platformUDPSocketsEnabled) {
-        if (auto socket = NetworkRTCUDPSocketCocoa::createUDPSocket(identifier, *this, address.value, minPort, maxPort, m_ipcConnection.copyRef(), String(attributedBundleIdentifierFromPageIdentifier(pageIdentifier)), isFirstParty, isRelayDisabled, WTFMove(domain))) {
-            addSocket(identifier, WTFMove(socket));
-            return;
-        }
+        auto socket = makeUnique<NetworkRTCUDPSocketCocoa>(identifier, *this, address.value, m_ipcConnection.copyRef(), String(attributedBundleIdentifierFromPageIdentifier(pageIdentifier)), isFirstParty, isRelayDisabled, WTFMove(domain));
+        addSocket(identifier, WTFMove(socket));
+        return;
     }
 #endif
 
@@ -187,7 +186,7 @@ void NetworkRTCProvider::createServerTCPSocket(LibWebRTCSocketIdentifier identif
             return;
 
         if (!m_isListeningSocketAuthorized) {
-            m_connection->connection().send(Messages::LibWebRTCNetwork::SignalClose(identifier, 1), 0);
+            signalSocketIsClosed(identifier);
             return;
         }
 
@@ -211,10 +210,12 @@ void NetworkRTCProvider::createClientTCPSocket(LibWebRTCSocketIdentifier identif
 
 #if PLATFORM(COCOA)
     if (m_platformTCPSocketsEnabled) {
-        if (auto socket = NetworkRTCTCPSocketCocoa::createClientTCPSocket(identifier, *this, remoteAddress.value, options, attributedBundleIdentifierFromPageIdentifier(pageIdentifier), isFirstParty, isRelayDisabled, domain, m_ipcConnection.copyRef())) {
+        auto socket = NetworkRTCTCPSocketCocoa::createClientTCPSocket(identifier, *this, remoteAddress.value, options, attributedBundleIdentifierFromPageIdentifier(pageIdentifier), isFirstParty, isRelayDisabled, domain, m_ipcConnection.copyRef());
+        if (socket)
             addSocket(identifier, WTFMove(socket));
-            return;
-        }
+        else
+            signalSocketIsClosed(identifier);
+        return;
     }
 #endif
 
@@ -224,7 +225,7 @@ void NetworkRTCProvider::createClientTCPSocket(LibWebRTCSocketIdentifier identif
 
         auto* session = m_connection->networkSession();
         if (!session) {
-            m_connection->connection().send(Messages::LibWebRTCNetwork::SignalClose(identifier, 1), 0);
+            signalSocketIsClosed(identifier);
             return;
         }
         callOnRTCNetworkThread([this, identifier, localAddress = RTCNetwork::isolatedCopy(localAddress.value), remoteAddress = RTCNetwork::isolatedCopy(remoteAddress.value), proxyInfo = proxyInfoFromSession(remoteAddress, *session), userAgent = WTFMove(userAgent).isolatedCopy(), options]() mutable {
@@ -427,6 +428,11 @@ void NetworkRTCProvider::OnMessage(rtc::Message* message)
 void NetworkRTCProvider::callOnRTCNetworkThread(Function<void()>&& callback)
 {
     m_rtcNetworkThread.Post(RTC_FROM_HERE, this, 1, new NetworkMessageData(*this, WTFMove(callback)));
+}
+
+void NetworkRTCProvider::signalSocketIsClosed(LibWebRTCSocketIdentifier identifier)
+{
+    m_connection->connection().send(Messages::LibWebRTCNetwork::SignalClose(identifier, 1), 0);
 }
 
 #undef RTC_RELEASE_LOG

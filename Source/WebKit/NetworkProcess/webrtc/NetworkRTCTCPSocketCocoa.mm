@@ -53,9 +53,7 @@ static dispatch_queue_t tcpSocketQueue()
 
 std::unique_ptr<NetworkRTCProvider::Socket> NetworkRTCTCPSocketCocoa::createClientTCPSocket(LibWebRTCSocketIdentifier identifier, NetworkRTCProvider& rtcProvider, const rtc::SocketAddress& remoteAddress, int tcpOptions, const String& attributedBundleIdentifier, bool isFirstParty, bool isRelayDisabled, const WebCore::RegistrableDomain& domain, Ref<IPC::Connection>&& connection)
 {
-    // FIXME: We should migrate ssltcp candidates, maybe support OPT_TLS_INSECURE as well.
-    if ((tcpOptions & rtc::PacketSocketFactory::OPT_TLS_FAKE) || (tcpOptions & rtc::PacketSocketFactory::OPT_TLS_INSECURE))
-        return nullptr;
+    // FIXME: We should support ssltcp candidates, maybe support OPT_TLS_INSECURE as well.
     return makeUnique<NetworkRTCTCPSocketCocoa>(identifier, rtcProvider, remoteAddress, tcpOptions, attributedBundleIdentifier, isFirstParty, isRelayDisabled, domain, WTFMove(connection));
 }
 

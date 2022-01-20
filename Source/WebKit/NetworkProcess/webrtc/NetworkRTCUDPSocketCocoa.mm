@@ -102,11 +102,6 @@ static dispatch_queue_t udpSocketQueue()
     return queue;
 }
 
-std::unique_ptr<NetworkRTCProvider::Socket> NetworkRTCUDPSocketCocoa::createUDPSocket(WebCore::LibWebRTCSocketIdentifier identifier, NetworkRTCProvider& rtcProvider, const rtc::SocketAddress& address, uint16_t minPort, uint16_t maxPort, Ref<IPC::Connection>&& connection, String&& attributedBundleIdentifier, bool isFirstParty, bool isRelayDisabled, const WebCore::RegistrableDomain& domain)
-{
-    return makeUnique<NetworkRTCUDPSocketCocoa>(identifier, rtcProvider, address, WTFMove(connection), WTFMove(attributedBundleIdentifier), isFirstParty, isRelayDisabled, domain);
-}
-
 NetworkRTCUDPSocketCocoa::NetworkRTCUDPSocketCocoa(WebCore::LibWebRTCSocketIdentifier identifier, NetworkRTCProvider& rtcProvider, const rtc::SocketAddress& address, Ref<IPC::Connection>&& connection, String&& attributedBundleIdentifier, bool isFirstParty, bool isRelayDisabled, const WebCore::RegistrableDomain& domain)
     : m_rtcProvider(rtcProvider)
     , m_identifier(identifier)
