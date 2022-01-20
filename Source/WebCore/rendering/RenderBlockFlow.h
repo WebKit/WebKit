@@ -278,6 +278,8 @@ public:
 
     bool containsFloats() const override { return m_floatingObjects && !m_floatingObjects->set().isEmpty(); }
     bool containsFloat(RenderBox&) const;
+    bool subtreeContainsFloats() const;
+    bool subtreeContainsFloat(RenderBox&) const;
 
     void deleteLines() override;
     void computeOverflow(LayoutUnit oldClientAfterEdge, bool recomputeFloats = false) override;

@@ -1,3 +1,13 @@
+2021-12-10  Gabriel Nava Marino  <gnavamarino@apple.com>
+
+        nullptr deref in ComputeFloatOffsetForLineLayoutAdapter<FloatingObject::FloatLeft>::updateOffsetIfNeeded
+        https://bugs.webkit.org/show_bug.cgi?id=234018
+
+        Reviewed by Alan Bujtas.
+
+        * fast/rendering/floating-object-renderer-crash-expected.txt: Added.
+        * fast/rendering/floating-object-renderer-crash.html: Added.
+
 2021-12-09  Cathie Chen  <cathiechen@igalia.com>
 
         Stack-overflow crash in WebCore::RenderBox::computeLogicalHeight()

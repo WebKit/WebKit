@@ -1,3 +1,31 @@
+2021-12-10  Gabriel Nava Marino  <gnavamarino@apple.com>
+
+        nullptr deref in ComputeFloatOffsetForLineLayoutAdapter<FloatingObject::FloatLeft>::updateOffsetIfNeeded
+        https://bugs.webkit.org/show_bug.cgi?id=234018
+
+        Reviewed by Alan Bujtas.
+
+        Test: fast/rendering/floating-object-renderer-crash.html
+
+        When destroying a given renderer, we first remove floats and out-of-flow positioned objects
+        from their containing block before detaching the renderer from the tree. We do this by obtaining
+        the renderer’s outermost block containing a floating object and recursively marking all siblings
+        and descendants for layout.
+
+        The criteria for continuing down the list of children require the current block to contain floats
+        or be able to shrink to avoid floats. However, we can have a scenario where the current child block
+        doesn’t have a float, but one of its descendants does. In this case, although we should continue to
+        that descendant and remove the float, we do not.
+
+        The proposal in this patch will instead check whether the child block contains a float, or any of its descendants do.
+        If so we should continue traversing towards that descendant.
+
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::subtreeContainsFloat const):
+        (WebCore::RenderBlockFlow::subtreeContainsFloats const):
+        (WebCore::RenderBlockFlow::markAllDescendantsWithFloatsForLayout):
+        * rendering/RenderBlockFlow.h:
+
 2021-12-09  Cathie Chen  <cathiechen@igalia.com>
 
         Stack-overflow crash in WebCore::RenderBox::computeLogicalHeight()
