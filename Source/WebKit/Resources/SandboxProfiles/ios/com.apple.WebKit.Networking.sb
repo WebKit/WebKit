@@ -338,7 +338,8 @@
 
     (allow user-preference-read (preference-domain "kCFPreferencesAnyApplication"))
     (allow file-read*
-        (front-user-home-literal "/Library/Preferences/.GlobalPreferences.plist"))
+           (front-user-home-literal "/Library/Preferences/.GlobalPreferences.plist")
+           (front-user-home-literal "/Library/Preferences/.GlobalPreferences_m.plist"))
 
     (allow file-read*
            (literal "/private/var/Managed Preferences/mobile/.GlobalPreferences.plist"))

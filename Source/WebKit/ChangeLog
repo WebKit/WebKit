@@ -1,3 +1,18 @@
+2022-01-19  Brent Fulgham  <bfulgham@apple.com>
+
+        Grant access to GlobalPreferences and GlobalPreferences_m uniformly
+        https://bugs.webkit.org/show_bug.cgi?id=235387
+        <rdar://problem/86943871>
+
+        Reviewed by Per Arne Vollan.
+
+        We should allow access to GlobalPreferences_m.plist in the places where we currently
+        allow GlobalPreferences.plist. We are inconsistent about this in our sandboxes, and
+        telemetry shows that we need to provide access.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.Networking.sb:
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebAuthn.sb:
+
 2022-01-19  Chris Dumez  <cdumez@apple.com>
 
         WebKit::nsTextAlignmentFromTextAlignment() falls through ASSERT_NOT_REACHED()
