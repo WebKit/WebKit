@@ -176,6 +176,7 @@ static_assert((PROBE_EXECUTOR_OFFSET + PTR_SIZE) <= (PROBE_SIZE + OUT_SIZE), "Mu
 #if CPU(X86)
 #if COMPILER(GCC_COMPATIBLE)
 asm (
+    ".text" "\n"
     ".globl " SYMBOL_STRING(ctiMasmProbeTrampoline) "\n"
     HIDE_SYMBOL(ctiMasmProbeTrampoline) "\n"
     SYMBOL_STRING(ctiMasmProbeTrampoline) ":" "\n"
@@ -516,6 +517,7 @@ extern "C" __declspec(naked) void ctiMasmProbeTrampoline()
 #if CPU(X86_64)
 #if COMPILER(GCC_COMPATIBLE)
 asm (
+    ".text" "\n"
     ".globl " SYMBOL_STRING(ctiMasmProbeTrampoline) "\n"
     HIDE_SYMBOL(ctiMasmProbeTrampoline) "\n"
     SYMBOL_STRING(ctiMasmProbeTrampoline) ":" "\n"
