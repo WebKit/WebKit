@@ -1,3 +1,24 @@
+2022-01-05  Chris Dumez  <cdumez@apple.com>
+
+        [ Monterey Debug arm64 ] ASSERTION FAILED: result == &worker ./workers/service/server/SWServer.cpp(837) : void WebCore::SWServer::workerContextTerminated(WebCore::SWServerWorker &)
+        https://bugs.webkit.org/show_bug.cgi?id=233219
+        <rdar://problem/85478756>
+
+        Reviewed by Darin Adler.
+
+        The crash would occur when we get notified by the service worker process that a given service worker
+        was terminated right after we've determined that we no longer needed a given service worker process
+        and called markAllWorkersForRegistrableDomainAsTerminated(). This race would cause
+        SWServer::workerContextTerminated() to get called twice for the same worker. During the second call,
+        we would retrieve a null worker from the HashMap and hit the assertion. I updated the call to ignore
+        the call to workerContextTerminated() if the worker was already removed from the HashMap and added
+        an assertion to make sure we've already marked the service worker as "not running" in this case.
+
+        No new tests, covered by existing API test that is flakily crashing in debug.
+
+        * workers/service/server/SWServer.cpp:
+        (WebCore::SWServer::workerContextTerminated):
+
 2021-12-24  Frederic Wang  <fwang@igalia.com>
 
         Simplify test for startOfLastParagraph in InsertListCommand::doApply
