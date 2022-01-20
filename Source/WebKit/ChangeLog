@@ -1,3 +1,19 @@
+2022-01-20  Elliott Williams  <emw@apple.com>
+
+        Prevent empty folders being created during install builds
+        rdar://87777915
+
+        Reviewed by Brady Eidson.
+
+        The "Copy Daemon Plists" script phase has output files which aren't always written to. Since
+        Xcode mkdir-p's these output directories, it ends up creating an empty directory under some
+        circumstances. Fix by removing these declared outputs: since this script is install-only
+        and executes quickly, it's not really a problem to have it run redundantly.
+
+        Once we use XCBuild everywhere, it can be rewritten as a Copy Files phase.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
 2022-01-19  Brent Fulgham  <bfulgham@apple.com>
 
         Grant access to GlobalPreferences and GlobalPreferences_m uniformly
