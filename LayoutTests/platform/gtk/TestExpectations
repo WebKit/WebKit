@@ -210,6 +210,10 @@ webkit.org/b/208988 http/wpt/webxr [ Skip ]
 webkit.org/b/208988 imported/w3c/web-platform-tests/webxr [ Skip ]
 webkit.org/b/208988 webxr [ Skip ]
 
+# setMockCameraOrientation seems to fail.
+webkit.org/b/235396 fast/mediastream/getUserMedia-to-canvas-1.html [ Failure ]
+webkit.org/b/235396 fast/mediastream/getUserMedia-to-canvas-2.html [ Failure ]
+
 #//////////////////////////////////////////////////////////////////////////////////////////
 # End of Triaged Expectations
 # Legacy Expectations sections below

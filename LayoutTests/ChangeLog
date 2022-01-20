@@ -1,3 +1,15 @@
+2022-01-20  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        Implement WebGL GPU buffer texture upload path for Cocoa getUserMedia camera streams
+        https://bugs.webkit.org/show_bug.cgi?id=235233
+        <rdar://problem/87601762>
+
+        Reviewed by Youenn Fablet.
+
+        * fast/mediastream/getUserMedia-to-canvas.html:
+        * webrtc/routines.js:
+        Test camera image rotations in the test.
+
 2022-01-20  Alexey Shvayka  <ashvayka@apple.com>
 
         Callback functions / interfaces should use global object of its _value_ for errors and lifecycle

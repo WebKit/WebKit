@@ -296,6 +296,7 @@ platform/graphics/avfoundation/InbandMetadataTextTrackPrivateAVF.cpp
 platform/graphics/avfoundation/InbandTextTrackPrivateAVF.cpp
 platform/graphics/avfoundation/MediaPlaybackTargetCocoa.mm
 platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.cpp
+platform/graphics/avfoundation/MediaSampleVideoFrameAVF.mm
 platform/graphics/avfoundation/MediaSelectionGroupAVFObjC.mm
 platform/graphics/avfoundation/SampleBufferDisplayLayer.cpp
 platform/graphics/avfoundation/WebMediaSessionManagerMac.cpp

@@ -292,9 +292,8 @@ private:
     void paintCurrentFrameInContext(WebCore::GraphicsContext&, const WebCore::FloatRect&) final;
 #if !USE(AVFOUNDATION)
     bool copyVideoTextureToPlatformTexture(WebCore::GraphicsContextGL*, PlatformGLObject, GCGLenum, GCGLint, GCGLenum, GCGLenum, GCGLenum, bool, bool) final;
-#else
-    RetainPtr<CVPixelBufferRef> pixelBufferForCurrentTime() final;
 #endif
+    std::optional<WebCore::MediaSampleVideoFrame> videoFrameForCurrentTime() final;
     RefPtr<WebCore::NativeImage> nativeImageForCurrentTime() final;
     WebCore::DestinationColorSpace colorSpace() final;
 
@@ -461,9 +460,7 @@ private:
     bool m_waitingForKey { false };
     bool m_timeIsProgressing { false };
     bool m_renderingCanBeAccelerated { false };
-#if USE(AVFOUNDATION)
-    RetainPtr<CVPixelBufferRef> m_pixelBufferForCurrentTime;
-#endif
+    std::optional<WebCore::MediaSampleVideoFrame> m_videoFrameForCurrentTime;
 #if PLATFORM(COCOA)
     RetainPtr<CVPixelBufferRef> m_pixelBufferGatheredWithVideoFrameMetadata;
     std::unique_ptr<WebCore::PixelBufferConformerCV> m_pixelBufferConformer;

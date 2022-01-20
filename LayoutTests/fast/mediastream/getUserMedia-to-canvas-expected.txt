@@ -1,6 +1,0 @@
-
-PASS Testing getUserMedia stream to canvas contexts via 2DContext
-PASS Testing getUserMedia stream to canvas contexts via ImageBitmap to 2DContext
-PASS Testing getUserMedia stream to canvas contexts via WebGL texture
-PASS Testing getUserMedia stream to canvas contexts via ImageBitmap to WebGL texture
-

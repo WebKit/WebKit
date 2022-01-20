@@ -2625,11 +2625,12 @@ void MediaPlayerPrivateAVFoundationObjC::paintWithVideoOutput(GraphicsContext& c
 
 }
 
-RetainPtr<CVPixelBufferRef> MediaPlayerPrivateAVFoundationObjC::pixelBufferForCurrentTime()
+std::optional<MediaSampleVideoFrame> MediaPlayerPrivateAVFoundationObjC::videoFrameForCurrentTime()
 {
     updateLastPixelBuffer();
-
-    return m_lastPixelBuffer;
+    if (!m_lastPixelBuffer)
+        return std::nullopt;
+    return MediaSampleVideoFrame { RetainPtr { m_lastPixelBuffer }, ImageOrientation::None };
 }
 
 RefPtr<NativeImage> MediaPlayerPrivateAVFoundationObjC::nativeImageForCurrentTime()

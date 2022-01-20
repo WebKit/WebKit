@@ -28,7 +28,7 @@
 #if ENABLE(WEBGL) && ENABLE(VIDEO) && USE(AVFOUNDATION)
 
 #include "GraphicsContextGLCV.h"
-
+#include "ImageOrientation.h"
 #include <memory>
 #include <wtf/UnsafePointer.h>
 
@@ -44,7 +44,7 @@ public:
 
     ~GraphicsContextGLCVCocoa() final;
 
-    bool copyPixelBufferToTexture(CVPixelBufferRef, PlatformGLObject outputTexture, GCGLint level, GCGLenum internalFormat, GCGLenum format, GCGLenum type, FlipY) final;
+    bool copyVideoSampleToTexture(const MediaSampleVideoFrame&, PlatformGLObject outputTexture, GCGLint level, GCGLenum internalFormat, GCGLenum format, GCGLenum type, FlipY) final;
 
 private:
     GraphicsContextGLCVCocoa(GraphicsContextGLCocoa&);
@@ -64,12 +64,15 @@ private:
     GCGLint m_yTextureUniformLocation { -1 };
     GCGLint m_uvTextureUniformLocation { -1 };
     GCGLint m_yuvFlipYUniformLocation { -1 };
+    GCGLint m_yuvFlipXUniformLocation { -1 };
+    GCGLint m_yuvSwapXYUniformLocation { -1 };
     GCGLint m_colorMatrixUniformLocation { -1 };
     GCGLint m_yuvPositionAttributeLocation { -1 };
     GCGLint m_yTextureSizeUniformLocation { -1 };
     GCGLint m_uvTextureSizeUniformLocation { -1 };
 
-    FlipY m_lastFlipY { FlipY::No };
+    FlipY m_lastUnpackFlipY { FlipY::No };
+    ImageOrientation m_lastSurfaceOrientation;
     UnsafePointer<IOSurfaceRef> m_lastSurface;
     uint32_t m_lastSurfaceSeed { 0 };
 

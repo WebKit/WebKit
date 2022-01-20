@@ -1062,14 +1062,12 @@ bool MediaPlayer::copyVideoTextureToPlatformTexture(GraphicsContextGL* context, 
     return m_private->copyVideoTextureToPlatformTexture(context, texture, target, level, internalFormat, format, type, premultiplyAlpha, flipY);
 }
 
-#else
-
-RetainPtr<CVPixelBufferRef> MediaPlayer::pixelBufferForCurrentTime()
-{
-    return m_private->pixelBufferForCurrentTime();
-}
-
 #endif
+
+std::optional<MediaSampleVideoFrame> MediaPlayer::videoFrameForCurrentTime()
+{
+    return m_private->videoFrameForCurrentTime();
+}
 
 RefPtr<NativeImage> MediaPlayer::nativeImageForCurrentTime()
 {

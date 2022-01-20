@@ -29,8 +29,10 @@
 
 #include "MediaPlayer.h"
 #include "MediaPlayerIdentifier.h"
+#include "MediaSampleVideoFrame.h"
 #include "NativeImage.h"
 #include "PlatformTimeRanges.h"
+#include <optional>
 #include <wtf/CompletionHandler.h>
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
@@ -178,9 +180,8 @@ public:
     virtual void paintCurrentFrameInContext(GraphicsContext& c, const FloatRect& r) { paint(c, r); }
 #if !USE(AVFOUNDATION)
     virtual bool copyVideoTextureToPlatformTexture(GraphicsContextGL*, PlatformGLObject, GCGLenum, GCGLint, GCGLenum, GCGLenum, GCGLenum, bool, bool) { return false; }
-#else
-    virtual RetainPtr<CVPixelBufferRef> pixelBufferForCurrentTime() { return nullptr; }
 #endif
+    virtual std::optional<MediaSampleVideoFrame> videoFrameForCurrentTime() { return std::nullopt; }
     virtual RefPtr<NativeImage> nativeImageForCurrentTime() { return nullptr; }
     virtual DestinationColorSpace colorSpace() = 0;
 

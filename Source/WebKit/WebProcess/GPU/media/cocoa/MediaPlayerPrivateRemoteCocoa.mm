@@ -94,18 +94,6 @@ WebCore::DestinationColorSpace MediaPlayerPrivateRemote::colorSpace()
     return colorSpace;
 }
 
-#if USE(AVFOUNDATION)
-RetainPtr<CVPixelBufferRef> MediaPlayerPrivateRemote::pixelBufferForCurrentTime()
-{
-    std::optional<RetainPtr<CVPixelBufferRef>> result;
-    if (!connection().sendSync(Messages::RemoteMediaPlayerProxy::PixelBufferForCurrentTimeIfChanged(), Messages::RemoteMediaPlayerProxy::PixelBufferForCurrentTimeIfChanged::Reply(result), m_id))
-        return nullptr;
-    if (result)
-        m_pixelBufferForCurrentTime = WTFMove(*result);
-    return m_pixelBufferForCurrentTime;
-}
-#endif
-
 } // namespace WebKit
 
 #endif // ENABLE(GPU_PROCESS) && PLATFORM(COCOA)

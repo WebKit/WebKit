@@ -262,11 +262,10 @@ private:
     bool updateLastPixelBuffer();
     bool videoOutputHasAvailableFrame();
     void paintWithVideoOutput(GraphicsContext&, const FloatRect&);
+    std::optional<MediaSampleVideoFrame> videoFrameForCurrentTime() final;
     RefPtr<NativeImage> nativeImageForCurrentTime() final;
     DestinationColorSpace colorSpace() final;
     void waitForVideoOutputMediaDataWillChange();
-
-    RetainPtr<CVPixelBufferRef> pixelBufferForCurrentTime() final;
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
     void keyAdded() final;
