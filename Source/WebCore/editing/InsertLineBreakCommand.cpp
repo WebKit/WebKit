@@ -60,7 +60,7 @@ bool InsertLineBreakCommand::shouldUseBreakElement(const Position& position)
     // the input element, and in that case we need to check the input element's
     // parent's renderer.
     auto* node = position.parentAnchoredEquivalent().deprecatedNode();
-    return node->renderer() && !node->renderer()->style().preserveNewline();
+    return node && node->renderer() && !node->renderer()->style().preserveNewline();
 }
 
 void InsertLineBreakCommand::doApply()
@@ -81,6 +81,9 @@ void InsertLineBreakCommand::doApply()
     position = positionAvoidingSpecialElementBoundary(position);
     position = positionOutsideTabSpan(position);
 
+    if (!isEditablePosition(position))
+        return;
+
     RefPtr<Node> nodeToInsert;
     if (shouldUseBreakElement(position))
         nodeToInsert = HTMLBRElement::create(document());
@@ -91,7 +94,7 @@ void InsertLineBreakCommand::doApply()
     
     if (isEndOfParagraph(caret) && !lineBreakExistsAtVisiblePosition(caret)) {
         bool needExtraLineBreak = !is<HTMLHRElement>(*position.deprecatedNode()) && !is<HTMLTableElement>(*position.deprecatedNode());
-        
+
         insertNodeAt(*nodeToInsert, position);
         
         if (needExtraLineBreak)
