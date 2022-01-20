@@ -1,3 +1,9 @@
+2022-01-20  Jon Lee  <jonlee554@gmail.com>
+
+        Unreviewed gardening of GPU Process bots
+
+        * gpu-process/TestExpectations:
+
 2022-01-19  Simon Fraser  <simon.fraser@apple.com>
 
         <dialog> with transformed ancestor asserts under RenderGeometryMap
