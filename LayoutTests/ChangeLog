@@ -1,3 +1,13 @@
+2021-12-16  Rob Buis  <rbuis@igalia.com>
+
+        Mark range boundary point containers
+        https://bugs.webkit.org/show_bug.cgi?id=233462
+
+        Reviewed by Darin Adler.
+
+        * fast/dom/Range/delete-contents-crash-expected.txt: Added.
+        * fast/dom/Range/delete-contents-crash.html: Added.
+
 2021-12-15  Gabriel Nava Marino  <gnavamarino@apple.com>
 
         null ptr deref in WebCore::ApplyStyleCommand::applyRelativeFontStyleChange

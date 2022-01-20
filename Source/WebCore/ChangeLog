@@ -1,3 +1,23 @@
+2021-12-16  Rob Buis  <rbuis@igalia.com>
+
+        Mark range boundary point containers
+        https://bugs.webkit.org/show_bug.cgi?id=233462
+
+        Reviewed by Darin Adler.
+
+        Mark range boundary point containers as unreachable for gc.
+
+        Test: fast/dom/Range/delete-contents-crash.html
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSRangeCustom.cpp: Added.
+        (WebCore::JSRange::visitAdditionalChildren):
+        * dom/Range.cpp:
+        (WebCore::Range::visitNodesConcurrently const):
+        * dom/Range.h:
+        * dom/Range.idl:
+
 2021-12-15  Gabriel Nava Marino  <gnavamarino@apple.com>
 
         null ptr deref in WebCore::ApplyStyleCommand::applyRelativeFontStyleChange
