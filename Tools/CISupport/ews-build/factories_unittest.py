@@ -1,4 +1,4 @@
-# Copyright (C) 2020-2021 Apple Inc. All rights reserved.
+# Copyright (C) 2020-2022 Apple Inc. All rights reserved.
 # Copyright (C) 2021 Igalia S.L.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -39,6 +39,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'show-identifier',
             'update-working-directory',
             'apply-patch',
+            'checkout-pull-request',
             'check-webkit-style'
         ],
         'Apply-WatchList-EWS': [
@@ -51,6 +52,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'show-identifier',
             'update-working-directory',
             'apply-patch',
+            'checkout-pull-request',
             'apply-watch-list'
         ],
         'GTK-Build-EWS': [
@@ -63,6 +65,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'fetch-branch-references',
             'show-identifier',
             'apply-patch',
+            'checkout-pull-request',
             'kill-old-processes',
             'jhbuild',
             'compile-webkit',
@@ -78,6 +81,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'fetch-branch-references',
             'show-identifier',
             'apply-patch',
+            'checkout-pull-request',
             'jhbuild',
             'download-built-product',
             'extract-built-product',
@@ -97,6 +101,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'fetch-branch-references',
             'show-identifier',
             'apply-patch',
+            'checkout-pull-request',
             'kill-old-processes',
             'compile-webkit'
         ],
@@ -110,6 +115,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'fetch-branch-references',
             'show-identifier',
             'apply-patch',
+            'checkout-pull-request',
             'kill-old-processes',
             'compile-webkit'
         ],
@@ -123,6 +129,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'fetch-branch-references',
             'show-identifier',
             'apply-patch',
+            'checkout-pull-request',
             'download-built-product',
             'extract-built-product',
             'wait-for-crash-collection',
@@ -144,6 +151,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'fetch-branch-references',
             'show-identifier',
             'apply-patch',
+            'checkout-pull-request',
             'kill-old-processes',
             'compile-webkit'
         ],
@@ -157,6 +165,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'fetch-branch-references',
             'show-identifier',
             'apply-patch',
+            'checkout-pull-request',
             'download-built-product',
             'extract-built-product',
             'wait-for-crash-collection',
@@ -177,6 +186,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'fetch-branch-references',
             'show-identifier',
             'apply-patch',
+            'checkout-pull-request',
             'kill-old-processes',
             'compile-webkit'
         ],
@@ -191,6 +201,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'fetch-branch-references',
             'show-identifier',
             'apply-patch',
+            'checkout-pull-request',
             'download-built-product',
             'extract-built-product',
             'wait-for-crash-collection',
@@ -211,6 +222,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'fetch-branch-references',
             'show-identifier',
             'apply-patch',
+            'checkout-pull-request',
             'download-built-product',
             'extract-built-product',
             'wait-for-crash-collection',
@@ -232,6 +244,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'fetch-branch-references',
             'show-identifier',
             'apply-patch',
+            'checkout-pull-request',
             'download-built-product',
             'extract-built-product',
             'wait-for-crash-collection',
@@ -250,6 +263,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'fetch-branch-references',
             'show-identifier',
             'apply-patch',
+            'checkout-pull-request',
             'kill-old-processes',
             'compile-webkit'
         ],
@@ -264,6 +278,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'fetch-branch-references',
             'show-identifier',
             'apply-patch',
+            'checkout-pull-request',
             'download-built-product',
             'extract-built-product',
             'wait-for-crash-collection',
@@ -284,6 +299,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'fetch-branch-references',
             'show-identifier',
             'apply-patch',
+            'checkout-pull-request',
             'kill-old-processes',
             'compile-webkit'
         ],
@@ -297,6 +313,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'fetch-branch-references',
             'show-identifier',
             'apply-patch',
+            'checkout-pull-request',
             'kill-old-processes',
             'compile-webkit'
         ],
@@ -310,6 +327,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'fetch-branch-references',
             'show-identifier',
             'apply-patch',
+            'checkout-pull-request',
             'kill-old-processes',
             'compile-webkit'
         ],
@@ -323,6 +341,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'fetch-branch-references',
             'show-identifier',
             'apply-patch',
+            'checkout-pull-request',
             'kill-old-processes',
             'compile-webkit'
         ],
@@ -337,6 +356,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'fetch-branch-references',
             'show-identifier',
             'apply-patch',
+            'checkout-pull-request',
             'kill-old-processes',
             'compile-webkit',
             'validate-change',
@@ -353,6 +373,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'fetch-branch-references',
             'show-identifier',
             'apply-patch',
+            'checkout-pull-request',
             'kill-old-processes',
             'compile-webkit'
         ],
@@ -366,6 +387,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'fetch-branch-references',
             'show-identifier',
             'apply-patch',
+            'checkout-pull-request',
             'kill-old-processes',
             'jhbuild',
             'compile-webkit'
@@ -381,6 +403,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'fetch-branch-references',
             'show-identifier',
             'apply-patch',
+            'checkout-pull-request',
             'kill-old-processes',
             'compile-jsc',
             'jscore-test'
@@ -396,6 +419,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'fetch-branch-references',
             'show-identifier',
             'apply-patch',
+            'checkout-pull-request',
             'kill-old-processes',
             'compile-jsc'
         ],
@@ -410,6 +434,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'fetch-branch-references',
             'show-identifier',
             'apply-patch',
+            'checkout-pull-request',
             'download-built-product',
             'extract-built-product',
             'kill-old-processes',
@@ -426,6 +451,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'fetch-branch-references',
             'show-identifier',
             'apply-patch',
+            'checkout-pull-request',
             'kill-old-processes',
             'compile-jsc'
         ],
@@ -440,6 +466,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'fetch-branch-references',
             'show-identifier',
             'apply-patch',
+            'checkout-pull-request',
             'download-built-product',
             'extract-built-product',
             'kill-old-processes',
@@ -456,6 +483,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'fetch-branch-references',
             'show-identifier',
             'apply-patch',
+            'checkout-pull-request',
             'kill-old-processes',
             'compile-jsc'
         ],
@@ -470,6 +498,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'fetch-branch-references',
             'show-identifier',
             'apply-patch',
+            'checkout-pull-request',
             'bindings-tests'
         ],
         'WebKitPy-Tests-EWS': [
@@ -483,6 +512,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'fetch-branch-references',
             'show-identifier',
             'apply-patch',
+            'checkout-pull-request',
             'webkitpy-tests-python2',
             'webkitpy-tests-python3',
             'set-build-summary'
@@ -497,6 +527,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'fetch-branch-references',
             'show-identifier',
             'apply-patch',
+            'checkout-pull-request',
             'webkitperl-tests'
         ],
         'API-Tests-iOS-Simulator-EWS': [
@@ -509,6 +540,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'fetch-branch-references',
             'show-identifier',
             'apply-patch',
+            'checkout-pull-request',
             'download-built-product',
             'extract-built-product',
             'kill-old-processes',
@@ -524,6 +556,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'fetch-branch-references',
             'show-identifier',
             'apply-patch',
+            'checkout-pull-request',
             'download-built-product',
             'extract-built-product',
             'kill-old-processes',
@@ -539,6 +572,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'fetch-branch-references',
             'show-identifier',
             'apply-patch',
+            'checkout-pull-request',
             'jhbuild',
             'download-built-product',
             'extract-built-product',
@@ -556,6 +590,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'fetch-branch-references',
             'show-identifier',
             'apply-patch',
+            'checkout-pull-request',
             'build-webkit-org-unit-tests',
             'buildbot-check-config-for-build-webkit',
             'ews-unit-tests',

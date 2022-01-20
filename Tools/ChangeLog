@@ -1,3 +1,30 @@
+2022-01-20  Jonathan Bedard  <jbedard@apple.com>
+
+        [EWS] Add CheckOutPullRequest step
+        https://bugs.webkit.org/show_bug.cgi?id=235157
+        <rdar://problem/87487209 >
+
+        Reviewed by Aakash Jain.
+
+        * CISupport/ews-build/factories.py:
+        (Factory.__init__): Add CheckOutPullRequest step.
+        (StyleFactory.__init__): Ditto.
+        (WatchListFactory.__init__): Ditto.
+        * CISupport/ews-build/factories_unittest.py:
+        (TestExpectedBuildSteps): Add CheckOutPullRequest step.
+        * CISupport/ews-build/steps.py:
+        (ApplyPatch.doStepIf): Only run step if a patch is provided.
+        (ApplyPatch.hideStepIf): Only display step if a patch was provided.
+        (ApplyPatch.getResultSummary): Add SKIPPED description.
+        (CheckOutPullRequest):
+        (CheckOutPullRequest.__init__):
+        (CheckOutPullRequest.doStepIf): Only run step if a pull request is provided.
+        (CheckOutPullRequest.hideStepIf): Only display step if a pul request was provided.
+        (CheckOutPullRequest.run): Configure new remote, fetch remote and checkout pull request
+        branch from the newly configured remote.
+        (CheckOutPullRequest.getResultSummary):
+        * CISupport/ews-build/steps_unittest.py:
+
 2022-01-19  Jonathan Bedard  <jbedard@apple.com>
 
         [webkitbugspy] Support automated comments

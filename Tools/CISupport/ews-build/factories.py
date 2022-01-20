@@ -1,4 +1,4 @@
-# Copyright (C) 2018-2021 Apple Inc. All rights reserved.
+# Copyright (C) 2018-2022 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -24,7 +24,7 @@
 from buildbot.process import factory
 from buildbot.steps import trigger
 
-from steps import (ApplyPatch, ApplyWatchList, CheckOutSource, CheckOutSpecificRevision, CheckPatchRelevance,
+from steps import (ApplyPatch, ApplyWatchList, CheckOutPullRequest, CheckOutSource, CheckOutSpecificRevision, CheckPatchRelevance,
                    CheckPatchStatusOnEWSQueues, CheckStyle, CleanGitRepo, CompileJSC, CompileWebKit, ConfigureBuild, CreateLocalGITCommit,
                    DownloadBuiltProduct, ExtractBuiltProduct, FetchBranches, FindModifiedChangeLogs, FindModifiedLayoutTests,
                    InstallGtkDependencies, InstallWpeDependencies, KillOldProcesses, PrintConfiguration, PushCommitToWebKitRepo,
@@ -57,6 +57,7 @@ class Factory(factory.BuildFactory):
         self.addStep(FetchBranches())
         self.addStep(ShowIdentifier())
         self.addStep(ApplyPatch())
+        self.addStep(CheckOutPullRequest())
 
 
 class StyleFactory(factory.BuildFactory):
@@ -71,6 +72,7 @@ class StyleFactory(factory.BuildFactory):
         self.addStep(ShowIdentifier())
         self.addStep(UpdateWorkingDirectory())
         self.addStep(ApplyPatch())
+        self.addStep(CheckOutPullRequest())
         self.addStep(CheckStyle())
 
 
@@ -86,6 +88,7 @@ class WatchListFactory(factory.BuildFactory):
         self.addStep(ShowIdentifier())
         self.addStep(UpdateWorkingDirectory())
         self.addStep(ApplyPatch())
+        self.addStep(CheckOutPullRequest())
         self.addStep(ApplyWatchList())
 
 

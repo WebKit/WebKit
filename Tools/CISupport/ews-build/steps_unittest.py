@@ -1,4 +1,4 @@
-# Copyright (C) 2018-2021 Apple Inc. All rights reserved.
+# Copyright (C) 2018-2022 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -42,7 +42,7 @@ from twisted.trial import unittest
 
 from steps import (AnalyzeAPITestsResults, AnalyzeCompileWebKitResults, AnalyzeJSCTestsResults,
                    AnalyzeLayoutTestsResults, ApplyPatch, ApplyWatchList, ArchiveBuiltProduct, ArchiveTestResults,
-                   CheckOutSource, CheckOutSpecificRevision, CheckPatchRelevance, CheckPatchStatusOnEWSQueues, CheckStyle,
+                   CheckOutPullRequest, CheckOutSource, CheckOutSpecificRevision, CheckPatchRelevance, CheckPatchStatusOnEWSQueues, CheckStyle,
                    CleanBuild, CleanUpGitIndexLock, CleanGitRepo, CleanWorkingDirectory, CompileJSC, CompileJSCWithoutPatch,
                    CompileWebKit, CompileWebKitWithoutPatch, ConfigureBuild, ConfigureBuild, Contributors, CreateLocalGITCommit,
                    DownloadBuiltProduct, DownloadBuiltProductFromMaster, EWS_BUILD_HOSTNAME, ExtractBuiltProduct, ExtractTestResults,
@@ -3006,6 +3006,7 @@ class TestApplyPatch(BuildStepMixinAdditions, unittest.TestCase):
 
     def test_success(self):
         self.setupStep(ApplyPatch())
+        self.setProperty('patch_id', '1234')
         self.assertEqual(ApplyPatch.flunkOnFailure, True)
         self.assertEqual(ApplyPatch.haltOnFailure, False)
         self.expectRemoteCommands(
@@ -3021,6 +3022,7 @@ class TestApplyPatch(BuildStepMixinAdditions, unittest.TestCase):
 
     def test_failure(self):
         self.setupStep(ApplyPatch())
+        self.setProperty('patch_id', '1234')
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         timeout=600,
@@ -3035,6 +3037,12 @@ class TestApplyPatch(BuildStepMixinAdditions, unittest.TestCase):
         self.assertEqual(self.getProperty('bugzilla_comment_text'), None)
         self.assertEqual(self.getProperty('build_finish_summary'), None)
         return rc
+
+    def test_skipped(self):
+        self.setupStep(ApplyPatch())
+        self.expectHidden(True)
+        self.expectOutcome(result=SKIPPED, state_string="Skipping applying patch since patch_id isn't provided")
+        return self.runStep()
 
     def test_failure_on_commit_queue(self):
         self.setupStep(ApplyPatch())
@@ -3054,6 +3062,87 @@ class TestApplyPatch(BuildStepMixinAdditions, unittest.TestCase):
         self.assertEqual(self.getProperty('bugzilla_comment_text'), 'Tools/Scripts/svn-apply failed to apply attachment 1234 to trunk.\nPlease resolve the conflicts and upload a new patch.')
         self.assertEqual(self.getProperty('build_finish_summary'), 'Tools/Scripts/svn-apply failed to apply patch 1234 to trunk')
         return rc
+
+
+class TestCheckOutPullRequest(BuildStepMixinAdditions, unittest.TestCase):
+    def setUp(self):
+        self.longMessage = True
+        return self.setUpBuildStep()
+
+    def tearDown(self):
+        return self.tearDownBuildStep()
+
+    def test_success(self):
+        self.setupStep(CheckOutPullRequest())
+        self.setProperty('github.number', '1234')
+        self.setProperty('github.head.repo.full_name', 'Contributor/WebKit')
+        self.setProperty('github.head.ref', 'eng/pull-request-branch')
+        self.assertEqual(CheckOutPullRequest.flunkOnFailure, True)
+        self.assertEqual(CheckOutPullRequest.haltOnFailure, True)
+        self.expectRemoteCommands(
+            ExpectShell(
+                workdir='wkdir',
+                timeout=600,
+                logEnviron=False,
+                command=['/bin/sh', '-c', 'git remote add Contributor https://github.com/Contributor/WebKit.git & true'],
+            ) + 0, ExpectShell(
+                workdir='wkdir',
+                timeout=600,
+                logEnviron=False,
+                command=['git', 'remote', 'set-url', 'Contributor', 'https://github.com/Contributor/WebKit.git'],
+            ) + 0, ExpectShell(
+                workdir='wkdir',
+                timeout=600,
+                logEnviron=False,
+                command=['git', 'fetch', 'Contributor'],
+            ) + 0, ExpectShell(
+                workdir='wkdir',
+                timeout=600,
+                logEnviron=False,
+                command=['git', 'branch', '-f', 'eng/pull-request-branch', 'remotes/Contributor/eng/pull-request-branch'],
+            ) + 0, ExpectShell(
+                workdir='wkdir',
+                timeout=600,
+                logEnviron=False,
+                command=['git', 'checkout', 'eng/pull-request-branch'],
+            ) + 0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='Checked out pull request')
+        return self.runStep()
+
+    def test_failure(self):
+        self.setupStep(CheckOutPullRequest())
+        self.setProperty('github.number', '1234')
+        self.setProperty('github.head.repo.full_name', 'Contributor/WebKit')
+        self.setProperty('github.head.ref', 'eng/pull-request-branch')
+        self.assertEqual(CheckOutPullRequest.flunkOnFailure, True)
+        self.assertEqual(CheckOutPullRequest.haltOnFailure, True)
+        self.expectRemoteCommands(
+            ExpectShell(
+                workdir='wkdir',
+                timeout=600,
+                logEnviron=False,
+                command=['/bin/sh', '-c', 'git remote add Contributor https://github.com/Contributor/WebKit.git & true'],
+            ) + 0, ExpectShell(
+                workdir='wkdir',
+                timeout=600,
+                logEnviron=False,
+                command=['git', 'remote', 'set-url', 'Contributor', 'https://github.com/Contributor/WebKit.git'],
+            ) + 0, ExpectShell(
+                workdir='wkdir',
+                timeout=600,
+                logEnviron=False,
+                command=['git', 'fetch', 'Contributor'],
+            ) + 1,
+        )
+        self.expectOutcome(result=FAILURE, state_string='Failed to checkout branch from PR 1234')
+        return self.runStep()
+
+    def test_skipped(self):
+        self.setupStep(CheckOutPullRequest())
+        self.expectHidden(True)
+        self.expectOutcome(result=SKIPPED, state_string='No pull request to checkout')
+        return self.runStep()
 
 
 class TestUnApplyPatchIfRequired(BuildStepMixinAdditions, unittest.TestCase):

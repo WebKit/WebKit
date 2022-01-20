@@ -1,4 +1,4 @@
-# Copyright (C) 2018-2021 Apple Inc. All rights reserved.
+# Copyright (C) 2018-2022 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -521,6 +521,9 @@ class ApplyPatch(shell.ShellCommand, CompositeStepMixin):
     def __init__(self, **kwargs):
         super(ApplyPatch, self).__init__(timeout=10 * 60, logEnviron=False, **kwargs)
 
+    def doStepIf(self, step):
+        return self.getProperty('patch_id', False)
+
     def _get_patch(self):
         sourcestamp = self.build.getSourceStamp(self.getProperty('codebase', ''))
         if not sourcestamp or not sourcestamp.patch:
@@ -543,9 +546,11 @@ class ApplyPatch(shell.ShellCommand, CompositeStepMixin):
         d.addCallback(lambda res: shell.ShellCommand.start(self))
 
     def hideStepIf(self, results, step):
-        return results == SUCCESS and self.getProperty('sensitive', False)
+        return not self.doStepIf(step) or (results == SUCCESS and self.getProperty('sensitive', False))
 
     def getResultSummary(self):
+        if self.results == SKIPPED:
+            return {'step': "Skipping applying patch since patch_id isn't provided"}
         if self.results != SUCCESS:
             return {'step': 'svn-apply failed to apply patch to trunk'}
         return super(ApplyPatch, self).getResultSummary()
@@ -563,6 +568,47 @@ class ApplyPatch(shell.ShellCommand, CompositeStepMixin):
             else:
                 self.build.buildFinished([message], FAILURE)
         return rc
+
+
+class CheckOutPullRequest(steps.ShellSequence):
+    name = 'checkout-pull-request'
+    description = ['checking-out-pull-request']
+    descriptionDone = ['Checked out pull request']
+    haltOnFailure = True
+
+    def __init__(self, **kwargs):
+        super(CheckOutPullRequest, self).__init__(timeout=10 * 60, logEnviron=False, **kwargs)
+
+    def doStepIf(self, step):
+        return self.getProperty('github.number', False)
+
+    def hideStepIf(self, results, step):
+        return not self.doStepIf(step)
+
+    def run(self):
+        self.commands = []
+
+        remote = self.getProperty('github.head.repo.full_name', 'origin').split('/')[0]
+        project = self.getProperty('github.head.repo.full_name', self.getProperty('project'))
+        branch = self.getProperty('github.head.ref', 'main')
+
+        for command in [
+            ['/bin/sh', '-c', 'git remote add {} {}{}.git & true'.format(remote, GITHUB_URL, project)],
+            ['git', 'remote', 'set-url', remote, '{}{}.git'.format(GITHUB_URL, project)],
+            ['git', 'fetch', remote],
+            ['git', 'branch', '-f', branch, 'remotes/{}/{}'.format(remote, branch)],
+            ['git', 'checkout', branch],
+        ]:
+            self.commands.append(util.ShellArg(command=command, logname='stdio', haltOnFailure=True))
+
+        return super(CheckOutPullRequest, self).run()
+
+    def getResultSummary(self):
+        if self.results == SKIPPED:
+            return {'step': 'No pull request to checkout'}
+        if self.results != SUCCESS:
+            return {'step': 'Failed to checkout branch from PR {}'.format(self.getProperty('github.number'))}
+        return super(CheckOutPullRequest, self).getResultSummary()
 
 
 class AnalyzePatch(buildstep.BuildStep):
@@ -3743,6 +3789,7 @@ class PrintConfiguration(steps.ShellSequence):
         return {'step': configuration}
 
 
+# FIXME: We should be able to remove this step once abandoning patch workflows
 class CleanGitRepo(steps.ShellSequence):
     name = 'clean-up-git-repo'
     haltOnFailure = False
