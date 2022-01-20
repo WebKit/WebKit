@@ -895,6 +895,8 @@
 		52C0611F1AA51E1C00B4ADBA /* RuntimeType.h in Headers */ = {isa = PBXBuildFile; fileRef = 52C0611D1AA51E1B00B4ADBA /* RuntimeType.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		52C55566224C2AEA0099F5CC /* DFGValueRepReductionPhase.h in Headers */ = {isa = PBXBuildFile; fileRef = 52C55565224C2AE70099F5CC /* DFGValueRepReductionPhase.h */; };
 		52C952B719A289850069B386 /* TypeProfiler.h in Headers */ = {isa = PBXBuildFile; fileRef = 52C952B619A289850069B386 /* TypeProfiler.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		52CAEC752790B8FB00DDBAAF /* SecureARM64EHashPins.h in Headers */ = {isa = PBXBuildFile; fileRef = 52CAEC742790B8F600DDBAAF /* SecureARM64EHashPins.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		52CAEC762790B90100DDBAAF /* SecureARM64EHashPinsInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 52CAEC722790B8F600DDBAAF /* SecureARM64EHashPinsInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		52CD0F5D2242F569004A18A5 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 51F0EB6105C86C6B00E6DF1B /* Foundation.framework */; };
 		52CD0F5E2242F569004A18A5 /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 932F5BD90822A1C700736975 /* JavaScriptCore.framework */; };
 		52CD0F682242F71C004A18A5 /* testdfg.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52CD0F672242F71C004A18A5 /* testdfg.cpp */; };
@@ -2083,7 +2085,6 @@
 		FE48BD4423245E9300F136D0 /* JSCConfig.h in Headers */ = {isa = PBXBuildFile; fileRef = FE48BD4223245E8700F136D0 /* JSCConfig.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE48E6381EB118D2005D7A96 /* ObjectInitializationScope.h in Headers */ = {isa = PBXBuildFile; fileRef = FE48E6361EB1188F005D7A96 /* ObjectInitializationScope.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE4BFF2C1AD476E700088F87 /* FunctionOverrides.h in Headers */ = {isa = PBXBuildFile; fileRef = FE4BFF2A1AD476E700088F87 /* FunctionOverrides.h */; };
-		FE4D55B81AE716CA0052E459 /* IterationStatus.h in Headers */ = {isa = PBXBuildFile; fileRef = FE4D55B71AE716CA0052E459 /* IterationStatus.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE5068651AE246390009DAB7 /* DeferredSourceDump.h in Headers */ = {isa = PBXBuildFile; fileRef = FE5068641AE246390009DAB7 /* DeferredSourceDump.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE533CA51F217DB30016A1FE /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 51F0EB6105C86C6B00E6DF1B /* Foundation.framework */; };
 		FE533CA61F217DB30016A1FE /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 932F5BD90822A1C700736975 /* JavaScriptCore.framework */; };
@@ -3789,6 +3790,9 @@
 		52C55565224C2AE70099F5CC /* DFGValueRepReductionPhase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = DFGValueRepReductionPhase.h; path = dfg/DFGValueRepReductionPhase.h; sourceTree = "<group>"; };
 		52C952B619A289850069B386 /* TypeProfiler.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TypeProfiler.h; sourceTree = "<group>"; };
 		52C952B819A28A1C0069B386 /* TypeProfiler.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TypeProfiler.cpp; sourceTree = "<group>"; };
+		52CAEC722790B8F600DDBAAF /* SecureARM64EHashPinsInlines.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SecureARM64EHashPinsInlines.h; sourceTree = "<group>"; };
+		52CAEC732790B8F600DDBAAF /* SecureARM64EHashPins.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SecureARM64EHashPins.cpp; sourceTree = "<group>"; };
+		52CAEC742790B8F600DDBAAF /* SecureARM64EHashPins.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SecureARM64EHashPins.h; sourceTree = "<group>"; };
 		52CD0F642242F569004A18A5 /* testdfg */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = testdfg; sourceTree = BUILT_PRODUCTS_DIR; };
 		52CD0F672242F71C004A18A5 /* testdfg.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = testdfg.cpp; path = dfg/testdfg.cpp; sourceTree = "<group>"; };
 		52D1308F221CE03A009C836C /* foo.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = foo.js; sourceTree = "<group>"; };
@@ -5627,7 +5631,6 @@
 		FE48E6371EB118AD005D7A96 /* ObjectInitializationScope.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ObjectInitializationScope.cpp; sourceTree = "<group>"; };
 		FE4BFF291AD476E700088F87 /* FunctionOverrides.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FunctionOverrides.cpp; sourceTree = "<group>"; };
 		FE4BFF2A1AD476E700088F87 /* FunctionOverrides.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FunctionOverrides.h; sourceTree = "<group>"; };
-		FE4D55B71AE716CA0052E459 /* IterationStatus.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IterationStatus.h; sourceTree = "<group>"; };
 		FE5068641AE246390009DAB7 /* DeferredSourceDump.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeferredSourceDump.h; sourceTree = "<group>"; };
 		FE5068661AE25E280009DAB7 /* DeferredSourceDump.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DeferredSourceDump.cpp; sourceTree = "<group>"; };
 		FE533CA01F217C310016A1FE /* testmasm.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = testmasm.cpp; sourceTree = "<group>"; };
@@ -7815,7 +7818,6 @@
 				A38CA59B26DD84DE00C8D84C /* ISO8601.cpp */,
 				A38CA59C26DD84DE00C8D84C /* ISO8601.h */,
 				8B9F6D551D5912FA001C739F /* IterationKind.h */,
-				FE4D55B71AE716CA0052E459 /* IterationStatus.h */,
 				70113D491A8DB093003848C4 /* IteratorOperations.cpp */,
 				70113D4A1A8DB093003848C4 /* IteratorOperations.h */,
 				70DC3E071B2DF2C700054299 /* IteratorPrototype.cpp */,
@@ -8802,6 +8804,9 @@
 				FE10AAE91F44D510009DEDC5 /* ProbeStack.cpp */,
 				FE10AAEA1F44D512009DEDC5 /* ProbeStack.h */,
 				9688CB140ED12B4E001D6499 /* RegisterInfo.h */,
+				52CAEC732790B8F600DDBAAF /* SecureARM64EHashPins.cpp */,
+				52CAEC742790B8F600DDBAAF /* SecureARM64EHashPins.h */,
+				52CAEC722790B8F600DDBAAF /* SecureARM64EHashPinsInlines.h */,
 				FE533CA01F217C310016A1FE /* testmasm.cpp */,
 				9688CB140ED12B4E001D6492 /* X86_64Registers.h */,
 				9688CB140ED12B4E001D649F /* X86Assembler.h */,
@@ -10019,6 +10024,7 @@
 				0FBE0F7316C1DB050082C5E8 /* DFGCPSRethreadingPhase.h in Headers */,
 				A7D89CF617A0B8CC00773AD8 /* DFGCriticalEdgeBreakingPhase.h in Headers */,
 				0FFFC95A14EF90A900C72532 /* DFGCSEPhase.h in Headers */,
+				52CAEC752790B8FB00DDBAAF /* SecureARM64EHashPins.h in Headers */,
 				0F2FC77316E12F740038D976 /* DFGDCEPhase.h in Headers */,
 				E3BFA5D021E853A1009C0EBA /* DFGDesiredGlobalProperty.h in Headers */,
 				0F8F2B9A172F0501007DBDA5 /* DFGDesiredIdentifiers.h in Headers */,
@@ -10476,7 +10482,6 @@
 				0F5E0FE72086AD480097F0DE /* IsoSubspacePerVM.h in Headers */,
 				8B9F6D561D5912FA001C739F /* IterationKind.h in Headers */,
 				53D41EC923C0081A00AE984B /* IterationModeMetadata.h in Headers */,
-				FE4D55B81AE716CA0052E459 /* IterationStatus.h in Headers */,
 				70113D4C1A8DB093003848C4 /* IteratorOperations.h in Headers */,
 				70DC3E0A1B2DF2C700054299 /* IteratorPrototype.h in Headers */,
 				BC18C4130E16F5CD00B34460 /* JavaScript.h in Headers */,
@@ -11179,6 +11184,7 @@
 				E33BBE0925BFA0410053690F /* WasmStreamingCompiler.h in Headers */,
 				E3A0531A21342B680022EC14 /* WasmStreamingParser.h in Headers */,
 				E3C73A9125BFA73B00EFE303 /* WasmStreamingPlan.h in Headers */,
+				52CAEC762790B90100DDBAAF /* SecureARM64EHashPinsInlines.h in Headers */,
 				AD5C36E61F69EC91000BCAAF /* WasmTable.h in Headers */,
 				14D01BF526DEEF5300CAE0D0 /* WasmTag.h in Headers */,
 				5250D2D21E8DA05A0029A932 /* WasmThunks.h in Headers */,

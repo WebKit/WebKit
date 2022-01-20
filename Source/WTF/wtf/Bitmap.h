@@ -22,6 +22,7 @@
 #include <array>
 #include <wtf/Atomics.h>
 #include <wtf/HashFunctions.h>
+#include <wtf/IterationStatus.h>
 #include <wtf/MathExtras.h>
 #include <wtf/PrintStream.h>
 #include <wtf/StdIntExtras.h>
@@ -72,6 +73,8 @@ public:
     
     bool subsumes(const Bitmap&) const;
     
+    // If the lambda returns an IterationStatus, we use it. The lambda can also return
+    // void, in which case, we'll iterate every set bit.
     template<typename Func>
     void forEachSetBit(const Func&) const;
     
@@ -165,13 +168,13 @@ inline bool Bitmap<bitmapSize, WordType>::get(size_t n, Dependency dependency) c
 }
 
 template<size_t bitmapSize, typename WordType>
-inline void Bitmap<bitmapSize, WordType>::set(size_t n)
+ALWAYS_INLINE void Bitmap<bitmapSize, WordType>::set(size_t n)
 {
     bits[n / wordSize] |= (one << (n % wordSize));
 }
 
 template<size_t bitmapSize, typename WordType>
-inline void Bitmap<bitmapSize, WordType>::set(size_t n, bool value)
+ALWAYS_INLINE void Bitmap<bitmapSize, WordType>::set(size_t n, bool value)
 {
     if (value)
         set(n);
@@ -381,7 +384,7 @@ inline bool Bitmap<bitmapSize, WordType>::subsumes(const Bitmap& other) const
 
 template<size_t bitmapSize, typename WordType>
 template<typename Func>
-inline void Bitmap<bitmapSize, WordType>::forEachSetBit(const Func& func) const
+ALWAYS_INLINE void Bitmap<bitmapSize, WordType>::forEachSetBit(const Func& func) const
 {
     for (size_t i = 0; i < words; ++i) {
         WordType word = bits[i];
@@ -389,8 +392,13 @@ inline void Bitmap<bitmapSize, WordType>::forEachSetBit(const Func& func) const
             continue;
         size_t base = i * wordSize;
         for (size_t j = 0; j < wordSize; ++j) {
-            if (word & 1)
-                func(base + j);
+            if (word & 1) {
+                if constexpr (std::is_same_v<IterationStatus, decltype(func(base + j))>) {
+                    if (func(base + j) == IterationStatus::Done)
+                        return;
+                } else
+                    func(base + j);
+            }
             word >>= 1;
         }
     }

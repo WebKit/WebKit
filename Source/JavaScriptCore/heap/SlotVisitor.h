@@ -27,8 +27,8 @@
 
 #include "AbstractSlotVisitor.h"
 #include "HandleTypes.h"
-#include "IterationStatus.h"
 #include <wtf/Forward.h>
+#include <wtf/IterationStatus.h>
 #include <wtf/MonotonicTime.h>
 
 namespace JSC {

@@ -1,3 +1,69 @@
+2022-01-19  Saam Barati  <sbarati@apple.com>
+
+        Update ARM64EHash
+        https://bugs.webkit.org/show_bug.cgi?id=235192
+
+        Reviewed by Mark Lam.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * assembler/AssemblerBuffer.h:
+        (JSC::ARM64EHash::ARM64EHash):
+        (JSC::ARM64EHash::~ARM64EHash):
+        (JSC::ARM64EHash::allocatePinForCurrentThreadAndInitializeHash):
+        (JSC::ARM64EHash::deallocatePinForCurrentThread):
+        (JSC::ARM64EHash::update):
+        (JSC::ARM64EHash::pin):
+        (JSC::ARM64EHash::currentHash):
+        (JSC::ARM64EHash::setUpdatedHash):
+        (JSC::AssemblerBuffer::AssemblerBuffer):
+        (JSC::AssemblerBuffer::arm64eHash):
+        (JSC::AssemblerBuffer::putIntegralUnchecked):
+        (JSC::ARM64EHash::bitsForDiversifier): Deleted.
+        * assembler/LinkBuffer.cpp:
+        (JSC::LinkBuffer::copyCompactAndLinkCode):
+        (JSC::LinkBuffer::allocate):
+        * assembler/SecureARM64EHashPins.cpp: Added.
+        (JSC::WriteToJITRegionScope::WriteToJITRegionScope):
+        (JSC::WriteToJITRegionScope::~WriteToJITRegionScope):
+        (JSC::ValidateNonReentrancyScope::ValidateNonReentrancyScope):
+        (JSC::ValidateNonReentrancyScope::~ValidateNonReentrancyScope):
+        (JSC::allocateInExecutableMemory):
+        (JSC::SecureARM64EHashPins::Page::Page):
+        (JSC::initializePage):
+        (JSC::SecureARM64EHashPins::metadata):
+        (JSC::SecureARM64EHashPins::initializeAtStartup):
+        (JSC::SecureARM64EHashPins::allocatePinForCurrentThreadImpl):
+        (JSC::SecureARM64EHashPins::allocatePinForCurrentThread):
+        (JSC::SecureARM64EHashPins::deallocatePinForCurrentThread):
+        * assembler/SecureARM64EHashPins.h: Added.
+        (JSC::SecureARM64EHashPins::firstPage):
+        * assembler/SecureARM64EHashPinsInlines.h: Added.
+        (JSC::SecureARM64EHashPins::keyForCurrentThread):
+        (JSC::SecureARM64EHashPins::forEachPage):
+        (JSC::SecureARM64EHashPins::forEachEntry):
+        (JSC::SecureARM64EHashPins::findFirstEntry):
+        (JSC::SecureARM64EHashPins::pinForCurrentThread):
+        * heap/MarkedBlock.h:
+        * heap/MarkedSpace.h:
+        * heap/SlotVisitor.h:
+        * jit/BaselineJITPlan.cpp:
+        (JSC::BaselineJITPlan::BaselineJITPlan):
+        (JSC::BaselineJITPlan::compileInThreadImpl):
+        * jit/ExecutableAllocator.cpp:
+        * parser/Parser.h:
+        * runtime/InitializeThreading.cpp:
+        (JSC::initialize):
+        * runtime/IterationStatus.h: Removed.
+        * runtime/JSCConfig.h:
+        * wasm/WasmAirIRGenerator.cpp:
+        (JSC::Wasm::parseAndCompileAir):
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::parseAndCompileB3):
+        * wasm/WasmBBQPlan.cpp:
+        (JSC::Wasm::BBQPlan::compileFunction):
+
 2022-01-19  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Fix YarrJIT backtrackCharacterClassNonGreedy breakpoint

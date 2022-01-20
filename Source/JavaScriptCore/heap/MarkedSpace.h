@@ -22,13 +22,13 @@
 #pragma once
 
 #include "BlockDirectory.h"
-#include "IterationStatus.h"
 #include "MarkedBlock.h"
 #include "MarkedBlockSet.h"
 #include "PreciseAllocation.h"
 #include <array>
 #include <wtf/Bag.h>
 #include <wtf/HashSet.h>
+#include <wtf/IterationStatus.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/SentinelLinkedList.h>

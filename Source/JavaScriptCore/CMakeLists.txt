@@ -593,6 +593,8 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     assembler/RISCV64Assembler.h
     assembler/RISCV64Registers.h
     assembler/RegisterInfo.h
+    assembler/SecureARM64EHashPins.h
+    assembler/SecureARM64EHashPinsInlines.h
     assembler/X86Assembler.h
     assembler/X86Registers.h
     assembler/X86_64Registers.h
@@ -1023,7 +1025,6 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/InternalFunction.h
     runtime/Intrinsic.h
     runtime/IterationKind.h
-    runtime/IterationStatus.h
     runtime/IteratorOperations.h
     runtime/IteratorPrototype.h
     runtime/JSArray.h

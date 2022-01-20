@@ -61,6 +61,7 @@ assembler/PerfLog.cpp
 assembler/Printer.cpp
 assembler/ProbeContext.cpp
 assembler/ProbeStack.cpp
+assembler/SecureARM64EHashPins.cpp
 
 b3/air/AirAllocateRegistersAndStackAndGenerateCode.cpp
 b3/air/AirAllocateRegistersAndStackByLinearScan.cpp

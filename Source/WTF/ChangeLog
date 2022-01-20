@@ -1,3 +1,17 @@
+2022-01-19  Saam Barati  <sbarati@apple.com>
+
+        Update ARM64EHash
+        https://bugs.webkit.org/show_bug.cgi?id=235192
+
+        Reviewed by Mark Lam.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/Bitmap.h:
+        (WTF::WordType>::set):
+        (WTF::WordType>::forEachSetBit const):
+        * wtf/CMakeLists.txt:
+        * wtf/IterationStatus.h: Added.
+
 2022-01-19  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Do not use pas utils outside of libpas

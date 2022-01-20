@@ -29,11 +29,11 @@
 #if ENABLE(JIT)
 
 #include "ExecutableAllocationFuzz.h"
-#include "IterationStatus.h"
 #include "JITOperationValidation.h"
 #include "LinkBuffer.h"
 #include <wtf/FastBitVector.h>
 #include <wtf/FileSystem.h>
+#include <wtf/IterationStatus.h>
 #include <wtf/PageReservation.h>
 #include <wtf/ProcessID.h>
 #include <wtf/RedBlackTree.h>

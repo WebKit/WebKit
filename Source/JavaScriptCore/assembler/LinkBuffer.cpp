@@ -221,8 +221,7 @@ void LinkBuffer::copyCompactAndLinkCode(MacroAssembler& macroAssembler, JITCompi
     m_assemblerStorage = macroAssembler.m_assembler.buffer().releaseAssemblerData();
     uint8_t* inData = bitwise_cast<uint8_t*>(m_assemblerStorage.buffer());
 #if CPU(ARM64E)
-    void* bufferPtr = &macroAssembler.m_assembler.buffer();
-    ARM64EHash verifyUncompactedHash { bufferPtr };
+    ARM64EHash<ShouldSign::No> verifyUncompactedHash;
     m_assemblerHashesStorage = macroAssembler.m_assembler.buffer().releaseAssemblerHashes();
     uint32_t* inHashes = bitwise_cast<uint32_t*>(m_assemblerHashesStorage.buffer());
 #endif
@@ -245,7 +244,7 @@ void LinkBuffer::copyCompactAndLinkCode(MacroAssembler& macroAssembler, JITCompi
         InstructionType value = *ptr;
 #if CPU(ARM64E)
         unsigned index = (bitwise_cast<uint8_t*>(ptr) - inData) / 4;
-        uint32_t hash = verifyUncompactedHash.update(value, index, bufferPtr);
+        uint32_t hash = verifyUncompactedHash.update(value, index);
         RELEASE_ASSERT(inHashes[index] == hash);
 #endif
         return value;
@@ -437,6 +436,10 @@ void LinkBuffer::allocate(MacroAssembler& macroAssembler, JITCompilationEffort e
         macroAssembler.breakpoint();
         initialSize = macroAssembler.m_assembler.codeSize();
     }
+
+#if CPU(ARM64E)
+    macroAssembler.m_assembler.buffer().arm64eHash().deallocatePinForCurrentThread();
+#endif
 
     m_executableMemory = ExecutableAllocator::singleton().allocate(initialSize, effort);
     if (!m_executableMemory)

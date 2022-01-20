@@ -195,6 +195,7 @@ void BBQPlan::compileFunction(uint32_t functionIndex)
         SignatureIndex signatureIndex = m_moduleInformation->internalFunctionSignatureIndices[functionIndex];
         const Signature& signature = SignatureInformation::get(signatureIndex);
 
+        m_compilationContexts[functionIndex].embedderEntrypointJIT = makeUnique<CCallHelpers>();
         auto embedderToWasmInternalFunction = createJSToWasmWrapper(*m_compilationContexts[functionIndex].embedderEntrypointJIT, signature, &m_unlinkedWasmToWasmCalls[functionIndex], m_moduleInformation.get(), m_mode, functionIndex);
         auto linkBuffer = makeUnique<LinkBuffer>(*m_compilationContexts[functionIndex].embedderEntrypointJIT, nullptr, LinkBuffer::Profile::Wasm, JITCompilationCanFail);
 
