@@ -1,3 +1,15 @@
+2021-11-18  Frédéric Wang  <fwang@igalia.com>
+
+        Nullptr crash in SimplifiedBackwardsTextIterator::range() via previousSentencePosition
+        https://bugs.webkit.org/show_bug.cgi?id=229282
+
+        Reviewed by Darin Adler.
+
+        Add regression test.
+
+        * editing/text-iterator/backward-textiterator-object-crash-expected.txt: Added.
+        * editing/text-iterator/backward-textiterator-object-crash.html: Added.
+
 2021-11-15  Gabriel Nava Marino  <gnavamarino@apple.com>
 
         nullptr deref in CompositeEditCommand::insertNodeAt

@@ -1,3 +1,23 @@
+2021-11-18  Frédéric Wang  <fwang@igalia.com>
+
+        Nullptr crash in SimplifiedBackwardsTextIterator::range() via previousSentencePosition
+        https://bugs.webkit.org/show_bug.cgi?id=229282
+
+        Reviewed by Darin Adler.
+
+        Constructors of TextIterator and SimplifiedBackwardsTextIterator update layout, which may
+        make HTMLObjectElement switch to fallback content and invalidate their renderer. As a
+        consequence their advance() method may incorrectly treat them as replaced elements. This
+        patch updates the layout at the beginning of FrameSelection::modify and disable post
+        resolution callbacks in order to prevent this kind of unaverted tree changes while browsing
+        the tree for selection update.
+
+        Test: editing/text-iterator/backward-textiterator-object-crash.html
+
+        * editing/FrameSelection.cpp:
+        (WebCore::FrameSelection::modify): Update layout and disable post resolution callback, so that
+        all iterators used during the execution of the function handle <object>s consistently.
+
 2021-11-15  Gabriel Nava Marino  <gnavamarino@apple.com>
 
         nullptr deref in CompositeEditCommand::insertNodeAt

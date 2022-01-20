@@ -70,6 +70,7 @@
 #include "SimpleRange.h"
 #include "SpatialNavigation.h"
 #include "StyleProperties.h"
+#include "StyleTreeResolver.h"
 #include "TypingCommand.h"
 #include "VisibleUnits.h"
 #include <stdio.h>
@@ -1342,6 +1343,14 @@ bool FrameSelection::modify(EAlteration alter, SelectionDirection direction, Tex
     }
 
     willBeModified(alter, direction);
+
+    // Before modifying selection, update layout and disable post resolution callbacks.
+    // That way, unaverted tree changes are avoided while browsing the document.
+    auto selectionDocument = m_selection.document();
+    if (!selectionDocument)
+        return false;
+    selectionDocument->updateLayoutIgnorePendingStylesheets();
+    Style::PostResolutionCallbackDisabler disabler(*selectionDocument);
 
     bool reachedBoundary = false;
     bool wasRange = m_selection.isRange();
