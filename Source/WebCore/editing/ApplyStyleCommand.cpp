@@ -636,6 +636,9 @@ void ApplyStyleCommand::applyInlineStyle(EditingStyle& style)
         end = endPosition();
     }
 
+    if (start.isNull() || end.isNull())
+        return;
+    
     if (splitEnd) {
         mergeEndWithNextIfIdentical(start, end);
         start = startPosition();
