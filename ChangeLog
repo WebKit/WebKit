@@ -1,3 +1,16 @@
+2022-01-20  Don Olmstead  <don.olmstead@sony.com>
+
+        [WinCairo] Make USE_CF conditional on ENABLE_WEBKIT_LEGACY
+        https://bugs.webkit.org/show_bug.cgi?id=235393
+
+        Reviewed by Fujii Hironori.
+
+        CoreFoundation is used heavily in WebKitLegacy on Windows and won't compile without it.
+        Modern WebKit doesn't have this requirement so tie CoreFoundation usage to whether
+        WebKitLegacy is being used.
+
+        * Source/cmake/OptionsWinCairo.cmake:
+
 2022-01-19  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         [WPE][GTK] ENABLE_JOURNALD_LOG has weird value
