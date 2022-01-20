@@ -3698,7 +3698,7 @@ void RenderBlockFlow::invalidateLineLayoutPath()
 #endif
         m_lineLayout = WTF::Monostate();
         setLineLayoutPath(path);
-        if (needsLayout())
+        if (selfNeedsLayout() || normalChildNeedsLayout())
             return;
         // FIXME: We should just kick off a subtree layout here (if needed at all) see webkit.org/b/172947.
         setNeedsLayout();

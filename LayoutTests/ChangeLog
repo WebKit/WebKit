@@ -1,3 +1,14 @@
+2022-01-10  Alan Bujtas  <zalan@apple.com>
+
+        null ptr deref in WebCore::LayoutIntegration::LineLayout::collectOverflow()
+        https://bugs.webkit.org/show_bug.cgi?id=234654
+        <rdar://problem/86571571>
+
+        Reviewed by Antti Koivisto.
+
+        * fast/block/line-layout/line-layout-collect-overflow-crash-expected.txt: Added.
+        * fast/block/line-layout/line-layout-collect-overflow-crash.html: Added.
+
 2022-01-08  Gabriel Nava Marino  <gnavamarino@apple.com>
 
         null ptr deref in WebCore::ModifySelectionListLevelCommand::appendSiblingNodeRange

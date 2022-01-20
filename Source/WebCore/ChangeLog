@@ -1,3 +1,24 @@
+2022-01-10  Alan Bujtas  <zalan@apple.com>
+
+        null ptr deref in WebCore::LayoutIntegration::LineLayout::collectOverflow()
+        https://bugs.webkit.org/show_bug.cgi?id=234654
+        <rdar://problem/86571571>
+
+        Reviewed by Antti Koivisto.
+
+        needsLayout() check in invalidateLineLayoutPath is insufficient for modern line layout.
+
+        m_lineLayout = std::monostate() does not only destroy the line layout object but it also nukes all the IFC geometries.
+        It is equivalent to having all the child boxes dirty, since in order to re-generate the geometry information,
+        we have to layout _all_ the boxes (note that nuking the legacy line layout object does not destroy the inline tree).
+        The bug here is that needsLayout() returns true for cases (e.g. posChildNeedsLayout) when
+        while the geometry is all gone, we are going to take a special layout codepath which expects pre-computed geometries.
+
+        Test: fast/block/line-layout/line-layout-collect-overflow-crash.html
+
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::invalidateLineLayoutPath):
+
 2022-01-08  Gabriel Nava Marino  <gnavamarino@apple.com>
 
         null ptr deref in WebCore::ModifySelectionListLevelCommand::appendSiblingNodeRange
