@@ -99,6 +99,9 @@ PerformanceResourceTiming::~PerformanceResourceTiming() = default;
 
 const String& PerformanceResourceTiming::nextHopProtocol() const
 {
+    if (m_resourceTiming.networkLoadMetrics().failsTAOCheck)
+        return emptyString();
+
     return m_resourceTiming.networkLoadMetrics().protocol;
 }
 

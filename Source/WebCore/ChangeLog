@@ -1,3 +1,16 @@
+2022-01-19  Alex Christensen  <achristensen@webkit.org>
+
+        [ResourceTiming] nextHopProtocol is exposed regardless of Timing-Allow-Origin
+        https://bugs.webkit.org/show_bug.cgi?id=235294
+
+        Reviewed by Chris Dumez.
+
+        Covered by an existing WPT test that starts passing.
+        This was recently fixed in Chromium in https://chromium-review.googlesource.com/c/chromium/src/+/3354335
+
+        * page/PerformanceResourceTiming.cpp:
+        (WebCore::PerformanceResourceTiming::nextHopProtocol const):
+
 2021-11-30  Youenn Fablet  <youenn@apple.com>
 
         ServiceWorkerContainer does not respond well to network process crash
