@@ -48,8 +48,7 @@ public:
     static Key makeKey(const CSSSelector& hasSelector);
 
     bool reject(const CSSSelector& hasSelector) const { return reject(makeKey(hasSelector)); }
-    bool reject(Key key) const { return !m_filter.mayContain(key); }
-
+    bool reject(Key key) const { return key && !m_filter.mayContain(key); }
 
 private:
     void add(const Element&);
