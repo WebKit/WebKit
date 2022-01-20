@@ -57,8 +57,7 @@ WI.CallFrameTreeElement = class CallFrameTreeElement extends WI.GeneralTreeEleme
             this.tooltipHandledSeparately = true;
         }
 
-        this._isBlackboxed = WI.debuggerManager.blackboxDataForSourceCode(this._callFrame.sourceCodeLocation.sourceCode);
-        if (this._isBlackboxed) {
+        if (this._callFrame.blackboxed) {
             this.addClassName("blackboxed");
             this.tooltipHandledSeparately = true;
         }
@@ -98,7 +97,7 @@ WI.CallFrameTreeElement = class CallFrameTreeElement extends WI.GeneralTreeEleme
             let tooltipPrefix = this.mainTitle + tailCallSuffix + "\n";
 
             let tooltipSuffix = "";
-            if (this._isBlackboxed)
+            if (this._callFrame.blackboxed)
                 tooltipSuffix += "\n\n" + WI.UIString("Script ignored due to blackbox");
 
             this._callFrame.sourceCodeLocation.populateLiveDisplayLocationTooltip(this.element, tooltipPrefix, tooltipSuffix);

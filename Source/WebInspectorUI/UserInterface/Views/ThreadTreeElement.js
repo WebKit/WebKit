@@ -71,9 +71,10 @@ WI.ThreadTreeElement = class ThreadTreeElement extends WI.GeneralTreeElement
                 console.assert(boundaryCallFrame.nativeCode && !boundaryCallFrame.sourceCodeLocation);
             } else {
                 // Create a generic native CallFrame for the asynchronous boundary.
-                const functionName = WI.UIString("(async)");
-                const nativeCode = true;
-                boundaryCallFrame = new WI.CallFrame(null, null, null, functionName, null, null, nativeCode);
+                boundaryCallFrame = new WI.CallFrame(this._target, {
+                    functionName: WI.UIString("(async)"),
+                    nativeCode: true,
+                });
             }
 
             this.appendChild(new WI.CallFrameTreeElement(boundaryCallFrame, {isAsyncBoundaryCallFrame: true}));

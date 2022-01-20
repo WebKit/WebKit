@@ -1,5 +1,37 @@
 2022-01-19  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: fully blackboxed stack traces don't show the right top call frame
+        https://bugs.webkit.org/show_bug.cgi?id=235381
+
+        Reviewed by Patrick Angle.
+
+        * UserInterface/Models/StackTrace.js:
+        (WI.StackTrace):
+        (WI.StackTrace.fromPayload):
+        (WI.StackTrace.prototype.get firstNonNativeNonAnonymousNotBlackboxedCallFrame):
+        Only assign to `firstNonNativeNonAnonymousCallFrame` once.
+        Drive-by: Don't re-fetch the blackbox data for the `WI.SourceCode` of the `WI.CallFrame`.
+        Drive-by: Combine optional parameters into an `options = {}` for current code cleanliness
+                  and greater flexibility for future changes.
+
+        * UserInterface/Models/CallFrame.js:
+        (WI.CallFrame):
+        (WI.CallFrame.fromDebuggerPayload):
+        (WI.CallFrame.fromPayload):
+        * UserInterface/Views/ThreadTreeElement.js:
+        (WI.ThreadTreeElement.prototype.refresh):
+        Drive-by: Combine optional parameters into an `options = {}` for current code cleanliness
+                  and greater flexibility for future changes.
+
+        * UserInterface/Views/CallFrameTreeElement.js:
+        (WI.CallFrameTreeElement):
+        (WI.CallFrameTreeElement.prototype.onattach):
+        * UserInterface/Views/CallFrameView.js:
+        (WI.CallFrameView):
+        Drive-by: Don't re-fetch the blackbox data for the `WI.SourceCode` of the `WI.CallFrame`.
+
+2022-01-19  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: blackboxed call frames should be grouped everywhere
         https://bugs.webkit.org/show_bug.cgi?id=234648
         <rdar://problem/87018103>
