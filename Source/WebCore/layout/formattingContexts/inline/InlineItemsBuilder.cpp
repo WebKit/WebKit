@@ -172,7 +172,7 @@ static void replaceNonPreservedNewLineCharactersAndAppend(const InlineTextBox& i
 }
 
 struct BidiContext {
-    EUnicodeBidi unicodeBidi;
+    UnicodeBidi unicodeBidi;
     bool isLeftToRightDirection { false };
     bool isBlockLevel { false };
 };
@@ -184,27 +184,27 @@ enum class EnterExitType : uint8_t {
     EnteringInlineBox,
     ExitingInlineBox
 };
-static inline void handleEnterExitBidiContext(StringBuilder& paragraphContentBuilder, EUnicodeBidi unicodeBidi, bool isLTR, EnterExitType enterExitType, BidiContextStack& bidiContextStack)
+static inline void handleEnterExitBidiContext(StringBuilder& paragraphContentBuilder, UnicodeBidi unicodeBidi, bool isLTR, EnterExitType enterExitType, BidiContextStack& bidiContextStack)
 {
     auto isEnteringBidi = enterExitType == EnterExitType::EnteringBlock || enterExitType == EnterExitType::EnteringInlineBox;
     switch (unicodeBidi) {
-    case EUnicodeBidi::UBNormal:
+    case UnicodeBidi::UBNormal:
         // The box does not open an additional level of embedding with respect to the bidirectional algorithm.
         // For inline boxes, implicit reordering works across box boundaries.
         break;
-    case EUnicodeBidi::Embed:
+    case UnicodeBidi::Embed:
         paragraphContentBuilder.append(isEnteringBidi ? (isLTR ? leftToRightEmbed : rightToLeftEmbed) : popDirectionalFormatting);
         break;
-    case EUnicodeBidi::Override:
+    case UnicodeBidi::Override:
         paragraphContentBuilder.append(isEnteringBidi ? (isLTR ? leftToRightOverride : rightToLeftOverride) : popDirectionalFormatting);
         break;
-    case EUnicodeBidi::Isolate:
+    case UnicodeBidi::Isolate:
         paragraphContentBuilder.append(isEnteringBidi ? (isLTR ? leftToRightIsolate : rightToLeftIsolate) : popDirectionalIsolate);
         break;
-    case EUnicodeBidi::Plaintext:
+    case UnicodeBidi::Plaintext:
         paragraphContentBuilder.append(isEnteringBidi ? firstStrongIsolate : popDirectionalIsolate);
         break;
-    case EUnicodeBidi::IsolateOverride:
+    case UnicodeBidi::IsolateOverride:
         if (isEnteringBidi) {
             paragraphContentBuilder.append(firstStrongIsolate);
             paragraphContentBuilder.append(isLTR ? leftToRightOverride : rightToLeftOverride);
@@ -226,7 +226,7 @@ static inline void buildBidiParagraph(const RenderStyle& rootStyle, const Inline
     auto bidiContextStack = BidiContextStack { };
     handleEnterExitBidiContext(paragraphContentBuilder, rootStyle.unicodeBidi(), rootStyle.isLeftToRightDirection(), EnterExitType::EnteringBlock, bidiContextStack);
     if (rootStyle.rtlOrdering() != Order::Logical)
-        handleEnterExitBidiContext(paragraphContentBuilder, EUnicodeBidi::Override, rootStyle.isLeftToRightDirection(), EnterExitType::EnteringBlock, bidiContextStack);
+        handleEnterExitBidiContext(paragraphContentBuilder, UnicodeBidi::Override, rootStyle.isLeftToRightDirection(), EnterExitType::EnteringBlock, bidiContextStack);
 
     const Box* lastInlineTextBox = nullptr;
     size_t inlineTextBoxOffset = 0;
@@ -252,7 +252,7 @@ static inline void buildBidiParagraph(const RenderStyle& rootStyle, const Inline
         } else if (inlineItem.isInlineBoxStart() || inlineItem.isInlineBoxEnd()) {
             // https://drafts.csswg.org/css-writing-modes/#unicode-bidi
             auto& style = inlineItem.style();
-            auto initiatesControlCharacter = style.rtlOrdering() == Order::Logical && style.unicodeBidi() != EUnicodeBidi::UBNormal;
+            auto initiatesControlCharacter = style.rtlOrdering() == Order::Logical && style.unicodeBidi() != UnicodeBidi::UBNormal;
             if (!initiatesControlCharacter) {
                 // Opaque items do not have position in the bidi paragraph. They inherit their bidi level from the next inline item.
                 inlineItemOffsetList.uncheckedAppend({ });
@@ -339,7 +339,7 @@ void InlineItemsBuilder::breakAndComputeBidiLevels(InlineItems& inlineItems)
     });
 
     UBiDiLevel rootBidiLevel = UBIDI_DEFAULT_LTR;
-    bool useHeuristicBaseDirection = root().style().unicodeBidi() == EUnicodeBidi::Plaintext;
+    bool useHeuristicBaseDirection = root().style().unicodeBidi() == UnicodeBidi::Plaintext;
     if (!useHeuristicBaseDirection)
         rootBidiLevel = root().style().isLeftToRightDirection() ? UBIDI_LTR : UBIDI_RTL;
 
@@ -557,14 +557,14 @@ void InlineItemsBuilder::handleInlineBoxStart(const Box& inlineBox, InlineItems&
 {
     inlineItems.append({ inlineBox, InlineItem::Type::InlineBoxStart });
     auto& style = inlineBox.style();
-    m_needsVisualReordering = m_needsVisualReordering || !style.isLeftToRightDirection() || (style.rtlOrdering() == Order::Logical && style.unicodeBidi() != EUnicodeBidi::UBNormal);
+    m_needsVisualReordering = m_needsVisualReordering || !style.isLeftToRightDirection() || (style.rtlOrdering() == Order::Logical && style.unicodeBidi() != UnicodeBidi::UBNormal);
 }
 
 void InlineItemsBuilder::handleInlineBoxEnd(const Box& inlineBox, InlineItems& inlineItems)
 {
     inlineItems.append({ inlineBox, InlineItem::Type::InlineBoxEnd });
     // Inline box end item itself can not trigger bidi content.
-    ASSERT(needsVisualReordering() || inlineBox.style().isLeftToRightDirection() || inlineBox.style().rtlOrdering() == Order::Visual || inlineBox.style().unicodeBidi() == EUnicodeBidi::UBNormal);
+    ASSERT(needsVisualReordering() || inlineBox.style().isLeftToRightDirection() || inlineBox.style().rtlOrdering() == Order::Visual || inlineBox.style().unicodeBidi() == UnicodeBidi::UBNormal);
 }
 
 void InlineItemsBuilder::handleInlineLevelBox(const Box& layoutBox, InlineItems& inlineItems)

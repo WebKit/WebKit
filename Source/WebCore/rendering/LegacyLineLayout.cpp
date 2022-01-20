@@ -632,7 +632,7 @@ void LegacyLineLayout::computeExpansionForJustifiedText(BidiRun* firstRun, BidiR
 void LegacyLineLayout::updateLogicalWidthForAlignment(RenderBlockFlow& flow, const TextAlignMode& textAlign, const LegacyRootInlineBox* rootInlineBox, BidiRun* trailingSpaceRun, float& logicalLeft, float& totalLogicalWidth, float& availableLogicalWidth, int expansionOpportunityCount)
 {
     TextDirection direction;
-    if (rootInlineBox && flow.style().unicodeBidi() == Plaintext)
+    if (rootInlineBox && flow.style().unicodeBidi() == UnicodeBidi::Plaintext)
         direction = rootInlineBox->direction();
     else
         direction = flow.style().direction();
@@ -1196,12 +1196,12 @@ static inline void constructBidiRunsForSegment(InlineBidiResolver& topResolver, 
         ASSERT(isolatedInline);
 
         InlineBidiResolver isolatedResolver;
-        EUnicodeBidi unicodeBidi = isolatedInline->style().unicodeBidi();
+        auto unicodeBidi = isolatedInline->style().unicodeBidi();
         TextDirection direction;
-        if (unicodeBidi == Plaintext)
+        if (unicodeBidi == UnicodeBidi::Plaintext)
             determineDirectionality(direction, LegacyInlineIterator(isolatedInline, &isolatedRun.object, 0));
         else {
-            ASSERT(unicodeBidi == Isolate || unicodeBidi == IsolateOverride);
+            ASSERT(unicodeBidi == UnicodeBidi::Isolate || unicodeBidi == UnicodeBidi::IsolateOverride);
             direction = isolatedInline->style().direction();
         }
         isolatedResolver.setStatus(BidiStatus(direction, isOverride(unicodeBidi)));
@@ -1433,7 +1433,7 @@ void LegacyLineLayout::layoutRunsAndFloatsInRange(LineLayoutState& layoutState, 
         } else {
             VisualDirectionOverride override = (styleToUse.rtlOrdering() == Order::Visual ? (styleToUse.direction() == TextDirection::LTR ? VisualLeftToRightOverride : VisualRightToLeftOverride) : NoVisualOverride);
 
-            if (isNewUBAParagraph && styleToUse.unicodeBidi() == Plaintext && !resolver.context()->parent()) {
+            if (isNewUBAParagraph && styleToUse.unicodeBidi() == UnicodeBidi::Plaintext && !resolver.context()->parent()) {
                 TextDirection direction = styleToUse.direction();
                 determineDirectionality(direction, resolver.position());
                 resolver.setStatus(BidiStatus(direction, isOverride(styleToUse.unicodeBidi())));
@@ -1964,7 +1964,7 @@ LegacyRootInlineBox* LegacyLineLayout::determineStartPosition(LineLayoutState& l
         resolver.setStatus(lastLine->lineBreakBidiStatus());
     } else {
         TextDirection direction = style().direction();
-        if (style().unicodeBidi() == Plaintext)
+        if (style().unicodeBidi() == UnicodeBidi::Plaintext)
             determineDirectionality(direction, LegacyInlineIterator(&m_flow, firstInlineRendererSkippingEmpty(m_flow), 0));
         resolver.setStatus(BidiStatus(direction, isOverride(style().unicodeBidi())));
         LegacyInlineIterator iter = LegacyInlineIterator(&m_flow, firstInlineRendererSkippingEmpty(m_flow, &resolver), 0);

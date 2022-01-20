@@ -2614,58 +2614,58 @@ template<> inline CSSPrimitiveValue::operator TextTransform() const
     return TextTransform::None;
 }
 
-template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EUnicodeBidi e)
+template<> inline CSSPrimitiveValue::CSSPrimitiveValue(UnicodeBidi e)
     : CSSValue(PrimitiveClass)
 {
     setPrimitiveUnitType(CSSUnitType::CSS_VALUE_ID);
     switch (e) {
-    case UBNormal:
+    case UnicodeBidi::UBNormal:
         m_value.valueID = CSSValueNormal;
         break;
-    case Embed:
+    case UnicodeBidi::Embed:
         m_value.valueID = CSSValueEmbed;
         break;
-    case Override:
+    case UnicodeBidi::Override:
         m_value.valueID = CSSValueBidiOverride;
         break;
-    case Isolate:
+    case UnicodeBidi::Isolate:
         m_value.valueID = CSSValueIsolate;
         break;
-    case IsolateOverride:
+    case UnicodeBidi::IsolateOverride:
         m_value.valueID = CSSValueIsolateOverride;
         break;
-    case Plaintext:
+    case UnicodeBidi::Plaintext:
         m_value.valueID = CSSValuePlaintext;
         break;
     }
 }
 
-template<> inline CSSPrimitiveValue::operator EUnicodeBidi() const
+template<> inline CSSPrimitiveValue::operator UnicodeBidi() const
 {
     ASSERT(isValueID());
 
     switch (m_value.valueID) {
     case CSSValueNormal:
-        return UBNormal;
+        return UnicodeBidi::UBNormal;
     case CSSValueEmbed:
-        return Embed;
+        return UnicodeBidi::Embed;
     case CSSValueBidiOverride:
-        return Override;
+        return UnicodeBidi::Override;
     case CSSValueIsolate:
     case CSSValueWebkitIsolate:
-        return Isolate;
+        return UnicodeBidi::Isolate;
     case CSSValueIsolateOverride:
     case CSSValueWebkitIsolateOverride:
-        return IsolateOverride;
+        return UnicodeBidi::IsolateOverride;
     case CSSValuePlaintext:
     case CSSValueWebkitPlaintext:
-        return Plaintext;
+        return UnicodeBidi::Plaintext;
     default:
         break;
     }
 
     ASSERT_NOT_REACHED();
-    return UBNormal;
+    return UnicodeBidi::UBNormal;
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(UserDrag e)

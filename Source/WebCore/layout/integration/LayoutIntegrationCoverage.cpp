@@ -415,7 +415,7 @@ static OptionSet<AvoidanceReason> canUseForStyle(const RenderElement& renderer, 
         SET_REASON_AND_RETURN_IF_NEEDED(FlowHasOverflowNotVisible, reasons, includeReasons);
     if (style.textOverflow() == TextOverflow::Ellipsis)
         SET_REASON_AND_RETURN_IF_NEEDED(FlowHasTextOverflow, reasons, includeReasons);
-    if (is<RenderBlockFlow>(renderer) && style.unicodeBidi() == EUnicodeBidi::Plaintext)
+    if (is<RenderBlockFlow>(renderer) && style.unicodeBidi() == UnicodeBidi::Plaintext)
         SET_REASON_AND_RETURN_IF_NEEDED(FlowMayNotBeLTR, reasons, includeReasons);
     if (style.writingMode() != WritingMode::TopToBottom)
         SET_REASON_AND_RETURN_IF_NEEDED(FlowIsNotTopToBottom, reasons, includeReasons);

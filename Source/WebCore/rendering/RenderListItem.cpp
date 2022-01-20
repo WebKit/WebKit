@@ -77,7 +77,7 @@ RenderStyle RenderListItem::computeMarkerStyle() const
     fontDescription.setVariantNumericSpacing(FontVariantNumericSpacing::TabularNumbers);
     markerStyle.setFontDescription(WTFMove(fontDescription));
     markerStyle.fontCascade().update(&document().fontSelector());
-    markerStyle.setUnicodeBidi(EUnicodeBidi::Isolate);
+    markerStyle.setUnicodeBidi(UnicodeBidi::Isolate);
     markerStyle.setWhiteSpace(WhiteSpace::Pre);
     markerStyle.setTextTransform(TextTransform::None);
     return markerStyle;

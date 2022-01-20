@@ -349,7 +349,7 @@ public:
     const LengthBox& clip() const { return m_visualData->clip; }
     bool hasClip() const { return m_visualData->hasClip; }
 
-    EUnicodeBidi unicodeBidi() const { return static_cast<EUnicodeBidi>(m_nonInheritedFlags.unicodeBidi); }
+    UnicodeBidi unicodeBidi() const { return static_cast<UnicodeBidi>(m_nonInheritedFlags.unicodeBidi); }
 
     Clear clear() const { return static_cast<Clear>(m_nonInheritedFlags.clear); }
     static UsedClear usedClear(const RenderObject&);
@@ -965,7 +965,7 @@ public:
     void setClip(Length&& top, Length&& right, Length&& bottom, Length&& left);
     void setClip(LengthBox&& box) { SET_VAR(m_visualData, clip, WTFMove(box)); }
 
-    void setUnicodeBidi(EUnicodeBidi v) { m_nonInheritedFlags.unicodeBidi = v; }
+    void setUnicodeBidi(UnicodeBidi v) { m_nonInheritedFlags.unicodeBidi = static_cast<unsigned>(v); }
 
     void setClear(Clear v) { m_nonInheritedFlags.clear = static_cast<unsigned>(v); }
     void setTableLayout(TableLayoutType v) { m_nonInheritedFlags.tableLayout = static_cast<unsigned>(v); }
@@ -1561,7 +1561,7 @@ public:
 
     static Clear initialClear() { return Clear::None; }
     static DisplayType initialDisplay() { return DisplayType::Inline; }
-    static EUnicodeBidi initialUnicodeBidi() { return UBNormal; }
+    static UnicodeBidi initialUnicodeBidi() { return UnicodeBidi::UBNormal; }
     static PositionType initialPosition() { return PositionType::Static; }
     static VerticalAlign initialVerticalAlign() { return VerticalAlign::Baseline; }
     static Float initialFloating() { return Float::None; }
@@ -1923,7 +1923,7 @@ private:
         unsigned verticalAlign : 4; // VerticalAlign
         unsigned clear : 3; // Clear
         unsigned position : 3; // PositionType
-        unsigned unicodeBidi : 3; // EUnicodeBidi
+        unsigned unicodeBidi : 3; // UnicodeBidi
         unsigned floating : 3; // Float
         unsigned tableLayout : 1; // TableLayoutType
 
