@@ -1,3 +1,23 @@
+2021-12-24  Frederic Wang  <fwang@igalia.com>
+
+        Simplify test for startOfLastParagraph in InsertListCommand::doApply
+        https://bugs.webkit.org/show_bug.cgi?id=234600
+
+        Reviewed by Darin Adler.
+
+        Current test is !startOfLastParagraph.deepEquivalent().anchorNode()->isConnected(). It could
+        be replaced with the less verbose startOfLastParagraph.isOrphan() which is equivalent to
+        startOfLastParagraph.deepEquivalent().isOrphan() and so to the condition
+        startOfLastParagraph.deepEquivalent().anchorNode() &&
+        !startOfLastParagraph.deepEquivalent().anchorNode()->isConnected(). A difference can only
+        happen for a page where anchorNode() is a null pointer. In such a test case exists, then it
+        is already crashing with a null ptr deref anyway.
+
+        No new tests, behavior essentially unchanged.
+
+        * editing/InsertListCommand.cpp:
+        (WebCore::InsertListCommand::doApply): Use startOfLastParagraph.isOrphan().
+
 2021-12-23  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] MediaPlayerPrivateGStreamer mishandles failure to create WebKitTextCombiner

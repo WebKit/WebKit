@@ -155,7 +155,7 @@ void InsertListCommand::doApply()
                     // infinite loop and because there is no more work to be done.
                     // FIXME(<rdar://problem/5983974>): The endingSelection() may be incorrect here. Compute
                     // the new location of endOfSelection and use it as the end of the new selection.
-                    if (!startOfLastParagraph.deepEquivalent().anchorNode()->isConnected())
+                    if (startOfLastParagraph.isOrphan())
                         return;
                     setEndingSelection(startOfCurrentParagraph);
 
