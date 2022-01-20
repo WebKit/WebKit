@@ -830,6 +830,8 @@ void ReplaceSelectionCommand::moveNodeOutOfAncestor(Node& node, Node& ancestor, 
     VisiblePosition lastPositionInParagraph = lastPositionInNode(&ancestor);
     if (positionAtEndOfNode == lastPositionInParagraph) {
         removeNode(node);
+        if (!ancestor.isConnected())
+            return;
         if (ancestor.nextSibling())
             insertNodeBefore(WTFMove(protectedNode), *ancestor.nextSibling());
         else

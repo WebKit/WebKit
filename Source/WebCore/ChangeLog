@@ -1,3 +1,19 @@
+2022-01-14  Frederic Wang  <fwang@igalia.com>
+
+        null ptr deref in WebCore::ReplaceSelectionCommand::moveNodeOutOfAncestor()
+        https://bugs.webkit.org/show_bug.cgi?id=233463
+
+        Reviewed by Wenson Hsieh.
+
+        One line of ReplaceSelectionCommand::moveNodeOutOfAncestor() assumes that the pointer
+        ancestor.parentNode() is non-null. However, the call to removeNode(node) just before can
+        lead to arbitrary tree mutations that leaves the ancestor orphan, causing a nullptr deref.
+        This patch mitigates that issue by exiting early if that situation happens.
+
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::moveNodeOutOfAncestor): Exit early if the ancestor
+        is no longer connected.
+
 2022-01-10  Alan Bujtas  <zalan@apple.com>
 
         null ptr deref in WebCore::LayoutIntegration::LineLayout::collectOverflow()
