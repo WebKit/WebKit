@@ -1,3 +1,22 @@
+2021-12-09  Cathie Chen  <cathiechen@igalia.com>
+
+        Stack-overflow crash in WebCore::RenderBox::computeLogicalHeight()
+        https://bugs.webkit.org/show_bug.cgi?id=233460
+
+        Reviewed by Sergio Villar Senin and Darin Adler.
+
+        Like flexibleBox item, deprecatedFlexibleBox item should call clearOverridingContentSize if
+        it is positioned. Otherwise, RenderReplaced::computeAspectRatioInformationForRenderBox might call
+        itself recursively.
+
+        Test: fast/css/deprecated-flex-box-with-min-content-crashes.html
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::styleDidChange):
+        * rendering/style/RenderStyle.h:
+        (WebCore::RenderStyle::isDisplayFlexibleOrGridBoxIncludingDeprecated const):
+        (WebCore::RenderStyle::isDisplayDeprecatedFlexibleBox):
+
 2021-12-06  Rob Buis  <rbuis@igalia.com>
 
         Null check in shouldUseBreakElement
