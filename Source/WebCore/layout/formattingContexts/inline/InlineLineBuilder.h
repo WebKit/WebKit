@@ -52,6 +52,7 @@ public:
     };
     struct PreviousLine {
         InlineItemRange range;
+        bool endsWithLineBreak { false };
         struct OverflowContent {
             size_t partialContentLength { 0 };
             std::optional<InlineLayoutUnit> width { };
