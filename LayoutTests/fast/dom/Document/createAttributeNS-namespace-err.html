@@ -72,11 +72,11 @@ var allNSTests = [
    { args: ["http://example.com/", "a:0"], code: 5, message: "valid XML name, not a valid QName" },
    { args: ["http://example.com/", "0:a"], code: 5, message: "0 at start makes it not a valid XML name" },
    { args: ["http://example.com/", "a:_"] },
-   { args: ["http://example.com/", "a:\u0BC6"], code: 14,
+   { args: ["http://example.com/", "a:\u037E"], code: 14,
      message: "non-ASCII character after colon is CombiningChar, which is " +
               "NCNameChar but not (Letter | \"_\") so invalid at start of " +
               "NCName (but still a valid XML name, hence not INVALID_CHARACTER_ERR)" },
-   { args: ["http://example.com/", "\u0BC6:a"], code: 5,
+   { args: ["http://example.com/", "\u037E:a"], code: 5,
      message: "non-ASCII character after colon is CombiningChar, which is " +
               "NCNameChar but not (Letter | \"_\") so invalid at start of " +
               "NCName (Gecko chooses to throw NAMESPACE_ERR here, but either is valid " +

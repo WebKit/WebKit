@@ -54,11 +54,11 @@ shouldBeTrue("testSet('Foo', 'data--foo')");
 shouldBeTrue("testSet('-Foo', 'data---foo')");
 shouldBeTrue("testSet('', 'data-')");
 shouldBeTrue("testSet('\xE0', 'data-\xE0')");
+shouldBeTrue("testSet('foo\uF900', 'data-foo\uF900')");
 debug("");
 
 shouldThrowErrorName("testSet('-foo', 'dummy')", "SyntaxError");
 shouldThrowErrorName("testSet('foo\x20', 'dummy')", "InvalidCharacterError");
-shouldThrowErrorName("testSet('foo\uF900', 'dummy')", "InvalidCharacterError");
 debug("");
 
 function testDelete(attr, prop)

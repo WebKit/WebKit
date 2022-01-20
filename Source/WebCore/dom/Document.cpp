@@ -397,75 +397,22 @@ public:
 
 static const Seconds intersectionObserversInitialUpdateDelay { 2000_ms };
 
-// DOM Level 2 says (letters added):
-//
-// a) Name start characters must have one of the categories Ll, Lu, Lo, Lt, Nl.
-// b) Name characters other than Name-start characters must have one of the categories Mc, Me, Mn, Lm, or Nd.
-// c) Characters in the compatibility area (i.e. with character code greater than #xF900 and less than #xFFFE) are not allowed in XML names.
-// d) Characters which have a font or compatibility decomposition (i.e. those with a "compatibility formatting tag" in field 5 of the database -- marked by field 5 beginning with a "<") are not allowed.
-// e) The following characters are treated as name-start characters rather than name characters, because the property file classifies them as Alphabetic: [#x02BB-#x02C1], #x0559, #x06E5, #x06E6.
-// f) Characters #x20DD-#x20E0 are excluded (in accordance with Unicode, section 5.14).
-// g) Character #x00B7 is classified as an extender, because the property list so identifies it.
-// h) Character #x0387 is added as a name character, because #x00B7 is its canonical equivalent.
-// i) Characters ':' and '_' are allowed as name-start characters.
-// j) Characters '-' and '.' are allowed as name characters.
-//
-// It also contains complete tables. If we decide it's better, we could include those instead of the following code.
-
+// https://www.w3.org/TR/xml/#NT-NameStartChar
+// NameStartChar       ::=       ":" | [A-Z] | "_" | [a-z] | [#xC0-#xD6] | [#xD8-#xF6] | [#xF8-#x2FF] | [#x370-#x37D] | [#x37F-#x1FFF] | [#x200C-#x200D] | [#x2070-#x218F] | [#x2C00-#x2FEF] | [#x3001-#xD7FF] | [#xF900-#xFDCF] | [#xFDF0-#xFFFD] | [#x10000-#xEFFFF]
 static inline bool isValidNameStart(UChar32 c)
 {
-    // rule (e) above
-    if ((c >= 0x02BB && c <= 0x02C1) || c == 0x559 || c == 0x6E5 || c == 0x6E6)
-        return true;
-
-    // rule (i) above
-    if (c == ':' || c == '_')
-        return true;
-
-    // rules (a) and (f) above
-    if (!(U_GET_GC_MASK(c) & (U_GC_LL_MASK | U_GC_LU_MASK | U_GC_LO_MASK | U_GC_LT_MASK | U_GC_NL_MASK)))
-        return false;
-
-    // rule (c) above
-    if (c >= 0xF900 && c < 0xFFFE)
-        return false;
-
-    // rule (d) above
-    int type = u_getIntPropertyValue(c, UCHAR_DECOMPOSITION_TYPE);
-    if (type == U_DT_FONT || type == U_DT_COMPAT)
-        return false;
-
-    return true;
+    return c == ':' || (c >= 'A' && c <= 'Z') || c == '_' || (c >= 'a' && c <= 'z') || (c >= 0x00C0 && c <= 0x00D6)
+        || (c >= 0x00D8 && c <= 0x00F6) || (c >= 0x00F8 && c <= 0x02FF) || (c >= 0x0370 && c <= 0x037D) || (c >= 0x037F && c <= 0x1FFF)
+        || (c >= 0x200C && c <= 0x200D) || (c >= 0x2070 && c <= 0x218F) || (c >= 0x2C00 && c <= 0x2FeF) || (c >= 0x3001 && c <= 0xD7FF)
+        || (c >= 0xF900 && c <= 0xFDCF) || (c >= 0xFDF0 && c <= 0xFFFD) || (c >= 0x10000 && c <= 0xEFFFF);
 }
 
+// https://www.w3.org/TR/xml/#NT-NameChar
+// NameChar       ::=       NameStartChar | "-" | "." | [0-9] | #xB7 | [#x0300-#x036F] | [#x203F-#x2040]
 static inline bool isValidNamePart(UChar32 c)
 {
-    // rules (a), (e), and (i) above
-    if (isValidNameStart(c))
-        return true;
-
-    // rules (g) and (h) above
-    if (c == 0x00B7 || c == 0x0387)
-        return true;
-
-    // rule (j) above
-    if (c == '-' || c == '.')
-        return true;
-
-    // rules (b) and (f) above
-    if (!(U_GET_GC_MASK(c) & (U_GC_M_MASK | U_GC_LM_MASK | U_GC_ND_MASK)))
-        return false;
-
-    // rule (c) above
-    if (c >= 0xF900 && c < 0xFFFE)
-        return false;
-
-    // rule (d) above
-    int type = u_getIntPropertyValue(c, UCHAR_DECOMPOSITION_TYPE);
-    if (type == U_DT_FONT || type == U_DT_COMPAT)
-        return false;
-
-    return true;
+    return isValidNameStart(c) || c == '-' || c == '.' || (c >= '0' && c <= '9') || c == 0x00B7
+        || (c >= 0x0300 && c <= 0x036F) || (c >= 0x203F && c <= 0x2040);
 }
 
 static Widget* widgetForElement(Element* focusedElement)
