@@ -1,3 +1,17 @@
+2022-01-20  Joseph Griego  <jgriego@igalia.com>
+
+        [JSC] Add section directive in MacroAssemblerX86Common asm blocks
+        https://bugs.webkit.org/show_bug.cgi?id=235406
+
+        Reviewed by Yusuke Suzuki.
+
+        These asm blocks aren't in a function body so they need a .text
+        directive to prevent them from being included in some arbitrary section
+        (say, an inline function's section) by happenstance, which was happening
+        in the WPE build without UnifiedSources.
+
+        * assembler/MacroAssemblerX86Common.cpp:
+
 2022-01-20  Pablo Saavedra  <psaavedra@igalia.com>
 
         Non-unified build fails due to forward declaration in JavaScriptCore/jit/JITStubRoutine.h
