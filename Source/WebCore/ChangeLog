@@ -1,3 +1,18 @@
+2021-12-14  Youenn Fablet  <youenn@apple.com>
+
+        Null pointer crash in FetchResponse::clone
+        https://bugs.webkit.org/show_bug.cgi?id=234236
+        <rdar://86327601>
+
+        Reviewed by Alex Christensen.
+
+        From the log, we are most probably getting a null globalObject from a ScriptExecutionContext in FetchResponse::clone.
+        This may happen in case the document is navigated away but we still execute some code for it.
+        Add a null check to ensure we do not crash.
+
+        * Modules/fetch/FetchResponse.cpp:
+        (WebCore::FetchResponse::clone):
+
 2021-12-10  Gabriel Nava Marino  <gnavamarino@apple.com>
 
         nullptr deref in ComputeFloatOffsetForLineLayoutAdapter<FloatingObject::FloatLeft>::updateOffsetIfNeeded
