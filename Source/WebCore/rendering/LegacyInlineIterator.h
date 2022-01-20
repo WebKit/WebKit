@@ -155,7 +155,7 @@ static inline void notifyObserverEnteredObject(Observer* observer, RenderObject*
 
     const RenderStyle& style = object->style();
     auto unicodeBidi = style.unicodeBidi();
-    if (unicodeBidi == UnicodeBidi::UBNormal) {
+    if (unicodeBidi == UnicodeBidi::Normal) {
         // http://dev.w3.org/csswg/css3-writing-modes/#unicode-bidi
         // "The element does not open an additional level of embedding with respect to the bidirectional algorithm."
         // Thus we ignore any possible dir= attribute on the span.
@@ -181,7 +181,7 @@ static inline void notifyObserverWillExitObject(Observer* observer, RenderObject
         return;
 
     auto unicodeBidi = object->style().unicodeBidi();
-    if (unicodeBidi == UnicodeBidi::UBNormal)
+    if (unicodeBidi == UnicodeBidi::Normal)
         return; // Nothing to do for unicode-bidi: normal
     if (isIsolated(unicodeBidi)) {
         observer->exitIsolate();

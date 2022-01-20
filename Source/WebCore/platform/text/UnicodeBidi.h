@@ -29,7 +29,7 @@
 namespace WebCore {
 
 enum class UnicodeBidi : uint8_t {
-    UBNormal,
+    Normal,
     Embed,
     Override,
     Isolate,

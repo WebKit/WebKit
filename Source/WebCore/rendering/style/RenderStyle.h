@@ -1561,7 +1561,7 @@ public:
 
     static Clear initialClear() { return Clear::None; }
     static DisplayType initialDisplay() { return DisplayType::Inline; }
-    static UnicodeBidi initialUnicodeBidi() { return UnicodeBidi::UBNormal; }
+    static UnicodeBidi initialUnicodeBidi() { return UnicodeBidi::Normal; }
     static PositionType initialPosition() { return PositionType::Static; }
     static VerticalAlign initialVerticalAlign() { return VerticalAlign::Baseline; }
     static Float initialFloating() { return Float::None; }

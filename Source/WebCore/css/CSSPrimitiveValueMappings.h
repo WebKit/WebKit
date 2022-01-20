@@ -2619,7 +2619,7 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(UnicodeBidi e)
 {
     setPrimitiveUnitType(CSSUnitType::CSS_VALUE_ID);
     switch (e) {
-    case UnicodeBidi::UBNormal:
+    case UnicodeBidi::Normal:
         m_value.valueID = CSSValueNormal;
         break;
     case UnicodeBidi::Embed:
@@ -2646,7 +2646,7 @@ template<> inline CSSPrimitiveValue::operator UnicodeBidi() const
 
     switch (m_value.valueID) {
     case CSSValueNormal:
-        return UnicodeBidi::UBNormal;
+        return UnicodeBidi::Normal;
     case CSSValueEmbed:
         return UnicodeBidi::Embed;
     case CSSValueBidiOverride:
@@ -2665,7 +2665,7 @@ template<> inline CSSPrimitiveValue::operator UnicodeBidi() const
     }
 
     ASSERT_NOT_REACHED();
-    return UnicodeBidi::UBNormal;
+    return UnicodeBidi::Normal;
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(UserDrag e)

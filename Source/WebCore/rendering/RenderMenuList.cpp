@@ -141,7 +141,7 @@ void RenderMenuList::adjustInnerStyle()
         UnicodeBidi unicodeBidi;
         if (multiple() && selectedOptionCount(*this) != 1) {
             direction = (m_buttonText && m_buttonText->text().defaultWritingDirection() == U_RIGHT_TO_LEFT) ? TextDirection::RTL : TextDirection::LTR;
-            unicodeBidi = UnicodeBidi::UBNormal;
+            unicodeBidi = UnicodeBidi::Normal;
         } else if (m_optionStyle) {
             direction = m_optionStyle->direction();
             unicodeBidi = m_optionStyle->unicodeBidi();
