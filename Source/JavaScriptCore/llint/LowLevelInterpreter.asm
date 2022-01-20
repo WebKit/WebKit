@@ -2533,7 +2533,7 @@ macro linkSlowPathFor(function)
     move t2, a2
     move t3, a1
     move cfr, a0
-    cCall4(function)
+    cCall3(function)
     functionEpilogue()
     untagReturnAddress sp
     btpz r1, .doNotTrash

@@ -572,6 +572,14 @@ def cloopEmitCallSlowPathVoid(operands)
     $asm.putc "#{operands[0].cLabel}(#{operands[1].clDump}, #{operands[2].clDump});"
 end
 
+def cloopEmitCallSlowPath3(operands)
+    $asm.putc "{"
+    $asm.putc "    cloopStack.setCurrentStackPointer(sp.vp());"
+    $asm.putc "    SlowPathReturnType result = #{operands[0].cLabel}(#{operands[1].clDump}, #{operands[2].clDump}, #{operands[3].clDump});"
+    $asm.putc "    decodeResult(result, t0, t1);"
+    $asm.putc "}"
+end
+
 def cloopEmitCallSlowPath4(operands)
     $asm.putc "{"
     $asm.putc "    cloopStack.setCurrentStackPointer(sp.vp());"
@@ -1182,6 +1190,9 @@ class Instruction
 
         when "cloopCallSlowPathVoid"
             cloopEmitCallSlowPathVoid(operands)
+
+        when "cloopCallSlowPath3"
+            cloopEmitCallSlowPath3(operands)
 
         when "cloopCallSlowPath4"
             cloopEmitCallSlowPath4(operands)

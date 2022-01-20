@@ -1,3 +1,26 @@
+2022-01-19  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Fix non-JIT Windows LLInt
+        https://bugs.webkit.org/show_bug.cgi?id=235388
+
+        Reviewed by Mark Lam.
+
+        We should implement cCall3 which calls llint_link_call etc. from LLInt code.
+        This implementation needs to work on Windows too, so it requires stack modification.
+        While we do not have a problem on JIT Windows build, it is required for non JIT Windows
+        build. (If JIT is enabled, LLInt is fine. But if JIT is entirely disabled, this change
+        is required.)
+
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::llint_link_call):
+        (JSC::LLInt::llint_virtual_call):
+        * llint/LLIntSlowPaths.h:
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * offlineasm/cloop.rb:
+        * offlineasm/instructions.rb:
+
 2022-01-19  Saam Barati  <sbarati@apple.com>
 
         Update ARM64EHash

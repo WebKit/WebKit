@@ -94,7 +94,9 @@ macro dispatchAfterCall(size, opcodeStruct, valueProfileName, dstVirtualRegister
 end
 
 macro cCall2(function)
-    if ARMv7 or MIPS
+    if C_LOOP or C_LOOP_WIN
+        cloopCallSlowPath function, a0, a1
+    elsif ARMv7 or MIPS
         call function
     elsif X86 or X86_WIN
         subp 8, sp
@@ -102,8 +104,6 @@ macro cCall2(function)
         push a0
         call function
         addp 16, sp
-    elsif C_LOOP or C_LOOP_WIN
-        cloopCallSlowPath function, a0, a1
     else
         error
     end
@@ -114,6 +114,23 @@ macro cCall2Void(function)
         cloopCallSlowPathVoid function, a0, a1
     else
         cCall2(function)
+    end
+end
+
+macro cCall3(function)
+    if C_LOOP or C_LOOP_WIN
+        cloopCallSlowPath3 function, a0, a1, a2
+    elsif ARMv7 or MIPS
+        call function
+    elsif X86 or X86_WIN
+        subp 4, sp
+        push a2
+        push a1
+        push a0
+        call function
+        addp 16, sp
+    else
+        error
     end
 end
 

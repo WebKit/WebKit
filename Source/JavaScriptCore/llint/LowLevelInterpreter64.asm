@@ -96,7 +96,9 @@ end
 
 macro cCall2(function)
     checkStackPointerAlignment(t4, 0xbad0c002)
-    if X86_64 or ARM64 or ARM64E or RISCV64
+    if C_LOOP or C_LOOP_WIN
+        cloopCallSlowPath function, a0, a1
+    elsif X86_64 or ARM64 or ARM64E or RISCV64
         call function
     elsif X86_64_WIN
         # Note: this implementation is only correct if the return type size is > 8 bytes.
@@ -113,11 +115,9 @@ macro cCall2(function)
         move sp, a0
         addp 32, a0
         call function
-        addp 48, sp
         move 8[r0], r1
         move [r0], r0
-    elsif C_LOOP or C_LOOP_WIN
-        cloopCallSlowPath function, a0, a1
+        addp 48, sp
     else
         error
     end
@@ -137,6 +137,36 @@ macro cCall2Void(function)
         addp 32, sp
     else
         cCall2(function)
+    end
+end
+
+macro cCall3(function)
+    checkStackPointerAlignment(t4, 0xbad0c004)
+    if C_LOOP or C_LOOP_WIN
+        cloopCallSlowPath3 function, a0, a1, a2
+    elsif X86_64 or ARM64 or ARM64E or RISCV64
+        call function
+    elsif X86_64_WIN
+        # Note: this implementation is only correct if the return type size is > 8 bytes.
+        # See macro cCall2Void for an implementation when the return type <= 8 bytes.
+        # On Win64, when the return type is larger than 8 bytes, we need to allocate space on the stack for the return value.
+        # On entry rcx (a0), should contain a pointer to this stack space. The other parameters are shifted to the right,
+        # rdx (a1) should contain the first argument, r8 (a2) should contain the second argument, and r9 (a3) should contain the third argument.
+        # On return, rax contains a pointer to this stack value, and we then need to copy the 16 byte return value into rax (r0) and rdx (r1)
+        # since the return value is expected to be split between the two.
+        # See http://msdn.microsoft.com/en-us/library/7572ztz4.aspx
+        move a2, a3
+        move a1, a2
+        move a0, a1
+        subp 64, sp
+        move sp, a0
+        addp 32, a0
+        call function
+        move 8[r0], r1
+        move [r0], r0
+        addp 64, sp
+    else
+        error
     end
 end
 
