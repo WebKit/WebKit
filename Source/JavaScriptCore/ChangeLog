@@ -1,3 +1,12 @@
+2022-01-20  Pablo Saavedra  <psaavedra@igalia.com>
+
+        Non-unified build fails due to forward declaration in JavaScriptCore/jit/JITStubRoutine.h
+        https://bugs.webkit.org/show_bug.cgi?id=235409
+
+        Unreviewed non-unified build fix.
+
+        * jit/JITStubRoutine.h:
+
 2022-01-20  Joseph Griego  <jgriego@igalia.com>
 
         [JSC] Add section directive in MacroAssemblerX86Common asm blocks

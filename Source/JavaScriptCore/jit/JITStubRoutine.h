@@ -33,6 +33,7 @@
 namespace JSC {
 
 class JITStubRoutineSet;
+class Structure;
 class VM;
 
 #if USE(JSVALUE64)
