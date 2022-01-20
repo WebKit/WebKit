@@ -1,3 +1,14 @@
+2022-01-20  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Unreviewed PlayStation / clang-cl build fix following r288298.
+
+        clang for Windows (< v10.0.0) cannot destructure a const class.
+        See also r261572, r254471, r249524, etc.
+
+        * NetworkProcess/storage/StorageAreaBase.cpp:
+        (WebKit::StorageAreaBase::notifyListenersAboutClear):
+        (WebKit::StorageAreaBase::dispatchEvents const):
+
 2022-01-20  Sihui Liu  <sihui_liu@apple.com>
 
         Make LocalStorage prewarming async
