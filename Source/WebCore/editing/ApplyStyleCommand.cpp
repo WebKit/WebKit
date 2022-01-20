@@ -385,8 +385,11 @@ void ApplyStyleCommand::applyRelativeFontStyleChange(EditingStyle* style)
         RefPtr<HTMLElement> element;
         if (is<HTMLElement>(*node)) {
             // Only work on fully selected nodes.
-            if (!nodeFullySelected(downcast<HTMLElement>(*node), start, end))
+            if (!nodeFullySelected(downcast<HTMLElement>(*node), start, end)) {
+                if (!node->isConnected())
+                    break;
                 continue;
+            }
             element = &downcast<HTMLElement>(*node);
         } else if (is<Text>(*node) && node->renderer() && node->parentNode() != lastStyledNode) {
             // Last styled node was not parent node of this text node, but we wish to style this
@@ -588,7 +591,7 @@ void ApplyStyleCommand::applyInlineStyle(EditingStyle& style)
         endDummySpanAncestor = dummySpanAncestorForNode(end.deprecatedNode());
     }
 
-    if (start.isNull() || end.isNull())
+    if (start.isNull() || start.isOrphan() || end.isNull() || end.isOrphan())
         return;
 
     // Remove style from the selection.

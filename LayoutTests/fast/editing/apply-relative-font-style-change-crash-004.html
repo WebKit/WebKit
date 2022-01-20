@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<style>
+  video {
+    appearance: push-button;
+  }
+</style>
+<script>
+  onerror = () => {
+      document.execCommand('InsertOrderedList');
+  };
+  document.onbeforeinput = () => {
+    document.execCommand('FontSizeDelta', false, '2');
+  };
+  onload = () => {
+    document.body.append('a');
+    let video0 = document.createElement('video');
+    video0.controls = true;
+    document.body.appendChild(video0);
+    document.designMode = 'on';
+    document.body.appendChild(document.createElement('input'));
+    document.execCommand('SelectAll');
+    document.execCommand('InsertText', false, '');
+    if (window.testRunner)
+        testRunner.dumpAsText();
+    console.log("This test passes if it does not crash.");
+  };
+</script>

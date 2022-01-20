@@ -1,3 +1,14 @@
+2021-12-15  Gabriel Nava Marino  <gnavamarino@apple.com>
+
+        null ptr deref in WebCore::ApplyStyleCommand::applyRelativeFontStyleChange
+        https://bugs.webkit.org/show_bug.cgi?id=234312
+
+        Reviewed by Chris Dumez.
+
+        * TestExpectations:
+        * fast/editing/apply-relative-font-style-change-crash-004-expected.txt: Added.
+        * fast/editing/apply-relative-font-style-change-crash-004.html: Added.
+
 2021-12-10  Gabriel Nava Marino  <gnavamarino@apple.com>
 
         nullptr deref in ComputeFloatOffsetForLineLayoutAdapter<FloatingObject::FloatLeft>::updateOffsetIfNeeded

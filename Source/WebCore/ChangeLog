@@ -1,3 +1,22 @@
+2021-12-15  Gabriel Nava Marino  <gnavamarino@apple.com>
+
+        null ptr deref in WebCore::ApplyStyleCommand::applyRelativeFontStyleChange
+        https://bugs.webkit.org/show_bug.cgi?id=234312
+
+        Reviewed by Chris Dumez.
+
+        In some situations calling ApplyStyleCommand::nodeFullySelected forces layout in a
+        way that disconnects the element. In this situation, we now break out of iteration.
+
+        We also add an isOrphan() check in ApplyStyleCommand::applyInlineStyle given
+        the possibility of this scenario.
+
+        Test: fast/editing/apply-relative-font-style-change-crash-004.html
+
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::ApplyStyleCommand::applyRelativeFontStyleChange):
+        (WebCore::ApplyStyleCommand::applyInlineStyle):
+
 2021-12-14  Youenn Fablet  <youenn@apple.com>
 
         Null pointer crash in FetchResponse::clone
