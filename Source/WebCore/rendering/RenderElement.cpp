@@ -634,11 +634,60 @@ RenderPtr<RenderObject> RenderElement::detachRendererInternal(RenderObject& rend
     return RenderPtr<RenderObject>(&renderer);
 }
 
+static RenderLayer* findNextLayer(const RenderElement& currRenderer, RenderLayer& parentLayer, const RenderObject* siblingToTraverseFrom, bool checkParent = true)
+{
+    // Step 1: If our layer is a child of the desired parent, then return our layer.
+    auto* ourLayer = currRenderer.hasLayer() ? downcast<RenderLayerModelObject>(currRenderer).layer() : nullptr;
+    if (ourLayer && ourLayer->parent() == &parentLayer)
+        return ourLayer;
+
+    // Step 2: If we don't have a layer, or our layer is the desired parent, then descend
+    // into our siblings trying to find the next layer whose parent is the desired parent.
+    if (!ourLayer || ourLayer == &parentLayer) {
+        for (auto* child = siblingToTraverseFrom ? siblingToTraverseFrom->nextSibling() : currRenderer.firstChild(); child; child = child->nextSibling()) {
+            if (!is<RenderElement>(*child))
+                continue;
+            if (auto* nextLayer = findNextLayer(downcast<RenderElement>(*child), parentLayer, nullptr, false))
+                return nextLayer;
+        }
+    }
+
+    // Step 3: If our layer is the desired parent layer, then we're finished. We didn't
+    // find anything.
+    if (ourLayer == &parentLayer)
+        return nullptr;
+
+    // Step 4: If |checkParent| is set, climb up to our parent and check its siblings that
+    // follow us to see if we can locate a layer.
+    if (checkParent && currRenderer.parent())
+        return findNextLayer(*currRenderer.parent(), parentLayer, &currRenderer, true);
+
+    return nullptr;
+}
+
+static RenderLayer* layerNextSiblingRespectingTopLayer(const RenderElement& renderer, RenderLayer& parentLayer)
+{
+    ASSERT_IMPLIES(isInTopLayerOrBackdrop(renderer.style(), renderer.element()), renderer.hasLayer());
+
+    if (is<RenderLayerModelObject>(renderer) && isInTopLayerOrBackdrop(renderer.style(), renderer.element())) {
+        auto& layerModelObject = downcast<RenderLayerModelObject>(renderer);
+        ASSERT(layerModelObject.hasLayer());
+        auto topLayerLayers = RenderLayer::topLayerRenderLayers(renderer.view());
+        auto layerIndex = topLayerLayers.find(layerModelObject.layer());
+        if (layerIndex != notFound && layerIndex < topLayerLayers.size() - 1)
+            return topLayerLayers[layerIndex + 1];
+
+        return nullptr;
+    }
+
+    return findNextLayer(*renderer.parent(), parentLayer, &renderer);
+}
+
 static void addLayers(const RenderElement& addedRenderer, RenderElement& currentRenderer, RenderLayer& parentLayer, std::optional<RenderLayer*>& beforeChild)
 {
     if (currentRenderer.hasLayer()) {
         if (!beforeChild.has_value())
-            beforeChild = addedRenderer.parent()->findNextLayer(parentLayer, &addedRenderer);
+            beforeChild = layerNextSiblingRespectingTopLayer(addedRenderer, parentLayer);
 
         parentLayer.addChild(*downcast<RenderLayerModelObject>(currentRenderer).layer(), beforeChild.value());
         return;
@@ -686,35 +735,20 @@ void RenderElement::moveLayers(RenderLayer* oldParent, RenderLayer& newParent)
         child.moveLayers(oldParent, newParent);
 }
 
-RenderLayer* RenderElement::findNextLayer(RenderLayer& parentLayer, const RenderObject* siblingToTraverseFrom, bool checkParent) const
+RenderLayer* RenderElement::layerParent() const
 {
-    // Step 1: If our layer is a child of the desired parent, then return our layer.
-    auto* ourLayer = hasLayer() ? downcast<RenderLayerModelObject>(*this).layer() : nullptr;
-    if (ourLayer && ourLayer->parent() == &parentLayer)
-        return ourLayer;
+    ASSERT_IMPLIES(isInTopLayerOrBackdrop(style(), element()), hasLayer());
 
-    // Step 2: If we don't have a layer, or our layer is the desired parent, then descend
-    // into our siblings trying to find the next layer whose parent is the desired parent.
-    if (!ourLayer || ourLayer == &parentLayer) {
-        for (auto* child = siblingToTraverseFrom ? siblingToTraverseFrom->nextSibling() : firstChild(); child; child = child->nextSibling()) {
-            if (!is<RenderElement>(*child))
-                continue;
-            if (auto* nextLayer = downcast<RenderElement>(*child).findNextLayer(parentLayer, nullptr, false))
-                return nextLayer;
-        }
-    }
+    if (hasLayer() && isInTopLayerOrBackdrop(style(), element()))
+        return view().layer();
 
-    // Step 3: If our layer is the desired parent layer, then we're finished. We didn't
-    // find anything.
-    if (ourLayer == &parentLayer)
-        return nullptr;
+    return parent()->enclosingLayer();
+}
 
-    // Step 4: If |checkParent| is set, climb up to our parent and check its siblings that
-    // follow us to see if we can locate a layer.
-    if (checkParent && parent())
-        return parent()->findNextLayer(parentLayer, this, true);
-
-    return nullptr;
+// This answers the question "if this renderer had a layer, what would its next sibling layer be".
+RenderLayer* RenderElement::layerNextSibling(RenderLayer& parentLayer) const
+{
+    return WebCore::layerNextSiblingRespectingTopLayer(*this, parentLayer);
 }
 
 bool RenderElement::layerCreationAllowedForSubtree() const
@@ -961,19 +995,19 @@ void RenderElement::insertedIntoTree(IsInternalMove isInternalMove)
 {
     // Keep our layer hierarchy updated. Optimize for the common case where we don't have any children
     // and don't have a layer attached to ourselves.
-    RenderLayer* layer = nullptr;
+    RenderLayer* parentLayer = nullptr;
     if (firstChild() || hasLayer()) {
-        layer = parent()->enclosingLayer();
-        addLayers(layer);
+        auto* parentLayer = layerParent();
+        addLayers(parentLayer);
     }
 
     // If |this| is visible but this object was not, tell the layer it has some visible content
     // that needs to be drawn and layer visibility optimization can't be used
     if (parent()->style().visibility() != Visibility::Visible && style().visibility() == Visibility::Visible && !hasLayer()) {
-        if (!layer)
-            layer = parent()->enclosingLayer();
-        if (layer)
-            layer->dirtyVisibleContentStatus();
+        if (!parentLayer)
+            parentLayer = layerParent();
+        if (parentLayer)
+            parentLayer->dirtyVisibleContentStatus();
     }
 
     RenderObject::insertedIntoTree(isInternalMove);
@@ -982,16 +1016,15 @@ void RenderElement::insertedIntoTree(IsInternalMove isInternalMove)
 void RenderElement::willBeRemovedFromTree(IsInternalMove isInternalMove)
 {
     // If we remove a visible child from an invisible parent, we don't know the layer visibility any more.
-    RenderLayer* layer = nullptr;
     if (parent()->style().visibility() != Visibility::Visible && style().visibility() == Visibility::Visible && !hasLayer()) {
-        if ((layer = parent()->enclosingLayer()))
-            layer->dirtyVisibleContentStatus();
+        // FIXME: should get parent layer. Necessary?
+        if (auto* enclosingLayer = parent()->enclosingLayer())
+            enclosingLayer->dirtyVisibleContentStatus();
     }
     // Keep our layer hierarchy updated.
     if (firstChild() || hasLayer()) {
-        if (!layer)
-            layer = parent()->enclosingLayer();
-        removeLayers(layer);
+        auto* parentLayer = layerParent();
+        removeLayers(parentLayer);
     }
 
     if (isOutOfFlowPositioned() && parent()->childrenInline())

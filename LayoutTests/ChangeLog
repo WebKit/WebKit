@@ -1,3 +1,13 @@
+2022-01-19  Simon Fraser  <simon.fraser@apple.com>
+
+        <dialog> with transformed ancestor asserts under RenderGeometryMap
+        https://bugs.webkit.org/show_bug.cgi?id=235194
+
+        Reviewed by Antti Koivisto.
+
+        * TestExpectations: imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/top-layer-parent-transform.html
+        no longer asserts.
+
 2022-01-19  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: fully blackboxed stack traces don't show the right top call frame

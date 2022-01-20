@@ -483,11 +483,11 @@ void RenderLayer::insertOnlyThisLayer(LayerChangeTiming timing)
     if (!m_parent && renderer().parent()) {
         // We need to connect ourselves when our renderer() has a parent.
         // Find our enclosingLayer and add ourselves.
-        auto* parentLayer = renderer().parent()->enclosingLayer();
+        auto* parentLayer = renderer().layerParent();
         if (!parentLayer)
             return;
 
-        auto* beforeChild = parentLayer->reflectionLayer() != this ? renderer().parent()->findNextLayer(*parentLayer, &renderer()) : nullptr;
+        auto* beforeChild = parentLayer->reflectionLayer() != this ? renderer().layerNextSibling(*parentLayer) : nullptr;
         parentLayer->addChild(*this, beforeChild);
     }
 
@@ -653,14 +653,12 @@ void RenderLayer::setParent(RenderLayer* parent)
 
 RenderLayer* RenderLayer::stackingContext() const
 {
-    if (establishesTopLayer())
-        return renderer().view().layer();
-
     auto* layer = parent();
     while (layer && !layer->isStackingContext())
         layer = layer->parent();
 
     ASSERT(!layer || layer->isStackingContext());
+    ASSERT_IMPLIES(establishesTopLayer(), !layer || layer == renderer().view().layer());
     return layer;
 }
 
@@ -1482,7 +1480,7 @@ void RenderLayer::setHasVisibleContent()
         // We don't collect invisible layers in z-order lists if we are not in compositing mode.
         // As we became visible, we need to dirty our stacking containers ancestors to be properly
         // collected. FIXME: When compositing, we could skip this dirtying phase.
-        for (RenderLayer* sc = stackingContext(); sc; sc = sc->stackingContext()) {
+        for (auto* sc = stackingContext(); sc; sc = sc->stackingContext()) {
             sc->dirtyZOrderLists();
             if (sc->hasVisibleContent())
                 break;
@@ -1502,7 +1500,7 @@ void RenderLayer::dirtyVisibleContentStatus()
 
 void RenderLayer::dirtyAncestorChainVisibleDescendantStatus()
 {
-    for (RenderLayer* layer = this; layer; layer = layer->parent()) {
+    for (auto* layer = this; layer; layer = layer->parent()) {
         if (layer->m_visibleDescendantStatusDirty)
             break;
 
@@ -1512,7 +1510,7 @@ void RenderLayer::dirtyAncestorChainVisibleDescendantStatus()
 
 void RenderLayer::setAncestorChainHasVisibleDescendant()
 {
-    for (RenderLayer* layer = this; layer; layer = layer->parent()) {
+    for (auto* layer = this; layer; layer = layer->parent()) {
         if (shouldApplyPaintContainment(renderer())) {
             m_hasVisibleDescendant = true;
             m_visibleDescendantStatusDirty = false;
@@ -1836,13 +1834,11 @@ bool RenderLayer::ancestorLayerIsInContainingBlockChain(const RenderLayer& ances
 
 RenderLayer* RenderLayer::enclosingAncestorForPosition(PositionType position) const
 {
-    if (establishesTopLayer())
-        return renderer().view().layer();
-
-    RenderLayer* curr = parent();
+    auto* curr = parent();
     while (curr && !isContainerForPositioned(*curr, position, establishesTopLayer()))
         curr = curr->parent();
 
+    ASSERT_IMPLIES(establishesTopLayer(), !curr || curr == renderer().view().layer());
     return curr;
 }
 
@@ -3071,8 +3067,7 @@ void RenderLayer::paintLayerWithEffects(GraphicsContext& context, const LayerPai
         // If we have a transparency layer enclosing us and we are the root of a transform, then we need to establish the transparency
         // layer from the parent now, assuming there is a parent
         if (paintFlags & PaintLayerFlag::HaveTransparency) {
-            // Top layer elements are not affected by ancestor opacities
-            if (!establishesTopLayer() && parent())
+            if (parent())
                 parent()->beginTransparencyLayers(context, paintingInfo, paintingInfo.paintDirtyRect);
             else
                 beginTransparencyLayers(context, paintingInfo, paintingInfo.paintDirtyRect);
@@ -4021,14 +4016,14 @@ bool RenderLayer::establishesTopLayer() const
 
 void RenderLayer::establishesTopLayerWillChange()
 {
-    dirtyStackingContextZOrderLists();
+    if (auto* parentLayer = parent())
+        parentLayer->removeChild(*this);
 }
 
 void RenderLayer::establishesTopLayerDidChange()
 {
-    dirtyStackingContextZOrderLists();
-    if (isStackingContext())
-        dirtyZOrderLists();
+    if (auto* parentLayer = renderer().layerParent())
+        parentLayer->addChild(*this);
 }
 
 RenderLayer* RenderLayer::enclosingFragmentedFlowAncestor() const
@@ -4498,9 +4493,6 @@ ClipRects* RenderLayer::clipRects(const ClipRectsContext& context) const
 
 bool RenderLayer::clipCrossesPaintingBoundary() const
 {
-    if (establishesTopLayer())
-        return true;
-
     return parent()->enclosingPaginationLayer(IncludeCompositedPaginatedLayers) != enclosingPaginationLayer(IncludeCompositedPaginatedLayers)
         || parent()->enclosingCompositingLayerForRepaint() != enclosingCompositingLayerForRepaint();
 }
@@ -4588,9 +4580,9 @@ void RenderLayer::calculateClipRects(const ClipRectsContext& clipRectsContext, C
 
 Ref<ClipRects> RenderLayer::parentClipRects(const ClipRectsContext& clipRectsContext) const
 {
-    ASSERT(parent() || establishesTopLayer());
+    ASSERT(parent());
 
-    auto containerLayer = establishesTopLayer() ? renderer().view().layer() : parent();
+    auto containerLayer = parent();
     auto temporaryParentClipRects = [&](const ClipRectsContext& clipContext) {
         auto parentClipRects = ClipRects::create();
         containerLayer->calculateClipRects(clipContext, parentClipRects);
