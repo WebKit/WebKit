@@ -1,3 +1,91 @@
+2022-01-20  Sihui Liu  <sihui_liu@apple.com>
+
+        Make LocalStorage prewarming async
+        https://bugs.webkit.org/show_bug.cgi?id=235236
+
+        Reviewed by Chris Dumez.
+
+        StorageAreaMap in web process needs to sync with a remote StorageArea in network process before it performs any
+        Web Storage operation. To connect to remote StorageArea, StorageAreaMap currently sends out two sync messages:
+        1. ConnectTo*StorageArea: for getting the remote StorageAreaIdentifier
+        2. getValues: for getting the content of StorageArea
+        We can merge these two messages into one message: ConnectToStorageAreaSync, and return both remote 
+        StorageAreaIdentifier and content in its reply. This way, web process will not be blocked twice.
+
+        To reduce the wait time for connecting to a local StorageArea, we would prewarm LocalStorage by creating its 
+        StorageAreaMap ahead and making it connected (r247555), but we don't actually need StorageAreaMap to be ready 
+        for operation at this time. Therefore, a new async message ConnectToStorageArea is added to be used for 
+        prewarming.
+
+        If LocalStorage is used immediately after prewarming, a StorageAreaMap may send ConnectToStorageAreaSync before 
+        receiving the reply of ConnectToStorageArea. In this case, StorageAreaMap would handle ConnectToStorageAreaSync 
+        reply before ConnectToStorageArea reply (due to the priority of sync message), and also before other async 
+        messages (DispatchStorageEvent / ClearCache) that are sent from network process earlier before the sync reply.
+        To solve this, we use a message identifier to indicate the order of messages sent from network process, so
+        StorageAreaMap can ignore previous messages when it is already synced with a more recent version of StorageArea.
+
+        * NetworkProcess/WebStorage/StorageArea.cpp:
+        (WebKit::StorageArea::clear):
+        (WebKit::StorageArea::dispatchEvents const):
+        * NetworkProcess/storage/LocalStorageManager.cpp:
+        (WebKit::LocalStorageManager::connectToLocalStorageArea):
+        (WebKit::LocalStorageManager::connectToTransientLocalStorageArea):
+        * NetworkProcess/storage/LocalStorageManager.h:
+        * NetworkProcess/storage/NetworkStorageManager.cpp:
+        (WebKit::NetworkStorageManager::connectToStorageArea):
+        (WebKit::NetworkStorageManager::connectToStorageAreaSync):
+        (WebKit::NetworkStorageManager::connectToLocalStorageArea): Deleted.
+        (WebKit::NetworkStorageManager::connectToTransientLocalStorageArea): Deleted.
+        (WebKit::NetworkStorageManager::connectToSessionStorageArea): Deleted.
+        (WebKit::NetworkStorageManager::getValues): Deleted.
+        * NetworkProcess/storage/NetworkStorageManager.h:
+        * NetworkProcess/storage/NetworkStorageManager.messages.in:
+        * NetworkProcess/storage/SessionStorageManager.cpp:
+        (WebKit::SessionStorageManager::connectToSessionStorageArea):
+        * NetworkProcess/storage/SessionStorageManager.h:
+        * NetworkProcess/storage/StorageAreaBase.cpp:
+        (WebKit::StorageAreaBase::nextMessageIdentifier):
+        (WebKit::StorageAreaBase::StorageAreaBase):
+        (WebKit::StorageAreaBase::addListener):
+        (WebKit::StorageAreaBase::notifyListenersAboutClear):
+        (WebKit::StorageAreaBase::dispatchEvents const):
+        * NetworkProcess/storage/StorageAreaBase.h:
+        * Scripts/webkit/messages.py:
+        (types_that_cannot_be_forward_declared):
+        (headers_for_type):
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/Network/NetworkProcessConnection.cpp:
+        (WebKit::NetworkProcessConnection::didReceiveMessage):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::networkProcessConnectionClosed):
+        (WebKit::WebProcess::registerStorageAreaMap):
+        (WebKit::WebProcess::unregisterStorageAreaMap):
+        (WebKit::WebProcess::storageAreaMap const):
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebStorage/StorageAreaImpl.cpp:
+        (WebKit::StorageAreaImpl::prewarm):
+        (WebKit::StorageAreaImpl::incrementAccessCount): Deleted.
+        (WebKit::StorageAreaImpl::decrementAccessCount): Deleted.
+        (WebKit::StorageAreaImpl::closeDatabaseIfIdle): Deleted.
+        * WebProcess/WebStorage/StorageAreaImpl.h:
+        * WebProcess/WebStorage/StorageAreaMap.cpp:
+        (WebKit::StorageAreaMap::StorageAreaMap):
+        (WebKit::StorageAreaMap::~StorageAreaMap):
+        (WebKit::StorageAreaMap::setItem):
+        (WebKit::StorageAreaMap::removeItem):
+        (WebKit::StorageAreaMap::clear):
+        (WebKit::StorageAreaMap::ensureMap):
+        (WebKit::StorageAreaMap::dispatchStorageEvent):
+        (WebKit::StorageAreaMap::clearCache):
+        (WebKit::StorageAreaMap::sendConnectMessage):
+        (WebKit::StorageAreaMap::connectSync):
+        (WebKit::StorageAreaMap::connect):
+        (WebKit::StorageAreaMap::didConnect):
+        (WebKit::StorageAreaMap::disconnect):
+        * WebProcess/WebStorage/StorageAreaMap.h:
+        * WebProcess/WebStorage/StorageAreaMap.messages.in:
+        * WebProcess/WebStorage/StorageAreaMapIdentifier.h: Added.
+
 2022-01-20  Youenn Fablet  <youenn@apple.com>
 
         Disable fallback path to WebRTC platform sockets

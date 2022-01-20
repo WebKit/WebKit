@@ -112,20 +112,10 @@ size_t StorageAreaImpl::memoryBytesUsedByCache()
     return 0;
 }
 
-void StorageAreaImpl::incrementAccessCount()
+void StorageAreaImpl::prewarm()
 {
-    // Storage access is handled in the network process, so there's nothing to do here.
-}
-
-void StorageAreaImpl::decrementAccessCount()
-{
-    // Storage access is handled in the network process, so there's nothing to do here.
-}
-
-void StorageAreaImpl::closeDatabaseIfIdle()
-{
-    // FIXME: Implement this.
-    ASSERT_NOT_REACHED();
+    if (m_storageAreaMap)
+        m_storageAreaMap->connect();
 }
 
 } // namespace WebKit

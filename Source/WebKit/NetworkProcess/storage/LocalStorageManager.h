@@ -27,6 +27,7 @@
 
 #include "Connection.h"
 #include "StorageAreaIdentifier.h"
+#include "StorageAreaMapIdentifier.h"
 #include <wtf/WorkQueue.h>
 
 namespace WebCore {
@@ -56,8 +57,8 @@ public:
     void syncLocalStorage();
     void connectionClosed(IPC::Connection::UniqueID);
 
-    StorageAreaIdentifier connectToLocalStorageArea(IPC::Connection::UniqueID, const WebCore::ClientOrigin&, Ref<WorkQueue>&&);
-    StorageAreaIdentifier connectToTransientLocalStorageArea(IPC::Connection::UniqueID, const WebCore::ClientOrigin&);
+    StorageAreaIdentifier connectToLocalStorageArea(IPC::Connection::UniqueID, StorageAreaMapIdentifier, const WebCore::ClientOrigin&, Ref<WorkQueue>&&);
+    StorageAreaIdentifier connectToTransientLocalStorageArea(IPC::Connection::UniqueID, StorageAreaMapIdentifier, const WebCore::ClientOrigin&);
     void disconnectFromStorageArea(IPC::Connection::UniqueID, StorageAreaIdentifier);
 
 private:

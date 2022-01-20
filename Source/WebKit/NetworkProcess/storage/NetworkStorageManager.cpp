@@ -625,24 +625,33 @@ void NetworkStorageManager::syncLocalStorage(CompletionHandler<void()>&& complet
     });
 }
 
-void NetworkStorageManager::connectToLocalStorageArea(IPC::Connection& connection, StorageNamespaceIdentifier, WebCore::SecurityOriginData&& topOrigin, CompletionHandler<void(StorageAreaIdentifier)>&& completionHandler)
+void NetworkStorageManager::connectToStorageArea(IPC::Connection& connection, WebCore::StorageType type, StorageAreaMapIdentifier sourceIdentifier, StorageNamespaceIdentifier namespaceIdentifier, const WebCore::ClientOrigin& origin, CompletionHandler<void(StorageAreaIdentifier, HashMap<String, String>, uint64_t)>&& completionHandler)
 {
     ASSERT(!RunLoop::isMain());
 
-    WebCore::ClientOrigin origin = { topOrigin, topOrigin };
-    completionHandler(localOriginStorageManager(origin).localStorageManager(*m_storageAreaRegistry).connectToLocalStorageArea(connection.uniqueID(), origin, m_queue.copyRef()));
+    auto connectionIdentifier = connection.uniqueID();
+    auto& originStorageManager = localOriginStorageManager(origin);
+    StorageAreaIdentifier resultIdentifier;
+    switch (type) {
+    case WebCore::StorageType::Local:
+        resultIdentifier = originStorageManager.localStorageManager(*m_storageAreaRegistry).connectToLocalStorageArea(connectionIdentifier, sourceIdentifier, origin, m_queue.copyRef());
+        break;
+    case WebCore::StorageType::TransientLocal:
+        resultIdentifier = originStorageManager.localStorageManager(*m_storageAreaRegistry).connectToTransientLocalStorageArea(connectionIdentifier, sourceIdentifier, origin);
+        break;
+    case WebCore::StorageType::Session:
+        resultIdentifier = originStorageManager.sessionStorageManager(*m_storageAreaRegistry).connectToSessionStorageArea(connectionIdentifier, sourceIdentifier, origin, namespaceIdentifier);
+    }
+
+    if (auto storageArea = m_storageAreaRegistry->getStorageArea(resultIdentifier))
+        return completionHandler(resultIdentifier, storageArea->allItems(), StorageAreaBase::nextMessageIdentifier());
+
+    return completionHandler(resultIdentifier, HashMap<String, String> { }, StorageAreaBase::nextMessageIdentifier());
 }
 
-void NetworkStorageManager::connectToTransientLocalStorageArea(IPC::Connection& connection, StorageNamespaceIdentifier, WebCore::SecurityOriginData&& topOrigin, WebCore::SecurityOriginData&& openingOrigin, CompletionHandler<void(StorageAreaIdentifier)>&& completionHandler)
+void NetworkStorageManager::connectToStorageAreaSync(IPC::Connection& connection, WebCore::StorageType type, StorageAreaMapIdentifier sourceIdentifier, StorageNamespaceIdentifier namespaceIdentifier, const WebCore::ClientOrigin& origin, CompletionHandler<void(StorageAreaIdentifier, HashMap<String, String>, uint64_t)>&& completionHandler)
 {
-    WebCore::ClientOrigin origin = { topOrigin, openingOrigin };
-    completionHandler(localOriginStorageManager(origin).localStorageManager(*m_storageAreaRegistry).connectToTransientLocalStorageArea(connection.uniqueID(), origin));
-}
-
-void NetworkStorageManager::connectToSessionStorageArea(IPC::Connection& connection, StorageNamespaceIdentifier identifier, WebCore::SecurityOriginData&& topOrigin, CompletionHandler<void(StorageAreaIdentifier)>&& completionHandler)
-{
-    WebCore::ClientOrigin origin = { topOrigin, topOrigin };
-    completionHandler(localOriginStorageManager(origin).sessionStorageManager(*m_storageAreaRegistry).connectToSessionStorageArea(connection.uniqueID(), origin, identifier));
+    connectToStorageArea(connection, type, sourceIdentifier, namespaceIdentifier, origin, WTFMove(completionHandler));
 }
 
 void NetworkStorageManager::disconnectFromStorageArea(IPC::Connection& connection, StorageAreaIdentifier identifier)
@@ -667,16 +676,6 @@ void NetworkStorageManager::cloneSessionStorageNamespace(IPC::Connection& connec
         if (auto* sessionStorageManager = manager->existingSessionStorageManager())
             sessionStorageManager->cloneStorageArea(connection.uniqueID(), fromIdentifier, toIdentifier);
     }
-}
-
-void NetworkStorageManager::getValues(StorageAreaIdentifier identifier, CompletionHandler<void(const HashMap<String, String>&)>&& completionHandler)
-{
-    ASSERT(!RunLoop::isMain());
-
-    if (auto storageArea = m_storageAreaRegistry->getStorageArea(identifier))
-        return completionHandler(storageArea->allItems());
-    
-    return completionHandler({ });
 }
 
 void NetworkStorageManager::setItem(IPC::Connection& connection, StorageAreaIdentifier identifier, StorageAreaImplIdentifier implIdentifier, uint64_t storageMapSeed, String&& key, String&& value, String&& urlString)

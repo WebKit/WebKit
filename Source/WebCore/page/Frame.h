@@ -291,9 +291,6 @@ public:
     void resumeActiveDOMObjectsAndAnimations();
     bool activeDOMObjectsAndAnimationsSuspended() const { return m_activeDOMObjectsAndAnimationsSuspendedCount > 0; }
 
-    void didPrewarmLocalStorage();
-    bool mayPrewarmLocalStorage() const;
-
     enum class InvalidateContentEventRegionsReason { Layout, EventHandlerChange };
     void invalidateContentEventRegionsIfNeeded(InvalidateContentEventRegionsReason);
 
@@ -361,7 +358,6 @@ private:
     unsigned m_navigationDisableCount { 0 };
     unsigned m_selfOnlyRefCount { 0 };
     bool m_hasHadUserInteraction { false };
-    unsigned m_localStoragePrewarmingCount { 0 };
 
     FloatSize m_overrideScreenSize;
 

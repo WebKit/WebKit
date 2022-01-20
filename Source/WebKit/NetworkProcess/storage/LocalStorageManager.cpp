@@ -165,7 +165,7 @@ void LocalStorageManager::connectionClosedForTransientStorageArea(IPC::Connectio
     m_transientStorageArea = nullptr;
 }
 
-StorageAreaIdentifier LocalStorageManager::connectToLocalStorageArea(IPC::Connection::UniqueID connection, const WebCore::ClientOrigin& origin, Ref<WorkQueue>&& workQueue)
+StorageAreaIdentifier LocalStorageManager::connectToLocalStorageArea(IPC::Connection::UniqueID connection, StorageAreaMapIdentifier sourceIdentifier, const WebCore::ClientOrigin& origin, Ref<WorkQueue>&& workQueue)
 {
     if (!m_localStorageArea) {
         if (!m_path.isEmpty())
@@ -177,11 +177,11 @@ StorageAreaIdentifier LocalStorageManager::connectToLocalStorageArea(IPC::Connec
     }
 
     ASSERT(m_path.isEmpty() || m_localStorageArea->type() == StorageAreaBase::Type::SQLite);
-    m_localStorageArea->addListener(connection);
+    m_localStorageArea->addListener(connection, sourceIdentifier);
     return m_localStorageArea->identifier();
 }
 
-StorageAreaIdentifier LocalStorageManager::connectToTransientLocalStorageArea(IPC::Connection::UniqueID connection, const WebCore::ClientOrigin& origin)
+StorageAreaIdentifier LocalStorageManager::connectToTransientLocalStorageArea(IPC::Connection::UniqueID connection, StorageAreaMapIdentifier sourceIdentifier, const WebCore::ClientOrigin& origin)
 {
     if (!m_transientStorageArea) {
         m_transientStorageArea = makeUnique<MemoryStorageArea>(origin, StorageAreaBase::StorageType::Local);
@@ -189,7 +189,7 @@ StorageAreaIdentifier LocalStorageManager::connectToTransientLocalStorageArea(IP
     }
 
     ASSERT(m_transientStorageArea->type() == StorageAreaBase::Type::Memory);
-    m_transientStorageArea->addListener(connection);
+    m_transientStorageArea->addListener(connection, sourceIdentifier);
     return m_transientStorageArea->identifier();
 }
 

@@ -72,7 +72,7 @@ StorageAreaIdentifier SessionStorageManager::addStorageArea(std::unique_ptr<Memo
     return identifier;
 }
 
-StorageAreaIdentifier SessionStorageManager::connectToSessionStorageArea(IPC::Connection::UniqueID connection, const WebCore::ClientOrigin& origin, StorageNamespaceIdentifier namespaceIdentifier)
+StorageAreaIdentifier SessionStorageManager::connectToSessionStorageArea(IPC::Connection::UniqueID connection, StorageAreaMapIdentifier sourceIdentifier, const WebCore::ClientOrigin& origin, StorageNamespaceIdentifier namespaceIdentifier)
 {
     auto identifier = m_storageAreasByNamespace.get(namespaceIdentifier);
     if (!identifier.isValid()) {
@@ -84,7 +84,8 @@ StorageAreaIdentifier SessionStorageManager::connectToSessionStorageArea(IPC::Co
     if (!storageArea)
         return StorageAreaIdentifier { };
 
-    storageArea->addListener(connection);
+    storageArea->addListener(connection, sourceIdentifier);
+
     return identifier;
 }
 

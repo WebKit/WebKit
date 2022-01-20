@@ -1057,19 +1057,6 @@ void Frame::dropChildren()
         tree().removeChild(*child);
 }
 
-void Frame::didPrewarmLocalStorage()
-{
-    ASSERT(isMainFrame());
-    ASSERT(m_localStoragePrewarmingCount < maxlocalStoragePrewarmingCount);
-    ++m_localStoragePrewarmingCount;
-}
-
-bool Frame::mayPrewarmLocalStorage() const
-{
-    ASSERT(isMainFrame());
-    return m_localStoragePrewarmingCount < maxlocalStoragePrewarmingCount;
-}
-
 FloatSize Frame::screenSize() const
 {
     if (!m_overrideScreenSize.isEmpty())

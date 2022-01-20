@@ -30,7 +30,7 @@
 #include "CacheModel.h"
 #include "IdentifierTypes.h"
 #include "SandboxExtension.h"
-#include "StorageAreaIdentifier.h"
+#include "StorageAreaMapIdentifier.h"
 #include "TextCheckerState.h"
 #include "UserContentControllerIdentifier.h"
 #include "ViewUpdateDispatcher.h"
@@ -284,7 +284,7 @@ public:
 
     void registerStorageAreaMap(StorageAreaMap&);
     void unregisterStorageAreaMap(StorageAreaMap&);
-    StorageAreaMap* storageAreaMap(StorageAreaIdentifier) const;
+    WeakPtr<StorageAreaMap> storageAreaMap(StorageAreaMapIdentifier) const;
 
 #if PLATFORM(COCOA)
     RetainPtr<CFDataRef> sourceApplicationAuditData() const;
@@ -742,7 +742,7 @@ private:
     HashCountedSet<WebCore::ServiceWorkerRegistrationIdentifier> m_swRegistrationCounts;
 #endif
 
-    HashMap<StorageAreaIdentifier, StorageAreaMap*> m_storageAreaMaps;
+    HashMap<StorageAreaMapIdentifier, WeakPtr<StorageAreaMap>> m_storageAreaMaps;
     
     // Prewarmed WebProcesses do not have an associated sessionID yet, which is why this is an optional.
     // By the time the WebProcess gets a WebPage, it is guaranteed to have a sessionID.

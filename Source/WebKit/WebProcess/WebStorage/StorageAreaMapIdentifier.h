@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,39 +25,12 @@
 
 #pragma once
 
-#include "Connection.h"
-#include "StorageAreaIdentifier.h"
-#include "StorageAreaMapIdentifier.h"
-#include "StorageNamespaceIdentifier.h"
-
-namespace WebCore {
-struct ClientOrigin;
-} // namespace WebCore
+#include <wtf/ObjectIdentifier.h>
 
 namespace WebKit {
 
-class MemoryStorageArea;
-class StorageAreaRegistry;
-
-class SessionStorageManager {
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    explicit SessionStorageManager(StorageAreaRegistry&);
-    bool isActive() const;
-    bool hasDataInMemory() const;
-    void clearData();
-    void connectionClosed(IPC::Connection::UniqueID);
-
-    StorageAreaIdentifier connectToSessionStorageArea(IPC::Connection::UniqueID, StorageAreaMapIdentifier, const WebCore::ClientOrigin&, StorageNamespaceIdentifier);
-    void disconnectFromStorageArea(IPC::Connection::UniqueID, StorageAreaIdentifier);
-    void cloneStorageArea(IPC::Connection::UniqueID, StorageNamespaceIdentifier, StorageNamespaceIdentifier);
-
-private:
-    StorageAreaIdentifier addStorageArea(std::unique_ptr<MemoryStorageArea>, StorageNamespaceIdentifier);
-
-    StorageAreaRegistry& m_registry;
-    HashMap<StorageAreaIdentifier, std::unique_ptr<MemoryStorageArea>> m_storageAreas;
-    HashMap<StorageNamespaceIdentifier, StorageAreaIdentifier> m_storageAreasByNamespace;
-};
+enum StorageAreaMapIdentifierType { };
+using StorageAreaMapIdentifier = ObjectIdentifier<StorageAreaMapIdentifierType>;
 
 } // namespace WebKit
+

@@ -28,6 +28,7 @@
 #include "Connection.h"
 #include "StorageAreaIdentifier.h"
 #include "StorageAreaImplIdentifier.h"
+#include "StorageAreaMapIdentifier.h"
 #include <WebCore/ClientOrigin.h>
 #include <wtf/WeakPtr.h>
 
@@ -47,6 +48,7 @@ class StorageAreaBase : public CanMakeWeakPtr<StorageAreaBase> {
     WTF_MAKE_NONCOPYABLE(StorageAreaBase);
     WTF_MAKE_FAST_ALLOCATED;
 public:
+    static uint64_t nextMessageIdentifier();
     virtual ~StorageAreaBase();
 
     enum class Type : bool { SQLite, Memory };
@@ -59,7 +61,7 @@ public:
     StorageAreaIdentifier identifier() const { return m_identifier; }
     WebCore::ClientOrigin origin() const { return m_origin; }
     unsigned quota() const { return m_quota; }
-    void addListener(IPC::Connection::UniqueID);
+    void addListener(IPC::Connection::UniqueID, StorageAreaMapIdentifier);
     void removeListener(IPC::Connection::UniqueID);
     bool hasListeners() const;
     void notifyListenersAboutClear();
@@ -77,7 +79,7 @@ private:
     StorageAreaIdentifier m_identifier;
     unsigned m_quota;
     WebCore::ClientOrigin m_origin;
-    HashSet<IPC::Connection::UniqueID> m_listeners;
+    HashMap<IPC::Connection::UniqueID, StorageAreaMapIdentifier> m_listeners;
 };
 
 } // namespace WebKit

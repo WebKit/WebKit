@@ -1189,8 +1189,10 @@ void WebProcess::networkProcessConnectionClosed(NetworkProcessConnection* connec
     ASSERT(m_networkProcessConnection);
     ASSERT_UNUSED(connection, m_networkProcessConnection == connection);
 
-    for (auto* storageAreaMap : copyToVector(m_storageAreaMaps.values()))
-        storageAreaMap->disconnect();
+    for (auto key : copyToVector(m_storageAreaMaps.keys())) {
+        if (auto map = m_storageAreaMaps.get(key))
+            map->disconnect();
+    }
 
     for (auto& page : m_pageMap.values()) {
         auto idbConnection = page->corePage()->optionalIDBConnection();
@@ -1697,20 +1699,20 @@ void WebProcess::nonVisibleProcessMemoryCleanupTimerFired()
 
 void WebProcess::registerStorageAreaMap(StorageAreaMap& storageAreaMap)
 {
-    ASSERT(storageAreaMap.identifier());
-    ASSERT(!m_storageAreaMaps.contains(*storageAreaMap.identifier()));
-    m_storageAreaMaps.set(*storageAreaMap.identifier(), &storageAreaMap);
+    auto identifier = storageAreaMap.identifier();
+    ASSERT(!m_storageAreaMaps.contains(identifier));
+    m_storageAreaMaps.add(identifier, storageAreaMap);
 }
 
 void WebProcess::unregisterStorageAreaMap(StorageAreaMap& storageAreaMap)
 {
-    ASSERT(storageAreaMap.identifier());
-    ASSERT(m_storageAreaMaps.contains(*storageAreaMap.identifier()));
-    ASSERT(m_storageAreaMaps.get(*storageAreaMap.identifier()) == &storageAreaMap);
-    m_storageAreaMaps.remove(*storageAreaMap.identifier());
+    auto identifier = storageAreaMap.identifier();
+    ASSERT(m_storageAreaMaps.contains(identifier));
+    ASSERT(m_storageAreaMaps.get(identifier).get() == &storageAreaMap);
+    m_storageAreaMaps.remove(identifier);
 }
 
-StorageAreaMap* WebProcess::storageAreaMap(StorageAreaIdentifier identifier) const
+WeakPtr<StorageAreaMap> WebProcess::storageAreaMap(StorageAreaMapIdentifier identifier) const
 {
     return m_storageAreaMaps.get(identifier);
 }

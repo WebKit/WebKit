@@ -30,8 +30,14 @@
 
 namespace WebKit {
 
+uint64_t StorageAreaBase::nextMessageIdentifier()
+{
+    static std::atomic<uint64_t> currentIdentifier;
+    return ++currentIdentifier;
+}
+
 StorageAreaBase::StorageAreaBase(unsigned quota, const WebCore::ClientOrigin& origin)
-    : m_identifier(StorageAreaIdentifier::generate())
+    : m_identifier(StorageAreaIdentifier::generateThreadSafe())
     , m_quota(quota)
     , m_origin(origin)
 {
@@ -39,11 +45,11 @@ StorageAreaBase::StorageAreaBase(unsigned quota, const WebCore::ClientOrigin& or
 
 StorageAreaBase::~StorageAreaBase() = default;
 
-void StorageAreaBase::addListener(IPC::Connection::UniqueID connection)
+void StorageAreaBase::addListener(IPC::Connection::UniqueID connection, StorageAreaMapIdentifier identifier)
 {
-    ASSERT(!m_listeners.contains(connection));
+    ASSERT(!m_listeners.contains(connection) || m_listeners.get(connection) == identifier);
 
-    m_listeners.add(connection);
+    m_listeners.add(connection, identifier);
 }
 
 void StorageAreaBase::removeListener(IPC::Connection::UniqueID connection)
@@ -58,19 +64,19 @@ bool StorageAreaBase::hasListeners() const
 
 void StorageAreaBase::notifyListenersAboutClear()
 {
-    for (auto& connection : m_listeners)
-        IPC::Connection::send(connection, Messages::StorageAreaMap::ClearCache(), m_identifier.toUInt64());
+    for (auto& [connection, identifier] : m_listeners)
+        IPC::Connection::send(connection, Messages::StorageAreaMap::ClearCache(StorageAreaBase::nextMessageIdentifier()), identifier.toUInt64());
 }
 
 void StorageAreaBase::dispatchEvents(IPC::Connection::UniqueID sourceConnection, StorageAreaImplIdentifier sourceImplIdentifier, const String& key, const String& oldValue, const String& newValue, const String& urlString) const
 {
     ASSERT(sourceImplIdentifier);
 
-    for (auto& connection : m_listeners) {
+    for (auto& [connection, identifier] : m_listeners) {
         std::optional<StorageAreaImplIdentifier> implIdentifier;
         if (connection == sourceConnection)
             implIdentifier = sourceImplIdentifier;
-        IPC::Connection::send(connection, Messages::StorageAreaMap::DispatchStorageEvent(implIdentifier, key, oldValue, newValue, urlString), m_identifier.toUInt64());
+        IPC::Connection::send(connection, Messages::StorageAreaMap::DispatchStorageEvent(implIdentifier, key, oldValue, newValue, urlString, StorageAreaBase::nextMessageIdentifier()), identifier.toUInt64());
     }
 }
 

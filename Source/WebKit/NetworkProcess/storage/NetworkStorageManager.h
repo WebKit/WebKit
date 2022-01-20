@@ -30,6 +30,7 @@
 #include "OriginStorageManager.h"
 #include "StorageAreaIdentifier.h"
 #include "StorageAreaImplIdentifier.h"
+#include "StorageAreaMapIdentifier.h"
 #include "StorageNamespaceIdentifier.h"
 #include "WebsiteData.h"
 #include <WebCore/ClientOrigin.h>
@@ -44,6 +45,7 @@ class SharedFileHandle;
 
 namespace WebCore {
 struct ClientOrigin;
+enum class StorageType : uint8_t;
 }
 
 namespace WebKit {
@@ -108,12 +110,10 @@ private:
     void getHandle(IPC::Connection&, WebCore::FileSystemHandleIdentifier, String&& name, CompletionHandler<void(Expected<std::pair<WebCore::FileSystemHandleIdentifier, bool>, FileSystemStorageError>)>&&);
     
     // Message handlers for WebStorage.
-    void connectToLocalStorageArea(IPC::Connection&, StorageNamespaceIdentifier, WebCore::SecurityOriginData&&, CompletionHandler<void(StorageAreaIdentifier)>&&);
-    void connectToTransientLocalStorageArea(IPC::Connection&, StorageNamespaceIdentifier, WebCore::SecurityOriginData&&, WebCore::SecurityOriginData&&, CompletionHandler<void(StorageAreaIdentifier)>&&);
-    void connectToSessionStorageArea(IPC::Connection&, StorageNamespaceIdentifier, WebCore::SecurityOriginData&&, CompletionHandler<void(StorageAreaIdentifier)>&&);
+    void connectToStorageArea(IPC::Connection&, WebCore::StorageType, StorageAreaMapIdentifier, StorageNamespaceIdentifier, const WebCore::ClientOrigin&, CompletionHandler<void(StorageAreaIdentifier, HashMap<String, String>, uint64_t)>&&);
+    void connectToStorageAreaSync(IPC::Connection&, WebCore::StorageType, StorageAreaMapIdentifier, StorageNamespaceIdentifier, const WebCore::ClientOrigin&, CompletionHandler<void(StorageAreaIdentifier, HashMap<String, String>, uint64_t)>&&);
     void disconnectFromStorageArea(IPC::Connection&, StorageAreaIdentifier);
     void cloneSessionStorageNamespace(IPC::Connection&, StorageNamespaceIdentifier, StorageNamespaceIdentifier);
-    void getValues(StorageAreaIdentifier, CompletionHandler<void(const HashMap<String, String>&)>&&);
     void setItem(IPC::Connection&, StorageAreaIdentifier, StorageAreaImplIdentifier, uint64_t seed, String&& key, String&& value, String&& urlString);
     void removeItem(IPC::Connection&, StorageAreaIdentifier, StorageAreaImplIdentifier, uint64_t seed, String&& key, String&& urlString);
     void clear(IPC::Connection&, StorageAreaIdentifier, StorageAreaImplIdentifier, uint64_t seed, String&& urlString);

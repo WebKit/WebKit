@@ -117,7 +117,7 @@ void NetworkProcessConnection::didReceiveMessage(IPC::Connection& connection, IP
         return;
     }
     if (decoder.messageReceiverName() == Messages::StorageAreaMap::messageReceiverName()) {
-        if (auto* storageAreaMap = WebProcess::singleton().storageAreaMap(makeObjectIdentifier<StorageAreaIdentifierType>(decoder.destinationID())))
+        if (auto storageAreaMap = WebProcess::singleton().storageAreaMap(makeObjectIdentifier<StorageAreaMapIdentifierType>(decoder.destinationID())))
             storageAreaMap->didReceiveMessage(connection, decoder);
         return;
     }
