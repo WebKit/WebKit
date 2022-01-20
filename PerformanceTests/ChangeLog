@@ -1,3 +1,10 @@
+2022-01-20  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [WinCairo] Unreviewed performance test gardening.
+
+        * Skipped:
+        Skip various IndexedDB timeouts.
+
 2022-01-18  Ross Kirsling  <ross.kirsling@sony.com>
 
         Speedometer should be locally runnable on Windows
