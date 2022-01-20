@@ -1,3 +1,13 @@
+2021-12-04  Rob Buis  <rbuis@igalia.com>
+
+        Fix parentNode in CompositeEditCommand::splitTreeToNode
+        https://bugs.webkit.org/show_bug.cgi?id=230710
+
+        Reviewed by Ryosuke Niwa.
+
+        * editing/execCommand/outdent-cut-crash-expected.txt: Added.
+        * editing/execCommand/outdent-cut-crash.html: Added.
+
 2021-11-30  Youenn Fablet  <youenn@apple.com>
 
         ServiceWorkerContainer does not respond well to network process crash

@@ -1,3 +1,23 @@
+2021-12-04  Rob Buis  <rbuis@igalia.com>
+
+        Fix parentNode in CompositeEditCommand::splitTreeToNode
+        https://bugs.webkit.org/show_bug.cgi?id=230710
+
+        Reviewed by Ryosuke Niwa.
+
+        Fix parentNode handling in CompositeEditCommand::splitTreeToNode and
+        also a few more IndentOutdentCommand methods to support the test case.
+
+        Test: editing/execCommand/outdent-cut-crash.html
+
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::moveParagraphs):
+        * editing/IndentOutdentCommand.cpp:
+        (WebCore::IndentOutdentCommand::indentIntoBlockquote): do not call positionInParentAfterNode
+        if insertNodeBefore failed.
+        (WebCore::IndentOutdentCommand::outdentParagraph): need to check for null positions
+        before calling moveParagraphs.
+
 2022-01-19  Alex Christensen  <achristensen@webkit.org>
 
         [ResourceTiming] nextHopProtocol is exposed regardless of Timing-Allow-Origin
