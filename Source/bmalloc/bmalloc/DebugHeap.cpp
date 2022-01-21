@@ -44,11 +44,27 @@ DEFINE_STATIC_PER_PROCESS_STORAGE(DebugHeap);
 
 #if BOS(DARWIN)
 
+static bool shouldUseDefaultMallocZone()
+{
+    if (getenv("DEBUG_HEAP_USE_DEFAULT_ZONE"))
+        return true;
+
+    // The lite logging mode only intercepts allocations from the default zone.
+    const char* mallocStackLogging = getenv("MallocStackLogging");
+    if (mallocStackLogging && !strcmp(mallocStackLogging, "lite"))
+        return true;
+
+    return false;
+}
+
 DebugHeap::DebugHeap(const LockHolder&)
-    : m_zone(malloc_create_zone(0, 0))
+    : m_zone(malloc_default_zone())
     , m_pageSize(vmPageSize())
 {
-    malloc_set_zone_name(m_zone, "WebKit Using System Malloc");
+    if (!shouldUseDefaultMallocZone()) {
+        m_zone = malloc_create_zone(0, 0);
+        malloc_set_zone_name(m_zone, "WebKit Using System Malloc");
+    }
 }
 
 void* DebugHeap::malloc(size_t size, FailureAction action)

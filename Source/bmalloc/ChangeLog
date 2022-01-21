@@ -1,3 +1,29 @@
+2022-01-20  Ben Nham  <nham@apple.com>
+
+        Make bmalloc work better with various MallocStackLogging modes
+        https://bugs.webkit.org/show_bug.cgi?id=235425
+
+        Reviewed by Yusuke Suzuki.
+
+        This conditionalizes the way system malloc is used depending on the exact value of the
+        MallocStackLogging environment variable:
+
+        - If the mode is "vm" or "vmlite", then we don't need to use system malloc at all, since
+          those logging modes only intercept syscalls.
+        - If the mode is "lite", then we should use the default malloc zone (rather than our custom
+          "WebKit Using System Malloc" zone), since the lite mode only intercepts allocations from
+          the default zone.
+
+        Before this change, the lite mode didn't capture bmalloc/FastMalloc callstacks, which made
+        it less useful than it should have been.
+
+        * bmalloc/DebugHeap.cpp:
+        (bmalloc::shouldUseDefaultMallocZone):
+        (bmalloc::DebugHeap::DebugHeap):
+        * bmalloc/Environment.cpp:
+        (bmalloc::isMallocEnvironmentVariableImplyingSystemMallocSet):
+        (bmalloc::Environment::computeIsDebugHeapEnabled):
+
 2022-01-20  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [libpas] Ensure pas_allocation_callback and pas_deallocation_callback are initialized as NULL
