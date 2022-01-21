@@ -428,7 +428,8 @@ void InlineItemsBuilder::breakAndComputeBidiLevels(InlineItems& inlineItems)
                 continue;
             }
             // Mark the inline box stack with "content yes", when we come across a content type of inline item.
-            inlineBoxContentFlagStack.fill(InlineBoxHasContent::Yes);
+            if (!inlineItem.isText() || !downcast<InlineTextItem>(inlineItem).isWhitespace() || TextUtil::shouldPreserveSpacesAndTabs(inlineItem.layoutBox()))
+                inlineBoxContentFlagStack.fill(InlineBoxHasContent::Yes);
         }
     };
     setBidiLevelForOpaqueInlineItems();
