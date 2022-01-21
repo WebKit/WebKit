@@ -922,7 +922,6 @@ media/video-canvas-createPattern.html [ Pass ]
 media/video-object-fit.html [ Pass ]
 media/video-seek-to-current-time.html [ Pass ]
 media/video-src-blob-replay.html
-media/video-src-blob-using-open-panel.html [ Pass ]
 pointerevents/mouse/pointer-event-basic-properties.html [ Timeout ]
 scrollbars/scrollevent-iframe-no-scrolling.html [ Pass ]
 storage/indexeddb/connection-leak-private.html [ Pass ]
