@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018-2021 Apple Inc. All rights reserved.
+ * Copyright (c) 2018-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -303,6 +303,16 @@ static inline bool pas_segregated_size_directory_has_tlc_allocator(
     pas_segregated_size_directory_data* data;
     data = pas_segregated_size_directory_data_ptr_load(&directory->data);
     return data && data->allocator_index;
+}
+
+static inline pas_allocator_index pas_segregated_size_directory_get_tlc_allocator_index(
+    pas_segregated_size_directory* directory)
+{
+    pas_segregated_size_directory_data* data;
+    data = pas_segregated_size_directory_data_ptr_load(&directory->data);
+    if (data)
+        return data->allocator_index;
+    return 0;
 }
 
 /* Call with heap lock held. */

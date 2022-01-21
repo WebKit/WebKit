@@ -80,17 +80,20 @@ pas_try_allocate_primitive_impl_casual_case(pas_primitive_heap_ref* heap_ref,
     /* Have a fast path for when you allocate some size all the time or
        most of the time. This saves both time and space. The space savings are
        the more interesting part, since */
+
+    if (verbose)
+        pas_log("%p: getting allocator index.\n", pthread_self());
     
     if (index == heap_ref->cached_index) {
         if (verbose)
-            printf("Found cached index.\n");
+            pas_log("Found cached index.\n");
         allocator_index = heap_ref->base.allocator_index;
     } else {
         pas_heap* heap;
         pas_segregated_heap* segregated_heap;
         
         if (verbose)
-            printf("Using full lookup.\n");
+            pas_log("Using full lookup.\n");
 
         heap = pas_ensure_heap(&heap_ref->base, pas_primitive_heap_ref_kind, config.config_ptr,
                                runtime_config);
@@ -102,10 +105,18 @@ pas_try_allocate_primitive_impl_casual_case(pas_primitive_heap_ref* heap_ref,
     }
     
     if (verbose)
-        printf("allocator_index = %u\n", allocator_index);
+        pas_log("allocator_index = %u\n", allocator_index);
+
+    /* Cool fact: there could be a race where the allocator_index we get is 0 (i.e. unselected) even though
+       at this point, the directory has already initialized the allocator_index. That's because between when
+       we got the allocator_index above and now, some other thread could have already initialized the
+       directory's allocator_index. */
     
     allocator = pas_thread_local_cache_get_local_allocator_if_can_set_cache_for_possibly_uninitialized_index(
         allocator_index, config.config_ptr);
+
+    if (verbose && !allocator.did_succeed)
+        pas_log("%p: Failed to quickly get the allocator, allocator_index = %u.\n", pthread_self(), allocator_index);
     
     /* This should be specialized out in the non-alignment case because of ALWAYS_INLINE and
        alignment being the constant 1. */
@@ -145,14 +156,14 @@ pas_try_allocate_primitive_impl_inline_only(
     
     if (index == heap_ref->cached_index) {
         if (verbose)
-            printf("Found cached index.\n");
+            pas_log("Found cached index.\n");
         allocator_index = heap_ref->base.allocator_index;
     } else {
         pas_heap* heap;
         pas_segregated_heap* segregated_heap;
         
         if (verbose)
-            printf("Using full lookup.\n");
+            pas_log("Using full lookup.\n");
 
         heap = heap_ref->base.heap;
         if (!heap)
@@ -164,7 +175,7 @@ pas_try_allocate_primitive_impl_inline_only(
     }
     
     if (verbose)
-        printf("allocator_index = %u\n", allocator_index);
+        pas_log("allocator_index = %u\n", allocator_index);
 
     cache = pas_thread_local_cache_try_get();
     if (PAS_UNLIKELY(!cache))
@@ -173,9 +184,12 @@ pas_try_allocate_primitive_impl_inline_only(
     allocator =
         pas_thread_local_cache_try_get_local_allocator_or_unselected_for_uninitialized_index(
             cache, allocator_index);
-    if (PAS_UNLIKELY(!allocator.did_succeed))
+    if (PAS_UNLIKELY(!allocator.did_succeed)) {
+        if (verbose)
+            pas_log("Could not quickly get the allocator.\n");
         return pas_allocation_result_create_failure();
-    
+    }
+
     /* This should be specialized out in the non-alignment case because of ALWAYS_INLINE and
        alignment being the constant 1. */
     if (PAS_UNLIKELY(

@@ -1,3 +1,91 @@
+2022-01-20  Filip Pizlo  <fpizlo@apple.com>
+
+        [libpas] medium directory lookup should bail if begin_index is zero to catch races with expendable memory decommit (cherry pick 434465bfb8e0c285d6763cf6aa0e04982199f824)
+        https://bugs.webkit.org/show_bug.cgi?id=235280
+
+        Reviewed by Yusuke Suzuki.
+
+        I've been seeing crashes in pas_segregated_heap_ensure_allocator_index where the directory that is
+        passed to the function doesn't match the size. The most likely reason why this is happening is that
+        the medium directory lookup raced with expendable memory decommit and returned the wrong directory.
+        To figure out how this happens, I added a bunch of tests to ExpendableMemoryTests. This change
+        includes various small fixes (like removing assertions) that were found by doing such testing, and it
+        also includes a test and a change that I think exactly catches what is going on:
+
+        - Expendable memory is decommitted so that the medium lookup sees begin_index == 0, but end_index
+          still has its original value. This will cause it to return a tuple that is for a too-large size
+          class.
+        - Some other thread rematerializes the expendable memory right after the medium lookup finishes, but
+          before it loads the directory.
+        - The medium lookup finally loads the directory from the tuple, and now sees a non-NULL directory, so
+          it thinks that everything is fine.
+
+        This race barely "works" since:
+
+        - Any other field in the medium tuple being zero would cause the medium lookup to fail, which would
+          then cause a slow path that rematerializes expendable memory under a lock.
+        - Rematerialization of expendable memory adjusts the mutation count, so this race would only go
+          undetected if the rematerialization happened after the medium lookup search but before when the
+          medium lookup loads the directory.
+
+        The solution is to just have the medium lookup fail if begin_index == 0. Begin_index can never
+        legitimately be zero, because there's no way that a size class would want to be responsible for both
+        index 0 (i.e. the zero-byte object) and objects big enough to require medium lookup.
+
+        This adds new tests. While running those new tests, I found and fixed two other bugs:
+
+        - Recomputation of the index_to_small_allocator_index table subtly mishandles the cached_index case.
+          Previously, it was only special-casing it only when the directory was not participating in lookup
+          tables at all, but actually it needs to special-case it anytime that the directory doesn't otherwise
+          think that it should set the entry at cached_index.
+
+        - Expendable memory commit/decommit was playing fast-and-loose with version numbers. This fixes it so
+          that there is a global monotonically increasing version number.
+
+        * libpas/src/libpas/bmalloc_heap.c:
+        (bmalloc_flex_heap_ref_get_heap):
+        (bmalloc_auxiliary_heap_ref_get_heap):
+        (bmalloc_get_heap):
+        * libpas/src/libpas/bmalloc_heap.h:
+        * libpas/src/libpas/pas_expendable_memory.c:
+        (pas_expendable_memory_state_version_next):
+        (pas_expendable_memory_construct):
+        (pas_expendable_memory_commit_if_necessary):
+        (scavenge_impl):
+        (pas_expendable_memory_scavenge):
+        * libpas/src/libpas/pas_expendable_memory.h:
+        * libpas/src/libpas/pas_scavenger.c:
+        (handle_expendable_memory):
+        (scavenger_thread_main):
+        (pas_scavenger_decommit_expendable_memory):
+        (pas_scavenger_fake_decommit_expendable_memory):
+        * libpas/src/libpas/pas_scavenger.h:
+        * libpas/src/libpas/pas_segregated_heap.c:
+        (medium_directory_tuple_for_index_impl):
+        (pas_segregated_heap_medium_directory_tuple_for_index):
+        (pas_segregated_heap_medium_allocator_index_for_index):
+        (recompute_size_lookup):
+        (rematerialize_size_lookup_set_medium_directory_tuple):
+        (pas_segregated_heap_ensure_allocator_index):
+        (check_size_lookup_recomputation_set_medium_directory_tuple):
+        (check_size_lookup_recomputation_dump_directory):
+        (check_size_lookup_recomputation):
+        (check_size_lookup_recomputation_if_appropriate):
+        (pas_segregated_heap_ensure_size_directory_for_size):
+        * libpas/src/libpas/pas_segregated_heap.h:
+        * libpas/src/libpas/pas_segregated_size_directory.h:
+        (pas_segregated_size_directory_get_tlc_allocator_index):
+        * libpas/src/libpas/pas_try_allocate_primitive.h:
+        (pas_try_allocate_primitive_impl_casual_case):
+        (pas_try_allocate_primitive_impl_inline_only):
+        * libpas/src/test/ExpendableMemoryTests.cpp:
+        (std::testRage):
+        (std::testRematerializeAfterSearchOfDecommitted):
+        (std::testBasicSizeClass):
+        (addExpendableMemoryTests):
+        * libpas/src/test/TestHarness.cpp:
+        (RuntimeConfigTestScope::RuntimeConfigTestScope):
+
 2022-01-20  Ben Nham  <nham@apple.com>
 
         Make bmalloc work better with various MallocStackLogging modes
