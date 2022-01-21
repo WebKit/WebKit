@@ -1,3 +1,12 @@
+2022-01-20  Alan Bujtas  <zalan@apple.com>
+
+        WPT progressions after r288070 (complex font codepath for IFC)
+
+        Unreviewed.
+
+        * TestExpectations:
+        * platform/mac/TestExpectations:
+
 2022-01-20  Jon Lee  <jonlee554@gmail.com>
 
         Unreviewed gardening.
