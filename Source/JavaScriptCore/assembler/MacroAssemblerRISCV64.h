@@ -2171,12 +2171,234 @@ public:
     MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD_WITH_RETURN(branchNeg32, Jump);
     MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD_WITH_RETURN(branchNeg64, Jump);
 
-    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD_WITH_RETURN(branchTest8, Jump);
-    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD_WITH_RETURN(branchTest16, Jump);
-    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD_WITH_RETURN(branchTest32, Jump);
-    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD_WITH_RETURN(branchTest64, Jump);
+    Jump branchTest8(ResultCondition cond, Address address, TrustedImm32 imm = TrustedImm32(-1))
+    {
+        auto temp = temps<Data, Memory>();
+        auto resolution = resolveAddress(address, temp.memory());
+        m_assembler.lbuInsn(temp.memory(), resolution.base, Imm::I(resolution.offset));
 
-    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD_WITH_RETURN(branchPtr, Jump);
+        if (!Imm::isValid<Imm::IType>(imm.m_value)) {
+            loadImmediate(imm, temp.data());
+            m_assembler.andInsn(temp.data(), temp.memory(), temp.data());
+        } else
+            m_assembler.andiInsn(temp.data(), temp.memory(), Imm::I(imm.m_value));
+        m_assembler.signExtend<8>(temp.data());
+        return branchTestFinalize(cond, temp.data());
+    }
+
+    Jump branchTest8(ResultCondition cond, AbsoluteAddress address, TrustedImm32 imm = TrustedImm32(-1))
+    {
+        auto temp = temps<Data, Memory>();
+        loadImmediate(TrustedImmPtr(address.m_ptr), temp.memory());
+        m_assembler.lbuInsn(temp.memory(), temp.memory(), Imm::I<0>());
+
+        if (!Imm::isValid<Imm::IType>(imm.m_value)) {
+            loadImmediate(imm, temp.data());
+            m_assembler.andInsn(temp.data(), temp.memory(), temp.data());
+        } else
+            m_assembler.andiInsn(temp.data(), temp.memory(), Imm::I(imm.m_value));
+        m_assembler.signExtend<8>(temp.data());
+        return branchTestFinalize(cond, temp.data());
+    }
+
+    Jump branchTest8(ResultCondition cond, BaseIndex address, TrustedImm32 imm = TrustedImm32(-1))
+    {
+        auto temp = temps<Data, Memory>();
+        auto resolution = resolveAddress(address, temp.memory());
+        m_assembler.lbuInsn(temp.memory(), resolution.base, Imm::I(resolution.offset));
+
+        if (!Imm::isValid<Imm::IType>(imm.m_value)) {
+            loadImmediate(imm, temp.data());
+            m_assembler.andInsn(temp.data(), temp.memory(), temp.data());
+        } else
+            m_assembler.andiInsn(temp.data(), temp.memory(), Imm::I(imm.m_value));
+        m_assembler.signExtend<8>(temp.data());
+        return branchTestFinalize(cond, temp.data());
+    }
+
+    Jump branchTest8(ResultCondition cond, ExtendedAddress address, TrustedImm32 imm = TrustedImm32(-1))
+    {
+        auto temp = temps<Data, Memory>();
+        auto resolution = resolveAddress(address, temp.memory());
+        m_assembler.lbuInsn(temp.memory(), resolution.base, Imm::I(resolution.offset));
+
+        if (!Imm::isValid<Imm::IType>(imm.m_value)) {
+            loadImmediate(imm, temp.data());
+            m_assembler.andInsn(temp.data(), temp.memory(), temp.data());
+        } else
+            m_assembler.andiInsn(temp.data(), temp.memory(), Imm::I(imm.m_value));
+        m_assembler.signExtend<8>(temp.data());
+        return branchTestFinalize(cond, temp.data());
+    }
+
+    Jump branchTest16(ResultCondition cond, Address address, TrustedImm32 imm = TrustedImm32(-1))
+    {
+        auto temp = temps<Data, Memory>();
+        auto resolution = resolveAddress(address, temp.memory());
+        m_assembler.lhuInsn(temp.memory(), resolution.base, Imm::I(resolution.offset));
+
+        if (!Imm::isValid<Imm::IType>(imm.m_value)) {
+            loadImmediate(imm, temp.data());
+            m_assembler.andInsn(temp.data(), temp.memory(), temp.data());
+        } else
+            m_assembler.andiInsn(temp.data(), temp.memory(), Imm::I(imm.m_value));
+        m_assembler.signExtend<16>(temp.data());
+        return branchTestFinalize(cond, temp.data());
+    }
+
+    Jump branchTest16(ResultCondition cond, BaseIndex address, TrustedImm32 imm = TrustedImm32(-1))
+    {
+        auto temp = temps<Data, Memory>();
+        auto resolution = resolveAddress(address, temp.memory());
+        m_assembler.lhuInsn(temp.memory(), resolution.base, Imm::I(resolution.offset));
+
+        if (!Imm::isValid<Imm::IType>(imm.m_value)) {
+            loadImmediate(imm, temp.data());
+            m_assembler.andInsn(temp.data(), temp.memory(), temp.data());
+        } else
+            m_assembler.andiInsn(temp.data(), temp.memory(), Imm::I(imm.m_value));
+        m_assembler.signExtend<16>(temp.data());
+        return branchTestFinalize(cond, temp.data());
+    }
+
+    Jump branchTest32(ResultCondition cond, RegisterID lhs, RegisterID rhs)
+    {
+        auto temp = temps<Data>();
+        m_assembler.zeroExtend<32>(temp.data(), lhs);
+        m_assembler.andInsn(temp.data(), temp.data(), rhs);
+        m_assembler.signExtend<32>(temp.data());
+        return branchTestFinalize(cond, temp.data());
+    }
+
+    Jump branchTest32(ResultCondition cond, RegisterID lhs, TrustedImm32 imm = TrustedImm32(-1))
+    {
+        auto temp = temps<Data, Memory>();
+        m_assembler.zeroExtend<32>(temp.memory(), lhs);
+
+        if (!Imm::isValid<Imm::IType>(imm.m_value)) {
+            loadImmediate(imm, temp.data());
+            m_assembler.andInsn(temp.data(), temp.memory(), temp.data());
+        } else
+            m_assembler.andiInsn(temp.data(), temp.memory(), Imm::I(imm.m_value));
+        m_assembler.signExtend<32>(temp.data());
+        return branchTestFinalize(cond, temp.data());
+    }
+
+    Jump branchTest32(ResultCondition cond, Address address, TrustedImm32 imm = TrustedImm32(-1))
+    {
+        auto temp = temps<Data, Memory>();
+        auto resolution = resolveAddress(address, temp.memory());
+        m_assembler.lwuInsn(temp.memory(), resolution.base, Imm::I(resolution.offset));
+
+        if (!Imm::isValid<Imm::IType>(imm.m_value)) {
+            loadImmediate(imm, temp.data());
+            m_assembler.andInsn(temp.data(), temp.memory(), temp.data());
+        } else
+            m_assembler.andiInsn(temp.data(), temp.memory(), Imm::I(imm.m_value));
+        m_assembler.signExtend<32>(temp.data());
+        return branchTestFinalize(cond, temp.data());
+    }
+
+    Jump branchTest32(ResultCondition cond, AbsoluteAddress address, TrustedImm32 imm = TrustedImm32(-1))
+    {
+        auto temp = temps<Data, Memory>();
+        loadImmediate(TrustedImmPtr(address.m_ptr), temp.memory());
+        m_assembler.lwuInsn(temp.memory(), temp.memory(), Imm::I<0>());
+
+        if (!Imm::isValid<Imm::IType>(imm.m_value)) {
+            loadImmediate(imm, temp.data());
+            m_assembler.andInsn(temp.data(), temp.memory(), temp.data());
+        } else
+            m_assembler.andiInsn(temp.data(), temp.memory(), Imm::I(imm.m_value));
+        m_assembler.signExtend<32>(temp.data());
+        return branchTestFinalize(cond, temp.data());
+    }
+
+
+    Jump branchTest64(ResultCondition cond, RegisterID lhs, RegisterID rhs)
+    {
+        auto temp = temps<Data>();
+        m_assembler.andInsn(temp.data(), lhs, rhs);
+        return branchTestFinalize(cond, temp.data());
+    }
+
+    Jump branchTest64(ResultCondition cond, RegisterID lhs, TrustedImm32 imm = TrustedImm32(-1))
+    {
+        auto temp = temps<Data>();
+        if (!Imm::isValid<Imm::IType>(imm.m_value)) {
+            loadImmediate(imm, temp.data());
+            m_assembler.andInsn(temp.data(), lhs, temp.data());
+        } else
+            m_assembler.andiInsn(temp.data(), lhs, Imm::I(imm.m_value));
+        return branchTestFinalize(cond, temp.data());
+    }
+
+    Jump branchTest64(ResultCondition cond, RegisterID lhs, TrustedImm64 imm)
+    {
+        auto temp = temps<Data>();
+        if (!Imm::isValid<Imm::IType>(imm.m_value)) {
+            loadImmediate(imm, temp.data());
+            m_assembler.andInsn(temp.data(), lhs, temp.data());
+        } else
+            m_assembler.andiInsn(temp.data(), lhs, Imm::I(imm.m_value));
+        return branchTestFinalize(cond, temp.data());
+    }
+
+    Jump branchTest64(ResultCondition cond, Address address, RegisterID rhs)
+    {
+        auto temp = temps<Data, Memory>();
+        auto resolution = resolveAddress(address, temp.memory());
+        m_assembler.ldInsn(temp.data(), resolution.base, Imm::I(resolution.offset));
+        m_assembler.andInsn(temp.data(), temp.data(), rhs);
+        return branchTestFinalize(cond, temp.data());
+    }
+
+    Jump branchTest64(ResultCondition cond, Address address, TrustedImm32 imm = TrustedImm32(-1))
+    {
+        auto temp = temps<Data, Memory>();
+        auto resolution = resolveAddress(address, temp.memory());
+        m_assembler.ldInsn(temp.memory(), resolution.base, Imm::I(resolution.offset));
+
+        if (!Imm::isValid<Imm::IType>(imm.m_value)) {
+            loadImmediate(imm, temp.data());
+            m_assembler.andInsn(temp.data(), temp.memory(), temp.data());
+        } else
+            m_assembler.andiInsn(temp.data(), temp.memory(), Imm::I(imm.m_value));
+        return branchTestFinalize(cond, temp.data());
+    }
+
+    Jump branchTest64(ResultCondition cond, AbsoluteAddress address, TrustedImm32 imm = TrustedImm32(-1))
+    {
+        auto temp = temps<Data, Memory>();
+        loadImmediate(TrustedImmPtr(address.m_ptr), temp.memory());
+        m_assembler.ldInsn(temp.memory(), temp.memory(), Imm::I<0>());
+
+        if (!Imm::isValid<Imm::IType>(imm.m_value)) {
+            loadImmediate(imm, temp.data());
+            m_assembler.andInsn(temp.data(), temp.memory(), temp.data());
+        } else
+            m_assembler.andiInsn(temp.data(), temp.memory(), Imm::I(imm.m_value));
+        return branchTestFinalize(cond, temp.data());
+    }
+
+    Jump branchTest64(ResultCondition cond, BaseIndex address, TrustedImm32 imm = TrustedImm32(-1))
+    {
+        auto temp = temps<Data, Memory>();
+        auto resolution = resolveAddress(address, temp.memory());
+        m_assembler.ldInsn(temp.memory(), resolution.base, Imm::I(resolution.offset));
+
+        if (!Imm::isValid<Imm::IType>(imm.m_value)) {
+            loadImmediate(imm, temp.data());
+            m_assembler.andInsn(temp.data(), temp.memory(), temp.data());
+        } else
+            m_assembler.andiInsn(temp.data(), temp.memory(), Imm::I(imm.m_value));
+        return branchTestFinalize(cond, temp.data());
+    }
+
+    Jump branchPtr(RelationalCondition cond, BaseIndex address, RegisterID rhs)
+    {
+        return branch64(cond, address, rhs);
+    }
 
     DataLabel32 moveWithPatch(TrustedImm32 imm, RegisterID dest)
     {
@@ -2962,6 +3184,25 @@ private:
                 }
             });
         return Jump(label);
+    }
+
+    Jump branchTestFinalize(ResultCondition cond, RegisterID src)
+    {
+        switch (cond) {
+        case Overflow:
+            break;
+        case Signed:
+            return makeBranch(LessThan, src, RISCV64Registers::zero);
+        case PositiveOrZero:
+            return makeBranch(GreaterThanOrEqual, src, RISCV64Registers::zero);
+        case Zero:
+            return makeBranch(Equal, src, RISCV64Registers::zero);
+        case NonZero:
+            return makeBranch(NotEqual, src, RISCV64Registers::zero);
+        }
+
+        RELEASE_ASSERT_NOT_REACHED();
+        return { };
     }
 
     void compareFinalize(RelationalCondition cond, RegisterID lhs, RegisterID rhs, RegisterID dest)
