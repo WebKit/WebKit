@@ -27,6 +27,7 @@ from buildbot.steps import master, shell, transfer, trigger
 from buildbot.steps.source import git
 from buildbot.steps.worker import CompositeStepMixin
 from datetime import date
+from requests.auth import HTTPBasicAuth
 from twisted.internet import defer
 
 from layout_test_failures import LayoutTestFailures
@@ -135,7 +136,7 @@ class GitHubMixin(object):
     def fetch_data_from_url_with_authentication(self, url):
         response = None
         try:
-            username, access_token = self.credentials()
+            username, access_token = GitHub.credentials()
             auth = HTTPBasicAuth(username, access_token) if username and access_token else None
             response = requests.get(
                 url, timeout=60, auth=auth,

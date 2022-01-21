@@ -1,3 +1,14 @@
+2022-01-21  Jonathan Bedard  <jbedard@apple.com>
+
+        [EWS] Support pull-requests in ValidateChange (Follow-up fix)
+        https://bugs.webkit.org/show_bug.cgi?id=234861
+        <rdar://problem/87114299>
+
+        Unreviewed follow-up fix.
+
+        * CISupport/ews-build/steps.py:
+        (GitHubMixin.fetch_data_from_url_with_authentication): Fix authentication call.
+
 2022-01-20  Jonathan Bedard  <jbedard@apple.com>
 
         [EWS] Avoid extra network request from buildbot to github
