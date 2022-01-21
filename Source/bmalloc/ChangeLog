@@ -1,3 +1,17 @@
+2022-01-20  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [libpas] Ensure pas_allocation_callback and pas_deallocation_callback are initialized as NULL
+        https://bugs.webkit.org/show_bug.cgi?id=235423
+
+        Reviewed by Mark Lam.
+
+        Some compiler options cause link-failure when we do not explicitly initialize these variables
+        in the C file (but it is not necessary strictly speaking). This patch cleans up and initializes
+        them with NULL.
+
+        * libpas/src/libpas/pas_allocation_callbacks.c:
+        * libpas/src/libpas/pas_allocation_callbacks.h:
+
 2022-01-19  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [libpas] Disable PAS_ASSERT on Darwin ARM64 (not in ARM64E)
