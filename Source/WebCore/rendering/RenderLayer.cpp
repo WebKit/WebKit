@@ -5603,7 +5603,7 @@ void RenderLayer::updateFilterPaintingStrategy()
     }
     
     ensureLayerFilters();
-    m_filters->buildFilter(renderer(), page().deviceScaleFactor(), renderer().settings().acceleratedFiltersEnabled() ? RenderingMode::Accelerated : RenderingMode::Unaccelerated);
+    m_filters->buildFilter(renderer(), page().deviceScaleFactor(), renderer().page().acceleratedFiltersEnabled() ? RenderingMode::Accelerated : RenderingMode::Unaccelerated);
 }
 
 IntOutsets RenderLayer::filterOutsets() const

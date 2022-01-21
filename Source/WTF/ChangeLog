@@ -1,3 +1,19 @@
+2022-01-20  Said Abou-Hallawa  <said@apple.com>
+
+        [Cocoa] Accelerated filters are enabled by the wrong setting
+        https://bugs.webkit.org/show_bug.cgi?id=235376
+
+        Reviewed by Simon Fraser.
+
+        Delete ENABLE_CORE_IMAGE_ACCELERATED_FILTER_RENDER and use USE_CORE_IMAGE
+        instead since CoreImage is only used for filters right now. Besides 
+        CoreImage filters will be enabled by the internal feature control flag
+        AcceleratedFiltersEnabled.
+
+        * Scripts/Preferences/WebPreferencesExperimental.yaml:
+        * Scripts/Preferences/WebPreferencesInternal.yaml:
+        * wtf/PlatformEnableCocoa.h:
+
 2022-01-19  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Implement Temporal.Now.instant()

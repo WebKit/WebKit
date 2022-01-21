@@ -4,7 +4,7 @@
  * Copyright (C) 2005 Eric Seidel <eric@webkit.org>
  * Copyright (C) 2009 Dirk Schulze <krit@webkit.org>
  * Copyright (C) 2010 Renata Hodovan <reni@inf.u-szeged.hu>
- * Copyright (C) 2017-2021 Apple Inc.  All rights reserved.
+ * Copyright (C) 2017-2022 Apple Inc.  All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -67,7 +67,7 @@ private:
 
     FloatRect calculateImageRect(const Filter&, const FilterImageVector& inputs, const FloatRect& primitiveSubregion) const override;
 
-    std::unique_ptr<FilterEffectApplier> createApplier(const Filter&) const override;
+    std::unique_ptr<FilterEffectApplier> createSoftwareApplier() const override;
 
     WTF::TextStream& externalRepresentation(WTF::TextStream&, FilterRepresentation) const override;
 

@@ -5,7 +5,7 @@
  * Copyright (C) 2009 Dirk Schulze <krit@webkit.org>
  * Copyright (C) 2010 Igalia, S.L.
  * Copyright (C) Research In Motion Limited 2010. All rights reserved.
- * Copyright (C) 2015-2021 Apple, Inc. All rights reserved.
+ * Copyright (C) 2015-2022 Apple, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -131,7 +131,7 @@ bool FEGaussianBlur::resultIsAlphaImage(const FilterImageVector& inputs) const
     return inputs[0]->isAlphaImage();
 }
 
-std::unique_ptr<FilterEffectApplier> FEGaussianBlur::createApplier(const Filter&) const
+std::unique_ptr<FilterEffectApplier> FEGaussianBlur::createSoftwareApplier() const
 {
     return FilterEffectApplier::create<FEGaussianBlurSoftwareApplier>(*this);
 }

@@ -38,7 +38,7 @@ SourceAlpha::SourceAlpha(const DestinationColorSpace& colorSpace)
     setOperatingColorSpace(colorSpace);
 }
 
-std::unique_ptr<FilterEffectApplier> SourceAlpha::createApplier(const Filter&) const
+std::unique_ptr<FilterEffectApplier> SourceAlpha::createSoftwareApplier() const
 {
     return FilterEffectApplier::create<SourceAlphaSoftwareApplier>(*this);
 }

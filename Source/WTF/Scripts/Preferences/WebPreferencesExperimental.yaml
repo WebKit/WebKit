@@ -409,20 +409,6 @@ ContactPickerAPIEnabled:
     WebCore:
       default: false
 
-CoreImageAcceleratedFilterRenderEnabled:
-  type: bool
-  webcoreOnChange: setNeedsRelayoutAllFrames
-  humanReadableName: "CoreImage-Accelerated Filter Rendering"
-  humanReadableDescription: "Accelerated CSS and SVG filter rendering using CoreImage"
-  condition: ENABLE(CORE_IMAGE_ACCELERATED_FILTER_RENDER)
-  defaultValue:
-    WebKitLegacy:
-      default: false
-    WebKit:
-      default: false
-    WebCore:
-      default: false
-
 CoreMathMLEnabled:
   type: bool
   webcoreOnChange: setNeedsRecalcStyleInAllFrames

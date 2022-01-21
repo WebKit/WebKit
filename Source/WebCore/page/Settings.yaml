@@ -29,12 +29,6 @@ AcceleratedCompositedAnimationsEnabled:
     WebCore:
       default: true
 
-AcceleratedFiltersEnabled:
-  type: bool
-  defaultValue:
-    WebCore:
-      default: false
-
 AnimatedImageDebugCanvasDrawingEnabled:
   type: bool
   defaultValue:

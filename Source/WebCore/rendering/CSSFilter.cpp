@@ -52,10 +52,9 @@ RefPtr<CSSFilter> CSSFilter::create(RenderElement& renderer, const FilterOperati
     if (!filter->buildFilterFunctions(renderer, operations, targetBoundingBox))
         return nullptr;
 
-#if USE(CORE_IMAGE)
-    if (!filter->supportsCoreImageRendering())
+    if (renderingMode == RenderingMode::Accelerated && !filter->supportsAcceleratedRendering())
         filter->setRenderingMode(RenderingMode::Unaccelerated);
-#endif
+
     return filter;
 }
 
@@ -337,20 +336,18 @@ FilterEffectVector CSSFilter::effectsOfType(FilterFunction::Type filterType) con
     return effects;
 }
 
-#if USE(CORE_IMAGE)
-bool CSSFilter::supportsCoreImageRendering() const
+bool CSSFilter::supportsAcceleratedRendering() const
 {
     if (renderingMode() == RenderingMode::Unaccelerated)
         return false;
 
     for (auto& function : m_functions) {
-        if (!function->supportsCoreImageRendering())
+        if (!function->supportsAcceleratedRendering())
             return false;
     }
 
     return true;
 }
-#endif
 
 RefPtr<FilterImage> CSSFilter::apply(FilterImage* sourceImage, FilterResults& results)
 {

@@ -490,6 +490,8 @@ public:
     WEBCORE_EXPORT void recomputeTextAutoSizingInAllFrames();
 #endif
 
+    bool acceleratedFiltersEnabled() const;
+
     const FloatBoxExtent& fullscreenInsets() const { return m_fullscreenInsets; }
     WEBCORE_EXPORT void setFullscreenInsets(const FloatBoxExtent&);
 

@@ -1607,6 +1607,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/filters/FETurbulence.h
     platform/graphics/filters/Filter.h
     platform/graphics/filters/FilterEffect.h
+    platform/graphics/filters/FilterEffectApplier.h
     platform/graphics/filters/FilterEffectGeometry.h
     platform/graphics/filters/FilterEffectVector.h
     platform/graphics/filters/FilterFunction.h

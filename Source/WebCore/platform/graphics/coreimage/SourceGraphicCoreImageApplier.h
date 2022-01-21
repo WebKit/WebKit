@@ -25,6 +25,8 @@
 
 #pragma once
 
+#if USE(CORE_IMAGE)
+
 #import "FilterEffectApplier.h"
 
 namespace WebCore {
@@ -42,3 +44,5 @@ public:
 };
 
 } // namespace WebCore
+
+#endif // USE(CORE_IMAGE)

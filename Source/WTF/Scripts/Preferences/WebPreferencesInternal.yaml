@@ -26,6 +26,20 @@
 # They must include a humanReadableName and humanReadableDescription. This is
 #   the text exposed to the user from the WebKit client.
 
+AcceleratedFiltersEnabled:
+  type: bool
+  webcoreOnChange: setNeedsRelayoutAllFrames
+  humanReadableName: "Accelerated Filter Rendering"
+  humanReadableDescription: "Accelerated CSS and SVG filter rendering"
+  condition: USE(CORE_IMAGE)
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 # FIXME: This is not relevent for WebKitLegacy, so should be excluded from WebKitLegacy entirely.
 AllowViewportShrinkToFitContent:
   type: bool

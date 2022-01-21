@@ -85,6 +85,13 @@ FloatRect FilterEffect::calculateImageRect(const Filter& filter, const FilterIma
     return filter.clipToMaxEffectRect(imageRect, primitiveSubregion);
 }
 
+std::unique_ptr<FilterEffectApplier> FilterEffect::createApplier(const Filter& filter) const
+{
+    if (filter.renderingMode() == RenderingMode::Accelerated)
+        return createAcceleratedApplier();
+    return createSoftwareApplier();
+}
+
 void FilterEffect::transformInputsColorSpace(const FilterImageVector& inputs) const
 {
     for (auto& input : inputs)

@@ -4,7 +4,7 @@
  * Copyright (C) 2005 Eric Seidel <eric@webkit.org>
  * Copyright (C) 2009 Dirk Schulze <krit@webkit.org>
  * Copyright (C) Research In Motion Limited 2010. All rights reserved.
- * Copyright (C) 2021 Apple Inc.  All rights reserved.
+ * Copyright (C) 2021-2022 Apple Inc.  All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -49,21 +49,26 @@ FEComponentTransfer::FEComponentTransfer(const ComponentTransferFunction& redFun
 {
 }
 
-#if USE(CORE_IMAGE)
-bool FEComponentTransfer::supportsCoreImageRendering() const
+bool FEComponentTransfer::supportsAcceleratedRendering() const
 {
+#if USE(CORE_IMAGE)
     return FEComponentTransferCoreImageApplier::supportsCoreImageRendering(*this);
-}
+#else
+    return false;
 #endif
+}
 
-std::unique_ptr<FilterEffectApplier> FEComponentTransfer::createApplier(const Filter& filter) const
+std::unique_ptr<FilterEffectApplier> FEComponentTransfer::createAcceleratedApplier() const
 {
 #if USE(CORE_IMAGE)
-    if (filter.renderingMode() == RenderingMode::Accelerated)
-        return FilterEffectApplier::create<FEComponentTransferCoreImageApplier>(*this);
+    return FilterEffectApplier::create<FEComponentTransferCoreImageApplier>(*this);
 #else
-    UNUSED_PARAM(filter);
+    return nullptr;
 #endif
+}
+
+std::unique_ptr<FilterEffectApplier> FEComponentTransfer::createSoftwareApplier() const
+{
     return FilterEffectApplier::create<FEComponentTransferSoftwareApplier>(*this);
 }
 

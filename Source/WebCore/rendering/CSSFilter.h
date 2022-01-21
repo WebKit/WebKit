@@ -59,9 +59,7 @@ private:
     
     bool buildFilterFunctions(RenderElement&, const FilterOperations&, const FloatRect& targetBoundingBox);
 
-#if USE(CORE_IMAGE)
-    bool supportsCoreImageRendering() const final;
-#endif
+    bool supportsAcceleratedRendering() const final;
 
     WTF::TextStream& externalRepresentation(WTF::TextStream&, FilterRepresentation) const final;
 

@@ -3654,6 +3654,15 @@ void Page::recomputeTextAutoSizingInAllFrames()
 
 #endif
 
+bool Page::acceleratedFiltersEnabled() const
+{
+#if USE(CORE_IMAGE)
+    return settings().acceleratedFiltersEnabled();
+#else
+    return false;
+#endif
+}
+
 bool Page::shouldDisableCorsForRequestTo(const URL& url) const
 {
     return WTF::anyOf(m_corsDisablingPatterns, [&] (const auto& pattern) {

@@ -23,6 +23,7 @@
 #pragma once
 
 #include "DestinationColorSpace.h"
+#include "FilterEffectApplier.h"
 #include "FilterFunction.h"
 #include "FilterImageVector.h"
 
@@ -33,7 +34,6 @@ class TextStream;
 namespace WebCore {
 
 class Filter;
-class FilterEffectApplier;
 class FilterEffectGeometry;
 class FilterResults;
 
@@ -70,7 +70,10 @@ protected:
     
     void correctPremultipliedInputs(const FilterImageVector& inputs) const;
 
-    virtual std::unique_ptr<FilterEffectApplier> createApplier(const Filter&) const = 0;
+    std::unique_ptr<FilterEffectApplier> createApplier(const Filter&) const;
+
+    virtual std::unique_ptr<FilterEffectApplier> createAcceleratedApplier() const { return nullptr; }
+    virtual std::unique_ptr<FilterEffectApplier> createSoftwareApplier() const = 0;
 
     RefPtr<FilterImage> apply(const Filter&, FilterImage& input, FilterResults&) override;
 

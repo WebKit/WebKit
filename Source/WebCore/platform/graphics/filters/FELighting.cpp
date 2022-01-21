@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2010 University of Szeged
  * Copyright (C) 2010 Zoltan Herczeg
- * Copyright (C) 2018-2021 Apple Inc.  All rights reserved.
+ * Copyright (C) 2018-2022 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -87,7 +87,7 @@ FloatRect FELighting::calculateImageRect(const Filter& filter, const FilterImage
     return filter.maxEffectRect(primitiveSubregion);
 }
 
-std::unique_ptr<FilterEffectApplier> FELighting::createApplier(const Filter&) const
+std::unique_ptr<FilterEffectApplier> FELighting::createSoftwareApplier() const
 {
     return FilterEffectApplier::create<FELightingSoftwareApplier>(*this);
 }

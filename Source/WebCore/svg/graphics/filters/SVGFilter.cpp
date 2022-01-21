@@ -48,10 +48,9 @@ RefPtr<SVGFilter> SVGFilter::create(SVGFilterElement& filterElement, SVGFilterBu
     ASSERT(!expression.isEmpty());
     filter->setExpression(WTFMove(expression));
 
-#if USE(CORE_IMAGE)
-    if (!filter->supportsCoreImageRendering())
+    if (renderingMode == RenderingMode::Accelerated && !filter->supportsAcceleratedRendering())
         filter->setRenderingMode(RenderingMode::Unaccelerated);
-#endif
+
     return filter;
 }
 
@@ -80,21 +79,19 @@ FloatSize SVGFilter::resolvedSize(const FloatSize& size) const
     return m_primitiveUnits == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX ? size * m_targetBoundingBox.size() : size;
 }
 
-#if USE(CORE_IMAGE)
-bool SVGFilter::supportsCoreImageRendering() const
+bool SVGFilter::supportsAcceleratedRendering() const
 {
     if (renderingMode() == RenderingMode::Unaccelerated)
         return false;
 
     ASSERT(!m_expression.isEmpty());
     for (auto& term : m_expression) {
-        if (!term.effect->supportsCoreImageRendering())
+        if (!term.effect->supportsAcceleratedRendering())
             return false;
     }
 
     return true;
 }
-#endif
 
 FilterEffectVector SVGFilter::effectsOfType(FilterFunction::Type filterType) const
 {

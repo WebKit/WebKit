@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2010 University of Szeged
  * Copyright (C) 2010 Zoltan Herczeg
- * Copyright (C) 2021 Apple Inc.  All rights reserved.
+ * Copyright (C) 2021-2022 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -65,7 +65,7 @@ protected:
 
     FloatRect calculateImageRect(const Filter&, const FilterImageVector& inputs, const FloatRect& primitiveSubregion) const override;
 
-    std::unique_ptr<FilterEffectApplier> createApplier(const Filter&) const override;
+    std::unique_ptr<FilterEffectApplier> createSoftwareApplier() const override;
 
 #if CPU(ARM_NEON) && CPU(ARM_TRADITIONAL) && COMPILER(GCC_COMPATIBLE)
     static int getPowerCoefficients(float exponent);

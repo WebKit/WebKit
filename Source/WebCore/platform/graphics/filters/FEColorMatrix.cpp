@@ -3,7 +3,7 @@
  * Copyright (C) 2004, 2005 Rob Buis <buis@kde.org>
  * Copyright (C) 2005 Eric Seidel <eric@webkit.org>
  * Copyright (C) 2009 Dirk Schulze <krit@webkit.org>
- * Copyright (C) 2021 Apple Inc.  All rights reserved.
+ * Copyright (C) 2021-2022 Apple Inc.  All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -98,26 +98,31 @@ Vector<float> FEColorMatrix::normalizedFloats(const Vector<float>& values)
     return normalizedValues;
 }
 
-#if USE(CORE_IMAGE)
-bool FEColorMatrix::supportsCoreImageRendering() const
-{
-    return FEColorMatrixCoreImageApplier::supportsCoreImageRendering(*this);
-}
-#endif
-
 bool FEColorMatrix::resultIsAlphaImage(const FilterImageVector&) const
 {
     return m_type == FECOLORMATRIX_TYPE_LUMINANCETOALPHA;
 }
 
-std::unique_ptr<FilterEffectApplier> FEColorMatrix::createApplier(const Filter& filter) const
+bool FEColorMatrix::supportsAcceleratedRendering() const
 {
 #if USE(CORE_IMAGE)
-    if (filter.renderingMode() == RenderingMode::Accelerated)
-        return FilterEffectApplier::create<FEColorMatrixCoreImageApplier>(*this);
+    return FEColorMatrixCoreImageApplier::supportsCoreImageRendering(*this);
 #else
-    UNUSED_PARAM(filter);
+    return false;
 #endif
+}
+
+std::unique_ptr<FilterEffectApplier> FEColorMatrix::createAcceleratedApplier() const
+{
+#if USE(CORE_IMAGE)
+    return FilterEffectApplier::create<FEColorMatrixCoreImageApplier>(*this);
+#else
+    return nullptr;
+#endif
+}
+
+std::unique_ptr<FilterEffectApplier> FEColorMatrix::createSoftwareApplier() const
+{
     return FilterEffectApplier::create<FEColorMatrixSoftwareApplier>(*this);
 }
 

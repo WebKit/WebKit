@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2009 Dirk Schulze <krit@webkit.org>
- * Copyright (C) 2021 Apple Inc.  All rights reserved.
+ * Copyright (C) 2021-2022 Apple Inc.  All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -41,15 +41,26 @@ SourceGraphic::SourceGraphic()
 {
 }
 
-std::unique_ptr<FilterEffectApplier> SourceGraphic::createApplier(const Filter& filter) const
+bool SourceGraphic::supportsAcceleratedRendering() const
 {
 #if USE(CORE_IMAGE)
-    // FIXME: return SourceGraphicCoreImageApplier.
-    if (filter.renderingMode() == RenderingMode::Accelerated)
-        return FilterEffectApplier::create<SourceGraphicCoreImageApplier>(*this);
+    return true;
 #else
-    UNUSED_PARAM(filter);
+    return false;
 #endif
+}
+
+std::unique_ptr<FilterEffectApplier> SourceGraphic::createAcceleratedApplier() const
+{
+#if USE(CORE_IMAGE)
+    return FilterEffectApplier::create<SourceGraphicCoreImageApplier>(*this);
+#else
+    return nullptr;
+#endif
+}
+
+std::unique_ptr<FilterEffectApplier> SourceGraphic::createSoftwareApplier() const
+{
     return FilterEffectApplier::create<SourceGraphicSoftwareApplier>(*this);
 }
 
