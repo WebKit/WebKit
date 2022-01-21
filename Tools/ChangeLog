@@ -1,3 +1,13 @@
+2022-01-19  Jonathan Bedard  <jbedard@apple.com>
+
+        [EWS] Use token when processing hook
+        https://bugs.webkit.org/show_bug.cgi?id=235383
+        <rdar://problem/87791577>
+
+        Reviewed by Aakash Jain.
+
+        * CISupport/ews-build/master.cfg:
+
 2022-01-20  Jonathan Bedard  <jbedard@apple.com>
 
         [EWS] ConfigureBuild should display PR information instead of ValidateChange
