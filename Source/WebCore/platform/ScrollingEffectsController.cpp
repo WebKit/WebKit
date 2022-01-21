@@ -522,6 +522,20 @@ ScrollExtents ScrollingEffectsController::scrollExtentsForAnimation(ScrollAnimat
     return m_client.scrollExtents();
 }
 
+FloatSize ScrollingEffectsController::overscrollAmount(ScrollAnimation&)
+{
+#if HAVE(RUBBER_BANDING)
+    return m_client.stretchAmount();
+#else
+    return { };
+#endif
+}
+
+FloatPoint ScrollingEffectsController::scrollOffset(ScrollAnimation&)
+{
+    return m_client.scrollOffset();
+}
+
 void ScrollingEffectsController::startDeferringWheelEventTestCompletion(WheelEventTestMonitor::DeferReason reason)
 {
     m_client.deferWheelEventTestCompletionForReason(reinterpret_cast<WheelEventTestMonitor::ScrollableAreaIdentifier>(this), reason);
