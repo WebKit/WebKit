@@ -33,6 +33,8 @@ namespace JSC {
 class CallFrame;
 }
 
+using JSC::MessageType;
+
 namespace WebCore {
 
 class WorkerConsoleClient final : public JSC::ConsoleClient {

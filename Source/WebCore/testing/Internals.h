@@ -1010,7 +1010,15 @@ public:
     using PlaybackControlsPurpose = MediaElementSession::PlaybackControlsPurpose;
     RefPtr<HTMLMediaElement> bestMediaElementForRemoteControls(PlaybackControlsPurpose);
 
-    using MediaSessionState = PlatformMediaSession::State;
+    // Same values as PlatformMediaSession::State, but re-declared to avoid redefinitions when linking
+    // directly with libWebCore (e.g. with non-unified builds)
+    enum MediaSessionState {
+        Idle,
+        Autoplaying,
+        Playing,
+        Paused,
+        Interrupted,
+    };
     MediaSessionState mediaSessionState(HTMLMediaElement&);
 
     size_t mediaElementCount() const;

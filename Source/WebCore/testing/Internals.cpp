@@ -4540,7 +4540,7 @@ RefPtr<HTMLMediaElement> Internals::bestMediaElementForRemoteControls(Internals:
 
 Internals::MediaSessionState Internals::mediaSessionState(HTMLMediaElement& element)
 {
-    return element.mediaSession().state();
+    return static_cast<Internals::MediaSessionState>(element.mediaSession().state());
 }
 #endif
 

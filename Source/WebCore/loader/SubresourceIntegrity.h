@@ -25,13 +25,14 @@
 
 #pragma once
 
+#include "ResourceCryptographicDigest.h"
+
 #include <optional>
 #include <wtf/Forward.h>
 
 namespace WebCore {
 
 class CachedResource;
-struct EncodedResourceCryptographicDigest;
 
 bool matchIntegrityMetadata(const CachedResource&, const String& integrityMetadata);
 String integrityMismatchDescription(const CachedResource&, const String& integrityMetadata);

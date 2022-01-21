@@ -24,6 +24,7 @@ set(WebKitTestRunner_LIBRARIES
 )
 set(WebKitTestRunner_FRAMEWORKS
     JavaScriptCore
+    WebCore
     WebCoreTestSupport
 )
 
@@ -103,6 +104,7 @@ list(APPEND WebKitTestRunnerInjectedBundle_INCLUDE_DIRECTORIES
 
 set(WebKitTestRunnerInjectedBundle_LIBRARIES
     TestRunnerShared
+    WebKit::WebCore
     WebKit::WebCoreTestSupport
     WebKit::WebKit
 )

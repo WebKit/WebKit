@@ -27,6 +27,7 @@
 
 #if ENABLE(WEBASSEMBLY)
 
+#include "CallLinkInfo.h"
 #include "JSDestructibleObject.h"
 #include "JSObject.h"
 #include "WasmMemoryMode.h"

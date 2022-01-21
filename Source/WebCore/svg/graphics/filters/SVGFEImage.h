@@ -25,6 +25,7 @@
 
 #include "FilterEffect.h"
 #include "Image.h"
+#include "ImageBuffer.h"
 #include "SVGPreserveAspectRatioValue.h"
 
 namespace WebCore {

@@ -1,3 +1,13 @@
+2022-01-21  Lauro Moura  <lmoura@igalia.com>
+
+        [CMake] Cannot link libTestRunnerInjectedBundle.so in non unified build
+        https://bugs.webkit.org/show_bug.cgi?id=226088
+
+        Reviewed by Adrian Perez de Castro.
+
+        * WebKitTestRunner/CMakeLists.txt: Pull WebCore as dependency for
+        WTR/WTRInjectedBundle
+
 2022-01-20  Lauro Moura  <lmoura@igalia.com>
 
         [GTK] API test /webkit/WebKitWebsiteData/cache is flaky

@@ -30,6 +30,7 @@
 
 #include "GtkVersioning.h"
 #include <glib.h>
+#include <gtk/gtk.h>
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/text/WTFString.h>
 
