@@ -1,3 +1,13 @@
+2022-01-21  Simon Fraser  <simon.fraser@apple.com>
+
+        Unreviewed test resource change.
+
+        Change this alpha PNG image to use a simple color with alpha, rather than a gradient,
+        so that when the image is stretched it doesn't result in small pixel diffs in test
+        results.
+
+        * compositing/resources/simple_image.png:
+
 2022-01-21  Robert Jenner  <Jenner@apple.com>
 
         REGRESSION (r286944?): web-platform-tests/html/semantics/text-level-semantics/the-a-element/a-download-click tests have become flaky failures
