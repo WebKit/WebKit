@@ -1609,12 +1609,9 @@ inline void AXCoreObject::detachWrapper(AccessibilityDetachmentType detachmentTy
 
 inline Vector<AXID> AXCoreObject::childrenIDs(bool updateChildrenIfNecessary)
 {
-    auto& kids = children(updateChildrenIfNecessary);
-    Vector<AXID> childrenIDs;
-    childrenIDs.reserveCapacity(kids.size());
-    for (const auto& child : kids)
-        childrenIDs.append(child->objectID());
-    return childrenIDs;
+    return children(updateChildrenIfNecessary).map([] (auto& axObject) -> AXID {
+        return axObject->objectID();
+    });
 }
 
 namespace Accessibility {
