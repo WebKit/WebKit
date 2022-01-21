@@ -1,3 +1,37 @@
+2022-01-21  Zan Dobersek  <zdobersek@igalia.com>
+
+        [RISCV64] Add MacroAssemblerRISCV64 operations for bitfield, zero-counting, byte-swapping operations
+        https://bugs.webkit.org/show_bug.cgi?id=235439
+
+        Reviewed by Yusuke Suzuki.
+
+        Add MacroAssemblerRISCV64 implementations that cover unsigned bitfield,
+        leading-zero, trailing-zero and byte-swapping operations. All these
+        operations are not supported in base RISC-V specifications. There are
+        extensions currently being ratified that will introduce more useful
+        instructions, but until then more verbose implementations will have
+        to be used.
+
+        For the unsigned bitfield operations, the desired result is achieved
+        through shifting and masking. Scratch registers are only needed in
+        case of the mask immediate being too large, but that will be properly
+        handled by the higher-level JITs. For other operations covered in this
+        patch  we have to use scratch registers and custom loops to implement
+        the necessary behavior.
+
+        * assembler/MacroAssemblerRISCV64.h:
+        (JSC::MacroAssemblerRISCV64::extractUnsignedBitfield32):
+        (JSC::MacroAssemblerRISCV64::extractUnsignedBitfield64):
+        (JSC::MacroAssemblerRISCV64::insertUnsignedBitfieldInZero32):
+        (JSC::MacroAssemblerRISCV64::insertUnsignedBitfieldInZero64):
+        (JSC::MacroAssemblerRISCV64::countLeadingZeros32):
+        (JSC::MacroAssemblerRISCV64::countLeadingZeros64):
+        (JSC::MacroAssemblerRISCV64::countTrailingZeros32):
+        (JSC::MacroAssemblerRISCV64::countTrailingZeros64):
+        (JSC::MacroAssemblerRISCV64::byteSwap16):
+        (JSC::MacroAssemblerRISCV64::byteSwap32):
+        (JSC::MacroAssemblerRISCV64::byteSwap64):
+
 2022-01-21  Alex Christensen  <achristensen@webkit.org>
 
         Fix build when using Visual Studio 2022

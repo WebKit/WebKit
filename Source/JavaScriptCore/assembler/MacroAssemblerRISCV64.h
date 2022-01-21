@@ -471,19 +471,163 @@ public:
         m_assembler.mulInsn(dest, lhs, rhs);
     }
 
-    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(extractUnsignedBitfield32);
-    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(extractUnsignedBitfield64);
-    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(insertUnsignedBitfieldInZero32);
-    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(insertUnsignedBitfieldInZero64);
+    void extractUnsignedBitfield32(RegisterID src, TrustedImm32 lsb, TrustedImm32 width, RegisterID dest)
+    {
+        m_assembler.srliInsn(dest, src, std::clamp<int32_t>(lsb.m_value, 0, 31));
+        if (!Imm::isValid<Imm::IType>(width.m_value)) {
+            auto temp = temps<Data>();
+            loadImmediate(width, temp.data());
+            m_assembler.andInsn(dest, dest, temp.data());
+        } else
+            m_assembler.andiInsn(dest, dest, Imm::I(width.m_value));
+    }
 
-    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(countLeadingZeros32);
-    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(countLeadingZeros64);
-    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(countTrailingZeros32);
-    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(countTrailingZeros64);
+    void extractUnsignedBitfield64(RegisterID src, TrustedImm32 lsb, TrustedImm32 width, RegisterID dest)
+    {
+        m_assembler.srliInsn(dest, src, std::clamp<int32_t>(lsb.m_value, 0, 63));
+        if (!Imm::isValid<Imm::IType>(width.m_value)) {
+            auto temp = temps<Data>();
+            loadImmediate(width, temp.data());
+            m_assembler.andInsn(dest, dest, temp.data());
+        } else
+            m_assembler.andiInsn(dest, dest, Imm::I(width.m_value));
+    }
 
-    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(byteSwap16);
-    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(byteSwap32);
-    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(byteSwap64);
+    void insertUnsignedBitfieldInZero32(RegisterID src, TrustedImm32 lsb, TrustedImm32 width, RegisterID dest)
+    {
+        if (!Imm::isValid<Imm::IType>(width.m_value)) {
+            auto temp = temps<Data>();
+            loadImmediate(width, temp.data());
+            m_assembler.andInsn(dest, src, temp.data());
+        } else
+            m_assembler.andiInsn(dest, src, Imm::I(width.m_value));
+        m_assembler.slliInsn(dest, dest, std::clamp<int32_t>(lsb.m_value, 0, 63));
+    }
+
+    void insertUnsignedBitfieldInZero64(RegisterID src, TrustedImm32 lsb, TrustedImm32 width, RegisterID dest)
+    {
+        if (!Imm::isValid<Imm::IType>(width.m_value)) {
+            auto temp = temps<Data>();
+            loadImmediate(width, temp.data());
+            m_assembler.andInsn(dest, src, temp.data());
+        } else
+            m_assembler.andiInsn(dest, src, Imm::I(width.m_value));
+        m_assembler.slliInsn(dest, dest, std::clamp<int32_t>(lsb.m_value, 0, 63));
+    }
+
+    void countLeadingZeros32(RegisterID src, RegisterID dest)
+    {
+        auto temp = temps<Data>();
+        m_assembler.zeroExtend<32>(temp.data(), src);
+        m_assembler.addiInsn(dest, RISCV64Registers::zero, Imm::I<32>());
+
+        JumpList zero(makeBranch(Equal, temp.data(), RISCV64Registers::zero));
+
+        Label loop = label();
+        m_assembler.srliInsn<1>(temp.data(), temp.data());
+        m_assembler.addiInsn(dest, dest, Imm::I<-1>());
+        zero.append(makeBranch(Equal, temp.data(), RISCV64Registers::zero));
+        jump().linkTo(loop, this);
+
+        zero.link(this);
+    }
+
+    void countLeadingZeros64(RegisterID src, RegisterID dest)
+    {
+        auto temp = temps<Data>();
+        m_assembler.addiInsn(temp.data(), src, Imm::I<0>());
+        m_assembler.addiInsn(dest, RISCV64Registers::zero, Imm::I<64>());
+
+        JumpList zero(makeBranch(Equal, temp.data(), RISCV64Registers::zero));
+
+        Label loop = label();
+        m_assembler.srliInsn<1>(temp.data(), temp.data());
+        m_assembler.addiInsn(dest, dest, Imm::I<-1>());
+        zero.append(makeBranch(Equal, temp.data(), RISCV64Registers::zero));
+        jump().linkTo(loop, this);
+
+        zero.link(this);
+    }
+
+    void countTrailingZeros32(RegisterID src, RegisterID dest)
+    {
+        auto temp = temps<Data>();
+        m_assembler.addiInsn(dest, RISCV64Registers::zero, Imm::I<32>());
+        m_assembler.zeroExtend<32>(temp.data(), src);
+
+        JumpList zero(makeBranch(Equal, temp.data(), RISCV64Registers::zero));
+
+        Label loop = label();
+        m_assembler.slliInsn<1>(temp.data(), temp.data());
+        m_assembler.addiInsn(dest, dest, Imm::I<-1>());
+        zero.append(makeBranch(Equal, temp.data(), RISCV64Registers::zero));
+        jump().linkTo(loop, this);
+
+        zero.link(this);
+    }
+
+    void countTrailingZeros64(RegisterID src, RegisterID dest)
+    {
+        auto temp = temps<Data>();
+        m_assembler.addiInsn(dest, RISCV64Registers::zero, Imm::I<64>());
+        m_assembler.addiInsn(temp.data(), src, Imm::I<0>());
+
+        JumpList zero(makeBranch(Equal, temp.data(), RISCV64Registers::zero));
+
+        Label loop = label();
+        m_assembler.slliInsn<1>(temp.data(), temp.data());
+        m_assembler.addiInsn(dest, dest, Imm::I<-1>());
+        zero.append(makeBranch(Equal, temp.data(), RISCV64Registers::zero));
+        jump().linkTo(loop, this);
+
+        zero.link(this);
+    }
+
+    void byteSwap16(RegisterID reg)
+    {
+        auto temp = temps<Data>();
+        m_assembler.andiInsn(temp.data(), reg, Imm::I<0xff>());
+        m_assembler.slliInsn<8>(temp.data(), temp.data());
+        m_assembler.slliInsn<48>(reg, reg);
+        m_assembler.srliInsn<56>(reg, reg);
+        m_assembler.orInsn(reg, reg, temp.data());
+    }
+
+    void byteSwap32(RegisterID reg)
+    {
+        auto temp = temps<Data, Memory>();
+        m_assembler.andiInsn(temp.data(), reg, Imm::I<0xff>());
+        m_assembler.slliInsn<8>(temp.data(), temp.data());
+        m_assembler.srliInsn<8>(reg, reg);
+
+        for (unsigned i = 0; i < 2; ++i) {
+            m_assembler.andiInsn(temp.memory(), reg, Imm::I<0xff>());
+            m_assembler.orInsn(temp.data(), temp.data(), temp.memory());
+            m_assembler.slliInsn<8>(temp.data(), temp.data());
+            m_assembler.srliInsn<8>(reg, reg);
+        }
+
+        m_assembler.andiInsn(temp.memory(), reg, Imm::I<0xff>());
+        m_assembler.orInsn(reg, temp.data(), temp.memory());
+    }
+
+    void byteSwap64(RegisterID reg)
+    {
+        auto temp = temps<Data, Memory>();
+        m_assembler.andiInsn(temp.data(), reg, Imm::I<0xff>());
+        m_assembler.slliInsn<8>(temp.data(), temp.data());
+        m_assembler.srliInsn<8>(reg, reg);
+
+        for (unsigned i = 0; i < 6; ++i) {
+            m_assembler.andiInsn(temp.memory(), reg, Imm::I<0xff>());
+            m_assembler.orInsn(temp.data(), temp.data(), temp.memory());
+            m_assembler.slliInsn<8>(temp.data(), temp.data());
+            m_assembler.srliInsn<8>(reg, reg);
+        }
+
+        m_assembler.andiInsn(temp.memory(), reg, Imm::I<0xff>());
+        m_assembler.orInsn(reg, temp.data(), temp.memory());
+    }
 
     void lshift32(RegisterID shiftAmount, RegisterID dest)
     {
