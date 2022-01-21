@@ -119,10 +119,10 @@ void NfcConnection::didDetectTags(NSArray *tags)
         return;
     }
 
-    // FIXME(203234): Tell users to switch to a different tag if the tag is not of type NFTagTypeGeneric4A
-    // or can't speak U2F/FIDO2.
+    // FIXME(203234): Tell users to switch to a different tag if the tag is not supported or can't speak U2F/FIDO2.
     for (NFTag *tag : tags) {
-        if (tag.type != NFTagTypeGeneric4A || ![m_session connectTag:tag])
+        // FIDO tag is ISO-DEP which can be Tag4A, Tag4B, and DESFIRE (Tag4A).
+        if ((tag.type != NFTagTypeGeneric4A && tag.type != NFTagTypeGeneric4B && tag.type != NFTagTypeMiFareDESFire) || ![m_session connectTag:tag])
             continue;
 
         if (!trySelectFidoApplet(m_session.get())) {

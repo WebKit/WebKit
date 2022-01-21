@@ -1,3 +1,20 @@
+2022-01-20  J Pascoe  <j_pascoe@apple.com>
+
+        [WebAuthn] Support all valid FIDO NFC tag types
+        https://bugs.webkit.org/show_bug.cgi?id=234616
+        rdar://85871173
+
+        Reviewed by Darin Adler.
+
+        This patch modifies a check when looking for FIDO nfc tags
+        to support all valid FIDO tag types.
+
+        Tested using physical NFC tags provided for this bug.
+
+        * Platform/spi/Cocoa/NearFieldSPI.h:
+        * UIProcess/WebAuthentication/Cocoa/NfcConnection.mm:
+        (WebKit::NfcConnection::didDetectTags):
+
 2022-01-20  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         Implement WebGL GPU buffer texture upload path for Cocoa getUserMedia camera streams
