@@ -1,3 +1,19 @@
+2022-01-20  Jonathan Bedard  <jbedard@apple.com>
+
+        [EWS] ConfigureBuild should display PR information instead of ValidateChange
+        https://bugs.webkit.org/show_bug.cgi?id=235377
+        <rdar://problem/87853245>
+
+        Reviewed by Aakash Jain.
+
+        * CISupport/ews-build/steps.py:
+        (GitHub):
+        (GitHub.commit_url): Convert a sha and repository to clickable commit url.
+        (ConfigureBuild._addToLog): Added.
+        (ConfigureBuild.add_pr_details): Print link to pull request, commit being
+        tested and author of change.
+        (ValidateChange.validate_github): Move links to ConfigureBuild.
+
 2022-01-21  Jonathan Bedard  <jbedard@apple.com>
 
         [webkitscmpy] Stop killing finished processes

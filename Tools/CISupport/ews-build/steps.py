@@ -90,6 +90,16 @@ class GitHub(object):
         return '{}/pull/{}'.format(repository_url, pr_number)
 
     @classmethod
+    def commit_url(cls, sha, repository_url=None):
+        if not repository_url:
+            repository_url = '{}{}'.format(GITHUB_URL, GITHUB_PROJECTS[0])
+        if repository_url not in GitHub.repository_urls():
+            return ''
+        if not sha:
+            return ''
+        return '{}/commit/{}'.format(repository_url, sha)
+
+    @classmethod
     def api_url(cls, repository_url=None):
         if not repository_url:
             repository_url = '{}{}'.format(GITHUB_URL, GITHUB_PROJECTS[0])
@@ -262,6 +272,14 @@ class ConfigureBuild(buildstep.BuildStep):
         self.remotes = remotes
         self.additionalArguments = additionalArguments
 
+    @defer.inlineCallbacks
+    def _addToLog(self, logName, message):
+        try:
+            log = self.getLog(logName)
+        except KeyError:
+            log = yield self.addLog(logName)
+        log.addStdout(message)
+
     def start(self):
         if self.platform and self.platform != '*':
             self.setProperty('platform', self.platform, 'config.json')
@@ -294,9 +312,27 @@ class ConfigureBuild(buildstep.BuildStep):
             self.addURL('Patch {}'.format(patch_id), Bugzilla.patch_url(patch_id))
 
     def add_pr_details(self):
+        repository_url = self.getProperty('repository', '')
         pr_number = self.getProperty('github.number')
-        if pr_number:
-            self.addURL('Pull request {}'.format(pr_number), GitHub.pr_url(pr_number=pr_number, repository_url=self.getProperty('repository')) or '')
+        title = self.getProperty('github.title', '')
+        owners = self.getProperty('owners', [])
+        revision = self.getProperty('revision')
+
+        if pr_number and title:
+            self.addURL('PR {}: {}'.format(pr_number, title), GitHub.pr_url(pr_number, repository_url))
+        if pr_number and revision:
+            self.addURL('Hash: {}'.format(revision[:HASH_LENGTH_TO_DISPLAY]), GitHub.commit_url(revision, repository_url))
+        if owners:
+            contributors, errors = Contributors.load(use_network=False)
+            for error in errors:
+                print(error)
+                self._addToLog('stdio', error)
+            github_username = owners[0]
+            contributor = contributors.get(github_username, {})
+            display_name = contributor.get('email', github_username)
+            if display_name != github_username:
+                display_name = '{} ({})'.format(display_name, github_username)
+            self.addURL('PR by: {}'.format(display_name), '{}{}'.format(GITHUB_URL, github_username))
 
 
 class CheckOutSource(git.Git):
@@ -1180,20 +1216,6 @@ class ValidateChange(buildstep.BuildStep, BugzillaMixin, GitHubMixin):
             return False
 
         repository_url = self.getProperty('repository', '')
-        title = self.getProperty('github.title', '')
-        owners = self.getProperty('owners', [])
-
-        if self.addURLs and title and repository_url:
-            self.addURL('[PR {}] {}'.format(pr_number, title), GitHub.pr_url(pr_number, repository_url))
-        if self.addURLs and owners:
-            contributors, errors = Contributors.load(use_network=False)
-            for error in errors:
-                print(error)
-                self._addToLog('stdio', error)
-            github_username = owners[0]
-            contributor = contributors.get(github_username, {})
-            display_name = contributor.get('email', github_username)
-            self.addURL('PR by: {}'.format(display_name), '{}{}'.format(GITHUB_URL, github_username))
 
         pr_closed = self._is_pr_closed(pr_number, repository_url=repository_url) if self.verifyBugClosed else 0
         if pr_closed == 1:
