@@ -1,3 +1,15 @@
+2022-01-21  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        Fix AppleWin build with newer MSVC
+        https://bugs.webkit.org/show_bug.cgi?id=235431
+
+        Reviewed by Alex Christensen.
+
+        * WebDownloadCFNet.cpp:
+        (WebDownload::cancelForResume):
+        * WebKitQuartzCoreAdditions/CAD3DRenderer.cpp:
+        (WKQCA::CAD3DRenderer::resetD3DDevice):
+
 2022-01-15  Sam Weinig  <weinig@apple.com>
 
         CSS Gradients: interpolation mode should default to OKLab if any non-legacy color syntax colors are used in the stops
