@@ -10,6 +10,7 @@ compositing/images/positioned-image-content-rect.html
 compositing/masks/compositing-clip-path-and-mask.html
 compositing/overlap-blending/children-opacity-huge.html
 compositing/overlap-blending/children-opacity-no-overlap.html
+compositing/overlap-blending/nested-overlap.html [ Pass ]
 compositing/patterns/direct-pattern-compositing-add-text.html
 compositing/patterns/direct-pattern-compositing-contain.html
 compositing/patterns/direct-pattern-compositing-cover.html
@@ -50,14 +51,18 @@ css3/masking/mask-repeat-space-padding.html
 css3/masking/mask-svg-no-fragmentId-tiled.html
 css3/masking/mask-svg-no-fragmentId.html
 css3/masking/reference-clip-path-objectBoundingBox-buffer-clip.html
+editing/async-clipboard/clipboard-item-get-type-basic.html
 editing/async-clipboard/clipboard-read-basic.html
 editing/async-clipboard/clipboard-read-text-from-platform.html
 editing/async-clipboard/clipboard-read-while-pasting.html
 editing/async-clipboard/clipboard-write-items-twice.html [ Pass Timeout ]
 editing/input/composition-underline-color.html
 editing/pasteboard/4076267-3.html
+editing/pasteboard/4922709.html
 editing/pasteboard/5075944.html
 editing/pasteboard/5665299.html
+editing/pasteboard/copy-paste-across-shadow-boundaries-3.html
+editing/pasteboard/copy-paste-across-shadow-boundaries-with-style-2.html
 editing/pasteboard/dom-paste/dom-paste-confirmation.html
 editing/pasteboard/dom-paste/dom-paste-consecutive-confirmations.html
 editing/pasteboard/dom-paste/dom-paste-requires-user-gesture.html
@@ -65,16 +70,19 @@ editing/pasteboard/paste-and-sanitize.html
 editing/pasteboard/paste-dark-mode-color-filtered.html
 editing/pasteboard/smart-paste-paragraph-002.html
 editing/pasteboard/smart-paste-paragraph-004.html
-editing/selection/ios/change-selection-by-tapping-with-existing-selection.html [ Pass Fail ]
-editing/spelling/editing-word-with-marker-2.html [ Crash ]
+editing/selection/ios/change-selection-by-tapping-with-existing-selection.html [ Pass Failure ]
+editing/spelling/editing-word-with-marker-2.html [ Crash Pass ]
 editing/spelling/toggle-spellchecking.html
 fast/attachment/attachment-border-should-stay-inside-attachment.html
 fast/backgrounds/background-opaque-clipped-gradients.html
 fast/backgrounds/generated-bck-image-with-small-relative-size.html
+fast/backgrounds/gradient-background-shadow.html
 fast/backgrounds/hidpi-background-image-contain-cover-scale-needs-more-precision.html
 fast/backgrounds/scaled-gradient-background.html
 fast/borders/border-image-fill-no-intrinsic-size.html
+fast/borders/border-image-repeat-stretch.html
 fast/borders/border-radius-on-html.html
+fast/borders/hidpi-border-radius-with-subpixel-margin-not-renderable.html
 fast/box-shadow/inset-box-shadow.html
 fast/box-shadow/inset-spread-box-shadow-split-inline.html
 fast/canvas/canvas-composite-canvas.html
@@ -108,6 +116,7 @@ fast/forms/auto-fill-button/input-auto-fill-button.html [ Pass ]
 fast/forms/autofocus-readonly-attribute.html
 fast/forms/fieldset/fieldset-grid.html
 fast/forms/input-text-autofocus.html
+fast/gradients/alpha-premultiplied.html
 fast/gradients/conic-center-outside-box.html
 fast/gradients/conic-extended-stops.html
 fast/gradients/conic-from-angle.html
@@ -131,8 +140,11 @@ fast/layers/hidpi-nested-layers-with-subpixel-accumulation.html
 fast/layers/hidpi-transform-on-child-content-is-mispositioned.html
 fast/layers/overflow-scroll-transform-border-radius.html
 fast/masking/clip-path-inset-large-radii.html
+fast/mediastream/getUserMedia-to-canvas-1.html [ Crash ]
+fast/mediastream/getUserMedia-to-canvas-2.html [ Crash ]
 fast/mediastream/getUserMedia-to-canvas.html [ Crash ]
 fast/multicol/columns-on-body.html
+fast/multicol/fixed-stack.html [ Pass ]
 fast/overflow/line-clamp-with-text-shadow.html
 fast/repaint/placeholder-after-caps-lock-hidden.html
 fast/replaced/border-radius-clip.html [ Pass ]
@@ -179,12 +191,13 @@ fast/text/international/synthesized-italic-vertical.html
 fast/text/multiple-codeunit-vertical-upright-2.html
 fast/text/multiple-codeunit-vertical-upright.html
 fast/text/negative-underline-position.html
+fast/text/simple-line-wordspacing.html [ Pass ]
 fast/text/strikethrough-int.html
 fast/text/user-installed-fonts/shadow-postscript-family.html [ Pass ]
 fast/transforms/skew-x-135deg-with-gradient.html
 fast/transforms/skew-y-135deg-with-gradient.html
 http/tests/app-privacy-report/user-attribution-post-request.html
-http/tests/appcache/fail-on-update-2.html [ Pass Fail ]
+http/tests/appcache/fail-on-update-2.html [ Pass Failure ]
 http/tests/canvas/color-fonts/fill-color-shadow-ctm-sbix.html
 http/tests/canvas/color-fonts/fill-color-shadow-sbix.html
 http/tests/loading/hidpi-preload-picture-sizes.html
@@ -201,6 +214,7 @@ http/tests/svg/svg-fragment-url-special-cases.html
 http/wpt/cross-origin-opener-policy/header-parsing-with-report-to.https.html [ Crash Pass ]
 http/wpt/css/css-highlight-api/highlight-text-decorations.html
 http/wpt/fetch/fetch-in-pagehide.html
+http/wpt/html/semantics/text-level-semantics/the-a-element/a-download-click-404.html
 http/wpt/push-api/pushEvent.any.serviceworker.html
 http/wpt/push-api/pushManager.any.html
 ietestcenter/css3/bordersbackgrounds/border-radius-applies-to-009.htm
@@ -217,6 +231,7 @@ ietestcenter/css3/multicolumn/column-width-applies-to-004.htm
 ietestcenter/css3/multicolumn/column-width-applies-to-013.htm
 ietestcenter/css3/multicolumn/column-width-applies-to-014.htm
 imported/blink/compositing/child-transform-layer-rounding.html
+imported/blink/compositing/overflow/handle-non-ancestor-clip-parent.html
 imported/blink/fast/gradients/large-horizontal-gradient.html
 imported/blink/fast/gradients/large-vertical-gradient.html
 imported/blink/fast/multicol/dynamic/insert-spanner-after-content.html
@@ -240,6 +255,9 @@ imported/mozilla/svg/as-image/img-simple-3.html
 imported/mozilla/svg/as-image/img-simple-5.html
 imported/mozilla/svg/as-image/img-simple-7.html
 imported/mozilla/svg/blend-color-burn.svg
+imported/mozilla/svg/blend-exclusion.svg
+imported/mozilla/svg/blend-hard-light.svg [ Pass ]
+imported/mozilla/svg/blend-overlay.svg
 imported/mozilla/svg/blend-saturation.svg
 imported/mozilla/svg/conditions-08.svg [ Crash ]
 imported/mozilla/svg/dynamic-pattern-01.svg [ Crash ]
@@ -258,6 +276,7 @@ imported/mozilla/svg/objectBoundingBox-and-pattern-01c.svg [ Crash ]
 imported/mozilla/svg/objectBoundingBox-and-pattern-02.svg [ Crash ]
 imported/mozilla/svg/objectBoundingBox-and-pattern-03.svg [ Crash ]
 imported/mozilla/svg/opacity-and-gradient-02.svg
+imported/mozilla/svg/paint-order-01.svg
 imported/mozilla/svg/path-02.svg
 imported/mozilla/svg/pattern-basic-01.svg [ Crash ]
 imported/mozilla/svg/pattern-live-01a.svg [ Crash ]
@@ -294,6 +313,7 @@ imported/w3c/web-platform-tests/css/css-backgrounds/background-repeat-space-9.ht
 imported/w3c/web-platform-tests/css/css-backgrounds/background-repeat/background-repeat-space.xht
 imported/w3c/web-platform-tests/css/css-backgrounds/background-rounded-image-clip.html
 imported/w3c/web-platform-tests/css/css-backgrounds/background-size-027.html
+imported/w3c/web-platform-tests/css/css-backgrounds/background-size-percentage-root.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-backgrounds/background-size/background-size-cover.xht
 imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/background-size-vector-001.html
 imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/background-size-vector-002.html
@@ -366,6 +386,8 @@ imported/w3c/web-platform-tests/css/css-backgrounds/border-radius-clip-001.html
 imported/w3c/web-platform-tests/css/css-backgrounds/css-box-shadow-001.html
 imported/w3c/web-platform-tests/css/css-backgrounds/hidpi/simple-bg-color.html
 imported/w3c/web-platform-tests/css/css-backgrounds/linear-gradient-currentcolor-first-line.html
+imported/w3c/web-platform-tests/css/css-color/t422-rgba-onscreen-multiple-boxes-c.xht [ Pass ]
+imported/w3c/web-platform-tests/css/css-color/t425-hsla-onscreen-multiple-boxes-c.xht [ Pass ]
 imported/w3c/web-platform-tests/css/css-contain/contain-layout-suppress-baseline-001.html
 imported/w3c/web-platform-tests/css/css-contain/contain-size-block-002.html
 imported/w3c/web-platform-tests/css/css-contain/contain-size-block-004.html
@@ -420,11 +442,14 @@ imported/w3c/web-platform-tests/css/css-grid/grid-items/replaced-element-015.htm
 imported/w3c/web-platform-tests/css/css-grid/layout-algorithm/flex-sizing-rows-indefinite-height.html
 imported/w3c/web-platform-tests/css/css-grid/layout-algorithm/grid-template-flexible-rerun-track-sizing.html
 imported/w3c/web-platform-tests/css/css-images/gradients-with-border.html
+imported/w3c/web-platform-tests/css/css-images/gradients-with-transparent.html
 imported/w3c/web-platform-tests/css/css-images/gradients-with-transparent.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-images/image-orientation/image-orientation-mask-image.html
 imported/w3c/web-platform-tests/css/css-images/image-orientation/image-orientation-mask-image.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-images/multiple-position-color-stop-conic-2.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-images/multiple-position-color-stop-linear.html
 imported/w3c/web-platform-tests/css/css-images/repeating-conic-gradient.html
+imported/w3c/web-platform-tests/css/css-images/tiled-conic-gradients.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-images/tiled-radial-gradients.html
 imported/w3c/web-platform-tests/css/css-masking/clip-path-svg-content/clip-path-content-use-007.svg
 imported/w3c/web-platform-tests/css/css-masking/clip-path-svg-content/clip-path-text-001.svg
@@ -448,6 +473,7 @@ imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-ellipse-005.
 imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-ellipse-006.html
 imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-ellipse-007.html
 imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-ellipse-008.html
+imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-polygon-013.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-svg-text-backdrop-filter.html
 imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-svg-text-font-loading.html
 imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-clip-exclude.html
@@ -529,6 +555,7 @@ imported/w3c/web-platform-tests/css/css-sizing/intrinsic-percent-replaced-dynami
 imported/w3c/web-platform-tests/css/css-sizing/intrinsic-percent-replaced-dynamic-006.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-sizing/intrinsic-percent-replaced-dynamic-009.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-sizing/intrinsic-percent-replaced-dynamic-010.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-sizing/slice-intrinsic-size.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-underline-position-vertical.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-text-decor/text-underline-offset-negative.html
 imported/w3c/web-platform-tests/css/css-text/line-break/line-break-anywhere-and-white-space-003.html
@@ -557,6 +584,7 @@ imported/w3c/web-platform-tests/css/css-text/word-break/word-break-break-all-008
 imported/w3c/web-platform-tests/css/css-text/word-break/word-break-min-content-003.html
 imported/w3c/web-platform-tests/css/css-text/word-break/word-break-min-content-006.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-text/word-break/word-break-normal-my-000.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-transforms/css-skew-002.html
 imported/w3c/web-platform-tests/css/css-transforms/document-styles/svg-document-styles-001.html
 imported/w3c/web-platform-tests/css/css-transforms/document-styles/svg-document-styles-002.html
 imported/w3c/web-platform-tests/css/css-transforms/document-styles/svg-document-styles-003.html
@@ -614,6 +642,53 @@ imported/w3c/web-platform-tests/css/css-transforms/matrix/svg-matrix-016.html [ 
 imported/w3c/web-platform-tests/css/css-transforms/matrix/svg-matrix-017.html [ Crash ]
 imported/w3c/web-platform-tests/css/css-transforms/matrix/svg-matrix-018.html [ Crash ]
 imported/w3c/web-platform-tests/css/css-transforms/matrix/svg-matrix-019.html [ Crash ]
+imported/w3c/web-platform-tests/css/css-transforms/matrix/svg-matrix-020.html [ Crash ]
+imported/w3c/web-platform-tests/css/css-transforms/matrix/svg-matrix-021.html [ Crash ]
+imported/w3c/web-platform-tests/css/css-transforms/matrix/svg-matrix-022.html [ Crash ]
+imported/w3c/web-platform-tests/css/css-transforms/matrix/svg-matrix-023.html [ Crash ]
+imported/w3c/web-platform-tests/css/css-transforms/matrix/svg-matrix-024.html [ Crash ]
+imported/w3c/web-platform-tests/css/css-transforms/matrix/svg-matrix-025.html [ Crash ]
+imported/w3c/web-platform-tests/css/css-transforms/matrix/svg-matrix-026.html [ Crash ]
+imported/w3c/web-platform-tests/css/css-transforms/matrix/svg-matrix-027.html [ Crash ]
+imported/w3c/web-platform-tests/css/css-transforms/matrix/svg-matrix-028.html [ Crash ]
+imported/w3c/web-platform-tests/css/css-transforms/matrix/svg-matrix-029.html [ Crash ]
+imported/w3c/web-platform-tests/css/css-transforms/matrix/svg-matrix-030.html [ Crash ]
+imported/w3c/web-platform-tests/css/css-transforms/matrix/svg-matrix-031.html [ Crash ]
+imported/w3c/web-platform-tests/css/css-transforms/matrix/svg-matrix-032.html [ Crash ]
+imported/w3c/web-platform-tests/css/css-transforms/matrix/svg-matrix-033.html [ Crash ]
+imported/w3c/web-platform-tests/css/css-transforms/matrix/svg-matrix-034.html [ Crash ]
+imported/w3c/web-platform-tests/css/css-transforms/matrix/svg-matrix-035.html [ Crash ]
+imported/w3c/web-platform-tests/css/css-transforms/matrix/svg-matrix-036.html [ Crash ]
+imported/w3c/web-platform-tests/css/css-transforms/matrix/svg-matrix-037.html [ Crash ]
+imported/w3c/web-platform-tests/css/css-transforms/matrix/svg-matrix-038.html [ Crash ]
+imported/w3c/web-platform-tests/css/css-transforms/matrix/svg-matrix-039.html [ Crash ]
+imported/w3c/web-platform-tests/css/css-transforms/matrix/svg-matrix-040.html [ Crash ]
+imported/w3c/web-platform-tests/css/css-transforms/matrix/svg-matrix-041.html [ Crash ]
+imported/w3c/web-platform-tests/css/css-transforms/matrix/svg-matrix-042.html [ Crash ]
+imported/w3c/web-platform-tests/css/css-transforms/matrix/svg-matrix-043.html [ Crash ]
+imported/w3c/web-platform-tests/css/css-transforms/matrix/svg-matrix-044.html [ Crash ]
+imported/w3c/web-platform-tests/css/css-transforms/matrix/svg-matrix-045.html [ Crash ]
+imported/w3c/web-platform-tests/css/css-transforms/matrix/svg-matrix-046.html [ Crash ]
+imported/w3c/web-platform-tests/css/css-transforms/matrix/svg-matrix-047.html [ Crash ]
+imported/w3c/web-platform-tests/css/css-transforms/matrix/svg-matrix-048.html [ Crash ]
+imported/w3c/web-platform-tests/css/css-transforms/matrix/svg-matrix-049.html [ Crash ]
+imported/w3c/web-platform-tests/css/css-transforms/matrix/svg-matrix-050.html [ Crash ]
+imported/w3c/web-platform-tests/css/css-transforms/matrix/svg-matrix-051.html [ Crash ]
+imported/w3c/web-platform-tests/css/css-transforms/matrix/svg-matrix-052.html [ Crash ]
+imported/w3c/web-platform-tests/css/css-transforms/matrix/svg-matrix-053.html [ Crash ]
+imported/w3c/web-platform-tests/css/css-transforms/matrix/svg-matrix-054.html [ Crash ]
+imported/w3c/web-platform-tests/css/css-transforms/matrix/svg-matrix-055.html [ Crash ]
+imported/w3c/web-platform-tests/css/css-transforms/matrix/svg-matrix-056.html [ Crash ]
+imported/w3c/web-platform-tests/css/css-transforms/matrix/svg-matrix-057.html [ Crash ]
+imported/w3c/web-platform-tests/css/css-transforms/matrix/svg-matrix-058.html [ Crash ]
+imported/w3c/web-platform-tests/css/css-transforms/matrix/svg-matrix-059.html [ Crash ]
+imported/w3c/web-platform-tests/css/css-transforms/matrix/svg-matrix-060.html [ Crash ]
+imported/w3c/web-platform-tests/css/css-transforms/matrix/svg-matrix-061.html [ Crash ]
+imported/w3c/web-platform-tests/css/css-transforms/matrix/svg-matrix-062.html [ Crash ]
+imported/w3c/web-platform-tests/css/css-transforms/matrix/svg-matrix-063.html [ Crash ]
+imported/w3c/web-platform-tests/css/css-transforms/matrix/svg-matrix-064.html [ Crash ]
+imported/w3c/web-platform-tests/css/css-transforms/matrix/svg-matrix-065.html [ Crash ]
+imported/w3c/web-platform-tests/css/css-transforms/matrix/svg-matrix-066.html [ Crash ]
 imported/w3c/web-platform-tests/css/css-transforms/patternTransform/svg-patternTransform-001.html [ Crash ]
 imported/w3c/web-platform-tests/css/css-transforms/patternTransform/svg-patternTransform-combination-001.html [ Crash ]
 imported/w3c/web-platform-tests/css/css-transforms/transform-input-003.html [ Pass ]
@@ -710,6 +785,7 @@ imported/w3c/web-platform-tests/css/css-transforms/transform-origin/svg-origin-r
 imported/w3c/web-platform-tests/css/css-transforms/transform-origin/svg-origin-relative-length-invalid-010.html
 imported/w3c/web-platform-tests/css/css-transforms/transform-origin/svg-origin-relative-length-invalid-011.html
 imported/w3c/web-platform-tests/css/css-transforms/transform-origin/svg-origin-relative-length-invalid-012.html
+imported/w3c/web-platform-tests/css/css-transforms/transforms-skewY.html
 imported/w3c/web-platform-tests/css/css-ui/appearance-menulist-button-002.tentative.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-ui/box-sizing-020.html
 imported/w3c/web-platform-tests/css/css-ui/box-sizing-021.html
