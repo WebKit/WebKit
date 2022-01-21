@@ -109,8 +109,6 @@ fast/css3-text/css3-text-decoration/text-decoration-offset.html
 fast/css3-text/css3-text-decoration/text-decoration-skip/text-decoration-skip-ink-cjk.html
 fast/css3-text/css3-text-decoration/text-decoration-thickness-length.html
 fast/css3-text/css3-text-decoration/text-underline-style.html
-fast/events/document-elementFromPoint.html [ Pass ]
-fast/events/touch/ios/long-press-then-drag-to-select-text.html [ Pass ]
 fast/filter-image/filter-image-blur.html
 fast/forms/auto-fill-button/input-auto-fill-button.html [ Pass ]
 fast/forms/autofocus-readonly-attribute.html
@@ -944,8 +942,6 @@ svg/clip-path/webkit-clip-path-after.svg
 svg/clip-path/webkit-clip-path-before.svg
 svg/custom/subpaths-moveto-only-rendering.svg [ Pass ]
 svg/custom/svg-fonts-skip-ink.html
-svg/filters/feMorphology-radius-cases.svg [ Pass ]
-svg/filters/filter-hidden-content.svg [ Pass ]
 svg/gradients/gradient-flipped-start-end-points.svg
 svg/gradients/spreadMethod.svg
 svg/gradients/spreadMethodAlpha.svg
@@ -970,8 +966,6 @@ webgl/max-active-contexts-console-warning.html
 webgl/max-active-contexts-gc.html
 webgl/max-active-contexts-oldest-context-lost.html
 webgl/max-active-contexts-webglcontextlost-prevent-default.html
-webgl/pending/conformance2/glsl3/empty-shader-with-output.html [ Pass ]
 webrtc/datachannel/multiple-connections.html
 webrtc/vp9-profile2.html [ Timeout ]
 webxr/high-performance.html
-workers/wasm-mem-post-message.html [ Pass ]

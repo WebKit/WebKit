@@ -1,5 +1,13 @@
 2022-01-20  Jon Lee  <jonlee554@gmail.com>
 
+        Unreviewed gardening.
+
+        * gpu-process/TestExpectations:
+        * platform/ios-simulator/TestExpectations:
+        * platform/ios-wk2/TestExpectations:
+
+2022-01-20  Jon Lee  <jonlee554@gmail.com>
+
         media/video-src-blob-using-open-panel.html now always passes.
         rdar://problem/32715902
 

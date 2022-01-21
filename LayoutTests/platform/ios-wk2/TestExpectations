@@ -985,7 +985,6 @@ fast/forms/select/select-painting.html [ ImageOnlyFailure ]
 fast/images/background-image-size-changes-fractional-position.html [ ImageOnlyFailure ]
 fast/masking/clip-path-on-subpixel-position.html [ ImageOnlyFailure ]
 fast/text/hidpi-text-selection-gap-between-words.html [ ImageOnlyFailure ]
-svg/filters/feMorphology-radius-cases.svg [ ImageOnlyFailure ]
 
 # Time outs as of 06/08/2015
 fast/images/animated-gif-iframe-webkit-transform.html
@@ -2076,8 +2075,6 @@ http/tests/media/modern-media-controls/overflow-support/playback-speed-live-broa
 
 webkit.org/b/168961 fast/events/wheelevent-in-frame.html [ Pass Timeout ]
 
-#rdar://80386523 (REGRESSION (iOS15 19A224?): fast/events/touch/ios/long-press-then-drag-to-select-text.html is failing) [ iOS15 ] fast/events/touch/ios/long-press-then-drag-to-select-text.html [ Failure ]
-
 #rdar://82259067 ([iOS Debug]fast/events/ios/rotation/basic-rotation.html is a constant crash) 
 fast/events/ios/rotation/basic-rotation.html [ Pass Crash Failure ]
 
@@ -2123,7 +2120,6 @@ media/modern-media-controls/media-documents/media-document-audio-ios-sizing.html
 media/modern-media-controls/media-documents/media-document-video-iphone-sizing.html [ Skip ]
 fast/forms/ios/scroll-to-reveal-focused-select.html [ Failure ]
 fast/scrolling/ios/body-overflow-hidden-height-100-percent-zoomed-1.html [ Failure ]
-webgl/pending/conformance2/glsl3/empty-shader-with-output.html [ Failure ]
 
 # This test "fails" on iPhone 12 simulator because it supports P3, may need to rebaseline this reftest
 fast/media/mq-color-gamut.html [ ImageOnlyFailure ]
