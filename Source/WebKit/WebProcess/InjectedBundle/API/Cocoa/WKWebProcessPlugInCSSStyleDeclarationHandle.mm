@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,34 +23,41 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef InjectedBundleCSSStyleDeclarationHandle_h
-#define InjectedBundleCSSStyleDeclarationHandle_h
+#import "config.h"
+#import "WKWebProcessPlugInCSSStyleDeclarationHandleInternal.h"
 
-#include "APIObject.h"
-#include <JavaScriptCore/JSBase.h>
-#include <wtf/Ref.h>
-#include <wtf/RefPtr.h>
+#import <WebCore/CSSStyleDeclaration.h>
+#import <WebCore/WebCoreObjCExtras.h>
 
-namespace WebCore {
-class CSSStyleDeclaration;
+@implementation WKWebProcessPlugInCSSStyleDeclarationHandle {
+    API::ObjectStorage<WebKit::InjectedBundleCSSStyleDeclarationHandle> _cssStyleDeclarationHandle;
 }
 
-namespace WebKit {
+- (void)dealloc
+{
+    if (WebCoreObjCScheduleDeallocateOnMainRunLoop(WKWebProcessPlugInCSSStyleDeclarationHandle.class, self))
+        return;
+    _cssStyleDeclarationHandle->~InjectedBundleCSSStyleDeclarationHandle();
+    [super dealloc];
+}
 
-class InjectedBundleCSSStyleDeclarationHandle : public API::ObjectImpl<API::Object::Type::BundleCSSStyleDeclarationHandle> {
-public:
-    static RefPtr<InjectedBundleCSSStyleDeclarationHandle> getOrCreate(JSContextRef, JSObjectRef);
-    static RefPtr<InjectedBundleCSSStyleDeclarationHandle> getOrCreate(WebCore::CSSStyleDeclaration*);
-    virtual ~InjectedBundleCSSStyleDeclarationHandle();
++ (WKWebProcessPlugInCSSStyleDeclarationHandle *)cssStyleDeclarationHandleWithJSValue:(JSValue *)value inContext:(JSContext *)context
+{
+    JSContextRef contextRef = [context JSGlobalContextRef];
+    JSObjectRef objectRef = JSValueToObject(contextRef, [value JSValueRef], nullptr);
+    return wrapper(WebKit::InjectedBundleCSSStyleDeclarationHandle::getOrCreate(contextRef, objectRef));
+}
 
-    WebCore::CSSStyleDeclaration* coreCSSStyleDeclaration();
+- (WebKit::InjectedBundleCSSStyleDeclarationHandle&)_cssStyleDeclarationHandle
+{
+    return *_cssStyleDeclarationHandle;
+}
 
-private:
-    InjectedBundleCSSStyleDeclarationHandle(WebCore::CSSStyleDeclaration&);
+// MARK: WKObject protocol implementation
 
-    Ref<WebCore::CSSStyleDeclaration> m_styleDeclaration;
-};
+- (API::Object&)_apiObject
+{
+    return *_cssStyleDeclarationHandle;
+}
 
-} // namespace WebKit
-
-#endif // InjectedBundleCSSStyleDeclarationHandle_h
+@end

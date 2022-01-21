@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,34 +23,14 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef InjectedBundleCSSStyleDeclarationHandle_h
-#define InjectedBundleCSSStyleDeclarationHandle_h
+#import <WebKit/WKFoundation.h>
 
-#include "APIObject.h"
-#include <JavaScriptCore/JSBase.h>
-#include <wtf/Ref.h>
-#include <wtf/RefPtr.h>
+#import <Foundation/Foundation.h>
+#import <JavaScriptCore/JavaScriptCore.h>
 
-namespace WebCore {
-class CSSStyleDeclaration;
-}
+WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
+@interface WKWebProcessPlugInCSSStyleDeclarationHandle : NSObject
 
-namespace WebKit {
++ (WKWebProcessPlugInCSSStyleDeclarationHandle *)cssStyleDeclarationHandleWithJSValue:(JSValue *)value inContext:(JSContext *)context;
 
-class InjectedBundleCSSStyleDeclarationHandle : public API::ObjectImpl<API::Object::Type::BundleCSSStyleDeclarationHandle> {
-public:
-    static RefPtr<InjectedBundleCSSStyleDeclarationHandle> getOrCreate(JSContextRef, JSObjectRef);
-    static RefPtr<InjectedBundleCSSStyleDeclarationHandle> getOrCreate(WebCore::CSSStyleDeclaration*);
-    virtual ~InjectedBundleCSSStyleDeclarationHandle();
-
-    WebCore::CSSStyleDeclaration* coreCSSStyleDeclaration();
-
-private:
-    InjectedBundleCSSStyleDeclarationHandle(WebCore::CSSStyleDeclaration&);
-
-    Ref<WebCore::CSSStyleDeclaration> m_styleDeclaration;
-};
-
-} // namespace WebKit
-
-#endif // InjectedBundleCSSStyleDeclarationHandle_h
+@end

@@ -58,6 +58,7 @@ class IntRect;
 
 namespace WebKit {
 
+class InjectedBundleCSSStyleDeclarationHandle;
 class InjectedBundleHitTestResult;
 class InjectedBundleNodeHandle;
 class InjectedBundleRangeHandle;
@@ -146,6 +147,7 @@ public:
 
     static WebFrame* frameForContext(JSContextRef);
 
+    JSValueRef jsWrapperForWorld(InjectedBundleCSSStyleDeclarationHandle*, InjectedBundleScriptWorld*);
     JSValueRef jsWrapperForWorld(InjectedBundleNodeHandle*, InjectedBundleScriptWorld*);
     JSValueRef jsWrapperForWorld(InjectedBundleRangeHandle*, InjectedBundleScriptWorld*);
 

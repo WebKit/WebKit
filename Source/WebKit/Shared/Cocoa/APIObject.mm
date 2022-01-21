@@ -59,6 +59,7 @@
 #import "WKUserContentControllerInternal.h"
 #import "WKUserScriptInternal.h"
 #import "WKWebProcessPlugInBrowserContextControllerInternal.h"
+#import "WKWebProcessPlugInCSSStyleDeclarationHandleInternal.h"
 #import "WKWebProcessPlugInFrameInternal.h"
 #import "WKWebProcessPlugInHitTestResultInternal.h"
 #import "WKWebProcessPlugInInternal.h"
@@ -420,6 +421,10 @@ void* Object::newObject(size_t size, Type type)
 
     case Type::BundleHitTestResult:
         wrapper = [WKWebProcessPlugInHitTestResult alloc];
+        break;
+
+    case Type::BundleCSSStyleDeclarationHandle:
+        wrapper = [WKWebProcessPlugInCSSStyleDeclarationHandle alloc];
         break;
 
     case Type::BundleNodeHandle:

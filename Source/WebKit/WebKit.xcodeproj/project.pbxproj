@@ -1487,6 +1487,8 @@
 		93E799DC276121080074008A /* StorageAreaBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 93E799D6276121080074008A /* StorageAreaBase.h */; };
 		93F549B41E3174B7000E7239 /* WKSnapshotConfiguration.h in Headers */ = {isa = PBXBuildFile; fileRef = 93F549B31E3174B7000E7239 /* WKSnapshotConfiguration.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		950F2880252414EA00B74F1C /* WKMouseDeviceObserver.h in Headers */ = {isa = PBXBuildFile; fileRef = 950F287E252414E900B74F1C /* WKMouseDeviceObserver.h */; };
+		952BC0A12797A368003F3D25 /* WKWebProcessPlugInCSSStyleDeclarationHandleInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 952BC09E2797A366003F3D25 /* WKWebProcessPlugInCSSStyleDeclarationHandleInternal.h */; };
+		952BC0A32797A368003F3D25 /* WKWebProcessPlugInCSSStyleDeclarationHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 952BC0A02797A367003F3D25 /* WKWebProcessPlugInCSSStyleDeclarationHandle.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9565083926D87A2B00E15CB7 /* AppleMediaServicesSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 9565083726D87A2B00E15CB7 /* AppleMediaServicesSPI.h */; };
 		9565083A26D87A2B00E15CB7 /* AppleMediaServicesUISPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 9565083826D87A2B00E15CB7 /* AppleMediaServicesUISPI.h */; };
 		9593675F252E5E3100D3F0A0 /* WKStylusDeviceObserver.h in Headers */ = {isa = PBXBuildFile; fileRef = 9593675D252E5E3000D3F0A0 /* WKStylusDeviceObserver.h */; };
@@ -5367,6 +5369,9 @@
 		93F549B51E3174DA000E7239 /* WKSnapshotConfiguration.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKSnapshotConfiguration.mm; sourceTree = "<group>"; };
 		950F287E252414E900B74F1C /* WKMouseDeviceObserver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKMouseDeviceObserver.h; path = ios/WKMouseDeviceObserver.h; sourceTree = "<group>"; };
 		950F287F252414EA00B74F1C /* WKMouseDeviceObserver.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WKMouseDeviceObserver.mm; path = ios/WKMouseDeviceObserver.mm; sourceTree = "<group>"; };
+		952BC09E2797A366003F3D25 /* WKWebProcessPlugInCSSStyleDeclarationHandleInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKWebProcessPlugInCSSStyleDeclarationHandleInternal.h; sourceTree = "<group>"; };
+		952BC09F2797A367003F3D25 /* WKWebProcessPlugInCSSStyleDeclarationHandle.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebProcessPlugInCSSStyleDeclarationHandle.mm; sourceTree = "<group>"; };
+		952BC0A02797A367003F3D25 /* WKWebProcessPlugInCSSStyleDeclarationHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKWebProcessPlugInCSSStyleDeclarationHandle.h; sourceTree = "<group>"; };
 		9565083726D87A2B00E15CB7 /* AppleMediaServicesSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppleMediaServicesSPI.h; sourceTree = "<group>"; };
 		9565083826D87A2B00E15CB7 /* AppleMediaServicesUISPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppleMediaServicesUISPI.h; sourceTree = "<group>"; };
 		9593675D252E5E3000D3F0A0 /* WKStylusDeviceObserver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKStylusDeviceObserver.h; path = ios/WKStylusDeviceObserver.h; sourceTree = "<group>"; };
@@ -7890,6 +7895,9 @@
 			children = (
 				1AA2E56518D77508003814BD /* WKWebProcessBundleParameters.h */,
 				1AA2E56418D77508003814BD /* WKWebProcessBundleParameters.mm */,
+				952BC0A02797A367003F3D25 /* WKWebProcessPlugInCSSStyleDeclarationHandle.h */,
+				952BC09F2797A367003F3D25 /* WKWebProcessPlugInCSSStyleDeclarationHandle.mm */,
+				952BC09E2797A366003F3D25 /* WKWebProcessPlugInCSSStyleDeclarationHandleInternal.h */,
 				3775122E1DF0DC8B008A351C /* WKWebProcessPlugInEditingDelegate.h */,
 				3795789B18AD4F1100B9ED2E /* WKWebProcessPlugInFormDelegatePrivate.h */,
 				1F0181691858DC1500F92884 /* WKWebProcessPlugInFrame.h */,
@@ -13980,6 +13988,8 @@
 				BC8F2F2B16273A2C005FACB5 /* WKWebProcessPlugInBrowserContextController.h in Headers */,
 				BC8F2F2E16273ACC005FACB5 /* WKWebProcessPlugInBrowserContextControllerInternal.h in Headers */,
 				29501724162A4504004A9D71 /* WKWebProcessPlugInBrowserContextControllerPrivate.h in Headers */,
+				952BC0A32797A368003F3D25 /* WKWebProcessPlugInCSSStyleDeclarationHandle.h in Headers */,
+				952BC0A12797A368003F3D25 /* WKWebProcessPlugInCSSStyleDeclarationHandleInternal.h in Headers */,
 				3775122F1DF0DC8B008A351C /* WKWebProcessPlugInEditingDelegate.h in Headers */,
 				3795789C18AD4F1900B9ED2E /* WKWebProcessPlugInFormDelegatePrivate.h in Headers */,
 				1F7506B11859163700EC0FF7 /* WKWebProcessPlugInFrame.h in Headers */,

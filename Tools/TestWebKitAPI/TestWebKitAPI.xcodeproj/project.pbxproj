@@ -768,6 +768,7 @@
 		93F56DA71E5F9174003EDE84 /* libicucore.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 7C83E0331D0A5F2700FEBCF3 /* libicucore.dylib */; };
 		93F7E86F14DC8E5C00C84A99 /* NewFirstVisuallyNonEmptyLayoutFrames_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93F7E86E14DC8E5B00C84A99 /* NewFirstVisuallyNonEmptyLayoutFrames_Bundle.cpp */; };
 		93FCDB34263631560046DD7D /* SortedArrayMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93FCDB33263631560046DD7D /* SortedArrayMap.cpp */; };
+		9528E5FD279A0341008ADFEF /* BundleCSSStyleDeclarationHandlePlugIn.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9528E5FC279A0338008ADFEF /* BundleCSSStyleDeclarationHandlePlugIn.mm */; };
 		952F7167270BD9CB00D00DCC /* CSSViewportUnits.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 952F7166270BD99700D00DCC /* CSSViewportUnits.html */; };
 		952F7167270BD9CB00D00DCD /* CSSViewportUnits.svg in Copy Resources */ = {isa = PBXBuildFile; fileRef = 952F7166270BD99700D00DCD /* CSSViewportUnits.svg */; };
 		95C52729275F35E100DA7E40 /* FontShadowTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 95C52728275F35E100DA7E40 /* FontShadowTests.cpp */; };
@@ -2540,6 +2541,9 @@
 		93FCDB33263631560046DD7D /* SortedArrayMap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SortedArrayMap.cpp; sourceTree = "<group>"; };
 		95095F1F262FFFA50000D920 /* SampledPageTopColor.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SampledPageTopColor.mm; sourceTree = "<group>"; };
 		950E4CC0252E75230071659F /* iOSStylusSupport.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = iOSStylusSupport.mm; sourceTree = "<group>"; };
+		9528E5FA279A0337008ADFEF /* BundleCSSStyleDeclarationHandleProtocol.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BundleCSSStyleDeclarationHandleProtocol.h; sourceTree = "<group>"; };
+		9528E5FB279A0337008ADFEF /* BundleCSSStyleDeclarationHandle.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = BundleCSSStyleDeclarationHandle.mm; sourceTree = "<group>"; };
+		9528E5FC279A0338008ADFEF /* BundleCSSStyleDeclarationHandlePlugIn.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = BundleCSSStyleDeclarationHandlePlugIn.mm; sourceTree = "<group>"; };
 		952F7164270BD97E00D00DCC /* CSSViewportUnits.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CSSViewportUnits.mm; sourceTree = "<group>"; };
 		952F7166270BD99700D00DCC /* CSSViewportUnits.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = CSSViewportUnits.html; sourceTree = "<group>"; };
 		952F7166270BD99700D00DCD /* CSSViewportUnits.svg */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = CSSViewportUnits.svg; sourceTree = "<group>"; };
@@ -3388,6 +3392,9 @@
 				2DD355351BD08378005DF4A7 /* AutoLayoutIntegration.mm */,
 				07CD32F52065B5420064A4BE /* AVFoundationPreference.mm */,
 				5C42594422669E9B0039AA7A /* BasicProposedCredentialPlugIn.mm */,
+				9528E5FB279A0337008ADFEF /* BundleCSSStyleDeclarationHandle.mm */,
+				9528E5FC279A0338008ADFEF /* BundleCSSStyleDeclarationHandlePlugIn.mm */,
+				9528E5FA279A0337008ADFEF /* BundleCSSStyleDeclarationHandleProtocol.h */,
 				374B7A5E1DF36EEE00ACCB6C /* BundleEditingDelegate.mm */,
 				374B7A5F1DF36EEE00ACCB6C /* BundleEditingDelegatePlugIn.mm */,
 				374B7A621DF3734C00ACCB6C /* BundleEditingDelegateProtocol.h */,
@@ -5888,6 +5895,7 @@
 				491AEEF82652E33500D530A8 /* AppPrivacyReportPlugIn.mm in Sources */,
 				754CEC811F6722F200D0039A /* AutoFillAvailable.mm in Sources */,
 				5C4259462266A68A0039AA7A /* BasicProposedCredentialPlugIn.mm in Sources */,
+				9528E5FD279A0341008ADFEF /* BundleCSSStyleDeclarationHandlePlugIn.mm in Sources */,
 				374B7A611DF371CF00ACCB6C /* BundleEditingDelegatePlugIn.mm in Sources */,
 				7A89BB682331643A0042CB1E /* BundleFormDelegatePlugIn.mm in Sources */,
 				5175C7A226F876230003AF5C /* BundlePageConsoleMessage.mm in Sources */,

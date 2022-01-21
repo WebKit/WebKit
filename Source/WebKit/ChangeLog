@@ -1,3 +1,48 @@
+2022-01-20  Devin Rousso  <drousso@apple.com>
+
+        Add SPI for passing around and getting details about `WebCore::CSSStyleDeclaration` in injected bundle code
+        https://bugs.webkit.org/show_bug.cgi?id=235386
+        <rdar://problem/87566737>
+
+        Reviewed by Tim Horton.
+
+        Test: WebKit.WKWebProcessPlugInCSSStyleDeclarationHandle
+
+        * WebProcess/InjectedBundle/DOM/InjectedBundleCSSStyleDeclarationHandle.h:
+        * WebProcess/InjectedBundle/DOM/InjectedBundleCSSStyleDeclarationHandle.cpp:
+        (WebKit::InjectedBundleCSSStyleDeclarationHandle::getOrCreate):
+        (WebKit::InjectedBundleCSSStyleDeclarationHandle::coreCSSStyleDeclaration): Added.
+        Expose a way to get the related `WebCore::CSSStyleDeclaration` (for `toJS`).
+        Add a method that returns the string value for a given property name.
+
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInCSSStyleDeclarationHandle.h: Added.
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInCSSStyleDeclarationHandleInternal.h: Added.
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInCSSStyleDeclarationHandle.mm: Added.
+        (-[WKWebProcessPlugInCSSStyleDeclarationHandle dealloc]):
+        (+[WKWebProcessPlugInCSSStyleDeclarationHandle cssStyleDeclarationHandleWithJSValue:inContext:]):
+        (-[WKWebProcessPlugInCSSStyleDeclarationHandle _cssStyleDeclarationHandle]):
+        (-[WKWebProcessPlugInCSSStyleDeclarationHandle _apiObject]):
+        Add ObjC SPI for manipulating `WebCore::CSSStyleDeclaration` (in the injected bundle).
+
+        * WebProcess/WebPage/WebFrame.h:
+        * WebProcess/WebPage/WebFrame.cpp:
+        (WebKit::WebFrame::jsWrapperForWorld):
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInFrame.h:
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInFrame.mm:
+        (-[WKWebProcessPlugInFrame jsCSSStyleDeclarationForCSSStyleDeclarationHandle:inWorld:]): Added.
+        Add methods for converting from ObjC SPI wrappers of `WebCore::CSSStyleDeclaration` to JS.
+
+        * Shared/Cocoa/APIObject.mm:
+        (API::Object::newObject):
+        Add support for automatic conversion of `WKBundleCSSStyleDeclarationRef` to ObjC (above).
+
+        * PlatformMac.cmake:
+        * SourcesCocoa.txt:
+        * WebKit.xcodeproj/project.pbxproj:
+
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        Drive-by: Unified sources fixes.
+
 2022-01-20  Tim Horton  <timothy_horton@apple.com>
 
         ReplayCGDisplayListsIntoBackingStore often results in compositing layers with black backgrounds

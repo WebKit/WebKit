@@ -635,6 +635,7 @@ WebProcess/InjectedBundle/API/c/mac/WKBundleMac.mm
 WebProcess/InjectedBundle/API/c/mac/WKBundlePageBannerMac.mm
 
 WebProcess/InjectedBundle/API/Cocoa/WKWebProcessBundleParameters.mm
+WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInCSSStyleDeclarationHandle.mm
 WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInFrame.mm
 WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInHitTestResult.mm
 WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInNodeHandle.mm
