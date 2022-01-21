@@ -1,3 +1,15 @@
+2022-01-20  Lauro Moura  <lmoura@igalia.com>
+
+        [GTK] API test /webkit/WebKitWebsiteData/cache is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=188113
+
+        Unreviewed test gardening.
+
+        It has been passing consistently for a long time. Sometimes failing
+        consistently too, but when there are regressions.
+
+        * TestWebKitAPI/glib/TestExpectations.json:
+
 2022-01-20  Devin Rousso  <drousso@apple.com>
 
         Add SPI for passing around and getting details about `WebCore::CSSStyleDeclaration` in injected bundle code

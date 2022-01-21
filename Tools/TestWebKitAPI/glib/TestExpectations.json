@@ -101,9 +101,6 @@
     },
     "TestWebsiteData": {
         "subtests": {
-            "/webkit/WebKitWebsiteData/cache": {
-                "expected": {"all": {"status": ["PASS", "FAIL"], "bug": "webkit.org/b/188113"}}
-            },
             "/webkit/WebKitWebsiteData/appcache": {
                 "expected": {"all": {"status": ["PASS", "FAIL"], "bug": "webkit.org/b/188117"}}
             },
