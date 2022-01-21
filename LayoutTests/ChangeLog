@@ -1,3 +1,13 @@
+2022-01-21  Robert Jenner  <Jenner@apple.com>
+
+        [ iOS EWS ] imported/w3c/web-platform-tests/dom/events/focus-event-document-move.html is a constant text failure
+        https://bugs.webkit.org/show_bug.cgi?id=235150
+        <rdar://problem/87524787>
+
+        Unreviewed, re-land iOS baseline in the correct location. The behaviour difference is expected as it involves mouse events.
+
+        * platform/ios/imported/w3c/web-platform-tests/dom/events/focus-event-document-move-expected.txt: Renamed from LayoutTests/platform/ios/imported/w3c/dom/events/focus-event-document-move-expected.txt.
+
 2022-01-21  Antti Koivisto  <antti@apple.com>
 
         WPT version of css/css-cascade/parsing/layer-import-parsing.html crashes with nullptr
