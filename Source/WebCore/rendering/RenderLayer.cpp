@@ -2624,21 +2624,21 @@ LayoutRect RenderLayer::getRectToExpose(const LayoutRect& visibleRect, const Lay
     ScrollAlignment::Behavior scrollX;
     LayoutRect exposeRectX(exposeRect.x(), visibleRect.y(), exposeRect.width(), visibleRect.height());
     LayoutUnit intersectWidth = intersection(visibleRect, exposeRectX).width();
-    if (intersectWidth == exposeRect.width() || intersectWidth >= MIN_INTERSECT_FOR_REVEAL)
+    if (intersectWidth == exposeRect.width() || (alignX.legacyHorizontalVisibilityThresholdEnabled() && intersectWidth >= MIN_INTERSECT_FOR_REVEAL)) {
         // If the rectangle is fully visible, use the specified visible behavior.
         // If the rectangle is partially visible, but over a certain threshold,
         // then treat it as fully visible to avoid unnecessary horizontal scrolling
-        scrollX = ScrollAlignment::getVisibleBehavior(alignX);
-    else if (intersectWidth == visibleRect.width()) {
+        scrollX = alignX.getVisibleBehavior();
+    } else if (intersectWidth == visibleRect.width()) {
         // If the rect is bigger than the visible area, don't bother trying to center. Other alignments will work.
-        scrollX = ScrollAlignment::getVisibleBehavior(alignX);
+        scrollX = alignX.getVisibleBehavior();
         if (scrollX == ScrollAlignment::Behavior::AlignCenter)
             scrollX = ScrollAlignment::Behavior::NoScroll;
     } else if (intersectWidth > 0)
         // If the rectangle is partially visible, but not above the minimum threshold, use the specified partial behavior
-        scrollX = ScrollAlignment::getPartialBehavior(alignX);
+        scrollX = alignX.getPartialBehavior();
     else
-        scrollX = ScrollAlignment::getHiddenBehavior(alignX);
+        scrollX = alignX.getHiddenBehavior();
     // If we're trying to align to the closest edge, and the exposeRect is further right
     // than the visibleRect, and not bigger than the visible area, then align with the right.
     if (scrollX == ScrollAlignment::Behavior::AlignToClosestEdge && exposeRect.maxX() > visibleRect.maxX() && exposeRect.width() < visibleRect.width())
@@ -2661,17 +2661,17 @@ LayoutRect RenderLayer::getRectToExpose(const LayoutRect& visibleRect, const Lay
     LayoutUnit intersectHeight = intersection(visibleRect, exposeRectY).height();
     if (intersectHeight == exposeRect.height())
         // If the rectangle is fully visible, use the specified visible behavior.
-        scrollY = ScrollAlignment::getVisibleBehavior(alignY);
+        scrollY = alignY.getVisibleBehavior();
     else if (intersectHeight == visibleRect.height()) {
         // If the rect is bigger than the visible area, don't bother trying to center. Other alignments will work.
-        scrollY = ScrollAlignment::getVisibleBehavior(alignY);
+        scrollY = alignY.getVisibleBehavior();
         if (scrollY == ScrollAlignment::Behavior::AlignCenter)
             scrollY = ScrollAlignment::Behavior::NoScroll;
     } else if (intersectHeight > 0)
         // If the rectangle is partially visible, use the specified partial behavior
-        scrollY = ScrollAlignment::getPartialBehavior(alignY);
+        scrollY = alignY.getPartialBehavior();
     else
-        scrollY = ScrollAlignment::getHiddenBehavior(alignY);
+        scrollY = alignY.getHiddenBehavior();
     // If we're trying to align to the closest edge, and the exposeRect is further down
     // than the visibleRect, and not bigger than the visible area, then align with the bottom.
     if (scrollY == ScrollAlignment::Behavior::AlignToClosestEdge && exposeRect.maxY() > visibleRect.maxY() && exposeRect.height() < visibleRect.height())

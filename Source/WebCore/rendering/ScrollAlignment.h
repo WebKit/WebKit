@@ -61,9 +61,11 @@ struct ScrollAlignment {
         AlignToClosestEdge
     };
 
-    static Behavior getVisibleBehavior(const ScrollAlignment& s) { return s.m_rectVisible; }
-    static Behavior getPartialBehavior(const ScrollAlignment& s) { return s.m_rectPartial; }
-    static Behavior getHiddenBehavior(const ScrollAlignment& s) { return s.m_rectHidden; }
+    Behavior getVisibleBehavior() const { return m_rectVisible; }
+    Behavior getPartialBehavior() const { return m_rectPartial; }
+    Behavior getHiddenBehavior() const { return m_rectHidden; }
+    void disableLegacyHorizontalVisibilityThreshold() { m_enableLegacyHorizontalVisibilityThreshold = false; }
+    bool legacyHorizontalVisibilityThresholdEnabled() const { return m_enableLegacyHorizontalVisibilityThreshold; }
 
     static const ScrollAlignment alignCenterIfNotVisible;
     static const ScrollAlignment alignToEdgeIfNotVisible;
@@ -78,6 +80,7 @@ struct ScrollAlignment {
     Behavior m_rectVisible;
     Behavior m_rectHidden;
     Behavior m_rectPartial;
+    bool m_enableLegacyHorizontalVisibilityThreshold { true };
 };
     
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, ScrollAlignment::Behavior);

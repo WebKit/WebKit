@@ -1019,6 +1019,7 @@ void Element::scrollIntoView(std::optional<std::variant<bool, ScrollIntoViewOpti
     auto writingMode = renderer()->style().writingMode();
     ScrollAlignment alignX = toScrollAlignmentForInlineDirection(options.inlinePosition, writingMode, renderer()->style().isLeftToRightDirection());
     ScrollAlignment alignY = toScrollAlignmentForBlockDirection(options.blockPosition, writingMode);
+    alignX.disableLegacyHorizontalVisibilityThreshold();
 
     bool isHorizontal = renderer()->style().isHorizontalWritingMode();
     ScrollRectToVisibleOptions visibleOptions {
@@ -1040,11 +1041,13 @@ void Element::scrollIntoView(bool alignToTop)
 
     bool insideFixed;
     LayoutRect absoluteBounds = renderer()->absoluteAnchorRectWithScrollMargin(&insideFixed);
+
     // Align to the top / bottom and to the closest edge.
-    if (alignToTop)
-        renderer()->scrollRectToVisible(absoluteBounds, insideFixed, { SelectionRevealMode::Reveal, ScrollAlignment::alignToEdgeIfNeeded, ScrollAlignment::alignTopAlways, ShouldAllowCrossOriginScrolling::No });
-    else
-        renderer()->scrollRectToVisible(absoluteBounds, insideFixed, { SelectionRevealMode::Reveal, ScrollAlignment::alignToEdgeIfNeeded, ScrollAlignment::alignBottomAlways, ShouldAllowCrossOriginScrolling::No });
+    auto alignY = alignToTop ? ScrollAlignment::alignTopAlways : ScrollAlignment::alignBottomAlways;
+    auto alignX = ScrollAlignment::alignToEdgeIfNeeded;
+    alignX.disableLegacyHorizontalVisibilityThreshold();
+
+    renderer()->scrollRectToVisible(absoluteBounds, insideFixed, { SelectionRevealMode::Reveal, alignX, alignY, ShouldAllowCrossOriginScrolling::No });
 }
 
 void Element::scrollIntoViewIfNeeded(bool centerIfNeeded)
@@ -1056,10 +1059,12 @@ void Element::scrollIntoViewIfNeeded(bool centerIfNeeded)
 
     bool insideFixed;
     LayoutRect absoluteBounds = renderer()->absoluteAnchorRectWithScrollMargin(&insideFixed);
-    if (centerIfNeeded)
-        renderer()->scrollRectToVisible(absoluteBounds, insideFixed, { SelectionRevealMode::Reveal, ScrollAlignment::alignCenterIfNeeded, ScrollAlignment::alignCenterIfNeeded, ShouldAllowCrossOriginScrolling::No });
-    else
-        renderer()->scrollRectToVisible(absoluteBounds, insideFixed, { SelectionRevealMode::Reveal, ScrollAlignment::alignToEdgeIfNeeded, ScrollAlignment::alignToEdgeIfNeeded, ShouldAllowCrossOriginScrolling::No });
+
+    auto alignY = centerIfNeeded ? ScrollAlignment::alignCenterIfNeeded : ScrollAlignment::alignToEdgeIfNeeded;
+    auto alignX = centerIfNeeded ? ScrollAlignment::alignCenterIfNeeded : ScrollAlignment::alignToEdgeIfNeeded;
+    alignX.disableLegacyHorizontalVisibilityThreshold();
+
+    renderer()->scrollRectToVisible(absoluteBounds, insideFixed, { SelectionRevealMode::Reveal, alignX, alignY, ShouldAllowCrossOriginScrolling::No });
 }
 
 void Element::scrollIntoViewIfNotVisible(bool centerIfNotVisible)

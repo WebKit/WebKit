@@ -1,3 +1,15 @@
+2022-01-21  Martin Robinson  <mrobinson@webkit.org>
+
+        element.scrollIntoView() sometimes doesn't scroll
+        https://bugs.webkit.org/show_bug.cgi?id=42593
+
+        Reviewed by Simon Fraser.
+
+        * platform/gtk/imported/w3c/web-platform-tests/css/cssom-view/getBoundingClientRect-empty-inline-expected.txt: Removed.
+        * platform/gtk/imported/w3c/web-platform-tests/css/cssom-view/getBoundingClientRect-shy-expected.txt:
+        * platform/gtk/imported/w3c/web-platform-tests/css/cssom-view/offsetTopLeft-empty-inline-expected.txt:
+        * platform/gtk/imported/w3c/web-platform-tests/css/cssom-view/offsetTopLeft-leading-space-inline-expected.txt:
+
 2022-01-21  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         [GLIB] Garden fast/mediastream/getUserMedia-to-canvas-*.html failure for WPE

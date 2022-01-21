@@ -1,3 +1,12 @@
+2022-01-21  Martin Robinson  <mrobinson@webkit.org>
+
+        element.scrollIntoView() sometimes doesn't scroll
+        https://bugs.webkit.org/show_bug.cgi?id=42593
+
+        Reviewed by Simon Fraser.
+
+        * web-platform-tests/css/cssom-view/scrollIntoView-horizontal-partially-visible-expected.txt:
+
 2022-01-20  Alexey Shvayka  <ashvayka@apple.com>
 
         Callback functions / interfaces should use global object of its _value_ for errors and lifecycle
