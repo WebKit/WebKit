@@ -2640,6 +2640,11 @@ webkit.org/b/223830 inspector/debugger/csp-exceptions.html [ Timeout ]
 
 # This test not only fails but may end up leaving the setShowPaintRects setting enabled and affect other tests.
 webkit.org/b/233047 inspector/page/setShowPaintRects.html [ Skip ]
+
+# setMockCameraOrientation seems to fail.
+webkit.org/b/235396 fast/mediastream/getUserMedia-to-canvas-1.html [ Failure ]
+webkit.org/b/235396 fast/mediastream/getUserMedia-to-canvas-2.html [ Failure ]
+
 # End: Common failures between GTK and WPE.
 
 #////////////////////////////////////////////////////////////////////////////////////////

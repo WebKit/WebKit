@@ -1,3 +1,16 @@
+2022-01-21  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        [GLIB] Garden fast/mediastream/getUserMedia-to-canvas-*.html failure for WPE
+        https://bugs.webkit.org/show_bug.cgi?id=235396
+
+        Unreviewed gardnening.
+
+        Move fast/mediastream/getUserMedia-to-canvas-*.html failures to glib
+        to suppress also WPE failures.
+
+        * platform/glib/TestExpectations:
+        * platform/gtk/TestExpectations:
+
 2022-01-21  Jon Lee  <jonlee554@gmail.com>
 
         Unreviewed gardening.
