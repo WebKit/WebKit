@@ -1,3 +1,13 @@
+2022-01-21  Robert Jenner  <Jenner@apple.com>
+
+        REGRESSION (r286944?): web-platform-tests/html/semantics/text-level-semantics/the-a-element/a-download-click tests have become flaky failures
+        https://bugs.webkit.org/show_bug.cgi?id=234410
+
+        Unreviewed test gardening. Adding expectations due to negative impact on EWS.
+
+        * platform/ios-wk2/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+
 2022-01-21  Alan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Inline boxes with collapsible content only should not be considered opaque bidi items
