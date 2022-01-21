@@ -168,7 +168,7 @@ class Git(Scm):
                 # If our `git log` operation failed, we can't count on the validity of our cache
                 if log and log.returncode:
                     return
-                if log:
+                if log and log.poll() is None:
                     log.kill()
 
             if not hashes or intersected and len(hashes) <= 1:
@@ -759,7 +759,7 @@ class Git(Scm):
                 cached.order += begin.order
                 yield cached
         finally:
-            if log:
+            if log and log.poll() is None:
                 log.kill()
 
     def find(self, argument, include_log=True, include_identifier=True):

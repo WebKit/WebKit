@@ -126,7 +126,7 @@ class Svn(Scm):
                         self._data[branch].insert(pos, revision)
                     line = log.stdout.readline()
             finally:
-                if log:
+                if log and log.poll() is None:
                     log.kill()
 
             if default_count:
@@ -568,7 +568,7 @@ class Svn(Scm):
             yield previous
 
         finally:
-            if log:
+            if log and log.poll() is None:
                 log.kill()
 
     def checkout(self, argument):
