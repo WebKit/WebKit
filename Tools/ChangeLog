@@ -1,3 +1,14 @@
+2022-01-20  Jonathan Bedard  <jbedard@apple.com>
+
+        [EWS] Avoid extra network request from buildbot to github
+        https://bugs.webkit.org/show_bug.cgi?id=235417
+        <rdar://problem/87846222>
+
+        Reviewed by Aakash Jain.
+
+        * CISupport/ews-build/events.py:
+        (GitHubEventHandlerNoEdits._get_commit_msg): Return empty string.
+
 2022-01-21  Mike Gorse  <mgorse@suse.com>
 
         Build failure with g++ 12: std::exchange undefined
