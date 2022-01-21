@@ -314,6 +314,9 @@ class Events(service.BuildbotService):
 class GitHubEventHandlerNoEdits(GitHubEventHandler):
     ACTIONS_TO_TRIGGER_EWS = ('opened', 'synchronize')
 
+    def _get_commit_msg(self, repo, sha):
+        return ''
+
     def handle_pull_request(self, payload, event):
         pr_number = payload['number']
         action = payload.get('action')
