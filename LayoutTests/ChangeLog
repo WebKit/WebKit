@@ -1,3 +1,15 @@
+2022-01-20  Jon Lee  <jonlee554@gmail.com>
+
+        Partially garden [iOS] Triage failing LayoutTests in the storage/indexeddb directory
+        https://bugs.webkit.org/show_bug.cgi?id=181752
+        rdar://36590081
+
+        Reviewed by Simon Fraser.
+
+        Some of the tests always pass now. Update expectations.
+        * gpu-process/TestExpectations:
+        * platform/ios/TestExpectations:
+
 2022-01-20  Alan Bujtas  <zalan@apple.com>
 
         It looks like word-break-break-all-008.html still fails on Catalina.

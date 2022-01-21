@@ -1345,13 +1345,6 @@ svg/text/svg-fallback-font-crash.html
 svg/css/font-face-variant-crash.html
 
 # storage/indexeddb tests to triage
-webkit.org/b/181752 storage/indexeddb/connection-leak-private.html [ Failure ]
-webkit.org/b/181752 storage/indexeddb/connection-leak.html [ Failure ]
-webkit.org/b/181752 storage/indexeddb/cursor-leak-private.html [ Failure ]
-webkit.org/b/181752 storage/indexeddb/cursor-leak.html [ Failure ]
-webkit.org/b/181752 storage/indexeddb/cursor-request-cycle-private.html [ Failure ]
-webkit.org/b/181752 storage/indexeddb/cursor-request-cycle.html [ Failure ]
-webkit.org/b/181752 storage/indexeddb/database-odd-names.html [ Failure ]
 webkit.org/b/181752 storage/indexeddb/dont-commit-on-blocked-private.html [ Failure ]
 webkit.org/b/181752 storage/indexeddb/events-private.html [ Failure ]
 webkit.org/b/181752 storage/indexeddb/events.html [ Failure ]
@@ -1359,9 +1352,6 @@ webkit.org/b/181752 storage/indexeddb/open-db-private-browsing.html [ Failure ]
 webkit.org/b/181752 storage/indexeddb/properties-disabled-at-runtime.html [ Failure ]
 webkit.org/b/181752 storage/indexeddb/removed-private.html [ Failure ]
 webkit.org/b/181752 storage/indexeddb/removed.html [ Failure ]
-webkit.org/b/181752 storage/indexeddb/request-leak-private.html [ Failure ]
-webkit.org/b/181752 storage/indexeddb/request-leak.html [ Failure ]
-webkit.org/b/181752 storage/indexeddb/wasm-exceptions.html [ Failure ]
 webkit.org/b/181752 storage/indexeddb/database-quota-private.html [ Skip ]
 webkit.org/b/181752 storage/indexeddb/database-quota.html [ Skip ]
 webkit.org/b/181752 storage/indexeddb/deletedatabase-delayed-by-versionchange.html [ Skip ]

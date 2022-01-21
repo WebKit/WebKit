@@ -922,16 +922,6 @@ media/video-seek-to-current-time.html [ Pass ]
 media/video-src-blob-replay.html
 pointerevents/mouse/pointer-event-basic-properties.html [ Timeout ]
 scrollbars/scrollevent-iframe-no-scrolling.html [ Pass ]
-storage/indexeddb/connection-leak-private.html [ Pass ]
-storage/indexeddb/connection-leak.html [ Pass ]
-storage/indexeddb/cursor-leak-private.html [ Pass ]
-storage/indexeddb/cursor-leak.html [ Pass ]
-storage/indexeddb/cursor-request-cycle-private.html [ Pass ]
-storage/indexeddb/cursor-request-cycle.html [ Pass ]
-storage/indexeddb/database-odd-names.html [ Pass ]
-storage/indexeddb/request-leak-private.html [ Pass ]
-storage/indexeddb/request-leak.html [ Pass ]
-storage/indexeddb/wasm-exceptions.html [ Pass ]
 svg/as-image/svg-as-image-with-relative-size.html
 svg/as-image/svg-cached-draw-canvas.html
 svg/as-image/svg-image-viewbox.html
