@@ -11,6 +11,15 @@
 
         Unreviewed gardening.
 
+        * gpu-process/TestExpectations: Remove failing test expectations. Bots show fully passing.
+        * platform/ios-simulator/TestExpectations:
+        * platform/ios-wk2/TestExpectations:
+        * platform/ios/TestExpectations: media/track/track-in-band-mode.html is flaky, not always failing.
+
+2022-01-20  Jon Lee  <jonlee554@gmail.com>
+
+        Unreviewed gardening.
+
         * gpu-process/TestExpectations: Remove failure expectations on media tests that are passing on iOS.
         * platform/ios/TestExpectations:
 

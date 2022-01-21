@@ -2355,15 +2355,12 @@ media/W3C/video/canPlayType/canPlayType_two_implies_one_5.html [ Failure ]
 media/W3C/video/canPlayType/canPlayType_two_implies_one_6.html [ Failure ]
 media/audio-mpeg-supported.html [ Failure ]
 media/event-attributes.html [ Failure ]
-media/media-can-play-wav-audio.html [ Failure ]
-media/media-captions-no-controls.html [ Failure ]
 media/media-can-play-webm.html [ Failure ]
 media/media-higher-prio-audio-stream.html [ Failure ]
 media/progress-events-generated-correctly.html [ Failure ]
 media/restore-from-page-cache.html [ Failure ]
 media/track/track-forced-subtitles-in-band.html [ Failure ]
-media/track/track-in-band-mode.html [ Failure ]
-media/track/track-manual-mode.html [ Failure ]
+media/track/track-in-band-mode.html [ Pass Failure ]
 media/track/w3c/interfaces/TextTrackCue/align.html [ Failure ]
 media/video-autoplay-allowed-but-fullscreen-required.html [ Failure ]
 media/video-background-tab-playback.html [ Failure ]
@@ -2622,9 +2619,6 @@ webkit.org/b/183441 mathml/presentation/multiscripts-equivalence.html [ ImageOnl
 
 # <rdar://problem/32626498> REGRESSION (iOS 11/High Sierra): media/remote-control-command-seek.html is timing out
 media/remote-control-command-seek.html [ Timeout ]
-
-# <rdar://problem/32715903> iOS 11: LayoutTest media/sources-fallback-codecs.html is failing
-media/sources-fallback-codecs.html [ Failure ]
 
 # <rdar://problem/32715902> iOS 11: LayoutTest media/video-src-blob-using-open-panel.html is failing
 media/video-src-blob-using-open-panel.html [ Failure ]

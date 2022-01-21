@@ -914,22 +914,15 @@ imported/w3c/web-platform-tests/xhr/send-blob-with-no-mime-type.html [ Pass ]
 js/dom/Promise-reject-large-string.html
 loader/go-back-to-different-window-size.html [ Pass ]
 mathml/presentation/mroot-pref-width.html
-media/media-can-play-wav-audio.html [ Pass ]
-media/media-captions-no-controls.html [ Pass ]
 media/media-session/actionHandlerInternalMappings.html
 media/remote-control-command-seek.html [ Pass ]
-media/sources-fallback-codecs.html [ Pass ]
 media/track/track-css-visible-stroke.html
 media/track/track-in-band-legacy-api.html [ Pass ]
-media/track/track-in-band-mode.html [ Pass ]
-media/track/track-manual-mode.html [ Pass ]
-media/track/video-track-alternate-groups.html [ Pass ]
 media/video-canvas-createPattern.html [ Pass ]
 media/video-object-fit.html [ Pass ]
 media/video-seek-to-current-time.html [ Pass ]
 media/video-src-blob-replay.html
 media/video-src-blob-using-open-panel.html [ Pass ]
-media/vp9.html [ Pass ]
 pointerevents/mouse/pointer-event-basic-properties.html [ Timeout ]
 scrollbars/scrollevent-iframe-no-scrolling.html [ Pass ]
 storage/indexeddb/connection-leak-private.html [ Pass ]

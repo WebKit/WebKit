@@ -25,7 +25,6 @@ webkit.org/b/126898 css3/flexbox/image-percent-max-height.html [ ImageOnlyFailur
 fast/events/document-elementFromPoint.html [ Failure ]
 
 media/track/track-in-band-legacy-api.html [ Failure ]
-media/track/video-track-alternate-groups.html [ Failure ]
 
 svg/filters/filter-hidden-content.svg [ Failure ]
 
