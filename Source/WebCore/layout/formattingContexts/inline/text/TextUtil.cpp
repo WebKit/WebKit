@@ -36,6 +36,7 @@
 #include "RenderBox.h"
 #include "RenderStyle.h"
 #include "SurrogatePairAwareTextIterator.h"
+#include <unicode/ubidi.h>
 #include <wtf/text/TextBreakIterator.h>
 
 namespace WebCore {
@@ -336,10 +337,11 @@ size_t TextUtil::firstUserPerceivedCharacterLength(const InlineTextItem& inlineT
     return nextPosition - inlineTextItem.start();
 }
 
-TextDirection TextUtil::directionForTextContent(StringView)
+TextDirection TextUtil::directionForTextContent(StringView content)
 {
-    ASSERT_NOT_IMPLEMENTED_YET();
-    return TextDirection::LTR;
+    if (content.is8Bit())
+        return TextDirection::LTR;
+    return ubidi_getBaseDirection(content.characters16(), content.length()) == UBIDI_RTL ? TextDirection::RTL : TextDirection::LTR;
 }
 
 }
