@@ -2970,13 +2970,6 @@ fast/attachment/attachment-title-with-rtl.html [ ImageOnlyFailure ]
 
 fast/forms/textfield-no-linebreak.html [ ImageOnlyFailure ]
 
-# <rdar://problem/47897726> REGRESSION (iOS 13): Multiple media tests failing
-media/video-currentTime.html [ Failure ]
-media/video-ended-event-negative-playback.html [ Failure ]
-media/video-played-collapse.html [ Failure ]
-media/video-played-ranges-1.html [ Failure ]
-media/video-played-reset.html [ Failure ]
-
 # <rdar://problem/50892567> REGRESSION (iOS 13): CrashTracer: com.apple.WebKit.WebContent.Development at com.apple.WebKit: _ZN6WebKit19fallbackIconForFileEP5NSURL
 fast/forms/file/file-reset-in-change-using-open-panel-with-icon.html [ Skip ]
 

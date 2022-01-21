@@ -442,10 +442,8 @@ imported/w3c/web-platform-tests/css/css-grid/grid-items/replaced-element-015.htm
 imported/w3c/web-platform-tests/css/css-grid/layout-algorithm/flex-sizing-rows-indefinite-height.html
 imported/w3c/web-platform-tests/css/css-grid/layout-algorithm/grid-template-flexible-rerun-track-sizing.html
 imported/w3c/web-platform-tests/css/css-images/gradients-with-border.html
-imported/w3c/web-platform-tests/css/css-images/gradients-with-transparent.html
-imported/w3c/web-platform-tests/css/css-images/gradients-with-transparent.html [ Pass ]
-imported/w3c/web-platform-tests/css/css-images/image-orientation/image-orientation-mask-image.html
-imported/w3c/web-platform-tests/css/css-images/image-orientation/image-orientation-mask-image.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-images/gradients-with-transparent.html [ Pass Failure ]
+imported/w3c/web-platform-tests/css/css-images/image-orientation/image-orientation-mask-image.html [ Pass Failure ]
 imported/w3c/web-platform-tests/css/css-images/multiple-position-color-stop-conic-2.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-images/multiple-position-color-stop-linear.html
 imported/w3c/web-platform-tests/css/css-images/repeating-conic-gradient.html
@@ -927,12 +925,7 @@ media/track/track-in-band-mode.html [ Pass ]
 media/track/track-manual-mode.html [ Pass ]
 media/track/video-track-alternate-groups.html [ Pass ]
 media/video-canvas-createPattern.html [ Pass ]
-media/video-currentTime.html [ Pass ]
-media/video-ended-event-negative-playback.html [ Pass ]
 media/video-object-fit.html [ Pass ]
-media/video-played-collapse.html [ Pass ]
-media/video-played-ranges-1.html [ Pass ]
-media/video-played-reset.html [ Pass ]
 media/video-seek-to-current-time.html [ Pass ]
 media/video-src-blob-replay.html
 media/video-src-blob-using-open-panel.html [ Pass ]
