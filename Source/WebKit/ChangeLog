@@ -1,3 +1,18 @@
+2022-01-20  Tim Horton  <timothy_horton@apple.com>
+
+        ReplayCGDisplayListsIntoBackingStore often results in compositing layers with black backgrounds
+        https://bugs.webkit.org/show_bug.cgi?id=235424
+
+        Reviewed by Simon Fraser.
+
+        No new tests, covered by many existing tests when run in this mode.
+
+        * Shared/RemoteLayerTree/RemoteLayerBackingStore.mm:
+        (WebKit::RemoteLayerBackingStore::applyBackingStoreToLayer):
+        Since we use CA-driven painting when ReplayCGDisplayListsIntoBackingStore
+        is enabled, we need to tell CA whether or not our backing store needs
+        an alpha channel before invalidating and painting into the layer. 
+
 2022-01-20  J Pascoe  <j_pascoe@apple.com>
 
         [WebAuthn] Support all valid FIDO NFC tag types
