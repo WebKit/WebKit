@@ -76,12 +76,11 @@ InlineDisplayLineBuilder::EnclosingLineGeometry InlineDisplayLineBuilder::collec
     return { enclosingTopAndBottom, scrollableOverflowRect };
 }
 
-InlineDisplay::Line InlineDisplayLineBuilder::build(const LineBuilder::LineContent& lineContent, const LineBox& lineBox, InlineLayoutUnit lineBoxLogicalHeight, size_t lineIndex) const
+InlineDisplay::Line InlineDisplayLineBuilder::build(const LineBuilder::LineContent& lineContent, const LineBox& lineBox, InlineLayoutUnit lineBoxLogicalHeight) const
 {
-    auto& rootStyle = lineIndex ? root().firstLineStyle() : root().style();
     auto& rootInlineBox = lineBox.rootInlineBox();
     auto& rootGeometry = layoutState().geometryForBox(root());
-    auto isLeftToRightDirection = rootStyle.isLeftToRightDirection();
+    auto isLeftToRightDirection = lineContent.inlineBaseDirection == TextDirection::LTR;
     auto lineOffsetFromContentBox = lineContent.lineLogicalTopLeft.x() - rootGeometry.contentBoxLeft();
 
     auto lineBoxVisualLeft = isLeftToRightDirection

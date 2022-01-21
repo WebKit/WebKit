@@ -53,6 +53,7 @@ public:
     struct PreviousLine {
         InlineItemRange range;
         bool endsWithLineBreak { false };
+        TextDirection inlineBaseDirection { TextDirection::LTR };
         struct OverflowContent {
             size_t partialContentLength { 0 };
             std::optional<InlineLayoutUnit> width { };
@@ -75,6 +76,7 @@ public:
         bool isLastLineWithInlineContent { true };
         size_t nonSpanningInlineLevelBoxCount { 0 };
         Vector<int32_t> visualOrderList;
+        TextDirection inlineBaseDirection { TextDirection::LTR };
         const Line::RunList& runs;
     };
     LineContent layoutInlineContent(const InlineItemRange&, const InlineRect& lineLogicalRect, const std::optional<PreviousLine>&);

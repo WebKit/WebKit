@@ -245,7 +245,7 @@ void InlineFormattingContext::lineLayout(InlineItems& inlineItems, LineBuilder::
                 overflowContent = { lineContent.partialTrailingContentLength, lineContent.overflowLogicalWidth };
             else if (lineContent.overflowLogicalWidth)
                 overflowContent = { { }, *lineContent.overflowLogicalWidth };
-            previousLine = LineBuilder::PreviousLine { lineContentRange, !lineContent.runs.isEmpty() && lineContent.runs.last().isLineBreak(), overflowContent };
+            previousLine = LineBuilder::PreviousLine { lineContentRange, !lineContent.runs.isEmpty() && lineContent.runs.last().isLineBreak(), lineContent.inlineBaseDirection, overflowContent };
             continue;
         }
         // Floats prevented us placing any content on the line.
@@ -548,11 +548,7 @@ InlineRect InlineFormattingContext::computeGeometryForLineContent(const LineBuil
     auto currentLineIndex = formattingState.lines().size();
 
     auto lineBoxAndHeight = LineBoxBuilder { *this }.build(lineContent, currentLineIndex);
-    auto displayLine = InlineDisplayLineBuilder { *this }.build(lineContent
-        , lineBoxAndHeight.lineBox
-        , lineBoxAndHeight.lineBoxLogicalHeight
-        , currentLineIndex
-    );
+    auto displayLine = InlineDisplayLineBuilder { *this }.build(lineContent, lineBoxAndHeight.lineBox, lineBoxAndHeight.lineBoxLogicalHeight);
     formattingState.addBoxes(InlineDisplayContentBuilder { root(), formattingState }.build(lineContent
         , lineBoxAndHeight.lineBox
         , displayLine

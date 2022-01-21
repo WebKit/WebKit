@@ -324,7 +324,7 @@ void InlineDisplayContentBuilder::processNonBidiContent(const LineBuilder::LineC
     auto hasContent = false;
     for (auto& lineRun : lineContent.runs)
         hasContent = hasContent || lineRun.isText() || lineRun.isBox();
-    ASSERT(root().style().isLeftToRightDirection() || !hasContent);
+    ASSERT(lineContent.inlineBaseDirection == TextDirection::LTR || !hasContent);
 #endif
     auto contentStartInVisualOrder = displayLine.left() + displayLine.contentLeft();
 

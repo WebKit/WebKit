@@ -41,6 +41,19 @@
 namespace WebCore {
 namespace Layout {
 
+static inline StringBuilder toString(const Line::RunList& runs)
+{
+    // FIXME: We could try to reuse the content builder in InlineItemsBuilder if this turns out to be a perf bottleneck.
+    StringBuilder lineContentBuilder;
+    for (auto& run : runs) {
+        if (!run.isText())
+            continue;
+        auto& textContent = run.textContent();
+        lineContentBuilder.append(downcast<InlineTextBox>(run.layoutBox()).content().substring(textContent->start, textContent->length));
+    }
+    return lineContentBuilder;
+}
+
 static inline bool endsWithSoftWrapOpportunity(const InlineTextItem& currentTextItem, const InlineTextItem& nextInlineTextItem)
 {
     ASSERT(!nextInlineTextItem.isWhitespace());
@@ -343,6 +356,17 @@ LineBuilder::LineContent LineBuilder::layoutInlineContent(const InlineItemRange&
         return visualOrderList;
     };
 
+    auto inlineBaseDirectionForLineContent = [&] {
+        auto& rootStyle = !previousLine ? root().firstLineStyle() : root().style();
+        auto shouldUseBlockDirection = rootStyle.unicodeBidi() != UnicodeBidi::Plaintext || !previousLine;
+        if (shouldUseBlockDirection)
+            return rootStyle.direction();
+        // A previous line ending with a line break (<br> or preserved \n) introduces a new unicode paragraph with its own direction.
+        if (!previousLine->endsWithLineBreak)
+            return previousLine->inlineBaseDirection;
+        return TextUtil::directionForTextContent(toString(lineRuns));
+    };
+
     auto isLastLine = isLastLineWithInlineContent(committedRange, needsLayoutRange.end, committedContent.partialTrailingContentLength);
     return LineContent { committedRange
         , committedContent.partialTrailingContentLength
@@ -358,6 +382,7 @@ LineBuilder::LineContent LineBuilder::layoutInlineContent(const InlineItemRange&
         , isLastLine
         , m_line.nonSpanningInlineLevelBoxCount()
         , computedVisualOrder()
+        , inlineBaseDirectionForLineContent()
         , lineRuns };
 }
 

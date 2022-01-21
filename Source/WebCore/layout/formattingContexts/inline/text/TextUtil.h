@@ -71,6 +71,7 @@ public:
     static bool containsStrongDirectionalityText(StringView);
 
     static size_t firstUserPerceivedCharacterLength(const InlineTextItem&);
+    static TextDirection directionForTextContent(StringView);
 };
 
 }

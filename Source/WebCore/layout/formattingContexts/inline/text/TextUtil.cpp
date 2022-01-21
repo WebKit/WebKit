@@ -336,6 +336,12 @@ size_t TextUtil::firstUserPerceivedCharacterLength(const InlineTextItem& inlineT
     return nextPosition - inlineTextItem.start();
 }
 
+TextDirection TextUtil::directionForTextContent(StringView)
+{
+    ASSERT_NOT_IMPLEMENTED_YET();
+    return TextDirection::LTR;
+}
+
 }
 }
 #endif
