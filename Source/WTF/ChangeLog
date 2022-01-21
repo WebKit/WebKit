@@ -1,3 +1,13 @@
+2022-01-21  Mike Gorse  <mgorse@suse.com>
+
+        Build failure with g++ 12: std::exchange undefined
+        https://bugs.webkit.org/show_bug.cgi?id=235445
+
+        Reviewed by Michael Catanzaro.
+
+        * wtf/CompletionHandler.h: Include <utility>
+        * wtf/MallocPtr.h: Ditto
+
 2022-01-20  Said Abou-Hallawa  <said@apple.com>
 
         [Cocoa] Accelerated filters are enabled by the wrong setting
