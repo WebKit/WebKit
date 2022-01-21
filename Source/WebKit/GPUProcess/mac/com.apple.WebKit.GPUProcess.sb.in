@@ -360,6 +360,7 @@
     (iokit-property "UserClientEnabled")
     (iokit-property "VRAM,totalMB")
     (iokit-property "WANTS_FRAMES_IGNORED")
+    (iokit-property "ane-type")
     (iokit-property "acpi-device")
     (iokit-property "acpi-path")
     (iokit-property "assigned-addresses")
