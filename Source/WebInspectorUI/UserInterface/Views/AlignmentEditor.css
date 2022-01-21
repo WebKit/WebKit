@@ -56,3 +56,7 @@
 .alignment-editor .glyph.rotate-left > svg {
     rotate: -90deg;
 }
+
+.alignment-editor .glyph:focus {
+    outline-offset: var(--focus-ring-outline-offset);
+}
