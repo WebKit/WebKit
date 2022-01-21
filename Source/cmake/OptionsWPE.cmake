@@ -1,7 +1,7 @@
 include(GNUInstallDirs)
 include(VersioningUtils)
 
-SET_PROJECT_VERSION(2 34 3)
+SET_PROJECT_VERSION(2 34 4)
 
 set(USER_AGENT_BRANDING "" CACHE STRING "Branding to add to user agent string")
 
@@ -143,9 +143,9 @@ endif ()
 endif ()
 
 if (WPE_API_VERSION VERSION_EQUAL "1.0")
-    CALCULATE_LIBRARY_VERSIONS_FROM_LIBTOOL_TRIPLE(WEBKIT 19 5 16)
+    CALCULATE_LIBRARY_VERSIONS_FROM_LIBTOOL_TRIPLE(WEBKIT 19 6 16)
 else ()
-    CALCULATE_LIBRARY_VERSIONS_FROM_LIBTOOL_TRIPLE(WEBKIT 0 3 0)
+    CALCULATE_LIBRARY_VERSIONS_FROM_LIBTOOL_TRIPLE(WEBKIT 0 4 0)
 endif ()
 
 # These are shared variables, but we special case their definition so that we can use the
