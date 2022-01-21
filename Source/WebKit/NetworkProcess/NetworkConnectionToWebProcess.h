@@ -56,6 +56,10 @@
 #include <wtf/RefCounted.h>
 #include <wtf/URLHash.h>
 
+#if ENABLE(IPC_TESTING_API)
+#include "IPCTester.h"
+#endif
+
 namespace PAL {
 class SessionID;
 }
@@ -415,6 +419,9 @@ private:
         
     HashSet<URL> m_blobURLs;
     HashSet<URL> m_blobURLHandles;
+#if ENABLE(IPC_TESTING_API)
+    IPCTester m_ipcTester;
+#endif
 };
 
 } // namespace WebKit

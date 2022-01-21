@@ -214,6 +214,7 @@ set(WebKit_MESSAGES_IN_FILES
     NetworkProcess/webrtc/RTCDataChannelRemoteManagerProxy
 
     Shared/AuxiliaryProcess
+    Shared/IPCTester
     Shared/WebConnection
 
     Shared/Authentication/AuthenticationManager

@@ -426,7 +426,7 @@ static std::unique_ptr<Decoder> createMessageDecoder(mach_msg_header_t* header, 
             return nullptr;
         }
 
-        return Decoder::create(body, bodySize, nullptr, Vector<Attachment> { });
+        return Decoder::create(body, bodySize, { });
     }
 
     mach_msg_body_t* body = reinterpret_cast<mach_msg_body_t*>(header + 1);
@@ -487,7 +487,7 @@ static std::unique_ptr<Decoder> createMessageDecoder(mach_msg_header_t* header, 
         return nullptr;
     }
 
-    return Decoder::create(messageBody, messageBodySize, nullptr, WTFMove(attachments));
+    return Decoder::create(messageBody, messageBodySize, WTFMove(attachments));
 }
 
 // The receive buffer size should always include the maximum trailer size.

@@ -1,3 +1,72 @@
+2022-01-21  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        Support in-process testing of IPC messages
+        https://bugs.webkit.org/show_bug.cgi?id=231674
+        <rdar://84189314>
+
+        Reviewed by Brent Fulgham.
+
+        Add IPCTester service to UI, GPU, Network, Authn process.
+        The service can be used to send random messages to the processes.
+
+        Test: ipc/start-message-testing.html
+
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * GPUProcess/GPUConnectionToWebProcess.cpp:
+        (WebKit::GPUConnectionToWebProcess::dispatchMessage):
+        (WebKit::GPUConnectionToWebProcess::dispatchSyncMessage):
+        * GPUProcess/GPUConnectionToWebProcess.h:
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::didReceiveMessage):
+        (WebKit::NetworkConnectionToWebProcess::didReceiveSyncMessage):
+        * NetworkProcess/NetworkConnectionToWebProcess.h:
+        * Platform/IPC/Connection.cpp:
+        (IPC::Connection::dispatchIncomingMessageForTesting):
+        (IPC::Connection::dispatchMessage):
+        (IPC::CompletionHandler<void):
+        Remove asserts from takeAsyncReplyHandler, they're already present
+        in the caller. The caller can filter them based on the testing flag,
+        allowing testing without asserts.
+        * Platform/IPC/Connection.h:
+        * Platform/IPC/Decoder.cpp:
+        (IPC::Decoder::create):
+        (IPC::Decoder::Decoder):
+        (IPC::Decoder::~Decoder):
+        * Platform/IPC/Decoder.h:
+        * Platform/IPC/cocoa/ConnectionCocoa.mm:
+        (IPC::createMessageDecoder):
+        * Platform/IPC/unix/ConnectionUnix.cpp:
+        (IPC::Connection::processMessage):
+        * Platform/IPC/win/ConnectionWin.cpp:
+        (IPC::Connection::readEventHandler):
+        * Shared/IPCTester.cpp: Added.
+        (WebKit::messageTestDriver):
+        (WebKit::runMessageTesting):
+        (WebKit::IPCTester::~IPCTester):
+        (WebKit::IPCTester::startMessageTesting):
+        (WebKit::IPCTester::stopMessageTesting):
+        (WebKit::IPCTester::stopIfNeeded):
+        * Shared/IPCTester.h: Added.
+        * Shared/IPCTester.messages.in: Copied from Source/WebKit/WebAuthnProcess/WebAuthnConnectionToWebProcess.messages.in.
+        * Sources.txt:
+        * UIProcess/LegacySessionStateCodingNone.cpp:
+        (WebKit::decodeLegacySessionState):
+        * UIProcess/WebProcessPool.cpp:
+        * UIProcess/WebProcessPool.h:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::shouldSendPendingMessage):
+        * WebAuthnProcess/WebAuthnConnectionToWebProcess.cpp:
+        (WebKit::WebAuthnConnectionToWebProcess::dispatchMessage):
+        (WebKit::WebAuthnConnectionToWebProcess::dispatchSyncMessage):
+        * WebAuthnProcess/WebAuthnConnectionToWebProcess.h:
+        * WebAuthnProcess/WebAuthnConnectionToWebProcess.messages.in:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/WebPage/IPCTestingAPI.cpp:
+        (WebKit::IPCTestingAPI::JSMessageListener::didReceiveMessage):
+        (WebKit::IPCTestingAPI::JSMessageListener::willSendMessage):
+
 2022-01-20  Devin Rousso  <drousso@apple.com>
 
         Add SPI for passing around and getting details about `WebCore::CSSStyleDeclaration` in injected bundle code

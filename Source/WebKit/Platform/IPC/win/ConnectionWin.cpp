@@ -140,7 +140,7 @@ void Connection::readEventHandler()
 
         if (!m_readBuffer.isEmpty()) {
             // We have a message, let's dispatch it.
-            auto decoder = Decoder::create(m_readBuffer.data(), m_readBuffer.size(), nullptr, { });
+            auto decoder = Decoder::create(m_readBuffer.data(), m_readBuffer.size(), { });
             ASSERT(decoder);
             if (!decoder)
                 return;

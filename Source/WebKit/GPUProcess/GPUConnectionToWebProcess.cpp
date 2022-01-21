@@ -149,6 +149,10 @@
 #include "WCContentBufferManager.h"
 #endif
 
+#if ENABLE(IPC_TESTING_API)
+#include "IPCTesterMessages.h"
+#endif
+
 namespace WebKit {
 using namespace WebCore;
 
@@ -795,6 +799,12 @@ bool GPUConnectionToWebProcess::dispatchMessage(IPC::Connection& connection, IPC
             m_remoteRemoteCommandListener->didReceiveMessage(connection, decoder);
         return true;
     }
+#if ENABLE(IPC_TESTING_API)
+    if (decoder.messageReceiverName() == Messages::IPCTester::messageReceiverName()) {
+        m_ipcTester.didReceiveMessage(connection, decoder);
+        return true;
+    }
+#endif
 
     return messageReceiverMap().dispatchMessage(connection, decoder);
 }
@@ -868,6 +878,12 @@ bool GPUConnectionToWebProcess::dispatchSyncMessage(IPC::Connection& connection,
     if (decoder.messageReceiverName() == Messages::RemoteGraphicsContextGL::messageReceiverName())
         // Skip messages for already removed receivers.
         return true;
+#endif
+#if ENABLE(IPC_TESTING_API)
+    if (decoder.messageReceiverName() == Messages::IPCTester::messageReceiverName()) {
+        m_ipcTester.didReceiveSyncMessage(connection, decoder, replyEncoder);
+        return true;
+    }
 #endif
     return messageReceiverMap().dispatchSyncMessage(connection, decoder, replyEncoder);
 }

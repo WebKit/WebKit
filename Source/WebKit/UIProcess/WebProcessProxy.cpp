@@ -464,7 +464,7 @@ bool WebProcessProxy::shouldSendPendingMessage(const PendingMessage& message)
     if (message.encoder->messageName() == IPC::MessageName::WebPage_LoadRequestWaitingForProcessLaunch) {
         auto buffer = message.encoder->buffer();
         auto bufferSize = message.encoder->bufferSize();
-        auto decoder = IPC::Decoder::create(buffer, bufferSize, nullptr, { });
+        auto decoder = IPC::Decoder::create(buffer, bufferSize, { });
         ASSERT(decoder);
         if (!decoder)
             return false;

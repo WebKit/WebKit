@@ -5200,6 +5200,9 @@ webkit.org/b/233344 imported/w3c/web-platform-tests/css/motion/offset-rotate-002
 # IPC test failing in Debug mode due to assert.
 [ Debug ] ipc/send-invalid-message.html [ Skip ]
 
+# The test invokes random messages, potentially produces random results.
+ipc/start-message-testing.html [ Skip ]
+
 imported/w3c/web-platform-tests/css/css-shadow-parts/interaction-with-nested-pseudo-class.html [ ImageOnlyFailure ]
 
 webkit.org/b/183994 imported/w3c/web-platform-tests/css/cssom/css-style-attr-decl-block.html [ Failure ]

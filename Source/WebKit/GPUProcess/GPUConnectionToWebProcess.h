@@ -64,6 +64,10 @@
 #include "WCLayerTreeHostIdentifier.h"
 #endif
 
+#if ENABLE(IPC_TESTING_API)
+#include "IPCTester.h"
+#endif
+
 namespace WebCore {
 class SecurityOrigin;
 struct SecurityOriginData;
@@ -348,6 +352,9 @@ private:
 
 #if ENABLE(ROUTING_ARBITRATION) && HAVE(AVAUDIO_ROUTING_ARBITER)
     UniqueRef<LocalAudioSessionRoutingArbitrator> m_routingArbitrator;
+#endif
+#if ENABLE(IPC_TESTING_API)
+    IPCTester m_ipcTester;
 #endif
 };
 
