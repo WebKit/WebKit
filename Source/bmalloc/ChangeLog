@@ -1,3 +1,13 @@
+2022-01-21  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [libpas] Follow-up after r288339
+        https://bugs.webkit.org/show_bug.cgi?id=235423
+
+        Changed the type names.
+
+        * libpas/src/libpas/pas_allocation_callbacks.c:
+        * libpas/src/libpas/pas_allocation_callbacks.h:
+
 2022-01-20  Filip Pizlo  <fpizlo@apple.com>
 
         [libpas] medium directory lookup should bail if begin_index is zero to catch races with expendable memory decommit (cherry pick 434465bfb8e0c285d6763cf6aa0e04982199f824)
