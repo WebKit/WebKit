@@ -47,32 +47,32 @@ static const uint8_t* copyBuffer(const uint8_t* buffer, size_t bufferSize)
     return bufferCopy;
 }
 
-std::unique_ptr<Decoder> Decoder::create(const uint8_t* buffer, size_t bufferSize, void (*bufferDeallocator)(const uint8_t*, size_t), Vector<Attachment>&& attachments)
+std::unique_ptr<Decoder> Decoder::create(const uint8_t* buffer, size_t bufferSize, Vector<Attachment>&& attachments)
 {
     ASSERT(buffer);
     if (UNLIKELY(!buffer)) {
         RELEASE_LOG_FAULT(IPC, "Decoder::create() called with a null buffer (bufferSize: %lu)", bufferSize);
         return nullptr;
     }
+    return Decoder::create(copyBuffer(buffer, bufferSize), bufferSize, [](const uint8_t* ptr, size_t) { fastFree(const_cast<uint8_t*>(ptr)); }, WTFMove(attachments)); // NOLINT
+}
 
-    const uint8_t* bufferCopy;
-    if (!bufferDeallocator) {
-        bufferCopy = copyBuffer(buffer, bufferSize);
-        ASSERT(bufferCopy);
-        if (UNLIKELY(!bufferCopy))
-            return nullptr;
-    } else
-        bufferCopy = buffer;
-
-    auto decoder = std::unique_ptr<Decoder>(new Decoder(bufferCopy, bufferSize, bufferDeallocator, WTFMove(attachments)));
+std::unique_ptr<Decoder> Decoder::create(const uint8_t* buffer, size_t bufferSize, BufferDeallocator&& bufferDeallocator, Vector<Attachment>&& attachments)
+{
+    ASSERT(buffer);
+    if (UNLIKELY(!buffer)) {
+        RELEASE_LOG_FAULT(IPC, "Decoder::create() called with a null buffer (bufferSize: %lu)", bufferSize);
+        return nullptr;
+    }
+    auto decoder = std::unique_ptr<Decoder>(new Decoder(buffer, bufferSize, WTFMove(bufferDeallocator), WTFMove(attachments)));
     return decoder->isValid() ? WTFMove(decoder) : nullptr;
 }
 
-Decoder::Decoder(const uint8_t* buffer, size_t bufferSize, void (*bufferDeallocator)(const uint8_t*, size_t), Vector<Attachment>&& attachments)
+Decoder::Decoder(const uint8_t* buffer, size_t bufferSize, BufferDeallocator&& bufferDeallocator, Vector<Attachment>&& attachments)
     : m_buffer { buffer }
     , m_bufferPos { m_buffer }
     , m_bufferEnd { m_buffer + bufferSize }
-    , m_bufferDeallocator { bufferDeallocator }
+    , m_bufferDeallocator { WTFMove(bufferDeallocator) }
     , m_attachments { WTFMove(attachments) }
 {
     if (UNLIKELY(reinterpret_cast<uintptr_t>(m_buffer) % alignof(uint64_t))) {
@@ -94,7 +94,7 @@ Decoder::Decoder(const uint8_t* stream, size_t streamSize, uint64_t destinationI
     : m_buffer { stream }
     , m_bufferPos { m_buffer }
     , m_bufferEnd { m_buffer + streamSize }
-    , m_bufferDeallocator([] (const uint8_t*, size_t) { })
+    , m_bufferDeallocator { nullptr }
     , m_destinationID(destinationID)
 {
     if (UNLIKELY(!decode(m_messageName)))
@@ -104,12 +104,8 @@ Decoder::Decoder(const uint8_t* stream, size_t streamSize, uint64_t destinationI
 Decoder::~Decoder()
 {
     ASSERT(m_buffer);
-
     if (m_bufferDeallocator)
         m_bufferDeallocator(m_buffer, m_bufferEnd - m_buffer);
-    else
-        fastFree(const_cast<uint8_t*>(m_buffer));
-
     // FIXME: We need to dispose of the mach ports in cases of failure.
 }
 

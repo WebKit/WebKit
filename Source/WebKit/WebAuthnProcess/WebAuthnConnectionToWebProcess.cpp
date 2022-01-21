@@ -33,6 +33,10 @@
 #include "WebAuthnProcess.h"
 #include <WebCore/AuthenticatorResponseData.h>
 
+#if ENABLE(IPC_TESTING_API)
+#include "IPCTesterMessages.h"
+#endif
+
 namespace WebKit {
 using namespace WebCore;
 
@@ -66,6 +70,29 @@ void WebAuthnConnectionToWebProcess::didReceiveInvalidMessage(IPC::Connection& c
     WTFLogAlways("Received an invalid message \"%s\" from the web process.\n", description(messageName));
     CRASH();
 }
+
+bool WebAuthnConnectionToWebProcess::dispatchMessage(IPC::Connection& connection, IPC::Decoder& decoder)
+{
+#if ENABLE(IPC_TESTING_API)
+    if (decoder.messageReceiverName() == Messages::IPCTester::messageReceiverName()) {
+        m_ipcTester.didReceiveMessage(connection, decoder);
+        return true;
+    }
+#endif
+    return false;
+}
+
+bool WebAuthnConnectionToWebProcess::dispatchSyncMessage(IPC::Connection& connection, IPC::Decoder& decoder, UniqueRef<IPC::Encoder>& replyEncoder)
+{
+#if ENABLE(IPC_TESTING_API)
+    if (decoder.messageReceiverName() == Messages::IPCTester::messageReceiverName()) {
+        m_ipcTester.didReceiveSyncMessage(connection, decoder, replyEncoder);
+        return true;
+    }
+#endif
+    return false;
+}
+
 
 void WebAuthnConnectionToWebProcess::makeCredential(Vector<uint8_t>&& hash, PublicKeyCredentialCreationOptions&& options, bool processingUserGesture, RequestCompletionHandler&& handler)
 {

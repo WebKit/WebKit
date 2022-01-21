@@ -75,6 +75,11 @@ OBJC_CLASS WKWebInspectorPreferenceObserver;
 #include <pal/system/SystemSleepListener.h>
 #endif
 
+
+#if ENABLE(IPC_TESTING_API)
+#include "IPCTester.h"
+#endif
+
 namespace API {
 class AutomationClient;
 class DownloadClient;
@@ -802,6 +807,9 @@ private:
 #if PLATFORM(MAC)
     std::unique_ptr<WebCore::PowerObserver> m_powerObserver;
     std::unique_ptr<PAL::SystemSleepListener> m_systemSleepListener;
+#endif
+#if ENABLE(IPC_TESTING_API)
+    IPCTester m_ipcTester;
 #endif
 };
 

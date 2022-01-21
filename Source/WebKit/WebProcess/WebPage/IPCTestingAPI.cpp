@@ -1886,7 +1886,7 @@ void JSMessageListener::didReceiveMessage(const IPC::Decoder& decoder)
     auto* globalObject = toJS(m_context);
     JSC::JSLockHolder lock(globalObject->vm());
 
-    auto mutableDecoder = IPC::Decoder::create(decoder.buffer(), decoder.length(), nullptr, { });
+    auto mutableDecoder = IPC::Decoder::create(decoder.buffer(), decoder.length(), { });
     auto* description = jsDescriptionFromDecoder(globalObject, *mutableDecoder);
 
     JSValueRef arguments[] = { description ? toRef(globalObject, description) : JSValueMakeUndefined(m_context) };
@@ -1903,7 +1903,7 @@ void JSMessageListener::willSendMessage(const IPC::Encoder& encoder, OptionSet<I
     auto* globalObject = toJS(m_context);
     JSC::JSLockHolder lock(globalObject->vm());
 
-    auto decoder = IPC::Decoder::create(encoder.buffer(), encoder.bufferSize(), nullptr, { });
+    auto decoder = IPC::Decoder::create(encoder.buffer(), encoder.bufferSize(), { });
     auto* description = jsDescriptionFromDecoder(globalObject, *decoder);
 
     JSValueRef arguments[] = { description ? toRef(globalObject, description) : JSValueMakeUndefined(m_context) };

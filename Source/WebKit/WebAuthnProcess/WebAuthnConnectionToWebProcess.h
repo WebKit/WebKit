@@ -32,6 +32,10 @@
 #include <WebCore/ProcessIdentifier.h>
 #include <wtf/RefCounted.h>
 
+#if ENABLE(IPC_TESTING_API)
+#include "IPCTester.h"
+#endif
+
 namespace WebCore {
 enum class AuthenticatorAttachment;
 struct AuthenticatorResponseData;
@@ -67,6 +71,10 @@ private:
     void didClose(IPC::Connection&) final;
     void didReceiveInvalidMessage(IPC::Connection&, IPC::MessageName) final;
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
+    bool didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&);
+
+    bool dispatchMessage(IPC::Connection&, IPC::Decoder&);
+    bool dispatchSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&);
 
     // Receivers.
     void makeCredential(Vector<uint8_t>&& hash, WebCore::PublicKeyCredentialCreationOptions&&, bool processingUserGesture, RequestCompletionHandler&&);
@@ -79,6 +87,9 @@ private:
     Ref<IPC::Connection> m_connection;
     Ref<WebAuthnProcess> m_WebAuthnProcess;
     const WebCore::ProcessIdentifier m_webProcessIdentifier;
+#if ENABLE(IPC_TESTING_API)
+    IPCTester m_ipcTester;
+#endif
 };
 
 } // namespace WebKit

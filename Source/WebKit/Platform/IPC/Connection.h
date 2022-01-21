@@ -322,6 +322,7 @@ public:
 
     void setIgnoreInvalidMessageForTesting() { m_ignoreInvalidMessageForTesting = true; }
     bool ignoreInvalidMessageForTesting() const { return m_ignoreInvalidMessageForTesting; }
+    void dispatchIncomingMessageForTesting(std::unique_ptr<Decoder>&&);
 #endif
 
     void dispatchMessageReceiverMessage(MessageReceiver&, std::unique_ptr<Decoder>&&);
