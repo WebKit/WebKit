@@ -358,11 +358,11 @@ LineBuilder::LineContent LineBuilder::layoutInlineContent(const InlineItemRange&
 
     auto inlineBaseDirectionForLineContent = [&] {
         auto& rootStyle = !previousLine ? root().firstLineStyle() : root().style();
-        auto shouldUseBlockDirection = rootStyle.unicodeBidi() != UnicodeBidi::Plaintext || !previousLine;
+        auto shouldUseBlockDirection = rootStyle.unicodeBidi() != UnicodeBidi::Plaintext;
         if (shouldUseBlockDirection)
             return rootStyle.direction();
         // A previous line ending with a line break (<br> or preserved \n) introduces a new unicode paragraph with its own direction.
-        if (!previousLine->endsWithLineBreak)
+        if (previousLine && !previousLine->endsWithLineBreak)
             return previousLine->inlineBaseDirection;
         return TextUtil::directionForTextContent(toString(lineRuns));
     };
