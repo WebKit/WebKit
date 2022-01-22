@@ -1,3 +1,15 @@
+2022-01-21  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Unreviewed, follow-up after r288066
+        https://bugs.webkit.org/show_bug.cgi?id=235271
+
+        * runtime/DatePrototype.cpp:
+        (JSC::applyToNumberToOtherwiseIgnoredArguments):
+        (JSC::fillStructuresUsingDateArgs):
+        (JSC::setNewValueFromTimeArgs):
+        (JSC::setNewValueFromDateArgs):
+        (JSC::applyToNumbersToTrashedArguments): Deleted.
+
 2022-01-21  Mike Gorse  <mgorse@suse.com>
 
         Build failure with g++ 12: std::exchange undefined

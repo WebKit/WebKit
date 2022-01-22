@@ -110,7 +110,7 @@ static EncodedJSValue formateDateInstance(JSGlobalObject* globalObject, CallFram
 }
 
 
-static void applyToNumbersToTrashedArguments(JSGlobalObject* globalObject, CallFrame* callFrame, unsigned maxArgs)
+static void applyToNumberToOtherwiseIgnoredArguments(JSGlobalObject* globalObject, CallFrame* callFrame, unsigned maxArgs)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -188,21 +188,21 @@ static bool fillStructuresUsingDateArgs(JSGlobalObject* globalObject, CallFrame*
     if (maxArgs >= 3 && idx < numArgs) {
         double years = callFrame->uncheckedArgument(idx++).toIntegerPreserveNaN(globalObject);
         RETURN_IF_EXCEPTION(scope, false);
-        ok = (ok && std::isfinite(years));
+        ok = ok && std::isfinite(years);
         t->setYear(toInt32(years));
     }
     // months
     if (maxArgs >= 2 && idx < numArgs) {
         double months = callFrame->uncheckedArgument(idx++).toIntegerPreserveNaN(globalObject);
         RETURN_IF_EXCEPTION(scope, false);
-        ok = (ok && std::isfinite(months));
+        ok = ok && std::isfinite(months);
         t->setMonth(toInt32(months));
     }
     // days
     if (idx < numArgs) {
         double days = callFrame->uncheckedArgument(idx++).toIntegerPreserveNaN(globalObject);
         RETURN_IF_EXCEPTION(scope, false);
-        ok = (ok && std::isfinite(days));
+        ok = ok && std::isfinite(days);
         t->setMonthDay(0);
         *ms += days * msPerDay;
     }
@@ -679,7 +679,7 @@ static EncodedJSValue setNewValueFromTimeArgs(JSGlobalObject* globalObject, Call
     double milli = thisDateObj->internalNumber();
 
     if (!callFrame->argumentCount() || std::isnan(milli)) {
-        applyToNumbersToTrashedArguments(globalObject, callFrame, numArgsToUse);
+        applyToNumberToOtherwiseIgnoredArguments(globalObject, callFrame, numArgsToUse);
         RETURN_IF_EXCEPTION(scope, { });
         thisDateObj->setInternalNumber(PNaN);
         return JSValue::encode(jsNaN());
@@ -692,7 +692,7 @@ static EncodedJSValue setNewValueFromTimeArgs(JSGlobalObject* globalObject, Call
         ? thisDateObj->gregorianDateTimeUTC(cache)
         : thisDateObj->gregorianDateTime(cache);
     if (!other) {
-        applyToNumbersToTrashedArguments(globalObject, callFrame, numArgsToUse);
+        applyToNumberToOtherwiseIgnoredArguments(globalObject, callFrame, numArgsToUse);
         RETURN_IF_EXCEPTION(scope, { });
         return JSValue::encode(jsNaN());
     }
@@ -723,7 +723,7 @@ static EncodedJSValue setNewValueFromDateArgs(JSGlobalObject* globalObject, Call
         return throwVMTypeError(globalObject, scope);
 
     if (!callFrame->argumentCount()) {
-        applyToNumbersToTrashedArguments(globalObject, callFrame, numArgsToUse);
+        applyToNumberToOtherwiseIgnoredArguments(globalObject, callFrame, numArgsToUse);
         RETURN_IF_EXCEPTION(scope, { });
         thisDateObj->setInternalNumber(PNaN);
         return JSValue::encode(jsNaN());
@@ -741,7 +741,7 @@ static EncodedJSValue setNewValueFromDateArgs(JSGlobalObject* globalObject, Call
             ? thisDateObj->gregorianDateTimeUTC(cache)
             : thisDateObj->gregorianDateTime(cache);
         if (!other) {
-            applyToNumbersToTrashedArguments(globalObject, callFrame, numArgsToUse);
+            applyToNumberToOtherwiseIgnoredArguments(globalObject, callFrame, numArgsToUse);
             RETURN_IF_EXCEPTION(scope, { });
             return JSValue::encode(jsNaN());
         }
