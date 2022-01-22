@@ -1,3 +1,52 @@
+2022-01-21  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r288391. rdar://problem/87829404
+
+    WebKit fails to build - error: 'webrtc/rtc_base/network.h' file not found
+    https://bugs.webkit.org/show_bug.cgi?id=235459
+    
+    Reviewed by Mark Lam.
+    
+    We needed to create symlinks from the standard location to the SYSTEM_CONTENT_PATH location.
+    This is needed for both the include files and archive libraries.
+    
+    * Configurations/boringssl.xcconfig:
+    * Configurations/libsrtp.xcconfig:
+    * Configurations/libvpx.xcconfig:
+    * Configurations/libwebm.xcconfig:
+    * Configurations/libwebrtc.xcconfig:
+    * Configurations/libyuv.xcconfig:
+    * Configurations/opus.xcconfig:
+    * Configurations/usrsctp.xcconfig:
+    * Scripts: Added.
+    * Scripts/create-symlink-to-altroot.sh: Added.
+    * libwebrtc.xcodeproj/project.pbxproj:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@288391 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-01-21  Michael Saboff  <msaboff@apple.com>
+
+            WebKit fails to build - error: 'webrtc/rtc_base/network.h' file not found
+            https://bugs.webkit.org/show_bug.cgi?id=235459
+
+            Reviewed by Mark Lam.
+
+            We needed to create symlinks from the standard location to the SYSTEM_CONTENT_PATH location.
+            This is needed for both the include files and archive libraries.
+
+            * Configurations/boringssl.xcconfig:
+            * Configurations/libsrtp.xcconfig:
+            * Configurations/libvpx.xcconfig:
+            * Configurations/libwebm.xcconfig:
+            * Configurations/libwebrtc.xcconfig:
+            * Configurations/libyuv.xcconfig:
+            * Configurations/opus.xcconfig:
+            * Configurations/usrsctp.xcconfig:
+            * Scripts: Added.
+            * Scripts/create-symlink-to-altroot.sh: Added.
+            * libwebrtc.xcodeproj/project.pbxproj:
+
 2022-01-07  Alex Christensen  <achristensen@webkit.org>
 
         Unreviewed, reverting r287698.
