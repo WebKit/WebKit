@@ -838,6 +838,9 @@
     )
 )
 
+(with-filter (system-attribute apple-internal)
+    (mobile-preferences-read "com.apple.CFNetwork"))
+
 (deny sysctl*)
 (allow sysctl-read
     (sysctl-name
