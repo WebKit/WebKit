@@ -184,10 +184,8 @@ void AccessibilityAtspi::removeEventListener(const char* dbusName, const char* e
 
 void AccessibilityAtspi::addClient(const char* dbusName)
 {
-    if (m_clients.isEmpty()) {
-        for (auto* rootObject : m_rootObjects.keys())
-            rootObject->registerTree();
-    }
+    if (m_clients.isEmpty())
+        AXObjectCache::enableAccessibility();
 
     auto addResult = m_clients.add(dbusName, 0);
     if (!addResult.isNewEntry)
@@ -375,8 +373,8 @@ void AccessibilityAtspi::parentChanged(AccessibilityObjectAtspi& atspiObject)
     if (!m_connection)
         return;
 
-    // Always emit parentChanged when the tree is registered because the atspi cache always consumes it.
-    if (!atspiObject.isTreeRegistered())
+    // Always emit parentChanged when there are clients because the atspi cache always consumes it.
+    if (!m_clients.isEmpty())
         return;
 
     // Emit parentChanged only if the object is already registered, otherwise register the object,
@@ -395,6 +393,10 @@ void AccessibilityAtspi::parentChanged(AccessibilityRootAtspi& rootObject)
     if (!m_connection)
         return;
 
+    // Always emit parentChanged when there are clients because the atspi cache always consumes it.
+    if (m_clients.isEmpty())
+        return;
+
     g_dbus_connection_emit_signal(m_connection.get(), nullptr, rootObject.path().utf8().data(), "org.a11y.atspi.Event.Object", "PropertyChange",
         g_variant_new("(siiva{sv})", "accessible-parent", 0, 0, rootObject.parentReference(), nullptr), nullptr);
 }
@@ -408,8 +410,8 @@ void AccessibilityAtspi::childrenChanged(AccessibilityObjectAtspi& atspiObject, 
     if (!m_connection)
         return;
 
-    // Always emit ChildrenChanged when the tree is registered because the atspi cache always consumes it.
-    if (!atspiObject.isTreeRegistered())
+    // Always emit ChildrenChanged when there are clients because the atspi cache always consumes it.
+    if (m_clients.isEmpty())
         return;
 
     addToCacheIfPending(atspiObject);
@@ -423,6 +425,10 @@ void AccessibilityAtspi::childrenChanged(AccessibilityObjectAtspi& atspiObject, 
 void AccessibilityAtspi::childrenChanged(AccessibilityRootAtspi& rootObject, AccessibilityObjectAtspi& child, ChildrenChanged change)
 {
     if (!m_connection)
+        return;
+
+    // Always emit ChildrenChanged when there are clients because the atspi cache always consumes it.
+    if (m_clients.isEmpty())
         return;
 
     addToCacheIfPending(child);
@@ -837,10 +843,6 @@ void AccessibilityAtspi::cacheClearTimerFired()
         it.key->didUnregisterObject();
     }
     m_atspiObjects.clear();
-
-    for (auto* rootObject : m_rootObjects.keys())
-        rootObject->didUnregisterTree();
-
     m_cache.clear();
 
     RELEASE_ASSERT(m_cacheUpdateList.isEmpty());

@@ -41,7 +41,6 @@ public:
     ~AccessibilityObjectAtspi() = default;
 
     bool registerObject();
-    bool isTreeRegistered() const;
     void didUnregisterObject();
 
     enum class Interface : uint16_t {

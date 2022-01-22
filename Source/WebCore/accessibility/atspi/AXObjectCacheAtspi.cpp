@@ -39,12 +39,6 @@ void AXObjectCache::attachWrapper(AXCoreObject* axObject)
     auto wrapper = AccessibilityObjectAtspi::create(axObject, atspiRoot);
     axObject->setWrapper(wrapper.ptr());
 
-    // Handle the root earlier here, since we know it only has one child.
-    if (!axObject->parentObjectUnignored() && axObject->isScrollView() && axObject->scrollView() == document().view() && atspiRoot) {
-        wrapper->setParent(nullptr); // nullptr means root.
-        return;
-    }
-
     m_deferredParentChangedList.add(axObject);
     m_performCacheUpdateTimer.startOneShot(0_s);
 }
@@ -57,8 +51,11 @@ void AXObjectCache::platformPerformDeferredCacheUpdate()
             return;
 
         auto* axParent = axObject.parentObjectUnignored();
-        if (!axParent)
+        if (!axParent) {
+            if (axObject.isScrollView() && axObject.scrollView() == document().view())
+                wrapper->setParent(nullptr); // nullptr means root.
             return;
+        }
 
         if (auto* axParentWrapper = axParent->wrapper())
             wrapper->setParent(axParentWrapper);

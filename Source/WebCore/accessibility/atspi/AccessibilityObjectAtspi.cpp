@@ -476,11 +476,6 @@ AccessibilityRootAtspi* AccessibilityObjectAtspi::root()
     return m_root;
 }
 
-bool AccessibilityObjectAtspi::isTreeRegistered() const
-{
-    return m_root ? m_root->isTreeRegistered() : false;
-}
-
 bool AccessibilityObjectAtspi::registerObject()
 {
     if (!m_path.isNull())

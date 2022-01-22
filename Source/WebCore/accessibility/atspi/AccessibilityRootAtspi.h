@@ -40,9 +40,6 @@ public:
 
     void registerObject(CompletionHandler<void(const String&)>&&);
     void unregisterObject();
-    void registerTree();
-    void didUnregisterTree();
-    bool isTreeRegistered() const { return m_isTreeRegistered; }
     void setPath(String&&);
 
     const String& path() const { return m_path; }
@@ -69,8 +66,6 @@ private:
     String m_path;
     String m_parentUniqueName;
     String m_parentPath;
-    bool m_isTreeRegistered { false };
-    mutable bool m_inChild { false };
 };
 
 } // namespace WebCore

@@ -30,7 +30,6 @@
 #include "FrameView.h"
 #include "Page.h"
 #include <glib/gi18n-lib.h>
-#include <wtf/SetForScope.h>
 
 namespace WebCore {
 
@@ -169,36 +168,6 @@ void AccessibilityRootAtspi::unregisterObject()
         m_page->setAccessibilityRootObject(nullptr);
 }
 
-static void registerSubtree(AccessibilityObjectAtspi* atspiObject)
-{
-    if (!atspiObject)
-        return;
-
-    if (!atspiObject->registerObject())
-        return;
-
-    atspiObject->updateBackingStore();
-    for (auto& child : atspiObject->children())
-        registerSubtree(child.get());
-}
-
-void AccessibilityRootAtspi::registerTree()
-{
-    if (m_parentUniqueName.isNull())
-        return;
-
-    if (m_isTreeRegistered)
-        return;
-
-    registerSubtree(child());
-    m_isTreeRegistered = true;
-}
-
-void AccessibilityRootAtspi::didUnregisterTree()
-{
-    m_isTreeRegistered = false;
-}
-
 void AccessibilityRootAtspi::setPath(String&& path)
 {
     m_path = WTFMove(path);
@@ -209,8 +178,6 @@ void AccessibilityRootAtspi::embedded(const char* parentUniqueName, const char* 
     m_parentUniqueName = parentUniqueName;
     m_parentPath = parentPath;
     AccessibilityAtspi::singleton().parentChanged(*this);
-    if (AccessibilityAtspi::singleton().hasClients())
-        registerTree();
 }
 
 GVariant* AccessibilityRootAtspi::applicationReference() const
@@ -239,8 +206,6 @@ AccessibilityObjectAtspi* AccessibilityRootAtspi::child() const
     if (!frame.document())
         return nullptr;
 
-    SetForScope<bool> inChild(m_inChild, true);
-
     AXObjectCache::enableAccessibility();
     AXObjectCache* cache = frame.document()->axObjectCache();
     if (!cache)
@@ -252,13 +217,6 @@ AccessibilityObjectAtspi* AccessibilityRootAtspi::child() const
 
 void AccessibilityRootAtspi::childAdded(AccessibilityObjectAtspi& child)
 {
-    // Don't emit children changed when called from child() because that means the tree is being populated.
-    if (m_inChild || !m_isTreeRegistered)
-        return;
-
-    if (this->child() != &child)
-        return;
-
     AccessibilityAtspi::singleton().childrenChanged(*this, child, AccessibilityAtspi::ChildrenChanged::Added);
 }
 

@@ -2393,17 +2393,14 @@ static void testDocumentLoadEvents(AccessibilityTest* test, gconstpointer)
         "</html>",
         nullptr);
     test->waitUntilLoadFinished();
-    auto events = test->stopEventMonitor(3);
-    g_assert_cmpuint(events.size(), ==, 3);
+    auto events = test->stopEventMonitor(2);
+    g_assert_cmpuint(events.size(), ==, 2);
     g_assert_cmpstr(events[0]->type, ==, "object:state-changed:busy");
-    g_assert_cmpuint(events[0]->detail1, ==, 1);
-    g_assert_cmpstr(events[1]->type, ==, "object:state-changed:busy");
-    g_assert_cmpuint(events[1]->detail1, ==, 0);
-    g_assert_false(events[0]->source == events[1]->source);
+    g_assert_cmpuint(events[0]->detail1, ==, 0);
     g_assert_true(ATSPI_IS_ACCESSIBLE(events[0]->source));
     g_assert_cmpint(atspi_accessible_get_role(events[0]->source, nullptr), ==, ATSPI_ROLE_DOCUMENT_WEB);
-    g_assert_cmpstr(events[2]->type, ==, "document:load-complete");
-    g_assert_true(events[1]->source == events[2]->source);
+    g_assert_cmpstr(events[1]->type, ==, "document:load-complete");
+    g_assert_true(events[0]->source == events[1]->source);
     g_assert_true(ATSPI_IS_ACCESSIBLE(events[1]->source));
     g_assert_cmpint(atspi_accessible_get_role(events[1]->source, nullptr), ==, ATSPI_ROLE_DOCUMENT_WEB);
     events = { };
