@@ -37,12 +37,24 @@
 
 @keyframes anim-simple-timing {
   from { color: rgb(0, 0, 0); animation-timing-function: linear; }
-  50%  { color: rgb(0, 0, 255);  animation-timing-function: ease-in-out; }
+  50%  { color: rgb(0, 0, 255); animation-timing-function: ease-in-out; }
   to   { color: rgb(255, 255, 255); animation-timing-function: step-end; }
 }
 
 @keyframes anim-simple-timing-some {
   from { color: rgb(0, 0, 0); animation-timing-function: linear; }
+  50%  { color: rgb(0, 0, 255); }
+  to   { color: rgb(255, 255, 255); }
+}
+
+@keyframes anim-simple-composite {
+  from { color: rgb(0, 0, 0); animation-composition: replace; }
+  50%  { color: rgb(0, 0, 255); animation-composition: add; }
+  to   { color: rgb(255, 255, 255); animation-composition: accumulate; }
+}
+
+@keyframes anim-simple-composite-some {
+  from { color: rgb(0, 0, 0); animation-composition: add; }
   50%  { color: rgb(0, 0, 255); }
   to   { color: rgb(255, 255, 255); }
 }
@@ -182,6 +194,12 @@ const kTimingFunctionValues = [
   "cubic-bezier(0, 0.25, 0.75, 1)"
 ];
 
+const kCompositeValues = [
+  "replace",
+  "add",
+  "accumulate"
+];
+
 test(t => {
   const div = addDiv(t);
 
@@ -270,6 +288,58 @@ test(t => {
                 "value of 'easing' on ComputedKeyframe #2");
 }, 'KeyframeEffect.getKeyframes() returns frames with expected easing'
    + ' values, when the easing is specified on some keyframes');
+
+test(t => {
+  for (const composite of kCompositeValues) {
+    const div = addDiv(t);
+
+    div.style.animation = 'anim-simple-three 100s';
+    div.style.animationComposition = composite;
+    const frames = getKeyframes(div);
+
+    assert_equals(frames.length, 3, "number of frames");
+
+    for (let i = 0; i < frames.length; i++) {
+      assert_equals(frames[i].composite, "auto",
+                    "value for 'composite' on ComputedKeyframe #" + i);
+    }
+  }
+}, 'KeyframeEffect.getKeyframes() returns frames with expected composite'
+   + ' values, when the composite is set on the effect using animation-composition on the'
+   + ' element');
+
+test(t => {
+  const div = addDiv(t);
+
+  div.style.animation = 'anim-simple-composite 100s';
+  const frames = getKeyframes(div);
+
+  assert_equals(frames.length, 3, "number of frames");
+  assert_equals(frames[0].composite, "replace",
+                "value of 'composite' on ComputedKeyframe #0");
+  assert_equals(frames[1].composite, "add",
+                "value of 'composite' on ComputedKeyframe #1");
+  assert_equals(frames[2].composite, "accumulate",
+                "value of 'composite' on ComputedKeyframe #2");
+}, 'KeyframeEffect.getKeyframes() returns frames with expected composite'
+   + ' values, when the composite is specified on each keyframe');
+
+test(t => {
+  const div = addDiv(t);
+
+  div.style.animation = 'anim-simple-composite-some 100s';
+  div.style.animationComposition = 'accumulate';
+  const frames = getKeyframes(div);
+
+  assert_equals(frames.length, 3, "number of frames");
+  assert_equals(frames[0].composite, "add",
+                "value of 'composite' on ComputedKeyframe #0");
+  assert_equals(frames[1].composite, "auto",
+                "value of 'composite' on ComputedKeyframe #1");
+  assert_equals(frames[2].composite, "auto",
+                "value of 'composite' on ComputedKeyframe #2");
+}, 'KeyframeEffect.getKeyframes() returns frames with expected composite'
+   + ' values, when the composite is specified on some keyframes');
 
 test(t => {
   const div = addDiv(t);
