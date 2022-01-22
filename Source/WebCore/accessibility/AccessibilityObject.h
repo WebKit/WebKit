@@ -435,6 +435,7 @@ public:
     AccessibilityRole roleValue() const override { return m_role; }
     String rolePlatformString() const override;
     String roleDescription() const override;
+    String subrolePlatformString() const override;
     String ariaLandmarkRoleDescription() const override;
 
     AXObjectCache* axObjectCache() const override;

@@ -283,6 +283,7 @@ enum class AXPropertyName : uint16_t {
     SpeakAs,
     SpeechHint,
     StringValue,
+    SubrolePlatformString,
     SupportsRowCountChange,
     SupportsDragging,
     SupportsDropping,

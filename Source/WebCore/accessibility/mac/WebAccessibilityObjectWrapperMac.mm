@@ -110,41 +110,8 @@ using namespace WebCore;
 #define NSAccessibilityCellRole @"AXCell"
 #endif
 
-// Lists
-#ifndef NSAccessibilityContentListSubrole
-#define NSAccessibilityContentListSubrole @"AXContentList"
-#endif
-
 #ifndef NSAccessibilityDefinitionListSubrole
 #define NSAccessibilityDefinitionListSubrole @"AXDefinitionList"
-#endif
-
-#ifndef NSAccessibilityDescriptionListSubrole
-#define NSAccessibilityDescriptionListSubrole @"AXDescriptionList"
-#endif
-
-#ifndef NSAccessibilityContentSeparatorSubrole
-#define NSAccessibilityContentSeparatorSubrole @"AXContentSeparator"
-#endif
-
-#ifndef NSAccessibilityRubyBaseSubRole
-#define NSAccessibilityRubyBaseSubrole @"AXRubyBase"
-#endif
-
-#ifndef NSAccessibilityRubyBlockSubrole
-#define NSAccessibilityRubyBlockSubrole @"AXRubyBlock"
-#endif
-
-#ifndef NSAccessibilityRubyInlineSubrole
-#define NSAccessibilityRubyInlineSubrole @"AXRubyInline"
-#endif
-
-#ifndef NSAccessibilityRubyRunSubrole
-#define NSAccessibilityRubyRunSubrole @"AXRubyRun"
-#endif
-
-#ifndef NSAccessibilityRubyTextSubrole
-#define NSAccessibilityRubyTextSubrole @"AXRubyText"
 #endif
 
 // Miscellaneous
@@ -1828,6 +1795,22 @@ static void WebTransformCGPathToNSBezierPath(void* info, const CGPathElement *el
     return NSAccessibilityUnknownRole;
 }
 
+- (BOOL)isEmptyGroup
+{
+    auto* backingObject = self.axBackingObject;
+    if (!backingObject)
+        return false;
+
+#if ENABLE(MODEL_ELEMENT)
+    if (backingObject->isModel())
+        return false;
+#endif
+
+    return [[self role] isEqual:NSAccessibilityGroupRole]
+        && backingObject->children().isEmpty()
+        && ![[self renderWidgetChildren] count];
+}
+
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 - (NSString*)subrole
 {
@@ -1835,219 +1818,12 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     if (!backingObject)
         return nil;
 
-    // FIXME: create AXCoreObject::subrolePlatformString to replace the following linear search and heuristics, similar to rolePlatformString.
-    if (backingObject->isPasswordField())
-        return NSAccessibilitySecureTextFieldSubrole;
-    if (backingObject->isSearchField())
-        return NSAccessibilitySearchFieldSubrole;
-
-    if (backingObject->isAttachment()) {
-        NSView* attachView = [self attachmentView];
-        if ([[attachView accessibilityAttributeNames] containsObject:NSAccessibilitySubroleAttribute])
-            return [attachView accessibilityAttributeValue:NSAccessibilitySubroleAttribute];
-    }
-
-    if (backingObject->isMeter())
-        return @"AXMeter";
-
-#if ENABLE(MODEL_ELEMENT)
-    if (backingObject->isModel())
-        return @"AXModel";
-#endif
-
-    // Treat any group without exposed children as empty.
-    if ([[self role] isEqual:NSAccessibilityGroupRole] && !backingObject->children().size() && ![[self renderWidgetChildren] count])
+    if ([self isEmptyGroup])
         return @"AXEmptyGroup";
 
-    AccessibilityRole role = backingObject->roleValue();
-    if (role == AccessibilityRole::HorizontalRule)
-        return NSAccessibilityContentSeparatorSubrole;
-    if (role == AccessibilityRole::ToggleButton)
-        return NSAccessibilityToggleSubrole;
-    if (role == AccessibilityRole::Footer)
-        return @"AXFooter";
-    if (role == AccessibilityRole::SpinButtonPart) {
-        if (backingObject->isIncrementor())
-            return NSAccessibilityIncrementArrowSubrole;
-        return NSAccessibilityDecrementArrowSubrole;
-    }
-
-    if (backingObject->isFileUploadButton())
-        return @"AXFileUploadButton";
-
-    if (backingObject->isTreeItem())
-        return NSAccessibilityOutlineRowSubrole;
-
-    if (backingObject->isFieldset())
-        return @"AXFieldset";
-
-    if (backingObject->isList()) {
-        if (backingObject->isUnorderedList() || backingObject->isOrderedList())
-            return NSAccessibilityContentListSubrole;
-        if (backingObject->isDescriptionList()) {
-            return NSAccessibilityDescriptionListSubrole;
-        }
-    }
-
-    // ARIA content subroles.
-    switch (role) {
-    case AccessibilityRole::LandmarkBanner:
-        return @"AXLandmarkBanner";
-    case AccessibilityRole::LandmarkComplementary:
-        return @"AXLandmarkComplementary";
-    case AccessibilityRole::LandmarkContentInfo:
-        return @"AXLandmarkContentInfo";
-    case AccessibilityRole::LandmarkMain:
-        return @"AXLandmarkMain";
-    case AccessibilityRole::LandmarkNavigation:
-        return @"AXLandmarkNavigation";
-    case AccessibilityRole::LandmarkDocRegion:
-    case AccessibilityRole::LandmarkRegion:
-        return @"AXLandmarkRegion";
-    case AccessibilityRole::LandmarkSearch:
-        return @"AXLandmarkSearch";
-    case AccessibilityRole::ApplicationAlert:
-        return @"AXApplicationAlert";
-    case AccessibilityRole::ApplicationAlertDialog:
-        return @"AXApplicationAlertDialog";
-    case AccessibilityRole::ApplicationDialog:
-        return @"AXApplicationDialog";
-    case AccessibilityRole::ApplicationGroup:
-    case AccessibilityRole::ApplicationTextGroup:
-    case AccessibilityRole::Feed:
-    case AccessibilityRole::Footnote:
-        return @"AXApplicationGroup";
-    case AccessibilityRole::ApplicationLog:
-        return @"AXApplicationLog";
-    case AccessibilityRole::ApplicationMarquee:
-        return @"AXApplicationMarquee";
-    case AccessibilityRole::ApplicationStatus:
-        return @"AXApplicationStatus";
-    case AccessibilityRole::ApplicationTimer:
-        return @"AXApplicationTimer";
-    case AccessibilityRole::Document:
-    case AccessibilityRole::GraphicsDocument:
-        return @"AXDocument";
-    case AccessibilityRole::DocumentArticle:
-        return @"AXDocumentArticle";
-    case AccessibilityRole::DocumentMath:
-        return @"AXDocumentMath";
-    case AccessibilityRole::DocumentNote:
-        return @"AXDocumentNote";
-    case AccessibilityRole::UserInterfaceTooltip:
-        return @"AXUserInterfaceTooltip";
-    case AccessibilityRole::TabPanel:
-        return @"AXTabPanel";
-    case AccessibilityRole::Definition:
-        return @"AXDefinition";
-    case AccessibilityRole::DescriptionListTerm:
-    case AccessibilityRole::Term:
-        return @"AXTerm";
-    case AccessibilityRole::DescriptionListDetail:
-        return @"AXDescription";
-    case AccessibilityRole::WebApplication:
-        return @"AXWebApplication";
-        // Default doesn't return anything, so roles defined below can be chosen.
-    default:
-        break;
-    }
-
-    if (role == AccessibilityRole::MathElement) {
-        if (backingObject->isMathFraction())
-            return @"AXMathFraction";
-        if (backingObject->isMathFenced())
-            return @"AXMathFenced";
-        if (backingObject->isMathSubscriptSuperscript())
-            return @"AXMathSubscriptSuperscript";
-        if (backingObject->isMathRow())
-            return @"AXMathRow";
-        if (backingObject->isMathUnderOver())
-            return @"AXMathUnderOver";
-        if (backingObject->isMathSquareRoot())
-            return @"AXMathSquareRoot";
-        if (backingObject->isMathRoot())
-            return @"AXMathRoot";
-        if (backingObject->isMathText())
-            return @"AXMathText";
-        if (backingObject->isMathNumber())
-            return @"AXMathNumber";
-        if (backingObject->isMathIdentifier())
-            return @"AXMathIdentifier";
-        if (backingObject->isMathTable())
-            return @"AXMathTable";
-        if (backingObject->isMathTableRow())
-            return @"AXMathTableRow";
-        if (backingObject->isMathTableCell())
-            return @"AXMathTableCell";
-        if (backingObject->isMathFenceOperator())
-            return @"AXMathFenceOperator";
-        if (backingObject->isMathSeparatorOperator())
-            return @"AXMathSeparatorOperator";
-        if (backingObject->isMathOperator())
-            return @"AXMathOperator";
-        if (backingObject->isMathMultiscript())
-            return @"AXMathMultiscript";
-    }
-
-    if (role == AccessibilityRole::Video)
-        return @"AXVideo";
-    if (role == AccessibilityRole::Audio)
-        return @"AXAudio";
-    if (role == AccessibilityRole::Details)
-        return @"AXDetails";
-    if (role == AccessibilityRole::Summary)
-        return @"AXSummary";
-    if (role == AccessibilityRole::Time)
-        return @"AXTimeGroup";
-
-    if (backingObject->isMediaTimeline())
-        return NSAccessibilityTimelineSubrole;
-
-    if (backingObject->isSwitch())
-        return NSAccessibilitySwitchSubrole;
-
-    if (role == AccessibilityRole::Insertion)
-        return @"AXInsertStyleGroup";
-    if (role == AccessibilityRole::Deletion)
-        return @"AXDeleteStyleGroup";
-    if (role == AccessibilityRole::Superscript)
-        return @"AXSuperscriptStyleGroup";
-    if (role == AccessibilityRole::Subscript)
-        return @"AXSubscriptStyleGroup";
-
-    if (backingObject->isStyleFormatGroup()) {
-        using namespace HTMLNames;
-        auto tagName = backingObject->tagName();
-        if (tagName == kbdTag)
-            return @"AXKeyboardInputStyleGroup";
-        if (tagName == codeTag)
-            return @"AXCodeStyleGroup";
-        if (tagName == preTag)
-            return @"AXPreformattedStyleGroup";
-        if (tagName == sampTag)
-            return @"AXSampleStyleGroup";
-        if (tagName == varTag)
-            return @"AXVariableStyleGroup";
-        if (tagName == citeTag)
-            return @"AXCiteStyleGroup";
-        ASSERT_NOT_REACHED();
-    }
-
-    // Ruby subroles
-    switch (role) {
-    case AccessibilityRole::RubyBase:
-        return NSAccessibilityRubyBaseSubrole;
-    case AccessibilityRole::RubyBlock:
-        return NSAccessibilityRubyBlockSubrole;
-    case AccessibilityRole::RubyInline:
-        return NSAccessibilityRubyInlineSubrole;
-    case AccessibilityRole::RubyRun:
-        return NSAccessibilityRubyRunSubrole;
-    case AccessibilityRole::RubyText:
-        return NSAccessibilityRubyTextSubrole;
-    default:
-        break;
-    }
+    auto subrole = backingObject->subrolePlatformString();
+    if (!subrole.isEmpty())
+        return subrole;
 
     return nil;
 }

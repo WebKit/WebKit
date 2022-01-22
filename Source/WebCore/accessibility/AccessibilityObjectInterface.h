@@ -1195,6 +1195,8 @@ public:
     virtual String roleDescription() const = 0;
     // Localized string that describes ARIA landmark roles.
     virtual String ariaLandmarkRoleDescription() const = 0;
+    // Non-localized string associated with the object's subrole.
+    virtual String subrolePlatformString() const = 0;
 
     virtual AXObjectCache* axObjectCache() const = 0;
 

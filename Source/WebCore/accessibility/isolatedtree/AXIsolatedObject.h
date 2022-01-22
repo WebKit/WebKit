@@ -270,6 +270,7 @@ private:
     AccessibilityRole roleValue() const override { return static_cast<AccessibilityRole>(intAttributeValue(AXPropertyName::RoleValue)); }
     String rolePlatformString() const override { return stringAttributeValue(AXPropertyName::RolePlatformString); }
     String roleDescription() const override { return stringAttributeValue(AXPropertyName::RoleDescription); }
+    String subrolePlatformString() const override { return stringAttributeValue(AXPropertyName::SubrolePlatformString); }
     String ariaLandmarkRoleDescription() const override { return stringAttributeValue(AXPropertyName::ARIALandmarkRoleDescription); }
     bool supportsPressAction() const override { return boolAttributeValue(AXPropertyName::SupportsPressAction); }
     LayoutRect boundingBoxRect() const override { return rectAttributeValue<LayoutRect>(AXPropertyName::BoundingBoxRect); }

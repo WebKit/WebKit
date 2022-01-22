@@ -2554,6 +2554,11 @@ String AccessibilityObject::rolePlatformDescription() const
     // FIXME: implement in other platforms.
     return String();
 }
+
+String AccessibilityObject::subrolePlatformString() const
+{
+    return String();
+}
 #endif
 
 String AccessibilityObject::embeddedImageDescription() const

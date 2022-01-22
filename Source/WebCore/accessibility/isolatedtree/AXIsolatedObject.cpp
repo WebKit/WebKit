@@ -146,6 +146,7 @@ void AXIsolatedObject::initializeAttributeData(AXCoreObject& coreObject, bool is
     setProperty(AXPropertyName::RoleDescription, object.roleDescription().isolatedCopy());
     setProperty(AXPropertyName::RolePlatformString, object.rolePlatformString().isolatedCopy());
     setProperty(AXPropertyName::RoleValue, static_cast<int>(object.roleValue()));
+    setProperty(AXPropertyName::SubrolePlatformString, object.subrolePlatformString().isolatedCopy());
     setProperty(AXPropertyName::SupportsDatetimeAttribute, object.supportsDatetimeAttribute());
     setProperty(AXPropertyName::SupportsRowCountChange, object.supportsRowCountChange());
     setProperty(AXPropertyName::Title, object.title().isolatedCopy());
