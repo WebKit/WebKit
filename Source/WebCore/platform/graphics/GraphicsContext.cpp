@@ -307,6 +307,7 @@ void GraphicsContextStateChange::dump(TextStream& ts) const
     if (m_changeFlags.contains(GraphicsContextState::ShadowChange)) {
         ts.dumpProperty("shadow-blur", m_state.shadowBlur);
         ts.dumpProperty("shadow-offset", m_state.shadowOffset);
+        ts.dumpProperty("shadow-color", m_state.shadowColor);
         ts.dumpProperty("shadows-use-legacy-radius", m_state.shadowRadiusMode == ShadowRadiusMode::Legacy);
     }
 
