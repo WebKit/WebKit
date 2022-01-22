@@ -1,3 +1,36 @@
+2022-01-21  Mikhail R. Gadelha  <mikhail@igalia.com>
+
+        [JSC][32bit] Fix regexp crash on ARMv7
+        https://bugs.webkit.org/show_bug.cgi?id=234476
+
+        Reviewed by Yusuke Suzuki.
+
+        This patch fixes several regexp crashes on ARMv7 due to an incorrect
+        offset to retrieve the 5th argument from the stack: in ARMv7, only
+        4 arguments are passed via registers r0-r3i, and any other argument is
+        placed on the stack, however, YarrJIT was trying to get the 5th arg
+        from a fixed offset, so because the generateEnter() method pushed
+        register into the stack, the offset was wrong. This patch fixes how
+        the offset is calculated for MIPS and ARMv7.
+
+        This patch also introduces some small changes:
+
+        1. Added static_asserts that the YarrJIT calls do indeed have 5 arguments
+        and that the 5th argument has the type that we expect (MatchingContextHolder*).
+
+        2. Removed an unnecessary pointer from the MatchingContextHolder
+        constructor.
+
+        3. Fixed some warnings in the YarrJIT code here and there.
+
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compileRegExpTestInline):
+        * runtime/RegExpInlines.h:
+        (JSC::RegExp::matchInline):
+        * yarr/YarrJIT.cpp:
+        * yarr/YarrMatchingContextHolder.h:
+        (JSC::Yarr::MatchingContextHolder::MatchingContextHolder):
+
 2022-01-21  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Unreviewed, follow-up after r288066
