@@ -1,3 +1,15 @@
+2022-01-22  Oriol Brufau  <obrufau@igalia.com>
+
+        [CSS Cascade Layers] Enable CSSImportRule.layerName for WebKitGTK
+        https://bugs.webkit.org/show_bug.cgi?id=235455
+
+        Reviewed by Darin Adler.
+
+        Expect the tests to pass.
+
+        * platform/glib/imported/w3c/web-platform-tests/css/css-cascade/idlharness-expected.txt: Removed.
+        * platform/glib/imported/w3c/web-platform-tests/css/css-cascade/layer-rules-cssom-expected.txt: Removed.
+
 2022-01-21  Simon Fraser  <simon.fraser@apple.com>
 
         Unreviewed test resource change.
