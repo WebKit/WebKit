@@ -1,3 +1,25 @@
+2022-01-22  Elliott Williams  <emw@apple.com>
+
+        Skip installing webpushd in STP and downlevel builds
+        https://bugs.webkit.org/show_bug.cgi?id=235464
+        <rdar://87425138>
+
+        Reviewed by Brady Eidson.
+
+        We can't ship webpushd as part of STP or builds made for previous versions of macOS. This
+        change adjusts build settings to skip installing webpushd and its launchd plist outside of a
+        non-relocatable production build environment.
+
+        As a consequence, webpushd will not _install_ in development builds (where all build
+        products are relocatable). It will continue to build and be runnable from the build
+        products directory.
+
+        * Configurations/BaseTarget.xcconfig: Add WK_SKIP_INSTALL_WEBPUSHD to determine whether to
+        skip installation.
+        * Configurations/webpushd.xcconfig: Set SKIP_INSTALL based on WK_SKIP_INSTALL_WEBPUSHD.
+        * WebKit.xcodeproj/project.pbxproj: Skip installing launchd plists when
+        WK_SKIP_INSTALL_WEBPUSHD=YES.
+
 2022-01-21  Sihui Liu  <sihui_liu@apple.com>
 
         Disable CFURLCache in WebKit2
