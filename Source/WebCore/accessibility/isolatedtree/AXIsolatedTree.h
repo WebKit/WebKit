@@ -386,7 +386,9 @@ private:
     static HashMap<AXIsolatedTreeID, Ref<AXIsolatedTree>>& treeIDCache() WTF_REQUIRES_LOCK(s_cacheLock);
     static HashMap<PageIdentifier, Ref<AXIsolatedTree>>& treePageCache() WTF_REQUIRES_LOCK(s_cacheLock);
 
-    // Call on main thread
+    // Called on main thread.
+    NodeChange nodeChangeForObject(AXCoreObject&, AXID parentID, bool attachWrapper);
+    void queueChanges(const NodeChange&, Vector<AXID>&& childrenIDs);
     Ref<AXIsolatedObject> createSubtree(AXCoreObject&, AXID parentID, bool attachWrapper);
     // Called on main thread to update both m_nodeMap and m_pendingChildrenUpdates.
     void updateChildrenIDs(AXID parentID, Vector<AXID>&& childrenIDs) WTF_REQUIRES_LOCK(m_changeLogLock);
