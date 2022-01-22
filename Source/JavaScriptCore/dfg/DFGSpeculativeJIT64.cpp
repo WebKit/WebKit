@@ -2888,7 +2888,7 @@ void SpeculativeJIT::compileRegExpTestInline(Node* node)
 {
     UNUSED_PARAM(node);
     ASSERT_NOT_REACHED();
-    compileRegExpTest(node);
+    return compileRegExpTest(node);
 }
 #endif
 
