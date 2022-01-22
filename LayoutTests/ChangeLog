@@ -1,3 +1,15 @@
+2022-01-22  Alan Bujtas  <zalan@apple.com>
+
+        REGRESSION (r288069): Bits of selection left after deselecting on bugzilla page
+        https://bugs.webkit.org/show_bug.cgi?id=235466
+        <rdar://87902230>
+
+        Reviewed by Darin Adler.
+
+        * fast/text/incorrect-deselection-across-multiple-elements-expected.txt: Added.
+        * fast/text/incorrect-deselection-across-multiple-elements.html: Added. Use indexOf because
+        while the repaint rect area is always the same, the rects order may vary.
+
 2022-01-22  Oriol Brufau  <obrufau@igalia.com>
 
         [CSS Cascade Layers] Enable CSSImportRule.layerName for WebKitGTK
