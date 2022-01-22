@@ -54,7 +54,7 @@ public:
 
     FloatRect rect() const { return box().rect(); }
 
-    bool isHorizontal() const { return true; }
+    bool isHorizontal() const { return box().isHorizontal(); }
     bool isLineBreak() const { return box().isLineBreak(); }
 
     unsigned minimumCaretOffset() const { return isText() ? start() : 0; }

@@ -94,6 +94,8 @@ struct Box {
 
     UBiDiLevel bidiLevel() const { return m_bidiLevel; }
 
+    bool isHorizontal() const { return style().isHorizontalWritingMode(); }
+
     bool hasContent() const { return m_hasContent; }
 
     const FloatRect& rect() const { return m_physicalRect; }
