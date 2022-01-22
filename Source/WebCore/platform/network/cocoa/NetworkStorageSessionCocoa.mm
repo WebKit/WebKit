@@ -171,7 +171,7 @@ CookieStorageObserver& NetworkStorageSession::cookieStorageObserver() const
     return *m_cookieStorageObserver;
 }
 
-RetainPtr<CFURLStorageSessionRef> createPrivateStorageSession(CFStringRef identifier, std::optional<HTTPCookieAcceptPolicy> cookieAcceptPolicy)
+RetainPtr<CFURLStorageSessionRef> createPrivateStorageSession(CFStringRef identifier, std::optional<HTTPCookieAcceptPolicy> cookieAcceptPolicy, NetworkStorageSession::ShouldDisableCFURLCache shouldDisableCFURLCache)
 {
     const void* sessionPropertyKeys[] = { _kCFURLStorageSessionIsPrivate };
     const void* sessionPropertyValues[] = { kCFBooleanTrue };
@@ -181,6 +181,14 @@ RetainPtr<CFURLStorageSessionRef> createPrivateStorageSession(CFStringRef identi
     if (!storageSession)
         return nullptr;
 
+    if (shouldDisableCFURLCache == NetworkStorageSession::ShouldDisableCFURLCache::Yes) {
+#if HAVE(CFNETWORK_DISABLE_CACHE_SPI)
+        _CFURLStorageSessionDisableCache(storageSession.get());
+#else
+        shouldDisableCFURLCache = NetworkStorageSession::ShouldDisableCFURLCache::No;
+#endif
+    }
+
     // The private storage session should have the same properties as the default storage session,
     // with the exception that it should be in-memory only storage.
 
@@ -188,12 +196,13 @@ RetainPtr<CFURLStorageSessionRef> createPrivateStorageSession(CFStringRef identi
     // This could occur if there is an issue figuring out where to place a storage on disk (e.g. the
     // sandbox does not allow CFNetwork access).
 
-    auto cache = adoptCF(_CFURLStorageSessionCopyCache(kCFAllocatorDefault, storageSession.get()));
-    if (!cache)
-        return nullptr;
+    if (shouldDisableCFURLCache == NetworkStorageSession::ShouldDisableCFURLCache::No) {
+        auto cache = adoptCF(_CFURLStorageSessionCopyCache(kCFAllocatorDefault, storageSession.get()));
+        if (!cache)
+            return nullptr;
 
-    CFURLCacheSetDiskCapacity(cache.get(), 0); // Setting disk cache size should not be necessary once <rdar://problem/12656814> is fixed.
-    CFURLCacheSetMemoryCapacity(cache.get(), [[NSURLCache sharedURLCache] memoryCapacity]);
+        CFURLCacheSetMemoryCapacity(cache.get(), [[NSURLCache sharedURLCache] memoryCapacity]);
+    }
 
     auto cookieStorage = adoptCF(_CFURLStorageSessionCopyCookieStorage(kCFAllocatorDefault, storageSession.get()));
     if (!cookieStorage)
