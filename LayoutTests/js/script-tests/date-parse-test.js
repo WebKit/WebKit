@@ -66,7 +66,7 @@ testDateParseExact("1995-12-25T01:30:00.+1Z", "NaN");
 testDateParseExact("1995-12-25T01:30:00Z ", "NaN");
 testDateParseExact("1995-12-25T01:30:00+00:00 ", "NaN");
 testDateParseExact("1995-02-29T00:00:00Z", "NaN");
-testDateParseExact("1995-12-25 01:30:00Z", "NaN");
+testDateParseExact("1995-12-25 01:30:00Z", "819855000000");
 testDateParseExact("1995-12-25T01:30:00z", "NaN");
 
 // Date-only dates.

@@ -1,3 +1,21 @@
+2022-01-21  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Relax Date.parse requirement
+        https://bugs.webkit.org/show_bug.cgi?id=235468
+
+        Reviewed by Darin Adler.
+
+        While the spec does not require accepting 't' / ' ' separator, ISO 8601 accepts it.
+        This is because ECMA262's Date format is *not* ISO 8601 (it is called simplification
+        of ISO 8601[1]).
+        This patch relaxes this strictness to accept more formats, which can be accepted in
+        the other engines too.
+
+        [1]: https://tc39.es/ecma262/#sec-date-time-string-format
+
+        * wtf/DateMath.cpp:
+        (WTF::parseES5DateFromNullTerminatedCharacters):
+
 2022-01-21  Sihui Liu  <sihui_liu@apple.com>
 
         Disable CFURLCache in WebKit2
