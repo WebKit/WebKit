@@ -557,7 +557,7 @@ InlineRect InlineFormattingContext::computeGeometryForLineContent(const LineBuil
     formattingState.addLineBox(WTFMove(lineBoxAndHeight.lineBox));
     formattingState.addLine(displayLine);
 
-    return formattingState.lines().last().lineBoxRect();
+    return InlineFormattingGeometry::flipVisualRectToLogicalForWritingMode(formattingState.lines().last().lineBoxRect(), root().style().writingMode());
 }
 
 void InlineFormattingContext::invalidateFormattingState()
