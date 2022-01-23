@@ -3276,63 +3276,6 @@ void AXObjectCache::performDeferredCacheUpdate()
 }
     
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-void AXObjectCache::updateIsolatedTree(AXCoreObject& object, AXNotification notification)
-{
-    AXTRACE("AXObjectCache::updateIsolatedTree");
-    AXLOG(std::make_pair(&object, notification));
-    AXLOG(*this);
-
-    if (!m_pageID || !object.objectID().isValid()) {
-        AXLOG("No pageID or objectID");
-        return;
-    }
-
-    auto tree = AXIsolatedTree::treeForPageID(*m_pageID);
-    if (!tree) {
-        AXLOG("No isolated tree for m_pageID.");
-        return;
-    }
-
-    switch (notification) {
-    case AXAriaRoleChanged:
-        tree->updateNode(object);
-        break;
-    case AXCheckedStateChanged:
-        tree->updateNodeProperty(object, AXPropertyName::IsChecked);
-        break;
-    case AXDisabledStateChanged:
-        tree->updateNodeProperty(object, AXPropertyName::CanSetFocusAttribute);
-        break;
-    case AXSortDirectionChanged:
-        tree->updateNodeProperty(object, AXPropertyName::SortDirection);
-        break;
-    case AXIdAttributeChanged:
-        tree->updateNodeProperty(object, AXPropertyName::IdentifierAttribute);
-        break;
-    case AXActiveDescendantChanged:
-    case AXSelectedChildrenChanged:
-    case AXValueChanged:
-        tree->updateNode(object);
-        break;
-    case AXChildrenChanged:
-    case AXLanguageChanged:
-    case AXRowCountChanged:
-    case AXRowCollapsed:
-    case AXRowExpanded:
-    case AXExpandedChanged:
-        tree->updateChildren(object);
-        break;
-    default:
-        break;
-    }
-}
-
-void AXObjectCache::updateIsolatedTree(AXCoreObject* object, AXNotification notification)
-{
-    if (object)
-        updateIsolatedTree(*object, notification);
-}
-
 // FIXME: should be added to WTF::Vector.
 template<typename T, typename F>
 static bool appendIfNotContainsMatching(Vector<T>& vector, const T& value, F matches)
@@ -3341,6 +3284,17 @@ static bool appendIfNotContainsMatching(Vector<T>& vector, const T& value, F mat
         return false;
     vector.append(value);
     return true;
+}
+
+void AXObjectCache::updateIsolatedTree(AXCoreObject* object, AXNotification notification)
+{
+    if (object)
+        updateIsolatedTree(*object, notification);
+}
+
+void AXObjectCache::updateIsolatedTree(AXCoreObject& object, AXNotification notification)
+{
+    updateIsolatedTree({ std::make_pair(&object, notification) });
 }
 
 void AXObjectCache::updateIsolatedTree(const Vector<std::pair<RefPtr<AXCoreObject>, AXNotification>>& notifications)
@@ -3368,9 +3322,6 @@ void AXObjectCache::updateIsolatedTree(const Vector<std::pair<RefPtr<AXCoreObjec
             continue;
 
         switch (notification.second) {
-        case AXAriaRoleChanged:
-            tree->updateNode(*notification.first);
-            break;
         case AXCheckedStateChanged:
             tree->updateNodeProperty(*notification.first, AXPropertyName::IsChecked);
             break;
@@ -3384,6 +3335,7 @@ void AXObjectCache::updateIsolatedTree(const Vector<std::pair<RefPtr<AXCoreObjec
             tree->updateNodeProperty(*notification.first, AXPropertyName::IdentifierAttribute);
             break;
         case AXActiveDescendantChanged:
+        case AXAriaRoleChanged:
         case AXSelectedChildrenChanged:
         case AXValueChanged: {
             bool needsUpdate = appendIfNotContainsMatching(filteredNotifications, notification, [&notification] (const std::pair<RefPtr<AXCoreObject>, AXNotification>& note) {
