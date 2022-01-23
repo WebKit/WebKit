@@ -359,13 +359,14 @@ void LineLayout::prepareFloatingState()
 
 LayoutUnit LineLayout::contentLogicalHeight() const
 {
-    if (m_paginatedHeight)
-        return *m_paginatedHeight;
     if (!m_inlineContent)
         return { };
 
     auto& lines = m_inlineContent->lines;
-    return LayoutUnit { lines.last().lineBoxBottom() - lines.first().lineBoxTop() + m_inlineContent->clearGapAfterLastLine };
+    auto flippedContentHeightForWritingMode = rootLayoutBox().style().isHorizontalWritingMode()
+        ? lines.last().lineBoxBottom() - lines.first().lineBoxTop()
+        : lines.last().lineBoxRight() - lines.first().lineBoxLeft();
+    return LayoutUnit { flippedContentHeightForWritingMode + m_inlineContent->clearGapAfterLastLine };
 }
 
 size_t LineLayout::lineCount() const
@@ -404,13 +405,10 @@ void LineLayout::adjustForPagination()
 {
     auto paginedInlineContent = adjustLinePositionsForPagination(*m_inlineContent, flow());
     if (paginedInlineContent.ptr() == m_inlineContent) {
-        m_paginatedHeight = { };
+        m_isPaginatedContent = false;
         return;
     }
-
-    auto& lines = paginedInlineContent->lines;
-    m_paginatedHeight = LayoutUnit { lines.last().lineBoxBottom() - lines.first().lineBoxTop() };
-
+    m_isPaginatedContent = true;
     m_inlineContent = WTFMove(paginedInlineContent);
 }
 

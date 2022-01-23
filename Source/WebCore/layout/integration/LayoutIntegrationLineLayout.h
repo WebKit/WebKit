@@ -95,7 +95,7 @@ public:
     void collectOverflow();
 
     const InlineContent* inlineContent() const { return m_inlineContent.get(); }
-    bool isPaginated() const { return !!m_paginatedHeight; }
+    bool isPaginated() const { return m_isPaginatedContent; }
 
     void paint(PaintInfo&, const LayoutPoint& paintOffset);
     bool hitTest(const HitTestRequest&, HitTestResult&, const HitTestLocation&, const LayoutPoint& accumulatedOffset, HitTestAction);
@@ -143,7 +143,7 @@ private:
     // FIXME: This should be part of LayoutState.
     std::unique_ptr<Layout::InlineDamage> m_lineDamage;
     RefPtr<InlineContent> m_inlineContent;
-    std::optional<LayoutUnit> m_paginatedHeight;
+    bool m_isPaginatedContent { false };
 };
 
 }
