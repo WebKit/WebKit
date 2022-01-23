@@ -164,31 +164,35 @@ void ModelElementController::modelElementDidCreatePreview(URL fileURL, String uu
     // FIXME: Why is this not just using normal URL -> NSURL conversion?
     auto url = adoptNS([[NSURL alloc] initFileURLWithPath:fileURL.fileSystemPath()]);
 
+    auto handler = CompletionHandlerWithFinalizer<void(Expected<std::pair<String, uint32_t>, WebCore::ResourceError>)>(WTFMove(completionHandler), [url] (Function<void(Expected<std::pair<String, uint32_t>, WebCore::ResourceError>)>& completionHandler) {
+        completionHandler(makeUnexpected(WebCore::ResourceError { WebCore::ResourceError::Type::General }));
+    });
+
     RELEASE_ASSERT(isMainRunLoop());
-    [preview setupRemoteConnectionWithCompletionHandler:makeBlockPtr([weakThis = WeakPtr { *this }, preview, uuid = WTFMove(uuid), url = WTFMove(url), completionHandler = WTFMove(completionHandler)] (NSError *contextError) mutable {
+    [preview setupRemoteConnectionWithCompletionHandler:makeBlockPtr([weakThis = WeakPtr { *this }, preview, uuid = WTFMove(uuid), url = WTFMove(url), handler = WTFMove(handler)] (NSError *contextError) mutable {
         if (contextError) {
             LOG(ModelElement, "Unable to create remote connection for uuid %s: %@.", uuid.utf8().data(), contextError.localizedDescription);
 
-            callOnMainRunLoop([weakThis = WTFMove(weakThis), completionHandler = WTFMove(completionHandler), error = WebCore::ResourceError { contextError }] () mutable {
+            callOnMainRunLoop([weakThis = WTFMove(weakThis), handler = WTFMove(handler), error = WebCore::ResourceError { contextError }] () mutable {
                 if (!weakThis)
                     return;
 
-                completionHandler(makeUnexpected(error));
+                handler(makeUnexpected(error));
             });
             return;
         }
 
         LOG(ModelElement, "Established remote connection with UUID %s.", uuid.utf8().data());
 
-        [preview preparePreviewOfFileAtURL:url.get() completionHandler:makeBlockPtr([weakThis = WTFMove(weakThis), preview, uuid = WTFMove(uuid), url = WTFMove(url), completionHandler = WTFMove(completionHandler)] (NSError *loadError) mutable {
+        [preview preparePreviewOfFileAtURL:url.get() completionHandler:makeBlockPtr([weakThis = WTFMove(weakThis), preview, uuid = WTFMove(uuid), url = WTFMove(url), handler = WTFMove(handler)] (NSError *loadError) mutable {
             if (loadError) {
                 LOG(ModelElement, "Unable to load file for uuid %s: %@.", uuid.utf8().data(), loadError.localizedDescription);
 
-                callOnMainRunLoop([weakThis = WTFMove(weakThis), completionHandler = WTFMove(completionHandler), error = WebCore::ResourceError { loadError }] () mutable {
+                callOnMainRunLoop([weakThis = WTFMove(weakThis), handler = WTFMove(handler), error = WebCore::ResourceError { loadError }] () mutable {
                     if (!weakThis)
                         return;
 
-                    completionHandler(makeUnexpected(error));
+                    handler(makeUnexpected(error));
                 });
                 return;
             }
@@ -196,11 +200,11 @@ void ModelElementController::modelElementDidCreatePreview(URL fileURL, String uu
             LOG(ModelElement, "Loaded file with UUID %s.", uuid.utf8().data());
 
             auto contextId = [preview contextId];
-            callOnMainRunLoop([weakThis = WTFMove(weakThis), uuid = WTFMove(uuid), completionHandler = WTFMove(completionHandler), contextId] () mutable {
+            callOnMainRunLoop([weakThis = WTFMove(weakThis), uuid = WTFMove(uuid), handler = WTFMove(handler), contextId] () mutable {
                 if (!weakThis)
                     return;
 
-                completionHandler(std::make_pair(uuid, contextId));
+                handler(std::make_pair(uuid, contextId));
             });
         }).get()];
     }).get()];

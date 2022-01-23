@@ -6,39 +6,40 @@
 </model>
 <pre id="layers"></pre>
 <script>
-    let layers = document.getElementById("layers");
-    let source = document.getElementsByTagName("source")[0];
+    window.testRunner?.waitUntilDone();
+    window.testRunner?.dumpAsText();
 
-    if (window.testRunner) {
-        testRunner.waitUntilDone();
-        testRunner.dumpAsText();
-    } else
-        layers.textContent = "This test requires testRunner.";
+    const layers = document.getElementById("layers");
+    const source = document.querySelector("source");
+    const model = document.getElementById("model");
 
-    let model = document.getElementById("model");
-
-    model.ready.then(value => {
+    const modelDidLoadFirstSource = () => {
         layers.textContent = "Before Changing Source:\n";
-        layers.textContent += window.internals.platformLayerTreeAsText(model, window.internals.PLATFORM_LAYER_TREE_INCLUDE_MODELS);
+        layers.textContent += window.internals?.platformLayerTreeAsText(model, window.internals.PLATFORM_LAYER_TREE_INCLUDE_MODELS) ?? "This test requires testRunner.";
+
+        model.addEventListener("load", event => {
+            layers.textContent += "After Changing Source:\n";
+            layers.textContent += window.internals?.platformLayerTreeAsText(model, window.internals.PLATFORM_LAYER_TREE_INCLUDE_MODELS) ?? "This test requires testRunner.";
+            window.testRunner?.notifyDone();
+        }, { once: true });
+
+        model.addEventListener("error", event => {
+            layers.textContent = `Failed. Second model did not load.`;
+            window.testRunner?.notifyDone();
+        }, { once: true });
 
         source.src = "resources/cube.usdz";
-        model.ready.then(value => {
-            if (window.testRunner) {
-                layers.textContent += "After Changing Source:\n";
-                layers.textContent += window.internals.platformLayerTreeAsText(model, window.internals.PLATFORM_LAYER_TREE_INCLUDE_MODELS);
-            }
-        }, reason => {
-            layers.textContent = `Failed. Second model did not load: ${reason}`;
-        }).finally(() => { 
-            if (window.testRunner)
-                testRunner.notifyDone();
-        });
-        
-    }, reason => {
-        layers.textContent = `Failed. First model did not load: ${reason}`;
-        if (window.testRunner)
-            testRunner.notifyDone();
-    });
+    }
+
+    if (model.complete)
+        modelDidLoadFirstSource();
+    else {
+        model.addEventListener("load", modelDidLoadFirstSource, { once: true });
+        model.addEventListener("error", event => {
+            layers.textContent = `Failed. First model did not load.`;
+            window.testRunner?.notifyDone();
+        }, { once: true });
+    }
 </script>
 </body>
 </html>

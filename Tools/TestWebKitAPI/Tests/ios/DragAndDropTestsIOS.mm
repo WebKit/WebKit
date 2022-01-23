@@ -2197,7 +2197,7 @@ TEST(DragAndDropTests, CanStartDragOnModel)
     [configuration setURLSchemeHandler:handler.get() forURLScheme:@"model"];
     
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:configuration.get()]);
-    [webView synchronouslyLoadHTMLString:@"<model><source src='model://cube.usdz'></model><script>document.getElementsByTagName('model')[0].ready.then(() => { window.webkit.messageHandlers.modelLoading.postMessage('READY') });</script>"];
+    [webView synchronouslyLoadHTMLString:@"<model><source src='model://cube.usdz'></model><script>document.querySelector('model').addEventListener('load', event => window.webkit.messageHandlers.modelLoading.postMessage('READY'));</script>"];
 
     while (![messageHandler didLoadModel])
         Util::spinRunLoop();
