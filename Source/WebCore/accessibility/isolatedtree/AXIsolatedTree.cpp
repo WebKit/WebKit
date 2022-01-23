@@ -291,6 +291,9 @@ void AXIsolatedTree::updateNodeProperty(const AXCoreObject& axObject, AXProperty
     case AXPropertyName::IsChecked:
         propertyMap.set(AXPropertyName::IsChecked, axObject.isChecked());
         break;
+    case AXPropertyName::IsEnabled:
+        propertyMap.set(AXPropertyName::IsEnabled, axObject.isEnabled());
+        break;
     case AXPropertyName::SortDirection:
         propertyMap.set(AXPropertyName::SortDirection, static_cast<int>(axObject.sortDirection()));
         break;

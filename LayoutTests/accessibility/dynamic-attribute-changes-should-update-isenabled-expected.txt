@@ -1,0 +1,28 @@
+This test ensures that dynamically changing elements disabled and aria-disabled attributes properly updates their isEnabled property.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Verifying initial element enabled state.
+PASS axButton.isEnabled is true
+PASS axOption.isEnabled is true
+domButton.ariaDisabled = true
+PASS axButton.isEnabled === false
+domButton.ariaDisabled = false
+PASS axButton.isEnabled === true
+domButton.disabled = true
+PASS axButton.isEnabled === false
+domButton.disabled = false
+PASS axButton.isEnabled === true
+domOption.ariaDisabled = true
+PASS axOption.isEnabled === false
+domOption.ariaDisabled = false
+PASS axOption.isEnabled === true
+domOption.disabled = true
+PASS axOption.isEnabled === false
+domOption.disabled = false
+PASS axOption.isEnabled === true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Click me
