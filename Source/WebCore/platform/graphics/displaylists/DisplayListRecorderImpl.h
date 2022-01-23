@@ -136,9 +136,10 @@ private:
 #endif
     void recordApplyDeviceScaleFactor(float) final;
 
-    void recordResourceUse(NativeImage&) final;
-    void recordResourceUse(Font&) final;
-    void recordResourceUse(ImageBuffer&) final;
+    bool recordResourceUse(NativeImage&) final;
+    bool recordResourceUse(ImageBuffer&) final;
+    bool recordResourceUse(const SourceImage&) final;
+    bool recordResourceUse(Font&) final;
 
     std::unique_ptr<GraphicsContext> createNestedContext(const FloatRect& initialClip, const AffineTransform& initialCTM) final;
 

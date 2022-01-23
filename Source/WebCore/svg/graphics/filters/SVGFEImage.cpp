@@ -31,12 +31,6 @@
 
 namespace WebCore {
 
-Ref<FEImage> FEImage::create(Ref<Image>&& image, const SVGPreserveAspectRatioValue& preserveAspectRatio)
-{
-    auto imageRect = FloatRect { { }, image->size() };
-    return create(WTFMove(image), imageRect, preserveAspectRatio);
-}
-
 Ref<FEImage> FEImage::create(SourceImage&& sourceImage, const FloatRect& sourceImageRect, const SVGPreserveAspectRatioValue& preserveAspectRatio)
 {
     return adoptRef(*new FEImage(WTFMove(sourceImage), sourceImageRect, preserveAspectRatio));
@@ -52,22 +46,18 @@ FEImage::FEImage(SourceImage&& sourceImage, const FloatRect& sourceImageRect, co
 
 FloatRect FEImage::calculateImageRect(const Filter& filter, const FilterImageVector&, const FloatRect& primitiveSubregion) const
 {
-    auto imageRect = WTF::switchOn(m_sourceImage,
-        [&] (const Ref<Image>&) {
-            auto imageRect = primitiveSubregion;
-            auto srcRect = m_sourceImageRect;
-            m_preserveAspectRatio.transformRect(imageRect, srcRect);
-            return imageRect;
-        },
-        [&] (const Ref<ImageBuffer>&) {
-            return primitiveSubregion;
-        },
-        [&] (RenderingResourceIdentifier) {
-            ASSERT_NOT_REACHED();
-            return FloatRect();
-        }
-    );
-    return filter.clipToMaxEffectRect(imageRect, primitiveSubregion);
+    if (m_sourceImage.nativeImageIfExists()) {
+        auto imageRect = primitiveSubregion;
+        auto srcRect = m_sourceImageRect;
+        m_preserveAspectRatio.transformRect(imageRect, srcRect);
+        return filter.clipToMaxEffectRect(imageRect, primitiveSubregion);
+    }
+
+    if (m_sourceImage.imageBufferIfExists())
+        return filter.maxEffectRect(primitiveSubregion);
+
+    ASSERT_NOT_REACHED();
+    return FloatRect();
 }
 
 // FIXME: Move the class FEImageSoftwareApplier to separate source and header files.
@@ -87,31 +77,31 @@ bool FEImageSoftwareApplier::apply(const Filter& filter, const FilterImageVector
     if (!resultImage)
         return false;
 
+    auto& sourceImage = m_effect.sourceImage();
     auto primitiveSubregion = result.primitiveSubregion();
     auto& context = resultImage->context();
 
-    WTF::switchOn(m_effect.sourceImage(),
-        [&] (const Ref<Image>& image) {
-            auto imageRect = primitiveSubregion;
-            auto srcRect = m_effect.sourceImageRect();
-            m_effect.preserveAspectRatio().transformRect(imageRect, srcRect);
-            imageRect.scale(filter.filterScale());
-            imageRect = IntRect(imageRect) - result.absoluteImageRect().location();
-            context.drawImage(image, imageRect, srcRect);
-        },
-        [&] (const Ref<ImageBuffer>& imageBuffer) {
-            auto imageRect = primitiveSubregion;
-            imageRect.moveBy(m_effect.sourceImageRect().location());
-            imageRect.scale(filter.filterScale());
-            imageRect = IntRect(imageRect) - result.absoluteImageRect().location();
-            context.drawImageBuffer(imageBuffer, imageRect.location());
-        },
-        [&] (RenderingResourceIdentifier) {
-            ASSERT_NOT_REACHED();
-        }
-    );
+    if (auto nativeImage = sourceImage.nativeImageIfExists()) {
+        auto imageRect = primitiveSubregion;
+        auto srcRect = m_effect.sourceImageRect();
+        m_effect.preserveAspectRatio().transformRect(imageRect, srcRect);
+        imageRect.scale(filter.filterScale());
+        imageRect = IntRect(imageRect) - result.absoluteImageRect().location();
+        context.drawNativeImage(*nativeImage, srcRect.size(), imageRect, srcRect);
+        return true;
+    }
 
-    return true;
+    if (auto imageBuffer = sourceImage.imageBufferIfExists()) {
+        auto imageRect = primitiveSubregion;
+        imageRect.moveBy(m_effect.sourceImageRect().location());
+        imageRect.scale(filter.filterScale());
+        imageRect = IntRect(imageRect) - result.absoluteImageRect().location();
+        context.drawImageBuffer(*imageBuffer, imageRect.location());
+        return true;
+    }
+    
+    ASSERT_NOT_REACHED();
+    return false;
 }
 
 std::unique_ptr<FilterEffectApplier> FEImage::createSoftwareApplier() const

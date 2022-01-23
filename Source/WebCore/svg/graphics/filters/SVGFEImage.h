@@ -27,6 +27,7 @@
 #include "Image.h"
 #include "ImageBuffer.h"
 #include "SVGPreserveAspectRatioValue.h"
+#include "SourceImage.h"
 
 namespace WebCore {
 
@@ -35,13 +36,6 @@ class ImageBuffer;
 
 class FEImage final : public FilterEffect {
 public:
-    using SourceImage = std::variant<
-        Ref<Image>,
-        Ref<ImageBuffer>,
-        RenderingResourceIdentifier
-    >;
-
-    static Ref<FEImage> create(Ref<Image>&&, const SVGPreserveAspectRatioValue&);
     WEBCORE_EXPORT static Ref<FEImage> create(SourceImage&&, const FloatRect& sourceImageRect, const SVGPreserveAspectRatioValue&);
 
     const SourceImage& sourceImage() const { return m_sourceImage; }
@@ -75,19 +69,7 @@ private:
 template<class Encoder>
 void FEImage::encode(Encoder& encoder) const
 {
-    WTF::switchOn(m_sourceImage,
-        [&] (const Ref<Image>& image) {
-            if (auto nativeImage = image->nativeImage())
-                encoder << nativeImage->renderingResourceIdentifier();
-        },
-        [&] (const Ref<ImageBuffer>& imageBuffer) {
-            encoder << imageBuffer->renderingResourceIdentifier();
-        },
-        [&] (RenderingResourceIdentifier renderingResourceIdentifier) {
-            encoder << renderingResourceIdentifier;
-        }
-    );
-
+    encoder << m_sourceImage;
     encoder << m_sourceImageRect;
     encoder << m_preserveAspectRatio;
 }
@@ -95,9 +77,9 @@ void FEImage::encode(Encoder& encoder) const
 template<class Decoder>
 std::optional<Ref<FEImage>> FEImage::decode(Decoder& decoder)
 {
-    std::optional<RenderingResourceIdentifier> imageIdentifier;
-    decoder >> imageIdentifier;
-    if (!imageIdentifier)
+    std::optional<SourceImage> sourceImage;
+    decoder >> sourceImage;
+    if (!sourceImage)
         return std::nullopt;
 
     std::optional<FloatRect> sourceImageRect;
@@ -110,7 +92,7 @@ std::optional<Ref<FEImage>> FEImage::decode(Decoder& decoder)
     if (!preserveAspectRatio)
         return std::nullopt;
 
-    return FEImage::create(*imageIdentifier, *sourceImageRect, *preserveAspectRatio);
+    return FEImage::create(WTFMove(*sourceImage), *sourceImageRect, *preserveAspectRatio);
 }
 
 } // namespace WebCore

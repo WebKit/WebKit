@@ -208,11 +208,6 @@ ImageDrawResult SVGImage::drawForContainerInternal(GraphicsContext& context, con
     return result;
 }
 
-RefPtr<NativeImage> SVGImage::nativeImageForCurrentFrame()
-{
-    return nativeImage();
-}
-
 RefPtr<NativeImage> SVGImage::nativeImage()
 {
     return nativeImage(size(), FloatRect(FloatPoint(), size()), DestinationColorSpace::SRGB());

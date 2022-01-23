@@ -150,33 +150,9 @@ void Recorder::drawFilteredImageBuffer(ImageBuffer* sourceImage, const FloatRect
 {
     appendStateChangeItemIfNecessary();
 
-    if (sourceImage && !canDrawImageBuffer(*sourceImage)) {
-        GraphicsContext::drawFilteredImageBuffer(sourceImage, sourceImageRect, filter, results);
-        return;
-    }
-
     for (auto& effect : filter.effectsOfType(FilterEffect::Type::FEImage)) {
-        bool isRecorded = WTF::switchOn(downcast<FEImage>(effect.get()).sourceImage(),
-            [&] (const Ref<Image>& image) {
-                if (auto nativeImage = image->nativeImage()) {
-                    recordResourceUse(*nativeImage);
-                    return true;
-                }
-                return false;
-            },
-            [&] (const Ref<ImageBuffer>& imageBuffer) {
-                if (canDrawImageBuffer(imageBuffer)) {
-                    recordResourceUse(imageBuffer);
-                    return true;
-                }
-                return false;
-            },
-            [&] (RenderingResourceIdentifier) {
-                return true;
-            }
-        );
-
-        if (!isRecorded) {
+        auto& feImage = downcast<FEImage>(effect.get());
+        if (!recordResourceUse(feImage.sourceImage())) {
             GraphicsContext::drawFilteredImageBuffer(sourceImage, sourceImageRect, filter, results);
             return;
         }
@@ -187,7 +163,11 @@ void Recorder::drawFilteredImageBuffer(ImageBuffer* sourceImage, const FloatRect
         return;
     }
 
-    recordResourceUse(*sourceImage);
+    if (!recordResourceUse(*sourceImage)) {
+        GraphicsContext::drawFilteredImageBuffer(sourceImage, sourceImageRect, filter, results);
+        return;
+    }
+
     recordDrawFilteredImageBuffer(sourceImage->renderingResourceIdentifier(), sourceImageRect, filter);
 }
 
@@ -206,12 +186,12 @@ void Recorder::drawGlyphsAndCacheFont(const Font& font, const GlyphBufferGlyph* 
 void Recorder::drawImageBuffer(ImageBuffer& imageBuffer, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& options)
 {
     appendStateChangeItemIfNecessary();
-    if (!canDrawImageBuffer(imageBuffer)) {
+
+    if (!recordResourceUse(imageBuffer)) {
         GraphicsContext::drawImageBuffer(imageBuffer, destRect, srcRect, options);
         return;
     }
 
-    recordResourceUse(imageBuffer);
     recordDrawImageBuffer(imageBuffer.renderingResourceIdentifier(), destRect, srcRect, options);
 }
 

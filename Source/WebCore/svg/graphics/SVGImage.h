@@ -86,7 +86,6 @@ private:
     // FIXME: Implement this to be less conservative.
     bool currentFrameKnownToBeOpaque() const final { return false; }
 
-    RefPtr<NativeImage> nativeImageForCurrentFrame() final;
     RefPtr<NativeImage> nativeImage() final;
     RefPtr<NativeImage> nativeImage(const FloatSize& imageSize, const FloatRect& sourceRect, DestinationColorSpace);
 

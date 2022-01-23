@@ -157,8 +157,8 @@ public:
     enum TileRule { StretchTile, RoundTile, SpaceTile, RepeatTile };
 
     virtual RefPtr<NativeImage> nativeImage() { return nullptr; }
-    virtual RefPtr<NativeImage> nativeImageForCurrentFrame() { return nullptr; }
-    virtual RefPtr<NativeImage> preTransformedNativeImageForCurrentFrame(bool = true) { return nullptr; }
+    virtual RefPtr<NativeImage> nativeImageForCurrentFrame() { return nativeImage(); }
+    virtual RefPtr<NativeImage> preTransformedNativeImageForCurrentFrame(bool = true) { return nativeImageForCurrentFrame(); }
     virtual RefPtr<NativeImage> nativeImageOfSize(const IntSize&) { return nullptr; }
 
     // Accessors for native image formats.

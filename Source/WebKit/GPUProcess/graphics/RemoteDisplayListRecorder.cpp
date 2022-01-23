@@ -239,18 +239,18 @@ void RemoteDisplayListRecorder::drawFilteredImageBuffer(std::optional<RenderingR
     for (auto& effect : filter->effectsOfType(FilterEffect::Type::FEImage)) {
         auto& feImage = downcast<FEImage>(effect.get());
 
-        const auto* resourceIdentifier = std::get_if<RenderingResourceIdentifier>(&feImage.sourceImage());
-        if (!resourceIdentifier) {
+        auto imageIdentifier = feImage.sourceImage().imageIdentifier();
+        if (!imageIdentifier) {
             ASSERT_NOT_REACHED();
             return;
         }
 
-        if (auto nativeImage = resourceCache().cachedNativeImage({ *resourceIdentifier, m_webProcessIdentifier })) {
-            feImage.setImageSource(Ref<Image> { BitmapImage::create(nativeImage) });
+        if (auto nativeImage = resourceCache().cachedNativeImage({ imageIdentifier, m_webProcessIdentifier })) {
+            feImage.setImageSource({ *nativeImage });
             continue;
         }
 
-        if (auto imageBuffer = resourceCache().cachedImageBuffer({ *resourceIdentifier, m_webProcessIdentifier })) {
+        if (auto imageBuffer = resourceCache().cachedImageBuffer({ imageIdentifier, m_webProcessIdentifier })) {
             feImage.setImageSource({ *imageBuffer });
             continue;
         }

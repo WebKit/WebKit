@@ -138,9 +138,10 @@ private:
 #endif
     void recordApplyDeviceScaleFactor(float) final;
 
-    void recordResourceUse(WebCore::NativeImage&) final;
-    void recordResourceUse(WebCore::Font&) final;
-    void recordResourceUse(WebCore::ImageBuffer&) final;
+    bool recordResourceUse(WebCore::NativeImage&) final;
+    bool recordResourceUse(WebCore::ImageBuffer&) final;
+    bool recordResourceUse(const WebCore::SourceImage&) final;
+    bool recordResourceUse(WebCore::Font&) final;
 
     std::unique_ptr<WebCore::GraphicsContext> createNestedContext(const WebCore::FloatRect& initialClip, const WebCore::AffineTransform& initialCTM) final;
 

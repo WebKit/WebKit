@@ -1,3 +1,18 @@
+2022-01-22  Said Abou-Hallawa  <said@apple.com>
+
+        [GPU Process] Add the class 'SourceImage' to represent variants of image
+        https://bugs.webkit.org/show_bug.cgi?id=235467
+
+        Reviewed by Cameron McCormack.
+
+        Provide a new recordResourceUse() for the SourceImage.
+
+        * GPUProcess/graphics/RemoteDisplayListRecorder.cpp:
+        (WebKit::RemoteDisplayListRecorder::drawFilteredImageBuffer):
+        * WebProcess/GPU/graphics/RemoteDisplayListRecorderProxy.cpp:
+        (WebKit::RemoteDisplayListRecorderProxy::recordResourceUse):
+        * WebProcess/GPU/graphics/RemoteDisplayListRecorderProxy.h:
+
 2022-01-22  Elliott Williams  <emw@apple.com>
 
         Skip installing webpushd in STP and downlevel builds

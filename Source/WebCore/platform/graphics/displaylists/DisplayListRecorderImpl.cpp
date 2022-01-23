@@ -35,6 +35,7 @@
 #include "Logging.h"
 #include "MediaPlayer.h"
 #include "NotImplemented.h"
+#include "SourceImage.h"
 #include <wtf/MathExtras.h>
 #include <wtf/text/TextStream.h>
 
@@ -418,25 +419,41 @@ void RecorderImpl::recordApplyDeviceScaleFactor(float scaleFactor)
     append<ApplyDeviceScaleFactor>(scaleFactor);
 }
 
-void RecorderImpl::recordResourceUse(NativeImage& image)
+bool RecorderImpl::recordResourceUse(NativeImage& nativeImage)
 {
     if (m_delegate)
-        m_delegate->recordNativeImageUse(image);
-    m_displayList.cacheNativeImage(image);
+        m_delegate->recordNativeImageUse(nativeImage);
+    m_displayList.cacheNativeImage(nativeImage);
+    return true;
 }
 
-void RecorderImpl::recordResourceUse(Font& font)
+bool RecorderImpl::recordResourceUse(ImageBuffer& imageBuffer)
+{
+    if (!canDrawImageBuffer(imageBuffer))
+        return false;
+    if (m_delegate)
+        m_delegate->recordImageBufferUse(imageBuffer);
+    m_displayList.cacheImageBuffer(imageBuffer);
+    return true;
+}
+
+bool RecorderImpl::recordResourceUse(const SourceImage& image)
+{
+    if (auto imageBuffer = image.imageBufferIfExists())
+        return recordResourceUse(*imageBuffer);
+
+    if (auto nativeImage = image.nativeImageIfExists())
+        return recordResourceUse(*nativeImage);
+
+    return true;
+}
+
+bool RecorderImpl::recordResourceUse(Font& font)
 {
     if (m_delegate)
         m_delegate->recordFontUse(font);
     m_displayList.cacheFont(font);
-}
-
-void RecorderImpl::recordResourceUse(ImageBuffer& imageBuffer)
-{
-    if (m_delegate)
-        m_delegate->recordImageBufferUse(imageBuffer);
-    m_displayList.cacheImageBuffer(imageBuffer);
+    return true;
 }
 
 // FIXME: share with ShadowData

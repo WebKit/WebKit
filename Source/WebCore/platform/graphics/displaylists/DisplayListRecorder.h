@@ -45,6 +45,7 @@ class Font;
 class GlyphBuffer;
 class Image;
 class PixelBuffer;
+class SourceImage;
 
 struct GraphicsContextState;
 struct ImagePaintingOptions;
@@ -138,9 +139,10 @@ protected:
 #endif
     virtual void recordApplyDeviceScaleFactor(float) = 0;
 
-    virtual void recordResourceUse(NativeImage&) = 0;
-    virtual void recordResourceUse(Font&) = 0;
-    virtual void recordResourceUse(ImageBuffer&) = 0;
+    virtual bool recordResourceUse(NativeImage&) = 0;
+    virtual bool recordResourceUse(ImageBuffer&) = 0;
+    virtual bool recordResourceUse(const SourceImage&) = 0;
+    virtual bool recordResourceUse(Font&) = 0;
 
     // FIXME: Maybe remove this?
     virtual bool canDrawImageBuffer(const ImageBuffer&) const = 0;
