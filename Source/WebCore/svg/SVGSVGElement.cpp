@@ -211,14 +211,8 @@ void SVGSVGElement::svgAttributeChanged(const QualifiedName& attrName)
         InstanceInvalidationGuard guard(*this);
         invalidateSVGPresentationalHintStyle();
 
-        if (auto renderer = this->renderer()) {
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
-            if (is<RenderSVGRoot>(renderer) && downcast<RenderSVGRoot>(*renderer).isEmbeddedThroughFrameContainingSVGDocument())
-                RenderSVGResource::markForLayoutAndParentResourceInvalidation(*renderer);
-#endif
-            if (is<LegacyRenderSVGRoot>(renderer) && downcast<LegacyRenderSVGRoot>(*renderer).isEmbeddedThroughFrameContainingSVGDocument())
-                RenderSVGResource::markForLayoutAndParentResourceInvalidation(*renderer);
-        }
+        if (auto* renderer = this->renderer())
+            RenderSVGResource::markForLayoutAndParentResourceInvalidation(*renderer);
         return;
     }
 
