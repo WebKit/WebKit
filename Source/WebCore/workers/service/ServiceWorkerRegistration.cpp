@@ -173,14 +173,14 @@ void ServiceWorkerRegistration::subscribeToPushService(const Vector<uint8_t>& ap
     m_container->subscribeToPushService(*this, applicationServerKey, WTFMove(promise));
 }
 
-void ServiceWorkerRegistration::unsubscribeFromPushService(DOMPromiseDeferred<IDLBoolean>&& promise)
+void ServiceWorkerRegistration::unsubscribeFromPushService(PushSubscriptionIdentifier subscriptionIdentifier, DOMPromiseDeferred<IDLBoolean>&& promise)
 {
     if (isContextStopped()) {
         promise.reject(Exception(InvalidStateError));
         return;
     }
 
-    m_container->unsubscribeFromPushService(identifier(), WTFMove(promise));
+    m_container->unsubscribeFromPushService(identifier(), subscriptionIdentifier, WTFMove(promise));
 }
 
 void ServiceWorkerRegistration::getPushSubscription(DOMPromiseDeferred<IDLNullable<IDLInterface<PushSubscription>>>&& promise)

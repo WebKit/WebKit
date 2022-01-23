@@ -28,12 +28,14 @@
 #if ENABLE(SERVICE_WORKER)
 
 #include "EpochTimeStamp.h"
+#include "PushSubscriptionIdentifier.h"
 
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
 struct PushSubscriptionData {
+    PushSubscriptionIdentifier identifier;
     String endpoint;
     std::optional<WebCore::EpochTimeStamp> expirationTime;
     Vector<uint8_t> serverVAPIDPublicKey;
@@ -49,6 +51,7 @@ struct PushSubscriptionData {
 template<class Encoder>
 void PushSubscriptionData::encode(Encoder& encoder) const
 {
+    encoder << identifier;
     encoder << endpoint;
     encoder << expirationTime;
     encoder << serverVAPIDPublicKey;
@@ -59,18 +62,37 @@ void PushSubscriptionData::encode(Encoder& encoder) const
 template<class Decoder>
 std::optional<PushSubscriptionData> PushSubscriptionData::decode(Decoder& decoder)
 {
-    PushSubscriptionData result;
-    if (!decoder.decode(result.endpoint))
+    std::optional<PushSubscriptionIdentifier> identifier;
+    decoder >> identifier;
+    if (!identifier)
         return std::nullopt;
-    if (!decoder.decode(result.expirationTime))
+
+    std::optional<String> endpoint;
+    decoder >> endpoint;
+    if (!endpoint)
         return std::nullopt;
-    if (!decoder.decode(result.serverVAPIDPublicKey))
+
+    std::optional<std::optional<WebCore::EpochTimeStamp>> expirationTime;
+    decoder >> expirationTime;
+    if (!expirationTime)
         return std::nullopt;
-    if (!decoder.decode(result.clientECDHPublicKey))
+
+    std::optional<Vector<uint8_t>> serverVAPIDPublicKey;
+    decoder >> serverVAPIDPublicKey;
+    if (!serverVAPIDPublicKey)
         return std::nullopt;
-    if (!decoder.decode(result.sharedAuthenticationSecret))
+
+    std::optional<Vector<uint8_t>> clientECDHPublicKey;
+    decoder >> clientECDHPublicKey;
+    if (!clientECDHPublicKey)
         return std::nullopt;
-    return result;
+
+    std::optional<Vector<uint8_t>> sharedAuthenticationSecret;
+    decoder >> sharedAuthenticationSecret;
+    if (!sharedAuthenticationSecret)
+        return std::nullopt;
+
+    return PushSubscriptionData { WTFMove(*identifier), WTFMove(*endpoint), WTFMove(*expirationTime), WTFMove(*serverVAPIDPublicKey), WTFMove(*clientECDHPublicKey), WTFMove(*sharedAuthenticationSecret) };
 }
 
 } // namespace WebCore

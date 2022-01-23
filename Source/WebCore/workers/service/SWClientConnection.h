@@ -93,7 +93,7 @@ public:
     virtual void subscribeToPushService(ServiceWorkerRegistrationIdentifier, const Vector<uint8_t>& applicationServerKey, SubscribeToPushServiceCallback&&) = 0;
     
     using UnsubscribeFromPushServiceCallback = CompletionHandler<void(ExceptionOr<bool>&&)>;
-    virtual void unsubscribeFromPushService(ServiceWorkerRegistrationIdentifier, UnsubscribeFromPushServiceCallback&&) = 0;
+    virtual void unsubscribeFromPushService(ServiceWorkerRegistrationIdentifier, PushSubscriptionIdentifier, UnsubscribeFromPushServiceCallback&&) = 0;
     
     using GetPushSubscriptionCallback = CompletionHandler<void(ExceptionOr<std::optional<PushSubscriptionData>>&&)>;
     virtual void getPushSubscription(ServiceWorkerRegistrationIdentifier, GetPushSubscriptionCallback&&) = 0;

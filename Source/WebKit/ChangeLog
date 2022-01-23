@@ -1,3 +1,24 @@
+2022-01-22  Ben Nham  <nham@apple.com>
+
+        Add PushSubscriptionIdentifier
+        https://bugs.webkit.org/show_bug.cgi?id=234797
+
+        Reviewed by Darin Adler.
+
+        Pass the subscription identifier in the PushSubscription.unsubscribe call to guarantee that
+        we only unsubscribe from the given subscription.
+
+        * NetworkProcess/ServiceWorker/WebSWServerConnection.cpp:
+        (WebKit::WebSWServerConnection::unsubscribeFromPushService):
+        * NetworkProcess/ServiceWorker/WebSWServerConnection.h:
+        * NetworkProcess/ServiceWorker/WebSWServerConnection.messages.in:
+        * Scripts/webkit/messages.py:
+        (types_that_cannot_be_forward_declared):
+        (headers_for_type):
+        * WebProcess/Storage/WebSWClientConnection.cpp:
+        (WebKit::WebSWClientConnection::unsubscribeFromPushService):
+        * WebProcess/Storage/WebSWClientConnection.h:
+
 2022-01-22  Said Abou-Hallawa  <said@apple.com>
 
         [GPU Process] Add the class 'SourceImage' to represent variants of image

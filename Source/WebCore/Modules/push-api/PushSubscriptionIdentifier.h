@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,26 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "PushSubscriptionData.h"
+#pragma once
 
-#if ENABLE(SERVICE_WORKER)
+#include <wtf/ObjectIdentifier.h>
 
 namespace WebCore {
 
-PushSubscriptionData PushSubscriptionData::isolatedCopy() const
-{
-    PushSubscriptionData result;
-    result.identifier = identifier;
-    result.endpoint = endpoint.isolatedCopy();
-    result.expirationTime = expirationTime;
-    result.serverVAPIDPublicKey = serverVAPIDPublicKey;
-    result.clientECDHPublicKey = clientECDHPublicKey;
-    result.sharedAuthenticationSecret = sharedAuthenticationSecret;
+enum PushSubscriptionIdentifierType { };
+using PushSubscriptionIdentifier = ObjectIdentifier<PushSubscriptionIdentifierType>;
 
-    return result;
 }
-
-} // namespace WebCore
-
-#endif // ENABLE(SERVICE_WORKER)

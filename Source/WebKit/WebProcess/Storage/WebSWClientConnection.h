@@ -91,7 +91,7 @@ private:
     void storeRegistrationsOnDiskForTesting(CompletionHandler<void()>&&) final;
     
     void subscribeToPushService(WebCore::ServiceWorkerRegistrationIdentifier, const Vector<uint8_t>& applicationServerKey, SubscribeToPushServiceCallback&&) final;
-    void unsubscribeFromPushService(WebCore::ServiceWorkerRegistrationIdentifier, UnsubscribeFromPushServiceCallback&&) final;
+    void unsubscribeFromPushService(WebCore::ServiceWorkerRegistrationIdentifier, WebCore::PushSubscriptionIdentifier, UnsubscribeFromPushServiceCallback&&) final;
     void getPushSubscription(WebCore::ServiceWorkerRegistrationIdentifier, GetPushSubscriptionCallback&&) final;
     void getPushPermissionState(WebCore::ServiceWorkerRegistrationIdentifier, GetPushPermissionStateCallback&&) final;
 

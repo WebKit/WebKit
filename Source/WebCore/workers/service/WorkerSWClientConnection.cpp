@@ -245,14 +245,14 @@ void WorkerSWClientConnection::subscribeToPushService(ServiceWorkerRegistrationI
     });
 }
 
-void WorkerSWClientConnection::unsubscribeFromPushService(ServiceWorkerRegistrationIdentifier registrationIdentifier, UnsubscribeFromPushServiceCallback&& callback)
+void WorkerSWClientConnection::unsubscribeFromPushService(ServiceWorkerRegistrationIdentifier registrationIdentifier, PushSubscriptionIdentifier subscriptionIdentifier, UnsubscribeFromPushServiceCallback&& callback)
 {
     uint64_t requestIdentifier = ++m_lastRequestIdentifier;
     m_unsubscribeFromPushServiceRequests.add(requestIdentifier, WTFMove(callback));
     
-    callOnMainThread([thread = m_thread, requestIdentifier, registrationIdentifier]() mutable {
+    callOnMainThread([thread = m_thread, requestIdentifier, registrationIdentifier, subscriptionIdentifier]() mutable {
         auto& connection = ServiceWorkerProvider::singleton().serviceWorkerConnection();
-        connection.unsubscribeFromPushService(registrationIdentifier, [thread = WTFMove(thread), requestIdentifier](auto&& result) {
+        connection.unsubscribeFromPushService(registrationIdentifier, subscriptionIdentifier, [thread = WTFMove(thread), requestIdentifier](auto&& result) {
             thread->runLoop().postTaskForMode([requestIdentifier, result = crossThreadCopy(result)](auto& scope) mutable {
                 auto callback = downcast<WorkerGlobalScope>(scope).swClientConnection().m_unsubscribeFromPushServiceRequests.take(requestIdentifier);
                 callback(WTFMove(result));

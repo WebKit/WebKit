@@ -570,9 +570,9 @@ void ServiceWorkerContainer::subscribeToPushService(ServiceWorkerRegistration& r
     });
 }
 
-void ServiceWorkerContainer::unsubscribeFromPushService(ServiceWorkerRegistrationIdentifier identifier, DOMPromiseDeferred<IDLBoolean>&& promise)
+void ServiceWorkerContainer::unsubscribeFromPushService(ServiceWorkerRegistrationIdentifier identifier, PushSubscriptionIdentifier subscriptionIdentifier, DOMPromiseDeferred<IDLBoolean>&& promise)
 {
-    ensureSWClientConnection().unsubscribeFromPushService(identifier, [promise = WTFMove(promise)](auto&& result) mutable {
+    ensureSWClientConnection().unsubscribeFromPushService(identifier, subscriptionIdentifier, [promise = WTFMove(promise)](auto&& result) mutable {
         promise.settle(WTFMove(result));
     });
 }
