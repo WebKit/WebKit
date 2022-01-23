@@ -350,6 +350,8 @@ void MediaPlayerPrivateMediaSourceAVFObjC::playInternal(std::optional<MonotonicT
     UNUSED_PARAM(hostTime);
     [m_synchronizer setRate:m_rate];
 #endif
+
+    m_player->playbackStateChanged();
 }
 
 void MediaPlayerPrivateMediaSourceAVFObjC::pause()
@@ -380,6 +382,8 @@ void MediaPlayerPrivateMediaSourceAVFObjC::pauseInternal(std::optional<Monotonic
     UNUSED_PARAM(hostTime);
     [m_synchronizer setRate:0];
 #endif
+
+    m_player->playbackStateChanged();
 }
 
 bool MediaPlayerPrivateMediaSourceAVFObjC::paused() const
