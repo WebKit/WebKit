@@ -1,3 +1,13 @@
+2022-01-23  Ziran Sun  <zsun@igalia.com>
+
+        [forms] Prevent contenteditable anchors from being stuck
+        https://bugs.webkit.org/show_bug.cgi?id=235438
+
+        Reviewed by Darin Adler.
+
+        Update 1 WPT test expectation file as the test is now passing.
+        * web-platform-tests/html/semantics/forms/the-input-element/anchor-active-contenteditable-expected.txt:
+
 2022-01-21  Antoine Quint  <graouts@webkit.org>
 
         Update css/css-animation WPT following animation-composition testing updates

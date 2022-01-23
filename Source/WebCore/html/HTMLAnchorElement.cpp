@@ -213,7 +213,7 @@ void HTMLAnchorElement::defaultEventHandler(Event& event)
 
 void HTMLAnchorElement::setActive(bool down, bool pause, Style::InvalidationScope invalidationScope)
 {
-    if (hasEditableStyle()) {
+    if (down && hasEditableStyle()) {
         switch (document().settings().editableLinkBehavior()) {
         case EditableLinkBehavior::Default:
         case EditableLinkBehavior::AlwaysLive:
