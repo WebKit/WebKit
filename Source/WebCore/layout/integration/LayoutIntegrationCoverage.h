@@ -53,7 +53,7 @@ enum class AvoidanceReason : uint64_t {
     // Unused                                    = 1LLU  << 12,
     FlowHasOverflowNotVisible                    = 1LLU  << 13,
     // Unused                                    = 1LLU  << 14,
-    FlowMayNotBeLTR                              = 1LLU  << 15,
+    // Unused                                    = 1LLU  << 15,
     FlowHasLineBoxContainProperty                = 1LLU  << 16,
     FlowIsNotTopToBottom                         = 1LLU  << 17,
     // Unused                                    = 1LLU  << 18,

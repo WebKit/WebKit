@@ -1,3 +1,12 @@
+2022-01-23  Alan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Enable unicode-bidi: plaintext for IFC
+        https://bugs.webkit.org/show_bug.cgi?id=235429
+
+        Reviewed by Antti Koivisto.
+
+        * platform/mac/fast/text/international/unicode-bidi-plaintext-in-textarea-expected.txt:
+
 2022-01-22  Alan Bujtas  <zalan@apple.com>
 
         [iOS] Unreviewed gardering

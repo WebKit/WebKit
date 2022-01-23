@@ -113,9 +113,6 @@ static void printReason(AvoidanceReason reason, TextStream& stream)
     case AvoidanceReason::FlowHasOverflowNotVisible:
         stream << "overflow: hidden | scroll | auto";
         break;
-    case AvoidanceReason::FlowMayNotBeLTR:
-        stream << "dir may not be LTR";
-        break;
     case AvoidanceReason::FlowHasLineBoxContainProperty:
         stream << "line-box-contain value indicates variable line height";
         break;
@@ -415,8 +412,6 @@ static OptionSet<AvoidanceReason> canUseForStyle(const RenderElement& renderer, 
         SET_REASON_AND_RETURN_IF_NEEDED(FlowHasOverflowNotVisible, reasons, includeReasons);
     if (style.textOverflow() == TextOverflow::Ellipsis)
         SET_REASON_AND_RETURN_IF_NEEDED(FlowHasTextOverflow, reasons, includeReasons);
-    if (is<RenderBlockFlow>(renderer) && style.unicodeBidi() == UnicodeBidi::Plaintext)
-        SET_REASON_AND_RETURN_IF_NEEDED(FlowMayNotBeLTR, reasons, includeReasons);
     if (style.writingMode() != WritingMode::TopToBottom)
         SET_REASON_AND_RETURN_IF_NEEDED(FlowIsNotTopToBottom, reasons, includeReasons);
     if (style.textEmphasisFill() != TextEmphasisFill::Filled || style.textEmphasisMark() != TextEmphasisMark::None)
