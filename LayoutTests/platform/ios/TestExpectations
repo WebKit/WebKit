@@ -2964,6 +2964,7 @@ http/wpt/resource-timing/rt-initiatorType-element.html [ Pass Failure ]
 http/wpt/resource-timing/rt-initiatorType-xmlhttprequest.html [ Pass Failure ]
 
 # <rdar://problem/51826131> REGRESSION (r241747) 2 Layout tests are failing on Internal iOS 13 iOS / iPad Simulator testers fast/repaint/placeholder-after-caps-lock-hidden.html imported/blink/svg/custom/focus-ring-2.svg
+fast/text/incorrect-deselection-across-multiple-elements.html [ Failure ]
 
 # <rdar://problem/51828203> 2 platform/ipad/fast/viewport/viewport* Layout tests are timing out on iOS 13
 platform/ipad/fast/viewport/viewport-overriden-by-minimum-effective-width-if-ignore-meta-viewport.html [ Timeout ]

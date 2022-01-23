@@ -1,3 +1,9 @@
+2022-01-22  Alan Bujtas  <zalan@apple.com>
+
+        [iOS] Unreviewed gardering
+
+        * platform/ios/TestExpectations: blank selection.
+
 2022-01-21  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Relax Date.parse requirement
