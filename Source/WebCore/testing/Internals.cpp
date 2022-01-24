@@ -3931,7 +3931,17 @@ String Internals::getImageSourceURL(Element& element)
 
 unsigned Internals::mediaElementCount()
 {
-    return HTMLMediaElement::allMediaElements().size();
+    Document* document = contextDocument();
+    if (!document)
+        return 0;
+
+    unsigned number = 0;
+    for (auto* mediaElement : HTMLMediaElement::allMediaElements()) {
+        if (&mediaElement->document() == document)
+            ++number;
+    }
+
+    return number;
 }
 
 Vector<String> Internals::mediaResponseSources(HTMLMediaElement& media)

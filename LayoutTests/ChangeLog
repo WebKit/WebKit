@@ -1,3 +1,14 @@
+2022-01-24  Youenn Fablet  <youenn@apple.com>
+
+        [ iOS Release ] fast/mediastream/mediaElement-gc.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=231601
+        <rdar://problem/84158942>
+
+        Reviewed by Eric Carlson.
+
+        * fast/mediastream/mediaElement-gc.html: add more precise checks to get better error information if test continues to be flaky.
+        * platform/ios-wk2/TestExpectations:
+
 2022-01-24  Simon Fraser  <simon.fraser@apple.com>
 
         Add pixel tolerance to some compositing tests

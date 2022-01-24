@@ -1448,8 +1448,6 @@ webkit.org/b/232106 media/modern-media-controls/media-documents/media-document-v
 
 webkit.org/b/231618 [ Release ] fast/mediastream/apply-constraints-video.html [ Pass Failure ]
 
-webkit.org/b/231601 [ Release ] fast/mediastream/mediaElement-gc.html [ Pass Failure ]
-
 webkit.org/b/230012 media/modern-media-controls/media-documents/media-document-invalid.html [ Pass Crash ]
 
 webkit.org/b/229810 fast/mediastream/get-display-media-capabilities.html [ Skip ]
