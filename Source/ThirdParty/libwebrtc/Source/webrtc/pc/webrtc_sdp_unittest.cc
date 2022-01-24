@@ -4694,3 +4694,15 @@ TEST_F(WebRtcSdpTest, IllegalMidCharacterValue) {
   Replace("a=mid:", "a=mid:[]", &sdp);
   ExpectParseFailure(std::string(sdp), "a=mid:[]");
 }
+
+TEST_F(WebRtcSdpTest, MaxChannels) {
+  std::string sdp =
+      "v=0\r\n"
+      "o=- 11 22 IN IP4 127.0.0.1\r\n"
+      "s=-\r\n"
+      "t=0 0\r\n"
+      "m=audio 49232 RTP/AVP 108\r\n"
+      "a=rtpmap:108 ISAC/16000/512\r\n";
+
+  ExpectParseFailure(sdp, "a=rtpmap:108 ISAC/16000/512");
+}
