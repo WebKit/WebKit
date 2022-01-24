@@ -161,7 +161,12 @@ bool RtpHeaderExtensionMap::Register(int id,
                         << static_cast<int>(registered_type);
     return false;
   }
-  RTC_DCHECK(!IsRegistered(type));
+  if (IsRegistered(type)) {
+    RTC_LOG(LS_WARNING) << "Illegal reregistration for uri: " << uri
+                        << " is previously registered with id " << GetId(type)
+                        << " and cannot be reregistered with id " << id;
+    return false;
+  }
 
   // There is a run-time check above id fits into uint8_t.
   ids_[type] = static_cast<uint8_t>(id);
