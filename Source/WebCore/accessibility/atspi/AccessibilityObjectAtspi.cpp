@@ -1209,9 +1209,6 @@ void AccessibilityObjectAtspi::childRemoved(AccessibilityObjectAtspi& child)
     if (!m_isRegistered)
         return;
 
-    if (!m_coreObject || m_coreObject->accessibilityIsIgnored())
-        return;
-
     AccessibilityAtspi::singleton().childrenChanged(*this, child, AccessibilityAtspi::ChildrenChanged::Removed);
 }
 
