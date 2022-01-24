@@ -241,7 +241,7 @@ ExceptionOr<Ref<ReadableStream>> Blob::stream(ScriptExecutionContext& scriptExec
     class BlobStreamSource : public FileReaderLoaderClient, public ReadableStreamSource {
     public:
         BlobStreamSource(ScriptExecutionContext& scriptExecutionContext, Blob& blob)
-            : m_loader(makeUniqueRef<FileReaderLoader>(FileReaderLoader::ReadType::ReadAsArrayBuffer, this))
+            : m_loader(makeUniqueRef<FileReaderLoader>(FileReaderLoader::ReadType::ReadAsBinaryChunks, this))
         {
             m_loader->start(&scriptExecutionContext, blob);
         }
@@ -265,19 +265,11 @@ ExceptionOr<Ref<ReadableStream>> Blob::stream(ScriptExecutionContext& scriptExec
 
         // FileReaderLoaderClient
         void didStartLoading() final { }
-        void didReceiveData() final
+        void didReceiveData() final { }
+        void didReceiveBinaryChunk(const SharedBuffer& buffer) final
         {
-            auto result = m_loader->arrayBufferResult();
-            if (!result)
-                return;
-
-            if (m_loader->isCompleted() && !m_bytesRead)
-                controller().enqueue(WTFMove(result));
-            else {
-                auto bytesLoaded = m_loader->bytesLoaded();
-                controller().enqueue(result->slice(m_bytesRead, bytesLoaded));
-                m_bytesRead = bytesLoaded;
-            }
+            if (!controller().enqueue(buffer.tryCreateArrayBuffer()))
+                doCancel();
         }
         void didFinishLoading() final
         {
@@ -294,7 +286,6 @@ ExceptionOr<Ref<ReadableStream>> Blob::stream(ScriptExecutionContext& scriptExec
         }
 
         UniqueRef<FileReaderLoader> m_loader;
-        size_t m_bytesRead { 0 };
         bool m_isStarted { false };
         std::optional<Exception> m_exception;
     };
