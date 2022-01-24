@@ -475,6 +475,7 @@ animation/AnimationTimeline.cpp
 animation/CSSAnimation.cpp
 animation/CSSPropertyAnimation.cpp
 animation/CSSTransition.cpp
+animation/CompositeOperation.cpp
 animation/CustomEffect.cpp
 animation/DeclarativeAnimation.cpp
 animation/DocumentTimeline.cpp

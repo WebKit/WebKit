@@ -1,3 +1,22 @@
+2022-01-24  Antoine Quint  <graouts@webkit.org>
+
+        [Web Animations] add support for animation-composition CSS property
+        https://bugs.webkit.org/show_bug.cgi?id=232086
+        <rdar://problem/84508394>
+
+        Reviewed by Darin Adler.
+
+        Mark WPT progressions and import one ::marker WPT test that wasn't imported originally with bug 235443.
+
+        * web-platform-tests/css/css-animations/CSSAnimation-effect.tentative-expected.txt:
+        * web-platform-tests/css/css-animations/KeyframeEffect-getKeyframes.tentative-expected.txt:
+        * web-platform-tests/css/css-animations/parsing/animation-composition-computed.tentative-expected.txt:
+        * web-platform-tests/css/css-animations/parsing/animation-composition-valid.tentative-expected.txt:
+        * web-platform-tests/css/css-cascade/all-prop-initial-xml-expected.txt:
+        * web-platform-tests/css/css-pseudo/parsing/marker-supported-properties-expected.txt:
+        * web-platform-tests/css/css-pseudo/parsing/marker-supported-properties.html:
+        * web-platform-tests/css/cssom/getComputedStyle-detached-subtree-expected.txt:
+
 2022-01-23  Sam Weinig  <weinig@apple.com>
 
         Support interpolating colors with missing/none components via color-mix()

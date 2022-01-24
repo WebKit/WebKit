@@ -20,6 +20,7 @@
     animation-play-state: running, paused, running;
     animation-iteration-count: 1, 2, 3;
     animation-timing-function: linear;
+    animation-composition: add, replace, accumulate;
 }
 @keyframes a { }
 @keyframes b { }
@@ -43,7 +44,8 @@
       { 'property': 'animationFillMode',  'value': 'forwards, backwards' },
       { 'property': 'animationPlayState', 'value': 'running, paused, running' },
       { 'property': 'animationIterationCount', 'value': '1, 2, 3' },
-      { 'property': 'animationTimingFunction', 'value': 'linear' }
+      { 'property': 'animationTimingFunction', 'value': 'linear' },
+      { 'property': 'animationComposition', 'value': 'add, replace, accumulate' }
     ];
     
     function start()

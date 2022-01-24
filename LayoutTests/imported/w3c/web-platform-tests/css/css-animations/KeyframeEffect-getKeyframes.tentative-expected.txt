@@ -5,8 +5,8 @@ PASS KeyframeEffect.getKeyframes() returns frames with expected easing values, w
 PASS KeyframeEffect.getKeyframes() returns frames with expected easing values, when the easing is specified on each keyframe
 PASS KeyframeEffect.getKeyframes() returns frames with expected easing values, when the easing is specified on some keyframes
 PASS KeyframeEffect.getKeyframes() returns frames with expected composite values, when the composite is set on the effect using animation-composition on the element
-FAIL KeyframeEffect.getKeyframes() returns frames with expected composite values, when the composite is specified on each keyframe assert_equals: value of 'composite' on ComputedKeyframe #0 expected "replace" but got "auto"
-FAIL KeyframeEffect.getKeyframes() returns frames with expected composite values, when the composite is specified on some keyframes assert_equals: value of 'composite' on ComputedKeyframe #0 expected "add" but got "auto"
+PASS KeyframeEffect.getKeyframes() returns frames with expected composite values, when the composite is specified on each keyframe
+PASS KeyframeEffect.getKeyframes() returns frames with expected composite values, when the composite is specified on some keyframes
 PASS KeyframeEffect.getKeyframes() returns expected frames for a simple animation that specifies a single shorthand property
 PASS KeyframeEffect.getKeyframes() returns expected frames for an animation with a 0% keyframe and no 100% keyframe
 PASS KeyframeEffect.getKeyframes() returns expected frames for an animation with a 100% keyframe and no 0% keyframe

@@ -79,7 +79,7 @@ public:
     void clearPlayState() { m_playStateSet = false; m_playStateFilled = false; }
     void clearProperty() { m_propertySet = false; m_propertyFilled = false; }
     void clearTimingFunction() { m_timingFunctionSet = false; m_timingFunctionFilled = false; }
-    void clearCompositeOperation() { m_compositeOperationSet = false; }
+    void clearCompositeOperation() { m_compositeOperationSet = false; m_compositeOperationFilled = false; }
 
     void clearAll()
     {
@@ -167,6 +167,7 @@ public:
     void fillPlayState(AnimationPlayState playState) { setPlayState(playState); m_playStateFilled = true; }
     void fillProperty(TransitionProperty property) { setProperty(property); m_propertyFilled = true; }
     void fillTimingFunction(RefPtr<TimingFunction>&& timingFunction) { setTimingFunction(WTFMove(timingFunction)); m_timingFunctionFilled = true; }
+    void fillCompositeOperation(CompositeOperation compositeOperation) { setCompositeOperation(compositeOperation); m_compositeOperationFilled = true; }
 
     bool isDelayFilled() const { return m_delayFilled; }
     bool isDirectionFilled() const { return m_directionFilled; }
@@ -176,6 +177,7 @@ public:
     bool isPlayStateFilled() const { return m_playStateFilled; }
     bool isPropertyFilled() const { return m_propertyFilled; }
     bool isTimingFunctionFilled() const { return m_timingFunctionFilled; }
+    bool isCompositeOperationFilled() const { return m_compositeOperationFilled; }
 
     // return true if all members of this class match (excluding m_next)
     bool animationsMatch(const Animation&, bool matchProperties = true) const;
@@ -234,6 +236,7 @@ private:
     bool m_playStateFilled : 1;
     bool m_propertyFilled : 1;
     bool m_timingFunctionFilled : 1;
+    bool m_compositeOperationFilled : 1;
 
 public:
     static double initialDelay() { return 0; }

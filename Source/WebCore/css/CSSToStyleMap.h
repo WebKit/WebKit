@@ -68,6 +68,7 @@ public:
     void mapAnimationPlayState(Animation&, const CSSValue&);
     void mapAnimationProperty(Animation&, const CSSValue&);
     void mapAnimationTimingFunction(Animation&, const CSSValue&);
+    void mapAnimationCompositeOperation(Animation&, const CSSValue&);
 
     void mapNinePieceImage(CSSPropertyID, CSSValue*, NinePieceImage&);
     void mapNinePieceImageSlice(CSSValue&, NinePieceImage&);

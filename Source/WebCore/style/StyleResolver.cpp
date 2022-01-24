@@ -40,6 +40,7 @@
 #include "CSSStyleRule.h"
 #include "CSSStyleSheet.h"
 #include "CachedResourceLoader.h"
+#include "CompositeOperation.h"
 #include "ElementRuleCollector.h"
 #include "Frame.h"
 #include "FrameSelection.h"
@@ -293,9 +294,10 @@ std::unique_ptr<RenderStyle> Resolver::styleForKeyframe(const Element& element, 
     unsigned propertyCount = keyframe->properties().propertyCount();
     for (unsigned i = 0; i < propertyCount; ++i) {
         CSSPropertyID property = keyframe->properties().propertyAt(i).id();
-        // Timing-function within keyframes is special, because it is not animated; it just
-        // describes the timing function between this keyframe and the next.
-        if (property != CSSPropertyAnimationTimingFunction)
+        // The animation-composition and animation-timing-function within keyframes are special
+        // because they are not animated; they just describe the composite operation and timing
+        // function between this keyframe and the next.
+        if (property != CSSPropertyAnimationTimingFunction && property != CSSPropertyAnimationComposition)
             keyframeValue.addProperty(property);
     }
 
@@ -396,6 +398,10 @@ void Resolver::keyframeStylesForAnimation(const Element& element, const RenderSt
             keyframeValue.setKey(key);
             if (auto timingFunctionCSSValue = keyframeRule->properties().getPropertyCSSValue(CSSPropertyAnimationTimingFunction))
                 keyframeValue.setTimingFunction(TimingFunction::createFromCSSValue(*timingFunctionCSSValue.get()));
+            if (auto compositeOperationCSSValue = keyframeRule->properties().getPropertyCSSValue(CSSPropertyAnimationComposition)) {
+                if (auto compositeOperation = toCompositeOperation(*compositeOperationCSSValue))
+                    keyframeValue.setCompositeOperation(*compositeOperation);
+            }
             list.insert(WTFMove(keyframeValue));
         }
     }

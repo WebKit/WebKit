@@ -56,6 +56,7 @@ Animation::Animation()
     , m_playStateFilled(false)
     , m_propertyFilled(false)
     , m_timingFunctionFilled(false)
+    , m_compositeOperationFilled(false)
 {
 }
 
@@ -91,6 +92,7 @@ Animation::Animation(const Animation& o)
     , m_playStateFilled(o.m_playStateFilled)
     , m_propertyFilled(o.m_propertyFilled)
     , m_timingFunctionFilled(o.m_timingFunctionFilled)
+    , m_compositeOperationFilled(o.m_compositeOperationFilled)
 {
 }
 

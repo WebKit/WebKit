@@ -916,6 +916,25 @@
                 "description": "Used to animate elements"
             }
         },
+        "animation-composition": {
+            "values": [
+                "add",
+                "accumulate",
+                "replace"
+            ],
+            "animatable": true,
+            "codegen-properties": {
+                "name-for-methods": "CompositeOperation",
+                "settings-flag": "webAnimationsCompositeOperationsEnabled"
+            },
+            "specification": {
+                "category": "css-animations",
+                "url": "https://drafts.csswg.org/css-animations-2/#animation-composition"
+            },
+            "status": {
+                "status": "experimental"
+            }
+        },
         "animation-delay": {
             "animatable": true,
             "codegen-properties": {

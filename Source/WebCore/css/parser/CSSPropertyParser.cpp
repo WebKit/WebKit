@@ -1573,6 +1573,8 @@ static RefPtr<CSSValue> consumeAnimationValue(CSSPropertyID property, CSSParserT
         return consumeAnimationName(range);
     case CSSPropertyAnimationPlayState:
         return consumeIdent<CSSValueRunning, CSSValuePaused>(range);
+    case CSSPropertyAnimationComposition:
+        return consumeIdent<CSSValueAccumulate, CSSValueAdd, CSSValueReplace>(range);
     case CSSPropertyTransitionProperty:
         return consumeTransitionProperty(range);
     case CSSPropertyAnimationTimingFunction:
@@ -4334,6 +4336,7 @@ RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, CSS
     case CSSPropertyAnimationIterationCount:
     case CSSPropertyAnimationName:
     case CSSPropertyAnimationPlayState:
+    case CSSPropertyAnimationComposition:
     case CSSPropertyTransitionProperty:
     case CSSPropertyAnimationTimingFunction:
     case CSSPropertyTransitionTimingFunction:

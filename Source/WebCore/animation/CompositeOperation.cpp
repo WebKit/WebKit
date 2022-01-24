@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,16 +23,30 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "CompositeOperation.h"
 
-#include <optional>
+#include "CSSPrimitiveValue.h"
+#include "CSSValue.h"
+#include "CSSValueKeywords.h"
 
 namespace WebCore {
 
-class CSSValue;
+std::optional<CompositeOperation> toCompositeOperation(const CSSValue& value)
+{
+    if (!is<CSSPrimitiveValue>(value))
+        return std::nullopt;
 
-enum class CompositeOperation : uint8_t { Replace, Add, Accumulate };
-
-std::optional<CompositeOperation> toCompositeOperation(const CSSValue&);
+    switch (downcast<CSSPrimitiveValue>(value).valueID()) {
+    case CSSValueAdd:
+        return CompositeOperation::Add;
+    case CSSValueAccumulate:
+        return CompositeOperation::Accumulate;
+    case CSSValueReplace:
+        return CompositeOperation::Replace;
+    default:
+        return std::nullopt;
+    }
+}
 
 } // namespace WebCore

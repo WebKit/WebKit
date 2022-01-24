@@ -114,8 +114,8 @@ public:
 
     const std::optional<const Styleable> targetStyleable() const;
 
-    Vector<JSC::Strong<JSC::JSObject>> getBindingsKeyframes(JSC::JSGlobalObject&);
-    Vector<JSC::Strong<JSC::JSObject>> getKeyframes(JSC::JSGlobalObject&);
+    Vector<JSC::Strong<JSC::JSObject>> getBindingsKeyframes(JSC::JSGlobalObject&, Document&);
+    Vector<JSC::Strong<JSC::JSObject>> getKeyframes(JSC::JSGlobalObject&, Document&);
     ExceptionOr<void> setBindingsKeyframes(JSC::JSGlobalObject&, JSC::Strong<JSC::JSObject>&&);
     ExceptionOr<void> setKeyframes(JSC::JSGlobalObject&, JSC::Strong<JSC::JSObject>&&);
 
@@ -123,6 +123,8 @@ public:
     void setIterationComposite(IterationCompositeOperation iterationCompositeOperation) { m_iterationCompositeOperation = iterationCompositeOperation; }
     CompositeOperation composite() const { return m_compositeOperation; }
     void setComposite(CompositeOperation compositeOperation) { m_compositeOperation = compositeOperation; }
+    CompositeOperation bindingsComposite() const;
+    void setBindingsComposite(CompositeOperation);
 
     void getAnimatedStyle(std::unique_ptr<RenderStyle>& animatedStyle);
     void apply(RenderStyle& targetStyle, const Style::ResolutionContext&, std::optional<Seconds> = std::nullopt);

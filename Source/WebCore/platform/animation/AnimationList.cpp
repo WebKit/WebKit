@@ -58,6 +58,7 @@ void AnimationList::fillUnsetProperties()
     FILL_UNSET_PROPERTY(isPlayStateSet, playState, fillPlayState);
     FILL_UNSET_PROPERTY(isTimingFunctionSet, timingFunction, fillTimingFunction);
     FILL_UNSET_PROPERTY(isPropertySet, property, fillProperty);
+    FILL_UNSET_PROPERTY(isCompositeOperationSet, compositeOperation, fillCompositeOperation);
 }
 
 bool AnimationList::operator==(const AnimationList& other) const

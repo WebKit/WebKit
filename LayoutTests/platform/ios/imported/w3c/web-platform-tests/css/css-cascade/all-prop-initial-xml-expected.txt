@@ -8,6 +8,7 @@ PASS align-self
 PASS alignment-baseline
 PASS all
 PASS alt
+PASS animation-composition
 PASS animation-delay
 PASS animation-direction
 PASS animation-duration

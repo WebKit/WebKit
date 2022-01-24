@@ -596,16 +596,18 @@ void KeyframeEffect::copyPropertiesFromSource(Ref<KeyframeEffect>&& source)
     setBlendingKeyframes(keyframeList);
 }
 
-Vector<Strong<JSObject>> KeyframeEffect::getBindingsKeyframes(JSGlobalObject& lexicalGlobalObject)
+Vector<Strong<JSObject>> KeyframeEffect::getBindingsKeyframes(JSGlobalObject& lexicalGlobalObject, Document& document)
 {
     if (is<DeclarativeAnimation>(animation()))
         downcast<DeclarativeAnimation>(*animation()).flushPendingStyleChanges();
-    return getKeyframes(lexicalGlobalObject);
+    return getKeyframes(lexicalGlobalObject, document);
 }
 
-Vector<Strong<JSObject>> KeyframeEffect::getKeyframes(JSGlobalObject& lexicalGlobalObject)
+Vector<Strong<JSObject>> KeyframeEffect::getKeyframes(JSGlobalObject& lexicalGlobalObject, Document& document)
 {
     // https://drafts.csswg.org/web-animations-1/#dom-keyframeeffectreadonly-getkeyframes
+
+    auto supportsCompositeOperation = document.settings().webAnimationsCompositeOperationsEnabled();
 
     auto lock = JSLockHolder { &lexicalGlobalObject };
 
@@ -700,6 +702,11 @@ Vector<Strong<JSObject>> KeyframeEffect::getKeyframes(JSGlobalObject& lexicalGlo
             // For CSS transitions, all keyframes should return "linear" since the effect's global timing function applies.
             computedKeyframe.easing = is<CSSTransition>(animation()) ? "linear" : timingFunctionForBlendingKeyframe(keyframe)->cssText();
 
+            if (supportsCompositeOperation) {
+                if (auto compositeOperation = keyframe.compositeOperation())
+                    computedKeyframe.composite = toCompositeOperationOrAuto(*compositeOperation);
+            }
+
             auto outputKeyframe = convertDictionaryToJS(lexicalGlobalObject, *jsCast<JSDOMGlobalObject*>(&lexicalGlobalObject), computedKeyframe);
 
             auto addPropertyToKeyframe = [&](CSSPropertyID cssPropertyId) {
@@ -773,11 +780,8 @@ Vector<Strong<JSObject>> KeyframeEffect::getKeyframes(JSGlobalObject& lexicalGlo
             computedKeyframe.computedOffset = parsedKeyframe.computedOffset;
             computedKeyframe.easing = timingFunctionForKeyframeAtIndex(i)->cssText();
 
-            auto* scriptExecutionContext = jsCast<JSDOMGlobalObject*>(&lexicalGlobalObject)->scriptExecutionContext();
-            if (is<Document>(scriptExecutionContext)) {
-                if (downcast<Document>(*scriptExecutionContext).settings().webAnimationsCompositeOperationsEnabled())
-                    computedKeyframe.composite = parsedKeyframe.composite;
-            }
+            if (supportsCompositeOperation)
+                computedKeyframe.composite = parsedKeyframe.composite;
 
             auto outputKeyframe = convertDictionaryToJS(lexicalGlobalObject, *jsCast<JSDOMGlobalObject*>(&lexicalGlobalObject), computedKeyframe);
 
@@ -2219,6 +2223,20 @@ Seconds KeyframeEffect::timeToNextTick(BasicEffectTiming timing) const
     }
 
     return AnimationEffect::timeToNextTick(timing);
+}
+
+CompositeOperation KeyframeEffect::bindingsComposite() const
+{
+    if (is<DeclarativeAnimation>(animation()))
+        downcast<DeclarativeAnimation>(*animation()).flushPendingStyleChanges();
+    return composite();
+}
+
+void KeyframeEffect::setBindingsComposite(CompositeOperation compositeOperation)
+{
+    setComposite(compositeOperation);
+    if (is<CSSAnimation>(animation()))
+        downcast<CSSAnimation>(*animation()).effectCompositeOperationWasSetUsingBindings();
 }
 
 } // namespace WebCore

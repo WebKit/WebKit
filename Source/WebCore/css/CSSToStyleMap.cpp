@@ -37,6 +37,7 @@
 #include "CSSPrimitiveValueMappings.h"
 #include "CSSTimingFunctionValue.h"
 #include "CSSValueKeywords.h"
+#include "CompositeOperation.h"
 #include "FillLayer.h"
 #include "Pair.h"
 #include "Rect.h"
@@ -460,6 +461,14 @@ void CSSToStyleMap::mapAnimationTimingFunction(Animation& animation, const CSSVa
         animation.setTimingFunction(Animation::initialTimingFunction());
     else if (auto timingFunction = TimingFunction::createFromCSSValue(value))
         animation.setTimingFunction(WTFMove(timingFunction));
+}
+
+void CSSToStyleMap::mapAnimationCompositeOperation(Animation& animation, const CSSValue& value)
+{
+    if (value.treatAsInitialValue(CSSPropertyAnimationComposition))
+        animation.setCompositeOperation(Animation::initialCompositeOperation());
+    else if (auto compositeOperation = toCompositeOperation(value))
+        animation.setCompositeOperation(*compositeOperation);
 }
 
 void CSSToStyleMap::mapNinePieceImage(CSSPropertyID property, CSSValue* value, NinePieceImage& image)

@@ -1378,6 +1378,18 @@ static Ref<CSSPrimitiveValue> valueForAnimationFillMode(AnimationFillMode fillMo
     RELEASE_ASSERT_NOT_REACHED();
 }
 
+static Ref<CSSPrimitiveValue> valueForAnimationComposition(CompositeOperation operation)
+{
+    switch (operation) {
+    case CompositeOperation::Add:
+        return CSSValuePool::singleton().createIdentifierValue(CSSValueAdd);
+    case CompositeOperation::Accumulate:
+        return CSSValuePool::singleton().createIdentifierValue(CSSValueAccumulate);
+    case CompositeOperation::Replace:
+        return CSSValuePool::singleton().createIdentifierValue(CSSValueReplace);
+    }
+}
+
 static Ref<CSSPrimitiveValue> valueForAnimationPlayState(AnimationPlayState playState)
 {
     switch (playState) {
@@ -1458,7 +1470,10 @@ void ComputedStyleExtractor::addValueForAnimationPropertyToList(CSSValueList& li
             list.append(valueForAnimationPlayState(animation ? animation->playState() : Animation::initialPlayState()));
     } else if (property == CSSPropertyAnimationName)
         list.append(valueForAnimationName(animation ? animation->name() : Animation::initialName()));
-    else if (property == CSSPropertyTransitionProperty) {
+    else if (property == CSSPropertyAnimationComposition) {
+        if (!animation || !animation->isCompositeOperationFilled())
+            list.append(valueForAnimationComposition(animation ? animation->compositeOperation() : Animation::initialCompositeOperation()));
+    } else if (property == CSSPropertyTransitionProperty) {
         if (animation) {
             if (!animation->isPropertyFilled())
                 list.append(createTransitionPropertyValue(*animation));
@@ -3555,6 +3570,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
             return cssValuePool.createIdentifierValue(CSSValueBorderBox);
         case CSSPropertyAnimation:
             return animationShorthandValue(propertyID, style.animations());
+        case CSSPropertyAnimationComposition:
         case CSSPropertyAnimationDelay:
         case CSSPropertyAnimationDirection:
         case CSSPropertyAnimationDuration:

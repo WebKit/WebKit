@@ -1,3 +1,20 @@
+2022-01-24  Antoine Quint  <graouts@webkit.org>
+
+        [Web Animations] add support for animation-composition CSS property
+        https://bugs.webkit.org/show_bug.cgi?id=232086
+        <rdar://problem/84508394>
+
+        Reviewed by Darin Adler.
+
+        Update existing tests to account for the new "animation-composition" CSS property.
+
+        * animations/fill-unset-properties-expected.txt:
+        * animations/fill-unset-properties.html:
+        * platform/glib/imported/w3c/web-platform-tests/css/css-cascade/all-prop-initial-xml-expected.txt:
+        * platform/gtk/imported/w3c/web-platform-tests/css/cssom/getComputedStyle-detached-subtree-expected.txt:
+        * platform/ios/imported/w3c/web-platform-tests/css/css-cascade/all-prop-initial-xml-expected.txt:
+        * platform/ios/imported/w3c/web-platform-tests/css/cssom/getComputedStyle-detached-subtree-expected.txt:
+
 2022-01-23  Matt Woodrow  <mattwoodrow@apple.com>
 
         Position:fixed layers shouldn't allocate a backing buffer if all children are offscreen.

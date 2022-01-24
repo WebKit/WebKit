@@ -46,6 +46,7 @@ public:
 
     void effectTimingWasUpdatedUsingBindings(OptionalEffectTiming);
     void effectKeyframesWereSetUsingBindings();
+    void effectCompositeOperationWasSetUsingBindings();
     void keyframesRuleDidChange();
     void updateKeyframesIfNeeded(const RenderStyle* oldStyle, const RenderStyle& newStyle, const Style::ResolutionContext&);
 
@@ -70,7 +71,8 @@ private:
         PlayState = 1 << 5,
         Delay = 1 << 6,
         FillMode = 1 << 7,
-        Keyframes = 1 << 8
+        Keyframes = 1 << 8,
+        CompositeOperation = 1 << 9
     };
 
     String m_animationName;

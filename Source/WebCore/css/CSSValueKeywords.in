@@ -1033,6 +1033,13 @@ jump-both
 // end
 
 //
+// animation-composition
+//
+// add
+accumulate
+replace
+
+//
 // CSS_PROP_ZOOM
 //
 document
