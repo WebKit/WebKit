@@ -56,7 +56,7 @@ bool containsPlainText(const String& document, const String&, FindOptions); // L
 WEBCORE_EXPORT String foldQuoteMarks(const String&);
 
 // FIXME: Move this somewhere else in the editing directory. It doesn't belong in the header with TextIterator.
-bool isRendererReplacedElement(RenderObject*);
+bool isRendererReplacedElement(RenderObject*, TextIteratorBehaviors = { });
 
 // FIXME: Move each iterator class into a separate header file.
 

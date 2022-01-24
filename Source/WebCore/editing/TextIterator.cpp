@@ -259,7 +259,7 @@ static bool isClippedByFrameAncestor(const Document& document, TextIteratorBehav
 
 // FIXME: editingIgnoresContent and isRendererReplacedElement try to do the same job.
 // It's not good to have both of them.
-bool isRendererReplacedElement(RenderObject* renderer)
+bool isRendererReplacedElement(RenderObject* renderer, TextIteratorBehaviors behaviors)
 {
     if (!renderer)
         return false;
@@ -279,8 +279,10 @@ bool isRendererReplacedElement(RenderObject* renderer)
             return true;
 #if USE(ATSPI)
         // Links are also replaced with object replacement character in ATSPI.
-        if (element.isLink())
+        if (behaviors.contains(TextIteratorBehavior::EmitsObjectReplacementCharacters) && element.isLink())
             return true;
+#else
+        UNUSED_PARAM(behaviors);
 #endif
     }
 
@@ -474,7 +476,7 @@ void TextIterator::advance()
                 // handle current node according to its type
                 if (renderer->isText() && m_node->isTextNode())
                     m_handledNode = handleTextNode();
-                else if (isRendererReplacedElement(renderer))
+                else if (isRendererReplacedElement(renderer, m_behaviors))
                     m_handledNode = handleReplacedElement();
                 else
                     m_handledNode = handleNonTextNode();
@@ -1211,7 +1213,7 @@ void SimplifiedBackwardsTextIterator::advance()
             if (renderer && renderer->isText() && m_node->isTextNode()) {
                 if (renderer->style().visibility() == Visibility::Visible && m_offset > 0)
                     m_handledNode = handleTextNode();
-            } else if (isRendererReplacedElement(renderer)) {
+            } else if (isRendererReplacedElement(renderer, m_behaviors)) {
                 if (renderer->style().visibility() == Visibility::Visible && m_offset > 0)
                     m_handledNode = handleReplacedElement();
             } else
@@ -2366,12 +2368,12 @@ uint64_t characterCount(const SimpleRange& range, TextIteratorBehaviors behavior
     return length;
 }
 
-static inline bool isInsideReplacedElement(TextIterator& iterator)
+static inline bool isInsideReplacedElement(TextIterator& iterator, TextIteratorBehaviors behaviors)
 {
     ASSERT(!iterator.atEnd());
     ASSERT(iterator.text().length() == 1);
     Node* node = iterator.node();
-    return node && isRendererReplacedElement(node->renderer());
+    return node && isRendererReplacedElement(node->renderer(), behaviors);
 }
 
 constexpr uint64_t clampedAdd(uint64_t a, uint64_t b)
@@ -2398,7 +2400,7 @@ SimpleRange resolveCharacterRange(const SimpleRange& scope, CharacterRange range
         if (foundEnd) {
             // FIXME: This is a workaround for the fact that the end of a run is often at the wrong position for emitted '\n's or if the renderer of the current node is a replaced element.
             // FIXME: consider controlling this with TextIteratorBehavior instead of doing it unconditionally to help us eventually phase it out everywhere.
-            if (length == 1 && (it.text()[0] == '\n' || isInsideReplacedElement(it))) {
+            if (length == 1 && (it.text()[0] == '\n' || isInsideReplacedElement(it, behaviors))) {
                 it.advance();
                 if (!it.atEnd())
                     textRunRange.end = it.range().start;
