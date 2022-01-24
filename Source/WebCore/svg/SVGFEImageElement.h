@@ -23,7 +23,6 @@
 
 #include "CachedImageClient.h"
 #include "CachedResourceHandle.h"
-#include "SVGFEImage.h"
 #include "SVGFilterPrimitiveStandardAttributes.h"
 #include "SVGURIReference.h"
 

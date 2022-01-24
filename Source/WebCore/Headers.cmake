@@ -1600,6 +1600,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/filters/FEDropShadow.h
     platform/graphics/filters/FEFlood.h
     platform/graphics/filters/FEGaussianBlur.h
+    platform/graphics/filters/FEImage.h
     platform/graphics/filters/FELighting.h
     platform/graphics/filters/FEMerge.h
     platform/graphics/filters/FEMorphology.h
@@ -1934,7 +1935,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
 
     svg/graphics/SVGImageCache.h
 
-    svg/graphics/filters/SVGFEImage.h
     svg/graphics/filters/SVGFilter.h
     svg/graphics/filters/SVGFilterExpression.h
 

@@ -2107,6 +2107,7 @@ platform/graphics/filters/FEDisplacementMap.cpp
 platform/graphics/filters/FEDropShadow.cpp
 platform/graphics/filters/FEFlood.cpp
 platform/graphics/filters/FEGaussianBlur.cpp
+platform/graphics/filters/FEImage.cpp
 platform/graphics/filters/FELighting.cpp
 platform/graphics/filters/FEMerge.cpp
 platform/graphics/filters/FEMorphology.cpp
@@ -2133,6 +2134,7 @@ platform/graphics/filters/software/FEDisplacementMapSoftwareApplier.cpp
 platform/graphics/filters/software/FEDropShadowSoftwareApplier.cpp
 platform/graphics/filters/software/FEFloodSoftwareApplier.cpp
 platform/graphics/filters/software/FEGaussianBlurSoftwareApplier.cpp
+platform/graphics/filters/software/FEImageSoftwareApplier.cpp
 platform/graphics/filters/software/FELightingSoftwareApplier.cpp
 platform/graphics/filters/software/FEMergeSoftwareApplier.cpp
 platform/graphics/filters/software/FEMorphologySoftwareApplier.cpp
@@ -2717,7 +2719,6 @@ svg/animation/SVGSMILElement.cpp
 svg/graphics/SVGImage.cpp
 svg/graphics/SVGImageCache.cpp
 svg/graphics/SVGImageForContainer.cpp
-svg/graphics/filters/SVGFEImage.cpp
 svg/graphics/filters/SVGFilter.cpp
 svg/graphics/filters/SVGFilterBuilder.cpp
 svg/properties/SVGAnimatedProperty.cpp

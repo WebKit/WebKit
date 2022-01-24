@@ -36,6 +36,7 @@
 #include <WebCore/FEDropShadow.h>
 #include <WebCore/FEFlood.h>
 #include <WebCore/FEGaussianBlur.h>
+#include <WebCore/FEImage.h>
 #include <WebCore/FEMerge.h>
 #include <WebCore/FEMorphology.h>
 #include <WebCore/FEOffset.h>
@@ -44,7 +45,6 @@
 #include <WebCore/FETurbulence.h>
 #include <WebCore/Filter.h>
 #include <WebCore/FilterEffectVector.h>
-#include <WebCore/SVGFEImage.h>
 #include <WebCore/SVGFilter.h>
 #include <WebCore/SourceAlpha.h>
 #include <WebCore/SourceGraphic.h>

@@ -27,6 +27,7 @@
 #include "CachedResourceLoader.h"
 #include "CachedResourceRequest.h"
 #include "Document.h"
+#include "FEImage.h"
 #include "Image.h"
 #include "RenderObject.h"
 #include "RenderSVGResource.h"

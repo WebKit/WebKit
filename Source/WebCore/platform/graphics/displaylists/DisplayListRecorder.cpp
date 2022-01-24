@@ -29,13 +29,13 @@
 #include "DisplayList.h"
 #include "DisplayListDrawingContext.h"
 #include "DisplayListItems.h"
+#include "FEImage.h"
 #include "Filter.h"
 #include "GraphicsContext.h"
 #include "ImageBuffer.h"
 #include "Logging.h"
 #include "MediaPlayer.h"
 #include "NotImplemented.h"
-#include "SVGFEImage.h"
 #include <wtf/MathExtras.h>
 #include <wtf/text/TextStream.h>
 

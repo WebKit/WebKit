@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,7 +33,7 @@ namespace WebCore {
 
 class FEComponentTransfer;
 
-class FEComponentTransferCoreImageApplier : public FilterEffectConcreteApplier<FEComponentTransfer> {
+class FEComponentTransferCoreImageApplier final : public FilterEffectConcreteApplier<FEComponentTransfer> {
     WTF_MAKE_FAST_ALLOCATED;
     using Base = FilterEffectConcreteApplier<FEComponentTransfer>;
 
@@ -42,7 +42,8 @@ public:
 
     static bool supportsCoreImageRendering(const FEComponentTransfer&);
 
-    bool apply(const Filter&, const FilterImageVector& inputs, FilterImage& result) const override;
+private:
+    bool apply(const Filter&, const FilterImageVector& inputs, FilterImage& result) const final;
 };
 
 } // namespace WebCore
