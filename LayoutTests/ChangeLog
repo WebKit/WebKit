@@ -1,3 +1,35 @@
+2022-01-24  Joseph Griego  <jgriego@igalia.com>
+
+        [Shadow Realms] Use WebCore module loaders for shadow realm importValue
+        https://bugs.webkit.org/show_bug.cgi?id=234155
+
+        Reviewed by Darin Adler.
+
+        Improve test coverage a bit for shadow realms, especially running
+        nested, in worker contexts, or in iframes.
+
+        * js/ShadowRealm-evaluate-expected.txt: Added.
+        * js/ShadowRealm-evaluate.html: Added.
+        * js/ShadowRealm-importValue-expected.txt: Added.
+        * js/ShadowRealm-importValue.html: Added.
+        * js/ShadowRealm-worker-expected.txt: Added.
+        * js/ShadowRealm-worker.html: Added.
+        * js/script-tests/ShadowRealm-evaluate.js: Added.
+        (assert_closed_opener):
+        (promise_test.async t):
+        * js/script-tests/ShadowRealm-importValue.js: Added.
+        (wrappedLog):
+        (promise_test.async t):
+        * js/script-tests/example-module.js: Added.
+        (check):
+        (log_equal):
+        (check_nested):
+        (setValue):
+        * js/script-tests/shadow-realm-worker.js: Added.
+        (assert_equals):
+        (async test):
+        (async await):
+
 2022-01-24  Antoine Quint  <graouts@webkit.org>
 
         [Model] Add testing coverage for camera API

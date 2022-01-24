@@ -44,6 +44,7 @@ my $isoSubspacesHeaderFile;
 my $constructorsHeaderFile;
 my $windowConstructorsFile;
 my $workerGlobalScopeConstructorsFile;
+my $shadowRealmGlobalScopeConstructorsFile;
 my $dedicatedWorkerGlobalScopeConstructorsFile;
 my $serviceWorkerGlobalScopeConstructorsFile;
 my $sharedWorkerGlobalScopeConstructorsFile;
@@ -65,7 +66,8 @@ my @supportedGlobalContexts = (
     "DedicatedWorker",
     "ServiceWorker",
     "PaintWorklet",
-    "AudioWorklet"
+    "AudioWorklet",
+    "ShadowRealm",
 );
 
 # Toggle this to validate that the fast regular expression based "parsing" used
@@ -82,6 +84,7 @@ GetOptions('defines=s' => \$defines,
            'constructorsHeaderFile=s' => \$constructorsHeaderFile,
            'windowConstructorsFile=s' => \$windowConstructorsFile,
            'workerGlobalScopeConstructorsFile=s' => \$workerGlobalScopeConstructorsFile,
+           'shadowRealmGlobalScopeConstructorsFile=s' => \$shadowRealmGlobalScopeConstructorsFile,
            'dedicatedWorkerGlobalScopeConstructorsFile=s' => \$dedicatedWorkerGlobalScopeConstructorsFile,
            'serviceWorkerGlobalScopeConstructorsFile=s' => \$serviceWorkerGlobalScopeConstructorsFile,
            'sharedWorkerGlobalScopeConstructorsFile=s' => \$sharedWorkerGlobalScopeConstructorsFile,
@@ -98,6 +101,7 @@ die('Must specify #define macros using --defines.') unless defined($defines);
 die('Must specify an output file using --supplementalDependencyFile.') unless defined($supplementalDependencyFile);
 die('Must specify an output file using --windowConstructorsFile.') unless defined($windowConstructorsFile);
 die('Must specify an output file using --workerGlobalScopeConstructorsFile.') unless defined($workerGlobalScopeConstructorsFile);
+die('Must specify an output file using --shadowRealmGlobalScopeConstructorsFile.') unless defined($shadowRealmGlobalScopeConstructorsFile);
 die('Must specify an output file using --dedicatedWorkerGlobalScopeConstructorsFile.') unless defined($dedicatedWorkerGlobalScopeConstructorsFile);
 die('Must specify an output file using --serviceWorkerGlobalScopeConstructorsFile.') unless defined($serviceWorkerGlobalScopeConstructorsFile);
 die('Must specify an output file using --sharedWorkerGlobalScopeConstructorsFile.') unless defined($sharedWorkerGlobalScopeConstructorsFile);
@@ -113,6 +117,7 @@ $isoSubspacesHeaderFile = CygwinPathIfNeeded($isoSubspacesHeaderFile);
 $constructorsHeaderFile = CygwinPathIfNeeded($constructorsHeaderFile);
 $windowConstructorsFile = CygwinPathIfNeeded($windowConstructorsFile);
 $workerGlobalScopeConstructorsFile = CygwinPathIfNeeded($workerGlobalScopeConstructorsFile);
+$shadowRealmGlobalScopeConstructorsFile = CygwinPathIfNeeded($shadowRealmGlobalScopeConstructorsFile);
 $dedicatedWorkerGlobalScopeConstructorsFile = CygwinPathIfNeeded($dedicatedWorkerGlobalScopeConstructorsFile);
 $serviceWorkerGlobalScopeConstructorsFile = CygwinPathIfNeeded($serviceWorkerGlobalScopeConstructorsFile);
 $workletGlobalScopeConstructorsFile = CygwinPathIfNeeded($workletGlobalScopeConstructorsFile);
@@ -154,6 +159,7 @@ my %dictionaryDependencies;
 my %supplementals;
 my $windowConstructorsCode = "";
 my $workerGlobalScopeConstructorsCode = "";
+my $shadowRealmGlobalScopeConstructorsCode = "";
 my $dedicatedWorkerGlobalScopeConstructorsCode = "";
 my $serviceWorkerGlobalScopeConstructorsCode = "";
 my $sharedWorkerGlobalScopeConstructorsCode = "";
@@ -272,6 +278,8 @@ foreach my $idlFileName (sort keys %idlFileNameHash) {
                 $windowConstructorsCode .= $windowAliases if $windowAliases;
             } elsif ($globalContext eq "Worker") {
                 $workerGlobalScopeConstructorsCode .= $attributeCode;
+            } elsif ($globalContext eq "ShadowRealm") {
+                $shadowRealmGlobalScopeConstructorsCode .= $attributeCode;
             } elsif ($globalContext eq "DedicatedWorker") {
                 $dedicatedWorkerGlobalScopeConstructorsCode .= $attributeCode;
             } elsif ($globalContext eq "ServiceWorker") {
@@ -303,6 +311,7 @@ foreach my $idlFileName (sort keys %idlFileNameHash) {
 # Generate partial interfaces for Constructors.
 GeneratePartialInterface("DOMWindow", $windowConstructorsCode, $windowConstructorsFile);
 GeneratePartialInterface("WorkerGlobalScope", $workerGlobalScopeConstructorsCode, $workerGlobalScopeConstructorsFile);
+GeneratePartialInterface("ShadowRealmGlobalScope", $shadowRealmGlobalScopeConstructorsCode, $shadowRealmGlobalScopeConstructorsFile);
 GeneratePartialInterface("DedicatedWorkerGlobalScope", $dedicatedWorkerGlobalScopeConstructorsCode, $dedicatedWorkerGlobalScopeConstructorsFile);
 GeneratePartialInterface("ServiceWorkerGlobalScope", $serviceWorkerGlobalScopeConstructorsCode, $serviceWorkerGlobalScopeConstructorsFile);
 GeneratePartialInterface("SharedWorkerGlobalScope", $sharedWorkerGlobalScopeConstructorsCode, $sharedWorkerGlobalScopeConstructorsFile);

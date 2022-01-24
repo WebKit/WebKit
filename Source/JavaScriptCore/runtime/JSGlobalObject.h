@@ -264,6 +264,9 @@ struct GlobalObjectMethodTable {
 
     typedef JSPromise* (*InstantiateStreamingPtr)(JSGlobalObject*, JSValue, JSObject*);
     InstantiateStreamingPtr instantiateStreaming;
+
+    typedef JSGlobalObject* (*DeriveShadowRealmGlobalFunctionPtr)(JSGlobalObject*);
+    DeriveShadowRealmGlobalFunctionPtr deriveShadowRealmGlobalObject;
 };
 
 class JSGlobalObject : public JSSegmentedVariableObject {
@@ -1073,6 +1076,12 @@ public:
     JS_EXPORT_PRIVATE CallFrame* deprecatedCallFrameForDebugger();
 
     static bool supportsRichSourceInfo(const JSGlobalObject*) { return true; }
+
+    static JSGlobalObject* deriveShadowRealmGlobalObject(JSGlobalObject* globalObject)
+    {
+        auto& vm = globalObject->vm();
+        return JSGlobalObject::createWithCustomMethodTable(vm, JSGlobalObject::createStructure(vm, jsNull()), globalObject->globalObjectMethodTable());
+    }
 
     static bool shouldInterruptScript(const JSGlobalObject*) { return true; }
     static bool shouldInterruptScriptBeforeTimeout(const JSGlobalObject*) { return false; }

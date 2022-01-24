@@ -1,0 +1,4 @@
+partial interface ShadowRealmGlobalScope {
+    attribute ExposedStarConstructor ExposedStar;
+    attribute ShadowRealmGlobalScopeConstructor ShadowRealmGlobalScope;
+};

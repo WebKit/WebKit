@@ -94,6 +94,7 @@ public:
 
     virtual bool isDocument() const { return false; }
     virtual bool isWorkerGlobalScope() const { return false; }
+    virtual bool isShadowRealmGlobalScope() const { return false; }
     virtual bool isWorkletGlobalScope() const { return false; }
 
     virtual bool isContextThread() const { return true; }
@@ -312,6 +313,7 @@ private:
     // Callers should try to create the ConsoleMessage themselves.
     virtual void addMessage(MessageSource, MessageLevel, const String& message, const String& sourceURL, unsigned lineNumber, unsigned columnNumber, RefPtr<Inspector::ScriptCallStack>&&, JSC::JSGlobalObject* = nullptr, unsigned long requestIdentifier = 0) = 0;
     virtual void logExceptionToConsole(const String& errorMessage, const String& sourceURL, int lineNumber, int columnNumber, RefPtr<Inspector::ScriptCallStack>&&) = 0;
+
     bool dispatchErrorEvent(const String& errorMessage, int lineNumber, int columnNumber, const String& sourceURL, JSC::Exception*, CachedScript*);
 
     virtual void refScriptExecutionContext() = 0;

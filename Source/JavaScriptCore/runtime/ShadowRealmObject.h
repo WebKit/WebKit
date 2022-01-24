@@ -48,7 +48,7 @@ public:
 
     DECLARE_INFO;
 
-    static ShadowRealmObject* create(VM&, Structure*, const GlobalObjectMethodTable*);
+    static ShadowRealmObject* create(VM&, Structure*, JSGlobalObject*);
 
     JSGlobalObject* globalObject() { return m_globalObject.get(); }
 

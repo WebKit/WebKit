@@ -39,6 +39,7 @@
 #include "ModuleFetchParameters.h"
 #include "ScriptController.h"
 #include "ScriptSourceCode.h"
+#include "ShadowRealmGlobalScope.h"
 #include "SubresourceIntegrity.h"
 #include "WebCoreJSClientData.h"
 #include "WorkerModuleScriptLoader.h"
@@ -72,6 +73,13 @@ ScriptModuleLoader::~ScriptModuleLoader()
 {
     for (auto& loader : m_loaders)
         loader->clearClient();
+}
+
+UniqueRef<ScriptModuleLoader> ScriptModuleLoader::shadowRealmLoader(JSC::JSGlobalObject* realmGlobal) const
+{
+    auto loader = makeUniqueRef<ScriptModuleLoader>(m_context, m_ownerType);
+    loader->m_shadowRealmGlobal = realmGlobal;
+    return loader;
 }
 
 static bool isRootModule(JSC::JSValue importerModuleKey)
@@ -244,7 +252,9 @@ JSC::JSValue ScriptModuleLoader::evaluate(JSC::JSGlobalObject* jsGlobalObject, J
     if (!sourceURL.isValid())
         return JSC::throwTypeError(jsGlobalObject, scope, "Module key is an invalid URL."_s);
 
-    if (m_ownerType == OwnerType::Document) {
+    if (m_shadowRealmGlobal)
+        RELEASE_AND_RETURN(scope, moduleRecord->evaluate(m_shadowRealmGlobal, awaitedValue, resumeMode));
+    else if (m_ownerType == OwnerType::Document) {
         if (auto* frame = downcast<Document>(m_context).frame())
             RELEASE_AND_RETURN(scope, frame->script().evaluateModule(sourceURL, *moduleRecord, awaitedValue, resumeMode));
     } else {

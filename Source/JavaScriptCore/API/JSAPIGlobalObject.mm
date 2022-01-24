@@ -71,6 +71,7 @@ const GlobalObjectMethodTable JSAPIGlobalObject::s_globalObjectMethodTable = {
     nullptr, // defaultLanguage
     nullptr, // compileStreaming
     nullptr, // instantiateStreaming
+    &deriveShadowRealmGlobalObject,
 };
 
 void JSAPIGlobalObject::reportUncaughtExceptionAtEventLoop(JSGlobalObject* globalObject, Exception* exception)

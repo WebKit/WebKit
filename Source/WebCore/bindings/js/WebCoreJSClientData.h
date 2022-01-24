@@ -101,6 +101,7 @@ public:
     JSC::IsoHeapCellType m_heapCellTypeForJSRemoteDOMWindow;
     JSC::IsoHeapCellType m_heapCellTypeForJSWorkerGlobalScope;
     JSC::IsoHeapCellType m_heapCellTypeForJSSharedWorkerGlobalScope;
+    JSC::IsoHeapCellType m_heapCellTypeForJSShadowRealmGlobalScope;
 #if ENABLE(SERVICE_WORKER)
     JSC::IsoHeapCellType m_heapCellTypeForJSServiceWorkerGlobalScope;
 #endif

@@ -1,0 +1,39 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN"><!-- webkit-test-runner [ jscOptions=--useShadowRealm=true ] -->
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script src =../resources/testharness.js></script>
+<script src =../resources/testharnessreport.js></script>
+<iframe src="resources/shadow-realm-iframe.html" sandbox="allow-scripts"></iframe>
+<script>
+ description("Test to ensure ShadowRealms running in a sandboxed iframe do not access the parent window object");
+ window.jsTestIsAsync = true;
+
+ function wrappedLog(prefix) {
+     return function (msg) {
+         debug(prefix + ": " + msg);
+     };
+ }
+
+ debug("attached frames: " + window.frames.length);
+ let frame = window.frames[0];
+ window.addEventListener("message", async () => {
+     let realm = frame.realm;
+     debug("detaching iframe");
+     document.getElementsByTagName("iframe")[0].remove()
+     $vm.gc();
+     frame = null;
+     const checkFn2 = await realm.importValue("./resources/example-module.js", "check");
+     debug("dropping realm value")
+     realm = null;
+     $vm.gc();
+     shouldBe(() => checkFn2(wrappedLog("shadowRealm")),
+              "true");
+     finishJSTest();
+ });
+</script>
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

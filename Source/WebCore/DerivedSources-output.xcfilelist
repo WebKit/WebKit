@@ -2475,6 +2475,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSServiceWorkerUpdateViaCache.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSServiceWorkerUpdateViaCache.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSServiceWorkerWindowClient.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSServiceWorkerWindowClient.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSShadowRealmGlobalScope.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSShadowRealmGlobalScope.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSShadowRoot.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSShadowRoot.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSShadowRootInit.cpp
