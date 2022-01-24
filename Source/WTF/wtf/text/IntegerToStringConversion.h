@@ -21,6 +21,7 @@
 
 #pragma once
 
+#include <string>
 #include <wtf/text/LChar.h>
 
 namespace WTF {
