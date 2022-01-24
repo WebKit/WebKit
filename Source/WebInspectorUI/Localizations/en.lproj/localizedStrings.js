@@ -510,7 +510,6 @@ localizedStrings["Dismiss"] = "Dismiss";
 /* Tooltip for the dismiss button in banner views. */
 localizedStrings["Dismiss @ Banner View"] = "Dismiss";
 localizedStrings["Displayed Columns"] = "Displayed Columns";
-localizedStrings["Do not clear network items on new page loads"] = "Do not clear network items on new page loads";
 localizedStrings["Do not clear the console on new page loads"] = "Do not clear the console on new page loads";
 localizedStrings["Do not fade unexecuted code"] = "Do not fade unexecuted code";
 localizedStrings["Dock to bottom of window"] = "Dock to bottom of window";
@@ -1063,6 +1062,7 @@ localizedStrings["Other"] = "Other";
 localizedStrings["Other @ Computed Style variables section"] = "Other";
 localizedStrings["Other Issue"] = "Other Issue";
 localizedStrings["Other Threads"] = "Other Threads";
+localizedStrings["Other filter options\u2026"] = "Other filter options\u2026";
 localizedStrings["Other: %s"] = "Other: %s";
 localizedStrings["Other\u2026"] = "Other\u2026";
 localizedStrings["Outgoing message"] = "Outgoing message";

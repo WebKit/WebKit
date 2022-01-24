@@ -1,5 +1,30 @@
 2022-01-24  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Network: move filtering checkboxes into a single gear-with-contextmenu to save space
+        https://bugs.webkit.org/show_bug.cgi?id=235538
+
+        Reviewed by Patrick Angle.
+
+        * UserInterface/Views/NetworkTableContentView.js:
+        (WI.NetworkTableContentView):
+        (WI.NetworkTableContentView.prototype.get navigationItems):
+        (WI.NetworkTableContentView.prototype.get filterNavigationItems):
+        (WI.NetworkTableContentView.prototype.closed):
+        (WI.NetworkTableContentView.prototype._changeCollection):
+        (WI.NetworkTableContentView.prototype._updateOtherFiltersNavigationItemState): Added.
+        (WI.NetworkTableContentView.prototype._handleOtherFiltersNavigationItemContextMenu): Added.
+        (WI.NetworkTableContentView.prototype._handleClearNetworkOnNavigateChanged): Renamed from `_handleClearNetworkOnNavigateChanged`.
+        (WI.NetworkTableContentView.prototype._handleGroupMediaRequestsByDOMNodeChanged): Renamed from `_handleGroupMediaRequestsByDOMNodeCheckedDidChange`.
+        * UserInterface/Views/NetworkTableContentView.css:
+        (.network-other-filters-button > .glyph): Added.
+        (.network-other-filters-button:active > .glyph): Added.
+        (.network-other-filters-button.active > .glyph): Added.
+        (.network-other-filters-button.active:active > .glyph): Added.
+
+        * Localizations/en.lproj/localizedStrings.js:
+
+2022-01-24  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Network: collapse type filter scope bar into a single button to save space
         https://bugs.webkit.org/show_bug.cgi?id=235537
 

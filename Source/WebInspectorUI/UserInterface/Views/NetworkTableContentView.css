@@ -33,6 +33,25 @@
     --scope-bar-background-opacity-override: 0.5;
 }
 
+.network-other-filters-button > .glyph {
+    width: 16px;
+    height: 16px;
+    color: var(--glyph-color);
+    opacity: var(--glyph-opacity);
+}
+
+.network-other-filters-button:active > .glyph {
+    color: var(--glyph-color-pressed);
+}
+
+.network-other-filters-button.active > .glyph {
+    color: var(--glyph-color-active);
+}
+
+.network-other-filters-button.active:active > .glyph {
+    color: var(--glyph-color-active-pressed);
+}
+
 .content-view.tab.network > .content-browser > .navigation-bar .hierarchical-path .icon {
     margin-inline: 8px 4px;
 }
