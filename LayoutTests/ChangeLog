@@ -1,3 +1,18 @@
+2022-01-23  Matt Woodrow  <mattwoodrow@apple.com>
+
+        Position:fixed layers shouldn't allocate a backing buffer if all children are offscreen.
+        https://bugs.webkit.org/show_bug.cgi?id=235420
+        <rdar://86612099>
+
+        Reviewed by Simon Fraser and Darin Adler.
+
+        Adds a test that has a viewport sized position:fixed element (with compositing
+        layer), and a single child which is entirely offscreen. Tests that we correctly
+        determine that we don't need a backing store for the layer.
+
+        * compositing/backing/no-backing-for-offscreen-children-of-position-fixed-expected.txt: Added.
+        * compositing/backing/no-backing-for-offscreen-children-of-position-fixed.html: Added.
+
 2022-01-23  Tyler Wilcock  <tyler_w@apple.com>
 
         AX Isolated Tree Mode: Re-compute AXPropertyName::IsEnabled when a node experiences AXDisabledStateChanged
