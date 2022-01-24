@@ -1,4 +1,5 @@
 
-Harness Error (FAIL), message = Error: assert_implements: Basic support for container queries required undefined
-
+FAIL Check that container queries is supported assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
+PASS (min-width: 0) does not match a container without a principal box (display:none)
+PASS (min-width: 0) does not match a container without a principal box (display:contents)
 

@@ -1231,6 +1231,12 @@ enum class Containment : uint8_t {
     Style    = 1 << 3,
 };
 
+enum class ContainerType : uint8_t {
+    None,
+    Size,
+    InlineSize,
+};
+
 CSSBoxType transformBoxToCSSBoxType(TransformBox);
 
 extern const float defaultMiterLimit;

@@ -1,5 +1,4 @@
 You should see a green border around this text
 
-Harness Error (FAIL), message = Error: assert_implements: Basic support for container queries required undefined
-
+FAIL Conditionally applying container-type:initial assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
 

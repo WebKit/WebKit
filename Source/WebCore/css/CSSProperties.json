@@ -5221,6 +5221,23 @@
                 "url": "https://drafts.csswg.org/css-contain-1/"
             }
         },
+        "container-type": {
+            "codegen-properties": {
+                "settings-flag": "cssContainerQueriesEnabled"
+            },
+            "values": [
+                "none",
+                "size",
+                "inline-size"
+            ],
+            "status": {
+                "status": "experimental"
+            },
+            "specification": {
+                "category": "css-contain",
+                "url": "https://drafts.csswg.org/css-contain-3/#container-queries"
+            }
+        },
         "backface-visibility": {
             "codegen-properties": {
                 "aliases": [

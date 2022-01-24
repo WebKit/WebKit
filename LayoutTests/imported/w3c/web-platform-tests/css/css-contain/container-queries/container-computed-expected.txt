@@ -1,4 +1,16 @@
 
-Harness Error (FAIL), message = Error: assert_implements: Basic support for container queries required undefined
-
+FAIL Property container value 'initial' assert_true: container doesn't seem to be supported in the computed style expected true got false
+FAIL Property container value 'inherit' assert_true: container doesn't seem to be supported in the computed style expected true got false
+FAIL Property container value 'unset' assert_true: container doesn't seem to be supported in the computed style expected true got false
+FAIL Property container value 'inline-size' assert_true: container doesn't seem to be supported in the computed style expected true got false
+FAIL Property container value 'size' assert_true: container doesn't seem to be supported in the computed style expected true got false
+FAIL Property container value 'inline-size / inline-size' assert_true: container doesn't seem to be supported in the computed style expected true got false
+FAIL Property container value 'size / block-size' assert_true: container doesn't seem to be supported in the computed style expected true got false
+FAIL Property container value 'size style / name' assert_true: container doesn't seem to be supported in the computed style expected true got false
+FAIL Property container value 'inline-size state style/ name' assert_true: container doesn't seem to be supported in the computed style expected true got false
+FAIL Property container value 'inline-size / foo' assert_true: container doesn't seem to be supported in the computed style expected true got false
+FAIL Property container value 'inline-size /foo' assert_true: container doesn't seem to be supported in the computed style expected true got false
+FAIL Property container value 'inline-size/ foo' assert_true: container doesn't seem to be supported in the computed style expected true got false
+FAIL Property container value 'inline-size/foo' assert_true: container doesn't seem to be supported in the computed style expected true got false
+FAIL Property container value 'size / FoO' assert_true: container doesn't seem to be supported in the computed style expected true got false
 

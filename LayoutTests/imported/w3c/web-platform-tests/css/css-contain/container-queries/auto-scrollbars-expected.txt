@@ -1,4 +1,4 @@
 
-Harness Error (FAIL), message = Error: assert_implements: Basic support for container queries required undefined
-
+FAIL Initial layout - expecting a scrollbar without overflowing content instead of overflowing content without a scrollbar assert_equals: Layout with a scrollbar means the container query applies expected "50px" but got "100px"
+FAIL Same result after a reflow assert_equals: Layout with a scrollbar means the container query applies expected "50px" but got "100px"
 

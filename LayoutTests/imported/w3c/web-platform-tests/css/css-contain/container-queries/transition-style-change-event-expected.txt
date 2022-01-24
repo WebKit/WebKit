@@ -1,5 +1,4 @@
 Green
 
-Harness Error (FAIL), message = Error: assert_implements: Basic support for container queries required undefined
-
+FAIL Container Queries - Style Change Event for transitions assert_equals: @container queries supported expected "rgb(255, 0, 0)" but got "rgb(0, 128, 0)"
 

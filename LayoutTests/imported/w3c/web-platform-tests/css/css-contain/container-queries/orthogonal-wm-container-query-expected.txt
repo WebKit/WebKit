@@ -1,5 +1,5 @@
 XX
 
-Harness Error (FAIL), message = Error: assert_implements: Basic support for container queries required undefined
-
+PASS Initial non-orthogonal width
+FAIL Orthogonal width assert_equals: expected 50 but got 100
 

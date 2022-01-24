@@ -898,6 +898,9 @@ bool CSSParserFastPaths::isValidKeywordPropertyAndValue(CSSPropertyID propertyId
 #endif
     case CSSPropertyTextDecorationSkipInk:
         return valueID == CSSValueAuto || valueID == CSSValueNone || valueID == CSSValueAll;
+    case CSSPropertyContainerType:
+        // FIXME: Support 'style', 'state'. Those will require parsing the value as a list.
+        return valueID == CSSValueNone || valueID == CSSValueSize || valueID == CSSValueInlineSize;
     default:
         ASSERT_NOT_REACHED();
         return false;
@@ -1053,6 +1056,7 @@ bool CSSParserFastPaths::isKeywordPropertyID(CSSPropertyID propertyId)
 #endif
     case CSSPropertyMathStyle:
     case CSSPropertyTextDecorationSkipInk:
+    case CSSPropertyContainerType:
         return true;
     default:
         return false;

@@ -5682,4 +5682,38 @@ template<> inline CSSPrimitiveValue::operator MathStyle() const
     return MathStyle::Normal;
 }
 
+template<> inline CSSPrimitiveValue::CSSPrimitiveValue(ContainerType containerType)
+    : CSSValue(PrimitiveClass)
+{
+    setPrimitiveUnitType(CSSUnitType::CSS_VALUE_ID);
+    switch (containerType) {
+    case ContainerType::None:
+        m_value.valueID = CSSValueNone;
+        break;
+    case ContainerType::Size:
+        m_value.valueID = CSSValueSize;
+        break;
+    case ContainerType::InlineSize:
+        m_value.valueID = CSSValueInlineSize;
+        break;
+    }
+}
+
+template<> inline CSSPrimitiveValue::operator ContainerType() const
+{
+    ASSERT(isValueID());
+    switch (m_value.valueID) {
+    case CSSValueNone:
+        return ContainerType::None;
+    case CSSValueSize:
+        return ContainerType::Size;
+    case CSSValueInlineSize:
+        return ContainerType::InlineSize;
+    default:
+        break;
+    }
+    ASSERT_NOT_REACHED();
+    return ContainerType::None;
+}
+
 }

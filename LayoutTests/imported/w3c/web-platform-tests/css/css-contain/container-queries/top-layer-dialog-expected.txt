@@ -1,4 +1,6 @@
 
-Harness Error (FAIL), message = Error: assert_implements: Basic support for container queries required undefined
-
+PASS #container initially wider than 200px
+FAIL #container changed to 200px assert_equals: expected "rgb(0, 128, 0)" but got "rgb(255, 0, 0)"
+FAIL Modal dialog still has parent as query container while in top layer assert_equals: expected "rgb(0, 128, 0)" but got "rgb(255, 0, 0)"
+FAIL Container changes width while dialog is in top layer assert_equals: expected "rgb(0, 255, 0)" but got "rgb(255, 0, 0)"
 

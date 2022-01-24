@@ -1632,6 +1632,11 @@ layout
 paint
 #endif
 
+// container-type
+// none
+// size
+inline-size
+
 // offset-path
 // https://drafts.fxtf.org/motion-1/#offset-path-property
 ray

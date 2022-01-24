@@ -1,5 +1,4 @@
 Test
 
-Harness Error (FAIL), message = Error: assert_implements: Basic support for container queries required undefined
-
+FAIL Animated container can create inner animation assert_equals: expected "rgb(0, 0, 255)" but got "rgb(0, 128, 0)"
 

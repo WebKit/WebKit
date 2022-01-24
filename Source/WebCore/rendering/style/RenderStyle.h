@@ -532,6 +532,7 @@ public:
     bool containsSize() const { return m_rareNonInheritedData->contain.contains(Containment::Size); }
     bool containsStyle() const { return m_rareNonInheritedData->contain.contains(Containment::Style); }
     bool containsPaint() const { return m_rareNonInheritedData->contain.contains(Containment::Paint); }
+    ContainerType containerType() const { return static_cast<ContainerType>(m_rareNonInheritedData->containerType); }
     BoxAlignment boxAlign() const { return static_cast<BoxAlignment>(m_rareNonInheritedData->deprecatedFlexibleBox->align); }
     BoxDirection boxDirection() const { return static_cast<BoxDirection>(m_inheritedFlags.boxDirection); }
     float boxFlex() const { return m_rareNonInheritedData->deprecatedFlexibleBox->flex; }
@@ -1057,6 +1058,7 @@ public:
     void setAspectRatio(double width, double height) { SET_VAR(m_rareNonInheritedData, aspectRatioWidth, width); SET_VAR(m_rareNonInheritedData, aspectRatioHeight, height); }
 
     void setContain(OptionSet<Containment> containment) { SET_VAR(m_rareNonInheritedData, contain, containment); }
+    void setContainerType(ContainerType containerType) { SET_VAR(m_rareNonInheritedData, containerType, static_cast<unsigned>(containerType)); }
 
     void setListStyleStringValue(const AtomString& value) { SET_VAR(m_rareInheritedData, listStyleStringValue, value); }
     void setListStyleType(ListStyleType v) { m_inheritedFlags.listStyleType = static_cast<unsigned>(v); }
@@ -1671,6 +1673,7 @@ public:
     static OptionSet<Containment> initialContainment() { return OptionSet<Containment> { }; }
     static OptionSet<Containment> strictContainment() { return OptionSet<Containment> { Containment::Size, Containment::Layout, Containment::Paint, Containment::Style }; }
     static OptionSet<Containment> contentContainment() { return OptionSet<Containment> { Containment::Layout, Containment::Paint, Containment::Style }; }
+    static ContainerType initialContainerType() { return ContainerType::None; }
     static double initialAspectRatioWidth() { return 1.0; }
     static double initialAspectRatioHeight() { return 1.0; }
     static Order initialRTLOrdering() { return Order::Logical; }

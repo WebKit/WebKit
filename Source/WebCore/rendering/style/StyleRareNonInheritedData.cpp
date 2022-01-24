@@ -111,6 +111,7 @@ StyleRareNonInheritedData::StyleRareNonInheritedData()
     , inputSecurity(static_cast<unsigned>(RenderStyle::initialInputSecurity()))
     , hasAttrContent(false)
     , isNotFinal(false)
+    , containerType(static_cast<unsigned>(RenderStyle::initialContainerType()))
     , columnGap(RenderStyle::initialColumnGap())
     , rowGap(RenderStyle::initialRowGap())
     , offsetDistance(RenderStyle::initialOffsetDistance())
@@ -214,6 +215,7 @@ inline StyleRareNonInheritedData::StyleRareNonInheritedData(const StyleRareNonIn
     , inputSecurity(o.inputSecurity)
     , hasAttrContent(o.hasAttrContent)
     , isNotFinal(o.isNotFinal)
+    , containerType(o.containerType)
     , columnGap(o.columnGap)
     , rowGap(o.rowGap)
     , offsetDistance(o.offsetDistance)
@@ -325,6 +327,7 @@ bool StyleRareNonInheritedData::operator==(const StyleRareNonInheritedData& o) c
         && inputSecurity == o.inputSecurity
         && hasAttrContent == o.hasAttrContent
         && isNotFinal == o.isNotFinal
+        && containerType == o.containerType
         && columnGap == o.columnGap
         && rowGap == o.rowGap
         && offsetDistance == o.offsetDistance

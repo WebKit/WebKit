@@ -1,5 +1,71 @@
 2022-01-24  Antti Koivisto  <antti@apple.com>
 
+        [CSS Container Queries] Basic parsing support for container-type property
+        https://bugs.webkit.org/show_bug.cgi?id=235514
+
+        Reviewed by Sam Weinig.
+
+        * web-platform-tests/css/css-contain/container-queries/animation-container-size-expected.txt:
+        * web-platform-tests/css/css-contain/container-queries/animation-container-type-dynamic-expected.txt:
+        * web-platform-tests/css/css-contain/container-queries/animation-nested-animation-expected.txt:
+        * web-platform-tests/css/css-contain/container-queries/animation-nested-transition-expected.txt:
+        * web-platform-tests/css/css-contain/container-queries/aspect-ratio-feature-evaluation-expected.txt:
+        * web-platform-tests/css/css-contain/container-queries/at-container-parsing-expected.txt:
+        * web-platform-tests/css/css-contain/container-queries/auto-scrollbars-expected.txt:
+        * web-platform-tests/css/css-contain/container-queries/backdrop-invalidation-expected.txt:
+        * web-platform-tests/css/css-contain/container-queries/conditional-container-status-expected.txt:
+        * web-platform-tests/css/css-contain/container-queries/container-computed-expected.txt:
+        * web-platform-tests/css/css-contain/container-queries/container-for-shadow-dom.tentative-expected.txt:
+        * web-platform-tests/css/css-contain/container-queries/container-inheritance-expected.txt:
+        * web-platform-tests/css/css-contain/container-queries/container-name-computed-expected.txt:
+        * web-platform-tests/css/css-contain/container-queries/container-name-invalidation-expected.txt:
+        * web-platform-tests/css/css-contain/container-queries/container-name-parsing-expected.txt:
+        * web-platform-tests/css/css-contain/container-queries/container-parsing-expected.txt:
+        * web-platform-tests/css/css-contain/container-queries/container-selection-expected.txt:
+        * web-platform-tests/css/css-contain/container-queries/container-size-invalidation-expected.txt:
+        * web-platform-tests/css/css-contain/container-queries/container-type-computed-expected.txt:
+        * web-platform-tests/css/css-contain/container-queries/container-type-containment-expected.txt:
+        * web-platform-tests/css/css-contain/container-queries/container-type-invalidation-expected.txt:
+        * web-platform-tests/css/css-contain/container-queries/container-type-layout-invalidation-expected.txt:
+        * web-platform-tests/css/css-contain/container-queries/container-type-parsing-expected.txt:
+        * web-platform-tests/css/css-contain/container-queries/container-units-animation-expected.txt:
+        * web-platform-tests/css/css-contain/container-queries/container-units-basic-expected.txt:
+        * web-platform-tests/css/css-contain/container-queries/container-units-computational-independence-expected.txt:
+        * web-platform-tests/css/css-contain/container-queries/container-units-invalidation-expected.txt:
+        * web-platform-tests/css/css-contain/container-queries/container-units-selection-expected.txt:
+        * web-platform-tests/css/css-contain/container-queries/container-units-typed-om-expected.txt:
+        * web-platform-tests/css/css-contain/container-queries/counters-flex-circular-expected.txt:
+        * web-platform-tests/css/css-contain/container-queries/display-contents-expected.txt:
+        * web-platform-tests/css/css-contain/container-queries/display-none-expected.txt:
+        * web-platform-tests/css/css-contain/container-queries/font-relative-units-dynamic-expected.txt:
+        * web-platform-tests/css/css-contain/container-queries/font-relative-units-expected.txt:
+        * web-platform-tests/css/css-contain/container-queries/get-animations-expected.txt:
+        * web-platform-tests/css/css-contain/container-queries/iframe-invalidation-expected.txt:
+        * web-platform-tests/css/css-contain/container-queries/ineligible-containment-expected.txt:
+        * web-platform-tests/css/css-contain/container-queries/inline-size-and-min-width-expected.txt:
+        * web-platform-tests/css/css-contain/container-queries/inline-size-containment-expected.txt:
+        * web-platform-tests/css/css-contain/container-queries/inline-size-containment-vertical-rl-expected.txt:
+        * web-platform-tests/css/css-contain/container-queries/orthogonal-wm-container-query-expected.txt:
+        * web-platform-tests/css/css-contain/container-queries/percentage-padding-orthogonal-expected.txt:
+        * web-platform-tests/css/css-contain/container-queries/pseudo-elements-001-expected.txt:
+        * web-platform-tests/css/css-contain/container-queries/pseudo-elements-003.tentative-expected.txt:
+        * web-platform-tests/css/css-contain/container-queries/query-content-box-expected.txt:
+        * web-platform-tests/css/css-contain/container-queries/query-evaluation-expected.txt:
+        * web-platform-tests/css/css-contain/container-queries/reattach-container-with-dirty-child-expected.txt:
+        * web-platform-tests/css/css-contain/container-queries/size-container-no-principal-box-expected.txt:
+        * web-platform-tests/css/css-contain/container-queries/size-feature-evaluation-expected.txt:
+        * web-platform-tests/css/css-contain/container-queries/style-change-in-container-expected.txt:
+        * web-platform-tests/css/css-contain/container-queries/top-layer-dialog-container-expected.txt:
+        * web-platform-tests/css/css-contain/container-queries/top-layer-dialog-expected.txt:
+        * web-platform-tests/css/css-contain/container-queries/top-layer-nested-dialog-expected.txt:
+        * web-platform-tests/css/css-contain/container-queries/transition-scrollbars-expected.txt:
+        * web-platform-tests/css/css-contain/container-queries/transition-style-change-event-expected.txt:
+        * web-platform-tests/css/css-contain/container-queries/unsupported-axis-expected.txt:
+        * web-platform-tests/css/css-contain/container-queries/viewport-units-dynamic-expected.txt:
+        * web-platform-tests/css/css-contain/container-queries/viewport-units-expected.txt:
+
+2022-01-24  Antti Koivisto  <antti@apple.com>
+
         [CSS Container Queries] Import WPT tests
         https://bugs.webkit.org/show_bug.cgi?id=235508
 

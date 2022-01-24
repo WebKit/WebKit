@@ -1,5 +1,4 @@
 content
 
-Harness Error (FAIL), message = Error: assert_implements: Basic support for container queries required undefined
-
+FAIL Changing container-type invalidates layout assert_equals: expected 0 but got 47
 

@@ -1,5 +1,5 @@
 Test
 
-Harness Error (FAIL), message = Error: assert_implements: Basic support for container queries required undefined
-
+FAIL Container units select the proper container assert_equals: expected "10px" but got "0px"
+FAIL Units respond to the writing-mode of the element assert_equals: expected "30px" but got "0px"
 

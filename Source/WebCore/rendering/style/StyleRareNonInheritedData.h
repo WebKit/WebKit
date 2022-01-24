@@ -233,6 +233,8 @@ public:
 
     unsigned isNotFinal : 1;
 
+    unsigned containerType : 2; // ContainerType
+
     GapLength columnGap;
     GapLength rowGap;
 
