@@ -193,7 +193,7 @@ class GitHubMixin(object):
             self._addToLog('stdio', 'Failed to fetch hash of pull request {}\n'.format(pr_number))
             return -1
 
-        return 0 if pr_sha == self.getProperty('revision', '?') else 1
+        return 0 if pr_sha == self.getProperty('github.head.sha', '?') else 1
 
 
 class Contributors(object):
@@ -317,7 +317,7 @@ class ConfigureBuild(buildstep.BuildStep):
         pr_number = self.getProperty('github.number')
         title = self.getProperty('github.title', '')
         owners = self.getProperty('owners', [])
-        revision = self.getProperty('revision')
+        revision = self.getProperty('github.head.sha')
 
         if pr_number and title:
             self.addURL('PR {}: {}'.format(pr_number, title), GitHub.pr_url(pr_number, repository_url))
@@ -1225,7 +1225,7 @@ class ValidateChange(buildstep.BuildStep, BugzillaMixin, GitHubMixin):
 
         obsolete = self._is_pr_obsolete(pr_number, repository_url=repository_url) if self.verifyObsolete else 0
         if obsolete == 1:
-            self.skip_build('Pull request {} (sha {}) is obsolete'.format(pr_number, self.getProperty('revision', '?')[:HASH_LENGTH_TO_DISPLAY]))
+            self.skip_build('Pull request {} (sha {}) is obsolete'.format(pr_number, self.getProperty('github.head.sha', '?')[:HASH_LENGTH_TO_DISPLAY]))
             return False
 
         if obsolete == -1 or pr_closed == -1:

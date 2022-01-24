@@ -162,7 +162,7 @@ class Events(service.BuildbotService):
 
     @defer.inlineCallbacks
     def buildFinishedGitHub(self, context, build):
-        sha = self.extractProperty(build, 'revision')
+        sha = self.extractProperty(build, 'github.head.sha')
         repository = self.extractProperty(build, 'repository')
 
         if not sha or not repository:
@@ -225,7 +225,7 @@ class Events(service.BuildbotService):
 
     @defer.inlineCallbacks
     def stepStartedGitHub(self, build, state_string):
-        sha = self.extractProperty(build, 'revision')
+        sha = self.extractProperty(build, 'github.head.sha')
         repository = self.extractProperty(build, 'repository')
         if not sha or not repository:
             print('Pull request number defined, but sha is {} and repository {}, which are invalid'.format(sha, repository))
