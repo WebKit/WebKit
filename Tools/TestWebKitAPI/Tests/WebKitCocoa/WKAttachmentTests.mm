@@ -260,6 +260,16 @@ static NSData *testPDFData()
     return [NSData dataWithContentsOfURL:testPDFFileURL()];
 }
 
+static NSURL *testJPEGFileURL()
+{
+    return [[NSBundle mainBundle] URLForResource:@"sunset-in-cupertino-600px" withExtension:@"jpg" subdirectory:@"TestWebKitAPI.resources"];
+}
+
+static NSData *testJPEGData()
+{
+    return [NSData dataWithContentsOfURL:testJPEGFileURL()];
+}
+
 @implementation TestWKWebView (AttachmentTesting)
 
 - (_WKAttachment *)synchronouslyInsertAttachmentWithFileWrapper:(NSFileWrapper *)fileWrapper contentType:(NSString *)contentType
@@ -612,6 +622,36 @@ void platformCopyPNG()
     auto item = adoptNS([[NSItemProvider alloc] init]);
     [item setPreferredPresentationStyle:UIPreferredPresentationStyleAttachment];
     [item registerData:testImageData() type:(__bridge NSString *)kUTTypePNG];
+    pasteboard.itemProviders = @[ item.get() ];
+#endif
+}
+
+void platformCopyPDF()
+{
+#if PLATFORM(MAC)
+    NSPasteboard *pasteboard = [NSPasteboard generalPasteboard];
+    [pasteboard declareTypes:@[(__bridge NSString *)kUTTypePDF] owner:nil];
+    [pasteboard setData:testPDFData() forType:(__bridge NSString *)kUTTypePDF];
+#elif PLATFORM(IOS_FAMILY)
+    UIPasteboard *pasteboard = [UIPasteboard generalPasteboard];
+    auto item = adoptNS([[NSItemProvider alloc] init]);
+    [item setPreferredPresentationStyle:UIPreferredPresentationStyleAttachment];
+    [item registerData:testPDFData() type:(__bridge NSString *)kUTTypePDF];
+    pasteboard.itemProviders = @[ item.get() ];
+#endif
+}
+
+void platformCopyJPEG()
+{
+#if PLATFORM(MAC)
+    NSPasteboard *pasteboard = [NSPasteboard generalPasteboard];
+    [pasteboard declareTypes:@[(__bridge NSString *)kUTTypeJPEG] owner:nil];
+    [pasteboard setData:testJPEGData() forType:(__bridge NSString *)kUTTypeJPEG];
+#elif PLATFORM(IOS_FAMILY)
+    UIPasteboard *pasteboard = [UIPasteboard generalPasteboard];
+    auto item = adoptNS([[NSItemProvider alloc] init]);
+    [item setPreferredPresentationStyle:UIPreferredPresentationStyleAttachment];
+    [item registerData:testJPEGData() type:(__bridge NSString *)kUTTypeJPEG];
     pasteboard.itemProviders = @[ item.get() ];
 #endif
 }
@@ -1587,7 +1627,6 @@ TEST(WKAttachmentTests, AttachmentIdentifierOfClonedAttachment)
 TEST(WKAttachmentTests, SetFileWrapperForPDFImageAttachment)
 {
     auto webView = webViewForTestingAttachments();
-    [webView evaluateJavaScript:@"document.body.appendChild()" completionHandler:nil];
     NSString *identifier = [webView stringByEvaluatingJavaScript:@"const i = document.createElement('img'); document.body.appendChild(i); HTMLAttachmentElement.getAttachmentIdentifier(i)"];
     auto attachment = retainPtr([webView _attachmentForIdentifier:identifier]);
 
@@ -1600,6 +1639,35 @@ TEST(WKAttachmentTests, SetFileWrapperForPDFImageAttachment)
     auto zipFile = adoptNS([[NSFileWrapper alloc] initRegularFileWithContents:testZIPData()]);
     [attachment setFileWrapper:zipFile.get() contentType:(__bridge NSString *)kUTTypeZipArchive completion:nil];
     EXPECT_FALSE([attachment isConnected]);
+}
+
+TEST(WKAttachmentTests, PastingPreservesImageFormat)
+{
+    auto webView = webViewForTestingAttachments();
+    {
+        platformCopyPNG();
+        ObserveAttachmentUpdatesForScope observer(webView.get());
+        [webView _synchronouslyExecuteEditCommand:@"Paste" argument:nil];
+        EXPECT_EQ(1U, observer.observer().inserted.count);
+        _WKAttachment *attachment = observer.observer().inserted[0];
+        EXPECT_WK_STREQ("image/png", attachment.info.contentType);
+    }
+    {
+        platformCopyPDF();
+        ObserveAttachmentUpdatesForScope observer(webView.get());
+        [webView _synchronouslyExecuteEditCommand:@"Paste" argument:nil];
+        EXPECT_EQ(1U, observer.observer().inserted.count);
+        _WKAttachment *attachment = observer.observer().inserted[0];
+        EXPECT_WK_STREQ("application/pdf", attachment.info.contentType);
+    }
+    {
+        platformCopyJPEG();
+        ObserveAttachmentUpdatesForScope observer(webView.get());
+        [webView _synchronouslyExecuteEditCommand:@"Paste" argument:nil];
+        EXPECT_EQ(1U, observer.observer().inserted.count);
+        _WKAttachment *attachment = observer.observer().inserted[0];
+        EXPECT_WK_STREQ("image/jpeg", attachment.info.contentType);
+    }
 }
 
 #pragma mark - Platform-specific tests

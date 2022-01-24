@@ -1,3 +1,26 @@
+2022-01-24  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macOS] Update Pasteboard::read to prioritize native representations over TIFF
+        https://bugs.webkit.org/show_bug.cgi?id=190101
+        rdar://44879244
+
+        Reviewed by Ryosuke Niwa.
+
+        Add a cross-platform API test to verify that when using the client-side attachments, pasted image data of
+        varying formats (PDF, JPEG, PNG) are read in their original form. See WebCore/ChangeLog for more details. This
+        test currently passes on iOS but fails on macOS, where both the PNG and JPEG images are transcoded and read as
+        TIFF.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WKAttachmentTests.mm:
+        (testJPEGFileURL):
+        (testJPEGData):
+        (platformCopyPDF):
+        (platformCopyJPEG):
+        (TestWebKitAPI::TEST):
+
+        Drive-by fix: also remove a JavaScript evaluation in a nearby test that could only result in an exception (and
+        was probably accidentally left there while writing the test).
+
 2022-01-24  Jonathan Bedard  <JonWBedard@gmail.com>
 
         [EWS] Use github.head.sha instead of revision
