@@ -48,6 +48,7 @@
 #import <WebCore/CertificateInfo.h>
 #import <WebCore/InspectorFrontendClientLocal.h>
 #import <WebCore/LocalizedStrings.h>
+#import <pal/spi/cf/CFUtilitiesSPI.h>
 #import <wtf/text/Base64.h>
 
 static const NSUInteger windowStyleMask = NSWindowStyleMaskTitled | NSWindowStyleMaskClosable | NSWindowStyleMaskMiniaturizable | NSWindowStyleMaskResizable | NSWindowStyleMaskFullSizeContentView;
@@ -787,23 +788,15 @@ String WebInspectorUIProxy::inspectorTestPageURL()
     return [WKInspectorViewController URLForInspectorResource:@"Test.html"].absoluteString;
 }
 
-static NSDictionary *systemVersionPlist()
-{
-    NSString *systemLibraryPath = [NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSSystemDomainMask, YES) objectAtIndex:0];
-    NSString *systemVersionPlistPath = [systemLibraryPath stringByAppendingPathComponent:@"CoreServices/SystemVersion.plist"];
-    NSDictionary *systemVersionInfo = [NSDictionary dictionaryWithContentsOfFile:systemVersionPlistPath];
-    return systemVersionInfo;
-}
-
 DebuggableInfoData WebInspectorUIProxy::infoForLocalDebuggable()
 {
-    NSDictionary *plist = systemVersionPlist();
+    NSDictionary *plist = adoptCF(_CFCopySystemVersionDictionary()).bridgingAutorelease();
 
     DebuggableInfoData result;
     result.debuggableType = Inspector::DebuggableType::WebPage;
     result.targetPlatformName = "macOS"_s;
-    result.targetBuildVersion = plist[@"ProductBuildVersion"];
-    result.targetProductVersion = plist[@"ProductUserVisibleVersion"];
+    result.targetBuildVersion = plist[static_cast<NSString *>(_kCFSystemVersionBuildVersionKey)];
+    result.targetProductVersion = plist[static_cast<NSString *>(_kCFSystemVersionProductUserVisibleVersionKey)];
     result.targetIsSimulator = false;
 
     return result;

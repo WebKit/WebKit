@@ -1,3 +1,14 @@
+2022-01-24  David Quesada  <david_quesada@apple.com>
+
+        Simplify accesses to SystemVersion.plist
+        https://bugs.webkit.org/show_bug.cgi?id=234306
+
+        Reviewed by Alexey Proskuryakov.
+
+        * pal/spi/cf/CFUtilitiesSPI.h:
+            Forward declare _kCFSystemVersionProductUserVisibleVersionKey, used
+            by WebCore's SystemVersion.mm
+
 2022-01-21  Sihui Liu  <sihui_liu@apple.com>
 
         Disable CFURLCache in WebKit2

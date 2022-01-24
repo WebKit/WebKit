@@ -1,3 +1,18 @@
+2022-01-24  David Quesada  <david_quesada@apple.com>
+
+        Simplify accesses to SystemVersion.plist
+        https://bugs.webkit.org/show_bug.cgi?id=234306
+
+        Reviewed by Alexey Proskuryakov.
+
+        No new tests since no behavior change is expected.
+
+        * UIProcess/Inspector/mac/WebInspectorUIProxyMac.mm:
+        (WebKit::WebInspectorUIProxy::infoForLocalDebuggable):
+            Use _CFCopySystemVersionDictionary() to locate and load the
+            SystemVersion.plist file rather than doing that all manually.
+        (WebKit::systemVersionPlist): Deleted.
+
 2022-01-24  Said Abou-Hallawa  <said@apple.com>
 
         [GPU Process] [Filters] Move FEImage to the 'platform' directory

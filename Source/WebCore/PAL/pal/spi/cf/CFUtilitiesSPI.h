@@ -49,6 +49,7 @@ WTF_EXTERN_C_BEGIN
 extern const CFStringRef kCFWebServicesProviderDefaultDisplayNameKey;
 extern const CFStringRef kCFWebServicesTypeWebSearch;
 extern const CFStringRef _kCFSystemVersionBuildVersionKey;
+extern const CFStringRef _kCFSystemVersionProductUserVisibleVersionKey;
 extern const CFStringRef _kCFSystemVersionProductVersionKey;
 
 Boolean _CFAppVersionCheckLessThan(CFStringRef bundleID, int linkedOnAnOlderSystemThan, double versionNumberLessThan);
