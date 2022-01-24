@@ -2837,11 +2837,11 @@ template<typename InterpolationMethod> static Color mixColorComponentsUsingColor
     auto convertedColor2 = color2.template toColorTypeLossy<ColorType>();
 
     // 2. Colors are then interpolated in the specified color space, as described in CSS Color 4 § 13 Interpolation. [...]
-    auto mixedColor = interpolateColorComponents<AlphaPremultiplication::Premultiplied>(interpolationMethod, convertedColor1, mixPercentages.p1 / 100.0, convertedColor2, mixPercentages.p2 / 100.0).resolved();
+    auto mixedColor = interpolateColorComponents<AlphaPremultiplication::Premultiplied>(interpolationMethod, convertedColor1, mixPercentages.p1 / 100.0, convertedColor2, mixPercentages.p2 / 100.0).unresolved();
 
     // 3. If an alpha multiplier was produced during percentage normalization, the alpha component of the interpolated result
     //    is multiplied by the alpha multiplier.
-    if (mixPercentages.alphaMultiplier)
+    if (mixPercentages.alphaMultiplier && !std::isnan(mixedColor.alpha))
         mixedColor.alpha *= (*mixPercentages.alphaMultiplier / 100.0);
 
     return makeCanonicalColor(mixedColor);

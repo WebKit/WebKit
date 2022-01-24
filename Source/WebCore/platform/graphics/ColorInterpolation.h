@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,109 +26,146 @@
 #pragma once
 
 #include "AlphaPremultiplication.h"
-#include "Color.h"
 #include "ColorInterpolationMethod.h"
 #include "ColorNormalization.h"
 #include "ColorTypes.h"
 
 namespace WebCore {
 
-// MARK: - Pre-interpolation normalization/fixup
+class Color;
 
-std::pair<float, float> fixupHueComponentsPriorToInterpolation(HueInterpolationMethod, float, float);
+template<AlphaPremultiplication, typename InterpolationMethodColorSpace>
+typename InterpolationMethodColorSpace::ColorType interpolateColorComponents(InterpolationMethodColorSpace, typename InterpolationMethodColorSpace::ColorType color1, double color1Multiplier, typename InterpolationMethodColorSpace::ColorType color2, double color2Multiplier);
 
-template<size_t I, AlphaPremultiplication alphaPremultiplication, typename InterpolationMethodColorSpace>
-std::pair<float, float> preInterpolationNormalizationForComponent(InterpolationMethodColorSpace interpolationMethodColorSpace, ColorComponents<float, 4> colorComponents1, ColorComponents<float, 4> colorComponents2)
+Color interpolateColors(ColorInterpolationMethod, Color color1, double color1Multiplier, Color color2, double color2Multiplier);
+
+
+// MARK: - Pre-interpolation normalization/fixup.
+
+std::pair<float, float> fixupHueComponentsPriorToInterpolation(HueInterpolationMethod, float component1, float component2);
+
+// MARK: - Premultiplication-agnostic interpolation helpers.
+
+inline float interpolateComponetWithoutAccountingForNaN(float componentFromColor1, double color1Multiplier, float componentFromColor2, double color2Multiplier)
+{
+    return (componentFromColor1 * color1Multiplier) + (componentFromColor2 * color2Multiplier);
+}
+
+inline float interpolateComponentAccountingForNaN(float componentFromColor1, double color1Multiplier, float componentFromColor2, double color2Multiplier)
+{
+    if (std::isnan(componentFromColor1))
+        return componentFromColor2;
+    if (std::isnan(componentFromColor2))
+        return componentFromColor1;
+
+    return interpolateComponetWithoutAccountingForNaN(componentFromColor1, color1Multiplier, componentFromColor2, color2Multiplier);
+}
+
+template<typename InterpolationMethodColorSpace>
+float interpolateHue(InterpolationMethodColorSpace interpolationMethodColorSpace, float componentFromColor1, double color1Multiplier, float componentFromColor2, double color2Multiplier)
+{
+    if (std::isnan(componentFromColor1))
+        return componentFromColor2;
+    if (std::isnan(componentFromColor2))
+        return componentFromColor1;
+
+    auto [fixedupComponent1, fixedupComponent2] = fixupHueComponentsPriorToInterpolation(interpolationMethodColorSpace.hueInterpolationMethod, componentFromColor1, componentFromColor2);
+    return interpolateComponetWithoutAccountingForNaN(fixedupComponent1, color1Multiplier, fixedupComponent2, color2Multiplier);
+}
+
+// MARK: - Premultiplied interpolation.
+
+struct PremultipliedAlphaState {
+    float alphaForPremultiplicationOfColor1;
+    float alphaForPremultiplicationOfColor2;
+    float alphaForUnpremultiplication;
+    float resultAlpha;
+};
+inline PremultipliedAlphaState interpolateAlphaPremulitplied(float alphaForColor1, double color1Multiplier, float alphaForColor2, double color2Multiplier)
+{
+    // If both alpha channels are none/missing, no premultiplication is performed and the resulting color will have a none/missing alpha channel.
+    // If only one alpha channels is none/missing, the other alpha channel is used premultiplication of both colors and is the resulting color's alpha channel.
+    // If neither alpha channel is none/missing, each alpha channel is used for the premultiplication of its associated color and the interpolated result of the two alpha channels is the resulting color's alpha channel.
+
+    if (std::isnan(alphaForColor1)) {
+        if (std::isnan(alphaForColor2))
+            return { 1.0f, 1.0f, 1.0f, std::numeric_limits<float>::quiet_NaN() };
+        return { alphaForColor2, alphaForColor2, alphaForColor2, alphaForColor2 };
+    }
+    if (std::isnan(alphaForColor2))
+        return { alphaForColor1, alphaForColor1, alphaForColor1, alphaForColor1 };
+
+    auto interpolatedAlpha = interpolateComponetWithoutAccountingForNaN(alphaForColor1, color1Multiplier, alphaForColor2, color2Multiplier);
+    return { alphaForColor1, alphaForColor2, interpolatedAlpha, interpolatedAlpha };
+}
+
+template<size_t I, typename InterpolationMethodColorSpace>
+float interpolateComponentUsingPremultipliedAlpha(InterpolationMethodColorSpace interpolationMethodColorSpace, ColorComponents<float, 4> colorComponents1, double color1Multiplier, ColorComponents<float, 4> colorComponents2, double color2Multiplier, PremultipliedAlphaState interpolatedAlpha)
 {
     using ColorType = typename InterpolationMethodColorSpace::ColorType;
     constexpr auto componentInfo = ColorType::Model::componentInfo;
 
     if constexpr (componentInfo[I].type == ColorComponentType::Angle)
-        return fixupHueComponentsPriorToInterpolation(interpolationMethodColorSpace.hueInterpolationMethod, colorComponents1[I], colorComponents2[I]);
+        return interpolateHue(interpolationMethodColorSpace, colorComponents1[I], color1Multiplier, colorComponents2[I], color2Multiplier);
     else {
-        if constexpr (alphaPremultiplication == AlphaPremultiplication::Premultiplied)
-            return { colorComponents1[I] * colorComponents1[3], colorComponents2[I] * colorComponents2[3] };
-        else
-            return { colorComponents1[I], colorComponents2[I] };
+        if (std::isnan(colorComponents1[I]))
+            return colorComponents2[I];
+        if (std::isnan(colorComponents2[I]))
+            return colorComponents1[I];
+
+        auto premultipliedComponent1 = colorComponents1[I] * interpolatedAlpha.alphaForPremultiplicationOfColor1;
+        auto premultipliedComponent2 = colorComponents2[I] * interpolatedAlpha.alphaForPremultiplicationOfColor2;
+
+        auto premultipliedResult = interpolateComponetWithoutAccountingForNaN(premultipliedComponent1, color1Multiplier, premultipliedComponent2, color2Multiplier);
+
+        if (interpolatedAlpha.alphaForUnpremultiplication == 0.0f)
+            return premultipliedResult;
+        return premultipliedResult / interpolatedAlpha.alphaForUnpremultiplication;
     }
 }
 
-template<AlphaPremultiplication alphaPremultiplication, typename InterpolationMethodColorSpace>
-std::pair<ColorComponents<float, 4>, ColorComponents<float, 4>> preInterpolationNormalization(InterpolationMethodColorSpace interpolationMethodColorSpace, ColorComponents<float, 4> colorComponents1, ColorComponents<float, 4> colorComponents2)
-{
-    auto [colorA0, colorB0] = preInterpolationNormalizationForComponent<0, alphaPremultiplication>(interpolationMethodColorSpace, colorComponents1, colorComponents2);
-    auto [colorA1, colorB1] = preInterpolationNormalizationForComponent<1, alphaPremultiplication>(interpolationMethodColorSpace, colorComponents1, colorComponents2);
-    auto [colorA2, colorB2] = preInterpolationNormalizationForComponent<2, alphaPremultiplication>(interpolationMethodColorSpace, colorComponents1, colorComponents2);
+// MARK: - Unpremultiplied interpolation.
 
-    return {
-        { colorA0, colorA1, colorA2, colorComponents1[3] },
-        { colorB0, colorB1, colorB2, colorComponents2[3] }
-    };
+inline float interpolateAlphaUnpremulitplied(float alphaForColor1, double color1Multiplier, float alphaForColor2, double color2Multiplier)
+{
+    return interpolateComponentAccountingForNaN(alphaForColor1, color1Multiplier, alphaForColor2, color2Multiplier);
 }
 
-
-// MARK: - Post-interpolation normalization/fixup
-
-template<size_t I, AlphaPremultiplication alphaPremultiplication, typename InterpolationMethodColorSpace>
-float postInterpolationNormalizationForComponent(InterpolationMethodColorSpace, ColorComponents<float, 4> colorComponents)
+template<size_t I, typename InterpolationMethodColorSpace>
+float interpolateComponentUsingUnpremultipliedAlpha(InterpolationMethodColorSpace interpolationMethodColorSpace, ColorComponents<float, 4> colorComponents1, double color1Multiplier, ColorComponents<float, 4> colorComponents2, double color2Multiplier)
 {
     using ColorType = typename InterpolationMethodColorSpace::ColorType;
     constexpr auto componentInfo = ColorType::Model::componentInfo;
 
-    if constexpr (componentInfo[I].type != ColorComponentType::Angle && alphaPremultiplication == AlphaPremultiplication::Premultiplied) {
-        if (colorComponents[3] == 0.0f)
-            return 0;
-        return colorComponents[I] / colorComponents[3];
-    } else
-        return colorComponents[I];
+    if constexpr (componentInfo[I].type == ColorComponentType::Angle)
+        return interpolateHue(interpolationMethodColorSpace, colorComponents1[I], color1Multiplier, colorComponents2[I], color2Multiplier);
+    else
+        return interpolateComponentAccountingForNaN(colorComponents1[I], color1Multiplier, colorComponents2[I], color2Multiplier);
 }
 
-template<AlphaPremultiplication alphaPremultiplication, typename InterpolationMethodColorSpace>
-ColorComponents<float, 4> postInterpolationNormalization(InterpolationMethodColorSpace interpolationMethodColorSpace, ColorComponents<float, 4> colorComponents)
-{
-    return {
-        postInterpolationNormalizationForComponent<0, alphaPremultiplication>(interpolationMethodColorSpace, colorComponents),
-        postInterpolationNormalizationForComponent<1, alphaPremultiplication>(interpolationMethodColorSpace, colorComponents),
-        postInterpolationNormalizationForComponent<2, alphaPremultiplication>(interpolationMethodColorSpace, colorComponents),
-        colorComponents[3]
-    };
- }
-
-
-// MARK: - Interpolation
+// MARK: - Interpolation.
 
 template<AlphaPremultiplication alphaPremultiplication, typename InterpolationMethodColorSpace>
 typename InterpolationMethodColorSpace::ColorType interpolateColorComponents(InterpolationMethodColorSpace interpolationMethodColorSpace, typename InterpolationMethodColorSpace::ColorType color1, double color1Multiplier, typename InterpolationMethodColorSpace::ColorType color2, double color2Multiplier)
 {
-    // 1. Apply pre-interpolation transforms (hue fixup for polar color spaces, alpha premultiplication if required).
-    auto [normalizedColorComponents1, normalizedColorComponents2] = preInterpolationNormalization<alphaPremultiplication>(interpolationMethodColorSpace, asColorComponents(color1.resolved()), asColorComponents(color2.resolved()));
+    auto colorComponents1 = asColorComponents(color1.unresolved());
+    auto colorComponents2 = asColorComponents(color2.unresolved());
 
-    // 2. Interpolate using the normalized components.
-    auto interpolatedColorComponents = mapColorComponents([&] (auto componentFromColor1, auto componentFromColor2) -> float {
-        return (componentFromColor1 * color1Multiplier) + (componentFromColor2 * color2Multiplier);
-    }, normalizedColorComponents1, normalizedColorComponents2);
+    if constexpr (alphaPremultiplication == AlphaPremultiplication::Premultiplied) {
+        auto interpolatedAlpha = interpolateAlphaPremulitplied(colorComponents1[3], color1Multiplier, colorComponents2[3], color2Multiplier);
+        auto interpolatedComponent1 = interpolateComponentUsingPremultipliedAlpha<0>(interpolationMethodColorSpace, colorComponents1, color1Multiplier, colorComponents2, color2Multiplier, interpolatedAlpha);
+        auto interpolatedComponent2 = interpolateComponentUsingPremultipliedAlpha<1>(interpolationMethodColorSpace, colorComponents1, color1Multiplier, colorComponents2, color2Multiplier, interpolatedAlpha);
+        auto interpolatedComponent3 = interpolateComponentUsingPremultipliedAlpha<2>(interpolationMethodColorSpace, colorComponents1, color1Multiplier, colorComponents2, color2Multiplier, interpolatedAlpha);
 
-    // 3. Apply post-interpolation trasforms (alpha un-premultiplication if required).
-    auto normalizedInterpolatedColorComponents = postInterpolationNormalization<alphaPremultiplication>(interpolationMethodColorSpace, interpolatedColorComponents);
+        return makeColorTypeByNormalizingComponents<typename InterpolationMethodColorSpace::ColorType>({ interpolatedComponent1, interpolatedComponent2, interpolatedComponent3, interpolatedAlpha.resultAlpha });
+    } else {
+        auto interpolatedAlpha = interpolateAlphaUnpremulitplied(colorComponents1[3], color1Multiplier, colorComponents2[3], color2Multiplier);
+        auto interpolatedComponent1 = interpolateComponentUsingUnpremultipliedAlpha<0>(interpolationMethodColorSpace, colorComponents1, color1Multiplier, colorComponents2, color2Multiplier);
+        auto interpolatedComponent2 = interpolateComponentUsingUnpremultipliedAlpha<1>(interpolationMethodColorSpace, colorComponents1, color1Multiplier, colorComponents2, color2Multiplier);
+        auto interpolatedComponent3 = interpolateComponentUsingUnpremultipliedAlpha<2>(interpolationMethodColorSpace, colorComponents1, color1Multiplier, colorComponents2, color2Multiplier);
 
-    // 4. Create color type from components, normalizing any components that may be out of range.
-    return makeColorTypeByNormalizingComponents<typename InterpolationMethodColorSpace::ColorType>(normalizedInterpolatedColorComponents);
-}
-
-inline Color interpolateColors(ColorInterpolationMethod colorInterpolationMethod, Color color1, double color1Multiplier, Color color2, double color2Multiplier)
-{
-    return WTF::switchOn(colorInterpolationMethod.colorSpace,
-        [&] (auto& colorSpace) {
-            using ColorType = typename std::remove_reference_t<decltype(colorSpace)>::ColorType;
-            switch (colorInterpolationMethod.alphaPremultiplication) {
-            case AlphaPremultiplication::Premultiplied:
-                return makeCanonicalColor(interpolateColorComponents<AlphaPremultiplication::Premultiplied>(colorSpace, color1.toColorTypeLossy<ColorType>(), color1Multiplier, color2.toColorTypeLossy<ColorType>(), color2Multiplier));
-            case AlphaPremultiplication::Unpremultiplied:
-                return makeCanonicalColor(interpolateColorComponents<AlphaPremultiplication::Unpremultiplied>(colorSpace, color1.toColorTypeLossy<ColorType>(), color1Multiplier, color2.toColorTypeLossy<ColorType>(), color2Multiplier));
-            }
-            RELEASE_ASSERT_NOT_REACHED();
-        }
-    );
+        return makeColorTypeByNormalizingComponents<typename InterpolationMethodColorSpace::ColorType>({ interpolatedComponent1, interpolatedComponent2, interpolatedComponent3, interpolatedAlpha });
+    }
 }
 
 }

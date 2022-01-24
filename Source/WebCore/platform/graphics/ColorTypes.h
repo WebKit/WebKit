@@ -135,7 +135,7 @@ template<typename ColorType, typename T, typename Alpha> constexpr auto makeFrom
 template<typename ComponentType>
 constexpr bool constexprIsNaN(ComponentType value)
 {
-    // FIXME: Replace std::isnan() once std::isnan() is constexpr.
+    // FIXME: Replace with std::isnan() once std::isnan() is constexpr.
     return value != value;
 }
 

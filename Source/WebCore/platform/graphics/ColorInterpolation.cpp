@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,6 +25,8 @@
 
 #include "config.h"
 #include "ColorInterpolation.h"
+
+#include "Color.h"
 
 namespace WebCore {
 
@@ -82,6 +84,22 @@ std::pair<float, float> fixupHueComponentsPriorToInterpolation(HueInterpolationM
         return normalizeAnglesUsingSpecifiedAlgorithm(component1, component2);
     }
     RELEASE_ASSERT_NOT_REACHED();
+}
+
+Color interpolateColors(ColorInterpolationMethod colorInterpolationMethod, Color color1, double color1Multiplier, Color color2, double color2Multiplier)
+{
+    return WTF::switchOn(colorInterpolationMethod.colorSpace,
+        [&] (auto& colorSpace) {
+            using ColorType = typename std::remove_reference_t<decltype(colorSpace)>::ColorType;
+            switch (colorInterpolationMethod.alphaPremultiplication) {
+            case AlphaPremultiplication::Premultiplied:
+                return makeCanonicalColor(interpolateColorComponents<AlphaPremultiplication::Premultiplied>(colorSpace, color1.toColorTypeLossy<ColorType>(), color1Multiplier, color2.toColorTypeLossy<ColorType>(), color2Multiplier));
+            case AlphaPremultiplication::Unpremultiplied:
+                return makeCanonicalColor(interpolateColorComponents<AlphaPremultiplication::Unpremultiplied>(colorSpace, color1.toColorTypeLossy<ColorType>(), color1Multiplier, color2.toColorTypeLossy<ColorType>(), color2Multiplier));
+            }
+            RELEASE_ASSERT_NOT_REACHED();
+        }
+    );
 }
 
 }
