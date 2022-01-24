@@ -49,6 +49,7 @@
 #include <wtf/Lock.h>
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/Scope.h>
 
 #include <pal/cf/AudioToolboxSoftLink.h>
 #include <pal/cf/CoreMediaSoftLink.h>
@@ -146,6 +147,7 @@ private:
     uint64_t m_microphoneProcsCalledLastTime { 0 };
     Timer m_verifyCapturingTimer;
 
+    bool m_isReconfiguring { false };
     Lock m_speakerSamplesProducerLock;
     CoreAudioSpeakerSamplesProducer* m_speakerSamplesProducer WTF_GUARDED_BY_LOCK(m_speakerSamplesProducerLock) { nullptr };
 };
@@ -354,7 +356,7 @@ void CoreAudioSharedUnit::checkTimestamps(const AudioTimeStamp& timeStamp, uint6
 
 OSStatus CoreAudioSharedUnit::provideSpeakerData(AudioUnitRenderActionFlags& flags, const AudioTimeStamp& timeStamp, UInt32 /*inBusNumber*/, UInt32 inNumberFrames, AudioBufferList& ioData)
 {
-    if (!m_speakerSamplesProducerLock.tryLock()) {
+    if (m_isReconfiguring || !m_speakerSamplesProducerLock.tryLock()) {
         AudioSampleBufferList::zeroABL(ioData, static_cast<size_t>(inNumberFrames * m_speakerProcFormat.bytesPerFrame()));
         flags = kAudioUnitRenderAction_OutputIsSilence;
         return noErr;
@@ -379,6 +381,11 @@ OSStatus CoreAudioSharedUnit::speakerCallback(void *inRefCon, AudioUnitRenderAct
 
 OSStatus CoreAudioSharedUnit::processMicrophoneSamples(AudioUnitRenderActionFlags& ioActionFlags, const AudioTimeStamp& timeStamp, UInt32 inBusNumber, UInt32 inNumberFrames, AudioBufferList* /*ioData*/)
 {
+    ++m_microphoneProcsCalled;
+
+    if (m_isReconfiguring)
+        return false;
+
     // Pull through the vpio unit to our mic buffer.
     m_microphoneSampleBuffer->reset();
     AudioBufferList& bufferList = m_microphoneSampleBuffer->bufferList();
@@ -394,8 +401,6 @@ OSStatus CoreAudioSharedUnit::processMicrophoneSamples(AudioUnitRenderActionFlag
         // We return early so that if this error happens, we do not increment m_microphoneProcsCalled and fail the capture once timer kicks in.
         return err;
     }
-
-    ++m_microphoneProcsCalled;
 
     if (!isProducingMicrophoneSamples())
         return noErr;
@@ -451,19 +456,11 @@ OSStatus CoreAudioSharedUnit::reconfigureAudioUnit()
     if (!hasAudioUnit())
         return 0;
 
-    if (m_ioUnitStarted) {
-        CoreAudioSpeakerSamplesProducer* speakerSamplesProducer;
-        {
-            Locker locker { m_speakerSamplesProducerLock };
-            speakerSamplesProducer = m_speakerSamplesProducer;
-            m_speakerSamplesProducer = nullptr;
-        }
-        err = PAL::AudioOutputUnitStop(m_ioUnit);
-        {
-            Locker locker { m_speakerSamplesProducerLock };
-            m_speakerSamplesProducer = speakerSamplesProducer;
-        }
+    m_isReconfiguring = true;
+    auto scope = makeScopeExit([this] { m_isReconfiguring = false; });
 
+    if (m_ioUnitStarted) {
+        err = PAL::AudioOutputUnitStop(m_ioUnit);
         if (err) {
             RELEASE_LOG_ERROR(WebRTC, "CoreAudioSharedUnit::reconfigureAudioUnit(%p) AudioOutputUnitStop failed with error %d (%.4s)", this, (int)err, (char*)&err);
             return err;
