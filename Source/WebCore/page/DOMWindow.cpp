@@ -403,6 +403,7 @@ void DOMWindow::didSecureTransitionTo(Document& document)
     m_crypto = nullptr;
     m_navigator = nullptr;
     m_performance = nullptr;
+    m_customElementRegistry = nullptr;
 }
 
 void DOMWindow::prewarmLocalStorageIfNecessary()
@@ -571,6 +572,7 @@ CustomElementRegistry& DOMWindow::ensureCustomElementRegistry()
 {
     if (!m_customElementRegistry)
         m_customElementRegistry = CustomElementRegistry::create(*this, scriptExecutionContext());
+    ASSERT(m_customElementRegistry->scriptExecutionContext() == document());
     return *m_customElementRegistry;
 }
 
