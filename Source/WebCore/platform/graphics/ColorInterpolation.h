@@ -46,7 +46,7 @@ std::pair<float, float> fixupHueComponentsPriorToInterpolation(HueInterpolationM
 
 // MARK: - Premultiplication-agnostic interpolation helpers.
 
-inline float interpolateComponetWithoutAccountingForNaN(float componentFromColor1, double color1Multiplier, float componentFromColor2, double color2Multiplier)
+inline float interpolateComponentWithoutAccountingForNaN(float componentFromColor1, double color1Multiplier, float componentFromColor2, double color2Multiplier)
 {
     return (componentFromColor1 * color1Multiplier) + (componentFromColor2 * color2Multiplier);
 }
@@ -58,7 +58,7 @@ inline float interpolateComponentAccountingForNaN(float componentFromColor1, dou
     if (std::isnan(componentFromColor2))
         return componentFromColor1;
 
-    return interpolateComponetWithoutAccountingForNaN(componentFromColor1, color1Multiplier, componentFromColor2, color2Multiplier);
+    return interpolateComponentWithoutAccountingForNaN(componentFromColor1, color1Multiplier, componentFromColor2, color2Multiplier);
 }
 
 template<typename InterpolationMethodColorSpace>
@@ -70,7 +70,7 @@ float interpolateHue(InterpolationMethodColorSpace interpolationMethodColorSpace
         return componentFromColor1;
 
     auto [fixedupComponent1, fixedupComponent2] = fixupHueComponentsPriorToInterpolation(interpolationMethodColorSpace.hueInterpolationMethod, componentFromColor1, componentFromColor2);
-    return interpolateComponetWithoutAccountingForNaN(fixedupComponent1, color1Multiplier, fixedupComponent2, color2Multiplier);
+    return interpolateComponentWithoutAccountingForNaN(fixedupComponent1, color1Multiplier, fixedupComponent2, color2Multiplier);
 }
 
 // MARK: - Premultiplied interpolation.
@@ -95,7 +95,7 @@ inline PremultipliedAlphaState interpolateAlphaPremulitplied(float alphaForColor
     if (std::isnan(alphaForColor2))
         return { alphaForColor1, alphaForColor1, alphaForColor1, alphaForColor1 };
 
-    auto interpolatedAlpha = interpolateComponetWithoutAccountingForNaN(alphaForColor1, color1Multiplier, alphaForColor2, color2Multiplier);
+    auto interpolatedAlpha = interpolateComponentWithoutAccountingForNaN(alphaForColor1, color1Multiplier, alphaForColor2, color2Multiplier);
     return { alphaForColor1, alphaForColor2, interpolatedAlpha, interpolatedAlpha };
 }
 
@@ -116,7 +116,7 @@ float interpolateComponentUsingPremultipliedAlpha(InterpolationMethodColorSpace 
         auto premultipliedComponent1 = colorComponents1[I] * interpolatedAlpha.alphaForPremultiplicationOfColor1;
         auto premultipliedComponent2 = colorComponents2[I] * interpolatedAlpha.alphaForPremultiplicationOfColor2;
 
-        auto premultipliedResult = interpolateComponetWithoutAccountingForNaN(premultipliedComponent1, color1Multiplier, premultipliedComponent2, color2Multiplier);
+        auto premultipliedResult = interpolateComponentWithoutAccountingForNaN(premultipliedComponent1, color1Multiplier, premultipliedComponent2, color2Multiplier);
 
         if (interpolatedAlpha.alphaForUnpremultiplication == 0.0f)
             return premultipliedResult;
