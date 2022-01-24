@@ -57,7 +57,7 @@ class GitHub(Scm):
                 generator=self,
                 metadata=dict(
                     issue=data.get('_links', {}).get('issue', {}).get('href'),
-                ), url='{}/pulls/{}'.format(self.repository.url, data['number']),
+                ), url='{}/pull/{}'.format(self.repository.url, data['number']),
             )
 
         def get(self, number):

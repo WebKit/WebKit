@@ -330,7 +330,7 @@ Rebased 'eng/pr-branch' on 'main!'
             captured.stdout.getvalue(),
             "Created the local development branch 'eng/pr-branch'!\n"
             "Created 'PR 1 | [Testing] Creating commits'!\n"
-            "https://github.example.com/WebKit/WebKit/pulls/1\n",
+            "https://github.example.com/WebKit/WebKit/pull/1\n",
         )
         self.assertEqual(captured.stderr.getvalue(), '')
         log = captured.root.log.getvalue().splitlines()
@@ -366,7 +366,7 @@ Rebased 'eng/pr-branch' on 'main!'
         self.assertEqual(
             captured.stdout.getvalue(),
             "Updated 'PR 1 | [Testing] Amending commits'!\n"
-            "https://github.example.com/WebKit/WebKit/pulls/1\n",
+            "https://github.example.com/WebKit/WebKit/pull/1\n",
         )
         self.assertEqual(captured.stderr.getvalue(), '')
         log = captured.root.log.getvalue().splitlines()
@@ -408,7 +408,7 @@ Rebased 'eng/pr-branch' on 'main!'
             "'eng/pr-branch' is already associated with 'PR 1 | [Testing] Creating commits', which is closed.\n"
             'Would you like to create a new pull-request? (Yes/[No]): \n'
             "Updated 'PR 1 | [Testing] Amending commits'!\n"
-            "https://github.example.com/WebKit/WebKit/pulls/1\n",
+            "https://github.example.com/WebKit/WebKit/pull/1\n",
         )
         self.assertEqual(captured.stderr.getvalue(), '')
         log = captured.root.log.getvalue().splitlines()
