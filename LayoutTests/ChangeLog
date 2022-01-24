@@ -1,3 +1,29 @@
+2022-01-24  Simon Fraser  <simon.fraser@apple.com>
+
+        Add pixel tolerance to some compositing tests
+        https://bugs.webkit.org/show_bug.cgi?id=235462
+
+        Reviewed by Darin Adler.
+
+        Add pixel tolerance to tests whose output is slightly different when accelerated drawing
+        is enabled in the iOS simulator, for bug 231828.
+
+        * compositing/clipping/border-radius-async-overflow-non-stacking.html:
+        * compositing/geometry/css-clip-oversize.html:
+        * compositing/geometry/scroller-with-clipping-and-foreground-layers.html:
+        * compositing/overlap-blending/children-opacity-huge.html:
+        * compositing/overlap-blending/children-opacity-no-overlap.html:
+        * compositing/patterns/direct-pattern-compositing-add-text.html:
+        * compositing/patterns/direct-pattern-compositing-contain.html:
+        * compositing/patterns/direct-pattern-compositing-cover.html:
+        * compositing/patterns/direct-pattern-compositing-padding.html:
+        * compositing/patterns/direct-pattern-compositing-position.html:
+        * compositing/patterns/direct-pattern-compositing-size.html:
+        * compositing/patterns/direct-pattern-compositing.html:
+        * compositing/reflections/nested-reflection-opacity2.html:
+        * compositing/reflections/opacity-in-reflection.html:
+        * compositing/scrolling/async-overflow-scrolling/border-radius-on-scroll-container.html:
+
 2022-01-24  Joseph Griego  <jgriego@igalia.com>
 
         [Shadow Realms] Use WebCore module loaders for shadow realm importValue
