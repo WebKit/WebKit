@@ -1,3 +1,18 @@
+2022-01-24  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        texImage2d fails to set same video frame to multiple textures
+        https://bugs.webkit.org/show_bug.cgi?id=203148
+        <rdar://problem/56436745>
+
+        Reviewed by Darin Adler.
+
+        Add a test for testing the bug in which some video texture uploads
+        were skipped errorneously.
+
+        * webgl/pending/conformance/textures/misc/tex-image-video-repeated.html: Added.
+        * webgl/pending/conformance/textures/misc/tex-image-video-repeated-expected.txt: Added.
+        * webgl/pending/resources/webgl_test_files/conformance/textures/misc/tex-image-video-repeated.html: Added.
+
 2022-01-24  Antoine Quint  <graouts@webkit.org>
 
         [Web Animations] add support for animation-composition CSS property

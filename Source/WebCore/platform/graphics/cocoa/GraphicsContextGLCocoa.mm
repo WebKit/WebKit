@@ -820,6 +820,12 @@ RefPtr<GraphicsLayerContentsDisplayDelegate> GraphicsContextGLCocoa::layerConten
     return nullptr;
 }
 
+void GraphicsContextGLCocoa::invalidateKnownTextureContent(GCGLuint texture)
+{
+    if (m_cv)
+        m_cv->invalidateKnownTextureContent(texture);
+}
+
 }
 
 #endif // ENABLE(WEBGL)

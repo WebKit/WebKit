@@ -1013,7 +1013,6 @@ void GraphicsContextGLOpenGL::framebufferTexture2D(GCGLenum target, GCGLenum att
         return;
 
     ::glFramebufferTexture2DEXT(target, attachment, textarget, texture, level);
-    m_state.textureSeedCount.add(m_state.currentBoundTexture());
 }
 
 void GraphicsContextGLOpenGL::frontFace(GCGLenum mode)
@@ -2193,7 +2192,6 @@ void GraphicsContextGLOpenGL::texSubImage2D(GCGLenum target, GCGLint level, GCGL
 
     // FIXME: we will need to deal with PixelStore params when dealing with image buffers that differ from the subimage size.
     ::glTexSubImage2D(target, level, xoff, yoff, width, height, format, type, pixels.data);
-    m_state.textureSeedCount.add(m_state.currentBoundTexture());
 }
 
 void GraphicsContextGLOpenGL::compressedTexImage2D(GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, GCGLint border, GCGLsizei imageSize, GCGLSpan<const GCGLvoid> data)
@@ -2202,7 +2200,6 @@ void GraphicsContextGLOpenGL::compressedTexImage2D(GCGLenum target, GCGLint leve
         return;
 
     ::glCompressedTexImage2D(target, level, internalformat, width, height, border, imageSize, data.data);
-    m_state.textureSeedCount.add(m_state.currentBoundTexture());
 }
 
 void GraphicsContextGLOpenGL::compressedTexSubImage2D(GCGLenum target, GCGLint level, GCGLint xoffset, GCGLint yoffset, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLsizei imageSize, GCGLSpan<const GCGLvoid> data)
@@ -2211,7 +2208,6 @@ void GraphicsContextGLOpenGL::compressedTexSubImage2D(GCGLenum target, GCGLint l
         return;
 
     ::glCompressedTexSubImage2D(target, level, xoffset, yoffset, width, height, format, imageSize, data.data);
-    m_state.textureSeedCount.add(m_state.currentBoundTexture());
 }
 
 PlatformGLObject GraphicsContextGLOpenGL::createBuffer()
@@ -2267,7 +2263,6 @@ PlatformGLObject GraphicsContextGLOpenGL::createTexture()
 
     GLuint o = 0;
     glGenTextures(1, &o);
-    m_state.textureSeedCount.add(o);
     return o;
 }
 
@@ -2327,7 +2322,6 @@ void GraphicsContextGLOpenGL::deleteTexture(PlatformGLObject texture)
         return keyValue.value.first == texture;
     });
     glDeleteTextures(1, &texture);
-    m_state.textureSeedCount.removeAll(texture);
 }
 
 void GraphicsContextGLOpenGL::synthesizeGLError(GCGLenum error)
@@ -2363,7 +2357,6 @@ void GraphicsContextGLOpenGL::texImage2DDirect(GCGLenum target, GCGLint level, G
         return;
 
     ::glTexImage2D(target, level, internalformat, width, height, border, format, type, pixels);
-    m_state.textureSeedCount.add(m_state.currentBoundTexture());
 }
 
 void GraphicsContextGLOpenGL::drawArraysInstanced(GCGLenum mode, GCGLint first, GCGLsizei count, GCGLsizei primcount)
@@ -2510,7 +2503,6 @@ void GraphicsContextGLOpenGL::texStorage2D(GCGLenum target, GCGLsizei levels, GC
         return;
 
     ::glTexStorage2D(target, levels, internalformat, width, height);
-    m_state.textureSeedCount.add(m_state.currentBoundTexture());
 }
 
 void GraphicsContextGLOpenGL::texStorage3D(GCGLenum target, GCGLsizei levels, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, GCGLsizei depth)
@@ -2519,7 +2511,6 @@ void GraphicsContextGLOpenGL::texStorage3D(GCGLenum target, GCGLsizei levels, GC
         return;
 
     ::glTexStorage3D(target, levels, internalformat, width, height, depth);
-    m_state.textureSeedCount.add(m_state.currentBoundTexture());
 }
 #else
 void GraphicsContextGLOpenGL::getInternalformativ(GCGLenum, GCGLenum, GCGLenum, GCGLSpan<GCGLint>)

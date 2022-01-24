@@ -412,8 +412,6 @@ public:
 
     void simulateEventForTesting(SimulatedEventForTesting) override;
 
-    unsigned textureSeed(GCGLuint texture) { return m_state.textureSeedCount.count(texture); }
-
     void prepareForDisplay() override;
 
 protected:

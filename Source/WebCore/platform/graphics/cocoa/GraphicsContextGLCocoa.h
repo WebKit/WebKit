@@ -80,6 +80,10 @@ public:
 protected:
     GraphicsContextGLCocoa(WebCore::GraphicsContextGLAttributes&&, ProcessIdentity&& resourceOwner);
     bool isValid() const;
+
+    // GraphicsContextGLANGLE overrides.
+    void invalidateKnownTextureContent(GCGLuint) final;
+
 #if ENABLE(VIDEO)
     std::unique_ptr<GraphicsContextGLCVCocoa> m_cv;
 #endif
