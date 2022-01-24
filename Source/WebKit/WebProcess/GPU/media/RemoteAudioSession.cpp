@@ -141,11 +141,7 @@ void RemoteAudioSession::setIsPlayingToBluetoothOverride(std::optional<bool> val
 
 AudioSession::CategoryType RemoteAudioSession::category() const
 {
-#if PLATFORM(COCOA)
     return m_category;
-#else
-    return AudioSession::CategoryType::None;
-#endif
 }
 
 void RemoteAudioSession::configurationChanged(RemoteAudioSessionConfiguration&& configuration)

@@ -28,9 +28,11 @@
 #if PLATFORM(COCOA)
 
 #include "AudioHardwareListener.h"
+#include "AudioSession.h"
 #include "NowPlayingManager.h"
 #include "PlatformMediaSessionManager.h"
 #include "RemoteCommandListener.h"
+#include <wtf/RunLoop.h>
 
 namespace WebCore {
 
@@ -106,6 +108,8 @@ private:
     void audioHardwareDidBecomeInactive() final { }
     void audioOutputDeviceChanged() final;
 
+    void possiblyChangeAudioCategory();
+
     bool m_nowPlayingActive { false };
     bool m_registeredAsNowPlayingApplication { false };
     bool m_haveEverRegisteredAsNowPlayingApplication { false };
@@ -121,6 +125,10 @@ private:
 
     AudioHardwareListener::BufferSizeRange m_supportedAudioHardwareBufferSizes;
     size_t m_defaultBufferSize;
+
+    RunLoop::Timer<MediaSessionManagerCocoa> m_delayCategoryChangeTimer;
+    AudioSession::CategoryType m_previousCategory { AudioSession::CategoryType::None };
+    bool m_previousHadAudibleAudioOrVideoMediaType { false };
 };
 
 }

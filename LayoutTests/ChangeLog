@@ -1,3 +1,19 @@
+2022-01-24  Eric Carlson  <eric.carlson@apple.com>
+
+        REGRESSION (iOS 15): HTMLAudioElement fails to load new audio when device is locked or safari is in background
+        https://bugs.webkit.org/show_bug.cgi?id=229688
+        <rdar://problem/82554226>
+
+        Reviewed by Jer Noble.
+
+        * fast/mediasession/metadata/audio-track-enabled.html: Wait longer for the audio session
+        category to be reset.
+        * media/audio-session-category-expected.txt: Added.
+        * media/audio-session-category.html: Added.
+        * platform/gtk/TestExpectations: Skip new test.
+        * platform/mac-wk1/TestExpectations: Skip new test, MediaStream isn't supported
+        on WK1.
+
 2022-01-24  Youenn Fablet  <youenn@apple.com>
 
         [ iOS Release ] fast/mediastream/mediaElement-gc.html is a flaky failure

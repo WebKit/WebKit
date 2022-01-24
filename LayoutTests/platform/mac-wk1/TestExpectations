@@ -64,6 +64,7 @@ http/tests/ssl/media-stream
 inspector/page/overrideSetting-MockCaptureDevicesEnabled.html [ Skip ]
 http/tests/navigation/page-cache-getUserMedia-pending-promise.html [ Skip ]
 http/tests/navigation/page-cache-mediastream.html [ Skip ]
+media/audio-session-category.html [ Skip ]
 
 http/wpt/mediarecorder [ Skip ]
 imported/w3c/web-platform-tests/mediacapture-record [ Skip ]
