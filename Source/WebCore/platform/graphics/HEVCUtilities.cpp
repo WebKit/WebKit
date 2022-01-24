@@ -238,7 +238,7 @@ String createHEVCCodecParametersString(const HEVCParameters& parameters)
         , compatibilityFlags.toString());
 }
 
-std::optional<HEVCParameters> parseHEVCDecoderConfigurationRecord(const FourCC& codecCode, const SharedBuffer& buffer)
+std::optional<HEVCParameters> parseHEVCDecoderConfigurationRecord(FourCC codecCode, const SharedBuffer& buffer)
 {
     // ISO/IEC 14496-15:2014
     // 8.3.3.1 HEVC decoder configuration record
@@ -248,9 +248,9 @@ std::optional<HEVCParameters> parseHEVCDecoderConfigurationRecord(const FourCC& 
         return std::nullopt;
 
     HEVCParameters parameters;
-    if (codecCode == FourCC("hev1"))
+    if (codecCode == "hev1")
         parameters.codec = HEVCParameters::Codec::Hev1;
-    else if (codecCode == FourCC("hvc1"))
+    else if (codecCode == "hvc1")
         parameters.codec = HEVCParameters::Codec::Hvc1;
     else
         return std::nullopt;

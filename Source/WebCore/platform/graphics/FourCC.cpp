@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,28 +28,17 @@
 
 namespace WebCore {
 
-std::optional<FourCC> FourCC::fromString(const String& stringValue)
+std::optional<FourCC> FourCC::fromString(StringView string)
 {
-    auto asciiValue = stringValue.ascii();
-    if (asciiValue.length() != 4)
+    if (string.length() != 4 || !string.isAllASCII())
         return std::nullopt;
-
-    const char* data = asciiValue.data();
-    ASSERT(asciiValue.data());
-    uint32_t value = data[0] << 24 | data[1] << 16 | data[2] << 8 | data[3];
-    return FourCC(value);
-}
-
-String FourCC::toString() const
-{
-    Vector<LChar, 4> data = {
-        LChar(value >> 24),
-        LChar((value >> 16) & 0xFF),
-        LChar((value >> 8) & 0xFF),
-        LChar(value & 0xFF),
-    };
-
-    return String::adopt(WTFMove(data));
+    return { { {
+        static_cast<char>(string[0]),
+        static_cast<char>(string[1]),
+        static_cast<char>(string[2]),
+        static_cast<char>(string[3]),
+        '\0'
+    } } };
 }
 
 }

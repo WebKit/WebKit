@@ -91,6 +91,9 @@ ISOWebVTTCue::ISOWebVTTCue(MediaTime&& presentationTime, MediaTime&& duration, S
 {
 }
 
+ISOWebVTTCue::ISOWebVTTCue(ISOWebVTTCue&&) = default;
+ISOWebVTTCue::~ISOWebVTTCue() = default;
+
 bool ISOWebVTTCue::parse(DataView& view, unsigned& offset)
 {
     if (!ISOBox::parse(view, offset))
@@ -110,7 +113,7 @@ bool ISOWebVTTCue::parse(DataView& view, unsigned& offset)
         else if (stringBox.boxType() == vttPayloadBoxType())
             m_cueText = stringBox.contents();
         else
-            LOG(Media, "ISOWebVTTCue::ISOWebVTTCue - skipping box id = \"%s\", size = %zu", stringBox.boxType().toString().utf8().data(), (size_t)stringBox.size());
+            LOG(Media, "ISOWebVTTCue::ISOWebVTTCue - skipping box id = \"%s\", size = %" PRIu64, stringBox.boxType().string().data(), stringBox.size());
     }
     return true;
 }

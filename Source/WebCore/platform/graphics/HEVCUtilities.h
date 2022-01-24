@@ -55,7 +55,7 @@ struct HEVCParameters {
 };
 
 WEBCORE_EXPORT std::optional<HEVCParameters> parseHEVCCodecParameters(StringView);
-WEBCORE_EXPORT std::optional<HEVCParameters> parseHEVCDecoderConfigurationRecord(const FourCC&, const SharedBuffer&);
+WEBCORE_EXPORT std::optional<HEVCParameters> parseHEVCDecoderConfigurationRecord(FourCC, const SharedBuffer&);
 WEBCORE_EXPORT String createHEVCCodecParametersString(const HEVCParameters&);
 
 struct DoViParameters {

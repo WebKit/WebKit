@@ -502,11 +502,11 @@ void InbandTextTrackPrivateAVF::processNativeSamples(CFArrayRef nativeSamples, c
         auto type = peekResult.value().first;
         auto boxLength = peekResult.value().second;
         if (boxLength > view->byteLength()) {
-            ERROR_LOG(LOGIDENTIFIER, "chunk  type = '", type.toString(), "', size = ", (size_t)boxLength, " larger than buffer length!");
+            ERROR_LOG(LOGIDENTIFIER, "chunk  type = '", type, "', size = ", boxLength, " larger than buffer length!");
             continue;
         }
 
-        INFO_LOG(LOGIDENTIFIER, "chunk  type = '", type.toString(), "', size = ", (size_t)boxLength);
+        INFO_LOG(LOGIDENTIFIER, "chunk  type = '", type, "', size = ", boxLength);
 
         do {
             if (m_haveReportedVTTHeader || !formatDescription)

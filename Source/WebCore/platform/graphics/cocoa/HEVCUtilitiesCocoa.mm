@@ -48,7 +48,7 @@ std::optional<MediaCapabilitiesInfo> validateHEVCParameters(const HEVCParameters
         if (!PAL::isAVFoundationFrameworkAvailable() || !PAL::canLoad_AVFoundation_AVVideoCodecTypeHEVCWithAlpha())
             return std::nullopt;
 
-        auto codecCode = FourCC::fromString(AVVideoCodecTypeHEVCWithAlpha);
+        auto codecCode = FourCC::fromString(String { AVVideoCodecTypeHEVCWithAlpha });
         if (!codecCode)
             return std::nullopt;
 
