@@ -1428,6 +1428,10 @@ AccessibilityObjectInclusion AccessibilityObject::accessibilityPlatformIncludesO
     if (parent->isPasswordField() || parent->isTextControl())
         return AccessibilityObjectInclusion::IgnoreObject;
 
+    // We expose the slider as a whole but not its value indicator.
+    if (roleValue() == AccessibilityRole::SliderThumb)
+        return AccessibilityObjectInclusion::IgnoreObject;
+
     // List items inheriting presentational are ignored, but their content exposed.
     // Since we expose text in the parent, we need to expose presentational list items
     // with a different role (section).
