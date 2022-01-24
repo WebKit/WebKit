@@ -277,6 +277,18 @@ void MediaPlayerPrivateMediaStreamAVFObjC::enqueueVideoSample(MediaSample& sampl
     m_sampleBufferDisplayLayer->enqueueSample(sample);
 }
 
+void MediaPlayerPrivateMediaStreamAVFObjC::reenqueueCurrentVideoSampleIfNeeded()
+{
+    if (!m_currentVideoSampleLock.tryLock())
+        return;
+    Locker locker { AdoptLock, m_currentVideoSampleLock };
+
+    if (!m_currentVideoSample && !m_imagePainter.mediaSample)
+        return;
+
+    enqueueVideoSample(m_currentVideoSample ? *m_currentVideoSample : *m_imagePainter.mediaSample);
+}
+
 void MediaPlayerPrivateMediaStreamAVFObjC::processNewVideoSample(MediaSample& sample, VideoSampleMetadata metadata, Seconds presentationTime)
 {
     if (!isMainThread()) {
@@ -398,7 +410,10 @@ void MediaPlayerPrivateMediaStreamAVFObjC::layersAreInitialized(IntSize size, bo
         return;
     }
 
-    updateRenderingMode();
+    scheduleRenderingModeChanged();
+
+    m_sampleBufferDisplayLayer->updateBoundsAndPosition(m_sampleBufferDisplayLayer->rootLayer().bounds, m_videoRotation);
+    m_sampleBufferDisplayLayer->updateDisplayMode(m_displayMode < PausedImage, hideRootLayer());
     m_shouldUpdateDisplayLayer = true;
 
     m_videoLayerManager->setVideoLayer(m_sampleBufferDisplayLayer->rootLayer(), size);
@@ -416,7 +431,7 @@ void MediaPlayerPrivateMediaStreamAVFObjC::destroyLayers()
     if (m_sampleBufferDisplayLayer)
         m_sampleBufferDisplayLayer = nullptr;
 
-    updateRenderingMode();
+    scheduleRenderingModeChanged();
     
     m_videoLayerManager->didDestroyVideoLayer();
 }
@@ -551,6 +566,7 @@ void MediaPlayerPrivateMediaStreamAVFObjC::play()
     if (m_sampleBufferDisplayLayer)
         m_sampleBufferDisplayLayer->play();
     updateDisplayMode();
+    reenqueueCurrentVideoSampleIfNeeded();
 
     scheduleDeferredTask([this] {
         updateReadyState();
@@ -622,6 +638,7 @@ void MediaPlayerPrivateMediaStreamAVFObjC::setPageIsVisible(bool isVisible)
 
     m_isPageVisible = isVisible;
     flushRenderers();
+    reenqueueCurrentVideoSampleIfNeeded();
 }
 
 void MediaPlayerPrivateMediaStreamAVFObjC::setVisibleForCanvas(bool)
@@ -711,14 +728,17 @@ void MediaPlayerPrivateMediaStreamAVFObjC::activeStatusChanged()
 
 void MediaPlayerPrivateMediaStreamAVFObjC::updateRenderingMode()
 {
-    if (!updateDisplayMode())
-        return;
+    if (updateDisplayMode())
+        scheduleRenderingModeChanged();
+}
 
+void MediaPlayerPrivateMediaStreamAVFObjC::scheduleRenderingModeChanged()
+{
     scheduleDeferredTask([this] {
         if (m_player)
             m_player->renderingModeChanged();
+        reenqueueCurrentVideoSampleIfNeeded();
     });
-
 }
 
 void MediaPlayerPrivateMediaStreamAVFObjC::characteristicsChanged()
