@@ -90,7 +90,7 @@ public:
 #endif
 
 private:
-    AccessibilityAtspi() = default;
+    AccessibilityAtspi();
 
     struct PendingRootRegistration {
         Ref<AccessibilityRootAtspi> root;
@@ -109,7 +109,6 @@ private:
     void addToCacheIfNeeded(AccessibilityObjectAtspi&);
     void addToCacheIfPending(AccessibilityObjectAtspi&);
     void removeAccessible(AccessibilityObjectAtspi&);
-    void scheduleCacheUpdate();
     void cacheUpdateTimerFired();
     void cacheClearTimerFired();
 
@@ -139,8 +138,8 @@ private:
     unsigned m_cacheID { 0 };
     HashMap<String, AccessibilityObjectAtspi*> m_cache;
     ListHashSet<RefPtr<AccessibilityObjectAtspi>> m_cacheUpdateList;
-    std::unique_ptr<RunLoop::Timer<AccessibilityAtspi>> m_cacheUpdateTimer;
-    std::unique_ptr<RunLoop::Timer<AccessibilityAtspi>> m_cacheClearTimer;
+    RunLoop::Timer<AccessibilityAtspi> m_cacheUpdateTimer;
+    RunLoop::Timer<AccessibilityAtspi> m_cacheClearTimer;
 #if ENABLE(DEVELOPER_MODE)
     HashMap<void*, NotificationObserver> m_notificationObservers;
 #endif

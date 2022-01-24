@@ -38,6 +38,14 @@ AccessibilityAtspi& AccessibilityAtspi::singleton()
     return atspi;
 }
 
+AccessibilityAtspi::AccessibilityAtspi()
+    : m_cacheUpdateTimer(RunLoop::main(), this, &AccessibilityAtspi::cacheUpdateTimerFired)
+    , m_cacheClearTimer(RunLoop::main(), this, &AccessibilityAtspi::cacheClearTimerFired)
+{
+    m_cacheUpdateTimer.setPriority(RunLoopSourcePriority::RunLoopDispatcher);
+    m_cacheClearTimer.setPriority(RunLoopSourcePriority::ReleaseUnusedResourcesTimer);
+}
+
 void AccessibilityAtspi::connect(const String& busAddress)
 {
     if (busAddress.isEmpty())
@@ -191,7 +199,7 @@ void AccessibilityAtspi::addClient(const char* dbusName)
     if (!addResult.isNewEntry)
         return;
 
-    m_cacheClearTimer = nullptr;
+    m_cacheClearTimer.stop();
 
     addResult.iterator->value = g_dbus_connection_signal_subscribe(m_connection.get(), nullptr, "org.freedesktop.DBus", "NameOwnerChanged", nullptr, dbusName,
         G_DBUS_SIGNAL_FLAGS_MATCH_ARG0_NAMESPACE, [](GDBusConnection*, const gchar*, const gchar*, const gchar*, const gchar*, GVariant* parameters, gpointer userData) {
@@ -217,14 +225,8 @@ void AccessibilityAtspi::removeClient(const char* dbusName)
         return;
 
     m_cacheUpdateList.clear();
-    m_cacheUpdateTimer->stop();
-
-    if (!m_cacheClearTimer) {
-        m_cacheClearTimer = makeUnique<RunLoop::Timer<AccessibilityAtspi>>(RunLoop::current(), this, &AccessibilityAtspi::cacheClearTimerFired);
-        m_cacheClearTimer->setPriority(RunLoopSourcePriority::ReleaseUnusedResourcesTimer);
-    }
-
-    m_cacheClearTimer->startOneShot(10_s);
+    m_cacheUpdateTimer.stop();
+    m_cacheClearTimer.startOneShot(10_s);
 }
 
 bool AccessibilityAtspi::shouldEmitSignal(const char* interface, const char* name, const char* detail)
@@ -788,8 +790,8 @@ void AccessibilityAtspi::addToCacheIfPending(AccessibilityObjectAtspi& atspiObje
         return;
 
     addToCacheIfNeeded(atspiObject);
-    if (m_cacheUpdateTimer && m_cacheUpdateList.isEmpty())
-        m_cacheUpdateTimer = nullptr;
+    if (m_cacheUpdateList.isEmpty())
+        m_cacheUpdateTimer.stop();
 }
 
 void AccessibilityAtspi::cacheUpdateTimerFired()
@@ -798,22 +800,14 @@ void AccessibilityAtspi::cacheUpdateTimerFired()
         addToCacheIfNeeded(*m_cacheUpdateList.takeFirst());
 }
 
-void AccessibilityAtspi::scheduleCacheUpdate()
-{
-    if (!m_cacheUpdateTimer)
-        m_cacheUpdateTimer = makeUnique<RunLoop::Timer<AccessibilityAtspi>>(RunLoop::current(), this, &AccessibilityAtspi::cacheUpdateTimerFired);
-
-    if (!m_cacheUpdateTimer->isActive())
-        m_cacheUpdateTimer->startOneShot(0_s);
-}
-
 void AccessibilityAtspi::addAccessible(AccessibilityObjectAtspi& atspiObject)
 {
     if (!m_connection)
         return;
 
     m_cacheUpdateList.add(&atspiObject);
-    scheduleCacheUpdate();
+    if (!m_cacheUpdateTimer.isActive())
+        m_cacheUpdateTimer.startOneShot(0_s);
 }
 
 void AccessibilityAtspi::removeAccessible(AccessibilityObjectAtspi& atspiObject)
@@ -846,8 +840,8 @@ void AccessibilityAtspi::cacheClearTimerFired()
     m_cache.clear();
 
     RELEASE_ASSERT(m_cacheUpdateList.isEmpty());
-    m_cacheUpdateTimer = nullptr;
-    m_cacheClearTimer = nullptr;
+    m_cacheUpdateTimer.stop();
+    m_cacheClearTimer.stop();
 }
 
 namespace Accessibility {
