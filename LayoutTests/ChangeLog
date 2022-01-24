@@ -1,3 +1,12 @@
+2022-01-24  Antti Koivisto  <antti@apple.com>
+
+        [CSS Container Queries] Import WPT tests
+        https://bugs.webkit.org/show_bug.cgi?id=235508
+
+        Reviewed by Alexey Shvayka.
+
+        * TestExpectations:
+
 2022-01-24  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         texImage2d fails to set same video frame to multiple textures
