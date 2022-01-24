@@ -271,14 +271,14 @@ WTF_EXPORT_PRIVATE bool WTFIsDebuggerAttached(void);
 #elif !ENABLE(DEVELOPER_MODE) && !OS(DARWIN)
 #ifdef __cplusplus
 #define CRASH() std::abort()
-#define CRASH_UNDER_CONSTEXPR_CONTEXT() std::abort()
+#define CRASH_UNDER_CONSTEXPR_CONTEXT() WTFBreakpointTrapUnderConstexprContext()
 #else
 #define CRASH() abort()
-#define CRASH_UNDER_CONSTEXPR_CONTEXT() abort()
+#define CRASH_UNDER_CONSTEXPR_CONTEXT() WTFBreakpointTrapUnderConstexprContext()
 #endif // __cplusplus
 #else
 #define CRASH() WTFCrash()
-#define CRASH_UNDER_CONSTEXPR_CONTEXT() WTFCrash()
+#define CRASH_UNDER_CONSTEXPR_CONTEXT() WTFBreakpointTrapUnderConstexprContext()
 #endif
 
 #endif // !defined(CRASH)

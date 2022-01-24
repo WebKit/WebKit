@@ -1,5 +1,17 @@
 2022-01-24  Michael Catanzaro  <mcatanzaro@gnome.org>
 
+        REGRESION(r288200): [GTK][WPE] Build broken on Ubuntu 18.04
+        https://bugs.webkit.org/show_bug.cgi?id=235401
+
+        Reviewed by Adrian Perez de Castro.
+
+        This implements WTF_CRASH_UNDER_CONSTEXPR_CONTEXT() properly for compatibility with older
+        compilers.
+
+        * wtf/Assertions.h:
+
+2022-01-24  Michael Catanzaro  <mcatanzaro@gnome.org>
+
         Build failure with GCC 12: no matching function for call to 'end(LChar [7])'
         https://bugs.webkit.org/show_bug.cgi?id=235458
 
