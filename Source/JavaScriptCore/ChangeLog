@@ -1,3 +1,15 @@
+2022-01-24  Mark Lam  <mark.lam@apple.com>
+
+        Add FixedVector::clear(), contains(), find(), and findMatching().
+        https://bugs.webkit.org/show_bug.cgi?id=234855
+
+        Reviewed by Yusuke Suzuki.
+
+        Use FixedVector instead of Vector in DeferredWorkTimer::TicketData now that
+        the needed APIs have been added.
+
+        * runtime/DeferredWorkTimer.h:
+
 2022-01-24  Joseph Griego  <jgriego@igalia.com>
 
         [Shadow Realms] Use WebCore module loaders for shadow realm importValue

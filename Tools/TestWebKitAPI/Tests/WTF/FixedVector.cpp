@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -78,6 +78,46 @@ TEST(WTF_FixedVector, OverloadedOperatorAmpersand)
     vector[0] = Test();
 }
 
+TEST(WTF_FixedVector, ClearContainsAndFind)
+{
+    FixedVector<int> v;
+    EXPECT_TRUE(v.isEmpty());
+    v.clear();
+    EXPECT_TRUE(v.isEmpty());
+
+    v = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    EXPECT_EQ(10U, v.size());
+    EXPECT_FALSE(v.contains(1));
+    EXPECT_EQ(notFound, v.find(1));
+    v.clear();
+    EXPECT_TRUE(v.isEmpty());
+    EXPECT_FALSE(v.contains(1));
+    EXPECT_EQ(notFound, v.find(1));
+
+    v = { 3, 1, 2, 1, 1, 4, 2, 2, 1, 1, 3, 5 };
+    EXPECT_EQ(12U, v.size());
+    EXPECT_TRUE(v.contains(3));
+    EXPECT_TRUE(v.contains(4));
+    EXPECT_TRUE(v.contains(5));
+    EXPECT_FALSE(v.contains(6));
+    EXPECT_EQ(0U, v.find(3));
+    EXPECT_EQ(5U, v.find(4));
+    EXPECT_EQ(11U, v.find(5));
+    EXPECT_EQ(notFound, v.find(6));
+    EXPECT_TRUE(v == FixedVector<int>({ 3, 1, 2, 1, 1, 4, 2, 2, 1, 1, 3, 5 }));
+    v.clear();
+    EXPECT_EQ(0U, v.size());
+    EXPECT_FALSE(v.contains(3));
+    EXPECT_FALSE(v.contains(4));
+    EXPECT_FALSE(v.contains(5));
+    EXPECT_FALSE(v.contains(6));
+    EXPECT_EQ(notFound, v.find(3));
+    EXPECT_EQ(notFound, v.find(4));
+    EXPECT_EQ(notFound, v.find(5));
+    EXPECT_EQ(notFound, v.find(6));
+    EXPECT_TRUE(v == FixedVector<int>({ }));
+}
+
 TEST(WTF_FixedVector, Copy)
 {
     FixedVector<unsigned> vec1(3);
@@ -115,6 +155,21 @@ TEST(WTF_FixedVector, CopyAssign)
     vec1[2] = 42;
     EXPECT_EQ(42U, vec1[2]);
     EXPECT_EQ(2U, vec2[2]);
+}
+
+TEST(WTF_FixedVector, FindMatching)
+{
+    FixedVector<int> v;
+    EXPECT_TRUE(v.findMatching([](int) { return false; }) == notFound);
+    EXPECT_TRUE(v.findMatching([](int) { return true; }) == notFound);
+
+    v = { 3, 1, 2, 1, 2, 1, 2, 2, 1, 1, 1, 3 };
+    EXPECT_TRUE(v.findMatching([](int value) { return value > 3; }) == notFound);
+    EXPECT_TRUE(v.findMatching([](int) { return false; }) == notFound);
+    EXPECT_EQ(0U, v.findMatching([](int) { return true; }));
+    EXPECT_EQ(0U, v.findMatching([](int value) { return value <= 3; }));
+    EXPECT_EQ(1U, v.findMatching([](int value) { return value < 3; }));
+    EXPECT_EQ(2U, v.findMatching([](int value) { return value == 2; }));
 }
 
 TEST(WTF_FixedVector, Move)

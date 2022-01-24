@@ -1,3 +1,16 @@
+2022-01-24  Mark Lam  <mark.lam@apple.com>
+
+        Add FixedVector::clear(), contains(), find(), and findMatching().
+        https://bugs.webkit.org/show_bug.cgi?id=234855
+
+        Reviewed by Yusuke Suzuki.
+
+        * wtf/FixedVector.h:
+        (WTF::FixedVector::clear):
+        (WTF::FixedVector<T>::contains const):
+        (WTF::FixedVector<T>::findMatching const):
+        (WTF::FixedVector<T>::find const):
+
 2022-01-21  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Relax Date.parse requirement

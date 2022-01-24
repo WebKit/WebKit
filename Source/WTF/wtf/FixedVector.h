@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -127,6 +127,8 @@ public:
     T& last() { return (*this)[size() - 1]; }
     const T& last() const { return (*this)[size() - 1]; }
 
+    void clear() { m_storage = nullptr; }
+
     void fill(const T& val)
     {
         if (!m_storage)
@@ -151,6 +153,10 @@ public:
         return *m_storage == *other.m_storage;
     }
 
+    template<typename U> bool contains(const U&) const;
+    template<typename U> size_t find(const U&) const;
+    template<typename MatchFunction> size_t findMatching(const MatchFunction&) const;
+
     void swap(FixedVector<T>& other)
     {
         using std::swap;
@@ -167,6 +173,33 @@ private:
     std::unique_ptr<Storage> m_storage;
 };
 static_assert(sizeof(FixedVector<int>) == sizeof(int*));
+
+template<typename T>
+template<typename U>
+bool FixedVector<T>::contains(const U& value) const
+{
+    return find(value) != notFound;
+}
+
+template<typename T>
+template<typename MatchFunction>
+size_t FixedVector<T>::findMatching(const MatchFunction& matches) const
+{
+    for (size_t i = 0; i < size(); ++i) {
+        if (matches(at(i)))
+            return i;
+    }
+    return notFound;
+}
+
+template<typename T>
+template<typename U>
+size_t FixedVector<T>::find(const U& value) const
+{
+    return findMatching([&](auto& item) {
+        return item == value;
+    });
+}
 
 template<typename T>
 inline void swap(FixedVector<T>& a, FixedVector<T>& b)
