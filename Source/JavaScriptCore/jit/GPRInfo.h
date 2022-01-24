@@ -626,7 +626,7 @@ class GPRInfo {
 public:
     typedef GPRReg RegisterType;
     static constexpr unsigned numberOfRegisters = 16;
-    static constexpr unsigned numberOfArgumentRegisters = 8;
+    static constexpr unsigned numberOfArgumentRegisters = NUMBER_OF_ARGUMENT_REGISTERS;
 
     // These registers match the baseline JIT.
     static constexpr GPRReg callFrameRegister = ARM64Registers::fp;
@@ -825,7 +825,7 @@ class GPRInfo {
 public:
     typedef GPRReg RegisterType;
     static constexpr unsigned numberOfRegisters = 13;
-    static constexpr unsigned numberOfArgumentRegisters = 8;
+    static constexpr unsigned numberOfArgumentRegisters = NUMBER_OF_ARGUMENT_REGISTERS;
 
     static constexpr GPRReg callFrameRegister = RISCV64Registers::fp;
     static constexpr GPRReg numberTagRegister = RISCV64Registers::x25;

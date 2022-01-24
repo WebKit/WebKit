@@ -27,6 +27,7 @@
 #include "config.h"
 #include "YarrJIT.h"
 
+#include "CCallHelpers.h"
 #include "LinkBuffer.h"
 #include "Options.h"
 #include "VM.h"
@@ -185,10 +186,6 @@ std::tuple<BoyerMooreBitmap::Map, BoyerMooreFastCandidates> BoyerMooreInfo::crea
 
 template<class YarrJITRegs = YarrJITDefaultRegisters>
 class YarrGenerator final : public YarrJITInfo {
-
-#ifdef  JIT_UNICODE_EXPRESSIONS
-    const MacroAssembler::TrustedImm32 surrogateTagMask = MacroAssembler::TrustedImm32(0xfffffc00);
-#endif
 
 #if ENABLE(YARR_JIT_ALL_PARENS_EXPRESSIONS)
     struct ParenContextSizes {
@@ -603,7 +600,7 @@ class YarrGenerator final : public YarrJITInfo {
         m_jit.load16Unaligned(MacroAssembler::Address(m_regs.regUnicodeInputAndTrail), resultReg);
 
         // Is the character a leading surrogate?
-        m_jit.and32(YarrJITDefaultRegisters::surrogateTagMask, resultReg, m_regs.unicodeTemp);
+        m_jit.and32(m_regs.surrogateTagMask, resultReg, m_regs.unicodeTemp);
         notUnicode.append(m_jit.branch32(MacroAssembler::NotEqual, m_regs.unicodeTemp, m_regs.leadingSurrogateTag));
 
         // Is the input long enough to read a trailing surrogate?
@@ -612,7 +609,7 @@ class YarrGenerator final : public YarrJITInfo {
 
         // Is the character a trailing surrogate?
         m_jit.load16Unaligned(MacroAssembler::Address(m_regs.regUnicodeInputAndTrail), m_regs.regUnicodeInputAndTrail);
-        m_jit.and32(YarrJITDefaultRegisters::surrogateTagMask, m_regs.regUnicodeInputAndTrail, m_regs.unicodeTemp);
+        m_jit.and32(m_regs.surrogateTagMask, m_regs.regUnicodeInputAndTrail, m_regs.unicodeTemp);
         notUnicode.append(m_jit.branch32(MacroAssembler::NotEqual, m_regs.unicodeTemp, m_regs.trailingSurrogateTag));
 
         // Combine leading and trailing surrogates to produce a code point.
@@ -3961,57 +3958,71 @@ class YarrGenerator final : public YarrJITInfo {
 
     void generateEnter()
     {
+        auto pushInEnter = [&](GPRReg gpr) {
+            m_jit.push(gpr);
+            m_pushCountInEnter += 1;
+        };
+
+        auto pushPairInEnter = [&](GPRReg gpr1, GPRReg gpr2) {
+            m_jit.pushPair(gpr1, gpr2);
+            m_pushCountInEnter += 2;
+        };
+
 #if CPU(X86_64)
-        m_jit.push(X86Registers::ebp);
-        m_jit.move(MacroAssembler::stackPointerRegister, X86Registers::ebp);
+        UNUSED_VARIABLE(pushPairInEnter);
+        m_jit.emitFunctionPrologue();
 
         if (m_pattern.m_saveInitialStartValue)
-            m_jit.push(X86Registers::ebx);
+            pushInEnter(X86Registers::ebx);
 
 #if OS(WINDOWS)
-        m_jit.push(X86Registers::edi);
+        pushInEnter(X86Registers::edi);
 #endif
 #if ENABLE(YARR_JIT_ALL_PARENS_EXPRESSIONS)
         if (m_containsNestedSubpatterns) {
 #if OS(WINDOWS)
-            m_jit.push(X86Registers::esi);
+            pushInEnter(X86Registers::esi);
 #endif
-            m_jit.push(X86Registers::r12);
+            pushInEnter(X86Registers::r12);
         }
 #endif
 
         if (m_decodeSurrogatePairs) {
-            m_jit.push(X86Registers::r13);
-            m_jit.push(X86Registers::r14);
-            m_jit.push(X86Registers::r15);
+            pushInEnter(X86Registers::r13);
+            pushInEnter(X86Registers::r14);
+            pushInEnter(X86Registers::r15);
         }
 #if OS(WINDOWS)
         if (m_compileMode == JITCompileMode::IncludeSubpatterns)
-            m_jit.loadPtr(MacroAssembler::Address(X86Registers::ebp, 6 * sizeof(void*)), m_regs.output);
+            m_jit.loadPtr(MacroAssembler::Address(MacroAssembler::framePointerRegister, 6 * sizeof(void*)), m_regs.output);
         // rcx is the pointer to the allocated space for result in x64 Windows.
-        m_jit.push(X86Registers::ecx);
+        pushInEnter(X86Registers::ecx);
 #endif
 #elif CPU(ARM64)
+        UNUSED_VARIABLE(pushInEnter);
         if (!Options::useJITCage())
             m_jit.tagReturnAddress();
         if (m_decodeSurrogatePairs) {
             if (!Options::useJITCage())
-                m_jit.pushPair(MacroAssembler::framePointerRegister, MacroAssembler::linkRegister);
+                pushPairInEnter(MacroAssembler::framePointerRegister, MacroAssembler::linkRegister);
             m_jit.move(MacroAssembler::TrustedImm32(0x10000), m_regs.supplementaryPlanesBase);
             m_jit.move(MacroAssembler::TrustedImm32(0xd800), m_regs.leadingSurrogateTag);
             m_jit.move(MacroAssembler::TrustedImm32(0xdc00), m_regs.trailingSurrogateTag);
         }
 #elif CPU(ARM_THUMB2)
-        m_jit.push(ARMRegisters::r4);
-        m_jit.push(ARMRegisters::r5);
-        m_jit.push(ARMRegisters::r6);
-        m_jit.push(ARMRegisters::r8);
-        m_jit.push(ARMRegisters::r10);
+        UNUSED_VARIABLE(pushPairInEnter);
+        pushInEnter(ARMRegisters::r4);
+        pushInEnter(ARMRegisters::r5);
+        pushInEnter(ARMRegisters::r6);
+        pushInEnter(ARMRegisters::r8);
+        pushInEnter(ARMRegisters::r10);
 #elif CPU(RISCV64)
+        UNUSED_VARIABLE(pushInEnter);
         if (m_decodeSurrogatePairs)
-            m_jit.pushPair(MacroAssembler::framePointerRegister, MacroAssembler::linkRegister);
-#elif CPU(MIPS)
-        // Do nothing.
+            pushPairInEnter(MacroAssembler::framePointerRegister, MacroAssembler::linkRegister);
+#else
+        UNUSED_VARIABLE(pushInEnter);
+        UNUSED_VARIABLE(pushPairInEnter);
 #endif
     }
 
@@ -4052,7 +4063,7 @@ class YarrGenerator final : public YarrJITInfo {
 
         if (m_pattern.m_saveInitialStartValue)
             m_jit.pop(X86Registers::ebx);
-        m_jit.pop(X86Registers::ebp);
+        m_jit.emitFunctionEpilogue();
 #elif CPU(ARM64)
         if (m_decodeSurrogatePairs) {
             if (!Options::useJITCage())
@@ -4067,9 +4078,8 @@ class YarrGenerator final : public YarrJITInfo {
 #elif CPU(RISCV64)
         if (m_decodeSurrogatePairs)
             m_jit.popPair(MacroAssembler::framePointerRegister, MacroAssembler::linkRegister);
-#elif CPU(MIPS)
-        // Do nothing
 #endif
+
 #if CPU(ARM64E)
         if (Options::useJITCage())
             m_jit.farJump(MacroAssembler::TrustedImmPtr(retagCodePtr<void*, CFunctionPtrTag, OperationPtrTag>(&vmEntryToYarrJITAfter)), OperationPtrTag);
@@ -4086,7 +4096,7 @@ class YarrGenerator final : public YarrJITInfo {
     }
 
 public:
-    YarrGenerator(MacroAssembler& jit, const VM* vm, YarrCodeBlock* codeBlock, const YarrJITRegs& regs, YarrPattern& pattern, const String& patternString, CharSize charSize, JITCompileMode compileMode)
+    YarrGenerator(CCallHelpers& jit, const VM* vm, YarrCodeBlock* codeBlock, const YarrJITRegs& regs, YarrPattern& pattern, const String& patternString, CharSize charSize, JITCompileMode compileMode)
         : m_jit(jit)
         , m_vm(vm)
         , m_codeBlock(codeBlock)
@@ -4105,7 +4115,7 @@ public:
         m_boyerMooreData = static_cast<YarrBoyerMoyerData*>(m_codeBlock);
     }
 
-    YarrGenerator(MacroAssembler& jit, const VM* vm, YarrBoyerMoyerData* yarrBMData, const YarrJITRegs& regs, YarrPattern& pattern, const String& patternString, CharSize charSize, JITCompileMode compileMode)
+    YarrGenerator(CCallHelpers& jit, const VM* vm, YarrBoyerMoyerData* yarrBMData, const YarrJITRegs& regs, YarrPattern& pattern, const String& patternString, CharSize charSize, JITCompileMode compileMode)
         : m_jit(jit)
         , m_vm(vm)
         , m_codeBlock(nullptr)
@@ -4137,6 +4147,13 @@ public:
     void setStackChecker(StackCheck* stackChecker)
     {
         m_compilationThreadStackChecker = stackChecker;
+    }
+
+    template<typename OperationType>
+    static constexpr void functionChecks()
+    {
+        static_assert(FunctionTraits<OperationType>::cCallArity() == 5, "YarrJITCode takes 5 arguments");
+        static_assert(std::is_same<MatchingContextHolder*, typename FunctionTraits<OperationType>::template ArgumentType<4>>::value, "MatchingContextHolder* is expected as the function 5th argument");
     }
 
     void compile(YarrCodeBlock& codeBlock)
@@ -4191,14 +4208,25 @@ public:
         if (callFrameSizeInBytes) {
             // Check stack size
             m_jit.addPtr(MacroAssembler::TrustedImm32(-callFrameSizeInBytes), MacroAssembler::stackPointerRegister, m_regs.regT0);
+
+            // Make sure that the JITed functions have 5 parameters and that the 5th argument is a MatchingContextHolder*
+            functionChecks<YarrCodeBlock::YarrJITCode8>();
+            functionChecks<YarrCodeBlock::YarrJITCode16>();
+            functionChecks<YarrCodeBlock::YarrJITCodeMatchOnly8>();
+            functionChecks<YarrCodeBlock::YarrJITCodeMatchOnly16>();
 #if CPU(X86_64) && OS(WINDOWS)
             // matchingContext is the 5th argument, it is found on the stack.
             MacroAssembler::RegisterID matchingContext = m_regs.regT1;
-            m_jit.loadPtr(MacroAssembler::Address(X86Registers::ebp, 7 * sizeof(void*)), matchingContext);
+            m_jit.loadPtr(MacroAssembler::Address(MacroAssembler::framePointerRegister, 7 * sizeof(void*)), matchingContext);
 #elif CPU(ARM_THUMB2) || CPU(MIPS)
-            // matchingContext is the 5th argument, it is found on the stack.
+            // Not enough argument registers: try to load the 5th argument from the stack
             MacroAssembler::RegisterID matchingContext = m_regs.regT1;
-            m_jit.loadPtr(MacroAssembler::Address(MacroAssembler::stackPointerRegister, 4 * sizeof(void*)), matchingContext);
+
+            // The argument will be in an offset that depends on the arch and the number of registers we pushed into the stack
+            // POKE_ARGUMENT_OFFSET: MIPS reserves space in the stack for all arguments, so we add +4 offset
+            // m_pushCountInEnter: number of registers pushed into the stack (see generateEnter())
+            unsigned offset = POKE_ARGUMENT_OFFSET + m_pushCountInEnter;
+            m_jit.loadPtr(MacroAssembler::Address(MacroAssembler::stackPointerRegister, offset * sizeof(void*)), matchingContext);
 #else
             MacroAssembler::RegisterID matchingContext = m_regs.matchingContext;
 #endif
@@ -4618,7 +4646,7 @@ public:
     }
 
 private:
-    MacroAssembler& m_jit;
+    CCallHelpers& m_jit;
     const VM* m_vm;
     YarrCodeBlock* m_codeBlock;
     YarrBoyerMoyerData* m_boyerMooreData;
@@ -4672,6 +4700,12 @@ private:
     BacktrackingState m_backtrackingState;
     
     std::unique_ptr<YarrDisassembler> m_disassembler;
+
+    // Member is used to count the number of GPR pushed into the stack when
+    // entering JITed code. It is used to figure out if an function argument
+    // offset in the stack if there wasn't enough registers to pass it, e.g.,
+    // ARMv7 and MIPS only use 4 registers to pass function arguments.
+    unsigned m_pushCountInEnter { 0 };
 };
 
 static void dumpCompileFailure(JITFailureReason failure)
@@ -4706,7 +4740,7 @@ static void dumpCompileFailure(JITFailureReason failure)
 
 void jitCompile(YarrPattern& pattern, String& patternString, CharSize charSize, VM* vm, YarrCodeBlock& codeBlock, JITCompileMode mode)
 {
-    MacroAssembler masm;
+    CCallHelpers masm;
 
     ASSERT(mode == JITCompileMode::MatchOnly || mode == JITCompileMode::IncludeSubpatterns);
 
@@ -4727,7 +4761,7 @@ void jitCompile(YarrPattern& pattern, String& patternString, CharSize charSize, 
 #error "No support for inlined JIT'ing of RegExp.test for this CPU / OS combination."
 #endif
 
-void jitCompileInlinedTest(StackCheck* m_compilationThreadStackChecker, const String& patternString, OptionSet<Yarr::Flags> flags, CharSize charSize, const VM* vm, YarrBoyerMoyerData& boyerMooreData, MacroAssembler& jit, YarrJITRegisters& jitRegisters)
+void jitCompileInlinedTest(StackCheck* m_compilationThreadStackChecker, const String& patternString, OptionSet<Yarr::Flags> flags, CharSize charSize, const VM* vm, YarrBoyerMoyerData& boyerMooreData, CCallHelpers& jit, YarrJITRegisters& jitRegisters)
 {
     Yarr::ErrorCode errorCode;
     Yarr::YarrPattern pattern(patternString, flags, errorCode);

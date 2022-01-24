@@ -43,9 +43,10 @@
 
 namespace JSC {
 
-class VM;
+class CCallHelpers;
 class ExecutablePool;
 class MacroAssembler;
+class VM;
 
 namespace Yarr {
 
@@ -271,12 +272,12 @@ class YarrCodeBlock : public YarrBoyerMoyerData {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(YarrCodeBlock);
 
-    using YarrJITCode8 = SlowPathReturnType (*)(const LChar* input, UCPURegister start, UCPURegister length, int* output, MatchingContextHolder& matchingContext) YARR_CALL;
-    using YarrJITCode16 = SlowPathReturnType (*)(const UChar* input, UCPURegister start, UCPURegister length, int* output, MatchingContextHolder& matchingContext) YARR_CALL;
-    using YarrJITCodeMatchOnly8 = SlowPathReturnType (*)(const LChar* input, UCPURegister start, UCPURegister length, void*, MatchingContextHolder& matchingContext) YARR_CALL;
-    using YarrJITCodeMatchOnly16 = SlowPathReturnType (*)(const UChar* input, UCPURegister start, UCPURegister length, void*, MatchingContextHolder& matchingContext) YARR_CALL;
-
 public:
+    using YarrJITCode8 = SlowPathReturnType (*)(const LChar* input, UCPURegister start, UCPURegister length, int* output, MatchingContextHolder*) YARR_CALL;
+    using YarrJITCode16 = SlowPathReturnType (*)(const UChar* input, UCPURegister start, UCPURegister length, int* output, MatchingContextHolder*) YARR_CALL;
+    using YarrJITCodeMatchOnly8 = SlowPathReturnType (*)(const LChar* input, UCPURegister start, UCPURegister length, void*, MatchingContextHolder*) YARR_CALL;
+    using YarrJITCodeMatchOnly16 = SlowPathReturnType (*)(const UChar* input, UCPURegister start, UCPURegister length, void*, MatchingContextHolder*) YARR_CALL;
+
     YarrCodeBlock() = default;
 
     void setFallBackWithFailureReason(JITFailureReason failureReason) { m_failureReason = failureReason; }
@@ -326,42 +327,42 @@ public:
     InlineStats& get8BitInlineStats() { return m_matchOnly8Stats; }
     InlineStats& get16BitInlineStats() { return  m_matchOnly16Stats; }
 
-    MatchResult execute(const LChar* input, unsigned start, unsigned length, int* output, MatchingContextHolder& matchingContext)
+    MatchResult execute(const LChar* input, unsigned start, unsigned length, int* output, MatchingContextHolder* matchingContext)
     {
         ASSERT(has8BitCode());
 #if CPU(ARM64E)
         if (Options::useJITCage())
-            return MatchResult(vmEntryToYarrJIT(input, start, length, output, &matchingContext, retagCodePtr<Yarr8BitPtrTag, YarrEntryPtrTag>(m_ref8.code().executableAddress())));
+            return MatchResult(vmEntryToYarrJIT(input, start, length, output, matchingContext, retagCodePtr<Yarr8BitPtrTag, YarrEntryPtrTag>(m_ref8.code().executableAddress())));
 #endif
         return MatchResult(untagCFunctionPtr<YarrJITCode8, Yarr8BitPtrTag>(m_ref8.code().executableAddress())(input, start, length, output, matchingContext));
     }
 
-    MatchResult execute(const UChar* input, unsigned start, unsigned length, int* output, MatchingContextHolder& matchingContext)
+    MatchResult execute(const UChar* input, unsigned start, unsigned length, int* output, MatchingContextHolder* matchingContext)
     {
         ASSERT(has16BitCode());
 #if CPU(ARM64E)
         if (Options::useJITCage())
-            return MatchResult(vmEntryToYarrJIT(input, start, length, output, &matchingContext, retagCodePtr<Yarr16BitPtrTag, YarrEntryPtrTag>(m_ref16.code().executableAddress())));
+            return MatchResult(vmEntryToYarrJIT(input, start, length, output, matchingContext, retagCodePtr<Yarr16BitPtrTag, YarrEntryPtrTag>(m_ref16.code().executableAddress())));
 #endif
         return MatchResult(untagCFunctionPtr<YarrJITCode16, Yarr16BitPtrTag>(m_ref16.code().executableAddress())(input, start, length, output, matchingContext));
     }
 
-    MatchResult execute(const LChar* input, unsigned start, unsigned length, MatchingContextHolder& matchingContext)
+    MatchResult execute(const LChar* input, unsigned start, unsigned length, MatchingContextHolder* matchingContext)
     {
         ASSERT(has8BitCodeMatchOnly());
 #if CPU(ARM64E)
         if (Options::useJITCage())
-            return MatchResult(vmEntryToYarrJIT(input, start, length, nullptr, &matchingContext, retagCodePtr<YarrMatchOnly8BitPtrTag, YarrEntryPtrTag>(m_matchOnly8.code().executableAddress())));
+            return MatchResult(vmEntryToYarrJIT(input, start, length, nullptr, matchingContext, retagCodePtr<YarrMatchOnly8BitPtrTag, YarrEntryPtrTag>(m_matchOnly8.code().executableAddress())));
 #endif
         return MatchResult(untagCFunctionPtr<YarrJITCodeMatchOnly8, YarrMatchOnly8BitPtrTag>(m_matchOnly8.code().executableAddress())(input, start, length, nullptr, matchingContext));
     }
 
-    MatchResult execute(const UChar* input, unsigned start, unsigned length, MatchingContextHolder& matchingContext)
+    MatchResult execute(const UChar* input, unsigned start, unsigned length, MatchingContextHolder* matchingContext)
     {
         ASSERT(has16BitCodeMatchOnly());
 #if CPU(ARM64E)
         if (Options::useJITCage())
-            return MatchResult(vmEntryToYarrJIT(input, start, length, nullptr, &matchingContext, retagCodePtr<YarrMatchOnly16BitPtrTag, YarrEntryPtrTag>(m_matchOnly16.code().executableAddress())));
+            return MatchResult(vmEntryToYarrJIT(input, start, length, nullptr, matchingContext, retagCodePtr<YarrMatchOnly16BitPtrTag, YarrEntryPtrTag>(m_matchOnly16.code().executableAddress())));
 #endif
         return MatchResult(untagCFunctionPtr<YarrJITCodeMatchOnly16, YarrMatchOnly16BitPtrTag>(m_matchOnly16.code().executableAddress())(input, start, length, nullptr, matchingContext));
     }
@@ -439,7 +440,7 @@ void jitCompile(YarrPattern&, String& patternString, CharSize, VM*, YarrCodeBloc
 
 class YarrJITRegisters;
 
-void jitCompileInlinedTest(StackCheck*, const String&, OptionSet<Yarr::Flags>, CharSize, const VM*, YarrBoyerMoyerData&, MacroAssembler&, YarrJITRegisters&);
+void jitCompileInlinedTest(StackCheck*, const String&, OptionSet<Yarr::Flags>, CharSize, const VM*, YarrBoyerMoyerData&, CCallHelpers&, YarrJITRegisters&);
 #endif
 
 } } // namespace JSC::Yarr

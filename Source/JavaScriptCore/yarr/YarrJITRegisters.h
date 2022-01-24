@@ -206,6 +206,7 @@ public:
     const MacroAssembler::TrustedImm32 supplementaryPlanesBase = MacroAssembler::TrustedImm32(0x10000);
     const MacroAssembler::TrustedImm32 leadingSurrogateTag = MacroAssembler::TrustedImm32(0xd800);
     const MacroAssembler::TrustedImm32 trailingSurrogateTag = MacroAssembler::TrustedImm32(0xdc00);
+    const MacroAssembler::TrustedImm32 surrogateTagMask = MacroAssembler::TrustedImm32(0xfffffc00);
 };
 #endif
 
