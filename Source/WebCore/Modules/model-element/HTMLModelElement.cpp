@@ -391,7 +391,7 @@ void HTMLModelElement::dragDidEnd(MouseEvent& event)
 void HTMLModelElement::getCamera(CameraPromise&& promise)
 {
     if (!m_modelPlayer) {
-        promise.reject();
+        promise.reject(Exception { AbortError });
         return;
     }
 
@@ -406,7 +406,7 @@ void HTMLModelElement::getCamera(CameraPromise&& promise)
 void HTMLModelElement::setCamera(HTMLModelElementCamera camera, DOMPromiseDeferred<void>&& promise)
 {
     if (!m_modelPlayer) {
-        promise.reject();
+        promise.reject(Exception { AbortError });
         return;
     }
 

@@ -107,6 +107,9 @@ fast/dom/Window/slow-unload-handler-only-frame-is-stopped.html
 model-element/model-element-contents-layer-updates-with-clipping.html [ Skip ]
 model-element/model-element-contents-layer-updates.html [ Skip ]
 
+# This test requires ARQL SPIs not yet available to OpenSource builds.
+model-element/model-element-camera.html [ Skip ]
+
 # Accessibility tests for notifications that don't exist or aren't needed on Mac OS X.
 accessibility/aria-checkbox-sends-notification.html
 accessibility/aria-switch-sends-notification.html

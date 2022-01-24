@@ -28,7 +28,7 @@
     EnabledBySetting=ModelElementEnabled,
     JSGenerateToJSObject
 ] dictionary HTMLModelElementCamera {
-    double pitch;
-    double yaw;
-    double scale;
+    required double pitch;
+    required double yaw;
+    required double scale;
 };

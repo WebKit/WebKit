@@ -3420,6 +3420,9 @@ webkit.org/b/229832 [ Release ] imported/w3c/web-platform-tests/beacon/beacon-re
 [ Release ] fast/canvas/canvas-composite-text-alpha.html [ Pass Timeout Failure ]
 fast/canvas/canvas-blending-text.html [ Pass Failure ]
 
+# This test requires ARQL SPIs not yet available to OpenSource builds.
+model-element/model-element-camera.html [ Skip ]
+
 # These tests require the design system ui fonts to be installed.
 fast/text/design-system-ui-11.html [ Pass ]
 fast/text/design-system-ui-12.html [ Pass ]
