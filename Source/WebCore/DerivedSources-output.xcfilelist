@@ -2943,6 +2943,7 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/SelectorPseudoElementTypeMap.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/ServiceWorkerGlobalScopeConstructors.idl
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/Settings.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/Settings.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/ShadowRealmGlobalScopeConstructors.idl
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/StreamInternalsBuiltins.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/StyleBuilderGenerated.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/StylePropertyShorthandFunctions.cpp
