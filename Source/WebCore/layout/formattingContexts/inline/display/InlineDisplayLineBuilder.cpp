@@ -28,6 +28,7 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
+#include "InlineDisplayContentBuilder.h"
 #include "LayoutBoxGeometry.h"
 
 namespace WebCore {
@@ -93,8 +94,10 @@ InlineDisplay::Line InlineDisplayLineBuilder::build(const LineBuilder::LineConte
     auto lineBoxRect = InlineRect { lineContent.lineLogicalTopLeft.y(), lineBoxVisualLeft, lineContent.lineLogicalWidth, lineBoxLogicalHeight };
     auto enclosingLineGeometry = collectEnclosingLineGeometry(lineBox, lineBoxRect);
 
-    return InlineDisplay::Line { lineBoxRect
-        , enclosingLineGeometry.scrollableOverflowRect
+    // FIXME: Figure out if properties like enclosingLineGeometry top and bottom needs to be flipped as well.
+    auto writingMode = root().style().writingMode();
+    return InlineDisplay::Line { InlineDisplayContentBuilder::flipLogicalRectToVisualForWritingMode(lineBoxRect, writingMode)
+        , InlineDisplayContentBuilder::flipLogicalRectToVisualForWritingMode(enclosingLineGeometry.scrollableOverflowRect, writingMode)
         , enclosingLineGeometry.enclosingTopAndBottom
         , rootInlineBox.logicalTop() + rootInlineBox.baseline()
         , contentVisualLeft

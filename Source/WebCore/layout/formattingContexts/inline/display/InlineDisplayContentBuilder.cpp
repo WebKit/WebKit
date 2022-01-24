@@ -326,14 +326,16 @@ void InlineDisplayContentBuilder::processNonBidiContent(const LineBuilder::LineC
         hasContent = hasContent || lineRun.isText() || lineRun.isBox();
     ASSERT(lineContent.inlineBaseDirection == TextDirection::LTR || !hasContent);
 #endif
+    auto writingMode = root().style().writingMode();
     auto contentStartInVisualOrder = displayLine.left() + displayLine.contentLeft();
 
     for (auto& lineRun : lineContent.runs) {
         auto& layoutBox = lineRun.layoutBox();
 
         auto visualRectRelativeToRoot = [&](auto logicalRect) {
-            logicalRect.moveBy({ contentStartInVisualOrder, displayLine.top() });
-            return logicalRect;
+            auto visualRect = flipLogicalRectToVisualForWritingMode(logicalRect, writingMode);
+            visualRect.moveBy({ contentStartInVisualOrder, displayLine.top() });
+            return visualRect;
         };
 
         if (lineRun.isText()) {
@@ -542,6 +544,7 @@ void InlineDisplayContentBuilder::processBidiContent(const LineBuilder::LineCont
     auto displayBoxTree = DisplayBoxTree { };
     ancestorStack.push({ }, root());
 
+    auto writingMode = root().style().writingMode();
     auto contentStartInVisualOrder = displayLine.left() + displayLine.contentLeft();
     auto hasInlineBox = false;
     auto createDisplayBoxesInVisualOrder = [&] {
@@ -559,9 +562,13 @@ void InlineDisplayContentBuilder::processBidiContent(const LineBuilder::LineCont
                 continue;
 
             auto visualRectRelativeToRoot = [&](auto logicalRect) {
-                logicalRect.setLeft(contentRightInVisualOrder);
-                logicalRect.moveVertically(displayLine.top());
-                return logicalRect;
+                auto visualRect = flipLogicalRectToVisualForWritingMode(logicalRect, writingMode);
+                if (WebCore::isHorizontalWritingMode(writingMode))
+                    visualRect.setLeft(contentRightInVisualOrder);
+                else
+                    visualRect.setTop(contentRightInVisualOrder);
+                visualRect.moveVertically(displayLine.top());
+                return visualRect;
             };
 
             auto parentDisplayBoxNodeIndex = ensureDisplayBoxForContainer(layoutBox.parent(), displayBoxTree, ancestorStack, boxes);
@@ -772,6 +779,23 @@ void InlineDisplayContentBuilder::computeIsFirstIsLastBoxForInlineContent(Displa
         boxes[index].setIsLastForLayoutBox(true);
 
     boxes[lastRootInlineBoxIndex].setIsLastForLayoutBox(true);
+}
+
+InlineRect InlineDisplayContentBuilder::flipLogicalRectToVisualForWritingMode(const InlineRect& logicalRect, WritingMode writingMode)
+{
+    switch (writingMode) {
+    case WritingMode::TopToBottom:
+        return logicalRect;
+    case WritingMode::LeftToRight:
+    case WritingMode::RightToLeft: {
+        // See InlineFormattingGeometry for more info.
+        return InlineRect { logicalRect.left(), logicalRect.top(), logicalRect.height(), logicalRect.width() };
+    }
+    default:
+        ASSERT_NOT_REACHED();
+        break;
+    }
+    return logicalRect;
 }
 
 }
