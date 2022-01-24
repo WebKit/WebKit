@@ -60,7 +60,7 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
 
         this.element.classList.add("network-table");
 
-        this._typeFilterScopeBarItemAll = new WI.ScopeBarItem("network-type-filter-all", WI.UIString("All"), {exclusive: true});
+        this._typeFilterScopeBarItemAll = new WI.ScopeBarItem("network-type-filter-all", WI.UIString("All"));
         let typeFilterScopeBarItems = [this._typeFilterScopeBarItemAll];
 
         function addScopeBarItem(id, label, checker) {
@@ -84,7 +84,8 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
                 && type !== WI.Resource.Type.Fetch;
         });
 
-        this._typeFilterScopeBar = new WI.ScopeBar("network-type-filter-scope-bar", typeFilterScopeBarItems, typeFilterScopeBarItems[0]);
+        const shouldGroupNonExclusiveItems = true;
+        this._typeFilterScopeBar = new WI.ScopeBar("network-type-filter-scope-bar", typeFilterScopeBarItems, typeFilterScopeBarItems[0], shouldGroupNonExclusiveItems);
         this._typeFilterScopeBar.visibilityPriority = WI.NavigationItem.VisibilityPriority.High;
         this._typeFilterScopeBar.addEventListener(WI.ScopeBar.Event.SelectionChanged, this._typeFilterScopeBarSelectionChanged, this);
 
