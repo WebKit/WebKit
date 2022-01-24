@@ -169,7 +169,7 @@ static inline void computeMissingKeyframeOffsets(Vector<KeyframeEffect::ParsedKe
     }
 }
 
-static inline ExceptionOr<KeyframeEffect::KeyframeLikeObject> processKeyframeLikeObject(JSGlobalObject& lexicalGlobalObject, Strong<JSObject>&& keyframesInput, bool allowLists)
+static inline ExceptionOr<KeyframeEffect::KeyframeLikeObject> processKeyframeLikeObject(JSGlobalObject& lexicalGlobalObject, Document& document, Strong<JSObject>&& keyframesInput, bool allowLists)
 {
     // https://drafts.csswg.org/web-animations-1/#process-a-keyframe-like-object
 
@@ -206,11 +206,8 @@ static inline ExceptionOr<KeyframeEffect::KeyframeLikeObject> processKeyframeLik
             baseProperties.offset = nullptr;
         baseProperties.easing = baseKeyframe.easing;
 
-        auto* scriptExecutionContext = jsCast<JSDOMGlobalObject*>(&lexicalGlobalObject)->scriptExecutionContext();
-        if (is<Document>(scriptExecutionContext)) {
-            if (downcast<Document>(*scriptExecutionContext).settings().webAnimationsCompositeOperationsEnabled())
-                baseProperties.composite = baseKeyframe.composite;
-        }
+        if (document.settings().webAnimationsCompositeOperationsEnabled())
+            baseProperties.composite = baseKeyframe.composite;
     }
     RETURN_IF_EXCEPTION(scope, Exception { TypeError });
 
@@ -282,12 +279,8 @@ static inline ExceptionOr<KeyframeEffect::KeyframeLikeObject> processKeyframeLik
     return { WTFMove(keyframeOuput) };
 }
 
-static inline ExceptionOr<void> processIterableKeyframes(JSGlobalObject& lexicalGlobalObject, Strong<JSObject>&& keyframesInput, JSValue method, Vector<KeyframeEffect::ParsedKeyframe>& parsedKeyframes)
+static inline ExceptionOr<void> processIterableKeyframes(JSGlobalObject& lexicalGlobalObject, Document& document, Strong<JSObject>&& keyframesInput, JSValue method, Vector<KeyframeEffect::ParsedKeyframe>& parsedKeyframes)
 {
-    auto* scriptExecutionContext = jsCast<JSDOMGlobalObject*>(&lexicalGlobalObject)->scriptExecutionContext();
-    if (!is<Document>(scriptExecutionContext))
-        return { };
-    auto& document = downcast<Document>(*scriptExecutionContext);
     CSSParserContext parserContext(document);
 
     // 1. Let iter be GetIterator(object, method).
@@ -301,7 +294,7 @@ static inline ExceptionOr<void> processIterableKeyframes(JSGlobalObject& lexical
 
         // 7. Append to processed keyframes the result of running the procedure to process a keyframe-like object passing nextItem
         // as the keyframe input and with the allow lists flag set to false.
-        auto processKeyframeLikeObjectResult = processKeyframeLikeObject(lexicalGlobalObject, Strong<JSObject>(vm, nextValue.toObject(&lexicalGlobalObject)), false);
+        auto processKeyframeLikeObjectResult = processKeyframeLikeObject(lexicalGlobalObject, document, Strong<JSObject>(vm, nextValue.toObject(&lexicalGlobalObject)), false);
         if (processKeyframeLikeObjectResult.hasException())
             return processKeyframeLikeObjectResult.releaseException();
         auto keyframeLikeObject = processKeyframeLikeObjectResult.returnValue();
@@ -345,18 +338,14 @@ static inline ExceptionOr<void> processIterableKeyframes(JSGlobalObject& lexical
     return { };
 }
 
-static inline ExceptionOr<void> processPropertyIndexedKeyframes(JSGlobalObject& lexicalGlobalObject, Strong<JSObject>&& keyframesInput, Vector<KeyframeEffect::ParsedKeyframe>& parsedKeyframes, Vector<String>& unusedEasings)
+static inline ExceptionOr<void> processPropertyIndexedKeyframes(JSGlobalObject& lexicalGlobalObject, Document& document, Strong<JSObject>&& keyframesInput, Vector<KeyframeEffect::ParsedKeyframe>& parsedKeyframes, Vector<String>& unusedEasings)
 {
     // 1. Let property-indexed keyframe be the result of running the procedure to process a keyframe-like object passing object as the keyframe input.
-    auto processKeyframeLikeObjectResult = processKeyframeLikeObject(lexicalGlobalObject, WTFMove(keyframesInput), true);
+    auto processKeyframeLikeObjectResult = processKeyframeLikeObject(lexicalGlobalObject, document, WTFMove(keyframesInput), true);
     if (processKeyframeLikeObjectResult.hasException())
         return processKeyframeLikeObjectResult.releaseException();
     auto propertyIndexedKeyframe = processKeyframeLikeObjectResult.returnValue();
 
-    auto* scriptExecutionContext = jsCast<JSDOMGlobalObject*>(&lexicalGlobalObject)->scriptExecutionContext();
-    if (!is<Document>(scriptExecutionContext))
-        return { };
-    auto& document = downcast<Document>(*scriptExecutionContext);
     CSSParserContext parserContext(document);
 
     // 2. For each member, m, in property-indexed keyframe, perform the following steps:
@@ -494,7 +483,7 @@ static inline ExceptionOr<void> processPropertyIndexedKeyframes(JSGlobalObject& 
     return { };
 }
 
-ExceptionOr<Ref<KeyframeEffect>> KeyframeEffect::create(JSGlobalObject& lexicalGlobalObject, Element* target, Strong<JSObject>&& keyframes, std::optional<std::variant<double, KeyframeEffectOptions>>&& options)
+ExceptionOr<Ref<KeyframeEffect>> KeyframeEffect::create(JSGlobalObject& lexicalGlobalObject, Document& document, Element* target, Strong<JSObject>&& keyframes, std::optional<std::variant<double, KeyframeEffectOptions>>&& options)
 {
     auto keyframeEffect = adoptRef(*new KeyframeEffect(target, PseudoId::None));
 
@@ -522,12 +511,9 @@ ExceptionOr<Ref<KeyframeEffect>> KeyframeEffect::create(JSGlobalObject& lexicalG
                 keyframeEffectOptions.direction
             };
 
-            auto* scriptExecutionContext = jsCast<JSDOMGlobalObject*>(&lexicalGlobalObject)->scriptExecutionContext();
-            if (is<Document>(scriptExecutionContext)) {
-                if (downcast<Document>(*scriptExecutionContext).settings().webAnimationsCompositeOperationsEnabled()) {
-                    keyframeEffect->setComposite(keyframeEffectOptions.composite);
-                    keyframeEffect->setIterationComposite(keyframeEffectOptions.iterationComposite);
-                }
+            if (document.settings().webAnimationsCompositeOperationsEnabled()) {
+                keyframeEffect->setComposite(keyframeEffectOptions.composite);
+                keyframeEffect->setIterationComposite(keyframeEffectOptions.iterationComposite);
             }
         }
         auto updateTimingResult = keyframeEffect->updateTiming(timing);
@@ -535,14 +521,14 @@ ExceptionOr<Ref<KeyframeEffect>> KeyframeEffect::create(JSGlobalObject& lexicalG
             return updateTimingResult.releaseException();
     }
 
-    auto processKeyframesResult = keyframeEffect->processKeyframes(lexicalGlobalObject, WTFMove(keyframes));
+    auto processKeyframesResult = keyframeEffect->processKeyframes(lexicalGlobalObject, document, WTFMove(keyframes));
     if (processKeyframesResult.hasException())
         return processKeyframesResult.releaseException();
 
     return keyframeEffect;
 }
 
-ExceptionOr<Ref<KeyframeEffect>> KeyframeEffect::create(JSC::JSGlobalObject&, Ref<KeyframeEffect>&& source)
+ExceptionOr<Ref<KeyframeEffect>> KeyframeEffect::create(Ref<KeyframeEffect>&& source)
 {
     auto keyframeEffect = adoptRef(*new KeyframeEffect(nullptr, PseudoId::None));
     keyframeEffect->copyPropertiesFromSource(WTFMove(source));
@@ -806,17 +792,17 @@ Vector<Strong<JSObject>> KeyframeEffect::getKeyframes(JSGlobalObject& lexicalGlo
     return result;
 }
 
-ExceptionOr<void> KeyframeEffect::setBindingsKeyframes(JSGlobalObject& lexicalGlobalObject, Strong<JSObject>&& keyframesInput)
+ExceptionOr<void> KeyframeEffect::setBindingsKeyframes(JSGlobalObject& lexicalGlobalObject, Document& document, Strong<JSObject>&& keyframesInput)
 {
-    auto retVal = setKeyframes(lexicalGlobalObject, WTFMove(keyframesInput));
+    auto retVal = setKeyframes(lexicalGlobalObject, document, WTFMove(keyframesInput));
     if (!retVal.hasException() && is<CSSAnimation>(animation()))
         downcast<CSSAnimation>(*animation()).effectKeyframesWereSetUsingBindings();
     return retVal;
 }
 
-ExceptionOr<void> KeyframeEffect::setKeyframes(JSGlobalObject& lexicalGlobalObject, Strong<JSObject>&& keyframesInput)
+ExceptionOr<void> KeyframeEffect::setKeyframes(JSGlobalObject& lexicalGlobalObject, Document& document, Strong<JSObject>&& keyframesInput)
 {
-    auto processKeyframesResult = processKeyframes(lexicalGlobalObject, WTFMove(keyframesInput));
+    auto processKeyframesResult = processKeyframes(lexicalGlobalObject, document, WTFMove(keyframesInput));
     if (!processKeyframesResult.hasException() && animation())
         animation()->effectTimingDidChange();
     return processKeyframesResult;
@@ -829,7 +815,7 @@ void KeyframeEffect::keyframesRuleDidChange()
     invalidate();
 }
 
-ExceptionOr<void> KeyframeEffect::processKeyframes(JSGlobalObject& lexicalGlobalObject, Strong<JSObject>&& keyframesInput)
+ExceptionOr<void> KeyframeEffect::processKeyframes(JSGlobalObject& lexicalGlobalObject, Document& document, Strong<JSObject>&& keyframesInput)
 {
     // 1. If object is null, return an empty sequence of keyframes.
     if (!keyframesInput.get())
@@ -850,11 +836,11 @@ ExceptionOr<void> KeyframeEffect::processKeyframes(JSGlobalObject& lexicalGlobal
     // 5. Perform the steps corresponding to the first matching condition from below,
     Vector<String> unusedEasings;
     if (!method.isUndefined()) {
-        auto retVal = processIterableKeyframes(lexicalGlobalObject, WTFMove(keyframesInput), WTFMove(method), parsedKeyframes);
+        auto retVal = processIterableKeyframes(lexicalGlobalObject, document, WTFMove(keyframesInput), WTFMove(method), parsedKeyframes);
         if (retVal.hasException())
             return retVal.releaseException();
     } else {
-        auto retVal = processPropertyIndexedKeyframes(lexicalGlobalObject, WTFMove(keyframesInput), parsedKeyframes, unusedEasings);
+        auto retVal = processPropertyIndexedKeyframes(lexicalGlobalObject, document, WTFMove(keyframesInput), parsedKeyframes, unusedEasings);
         if (retVal.hasException())
             return retVal.releaseException();
     }
