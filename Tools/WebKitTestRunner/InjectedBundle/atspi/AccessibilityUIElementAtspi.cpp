@@ -1381,16 +1381,14 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::url()
     if (axURL.isNull())
         return JSStringCreateWithUTF8CString("AXURL: (null)");
 
+    auto stringURL = axURL.string();
     if (axURL.isLocalFile()) {
         // Do not expose absolute paths.
-        auto path = axURL.fileSystemPath();
-        auto index = path.find("LayoutTests");
+        auto index = stringURL.find("LayoutTests");
         if (index != notFound)
-            path = path.substring(index);
-        return OpaqueJSString::tryCreate(makeString("AXURL: ", path)).leakRef();
+            stringURL = stringURL.substring(index);
     }
-
-    return OpaqueJSString::tryCreate(makeString("AXURL: ", axURL.string())).leakRef();
+    return OpaqueJSString::tryCreate(makeString("AXURL: ", stringURL)).leakRef();
 }
 
 bool AccessibilityUIElement::addNotificationListener(JSValueRef functionCallback)
