@@ -1,3 +1,16 @@
+2022-01-24  Ada Chan  <adachan@apple.com>
+
+        Soft link ARKit in a separate ARKitSoftLink file
+        https://bugs.webkit.org/show_bug.cgi?id=235532
+
+        Reviewed by Tim Horton.
+
+        * Shared/Cocoa/ARKitSoftLink.h: Added.
+        * Shared/Cocoa/ARKitSoftLink.mm: Added.
+        * SourcesCocoa.txt:
+        * UIProcess/Cocoa/SystemPreviewControllerCocoa.mm:
+        * WebKit.xcodeproj/project.pbxproj:
+
 2022-01-24  Eric Carlson  <eric.carlson@apple.com>
 
         REGRESSION (iOS 15): HTMLAudioElement fails to load new audio when device is locked or safari is in background
