@@ -541,6 +541,7 @@ bool canUseWebAssemblyFastMemory();
     v(Bool, useArrayGroupByMethod, false, Normal, "Expose the groupBy() and groupByToMap() methods on Array.") \
     v(Bool, useAtMethod, true, Normal, "Expose the at() method on Array, %TypedArray%, and String.") \
     v(Bool, useHasOwn, true, Normal, "Expose the Object.hasOwn method") \
+    v(Bool, useImportAssertion, false, Normal, "Enable import assertion.") \
     v(Bool, useIntlEnumeration, true, Normal, "Expose the Intl enumeration APIs.") \
     v(Bool, useSharedArrayBuffer, false, Normal, nullptr) \
     /* FIXME: ShadownRealm can be enabled once WebCore's JSGlobalObject == JSDOMGlobalObject assumption is removed,  https://bugs.webkit.org/show_bug.cgi?id=231506 */\

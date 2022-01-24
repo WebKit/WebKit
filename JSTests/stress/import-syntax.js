@@ -27,27 +27,26 @@ async function testSyntax(script, message) {
     }
 }
 
-testSyntaxError(`import)`, `SyntaxError: Unexpected token ')'. import call expects exactly one argument.`);
+testSyntaxError(`import)`, `SyntaxError: Unexpected token ')'. import call expects one or two arguments.`);
 testSyntaxError(`new import(`, `SyntaxError: Cannot use new with import.`);
 testSyntaxError(`import.hello()`, `SyntaxError: Unexpected identifier 'hello'. "import." can only be followed with meta.`);
-testSyntaxError(`import[`, `SyntaxError: Unexpected token '['. import call expects exactly one argument.`);
-testSyntaxError(`import<`, `SyntaxError: Unexpected token '<'. import call expects exactly one argument.`);
+testSyntaxError(`import[`, `SyntaxError: Unexpected token '['. import call expects one or two arguments.`);
+testSyntaxError(`import<`, `SyntaxError: Unexpected token '<'. import call expects one or two arguments.`);
 
 testSyntaxError(`import()`, `SyntaxError: Unexpected token ')'`);
-testSyntaxError(`import(a, b)`, `SyntaxError: Unexpected token ','. import call expects exactly one argument.`);
-testSyntaxError(`import(a, b, c)`, `SyntaxError: Unexpected token ','. import call expects exactly one argument.`);
+testSyntaxError(`import(a, b, c)`, `SyntaxError: Unexpected identifier 'c'. import call expects one or two arguments.`);
 testSyntaxError(`import(...a)`, `SyntaxError: Unexpected token '...'`);
 testSyntaxError(`import(,a)`, `SyntaxError: Unexpected token ','`);
 testSyntaxError(`import(,)`, `SyntaxError: Unexpected token ','`);
-testSyntaxError(`import("Hello";`, `SyntaxError: Unexpected token ';'. import call expects exactly one argument.`);
-testSyntaxError(`import("Hello"];`, `SyntaxError: Unexpected token ']'. import call expects exactly one argument.`);
-testSyntaxError(`import("Hello",;`, `SyntaxError: Unexpected token ','. import call expects exactly one argument.`);
-testSyntaxError(`import("Hello", "Hello2";`, `SyntaxError: Unexpected token ','. import call expects exactly one argument.`);
+testSyntaxError(`import("Hello";`, `SyntaxError: Unexpected token ';'. import call expects one or two arguments.`);
+testSyntaxError(`import("Hello"];`, `SyntaxError: Unexpected token ']'. import call expects one or two arguments.`);
+testSyntaxError(`import("Hello",;`, `SyntaxError: Unexpected token ';'`);
+testSyntaxError(`import("Hello", "Hello2";`, `SyntaxError: Unexpected token ';'. import call expects one or two arguments.`);
 
 
-testSyntaxError(`import = 42`, `SyntaxError: Unexpected token '='. import call expects exactly one argument.`);
-testSyntaxError(`[import] = 42`, `SyntaxError: Unexpected token ']'. import call expects exactly one argument.`);
-testSyntaxError(`{import} = 42`, `SyntaxError: Unexpected token '}'. import call expects exactly one argument.`);
+testSyntaxError(`import = 42`, `SyntaxError: Unexpected token '='. import call expects one or two arguments.`);
+testSyntaxError(`[import] = 42`, `SyntaxError: Unexpected token ']'. import call expects one or two arguments.`);
+testSyntaxError(`{import} = 42`, `SyntaxError: Unexpected token '}'. import call expects one or two arguments.`);
 testSyntaxError(`let import = 42`, `SyntaxError: Unexpected keyword 'import'`);
 testSyntaxError(`var import = 42`, `SyntaxError: Cannot use the keyword 'import' as a variable name.`);
 testSyntaxError(`const import = 42`, `SyntaxError: Cannot use the keyword 'import' as a lexical variable name.`);

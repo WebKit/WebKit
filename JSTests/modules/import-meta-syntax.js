@@ -14,7 +14,7 @@ shouldThrow(() => {
 
 shouldThrow(() => {
     checkModuleSyntax(`(import["Cocoa"])`);
-}, `SyntaxError: Unexpected token '['. import call expects exactly one argument.:1`);
+}, `SyntaxError: Unexpected token '['. import call expects one or two arguments.:1`);
 
 shouldThrow(() => {
     checkModuleSyntax(`import.cocoa`);

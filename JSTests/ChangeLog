@@ -1,3 +1,18 @@
+2022-01-24  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Support import assertion syntax
+        https://bugs.webkit.org/show_bug.cgi?id=235312
+
+        Reviewed by Ross Kirsling.
+
+        * modules/import-meta-syntax.js:
+        (shouldThrow):
+        * stress/import-syntax.js:
+        * stress/modules-syntax-error.js:
+        * stress/modules-syntax-import-assertion-error.js: Added.
+        (shouldThrow):
+        * stress/modules-syntax-import-assertion.js: Added.
+
 2022-01-21  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Relax Date.parse requirement
