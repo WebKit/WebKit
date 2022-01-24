@@ -23,13 +23,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
-
 #include "config.h"
 #include "FEImageSoftwareApplier.h"
 
 #include "FEImage.h"
 #include "Filter.h"
+#include "GraphicsContext.h"
 
 namespace WebCore {
 
