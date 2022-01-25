@@ -3768,6 +3768,13 @@
    },
    {
       "emails" : [
+         "justvanrossum@gmail.com"
+      ],
+      "expertise" : "Text and Fonts",
+      "name" : "Just van Rossum"
+   },
+   {
+      "emails" : [
          "justin_fan@apple.com"
       ],
       "expertise" : "WebGL, Canvas",

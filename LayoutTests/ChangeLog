@@ -1,3 +1,26 @@
+2022-01-25  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Add another test for locale-specific shaping
+        https://bugs.webkit.org/show_bug.cgi?id=235558
+
+        Reviewed by Darin Adler.
+
+        Thanks so much to Just van Rossum for contributing the test font!!!
+
+        This test makes sure the LOCL lookup works correctly, even without font-feature-settings.
+
+        * fast/text/locale-shaping-2-expected.html: Added.
+        * fast/text/locale-shaping-2.html: Added.
+        * fast/text/locale-shaping-3-expected.html: Added.
+        * fast/text/locale-shaping-3.html: Added.
+        * fast/text/resources/langlocatest_cjk/LICENSE: Added.
+        * fast/text/resources/langlocatest_cjk/langlocatest_cjk.ttf: Added.
+        * platform/gtk/TestExpectations:
+        * platform/ios/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/win/TestExpectations:
+        * platform/wpe/TestExpectations:
+
 2022-01-25  Ryan Haddad  <ryanhaddad@apple.com>
 
         [macOS arm64] fast/scrolling/mac/j-shaped-scroll-rubberband.html is consistently failing

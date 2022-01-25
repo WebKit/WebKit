@@ -2047,3 +2047,7 @@ webkit.org/b/160119 fast/repaint/selection-gap-flipped-fixed-child.html [ Failur
 #////////////////////////////////////////////////////////////////////////////////////////
 # UNSORTED Expectations. When in doubt, put it here.
 #////////////////////////////////////////////////////////////////////////////////////////
+
+# These tests require platform support.
+fast/text/locale-shaping-2.html [ ImageOnlyFailure ]
+fast/text/locale-shaping-3.html [ ImageOnlyFailure ]

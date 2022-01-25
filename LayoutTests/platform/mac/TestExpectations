@@ -2433,3 +2433,8 @@ webkit.org/b/235084 [ arm64 ] imported/w3c/web-platform-tests/css/css-transforms
 
 # This test is specific to Core Text.
 fast/text/font-lookup-dot-prefix-case-sensitive.html [ Pass ]
+
+# These tests require platform support.
+# <rdar://problem/87944426>
+[ Catalina BigSur Monterey ] fast/text/locale-shaping-2.html [ Pass ImageOnlyFailure ]
+[ Catalina BigSur Monterey ] fast/text/locale-shaping-3.html [ Pass ImageOnlyFailure ]

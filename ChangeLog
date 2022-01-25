@@ -1,3 +1,14 @@
+2022-01-25  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Add another test for locale-specific shaping
+        https://bugs.webkit.org/show_bug.cgi?id=235558
+
+        Reviewed by Darin Adler.
+
+        Thanks so much to Just van Rossum for contributing the test font!!!
+
+        * metadata/contributors.json:
+
 2022-01-20  Elliott Williams  <emw@apple.com>
 
         [XCBuild] Build via the workspace with USE_WORKSPACE=YES

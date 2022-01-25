@@ -4800,3 +4800,7 @@ webkit.org/b/235126 webanimations/accelerated-animation-after-forward-filling-an
 
 # LinearSRGB color space is not supported on Windows.
 css3/filters/reference-filter-color-space.html [ Skip ]
+
+# These tests require platform support.
+fast/text/locale-shaping-2.html [ ImageOnlyFailure ]
+fast/text/locale-shaping-3.html [ ImageOnlyFailure ]
