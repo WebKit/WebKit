@@ -1,3 +1,13 @@
+2022-01-25  Ziran Sun  <zsun@igalia.com>
+
+        [css-grid] Fix grid shorthand expansion of initial values
+        https://bugs.webkit.org/show_bug.cgi?id=234430
+
+        Reviewed by Sergio Villar Senin.
+
+        * web-platform-tests/css/css-grid/parsing/grid-shorthand-expected.txt:
+        * web-platform-tests/css/css-grid/parsing/grid-shorthand-valid-expected.txt:
+
 2022-01-24  Youenn Fablet  <youenn@apple.com>
 
         A sandboxed document should not reuse its service worker client ID

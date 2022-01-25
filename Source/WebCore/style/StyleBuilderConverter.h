@@ -1129,6 +1129,11 @@ inline void BuilderConverter::createImplicitNamedGridLinesFromGridArea(const Nam
 
 inline Vector<GridTrackSize> BuilderConverter::convertGridTrackSizeList(BuilderState& builderState, const CSSValue& value)
 {
+    if (is<CSSPrimitiveValue>(value)) {
+        ASSERT(downcast<CSSPrimitiveValue>(value).isValueID() && downcast<CSSPrimitiveValue>(value).valueID() == CSSValueAuto);
+        return RenderStyle::initialGridAutoRows();
+    }
+
     ASSERT(value.isValueList());
     auto& valueList = downcast<CSSValueList>(value);
     Vector<GridTrackSize> trackSizes;
@@ -1157,12 +1162,17 @@ inline std::optional<GridPosition> BuilderConverter::convertGridPosition(Builder
 
 inline GridAutoFlow BuilderConverter::convertGridAutoFlow(BuilderState&, const CSSValue& value)
 {
-    auto& list = downcast<CSSValueList>(value);
-    if (!list.length())
-        return RenderStyle::initialGridAutoFlow();
+    ASSERT(!is<CSSPrimitiveValue>(value) || downcast<CSSPrimitiveValue>(value).isValueID());
 
-    auto& first = downcast<CSSPrimitiveValue>(*list.item(0));
-    auto* second = downcast<CSSPrimitiveValue>(list.item(1));
+    bool isValuelist = is<CSSValueList>(value);
+    if (isValuelist) {
+        auto& list = downcast<CSSValueList>(value);
+        if (!list.length())
+            return RenderStyle::initialGridAutoFlow();
+    }
+
+    auto& first = downcast<CSSPrimitiveValue>(isValuelist ? *(downcast<CSSValueList>(value).item(0)) : value);
+    auto* second = downcast<CSSPrimitiveValue>(isValuelist && downcast<CSSValueList>(value).length() == 2 ? downcast<CSSValueList>(value).item(1) : nullptr);
 
     GridAutoFlow autoFlow;
     switch (first.valueID()) {
