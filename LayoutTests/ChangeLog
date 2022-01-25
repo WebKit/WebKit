@@ -1,5 +1,75 @@
 2022-01-24  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r288266. rdar://problem/87804395
+
+    Web Inspector: fully blackboxed stack traces don't show the right top call frame
+    https://bugs.webkit.org/show_bug.cgi?id=235381
+    
+    Reviewed by Patrick Angle.
+    
+    Source/WebInspectorUI:
+    
+    * UserInterface/Models/StackTrace.js:
+    (WI.StackTrace):
+    (WI.StackTrace.fromPayload):
+    (WI.StackTrace.prototype.get firstNonNativeNonAnonymousNotBlackboxedCallFrame):
+    Only assign to `firstNonNativeNonAnonymousCallFrame` once.
+    Drive-by: Don't re-fetch the blackbox data for the `WI.SourceCode` of the `WI.CallFrame`.
+    Drive-by: Combine optional parameters into an `options = {}` for current code cleanliness
+              and greater flexibility for future changes.
+    
+    * UserInterface/Models/CallFrame.js:
+    (WI.CallFrame):
+    (WI.CallFrame.fromDebuggerPayload):
+    (WI.CallFrame.fromPayload):
+    * UserInterface/Views/ThreadTreeElement.js:
+    (WI.ThreadTreeElement.prototype.refresh):
+    Drive-by: Combine optional parameters into an `options = {}` for current code cleanliness
+              and greater flexibility for future changes.
+    
+    * UserInterface/Views/CallFrameTreeElement.js:
+    (WI.CallFrameTreeElement):
+    (WI.CallFrameTreeElement.prototype.onattach):
+    * UserInterface/Views/CallFrameView.js:
+    (WI.CallFrameView):
+    Drive-by: Don't re-fetch the blackbox data for the `WI.SourceCode` of the `WI.CallFrame`.
+    
+    LayoutTests:
+    
+    * inspector/model/stack-trace.html:
+    * inspector/model/stack-trace-expected.txt:
+    
+    * inspector/debugger/resources/async-stack-trace-test.js:
+    (TestPage.registerInitializer.window.getAsyncStackTrace):
+    * inspector/debugger/resources/log-active-stack-trace.js:
+    (TestPage.registerInitializer.window.getActiveStackTrace):
+    * inspector/debugger/tail-deleted-frames/resources/stack-trace-utilities.js:
+    (TestPage.registerInitializer.window.getAsyncStackTrace):
+    Drive-by: Adopt new `WI.StackTrace` constructor arguments format.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@288266 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-01-19  Devin Rousso  <drousso@apple.com>
+
+            Web Inspector: fully blackboxed stack traces don't show the right top call frame
+            https://bugs.webkit.org/show_bug.cgi?id=235381
+
+            Reviewed by Patrick Angle.
+
+            * inspector/model/stack-trace.html:
+            * inspector/model/stack-trace-expected.txt:
+
+            * inspector/debugger/resources/async-stack-trace-test.js:
+            (TestPage.registerInitializer.window.getAsyncStackTrace):
+            * inspector/debugger/resources/log-active-stack-trace.js:
+            (TestPage.registerInitializer.window.getActiveStackTrace):
+            * inspector/debugger/tail-deleted-frames/resources/stack-trace-utilities.js:
+            (TestPage.registerInitializer.window.getAsyncStackTrace):
+            Drive-by: Adopt new `WI.StackTrace` constructor arguments format.
+
+2022-01-24  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r288264. rdar://problem/87745419
 
     Align our qualified name validation with the specification
