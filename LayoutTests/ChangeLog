@@ -1,5 +1,55 @@
 2022-01-24  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r287922. rdar://problem/87455957
+
+    [LFC][IFC] Incorrect negative margin handling (both left/right) with RTL inline base direction
+    https://bugs.webkit.org/show_bug.cgi?id=235095
+    
+    Reviewed by Antti Koivisto.
+    
+    Source/WebCore:
+    
+    The simplified negative margin handling on inline boxes does not work well with RTL inline base direction.
+    With LTR direction, we could just treat the negative left margin value (which pulls content to the left)
+    as part the "logical width" (may resulting in negative width values) and let this shorter width pull
+    the the adjoining content.
+    However this setup produces incorrect box positions when the inline base direction is RTL.
+    In this patch, we switch over to a more correct inline box positioning where the negative margin
+    affects the logical left while it does not make the run shorter anymore.
+    
+    Test: fast/inline/rtl-negative-margins.html
+    
+    * layout/formattingContexts/inline/InlineLine.cpp:
+    (WebCore::Layout::Line::appendInlineBoxStart):
+    (WebCore::Layout::Line::appendNonReplacedInlineLevelBox):
+    * layout/formattingContexts/inline/InlineLineBoxBuilder.cpp:
+    (WebCore::Layout::LineBoxBuilder::constructAndAlignInlineLevelBoxes):
+    * layout/formattingContexts/inline/InlineLineBuilder.cpp:
+    (WebCore::Layout::LineBuilder::layoutInlineContent):
+    * layout/formattingContexts/inline/InlineLineBuilder.h:
+    * layout/formattingContexts/inline/display/InlineDisplayLineBuilder.cpp:
+    (WebCore::Layout::InlineDisplayLineBuilder::build const):
+    
+    LayoutTests:
+    
+    * fast/inline/rtl-negative-margins-expected.html: Added.
+    * fast/inline/rtl-negative-margins.html: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@287922 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-01-12  Alan Bujtas  <zalan@apple.com>
+
+            [LFC][IFC] Incorrect negative margin handling (both left/right) with RTL inline base direction
+            https://bugs.webkit.org/show_bug.cgi?id=235095
+
+            Reviewed by Antti Koivisto.
+
+            * fast/inline/rtl-negative-margins-expected.html: Added.
+            * fast/inline/rtl-negative-margins.html: Added.
+
+2022-01-24  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r287878. rdar://problem/85359803
 
     ::backdrop pseudo element should react to associated element event listeners

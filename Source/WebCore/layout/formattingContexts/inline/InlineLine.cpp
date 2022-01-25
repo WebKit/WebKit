@@ -228,9 +228,16 @@ void Line::appendInlineBoxStart(const InlineItem& inlineItem, const RenderStyle&
     auto logicalLeft = lastRunLogicalRight();
     // Incoming logical width includes the cloned decoration end to be able to do line breaking.
     auto borderAndPaddingEndForDecorationClone = addBorderAndPaddingEndForInlineBoxDecorationClone(inlineItem);
-    m_runs.append({ inlineItem, style, logicalLeft, logicalWidth - borderAndPaddingEndForDecorationClone });
     // Do not let negative margin make the content shorter than it already is.
     m_contentLogicalWidth = std::max(m_contentLogicalWidth, logicalLeft + logicalWidth);
+
+    auto marginStart = formattingContext().geometryForBox(inlineItem.layoutBox()).marginStart();
+    if (marginStart >= 0) {
+        m_runs.append({ inlineItem, style, logicalLeft, logicalWidth - borderAndPaddingEndForDecorationClone });
+        return;
+    }
+    // Negative margin-start pulls the content to the logical left direction.
+    m_runs.append({ inlineItem, style, logicalLeft + marginStart, logicalWidth - marginStart - borderAndPaddingEndForDecorationClone });
 }
 
 void Line::appendInlineBoxEnd(const InlineItem& inlineItem, const RenderStyle& style, InlineLayoutUnit logicalWidth)
@@ -351,7 +358,8 @@ void Line::appendTextContent(const InlineTextItem& inlineTextItem, const RenderS
 void Line::appendNonReplacedInlineLevelBox(const InlineItem& inlineItem, const RenderStyle& style, InlineLayoutUnit marginBoxLogicalWidth)
 {
     resetTrailingContent();
-    m_contentLogicalWidth += marginBoxLogicalWidth;
+    // Do not let negative margin make the content shorter than it already is.
+    m_contentLogicalWidth = std::max(m_contentLogicalWidth, lastRunLogicalRight() + marginBoxLogicalWidth);
     ++m_nonSpanningInlineLevelBoxCount;
     auto marginStart = formattingContext().geometryForBox(inlineItem.layoutBox()).marginStart();
     if (marginStart >= 0) {
