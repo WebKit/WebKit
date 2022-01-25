@@ -8646,19 +8646,21 @@ static RetainPtr<UITargetedPreview> createFallbackTargetedPreview(UIView *rootVi
     if (backgroundColor)
         [parameters setBackgroundColor:backgroundColor];
 
-    UIView *snapshotView = [rootView resizableSnapshotViewFromRect:frameInRootViewCoordinates afterScreenUpdates:NO withCapInsets:UIEdgeInsetsZero];
+    RetainPtr snapshotView = [rootView resizableSnapshotViewFromRect:frameInRootViewCoordinates afterScreenUpdates:NO withCapInsets:UIEdgeInsetsZero];
+    if (!snapshotView)
+        snapshotView = adoptNS([UIView new]);
 
     CGRect frameInContainerViewCoordinates = [rootView convertRect:frameInRootViewCoordinates toView:containerView];
 
     if (CGRectIsEmpty(frameInContainerViewCoordinates))
         return nil;
 
-    snapshotView.frame = frameInContainerViewCoordinates;
+    [snapshotView setFrame:frameInContainerViewCoordinates];
 
     CGPoint centerInContainerViewCoordinates = CGPointMake(CGRectGetMidX(frameInContainerViewCoordinates), CGRectGetMidY(frameInContainerViewCoordinates));
     auto target = adoptNS([[UIPreviewTarget alloc] initWithContainer:containerView center:centerInContainerViewCoordinates]);
 
-    return adoptNS([[UITargetedPreview alloc] initWithView:snapshotView parameters:parameters.get() target:target.get()]);
+    return adoptNS([[UITargetedPreview alloc] initWithView:snapshotView.get() parameters:parameters.get() target:target.get()]);
 }
 
 - (UITargetedPreview *)_createTargetedContextMenuHintPreviewForFocusedElement

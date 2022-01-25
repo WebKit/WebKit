@@ -826,6 +826,27 @@ TEST(KeyboardInputTests, OverrideUndoManager)
     EXPECT_EQ(contentView.undoManager, undoManager);
 }
 
+static UIView * nilResizableSnapshotViewFromRect(id, SEL, CGRect, BOOL, UIEdgeInsets)
+{
+    return nil;
+}
+
+TEST(KeyboardInputTests, DoNotCrashWhenFocusingSelectWithoutViewSnapshot)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    auto delegate = adoptNS([TestInputDelegate new]);
+    [webView _setInputDelegate:delegate.get()];
+    [delegate setFocusStartsInputSessionPolicyHandler:[](WKWebView *, id <_WKFocusedElementInfo>) {
+        return _WKFocusStartsInputSessionPolicyAllow;
+    }];
+
+    [webView synchronouslyLoadHTMLString:@"<select id='select'><option>foo</option><option>bar</option></select>"];
+
+    InstanceMethodSwizzler swizzler { UIView.class, @selector(resizableSnapshotViewFromRect:afterScreenUpdates:withCapInsets:), reinterpret_cast<IMP>(nilResizableSnapshotViewFromRect) };
+    [webView stringByEvaluatingJavaScript:@"select.focus()"];
+    [webView waitForNextPresentationUpdate];
+}
+
 } // namespace TestWebKitAPI
 
 #endif // PLATFORM(IOS_FAMILY)
