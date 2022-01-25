@@ -1,5 +1,67 @@
 2022-01-24  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r288025. rdar://problem/83407577
+
+    gl.texImage2D upload of getUserMedia streams via <video> element fails
+    https://bugs.webkit.org/show_bug.cgi?id=230617
+    <rdar://problem/83407577>
+    
+    Patch by Kimmo Kinnunen <kkinnunen@apple.com> on 2022-01-14
+    Reviewed by Youenn Fablet.
+    
+    Source/WebCore:
+    
+    Fix MSE camera to WebGL texture uploads.
+    Partially revert r280963 for Cocoa MediaPlayer implementatations
+    that do not have nativeImageForCurrentTime / pixelBufferForCurrentTime.
+    Turns out MSE does not have these implemented, so currently fall back
+    to the painting path.
+    
+    Test: fast/mediastream/getUserMedia-to-canvas.html
+    
+    * html/canvas/WebGLRenderingContextBase.cpp:
+    (WebCore::WebGLRenderingContextBase::videoFrameToImage):
+    
+    LayoutTests:
+    
+    * fast/mediastream/getUserMedia-to-canvas-expected.txt: Added.
+    * fast/mediastream/getUserMedia-to-canvas.html: Added.
+    Add a test to test getting video frame to 2DContext and
+    WebGL canvas elements.
+    
+    * webrtc/routines.js:
+    Add a function to assert that ImageData contains
+    the simulated mock camera image. This is useful
+    in verifying that the image is exactly as
+    expected. The test tests only the default orientation.
+    Later changes will update the test to address the
+    camera rotation.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@288025 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-01-14  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+            gl.texImage2D upload of getUserMedia streams via <video> element fails
+            https://bugs.webkit.org/show_bug.cgi?id=230617
+            <rdar://problem/83407577>
+
+            Reviewed by Youenn Fablet.
+
+            * fast/mediastream/getUserMedia-to-canvas-expected.txt: Added.
+            * fast/mediastream/getUserMedia-to-canvas.html: Added.
+            Add a test to test getting video frame to 2DContext and
+            WebGL canvas elements.
+
+            * webrtc/routines.js:
+            Add a function to assert that ImageData contains
+            the simulated mock camera image. This is useful
+            in verifying that the image is exactly as
+            expected. The test tests only the default orientation.
+            Later changes will update the test to address the
+            camera rotation.
+
+2022-01-24  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r288015. rdar://problem/84617690
 
     [LFC][IFC] Incorrect root inline box position when non-empty atomic inline level child box has height: 0px
