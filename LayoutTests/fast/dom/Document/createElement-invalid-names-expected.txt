@@ -8,13 +8,9 @@ PASS document.createElement('.Ascii') threw exception InvalidCharacterError: The
 PASS document.createElement('-Ascii') threw exception InvalidCharacterError: The string contains invalid characters..
 PASS document.createElement(' ascii') threw exception InvalidCharacterError: The string contains invalid characters..
 PASS document.createElement('	ascii') threw exception InvalidCharacterError: The string contains invalid characters..
-PASS document.createElement('֑sc.ii') threw exception InvalidCharacterError: The string contains invalid characters..
-PASS document.createElement('⃣scii') threw exception InvalidCharacterError: The string contains invalid characters..
-PASS document.createElement('िascii') threw exception InvalidCharacterError: The string contains invalid characters..
-PASS document.createElement('ʳascii') threw exception InvalidCharacterError: The string contains invalid characters..
+PASS document.createElement(';ascii') threw exception InvalidCharacterError: The string contains invalid characters..
 PASS document.createElement('asc i') threw exception InvalidCharacterError: The string contains invalid characters..
 PASS document.createElement('asc	i') threw exception InvalidCharacterError: The string contains invalid characters..
-PASS document.createElement('asciiⅦ') threw exception InvalidCharacterError: The string contains invalid characters..
 PASS successfullyParsed is true
 
 TEST COMPLETE
