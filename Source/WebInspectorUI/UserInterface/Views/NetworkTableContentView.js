@@ -141,12 +141,11 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
 
         // COMPATIBILITY (iOS 10.3): Network.setDisableResourceCaching did not exist.
         if (InspectorBackend.hasCommand("Network.setResourceCachingDisabled")) {
-            let toolTipForDisableResourceCache = WI.UIString("Ignore the resource cache when loading resources");
-            let activatedToolTipForDisableResourceCache = WI.UIString("Use the resource cache when loading resources");
-            this._disableResourceCacheNavigationItem = new WI.ActivateButtonNavigationItem("disable-resource-cache", toolTipForDisableResourceCache, activatedToolTipForDisableResourceCache, "Images/IgnoreCaches.svg", 16, 16);
-            this._disableResourceCacheNavigationItem.activated = WI.settings.resourceCachingDisabled.value;
-            this._disableResourceCacheNavigationItem.visibilityPriority = WI.NavigationItem.VisibilityPriority.High;
-            this._disableResourceCacheNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._toggleDisableResourceCache, this);
+            this._disableResourceCacheNavigationItem = new WI.CheckboxNavigationItem("network-disable-resource-cache", WI.UIString("Disable Caches"), WI.settings.resourceCachingDisabled.value);
+            this._disableResourceCacheNavigationItem.addEventListener(WI.CheckboxNavigationItem.Event.CheckedDidChange, this._toggleDisableResourceCache, this);
+
+            this._disableResourceCacheNavigationItemGroup = new WI.GroupNavigationItem([this._disableResourceCacheNavigationItem, new WI.DividerNavigationItem]);
+            this._disableResourceCacheNavigationItemGroup.visibilityPriority = WI.NavigationItem.VisibilityPriority.High;
 
             WI.settings.resourceCachingDisabled.addEventListener(WI.Setting.Event.Changed, this._resourceCachingDisabledSettingChanged, this);
         }
@@ -244,10 +243,10 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
 
     get navigationItems()
     {
-        let items = [this._pathComponentsNavigationItemGroup, this._buttonsNavigationItemGroup];
-        if (this._disableResourceCacheNavigationItem)
-            items.push(this._disableResourceCacheNavigationItem);
-        items.push(this._clearNetworkItemsNavigationItem);
+        let items = [];
+        if (this._disableResourceCacheNavigationItemGroup)
+            items.push(this._disableResourceCacheNavigationItemGroup);
+        items.push(this._pathComponentsNavigationItemGroup, this._buttonsNavigationItemGroup, this._clearNetworkItemsNavigationItem);
         return items;
     }
 
@@ -1626,7 +1625,7 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
 
     _resourceCachingDisabledSettingChanged()
     {
-        this._disableResourceCacheNavigationItem.activated = WI.settings.resourceCachingDisabled.value;
+        this._disableResourceCacheNavigationItem.checked = WI.settings.resourceCachingDisabled.value;
     }
 
     _toggleDisableResourceCache()
