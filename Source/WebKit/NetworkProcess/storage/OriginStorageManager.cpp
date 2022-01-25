@@ -174,7 +174,7 @@ public:
         if (types.contains(WebsiteDataType::LocalStorage))
             deleteLocalStorageData(modifiedSinceTime);
 
-        if (types.contains(WebsiteDataType::SessionStorage) && modifiedSinceTime == -WallTime::infinity())
+        if (types.contains(WebsiteDataType::SessionStorage) && modifiedSinceTime < WallTime::now())
             deleteSessionStorageData();
     }
 

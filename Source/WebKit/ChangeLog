@@ -1,3 +1,19 @@
+2022-01-24  Sihui Liu  <sihui_liu@apple.com>
+
+        Regression (r286936): SessionStorage data is not cleared when deleting website data by modification time
+        https://bugs.webkit.org/show_bug.cgi?id=235542
+
+        Reviewed by Chris Dumez.
+
+        The old behavior before r286936 is to delete SessionStorage data regardless of the modifiedSince parameter.
+        r286936 made it check modifiedSince and perform deleteion when modifiedSince time is -Walltime::infinity. This 
+        patch corrects it by deleting SessionStorage data when modifiedSince time is in the past.
+
+        API test: SessionStorage.ClearByModificationTime
+
+        * NetworkProcess/storage/OriginStorageManager.cpp:
+        (WebKit::OriginStorageManager::StorageBucket::deleteData):
+
 2022-01-24  Ada Chan  <adachan@apple.com>
 
         Soft link ARKit in a separate ARKitSoftLink file

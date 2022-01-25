@@ -1,3 +1,13 @@
+2022-01-24  Sihui Liu  <sihui_liu@apple.com>
+
+        Regression (r286936): SessionStorage data is not cleared when deleting website data by modification time
+        https://bugs.webkit.org/show_bug.cgi?id=235542
+
+        Reviewed by Chris Dumez.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/SessionStorage.mm:
+        (TEST):
+
 2022-01-24  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [macOS] Update Pasteboard::read to prioritize native representations over TIFF
