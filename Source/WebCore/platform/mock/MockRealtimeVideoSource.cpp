@@ -509,6 +509,7 @@ void MockRealtimeVideoSource::orientationChanged(int orientation)
         m_deviceOrientation = MediaSample::VideoRotation::UpsideDown;
         break;
     default:
+        ASSERT_NOT_REACHED();
         return;
     }
 

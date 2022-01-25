@@ -260,18 +260,18 @@ void RemoteGraphicsContextGL::copyTextureFromMedia(WebCore::MediaPlayerIdentifie
     UNUSED_VARIABLE(premultiplyAlpha);
     ASSERT_UNUSED(target, target == GraphicsContextGL::TEXTURE_2D);
 
-    RetainPtr<CVPixelBufferRef> pixelBuffer;
-    auto getPixelBuffer = [&] {
+    std::optional<MediaSampleVideoFrame> videoFrame;
+    auto getVideoFrame = [&] {
         if (!m_gpuConnectionToWebProcess)
             return;
 
         if (auto mediaPlayer = m_gpuConnectionToWebProcess->remoteMediaPlayerManagerProxy().mediaPlayer(mediaPlayerIdentifier))
-            pixelBuffer = mediaPlayer->pixelBufferForCurrentTime();
+            videoFrame = mediaPlayer->videoFrameForCurrentTime();
     };
 
-    callOnMainRunLoopAndWait(WTFMove(getPixelBuffer));
+    callOnMainRunLoopAndWait(WTFMove(getVideoFrame));
 
-    if (!pixelBuffer) {
+    if (!videoFrame) {
         completionHandler(false);
         return;
     }
@@ -282,7 +282,7 @@ void RemoteGraphicsContextGL::copyTextureFromMedia(WebCore::MediaPlayerIdentifie
         return;
     }
 
-    completionHandler(contextCV->copyPixelBufferToTexture(pixelBuffer.get(), texture, level, internalFormat, format, type, GraphicsContextGL::FlipY(flipY)));
+    completionHandler(contextCV->copyVideoSampleToTexture(*videoFrame, texture, level, internalFormat, format, type, GraphicsContextGL::FlipY(flipY)));
 #else
     UNUSED_VARIABLE(mediaPlayerIdentifier);
     UNUSED_VARIABLE(texture);

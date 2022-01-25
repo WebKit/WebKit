@@ -1000,13 +1000,18 @@ bool MediaPlayerPrivateRemote::copyVideoTextureToPlatformTexture(WebCore::Graphi
     notImplemented();
     return false;
 }
-#elif !PLATFORM(COCOA)
-RetainPtr<CVPixelBufferRef> MediaPlayerPrivateRemote::pixelBufferForCurrentTime()
-{
-    notImplemented();
-    return false;
-}
 #endif
+
+std::optional<WebCore::MediaSampleVideoFrame> MediaPlayerPrivateRemote::videoFrameForCurrentTime()
+{
+    std::optional<WebCore::MediaSampleVideoFrame> result;
+    bool changed = false;
+    if (!connection().sendSync(Messages::RemoteMediaPlayerProxy::VideoFrameForCurrentTimeIfChanged(), Messages::RemoteMediaPlayerProxy::VideoFrameForCurrentTimeIfChanged::Reply(result, changed), m_id))
+        return std::nullopt;
+    if (changed)
+        m_videoFrameForCurrentTime = WTFMove(result);
+    return m_videoFrameForCurrentTime;
+}
 
 #if !PLATFORM(COCOA)
 RefPtr<NativeImage> MediaPlayerPrivateRemote::nativeImageForCurrentTime()

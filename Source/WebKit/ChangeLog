@@ -1,3 +1,136 @@
+2022-01-25  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r288315. rdar://problem/87601762
+
+    Implement WebGL GPU buffer texture upload path for Cocoa getUserMedia camera streams
+    https://bugs.webkit.org/show_bug.cgi?id=235233
+    <rdar://problem/87601762>
+    
+    Patch by Kimmo Kinnunen <kkinnunen@apple.com> on 2022-01-20
+    Reviewed by Youenn Fablet.
+    
+    Source/WebCore:
+    
+    Make full texture uploads from MediaStream camera captures use CVPixelBuffers
+    instead of reading the pixels back.
+    Implement MediaPlayerInterface::pixelBufferForCurrentTime() for
+    MediaPlayerPrivateMediaSourceAVFObjC.
+    Rename functions from pixelBuffer... to videoSample...
+    Use new type MediaSampleVideoFrame instead of CVPixelBuffer.
+    MediaSampleVideoFrame contains also the frame orientation. The
+    orientation is needed as the camera might capture the image
+    with a rotation or a flip.
+    
+    To avoid ifdefs, the new API videoSampleForCurrentTime exists
+    for all platforms, but is currently called only by Cocoa.
+    Also the type MediaSampleVideoFrame exists for all platforms
+    but has the frame contents implementation only for Cocoa.
+    
+    Tested by
+    fast/mediastream/getUserMedia-to-canvas-1.html
+    fast/mediastream/getUserMedia-to-canvas-2.html
+    
+    Currently the "mirrored" part is tested manually, WebKit
+    does not request mirrored camera image so it is dead code.
+    
+    * Headers.cmake:
+    * SourcesCocoa.txt:
+    * WebCore.xcodeproj/project.pbxproj:
+    * platform/graphics/MediaPlayer.cpp:
+    (WebCore::MediaPlayer::videoSampleForCurrentTime):
+    (WebCore::MediaPlayer::pixelBufferForCurrentTime): Deleted.
+    * platform/graphics/MediaPlayer.h:
+    * platform/graphics/MediaPlayerPrivate.h:
+    (WebCore::MediaPlayerPrivateInterface::copyVideoTextureToPlatformTexture):
+    (WebCore::MediaPlayerPrivateInterface::videoSampleForCurrentTime):
+    (WebCore::MediaPlayerPrivateInterface::pixelBufferForCurrentTime): Deleted.
+    * platform/graphics/MediaSampleVideoFrame.h: Added.
+    (WebCore::MediaSampleVideoFrame::orientation const):
+    (WebCore::MediaSampleVideoFrame::pixelBuffer const):
+    (WebCore::MediaSampleVideoFrame::operator== const):
+    (WebCore::MediaSampleVideoFrame::encode const):
+    (WebCore::MediaSampleVideoFrame::decode):
+    * platform/graphics/avfoundation/MediaSampleVideoFrameAVF.mm: Added.
+    (WebCore::MediaSampleVideoFrame::MediaSampleVideoFrame):
+    * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.h:
+    * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+    (WebCore::MediaPlayerPrivateAVFoundationObjC::videoSampleForCurrentTime):
+    (WebCore::MediaPlayerPrivateAVFoundationObjC::pixelBufferForCurrentTime): Deleted.
+    * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.h:
+    * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm:
+    (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::videoSampleForCurrentTime):
+    (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::pixelBufferForCurrentTime): Deleted.
+    * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.h:
+    * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.mm:
+    (WebCore::videoOrientation):
+    (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::videoSampleForCurrentTime):
+    * platform/graphics/cocoa/GraphicsContextGLCocoa.mm:
+    (WebCore::GraphicsContextGLCocoa::copyTextureFromMedia):
+    * platform/graphics/cv/GraphicsContextGLCV.h:
+    * platform/graphics/cv/GraphicsContextGLCVCocoa.cpp:
+    (WebCore::GraphicsContextGLCVCocoa::GraphicsContextGLCVCocoa):
+    (WebCore::GraphicsContextGLCVCocoa::copyVideoFrameToTexture):
+    (WebCore::GraphicsContextGLCVCocoa::copyPixelBufferToTexture): Deleted.
+    * platform/graphics/cv/GraphicsContextGLCVCocoa.h:
+    
+    Source/WebKit:
+    
+    Rename functions from pixelBuffer... to videoFrame.
+    Send new type MediaPlayerVideoFrame instead of CVPixelBuffer.
+    MediaPlayerVideoFrame contains also the frame orientation.
+    
+    * GPUProcess/graphics/RemoteGraphicsContextGL.cpp:
+    (WebKit::RemoteGraphicsContextGL::copyTextureFromMedia):
+    * GPUProcess/media/RemoteMediaPlayerProxy.cpp:
+    (WebKit::RemoteMediaPlayerProxy::invalidate):
+    (WebKit::RemoteMediaPlayerProxy::videoFrameForCurrentTimeIfChanged):
+    * GPUProcess/media/RemoteMediaPlayerProxy.h:
+    * GPUProcess/media/RemoteMediaPlayerProxy.messages.in:
+    * GPUProcess/media/cocoa/RemoteMediaPlayerProxyCocoa.mm:
+    (WebKit::RemoteMediaPlayerProxy::pixelBufferForCurrentTimeIfChanged): Deleted.
+    * WebProcess/GPU/media/MediaPlayerPrivateRemote.cpp:
+    (WebKit::MediaPlayerPrivateRemote::videoFrameForCurrentTime):
+    (WebKit::MediaPlayerPrivateRemote::pixelBufferForCurrentTime): Deleted.
+    * WebProcess/GPU/media/MediaPlayerPrivateRemote.h:
+    * WebProcess/GPU/media/cocoa/MediaPlayerPrivateRemoteCocoa.mm:
+    (WebKit::MediaPlayerPrivateRemote::pixelBufferForCurrentTime): Deleted.
+    
+    LayoutTests:
+    
+    * fast/mediastream/getUserMedia-to-canvas.html:
+    * webrtc/routines.js:
+    Test camera image rotations in the test.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@288315 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-01-20  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+            Implement WebGL GPU buffer texture upload path for Cocoa getUserMedia camera streams
+            https://bugs.webkit.org/show_bug.cgi?id=235233
+            <rdar://problem/87601762>
+
+            Reviewed by Youenn Fablet.
+
+            Rename functions from pixelBuffer... to videoFrame.
+            Send new type MediaPlayerVideoFrame instead of CVPixelBuffer.
+            MediaPlayerVideoFrame contains also the frame orientation.
+
+            * GPUProcess/graphics/RemoteGraphicsContextGL.cpp:
+            (WebKit::RemoteGraphicsContextGL::copyTextureFromMedia):
+            * GPUProcess/media/RemoteMediaPlayerProxy.cpp:
+            (WebKit::RemoteMediaPlayerProxy::invalidate):
+            (WebKit::RemoteMediaPlayerProxy::videoFrameForCurrentTimeIfChanged):
+            * GPUProcess/media/RemoteMediaPlayerProxy.h:
+            * GPUProcess/media/RemoteMediaPlayerProxy.messages.in:
+            * GPUProcess/media/cocoa/RemoteMediaPlayerProxyCocoa.mm:
+            (WebKit::RemoteMediaPlayerProxy::pixelBufferForCurrentTimeIfChanged): Deleted.
+            * WebProcess/GPU/media/MediaPlayerPrivateRemote.cpp:
+            (WebKit::MediaPlayerPrivateRemote::videoFrameForCurrentTime):
+            (WebKit::MediaPlayerPrivateRemote::pixelBufferForCurrentTime): Deleted.
+            * WebProcess/GPU/media/MediaPlayerPrivateRemote.h:
+            * WebProcess/GPU/media/cocoa/MediaPlayerPrivateRemoteCocoa.mm:
+            (WebKit::MediaPlayerPrivateRemote::pixelBufferForCurrentTime): Deleted.
+
 2022-01-24  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r288389. rdar://problem/85405320

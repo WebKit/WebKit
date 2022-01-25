@@ -791,8 +791,8 @@ void GraphicsContextGLANGLE::platformReleaseThreadResources()
 #if ENABLE(VIDEO)
 bool GraphicsContextGLCocoa::copyTextureFromMedia(MediaPlayer& player, PlatformGLObject outputTexture, GCGLenum outputTarget, GCGLint level, GCGLenum internalFormat, GCGLenum format, GCGLenum type, bool premultiplyAlpha, bool flipY)
 {
-    auto pixelBuffer = player.pixelBufferForCurrentTime();
-    if (!pixelBuffer)
+    auto videoFrame = player.videoFrameForCurrentTime();
+    if (!videoFrame)
         return false;
 
     auto contextCV = asCV();
@@ -801,7 +801,7 @@ bool GraphicsContextGLCocoa::copyTextureFromMedia(MediaPlayer& player, PlatformG
 
     UNUSED_VARIABLE(premultiplyAlpha);
     ASSERT_UNUSED(outputTarget, outputTarget == GraphicsContextGL::TEXTURE_2D);
-    return contextCV->copyPixelBufferToTexture(pixelBuffer.get(), outputTexture, level, internalFormat, format, type, GraphicsContextGL::FlipY(flipY));
+    return contextCV->copyVideoSampleToTexture(*videoFrame, outputTexture, level, internalFormat, format, type, GraphicsContextGL::FlipY(flipY));
 }
 #endif
 

@@ -320,9 +320,7 @@ private:
     void nativeImageForCurrentTime(CompletionHandler<void(std::optional<WTF::MachSendRight>&&, WebCore::DestinationColorSpace)>&&);
     void colorSpace(CompletionHandler<void(WebCore::DestinationColorSpace)>&&);
 #endif
-#if USE(AVFOUNDATION)
-    void pixelBufferForCurrentTimeIfChanged(CompletionHandler<void(std::optional<RetainPtr<CVPixelBufferRef>>&&)>&&);
-#endif
+    void videoFrameForCurrentTimeIfChanged(CompletionHandler<void(std::optional<WebCore::MediaSampleVideoFrame>&&, bool)>&&);
 
 #if !RELEASE_LOG_DISABLED
     const Logger& mediaPlayerLogger() final { return m_logger; }
@@ -378,9 +376,7 @@ private:
     ScopedRenderingResourcesRequest m_renderingResourcesRequest;
 
     bool m_observingTimeChanges { false };
-#if USE(AVFOUNDATION)
-    RetainPtr<CVPixelBufferRef> m_pixelBufferForCurrentTime;
-#endif
+    std::optional<WebCore::MediaSampleVideoFrame> m_videoFrameForCurrentTime;
 #if !RELEASE_LOG_DISABLED
     const Logger& m_logger;
 #endif

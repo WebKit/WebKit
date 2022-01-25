@@ -721,7 +721,7 @@ void MediaPlayerPrivateMediaSourceAVFObjC::paintCurrentFrameInContext(GraphicsCo
     context.drawNativeImage(*image, imageRect.size(), outputRect, imageRect);
 }
 
-RetainPtr<CVPixelBufferRef> MediaPlayerPrivateMediaSourceAVFObjC::pixelBufferForCurrentTime()
+std::optional<MediaSampleVideoFrame> MediaPlayerPrivateMediaSourceAVFObjC::videoFrameForCurrentTime()
 {
     // We have been asked to paint into a WebGL canvas, so take that as a signal to create
     // a decompression session, even if that means the native video can't also be displayed
@@ -733,8 +733,9 @@ RetainPtr<CVPixelBufferRef> MediaPlayerPrivateMediaSourceAVFObjC::pixelBufferFor
 
     if (!m_isGatheringVideoFrameMetadata)
         updateLastPixelBuffer();
-
-    return m_lastPixelBuffer;
+    if (!m_lastPixelBuffer)
+        return std::nullopt;
+    return MediaSampleVideoFrame { RetainPtr { m_lastPixelBuffer }, ImageOrientation::None };
 }
 
 DestinationColorSpace MediaPlayerPrivateMediaSourceAVFObjC::colorSpace()

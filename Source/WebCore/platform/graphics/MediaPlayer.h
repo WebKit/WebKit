@@ -33,6 +33,7 @@
 #include "LayoutRect.h"
 #include "MediaPlayerEnums.h"
 #include "MediaPlayerIdentifier.h"
+#include "MediaSampleVideoFrame.h"
 #include "PlatformLayer.h"
 #include "PlatformTextTrack.h"
 #include "SecurityOriginData.h"
@@ -467,10 +468,8 @@ public:
     // The current restrictions require that format shoud be RGB or RGBA, type should be UNSIGNED_BYTE and level should be 0. It may be lifted in the future.
 #if !USE(AVFOUNDATION)
     bool copyVideoTextureToPlatformTexture(GraphicsContextGL*, PlatformGLObject texture, GCGLenum target, GCGLint level, GCGLenum internalFormat, GCGLenum format, GCGLenum type, bool premultiplyAlpha, bool flipY);
-#else
-    RetainPtr<CVPixelBufferRef> pixelBufferForCurrentTime();
 #endif
-
+    std::optional<MediaSampleVideoFrame> videoFrameForCurrentTime();
     RefPtr<NativeImage> nativeImageForCurrentTime();
     DestinationColorSpace colorSpace();
 
