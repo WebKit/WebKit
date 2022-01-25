@@ -828,9 +828,13 @@ ComplexTextController::ComplexTextRun::ComplexTextRun(const Font& font, const UC
     m_coreTextIndices.reserveInitialCapacity(runLengthInCodeUnits);
     unsigned r = m_indexBegin;
     while (r < m_indexEnd) {
-        m_coreTextIndices.uncheckedAppend(r);
+        auto currentIndex = r;
         UChar32 character;
         U16_NEXT(m_characters, r, m_stringLength, character);
+        // https://drafts.csswg.org/css-text-3/#white-space-processing
+        // "Unsupported Default_ignorable characters must be ignored for text rendering."
+        if (!FontCascade::isCharacterWhoseGlyphsShouldBeDeletedForTextRendering(character))
+            m_coreTextIndices.uncheckedAppend(currentIndex);
     }
     m_glyphCount = m_coreTextIndices.size();
     if (!ltr) {
