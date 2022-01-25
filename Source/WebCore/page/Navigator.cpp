@@ -41,6 +41,7 @@
 #include "Page.h"
 #include "PlatformStrategies.h"
 #include "PluginData.h"
+#include "Quirks.h"
 #include "ResourceLoadObserver.h"
 #include "RuntimeEnabledFeatures.h"
 #include "ScriptController.h"
