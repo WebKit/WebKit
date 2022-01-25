@@ -257,7 +257,7 @@
         {
             "id": "LayoutContextType",
             "type": "string",
-            "enum": ["grid"],
+            "enum": ["flex", "grid"],
             "description": "The layout context type of a node."
         },
         {

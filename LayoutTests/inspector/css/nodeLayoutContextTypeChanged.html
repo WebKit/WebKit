@@ -65,6 +65,54 @@ function test()
         }
     });
 
+    addTestCase({
+        name: "CSS.nodeLayoutContextTypeChanged.FlexToNonFlex",
+        description: "Change a flex container to a non-flex container.",
+        selector: "#flexToNonFlex",
+        async domNodeHandler(domNode) {
+            InspectorTest.expectEqual(domNode.layoutContextType, WI.DOMNode.LayoutContextType.Flex, "Layout context should be `flex`.");
+
+            await Promise.all([
+                domNode.awaitEvent(WI.DOMNode.Event.LayoutContextTypeChanged),
+                changeElementDisplayValue("flexToNonFlex", "block"),
+            ]);
+
+            InspectorTest.expectEqual(domNode.layoutContextType, null, "Layout context should now be `null`.");
+        }
+    });
+
+    addTestCase({
+        name: "CSS.nodeLayoutContextTypeChanged.NonFlexToFlex",
+        description: "Change a non-flex container to a flex container.",
+        selector: "#nonFlexToFlex",
+        async domNodeHandler(domNode) {
+            InspectorTest.expectEqual(domNode.layoutContextType, null, "Layout context should be `null`.");
+
+            await Promise.all([
+                domNode.awaitEvent(WI.DOMNode.Event.LayoutContextTypeChanged),
+                changeElementDisplayValue("nonFlexToFlex", "flex"),
+            ]);
+
+            InspectorTest.expectEqual(domNode.layoutContextType, WI.DOMNode.LayoutContextType.Flex, "Layout context should now be `flex`.");
+        }
+    });
+
+    addTestCase({
+        name: "CSS.nodeLayoutContextTypeChanged.GridToFlex",
+        description: "Change a non-flex container to a flex container.",
+        selector: "#gridToFlex",
+        async domNodeHandler(domNode) {
+            InspectorTest.expectEqual(domNode.layoutContextType, WI.DOMNode.LayoutContextType.Grid, "Layout context should now be `grid`.");
+
+            await Promise.all([
+                domNode.awaitEvent(WI.DOMNode.Event.LayoutContextTypeChanged),
+                changeElementDisplayValue("gridToFlex", "flex"),
+            ]);
+
+            InspectorTest.expectEqual(domNode.layoutContextType, WI.DOMNode.LayoutContextType.Flex, "Layout context should now be `flex`.");
+        }
+    });
+
     WI.domManager.requestDocument().then((doc) => {
         documentNode = doc;
         suite.runTestCasesAndFinish();
@@ -74,6 +122,10 @@ function test()
 <style>
     .grid-container {
         display: grid;
+    }
+
+    .flex-container {
+        display: flex;
     }
 </style>
 </head>
@@ -85,6 +137,21 @@ function test()
     </div>
 
     <div id="nonGridToGrid">
+        <div></div>
+        <div></div>
+    </div>
+
+    <div id="flexToNonFlex" class="flex-container">
+        <div></div>
+        <div></div>
+    </div>
+
+    <div id="nonFlexToFlex">
+        <div></div>
+        <div></div>
+    </div>
+
+    <div id="gridToFlex" class="grid-container">
         <div></div>
         <div></div>
     </div>

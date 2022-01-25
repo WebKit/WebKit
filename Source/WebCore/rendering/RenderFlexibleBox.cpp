@@ -33,6 +33,7 @@
 
 #include "FlexibleBoxAlgorithm.h"
 #include "HitTestResult.h"
+#include "InspectorInstrumentation.h"
 #include "LayoutRepainter.h"
 #include "RenderChildIterator.h"
 #include "RenderLayer.h"
@@ -72,6 +73,8 @@ RenderFlexibleBox::RenderFlexibleBox(Element& element, RenderStyle&& style)
     : RenderBlock(element, WTFMove(style), 0)
 {
     setChildrenInline(false); // All of our children must be block-level.
+
+    InspectorInstrumentation::nodeLayoutContextChanged(element, this);
 }
 
 RenderFlexibleBox::RenderFlexibleBox(Document& document, RenderStyle&& style)
@@ -80,7 +83,11 @@ RenderFlexibleBox::RenderFlexibleBox(Document& document, RenderStyle&& style)
     setChildrenInline(false); // All of our children must be block-level.
 }
 
-RenderFlexibleBox::~RenderFlexibleBox() = default;
+RenderFlexibleBox::~RenderFlexibleBox()
+{
+    if (!isAnonymous())
+        InspectorInstrumentation::nodeLayoutContextChanged(nodeForNonAnonymous(), nullptr);
+}
 
 const char* RenderFlexibleBox::renderName() const
 {

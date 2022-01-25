@@ -56,6 +56,7 @@
 #include "Node.h"
 #include "NodeList.h"
 #include "PseudoElement.h"
+#include "RenderFlexibleBox.h"
 #include "RenderGrid.h"
 #include "RenderStyleConstants.h"
 #include "SVGStyleElement.h"
@@ -938,6 +939,8 @@ Protocol::ErrorStringOr<void> InspectorCSSAgent::forcePseudoState(Protocol::DOM:
 
 std::optional<Protocol::CSS::LayoutContextType> InspectorCSSAgent::layoutContextTypeForRenderer(RenderObject* renderer)
 {
+    if (is<RenderFlexibleBox>(renderer))
+        return Protocol::CSS::LayoutContextType::Flex;
     if (is<RenderGrid>(renderer))
         return Protocol::CSS::LayoutContextType::Grid;
     return std::nullopt;

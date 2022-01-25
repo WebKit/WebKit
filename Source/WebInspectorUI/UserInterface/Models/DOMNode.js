@@ -1138,5 +1138,6 @@ WI.DOMNode.CustomElementState = {
 
 // Corresponds to `CSS.LayoutContextType`.
 WI.DOMNode.LayoutContextType = {
+    Flex: "flex",
     Grid: "grid",
 };

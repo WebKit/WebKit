@@ -1,3 +1,13 @@
+2022-01-24  Patrick Angle  <pangle@apple.com>
+
+        Web Inspector: [Flexbox] Add instrumentation/protocol bits for flex layout containers
+        https://bugs.webkit.org/show_bug.cgi?id=235454
+
+        Reviewed by Devin Rousso.
+
+        * inspector/css/nodeLayoutContextTypeChanged-expected.txt:
+        * inspector/css/nodeLayoutContextTypeChanged.html:
+
 2022-01-24  Eric Carlson  <eric.carlson@apple.com>
 
         REGRESSION (iOS 15): HTMLAudioElement fails to load new audio when device is locked or safari is in background
