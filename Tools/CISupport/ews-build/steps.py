@@ -313,16 +313,16 @@ class ConfigureBuild(buildstep.BuildStep):
             self.addURL('Patch {}'.format(patch_id), Bugzilla.patch_url(patch_id))
 
     def add_pr_details(self):
-        repository_url = self.getProperty('repository', '')
         pr_number = self.getProperty('github.number')
+        if not pr_number:
+            return
+        repository_url = self.getProperty('repository', '')
         title = self.getProperty('github.title', '')
         owners = self.getProperty('owners', [])
         revision = self.getProperty('github.head.sha')
 
-        if pr_number and title:
+        if title:
             self.addURL('PR {}: {}'.format(pr_number, title), GitHub.pr_url(pr_number, repository_url))
-        if pr_number and revision:
-            self.addURL('Hash: {}'.format(revision[:HASH_LENGTH_TO_DISPLAY]), GitHub.commit_url(revision, repository_url))
         if owners:
             contributors, errors = Contributors.load(use_network=False)
             for error in errors:
@@ -334,6 +334,8 @@ class ConfigureBuild(buildstep.BuildStep):
             if display_name != github_username:
                 display_name = '{} ({})'.format(display_name, github_username)
             self.addURL('PR by: {}'.format(display_name), '{}{}'.format(GITHUB_URL, github_username))
+        if revision:
+            self.addURL('Hash: {}'.format(revision[:HASH_LENGTH_TO_DISPLAY]), GitHub.commit_url(revision, repository_url))
 
 
 class CheckOutSource(git.Git):
