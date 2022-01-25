@@ -1,5 +1,43 @@
 2022-01-24  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r288303. rdar://problem/87836127
+
+    [:has pseudo-class] Support :has(:not(foo))
+    https://bugs.webkit.org/show_bug.cgi?id=235399
+    
+    Reviewed by Darin Adler.
+    
+    LayoutTests/imported/w3c:
+    
+    * web-platform-tests/css/selectors/invalidation/has-with-not-expected.txt: Added.
+    * web-platform-tests/css/selectors/invalidation/has-with-not.html: Added.
+    
+    Source/WebCore:
+    
+    This already works except for a filter bug.
+    
+    Test: imported/w3c/web-platform-tests/css/selectors/invalidation/has-with-not.html
+    
+    * style/HasSelectorFilter.h:
+    (WebCore::Style::HasSelectorFilter::reject const):
+    
+    We shouldn't reject a selector if we have a null key.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@288303 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-01-20  Antti Koivisto  <antti@apple.com>
+
+            [:has pseudo-class] Support :has(:not(foo))
+            https://bugs.webkit.org/show_bug.cgi?id=235399
+
+            Reviewed by Darin Adler.
+
+            * web-platform-tests/css/selectors/invalidation/has-with-not-expected.txt: Added.
+            * web-platform-tests/css/selectors/invalidation/has-with-not.html: Added.
+
+2022-01-24  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r288264. rdar://problem/87745419
 
     Align our qualified name validation with the specification
