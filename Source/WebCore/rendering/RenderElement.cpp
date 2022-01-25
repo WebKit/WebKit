@@ -634,22 +634,18 @@ RenderPtr<RenderObject> RenderElement::detachRendererInternal(RenderObject& rend
     return RenderPtr<RenderObject>(&renderer);
 }
 
-static void addLayers(RenderElement& renderer, RenderLayer* parentLayer, RenderElement*& newObject, RenderLayer*& beforeChild)
+static void addLayers(const RenderElement& addedRenderer, RenderElement& currentRenderer, RenderLayer& parentLayer, std::optional<RenderLayer*>& beforeChild)
 {
-    if (renderer.hasLayer()) {
-        if (!beforeChild && newObject) {
-            // We need to figure out the layer that follows newObject. We only do
-            // this the first time we find a child layer, and then we update the
-            // pointer values for newObject and beforeChild used by everyone else.
-            beforeChild = newObject->parent()->findNextLayer(parentLayer, newObject);
-            newObject = nullptr;
-        }
-        parentLayer->addChild(*downcast<RenderLayerModelObject>(renderer).layer(), beforeChild);
+    if (currentRenderer.hasLayer()) {
+        if (!beforeChild.has_value())
+            beforeChild = addedRenderer.parent()->findNextLayer(parentLayer, &addedRenderer);
+
+        parentLayer.addChild(*downcast<RenderLayerModelObject>(currentRenderer).layer(), beforeChild.value());
         return;
     }
 
-    for (auto& child : childrenOfType<RenderElement>(renderer))
-        addLayers(child, parentLayer, newObject, beforeChild);
+    for (auto& child : childrenOfType<RenderElement>(currentRenderer))
+        addLayers(addedRenderer, child, parentLayer, beforeChild);
 }
 
 void RenderElement::addLayers(RenderLayer* parentLayer)
@@ -657,9 +653,8 @@ void RenderElement::addLayers(RenderLayer* parentLayer)
     if (!parentLayer)
         return;
 
-    RenderElement* renderer = this;
-    RenderLayer* beforeChild = nullptr;
-    WebCore::addLayers(*this, parentLayer, renderer, beforeChild);
+    std::optional<RenderLayer*> beforeChild;
+    WebCore::addLayers(*this, *this, *parentLayer, beforeChild);
 }
 
 void RenderElement::removeLayers(RenderLayer* parentLayer)
@@ -691,32 +686,27 @@ void RenderElement::moveLayers(RenderLayer* oldParent, RenderLayer& newParent)
         child.moveLayers(oldParent, newParent);
 }
 
-RenderLayer* RenderElement::findNextLayer(RenderLayer* parentLayer, RenderObject* startPoint, bool checkParent)
+RenderLayer* RenderElement::findNextLayer(RenderLayer& parentLayer, const RenderObject* siblingToTraverseFrom, bool checkParent) const
 {
-    // Error check the parent layer passed in. If it's null, we can't find anything.
-    if (!parentLayer)
-        return nullptr;
-
     // Step 1: If our layer is a child of the desired parent, then return our layer.
-    RenderLayer* ourLayer = hasLayer() ? downcast<RenderLayerModelObject>(*this).layer() : nullptr;
-    if (ourLayer && ourLayer->parent() == parentLayer)
+    auto* ourLayer = hasLayer() ? downcast<RenderLayerModelObject>(*this).layer() : nullptr;
+    if (ourLayer && ourLayer->parent() == &parentLayer)
         return ourLayer;
 
     // Step 2: If we don't have a layer, or our layer is the desired parent, then descend
     // into our siblings trying to find the next layer whose parent is the desired parent.
-    if (!ourLayer || ourLayer == parentLayer) {
-        for (RenderObject* child = startPoint ? startPoint->nextSibling() : firstChild(); child; child = child->nextSibling()) {
+    if (!ourLayer || ourLayer == &parentLayer) {
+        for (auto* child = siblingToTraverseFrom ? siblingToTraverseFrom->nextSibling() : firstChild(); child; child = child->nextSibling()) {
             if (!is<RenderElement>(*child))
                 continue;
-            RenderLayer* nextLayer = downcast<RenderElement>(*child).findNextLayer(parentLayer, nullptr, false);
-            if (nextLayer)
+            if (auto* nextLayer = downcast<RenderElement>(*child).findNextLayer(parentLayer, nullptr, false))
                 return nextLayer;
         }
     }
 
     // Step 3: If our layer is the desired parent layer, then we're finished. We didn't
     // find anything.
-    if (parentLayer == ourLayer)
+    if (ourLayer == &parentLayer)
         return nullptr;
 
     // Step 4: If |checkParent| is set, climb up to our parent and check its siblings that
