@@ -31,6 +31,7 @@
 #pragma once
 
 #include "ExceptionCode.h"
+#include "SharedBuffer.h"
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {

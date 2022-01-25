@@ -1,3 +1,9 @@
+2022-01-24  Diego Pino Garcia  <dpino@igalia.com>
+
+        Unreviewed, fix non-unified build after r288458
+
+        * runtime/DeferredWorkTimer.h:
+
 2022-01-24  Patrick Angle  <pangle@apple.com>
 
         Web Inspector: [Flexbox] Add instrumentation/protocol bits for flex layout containers

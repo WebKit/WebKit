@@ -30,6 +30,7 @@
 #include "Strong.h"
 
 #include <wtf/Deque.h>
+#include <wtf/FixedVector.h>
 #include <wtf/HashSet.h>
 #include <wtf/Lock.h>
 #include <wtf/Vector.h>
