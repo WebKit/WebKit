@@ -1,5 +1,69 @@
 2022-01-24  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r288180. rdar://problem/84440841
+
+    Loupe sometimes flips to the bottom of the page when dragging the end of a selection to the top of a page with selection flipping.
+    https://bugs.webkit.org/show_bug.cgi?id=235220
+    
+    Reviewed by Tim Horton.
+    
+    Source/WebCore:
+    
+    Test: fast/events/touch/ios/long-press-then-drag-up-to-change-selected-text-overflow.html
+    
+    When selecting on an EPUB in books, if you had a selection near the top of the page,
+    and you dragged the end of the selection past the start and into the upper margin, sometimes
+    this would result in the selection ending up on the previous page of content, which would result
+    in the loupe being pushed to the bottom of the page (because the selection was on the previous page
+    at the bottom), which is incorrect. The most solid way to keep this from happening is to clamp the selection
+    to the unobscured content rect, which will keep selection from reaching back to the previous page.
+    
+    * platform/graphics/FloatPoint.cpp:
+    (WebCore::FloatPoint::constrainedWithin const):
+    * platform/graphics/FloatPoint.h:
+    * platform/graphics/IntPoint.cpp:
+    (WebCore::IntPoint::constrainedWithin const):
+    * platform/graphics/IntPoint.h:
+    
+    Source/WebKit:
+    
+    When selecting on an EPUB in books, if you had a selection near the top of the page,
+    and you dragged the end of the selection past the start and into the upper margin, sometimes
+    this would result in the selection ending up on the previous page of content, which would result
+    in the loupe being pushed to the bottom of the page (because the selection was on the previous page
+    at the bottom), which is incorrect. The most solid way to keep this from happening is to clamp the selection
+    to the unobscured content rect, which will keep selection from reaching back to the previous page.
+    
+    * WebProcess/WebPage/ios/WebPageIOS.mm:
+    (WebKit::rangeForPointInRootViewCoordinates):
+    
+    LayoutTests:
+    
+    * fast/events/touch/ios/long-press-then-drag-up-to-change-selected-text-overflow-expected.txt: Added.
+    * fast/events/touch/ios/long-press-then-drag-up-to-change-selected-text-overflow.html: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@288180 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-01-18  Megan Gardner  <megan_gardner@apple.com>
+
+            Loupe sometimes flips to the bottom of the page when dragging the end of a selection to the top of a page with selection flipping.
+            https://bugs.webkit.org/show_bug.cgi?id=235220
+
+            Reviewed by Tim Horton.
+
+            When selecting on an EPUB in books, if you had a selection near the top of the page,
+            and you dragged the end of the selection past the start and into the upper margin, sometimes
+            this would result in the selection ending up on the previous page of content, which would result
+            in the loupe being pushed to the bottom of the page (because the selection was on the previous page
+            at the bottom), which is incorrect. The most solid way to keep this from happening is to clamp the selection
+            to the unobscured content rect, which will keep selection from reaching back to the previous page.
+
+            * WebProcess/WebPage/ios/WebPageIOS.mm:
+            (WebKit::rangeForPointInRootViewCoordinates):
+
+2022-01-24  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r288039. rdar://problem/79220540
 
     [iOS] Occasional crash under -[UITargetedPreview initWithView:parameters:target:] when focusing form controls
