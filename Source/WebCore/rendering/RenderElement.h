@@ -107,10 +107,11 @@ public:
     // The following functions are used when the render tree hierarchy changes to make sure layers get
     // properly added and removed. Since containership can be implemented by any subclass, and since a hierarchy
     // can contain a mixture of boxes and other object types, these functions need to be in the base class.
+    RenderLayer* layerParent() const;
+    RenderLayer* layerNextSibling(RenderLayer& parentLayer) const;
     void addLayers(RenderLayer* parentLayer);
     void removeLayers(RenderLayer* parentLayer);
     void moveLayers(RenderLayer* oldParent, RenderLayer& newParent);
-    RenderLayer* findNextLayer(RenderLayer& parentLayer, const RenderObject* siblingToTraverseFrom, bool checkParent = true) const;
 
     virtual void dirtyLinesFromChangedChild(RenderObject&) { }
 
