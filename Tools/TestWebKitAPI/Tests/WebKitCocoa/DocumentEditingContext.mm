@@ -784,6 +784,19 @@ TEST(DocumentEditingContext, SpatialAndCurrentSelectionRequest_RectAfterInputWit
     EXPECT_NSSTRING_EQ(" the lazy dog.", context.contextAfter);
 }
 
+TEST(DocumentEditingContext, SpatialAndCurrentSelectionRequest_LimitContextToEditableRoot)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 980, 600)]);
+
+    [webView synchronouslyLoadHTMLString:applyAhemStyle(@"hello world <textarea>foo bar baz</textarea> this is a test")];
+    [webView stringByEvaluatingJavaScript:@"document.querySelector('textarea').select()"];
+
+    UIWKDocumentContext *context = [webView synchronouslyRequestDocumentContext:makeRequest(UIWKDocumentRequestText | UIWKDocumentRequestSpatialAndCurrentSelection, UITextGranularityWord, 200, CGRectMake(0, 0, 980, 600))];
+    EXPECT_NULL(context.contextBefore);
+    EXPECT_NSSTRING_EQ("foo bar baz", context.selectedText);
+    EXPECT_NULL(context.contextAfter);
+}
+
 TEST(DocumentEditingContext, RequestRectsInTextAreaAcrossWordWrappedLine)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);

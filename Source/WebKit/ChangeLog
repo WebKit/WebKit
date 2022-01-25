@@ -1,3 +1,29 @@
+2022-01-25  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        UIWKDocumentRequestSpatialAndCurrentSelection should limit context to the editable root of the current selection
+        https://bugs.webkit.org/show_bug.cgi?id=235595
+        rdar://87835602
+
+        Reviewed by Aditya Keerthi.
+
+        Adjust the behavior of document editing context requests in the case where the `SpatialAndCurrentSelection` flag
+        is specified, but no explicit `textInputContext` has been given. Instead of using the hit-tested corners of the
+        spatial request as-is, clamp to the visible start and end positions of the current editable root (only if it
+        exists).
+
+        This adjustment makes this particular request configuration useful for text input clients that just want to
+        request text input context information for the current editable element in a given rect, but don't already have
+        a text input element identifier.
+
+        Test: DocumentEditingContext.SpatialAndCurrentSelectionRequest_LimitContextToEditableRoot
+
+        * Platform/spi/ios/UIKitSPI.h:
+
+        Drive-by fix: also clean up a couple of old staging declarations.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::requestDocumentEditingContext):
+
 2022-01-25  Sihui Liu  <sihui_liu@apple.com>
 
         Regression (r235236): NetworkStorageManager sends messages to wrong StorageAreaMap

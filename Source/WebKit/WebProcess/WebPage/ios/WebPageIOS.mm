@@ -4490,6 +4490,16 @@ void WebPage::requestDocumentEditingContext(DocumentEditingContextRequest reques
         // FIXME: We might need to be a bit more careful that we get something useful (test the other corners?).
         rangeOfInterest.start = visiblePositionForPointInRootViewCoordinates(frame.get(), request.rect.minXMinYCorner());
         rangeOfInterest.end = visiblePositionForPointInRootViewCoordinates(frame.get(), request.rect.maxXMaxYCorner());
+        if (request.options.contains(DocumentEditingContextRequest::Options::SpatialAndCurrentSelection)) {
+            if (RefPtr rootEditableElement = selection.rootEditableElement()) {
+                VisiblePosition startOfEditableRoot { firstPositionInOrBeforeNode(rootEditableElement.get()) };
+                VisiblePosition endOfEditableRoot { lastPositionInOrAfterNode(rootEditableElement.get()) };
+                if (rangeOfInterest.start < startOfEditableRoot)
+                    rangeOfInterest.start = WTFMove(startOfEditableRoot);
+                if (rangeOfInterest.end > endOfEditableRoot)
+                    rangeOfInterest.end = WTFMove(endOfEditableRoot);
+            }
+        }
     } else if (!selection.isNone())
         rangeOfInterest = selectionRange;
 

@@ -1259,6 +1259,8 @@ typedef NS_OPTIONS(NSInteger, UIWKDocumentRequestFlags) {
     UIWKDocumentRequestRects = 1 << 2,
     UIWKDocumentRequestSpatial = 1 << 3,
     UIWKDocumentRequestAnnotation = 1 << 4,
+    UIWKDocumentRequestMarkedTextRects =  1 << 5,
+    UIWKDocumentRequestSpatialAndCurrentSelection =  1 << 6,
 };
 
 @interface UIWKDocumentRequest : NSObject
@@ -1340,9 +1342,6 @@ typedef NS_ENUM(NSUInteger, _UIContextMenuLayout) {
 @end
 
 #endif // USE(APPLE_INTERNAL_SDK)
-
-#define UIWKDocumentRequestMarkedTextRects (1 << 5)
-#define UIWKDocumentRequestSpatialAndCurrentSelection (1 << 6)
 
 #if HAVE(PASTEBOARD_DATA_OWNER)
 
