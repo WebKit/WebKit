@@ -28,7 +28,7 @@ messages -> StorageManagerSet {
     GetValues(WebKit::StorageAreaIdentifier storageAreaID) -> (HashMap<String, String> values) Synchronous WantsConnection
     CloneSessionStorageNamespace(PAL::SessionID sessionID, WebKit::StorageNamespaceIdentifier fromStorageNamespaceID, WebKit::StorageNamespaceIdentifier toStorageNamespaceID) WantsConnection
 
-    SetItem(WebKit::StorageAreaIdentifier storageAreaID, WebKit::StorageAreaImplIdentifier storageAreaImplID, uint64_t storageMapSeed, String key, String value, String urlString) WantsConnection
-    RemoveItem(WebKit::StorageAreaIdentifier storageAreaID, WebKit::StorageAreaImplIdentifier storageAreaImplID, uint64_t storageMapSeed, String key, String urlString) WantsConnection
-    Clear(WebKit::StorageAreaIdentifier storageAreaID, WebKit::StorageAreaImplIdentifier storageAreaImplID, uint64_t storageMapSeed, String urlString) WantsConnection
+    SetItem(WebKit::StorageAreaIdentifier identifier, WebKit::StorageAreaImplIdentifier implIdentifier, String key, String value, String urlString) -> (bool quotaException) Async WantsConnection
+    RemoveItem(WebKit::StorageAreaIdentifier identifier, WebKit::StorageAreaImplIdentifier implIdentifier, String key, String urlString) -> () Async WantsConnection
+    Clear(WebKit::StorageAreaIdentifier identifier, WebKit::StorageAreaImplIdentifier implIdentifier, String urlString) -> () Async WantsConnection
 }

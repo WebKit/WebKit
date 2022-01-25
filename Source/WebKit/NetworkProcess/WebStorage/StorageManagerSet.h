@@ -89,9 +89,9 @@ private:
     void connectToSessionStorageArea(IPC::Connection&, PAL::SessionID, StorageNamespaceIdentifier, SecurityOriginData&&, ConnectToStorageAreaCallback&&);
     void disconnectFromStorageArea(IPC::Connection&, StorageAreaIdentifier);
     void getValues(IPC::Connection&, StorageAreaIdentifier, GetValuesCallback&&);
-    void setItem(IPC::Connection&, StorageAreaIdentifier, StorageAreaImplIdentifier, uint64_t storageMapSeed, const String& key, const String& value, const String& urlString);
-    void removeItem(IPC::Connection&, StorageAreaIdentifier, StorageAreaImplIdentifier, uint64_t storageMapSeed, const String& key, const String& urlString);
-    void clear(IPC::Connection&, StorageAreaIdentifier, StorageAreaImplIdentifier, uint64_t storageMapSeed, const String& urlString);
+    void setItem(IPC::Connection&, StorageAreaIdentifier, StorageAreaImplIdentifier, const String& key, const String& value, const String& urlString, CompletionHandler<void(bool)>&&);
+    void removeItem(IPC::Connection&, StorageAreaIdentifier, StorageAreaImplIdentifier, const String& key, const String& urlString, CompletionHandler<void()>&&);
+    void clear(IPC::Connection&, StorageAreaIdentifier, StorageAreaImplIdentifier, const String& urlString, CompletionHandler<void()>&&);
     void cloneSessionStorageNamespace(IPC::Connection&, PAL::SessionID, StorageNamespaceIdentifier fromStorageNamespaceID, StorageNamespaceIdentifier toStorageNamespaceID);
 
     HashMap<PAL::SessionID, std::unique_ptr<StorageManager>> m_storageManagers;

@@ -114,9 +114,9 @@ private:
     void connectToStorageAreaSync(IPC::Connection&, WebCore::StorageType, StorageAreaMapIdentifier, StorageNamespaceIdentifier, const WebCore::ClientOrigin&, CompletionHandler<void(StorageAreaIdentifier, HashMap<String, String>, uint64_t)>&&);
     void disconnectFromStorageArea(IPC::Connection&, StorageAreaIdentifier);
     void cloneSessionStorageNamespace(IPC::Connection&, StorageNamespaceIdentifier, StorageNamespaceIdentifier);
-    void setItem(IPC::Connection&, StorageAreaIdentifier, StorageAreaImplIdentifier, uint64_t seed, String&& key, String&& value, String&& urlString);
-    void removeItem(IPC::Connection&, StorageAreaIdentifier, StorageAreaImplIdentifier, uint64_t seed, String&& key, String&& urlString);
-    void clear(IPC::Connection&, StorageAreaIdentifier, StorageAreaImplIdentifier, uint64_t seed, String&& urlString);
+    void setItem(IPC::Connection&, StorageAreaIdentifier, StorageAreaImplIdentifier, String&& key, String&& value, String&& urlString, CompletionHandler<void(bool)>&&);
+    void removeItem(IPC::Connection&, StorageAreaIdentifier, StorageAreaImplIdentifier, String&& key, String&& urlString, CompletionHandler<void()>&&);
+    void clear(IPC::Connection&, StorageAreaIdentifier, StorageAreaImplIdentifier, String&& urlString, CompletionHandler<void()>&&);
 
     PAL::SessionID m_sessionID;
     Ref<SuspendableWorkQueue> m_queue;

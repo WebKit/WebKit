@@ -1,3 +1,38 @@
+2022-01-25  Sihui Liu  <sihui_liu@apple.com>
+
+        Regression (r235236): NetworkStorageManager sends messages to wrong StorageAreaMap
+        https://bugs.webkit.org/show_bug.cgi?id=235553
+
+        Reviewed by Darin Adler.
+
+        Started from r235236, NetworkStorageManager uses StorageAreaMapIdentifier instead of StorageAreaIdentifier as
+        the message destination (as web process stores StorageAreaMap by StorageAreaMapIdentifier). However, the
+        destination is not changed accordingly when sending didSetItem, didRemoveItem and didClear messages, so the
+        messages are dispatched to wrong StorageAreaMaps.
+
+        Since these messages are reply for some message sent from StorageAreaMap to NetworkStorageManager (e.g. 
+        didSetItem is reply of setItem), we may just use sendMessageWithAsyncReply when sending original message, and
+        we don't need to worry about the destination.
+
+        * NetworkProcess/WebStorage/StorageManagerSet.cpp:
+        (WebKit::StorageManagerSet::setItem):
+        (WebKit::StorageManagerSet::removeItem):
+        (WebKit::StorageManagerSet::clear):
+        * NetworkProcess/WebStorage/StorageManagerSet.h:
+        * NetworkProcess/WebStorage/StorageManagerSet.messages.in:
+        * NetworkProcess/storage/NetworkStorageManager.cpp:
+        (WebKit::NetworkStorageManager::setItem):
+        (WebKit::NetworkStorageManager::removeItem):
+        (WebKit::NetworkStorageManager::clear):
+        * NetworkProcess/storage/NetworkStorageManager.h:
+        * NetworkProcess/storage/NetworkStorageManager.messages.in:
+        * WebProcess/WebStorage/StorageAreaMap.cpp:
+        (WebKit::StorageAreaMap::setItem):
+        (WebKit::StorageAreaMap::removeItem):
+        (WebKit::StorageAreaMap::clear):
+        * WebProcess/WebStorage/StorageAreaMap.h:
+        * WebProcess/WebStorage/StorageAreaMap.messages.in:
+
 2022-01-24  Myles C. Maxfield  <mmaxfield@apple.com>
 
         REGRESSION(r282320): [Cocoa] User-installed fonts don't work in the GPU Process (in WKWebView)

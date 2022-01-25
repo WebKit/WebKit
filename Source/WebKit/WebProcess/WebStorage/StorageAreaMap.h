@@ -104,7 +104,7 @@ private:
     std::unique_ptr<WebCore::StorageMap> m_map;
     std::optional<StorageAreaIdentifier> m_remoteAreaIdentifier;
     HashCountedSet<String> m_pendingValueChanges;
-    uint64_t m_currentSeed { 0 };
+    uint64_t m_currentSeed { 1 };
     unsigned m_quotaInBytes;
     WebCore::StorageType m_type;
     uint64_t m_useCount { 0 };

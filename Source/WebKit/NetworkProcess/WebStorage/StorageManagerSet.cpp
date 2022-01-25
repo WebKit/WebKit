@@ -399,7 +399,7 @@ void StorageManagerSet::getValues(IPC::Connection& connection, StorageAreaIdenti
     completionHandler(storageArea ? storageArea->items() : HashMap<String, String>());
 }
 
-void StorageManagerSet::setItem(IPC::Connection& connection, StorageAreaIdentifier storageAreaID, StorageAreaImplIdentifier storageAreaImplID, uint64_t storageMapSeed, const String& key, const String& value, const String& urlString)
+void StorageManagerSet::setItem(IPC::Connection& connection, StorageAreaIdentifier storageAreaID, StorageAreaImplIdentifier storageAreaImplID, const String& key, const String& value, const String& urlString, CompletionHandler<void(bool)>&& completionHandler)
 {
     ASSERT(!RunLoop::isMain());
 
@@ -410,10 +410,10 @@ void StorageManagerSet::setItem(IPC::Connection& connection, StorageAreaIdentifi
     if (storageArea)
         storageArea->setItem(connection.uniqueID(), storageAreaImplID, key, value, urlString, quotaError);
 
-    connection.send(Messages::StorageAreaMap::DidSetItem(storageMapSeed, key, quotaError), storageAreaID);
+    completionHandler(quotaError);
 } 
 
-void StorageManagerSet::removeItem(IPC::Connection& connection, StorageAreaIdentifier storageAreaID, StorageAreaImplIdentifier storageAreaImplID, uint64_t storageMapSeed, const String& key, const String& urlString)
+void StorageManagerSet::removeItem(IPC::Connection& connection, StorageAreaIdentifier storageAreaID, StorageAreaImplIdentifier storageAreaImplID, const String& key, const String& urlString, CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(!RunLoop::isMain());
 
@@ -423,10 +423,10 @@ void StorageManagerSet::removeItem(IPC::Connection& connection, StorageAreaIdent
     if (storageArea)
         storageArea->removeItem(connection.uniqueID(), storageAreaImplID, key, urlString);
 
-    connection.send(Messages::StorageAreaMap::DidRemoveItem(storageMapSeed, key), storageAreaID);
+    completionHandler();
 }
 
-void StorageManagerSet::clear(IPC::Connection& connection, StorageAreaIdentifier storageAreaID, StorageAreaImplIdentifier storageAreaImplID, uint64_t storageMapSeed, const String& urlString)
+void StorageManagerSet::clear(IPC::Connection& connection, StorageAreaIdentifier storageAreaID, StorageAreaImplIdentifier storageAreaImplID, const String& urlString, CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(!RunLoop::isMain());
 
@@ -436,7 +436,7 @@ void StorageManagerSet::clear(IPC::Connection& connection, StorageAreaIdentifier
     if (storageArea)
         storageArea->clear(connection.uniqueID(), storageAreaImplID, urlString);
 
-    connection.send(Messages::StorageAreaMap::DidClear(storageMapSeed), storageAreaID);
+    completionHandler();
 }
 
 void StorageManagerSet::cloneSessionStorageNamespace(IPC::Connection&, PAL::SessionID sessionID, StorageNamespaceIdentifier fromStorageNamespaceID, StorageNamespaceIdentifier toStorageNamespaceID)

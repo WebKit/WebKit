@@ -678,7 +678,7 @@ void NetworkStorageManager::cloneSessionStorageNamespace(IPC::Connection& connec
     }
 }
 
-void NetworkStorageManager::setItem(IPC::Connection& connection, StorageAreaIdentifier identifier, StorageAreaImplIdentifier implIdentifier, uint64_t storageMapSeed, String&& key, String&& value, String&& urlString)
+void NetworkStorageManager::setItem(IPC::Connection& connection, StorageAreaIdentifier identifier, StorageAreaImplIdentifier implIdentifier, String&& key, String&& value, String&& urlString, CompletionHandler<void(bool)>&& completionHandler)
 {
     ASSERT(!RunLoop::isMain());
 
@@ -689,27 +689,27 @@ void NetworkStorageManager::setItem(IPC::Connection& connection, StorageAreaIden
             hasQuotaError = (result.error() == StorageError::QuotaExceeded);
     }
 
-    connection.send(Messages::StorageAreaMap::DidSetItem(storageMapSeed, key, hasQuotaError), identifier);
+    completionHandler(hasQuotaError);
 }
 
-void NetworkStorageManager::removeItem(IPC::Connection& connection, StorageAreaIdentifier identifier, StorageAreaImplIdentifier implIdentifier, uint64_t storageMapSeed, String&& key, String&& urlString)
+void NetworkStorageManager::removeItem(IPC::Connection& connection, StorageAreaIdentifier identifier, StorageAreaImplIdentifier implIdentifier, String&& key, String&& urlString, CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(!RunLoop::isMain());
 
     if (auto storageArea = m_storageAreaRegistry->getStorageArea(identifier))
-        storageArea->removeItem(connection.uniqueID(), implIdentifier, key, WTFMove(urlString));
+        storageArea->removeItem(connection.uniqueID(), implIdentifier, WTFMove(key), WTFMove(urlString));
 
-    connection.send(Messages::StorageAreaMap::DidRemoveItem(storageMapSeed, WTFMove(key)), identifier);
+    completionHandler();
 }
 
-void NetworkStorageManager::clear(IPC::Connection& connection, StorageAreaIdentifier identifier, StorageAreaImplIdentifier implIdentifier, uint64_t storageMapSeed, String&& urlString)
+void NetworkStorageManager::clear(IPC::Connection& connection, StorageAreaIdentifier identifier, StorageAreaImplIdentifier implIdentifier, String&& urlString, CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(!RunLoop::isMain());
 
     if (auto storageArea = m_storageAreaRegistry->getStorageArea(identifier))
         storageArea->clear(connection.uniqueID(), implIdentifier, WTFMove(urlString));
 
-    connection.send(Messages::StorageAreaMap::DidClear(storageMapSeed), identifier);
+    completionHandler();
 }
 
 } // namespace WebKit

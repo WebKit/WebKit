@@ -44,7 +44,7 @@
     ConnectToStorageAreaSync(WebCore::StorageType type, WebKit::StorageAreaMapIdentifier sourceIdentifier, WebKit::StorageNamespaceIdentifier namespaceIdentifier, struct WebCore::ClientOrigin origin) -> (WebKit::StorageAreaIdentifier identifier, HashMap<String, String> items, uint64_t messageIdentifier) Synchronous WantsConnection
     DisconnectFromStorageArea(WebKit::StorageAreaIdentifier identifier) WantsConnection
     CloneSessionStorageNamespace(WebKit::StorageNamespaceIdentifier fromStorageNamespaceID, WebKit::StorageNamespaceIdentifier toStorageNamespaceID) WantsConnection
-    SetItem(WebKit::StorageAreaIdentifier identifier, WebKit::StorageAreaImplIdentifier implIdentifier, uint64_t storageMapSeed, String key, String value, String urlString) WantsConnection
-    RemoveItem(WebKit::StorageAreaIdentifier identifier, WebKit::StorageAreaImplIdentifier implIdentifier, uint64_t storageMapSeed, String key, String urlString) WantsConnection
-    Clear(WebKit::StorageAreaIdentifier identifier, WebKit::StorageAreaImplIdentifier implIdentifier, uint64_t storageMapSeed, String urlString) WantsConnection
+    SetItem(WebKit::StorageAreaIdentifier identifier, WebKit::StorageAreaImplIdentifier implIdentifier, String key, String value, String urlString) -> (bool quotaException) Async WantsConnection
+    RemoveItem(WebKit::StorageAreaIdentifier identifier, WebKit::StorageAreaImplIdentifier implIdentifier, String key, String urlString) -> () Async WantsConnection
+    Clear(WebKit::StorageAreaIdentifier identifier, WebKit::StorageAreaImplIdentifier implIdentifier, String urlString) -> () Async WantsConnection
 }

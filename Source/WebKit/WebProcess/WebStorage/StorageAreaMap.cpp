@@ -97,10 +97,17 @@ void StorageAreaMap::setItem(Frame* sourceFrame, StorageAreaImpl* sourceArea, co
 
     m_pendingValueChanges.add(key);
 
-    if (m_remoteAreaIdentifier)
-        WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::NetworkStorageManager::SetItem(*m_remoteAreaIdentifier, sourceArea->identifier(), m_currentSeed, key, value, sourceFrame->document()->url().string()), 0);
-    else
+    if (!m_remoteAreaIdentifier) {
         RELEASE_LOG_ERROR(Storage, "StorageAreaMap::setItem failed because storage map ID is invalid");
+        return;
+    }
+        
+    auto callback = [weakThis = WeakPtr { *this }, seed = m_currentSeed, key](bool hasQuotaException) mutable {
+        if (weakThis)
+            weakThis->didSetItem(seed, key, hasQuotaException);
+    };
+    auto& connection = WebProcess::singleton().ensureNetworkProcessConnection().connection();
+    connection.sendWithAsyncReply(Messages::NetworkStorageManager::SetItem(*m_remoteAreaIdentifier, sourceArea->identifier(), key, value, sourceFrame->document()->url().string()), WTFMove(callback));
 }
 
 void StorageAreaMap::removeItem(WebCore::Frame* sourceFrame, StorageAreaImpl* sourceArea, const String& key)
@@ -116,10 +123,16 @@ void StorageAreaMap::removeItem(WebCore::Frame* sourceFrame, StorageAreaImpl* so
 
     m_pendingValueChanges.add(key);
 
-    if (m_remoteAreaIdentifier)
-        WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::NetworkStorageManager::RemoveItem(*m_remoteAreaIdentifier, sourceArea->identifier(), m_currentSeed, key, sourceFrame->document()->url().string()), 0);
-    else
+    if (!m_remoteAreaIdentifier) {
         RELEASE_LOG_ERROR(Storage, "StorageAreaMap::removeItem failed because storage map ID is invalid");
+        return;
+    }
+
+    auto callback = [weakThis = WeakPtr { *this }, seed = m_currentSeed, key]() mutable {
+        if (weakThis)
+            weakThis->didRemoveItem(seed, key);
+    };
+    WebProcess::singleton().ensureNetworkProcessConnection().connection().sendWithAsyncReply(Messages::NetworkStorageManager::RemoveItem(*m_remoteAreaIdentifier, sourceArea->identifier(), key, sourceFrame->document()->url().string()), WTFMove(callback));
 }
 
 void StorageAreaMap::clear(WebCore::Frame* sourceFrame, StorageAreaImpl* sourceArea)
@@ -130,10 +143,16 @@ void StorageAreaMap::clear(WebCore::Frame* sourceFrame, StorageAreaImpl* sourceA
     m_hasPendingClear = true;
     m_map = makeUnique<StorageMap>(m_quotaInBytes);
 
-    if (m_remoteAreaIdentifier)
-        WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::NetworkStorageManager::Clear(*m_remoteAreaIdentifier, sourceArea->identifier(), m_currentSeed, sourceFrame->document()->url().string()), 0);
-    else
+    if (!m_remoteAreaIdentifier) {
         RELEASE_LOG_ERROR(Storage, "StorageAreaMap::clear failed because storage map ID is invalid");
+        return;
+    }
+
+    auto callback = [weakThis = WeakPtr { *this }, seed = m_currentSeed]() mutable {
+        if (weakThis)
+            weakThis->didClear(seed);
+    };
+    WebProcess::singleton().ensureNetworkProcessConnection().connection().sendWithAsyncReply(Messages::NetworkStorageManager::Clear(*m_remoteAreaIdentifier, sourceArea->identifier(), sourceFrame->document()->url().string()), WTFMove(callback));
 }
 
 bool StorageAreaMap::contains(const String& key)
