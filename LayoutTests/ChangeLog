@@ -1,3 +1,15 @@
+2022-01-25  Jon Lee  <jonlee@apple.com>
+
+        Mavericks: media/track/track-in-band-legacy-api.html fails intermittently
+        https://bugs.webkit.org/show_bug.cgi?id=123522
+
+        Reviewed by Simon Fraser.
+
+        Remove expectations since it's not longer happening.
+        * gpu-process/TestExpectations:
+        * platform/ios-simulator/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2022-01-25  Ryan Haddad  <ryanhaddad@apple.com>
 
         [macOS arm64] imported/w3c/web-platform-tests/css/css-transforms/perspective-transforms-equivalence.html is consistently failing
@@ -7,7 +19,7 @@
 
         * platform/mac/TestExpectations: Mark test as failing on arm64.
 
-2022-01-25  Jon Lee  <jonlee554@gmail.com>
+2022-01-25  Jon Lee  <jonlee@apple.com>
 
         [ Catalina wk1 ews ] media/remote-control-command-seek.html is a flaky timeout
         https://bugs.webkit.org/show_bug.cgi?id=215325
@@ -421,7 +433,7 @@
         * platform/glib/TestExpectations:
         * platform/gtk/TestExpectations:
 
-2022-01-21  Jon Lee  <jonlee554@gmail.com>
+2022-01-21  Jon Lee  <jonlee@apple.com>
 
         Unreviewed gardening.
 
@@ -440,7 +452,7 @@
         * TestExpectations:
         * ipc/start-message-testing.html: Added.
 
-2022-01-20  Jon Lee  <jonlee554@gmail.com>
+2022-01-20  Jon Lee  <jonlee@apple.com>
 
         Partially garden [iOS] Triage failing LayoutTests in the storage/indexeddb directory
         https://bugs.webkit.org/show_bug.cgi?id=181752
@@ -460,7 +472,7 @@
 
         * platform/mac/TestExpectations:
 
-2022-01-20  Jon Lee  <jonlee554@gmail.com>
+2022-01-20  Jon Lee  <jonlee@apple.com>
 
         Unreviewed gardening.
 
@@ -468,7 +480,7 @@
         * platform/ios-simulator/TestExpectations:
         * platform/ios-wk2/TestExpectations:
 
-2022-01-20  Jon Lee  <jonlee554@gmail.com>
+2022-01-20  Jon Lee  <jonlee@apple.com>
 
         media/video-src-blob-using-open-panel.html now always passes.
         rdar://problem/32715902
@@ -486,7 +498,7 @@
         * TestExpectations:
         * platform/mac/TestExpectations:
 
-2022-01-20  Jon Lee  <jonlee554@gmail.com>
+2022-01-20  Jon Lee  <jonlee@apple.com>
 
         Unreviewed gardening.
 
@@ -495,14 +507,14 @@
         * platform/ios-wk2/TestExpectations:
         * platform/ios/TestExpectations: media/track/track-in-band-mode.html is flaky, not always failing.
 
-2022-01-20  Jon Lee  <jonlee554@gmail.com>
+2022-01-20  Jon Lee  <jonlee@apple.com>
 
         Unreviewed gardening.
 
         * gpu-process/TestExpectations: Remove failure expectations on media tests that are passing on iOS.
         * platform/ios/TestExpectations:
 
-2022-01-20  Jon Lee  <jonlee554@gmail.com>
+2022-01-20  Jon Lee  <jonlee@apple.com>
 
         Unreviewed gardening.
 
@@ -602,7 +614,7 @@
         * platform/wincairo/TestExpectations:
         IntersectionObserver / ResizeObserver are not enabled on these platforms.
 
-2022-01-20  Jon Lee  <jonlee554@gmail.com>
+2022-01-20  Jon Lee  <jonlee@apple.com>
 
         Unreviewed gardening of GPU Process bots
 
@@ -710,7 +722,7 @@
         * fast/css/CSSPrimitiveValue-modern-length-expected.txt: Added.
         * fast/css/CSSPrimitiveValue-modern-length.html: Added.
 
-2022-01-19  Jon Lee  <jonlee554@gmail.com>
+2022-01-19  Jon Lee  <jonlee@apple.com>
 
         Unreviewed gardening of GPU Process bot
 
@@ -851,7 +863,7 @@
 
         * platform/win/TestExpectations:
 
-2022-01-18  Jon Lee  <jonlee554@gmail.com>
+2022-01-18  Jon Lee  <jonlee@apple.com>
 
         Unreviewed gardening of GPU Process bot tests.
 

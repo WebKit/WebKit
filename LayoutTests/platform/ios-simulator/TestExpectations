@@ -23,8 +23,6 @@ webkit.org/b/126898 css3/flexbox/image-percent-max-height.html [ ImageOnlyFailur
 
 fast/events/document-elementFromPoint.html [ Pass Failure ]
 
-media/track/track-in-band-legacy-api.html [ Failure ]
-
 transforms/hittest-translated-content-off-to-infinity-and-back.html [ Pass ImageOnlyFailure ]
 
 # These tests seem to fail due pixel rounding errors in the absolute positioned elements used as reference.

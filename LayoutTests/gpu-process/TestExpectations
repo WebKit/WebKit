@@ -937,7 +937,6 @@ loader/go-back-to-different-window-size.html [ Pass ]
 mathml/presentation/mroot-pref-width.html
 media/media-session/actionHandlerInternalMappings.html
 media/track/track-css-visible-stroke.html
-media/track/track-in-band-legacy-api.html [ Pass ]
 media/video-canvas-createPattern.html [ Pass ]
 media/video-object-fit.html [ Pass ]
 media/video-seek-to-current-time.html [ Pass ]
