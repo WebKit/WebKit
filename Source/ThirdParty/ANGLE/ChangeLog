@@ -1,5 +1,33 @@
 2022-01-24  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r288097. rdar://problem/87653812
+
+    Follow-up: REGRESSION (r286603): Leak of three NSMutableDictionary objects each time rx::DisplayMtl::getMetalDeviceMatchingAttribute() is called
+    <https://webkit.org/b/235278>
+    <rdar://problem/87653812>
+    
+    Unreviewed follow-up fix from Bug 235281, Comment #5.
+    
+    * src/libANGLE/renderer/metal/DisplayMtl.mm:
+    (rx::DisplayMtl::getMetalDeviceMatchingAttribute):
+    - Remove unneeded calls to .get().
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@288097 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-01-17  David Kilzer  <ddkilzer@apple.com>
+
+            Follow-up: REGRESSION (r286603): Leak of three NSMutableDictionary objects each time rx::DisplayMtl::getMetalDeviceMatchingAttribute() is called
+            <https://webkit.org/b/235278>
+            <rdar://problem/87653812>
+
+            Unreviewed follow-up fix from Bug 235281, Comment #5.
+
+            * src/libANGLE/renderer/metal/DisplayMtl.mm:
+            (rx::DisplayMtl::getMetalDeviceMatchingAttribute):
+            - Remove unneeded calls to .get().
+
+2022-01-24  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r288074. rdar://problem/87653812
 
     REGRESSION (r286603): Leak of three NSMutableDictionary objects each time rx::DisplayMtl::getMetalDeviceMatchingAttribute() is called
