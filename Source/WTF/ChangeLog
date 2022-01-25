@@ -1,3 +1,19 @@
+2022-01-25  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [WTF] Make CRASH_WITH_INFO more useful when using GCC
+        https://bugs.webkit.org/show_bug.cgi?id=235573
+
+        Make CRASH_WITH_INFO() print out the additional information instead of silently crash
+        when WebKit is compiled with GCC.
+
+        Reviewed by Yusuke Suzuki.
+
+        * wtf/Assertions.h: Add a variant of CRASH_WITH_INFO() which uses __VA_OPT__ for
+        GCC and Clang; MSVC is left with the existing version as the version currently in
+        use is not happy about __VA_OPT__.
+        (CRASH_WITH_INFO): Deleted inline function for GCC.
+        (CRASH_WITH_SECURITY_IMPLICATION_AND_INFO): Ditto.
+
 2022-01-24  Mark Lam  <mark.lam@apple.com>
 
         Rename Vector and FixedVector::findMatching to findIf to match stl naming.
