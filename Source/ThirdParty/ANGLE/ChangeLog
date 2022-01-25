@@ -1,5 +1,36 @@
 2022-01-24  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r288105. rdar://problem/87656387
+
+    REGRESSION (r286603): rx::ProgramMtl::getSpecializedShader() leaks MTLFunctionConstantValues object due early return when an error occurs in ANGLE_TRY() macro
+    <https://webkit.org/b/235281>
+    <rdar://problem/87656387>
+    
+    Reviewed by Darin Adler.
+    
+    * src/libANGLE/renderer/metal/ProgramMtl.mm:
+    (rx::ProgramMtl::getSpecializedShader):
+    - Use mtl::AutoObjCObj<> to release MTLFunctionConstantValues
+      object on early return.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@288105 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-01-17  David Kilzer  <ddkilzer@apple.com>
+
+            REGRESSION (r286603): rx::ProgramMtl::getSpecializedShader() leaks MTLFunctionConstantValues object due early return when an error occurs in ANGLE_TRY() macro
+            <https://webkit.org/b/235281>
+            <rdar://problem/87656387>
+
+            Reviewed by Darin Adler.
+
+            * src/libANGLE/renderer/metal/ProgramMtl.mm:
+            (rx::ProgramMtl::getSpecializedShader):
+            - Use mtl::AutoObjCObj<> to release MTLFunctionConstantValues
+              object on early return.
+
+2022-01-24  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r288097. rdar://problem/87653812
 
     Follow-up: REGRESSION (r286603): Leak of three NSMutableDictionary objects each time rx::DisplayMtl::getMetalDeviceMatchingAttribute() is called
