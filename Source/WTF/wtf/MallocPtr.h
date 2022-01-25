@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <utility>
 #include <wtf/FastMalloc.h>
 #include <wtf/Noncopyable.h>
 
