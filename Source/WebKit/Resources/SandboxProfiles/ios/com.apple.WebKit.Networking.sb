@@ -187,7 +187,8 @@
     (deny mach-lookup (with telemetry)
            (global-name "com.apple.nsurlstorage-cache"))
 
-    (deny mach-lookup (with telemetry)
+    ;; <rdar://86781432>
+    (allow mach-lookup
            (global-name "com.apple.cfnetwork.AuthBrokerAgent"))
     ;; <rdar://problem/10423007>
     (allow mach-lookup (with telemetry)

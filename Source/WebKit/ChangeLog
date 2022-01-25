@@ -1,3 +1,32 @@
+2022-01-25  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r287990. rdar://problem/86781432
+
+    [iOS][Networking] Add access to required network service
+    https://bugs.webkit.org/show_bug.cgi?id=235188
+    <rdar://86781432>
+    
+    Reviewed by Brent Fulgham.
+    
+    Add access to required network service in the Networking process on iOS.
+    
+    * Resources/SandboxProfiles/ios/com.apple.WebKit.Networking.sb:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@287990 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-01-13  Per Arne Vollan  <pvollan@apple.com>
+
+            [iOS][Networking] Add access to required network service
+            https://bugs.webkit.org/show_bug.cgi?id=235188
+            <rdar://86781432>
+
+            Reviewed by Brent Fulgham.
+
+            Add access to required network service in the Networking process on iOS.
+
+            * Resources/SandboxProfiles/ios/com.apple.WebKit.Networking.sb:
+
 2022-01-25  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r288315. rdar://problem/87601762
