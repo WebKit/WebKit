@@ -1,5 +1,46 @@
 2022-01-24  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r288304. rdar://problem/87836459
+
+    [:has() pseudo-class] Ignore :visited inside :has()
+    https://bugs.webkit.org/show_bug.cgi?id=235404
+    
+    Reviewed by Sam Weinig.
+    
+    LayoutTests/imported/w3c:
+    
+    * web-platform-tests/css/selectors/has-visited-expected.html: Added.
+    * web-platform-tests/css/selectors/has-visited-ref.html: Added.
+    * web-platform-tests/css/selectors/has-visited.html: Added.
+    
+    Source/WebCore:
+    
+    Tests: imported/w3c/web-platform-tests/css/selectors/has-visited.html
+    
+    * css/SelectorChecker.cpp:
+    (WebCore::SelectorChecker::matchHasPseudoClass const):
+    
+    Make this more similar to :is/:not():
+    Use the current SelectorChecker with a different context rather than a nested SelectorChecker.
+    Use matchRecursively.
+    Setup the functional pseudo-class bits for the context.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@288304 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-01-20  Antti Koivisto  <antti@apple.com>
+
+            [:has() pseudo-class] Ignore :visited inside :has()
+            https://bugs.webkit.org/show_bug.cgi?id=235404
+
+            Reviewed by Sam Weinig.
+
+            * web-platform-tests/css/selectors/has-visited-expected.html: Added.
+            * web-platform-tests/css/selectors/has-visited-ref.html: Added.
+            * web-platform-tests/css/selectors/has-visited.html: Added.
+
+2022-01-24  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r288303. rdar://problem/87836127
 
     [:has pseudo-class] Support :has(:not(foo))

@@ -1310,14 +1310,18 @@ bool SelectorChecker::matchHasPseudoClass(CheckingContext& checkingContext, cons
             return false;
     }
 
-    SelectorChecker hasChecker(element.document());
+    CheckingContext hasCheckingContext(SelectorChecker::Mode::ResolvingStyle);
+    hasCheckingContext.scope = &element;
+
     bool matchedInsideScope = false;
 
     auto checkRelative = [&](auto& elementToCheck) {
-        CheckingContext hasCheckingContext(SelectorChecker::Mode::ResolvingStyle);
-        hasCheckingContext.scope = &element;
+        LocalContext hasContext(hasSelector, elementToCheck, VisitedMatchType::Disabled, PseudoId::None);
+        hasContext.inFunctionalPseudoClass = true;
+        hasContext.pseudoElementEffective = false;
 
-        auto result = hasChecker.match(hasSelector, elementToCheck, hasCheckingContext);
+        PseudoIdSet ignorePseudoElements;
+        auto result = matchRecursively(hasCheckingContext, hasContext, ignorePseudoElements).match == Match::SelectorMatches;
 
         if (hasCheckingContext.matchedInsideScope)
             matchedInsideScope = true;
