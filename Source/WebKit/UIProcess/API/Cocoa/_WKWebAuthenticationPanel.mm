@@ -711,6 +711,29 @@ static RetainPtr<_WKAuthenticatorAssertionResponse> wkAuthenticatorAssertionResp
     return encodedCommand.autorelease();
 }
 
+
++ (NSData *)encodeMakeCredentialCommandWithClientDataHash:(NSData *)clientDataHash options:(_WKPublicKeyCredentialCreationOptions *)options userVerificationAvailability:(_WKWebAuthenticationUserVerificationAvailability)userVerificationAvailability
+{
+    RetainPtr<NSData> encodedCommand;
+#if ENABLE(WEB_AUTHN)
+    auto encodedVector = fido::encodeMakeCredenitalRequestAsCBOR(vectorFromNSData(clientDataHash), [_WKWebAuthenticationPanel convertToCoreCreationOptionsWithOptions:options], coreUserVerificationAvailability(userVerificationAvailability), std::nullopt);
+    encodedCommand = adoptNS([[NSData alloc] initWithBytes:encodedVector.data() length:encodedVector.size()]);
+#endif
+
+    return encodedCommand.autorelease();
+}
+
++ (NSData *)encodeGetAssertionCommandWithClientDataHash:(NSData *)clientDataHash options:(_WKPublicKeyCredentialRequestOptions *)options userVerificationAvailability:(_WKWebAuthenticationUserVerificationAvailability)userVerificationAvailability
+{
+    RetainPtr<NSData> encodedCommand;
+#if ENABLE(WEB_AUTHN)
+    auto encodedVector = fido::encodeGetAssertionRequestAsCBOR(vectorFromNSData(clientDataHash), [_WKWebAuthenticationPanel convertToCoreRequestOptionsWithOptions:options], coreUserVerificationAvailability(userVerificationAvailability), std::nullopt);
+    encodedCommand = adoptNS([[NSData alloc] initWithBytes:encodedVector.data() length:encodedVector.size()]);
+#endif
+
+    return encodedCommand.autorelease();
+}
+
 - (void)setMockConfiguration:(NSDictionary *)configuration
 {
 #if ENABLE(WEB_AUTHN)
