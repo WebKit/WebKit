@@ -6151,6 +6151,33 @@ bool CSSPropertyParser::consumeOverscrollBehaviorShorthand(bool important)
     return true;
 }
 
+bool CSSPropertyParser::consumeContainerShorthand(bool important)
+{
+    auto type = parseSingleValue(CSSPropertyContainerType);
+    if (!type)
+        return false;
+
+    bool sawSlash = false;
+
+    auto consumeSlashName = [&]() -> RefPtr<CSSValue> {
+        if (m_range.atEnd())
+            return nullptr;
+        if (!consumeSlashIncludingWhitespace(m_range))
+            return nullptr;
+        sawSlash = true;
+        return parseSingleValue(CSSPropertyContainerName);
+    };
+
+    auto name = consumeSlashName();
+
+    if (!m_range.atEnd() || (sawSlash && !name))
+        return false;
+
+    addProperty(CSSPropertyContainerType, CSSPropertyContainer, type.releaseNonNull(), important);
+    addPropertyWithImplicitDefault(CSSPropertyContainerName, CSSPropertyContainer, WTFMove(name), CSSValuePool::singleton().createImplicitInitialValue(), important);
+    return true;
+}
+
 bool CSSPropertyParser::parseShorthand(CSSPropertyID property, bool important)
 {
     switch (property) {
@@ -6384,6 +6411,8 @@ bool CSSPropertyParser::parseShorthand(CSSPropertyID property, bool important)
         return consumePlaceSelfShorthand(important);
     case CSSPropertyTextDecorationSkip:
         return consumeTextDecorationSkip(important);
+    case CSSPropertyContainer:
+        return consumeContainerShorthand(important);
     default:
         return false;
     }

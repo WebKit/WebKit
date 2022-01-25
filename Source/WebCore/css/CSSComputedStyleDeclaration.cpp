@@ -3625,6 +3625,13 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
                 list->append(cssValuePool.createIdentifierValue(CSSValuePaint));
             return list;
         }
+        case CSSPropertyContainer: {
+            auto list = CSSValueList::createSlashSeparated();
+            list->append(propertyValue(CSSPropertyContainerType, DoNotUpdateLayout).releaseNonNull());
+            if (!style.containerNames().isEmpty())
+                list->append(propertyValue(CSSPropertyContainerName, DoNotUpdateLayout).releaseNonNull());
+            return list;
+        }
         case CSSPropertyContainerType:
             return CSSPrimitiveValue::create(style.containerType());
         case CSSPropertyContainerName: {

@@ -123,6 +123,8 @@ private:
 
     bool consumeOverscrollBehaviorShorthand(bool important);
 
+    bool consumeContainerShorthand(bool important);
+
 private:
     // Inputs:
     CSSParserTokenRange m_range;

@@ -1,3 +1,12 @@
+2022-01-25  Antti Koivisto  <antti@apple.com>
+
+        [CSS Container Queries] Parsing support for container shorthand property
+        https://bugs.webkit.org/show_bug.cgi?id=235582
+
+        Reviewed by Darin Adler.
+
+        * web-platform-tests/css/css-contain/container-queries/container-computed-expected.txt:
+
 2022-01-25  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Wasm module import should be done in sync when WebAssembly.instantiate gets module

@@ -1,16 +1,16 @@
 
-FAIL Property container value 'initial' assert_true: container doesn't seem to be supported in the computed style expected true got false
-FAIL Property container value 'inherit' assert_true: container doesn't seem to be supported in the computed style expected true got false
-FAIL Property container value 'unset' assert_true: container doesn't seem to be supported in the computed style expected true got false
-FAIL Property container value 'inline-size' assert_true: container doesn't seem to be supported in the computed style expected true got false
-FAIL Property container value 'size' assert_true: container doesn't seem to be supported in the computed style expected true got false
-FAIL Property container value 'inline-size / inline-size' assert_true: container doesn't seem to be supported in the computed style expected true got false
-FAIL Property container value 'size / block-size' assert_true: container doesn't seem to be supported in the computed style expected true got false
-FAIL Property container value 'size style / name' assert_true: container doesn't seem to be supported in the computed style expected true got false
-FAIL Property container value 'inline-size state style/ name' assert_true: container doesn't seem to be supported in the computed style expected true got false
-FAIL Property container value 'inline-size / foo' assert_true: container doesn't seem to be supported in the computed style expected true got false
-FAIL Property container value 'inline-size /foo' assert_true: container doesn't seem to be supported in the computed style expected true got false
-FAIL Property container value 'inline-size/ foo' assert_true: container doesn't seem to be supported in the computed style expected true got false
-FAIL Property container value 'inline-size/foo' assert_true: container doesn't seem to be supported in the computed style expected true got false
-FAIL Property container value 'size / FoO' assert_true: container doesn't seem to be supported in the computed style expected true got false
+PASS Property container value 'initial'
+PASS Property container value 'inherit'
+PASS Property container value 'unset'
+PASS Property container value 'inline-size'
+PASS Property container value 'size'
+PASS Property container value 'inline-size / inline-size'
+PASS Property container value 'size / block-size'
+FAIL Property container value 'size style / name' assert_true: 'size style / name' is a supported value for container. expected true got false
+FAIL Property container value 'inline-size state style/ name' assert_true: 'inline-size state style/ name' is a supported value for container. expected true got false
+PASS Property container value 'inline-size / foo'
+PASS Property container value 'inline-size /foo'
+PASS Property container value 'inline-size/ foo'
+PASS Property container value 'inline-size/foo'
+PASS Property container value 'size / FoO'
 
