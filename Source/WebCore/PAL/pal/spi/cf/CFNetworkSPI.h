@@ -359,6 +359,9 @@ typedef void (^CFCachedURLResponseCallBackBlock)(CFCachedURLResponseRef);
 void _CFCachedURLResponseSetBecameFileBackedCallBackBlock(CFCachedURLResponseRef, CFCachedURLResponseCallBackBlock, dispatch_queue_t);
 #endif
 
+#if HAVE(CFNETWORK_DISABLE_CACHE_SPI)
+void _CFURLStorageSessionDisableCache(CFURLStorageSessionRef);
+#endif
 CFURLStorageSessionRef _CFURLStorageSessionCreate(CFAllocatorRef, CFStringRef, CFDictionaryRef);
 CFURLCacheRef _CFURLStorageSessionCopyCache(CFAllocatorRef, CFURLStorageSessionRef);
 void CFURLRequestSetShouldStartSynchronously(CFURLRequestRef, Boolean);
