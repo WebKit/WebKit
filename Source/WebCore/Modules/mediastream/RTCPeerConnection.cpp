@@ -2,7 +2,7 @@
  * Copyright (C) 2012 Google Inc. All rights reserved.
  * Copyright (C) 2013 Nokia Corporation and/or its subsidiary(-ies).
  * Copyright (C) 2015, 2016 Ericsson AB. All rights reserved.
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -488,7 +488,7 @@ ExceptionOr<void> RTCPeerConnection::setConfiguration(RTCConfiguration&& configu
             return Exception { InvalidModificationError, "Certificates parameters are different" };
 
         for (auto& certificate : configuration.certificates) {
-            bool isThere = m_configuration.certificates.findMatching([&certificate](const auto& item) {
+            bool isThere = m_configuration.certificates.findIf([&certificate](const auto& item) {
                 return item.get() == certificate.get();
             }) != notFound;
             if (!isThere)
@@ -959,7 +959,7 @@ Document* RTCPeerConnection::document()
 
 Ref<RTCIceTransport> RTCPeerConnection::getOrCreateIceTransport(UniqueRef<RTCIceTransportBackend>&& backend)
 {
-    auto index = m_iceTransports.findMatching([&backend](auto& transport) { return backend.get() == transport->backend(); });
+    auto index = m_iceTransports.findIf([&backend](auto& transport) { return backend.get() == transport->backend(); });
     if (index == notFound) {
         index = m_iceTransports.size();
         m_iceTransports.append(RTCIceTransport::create(*scriptExecutionContext(), WTFMove(backend), *this));
@@ -978,7 +978,7 @@ RefPtr<RTCDtlsTransport> RTCPeerConnection::getOrCreateDtlsTransport(std::unique
     if (!context)
         return nullptr;
 
-    auto index = m_dtlsTransports.findMatching([&backend](auto& transport) { return *backend == transport->backend(); });
+    auto index = m_dtlsTransports.findIf([&backend](auto& transport) { return *backend == transport->backend(); });
     if (index == notFound) {
         index = m_dtlsTransports.size();
         auto iceTransportBackend = backend->iceTransportBackend();

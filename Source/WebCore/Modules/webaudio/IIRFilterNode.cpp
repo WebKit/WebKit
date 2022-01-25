@@ -1,6 +1,6 @@
 /*
  * Copyright 2016 The Chromium Authors. All rights reserved.
- * Copyright (C) 2020, Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -87,7 +87,7 @@ ExceptionOr<Ref<IIRFilterNode>> IIRFilterNode::create(ScriptExecutionContext& sc
     if (!options.feedforward.size() || options.feedforward.size() > IIRFilter::maxOrder)
         return Exception { NotSupportedError, "feedforward array must have a length between 1 and 20"_s };
 
-    auto nonZeroValueIndex = options.feedforward.findMatching([](auto& value) { return !!value; });
+    auto nonZeroValueIndex = options.feedforward.findIf([](auto& value) { return !!value; });
     if (nonZeroValueIndex == notFound)
         return Exception { InvalidStateError, "feedforward array must contain a non-zero value"_s };
 

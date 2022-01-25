@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -205,7 +205,7 @@ Layout::Box& BoxTree::layoutBoxForRenderer(const RenderObject& renderer)
         return m_root;
 
     if (m_boxes.size() <= smallTreeThreshold) {
-        auto index = m_boxes.findMatching([&](auto& entry) {
+        auto index = m_boxes.findIf([&](auto& entry) {
             return entry.renderer == &renderer;
         });
         RELEASE_ASSERT(index != notFound);
@@ -226,7 +226,7 @@ RenderObject& BoxTree::rendererForLayoutBox(const Layout::Box& box)
         return m_flow;
 
     if (m_boxes.size() <= smallTreeThreshold) {
-        auto index = m_boxes.findMatching([&](auto& entry) {
+        auto index = m_boxes.findIf([&](auto& entry) {
             return entry.box.ptr() == &box;
         });
         RELEASE_ASSERT(index != notFound);

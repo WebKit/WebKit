@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -1079,7 +1079,7 @@ bool GraphicsLayerCA::shouldRepaintOnSizeChange() const
 
 bool GraphicsLayerCA::animationIsRunning(const String& animationName) const
 {
-    auto index = m_animations.findMatching([&](LayerPropertyAnimation animation) {
+    auto index = m_animations.findIf([&](LayerPropertyAnimation animation) {
         return animation.m_name == animationName;
     });
     return index != notFound && m_animations[index].m_playState == PlayState::Playing;
@@ -1206,7 +1206,7 @@ void GraphicsLayerCA::platformCALayerAnimationStarted(const String& animationKey
 {
     LOG_WITH_STREAM(Animations, stream << "GraphicsLayerCA " << this << " id " << primaryLayerID() << " platformCALayerAnimationStarted " << animationKey);
 
-    auto index = m_animations.findMatching([&](LayerPropertyAnimation animation) {
+    auto index = m_animations.findIf([&](LayerPropertyAnimation animation) {
         return animation.animationIdentifier() == animationKey && !animation.m_beginTime;
     });
 
@@ -3303,7 +3303,7 @@ void GraphicsLayerCA::updateAnimations()
 
 bool GraphicsLayerCA::isRunningTransformAnimation() const
 {
-    return m_animations.findMatching([&](LayerPropertyAnimation animation) {
+    return m_animations.findIf([&](LayerPropertyAnimation animation) {
         return animatedPropertyIsTransformOrRelated(animation.m_property) && (animation.m_playState == PlayState::Playing || animation.m_playState == PlayState::Paused);
     }) != notFound;
 }

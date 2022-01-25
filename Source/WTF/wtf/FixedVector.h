@@ -155,7 +155,7 @@ public:
 
     template<typename U> bool contains(const U&) const;
     template<typename U> size_t find(const U&) const;
-    template<typename MatchFunction> size_t findMatching(const MatchFunction&) const;
+    template<typename MatchFunction> size_t findIf(const MatchFunction&) const;
 
     void swap(FixedVector<T>& other)
     {
@@ -183,7 +183,7 @@ bool FixedVector<T>::contains(const U& value) const
 
 template<typename T>
 template<typename MatchFunction>
-size_t FixedVector<T>::findMatching(const MatchFunction& matches) const
+size_t FixedVector<T>::findIf(const MatchFunction& matches) const
 {
     for (size_t i = 0; i < size(); ++i) {
         if (matches(at(i)))
@@ -196,7 +196,7 @@ template<typename T>
 template<typename U>
 size_t FixedVector<T>::find(const U& value) const
 {
-    return findMatching([&](auto& item) {
+    return findIf([&](auto& item) {
         return item == value;
     });
 }

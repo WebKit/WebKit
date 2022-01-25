@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -67,7 +67,7 @@ bool RTCController::shouldDisableICECandidateFiltering(Document& document)
 {
     if (!m_shouldFilterICECandidates)
         return true;
-    return notFound != m_filteringDisabledOrigins.findMatching([&] (const auto& origin) {
+    return notFound != m_filteringDisabledOrigins.findIf([&] (const auto& origin) {
         return matchDocumentOrigin(document, origin.topOrigin, origin.clientOrigin);
     });
 }

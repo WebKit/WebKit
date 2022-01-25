@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -65,7 +65,7 @@ void FloatingState::append(FloatItem floatItem)
         return m_floats.append(floatItem);
 
     // The integration codepath does not construct a layout box for the float item.
-    ASSERT_IMPLIES(floatItem.floatBox(), m_floats.findMatching([&] (auto& entry) {
+    ASSERT_IMPLIES(floatItem.floatBox(), m_floats.findIf([&] (auto& entry) {
         return entry.floatBox() == floatItem.floatBox();
     }) == notFound);
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -217,7 +217,7 @@ void CtapAuthenticator::continueGetNextAssertionAfterResponseReceived(Vector<uin
                 ASSERT(RunLoop::isMain());
                 if (!weakThis)
                     return;
-                auto result = m_assertionResponses.findMatching([expectedResponse = response] (auto& response) {
+                auto result = m_assertionResponses.findIf([expectedResponse = response] (auto& response) {
                     return response.ptr() == expectedResponse;
                 });
                 if (result == notFound)

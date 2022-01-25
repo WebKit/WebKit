@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -604,13 +604,13 @@ unsigned HTMLVideoElement::requestVideoFrameCallback(Ref<VideoFrameRequestCallba
 void HTMLVideoElement::cancelVideoFrameCallback(unsigned identifier)
 {
     // Search first the requests currently being serviced, and mark them as cancelled if found.
-    auto index = m_servicedVideoFrameRequests.findMatching([identifier](auto& request) { return request->identifier == identifier; });
+    auto index = m_servicedVideoFrameRequests.findIf([identifier](auto& request) { return request->identifier == identifier; });
     if (index != notFound) {
         m_servicedVideoFrameRequests[index]->cancelled = true;
         return;
     }
 
-    index = m_videoFrameRequests.findMatching([identifier](auto& request) { return request->identifier == identifier; });
+    index = m_videoFrameRequests.findIf([identifier](auto& request) { return request->identifier == identifier; });
     if (index == notFound)
         return;
     m_videoFrameRequests.remove(index);

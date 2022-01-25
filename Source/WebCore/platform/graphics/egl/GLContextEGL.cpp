@@ -140,7 +140,7 @@ bool GLContextEGL::getEGLConfig(EGLDisplay display, EGLConfig* config, EGLSurfac
         return false;
     }
 
-    auto index = configs.findMatching([&](EGLConfig value) {
+    auto index = configs.findIf([&](EGLConfig value) {
         EGLint redSize, greenSize, blueSize, alphaSize;
         eglGetConfigAttrib(display, value, EGL_RED_SIZE, &redSize);
         eglGetConfigAttrib(display, value, EGL_GREEN_SIZE, &greenSize);

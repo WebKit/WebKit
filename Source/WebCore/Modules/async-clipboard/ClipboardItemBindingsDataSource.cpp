@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -82,7 +82,7 @@ Vector<String> ClipboardItemBindingsDataSource::types() const
 
 void ClipboardItemBindingsDataSource::getType(const String& type, Ref<DeferredPromise>&& promise)
 {
-    auto matchIndex = m_itemPromises.findMatching([&] (auto& item) {
+    auto matchIndex = m_itemPromises.findIf([&] (auto& item) {
         return type == item.key;
     });
 
@@ -147,7 +147,7 @@ void ClipboardItemBindingsDataSource::collectDataForWriting(Clipboard& destinati
 
             Ref itemTypeLoader { *weakItemTypeLoader };
 #if !COMPILER(MSVC)
-            ASSERT_UNUSED(this, notFound != m_itemTypeLoaders.findMatching([&] (auto& loader) { return loader.ptr() == itemTypeLoader.ptr(); }));
+            ASSERT_UNUSED(this, notFound != m_itemTypeLoaders.findIf([&] (auto& loader) { return loader.ptr() == itemTypeLoader.ptr(); }));
 #endif
 
             auto result = promise->result();

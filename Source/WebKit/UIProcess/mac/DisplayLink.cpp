@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -195,7 +195,7 @@ void DisplayLink::setPreferredFramesPerSecond(IPC::Connection& connection, Displ
         return;
 
     auto& connectionInfo = it->value;
-    auto index = connectionInfo.observers.findMatching([observerID](const auto& observer) {
+    auto index = connectionInfo.observers.findIf([observerID](const auto& observer) {
         return observer.observerID == observerID;
     });
 

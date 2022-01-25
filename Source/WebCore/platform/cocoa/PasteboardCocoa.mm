@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -149,7 +149,7 @@ Pasteboard::FileContentState Pasteboard::fileContentState()
         if (!items)
             return FileContentState::NoFileOrImageData;
 
-        mayContainFilePaths = items->size() != 1 || notFound != items->findMatching([] (auto& item) {
+        mayContainFilePaths = items->size() != 1 || notFound != items->findIf([] (auto& item) {
             return item.canBeTreatedAsAttachmentOrFile() || item.isNonTextType || item.containsFileURLAndFileUploadContent;
         });
     }
@@ -158,10 +158,10 @@ Pasteboard::FileContentState Pasteboard::fileContentState()
     if (!mayContainFilePaths) {
         Vector<String> cocoaTypes;
         platformStrategies()->pasteboardStrategy()->getTypes(cocoaTypes, m_pasteboardName, context());
-        if (cocoaTypes.findMatching([](const String& cocoaType) { return shouldTreatCocoaTypeAsFile(cocoaType); }) == notFound)
+        if (cocoaTypes.findIf([](const String& cocoaType) { return shouldTreatCocoaTypeAsFile(cocoaType); }) == notFound)
             return FileContentState::NoFileOrImageData;
 
-        auto indexOfURL = cocoaTypes.findMatching([](auto& cocoaType) {
+        auto indexOfURL = cocoaTypes.findIf([](auto& cocoaType) {
 #if PLATFORM(MAC)
             if (cocoaType == String(legacyURLPasteboardType()))
                 return true;

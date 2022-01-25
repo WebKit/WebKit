@@ -1,3 +1,62 @@
+2022-01-24  Mark Lam  <mark.lam@apple.com>
+
+        Rename Vector and FixedVector::findMatching to findIf to match stl naming.
+        https://bugs.webkit.org/show_bug.cgi?id=234864
+        rdar://87424746
+
+        Reviewed by Yusuke Suzuki.
+
+        * GPUProcess/media/RemoteCDMFactoryProxy.cpp:
+        (WebKit::factoryForKeySystem):
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::findRootNetworkActivity):
+        (WebKit::NetworkConnectionToWebProcess::findNetworkActivityTracker):
+        * NetworkProcess/cache/CacheStorageEngineCache.cpp:
+        (WebKit::CacheStorage::Cache::storeRecords):
+        (WebKit::CacheStorage::Cache::put):
+        (WebKit::CacheStorage::Cache::remove):
+        (WebKit::CacheStorage::Cache::removeFromRecordList):
+        (WebKit::CacheStorage::Cache::updateRecordToDisk):
+        * NetworkProcess/cache/CacheStorageEngineCaches.cpp:
+        (WebKit::CacheStorage::Caches::find):
+        (WebKit::CacheStorage::Caches::remove):
+        (WebKit::CacheStorage::Caches::hasActiveCache const):
+        (WebKit::CacheStorage::Caches::dispose):
+        * Shared/mac/MediaFormatReader/MediaFormatReader.cpp:
+        (WebKit::MediaFormatReader::didProvideMediaData):
+        * UIProcess/API/glib/WebKitWebView.cpp:
+        (webkit_web_view_remove_frame_displayed_callback):
+        * UIProcess/Cocoa/WebPasteboardProxyCocoa.mm:
+        (WebKit::WebPasteboardProxy::PasteboardAccessInformation::grantAccess):
+        (WebKit::WebPasteboardProxy::PasteboardAccessInformation::accessType const):
+        * UIProcess/UserMediaPermissionRequestProxy.cpp:
+        (WebKit::setDeviceAsFirst):
+        * UIProcess/WebAuthentication/Cocoa/LocalAuthenticator.mm:
+        (WebKit::LocalAuthenticator::makeCredential):
+        (WebKit::LocalAuthenticator::getAssertion):
+        (WebKit::LocalAuthenticator::deleteDuplicateCredential const):
+        * UIProcess/WebAuthentication/fido/CtapAuthenticator.cpp:
+        (WebKit::CtapAuthenticator::continueGetNextAssertionAfterResponseReceived):
+        * UIProcess/ios/DragDropInteractionState.mm:
+        (WebKit::DragDropInteractionState::defaultDropPreview const):
+        (WebKit::BlockPtr<void):
+        * UIProcess/mac/DisplayLink.cpp:
+        (WebKit::DisplayLink::setPreferredFramesPerSecond):
+        * UIProcess/mac/WebContextMenuProxyMac.mm:
+        (WebKit::WebContextMenuProxyMac::getContextMenuFromItems):
+        * UIProcess/mac/WebDataListSuggestionsDropdownMac.mm:
+        (shouldShowDividersBetweenCells):
+        * WebProcess/Automation/WebAutomationSessionProxy.cpp:
+        (WebKit::WebAutomationSessionProxy::computeElementLayout):
+        * WebProcess/UserContent/WebUserContentController.cpp:
+        (WebKit::WebUserContentController::addUserScriptMessageHandlerInternal):
+        (WebKit::WebUserContentController::addUserScriptInternal):
+        (WebKit::WebUserContentController::addUserStyleSheetInternal):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::requestTextRecognition):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::checkDocumentsCaptureStateConsistency):
+
 2022-01-24  Alex Christensen  <achristensen@webkit.org>
 
         Re-enable CustomDisplayName and DefaultDisplayName API tests on Monterey

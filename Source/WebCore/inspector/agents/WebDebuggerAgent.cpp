@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -69,7 +69,7 @@ void WebDebuggerAgent::didAddEventListener(EventTarget& target, const AtomString
         return;
 
     auto& eventListeners = target.eventListeners(eventType);
-    auto position = eventListeners.findMatching([&](auto& registeredListener) {
+    auto position = eventListeners.findIf([&](auto& registeredListener) {
         return &registeredListener->callback() == &listener && registeredListener->useCapture() == capture;
     });
     if (position == notFound)
@@ -92,7 +92,7 @@ void WebDebuggerAgent::didAddEventListener(EventTarget& target, const AtomString
 void WebDebuggerAgent::willRemoveEventListener(EventTarget& target, const AtomString& eventType, EventListener& listener, bool capture)
 {
     auto& eventListeners = target.eventListeners(eventType);
-    size_t listenerIndex = eventListeners.findMatching([&](auto& registeredListener) {
+    size_t listenerIndex = eventListeners.findIf([&](auto& registeredListener) {
         return &registeredListener->callback() == &listener && registeredListener->useCapture() == capture;
     });
 

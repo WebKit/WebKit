@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2005-2022 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Alexey Proskuryakov
  *
  * Redistribution and use in source and binary forms, with or without
@@ -847,7 +847,7 @@ bool Font::isProbablyOnlyUsedToRenderIcons() const
     Vector<CGRect> boundingRects;
     boundingRects.fill(CGRectZero, glyphs.size());
     CTFontGetBoundingRectsForGlyphs(platformFont, kCTFontOrientationDefault, glyphs.begin(), boundingRects.begin(), glyphs.size());
-    return notFound == boundingRects.findMatching([](auto& rect) {
+    return notFound == boundingRects.findIf([](auto& rect) {
         return !CGRectIsEmpty(rect);
     });
 }

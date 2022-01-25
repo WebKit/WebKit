@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2010, Google Inc. All rights reserved.
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -483,7 +484,7 @@ void AudioNode::checkNumberOfChannelsForInput(AudioNodeInput* input)
 {
     ASSERT(context().isAudioThread() && context().isGraphOwner());
 
-    ASSERT(m_inputs.findMatching([&](auto& associatedInput) { return associatedInput.get() == input; }) != notFound);
+    ASSERT(m_inputs.findIf([&](auto& associatedInput) { return associatedInput.get() == input; }) != notFound);
     input->updateInternalBus();
 }
 

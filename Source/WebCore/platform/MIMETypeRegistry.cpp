@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2022 Apple Inc. All rights reserved.
  * Copyright (C) 2008, 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
  *
  * Redistribution and use in source and binary forms, with or without
@@ -783,7 +783,7 @@ String MIMETypeRegistry::preferredImageMIMETypeForEncoding(const Vector<String>&
 {
     auto allowedMIMETypes = MIMETypeRegistry::allowedMIMETypes(mimeTypes, extensions);
 
-    auto position = allowedMIMETypes.findMatching([](const auto& mimeType) {
+    auto position = allowedMIMETypes.findIf([](const auto& mimeType) {
         return MIMETypeRegistry::isSupportedImageMIMETypeForEncoding(mimeType);
     });
     

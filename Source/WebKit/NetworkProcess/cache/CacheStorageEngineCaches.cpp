@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc.  All rights reserved.
+ * Copyright (C) 2017-2022 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -279,17 +279,17 @@ void Caches::clearPendingWritingCachesToDiskCallbacks()
 
 Cache* Caches::find(const String& name)
 {
-    auto position = m_caches.findMatching([&](const auto& item) { return item.name() == name; });
+    auto position = m_caches.findIf([&](const auto& item) { return item.name() == name; });
     return (position != notFound) ? &m_caches[position] : nullptr;
 }
 
 Cache* Caches::find(uint64_t identifier)
 {
-    auto position = m_caches.findMatching([&](const auto& item) { return item.identifier() == identifier; });
+    auto position = m_caches.findIf([&](const auto& item) { return item.identifier() == identifier; });
     if (position != notFound)
         return &m_caches[position];
 
-    position = m_removedCaches.findMatching([&](const auto& item) { return item.identifier() == identifier; });
+    position = m_removedCaches.findIf([&](const auto& item) { return item.identifier() == identifier; });
     return (position != notFound) ? &m_removedCaches[position] : nullptr;
 }
 
@@ -346,10 +346,10 @@ void Caches::remove(uint64_t identifier, CacheIdentifierCallback&& callback)
         return;
     }
 
-    auto position = m_caches.findMatching([&](const auto& item) { return item.identifier() == identifier; });
+    auto position = m_caches.findIf([&](const auto& item) { return item.identifier() == identifier; });
 
     if (position == notFound) {
-        ASSERT(m_removedCaches.findMatching([&](const auto& item) { return item.identifier() == identifier; }) != notFound);
+        ASSERT(m_removedCaches.findIf([&](const auto& item) { return item.identifier() == identifier; }) != notFound);
         callback(CacheIdentifierOperationResult { 0, false });
         return;
     }
@@ -368,12 +368,12 @@ bool Caches::hasActiveCache() const
 {
     if (m_removedCaches.size())
         return true;
-    return m_caches.findMatching([](const auto& item) { return item.isActive(); }) != notFound;
+    return m_caches.findIf([](const auto& item) { return item.isActive(); }) != notFound;
 }
 
 void Caches::dispose(Cache& cache)
 {
-    auto position = m_removedCaches.findMatching([&](const auto& item) { return item.identifier() == cache.identifier(); });
+    auto position = m_removedCaches.findIf([&](const auto& item) { return item.identifier() == cache.identifier(); });
     if (position != notFound) {
         if (m_storage)
             m_storage->remove(cache.keys(), [] { });
@@ -381,7 +381,7 @@ void Caches::dispose(Cache& cache)
         m_removedCaches.remove(position);
         return;
     }
-    ASSERT(m_caches.findMatching([&](const auto& item) { return item.identifier() == cache.identifier(); }) != notFound);
+    ASSERT(m_caches.findIf([&](const auto& item) { return item.identifier() == cache.identifier(); }) != notFound);
 
     // We cannot clear the memory representation in ephemeral sessions since we would loose all data.
     if (!shouldPersist())

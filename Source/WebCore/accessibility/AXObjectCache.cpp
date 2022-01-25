@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -3280,7 +3280,7 @@ void AXObjectCache::performDeferredCacheUpdate()
 template<typename T, typename F>
 static bool appendIfNotContainsMatching(Vector<T>& vector, const T& value, F matches)
 {
-    if (vector.findMatching(matches) != notFound)
+    if (vector.findIf(matches) != notFound)
         return false;
     vector.append(value);
     return true;

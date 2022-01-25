@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -585,7 +585,7 @@ CDMInstanceSessionFairPlayStreamingAVFObjC* CDMInstanceFairPlayStreamingAVFObjC:
 
         auto sessionKeys = sessionInterface->keyIDs();
         if (anyOf(sessionKeys, [&](const Ref<FragmentedSharedBuffer>& sessionKey) {
-            return keyIDs.findMatching([&](const Ref<FragmentedSharedBuffer>& keyID) {
+            return keyIDs.findIf([&](const Ref<FragmentedSharedBuffer>& keyID) {
                 return keyID.get() == sessionKey.get();
             }) != notFound;
         }))
@@ -596,7 +596,7 @@ CDMInstanceSessionFairPlayStreamingAVFObjC* CDMInstanceFairPlayStreamingAVFObjC:
 
 CDMInstanceSessionFairPlayStreamingAVFObjC* CDMInstanceFairPlayStreamingAVFObjC::sessionForRequest(AVContentKeyRequest* request) const
 {
-    auto index = m_sessions.findMatching([&] (auto session) {
+    auto index = m_sessions.findIf([&] (auto session) {
         return session && session->hasRequest(request);
     });
 
@@ -608,7 +608,7 @@ CDMInstanceSessionFairPlayStreamingAVFObjC* CDMInstanceFairPlayStreamingAVFObjC:
 
 CDMInstanceSessionFairPlayStreamingAVFObjC* CDMInstanceFairPlayStreamingAVFObjC::sessionForGroup(AVContentKeyReportGroup* group) const
 {
-    auto index = m_sessions.findMatching([group] (auto session) {
+    auto index = m_sessions.findIf([group] (auto session) {
         return session && session->contentKeyReportGroup() == group;
     });
 
@@ -853,9 +853,9 @@ void CDMInstanceSessionFairPlayStreamingAVFObjC::updateLicense(const String&, Li
                 return false;
 
             auto keyID = SharedBuffer::create(WTFMove(*keyIDVector));
-            auto foundIndex = m_currentRequest.value().requests.findMatching([&] (auto& request) {
+            auto foundIndex = m_currentRequest.value().requests.findIf([&] (auto& request) {
                 auto keyIDs = keyIDsForRequest(request.get());
-                return keyIDs.findMatching([&](const Ref<FragmentedSharedBuffer>& id) {
+                return keyIDs.findIf([&](const Ref<FragmentedSharedBuffer>& id) {
                     return id.get() == keyID.get();
                 }) != notFound;
             });

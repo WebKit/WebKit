@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2020 Igalia S.L. All rights reserved.
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -142,7 +143,7 @@ void WebXRInputSourceArray::handleAddedOrUpdatedInputSources(double timestamp, c
         return;
 
     for (auto& inputSource : inputSources) {
-        auto index = m_inputSources.findMatching([&inputSource](auto& item) { return item->handle() == inputSource.handle; });
+        auto index = m_inputSources.findIf([&inputSource](auto& item) { return item->handle() == inputSource.handle; });
         if (index == notFound) {
             // When new XR input sources become available for XRSession session, the user agent MUST run the following steps:
             // 1. If session's promise resolved flag is not set, abort these steps.

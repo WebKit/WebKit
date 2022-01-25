@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -205,7 +205,7 @@ void LocalAuthenticator::makeCredential()
     // Step 8 is implicitly captured by all UnknownError exception receiveResponds.
     // Skip Step 10 as counter is constantly 0.
     // Step 2.
-    if (notFound == creationOptions.pubKeyCredParams.findMatching([] (auto& pubKeyCredParam) {
+    if (notFound == creationOptions.pubKeyCredParams.findIf([] (auto& pubKeyCredParam) {
         return pubKeyCredParam.type == PublicKeyCredentialType::PublicKey && pubKeyCredParam.alg == COSE::ES256;
     })) {
         receiveException({ NotSupportedError, "The platform attached authenticator doesn't support any provided PublicKeyCredentialParameters."_s });
@@ -222,7 +222,7 @@ void LocalAuthenticator::makeCredential()
 
     auto excludeCredentialIds = produceHashSet(creationOptions.excludeCredentials);
     if (!excludeCredentialIds.isEmpty()) {
-        if (notFound != m_existingCredentials.findMatching([&excludeCredentialIds] (auto& credential) {
+        if (notFound != m_existingCredentials.findIf([&excludeCredentialIds] (auto& credential) {
             auto* rawId = credential->rawId();
             ASSERT(rawId);
             return excludeCredentialIds.contains(base64EncodeToString(rawId->data(), rawId->byteLength()));
@@ -529,7 +529,7 @@ void LocalAuthenticator::getAssertion()
             if (!weakThis)
                 return;
 
-            auto result = m_existingCredentials.findMatching([expectedResponse = response] (auto& response) {
+            auto result = m_existingCredentials.findIf([expectedResponse = response] (auto& response) {
                 return response.ptr() == expectedResponse;
             });
             if (result == notFound)
@@ -686,7 +686,7 @@ void LocalAuthenticator::deleteDuplicateCredential() const
     using namespace LocalAuthenticatorInternal;
 
     auto& creationOptions = std::get<PublicKeyCredentialCreationOptions>(requestData().options);
-    m_existingCredentials.findMatching([creationOptions] (auto& credential) {
+    m_existingCredentials.findIf([creationOptions] (auto& credential) {
         auto* userHandle = credential->userHandle();
         ASSERT(userHandle);
         if (userHandle->byteLength() != creationOptions.user.id.length())

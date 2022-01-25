@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -220,7 +220,7 @@ String createHEVCCodecParametersString(const HEVCParameters& parameters)
     // general_progressive_source_flag, each encoded as a hexadecimal number, and the encoding
     // of each byte separated by a period; trailing bytes that are zero may be omitted.
     StringBuilder compatibilityFlags;
-    auto lastFlagByte = parameters.generalConstraintIndicatorFlags.reverseFindMatching([] (auto& flag) { return flag; });
+    auto lastFlagByte = parameters.generalConstraintIndicatorFlags.reverseFindIf([] (auto& flag) { return flag; });
     for (size_t i = 0; lastFlagByte != notFound && i <= lastFlagByte; ++i) {
         compatibilityFlags.append('.');
         compatibilityFlags.append(hex(parameters.generalConstraintIndicatorFlags[i], 2));

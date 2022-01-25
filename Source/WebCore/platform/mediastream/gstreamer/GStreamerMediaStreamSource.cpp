@@ -400,7 +400,7 @@ void WebKitMediaStreamObserver::didRemoveTrack(MediaStreamTrackPrivate& track)
     auto* priv = element->priv;
 
     // Lookup the corresponding InternalSource and take it from the storage.
-    auto index = priv->sources.findMatching([&](auto& item) {
+    auto index = priv->sources.findIf([&](auto& item) {
         return item->track().id() == track.id();
     });
     std::unique_ptr<InternalSource> source = WTFMove(priv->sources[index]);

@@ -725,19 +725,19 @@ TEST(WTF_Vector, ClearContainsAndFind)
     EXPECT_TRUE(v == Vector<int>({ }));
 }
 
-TEST(WTF_Vector, FindMatching)
+TEST(WTF_Vector, FindIf)
 {
     Vector<int> v;
-    EXPECT_TRUE(v.findMatching([](int) { return false; }) == notFound);
-    EXPECT_TRUE(v.findMatching([](int) { return true; }) == notFound);
+    EXPECT_TRUE(v.findIf([](int) { return false; }) == notFound);
+    EXPECT_TRUE(v.findIf([](int) { return true; }) == notFound);
 
     v = {3, 1, 2, 1, 2, 1, 2, 2, 1, 1, 1, 3};
-    EXPECT_TRUE(v.findMatching([](int value) { return value > 3; }) == notFound);
-    EXPECT_TRUE(v.findMatching([](int) { return false; }) == notFound);
-    EXPECT_EQ(0U, v.findMatching([](int) { return true; }));
-    EXPECT_EQ(0U, v.findMatching([](int value) { return value <= 3; }));
-    EXPECT_EQ(1U, v.findMatching([](int value) { return value < 3; }));
-    EXPECT_EQ(2U, v.findMatching([](int value) { return value == 2; }));
+    EXPECT_TRUE(v.findIf([](int value) { return value > 3; }) == notFound);
+    EXPECT_TRUE(v.findIf([](int) { return false; }) == notFound);
+    EXPECT_EQ(0U, v.findIf([](int) { return true; }));
+    EXPECT_EQ(0U, v.findIf([](int value) { return value <= 3; }));
+    EXPECT_EQ(1U, v.findIf([](int value) { return value < 3; }));
+    EXPECT_EQ(2U, v.findIf([](int value) { return value == 2; }));
 }
 
 TEST(WTF_Vector, RemoveFirstMatching)

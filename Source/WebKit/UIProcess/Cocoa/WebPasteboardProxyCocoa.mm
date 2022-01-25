@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -681,7 +681,7 @@ std::optional<DataOwnerType> WebPasteboardProxy::determineDataOwner(IPC::Connect
 
 void WebPasteboardProxy::PasteboardAccessInformation::grantAccess(WebProcessProxy& process, PasteboardAccessType type)
 {
-    auto matchIndex = processes.findMatching([&](auto& processAndType) {
+    auto matchIndex = processes.findIf([&](auto& processAndType) {
         return processAndType.first == &process;
     });
 
@@ -707,7 +707,7 @@ void WebPasteboardProxy::PasteboardAccessInformation::revokeAccess(WebProcessPro
 
 std::optional<WebPasteboardProxy::PasteboardAccessType> WebPasteboardProxy::PasteboardAccessInformation::accessType(WebProcessProxy& process) const
 {
-    auto matchIndex = processes.findMatching([&](auto& processAndType) {
+    auto matchIndex = processes.findIf([&](auto& processAndType) {
         return processAndType.first == &process;
     });
 

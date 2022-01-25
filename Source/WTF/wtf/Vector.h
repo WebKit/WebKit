@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2005-2020 Apple Inc. All rights reserved.
+ *  Copyright (C) 2005-2022 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -756,9 +756,9 @@ public:
     
     template<typename U> bool contains(const U&) const;
     template<typename U> size_t find(const U&) const;
-    template<typename MatchFunction> size_t findMatching(const MatchFunction&) const;
+    template<typename MatchFunction> size_t findIf(const MatchFunction&) const;
     template<typename U> size_t reverseFind(const U&) const;
-    template<typename MatchFunction> size_t reverseFindMatching(const MatchFunction&) const;
+    template<typename MatchFunction> size_t reverseFindIf(const MatchFunction&) const;
 
     template<typename U> bool appendIfNotContains(const U&);
 
@@ -996,7 +996,7 @@ bool Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::contains(c
 
 template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity, typename Malloc>
 template<typename MatchFunction>
-size_t Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::findMatching(const MatchFunction& matches) const
+size_t Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::findIf(const MatchFunction& matches) const
 {
     for (size_t i = 0; i < size(); ++i) {
         if (matches(at(i)))
@@ -1009,7 +1009,7 @@ template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t min
 template<typename U>
 size_t Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::find(const U& value) const
 {
-    return findMatching([&](auto& item) {
+    return findIf([&](auto& item) {
         return item == value;
     });
 }
@@ -1028,7 +1028,7 @@ size_t Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::reverseF
 
 template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity, typename Malloc>
 template<typename MatchFunction>
-size_t Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::reverseFindMatching(const MatchFunction& matches) const
+size_t Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::reverseFindIf(const MatchFunction& matches) const
 {
     for (size_t i = 1; i <= size(); ++i) {
         const size_t index = size() - i;

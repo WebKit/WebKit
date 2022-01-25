@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -362,7 +362,7 @@ void TestController::setIsMediaKeySystemPermissionGranted(bool granted)
 void TestController::closeOtherPage(WKPageRef page, PlatformWebView* view)
 {
     WKPageClose(page);
-    auto index = m_auxiliaryWebViews.findMatching([view](auto& auxiliaryWebView) { return auxiliaryWebView.ptr() == view; });
+    auto index = m_auxiliaryWebViews.findIf([view](auto& auxiliaryWebView) { return auxiliaryWebView.ptr() == view; });
     if (index != notFound)
         m_auxiliaryWebViews.remove(index);
 }

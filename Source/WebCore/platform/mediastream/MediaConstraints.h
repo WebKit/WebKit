@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2012 Google Inc. All rights reserved.
- * Copyright (C) 2016-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -305,7 +305,7 @@ public:
         }
 
         if (m_min) {
-            auto index = discreteCapabilityValues.findMatching([&](ValueType value) { return m_min.value() >= value; });
+            auto index = discreteCapabilityValues.findIf([&](ValueType value) { return m_min.value() >= value; });
             if (index != notFound) {
                 min = value = discreteCapabilityValues[index];
 

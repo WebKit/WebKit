@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -520,7 +520,7 @@ void WebContextMenuProxyMac::getContextMenuFromItems(const Vector<WebContextMenu
     std::optional<WebContextMenuItemData> quickLookItemToInsertIfNeeded;
 
 #if ENABLE(IMAGE_ANALYSIS)
-    auto indexOfQuickLookItem = filteredItems.findMatching([&] (auto& item) {
+    auto indexOfQuickLookItem = filteredItems.findIf([&] (auto& item) {
         return item.action() == WebCore::ContextMenuItemTagQuickLookImage;
     });
 

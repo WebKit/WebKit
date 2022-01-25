@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2013 Google Inc. All rights reserved.
- * Copyright (C) 2013-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2022 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -241,7 +241,7 @@ Vector<EventTarget*> EventPath::computePathUnclosedToTarget(const EventTarget& t
     RELEASE_ASSERT(pathSize);
     path.reserveInitialCapacity(pathSize);
 
-    auto currentTargetIndex = m_path.findMatching([&target] (auto& context) {
+    auto currentTargetIndex = m_path.findIf([&target] (auto& context) {
         return context.currentTarget() == &target;
     });
     RELEASE_ASSERT(currentTargetIndex != notFound);

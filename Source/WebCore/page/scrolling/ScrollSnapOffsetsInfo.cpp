@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2022 Apple Inc. All rights reserved.
  * Copyright (C) 2020 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -113,7 +113,7 @@ static bool hasCompatibleSnapArea(const InfoType& info, const SnapOffset<UnitTyp
     auto scrollDestinationInOtherAxis = componentForAxis<UnitType, PointType>(destinationOffsetPoint, otherAxis);
     auto viewportLengthInOtherAxis = axis == ScrollEventAxis::Horizontal ? viewportSize.height() : viewportSize.width();
 
-    return snapOffset.snapAreaIndices.findMatching([&] (auto index) {
+    return snapOffset.snapAreaIndices.findIf([&] (auto index) {
         const auto& snapArea = info.snapAreas[index];
         auto [otherAxisMin, otherAxisMax] = rangeForAxis<UnitType>(snapArea, otherAxis);
         return (scrollDestinationInOtherAxis + viewportLengthInOtherAxis) > otherAxisMin && scrollDestinationInOtherAxis < otherAxisMax;

@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2020 Metrological Group B.V.
  * Copyright (C) 2020 Igalia S.L.
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -109,7 +110,7 @@ bool KeyHandle::takeValueIfDifferent(KeyHandleValueVariant&& value)
 
 bool KeyStore::containsKeyID(const KeyIDType& keyID) const
 {
-    return m_keys.findMatching([&](const RefPtr<KeyHandle>& storedKey) {
+    return m_keys.findIf([&](const RefPtr<KeyHandle>& storedKey) {
         return *storedKey == keyID;
     }) != notFound;
 }
@@ -149,7 +150,7 @@ bool KeyStore::addKeys(Vector<RefPtr<KeyHandle>>&& newKeys)
 bool KeyStore::add(RefPtr<KeyHandle>&& key)
 {
     bool didStoreChange = false;
-    size_t keyWithMatchingKeyIDIndex = m_keys.findMatching([&] (const RefPtr<KeyHandle>& storedKey) {
+    size_t keyWithMatchingKeyIDIndex = m_keys.findIf([&] (const RefPtr<KeyHandle>& storedKey) {
         return *key == *storedKey;
     });
 

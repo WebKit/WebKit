@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2021 Igalia S.L.
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -240,7 +241,7 @@ bool AccessibilityAtspi::shouldEmitSignal(const char* interface, const char* nam
 
     const char* needle[4] = { interface, name, detail, nullptr };
     for (const auto& listeners : m_eventListeners.values()) {
-        auto result = listeners.findMatching([&](const GUniquePtr<char*>& event) {
+        auto result = listeners.findIf([&](const GUniquePtr<char*>& event) {
             return eventIsSubtype(const_cast<char**>(needle), event.get());
         });
         if (result != notFound)

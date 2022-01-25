@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -198,7 +198,7 @@ void DragDropInteractionState::setDefaultDropPreview(UIDragItem *item, UITargete
 
 UITargetedDragPreview *DragDropInteractionState::defaultDropPreview(UIDragItem *item) const
 {
-    auto matchIndex = m_defaultDropPreviews.findMatching([&] (auto& itemAndPreview) {
+    auto matchIndex = m_defaultDropPreviews.findIf([&] (auto& itemAndPreview) {
         return itemAndPreview.item == item;
     });
     return matchIndex == notFound ? nil : m_defaultDropPreviews[matchIndex].preview.get();
@@ -206,7 +206,7 @@ UITargetedDragPreview *DragDropInteractionState::defaultDropPreview(UIDragItem *
 
 BlockPtr<void(UITargetedDragPreview *)> DragDropInteractionState::dropPreviewProvider(UIDragItem *item)
 {
-    auto matchIndex = m_delayedItemPreviewProviders.findMatching([&] (auto& itemAndProvider) {
+    auto matchIndex = m_delayedItemPreviewProviders.findIf([&] (auto& itemAndProvider) {
         return itemAndProvider.item == item;
     });
 

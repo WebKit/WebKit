@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2020 Igalia S.L. All rights reserved.
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -279,7 +280,7 @@ void WebXRSession::cancelAnimationFrame(unsigned callbackId)
     //    currently running animation frame callbacks that is associated with the value handle.
     // 3. If there is such an entry, set its cancelled boolean to true and remove it from
     //    session's list of animation frame callbacks.
-    size_t position = m_callbacks.findMatching([callbackId] (auto& item) {
+    size_t position = m_callbacks.findIf([callbackId] (auto& item) {
         return item->callbackId() == callbackId;
     });
 

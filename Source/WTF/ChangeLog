@@ -1,3 +1,27 @@
+2022-01-24  Mark Lam  <mark.lam@apple.com>
+
+        Rename Vector and FixedVector::findMatching to findIf to match stl naming.
+        https://bugs.webkit.org/show_bug.cgi?id=234864
+        rdar://87424746
+
+        Reviewed by Yusuke Suzuki.
+
+        Also rename reverseFindMatching to reverseFindIf.
+
+        See https://bugs.webkit.org/show_bug.cgi?id=234855#c3 and
+        https://en.cppreference.com/w/cpp/algorithm/find.
+
+        * wtf/FixedVector.h:
+        (WTF::FixedVector<T>::findIf const):
+        (WTF::FixedVector<T>::find const):
+        (WTF::FixedVector<T>::findMatching const): Deleted.
+        * wtf/Vector.h:
+        (WTF::Malloc>::findIf const):
+        (WTF::Malloc>::find const):
+        (WTF::Malloc>::reverseFindIf const):
+        (WTF::Malloc>::findMatching const): Deleted.
+        (WTF::Malloc>::reverseFindMatching const): Deleted.
+
 2022-01-24  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         Build failure with GCC 12: no matching function for call to 'end(LChar [7])'

@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2020 Igalia S.L. All rights reserved.
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -116,7 +117,7 @@ void WebXRSystem::ensureImmersiveXRDeviceIsSelected(CompletionHandler<void()>&& 
             return;
         }
 
-        if (m_activeImmersiveSession && oldDevice && immersiveXRDevices.findMatching([&](auto& entry) { return entry.ptr() == oldDevice; }) != notFound)
+        if (m_activeImmersiveSession && oldDevice && immersiveXRDevices.findIf([&](auto& entry) { return entry.ptr() == oldDevice; }) != notFound)
             ASSERT(m_activeImmersiveDevice.get() == oldDevice);
         else {
             // FIXME: implement a better UA selection mechanism if required.

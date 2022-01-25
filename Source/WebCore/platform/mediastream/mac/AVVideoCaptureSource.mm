@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -619,7 +619,7 @@ void AVVideoCaptureSource::generatePresets()
 
         CMVideoDimensions dimensions = PAL::CMVideoFormatDescriptionGetDimensions(format.formatDescription);
         IntSize size = { dimensions.width, dimensions.height };
-        auto index = presets.findMatching([&size](auto& preset) {
+        auto index = presets.findIf([&size](auto& preset) {
             return size == preset->size;
         });
         if (index != notFound)

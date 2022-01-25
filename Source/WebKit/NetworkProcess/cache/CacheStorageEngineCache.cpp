@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc.  All rights reserved.
+ * Copyright (C) 2017-2022 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -411,7 +411,7 @@ void Cache::storeRecords(Vector<Record>&& records, RecordIdentifiersCallback&& c
         auto* sameURLRecords = recordsFromURL(record.request.url());
         auto matchingRecords = queryCache(sameURLRecords, record.request, options);
 
-        auto position = !matchingRecords.isEmpty() ? sameURLRecords->findMatching([&](const auto& item) { return item.identifier == matchingRecords[0]; }) : notFound;
+        auto position = !matchingRecords.isEmpty() ? sameURLRecords->findIf([&](const auto& item) { return item.identifier == matchingRecords[0]; }) : notFound;
 
         if (position == notFound) {
             record.identifier = ++m_nextRecordIdentifier;
@@ -438,7 +438,7 @@ void Cache::put(Vector<Record>&& records, RecordIdentifiersCallback&& callback)
         auto* sameURLRecords = recordsFromURL(record.request.url());
         auto matchingRecords = queryCache(sameURLRecords, record.request, options);
 
-        auto position = (sameURLRecords && !matchingRecords.isEmpty()) ? sameURLRecords->findMatching([&](const auto& item) { return item.identifier == matchingRecords[0]; }) : notFound;
+        auto position = (sameURLRecords && !matchingRecords.isEmpty()) ? sameURLRecords->findIf([&](const auto& item) { return item.identifier == matchingRecords[0]; }) : notFound;
 
         spaceRequired += record.responseBodySize;
         if (position != notFound) {
@@ -479,7 +479,7 @@ void Cache::remove(WebCore::ResourceRequest&& request, WebCore::CacheQueryOption
     }
 
     records->removeAllMatching([this, &recordIdentifiers](auto& item) {
-        bool shouldRemove = recordIdentifiers.findMatching([&item](auto identifier) { return identifier == item.identifier; }) != notFound;
+        bool shouldRemove = recordIdentifiers.findIf([&item](auto identifier) { return identifier == item.identifier; }) != notFound;
         if (shouldRemove)
             this->removeRecordFromDisk(item);
         return shouldRemove;
@@ -499,7 +499,7 @@ void Cache::removeFromRecordList(const Vector<uint64_t>& recordIdentifiers)
     for (auto& records : m_records.values()) {
         auto* cache = this;
         records.removeAllMatching([cache, &recordIdentifiers](const auto& item) {
-            return notFound != recordIdentifiers.findMatching([cache, &item](const auto& identifier) {
+            return notFound != recordIdentifiers.findIf([cache, &item](const auto& identifier) {
                 if (item.identifier != identifier)
                     return false;
                 cache->removeRecordFromDisk(item);
@@ -532,7 +532,7 @@ void Cache::updateRecordToDisk(RecordInformation& existingRecord, Record&& recor
         if (!sameURLRecords)
             return;
 
-        auto position = sameURLRecords->findMatching([&] (const auto& item) { return item.identifier == recordIdentifier; });
+        auto position = sameURLRecords->findIf([&] (const auto& item) { return item.identifier == recordIdentifier; });
         if (position == notFound)
             return;
         auto& recordInfo = sameURLRecords->at(position);

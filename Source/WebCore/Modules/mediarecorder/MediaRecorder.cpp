@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -363,7 +363,7 @@ void MediaRecorder::dispatchError(Exception&& exception)
 
 void MediaRecorder::trackEnded(MediaStreamTrackPrivate&)
 {
-    auto position = m_tracks.findMatching([](auto& track) {
+    auto position = m_tracks.findIf([](auto& track) {
         return !track->ended();
     });
     if (position != notFound)

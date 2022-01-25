@@ -4630,7 +4630,7 @@ void webkit_web_view_remove_frame_displayed_callback(WebKitWebView* webView, uns
     };
 
     if (webView->priv->inFrameDisplayed) {
-        auto index = webView->priv->frameDisplayedCallbacks.findMatching(matchFunction);
+        auto index = webView->priv->frameDisplayedCallbacks.findIf(matchFunction);
         if (index != notFound)
             webView->priv->frameDisplayedCallbacksToRemove.add(id);
     } else

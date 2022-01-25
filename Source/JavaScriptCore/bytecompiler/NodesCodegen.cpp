@@ -1,7 +1,7 @@
 /*
 *  Copyright (C) 1999-2002 Harri Porten (porten@kde.org)
 *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
-*  Copyright (C) 2003-2019 Apple Inc. All rights reserved.
+*  Copyright (C) 2003-2022 Apple Inc. All rights reserved.
 *  Copyright (C) 2007 Cameron Zwarich (cwzwarich@uwaterloo.ca)
 *  Copyright (C) 2007 Maks Orlovich
 *  Copyright (C) 2007 Eric Seidel <eric@webkit.org>
@@ -5351,7 +5351,7 @@ RegisterID* ArrayPatternNode::emitDirectBinding(BytecodeGenerator& generator, Re
     if (!rhs->isSimpleArray())
         return nullptr;
 
-    if (m_targetPatterns.findMatching([&] (auto& target) { return target.bindingType == BindingType::RestElement; }) != notFound)
+    if (m_targetPatterns.findIf([&] (auto& target) { return target.bindingType == BindingType::RestElement; }) != notFound)
         return nullptr;
 
     ElementNode* elementNodes = static_cast<ArrayNode*>(rhs)->elements();

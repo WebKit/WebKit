@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2011 Google Inc. All rights reserved.
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -158,7 +158,7 @@ void MutationObserver::enqueueSlotChangeEvent(HTMLSlotElement& slot)
     ASSERT(isMainThread());
     Ref eventLoop = slot.document().windowEventLoop();
     auto& list = eventLoop->signalSlotList();
-    ASSERT(list.findMatching([&slot](auto& entry) { return entry.ptr() == &slot; }) == notFound);
+    ASSERT(list.findIf([&slot](auto& entry) { return entry.ptr() == &slot; }) == notFound);
     list.append(slot);
 
     eventLoop->queueMutationObserverCompoundMicrotask();

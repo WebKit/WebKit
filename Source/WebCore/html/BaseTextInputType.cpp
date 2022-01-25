@@ -3,7 +3,7 @@
  *
  * Copyright (C) 2009 Michelangelo De Simone <micdesim@gmail.com>
  * Copyright (C) 2010 Google Inc. All rights reserved.
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2022 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -54,7 +54,7 @@ bool BaseTextInputType::patternMismatch(const String& value) const
 
     if (isEmailField() && element()->multiple()) {
         auto values = value.split(',');
-        return values.findMatching(valuePatternMismatch) != notFound;
+        return values.findIf(valuePatternMismatch) != notFound;
     }
     return valuePatternMismatch(value);
 }

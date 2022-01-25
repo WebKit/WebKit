@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,7 +38,7 @@ namespace TestWebKitAPI {
 static String parseUserAgent(const Vector<char>& request)
 {
     auto headers = String::fromUTF8(request.data(), request.size()).split("\r\n");
-    auto index = headers.findMatching([] (auto& header) { return header.startsWith("User-Agent:"); });
+    auto index = headers.findIf([] (auto& header) { return header.startsWith("User-Agent:"); });
     if (index != notFound)
         return headers[index];
     return emptyString();

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -146,7 +146,7 @@ void PasteboardCustomData::writeStringInCustomData(const String& type, const Str
 
 PasteboardCustomData::Entry& PasteboardCustomData::addOrMoveEntryToEnd(const String& type)
 {
-    auto index = m_data.findMatching([&] (auto& entry) {
+    auto index = m_data.findIf([&] (auto& entry) {
         return entry.type == type;
     });
     auto entry = index == notFound ? Entry(type) : m_data[index];
@@ -189,7 +189,7 @@ bool PasteboardCustomData::hasData() const
 
 bool PasteboardCustomData::hasSameOriginCustomData() const
 {
-    return notFound != m_data.findMatching([&] (auto& entry) {
+    return notFound != m_data.findIf([&] (auto& entry) {
         return !entry.customData.isNull();
     });
 }

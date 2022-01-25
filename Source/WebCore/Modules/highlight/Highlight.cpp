@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -85,7 +85,7 @@ void Highlight::clearFromSetLike()
 
 bool Highlight::addToSetLike(StaticRange& range)
 {
-    if (notFound != m_rangesData.findMatching([&range](const Ref<HighlightRangeData>& current) { return current.get().range.get() == range; }))
+    if (notFound != m_rangesData.findIf([&range](const Ref<HighlightRangeData>& current) { return current.get().range.get() == range; }))
         return false;
     repaintRange(range);
     m_rangesData.append(HighlightRangeData::create(range));

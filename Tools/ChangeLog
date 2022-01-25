@@ -1,3 +1,20 @@
+2022-01-24  Mark Lam  <mark.lam@apple.com>
+
+        Rename Vector and FixedVector::findMatching to findIf to match stl naming.
+        https://bugs.webkit.org/show_bug.cgi?id=234864
+        rdar://87424746
+
+        Reviewed by Yusuke Suzuki.
+
+        * TestWebKitAPI/Tests/WTF/FixedVector.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WTF/Vector.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/MediaLoading.mm:
+        (TestWebKitAPI::parseUserAgent):
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::closeOtherPage):
+
 2022-01-24  Alex Christensen  <achristensen@webkit.org>
 
         Re-enable CustomDisplayName and DefaultDisplayName API tests on Monterey

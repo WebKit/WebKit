@@ -1,6 +1,6 @@
 /*
  Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies)
- Copyright (C) 2010 Apple Inc. All rights reserved.
+ Copyright (C) 2010-2022 Apple Inc. All rights reserved.
  Copyright (C) 2012 Company 100, Inc.
  Copyright (C) 2012 Intel Corporation. All rights reserved.
  Copyright (C) 2017 Sony Interactive Entertainment Inc.
@@ -1359,7 +1359,7 @@ bool CoordinatedGraphicsLayer::shouldHaveBackingStore() const
     bool isInvisibleBecauseOpacityZero = !opacity() && !m_animations.hasActiveAnimationsOfType(AnimatedPropertyOpacity);
 
     // Check if there's a filter that sets the opacity to zero.
-    bool hasOpacityZeroFilter = notFound != filters().operations().findMatching([&](const auto& operation) {
+    bool hasOpacityZeroFilter = notFound != filters().operations().findIf([&](const auto& operation) {
         return operation->type() == FilterOperation::OperationType::OPACITY && !downcast<BasicComponentTransferFilterOperation>(*operation).amount();
     });
 

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2014 Igalia S.L.
- * Copyright (C) 2016-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2022 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -48,7 +48,7 @@ UserMediaPermissionRequestProxy::UserMediaPermissionRequestProxy(UserMediaPermis
 #if ENABLE(MEDIA_STREAM)
 static inline void setDeviceAsFirst(Vector<CaptureDevice>& devices, const String& deviceID)
 {
-    size_t index = devices.findMatching([&deviceID](const auto& device) {
+    size_t index = devices.findIf([&deviceID](const auto& device) {
         return device.persistentId() == deviceID;
     });
     ASSERT(index != notFound);

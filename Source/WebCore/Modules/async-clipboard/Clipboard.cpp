@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -203,7 +203,7 @@ void Clipboard::getType(ClipboardItem& item, const String& type, Ref<DeferredPro
         return;
     }
 
-    auto itemIndex = m_activeSession->items.findMatching([&] (auto& activeItem) {
+    auto itemIndex = m_activeSession->items.findIf([&] (auto& activeItem) {
         return activeItem.ptr() == &item;
     });
 

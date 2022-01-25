@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -1172,14 +1172,14 @@ void NetworkConnectionToWebProcess::stopAllNetworkActivityTrackingForPage(PageId
 
 size_t NetworkConnectionToWebProcess::findRootNetworkActivity(PageIdentifier pageID)
 {
-    return m_networkActivityTrackers.findMatching([&](const auto& item) {
+    return m_networkActivityTrackers.findIf([&](const auto& item) {
         return item.isRootActivity && item.pageID == pageID;
     });
 }
 
 size_t NetworkConnectionToWebProcess::findNetworkActivityTracker(WebCore::ResourceLoaderIdentifier resourceID)
 {
-    return m_networkActivityTrackers.findMatching([&](const auto& item) {
+    return m_networkActivityTrackers.findIf([&](const auto& item) {
         return item.resourceID == resourceID;
     });
 }

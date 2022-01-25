@@ -1,5 +1,5 @@
 // Copyright 2018 The Chromium Authors. All rights reserved.
-// Copyright (C) 2019-2021 Apple Inc. All rights reserved.
+// Copyright (C) 2019-2022 Apple Inc. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions are
@@ -87,7 +87,7 @@ bool isConvertibleToU2fRegisterCommand(const PublicKeyCredentialCreationOptions&
 {
     if (request.authenticatorSelection && (request.authenticatorSelection->userVerification == UserVerificationRequirement::Required || request.authenticatorSelection->requireResidentKey))
         return false;
-    if (request.pubKeyCredParams.findMatching([](auto& item) { return item.alg == COSE::ES256; }) == notFound)
+    if (request.pubKeyCredParams.findIf([](auto& item) { return item.alg == COSE::ES256; }) == notFound)
         return false;
     return true;
 }

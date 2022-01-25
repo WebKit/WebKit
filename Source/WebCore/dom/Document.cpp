@@ -3,7 +3,7 @@
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
  *           (C) 2006 Alexey Proskuryakov (ap@webkit.org)
- * Copyright (C) 2004-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2022 Apple Inc. All rights reserved.
  * Copyright (C) 2008, 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
  * Copyright (C) 2008, 2009, 2011, 2012 Google Inc. All rights reserved.
  * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies)
@@ -4283,7 +4283,7 @@ void Document::addPendingScrollEventTarget(ContainerNode& target)
         m_pendingScrollEventTargetList = makeUnique<PendingScrollEventTargetList>();
 
     auto& targets = m_pendingScrollEventTargetList->targets;
-    if (targets.findMatching([&] (auto& entry) { return entry.ptr() == &target; }) != notFound)
+    if (targets.findIf([&] (auto& entry) { return entry.ptr() == &target; }) != notFound)
         return;
 
     if (targets.isEmpty())
@@ -8033,7 +8033,7 @@ void Document::updateIntersectionObservations()
             continue;
         for (auto& target : observer->observationTargets()) {
             auto& targetRegistrations = target->intersectionObserverDataIfExists()->registrations;
-            auto index = targetRegistrations.findMatching([observer](auto& registration) {
+            auto index = targetRegistrations.findIf([observer](auto& registration) {
                 return registration.observer.get() == observer;
             });
             ASSERT(index != notFound);

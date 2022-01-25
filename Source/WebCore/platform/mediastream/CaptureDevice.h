@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -154,7 +154,7 @@ inline bool haveDevicesChanged(const Vector<CaptureDevice>& oldDevices, const Ve
         if (newDevice.type() != CaptureDevice::DeviceType::Camera && newDevice.type() != CaptureDevice::DeviceType::Microphone)
             continue;
 
-        auto index = oldDevices.findMatching([&newDevice](auto& oldDevice) {
+        auto index = oldDevices.findIf([&newDevice](auto& oldDevice) {
             return newDevice.persistentId() == oldDevice.persistentId() && newDevice.enabled() != oldDevice.enabled();
         });
 

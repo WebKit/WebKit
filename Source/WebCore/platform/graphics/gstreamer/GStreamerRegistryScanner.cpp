@@ -561,14 +561,14 @@ MediaPlayerEnums::SupportsType GStreamerRegistryScanner::isContentTypeSupported(
     for (const auto& item : codecs) {
         auto codec = item.convertToASCIILowercase();
         bool requiresHardwareSupport = contentTypesRequiringHardwareSupport
-            .findMatching([containerType, codec](auto& hardwareContentType) -> bool {
+            .findIf([containerType, codec](auto& hardwareContentType) -> bool {
             auto hardwareContainer = hardwareContentType.containerType();
             if (!hardwareContainer.isEmpty()
                 && fnmatch(hardwareContainer.utf8().data(), containerType.utf8().data(), 0))
                 return false;
             auto hardwareCodecs = hardwareContentType.codecs();
             return hardwareCodecs.isEmpty()
-                || hardwareCodecs.findMatching([codec](auto& hardwareCodec) -> bool {
+                || hardwareCodecs.findIf([codec](auto& hardwareCodec) -> bool {
                     return !fnmatch(hardwareCodec.utf8().data(), codec.utf8().data(), 0);
             }) != notFound;
         }) != notFound;

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2012 Google Inc. All rights reserved.
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -215,7 +215,7 @@ void DateTimeEditElement::addField(Ref<DateTimeFieldElement> field)
 
 size_t DateTimeEditElement::fieldIndexOf(const DateTimeFieldElement& fieldToFind) const
 {
-    return m_fields.findMatching([&] (auto& field) {
+    return m_fields.findIf([&] (auto& field) {
         return field.ptr() == &fieldToFind;
     });
 }
@@ -223,7 +223,7 @@ size_t DateTimeEditElement::fieldIndexOf(const DateTimeFieldElement& fieldToFind
 DateTimeFieldElement* DateTimeEditElement::focusedFieldElement() const
 {
     auto* focusedElement = document().focusedElement();
-    auto fieldIndex = m_fields.findMatching([&] (auto& field) {
+    auto fieldIndex = m_fields.findIf([&] (auto& field) {
         return field.ptr() == focusedElement;
     });
 
@@ -289,7 +289,7 @@ void DateTimeEditElement::didBlurFromField(Event& event)
         return;
 
     if (auto* newFocusedElement = event.relatedTarget()) {
-        bool didFocusSiblingField = notFound != m_fields.findMatching([&] (auto& field) {
+        bool didFocusSiblingField = notFound != m_fields.findIf([&] (auto& field) {
             return field.ptr() == newFocusedElement;
         });
 
