@@ -153,6 +153,8 @@ public:
     bool needsToForceUserSelectAndUserDragWhenInstallingImageOverlay() const;
 #endif
 
+    bool shouldDisableWebSharePolicy() const;
+
 private:
     bool needsQuirks() const;
 
@@ -197,6 +199,7 @@ private:
 #endif
     mutable std::optional<bool> m_blocksReturnToFullscreenFromPictureInPictureQuirk;
     mutable std::optional<bool> m_shouldDisableEndFullscreenEventWhenEnteringPictureInPictureFromFullscreenQuirk;
+    mutable std::optional<bool> m_shouldDisableWebSharePolicy;
 };
 
 } // namespace WebCore

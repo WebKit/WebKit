@@ -126,12 +126,14 @@ static std::optional<URL> shareableURLForShareData(ScriptExecutionContext& conte
     return url;
 }
 
+static bool validateWebSharePolicy(Document& document)
+{
+    return isFeaturePolicyAllowedByDocumentAndAllOwners(FeaturePolicy::Type::WebShare, document, LogFeaturePolicyFailure::Yes) || document.quirks().shouldDisableWebSharePolicy();
+}
+
 bool Navigator::canShare(Document& document, const ShareData& data)
 {
-    if (!document.isFullyActive())
-        return false;
-
-    if (!isFeaturePolicyAllowedByDocumentAndAllOwners(FeaturePolicy::Type::WebShare, document, LogFeaturePolicyFailure::Yes))
+    if (!document.isFullyActive() || !validateWebSharePolicy(document))
         return false;
 
     bool hasShareableTitleOrText = !data.title.isNull() || !data.text.isNull();
@@ -152,7 +154,7 @@ void Navigator::share(Document& document, const ShareData& data, Ref<DeferredPro
         return;
     }
 
-    if (!isFeaturePolicyAllowedByDocumentAndAllOwners(FeaturePolicy::Type::WebShare, document, LogFeaturePolicyFailure::Yes)) {
+    if (!validateWebSharePolicy(document)) {
         promise->reject(NotAllowedError, "Third-party iframes are not allowed to call share() unless explicitly allowed via Feature-Policy (web-share)"_s);
         return;
     }
