@@ -94,6 +94,8 @@ struct ModuleInformation : public ThreadSafeRefCounted<ModuleInformation> {
     bool isDeclaredException(uint32_t index) const { return m_declaredExceptions.contains(index); }
     void addDeclaredException(uint32_t index) { m_declaredExceptions.set(index); }
 
+    bool hasMemoryImport() const { return memory.isImport(); }
+
     Vector<Import> imports;
     Vector<SignatureIndex> importFunctionSignatureIndices;
     Vector<SignatureIndex> internalFunctionSignatureIndices;

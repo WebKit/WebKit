@@ -52,7 +52,7 @@ PASS Multiple i64 arguments: Module argument
 PASS stray argument: BufferSource argument
 PASS stray argument: Module argument
 PASS Synchronous options handling: Buffer argument
-FAIL Synchronous options handling: Module argument assert_array_equals: lengths differ, expected array ["module getter", "global getter"] length 2, got [] length 0
+PASS Synchronous options handling: Module argument
 PASS Empty buffer
 PASS Invalid code
 PASS Changing the buffer

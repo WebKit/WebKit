@@ -1,3 +1,42 @@
+2022-01-25  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Wasm module import should be done in sync when WebAssembly.instantiate gets module
+        https://bugs.webkit.org/show_bug.cgi?id=235506
+
+        Reviewed by Saam Barati.
+
+        According to the spec, module imports need to be done synchronously when WebAssembly.instantiate
+        is called with a wasm module[1].
+
+        To align our implementation to this behavior, we split WebAssemblyModuleRecord::initializeImportsAndExports
+        into WebAssemblyModuleRecord::initializeImports and WebAssemblyModuleRecord::initializeExports. The former
+        does not require CalleeGroups so we can execute before compiling CalleeGroups.
+
+        [1]: https://webassembly.github.io/spec/js-api/#asynchronously-instantiate-a-webassembly-module
+
+        * runtime/AbstractModuleRecord.cpp:
+        (JSC::AbstractModuleRecord::evaluate):
+        * wasm/WasmInstance.h:
+        (JSC::Wasm::Instance::setOwner):
+        (JSC::Wasm::Instance::finalizeCreation): Deleted.
+        * wasm/WasmModuleInformation.h:
+        (JSC::Wasm::ModuleInformation::hasMemoryImport const):
+        * wasm/js/JSWebAssembly.cpp:
+        (JSC::instantiate):
+        (JSC::resolve): Deleted.
+        * wasm/js/JSWebAssemblyInstance.cpp:
+        (JSC::JSWebAssemblyInstance::JSWebAssemblyInstance):
+        (JSC::JSWebAssemblyInstance::initializeImports):
+        (JSC::JSWebAssemblyInstance::finalizeCreation):
+        * wasm/js/JSWebAssemblyInstance.h:
+        * wasm/js/WebAssemblyInstanceConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * wasm/js/WebAssemblyModuleRecord.cpp:
+        (JSC::WebAssemblyModuleRecord::initializeImports):
+        (JSC::WebAssemblyModuleRecord::initializeExports):
+        (JSC::WebAssemblyModuleRecord::initializeImportsAndExports): Deleted.
+        * wasm/js/WebAssemblyModuleRecord.h:
+
 2022-01-24  Mark Lam  <mark.lam@apple.com>
 
         Rename Vector and FixedVector::findMatching to findIf to match stl naming.

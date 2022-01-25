@@ -67,7 +67,8 @@ public:
 
     DECLARE_EXPORT_INFO;
 
-    void finalizeCreation(VM&, JSGlobalObject*, Ref<Wasm::CalleeGroup>&&, JSObject* importObject, Wasm::CreationMode);
+    void initializeImports(JSGlobalObject*, JSObject* importObject, Wasm::CreationMode);
+    void finalizeCreation(VM&, JSGlobalObject*, Ref<Wasm::CalleeGroup>&&, Wasm::CreationMode);
     
     Wasm::Instance& instance() { return m_instance.get(); }
     WebAssemblyModuleRecord* moduleRecord() { return m_moduleRecord.get(); }

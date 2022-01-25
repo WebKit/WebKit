@@ -113,11 +113,11 @@ Synchronousness WebAssemblyModuleRecord::link(JSGlobalObject* globalObject, JSVa
     return Synchronousness::Sync;
 }
 
-void WebAssemblyModuleRecord::initializeImportsAndExports(JSGlobalObject* globalObject, JSObject* importObject, Wasm::CreationMode creationMode)
+// https://webassembly.github.io/spec/js-api/#read-the-imports
+void WebAssemblyModuleRecord::initializeImports(JSGlobalObject* globalObject, JSObject* importObject, Wasm::CreationMode creationMode)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    UNUSED_PARAM(scope);
 
     RELEASE_ASSERT(m_instance);
 
@@ -422,20 +422,38 @@ void WebAssemblyModuleRecord::initializeImportsAndExports(JSGlobalObject* global
             // iii. Append v.[[Memory]] to imports.
             m_instance->setMemory(vm, memory);
             RETURN_IF_EXCEPTION(scope, void());
-
-            // Usually at this point the module's code block in any memory mode should be
-            // runnable due to the LLint tier code being shared among all modes. However,
-            // if LLInt is disabled, it is possible that the code needs to be compiled at
-            // this point when we know which memory mode to use.
-            Wasm::CalleeGroup* calleeGroup = m_instance->instance().calleeGroup();
-            if (!calleeGroup || !calleeGroup->runnable()) {
-                calleeGroup = m_instance->module()->module().compileSync(&vm.wasmContext, memory->memory().mode()).ptr();
-                if (!calleeGroup->runnable())
-                    return exception(createJSWebAssemblyLinkError(globalObject, vm, calleeGroup->errorMessage()));
-            }
-            RELEASE_ASSERT(calleeGroup->isSafeToRun(memory->memory().mode()));
             break;
         }
+    }
+}
+
+// https://webassembly.github.io/spec/js-api/#create-an-exports-object
+void WebAssemblyModuleRecord::initializeExports(JSGlobalObject* globalObject)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    RELEASE_ASSERT(m_instance);
+
+    JSWebAssemblyModule* module = m_instance->module();
+    const Wasm::ModuleInformation& moduleInformation = module->moduleInformation();
+
+    auto exception = [&] (JSObject* error) {
+        throwException(globalObject, scope, error);
+    };
+
+    if (moduleInformation.hasMemoryImport()) {
+        // Usually at this point the module's code block in any memory mode should be
+        // runnable due to the LLint tier code being shared among all modes. However,
+        // if LLInt is disabled, it is possible that the code needs to be compiled at
+        // this point when we know which memory mode to use.
+        Wasm::CalleeGroup* calleeGroup = m_instance->instance().calleeGroup();
+        if (!calleeGroup || !calleeGroup->runnable()) {
+            calleeGroup = m_instance->module()->module().compileSync(&vm.wasmContext, m_instance->instance().memory()->mode()).ptr();
+            if (!calleeGroup->runnable())
+                return exception(createJSWebAssemblyLinkError(globalObject, vm, calleeGroup->errorMessage()));
+        }
+        RELEASE_ASSERT(calleeGroup->isSafeToRun(m_instance->instance().memory()->mode()));
     }
 
     for (unsigned i = 0; i < moduleInformation.tableCount(); ++i) {

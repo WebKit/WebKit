@@ -843,7 +843,9 @@ JS_EXPORT_PRIVATE JSValue AbstractModuleRecord::evaluate(JSGlobalObject* globalO
         // WebAssembly imports need to be supplied during evaluation so that, e.g.,
         // JS module exports are actually available to be read and installed as import
         // bindings.
-        wasmModuleRecord->initializeImportsAndExports(globalObject, nullptr, Wasm::CreationMode::FromModuleLoader);
+        wasmModuleRecord->initializeImports(globalObject, nullptr, Wasm::CreationMode::FromModuleLoader);
+        RETURN_IF_EXCEPTION(scope, jsUndefined());
+        wasmModuleRecord->initializeExports(globalObject);
         RETURN_IF_EXCEPTION(scope, jsUndefined());
         RELEASE_AND_RETURN(scope, wasmModuleRecord->evaluate(globalObject));
     }

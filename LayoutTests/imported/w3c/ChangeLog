@@ -1,3 +1,13 @@
+2022-01-25  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Wasm module import should be done in sync when WebAssembly.instantiate gets module
+        https://bugs.webkit.org/show_bug.cgi?id=235506
+
+        Reviewed by Saam Barati.
+
+        * web-platform-tests/wasm/jsapi/constructor/instantiate.any-expected.txt:
+        * web-platform-tests/wasm/jsapi/constructor/instantiate.any.worker-expected.txt:
+
 2022-01-25  Antoine Quint  <graouts@webkit.org>
 
         Deduplication for @keyframes rules should account for animation-composition

@@ -56,7 +56,7 @@ public:
 
     static Ref<Instance> create(Context*, Ref<Module>&&, EntryFrame** pointerToTopEntryFrame, void** pointerToActualStackLimit, StoreTopCallFrameCallback&&);
 
-    void finalizeCreation(void* owner)
+    void setOwner(void* owner)
     {
         m_owner = owner;
     }

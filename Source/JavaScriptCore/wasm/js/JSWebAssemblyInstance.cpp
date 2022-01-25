@@ -53,6 +53,7 @@ JSWebAssemblyInstance::JSWebAssemblyInstance(VM& vm, Structure* structure, Ref<W
     , m_globalObject(vm, this, structure->globalObject())
     , m_tables(m_instance->module().moduleInformation().tableCount())
 {
+    m_instance->setOwner(this);
     for (unsigned i = 0; i < this->instance().numImportFunctions(); ++i)
         new (this->instance().importFunction<WriteBarrier<JSObject>>(i)) WriteBarrier<JSObject>();
 }
@@ -104,10 +105,22 @@ void JSWebAssemblyInstance::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 
 DEFINE_VISIT_CHILDREN(JSWebAssemblyInstance);
 
-void JSWebAssemblyInstance::finalizeCreation(VM& vm, JSGlobalObject* globalObject, Ref<Wasm::CalleeGroup>&& wasmCalleeGroup, JSObject* importObject, Wasm::CreationMode creationMode)
+void JSWebAssemblyInstance::initializeImports(JSGlobalObject* globalObject, JSObject* importObject, Wasm::CreationMode creationMode)
 {
-    m_instance->finalizeCreation(this);
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
 
+    m_moduleRecord->prepareLink(vm, this);
+    if (creationMode == Wasm::CreationMode::FromJS) {
+        m_moduleRecord->link(globalObject, jsNull());
+        RETURN_IF_EXCEPTION(scope, void());
+        m_moduleRecord->initializeImports(globalObject, importObject, creationMode);
+        RETURN_IF_EXCEPTION(scope, void());
+    }
+}
+
+void JSWebAssemblyInstance::finalizeCreation(VM& vm, JSGlobalObject* globalObject, Ref<Wasm::CalleeGroup>&& wasmCalleeGroup, Wasm::CreationMode creationMode)
+{
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (!wasmCalleeGroup->runnable()) {
@@ -121,31 +134,16 @@ void JSWebAssemblyInstance::finalizeCreation(VM& vm, JSGlobalObject* globalObjec
     // results, so that later when memory imports become available, the appropriate CalleeGroup can be used.
     // If LLInt is disabled, we instead defer compilation to module evaluation.
     // If the code is already compiled, e.g. the module was already instantiated before, we do not re-initialize.
-    bool hasMemoryImport = module()->moduleInformation().memory.isImport();
-    if (Options::useWasmLLInt() && hasMemoryImport) {
-        Wasm::MemoryMode initialMode = Wasm::MemoryMode::BoundsChecking;
-        ASSERT(memoryMode() == initialMode);
-        module()->module().copyInitialCalleeGroupToAllMemoryModes(initialMode);
-
-        for (unsigned i = 0; i < Wasm::NumberOfMemoryModes; i++) {
-            if (i == static_cast<uint8_t>(initialMode))
-                continue;
-            Wasm::MemoryMode memoryMode = static_cast<Wasm::MemoryMode>(i);
-            module()->module().calleeGroupFor(memoryMode); // Materialize Wasm::CalleeGroup.
-        }
-    }
+    if (Options::useWasmLLInt() && module()->moduleInformation().hasMemoryImport())
+        module()->module().copyInitialCalleeGroupToAllMemoryModes(memoryMode());
 
     for (unsigned importFunctionNum = 0; importFunctionNum < instance().numImportFunctions(); ++importFunctionNum) {
         auto* info = instance().importFunctionInfo(importFunctionNum);
         info->wasmToEmbedderStub = m_module->wasmToEmbedderStub(importFunctionNum);
     }
 
-    m_moduleRecord->prepareLink(vm, this);
-
     if (creationMode == Wasm::CreationMode::FromJS) {
-        m_moduleRecord->link(globalObject, jsNull());
-        RETURN_IF_EXCEPTION(scope, void());
-        m_moduleRecord->initializeImportsAndExports(globalObject, importObject, creationMode);
+        m_moduleRecord->initializeExports(globalObject);
         RETURN_IF_EXCEPTION(scope, void());
 
         JSValue startResult = m_moduleRecord->evaluate(globalObject);

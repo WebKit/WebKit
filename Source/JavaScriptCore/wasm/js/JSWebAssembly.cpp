@@ -137,32 +137,6 @@ JSC_DEFINE_HOST_FUNCTION(webAssemblyCompileFunc, (JSGlobalObject* globalObject, 
     return JSValue::encode(promise);
 }
 
-enum class Resolve { WithInstance, WithModuleRecord, WithModuleAndInstance };
-static void resolve(VM& vm, JSGlobalObject* globalObject, JSPromise* promise, JSWebAssemblyInstance* instance, JSWebAssemblyModule* module, JSObject* importObject, Ref<Wasm::CalleeGroup>&& calleeGroup, Resolve resolveKind, Wasm::CreationMode creationMode)
-{
-    auto scope = DECLARE_THROW_SCOPE(vm);
-    instance->finalizeCreation(vm, globalObject, WTFMove(calleeGroup), importObject, creationMode);
-    if (UNLIKELY(scope.exception())) {
-        promise->rejectWithCaughtException(globalObject, scope);
-        return;
-    }
-
-    scope.release();
-    if (resolveKind == Resolve::WithInstance)
-        promise->resolve(globalObject, instance);
-    else if (resolveKind == Resolve::WithModuleRecord) {
-        auto* moduleRecord = instance->moduleRecord();
-        if (UNLIKELY(Options::dumpModuleRecord()))
-            moduleRecord->dump();
-        promise->resolve(globalObject, moduleRecord);
-    } else {
-        JSObject* result = constructEmptyObject(globalObject);
-        result->putDirect(vm, Identifier::fromString(vm, "module"_s), module);
-        result->putDirect(vm, Identifier::fromString(vm, "instance"_s), instance);
-        promise->resolve(globalObject, result);
-    }
-}
-
 void JSWebAssembly::webAssemblyModuleValidateAsync(JSGlobalObject* globalObject, JSPromise* promise, Vector<uint8_t>&& source)
 {
     VM& vm = globalObject->vm();
@@ -186,6 +160,7 @@ void JSWebAssembly::webAssemblyModuleValidateAsync(JSGlobalObject* globalObject,
     }));
 }
 
+enum class Resolve { WithInstance, WithModuleRecord, WithModuleAndInstance };
 static void instantiate(VM& vm, JSGlobalObject* globalObject, JSPromise* promise, JSWebAssemblyModule* module, JSObject* importObject, const Identifier& moduleKey, Resolve resolveKind, Wasm::CreationMode creationMode)
 {
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -197,18 +172,51 @@ static void instantiate(VM& vm, JSGlobalObject* globalObject, JSPromise* promise
         return;
     }
 
+    instance->initializeImports(globalObject, importObject, creationMode);
+    if (UNLIKELY(scope.exception())) {
+        promise->rejectWithCaughtException(globalObject, scope);
+        return;
+    }
+
     Vector<Strong<JSCell>> dependencies;
     // The instance keeps the module alive.
     dependencies.append(Strong<JSCell>(vm, promise));
-    dependencies.append(Strong<JSCell>(vm, importObject));
 
+    scope.release();
     auto ticket = vm.deferredWorkTimer->addPendingWork(vm, instance, WTFMove(dependencies));
     // Note: This completion task may or may not get called immediately.
-    module->module().compileAsync(&vm.wasmContext, instance->memoryMode(), createSharedTask<Wasm::CalleeGroup::CallbackType>([ticket, promise, instance, module, importObject, resolveKind, creationMode, &vm] (Ref<Wasm::CalleeGroup>&& refCalleeGroup) mutable {
+    module->module().compileAsync(&vm.wasmContext, instance->memoryMode(), createSharedTask<Wasm::CalleeGroup::CallbackType>([ticket, promise, instance, module, resolveKind, creationMode, &vm] (Ref<Wasm::CalleeGroup>&& refCalleeGroup) mutable {
         RefPtr<Wasm::CalleeGroup> calleeGroup = WTFMove(refCalleeGroup);
-        vm.deferredWorkTimer->scheduleWorkSoon(ticket, [promise, instance, module, importObject, resolveKind, creationMode, &vm, calleeGroup = WTFMove(calleeGroup)](DeferredWorkTimer::Ticket) mutable {
+        vm.deferredWorkTimer->scheduleWorkSoon(ticket, [promise, instance, module, resolveKind, creationMode, &vm, calleeGroup = WTFMove(calleeGroup)](DeferredWorkTimer::Ticket) mutable {
+            auto scope = DECLARE_THROW_SCOPE(vm);
             JSGlobalObject* globalObject = instance->globalObject();
-            resolve(vm, globalObject, promise, instance, module, importObject, calleeGroup.releaseNonNull(), resolveKind, creationMode);
+            instance->finalizeCreation(vm, globalObject, calleeGroup.releaseNonNull(), creationMode);
+            if (UNLIKELY(scope.exception())) {
+                promise->rejectWithCaughtException(globalObject, scope);
+                return;
+            }
+
+            scope.release();
+            switch (resolveKind) {
+            case Resolve::WithInstance: {
+                promise->resolve(globalObject, instance);
+                break;
+            }
+            case Resolve::WithModuleRecord: {
+                auto* moduleRecord = instance->moduleRecord();
+                if (UNLIKELY(Options::dumpModuleRecord()))
+                    moduleRecord->dump();
+                promise->resolve(globalObject, moduleRecord);
+                break;
+            }
+            case Resolve::WithModuleAndInstance: {
+                JSObject* result = constructEmptyObject(globalObject);
+                result->putDirect(vm, Identifier::fromString(vm, "module"_s), module);
+                result->putDirect(vm, Identifier::fromString(vm, "instance"_s), instance);
+                promise->resolve(globalObject, result);
+                break;
+            }
+            }
         });
     }));
 }

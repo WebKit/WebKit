@@ -60,7 +60,8 @@ public:
 
     void prepareLink(VM&, JSWebAssemblyInstance*);
     Synchronousness link(JSGlobalObject*, JSValue scriptFetcher);
-    void initializeImportsAndExports(JSGlobalObject*, JSObject* importObject, Wasm::CreationMode);
+    void initializeImports(JSGlobalObject*, JSObject* importObject, Wasm::CreationMode);
+    void initializeExports(JSGlobalObject*);
     JS_EXPORT_PRIVATE JSValue evaluate(JSGlobalObject*);
 
     JSObject* exportsObject() const { return m_exportsObject.get(); }
