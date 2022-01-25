@@ -205,7 +205,7 @@ private:
 
     void startRubberBandAnimationIfNecessary();
 
-    bool startRubberBandAnimation(const FloatPoint& targetOffset, const FloatSize& initialVelocity, const FloatSize& initialOverscroll);
+    bool startRubberBandAnimation(const FloatSize& initialVelocity, const FloatSize& initialOverscroll);
     void stopRubberBandAnimation();
 
     void willStartRubberBandAnimation();
@@ -227,6 +227,8 @@ private:
     void scrollAnimationWillStart(ScrollAnimation&) final;
     void scrollAnimationDidEnd(ScrollAnimation&) final;
     ScrollExtents scrollExtentsForAnimation(ScrollAnimation&) final;
+    FloatSize overscrollAmount(ScrollAnimation&) final;
+    FloatPoint scrollOffset(ScrollAnimation&) final;
 
     void adjustDeltaForSnappingIfNeeded(float& deltaX, float& deltaY);
 

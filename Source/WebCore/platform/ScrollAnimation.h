@@ -45,6 +45,8 @@ public:
     virtual void scrollAnimationWillStart(ScrollAnimation&) { }
     virtual void scrollAnimationDidEnd(ScrollAnimation&) { }
     virtual ScrollExtents scrollExtentsForAnimation(ScrollAnimation&) = 0;
+    virtual FloatSize overscrollAmount(ScrollAnimation&) = 0;
+    virtual FloatPoint scrollOffset(ScrollAnimation&) = 0;
 };
 
 class ScrollAnimation {

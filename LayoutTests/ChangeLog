@@ -1,5 +1,60 @@
 2022-01-24  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r288336. rdar://problem/86558157
+
+    REGRESSION (r284136): A slight horizontal rubberband kills scroll momentum
+    https://bugs.webkit.org/show_bug.cgi?id=234384
+    
+    Reviewed by Tim Horton.
+    
+    Source/WebCore:
+    
+    ScrollAnimationRubberBand subtly changed the behavior of the rubberband animation on the
+    axis that is not the rubberbanding axis. Because it converged on m_targetOffset, it always
+    resulted in no offset on that axis.
+    
+    Fix by restoring the behavior from before r284136, which applies the rubberbanding as a
+    delta from the current offset and no longer uses m_targetOffset, which is removed. It's a
+    bit surprising that this rubberband animation drives a vertical scroll when the gesture is
+    primarily horizontal (normally we'd clamp these deltas to be purely horizontal), but people
+    are used to this behavior so restore it.
+    
+    Test: fast/scrolling/mac/j-shaped-scroll-rubberband.html
+    
+    * platform/ScrollAnimation.h:
+    * platform/ScrollingEffectsController.cpp:
+    (WebCore::ScrollingEffectsController::overscrollAmount):
+    (WebCore::ScrollingEffectsController::scrollOffset):
+    * platform/ScrollingEffectsController.h:
+    * platform/mac/ScrollAnimationRubberBand.h:
+    * platform/mac/ScrollAnimationRubberBand.mm:
+    (WebCore::ScrollAnimationRubberBand::startRubberBandAnimation):
+    (WebCore::ScrollAnimationRubberBand::serviceAnimation):
+    (WebCore::ScrollAnimationRubberBand::debugDescription const):
+    * platform/mac/ScrollingEffectsController.mm:
+    (WebCore::ScrollingEffectsController::startRubberBandAnimation):
+    (WebCore::ScrollingEffectsController::startRubberBandAnimationIfNecessary):
+    
+    LayoutTests:
+    
+    * fast/scrolling/mac/j-shaped-scroll-rubberband-expected.txt: Added.
+    * fast/scrolling/mac/j-shaped-scroll-rubberband.html: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@288336 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-01-20  Simon Fraser  <simon.fraser@apple.com>
+
+            REGRESSION (r284136): A slight horizontal rubberband kills scroll momentum
+            https://bugs.webkit.org/show_bug.cgi?id=234384
+
+            Reviewed by Tim Horton.
+
+            * fast/scrolling/mac/j-shaped-scroll-rubberband-expected.txt: Added.
+            * fast/scrolling/mac/j-shaped-scroll-rubberband.html: Added.
+
+2022-01-24  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r288266. rdar://problem/87804395
 
     Web Inspector: fully blackboxed stack traces don't show the right top call frame

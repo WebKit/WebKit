@@ -36,7 +36,7 @@ public:
     virtual ~ScrollAnimationRubberBand();
 
     // targetOffset is the scroll offset when the animation has finished (i.e. scrolled to an edge).
-    bool startRubberBandAnimation(const FloatPoint& targetOffset, const FloatSize& initialVelocity, const FloatSize& initialOverscroll);
+    bool startRubberBandAnimation(const FloatSize& initialVelocity, const FloatSize& initialOverscroll);
 
 private:
     void updateScrollExtents() final;
@@ -47,7 +47,6 @@ private:
 
     bool animateScroll(MonotonicTime);
 
-    FloatPoint m_targetOffset;
     FloatSize m_initialVelocity;
     FloatSize m_initialOverscroll;
 };

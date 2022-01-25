@@ -59,9 +59,8 @@ ScrollAnimationRubberBand::ScrollAnimationRubberBand(ScrollAnimationClient& clie
 
 ScrollAnimationRubberBand::~ScrollAnimationRubberBand() = default;
 
-bool ScrollAnimationRubberBand::startRubberBandAnimation(const FloatPoint& targetOffset, const FloatSize& initialVelocity, const FloatSize& initialOverscroll)
+bool ScrollAnimationRubberBand::startRubberBandAnimation(const FloatSize& initialVelocity, const FloatSize& initialOverscroll)
 {
-    m_targetOffset = targetOffset;
     m_initialVelocity = initialVelocity;
     m_initialOverscroll = initialOverscroll;
 
@@ -93,7 +92,9 @@ void ScrollAnimationRubberBand::serviceAnimation(MonotonicTime currentTime)
 
     // We might be rubberbanding away from an edge and back, so wait a frame or two before checking for completion.
     bool animationComplete = rubberBandOffset.isZero() && elapsedTime > 24_ms;
-    m_currentOffset = m_targetOffset + rubberBandOffset;
+    
+    auto scrollDelta = rubberBandOffset - m_client.overscrollAmount(*this);
+    m_currentOffset = m_client.scrollOffset(*this) + scrollDelta;
 
     m_client.scrollAnimationDidUpdate(*this, m_currentOffset);
 
@@ -104,7 +105,7 @@ void ScrollAnimationRubberBand::serviceAnimation(MonotonicTime currentTime)
 String ScrollAnimationRubberBand::debugDescription() const
 {
     TextStream textStream;
-    textStream << "ScrollAnimationRubberBand " << this << " active " << isActive() << " target " << m_targetOffset << " current offset " << currentOffset();
+    textStream << "ScrollAnimationRubberBand " << this << " active " << isActive() << " initial velocity " << m_initialVelocity << " initial overscroll " << m_initialOverscroll;
     return textStream.release();
 }
 
