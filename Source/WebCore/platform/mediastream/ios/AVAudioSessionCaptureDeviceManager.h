@@ -33,6 +33,7 @@
 #include <wtf/WorkQueue.h>
 
 OBJC_CLASS AVAudioSession;
+OBJC_CLASS AVAudioSessionPortDescription;
 OBJC_CLASS WebAVAudioSessionAvailableInputsListener;
 
 namespace WebCore {
@@ -83,6 +84,7 @@ private:
     AudioSessionState m_audioSessionState { AudioSessionState::NotNeeded };
     String m_preferredAudioDeviceUID;
     bool m_recomputeDevices { true };
+    mutable RetainPtr<AVAudioSessionPortDescription> m_lastDefaultMicrophone;
 };
 
 } // namespace WebCore
