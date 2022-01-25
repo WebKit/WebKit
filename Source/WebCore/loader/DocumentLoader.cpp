@@ -1244,6 +1244,10 @@ void DocumentLoader::commitData(const SharedBuffer& data)
                     if (shouldUseActiveServiceWorkerFromParent(document, *parent))
                         document.setActiveServiceWorker(parent->activeServiceWorker());
                 }
+            } else if (m_resultingClientId) {
+                // In case document has a unique origin, say due to sandboxing, we should have created a new context, let's create a new identifier instead.
+                if (document.securityOrigin().isUnique())
+                    document.createNewIdentifier();
             }
 
             if (m_frame->document()->activeServiceWorker() || document.url().protocolIsInHTTPFamily() || (document.page() && document.page()->isServiceWorkerPage()))

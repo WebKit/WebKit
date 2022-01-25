@@ -631,6 +631,13 @@ Document::Document(Frame* frame, const Settings& settings, const URL& url, Docum
     InspectorInstrumentation::addEventListenersToNode(*this);
 }
 
+void Document::createNewIdentifier()
+{
+    removeFromDocumentsMap();
+    regenerateIdentifier();
+    addToDocumentsMap();
+}
+
 Ref<Document> Document::create(Document& contextDocument)
 {
     auto document = adoptRef(*new Document(nullptr, contextDocument.m_settings, URL(), { }));

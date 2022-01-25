@@ -1,3 +1,12 @@
+2022-01-24  Youenn Fablet  <youenn@apple.com>
+
+        A sandboxed document should not reuse its service worker client ID
+        https://bugs.webkit.org/show_bug.cgi?id=235310
+
+        Reviewed by Alex Christensen.
+
+        * web-platform-tests/service-workers/service-worker/clients-get-resultingClientId.https-expected.txt:
+
 2022-01-24  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Support import assertion syntax

@@ -307,6 +307,7 @@ protected:
     bool hasPendingActivity() const;
     void removeFromContextsMap();
     void removeRejectedPromiseTracker();
+    void regenerateIdentifier();
 
 private:
     // The following addMessage function is deprecated.
