@@ -153,7 +153,7 @@ http/tests/security/contentSecurityPolicy/report-cross-origin-no-cookies.py [ Sk
 http/tests/security/contentSecurityPolicy/report-cross-origin-no-cookies-when-private-browsing-enabled.py [ Skip ] 
 http/tests/navigation/ping-attribute/area-cross-origin.html [ Skip ] 
 http/tests/navigation/ping-attribute/anchor-cross-origin.html [ Skip ] 
-http/tests/referrer-policy/no-referrer-when-downgrade/ [ Skip ]
+http/tests/referrer-policy/no-referrer-when-downgrade/ [ Skip ] 
 http/tests/referrer-policy/unsafe-url/cross-origin-http-http.html [ Skip ] 
 http/tests/referrer-policy/unsafe-url/cross-origin-http.https.html [ Skip ] 
 http/tests/referrer-policy-img/no-referrer-when-downgrade/ [ Skip ] 
@@ -4745,38 +4745,4 @@ webkit.org/b/215318 fast/text/zwj-ligature.html [ ImageOnlyFailure ]
 webkit.org/b/231690 fast/text/hanging-punctuation-allow-end-basic.html [ ImageOnlyFailure ]
 
 webkit.org/b/229594 js/dfg-int16array.html [ Pass Crash ]
-webkit.org/b/229594 js/dfg-int32array-overflow-values.html [ Pass Crash ]
-webkit.org/b/229594 js/dfg-int8array.html [ Pass Crash ]
-webkit.org/b/229594 js/dfg-uint32array-overflow-values.html [ Pass Crash ]
-webkit.org/b/229594 js/dfg-uint8clampedarray.html [ Pass Crash ]
-webkit.org/b/229594 js/dfg-float64array.html [ Pass Crash ]
 
-# webkit.org/b/214448 Web Share API is not implemented in the Windows port
-http/tests/webshare/ [ Skip ]
-
-webkit.org/b/230727 fast/images/exif-orientation-composited.html [ Pass ImageOnlyFailure ]
-
-webkit.org/b/230838 svg/as-background-image/svg-as-background-body.html [ Pass Crash ]
-
-webkit.org/b/231921 http/wpt/webxr/xrHandInput_gc.html [ Pass Failure ]
-
-webkit.org/b/232188 fast/ruby/generated-before-counter-doesnt-crash.html [ Pass Failure ]
-
-webkit.org/b/232317 js/function-apply-aliased.html [ Pass Crash ]
-
-webkit.org/b/232319 fast/ruby/before-block-doesnt-crash.html [ Pass Failure ]
-
-webkit.org/b/232321 imported/mozilla/svg/viewBox-and-pattern-03.svg [ Pass Crash ]
-
-webkit.org/b/232703 webanimations/no-style-updates-for-animated-sibling-elements-accelerated.html [ Failure ]
-
-webkit.org/b/233887 webanimations/custom-effect [ Failure ]
-
-# OT-SVG is not implemented on Windows.
-fast/text/otsvg-canvas.html [ ImageOnlyFailure ]
-
-# The DocumentTimeline.maximumFrameRate property which this test is about is not available on Windows.
-webanimations/frame-rate/document-timeline-maximum-frame-rate.html [ Skip ]
-
-pointerevents/mouse/pointer-button-and-buttons.html [ Failure ]
-pointerevents/mouse/pointer-capture.html [ Failure ]
