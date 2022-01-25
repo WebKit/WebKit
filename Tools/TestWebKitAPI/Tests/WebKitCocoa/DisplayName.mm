@@ -53,12 +53,9 @@ static void checkUntilDisplayNameIs(WKWebView *webView, NSString *expectedName, 
     }];
 }
 
-// FIXME: Re-enable this test for Monterey+ once rdar://80353834 is resolved.
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 120000
-TEST(WebKit, DISABLED_CustomDisplayName)
-#else
+// The network process requires a private entitlement to get and set the process name for the web process.
+#if !ENABLE(SET_WEBCONTENT_PROCESS_INFORMATION_IN_NETWORK_PROCESS) || USE(APPLE_INTERNAL_SDK)
 TEST(WebKit, CustomDisplayName)
-#endif
 {
     auto configuration = adoptNS([WKWebViewConfiguration new]);
     NSString *displayNameToSet = @"test display name";
@@ -71,12 +68,7 @@ TEST(WebKit, CustomDisplayName)
     Util::run(&done);
 }
 
-// FIXME: Re-enable this test for Monterey+ once rdar://80353834 is resolved.
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 120000
-TEST(WebKit, DISABLED_DefaultDisplayName)
-#else
 TEST(WebKit, DefaultDisplayName)
-#endif
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
     [webView synchronouslyLoadHTMLString:@"start web process"];
@@ -85,6 +77,7 @@ TEST(WebKit, DefaultDisplayName)
     checkUntilDisplayNameIs(webView.get(), @"TestWebKitAPI Web Content", &done);
     Util::run(&done);
 }
+#endif // !ENABLE(SET_WEBCONTENT_PROCESS_INFORMATION_IN_NETWORK_PROCESS) || USE(APPLE_INTERNAL_SDK)
 #endif // PLATFORM(MAC)
 
 }

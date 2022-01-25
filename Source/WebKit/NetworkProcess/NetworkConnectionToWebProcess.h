@@ -278,6 +278,7 @@ private:
 
 #if PLATFORM(MAC)
     void updateActivePages(const String& name, const Vector<String>& activePagesOrigins, audit_token_t);
+    void getProcessDisplayName(audit_token_t, CompletionHandler<void(const String&)>&&);
 #endif
 
 #if USE(LIBWEBRTC)

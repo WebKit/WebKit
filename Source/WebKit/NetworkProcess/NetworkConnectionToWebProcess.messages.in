@@ -105,6 +105,7 @@ messages -> NetworkConnectionToWebProcess LegacyReceiver {
     RegisterURLSchemesAsCORSEnabled(Vector<String> schemes);
     SetCORSDisablingPatterns(WebCore::PageIdentifier pageIdentifier, Vector<String> patterns)
 #if PLATFORM(MAC)
+    GetProcessDisplayName(audit_token_t auditToken) -> (String displayName) Async
     UpdateActivePages(String name, Vector<String> activePagesOrigins, audit_token_t auditToken)
 #endif
     SetResourceLoadSchedulingMode(WebCore::PageIdentifier webPageID, enum:uint8_t WebCore::LoadSchedulingMode mode)

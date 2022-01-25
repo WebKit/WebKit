@@ -488,6 +488,18 @@ void WebProcess::initializeProcessName(const AuxiliaryProcessInitializationParam
 #endif
 }
 
+std::optional<audit_token_t> WebProcess::auditTokenForSelf()
+{
+    audit_token_t auditToken = { 0 };
+    mach_msg_type_number_t info_size = TASK_AUDIT_TOKEN_COUNT;
+    kern_return_t kr = task_info(mach_task_self(), TASK_AUDIT_TOKEN, reinterpret_cast<integer_t *>(&auditToken), &info_size);
+    if (kr != KERN_SUCCESS) {
+        WEBPROCESS_RELEASE_LOG_ERROR(Process, "Unable to get audit token for self. Error: %{public}s (%x)", mach_error_string(kr), kr);
+        return std::nullopt;
+    }
+    return auditToken;
+}
+
 void WebProcess::updateProcessName(IsInProcessInitialization isInProcessInitialization)
 {
 #if PLATFORM(MAC)
@@ -514,16 +526,13 @@ void WebProcess::updateProcessName(IsInProcessInitialization isInProcessInitiali
     // During WebProcess initialization, we are still able to talk to LaunchServices to set the process name so there is no need to go
     // via the NetworkProcess. Prewarmed WebProcesses also do not have a network process connection until they are actually used by
     // a page.
+
     if (isInProcessInitialization == IsInProcessInitialization::No) {
-        audit_token_t auditToken = { 0 };
-        mach_msg_type_number_t info_size = TASK_AUDIT_TOKEN_COUNT;
-        kern_return_t kr = task_info(mach_task_self(), TASK_AUDIT_TOKEN, reinterpret_cast<integer_t *>(&auditToken), &info_size);
-        if (kr != KERN_SUCCESS) {
-            WEBPROCESS_RELEASE_LOG_ERROR(Process, "updateProcessName: Unable to get audit token for self. Error: %{public}s (%x)", mach_error_string(kr), kr);
+        auto auditToken = auditTokenForSelf();
+        if (!auditToken)
             return;
-        }
         String displayName = applicationName.get();
-        ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::UpdateActivePages(displayName, Vector<String>(), auditToken), 0);
+        ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::UpdateActivePages(displayName, Vector<String>(), *auditToken), 0);
         return;
     }
 #endif // ENABLE(SET_WEBCONTENT_PROCESS_INFORMATION_IN_NETWORK_PROCESS)
@@ -741,19 +750,26 @@ static Vector<String> activePagesOrigins(const HashMap<PageIdentifier, RefPtr<We
 }
 #endif
 
+void WebProcess::getProcessDisplayName(CompletionHandler<void(String&&)>&& completionHandler)
+{
+#if PLATFORM(MAC)
+    auto auditToken = auditTokenForSelf();
+    if (!auditToken)
+        return completionHandler({ });
+    ensureNetworkProcessConnection().connection().sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::GetProcessDisplayName(*auditToken), WTFMove(completionHandler));
+#else
+    completionHandler({ });
+#endif
+}
+
 void WebProcess::updateActivePages(const String& overrideDisplayName)
 {
 #if PLATFORM(MAC)
 #if ENABLE(SET_WEBCONTENT_PROCESS_INFORMATION_IN_NETWORK_PROCESS)
-    audit_token_t auditToken = { 0 };
-    mach_msg_type_number_t info_size = TASK_AUDIT_TOKEN_COUNT;
-    kern_return_t kr = task_info(mach_task_self(), TASK_AUDIT_TOKEN, reinterpret_cast<integer_t *>(&auditToken), &info_size);
-    if (kr != KERN_SUCCESS) {
-        WEBPROCESS_RELEASE_LOG_ERROR(Process, "updateActivePages: Unable to get audit token for self. Error: %{public}s (%x)", mach_error_string(kr), kr);
+    auto auditToken = auditTokenForSelf();
+    if (!auditToken)
         return;
-    }
-
-    ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::UpdateActivePages(overrideDisplayName, activePagesOrigins(m_pageMap), auditToken), 0);
+    ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::UpdateActivePages(overrideDisplayName, activePagesOrigins(m_pageMap), *auditToken), 0);
 #else
     if (!overrideDisplayName) {
         RunLoop::main().dispatch([activeOrigins = activePagesOrigins(m_pageMap)] {
