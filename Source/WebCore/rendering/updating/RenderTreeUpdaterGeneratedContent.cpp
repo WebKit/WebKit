@@ -185,30 +185,14 @@ void RenderTreeUpdater::GeneratedContent::updateBackdropRenderer(RenderElement& 
     }
 
     auto newStyle = RenderStyle::clone(*style);
-    RenderPtr<RenderBlockFlow> newBackdropRenderer;
-    auto backdropRenderer = renderer.backdropRenderer();
-    if (backdropRenderer)
+    if (auto backdropRenderer = renderer.backdropRenderer())
         backdropRenderer->setStyle(WTFMove(newStyle));
     else {
-        newBackdropRenderer = WebCore::createRenderer<RenderBlockFlow>(renderer.document(), WTFMove(newStyle));
+        auto newBackdropRenderer = WebCore::createRenderer<RenderBlockFlow>(renderer.document(), WTFMove(newStyle));
         newBackdropRenderer->initializeStyle();
-        backdropRenderer = newBackdropRenderer.get();
-        renderer.setBackdropRenderer(*backdropRenderer);
+        renderer.setBackdropRenderer(*newBackdropRenderer.get());
+        m_updater.m_builder.attach(renderer, WTFMove(newBackdropRenderer), renderer.firstChild());
     }
-
-    // Update or attach to renderer parent
-    WeakPtr currentParent = backdropRenderer->parent();
-    WeakPtr newParent = renderer.parent();
-
-    ASSERT(newParent, "Should have new parent");
-
-    if (newParent == currentParent)
-        return;
-
-    if (currentParent)
-        m_updater.m_builder.attach(*newParent, m_updater.m_builder.detach(*currentParent, *backdropRenderer, RenderTreeBuilder::CanCollapseAnonymousBlock::No), &renderer);
-    else
-        m_updater.m_builder.attach(*newParent, WTFMove(newBackdropRenderer), &renderer);
 }
 
 bool RenderTreeUpdater::GeneratedContent::needsPseudoElement(const Style::ElementUpdate* update)
