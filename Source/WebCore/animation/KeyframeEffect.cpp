@@ -75,7 +75,7 @@ static inline void invalidateElement(const std::optional<const Styleable>& style
         styleable->element.invalidateStyleInternal();
 }
 
-static inline String CSSPropertyIDToIDLAttributeName(CSSPropertyID cssPropertyId)
+String KeyframeEffect::CSSPropertyIDToIDLAttributeName(CSSPropertyID cssPropertyId)
 {
     // https://drafts.csswg.org/web-animations-1/#animation-property-name-to-idl-attribute-name
     // 1. If property follows the <custom-property-name> production, return property.
@@ -110,7 +110,7 @@ static inline CSSPropertyID IDLAttributeNameToAnimationPropertyName(const String
 
     // We need to check that converting the property back to IDL form yields the same result such that a property passed
     // in non-IDL form is rejected, for instance "font-size".
-    if (idlAttributeName != CSSPropertyIDToIDLAttributeName(cssPropertyId))
+    if (idlAttributeName != KeyframeEffect::CSSPropertyIDToIDLAttributeName(cssPropertyId))
         return CSSPropertyInvalid;
 
     return cssPropertyId;
@@ -327,7 +327,7 @@ static inline ExceptionOr<void> processIterableKeyframes(JSGlobalObject& lexical
             ASSERT(propertyAndValue.values.size() == 1);
             auto stringValue = propertyAndValue.values[0];
             if (keyframeOutput.style->setProperty(cssPropertyId, stringValue, false, parserContext))
-                keyframeOutput.unparsedStyle.set(cssPropertyId, stringValue);
+                keyframeOutput.styleStrings.set(cssPropertyId, stringValue);
         }
 
         parsedKeyframes.append(WTFMove(keyframeOutput));
@@ -365,7 +365,7 @@ static inline ExceptionOr<void> processPropertyIndexedKeyframes(JSGlobalObject& 
             KeyframeEffect::ParsedKeyframe k;
             // 2. Add the property-value pair, property name → v, to k.
             if (k.style->setProperty(propertyName, v, false, parserContext))
-                k.unparsedStyle.set(propertyName, v);
+                k.styleStrings.set(propertyName, v);
             // 3. Append k to property keyframes.
             propertyKeyframes.append(WTFMove(k));
         }
@@ -402,7 +402,7 @@ static inline ExceptionOr<void> processPropertyIndexedKeyframes(JSGlobalObject& 
         if (keyframe.style->propertyCount()) {
             auto property = keyframe.style->propertyAt(0);
             previousKeyframe.style->setProperty(property.id(), property.value());
-            previousKeyframe.unparsedStyle.set(property.id(), keyframe.unparsedStyle.get(property.id()));
+            previousKeyframe.styleStrings.set(property.id(), keyframe.styleStrings.get(property.id()));
         }
         // Since we've processed this keyframe, we can remove it and keep i the same
         // so that we process the next keyframe in the next loop iteration.
@@ -559,7 +559,7 @@ void KeyframeEffect::copyPropertiesFromSource(Ref<KeyframeEffect>&& source)
         parsedKeyframe.easing = sourceParsedKeyframe.easing;
         parsedKeyframe.offset = sourceParsedKeyframe.offset;
         parsedKeyframe.composite = sourceParsedKeyframe.composite;
-        parsedKeyframe.unparsedStyle = sourceParsedKeyframe.unparsedStyle;
+        parsedKeyframe.styleStrings = sourceParsedKeyframe.styleStrings;
         parsedKeyframe.computedOffset = sourceParsedKeyframe.computedOffset;
         parsedKeyframe.timingFunction = sourceParsedKeyframe.timingFunction;
         parsedKeyframe.style = sourceParsedKeyframe.style->mutableCopy();
@@ -582,214 +582,141 @@ void KeyframeEffect::copyPropertiesFromSource(Ref<KeyframeEffect>&& source)
     setBlendingKeyframes(keyframeList);
 }
 
-Vector<Strong<JSObject>> KeyframeEffect::getBindingsKeyframes(JSGlobalObject& lexicalGlobalObject, Document& document)
-{
-    if (is<DeclarativeAnimation>(animation()))
-        downcast<DeclarativeAnimation>(*animation()).flushPendingStyleChanges();
-    return getKeyframes(lexicalGlobalObject, document);
-}
-
-Vector<Strong<JSObject>> KeyframeEffect::getKeyframes(JSGlobalObject& lexicalGlobalObject, Document& document)
+auto KeyframeEffect::getKeyframes(Document& document) -> Vector<ComputedKeyframe>
 {
     // https://drafts.csswg.org/web-animations-1/#dom-keyframeeffectreadonly-getkeyframes
 
-    auto supportsCompositeOperation = document.settings().webAnimationsCompositeOperationsEnabled();
+    if (auto* declarativeAnimation = dynamicDowncast<DeclarativeAnimation>(animation()))
+        declarativeAnimation->flushPendingStyleChanges();
 
-    auto lock = JSLockHolder { &lexicalGlobalObject };
+    Vector<ComputedKeyframe> computedKeyframes;
 
-    // Since keyframes are represented by a partially open-ended dictionary type that is not currently able to be expressed with WebIDL,
-    // the procedure used to prepare the result of this method is defined in prose below:
-    //
-    // 1. Let result be an empty sequence of objects.
-    Vector<Strong<JSObject>> result;
-
-    // 2. Let keyframes be the result of applying the procedure to compute missing keyframe offsets to the keyframes for this keyframe effect.
-
-    // 3. For each keyframe in keyframes perform the following steps:
-    if (m_parsedKeyframes.isEmpty() && m_blendingKeyframesSource != BlendingKeyframesSource::WebAnimation && m_blendingKeyframes.containsAnimatableProperty()) {
-        auto* target = m_target.get();
-        auto* renderer = this->renderer();
-        auto* lastStyleChangeEventStyle = targetStyleable()->lastStyleChangeEventStyle();
-
-        auto computedStyleExtractor = ComputedStyleExtractor(target, false, m_pseudoId);
-
-        KeyframeList computedKeyframes(m_blendingKeyframes.animationName());
-        computedKeyframes.copyKeyframes(m_blendingKeyframes);
-        computedKeyframes.fillImplicitKeyframes(*m_target, m_target->styleResolver(), lastStyleChangeEventStyle, nullptr);
-
-        auto keyframeRules = [&]() -> const Vector<Ref<StyleRuleKeyframe>> {
-            if (!is<CSSAnimation>(animation()))
-                return { };
-
-            auto& backingAnimation = downcast<CSSAnimation>(*animation()).backingAnimation();
-            auto* styleScope = Style::Scope::forOrdinal(*m_target, backingAnimation.nameStyleScopeOrdinal());
-            if (!styleScope)
-                return { };
-
-            return styleScope->resolver().keyframeRulesForName(computedKeyframes.animationName());
-        }();
-
-        auto keyframeRuleForKey = [&](double key) -> StyleRuleKeyframe* {
-            for (auto& keyframeRule : keyframeRules) {
-                for (auto keyframeRuleKey : keyframeRule->keys()) {
-                    if (keyframeRuleKey == key)
-                        return keyframeRule.ptr();
-                }
-            }
-            return nullptr;
-        };
-
-        auto styleProperties = MutableStyleProperties::create();
-        if (m_blendingKeyframesSource == BlendingKeyframesSource::CSSAnimation) {
-            auto matchingRules = m_target->styleResolver().pseudoStyleRulesForElement(target, m_pseudoId, Style::Resolver::AllCSSRules);
-            for (auto& matchedRule : matchingRules)
-                styleProperties->mergeAndOverrideOnConflict(matchedRule->properties());
-            if (is<StyledElement>(m_target) && m_pseudoId == PseudoId::None) {
-                if (auto* inlineProperties = downcast<StyledElement>(*m_target).inlineStyle())
-                    styleProperties->mergeAndOverrideOnConflict(*inlineProperties);
-            }
-        }
-
-        // We need to establish which properties are implicit for 0% and 100%.
-        HashSet<CSSPropertyID> zeroKeyframeProperties = computedKeyframes.properties();
-        HashSet<CSSPropertyID> oneKeyframeProperties = computedKeyframes.properties();
-        zeroKeyframeProperties.remove(CSSPropertyCustom);
-        oneKeyframeProperties.remove(CSSPropertyCustom);
-        for (size_t i = 0; i < computedKeyframes.size(); ++i) {
-            auto& keyframe = computedKeyframes[i];
-            if (!keyframe.key()) {
-                for (auto cssPropertyId : keyframe.properties())
-                    zeroKeyframeProperties.remove(cssPropertyId);
-            } else if (keyframe.key() == 1) {
-                for (auto cssPropertyId : keyframe.properties())
-                    oneKeyframeProperties.remove(cssPropertyId);
-            }
-        }
-
-        for (size_t i = 0; i < computedKeyframes.size(); ++i) {
-            // 1. Initialize a dictionary object, output keyframe, using the following definition:
-            //
-            // dictionary BaseComputedKeyframe {
-            //      double?                  offset = null;
-            //      double                   computedOffset;
-            //      DOMString                easing = "linear";
-            //      CompositeOperationOrAuto composite = "auto";
-            // };
-
-            auto& keyframe = computedKeyframes[i];
-            auto& style = *keyframe.style();
-            auto* keyframeRule = keyframeRuleForKey(keyframe.key());
-
-            // 2. Set offset, computedOffset, easing members of output keyframe to the respective values keyframe offset, computed keyframe offset,
-            // and keyframe-specific timing function of keyframe.
-            BaseComputedKeyframe computedKeyframe;
-            computedKeyframe.offset = keyframe.key();
-            computedKeyframe.computedOffset = keyframe.key();
-            // For CSS transitions, all keyframes should return "linear" since the effect's global timing function applies.
-            computedKeyframe.easing = is<CSSTransition>(animation()) ? "linear" : timingFunctionForBlendingKeyframe(keyframe)->cssText();
-
-            if (supportsCompositeOperation) {
-                if (auto compositeOperation = keyframe.compositeOperation())
-                    computedKeyframe.composite = toCompositeOperationOrAuto(*compositeOperation);
-            }
-
-            auto outputKeyframe = convertDictionaryToJS(lexicalGlobalObject, *jsCast<JSDOMGlobalObject*>(&lexicalGlobalObject), computedKeyframe);
-
-            auto addPropertyToKeyframe = [&](CSSPropertyID cssPropertyId) {
-                // 1. Let property name be the result of applying the animation property name to IDL attribute name algorithm to the property name of declaration.
-                auto propertyName = CSSPropertyIDToIDLAttributeName(cssPropertyId);
-                // 2. Let IDL value be the result of serializing the property value of declaration by passing declaration to the algorithm to serialize a CSS value.
-                String idlValue = "";
-                if (keyframeRule) {
-                    if (auto cssValue = keyframeRule->properties().getPropertyCSSValue(cssPropertyId)) {
-                        if (!cssValue->hasVariableReferences())
-                            idlValue = keyframeRule->properties().getPropertyValue(cssPropertyId);
-                    }
-                }
-                if (idlValue.isEmpty()) {
-                    if (auto cssValue = styleProperties->getPropertyCSSValue(cssPropertyId)) {
-                        if (!cssValue->hasVariableReferences())
-                            idlValue = styleProperties->getPropertyValue(cssPropertyId);
-                    }
-                }
-                if (idlValue.isEmpty()) {
-                    if (auto cssValue = computedStyleExtractor.valueForPropertyInStyle(style, cssPropertyId, renderer))
-                        idlValue = cssValue->cssText();
-                }
-                // 3. Let value be the result of converting IDL value to an ECMAScript String value.
-                auto value = toJS<IDLDOMString>(lexicalGlobalObject, idlValue);
-                // 4. Call the [[DefineOwnProperty]] internal method on output keyframe with property name property name,
-                //    Property Descriptor { [[Writable]]: true, [[Enumerable]]: true, [[Configurable]]: true, [[Value]]: value } and Boolean flag false.
-                JSObject::defineOwnProperty(outputKeyframe, &lexicalGlobalObject, AtomString(propertyName).impl(), PropertyDescriptor(value, 0), false);
-            };
-
-            // 3. For each animation property-value pair specified on keyframe, declaration, perform the following steps:
-            for (auto cssPropertyId : keyframe.properties()) {
-                if (cssPropertyId == CSSPropertyCustom)
-                    continue;
-                addPropertyToKeyframe(cssPropertyId);
-            }
-
-            // Now add the implicit properties in case there are any and we're dealing with a 0% or 100% keyframe.
-            if (lastStyleChangeEventStyle) {
-                if (!keyframe.key()) {
-                    for (auto cssPropertyId : zeroKeyframeProperties)
-                        addPropertyToKeyframe(cssPropertyId);
-                    zeroKeyframeProperties.clear();
-                } else if (keyframe.key() == 1) {
-                    for (auto cssPropertyId : oneKeyframeProperties)
-                        addPropertyToKeyframe(cssPropertyId);
-                    oneKeyframeProperties.clear();
-                }
-            }
-
-            // 5. Append output keyframe to result.
-            result.append(JSC::Strong<JSC::JSObject> { lexicalGlobalObject.vm(), outputKeyframe });
-        }
-    } else {
+    if (!m_parsedKeyframes.isEmpty() || m_blendingKeyframesSource == BlendingKeyframesSource::WebAnimation || !m_blendingKeyframes.containsAnimatableProperty()) {
         for (size_t i = 0; i < m_parsedKeyframes.size(); ++i) {
-            // 1. Initialize a dictionary object, output keyframe, using the following definition:
-            //
-            // dictionary BaseComputedKeyframe {
-            //      double?                  offset = null;
-            //      double                   computedOffset;
-            //      DOMString                easing = "linear";
-            //      CompositeOperationOrAuto composite = "auto";
-            // };
-
-            auto& parsedKeyframe = m_parsedKeyframes[i];
-
-            // 2. Set offset, computedOffset, easing, composite members of output keyframe to the respective values keyframe offset, computed keyframe
-            // offset, keyframe-specific timing function and keyframe-specific composite operation of keyframe.
-            BaseComputedKeyframe computedKeyframe;
-            computedKeyframe.offset = parsedKeyframe.offset;
-            computedKeyframe.computedOffset = parsedKeyframe.computedOffset;
+            ComputedKeyframe computedKeyframe { m_parsedKeyframes[i] };
             computedKeyframe.easing = timingFunctionForKeyframeAtIndex(i)->cssText();
+            computedKeyframes.append(WTFMove(computedKeyframe));
+        }
+        return computedKeyframes;
+    }
 
-            if (supportsCompositeOperation)
-                computedKeyframe.composite = parsedKeyframe.composite;
+    auto* target = m_target.get();
+    auto* renderer = this->renderer();
+    auto* lastStyleChangeEventStyle = targetStyleable()->lastStyleChangeEventStyle();
 
-            auto outputKeyframe = convertDictionaryToJS(lexicalGlobalObject, *jsCast<JSDOMGlobalObject*>(&lexicalGlobalObject), computedKeyframe);
+    ComputedStyleExtractor computedStyleExtractor { target, false, m_pseudoId };
 
-            // 3. For each animation property-value pair specified on keyframe, declaration, perform the following steps:
-            for (auto it = parsedKeyframe.unparsedStyle.begin(), end = parsedKeyframe.unparsedStyle.end(); it != end; ++it) {
-                // 1. Let property name be the result of applying the animation property name to IDL attribute name algorithm to the property name of declaration.
-                auto propertyName = CSSPropertyIDToIDLAttributeName(it->key);
-                // 2. Let IDL value be the result of serializing the property value of declaration by passing declaration to the algorithm to serialize a CSS value.
-                // 3. Let value be the result of converting IDL value to an ECMAScript String value.
-                auto value = toJS<IDLDOMString>(lexicalGlobalObject, it->value);
-                // 4. Call the [[DefineOwnProperty]] internal method on output keyframe with property name property name,
-                //    Property Descriptor { [[Writable]]: true, [[Enumerable]]: true, [[Configurable]]: true, [[Value]]: value } and Boolean flag false.
-                JSObject::defineOwnProperty(outputKeyframe, &lexicalGlobalObject, AtomString(propertyName).impl(), PropertyDescriptor(value, 0), false);
+    KeyframeList computedKeyframeList(m_blendingKeyframes.animationName());
+    computedKeyframeList.copyKeyframes(m_blendingKeyframes);
+    computedKeyframeList.fillImplicitKeyframes(*m_target, m_target->styleResolver(), lastStyleChangeEventStyle, nullptr);
+
+    auto keyframeRules = [&]() -> const Vector<Ref<StyleRuleKeyframe>> {
+        if (!is<CSSAnimation>(animation()))
+            return { };
+
+        auto& backingAnimation = downcast<CSSAnimation>(*animation()).backingAnimation();
+        auto* styleScope = Style::Scope::forOrdinal(*m_target, backingAnimation.nameStyleScopeOrdinal());
+        if (!styleScope)
+            return { };
+
+        return styleScope->resolver().keyframeRulesForName(computedKeyframeList.animationName());
+    }();
+
+    auto keyframeRuleForKey = [&](double key) -> StyleRuleKeyframe* {
+        for (auto& keyframeRule : keyframeRules) {
+            for (auto keyframeRuleKey : keyframeRule->keys()) {
+                if (keyframeRuleKey == key)
+                    return keyframeRule.ptr();
             }
+        }
+        return nullptr;
+    };
 
-            // 4. Append output keyframe to result.
-            result.append(JSC::Strong<JSC::JSObject> { lexicalGlobalObject.vm(), outputKeyframe });
+    auto styleProperties = MutableStyleProperties::create();
+    if (m_blendingKeyframesSource == BlendingKeyframesSource::CSSAnimation) {
+        auto matchingRules = m_target->styleResolver().pseudoStyleRulesForElement(target, m_pseudoId, Style::Resolver::AllCSSRules);
+        for (auto& matchedRule : matchingRules)
+            styleProperties->mergeAndOverrideOnConflict(matchedRule->properties());
+        if (is<StyledElement>(m_target) && m_pseudoId == PseudoId::None) {
+            if (auto* inlineProperties = downcast<StyledElement>(*m_target).inlineStyle())
+                styleProperties->mergeAndOverrideOnConflict(*inlineProperties);
         }
     }
 
-    // 4. Return result.
-    return result;
+    // We need to establish which properties are implicit for 0% and 100%.
+    auto zeroKeyframeProperties = computedKeyframeList.properties();
+    auto oneKeyframeProperties = computedKeyframeList.properties();
+    zeroKeyframeProperties.remove(CSSPropertyCustom);
+    oneKeyframeProperties.remove(CSSPropertyCustom);
+    for (auto& keyframe : computedKeyframeList.keyframes()) {
+        if (!keyframe.key()) {
+            for (auto cssPropertyId : keyframe.properties())
+                zeroKeyframeProperties.remove(cssPropertyId);
+        } else if (keyframe.key() == 1) {
+            for (auto cssPropertyId : keyframe.properties())
+                oneKeyframeProperties.remove(cssPropertyId);
+        }
+    }
+
+    for (auto& keyframe : computedKeyframeList.keyframes()) {
+        auto& style = *keyframe.style();
+        auto* keyframeRule = keyframeRuleForKey(keyframe.key());
+
+        ComputedKeyframe computedKeyframe;
+        computedKeyframe.offset = keyframe.key();
+        computedKeyframe.computedOffset = keyframe.key();
+        // For CSS transitions, all keyframes should return "linear" since the effect's global timing function applies.
+        computedKeyframe.easing = is<CSSTransition>(animation()) ? "linear" : timingFunctionForBlendingKeyframe(keyframe)->cssText();
+
+        if (document.settings().webAnimationsCompositeOperationsEnabled()) {
+            if (auto compositeOperation = keyframe.compositeOperation())
+                computedKeyframe.composite = toCompositeOperationOrAuto(*compositeOperation);
+        }
+
+        auto addPropertyToKeyframe = [&](CSSPropertyID cssPropertyId) {
+            String styleString = emptyString();
+            if (keyframeRule) {
+                if (auto cssValue = keyframeRule->properties().getPropertyCSSValue(cssPropertyId)) {
+                    if (!cssValue->hasVariableReferences())
+                        styleString = keyframeRule->properties().getPropertyValue(cssPropertyId);
+                }
+            }
+            if (styleString.isEmpty()) {
+                if (auto cssValue = styleProperties->getPropertyCSSValue(cssPropertyId)) {
+                    if (!cssValue->hasVariableReferences())
+                        styleString = styleProperties->getPropertyValue(cssPropertyId);
+                }
+            }
+            if (styleString.isEmpty()) {
+                if (auto cssValue = computedStyleExtractor.valueForPropertyInStyle(style, cssPropertyId, renderer))
+                    styleString = cssValue->cssText();
+            }
+            computedKeyframe.styleStrings.set(cssPropertyId, styleString);
+        };
+
+        for (auto cssPropertyId : keyframe.properties()) {
+            if (cssPropertyId == CSSPropertyCustom)
+                continue;
+            addPropertyToKeyframe(cssPropertyId);
+        }
+
+        // Now add the implicit properties in case there are any and we're dealing with a 0% or 100% keyframe.
+        if (lastStyleChangeEventStyle) {
+            if (!keyframe.key()) {
+                for (auto cssPropertyId : zeroKeyframeProperties)
+                    addPropertyToKeyframe(cssPropertyId);
+                zeroKeyframeProperties.clear();
+            } else if (keyframe.key() == 1) {
+                for (auto cssPropertyId : oneKeyframeProperties)
+                    addPropertyToKeyframe(cssPropertyId);
+                oneKeyframeProperties.clear();
+            }
+        }
+
+        computedKeyframes.append(WTFMove(computedKeyframe));
+    }
+
+    return computedKeyframes;
 }
 
 ExceptionOr<void> KeyframeEffect::setBindingsKeyframes(JSGlobalObject& lexicalGlobalObject, Document& document, Strong<JSObject>&& keyframesInput)
@@ -936,7 +863,7 @@ const HashSet<CSSPropertyID>& KeyframeEffect::animatedProperties()
 
     if (m_animatedProperties.isEmpty()) {
         for (auto& keyframe : m_parsedKeyframes) {
-            for (auto keyframeProperty : keyframe.unparsedStyle.keys())
+            for (auto keyframeProperty : keyframe.styleStrings.keys())
                 m_animatedProperties.add(keyframeProperty);
         }
     }
@@ -950,7 +877,7 @@ bool KeyframeEffect::animatesProperty(CSSPropertyID property) const
         return m_blendingKeyframes.properties().contains(property);
 
     for (auto& keyframe : m_parsedKeyframes) {
-        for (auto keyframeProperty : keyframe.unparsedStyle.keys()) {
+        for (auto keyframeProperty : keyframe.styleStrings.keys()) {
             if (keyframeProperty == property)
                 return true;
         }

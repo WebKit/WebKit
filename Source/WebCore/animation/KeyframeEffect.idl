@@ -36,7 +36,7 @@ typedef USVString CSSOMString;
     attribute CSSOMString? pseudoElement;
     [EnabledBySetting=WebAnimationsCompositeOperationsEnabled] attribute IterationCompositeOperation iterationComposite;
     [EnabledBySetting=WebAnimationsCompositeOperationsEnabled, ImplementedAs=bindingsComposite] attribute CompositeOperation composite;
-    [CallWith=GlobalObject&Document, ImplementedAs=getBindingsKeyframes] sequence<object> getKeyframes();
+    [Custom] sequence<object> getKeyframes();
     [CallWith=GlobalObject&Document, ImplementedAs=setBindingsKeyframes] undefined setKeyframes(object? keyframes);
 };
 

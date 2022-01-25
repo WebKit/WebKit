@@ -80,26 +80,22 @@ public:
         Vector<PropertyAndValues> propertiesAndValues;
     };
 
-    struct ParsedKeyframe {
-        MarkableDouble offset;
+    struct BaseComputedKeyframe : BaseKeyframe {
         double computedOffset;
-        CompositeOperationOrAuto composite { CompositeOperationOrAuto::Auto };
-        String easing;
+    };
+
+    struct ComputedKeyframe : BaseComputedKeyframe {
+        HashMap<CSSPropertyID, String> styleStrings;
+    };
+
+    struct ParsedKeyframe : ComputedKeyframe {
         RefPtr<TimingFunction> timingFunction;
         Ref<MutableStyleProperties> style;
-        HashMap<CSSPropertyID, String> unparsedStyle;
 
         ParsedKeyframe()
             : style(MutableStyleProperties::create())
         {
         }
-    };
-
-    struct BaseComputedKeyframe {
-        MarkableDouble offset;
-        double computedOffset;
-        String easing { "linear" };
-        CompositeOperationOrAuto composite { CompositeOperationOrAuto::Auto };
     };
 
     const Vector<ParsedKeyframe>& parsedKeyframes() const { return m_parsedKeyframes; }
@@ -114,8 +110,7 @@ public:
 
     const std::optional<const Styleable> targetStyleable() const;
 
-    Vector<JSC::Strong<JSC::JSObject>> getBindingsKeyframes(JSC::JSGlobalObject&, Document&);
-    Vector<JSC::Strong<JSC::JSObject>> getKeyframes(JSC::JSGlobalObject&, Document&);
+    Vector<ComputedKeyframe> getKeyframes(Document&);
     ExceptionOr<void> setBindingsKeyframes(JSC::JSGlobalObject&, Document&, JSC::Strong<JSC::JSObject>&&);
     ExceptionOr<void> setKeyframes(JSC::JSGlobalObject&, Document&, JSC::Strong<JSC::JSObject>&&);
 
@@ -172,6 +167,8 @@ public:
     void stopAcceleratingTransformRelatedProperties(UseAcceleratedAction);
 
     void keyframesRuleDidChange();
+
+    static String CSSPropertyIDToIDLAttributeName(CSSPropertyID);
 
 private:
     KeyframeEffect(Element*, PseudoId);

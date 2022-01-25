@@ -570,6 +570,7 @@ bindings/js/JSIDBSerializationGlobalObject.cpp
 bindings/js/JSImageDataCustom.cpp
 bindings/js/JSIntersectionObserverCustom.cpp
 bindings/js/JSIntersectionObserverEntryCustom.cpp
+bindings/js/JSKeyframeEffectCustom.cpp
 bindings/js/JSLazyEventListener.cpp
 bindings/js/JSLocationCustom.cpp
 bindings/js/JSMediaStreamTrackCustom.cpp
