@@ -238,22 +238,22 @@ mtl::AutoObjCPtr<id<MTLDevice>> DisplayMtl::getMetalDeviceMatchingAttribute(
 #if defined(ANGLE_PLATFORM_MACOS) || defined(ANGLE_PLATFORM_MACCATALYST)
     auto deviceList = mtl::adoptObjCObj(MTLCopyAllDevices());
 
-    NSMutableArray<id<MTLDevice>> *externalGPUs   = [[NSMutableArray alloc] init];
-    NSMutableArray<id<MTLDevice>> *integratedGPUs = [[NSMutableArray alloc] init];
-    NSMutableArray<id<MTLDevice>> *discreteGPUs   = [[NSMutableArray alloc] init];
+    auto externalGPUs = mtl::adoptObjCObj<NSMutableArray<id<MTLDevice>>>([[NSMutableArray alloc] init]);
+    auto integratedGPUs = mtl::adoptObjCObj<NSMutableArray<id<MTLDevice>>>([[NSMutableArray alloc] init]);
+    auto discreteGPUs = mtl::adoptObjCObj<NSMutableArray<id<MTLDevice>>>([[NSMutableArray alloc] init]);
     for (id<MTLDevice> device in deviceList.get())
     {
         if (device.removable)
         {
-            [externalGPUs addObject:device];
+            [externalGPUs.get() addObject:device];
         }
         else if (device.lowPower)
         {
-            [integratedGPUs addObject:device];
+            [integratedGPUs.get() addObject:device];
         }
         else
         {
-            [discreteGPUs addObject:device];
+            [discreteGPUs.get() addObject:device];
         }
     }
     // TODO(kpiddington: External GPU support. Do we prefer high power / low bandwidth for general
@@ -262,7 +262,7 @@ mtl::AutoObjCPtr<id<MTLDevice>> DisplayMtl::getMetalDeviceMatchingAttribute(
     if (attribs.get(EGL_POWER_PREFERENCE_ANGLE, 0) == EGL_HIGH_POWER_ANGLE)
     {
         // Search for a discrete GPU first.
-        for (id<MTLDevice> device in discreteGPUs)
+        for (id<MTLDevice> device in discreteGPUs.get())
         {
             if (![device isHeadless])
                 return device;
@@ -271,7 +271,7 @@ mtl::AutoObjCPtr<id<MTLDevice>> DisplayMtl::getMetalDeviceMatchingAttribute(
     else if (attribs.get(EGL_POWER_PREFERENCE_ANGLE, 0) == EGL_LOW_POWER_ANGLE)
     {
         // If we've selected a low power device, look through integrated devices.
-        for (id<MTLDevice> device in integratedGPUs)
+        for (id<MTLDevice> device in integratedGPUs.get())
         {
             if (![device isHeadless])
                 return device;
@@ -295,7 +295,7 @@ mtl::AutoObjCPtr<id<MTLDevice>> DisplayMtl::getMetalDeviceMatchingAttribute(
     }
 
     // Default to use a low power device, look through integrated devices.
-    for (id<MTLDevice> device in integratedGPUs)
+    for (id<MTLDevice> device in integratedGPUs.get())
     {
         if (![device isHeadless])
             return device;
