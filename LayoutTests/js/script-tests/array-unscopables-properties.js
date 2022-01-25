@@ -17,6 +17,8 @@ let expectedEntries = [
     "findLastIndex",
     "flat",
     "flatMap",
+    "groupBy",
+    "groupByToMap",
     "includes",
     "keys",
     "values"

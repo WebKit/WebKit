@@ -1,3 +1,12 @@
+2022-01-24  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Enable Array#groupBy and Array#groupByToMap
+        https://bugs.webkit.org/show_bug.cgi?id=235549
+
+        Reviewed by Ross Kirsling.
+
+        * runtime/OptionsList.h:
+
 2022-01-24  Cameron McCormack  <heycam@apple.com>
 
         Remove VM::stringCache
