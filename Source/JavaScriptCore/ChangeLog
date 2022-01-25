@@ -1,3 +1,24 @@
+2022-01-24  Cameron McCormack  <heycam@apple.com>
+
+        Remove VM::stringCache
+        https://bugs.webkit.org/show_bug.cgi?id=235536
+
+        Reviewed by Sam Weinig.
+
+        We consult VM::stringCache when creating a JSString, but since
+        bug 142115 we never insert anything into it.
+
+        Removing this results in almost-significant improvements in the VueJS,
+        Vanilla-ES2015, and jQuery sub-tests of Speedometer 2 (of 0.5-2%,
+        0.03 <= p <= 0.05), and an almost significant 0.2% improvement in the
+        overall score (p = 0.06).
+
+        * runtime/JSString.cpp:
+        (JSC::jsStringWithCacheSlowCase):
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        * runtime/VM.h:
+
 2022-01-24  Diego Pino Garcia  <dpino@igalia.com>
 
         Unreviewed, fix non-unified build after r288458
