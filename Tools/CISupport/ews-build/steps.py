@@ -1496,6 +1496,8 @@ class Trigger(trigger.Trigger):
             ]
         if self.triggers:
             property_names.append('triggers')
+        if self.include_revision and pull_request:
+            properties_to_pass['ews_revision'] = properties.Property('got_revision')
 
         properties_to_pass = {prop: properties.Property(prop) for prop in property_names}
         properties_to_pass['retry_count'] = properties.Property('retry_count', default=0)
