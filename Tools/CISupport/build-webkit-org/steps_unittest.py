@@ -1121,6 +1121,8 @@ class TestPrintConfiguration(BuildStepMixinAdditions, unittest.TestCase):
             + ExpectShell.log('stdio', stdout='''ProductName:	macOS
 ProductVersion:	12.0.1
 BuildVersion:	21A558'''),
+            ExpectShell(command=['system_profiler', 'SPSoftwareDataType', 'SPHardwareDataType'], workdir='wkdir', timeout=60, logEnviron=False) + 0
+            + ExpectShell.log('stdio', stdout='Configuration version: Software: System Software Overview: System Version: macOS 11.4 (20F71) Kernel Version: Darwin 20.5.0 Boot Volume: Macintosh HD Boot Mode: Normal Computer Name: bot1020 User Name: WebKit Build Worker (buildbot) Secure Virtual Memory: Enabled System Integrity Protection: Enabled Time since boot: 27 seconds Hardware: Hardware Overview: Model Name: Mac mini Model Identifier: Macmini8,1 Processor Name: 6-Core Intel Core i7 Processor Speed: 3.2 GHz Number of Processors: 1 Total Number of Cores: 6 L2 Cache (per Core): 256 KB L3 Cache: 12 MB Hyper-Threading Technology: Enabled Memory: 32 GB System Firmware Version: 1554.120.19.0.0 (iBridge: 18.16.14663.0.0,0) Serial Number (system): C07DXXXXXXXX Hardware UUID: F724DE6E-706A-5A54-8D16-000000000000 Provisioning UDID: E724DE6E-006A-5A54-8D16-000000000000 Activation Lock Status: Disabled Xcode 12.5 Build version 12E262'),
             ExpectShell(command=['xcodebuild', '-sdk', '-version'], workdir='wkdir', timeout=60, logEnviron=False)
             + ExpectShell.log('stdio', stdout='''MacOSX12.0.sdk - macOS 12.0 (macosx12.0)
 SDKVersion: 12.0
@@ -1137,8 +1139,6 @@ iOSSupportVersion: 15.0
 Xcode 13.1
 Build version 13A1030d''')
             + 0,
-            ExpectShell(command=['uptime'], workdir='wkdir', timeout=60, logEnviron=False) + 0
-            + ExpectShell.log('stdio', stdout=' 6:31  up 1 day, 19:05, 24 users, load averages: 4.17 7.23 5.45'),
         )
         self.expectOutcome(result=SUCCESS, state_string='OS: Monterey (12.0.1), Xcode: 13.1')
         return self.runStep()
@@ -1162,6 +1162,8 @@ Build version 13A1030d''')
             + ExpectShell.log('stdio', stdout='''ProductName:	macOS
 ProductVersion:	11.6
 BuildVersion:	20G165'''),
+            ExpectShell(command=['system_profiler', 'SPSoftwareDataType', 'SPHardwareDataType'], workdir='wkdir', timeout=60, logEnviron=False) + 0
+            + ExpectShell.log('stdio', stdout='Sample system information'),
             ExpectShell(command=['xcodebuild', '-sdk', '-version'], workdir='wkdir', timeout=60, logEnviron=False)
             + ExpectShell.log('stdio', stdout='''iPhoneSimulator15.0.sdk - Simulator - iOS 15.0 (iphonesimulator15.0)
 SDKVersion: 15.0
@@ -1177,8 +1179,6 @@ ProductVersion: 15.0
 Xcode 13.0
 Build version 13A233''')
             + 0,
-            ExpectShell(command=['uptime'], workdir='wkdir', timeout=60, logEnviron=False) + 0
-            + ExpectShell.log('stdio', stdout=' 6:31  up 1 day, 19:05, 24 users, load averages: 4.17 7.23 5.45'),
         )
         self.expectOutcome(result=SUCCESS, state_string='OS: Big Sur (11.6), Xcode: 13.0')
         return self.runStep()
@@ -1195,10 +1195,10 @@ Build version 13A233''')
             + ExpectShell.log('stdio', stdout='''ProductName:	macOS
 ProductVersion:	11.6
 BuildVersion:	20G165'''),
+            ExpectShell(command=['system_profiler', 'SPSoftwareDataType', 'SPHardwareDataType'], workdir='wkdir', timeout=60, logEnviron=False) + 0
+            + ExpectShell.log('stdio', stdout='Sample system information'),
             ExpectShell(command=['xcodebuild', '-sdk', '-version'], workdir='wkdir', timeout=60, logEnviron=False) + 0
             + ExpectShell.log('stdio', stdout='''Xcode 13.0\nBuild version 13A233'''),
-            ExpectShell(command=['uptime'], workdir='wkdir', timeout=60, logEnviron=False) + 0
-            + ExpectShell.log('stdio', stdout=' 6:31  up 22 seconds, 12:05, 2 users, load averages: 3.17 7.23 5.45'),
         )
         self.expectOutcome(result=SUCCESS, state_string='OS: Big Sur (11.6), Xcode: 13.0')
         return self.runStep()
@@ -1267,6 +1267,8 @@ BuildVersion:	20G165'''),
   File "/usr/lib/python2.7/os.py", line 382, in _execvpe
     func(fullname, *argrest)
 OSError: [Errno 2] No such file or directory'''),
+            ExpectShell(command=['system_profiler', 'SPSoftwareDataType', 'SPHardwareDataType'], workdir='wkdir', timeout=60, logEnviron=False) + 0
+            + ExpectShell.log('stdio', stdout='Sample system information'),
             ExpectShell(command=['xcodebuild', '-sdk', '-version'], workdir='wkdir', timeout=60, logEnviron=False)
             + ExpectShell.log('stdio', stdout='''Upon execvpe xcodebuild ['xcodebuild', '-sdk', '-version'] in environment id 7696545612416
 :Traceback (most recent call last):
@@ -1280,7 +1282,6 @@ OSError: [Errno 2] No such file or directory'''),
     func(fullname, *argrest)
 OSError: [Errno 2] No such file or directory''')
             + 1,
-            ExpectShell(command=['uptime'], workdir='wkdir', timeout=60, logEnviron=False) + 0,
         )
         self.expectOutcome(result=FAILURE, state_string='Failed to print configuration')
         return self.runStep()
