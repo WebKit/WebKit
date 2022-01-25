@@ -142,6 +142,7 @@
         @"com.apple.preferences.sounds",
         @"com.apple.voiceservices",
 #else
+        @"com.apple.CFNetwork",
         @"com.apple.CoreGraphics",
         @"com.apple.HIToolbox",
         @"com.apple.ServicesMenu.Services",
