@@ -28,6 +28,7 @@
 
 #include "ElementTraversal.h"
 #include "NodeRenderStyle.h"
+#include "PseudoClassChangeInvalidation.h"
 #include "ShadowRoot.h"
 #include "SlotAssignment.h"
 #include "StyleResolver.h"
@@ -44,41 +45,26 @@ void ChildChangeInvalidation::invalidateForChangedElement(Element& changedElemen
 
     bool isDescendant = changedElement.parentElement() != &parentElement();
 
+    auto canAffectAncestors = [&](MatchElement matchElement) {
+        if (!isDescendant)
+            return true;
+        return matchElement == MatchElement::HasDescendant
+            || matchElement == MatchElement::HasSiblingDescendant
+            || matchElement == MatchElement::HasNonSubject;
+    };
+
     auto addHasInvalidation = [&](const Vector<InvalidationRuleSet>* invalidationRuleSets)  {
         if (!invalidationRuleSets)
             return;
         for (auto& invalidationRuleSet : *invalidationRuleSets) {
-            if (!isHasPseudoClassMatchElement(invalidationRuleSet.matchElement))
+            if (!canAffectAncestors(invalidationRuleSet.matchElement))
                 continue;
-            if (isDescendant) {
-                // Elements deeper in the tree can't affect anything except when :has() selector uses descendant combinator.
-                if (invalidationRuleSet.matchElement != MatchElement::HasDescendant && invalidationRuleSet.matchElement != MatchElement::HasNonSubject)
-                    continue;
-            }
             Invalidator::addToMatchElementRuleSets(matchElementRuleSets, invalidationRuleSet);
         }
     };
 
-    auto tagName = changedElement.localName().convertToASCIILowercase();
-    addHasInvalidation(ruleSets.tagInvalidationRuleSets(tagName));
-
-    if (changedElement.hasID())
-        addHasInvalidation(ruleSets.idInvalidationRuleSets(changedElement.idForStyleResolution()));
-
-    if (changedElement.hasAttributes()) {
-        for (auto& attribute : changedElement.attributesIterator()) {
-            auto attributeName = attribute.localName().convertToASCIILowercase();
-            addHasInvalidation(ruleSets.attributeInvalidationRuleSets(attributeName));
-        }
-    }
-
-    if (changedElement.hasClass()) {
-        auto count = changedElement.classNames().size();
-        for (size_t i = 0; i < count; ++i) {
-            auto& className = changedElement.classNames()[i];
-            addHasInvalidation(ruleSets.classInvalidationRuleSets(className));
-        }
-    }
+    for (auto key : makePseudoClassInvalidationKeys(CSSSelector::PseudoClassHas, changedElement))
+        addHasInvalidation(ruleSets.hasPseudoClassInvalidationRuleSets(key));
 
     Invalidator::invalidateWithMatchElementRuleSets(changedElement, matchElementRuleSets);
 }

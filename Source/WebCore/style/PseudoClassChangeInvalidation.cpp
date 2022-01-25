@@ -32,7 +32,7 @@
 namespace WebCore {
 namespace Style {
 
-static Vector<PseudoClassInvalidationKey, 4> makePseudoClassInvalidationKeys(CSSSelector::PseudoClassType pseudoClass, const Element& element)
+Vector<PseudoClassInvalidationKey, 4> makePseudoClassInvalidationKeys(CSSSelector::PseudoClassType pseudoClass, const Element& element)
 {
     Vector<PseudoClassInvalidationKey, 4> keys;
 
