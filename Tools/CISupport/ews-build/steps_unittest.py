@@ -42,7 +42,7 @@ from twisted.trial import unittest
 
 from steps import (AnalyzeAPITestsResults, AnalyzeCompileWebKitResults, AnalyzeJSCTestsResults,
                    AnalyzeLayoutTestsResults, ApplyPatch, ApplyWatchList, ArchiveBuiltProduct, ArchiveTestResults,
-                   CheckOutPullRequest, CheckOutSource, CheckOutSpecificRevision, CheckPatchRelevance, CheckPatchStatusOnEWSQueues, CheckStyle,
+                   CheckOutPullRequest, CheckOutSource, CheckOutSpecificRevision, CheckChangeRelevance, CheckPatchStatusOnEWSQueues, CheckStyle,
                    CleanBuild, CleanUpGitIndexLock, CleanGitRepo, CleanWorkingDirectory, CompileJSC, CompileJSCWithoutPatch,
                    CompileWebKit, CompileWebKitWithoutPatch, ConfigureBuild, ConfigureBuild, Contributors, CreateLocalGITCommit,
                    DownloadBuiltProduct, DownloadBuiltProductFromMaster, EWS_BUILD_HOSTNAME, ExtractBuiltProduct, ExtractTestResults,
@@ -3189,7 +3189,7 @@ class TestUnApplyPatchIfRequired(BuildStepMixinAdditions, unittest.TestCase):
         return self.runStep()
 
 
-class TestCheckPatchRelevance(BuildStepMixinAdditions, unittest.TestCase):
+class TestCheckChangeRelevance(BuildStepMixinAdditions, unittest.TestCase):
     def setUp(self):
         self.longMessage = True
         return self.setUpBuildStep()
@@ -3205,12 +3205,12 @@ class TestCheckPatchRelevance(BuildStepMixinAdditions, unittest.TestCase):
                       'Tools/Scripts/update-javascriptcore-test-results', 'Tools/Scripts/webkitdirs.pm',
                       'Source/cmake/OptionsJSCOnly.cmake']
 
-        self.setupStep(CheckPatchRelevance())
+        self.setupStep(CheckChangeRelevance())
         self.setProperty('buildername', 'JSC-Tests-EWS')
-        self.assertEqual(CheckPatchRelevance.haltOnFailure, True)
-        self.assertEqual(CheckPatchRelevance.flunkOnFailure, True)
+        self.assertEqual(CheckChangeRelevance.haltOnFailure, True)
+        self.assertEqual(CheckChangeRelevance.flunkOnFailure, True)
         for file_name in file_names:
-            CheckPatchRelevance._get_patch = lambda x: 'Sample patch; file: {}'.format(file_name)
+            CheckChangeRelevance._get_patch = lambda x: 'Sample patch; file: {}'.format(file_name)
             self.expectOutcome(result=SUCCESS, state_string='Patch contains relevant changes')
             rc = self.runStep()
         return rc
@@ -3219,37 +3219,37 @@ class TestCheckPatchRelevance(BuildStepMixinAdditions, unittest.TestCase):
         file_names = ['Source/WebKitLegacy', 'Source/WebCore', 'Source/WebInspectorUI', 'Source/WebDriver', 'Source/WTF',
                       'Source/bmalloc', 'Source/JavaScriptCore', 'Source/ThirdParty', 'LayoutTests', 'Tools']
 
-        self.setupStep(CheckPatchRelevance())
+        self.setupStep(CheckChangeRelevance())
         self.setProperty('buildername', 'macOS-Catalina-Release-WK1-Tests-EWS')
         for file_name in file_names:
-            CheckPatchRelevance._get_patch = lambda x: 'Sample patch; file: {}'.format(file_name)
+            CheckChangeRelevance._get_patch = lambda x: 'Sample patch; file: {}'.format(file_name)
             self.expectOutcome(result=SUCCESS, state_string='Patch contains relevant changes')
             rc = self.runStep()
         return rc
 
     def test_relevant_bigsur_builder_patch(self):
         file_names = ['Source/xyz', 'Tools/abc']
-        self.setupStep(CheckPatchRelevance())
+        self.setupStep(CheckChangeRelevance())
         self.setProperty('buildername', 'macOS-BigSur-Release-Build-EWS')
         for file_name in file_names:
-            CheckPatchRelevance._get_patch = lambda x: 'Sample patch; file: {}'.format(file_name)
+            CheckChangeRelevance._get_patch = lambda x: 'Sample patch; file: {}'.format(file_name)
             self.expectOutcome(result=SUCCESS, state_string='Patch contains relevant changes')
             rc = self.runStep()
         return rc
 
     def test_relevant_windows_wk1_patch(self):
-        CheckPatchRelevance._get_patch = lambda x: b'Sample patch; file: Source/WebKitLegacy'
-        self.setupStep(CheckPatchRelevance())
+        CheckChangeRelevance._get_patch = lambda x: b'Sample patch; file: Source/WebKitLegacy'
+        self.setupStep(CheckChangeRelevance())
         self.setProperty('buildername', 'Windows-EWS')
         self.expectOutcome(result=SUCCESS, state_string='Patch contains relevant changes')
         return self.runStep()
 
     def test_relevant_webkitpy_patch(self):
         file_names = ['Tools/Scripts/webkitpy', 'Tools/Scripts/libraries', 'Tools/Scripts/commit-log-editor']
-        self.setupStep(CheckPatchRelevance())
+        self.setupStep(CheckChangeRelevance())
         self.setProperty('buildername', 'WebKitPy-Tests-EWS')
         for file_name in file_names:
-            CheckPatchRelevance._get_patch = lambda x: 'Sample patch; file: {}'.format(file_name)
+            CheckChangeRelevance._get_patch = lambda x: 'Sample patch; file: {}'.format(file_name)
             self.expectOutcome(result=SUCCESS, state_string='Patch contains relevant changes')
             rc = self.runStep()
         return rc
@@ -3257,45 +3257,80 @@ class TestCheckPatchRelevance(BuildStepMixinAdditions, unittest.TestCase):
     def test_relevant_services_patch(self):
         file_names = ['Tools/CISupport/build-webkit-org', 'Tools/CISupport/ews-build', 'Tools/CISupport/Shared',
                       'Tools/Scripts/libraries/resultsdbpy', 'Tools/Scripts/libraries/webkitcorepy', 'Tools/Scripts/libraries/webkitscmpy']
-        self.setupStep(CheckPatchRelevance())
+        self.setupStep(CheckChangeRelevance())
         self.setProperty('buildername', 'Services-EWS')
         for file_name in file_names:
-            CheckPatchRelevance._get_patch = lambda x: 'Sample patch; file: {}'.format(file_name)
+            CheckChangeRelevance._get_patch = lambda x: 'Sample patch; file: {}'.format(file_name)
             self.expectOutcome(result=SUCCESS, state_string='Patch contains relevant changes')
+            rc = self.runStep()
+        return rc
+
+    def test_relevant_services_pull_request(self):
+        file_names = ['Tools/CISupport/build-webkit-org', 'Tools/CISupport/ews-build', 'Tools/CISupport/Shared',
+                      'Tools/Scripts/libraries/resultsdbpy', 'Tools/Scripts/libraries/webkitcorepy', 'Tools/Scripts/libraries/webkitscmpy']
+        self.setupStep(CheckChangeRelevance())
+        self.setProperty('buildername', 'Services-EWS')
+        self.setProperty('github.number', 1234)
+        for file_name in file_names:
+            CheckChangeRelevance._get_patch = lambda x: file_name
+            self.expectOutcome(result=SUCCESS, state_string='Pull request contains relevant changes')
             rc = self.runStep()
         return rc
 
     def test_relevant_bindings_tests_patch(self):
         file_names = ['Source/WebCore', 'Tools']
-        self.setupStep(CheckPatchRelevance())
+        self.setupStep(CheckChangeRelevance())
         self.setProperty('buildername', 'Bindings-Tests-EWS')
         for file_name in file_names:
-            CheckPatchRelevance._get_patch = lambda x: 'Sample patch; file: {}'.format(file_name)
+            CheckChangeRelevance._get_patch = lambda x: 'Sample patch; file: {}'.format(file_name)
             self.expectOutcome(result=SUCCESS, state_string='Patch contains relevant changes')
             rc = self.runStep()
         return rc
 
+    def test_relevant_bindings_tests_pull_request(self):
+        file_names = ['Source/WebCore', 'Tools']
+        self.setupStep(CheckChangeRelevance())
+        self.setProperty('buildername', 'Bindings-Tests-EWS')
+        self.setProperty('github.number', 1234)
+        for file_name in file_names:
+            CheckChangeRelevance._get_patch = lambda x: file_name
+            self.expectOutcome(result=SUCCESS, state_string='Pull request contains relevant changes')
+            rc = self.runStep()
+        return rc
+
     def test_queues_without_relevance_info(self):
-        CheckPatchRelevance._get_patch = lambda x: 'Sample patch'
+        CheckChangeRelevance._get_patch = lambda x: 'Sample patch'
         queues = ['Commit-Queue', 'Style-EWS', 'Apply-WatchList-EWS', 'GTK-Build-EWS', 'GTK-WK2-Tests-EWS',
                   'iOS-13-Build-EWS', 'iOS-13-Simulator-Build-EWS', 'iOS-13-Simulator-WK2-Tests-EWS',
                   'macOS-Catalina-Release-Build-EWS', 'macOS-Catalina-Release-WK2-Tests-EWS', 'macOS-Catalina-Debug-Build-EWS',
                   'WinCairo-EWS', 'WPE-EWS', 'WebKitPerl-Tests-EWS']
         for queue in queues:
-            self.setupStep(CheckPatchRelevance())
+            self.setupStep(CheckChangeRelevance())
             self.setProperty('buildername', queue)
             self.expectOutcome(result=SUCCESS, state_string='Patch contains relevant changes')
             rc = self.runStep()
         return rc
 
     def test_non_relevant_patch_on_various_queues(self):
-        CheckPatchRelevance._get_patch = lambda x: 'Sample patch'
+        CheckChangeRelevance._get_patch = lambda x: 'Sample patch'
         queues = ['Bindings-Tests-EWS', 'JSC-Tests-EWS', 'macOS-BigSur-Release-Build-EWS',
                   'macOS-Catalina-Debug-WK1-Tests-EWS', 'Services-EWS', 'WebKitPy-Tests-EWS']
         for queue in queues:
-            self.setupStep(CheckPatchRelevance())
+            self.setupStep(CheckChangeRelevance())
             self.setProperty('buildername', queue)
             self.expectOutcome(result=FAILURE, state_string='Patch doesn\'t have relevant changes')
+            rc = self.runStep()
+        return rc
+
+    def test_non_relevant_pull_request_on_various_queues(self):
+        CheckChangeRelevance._get_patch = lambda x: '\n'
+        queues = ['Bindings-Tests-EWS', 'JSC-Tests-EWS', 'macOS-BigSur-Release-Build-EWS',
+                  'macOS-Catalina-Debug-WK1-Tests-EWS', 'Services-EWS', 'WebKitPy-Tests-EWS']
+        for queue in queues:
+            self.setupStep(CheckChangeRelevance())
+            self.setProperty('buildername', queue)
+            self.setProperty('github.number', 1234)
+            self.expectOutcome(result=FAILURE, state_string='Pull request doesn\'t have relevant changes')
             rc = self.runStep()
         return rc
 

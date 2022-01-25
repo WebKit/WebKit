@@ -142,7 +142,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
         ],
         'macOS-AppleSilicon-Big-Sur-Debug-Build-EWS': [
             'configure-build',
-            'check-patch-relevance',
+            'check-change-relevance',
             'validate-change',
             'configuration',
             'clean-up-git-repo',
@@ -192,7 +192,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
         ],
         'macOS-Catalina-Release-WK1-Tests-EWS': [
             'configure-build',
-            'check-patch-relevance',
+            'check-change-relevance',
             'validate-change',
             'configuration',
             'clean-up-git-repo',
@@ -269,7 +269,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
         ],
         'macOS-Catalina-Debug-WK1-Tests-EWS': [
             'configure-build',
-            'check-patch-relevance',
+            'check-change-relevance',
             'validate-change',
             'configuration',
             'clean-up-git-repo',
@@ -347,7 +347,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
         ],
         'Windows-EWS': [
             'configure-build',
-            'check-patch-relevance',
+            'check-change-relevance',
             'validate-change',
             'configuration',
             'clean-up-git-repo',
@@ -394,7 +394,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
         ],
         'JSC-Tests-EWS': [
             'configure-build',
-            'check-patch-relevance',
+            'check-change-relevance',
             'validate-change',
             'configuration',
             'clean-up-git-repo',
@@ -410,7 +410,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
         ],
         'JSC-MIPSEL-32bits-Build-EWS': [
             'configure-build',
-            'check-patch-relevance',
+            'check-change-relevance',
             'validate-change',
             'configuration',
             'clean-up-git-repo',
@@ -425,7 +425,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
         ],
         'JSC-MIPSEL-32bits-Tests-EWS': [
             'configure-build',
-            'check-patch-relevance',
+            'check-change-relevance',
             'validate-change',
             'configuration',
             'clean-up-git-repo',
@@ -442,7 +442,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
         ],
         'JSC-ARMv7-32bits-Build-EWS': [
             'configure-build',
-            'check-patch-relevance',
+            'check-change-relevance',
             'validate-change',
             'configuration',
             'clean-up-git-repo',
@@ -457,7 +457,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
         ],
         'JSC-ARMv7-32bits-Tests-EWS': [
             'configure-build',
-            'check-patch-relevance',
+            'check-change-relevance',
             'validate-change',
             'configuration',
             'clean-up-git-repo',
@@ -474,7 +474,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
         ],
         'JSC-i386-32bits-EWS': [
             'configure-build',
-            'check-patch-relevance',
+            'check-change-relevance',
             'validate-change',
             'configuration',
             'clean-up-git-repo',
@@ -489,7 +489,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
         ],
         'Bindings-Tests-EWS': [
             'configure-build',
-            'check-patch-relevance',
+            'check-change-relevance',
             'validate-change',
             'configuration',
             'clean-up-git-repo',
@@ -503,7 +503,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
         ],
         'WebKitPy-Tests-EWS': [
             'configure-build',
-            'check-patch-relevance',
+            'check-change-relevance',
             'validate-change',
             'configuration',
             'clean-up-git-repo',
@@ -581,7 +581,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
         ],
         'Services-EWS': [
             'configure-build',
-            'check-patch-relevance',
+            'check-change-relevance',
             'validate-change',
             'configuration',
             'clean-up-git-repo',

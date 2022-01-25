@@ -24,7 +24,7 @@
 from buildbot.process import factory
 from buildbot.steps import trigger
 
-from steps import (ApplyPatch, ApplyWatchList, CheckOutPullRequest, CheckOutSource, CheckOutSpecificRevision, CheckPatchRelevance,
+from steps import (ApplyPatch, ApplyWatchList, CheckOutPullRequest, CheckOutSource, CheckOutSpecificRevision, CheckChangeRelevance,
                    CheckPatchStatusOnEWSQueues, CheckStyle, CleanGitRepo, CompileJSC, CompileWebKit, ConfigureBuild, CreateLocalGITCommit,
                    DownloadBuiltProduct, ExtractBuiltProduct, FetchBranches, FindModifiedChangeLogs, FindModifiedLayoutTests,
                    InstallGtkDependencies, InstallWpeDependencies, KillOldProcesses, PrintConfiguration, PushCommitToWebKitRepo,
@@ -43,7 +43,7 @@ class Factory(factory.BuildFactory):
         factory.BuildFactory.__init__(self)
         self.addStep(ConfigureBuild(platform=platform, configuration=configuration, architectures=architectures, buildOnly=buildOnly, triggers=triggers, triggered_by=triggered_by, remotes=remotes, additionalArguments=additionalArguments))
         if checkRelevance:
-            self.addStep(CheckPatchRelevance())
+            self.addStep(CheckChangeRelevance())
         if self.findModifiedLayoutTests:
             self.addStep(FindModifiedLayoutTests())
         self.addStep(ValidateChange())

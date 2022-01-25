@@ -648,15 +648,17 @@ class CheckOutPullRequest(steps.ShellSequence):
         return super(CheckOutPullRequest, self).getResultSummary()
 
 
-class AnalyzePatch(buildstep.BuildStep):
+class AnalyzeChange(buildstep.BuildStep):
     flunkOnFailure = True
     haltOnFailure = True
 
     def _get_patch(self):
         sourcestamp = self.build.getSourceStamp(self.getProperty('codebase', ''))
-        if not sourcestamp or not sourcestamp.patch:
-            return None
-        return sourcestamp.patch[1]
+        if sourcestamp and sourcestamp.changes:
+            return '\n'.join(sourcestamp.changes[0].files)
+        if sourcestamp and sourcestamp.patch:
+            return sourcestamp.patch[1]
+        return None
 
     @defer.inlineCallbacks
     def _addToLog(self, logName, message):
@@ -666,18 +668,24 @@ class AnalyzePatch(buildstep.BuildStep):
             log = yield self.addLog(logName)
         log.addStdout(message)
 
+    @property
+    def change_type(self):
+        if self.getProperty('github.number', False):
+            return 'Pull request'
+        return 'Patch'
+
     def getResultSummary(self):
         if self.results in [FAILURE, SKIPPED]:
-            return {'step': 'Patch doesn\'t have relevant changes'}
+            return {'step': '{} doesn\'t have relevant changes'.format(self.change_type)}
         if self.results == SUCCESS:
-            return {'step': 'Patch contains relevant changes'}
+            return {'step': '{} contains relevant changes'.format(self.change_type)}
         return buildstep.BuildStep.getResultSummary(self)
 
 
-class CheckPatchRelevance(AnalyzePatch):
-    name = 'check-patch-relevance'
-    description = ['check-patch-relevance running']
-    descriptionDone = ['Patch contains relevant changes']
+class CheckChangeRelevance(AnalyzeChange):
+    name = 'check-change-relevance'
+    description = ['check-change-relevance running']
+    descriptionDone = ['Change contains relevant changes']
     MAX_LINE_SIZE = 250
 
     bindings_path_regexes = [
@@ -767,19 +775,23 @@ class CheckPatchRelevance(AnalyzePatch):
             return None
 
         if self._patch_is_relevant(patch, self.getProperty('buildername', '')):
-            self._addToLog('stdio', 'This patch contains relevant changes.')
+            self._addToLog('stdio', 'This {} contains relevant changes.'.format(self.change_type.lower()))
             self.finished(SUCCESS)
             return None
 
-        self._addToLog('stdio', 'This patch does not have relevant changes.')
+        self._addToLog('stdio', 'This {} does not have relevant changes.'.format(self.change_type.lower()))
         self.finished(FAILURE)
         self.build.results = SKIPPED
-        self.build.buildFinished(['Patch {} doesn\'t have relevant changes'.format(self.getProperty('patch_id', ''))], SKIPPED)
+        self.build.buildFinished(['{} {} doesn\'t have relevant changes'.format(
+            self.change_type,
+            self.getProperty('patch_id', '') or self.getProperty('github.number', ''),
+        )], SKIPPED)
         return None
 
 
-class FindModifiedLayoutTests(AnalyzePatch):
+class FindModifiedLayoutTests(AnalyzeChange):
     name = 'find-modified-layout-tests'
+    # FIXME: This regex won't work for pull-requests
     RE_LAYOUT_TEST = br'^(\+\+\+).*(LayoutTests.*\.html)'
     DIRECTORIES_TO_IGNORE = ['reference', 'reftest', 'resources', 'support', 'script-tests', 'tools']
     SUFFIXES_TO_IGNORE = ['-expected', '-expected-mismatch', '-ref', '-notref']
@@ -810,16 +822,19 @@ class FindModifiedLayoutTests(AnalyzePatch):
         tests = self.find_test_names_from_patch(patch)
 
         if tests:
-            self._addToLog('stdio', 'This patch modifies following tests: {}'.format(tests))
+            self._addToLog('stdio', 'This change modifies following tests: {}'.format(tests))
             self.setProperty('modified_tests', tests)
             self.finished(SUCCESS)
             return None
 
-        self._addToLog('stdio', 'This patch does not modify any layout tests')
+        self._addToLog('stdio', 'This change does not modify any layout tests')
         self.finished(SKIPPED)
         if self.skipBuildIfNoResult:
             self.build.results = SKIPPED
-            self.build.buildFinished(['Patch {} doesn\'t have relevant changes'.format(self.getProperty('patch_id', ''))], SKIPPED)
+            self.build.buildFinished(['{} {} doesn\'t have relevant changes'.format(
+                self.change_type,
+                self.getProperty('patch_id', '') or self.getProperty('github.number', ''),
+            )], SKIPPED)
         return None
 
 
