@@ -959,9 +959,8 @@ bool CSSPrimitiveValue::equalForLengthResolution(const RenderStyle& styleA, cons
     return true;
 }
 
-double CSSPrimitiveValue::conversionToCanonicalUnitsScaleFactor(CSSUnitType unitType)
+std::optional<double> CSSPrimitiveValue::conversionToCanonicalUnitsScaleFactor(CSSUnitType unitType)
 {
-    double factor = 1.0;
     // FIXME: the switch can be replaced by an array of scale factors.
     switch (unitType) {
     // These are "canonical" units in their respective categories.
@@ -970,52 +969,52 @@ double CSSPrimitiveValue::conversionToCanonicalUnitsScaleFactor(CSSUnitType unit
     case CSSUnitType::CSS_MS:
     case CSSUnitType::CSS_HZ:
     case CSSUnitType::CSS_DPPX:
-        break;
+        return 1.0;
+
     case CSSUnitType::CSS_X:
         // This is semantically identical to (canonical) dppx
-        break;
+        return 1.0;
+
     case CSSUnitType::CSS_CM:
-        factor = cssPixelsPerInch / cmPerInch;
-        break;
+        return cssPixelsPerInch / cmPerInch;
+
     case CSSUnitType::CSS_DPCM:
-        factor = cmPerInch / cssPixelsPerInch; // (2.54 cm/in)
-        break;
+        return cmPerInch / cssPixelsPerInch; // (2.54 cm/in)
+
     case CSSUnitType::CSS_MM:
-        factor = cssPixelsPerInch / mmPerInch;
-        break;
+        return cssPixelsPerInch / mmPerInch;
+
     case CSSUnitType::CSS_Q:
-        factor = cssPixelsPerInch / QPerInch;
-        break;
+        return cssPixelsPerInch / QPerInch;
+
     case CSSUnitType::CSS_IN:
-        factor = cssPixelsPerInch;
-        break;
+        return cssPixelsPerInch;
+
     case CSSUnitType::CSS_DPI:
-        factor = 1 / cssPixelsPerInch;
-        break;
+        return 1 / cssPixelsPerInch;
+
     case CSSUnitType::CSS_PT:
-        factor = cssPixelsPerInch / 72.0;
-        break;
+        return cssPixelsPerInch / 72.0;
+
     case CSSUnitType::CSS_PC:
-        factor = cssPixelsPerInch * 12.0 / 72.0; // 1 pc == 12 pt
-        break;
+        return cssPixelsPerInch * 12.0 / 72.0; // 1 pc == 12 pt
+
     case CSSUnitType::CSS_RAD:
-        factor = degreesPerRadianDouble;
-        break;
+        return degreesPerRadianDouble;
+
     case CSSUnitType::CSS_GRAD:
-        factor = degreesPerGradientDouble;
-        break;
+        return degreesPerGradientDouble;
+
     case CSSUnitType::CSS_TURN:
-        factor = degreesPerTurnDouble;
-        break;
+        return degreesPerTurnDouble;
+
     case CSSUnitType::CSS_S:
     case CSSUnitType::CSS_KHZ:
-        factor = 1000;
-        break;
-    default:
-        break;
-    }
+        return 1000;
 
-    return factor;
+    default:
+        return std::nullopt;
+    }
 }
 
 ExceptionOr<float> CSSPrimitiveValue::getFloatValue(CSSUnitType unitType) const
@@ -1112,13 +1111,21 @@ std::optional<double> CSSPrimitiveValue::doubleValueInternal(CSSUnitType request
 
     double convertedValue = doubleValue();
 
+    // If we don't need to scale it, don't worry about if we can scale it.
+    if (sourceUnitType == targetUnitType)
+        return convertedValue;
+
     // First convert the value from primitiveUnitType() to canonical type.
-    double factor = conversionToCanonicalUnitsScaleFactor(sourceUnitType);
-    convertedValue *= factor;
+    auto sourceFactor = conversionToCanonicalUnitsScaleFactor(sourceUnitType);
+    if (!sourceFactor.has_value())
+        return std::nullopt;
+    convertedValue *= sourceFactor.value();
 
     // Now convert from canonical type to the target unitType.
-    factor = conversionToCanonicalUnitsScaleFactor(targetUnitType);
-    convertedValue /= factor;
+    auto targetFactor = conversionToCanonicalUnitsScaleFactor(targetUnitType);
+    if (!targetFactor.has_value())
+        return std::nullopt;
+    convertedValue /= targetFactor.value();
 
     return convertedValue;
 }

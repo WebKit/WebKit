@@ -1,5 +1,69 @@
 2022-01-24  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r288245. rdar://problem/85878291
+
+    Limit the deprecated CSSOMPrimitiveValue to formerly standardized unit types
+    https://bugs.webkit.org/show_bug.cgi?id=233651
+    <rdar://problem/85878291>
+    
+    Reviewed by Darin Adler.
+    
+    Source/WebCore:
+    
+    This removes support, and makes it clear that these deprecated APIs shouldn't be exposing
+    anything more modern than what is standardized in DOM Level 2 Style. Hopefully this avoids
+    others in future adding support for new units.
+    
+    Other changes included as they are necessary to make improved test not assert.
+    
+    Test: fast/css/CSSPrimitiveValue-modern-length.html
+    
+    * css/CSSUnits.cpp:
+    (WebCore::unitCategory): Ensure this is complete for all units.
+    (WebCore::canonicalUnitTypeForCategory): Ensure this is complete for all unit categories.
+    * css/DeprecatedCSSOMPrimitiveValue.cpp:
+    (WebCore::DeprecatedCSSOMPrimitiveValue::primitiveType const): Remove post-DOM Level 2 Style values.
+    (WebCore::DeprecatedCSSOMPrimitiveValue::getFloatValue const): Remove post-DOM Level 2 Style values.
+    (WebCore::DeprecatedCSSOMPrimitiveValue::getStringValue const): Add comment.
+    * css/DeprecatedCSSOMPrimitiveValue.h: Remove post-DOM Level 2 Style constants.
+    * css/DeprecatedCSSOMPrimitiveValue.idl: Remove post-DOM Level 2 Style constants.
+    * css/CSSPrimitiveValue.cpp:
+    (WebCore::CSSPrimitiveValue::conversionToCanonicalUnitsScaleFactor): Change to return std::optional, making explicit when there is no scaling factor.
+    (WebCore::CSSPrimitiveValue::doubleValueInternal const): Handle std::optional return.
+    * css/CSSPrimitiveValue.h:
+    (WebCore::CSSPrimitiveValue::conversionToCanonicalUnitsScaleFactor): Change to return std::optional, making explicit when there is no scaling factor.
+    * page/PrintContext.cpp:
+    (WebCore::PrintContext::computedPageMargin): Handle std::optional return.
+    
+    LayoutTests:
+    
+    Updated/moved test to cover all modern length units, not just ic.
+    
+    * fast/css/CSSPrimitiveValue-ic-expected.txt: Removed.
+    * fast/css/CSSPrimitiveValue-ic.html: Removed.
+    * fast/css/CSSPrimitiveValue-modern-length-expected.txt: Added.
+    * fast/css/CSSPrimitiveValue-modern-length.html: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@288245 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-01-19  Sam Sneddon  <gsnedders@apple.com>
+
+            Limit the deprecated CSSOMPrimitiveValue to formerly standardized unit types
+            https://bugs.webkit.org/show_bug.cgi?id=233651
+            <rdar://problem/85878291>
+
+            Reviewed by Darin Adler.
+
+            Updated/moved test to cover all modern length units, not just ic.
+
+            * fast/css/CSSPrimitiveValue-ic-expected.txt: Removed.
+            * fast/css/CSSPrimitiveValue-ic.html: Removed.
+            * fast/css/CSSPrimitiveValue-modern-length-expected.txt: Added.
+            * fast/css/CSSPrimitiveValue-modern-length.html: Added.
+
+2022-01-24  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r288180. rdar://problem/84440841
 
     Loupe sometimes flips to the bottom of the page when dragging the end of a selection to the top of a page with selection flipping.
