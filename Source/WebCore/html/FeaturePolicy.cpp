@@ -57,8 +57,6 @@ static const char* policyTypeName(FeaturePolicy::Type type)
         return "SyncXHR";
     case FeaturePolicy::Type::Fullscreen:
         return "Fullscreen";
-    case FeaturePolicy::Type::WebShare:
-        return "WebShare";
 #if ENABLE(DEVICE_ORIENTATION)
     case FeaturePolicy::Type::Gyroscope:
         return "Gyroscope";
@@ -182,7 +180,6 @@ FeaturePolicy FeaturePolicy::parse(Document& document, const HTMLIFrameElement& 
     bool isPaymentInitialized = false;
     bool isSyncXHRInitialized = false;
     bool isFullscreenInitialized = false;
-    bool isWebShareInitialized = false;
 #if ENABLE(DEVICE_ORIENTATION)
     bool isGyroscopeInitialized = false;
     bool isAccelerometerInitialized = false;
@@ -236,11 +233,6 @@ FeaturePolicy FeaturePolicy::parse(Document& document, const HTMLIFrameElement& 
             updateList(document, policy.m_fullscreenRule, item.substring(11));
             continue;
         }
-        if (item.startsWith("web-share")) {
-            isWebShareInitialized = true;
-            updateList(document, policy.m_webShareRule, item.substring(10));
-            continue;
-        }
 #if ENABLE(DEVICE_ORIENTATION)
         if (item.startsWith("gyroscope")) {
             isGyroscopeInitialized = true;
@@ -287,8 +279,6 @@ FeaturePolicy FeaturePolicy::parse(Document& document, const HTMLIFrameElement& 
         policy.m_geolocationRule.allowedList.add(document.securityOrigin().data());
     if (!isPaymentInitialized)
         policy.m_paymentRule.allowedList.add(document.securityOrigin().data());
-    if (!isWebShareInitialized)
-        policy.m_webShareRule.allowedList.add(document.securityOrigin().data());
 #if ENABLE(DEVICE_ORIENTATION)
     if (!isGyroscopeInitialized)
         policy.m_gyroscopeRule.allowedList.add(document.securityOrigin().data());
@@ -346,8 +336,6 @@ bool FeaturePolicy::allows(Type type, const SecurityOriginData& origin) const
         return isAllowedByFeaturePolicy(m_syncXHRRule, origin);
     case Type::Fullscreen:
         return isAllowedByFeaturePolicy(m_fullscreenRule, origin);
-    case Type::WebShare:
-        return isAllowedByFeaturePolicy(m_webShareRule, origin);
 #if ENABLE(DEVICE_ORIENTATION)
     case Type::Gyroscope:
         return isAllowedByFeaturePolicy(m_gyroscopeRule, origin);

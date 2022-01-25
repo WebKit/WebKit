@@ -1,3 +1,7 @@
+2022-01-24  Russell Epstein  <repstein@apple.com>
+
+        Revert r282746. rdar://problem/87732806
+
 2022-01-24  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r288429. rdar://problem/86612099
