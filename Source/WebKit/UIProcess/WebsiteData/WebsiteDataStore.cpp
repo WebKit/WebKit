@@ -287,34 +287,22 @@ void WebsiteDataStore::resolveDirectoriesIfNecessary()
     }
 }
 
-enum class ProcessAccessType {
-    None,
-    OnlyIfLaunched,
-    Launch,
-};
+enum class ProcessAccessType : uint8_t { None, OnlyIfLaunched, Launch };
 
 static ProcessAccessType computeNetworkProcessAccessTypeForDataFetch(OptionSet<WebsiteDataType> dataTypes, bool isNonPersistentStore)
 {
     for (auto dataType : dataTypes) {
-        if (WebsiteData::ownerProcess(dataType) == WebsiteDataProcessType::Network) {
-            if (isNonPersistentStore)
-                return ProcessAccessType::OnlyIfLaunched;
-            return ProcessAccessType::Launch;
-        }
+        if (WebsiteData::ownerProcess(dataType) == WebsiteDataProcessType::Network)
+            return isNonPersistentStore ? ProcessAccessType::OnlyIfLaunched : ProcessAccessType::Launch;
     }
     return ProcessAccessType::None;
 }
 
-static ProcessAccessType computeWebProcessAccessTypeForDataFetch(OptionSet<WebsiteDataType> dataTypes, bool isNonPersistentStore)
+static ProcessAccessType computeWebProcessAccessTypeForDataFetch(OptionSet<WebsiteDataType> dataTypes, bool /* isNonPersistentStore */)
 {
-    UNUSED_PARAM(isNonPersistentStore);
-
-    ProcessAccessType processAccessType = ProcessAccessType::None;
-
     if (dataTypes.contains(WebsiteDataType::MemoryCache))
         return ProcessAccessType::OnlyIfLaunched;
-
-    return processAccessType;
+    return ProcessAccessType::None;
 }
 
 void WebsiteDataStore::fetchData(OptionSet<WebsiteDataType> dataTypes, OptionSet<WebsiteDataFetchOption> fetchOptions, Function<void(Vector<WebsiteDataRecord>)>&& completionHandler)
@@ -471,21 +459,8 @@ private:
     auto webProcessAccessType = computeWebProcessAccessTypeForDataFetch(dataTypes, !isPersistent());
     if (webProcessAccessType != ProcessAccessType::None) {
         for (auto& process : processes()) {
-            switch (webProcessAccessType) {
-            case ProcessAccessType::OnlyIfLaunched:
-                if (process.state() != WebProcessProxy::State::Running)
-                    continue;
-                break;
-
-            case ProcessAccessType::Launch:
-                // FIXME: Handle this.
-                ASSERT_NOT_REACHED();
-                break;
-
-            case ProcessAccessType::None:
-                ASSERT_NOT_REACHED();
-            }
-
+            if (webProcessAccessType == ProcessAccessType::OnlyIfLaunched && process.state() != WebProcessProxy::State::Running)
+                continue;
             process.fetchWebsiteData(m_sessionID, dataTypes, [callbackAggregator](WebsiteData websiteData) {
                 callbackAggregator->addWebsiteData(WTFMove(websiteData));
             });
@@ -559,30 +534,21 @@ void WebsiteDataStore::fetchDataForRegistrableDomains(OptionSet<WebsiteDataType>
 static ProcessAccessType computeNetworkProcessAccessTypeForDataRemoval(OptionSet<WebsiteDataType> dataTypes, bool isNonPersistentStore)
 {
     ProcessAccessType processAccessType = ProcessAccessType::None;
-
     for (auto dataType : dataTypes) {
-        if (dataType == WebsiteDataType::Cookies) {
-            if (isNonPersistentStore)
-                processAccessType = std::max(processAccessType, ProcessAccessType::OnlyIfLaunched);
-            else
-                processAccessType = std::max(processAccessType, ProcessAccessType::Launch);
-        } else if (WebsiteData::ownerProcess(dataType) == WebsiteDataProcessType::Network)
+        if (WebsiteData::ownerProcess(dataType) != WebsiteDataProcessType::Network)
+            continue;
+        if (dataType != WebsiteDataType::Cookies || !isNonPersistentStore)
             return ProcessAccessType::Launch;
+        processAccessType = ProcessAccessType::OnlyIfLaunched;
     }
-    
     return processAccessType;
 }
 
-static ProcessAccessType computeWebProcessAccessTypeForDataRemoval(OptionSet<WebsiteDataType> dataTypes, bool isNonPersistentStore)
+static ProcessAccessType computeWebProcessAccessTypeForDataRemoval(OptionSet<WebsiteDataType> dataTypes, bool /* isNonPersistentStore */)
 {
-    UNUSED_PARAM(isNonPersistentStore);
-
-    ProcessAccessType processAccessType = ProcessAccessType::None;
-
     if (dataTypes.contains(WebsiteDataType::MemoryCache))
-        processAccessType = std::max(processAccessType, ProcessAccessType::OnlyIfLaunched);
-
-    return processAccessType;
+        return ProcessAccessType::OnlyIfLaunched;
+    return ProcessAccessType::None;
 }
 
 class RemovalCallbackAggregator : public ThreadSafeRefCounted<RemovalCallbackAggregator, WTF::DestructionThread::MainRunLoop> {
@@ -653,21 +619,8 @@ void WebsiteDataStore::removeData(OptionSet<WebsiteDataType> dataTypes, WallTime
         }
 
         for (auto& process : processes()) {
-            switch (webProcessAccessType) {
-            case ProcessAccessType::OnlyIfLaunched:
-                if (process.state() != WebProcessProxy::State::Running)
-                    continue;
-                break;
-
-            case ProcessAccessType::Launch:
-                // FIXME: Handle this.
-                ASSERT_NOT_REACHED();
-                break;
-
-            case ProcessAccessType::None:
-                ASSERT_NOT_REACHED();
-            }
-
+            if (webProcessAccessType == ProcessAccessType::OnlyIfLaunched && process.state() != WebProcessProxy::State::Running)
+                continue;
             process.deleteWebsiteData(m_sessionID, dataTypes, modifiedSince, [callbackAggregator] { });
         }
     }
@@ -772,21 +725,8 @@ void WebsiteDataStore::removeData(OptionSet<WebsiteDataType> dataTypes, const Ve
     auto webProcessAccessType = computeWebProcessAccessTypeForDataRemoval(dataTypes, !isPersistent());
     if (webProcessAccessType != ProcessAccessType::None) {
         for (auto& process : processes()) {
-            switch (webProcessAccessType) {
-            case ProcessAccessType::OnlyIfLaunched:
-                if (process.state() != WebProcessProxy::State::Running)
-                    continue;
-                break;
-
-            case ProcessAccessType::Launch:
-                // FIXME: Handle this.
-                ASSERT_NOT_REACHED();
-                break;
-
-            case ProcessAccessType::None:
-                ASSERT_NOT_REACHED();
-            }
-
+            if (webProcessAccessType == ProcessAccessType::OnlyIfLaunched && process.state() != WebProcessProxy::State::Running)
+                continue;
             process.deleteWebsiteDataForOrigins(m_sessionID, dataTypes, origins, [callbackAggregator] { });
         }
     }
