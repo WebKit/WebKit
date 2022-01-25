@@ -20,3 +20,12 @@ StackTrace: 10
   9:  - nativeCode (true) programCode (false)
   10: _wrapCall - nativeCode (true) programCode (false)
 
+-- Running test case: WI.StackTrace.FirstNonNativeNonAnonymousNotBlackboxedCallFrame.Normal
+PASS: Should be able to get the first non-native non-anonymous unblackboxed call frame.
+
+-- Running test case: WI.StackTrace.FirstNonNativeNonAnonymousNotBlackboxedCallFrame.AllNative
+PASS: Should not be able to get the first non-native non-anonymous unblackboxed call frame if the entire stack trace is native.
+
+-- Running test case: WI.StackTrace.FirstNonNativeNonAnonymousNotBlackboxedCallFrame.AllBlackboxed
+PASS: Should use the first blackboxed call frame if the entire stack trace is blackboxed.
+

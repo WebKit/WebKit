@@ -25,9 +25,10 @@
 
 WI.StackTrace = class StackTrace
 {
-    constructor(callFrames, topCallFrameIsBoundary, truncated, parentStackTrace)
+    constructor(callFrames, {topCallFrameIsBoundary, truncated, parentStackTrace} = {})
     {
-        console.assert(callFrames && callFrames.every((callFrame) => callFrame instanceof WI.CallFrame));
+        console.assert(callFrames.every((callFrame) => callFrame instanceof WI.CallFrame), callFrames);
+        console.assert(!parentStackTrace || parentStackTrace instanceof WI.StackTrace, parentStackTrace);
 
         this._callFrames = callFrames;
         this._topCallFrameIsBoundary = topCallFrameIsBoundary || false;
@@ -44,7 +45,10 @@ WI.StackTrace = class StackTrace
 
         while (payload) {
             let callFrames = payload.callFrames.map((x) => WI.CallFrame.fromPayload(target, x));
-            let stackTrace = new WI.StackTrace(callFrames, payload.topCallFrameIsBoundary, payload.truncated);
+            let stackTrace = new WI.StackTrace(callFrames, {
+                topCallFrameIsBoundary: payload.topCallFrameIsBoundary,
+                truncated: payload.truncated,
+            });
             if (!result)
                 result = stackTrace;
             if (previousStackTrace)
@@ -160,11 +164,11 @@ WI.StackTrace = class StackTrace
 
                 // Save the first non-native non-anonymous call frame so it can be used as a
                 // fallback if all remaining call frames are blackboxed.
-                firstNonNativeNonAnonymousCallFrame = frame;
-
-                if (WI.debuggerManager.blackboxDataForSourceCode(sourceCode))
-                    continue;
+                firstNonNativeNonAnonymousCallFrame ??= frame;
             }
+
+            if (frame.blackboxed)
+                continue;
 
             return frame;
         }
