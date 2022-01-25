@@ -344,8 +344,6 @@ localizedStrings["Closure Variables"] = "Closure Variables";
 localizedStrings["Closure Variables (%s)"] = "Closure Variables (%s)";
 localizedStrings["Code"] = "Code";
 localizedStrings["Collapse All"] = "Collapse All";
-/* Setting to collapse blackboxed call frames in the debugger. */
-localizedStrings["Collapse blackboxed call frames @ Experimental Settings"] = "Collapse blackboxed call frames";
 localizedStrings["Collapse columns"] = "Collapse columns";
 localizedStrings["Collect garbage"] = "Collect garbage";
 /* Section header for the group of CSS variables with colors as values */
@@ -445,8 +443,6 @@ localizedStrings["Debugger Statements @ JavaScript Breakpoint"] = "Debugger Stat
 localizedStrings["Debugger disabled during Audit"] = "Debugger disabled during Audit";
 localizedStrings["Debugger disabled during Timeline recording"] = "Debugger disabled during Timeline recording";
 localizedStrings["Debugging:"] = "Debugging:";
-/* Category label for experimental settings related to debugging. */
-localizedStrings["Debugging: @ Experimental Settings"] = "Debugging:";
 localizedStrings["Debugs"] = "Debugs";
 localizedStrings["Decoded"] = "Decoded";
 localizedStrings["Default"] = "Default";

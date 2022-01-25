@@ -540,7 +540,6 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
 
     shouldAutoExpandBlackboxedCallFrameGroup(blackboxedCallFrameGroup)
     {
-        console.assert(WI.settings.experimentalCollapseBlackboxedCallFrames.value);
         console.assert(Array.isArray(blackboxedCallFrameGroup) && blackboxedCallFrameGroup.length && blackboxedCallFrameGroup.every((callFrame) => callFrame instanceof WI.CallFrame && callFrame.blackboxed), blackboxedCallFrameGroup);
 
         return this._blackboxedCallFrameGroupsToAutoExpand.some((blackboxedCallFrameGroupToAutoExpand) => {

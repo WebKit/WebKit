@@ -402,12 +402,6 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
             experimentalSettingsView.addSeparator();
         }
 
-        let supportsBlackboxingScripts = WI.DebuggerManager.supportsBlackboxingScripts();
-        if (supportsBlackboxingScripts) {
-            experimentalSettingsView.addSetting(WI.UIString("Debugging:", "Debugging: @ Experimental Settings", "Category label for experimental settings related to debugging."), WI.settings.experimentalCollapseBlackboxedCallFrames, WI.UIString("Collapse blackboxed call frames", "Collapse blackboxed call frames @ Experimental Settings", "Setting to collapse blackboxed call frames in the debugger."));
-            experimentalSettingsView.addSeparator();
-        }
-
         let diagnosticsGroup = experimentalSettingsView.addGroup(WI.UIString("Diagnostics:", "Diagnostics: @ Experimental Settings", "Category label for experimental settings related to Web Inspector diagnostics."));
         diagnosticsGroup.addSetting(WI.settings.experimentalAllowInspectingInspector, WI.UIString("Allow Inspecting Web Inspector", "Allow Inspecting Web Inspector @ Experimental Settings", "Label for setting that allows the user to inspect the Web Inspector user interface."));
         experimentalSettingsView.addSeparator();
@@ -435,9 +429,6 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
             listenForChange(WI.settings.experimentalEnableStylesJumpToEffective);
             listenForChange(WI.settings.experimentalEnableStylesJumpToVariableDeclaration);
         }
-
-        if (supportsBlackboxingScripts)
-            listenForChange(WI.settings.experimentalCollapseBlackboxedCallFrames);
 
         this._createReferenceLink(experimentalSettingsView);
 

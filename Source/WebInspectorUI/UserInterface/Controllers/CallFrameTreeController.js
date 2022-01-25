@@ -78,7 +78,7 @@ WI.CallFrameTreeController = class CallFrameTreeController extends WI.Object
                 if (!displayable(callFrame))
                     continue;
 
-                if (callFrame.blackboxed && WI.settings.experimentalCollapseBlackboxedCallFrames.value) {
+                if (callFrame.blackboxed) {
                     blackboxedCallFrameGroupStartIndex ??= i;
                     continue;
                 }
