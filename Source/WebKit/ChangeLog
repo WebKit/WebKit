@@ -1,5 +1,40 @@
 2022-01-24  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r288269. rdar://problem/86943871
+
+    Grant access to GlobalPreferences and GlobalPreferences_m uniformly
+    https://bugs.webkit.org/show_bug.cgi?id=235387
+    <rdar://problem/86943871>
+    
+    Reviewed by Per Arne Vollan.
+    
+    We should allow access to GlobalPreferences_m.plist in the places where we currently
+    allow GlobalPreferences.plist. We are inconsistent about this in our sandboxes, and
+    telemetry shows that we need to provide access.
+    
+    * Resources/SandboxProfiles/ios/com.apple.WebKit.Networking.sb:
+    * Resources/SandboxProfiles/ios/com.apple.WebKit.WebAuthn.sb:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@288269 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-01-19  Brent Fulgham  <bfulgham@apple.com>
+
+            Grant access to GlobalPreferences and GlobalPreferences_m uniformly
+            https://bugs.webkit.org/show_bug.cgi?id=235387
+            <rdar://problem/86943871>
+
+            Reviewed by Per Arne Vollan.
+
+            We should allow access to GlobalPreferences_m.plist in the places where we currently
+            allow GlobalPreferences.plist. We are inconsistent about this in our sandboxes, and
+            telemetry shows that we need to provide access.
+
+            * Resources/SandboxProfiles/ios/com.apple.WebKit.Networking.sb:
+            * Resources/SandboxProfiles/ios/com.apple.WebKit.WebAuthn.sb:
+
+2022-01-24  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r288238. rdar://problem/87272534
 
     WebsiteDataStore.cpp uses switch statements for WebKit::ProcessAccessType enum that fall through ASSERT_NOT_REACHED()
