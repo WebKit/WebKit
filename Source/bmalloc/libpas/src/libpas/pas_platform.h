@@ -32,6 +32,7 @@
 #include <TargetConditionals.h>
 #endif
 
+/* PAS_COMPILER() - the target compiler */
 #define PAS_COMPILER(FEATURE) (defined PAS_COMPILER_##FEATURE  && PAS_COMPILER_##FEATURE)
 
 #if defined(__clang__)

@@ -1,3 +1,42 @@
+2022-01-24  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r288265. rdar://problem/87842725
+
+    [libpas] Disable PAS_ASSERT on Darwin ARM64 (not in ARM64E)
+    https://bugs.webkit.org/show_bug.cgi?id=235349
+    
+    Reviewed by Saam Barati.
+    
+    We have several weak devices which only have ARM64 (not ARM64E).
+    And in such a weak device, PAS_ASSERT affects on performance.
+    By disabling PAS_ASSERT, we got 0.5% improvement in PLT in iPhone 6S.
+    
+    * libpas/src/libpas/pas_config.h:
+    * libpas/src/libpas/pas_config_prefix.h:
+    * libpas/src/libpas/pas_internal_config.h:
+    * libpas/src/libpas/pas_platform.h:
+    * libpas/src/libpas/pas_utils.h:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@288265 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-01-19  Yusuke Suzuki  <ysuzuki@apple.com>
+
+            [libpas] Disable PAS_ASSERT on Darwin ARM64 (not in ARM64E)
+            https://bugs.webkit.org/show_bug.cgi?id=235349
+
+            Reviewed by Saam Barati.
+
+            We have several weak devices which only have ARM64 (not ARM64E).
+            And in such a weak device, PAS_ASSERT affects on performance.
+            By disabling PAS_ASSERT, we got 0.5% improvement in PLT in iPhone 6S.
+
+            * libpas/src/libpas/pas_config.h:
+            * libpas/src/libpas/pas_config_prefix.h:
+            * libpas/src/libpas/pas_internal_config.h:
+            * libpas/src/libpas/pas_platform.h:
+            * libpas/src/libpas/pas_utils.h:
+
 2022-01-07  Alex Christensen  <achristensen@webkit.org>
 
         Unreviewed, reverting r287698.

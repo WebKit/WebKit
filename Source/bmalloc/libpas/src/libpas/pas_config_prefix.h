@@ -23,6 +23,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#ifndef PAS_CONFIG_PREFIX_H
+#define PAS_CONFIG_PREFIX_H
+
+#include "pas_platform.h"
+
 #if defined(ENABLE_PAS_TESTING)
 #define __PAS_ENABLE_TESTING 1
 #else
@@ -54,3 +59,5 @@
 #else
 #define __PAS_RISCV 0
 #endif
+
+#endif /* PAS_CONFIG_PREFIX_H */
