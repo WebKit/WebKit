@@ -28,6 +28,7 @@
 #include "Element.h"
 #include "StyleInvalidator.h"
 #include "StyleScope.h"
+#include <wtf/HashSet.h>
 
 namespace WebCore {
 namespace Style {
@@ -44,7 +45,8 @@ private:
     void invalidateForHasAfterMutation();
     void invalidateAfterChange();
     void checkForSiblingStyleChanges();
-    void invalidateForChangedElement(Element&);
+    using MatchingHasSelectors = HashSet<const CSSSelector*>;
+    void invalidateForChangedElement(Element&, MatchingHasSelectors&);
 
     template<typename Function> void traverseRemovedElements(Function&&);
     template<typename Function> void traverseAddedElements(Function&&);

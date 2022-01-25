@@ -1478,6 +1478,9 @@ webkit.org/b/64861 imported/w3c/web-platform-tests/css/selectors/selectors-dir-s
 webkit.org/b/223497 imported/w3c/web-platform-tests/css/selectors/nesting.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/selectors/xml-class-selector.xml [ ImageOnlyFailure ]
 
+# This test is bit heavy for debug
+[ Debug ] imported/w3c/web-platform-tests/css/selectors/invalidation/has-complexity.html [ Skip ]
+
 # ref for this is under a directory that is not yet imported
 webkit.org/b/209735 imported/w3c/web-platform-tests/css/selectors/root-siblings.htm [ Skip ]
 

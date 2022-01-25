@@ -1,5 +1,61 @@
 2022-01-24  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r288012. rdar://problem/87397176
+
+    [:has() pseudo-class] Avoid O(n^2) in style invalidation with repeated DOM mutations
+    https://bugs.webkit.org/show_bug.cgi?id=234842
+    <rdar://problem/87397176>
+    
+    Reviewed by Dean Jackson.
+    
+    LayoutTests/imported/w3c:
+    
+    * web-platform-tests/css/selectors/invalidation/has-complexity-expected.txt: Added.
+    * web-platform-tests/css/selectors/invalidation/has-complexity.html: Added.
+    
+    Source/WebCore:
+    
+    Use invalidation selectors to check if a given mutation needs :has() invalidation.
+    
+    Test: imported/w3c/web-platform-tests/css/selectors/invalidation/has-complexity.html
+    
+    * css/SelectorChecker.cpp:
+    (WebCore::SelectorChecker::checkOne const):
+    * css/SelectorChecker.h:
+    * style/ChildChangeInvalidation.cpp:
+    (WebCore::Style::ChildChangeInvalidation::invalidateForChangedElement):
+    
+    Invalidate only if the invalidation ruleset has an invalidation selector that matches
+    the added/removed element. Even in that case we only need to invalidate if that selector
+    has not already matched within this parent.
+    
+    As we don't have persistent state that would remember what already matched accross multiple
+    mutations, approximate this by checking if the closest sibling matched.
+    
+    (WebCore::Style::ChildChangeInvalidation::invalidateForHasBeforeMutation):
+    (WebCore::Style::ChildChangeInvalidation::invalidateForHasAfterMutation):
+    * style/ChildChangeInvalidation.h:
+    
+    LayoutTests:
+    
+    * TestExpectations:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@288012 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-01-14  Antti Koivisto  <antti@apple.com>
+
+            [:has() pseudo-class] Avoid O(n^2) in style invalidation with repeated DOM mutations
+            https://bugs.webkit.org/show_bug.cgi?id=234842
+            <rdar://problem/87397176>
+
+            Reviewed by Dean Jackson.
+
+            * web-platform-tests/css/selectors/invalidation/has-complexity-expected.txt: Added.
+            * web-platform-tests/css/selectors/invalidation/has-complexity.html: Added.
+
+2022-01-24  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r287878. rdar://problem/85359803
 
     ::backdrop pseudo element should react to associated element event listeners
