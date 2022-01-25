@@ -1012,6 +1012,17 @@ void MediaPlayerPrivateMediaStreamAVFObjC::paintCurrentFrameInContext(GraphicsCo
     context.drawNativeImage(*image, imageRect.size(), transformedDestRect, imageRect);
 }
 
+std::optional<MediaSampleVideoFrame> MediaPlayerPrivateMediaStreamAVFObjC::videoFrameForCurrentTime()
+{
+    if (m_displayMode == None || !metaDataAvailable())
+        return std::nullopt;
+    if (m_displayMode == PaintItBlack)
+        return std::nullopt;
+    if (!m_imagePainter.mediaSample)
+        return std::nullopt;
+    return m_imagePainter.mediaSample->videoFrame();
+}
+
 DestinationColorSpace MediaPlayerPrivateMediaStreamAVFObjC::colorSpace()
 {
     updateCurrentFrameImage();

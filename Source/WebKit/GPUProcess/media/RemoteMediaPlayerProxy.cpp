@@ -107,7 +107,7 @@ void RemoteMediaPlayerProxy::invalidate()
     }
     m_renderingResourcesRequest = { };
 #if USE(AVFOUNDATION)
-    m_pixelBufferForCurrentTime = nullptr;
+    m_videoFrameForCurrentTime = std::nullopt;
 #endif
 }
 
@@ -866,6 +866,21 @@ bool RemoteMediaPlayerProxy::mediaPlayerPausedOrStalled() const
 void RemoteMediaPlayerProxy::currentTimeChanged(const MediaTime& mediaTime)
 {
     m_webProcessConnection->send(Messages::MediaPlayerPrivateRemote::CurrentTimeChanged(mediaTime, MonotonicTime::now(), !mediaPlayerPausedOrStalled()), m_id);
+}
+
+void RemoteMediaPlayerProxy::videoFrameForCurrentTimeIfChanged(CompletionHandler<void(std::optional<WebCore::MediaSampleVideoFrame>&&, bool)>&& completionHandler)
+{
+    std::optional<WebCore::MediaSampleVideoFrame> result;
+    bool changed = false;
+    std::optional<WebCore::MediaSampleVideoFrame> videoFrame;
+    if (m_player)
+        videoFrame = m_player->videoFrameForCurrentTime();
+    if (!(m_videoFrameForCurrentTime == videoFrame)) {
+        m_videoFrameForCurrentTime = videoFrame;
+        changed = true;
+        result = WTFMove(videoFrame);
+    }
+    completionHandler(WTFMove(result), changed);
 }
 
 void RemoteMediaPlayerProxy::updateCachedState(bool forceCurrentTimeUpdate)

@@ -127,21 +127,6 @@ void RemoteMediaPlayerProxy::colorSpace(CompletionHandler<void(WebCore::Destinat
     completionHandler(m_player->colorSpace());
 }
 
-#if USE(AVFOUNDATION)
-void RemoteMediaPlayerProxy::pixelBufferForCurrentTimeIfChanged(CompletionHandler<void(std::optional<RetainPtr<CVPixelBufferRef>>&&)>&& completionHandler)
-{
-    std::optional<RetainPtr<CVPixelBufferRef>> result;
-    RetainPtr<CVPixelBufferRef> pixelBuffer;
-    if (m_player)
-        pixelBuffer = m_player->pixelBufferForCurrentTime();
-    if (m_pixelBufferForCurrentTime != pixelBuffer) {
-        result = pixelBuffer;
-        m_pixelBufferForCurrentTime = WTFMove(pixelBuffer);
-    }
-    completionHandler(WTFMove(result));
-}
-#endif
-
 } // namespace WebKit
 
 #endif // ENABLE(GPU_PROCESS) && PLATFORM(COCOA)
