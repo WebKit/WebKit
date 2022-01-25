@@ -1,3 +1,42 @@
+2022-01-25  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r287845. rdar://problem/87785288
+
+    REGRESSION(r287683): <dialog> elements inside clipped/overflowed elements are no longer shown
+    https://bugs.webkit.org/show_bug.cgi?id=234984
+    
+    Reviewed by Simon Fraser.
+    
+    Source/WebCore:
+    
+    Paint at the right place by fixing isContainerForPositioned, also fix clip rects.
+    
+    * rendering/RenderLayer.cpp:
+    (WebCore::isContainerForPositioned):
+    (WebCore::RenderLayer::enclosingAncestorForPosition const):
+    (WebCore::accumulateOffsetTowardsAncestor):
+    (WebCore::RenderLayer::calculateClipRects const):
+    
+    LayoutTests:
+    
+    Enable relevant tests. Set the asserting test as Crash instead of Skipping.
+    
+    * TestExpectations:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@287845 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-01-10  Tim Nguyen  <ntim@apple.com>
+
+            REGRESSION(r287683): <dialog> elements inside clipped/overflowed elements are no longer shown
+            https://bugs.webkit.org/show_bug.cgi?id=234984
+
+            Reviewed by Simon Fraser.
+
+            Enable relevant tests. Set the asserting test as Crash instead of Skipping.
+
+            * TestExpectations:
+
 2022-01-25  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r288315. rdar://problem/87601762
