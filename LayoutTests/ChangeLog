@@ -1,5 +1,94 @@
 2022-01-24  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r288264. rdar://problem/87745419
+
+    Align our qualified name validation with the specification
+    https://bugs.webkit.org/show_bug.cgi?id=201699
+    
+    Reviewed by Geoffrey Garen.
+    
+    LayoutTests/imported/w3c:
+    
+    * web-platform-tests/dom/nodes/DOMImplementation-createDocument-expected.txt:
+    * web-platform-tests/dom/nodes/Document-createElementNS-expected.txt:
+    Rebaseline WPT tests now that more checks are passing.
+    
+    Source/WebCore:
+    
+    Align our qualified name validation with the latest specification:
+    - https://dom.spec.whatwg.org/#validate
+    - https://www.w3.org/TR/xml/#NT-NameStartChar
+    
+    No new tests, rebaselined existing tests.
+    
+    * dom/Document.cpp:
+    (WebCore::isValidNameStart):
+    (WebCore::isValidNamePart):
+    
+    LayoutTests:
+    
+    * dom/xhtml/level3/core/canonicalform06-expected.txt:
+    * dom/xhtml/level3/core/infoset06-expected.txt:
+    * dom/xhtml/level3/core/infoset07-expected.txt:
+    * dom/xhtml/level3/core/wellformed01-expected.txt:
+    * dom/xhtml/level3/core/wellformed02-expected.txt:
+    * dom/xhtml/level3/core/wellformed03-expected.txt:
+    * dom/xhtml/level3/core/wellformed04-expected.txt:
+    Rebaseline outdated imported tests.
+    
+    * fast/dom/DOMImplementation/createDocument-namespace-err-expected.txt:
+    * fast/dom/DOMImplementation/createDocument-namespace-err.html:
+    * fast/dom/Document/createAttributeNS-namespace-err-expected.txt:
+    * fast/dom/Document/createAttributeNS-namespace-err.html:
+    * fast/dom/Document/createElement-invalid-names-expected.txt:
+    * fast/dom/Document/createElement-invalid-names.html:
+    * fast/dom/Document/createElementNS-namespace-err-expected.txt:
+    * fast/dom/Document/createElementNS-namespace-err.html:
+    * fast/dom/Element/setAttributeNS-namespace-err-expected.txt:
+    * fast/dom/Element/setAttributeNS-namespace-err.html:
+    * fast/dom/dataset-expected.txt:
+    * fast/dom/dataset-xhtml-expected.txt:
+    * fast/dom/dataset-xhtml.xhtml:
+    * fast/dom/dataset.html:
+    Update and rebaseline outdated WebKit tests.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@288264 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-01-19  Chris Dumez  <cdumez@apple.com>
+
+            Align our qualified name validation with the specification
+            https://bugs.webkit.org/show_bug.cgi?id=201699
+
+            Reviewed by Geoffrey Garen.
+
+            * dom/xhtml/level3/core/canonicalform06-expected.txt:
+            * dom/xhtml/level3/core/infoset06-expected.txt:
+            * dom/xhtml/level3/core/infoset07-expected.txt:
+            * dom/xhtml/level3/core/wellformed01-expected.txt:
+            * dom/xhtml/level3/core/wellformed02-expected.txt:
+            * dom/xhtml/level3/core/wellformed03-expected.txt:
+            * dom/xhtml/level3/core/wellformed04-expected.txt:
+            Rebaseline outdated imported tests.
+
+            * fast/dom/DOMImplementation/createDocument-namespace-err-expected.txt:
+            * fast/dom/DOMImplementation/createDocument-namespace-err.html:
+            * fast/dom/Document/createAttributeNS-namespace-err-expected.txt:
+            * fast/dom/Document/createAttributeNS-namespace-err.html:
+            * fast/dom/Document/createElement-invalid-names-expected.txt:
+            * fast/dom/Document/createElement-invalid-names.html:
+            * fast/dom/Document/createElementNS-namespace-err-expected.txt:
+            * fast/dom/Document/createElementNS-namespace-err.html:
+            * fast/dom/Element/setAttributeNS-namespace-err-expected.txt:
+            * fast/dom/Element/setAttributeNS-namespace-err.html:
+            * fast/dom/dataset-expected.txt:
+            * fast/dom/dataset-xhtml-expected.txt:
+            * fast/dom/dataset-xhtml.xhtml:
+            * fast/dom/dataset.html:
+            Update and rebaseline outdated WebKit tests.
+
+2022-01-24  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r288245. rdar://problem/85878291
 
     Limit the deprecated CSSOMPrimitiveValue to formerly standardized unit types
