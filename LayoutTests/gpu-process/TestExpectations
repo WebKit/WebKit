@@ -936,7 +936,6 @@ js/dom/Promise-reject-large-string.html
 loader/go-back-to-different-window-size.html [ Pass ]
 mathml/presentation/mroot-pref-width.html
 media/media-session/actionHandlerInternalMappings.html
-media/remote-control-command-seek.html [ Pass ]
 media/track/track-css-visible-stroke.html
 media/track/track-in-band-legacy-api.html [ Pass ]
 media/video-canvas-createPattern.html [ Pass ]

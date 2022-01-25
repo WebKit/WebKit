@@ -1,3 +1,15 @@
+2022-01-25  Jon Lee  <jonlee554@gmail.com>
+
+        [ Catalina wk1 ews ] media/remote-control-command-seek.html is a flaky timeout
+        https://bugs.webkit.org/show_bug.cgi?id=215325
+
+        Reviewed by Simon Fraser.
+
+        No longer flaking on Catalina or on iOS bots. Remove expectations.
+        * gpu-process/TestExpectations:
+        * platform/ios/TestExpectations:
+        * platform/mac-wk1/TestExpectations:
+
 2022-01-25  Robert Jenner  <jenner@apple.com>
 
         [CSS Container Queries] Basic parsing support for container-type property
