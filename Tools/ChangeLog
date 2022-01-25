@@ -1,3 +1,15 @@
+2022-01-25  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix the lldb Color formatter
+        https://bugs.webkit.org/show_bug.cgi?id=235613
+
+        Reviewed by Darin Adler.
+        
+        Copy the list of color spaces from ColorSpace.h
+
+        * lldb/lldb_webkit.py:
+        (WebCoreColorProvider._to_string_out_of_line):
+
 2022-01-25  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         UIWKDocumentRequestSpatialAndCurrentSelection should limit context to the editable root of the current selection

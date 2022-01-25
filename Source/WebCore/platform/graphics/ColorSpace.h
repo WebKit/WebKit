@@ -32,6 +32,7 @@
 
 namespace WebCore {
 
+// Tools/lldb/lldb_webkit.py has a copy of this list, which should be kept in sync.
 enum class ColorSpace : uint8_t {
     A98RGB,
     DisplayP3,

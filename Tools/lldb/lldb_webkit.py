@@ -534,28 +534,31 @@ class WebCoreColorProvider:
 
         color_space = self._color_space(rgba_and_flags)
 
-        if color_space == 0:
-            profile = 'a98-rgb'
-        elif color_space == 1:
-            profile = 'display-p3'
-        elif color_space == 2:
-            profile = 'lch'
-        elif color_space == 3:
-            profile = 'lab'
-        elif color_space == 4:
-            profile = 'linear-srgb'
-        elif color_space == 5:
-            profile = 'linear-srgb'
-        elif color_space == 6:
-            profile = 'prophoto-rgb'
-        elif color_space == 7:
-            profile = 'rec2020'
-        elif color_space == 8:
-            profile = 'srgb'
-        elif color_space == 9:
-            profile = 'xyz-d50'
-        else:
-            profile = 'unknown'
+        # From ColorSpace.h.
+        color_spaces = [
+            'A98RGB',
+            'DisplayP3',
+            'ExtendedA98RGB',
+            'ExtendedDisplayP3',
+            'ExtendedLinearSRGB',
+            'ExtendedProPhotoRGB',
+            'ExtendedRec2020',
+            'ExtendedSRGB',
+            'HSL',
+            'HWB',
+            'LCH',
+            'Lab',
+            'LinearSRGB',
+            'OKLCH',
+            'OKLab',
+            'ProPhotoRGB',
+            'Rec2020',
+            'SRGB',
+            'XYZ_D50',
+            'XYZ_D65',
+        ]
+
+        profile = color_spaces[color_space] if color_space < len(color_spaces) else 'unknown'
 
         color_components = out_of_line_components.GetChildMemberWithName('m_components')
         std_array_elems = color_components.GetChildMemberWithName('components').GetChildMemberWithName('__elems_')
