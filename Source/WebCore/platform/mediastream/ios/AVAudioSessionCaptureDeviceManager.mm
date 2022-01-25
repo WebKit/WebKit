@@ -237,12 +237,12 @@ void AVAudioSessionCaptureDeviceManager::activateAudioSession()
 Vector<AVAudioSessionCaptureDevice> AVAudioSessionCaptureDeviceManager::retrieveAudioSessionCaptureDevices() const
 {
     auto *defaultInput = [m_audioSession currentRoute].inputs.firstObject;
-    if (!defaultInput)
-        defaultInput = m_lastDefaultMicrophone.get();
-    else {
+    if (!defaultInput) {
         RELEASE_LOG_INFO(WebRTC, "AVAudioSessionCaptureDeviceManager using previous default input");
+        defaultInput = m_lastDefaultMicrophone.get();
+    } else
         m_lastDefaultMicrophone = defaultInput;
-    }
+
     auto availableInputs = [m_audioSession availableInputs];
 
     Vector<AVAudioSessionCaptureDevice> newAudioDevices;
