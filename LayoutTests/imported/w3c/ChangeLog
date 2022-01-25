@@ -1,3 +1,44 @@
+2022-01-24  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r287835. rdar://problem/87338875
+
+    [Web Animations] getKeyframes() for a CSS Animation should not use computed style for keyframes (part 2)
+    https://bugs.webkit.org/show_bug.cgi?id=235028
+    
+    Reviewed by Antti Koivisto.
+    
+    LayoutTests/imported/w3c:
+    
+    Mark WPT progressions.
+    
+    * web-platform-tests/css/css-animations/KeyframeEffect-getKeyframes.tentative-expected.txt:
+    
+    Source/WebCore:
+    
+    In bug 235008, we already improved the situtation by reading from the StyleProperties
+    associated with the StyleRuleKeyframe for CSS Animations. We're now taking the next
+    step by reading from the matching rules for the provided element.
+    
+    There is one remaining case where we use the computed style: when the CSSValue uses
+    a CSS variable. To fix the css/css-animations/KeyframeEffect-getKeyframes.tentative.html
+    WPT entirely, we'll need to be able to substitute those in the output.
+    
+    * animation/KeyframeEffect.cpp:
+    (WebCore::KeyframeEffect::getKeyframes):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@287835 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-01-10  Antoine Quint  <graouts@webkit.org>
+
+            [Web Animations] getKeyframes() for a CSS Animation should not use computed style for keyframes (part 2)
+            https://bugs.webkit.org/show_bug.cgi?id=235028
+
+            Reviewed by Antti Koivisto.
+
+            Mark WPT progressions.
+
+            * web-platform-tests/css/css-animations/KeyframeEffect-getKeyframes.tentative-expected.txt:
+
 2022-01-09  Antoine Quint  <graouts@webkit.org>
 
         Unreviewed WPT update after https://github.com/web-platform-tests/wpt/pull/32222.

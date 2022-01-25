@@ -17,8 +17,8 @@ PASS KeyframeEffect.getKeyframes() returns expected frames for an animation with
 PASS KeyframeEffect.getKeyframes() returns expected frames for overlapping keyframes
 PASS KeyframeEffect.getKeyframes() returns expected values for animations with filter properties and missing keyframes
 PASS KeyframeEffect.getKeyframes() returns expected values for animation with drop-shadow of filter property
-FAIL KeyframeEffect.getKeyframes() returns expected values for animations with text-shadow properties and missing keyframes assert_equals: value for 'textShadow' on Keyframe #0 should match expected "rgb(0, 0, 0) 1px 1px 2px, rgb(0, 0, 255) 0px 0px 16px, rgb(0, 0, 255) 0px 0px 3.2px" but got "rgb(0, 0, 0) 1px 1px 2px, rgb(0, 0, 255) 0px 0px 16px, rgb(0, 0, 255) 0px 0px 3.200000047683716px"
-FAIL KeyframeEffect.getKeyframes() returns expected values for animations with background-size properties and missing keyframes assert_equals: value for 'backgroundSize' on ComputedKeyframe #0 after updating current style should match expected "30px, 40%, auto" but got "30px"
+PASS KeyframeEffect.getKeyframes() returns expected values for animations with text-shadow properties and missing keyframes
+PASS KeyframeEffect.getKeyframes() returns expected values for animations with background-size properties and missing keyframes
 FAIL KeyframeEffect.getKeyframes() returns expected values for animations with CSS variables as keyframe values assert_equals: value for 'transform' on Keyframe #1 should match expected "translate(100px)" but got "matrix(1, 0, 0, 1, 100, 0)"
 PASS KeyframeEffect.getKeyframes() returns expected values for animations with CSS variables as keyframe values in a shorthand property
 PASS KeyframeEffect.getKeyframes() returns expected values for animations with a CSS variable which is overriden by the value in keyframe
