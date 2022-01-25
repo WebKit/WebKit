@@ -147,14 +147,18 @@ WI.ComputedStyleDetailsPanel = class ComputedStyleDetailsPanel extends WI.StyleD
 
         this.element.appendChild(boxModelSection.element);
 
-        let propertyFiltersElement = WI.ImageUtilities.useSVGSymbol("Images/FilterFieldGlyph.svg", "filter");
+        let propertyFiltersElement = WI.ImageUtilities.useSVGSymbol("Images/Filter.svg", "filter");
         WI.addMouseDownContextMenuHandlers(propertyFiltersElement, (contextMenu) => {
             contextMenu.appendCheckboxItem(WI.UIString("Show All"), () => {
                 this._computedStyleShowAllSetting.value = !this._computedStyleShowAllSetting.value;
+
+                propertyFiltersElement.classList.toggle("active", this._computedStyleShowAllSetting.value || this._computedStylePreferShorthandsSetting.value);
             }, this._computedStyleShowAllSetting.value);
 
             contextMenu.appendCheckboxItem(WI.UIString("Prefer Shorthands"), () => {
                 this._computedStylePreferShorthandsSetting.value = !this._computedStylePreferShorthandsSetting.value;
+
+                propertyFiltersElement.classList.toggle("active", this._computedStyleShowAllSetting.value || this._computedStylePreferShorthandsSetting.value);
             }, this._computedStylePreferShorthandsSetting.value);
         });
 

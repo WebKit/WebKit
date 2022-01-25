@@ -94,7 +94,7 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
         this._otherFiltersNavigationItem.visibilityPriority = WI.NavigationItem.VisibilityPriority.High;
         WI.addMouseDownContextMenuHandlers(this._otherFiltersNavigationItem.element, this._handleOtherFiltersNavigationItemContextMenu.bind(this));
         this._updateOtherFiltersNavigationItemState();
-        this._otherFiltersNavigationItem.element.appendChild(WI.ImageUtilities.useSVGSymbol("Images/Gear.svg", "glyph"));
+        this._otherFiltersNavigationItem.element.appendChild(WI.ImageUtilities.useSVGSymbol("Images/Filter.svg", "glyph"));
 
         this._urlFilterSearchText = null;
         this._urlFilterSearchRegex = null;
