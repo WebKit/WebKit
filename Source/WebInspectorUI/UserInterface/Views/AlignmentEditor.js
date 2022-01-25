@@ -34,6 +34,7 @@ WI.AlignmentEditor = class AlignmentEditor extends WI.Object
 
         this._element = document.createElement("div");
         this._element.className = "alignment-editor";
+        this._element.role = "radiogroup";
     }
 
     // Static
@@ -99,6 +100,8 @@ WI.AlignmentEditor = class AlignmentEditor extends WI.Object
 
             for (let [value, path] of Object.entries(WI.AlignmentEditor._glyphsForType(alignment.type))) {
                 let glyphElement = WI.ImageUtilities.useSVGSymbol(path, "glyph", value);
+                glyphElement.role = "radio";
+                glyphElement.tabIndex = 0;
                 this._element.append(glyphElement);
                 glyphElement.classList.toggle("rotate-left", shouldRotate);
                 glyphElement.addEventListener("click", () => {
@@ -122,12 +125,14 @@ WI.AlignmentEditor = class AlignmentEditor extends WI.Object
     {
         let previousGlyphElement = this._valueToGlyphElement.get(this._alignment.text);
         previousGlyphElement?.classList.remove("selected");
+        previousGlyphElement?.removeAttribute("aria-checked");
     }
 
     _updateSelected()
     {
         let glyphElement = this._valueToGlyphElement.get(this._alignment.text);
         glyphElement?.classList.add("selected");
+        glyphElement?.setAttribute("aria-checked", true);
     }
 };
 
