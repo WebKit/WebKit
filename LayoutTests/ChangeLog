@@ -1,5 +1,57 @@
 2022-01-24  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r287934. rdar://problem/86578732
+
+    Web Inspector: Unhandled exception when moving cursor mid-token after receiving CSS property name completions
+    https://bugs.webkit.org/show_bug.cgi?id=234393
+    <rdar://problem/86578732>
+    
+    Reviewed by Patrick Angle.
+    
+    Source/WebInspectorUI:
+    
+    A faulty check for mid-token completions in `WI.CSSKeywordCompletions.forPartialPropertyName()`, which are still
+    unsupported, prevented an early return and completions were provided unexpectedly. This had knock-on effects in
+    `WI.SpreadsheetTextField` which is not set up to handle cases where the caret is placed within the completion query.
+    Calculating the adjusted caret position could return a negative index and throw an unhandled exception.
+    
+    Web Inspector does not currently explicitly support mid-token completions. See https://webkit.org/b/227157
+    
+    The implementation of fuzzy matching for CSS completions in https://webkit.org/b/234092
+    means that, unhindered, the completion provider for CSS property names _can_ return mid-token completions.
+    Typing a query like `margin`, then moving the caret to the beginning and correcting to `s|margin` will return
+    completions like `[s]croll-[margin]`. Accepting the completion results in a malformed `SpreadsheetTextField.value`
+    by concatenation within the prefix itself. As the user types mid-token, the prefix becomes ambiguous.
+    
+    Fixing the condition in `WI.CSSKeywordCompletions.forPartialPropertyName()` now inhibits unintentional
+    mid-token completions when fuzzy matching is enabled.
+    
+    * UserInterface/Models/CSSKeywordCompletions.js:
+    (WI.CSSKeywordCompletions.forPartialPropertyName):
+    * UserInterface/Views/SpreadsheetTextField.js:
+    (WI.SpreadsheetTextField.prototype._showSuggestionsView):
+    
+    LayoutTests:
+    
+    * inspector/unit-tests/css-keyword-completions-expected.txt:
+    * inspector/unit-tests/css-keyword-completions.html:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@287934 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-01-12  Razvan Caliman  <rcaliman@apple.com>
+
+            Web Inspector: Unhandled exception when moving cursor mid-token after receiving CSS property name completions
+            https://bugs.webkit.org/show_bug.cgi?id=234393
+            <rdar://problem/86578732>
+
+            Reviewed by Patrick Angle.
+
+            * inspector/unit-tests/css-keyword-completions-expected.txt:
+            * inspector/unit-tests/css-keyword-completions.html:
+
+2022-01-24  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r287922. rdar://problem/87455957
 
     [LFC][IFC] Incorrect negative margin handling (both left/right) with RTL inline base direction

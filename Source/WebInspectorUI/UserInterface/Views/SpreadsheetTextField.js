@@ -478,6 +478,8 @@ WI.SpreadsheetTextField = class SpreadsheetTextField
         // border: 1px solid ro|
         //                   rosybrown
         //                   royalblue
+        //
+        // FIXME: Account for the caret being within the token when fixing <webkit.org/b/227157> Styles: Support completions mid-token.
         let adjustedCaretPosition = this._getCaretPosition() - this._completionPrefix.length;
         let caretRect = this._getCaretRect(adjustedCaretPosition);
 
