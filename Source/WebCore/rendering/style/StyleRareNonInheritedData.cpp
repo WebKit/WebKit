@@ -216,6 +216,7 @@ inline StyleRareNonInheritedData::StyleRareNonInheritedData(const StyleRareNonIn
     , hasAttrContent(o.hasAttrContent)
     , isNotFinal(o.isNotFinal)
     , containerType(o.containerType)
+    , containerNames(o.containerNames)
     , columnGap(o.columnGap)
     , rowGap(o.rowGap)
     , offsetDistance(o.offsetDistance)
@@ -328,6 +329,7 @@ bool StyleRareNonInheritedData::operator==(const StyleRareNonInheritedData& o) c
         && hasAttrContent == o.hasAttrContent
         && isNotFinal == o.isNotFinal
         && containerType == o.containerType
+        && containerNames == o.containerNames
         && columnGap == o.columnGap
         && rowGap == o.rowGap
         && offsetDistance == o.offsetDistance

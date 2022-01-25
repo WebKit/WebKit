@@ -1,6 +1,6 @@
 
-FAIL Property container-name has initial value none assert_true: container-name doesn't seem to be supported in the computed style expected true got false
-FAIL Property container-name does not inherit assert_true: expected true got false
+PASS Property container-name has initial value none
+PASS Property container-name does not inherit
 PASS Property container-type has initial value none
 PASS Property container-type does not inherit
 

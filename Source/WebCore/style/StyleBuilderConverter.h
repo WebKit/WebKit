@@ -172,6 +172,7 @@ public:
     static GapLength convertGapLength(BuilderState&, const CSSValue&);
 
     static OffsetRotation convertOffsetRotate(BuilderState&, const CSSValue&);
+    static Vector<AtomString> convertContainerName(BuilderState&, const CSSValue&);
     
 private:
     friend class BuilderCustom;
@@ -1673,6 +1674,21 @@ inline OffsetRotation BuilderConverter::convertOffsetRotate(BuilderState&, const
     }
 
     return OffsetRotation(hasAuto, angleInDegrees);
+}
+
+inline Vector<AtomString> BuilderConverter::convertContainerName(BuilderState&, const CSSValue& value)
+{
+    if (is<CSSPrimitiveValue>(value)) {
+        ASSERT(downcast<CSSPrimitiveValue>(value).valueID() == CSSValueNone);
+        return { };
+    }
+
+    Vector<AtomString> result;
+    if (is<CSSValueList>(value)) {
+        for (auto& item : downcast<CSSValueList>(value))
+            result.append(downcast<CSSPrimitiveValue>(item.get()).stringValue());
+    }
+    return result;
 }
 
 }

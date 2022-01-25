@@ -97,6 +97,7 @@ PASS column-rule-width
 PASS column-span
 PASS column-width
 PASS contain
+PASS container-name
 PASS container-type
 PASS content
 PASS counter-increment

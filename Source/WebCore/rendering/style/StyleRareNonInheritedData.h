@@ -235,6 +235,8 @@ public:
 
     unsigned containerType : 2; // ContainerType
 
+    Vector<AtomString> containerNames;
+
     GapLength columnGap;
     GapLength rowGap;
 

@@ -1,3 +1,15 @@
+2022-01-25  Antti Koivisto  <antti@apple.com>
+
+        [CSS Container Queries] Parsing support for container-name property
+        https://bugs.webkit.org/show_bug.cgi?id=235564
+
+        Reviewed by Dean Jackson.
+
+        * web-platform-tests/css/css-contain/container-queries/container-inheritance-expected.txt:
+        * web-platform-tests/css/css-contain/container-queries/container-name-computed-expected.txt:
+        * web-platform-tests/css/css-contain/container-queries/container-name-parsing-expected.txt:
+        * web-platform-tests/css/cssom/getComputedStyle-detached-subtree-expected.txt:
+
 2022-01-25  Ziran Sun  <zsun@igalia.com>
 
         [css-grid] Fix grid shorthand expansion of initial values

@@ -3627,6 +3627,14 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         }
         case CSSPropertyContainerType:
             return CSSPrimitiveValue::create(style.containerType());
+        case CSSPropertyContainerName: {
+            if (style.containerNames().isEmpty())
+                return cssValuePool.createIdentifierValue(CSSValueNone);
+            auto list = CSSValueList::createSpaceSeparated();
+            for (auto& name : style.containerNames())
+                list->append(cssValuePool.createCustomIdent(name));
+            return list;
+        }
         case CSSPropertyBackfaceVisibility:
             return cssValuePool.createIdentifierValue((style.backfaceVisibility() == BackfaceVisibility::Hidden) ? CSSValueHidden : CSSValueVisible);
         case CSSPropertyWebkitBorderImage:

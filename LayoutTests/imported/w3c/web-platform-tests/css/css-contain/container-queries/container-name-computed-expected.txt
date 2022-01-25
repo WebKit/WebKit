@@ -1,6 +1,6 @@
 
-FAIL Property container-name value 'initial' assert_true: container-name doesn't seem to be supported in the computed style expected true got false
-FAIL Property container-name value 'unset' assert_true: container-name doesn't seem to be supported in the computed style expected true got false
-FAIL Property container-name value 'foo' assert_true: container-name doesn't seem to be supported in the computed style expected true got false
-FAIL Property container-name value 'FoO' assert_true: container-name doesn't seem to be supported in the computed style expected true got false
+PASS Property container-name value 'initial'
+PASS Property container-name value 'unset'
+PASS Property container-name value 'foo'
+PASS Property container-name value 'FoO'
 

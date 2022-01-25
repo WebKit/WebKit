@@ -3801,6 +3801,32 @@ static RefPtr<CSSValue> consumeLineGrid(CSSParserTokenRange& range)
     return consumeCustomIdent(range);
 }
 
+static RefPtr<CSSValue> consumeContainerName(CSSParserTokenRange& range)
+{
+    if (range.peek().id() == CSSValueNone)
+        return consumeIdent(range);
+
+    auto consumeName = [&]() -> RefPtr<CSSValue> {
+        if (range.peek().id() == CSSValueNone)
+            return nullptr;
+        if (auto ident = consumeCustomIdent(range))
+            return ident;
+        if (auto string = consumeString(range))
+            return string;
+        return nullptr;
+    };
+
+    auto list = CSSValueList::createSpaceSeparated();
+    do {
+        auto name = consumeName();
+        if (!name)
+            return nullptr;
+        list->append(name.releaseNonNull());
+    } while (!range.atEnd());
+
+    return list;
+}
+
 static RefPtr<CSSValue> consumeInitialLetter(CSSParserTokenRange& range)
 {
     RefPtr<CSSValue> ident = consumeIdent<CSSValueNormal>(range);
@@ -4654,6 +4680,8 @@ RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, CSS
     case CSSPropertyListStyleType:
         // All the keyword values for the list-style-type property are handled by the CSSParserFastPaths.
         return consumeString(m_range);
+    case CSSPropertyContainerName:
+        return consumeContainerName(m_range);
     default:
         return nullptr;
     }
