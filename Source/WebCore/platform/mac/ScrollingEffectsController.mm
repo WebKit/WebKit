@@ -399,13 +399,13 @@ void ScrollingEffectsController::stopRubberBanding()
     updateRubberBandingState();
 }
 
-bool ScrollingEffectsController::startRubberBandAnimation(const FloatPoint& targetOffset, const FloatSize& initialVelocity, const FloatSize& initialOverscroll)
+bool ScrollingEffectsController::startRubberBandAnimation(const FloatSize& initialVelocity, const FloatSize& initialOverscroll)
 {
     if (m_currentAnimation)
         m_currentAnimation->stop();
 
     m_currentAnimation = makeUnique<ScrollAnimationRubberBand>(*this);
-    bool started = downcast<ScrollAnimationRubberBand>(*m_currentAnimation).startRubberBandAnimation(targetOffset, initialVelocity, initialOverscroll);
+    bool started = downcast<ScrollAnimationRubberBand>(*m_currentAnimation).startRubberBandAnimation(initialVelocity, initialOverscroll);
     LOG_WITH_STREAM(ScrollAnimations, stream << "ScrollingEffectsController::startRubberBandAnimation() - animation " << *m_currentAnimation << " started " << started);
     return started;
 }
@@ -464,8 +464,8 @@ void ScrollingEffectsController::startRubberBandAnimationIfNecessary()
     if (!m_client.allowsVerticalScrolling())
         initialVelocity.setHeight(0);
 
-    LOG_WITH_STREAM(ScrollAnimations, stream << "ScrollingEffectsController::startRubberBandAnimationIfNecessary() - rubberBandAnimationRunning " << m_isAnimatingRubberBand << " stretchAmount " << stretchAmount << " contrainedOffset " << contrainedOffset << " initialVelocity " << initialVelocity);
-    startRubberBandAnimation(contrainedOffset, initialVelocity, stretchAmount);
+    LOG_WITH_STREAM(ScrollAnimations, stream << "ScrollingEffectsController::startRubberBandAnimationIfNecessary() - rubberBandAnimationRunning " << m_isAnimatingRubberBand << " stretchAmount " << stretchAmount << " initialVelocity " << initialVelocity);
+    startRubberBandAnimation(initialVelocity, stretchAmount);
 }
 
 bool ScrollingEffectsController::shouldRubberBandOnSide(BoxSide side) const
