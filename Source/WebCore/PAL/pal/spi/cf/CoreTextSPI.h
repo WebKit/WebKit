@@ -95,6 +95,10 @@ typedef CF_ENUM(CFIndex, CTFontPalette)
 
 typedef const struct __OTSVGTable * OTSVGTableRef;
 
+typedef CF_OPTIONS(uint32_t, CTFontDescriptorOptions) {
+    kCTFontDescriptorOptionThisIsNotARealOption = 0xFFFFFFFF
+};
+
 #endif
 
 WTF_EXTERN_C_BEGIN
@@ -221,5 +225,7 @@ CTFontDescriptorRef CTFontCreatePhysicalFontDescriptorForCharactersWithLanguage(
 bool CTFontIsAppleColorEmoji(CTFontRef);
 CTFontRef CTFontCreateForCharacters(CTFontRef currentFont, const UTF16Char *characters, CFIndex length, CFIndex *coveredLength);
 CGFloat CTFontGetSbixImageSizeForGlyphAndContentsScale(CTFontRef, const CGGlyph, CGFloat contentsScale);
+
+CTFontDescriptorOptions CTFontDescriptorGetOptions(CTFontDescriptorRef);
 
 WTF_EXTERN_C_END
