@@ -3551,7 +3551,7 @@ void HTMLMediaElement::setPlaybackRate(double rate)
 void HTMLMediaElement::updatePlaybackRate()
 {
     double requestedRate = requestedPlaybackRate();
-    if (m_player && potentiallyPlaying() && m_player->rate() != requestedRate)
+    if (m_player && potentiallyPlaying() && m_player->effectiveRate() != requestedRate)
         m_player->setRate(requestedRate);
 }
 
