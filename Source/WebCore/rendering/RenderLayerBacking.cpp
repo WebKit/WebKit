@@ -2790,12 +2790,34 @@ static LayerTraversal traverseVisibleNonCompositedDescendantLayers(RenderLayer& 
     return LayerTraversal::Continue;
 }
 
+static std::optional<bool> intersectsWithAncestor(const RenderLayer& child, const RenderLayer& ancestor, const LayoutRect& ancestorCompositedBounds)
+{
+    // If any layers between child and ancestor are transformed, then adjusting the offset is
+    // insufficient to convert coordinates into ancestor's coordinate space.
+    for (auto* layer = &child; layer != &ancestor; layer = layer->parent()) {
+        if (!layer->canUseOffsetFromAncestor())
+            return std::nullopt;
+    }
+
+    auto offset = child.convertToLayerCoords(&ancestor, { }, RenderLayer::AdjustForColumns);
+    auto overlap = child.overlapBounds();
+    overlap.moveBy(offset);
+    return overlap.intersects(ancestorCompositedBounds);
+}
+
 // Conservative test for having no rendered children.
 bool RenderLayerBacking::isPaintDestinationForDescendantLayers(RenderLayer::PaintedContentRequest& request) const
 {
     bool hasPaintingDescendant = false;
-    traverseVisibleNonCompositedDescendantLayers(m_owningLayer, [&hasPaintingDescendant, &request](const RenderLayer& layer) {
-        hasPaintingDescendant |= layer.isVisuallyNonEmpty(&request);
+    traverseVisibleNonCompositedDescendantLayers(m_owningLayer, [&hasPaintingDescendant, &request, this](const RenderLayer& layer) {
+        RenderLayer::PaintedContentRequest localRequest;
+        if (layer.isVisuallyNonEmpty(&localRequest)) {
+            bool mayIntersect = intersectsWithAncestor(layer, m_owningLayer, compositedBounds()).value_or(true);
+            if (mayIntersect) {
+                hasPaintingDescendant = true;
+                request.setHasPaintedContent();
+            }
+        }
         return (hasPaintingDescendant && request.isSatisfied()) ? LayerTraversal::Stop : LayerTraversal::Continue;
     });
 
