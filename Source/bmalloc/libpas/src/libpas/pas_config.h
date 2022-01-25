@@ -38,6 +38,11 @@
 #endif
 #endif
 
+#if PAS_OS(DARWIN) && __PAS_ARM64 && !__PAS_ARM64E && defined(NDEBUG)
+#define PAS_ENABLE_ASSERT 0
+#else
+#define PAS_ENABLE_ASSERT 1
+#endif
 #define PAS_ENABLE_TESTING __PAS_ENABLE_TESTING
 
 #define PAS_ARM64 __PAS_ARM64
