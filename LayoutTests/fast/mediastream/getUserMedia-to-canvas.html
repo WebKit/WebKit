@@ -1,0 +1,133 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Testing getUserMedia stream to canvas contexts</title>
+        <script src="../../resources/testharness.js"></script>
+        <script src="../../resources/testharnessreport.js"></script>
+        <script src="../../webrtc/routines.js"></script>
+        <script src="../canvas/webgl/resources/webgl-test-utils.js"></script>
+
+        <style type=text/css>
+            canvas { width: 600px }
+        </style>
+    </head>
+    <body>
+        <div id="debuge"></div>
+        <script>
+"use strict";
+const wtu = WebGLTestUtils;
+const width = 643;
+const verifyWidth = 200;
+const debuge = document.getElementById("debuge");
+
+async function createSourceVideo() {
+    let video = document.createElement("video");
+    video.srcObject = await navigator.mediaDevices.getUserMedia({ video: { width: { exact: width } } });
+    await video.play();
+    assert_equals(video.videoWidth, width);
+    return video;
+}
+
+function createVerifyCanvas(video) {
+    let canvas = document.createElement("canvas");
+    canvas.width = verifyWidth;
+    canvas.height = Math.floor(video.videoHeight / video.videoWidth * verifyWidth);
+    return canvas;
+}
+
+function createVerifyWebGLContext(canvas) {
+    let gl = wtu.create3DContext(canvas, { depth: false, stencil: false, antialias: false });
+    gl.viewport(0, 0, canvas.width, canvas.height);
+    let program = wtu.setupTexturedQuad(gl);
+    gl.uniform1i(gl.getUniformLocation(program, "tex"), 0);
+    return gl;
+}
+
+function getFramebufferAsImageData(gl) {
+    let canvas = gl.canvas;
+    let imageData = {
+        width: canvas.width,
+        height: canvas.height,
+        data: new Uint8Array(canvas.width * canvas.height * 4)
+    }
+    gl.readPixels(0, 0, canvas.width, canvas.height, gl.RGBA, gl.UNSIGNED_BYTE, imageData.data);
+    return imageData;
+}
+
+promise_test(async t => {
+    let video = await createSourceVideo();
+    debuge.append(video);
+    let canvas = createVerifyCanvas(video);
+    debuge.appendChild(canvas);
+
+    let ctx = canvas.getContext("2d");
+    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+    assertImageDataContainsMockCameraImage(ctx.getImageData(0, 0, canvas.width, canvas.height));
+    debuge.removeChild(canvas);
+    debuge.removeChild(video);
+
+}, document.title + " via 2DContext");
+
+promise_test(async t => {
+    let video = await createSourceVideo();
+    debuge.append(video);
+    let canvas = createVerifyCanvas(video);
+    debuge.appendChild(canvas);
+
+    let ctx = canvas.getContext("2d");
+    let imageBitmap = await createImageBitmap(video);
+    ctx.drawImage(imageBitmap, 0, 0, canvas.width, canvas.height);
+    assertImageDataContainsMockCameraImage(ctx.getImageData(0, 0, canvas.width, canvas.height));
+    debuge.removeChild(canvas);
+    debuge.removeChild(video);
+}, document.title + " via ImageBitmap to 2DContext");
+
+promise_test(async t => {
+    let video = await createSourceVideo();
+    debuge.append(video);
+    let canvas = createVerifyCanvas(video);
+    debuge.appendChild(canvas);
+
+    let gl = createVerifyWebGLContext(canvas);
+    let texture = gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_2D, texture);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, video);
+    wtu.clearAndDrawUnitQuad(gl, [0, 0, 0, 255]);
+
+    let imageData = getFramebufferAsImageData(gl);
+    assertImageDataContainsMockCameraImage(imageData);
+    debuge.removeChild(canvas);
+    debuge.removeChild(video);
+}, document.title + " via WebGL texture");
+
+promise_test(async t => {
+    let video = await createSourceVideo();
+    debuge.append(video);
+    let canvas = createVerifyCanvas(video);
+    debuge.appendChild(canvas);
+
+    let gl = createVerifyWebGLContext(canvas);
+    let texture = gl.createTexture();
+    let imageBitmap = await createImageBitmap(video);
+    gl.bindTexture(gl.TEXTURE_2D, texture);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, imageBitmap);
+    wtu.clearAndDrawUnitQuad(gl, [0, 0, 0, 255]);
+
+    let imageData = getFramebufferAsImageData(gl);
+    assertImageDataContainsMockCameraImage(imageData);
+    debuge.removeChild(canvas);
+    debuge.removeChild(video);
+}, document.title + " via ImageBitmap to WebGL texture");
+
+        </script>
+    </body>
+</html>
