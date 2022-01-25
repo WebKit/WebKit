@@ -1,5 +1,61 @@
 2022-01-24  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r288039. rdar://problem/79220540
+
+    [iOS] Occasional crash under -[UITargetedPreview initWithView:parameters:target:] when focusing form controls
+    https://bugs.webkit.org/show_bug.cgi?id=235248
+    rdar://79220540
+    
+    Reviewed by Tim Horton and Aditya Keerthi.
+    
+    Source/WebKit:
+    
+    It's possible for `-resizableSnapshotViewFromRect:afterScreenUpdates:withCapInsets:` to return a `nil` snapshot
+    view in the case where a screen update has not been performed yet (among other scenarios). In the case where
+    UIKit returns `nil` when we're creating the targeted preview for the context menu when focusing a select element
+    or file input, we'll crash due to an Objective-C exception in the initializer of UITargetedPreview. Mitigate
+    this by falling back to an empty UIView after requesting the snapshot view to make our code robust against this
+    scenario.
+    
+    Test: KeyboardInputTests.DoNotCrashWhenFocusingSelectWithoutViewSnapshot
+    
+    * UIProcess/ios/WKContentViewInteraction.mm:
+    (createFallbackTargetedPreview):
+    
+    Tools:
+    
+    Add an API test that exercises the crash by forcing `-resizableSnapshotViewFromRect:afterScreenUpdates:withCapInsets:`
+    to return nil via swizzling.
+    
+    * TestWebKitAPI/Tests/ios/KeyboardInputTestsIOS.mm:
+    (TestWebKitAPI::nilResizableSnapshotViewFromRect):
+    (TestWebKitAPI::TEST):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@288039 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-01-14  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+            [iOS] Occasional crash under -[UITargetedPreview initWithView:parameters:target:] when focusing form controls
+            https://bugs.webkit.org/show_bug.cgi?id=235248
+            rdar://79220540
+
+            Reviewed by Tim Horton and Aditya Keerthi.
+
+            It's possible for `-resizableSnapshotViewFromRect:afterScreenUpdates:withCapInsets:` to return a `nil` snapshot
+            view in the case where a screen update has not been performed yet (among other scenarios). In the case where
+            UIKit returns `nil` when we're creating the targeted preview for the context menu when focusing a select element
+            or file input, we'll crash due to an Objective-C exception in the initializer of UITargetedPreview. Mitigate
+            this by falling back to an empty UIView after requesting the snapshot view to make our code robust against this
+            scenario.
+
+            Test: KeyboardInputTests.DoNotCrashWhenFocusingSelectWithoutViewSnapshot
+
+            * UIProcess/ios/WKContentViewInteraction.mm:
+            (createFallbackTargetedPreview):
+
+2022-01-24  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r288034. rdar://problem/86341944
 
     REGRESSION:  ARKit example loads a page full of random symbols instead of a 3D model
