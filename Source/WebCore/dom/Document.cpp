@@ -5220,14 +5220,6 @@ void Document::addListenerTypeIfNeeded(const AtomString& eventType)
         addListenerType(DOMCHARACTERDATAMODIFIED_LISTENER);
     else if (eventType == eventNames().overflowchangedEvent)
         addListenerType(OVERFLOWCHANGED_LISTENER);
-    else if (eventType == eventNames().webkitAnimationStartEvent || eventType == eventNames().animationstartEvent)
-        addListenerType(ANIMATIONSTART_LISTENER);
-    else if (eventType == eventNames().webkitAnimationEndEvent || eventType == eventNames().animationendEvent)
-        addListenerType(ANIMATIONEND_LISTENER);
-    else if (eventType == eventNames().webkitAnimationIterationEvent || eventType == eventNames().animationiterationEvent)
-        addListenerType(ANIMATIONITERATION_LISTENER);
-    else if (eventType == eventNames().webkitTransitionEndEvent || eventType == eventNames().transitionendEvent)
-        addListenerType(TRANSITIONEND_LISTENER);
     else if (eventType == eventNames().beforeloadEvent)
         addListenerType(BEFORELOAD_LISTENER);
     else if (eventType == eventNames().scrollEvent)
@@ -5240,8 +5232,6 @@ void Document::addListenerTypeIfNeeded(const AtomString& eventType)
         addListenerType(FORCEDOWN_LISTENER);
     else if (eventType == eventNames().webkitmouseforceupEvent)
         addListenerType(FORCEUP_LISTENER);
-    else if (eventType == eventNames().resizeEvent)
-        addListenerType(RESIZE_LISTENER);
     else if (eventType == eventNames().focusinEvent)
         addListenerType(FOCUSIN_LISTENER);
     else if (eventType == eventNames().focusoutEvent)
