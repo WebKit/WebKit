@@ -30,6 +30,7 @@
 
 #import "Logging.h"
 #import "ScrollingStateStickyNode.h"
+#import "ScrollingThread.h"
 #import "ScrollingTree.h"
 #import "WebCoreCALayerExtras.h"
 #import <wtf/text/TextStream.h>
@@ -61,6 +62,14 @@ void ScrollingTreeStickyNodeCocoa::applyLayerPositions()
     auto layerPosition = computeLayerPosition();
 
     LOG_WITH_STREAM(Scrolling, stream << "ScrollingTreeStickyNodeCocoa " << scrollingNodeID() << " constrainingRectAtLastLayout " << m_constraints.constrainingRectAtLastLayout() << " last layer pos " << m_constraints.layerPositionAtLastLayout() << " layerPosition " << layerPosition);
+
+#if ENABLE(SCROLLING_THREAD)
+    if (ScrollingThread::isCurrentThread()) {
+        // Match the behavior of ScrollingTreeFrameScrollingNodeMac::repositionScrollingLayers().
+        if (!scrollingTree().isScrollingSynchronizedWithMainThread())
+            [m_layer _web_setLayerTopLeftPosition:CGPointZero];
+    }
+#endif
 
     [m_layer _web_setLayerTopLeftPosition:layerPosition - m_constraints.alignmentOffset()];
 }

@@ -28,6 +28,7 @@
 #if ENABLE(ASYNC_SCROLLING)
 
 #include "ScrollingConstraints.h"
+#include "ScrollingTree.h"
 #include "ScrollingTreeNode.h"
 #include <wtf/RetainPtr.h>
 
@@ -46,10 +47,10 @@ public:
 private:
     ScrollingTreeFixedNode(ScrollingTree&, ScrollingNodeID);
 
-    void commitStateBeforeChildren(const ScrollingStateNode&) override;
-    void applyLayerPositions() override;
+    void commitStateBeforeChildren(const ScrollingStateNode&) final;
+    void applyLayerPositions() final WTF_REQUIRES_LOCK(scrollingTree().treeLock());
 
-    void dumpProperties(WTF::TextStream&, OptionSet<ScrollingStateTreeAsTextBehavior>) const override;
+    void dumpProperties(WTF::TextStream&, OptionSet<ScrollingStateTreeAsTextBehavior>) const final;
 
     FixedPositionViewportConstraints m_constraints;
     RetainPtr<CALayer> m_layer;
