@@ -1,5 +1,46 @@
 2022-01-24  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r288111. rdar://problem/87699260
+
+    [:has() pseudo-class] Disallow nested :has()
+    https://bugs.webkit.org/show_bug.cgi?id=235231
+    
+    Reviewed by Dean Jackson.
+    
+    LayoutTests/imported/w3c:
+    
+    * web-platform-tests/css/selectors/has-argument-with-explicit-scope.tentative-expected.txt:
+    * web-platform-tests/css/selectors/has-basic-expected.txt:
+    * web-platform-tests/css/selectors/parsing/parse-has-expected.txt:
+    
+    Source/WebCore:
+    
+    Nested case ':has(:has(foo))' adds no meaningful capability and would complicate invalidation.
+    See https://github.com/w3c/csswg-drafts/issues/6952 for more details.
+    
+    * css/parser/CSSSelectorParser.cpp:
+    (WebCore::CSSSelectorParser::consumePseudo):
+    
+    Also set m_resistDefaultNamespace like other logical combination pseudo-classes.
+    
+    * css/parser/CSSSelectorParser.h:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@288111 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-01-17  Antti Koivisto  <antti@apple.com>
+
+            [:has() pseudo-class] Disallow nested :has()
+            https://bugs.webkit.org/show_bug.cgi?id=235231
+
+            Reviewed by Dean Jackson.
+
+            * web-platform-tests/css/selectors/has-argument-with-explicit-scope.tentative-expected.txt:
+            * web-platform-tests/css/selectors/has-basic-expected.txt:
+            * web-platform-tests/css/selectors/parsing/parse-has-expected.txt:
+
+2022-01-24  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r288107. rdar://problem/87425066
 
     REGRESSION(r281389): using font-variant-ligatures causes Unicode bidi isolation control characters to render

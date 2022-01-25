@@ -686,7 +686,7 @@ std::unique_ptr<CSSParserSelector> CSSSelectorParser::consumePseudo(CSSParserTok
     if (selector->match() == CSSSelector::PseudoClass) {
         switch (selector->pseudoClassType()) {
         case CSSSelector::PseudoClassNot: {
-            SetForScope<bool> resistDefaultNamespace(m_resistDefaultNamespace, true);
+            SetForScope resistDefaultNamespace(m_resistDefaultNamespace, true);
             auto selectorList = makeUnique<CSSSelectorList>();
             *selectorList = consumeComplexSelectorList(block);
             if (!selectorList->first() || !block.atEnd())
@@ -734,7 +734,7 @@ std::unique_ptr<CSSParserSelector> CSSSelectorParser::consumePseudo(CSSParserTok
         case CSSSelector::PseudoClassWhere:
         case CSSSelector::PseudoClassMatches:
         case CSSSelector::PseudoClassAny: {
-            SetForScope<bool> resistDefaultNamespace(m_resistDefaultNamespace, true);
+            SetForScope resistDefaultNamespace(m_resistDefaultNamespace, true);
             auto selectorList = makeUnique<CSSSelectorList>();
             *selectorList = consumeForgivingComplexSelectorList(block);
             if (!block.atEnd())
@@ -751,6 +751,10 @@ std::unique_ptr<CSSParserSelector> CSSSelectorParser::consumePseudo(CSSParserTok
             return selector;
         }
         case CSSSelector::PseudoClassHas: {
+            if (m_disallowHasPseudoClass)
+                return nullptr;
+            SetForScope resistDefaultNamespace(m_resistDefaultNamespace, true);
+            SetForScope disallowNestedHas(m_disallowHasPseudoClass, true);
             auto selectorList = makeUnique<CSSSelectorList>();
             *selectorList = consumeForgivingRelativeSelectorList(block);
             if (selectorList->isEmpty() || !block.atEnd())
