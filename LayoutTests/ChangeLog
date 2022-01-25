@@ -1,5 +1,46 @@
 2022-01-24  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r288099. rdar://problem/86586969
+
+    Layered @import rules in <style> should be preloaded
+    https://bugs.webkit.org/show_bug.cgi?id=234094
+    <rdar://problem/86586969>
+    
+    Reviewed by Dean Jackson.
+    
+    Source/WebCore:
+    
+    Test: http/tests/loading/preload-css-import-layer.html
+    
+    * html/parser/CSSPreloadScanner.cpp:
+    (WebCore::CSSPreloadScanner::tokenize):
+    (WebCore::hasValidImportConditions):
+    (WebCore::CSSPreloadScanner::emitRule):
+    * html/parser/CSSPreloadScanner.h:
+    
+    Allow @import rule containing layer condition to be preloaded.
+    
+    LayoutTests:
+    
+    * http/tests/loading/preload-css-import-layer-expected.txt: Added.
+    * http/tests/loading/preload-css-import-layer.html: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@288099 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-01-17  Antti Koivisto  <antti@apple.com>
+
+            Layered @import rules in <style> should be preloaded
+            https://bugs.webkit.org/show_bug.cgi?id=234094
+            <rdar://problem/86586969>
+
+            Reviewed by Dean Jackson.
+
+            * http/tests/loading/preload-css-import-layer-expected.txt: Added.
+            * http/tests/loading/preload-css-import-layer.html: Added.
+
+2022-01-24  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r288025. rdar://problem/83407577
 
     gl.texImage2D upload of getUserMedia streams via <video> element fails
