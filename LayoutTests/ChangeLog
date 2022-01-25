@@ -1,5 +1,75 @@
 2022-01-25  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r288267. rdar://problem/87785288
+
+    <dialog> with transformed ancestor asserts under RenderGeometryMap
+    https://bugs.webkit.org/show_bug.cgi?id=235194
+    
+    Reviewed by Antti Koivisto.
+    
+    Source/WebCore:
+    
+    With this change we reparent the RenderLayers of top layer elements under the RenderView's
+    layer. This makes the RenderLayer hierarchy a closer match to the containing block
+    hierarchy, and means that all the existing RenderLayer tree walks that use
+    parent()/firstChild()/nextSibling() traverse the the "top layer" layers as children of the
+    RenderView. This in turn means that the various bits of RenderLayer state that track the
+    state of descendants (e.g. m_hasVisibleDescendant, m_hasSelfPaintingLayerDescendant,
+    m_hasNotIsolatedBlendingDescendants) reflect descendency in the top-layer-aware hierarchy.
+    
+    Note that m_hasVisibleDescendant is about the inherited `visibility` property which follows
+    DOM order, but since we consult it during painting-related tree walks, we want this state to
+    reflect the top-layer-aware tree.
+    
+    The patch adds top-layer-aware helpers on RenderElement to find the parent and next sibling,
+    and uses those when parenting layers.
+    
+    In addition, when the top layer status changes for a RenderLayer, we unparent and
+    re-parent its layer (which in turn should toggle the relevant dirty bits).
+    
+    * rendering/RenderElement.cpp:
+    (WebCore::findNextLayer):
+    (WebCore::layerNextSiblingRespectingTopLayer):
+    (WebCore::addLayers):
+    (WebCore::RenderElement::layerParentRespectingTopLayer const):
+    (WebCore::RenderElement::layerNextSiblingRespectingTopLayer const):
+    (WebCore::RenderElement::insertedIntoTree):
+    (WebCore::RenderElement::willBeRemovedFromTree):
+    (WebCore::RenderElement::findNextLayer const): Deleted.
+    * rendering/RenderElement.h:
+    * rendering/RenderLayer.cpp:
+    (WebCore::RenderLayer::insertOnlyThisLayer):
+    (WebCore::RenderLayer::stackingContext const): No need for the explicit establishesTopLayer() check.
+    (WebCore::RenderLayer::setHasVisibleContent):
+    (WebCore::RenderLayer::dirtyAncestorChainVisibleDescendantStatus):
+    (WebCore::RenderLayer::setAncestorChainHasVisibleDescendant):
+    (WebCore::RenderLayer::enclosingAncestorForPosition const): No need for the explicit establishesTopLayer() check.
+    (WebCore::RenderLayer::paintLayerWithEffects): Ditto
+    (WebCore::RenderLayer::establishesTopLayerWillChange):
+    (WebCore::RenderLayer::establishesTopLayerDidChange):
+    (WebCore::RenderLayer::clipCrossesPaintingBoundary const): No need for the explicit establishesTopLayer() check.
+    (WebCore::RenderLayer::calculateClipRects const): Ditto
+    
+    LayoutTests:
+    
+    * TestExpectations: imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/top-layer-parent-transform.html
+    no longer asserts.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@288267 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-01-19  Simon Fraser  <simon.fraser@apple.com>
+
+            <dialog> with transformed ancestor asserts under RenderGeometryMap
+            https://bugs.webkit.org/show_bug.cgi?id=235194
+
+            Reviewed by Antti Koivisto.
+
+            * TestExpectations: imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/top-layer-parent-transform.html
+            no longer asserts.
+
+2022-01-25  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r287845. rdar://problem/87785288
 
     REGRESSION(r287683): <dialog> elements inside clipped/overflowed elements are no longer shown
