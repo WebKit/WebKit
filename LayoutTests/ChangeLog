@@ -1,5 +1,44 @@
 2022-01-24  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r288015. rdar://problem/84617690
+
+    [LFC][IFC] Incorrect root inline box position when non-empty atomic inline level child box has height: 0px
+    https://bugs.webkit.org/show_bug.cgi?id=235218
+    <rdar://84617690>
+    
+    Reviewed by Antti Koivisto.
+    
+    Source/WebCore:
+    
+    Even if the atomic inline level box itself does not stetch the line box, it may still affect the root inline box position
+    through baseline "syncing" (This is mostly the case with 0 tall boxes as (non-empty) atomic inline boxes in general stretch the line box).
+    
+    Test: fast/block/line-layout/non-empty-inline-block-with-zero-height.html
+    
+    * layout/formattingContexts/inline/InlineLineBoxVerticalAligner.cpp:
+    (WebCore::Layout::LineBoxVerticalAligner::computeRootInlineBoxVerticalPosition const):
+    
+    LayoutTests:
+    
+    * fast/block/line-layout/non-empty-inline-block-with-zero-height-expected.html: Added.
+    * fast/block/line-layout/non-empty-inline-block-with-zero-height.html: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@288015 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-01-14  Alan Bujtas  <zalan@apple.com>
+
+            [LFC][IFC] Incorrect root inline box position when non-empty atomic inline level child box has height: 0px
+            https://bugs.webkit.org/show_bug.cgi?id=235218
+            <rdar://84617690>
+
+            Reviewed by Antti Koivisto.
+
+            * fast/block/line-layout/non-empty-inline-block-with-zero-height-expected.html: Added.
+            * fast/block/line-layout/non-empty-inline-block-with-zero-height.html: Added.
+
+2022-01-24  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r288012. rdar://problem/87397176
 
     [:has() pseudo-class] Avoid O(n^2) in style invalidation with repeated DOM mutations
