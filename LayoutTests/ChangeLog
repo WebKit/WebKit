@@ -1,3 +1,12 @@
+2022-01-25  Robert Jenner  <jenner@apple.com>
+
+        [CSS Container Queries] Basic parsing support for container-type property
+        https://bugs.webkit.org/show_bug.cgi?id=235514
+
+        Uneviewed, rebaseline for iOS.
+
+        * platform/ios/imported/w3c/web-platform-tests/css/cssom/getComputedStyle-detached-subtree-expected.txt:
+
 2022-01-25  Alan Bujtas  <zalan@apple.com>
 
         (REGRESSION r287485) [LFC][IFC] Incorrect RTL content position when intrusive float is present
