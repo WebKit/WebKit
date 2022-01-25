@@ -1473,26 +1473,31 @@ class UnApplyPatchIfRequired(CleanWorkingDirectory):
 
 
 class Trigger(trigger.Trigger):
-    def __init__(self, schedulerNames, include_revision=True, triggers=None, **kwargs):
+    def __init__(self, schedulerNames, include_revision=True, triggers=None, patch=True, pull_request=False, **kwargs):
         self.include_revision = include_revision
         self.triggers = triggers
-        set_properties = self.propertiesToPassToTriggers() or {}
+        set_properties = self.propertiesToPassToTriggers(patch=patch, pull_request=pull_request) or {}
         super(Trigger, self).__init__(schedulerNames=schedulerNames, set_properties=set_properties, **kwargs)
 
-    def propertiesToPassToTriggers(self):
-        properties_to_pass = {
-            'patch_id': properties.Property('patch_id'),
-            'bug_id': properties.Property('bug_id'),
-            'configuration': properties.Property('configuration'),
-            'platform': properties.Property('platform'),
-            'fullPlatform': properties.Property('fullPlatform'),
-            'architecture': properties.Property('architecture'),
-            'owner': properties.Property('owner'),
-        }
-        if self.include_revision:
-            properties_to_pass['ews_revision'] = properties.Property('got_revision')
+    def propertiesToPassToTriggers(self, patch=True, pull_request=False):
+        property_names = [
+            'configuration',
+            'platform',
+            'fullPlatform',
+            'architecture',
+        ]
+        if patch:
+            property_names += ['patch_id', 'bug_id', 'owner']
+        if pull_request:
+            property_names += [
+                'github.base.sha', 'github.head.ref', 'github.head.sha',
+                'github.head.repo.full_name', 'github.number', 'github.title',
+                'repository', 'project', 'owners',
+            ]
         if self.triggers:
-            properties_to_pass['triggers'] = self.triggers
+            property_names.append('triggers')
+
+        properties_to_pass = {prop: properties.Property(prop) for prop in property_names}
         properties_to_pass['retry_count'] = properties.Property('retry_count', default=0)
         return properties_to_pass
 
@@ -1941,7 +1946,11 @@ class CompileWebKit(shell.Compile):
             if triggers or not self.skipUpload:
                 steps_to_add = [ArchiveBuiltProduct(), UploadBuiltProduct(), TransferToS3()]
                 if triggers:
-                    steps_to_add.append(Trigger(schedulerNames=triggers))
+                    steps_to_add.append(Trigger(
+                        schedulerNames=triggers,
+                        patch=bool(self.getProperty('patch_id')),
+                        pull_request=bool(self.getProperty('github.number')),
+                    ))
                 self.build.addStepsAfterCurrentStep(steps_to_add)
 
         return super(CompileWebKit, self).evaluateCommand(cmd)
@@ -2872,7 +2881,13 @@ class AnalyzeLayoutTestsResults(buildstep.BuildStep, BugzillaMixin):
         if triggered_by:
             # Trigger parent build so that it can re-build ToT
             schduler_for_current_queue = self.getProperty('scheduler')
-            self.build.addStepsAfterCurrentStep([Trigger(schedulerNames=triggered_by, include_revision=False, triggers=[schduler_for_current_queue])])
+            self.build.addStepsAfterCurrentStep([Trigger(
+                schedulerNames=triggered_by,
+                include_revision=False,
+                triggers=[schduler_for_current_queue],
+                patch=bool(self.getProperty('patch_id')),
+                pull_request=bool(self.getProperty('github.number')),
+            )])
             self.setProperty('build_summary', message)
             self.finished(SUCCESS)
         else:

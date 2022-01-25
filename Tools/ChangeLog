@@ -1,3 +1,18 @@
+2022-01-24  Jonathan Bedard  <jbedard@apple.com>
+
+        [EWS] Support pull requests in Trigger
+        https://bugs.webkit.org/show_bug.cgi?id=235545
+        <rdar://problem/87992990>
+
+        Reviewed by Aakash Jain.
+
+        * CISupport/ews-build/steps.py:
+        (Trigger.__init__): Pass flags for patch and pull requests.
+        (Trigger.propertiesToPassToTriggers): Pass different properties if Triggered by a
+        pull request verse a patch.
+        (CompileWebKit.evaluateCommand): Pass flags for patch and pull request to Trigger.
+        (AnalyzeLayoutTestsResults.retry_build): Ditto.
+
 2022-01-24  Mark Lam  <mark.lam@apple.com>
 
         Rename Vector and FixedVector::findMatching to findIf to match stl naming.
