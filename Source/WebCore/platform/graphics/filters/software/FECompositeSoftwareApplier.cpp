@@ -145,7 +145,9 @@ bool FECompositeSoftwareApplier::applyArithmetic(FilterImage& input, FilterImage
 
     int length = sourcePixelArray.length();
     ASSERT(length == static_cast<int>(destinationPixelArray.length()));
+#if !HAVE(ARM_NEON_INTRINSICS)
     applyPlatformArithmetic(sourcePixelArray.data(), destinationPixelArray.data(), length, m_effect.k1(), m_effect.k2(), m_effect.k3(), m_effect.k4());
+#endif
     return true;
 }
 

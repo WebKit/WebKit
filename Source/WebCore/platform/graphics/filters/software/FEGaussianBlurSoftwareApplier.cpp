@@ -27,6 +27,9 @@
 #include "FEGaussianBlurSoftwareApplier.h"
 
 #include "FEGaussianBlur.h"
+#if HAVE(ARM_NEON_INTRINSICS)
+#include "FEGaussianBlurNEON.h"
+#endif
 #include "GraphicsContext.h"
 #include "ImageBuffer.h"
 #include "PixelBuffer.h"
