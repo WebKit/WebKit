@@ -570,7 +570,19 @@ std::optional<HorizontalConstraints> LineBuilder::floatConstraints(const InlineR
 
     // Check for intruding floats and adjust logical left/available width for this line accordingly.
     auto floatingContext = FloatingContext { formattingContext(), *floatingState };
-    auto constraints = floatingContext.constraints(toLayoutUnit(lineLogicalRect.top()), toLayoutUnit(lineLogicalRect.bottom()));
+    auto toLogicalFloatPosition = [&] (const auto& constraints) -> FloatingContext::Constraints {
+        if (root().style().isLeftToRightDirection())
+            return constraints;
+        auto logicalConstraints = FloatingContext::Constraints { };
+        auto borderBoxWidth = layoutState().geometryForBox(root()).borderBoxWidth();
+        if (constraints.left)
+            logicalConstraints.right = PointInContextRoot { borderBoxWidth - constraints.left->x, constraints.left->y };
+        if (constraints.right)
+            logicalConstraints.left = PointInContextRoot { borderBoxWidth - constraints.right->x, constraints.right->y };
+        return logicalConstraints;
+    };
+    auto constraints = toLogicalFloatPosition(floatingContext.constraints(toLayoutUnit(lineLogicalRect.top()), toLayoutUnit(lineLogicalRect.bottom())));
+
     // Check if these values actually constrain the line.
     if (constraints.left && constraints.left->x <= lineLogicalRect.left())
         constraints.left = { };
