@@ -54,6 +54,7 @@ class TextStream;
 namespace WebCore {
 
 class FloatPoint;
+class IntRect;
 
 class IntPoint {
 public:
@@ -102,6 +103,8 @@ public:
     }
 
     WEBCORE_EXPORT IntPoint constrainedBetween(const IntPoint& min, const IntPoint& max) const;
+    
+    WEBCORE_EXPORT IntPoint constrainedWithin(const IntRect&) const;
 
     int distanceSquaredToPoint(const IntPoint&) const;
 

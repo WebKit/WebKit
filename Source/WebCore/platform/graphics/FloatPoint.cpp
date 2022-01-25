@@ -29,6 +29,7 @@
 
 #include "AffineTransform.h"
 #include "FloatConversion.h"
+#include "FloatRect.h"
 #include "IntPoint.h"
 #include "TransformationMatrix.h"
 #include <limits>
@@ -47,6 +48,11 @@ FloatPoint FloatPoint::constrainedBetween(const FloatPoint& min, const FloatPoin
         std::max(min.x(), std::min(max.x(), m_x)),
         std::max(min.y(), std::min(max.y(), m_y))
     };
+}
+
+FloatPoint FloatPoint::constrainedWithin(const FloatRect& rect) const
+{
+    return constrainedBetween(rect.minXMinYCorner(), rect.maxXMaxYCorner());
 }
 
 void FloatPoint::normalize()
