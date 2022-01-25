@@ -17,6 +17,8 @@ PASS KeyframeEffect.getKeyframes() returns expected frames for an animation with
 PASS KeyframeEffect.getKeyframes() returns expected frames for an animation with multiple keyframes for the same time, and all with the same easing function
 PASS KeyframeEffect.getKeyframes() returns expected frames for an animation with multiple keyframes for the same time and with different easing functions
 PASS KeyframeEffect.getKeyframes() returns expected frames for an animation with multiple keyframes for the same time and with different but equivalent easing functions
+PASS KeyframeEffect.getKeyframes() returns expected frames for an animation with multiple keyframes for the same time and with different composite operations
+PASS KeyframeEffect.getKeyframes() returns expected frames for an animation with multiple keyframes for the same time and with different easing functions and composite operations
 PASS KeyframeEffect.getKeyframes() returns expected frames for overlapping keyframes
 PASS KeyframeEffect.getKeyframes() returns expected values for animations with filter properties and missing keyframes
 PASS KeyframeEffect.getKeyframes() returns expected values for animation with drop-shadow of filter property

@@ -320,6 +320,14 @@ Vector<Ref<StyleRuleKeyframe>> Resolver::keyframeRulesForName(const AtomString& 
     if (it == m_keyframesRuleMap.end())
         return { };
 
+    auto compositeOperationForKeyframe = [](Ref<StyleRuleKeyframe> keyframe) -> CompositeOperation {
+        if (auto compositeOperationCSSValue = keyframe->properties().getPropertyCSSValue(CSSPropertyAnimationComposition)) {
+            if (auto compositeOperation = toCompositeOperation(*compositeOperationCSSValue))
+                return *compositeOperation;
+        }
+        return Animation::initialCompositeOperation();
+    };
+
     auto timingFunctionForKeyframe = [](Ref<StyleRuleKeyframe> keyframe) -> RefPtr<const TimingFunction> {
         if (auto timingFunctionCSSValue = keyframe->properties().getPropertyCSSValue(CSSPropertyAnimationTimingFunction)) {
             if (auto timingFunction = TimingFunction::createFromCSSValue(*timingFunctionCSSValue))
@@ -342,13 +350,14 @@ Vector<Ref<StyleRuleKeyframe>> Resolver::keyframeRulesForName(const AtomString& 
     auto* keyframesRule = it->value.get();
     auto* keyframes = &keyframesRule->keyframes();
 
-    using KeyframeUniqueKey = std::pair<double, RefPtr<const TimingFunction>>;
+    using KeyframeUniqueKey = std::tuple<double, RefPtr<const TimingFunction>, CompositeOperation>;
     auto hasDuplicateKeys = [&]() -> bool {
         HashSet<KeyframeUniqueKey> uniqueKeyframeKeys;
         for (auto& keyframe : *keyframes) {
+            auto compositeOperation = compositeOperationForKeyframe(keyframe);
             auto timingFunction = uniqueTimingFunctionForKeyframe(keyframe);
             for (auto key : keyframe->keys()) {
-                if (!uniqueKeyframeKeys.add({ key, timingFunction }))
+                if (!uniqueKeyframeKeys.add({ key, timingFunction, compositeOperation }))
                     return true;
             }
         }
@@ -360,19 +369,21 @@ Vector<Ref<StyleRuleKeyframe>> Resolver::keyframeRulesForName(const AtomString& 
 
     // FIXME: If HashMaps could have Ref<> as value types, we wouldn't need
     // to copy the HashMap into a Vector.
-    Vector<Ref<StyleRuleKeyframe>> deduplicatedKeyframes;
     // Merge keyframes with a similar offset and timing function.
+    Vector<Ref<StyleRuleKeyframe>> deduplicatedKeyframes;
     HashMap<KeyframeUniqueKey, RefPtr<StyleRuleKeyframe>> keyframesMap;
     for (auto& originalKeyframe : *keyframes) {
+        auto compositeOperation = compositeOperationForKeyframe(originalKeyframe);
         auto timingFunction = uniqueTimingFunctionForKeyframe(originalKeyframe);
         for (auto key : originalKeyframe->keys()) {
-            if (auto keyframe = keyframesMap.get({ key, timingFunction }))
+            KeyframeUniqueKey uniqueKey { key, timingFunction, compositeOperation };
+            if (auto keyframe = keyframesMap.get(uniqueKey))
                 keyframe->mutableProperties().mergeAndOverrideOnConflict(originalKeyframe->properties());
             else {
                 auto styleRuleKeyframe = StyleRuleKeyframe::create(MutableStyleProperties::create());
                 styleRuleKeyframe.ptr()->setKey(key);
                 styleRuleKeyframe.ptr()->mutableProperties().mergeAndOverrideOnConflict(originalKeyframe->properties());
-                keyframesMap.set({ key, timingFunction }, styleRuleKeyframe.ptr());
+                keyframesMap.set(uniqueKey, styleRuleKeyframe.ptr());
                 deduplicatedKeyframes.append(styleRuleKeyframe);
             }
         }

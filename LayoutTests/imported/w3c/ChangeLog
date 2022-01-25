@@ -1,3 +1,16 @@
+2022-01-25  Antoine Quint  <graouts@webkit.org>
+
+        Deduplication for @keyframes rules should account for animation-composition
+        https://bugs.webkit.org/show_bug.cgi?id=235596
+
+        Reviewed by Dean Jackson.
+
+        Import test recently added in WPT via https://github.com/web-platform-tests/wpt/pull/32495.
+        We pass them all with the source change.
+
+        * web-platform-tests/css/css-animations/KeyframeEffect-getKeyframes.tentative-expected.txt:
+        * web-platform-tests/css/css-animations/KeyframeEffect-getKeyframes.tentative.html:
+
 2022-01-25  Myles C. Maxfield  <mmaxfield@apple.com>
 
         REGRESSION(r281419): iCloud.com Notes web app fonts render incorrectly

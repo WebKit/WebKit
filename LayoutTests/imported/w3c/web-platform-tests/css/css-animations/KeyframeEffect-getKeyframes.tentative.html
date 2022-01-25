@@ -125,6 +125,28 @@
   to   { margin-top: 20px; margin-right: 20px; margin-bottom: 20px; }
 }
 
+@keyframes anim-merge-offset-and-composite {
+  from { color: rgb(0, 0, 0); animation-composition: add; }
+  to   { color: rgb(255, 255, 255); }
+  from { margin-top: 8px; animation-composition: accumulate; }
+  to   { margin-top: 16px; }
+  from { font-size: 16px; animation-composition: add; }
+  to   { font-size: 32px; }
+  from { padding-left: 2px; animation-composition: accumulate; }
+  to   { padding-left: 4px; }
+}
+
+@keyframes anim-merge-offset-easing-and-composite {
+  from { color: rgb(0, 0, 0); animation-composition: add; }
+  to   { color: rgb(255, 255, 255); }
+  from { margin-top: 8px; animation-composition: accumulate; }
+  to   { margin-top: 16px; }
+  from { font-size: 16px; animation-composition: add; animation-timing-function: linear; }
+  to   { font-size: 32px; }
+  from { padding-left: 2px; animation-composition: accumulate; }
+  to   { padding-left: 4px; }
+}
+
 @keyframes anim-overriding {
   from          { padding-top: 50px }
   50%, from     { padding-top: 30px } /* wins: 0% */
@@ -527,6 +549,48 @@ test(t => {
 }, 'KeyframeEffect.getKeyframes() returns expected frames for an ' +
    'animation with multiple keyframes for the same time and with ' +
    'different but equivalent easing functions');
+
+test(t => {
+  const div = addDiv(t);
+  div.style.animation = 'anim-merge-offset-and-composite 100s';
+
+  const frames = getKeyframes(div);
+
+  const expected = [
+    { offset: 0, computedOffset: 0, easing: "ease", composite: "add",
+      color: "rgb(0, 0, 0)", fontSize: "16px" },
+    { offset: 0, computedOffset: 0, easing: "ease", composite: "accumulate",
+      marginTop: "8px", paddingLeft: "2px" },
+    { offset: 1, computedOffset: 1, easing: "ease", composite: "auto",
+      color: "rgb(255, 255, 255)", fontSize: "32px", marginTop: "16px",
+      paddingLeft: "4px" },
+  ];
+  assert_frame_lists_equal(frames, expected);
+}, 'KeyframeEffect.getKeyframes() returns expected frames for an ' +
+   'animation with multiple keyframes for the same time and with ' +
+   'different composite operations');
+
+test(t => {
+  const div = addDiv(t);
+  div.style.animation = 'anim-merge-offset-easing-and-composite 100s';
+
+  const frames = getKeyframes(div);
+
+  const expected = [
+    { offset: 0, computedOffset: 0, easing: "ease", composite: "add",
+      color: "rgb(0, 0, 0)" },
+    { offset: 0, computedOffset: 0, easing: "ease", composite: "accumulate",
+      marginTop: "8px", paddingLeft: "2px" },
+    { offset: 0, computedOffset: 0, easing: "linear", composite: "add",
+      fontSize: "16px" },
+    { offset: 1, computedOffset: 1, easing: "ease", composite: "auto",
+      color: "rgb(255, 255, 255)", fontSize: "32px", marginTop: "16px",
+      paddingLeft: "4px" },
+  ];
+  assert_frame_lists_equal(frames, expected);
+}, 'KeyframeEffect.getKeyframes() returns expected frames for an ' +
+   'animation with multiple keyframes for the same time and with ' +
+   'different easing functions and composite operations');
 
 test(t => {
   const div = addDiv(t);

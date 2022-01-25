@@ -26,6 +26,7 @@
 #pragma once
 
 #include <optional>
+#include <wtf/HashTraits.h>
 
 namespace WebCore {
 
@@ -36,3 +37,7 @@ enum class CompositeOperation : uint8_t { Replace, Add, Accumulate };
 std::optional<CompositeOperation> toCompositeOperation(const CSSValue&);
 
 } // namespace WebCore
+
+namespace WTF {
+template<> struct DefaultHash<WebCore::CompositeOperation> : IntHash<WebCore::CompositeOperation> { };
+} // namespace WTF
