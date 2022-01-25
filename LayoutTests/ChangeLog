@@ -1,3 +1,12 @@
+2022-01-25  Ryan Haddad  <ryanhaddad@apple.com>
+
+        [macOS arm64] fast/scrolling/mac/j-shaped-scroll-rubberband.html is consistently failing
+        https://bugs.webkit.org/show_bug.cgi?id=235605
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations: Mark test as failing on arm64.
+
 2022-01-25  Jon Lee  <jonlee@apple.com>
 
         Mavericks: media/track/track-in-band-legacy-api.html fails intermittently

@@ -1657,6 +1657,8 @@ webkit.org/b/231780 [ Debug ] imported/w3c/web-platform-tests/webrtc/simulcast/b
 
 webkit.org/b/229569 [ Catalina Release ] imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-perfect-negotiation-stress-glare.https.html [ Pass Crash ]
 
+webkit.org/b/235605 [ arm64 ] fast/scrolling/mac/j-shaped-scroll-rubberband.html [ Failure ]
+
 # Plugins
 # FIXME: Remove these tests.
 platform/mac-wk2/plugins/npruntime/remove-property-from-javascript.html [ Skip ]
