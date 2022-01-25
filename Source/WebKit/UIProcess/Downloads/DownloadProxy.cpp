@@ -106,13 +106,12 @@ void DownloadProxy::publishProgress(const URL& URL)
     if (!m_dataStore)
         return;
 
-    SandboxExtension::Handle handle;
-    if (auto createdHandle = SandboxExtension::createHandle(URL.fileSystemPath(), SandboxExtension::Type::ReadWrite))
-        handle = WTFMove(*createdHandle);
-    else
-        ASSERT_NOT_REACHED();
+    auto handle = SandboxExtension::createHandle(URL.fileSystemPath(), SandboxExtension::Type::ReadWrite);
+    ASSERT(handle);
+    if (!handle)
+        return;
 
-    m_dataStore->networkProcess().send(Messages::NetworkProcess::PublishDownloadProgress(m_downloadID, URL, handle), 0);
+    m_dataStore->networkProcess().send(Messages::NetworkProcess::PublishDownloadProgress(m_downloadID, URL, *handle), 0);
 }
 #endif // PLATFORM(COCOA)
 
