@@ -27,7 +27,6 @@ import socket
 
 from email.mime.text import MIMEText
 
-is_test_mode_enabled = os.getenv('BUILDBOT_PRODUCTION') is None
 custom_suffix = '-uat' if os.getenv('BUILDBOT_UAT') else ''
 
 CURRENT_HOSTNAME = socket.gethostname().strip()
@@ -49,8 +48,6 @@ def get_email_ids(category):
 
 
 def send_email(to_emails, subject, text, reference=''):
-    if is_test_mode_enabled:
-        return
     if CURRENT_HOSTNAME != EWS_BUILD_HOSTNAME:
         # Only allow EWS production instance to send emails.
         return
