@@ -52,7 +52,6 @@ private:
     void willDispatchClick(InputElementClickState&) final;
     void didDispatchClick(Event&, const InputElementClickState&) final;
     bool matchesIndeterminatePseudoClass() const final;
-    void willUpdateCheckedness(bool nowChecked) final;
 };
 
 } // namespace WebCore

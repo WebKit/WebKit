@@ -46,35 +46,7 @@ const AtomString& RadioInputType::formControlType() const
 bool RadioInputType::valueMissing(const String&) const
 {
     ASSERT(element());
-    auto& name = element()->name();
-    if (auto* buttons = element()->radioButtonGroups())
-        return !buttons->checkedButtonForGroup(name) && buttons->isInRequiredGroup(*element());
-
-    if (name.isEmpty())
-        return false;
-
-    bool isRequired = false;
-    for (auto& input : inclusiveDescendantsOfType<HTMLInputElement>(element()->rootNode())) {
-        if (!input.isRadioButton() || input.form() || input.name() != name)
-            continue;
-        if (input.checked())
-            return false;
-        if (input.isRequired())
-            isRequired = true;
-    }
-    return isRequired;
-}
-
-void RadioInputType::willUpdateCheckedness(bool nowChecked)
-{
-    if (!nowChecked)
-        return;
-    if (element()->radioButtonGroups()) {
-        // Buttons in RadioButtonGroups are handled in HTMLInputElement::setChecked().
-        return;
-    }
-    if (auto input = element()->checkedRadioButtonForGroup())
-        input->setChecked(false);
+    return element()->isInRequiredRadioButtonGroup() && !element()->checkedRadioButtonForGroup();
 }
 
 String RadioInputType::valueMissingText() const

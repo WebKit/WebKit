@@ -1,3 +1,13 @@
+2022-01-26  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, revert r286855 as it caused form submission issues
+        https://bugs.webkit.org/show_bug.cgi?id=235645
+        <rdar://88020080>
+
+        * web-platform-tests/html/semantics/forms/constraints/form-validation-validity-valid-expected.txt:
+        * web-platform-tests/html/semantics/forms/constraints/form-validation-validity-valueMissing-expected.txt:
+        * web-platform-tests/html/semantics/forms/the-input-element/radio-expected.txt:
+
 2022-01-26  Antti Koivisto  <antti@apple.com>
 
         [CSS Container Queries] container-type property should establish containment for 'size' and 'inline-size' values
