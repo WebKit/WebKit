@@ -152,6 +152,9 @@ private:
 #if PLATFORM(COCOA)
     int m_eventNumber { 0 };
 #endif
+#if PLATFORM(GTK)
+    bool m_hasPreciseDeltas { false };
+#endif
 #if PLATFORM(WPE)
     uint32_t m_buttonState { 0 };
     Vector<struct wpe_input_touch_event_raw> m_touchEvents;

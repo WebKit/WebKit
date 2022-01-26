@@ -335,7 +335,7 @@ void WebAutomationSession::platformSimulateWheelInteraction(WebPageProxy& page, 
     auto* viewWidget = reinterpret_cast<WebKitWebViewBase*>(page.viewWidget());
     FloatSize scrollDelta(delta);
     scrollDelta.scale(1 / static_cast<float>(Scrollbar::pixelsPerLineStep()));
-    webkitWebViewBaseSynthesizeWheelEvent(viewWidget, -scrollDelta.width(), -scrollDelta.height(), locationInViewport.x(), locationInViewport.y(), WheelEventPhase::NoPhase, WheelEventPhase::NoPhase);
+    webkitWebViewBaseSynthesizeWheelEvent(viewWidget, -scrollDelta.width(), -scrollDelta.height(), locationInViewport.x(), locationInViewport.y(), WheelEventPhase::NoPhase, WheelEventPhase::NoPhase, false);
 }
 #endif // ENABLE(WEBDRIVER_WHEEL_INTERACTIONS)
 
