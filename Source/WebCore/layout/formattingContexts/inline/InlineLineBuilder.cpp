@@ -259,7 +259,7 @@ InlineLayoutUnit LineBuilder::inlineItemWidth(const InlineItem& inlineItem, Inli
         auto& inlineTextItem = downcast<InlineTextItem>(inlineItem);
         if (auto contentWidth = inlineTextItem.width())
             return *contentWidth;
-        auto& fontCascade = m_isFirstLine ? inlineTextItem.firstLineStyle().fontCascade() : inlineTextItem.style().fontCascade();
+        auto& fontCascade = isFirstLine() ? inlineTextItem.firstLineStyle().fontCascade() : inlineTextItem.style().fontCascade();
         if (!inlineTextItem.isWhitespace() || InlineTextItem::shouldPreserveSpacesAndTabs(inlineTextItem))
             return TextUtil::width(inlineTextItem, fontCascade, contentLogicalLeft);
         return TextUtil::width(inlineTextItem, fontCascade, inlineTextItem.start(), inlineTextItem.start() + 1, contentLogicalLeft);
@@ -280,7 +280,7 @@ InlineLayoutUnit LineBuilder::inlineItemWidth(const InlineItem& inlineItem, Inli
     if (inlineItem.isInlineBoxStart()) {
         auto logicalWidth = boxGeometry.marginStart() + boxGeometry.borderStart() + boxGeometry.paddingStart().value_or(0);
 #if ENABLE(CSS_BOX_DECORATION_BREAK)
-        auto& style = m_isFirstLine ? inlineItem.firstLineStyle() : inlineItem.style();
+        auto& style = isFirstLine() ? inlineItem.firstLineStyle() : inlineItem.style();
         if (style.boxDecorationBreak() == BoxDecorationBreak::Clone)
             logicalWidth += boxGeometry.borderEnd() + boxGeometry.paddingEnd().value_or(0_lu);
 #endif
@@ -401,7 +401,7 @@ LineBuilder::IntrinsicContent LineBuilder::computedIntrinsicWidth(const InlineIt
 
 void LineBuilder::initialize(const UsedConstraints& lineConstraints, size_t leadingInlineItemIndex, const std::optional<PreviousLine>& previousLine)
 {
-    m_isFirstLine = !previousLine;
+    m_previousLine = previousLine;
     m_floats.clear();
     m_lineSpanningInlineBoxes.clear();
     m_wrapOpportunityList.clear();
@@ -439,7 +439,7 @@ void LineBuilder::initialize(const UsedConstraints& lineConstraints, size_t lead
             m_lineSpanningInlineBoxes.append({ *spanningInlineBox, InlineItem::Type::InlineBoxStart, bidiLevelForOpaqueInlineItem });
     };
     createLineSpanningInlineBoxes();
-    m_line.initialize(m_lineSpanningInlineBoxes);
+    m_line.initialize(m_lineSpanningInlineBoxes, m_previousLine && !m_previousLine->endsWithLineBreak);
 
     m_lineMarginStart = lineConstraints.marginStart;
     m_lineLogicalRect = lineConstraints.logicalRect;
@@ -686,7 +686,7 @@ void LineBuilder::candidateContentForLine(LineCandidate& lineCandidate, size_t c
     for (auto index = currentInlineItemIndex; index < softWrapOpportunityIndex; ++index) {
         auto& inlineItem = m_inlineItems[index];
         auto& style = [&] () -> const RenderStyle& {
-            return m_isFirstLine ? inlineItem.firstLineStyle() : inlineItem.style();
+            return isFirstLine() ? inlineItem.firstLineStyle() : inlineItem.style();
         }();
         if (inlineItem.isFloat()) {
             lineCandidate.floatItem = &inlineItem;
@@ -959,7 +959,7 @@ LineBuilder::Result LineBuilder::handleInlineContent(InlineContentBreaker& inlin
         if (inlineTextItem.isWhitespace())
             return { };
         auto& overflowingRun = candidateRuns.first();
-        if (m_isFirstLine) {
+        if (isFirstLine()) {
             auto& usedStyle = overflowingRun.style;
             auto& style = overflowingRun.inlineItem.style();
             if (&usedStyle != &style && usedStyle.fontCascade() != style.fontCascade()) {
@@ -1060,7 +1060,7 @@ size_t LineBuilder::rebuildLine(const InlineItemRange& layoutRange, const Inline
     ASSERT(!m_wrapOpportunityList.isEmpty());
     // We might already have added floats. They shrink the available horizontal space for the line.
     // Let's just reuse what the line has at this point.
-    m_line.initialize(m_lineSpanningInlineBoxes);
+    m_line.initialize(m_lineSpanningInlineBoxes, m_previousLine && !m_previousLine->endsWithLineBreak);
     auto currentItemIndex = layoutRange.start;
     if (m_partialLeadingTextItem) {
         m_line.append(*m_partialLeadingTextItem, m_partialLeadingTextItem->style(), inlineItemWidth(*m_partialLeadingTextItem, { }));
@@ -1070,7 +1070,7 @@ size_t LineBuilder::rebuildLine(const InlineItemRange& layoutRange, const Inline
     }
     for (; currentItemIndex < layoutRange.end; ++currentItemIndex) {
         auto& inlineItem = m_inlineItems[currentItemIndex];
-        auto& style = m_isFirstLine ? inlineItem.firstLineStyle() : inlineItem.style();
+        auto& style = isFirstLine() ? inlineItem.firstLineStyle() : inlineItem.style();
         m_line.append(inlineItem, style, inlineItemWidth(inlineItem, m_line.contentLogicalRight()));
         if (&inlineItem == &lastInlineItemToAdd)
             return currentItemIndex - layoutRange.start + 1;

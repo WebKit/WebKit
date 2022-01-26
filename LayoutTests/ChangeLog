@@ -1,3 +1,17 @@
+2022-01-26  Alan Bujtas  <zalan@apple.com>
+
+        REGRESSION (r281306): Non-breaking space incorrectly collapsed when webkit-nbsp-mode is set to "space"
+        https://bugs.webkit.org/show_bug.cgi?id=235627
+        <rdar://88004831>
+
+        Reviewed by Antti Koivisto.
+
+        * fast/text/collapsible-non-breaking-space-expected.html: Added.
+        * fast/text/collapsible-non-breaking-space.html: Added.
+        * platform/ios/fast/text/whitespace/nbsp-mode-and-linewraps-expected.txt: A slight behavior change with trailing content trimming, but
+        not generally noticeable and very specific to this non-standard property.
+        * platform/mac/fast/text/whitespace/nbsp-mode-and-linewraps-expected.txt:
+
 2022-01-26  Alexey Shvayka  <ashvayka@apple.com>
 
         globalThis.queueMicrotask() should report thrown exceptions
