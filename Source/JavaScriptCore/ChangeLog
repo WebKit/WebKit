@@ -1,3 +1,15 @@
+2022-01-25  Mark Lam  <mark.lam@apple.com>
+
+        Gardening: build fix for CLoop.
+
+        Not reviewed.
+
+        Code for the USE(LIBPAS_JIT_HEAP) ExecutableMemoryHandle is only built in when
+        ENABLE(JIT).  Update the header to reflect this so that CLoop builds don't try to
+        link against it.
+
+        * jit/ExecutableMemoryHandle.h:
+
 2022-01-25  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Wasm module import should be done in sync when WebAssembly.instantiate gets module
