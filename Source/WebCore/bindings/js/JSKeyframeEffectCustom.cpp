@@ -27,6 +27,10 @@
 #include "JSKeyframeEffect.h"
 
 #include "CSSPropertyNames.h"
+#include "Document.h"
+#include "JSDOMConvertObject.h"
+#include "JSDOMConvertSequences.h"
+#include "JSDOMConvertStrings.h"
 
 namespace WebCore {
 
