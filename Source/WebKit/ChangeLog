@@ -1,3 +1,35 @@
+2022-01-26  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r288629. rdar://problem/88061283
+
+    Build failure - webkit daemons don't need symlink with system content path
+    https://bugs.webkit.org/show_bug.cgi?id=235648
+    
+    Reviewed by Darin Adler.
+    
+    Removed the create symlinks for the WebKit daemons since they are under the symlink for
+    /System/Library/WebKit.framework.
+    
+    * Configurations/adattributiond.xcconfig:
+    * Configurations/webpushd.xcconfig:
+    * WebKit.xcodeproj/project.pbxproj:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@288629 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-01-26  Michael Saboff  <msaboff@apple.com>
+
+            Build failure - webkit daemons don't need symlink with system content path
+            https://bugs.webkit.org/show_bug.cgi?id=235648
+
+            Reviewed by Darin Adler.
+
+            Removed the create symlinks for the WebKit daemons since they are under the symlink for
+            /System/Library/WebKit.framework.
+
+            * Configurations/adattributiond.xcconfig:
+            * Configurations/webpushd.xcconfig:
+            * WebKit.xcodeproj/project.pbxproj:
+
 2022-01-25  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r288593. rdar://problem/87906922

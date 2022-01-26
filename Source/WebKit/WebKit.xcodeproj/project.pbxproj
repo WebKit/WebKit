@@ -14075,7 +14075,6 @@
 			buildPhases = (
 				517B5F57275A8D3E002DC22D /* Sources */,
 				517B5F58275A8D3E002DC22D /* Frameworks */,
-				6577FFC32769C8110011AEC8 /* Create Symlink to Alt Root Path */,
 			);
 			buildRules = (
 			);
@@ -14118,7 +14117,6 @@
 				5C1579D227165B2F00ED5280 /* Sources */,
 				5C1579D427165B2F00ED5280 /* Frameworks */,
 				5C1579D527165B2F00ED5280 /* Process webpushd Entitlements */,
-				6577FFC22769C7EE0011AEC8 /* Create Symlink to Alt Root Path */,
 			);
 			buildRules = (
 			);
@@ -14139,7 +14137,6 @@
 				5CAF7A9D26F93A750003F19E /* Sources */,
 				5CAF7A9F26F93A750003F19E /* Frameworks */,
 				5C1578E6270E129400ED5280 /* Process adattributiond Entitlements */,
-				6577FFC12769C7BB0011AEC8 /* Create Symlink to Alt Root Path */,
 			);
 			buildRules = (
 			);
@@ -15011,60 +15008,6 @@
 			shellScript = "\"${SRCROOT}/Scripts/create-symlink-to-altroot.sh\"\n";
 		};
 		6577FFC02769C7700011AEC8 /* Create Symlink to Alt Root Path */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 8;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			name = "Create Symlink to Alt Root Path";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 1;
-			shellPath = /bin/zsh;
-			shellScript = "\"${SRCROOT}/Scripts/create-symlink-to-altroot.sh\"\n";
-		};
-		6577FFC12769C7BB0011AEC8 /* Create Symlink to Alt Root Path */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 8;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			name = "Create Symlink to Alt Root Path";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 1;
-			shellPath = /bin/zsh;
-			shellScript = "\"${SRCROOT}/Scripts/create-symlink-to-altroot.sh\"\n";
-		};
-		6577FFC22769C7EE0011AEC8 /* Create Symlink to Alt Root Path */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 8;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			name = "Create Symlink to Alt Root Path";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 1;
-			shellPath = /bin/zsh;
-			shellScript = "\"${SRCROOT}/Scripts/create-symlink-to-altroot.sh\"\n";
-		};
-		6577FFC32769C8110011AEC8 /* Create Symlink to Alt Root Path */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 8;
 			files = (
