@@ -27,7 +27,7 @@ import re
 
 from buildbot.scheduler import AnyBranchScheduler, Periodic, Dependent, Triggerable, Nightly
 from buildbot.schedulers.trysched import Try_Userpass
-from buildbot.schedulers.forcesched import ForceScheduler, StringParameter, FixedParameter, CodebaseParameter
+from buildbot.schedulers.forcesched import ForceScheduler, IntParameter, StringParameter, FixedParameter, CodebaseParameter
 from buildbot.worker import Worker
 from buildbot.util import identifiers as buildbot_identifiers
 
@@ -86,22 +86,22 @@ def loadBuilderConfig(c, is_test_mode_enabled=False, master_prefix_path='./'):
             scheduler['userpass'] = [(os.getenv('BUILDBOT_TRY_USERNAME', 'sampleuser'), os.getenv('BUILDBOT_TRY_PASSWORD', 'samplepass'))]
         c['schedulers'].append(schedulerClass(**scheduler))
 
-    if is_test_mode_enabled:
-        forceScheduler = ForceScheduler(
-            name="force_build",
-            buttonName="Force Build",
-            builderNames=[str(builder['name']) for builder in config['builders']],
-            # Disable default enabled input fields: branch, repository, project, additional properties
-            codebases=[CodebaseParameter("",
-                       revision=FixedParameter(name="revision", default=""),
-                       repository=FixedParameter(name="repository", default=""),
-                       project=FixedParameter(name="project", default=""),
-                       branch=FixedParameter(name="branch", default=""))],
-            # Add custom properties needed
-            properties=[StringParameter(name="patch_id", label="Patch attachment id number (not bug number)", required=True, maxsize=7),
-                        StringParameter(name="ews_revision", label="WebKit git sha1 hash to checkout before trying patch (optional)", required=False, maxsize=40)],
-        )
-        c['schedulers'].append(forceScheduler)
+    forceScheduler = ForceScheduler(
+        name='try_build',
+        buttonName='Try Build',
+        reason=StringParameter(name='reason', default='Trying patch', size=20),
+        builderNames=[str(builder['name']) for builder in config['builders']],
+        # Disable default enabled input fields: branch, repository, project, additional properties
+        codebases=[CodebaseParameter('',
+                   revision=FixedParameter(name='revision', default=''),
+                   repository=FixedParameter(name='repository', default=''),
+                   project=FixedParameter(name='project', default=''),
+                   branch=FixedParameter(name='branch', default=''))],
+        # Add custom properties needed
+        properties=[IntParameter(name='patch_id', label='Patch id (not bug number)', required=True, maxsize=6),
+                    StringParameter(name='ews_revision', label='WebKit git hash to checkout before trying patch (optional)', required=False, maxsize=40)],
+    )
+    c['schedulers'].append(forceScheduler)
 
 
 def prioritizeBuilders(buildmaster, builders):
