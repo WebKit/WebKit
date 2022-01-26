@@ -1,3 +1,30 @@
+2022-01-25  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo] Unreviewed test gardening
+
+        * platform/wincairo/TestExpectations:
+        * platform/wincairo/fast/css/text-overflow-ellipsis-bidi-expected.txt:
+        * platform/wincairo/fast/css/word-space-extra-expected.txt:
+        * platform/wincairo/fast/dom/52776-expected.txt:
+        * platform/wincairo/fast/text/atsui-negative-spacing-features-expected.txt:
+        * platform/wincairo/fast/text/atsui-spacing-features-expected.txt:
+        * platform/wincairo/fast/text/basic/015-expected.txt:
+        * platform/wincairo/fast/text/international/003-expected.txt:
+        * platform/wincairo/fast/text/international/bidi-control-chars-treated-as-ZWS-expected.txt:
+        * platform/wincairo/fast/text/international/bidi-linebreak-001-expected.txt:
+        * platform/wincairo/fast/text/international/bidi-linebreak-002-expected.txt:
+        * platform/wincairo/fast/text/international/bidi-linebreak-003-expected.txt:
+        * platform/wincairo/fast/text/international/bidi-neutral-run-expected.txt:
+        * platform/wincairo/fast/text/international/hebrew-vowels-expected.txt:
+        * platform/wincairo/fast/text/international/hindi-whitespace-expected.txt:
+        * platform/wincairo/fast/text/international/thai-baht-space-expected.txt:
+        * platform/wincairo/fast/text/international/unicode-bidi-plaintext-in-textarea-expected.txt:
+        * platform/wincairo/fast/text/midword-break-before-surrogate-pair-2-expected.txt:
+        * platform/wincairo/fast/text/stroking-decorations-expected.txt:
+        * platform/wincairo/fast/text/stroking-expected.txt:
+        * platform/wincairo/fast/text/wbr-expected.txt:
+        * platform/wincairo/fast/text/wide-zero-width-space-expected.txt:
+
 2022-01-25  Robert Jenner  <jenner@apple.com>
 
         WindowServer returned not alive with context:,unresponsive work processor(s)

@@ -19,8 +19,8 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 411x41
           text run at (0,0) width 411: "Lor\x{E9}m\x{200B}ipsum\x{200E}dolor\x{1F}sit"
       RenderBlock {DIV} at (0,78) size 784x42
-        RenderText {#text} at (0,0) size 386x41
-          text run at (0,0) width 386: "Lore\x{301}m\x{200B}ipsum\x{200E}dolor\x{1F}sit"
+        RenderText {#text} at (0,0) size 410x41
+          text run at (0,0) width 410: "Lore\x{301}m\x{200B}ipsum\x{200E}dolor\x{1F}sit"
       RenderBlock {DIV} at (0,120) size 784x42
         RenderText {#text} at (0,0) size 384x41
           text run at (0,0) width 384: "Lor\x{E9}mipsumdolorsit"

@@ -2122,13 +2122,6 @@ webgl/gl-clear-preserve-drawing-buffer-bug.html [ ImageOnlyFailure ]
 
 fast/text/preserved-white-space-with-word-spacing.html [ ImageOnlyFailure ]
 
-dom/xhtml/level3/core/canonicalform06.xhtml [ Failure ]
-dom/xhtml/level3/core/infoset06.xhtml [ Failure ]
-dom/xhtml/level3/core/infoset07.xhtml [ Failure ]
-dom/xhtml/level3/core/wellformed01.xhtml [ Failure ]
-dom/xhtml/level3/core/wellformed02.xhtml [ Failure ]
-dom/xhtml/level3/core/wellformed03.xhtml [ Failure ]
-dom/xhtml/level3/core/wellformed04.xhtml [ Failure ]
 fast/css/contain-invalidate-if-disabled.html [ Failure ]
 
 fast/filter-image/filter-image-blur.html [ ImageOnlyFailure ]
@@ -2140,3 +2133,7 @@ fast/gradients/conic-gradient-alpha-unpremultiplied.html [ ImageOnlyFailure ]
 fast/text/hanging-punctuation-last-rtl.html [ ImageOnlyFailure ]
 fast/text/simple-bidi-word-spacing.html [ ImageOnlyFailure ]
 fast/text/word-spacing-rtl.html [ ImageOnlyFailure ]
+
+fast/text/kerning-with-TextLayout.html [ ImageOnlyFailure ]
+http/tests/lists/list-new-parent-no-sibling-append.html [ Failure ]
+fast/js-promise/js-promise-invalid-context-access.html [ Failure ]
