@@ -164,6 +164,10 @@ if (COMPILER_IS_GCC_OR_CLANG)
             message(FATAL_ERROR "SSE2 support is required to compile WebKit")
         endif ()
     endif ()
+
+    # Makes builds faster. The GCC manual warns about the possibility that the assembler being
+    # used may not support input from a pipe, but in practice the toolchains we support all do.
+    WEBKIT_PREPEND_GLOBAL_COMPILER_FLAGS(-pipe)
 endif ()
 
 if (COMPILER_IS_GCC_OR_CLANG AND NOT MSVC)
