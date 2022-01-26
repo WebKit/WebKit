@@ -84,7 +84,7 @@ bool KeyframeList::hasImplicitKeyframes() const
 
 void KeyframeList::copyKeyframes(KeyframeList& other)
 {
-    for (auto& keyframe : other.keyframes()) {
+    for (auto& keyframe : other) {
         KeyframeValue keyframeValue(keyframe.key(), RenderStyle::clonePtr(*keyframe.style()));
         for (auto propertyId : keyframe.properties())
             keyframeValue.addProperty(propertyId);

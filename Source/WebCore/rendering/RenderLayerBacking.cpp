@@ -3683,9 +3683,7 @@ bool RenderLayerBacking::startAnimation(double timeOffset, const Animation& anim
     KeyframeValueList backdropFilterVector(AnimatedPropertyWebkitBackdropFilter);
 #endif
 
-    size_t numKeyframes = keyframes.size();
-    for (size_t i = 0; i < numKeyframes; ++i) {
-        const KeyframeValue& currentKeyframe = keyframes[i];
+    for (auto& currentKeyframe : keyframes) {
         const RenderStyle* keyframeStyle = currentKeyframe.style();
         double key = currentKeyframe.key();
 

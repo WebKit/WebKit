@@ -647,7 +647,7 @@ auto KeyframeEffect::getKeyframes(Document& document) -> Vector<ComputedKeyframe
     auto oneKeyframeProperties = computedKeyframeList.properties();
     zeroKeyframeProperties.remove(CSSPropertyCustom);
     oneKeyframeProperties.remove(CSSPropertyCustom);
-    for (auto& keyframe : computedKeyframeList.keyframes()) {
+    for (auto& keyframe : computedKeyframeList) {
         if (!keyframe.key()) {
             for (auto cssPropertyId : keyframe.properties())
                 zeroKeyframeProperties.remove(cssPropertyId);
@@ -657,7 +657,7 @@ auto KeyframeEffect::getKeyframes(Document& document) -> Vector<ComputedKeyframe
         }
     }
 
-    for (auto& keyframe : computedKeyframeList.keyframes()) {
+    for (auto& keyframe : computedKeyframeList) {
         auto& style = *keyframe.style();
         auto* keyframeRule = keyframeRuleForKey(keyframe.key());
 
@@ -1050,7 +1050,7 @@ void KeyframeEffect::computeCSSAnimationBlendingKeyframes(const RenderStyle& una
         styleScope->resolver().keyframeStylesForAnimation(*m_target, &unanimatedStyle, resolutionContext, keyframeList);
 
     // Ensure resource loads for all the frames.
-    for (auto& keyframe : keyframeList.keyframes()) {
+    for (auto& keyframe : keyframeList) {
         if (auto* style = const_cast<RenderStyle*>(keyframe.style()))
             Style::loadPendingResources(*style, *document(), m_target.get());
     }
@@ -1094,9 +1094,8 @@ void KeyframeEffect::computedNeedsForcedLayout()
     if (is<CSSTransition>(animation()) || !m_blendingKeyframes.containsProperty(CSSPropertyTransform))
         return;
 
-    size_t numberOfKeyframes = m_blendingKeyframes.size();
-    for (size_t i = 0; i < numberOfKeyframes; i++) {
-        auto* keyframeStyle = m_blendingKeyframes[i].style();
+    for (auto& keyframe : m_blendingKeyframes) {
+        auto* keyframeStyle = keyframe.style();
         if (!keyframeStyle) {
             ASSERT_NOT_REACHED();
             continue;
@@ -1349,14 +1348,12 @@ void KeyframeEffect::computeSomeKeyframesUseStepsTimingFunction()
 {
     m_someKeyframesUseStepsTimingFunction = false;
 
-    size_t numberOfKeyframes = m_blendingKeyframes.size();
-
     // If we're dealing with a CSS Animation and it specifies a default steps() timing function,
     // we need to check that any of the specified keyframes either does not have an explicit timing
     // function or specifies an explicit steps() timing function.
     if (is<CSSAnimation>(animation()) && is<StepsTimingFunction>(downcast<DeclarativeAnimation>(*animation()).backingAnimation().timingFunction())) {
-        for (size_t i = 0; i < numberOfKeyframes; i++) {
-            auto* timingFunction = m_blendingKeyframes[i].timingFunction();
+        for (auto& keyframe : m_blendingKeyframes) {
+            auto* timingFunction = keyframe.timingFunction();
             if (!timingFunction || is<StepsTimingFunction>(timingFunction)) {
                 m_someKeyframesUseStepsTimingFunction = true;
                 return;
@@ -1367,8 +1364,8 @@ void KeyframeEffect::computeSomeKeyframesUseStepsTimingFunction()
 
     // For any other type of animation, we just need to check whether any of the keyframes specify
     // an explicit steps() timing function.
-    for (size_t i = 0; i < numberOfKeyframes; i++) {
-        if (is<StepsTimingFunction>(m_blendingKeyframes[i].timingFunction())) {
+    for (auto& keyframe : m_blendingKeyframes) {
+        if (is<StepsTimingFunction>(keyframe.timingFunction())) {
             m_someKeyframesUseStepsTimingFunction = true;
             return;
         }
@@ -1450,8 +1447,7 @@ void KeyframeEffect::setAnimatedPropertiesInStyle(RenderStyle& targetStyle, doub
         unsigned numberOfKeyframesWithZeroOffset = 0;
         unsigned numberOfKeyframesWithOneOffset = 0;
         Vector<const KeyframeValue*> propertySpecificKeyframes;
-        for (size_t i = 0; i < m_blendingKeyframes.size(); ++i) {
-            auto& keyframe = m_blendingKeyframes[i];
+        for (auto& keyframe : m_blendingKeyframes) {
             auto offset = keyframe.key();
             if (!keyframe.containsProperty(cssPropertyId)) {
                 // If we're dealing with a CSS animation, we consider the first and last keyframes to always have the property listed
@@ -1948,7 +1944,7 @@ bool KeyframeEffect::computeExtentOfTransformAnimation(LayoutRect& bounds) const
         return true;
     };
 
-    for (const auto& keyframe : m_blendingKeyframes.keyframes()) {
+    for (const auto& keyframe : m_blendingKeyframes) {
         const auto* keyframeStyle = keyframe.style();
 
         // FIXME: maybe for declarative animations we always say it's true for the first and last keyframe.
