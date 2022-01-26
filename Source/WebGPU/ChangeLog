@@ -1,3 +1,17 @@
+2022-01-26  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [WebGPU] Make sure WGSLUnitTests can call into WGSL
+        https://bugs.webkit.org/show_bug.cgi?id=235630
+
+        Reviewed by Dean Jackson.
+
+        * WGSL/WGSL.cpp:
+        (WGSL::staticCheck): Apparently /usr/local/include/AssertMacros.h #defines "check"
+        (WGSL::check): Deleted.
+        * WGSL/WGSL.h:
+        * WGSLUnitTests/WGSLUnitTests.mm:
+        (-[WGSLUnitTests testExample]):
+
 2022-01-25  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [WebGPU] Fix WGSLUnitTests build

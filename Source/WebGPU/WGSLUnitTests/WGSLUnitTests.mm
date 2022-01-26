@@ -23,6 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import "config.h"
+#import "WGSL.h"
+
 #import <XCTest/XCTest.h>
 #import <vector>
 #import <wtf/DataLog.h>
@@ -41,6 +44,7 @@
     y.append(2);
     y.append(3);
     XCTAssertEqual(x, y);
+    WGSL::staticCheck("", std::nullopt);
 }
 
 @end

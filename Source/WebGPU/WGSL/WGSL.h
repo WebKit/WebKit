@@ -72,7 +72,7 @@ struct SourceMap {
     // https://sourcemaps.info/spec.html
 };
 
-std::variant<SuccessfulCheck, FailedCheck> check(const String& wgsl, const std::optional<SourceMap>&);
+std::variant<SuccessfulCheck, FailedCheck> staticCheck(const String& wgsl, const std::optional<SourceMap>&);
 
 //
 // Step 2

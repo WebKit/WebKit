@@ -30,9 +30,8 @@
 
 namespace WGSL {
 
-std::variant<SuccessfulCheck, FailedCheck> check(const String&, const std::optional<SourceMap>&)
+std::variant<SuccessfulCheck, FailedCheck> staticCheck(const String&, const std::optional<SourceMap>&)
 {
-    ASSERT_NOT_REACHED();
     return FailedCheck { { }, { } };
 }
 
