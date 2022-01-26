@@ -149,8 +149,10 @@ void BaseAudioSharedUnit::devicesChanged(const Vector<CaptureDevice>& devices)
         return;
 
     auto persistentID = this->persistentID();
-    if (WTF::anyOf(devices, [&persistentID] (auto& device) { return persistentID == device.persistentId(); }))
+    if (WTF::anyOf(devices, [&persistentID] (auto& device) { return persistentID == device.persistentId(); })) {
+        validateOutputDevice(m_outputDeviceID);
         return;
+    }
 
     RELEASE_LOG_ERROR(WebRTC, "BaseAudioSharedUnit::devicesChanged - failing capture, capturing device is missing");
     captureFailed();

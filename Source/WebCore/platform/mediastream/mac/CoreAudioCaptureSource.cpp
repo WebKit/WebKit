@@ -100,6 +100,7 @@ private:
     void stopInternal() final;
     bool isProducingData() const final { return m_ioUnitStarted; }
     void isProducingMicrophoneSamplesChanged() final;
+    void validateOutputDevice(uint32_t deviceID) final;
 
     OSStatus configureSpeakerProc();
     OSStatus configureMicrophoneProc();
@@ -247,6 +248,14 @@ OSStatus CoreAudioSharedUnit::setupAudioUnit()
         RELEASE_LOG_ERROR(WebRTC, "CoreAudioSharedUnit::setupAudioUnit(%p) unable to set vpio unit capture device ID %d, error %d (%.4s)", this, (int)deviceID, (int)err, (char*)&err);
         return err;
     }
+
+    uint32_t defaultOutputDeviceID;
+    err = defaultOutputDevice(&defaultOutputDeviceID);
+    if (!err) {
+        err = PAL::AudioUnitSetProperty(m_ioUnit, kAudioOutputUnitProperty_CurrentDevice, kAudioUnitScope_Global, outputBus, &defaultOutputDeviceID, sizeof(defaultOutputDeviceID));
+        RELEASE_LOG_ERROR_IF(err, WebRTC, "CoreAudioSharedUnit::setupAudioUnit(%p) unable to set vpio unit output device ID %d, error %d (%.4s)", this, (int)defaultOutputDeviceID, (int)err, (char*)&err);
+    }
+    setOutputDeviceID(!err ? defaultOutputDeviceID : 0);
 #endif
 
     err = configureMicrophoneProc();
@@ -533,6 +542,22 @@ void CoreAudioSharedUnit::isProducingMicrophoneSamplesChanged()
     if (!isProducingData())
         return;
     m_verifyCapturingTimer.startRepeating(verifyCaptureInterval());
+}
+
+void CoreAudioSharedUnit::validateOutputDevice(uint32_t currentOutputDeviceID)
+{
+#if PLATFORM(MAC)
+    uint32_t currentDefaultOutputDeviceID = 0;
+    if (auto err = defaultOutputDevice(&currentDefaultOutputDeviceID))
+        return;
+
+    if (!currentDefaultOutputDeviceID || currentOutputDeviceID == currentDefaultOutputDeviceID)
+        return;
+
+    reconfigure();
+#else
+    UNUSED_PARAM(currentOutputDeviceID);
+#endif
 }
 
 void CoreAudioSharedUnit::verifyIsCapturing()
