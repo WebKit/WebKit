@@ -33,7 +33,7 @@ layer at (0,0) size 800x600
                       text run at (371,0) width 42: "Lecture"
             RenderTableRow {TR} at (0,148) size 784x34
               RenderTableCell {TD} at (0,157) size 784x17 [r=4 c=0 rs=1 cs=1]
-                RenderInline {A} at (0,0) size 0x0 [color=#0000EE]
+                RenderInline {A} at (0,0) size 0x18 [color=#0000EE]
                   RenderInline {FONT} at (0,0) size 0x0
                 RenderInline {A} at (0,0) size 60x18 [color=#0000EE]
                   RenderInline {FONT} at (0,0) size 60x16
@@ -53,7 +53,7 @@ layer at (0,0) size 800x600
                       text run at (374,0) width 36: "Exams"
             RenderTableRow {TR} at (0,247) size 784x34
               RenderTableCell {TD} at (0,256) size 784x17 [r=7 c=0 rs=1 cs=1]
-                RenderInline {A} at (0,0) size 0x0 [color=#0000EE]
+                RenderInline {A} at (0,0) size 0x18 [color=#0000EE]
                   RenderInline {FONT} at (0,0) size 0x0
                 RenderInline {A} at (0,0) size 60x18 [color=#0000EE]
                   RenderInline {FONT} at (0,0) size 60x16

@@ -1,3 +1,64 @@
+2022-01-26  Arcady Goldmints-Orlov  <agoldmints@igalia.com>
+
+        [GLIB] Update test expectations and baselines. Unreviewed test gardening.
+        https://bugs.webkit.org/show_bug.cgi?id=235677
+
+        This is mostly rebaselining and updating expectations after r288070
+        enabled LFC integration for complex text.
+
+        * platform/glib/TestExpectations:
+        * platform/glib/css2.1/t1508-c527-font-00-b-expected.txt:
+        * platform/glib/imported/w3c/web-platform-tests/css/css-text/white-space/trailing-space-position-001-expected.txt:
+        * platform/glib/imported/w3c/web-platform-tests/html/dom/elements/the-innertext-and-outertext-properties/getter-expected.txt:
+        * platform/glib/transforms/2d/hindi-rotated-expected.txt:
+        * platform/gtk/TestExpectations:
+        * platform/gtk/fast/block/margin-collapse/045-expected.txt:
+        * platform/gtk/fast/borders/rtl-border-05-expected.txt:
+        * platform/gtk/fast/css/word-space-extra-expected.txt:
+        * platform/gtk/fast/events/updateLayoutForHitTest-expected.txt:
+        * platform/gtk/fast/forms/large-toggle-elements-expected.txt:
+        * platform/gtk/fast/forms/select-writing-direction-natural-expected.txt:
+        * platform/gtk/fast/forms/textarea-placeholder-pseudo-style-expected.txt:
+        * platform/gtk/fast/frames/iframe-scrolling-attribute-expected.txt:
+        * platform/gtk/fast/text/international/unicode-bidi-plaintext-in-textarea-expected.txt:
+        * platform/gtk/fast/text/wbr-expected.txt:
+        * platform/gtk/fast/text/whitespace/nbsp-mode-and-linewraps-expected.txt:
+        * platform/gtk/fast/text/whitespace/pre-wrap-overflow-selection-expected.txt:
+        * platform/gtk/fast/text/whitespace/span-in-word-space-causes-overflow-expected.txt:
+        * platform/gtk/fast/text/word-space-expected.txt:
+        * platform/gtk/fonts/sans-serif-expected.txt:
+        * platform/gtk/fonts/serif-expected.txt:
+        * platform/gtk/imported/w3c/web-platform-tests/html/browsers/sandboxing/sandbox-parse-noscript-expected.txt:
+        * platform/gtk/imported/w3c/web-platform-tests/html/dom/elements/the-innertext-idl-attribute/getter-expected.txt:
+        * platform/gtk/imported/w3c/web-platform-tests/innerText/getter-expected.txt:
+        * platform/gtk/printing/single-line-must-not-be-split-into-two-pages-expected.txt:
+        * platform/gtk/scrollbars/overflow-scrollbar-combinations-expected.txt:
+        * platform/gtk/svg/as-object/object-box-sizing-no-width-height-expected.txt:
+        * platform/gtk/svg/custom/svg-fonts-without-missing-glyph-expected.txt:
+        * platform/gtk/svg/custom/svg-fonts-word-spacing-expected.txt:
+        * platform/gtk/svg/hixie/processing-model/003-expected.txt:
+        * platform/gtk/svg/hixie/processing-model/004-expected.txt:
+        * platform/gtk/tables/mozilla/bugs/bug101674-expected.txt:
+        * platform/gtk/tables/mozilla/bugs/bug113235-1-expected.txt:
+        * platform/gtk/tables/mozilla/bugs/bug113235-2-expected.txt:
+        * platform/gtk/tables/mozilla/bugs/bug1188-expected.txt:
+        * platform/gtk/tables/mozilla/bugs/bug126742-expected.txt:
+        * platform/gtk/tables/mozilla/bugs/bug1318-expected.txt:
+        * platform/gtk/tables/mozilla/bugs/bug14323-expected.txt:
+        * platform/gtk/tables/mozilla/bugs/bug2267-expected.txt:
+        * platform/gtk/tables/mozilla/bugs/bug2947-expected.txt:
+        * platform/gtk/tables/mozilla/bugs/bug2973-expected.txt:
+        * platform/gtk/tables/mozilla/bugs/bug38916-expected.txt:
+        * platform/gtk/tables/mozilla/bugs/bug4527-expected.txt:
+        * platform/gtk/tables/mozilla/core/col_span-expected.txt:
+        * platform/gtk/tables/mozilla/marvin/x_col_width_rel-expected.txt:
+        * platform/gtk/tables/mozilla/marvin/x_colgroup_width_rel-expected.txt:
+        * platform/gtk/tables/mozilla/other/wa_table_thtd_rowspan-expected.txt:
+        * platform/gtk/tables/mozilla/other/wa_table_tr_align-expected.txt:
+        * platform/gtk/tables/mozilla_expected_failures/bugs/bug89315-expected.txt:
+        * platform/gtk/transforms/3d/general/perspective-units-expected.txt:
+        * platform/wpe/TestExpectations:
+
 2022-01-26  Alan Bujtas  <zalan@apple.com>
 
         REGRESSION (r281306): Non-breaking space incorrectly collapsed when webkit-nbsp-mode is set to "space"

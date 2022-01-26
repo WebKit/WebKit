@@ -37,7 +37,7 @@ FAIL \r converted to newline ("<div style='white-space:pre-line'>abc\rdef") asse
 PASS \t converted to space ("<div style='white-space:pre-line'>abc\tdef")
 PASS Whitespace collapses across element boundaries ("<div><span>abc </span> def")
 PASS Whitespace collapses across element boundaries ("<div><span>abc </span><span></span> def")
-FAIL Whitespace collapses across element boundaries ("<div><span>abc </span><span style='white-space:pre'></span> def") assert_equals: expected "abc def" but got "abc  def"
+PASS Whitespace collapses across element boundaries ("<div><span>abc </span><span style='white-space:pre'></span> def")
 PASS Whitespace around <input> should not be collapsed ("<div>abc <input> def")
 PASS Whitespace around inline-block should not be collapsed ("<div>abc <span style='display:inline-block'></span> def")
 FAIL Trailing space at end of inline-block should be collapsed ("<div>abc <span style='display:inline-block'> def </span> ghi") assert_equals: expected "abc def ghi" but got "abc def  ghi"
