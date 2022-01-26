@@ -35,7 +35,6 @@
 #include "EventNames.h"
 #include "KeyframeEffect.h"
 #include "Logging.h"
-#include "PseudoElement.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/text/TextStream.h>
 

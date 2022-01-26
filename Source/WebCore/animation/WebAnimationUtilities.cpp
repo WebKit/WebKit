@@ -33,7 +33,6 @@
 #include "DeclarativeAnimation.h"
 #include "Element.h"
 #include "KeyframeEffectStack.h"
-#include "PseudoElement.h"
 #include "WebAnimation.h"
 
 namespace WebCore {
