@@ -3703,7 +3703,7 @@ void Document::didRemoveAllPendingStylesheet()
     if (RefPtr parser = scriptableDocumentParser())
         parser->executeScriptsWaitingForStylesheetsSoon();
 
-    if (m_gotoAnchorNeededAfterStylesheetsLoad) {
+    if (m_gotoAnchorNeededAfterStylesheetsLoad && view()) {
         // https://html.spec.whatwg.org/multipage/browsing-the-web.html#try-to-scroll-to-the-fragment
         eventLoop().queueTask(TaskSource::Networking, [protectedThis = Ref { *this }, this] {
             RefPtr frameView = view();
