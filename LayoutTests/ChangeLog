@@ -1,3 +1,23 @@
+2022-01-26  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        Streams tests try to call ReadableStream.prototype.pipeThrough.call generically
+        https://bugs.webkit.org/show_bug.cgi?id=235560
+
+        Reviewed by Youenn Fablet.
+
+        ReadableStream methods are nowadays defined to accept only ReadableStream instances.
+        Tests sometimes assert that an exception is thrown. However, the exception being actually thrown is different.
+        Future testharness.js will check the exception and the test will fail.
+
+        * TestExpectations:
+        * platform/win/TestExpectations:
+        * streams/brand-checks-expected.txt: Removed.
+        * streams/brand-checks.html: Removed.
+        * streams/readable-stream-pipeThrough-expected.txt: Removed.
+        * streams/readable-stream-pipeThrough.html: Removed.
+        * streams/reference-implementation/brand-checks-expected.txt: Removed.
+        * streams/reference-implementation/brand-checks.html: Removed.
+
 2022-01-25  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [WinCairo] Unreviewed test gardening

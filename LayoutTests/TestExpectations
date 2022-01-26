@@ -1530,7 +1530,6 @@ http/tests/svg/svg-use-external.html [ Pass Failure ]
 http/tests/loading/text-content-type-with-binary-extension.html [ Pass Failure ]
 
 # Tests that are flakey due to unhandled promise rejection error messages
-webkit.org/b/171094 streams/brand-checks.html [ Pass Failure ]
 webkit.org/b/171094 streams/reference-implementation/abstract-ops.html [ Pass Failure ]
 
 # WPT tests that fail after doing full test repository reimport and need further investigation
