@@ -1842,6 +1842,9 @@ static void webkitWebViewBaseZoomBegin(WebKitWebViewBase* webViewBase, GdkEventS
     auto* event = gtk_gesture_get_last_event(gesture, sequence);
 
     webkitWebViewBaseSynthesizeWheelEvent(webViewBase, event, 0, 0, x, y, WheelEventPhase::Began, WheelEventPhase::NoPhase, true);
+
+    GtkGesture* click = GTK_GESTURE(g_object_get_data(G_OBJECT(webViewBase), "wk-view-multi-press-gesture"));
+    gtk_gesture_set_state(click, GTK_EVENT_SEQUENCE_DENIED);
 }
 
 static void webkitWebViewBaseZoomChanged(WebKitWebViewBase* webViewBase, gdouble scale, GtkGesture* gesture)
@@ -2064,6 +2067,17 @@ static void webkitWebViewBaseConstructed(GObject* object)
     gtk_widget_add_controller(viewWidget, GTK_EVENT_CONTROLLER(gesture));
 #endif
 
+#if USE(GTK4)
+    gesture = gtk_gesture_click_new();
+    gtk_widget_add_controller(viewWidget, GTK_EVENT_CONTROLLER(gesture));
+#else
+    auto* gesture = gtk_gesture_multi_press_new(viewWidget);
+    g_object_set_data_full(G_OBJECT(viewWidget), "wk-view-multi-press-gesture", gesture, g_object_unref);
+#endif
+    gtk_gesture_single_set_touch_only(GTK_GESTURE_SINGLE(gesture), TRUE);
+    g_signal_connect_object(gesture, "pressed", G_CALLBACK(webkitWebViewBaseTouchPress), viewWidget, G_CONNECT_SWAPPED);
+    g_signal_connect_object(gesture, "released", G_CALLBACK(webkitWebViewBaseTouchRelease), viewWidget, G_CONNECT_SWAPPED);
+
     // Touch gestures
 #if USE(GTK4)
     priv->touchGestureGroup = gtk_gesture_zoom_new();
@@ -2080,24 +2094,12 @@ static void webkitWebViewBaseConstructed(GObject* object)
     gesture = gtk_gesture_long_press_new();
     gtk_widget_add_controller(viewWidget, GTK_EVENT_CONTROLLER(gesture));
 #else
-    auto* gesture = gtk_gesture_long_press_new(viewWidget);
+    gesture = gtk_gesture_long_press_new(viewWidget);
     g_object_set_data_full(G_OBJECT(viewWidget), "wk-view-long-press-gesture", gesture, g_object_unref);
 #endif
     gtk_gesture_group(gesture, priv->touchGestureGroup);
     gtk_gesture_single_set_touch_only(GTK_GESTURE_SINGLE(gesture), TRUE);
     g_signal_connect_object(gesture, "pressed", G_CALLBACK(webkitWebViewBaseTouchLongPress), viewWidget, G_CONNECT_SWAPPED);
-
-#if USE(GTK4)
-    gesture = gtk_gesture_click_new();
-    gtk_widget_add_controller(viewWidget, GTK_EVENT_CONTROLLER(gesture));
-#else
-    gesture = gtk_gesture_multi_press_new(viewWidget);
-    g_object_set_data_full(G_OBJECT(viewWidget), "wk-view-multi-press-gesture", gesture, g_object_unref);
-#endif
-    gtk_gesture_group(gesture, priv->touchGestureGroup);
-    gtk_gesture_single_set_touch_only(GTK_GESTURE_SINGLE(gesture), TRUE);
-    g_signal_connect_object(gesture, "pressed", G_CALLBACK(webkitWebViewBaseTouchPress), viewWidget, G_CONNECT_SWAPPED);
-    g_signal_connect_object(gesture, "released", G_CALLBACK(webkitWebViewBaseTouchRelease), viewWidget, G_CONNECT_SWAPPED);
 
 #if USE(GTK4)
     gesture = gtk_gesture_drag_new();
