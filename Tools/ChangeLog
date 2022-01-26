@@ -1,3 +1,21 @@
+2022-01-26  Elliott Williams  <emw@apple.com>
+
+        Support workspace builds in build-webkit
+        https://bugs.webkit.org/show_bug.cgi?id=235550
+
+        On Apple platforms, `build-webkit --use-workspace` now builds using WebKit.xcworkspace and
+        XCBuild. This complements the `USE_WORKSPACE=YES` Make flag added in
+        https://commits.webkit.org/246232@main.
+
+        At this time, there is no guarantee of correctness when building with USE_WORKSPACE=YES, and
+        workspace builds are not checked by builders.
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Scripts/build-webkit: Add --use-workspace flag, correct platform hints in $usage.
+        * Scripts/webkitdirs.pm: Remove canUseXCBuild, the flag it powered is no longer used.
+        (buildXCodeWorkspace): Added.
+
 2022-01-26  Philippe Normand  <pnormand@igalia.com>
 
         [GTK] C++20 warnings in TestConsoleMessage

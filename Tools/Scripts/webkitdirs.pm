@@ -1079,12 +1079,6 @@ sub XcodeStaticAnalyzerOption()
     return "RUN_CLANG_STATIC_ANALYZER=YES";
 }
 
-sub canUseXCBuild()
-{
-    determineXcodeVersion();
-    return (eval "v$xcodeVersion" ge v11.4)
-}
-
 my $passedConfiguration;
 my $searchedForPassedConfiguration;
 sub determinePassedConfiguration
@@ -2111,6 +2105,15 @@ sub buildXCodeProject($$@)
         }
     }
     return system "xcodebuild", "-project", "$project.xcodeproj", @extraOptions;
+}
+
+sub buildXCodeWorkspace($$$@)
+{
+    my ($workspace, $scheme, $clean, @extraOptions) = @_;
+    if ($clean) {
+        push @extraOptions, "clean";
+    }
+    return system "xcodebuild", "-workspace", $workspace, "-scheme", $scheme, @extraOptions;
 }
 
 sub getVisualStudioToolset()
