@@ -1,3 +1,15 @@
+2022-01-26  J Pascoe  <j_pascoe@apple.com>
+
+        [WebAuthn] Add authenticator attachment used during authentication to credential payload
+        https://bugs.webkit.org/show_bug.cgi?id=235621
+        rdar://86538235
+
+        Reviewed by Dean Jackson.
+
+        Modify webauthn layout tests to check for new authenticatorAttachment field.        
+        * http/wpt/webauthn/public-key-credential-get-success-local.https.html:
+        * http/wpt/webauthn/resources/util.js:
+
 2022-01-26  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Data detectors sometimes show up in the wrong place when resizing images with Live Text
