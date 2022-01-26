@@ -1,3 +1,25 @@
+2022-01-26  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Move leftover JSValue inlines from JSString.h to JSCJSValueInlines.h
+        https://bugs.webkit.org/show_bug.cgi?id=235662
+
+        Reviewed by Yusuke Suzuki.
+
+        JSString.h still contains some JSValue inlines from years past
+        (including toBoolean which doesn't overtly relate to strings at all);
+        these can be moved to JSCJSValueInlines.h without issue.
+
+        * runtime/JSCJSValueInlines.h:
+        (JSC::JSValue::toBoolean const): Added.
+        (JSC::JSValue::toString const): Added.
+        (JSC::JSValue::toStringOrNull const): Added.
+        (JSC::JSValue::toWTFString const): Added.
+        * runtime/JSString.h:
+        (JSC::JSValue::toBoolean const): Deleted.
+        (JSC::JSValue::toString const): Deleted.
+        (JSC::JSValue::toStringOrNull const): Deleted.
+        (JSC::JSValue::toWTFString const): Deleted.
+
 2022-01-26  Alexey Shvayka  <ashvayka@apple.com>
 
         globalThis.queueMicrotask() should report thrown exceptions
