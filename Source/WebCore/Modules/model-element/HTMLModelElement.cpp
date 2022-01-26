@@ -344,6 +344,14 @@ void HTMLModelElement::defaultEventHandler(Event& event)
         dragDidEnd(mouseEvent);
 }
 
+LayoutPoint HTMLModelElement::flippedLocationInElementForMouseEvent(MouseEvent& event)
+{
+    LayoutUnit flippedY { event.offsetY() };
+    if (auto* renderModel = dynamicDowncast<RenderModel>(renderer()))
+        flippedY = renderModel->paddingBoxHeight() - flippedY;
+    return { LayoutUnit(event.offsetX()), flippedY };
+}
+
 void HTMLModelElement::dragDidStart(MouseEvent& event)
 {
     ASSERT(!m_isDragging);
@@ -357,7 +365,7 @@ void HTMLModelElement::dragDidStart(MouseEvent& event)
     m_isDragging = true;
 
     if (m_modelPlayer)
-        m_modelPlayer->handleMouseDown(event.pageLocation(), event.timeStamp());
+        m_modelPlayer->handleMouseDown(flippedLocationInElementForMouseEvent(event), event.timeStamp());
 }
 
 void HTMLModelElement::dragDidChange(MouseEvent& event)
@@ -367,7 +375,7 @@ void HTMLModelElement::dragDidChange(MouseEvent& event)
     event.setDefaultHandled();
 
     if (m_modelPlayer)
-        m_modelPlayer->handleMouseMove(event.pageLocation(), event.timeStamp());
+        m_modelPlayer->handleMouseMove(flippedLocationInElementForMouseEvent(event), event.timeStamp());
 }
 
 void HTMLModelElement::dragDidEnd(MouseEvent& event)
@@ -383,7 +391,7 @@ void HTMLModelElement::dragDidEnd(MouseEvent& event)
     m_isDragging = false;
 
     if (m_modelPlayer)
-        m_modelPlayer->handleMouseUp(event.pageLocation(), event.timeStamp());
+        m_modelPlayer->handleMouseUp(flippedLocationInElementForMouseEvent(event), event.timeStamp());
 }
 
 // MARK: - Camera support.

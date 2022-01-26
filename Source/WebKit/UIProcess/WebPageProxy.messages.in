@@ -588,9 +588,9 @@ messages -> WebPageProxy {
 #endif
 #if ENABLE(ARKIT_INLINE_PREVIEW_MAC)
     ModelElementDidCreatePreview(URL url, String uuid, WebCore::FloatSize size) -> (Expected<std::pair<String, uint32_t>, WebCore::ResourceError> result) Async
-    HandleMouseDownForModelElement(String uuid, WebCore::LayoutPoint locationInPageCoordinates, MonotonicTime timestamp)
-    HandleMouseMoveForModelElement(String uuid, WebCore::LayoutPoint locationInPageCoordinates, MonotonicTime timestamp)
-    HandleMouseUpForModelElement(String uuid, WebCore::LayoutPoint locationInPageCoordinates, MonotonicTime timestamp)
+    HandleMouseDownForModelElement(String uuid, WebCore::LayoutPoint flippedLocationInElement, MonotonicTime timestamp)
+    HandleMouseMoveForModelElement(String uuid, WebCore::LayoutPoint flippedLocationInElement, MonotonicTime timestamp)
+    HandleMouseUpForModelElement(String uuid, WebCore::LayoutPoint flippedLocationInElement, MonotonicTime timestamp)
 #endif
 #if ENABLE(ARKIT_INLINE_PREVIEW)
     ModelElementGetCamera(struct WebKit::ModelIdentifier modelIdentifier) -> (Expected<WebCore::HTMLModelElementCamera, WebCore::ResourceError> result) Async

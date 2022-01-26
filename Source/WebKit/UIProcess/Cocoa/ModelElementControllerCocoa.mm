@@ -215,22 +215,22 @@ RetainPtr<ASVInlinePreview> ModelElementController::previewForUUID(const String&
     return m_inlinePreviews.get(uuid);
 }
 
-void ModelElementController::handleMouseDownForModelElement(const String& uuid, const WebCore::LayoutPoint& locationInPageCoordinates, MonotonicTime timestamp)
+void ModelElementController::handleMouseDownForModelElement(const String& uuid, const WebCore::LayoutPoint& flippedLocationInElement, MonotonicTime timestamp)
 {
     if (auto preview = previewForUUID(uuid))
-        [preview mouseDownAtLocation:CGPointMake(locationInPageCoordinates.x().toFloat(), locationInPageCoordinates.y().toFloat()) timestamp:timestamp.secondsSinceEpoch().value()];
+        [preview mouseDownAtLocation:CGPointMake(flippedLocationInElement.x().toFloat(), flippedLocationInElement.y().toFloat()) timestamp:timestamp.secondsSinceEpoch().value()];
 }
 
-void ModelElementController::handleMouseMoveForModelElement(const String& uuid, const WebCore::LayoutPoint& locationInPageCoordinates, MonotonicTime timestamp)
+void ModelElementController::handleMouseMoveForModelElement(const String& uuid, const WebCore::LayoutPoint& flippedLocationInElement, MonotonicTime timestamp)
 {
     if (auto preview = previewForUUID(uuid))
-        [preview mouseDraggedAtLocation:CGPointMake(locationInPageCoordinates.x().toFloat(), locationInPageCoordinates.y().toFloat()) timestamp:timestamp.secondsSinceEpoch().value()];
+        [preview mouseDraggedAtLocation:CGPointMake(flippedLocationInElement.x().toFloat(), flippedLocationInElement.y().toFloat()) timestamp:timestamp.secondsSinceEpoch().value()];
 }
 
-void ModelElementController::handleMouseUpForModelElement(const String& uuid, const WebCore::LayoutPoint& locationInPageCoordinates, MonotonicTime timestamp)
+void ModelElementController::handleMouseUpForModelElement(const String& uuid, const WebCore::LayoutPoint& flippedLocationInElement, MonotonicTime timestamp)
 {
     if (auto preview = previewForUUID(uuid))
-        [preview mouseUpAtLocation:CGPointMake(locationInPageCoordinates.x().toFloat(), locationInPageCoordinates.y().toFloat()) timestamp:timestamp.secondsSinceEpoch().value()];
+        [preview mouseUpAtLocation:CGPointMake(flippedLocationInElement.x().toFloat(), flippedLocationInElement.y().toFloat()) timestamp:timestamp.secondsSinceEpoch().value()];
 }
 
 #endif

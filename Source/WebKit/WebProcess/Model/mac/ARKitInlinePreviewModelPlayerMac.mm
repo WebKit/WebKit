@@ -185,22 +185,22 @@ bool ARKitInlinePreviewModelPlayerMac::supportsMouseInteraction()
     return false;
 }
 
-void ARKitInlinePreviewModelPlayerMac::handleMouseDown(const LayoutPoint& locationInPageCoordinates, MonotonicTime timestamp)
+void ARKitInlinePreviewModelPlayerMac::handleMouseDown(const LayoutPoint& flippedLocationInElement, MonotonicTime timestamp)
 {
     if (auto* page = this->page())
-        page->send(Messages::WebPageProxy::HandleMouseDownForModelElement([m_inlinePreview uuid].UUIDString, locationInPageCoordinates, timestamp));
+        page->send(Messages::WebPageProxy::HandleMouseDownForModelElement([m_inlinePreview uuid].UUIDString, flippedLocationInElement, timestamp));
 }
 
-void ARKitInlinePreviewModelPlayerMac::handleMouseMove(const LayoutPoint& locationInPageCoordinates, MonotonicTime timestamp)
+void ARKitInlinePreviewModelPlayerMac::handleMouseMove(const LayoutPoint& flippedLocationInElement, MonotonicTime timestamp)
 {
     if (auto* page = this->page())
-        page->send(Messages::WebPageProxy::HandleMouseMoveForModelElement([m_inlinePreview uuid].UUIDString, locationInPageCoordinates, timestamp));
+        page->send(Messages::WebPageProxy::HandleMouseMoveForModelElement([m_inlinePreview uuid].UUIDString, flippedLocationInElement, timestamp));
 }
 
-void ARKitInlinePreviewModelPlayerMac::handleMouseUp(const LayoutPoint& locationInPageCoordinates, MonotonicTime timestamp)
+void ARKitInlinePreviewModelPlayerMac::handleMouseUp(const LayoutPoint& flippedLocationInElement, MonotonicTime timestamp)
 {
     if (auto* page = this->page())
-        page->send(Messages::WebPageProxy::HandleMouseUpForModelElement([m_inlinePreview uuid].UUIDString, locationInPageCoordinates, timestamp));
+        page->send(Messages::WebPageProxy::HandleMouseUpForModelElement([m_inlinePreview uuid].UUIDString, flippedLocationInElement, timestamp));
 }
 
 }

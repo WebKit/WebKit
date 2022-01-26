@@ -11011,19 +11011,19 @@ void WebPageProxy::modelElementDidCreatePreview(const URL& url, const String& uu
     modelElementController()->modelElementDidCreatePreview(url, uuid, size, WTFMove(completionHandler));
 }
 
-void WebPageProxy::handleMouseDownForModelElement(const String& uuid, const WebCore::LayoutPoint& locationInPageCoordinates, MonotonicTime timestamp)
+void WebPageProxy::handleMouseDownForModelElement(const String& uuid, const WebCore::LayoutPoint& flippedLocationInElement, MonotonicTime timestamp)
 {
-    modelElementController()->handleMouseDownForModelElement(uuid, locationInPageCoordinates, timestamp);
+    modelElementController()->handleMouseDownForModelElement(uuid, flippedLocationInElement, timestamp);
 }
 
-void WebPageProxy::handleMouseMoveForModelElement(const String& uuid, const WebCore::LayoutPoint& locationInPageCoordinates, MonotonicTime timestamp)
+void WebPageProxy::handleMouseMoveForModelElement(const String& uuid, const WebCore::LayoutPoint& flippedLocationInElement, MonotonicTime timestamp)
 {
-    modelElementController()->handleMouseMoveForModelElement(uuid, locationInPageCoordinates, timestamp);
+    modelElementController()->handleMouseMoveForModelElement(uuid, flippedLocationInElement, timestamp);
 }
 
-void WebPageProxy::handleMouseUpForModelElement(const String& uuid, const WebCore::LayoutPoint& locationInPageCoordinates, MonotonicTime timestamp)
+void WebPageProxy::handleMouseUpForModelElement(const String& uuid, const WebCore::LayoutPoint& flippedLocationInElement, MonotonicTime timestamp)
 {
-    modelElementController()->handleMouseUpForModelElement(uuid, locationInPageCoordinates, timestamp);
+    modelElementController()->handleMouseUpForModelElement(uuid, flippedLocationInElement, timestamp);
 }
 #endif
 

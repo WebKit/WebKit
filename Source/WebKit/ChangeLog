@@ -1,3 +1,29 @@
+2022-01-26  Antoine Quint  <graouts@webkit.org>
+
+        [Model] Mouse interaction for <model> is flipped in the y-axis
+        https://bugs.webkit.org/show_bug.cgi?id=235363
+        <rdar://problem/87772557>
+
+        Reviewed by Dean Jackson.
+
+        The mouse coordinates consumed by the ARQL APIs are in the coordinates
+        of the <model> element with the y-axis flipped, so let's label them
+        as such.
+
+        * UIProcess/Cocoa/ModelElementControllerCocoa.mm:
+        (WebKit::ModelElementController::handleMouseDownForModelElement):
+        (WebKit::ModelElementController::handleMouseMoveForModelElement):
+        (WebKit::ModelElementController::handleMouseUpForModelElement):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::handleMouseDownForModelElement):
+        (WebKit::WebPageProxy::handleMouseMoveForModelElement):
+        (WebKit::WebPageProxy::handleMouseUpForModelElement):
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/Model/mac/ARKitInlinePreviewModelPlayerMac.mm:
+        (WebKit::ARKitInlinePreviewModelPlayerMac::handleMouseDown):
+        (WebKit::ARKitInlinePreviewModelPlayerMac::handleMouseMove):
+        (WebKit::ARKitInlinePreviewModelPlayerMac::handleMouseUp):
+
 2022-01-26  Alexander Mikhaylenko  <alexm@gnome.org>
 
         [GTK] REGRESSION: Touch scrolling is broken

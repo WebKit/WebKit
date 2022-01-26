@@ -137,6 +137,8 @@ private:
     void dragDidChange(MouseEvent&);
     void dragDidEnd(MouseEvent&);
 
+    LayoutPoint flippedLocationInElementForMouseEvent(MouseEvent&);
+
     void setAnimationIsPlaying(bool, DOMPromiseDeferred<void>&&);
 
     URL m_sourceURL;
