@@ -88,6 +88,14 @@ bool InlineTextItem::isZeroWidthSpaceSeparator() const
     return !m_length || (m_length == 1 && inlineTextBox().content()[start()] == zeroWidthSpace); 
 }
 
+bool InlineTextItem::isCollapsibleNonBreakingSpace() const
+{
+    if (style().nbspMode() != NBSPMode::Space)
+        return false;
+    // Note that this text item may be longer than just one character.
+    return m_length && inlineTextBox().content()[start()] == noBreakSpace;
+}
+
 bool InlineTextItem::shouldPreserveSpacesAndTabs(const InlineTextItem& inlineTextItem)
 {
     ASSERT(inlineTextItem.isWhitespace());
