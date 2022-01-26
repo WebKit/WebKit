@@ -144,9 +144,6 @@
         "CustomToJSObject": {
             "contextsAllowed": ["interface"]
         },
-        "CustomEnabled": {
-            "contextsAllowed": ["interface", "dictionary", "enum", "attribute", "operation", "constant", "iterable"]
-        },
         "DOMJIT": {
             "contextsAllowed": ["interface", "attribute", "operation"],
             "values": ["", "ReadDOM", "Getter"],

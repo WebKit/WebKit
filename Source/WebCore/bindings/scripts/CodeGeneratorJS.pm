@@ -1994,8 +1994,7 @@ sub NeedsRuntimeCheck
         || $context->extendedAttributes->{EnabledBySetting}
         || $context->extendedAttributes->{EnabledByQuirk}
         || $context->extendedAttributes->{DisabledByQuirk}
-        || $context->extendedAttributes->{SecureContext}
-        || $context->extendedAttributes->{CustomEnabled};
+        || $context->extendedAttributes->{SecureContext};
 }
 
 sub NeedsRuntimeReadWriteCheck
@@ -4044,13 +4043,6 @@ sub GenerateRuntimeEnableConditionalString
         foreach my $flag (@flags) {
             push(@conjuncts, "downcast<Document>(jsCast<JSDOMGlobalObject*>(" . $globalObjectPtr . ")->scriptExecutionContext())->settingsValues()." . ToMethodName($flag));
         }
-    }
-
-    if ($context->extendedAttributes->{CustomEnabled}) {
-        assert("CustomEnabled can only be used by interfaces only exposed to the Window") if $interface->extendedAttributes->{Exposed} && $interface->extendedAttributes->{Exposed} ne "Window";
-
-        my $className = "JS" . $interface->type->name;
-        push(@conjuncts, "${className}" . $codeGenerator->WK_ucfirst($context->name) . "IsEnabled()");
     }
 
     if ($context->extendedAttributes->{EnabledByQuirk}) {
