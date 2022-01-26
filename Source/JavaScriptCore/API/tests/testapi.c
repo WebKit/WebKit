@@ -1622,7 +1622,7 @@ int main(int argc, char* argv[])
         failed = 1;
     } else
         printf("PASS: Correctly returned null for invalid JSON data.\n");
-    JSValueRef exception;
+    JSValueRef exception = NULL;
     JSStringRef str = JSValueCreateJSONString(context, jsonObject, 0, 0);
     if (!JSStringIsEqualToUTF8CString(str, "{\"aProperty\":true}")) {
         printf("FAIL: Did not correctly serialise with indent of 0.\n");
@@ -2119,7 +2119,6 @@ int main(int argc, char* argv[])
     failed |= testTypedArrayCAPI();
     failed |= testFunctionOverrides();
     failed |= testGlobalContextWithFinalizer();
-    failed |= testPingPongStackOverflow();
     failed |= testJSONParse();
     failed |= testJSObjectGetProxyTarget();
 
@@ -2170,14 +2169,18 @@ int main(int argc, char* argv[])
     globalObjectSetPrototypeTest();
     globalObjectPrivatePropertyTest();
 
-    failed = finalizeMultithreadedMultiVMExecutionTest() || failed;
+    failed |= finalizeMultithreadedMultiVMExecutionTest();
 
-    // Don't run this till after the MultithreadedMultiVMExecutionTest has finished.
-    // This is because testExecutionTimeLimit() modifies JIT options at runtime
+    // Don't run these tests till after the MultithreadedMultiVMExecutionTest has finished.
+    // 1. testPingPongStackOverflow() changes stack size per thread configuration at runtime to very small value,
+    // which can cause stack-overflow on MultithreadedMultiVMExecutionTest test.
+    // 2. testExecutionTimeLimit() modifies JIT options at runtime
     // as part of its testing. This can wreak havoc on the rest of the system that
     // expects the options to be frozen. Ideally, we'll find a way for testExecutionTimeLimit()
     // to do its work without changing JIT options, but that is not easy to do.
-    // For now, we'll just run it here at the end as a workaround.
+    //
+    // For now, we'll just run them here at the end as a workaround.
+    failed |= testPingPongStackOverflow();
     failed |= testExecutionTimeLimit();
 
     if (failed) {

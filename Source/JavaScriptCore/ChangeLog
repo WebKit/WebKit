@@ -1,3 +1,31 @@
+2022-01-26  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Do not run testPingPongStackOverflow while running multithreaded MultithreadedMultiVMExecutionTest
+        https://bugs.webkit.org/show_bug.cgi?id=235633
+
+        Reviewed by Mark Lam.
+
+        MultithreadedMultiVMExecutionTest is failing occasionally in CLoop test. This is because of the following.
+
+        1. CLoop is slow, so multithreaded tests are running longly.
+        2. Then, this multithreaded tests overlap with testPingPongStackOverflow.
+        3. testPingPongStackOverflow changes global Options::maxPerThreadStackUsage to test stack-overflow behavior.
+           This test is strongly assuming that there is only one thread using this VM. But this is wrong since
+           MultithreadedMultiVMExecutionTest is running concurrently. Then this configuration change affects on
+           the running MultithreadedMultiVMExecutionTest.
+        4. Stack-overflow error happens in MultithreadedMultiVMExecutionTest if the changed option is observed in that test.
+
+        We should not run testPingPongStackOverflow until MultithreadedMultiVMExecutionTest finishes since it assumes
+        that there is only one user of this VM.
+
+        This patch also cleans up / adds diagnosis of failures in MultithreadedMultiVMExecutionTest.
+
+        * API/tests/MultithreadedMultiVMExecutionTest.cpp:
+        (startMultithreadedMultiVMExecutionTest):
+        (finalizeMultithreadedMultiVMExecutionTest):
+        * API/tests/testapi.c:
+        (main):
+
 2022-01-25  Mark Lam  <mark.lam@apple.com>
 
         Gardening: build fix for CLoop.
