@@ -55,6 +55,8 @@ public:
         return m_scaleTransform * GraphicsContextCG::getCTM(includeDeviceScale);
     }
 
+    bool canUseShadowBlur() const final { return false; }
+
 private:
     WebCore::AffineTransform m_scaleTransform;
     WebCore::AffineTransform m_inverseScaleTransform;

@@ -169,6 +169,8 @@ public:
 
     void didUpdateState(const GraphicsContextState&, GraphicsContextState::StateChangeFlags) final;
 
+    virtual bool canUseShadowBlur() const;
+
 #if OS(WINDOWS)
     GraphicsContextPlatformPrivate* deprecatedPrivateContext() const final;
 #endif
