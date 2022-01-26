@@ -111,11 +111,11 @@ public:
     // URLRegistrable
     URLRegistry& registry() const override;
 
-    Ref<Blob> slice(ScriptExecutionContext&, long long start, long long end, const String& contentType) const;
+    Ref<Blob> slice(long long start, long long end, const String& contentType) const;
 
-    void text(ScriptExecutionContext&, Ref<DeferredPromise>&&);
-    void arrayBuffer(ScriptExecutionContext&, Ref<DeferredPromise>&&);
-    ExceptionOr<Ref<ReadableStream>> stream(ScriptExecutionContext&);
+    void text(Ref<DeferredPromise>&&);
+    void arrayBuffer(Ref<DeferredPromise>&&);
+    ExceptionOr<Ref<ReadableStream>> stream();
 
     // Keeping the handle alive will keep the Blob data alive (but not the Blob object).
     BlobURLHandle handle() const;
@@ -138,7 +138,7 @@ protected:
     Blob(ScriptExecutionContext*, const URL& srcURL, long long start, long long end, const String& contentType);
 
 private:
-    void loadBlob(ScriptExecutionContext&, FileReaderLoader::ReadType, CompletionHandler<void(BlobLoader&)>&&);
+    void loadBlob(FileReaderLoader::ReadType, CompletionHandler<void(BlobLoader&)>&&);
 
     // ActiveDOMObject.
     const char* activeDOMObjectName() const override;

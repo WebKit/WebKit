@@ -48,8 +48,8 @@ typedef (
     [CallWith=GlobalObject] RenderingContext? getContext(DOMString contextId, any... arguments);
 
     DOMString toDataURL(optional DOMString type, optional any quality);
-    [CallWith=ScriptExecutionContext] undefined toBlob(BlobCallback callback, optional DOMString type, optional any quality);
-    [Conditional=OFFSCREEN_CANVAS, EnabledAtRuntime=OffscreenCanvasEnabled, CallWith=ScriptExecutionContext] OffscreenCanvas transferControlToOffscreen();
+    undefined toBlob(BlobCallback callback, optional DOMString type, optional any quality);
+    [Conditional=OFFSCREEN_CANVAS, EnabledAtRuntime=OffscreenCanvasEnabled, NewObject] OffscreenCanvas transferControlToOffscreen();
 
-    [Conditional=MEDIA_STREAM, CallWith=Document, NewObject] MediaStream captureStream(optional double frameRequestRate);
+    [Conditional=MEDIA_STREAM, NewObject] MediaStream captureStream(optional double frameRequestRate);
 };

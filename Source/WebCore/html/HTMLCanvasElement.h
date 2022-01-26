@@ -96,9 +96,9 @@ public:
 
     WEBCORE_EXPORT ExceptionOr<UncachedString> toDataURL(const String& mimeType, JSC::JSValue quality);
     WEBCORE_EXPORT ExceptionOr<UncachedString> toDataURL(const String& mimeType);
-    ExceptionOr<void> toBlob(ScriptExecutionContext&, Ref<BlobCallback>&&, const String& mimeType, JSC::JSValue quality);
+    ExceptionOr<void> toBlob(Ref<BlobCallback>&&, const String& mimeType, JSC::JSValue quality);
 #if ENABLE(OFFSCREEN_CANVAS)
-    ExceptionOr<Ref<OffscreenCanvas>> transferControlToOffscreen(ScriptExecutionContext&);
+    ExceptionOr<Ref<OffscreenCanvas>> transferControlToOffscreen();
 #endif
 
     // Used for rendering
@@ -108,7 +108,7 @@ public:
 
 #if ENABLE(MEDIA_STREAM)
     RefPtr<MediaSample> toMediaSample();
-    ExceptionOr<Ref<MediaStream>> captureStream(Document&, std::optional<double>&& frameRequestRate);
+    ExceptionOr<Ref<MediaStream>> captureStream(std::optional<double>&& frameRequestRate);
 #endif
 
     Image* copiedImage() const final;
