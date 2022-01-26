@@ -1,3 +1,12 @@
+2022-01-25  Robert Jenner  <jenner@apple.com>
+
+        WindowServer returned not alive with context:,unresponsive work processor(s)
+        rdar://86037417
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations: Temporarily disabling test.
+
 2022-01-25  Aditya Keerthi  <akeerthi@apple.com>
 
         Disable input-security CSS property
