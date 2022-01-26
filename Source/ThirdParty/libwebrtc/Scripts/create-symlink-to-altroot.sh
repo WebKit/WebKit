@@ -2,15 +2,11 @@
 
 set -e
 
-if [[ "${ACTION}" == "installhdrs" && ( -z "${SYSTEM_PUBLIC_HEADER_PREFIX}" || -z "${HEADER_FOLDER_LIST}" ) ]]; then
-    exit 0
-fi
-
-if [[ "${ACTION}" == "install" && ( -z "${SYSTEM_PUBLIC_LIBRARY_PREFIX}" || -z "${LIBRARY_LIST}" ) ]]; then
-    exit 0
-fi
-
 if [[ "${SKIP_INSTALL}" == "YES" ]]; then
+    exit 0
+fi
+
+if [[ -z "${SYSTEM_PUBLIC_HEADER_PREFIX}" || -z "${HEADER_FOLDER_LIST}" || -z "${SYSTEM_PUBLIC_LIBRARY_PREFIX}" || -z "${LIBRARY_LIST}" ]]; then
     exit 0
 fi
 
@@ -43,7 +39,7 @@ create_symlink_if_needed()
     ln -sf "${SYMLINK_VALUE}" "${SYSTEM_HEADER_PATH}"
 }
 
-if [[ "${ACTION}" == "installhdrs" ]]
+if [[ "${ACTION}" == "installhdrs" || "${ACTION}" == "install" ]]
 then
     if [[ ! -d ${SYSTEM_PUBLIC_HEADER_PREFIX} ]]; then
         mkdir -p ${SYSTEM_PUBLIC_HEADER_PREFIX}

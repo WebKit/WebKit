@@ -1,3 +1,51 @@
+2022-01-25  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r288593. rdar://problem/87906922
+
+    Install build failure when using SYSTEM_CONTENT_PATH
+    https://bugs.webkit.org/show_bug.cgi?id=235609
+    
+    Reviewed by Filip Pizlo.
+    
+    Source/ThirdParty/libwebrtc:
+    
+    Change the Create Symlinks to Alternate Root script to create the links for the headers
+    for both the install headers and install phases.
+    
+    * Scripts/create-symlink-to-altroot.sh:
+    
+    Source/WebKit:
+    
+    Eliminated the Output Files of the Create Symlink to Alt Root Path script for the targets
+    adattributiond, GPU, Networking, WebAuthn, webpushd, and the various WebContent targets,
+    since the symlink to WebKit.framework will be created by the "WebKit" target.
+    Also fixed the INSTALL_PATH for adattributiond and webpushd to follow the difference between
+    macOS and iOS.
+    
+    * Configurations/adattributiond.xcconfig:
+    * Configurations/webpushd.xcconfig:
+    * WebKit.xcodeproj/project.pbxproj:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@288593 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-01-25  Michael Saboff  <msaboff@apple.com>
+
+            Install build failure when using SYSTEM_CONTENT_PATH
+            https://bugs.webkit.org/show_bug.cgi?id=235609
+
+            Reviewed by Filip Pizlo.
+
+            Eliminated the Output Files of the Create Symlink to Alt Root Path script for the targets
+            adattributiond, GPU, Networking, WebAuthn, webpushd, and the various WebContent targets,
+            since the symlink to WebKit.framework will be created by the "WebKit" target.
+            Also fixed the INSTALL_PATH for adattributiond and webpushd to follow the difference between
+            macOS and iOS.
+
+            * Configurations/adattributiond.xcconfig:
+            * Configurations/webpushd.xcconfig:
+            * WebKit.xcodeproj/project.pbxproj:
+
 2022-01-09  Sam Weinig  <weinig@apple.com>
 
         Remove support for Direct2D
