@@ -76,11 +76,11 @@ void AXIsolatedTree::clear()
     AXTRACE("AXIsolatedTree::clear");
     ASSERT(isMainThread());
     m_axObjectCache = nullptr;
+    m_nodeMap.clear();
 
     Locker locker { m_changeLogLock };
     m_pendingSubtreeRemovals.append(m_rootNode->objectID());
     m_rootNode = nullptr;
-    m_nodeMap.clear();
 }
 
 RefPtr<AXIsolatedTree> AXIsolatedTree::treeForID(AXIsolatedTreeID treeID)
@@ -431,11 +431,11 @@ void AXIsolatedTree::setFocusedNodeID(AXID axID)
     AXLOG(makeString("axID ", axID.loggingString()));
     ASSERT(isMainThread());
 
-    Locker locker { m_changeLogLock };
-    m_pendingFocusedNodeID = axID;
-
     AXPropertyMap propertyMap;
     propertyMap.set(AXPropertyName::IsFocused, true);
+
+    Locker locker { m_changeLogLock };
+    m_pendingFocusedNodeID = axID;
     m_pendingPropertyChanges.append({ axID, propertyMap });
 }
 
