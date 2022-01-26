@@ -75,6 +75,8 @@ class PseudoElement;
 class RevalidateStyleAttributeTask;
 class ShadowRoot;
 
+struct Styleable;
+
 class InspectorDOMAgent final : public InspectorAgentBase, public Inspector::DOMBackendDispatcherHandler {
     WTF_MAKE_NONCOPYABLE(InspectorDOMAgent);
     WTF_MAKE_FAST_ALLOCATED;
@@ -184,6 +186,8 @@ public:
 
     void styleAttributeInvalidated(const Vector<Element*>& elements);
 
+    Inspector::Protocol::DOM::NodeId pushStyleableElementToFrontend(const Styleable&);
+    Ref<Inspector::Protocol::DOM::Styleable> pushStyleablePathToFrontend(Inspector::Protocol::ErrorString, const Styleable&);
     Inspector::Protocol::DOM::NodeId pushNodeToFrontend(Node*);
     Inspector::Protocol::DOM::NodeId pushNodeToFrontend(Inspector::Protocol::ErrorString&, Inspector::Protocol::DOM::NodeId documentNodeId, Node*);
     Inspector::Protocol::DOM::NodeId pushNodePathToFrontend(Node*);

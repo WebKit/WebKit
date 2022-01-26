@@ -85,6 +85,8 @@ public:
     static CSSStyleRule* asCSSStyleRule(CSSRule&);
     static std::optional<Inspector::Protocol::CSS::LayoutContextType> layoutContextTypeForRenderer(RenderObject*);
 
+    static std::optional<Inspector::Protocol::CSS::PseudoId> protocolValueForPseudoId(PseudoId);
+
     // InspectorAgentBase
     void didCreateFrontendAndBackend(Inspector::FrontendRouter*, Inspector::BackendDispatcher*);
     void willDestroyFrontendAndBackend(Inspector::DisconnectReason);

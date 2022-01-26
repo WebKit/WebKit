@@ -441,7 +441,7 @@ bool InspectorCSSAgent::forcePseudoState(const Element& element, CSSSelector::Ps
     }
 }
 
-static std::optional<Protocol::CSS::PseudoId> protocolValueForPseudoId(PseudoId pseudoId)
+std::optional<Protocol::CSS::PseudoId> InspectorCSSAgent::protocolValueForPseudoId(PseudoId pseudoId)
 {
     switch (pseudoId) {
     case PseudoId::FirstLine:

@@ -101,7 +101,6 @@ public:
     const Vector<ParsedKeyframe>& parsedKeyframes() const { return m_parsedKeyframes; }
 
     Element* target() const { return m_target.get(); }
-    Element* targetElementOrPseudoElement() const;
     void setTarget(RefPtr<Element>&&);
 
     bool targetsPseudoElement() const;

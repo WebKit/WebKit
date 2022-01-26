@@ -48,7 +48,6 @@
 #include "KeyframeEffectStack.h"
 #include "Logging.h"
 #include "PropertyAllowlist.h"
-#include "PseudoElement.h"
 #include "RenderBox.h"
 #include "RenderBoxModelObject.h"
 #include "RenderElement.h"
@@ -1182,19 +1181,6 @@ bool KeyframeEffect::targetsPseudoElement() const
     return m_target.get() && m_pseudoId != PseudoId::None;
 }
 
-Element* KeyframeEffect::targetElementOrPseudoElement() const
-{
-    if (m_target) {
-        if (m_pseudoId == PseudoId::Before)
-            return m_target->beforePseudoElement();
-
-        if (m_pseudoId == PseudoId::After)
-            return m_target->afterPseudoElement();
-    }
-
-    return m_target.get();
-}
-
 void KeyframeEffect::setTarget(RefPtr<Element>&& newTarget)
 {
     if (m_target == newTarget)
@@ -1288,7 +1274,7 @@ void KeyframeEffect::apply(RenderStyle& targetStyle, const Style::ResolutionCont
     auto computedTiming = getComputedTiming(startTime);
     if (!startTime) {
         m_phaseAtLastApplication = computedTiming.phase;
-        if (auto* target = targetElementOrPseudoElement())
+        if (auto target = targetStyleable())
             InspectorInstrumentation::willApplyKeyframeEffect(*target, *this, computedTiming);
     }
 

@@ -104,6 +104,7 @@
 #include "StyleProperties.h"
 #include "StyleResolver.h"
 #include "StyleSheetList.h"
+#include "Styleable.h"
 #include "Text.h"
 #include "TextNodeTraversal.h"
 #include "Timer.h"
@@ -538,6 +539,25 @@ void InspectorDOMAgent::discardBindings()
     m_childrenRequested.clear();
 }
 
+static Element* elementToPushForStyleable(const Styleable& styleable)
+{
+    // FIXME: We want to get rid of PseudoElement.
+    auto* element = &styleable.element;
+
+    if (styleable.pseudoId == PseudoId::Before)
+        element = element->beforePseudoElement();
+    else if (styleable.pseudoId == PseudoId::After)
+        element = element->afterPseudoElement();
+
+    return element;
+}
+
+Protocol::DOM::NodeId InspectorDOMAgent::pushStyleableElementToFrontend(const Styleable& styleable)
+{
+    auto* element = elementToPushForStyleable(styleable);
+    return pushNodeToFrontend(element ?: &styleable.element);
+}
+
 Protocol::DOM::NodeId InspectorDOMAgent::pushNodeToFrontend(Node* nodeToPush)
 {
     if (!nodeToPush)
@@ -635,6 +655,23 @@ Protocol::DOM::NodeId InspectorDOMAgent::pushNodePathToFrontend(Node* nodeToPush
 {
     Protocol::ErrorString ignored;
     return pushNodePathToFrontend(ignored, nodeToPush);
+}
+
+Ref<Protocol::DOM::Styleable> InspectorDOMAgent::pushStyleablePathToFrontend(Protocol::ErrorString errorString, const Styleable& styleable)
+{
+    auto* element = elementToPushForStyleable(styleable);
+    auto nodeId = pushNodePathToFrontend(errorString, element ?: &styleable.element);
+
+    auto protocolStyleable = Protocol::DOM::Styleable::create()
+        .setNodeId(nodeId)
+        .release();
+
+    if (styleable.pseudoId != PseudoId::None) {
+        if (auto pseudoId = InspectorCSSAgent::protocolValueForPseudoId(styleable.pseudoId))
+            protocolStyleable->setPseudoId(*pseudoId);
+    }
+
+    return protocolStyleable;
 }
 
 Protocol::DOM::NodeId InspectorDOMAgent::pushNodePathToFrontend(Protocol::ErrorString errorString, Node* nodeToPush)

@@ -168,6 +168,15 @@
                 { "name": "borderColor", "$ref": "RGBAColor", "optional": true, "description": "The border highlight fill color (default: transparent)." },
                 { "name": "marginColor", "$ref": "RGBAColor", "optional": true, "description": "The margin highlight fill color (default: transparent)." }
             ]
+        },
+        {
+            "id": "Styleable",
+            "type": "object",
+            "properties": [
+                { "name": "nodeId", "$ref": "NodeId" },
+                { "name": "pseudoId", "$ref": "CSS.PseudoId", "optional": true }
+            ],
+            "description": "An object referencing a node and a pseudo-element, primarily used to identify an animation effect target."
         }
     ],
     "commands": [

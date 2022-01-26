@@ -1,3 +1,16 @@
+2022-01-26  Antoine Quint  <graouts@webkit.org>
+
+        [Web Inspector] Graphics tab should display pseudo-elements for more than ::before and ::after
+        https://bugs.webkit.org/show_bug.cgi?id=235234
+        <rdar://87766777>
+
+        Reviewed by Devin Rousso.
+
+        Add a new `DOM.Styleable` type to be used as the parameter type for `requestEffectTarget()` callbacks.
+
+        * inspector/protocol/Animation.json:
+        * inspector/protocol/DOM.json:
+
 2022-01-26  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Do not run testPingPongStackOverflow while running multithreaded MultithreadedMultiVMExecutionTest

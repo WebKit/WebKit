@@ -38,6 +38,7 @@
 #include "Event.h"
 #include "FillMode.h"
 #include "Frame.h"
+#include "InspectorCSSAgent.h"
 #include "InspectorDOMAgent.h"
 #include "InstrumentingAgents.h"
 #include "JSExecState.h"
@@ -47,6 +48,7 @@
 #include "Page.h"
 #include "PlaybackDirection.h"
 #include "RenderElement.h"
+#include "Styleable.h"
 #include "TimingFunction.h"
 #include "WebAnimation.h"
 #include <JavaScriptCore/IdentifiersFactory.h>
@@ -279,7 +281,7 @@ Protocol::ErrorStringOr<void> InspectorAnimationAgent::disable()
     return { };
 }
 
-Protocol::ErrorStringOr<Protocol::DOM::NodeId> InspectorAnimationAgent::requestEffectTarget(const Protocol::Animation::AnimationId& animationId)
+Protocol::ErrorStringOr<Ref<Protocol::DOM::Styleable>> InspectorAnimationAgent::requestEffectTarget(const Protocol::Animation::AnimationId& animationId)
 {
     Protocol::ErrorString errorString;
 
@@ -297,11 +299,11 @@ Protocol::ErrorStringOr<Protocol::DOM::NodeId> InspectorAnimationAgent::requestE
 
     auto& keyframeEffect = downcast<KeyframeEffect>(*effect);
 
-    auto* target = keyframeEffect.targetElementOrPseudoElement();
+    auto target = keyframeEffect.targetStyleable();
     if (!target)
         return makeUnexpected("Animation for given animationId does not have a target"_s);
 
-    return domAgent->pushNodePathToFrontend(errorString, target);
+    return domAgent->pushStyleablePathToFrontend(errorString, *target);
 }
 
 Protocol::ErrorStringOr<Ref<Protocol::Runtime::RemoteObject>> InspectorAnimationAgent::resolveAnimation(const Protocol::Animation::AnimationId& animationId, const String& objectGroup)
@@ -371,7 +373,7 @@ static bool isDelayed(ComputedEffectTiming& computedTiming)
     return computedTiming.localTime.value() < (computedTiming.endTime - computedTiming.activeDuration);
 }
 
-void InspectorAnimationAgent::willApplyKeyframeEffect(Element& target, KeyframeEffect& keyframeEffect, ComputedEffectTiming computedTiming)
+void InspectorAnimationAgent::willApplyKeyframeEffect(const Styleable& target, KeyframeEffect& keyframeEffect, ComputedEffectTiming computedTiming)
 {
     auto* animation = keyframeEffect.animation();
     if (!is<DeclarativeAnimation>(animation))
@@ -421,7 +423,7 @@ void InspectorAnimationAgent::willApplyKeyframeEffect(Element& target, KeyframeE
 
     if (ensureResult.isNewEntry) {
         if (auto* domAgent = m_instrumentingAgents.persistentDOMAgent()) {
-            if (auto nodeId = domAgent->pushNodeToFrontend(&target))
+            if (auto nodeId = domAgent->pushStyleableElementToFrontend(target))
                 event->setNodeId(nodeId);
         }
 

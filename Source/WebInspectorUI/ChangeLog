@@ -1,3 +1,35 @@
+2022-01-26  Antoine Quint  <graouts@webkit.org>
+
+        [Web Inspector] Graphics tab should display pseudo-elements for more than ::before and ::after
+        https://bugs.webkit.org/show_bug.cgi?id=235234
+        <rdar://87766777>
+
+        Reviewed by Devin Rousso.
+
+        Add a new `DOMStyleable` model class to match the new `DOM.Styleable` protocol type. 
+
+        When calling Animation.requestEffectTarget(), we now use this new DOMStyleable class
+        to display pseudo-elements other than ::before or ::after in the Graphics tab.
+
+        * UserInterface/Base/DOMUtilities.js:
+        (WI.linkifyStyleable):
+        * UserInterface/Main.html:
+        * UserInterface/Models/Animation.js:
+        (WI.Animation.prototype.requestEffectTarget):
+        * UserInterface/Models/DOMStyleable.js: Added.
+        (WI.DOMStyleable.prototype.fromPayload):
+        (WI.DOMStyleable.prototype.get node):
+        (WI.DOMStyleable.prototype.get pseudoId):
+        (WI.DOMStyleable.prototype.get displayName):
+        (WI.DOMStyleable):
+        * UserInterface/Test.html:
+        * UserInterface/Views/AnimationCollectionContentView.js:
+        (WI.AnimationCollectionContentView.prototype._handleContentViewMouseEnter):
+        * UserInterface/Views/AnimationContentView.js:
+        (WI.AnimationContentView.prototype._refreshSubtitle):
+        * UserInterface/Views/AnimationDetailsSidebarPanel.js:
+        (WI.AnimationDetailsSidebarPanel.prototype._refreshIdentitySection):
+
 2022-01-25  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Collapse blackboxed call frames by default

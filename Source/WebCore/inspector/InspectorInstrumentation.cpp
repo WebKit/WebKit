@@ -1120,7 +1120,7 @@ bool InspectorInstrumentation::isWebGLProgramHighlightedImpl(InstrumentingAgents
 }
 #endif
 
-void InspectorInstrumentation::willApplyKeyframeEffectImpl(InstrumentingAgents& instrumentingAgents, Element& target, KeyframeEffect& effect, ComputedEffectTiming computedTiming)
+void InspectorInstrumentation::willApplyKeyframeEffectImpl(InstrumentingAgents& instrumentingAgents, const Styleable& target, KeyframeEffect& effect, ComputedEffectTiming computedTiming)
 {
     if (auto* animationAgent = instrumentingAgents.trackingAnimationAgent())
         animationAgent->willApplyKeyframeEffect(target, effect, computedTiming);
