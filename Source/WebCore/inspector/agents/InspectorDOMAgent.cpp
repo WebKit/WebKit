@@ -555,7 +555,7 @@ static Element* elementToPushForStyleable(const Styleable& styleable)
 Protocol::DOM::NodeId InspectorDOMAgent::pushStyleableElementToFrontend(const Styleable& styleable)
 {
     auto* element = elementToPushForStyleable(styleable);
-    return pushNodeToFrontend(element ?: &styleable.element);
+    return pushNodeToFrontend(element ? element : &styleable.element);
 }
 
 Protocol::DOM::NodeId InspectorDOMAgent::pushNodeToFrontend(Node* nodeToPush)
@@ -660,7 +660,7 @@ Protocol::DOM::NodeId InspectorDOMAgent::pushNodePathToFrontend(Node* nodeToPush
 Ref<Protocol::DOM::Styleable> InspectorDOMAgent::pushStyleablePathToFrontend(Protocol::ErrorString errorString, const Styleable& styleable)
 {
     auto* element = elementToPushForStyleable(styleable);
-    auto nodeId = pushNodePathToFrontend(errorString, element ?: &styleable.element);
+    auto nodeId = pushNodePathToFrontend(errorString, element ? element : &styleable.element);
 
     auto protocolStyleable = Protocol::DOM::Styleable::create()
         .setNodeId(nodeId)
