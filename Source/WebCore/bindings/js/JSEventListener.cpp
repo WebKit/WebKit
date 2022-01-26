@@ -86,8 +86,12 @@ void JSEventListener::replaceJSFunctionForAttributeListener(JSObject* function, 
     ASSERT(wrapper);
 
     m_jsFunction = Weak { function };
-    m_wrapper = wrapper;
-    m_isInitialized = true;
+    if (UNLIKELY(!m_isInitialized)) {
+        m_wrapper = Weak { wrapper };
+        auto& vm = m_isolatedWorld->vm();
+        vm.writeBarrier(wrapper, function);
+        m_isInitialized = true;
+    }
 }
 
 JSValue eventHandlerAttribute(EventTarget& eventTarget, const AtomString& eventType, DOMWrapperWorld& isolatedWorld)
