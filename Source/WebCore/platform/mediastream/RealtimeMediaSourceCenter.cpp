@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2011 Ericsson AB. All rights reserved.
  * Copyright (C) 2012 Google Inc. All rights reserved.
- * Copyright (C) 2013-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,7 +35,7 @@
 
 #if ENABLE(MEDIA_STREAM)
 
-#include "CaptureDeviceManager.h"
+#include "DisplayCaptureManager.h"
 #include "Logging.h"
 #include "MediaStreamPrivate.h"
 #include <wtf/CallbackAggregator.h>
@@ -261,7 +261,7 @@ void RealtimeMediaSourceCenter::enumerateDevices(bool shouldEnumerateCamera, boo
 void RealtimeMediaSourceCenter::validateRequestConstraints(ValidConstraintsHandler&& validHandler, InvalidConstraintsHandler&& invalidHandler, const MediaStreamRequest& request, String&& deviceIdentifierHashSalt)
 {
     bool shouldEnumerateCamera = request.videoConstraints.isValid;
-    bool shouldEnumerateDisplay = request.type == MediaStreamRequest::Type::DisplayMedia;
+    bool shouldEnumerateDisplay = (request.type == MediaStreamRequest::Type::DisplayMedia || request.type == MediaStreamRequest::Type::DisplayMediaWithAudio);
     bool shouldEnumerateMicrophone = request.audioConstraints.isValid;
     bool shouldEnumerateSpeakers = false;
     enumerateDevices(shouldEnumerateCamera, shouldEnumerateDisplay, shouldEnumerateMicrophone, shouldEnumerateSpeakers, [this, validHandler = WTFMove(validHandler), invalidHandler = WTFMove(invalidHandler), request, deviceIdentifierHashSalt = WTFMove(deviceIdentifierHashSalt)]() mutable {
@@ -282,7 +282,7 @@ void RealtimeMediaSourceCenter::validateRequestConstraintsAfterEnumeration(Valid
     Vector<DeviceInfo> videoDeviceInfo;
     String firstInvalidConstraint;
 
-    if (request.type == MediaStreamRequest::Type::DisplayMedia)
+    if (request.type == MediaStreamRequest::Type::DisplayMedia || request.type == MediaStreamRequest::Type::DisplayMediaWithAudio)
         getDisplayMediaDevices(request, String { deviceIdentifierHashSalt }, videoDeviceInfo, firstInvalidConstraint);
     else
         getUserMediaDevices(request, String { deviceIdentifierHashSalt }, audioDeviceInfo, videoDeviceInfo, firstInvalidConstraint);

@@ -31,6 +31,7 @@
 #import "TestWKWebView.h"
 #import "Utilities.h"
 #import <WebKit/WKPreferencesPrivate.h>
+#import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/_WKExperimentalFeature.h>
 

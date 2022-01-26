@@ -174,6 +174,7 @@
 #include <WebCore/PlatformEvent.h>
 #include <WebCore/PrivateClickMeasurement.h>
 #include <WebCore/PublicSuffix.h>
+#include <WebCore/RealtimeMediaSourceCenter.h>
 #include <WebCore/RenderEmbeddedObject.h>
 #include <WebCore/ResourceLoadStatistics.h>
 #include <WebCore/RuntimeApplicationChecks.h>
@@ -309,6 +310,10 @@
 
 #if ENABLE(APP_HIGHLIGHTS)
 #include <WebCore/HighlightVisibility.h>
+#endif
+
+#if HAVE(SCREEN_CAPTURE_KIT)
+#import "DisplayCaptureSessionManager.h"
 #endif
 
 #define MESSAGE_CHECK(process, assertion) MESSAGE_CHECK_BASE(assertion, process->connection())
@@ -8585,6 +8590,7 @@ UserMediaPermissionRequestManagerProxy& WebPageProxy::userMediaPermissionRequest
         return *m_userMediaPermissionRequestManager;
 
     m_userMediaPermissionRequestManager = makeUnique<UserMediaPermissionRequestManagerProxy>(*this);
+
     return *m_userMediaPermissionRequestManager;
 }
 
@@ -10921,6 +10927,13 @@ WebCore::CaptureSourceOrError WebPageProxy::createRealtimeMediaSourceForSpeechRe
 #endif
 }
 
+#endif
+
+#if HAVE(SCREEN_CAPTURE_KIT)
+void WebPageProxy::setIndexOfGetDisplayMediaDeviceSelectedForTesting(std::optional<unsigned> index)
+{
+    DisplayCaptureSessionManager::singleton().setIndexOfDeviceSelectedForTesting(index);
+}
 #endif
 
 #if ENABLE(ARKIT_INLINE_PREVIEW)

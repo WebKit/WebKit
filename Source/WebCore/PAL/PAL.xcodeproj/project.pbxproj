@@ -25,6 +25,8 @@
 		071C00382707EDF000D027C7 /* ReplayKitSoftLink.h in Headers */ = {isa = PBXBuildFile; fileRef = 071C00362707EDF000D027C7 /* ReplayKitSoftLink.h */; };
 		07611DB6243FA5BF00D80704 /* UsageTrackingSoftLink.h in Headers */ = {isa = PBXBuildFile; fileRef = 07611DB4243FA5BE00D80704 /* UsageTrackingSoftLink.h */; };
 		07611DB7243FA5BF00D80704 /* UsageTrackingSoftLink.mm in Sources */ = {isa = PBXBuildFile; fileRef = 07611DB5243FA5BF00D80704 /* UsageTrackingSoftLink.mm */; };
+		07789181273B14FF00E408D1 /* ScreenCaptureKitSoftLink.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0778917F273B14FF00E408D1 /* ScreenCaptureKitSoftLink.mm */; };
+		07789182273B14FF00E408D1 /* ScreenCaptureKitSoftLink.h in Headers */ = {isa = PBXBuildFile; fileRef = 07789180273B14FF00E408D1 /* ScreenCaptureKitSoftLink.h */; };
 		077E87B1226A460200A2AFF0 /* AVFoundationSoftLink.mm in Sources */ = {isa = PBXBuildFile; fileRef = 077E87AF226A460200A2AFF0 /* AVFoundationSoftLink.mm */; };
 		077E87B2226A460300A2AFF0 /* AVFoundationSoftLink.h in Headers */ = {isa = PBXBuildFile; fileRef = 077E87B0226A460200A2AFF0 /* AVFoundationSoftLink.h */; };
 		079D1D9726950DD700883577 /* SystemStatusSoftLink.h in Headers */ = {isa = PBXBuildFile; fileRef = 079D1D9526950DD700883577 /* SystemStatusSoftLink.h */; };
@@ -432,6 +434,8 @@
 		071C00362707EDF000D027C7 /* ReplayKitSoftLink.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReplayKitSoftLink.h; sourceTree = "<group>"; };
 		07611DB4243FA5BE00D80704 /* UsageTrackingSoftLink.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UsageTrackingSoftLink.h; sourceTree = "<group>"; };
 		07611DB5243FA5BF00D80704 /* UsageTrackingSoftLink.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = UsageTrackingSoftLink.mm; sourceTree = "<group>"; };
+		0778917F273B14FF00E408D1 /* ScreenCaptureKitSoftLink.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ScreenCaptureKitSoftLink.mm; sourceTree = "<group>"; };
+		07789180273B14FF00E408D1 /* ScreenCaptureKitSoftLink.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScreenCaptureKitSoftLink.h; sourceTree = "<group>"; };
 		077E87AF226A460200A2AFF0 /* AVFoundationSoftLink.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AVFoundationSoftLink.mm; sourceTree = "<group>"; };
 		077E87B0226A460200A2AFF0 /* AVFoundationSoftLink.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AVFoundationSoftLink.h; sourceTree = "<group>"; };
 		079D1D9526950DD700883577 /* SystemStatusSoftLink.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SystemStatusSoftLink.h; sourceTree = "<group>"; };
@@ -1051,6 +1055,7 @@
 				0C7785841F45130F00F4EBB6 /* NSWindowSPI.h */,
 				0C7785851F45130F00F4EBB6 /* PIPSPI.h */,
 				0C7785871F45130F00F4EBB6 /* QuickLookMacSPI.h */,
+				A1175B481F6AFF8E00C4B9F0 /* SpeechSynthesisSPI.h */,
 				71B1141F26823ACD004D6701 /* SystemPreviewSPI.h */,
 				0C7785881F45130F00F4EBB6 /* TelephonyUtilitiesSPI.h */,
 			);
@@ -1419,6 +1424,8 @@
 				44E1A8AE21FA54DA00C3048E /* LookupSoftLink.mm */,
 				F4C85A4D2658551A005B89CC /* QuickLookUISoftLink.h */,
 				F4C85A4C26585519005B89CC /* QuickLookUISoftLink.mm */,
+				07789180273B14FF00E408D1 /* ScreenCaptureKitSoftLink.h */,
+				0778917F273B14FF00E408D1 /* ScreenCaptureKitSoftLink.mm */,
 			);
 			path = mac;
 			sourceTree = "<group>";
@@ -1669,6 +1676,7 @@
 				F4974EA3265EEA2200B49B8C /* RevealSoftLink.h in Headers */,
 				442956CD218A72DF0080DB54 /* RevealSPI.h in Headers */,
 				BC4DDD9F273EF56E00660EBB /* SceneKitSPI.h in Headers */,
+				07789182273B14FF00E408D1 /* ScreenCaptureKitSoftLink.h in Headers */,
 				570AB8F120AE2E8D00B8BE87 /* SecKeyProxySPI.h in Headers */,
 				0C2DA1581F3BEB4900DBC317 /* ServersSPI.h in Headers */,
 				A3C66CDD1F462D6A009E6EE9 /* SessionID.h in Headers */,
@@ -1946,6 +1954,7 @@
 				F4C85A4E2658551A005B89CC /* QuickLookUISoftLink.mm in Sources */,
 				071C00372707EDF000D027C7 /* ReplayKitSoftLink.mm in Sources */,
 				F4974EA4265EEA2200B49B8C /* RevealSoftLink.mm in Sources */,
+				07789181273B14FF00E408D1 /* ScreenCaptureKitSoftLink.mm in Sources */,
 				A3C66CDC1F462D6A009E6EE9 /* SessionID.cpp in Sources */,
 				A3AB6E521F3D1DC5009C14B1 /* SleepDisabler.cpp in Sources */,
 				A3AB6E601F3D1E39009C14B1 /* SleepDisablerCocoa.cpp in Sources */,

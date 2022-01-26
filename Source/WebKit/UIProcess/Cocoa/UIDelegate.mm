@@ -1136,6 +1136,43 @@ void UIDelegate::UIClient::didChangeFontAttributes(const WebCore::FontAttributes
     [privateUIDelegate _webView:m_uiDelegate->m_webView.get().get() didChangeFontAttributes:fontAttributes.createDictionary().get()];
 }
 
+void UIDelegate::UIClient::promptForDisplayCapturePermission(WebPageProxy& page, WebFrameProxy& frame, API::SecurityOrigin& userMediaOrigin, API::SecurityOrigin& topLevelOrigin, UserMediaPermissionRequestProxy& request)
+{
+    auto delegate = (id <WKUIDelegatePrivate>)m_uiDelegate->m_delegate.get();
+
+    ASSERT([delegate respondsToSelector:@selector(_webView:requestDisplayCapturePermissionForOrigin:initiatedByFrame:withSystemAudio:decisionHandler:)]);
+    ASSERT(request.canPromptForGetDisplayMedia());
+
+    auto checker = CompletionHandlerCallChecker::create(delegate, @selector(_webView:requestDisplayCapturePermissionForOrigin:initiatedByFrame:withSystemAudio:decisionHandler:));
+    auto decisionHandler = makeBlockPtr([protectedRequest = Ref { request }, checker = WTFMove(checker)](WKDisplayCapturePermissionDecision decision) {
+        if (checker->completionHandlerHasBeenCalled())
+            return;
+        checker->didCallCompletionHandler();
+
+        switch (decision) {
+        case WKDisplayCapturePermissionDecisionScreenPrompt:
+            protectedRequest->promptForGetDisplayMedia(UserMediaPermissionRequestProxy::UserMediaDisplayCapturePromptType::Screen);
+            break;
+        case WKDisplayCapturePermissionDecisionWindowPrompt: {
+            protectedRequest->promptForGetDisplayMedia(UserMediaPermissionRequestProxy::UserMediaDisplayCapturePromptType::Window);
+            break;
+        }
+        case WKDisplayCapturePermissionDecisionDeny:
+            protectedRequest->deny(UserMediaPermissionRequestProxy::UserMediaAccessDenialReason::PermissionDenied);
+            break;
+        }
+    });
+
+    std::optional<WebCore::FrameIdentifier> mainFrameID;
+    if (auto* mainFrame = frame.page() ? frame.page()->mainFrame() : nullptr)
+        mainFrameID = mainFrame->frameID();
+    FrameInfoData frameInfo { frame.isMainFrame(), { }, userMediaOrigin.securityOrigin(), { }, frame.frameID(), mainFrameID };
+    RetainPtr<WKFrameInfo> frameInfoWrapper = wrapper(API::FrameInfo::create(WTFMove(frameInfo), frame.page()));
+
+    BOOL requestSystemAudio = !!request.requiresDisplayCaptureWithAudio();
+    [delegate _webView:m_uiDelegate->m_webView.get().get() requestDisplayCapturePermissionForOrigin:wrapper(topLevelOrigin) initiatedByFrame:frameInfoWrapper.get() withSystemAudio:requestSystemAudio decisionHandler:decisionHandler.get()];
+
+}
 void UIDelegate::UIClient::decidePolicyForUserMediaPermissionRequest(WebPageProxy& page, WebFrameProxy& frame, API::SecurityOrigin& userMediaOrigin, API::SecurityOrigin& topLevelOrigin, UserMediaPermissionRequestProxy& request)
 {
 #if ENABLE(MEDIA_STREAM)
@@ -1150,14 +1187,10 @@ void UIDelegate::UIClient::decidePolicyForUserMediaPermissionRequest(WebPageProx
 
     bool respondsToRequestMediaCapturePermission = [delegate respondsToSelector:@selector(webView:requestMediaCapturePermissionForOrigin:initiatedByFrame:type:decisionHandler:)];
     bool respondsToRequestUserMediaAuthorizationForDevices = [delegate respondsToSelector:@selector(_webView:requestUserMediaAuthorizationForDevices:url:mainFrameURL:decisionHandler:)];
+    bool respondsToRequestDisplayCapturePermissionForOrigin = [delegate respondsToSelector:@selector(_webView:requestDisplayCapturePermissionForOrigin:initiatedByFrame:withSystemAudio:decisionHandler:)];
 
-    if (!respondsToRequestMediaCapturePermission && !respondsToRequestUserMediaAuthorizationForDevices) {
+    if (!respondsToRequestMediaCapturePermission && !respondsToRequestUserMediaAuthorizationForDevices && !respondsToRequestDisplayCapturePermissionForOrigin) {
         request.doDefaultAction();
-        return;
-    }
-
-    if (request.requiresDisplayCapture() && request.canPromptForGetDisplayMedia()) {
-        request.promptForGetDisplayMedia();
         return;
     }
 
@@ -1195,6 +1228,20 @@ void UIDelegate::UIClient::decidePolicyForUserMediaPermissionRequest(WebPageProx
         if (request.requiresAudioCapture())
             type = request.requiresVideoCapture() ? WKMediaCaptureTypeCameraAndMicrophone : WKMediaCaptureTypeMicrophone;
         [delegate webView:m_uiDelegate->m_webView.get().get() requestMediaCapturePermissionForOrigin:wrapper(topLevelOrigin) initiatedByFrame:frameInfoWrapper.get() type:type decisionHandler:decisionHandler.get()];
+        return;
+    }
+
+    if (request.requiresDisplayCapture() && request.canPromptForGetDisplayMedia()) {
+        if (respondsToRequestDisplayCapturePermissionForOrigin)
+            promptForDisplayCapturePermission(page, frame, userMediaOrigin, topLevelOrigin, request);
+        else
+            request.promptForGetDisplayMedia();
+
+        return;
+    }
+
+    if (!respondsToRequestUserMediaAuthorizationForDevices) {
+        request.doDefaultAction();
         return;
     }
 

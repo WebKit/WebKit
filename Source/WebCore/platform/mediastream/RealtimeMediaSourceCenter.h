@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2011 Ericsson AB. All rights reserved.
  * Copyright (C) 2012 Google Inc. All rights reserved.
- * Copyright (C) 2013-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -110,6 +110,11 @@ public:
     OSObjectPtr<tcc_identity_t> identity() const { return m_identity; }
 #endif
 
+#if HAVE(SCREEN_CAPTURE_KIT)
+    bool useScreenCaptureKit() const;
+    void setUseScreenCaptureKit(bool);
+#endif
+
 private:
     RealtimeMediaSourceCenter();
     friend class NeverDestroyed<RealtimeMediaSourceCenter>;
@@ -144,7 +149,24 @@ private:
 #if ENABLE(APP_PRIVACY_REPORT)
     OSObjectPtr<tcc_identity_t> m_identity;
 #endif
+
+#if HAVE(SCREEN_CAPTURE_KIT)
+    bool m_useScreenCaptureKit { false };
+#endif
+    bool m_useMockCaptureDevices { false };
 };
+
+#if HAVE(SCREEN_CAPTURE_KIT)
+inline bool RealtimeMediaSourceCenter::useScreenCaptureKit() const
+{
+    return m_useScreenCaptureKit;
+}
+
+inline void RealtimeMediaSourceCenter::setUseScreenCaptureKit(bool useScreenCaptureKit)
+{
+    m_useScreenCaptureKit = useScreenCaptureKit;
+}
+#endif
 
 } // namespace WebCore
 

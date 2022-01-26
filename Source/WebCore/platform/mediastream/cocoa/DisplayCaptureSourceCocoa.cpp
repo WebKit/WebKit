@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,7 +29,6 @@
 #if ENABLE(MEDIA_STREAM) && PLATFORM(COCOA)
 
 #include "CGDisplayStreamScreenCaptureSource.h"
-#include "CoreVideoSoftLink.h"
 #include "ImageTransferSessionVT.h"
 #include "Logging.h"
 #include "MediaSampleAVFObjC.h"
@@ -40,7 +39,6 @@
 #include "Timer.h"
 #include <IOSurface/IOSurfaceRef.h>
 #include <pal/avfoundation/MediaTimeAVFoundation.h>
-#include <pal/cf/CoreMediaSoftLink.h>
 #include <pal/spi/cf/CoreAudioSPI.h>
 #include <pal/spi/cg/CoreGraphicsSPI.h>
 #include <pal/spi/cocoa/IOSurfaceSPI.h>
@@ -52,6 +50,13 @@
 #include "ReplayKitCaptureSource.h"
 #endif
 
+#if HAVE(SCREEN_CAPTURE_KIT)
+#include "ScreenCaptureKitCaptureSource.h"
+#endif
+
+#include "CoreVideoSoftLink.h"
+#include <pal/cf/CoreMediaSoftLink.h>
+
 namespace WebCore {
 
 CaptureSourceOrError DisplayCaptureSourceCocoa::create(const CaptureDevice& device, String&& hashSalt, const MediaConstraints* constraints)
@@ -61,9 +66,18 @@ CaptureSourceOrError DisplayCaptureSourceCocoa::create(const CaptureDevice& devi
 #if PLATFORM(IOS)
         return create(ReplayKitCaptureSource::create(device.persistentId()), device, WTFMove(hashSalt), constraints);
 #else
+#if HAVE(SCREEN_CAPTURE_KIT)
+        if (ScreenCaptureKitCaptureSource::isAvailable())
+            return create(ScreenCaptureKitCaptureSource::create(device, constraints), device, WTFMove(hashSalt), constraints);
+#endif
         return create(CGDisplayStreamScreenCaptureSource::create(device.persistentId()), device, WTFMove(hashSalt), constraints);
 #endif
     case CaptureDevice::DeviceType::Window:
+#if HAVE(SCREEN_CAPTURE_KIT)
+        if (ScreenCaptureKitCaptureSource::isAvailable())
+            return create(ScreenCaptureKitCaptureSource::create(device, constraints), device, WTFMove(hashSalt), constraints);
+#endif
+        break;
     case CaptureDevice::DeviceType::Microphone:
     case CaptureDevice::DeviceType::Speaker:
     case CaptureDevice::DeviceType::Camera:
@@ -94,9 +108,8 @@ DisplayCaptureSourceCocoa::DisplayCaptureSourceCocoa(UniqueRef<Capturer>&& captu
     : RealtimeMediaSource(Type::Video, WTFMove(name), WTFMove(deviceID), WTFMove(hashSalt))
     , m_capturer(WTFMove(capturer))
     , m_timer(RunLoop::current(), this, &DisplayCaptureSourceCocoa::emitFrame)
-    , m_capturerIsRunningObserver([weakThis = WeakPtr { *this }] (bool isRunning) { if (weakThis) weakThis->notifyMutedChange(!isRunning); })
 {
-    m_capturer->setIsRunningObserver(&m_capturerIsRunningObserver);
+    m_capturer->setObserver(this);
 }
 
 DisplayCaptureSourceCocoa::~DisplayCaptureSourceCocoa()
@@ -303,10 +316,9 @@ WTFLogChannel& DisplayCaptureSourceCocoa::Capturer::logChannel() const
     return LogWebRTC;
 }
 
-void DisplayCaptureSourceCocoa::Capturer::capturerIsRunningChanged(bool running)
+void DisplayCaptureSourceCocoa::Capturer::setObserver(CapturerObserver* observer)
 {
-    if (m_observer)
-        (*m_observer)(running);
+    m_observer = WeakPtr { observer };
 }
 
 } // namespace WebCore

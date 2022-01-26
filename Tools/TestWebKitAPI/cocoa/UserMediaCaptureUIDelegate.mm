@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -41,6 +41,7 @@
         _numberOfPrompts = 0;
         _audioDecision = WKPermissionDecisionGrant;
         _videoDecision = WKPermissionDecisionGrant;
+        _getDisplayMediaDecision = WKDisplayCapturePermissionDecisionDeny;
     }
 
     return self;
@@ -65,6 +66,10 @@
 
 -(void)setVideoDecision:(WKPermissionDecision)decision {
     _videoDecision = decision;
+}
+
+-(void)setGetDisplayMediaDecision:(WKDisplayCapturePermissionDecision)decision {
+    _getDisplayMediaDecision = decision;
 }
 
 - (void)webView:(WKWebView *)webView requestMediaCapturePermissionForOrigin:(WKSecurityOrigin *)origin initiatedByFrame:(WKFrameInfo *)frame type:(WKMediaCaptureType)type decisionHandler:(void (^)(WKPermissionDecision decision))decisionHandler {
@@ -96,6 +101,14 @@
 - (void)_webView:(WKWebView *)webView checkUserMediaPermissionForURL:(NSURL *)url mainFrameURL:(NSURL *)mainFrameURL frameIdentifier:(NSUInteger)frameIdentifier decisionHandler:(void (^)(NSString *salt, BOOL authorized))decisionHandler {
     decisionHandler(@"0x9876543210", YES);
 }
+
+- (void)_webView:(WKWebView *)webView requestDisplayCapturePermissionForOrigin:(WKSecurityOrigin *)origin initiatedByFrame:(WKFrameInfo *)frame withSystemAudio:(BOOL)withSystemAudio decisionHandler:(void (^)(WKDisplayCapturePermissionDecision decision))decisionHandler
+{
+    ++_numberOfPrompts;
+    _wasPrompted = true;
+    decisionHandler(_getDisplayMediaDecision);
+}
+
 @end
 
 #endif // ENABLE(MEDIA_STREAM)

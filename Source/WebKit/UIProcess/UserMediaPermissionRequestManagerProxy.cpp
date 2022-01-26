@@ -45,6 +45,10 @@
 #include "GPUProcessProxy.h"
 #endif
 
+#if HAVE(SCREEN_CAPTURE_KIT)
+#include <WebCore/ScreenCaptureKitCaptureSource.h>
+#endif
+
 namespace WebKit {
 using namespace WebCore;
 
@@ -421,7 +425,7 @@ void UserMediaPermissionRequestManagerProxy::scheduleNextRejection()
 #if ENABLE(MEDIA_STREAM)
 UserMediaPermissionRequestManagerProxy::RequestAction UserMediaPermissionRequestManagerProxy::getRequestAction(const UserMediaPermissionRequestProxy& request)
 {
-    bool requestingScreenCapture = request.requestType() == MediaStreamRequest::Type::DisplayMedia;
+    bool requestingScreenCapture = request.requestType() == MediaStreamRequest::Type::DisplayMedia || request.requestType() == MediaStreamRequest::Type::DisplayMediaWithAudio;
     bool requestingCamera = !requestingScreenCapture && request.hasVideoDevice();
     bool requestingMicrophone = request.hasAudioDevice();
 
@@ -431,7 +435,7 @@ UserMediaPermissionRequestManagerProxy::RequestAction UserMediaPermissionRequest
     if (!request.isUserGesturePriviledged() && wasRequestDenied(request, requestingMicrophone, requestingCamera, requestingScreenCapture))
         return RequestAction::Deny;
 
-    if (request.requestType() == MediaStreamRequest::Type::DisplayMedia)
+    if (requestingScreenCapture)
         return RequestAction::Prompt;
 
     return searchForGrantedRequest(request.frameID(), request.userMediaDocumentSecurityOrigin(), request.topLevelDocumentSecurityOrigin(), requestingMicrophone, requestingCamera) ? RequestAction::Grant : RequestAction::Prompt;
@@ -580,7 +584,7 @@ void UserMediaPermissionRequestManagerProxy::processUserMediaPermissionValidRequ
     }
 
     if (action == RequestAction::Grant) {
-        ASSERT(m_currentUserMediaRequest->requestType() != MediaStreamRequest::Type::DisplayMedia);
+        ASSERT(m_currentUserMediaRequest->requestType() != MediaStreamRequest::Type::DisplayMedia && m_currentUserMediaRequest->requestType() != MediaStreamRequest::Type::DisplayMediaWithAudio);
 
         if (m_page.isViewVisible())
             grantRequest(*m_currentUserMediaRequest);
@@ -859,6 +863,10 @@ void UserMediaPermissionRequestManagerProxy::syncWithWebCorePrefs() const
 #if ENABLE(GPU_PROCESS)
     if (m_page.preferences().captureAudioInGPUProcessEnabled() || m_page.preferences().captureVideoInGPUProcessEnabled())
         m_page.process().processPool().ensureGPUProcess().setUseMockCaptureDevices(mockDevicesEnabled);
+#endif
+
+#if HAVE(SCREEN_CAPTURE_KIT)
+    WebCore::ScreenCaptureKitCaptureSource::setEnabled(m_page.preferences().useScreenCaptureKit());
 #endif
 
     if (MockRealtimeMediaSourceCenter::mockRealtimeMediaSourceCenterEnabled() == mockDevicesEnabled)

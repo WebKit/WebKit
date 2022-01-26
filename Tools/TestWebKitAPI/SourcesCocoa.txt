@@ -116,6 +116,7 @@ Tests/WebKitCocoa/FullscreenRemoveNodeBeforeEnter.mm
 Tests/WebKitCocoa/GPUProcess.mm
 Tests/WebKitCocoa/Geolocation.mm
 Tests/WebKitCocoa/GetDisplayMedia.mm
+Tests/WebKitCocoa/GetDisplayMediaWindowAndScreen.mm
 Tests/WebKitCocoa/GetResourceData.mm
 Tests/WebKitCocoa/HSTS.mm
 Tests/WebKitCocoa/IDBCheckpointWAL.mm

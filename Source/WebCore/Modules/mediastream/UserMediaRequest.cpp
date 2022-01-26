@@ -112,6 +112,7 @@ void UserMediaRequest::start()
 
     switch (m_request.type) {
     case MediaStreamRequest::Type::DisplayMedia:
+    case MediaStreamRequest::Type::DisplayMediaWithAudio:
         if (!isFeaturePolicyAllowedByDocumentAndAllOwners(FeaturePolicy::Type::DisplayCapture, document)) {
             deny(MediaAccessDenialReason::PermissionDenied);
             controller->logGetDisplayMediaDenial(document);

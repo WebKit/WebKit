@@ -1,3 +1,15 @@
+2022-01-25  Eric Carlson  <eric.carlson@apple.com>
+
+        [macOS] Add new screen and window capture backend
+        https://bugs.webkit.org/show_bug.cgi?id=234029
+        rdar://problem/86347726
+
+        Reviewed by Jer Noble and Youenn Fablet.
+
+        * PAL.xcodeproj/project.pbxproj:
+        * pal/mac/ScreenCaptureKitSoftLink.h: Added.
+        * pal/mac/ScreenCaptureKitSoftLink.mm: Added.
+
 2022-01-24  Myles C. Maxfield  <mmaxfield@apple.com>
 
         REGRESSION(r282320): [Cocoa] User-installed fonts don't work in the GPU Process (in WKWebView)
@@ -8,7 +20,7 @@
 
         * pal/spi/cf/CoreTextSPI.h:
 
-2022-01-24  David Quesada  <david_quesada@apple.com>
+022-01-24  David Quesada  <david_quesada@apple.com>
 
         Simplify accesses to SystemVersion.plist
         https://bugs.webkit.org/show_bug.cgi?id=234306

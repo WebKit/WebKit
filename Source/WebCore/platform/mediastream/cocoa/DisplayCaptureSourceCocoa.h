@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -51,13 +51,24 @@ class CaptureDeviceInfo;
 class ImageTransferSessionVT;
 class PixelBufferConformerCV;
 
-class DisplayCaptureSourceCocoa final : public RealtimeMediaSource, public CanMakeWeakPtr<DisplayCaptureSourceCocoa> {
+class CapturerObserver : public CanMakeWeakPtr<CapturerObserver> {
+public:
+    virtual ~CapturerObserver() = default;
+
+    virtual void capturerIsRunningChanged(bool) { }
+    virtual void capturerFailed() { };
+};
+
+class DisplayCaptureSourceCocoa final
+    : public RealtimeMediaSource
+    , public CapturerObserver {
 public:
     using DisplayFrameType = std::variant<RefPtr<NativeImage>, RetainPtr<IOSurfaceRef>, RetainPtr<CMSampleBufferRef>>;
 
     class Capturer : public LoggerHelper {
         WTF_MAKE_FAST_ALLOCATED;
     public:
+
         virtual ~Capturer() = default;
 
         virtual bool start() = 0;
@@ -74,15 +85,23 @@ public:
         const void* logIdentifier() const final { return m_logIdentifier; }
         WTFLogChannel& logChannel() const final;
 
-        using IsRunningObserver = WTF::Observer<void(bool)>;
-        void setIsRunningObserver(IsRunningObserver* observer) { m_observer = observer; };
+        void setObserver(CapturerObserver*);
 
     protected:
         Capturer() = default;
-        void capturerIsRunningChanged(bool);
+        void isRunningChanged(bool running)
+        {
+            if (m_observer)
+                m_observer->capturerIsRunningChanged(running);
+        }
+        void captureFailed()
+        {
+            if (m_observer)
+                m_observer->capturerFailed();
+        }
 
     private:
-        WeakPtr<IsRunningObserver> m_observer;
+        WeakPtr<CapturerObserver> m_observer;
         RefPtr<const Logger> m_logger;
         const void* m_logIdentifier;
     };
@@ -110,6 +129,10 @@ private:
     const char* logClassName() const final { return "DisplayCaptureSourceCocoa"; }
     void setLogger(const Logger&, const void*) final;
 
+    // CapturerObserver
+    void capturerIsRunningChanged(bool isRunning) final { notifyMutedChange(!isRunning); }
+    void capturerFailed() final { captureFailed(); }
+
     void emitFrame();
 
     UniqueRef<Capturer> m_capturer;
@@ -123,7 +146,6 @@ private:
     RunLoop::Timer<DisplayCaptureSourceCocoa> m_timer;
 
     std::unique_ptr<ImageTransferSessionVT> m_imageTransferSession;
-    WTF::Observer<void(bool)> m_capturerIsRunningObserver;
 };
 
 } // namespace WebCore

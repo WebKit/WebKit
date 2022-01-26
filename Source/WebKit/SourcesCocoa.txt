@@ -518,6 +518,7 @@ UIProcess/ios/WKWebEvent.mm
 UIProcess/Launcher/cocoa/ProcessLauncherCocoa.mm
 
 UIProcess/mac/CorrectionPanel.mm
+UIProcess/mac/DisplayCaptureSessionManager.mm
 UIProcess/mac/DisplayLink.cpp
 UIProcess/mac/HighPerformanceGPUManager.mm
 UIProcess/mac/LegacySessionStateCoding.cpp
@@ -526,6 +527,7 @@ UIProcess/mac/SecItemShimProxy.cpp
 UIProcess/mac/ServicesController.mm
 UIProcess/mac/TextCheckerMac.mm
 UIProcess/mac/TiledCoreAnimationDrawingAreaProxy.mm
+UIProcess/mac/UserMediaPermissionRequestProxyMac.mm
 UIProcess/mac/ViewGestureControllerMac.mm
 UIProcess/mac/ViewSnapshotStoreMac.mm
 UIProcess/mac/WebColorPickerMac.mm

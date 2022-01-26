@@ -115,4 +115,8 @@ bool defaultMediaSourceEnabled();
 bool defaultMediaSessionCoordinatorEnabled();
 #endif
 
+#if HAVE(SCREEN_CAPTURE_KIT)
+bool defaultScreenCaptureKitEnabled();
+#endif
+
 } // namespace WebKit
