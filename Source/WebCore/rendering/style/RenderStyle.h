@@ -528,10 +528,11 @@ public:
     }
     bool hasAspectRatio() const { return aspectRatioType() == AspectRatioType::Ratio || aspectRatioType() == AspectRatioType::AutoAndRatio; }
     OptionSet<Containment> contain() const { return m_rareNonInheritedData->contain; }
-    bool containsLayout() const { return m_rareNonInheritedData->contain.contains(Containment::Layout); }
-    bool containsSize() const { return m_rareNonInheritedData->contain.contains(Containment::Size); }
-    bool containsStyle() const { return m_rareNonInheritedData->contain.contains(Containment::Style); }
-    bool containsPaint() const { return m_rareNonInheritedData->contain.contains(Containment::Paint); }
+    OptionSet<Containment> effectiveContainment() const;
+    bool containsLayout() const { return effectiveContainment().contains(Containment::Layout); }
+    bool containsSize() const { return effectiveContainment().contains(Containment::Size); }
+    bool containsStyle() const { return effectiveContainment().contains(Containment::Style); }
+    bool containsPaint() const { return effectiveContainment().contains(Containment::Paint); }
     ContainerType containerType() const { return static_cast<ContainerType>(m_rareNonInheritedData->containerType); }
     const Vector<AtomString>& containerNames() const { return m_rareNonInheritedData->containerNames; }
     BoxAlignment boxAlign() const { return static_cast<BoxAlignment>(m_rareNonInheritedData->deprecatedFlexibleBox->align); }

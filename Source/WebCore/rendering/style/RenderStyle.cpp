@@ -2818,4 +2818,25 @@ UsedFloat RenderStyle::usedFloat(const RenderObject& renderer)
 
     RELEASE_ASSERT_NOT_REACHED();
 }
+
+OptionSet<Containment> RenderStyle::effectiveContainment() const
+{
+    auto containment = contain();
+
+    switch (containerType()) {
+    case ContainerType::None:
+        break;
+    case ContainerType::Size:
+        containment.add({ Containment::Layout, Containment::Style, Containment::Size });
+        break;
+    case ContainerType::InlineSize:
+        // FIXME: Support inline-size containment.
+        containment.add({ Containment::Layout, Containment::Style });
+        break;
+    };
+
+    return containment;
+}
+
+
 } // namespace WebCore

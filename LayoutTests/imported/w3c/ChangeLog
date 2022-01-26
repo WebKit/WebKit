@@ -1,3 +1,13 @@
+2022-01-26  Antti Koivisto  <antti@apple.com>
+
+        [CSS Container Queries] container-type property should establish containment for 'size' and 'inline-size' values
+        https://bugs.webkit.org/show_bug.cgi?id=235638
+
+        Reviewed by Dean Jackson.
+
+        * web-platform-tests/css/css-contain/container-queries/container-type-containment-expected.txt:
+        * web-platform-tests/css/css-contain/container-queries/container-type-layout-invalidation-expected.txt:
+
 2022-01-26  Youenn Fablet  <youenn@apple.com>
 
         Rebase WPT streams tests up to 8d1dc42

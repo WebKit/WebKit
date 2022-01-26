@@ -1,8 +1,8 @@
 AA
 A
 
-FAIL container-type:inline-size turns on layout containment assert_equals: expected 33 but got 8
+PASS container-type:inline-size turns on layout containment
 FAIL container-type:inline-size turns on inline-size containment assert_equals: expected 0 but got 12
-FAIL container-type:size turns on full size containment assert_equals: expected 0 but got 18
+PASS container-type:size turns on full size containment
 PASS container-type:inline/size turns on style containment
 

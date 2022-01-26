@@ -2622,7 +2622,7 @@ bool WebCore::shouldApplyPaintContainment(const WebCore::RenderObject& renderer)
 
 bool WebCore::shouldApplyAnyContainment(const WebCore::RenderObject& renderer)
 {
-    if (renderer.style().contain().isEmpty())
+    if (renderer.style().effectiveContainment().isEmpty())
         return false;
     if ((renderer.style().containsLayout() || renderer.style().containsPaint()) && (!renderer.isInline() || renderer.isAtomicInlineLevelBox()) && !renderer.isRubyText() && (!renderer.isTablePart() || renderer.isRenderBlockFlow()))
         return true;

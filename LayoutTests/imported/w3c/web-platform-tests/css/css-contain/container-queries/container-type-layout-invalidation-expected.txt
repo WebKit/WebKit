@@ -1,4 +1,4 @@
 content
 
-FAIL Changing container-type invalidates layout assert_equals: expected 0 but got 47
+PASS Changing container-type invalidates layout
 
