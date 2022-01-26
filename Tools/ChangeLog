@@ -1,3 +1,15 @@
+2022-01-25  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION (iOS 15.2): Loading gets stuck after back-navigation involving COOP header
+        https://bugs.webkit.org/show_bug.cgi?id=235475
+        <rdar://problem/87948317>
+
+        Reviewed by Geoffrey Garen.
+
+        Add API test coverage.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ProcessSwapOnNavigation.mm:
+
 2022-01-25  Eric Carlson  <eric.carlson@apple.com>
 
         [macOS] Add new screen and window capture backend

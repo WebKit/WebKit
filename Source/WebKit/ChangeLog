@@ -1,3 +1,42 @@
+2022-01-25  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION (iOS 15.2): Loading gets stuck after back-navigation involving COOP header
+        https://bugs.webkit.org/show_bug.cgi?id=235475
+        <rdar://problem/87948317>
+
+        Reviewed by Geoffrey Garen.
+
+        WebPageProxy::continueNavigationInNewProcess() was failing to pass the identifier of the
+        NetworkResourceLoader that needs to be resumed to ProvisionalPageProxy::goToBackForwardItem().
+        It was only passing it to ProvisionalPageProxy::loadRequest(), which is used for non-back/forward
+        navigations. As a result, in case of COOP process-swap on back/forward navigation, the network
+        process would start a fresh load instead of resuming the existing one. The fresh load would get
+        a COOP header and thus trigger yet another process swap (and so on in a loop).
+
+        Also fix an issue where ProvisionalPageProxy::goToBackForwardItem() would always use
+        ShouldTreatAsContinuingLoad::YesAfterNavigationPolicyDecision even in the case of a COOP
+        process-swap. In the case of a COOP process-swap, we should pass in
+        ShouldTreatAsContinuingLoad::YesAfterProvisionalLoadStarted. This was causing us to
+        do an extra call to didStartProvisionalLoad() and was causing the new API test to hit
+        an assertion on debug builds.
+
+        Covered by new API test.
+
+        * UIProcess/ProvisionalPageProxy.cpp:
+        (WebKit::ProvisionalPageProxy::goToBackForwardItem):
+        * UIProcess/ProvisionalPageProxy.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::launchProcessForReload):
+        (WebKit::WebPageProxy::goToBackForwardItem):
+        (WebKit::WebPageProxy::continueNavigationInNewProcess):
+        (WebKit::WebPageProxy::triggerBrowsingContextGroupSwitchForNavigation):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::loadRequest):
+        (WebKit::WebPage::loadData):
+        (WebKit::WebPage::goToBackForwardItem):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2022-01-25  Eric Carlson  <eric.carlson@apple.com>
 
         [macOS] Add new screen and window capture backend
