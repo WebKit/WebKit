@@ -5445,6 +5445,7 @@ HRESULT WebView::notifyPreferencesChanged(IWebNotification* notification)
     settings.setCSSGradientInterpolationColorSpacesEnabled(m_preferences->cssGradientInterpolationColorSpacesEnabled());
     settings.setCSSGradientPremultipliedAlphaInterpolationEnabled(m_preferences->cssGradientPremultipliedAlphaInterpolationEnabled());
     settings.setMockScrollbarsControllerEnabled(m_preferences->mockScrollbarsControllerEnabled());
+    settings.setCSSInputSecurityEnabled(m_preferences->cssInputSecurityEnabled());
 
     return S_OK;
 }

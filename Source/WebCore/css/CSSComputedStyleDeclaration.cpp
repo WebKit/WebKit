@@ -3231,6 +3231,8 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
             return cssValuePool.createValue(style.imageResolution(), CSSUnitType::CSS_DPPX);
 #endif
         case CSSPropertyInputSecurity:
+            if (!m_element->document().settings().cssInputSecurityEnabled())
+                return nullptr;
             return cssValuePool.createValue(style.inputSecurity());
         case CSSPropertyLeft:
             return positionOffsetValue(style, CSSPropertyLeft, renderer);

@@ -88,6 +88,7 @@ struct CSSParserContext {
     bool overflowClipEnabled { false };
     bool gradientPremultipliedAlphaInterpolationEnabled { false };
     bool gradientInterpolationColorSpacesEnabled { false };
+    bool inputSecurityEnabled { false };
 
     // RuntimeEnabledFeatures.
 #if ENABLE(ATTACHMENT_ELEMENT)

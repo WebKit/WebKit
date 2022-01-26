@@ -349,6 +349,7 @@ public:
     bool cssGradientInterpolationColorSpacesEnabled();
     bool cssGradientPremultipliedAlphaInterpolationEnabled();
     bool mockScrollbarsControllerEnabled();
+    bool cssInputSecurityEnabled();
 
 private:
     WebPreferences();

@@ -2652,3 +2652,7 @@ bool WebPreferences::mockScrollbarsControllerEnabled()
     return boolValueForKey("WebKitMockScrollbarsControllerEnabled");
 }
 
+bool WebPreferences::cssInputSecurityEnabled()
+{
+    return boolValueForKey("WebKitCSSInputSecurityEnabled");
+}

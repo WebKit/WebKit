@@ -1,3 +1,19 @@
+2022-01-25  Aditya Keerthi  <akeerthi@apple.com>
+
+        Disable input-security CSS property
+        https://bugs.webkit.org/show_bug.cgi?id=235557
+        rdar://87984277
+
+        Reviewed by Dean Jackson.
+
+        Add support for tests enabling the CSSInputSecurityEnabled preference.
+
+        * WebPreferences.cpp:
+        (WebPreferences::cssInputSecurityEnabled):
+        * WebPreferences.h:
+        * WebView.cpp:
+        (WebView::notifyPreferencesChanged):
+
 2022-01-21  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         Fix AppleWin build with newer MSVC

@@ -1,3 +1,13 @@
+2022-01-25  Aditya Keerthi  <akeerthi@apple.com>
+
+        Disable input-security CSS property
+        https://bugs.webkit.org/show_bug.cgi?id=235557
+        rdar://87984277
+
+        Reviewed by Dean Jackson.
+
+        * fast/css/computed-text-security-for-input-security.html:
+
 2022-01-25  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Add another test for locale-specific shaping
