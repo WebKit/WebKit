@@ -183,6 +183,20 @@ void ImageOverlayController::clearDataDetectorHighlights()
     m_activeDataDetectorHighlight = nullptr;
 }
 
+void ImageOverlayController::textRecognitionResultsChanged(HTMLElement& element)
+{
+    if (m_hostElementForDataDetectors != &element)
+        return;
+
+    clearDataDetectorHighlights();
+    uninstallPageOverlayIfNeeded();
+}
+
+bool ImageOverlayController::hasActiveDataDetectorHighlightForTesting() const
+{
+    return !!m_activeDataDetectorHighlight;
+}
+
 void ImageOverlayController::elementUnderMouseDidChange(Frame& frame, Element* elementUnderMouse)
 {
     if (m_activeDataDetectorHighlight)

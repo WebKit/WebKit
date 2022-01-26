@@ -47,6 +47,8 @@
 #include "MediaUniqueIdentifier.h"
 #endif
 
+OBJC_CLASS DDScannerResult;
+
 namespace WebCore {
 
 class AbstractRange;
@@ -938,7 +940,17 @@ public:
         ~ImageOverlayBlock();
     };
 
-    void installImageOverlay(Element&, Vector<ImageOverlayLine>&&, Vector<ImageOverlayBlock>&& = { });
+    struct ImageOverlayDataDetector {
+        RefPtr<DOMPointReadOnly> topLeft;
+        RefPtr<DOMPointReadOnly> topRight;
+        RefPtr<DOMPointReadOnly> bottomRight;
+        RefPtr<DOMPointReadOnly> bottomLeft;
+
+        ~ImageOverlayDataDetector();
+    };
+
+    void installImageOverlay(Element&, Vector<ImageOverlayLine>&&, Vector<ImageOverlayBlock>&& = { }, Vector<ImageOverlayDataDetector>&& = { });
+    bool hasActiveDataDetectorHighlight() const;
 
 #if ENABLE(IMAGE_ANALYSIS)
     void requestTextRecognition(Element&, RefPtr<VoidCallback>&&);
@@ -1258,6 +1270,10 @@ private:
 
     ExceptionOr<RenderedDocumentMarker*> markerAt(Node&, const String& markerType, unsigned index);
     ExceptionOr<ScrollableArea*> scrollableAreaForNode(Node*) const;
+
+#if ENABLE(DATA_DETECTION)
+    static DDScannerResult *fakeDataDetectorResultForTesting();
+#endif
 
 #if ENABLE(MEDIA_STREAM)
     // RealtimeMediaSource::Observer API

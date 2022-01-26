@@ -1,3 +1,17 @@
+2022-01-26  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Data detectors sometimes show up in the wrong place when resizing images with Live Text
+        https://bugs.webkit.org/show_bug.cgi?id=235598
+        rdar://88032375
+
+        Reviewed by Dean Jackson.
+
+        Move some soft-linked DataDetectorsCore API out of the iOS-specific define, so that we can call them on macOS.
+        See WebCore/ChangeLog for more details.
+
+        * pal/cocoa/DataDetectorsCoreSoftLink.h:
+        * pal/cocoa/DataDetectorsCoreSoftLink.mm:
+
 2022-01-25  Eric Carlson  <eric.carlson@apple.com>
 
         [macOS] Add new screen and window capture backend

@@ -1,3 +1,22 @@
+2022-01-26  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Data detectors sometimes show up in the wrong place when resizing images with Live Text
+        https://bugs.webkit.org/show_bug.cgi?id=235598
+        rdar://88032375
+
+        Reviewed by Dean Jackson.
+
+        Add a layout test to exercise (some) of the changes. This new layout test consists of 4 steps:
+        1.  Hover over a data detector in Live Text and confirm that a data detector highlight is activated.
+        2.  Resize the image (via script) such that the cursor is no longer over a data detector; confirm that the data
+            detector highlight is cleared.
+        3.  Move over the data detector highlight in the resized image, and confirm that the highlight is once again
+            activated.
+        4.  Move out of the image altogether and confirm that the highlight is deactivated.
+
+        * fast/images/text-recognition/mac/image-overlay-data-detectors-expected.txt: Added.
+        * fast/images/text-recognition/mac/image-overlay-data-detectors.html: Added.
+
 2022-01-26  Antti Koivisto  <antti@apple.com>
 
         [iOS] imported/w3c/web-platform-tests/css/cssom/getComputedStyle-detached-subtree.html is failing

@@ -42,6 +42,7 @@
 #import <Metal/Metal.h>
 #endif
 #import <pal/spi/cocoa/NSAccessibilitySPI.h>
+#import <wtf/cf/TypeCastsCF.h>
 #import <wtf/cocoa/NSURLExtras.h>
 #import <wtf/spi/darwin/SandboxSPI.h>
 
@@ -49,7 +50,9 @@
 #import <pal/ios/UIKitSoftLink.h>
 #endif
 
-
+#if ENABLE(DATA_DETECTION)
+#import <pal/cocoa/DataDetectorsCoreSoftLink.h>
+#endif
 
 namespace WebCore {
 
@@ -171,5 +174,27 @@ bool Internals::platformSupportsMetal(bool isWebGL2)
     return false;
 }
 #endif
+
+#if ENABLE(DATA_DETECTION)
+
+DDScannerResult *Internals::fakeDataDetectorResultForTesting()
+{
+    static NeverDestroyed result = ([]() -> RetainPtr<DDScannerResult> {
+        auto scanner = adoptCF(PAL::softLink_DataDetectorsCore_DDScannerCreate(DDScannerTypeStandard, 0, nullptr));
+        auto stringToScan = CFSTR("webkit.org");
+        auto query = adoptCF(PAL::softLink_DataDetectorsCore_DDScanQueryCreateFromString(kCFAllocatorDefault, stringToScan, CFRangeMake(0, CFStringGetLength(stringToScan))));
+        if (!PAL::softLink_DataDetectorsCore_DDScannerScanQuery(scanner.get(), query.get()))
+            return { };
+
+        auto results = adoptCF(PAL::softLink_DataDetectorsCore_DDScannerCopyResultsWithOptions(scanner.get(), DDScannerCopyResultsOptionsNoOverlap));
+        if (!CFArrayGetCount(results.get()))
+            return { };
+
+        return { [[PAL::getDDScannerResultClass() resultsFromCoreResults:results.get()] firstObject] };
+    })();
+    return result->get();
+}
+
+#endif // ENABLE(DATA_DETECTION)
 
 }

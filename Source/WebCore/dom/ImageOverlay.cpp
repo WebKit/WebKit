@@ -37,6 +37,7 @@
 #include "HTMLDivElement.h"
 #include "HTMLMediaElement.h"
 #include "HTMLStyleElement.h"
+#include "ImageOverlayController.h"
 #include "MediaControlsHost.h"
 #include "Page.h"
 #include "Quirks.h"
@@ -207,20 +208,30 @@ static Elements updateSubtree(HTMLElement& element, const TextRecognitionResult&
     bool hadExistingElements = false;
     Elements elements;
     RefPtr<HTMLElement> mediaControlsContainer;
-    if (RefPtr shadowRoot = element.shadowRoot()) {
 #if ENABLE(MODERN_MEDIA_CONTROLS)
-        if (is<HTMLMediaElement>(element)) {
-            if (RefPtr controlsHost = downcast<HTMLMediaElement>(element).mediaControlsHost()) {
-                auto& containerClass = controlsHost->mediaControlsContainerClassName();
-                for (auto& child : childrenOfType<HTMLDivElement>(*shadowRoot)) {
-                    if (child.hasClass() && child.classNames().contains(containerClass)) {
-                        mediaControlsContainer = &child;
-                        break;
-                    }
-                }
-            }
+    mediaControlsContainer = ([&]() -> RefPtr<HTMLElement> {
+        RefPtr mediaElement = dynamicDowncast<HTMLMediaElement>(element);
+        if (!mediaElement)
+            return { };
+
+        Ref shadowRoot = mediaElement->ensureUserAgentShadowRoot();
+        RefPtr controlsHost = mediaElement->mediaControlsHost();
+        if (!controlsHost) {
+            ASSERT_NOT_REACHED();
+            return { };
         }
-#endif
+
+        auto& containerClass = controlsHost->mediaControlsContainerClassName();
+        for (auto& child : childrenOfType<HTMLDivElement>(shadowRoot.get())) {
+            if (child.hasClass() && child.classNames().contains(containerClass))
+                return &child;
+        }
+        ASSERT_NOT_REACHED();
+        return { };
+    })();
+#endif // ENABLE(MODERN_MEDIA_CONTROLS)
+
+    if (RefPtr shadowRoot = element.shadowRoot()) {
         if (hasOverlay(element)) {
             RefPtr<ContainerNode> containerForImageOverlay;
             if (mediaControlsContainer)
@@ -510,6 +521,12 @@ void updateWithTextRecognitionResult(HTMLElement& element, const TextRecognition
 
         // FIXME: We should come up with a way to coalesce the bounding quads into one or more rotated rects with the same angle of rotation.
         fitElementToQuad(dataDetectorContainer.get(), convertToContainerCoordinates(firstQuad));
+    }
+
+    if (!result.dataDetectors.isEmpty()) {
+        auto* page = document->page();
+        if (auto* overlayController = page ? page->imageOverlayControllerIfExists() : nullptr)
+            overlayController->textRecognitionResultsChanged(element);
     }
 #endif // ENABLE(DATA_DETECTION)
 

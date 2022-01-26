@@ -306,6 +306,16 @@ enum HEVCParameterCodec {
     required DOMPointReadOnly bottomLeft;
 };
 
+[
+    ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
+    JSGenerateToJSObject,
+] dictionary ImageOverlayDataDetector {
+    required DOMPointReadOnly topLeft;
+    required DOMPointReadOnly topRight;
+    required DOMPointReadOnly bottomRight;
+    required DOMPointReadOnly bottomLeft;
+};
+
 typedef (FetchRequest or FetchResponse) FetchObject;
 
 [
@@ -967,7 +977,8 @@ typedef (FetchRequest or FetchResponse) FetchObject;
 
     [Conditional=IMAGE_ANALYSIS] readonly attribute Element? textRecognitionCandidate;
     [Conditional=IMAGE_ANALYSIS] undefined requestTextRecognition(Element element, VoidCallback callback);
-    undefined installImageOverlay(Element element, sequence<ImageOverlayLine> lines, optional sequence<ImageOverlayBlock> blocks = []);
+    undefined installImageOverlay(Element element, sequence<ImageOverlayLine> lines, optional sequence<ImageOverlayBlock> blocks = [], optional sequence<ImageOverlayDataDetector> dataDetectors = []);
+    readonly attribute boolean hasActiveDataDetectorHighlight;
 
     boolean usingAppleInternalSDK();
     boolean usingGStreamer();

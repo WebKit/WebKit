@@ -112,6 +112,7 @@
 #include "IDBRequest.h"
 #include "IDBTransaction.h"
 #include "ImageOverlay.h"
+#include "ImageOverlayController.h"
 #include "InspectorClient.h"
 #include "InspectorController.h"
 #include "InspectorDebuggableType.h"
@@ -5764,6 +5765,7 @@ MockPaymentCoordinator& Internals::mockPaymentCoordinator(Document& document)
 Internals::ImageOverlayLine::~ImageOverlayLine() = default;
 Internals::ImageOverlayText::~ImageOverlayText() = default;
 Internals::ImageOverlayBlock::~ImageOverlayBlock() = default;
+Internals::ImageOverlayDataDetector::~ImageOverlayDataDetector() = default;
 
 #if ENABLE(IMAGE_ANALYSIS)
 
@@ -5783,7 +5785,7 @@ static TextRecognitionLineData makeDataForLine(const Internals::ImageOverlayLine
     return {
         getQuad<Internals::ImageOverlayLine>(line),
         line.children.map([](auto& textChild) -> TextRecognitionWordData {
-            return { textChild.text, getQuad<Internals::ImageOverlayText>(textChild), textChild.hasLeadingWhitespace };
+            return { textChild.text, getQuad(textChild), textChild.hasLeadingWhitespace };
         }),
         line.hasTrailingNewline
     };
@@ -5813,7 +5815,7 @@ RefPtr<Element> Internals::textRecognitionCandidate() const
 
 #endif // ENABLE(IMAGE_ANALYSIS)
 
-void Internals::installImageOverlay(Element& element, Vector<ImageOverlayLine>&& lines, Vector<ImageOverlayBlock>&& blocks)
+void Internals::installImageOverlay(Element& element, Vector<ImageOverlayLine>&& lines, Vector<ImageOverlayBlock>&& blocks, Vector<ImageOverlayDataDetector>&& dataDetectors)
 {
     if (!is<HTMLElement>(element))
         return;
@@ -5824,16 +5826,28 @@ void Internals::installImageOverlay(Element& element, Vector<ImageOverlayLine>&&
             return makeDataForLine(line);
         })
 #if ENABLE(DATA_DETECTION)
-        , Vector<TextRecognitionDataDetector>()
-#endif
+        , dataDetectors.map([] (auto& dataDetector) -> TextRecognitionDataDetector {
+            return TextRecognitionDataDetector { fakeDataDetectorResultForTesting(), { getQuad(dataDetector) } };
+        })
+#endif // ENABLE(DATA_DETECTION)
         , blocks.map([] (auto& block) {
-            return TextRecognitionBlockData { block.text, getQuad<ImageOverlayBlock>(block) };
+            return TextRecognitionBlockData { block.text, getQuad(block) };
         })
     });
 #else
     UNUSED_PARAM(blocks);
+    UNUSED_PARAM(dataDetectors);
     UNUSED_PARAM(lines);
 #endif
+}
+
+bool Internals::hasActiveDataDetectorHighlight() const
+{
+#if ENABLE(DATA_DETECTION) && ENABLE(IMAGE_ANALYSIS)
+    if (auto* controller = contextDocument()->page()->imageOverlayControllerIfExists())
+        return controller->hasActiveDataDetectorHighlightForTesting();
+#endif
+    return false;
 }
 
 bool Internals::isSystemPreviewLink(Element& element) const

@@ -211,6 +211,19 @@ void ImageOverlayController::elementUnderMouseDidChange(Frame&, Element*)
 {
 }
 
+#if ENABLE(DATA_DETECTION)
+
+void ImageOverlayController::textRecognitionResultsChanged(HTMLElement&)
+{
+}
+
+bool ImageOverlayController::hasActiveDataDetectorHighlightForTesting() const
+{
+    return false;
+}
+
+#endif // ENABLE(DATA_DETECTION)
+
 #endif // !PLATFORM(MAC)
 
 } // namespace WebCore
