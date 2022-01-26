@@ -160,8 +160,8 @@ public:
     // Out of line and inline colors will always be non-equal.
     friend bool operator==(const Color& a, const Color& b);
     friend bool equalIgnoringSemanticColor(const Color& a, const Color& b);
-    friend bool outOfLineComponentssEqual(const Color&, const Color&);
-    friend bool outOfLineComponentssEqualIgnoringSemanticColor(const Color&, const Color&);
+    friend bool outOfLineComponentsEqual(const Color&, const Color&);
+    friend bool outOfLineComponentsEqualIgnoringSemanticColor(const Color&, const Color&);
 
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static std::optional<Color> decode(Decoder&);
@@ -259,8 +259,8 @@ bool operator==(const Color&, const Color&);
 bool operator!=(const Color&, const Color&);
 
 // One or both must be out of line colors.
-bool outOfLineComponentssEqual(const Color&, const Color&);
-bool outOfLineComponentssEqualIgnoringSemanticColor(const Color&, const Color&);
+bool outOfLineComponentsEqual(const Color&, const Color&);
+bool outOfLineComponentsEqualIgnoringSemanticColor(const Color&, const Color&);
 
 #if USE(CG)
 WEBCORE_EXPORT RetainPtr<CGColorRef> cachedCGColor(const Color&);
@@ -273,7 +273,7 @@ WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const Color&);
 inline bool operator==(const Color& a, const Color& b)
 {
     if (a.isOutOfLine() || b.isOutOfLine())
-        return outOfLineComponentssEqual(a, b);
+        return outOfLineComponentsEqual(a, b);
     return a.m_colorAndFlags == b.m_colorAndFlags;
 }
 
@@ -282,7 +282,7 @@ inline bool operator!=(const Color& a, const Color& b)
     return !(a == b);
 }
 
-inline bool outOfLineComponentssEqual(const Color& a, const Color& b)
+inline bool outOfLineComponentsEqual(const Color& a, const Color& b)
 {
     if (a.isOutOfLine() && b.isOutOfLine())
         return a.asOutOfLine().unresolvedComponents() == b.asOutOfLine().unresolvedComponents() && a.colorSpace() == b.colorSpace() && a.flags() == b.flags();
@@ -291,7 +291,7 @@ inline bool outOfLineComponentssEqual(const Color& a, const Color& b)
     return false;
 }
 
-inline bool outOfLineComponentssEqualIgnoringSemanticColor(const Color& a, const Color& b)
+inline bool outOfLineComponentsEqualIgnoringSemanticColor(const Color& a, const Color& b)
 {
     if (a.isOutOfLine() && b.isOutOfLine()) {
         auto aFlags = a.flags() - Color::FlagsIncludingPrivate::Semantic;
@@ -306,7 +306,7 @@ inline bool outOfLineComponentssEqualIgnoringSemanticColor(const Color& a, const
 inline bool equalIgnoringSemanticColor(const Color& a, const Color& b)
 {
     if (a.isOutOfLine() || b.isOutOfLine())
-        return outOfLineComponentssEqualIgnoringSemanticColor(a, b);
+        return outOfLineComponentsEqualIgnoringSemanticColor(a, b);
 
     auto aFlags = a.flags() - Color::FlagsIncludingPrivate::Semantic;
     auto bFlags = b.flags() - Color::FlagsIncludingPrivate::Semantic;
