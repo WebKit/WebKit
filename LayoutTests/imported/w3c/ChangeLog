@@ -1,3 +1,16 @@
+2022-01-26  Alexey Shvayka  <ashvayka@apple.com>
+
+        globalThis.queueMicrotask() should report thrown exceptions
+        https://bugs.webkit.org/show_bug.cgi?id=235614
+
+        Reviewed by Geoff Garen.
+
+        Rebaseline WPT tests that are now passing.
+
+        * web-platform-tests/html/webappapis/microtask-queuing/queue-microtask-exceptions.any-expected.txt:
+        * web-platform-tests/html/webappapis/microtask-queuing/queue-microtask-exceptions.any.serviceworker-expected.txt:
+        * web-platform-tests/html/webappapis/microtask-queuing/queue-microtask-exceptions.any.worker-expected.txt:
+
 2022-01-26  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, revert r286855 as it caused form submission issues

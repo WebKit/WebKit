@@ -2583,11 +2583,6 @@ void JSGlobalObject::setDebugger(Debugger* debugger)
         vm().ensureShadowChicken();
 }
 
-bool JSGlobalObject::hasDebugger() const
-{ 
-    return m_debugger;
-}
-
 bool JSGlobalObject::hasInteractiveDebugger() const 
 { 
     return m_debugger && m_debugger->isInteractivelyDebugging();

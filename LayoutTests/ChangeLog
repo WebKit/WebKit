@@ -1,3 +1,17 @@
+2022-01-26  Alexey Shvayka  <ashvayka@apple.com>
+
+        globalThis.queueMicrotask() should report thrown exceptions
+        https://bugs.webkit.org/show_bug.cgi?id=235614
+
+        Reviewed by Geoff Garen.
+
+        * TestExpectations: Unskip 3 WPT tests that are now passing.
+        * fast/dom/callback-function-detached-frame-queue-microtask-expected.txt: Added.
+        * fast/dom/callback-function-detached-frame-queue-microtask.html: Added.
+        * fast/dom/resources/callback-function-detached-frame-queue-microtask-iframe.html: Added.
+        * inspector/debugger/break-on-uncaught-exception-expected.txt:
+        * platform/mac-wk1/TestExpectations: Skip Service Worker test.
+
 2022-01-26  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, revert r286855 as it caused form submission issues

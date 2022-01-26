@@ -528,6 +528,7 @@ bindings/js/JSDOMGlobalObjectTask.cpp
 bindings/js/JSDOMGuardedObject.cpp
 bindings/js/JSDOMIterator.cpp
 bindings/js/JSDOMMapLike.cpp
+bindings/js/JSDOMMicrotask.cpp
 bindings/js/JSDOMPromise.cpp
 bindings/js/JSDOMPromiseDeferred.cpp
 bindings/js/JSDOMQuadCustom.cpp

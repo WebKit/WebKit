@@ -37,7 +37,6 @@ namespace WebCore {
 class ActiveDOMCallbackMicrotask;
 class EventLoopTaskGroup;
 class EventTarget;
-class Microtask;
 class MicrotaskQueue;
 class ScriptExecutionContext;
 

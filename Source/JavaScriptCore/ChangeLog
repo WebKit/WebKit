@@ -1,3 +1,23 @@
+2022-01-26  Alexey Shvayka  <ashvayka@apple.com>
+
+        globalThis.queueMicrotask() should report thrown exceptions
+        https://bugs.webkit.org/show_bug.cgi?id=235614
+
+        Reviewed by Geoff Garen.
+
+        1. Move JSGlobalObject::hasDebugger() to the header to facilitate
+           inlining as it's used in a rather hot Microtask execution code.
+        2. Export a few Debugger methods for JSDOMMicrotask::run().
+        3. Remove the now-unused createJSMicrotask() overload.
+
+        * debugger/Debugger.h:
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::hasDebugger const): Deleted.
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::hasDebugger const):
+        * runtime/JSMicrotask.cpp:
+        * runtime/JSMicrotask.h:
+
 2022-01-26  Antoine Quint  <graouts@webkit.org>
 
         [Web Inspector] Graphics tab should display pseudo-elements for more than ::before and ::after

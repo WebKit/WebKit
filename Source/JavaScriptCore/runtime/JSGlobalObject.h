@@ -629,7 +629,7 @@ public:
 
     DECLARE_EXPORT_INFO;
 
-    bool hasDebugger() const;
+    bool hasDebugger() const { return m_debugger; }
     bool hasInteractiveDebugger() const;
     const RuntimeFlags& runtimeFlags() const { return m_runtimeFlags; }
 
