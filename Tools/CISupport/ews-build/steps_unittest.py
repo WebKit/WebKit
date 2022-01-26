@@ -3441,7 +3441,7 @@ class TestUploadBuiltProduct(BuildStepMixinAdditions, unittest.TestCase):
         self.setProperty('fullPlatform', 'mac-sierra')
         self.setProperty('configuration', 'release')
         self.setProperty('architecture', 'x86_64')
-        self.setProperty('patch_id', '1234')
+        self.setProperty('change_id', '1234')
         self.expectHidden(False)
         self.expectRemoteCommands(
             Expect('uploadFile', dict(workersrc='WebKitBuild/release.zip', workdir='wkdir',
@@ -3460,7 +3460,7 @@ class TestUploadBuiltProduct(BuildStepMixinAdditions, unittest.TestCase):
         self.setProperty('fullPlatform', 'mac-sierra')
         self.setProperty('configuration', 'release')
         self.setProperty('architecture', 'x86_64')
-        self.setProperty('patch_id', '1234')
+        self.setProperty('change_id', '1234')
         self.expectHidden(False)
         self.expectRemoteCommands(
             Expect('uploadFile', dict(workersrc='WebKitBuild/release.zip', workdir='wkdir',
@@ -3488,7 +3488,7 @@ class TestDownloadBuiltProduct(BuildStepMixinAdditions, unittest.TestCase):
         self.setProperty('fullPlatform', 'ios-simulator-12')
         self.setProperty('configuration', 'release')
         self.setProperty('architecture', 'x86_64')
-        self.setProperty('patch_id', '1234')
+        self.setProperty('change_id', '1234')
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logEnviron=False,
@@ -3505,7 +3505,7 @@ class TestDownloadBuiltProduct(BuildStepMixinAdditions, unittest.TestCase):
         self.setProperty('fullPlatform', 'mac-sierra')
         self.setProperty('configuration', 'debug')
         self.setProperty('architecture', 'x86_64')
-        self.setProperty('patch_id', '123456')
+        self.setProperty('change_id', '123456')
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logEnviron=False,
@@ -3523,7 +3523,7 @@ class TestDownloadBuiltProduct(BuildStepMixinAdditions, unittest.TestCase):
         self.setProperty('fullPlatform', 'gtk')
         self.setProperty('configuration', 'release')
         self.setProperty('architecture', 'x86_64')
-        self.setProperty('patch_id', '123456')
+        self.setProperty('change_id', '123456')
         self.expectOutcome(result=SKIPPED)
         with current_hostname('test-ews-deployment.igalia.com'):
             return self.runStep()
@@ -3554,7 +3554,7 @@ class TestDownloadBuiltProductFromMaster(BuildStepMixinAdditions, unittest.TestC
         self.setProperty('fullPlatform', 'ios-simulator-12')
         self.setProperty('configuration', 'release')
         self.setProperty('architecture', 'x86_64')
-        self.setProperty('patch_id', '1234')
+        self.setProperty('change_id', '1234')
         self.expectHidden(False)
         buf = []
         self.expectRemoteCommands(
@@ -3583,7 +3583,7 @@ class TestDownloadBuiltProductFromMaster(BuildStepMixinAdditions, unittest.TestC
         self.setProperty('fullPlatform', 'mac-sierra')
         self.setProperty('configuration', 'debug')
         self.setProperty('architecture', 'x86_64')
-        self.setProperty('patch_id', '123456')
+        self.setProperty('change_id', '123456')
         buf = []
         self.expectRemoteCommands(
             Expect('downloadFile', dict(
@@ -3664,7 +3664,7 @@ class TestTransferToS3(BuildStepMixinAdditions, unittest.TestCase):
         self.setProperty('fullPlatform', 'mac-highsierra')
         self.setProperty('configuration', 'release')
         self.setProperty('architecture', 'x86_64')
-        self.setProperty('patch_id', '1234')
+        self.setProperty('change_id', '1234')
         self.expectLocalCommands(
             ExpectMasterShellCommand(command=['python3',
                                               '../Shared/transfer-archive-to-s3',
@@ -3683,7 +3683,7 @@ class TestTransferToS3(BuildStepMixinAdditions, unittest.TestCase):
         self.setProperty('fullPlatform', 'ios-simulator-12')
         self.setProperty('configuration', 'debug')
         self.setProperty('architecture', 'x86_64')
-        self.setProperty('patch_id', '1234')
+        self.setProperty('change_id', '1234')
         self.expectLocalCommands(
             ExpectMasterShellCommand(command=['python3',
                                               '../Shared/transfer-archive-to-s3',
@@ -3702,7 +3702,7 @@ class TestTransferToS3(BuildStepMixinAdditions, unittest.TestCase):
         self.setProperty('fullPlatform', 'mac-highsierra')
         self.setProperty('configuration', 'release')
         self.setProperty('architecture', 'x86_64')
-        self.setProperty('patch_id', '1234')
+        self.setProperty('change_id', '1234')
         self.expectOutcome(result=SKIPPED, state_string='Transferred archive to S3 (skipped)')
         with current_hostname('something-other-than-steps.EWS_BUILD_HOSTNAME'):
             return self.runStep()

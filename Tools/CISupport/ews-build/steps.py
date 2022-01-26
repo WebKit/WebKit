@@ -310,16 +310,20 @@ class ConfigureBuild(buildstep.BuildStep):
     def add_patch_id_url(self):
         patch_id = self.getProperty('patch_id', '')
         if patch_id:
+            self.setProperty('change_id', patch_id, 'ConfigureBuild')
             self.addURL('Patch {}'.format(patch_id), Bugzilla.patch_url(patch_id))
 
     def add_pr_details(self):
         pr_number = self.getProperty('github.number')
         if not pr_number:
             return
+
         repository_url = self.getProperty('repository', '')
         title = self.getProperty('github.title', '')
         owners = self.getProperty('owners', [])
         revision = self.getProperty('github.head.sha')
+
+        self.setProperty('change_id', revision, 'ConfigureBuild')
 
         if title:
             self.addURL('PR {}: {}'.format(pr_number, title), GitHub.pr_url(pr_number, repository_url))
@@ -1496,11 +1500,11 @@ class Trigger(trigger.Trigger):
             ]
         if self.triggers:
             property_names.append('triggers')
-        if self.include_revision and pull_request:
-            properties_to_pass['ews_revision'] = properties.Property('got_revision')
 
         properties_to_pass = {prop: properties.Property(prop) for prop in property_names}
         properties_to_pass['retry_count'] = properties.Property('retry_count', default=0)
+        if self.include_revision and patch:
+            properties_to_pass['ews_revision'] = properties.Property('got_revision')
         return properties_to_pass
 
 
@@ -3351,7 +3355,7 @@ class ArchiveBuiltProduct(shell.ShellCommand):
 class UploadBuiltProduct(transfer.FileUpload):
     name = 'upload-built-product'
     workersrc = WithProperties('WebKitBuild/%(configuration)s.zip')
-    masterdest = WithProperties('public_html/archives/%(fullPlatform)s-%(architecture)s-%(configuration)s/%(patch_id)s.zip')
+    masterdest = WithProperties('public_html/archives/%(fullPlatform)s-%(architecture)s-%(configuration)s/%(change_id)s.zip')
     descriptionDone = ['Uploaded built product']
     haltOnFailure = True
 
@@ -3372,10 +3376,10 @@ class TransferToS3(master.MasterShellCommand):
     name = 'transfer-to-s3'
     description = ['transferring to s3']
     descriptionDone = ['Transferred archive to S3']
-    archive = WithProperties('public_html/archives/%(fullPlatform)s-%(architecture)s-%(configuration)s/%(patch_id)s.zip')
+    archive = WithProperties('public_html/archives/%(fullPlatform)s-%(architecture)s-%(configuration)s/%(change_id)s.zip')
     identifier = WithProperties('%(fullPlatform)s-%(architecture)s-%(configuration)s')
-    patch_id = WithProperties('%(patch_id)s')
-    command = ['python3', '../Shared/transfer-archive-to-s3', '--patch_id', patch_id, '--identifier', identifier, '--archive', archive]
+    change_id = WithProperties('%(change_id)s')
+    command = ['python3', '../Shared/transfer-archive-to-s3', '--patch_id', change_id, '--identifier', identifier, '--archive', archive]
     haltOnFailure = False
     flunkOnFailure = False
 
@@ -3411,7 +3415,7 @@ class TransferToS3(master.MasterShellCommand):
 class DownloadBuiltProduct(shell.ShellCommand):
     command = ['python3', 'Tools/CISupport/download-built-product',
                WithProperties('--%(configuration)s'),
-               WithProperties(S3URL + 'ews-archives.webkit.org/%(fullPlatform)s-%(architecture)s-%(configuration)s/%(patch_id)s.zip')]
+               WithProperties(S3URL + 'ews-archives.webkit.org/%(fullPlatform)s-%(architecture)s-%(configuration)s/%(change_id)s.zip')]
     name = 'download-built-product'
     description = ['downloading built product']
     descriptionDone = ['Downloaded built product']
@@ -3441,7 +3445,7 @@ class DownloadBuiltProduct(shell.ShellCommand):
 
 
 class DownloadBuiltProductFromMaster(transfer.FileDownload):
-    mastersrc = WithProperties('public_html/archives/%(fullPlatform)s-%(architecture)s-%(configuration)s/%(patch_id)s.zip')
+    mastersrc = WithProperties('public_html/archives/%(fullPlatform)s-%(architecture)s-%(configuration)s/%(change_id)s.zip')
     workerdest = WithProperties('WebKitBuild/%(configuration)s.zip')
     name = 'download-built-product-from-master'
     description = ['downloading built product from buildbot master']
