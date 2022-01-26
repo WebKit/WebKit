@@ -1,3 +1,12 @@
+2022-01-26  Youenn Fablet  <youenn@apple.com>
+
+        Rebase WPT streams tests up to 8d1dc42
+        https://bugs.webkit.org/show_bug.cgi?id=235580
+
+        Reviewed by Chris Dumez.
+
+        * platform/mac-wk1/TestExpectations: Skipping service worker tests.
+
 2022-01-26  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         WebGL conformance tests that are pending upstreaming should not duplicate unmodified files
