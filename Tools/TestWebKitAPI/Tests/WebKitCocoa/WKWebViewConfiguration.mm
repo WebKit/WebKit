@@ -26,6 +26,7 @@
 #import "config.h"
 
 #import "PlatformUtilities.h"
+#import "TestWKWebView.h"
 #import <WebKit/WKWebView.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebsiteDataStore.h>
@@ -94,4 +95,26 @@ TEST(WebKit, DefaultConfigurationEME)
         done = true;
     }];
     TestWebKitAPI::Util::run(&done);
+}
+
+TEST(WebKit, ConfigurationDisableJavaScript)
+{
+    auto configuration = adoptNS([WKWebViewConfiguration new]);
+    EXPECT_TRUE([configuration _allowsJavaScriptMarkup]);
+    [configuration _setAllowsJavaScriptMarkup:NO];
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 100, 100) configuration:configuration.get()]);
+    [webView synchronouslyLoadHTMLString:@"<body onload=\"document.write('FAIL');\">PASS</body>"];
+    NSString *bodyHTML = [webView stringByEvaluatingJavaScript:@"document.body.innerHTML"];
+    EXPECT_WK_STREQ(bodyHTML, @"PASS");
+}
+
+TEST(WebKit, ConfigurationDisableJavaScriptNestedBody)
+{
+    auto configuration = adoptNS([WKWebViewConfiguration new]);
+    EXPECT_TRUE([configuration _allowsJavaScriptMarkup]);
+    [configuration _setAllowsJavaScriptMarkup:NO];
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 100, 100) configuration:configuration.get()]);
+    [webView synchronouslyLoadHTMLString:@"<table><body onload=\"document.write('FAIL');\"></table>"];
+    NSString *bodyHTML = [webView stringByEvaluatingJavaScript:@"document.body.innerHTML"];
+    EXPECT_WK_STREQ(bodyHTML, @"<table></table>");
 }

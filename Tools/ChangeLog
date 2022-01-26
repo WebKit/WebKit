@@ -1,3 +1,45 @@
+2022-01-26  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r286308. rdar://problem/85830759
+
+    Scripting attributes are sometimes not properly stripped from elements when JS is disabled
+    https://bugs.webkit.org/show_bug.cgi?id=233642
+    <rdar://63180952>
+    
+    Reviewed by Geoffrey Garen.
+    
+    Source/WebCore:
+    
+    HTMLConstructionSite::mergeAttributesFromTokenIntoElement() was not properly stripping scripting
+    Element attributes when scripting is disabled, unlike other code paths in HTMLConstructionSite().
+    
+    Covered by new API tests.
+    
+    * html/parser/HTMLConstructionSite.cpp:
+    (WebCore::HTMLConstructionSite::mergeAttributesFromTokenIntoElement):
+    
+    Tools:
+    
+    Add API test coverage.
+    
+    * TestWebKitAPI/Tests/WebKitCocoa/WKWebViewConfiguration.mm:
+    (TEST):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@286308 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-11-30  Chris Dumez  <cdumez@apple.com>
+
+            Scripting attributes are sometimes not properly stripped from elements when JS is disabled
+            https://bugs.webkit.org/show_bug.cgi?id=233642
+            <rdar://63180952>
+
+            Reviewed by Geoffrey Garen.
+
+            Add API test coverage.
+
+            * TestWebKitAPI/Tests/WebKitCocoa/WKWebViewConfiguration.mm:
+            (TEST):
+
 2020-06-15  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r262918. rdar://problem/64315999
