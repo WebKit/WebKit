@@ -1,3 +1,17 @@
+2022-01-26  Philippe Normand  <pnormand@igalia.com>
+
+        [GTK] C++20 warnings in TestConsoleMessage
+        https://bugs.webkit.org/show_bug.cgi?id=235634
+
+        Reviewed by Adrian Perez de Castro.
+
+        Fix ambiguous-reversed-operator warnings. In C++20 comparison operators (like a == b) need
+        to be declared const, so that reverse comparisons (like b == a) also work as intended.
+
+        * TestWebKitAPI/Tests/WebKitGLib/TestConsoleMessage.cpp:
+        (ConsoleMessageTest::ConsoleMessage::operator== const):
+        (ConsoleMessageTest::ConsoleMessage::operator==): Deleted.
+
 2022-01-26  Alexander Mikhaylenko  <alexm@gnome.org>
 
         [GTK] REGRESSION: Touch scrolling is broken
