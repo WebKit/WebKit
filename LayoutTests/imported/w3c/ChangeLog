@@ -1,3 +1,15 @@
+2022-01-25  Alexey Shvayka  <ashvayka@apple.com>
+
+        XPath::Step::nodesInAxis(): add null checks after Attr::ownerElement() calls
+        https://bugs.webkit.org/show_bug.cgi?id=235500
+
+        Reviewed by Darin Adler.
+
+        Import WPT tests from https://github.com/web-platform-tests/wpt/pull/32544.
+
+        * web-platform-tests/domxpath/xpath-evaluate-crash-expected.txt: Added.
+        * web-platform-tests/domxpath/xpath-evaluate-crash.html: Added.
+
 2022-01-25  Antti Koivisto  <antti@apple.com>
 
         [CSS Container Queries] Parsing support for container shorthand property
