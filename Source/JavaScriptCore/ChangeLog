@@ -1,3 +1,16 @@
+2022-01-26  Antoine Quint  <graouts@webkit.org>
+
+        [Web Inspector] Update return value name for Animation.requestEffectTarget()
+        https://bugs.webkit.org/show_bug.cgi?id=235661
+
+        Reviewed by Devin Rousso.
+
+        I wrongly assumed the name of the return value was important for backward compatibility when
+        fixing bug 235234, but it's not, so let's use a better name which doesn't make any particular
+        assumption on the type.
+
+        * inspector/protocol/Animation.json:
+
 2022-01-26  Ross Kirsling  <ross.kirsling@sony.com>
 
         Move leftover JSValue inlines from JSString.h to JSCJSValueInlines.h

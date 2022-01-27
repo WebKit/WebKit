@@ -191,7 +191,6 @@ WI.Animation = class Animation extends WI.Object
         return WI.UIString("Animation %d").format(this._uniqueDisplayNameNumber);
     }
 
-    // COMPATIBILITY (iOS 15): effectTarget changed from DOM.NodeId to CSS.Styleable.
     requestEffectTarget(callback)
     {
         if (this._effectTarget !== undefined) {
@@ -209,12 +208,12 @@ WI.Animation = class Animation extends WI.Object
         WI.domManager.ensureDocument();
 
         let target = WI.assumingMainTarget();
-        target.AnimationAgent.requestEffectTarget(this._animationId, (error, styleable) => {
-            // COMPATIBILITY (iOS 15): effectTarget changed from DOM.NodeId to DOM.Styleable.
-            if (!isNaN(styleable))
-                styleable = {nodeId: styleable};
+        target.AnimationAgent.requestEffectTarget(this._animationId, (error, effectTarget) => {
+            // COMPATIBILITY (iOS 15): nodeId was renamed to effectTarget and changed from DOM.NodeId to DOM.Styleable.
+            if (!isNaN(effectTarget))
+                effectTarget = {nodeId: effectTarget};
 
-            this._effectTarget = !error ? WI.DOMStyleable.fromPayload(styleable) : null;
+            this._effectTarget = !error ? WI.DOMStyleable.fromPayload(effectTarget) : null;
 
             for (let requestEffectTargetCallback of this._requestEffectTargetCallbacks)
                 requestEffectTargetCallback(this._effectTarget);

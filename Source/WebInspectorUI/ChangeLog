@@ -1,5 +1,17 @@
 2022-01-26  Antoine Quint  <graouts@webkit.org>
 
+        [Web Inspector] Update return value name for Animation.requestEffectTarget()
+        https://bugs.webkit.org/show_bug.cgi?id=235661
+
+        Reviewed by Devin Rousso.
+
+        Update the parameter name to match the name used in the protocol.
+
+        * UserInterface/Models/Animation.js:
+        (WI.Animation.prototype.requestEffectTarget):
+
+2022-01-26  Antoine Quint  <graouts@webkit.org>
+
         [Web Inspector] Graphics tab should display pseudo-elements for more than ::before and ::after
         https://bugs.webkit.org/show_bug.cgi?id=235234
         <rdar://87766777>
