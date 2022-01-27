@@ -65,6 +65,10 @@ class Build(models.Model):
             # If the build data is already present in database, update it, e.g.: build complete event.
             return Build.update_build(build, patch_id, uid, builder_id, builder_name, builder_display_name, number, result, state_string, started_at, complete_at)
 
+        if not Patch.is_existing_patch_id(patch_id):
+            Patch.save_patch(patch_id)
+            _log.info('Received result for unknown patch. Saved patch {} to database'.format(patch_id))
+
         # Save the new build data, e.g.: build start event.
         Build(patch_id, uid, builder_id, builder_name, builder_display_name, number, result, state_string, started_at, complete_at).save()
         _log.info('Saved build {} in database for patch_id: {}'.format(uid, patch_id))

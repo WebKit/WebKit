@@ -80,7 +80,7 @@ class StatusBubble(View):
     BUILD_RETRY_MSG = 'retrying build'
     UNKNOWN_QUEUE_POSITION = '?'
 
-    def _build_bubble(self, patch, queue, hide_icons=False):
+    def _build_bubble(self, patch, queue, hide_icons=False, sent_to_buildbot=True):
         bubble = {
             'name': queue,
         }
@@ -97,7 +97,7 @@ class StatusBubble(View):
         if builds:
             build = builds[0]
             builds = builds[:10]  # Limit number of builds to display in status-bubble hover over message
-        if not self._should_show_bubble_for_build(build):
+        if not self._should_show_bubble_for_build(build, sent_to_buildbot):
             return None
 
         if not build:
@@ -292,8 +292,10 @@ class StatusBubble(View):
                 failed_builds.append(build)
         return failed_builds
 
-    def _should_show_bubble_for_build(self, build):
+    def _should_show_bubble_for_build(self, build, sent_to_buildbot=True):
         if build and build.result == Buildbot.SKIPPED and re.search(r'Patch .* doesn\'t have relevant changes', build.state_string):
+            return False
+        if (not build) and (not sent_to_buildbot):
             return False
         return True
 
@@ -342,14 +344,12 @@ class StatusBubble(View):
         if not patch:
             return (None, show_submit_to_ews, failed_to_apply, show_retry)
 
-        if patch.sent_to_buildbot:
-            for queue in StatusBubble.ALL_QUEUES:
-                bubble = self._build_bubble(patch, queue, hide_icons)
-                if bubble:
-                    show_submit_to_ews = False
-                    bubbles.append(bubble)
-                    if bubble['state'] in ('fail', 'error'):
-                        show_retry = True
+        for queue in StatusBubble.ALL_QUEUES:
+            bubble = self._build_bubble(patch, queue, hide_icons, patch.sent_to_buildbot)
+            if bubble:
+                bubbles.append(bubble)
+                if bubble['state'] in ('fail', 'error'):
+                    show_retry = True
 
         if patch.sent_to_commit_queue:
             if not patch.sent_to_buildbot:
@@ -358,6 +358,7 @@ class StatusBubble(View):
             if cq_bubble:
                 bubbles.insert(0, cq_bubble)
 
+        show_submit_to_ews = not patch.sent_to_buildbot
         return (bubbles, show_submit_to_ews, failed_to_apply, show_retry)
 
     @xframe_options_exempt
