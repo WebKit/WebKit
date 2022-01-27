@@ -100,7 +100,7 @@ void AXLogger::add(TextStream& stream, const RefPtr<AXCoreObject>& object, bool 
     stream << *object;
 
     if (recursive) {
-        for (auto& child : object->children())
+        for (auto& child : object->children(false))
             add(stream, child, true);
     }
     stream.decreaseIndent();
