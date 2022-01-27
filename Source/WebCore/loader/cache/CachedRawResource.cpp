@@ -67,8 +67,8 @@ void CachedRawResource::updateBuffer(const FragmentedSharedBuffer& data)
     m_data = data.makeContiguous();
 
     auto previousDataSize = encodedSize();
-    while (data.size() > previousDataSize) {
-        auto incrementalData = data.getSomeData(previousDataSize);
+    while (m_data->size() > previousDataSize) {
+        auto incrementalData = m_data->getSomeData(previousDataSize);
         previousDataSize += incrementalData.size();
 
         SetForScope<bool> notifyScope(m_inIncrementalDataNotify, true);
