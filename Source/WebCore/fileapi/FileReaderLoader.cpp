@@ -101,9 +101,12 @@ void FileReaderLoader::start(ScriptExecutionContext* scriptExecutionContext, con
     options.mode = FetchOptions::Mode::SameOrigin;
     options.contentSecurityPolicyEnforcement = ContentSecurityPolicyEnforcement::DoNotEnforce;
 
-    if (m_client)
-        m_loader = ThreadableLoader::create(*scriptExecutionContext, *this, WTFMove(request), options);
-    else
+    if (m_client) {
+        auto loader = ThreadableLoader::create(*scriptExecutionContext, *this, WTFMove(request), options);
+        if (!loader)
+            return;
+        std::exchange(m_loader, loader);
+    } else
         ThreadableLoader::loadResourceSynchronously(*scriptExecutionContext, WTFMove(request), *this, options);
 }
 

@@ -95,6 +95,9 @@ void FormDataConsumer::consumeBlob(const URL& blobURL)
             return;
 
         auto loader = std::exchange(weakThis->m_blobLoader, { });
+        if (!loader)
+            return;
+
         if (auto optionalErrorCode = loader->errorCode()) {
             if (weakThis->m_callback)
                 weakThis->m_callback(Exception { InvalidStateError, "Failed to read form data blob"_s });
@@ -107,7 +110,7 @@ void FormDataConsumer::consumeBlob(const URL& blobURL)
 
     m_blobLoader->start(blobURL, m_context.get(), FileReaderLoader::ReadAsArrayBuffer);
 
-    if (!m_blobLoader->isLoading()) {
+    if (!m_blobLoader || !m_blobLoader->isLoading()) {
         m_callback(Exception { InvalidStateError, "Unable to read form data blob"_s });
         m_blobLoader = nullptr;
     }
