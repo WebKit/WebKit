@@ -74,6 +74,17 @@ class Editor(object):
         )
 
     @classmethod
+    def vscode(cls):
+        from whichcraft import which
+        path = which('code') or '/Applications/Visual Studio Code.app/Contents/Resources/app/bin/code'
+        return cls(
+            name='VSCode',
+            path=path,
+            command=[path, '-n'],
+            wait=['-w'],
+        )
+
+    @classmethod
     def vi(cls):
         from whichcraft import which
         path = which('vi')
@@ -116,6 +127,7 @@ class Editor(object):
             Editor.atom(),
             Editor.xcode(),
             Editor.textedit(),
+            Editor.vscode(),
             Editor.vi(),
             Editor.default(),
         ]:
