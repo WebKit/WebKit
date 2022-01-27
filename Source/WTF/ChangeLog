@@ -1,3 +1,20 @@
+2022-01-27  Antti Koivisto  <antti@apple.com>
+
+        Default to 32 bit refcount for CanMakeCheckedPtr
+        https://bugs.webkit.org/show_bug.cgi?id=235723
+        rdar://86602114
+
+        Reviewed by Darin Adler.
+
+        It is currently uint16_t for no good reason. It is no unreasonable to have an object being referenced
+        by a large number of other objects.
+
+        We just hit the first bug caused by overrunning it (in IFC).
+
+        * wtf/CheckedRef.h:
+
+        uint16_t -> uint32_t
+
 2022-01-27  Ada Chan  <ada.chan@apple.com>
 
         Disable WebXR experimental feature by default

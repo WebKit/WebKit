@@ -298,8 +298,8 @@ inline SingleThreadIntegralWrapper<IntegralType>& SingleThreadIntegralWrapper<In
     return *this;
 }
 
-using CanMakeCheckedPtr = CanMakeCheckedPtrBase<SingleThreadIntegralWrapper<uint16_t>, uint16_t>;
-using CanMakeThreadSafeCheckedPtr = CanMakeCheckedPtrBase<std::atomic<uint16_t>, uint16_t>;
+using CanMakeCheckedPtr = CanMakeCheckedPtrBase<SingleThreadIntegralWrapper<uint32_t>, uint32_t>;
+using CanMakeThreadSafeCheckedPtr = CanMakeCheckedPtrBase<std::atomic<uint32_t>, uint32_t>;
 
 } // namespace WTF
 
