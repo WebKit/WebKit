@@ -55,7 +55,8 @@ const char* const styleSrcAttr = "style-src-attr";
 const char* const styleSrcElem = "style-src-elem";
 const char* const upgradeInsecureRequests = "upgrade-insecure-requests";
 const char* const blockAllMixedContent = "block-all-mixed-content";
-    
+const char* const workerSrc = "worker-src";
+
 } // namespace ContentSecurityPolicyDirectiveNames
 
 } // namespace WebCore

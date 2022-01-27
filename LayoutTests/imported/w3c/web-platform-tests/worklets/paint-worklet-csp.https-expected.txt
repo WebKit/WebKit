@@ -13,20 +13,10 @@ CONSOLE MESSAGE: Error: Script error.
 CONSOLE MESSAGE: Error: Script error.
 CONSOLE MESSAGE: Error: Script error.
 CONSOLE MESSAGE: Error: Script error.
-CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'worker-src'.
-
 CONSOLE MESSAGE: Error: Script error.
-CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'worker-src'.
-
 CONSOLE MESSAGE: Error: Script error.
-CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'worker-src'.
-
 CONSOLE MESSAGE: Error: Script error.
-CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'worker-src'.
-
 CONSOLE MESSAGE: Error: Script error.
-CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'worker-src'.
-
 CONSOLE MESSAGE: Error: Script error.
 CONSOLE MESSAGE: Error: Script error.
 CONSOLE MESSAGE: Error: Script error.

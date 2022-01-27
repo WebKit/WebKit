@@ -1,3 +1,33 @@
+2022-01-27  Kate Cheney  <katherine_cheney@apple.com>
+
+        "Unrecognized Content-Security-Policy directive 'worker-src'."
+        https://bugs.webkit.org/show_bug.cgi?id=235260
+        <rdar://problem/83734079>
+
+        Reviewed by Brent Fulgham.
+
+        Update tests now that worker-src defaults eventually to script-src.
+        Since this was not the case with child-src, legacy CSP tests do not
+        expect script-src policies to affect workers. We can fix this by
+        specifying a separate worker-src policy for these tests to maintain
+        behavior.
+
+        * TestExpectations:
+        Some wpt tests log random URL strings that change for every test
+        iteration. For now we can't unskip those.
+
+        * http/tests/security/contentSecurityPolicy/1.1/child-src/worker-blocked-expected.txt:
+        * http/tests/security/contentSecurityPolicy/1.1/child-src/worker-redirect-blocked-expected.txt:
+        * http/tests/security/contentSecurityPolicy/worker-blob-inherits-csp-blocks-eval.html:
+        * http/tests/security/contentSecurityPolicy/worker-blob-inherits-csp-importScripts-block-aborts-all-subsequent-imports.html:
+        * http/tests/security/contentSecurityPolicy/worker-blob-inherits-csp-importScripts-redirect-cross-origin-blocked.html:
+        * http/tests/security/contentSecurityPolicy/worker-blob-inherits-csp.html:
+        * http/tests/security/contentSecurityPolicy/worker-script-src.html:
+        * http/tests/security/isolatedWorld/bypass-main-world-csp-worker-blob-eval.html:
+        * http/tests/security/isolatedWorld/bypass-main-world-csp-worker-blob-importScript-redirect-cross-origin.html:
+        * http/tests/security/isolatedWorld/bypass-main-world-csp-worker-blob-xhr.html:
+        * http/tests/security/isolatedWorld/bypass-main-world-csp-worker.html:
+
 2022-01-27  Devin Rousso  <drousso@apple.com>
 
         [Payment Request] allow additional payment method specific data to be passed to `complete()`

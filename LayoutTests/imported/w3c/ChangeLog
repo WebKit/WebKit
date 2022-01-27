@@ -1,3 +1,94 @@
+2022-01-27  Kate Cheney  <katherine_cheney@apple.com>
+
+        "Unrecognized Content-Security-Policy directive 'worker-src'."
+        https://bugs.webkit.org/show_bug.cgi?id=235260
+        <rdar://problem/83734079>
+
+        Reviewed by Brent Fulgham.
+
+        * web-platform-tests/content-security-policy/child-src/child-src-cross-origin-load.sub-expected.txt:
+        * web-platform-tests/content-security-policy/child-src/child-src-worker-blocked.sub-expected.txt:
+        * web-platform-tests/content-security-policy/gen/top.http-rp/script-src-self/sharedworker-import-data.http-expected.txt:
+        * web-platform-tests/content-security-policy/gen/top.http-rp/script-src-self/sharedworker-import-data.https-expected.txt:
+        * web-platform-tests/content-security-policy/gen/top.http-rp/script-src-self/worker-import-data.http-expected.txt:
+        * web-platform-tests/content-security-policy/gen/top.http-rp/script-src-self/worker-import-data.https-expected.txt:
+        * web-platform-tests/content-security-policy/gen/top.http-rp/script-src-wildcard/sharedworker-import-data.http-expected.txt:
+        * web-platform-tests/content-security-policy/gen/top.http-rp/script-src-wildcard/sharedworker-import-data.https-expected.txt:
+        * web-platform-tests/content-security-policy/gen/top.http-rp/script-src-wildcard/worker-import-data.http-expected.txt:
+        * web-platform-tests/content-security-policy/gen/top.http-rp/script-src-wildcard/worker-import-data.https-expected.txt:
+        * web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-none/sharedworker-classic.http-expected.txt:
+        * web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-none/sharedworker-classic.https-expected.txt:
+        * web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-none/sharedworker-import-data.http-expected.txt:
+        * web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-none/sharedworker-import-data.https-expected.txt:
+        * web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-none/sharedworker-import.http-expected.txt:
+        * web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-none/sharedworker-import.https-expected.txt:
+        * web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-none/sharedworker-module.http-expected.txt:
+        * web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-none/sharedworker-module.https-expected.txt:
+        * web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-none/worker-classic.http-expected.txt:
+        * web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-none/worker-classic.https-expected.txt:
+        * web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-none/worker-import-data.http-expected.txt:
+        * web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-none/worker-import-data.https-expected.txt:
+        * web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-none/worker-import.http-expected.txt:
+        * web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-none/worker-import.https-expected.txt:
+        * web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-none/worker-module.http-expected.txt:
+        * web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-none/worker-module.https-expected.txt:
+        * web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-self/sharedworker-import-data.http-expected.txt:
+        * web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-self/sharedworker-import-data.https-expected.txt:
+        * web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-self/sharedworker-import.http-expected.txt:
+        * web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-self/sharedworker-import.https-expected.txt:
+        * web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-self/worker-import-data.http-expected.txt:
+        * web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-self/worker-import-data.https-expected.txt:
+        * web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-wildcard/sharedworker-import-data.http-expected.txt:
+        * web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-wildcard/sharedworker-import-data.https-expected.txt:
+        * web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-wildcard/worker-import-data.http-expected.txt:
+        * web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-wildcard/worker-import-data.https-expected.txt:
+        * web-platform-tests/content-security-policy/gen/top.meta/script-src-self/sharedworker-import-data.http-expected.txt:
+        * web-platform-tests/content-security-policy/gen/top.meta/script-src-self/sharedworker-import-data.https-expected.txt:
+        * web-platform-tests/content-security-policy/gen/top.meta/script-src-self/worker-import-data.http-expected.txt:
+        * web-platform-tests/content-security-policy/gen/top.meta/script-src-self/worker-import-data.https-expected.txt:
+        * web-platform-tests/content-security-policy/gen/top.meta/script-src-wildcard/sharedworker-import-data.http-expected.txt:
+        * web-platform-tests/content-security-policy/gen/top.meta/script-src-wildcard/sharedworker-import-data.https-expected.txt:
+        * web-platform-tests/content-security-policy/gen/top.meta/script-src-wildcard/worker-import-data.http-expected.txt:
+        * web-platform-tests/content-security-policy/gen/top.meta/script-src-wildcard/worker-import-data.https-expected.txt:
+        * web-platform-tests/content-security-policy/worker-src/dedicated-fallback.sub-expected.txt:
+        * web-platform-tests/content-security-policy/worker-src/dedicated-none.sub-expected.txt:
+        * web-platform-tests/content-security-policy/worker-src/dedicated-worker-src-child-fallback-blocked.sub-expected.txt:
+        * web-platform-tests/content-security-policy/worker-src/dedicated-worker-src-script-fallback.sub-expected.txt:
+        * web-platform-tests/content-security-policy/worker-src/dedicated-worker-src-self-fallback.sub-expected.txt:
+        * web-platform-tests/content-security-policy/worker-src/service-none.https.sub-expected.txt:
+        * web-platform-tests/content-security-policy/worker-src/service-worker-src-child-fallback-blocked.https.sub-expected.txt:
+        * web-platform-tests/content-security-policy/worker-src/shared-child.sub-expected.txt: Added.
+        * web-platform-tests/content-security-policy/worker-src/shared-fallback.sub-expected.txt: Added.
+        * web-platform-tests/content-security-policy/worker-src/shared-list.sub-expected.txt: Added.
+        * web-platform-tests/content-security-policy/worker-src/shared-none.sub-expected.txt: Added.
+        * web-platform-tests/content-security-policy/worker-src/shared-self.sub-expected.txt: Added.
+        * web-platform-tests/content-security-policy/worker-src/shared-worker-src-child-fallback-blocked.sub-expected.txt: Added.
+        * web-platform-tests/content-security-policy/worker-src/shared-worker-src-child-fallback.sub-expected.txt: Added.
+        * web-platform-tests/content-security-policy/worker-src/shared-worker-src-default-fallback.sub-expected.txt: Added.
+        * web-platform-tests/content-security-policy/worker-src/shared-worker-src-script-fallback.sub-expected.txt: Added.
+        * web-platform-tests/content-security-policy/worker-src/shared-worker-src-self-fallback.sub-expected.txt: Added.
+        * web-platform-tests/content-security-policy/blob/self-doesnt-match-blob.sub-expected.txt:
+        * web-platform-tests/content-security-policy/blob/star-doesnt-match-blob.sub-expected.txt:
+        * web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-self/worker-import-data.http-expected.txt:
+        * web-platform-tests/content-security-policy/gen/top.meta/worker-src-none/sharedworker-classic.http-expected.txt:
+        * web-platform-tests/content-security-policy/gen/top.meta/worker-src-none/sharedworker-classic.https-expected.txt:
+        * web-platform-tests/content-security-policy/gen/top.meta/worker-src-none/sharedworker-import-data.http-expected.txt:
+        * web-platform-tests/content-security-policy/gen/top.meta/worker-src-none/sharedworker-import-data.https-expected.txt:
+        * web-platform-tests/content-security-policy/gen/top.meta/worker-src-none/sharedworker-module.http-expected.txt:
+        * web-platform-tests/content-security-policy/gen/top.meta/worker-src-none/sharedworker-module.https-expected.txt:
+        * web-platform-tests/content-security-policy/gen/top.meta/worker-src-none/worker-classic.http-expected.txt:
+        * web-platform-tests/content-security-policy/gen/top.meta/worker-src-none/worker-classic.https-expected.txt:
+        * web-platform-tests/content-security-policy/gen/top.meta/worker-src-none/worker-import-data.http-expected.txt:
+        * web-platform-tests/content-security-policy/gen/top.meta/worker-src-none/worker-import-data.https-expected.txt:
+        * web-platform-tests/content-security-policy/gen/top.meta/worker-src-none/worker-import.http-expected.txt:
+        * web-platform-tests/content-security-policy/gen/top.meta/worker-src-none/worker-import.https-expected.txt:
+        * web-platform-tests/content-security-policy/gen/top.meta/worker-src-none/worker-module.http-expected.txt:
+        * web-platform-tests/content-security-policy/gen/top.meta/worker-src-none/worker-module.https-expected.txt:
+        * web-platform-tests/content-security-policy/gen/top.meta/worker-src-self/sharedworker-import-data.http-expected.txt:
+        * web-platform-tests/content-security-policy/gen/top.meta/worker-src-self/sharedworker-import-data.https-expected.txt:
+        * web-platform-tests/content-security-policy/gen/top.meta/worker-src-self/worker-import-data.http-expected.txt:
+        * web-platform-tests/content-security-policy/gen/top.meta/worker-src-self/worker-import-data.https-expected.txt:
+
 2022-01-27  Chris Dumez  <cdumez@apple.com>
 
         Add layout test for Bug 235645

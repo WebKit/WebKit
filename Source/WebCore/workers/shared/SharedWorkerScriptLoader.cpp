@@ -45,7 +45,7 @@ SharedWorkerScriptLoader::SharedWorkerScriptLoader(const URL& url, SharedWorker&
     , m_url(url)
 {
     m_worker->setIsLoading(true);
-    m_loader->loadAsynchronously(*worker.scriptExecutionContext(), ResourceRequest(url), worker.workerFetchOptions(options, FetchOptions::Destination::Sharedworker), ContentSecurityPolicyEnforcement::EnforceChildSrcDirective, ServiceWorkersMode::All, *this, WorkerRunLoop::defaultMode());
+    m_loader->loadAsynchronously(*worker.scriptExecutionContext(), ResourceRequest(url), worker.workerFetchOptions(options, FetchOptions::Destination::Sharedworker), ContentSecurityPolicyEnforcement::EnforceWorkerSrcDirective, ServiceWorkersMode::All, *this, WorkerRunLoop::defaultMode());
 }
 
 void SharedWorkerScriptLoader::didReceiveResponse(ResourceLoaderIdentifier identifier, const ResourceResponse&)
