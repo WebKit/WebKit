@@ -1,3 +1,13 @@
+2022-01-27  Chris Dumez  <cdumez@apple.com>
+
+        Add layout test for Bug 235645
+        https://bugs.webkit.org/show_bug.cgi?id=235718
+
+        Reviewed by Alex Christensen.
+
+        * web-platform-tests/html/semantics/forms/the-input-element/radio-multiple-selected-expected.txt: Added.
+        * web-platform-tests/html/semantics/forms/the-input-element/radio-multiple-selected.html: Added.
+
 2022-01-27  Patrick Griffis  <pgriffis@igalia.com>
 
         CSP: Clean up effective-violation handling in reports
