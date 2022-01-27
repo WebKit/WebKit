@@ -1,3 +1,15 @@
+2022-01-27  Elliott Williams  <emw@apple.com>
+
+        Generated xcfilelists contain symlinks when building for macOS
+        https://bugs.webkit.org/show_bug.cgi?id=235663
+        rdar://88054903
+
+        Reviewed by Alexey Proskuryakov.
+
+        * DumpRenderTree/mac/Configurations/Base.xcconfig:
+        * TestWebKitAPI/Configurations/Base.xcconfig:
+        * WebKitTestRunner/Configurations/Base.xcconfig:
+
 2022-01-27  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         ImageAnalysisQueue should prioritize elements that intersect the visible viewport

@@ -1,3 +1,18 @@
+2022-01-27  Elliott Williams  <emw@apple.com>
+
+        Generated xcfilelists contain symlinks when building for macOS
+        https://bugs.webkit.org/show_bug.cgi?id=235663
+        rdar://88054903
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Configurations/Base.xcconfig:
+        * Configurations/BaseTarget.xcconfig:
+        * Configurations/BaseXPCService.xcconfig:
+        * Configurations/WebKitSwift.xcconfig:
+        * Configurations/adattributiond.xcconfig:
+        * Configurations/webpushd.xcconfig:
+
 2022-01-27  Ada Chan  <ada.chan@apple.com>
 
         Disable WebXR experimental feature by default
