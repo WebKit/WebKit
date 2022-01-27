@@ -41,7 +41,6 @@
 #import <WebCore/ApplePayShippingContactUpdate.h>
 #import <WebCore/ApplePayShippingMethod.h>
 #import <WebCore/ApplePayShippingMethodUpdate.h>
-#import <WebCore/PaymentAuthorizationStatus.h>
 #import <WebCore/PaymentHeaders.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/RunLoop.h>
@@ -348,9 +347,9 @@ RetainPtr<PKPaymentRequest> WebPaymentCoordinatorProxy::platformPaymentRequest(c
     return result;
 }
 
-void WebPaymentCoordinatorProxy::platformCompletePaymentSession(const std::optional<WebCore::PaymentAuthorizationResult>& result)
+void WebPaymentCoordinatorProxy::platformCompletePaymentSession(WebCore::ApplePayPaymentAuthorizationResult&& result)
 {
-    m_authorizationPresenter->completePaymentSession(result);
+    m_authorizationPresenter->completePaymentSession(WTFMove(result));
 }
 
 void WebPaymentCoordinatorProxy::platformCompleteMerchantValidation(const WebCore::PaymentMerchantSession& paymentMerchantSession)

@@ -38,7 +38,6 @@
 #include "LinkIconCollector.h"
 #include "Logging.h"
 #include "Page.h"
-#include "PaymentAuthorizationStatus.h"
 #include "PaymentCoordinatorClient.h"
 #include "PaymentSession.h"
 #include "UserContentProvider.h"
@@ -164,11 +163,11 @@ void PaymentCoordinator::completeCouponCodeChange(std::optional<ApplePayCouponCo
 
 #endif // ENABLE(APPLE_PAY_COUPON_CODE)
 
-void PaymentCoordinator::completePaymentSession(std::optional<PaymentAuthorizationResult>&& result)
+void PaymentCoordinator::completePaymentSession(ApplePayPaymentAuthorizationResult&& result)
 {
     ASSERT(m_activeSession);
 
-    bool isFinalState = isFinalStateResult(result);
+    bool isFinalState = result.isFinalState();
     PAYMENT_COORDINATOR_RELEASE_LOG("completePaymentSession() (isFinalState: %d)", isFinalState);
     m_client.completePaymentSession(WTFMove(result));
 

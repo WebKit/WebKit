@@ -35,10 +35,10 @@
 #import <WebCore/ApplePayError.h>
 #import <WebCore/ApplePayErrorCode.h>
 #import <WebCore/ApplePayErrorContactField.h>
+#import <WebCore/ApplePayPaymentAuthorizationResult.h>
 #import <WebCore/ApplePayPaymentMethodUpdate.h>
 #import <WebCore/ApplePayShippingContactUpdate.h>
 #import <WebCore/ApplePayShippingMethodUpdate.h>
-#import <WebCore/PaymentAuthorizationStatus.h>
 #import <WebCore/PaymentMerchantSession.h>
 #import <WebCore/PaymentSummaryItems.h>
 #import <wtf/cocoa/VectorCocoa.h>
@@ -66,19 +66,27 @@ namespace WebKit {
 // FIXME: Rather than having these free functions scattered about, Apple Pay data types should know
 // how to convert themselves to and from their platform representations.
 
-static PKPaymentAuthorizationStatus toPKPaymentAuthorizationStatus(WebCore::PaymentAuthorizationStatus status)
+static PKPaymentAuthorizationStatus toPKPaymentAuthorizationStatus(WebCore::ApplePayPaymentAuthorizationResult::Status status)
 {
     switch (status) {
-    case WebCore::PaymentAuthorizationStatus::Success:
+    case WebCore::ApplePayPaymentAuthorizationResult::Success:
         return PKPaymentAuthorizationStatusSuccess;
-    case WebCore::PaymentAuthorizationStatus::Failure:
+
+    case WebCore::ApplePayPaymentAuthorizationResult::Failure:
         return PKPaymentAuthorizationStatusFailure;
-    case WebCore::PaymentAuthorizationStatus::PINRequired:
+
+    case WebCore::ApplePayPaymentAuthorizationResult::PINRequired:
         return PKPaymentAuthorizationStatusPINRequired;
-    case WebCore::PaymentAuthorizationStatus::PINIncorrect:
+
+    case WebCore::ApplePayPaymentAuthorizationResult::PINIncorrect:
         return PKPaymentAuthorizationStatusPINIncorrect;
-    case WebCore::PaymentAuthorizationStatus::PINLockout:
+
+    case WebCore::ApplePayPaymentAuthorizationResult::PINLockout:
         return PKPaymentAuthorizationStatusPINLockout;
+
+    default:
+        ASSERT_NOT_REACHED();
+        return PKPaymentAuthorizationStatusFailure;
     }
 }
 
@@ -231,11 +239,18 @@ void PaymentAuthorizationPresenter::completePaymentMethodSelection(std::optional
     [platformDelegate() completePaymentMethodSelection:paymentMethodUpdate.get()];
 }
 
-void PaymentAuthorizationPresenter::completePaymentSession(const std::optional<WebCore::PaymentAuthorizationResult>& result)
+void PaymentAuthorizationPresenter::completePaymentSession(WebCore::ApplePayPaymentAuthorizationResult&& result)
 {
     ASSERT(platformDelegate());
-    auto status = result ? toPKPaymentAuthorizationStatus(result->status) : PKPaymentAuthorizationStatusSuccess;
-    RetainPtr<NSArray> errors = result ? toNSErrors(result->errors) : @[ ];
+    ASSERT(result.isFinalState());
+
+    auto status = toPKPaymentAuthorizationStatus(result.status);
+    auto errors = toNSErrors(result.errors);
+
+#if defined(PaymentAuthorizationPresenterAdditions_completePaymentSession)
+    PaymentAuthorizationPresenterAdditions_completePaymentSession
+#endif
+
     [platformDelegate() completePaymentSession:status errors:errors.get()];
 }
 

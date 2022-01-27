@@ -484,6 +484,7 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/paymentrequest/PayerErrorFields.idl
     Modules/paymentrequest/PaymentAddress.idl
     Modules/paymentrequest/PaymentComplete.idl
+    Modules/paymentrequest/PaymentCompleteDetails.idl
     Modules/paymentrequest/PaymentCurrencyAmount.idl
     Modules/paymentrequest/PaymentDetailsBase.idl
     Modules/paymentrequest/PaymentDetailsInit.idl

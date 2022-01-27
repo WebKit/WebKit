@@ -161,9 +161,10 @@ ExceptionOr<void> ApplePayAMSUIPaymentHandler::merchantValidationCompleted(JSC::
     return { };
 }
 
-void ApplePayAMSUIPaymentHandler::complete(std::optional<PaymentComplete>&&)
+ExceptionOr<void> ApplePayAMSUIPaymentHandler::complete(Document&, std::optional<PaymentComplete>&&, String&&)
 {
     hide();
+    return { };
 }
 
 ExceptionOr<void> ApplePayAMSUIPaymentHandler::retry(PaymentValidationErrors&&)

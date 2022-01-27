@@ -38,7 +38,7 @@ messages -> WebPaymentCoordinatorProxy NotRefCounted {
 #if ENABLE(APPLE_PAY_COUPON_CODE)
     CompleteCouponCodeChange(std::optional<WebCore::ApplePayCouponCodeUpdate> update)
 #endif
-    CompletePaymentSession(std::optional<WebCore::PaymentAuthorizationResult> result)
+    CompletePaymentSession(struct WebCore::ApplePayPaymentAuthorizationResult result)
     AbortPaymentSession()
     CancelPaymentSession()
 

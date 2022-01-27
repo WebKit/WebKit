@@ -47,7 +47,6 @@ class Connection;
 }
 
 namespace WebCore {
-enum class PaymentAuthorizationStatus;
 class Payment;
 class PaymentContact;
 class PaymentMerchantSession;
@@ -139,7 +138,7 @@ private:
 #if ENABLE(APPLE_PAY_COUPON_CODE)
     void completeCouponCodeChange(std::optional<WebCore::ApplePayCouponCodeUpdate>&&);
 #endif
-    void completePaymentSession(const std::optional<WebCore::PaymentAuthorizationResult>&);
+    void completePaymentSession(WebCore::ApplePayPaymentAuthorizationResult&&);
     void abortPaymentSession();
     void cancelPaymentSession();
 
@@ -167,7 +166,7 @@ private:
 #if ENABLE(APPLE_PAY_COUPON_CODE)
     void platformCompleteCouponCodeChange(std::optional<WebCore::ApplePayCouponCodeUpdate>&&);
 #endif
-    void platformCompletePaymentSession(const std::optional<WebCore::PaymentAuthorizationResult>&);
+    void platformCompletePaymentSession(WebCore::ApplePayPaymentAuthorizationResult&&);
     void platformHidePaymentUI();
 #if PLATFORM(COCOA)
     RetainPtr<PKPaymentRequest> platformPaymentRequest(const URL& originatingURL, const Vector<URL>& linkIconURLs, const WebCore::ApplePaySessionPaymentRequest&);

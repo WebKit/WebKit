@@ -55,7 +55,6 @@
 #include "LinkIconType.h"
 #include "Page.h"
 #include "PageConsoleClient.h"
-#include "PaymentAuthorizationStatus.h"
 #include "PaymentContact.h"
 #include "PaymentCoordinator.h"
 #include "PaymentMerchantSession.h"
@@ -194,53 +193,40 @@ static ExceptionOr<ApplePaySessionPaymentRequest> convertAndValidate(Document& d
     return WTFMove(result);
 }
 
-static ExceptionOr<PaymentAuthorizationResult> convertAndValidate(ApplePayPaymentAuthorizationResult&& result)
+static ExceptionOr<ApplePayPaymentAuthorizationResult> convertAndValidate(ApplePayPaymentAuthorizationResult&& result)
 {
-    PaymentAuthorizationResult convertedResult;
-
     switch (result.status) {
-    case ApplePaySession::STATUS_SUCCESS:
-        convertedResult.status = PaymentAuthorizationStatus::Success;
+    case ApplePayPaymentAuthorizationResult::Success:
+    case ApplePayPaymentAuthorizationResult::Failure:
+    case ApplePayPaymentAuthorizationResult::PINRequired:
+    case ApplePayPaymentAuthorizationResult::PINIncorrect:
+    case ApplePayPaymentAuthorizationResult::PINLockout:
         break;
 
-    case ApplePaySession::STATUS_FAILURE:
-        convertedResult.status = PaymentAuthorizationStatus::Failure;
+    case ApplePayPaymentAuthorizationResult::InvalidBillingPostalAddress:
+        result.status = ApplePayPaymentAuthorizationResult::Failure;
+        result.errors.insert(0, ApplePayError::create(ApplePayErrorCode::BillingContactInvalid, std::nullopt, nullString()));
         break;
 
-    case ApplePaySession::STATUS_INVALID_BILLING_POSTAL_ADDRESS:
-        convertedResult.status = PaymentAuthorizationStatus::Failure;
-        convertedResult.errors.append(ApplePayError::create(ApplePayErrorCode::BillingContactInvalid, std::nullopt, nullString()));
+    case ApplePayPaymentAuthorizationResult::InvalidShippingPostalAddress:
+        result.status = ApplePayPaymentAuthorizationResult::Failure;
+        result.errors.insert(0, ApplePayError::create(ApplePayErrorCode::ShippingContactInvalid, ApplePayErrorContactField::PostalAddress, nullString()));
         break;
 
-    case ApplePaySession::STATUS_INVALID_SHIPPING_POSTAL_ADDRESS:
-        convertedResult.status = PaymentAuthorizationStatus::Failure;
-        convertedResult.errors.append(ApplePayError::create(ApplePayErrorCode::ShippingContactInvalid, ApplePayErrorContactField::PostalAddress, nullString()));
-        break;
-
-    case ApplePaySession::STATUS_INVALID_SHIPPING_CONTACT:
-        convertedResult.status = PaymentAuthorizationStatus::Failure;
-        convertedResult.errors.append(ApplePayError::create(ApplePayErrorCode::ShippingContactInvalid, std::nullopt, nullString()));
-        break;
-
-    case ApplePaySession::STATUS_PIN_REQUIRED:
-        convertedResult.status = PaymentAuthorizationStatus::PINRequired;
-        break;
-
-    case ApplePaySession::STATUS_PIN_INCORRECT:
-        convertedResult.status = PaymentAuthorizationStatus::PINIncorrect;
-        break;
-
-    case ApplePaySession::STATUS_PIN_LOCKOUT:
-        convertedResult.status = PaymentAuthorizationStatus::PINLockout;
+    case ApplePayPaymentAuthorizationResult::InvalidShippingContact:
+        result.status = ApplePayPaymentAuthorizationResult::Failure;
+        result.errors.insert(0, ApplePayError::create(ApplePayErrorCode::ShippingContactInvalid, std::nullopt, nullString()));
         break;
 
     default:
         return Exception { InvalidAccessError };
     }
 
-    convertedResult.errors.appendVector(WTFMove(result.errors));
+#if defined(ApplePaySessionAdditions_convertAndValidate_ApplePayPaymentAuthorizationResult)
+    ApplePaySessionAdditions_convertAndValidate_ApplePayPaymentAuthorizationResult
+#endif
 
-    return WTFMove(convertedResult);
+    return WTFMove(result);
 }
 
 static ExceptionOr<ApplePayPaymentMethodUpdate> convertAndValidate(ApplePayPaymentMethodUpdate&& update)
@@ -567,7 +553,7 @@ ExceptionOr<void> ApplePaySession::completePayment(ApplePayPaymentAuthorizationR
         return convertedResultOrException.releaseException();
 
     auto&& convertedResult = convertedResultOrException.releaseReturnValue();
-    bool isFinalState = isFinalStateResult(convertedResult);
+    bool isFinalState = convertedResult.isFinalState();
 
     paymentCoordinator().completePaymentSession(WTFMove(convertedResult));
 

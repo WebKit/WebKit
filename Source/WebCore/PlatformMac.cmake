@@ -796,6 +796,7 @@ list(APPEND WebCore_IDL_FILES
     Modules/applepay/ApplePayValidateMerchantEvent.idl
 
     Modules/applepay/paymentrequest/ApplePayModifier.idl
+    Modules/applepay/paymentrequest/ApplePayPaymentCompleteDetails.idl
     Modules/applepay/paymentrequest/ApplePayRequest.idl
 
     Modules/applepay-ams-ui/ApplePayAMSUIRequest.idl

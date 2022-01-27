@@ -29,6 +29,7 @@
 #if ENABLE(APPLE_PAY)
 
 #include "ApplePayCouponCodeUpdate.h"
+#include "ApplePayPaymentAuthorizationResult.h"
 #include "ApplePayPaymentMethodUpdate.h"
 #include "ApplePaySessionPaymentRequest.h"
 #include "ApplePayShippingContactEditingMode.h"
@@ -248,10 +249,10 @@ void MockPaymentCoordinator::cancelPayment()
     });
 }
 
-void MockPaymentCoordinator::completePaymentSession(std::optional<PaymentAuthorizationResult>&& result)
+void MockPaymentCoordinator::completePaymentSession(ApplePayPaymentAuthorizationResult&& result)
 {
-    auto isFinalState = isFinalStateResult(result);
-    m_errors = convert(WTFMove(result->errors));
+    auto isFinalState = result.isFinalState();
+    m_errors = convert(WTFMove(result.errors));
 
     if (!isFinalState)
         return;

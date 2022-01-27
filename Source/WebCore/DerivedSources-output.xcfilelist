@@ -124,6 +124,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSApplePayPaymentAuthorizationResul
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSApplePayPaymentAuthorizationResult.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSApplePayPaymentAuthorizedEvent.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSApplePayPaymentAuthorizedEvent.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSApplePayPaymentCompleteDetails.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSApplePayPaymentCompleteDetails.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSApplePayPaymentContact.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSApplePayPaymentContact.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSApplePayPaymentMethod.cpp
@@ -1793,6 +1795,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPaymentAddress.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPaymentAddress.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPaymentComplete.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPaymentComplete.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPaymentCompleteDetails.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPaymentCompleteDetails.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPaymentCurrencyAmount.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPaymentCurrencyAmount.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPaymentDetailsBase.cpp

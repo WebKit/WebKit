@@ -28,15 +28,75 @@
 #if ENABLE(APPLE_PAY)
 
 #include "ApplePayError.h"
+#include <optional>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
+
+#if USE(APPLE_INTERNAL_SDK)
+#include <WebKitAdditions/ApplePayPaymentAuthorizationResultAdditions.h>
+#endif
 
 namespace WebCore {
 
 struct ApplePayPaymentAuthorizationResult {
-    unsigned short status;
+    using Status = unsigned short;
+    static constexpr Status Success = 0;
+    static constexpr Status Failure = 1;
+    static constexpr Status InvalidBillingPostalAddress = 2;
+    static constexpr Status InvalidShippingPostalAddress = 3;
+    static constexpr Status InvalidShippingContact = 4;
+    static constexpr Status PINRequired = 5;
+    static constexpr Status PINIncorrect = 6;
+    static constexpr Status PINLockout = 7;
+
+    Status status; // required
     Vector<RefPtr<ApplePayError>> errors;
+
+#if defined(ApplePayPaymentAuthorizationResultAdditions_members)
+    ApplePayPaymentAuthorizationResultAdditions_members
+#endif
+
+    WEBCORE_EXPORT bool isFinalState() const;
+
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static std::optional<ApplePayPaymentAuthorizationResult> decode(Decoder&);
 };
+
+template<class Encoder>
+void ApplePayPaymentAuthorizationResult::encode(Encoder& encoder) const
+{
+    encoder << status;
+    encoder << errors;
+#if defined(ApplePayPaymentAuthorizationResultAdditions_encode)
+    ApplePayPaymentAuthorizationResultAdditions_encode
+#endif
+}
+
+template<class Decoder>
+std::optional<ApplePayPaymentAuthorizationResult> ApplePayPaymentAuthorizationResult::decode(Decoder& decoder)
+{
+#define DECODE(name, type) \
+    std::optional<type> name; \
+    decoder >> name; \
+    if (!name) \
+        return std::nullopt; \
+
+    DECODE(status, Status)
+    DECODE(errors, Vector<RefPtr<ApplePayError>>)
+#if defined(ApplePayPaymentAuthorizationResultAdditions_decode_members)
+    ApplePayPaymentAuthorizationResultAdditions_decode_members
+#endif
+
+#undef DECODE
+
+    return { {
+        WTFMove(*status),
+        WTFMove(*errors),
+#if defined(ApplePayPaymentAuthorizationResultAdditions_decode_return)
+    ApplePayPaymentAuthorizationResultAdditions_decode_return
+#endif
+    } };
+}
 
 }
 

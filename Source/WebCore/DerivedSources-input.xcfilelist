@@ -218,6 +218,7 @@ $(PROJECT_DIR)/Modules/applepay/ApplePayShippingMethodSelectedEvent.idl
 $(PROJECT_DIR)/Modules/applepay/ApplePayShippingMethodUpdate.idl
 $(PROJECT_DIR)/Modules/applepay/ApplePayValidateMerchantEvent.idl
 $(PROJECT_DIR)/Modules/applepay/paymentrequest/ApplePayModifier.idl
+$(PROJECT_DIR)/Modules/applepay/paymentrequest/ApplePayPaymentCompleteDetails.idl
 $(PROJECT_DIR)/Modules/applepay/paymentrequest/ApplePayRequest.idl
 $(PROJECT_DIR)/Modules/async-clipboard/Clipboard.idl
 $(PROJECT_DIR)/Modules/async-clipboard/ClipboardItem.idl
@@ -551,6 +552,7 @@ $(PROJECT_DIR)/Modules/paymentrequest/MerchantValidationEvent.idl
 $(PROJECT_DIR)/Modules/paymentrequest/PayerErrorFields.idl
 $(PROJECT_DIR)/Modules/paymentrequest/PaymentAddress.idl
 $(PROJECT_DIR)/Modules/paymentrequest/PaymentComplete.idl
+$(PROJECT_DIR)/Modules/paymentrequest/PaymentCompleteDetails.idl
 $(PROJECT_DIR)/Modules/paymentrequest/PaymentCurrencyAmount.idl
 $(PROJECT_DIR)/Modules/paymentrequest/PaymentDetailsBase.idl
 $(PROJECT_DIR)/Modules/paymentrequest/PaymentDetailsInit.idl

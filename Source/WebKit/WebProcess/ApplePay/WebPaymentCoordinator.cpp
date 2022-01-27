@@ -37,6 +37,7 @@
 #include "WebPaymentCoordinatorProxyMessages.h"
 #include "WebProcess.h"
 #include <WebCore/ApplePayCouponCodeUpdate.h>
+#include <WebCore/ApplePayPaymentAuthorizationResult.h>
 #include <WebCore/ApplePayPaymentMethodUpdate.h>
 #include <WebCore/ApplePayShippingContactUpdate.h>
 #include <WebCore/ApplePayShippingMethodUpdate.h>
@@ -137,9 +138,9 @@ void WebPaymentCoordinator::completeCouponCodeChange(std::optional<WebCore::Appl
 
 #endif // ENABLE(APPLE_PAY_COUPON_CODE)
 
-void WebPaymentCoordinator::completePaymentSession(std::optional<WebCore::PaymentAuthorizationResult>&& result)
+void WebPaymentCoordinator::completePaymentSession(WebCore::ApplePayPaymentAuthorizationResult&& result)
 {
-    send(Messages::WebPaymentCoordinatorProxy::CompletePaymentSession(result));
+    send(Messages::WebPaymentCoordinatorProxy::CompletePaymentSession(WTFMove(result)));
 }
 
 void WebPaymentCoordinator::abortPaymentSession()

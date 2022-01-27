@@ -772,13 +772,16 @@ void PaymentRequest::reject(Exception&& exception)
     abortWithException(WTFMove(exception));
 }
 
-ExceptionOr<void> PaymentRequest::complete(std::optional<PaymentComplete>&& result)
+ExceptionOr<void> PaymentRequest::complete(Document& document, std::optional<PaymentComplete>&& result, String&& serializedData)
 {
     ASSERT(m_state == State::Closed);
     if (!m_activePaymentHandler)
         return Exception { AbortError };
 
-    activePaymentHandler()->complete(WTFMove(result));
+    auto exception = activePaymentHandler()->complete(document, WTFMove(result), WTFMove(serializedData));
+    if (exception.hasException())
+        return exception.releaseException();
+
     m_activePaymentHandler = std::nullopt;
     return { };
 }

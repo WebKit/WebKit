@@ -3544,6 +3544,7 @@ JSPath2D.cpp
 JSPayerErrorFields.cpp
 JSPaymentAddress.cpp
 JSPaymentComplete.cpp
+JSPaymentCompleteDetails.cpp
 JSPaymentCurrencyAmount.cpp
 JSPaymentDetailsBase.cpp
 JSPaymentDetailsInit.cpp

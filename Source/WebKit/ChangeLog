@@ -1,3 +1,43 @@
+2022-01-27  Devin Rousso  <drousso@apple.com>
+
+        [Payment Request] allow additional payment method specific data to be passed to `complete()`
+        https://bugs.webkit.org/show_bug.cgi?id=235415
+        <rdar://problem/82970451>
+
+        Reviewed by Darin Adler.
+
+        This allows for developers/merchants to give additional details to Apple Pay on completion.
+
+        Issue: <https://github.com/w3c/payment-request/issues/981>
+        Spec PR: <https://github.com/w3c/payment-request/pull/982>
+
+        * WebProcess/ApplePay/WebPaymentCoordinator.h:
+        * WebProcess/ApplePay/WebPaymentCoordinator.cpp:
+        (WebKit::WebPaymentCoordinator::completePaymentSession):
+        * Scripts/webkit/messages.py:
+        (headers_for_type):
+        * Shared/WebCoreArgumentCoders.h:
+        * Shared/Cocoa/WebCoreArgumentCodersCocoa.mm:
+        (IPC::ArgumentCoder<WebCore::PaymentAuthorizationResult>::encode): Deleted.
+        (IPC::ArgumentCoder<WebCore::PaymentAuthorizationResult>::decode): Deleted.
+        * Shared/ApplePay/WebPaymentCoordinatorProxy.messages.in:
+        * Shared/ApplePay/WebPaymentCoordinatorProxy.h:
+        * Shared/ApplePay/WebPaymentCoordinatorProxy.cpp:
+        (WebKit::WebPaymentCoordinatorProxy::completePaymentSession):
+        * Shared/ApplePay/cocoa/WebPaymentCoordinatorProxyCocoa.mm:
+        (WebKit::WebPaymentCoordinatorProxy::platformCompletePaymentSession):
+        * Shared/ApplePay/ios/WebPaymentCoordinatorProxyIOS.mm:
+        * Platform/cocoa/PaymentAuthorizationPresenter.h:
+        * Platform/cocoa/PaymentAuthorizationPresenter.mm:
+        (WebKit::toPKPaymentAuthorizationStatus):
+        (WebKit::PaymentAuthorizationPresenter::completePaymentSession):
+        Replace `PaymentAuthorizationResult` with `ApplePayPaymentAuthorizationResult` so that data
+        doesn't need to be moved between identically shaped structs for sending to the UIProcess.
+
+        * Platform/cocoa/WKPaymentAuthorizationDelegate.h:
+        * Platform/cocoa/WKPaymentAuthorizationDelegate.mm:
+        Add some WKA hooks.
+
 2022-01-27  Elliott Williams  <emw@apple.com>
 
         [XCBuild] Add missing task dependencies on generate-unified-source-bundles.rb

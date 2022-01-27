@@ -42,7 +42,7 @@
     readonly attribute DOMString? payerEmail;
     readonly attribute DOMString? payerPhone;
 
-    [NewObject] Promise<undefined> complete(optional PaymentComplete result = "unknown");
+    [CallWith=Document, NewObject] Promise<undefined> complete(optional PaymentComplete result = "unknown", optional PaymentCompleteDetails details);
     [NewObject] Promise<undefined> retry(optional PaymentValidationErrors errorFields);
 
     attribute EventHandler onpayerdetailchange;

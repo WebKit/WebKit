@@ -645,11 +645,6 @@ template<> struct ArgumentCoder<WebCore::Payment> {
     static std::optional<WebCore::Payment> decode(Decoder&);
 };
 
-template<> struct ArgumentCoder<WebCore::PaymentAuthorizationResult> {
-    static void encode(Encoder&, const WebCore::PaymentAuthorizationResult&);
-    static std::optional<WebCore::PaymentAuthorizationResult> decode(Decoder&);
-};
-
 template<> struct ArgumentCoder<WebCore::PaymentContact> {
     static void encode(Encoder&, const WebCore::PaymentContact&);
     static std::optional<WebCore::PaymentContact> decode(Decoder&);

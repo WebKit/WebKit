@@ -426,7 +426,7 @@ class EmptyPaymentCoordinatorClient final : public PaymentCoordinatorClient {
 #if ENABLE(APPLE_PAY_COUPON_CODE)
     void completeCouponCodeChange(std::optional<ApplePayCouponCodeUpdate>&&) final { }
 #endif
-    void completePaymentSession(std::optional<PaymentAuthorizationResult>&&) final { }
+    void completePaymentSession(ApplePayPaymentAuthorizationResult&&) final { }
     void cancelPaymentSession() final { }
     void abortPaymentSession() final { }
     void paymentCoordinatorDestroyed() final { }

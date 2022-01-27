@@ -71,7 +71,7 @@ private:
 #if ENABLE(APPLE_PAY_COUPON_CODE)
     void completeCouponCodeChange(std::optional<WebCore::ApplePayCouponCodeUpdate>&&) override;
 #endif
-    void completePaymentSession(std::optional<WebCore::PaymentAuthorizationResult>&&) override;
+    void completePaymentSession(WebCore::ApplePayPaymentAuthorizationResult&&) override;
 
     void abortPaymentSession() override;
     void cancelPaymentSession() override;

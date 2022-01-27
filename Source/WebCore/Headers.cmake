@@ -133,7 +133,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
 
     Modules/applepay/ApplePaySessionPaymentRequest.h
     Modules/applepay/Payment.h
-    Modules/applepay/PaymentAuthorizationStatus.h
     Modules/applepay/PaymentContact.h
     Modules/applepay/PaymentCoordinator.h
     Modules/applepay/PaymentCoordinatorClient.h

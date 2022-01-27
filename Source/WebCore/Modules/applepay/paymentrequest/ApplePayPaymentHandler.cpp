@@ -40,6 +40,8 @@
 #include "ApplePayMerchantCapability.h"
 #include "ApplePayModifier.h"
 #include "ApplePayPayment.h"
+#include "ApplePayPaymentAuthorizationResult.h"
+#include "ApplePayPaymentCompleteDetails.h"
 #include "ApplePayPaymentMethodUpdate.h"
 #include "ApplePaySessionPaymentRequest.h"
 #include "ApplePayShippingContactUpdate.h"
@@ -59,7 +61,7 @@
 #include "Page.h"
 #include "PayerErrorFields.h"
 #include "Payment.h"
-#include "PaymentAuthorizationStatus.h"
+#include "PaymentComplete.h"
 #include "PaymentContact.h"
 #include "PaymentCoordinator.h"
 #include "PaymentDetailsModifier.h"
@@ -685,27 +687,46 @@ ExceptionOr<void> ApplePayPaymentHandler::paymentMethodUpdated(Vector<RefPtr<App
     return { };
 }
 
-void ApplePayPaymentHandler::complete(std::optional<PaymentComplete>&& result)
-{
-    if (!result) {
-        ASSERT(isFinalStateResult(std::nullopt));
-        paymentCoordinator().completePaymentSession(std::nullopt);
-        return;
-    }
+#if !USE(APPLE_INTERNAL_SDK)
+static ExceptionOr<ApplePayPaymentCompleteDetails> convertAndValidate(ApplePayPaymentCompleteDetails&& details) { return WTFMove(details); }
+static void merge(ApplePayPaymentAuthorizationResult&, ApplePayPaymentCompleteDetails&&) { }
+#endif
 
-    PaymentAuthorizationResult authorizationResult;
-    switch (*result) {
+ExceptionOr<void> ApplePayPaymentHandler::complete(Document& document, std::optional<PaymentComplete>&& result, String&& serializedData)
+{
+    ApplePayPaymentAuthorizationResult authorizationResult;
+
+    switch (result.value_or(PaymentComplete::Success)) {
     case PaymentComplete::Fail:
     case PaymentComplete::Unknown:
-        authorizationResult.status = PaymentAuthorizationStatus::Failure;
+        authorizationResult.status = ApplePayPaymentAuthorizationResult::Failure;
         break;
+
     case PaymentComplete::Success:
-        authorizationResult.status = PaymentAuthorizationStatus::Success;
+        authorizationResult.status = ApplePayPaymentAuthorizationResult::Success;
         break;
     }
 
-    ASSERT(isFinalStateResult(authorizationResult));
+    if (!serializedData.isEmpty()) {
+        auto throwScope = DECLARE_THROW_SCOPE(document.vm());
+
+        auto parsedData = JSONParse(document.globalObject(), WTFMove(serializedData));
+        if (throwScope.exception())
+            return Exception { ExistingExceptionError };
+
+        auto details = convertDictionary<ApplePayPaymentCompleteDetails>(*document.globalObject(), WTFMove(parsedData));
+        if (throwScope.exception())
+            return Exception { ExistingExceptionError };
+
+        auto convertedDetails = convertAndValidate(WTFMove(details));
+        if (convertedDetails.hasException())
+            return convertedDetails.releaseException();
+        merge(authorizationResult, convertedDetails.releaseReturnValue());
+    }
+
+    ASSERT(authorizationResult.isFinalState());
     paymentCoordinator().completePaymentSession(WTFMove(authorizationResult));
+    return { };
 }
 
 ExceptionOr<void> ApplePayPaymentHandler::retry(PaymentValidationErrors&& validationErrors)
@@ -723,8 +744,8 @@ ExceptionOr<void> ApplePayPaymentHandler::retry(PaymentValidationErrors&& valida
     if (errors.isEmpty())
         errors.append(ApplePayError::create(ApplePayErrorCode::Unknown, std::nullopt, nullString()));
 
-    PaymentAuthorizationResult authorizationResult { PaymentAuthorizationStatus::Failure, WTFMove(errors) };
-    ASSERT(!isFinalStateResult(authorizationResult));
+    ApplePayPaymentAuthorizationResult authorizationResult { ApplePayPaymentAuthorizationResult::Failure, WTFMove(errors) };
+    ASSERT(!authorizationResult.isFinalState());
     paymentCoordinator().completePaymentSession(WTFMove(authorizationResult));
     return { };
 }

@@ -92,7 +92,7 @@ void WebPaymentCoordinatorClient::completeCouponCodeChange(std::optional<WebCore
 
 #endif // ENABLE(APPLE_PAY_COUPON_CODE)
 
-void WebPaymentCoordinatorClient::completePaymentSession(std::optional<WebCore::PaymentAuthorizationResult>&&)
+void WebPaymentCoordinatorClient::completePaymentSession(WebCore::ApplePayPaymentAuthorizationResult&&)
 {
 }
 

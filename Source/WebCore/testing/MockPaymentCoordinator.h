@@ -107,7 +107,7 @@ private:
 #if ENABLE(APPLE_PAY_COUPON_CODE)
     void completeCouponCodeChange(std::optional<ApplePayCouponCodeUpdate>&&) final;
 #endif
-    void completePaymentSession(std::optional<PaymentAuthorizationResult>&&) final;
+    void completePaymentSession(ApplePayPaymentAuthorizationResult&&) final;
     void abortPaymentSession() final;
     void cancelPaymentSession() final;
     void paymentCoordinatorDestroyed() final;

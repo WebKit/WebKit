@@ -99,7 +99,7 @@ public:
     void accept(const String& methodName, PaymentResponse::DetailsFunction&&);
     void accept(const String& methodName, PaymentResponse::DetailsFunction&&, Ref<PaymentAddress>&& shippingAddress, const String& payerName, const String& payerEmail, const String& payerPhone);
     void reject(Exception&&);
-    ExceptionOr<void> complete(std::optional<PaymentComplete>&&);
+    ExceptionOr<void> complete(Document&, std::optional<PaymentComplete>&&, String&& serializedData);
     ExceptionOr<void> retry(PaymentValidationErrors&&);
     void cancel();
 

@@ -159,6 +159,10 @@
         [self completePaymentSession:PKPaymentAuthorizationStatusFailure errors:@[ ]];
 }
 
+#if USE(APPLE_INTERNAL_SDK)
+#include <WebKitAdditions/WKPaymentAuthorizationDelegateAdditionsAfter.mm>
+#endif
+
 @end
 
 @implementation WKPaymentAuthorizationDelegate (Protected)

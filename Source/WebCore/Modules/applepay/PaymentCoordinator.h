@@ -43,15 +43,14 @@ class PaymentMerchantSession;
 class PaymentMethod;
 class PaymentSession;
 class PaymentSessionError;
-enum class PaymentAuthorizationStatus;
 struct ApplePayCouponCodeUpdate;
+struct ApplePayPaymentAuthorizationResult;
 struct ApplePayPaymentMethodUpdate;
 struct ApplePaySetupConfiguration;
 struct ApplePayShippingContactUpdate;
 struct ApplePayShippingMethod;
 struct ApplePayShippingMethodUpdate;
 struct ExceptionDetails;
-struct PaymentAuthorizationResult;
 
 class PaymentCoordinator : public CanMakeWeakPtr<PaymentCoordinator> {
     WTF_MAKE_FAST_ALLOCATED;
@@ -76,7 +75,7 @@ public:
 #if ENABLE(APPLE_PAY_COUPON_CODE)
     void completeCouponCodeChange(std::optional<ApplePayCouponCodeUpdate>&&);
 #endif
-    void completePaymentSession(std::optional<PaymentAuthorizationResult>&&);
+    void completePaymentSession(ApplePayPaymentAuthorizationResult&&);
     void abortPaymentSession();
     void cancelPaymentSession();
 

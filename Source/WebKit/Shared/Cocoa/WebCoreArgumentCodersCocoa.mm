@@ -58,7 +58,6 @@
 
 #if ENABLE(APPLE_PAY)
 #import "DataReference.h"
-#import <WebCore/PaymentAuthorizationStatus.h>
 #import <pal/cocoa/PassKitSoftLink.h>
 #endif
 
@@ -124,27 +123,6 @@ std::optional<WebCore::Payment> ArgumentCoder<WebCore::Payment>::decode(Decoder&
         return std::nullopt;
 
     return WebCore::Payment { WTFMove(*payment) };
-}
-
-void ArgumentCoder<WebCore::PaymentAuthorizationResult>::encode(Encoder& encoder, const WebCore::PaymentAuthorizationResult& result)
-{
-    encoder << result.status;
-    encoder << result.errors;
-}
-
-std::optional<WebCore::PaymentAuthorizationResult> ArgumentCoder<WebCore::PaymentAuthorizationResult>::decode(Decoder& decoder)
-{
-    std::optional<WebCore::PaymentAuthorizationStatus> status;
-    decoder >> status;
-    if (!status)
-        return std::nullopt;
-
-    std::optional<Vector<RefPtr<WebCore::ApplePayError>>> errors;
-    decoder >> errors;
-    if (!errors)
-        return std::nullopt;
-
-    return {{ WTFMove(*status), WTFMove(*errors) }};
 }
 
 void ArgumentCoder<WebCore::PaymentContact>::encode(Encoder& encoder, const WebCore::PaymentContact& paymentContact)

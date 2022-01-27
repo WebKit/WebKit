@@ -808,7 +808,6 @@ def headers_for_type(type):
         'WebCore::PasteboardImage': ['<WebCore/Pasteboard.h>'],
         'WebCore::PasteboardURL': ['<WebCore/Pasteboard.h>'],
         'WebCore::PasteboardWebContent': ['<WebCore/Pasteboard.h>'],
-        'WebCore::PaymentAuthorizationResult': ['<WebCore/ApplePaySessionPaymentRequest.h>'],
         'WebCore::PixelFormat': ['<WebCore/ImageBufferBackend.h>'],
         'WebCore::PlatformTextTrackData': ['<WebCore/PlatformTextTrack.h>'],
         'WebCore::PlaybackSessionModel::PlaybackState': ['<WebCore/PlaybackSessionModel.h>'],

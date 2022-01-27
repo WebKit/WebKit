@@ -44,6 +44,7 @@ JSApplePayModifier.cpp
 JSApplePayPayment.cpp
 JSApplePayPaymentAuthorizationResult.cpp
 JSApplePayPaymentAuthorizedEvent.cpp
+JSApplePayPaymentCompleteDetails.cpp
 JSApplePayPaymentContact.cpp
 JSApplePayPaymentMethod.cpp
 JSApplePayPaymentMethodSelectedEvent.cpp
@@ -74,6 +75,7 @@ Modules/applepay/ApplePayCouponCodeChangedEvent.cpp
 Modules/applepay/ApplePayCancelEvent.cpp
 Modules/applepay/ApplePayContactField.cpp
 Modules/applepay/ApplePayMerchantCapability.cpp
+Modules/applepay/ApplePayPaymentAuthorizationResult.cpp
 Modules/applepay/ApplePayPaymentAuthorizedEvent.cpp
 Modules/applepay/ApplePayPaymentMethodSelectedEvent.cpp
 Modules/applepay/ApplePayRequestBase.cpp

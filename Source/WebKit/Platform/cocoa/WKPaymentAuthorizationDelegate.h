@@ -66,6 +66,10 @@ using DidChangeCouponCodeCompletion = BlockPtr<void(PKPaymentRequestCouponCodeUp
 #endif
 - (void)invalidate;
 
+#if USE(APPLE_INTERNAL_SDK)
+#include <WebKitAdditions/WKPaymentAuthorizationDelegateAdditionsAfter.h>
+#endif
+
 @end
 
 // Helper methods called by WKPaymentAuthorizationSession's subclasses

@@ -239,6 +239,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/applepay/ApplePayShippingMethodUpdate.idl \
     $(WebCore)/Modules/applepay/ApplePayValidateMerchantEvent.idl \
     $(WebCore)/Modules/applepay/paymentrequest/ApplePayModifier.idl \
+    $(WebCore)/Modules/applepay/paymentrequest/ApplePayPaymentCompleteDetails.idl \
     $(WebCore)/Modules/applepay/paymentrequest/ApplePayRequest.idl \
     $(WebCore)/Modules/applepay-ams-ui/ApplePayAMSUIRequest.idl \
     $(WebCore)/Modules/async-clipboard/Clipboard.idl \
@@ -471,6 +472,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/paymentrequest/PayerErrorFields.idl \
     $(WebCore)/Modules/paymentrequest/PaymentAddress.idl \
     $(WebCore)/Modules/paymentrequest/PaymentComplete.idl \
+    $(WebCore)/Modules/paymentrequest/PaymentCompleteDetails.idl \
     $(WebCore)/Modules/paymentrequest/PaymentCurrencyAmount.idl \
     $(WebCore)/Modules/paymentrequest/PaymentDetailsBase.idl \
     $(WebCore)/Modules/paymentrequest/PaymentDetailsInit.idl \
