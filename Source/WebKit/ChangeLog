@@ -1,3 +1,35 @@
+2022-01-26  J Pascoe  <j_pascoe@apple.com>
+
+        [WebAuthn] We should pass extensions to ASC if possible
+        https://bugs.webkit.org/show_bug.cgi?id=235533
+        rdar://87169406
+
+        Reviewed by Brent Fulgham.
+
+        This patch starts passing WebAuthn extensions to ASC if possible,
+        in order to support the googleLegacyAppidSupport extension, which
+        is required to register security keys on google.com. It also starts
+        passing the attestationPreference option, which was not being passed before.
+
+        Tested manually. Previous version of patch contained
+        TestWebKitAPI.WebAuthenticationPanel.PublicKeyCredentialRequestOptionsASC
+        and TestWebKitAPI.WebAuthenticationPanel.PublicKeyCredentialCreationOptionsASC,
+        but were removed due to difficulty softlinking from tests.
+
+        * Platform/spi/Cocoa/AuthenticationServicesCoreSPI.h:
+        * UIProcess/API/Cocoa/_WKAuthenticationExtensionsClientInputs.h:
+        * UIProcess/API/Cocoa/_WKWebAuthenticationPanel.mm:
+        (authenticationExtensionsClientInputs):
+        * UIProcess/WebAuthentication/Cocoa/AuthenticationServicesCoreSoftLink.h:
+        * UIProcess/WebAuthentication/Cocoa/AuthenticationServicesCoreSoftLink.mm:
+        * UIProcess/WebAuthentication/Cocoa/WebAuthenticatorCoordinatorProxy.mm:
+        (WebKit::toNSString):
+        (WebKit::toASCExtensions):
+        (WebKit::configureRegistrationRequestContext):
+        (WebKit::configurationAssertionRequestContext):
+        * UIProcess/WebAuthentication/WebAuthenticatorCoordinatorProxy.h:
+        * WebKit.xcodeproj/project.pbxproj:
+
 2022-01-26  Alexander Mikhaylenko  <alexm@gnome.org>
 
         [GTK3] Pinch zooming from a link activates it

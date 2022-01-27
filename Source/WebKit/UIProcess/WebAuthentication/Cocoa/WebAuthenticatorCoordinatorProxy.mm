@@ -69,6 +69,20 @@ static inline RetainPtr<NSString> toNSString(UserVerificationRequirement userVer
     return @"preferred";
 }
 
+static inline RetainPtr<NSString> toNSString(AttestationConveyancePreference attestationConveyancePreference)
+{
+    switch (attestationConveyancePreference) {
+    case AttestationConveyancePreference::Direct:
+        return @"direct";
+    case AttestationConveyancePreference::Indirect:
+        return @"indirect";
+    case AttestationConveyancePreference::None:
+        return @"none";
+    }
+
+    return @"none";
+}
+
 static inline ExceptionCode toExceptionCode(NSInteger nsErrorCode)
 {
     ExceptionCode exceptionCode = (ExceptionCode)nsErrorCode;
@@ -150,6 +164,14 @@ static inline RetainPtr<ASCPublicKeyCredentialDescriptor> toASCDescriptor(Public
     return adoptNS([allocASCPublicKeyCredentialDescriptorInstance() initWithCredentialID:WebCore::toNSData(descriptor.id).get() transports:transports.get()]);
 }
 
+static inline RetainPtr<ASCWebAuthenticationExtensionsClientInputs> toASCExtensions(const AuthenticationExtensionsClientInputs& extensions)
+{
+    if ([allocASCWebAuthenticationExtensionsClientInputsInstance() respondsToSelector:@selector(initWithAppID:isGoogleLegacyAppIDSupport:)])
+        return adoptNS([allocASCWebAuthenticationExtensionsClientInputsInstance() initWithAppID:extensions.appid isGoogleLegacyAppIDSupport:extensions.googleLegacyAppidSupport]);
+
+    return nil;
+}
+
 static RetainPtr<ASCCredentialRequestContext> configureRegistrationRequestContext(const PublicKeyCredentialCreationOptions& options, Vector<uint8_t> hash)
 {
     ASCCredentialRequestTypes requestTypes = ASCCredentialRequestTypePlatformPublicKeyRegistration | ASCCredentialRequestTypeSecurityKeyPublicKeyRegistration;
@@ -184,6 +206,7 @@ static RetainPtr<ASCCredentialRequestContext> configureRegistrationRequestContex
     [credentialCreationOptions setUserDisplayName:options.user.displayName];
     [credentialCreationOptions setUserVerificationPreference:userVerification.get()];
     [credentialCreationOptions setShouldRequireResidentKey:shouldRequireResidentKey];
+    [credentialCreationOptions setAttestationPreference:toNSString(options.attestation).get()];
 
     RetainPtr<NSMutableArray<NSNumber *>> supportedAlgorithmIdentifiers = adoptNS([[NSMutableArray alloc] initWithCapacity:options.pubKeyCredParams.size()]);
     for (PublicKeyCredentialCreationOptions::Parameters algorithmParameter : options.pubKeyCredParams)
@@ -206,6 +229,9 @@ static RetainPtr<ASCCredentialRequestContext> configureRegistrationRequestContex
 
     if (requestTypes & ASCCredentialRequestTypeSecurityKeyPublicKeyRegistration)
         [requestContext setSecurityKeyCredentialCreationOptions:credentialCreationOptions.get()];
+
+    if (options.extensions && [credentialCreationOptions respondsToSelector:@selector(setExtensions:)])
+        [credentialCreationOptions setExtensions:toASCExtensions(*options.extensions).get()];
 
     return requestContext;
 }
@@ -244,6 +270,8 @@ static RetainPtr<ASCCredentialRequestContext> configurationAssertionRequestConte
             auto challenge = WebCore::toNSData(options.challenge);
             [assertionOptions initWithKind:ASCPublicKeyCredentialKindPlatform relyingPartyIdentifier:options.rpId challenge:challenge.get() userVerificationPreference:userVerification.get() allowedCredentials:allowedCredentials.get()];
         }
+        if (options.extensions && [assertionOptions respondsToSelector:@selector(setExtensions:)])
+            [assertionOptions setExtensions:toASCExtensions(*options.extensions).get()];
 
         [requestContext setPlatformKeyCredentialAssertionOptions:assertionOptions.get()];
     }
@@ -257,6 +285,9 @@ static RetainPtr<ASCCredentialRequestContext> configurationAssertionRequestConte
             auto challenge = WebCore::toNSData(options.challenge);
             [assertionOptions initWithKind:ASCPublicKeyCredentialKindSecurityKey relyingPartyIdentifier:options.rpId challenge:challenge.get() userVerificationPreference:userVerification.get() allowedCredentials:allowedCredentials.get()];
         }
+        if (options.extensions && [assertionOptions respondsToSelector:@selector(setExtensions:)])
+            [assertionOptions setExtensions:toASCExtensions(*options.extensions).get()];
+
         [requestContext setSecurityKeyCredentialAssertionOptions:assertionOptions.get()];
     }
 

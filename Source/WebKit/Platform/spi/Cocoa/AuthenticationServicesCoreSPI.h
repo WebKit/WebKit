@@ -133,6 +133,17 @@ typedef NS_ENUM(NSInteger, ASCSecurityKeyPublicKeyCredentialKind) {
 
 @end
 
+@class ASCWebAuthenticationExtensionsClientInputs;
+
+@interface ASCWebAuthenticationExtensionsClientInputs : NSObject <NSCopying, NSSecureCoding>
+
+- (instancetype)initWithAppID:(NSString * _Nullable)appID isGoogleLegacyAppIDSupport:(BOOL)isGoogleLegacyAppIDSupport NS_DESIGNATED_INITIALIZER;
+
+@property (nonatomic, nullable, copy) NSString *appID;
+@property (nonatomic) BOOL isGoogleLegacyAppIDSupport;
+
+@end
+
 @class ASCPublicKeyCredentialDescriptor;
 
 typedef NS_ENUM(NSUInteger, ASCPublicKeyCredentialKind) {
@@ -152,6 +163,7 @@ typedef NS_ENUM(NSUInteger, ASCPublicKeyCredentialKind) {
 // If clientDataHash is null, then gets generated from challenge and relyingPartyIdentifier.
 @property (nonatomic, nullable, copy) NSData *clientDataHash;
 @property (nonatomic, nullable, readonly, copy) NSString *userVerificationPreference;
+@property (nonatomic, nullable, copy) ASCWebAuthenticationExtensionsClientInputs *extensions;
 
 @property (nonatomic, nullable, readonly, copy) NSArray<ASCPublicKeyCredentialDescriptor *> *allowedCredentials;
 
@@ -178,6 +190,8 @@ typedef NS_OPTIONS(NSUInteger, ASCCredentialRequestTypes) {
 @property (nonatomic, copy) NSString *userDisplayName;
 @property (nonatomic, copy) NSArray<NSNumber *> *supportedAlgorithmIdentifiers;
 @property (nonatomic, nullable, copy) NSString *userVerificationPreference;
+@property (nonatomic, nullable, copy) NSString *attestationPreference;
+@property (nonatomic, nullable, copy) ASCWebAuthenticationExtensionsClientInputs *extensions;
 
 @property (nonatomic) BOOL shouldRequireResidentKey;
 @property (nonatomic, copy) NSArray<ASCPublicKeyCredentialDescriptor *> *excludedCredentials;
