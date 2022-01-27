@@ -26,8 +26,6 @@
 #include "config.h"
 #include "TestRunner.h"
 
-#include "ActivateFonts.h"
-
 namespace WTR {
 
 JSRetainPtr<JSStringRef> TestRunner::pathToLocalResource(JSStringRef)
@@ -42,11 +40,6 @@ JSRetainPtr<JSStringRef> TestRunner::inspectorTestStubURL()
 
 void TestRunner::platformInitialize()
 {
-}
-
-void TestRunner::installFakeHelvetica(JSStringRef configuration)
-{
-    WTR::installFakeHelvetica(toWK(configuration).get());
 }
 
 } // namespace WTR

@@ -26,6 +26,7 @@
 #include "config.h"
 #include "TestRunner.h"
 
+#include "ActivateFonts.h"
 #include "DictionaryFunctions.h"
 #include "InjectedBundle.h"
 #include "InjectedBundlePage.h"
@@ -1982,6 +1983,11 @@ void TestRunner::getApplicationManifestThen(JSValueRef callback)
 void TestRunner::didGetApplicationManifest()
 {
     callTestRunnerCallback(GetApplicationManifestCallbackID);
+}
+
+void TestRunner::installFakeHelvetica(JSStringRef configuration)
+{
+    WTR::installFakeHelvetica(toWK(configuration).get());
 }
 
 void TestRunner::performCustomMenuAction()

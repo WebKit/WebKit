@@ -1,3 +1,26 @@
+2022-01-26  Don Olmstead  <don.olmstead@sony.com>
+
+        Share TestRunner::installFakeHelvetica implementation
+        https://bugs.webkit.org/show_bug.cgi?id=235657
+
+        Reviewed by Darin Adler.
+
+        The implementation of TestRunner::installFakeHelvetica was the same for each port. It just
+        calls into the WTR::installFakeHelvetica function defined in ActivateFonts.h which does the
+        actual work of installing the font.
+
+        * WebKitTestRunner/InjectedBundle/ActivateFonts.h:
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::installFakeHelvetica):
+        * WebKitTestRunner/InjectedBundle/gtk/TestRunnerGtk.cpp:
+        (WTR::TestRunner::installFakeHelvetica): Deleted.
+        * WebKitTestRunner/InjectedBundle/mac/TestRunnerMac.mm:
+        (WTR::TestRunner::installFakeHelvetica): Deleted.
+        * WebKitTestRunner/InjectedBundle/win/TestRunnerWin.cpp:
+        (WTR::TestRunner::installFakeHelvetica): Deleted.
+        * WebKitTestRunner/InjectedBundle/wpe/TestRunnerWPE.cpp:
+        (WTR::TestRunner::installFakeHelvetica): Deleted.
+
 2022-01-25  Jonathan Bedard  <jbedard@apple.com>
 
         [EWS] Support pull requests in built product management
