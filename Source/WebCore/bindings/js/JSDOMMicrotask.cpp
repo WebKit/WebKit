@@ -28,6 +28,7 @@
 
 #include "JSDOMExceptionHandling.h"
 #include "JSExecState.h"
+#include "ScriptExecutionContext.h"
 #include <JavaScriptCore/Debugger.h>
 #include <JavaScriptCore/JSGlobalObject.h>
 #include <JavaScriptCore/JSObjectInlines.h>
