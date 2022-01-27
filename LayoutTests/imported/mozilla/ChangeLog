@@ -1,3 +1,20 @@
+2022-01-26  Jon Lee  <jonlee@apple.com>
+
+        Add fuzzy match meta headers to tests
+        https://bugs.webkit.org/show_bug.cgi?id=235671
+
+        Reviewed by Simon Fraser.
+
+        * svg/blend-saturation.svg:
+        * svg/filters/feComposite-2.svg:
+        * svg/filters/feFlood-1.svg:
+        * svg/filters/feFlood-2.svg:
+        * svg/filters/feImage-1.svg:
+        * svg/mask-type-01.svg:
+        * svg/opacity-and-gradient-02.svg:
+        * svg/text-scale-02.svg:
+        * svg/text/simple-fill-gradient.svg:
+
 2020-05-08  David Kilzer  <ddkilzer@apple.com>
 
         Remove empty directories from from svn.webkit.org repository

@@ -1,3 +1,110 @@
+2022-01-26  Jon Lee  <jonlee@apple.com>
+
+        Add fuzzy match meta headers to tests
+        https://bugs.webkit.org/show_bug.cgi?id=235671
+
+        Reviewed by Simon Fraser.
+
+        Use a conservative range of pixels based on a comparison between an EWS run and a run on an
+        M1 16" MacBook Pro.
+
+        * platform/ios/TestExpectations: a few tests are real failures with accelerated drawing. Mark
+        as image failures.
+
+        * compositing/clipping/border-radius-async-overflow-non-stacking.html: Some of the ranges
+        were not large enough, and still reported errors on my machine. Expanding range.
+        * compositing/geometry/css-clip-oversize.html:
+        * compositing/geometry/scroller-with-clipping-and-foreground-layers.html:
+        * compositing/masks/compositing-clip-path-and-mask.html:
+        * compositing/patterns/direct-pattern-compositing-add-text.html:
+        * compositing/patterns/direct-pattern-compositing-contain.html:
+        * compositing/patterns/direct-pattern-compositing-padding.html:
+        * compositing/patterns/direct-pattern-compositing-size.html:
+        * compositing/patterns/direct-pattern-compositing.html:
+        * compositing/scrolling/async-overflow-scrolling/border-radius-on-scroll-container.html:
+        * css3/background/background-repeat-space-border.html:
+        * css3/background/background-repeat-space-content.html:
+        * css3/background/background-repeat-space-padding.html:
+        * css3/blending/background-blend-mode-body-image.html:
+        * css3/blending/background-blend-mode-body-transparent-color-and-image.html:
+        * css3/blending/background-blend-mode-body-transparent-image.html:
+        * css3/filters/filters-on-svg-root.html:
+        * css3/masking/mask-luminance-gradient.html:
+        * css3/masking/mask-repeat-space-border.html:
+        * css3/masking/mask-repeat-space-content.html:
+        * css3/masking/mask-repeat-space-padding.html:
+        * fast/attachment/attachment-border-should-stay-inside-attachment.html:
+        * fast/backgrounds/background-opaque-clipped-gradients.html:
+        * fast/backgrounds/generated-bck-image-with-small-relative-size.html:
+        * fast/backgrounds/hidpi-background-image-contain-cover-scale-needs-more-precision.html:
+        * fast/backgrounds/scaled-gradient-background.html:
+        * fast/borders/border-painting-inset.html:
+        * fast/borders/border-painting-outset.html:
+        * fast/borders/border-radius-on-html.html:
+        * fast/borders/hidpi-border-painting-groove.html:
+        * fast/borders/hidpi-border-painting-ridge.html:
+        * fast/borders/wrong-border-color-when-radius-is-present.html:
+        * fast/box-shadow/inset-box-shadow.html:
+        * fast/box-shadow/inset-spread-box-shadow-split-inline.html:
+        * fast/css/cascade/box-shadow-and-webkit-box-shadow-cascade-order.html:
+        * fast/css/object-fit/object-fit-img-svg2.html:
+        * fast/gradients/conic-center-outside-box.html:
+        * fast/gradients/conic-extended-stops.html:
+        * fast/gradients/conic-from-angle.html:
+        * fast/gradients/conic-off-center.html:
+        * fast/gradients/conic-repeating.html:
+        * fast/gradients/conic-two-hints.html:
+        * fast/gradients/conic.html:
+        * fast/gradients/linear-two-hints-angle.html:
+        * fast/gradients/linear-two-hints.html:
+        * fast/gradients/radial-two-hints.html:
+        * fast/images/async-image-background-image-repeated.html:
+        * fast/images/exif-orientation-background-image-repeat.html:
+        * fast/images/exif-orientation-svg-feimage.html:
+        * fast/images/hidpi-image-position-on-device-pixels-with-border-radius.html:
+        * fast/images/sprite-sheet-image-draw.html:
+        * fast/inline/inline-background-clip-text-multiline.html:
+        * fast/shadow-dom/svg-linear-gradient-dynamic-update-href-in-shadow-tree.html:
+        * fast/shadow-dom/svg-linear-gradient-href-in-shadow-tree.html:
+        * fast/shadow-dom/svg-radial-gradient-dynamic-update-href-in-shadow-tree.html:
+        * fast/shadow-dom/svg-radial-gradient-href-in-shadow-tree.html:
+        * fast/text/empty-shadow.html:
+        * fast/text/initial-advance-selected-text.html:
+        * fast/transforms/skew-x-135deg-with-gradient.html:
+        * fast/transforms/skew-y-135deg-with-gradient.html:
+        * imported/blink/fast/gradients/large-horizontal-gradient.html:
+        * imported/blink/fast/gradients/large-vertical-gradient.html:
+        * imported/blink/svg/custom/fill-fallback-currentcolor-1.svg:
+        * imported/blink/svg/text/obb-paintserver.html:
+        * svg/animations/animated-string-href.svg:
+        * svg/clip-path/clip-opacity.html:
+        * svg/clip-path/clip-path-shape-rounded-inset-1.svg:
+        * svg/clip-path/clip-path-shape-rounded-inset-2.svg:
+        * svg/css/invalid-color-cascade.svg:
+        * svg/custom/composited-svg-with-opacity.html:
+        * svg/custom/hidpi-masking-clipping.svg:
+        * svg/custom/href-svg-namespace-static.svg:
+        * svg/custom/href-xlink-href-gradient-element.svg:
+        * svg/custom/local-url-reference-fill.html:
+        * svg/custom/local-url-reference-radial-gradient.html:
+        * svg/custom/local-url-reference-srcdoc.html:
+        * svg/custom/local-url-reference-stroke.html:
+        * svg/dynamic-updates/SVGLinearGradientElement-svgdom-href-prop.html:
+        * svg/dynamic-updates/SVGRadialGradientElement-svgdom-href-prop.html:
+        * svg/filters/feComposite.svg:
+        * svg/filters/feImage-element-primitive-subregion.svg:
+        * svg/gradients/spreadMethod.svg:
+        * svg/gradients/spreadMethodAlpha.svg:
+        * svg/gradients/spreadMethodDiagonal.svg:
+        * svg/gradients/spreadMethodDiagonal2.svg:
+        * svg/gradients/spreadMethodDiagonal3.svg:
+        * svg/gradients/spreadMethodDiagonal4.svg:
+        * svg/gradients/spreadMethodDuplicateStop.svg:
+        * svg/gradients/spreadMethodReversed.svg:
+        * svg/gradients/stopAlpha.svg:
+        * system-preview/badge.html:
+        * webanimations/opacity-animation.html:
+
 2022-01-27  Patrick Griffis  <pgriffis@igalia.com>
 
         CSP: Clean up effective-violation handling in reports

@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="500" height="500">
-
+<meta name="fuzzy" content="maxDifference=1;totalPixels=250000" />
 <filter id="f1" filterUnits="userSpaceOnUse" primitiveUnits="userSpaceOnUse">
   <feFlood flood-color="#00ff00" flood-opacity="0.5"/>
 </filter>
