@@ -30,7 +30,6 @@
 
 #include "DOMWrapperWorld.h"
 #include "EventLoop.h"
-#include "JSDOMGlobalObjectTask.h"
 #include "JSDOMGuardedObject.h"
 #include "JSMicrotaskCallback.h"
 #include "WorkerGlobalScope.h"

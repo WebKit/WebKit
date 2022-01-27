@@ -28,7 +28,6 @@
 #include "JSWorkletGlobalScopeBase.h"
 
 #include "DOMWrapperWorld.h"
-#include "JSDOMGlobalObjectTask.h"
 #include "JSDOMGuardedObject.h"
 #include "WorkerOrWorkletScriptController.h"
 #include "WorkletGlobalScope.h"
