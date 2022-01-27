@@ -9,6 +9,6 @@ PASS Parser-inserted async script via `document.write` without a correct nonce i
 PASS Parser-inserted async script via `document.writeln` without a correct nonce is not allowed with `strict-dynamic`.
 PASS Parser-inserted deferred async script via `document.write` without a correct nonce is not allowed with `strict-dynamic`.
 PASS Parser-inserted deferred async script via `document.writeln` without a correct nonce is not allowed with `strict-dynamic`.
-FAIL Script injected via `innerHTML` is not allowed with `strict-dynamic`. assert_equals: expected "script-src-attr" but got "script-src"
-FAIL Script injected via `insertAdjacentHTML` is not allowed with `strict-dynamic`. assert_equals: expected "script-src-attr" but got "script-src"
+PASS Script injected via `innerHTML` is not allowed with `strict-dynamic`.
+PASS Script injected via `insertAdjacentHTML` is not allowed with `strict-dynamic`.
 

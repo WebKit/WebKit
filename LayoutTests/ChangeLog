@@ -1,3 +1,41 @@
+2022-01-27  Patrick Griffis  <pgriffis@igalia.com>
+
+        CSP: Clean up effective-violation handling in reports
+        https://bugs.webkit.org/show_bug.cgi?id=235602
+
+        Reviewed by Kate Cheney.
+
+        Update effective-violation of expectations.
+
+        * http/tests/security/contentSecurityPolicy/1.1/child-src/frame-blocked-expected.txt:
+        * http/tests/security/contentSecurityPolicy/1.1/child-src/frame-redirect-blocked-expected.txt:
+        * http/tests/security/contentSecurityPolicy/1.1/report-uri-effective-directive-expected.txt:
+        * http/tests/security/contentSecurityPolicy/1.1/script-blocked-sends-multiple-reports-expected.txt:
+        * http/tests/security/contentSecurityPolicy/1.1/scripthash-allowed-by-enforced-policy-and-blocked-by-report-policy-expected.txt:
+        * http/tests/security/contentSecurityPolicy/1.1/scripthash-allowed-by-enforced-policy-and-blocked-by-report-policy2-expected.txt:
+        * http/tests/security/contentSecurityPolicy/1.1/scripthash-allowed-by-legacy-enforced-policy-and-blocked-by-report-policy-expected.txt:
+        * http/tests/security/contentSecurityPolicy/1.1/scripthash-allowed-by-legacy-enforced-policy-and-blocked-by-report-policy2-expected.txt:
+        * http/tests/security/contentSecurityPolicy/1.1/scripthash-blocked-by-enforced-policy-and-allowed-by-report-policy-expected.txt:
+        * http/tests/security/contentSecurityPolicy/1.1/scripthash-blocked-by-legacy-enforced-policy-and-blocked-by-report-policy-expected.txt:
+        * http/tests/security/contentSecurityPolicy/1.1/scripthash-blocked-by-legacy-enforced-policy-and-blocked-by-report-policy2-expected.txt:
+        * http/tests/security/contentSecurityPolicy/1.1/scriptnonce-blocked-by-enforced-policy-and-allowed-by-report-policy-expected.txt:
+        * http/tests/security/contentSecurityPolicy/1.1/securityviolationpolicy-block-frame-using-child-src-expected.txt:
+        * http/tests/security/contentSecurityPolicy/1.1/securityviolationpolicy-block-frame-using-child-src.html:
+        * http/tests/security/contentSecurityPolicy/1.1/securityviolationpolicy-block-frame-using-default-src-expected.txt:
+        * http/tests/security/contentSecurityPolicy/1.1/securityviolationpolicy-block-frame-using-default-src.html:
+        * http/tests/security/contentSecurityPolicy/iframe-blocked-when-loaded-via-javascript-url-expected.txt:
+        * http/tests/security/contentSecurityPolicy/iframe-blocked-when-loaded-via-javascript-url2-expected.txt:
+        * http/tests/security/contentSecurityPolicy/iframe-redirect-blocked-by-child-src-expected.txt:
+        * http/tests/security/contentSecurityPolicy/report-and-enforce-expected.txt:
+        * http/tests/security/contentSecurityPolicy/report-only-expected.txt:
+        * http/tests/security/contentSecurityPolicy/report-only-from-header-expected.txt:
+        * http/tests/security/contentSecurityPolicy/report-only-upgrade-insecure-expected.txt:
+        * http/tests/security/contentSecurityPolicy/report-status-code-zero-when-using-https-expected.txt:
+        * http/tests/security/contentSecurityPolicy/report-uri-expected.txt:
+        * http/tests/security/contentSecurityPolicy/report-uri-from-child-frame-expected.txt:
+        * http/tests/security/contentSecurityPolicy/report-uri-scheme-relative-expected.txt:
+        * platform/glib/http/tests/security/contentSecurityPolicy/report-only-from-header-expected.txt:
+
 2022-01-27  Tyler Wilcock  <tyler_w@apple.com>
 
         AX ITM: Defer to the tree when determining AX object loading progress

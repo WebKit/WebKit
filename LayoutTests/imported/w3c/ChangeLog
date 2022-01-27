@@ -1,3 +1,16 @@
+2022-01-27  Patrick Griffis  <pgriffis@igalia.com>
+
+        CSP: Clean up effective-violation handling in reports
+        https://bugs.webkit.org/show_bug.cgi?id=235602
+
+        Reviewed by Kate Cheney.
+
+        Updated expectations with more passes.
+
+        * web-platform-tests/content-security-policy/child-src/child-src-cross-origin-load.sub-expected.txt:
+        * web-platform-tests/content-security-policy/frame-src/frame-src-cross-origin-load.sub-expected.txt:
+        * web-platform-tests/content-security-policy/script-src/script-src-strict_dynamic_parser_inserted-expected.txt:
+
 2022-01-27  Antti Koivisto  <antti@apple.com>
 
         [CSS Container Queries] Basic parsing support for query syntax
