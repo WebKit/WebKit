@@ -4,6 +4,9 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 Method called on Geolocation object with disconnected Frame.
+PASS successCallbackInvoked is false
+PASS positionError.code is GeolocationPositionError.POSITION_UNAVAILABLE
+PASS positionError.message is 'Document is not fully active'
 PASS successfullyParsed is true
 
 TEST COMPLETE

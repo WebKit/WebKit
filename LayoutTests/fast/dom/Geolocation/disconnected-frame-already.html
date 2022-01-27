@@ -17,20 +17,21 @@ function onFirstIframeLoaded() {
     iframe.src = 'resources/disconnected-frame-already-inner2.html';
 }
 
-var error;
+window.successCallbackInvoked = false;
 function onSecondIframeLoaded() {
     iframeGeolocation.getCurrentPosition(function () {
-        testFailed('Success callback invoked unexpectedly');
-        finishJSTest();
+        window.successCallbackInvoked = true;
     }, function(e) {
-        testFailed('Error callback invoked');
-        finishJSTest();
+        window.positionError = e;
     });
     setTimeout(finishTest, 1000);
 }
 
 function finishTest() {
     debug('Method called on Geolocation object with disconnected Frame.');
+    shouldBe("successCallbackInvoked", "false");
+    shouldBe("positionError.code", "GeolocationPositionError.POSITION_UNAVAILABLE");
+    shouldBe("positionError.message", "'Document is not fully active'");
     finishJSTest();
 }
 
