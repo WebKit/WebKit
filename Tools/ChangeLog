@@ -1,3 +1,19 @@
+2022-01-27  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        Update WebGL conformance test suite to 2022-01-12
+        https://bugs.webkit.org/show_bug.cgi?id=235563
+
+        Reviewed by Dean Jackson.
+
+        Add functionality to Tools/Scripts/update-webgl-conformance-tests:
+         - Copy http-only tests to http/tests/webgl
+         - Add template to js-test-pre.js
+
+        * Scripts/webkitpy/update_webgl_conformance_tests_lib/js-test-pre-template.js: Renamed from LayoutTests/http/tests/webgl/1.0.2/resources/webgl_test_files/resources/js-test-pre.js.
+        * Scripts/webkitpy/update_webgl_conformance_tests_lib/main.py:
+        (_copy_tree):
+        (main):
+
 2022-01-26  ChangSeok Oh  <changseok@webkit.org>
 
         [GTK] WTR: Native HTML form validation popover is not supported

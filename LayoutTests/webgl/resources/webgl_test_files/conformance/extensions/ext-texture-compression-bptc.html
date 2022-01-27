@@ -60,7 +60,7 @@ function runTestExtension() {
   // * <height> is not a multiple of four, and <height> plus <yoffset> is
   //           not equal to TEXTURE_HEIGHT; or
   // * <xoffset> or <yoffset> is not a multiple of four.
-  ctu.testTexSubImageDimensions(gl, validFormats, expectedByteLength, getBlockDimensions,
+  ctu.testTexSubImageDimensions(gl, ext, validFormats, expectedByteLength, getBlockDimensions,
     16, 16, [
       { xoffset: 0, yoffset: 0, width: 4, height: 3,
         expectation: gl.INVALID_OPERATION, message: "height is not a multiple of 4" },
@@ -77,7 +77,17 @@ function runTestExtension() {
   // Test TexImage validation on level dimensions combinations.
   // When level equals 0, width and height must be a multiple of 4.
   // When level is larger than 0, this constraint doesn't apply.
-  ctu.testTexImageLevelDimensions(gl, validFormats, expectedByteLength, getBlockDimensions,
+
+  let npotExpectation, npotMessage;
+  if (contextVersion >= 2) {
+    npotExpectation = gl.NO_ERROR;
+    npotMessage = "valid";
+  } else {
+    npotExpectation = gl.INVALID_VALUE;
+    npotMessage = "invalid";
+  }
+
+  ctu.testTexImageLevelDimensions(gl, ext, validFormats, expectedByteLength, getBlockDimensions,
     [
       { level: 0, width: 4, height: 3,
         expectation: gl.INVALID_OPERATION, message: "level is 0, height is not a multiple of 4" },
@@ -87,10 +97,16 @@ function runTestExtension() {
         expectation: gl.INVALID_OPERATION, message: "level is 0, width is not a multiple of 4" },
       { level: 0, width: 4, height: 4,
         expectation: gl.NO_ERROR, message: "is valid" },
+      { level: 1, width: 1, height: 1,
+        expectation: gl.INVALID_OPERATION, message: "implied base mip 2x2 is invalid" },
+      { level: 1, width: 1, height: 2,
+        expectation: gl.INVALID_OPERATION, message: "implied base mip 2x4 is invalid" },
+      { level: 1, width: 2, height: 1,
+        expectation: gl.INVALID_OPERATION, message: "implied base mip 4x2 is invalid" },
       { level: 1, width: 2, height: 2,
-        expectation: gl.NO_ERROR, message: "level > 0, is valid" },
-      { level: 2, width: 1, height: 1,
-        expectation: gl.NO_ERROR, message: "level > 0, is valid" },
+        expectation: gl.NO_ERROR, message: "implied base mip 4x4 is valid" },
+      { level: 2, width: 1, height: 3,
+        expectation: npotExpectation, message: "implied base mip 4x12 is " + npotMessage },
   ]);
 
   // Test that BPTC enums are not accepted by texImage2D

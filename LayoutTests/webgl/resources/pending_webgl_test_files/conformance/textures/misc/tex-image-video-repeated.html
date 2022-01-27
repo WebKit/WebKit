@@ -16,7 +16,7 @@ var wtu = WebGLTestUtils;
 var gl = null;
 var textureLoc = null;
 var successfullyParsed = false;
-var blue = [0, 0, 248];
+var blue = [0, 0, 255];
 var yellow = [255, 255, 0];
 var black = [0, 0, 0];
 initTestingHarness();
@@ -50,9 +50,9 @@ function checkFramebufferHasVideo2(gl)
     const rightColor = yellow;
     const tolerance = 5;
     debug("Checking mid left border");
-    wtu.checkCanvasRect(gl, 4, 20, 2, 2, leftColor, "shouldBe " + leftColor, tolerance);
+    wtu.checkCanvasRect(gl, 4, 17, 2, 2, leftColor, "shouldBe " + leftColor, tolerance);
     debug("Checking mid right border");
-    wtu.checkCanvasRect(gl, gl.canvas.width - 4, gl.canvas.height - 20, 2, 2, rightColor, "shouldBe " + rightColor, tolerance);
+    wtu.checkCanvasRect(gl, 60, 28, 2, 2, rightColor, "shouldBe " + rightColor, tolerance);
 }
 
 function testTwoTexturesBug1(video1, video2)

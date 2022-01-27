@@ -2041,8 +2041,6 @@ http/tests/misc/large-js-program.py [ Skip ] # Timeout
 http/tests/misc/webtiming-one-redirect.py [ Failure ]
 http/tests/misc/webtiming-two-redirects.py [ Failure ]
 http/tests/performance/paint-timing/performance-paint-timing-fcp-after-visually-non-empty-for-style.html [ Timeout ]
-http/tests/webgl/1.0.2/origin-clean-conformance.html [ Failure ]
-http/tests/webgl/1.0.2/readPixelsBadArgs.html [ Failure ]
 http/tests/websocket/web-socket-loads-captured-in-per-page-domains.html [ Skip ] # Crash by assertion failure
 http/tests/xmlhttprequest/access-control-basic-allow-list-request-headers.html [ Failure ]
 http/tests/xmlhttprequest/chunked-progress-event-expectedLength.html [ Failure Timeout ]

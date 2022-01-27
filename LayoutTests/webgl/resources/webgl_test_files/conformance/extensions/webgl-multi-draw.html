@@ -371,7 +371,7 @@ function doTest(ext, instanced) {
     wtu.checkCanvas(gl, [0, 255, 0, 255], "gl_DrawID is 0 for non-Multi* draw calls", 0);
   }
 
-  function runPixelTests(bufferUsage) {
+  function runPixelTests(bufferUsage, useSharedArrayBuffer) {
     // An array of quads is tiled across the screen.
     // gl_DrawID is checked by using it to select the color of the draw.
     // Instanced entrypoints are tested here scaling and then instancing the
@@ -506,10 +506,18 @@ function doTest(ext, instanced) {
       wtu.checkCanvasRects(gl, rects);
     }
 
-    const firsts = new Uint32Array(tri_count);
-    const counts = new Uint32Array(tri_count);
-    const offsets = new Uint32Array(tri_count);
-    const instances = new Uint32Array(tri_count);
+    function newIntArray(count) {
+      if (!useSharedArrayBuffer) {
+        return new Int32Array(count);
+      }
+      let sab = new SharedArrayBuffer(count * Int32Array.BYTES_PER_ELEMENT);
+      return new Int32Array(sab);
+    }
+
+    const firsts = newIntArray(tri_count);
+    const counts = newIntArray(tri_count);
+    const offsets = newIntArray(tri_count);
+    const instances = newIntArray(tri_count);
 
     for (let i = 0; i < firsts.length; ++i) firsts[i] = i * 3;
     counts.fill(3);
@@ -521,7 +529,7 @@ function doTest(ext, instanced) {
     const offsetsOffset = countsOffset + counts.length;
     const instancesOffset = offsetsOffset + instances.length;
 
-    const buffer = new Uint32Array(firstsOffset + firsts.length + counts.length + offsets.length + instances.length);
+    const buffer = newIntArray(firstsOffset + firsts.length + counts.length + offsets.length + instances.length);
     buffer.set(firsts, firstsOffset);
     buffer.set(counts, countsOffset);
     buffer.set(offsets, offsetsOffset);
@@ -664,6 +672,8 @@ function doTest(ext, instanced) {
         config.instanced ? ' instanced' : ''
       ) + (
         config.drawID ? ' with gl_DrawID' : ''
+      ) + (
+        useSharedArrayBuffer ? ' and SharedArrayBuffer' : ''
       ));
 
       gl.disableVertexAttribArray(0);
@@ -827,7 +837,12 @@ function doTest(ext, instanced) {
     debug("Testing with BufferUsage = " + bufferUsage);
     runValidationTests(bufferUsage);
     runShaderTests(bufferUsage);
-    runPixelTests(bufferUsage);
+    runPixelTests(bufferUsage, false);
+  }
+
+  // Run a subset of the pixel tests with SharedArrayBuffer if supported.
+  if (window.SharedArrayBuffer) {
+    runPixelTests(bufferUsageSet[0], true);
   }
 }
 

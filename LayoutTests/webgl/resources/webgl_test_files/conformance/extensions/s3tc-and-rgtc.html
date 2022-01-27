@@ -39,6 +39,11 @@ description("This test verifies the functionality of the WEBGL_compressed_textur
 
 debug("");
 
+// Acceptable interpolation error depends on endpoints:
+// 1.0 / 255.0 + 0.03 * max(abs(endpoint0 - endpoint1), abs(endpoint0_p - endpoint1_p))
+// For simplicity, assume the worst case (e0 is 0.0, e1 is 1.0). After conversion to unorm8, it is 9.
+const DEFAULT_COLOR_ERROR = 9;
+
 /*
 BC1 (DXT1) block
 e0 = [  0, 255, 0]
@@ -267,6 +272,87 @@ function runTestExtension() {
     if (contextVersion >= 2) {
         testDXT5_RGBA_PBO();
     }
+
+    // Test TexImage validation on level dimensions combinations.
+    debug("");
+    debug("When level equals 0, width and height must be a multiple of 4.");
+    debug("When level is larger than 0, this constraint doesn't apply.");
+    ctu.testTexImageLevelDimensions(gl, ext, validFormats, expectedByteLength, getBlockDimensions,
+      [
+        { level: 0, width: 4, height: 3, expectation: gl.INVALID_OPERATION, message: "0: 4x3" },
+        { level: 0, width: 3, height: 4, expectation: gl.INVALID_OPERATION, message: "0: 3x4" },
+        { level: 0, width: 2, height: 2, expectation: gl.INVALID_OPERATION, message: "0: 2x2" },
+        { level: 0, width: 4, height: 4, expectation: gl.NO_ERROR, message: "0: 4x4" },
+        { level: 1, width: 2, height: 2, expectation: gl.NO_ERROR, message: "1: 2x2" },
+        { level: 2, width: 1, height: 1, expectation: gl.NO_ERROR, message: "2: 1x1" },
+    ]);
+
+    ctu.testTexSubImageDimensions(gl, ext, validFormats, expectedByteLength, getBlockDimensions, 16, 16,
+      [
+        { xoffset: 0, yoffset: 0, width: 4, height: 3,
+          expectation: gl.INVALID_OPERATION, message: "height is not a multiple of 4" },
+        { xoffset: 0, yoffset: 0, width: 3, height: 4,
+          expectation: gl.INVALID_OPERATION, message: "width is not a multiple of 4" },
+        { xoffset: 1, yoffset: 0, width: 4, height: 4,
+          expectation: gl.INVALID_OPERATION, message: "xoffset is not a multiple of 4" },
+        { xoffset: 0, yoffset: 1, width: 4, height: 4,
+          expectation: gl.INVALID_OPERATION, message: "yoffset is not a multiple of 4" },
+        { xoffset: 12, yoffset: 12, width: 4, height: 4,
+          expectation: gl.NO_ERROR, message: "is valid" },
+    ]);
+
+    if (contextVersion >= 2) {
+        debug("");
+        debug("Testing NPOT textures");
+        ctu.testTexImageLevelDimensions(gl, ext, validFormats, expectedByteLength, getBlockDimensions,
+          [
+            { level: 0, width: 0, height: 0, expectation: gl.NO_ERROR, message: "0: 0x0 is valid" },
+            { level: 0, width: 1, height: 1, expectation: gl.INVALID_OPERATION, message: "0: 1x1 is invalid" },
+            { level: 0, width: 2, height: 2, expectation: gl.INVALID_OPERATION, message: "0: 2x2 is invalid" },
+            { level: 0, width: 3, height: 3, expectation: gl.INVALID_OPERATION, message: "0: 3x3 is invalid" },
+            { level: 0, width: 10, height: 10, expectation: gl.INVALID_OPERATION, message: "0: 10x10 is invalid" },
+            { level: 0, width: 11, height: 11, expectation: gl.INVALID_OPERATION, message: "0: 11x11 is invalid" },
+            { level: 0, width: 11, height: 12, expectation: gl.INVALID_OPERATION, message: "0: 11x12 is invalid" },
+            { level: 0, width: 12, height: 11, expectation: gl.INVALID_OPERATION, message: "0: 12x11 is invalid" },
+            { level: 0, width: 12, height: 12, expectation: gl.NO_ERROR, message: "0: 12x12 is valid" },
+            { level: 1, width:  0, height:  0, expectation: gl.NO_ERROR, message: "1: 0x0, is valid" },
+            { level: 1, width:  3, height:  3, expectation: gl.INVALID_OPERATION, message: "1: 3x3, is invalid" },
+            { level: 1, width:  5, height:  5, expectation: gl.INVALID_OPERATION, message: "1: 5x5, is invalid" },
+            { level: 1, width:  5, height:  6, expectation: gl.INVALID_OPERATION, message: "1: 5x6, is invalid" },
+            { level: 1, width:  6, height:  5, expectation: gl.INVALID_OPERATION, message: "1: 6x5, is invalid" },
+            { level: 1, width:  6, height:  6, expectation: gl.NO_ERROR, message: "1: 6x6, is valid" },
+            { level: 2, width:  0, height:  0, expectation: gl.NO_ERROR, message: "2: 0x0, is valid" },
+            { level: 2, width:  3, height:  3, expectation: gl.NO_ERROR, message: "2: 3x3, is valid" },
+            { level: 3, width:  1, height:  3, expectation: gl.NO_ERROR, message: "3: 1x3, is valid" },
+            { level: 3, width:  1, height:  1, expectation: gl.NO_ERROR, message: "3: 1x1, is valid" },
+        ]);
+
+        debug("");
+        debug("Testing partial updates");
+        ctu.testTexSubImageDimensions(gl, ext, validFormats, expectedByteLength, getBlockDimensions, 12, 12,
+        [
+          { xoffset: 0, yoffset: 0, width: 4, height: 3,
+            expectation: gl.INVALID_OPERATION, message: "height is not a multiple of 4" },
+          { xoffset: 0, yoffset: 0, width: 3, height: 4,
+            expectation: gl.INVALID_OPERATION, message: "width is not a multiple of 4" },
+          { xoffset: 1, yoffset: 0, width: 4, height: 4,
+            expectation: gl.INVALID_OPERATION, message: "xoffset is not a multiple of 4" },
+          { xoffset: 0, yoffset: 1, width: 4, height: 4,
+            expectation: gl.INVALID_OPERATION, message: "yoffset is not a multiple of 4" },
+          { xoffset: 8, yoffset: 8, width: 4, height: 4,
+            expectation: gl.NO_ERROR, message: "is valid" },
+        ]);
+
+        debug("");
+        debug("Testing immutable NPOT textures");
+        ctu.testTexStorageLevelDimensions(gl, ext, validFormats, expectedByteLength, getBlockDimensions,
+          [
+            { width: 12, height: 12, expectation: gl.NO_ERROR, message: "0: 12x12 is valid" },
+            { width:  6, height:  6, expectation: gl.NO_ERROR, message: "1: 6x6, is valid" },
+            { width:  3, height:  3, expectation: gl.NO_ERROR, message: "2: 3x3, is valid" },
+            { width:  1, height:  1, expectation: gl.NO_ERROR, message: "3: 1x1, is valid" },
+        ]);
+    }
 }
 
 function runTestRGTC() {
@@ -298,6 +384,8 @@ function runTestRGTC() {
             data: img_4x4_signed_rg_bc5,
             format: ext_rgtc.COMPRESSED_SIGNED_RED_GREEN_RGTC2_EXT,
             hasAlpha: false,
+            error: 18, // Signed, so twice the normal error.
+                       // Experimentally needed by e.g. RTX 3070.
         },
         {   width: 8,
             height: 8,
@@ -474,10 +562,13 @@ function uncompressDXTBlock(
          format == ext_rgtc.COMPRESSED_RED_GREEN_RGTC2_EXT ||
          format == ext_rgtc.COMPRESSED_SIGNED_RED_RGTC1_EXT ||
          format == ext_rgtc.COMPRESSED_SIGNED_RED_GREEN_RGTC2_EXT);
+    let colorOffset = srcOffset;
     if (!isBC45) {
         var isDXT1 = format == ext.COMPRESSED_RGB_S3TC_DXT1_EXT ||
                      format == ext.COMPRESSED_RGBA_S3TC_DXT1_EXT;
-        var colorOffset = srcOffset + (isDXT1 ? 0 : 8);
+        if (!isDXT1) {
+            colorOffset += 8;
+        }
         var color0 = make565(src, colorOffset + 0);
         var color1 = make565(src, colorOffset + 2);
         var c0gtc1 = color0 > color1 || !isDXT1;
@@ -658,6 +749,8 @@ function copyRect(data, srcX, srcY, dstX, dstY, width, height, stride) {
 }
 
 function testDXTTexture(test, useTexStorage) {
+    test.error = test.error || DEFAULT_COLOR_ERROR;
+
     var data = new Uint8Array(test.data);
     var width = test.width;
     var height = test.height;
@@ -696,7 +789,7 @@ function testDXTTexture(test, useTexStorage) {
 
             wtu.clearAndDrawUnitQuad(gl);
             wtu.glErrorShouldBe(gl, gl.NO_ERROR, "drawing unit quad 1");
-            compareRect(width, height, test.channels, uncompressedDataSub, "NEAREST");
+            compareRect(width, height, test.channels, uncompressedDataSub, "NEAREST", test.error);
 
             // Clean up and recover
             gl.deleteTexture(tex1);
@@ -720,13 +813,13 @@ function testDXTTexture(test, useTexStorage) {
     wtu.glErrorShouldBe(gl, gl.NO_ERROR, "after clearing generateMipmap error");
     wtu.clearAndDrawUnitQuad(gl);
     wtu.glErrorShouldBe(gl, gl.NO_ERROR, "drawing unit quad 1");
-    compareRect(width, height, test.channels, uncompressedData, "NEAREST");
+    compareRect(width, height, test.channels, uncompressedData, "NEAREST", test.error);
     // Test again with linear filtering.
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
     wtu.clearAndDrawUnitQuad(gl);
     wtu.glErrorShouldBe(gl, gl.NO_ERROR, "drawing unit quad 2");
-    compareRect(width, height, test.channels, uncompressedData, "LINEAR");
+    compareRect(width, height, test.channels, uncompressedData, "LINEAR", test.error);
 
     if (!useTexStorage) {
         // It's not allowed to redefine textures defined via texStorage2D.
@@ -752,12 +845,14 @@ function testDXTTexture(test, useTexStorage) {
         wtu.glErrorShouldBe(gl, gl.INVALID_OPERATION, "invalid dimensions");
 
         if (width == 4) {
+            // The width/height of the implied base level must be a multiple of the block size.
             gl.compressedTexImage2D(gl.TEXTURE_2D, 1, format, 1, height, 0, data);
             wtu.glErrorShouldBe(gl, gl.INVALID_OPERATION, "invalid dimensions for level > 0");
             gl.compressedTexImage2D(gl.TEXTURE_2D, 1, format, 2, height, 0, data);
             wtu.glErrorShouldBe(gl, gl.NO_ERROR, "valid dimensions for level > 0");
         }
         if (height == 4) {
+            // The width/height of the implied base level must be a multiple of the block size.
             gl.compressedTexImage2D(gl.TEXTURE_2D, 1, format, width, 1, 0, data);
             wtu.glErrorShouldBe(gl, gl.INVALID_OPERATION, "invalid dimensions for level > 0");
             gl.compressedTexImage2D(gl.TEXTURE_2D, 1, format, width, 2, 0, data);
@@ -835,14 +930,14 @@ function testDXTTexture(test, useTexStorage) {
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
             wtu.clearAndDrawUnitQuad(gl);
-            compareRect(width, height, test.channels, uncompressedData, "NEAREST");
+            compareRect(width, height, test.channels, uncompressedData, "NEAREST", test.error);
             wtu.glErrorShouldBe(gl, gl.NO_ERROR, "drawing unit quad");
             // Next test LINEAR filtering.
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
             wtu.clearAndDrawUnitQuad(gl);
             wtu.glErrorShouldBe(gl, gl.NO_ERROR, "drawing unit quad");
-            compareRect(width, height, test.channels, uncompressedData, "LINEAR");
+            compareRect(width, height, test.channels, uncompressedData, "LINEAR", test.error);
         }
     }
 }
@@ -873,7 +968,7 @@ function testDXT5_RGBA_PBO() {
     gl.bindBuffer(gl.PIXEL_UNPACK_BUFFER, null);
     wtu.clearAndDrawUnitQuad(gl);
     wtu.glErrorShouldBe(gl, gl.NO_ERROR, "drawing unit quad");
-    compareRect(width, height, channels, uncompressedData, "NEAREST");
+    compareRect(width, height, channels, uncompressedData, "NEAREST", DEFAULT_COLOR_ERROR);
 
     // Clear the texture before the next test
     gl.bindBuffer(gl.PIXEL_UNPACK_BUFFER, null);
@@ -890,10 +985,10 @@ function testDXT5_RGBA_PBO() {
     gl.bindBuffer(gl.PIXEL_UNPACK_BUFFER, null);
     wtu.clearAndDrawUnitQuad(gl);
     wtu.glErrorShouldBe(gl, gl.NO_ERROR, "drawing unit quad");
-    compareRect(width, height, channels, uncompressedData, "NEAREST");
+    compareRect(width, height, channels, uncompressedData, "NEAREST", DEFAULT_COLOR_ERROR);
 }
 
-function compareRect(width, height, channels, expectedData, filteringMode) {
+function compareRect(width, height, channels, expectedData, filteringMode, colorError) {
     var actual = new Uint8Array(width * height * 4);
     gl.readPixels(0, 0, width, height, gl.RGBA, gl.UNSIGNED_BYTE, actual);
     wtu.glErrorShouldBe(gl, gl.NO_ERROR, "reading back pixels");
@@ -910,19 +1005,15 @@ function compareRect(width, height, channels, expectedData, filteringMode) {
         for (var xx = 0; xx < width; ++xx) {
             var offset = (yy * width + xx) * 4;
             var expected = expectedData.slice(offset, offset + 4);
+            const was = actual.slice(offset, offset + 4);
+
             // Compare RGB values
             for (var jj = 0; jj < 3; ++jj) {
-                // Acceptable interpolation error depends on endpoints:
-                // 1.0 / 255.0 + 0.03 * max(abs(endpoint0 - endpoint1), abs(endpoint0_p - endpoint1_p))
-                // For simplicity, assume the worst case (e0 is 0.0, e1 is 1.0). After conversion to unorm8, it is 9.
-                if (Math.abs(actual[offset + jj] - expected[jj]) > 9) {
-                    var was = actual[offset + 0].toString();
-                    for (var j = 1; j < 3; ++j) {
-                        was += "," + actual[offset + j];
-                    }
+                if (Math.abs(was[jj] - expected[jj]) > colorError) {
                     failed = true;
-                    testFailed('RGB at (' + xx + ', ' + yy +
-                                        ') expected: ' + expected + ' ± 9 was ' + was);
+                    testFailed(`RGB at (${xx}, ${yy}) expected: ${expected}` +
+                               ` +/- ${colorError}, was ${was}`);
+                    break;
                 }
             }
 
@@ -937,15 +1028,15 @@ function compareRect(width, height, channels, expectedData, filteringMode) {
                     // Check RGB values. Notice, that the condition here
                     // is more permissive than needed since we don't have
                     // compressed data at this point.
-                    if (actual[offset] == 0 &&
-                        actual[offset + 1] == 0 &&
-                        actual[offset + 2] == 0 &&
-                        actual[offset + 3] == 0) {
+                    if (was[0] == 0 &&
+                        was[1] == 0 &&
+                        was[2] == 0 &&
+                        was[3] == 0) {
                             debug("<b>DXT1 RGB is mapped to DXT1 RGBA</b>");
                     } else {
                         failed = true;
                         testFailed('Alpha at (' + xx + ', ' + yy +
-                                              ') expected: ' + expected[3] + ' was ' + actual[offset + 3]);
+                                              ') expected: ' + expected[3] + ' was ' + was);
                     }
                 }
             } else {
@@ -953,11 +1044,10 @@ function compareRect(width, height, channels, expectedData, filteringMode) {
                 // Acceptable interpolation error depends on endpoints:
                 // 1.0 / 65535.0 + 0.03 * max(abs(endpoint0 - endpoint1), abs(endpoint0_p - endpoint1_p))
                 // For simplicity, assume the worst case (e0 is 0.0, e1 is 1.0). After conversion to unorm8, it is 8.
-                if (Math.abs(actual[offset + 3] - expected[3]) > 8) {
-                    var was = actual[offset + 3].toString();
+                if (Math.abs(was[3] - expected[3]) > 8) {
                     failed = true;
                     testFailed('Alpha at (' + xx + ', ' + yy +
-                                          ') expected: ' + expected + ' ± 8 was ' + was);
+                                          ') expected: ' + expected + ' +/- 8 was ' + was);
                 }
             }
         }

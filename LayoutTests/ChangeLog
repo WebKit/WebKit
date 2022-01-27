@@ -1,3 +1,550 @@
+2022-01-27  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        Update WebGL conformance test suite to 2022-01-12
+        https://bugs.webkit.org/show_bug.cgi?id=235563
+
+        Reviewed by Dean Jackson.
+
+        Update WebGL testsuite to 2022-01-12 9b58fd243d38f4b9c72ab6f75ad701cafc131137.
+
+        Additionally:
+        The import script can now categorize tests to regular tests and small amount of http
+        tests:
+         - Remove old http/tests/webgl/1.0.2/
+         - Add new http/tests/webgl/1.0.x / 2.0.y
+
+        * http/tests/webgl/1.0.2/origin-clean-conformance-expected.txt: Removed.
+        * http/tests/webgl/1.0.2/origin-clean-conformance.html: Removed.
+        * http/tests/webgl/1.0.2/readPixelsBadArgs-expected.txt: Removed.
+        * http/tests/webgl/1.0.2/readPixelsBadArgs.html: Removed.
+        * http/tests/webgl/1.0.2/resources/webgl_test_files/conformance/resources/3x3.png: Removed.
+        * http/tests/webgl/1.0.2/resources/webgl_test_files/conformance/resources/blue-1x1.jpg: Removed.
+        * http/tests/webgl/1.0.2/resources/webgl_test_files/conformance/resources/bug-32888-texture.png: Removed.
+        * http/tests/webgl/1.0.2/resources/webgl_test_files/conformance/resources/floatUniformShader.vert: Removed.
+        * http/tests/webgl/1.0.2/resources/webgl_test_files/conformance/resources/fragmentShader.frag: Removed.
+        * http/tests/webgl/1.0.2/resources/webgl_test_files/conformance/resources/gray-ramp-256-with-128-alpha.png: Removed.
+        * http/tests/webgl/1.0.2/resources/webgl_test_files/conformance/resources/gray-ramp-256.png: Removed.
+        * http/tests/webgl/1.0.2/resources/webgl_test_files/conformance/resources/gray-ramp-default-gamma.png: Removed.
+        * http/tests/webgl/1.0.2/resources/webgl_test_files/conformance/resources/gray-ramp-gamma0.1.png: Removed.
+        * http/tests/webgl/1.0.2/resources/webgl_test_files/conformance/resources/gray-ramp-gamma1.0.png: Removed.
+        * http/tests/webgl/1.0.2/resources/webgl_test_files/conformance/resources/gray-ramp-gamma2.0.png: Removed.
+        * http/tests/webgl/1.0.2/resources/webgl_test_files/conformance/resources/gray-ramp-gamma4.0.png: Removed.
+        * http/tests/webgl/1.0.2/resources/webgl_test_files/conformance/resources/gray-ramp-gamma9.0.png: Removed.
+        * http/tests/webgl/1.0.2/resources/webgl_test_files/conformance/resources/gray-ramp.png: Removed.
+        * http/tests/webgl/1.0.2/resources/webgl_test_files/conformance/resources/green-2x2-16bit.png: Removed.
+        * http/tests/webgl/1.0.2/resources/webgl_test_files/conformance/resources/noopUniformShader.frag: Removed.
+        * http/tests/webgl/1.0.2/resources/webgl_test_files/conformance/resources/npot-video.mp4: Removed.
+        * http/tests/webgl/1.0.2/resources/webgl_test_files/conformance/resources/npot-video.theora.ogv: Removed.
+        * http/tests/webgl/1.0.2/resources/webgl_test_files/conformance/resources/npot-video.webmvp8.webm: Removed.
+        * http/tests/webgl/1.0.2/resources/webgl_test_files/conformance/resources/pnglib.js: Removed.
+        * http/tests/webgl/1.0.2/resources/webgl_test_files/conformance/resources/red-green.mp4: Removed.
+        * http/tests/webgl/1.0.2/resources/webgl_test_files/conformance/resources/red-green.png: Removed.
+        * http/tests/webgl/1.0.2/resources/webgl_test_files/conformance/resources/red-green.theora.ogv: Removed.
+        * http/tests/webgl/1.0.2/resources/webgl_test_files/conformance/resources/red-green.webmvp8.webm: Removed.
+        * http/tests/webgl/1.0.2/resources/webgl_test_files/conformance/resources/red-indexed.png: Removed.
+        * http/tests/webgl/1.0.2/resources/webgl_test_files/conformance/resources/small-square-with-cie-rgb-profile.png: Removed.
+        * http/tests/webgl/1.0.2/resources/webgl_test_files/conformance/resources/small-square-with-colormatch-profile.png: Removed.
+        * http/tests/webgl/1.0.2/resources/webgl_test_files/conformance/resources/small-square-with-colorspin-profile.jpg: Removed.
+        * http/tests/webgl/1.0.2/resources/webgl_test_files/conformance/resources/small-square-with-colorspin-profile.png: Removed.
+        * http/tests/webgl/1.0.2/resources/webgl_test_files/conformance/resources/small-square-with-e-srgb-profile.png: Removed.
+        * http/tests/webgl/1.0.2/resources/webgl_test_files/conformance/resources/small-square-with-smpte-c-profile.png: Removed.
+        * http/tests/webgl/1.0.2/resources/webgl_test_files/conformance/resources/small-square-with-srgb-iec61966-2.1-profile.png: Removed.
+        * http/tests/webgl/1.0.2/resources/webgl_test_files/conformance/resources/tex-image-and-sub-image-2d-with-canvas.js: Removed.
+        * http/tests/webgl/1.0.2/resources/webgl_test_files/conformance/resources/tex-image-and-sub-image-2d-with-image-data.js: Removed.
+        * http/tests/webgl/1.0.2/resources/webgl_test_files/conformance/resources/tex-image-and-sub-image-2d-with-image.js: Removed.
+        * http/tests/webgl/1.0.2/resources/webgl_test_files/conformance/resources/tex-image-and-sub-image-2d-with-video.js: Removed.
+        * http/tests/webgl/1.0.2/resources/webgl_test_files/conformance/resources/vertexShader.vert: Removed.
+        * http/tests/webgl/1.0.2/resources/webgl_test_files/conformance/resources/webgl-test-utils.js: Removed.
+        * http/tests/webgl/1.0.2/resources/webgl_test_files/conformance/resources/webgl-test.js: Removed.
+        * http/tests/webgl/1.0.2/resources/webgl_test_files/conformance/resources/zero-alpha.png: Removed.
+        * http/tests/webgl/1.0.2/resources/webgl_test_files/conformance/textures/00_test_list.txt: Removed.
+        * http/tests/webgl/1.0.2/resources/webgl_test_files/conformance/textures/compressed-tex-image.html: Removed.
+        * http/tests/webgl/1.0.2/resources/webgl_test_files/conformance/textures/copy-tex-image-2d-formats.html: Removed.
+        * http/tests/webgl/1.0.2/resources/webgl_test_files/conformance/textures/copy-tex-image-and-sub-image-2d.html: Removed.
+        * http/tests/webgl/1.0.2/resources/webgl_test_files/conformance/textures/gl-get-tex-parameter.html: Removed.
+        * http/tests/webgl/1.0.2/resources/webgl_test_files/conformance/textures/gl-pixelstorei.html: Removed.
+        * http/tests/webgl/1.0.2/resources/webgl_test_files/conformance/textures/gl-teximage.html: Removed.
+        * http/tests/webgl/1.0.2/resources/webgl_test_files/conformance/textures/mipmap-fbo.html: Removed.
+        * http/tests/webgl/1.0.2/resources/webgl_test_files/conformance/textures/origin-clean-conformance.html: Removed.
+        * http/tests/webgl/1.0.2/resources/webgl_test_files/conformance/textures/tex-image-and-sub-image-2d-with-array-buffer-view.html: Removed.
+        * http/tests/webgl/1.0.2/resources/webgl_test_files/conformance/textures/tex-image-and-sub-image-2d-with-canvas-rgb565.html: Removed.
+        * http/tests/webgl/1.0.2/resources/webgl_test_files/conformance/textures/tex-image-and-sub-image-2d-with-canvas-rgba4444.html: Removed.
+        * http/tests/webgl/1.0.2/resources/webgl_test_files/conformance/textures/tex-image-and-sub-image-2d-with-canvas-rgba5551.html: Removed.
+        * http/tests/webgl/1.0.2/resources/webgl_test_files/conformance/textures/tex-image-and-sub-image-2d-with-canvas.html: Removed.
+        * http/tests/webgl/1.0.2/resources/webgl_test_files/conformance/textures/tex-image-and-sub-image-2d-with-image-data-rgb565.html: Removed.
+        * http/tests/webgl/1.0.2/resources/webgl_test_files/conformance/textures/tex-image-and-sub-image-2d-with-image-data-rgba4444.html: Removed.
+        * http/tests/webgl/1.0.2/resources/webgl_test_files/conformance/textures/tex-image-and-sub-image-2d-with-image-data-rgba5551.html: Removed.
+        * http/tests/webgl/1.0.2/resources/webgl_test_files/conformance/textures/tex-image-and-sub-image-2d-with-image-data.html: Removed.
+        * http/tests/webgl/1.0.2/resources/webgl_test_files/conformance/textures/tex-image-and-sub-image-2d-with-image-rgb565.html: Removed.
+        * http/tests/webgl/1.0.2/resources/webgl_test_files/conformance/textures/tex-image-and-sub-image-2d-with-image-rgba4444.html: Removed.
+        * http/tests/webgl/1.0.2/resources/webgl_test_files/conformance/textures/tex-image-and-sub-image-2d-with-image-rgba5551.html: Removed.
+        * http/tests/webgl/1.0.2/resources/webgl_test_files/conformance/textures/tex-image-and-sub-image-2d-with-image.html: Removed.
+        * http/tests/webgl/1.0.2/resources/webgl_test_files/conformance/textures/tex-image-and-sub-image-2d-with-video-rgb565.html: Removed.
+        * http/tests/webgl/1.0.2/resources/webgl_test_files/conformance/textures/tex-image-and-sub-image-2d-with-video-rgba4444.html: Removed.
+        * http/tests/webgl/1.0.2/resources/webgl_test_files/conformance/textures/tex-image-and-sub-image-2d-with-video-rgba5551.html: Removed.
+        * http/tests/webgl/1.0.2/resources/webgl_test_files/conformance/textures/tex-image-and-sub-image-2d-with-video.html: Removed.
+        * http/tests/webgl/1.0.2/resources/webgl_test_files/conformance/textures/tex-image-and-uniform-binding-bugs.html: Removed.
+        * http/tests/webgl/1.0.2/resources/webgl_test_files/conformance/textures/tex-image-webgl.html: Removed.
+        * http/tests/webgl/1.0.2/resources/webgl_test_files/conformance/textures/tex-image-with-format-and-type.html: Removed.
+        * http/tests/webgl/1.0.2/resources/webgl_test_files/conformance/textures/tex-image-with-invalid-data.html: Removed.
+        * http/tests/webgl/1.0.2/resources/webgl_test_files/conformance/textures/tex-input-validation.html: Removed.
+        * http/tests/webgl/1.0.2/resources/webgl_test_files/conformance/textures/tex-sub-image-2d-bad-args.html: Removed.
+        * http/tests/webgl/1.0.2/resources/webgl_test_files/conformance/textures/tex-sub-image-2d.html: Removed.
+        * http/tests/webgl/1.0.2/resources/webgl_test_files/conformance/textures/texparameter-test.html: Removed.
+        * http/tests/webgl/1.0.2/resources/webgl_test_files/conformance/textures/texture-active-bind-2.html: Removed.
+        * http/tests/webgl/1.0.2/resources/webgl_test_files/conformance/textures/texture-active-bind.html: Removed.
+        * http/tests/webgl/1.0.2/resources/webgl_test_files/conformance/textures/texture-attachment-formats.html: Removed.
+        * http/tests/webgl/1.0.2/resources/webgl_test_files/conformance/textures/texture-clear.html: Removed.
+        * http/tests/webgl/1.0.2/resources/webgl_test_files/conformance/textures/texture-complete.html: Removed.
+        * http/tests/webgl/1.0.2/resources/webgl_test_files/conformance/textures/texture-formats-test.html: Removed.
+        * http/tests/webgl/1.0.2/resources/webgl_test_files/conformance/textures/texture-hd-dpi.html: Removed.
+        * http/tests/webgl/1.0.2/resources/webgl_test_files/conformance/textures/texture-mips.html: Removed.
+        * http/tests/webgl/1.0.2/resources/webgl_test_files/conformance/textures/texture-npot-video.html: Removed.
+        * http/tests/webgl/1.0.2/resources/webgl_test_files/conformance/textures/texture-npot.html: Removed.
+        * http/tests/webgl/1.0.2/resources/webgl_test_files/conformance/textures/texture-size-cube-maps.html: Removed.
+        * http/tests/webgl/1.0.2/resources/webgl_test_files/conformance/textures/texture-size-limit.html: Removed.
+        * http/tests/webgl/1.0.2/resources/webgl_test_files/conformance/textures/texture-size.html: Removed.
+        * http/tests/webgl/1.0.2/resources/webgl_test_files/conformance/textures/texture-sub-image-cube-maps.html: Removed.
+        * http/tests/webgl/1.0.2/resources/webgl_test_files/conformance/textures/texture-transparent-pixels-initialized.html: Removed.
+        * http/tests/webgl/1.0.2/resources/webgl_test_files/conformance/textures/texture-upload-cube-maps.html: Removed.
+        * http/tests/webgl/1.0.2/resources/webgl_test_files/resources/desktop-gl-constants.js: Removed.
+        * http/tests/webgl/1.0.2/resources/webgl_test_files/resources/js-test-post.js: Removed.
+        * http/tests/webgl/1.0.2/resources/webgl_test_files/resources/webgl-test-harness.js: Removed.
+        * http/tests/webgl/1.0.2/texImage2DHTML-expected.txt: Removed.
+        * http/tests/webgl/1.0.2/texImage2DHTML.html: Removed.
+        * http/tests/webgl/1.0.2/texSubImage2DHTML-expected.txt: Removed.
+        * http/tests/webgl/1.0.2/texSubImage2DHTML.html: Removed.
+        * http/tests/webgl/1.0.x/conformance/more/functions/readPixelsBadArgs-expected.txt: Renamed from LayoutTests/webgl/1.0.x/conformance/more/functions/readPixelsBadArgs-expected.txt.
+        * http/tests/webgl/1.0.x/conformance/more/functions/readPixelsBadArgs.html: Copied from LayoutTests/webgl/1.0.x/conformance/more/functions/readPixelsBadArgs.html.
+        * http/tests/webgl/1.0.x/conformance/more/functions/texImage2DHTML-expected.txt: Copied from LayoutTests/webgl/1.0.x/conformance/more/functions/texImage2DHTML-expected.txt.
+        * http/tests/webgl/1.0.x/conformance/more/functions/texImage2DHTML.html: Renamed from LayoutTests/webgl/1.0.x/conformance/more/functions/texImage2DHTML.html.
+        * http/tests/webgl/1.0.x/conformance/more/functions/texSubImage2DHTML-expected.txt: Renamed from LayoutTests/webgl/1.0.x/conformance/more/functions/texSubImage2DHTML-expected.txt.
+        * http/tests/webgl/1.0.x/conformance/more/functions/texSubImage2DHTML.html: Renamed from LayoutTests/webgl/1.0.x/conformance/more/functions/texSubImage2DHTML.html.
+        * http/tests/webgl/2.0.y/conformance/more/functions/readPixelsBadArgs-expected.txt: Renamed from LayoutTests/webgl/2.0.y/conformance/more/functions/readPixelsBadArgs-expected.txt.
+        * http/tests/webgl/2.0.y/conformance/more/functions/readPixelsBadArgs.html: Renamed from LayoutTests/webgl/2.0.y/conformance/more/functions/readPixelsBadArgs.html.
+        * http/tests/webgl/2.0.y/conformance/more/functions/texImage2DHTML-expected.txt: Renamed from LayoutTests/webgl/2.0.y/conformance/more/functions/texImage2DHTML-expected.txt.
+        * http/tests/webgl/2.0.y/conformance/more/functions/texImage2DHTML.html: Copied from LayoutTests/webgl/2.0.y/conformance/more/functions/texImage2DHTML.html.
+        * http/tests/webgl/2.0.y/conformance/more/functions/texSubImage2DHTML-expected.txt: Renamed from LayoutTests/webgl/2.0.y/conformance/more/functions/texSubImage2DHTML-expected.txt.
+        * http/tests/webgl/2.0.y/conformance/more/functions/texSubImage2DHTML.html: Renamed from LayoutTests/webgl/2.0.y/conformance/more/functions/texSubImage2DHTML.html.
+        * http/tests/webgl/resources/js-test-pre.js: Copied from LayoutTests/http/tests/webgl/1.0.2/resources/webgl_test_files/resources/js-test-pre.js.
+        * http/tests/webgl/resources/webgl_test_files/conformance/more/functions/readPixelsBadArgs.html: Renamed from LayoutTests/http/tests/webgl/1.0.2/resources/webgl_test_files/conformance/more/functions/readPixelsBadArgs.html.
+        * http/tests/webgl/resources/webgl_test_files/conformance/more/functions/texImage2DHTML.html: Renamed from LayoutTests/http/tests/webgl/1.0.2/resources/webgl_test_files/conformance/more/functions/texImage2DHTML.html.
+        * http/tests/webgl/resources/webgl_test_files/conformance/more/functions/texSubImage2DHTML.html: Renamed from LayoutTests/http/tests/webgl/1.0.2/resources/webgl_test_files/conformance/more/functions/texSubImage2DHTML.html.
+        * http/tests/webgl/resources/webgl_test_files/conformance/more/unit.css: Renamed from LayoutTests/http/tests/webgl/1.0.2/resources/webgl_test_files/conformance/more/unit.css.
+        * http/tests/webgl/resources/webgl_test_files/conformance/more/unit.js: Renamed from LayoutTests/http/tests/webgl/1.0.2/resources/webgl_test_files/conformance/more/unit.js.
+        * http/tests/webgl/resources/webgl_test_files/conformance/more/util.js: Renamed from LayoutTests/http/tests/webgl/1.0.2/resources/webgl_test_files/conformance/more/util.js.
+        * http/tests/webgl/resources/webgl_test_files/js/js-test-post.js: Added.
+        * http/tests/webgl/resources/webgl_test_files/js/js-test-pre.js: Copied from LayoutTests/webgl/resources/webgl_test_files/js/js-test-pre.js.
+        * http/tests/webgl/resources/webgl_test_files/js/webgl-test-utils.js: Copied from LayoutTests/webgl/resources/webgl_test_files/js/webgl-test-utils.js.
+        * http/tests/webgl/resources/webgl_test_files/resources/js-test-style.css: Renamed from LayoutTests/http/tests/webgl/1.0.2/resources/webgl_test_files/resources/js-test-style.css.
+        * http/tests/webgl/resources/webgl_test_files/resources/opengl_logo.jpg: Added.
+        * http/tests/webgl/resources/webgl_test_files/resources/thunderbird-logo-64x64.png: Added.
+        * http/tests/webgl/resources/webkit-webgl-test-harness.js: Renamed from LayoutTests/http/tests/webgl/1.0.2/resources/webkit-webgl-test-harness.js.
+        * webgl/1.0.x/conformance/canvas/to-data-url-after-composite-expected.txt: Renamed from LayoutTests/webgl/2.0.y/deqp/functional/gles3/multisample-expected.txt.
+        * webgl/1.0.x/conformance/canvas/to-data-url-after-composite.html: Added.
+        * webgl/1.0.x/conformance/ogles/GL/build/build_001_to_008-expected.txt: Copied from LayoutTests/webgl/1.0.x/conformance/more/functions/texImage2DHTML-expected.txt.
+        * webgl/1.0.x/conformance/ogles/GL/build/build_001_to_008.html: Added.
+        * webgl/1.0.x/conformance/ogles/GL/build/build_009_to_016-expected.txt: Copied from LayoutTests/webgl/1.0.x/conformance/more/functions/texImage2DHTML-expected.txt.
+        * webgl/1.0.x/conformance/ogles/GL/build/build_009_to_016.html: Added.
+        * webgl/1.0.x/conformance/ogles/GL/build/build_017_to_024-expected.txt: Copied from LayoutTests/webgl/1.0.x/conformance/more/functions/texImage2DHTML-expected.txt.
+        * webgl/1.0.x/conformance/ogles/GL/build/build_017_to_024.html: Added.
+        * webgl/1.0.x/conformance/ogles/GL/build/build_025_to_032-expected.txt: Copied from LayoutTests/webgl/1.0.x/conformance/more/functions/texImage2DHTML-expected.txt.
+        * webgl/1.0.x/conformance/ogles/GL/build/build_025_to_032.html: Added.
+        * webgl/1.0.x/conformance/ogles/GL/build/build_033_to_040-expected.txt: Copied from LayoutTests/webgl/1.0.x/conformance/more/functions/texImage2DHTML-expected.txt.
+        * webgl/1.0.x/conformance/ogles/GL/build/build_033_to_040.html: Added.
+        * webgl/1.0.x/conformance/ogles/GL/build/build_041_to_048-expected.txt: Copied from LayoutTests/webgl/1.0.x/conformance/more/functions/texImage2DHTML-expected.txt.
+        * webgl/1.0.x/conformance/ogles/GL/build/build_041_to_048.html: Added.
+        * webgl/1.0.x/conformance/ogles/GL/build/build_049_to_056-expected.txt: Copied from LayoutTests/webgl/1.0.x/conformance/more/functions/texImage2DHTML-expected.txt.
+        * webgl/1.0.x/conformance/ogles/GL/build/build_049_to_056.html: Added.
+        * webgl/1.0.x/conformance/ogles/GL/build/build_057_to_064-expected.txt: Copied from LayoutTests/webgl/1.0.x/conformance/more/functions/texImage2DHTML-expected.txt.
+        * webgl/1.0.x/conformance/ogles/GL/build/build_057_to_064.html: Added.
+        * webgl/1.0.x/conformance/ogles/GL/build/build_065_to_072-expected.txt: Copied from LayoutTests/webgl/1.0.x/conformance/more/functions/texImage2DHTML-expected.txt.
+        * webgl/1.0.x/conformance/ogles/GL/build/build_065_to_072.html: Added.
+        * webgl/1.0.x/conformance/ogles/GL/build/build_073_to_080-expected.txt: Copied from LayoutTests/webgl/1.0.x/conformance/more/functions/texImage2DHTML-expected.txt.
+        * webgl/1.0.x/conformance/ogles/GL/build/build_073_to_080.html: Added.
+        * webgl/1.0.x/conformance/ogles/GL/build/build_081_to_088-expected.txt: Copied from LayoutTests/webgl/1.0.x/conformance/more/functions/texImage2DHTML-expected.txt.
+        * webgl/1.0.x/conformance/ogles/GL/build/build_081_to_088.html: Added.
+        * webgl/1.0.x/conformance/ogles/GL/build/build_089_to_096-expected.txt: Copied from LayoutTests/webgl/1.0.x/conformance/more/functions/texImage2DHTML-expected.txt.
+        * webgl/1.0.x/conformance/ogles/GL/build/build_089_to_096.html: Added.
+        * webgl/1.0.x/conformance/ogles/GL/build/build_097_to_104-expected.txt: Copied from LayoutTests/webgl/1.0.x/conformance/more/functions/texImage2DHTML-expected.txt.
+        * webgl/1.0.x/conformance/ogles/GL/build/build_097_to_104.html: Added.
+        * webgl/1.0.x/conformance/ogles/GL/build/build_105_to_112-expected.txt: Copied from LayoutTests/webgl/1.0.x/conformance/more/functions/texImage2DHTML-expected.txt.
+        * webgl/1.0.x/conformance/ogles/GL/build/build_105_to_112.html: Added.
+        * webgl/1.0.x/conformance/ogles/GL/build/build_113_to_120-expected.txt: Copied from LayoutTests/webgl/1.0.x/conformance/more/functions/texImage2DHTML-expected.txt.
+        * webgl/1.0.x/conformance/ogles/GL/build/build_113_to_120.html: Added.
+        * webgl/1.0.x/conformance/ogles/GL/build/build_121_to_128-expected.txt: Copied from LayoutTests/webgl/1.0.x/conformance/more/functions/texImage2DHTML-expected.txt.
+        * webgl/1.0.x/conformance/ogles/GL/build/build_121_to_128.html: Added.
+        * webgl/1.0.x/conformance/ogles/GL/build/build_129_to_136-expected.txt: Copied from LayoutTests/webgl/1.0.x/conformance/more/functions/texImage2DHTML-expected.txt.
+        * webgl/1.0.x/conformance/ogles/GL/build/build_129_to_136.html: Added.
+        * webgl/1.0.x/conformance/ogles/GL/build/build_137_to_144-expected.txt: Copied from LayoutTests/webgl/1.0.x/conformance/more/functions/texImage2DHTML-expected.txt.
+        * webgl/1.0.x/conformance/ogles/GL/build/build_137_to_144.html: Added.
+        * webgl/1.0.x/conformance/ogles/GL/build/build_145_to_152-expected.txt: Copied from LayoutTests/webgl/1.0.x/conformance/more/functions/texImage2DHTML-expected.txt.
+        * webgl/1.0.x/conformance/ogles/GL/build/build_145_to_152.html: Added.
+        * webgl/1.0.x/conformance/ogles/GL/build/build_153_to_160-expected.txt: Copied from LayoutTests/webgl/1.0.x/conformance/more/functions/texImage2DHTML-expected.txt.
+        * webgl/1.0.x/conformance/ogles/GL/build/build_153_to_160.html: Added.
+        * webgl/1.0.x/conformance/ogles/GL/build/build_161_to_168-expected.txt: Copied from LayoutTests/webgl/1.0.x/conformance/more/functions/texImage2DHTML-expected.txt.
+        * webgl/1.0.x/conformance/ogles/GL/build/build_161_to_168.html: Added.
+        * webgl/1.0.x/conformance/ogles/GL/build/build_169_to_176-expected.txt: Copied from LayoutTests/webgl/1.0.x/conformance/more/functions/texImage2DHTML-expected.txt.
+        * webgl/1.0.x/conformance/ogles/GL/build/build_169_to_176.html: Added.
+        * webgl/1.0.x/conformance/ogles/GL/build/build_177_to_178-expected.txt: Copied from LayoutTests/webgl/1.0.x/conformance/more/functions/texImage2DHTML-expected.txt.
+        * webgl/1.0.x/conformance/ogles/GL/build/build_177_to_178.html: Added.
+        * webgl/1.0.x/conformance/rendering/clear-default-framebuffer-with-scissor-test-expected.txt: Added.
+        * webgl/1.0.x/conformance/rendering/clear-default-framebuffer-with-scissor-test.html: Added.
+        * webgl/1.0.x/conformance/rendering/color-mask-should-not-affect-antialiased-framebuffer-resolution-expected.txt: Added.
+        * webgl/1.0.x/conformance/rendering/color-mask-should-not-affect-antialiased-framebuffer-resolution.html: Added.
+        * webgl/1.0.x/conformance/textures/misc/format-filterable-renderable-expected.txt: Renamed from LayoutTests/webgl/2.0.y/conformance/textures/misc/origin-clean-conformance-expected.txt.
+        * webgl/1.0.x/conformance/textures/misc/format-filterable-renderable.html: Copied from LayoutTests/webgl/1.0.x/conformance/more/functions/readPixelsBadArgs.html.
+        * webgl/1.0.x/conformance/textures/misc/origin-clean-conformance-offscreencanvas.html: Removed.
+        * webgl/1.0.x/conformance/textures/misc/png-image-types-expected.txt: Renamed from LayoutTests/webgl/1.0.x/conformance/textures/misc/origin-clean-conformance-expected.txt.
+        * webgl/1.0.x/conformance/textures/misc/png-image-types.html: Renamed from LayoutTests/webgl/1.0.x/conformance/textures/misc/origin-clean-conformance.html.
+        * webgl/2.0.y/conformance/canvas/to-data-url-after-composite-expected.txt: Copied from LayoutTests/webgl/1.0.x/conformance/more/functions/texImage2DHTML-expected.txt.
+        * webgl/2.0.y/conformance/canvas/to-data-url-after-composite.html: Added.
+        * webgl/2.0.y/conformance/ogles/GL/build/build_001_to_008-expected.txt: Added.
+        * webgl/2.0.y/conformance/ogles/GL/build/build_001_to_008.html: Added.
+        * webgl/2.0.y/conformance/ogles/GL/build/build_009_to_016-expected.txt: Added.
+        * webgl/2.0.y/conformance/ogles/GL/build/build_009_to_016.html: Added.
+        * webgl/2.0.y/conformance/ogles/GL/build/build_017_to_024-expected.txt: Added.
+        * webgl/2.0.y/conformance/ogles/GL/build/build_017_to_024.html: Added.
+        * webgl/2.0.y/conformance/ogles/GL/build/build_025_to_032-expected.txt: Added.
+        * webgl/2.0.y/conformance/ogles/GL/build/build_025_to_032.html: Added.
+        * webgl/2.0.y/conformance/ogles/GL/build/build_033_to_040-expected.txt: Added.
+        * webgl/2.0.y/conformance/ogles/GL/build/build_033_to_040.html: Added.
+        * webgl/2.0.y/conformance/ogles/GL/build/build_041_to_048-expected.txt: Added.
+        * webgl/2.0.y/conformance/ogles/GL/build/build_041_to_048.html: Added.
+        * webgl/2.0.y/conformance/ogles/GL/build/build_049_to_056-expected.txt: Added.
+        * webgl/2.0.y/conformance/ogles/GL/build/build_049_to_056.html: Added.
+        * webgl/2.0.y/conformance/ogles/GL/build/build_057_to_064-expected.txt: Added.
+        * webgl/2.0.y/conformance/ogles/GL/build/build_057_to_064.html: Added.
+        * webgl/2.0.y/conformance/ogles/GL/build/build_065_to_072-expected.txt: Added.
+        * webgl/2.0.y/conformance/ogles/GL/build/build_065_to_072.html: Added.
+        * webgl/2.0.y/conformance/ogles/GL/build/build_073_to_080-expected.txt: Added.
+        * webgl/2.0.y/conformance/ogles/GL/build/build_073_to_080.html: Added.
+        * webgl/2.0.y/conformance/ogles/GL/build/build_081_to_088-expected.txt: Added.
+        * webgl/2.0.y/conformance/ogles/GL/build/build_081_to_088.html: Added.
+        * webgl/2.0.y/conformance/ogles/GL/build/build_089_to_096-expected.txt: Added.
+        * webgl/2.0.y/conformance/ogles/GL/build/build_089_to_096.html: Added.
+        * webgl/2.0.y/conformance/ogles/GL/build/build_097_to_104-expected.txt: Added.
+        * webgl/2.0.y/conformance/ogles/GL/build/build_097_to_104.html: Added.
+        * webgl/2.0.y/conformance/ogles/GL/build/build_105_to_112-expected.txt: Added.
+        * webgl/2.0.y/conformance/ogles/GL/build/build_105_to_112.html: Added.
+        * webgl/2.0.y/conformance/ogles/GL/build/build_113_to_120-expected.txt: Added.
+        * webgl/2.0.y/conformance/ogles/GL/build/build_113_to_120.html: Added.
+        * webgl/2.0.y/conformance/ogles/GL/build/build_121_to_128-expected.txt: Added.
+        * webgl/2.0.y/conformance/ogles/GL/build/build_121_to_128.html: Added.
+        * webgl/2.0.y/conformance/ogles/GL/build/build_129_to_136-expected.txt: Added.
+        * webgl/2.0.y/conformance/ogles/GL/build/build_129_to_136.html: Added.
+        * webgl/2.0.y/conformance/ogles/GL/build/build_137_to_144-expected.txt: Added.
+        * webgl/2.0.y/conformance/ogles/GL/build/build_137_to_144.html: Added.
+        * webgl/2.0.y/conformance/ogles/GL/build/build_145_to_152-expected.txt: Added.
+        * webgl/2.0.y/conformance/ogles/GL/build/build_145_to_152.html: Added.
+        * webgl/2.0.y/conformance/ogles/GL/build/build_153_to_160-expected.txt: Added.
+        * webgl/2.0.y/conformance/ogles/GL/build/build_153_to_160.html: Added.
+        * webgl/2.0.y/conformance/ogles/GL/build/build_161_to_168-expected.txt: Added.
+        * webgl/2.0.y/conformance/ogles/GL/build/build_161_to_168.html: Added.
+        * webgl/2.0.y/conformance/ogles/GL/build/build_169_to_176-expected.txt: Added.
+        * webgl/2.0.y/conformance/ogles/GL/build/build_169_to_176.html: Added.
+        * webgl/2.0.y/conformance/ogles/GL/build/build_177_to_178-expected.txt: Added.
+        * webgl/2.0.y/conformance/ogles/GL/build/build_177_to_178.html: Added.
+        * webgl/2.0.y/conformance/rendering/clear-default-framebuffer-with-scissor-test-expected.txt: Added.
+        * webgl/2.0.y/conformance/rendering/clear-default-framebuffer-with-scissor-test.html: Added.
+        * webgl/2.0.y/conformance/rendering/color-mask-should-not-affect-antialiased-framebuffer-resolution-expected.txt: Added.
+        * webgl/2.0.y/conformance/rendering/color-mask-should-not-affect-antialiased-framebuffer-resolution.html: Added.
+        * webgl/2.0.y/conformance/textures/misc/format-filterable-renderable-expected.txt: Renamed from LayoutTests/webgl/2.0.y/conformance/textures/misc/origin-clean-conformance-offscreencanvas-expected.txt.
+        * webgl/2.0.y/conformance/textures/misc/format-filterable-renderable.html: Renamed from LayoutTests/webgl/1.0.x/conformance/more/functions/readPixelsBadArgs.html.
+        * webgl/2.0.y/conformance/textures/misc/origin-clean-conformance-offscreencanvas.html: Removed.
+        * webgl/2.0.y/conformance/textures/misc/origin-clean-conformance.html: Removed.
+        * webgl/2.0.y/conformance/textures/misc/png-image-types-expected.txt: Renamed from LayoutTests/webgl/1.0.x/conformance/textures/misc/origin-clean-conformance-offscreencanvas-expected.txt.
+        * webgl/2.0.y/conformance/textures/misc/png-image-types.html: Renamed from LayoutTests/webgl/2.0.y/conformance/more/functions/texImage2DHTML.html.
+        * webgl/2.0.y/conformance2/extensions/required-extensions-expected.txt: Copied from LayoutTests/webgl/1.0.x/conformance/more/functions/texImage2DHTML-expected.txt.
+        * webgl/2.0.y/conformance2/extensions/required-extensions.html: Added.
+        * webgl/2.0.y/conformance2/glsl3/fragment-shader-loop-crash-expected.txt: Copied from LayoutTests/webgl/1.0.x/conformance/more/functions/texImage2DHTML-expected.txt.
+        * webgl/2.0.y/conformance2/glsl3/fragment-shader-loop-crash.html: Added.
+        * webgl/2.0.y/conformance2/glsl3/reciprocal-sqrt-of-sum-of-squares-crash-expected.txt: Added.
+        * webgl/2.0.y/conformance2/glsl3/reciprocal-sqrt-of-sum-of-squares-crash.html: Added.
+        * webgl/2.0.y/conformance2/misc/blend-integer-expected.txt: Renamed from LayoutTests/webgl/1.0.x/conformance/more/functions/texImage2DHTML-expected.txt.
+        * webgl/2.0.y/conformance2/misc/blend-integer.html: Added.
+        * webgl/2.0.y/conformance2/rendering/blitframebuffer-unaffected-by-colormask-expected.txt: Added.
+        * webgl/2.0.y/conformance2/rendering/blitframebuffer-unaffected-by-colormask.html: Added.
+        * webgl/2.0.y/conformance2/rendering/draw-buffers-sparse-output-locations-expected.txt: Added.
+        * webgl/2.0.y/conformance2/rendering/draw-buffers-sparse-output-locations.html: Added.
+        * webgl/2.0.y/conformance2/textures/misc/origin-clean-conformance-offscreencanvas-expected.txt: Removed.
+        * webgl/2.0.y/conformance2/textures/misc/origin-clean-conformance-offscreencanvas.html: Removed.
+        * webgl/2.0.y/deqp/functional/gles3/multisample.html: Removed.
+        * webgl/2.0.y/deqp/functional/gles3/multisample/default_fbo-expected.txt: Added.
+        * webgl/2.0.y/deqp/functional/gles3/multisample/default_fbo.html: Added.
+        * webgl/2.0.y/deqp/functional/gles3/multisample/fbo_4_samples-expected.txt: Added.
+        * webgl/2.0.y/deqp/functional/gles3/multisample/fbo_4_samples.html: Added.
+        * webgl/2.0.y/deqp/functional/gles3/multisample/fbo_8_samples-expected.txt: Added.
+        * webgl/2.0.y/deqp/functional/gles3/multisample/fbo_8_samples.html: Added.
+        * webgl/2.0.y/deqp/functional/gles3/multisample/fbo_max_samples-expected.txt: Added.
+        * webgl/2.0.y/deqp/functional/gles3/multisample/fbo_max_samples.html: Added.
+        * webgl/draw-webgl-to-context2d-memory-test-expected.txt:
+        * webgl/resources/webgl_test_files/conformance/attribs/gl-vertexattribpointer.html:
+        * webgl/resources/webgl_test_files/conformance/canvas/to-data-url-after-composite.html: Added.
+        * webgl/resources/webgl_test_files/conformance/context/context-attributes-alpha-depth-stencil-antialias.html:
+        * webgl/resources/webgl_test_files/conformance/context/methods.html:
+        * webgl/resources/webgl_test_files/conformance/extensions/ext-texture-compression-bptc.html:
+        * webgl/resources/webgl_test_files/conformance/extensions/ext-texture-compression-rgtc.html:
+        * webgl/resources/webgl_test_files/conformance/extensions/s3tc-and-rgtc.html:
+        * webgl/resources/webgl_test_files/conformance/extensions/webgl-compressed-texture-s3tc-srgb.html:
+        * webgl/resources/webgl_test_files/conformance/extensions/webgl-multi-draw.html:
+        * webgl/resources/webgl_test_files/conformance/extensions/webgl-webcodecs-video-frame.html:
+        * webgl/resources/webgl_test_files/conformance/glsl/bugs/character-set.html:
+        * webgl/resources/webgl_test_files/conformance/glsl/constructors/glsl-construct-vec-mat-index.html:
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/CG_Data_Types_frag.frag: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/CG_Standard_Library_frag.frag: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/CorrectBuiltInOveride_frag.frag: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/CorrectComma_frag.frag: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/CorrectConstFolding1_vert.vert: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/CorrectConstFolding2_vert.vert: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/CorrectConstruct_vert.vert: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/CorrectExtension10_V100_frag.frag: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/CorrectExtension1_V100_frag.frag: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/CorrectExtension4_V100_frag.frag: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/CorrectFull_vert.vert: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/CorrectFuncOverload_frag.frag: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/CorrectFuncOverload_vert.vert: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/CorrectFunction1_vert.vert: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/CorrectModule_frag.frag: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/CorrectParse1_frag.frag: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/CorrectParse2_frag.frag: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/CorrectParse2_vert.vert: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/CorrectParseTest1_frag.frag: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/CorrectParseTest_frag.frag: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/CorrectPreprocess5_frag.frag: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/CorrectPreprocess8_frag.frag: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/CorrectPreprocess9_frag.frag: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/CorrectSwizzle1_frag.frag: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/CorrectSwizzle1_vert.vert: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/CorrectSwizzle2_frag.frag: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/CorrectSwizzle2_vert.vert: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/CorrectSwizzle3_frag.frag: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/CorrectVersion_V100_frag.frag: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/DuplicateVersion1_V100_frag.frag: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/FunctionParam_vert.vert: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/Include_Preprocessor_Directive_frag.frag: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/Low_Level_Assembly_Reserved_Words_frag.frag: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/Main_Parameters_vert.vert: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/ParseTest3_frag.frag: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/ParseTest4_frag.frag: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/Permissive_Constant_Conversions_frag.frag: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/Permissive_Scalar_Vector_Expressions_frag.frag: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/TernaryOp_frag.frag: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/Texture_Rectangle_Samplers_frag.frag: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/array10_frag.frag: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/array11_frag.frag: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/array1_frag.frag: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/array2_frag.frag: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/array3_frag.frag: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/array4_frag.frag: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/array5_frag.frag: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/array6_frag.frag: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/array7_frag.frag: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/array8_frag.frag: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/array9_frag.frag: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/attribute1_vert.vert: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/attribute2_vert.vert: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/attribute_frag.frag: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/attribute_vert.vert: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/break_frag.frag: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/build_001_to_008.html: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/build_009_to_016.html: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/build_017_to_024.html: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/build_025_to_032.html: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/build_033_to_040.html: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/build_041_to_048.html: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/build_049_to_056.html: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/build_057_to_064.html: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/build_065_to_072.html: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/build_073_to_080.html: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/build_081_to_088.html: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/build_089_to_096.html: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/build_097_to_104.html: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/build_105_to_112.html: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/build_113_to_120.html: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/build_121_to_128.html: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/build_129_to_136.html: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/build_137_to_144.html: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/build_145_to_152.html: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/build_153_to_160.html: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/build_161_to_168.html: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/build_169_to_176.html: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/build_177_to_178.html: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/comma1_vert.vert: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/comma2_frag.frag: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/comma2_vert.vert: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/comma3_vert.vert: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/comment_frag.frag: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/conditional1_frag.frag: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/conditional2_frag.frag: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/conditional3_frag.frag: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/constFunc_frag.frag: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/constructor1_frag.frag: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/constructor2_frag.frag: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/constructor3_V100_frag.frag: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/continue_frag.frag: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/dataType10_frag.frag: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/dataType11_frag.frag: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/dataType12_frag.frag: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/dataType13_frag.frag: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/dataType19_frag.frag: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/dataType1_frag.frag: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/dataType2_frag.frag: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/dataType3_frag.frag: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/dataType4_frag.frag: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/dataType5_frag.frag: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/dataType6_frag.frag: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/dataType7_frag.frag: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/dataType8_frag.frag: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/dataType9_frag.frag: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/default.frag: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/default.vert: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/dowhile_frag.frag: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/dvec2_frag.frag: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/dvec3_frag.frag: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/dvec4_frag.frag: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/extension2_V100_frag.frag: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/extension3_V100_frag.frag: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/extension5_V100_frag.frag: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/extension6_V100_frag.frag: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/extension7_V100_frag.frag: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/extension8_V100_frag.frag: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/extension9_V100_frag.frag: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/float2_frag.frag: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/float3_frag.frag: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/float4_frag.frag: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/fragmentOnly1_vert.vert: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/fragmentOnly2_vert.vert: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/fragmentOnly3_vert.vert: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/fragmentOnly4_vert.vert: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/fragmentOnly_vert.vert: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/function10_frag.frag: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/function1_frag.frag: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/function2_V100_frag.frag: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/function3_frag.frag: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/function4_frag.frag: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/function6_frag.frag: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/function7_frag.frag: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/function8_frag.frag: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/function9_frag.frag: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/hvec2_frag.frag: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/hvec3_frag.frag: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/hvec4_frag.frag: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/identifier1_frag.frag: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/identifier2_frag.frag: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/identifier3_frag.frag: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/if1_frag.frag: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/if2_frag.frag: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/increment1_frag.frag: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/increment2_frag.frag: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/increment3_frag.frag: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/increment4_frag.frag: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/increment6_frag.frag: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/input.run.txt: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/main1_vert.vert: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/main2_vert.vert: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/main3_vert.vert: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/matrix_V100_frag.frag: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/normal_vert.vert: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/parser10_frag.frag: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/parser1_vert.vert: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/parser3_frag.frag: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/parser4_frag.frag: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/parser5_frag.frag: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/parser6_frag.frag: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/parser7_frag.frag: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/parser8_frag.frag: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/parser9_frag.frag: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/preprocess0_frag.frag: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/preprocess10_frag.frag: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/preprocess1_frag.frag: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/preprocess2_frag.frag: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/preprocess3_frag.frag: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/preprocess4_frag.frag: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/preprocess6_frag.frag: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/preprocess7_frag.frag: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/scoping1_frag.frag: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/scoping2_frag.frag: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/struct10_frag.frag: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/struct11_frag.frag: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/struct1_frag.frag: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/struct2_frag.frag: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/struct3_frag.frag: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/struct4_frag.frag: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/struct5_frag.frag: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/struct6_frag.frag: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/struct7_frag.frag: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/struct8_frag.frag: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/struct9_frag.frag: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/swizzle1_frag.frag: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/swizzle2_frag.frag: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/swizzle3_frag.frag: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/typecast_frag.frag: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/uniform1_frag.frag: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/uniform_frag.frag: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/varying1_frag.frag: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/varying2_frag.frag: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/varying3_frag.frag: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/varying_frag.frag: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/vector_frag.frag: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/version2_V100_frag.frag: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/version3_V100_frag.frag: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/vertexOnly2_frag.frag: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/vertexOnly_frag.frag: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/vertex_vert.vert: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/while1_frag.frag: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/while2_frag.frag: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/while_frag.frag: Added.
+        * webgl/resources/webgl_test_files/conformance/programs/program-test.html:
+        * webgl/resources/webgl_test_files/conformance/rendering/clear-default-framebuffer-with-scissor-test.html: Added.
+        * webgl/resources/webgl_test_files/conformance/rendering/color-mask-should-not-affect-antialiased-framebuffer-resolution.html: Added.
+        * webgl/resources/webgl_test_files/conformance/state/gl-object-get-calls.html:
+        * webgl/resources/webgl_test_files/conformance/textures/misc/format-filterable-renderable.html: Added.
+        * webgl/resources/webgl_test_files/conformance/textures/misc/png-image-types.html: Added.
+        * webgl/resources/webgl_test_files/conformance/textures/misc/video-rotation.html:
+        * webgl/resources/webgl_test_files/conformance2/context/methods-2.html:
+        * webgl/resources/webgl_test_files/conformance2/extensions/ext-color-buffer-float.html:
+        * webgl/resources/webgl_test_files/conformance2/extensions/ext-texture-norm16.html:
+        * webgl/resources/webgl_test_files/conformance2/extensions/oes-draw-buffers-indexed.html:
+        * webgl/resources/webgl_test_files/conformance2/extensions/required-extensions.html: Added.
+        * webgl/resources/webgl_test_files/conformance2/extensions/webgl-multi-draw-instanced-base-vertex-base-instance.html:
+        * webgl/resources/webgl_test_files/conformance2/glsl3/array-equality.html:
+        * webgl/resources/webgl_test_files/conformance2/glsl3/fragment-shader-loop-crash.html: Added.
+        * webgl/resources/webgl_test_files/conformance2/glsl3/matrix-row-major-dynamic-indexing.html:
+        * webgl/resources/webgl_test_files/conformance2/glsl3/reciprocal-sqrt-of-sum-of-squares-crash.html: Added.
+        * webgl/resources/webgl_test_files/conformance2/misc/blend-integer.html: Added.
+        * webgl/resources/webgl_test_files/conformance2/programs/gl-get-frag-data-location.html:
+        * webgl/resources/webgl_test_files/conformance2/rendering/blitframebuffer-unaffected-by-colormask.html: Added.
+        * webgl/resources/webgl_test_files/conformance2/rendering/draw-buffers-sparse-output-locations.html: Added.
+        * webgl/resources/webgl_test_files/conformance2/state/gl-object-get-calls.html:
+        * webgl/resources/webgl_test_files/conformance2/textures/misc/tex-storage-compressed-formats.html:
+        * webgl/resources/webgl_test_files/deqp/functional/gles3/es3fMultisampleTests.js:
+        * webgl/resources/webgl_test_files/deqp/functional/gles3/es3fPrimitiveRestartTests.js:
+        * webgl/resources/webgl_test_files/deqp/functional/gles3/multisample.html: Removed.
+        * webgl/resources/webgl_test_files/deqp/functional/gles3/multisample/default_fbo.html: Added.
+        * webgl/resources/webgl_test_files/deqp/functional/gles3/multisample/fbo_4_samples.html: Added.
+        * webgl/resources/webgl_test_files/deqp/functional/gles3/multisample/fbo_8_samples.html: Added.
+        * webgl/resources/webgl_test_files/deqp/functional/gles3/multisample/fbo_max_samples.html: Added.
+        * webgl/resources/webgl_test_files/js/glsl-conformance-test.js:
+        * webgl/resources/webgl_test_files/js/js-test-post.js:
+        * webgl/resources/webgl_test_files/js/js-test-pre.js:
+        * webgl/resources/webgl_test_files/js/tests/compressed-texture-utils.js:
+        * webgl/resources/webgl_test_files/js/tests/context-methods.js: Added.
+        * webgl/resources/webgl_test_files/js/tests/ext-color-buffer-half-float.js:
+        * webgl/resources/webgl_test_files/js/tests/gl-object-get-calls.js:
+        * webgl/resources/webgl_test_files/js/tests/tex-image-and-sub-image-2d-with-image-bitmap-from-video.js:
+        * webgl/resources/webgl_test_files/js/tests/tex-image-and-sub-image-3d-with-image-bitmap-from-video.js:
+        * webgl/resources/webgl_test_files/js/webgl-test-utils.js:
+        * webgl/resources/webgl_test_files/resources/red-green.webmvp8.webm:
+        * webgl/resources/webgl_test_files/resources/video-rotation-0.mp4:
+        * webgl/resources/webgl_test_files/resources/video-rotation-0.vp9.mp4:
+        * webgl/resources/webgl_test_files/resources/video-rotation-180.mp4:
+        * webgl/resources/webgl_test_files/resources/video-rotation-180.vp9.mp4:
+        * webgl/resources/webgl_test_files/resources/video-rotation-270.mp4:
+        * webgl/resources/webgl_test_files/resources/video-rotation-270.vp9.mp4:
+        * webgl/resources/webgl_test_files/resources/video-rotation-90.mp4:
+        * webgl/resources/webgl_test_files/resources/video-rotation-90.vp9.mp4:
+
 2022-01-27  Cameron McCormack  <heycam@apple.com>
 
         Avoid setting and clearing :active state when dispatching synthetic click events when possible

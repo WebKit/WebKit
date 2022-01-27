@@ -1,5 +1,5 @@
 ﻿<!--
-Copyright (c) 2019 The Khronos Group Inc.
+Copyright (c) 2021 The Khronos Group Inc.
 Use of this source code is governed by an MIT-style license that can be
 found in the LICENSE.txt file.
 -->
@@ -43,6 +43,18 @@ void main() {
 }
 </script>
 
+<script id="vs-es2" type="x-shader/x-vertex">
+void main() {
+  gl_Position = vec4(0, 0, 0, 1);
+}
+</script>
+<script id="fs-es2" type="x-shader/x-fragment">
+precision mediump float;
+void main() {
+  gl_FragColor = vec4(0, 1, 0, 1);
+}
+</script>
+
 <script>
 "use strict";
 description("This test verifies getFragDataLocation behaviors.");
@@ -61,13 +73,22 @@ if (!gl) {
 }
 
 function runTests() {
-  var program = wtu.setupProgram(gl, ["vs", "fs"]);
-  var programArray = wtu.setupProgram(gl, ["vs", "fs-array"]);
-  if (!program || !programArray) {
+  window.program = wtu.setupProgram(gl, ["vs", "fs"]);
+  window.programArray = wtu.setupProgram(gl, ["vs", "fs-array"]);
+  window.programEs2 = wtu.setupProgram(gl, ["vs-es2", "fs-es2"]);
+  if (!program || !programArray || !programEs2) {
     testFailed("Set up program failed");
     return;
   }
   wtu.glErrorShouldBe(gl, gl.NO_ERROR, "No GL error from set up");
+
+  shouldBe("gl.getFragDataLocation(program, 'gl_FragColor')", "-1");
+  shouldBe("gl.getFragDataLocation(programArray, 'gl_FragColor')", "-1");
+  shouldBe("gl.getFragDataLocation(programEs2, 'gl_FragColor')", "-1");
+  shouldBe("gl.getFragDataLocation(program, 'gl_FragData')", "-1");
+  shouldBe("gl.getFragDataLocation(programArray, 'gl_FragData')", "-1");
+  shouldBe("gl.getFragDataLocation(programEs2, 'gl_FragData')", "-1");
+  wtu.glErrorShouldBe(gl, gl.NO_ERROR, "No GL error from gl_* queries");
 
   var loc0 = gl.getFragDataLocation(program, "fragColor0");
   var loc1 = gl.getFragDataLocation(program, "fragColor1");

@@ -9,27 +9,13 @@
 <script src="../../js/webgl-test-utils.js"></script>
 </head>
 <body>
-<script id="vshaderIllegalBaseInstance" type="x-shader/x-vertex">#version 300 es
+<script id="vshaderBaseInstanceWithoutExt" type="x-shader/x-vertex">#version 300 es
 layout(location = 0) in vec2 vPosition;
 out vec4 color;
 void main()
 {
   color = vec4(1.0, 0.0, 0.0, 1.0);
   gl_Position = vec4(vPosition * 2.0 - 1.0, gl_BaseInstance, 1);
-}
-</script>
-<script id="vshaderBaseInstanceZero" type="x-shader/x-vertex">#version 300 es
-#extension GL_ANGLE_base_vertex_base_instance : require
-layout(location = 0) in vec2 vPosition;
-out vec4 color;
-void main()
-{
-  if (gl_BaseInstance == 0) {
-    color = vec4(0, 1, 0, 1);
-  } else {
-    color = vec4(1, 0, 0, 1);
-  }
-  gl_Position = vec4(vPosition * 2.0 - 1.0, 0, 1);
 }
 </script>
 <!-- Check gl_InstanceID starts at 0 regardless of gl_BaseInstance -->
@@ -46,7 +32,7 @@ void main()
   gl_Position = vec4(vPosition * 2.0 - 1.0, 0, 1);
 }
 </script>
-<script id="vshaderIllegalBaseVertex" type="x-shader/x-vertex">#version 300 es
+<script id="vshaderBaseVertexWithoutExt" type="x-shader/x-vertex">#version 300 es
 layout(location = 0) in vec2 vPosition;
 out vec4 color;
 void main()
@@ -55,17 +41,13 @@ void main()
   gl_Position = vec4(vPosition * 2.0 - 1.0, gl_BaseVertex, 1);
 }
 </script>
-<script id="vshaderBaseVertexZero" type="x-shader/x-vertex">#version 300 es
+<script id="vshaderWithExt" type="x-shader/x-vertex">#version 300 es
 #extension GL_ANGLE_base_vertex_base_instance : require
 layout(location = 0) in vec2 vPosition;
 out vec4 color;
 void main()
 {
-  if (gl_BaseVertex == 0) {
-    color = vec4(0, 1, 0, 1);
-  } else {
-    color = vec4(1, 0, 0, 1);
-  }
+  color = vec4(0, 1, 0, 1);
   gl_Position = vec4(vPosition * 2.0 - 1.0, 0, 1);
 }
 </script>
@@ -84,7 +66,6 @@ void main()
 }
 </script>
 <script id="vshaderSimple" type="x-shader/x-vertex">#version 300 es
-  #extension GL_ANGLE_base_vertex_base_instance : require
   layout(location = 0) in vec2 vPosition;
   layout(location = 1) in float vInstance;
   out vec4 color;
@@ -121,7 +102,13 @@ description("This test verifies the functionality of the WEBGL_[multi]_draw_base
 
 const wtu = WebGLTestUtils;
 const canvas = document.getElementById("canvas");
-const gl = wtu.create3DContext(canvas, null, 2);
+canvas.style.backgroundColor = '#000';
+canvas.style.imageRendering = 'pixelated'; // Because Chrome doesn't support crisp-edges.
+canvas.style.imageRendering = 'crisp-edges';
+const attribs = {
+  antialias: false,
+};
+const gl = wtu.create3DContext(canvas, attribs, 2);
 
 const width = gl.canvas.width;
 const height = gl.canvas.height;
@@ -270,7 +257,249 @@ function runTest() {
 
   doTest('WEBGL_draw_instanced_base_vertex_base_instance', false);
   doTest('WEBGL_multi_draw_instanced_base_vertex_base_instance', true);
+
+  testGlslBuiltins();
 }
+
+// -
+
+function* range(n) {
+  for (let i = 0; i < n; i++) {
+    yield i;
+  }
+}
+
+function crossCombine(...args) {
+  function crossCombine2(listA, listB) {
+    const listC = [];
+    for (const a of listA) {
+      for (const b of listB) {
+        const c = Object.assign({}, a, b);
+        listC.push(c);
+      }
+    }
+    return listC;
+  }
+
+  let res = [{}];
+  while (args.length) {
+    const next = args.shift();
+    next[0].defined;
+    res = crossCombine2(res, next);
+  }
+  return res;
+}
+
+// -
+
+const PASSTHROUGH_FRAG_SRC = `\
+#version 300 es
+precision mediump float;
+in vec4 v_color;
+out vec4 o_color;
+
+void main() {
+  o_color = v_color;
+}
+`;
+
+function testGlslBuiltins() {
+  const EXT = gl.getExtension('WEBGL_draw_instanced_base_vertex_base_instance');
+
+  const vertid_prog = (() => {
+      const vert_src = `\
+#version 300 es
+#line 405
+layout(location = 0) in int a_vertex_id; // Same as gl_VertexID
+out vec4 v_color;
+
+void main() {
+  gl_Position = vec4(0,0,0,1);
+  gl_PointSize = 1.0;
+  v_color = vec4(float(gl_VertexID), float(a_vertex_id),0,0);
+  v_color /= 255.0;
+}
+`;
+      const prog = wtu.setupProgram(gl, [vert_src, PASSTHROUGH_FRAG_SRC],
+              undefined, undefined, /*logShaders*/ true);
+      expectTrue(!!prog, `make_vertid_prog failed`);
+      return prog;
+    })();
+
+  const instid_prog = (() => {
+      const vert_src = `\
+#version 300 es
+#line 425
+layout(location = 0) in int a_vertex_id; // Same as gl_VertexID
+layout(location = 1) in int a_instance_div1; // Same as base_instance+gl_InstanceID
+layout(location = 2) in int a_instance_div2; // Same as base_instance+floor(gl_InstanceID/2)
+layout(location = 3) in int a_instance_div3; // Same as base_instance+floor(gl_InstanceID/3)
+out vec4 v_color;
+
+void main() {
+  gl_Position = vec4(0,0,0,1);
+  gl_PointSize = 1.0;
+  v_color = vec4(float(gl_InstanceID), float(a_instance_div1),
+                 float(a_instance_div2), float(a_instance_div3));
+  v_color /= 255.0;
+}
+`;
+      const prog = wtu.setupProgram(gl, [vert_src, PASSTHROUGH_FRAG_SRC],
+              undefined, undefined, /*logShaders*/ true);
+      expectTrue(!!prog, `make_instid_prog failed`);
+      return prog;
+    })();
+
+  const COUNT_UP_DATA = new Int32Array(1000);
+  for (const i in COUNT_UP_DATA) {
+    COUNT_UP_DATA[i] = i;
+  }
+
+  const vertex_id_buf = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, vertex_id_buf);
+  gl.bufferData(gl.ARRAY_BUFFER, COUNT_UP_DATA, gl.STATIC_DRAW);
+  gl.enableVertexAttribArray(0);
+  gl.vertexAttribIPointer(0, 1, gl.INT, 0, 0);
+
+  gl.enableVertexAttribArray(1);
+  gl.vertexAttribIPointer(1, 1, gl.INT, 0, 0);
+  gl.vertexAttribDivisor(1, 1);
+
+  gl.enableVertexAttribArray(2);
+  gl.vertexAttribIPointer(2, 1, gl.INT, 0, 0);
+  gl.vertexAttribDivisor(2, 2);
+
+  gl.enableVertexAttribArray(3);
+  gl.vertexAttribIPointer(3, 1, gl.INT, 0, 0);
+  gl.vertexAttribDivisor(3, 3);
+
+  const index_buf = gl.createBuffer();
+  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, index_buf);
+  gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, COUNT_UP_DATA, gl.STATIC_DRAW);
+
+  gl.canvas.width = gl.canvas.height = 1;
+  gl.canvas.style.width = gl.canvas.style.height = '1em';
+  gl.viewport(0, 0, 1, 1);
+
+  const expect_pixel = (() => {
+    const was = new Uint8Array(4);
+    return (desc, subtest, expected) => {
+      gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, was);
+      if (!areArraysEqual(was, expected)) {
+        testFailed(`${subtest}: Expected [${expected}], was [${was}]. desc: ${JSON.stringify(desc)}`);
+      } else {
+        debug(`${subtest}: Was [${was}] as expected.`);
+      }
+    };
+  })();
+
+  // Common setup complete
+  // -
+  // Create testcases
+
+  const DRAW_FUNC_COMBINER = [{
+    name: 'drawArraysInstanced',
+    draw: desc => {
+      if (desc.base_vert) return false;
+      if (desc.base_inst) return false;
+      gl.drawArraysInstanced(gl[desc.mode], desc.first_vert,
+          desc.vert_count, desc.inst_count);
+      return true;
+    },
+  }, {
+    name: 'drawElementsInstanced',
+    draw: desc => {
+      if (desc.base_vert) return false;
+      if (desc.base_inst) return false;
+      gl.drawElementsInstanced(gl[desc.mode], desc.vert_count,
+          gl.UNSIGNED_INT, 4*desc.first_vert, desc.inst_count);
+      return true;
+    },
+  }, {
+    name: 'drawArraysInstancedBaseInstanceWEBGL',
+    draw: desc => {
+      if (desc.base_vert) return false;
+      if (!EXT) return false;
+      EXT.drawArraysInstancedBaseInstanceWEBGL(gl[desc.mode],
+        desc.first_vert, desc.vert_count, desc.inst_count,
+        desc.base_inst);
+      return true;
+    },
+  }, {
+    name: 'drawElementsInstancedBaseVertexBaseInstanceWEBGL',
+    draw: desc => {
+      if (!EXT) return false;
+      EXT.drawElementsInstancedBaseVertexBaseInstanceWEBGL(
+          gl[desc.mode], desc.vert_count, gl.UNSIGNED_INT, 4*desc.first_vert,
+          desc.inst_count, desc.base_vert, desc.base_inst);
+      return true;
+    },
+  }];
+
+  // -
+
+  function make_key_combiner(key, vals) {
+    const ret = [];
+    for (const v of vals) {
+      const cur = {};
+      cur[key] = v;
+      ret.push(cur);
+    }
+    return ret;
+  }
+
+  const TEST_DESCS = crossCombine(
+    DRAW_FUNC_COMBINER,
+    make_key_combiner('base_vert', [0,1,2]),
+    make_key_combiner('vert_count', [0,1,2]),
+    make_key_combiner('base_inst', [0,1,2]),
+    make_key_combiner('inst_count', range(10)),
+    make_key_combiner('first_vert', [0,1,2]),
+  );
+  console.log('TEST_DESCS', TEST_DESCS);
+
+  // -
+  // Run testcases
+
+  gl.disable(gl.DEPTH_TEST);
+  gl.disable(gl.STENCIL_TEST);
+  gl.disable(gl.BLEND);
+
+  for (const desc of TEST_DESCS) {
+    gl.disable(gl.SCISSOR_TEST);
+    gl.clearBufferfv(gl.COLOR, 0, [1,0,0,1]);
+
+    // From OpenGL ES 3.2 spec section 10.5
+    // https://www.khronos.org/registry/OpenGL/specs/es/3.2/es_spec_3.2.pdf
+    // The index of any element transferred to the GL by DrawArraysOneInstance
+    // is referred to as its vertex ID, and may be read by a vertex shader as gl_VertexID.
+    // The vertex ID of the ith element transferred is first + i.
+    const last_gl_vert_id = desc.base_vert + desc.first_vert + desc.vert_count - 1;
+    const last_vert_id = last_gl_vert_id;
+    const last_inst_id = desc.inst_count - 1;
+    const last_inst_div1 = desc.base_inst + last_inst_id;
+    const last_inst_div2 = desc.base_inst + Math.floor(last_inst_id / 2);
+    const last_inst_div3 = desc.base_inst + Math.floor(last_inst_id / 3);
+
+    gl.useProgram(vertid_prog);
+    if (!desc.draw(desc)) continue;
+    debug('\ndesc: ' + JSON.stringify(desc));
+
+    wtu.glErrorAssert(gl, 0);
+    if (!desc.vert_count || !desc.inst_count) {
+      expect_pixel(desc, 'vertid_prog', [255, 0, 0, 255]);
+      continue;
+    }
+
+    expect_pixel(desc, 'vertid_prog', [last_gl_vert_id, last_vert_id, 0, 0]);
+
+    gl.useProgram(instid_prog);
+    desc.draw(desc);
+    expect_pixel(desc, 'instid_prog', [last_inst_id, last_inst_div1, last_inst_div2, last_inst_div3]);
+  }
+}
+
+// -
 
 function doTest(extensionName, multiDraw) {
   const ext = gl.getExtension(extensionName);
@@ -282,21 +511,19 @@ function doTest(extensionName, multiDraw) {
     const vs = [
       '#version 300 es',
       config.isMultiDraw ? '#extension GL_ANGLE_multi_draw : require' : '',
-      '#extension GL_ANGLE_base_vertex_base_instance : require',
       '#define kCountX ' + countX.toString(),
       '#define kCountY ' + countY.toString(),
       'layout(location = 0) in vec2 vPosition;',
-      config.useBaseInstanceBuiltin ? '' : 'layout(location = 1) in float vInstanceID;',
+      'layout(location = 1) in float vInstanceID;',
       'out vec4 color;',
       'void main()',
       '{',
       '  const float xStep = 1.0 / float(kCountX);',
       '  const float yStep = 1.0 / float(kCountY);',
-      '  float xID = ' + (config.useBaseInstanceBuiltin ? 'float(gl_InstanceID + gl_BaseInstance)' : 'vInstanceID') + ';',
+      '  float xID = vInstanceID;',
       '  float xColor = 1.0 - xStep * xID;',
       '  float yID = floor(float(gl_VertexID) / ' + (config.isDrawArrays ? '6.0' : '4.0') + ' + 0.01);',
-      '  color = vec4(xColor, 1.0 - yStep * yID, ',
-      config.useBaseVertexBuiltin ? '1.0 - yStep * float(gl_BaseVertex) / 4.0' : '1.0',
+      '  color = vec4(xColor, 1.0 - yStep * yID, 1.0',
       '  , 1.0);',
       '  mat3 transform = mat3(1.0);',
       '  transform[2][0] = xID * xStep;',
@@ -322,7 +549,7 @@ function doTest(extensionName, multiDraw) {
     gl.bindBuffer(gl.ARRAY_BUFFER, instanceBuffer);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([ 0, 1, 2 ]), bufferUsage);
 
-    const program = wtu.setupProgram(gl, ['vshaderSimple', 'fshader'], ['vPosition, vInstanceID'], [0, 1]);
+    const program = wtu.setupProgram(gl, ['vshaderSimple', 'fshader'], ['vPosition, vInstanceID'], [0, 1], true);
     expectTrue(program != null, "can compile simple program");
 
     function setupInstanced() {
@@ -490,37 +717,26 @@ function doTest(extensionName, multiDraw) {
   }
 
   function runShaderTests(bufferUsage) {
-    const illegalBaseInstanceProgram = wtu.setupProgram(gl, ["vshaderIllegalBaseInstance", "fshader"]);
-    expectTrue(illegalBaseInstanceProgram == null, "cannot compile program with gl_BaseInstance but no extension directive");
-    const illegalBaseVertexProgram = wtu.setupProgram(gl, ["vshaderIllegalBaseVertex", "fshader"]);
-    expectTrue(illegalBaseVertexProgram == null, "cannot compile program with gl_BaseVertex but no extension directive");
+    let badProgram;
+
+    badProgram = wtu.setupProgram(gl, ["vshaderBaseInstanceWithoutExt", "fshader"]);
+    expectTrue(!badProgram, "cannot compile program with gl_BaseInstance but no extension directive");
+    badProgram = wtu.setupProgram(gl, ["vshaderBaseVertexWithoutExt", "fshader"]);
+    expectTrue(!badProgram, "cannot compile program with gl_BaseVertex but no extension directive");
+
+    badProgram = wtu.setupProgram(gl, ["vshaderWithExt", "fshader"]);
+    expectTrue(!badProgram, "cannot compile program with #extension GL_ANGLE_base_vertex_base_instance");
 
     const x = Math.floor(width * 0.4);
     const y = Math.floor(height * 0.4);
     const xSize = Math.floor(width * 0.2);
     const ySize = Math.floor(height * 0.2);
 
-    // gl_BaseInstance and gl_InstanceID
+    // gl_InstanceID
     gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer());
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([ 0,0, 1,0, 0.5,1, 0,1, 0.5,0, 1,1 ]), bufferUsage);
     gl.enableVertexAttribArray(0);
     gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 0, 0);
-
-    const baseInstanceZeroProgram = wtu.setupProgram(gl, ["vshaderBaseInstanceZero", "fshader"], ["vPosition"], [0]);
-    expectTrue(baseInstanceZeroProgram !== null, "can compile program with gl_BaseInstance");
-    gl.useProgram(baseInstanceZeroProgram);
-
-    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-    if (!multiDraw) {
-      ext.drawArraysInstancedBaseInstanceWEBGL(gl.TRIANGLES, 0, 6, 1, 5);
-    } else {
-      ext.multiDrawArraysInstancedBaseInstanceWEBGL(gl.TRIANGLES, [0], 0, [6], 0, [1], 0, [5], 0, 1);
-    }
-
-    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-    gl.drawArrays(gl.TRIANGLES, 0, 6);
-
-    wtu.checkCanvasRect(gl, x, y, xSize, ySize, [0, 255, 0, 255], "gl_BaseInstance is 0 for non-BaseInstance draw calls");
 
     const instanceIDProgram = wtu.setupProgram(gl, ["vshaderInstanceIDCheck", "fshader"], ["vPosition"], [0]);
     expectTrue(instanceIDProgram !== null, "can compile program with gl_InstanceID");
@@ -535,29 +751,13 @@ function doTest(extensionName, multiDraw) {
 
     wtu.checkCanvasRect(gl, x, y, xSize, ySize, [0, 255, 0, 255], "gl_InstanceID should always starts from 0");
 
-    // gl_BaseVertex and gl_VertexID
+    // gl_VertexID
     gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer());
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([ 0,0, 1,0, 0.5,1, 0,1, 0.5,0, 1,1, 0,0, 1,0, 0.5,1, 0,1 ]), bufferUsage);
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, gl.createBuffer());
     gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint8Array([0, 1, 2, 3, 4, 5]), bufferUsage);
     gl.enableVertexAttribArray(0);
     gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 0, 0);
-
-    const baseVertexZeroProgram = wtu.setupProgram(gl, ["vshaderBaseVertexZero", "fshader"], ["vPosition"], [0]);
-    expectTrue(baseVertexZeroProgram !== null, "can compile program with gl_BaseVertex");
-    gl.useProgram(baseVertexZeroProgram);
-
-    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-    if (!multiDraw) {
-      ext.drawElementsInstancedBaseVertexBaseInstanceWEBGL(gl.TRIANGLES, 6, gl.UNSIGNED_BYTE, 0, 1, 3, 0);
-    } else {
-      ext.multiDrawElementsInstancedBaseVertexBaseInstanceWEBGL(gl.TRIANGLES, [6], 0, gl.UNSIGNED_BYTE, [0], 0, [1], 0, [3], 0, [0], 0, 1);
-    }
-
-    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-    gl.drawElements(gl.TRIANGLES, 6, gl.UNSIGNED_BYTE, 0);
-
-    wtu.checkCanvasRect(gl, x, y, xSize, ySize, [0, 255, 0, 255], "gl_BaseVertex is 0 for non-BaseVertex draw calls");
 
     const vertexIDProgram = wtu.setupProgram(gl, ["vshaderVertexIDCheck", "fshader"], ["vPosition"], [0]);
     expectTrue(vertexIDProgram !== null, "can compile program with gl_VertexID");
@@ -678,59 +878,11 @@ function doTest(extensionName, multiDraw) {
     });
 
     checkDraw({
-      drawFunc: multiDraw ? multiDrawArraysInstancedBaseInstance : drawArraysInstancedBaseInstance,
-      isDrawArrays: true,
-      isMultiDraw: multiDraw,
-      useBaseVertexBuiltin: true,
-      useBaseInstanceBuiltin: false
-    });
-
-    checkDraw({
-      drawFunc: multiDraw ? multiDrawArraysInstancedBaseInstance : drawArraysInstancedBaseInstance,
-      isDrawArrays: true,
-      isMultiDraw: multiDraw,
-      useBaseVertexBuiltin: false,
-      useBaseInstanceBuiltin: true
-    });
-
-    checkDraw({
-      drawFunc: multiDraw ? multiDrawArraysInstancedBaseInstance : drawArraysInstancedBaseInstance,
-      isDrawArrays: true,
-      isMultiDraw: multiDraw,
-      useBaseVertexBuiltin: true,
-      useBaseInstanceBuiltin: true
-    });
-
-    checkDraw({
       drawFunc: multiDraw ? multiDrawElementsInstancedBaseVertexBaseInstance : drawElementsInstancedBaseVertexBaseInstance,
       isDrawArrays: false,
       isMultiDraw: multiDraw,
       useBaseVertexBuiltin: false,
       useBaseInstanceBuiltin: false
-    });
-
-    checkDraw({
-      drawFunc: multiDraw ? multiDrawElementsInstancedBaseVertexBaseInstance : drawElementsInstancedBaseVertexBaseInstance,
-      isDrawArrays: false,
-      isMultiDraw: multiDraw,
-      useBaseVertexBuiltin: true,
-      useBaseInstanceBuiltin: false
-    });
-
-    checkDraw({
-      drawFunc: multiDraw ? multiDrawElementsInstancedBaseVertexBaseInstance : drawElementsInstancedBaseVertexBaseInstance,
-      isDrawArrays: false,
-      isMultiDraw: multiDraw,
-      useBaseVertexBuiltin: false,
-      useBaseInstanceBuiltin: true
-    });
-
-    checkDraw({
-      drawFunc: multiDraw ? multiDrawElementsInstancedBaseVertexBaseInstance : drawElementsInstancedBaseVertexBaseInstance,
-      isDrawArrays: false,
-      isMultiDraw: multiDraw,
-      useBaseVertexBuiltin: true,
-      useBaseInstanceBuiltin: true
     });
   }
 

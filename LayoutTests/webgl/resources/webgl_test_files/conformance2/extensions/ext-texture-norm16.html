@@ -153,6 +153,23 @@ function testSnorm16Unrenderable(internalFormat, format, type) {
                                 "framebuffer should not be complete with SNORM16 texture attached");
 }
 
+function runInternalFormatQueryTest()
+{
+    debug("");
+    debug("testing the internal format query");
+
+    var maxSamples = gl.getParameter(gl.MAX_SAMPLES);
+    const formats = [ext.R16_EXT, ext.RG16_EXT, ext.RGBA16_EXT];
+    for (const format of formats) {
+        var samples = gl.getInternalformatParameter(gl.RENDERBUFFER, format, gl.SAMPLES);
+        if (samples == null || samples.length == 0 || samples[0] < maxSamples) {
+            testFailed("the maximum value in SAMPLES should be at least " + maxSamples);
+            return;
+        }
+    }
+    testPassed("Internal format query succeeded");
+}
+
 function runTestExtension() {
   textures = [gl.createTexture(), gl.createTexture()];
   fbos = [gl.createFramebuffer(), gl.createFramebuffer()];
@@ -207,6 +224,7 @@ function runTest() {
     wtu.runExtensionSupportedTest(gl, "EXT_texture_norm16", ext !== null);
 
     if (ext !== null) {
+      runInternalFormatQueryTest();
       runTestExtension();
     } else {
       testPassed("No EXT_texture_norm16 support -- this is legal");
