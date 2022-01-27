@@ -44,6 +44,7 @@
     z-index: var(--z-index-header);
 
     --find-banner-outer-child-margin: 8px;
+    --find-banner-input-margin-start: 6px;
 }
 
 .find-banner.showing {
@@ -81,7 +82,7 @@
     height: 19px;
     margin-top: 1px;
     margin-bottom: 1px;
-    margin-inline: 6px -1px;
+    margin-inline: var(--find-banner-input-margin-start) -1px;
     vertical-align: top;
     background-color: white;
     border: 1px solid var(--border-color);

@@ -150,6 +150,7 @@ localizedStrings["All Petite Capitals @ Font Details Sidebar Property Value"] = 
 localizedStrings["All Requests"] = "All Requests";
 /* Property value for `font-variant-capitals: all-small-caps`. */
 localizedStrings["All Small Capitals @ Font Details Sidebar Property Value"] = "All Small Capitals";
+localizedStrings["All Sources"] = "All Sources";
 localizedStrings["All Storage"] = "All Storage";
 /* Break (pause) on all timeouts */
 localizedStrings["All Timeouts @ Event Breakpoint"] = "All Timeouts";
@@ -507,7 +508,6 @@ localizedStrings["Dismiss"] = "Dismiss";
 /* Tooltip for the dismiss button in banner views. */
 localizedStrings["Dismiss @ Banner View"] = "Dismiss";
 localizedStrings["Displayed Columns"] = "Displayed Columns";
-localizedStrings["Do not clear the console on new page loads"] = "Do not clear the console on new page loads";
 localizedStrings["Do not fade unexecuted code"] = "Do not fade unexecuted code";
 localizedStrings["Dock to bottom of window"] = "Dock to bottom of window";
 localizedStrings["Dock to left of window"] = "Dock to left of window";

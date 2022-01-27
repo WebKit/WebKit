@@ -1,3 +1,47 @@
+2022-01-27  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Console: move Preserve Log checkbox navigation item to a gear-with-contextmenu to save space (and match the Network Tab)
+        https://bugs.webkit.org/show_bug.cgi?id=235541
+
+        Reviewed by Patrick Angle.
+
+        Also collapse source scope bar into a single button for more space, and align it (and the
+        filter bar and type scope bar) to the left to better match other tabs.
+
+        * UserInterface/Views/LogContentView.js:
+        (WI.LogContentView):
+        (WI.LogContentView.prototype.get navigationItems):
+        (WI.LogContentView.prototype._updateOtherFiltersNavigationItemState): Added.
+        (WI.LogContentView.prototype._handleOtherFiltersNavigationItemContextMenu): Added.
+        (WI.LogContentView.prototype._handleClearLogOnNavigateSettingChanged):
+        (WI.LogContentView.prototype._showHiddenMessagesBannerIfNeeded):
+        Drive-by: Also reset the message source `WI.ScopeBar` when clearing filters.
+
+        * UserInterface/Views/LogContentView.css:
+        (.console-find-banner): Added.
+        (.message-channel-scope-bar.default-item-selected:not(:hover)): Added.
+        (.message-channel-scope-bar.default-item-selected:hover): Added.
+        (.log-scope-bar + .message-channel-scope-bar): Added.
+        (.console-other-filters-button > .glyph): Added.
+        (.console-other-filters-button:active > .glyph): Added.
+        (.console-other-filters-button.active > .glyph): Added.
+        (.console-other-filters-button.active:active > .glyph): Added.
+
+        * UserInterface/Views/ConsoleTabContentView.js:
+        (WI.ConsoleTabContentView):
+        Override the `flexibleNavigationItem` so that there's no expanding space before the filter.
+
+        * UserInterface/Views/ConsoleDrawer.js:
+        (WI.ConsoleDrawer):
+        Somehow this got overlooked when the constructor of `WI.ContentBrowser` was changed :(
+
+        * UserInterface/Views/FindBanner.css:
+        (.find-banner):
+        (.find-banner > input[type="search"]):
+        Add `--find-banner-input-margin-start` so that this can be overridden by specific clients.
+
+        * Localizations/en.lproj/localizedStrings.js:
+
 2022-01-27  Elliott Williams  <emw@apple.com>
 
         Generated xcfilelists contain symlinks when building for macOS

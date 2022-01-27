@@ -28,9 +28,12 @@ WI.ConsoleDrawer = class ConsoleDrawer extends WI.ContentBrowser
     constructor(element)
     {
         const delegate = null;
-        const disableBackForward = true;
-        const disableFindBanner = false;
-        super(element, delegate, disableBackForward, disableFindBanner);
+        super(element, delegate, {
+            hideBackForwardButtons: true,
+            disableBackForwardNavigation: true,
+            disableFindBanner: true,
+            flexibleNavigationItem: new WI.NavigationItem,
+        });
 
         this.element.classList.add("console-drawer");
 
