@@ -361,6 +361,8 @@ public:
 
     Settings& settings() const { return *m_settings; }
     ProgressTracker& progress() const { return *m_progress; }
+    void progressEstimateChanged(Frame&) const;
+    void progressFinished(Frame&) const;
     BackForwardController& backForward() const { return *m_backForwardController; }
 
     Seconds domTimerAlignmentInterval() const { return m_domTimerAlignmentInterval; }

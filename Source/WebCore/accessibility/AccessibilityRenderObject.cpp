@@ -1536,7 +1536,7 @@ bool AccessibilityRenderObject::isLoaded() const
     return m_renderer ? !m_renderer->document().parser() : false;
 }
 
-double AccessibilityRenderObject::estimatedLoadingProgress() const
+double AccessibilityRenderObject::loadingProgress() const
 {
     if (!m_renderer)
         return 0;

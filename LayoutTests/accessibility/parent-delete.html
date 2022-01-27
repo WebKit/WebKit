@@ -1,27 +1,22 @@
 <!DOCTYPE html>
 <html>
 <head>
+<script src="../resources/js-test.js"></script>
 <script>
-if (window.testRunner)
-    testRunner.dumpAsText();
-
 function runTest() {
-    var accessibilityElement;
-    {
-        var outer = document.getElementById("outer");
-        var inner = document.getElementById("inner");
-        var editable = document.getElementById("editable");
-        var result = document.getElementById("result");
-        editable.focus();
-        if (window.accessibilityController) {
-            var accessibilityElement = accessibilityController.focusedElement;
-        }
-        inner.removeChild(editable);
-        outer.removeChild(inner);
-    }
-    if (window.accessibilityController) {
-        result.innerText = accessibilityElement.allAttributes();
-    }
+    const outer = document.getElementById("outer");
+    const inner = document.getElementById("inner");
+    const editable = document.getElementById("editable");
+    const result = document.getElementById("result");
+    editable.focus();
+    let accessibilityElement;
+    if (window.accessibilityController)
+        accessibilityElement = accessibilityController.focusedElement;
+    inner.removeChild(editable);
+    outer.removeChild(inner);
+    // This should not cause a crash.
+    if (window.accessibilityController)
+        accessibilityElement.allAttributes();
 }
 </script>
 </head>

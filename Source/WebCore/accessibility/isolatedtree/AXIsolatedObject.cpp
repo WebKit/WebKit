@@ -110,7 +110,6 @@ void AXIsolatedObject::initializeAttributeData(AXCoreObject& coreObject, bool is
     setProperty(AXPropertyName::IsLink, object.isLink());
     setProperty(AXPropertyName::IsLinked, object.isLinked());
     setProperty(AXPropertyName::IsList, object.isList());
-    setProperty(AXPropertyName::IsLoaded, object.isLoaded());
     setProperty(AXPropertyName::IsMediaTimeline, object.isMediaTimeline());
     setProperty(AXPropertyName::IsMenu, object.isMenu());
     setProperty(AXPropertyName::IsMenuBar, object.isMenuBar());
@@ -171,7 +170,6 @@ void AXIsolatedObject::initializeAttributeData(AXCoreObject& coreObject, bool is
     setObjectProperty(AXPropertyName::SelectedRadioButton, object.selectedRadioButton());
     setObjectProperty(AXPropertyName::SelectedTabItem, object.selectedTabItem());
     setProperty(AXPropertyName::LayoutCount, object.layoutCount());
-    setProperty(AXPropertyName::EstimatedLoadingProgress, object.estimatedLoadingProgress());
     setProperty(AXPropertyName::SupportsARIAOwns, object.supportsARIAOwns());
     setProperty(AXPropertyName::HasPopup, object.hasPopup());
     setProperty(AXPropertyName::PopupValue, object.popupValue().isolatedCopy());

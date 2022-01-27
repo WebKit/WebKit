@@ -221,7 +221,7 @@ private:
     AXCoreObject* selectedRadioButton() override { return objectAttributeValue(AXPropertyName::SelectedRadioButton); }
     AXCoreObject* selectedTabItem() override { return objectAttributeValue(AXPropertyName::SelectedTabItem); }
     int layoutCount() const override { return intAttributeValue(AXPropertyName::LayoutCount); }
-    double estimatedLoadingProgress() const override { return doubleAttributeValue(AXPropertyName::EstimatedLoadingProgress); }
+    double loadingProgress() const override { return tree()->loadingProgress(); }
     bool supportsARIAOwns() const override { return boolAttributeValue(AXPropertyName::SupportsARIAOwns); }
     bool isActiveDescendantOfFocusedContainer() const override { return boolAttributeValue(AXPropertyName::IsActiveDescendantOfFocusedContainer); }
     void ariaControlsElements(AccessibilityChildrenVector& children) const override { fillChildrenVectorForProperty(AXPropertyName::ARIAControlsElements, children); }
@@ -513,7 +513,7 @@ private:
     bool isFigureElement() const override;
     bool isHovered() const override;
     bool isIndeterminate() const override;
-    bool isLoaded() const override { return boolAttributeValue(AXPropertyName::IsLoaded); }
+    bool isLoaded() const override { return loadingProgress() >= 1; }
     bool isOnScreen() const override;
     bool isOffScreen() const override;
     bool isPressed() const override;

@@ -111,7 +111,6 @@ enum class AXPropertyName : uint16_t {
     EditableAncestor,
     ElementRect,
     EmbeddedImageDescription,
-    EstimatedLoadingProgress,
     ExpandedTextValue,
     FileUploadButtonReturnsValueInTitle,
     FocusableAncestor,
@@ -168,7 +167,6 @@ enum class AXPropertyName : uint16_t {
     IsLinked,
     IsList,
     IsListBox,
-    IsLoaded,
     IsMathElement,
     IsMathFraction,
     IsMathFenced,
@@ -361,6 +359,9 @@ public:
     void updateSubtree(AXCoreObject&);
     void updateChildren(AXCoreObject&);
 
+    double loadingProgress() { return m_loadingProgress; }
+    void updateLoadingProgress(double);
+
     // Removes the given node leaving all descendants alone.
     void removeNode(AXID);
     // Removes the given node and all its descendants.
@@ -411,6 +412,8 @@ private:
     Vector<std::pair<AXID, Vector<AXID>>> m_pendingChildrenUpdates WTF_GUARDED_BY_LOCK(m_changeLogLock);
     AXID m_pendingFocusedNodeID WTF_GUARDED_BY_LOCK(m_changeLogLock);
     AXID m_focusedNodeID;
+    double m_pendingLoadingProgress WTF_GUARDED_BY_LOCK(m_changeLogLock) { 0 };
+    double m_loadingProgress { 0 };
     Lock m_changeLogLock;
 
     bool m_creatingSubtree { false };

@@ -118,6 +118,7 @@ Ref<AXIsolatedTree> AXIsolatedTree::create(AXObjectCache* axObjectCache)
     ASSERT(!treePageCache().contains(*pageID));
     treePageCache().set(*pageID, tree.copyRef());
     treeIDCache().set(tree->treeID(), tree.copyRef());
+    tree->updateLoadingProgress(axObjectCache->loadingProgress());
 
     return tree;
 }
@@ -439,6 +440,16 @@ void AXIsolatedTree::setFocusedNodeID(AXID axID)
     m_pendingPropertyChanges.append({ axID, propertyMap });
 }
 
+void AXIsolatedTree::updateLoadingProgress(double newProgressValue)
+{
+    AXTRACE("AXIsolatedTree::updateLoadingProgress");
+    AXLOG(makeString("Queueing loading progress update to ", newProgressValue, " for treeID ", treeID()));
+    ASSERT(isMainThread());
+
+    Locker locker { m_changeLogLock };
+    m_pendingLoadingProgress = newProgressValue;
+}
+
 void AXIsolatedTree::removeNode(AXID axID)
 {
     AXTRACE("AXIsolatedTree::removeNode");
@@ -483,6 +494,8 @@ void AXIsolatedTree::applyPendingChanges()
         return;
 
     Locker locker { m_changeLogLock };
+
+    m_loadingProgress = m_pendingLoadingProgress;
 
     if (m_pendingFocusedNodeID != m_focusedNodeID) {
         AXLOG(makeString("focusedNodeID ", m_focusedNodeID.loggingString(), " pendingFocusedNodeID ", m_pendingFocusedNodeID.loggingString()));

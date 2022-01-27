@@ -1047,7 +1047,7 @@ public:
     virtual AXCoreObject* selectedTabItem() = 0;
     virtual AXCoreObject* selectedListItem() = 0;
     virtual int layoutCount() const = 0;
-    virtual double estimatedLoadingProgress() const = 0;
+    virtual double loadingProgress() const = 0;
     virtual String brailleLabel() const = 0;
     virtual String brailleRoleDescription() const = 0;
     virtual String embeddedImageDescription() const = 0;

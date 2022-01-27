@@ -187,6 +187,9 @@ public:
     void checkedStateChanged(Node*);
     // Called when a node has just been attached, so we can make sure we have the right subclass of AccessibilityObject.
     void updateCacheAfterNodeIsAttached(Node*);
+    void updateLoadingProgress(double);
+    void loadingFinished() { updateLoadingProgress(1); }
+    double loadingProgress() const { return m_loadingProgress; }
 
     void deferFocusedUIElementChangeIfNeeded(Node* oldFocusedNode, Node* newFocusedNode);
     void deferModalChange(Element*);
@@ -523,6 +526,7 @@ private:
     Vector<std::pair<Node*, Node*>> m_deferredFocusedNodeChange;
     bool m_isSynchronizingSelection { false };
     bool m_performingDeferredCacheUpdate { false };
+    double m_loadingProgress { 0 };
 
 #if USE(ATK)
     ListHashSet<RefPtr<AccessibilityObject>> m_deferredAttachedWrapperObjectList;

@@ -2033,7 +2033,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         if ([attributeName isEqualToString:@"AXLayoutCount"])
             return @(backingObject->layoutCount());
         if ([attributeName isEqualToString:NSAccessibilityLoadingProgressAttribute])
-            return @(backingObject->estimatedLoadingProgress());
+            return @(backingObject->loadingProgress());
         if ([attributeName isEqualToString:NSAccessibilityPreventKeyboardDOMEventDispatchAttribute])
             return [NSNumber numberWithBool:backingObject->preventKeyboardDOMEventDispatch()];
         if ([attributeName isEqualToString:NSAccessibilityCaretBrowsingEnabledAttribute])

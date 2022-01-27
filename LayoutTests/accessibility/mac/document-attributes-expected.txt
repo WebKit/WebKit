@@ -1,9 +1,14 @@
+This test provides a base snapshot of the root web area's attributes.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
 AXHasDocumentRoleAncestor: 0
 AXHasWebApplicationAncestor: 0
 AXRole: AXWebArea
 AXRoleDescription: HTML content
-AXChildren: <array of size 0>
-AXChildrenInNavigationOrder: <array of size 0>
+AXChildren: <array of size 2>
+AXChildrenInNavigationOrder: <array of size 2>
 AXHelp:
 AXParent: <AXWebArea>
 AXSize: NSSize: {800, 600}
@@ -34,4 +39,7 @@ AXPreventKeyboardDOMEventDispatch: 0
 AXWebSessionID: 2
 AXElementBusy: 0
 
+PASS successfullyParsed is true
+
+TEST COMPLETE
 

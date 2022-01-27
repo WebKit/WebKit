@@ -295,7 +295,7 @@ public:
     AXCoreObject* selectedTabItem() override { return nullptr; }
     AXCoreObject* selectedListItem() override;
     int layoutCount() const override { return 0; }
-    double estimatedLoadingProgress() const override { return 0; }
+    double loadingProgress() const override { return 0; }
     WEBCORE_EXPORT static bool isARIAControl(AccessibilityRole);
     bool supportsCheckedState() const override;
     

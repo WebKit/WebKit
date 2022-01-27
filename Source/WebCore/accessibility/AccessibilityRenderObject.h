@@ -83,7 +83,7 @@ public:
     AccessibilityObjectInclusion defaultObjectInclusion() const override;
     
     int layoutCount() const override;
-    double estimatedLoadingProgress() const override;
+    double loadingProgress() const override;
     
     AccessibilityObject* firstChild() const override;
     AccessibilityObject* lastChild() const override;
