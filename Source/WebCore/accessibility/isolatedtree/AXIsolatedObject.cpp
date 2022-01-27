@@ -75,8 +75,6 @@ void AXIsolatedObject::initializeAttributeData(AXCoreObject& coreObject, bool is
     setProperty(AXPropertyName::ARIALandmarkRoleDescription, object.ariaLandmarkRoleDescription().isolatedCopy());
     setProperty(AXPropertyName::AccessibilityDescription, object.accessibilityDescription().isolatedCopy());
 
-    // For all objects besides the root, the ancestry flags should've been set by now.
-    ASSERT(isRoot || object.ancestorFlagsAreInitialized());
     if (object.ancestorFlagsAreInitialized())
         setProperty(AXPropertyName::AncestorFlags, object.ancestorFlags());
     else
