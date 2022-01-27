@@ -273,19 +273,6 @@ bool defaultIncrementalPDFEnabled()
 }
 #endif
 
-#if ENABLE(WEBXR)
-
-bool defaultWebXREnabled()
-{
-#if HAVE(WEBXR_INTERNALS)
-    return true;
-#else
-    return false;
-#endif
-}
-
-#endif // ENABLE(WEBXR)
-
 #if ENABLE(WEBM_FORMAT_READER)
 
 bool defaultWebMFormatReaderEnabled()

@@ -43,10 +43,6 @@ bool isFeatureFlagEnabled(const char*, bool defaultValue = false);
 bool defaultIncrementalPDFEnabled();
 #endif
 
-#if ENABLE(WEBXR)
-bool defaultWebXREnabled();
-#endif
-
 #if PLATFORM(IOS_FAMILY)
 bool defaultAllowsInlineMediaPlayback();
 bool defaultAllowsInlineMediaPlaybackAfterFullscreen();

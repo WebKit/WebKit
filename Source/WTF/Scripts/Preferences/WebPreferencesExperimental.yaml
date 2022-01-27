@@ -1793,9 +1793,9 @@ WebXRAugmentedRealityModuleEnabled:
   condition: ENABLE(WEBXR)
   defaultValue:
     WebKitLegacy:
-      default: WebKit::defaultWebXREnabled()
+      default: false
     WebKit:
-      default: WebKit::defaultWebXREnabled()
+      default: false
     WebCore:
       default: false
 
@@ -1806,9 +1806,9 @@ WebXREnabled:
   condition: ENABLE(WEBXR)
   defaultValue:
     WebKitLegacy:
-      default: WebKit::defaultWebXREnabled()
+      default: false
     WebKit:
-      default: WebKit::defaultWebXREnabled()
+      default: false
     WebCore:
       default: false
 
@@ -1819,9 +1819,9 @@ WebXRGamepadsModuleEnabled:
   condition: ENABLE(WEBXR)
   defaultValue:
     WebKitLegacy:
-      default: WebKit::defaultWebXREnabled()
+      default: false
     WebKit:
-      default: WebKit::defaultWebXREnabled()
+      default: false
     WebCore:
       default: false
 
@@ -1832,9 +1832,9 @@ WebXRHandInputModuleEnabled:
   condition: ENABLE(WEBXR_HANDS)
   defaultValue:
     WebKitLegacy:
-      default: WebKit::defaultWebXREnabled()
+      default: false
     WebKit:
-      default: WebKit::defaultWebXREnabled()
+      default: false
     WebCore:
       default: false
 

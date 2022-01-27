@@ -1,3 +1,16 @@
+2022-01-27  Ada Chan  <ada.chan@apple.com>
+
+        Disable WebXR experimental feature by default
+        https://bugs.webkit.org/show_bug.cgi?id=235688
+
+        Reviewed by Tim Horton.
+
+        Remove WebKit::defaultWebXREnabled() since it's no longer used.
+
+        * Shared/WebPreferencesDefaultValues.cpp:
+        (WebKit::defaultWebXREnabled): Deleted.
+        * Shared/WebPreferencesDefaultValues.h:
+
 2022-01-27  Alexander Mikhaylenko  <alexm@gnome.org>
 
         [GTK] Support accent colors

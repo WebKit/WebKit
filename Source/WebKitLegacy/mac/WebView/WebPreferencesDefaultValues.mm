@@ -79,15 +79,6 @@ bool defaultIncrementalPDFEnabled()
 
 #endif
 
-#if ENABLE(WEBXR)
-
-bool defaultWebXREnabled()
-{
-    return isFeatureFlagEnabled("WebXR", false);
-}
-
-#endif // ENABLE(WEBXR)
-
 #if PLATFORM(IOS_FAMILY)
 
 bool defaultAllowsInlineMediaPlayback()
