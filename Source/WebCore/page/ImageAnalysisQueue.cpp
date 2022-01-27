@@ -30,10 +30,12 @@
 
 #include "Chrome.h"
 #include "ChromeClient.h"
+#include "FrameView.h"
 #include "HTMLCollection.h"
 #include "HTMLImageElement.h"
 #include "ImageOverlay.h"
 #include "RenderImage.h"
+#include "RenderView.h"
 #include "Timer.h"
 
 namespace WebCore {
@@ -67,8 +69,21 @@ void ImageAnalysisQueue::enqueueIfNeeded(HTMLImageElement& element)
     if (!m_queuedElements.add(element).isNewEntry)
         return;
 
-    m_queue.append({ element });
-    resumeProcessing();
+    Ref view = renderer.view().frameView();
+    m_queue.enqueue({
+        element,
+        renderer.isVisibleInDocumentRect(view->windowToContents(view->windowClipRect())) ? Priority::High : Priority::Low,
+        nextTaskNumber()
+    });
+    resumeProcessingSoon();
+}
+
+void ImageAnalysisQueue::resumeProcessingSoon()
+{
+    if (m_queue.isEmpty() || m_resumeProcessingTimer.isActive())
+        return;
+
+    m_resumeProcessingTimer.startOneShot(resumeProcessingDelay);
 }
 
 void ImageAnalysisQueue::enqueueAllImages(Document& document, const String& identifier)
@@ -91,22 +106,20 @@ void ImageAnalysisQueue::resumeProcessing()
         return;
 
     while (!m_queue.isEmpty() && m_pendingRequestCount < maximumPendingImageAnalysisCount) {
-        auto weakElement = m_queue.takeFirst();
-        RefPtr element = weakElement.get();
+        RefPtr element = m_queue.dequeue().element.get();
         if (!element || !element->isConnected())
             continue;
 
         m_pendingRequestCount++;
         m_page->resetTextRecognitionResult(*element);
         m_page->chrome().client().requestTextRecognition(*element, m_identifier, [this, page = m_page] (auto&&) {
-            if (!page)
+            if (!page || page->imageAnalysisQueueIfExists() != this)
                 return;
 
             if (m_pendingRequestCount)
                 m_pendingRequestCount--;
 
-            if (!m_queue.isEmpty() && !m_resumeProcessingTimer.isActive())
-                m_resumeProcessingTimer.startOneShot(resumeProcessingDelay);
+            resumeProcessingSoon();
         });
     }
 }
@@ -116,9 +129,10 @@ void ImageAnalysisQueue::clear()
     // FIXME: This should cancel pending requests in addition to emptying the task queue.
     m_pendingRequestCount = 0;
     m_resumeProcessingTimer.stop();
-    m_queue.clear();
+    m_queue = { };
     m_queuedElements.clear();
     m_identifier = { };
+    m_currentTaskNumber = 0;
 }
 
 } // namespace WebCore

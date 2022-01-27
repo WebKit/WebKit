@@ -27,8 +27,8 @@
 
 #if ENABLE(IMAGE_ANALYSIS)
 
-#include <wtf/Deque.h>
 #include <wtf/FastMalloc.h>
+#include <wtf/PriorityQueue.h>
 #include <wtf/WeakHashSet.h>
 #include <wtf/WeakPtr.h>
 
@@ -51,15 +51,35 @@ public:
     void enqueueIfNeeded(HTMLImageElement&);
 
 private:
+    void resumeProcessingSoon();
     void resumeProcessing();
+
+    enum class Priority : bool { Low, High };
+    struct Task {
+        WeakPtr<HTMLImageElement> element;
+        Priority priority { Priority::Low };
+        unsigned taskNumber { 0 };
+    };
+
+    static bool firstIsHigherPriority(const Task&, const Task&);
+    unsigned nextTaskNumber() { return ++m_currentTaskNumber; }
 
     String m_identifier;
     WeakPtr<Page> m_page;
     Timer m_resumeProcessingTimer;
     WeakHashSet<HTMLImageElement> m_queuedElements;
-    Deque<WeakPtr<HTMLImageElement>> m_queue;
+    PriorityQueue<Task, firstIsHigherPriority> m_queue;
     unsigned m_pendingRequestCount { 0 };
+    unsigned m_currentTaskNumber { 0 };
 };
+
+inline bool ImageAnalysisQueue::firstIsHigherPriority(const Task& first, const Task& second)
+{
+    if (first.priority != second.priority)
+        return first.priority == Priority::High;
+
+    return first.taskNumber < second.taskNumber;
+}
 
 } // namespace WebCore
 

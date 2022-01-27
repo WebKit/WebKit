@@ -1,3 +1,38 @@
+2022-01-27  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        ImageAnalysisQueue should prioritize elements that intersect the visible viewport
+        https://bugs.webkit.org/show_bug.cgi?id=235664
+        rdar://88131827
+
+        Reviewed by Darin Adler.
+
+        Add an API test to verify that batch image analysis prioritizes a visible image over another image that appears
+        first in DOM traversal order, but is offscreen.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/ImageAnalysisTests.mm:
+        (TestWebKitAPI::processedRequests):
+        (TestWebKitAPI::processRequestWithResults):
+        (TestWebKitAPI::makeFakeRequest):
+        (TestWebKitAPI::makeImageAnalysisRequestSwizzler):
+        (TestWebKitAPI::processRequestWithError):
+
+        Additionally add a mechanism for swizzling out VKImageAnalyzerRequest initialization to return a mock object
+        (TestVKImageAnalyzerRequest) instead, which can then be used to inspect the CGImage that would've been sent for
+        analysis. See changes in `ImageAnalysisTestingUtilities.*` below for more information.
+
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/offscreen-image.html: Added.
+        * TestWebKitAPI/cocoa/ImageAnalysisTestingUtilities.h:
+        * TestWebKitAPI/cocoa/ImageAnalysisTestingUtilities.mm:
+        (-[TestVKImageAnalyzerRequest initWithCGImage:orientation:requestType:]):
+        (-[TestVKImageAnalyzerRequest image]):
+        (-[TestVKImageAnalyzerRequest imageURL]):
+        (-[TestVKImageAnalyzerRequest setImageURL:]):
+        (-[TestVKImageAnalyzerRequest pageURL]):
+        (-[TestVKImageAnalyzerRequest setPageURL:]):
+        (TestWebKitAPI::createRequest):
+
 2022-01-26  Jonathan Bedard  <jbedard@apple.com>
 
         [webkitbugspy] JSON encode trackers

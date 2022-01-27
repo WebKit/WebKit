@@ -53,6 +53,10 @@ static CGPoint swizzledLocationInView(id, SEL, UIView *)
 
 #endif // PLATFORM(IOS_FAMILY)
 
+@interface VKImageAnalyzerRequest (TestSupport)
+@property (nonatomic, readonly) CGImageRef image;
+@end
+
 @interface TestWKWebView (ImageAnalysisTests)
 - (void)waitForImageAnalysisRequests:(unsigned)numberOfRequests;
 #if PLATFORM(IOS_FAMILY)
@@ -92,6 +96,12 @@ static CGPoint swizzledLocationInView(id, SEL, UIView *)
 
 namespace TestWebKitAPI {
 
+static Vector<RetainPtr<VKImageAnalyzerRequest>>& processedRequests()
+{
+    static NeverDestroyed requests = Vector<RetainPtr<VKImageAnalyzerRequest>> { };
+    return requests.get();
+}
+
 static RetainPtr<TestWKWebView> createWebViewWithTextRecognitionEnhancements()
 {
     RetainPtr configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
@@ -104,23 +114,33 @@ static RetainPtr<TestWKWebView> createWebViewWithTextRecognitionEnhancements()
     return adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 300, 300) configuration:configuration.get()]);
 }
 
-static void processRequestWithResults(id, SEL, VKImageAnalyzerRequest *, void (^)(double progress), void (^completion)(VKImageAnalysis *, NSError *))
+static void processRequestWithResults(id, SEL, VKImageAnalyzerRequest *request, void (^)(double progress), void (^completion)(VKImageAnalysis *, NSError *))
 {
     gDidProcessRequestCount++;
+    processedRequests().append({ request });
     completion(createImageAnalysisWithSimpleFixedResults().get(), nil);
 }
 
-template <typename FunctionType>
-InstanceMethodSwizzler makeImageAnalysisRequestSwizzler(FunctionType function)
+static VKImageAnalyzerRequest *makeFakeRequest(id, SEL, CGImageRef image, VKImageOrientation orientation, VKAnalysisTypes requestTypes)
 {
-    return InstanceMethodSwizzler { PAL::getVKImageAnalyzerClass(), @selector(processRequest:progressHandler:completionHandler:), reinterpret_cast<IMP>(function) };
+    return createRequest(image, orientation, requestTypes).leakRef();
+}
+
+template <typename FunctionType>
+std::pair<std::unique_ptr<InstanceMethodSwizzler>, std::unique_ptr<InstanceMethodSwizzler>> makeImageAnalysisRequestSwizzler(FunctionType function)
+{
+    return std::pair {
+        makeUnique<InstanceMethodSwizzler>(PAL::getVKImageAnalyzerClass(), @selector(processRequest:progressHandler:completionHandler:), reinterpret_cast<IMP>(function)),
+        makeUnique<InstanceMethodSwizzler>(PAL::getVKImageAnalyzerRequestClass(), @selector(initWithCGImage:orientation:requestType:), reinterpret_cast<IMP>(makeFakeRequest))
+    };
 }
 
 #if PLATFORM(IOS_FAMILY)
 
-static void processRequestWithError(id, SEL, VKImageAnalyzerRequest *, void (^)(double progress), void (^completion)(VKImageAnalysis *analysis, NSError *error))
+static void processRequestWithError(id, SEL, VKImageAnalyzerRequest *request, void (^)(double progress), void (^completion)(VKImageAnalysis *analysis, NSError *error))
 {
     gDidProcessRequestCount++;
+    processedRequests().append({ request });
     completion(nil, [NSError errorWithDomain:NSCocoaErrorDomain code:1 userInfo:nil]);
 }
 
@@ -222,6 +242,22 @@ TEST(ImageAnalysisTests, ResetImageAnalysisAfterNavigation)
     [webView synchronouslyLoadTestPageNamed:@"multiple-images"];
     [webView waitForNextPresentationUpdate];
     EXPECT_EQ(gDidProcessRequestCount, 5U);
+}
+
+TEST(ImageAnalysisTests, ImageAnalysisPrioritizesVisibleImages)
+{
+    auto requestSwizzler = makeImageAnalysisRequestSwizzler(processRequestWithResults);
+    auto webView = createWebViewWithTextRecognitionEnhancements();
+    [webView synchronouslyLoadTestPageNamed:@"offscreen-image"];
+    [webView _startImageAnalysis:nil];
+    [webView waitForImageAnalysisRequests:2];
+
+    auto firstRequestedImage = [processedRequests().first() image];
+    auto lastRequestedImage = [processedRequests().last() image];
+    EXPECT_EQ(200U, CGImageGetWidth(firstRequestedImage));
+    EXPECT_EQ(150U, CGImageGetHeight(firstRequestedImage));
+    EXPECT_EQ(600U, CGImageGetWidth(lastRequestedImage));
+    EXPECT_EQ(450U, CGImageGetHeight(lastRequestedImage));
 }
 
 } // namespace TestWebKitAPI

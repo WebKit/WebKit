@@ -1058,6 +1058,7 @@
 		F45E15732112CE2900307E82 /* KeyboardInputTestsIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = F45E15722112CE2900307E82 /* KeyboardInputTestsIOS.mm */; };
 		F45E15762112CE6200307E82 /* TestInputDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = F45E15752112CE6200307E82 /* TestInputDelegate.mm */; };
 		F45EB60427739F34003571AE /* TestModalContainerControls.mlmodelc in Copy Resources */ = {isa = PBXBuildFile; fileRef = F45EB60327739F2B003571AE /* TestModalContainerControls.mlmodelc */; };
+		F460BEEA27A1F416007B87D9 /* offscreen-image.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F460BEE727A1F2D6007B87D9 /* offscreen-image.html */; };
 		F460F657261116EA0064F2B6 /* InjectedBundleHitTest.mm in Sources */ = {isa = PBXBuildFile; fileRef = F460F656261116EA0064F2B6 /* InjectedBundleHitTest.mm */; };
 		F460F65B261119580064F2B6 /* InjectedBundleHitTestPlugIn.mm in Sources */ = {isa = PBXBuildFile; fileRef = F460F659261117E70064F2B6 /* InjectedBundleHitTestPlugIn.mm */; };
 		F460F669261263370064F2B6 /* simple-responsive-page.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F460F668261262C70064F2B6 /* simple-responsive-page.html */; };
@@ -1499,6 +1500,7 @@
 				466C3843210637DE006A88DE /* notify-resourceLoadObserver.html in Copy Resources */,
 				CDB5DFFF213610FA00D3E189 /* now-playing.html in Copy Resources */,
 				93E2D2761ED7D53200FA76F6 /* offscreen-iframe-of-media-document.html in Copy Resources */,
+				F460BEEA27A1F416007B87D9 /* offscreen-image.html in Copy Resources */,
 				074994421EA5034B000DA44F /* ondevicechange.html in Copy Resources */,
 				1DAA52CC243BE805001A3159 /* one-video.html in Copy Resources */,
 				CEA6CF2819CCF69D0064F5A7 /* open-and-close-window.html in Copy Resources */,
@@ -3035,6 +3037,7 @@
 		F45E15752112CE6200307E82 /* TestInputDelegate.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = TestInputDelegate.mm; sourceTree = "<group>"; };
 		F45EB60327739F2B003571AE /* TestModalContainerControls.mlmodelc */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = TestModalContainerControls.mlmodelc; sourceTree = "<group>"; };
 		F45EB6062773C371003571AE /* ModalContainerObservation.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ModalContainerObservation.mm; sourceTree = "<group>"; };
+		F460BEE727A1F2D6007B87D9 /* offscreen-image.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "offscreen-image.html"; sourceTree = "<group>"; };
 		F460F656261116EA0064F2B6 /* InjectedBundleHitTest.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = InjectedBundleHitTest.mm; sourceTree = "<group>"; };
 		F460F659261117E70064F2B6 /* InjectedBundleHitTestPlugIn.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = InjectedBundleHitTestPlugIn.mm; sourceTree = "<group>"; };
 		F460F65A2611183F0064F2B6 /* InjectedBundleHitTestProtocol.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = InjectedBundleHitTestProtocol.h; sourceTree = "<group>"; };
@@ -4186,6 +4189,7 @@
 				466C3842210637CE006A88DE /* notify-resourceLoadObserver.html */,
 				CDB5DFFE21360ED800D3E189 /* now-playing.html */,
 				93E2D2751ED7D51700FA76F6 /* offscreen-iframe-of-media-document.html */,
+				F460BEE727A1F2D6007B87D9 /* offscreen-image.html */,
 				7CCB99221D3B44E7003922F6 /* open-multiple-external-url.html */,
 				931C281B22BC5583001D98C4 /* opendatabase-always-exists.html */,
 				F49992C5248DABE400034167 /* overflow-hidden.html */,

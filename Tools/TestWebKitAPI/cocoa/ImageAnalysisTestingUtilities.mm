@@ -142,6 +142,60 @@
 
 @end
 
+@interface TestVKImageAnalyzerRequest : NSObject
+@property (nonatomic, readonly) CGImageRef image;
+@property (nonatomic, readonly) VKImageOrientation orientation;
+@property (nonatomic, readonly) VKAnalysisTypes requestType;
+@property (nonatomic, copy) NSURL *imageURL;
+@property (nonatomic, copy) NSURL *pageURL;
+@end
+
+@implementation TestVKImageAnalyzerRequest {
+    RetainPtr<CGImageRef> _image;
+    VKImageOrientation _orientation;
+    VKAnalysisTypes _requestType;
+    RetainPtr<NSURL> _imageURL;
+    RetainPtr<NSURL> _pageURL;
+}
+
+- (instancetype)initWithCGImage:(CGImageRef)image orientation:(VKImageOrientation)orientation requestType:(VKAnalysisTypes)requestType
+{
+    if (!(self = [super init]))
+        return nil;
+
+    _image = image;
+    _orientation = orientation;
+    _requestType = requestType;
+    return self;
+}
+
+- (CGImageRef)image
+{
+    return _image.get();
+}
+
+- (NSURL *)imageURL
+{
+    return _imageURL.get();
+}
+
+- (void)setImageURL:(NSURL *)url
+{
+    _imageURL = adoptNS(url.copy);
+}
+
+- (NSURL *)pageURL
+{
+    return _pageURL.get();
+}
+
+- (void)setPageURL:(NSURL *)url
+{
+    _pageURL = adoptNS(url.copy);
+}
+
+@end
+
 namespace TestWebKitAPI {
 
 RetainPtr<VKQuad> createQuad(CGPoint topLeft, CGPoint topRight, CGPoint bottomLeft, CGPoint bottomRight)
@@ -170,6 +224,11 @@ RetainPtr<VKImageAnalysis> createImageAnalysisWithSimpleFixedResults()
     auto text = createTextInfo(@"Foo bar", quad.get());
     auto line = createLineInfo(@"Foo bar", quad.get(), @[ text.get() ]);
     return createImageAnalysis(@[ line.get() ]);
+}
+
+RetainPtr<VKImageAnalyzerRequest> createRequest(CGImageRef image, VKImageOrientation orientation, VKAnalysisTypes types)
+{
+    return adoptNS(static_cast<VKImageAnalyzerRequest *>([[TestVKImageAnalyzerRequest alloc] initWithCGImage:image orientation:orientation requestType:types]));
 }
 
 } // namespace TestWebKitAPI
