@@ -37,6 +37,7 @@ class WebXRReferenceSpace;
 class WebXRRigidTransform;
 
 class XRReferenceSpaceEvent : public Event {
+    WTF_MAKE_ISO_ALLOCATED(XRReferenceSpaceEvent);
 public:
     struct Init : EventInit {
         RefPtr<WebXRReferenceSpace> referenceSpace;
@@ -47,7 +48,7 @@ public:
     virtual ~XRReferenceSpaceEvent();
 
     const WebXRReferenceSpace& referenceSpace() const;
-    const WebXRRigidTransform& transform() const;
+    WebXRRigidTransform* transform() const;
 
 private:
     XRReferenceSpaceEvent(const AtomString&, const Init&, IsTrusted);

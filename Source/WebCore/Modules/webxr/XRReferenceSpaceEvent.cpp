@@ -33,6 +33,8 @@
 
 namespace WebCore {
 
+WTF_MAKE_ISO_ALLOCATED_IMPL(XRReferenceSpaceEvent);
+
 Ref<XRReferenceSpaceEvent> XRReferenceSpaceEvent::create(const AtomString& type, const Init& initializer, IsTrusted isTrusted)
 {
     return adoptRef(*new XRReferenceSpaceEvent(type, initializer, isTrusted));
@@ -44,7 +46,6 @@ XRReferenceSpaceEvent::XRReferenceSpaceEvent(const AtomString& type, const Init&
     , m_transform(initializer.transform)
 {
     ASSERT(m_referenceSpace);
-    ASSERT(m_transform);
 }
 
 XRReferenceSpaceEvent::~XRReferenceSpaceEvent() = default;
@@ -54,9 +55,9 @@ const WebXRReferenceSpace& XRReferenceSpaceEvent::referenceSpace() const
     return *m_referenceSpace;
 }
 
-const WebXRRigidTransform& XRReferenceSpaceEvent::transform() const
+WebXRRigidTransform* XRReferenceSpaceEvent::transform() const
 {
-    return *m_transform;
+    return m_transform.get();
 }
 
 } // namespace WebCore
