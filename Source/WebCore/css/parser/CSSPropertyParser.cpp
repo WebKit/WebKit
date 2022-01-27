@@ -3806,19 +3806,9 @@ static RefPtr<CSSValue> consumeContainerName(CSSParserTokenRange& range)
     if (range.peek().id() == CSSValueNone)
         return consumeIdent(range);
 
-    auto consumeName = [&]() -> RefPtr<CSSValue> {
-        if (range.peek().id() == CSSValueNone)
-            return nullptr;
-        if (auto ident = consumeCustomIdent(range))
-            return ident;
-        if (auto string = consumeString(range))
-            return string;
-        return nullptr;
-    };
-
     auto list = CSSValueList::createSpaceSeparated();
     do {
-        auto name = consumeName();
+        auto name = consumeSingleContainerName(range);
         if (!name)
             return nullptr;
         list->append(name.releaseNonNull());

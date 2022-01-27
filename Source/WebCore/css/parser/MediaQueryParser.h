@@ -48,22 +48,25 @@ public:
     static RefPtr<MediaQuerySet> parseMediaQuerySet(const String&, MediaQueryParserContext);
     static RefPtr<MediaQuerySet> parseMediaQuerySet(CSSParserTokenRange, MediaQueryParserContext);
     static RefPtr<MediaQuerySet> parseMediaCondition(CSSParserTokenRange, MediaQueryParserContext);
+    static RefPtr<MediaQuerySet> parseContainerQuery(CSSParserTokenRange, MediaQueryParserContext);
 
 private:
     enum ParserType {
         MediaQuerySetParser,
         MediaConditionParser,
+        ContainerQueryParser,
     };
 
     MediaQueryParser(ParserType, MediaQueryParserContext);
     virtual ~MediaQueryParser();
 
-    RefPtr<MediaQuerySet> parseInternal(CSSParserTokenRange);
+    RefPtr<MediaQuerySet> parseInternal(CSSParserTokenRange&);
 
     void processToken(const CSSParserToken&, CSSParserTokenRange&);
 
     void readRestrictor(CSSParserTokenType, const CSSParserToken&, CSSParserTokenRange&);
     void readMediaNot(CSSParserTokenType, const CSSParserToken&, CSSParserTokenRange&);
+    void readContainerQuery(CSSParserTokenType, const CSSParserToken&, CSSParserTokenRange&);
     void readMediaType(CSSParserTokenType, const CSSParserToken&, CSSParserTokenRange&);
     void readAnd(CSSParserTokenType, const CSSParserToken&, CSSParserTokenRange&);
     void readFeatureStart(CSSParserTokenType, const CSSParserToken&, CSSParserTokenRange&);
@@ -124,6 +127,7 @@ private:
 
     const static State ReadRestrictor;
     const static State ReadMediaNot;
+    const static State ReadContainerQuery;
     const static State ReadMediaType;
     const static State ReadAnd;
     const static State ReadFeatureStart;

@@ -1,3 +1,12 @@
+2022-01-27  Antti Koivisto  <antti@apple.com>
+
+        [CSS Container Queries] Basic parsing support for query syntax
+        https://bugs.webkit.org/show_bug.cgi?id=235712
+
+        Reviewed by Darin Adler.
+
+        * web-platform-tests/css/css-contain/container-queries/at-container-parsing-expected.txt:
+
 2022-01-26  Alexey Shvayka  <ashvayka@apple.com>
 
         globalThis.queueMicrotask() should report thrown exceptions

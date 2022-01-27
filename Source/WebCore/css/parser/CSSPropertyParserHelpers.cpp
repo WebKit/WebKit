@@ -4279,6 +4279,17 @@ AtomString consumeCounterStyleNameInPrelude(CSSParserTokenRange& prelude)
     return isPredefinedCounterStyle(nameToken.id()) ? name.convertToASCIILowercaseAtom() : name.toAtomString();
 }
 
+RefPtr<CSSPrimitiveValue> consumeSingleContainerName(CSSParserTokenRange& range)
+{
+    if (range.peek().id() == CSSValueNone)
+        return nullptr;
+    if (auto ident = consumeCustomIdent(range))
+        return ident;
+    if (auto string = consumeString(range))
+        return string;
+    return nullptr;
+}
+
 std::optional<CSSValueID> consumeFontVariantCSS21Raw(CSSParserTokenRange& range)
 {
     return consumeIdentRaw<CSSValueNormal, CSSValueSmallCaps>(range);

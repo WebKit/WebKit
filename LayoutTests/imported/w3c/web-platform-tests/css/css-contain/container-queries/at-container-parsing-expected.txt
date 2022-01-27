@@ -33,14 +33,14 @@ PASS size(color-index >= 1)
 PASS (color-index >= 1)
 PASS size(grid)
 PASS (grid)
-FAIL screen assert_equals: expected 0 but got 1
-FAIL print assert_equals: expected 0 but got 1
-FAIL not print assert_equals: expected 0 but got 1
-FAIL only print assert_equals: expected 0 but got 1
-FAIL screen and (width: 100px) assert_equals: expected 0 but got 1
-FAIL screen or (width: 100px) assert_equals: expected 0 but got 1
-FAIL not screen and (width: 100px) assert_equals: expected 0 but got 1
-FAIL not screen or (width: 100px) assert_equals: expected 0 but got 1
+PASS screen
+PASS print
+PASS not print
+PASS only print
+PASS screen and (width: 100px)
+PASS screen or (width: 100px)
+PASS not screen and (width: 100px)
+PASS not screen or (width: 100px)
 FAIL (width: 100px), (height: 100px) assert_equals: expected 0 but got 1
 PASS Container selector:  foo
 PASS Container selector:  foo
@@ -52,9 +52,9 @@ PASS Container selector: type(inline-size)
 PASS Container selector: type(block-size)
 PASS Container selector: name(bar) type(block-size)
 PASS Container selector: type(block-size) name(bar)
-FAIL Container selector: foo foo assert_equals: expected 0 but got 1
-FAIL Container selector: 1px assert_equals: expected 0 but got 1
-FAIL Container selector: 50gil assert_equals: expected 0 but got 1
+PASS Container selector: foo foo
+PASS Container selector: 1px
+PASS Container selector: 50gil
 FAIL Container selector: name(1px) assert_equals: expected 0 but got 1
 FAIL Container selector: type(1px) assert_equals: expected 0 but got 1
 FAIL Container selector: type(red) assert_equals: expected 0 but got 1

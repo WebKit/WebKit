@@ -123,12 +123,6 @@ static inline void filterProperties(bool important, const ParsedPropertyVector& 
             output[--unusedEntries] = property;
             continue;
         }
-        
-        // FIXME-NEWPARSER: We won't support @apply yet.
-        /*else if (property.id() == CSSPropertyApplyAtRule) {
-         // FIXME: Do we need to do anything here?
-         } */
-        
 
         if (seenProperties.test(propertyIDIndex))
             continue;
@@ -430,11 +424,6 @@ RefPtr<StyleRuleBase> CSSParserImpl::consumeAtRule(CSSParserTokenRange& range, A
             return consumeNamespaceRule(prelude);
         if (allowedRules <= RegularRules && id == CSSAtRuleLayer)
             return consumeLayerRule(prelude, { });
-        // FIXME-NEWPARSER: Support "apply"
-        /*if (allowedRules == ApplyRules && id == CSSAtRuleApply) {
-            consumeApplyRule(prelude);
-            return nullptr; // consumeApplyRule just updates m_parsedProperties
-        }*/
         return nullptr; // Parse error, unrecognised at-rule without block
     }
 
@@ -623,7 +612,7 @@ RefPtr<StyleRuleMedia> CSSParserImpl::consumeMediaRule(CSSParserTokenRange prelu
     if (m_observerWrapper)
         m_observerWrapper->observer().endRuleBody(m_observerWrapper->endOffset(block));
 
-    return StyleRuleMedia::create(MediaQueryParser::parseMediaQuerySet(prelude, MediaQueryParserContext(m_context)).releaseNonNull(), WTFMove(rules));
+    return StyleRuleMedia::create(MediaQueryParser::parseMediaQuerySet(prelude, { m_context }).releaseNonNull(), WTFMove(rules));
 }
 
 RefPtr<StyleRuleSupports> CSSParserImpl::consumeSupportsRule(CSSParserTokenRange prelude, CSSParserTokenRange block)
@@ -862,8 +851,26 @@ RefPtr<StyleRuleContainer> CSSParserImpl::consumeContainerRule(CSSParserTokenRan
     if (!m_context.containerQueriesEnabled)
         return nullptr;
 
+    if (prelude.atEnd())
+        return nullptr;
+
+    auto consumeName = [&]() -> AtomString {
+        if (prelude.peek().type() == LeftParenthesisToken || prelude.peek().type() == FunctionToken)
+            return nullAtom();
+        auto nameValue = CSSPropertyParserHelpers::consumeSingleContainerName(prelude);
+        if (!nameValue)
+            return nullAtom();
+        return nameValue->stringValue();
+    };
+
+    auto name = consumeName();
+
+    auto query = MediaQueryParser::parseContainerQuery(prelude, MediaQueryParserContext(m_context));
+    if (!query)
+        return nullptr;
+
     if (m_deferredParser)
-        return StyleRuleContainer::create({ }, makeUnique<DeferredStyleGroupRuleList>(block, *m_deferredParser));
+        return StyleRuleContainer::create({ name, query.releaseNonNull() }, makeUnique<DeferredStyleGroupRuleList>(block, *m_deferredParser));
 
     Vector<RefPtr<StyleRuleBase>> rules;
 
@@ -881,7 +888,7 @@ RefPtr<StyleRuleContainer> CSSParserImpl::consumeContainerRule(CSSParserTokenRan
     if (m_observerWrapper)
         m_observerWrapper->observer().endRuleBody(m_observerWrapper->endOffset(block));
 
-    return StyleRuleContainer::create({ }, WTFMove(rules));
+    return StyleRuleContainer::create({ name, query.releaseNonNull() }, WTFMove(rules));
 }
     
 RefPtr<StyleRuleKeyframe> CSSParserImpl::consumeKeyframeStyleRule(CSSParserTokenRange prelude, CSSParserTokenRange block)

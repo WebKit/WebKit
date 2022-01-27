@@ -193,6 +193,7 @@ struct FontRaw {
 bool isPredefinedCounterStyle(CSSValueID);
 RefPtr<CSSPrimitiveValue> consumeCounterStyleName(CSSParserTokenRange&);
 AtomString consumeCounterStyleNameInPrelude(CSSParserTokenRange&);
+RefPtr<CSSPrimitiveValue> consumeSingleContainerName(CSSParserTokenRange&);
 
 std::optional<CSSValueID> consumeFontVariantCSS21Raw(CSSParserTokenRange&);
 std::optional<CSSValueID> consumeFontWeightKeywordValueRaw(CSSParserTokenRange&);

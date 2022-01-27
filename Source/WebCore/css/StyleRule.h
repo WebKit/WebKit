@@ -314,7 +314,10 @@ private:
     std::variant<CascadeLayerName, Vector<CascadeLayerName>> m_nameVariant;
 };
 
-struct ContainerQuery { };
+struct ContainerQuery {
+    AtomString containerName;
+    Ref<MediaQuerySet> query;
+};
 
 class StyleRuleContainer final : public StyleRuleGroup {
 public:
