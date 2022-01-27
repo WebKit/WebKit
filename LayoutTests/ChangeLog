@@ -1,3 +1,15 @@
+2022-01-26  Ryan Haddad  <ryanhaddad@apple.com>
+
+        ASSERTION FAILED: m_pdfDocument under WebKit::PDFPlugin::installPDFDocument()
+        https://bugs.webkit.org/show_bug.cgi?id=235660
+
+        Unreviewed test gardening.
+
+        Speculatively skip fast/replaced/encrypted-pdf-as-object-and-embed.html, which runs right
+        before a non-PDF test that gets the blame for the crash.
+
+        * platform/mac/TestExpectations:
+
 2022-01-26  Arcady Goldmints-Orlov  <agoldmints@igalia.com>
 
         [GLIB] Update test expectations and baselines. Unreviewed test gardening.

@@ -2425,6 +2425,8 @@ webkit.org/b/221230 [ BigSur+ ] imported/w3c/web-platform-tests/media-source/med
 
 webkit.org/b/235084 [ arm64 ] imported/w3c/web-platform-tests/css/css-transforms/perspective-transforms-equivalence.html [ ImageOnlyFailure ]
 
+webkit.org/b/235660 [ Debug ] fast/replaced/encrypted-pdf-as-object-and-embed.html [ Skip ]
+
 # <model> tests involving the ready promise can only work on Monterey and up
 [ Catalina BigSur ] model-element/model-element-ready.html [ Skip ]
 
