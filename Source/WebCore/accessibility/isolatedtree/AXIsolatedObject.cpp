@@ -531,7 +531,7 @@ void AXIsolatedObject::detachFromParent()
     m_parentID = { };
 }
 
-const AXCoreObject::AccessibilityChildrenVector& AXIsolatedObject::children(bool)
+const AXCoreObject::AccessibilityChildrenVector& AXIsolatedObject::children(bool updateChildrenIfNeeded)
 {
 #if USE(APPLE_INTERNAL_SDK)
     ASSERT(_AXSIsolatedTreeModeFunctionIsAvailable() && ((_AXSIsolatedTreeMode_Soft() == AXSIsolatedTreeModeSecondaryThread && !isMainThread())
@@ -539,12 +539,14 @@ const AXCoreObject::AccessibilityChildrenVector& AXIsolatedObject::children(bool
 #elif USE(ATSPI)
     ASSERT(!isMainThread());
 #endif
-    updateBackingStore();
-    m_children.clear();
-    m_children.reserveInitialCapacity(m_childrenIDs.size());
-    for (const auto& childID : m_childrenIDs) {
-        if (auto child = tree()->nodeForID(childID))
-            m_children.uncheckedAppend(child);
+    if (updateChildrenIfNeeded) {
+        updateBackingStore();
+        m_children.clear();
+        m_children.reserveInitialCapacity(m_childrenIDs.size());
+        for (const auto& childID : m_childrenIDs) {
+            if (auto child = tree()->nodeForID(childID))
+                m_children.uncheckedAppend(child);
+        }
     }
     return m_children;
 }
