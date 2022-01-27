@@ -1,3 +1,12 @@
+2022-01-27  Alexander Mikhaylenko  <alexm@gnome.org>
+
+        [GTK] Support accent colors
+        https://bugs.webkit.org/show_bug.cgi?id=235706
+
+        Reviewed by Michael Catanzaro.
+
+        * wtf/PlatformHave.h: Flip HAVE_APP_ACCENT_COLORS for GTK.
+
 2022-01-26  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         Build failure with GCC 12: MediaTime.h:167:71: error: call to non-'constexpr' function 'WTF::MediaTime& WTF::MediaTime::operator=(const WTF::MediaTime&)'

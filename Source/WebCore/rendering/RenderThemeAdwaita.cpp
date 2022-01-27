@@ -762,4 +762,10 @@ Seconds RenderThemeAdwaita::caretBlinkInterval() const
 }
 #endif
 
+void RenderThemeAdwaita::setAccentColor(const Color& color)
+{
+    static_cast<ThemeAdwaita&>(Theme::singleton()).setAccentColor(color);
+    platformColorsDidChange();
+}
+
 } // namespace WebCore

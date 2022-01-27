@@ -179,6 +179,8 @@ private:
 
     void makeViewBlank(bool) override;
 
+    WebCore::Color accentColor() override;
+
     // Members of PageClientImpl class
     GtkWidget* m_viewWidget;
     DefaultUndoController m_undoController;

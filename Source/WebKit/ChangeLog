@@ -1,3 +1,33 @@
+2022-01-27  Alexander Mikhaylenko  <alexm@gnome.org>
+
+        [GTK] Support accent colors
+        https://bugs.webkit.org/show_bug.cgi?id=235706
+
+        Reviewed by Michael Catanzaro.
+
+        Take the accent color from CSS named colors. Handle the colors used in
+        libadwaita, elementary OS 6.x and 5.x, and the generic selection bg
+        color that people have been using out of context for a long time.
+
+        Track changes the best we can, even though it's not perfect: css_changed()
+        in GTK4 won't be called unless the CSS change affects the web view itself.
+
+        * UIProcess/API/gtk/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::accentColor):
+        * UIProcess/API/gtk/PageClientImpl.h:
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseStyleUpdated):
+        (webkit_web_view_base_class_init):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/gtk/WebPageProxyGtk.cpp:
+        (WebKit::WebPageProxy::accentColorDidChange):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::reinitializeWebPage):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/gtk/WebPageGtk.cpp:
+        (WebKit::WebPage::setAccentColor):
+
 2022-01-27  Antoine Quint  <graouts@webkit.org>
 
         <model> should only be draggable on iOS

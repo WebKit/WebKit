@@ -80,27 +80,25 @@ static constexpr auto spinButtonBackgroundColorDark = SRGBA<uint8_t> { 45, 45, 4
 static constexpr auto spinButtonBackgroundHoveredColorDark = SRGBA<uint8_t> { 238, 238, 236, 50 };
 static constexpr auto spinButtonBackgroundPressedColorDark = SRGBA<uint8_t> { 238, 238, 236, 70 };
 
-#if !PLATFORM(GTK) || USE(GTK4)
 Theme& Theme::singleton()
 {
     static NeverDestroyed<ThemeAdwaita> theme;
     return theme;
 }
-#endif
 
 Color ThemeAdwaita::activeSelectionForegroundColor() const
 {
-    return Color::white;
+    return activeSelectionBackgroundColor().luminance() > 0.5 ? Color::black : Color::white;
 }
 
 Color ThemeAdwaita::activeSelectionBackgroundColor() const
 {
-    return SRGBA<uint8_t> { 52, 132, 228 };
+    return m_accentColor.isValid() ? m_accentColor : SRGBA<uint8_t> { 52, 132, 228 };
 }
 
 Color ThemeAdwaita::inactiveSelectionForegroundColor() const
 {
-    return SRGBA<uint8_t> { 252, 252, 252 };
+    return activeSelectionForegroundColor().colorWithAlpha(0.75);
 }
 
 Color ThemeAdwaita::inactiveSelectionBackgroundColor() const
@@ -543,6 +541,16 @@ void ThemeAdwaita::paintSpinButton(ControlStates& states, GraphicsContext& graph
         }
         paintArrow(graphicsContext, ArrowDirection::Down, useDarkAppearance);
     }
+}
+
+void ThemeAdwaita::setAccentColor(const Color& color)
+{
+    if (m_accentColor == color)
+        return;
+
+    m_accentColor = color;
+
+    platformColorsDidChange();
 }
 
 } // namespace WebCore

@@ -69,6 +69,8 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/gtk/SelectionData.h
 
     platform/text/enchant/TextCheckerEnchant.h
+
+    rendering/RenderThemeAdwaita.h
 )
 
 set(CSS_VALUE_PLATFORM_DEFINES "HAVE_OS_DARK_MODE_SUPPORT=1")

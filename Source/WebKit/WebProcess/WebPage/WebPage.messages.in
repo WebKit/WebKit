@@ -517,6 +517,10 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
 
     EffectiveAppearanceDidChange(bool useDarkAppearance, bool useElevatedUserInterfaceLevel)
 
+#if HAVE(APP_ACCENT_COLORS)
+    SetAccentColor(WebCore::Color color)
+#endif
+
 #if PLATFORM(COCOA)
     RequestActiveNowPlayingSessionInfo() -> (bool active, bool registeredAsNowPlayingApplication, String title, double duration, double elapsedTime, uint64_t uniqueIdentifier) Async
 #endif

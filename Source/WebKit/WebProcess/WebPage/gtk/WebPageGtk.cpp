@@ -45,6 +45,8 @@
 #include <WebCore/PlatformKeyboardEvent.h>
 #include <WebCore/PlatformScreen.h>
 #include <WebCore/PointerCharacteristics.h>
+#include <WebCore/RenderTheme.h>
+#include <WebCore/RenderThemeAdwaita.h>
 #include <WebCore/Settings.h>
 #include <WebCore/SharedBuffer.h>
 #include <WebCore/WindowsKeyboardCodes.h>
@@ -192,6 +194,11 @@ void WebPage::showEmojiPicker(Frame& frame)
             frame->editor().insertText(result, nullptr);
     };
     sendWithAsyncReply(Messages::WebPageProxy::ShowEmojiPicker(frame.view()->contentsToRootView(frame.selection().absoluteCaretBounds())), WTFMove(completionHandler));
+}
+
+void WebPage::setAccentColor(WebCore::Color color)
+{
+    static_cast<RenderThemeAdwaita&>(RenderTheme::singleton()).setAccentColor(color);
 }
 
 } // namespace WebKit

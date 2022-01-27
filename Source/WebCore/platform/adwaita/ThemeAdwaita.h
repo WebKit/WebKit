@@ -48,6 +48,7 @@ public:
     virtual Color inactiveSelectionBackgroundColor() const;
     virtual void platformColorsDidChange() { };
 
+    void setAccentColor(const Color&);
 private:
     LengthSize controlSize(ControlPart, const FontCascade&, const LengthSize&, float) const final;
     LengthSize minimumControlSize(ControlPart, const FontCascade&, const LengthSize&, float) const final;
@@ -58,6 +59,8 @@ private:
     void paintRadio(ControlStates&, GraphicsContext&, const FloatRect&, bool);
     void paintButton(ControlStates&, GraphicsContext&, const FloatRect&, bool);
     void paintSpinButton(ControlStates&, GraphicsContext&, const FloatRect&, bool);
+
+    Color m_accentColor;
 };
 
 } // namespace WebCore

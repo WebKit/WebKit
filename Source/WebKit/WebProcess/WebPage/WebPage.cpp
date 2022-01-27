@@ -998,6 +998,10 @@ void WebPage::reinitializeWebPage(WebPageCreationParameters&& parameters)
     if (m_layerHostingMode != parameters.layerHostingMode)
         setLayerHostingMode(parameters.layerHostingMode);
 
+#if HAVE(APP_ACCENT_COLORS)
+    setAccentColor(parameters.accentColor);
+#endif
+
 #if PLATFORM(GTK)
     GtkSettingsManagerProxy::singleton().applySettings(WTFMove(parameters.gtkSettings));
 #endif

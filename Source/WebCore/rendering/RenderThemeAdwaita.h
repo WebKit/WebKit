@@ -33,6 +33,8 @@ class RenderThemeAdwaita : public RenderTheme {
 public:
     virtual ~RenderThemeAdwaita() = default;
 
+    void setAccentColor(const Color&);
+
 private:
     String extraDefaultStyleSheet() final;
 #if ENABLE(VIDEO)

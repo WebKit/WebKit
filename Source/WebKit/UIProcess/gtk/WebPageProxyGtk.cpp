@@ -106,4 +106,14 @@ void WebPageProxy::sendMessageToWebView(UserMessage&& message)
     sendMessageToWebViewWithReply(WTFMove(message), [](UserMessage&&) { });
 }
 
+void WebPageProxy::accentColorDidChange()
+{
+    if (!hasRunningProcess())
+        return;
+
+    WebCore::Color accentColor = pageClient().accentColor();
+
+    send(Messages::WebPage::SetAccentColor(accentColor));
+}
+
 } // namespace WebKit
