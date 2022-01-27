@@ -212,13 +212,13 @@ static Elements updateSubtree(HTMLElement& element, const TextRecognitionResult&
     mediaControlsContainer = ([&]() -> RefPtr<HTMLElement> {
         RefPtr mediaElement = dynamicDowncast<HTMLMediaElement>(element);
         if (!mediaElement)
-            return { };
+            return nullptr;
 
         Ref shadowRoot = mediaElement->ensureUserAgentShadowRoot();
         RefPtr controlsHost = mediaElement->mediaControlsHost();
         if (!controlsHost) {
             ASSERT_NOT_REACHED();
-            return { };
+            return nullptr;
         }
 
         auto& containerClass = controlsHost->mediaControlsContainerClassName();
@@ -227,7 +227,7 @@ static Elements updateSubtree(HTMLElement& element, const TextRecognitionResult&
                 return &child;
         }
         ASSERT_NOT_REACHED();
-        return { };
+        return nullptr;
     })();
 #endif // ENABLE(MODERN_MEDIA_CONTROLS)
 

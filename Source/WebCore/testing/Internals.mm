@@ -179,19 +179,19 @@ bool Internals::platformSupportsMetal(bool isWebGL2)
 
 DDScannerResult *Internals::fakeDataDetectorResultForTesting()
 {
-    static NeverDestroyed result = ([]() -> RetainPtr<DDScannerResult> {
+    static NeverDestroyed result = []() -> RetainPtr<DDScannerResult> {
         auto scanner = adoptCF(PAL::softLink_DataDetectorsCore_DDScannerCreate(DDScannerTypeStandard, 0, nullptr));
         auto stringToScan = CFSTR("webkit.org");
         auto query = adoptCF(PAL::softLink_DataDetectorsCore_DDScanQueryCreateFromString(kCFAllocatorDefault, stringToScan, CFRangeMake(0, CFStringGetLength(stringToScan))));
         if (!PAL::softLink_DataDetectorsCore_DDScannerScanQuery(scanner.get(), query.get()))
-            return { };
+            return nil;
 
         auto results = adoptCF(PAL::softLink_DataDetectorsCore_DDScannerCopyResultsWithOptions(scanner.get(), DDScannerCopyResultsOptionsNoOverlap));
         if (!CFArrayGetCount(results.get()))
-            return { };
+            return nil;
 
         return { [[PAL::getDDScannerResultClass() resultsFromCoreResults:results.get()] firstObject] };
-    })();
+    }();
     return result->get();
 }
 

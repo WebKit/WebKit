@@ -5826,8 +5826,8 @@ void Internals::installImageOverlay(Element& element, Vector<ImageOverlayLine>&&
             return makeDataForLine(line);
         })
 #if ENABLE(DATA_DETECTION)
-        , dataDetectors.map([] (auto& dataDetector) -> TextRecognitionDataDetector {
-            return TextRecognitionDataDetector { fakeDataDetectorResultForTesting(), { getQuad(dataDetector) } };
+        , dataDetectors.map([](auto& dataDetector) -> TextRecognitionDataDetector {
+            return { fakeDataDetectorResultForTesting(), { getQuad(dataDetector) } };
         })
 #endif // ENABLE(DATA_DETECTION)
         , blocks.map([] (auto& block) {
