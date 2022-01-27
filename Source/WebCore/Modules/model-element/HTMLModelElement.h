@@ -97,8 +97,7 @@ public:
     void isMuted(IsMutedPromise&&);
     void setIsMuted(bool, DOMPromiseDeferred<void>&&);
 
-    bool supportsDragging() const;
-    bool isDraggableIgnoringAttributes() const final;
+    bool isDraggableIgnoringAttributes() const final { return true; }
 
 #if PLATFORM(COCOA)
     Vector<RetainPtr<id>> accessibilityChildren();

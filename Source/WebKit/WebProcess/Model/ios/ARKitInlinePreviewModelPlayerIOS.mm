@@ -61,11 +61,6 @@ std::optional<ModelIdentifier> ARKitInlinePreviewModelPlayerIOS::modelIdentifier
 
 // MARK: - WebCore::ModelPlayer overrides.
 
-bool ARKitInlinePreviewModelPlayerIOS::supportsDragging()
-{
-    return true;
-}
-
 void ARKitInlinePreviewModelPlayerIOS::enterFullscreen()
 {
     RefPtr strongPage = page();

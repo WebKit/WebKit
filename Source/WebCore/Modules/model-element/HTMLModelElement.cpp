@@ -321,16 +321,6 @@ void HTMLModelElement::enterFullscreen()
 
 // MARK: - Interaction support.
 
-bool HTMLModelElement::supportsDragging() const
-{
-    return m_modelPlayer && m_modelPlayer->supportsDragging();
-}
-
-bool HTMLModelElement::isDraggableIgnoringAttributes() const
-{
-    return supportsDragging();
-}
-
 void HTMLModelElement::defaultEventHandler(Event& event)
 {
     if (!m_modelPlayer || !m_modelPlayer->supportsMouseInteraction())
