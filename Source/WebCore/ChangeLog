@@ -1,3 +1,37 @@
+2022-01-27  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r288539. rdar://problem/88139598
+
+    Expand RefPtr / Ref use in FrameLoader
+    https://bugs.webkit.org/show_bug.cgi?id=235551
+    rdar://87986840
+    
+    Reviewed by Mark Lam.
+    
+    Apply Ref / RefPtr instead of taking SerializedScriptValue*.
+    
+    * loader/FrameLoader.cpp:
+    (WebCore::FrameLoader::loadInSameDocument):
+    (WebCore::FrameLoader::continueFragmentScrollAfterNavigationPolicy):
+    * loader/FrameLoader.h:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@288539 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-01-24  Yusuke Suzuki  <ysuzuki@apple.com>
+
+            Expand RefPtr / Ref use in FrameLoader
+            https://bugs.webkit.org/show_bug.cgi?id=235551
+            rdar://87986840
+
+            Reviewed by Mark Lam.
+
+            Apply Ref / RefPtr instead of taking SerializedScriptValue*.
+
+            * loader/FrameLoader.cpp:
+            (WebCore::FrameLoader::loadInSameDocument):
+            (WebCore::FrameLoader::continueFragmentScrollAfterNavigationPolicy):
+            * loader/FrameLoader.h:
+
 2022-01-16  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r288078. rdar://problem/85801310
