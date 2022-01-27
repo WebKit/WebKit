@@ -313,6 +313,7 @@ class Events(service.BuildbotService):
 
 class GitHubEventHandlerNoEdits(GitHubEventHandler):
     ACTIONS_TO_TRIGGER_EWS = ('opened', 'synchronize')
+    OPEN_STATES = ('open',)
 
     def _get_commit_msg(self, repo, sha):
         return ''
@@ -320,7 +321,11 @@ class GitHubEventHandlerNoEdits(GitHubEventHandler):
     def handle_pull_request(self, payload, event):
         pr_number = payload['number']
         action = payload.get('action')
+        state = payload.get('state')
         if action not in self.ACTIONS_TO_TRIGGER_EWS:
             log.msg('Action {} on PR #{} does not indicate code has been changed'.format(action, pr_number))
+            return ([], 'git')
+        if state not in self.OPEN_STATES:
+            log.msg("PR #{} is '{}', which triggers nothing".format(pr_number, state))
             return ([], 'git')
         return super(GitHubEventHandlerNoEdits, self).handle_pull_request(payload, event)
