@@ -1,3 +1,17 @@
+2022-01-27  Gavin Phillips  <gavin.p@apple.com>
+
+        Check the process has the dynamic-codesigning entitlement before trying to allocate a holding JIT region
+        https://bugs.webkit.org/show_bug.cgi?id=235673
+        rdar://88094997
+
+        Reviewed by Saam Barati.
+
+        We only need to allocate a holding JIT region, for processes with the JIT disabled, if that process has the
+        dynamic-codesigning entitlement. We can skip this allocation if the process doesn't have that entitlement.
+
+        * jit/ExecutableAllocator.cpp:
+        (JSC::ExecutableAllocator::setJITEnabled):
+
 2022-01-26  Antoine Quint  <graouts@webkit.org>
 
         [Web Inspector] Update return value name for Animation.requestEffectTarget()
