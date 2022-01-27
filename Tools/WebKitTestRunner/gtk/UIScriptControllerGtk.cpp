@@ -28,12 +28,15 @@
 
 #include "EventSenderProxy.h"
 #include "PlatformWebView.h"
+#include "StringFunctions.h"
 #include "TestController.h"
 #include "UIScriptContext.h"
+#include <JavaScriptCore/JavaScript.h>
 #include <JavaScriptCore/OpaqueJSString.h>
 #include <WebKit/WKTextCheckerGLib.h>
 #include <WebKit/WKViewPrivate.h>
 #include <gtk/gtk.h>
+#include <wtf/JSONValues.h>
 #include <wtf/RunLoop.h>
 
 namespace WTR {
@@ -160,6 +163,44 @@ void UIScriptControllerGtk::addViewToWindow(JSValueRef callback)
             return;
         m_context->asyncTaskComplete(callbackID);
     });
+}
+
+void UIScriptControllerGtk::overridePreference(JSStringRef preference, JSStringRef value)
+{
+    if (toWTFString(preference) != "WebKitMinimumFontSize")
+        return;
+
+    auto preferences = TestController::singleton().platformPreferences();
+    WKPreferencesSetMinimumFontSize(preferences, static_cast<uint32_t>(toWTFString(value).toDouble()));
+}
+
+static Ref<JSON::Object> toJSONObject(GVariant* variant)
+{
+    Ref<JSON::Object> jsonObject = JSON::Object::create();
+
+    const char* key;
+    GVariant* value;
+    GVariantIter iter;
+    g_variant_iter_init(&iter, variant);
+    while (g_variant_iter_loop(&iter, "{&sv}", &key, &value)) {
+        const GVariantType* type = g_variant_get_type(value);
+        if (type && g_variant_type_equal(type, G_VARIANT_TYPE_VARDICT))
+            jsonObject->setObject(key, toJSONObject(value));
+        else if (type && g_variant_type_equal(type, G_VARIANT_TYPE_STRING))
+            jsonObject->setString(key, g_variant_get_string(value, nullptr));
+        else if (type && g_variant_type_equal(type, G_VARIANT_TYPE_DOUBLE))
+            jsonObject->setDouble(key, g_variant_get_double(value));
+    }
+    return jsonObject;
+}
+
+JSObjectRef UIScriptControllerGtk::contentsOfUserInterfaceItem(JSStringRef interfaceItem) const
+{
+    auto* webView = TestController::singleton().mainWebView()->platformView();
+    GRefPtr<GVariant> contentDictionary = adoptGRef(WKViewContentsOfUserInterfaceItem(webView, toWTFString(interfaceItem).utf8().data()));
+    auto jsonObject = toJSONObject(contentDictionary.get());
+
+    return JSValueToObject(m_context->jsContext(), contentDictionary ? JSValueMakeFromJSONString(m_context->jsContext(), createJSString(jsonObject->toJSONString().utf8().data()).get()) : JSValueMakeUndefined(m_context->jsContext()), nullptr);
 }
 
 } // namespace WTR

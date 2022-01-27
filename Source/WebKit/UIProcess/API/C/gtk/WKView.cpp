@@ -63,3 +63,8 @@ bool WKViewCompleteBackSwipeForTesting(WKViewRef viewRef)
 {
     return webkitWebViewBaseCompleteBackSwipeForTesting(toImpl(viewRef));
 }
+
+GVariant* WKViewContentsOfUserInterfaceItem(WKViewRef viewRef, const char* userInterfaceItem)
+{
+    return webkitWebViewBaseContentsOfUserInterfaceItem(toImpl(viewRef), userInterfaceItem);
+}

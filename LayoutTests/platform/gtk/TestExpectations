@@ -644,23 +644,16 @@ webkit.org/b/153833 fast/events/can-click-element-on-page-with-active-pseudo-cla
 webkit.org/b/153833 fast/events/before-input-prevent-insert-replacement.html [ Skip ]
 webkit.org/b/153833 fast/events/input-event-insert-replacement.html [ Skip ]
 
-# Skip tests expecting native HTML form validation popover
-webkit.org/b/167579 fast/forms/scroll-into-view-and-show-validation-message.html [ Skip ]
-webkit.org/b/167579 fast/forms/navigation-dismisses-validation-bubbles.html [ Skip ]
-webkit.org/b/167579 fast/forms/validation-bubble-disappears-when-input-detached.html [ Skip ]
-webkit.org/b/167579 fast/forms/validation-bubble-disappears-when-input-moved.html [ Skip ]
-webkit.org/b/167579 fast/forms/validation-bubble-disappears-when-input-no-longer-visible.html [ Skip ]
-webkit.org/b/167579 fast/forms/validation-custom-message.html [ Skip ]
-webkit.org/b/167579 fast/forms/validation-message-detached-iframe.html [ Skip ]
-webkit.org/b/167579 fast/forms/validation-message-detached-iframe2.html [ Skip ]
-webkit.org/b/167579 fast/forms/validation-messages.html [ Skip ]
-webkit.org/b/167579 fast/forms/validation-bubble-escape-key-dismiss.html [ Skip ]
-webkit.org/b/167579 fast/forms/validation-message-minimum-font-size.html [ Skip ]
-webkit.org/b/167579 fast/forms/validation-message-on-checkbox.html [ Skip ]
-webkit.org/b/167579 fast/forms/validation-message-on-listbox.html [ Skip ]
-webkit.org/b/167579 fast/forms/validation-message-on-menulist.html [ Skip ]
-webkit.org/b/167579 fast/forms/validation-message-on-radio.html [ Skip ]
-webkit.org/b/167579 fast/forms/validation-message-clone.html [ Skip ]
+# These tests test the Shadow DOM based HTML form validation UI but GTK WK2 is using native dialogs instead.
+fast/forms/validation-message-on-listbox.html [ Skip ]
+fast/forms/validation-message-on-menulist.html [ Skip ]
+fast/forms/validation-message-on-radio.html [ Skip ]
+fast/forms/validation-message-on-checkbox.html [ Skip ]
+fast/forms/validation-message-on-range.html [ Skip ]
+fast/forms/validation-message-clone.html [ Skip ]
+fast/forms/validation-message-in-relative-body.html [ Skip ]
+fast/forms/validation-message-appearance.html [ Skip ]
+fast/forms/validation-message-on-textarea.html [ Skip ]
 
 webkit.org/b/137096 svg/W3C-SVG-1.1/text-altglyph-01-b.svg [ Failure ]
 webkit.org/b/137096 svg/custom/altglyph.svg [ Failure ]
@@ -927,8 +920,6 @@ webkit.org/b/152642 http/tests/misc/detached-frame-console.html [ Failure ]
 
 webkit.org/b/188406 [ Debug ] imported/w3c/web-platform-tests/html/semantics/selectors/pseudo-classes/dir.html [ Crash ]
 
-webkit.org/b/191882 fast/forms/validation-message-in-relative-body.html [ Failure Pass ]
-
 webkit.org/b/196799 imported/blink/fast/css/first-letter-crash-document-disposal.html [ Crash ]
 
 webkit.org/b/120839 animations/cross-fade-background-image.html [ ImageOnlyFailure Crash ]
@@ -1068,8 +1059,6 @@ webkit.org/b/197713 imported/w3c/web-platform-tests/service-workers/service-work
 webkit.org/b/197256 http/tests/security/sandboxed-iframe-ALLOWED-modals.html [ Crash ]
 
 webkit.org/b/170484 swipe/main-frame-pinning-requirement.html [ Timeout ]
-
-webkit.org/b/202232 fast/forms/validation-message-appearance.html [ Failure ]
 
 webkit.org/b/208809 imported/w3c/web-platform-tests/css/WOFF2/blocks-extraneous-data-001.xht [ ImageOnlyFailure ]
 webkit.org/b/208809 imported/w3c/web-platform-tests/css/WOFF2/blocks-extraneous-data-002.xht [ ImageOnlyFailure ]
@@ -1743,8 +1732,6 @@ webkit.org/b/191688 compositing/layer-creation/overlap-transforms.html [ Failure
 webkit.org/b/191688 compositing/overflow/clip-descendents.html [ Failure ]
 webkit.org/b/191688 compositing/repaint/absolute-painted-into-composited-ancestor.html [ Failure ]
 
-webkit.org/b/191882 fast/forms/validation-message-on-range.html [ Failure ]
-webkit.org/b/191882 fast/forms/validation-message-on-textarea.html [ Failure ]
 webkit.org/b/191882 fast/forms/auto-fill-button/input-credit-card-auto-fill-button.html [ Failure ]
 
 webkit.org/b/191885 fast/inline/simple-inline-inflow-positioned.html [ Failure ]

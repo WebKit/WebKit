@@ -52,6 +52,10 @@ public:
     void simulateAccessibilitySettingsChangeNotification(JSValueRef) override;
     void removeViewFromWindow(JSValueRef) override;
     void addViewToWindow(JSValueRef) override;
+
+private:
+    void overridePreference(JSStringRef, JSStringRef) override;
+    JSObjectRef contentsOfUserInterfaceItem(JSStringRef) const override;
 };
 
 } // namespace WTR

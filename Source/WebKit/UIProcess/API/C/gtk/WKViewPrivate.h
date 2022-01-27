@@ -40,6 +40,8 @@ WK_EXPORT bool WKViewBeginBackSwipeForTesting(WKViewRef viewRef);
 
 WK_EXPORT bool WKViewCompleteBackSwipeForTesting(WKViewRef viewRef);
 
+WK_EXPORT GVariant* WKViewContentsOfUserInterfaceItem(WKViewRef viewRef, const char* userInterfaceItem);
+
 #ifdef __cplusplus
 }
 #endif

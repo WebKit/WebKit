@@ -1,3 +1,19 @@
+2022-01-26  ChangSeok Oh  <changseok@webkit.org>
+
+        [GTK] WTR: Native HTML form validation popover is not supported
+        https://bugs.webkit.org/show_bug.cgi?id=167579
+
+        Reviewed by Carlos Garcia Campos.
+
+        This change enables form-validation-related tests. To this end, two APIs called
+        overridePreference and contentsOfUserInterfaceItem are added to UIScriptController.
+
+        We configure the minimum font size of the validation bubbles via UIScriptController.overridePreference
+        and retrieve a message and its font size through UIScriptController.contentsOfUserInterfaceItem.
+
+        * platform/gtk/TestExpectations: Enable form validation related tests we can perform with
+          native bubble widgets but skip ones related to HTML-based form validation as Cocoa-based ports do.
+
 2022-01-26  Ryan Haddad  <ryanhaddad@apple.com>
 
         REGRESSION (01/14/22?): [macOS Release WK2] imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/createImageBitmap-drawImage.html and createImageBitmap-flipY.html are flaky failures

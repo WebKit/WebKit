@@ -1,3 +1,27 @@
+2022-01-26  ChangSeok Oh  <changseok@webkit.org>
+
+        [GTK] WTR: Native HTML form validation popover is not supported
+        https://bugs.webkit.org/show_bug.cgi?id=167579
+
+        Reviewed by Carlos Garcia Campos.
+
+        This change enables form-validation-related tests. To this end, two APIs called
+        overridePreference and contentsOfUserInterfaceItem are added to UIScriptController.
+
+        WebKitWebViewBase implements contentsOfUserInterfaceItem for UIScriptController
+        necessary for webkit tests. It returns a font size and an actual message of a validation
+        bubble in the dictionary format. For overridePreference, we directly call WKPreference API
+        in WKView.cpp
+
+        No new tests since this change is the enabler of existing tests.
+
+        * UIProcess/API/C/gtk/WKView.cpp:
+        (WKViewContentsOfUserInterfaceItem):
+        * UIProcess/API/C/gtk/WKViewPrivate.h:
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseContentsOfUserInterfaceItem):
+        * UIProcess/API/gtk/WebKitWebViewBasePrivate.h:
+
 2022-01-26  Per Arne Vollan  <pvollan@apple.com>
 
         [WP] Avoid calling IOSurfaceAlignProperty
