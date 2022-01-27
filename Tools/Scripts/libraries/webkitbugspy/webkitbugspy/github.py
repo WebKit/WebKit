@@ -1,4 +1,4 @@
-# Copyright (C) 2021 Apple Inc. All rights reserved.
+# Copyright (C) 2021-2022 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -38,6 +38,22 @@ class Tracker(GenericTracker):
     ROOT_RE = re.compile(r'\Ahttps?://github.(?P<domain>\S+)/(?P<owner>\S+)/(?P<repository>\S+)\Z')
     ISSUE_LINK_RE = re.compile(r'#(?P<id>\d+)')
     USERNAME_RE = re.compile(r'(^|\s|\'|")@(?P<username>[^\s"\'<>]+)')
+
+    class Encoder(GenericTracker.Encoder):
+        @webkitcorepy.decorators.hybridmethod
+        def default(context, obj):
+            if isinstance(obj, Tracker):
+                result = dict(
+                    type='github',
+                    url=obj.url,
+                )
+                if obj._res[2:]:
+                    result['res'] = [compiled.pattern for compiled in obj._res[2:]]
+                return result
+            if isinstance(context, type):
+                raise TypeError('Cannot invoke parent class when classmethod')
+            return super(Tracker.Encoder, context).default(obj)
+
 
     def __init__(self, url, users=None, res=None):
         super(Tracker, self).__init__(users=users)

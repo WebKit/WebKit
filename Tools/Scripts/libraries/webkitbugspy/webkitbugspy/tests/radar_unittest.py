@@ -20,13 +20,25 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import json
 import unittest
 
-from webkitbugspy import Issue, User, radar, mocks
+from webkitbugspy import Issue, Tracker, User, radar, mocks
 from webkitcorepy import mocks as wkmocks
 
 
 class TestRadar(unittest.TestCase):
+    def test_encoding(self):
+        self.assertEqual(
+            radar.Tracker.Encoder().default(radar.Tracker()),
+            dict(type='radar'),
+        )
+
+    def test_decoding(self):
+        decoded = Tracker.from_json(json.dumps(radar.Tracker(), cls=Tracker.Encoder))
+        self.assertIsInstance(decoded, radar.Tracker)
+        self.assertEqual(decoded.from_string('rdar://1234').id, 1234)
+
     def test_no_radar(self):
         with mocks.NoRadar():
             tracker = radar.Tracker()

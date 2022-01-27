@@ -37,6 +37,16 @@ class Tracker(GenericTracker):
         re.compile(r'<?radar:\/\/(?P<id>\d+)>?'),
     ]
 
+    class Encoder(GenericTracker.Encoder):
+        @decorators.hybridmethod
+        def default(context, obj):
+            if isinstance(obj, Tracker):
+                return dict(type='radar')
+            if isinstance(context, type):
+                raise TypeError('Cannot invoke parent class when classmethod')
+            return super(Tracker.Encoder, context).default(obj)
+
+
     @staticmethod
     def radarclient():
         try:

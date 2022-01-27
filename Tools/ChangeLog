@@ -1,3 +1,32 @@
+2022-01-26  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkitbugspy] JSON encode trackers
+        https://bugs.webkit.org/show_bug.cgi?id=235426
+        <rdar://problem/87856802>
+
+        Reviewed by Dewei Zhu.
+
+        * Scripts/libraries/webkitbugspy/setup.py: Bump version.
+        * Scripts/libraries/webkitbugspy/webkitbugspy/__init__.py: Ditto.
+        * Scripts/libraries/webkitbugspy/webkitbugspy/bugzilla.py:
+        (Tracker.Encoder.default): Encode bugzilla Tracker object.
+        * Scripts/libraries/webkitbugspy/webkitbugspy/github.py:
+        (Tracker.Encoder.default): Encode github Tracker object.
+        * Scripts/libraries/webkitbugspy/webkitbugspy/radar.py:
+        (Tracker.Encoder.default): Encode radar Tracker object.
+        * Scripts/libraries/webkitbugspy/webkitbugspy/tests/bugzilla_unittest.py:
+        (TestBugzilla.test_encoding):
+        (TestBugzilla.test_decoding):
+        * Scripts/libraries/webkitbugspy/webkitbugspy/tests/github_unittest.py:
+        (TestGitHub.test_encoding):
+        (TestGitHub.test_decoding):
+        * Scripts/libraries/webkitbugspy/webkitbugspy/tests/radar_unittest.py:
+        (TestRadar.test_encoding):
+        (TestRadar.test_decoding):
+        * Scripts/libraries/webkitbugspy/webkitbugspy/tracker.py:
+        (Tracker.Encoder.default): Generic encoding for all Tracker objects.
+        (Tracker.from_json): Decode dictionary into Tracker objects.
+
 2022-01-27  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         Update WebGL conformance test suite to 2022-01-12

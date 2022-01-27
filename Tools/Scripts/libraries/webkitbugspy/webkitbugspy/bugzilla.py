@@ -36,6 +36,22 @@ from datetime import datetime
 class Tracker(GenericTracker):
     ROOT_RE = re.compile(r'\Ahttps?://(?P<domain>\S+)\Z')
 
+    class Encoder(GenericTracker.Encoder):
+        @webkitcorepy.decorators.hybridmethod
+        def default(context, obj):
+            if isinstance(obj, Tracker):
+                result = dict(
+                    type='bugzilla',
+                    url=obj.url,
+                )
+                if obj._res[2:]:
+                    result['res'] = [compiled.pattern for compiled in obj._res[2:]]
+                return result
+            if isinstance(context, type):
+                raise TypeError('Cannot invoke parent class when classmethod')
+            return super(Tracker.Encoder, context).default(obj)
+
+
     def __init__(self, url, users=None, res=None):
         super(Tracker, self).__init__(users=users)
 

@@ -20,6 +20,7 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import json
 import re
 
 from .user import User
@@ -31,6 +32,36 @@ class Tracker(object):
     REFERENCE_RE = re.compile(r'((https|http|rdar|radar)://[^\s><,\'\"}{\]\[)(]*[^\s><,\'\"}{\]\[)(\.\?])')
 
     _trackers = []
+
+    class Encoder(json.JSONEncoder):
+        def default(self, obj):
+            if isinstance(obj, dict):
+                return {key: self.default(value) for key, value in obj.items()}
+            if isinstance(obj, list):
+                return [self.default(value) for value in obj]
+            if not isinstance(obj, Tracker):
+                return super(Tracker.Encoder, self).default(obj)
+            return obj.Encoder.default(obj)
+
+    @classmethod
+    def from_json(cls, data):
+        from . import bugzilla, github, radar
+
+        data = data if isinstance(data, dict) else json.loads(data)
+        if isinstance(data, (list, tuple)):
+            return [cls.from_json(datum) for datum in data]
+        if data.get('type') in ('bugzilla', 'github'):
+            return dict(
+                bugzilla=bugzilla.Tracker,
+                github=github.Tracker
+            )[data['type']](
+                url=data.get('url'),
+                res=[re.compile(r) for r in data.get('res', [])],
+            )
+        if data.get('type') == 'radar':
+            return radar.Tracker()
+        raise TypeError("'{}' is not a recognized tracker type".format(data.get('type')))
+
 
     @classmethod
     def register(cls, tracker):

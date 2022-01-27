@@ -1,4 +1,4 @@
-# Copyright (C) 2021 Apple Inc. All rights reserved.
+# Copyright (C) 2021-2022 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -20,14 +20,37 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import re
+import json
 import unittest
 
-from webkitbugspy import Issue, User, github, mocks
+from webkitbugspy import Issue, Tracker, User, github, mocks
 from webkitcorepy import mocks as wkmocks
 
 
 class TestGitHub(unittest.TestCase):
     URL = 'https://github.example.com/WebKit/WebKit'
+
+    def test_encoding(self):
+        self.assertEqual(
+            github.Tracker.Encoder().default(github.Tracker(
+                self.URL,
+                res=[re.compile(r'\Aexample.com/b/(?P<id>\d+)\Z')],
+            )), dict(
+                type='github',
+                url='https://github.example.com/WebKit/WebKit',
+                res=['\\Aexample.com/b/(?P<id>\\d+)\\Z']
+            ),
+        )
+
+    def test_decoding(self):
+        decoded = Tracker.from_json(json.dumps(github.Tracker(
+            self.URL,
+            res=[re.compile(r'\Aexample.com/b/(?P<id>\d+)\Z')],
+        ), cls=Tracker.Encoder))
+        self.assertIsInstance(decoded, github.Tracker)
+        self.assertEqual(decoded.url, 'https://github.example.com/WebKit/WebKit')
+        self.assertEqual(decoded.from_string('example.com/b/1234').id, 1234)
 
     def test_users(self):
         with mocks.GitHub(self.URL.split('://')[1], users=mocks.USERS):
