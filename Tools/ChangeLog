@@ -1,3 +1,14 @@
+2022-01-27  Jonathan Bedard  <jbedard@apple.com>
+
+        [EWS] Ignore hooks from closed PRs
+        https://bugs.webkit.org/show_bug.cgi?id=235666
+        <rdar://problem/88091611>
+
+        Unreviewed follow-up fix.
+
+        * CISupport/ews-build/events.py:
+        (GitHubEventHandlerNoEdits.handle_pull_request): 'state' is a member of the 'pull_request' dictionary.
+
 2022-01-27  Antti Koivisto  <antti@apple.com>
 
         Default to 32 bit refcount for CanMakeCheckedPtr

@@ -321,7 +321,7 @@ class GitHubEventHandlerNoEdits(GitHubEventHandler):
     def handle_pull_request(self, payload, event):
         pr_number = payload['number']
         action = payload.get('action')
-        state = payload.get('state')
+        state = payload.get('pull_request', {}).get('state')
         if action not in self.ACTIONS_TO_TRIGGER_EWS:
             log.msg('Action {} on PR #{} does not indicate code has been changed'.format(action, pr_number))
             return ([], 'git')
