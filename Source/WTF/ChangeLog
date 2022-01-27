@@ -1,3 +1,16 @@
+2022-01-26  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        Build failure with GCC 12: MediaTime.h:167:71: error: call to non-'constexpr' function 'WTF::MediaTime& WTF::MediaTime::operator=(const WTF::MediaTime&)'
+        https://bugs.webkit.org/show_bug.cgi?id=235610
+
+        Reviewed by Darin Adler.
+
+        The problem is the constexpr constructor calls the non-constexpr copy assignment operator.
+        This is easy to fix, at the expense of readability, by open-coding the desired values here.
+
+        * wtf/MediaTime.h:
+        (WTF::MediaTime::MediaTime):
+
 2022-01-25  Eric Carlson  <eric.carlson@apple.com>
 
         [macOS] Add new screen and window capture backend
