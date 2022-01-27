@@ -35,4 +35,9 @@ bool ModelPlayer::supportsMouseInteraction()
     return false;
 }
 
+bool ModelPlayer::supportsDragging()
+{
+    return false;
+}
+
 }

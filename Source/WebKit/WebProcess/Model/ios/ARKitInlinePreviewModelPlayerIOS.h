@@ -44,6 +44,7 @@ private:
     std::optional<ModelIdentifier> modelIdentifier() override;
 
     // WebCore::ModelPlayer overrides.
+    bool supportsDragging() override;
     void enterFullscreen() override;
     void handleMouseDown(const WebCore::LayoutPoint&, MonotonicTime) override;
     void handleMouseMove(const WebCore::LayoutPoint&, MonotonicTime) override;
