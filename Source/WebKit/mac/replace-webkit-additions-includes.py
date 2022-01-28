@@ -88,9 +88,7 @@ def main(argv=None):
     # We currently only support WebKitAdditions in Framework headers on macOS 13+ and iOS 16+.
     should_do_replacement = is_supported_os()
 
-    # API_WEBKIT_ADDITIONS is intentionally not defined anywhere so that we never try to build this code. It is only
-    # meant to be used by this script to identify where to introduce replacement in API headers from WebKitAdditions.
-    additions_import_pattern = re.compile(r"\#if ENABLE\(API_WEBKIT_ADDITIONS\)\n#import <WebKitAdditions/(.*)>\n#endif")
+    additions_import_pattern = re.compile(r"\#if 0 // API_WEBKIT_ADDITIONS_REPLACEMENT\n#import <WebKitAdditions/(.*)>\n#endif")
     try:
         with open(header_path, "r") as header:
             header_contents = header.read()

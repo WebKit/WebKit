@@ -71,7 +71,7 @@ WK_CLASS_AVAILABLE(macos(10.15), ios(13.0))
 */
 @property (nonatomic) BOOL allowsContentJavaScript WK_API_AVAILABLE(macos(11.0), ios(14.0));
 
-#if ENABLE(API_WEBKIT_ADDITIONS)
+#if 0 // API_WEBKIT_ADDITIONS_REPLACEMENT
 #import <WebKitAdditions/WKWebpagePreferencesAdditions.h>
 #endif
 

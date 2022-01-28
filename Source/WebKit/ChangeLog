@@ -1,3 +1,17 @@
+2022-01-28  Chris Dumez  <cdumez@apple.com>
+
+        Symbols not always properly hidden when using WebKitAdditions to introduce new API
+        https://bugs.webkit.org/show_bug.cgi?id=235674
+        <rdar://87999257>
+
+        Reviewed by Wenson Hsieh.
+
+        Follow-up to r288658 to address post commit feedback from Alexey Proskuryakov.
+
+        * UIProcess/API/Cocoa/WKWebpagePreferences.h:
+        * mac/replace-webkit-additions-includes.py:
+        (main):
+
 2022-01-28  Tyler Wilcock  <tyler_w@apple.com>
 
         AX: Isolated tree object frames no longer encode content offsets, so hit testing should be updated accordingly
