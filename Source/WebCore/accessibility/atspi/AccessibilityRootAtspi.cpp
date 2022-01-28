@@ -194,6 +194,8 @@ GVariant* AccessibilityRootAtspi::reference() const
 
 GVariant* AccessibilityRootAtspi::parentReference() const
 {
+    if (m_parentUniqueName.isNull())
+        return AccessibilityAtspi::singleton().nullReference();
     return g_variant_new("(so)", m_parentUniqueName.utf8().data(), m_parentPath.utf8().data());
 }
 
