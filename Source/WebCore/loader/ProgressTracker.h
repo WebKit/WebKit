@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "Page.h"
 #include "ResourceLoaderIdentifier.h"
 #include "Timer.h"
 #include <wtf/Forward.h>

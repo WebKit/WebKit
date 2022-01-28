@@ -30,6 +30,7 @@
 
 #include "WebXRReferenceSpace.h"
 #include "WebXRRigidTransform.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
 
