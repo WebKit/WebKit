@@ -1,3 +1,17 @@
+2022-01-28  Patrick Angle  <pangle@apple.com>
+
+        Web Inspector: Add another Protocol Version (iOS 15.4)
+        https://bugs.webkit.org/show_bug.cgi?id=235741
+
+        Reviewed by Devin Rousso.
+
+        * UserInterface/Models/Animation.js:
+        (WI.Animation.prototype.requestEffectTarget):
+        - Update compatibility comment to reflect that the change is not present in iOS 15.4 or earlier.
+
+        * UserInterface/Protocol/Legacy/15.4/InspectorBackendCommands.js: Added.
+        * Versions/Inspector-iOS-15.4.json: Added.
+
 2022-01-27  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Console: move Preserve Log checkbox navigation item to a gear-with-contextmenu to save space (and match the Network Tab)

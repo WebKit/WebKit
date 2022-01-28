@@ -209,7 +209,7 @@ WI.Animation = class Animation extends WI.Object
 
         let target = WI.assumingMainTarget();
         target.AnimationAgent.requestEffectTarget(this._animationId, (error, effectTarget) => {
-            // COMPATIBILITY (iOS 15): nodeId was renamed to effectTarget and changed from DOM.NodeId to DOM.Styleable.
+            // COMPATIBILITY (iOS 15.4): nodeId was renamed to effectTarget and changed from DOM.NodeId to DOM.Styleable.
             if (!isNaN(effectTarget))
                 effectTarget = {nodeId: effectTarget};
 
