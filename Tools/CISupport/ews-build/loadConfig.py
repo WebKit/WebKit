@@ -1,4 +1,4 @@
-# Copyright (C) 2018-2021 Apple Inc. All rights reserved.
+# Copyright (C) 2018-2022 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -27,7 +27,7 @@ import re
 
 from buildbot.scheduler import AnyBranchScheduler, Periodic, Dependent, Triggerable, Nightly
 from buildbot.schedulers.trysched import Try_Userpass
-from buildbot.schedulers.forcesched import ForceScheduler, IntParameter, StringParameter, FixedParameter, CodebaseParameter
+from buildbot.schedulers.forcesched import ForceScheduler, StringParameter, FixedParameter, CodebaseParameter
 from buildbot.worker import Worker
 from buildbot.util import identifiers as buildbot_identifiers
 
@@ -98,7 +98,7 @@ def loadBuilderConfig(c, is_test_mode_enabled=False, master_prefix_path='./'):
                    project=FixedParameter(name='project', default=''),
                    branch=FixedParameter(name='branch', default=''))],
         # Add custom properties needed
-        properties=[IntParameter(name='patch_id', label='Patch id (not bug number)', required=True, maxsize=6),
+        properties=[StringParameter(name='patch_id', label='Patch id (not bug number)', regex='^[4-9]\d{5}$', required=True, maxsize=6),
                     StringParameter(name='ews_revision', label='WebKit git hash to checkout before trying patch (optional)', required=False, maxsize=40)],
     )
     c['schedulers'].append(forceScheduler)
