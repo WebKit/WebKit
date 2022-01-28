@@ -2341,7 +2341,6 @@ class YarrGenerator final : public YarrJITInfo {
                         auto [map, charactersFastPath] = op.m_bmInfo->createCandidateBitmap(beginIndex, endIndex);
                         unsigned mapCount = map.count();
                         // If candiate characters are <= 2, checking each is better than using vector.
-                        MacroAssembler::JumpList outOfLengthFailure;
                         MacroAssembler::JumpList matched;
                         dataLogLnIf(YarrJITInternal::verbose, "BM Bitmap is ", map);
                         // Patterns like /[]/ have zero candidates. Since it is rare, we do not do nothing for now.
@@ -2356,8 +2355,7 @@ class YarrGenerator final : public YarrJITInfo {
                             matched.append(m_jit.branch32(MacroAssembler::Equal, m_regs.regT0, MacroAssembler::TrustedImm32(charactersFastPath.at(0))));
                             if (charactersFastPath.size() > 1)
                                 matched.append(m_jit.branch32(MacroAssembler::Equal, m_regs.regT0, MacroAssembler::TrustedImm32(charactersFastPath.at(1))));
-                            outOfLengthFailure.append(jumpIfNoAvailableInput(endIndex - beginIndex));
-                            m_jit.jump().linkTo(loopHead, &m_jit);
+                            jumpIfAvailableInput(endIndex - beginIndex).linkTo(loopHead, &m_jit);
                         } else {
                             const auto* pointer = getBoyerMooreBitmap(map);
                             dataLogLnIf(Options::verboseRegExpCompilation(), "Found bitmap lookahead count:(", mapCount, "),range:[", beginIndex, ", ", endIndex, ")");
@@ -2393,14 +2391,13 @@ class YarrGenerator final : public YarrJITInfo {
                             m_jit.urshift32(m_regs.regT0, m_regs.regT2); // We can ignore upper bits and only lower 5bits are effective.
                             matched.append(m_jit.branchTest32(MacroAssembler::NonZero, m_regs.regT2, MacroAssembler::TrustedImm32(1)));
 #endif
-                            outOfLengthFailure.append(jumpIfNoAvailableInput(endIndex - beginIndex));
-                            m_jit.jump().linkTo(loopHead, &m_jit);
+                            jumpIfAvailableInput(endIndex - beginIndex).linkTo(loopHead, &m_jit);
                         }
+                        // Fallthrough if out-of-length failure happens.
 
                         // If the pattern size is not fixed, then store the start index for use if we match.
                         // This is used for adjusting match-start when we failed to find the start with BoyerMoore search.
                         if (!m_pattern.m_body->m_hasFixedSize) {
-                            outOfLengthFailure.link(&m_jit);
                             if (alternative->m_minimumSize) {
                                 m_jit.sub32(m_regs.index, MacroAssembler::Imm32(alternative->m_minimumSize), m_regs.regT0);
                                 setMatchStart(m_regs.regT0);
@@ -2408,7 +2405,7 @@ class YarrGenerator final : public YarrJITInfo {
                                 setMatchStart(m_regs.index);
                             op.m_jumps.append(m_jit.jump());
                         } else
-                            op.m_jumps.append(outOfLengthFailure);
+                            op.m_jumps.append(m_jit.jump());
 
                         matched.link(&m_jit);
                         // If the pattern size is not fixed, then store the start index for use if we match.

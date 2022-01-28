@@ -1,3 +1,19 @@
+2022-01-28  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] YarrJIT optimization for character BM search
+        https://bugs.webkit.org/show_bug.cgi?id=235738
+
+        Reviewed by Saam Barati.
+
+        Add micro-optimization of BM search path. Since it is super hot path,
+        this small improvement offsers 1% in jquery-todomvc-regexp microbenchmark.
+
+                                              ToT                     Patched
+
+            jquery-todomvc-regexp      484.1399+-1.0527     ^    479.0932+-1.0999        ^ definitely 1.0105x faster
+
+        * yarr/YarrJIT.cpp:
+
 2022-01-27  Michael Saboff  <msaboff@apple.com>
 
         com.apple.WebKit.WebAuthn.xpc fails to build with system content path
