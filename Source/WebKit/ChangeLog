@@ -1,3 +1,19 @@
+2022-01-28  Michael Saboff  <msaboff@apple.com>
+
+        Catalyst builds fail for WebCore, WebKi and WebKitLegacy for builds with system content path
+        https://bugs.webkit.org/show_bug.cgi?id=235821
+
+        Reviewed by Saam Barati.
+
+        Eliminated the system content prefix from ALTERNATE_ROOT_PATH since it is the old location.
+        Changed the create symlink script to create the directory path leading up to the symlink because
+        it isn't created for Catalyst builds.
+
+        * Configurations/SDKVariant.xcconfig:
+        * Configurations/WebKit.xcconfig:
+        * Scripts/create-symlink-to-altroot.sh:
+        * WebKit.xcodeproj/project.pbxproj:
+
 2022-01-28  Chris Dumez  <cdumez@apple.com>
 
         Symbols not always properly hidden when using WebKitAdditions to introduce new API
