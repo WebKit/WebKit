@@ -47,6 +47,7 @@ public:
     virtual PlatformLayer* layer() = 0;
     virtual void enterFullscreen() = 0;
     virtual bool supportsMouseInteraction();
+    virtual bool supportsDragging();
     virtual void handleMouseDown(const LayoutPoint&, MonotonicTime) = 0;
     virtual void handleMouseMove(const LayoutPoint&, MonotonicTime) = 0;
     virtual void handleMouseUp(const LayoutPoint&, MonotonicTime) = 0;

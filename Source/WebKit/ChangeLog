@@ -1,5 +1,18 @@
 2022-01-27  Antoine Quint  <graouts@webkit.org>
 
+        <model> should not be draggable on macOS
+        https://bugs.webkit.org/show_bug.cgi?id=235697
+
+        Reviewed by Dean Jackson.
+
+        Override the ModelPlayer method to disable <model> dragging on macOS.
+
+        * WebProcess/Model/mac/ARKitInlinePreviewModelPlayerMac.h:
+        * WebProcess/Model/mac/ARKitInlinePreviewModelPlayerMac.mm:
+        (WebKit::ARKitInlinePreviewModelPlayerMac::supportsDragging):
+
+2022-01-27  Antoine Quint  <graouts@webkit.org>
+
         Remove unnecessary build-time branch in ARKitInlinePreviewModelPlayerMac::supportsMouseInteraction()
         https://bugs.webkit.org/show_bug.cgi?id=235729
 

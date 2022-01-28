@@ -755,7 +755,7 @@ static bool imageElementIsDraggable(const HTMLImageElement& image, const Frame& 
 
 static bool modelElementIsDraggable(const HTMLModelElement& modelElement)
 {
-    return !!modelElement.model();
+    return modelElement.supportsDragging() && !!modelElement.model();
 }
 
 #endif

@@ -53,6 +53,7 @@ private:
     void load(WebCore::Model&, WebCore::LayoutSize) override;
     PlatformLayer* layer() override;
     bool supportsMouseInteraction() override;
+    bool supportsDragging() override;
     void handleMouseDown(const WebCore::LayoutPoint&, MonotonicTime) override;
     void handleMouseMove(const WebCore::LayoutPoint&, MonotonicTime) override;
     void handleMouseUp(const WebCore::LayoutPoint&, MonotonicTime) override;

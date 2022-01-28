@@ -182,6 +182,11 @@ bool ARKitInlinePreviewModelPlayerMac::supportsMouseInteraction()
     return true;
 }
 
+bool ARKitInlinePreviewModelPlayerMac::supportsDragging()
+{
+    return false;
+}
+
 void ARKitInlinePreviewModelPlayerMac::handleMouseDown(const LayoutPoint& flippedLocationInElement, MonotonicTime timestamp)
 {
     if (auto* page = this->page())
