@@ -4740,7 +4740,7 @@ class TestValidateChange(BuildStepMixinAdditions, unittest.TestCase):
         self.setProperty('github.number', '1234')
         self.setProperty('repository', 'https://github.com/WebKit/WebKit')
         self.setProperty('github.head.sha', '1ad60d45a112301f7b9f93dac06134524dae8480')
-        self.expectOutcome(result=FAILURE, state_string='Pull request 1234 (sha 1ad60d45) is obsolete')
+        self.expectOutcome(result=FAILURE, state_string='Hash 1ad60d45 on PR 1234 is outdated')
         rc = self.runStep()
         self.assertEqual(self.getProperty('fast_commit_queue'), None, 'fast_commit_queue is unexpectedly set')
         return rc

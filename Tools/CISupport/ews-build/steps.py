@@ -169,30 +169,19 @@ class GitHubMixin(object):
             return None
         return pr_json
 
-    def _is_pr_closed(self, pr_number, repository_url=None):
-        if not pr_number:
-            self._addToLog('stdio', 'Skipping pull request status validation since pull request is None.\n')
-            return -1
-
-        pr_json = self.get_pr_json(pr_number, repository_url)
+    def _is_pr_closed(self, pr_json):
         if not pr_json or not pr_json.get('state'):
-            self._addToLog('stdio', 'Unable to fetch pull request {}.\n'.format(pr_number))
+            self._addToLog('stdio', 'Cannot determine pull request status.\n')
             return -1
         if pr_json.get('state') in self.pr_closed_states:
             return 1
         return 0
 
-    def _is_pr_obsolete(self, pr_number, repository_url=None):
-        pr_json = self.get_pr_json(pr_number, repository_url)
-        if not pr_json:
-            self._addToLog('stdio', 'Unable to fetch pull request {}.\n'.format(pr_number))
-            return -1
-
-        pr_sha = pr_json.get('head', {}).get('sha', '')
+    def _is_hash_outdated(self, pr_json):
+        pr_sha = (pr_json or {}).get('head', {}).get('sha', '')
         if not pr_sha:
-            self._addToLog('stdio', 'Failed to fetch hash of pull request {}\n'.format(pr_number))
+            self._addToLog('stdio', 'Cannot determine if hash is outdated or not.\n')
             return -1
-
         return 0 if pr_sha == self.getProperty('github.head.sha', '?') else 1
 
 
@@ -1192,9 +1181,9 @@ class ValidateChange(buildstep.BuildStep, BugzillaMixin, GitHubMixin):
             self._addToLog('stdio', 'Bug is open.\n')
         if self.verifyObsolete:
             self._addToLog('stdio', 'Change is not obsolete.\n')
-        if self.verifyReviewDenied:
+        if self.verifyReviewDenied and patch_id:
             self._addToLog('stdio', 'Change has not been denied.\n')
-        if self.verifycqplus:
+        if self.verifycqplus and patch_id:
             self._addToLog('stdio', 'Change is in commit queue.\n')
             self._addToLog('stdio', 'Change has been reviewed.\n')
         self.finished(SUCCESS)
@@ -1239,14 +1228,18 @@ class ValidateChange(buildstep.BuildStep, BugzillaMixin, GitHubMixin):
 
         repository_url = self.getProperty('repository', '')
 
-        pr_closed = self._is_pr_closed(pr_number, repository_url=repository_url) if self.verifyBugClosed else 0
+        pr_json = self.get_pr_json(pr_number, repository_url)
+        if not pr_json:
+            self._addToLog('stdio', 'Unable to fetch pull request {}.\n'.format(pr_number))
+
+        pr_closed = self._is_pr_closed(pr_json) if self.verifyBugClosed else 0
         if pr_closed == 1:
             self.skip_build('Pull request {} is already closed'.format(pr_number))
             return False
 
-        obsolete = self._is_pr_obsolete(pr_number, repository_url=repository_url) if self.verifyObsolete else 0
+        obsolete = self._is_hash_outdated(pr_json) if self.verifyObsolete else 0
         if obsolete == 1:
-            self.skip_build('Pull request {} (sha {}) is obsolete'.format(pr_number, self.getProperty('github.head.sha', '?')[:HASH_LENGTH_TO_DISPLAY]))
+            self.skip_build('Hash {} on PR {} is outdated'.format(self.getProperty('github.head.sha', '?')[:HASH_LENGTH_TO_DISPLAY], pr_number))
             return False
 
         if obsolete == -1 or pr_closed == -1:
