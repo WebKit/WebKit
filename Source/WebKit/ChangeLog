@@ -1,3 +1,15 @@
+2022-01-27  Antoine Quint  <graouts@webkit.org>
+
+        Remove unnecessary build-time branch in ARKitInlinePreviewModelPlayerMac::supportsMouseInteraction()
+        https://bugs.webkit.org/show_bug.cgi?id=235729
+
+        Reviewed by Dean Jackson.
+
+        The whole file is wrapped in a #if ENABLE(ARKIT_INLINE_PREVIEW_MAC) statement already.
+
+        * WebProcess/Model/mac/ARKitInlinePreviewModelPlayerMac.mm:
+        (WebKit::ARKitInlinePreviewModelPlayerMac::supportsMouseInteraction):
+
 2022-01-27  Megan Gardner  <megan_gardner@apple.com>
 
         DocumentContext gives empty rects for blank lines.

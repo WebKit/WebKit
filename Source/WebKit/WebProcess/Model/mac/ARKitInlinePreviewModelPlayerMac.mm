@@ -179,10 +179,7 @@ PlatformLayer* ARKitInlinePreviewModelPlayerMac::layer()
 
 bool ARKitInlinePreviewModelPlayerMac::supportsMouseInteraction()
 {
-#if ENABLE(ARKIT_INLINE_PREVIEW_MAC)
     return true;
-#endif
-    return false;
 }
 
 void ARKitInlinePreviewModelPlayerMac::handleMouseDown(const LayoutPoint& flippedLocationInElement, MonotonicTime timestamp)
