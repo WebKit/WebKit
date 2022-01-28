@@ -1,3 +1,12 @@
+2022-01-28  Pablo Saavedra  <psaavedra@igalia.com>
+
+        [WPE] Build error with ACCESSIBILITY=OFF after r288731
+        https://bugs.webkit.org/show_bug.cgi?id=235764
+
+        Reviewed by Adrian Perez de Castro.
+
+        * Source/cmake/OptionsWPE.cmake:
+
 2022-01-27  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [WPE][a11y] Add option to build with ATSPI
