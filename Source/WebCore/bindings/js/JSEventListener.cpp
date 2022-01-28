@@ -86,10 +86,10 @@ void JSEventListener::replaceJSFunctionForAttributeListener(JSObject* function, 
     ASSERT(wrapper);
 
     m_jsFunction = Weak { function };
-    if (UNLIKELY(!m_isInitialized)) {
+    if (m_isInitialized)
+        ASSERT(m_wrapper.get() == wrapper);
+    else {
         m_wrapper = Weak { wrapper };
-        auto& vm = m_isolatedWorld->vm();
-        vm.writeBarrier(wrapper, function);
         m_isInitialized = true;
     }
 }

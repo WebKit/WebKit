@@ -107,14 +107,14 @@ inline JSC::JSValue windowEventHandlerAttribute(HTMLElement& element, const Atom
 template<typename JSMaybeErrorEventListener>
 inline void setWindowEventHandlerAttribute(DOMWindow& window, const AtomString& eventType, JSC::JSValue listener, JSC::JSObject& jsEventTarget)
 {
-    window.setAttributeEventListener<JSMaybeErrorEventListener>(eventType, listener, jsEventTarget);
+    window.setAttributeEventListener<JSMaybeErrorEventListener>(eventType, listener, *jsEventTarget.globalObject());
 }
 
 template<typename JSMaybeErrorEventListener>
 inline void setWindowEventHandlerAttribute(HTMLElement& element, const AtomString& eventType, JSC::JSValue listener, JSC::JSObject& jsEventTarget)
 {
     if (auto* domWindow = element.document().domWindow())
-        setWindowEventHandlerAttribute<JSMaybeErrorEventListener>(*domWindow, eventType, listener, jsEventTarget);
+        domWindow->setAttributeEventListener<JSMaybeErrorEventListener>(eventType, listener, *jsEventTarget.globalObject());
 }
 
 inline JSC::JSObject* JSEventListener::ensureJSFunction(ScriptExecutionContext& scriptExecutionContext) const
