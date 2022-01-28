@@ -1108,6 +1108,12 @@
 (read-only-and-issue-extensions (extension "com.apple.app-sandbox.read"))
 (read-write-and-issue-extensions (extension "com.apple.app-sandbox.read-write"))
 
+;; Allow certain Mach extensions. See <rdar://87850345>.
+(allow mach-lookup
+    (require-all
+        (extension "com.apple.app-sandbox.mach")
+        (global-name "com.apple.commerce")))
+
 ;; Allow the OpenGL Profiler to attach.
 (with-filter (system-attribute apple-internal)
     (allow mach-register

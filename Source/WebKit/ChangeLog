@@ -1,3 +1,33 @@
+2022-01-28  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r288591. rdar://problem/87850345
+
+    [macOS][WP] Allow mach extension to service
+     https://bugs.webkit.org/show_bug.cgi?id=235599
+     <rdar://87850345>
+    
+     Reviewed by Darin Adler.
+    
+     Allow mach extension to a service in the WebContent process on macOS.
+    
+     * WebProcess/com.apple.WebProcess.sb.in:
+    
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@288591 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-01-25  Per Arne Vollan  <pvollan@apple.com>
+
+             [macOS][WP] Allow mach extension to service
+             https://bugs.webkit.org/show_bug.cgi?id=235599
+             <rdar://87850345>
+
+             Reviewed by Darin Adler.
+
+             Allow mach extension to a service in the WebContent process on macOS.
+
+             * WebProcess/com.apple.WebProcess.sb.in:
+
 2022-01-25  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r287990. rdar://problem/86781432
