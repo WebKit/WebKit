@@ -95,20 +95,12 @@ Vector<RefPtr<AccessibilityObjectAtspi>> AccessibilityObjectAtspi::cellRowHeader
     if (!m_coreObject)
         return { };
 
-    // Only return headers for cells that are not headers.
-    if (role() != Atspi::Role::TableCell)
-        return { };
-
     return wrapperVector(m_coreObject->rowHeaders());
 }
 
 Vector<RefPtr<AccessibilityObjectAtspi>> AccessibilityObjectAtspi::cellColumnHeaders() const
 {
     if (!m_coreObject)
-        return { };
-
-    // Only return headers for cells that are not headers.
-    if (role() != Atspi::Role::TableCell)
         return { };
 
     return wrapperVector(m_coreObject->columnHeaders());

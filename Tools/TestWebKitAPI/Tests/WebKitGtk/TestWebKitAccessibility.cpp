@@ -2822,7 +2822,9 @@ static void testTableBasic(AccessibilityTest* test, gconstpointer)
     cellTable = adoptGRef(atspi_table_cell_get_table(ATSPI_TABLE_CELL(cell1.get()), nullptr));
     g_assert_true(table.get() == cellTable.get());
     rowHeaders = adoptGRef(atspi_table_cell_get_row_header_cells(ATSPI_TABLE_CELL(cell1.get()), nullptr));
-    g_assert_cmpint(rowHeaders->len, ==, 0);
+    g_assert_cmpint(rowHeaders->len, ==, 1);
+    g_assert_true(rowHeaders->pdata[0] == columnHeader0.get());
+    g_ptr_array_foreach(rowHeaders.get(), reinterpret_cast<GFunc>(reinterpret_cast<GCallback>(g_object_unref)), nullptr);
     columnHeaders = adoptGRef(atspi_table_cell_get_column_header_cells(ATSPI_TABLE_CELL(cell1.get()), nullptr));
     g_assert_cmpint(columnHeaders->len, ==, 0);
     g_assert_true(ATSPI_IS_TEXT(cell1.get()));
@@ -2856,7 +2858,9 @@ static void testTableBasic(AccessibilityTest* test, gconstpointer)
     cellTable = adoptGRef(atspi_table_cell_get_table(ATSPI_TABLE_CELL(cell2.get()), nullptr));
     g_assert_true(table.get() == cellTable.get());
     rowHeaders = adoptGRef(atspi_table_cell_get_row_header_cells(ATSPI_TABLE_CELL(cell2.get()), nullptr));
-    g_assert_cmpint(rowHeaders->len, ==, 0);
+    g_assert_cmpint(rowHeaders->len, ==, 1);
+    g_assert_true(rowHeaders->pdata[0] == columnHeader0.get());
+    g_ptr_array_foreach(rowHeaders.get(), reinterpret_cast<GFunc>(reinterpret_cast<GCallback>(g_object_unref)), nullptr);
     columnHeaders = adoptGRef(atspi_table_cell_get_column_header_cells(ATSPI_TABLE_CELL(cell2.get()), nullptr));
     g_assert_cmpint(columnHeaders->len, ==, 0);
     g_assert_true(ATSPI_IS_TEXT(cell2.get()));
@@ -2892,7 +2896,9 @@ static void testTableBasic(AccessibilityTest* test, gconstpointer)
     rowHeaders = adoptGRef(atspi_table_cell_get_row_header_cells(ATSPI_TABLE_CELL(cell3.get()), nullptr));
     g_assert_cmpint(rowHeaders->len, ==, 0);
     columnHeaders = adoptGRef(atspi_table_cell_get_column_header_cells(ATSPI_TABLE_CELL(cell3.get()), nullptr));
-    g_assert_cmpint(columnHeaders->len, ==, 0);
+    g_assert_cmpint(columnHeaders->len, ==, 1);
+    g_assert_true(columnHeaders->pdata[0] == columnHeader0.get());
+    g_ptr_array_foreach(columnHeaders.get(), reinterpret_cast<GFunc>(reinterpret_cast<GCallback>(g_object_unref)), nullptr);
     g_assert_true(ATSPI_IS_TEXT(cell3.get()));
     text.reset(atspi_text_get_text(ATSPI_TEXT(cell3.get()), 0, -1, nullptr));
     g_assert_cmpstr(text.get(), ==, "Row 1 Cell 1");
