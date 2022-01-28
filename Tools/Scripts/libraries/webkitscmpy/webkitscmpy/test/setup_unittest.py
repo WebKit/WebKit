@@ -24,7 +24,7 @@ import logging
 import os
 import sys
 
-from webkitcorepy import Editor, OutputCapture, testing
+from webkitcorepy import Editor, OutputCapture, testing, mocks as wkmocks
 from webkitcorepy.mocks import Terminal as MockTerminal
 from webkitscmpy import local, program, mocks
 
@@ -64,7 +64,9 @@ Created a private fork of 'WebKit' belonging to 'username'!
         )
 
     def test_git(self):
-        with OutputCapture(level=logging.INFO) as captured, mocks.local.Git(self.path) as repo, mocks.local.Svn():
+        with OutputCapture(level=logging.INFO) as captured, mocks.local.Git(self.path) as repo, \
+            mocks.local.Svn(), wkmocks.Environment(EMAIL_ADDRESS=''):
+
             self.assertEqual(0, program.main(
                 args=('setup', '--defaults', '-v'),
                 path=self.path,
@@ -97,7 +99,8 @@ Using the default git editor
     def test_github_checkout(self):
         with OutputCapture(level=logging.INFO) as captured, mocks.remote.GitHub() as remote, \
             MockTerminal.input('n', 'committer@webkit.org', 'n', 'Committer', 'n', '1', 'y', 'y'), \
-            mocks.local.Git(self.path, remote='https://{}.git'.format(remote.remote)) as repo:
+            mocks.local.Git(self.path, remote='https://{}.git'.format(remote.remote)) as repo, \
+            wkmocks.Environment(EMAIL_ADDRESS=''):
 
             self.assertEqual('https://github.example.com/WebKit/WebKit.git', local.Git(self.path).url())
 

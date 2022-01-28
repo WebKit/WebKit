@@ -83,7 +83,7 @@ class Setup(Command):
         global_config = local.Git.config()
         result = 0
 
-        email = global_config.get('user.email')
+        email = os.environ.get('EMAIL_ADDRESS') or global_config.get('user.email')
         log.info('Setting git user email for {}...'.format(repository.root_path))
         if not email or args.defaults is False or (not args.defaults and Terminal.choose(
             "Set '{}' as the git user email".format(email),
