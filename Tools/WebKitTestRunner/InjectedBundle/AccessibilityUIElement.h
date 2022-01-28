@@ -246,7 +246,7 @@ public:
     RefPtr<AccessibilityUIElement> ariaOwnsElementAtIndex(unsigned);
     RefPtr<AccessibilityUIElement> ariaFlowToElementAtIndex(unsigned);
     RefPtr<AccessibilityUIElement> ariaControlsElementAtIndex(unsigned);
-#if PLATFORM(COCOA) || USE(ATK)
+#if PLATFORM(COCOA) || USE(ATK) || USE(ATSPI)
     RefPtr<AccessibilityUIElement> ariaDetailsElementAtIndex(unsigned);
     RefPtr<AccessibilityUIElement> ariaErrorMessageElementAtIndex(unsigned);
 #else
@@ -254,7 +254,7 @@ public:
     RefPtr<AccessibilityUIElement> ariaErrorMessageElementAtIndex(unsigned) { return nullptr; }
 #endif
 
-#if USE(ATK)
+#if USE(ATK) || USE(ATSPI)
     RefPtr<AccessibilityUIElement> ariaLabelledByElementAtIndex(unsigned);
     RefPtr<AccessibilityUIElement> ariaDescribedByElementAtIndex(unsigned);
     RefPtr<AccessibilityUIElement> ariaOwnsReferencingElementAtIndex(unsigned);

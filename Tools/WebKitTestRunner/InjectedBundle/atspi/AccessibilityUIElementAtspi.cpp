@@ -128,14 +128,69 @@ RefPtr<AccessibilityUIElement> AccessibilityUIElement::ariaOwnsElementAtIndex(un
     return elementForRelationAtIndex(m_element.get(), WebCore::Atspi::Relation::NodeParentOf, index);
 }
 
+RefPtr<AccessibilityUIElement> AccessibilityUIElement::ariaOwnsReferencingElementAtIndex(unsigned index)
+{
+    return elementForRelationAtIndex(m_element.get(), WebCore::Atspi::Relation::NodeChildOf, index);
+}
+
 RefPtr<AccessibilityUIElement> AccessibilityUIElement::ariaFlowToElementAtIndex(unsigned index)
 {
     return elementForRelationAtIndex(m_element.get(), WebCore::Atspi::Relation::FlowsTo, index);
 }
 
+RefPtr<AccessibilityUIElement> AccessibilityUIElement::ariaFlowToReferencingElementAtIndex(unsigned index)
+{
+    return elementForRelationAtIndex(m_element.get(), WebCore::Atspi::Relation::FlowsFrom, index);
+}
+
 RefPtr<AccessibilityUIElement> AccessibilityUIElement::ariaControlsElementAtIndex(unsigned index)
 {
     return elementForRelationAtIndex(m_element.get(), WebCore::Atspi::Relation::ControllerFor, index);
+}
+
+RefPtr<AccessibilityUIElement> AccessibilityUIElement::ariaControlsReferencingElementAtIndex(unsigned index)
+{
+    return elementForRelationAtIndex(m_element.get(), WebCore::Atspi::Relation::ControlledBy, index);
+}
+
+RefPtr<AccessibilityUIElement> AccessibilityUIElement::ariaLabelledByElementAtIndex(unsigned index)
+{
+    return elementForRelationAtIndex(m_element.get(), WebCore::Atspi::Relation::LabelledBy, index);
+}
+
+RefPtr<AccessibilityUIElement> AccessibilityUIElement::ariaLabelledByReferencingElementAtIndex(unsigned index)
+{
+    return elementForRelationAtIndex(m_element.get(), WebCore::Atspi::Relation::LabelFor, index);
+}
+
+RefPtr<AccessibilityUIElement> AccessibilityUIElement::ariaDescribedByElementAtIndex(unsigned index)
+{
+    return elementForRelationAtIndex(m_element.get(), WebCore::Atspi::Relation::DescribedBy, index);
+}
+
+RefPtr<AccessibilityUIElement> AccessibilityUIElement::ariaDescribedByReferencingElementAtIndex(unsigned index)
+{
+    return elementForRelationAtIndex(m_element.get(), WebCore::Atspi::Relation::DescriptionFor, index);
+}
+
+RefPtr<AccessibilityUIElement> AccessibilityUIElement::ariaDetailsElementAtIndex(unsigned index)
+{
+    return elementForRelationAtIndex(m_element.get(), WebCore::Atspi::Relation::Details, index);
+}
+
+RefPtr<AccessibilityUIElement> AccessibilityUIElement::ariaDetailsReferencingElementAtIndex(unsigned index)
+{
+    return elementForRelationAtIndex(m_element.get(), WebCore::Atspi::Relation::DetailsFor, index);
+}
+
+RefPtr<AccessibilityUIElement> AccessibilityUIElement::ariaErrorMessageElementAtIndex(unsigned index)
+{
+    return elementForRelationAtIndex(m_element.get(), WebCore::Atspi::Relation::ErrorMessage, index);
+}
+
+RefPtr<AccessibilityUIElement> AccessibilityUIElement::ariaErrorMessageReferencingElementAtIndex(unsigned index)
+{
+    return elementForRelationAtIndex(m_element.get(), WebCore::Atspi::Relation::ErrorFor, index);
 }
 
 RefPtr<AccessibilityUIElement> AccessibilityUIElement::disclosedRowAtIndex(unsigned index)
