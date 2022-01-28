@@ -30,6 +30,8 @@
 #include <WebCore/FindOptions.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/PageOverlay.h>
+#include <WebCore/SimpleRange.h>
+#include <WebCore/TextIndicator.h>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>
@@ -67,7 +69,20 @@ private:
     bool mouseEvent(WebCore::PageOverlay&, const WebCore::PlatformMouseEvent&) override;
     void drawRect(WebCore::PageOverlay&, WebCore::GraphicsContext&, const WebCore::IntRect& dirtyRect) override;
 
+    Vector<WebCore::FloatRect> rectsForTextMatchesInRect(WebCore::IntRect clipRect);
+
+    WebCore::Document* documentForFoundTextRange(const WebFoundTextRange&) const;
+    std::optional<WebCore::SimpleRange> simpleRangeFromFoundTextRange(WebFoundTextRange);
+
     WeakPtr<WebPage> m_webPage;
+    RefPtr<WebCore::PageOverlay> m_findPageOverlay;
+
+    WebFoundTextRange m_highlightedRange;
+
+    HashMap<WebFoundTextRange, std::optional<WebCore::SimpleRange>> m_cachedFoundRanges;
+    HashMap<WebFoundTextRange, FindDecorationStyle> m_decoratedRanges;
+
+    RefPtr<WebCore::TextIndicator> m_textIndicator;
 };
 
 } // namespace WebKit

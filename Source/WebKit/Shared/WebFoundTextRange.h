@@ -55,9 +55,10 @@ struct WebFoundTextRangeHash {
 
 template<> struct HashTraits<WebKit::WebFoundTextRange> : GenericHashTraits<WebKit::WebFoundTextRange> {
     static WebKit::WebFoundTextRange emptyValue() { return { }; }
+    static WebKit::WebFoundTextRange deletedValue() { return { std::numeric_limits<uint64_t>::max(), 0, { }, 0 }; }
 
-    static void constructDeletedValue(WebKit::WebFoundTextRange& range) { range = { }; }
-    static bool isDeletedValue(const WebKit::WebFoundTextRange& range) { return range == WebKit::WebFoundTextRange { }; }
+    static void constructDeletedValue(WebKit::WebFoundTextRange& range) { range = deletedValue(); }
+    static bool isDeletedValue(const WebKit::WebFoundTextRange& range) { return range == deletedValue(); }
 };
 
 template<> struct DefaultHash<WebKit::WebFoundTextRange> : WebFoundTextRangeHash { };

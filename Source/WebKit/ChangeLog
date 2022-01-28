@@ -1,3 +1,56 @@
+2022-01-28  Aditya Keerthi  <akeerthi@apple.com>
+
+        Add support for decorating and scrolling to ranges in WebFoundTextRangeController
+        https://bugs.webkit.org/show_bug.cgi?id=235692
+        rdar://88117232
+
+        Reviewed by Wenson Hsieh.
+
+        * Shared/WebFoundTextRange.h:
+        (WTF::HashTraits<WebKit::WebFoundTextRange>::deletedValue):
+
+        The empty and deleted values should not be the same.
+
+        (WTF::HashTraits<WebKit::WebFoundTextRange>::constructDeletedValue):
+        (WTF::HashTraits<WebKit::WebFoundTextRange>::isDeletedValue):
+
+        * WebProcess/WebPage/WebFoundTextRangeController.cpp:
+        (WebKit::WebFoundTextRangeController::findTextRangesForStringMatches):
+
+        Cache the found ranges and their corresponding SimpleRange, to avoid
+        unnecessary tree traversal each time we want to decorate or scroll to
+        a found result.
+
+        (WebKit::WebFoundTextRangeController::decorateTextRangeWithStyle):
+
+        Found ranges can currently be decorated with 3 styles: "Normal",
+        "Found", and "Highlighted". The "Found" style is drawn using
+        document markers. The "Highlighted" style is drawn using a
+        TextIndicator.
+
+        (WebKit::WebFoundTextRangeController::scrollTextRangeToVisible):
+
+        Use TemporarySelectionChange to make the range visible.
+
+        (WebKit::WebFoundTextRangeController::clearAllDecoratedFoundText):
+        (WebKit::WebFoundTextRangeController::didBeginTextSearchOperation):
+        (WebKit::WebFoundTextRangeController::didEndTextSearchOperation):
+        (WebKit::WebFoundTextRangeController::willMoveToPage):
+        (WebKit::WebFoundTextRangeController::didMoveToPage):
+        (WebKit::WebFoundTextRangeController::drawRect):
+        (WebKit::WebFoundTextRangeController::rectsForTextMatchesInRect):
+        (WebKit::WebFoundTextRangeController::documentForFoundTextRange const):
+
+        Use the frame identifer of the WebFoundTextRange to retrieve the
+        corresponding Document, so that the range can be appropriately
+        mapped for decoration/scrolling.
+
+        (WebKit::WebFoundTextRangeController::simpleRangeFromFoundTextRange):
+
+        A helper method to cache WebFoundTextRanges and SimpleRanges.
+
+        * WebProcess/WebPage/WebFoundTextRangeController.h:
+
 2022-01-28  Sihui Liu  <sihui_liu@apple.com>
 
         Ensure session is added in network process when it creates connection to web process
