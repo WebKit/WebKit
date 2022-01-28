@@ -29,7 +29,8 @@
 [
     Conditional=WEB_AUDIO,
     Exposed=AudioWorklet,
-    JSCustomMarkFunction
+    GenerateIsReachable=Impl,
+    JSCustomMarkFunction,
 ] interface AudioWorkletProcessor {
     [CallWith=ScriptExecutionContext] constructor();
     readonly attribute MessagePort port;

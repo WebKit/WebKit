@@ -32,9 +32,11 @@
 #include "AudioArray.h"
 #include "ExceptionOr.h"
 #include "JSValueInWrappedObject.h"
+#include "ScriptWrappable.h"
 #include <wtf/Forward.h>
 #include <wtf/Ref.h>
 #include <wtf/ThreadSafeRefCounted.h>
+#include <wtf/WeakPtr.h>
 
 namespace JSC {
 class JSArray;
@@ -44,12 +46,14 @@ class MarkedArgumentBufferBase;
 namespace WebCore {
 
 class AudioBus;
+class AudioWorkletGlobalScope;
 class AudioWorkletProcessorConstructionData;
 class JSCallbackDataStrong;
 class MessagePort;
 class ScriptExecutionContext;
 
-class AudioWorkletProcessor : public ThreadSafeRefCounted<AudioWorkletProcessor> {
+class AudioWorkletProcessor : public ScriptWrappable, public ThreadSafeRefCounted<AudioWorkletProcessor>, public CanMakeWeakPtr<AudioWorkletProcessor> {
+    WTF_MAKE_ISO_ALLOCATED(AudioWorkletProcessor);
 public:
     static ExceptionOr<Ref<AudioWorkletProcessor>> create(ScriptExecutionContext&);
     ~AudioWorkletProcessor();
@@ -59,21 +63,17 @@ public:
 
     bool process(const Vector<RefPtr<AudioBus>>& inputs, Vector<Ref<AudioBus>>& outputs, const HashMap<String, std::unique_ptr<AudioFloatArray>>& paramValuesMap, bool& threwException);
 
-    void setProcessCallback(JSC::JSObject*);
-
-    JSValueInWrappedObject& processCallbackWrapper() { return m_processCallback; }
     JSValueInWrappedObject& jsInputsWrapper() { return m_jsInputs; }
     JSValueInWrappedObject& jsOutputsWrapper() { return m_jsOutputs; }
     JSValueInWrappedObject& jsParamValuesWrapper() { return m_jsParamValues; }
 
 private:
-    explicit AudioWorkletProcessor(ScriptExecutionContext&, const AudioWorkletProcessorConstructionData&);
+    explicit AudioWorkletProcessor(AudioWorkletGlobalScope&, const AudioWorkletProcessorConstructionData&);
     void buildJSArguments(JSC::VM&, JSC::JSGlobalObject&, JSC::MarkedArgumentBufferBase&, const Vector<RefPtr<AudioBus>>& inputs, Vector<Ref<AudioBus>>& outputs, const HashMap<String, std::unique_ptr<AudioFloatArray>>& paramValuesMap);
 
-    ScriptExecutionContext& m_scriptExecutionContext;
+    AudioWorkletGlobalScope& m_globalScope;
     String m_name;
     Ref<MessagePort> m_port;
-    JSValueInWrappedObject m_processCallback;
     JSValueInWrappedObject m_jsInputs;
     JSValueInWrappedObject m_jsOutputs;
     JSValueInWrappedObject m_jsParamValues;

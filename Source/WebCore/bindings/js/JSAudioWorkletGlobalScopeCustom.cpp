@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,22 +24,22 @@
  */
 
 #include "config.h"
-#include "JSAudioWorkletProcessor.h"
+#include "JSAudioWorkletGlobalScope.h"
+
+#include "AudioWorkletGlobalScope.h"
+#include "AudioWorkletProcessor.h"
 
 #if ENABLE(WEB_AUDIO)
 
 namespace WebCore {
 
 template<typename Visitor>
-void JSAudioWorkletProcessor::visitAdditionalChildren(Visitor& visitor)
+void JSAudioWorkletGlobalScope::visitAdditionalChildren(Visitor& visitor)
 {
-    auto& processor = wrapped();
-    processor.jsInputsWrapper().visit(visitor);
-    processor.jsOutputsWrapper().visit(visitor);
-    processor.jsParamValuesWrapper().visit(visitor);
+    wrapped().visitProcessors(visitor);
 }
 
-DEFINE_VISIT_ADDITIONAL_CHILDREN(JSAudioWorkletProcessor);
+DEFINE_VISIT_ADDITIONAL_CHILDREN(JSAudioWorkletGlobalScope);
 
 } // namespace WebCore
 

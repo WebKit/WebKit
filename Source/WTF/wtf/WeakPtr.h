@@ -33,15 +33,15 @@
 
 namespace WTF {
 
-template<typename, typename> class WeakHashSet;
-template<typename, typename> class WeakPtrFactory;
-
 struct EmptyCounter {
     static void increment() { }
     static void decrement() { }
 };
 
 enum class EnableWeakPtrThreadingAssertions : bool { No, Yes };
+template<typename, typename> class WeakPtrFactory;
+
+template<typename, typename, EnableWeakPtrThreadingAssertions> class WeakHashSet;
 
 template<typename Counter = EmptyCounter> class WeakPtrImpl : public ThreadSafeRefCounted<WeakPtrImpl<Counter>> {
     WTF_MAKE_NONCOPYABLE(WeakPtrImpl);
@@ -159,7 +159,7 @@ public:
 
 private:
     template<typename, typename, typename> friend class WeakHashMap;
-    template<typename, typename> friend class WeakHashSet;
+    template<typename, typename, EnableWeakPtrThreadingAssertions> friend class WeakHashSet;
     template<typename, typename> friend class WeakPtr;
     template<typename, typename> friend class WeakPtrFactory;
 
@@ -238,7 +238,7 @@ public:
 #endif
 
 private:
-    template<typename, typename> friend class WeakHashSet;
+    template<typename, typename, EnableWeakPtrThreadingAssertions> friend class WeakHashSet;
     template<typename, typename, typename> friend class WeakHashMap;
     template<typename, typename> friend class WeakPtr;
 

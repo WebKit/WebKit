@@ -40,8 +40,11 @@
 #include "MessagePort.h"
 #include <JavaScriptCore/JSTypedArrays.h>
 #include <wtf/GetPtr.h>
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(AudioWorkletProcessor);
 
 using namespace JSC;
 
@@ -197,17 +200,18 @@ static bool zeroJSArray(VM& vm, JSGlobalObject& globalObject, const Vector<Ref<A
 
 ExceptionOr<Ref<AudioWorkletProcessor>> AudioWorkletProcessor::create(ScriptExecutionContext& context)
 {
-    auto constructionData = downcast<AudioWorkletGlobalScope>(context).takePendingProcessorConstructionData();
+    auto& globalScope = downcast<AudioWorkletGlobalScope>(context);
+    auto constructionData = globalScope.takePendingProcessorConstructionData();
     if (!constructionData)
         return Exception { TypeError, "No pending construction data for this worklet processor"_s };
 
-    return adoptRef(*new AudioWorkletProcessor(context, *constructionData));
+    return adoptRef(*new AudioWorkletProcessor(globalScope, *constructionData));
 }
 
 AudioWorkletProcessor::~AudioWorkletProcessor() = default;
 
-AudioWorkletProcessor::AudioWorkletProcessor(ScriptExecutionContext& context, const AudioWorkletProcessorConstructionData& constructionData)
-    : m_scriptExecutionContext(context)
+AudioWorkletProcessor::AudioWorkletProcessor(AudioWorkletGlobalScope& globalScope, const AudioWorkletProcessorConstructionData& constructionData)
+    : m_globalScope(globalScope)
     , m_name(constructionData.name())
     , m_port(constructionData.port())
 {
@@ -236,8 +240,8 @@ bool AudioWorkletProcessor::process(const Vector<RefPtr<AudioBus>>& inputs, Vect
     // explicitly allow the following allocation(s).
     DisableMallocRestrictionsForCurrentThreadScope disableMallocRestrictions;
 
-    ASSERT(m_processCallback);
-    auto& globalObject = *jsCast<JSDOMGlobalObject*>(m_scriptExecutionContext.globalObject());
+    ASSERT(wrapper());
+    auto& globalObject = *jsCast<JSDOMGlobalObject*>(m_globalScope.globalObject());
     ASSERT(globalObject.scriptExecutionContext());
     ASSERT(globalObject.scriptExecutionContext()->isContextThread());
 
@@ -248,7 +252,7 @@ bool AudioWorkletProcessor::process(const Vector<RefPtr<AudioBus>>& inputs, Vect
     buildJSArguments(vm, globalObject, args, inputs, outputs, paramValuesMap);
 
     NakedPtr<JSC::Exception> returnedException;
-    auto result = JSCallbackData::invokeCallback(vm, asObject(m_processCallback), jsUndefined(), args, JSCallbackData::CallbackType::Object, Identifier::fromString(vm, "process"), returnedException);
+    auto result = JSCallbackData::invokeCallback(vm, wrapper(), jsUndefined(), args, JSCallbackData::CallbackType::Object, Identifier::fromString(vm, "process"), returnedException);
     if (returnedException) {
         reportException(&globalObject, returnedException);
         threwException = true;
@@ -258,11 +262,6 @@ bool AudioWorkletProcessor::process(const Vector<RefPtr<AudioBus>>& inputs, Vect
     copyDataFromJSArrayToBuses(globalObject, *toJSArray(m_jsOutputs), outputs);
 
     return result.toBoolean(&globalObject);
-}
-
-void AudioWorkletProcessor::setProcessCallback(JSObject* processCallback)
-{
-    m_processCallback = { processCallback };
 }
 
 } // namespace WebCore

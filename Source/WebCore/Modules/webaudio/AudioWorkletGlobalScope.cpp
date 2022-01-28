@@ -154,7 +154,10 @@ RefPtr<AudioWorkletProcessor> AudioWorkletGlobalScope::createProcessor(const Str
     if (!jsProcessor)
         return nullptr;
 
-    jsProcessor->wrapped().setProcessCallback(jsProcessor);
+    {
+        Locker locker { m_processorsLock };
+        m_processors.add(jsProcessor->wrapped());
+    }
 
     return &jsProcessor->wrapped();
 }
@@ -197,6 +200,20 @@ void AudioWorkletGlobalScope::handlePostRenderTasks(size_t currentFrame)
         // This takes care of processing the MicroTask queue after rendering.
         m_lockDuringRendering = std::nullopt;
     }
+}
+
+void AudioWorkletGlobalScope::processorIsNoLongerNeeded(AudioWorkletProcessor& processor)
+{
+    Locker locker { m_processorsLock };
+    m_processors.remove(processor);
+}
+
+void AudioWorkletGlobalScope::visitProcessors(JSC::AbstractSlotVisitor& visitor)
+{
+    Locker locker { m_processorsLock };
+    m_processors.forEach([&](auto& processor) {
+        visitor.addOpaqueRoot(&processor);
+    });
 }
 
 } // namespace WebCore
