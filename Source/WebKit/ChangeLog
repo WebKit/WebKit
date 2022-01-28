@@ -1,3 +1,17 @@
+2022-01-27  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [WPE][a11y] Add option to build with ATSPI
+        https://bugs.webkit.org/show_bug.cgi?id=235701
+
+        Reviewed by Adrian Perez de Castro.
+
+        * UIProcess/wpe/WebPageProxyWPE.cpp:
+        (WebKit::WebPageProxy::bindAccessibilityTree):
+        * WebProcess/WebPage/wpe/WebPageWPE.cpp:
+        (WebKit::WebPage::platformInitialize):
+        (WebKit::WebPage::platformDetach):
+        * WebProcess/wpe/WebProcessMainWPE.cpp:
+
 2022-01-27  Antoine Quint  <graouts@webkit.org>
 
         [Model] Allow disabling interaction
