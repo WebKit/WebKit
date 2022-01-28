@@ -65,7 +65,8 @@
     </tr>
     <tr class="pixel-diff __HIDE_FUZZY_CLASS__">
         <td>Fuzzy match:</td>
-        <td>__FUZZY_DATA__</td>
+        <td><span>Click to toggle between ranges and values</span><br/><input type="button" id="fuzzy-match-data" onclick="toggleFuzzyMatchString()"</td>
+        <td id="fuzzy-match-form" colspan=2><input type="button" value="Copy to clipboard as <meta> tag" onclick="copyToClipboardFuzzyMetaTag()" /></td>
     </tr>
     <tr>
         <td></td>
@@ -199,6 +200,30 @@ function cycleImages()
 
     showImage(data[order[currIndex]]);
 }
+
+function copyToClipboardFuzzyMetaTag() {
+    var metaTag = `<meta name="fuzzy" content="${document.getElementById("fuzzy-match-data").value}" />`;
+    navigator.clipboard.writeText(metaTag);
+
+    document.getElementById("fuzzy-match-form").append("Copied! ");
+}
+
+__FUZZY_DATA__;
+bitMaskForWhetherToUseRanges = -1;
+function toggleFuzzyMatchString() {
+    bitMaskForWhetherToUseRanges = (bitMaskForWhetherToUseRanges + 1) % 4;
+    var fuzzyMatchString = "maxDifference=";
+    if (bitMaskForWhetherToUseRanges & 0x2)
+        fuzzyMatchString += "0-";
+    fuzzyMatchString += `${maxDifference}; totalPixels=`;
+    if (bitMaskForWhetherToUseRanges & 0x1)
+        fuzzyMatchString += "0-";
+    fuzzyMatchString += totalPixels;
+
+    document.getElementById("fuzzy-match-data").value = fuzzyMatchString;
+}
+toggleFuzzyMatchString();
+
 </script>
 </body>
 </html>

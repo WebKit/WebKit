@@ -1,3 +1,15 @@
+2022-01-28  Jon Lee  <jonlee@apple.com>
+
+        Add copy-to-clipboard button for fuzzy matching meta tag
+        https://bugs.webkit.org/show_bug.cgi?id=235665
+
+        Reviewed by Darin Adler.
+
+        * fast/harness/image-diff-template.html: Add button which cycles through different versions of
+        the fuzzy match string to allow for both absolute values and a range. Add a button that copies
+        that text and inserts into meta tag string prior to copying to clipboard.
+        * fast/harness/image-diff-template-expected.txt:
+
 2022-01-28  Antoine Quint  <graouts@webkit.org>
 
         [WPT] Remove outdated Web Animations expectations

@@ -1,5 +1,7 @@
+CONSOLE MESSAGE: ReferenceError: Can't find variable: __FUZZY_DATA__
 Pixel difference:	__PIXEL_DIFF__
-Fuzzy match:	__FUZZY_DATA__
+Fuzzy match:	Click to toggle between ranges and values
+	
 Expected Image	Actual Image	Diff Image
 Animate:	Expected	Actual	Diff
 Loading...
