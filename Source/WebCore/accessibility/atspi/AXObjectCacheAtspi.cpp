@@ -35,8 +35,7 @@ namespace WebCore {
 
 void AXObjectCache::attachWrapper(AXCoreObject* axObject)
 {
-    auto* atspiRoot = document().page()->accessibilityRootObject();
-    auto wrapper = AccessibilityObjectAtspi::create(axObject, atspiRoot);
+    auto wrapper = AccessibilityObjectAtspi::create(axObject, document().page()->accessibilityRootObject());
     axObject->setWrapper(wrapper.ptr());
 
     m_deferredParentChangedList.add(axObject);

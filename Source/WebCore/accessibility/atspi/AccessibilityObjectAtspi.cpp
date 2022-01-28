@@ -468,15 +468,6 @@ GDBusInterfaceVTable AccessibilityObjectAtspi::s_accessibleFunctions = {
     nullptr
 };
 
-AccessibilityRootAtspi* AccessibilityObjectAtspi::root()
-{
-    if (!m_root) {
-        if (auto* document = m_coreObject->document())
-            m_root = document->page()->accessibilityRootObject();
-    }
-    return m_root;
-}
-
 bool AccessibilityObjectAtspi::registerObject()
 {
     if (!m_path.isNull())
@@ -546,7 +537,7 @@ void AccessibilityObjectAtspi::setParent(std::optional<AccessibilityObjectAtspi*
         return;
 
     m_parent = atspiParent;
-    if (!m_coreObject || m_coreObject->accessibilityIsIgnored() || !root())
+    if (!m_coreObject || m_coreObject->accessibilityIsIgnored())
         return;
 
     AccessibilityAtspi::singleton().parentChanged(*this);

@@ -159,8 +159,6 @@ public:
 private:
     AccessibilityObjectAtspi(AXCoreObject*, AccessibilityRootAtspi*);
 
-    AccessibilityRootAtspi* root();
-
     Vector<RefPtr<AccessibilityObjectAtspi>> wrapperVector(const Vector<RefPtr<AXCoreObject>>&) const;
     int indexInParent() const;
     void childAdded(AccessibilityObjectAtspi&);
