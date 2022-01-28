@@ -1,3 +1,14 @@
+2022-01-27  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Add .clangd similar to .ccls
+        https://bugs.webkit.org/show_bug.cgi?id=235743
+
+        Reviewed by Saam Barati.
+
+        This patch adds .clangd local configuration, which is similar to .ccls.
+
+        * .clangd: Added.
+
 2022-01-26  Adrian Perez de Castro  <aperez@igalia.com>
 
         [CMake] Pass -pipe to compilers that support it
