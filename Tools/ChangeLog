@@ -1,3 +1,12 @@
+2022-01-28  Elliott Williams  <emw@apple.com>
+
+        [XCBuild] Small corrections to build-webkit and Makefile for workspace builds
+        https://bugs.webkit.org/show_bug.cgi?id=235747
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Scripts/build-webkit: When --use-workspace is passed, assume --xcbuild
+
 2022-01-27  Jonathan Bedard  <jbedard@apple.com>
 
         [EWS] Only make a single request to GitHub when validating PR

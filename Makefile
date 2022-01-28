@@ -1,7 +1,8 @@
 ifeq ($(USE_WORKSPACE),YES)
 
-include Makefile.shared
 SCHEME = All Modules
+SCRIPTS_PATH = Tools/Scripts
+include Makefile.shared
 
 else
 

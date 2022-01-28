@@ -230,7 +230,7 @@ if (isAppleCocoaWebKit()) {
         push @options, "-UseNewBuildSystem=YES";
     } elsif (!$useWorkspace) {
         push @options, "-UseNewBuildSystem=NO";
-    } else {
+    } elsif (defined $xcbuild) {
         die "Error: --use-workspace and --no-xcbuild are not compatible. Workspaces builds require XCBuild.\n";
     }
 

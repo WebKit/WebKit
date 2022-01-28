@@ -1,3 +1,12 @@
+2022-01-28  Elliott Williams  <emw@apple.com>
+
+        [XCBuild] Small corrections to build-webkit and Makefile for workspace builds
+        https://bugs.webkit.org/show_bug.cgi?id=235747
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Makefile: Set SCRIPTS_PATH correctly from the root of the repo
+
 2022-01-28  Pablo Saavedra  <psaavedra@igalia.com>
 
         [WPE] Build error with ACCESSIBILITY=OFF after r288731
