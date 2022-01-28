@@ -396,7 +396,7 @@ public:
         int indexForSelection { 0 }; // FIXME: Consider std::optional<unsigned> or unsigned for this instead.
     };
     static constexpr int NoMatchAfterUserSelection = -1;
-    WEBCORE_EXPORT MatchingRanges findTextMatches(const String&, FindOptions, unsigned maxCount);
+    WEBCORE_EXPORT MatchingRanges findTextMatches(const String&, FindOptions, unsigned maxCount, bool markMatches = true);
 
 #if PLATFORM(COCOA)
     void platformInitialize();

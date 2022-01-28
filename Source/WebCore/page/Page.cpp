@@ -782,14 +782,14 @@ bool Page::findString(const String& target, FindOptions options, DidWrap* didWra
     return false;
 }
 
-auto Page::findTextMatches(const String& target, FindOptions options, unsigned limit) -> MatchingRanges
+auto Page::findTextMatches(const String& target, FindOptions options, unsigned limit, bool markMatches) -> MatchingRanges
 {
     MatchingRanges result;
 
     Frame* frame = &mainFrame();
     Frame* frameWithSelection = nullptr;
     do {
-        frame->editor().countMatchesForText(target, { }, options, limit ? (limit - result.ranges.size()) : 0, true, &result.ranges);
+        frame->editor().countMatchesForText(target, { }, options, limit ? (limit - result.ranges.size()) : 0, markMatches, &result.ranges);
         if (frame->selection().isRange())
             frameWithSelection = frame;
         frame = incrementFrame(frame, true, CanWrap::No);

@@ -57,24 +57,6 @@
 namespace WebKit {
 using namespace WebCore;
 
-WebCore::FindOptions core(OptionSet<FindOptions> options)
-{
-    WebCore::FindOptions result;
-    if (options.contains(FindOptions::CaseInsensitive))
-        result.add(WebCore::CaseInsensitive);
-    if (options.contains(FindOptions::AtWordStarts))
-        result.add(WebCore::AtWordStarts);
-    if (options.contains(FindOptions::TreatMedialCapitalAsWordStart))
-        result.add(WebCore::TreatMedialCapitalAsWordStart);
-    if (options.contains(FindOptions::Backwards))
-        result.add(WebCore::Backwards);
-    if (options.contains(FindOptions::WrapAround))
-        result.add(WebCore::WrapAround);
-    if (options.contains(FindOptions::AtWordEnds))
-        result.add(WebCore::AtWordEnds);
-    return result;
-}
-
 FindController::FindController(WebPage* webPage)
     : m_webPage(webPage)
 {

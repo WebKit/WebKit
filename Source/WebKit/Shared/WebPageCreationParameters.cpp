@@ -337,7 +337,7 @@ std::optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::
     parameters.hasResourceLoadClient = WTFMove(*hasResourceLoadClient);
 
 #if PLATFORM(MAC)
-    std::optional<std::optional<DestinationColorSpace>> colorSpace;
+    std::optional<std::optional<WebCore::DestinationColorSpace>> colorSpace;
     decoder >> colorSpace;
     if (!colorSpace)
         return std::nullopt;

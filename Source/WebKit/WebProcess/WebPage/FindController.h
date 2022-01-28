@@ -118,6 +118,4 @@ private:
 #endif
 };
 
-WebCore::FindOptions core(OptionSet<FindOptions>);
-
 } // namespace WebKit

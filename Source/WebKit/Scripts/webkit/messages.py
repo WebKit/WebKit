@@ -864,6 +864,7 @@ def headers_for_type(type):
         'WebKit::CallDownloadDidStart': ['"DownloadManager.h"'],
         'WebKit::ContentWorldIdentifier': ['"ContentWorldShared.h"'],
         'WebKit::DocumentEditingContextRequest': ['"DocumentEditingContext.h"'],
+        'WebKit::FindDecorationStyle': ['"WebFindOptions.h"'],
         'WebKit::FindOptions': ['"WebFindOptions.h"'],
         'WebKit::FormSubmitListenerIdentifier': ['"IdentifierTypes.h"'],
         'WebKit::GestureRecognizerState': ['"GestureTypes.h"'],

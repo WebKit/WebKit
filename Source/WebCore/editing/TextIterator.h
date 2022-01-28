@@ -293,6 +293,14 @@ private:
     bool m_didLookAhead { true };
 };
 
+constexpr TextIteratorBehaviors findIteratorOptions(FindOptions options = { })
+{
+    TextIteratorBehaviors iteratorOptions { TextIteratorBehavior::EntersTextControls, TextIteratorBehavior::ClipsToFrameAncestors, TextIteratorBehavior::EntersImageOverlays };
+    if (!options.contains(DoNotTraverseFlatTree))
+        iteratorOptions.add(TextIteratorBehavior::TraversesFlatTree);
+    return iteratorOptions;
+}
+
 inline CharacterRange characterRange(const BoundaryPoint& start, const SimpleRange& range, TextIteratorBehaviors behaviors)
 {
     return { characterCount({ start, range.start }, behaviors), characterCount(range, behaviors) };

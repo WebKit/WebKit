@@ -255,6 +255,8 @@ Shared/WebCoreArgumentCoders.cpp
 Shared/WebErrors.cpp
 Shared/WebEvent.cpp
 Shared/WebEventConversion.cpp
+Shared/WebFindOptions.cpp
+Shared/WebFoundTextRange.cpp
 Shared/WebGeolocationPosition.cpp
 Shared/WebHitTestResultData.cpp
 Shared/WebImage.cpp
@@ -828,6 +830,7 @@ WebProcess/WebPage/WebContextMenu.cpp
 WebProcess/WebPage/WebCookieCache.cpp
 WebProcess/WebPage/WebCookieJar.cpp
 WebProcess/WebPage/WebDocumentLoader.cpp
+WebProcess/WebPage/WebFoundTextRangeController.cpp
 WebProcess/WebPage/WebFrame.cpp
 WebProcess/WebPage/WebOpenPanelResultListener.cpp
 WebProcess/WebPage/WebPage.cpp @no-unify

@@ -1,3 +1,81 @@
+2022-01-27  Aditya Keerthi  <akeerthi@apple.com>
+
+        Introduce WebFoundTextRange and WebFoundTextRangeController to support restorable find results
+        https://bugs.webkit.org/show_bug.cgi?id=235691
+        rdar://88117167
+
+        Reviewed by Wenson Hsieh.
+
+        To better support the _UITextSearching protocol, WKWebView needs to be
+        able to restore find-in-page results found in other views with the same
+        content.
+
+        The desired functionality is achieved through the use of two new interfaces:
+        WebFoundTextRange, which represents a range of found text, and
+        WebFoundTextRangeController, which will be responsible for finding,
+        decorating, and scrolling to ranges.
+
+        A "found text range" is uniquely identified by a location, length,
+        frame identifier, and order. The location and length represent a
+        character range in document corresponding to the frame identifier.
+        The order represents the relative ordering between ranges - for
+        example, results in the main frame are ordered before results in a
+        subframe.
+
+        This is the first in a series of patches that implements the interface.
+        The available methods on WebFoundTextRangeController map one-to-one with
+        the _UITextSearching protocol. This patch implements the creation of
+        restorable found ranges.
+
+        * Scripts/generate-unified-sources.sh:
+
+        Increase unified build files to 120.
+
+        * Scripts/webkit/messages.py:
+        (headers_for_type):
+        * Shared/WebFindOptions.cpp: Copied from Source/WebKit/Shared/WebFindOptions.h.
+        (WebKit::core):
+        * Shared/WebFindOptions.h:
+        * Shared/WebFoundTextRange.cpp:
+        (WebKit::WebFoundTextRange::operator== const):
+        (WebKit::WebFoundTextRange::encode const):
+        (WebKit::WebFoundTextRange::decode):
+        * Shared/WebFoundTextRange.h:
+        (WTF::WebFoundTextRangeHash::hash):
+        (WTF::WebFoundTextRangeHash::equal):
+        (WTF::HashTraits<WebKit::WebFoundTextRange>::emptyValue):
+        (WTF::HashTraits<WebKit::WebFoundTextRange>::constructDeletedValue):
+        (WTF::HashTraits<WebKit::WebFoundTextRange>::isDeletedValue):
+        * Shared/WebPageCreationParameters.cpp:
+        (WebKit::WebPageCreationParameters::decode):
+
+        Fix unified source-related build failure.
+
+        * Sources.txt:
+        * UnifiedSources-output.xcfilelist:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/WebPage/FindController.cpp:
+        (WebKit::core): Deleted.
+        * WebProcess/WebPage/FindController.h:
+        * WebProcess/WebPage/WebFoundTextRangeController.cpp: Added.
+        (WebKit::WebFoundTextRangeController::WebFoundTextRangeController):
+        (WebKit::WebFoundTextRangeController::findTextRangesForStringMatches):
+
+        Use the FrameTrees's uniqueName as a frame identifier for the found
+        text range. These names are consistent across web content with the
+        same markup.
+
+        (WebKit::WebFoundTextRangeController::decorateTextRangeWithStyle):
+        (WebKit::WebFoundTextRangeController::scrollTextRangeToVisible):
+        (WebKit::WebFoundTextRangeController::clearAllDecoratedFoundText):
+        (WebKit::WebFoundTextRangeController::didBeginTextSearchOperation):
+        (WebKit::WebFoundTextRangeController::didEndTextSearchOperation):
+        (WebKit::WebFoundTextRangeController::willMoveToPage):
+        (WebKit::WebFoundTextRangeController::didMoveToPage):
+        (WebKit::WebFoundTextRangeController::mouseEvent):
+        (WebKit::WebFoundTextRangeController::drawRect):
+        * WebProcess/WebPage/WebFoundTextRangeController.h: Added.
+
 2022-01-27  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [WPE][a11y] Add option to build with ATSPI

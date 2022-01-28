@@ -2478,14 +2478,6 @@ String plainTextReplacingNoBreakSpace(const SimpleRange& range, TextIteratorBeha
     return plainText(range, defaultBehaviors, isDisplayString).replace(noBreakSpace, ' ');
 }
 
-static constexpr TextIteratorBehaviors findIteratorOptions(FindOptions options)
-{
-    TextIteratorBehaviors iteratorOptions { TextIteratorBehavior::EntersTextControls, TextIteratorBehavior::ClipsToFrameAncestors, TextIteratorBehavior::EntersImageOverlays };
-    if (!options.contains(DoNotTraverseFlatTree))
-        iteratorOptions.add(TextIteratorBehavior::TraversesFlatTree);
-    return iteratorOptions;
-}
-
 static void forEachMatch(const SimpleRange& range, const String& target, FindOptions options, const Function<bool(CharacterRange)>& match)
 {
     SearchBuffer buffer(target, options);

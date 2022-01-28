@@ -1978,15 +1978,22 @@
 		E4D54D0421F1D72D007E3C36 /* ScrollingTreeFrameScrollingNodeRemoteIOS.h in Headers */ = {isa = PBXBuildFile; fileRef = E40C1F9321F0B96E00530718 /* ScrollingTreeFrameScrollingNodeRemoteIOS.h */; };
 		E4E57F6B21A83B1200345F3C /* RemoteLayerTreeNode.h in Headers */ = {isa = PBXBuildFile; fileRef = E4E57F6A21A83B1100345F3C /* RemoteLayerTreeNode.h */; };
 		E50620922542102000C43091 /* ContactsUISPI.h in Headers */ = {isa = PBXBuildFile; fileRef = E50620912542102000C43091 /* ContactsUISPI.h */; };
+		E5227D8427A11261008EAB57 /* WebFoundTextRange.h in Headers */ = {isa = PBXBuildFile; fileRef = E5227D8227A11231008EAB57 /* WebFoundTextRange.h */; };
 		E52CF55220A35C3A00DADA27 /* WebDataListSuggestionPicker.h in Headers */ = {isa = PBXBuildFile; fileRef = E52CF55020A35C3A00DADA27 /* WebDataListSuggestionPicker.h */; };
 		E55CD1F524CF747D0042DB9C /* WebDateTimeChooser.h in Headers */ = {isa = PBXBuildFile; fileRef = E55CD1F324CF747D0042DB9C /* WebDateTimeChooser.h */; };
 		E55CD20024D08D8F0042DB9C /* WebDateTimePicker.h in Headers */ = {isa = PBXBuildFile; fileRef = E55CD1FC24D0880B0042DB9C /* WebDateTimePicker.h */; };
 		E55CD20324D09F1F0042DB9C /* WebDateTimePickerMac.h in Headers */ = {isa = PBXBuildFile; fileRef = E55CD20124D09F1F0042DB9C /* WebDateTimePickerMac.h */; };
+		E55CFD4E279D31E5002F1020 /* WebFoundTextRangeController.h in Headers */ = {isa = PBXBuildFile; fileRef = E55CFD4C279D31C3002F1020 /* WebFoundTextRangeController.h */; };
 		E568B91F20A3AB2F00E3C856 /* WebDataListSuggestionsDropdown.h in Headers */ = {isa = PBXBuildFile; fileRef = E568B91E20A3AB2F00E3C856 /* WebDataListSuggestionsDropdown.h */; };
 		E568B92220A3AC6A00E3C856 /* WebDataListSuggestionsDropdownMac.h in Headers */ = {isa = PBXBuildFile; fileRef = E568B92020A3AC6A00E3C856 /* WebDataListSuggestionsDropdownMac.h */; };
 		E596DD6A251E71D400C275A7 /* WKContactPicker.h in Headers */ = {isa = PBXBuildFile; fileRef = E596DD68251E71D300C275A7 /* WKContactPicker.h */; };
 		E5BEF6822130C48000F31111 /* WebDataListSuggestionsDropdownIOS.h in Headers */ = {isa = PBXBuildFile; fileRef = E5BEF6802130C47F00F31111 /* WebDataListSuggestionsDropdownIOS.h */; };
 		E5CB07DC20E1678F0022C183 /* WKFormColorControl.h in Headers */ = {isa = PBXBuildFile; fileRef = E5CB07DA20E1678F0022C183 /* WKFormColorControl.h */; };
+		E5CBA76427A318E100DF7858 /* UnifiedSource120.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E5CBA75F27A3187800DF7858 /* UnifiedSource120.cpp */; };
+		E5CBA76527A318E100DF7858 /* UnifiedSource118.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E5CBA76127A3187900DF7858 /* UnifiedSource118.cpp */; };
+		E5CBA76627A318E100DF7858 /* UnifiedSource116.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E5CBA76327A3187B00DF7858 /* UnifiedSource116.cpp */; };
+		E5CBA76727A318E100DF7858 /* UnifiedSource119.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E5CBA76027A3187900DF7858 /* UnifiedSource119.cpp */; };
+		E5CBA76827A318E100DF7858 /* UnifiedSource117.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E5CBA76227A3187900DF7858 /* UnifiedSource117.cpp */; };
 		E5DEFA6826F8F42600AB68DB /* PhotosUISPI.h in Headers */ = {isa = PBXBuildFile; fileRef = E5DEFA6726F8F42600AB68DB /* PhotosUISPI.h */; };
 		ED82A7F2128C6FAF004477B3 /* WKBundlePageOverlay.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A22F0FF1289FCD90085E74F /* WKBundlePageOverlay.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		F409BA181E6E64BC009DA28E /* WKDragDestinationAction.h in Headers */ = {isa = PBXBuildFile; fileRef = F409BA171E6E64B3009DA28E /* WKDragDestinationAction.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -6401,8 +6408,11 @@
 		E4E57F6821A83B0300345F3C /* RemoteLayerTreeNode.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RemoteLayerTreeNode.mm; sourceTree = "<group>"; };
 		E4E57F6A21A83B1100345F3C /* RemoteLayerTreeNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteLayerTreeNode.h; sourceTree = "<group>"; };
 		E50620912542102000C43091 /* ContactsUISPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ContactsUISPI.h; sourceTree = "<group>"; };
+		E5227D8227A11231008EAB57 /* WebFoundTextRange.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebFoundTextRange.h; sourceTree = "<group>"; };
+		E5227D8327A11231008EAB57 /* WebFoundTextRange.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebFoundTextRange.cpp; sourceTree = "<group>"; };
 		E52CF55020A35C3A00DADA27 /* WebDataListSuggestionPicker.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebDataListSuggestionPicker.h; sourceTree = "<group>"; };
 		E52CF55120A35C3A00DADA27 /* WebDataListSuggestionPicker.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebDataListSuggestionPicker.cpp; sourceTree = "<group>"; };
+		E5309B7D27A2872F00B10631 /* WebFindOptions.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebFindOptions.cpp; sourceTree = "<group>"; };
 		E54A14CE20FCFB7B007E13D8 /* WebDataListSuggestionsDropdown.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebDataListSuggestionsDropdown.cpp; sourceTree = "<group>"; };
 		E55CD1F324CF747D0042DB9C /* WebDateTimeChooser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebDateTimeChooser.h; sourceTree = "<group>"; };
 		E55CD1F424CF747D0042DB9C /* WebDateTimeChooser.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebDateTimeChooser.cpp; sourceTree = "<group>"; };
@@ -6410,6 +6420,8 @@
 		E55CD1FD24D0880B0042DB9C /* WebDateTimePicker.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebDateTimePicker.cpp; sourceTree = "<group>"; };
 		E55CD20124D09F1F0042DB9C /* WebDateTimePickerMac.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebDateTimePickerMac.h; sourceTree = "<group>"; };
 		E55CD20224D09F1F0042DB9C /* WebDateTimePickerMac.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WebDateTimePickerMac.mm; sourceTree = "<group>"; };
+		E55CFD4C279D31C3002F1020 /* WebFoundTextRangeController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebFoundTextRangeController.h; sourceTree = "<group>"; };
+		E55CFD4D279D31C3002F1020 /* WebFoundTextRangeController.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebFoundTextRangeController.cpp; sourceTree = "<group>"; };
 		E568B91E20A3AB2F00E3C856 /* WebDataListSuggestionsDropdown.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebDataListSuggestionsDropdown.h; sourceTree = "<group>"; };
 		E568B92020A3AC6A00E3C856 /* WebDataListSuggestionsDropdownMac.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebDataListSuggestionsDropdownMac.h; sourceTree = "<group>"; };
 		E568B92120A3AC6A00E3C856 /* WebDataListSuggestionsDropdownMac.mm */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; path = WebDataListSuggestionsDropdownMac.mm; sourceTree = "<group>"; };
@@ -6419,6 +6431,11 @@
 		E5BEF6812130C47F00F31111 /* WebDataListSuggestionsDropdownIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WebDataListSuggestionsDropdownIOS.mm; path = ios/WebDataListSuggestionsDropdownIOS.mm; sourceTree = "<group>"; };
 		E5CB07DA20E1678F0022C183 /* WKFormColorControl.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = WKFormColorControl.h; path = ios/forms/WKFormColorControl.h; sourceTree = "<group>"; };
 		E5CB07DB20E1678F0022C183 /* WKFormColorControl.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = WKFormColorControl.mm; path = ios/forms/WKFormColorControl.mm; sourceTree = "<group>"; };
+		E5CBA75F27A3187800DF7858 /* UnifiedSource120.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = UnifiedSource120.cpp; path = "DerivedSources/WebKit/unified-sources/UnifiedSource120.cpp"; sourceTree = BUILT_PRODUCTS_DIR; };
+		E5CBA76027A3187900DF7858 /* UnifiedSource119.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = UnifiedSource119.cpp; path = "DerivedSources/WebKit/unified-sources/UnifiedSource119.cpp"; sourceTree = BUILT_PRODUCTS_DIR; };
+		E5CBA76127A3187900DF7858 /* UnifiedSource118.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = UnifiedSource118.cpp; path = "DerivedSources/WebKit/unified-sources/UnifiedSource118.cpp"; sourceTree = BUILT_PRODUCTS_DIR; };
+		E5CBA76227A3187900DF7858 /* UnifiedSource117.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = UnifiedSource117.cpp; path = "DerivedSources/WebKit/unified-sources/UnifiedSource117.cpp"; sourceTree = BUILT_PRODUCTS_DIR; };
+		E5CBA76327A3187B00DF7858 /* UnifiedSource116.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = UnifiedSource116.cpp; path = "DerivedSources/WebKit/unified-sources/UnifiedSource116.cpp"; sourceTree = BUILT_PRODUCTS_DIR; };
 		E5DEFA6726F8F42600AB68DB /* PhotosUISPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PhotosUISPI.h; sourceTree = "<group>"; };
 		EB0D312D275AE13300863D8F /* com.apple.webkit.webpushd.mac.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = com.apple.webkit.webpushd.mac.plist; sourceTree = "<group>"; };
 		EB0D312E275AE13300863D8F /* com.apple.webkit.webpushd.ios.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = com.apple.webkit.webpushd.ios.plist; sourceTree = "<group>"; };
@@ -7261,7 +7278,10 @@
 				BC032DAF10F4380F0058C15A /* WebEvent.h */,
 				BC032DB010F4380F0058C15A /* WebEventConversion.cpp */,
 				BC032DB110F4380F0058C15A /* WebEventConversion.h */,
+				E5309B7D27A2872F00B10631 /* WebFindOptions.cpp */,
 				1A90C1ED1264FD50003E44D4 /* WebFindOptions.h */,
+				E5227D8327A11231008EAB57 /* WebFoundTextRange.cpp */,
+				E5227D8227A11231008EAB57 /* WebFoundTextRange.h */,
 				BC0E607212D6BC200012A72A /* WebGeolocationPosition.cpp */,
 				BC0E607112D6BC200012A72A /* WebGeolocationPosition.h */,
 				93A88B341BC6EABA00ABA5C2 /* WebHitTestResultData.cpp */,
@@ -8270,6 +8290,11 @@
 				3CAECB5E27465AE300AB78D0 /* UnifiedSource113.cpp */,
 				4CAECB5E27465AE300AB78D0 /* UnifiedSource114.cpp */,
 				5CAECB5E27465AE300AB78D0 /* UnifiedSource115.cpp */,
+				E5CBA76327A3187B00DF7858 /* UnifiedSource116.cpp */,
+				E5CBA76227A3187900DF7858 /* UnifiedSource117.cpp */,
+				E5CBA76127A3187900DF7858 /* UnifiedSource118.cpp */,
+				E5CBA76027A3187900DF7858 /* UnifiedSource119.cpp */,
+				E5CBA75F27A3187800DF7858 /* UnifiedSource120.cpp */,
 			);
 			name = "unified-sources";
 			path = "DerivedSources/WebKit/unified-sources";
@@ -10802,6 +10827,8 @@
 				5C7FB46F21E97C0C009E3241 /* WebCookieJar.h */,
 				1A5B1C5218987EDF004FCF9B /* WebDocumentLoader.cpp */,
 				1A5B1C5318987EDF004FCF9B /* WebDocumentLoader.h */,
+				E55CFD4D279D31C3002F1020 /* WebFoundTextRangeController.cpp */,
+				E55CFD4C279D31C3002F1020 /* WebFoundTextRangeController.h */,
 				BC111ADC112F5B9300337BAB /* WebFrame.cpp */,
 				BC032D8910F437A00058C15A /* WebFrame.h */,
 				BC857F8412B82D0B00EDEB2E /* WebOpenPanelResultListener.cpp */,
@@ -13452,6 +13479,8 @@
 				1A90C1EE1264FD50003E44D4 /* WebFindOptions.h in Headers */,
 				BCE469541214E6CB000B98EB /* WebFormClient.h in Headers */,
 				BCE469561214E6CB000B98EB /* WebFormSubmissionListenerProxy.h in Headers */,
+				E5227D8427A11261008EAB57 /* WebFoundTextRange.h in Headers */,
+				E55CFD4E279D31E5002F1020 /* WebFoundTextRangeController.h in Headers */,
 				BC032D8D10F437A00058C15A /* WebFrame.h in Headers */,
 				BC032D7F10F4378D0058C15A /* WebFrameLoaderClient.h in Headers */,
 				9391F2CB121B67AD00EBF7E8 /* WebFrameNetworkingContext.h in Headers */,
@@ -15662,6 +15691,11 @@
 				3CAECB6627465AE400AB78D0 /* UnifiedSource113.cpp in Sources */,
 				4CAECB6627465AE400AB78D0 /* UnifiedSource114.cpp in Sources */,
 				5CAECB6627465AE400AB78D0 /* UnifiedSource115.cpp in Sources */,
+				E5CBA76627A318E100DF7858 /* UnifiedSource116.cpp in Sources */,
+				E5CBA76827A318E100DF7858 /* UnifiedSource117.cpp in Sources */,
+				E5CBA76527A318E100DF7858 /* UnifiedSource118.cpp in Sources */,
+				E5CBA76727A318E100DF7858 /* UnifiedSource119.cpp in Sources */,
+				E5CBA76427A318E100DF7858 /* UnifiedSource120.cpp in Sources */,
 				E38A1FC023A551BF00D2374F /* UserInterfaceIdiom.mm in Sources */,
 				CD491B0D1E732E4D00009066 /* UserMediaCaptureManagerMessageReceiver.cpp in Sources */,
 				CD491B171E73525500009066 /* UserMediaCaptureManagerProxyMessageReceiver.cpp in Sources */,
