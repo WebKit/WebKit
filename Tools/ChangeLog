@@ -1,5 +1,15 @@
 2022-01-28  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK][a11y] WTR: implement AccessibilityUIElement::isIgnored() for ATSPI
+        https://bugs.webkit.org/show_bug.cgi?id=235761
+
+        Reviewed by Adrian Perez de Castro.
+
+        * WebKitTestRunner/InjectedBundle/atspi/AccessibilityUIElementAtspi.cpp:
+        (WTR::AccessibilityUIElement::isIgnored const):
+
+2022-01-28  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK][a11y] Return the list of column/row headers from header cells too with ATSPI
         https://bugs.webkit.org/show_bug.cgi?id=235711
 

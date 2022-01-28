@@ -63,6 +63,7 @@ public:
     WEBCORE_EXPORT std::optional<AccessibilityObjectAtspi*> parent() const;
     GVariant* parentReference() const;
     WEBCORE_EXPORT void updateBackingStore();
+    WEBCORE_EXPORT bool isIgnored() const;
 
     void attach(AXCoreObject*);
     void detach();

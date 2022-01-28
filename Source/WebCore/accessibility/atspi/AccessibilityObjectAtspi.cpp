@@ -1376,6 +1376,11 @@ void AccessibilityObjectAtspi::updateBackingStore()
         m_coreObject->updateBackingStore();
 }
 
+bool AccessibilityObjectAtspi::isIgnored() const
+{
+    return m_coreObject ? m_coreObject->accessibilityIsIgnored() : true;
+}
+
 void AccessibilityObject::detachPlatformWrapper(AccessibilityDetachmentType detachmentType)
 {
     switch (detachmentType) {

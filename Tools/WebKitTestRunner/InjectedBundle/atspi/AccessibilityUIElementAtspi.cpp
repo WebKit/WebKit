@@ -1503,7 +1503,8 @@ bool AccessibilityUIElement::isCollapsed() const
 
 bool AccessibilityUIElement::isIgnored() const
 {
-    return false;
+    m_element->updateBackingStore();
+    return m_element->isIgnored();
 }
 
 bool AccessibilityUIElement::isSingleLine() const
