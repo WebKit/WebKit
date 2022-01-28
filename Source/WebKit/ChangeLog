@@ -1,3 +1,22 @@
+2022-01-28  Sihui Liu  <sihui_liu@apple.com>
+
+        Ensure session is added in network process when it creates connection to web process
+        https://bugs.webkit.org/show_bug.cgi?id=235754
+
+        Reviewed by Chris Dumez.
+
+        In NetworkProcess::CreateNetworkConnectionToWebProcess, if the session that web process is using is not added 
+        yet, WorkQueueMessageReceiver cannot be added to the connection and storage messages will be dropped. Usually 
+        session is added in NetworkProcess::AddWebsiteDataStore, which is sent from UI process before
+        NetworkProcess::CreateNetworkConnectionToWebProcess; but CreateNetworkConnectionToWebProcess message has
+        DispatchMessageEvenWhenWaitingForSyncReply flag set, so it might get processed earlier.
+
+        To fix the issue, now we send set DispatchMessageEvenWhenWaitingForSyncReply flag on AddWebsiteDataStore message
+        too, so it's processed before CreateNetworkConnectionToWebProcess.
+
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::addSession):
+
 2022-01-28  Per Arne Vollan  <pvollan@apple.com>
 
         [macOS][WP] Add required syscall

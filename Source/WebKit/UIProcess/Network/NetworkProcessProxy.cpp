@@ -1347,8 +1347,11 @@ void NetworkProcessProxy::addSession(WebsiteDataStore& store, SendParametersToNe
     if (!addResult.isNewEntry)
         return;
 
+    // DispatchMessageEvenWhenWaitingForSyncReply is needed because session needs to be
+    // added in network process before CreateNetworkConnectionToWebProcess, which has
+    // DispatchMessageEvenWhenWaitingForSyncReply flag.
     if (canSendMessage() && sendParametersToNetworkProcess == SendParametersToNetworkProcess::Yes)
-        send(Messages::NetworkProcess::AddWebsiteDataStore { store.parameters() }, 0);
+        send(Messages::NetworkProcess::AddWebsiteDataStore { store.parameters() }, 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
     auto sessionID = store.sessionID();
     if (!sessionID.isEphemeral())
         createSymLinkForFileUpgrade(store.resolvedIndexedDatabaseDirectory());
