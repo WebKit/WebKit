@@ -1372,7 +1372,7 @@
     (allow system-fcntl
         (fcntl-command
             F_GETPATH)) ;; used by dyld4 and CGFontURLCreate, getcwd (at least)
-    (allow system-fcntl (with report) (with telemetry)
+    (allow system-fcntl
         (fcntl-command
             F_BARRIERFSYNC
             F_GETCONFINED
@@ -1407,7 +1407,7 @@
     (with-filter (state-flag "AppCacheDisabled")
         (allow system-fcntl (with report) (with telemetry) (appcache-fcntl-commands)))
 #else
-    (allow system-fcntl (with report) (with telemetry) (appcache-fcntl-commands))
+    (allow system-fcntl (appcache-fcntl-commands))
 #endif
 
     (allow system-fcntl

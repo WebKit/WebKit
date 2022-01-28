@@ -1,3 +1,15 @@
+2022-01-27  Per Arne Vollan  <pvollan@apple.com>
+
+        [iOS][macOS] Removed unneeded telemetry
+        https://bugs.webkit.org/show_bug.cgi?id=235742
+
+        Reviewed by Darin Adler.
+
+        Remove some telemetry we have sufficient data for.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb.in:
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2022-01-27  Michael Saboff  <msaboff@apple.com>
 
         com.apple.WebKit.WebAuthn.xpc fails to build with system content path
