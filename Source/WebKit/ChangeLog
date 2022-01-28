@@ -1,3 +1,17 @@
+2022-01-27  Michael Saboff  <msaboff@apple.com>
+
+        com.apple.WebKit.WebAuthn.xpc fails to build with system content path
+        https://bugs.webkit.org/show_bug.cgi?id=235734
+
+        Reviewed by Filip Pizlo.
+
+        Since we symlink the the whole framework when building the main "WebKit" target,
+        we can eliminate the create symlink script for the WebAuth target.
+        Eliminated the setting of ALTERNATE_ROOT_PATH build variables for all XPC services.
+
+        * Configurations/BaseXPCService.xcconfig:
+        * WebKit.xcodeproj/project.pbxproj:
+
 2022-01-27  Kate Cheney  <katherine_cheney@apple.com>
 
         "Unrecognized Content-Security-Policy directive 'worker-src'."

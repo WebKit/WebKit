@@ -14142,7 +14142,6 @@
 				5742A2F02535613F00B7BA14 /* Resources */,
 				5742A2F12535613F00B7BA14 /* Unlock keychain */,
 				5742A2F22535613F00B7BA14 /* Process WebAuthentication entitlements */,
-				6577FFC02769C7700011AEC8 /* Create Symlink to Alt Root Path */,
 			);
 			buildRules = (
 			);
@@ -14960,6 +14959,7 @@
 			outputFileListPaths = (
 			);
 			outputPaths = (
+				"${OUTPUT_ALTERNATE_ROOT_PATH}",
 			);
 			runOnlyForDeploymentPostprocessing = 1;
 			shellPath = /bin/zsh;
@@ -15038,24 +15038,6 @@
 			shellScript = "\"${SRCROOT}/Scripts/create-symlink-to-altroot.sh\"\n";
 		};
 		6577FFBF2769C7550011AEC8 /* Create Symlink to Alt Root Path */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 8;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			name = "Create Symlink to Alt Root Path";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 1;
-			shellPath = /bin/zsh;
-			shellScript = "\"${SRCROOT}/Scripts/create-symlink-to-altroot.sh\"\n";
-		};
-		6577FFC02769C7700011AEC8 /* Create Symlink to Alt Root Path */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 8;
 			files = (

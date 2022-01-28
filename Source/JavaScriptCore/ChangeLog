@@ -1,3 +1,22 @@
+2022-01-27  Michael Saboff  <msaboff@apple.com>
+
+        com.apple.WebKit.WebAuthn.xpc fails to build with system content path
+        https://bugs.webkit.org/show_bug.cgi?id=235734
+
+        Reviewed by Filip Pizlo.
+
+        Adjusted build path variables to handle the case when building for Catalyst.
+        Did this by refactoring how the optional system content path is added as a prefix to paths.
+        As a result, modified the create symlink script to not be dependent on the target location,
+        since it isn't created when doing a catalyst build.  Instead the script creates the parent
+        directory of the symlink if it doesn't exisst.
+
+        * Configurations/Base.xcconfig:
+        * Configurations/JSC.xcconfig:
+        * Configurations/JavaScriptCore.xcconfig:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Scripts/create-symlink-to-altroot.sh:
+
 2022-01-27  Gavin Phillips  <gavin.p@apple.com>
 
         Check the process has the dynamic-codesigning entitlement before trying to allocate a holding JIT region

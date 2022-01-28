@@ -62,6 +62,8 @@ LIBRARY_LIST = libboringssl.a libopus.a libsrtp.a libusrsctp.a libvpx.a libwebm.
 
 CREATE_SYMLINK_OUTPUT_FILES = ${SYSTEM_PUBLIC_HEADER_PREFIX}  ${SYSTEM_PUBLIC_LIBRARY_PREFIX};
 
+PUBLIC_HEADERS_FOLDER_PATH = ${PUBLIC_HEADERS_FOLDER_PREFIX}/libwebrtc;
+
 USE_HEADERMAP = NO;
 INSTALLHDRS_SCRIPT_PHASE = YES;
 WARNING_CFLAGS = -Wno-deprecated-declarations $(inherited);
