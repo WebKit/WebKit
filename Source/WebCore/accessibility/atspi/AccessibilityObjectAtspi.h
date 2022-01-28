@@ -242,7 +242,7 @@ private:
     AXCoreObject* m_coreObject { nullptr };
     OptionSet<Interface> m_interfaces;
     AccessibilityRootAtspi* m_root { nullptr };
-    std::optional<AccessibilityObjectAtspi*> m_parent;
+    std::optional<RefPtr<AccessibilityObjectAtspi>> m_parent;
     bool m_isRegistered { false };
     String m_path;
     String m_hyperlinkPath;
