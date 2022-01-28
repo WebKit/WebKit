@@ -1,5 +1,30 @@
 2022-01-27  Antoine Quint  <graouts@webkit.org>
 
+        [Model] Allow disabling interaction
+        https://bugs.webkit.org/show_bug.cgi?id=227621
+        <rdar://problem/80079703>
+
+        Reviewed by Darin Adler.
+
+        Override the new ModelPlayer::setInteractionEnabled() method for the iOS flavor
+        and send the value up to the UI process such that it may set the matching value
+        for UIView.userInteractionEnabled on the matching WKModelView.
+
+        * UIProcess/Cocoa/ModelElementControllerCocoa.mm:
+        (WebKit::ModelElementController::setInteractionEnabledForModelElement):
+        * UIProcess/ModelElementController.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::modelElementSetInteractionEnabled):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/ios/WKModelView.mm:
+        (-[WKModelView initWithModel:]):
+        * WebProcess/Model/ios/ARKitInlinePreviewModelPlayerIOS.h:
+        * WebProcess/Model/ios/ARKitInlinePreviewModelPlayerIOS.mm:
+        (WebKit::ARKitInlinePreviewModelPlayerIOS::setInteractionEnabled):
+
+2022-01-27  Antoine Quint  <graouts@webkit.org>
+
         <model> should not be draggable on macOS
         https://bugs.webkit.org/show_bug.cgi?id=235697
 

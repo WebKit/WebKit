@@ -109,6 +109,7 @@ model-element/model-element-contents-layer-updates.html [ Skip ]
 
 # This test requires ARQL SPIs not yet available to OpenSource builds.
 model-element/model-element-camera.html [ Skip ]
+model-element/model-element-interactive-dragging.html [ Skip ]
 
 # Accessibility tests for notifications that don't exist or aren't needed on Mac OS X.
 accessibility/aria-checkbox-sends-notification.html

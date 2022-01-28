@@ -1,0 +1,4 @@
+
+PASS Dragging over a <model> has no effect on the camera when interactive is false
+PASS Dragging over a <model> affects the camera when interactive is true
+

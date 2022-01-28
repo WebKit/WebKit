@@ -33,6 +33,8 @@
     readonly attribute boolean complete;
     readonly attribute Promise<HTMLModelElement> ready;
 
+    [Reflect] attribute boolean interactive;
+
     undefined enterFullscreen();
 
     [Conditional=ARKIT_INLINE_PREVIEW_CAMERA_TRANSFORM] Promise<HTMLModelElementCamera> getCamera();

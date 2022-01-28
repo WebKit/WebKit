@@ -11003,6 +11003,11 @@ void WebPageProxy::takeModelElementFullscreen(ModelIdentifier modelIdentifier)
 {
     modelElementController()->takeModelElementFullscreen(modelIdentifier);
 }
+
+void WebPageProxy::modelElementSetInteractionEnabled(ModelIdentifier modelIdentifier, bool isInteractionEnabled)
+{
+    modelElementController()->setInteractionEnabledForModelElement(modelIdentifier, isInteractionEnabled);
+}
 #endif
 
 #if ENABLE(ARKIT_INLINE_PREVIEW_MAC)

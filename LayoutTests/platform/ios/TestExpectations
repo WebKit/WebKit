@@ -3419,6 +3419,7 @@ fast/canvas/canvas-blending-text.html [ Pass Failure ]
 
 # This test requires ARQL SPIs not yet available to OpenSource builds.
 model-element/model-element-camera.html [ Skip ]
+model-element/model-element-interactive-dragging.html [ Skip ]
 
 # These tests require the design system ui fonts to be installed.
 fast/text/design-system-ui-11.html [ Pass ]

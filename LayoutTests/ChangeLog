@@ -1,3 +1,38 @@
+2022-01-27  Antoine Quint  <graouts@webkit.org>
+
+        [Model] Allow disabling interaction
+        https://bugs.webkit.org/show_bug.cgi?id=227621
+        <rdar://problem/80079703>
+
+        Reviewed by Darin Adler.
+
+        Add two new tests:
+        
+        - model-element/model-element-interactive.html tests the "interactive" IDL property
+        and the "interactive" HTML attribute,
+        - model-element/model-element-interactive-dragging.html tests that the "interactive"
+        IDL property correctly disables setting the camera by dragging when "false", and allows
+        it when "true".
+
+        We also refactor some code previously found in model-element/model-element-camera.html
+        to now be in the shared model-element/resources/model-utils.js to ease writing <model>
+        tests.
+
+        * model-element/model-element-camera.html:
+        * model-element/model-element-interactive-dragging-expected.txt: Added.
+        * model-element/model-element-interactive-dragging.html: Added.
+        * model-element/model-element-interactive-expected.txt: Added.
+        * model-element/model-element-interactive.html: Added.
+        * model-element/resources/model-utils.js: Added.
+        (const.makeModel):
+        (const.bodyAvailability.async return):
+        (const.bodyAvailability):
+        (const.readyModel.async test):
+        (const.assert_cameras_are_equal):
+        (const.assert_cameras_are_not_equal):
+        * platform/ios/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2022-01-27  Chris Dumez  <cdumez@apple.com>
 
         Geolocation API should callback with error if doc is not fully active

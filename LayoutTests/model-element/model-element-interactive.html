@@ -1,0 +1,40 @@
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<script>
+
+test(() => {
+    const model = document.createElement("model");
+    assert_idl_attribute(model, "interactive", "interactive is defined");
+}, "<model> has interactive property");
+
+test(() => {
+    const model = document.createElement("model");
+    assert_false(model.interactive, "interactive is false");
+}, "<model> interactive property default to false");
+
+test(() => {
+    const model = document.createElement("model");
+
+    model.setAttribute("interactive", "");
+    assert_true(model.interactive, "interactive is true when the HTML attribute has no value");
+
+    model.setAttribute("interactive", "false");
+    assert_true(model.interactive, "interactive is true when the HTML attribute has a 'false' value");
+
+    model.removeAttribute("interactive");
+    assert_false(model.interactive, "interactive is false");
+}, "<model> interactive property reflects the interactive HTML attribute");
+
+test(() => {
+    const model = document.createElement("model");
+
+    model.interactive = true;
+    assert_true(model.hasAttribute("interactive"), "interactive HTML attribute is present when interactive is true");
+
+    model.interactive = false;
+    assert_false(model.hasAttribute("interactive"), "interactive HTML attribute is not present when interactive is false");
+}, "<model> interactive HTML attribute reflects the interactive property");
+
+</script>
+</body>
+</html>

@@ -40,4 +40,8 @@ bool ModelPlayer::supportsDragging()
     return true;
 }
 
+void ModelPlayer::setInteractionEnabled(bool)
+{
+}
+
 }

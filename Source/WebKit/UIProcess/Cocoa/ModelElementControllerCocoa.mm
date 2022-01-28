@@ -131,6 +131,12 @@ void ModelElementController::takeModelElementFullscreen(ModelIdentifier modelIde
     }];
 }
 
+void ModelElementController::setInteractionEnabledForModelElement(ModelIdentifier modelIdentifier, bool isInteractionEnabled)
+{
+    if (auto *modelView = modelViewForModelIdentifier(modelIdentifier))
+        modelView.userInteractionEnabled = isInteractionEnabled;
+}
+
 #endif
 
 #if ENABLE(ARKIT_INLINE_PREVIEW_MAC)

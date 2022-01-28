@@ -71,6 +71,16 @@ void ARKitInlinePreviewModelPlayerIOS::enterFullscreen()
         strongPage->send(Messages::WebPageProxy::TakeModelElementFullscreen(*modelIdentifier));
 }
 
+void ARKitInlinePreviewModelPlayerIOS::setInteractionEnabled(bool isInteractionEnabled)
+{
+    RefPtr strongPage = page();
+    if (!strongPage)
+        return;
+
+    if (auto modelIdentifier = this->modelIdentifier())
+        strongPage->send(Messages::WebPageProxy::ModelElementSetInteractionEnabled(*modelIdentifier, isInteractionEnabled));
+}
+
 void ARKitInlinePreviewModelPlayerIOS::handleMouseDown(const WebCore::LayoutPoint&, MonotonicTime)
 {
     ASSERT_NOT_REACHED();

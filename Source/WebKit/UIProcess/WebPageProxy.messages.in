@@ -585,6 +585,7 @@ messages -> WebPageProxy {
 
 #if ENABLE(ARKIT_INLINE_PREVIEW_IOS)
     TakeModelElementFullscreen(struct WebKit::ModelIdentifier modelIdentifier)
+    ModelElementSetInteractionEnabled(struct WebKit::ModelIdentifier modelIdentifier, bool isInteractionEnabled)
 #endif
 #if ENABLE(ARKIT_INLINE_PREVIEW_MAC)
     ModelElementDidCreatePreview(URL url, String uuid, WebCore::FloatSize size) -> (Expected<std::pair<String, uint32_t>, WebCore::ResourceError> result) Async

@@ -1,33 +1,8 @@
 <script src="../resources/testharness.js"></script>
 <script src="../resources/testharnessreport.js"></script>
+<script src="resources/model-utils.js"></script>
 <script>
 
-const makeModel = () => {
-    const source = document.createElement("source");
-    source.src = "resources/cube.usdz";
-    const model = document.createElement("model");
-    model.appendChild(source);
-    return model;
-}
-
-const bodyAvailability = async () => {
-    return new Promise(resolve => {
-        if (document.body)
-            resolve();
-        else
-            window.addEventListener("DOMContentLoaded", event => resolve());
-    });
-};
-
-const readyModel = async (test) => {
-    await bodyAvailability();
-    const model = document.body.appendChild(makeModel());
-    test.add_cleanup(() => model.remove());
-    await model.ready;
-    return model;
-};
-
-const epsilon = 0.001;
 const expectedCamera = { pitch: 10, yaw: 40, scale: 2 };
 
 test(() => {
@@ -57,9 +32,7 @@ promise_test(async test => {
     const model = await readyModel(test);
     await model.setCamera(expectedCamera);
     const actualCamera = await model.getCamera();
-    assert_approx_equals(actualCamera.pitch, expectedCamera.pitch, epsilon, "Camera has expected pitch");
-    assert_approx_equals(actualCamera.yaw, expectedCamera.yaw, epsilon, "Camera has expected yaw");
-    assert_approx_equals(actualCamera.scale, expectedCamera.scale, epsilon, "Camera has expected scale");
+    assert_cameras_are_equal(actualCamera, expectedCamera);
 }, "<model> can set the camera and read it back");
 
 promise_test(async test => {

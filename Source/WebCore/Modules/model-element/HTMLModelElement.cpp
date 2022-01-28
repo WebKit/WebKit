@@ -334,8 +334,22 @@ bool HTMLModelElement::isDraggableIgnoringAttributes() const
     return supportsDragging();
 }
 
+bool HTMLModelElement::isInteractive() const
+{
+    return hasAttributeWithoutSynchronization(HTMLNames::interactiveAttr);
+}
+
+void HTMLModelElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason reason)
+{
+    HTMLElement::attributeChanged(name, oldValue, newValue, reason);
+    if (m_modelPlayer && name == HTMLNames::interactiveAttr)
+        m_modelPlayer->setInteractionEnabled(isInteractive());
+}
+
 void HTMLModelElement::defaultEventHandler(Event& event)
 {
+    HTMLElement::defaultEventHandler(event);
+
     if (!m_modelPlayer || !m_modelPlayer->supportsMouseInteraction())
         return;
 
@@ -349,7 +363,7 @@ void HTMLModelElement::defaultEventHandler(Event& event)
     if (mouseEvent.button() != LeftButton)
         return;
 
-    if (type == eventNames().mousedownEvent && !m_isDragging && !event.defaultPrevented())
+    if (type == eventNames().mousedownEvent && !m_isDragging && !event.defaultPrevented() && isInteractive())
         dragDidStart(mouseEvent);
     else if (type == eventNames().mousemoveEvent && m_isDragging)
         dragDidChange(mouseEvent);
