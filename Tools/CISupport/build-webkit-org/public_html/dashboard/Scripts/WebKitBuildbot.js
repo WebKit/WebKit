@@ -53,6 +53,11 @@ WebKitBuildbot = function()
         "Apple-BigSur-Debug-AppleSilicon-WK2-Tests": {platform: Dashboard.Platform.macOSBigSur, debug: true, tester: true, testCategory: Buildbot.TestCategory.WebKit2, heading: "Debug AppleSilicon"},
         "Apple-BigSur-Release-AppleSilicon-WK1-Tests": {platform: Dashboard.Platform.macOSBigSur, debug: false, tester: true, testCategory: Buildbot.TestCategory.WebKit1, heading: "Release AppleSilicon"},
         "Apple-BigSur-Release-AppleSilicon-WK2-Tests": {platform: Dashboard.Platform.macOSBigSur, debug: false, tester: true, testCategory: Buildbot.TestCategory.WebKit2, heading: "Release AppleSilicon"},
+        "Apple-BigSur JSC": {platform: Dashboard.Platform.macOSBigSur, heading: "JavaScript", combinedQueues: {
+            "Apple-BigSur-LLINT-CLoop-BuildAndTest": {heading: "LLINT CLoop (BuildAndTest)"},
+            "Apple-BigSur-Debug-JSC-Tests": {heading: "Debug JSC (Tests)"},
+            "Apple-BigSur-Release-JSC-Tests": {heading: "Release JSC (Tests)"},
+        }},
         "Apple-Catalina-Debug-Build": {platform: Dashboard.Platform.macOSCatalina, debug: true, builder: true, architecture: Buildbot.BuildArchitecture.SixtyFourBit},
         "Apple-Catalina-Release-Build": {platform: Dashboard.Platform.macOSCatalina, debug: false, builder: true, architecture: Buildbot.BuildArchitecture.SixtyFourBit},
         "Apple-Catalina-Debug-WK1-Tests": {platform: Dashboard.Platform.macOSCatalina, debug: true, tester: true, testCategory: Buildbot.TestCategory.WebKit1},
@@ -60,11 +65,6 @@ WebKitBuildbot = function()
         "Apple-Catalina-Release-WK1-Tests": {platform: Dashboard.Platform.macOSCatalina, debug: false, tester: true, testCategory: Buildbot.TestCategory.WebKit1},
         "Apple-Catalina-Release-WK2-Perf": {platform: Dashboard.Platform.macOSCatalina, debug: false, performance: true, heading: "Performance"},
         "Apple-Catalina-Release-WK2-Tests": {platform: Dashboard.Platform.macOSCatalina, debug: false, tester: true, testCategory: Buildbot.TestCategory.WebKit2},
-        "Apple-Catalina JSC": {platform: Dashboard.Platform.macOSCatalina, heading: "JavaScript", combinedQueues: {
-            "Apple-Catalina-LLINT-CLoop-BuildAndTest": {heading: "LLINT CLoop (BuildAndTest)"},
-            "Apple-Catalina-Debug-JSC-Tests": {heading: "Debug JSC (Tests)"},
-            "Apple-Catalina-Release-JSC-Tests": {heading: "Release JSC (Tests)"},
-        }},
         "Apple-iOS-15-Release-Build": {platform: Dashboard.Platform.iOS15Device, debug: false, builder: true, architecture: Buildbot.BuildArchitecture.SixtyFourBit},
         "Apple-iOS-15-Simulator-Release-Build": {platform: Dashboard.Platform.iOS15Simulator, debug: false, builder: true, architecture: Buildbot.BuildArchitecture.SixtyFourBit},
         "Apple-iOS-15-Simulator-Release-WK2-Tests": {platform: Dashboard.Platform.iOS15Simulator, heading:"iOS Release", debug: false, tester: true, testCategory: Buildbot.TestCategory.WebKit2},
