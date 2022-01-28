@@ -11860,7 +11860,6 @@
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"${OUTPUT_ALTERNATE_ROOT_PATH}",
 			);
 			runOnlyForDeploymentPostprocessing = 1;
 			shellPath = /bin/zsh;

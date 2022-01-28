@@ -1,3 +1,70 @@
+2022-01-27  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r288710. rdar://problem/88100509
+
+    com.apple.WebKit.WebAuthn.xpc fails to build with system content path
+    https://bugs.webkit.org/show_bug.cgi?id=235734
+    
+    Reviewed by Filip Pizlo.
+    
+    Source/JavaScriptCore:
+    
+    Adjusted build path variables to handle the case when building for Catalyst.
+    Did this by refactoring how the optional system content path is added as a prefix to paths.
+    As a result, modified the create symlink script to not be dependent on the target location,
+    since it isn't created when doing a catalyst build.  Instead the script creates the parent
+    directory of the symlink if it doesn't exisst.
+    
+    * Configurations/Base.xcconfig:
+    * Configurations/JSC.xcconfig:
+    * Configurations/JavaScriptCore.xcconfig:
+    * JavaScriptCore.xcodeproj/project.pbxproj:
+    * Scripts/create-symlink-to-altroot.sh:
+    
+    Source/ThirdParty/libwebrtc:
+    
+    Added explicit  PUBLIC_HEADERS_FOLDER_PATH vavriable.  Otherwise we get the
+    project version with didn't include the "libwebrtc" component.
+    
+    * Configurations/libwebrtc.xcconfig:
+    
+    Source/WebCore:
+    
+    Since WebCore is installed under the WebKit framework on macOS, we don't need a symlink for the
+    WebCore.framework itself.  As a result, modified the create symlink script to not be dependent
+    on the target location, since it isn't created when doing a catalyst build.
+    Instead the script creates the parent directory of the symlink if it doesn't exisst.
+    
+    * Configurations/WebCore.xcconfig:
+    * Scripts/create-symlink-to-altroot.sh:
+    * WebCore.xcodeproj/project.pbxproj:
+    
+    Source/WebKit:
+    
+    Since we symlink the the whole framework when building the main "WebKit" target,
+    we can eliminate the create symlink script for the WebAuth target.
+    Eliminated the setting of ALTERNATE_ROOT_PATH build variables for all XPC services.
+    
+    * Configurations/BaseXPCService.xcconfig:
+    * WebKit.xcodeproj/project.pbxproj:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@288710 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-01-27  Michael Saboff  <msaboff@apple.com>
+
+            com.apple.WebKit.WebAuthn.xpc fails to build with system content path
+            https://bugs.webkit.org/show_bug.cgi?id=235734
+
+            Reviewed by Filip Pizlo.
+
+            Since we symlink the the whole framework when building the main "WebKit" target,
+            we can eliminate the create symlink script for the WebAuth target.
+            Eliminated the setting of ALTERNATE_ROOT_PATH build variables for all XPC services.
+
+            * Configurations/BaseXPCService.xcconfig:
+            * WebKit.xcodeproj/project.pbxproj:
+
 2022-01-26  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r288629. rdar://problem/88061283
