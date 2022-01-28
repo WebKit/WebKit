@@ -61,6 +61,7 @@
 #include "Page.h"
 #include "PlatformMouseEvent.h"
 #include "PseudoClassChangeInvalidation.h"
+#include "RadioInputType.h"
 #include "RenderTextControlSingleLine.h"
 #include "RenderTheme.h"
 #include "ScopedEventQueue.h"
@@ -980,6 +981,8 @@ void HTMLInputElement::setChecked(bool isChecked)
     if (checked() == isChecked)
         return;
 
+    m_inputType->willUpdateCheckedness(isChecked);
+
     Style::PseudoClassChangeInvalidation checkedInvalidation(*this, CSSSelector::PseudoClassChecked, isChecked);
 
     m_dirtyCheckednessFlag = true;
@@ -1586,6 +1589,8 @@ Node::InsertedIntoAncestorResult HTMLInputElement::insertedIntoAncestor(Insertio
 #if ENABLE(DATALIST_ELEMENT)
     resetListAttributeTargetObserver();
 #endif
+    if (isRadioButton())
+        updateValidity();
     return InsertedIntoAncestorResult::NeedsPostInsertionCallback;
 }
 
@@ -1608,6 +1613,8 @@ void HTMLInputElement::removedFromAncestor(RemovalType removalType, ContainerNod
         removeFromRadioButtonGroup();
     HTMLTextFormControlElement::removedFromAncestor(removalType, oldParentOfRemovedTree);
     ASSERT(!isConnected());
+    if (removalType.disconnectedFromDocument && !form() && isRadioButton())
+        updateValidity();
 #if ENABLE(DATALIST_ELEMENT)
     resetListAttributeTargetObserver();
 #endif
@@ -1956,9 +1963,31 @@ Vector<Ref<HTMLInputElement>> HTMLInputElement::radioButtonGroup() const
 
 RefPtr<HTMLInputElement> HTMLInputElement::checkedRadioButtonForGroup() const
 {
+    ASSERT(isRadioButton());
+
+    if (checked())
+        return const_cast<HTMLInputElement*>(this);
+
+    auto& name = this->name();
     if (RadioButtonGroups* buttons = radioButtonGroups())
-        return buttons->checkedButtonForGroup(name());
-    return nullptr;
+        return buttons->checkedButtonForGroup(name);
+
+    if (name.isEmpty())
+        return nullptr;
+
+    ASSERT(!isConnected());
+    ASSERT(!form());
+
+    // The input is not managed by a RadioButtonGroups, we'll need to traverse the tree.
+    RefPtr<HTMLInputElement> checkedRadio;
+    RadioInputType::forEachButtonInDetachedGroup(rootNode(), name, [&](auto& input) {
+        if (input.checked()) {
+            checkedRadio = &input;
+            return false;
+        }
+        return true;
+    });
+    return checkedRadio;
 }
 
 RadioButtonGroups* HTMLInputElement::radioButtonGroups() const

@@ -38,7 +38,7 @@ PASS [INPUT in CHECKBOX status] The checked attribute is true
 PASS [INPUT in CHECKBOX status] The checked attribute is false
 PASS [INPUT in RADIO status] The required attribute is not set
 PASS [INPUT in RADIO status] The checked attribute is true
-FAIL [INPUT in RADIO status] The checked attribute is false assert_true: The validity.valueMissing should be true. expected true got false
+PASS [INPUT in RADIO status] The checked attribute is false
 PASS [INPUT in RADIO status] The checked attribute is false and the name attribute is empty
 PASS [INPUT in FILE status] The required attribute is not set
 PASS [INPUT in FILE status] The Files attribute is null
