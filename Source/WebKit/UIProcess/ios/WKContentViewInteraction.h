@@ -307,11 +307,7 @@ using ImageAnalysisRequestIdentifier = ObjectIdentifier<ImageAnalysisRequestIden
     WebCore::MouseEventPolicy _mouseEventPolicy;
 #endif
 
-#if ENABLE(HOVER_GESTURE_RECOGNIZER)
-    RetainPtr<WKHoverGestureRecognizer> _hoverGestureRecognizer;
-#endif
-
-#if HAVE(UIKIT_WITH_MOUSE_SUPPORT) || ENABLE(HOVER_GESTURE_RECOGNIZER)
+#if HAVE(UIKIT_WITH_MOUSE_SUPPORT)
     RetainPtr<WKHoverPlatter> _hoverPlatter;
 #endif
 
@@ -549,7 +545,7 @@ using ImageAnalysisRequestIdentifier = ObjectIdentifier<ImageAnalysisRequestIden
     , UIDragInteractionDelegate, UIDropInteractionDelegate
 #endif
     , WKTouchActionGestureRecognizerDelegate
-#if HAVE(UIKIT_WITH_MOUSE_SUPPORT) || ENABLE(HOVER_GESTURE_RECOGNIZER)
+#if HAVE(UIKIT_WITH_MOUSE_SUPPORT)
     , WKHoverPlatterDelegate
 #endif
 #if HAVE(UIFINDINTERACTION)

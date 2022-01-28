@@ -26,7 +26,7 @@
 #import "config.h"
 #import "WKHoverPlatter.h"
 
-#if HAVE(UIKIT_WITH_MOUSE_SUPPORT) || ENABLE(HOVER_GESTURE_RECOGNIZER)
+#if HAVE(UIKIT_WITH_MOUSE_SUPPORT)
 
 #import "WKHoverPlatterParameters.h"
 #import <WebCore/PathUtilities.h>
@@ -345,4 +345,4 @@ static void addAdditionalDismissalAnimations(CALayer *) { }
 
 @end
 
-#endif // HAVE(UIKIT_WITH_MOUSE_SUPPORT) || ENABLE(HOVER_GESTURE_RECOGNIZER)
+#endif // HAVE(UIKIT_WITH_MOUSE_SUPPORT)

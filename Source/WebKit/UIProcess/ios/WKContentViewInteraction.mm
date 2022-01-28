@@ -175,10 +175,6 @@
 #import "PepperUICoreSPI.h"
 #endif
 
-#if ENABLE(HOVER_GESTURE_RECOGNIZER)
-#import <WebKitAdditions/WKHoverGestureRecognizer.h>
-#endif
-
 #import <pal/cocoa/VisionKitCoreSoftLink.h>
 #import <pal/ios/ManagedConfigurationSoftLink.h>
 #import <pal/ios/QuickLookSoftLink.h>
@@ -961,11 +957,7 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
     [self setUpMouseGestureRecognizer];
 #endif
 
-#if ENABLE(HOVER_GESTURE_RECOGNIZER)
-    [self setUpHoverGestureRecognizer];
-#endif
-
-#if HAVE(UIKIT_WITH_MOUSE_SUPPORT) || ENABLE(HOVER_GESTURE_RECOGNIZER)
+#if HAVE(UIKIT_WITH_MOUSE_SUPPORT)
     _hoverPlatter = adoptNS([[WKHoverPlatter alloc] initWithView:self.rootContentView delegate:self]);
 #endif
 
@@ -1152,12 +1144,7 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
     [self removeGestureRecognizer:_mouseGestureRecognizer.get()];
 #endif
 
-#if ENABLE(HOVER_GESTURE_RECOGNIZER)
-    [_hoverGestureRecognizer setDelegate:nil];
-    [self removeGestureRecognizer:_hoverGestureRecognizer.get()];
-#endif
-
-#if HAVE(UIKIT_WITH_MOUSE_SUPPORT) || ENABLE(HOVER_GESTURE_RECOGNIZER)
+#if HAVE(UIKIT_WITH_MOUSE_SUPPORT)
     [_hoverPlatter invalidate];
     _hoverPlatter = nil;
 #endif
@@ -1310,9 +1297,6 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
 #if HAVE(UIKIT_WITH_MOUSE_SUPPORT)
     [self removeGestureRecognizer:_mouseGestureRecognizer.get()];
 #endif
-#if ENABLE(HOVER_GESTURE_RECOGNIZER)
-    [self removeGestureRecognizer:_hoverGestureRecognizer.get()];
-#endif
 #if HAVE(LOOKUP_GESTURE_RECOGNIZER)
     [self removeGestureRecognizer:_lookupGestureRecognizer.get()];
 #endif
@@ -1337,9 +1321,6 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
     [self addGestureRecognizer:_twoFingerSingleTapGestureRecognizer.get()];
 #if HAVE(UIKIT_WITH_MOUSE_SUPPORT)
     [self addGestureRecognizer:_mouseGestureRecognizer.get()];
-#endif
-#if ENABLE(HOVER_GESTURE_RECOGNIZER)
-    [self addGestureRecognizer:_hoverGestureRecognizer.get()];
 #endif
 #if HAVE(LOOKUP_GESTURE_RECOGNIZER)
     [self addGestureRecognizer:_lookupGestureRecognizer.get()];
@@ -1815,11 +1796,6 @@ typedef NS_ENUM(NSInteger, EndEditingReason) {
         return YES;
 #endif
 
-#if ENABLE(HOVER_GESTURE_RECOGNIZER)
-    if (gestureRecognizer == _hoverGestureRecognizer)
-        return NO;
-#endif
-
 #if HAVE(UIKIT_WITH_MOUSE_SUPPORT)
     if (gestureRecognizer != _mouseGestureRecognizer && [_mouseGestureRecognizer mouseTouch] == touch)
         return NO;
@@ -1846,10 +1822,6 @@ typedef NS_ENUM(NSInteger, EndEditingReason) {
 
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceivePress:(UIPress *)press
 {
-#if ENABLE(HOVER_GESTURE_RECOGNIZER)
-    if (gestureRecognizer == _hoverGestureRecognizer)
-        return NO;
-#endif
     return YES;
 }
 
@@ -2498,11 +2470,6 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
 
 #if HAVE(UIKIT_WITH_MOUSE_SUPPORT)
     if ([gestureRecognizer isKindOfClass:[WKMouseGestureRecognizer class]] || [otherGestureRecognizer isKindOfClass:[WKMouseGestureRecognizer class]])
-        return YES;
-#endif
-
-#if ENABLE(HOVER_GESTURE_RECOGNIZER)
-    if ([gestureRecognizer isKindOfClass:[WKHoverGestureRecognizer class]] || [otherGestureRecognizer isKindOfClass:[WKHoverGestureRecognizer class]])
         return YES;
 #endif
 
@@ -4851,7 +4818,7 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
     _treatAsContentEditableUntilNextEditorStateUpdate = NO;
     [self _invalidateCurrentPositionInformation];
 
-#if HAVE(UIKIT_WITH_MOUSE_SUPPORT) || ENABLE(HOVER_GESTURE_RECOGNIZER)
+#if HAVE(UIKIT_WITH_MOUSE_SUPPORT)
     [_hoverPlatter dismissPlatterWithAnimation:NO];
 #endif
 }
@@ -9636,32 +9603,7 @@ static BOOL applicationIsKnownToIgnoreMouseEvents(const char* &warningVersion)
 
 #endif // HAVE(UIKIT_WITH_MOUSE_SUPPORT)
 
-#if ENABLE(HOVER_GESTURE_RECOGNIZER)
-
-- (void)setUpHoverGestureRecognizer
-{
-    _hoverGestureRecognizer = adoptNS([[WKHoverGestureRecognizer alloc] initWithTarget:self action:@selector(hoverGestureRecognizerChanged:)]);
-    [_hoverGestureRecognizer setDelegate:self];
-    [self addGestureRecognizer:_hoverGestureRecognizer.get()];
-}
-
-- (void)hoverGestureRecognizerChanged:(WKHoverGestureRecognizer *)gestureRecognizer
-{
-    if (!_page->hasRunningProcess())
-        return;
-
-    auto event = gestureRecognizer.lastMouseEvent;
-    if (!event)
-        return;
-
-    _page->handleMouseEvent(*event);
-    if (WKHoverPlatterDomain.rootSettings.platterEnabledForHover)
-        [_hoverPlatter setHoverPoint:event->position()];
-}
-
-#endif // ENABLE(HOVER_GESTURE_RECOGNIZER)
-
-#if HAVE(UIKIT_WITH_MOUSE_SUPPORT) || ENABLE(HOVER_GESTURE_RECOGNIZER)
+#if HAVE(UIKIT_WITH_MOUSE_SUPPORT)
 
 - (void)positionInformationForHoverPlatter:(WKHoverPlatter *)hoverPlatter withRequest:(WebKit::InteractionInformationRequest&)request completionHandler:(void (^)(WebKit::InteractionInformationAtPosition))completionHandler
 {

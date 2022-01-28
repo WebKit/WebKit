@@ -1,3 +1,33 @@
+2022-01-27  Tim Horton  <timothy_horton@apple.com>
+
+        Remove ENABLE(HOVER_GESTURE_RECOGNIZER) and related code
+        https://bugs.webkit.org/show_bug.cgi?id=235749
+        <rdar://problem/86425437>
+
+        Reviewed by Wenson Hsieh.
+
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView setUpInteraction]):
+        (-[WKContentView cleanUpInteraction]):
+        (-[WKContentView _removeDefaultGestureRecognizers]):
+        (-[WKContentView _addDefaultGestureRecognizers]):
+        (-[WKContentView gestureRecognizer:shouldReceiveTouch:]):
+        (-[WKContentView gestureRecognizer:shouldReceivePress:]):
+        (-[WKContentView gestureRecognizer:shouldRecognizeSimultaneouslyWithGestureRecognizer:]):
+        (-[WKContentView _didCommitLoadForMainFrame]):
+        (-[WKContentView setUpHoverGestureRecognizer]): Deleted.
+        (-[WKContentView hoverGestureRecognizerChanged:]): Deleted.
+        * UIProcess/ios/WKHoverPlatter.h:
+        * UIProcess/ios/WKHoverPlatter.mm:
+        * UIProcess/ios/WKHoverPlatterParameters.h:
+        * UIProcess/ios/WKHoverPlatterParameters.mm:
+        * WebProcess/WebPage/MomentumEventDispatcher.cpp:
+        (WebKit::mode):
+        (WebKit::MomentumEventDispatcher::consumeDeltaForCurrentTime):
+        (WebKit::MomentumEventDispatcher::equalizeTailGaps):
+        * WebProcess/WebPage/MomentumEventDispatcher.h:
+
 2022-01-27  Per Arne Vollan  <pvollan@apple.com>
 
         [iOS][macOS] Removed unneeded telemetry

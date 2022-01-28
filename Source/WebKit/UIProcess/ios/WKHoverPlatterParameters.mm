@@ -26,7 +26,7 @@
 #import "config.h"
 #import "WKHoverPlatterParameters.h"
 
-#if HAVE(UIKIT_WITH_MOUSE_SUPPORT) || ENABLE(HOVER_GESTURE_RECOGNIZER)
+#if HAVE(UIKIT_WITH_MOUSE_SUPPORT)
 
 #import "PrototypeToolsSPI.h"
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
@@ -141,4 +141,4 @@ static void setDefaultValuesForAdditionalPlatterLayoutParameters(WKHoverPlatterP
 
 @end
 
-#endif // HAVE(UIKIT_WITH_MOUSE_SUPPORT) || ENABLE(HOVER_GESTURE_RECOGNIZER)
+#endif // HAVE(UIKIT_WITH_MOUSE_SUPPORT)
