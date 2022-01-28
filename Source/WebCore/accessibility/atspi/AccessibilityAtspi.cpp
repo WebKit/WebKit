@@ -329,6 +329,10 @@ String AccessibilityAtspi::registerObject(AccessibilityObjectAtspi& atspiObject,
     }
     m_atspiObjects.add(&atspiObject, WTFMove(registeredObjects));
 
+    m_cacheUpdateList.add(&atspiObject);
+    if (!m_cacheUpdateTimer.isActive())
+        m_cacheUpdateTimer.startOneShot(0_s);
+
     return path;
 }
 
@@ -344,10 +348,17 @@ void AccessibilityAtspi::unregisterObject(AccessibilityObjectAtspi& atspiObject)
             g_dbus_connection_unregister_object(m_connection.get(), id);
     }
 
-    g_dbus_connection_emit_signal(m_connection.get(), nullptr, atspiObject.path().utf8().data(), "org.a11y.atspi.Event.Object", "StateChanged",
+    const auto& path = atspiObject.path();
+    g_dbus_connection_emit_signal(m_connection.get(), nullptr, path.utf8().data(), "org.a11y.atspi.Event.Object", "StateChanged",
         g_variant_new("(siiva{sv})", "defunct", TRUE, 0, g_variant_new_string("0"), nullptr), nullptr);
 
-    removeAccessible(atspiObject);
+    if (!m_cacheUpdateList.remove(&atspiObject) && m_cache.remove(path)) {
+        g_dbus_connection_emit_signal(m_connection.get(), nullptr, "/org/a11y/atspi/cache", "org.a11y.atspi.Cache", "RemoveAccessible",
+            g_variant_new("((so))", uniqueName(), path.utf8().data()), nullptr);
+    }
+
+    if (m_cacheUpdateList.isEmpty())
+        m_cacheUpdateTimer.stop();
 
     auto registeredObjects = m_atspiObjects.take(&atspiObject);
     for (auto id : registeredObjects)
@@ -380,12 +391,9 @@ void AccessibilityAtspi::parentChanged(AccessibilityObjectAtspi& atspiObject)
     if (!m_clients.isEmpty())
         return;
 
-    // Emit parentChanged only if the object is already registered, otherwise register the object,
-    // without emitting the signal, because org.a11y.atspi.Cache.AddAccessible() will update the cache.
-    if (atspiObject.registerObject())
+    // Do not emit parent-changed for pending objects, since AddAccessible will update the cache.
+    if (m_cacheUpdateList.contains(&atspiObject))
         return;
-
-    addToCacheIfPending(atspiObject);
 
     g_dbus_connection_emit_signal(m_connection.get(), nullptr, atspiObject.path().utf8().data(), "org.a11y.atspi.Event.Object", "PropertyChange",
         g_variant_new("(siiva{sv})", "accessible-parent", 0, 0, atspiObject.parentReference(), nullptr), nullptr);
@@ -417,8 +425,6 @@ void AccessibilityAtspi::childrenChanged(AccessibilityObjectAtspi& atspiObject, 
     if (m_clients.isEmpty())
         return;
 
-    addToCacheIfPending(atspiObject);
-    addToCacheIfPending(child);
 
     g_dbus_connection_emit_signal(m_connection.get(), nullptr, atspiObject.path().utf8().data(), "org.a11y.atspi.Event.Object", "ChildrenChanged",
         g_variant_new("(siiv(so))", change == ChildrenChanged::Added ? "add" : "remove", child.indexInParentForChildrenChanged(change),
@@ -434,7 +440,6 @@ void AccessibilityAtspi::childrenChanged(AccessibilityRootAtspi& rootObject, Acc
     if (m_clients.isEmpty())
         return;
 
-    addToCacheIfPending(child);
 
     g_dbus_connection_emit_signal(m_connection.get(), nullptr, rootObject.path().utf8().data(), "org.a11y.atspi.Event.Object", "ChildrenChanged",
         g_variant_new("(siiv(so))", change == ChildrenChanged::Added ? "add" : "remove", 0,
@@ -453,8 +458,6 @@ void AccessibilityAtspi::stateChanged(AccessibilityObjectAtspi& atspiObject, con
     if (!shouldEmitSignal("Object", "StateChanged", name))
         return;
 
-    addToCacheIfPending(atspiObject);
-
     g_dbus_connection_emit_signal(m_connection.get(), nullptr, atspiObject.path().utf8().data(), "org.a11y.atspi.Event.Object", "StateChanged",
         g_variant_new("(siiva{sv})", name, value, 0, g_variant_new_string("0"), nullptr), nullptr);
 }
@@ -471,8 +474,6 @@ void AccessibilityAtspi::textChanged(AccessibilityObjectAtspi& atspiObject, cons
     if (!shouldEmitSignal("Object", "TextChanged", changeType))
         return;
 
-    addToCacheIfPending(atspiObject);
-
     g_dbus_connection_emit_signal(m_connection.get(), nullptr, atspiObject.path().utf8().data(), "org.a11y.atspi.Event.Object", "TextChanged",
         g_variant_new("(siiva{sv})", changeType, offset, length, g_variant_new_string(text.data()), nullptr), nullptr);
 }
@@ -484,8 +485,6 @@ void AccessibilityAtspi::textAttributesChanged(AccessibilityObjectAtspi& atspiOb
 
     if (!shouldEmitSignal("Object", "TextAttributesChanged"))
         return;
-
-    addToCacheIfPending(atspiObject);
 
     g_dbus_connection_emit_signal(m_connection.get(), nullptr, atspiObject.path().utf8().data(), "org.a11y.atspi.Event.Object", "TextAttributesChanged",
         g_variant_new("(siiva{sv})", "", 0, 0, g_variant_new_string(""), nullptr), nullptr);
@@ -503,8 +502,6 @@ void AccessibilityAtspi::textCaretMoved(AccessibilityObjectAtspi& atspiObject, u
     if (!shouldEmitSignal("Object", "TextCaretMoved"))
         return;
 
-    addToCacheIfPending(atspiObject);
-
     g_dbus_connection_emit_signal(m_connection.get(), nullptr, atspiObject.path().utf8().data(), "org.a11y.atspi.Event.Object", "TextCaretMoved",
         g_variant_new("(siiva{sv})", "", caretOffset, 0, g_variant_new_string(""), nullptr), nullptr);
 }
@@ -516,8 +513,6 @@ void AccessibilityAtspi::textSelectionChanged(AccessibilityObjectAtspi& atspiObj
 
     if (!shouldEmitSignal("Object", "TextSelectionChanged"))
         return;
-
-    addToCacheIfPending(atspiObject);
 
     g_dbus_connection_emit_signal(m_connection.get(), nullptr, atspiObject.path().utf8().data(), "org.a11y.atspi.Event.Object", "TextSelectionChanged",
         g_variant_new("(siiva{sv})", "", 0, 0, g_variant_new_string(""), nullptr), nullptr);
@@ -535,8 +530,6 @@ void AccessibilityAtspi::valueChanged(AccessibilityObjectAtspi& atspiObject, dou
     if (!shouldEmitSignal("Object", "PropertyChange", "accessible-value"))
         return;
 
-    addToCacheIfPending(atspiObject);
-
     g_dbus_connection_emit_signal(m_connection.get(), nullptr, atspiObject.path().utf8().data(), "org.a11y.atspi.Event.Object", "PropertyChange",
         g_variant_new("(siiva{sv})", "accessible-value", 0, 0, g_variant_new_double(value), nullptr), nullptr);
 }
@@ -553,8 +546,6 @@ void AccessibilityAtspi::selectionChanged(AccessibilityObjectAtspi& atspiObject)
     if (!shouldEmitSignal("Object", "SelectionChanged"))
         return;
 
-    addToCacheIfPending(atspiObject);
-
     g_dbus_connection_emit_signal(m_connection.get(), nullptr, atspiObject.path().utf8().data(), "org.a11y.atspi.Event.Object", "SelectionChanged",
         g_variant_new("(siiva{sv})", "", 0, 0, g_variant_new_string(""), nullptr), nullptr);
 }
@@ -570,8 +561,6 @@ void AccessibilityAtspi::loadEvent(AccessibilityObjectAtspi& atspiObject, CStrin
 
     if (!shouldEmitSignal("Document", event.data()))
         return;
-
-    addToCacheIfPending(atspiObject);
 
     g_dbus_connection_emit_signal(m_connection.get(), nullptr, atspiObject.path().utf8().data(), "org.a11y.atspi.Event.Document", event.data(),
         g_variant_new("(siiva{sv})", "", 0, 0, g_variant_new_string(""), nullptr), nullptr);
@@ -785,43 +774,11 @@ void AccessibilityAtspi::addToCacheIfNeeded(AccessibilityObjectAtspi& atspiObjec
         g_variant_new("(@(" ITEM_SIGNATURE "))", g_variant_builder_end(&builder)), nullptr);
 }
 
-void AccessibilityAtspi::addToCacheIfPending(AccessibilityObjectAtspi& atspiObject)
-{
-    if (!m_cacheUpdateList.remove(&atspiObject))
-        return;
-
-    addToCacheIfNeeded(atspiObject);
-    if (m_cacheUpdateList.isEmpty())
-        m_cacheUpdateTimer.stop();
-}
-
 void AccessibilityAtspi::cacheUpdateTimerFired()
 {
-    while (!m_cacheUpdateList.isEmpty())
-        addToCacheIfNeeded(*m_cacheUpdateList.takeFirst());
-}
-
-void AccessibilityAtspi::addAccessible(AccessibilityObjectAtspi& atspiObject)
-{
-    if (!m_connection)
-        return;
-
-    m_cacheUpdateList.add(&atspiObject);
-    if (!m_cacheUpdateTimer.isActive())
-        m_cacheUpdateTimer.startOneShot(0_s);
-}
-
-void AccessibilityAtspi::removeAccessible(AccessibilityObjectAtspi& atspiObject)
-{
-    if (m_cacheUpdateList.remove(&atspiObject))
-        return;
-
-    const auto& path = atspiObject.path();
-    if (!m_cache.remove(path))
-        return;
-
-    g_dbus_connection_emit_signal(m_connection.get(), nullptr, "/org/a11y/atspi/cache", "org.a11y.atspi.Cache", "RemoveAccessible",
-        g_variant_new("((so))", uniqueName(), path.utf8().data()), nullptr);
+    auto cacheUpdateList = std::exchange(m_cacheUpdateList, { });
+    for (auto& atspiObject : cacheUpdateList)
+        addToCacheIfNeeded(*atspiObject);
 }
 
 void AccessibilityAtspi::cacheClearTimerFired()

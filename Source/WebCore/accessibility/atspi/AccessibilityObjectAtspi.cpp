@@ -509,8 +509,6 @@ bool AccessibilityObjectAtspi::registerObject()
         interfaces.append({ const_cast<GDBusInterfaceInfo*>(&webkit_table_cell_interface), &s_tableCellFunctions });
 
     m_path = AccessibilityAtspi::singleton().registerObject(*this, WTFMove(interfaces));
-    AccessibilityAtspi::singleton().addAccessible(*this);
-
     return true;
 }
 
@@ -1174,7 +1172,8 @@ void AccessibilityObjectAtspi::serialize(GVariantBuilder* builder) const
     g_variant_builder_add(builder, "@(so)", parentReference());
 
     g_variant_builder_add(builder, "i", indexInParent());
-    g_variant_builder_add(builder, "i", childCount());
+    // Do not set the children count in cache, because children are handled by children-changed signals.
+    g_variant_builder_add(builder, "i", -1);
 
     GVariantBuilder interfaces = G_VARIANT_BUILDER_INIT(G_VARIANT_TYPE("as"));
     buildInterfaces(&interfaces);

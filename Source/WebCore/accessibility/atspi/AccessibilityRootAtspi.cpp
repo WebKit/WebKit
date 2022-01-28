@@ -234,7 +234,8 @@ void AccessibilityRootAtspi::serialize(GVariantBuilder* builder) const
     g_variant_builder_add(builder, "@(so)", parentReference());
 
     g_variant_builder_add(builder, "i", 0);
-    g_variant_builder_add(builder, "i", child() ? 1 : 0);
+    // Do not set the children count in cache, because child is handled by children-changed signals.
+    g_variant_builder_add(builder, "i", -1);
 
     GVariantBuilder interfaces = G_VARIANT_BUILDER_INIT(G_VARIANT_TYPE("as"));
     g_variant_builder_add(&interfaces, "s", webkit_accessible_interface.name);
