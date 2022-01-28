@@ -1,3 +1,41 @@
+2022-01-28  Tom Tartarin  <tom@leaningtech.com>
+
+        [JSC] Add support for WASM branch hinting proposal
+        https://bugs.webkit.org/show_bug.cgi?id=235581
+
+        Reviewed by Yusuke Suzuki.
+
+        See the proposal for a more detailed description: https://github.com/WebAssembly/branch-hinting.
+
+        This allows parsing a "code_annotation.branch_hint" custom section,
+        as per the code annotation proposal: https://github.com/WebAssembly/annotations.
+        This section provides per function information about how likely a branch at a
+        given offset is to be taken. It is similar to branch weight metadata in LLVM.
+
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * runtime/OptionsList.h:
+        * wasm/WasmAirIRGenerator.cpp:
+        (JSC::Wasm::AirIRGenerator::addIf):
+        (JSC::Wasm::AirIRGenerator::addBranch):
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::B3IRGenerator::addIf):
+        (JSC::Wasm::B3IRGenerator::addBranch):
+        * wasm/WasmBranchHints.h: Added.
+        (JSC::Wasm::BranchHintMap::add):
+        (JSC::Wasm::BranchHintMap::getBranchHint const):
+        (JSC::Wasm::BranchHintMap::isValidKey const):
+        (JSC::Wasm::isValidBranchHint):
+        * wasm/WasmBranchHintsSectionParser.cpp: Added.
+        (JSC::Wasm::BranchHintsSectionParser::parse):
+        * wasm/WasmBranchHintsSectionParser.h: Added.
+        (JSC::Wasm::BranchHintsSectionParser::BranchHintsSectionParser):
+        * wasm/WasmModuleInformation.h:
+        (JSC::Wasm::ModuleInformation::getBranchHint const):
+        * wasm/WasmSectionParser.cpp:
+        (JSC::Wasm::SectionParser::parseCustom):
+
 2022-01-28  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] YarrJIT optimization for character BM search

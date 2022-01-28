@@ -856,6 +856,8 @@
 		33A920BD23DA2C6D000EBAF0 /* CommonSlowPathsInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 33A920BC23DA2C6D000EBAF0 /* CommonSlowPathsInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		33B2A54722653481005A0F79 /* B3ValueInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FEC84FB1BDACDAC0080FF74 /* B3ValueInlines.h */; };
 		33B2A548226543BF005A0F79 /* FTLLowerDFGToB3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FEA0A04170513DB00BB722C /* FTLLowerDFGToB3.cpp */; };
+		37AAC093279F1BFC00D64842 /* WasmBranchHintsSectionParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 37AAC092279F124200D64842 /* WasmBranchHintsSectionParser.h */; };
+		37AAC094279F1C0500D64842 /* WasmBranchHints.h in Headers */ = {isa = PBXBuildFile; fileRef = 37AAC091279F124200D64842 /* WasmBranchHints.h */; };
 		37C738D21EDB56E4003F2B0B /* ParseInt.h in Headers */ = {isa = PBXBuildFile; fileRef = 37C738D11EDB5672003F2B0B /* ParseInt.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		412952771D2CF6BC00E78B89 /* builtins_generate_internals_wrapper_header.py in Headers */ = {isa = PBXBuildFile; fileRef = 412952731D2CF6AC00E78B89 /* builtins_generate_internals_wrapper_header.py */; settings = {ATTRIBUTES = (Private, ); }; };
 		412952781D2CF6BC00E78B89 /* builtins_generate_internals_wrapper_implementation.py in Headers */ = {isa = PBXBuildFile; fileRef = 412952741D2CF6AC00E78B89 /* builtins_generate_internals_wrapper_implementation.py */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -3726,6 +3728,9 @@
 		33B2A54522651D53005A0F79 /* MarkedSpace.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = MarkedSpace.cpp; sourceTree = "<group>"; };
 		37119A7720CCB5DC002C6DC9 /* WebKitTargetConditionals.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = WebKitTargetConditionals.xcconfig; sourceTree = "<group>"; };
 		371D842C17C98B6E00ECF994 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
+		37AAC090279F124100D64842 /* WasmBranchHintsSectionParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WasmBranchHintsSectionParser.cpp; sourceTree = "<group>"; };
+		37AAC091279F124200D64842 /* WasmBranchHints.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; path = WasmBranchHints.h; sourceTree = "<group>"; };
+		37AAC092279F124200D64842 /* WasmBranchHintsSectionParser.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; path = WasmBranchHintsSectionParser.h; sourceTree = "<group>"; };
 		37C738D11EDB5672003F2B0B /* ParseInt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ParseInt.h; sourceTree = "<group>"; };
 		412952731D2CF6AC00E78B89 /* builtins_generate_internals_wrapper_header.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = builtins_generate_internals_wrapper_header.py; sourceTree = "<group>"; };
 		412952741D2CF6AC00E78B89 /* builtins_generate_internals_wrapper_implementation.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = builtins_generate_internals_wrapper_implementation.py; sourceTree = "<group>"; };
@@ -7309,6 +7314,9 @@
 		7B98D1331B60CD1E0023B1A4 /* wasm */ = {
 			isa = PBXGroup;
 			children = (
+				37AAC091279F124200D64842 /* WasmBranchHints.h */,
+				37AAC090279F124100D64842 /* WasmBranchHintsSectionParser.cpp */,
+				37AAC092279F124200D64842 /* WasmBranchHintsSectionParser.h */,
 				AD2FCB8A1DB5840000B3E736 /* js */,
 				52847AD921FFB8630061A9DB /* WasmAirIRGenerator.cpp */,
 				52847ADA21FFB8630061A9DB /* WasmAirIRGenerator.h */,
@@ -10956,6 +10964,7 @@
 				0FE050291AA9095600D33B33 /* ScopedArgumentsTable.h in Headers */,
 				0FE0502B1AA9095600D33B33 /* ScopeOffset.h in Headers */,
 				0F24E55217EE274900ABB217 /* ScratchRegisterAllocator.h in Headers */,
+				37AAC094279F1C0500D64842 /* WasmBranchHints.h in Headers */,
 				33111B8B2397256500AA34CE /* Scribble.h in Headers */,
 				A5FD0068189AFE9C00633231 /* ScriptArguments.h in Headers */,
 				A5FD006E189B00AA00633231 /* ScriptCallFrame.h in Headers */,
@@ -11082,6 +11091,7 @@
 				FE3422121D6B81C30032BE88 /* ThrowScope.h in Headers */,
 				0F572D4F16879FDD00E57FBD /* ThunkGenerator.h in Headers */,
 				A7386556118697B400540279 /* ThunkGenerators.h in Headers */,
+				37AAC093279F1BFC00D64842 /* WasmBranchHintsSectionParser.h in Headers */,
 				141448CD13A1783700F5BA1A /* TinyBloomFilter.h in Headers */,
 				0F55989817C86C5800A1E543 /* ToNativeFromValue.h in Headers */,
 				0F2D4DE919832DAC007D4B19 /* ToThisStatus.h in Headers */,

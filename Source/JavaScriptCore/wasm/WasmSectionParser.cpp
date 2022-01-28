@@ -30,6 +30,7 @@
 #if ENABLE(WEBASSEMBLY)
 
 #include "JSCJSValueInlines.h"
+#include "WasmBranchHintsSectionParser.h"
 #include "WasmMemoryInformation.h"
 #include "WasmNameSectionParser.h"
 #include "WasmOps.h"
@@ -896,6 +897,12 @@ auto SectionParser::parseCustom() -> PartialResult
         NameSectionParser nameSectionParser(section.payload.begin(), section.payload.size(), m_info);
         if (auto nameSection = nameSectionParser.parse())
             m_info->nameSection = WTFMove(*nameSection);
+    } else if (Options::useWebAssemblyBranchHints()) {
+        Name branchHintsName = { 'c', 'o', 'd', 'e', '_', 'a', 'n', 'n', 'o', 't', 'a', 't', 'i', 'o', 'n', '.', 'b', 'r', 'a', 'n', 'c', 'h', '_', 'h', 'i', 'n', 't' };
+        if (section.name == branchHintsName) {
+            BranchHintsSectionParser branchHintsSectionParser(section.payload.begin(), section.payload.size(), m_info);
+            branchHintsSectionParser.parse();
+        }
     }
 
     m_info->customSections.uncheckedAppend(WTFMove(section));

@@ -52,7 +52,7 @@
 #include "JSWebAssemblyInstance.h"
 #include "ProbeContext.h"
 #include "ScratchRegisterAllocator.h"
-#include "ScratchRegisterAllocator.h"
+#include "WasmBranchHints.h"
 #include "WasmCallingConvention.h"
 #include "WasmContextInlines.h"
 #include "WasmExceptionType.h"
@@ -2475,9 +2475,26 @@ auto B3IRGenerator::addIf(ExpressionType condition, BlockSignature signature, St
     BasicBlock* taken = m_proc.addBlock();
     BasicBlock* notTaken = m_proc.addBlock();
     BasicBlock* continuation = m_proc.addBlock();
+    FrequencyClass takenFrequency = FrequencyClass::Normal;
+    FrequencyClass notTakenFrequency = FrequencyClass::Normal;
+
+    if (Options::useWebAssemblyBranchHints()) {
+        BranchHint hint = m_info.getBranchHint(m_functionIndex, m_parser->currentOpcodeStartingOffset());
+
+        switch (hint) {
+        case BranchHint::Unlikely:
+            takenFrequency = FrequencyClass::Rare;
+            break;
+        case BranchHint::Likely:
+            notTakenFrequency = FrequencyClass::Rare;
+            break;
+        case BranchHint::Invalid:
+            break;
+        }
+    }
 
     m_currentBlock->appendNew<Value>(m_proc, B3::Branch, origin(), get(condition));
-    m_currentBlock->setSuccessors(FrequentedBlock(taken), FrequentedBlock(notTaken));
+    m_currentBlock->setSuccessors(FrequentedBlock(taken, takenFrequency), FrequentedBlock(notTaken, notTakenFrequency));
     taken->addPredecessor(m_currentBlock);
     notTaken->addPredecessor(m_currentBlock);
 
@@ -2721,15 +2738,33 @@ auto B3IRGenerator::addBranch(ControlData& data, ExpressionType condition, const
     unifyValuesWithBlock(returnValues, data);
 
     BasicBlock* target = data.targetBlockForBranch();
+    FrequencyClass targetFrequency = FrequencyClass::Normal;
+    FrequencyClass continuationFrequency = FrequencyClass::Normal;
+
+    if (Options::useWebAssemblyBranchHints()) {
+        BranchHint hint = m_info.getBranchHint(m_functionIndex, m_parser->currentOpcodeStartingOffset());
+
+        switch (hint) {
+        case BranchHint::Unlikely:
+            targetFrequency = FrequencyClass::Rare;
+            break;
+        case BranchHint::Likely:
+            continuationFrequency = FrequencyClass::Rare;
+            break;
+        case BranchHint::Invalid:
+            break;
+        }
+    }
+
     if (condition) {
         BasicBlock* continuation = m_proc.addBlock();
         m_currentBlock->appendNew<Value>(m_proc, B3::Branch, origin(), get(condition));
-        m_currentBlock->setSuccessors(FrequentedBlock(target), FrequentedBlock(continuation));
+        m_currentBlock->setSuccessors(FrequentedBlock(target, targetFrequency), FrequentedBlock(continuation, continuationFrequency));
         target->addPredecessor(m_currentBlock);
         continuation->addPredecessor(m_currentBlock);
         m_currentBlock = continuation;
     } else {
-        m_currentBlock->appendNewControlValue(m_proc, Jump, origin(), FrequentedBlock(target));
+        m_currentBlock->appendNewControlValue(m_proc, Jump, origin(), FrequentedBlock(target, targetFrequency));
         target->addPredecessor(m_currentBlock);
     }
 

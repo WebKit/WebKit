@@ -44,6 +44,7 @@
 #include "JSCJSValueInlines.h"
 #include "JSWebAssemblyInstance.h"
 #include "ScratchRegisterAllocator.h"
+#include "WasmBranchHints.h"
 #include "WasmCallingConvention.h"
 #include "WasmContextInlines.h"
 #include "WasmExceptionType.h"
@@ -3174,10 +3175,27 @@ auto AirIRGenerator::addIf(ExpressionType condition, BlockSignature signature, S
     BasicBlock* taken = m_code.addBlock();
     BasicBlock* notTaken = m_code.addBlock();
     BasicBlock* continuation = m_code.addBlock();
-    
+    B3::FrequencyClass takenFrequency = B3::FrequencyClass::Normal;
+    B3::FrequencyClass notTakenFrequency= B3::FrequencyClass::Normal;
+
+    if (Options::useWebAssemblyBranchHints()) {
+        BranchHint hint = m_info.getBranchHint(m_functionIndex, m_parser->currentOpcodeStartingOffset());
+
+        switch (hint) {
+        case BranchHint::Unlikely:
+            takenFrequency = B3::FrequencyClass::Rare;
+            break;
+        case BranchHint::Likely:
+            notTakenFrequency = B3::FrequencyClass::Rare;
+            break;
+        case BranchHint::Invalid:
+            break;
+        }
+    }
+
     // Wasm bools are i32.
     append(BranchTest32, Arg::resCond(MacroAssembler::NonZero), condition, condition);
-    m_currentBlock->setSuccessors(taken, notTaken);
+    m_currentBlock->setSuccessors(FrequentedBlock(taken, takenFrequency), FrequentedBlock(notTaken, notTakenFrequency));
 
     m_currentBlock = taken;
     splitStack(signature, enclosingStack, newStack);
@@ -3417,14 +3435,32 @@ auto AirIRGenerator::addBranch(ControlData& data, ExpressionType condition, cons
     unifyValuesWithBlock(returnValues, data.results);
 
     BasicBlock* target = data.targetBlockForBranch();
+    B3::FrequencyClass targetFrequency = B3::FrequencyClass::Normal;
+    B3::FrequencyClass continuationFrequency = B3::FrequencyClass::Normal;
+
+    if (Options::useWebAssemblyBranchHints()) {
+        BranchHint hint = m_info.getBranchHint(m_functionIndex, m_parser->currentOpcodeStartingOffset());
+
+        switch (hint) {
+        case BranchHint::Unlikely:
+            targetFrequency = B3::FrequencyClass::Rare;
+            break;
+        case BranchHint::Likely:
+            continuationFrequency = B3::FrequencyClass::Rare;
+            break;
+        case BranchHint::Invalid:
+            break;
+        }
+    }
+
     if (condition) {
         BasicBlock* continuation = m_code.addBlock();
         append(BranchTest32, Arg::resCond(MacroAssembler::NonZero), condition, condition);
-        m_currentBlock->setSuccessors(target, continuation);
+        m_currentBlock->setSuccessors(FrequentedBlock(target, targetFrequency), FrequentedBlock(continuation, continuationFrequency));
         m_currentBlock = continuation;
     } else {
         append(Jump);
-        m_currentBlock->setSuccessors(target);
+        m_currentBlock->setSuccessors(FrequentedBlock(target, targetFrequency));
     }
 
     return { };

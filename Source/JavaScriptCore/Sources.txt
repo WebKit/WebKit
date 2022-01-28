@@ -1065,6 +1065,7 @@ wasm/WasmAirIRGenerator.cpp @no-unify
 wasm/WasmB3IRGenerator.cpp
 wasm/WasmBBQPlan.cpp
 wasm/WasmBinding.cpp
+wasm/WasmBranchHintsSectionParser.cpp
 wasm/WasmCallee.cpp
 wasm/WasmCalleeGroup.cpp
 wasm/WasmCalleeRegistry.cpp

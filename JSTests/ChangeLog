@@ -1,3 +1,17 @@
+2022-01-28  Tom Tartarin  <tom@leaningtech.com>
+
+        [JSC] Add support for WASM branch hinting proposal
+        https://bugs.webkit.org/show_bug.cgi?id=235581
+
+        Reviewed by Yusuke Suzuki.
+
+        Add test for branch hinting custom section
+
+        * wasm.yaml:
+        * wasm/branch-hints/branchHintsModule.wasm: Added.
+        * wasm/branch-hints/branchHintsSection.js: Added.
+        (const.module):
+
 2022-01-24  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Enable Array#groupBy and Array#groupByToMap
