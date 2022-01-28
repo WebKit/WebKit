@@ -1,3 +1,33 @@
+2022-01-28  Tyler Wilcock  <tyler_w@apple.com>
+
+        AX: Isolated tree object frames no longer encode content offsets, so hit testing should be updated accordingly
+        https://bugs.webkit.org/show_bug.cgi?id=235726
+
+        Reviewed by Chris Fleizach.
+
+        In -[WKAccessibilityWebPageObjectMac accessibilityHitTest], we have a special isolated tree case:
+
+        // Isolated tree frames have the offset encoded into them so we don't need to undo here.
+        #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+            applyContentOffset = !WebCore::AXObjectCache::isIsolatedTreeEnabled();
+        #endif
+
+        The statement in the comment no longer seems to be true, as not applying this content offset results
+        in hit testing working incorrectly (the point given to WebCore is too small).
+
+        This is because isolated tree hit testing used to use relative frames:
+
+        https://github.com/WebKit/WebKit/blob/f5525921aac090ca9544cce2a3ac28e38f92c9ba/Source/WebCore/accessibility/isolatedtree/AXIsolatedTreeNode.cpp#L115
+
+        But now doesn't, instead deferring to the live, main-thread AX object, which doesn't use relative frames:
+
+        https://github.com/WebKit/WebKit/blob/4221a510fe4678cf1a03e5c06878cf2d3f0c1738/Source/WebCore/accessibility/isolatedtree/AXIsolatedObject.cpp#L814
+
+        This patch removes this isolated-tree-specific behavior.
+
+        * WebProcess/WebPage/mac/WKAccessibilityWebPageObjectMac.mm:
+        (-[WKAccessibilityWebPageObject accessibilityHitTest:]):
+
 2022-01-27  Aditya Keerthi  <akeerthi@apple.com>
 
         Introduce WebFoundTextRange and WebFoundTextRangeController to support restorable find results
