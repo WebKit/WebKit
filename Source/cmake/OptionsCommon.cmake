@@ -73,7 +73,7 @@ if (USE_LD_GOLD)
 endif ()
 
 set(ENABLE_DEBUG_FISSION_DEFAULT OFF)
-if (USE_LD_GOLD AND CMAKE_BUILD_TYPE STREQUAL "Debug")
+if (CMAKE_BUILD_TYPE STREQUAL "Debug")
     check_cxx_compiler_flag(-gsplit-dwarf CXX_COMPILER_SUPPORTS_GSPLIT_DWARF)
     if (CXX_COMPILER_SUPPORTS_GSPLIT_DWARF)
         set(ENABLE_DEBUG_FISSION_DEFAULT ON)
@@ -83,13 +83,14 @@ endif ()
 option(DEBUG_FISSION "Use Debug Fission support" ${ENABLE_DEBUG_FISSION_DEFAULT})
 
 if (DEBUG_FISSION)
-    if (NOT USE_LD_GOLD)
-        message(FATAL_ERROR "Need GNU gold linker for Debug Fission support")
-    endif ()
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -gsplit-dwarf")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -gsplit-dwarf")
-    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,--gdb-index")
-    set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,--gdb-index")
+
+    # The ld.bfd linker does not support --gdb-index, possibly others as well.
+    if (USE_LD_GOLD OR USE_LD_LLD)
+        set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,--gdb-index")
+        set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,--gdb-index")
+    endif ()
 endif ()
 
 set(GCC_OFFLINEASM_SOURCE_MAP_DEFAULT OFF)
