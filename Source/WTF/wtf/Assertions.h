@@ -758,9 +758,14 @@ inline void compilerFenceForCrash()
 }
 
 #ifndef CRASH_WITH_INFO
+
+#define PP_THIRD_ARG(a,b,c,...) c
+#define VA_OPT_SUPPORTED_I(...) PP_THIRD_ARG(__VA_OPT__(,),true,false,)
+#define VA_OPT_SUPPORTED VA_OPT_SUPPORTED_I(?)
+
 // This is useful if you are going to stuff data into registers before crashing, like the
 // crashWithInfo functions below.
-#if COMPILER(MSVC)
+#if COMPILER(MSVC) || !VA_OPT_SUPPORTED
 // FIXME: Re-check whether MSVC 2020 supports __VA_OPT__ and remove the special
 //        casing once older versions of the compiler are no longer supported.
 #define CRASH_WITH_INFO(...) do { \
