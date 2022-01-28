@@ -1,3 +1,15 @@
+2022-01-27  Jonathan Bedard  <jbedard@apple.com>
+
+        [git-webkit] Respect EMAIL_ADDRESS environment variable during setup
+        https://bugs.webkit.org/show_bug.cgi?id=235748
+        <rdar://problem/88161757>
+
+        Reviewed by Ryan Haddad.
+
+        * Scripts/libraries/webkitscmpy/webkitscmpy/program/setup.py:
+        (Setup.git): Prefer EMAIL_ADDRESS variable over git config email.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/setup_unittest.py:
+
 2022-01-26  Jonathan Bedard  <jbedard@apple.com>
 
         [EWS] Differentiate UAT and production PR processing
