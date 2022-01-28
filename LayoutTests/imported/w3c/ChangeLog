@@ -1,3 +1,14 @@
+2022-01-28  Antoine Quint  <graouts@webkit.org>
+
+        [WPT] Remove outdated Web Animations expectations
+        https://bugs.webkit.org/show_bug.cgi?id=235767
+
+        Unreviewed test gardening.
+
+        * web-platform-tests/web-animations/animation-model/animation-types/accumulation-per-property-expected.txt: Removed.
+        * web-platform-tests/web-animations/animation-model/animation-types/addition-per-property-expected.txt: Removed.
+        * web-platform-tests/web-animations/animation-model/animation-types/interpolation-per-property-expected.txt: Removed.
+
 2022-01-27  Chris Dumez  <cdumez@apple.com>
 
         Radio buttons with no form owner are not grouped
