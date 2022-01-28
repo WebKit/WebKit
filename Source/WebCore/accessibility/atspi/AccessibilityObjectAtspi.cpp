@@ -26,6 +26,7 @@
 #include "AccessibilityRootAtspi.h"
 #include "AccessibilityTableCell.h"
 #include "ElementInlines.h"
+#include "HTMLSpanElement.h"
 #include "RenderAncestorIterator.h"
 #include "RenderBlock.h"
 #include "RenderObject.h"
@@ -1436,6 +1437,53 @@ AccessibilityObjectInclusion AccessibilityObject::accessibilityPlatformIncludesO
     // with a different role (section).
     if (roleValue() == AccessibilityRole::ListItem && inheritsPresentationalRole())
         return AccessibilityObjectInclusion::IncludeObject;
+
+    RenderObject* renderObject = renderer();
+    if (!renderObject)
+        return AccessibilityObjectInclusion::DefaultBehavior;
+
+    // We always want to include paragraphs that have rendered content.
+    // WebCore Accessibility does so unless there is a RenderBlock child.
+    if (roleValue() == AccessibilityRole::Paragraph) {
+        auto child = childrenOfType<RenderBlock>(downcast<RenderElement>(*renderObject)).first();
+        return child ? AccessibilityObjectInclusion::IncludeObject : AccessibilityObjectInclusion::DefaultBehavior;
+    }
+
+    if (renderObject->isAnonymousBlock()) {
+        // The text displayed by an ARIA menu item is exposed through the accessible name.
+        if (parent->isMenuItem())
+            return AccessibilityObjectInclusion::IgnoreObject;
+
+        // The text displayed in headings is typically exposed in the heading itself.
+        if (parent->isHeading())
+            return AccessibilityObjectInclusion::IgnoreObject;
+
+        // The text displayed in list items is typically exposed in the list item itself.
+        if (parent->isListItem())
+            return AccessibilityObjectInclusion::IgnoreObject;
+
+        // The text displayed in links is typically exposed in the link itself.
+        if (parent->isLink())
+            return AccessibilityObjectInclusion::IgnoreObject;
+
+        // FIXME: This next one needs some further consideration. But paragraphs are not
+        // typically huge (like divs). And ignoring anonymous block children of paragraphs
+        // will preserve existing behavior.
+        if (parent->roleValue() == AccessibilityRole::Paragraph)
+            return AccessibilityObjectInclusion::IgnoreObject;
+
+        return AccessibilityObjectInclusion::DefaultBehavior;
+    }
+
+    Node* node = renderObject->node();
+    if (!node)
+        return AccessibilityObjectInclusion::DefaultBehavior;
+
+    // We don't want <span> elements to show up in the accessibility hierarchy unless
+    // we have good reasons for that (e.g. focusable or visible because of containing
+    // a meaningful accessible name, maybe set through ARIA).
+    if (is<HTMLSpanElement>(node) && !canSetFocusAttribute() && !hasAttributesRequiredForInclusion() && !supportsARIAAttributes())
+        return AccessibilityObjectInclusion::IgnoreObject;
 
     return AccessibilityObjectInclusion::DefaultBehavior;
 }
