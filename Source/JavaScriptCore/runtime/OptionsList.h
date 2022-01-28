@@ -550,7 +550,7 @@ bool canUseWebAssemblyFastMemory();
     v(Bool, useWebAssemblyThreading, true, Normal, "Allow instructions from the wasm threading spec.") \
     v(Bool, useWebAssemblyTypedFunctionReferences, false, Normal, "Allow function types from the wasm typed function references spec.") \
     v(Bool, useWebAssemblyExceptions, true, Normal, "Allow the new section and instructions from the wasm exception handling spec.") \
-    v(Bool, useWebAssemblyBranchHints, false, Normal, "Allow the new section from the wasm branch hinting spec.") \
+    v(Bool, useWebAssemblyBranchHints, true, Normal, "Allow the new section from the wasm branch hinting spec.") \
 
 
 enum OptionEquivalence {
