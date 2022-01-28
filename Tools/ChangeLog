@@ -1,3 +1,15 @@
+2022-01-26  Jonathan Bedard  <jbedard@apple.com>
+
+        [EWS] Differentiate UAT and production PR processing
+        https://bugs.webkit.org/show_bug.cgi?id=235669
+        <rdar://problem/88093065>
+
+        Reviewed by Aakash Jain.
+
+        * CISupport/ews-build/events.py:
+        (Events.buildFinished): Append custom_suffix to reported context.
+        (Events.stepStartedGitHub): Ditto.
+
 2022-01-27  Jonathan Bedard  <jbedard@apple.com>
 
         [EWS] Ignore hooks from closed PRs
