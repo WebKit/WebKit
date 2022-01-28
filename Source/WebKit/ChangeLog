@@ -1,3 +1,22 @@
+2022-01-27  Megan Gardner  <megan_gardner@apple.com>
+
+        DocumentContext gives empty rects for blank lines.
+        https://bugs.webkit.org/show_bug.cgi?id=235695
+
+        Reviewed by Wenson Hsieh.
+
+        When requesting the document context for the end of a document, we would give empty rects for
+        blank lines. This was because when calculating the absoluteBoundingRect for the range, we 
+        would use a normal unionRect call, which would use the basic unite call, which does not combine
+        empty rects. And empty rect is defined as a rect that does not have a non-zero hight and width.
+        Since we were calculating information about <br> lines, this was causing us to union a list of 
+        a single rect, which was an empty rect. This left us with a zero rect after unioning. The solution 
+        is to unionIfNonZero when calculating these rects for DocumentContext. I also took the opportunity 
+        to make some of this code more parallel to other implementations.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::requestDocumentEditingContext):
+
 2022-01-27  Tim Horton  <timothy_horton@apple.com>
 
         Remove ENABLE(HOVER_GESTURE_RECOGNIZER) and related code

@@ -89,6 +89,14 @@ IntRect unionRect(const Vector<IntRect>& rects)
     return result;
 }
 
+IntRect unionRectIgnoringZeroRects(const Vector<IntRect>& rects)
+{
+    IntRect result;
+    for (auto& rect : rects)
+        result.uniteIfNonZero(rect);
+    return result;
+}
+
 FloatRect unionRect(const Vector<FloatRect>& rects)
 {
     FloatRect result;

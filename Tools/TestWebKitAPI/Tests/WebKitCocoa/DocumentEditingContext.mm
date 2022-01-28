@@ -475,6 +475,31 @@ static CGRect CGRectFromJSONEncodedDOMRectJSValue(id jsValue)
     return CGRectMake([domRect[@"left"] floatValue], [domRect[@"top"] floatValue], [domRect[@"width"] floatValue], [domRect[@"height"] floatValue]);
 }
 
+TEST(DocumentEditingContext, RectsRequestInContentEditable)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+
+    [webView synchronouslyLoadHTMLString:applyAhemStyle(@"<p id='text' contenteditable>Test<br><br><br><br></p>")];
+    [webView stringByEvaluatingJavaScript:@"getSelection().setBaseAndExtent(text.lastChild, text.lastChild.length, text.lastChild, text.lastChild.length)"]; // Will focus <p>.
+    
+    NSArray<_WKTextInputContext *> *textInputContexts = [webView synchronouslyRequestTextInputContextsInRect:[webView frame]];
+    EXPECT_EQ(1UL, textInputContexts.count);
+
+    auto request = retainPtr(makeRequest(UIWKDocumentRequestText | UIWKDocumentRequestRects | UIWKDocumentRequestSpatialAndCurrentSelection, UITextGranularityCharacter, 200, [webView frame], textInputContexts[0]));
+    auto context = retainPtr([webView synchronouslyRequestDocumentContext:request.get()]);
+    auto *textRects = [context textRects];
+    EXPECT_EQ(7U, textRects.count);
+    if (textRects.count >= 7) {
+        EXPECT_EQ(CGRectMake(0, 0, 25, 25), textRects[0].CGRectValue);
+        EXPECT_EQ(CGRectMake(25, 0, 25, 25), textRects[1].CGRectValue);
+        EXPECT_EQ(CGRectMake(50, 0, 25, 25), textRects[2].CGRectValue);
+        EXPECT_EQ(CGRectMake(75, 0, 25, 25), textRects[3].CGRectValue);
+        EXPECT_EQ(CGRectMake(100, 0, 0, 25), textRects[4].CGRectValue);
+        EXPECT_EQ(CGRectMake(0, 25, 0, 25), textRects[5].CGRectValue);
+        EXPECT_EQ(CGRectMake(0, 50, 0, 25), textRects[6].CGRectValue);
+    }
+}
+
 TEST(DocumentEditingContext, SpatialRequest_RectEncompassingInput)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 980, 600)]);

@@ -1,3 +1,13 @@
+2022-01-27  Megan Gardner  <megan_gardner@apple.com>
+
+        DocumentContext gives empty rects for blank lines.
+        https://bugs.webkit.org/show_bug.cgi?id=235695
+
+        Reviewed by Wenson Hsieh.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/DocumentEditingContext.mm:
+        (TEST): DocumentEditingContext::RectsRequestInContentEditable
+
 2022-01-27  Jonathan Bedard  <jbedard@apple.com>
 
         [git-webkit] Respect EMAIL_ADDRESS environment variable during setup
