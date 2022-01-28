@@ -83,6 +83,7 @@
 #import "WebAutocorrectionData.h"
 #import "WebDataListSuggestionsDropdownIOS.h"
 #import "WebEvent.h"
+#import "WebFoundTextRange.h"
 #import "WebIOSEventFactory.h"
 #import "WebPageMessages.h"
 #import "WebPageProxyMessages.h"
@@ -401,18 +402,23 @@ constexpr double fasterTapSignificantZoomThreshold = 0.8;
 
 @interface WKFoundTextRange : UITextRange
 
-@property (nonatomic) CGRect rect;
-@property (nonatomic) NSUInteger index;
+@property (nonatomic) NSUInteger location;
+@property (nonatomic) NSUInteger length;
+@property (nonatomic, copy) NSString *frameIdentifier;
+@property (nonatomic) NSUInteger order;
 
-+ (WKFoundTextRange *)foundTextRangeWithRect:(CGRect)rect index:(NSUInteger)index;
++ (WKFoundTextRange *)foundTextRangeWithWebFoundTextRange:(WebKit::WebFoundTextRange)range;
+
+- (WebKit::WebFoundTextRange)webFoundTextRange;
 
 @end
 
 @interface WKFoundTextPosition : UITextPosition
 
-@property (nonatomic) NSUInteger index;
+@property (nonatomic) NSUInteger offset;
+@property (nonatomic) NSUInteger order;
 
-+ (WKFoundTextPosition *)textPositionWithIndex:(NSUInteger)index;
++ (WKFoundTextPosition *)textPositionWithOffset:(NSUInteger)offset order:(NSUInteger)order;
 
 @end
 
@@ -5265,11 +5271,18 @@ static Vector<WebCore::CompositionHighlight> compositionHighlights(NSAttributedS
     return NSOrderedSame;
 }
 
-- (NSInteger)offsetFromPosition:(UITextPosition *)from toPosition:(UITextPosition *)toPosition
+- (NSInteger)offsetFromPosition:(UITextPosition *)from toPosition:(UITextPosition *)to
 {
 #if HAVE(UIFINDINTERACTION)
-    if ([from isKindOfClass:[WKFoundTextPosition class]] && [toPosition isKindOfClass:[WKFoundTextPosition class]])
-        return ((WKFoundTextPosition *)from).index - ((WKFoundTextPosition *)toPosition).index;
+    if ([from isKindOfClass:[WKFoundTextPosition class]] && [to isKindOfClass:[WKFoundTextPosition class]]) {
+        WKFoundTextPosition *fromPosition = (WKFoundTextPosition *)from;
+        WKFoundTextPosition *toPosition = (WKFoundTextPosition *)to;
+
+        if (fromPosition.order == toPosition.order)
+            return fromPosition.offset - toPosition.offset;
+
+        return fromPosition.order - toPosition.order;
+    }
 #endif
 
     return 0;
@@ -9993,8 +10006,6 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
 - (void)performTextSearchWithQueryString:(NSString *)string usingOptions:(_UITextSearchOptions *)options resultAggregator:(id<_UITextSearchAggregator>)aggregator
 {
     OptionSet<WebKit::FindOptions> findOptions;
-    findOptions.add(WebKit::FindOptions::ShowOverlay);
-
     switch (options.wordMatchMethod) {
     case _UITextSearchMatchMethodStartsWith:
         findOptions.add(WebKit::FindOptions::AtWordStarts);
@@ -10009,12 +10020,12 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
     if (options.stringCompareOptions & NSCaseInsensitiveSearch)
         findOptions.add(WebKit::FindOptions::CaseInsensitive);
 
-    _page->findRectsForStringMatches(string, findOptions, 1000, [string, aggregator = retainPtr(aggregator)](const Vector<WebCore::FloatRect>& rects) {
-        NSUInteger index = 0;
-        for (auto& rect : rects) {
-            WKFoundTextRange *range = [WKFoundTextRange foundTextRangeWithRect:rect index:index];
-            [aggregator foundRange:range forSearchString:string inDocument:nil];
-            index++;
+    // The limit matches the limit set on existing WKWebView find API.
+    constexpr auto maxMatches = 1000;
+    _page->findTextRangesForStringMatches(string, findOptions, maxMatches, [string, aggregator = retainPtr(aggregator)](const Vector<WebKit::WebFoundTextRange> ranges) {
+        for (auto& range : ranges) {
+            WKFoundTextRange *textRange = [WKFoundTextRange foundTextRangeWithWebFoundTextRange:range];
+            [aggregator foundRange:textRange forSearchString:string inDocument:nil];
         }
 
         [aggregator finishedSearching];
@@ -10023,21 +10034,38 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
 
 - (void)decorateFoundTextRange:(UITextRange *)range inDocument:(_UITextSearchDocumentIdentifier)document usingStyle:(_UIFoundTextStyle)style
 {
-    if (![range isKindOfClass:[WKFoundTextRange class]])
+    auto foundTextRange = dynamic_objc_cast<WKFoundTextRange>(range);
+    if (!foundTextRange)
         return;
 
-    if (style == _UIFoundTextStyleHighlighted) {
-        _foundHighlightedTextRange = range;
-        WKFoundTextRange *foundRange = (WKFoundTextRange *)range;
-        _page->indicateFindMatch(foundRange.index);
-    } else if (style == _UIFoundTextStyleFound && _foundHighlightedTextRange == range)
-        _page->hideFindIndicator();
+    auto decorationStyle = WebKit::FindDecorationStyle::Normal;
+    if (style == _UIFoundTextStyleFound)
+        decorationStyle = WebKit::FindDecorationStyle::Found;
+    else if (style == _UIFoundTextStyleHighlighted)
+        decorationStyle = WebKit::FindDecorationStyle::Highlighted;
+
+    _page->decorateTextRangeWithStyle([foundTextRange webFoundTextRange], decorationStyle);
+}
+
+- (void)scrollRangeToVisible:(UITextRange *)range inDocument:(_UITextSearchDocumentIdentifier)document
+{
+    if (auto foundTextRange = dynamic_objc_cast<WKFoundTextRange>(range))
+        _page->scrollTextRangeToVisible([foundTextRange webFoundTextRange]);
 }
 
 - (void)clearAllDecoratedFoundText
 {
-    _foundHighlightedTextRange = nil;
-    _page->hideFindUI();
+    _page->clearAllDecoratedFoundText();
+}
+
+- (void)didBeginTextSearchOperation
+{
+    _page->didBeginTextSearchOperation();
+}
+
+- (void)didEndTextSearchOperation
+{
+    _page->didEndTextSearchOperation();
 }
 
 - (NSInteger)offsetFromPosition:(UITextPosition *)from toPosition:(UITextPosition *)toPosition inDocument:(_UITextSearchDocumentIdentifier)document
@@ -11914,23 +11942,27 @@ static UIMenu *menuFromLegacyPreviewOrDefaultActions(UIViewController *previewVi
 
 @implementation WKFoundTextRange
 
-+ (WKFoundTextRange *)foundTextRangeWithRect:(CGRect)rect index:(NSUInteger)index
+
++ (WKFoundTextRange *)foundTextRangeWithWebFoundTextRange:(WebKit::WebFoundTextRange)webRange
 {
     auto range = adoptNS([[WKFoundTextRange alloc] init]);
-    [range setRect:rect];
-    [range setIndex:index];
+    [range setLocation:webRange.location];
+    [range setLength:webRange.length];
+    [range setFrameIdentifier:webRange.frameIdentifier];
+    [range setOrder:webRange.order];
     return range.autorelease();
 }
 
 - (WKFoundTextPosition *)start
 {
-    WKFoundTextPosition *position = [WKFoundTextPosition textPositionWithIndex:self.index];
+    WKFoundTextPosition *position = [WKFoundTextPosition textPositionWithOffset:self.location order:self.order];
     return position;
 }
 
 - (UITextPosition *)end
 {
-    return self.start;
+    WKFoundTextPosition *position = [WKFoundTextPosition textPositionWithOffset:(self.location + self.length) order:self.order];
+    return position;
 }
 
 - (BOOL)isEmpty
@@ -11938,14 +11970,20 @@ static UIMenu *menuFromLegacyPreviewOrDefaultActions(UIViewController *previewVi
     return NO;
 }
 
+- (WebKit::WebFoundTextRange)webFoundTextRange
+{
+    return { self.location, self.length, self.frameIdentifier, self.order };
+}
+
 @end
 
 @implementation WKFoundTextPosition
 
-+ (WKFoundTextPosition *)textPositionWithIndex:(NSUInteger)index
++ (WKFoundTextPosition *)textPositionWithOffset:(NSUInteger)offset order:(NSUInteger)order
 {
     auto pos = adoptNS([[WKFoundTextPosition alloc] init]);
-    [pos setIndex:index];
+    [pos setOffset:offset];
+    [pos setOrder:order];
     return pos.autorelease();
 }
 

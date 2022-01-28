@@ -296,6 +296,7 @@ class WebDataListSuggestionPicker;
 class WebDateTimeChooser;
 class WebDocumentLoader;
 class WebEvent;
+class WebFoundTextRangeController;
 class PlaybackSessionManager;
 class VideoFullscreenManager;
 class WebFrame;
@@ -323,6 +324,7 @@ class WebWheelEvent;
 class RemoteLayerTreeTransaction;
 
 enum class FindOptions : uint16_t;
+enum class FindDecorationStyle : uint8_t;
 enum class DragControllerAction : uint8_t;
 enum class TextRecognitionUpdateResult : uint8_t;
 enum class SyntheticEditingCommandType : uint8_t;
@@ -343,6 +345,7 @@ struct TextInputContext;
 struct UserMessage;
 struct WebAutocorrectionData;
 struct WebAutocorrectionContext;
+struct WebFoundTextRange;
 struct WebPageCreationParameters;
 struct WebPreferencesStore;
 struct WebsitePoliciesData;
@@ -705,6 +708,7 @@ public:
     static const WebEvent* currentEvent();
 
     FindController& findController() { return m_findController.get(); }
+    WebFoundTextRangeController& foundTextRangeController() { return m_foundTextRangeController.get(); }
 
 #if ENABLE(GEOLOCATION)
     GeolocationPermissionRequestManager& geolocationPermissionRequestManager() { return m_geolocationPermissionRequestManager.get(); }
@@ -1755,6 +1759,13 @@ private:
     void findRectsForStringMatches(const String&, OptionSet<FindOptions>, uint32_t maxMatchCount, CompletionHandler<void(Vector<WebCore::FloatRect>&&)>&&);
     void hideFindIndicator();
 
+    void findTextRangesForStringMatches(const String&, OptionSet<FindOptions>, uint32_t maxMatchCount, CompletionHandler<void(Vector<WebFoundTextRange>&&)>&&);
+    void decorateTextRangeWithStyle(const WebFoundTextRange&, WebKit::FindDecorationStyle);
+    void scrollTextRangeToVisible(const WebFoundTextRange&);
+    void clearAllDecoratedFoundText();
+    void didBeginTextSearchOperation();
+    void didEndTextSearchOperation();
+
 #if USE(COORDINATED_GRAPHICS)
     void sendViewportAttributesChanged(const WebCore::ViewportArguments&);
 #endif
@@ -2059,6 +2070,8 @@ private:
 #endif
 
     UniqueRef<FindController> m_findController;
+
+    UniqueRef<WebFoundTextRangeController> m_foundTextRangeController;
 
     RefPtr<WebInspector> m_inspector;
     RefPtr<WebInspectorUI> m_inspectorUI;

@@ -417,10 +417,6 @@ using ImageAnalysisRequestIdentifier = ObjectIdentifier<ImageAnalysisRequestIden
     WeakObjCPtr<WKDataListSuggestionsControl> _dataListSuggestionsControl;
 #endif
 
-#if HAVE(UIFINDINTERACTION)
-    RetainPtr<UITextRange> _foundHighlightedTextRange;
-#endif
-
     BOOL _isEditable;
     BOOL _showingTextStyleOptions;
     BOOL _hasValidPositionInformation;

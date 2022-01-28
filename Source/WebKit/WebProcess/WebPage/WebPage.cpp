@@ -91,6 +91,8 @@
 #include "WebEditorClient.h"
 #include "WebEventConversion.h"
 #include "WebEventFactory.h"
+#include "WebFoundTextRange.h"
+#include "WebFoundTextRangeController.h"
 #include "WebFrame.h"
 #include "WebFrameLoaderClient.h"
 #include "WebFullScreenManager.h"
@@ -509,6 +511,7 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
     , m_resourceLoadClient(makeUnique<API::InjectedBundle::ResourceLoadClient>())
     , m_uiClient(makeUnique<API::InjectedBundle::PageUIClient>())
     , m_findController(makeUniqueRef<FindController>(this))
+    , m_foundTextRangeController(makeUniqueRef<WebFoundTextRangeController>(*this))
     , m_inspectorTargetController(makeUnique<WebPageInspectorTargetController>(*this))
     , m_userContentController(WebUserContentController::getOrCreate(parameters.userContentControllerParameters.identifier))
 #if ENABLE(GEOLOCATION)
@@ -4704,6 +4707,36 @@ void WebPage::findRectsForStringMatches(const String& string, OptionSet<FindOpti
 void WebPage::hideFindIndicator()
 {
     findController().hideFindIndicator();
+}
+
+void WebPage::findTextRangesForStringMatches(const String& string, OptionSet<FindOptions> options, uint32_t maxMatchCount, CompletionHandler<void(Vector<WebFoundTextRange>&&)>&& completionHandler)
+{
+    foundTextRangeController().findTextRangesForStringMatches(string, options, maxMatchCount, WTFMove(completionHandler));
+}
+
+void WebPage::decorateTextRangeWithStyle(const WebFoundTextRange& range, WebKit::FindDecorationStyle style)
+{
+    foundTextRangeController().decorateTextRangeWithStyle(range, style);
+}
+
+void WebPage::scrollTextRangeToVisible(const WebFoundTextRange& range)
+{
+    foundTextRangeController().scrollTextRangeToVisible(range);
+}
+
+void WebPage::clearAllDecoratedFoundText()
+{
+    foundTextRangeController().clearAllDecoratedFoundText();
+}
+
+void WebPage::didBeginTextSearchOperation()
+{
+    foundTextRangeController().didBeginTextSearchOperation();
+}
+
+void WebPage::didEndTextSearchOperation()
+{
+    foundTextRangeController().didEndTextSearchOperation();
 }
 
 void WebPage::getImageForFindMatch(uint32_t matchIndex)

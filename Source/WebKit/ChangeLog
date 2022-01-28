@@ -1,5 +1,55 @@
 2022-01-28  Aditya Keerthi  <akeerthi@apple.com>
 
+        Migrate _UITextSearching implementation to be backed by WebFoundTextRangeController
+        https://bugs.webkit.org/show_bug.cgi?id=235693
+        rdar://88117303
+
+        Reviewed by Tim Horton.
+
+        Migrate _UITextSearching implementation to be backed by
+        WebFoundTextRangeController to support restoreable find results.
+
+        * UIProcess/API/ios/WKWebViewIOS.mm:
+        (-[WKWebView scrollRangeToVisible:inDocument:]):
+        (-[WKWebView didBeginTextSearchOperation]):
+        (-[WKWebView didEndTextSearchOperation]):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::findTextRangesForStringMatches):
+        (WebKit::WebPageProxy::decorateTextRangeWithStyle):
+        (WebKit::WebPageProxy::scrollTextRangeToVisible):
+        (WebKit::WebPageProxy::clearAllDecoratedFoundText):
+        (WebKit::WebPageProxy::didBeginTextSearchOperation):
+        (WebKit::WebPageProxy::didEndTextSearchOperation):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView offsetFromPosition:toPosition:]):
+        (-[WKContentView performTextSearchWithQueryString:usingOptions:resultAggregator:]):
+        (-[WKContentView decorateFoundTextRange:inDocument:usingStyle:]):
+        (-[WKContentView scrollRangeToVisible:inDocument:]):
+        (-[WKContentView clearAllDecoratedFoundText]):
+        (-[WKContentView didBeginTextSearchOperation]):
+        (-[WKContentView didEndTextSearchOperation]):
+        (+[WKFoundTextRange foundTextRangeWithWebFoundTextRange:]):
+        (-[WKFoundTextRange start]):
+        (-[WKFoundTextRange end]):
+        (-[WKFoundTextRange webFoundTextRange]):
+        (+[WKFoundTextPosition textPositionWithOffset:order:]):
+        (+[WKFoundTextRange foundTextRangeWithRect:index:]): Deleted.
+        (+[WKFoundTextPosition textPositionWithIndex:]): Deleted.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::findTextRangesForStringMatches):
+        (WebKit::WebPage::decorateTextRangeWithStyle):
+        (WebKit::WebPage::scrollTextRangeToVisible):
+        (WebKit::WebPage::clearAllDecoratedFoundText):
+        (WebKit::WebPage::didBeginTextSearchOperation):
+        (WebKit::WebPage::didEndTextSearchOperation):
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::foundTextRangeController):
+        * WebProcess/WebPage/WebPage.messages.in:
+
+2022-01-28  Aditya Keerthi  <akeerthi@apple.com>
+
         Add support for decorating and scrolling to ranges in WebFoundTextRangeController
         https://bugs.webkit.org/show_bug.cgi?id=235692
         rdar://88117232
