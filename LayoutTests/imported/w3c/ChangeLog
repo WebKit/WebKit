@@ -1,3 +1,16 @@
+2022-01-29  Patrick Griffis  <pgriffis@igalia.com>
+
+        CSP: Properly block image content in object elements
+        https://bugs.webkit.org/show_bug.cgi?id=235837
+
+        Reviewed by Kate Cheney.
+
+        Update expectations with more passes.
+
+        * web-platform-tests/content-security-policy/object-src/object-src-url-blocked-expected.txt:
+        * web-platform-tests/content-security-policy/object-src/object-src-url-embed-blocked-expected.txt:
+        * web-platform-tests/content-security-policy/object-src/object-src-url-redirect-blocked.sub-expected.txt:
+
 2022-01-28  Antoine Quint  <graouts@webkit.org>
 
         css/css-backgrounds/animations/box-shadow-composition.html has failures

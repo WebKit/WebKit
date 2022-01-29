@@ -1,3 +1,14 @@
+2022-01-29  Patrick Griffis  <pgriffis@igalia.com>
+
+        CSP: Properly block image content in object elements
+        https://bugs.webkit.org/show_bug.cgi?id=235837
+
+        Reviewed by Kate Cheney.
+
+        * http/tests/security/contentSecurityPolicy/userAgentShadowDOM/default-src-object-data-url-blocked-expected.txt:
+        * http/tests/security/contentSecurityPolicy/userAgentShadowDOM/default-src-object-data-url-blocked2-expected.txt:
+        * http/tests/security/contentSecurityPolicy/userAgentShadowDOM/default-src-object-data-url-blocked3-expected.txt:
+
 2022-01-29  Tyler Wilcock  <tyler_w@apple.com>
 
         AX: Isolated tree objects don't update their AXPropertyName::ElementRect or AXPropertyName::BoundingBoxRect in response to dynamic page changes
