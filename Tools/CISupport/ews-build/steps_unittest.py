@@ -1176,7 +1176,6 @@ class TestCompileWebKitWithoutPatch(BuildStepMixinAdditions, unittest.TestCase):
         self.setupStep(CompileWebKitWithoutPatch())
         self.setProperty('fullPlatform', 'ios-simulator-11')
         self.setProperty('configuration', 'release')
-        self.setProperty('patchFailedToBuild', True)
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logEnviron=False,
@@ -1191,7 +1190,6 @@ class TestCompileWebKitWithoutPatch(BuildStepMixinAdditions, unittest.TestCase):
         self.setupStep(CompileWebKitWithoutPatch())
         self.setProperty('fullPlatform', 'mac-sierra')
         self.setProperty('configuration', 'debug')
-        self.setProperty('patchFailedTests', True)
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logEnviron=False,
@@ -1201,14 +1199,6 @@ class TestCompileWebKitWithoutPatch(BuildStepMixinAdditions, unittest.TestCase):
             + 2,
         )
         self.expectOutcome(result=FAILURE, state_string='Failed to compile WebKit')
-        return self.runStep()
-
-    def test_skip(self):
-        self.setupStep(CompileWebKitWithoutPatch())
-        self.setProperty('fullPlatform', 'ios-simulator-11')
-        self.setProperty('configuration', 'release')
-        self.expectHidden(True)
-        self.expectOutcome(result=SKIPPED, state_string='Skipped compiling WebKit')
         return self.runStep()
 
 
@@ -1326,7 +1316,6 @@ class TestCompileJSCWithoutPatch(BuildStepMixinAdditions, unittest.TestCase):
         self.setupStep(CompileJSCWithoutPatch())
         self.setProperty('fullPlatform', 'jsc-only')
         self.setProperty('configuration', 'release')
-        self.setProperty('patchFailedToBuild', 'True')
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logEnviron=False,
@@ -3155,7 +3144,6 @@ class TestUnApplyPatchIfRequired(BuildStepMixinAdditions, unittest.TestCase):
 
     def test_success(self):
         self.setupStep(UnApplyPatchIfRequired())
-        self.setProperty('patchFailedToBuild', True)
         self.expectHidden(False)
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
@@ -3169,7 +3157,6 @@ class TestUnApplyPatchIfRequired(BuildStepMixinAdditions, unittest.TestCase):
 
     def test_failure(self):
         self.setupStep(UnApplyPatchIfRequired())
-        self.setProperty('patchFailedTests', True)
         self.expectHidden(False)
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
@@ -3180,12 +3167,6 @@ class TestUnApplyPatchIfRequired(BuildStepMixinAdditions, unittest.TestCase):
             + 2,
         )
         self.expectOutcome(result=FAILURE, state_string='Unapplied patch (failure)')
-        return self.runStep()
-
-    def test_skip(self):
-        self.setupStep(UnApplyPatchIfRequired())
-        self.expectHidden(True)
-        self.expectOutcome(result=SKIPPED, state_string='Unapplied patch (skipped)')
         return self.runStep()
 
 

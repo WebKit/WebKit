@@ -1462,12 +1462,6 @@ class UnApplyPatchIfRequired(CleanWorkingDirectory):
     name = 'unapply-patch'
     descriptionDone = ['Unapplied patch']
 
-    def doStepIf(self, step):
-        return self.getProperty('patchFailedToBuild') or self.getProperty('patchFailedTests')
-
-    def hideStepIf(self, results, step):
-        return not self.doStepIf(step)
-
 
 class Trigger(trigger.Trigger):
     def __init__(self, schedulerNames, include_revision=True, triggers=None, patch=True, pull_request=False, **kwargs):
@@ -1926,7 +1920,6 @@ class CompileWebKit(shell.Compile):
 
     def evaluateCommand(self, cmd):
         if cmd.didFail():
-            self.setProperty('patchFailedToBuild', True)
             steps_to_add = [UnApplyPatchIfRequired(), ValidateChange(verifyBugClosed=False, addURLs=False)]
             platform = self.getProperty('platform')
             if platform == 'wpe':
@@ -1971,12 +1964,6 @@ class CompileWebKitWithoutPatch(CompileWebKit):
     def __init__(self, retry_build_on_failure=False, **kwargs):
         self.retry_build_on_failure = retry_build_on_failure
         super(CompileWebKitWithoutPatch, self).__init__(**kwargs)
-
-    def doStepIf(self, step):
-        return self.getProperty('patchFailedToBuild') or self.getProperty('patchFailedTests')
-
-    def hideStepIf(self, results, step):
-        return not self.doStepIf(step)
 
     def evaluateCommand(self, cmd):
         rc = shell.Compile.evaluateCommand(self, cmd)
@@ -2209,7 +2196,6 @@ class RunJavaScriptCoreTests(shell.Test):
             self.build.results = SUCCESS
             self.build.buildFinished([message], SUCCESS)
         else:
-            self.setProperty('patchFailedTests', True)
             self.build.addStepsAfterCurrentStep([UnApplyPatchIfRequired(),
                                                 ValidateChange(verifyBugClosed=False, addURLs=False),
                                                 CompileJSCWithoutPatch(),
@@ -2726,7 +2712,6 @@ class ReRunWebKitTests(RunWebKitTests):
                     self.send_email_for_flaky_failure(flaky_failure)
             self.setProperty('build_summary', message)
         else:
-            self.setProperty('patchFailedTests', True)
             self.build.addStepsAfterCurrentStep([ArchiveTestResults(),
                                                 UploadTestResults(identifier='rerun'),
                                                 ExtractTestResults(identifier='rerun'),
@@ -3075,7 +3060,6 @@ class RunWebKitTestsRedTree(RunWebKitTests):
             # We have a failure return code but not a list of failed or flaky tests, so we can't run the repeat steps.
             # If we are on the last retry then run the whole layout tests without patch.
             # If not, then go to analyze-layout-tests-results where we will retry everything hoping this was a random failure.
-            self.setProperty('patchFailedTests', True)
             retry_count = int(self.getProperty('retry_count', 0))
             if retry_count < AnalyzeLayoutTestsResultsRedTree.MAX_RETRY:
                 next_steps.append(AnalyzeLayoutTestsResultsRedTree())
@@ -3109,7 +3093,6 @@ class RunWebKitTestsRepeatFailuresRedTree(RunWebKitTestsRedTree):
         self.setProperty('with_patch_repeat_failures_retcode', rc)
         next_steps = [ArchiveTestResults(), UploadTestResults(identifier='repeat-failures'), ExtractTestResults(identifier='repeat-failures')]
         if with_patch_repeat_failures_results_nonflaky_failures or with_patch_repeat_failures_timedout:
-            self.setProperty('patchFailedTests', True)
             next_steps.extend([ValidateChange(verifyBugClosed=False, addURLs=False), KillOldProcesses(), UnApplyPatchIfRequired(), CompileWebKitWithoutPatch(retry_build_on_failure=True),
                                ValidateChange(verifyBugClosed=False, addURLs=False), RunWebKitTestsRepeatFailuresWithoutPatchRedTree()])
         else:
@@ -3529,7 +3512,6 @@ class ReRunAPITests(RunAPITests):
             self.build.results = SUCCESS
             self.build.buildFinished([message], SUCCESS)
         else:
-            self.setProperty('patchFailedTests', True)
             steps_to_add = [UnApplyPatchIfRequired(), ValidateChange(verifyBugClosed=False, addURLs=False)]
             platform = self.getProperty('platform')
             if platform == 'wpe':
