@@ -1,3 +1,14 @@
+2022-01-28  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        REGRESSION(r281687): Space widths have synthetic bold applied to them in the fast text codepath but not the complex text codepath
+        https://bugs.webkit.org/show_bug.cgi?id=235755
+        <rdar://problem/88052073>
+
+        Reviewed by Simon Fraser.
+
+        * web-platform-tests/css/css-fonts/synthetic-bold-space-width-expected.html: Added.
+        * web-platform-tests/css/css-fonts/synthetic-bold-space-width.html: Added.
+
 2022-01-28  Antoine Quint  <graouts@webkit.org>
 
         [WPT] Remove outdated Web Animations expectations

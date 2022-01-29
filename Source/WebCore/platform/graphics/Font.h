@@ -137,12 +137,22 @@ public:
     void setAvgCharWidth(float avgCharWidth) { m_avgCharWidth = avgCharWidth; }
 
     FloatRect boundsForGlyph(Glyph) const;
+
+    // If you're calling this, you need to care about synthetic bold.
+    // This function returns the width before adding in the synthetic bold offset.
+    // This is because these widths are fed as an input to shaping, which needs to consume the true widths.
+    // Then, the synthetic bold offset is applied after shaping.
+    // If you're not going through WidthIterator or ComplexTextController (and thus potentially executing shaping yourself),
+    // then you need to decide whether or not you need to add syntheticBoldOffset() to the result of your widthForGlyph() call.
     float widthForGlyph(Glyph) const;
+
     const Path& pathForGlyph(Glyph) const; // Don't store the result of this! The hash map is free to rehash at any point, leaving this reference dangling.
     FloatRect platformBoundsForGlyph(Glyph) const;
     float platformWidthForGlyph(Glyph) const;
     Path platformPathForGlyph(Glyph) const;
 
+    // If you're calling this, you need to care about synthetic bold.
+    // See the comment just above widthForGlyph().
     float spaceWidth() const { return m_spaceWidth; }
 
     float syntheticBoldOffset() const { return m_syntheticBoldOffset; }
