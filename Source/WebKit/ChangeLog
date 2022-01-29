@@ -1,3 +1,15 @@
+2022-01-28  Per Arne Vollan  <pvollan@apple.com>
+
+        [macOS][WP] Temporarily add syscall to sandbox
+        https://bugs.webkit.org/show_bug.cgi?id=235841
+        <rdar://88197549>
+
+        Reviewed by Brent Fulgham.
+
+        Temporarily add syscall to sandbox in the WebContent process on macOS. This can be removed when <rdar://88210738> is fixed.
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2022-01-28  Aditya Keerthi  <akeerthi@apple.com>
 
         Add SPI to retrieve the rect of a found text range

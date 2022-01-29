@@ -2009,6 +2009,7 @@
         SYS_change_fdguard_np
         SYS_chmod
         SYS_connect
+        SYS_dup ;; Remove when <rdar://88210738> is fixed
         SYS_fchmod
         SYS_fsync
         SYS_getegid
@@ -2031,7 +2032,6 @@
         SYS_write
 #if !PLATFORM(MAC)
         SYS_abort_with_payload
-        SYS_dup
         SYS_fgetattrlist
         SYS_fstat64_extended
         SYS_kqueue
