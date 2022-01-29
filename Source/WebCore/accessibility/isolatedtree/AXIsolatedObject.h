@@ -273,8 +273,8 @@ private:
     String subrolePlatformString() const override { return stringAttributeValue(AXPropertyName::SubrolePlatformString); }
     String ariaLandmarkRoleDescription() const override { return stringAttributeValue(AXPropertyName::ARIALandmarkRoleDescription); }
     bool supportsPressAction() const override { return boolAttributeValue(AXPropertyName::SupportsPressAction); }
-    LayoutRect boundingBoxRect() const override { return rectAttributeValue<LayoutRect>(AXPropertyName::BoundingBoxRect); }
-    LayoutRect elementRect() const override { return rectAttributeValue<LayoutRect>(AXPropertyName::ElementRect); }
+    LayoutRect boundingBoxRect() const override;
+    LayoutRect elementRect() const override;
     IntPoint clickPoint() override { return intPointAttributeValue(AXPropertyName::ClickPoint); }
     void accessibilityText(Vector<AccessibilityText>& texts) const override;
     String brailleLabel() const override { return stringAttributeValue(AXPropertyName::BrailleLabel); }

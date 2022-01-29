@@ -1,0 +1,50 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/js-test.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
+</head>
+<body>
+
+<div id="content">
+    <div id="div" role="group">
+    </div>
+
+    <a href="https://apple.com" id="link">apple.com</a>
+</div>
+
+<script>
+    description("This test ensures that an AX element's position is updated after a dynamic page change.");
+
+    if (window.accessibilityController) {
+        window.jsTestIsAsync = true;
+
+        var link = accessibilityController.accessibleElementById("link");
+        var startY = link.y;
+        var endY;
+        setTimeout(async function() {
+            document.getElementById("div").innerHTML = `
+                foo bar foo bar foo bar foo bar
+                <br>
+                foo bar foo bar foo bar foo bar
+                <br>
+                foo bar foo bar foo bar foo bar
+                <br>
+                foo bar foo bar foo bar foo bar
+                <br>
+                foo bar foo bar foo bar foo bar
+            `;
+            await waitFor(() => {
+                endY = link.y;
+                return startY !== endY;
+            });
+
+            debug(`PASS: Link moved ${Math.abs(startY - endY)}px in response to dynamic page change.`);
+            document.getElementById("content").style.visibility = "hidden";
+            finishJSTest();
+        }, 0);
+    }
+</script>
+</body>
+</html>
+

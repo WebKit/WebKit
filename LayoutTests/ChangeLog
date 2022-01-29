@@ -1,3 +1,15 @@
+2022-01-29  Tyler Wilcock  <tyler_w@apple.com>
+
+        AX: Isolated tree objects don't update their AXPropertyName::ElementRect or AXPropertyName::BoundingBoxRect in response to dynamic page changes
+        https://bugs.webkit.org/show_bug.cgi?id=235833
+
+        Reviewed by Chris Fleizach.
+
+        Add test reproducing this issue.
+
+        * accessibility/dynamic-changes-update-position-expected.txt: Added.
+        * accessibility/dynamic-changes-update-position.html: Added.
+
 2022-01-29  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         Capturing WebGL canvas through peer connection shows the image flipped

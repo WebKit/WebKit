@@ -80,8 +80,6 @@ void AXIsolatedObject::initializeAttributeData(AXCoreObject& coreObject, bool is
     else
         setProperty(AXPropertyName::AncestorFlags, object.computeAncestorFlagsWithTraversal());
 
-    setProperty(AXPropertyName::BoundingBoxRect, object.boundingBoxRect());
-    setProperty(AXPropertyName::ElementRect, object.elementRect());
     setProperty(AXPropertyName::HasARIAValueNow, object.hasARIAValueNow());
     setProperty(AXPropertyName::IsAccessibilityIgnored, object.accessibilityIsIgnored());
     setProperty(AXPropertyName::IsActiveDescendantOfFocusedContainer, object.isActiveDescendantOfFocusedContainer());
@@ -1188,6 +1186,24 @@ std::optional<SimpleRange> AXIsolatedObject::misspellingRange(const SimpleRange&
     ASSERT(isMainThread());
     auto* axObject = associatedAXObject();
     return axObject ? axObject->misspellingRange(range, direction) : std::nullopt;
+}
+
+LayoutRect AXIsolatedObject::boundingBoxRect() const
+{
+    return Accessibility::retrieveValueFromMainThread<LayoutRect>([this] () -> LayoutRect {
+        if (auto* axObject = associatedAXObject())
+            return axObject->boundingBoxRect();
+        return { };
+    });
+}
+
+LayoutRect AXIsolatedObject::elementRect() const
+{
+    return Accessibility::retrieveValueFromMainThread<LayoutRect>([this] () -> LayoutRect {
+        if (auto* axObject = associatedAXObject())
+            return axObject->elementRect();
+        return { };
+    });
 }
 
 FloatRect AXIsolatedObject::relativeFrame() const
