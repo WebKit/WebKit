@@ -1458,7 +1458,7 @@ class CommentOnBug(buildstep.BuildStep, BugzillaMixin):
         return CURRENT_HOSTNAME == EWS_BUILD_HOSTNAME
 
 
-class UnApplyPatchIfRequired(CleanWorkingDirectory):
+class UnApplyPatch(CleanWorkingDirectory):
     name = 'unapply-patch'
     descriptionDone = ['Unapplied patch']
 
@@ -1920,7 +1920,7 @@ class CompileWebKit(shell.Compile):
 
     def evaluateCommand(self, cmd):
         if cmd.didFail():
-            steps_to_add = [UnApplyPatchIfRequired(), ValidateChange(verifyBugClosed=False, addURLs=False)]
+            steps_to_add = [UnApplyPatch(), ValidateChange(verifyBugClosed=False, addURLs=False)]
             platform = self.getProperty('platform')
             if platform == 'wpe':
                 steps_to_add.append(InstallWpeDependencies())
@@ -2196,7 +2196,7 @@ class RunJavaScriptCoreTests(shell.Test):
             self.build.results = SUCCESS
             self.build.buildFinished([message], SUCCESS)
         else:
-            self.build.addStepsAfterCurrentStep([UnApplyPatchIfRequired(),
+            self.build.addStepsAfterCurrentStep([UnApplyPatch(),
                                                 ValidateChange(verifyBugClosed=False, addURLs=False),
                                                 CompileJSCWithoutPatch(),
                                                 ValidateChange(verifyBugClosed=False, addURLs=False),
@@ -2715,7 +2715,7 @@ class ReRunWebKitTests(RunWebKitTests):
             self.build.addStepsAfterCurrentStep([ArchiveTestResults(),
                                                 UploadTestResults(identifier='rerun'),
                                                 ExtractTestResults(identifier='rerun'),
-                                                UnApplyPatchIfRequired(),
+                                                UnApplyPatch(),
                                                 ValidateChange(verifyBugClosed=False, addURLs=False),
                                                 CompileWebKitWithoutPatch(retry_build_on_failure=True),
                                                 ValidateChange(verifyBugClosed=False, addURLs=False),
@@ -3064,7 +3064,7 @@ class RunWebKitTestsRedTree(RunWebKitTests):
             if retry_count < AnalyzeLayoutTestsResultsRedTree.MAX_RETRY:
                 next_steps.append(AnalyzeLayoutTestsResultsRedTree())
             else:
-                next_steps.extend([UnApplyPatchIfRequired(), CompileWebKitWithoutPatch(retry_build_on_failure=True), ValidateChange(verifyBugClosed=False, addURLs=False), RunWebKitTestsWithoutPatchRedTree()])
+                next_steps.extend([UnApplyPatch(), CompileWebKitWithoutPatch(retry_build_on_failure=True), ValidateChange(verifyBugClosed=False, addURLs=False), RunWebKitTestsWithoutPatchRedTree()])
         if next_steps:
             self.build.addStepsAfterCurrentStep(next_steps)
         return rc
@@ -3093,7 +3093,7 @@ class RunWebKitTestsRepeatFailuresRedTree(RunWebKitTestsRedTree):
         self.setProperty('with_patch_repeat_failures_retcode', rc)
         next_steps = [ArchiveTestResults(), UploadTestResults(identifier='repeat-failures'), ExtractTestResults(identifier='repeat-failures')]
         if with_patch_repeat_failures_results_nonflaky_failures or with_patch_repeat_failures_timedout:
-            next_steps.extend([ValidateChange(verifyBugClosed=False, addURLs=False), KillOldProcesses(), UnApplyPatchIfRequired(), CompileWebKitWithoutPatch(retry_build_on_failure=True),
+            next_steps.extend([ValidateChange(verifyBugClosed=False, addURLs=False), KillOldProcesses(), UnApplyPatch(), CompileWebKitWithoutPatch(retry_build_on_failure=True),
                                ValidateChange(verifyBugClosed=False, addURLs=False), RunWebKitTestsRepeatFailuresWithoutPatchRedTree()])
         else:
             next_steps.append(AnalyzeLayoutTestsResultsRedTree())
@@ -3512,7 +3512,7 @@ class ReRunAPITests(RunAPITests):
             self.build.results = SUCCESS
             self.build.buildFinished([message], SUCCESS)
         else:
-            steps_to_add = [UnApplyPatchIfRequired(), ValidateChange(verifyBugClosed=False, addURLs=False)]
+            steps_to_add = [UnApplyPatch(), ValidateChange(verifyBugClosed=False, addURLs=False)]
             platform = self.getProperty('platform')
             if platform == 'wpe':
                 steps_to_add.append(InstallWpeDependencies())
