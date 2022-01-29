@@ -1,3 +1,28 @@
+2022-01-28  Antoine Quint  <graouts@webkit.org>
+
+        [WPT] Update CSS animation tests
+        https://bugs.webkit.org/show_bug.cgi?id=235759
+
+        Unreviewed manual WPT update.
+
+        * web-platform-tests/css/css-backgrounds/animations/background-color-animation-non-empty-no-draw-crash-expected.txt: Added.
+        * web-platform-tests/css/css-backgrounds/animations/background-color-animation-non-empty-no-draw-crash.html: Added.
+        * web-platform-tests/css/css-backgrounds/animations/background-color-animation-removed-element-crash-expected.txt: Added.
+        * web-platform-tests/css/css-backgrounds/animations/background-color-animation-removed-element-crash.html: Added.
+        * web-platform-tests/css/css-backgrounds/animations/background-color-animation-with-mask-expected.txt: Added.
+        * web-platform-tests/css/css-backgrounds/animations/background-color-animation-with-mask-ref.html: Added.
+        * web-platform-tests/css/css-backgrounds/animations/background-color-animation-with-mask.html: Added.
+        * web-platform-tests/css/css-fonts/animations/font-palette-animation-2-expected.html: Removed.
+        * web-platform-tests/css/css-fonts/animations/font-palette-animation-2.html: Removed.
+        * web-platform-tests/css/css-fonts/animations/font-palette-animation-3-expected-mismatch.html: Removed.
+        * web-platform-tests/css/css-fonts/animations/font-palette-animation-3.html: Removed.
+        * web-platform-tests/css/css-fonts/animations/font-palette-animation-expected.html: Removed.
+        * web-platform-tests/css/css-fonts/animations/font-palette-animation.html: Removed.
+        * web-platform-tests/css/css-fonts/animations/system-fonts-expected.txt: Added.
+        * web-platform-tests/css/css-fonts/animations/system-fonts.html: Added.
+        * web-platform-tests/css/css-size-adjust/animations/text-size-adjust-interpolation-expected.txt: Added.
+        * web-platform-tests/css/css-size-adjust/animations/text-size-adjust-interpolation.html: Added.
+
 2022-01-28  Antti Koivisto  <antti@apple.com>
 
         [CSS container Queries] Include container queries in RuleSets

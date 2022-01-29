@@ -562,7 +562,6 @@ webkit.org/b/229389 imported/w3c/web-platform-tests/css/css-text/white-space/con
 webkit.org/b/229389 imported/w3c/web-platform-tests/css/css-text/white-space/control-chars-09E.html [ ImageOnlyFailure ]
 webkit.org/b/229389 imported/w3c/web-platform-tests/css/css-text/white-space/control-chars-09F.html [ ImageOnlyFailure ]
 
-webkit.org/b/230926 imported/w3c/web-platform-tests/css/css-fonts/animations/font-palette-animation-3.html [ ImageOnlyFailure ]
 webkit.org/b/230926 imported/w3c/web-platform-tests/css/css-fonts/font-palette-13.html [ ImageOnlyFailure ]
 webkit.org/b/230926 imported/w3c/web-platform-tests/css/css-fonts/font-palette-16.html [ ImageOnlyFailure ]
 webkit.org/b/230926 imported/w3c/web-platform-tests/css/css-fonts/font-palette-17.html [ ImageOnlyFailure ]

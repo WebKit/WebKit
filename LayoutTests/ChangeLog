@@ -1,3 +1,14 @@
+2022-01-28  Antoine Quint  <graouts@webkit.org>
+
+        [WPT] Update CSS animation tests
+        https://bugs.webkit.org/show_bug.cgi?id=235759
+
+        Unreviewed manual WPT update.
+
+        * platform/glib/TestExpectations:
+        * platform/gtk/imported/w3c/web-platform-tests/css/css-fonts/animations/system-fonts-expected.txt: Added.
+        * platform/ios/imported/w3c/web-platform-tests/css/css-fonts/animations/system-fonts-expected.txt: Added.
+
 2022-01-28  Antti Koivisto  <antti@apple.com>
 
         [CSS container Queries] Include container queries in RuleSets
