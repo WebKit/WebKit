@@ -57,6 +57,7 @@ function mac_process_webcontent_captiveportal_entitlements()
 
         if (( "${TARGET_MAC_OS_X_VERSION_MAJOR}" >= 110000 ))
         then
+            plistbuddy Add :com.apple.developer.kernel.extended-virtual-addressing bool YES
             plistbuddy Add :com.apple.developer.videotoolbox.client-sandboxed-decoder bool YES
             plistbuddy Add :com.apple.pac.shared_region_id string WebContent
             plistbuddy Add :com.apple.private.pac.exception bool YES
@@ -272,6 +273,7 @@ function maccatalyst_process_webcontent_captiveportal_entitlements()
 
     if (( "${TARGET_MAC_OS_X_VERSION_MAJOR}" >= 110000 ))
     then
+        plistbuddy Add :com.apple.developer.kernel.extended-virtual-addressing bool YES
         plistbuddy Add :com.apple.pac.shared_region_id string WebContent
         plistbuddy Add :com.apple.private.pac.exception bool YES
         plistbuddy Add :com.apple.private.security.message-filter bool YES
@@ -396,6 +398,7 @@ function ios_family_process_webcontent_captiveportal_entitlements()
     plistbuddy Add :com.apple.QuartzCore.webkit-end-points bool YES
     plistbuddy add :com.apple.QuartzCore.webkit-limited-types bool YES
     plistbuddy Add :com.apple.developer.coremedia.allow-alternate-video-decoder-selection bool YES
+    plistbuddy Add :com.apple.developer.kernel.extended-virtual-addressing bool YES
     plistbuddy Add :com.apple.mediaremote.set-playback-state bool YES
     plistbuddy Add :com.apple.pac.shared_region_id string WebContent
     plistbuddy Add :com.apple.private.allow-explicit-graphics-priority bool YES

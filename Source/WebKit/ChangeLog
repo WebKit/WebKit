@@ -1,3 +1,16 @@
+2022-01-28  Brent Fulgham  <bfulgham@apple.com>
+
+        Update CaptivePortal entitlements to support full GigaCage
+        https://bugs.webkit.org/show_bug.cgi?id=235834
+        <rdar://problem/88075019>
+
+        Reviewed by Chris Dumez.
+
+        The CaptivePortal process, which does not allow JIT, cannot enable GigaCage without
+        a new entitlement.
+
+        * Scripts/process-entitlements.sh:
+
 2022-01-28  Aditya Keerthi  <akeerthi@apple.com>
 
         Migrate _UITextSearching implementation to be backed by WebFoundTextRangeController
