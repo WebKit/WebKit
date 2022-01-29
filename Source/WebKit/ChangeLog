@@ -1,5 +1,30 @@
 2022-01-28  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r288750. rdar://problem/88177392
+
+    [macOS][WP] Add required syscall
+    https://bugs.webkit.org/show_bug.cgi?id=235828
+    <rdar://88177392>
+    
+    Reviewed by Darin Adler.
+    
+    * WebProcess/com.apple.WebProcess.sb.in:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@288750 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-01-28  Per Arne Vollan  <pvollan@apple.com>
+
+            [macOS][WP] Add required syscall
+            https://bugs.webkit.org/show_bug.cgi?id=235828
+            <rdar://88177392>
+
+            Reviewed by Darin Adler.
+
+            * WebProcess/com.apple.WebProcess.sb.in:
+
+2022-01-28  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r287844. rdar://problem/87262730
 
     [MacCatalyst] Add syscalls from iOS sandbox
