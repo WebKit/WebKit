@@ -1,5 +1,16 @@
 2022-01-28  Antoine Quint  <graouts@webkit.org>
 
+        css/css-backgrounds/animations/box-shadow-composition.html has failures
+        https://bugs.webkit.org/show_bug.cgi?id=235773
+
+        Unreviewed sync with WPT upstream, our copy of this test was outdated and we in fact pass
+        all assertions.
+
+        * web-platform-tests/css/css-backgrounds/animations/box-shadow-composition-expected.txt:
+        * web-platform-tests/css/css-backgrounds/animations/box-shadow-composition.html:
+
+2022-01-28  Antoine Quint  <graouts@webkit.org>
+
         [WPT] Update CSS animation tests
         https://bugs.webkit.org/show_bug.cgi?id=235759
 
