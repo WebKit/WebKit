@@ -1,3 +1,60 @@
+2022-01-28  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r287961. rdar://problem/86282584
+
+    [Re-landing] Update hashThreadState() to exclude __opaque_flags.
+    https://bugs.webkit.org/show_bug.cgi?id=235081
+    rdar://86282584
+    
+    Reviewed by Keith Miller.
+    
+    Source/JavaScriptCore:
+    
+    Removed some unused code.
+    
+    * runtime/MachineContext.h:
+    (JSC::MachineContext::stackPointer):
+    (JSC::MachineContext::framePointer):
+    (JSC::MachineContext::instructionPointer):
+    (JSC::MachineContext::linkRegister):
+    (JSC::MachineContext::setStackPointer): Deleted.
+    (JSC::MachineContext::setFramePointer): Deleted.
+    (JSC::MachineContext::setLinkRegister): Deleted.
+    
+    Source/WTF:
+    
+    The __opaque_flags may be used by the OS, and may be altered without our knowledge.
+    Hence, our hash should not include the __opaque_flags field.
+    
+    Also remove some unused code.
+    
+    * wtf/PlatformRegisters.h:
+    * wtf/threads/Signals.cpp:
+    (WTF::hashThreadState):
+    
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@287961 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-01-12  Mark Lam  <mark.lam@apple.com>
+
+            [Re-landing] Update hashThreadState() to exclude __opaque_flags.
+            https://bugs.webkit.org/show_bug.cgi?id=235081
+            rdar://86282584
+
+            Reviewed by Keith Miller.
+
+            Removed some unused code.
+
+            * runtime/MachineContext.h:
+            (JSC::MachineContext::stackPointer):
+            (JSC::MachineContext::framePointer):
+            (JSC::MachineContext::instructionPointer):
+            (JSC::MachineContext::linkRegister):
+            (JSC::MachineContext::setStackPointer): Deleted.
+            (JSC::MachineContext::setFramePointer): Deleted.
+            (JSC::MachineContext::setLinkRegister): Deleted.
+
 2022-01-09  Sam Weinig  <weinig@apple.com>
 
         Remove support for Direct2D
