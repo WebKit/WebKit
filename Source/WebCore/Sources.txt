@@ -903,7 +903,6 @@ dom/ActiveDOMObject.cpp
 dom/AllDescendantsCollection.cpp
 dom/AnimationEvent.cpp
 dom/Attr.cpp
-dom/BeforeLoadEvent.cpp
 dom/BeforeTextInsertedEvent.cpp
 dom/BeforeUnloadEvent.cpp
 dom/BoundaryPoint.cpp
@@ -2917,7 +2916,6 @@ JSAutomationRate.cpp
 JSBarProp.cpp
 JSBaseAudioContext.cpp
 JSBasicCredential.cpp
-JSBeforeLoadEvent.cpp
 JSBeforeUnloadEvent.cpp
 JSBiquadFilterNode.cpp
 JSBiquadFilterOptions.cpp

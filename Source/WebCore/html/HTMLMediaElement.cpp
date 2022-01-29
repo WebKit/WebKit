@@ -1406,7 +1406,7 @@ void HTMLMediaElement::selectMediaResource()
                 return;
             }
 
-            if (!isSafeToLoadURL(absoluteURL, Complain) || !dispatchBeforeLoadEvent(absoluteURL.string())) {
+            if (!isSafeToLoadURL(absoluteURL, Complain)) {
                 mediaLoadingFailed(MediaPlayer::NetworkState::FormatError);
                 return;
             }
@@ -4884,7 +4884,7 @@ URL HTMLMediaElement::selectNextSourceChild(ContentType* contentType, String* ke
         }
 
         // Is it safe to load this url?
-        if (!isSafeToLoadURL(mediaURL, actionIfInvalid) || !dispatchBeforeLoadEvent(mediaURL.string()))
+        if (!isSafeToLoadURL(mediaURL, actionIfInvalid))
             goto CheckAgain;
 
         // A 'beforeload' event handler can mutate the DOM, so check to see if the source element is still a child node.

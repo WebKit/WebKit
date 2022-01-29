@@ -891,7 +891,7 @@ public:
     // dispatch events unnecessarily
     // FIXME: Consider using OptionSet.
     enum ListenerType {
-        DOMSUBTREEMODIFIED_LISTENER          = 1,
+        DOMSUBTREEMODIFIED_LISTENER          = 1 << 0,
         DOMNODEINSERTED_LISTENER             = 1 << 1,
         DOMNODEREMOVED_LISTENER              = 1 << 2,
         DOMNODEREMOVEDFROMDOCUMENT_LISTENER  = 1 << 3,
@@ -899,14 +899,13 @@ public:
         DOMCHARACTERDATAMODIFIED_LISTENER    = 1 << 5,
         OVERFLOWCHANGED_LISTENER             = 1 << 6,
         TRANSITIONEND_LISTENER               = 1 << 7,
-        BEFORELOAD_LISTENER                  = 1 << 8,
-        SCROLL_LISTENER                      = 1 << 9,
-        FORCEWILLBEGIN_LISTENER              = 1 << 10,
-        FORCECHANGED_LISTENER                = 1 << 11,
-        FORCEDOWN_LISTENER                   = 1 << 12,
-        FORCEUP_LISTENER                     = 1 << 13,
-        FOCUSIN_LISTENER                     = 1 << 14,
-        FOCUSOUT_LISTENER                    = 1 << 15,
+        SCROLL_LISTENER                      = 1 << 8,
+        FORCEWILLBEGIN_LISTENER              = 1 << 9,
+        FORCECHANGED_LISTENER                = 1 << 10,
+        FORCEDOWN_LISTENER                   = 1 << 11,
+        FORCEUP_LISTENER                     = 1 << 12,
+        FOCUSIN_LISTENER                     = 1 << 13,
+        FOCUSOUT_LISTENER                    = 1 << 14,
     };
 
     bool hasListenerType(ListenerType listenerType) const { return (m_listenerTypes & listenerType); }

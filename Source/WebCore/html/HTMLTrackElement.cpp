@@ -229,7 +229,7 @@ bool HTMLTrackElement::canLoadURL(const URL& url)
         return false;
     }
 
-    return dispatchBeforeLoadEvent(url.string());
+    return true;
 }
 
 void HTMLTrackElement::didCompleteLoad(LoadStatus status)

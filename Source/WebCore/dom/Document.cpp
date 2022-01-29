@@ -5220,8 +5220,6 @@ void Document::addListenerTypeIfNeeded(const AtomString& eventType)
         addListenerType(DOMCHARACTERDATAMODIFIED_LISTENER);
     else if (eventType == eventNames().overflowchangedEvent)
         addListenerType(OVERFLOWCHANGED_LISTENER);
-    else if (eventType == eventNames().beforeloadEvent)
-        addListenerType(BEFORELOAD_LISTENER);
     else if (eventType == eventNames().scrollEvent)
         addListenerType(SCROLL_LISTENER);
     else if (eventType == eventNames().webkitmouseforcewillbeginEvent)

@@ -276,14 +276,11 @@ void HTMLObjectElement::updateWidget(CreatePlugins createPlugins)
 
     setNeedsWidgetUpdate(false);
 
-    Ref<HTMLObjectElement> protectedThis(*this); // beforeload and plugin loading can make arbitrary DOM mutations.
-    bool beforeLoadAllowedLoad = guardedDispatchBeforeLoadEvent(url);
-    if (!renderer()) // Do not load the plugin if beforeload removed this element or its renderer.
-        return;
+    Ref protectedThis = *this; // Plugin loading can make arbitrary DOM mutations.
 
     // Dispatching a beforeLoad event could have executed code that changed the document.
     // Make sure the URL is still safe to load.
-    bool success = beforeLoadAllowedLoad && hasValidClassId() && canLoadURL(url);
+    bool success = hasValidClassId() && canLoadURL(url);
     if (success)
         success = requestObject(url, serviceType, paramNames, paramValues);
     if (!success && hasFallbackContent())

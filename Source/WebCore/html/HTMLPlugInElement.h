@@ -93,17 +93,12 @@ protected:
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) override;
     void didAddUserAgentShadowRoot(ShadowRoot&) final;
 
-    // Subclasses should use guardedDispatchBeforeLoadEvent instead of calling dispatchBeforeLoadEvent directly.
-    bool guardedDispatchBeforeLoadEvent(const String& sourceURL);
-
     // This will load the plugin if necessary.
     virtual RenderWidget* renderWidgetLoadingPlugin() const;
 
 private:
     void swapRendererTimerFired();
     bool shouldOverridePlugin(const String& url, const String& mimeType);
-
-    bool dispatchBeforeLoadEvent(const String& sourceURL) = delete; // Generate a compile error if someone calls this by mistake.
 
     bool supportsFocus() const final;
 
@@ -114,7 +109,6 @@ private:
     RefPtr<JSC::Bindings::Instance> m_instance;
     Timer m_swapRendererTimer;
     bool m_isCapturingMouseEvents { false };
-    bool m_inBeforeLoadEventHandler { false };
     DisplayState m_displayState { Playing };
 };
 

@@ -89,7 +89,6 @@ private:
 #if ENABLE(XSLT)
     bool m_isXSL { false };
 #endif
-    bool m_isHandlingBeforeLoad { false };
 };
 
 } // namespace WebCore

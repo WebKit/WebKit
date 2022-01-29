@@ -1550,8 +1550,7 @@ void FrameLoader::loadWithDocumentLoader(DocumentLoader* loader, FrameLoadType t
 {
     FRAMELOADER_RELEASE_LOG(ResourceLoading, "loadWithDocumentLoader: frame load started");
 
-    // Retain because dispatchBeforeLoadEvent may release the last reference to it.
-    Ref<Frame> protect(m_frame);
+    Ref protectedFrame = m_frame;
 
     CompletionHandlerCallingScope completionHandlerCaller(WTFMove(completionHandler));
 
@@ -1611,19 +1610,6 @@ void FrameLoader::loadWithDocumentLoader(DocumentLoader* loader, FrameLoadType t
     setPolicyDocumentLoader(loader);
     if (loader->triggeringAction().isEmpty())
         loader->setTriggeringAction({ *m_frame.document(), loader->request(), InitiatedByMainFrame::Unknown, policyChecker().loadType(), isFormSubmission });
-
-    if (Element* ownerElement = m_frame.ownerElement()) {
-        // We skip dispatching the beforeload event if we've already
-        // committed a real document load because the event would leak
-        // subsequent activity by the frame which the parent frame isn't
-        // supposed to learn. For example, if the child frame navigated to
-        // a new URL, the parent frame shouldn't learn the URL.
-        if (!m_stateMachine.committedFirstRealDocumentLoad()
-            && !ownerElement->dispatchBeforeLoadEvent(loader->request().url().string())) {
-            continueLoadAfterNavigationPolicy(loader->request(), formState.get(), NavigationPolicyDecision::IgnoreLoad, allowNavigationToInvalidURL);
-            return;
-        }
-    }
 
     m_frame.navigationScheduler().cancel(NewLoadInProgress::Yes);
 

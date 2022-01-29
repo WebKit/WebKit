@@ -107,29 +107,8 @@ JSC::Bindings::Instance* HTMLPlugInElement::bindingsInstance()
     return m_instance.get();
 }
 
-bool HTMLPlugInElement::guardedDispatchBeforeLoadEvent(const String& sourceURL)
-{
-    // FIXME: Our current plug-in loading design can't guarantee the following
-    // assertion is true, since plug-in loading can be initiated during layout,
-    // and synchronous layout can be initiated in a beforeload event handler!
-    // See <http://webkit.org/b/71264>.
-    // ASSERT(!m_inBeforeLoadEventHandler);
-    m_inBeforeLoadEventHandler = true;
-    // static_cast is used to avoid a compile error since dispatchBeforeLoadEvent
-    // is intentionally undefined on this class.
-    bool beforeLoadAllowedLoad = static_cast<HTMLFrameOwnerElement*>(this)->dispatchBeforeLoadEvent(sourceURL);
-    m_inBeforeLoadEventHandler = false;
-    return beforeLoadAllowedLoad;
-}
-
 Widget* HTMLPlugInElement::pluginWidget(PluginLoadingPolicy loadPolicy) const
 {
-    if (m_inBeforeLoadEventHandler) {
-        // The plug-in hasn't loaded yet, and it makes no sense to try to load if beforeload handler happened to touch the plug-in element.
-        // That would recursively call beforeload for the same element.
-        return nullptr;
-    }
-
     RenderWidget* renderWidget = loadPolicy == PluginLoadingPolicy::Load ? renderWidgetLoadingPlugin() : this->renderWidget();
     if (!renderWidget)
         return nullptr;

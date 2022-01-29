@@ -7,7 +7,7 @@ Events interfaceName=Event
 HTMLEvents interfaceName=Event
 AnimationEvent
 AnimationPlaybackEvent
-BeforeLoadEvent
+BeforeLoadEvent interfaceName=Event
 BeforeUnloadEvent
 ClipboardEvent
 CloseEvent

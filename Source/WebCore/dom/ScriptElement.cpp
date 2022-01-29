@@ -285,13 +285,7 @@ bool ScriptElement::prepareScript(const TextPosition& scriptStartPosition, Legac
 
 bool ScriptElement::requestClassicScript(const String& sourceURL)
 {
-    Ref<Document> originalDocument(m_element.document());
-    if (!m_element.dispatchBeforeLoadEvent(sourceURL))
-        return false;
-    bool didEventListenerDisconnectThisElement = !m_element.isConnected() || &m_element.document() != originalDocument.ptr();
-    if (didEventListenerDisconnectThisElement)
-        return false;
-
+    ASSERT(m_element.isConnected());
     ASSERT(!m_loadableScript);
     if (!stripLeadingAndTrailingHTMLSpaces(sourceURL).isEmpty()) {
         auto script = LoadableClassicScript::create(
@@ -336,15 +330,9 @@ bool ScriptElement::requestModuleScript(const TextPosition& scriptStartPosition)
         crossOriginMode = ScriptElementCachedScriptFetcher::defaultCrossOriginModeForModule;
 
     if (hasSourceAttribute()) {
+        ASSERT(m_element.isConnected());
+
         String sourceURL = sourceAttributeValue();
-        Ref<Document> originalDocument(m_element.document());
-        if (!m_element.dispatchBeforeLoadEvent(sourceURL))
-            return false;
-
-        bool didEventListenerDisconnectThisElement = !m_element.isConnected() || &m_element.document() != originalDocument.ptr();
-        if (didEventListenerDisconnectThisElement)
-            return false;
-
         if (stripLeadingAndTrailingHTMLSpaces(sourceURL).isEmpty()) {
             dispatchErrorEvent();
             return false;

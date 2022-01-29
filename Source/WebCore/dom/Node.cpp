@@ -27,7 +27,6 @@
 
 #include "AXObjectCache.h"
 #include "Attr.h"
-#include "BeforeLoadEvent.h"
 #include "ChildListMutationScope.h"
 #include "CommonVM.h"
 #include "ComposedTreeAncestorIterator.h"
@@ -42,6 +41,7 @@
 #include "ElementTraversal.h"
 #include "EventDispatcher.h"
 #include "EventHandler.h"
+#include "EventNames.h"
 #include "FrameView.h"
 #include "HTMLAreaElement.h"
 #include "HTMLBodyElement.h"
@@ -2407,20 +2407,6 @@ void Node::dispatchDOMActivateEvent(Event& underlyingClickEvent)
     dispatchScopedEvent(event);
     if (event->defaultHandled())
         underlyingClickEvent.setDefaultHandled();
-}
-
-bool Node::dispatchBeforeLoadEvent(const String& sourceURL)
-{
-    if (!document().settings().legacyBeforeLoadEventEnabled())
-        return true;
-
-    if (!document().hasListenerType(Document::BEFORELOAD_LISTENER))
-        return true;
-
-    Ref<Node> protectedThis(*this);
-    auto event = BeforeLoadEvent::create(sourceURL);
-    dispatchEvent(event);
-    return !event->defaultPrevented();
 }
 
 void Node::dispatchInputEvent()

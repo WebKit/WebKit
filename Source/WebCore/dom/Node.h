@@ -478,8 +478,6 @@ public:
     virtual bool allowsDoubleTapGesture() const { return true; }
 #endif
 
-    bool dispatchBeforeLoadEvent(const String& sourceURL);
-
     WEBCORE_EXPORT void dispatchInputEvent();
 
     // Perform the default action for an event.

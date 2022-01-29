@@ -71,6 +71,7 @@ template<> struct ValueCheck<WebCore::ImageLoader*> {
 
 namespace WebCore {
 
+// FIXME: beforeload event no longer exists. Delete this code.
 static ImageEventSender& beforeLoadEventSender()
 {
     static NeverDestroyed<ImageEventSender> sender(eventNames().beforeloadEvent);
@@ -263,12 +264,9 @@ void ImageLoader::updateFromElement(RelevantMutation relevantMutation)
         m_imageComplete = !newImage;
 
         if (newImage) {
-            if (!document.isImageDocument()) {
-                if (!document.hasListenerType(Document::BEFORELOAD_LISTENER))
-                    dispatchPendingBeforeLoadEvent();
-                else
-                    beforeLoadEventSender().dispatchEventSoon(*this);
-            } else
+            if (!document.isImageDocument())
+                dispatchPendingBeforeLoadEvent();
+            else
                 updateRenderer();
 
             if (m_lazyImageLoadState == LazyImageLoadState::Deferred)
@@ -510,29 +508,9 @@ void ImageLoader::dispatchPendingBeforeLoadEvent()
     if (!element().document().hasLivingRenderTree())
         return;
     m_hasPendingBeforeLoadEvent = false;
-    Ref<Document> originalDocument = element().document();
-    if (element().dispatchBeforeLoadEvent(m_image->url().string())) {
-        bool didEventListenerDisconnectThisElement = !element().isConnected() || &element().document() != originalDocument.ptr();
-        if (didEventListenerDisconnectThisElement)
-            return;
-        
-        updateRenderer();
+    if (!element().isConnected())
         return;
-    }
-    if (m_image) {
-        m_image->removeClient(*this);
-        m_image = nullptr;
-    }
-
-    loadEventSender().cancelEvent(*this);
-    m_hasPendingLoadEvent = false;
-    
-    if (is<HTMLObjectElement>(element()))
-        downcast<HTMLObjectElement>(element()).renderFallbackContent();
-
-    // Only consider updating the protection ref-count of the Element immediately before returning
-    // from this function as doing so might result in the destruction of this ImageLoader.
-    updatedHasPendingEvent();
+    updateRenderer();
 }
 
 void ImageLoader::dispatchPendingLoadEvent()
