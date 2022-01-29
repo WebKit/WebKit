@@ -64,8 +64,9 @@ void WCScene::initialize(WCSceneContext& context)
     m_textureMapper = m_context->createTextureMapper();
 }
 
-WCScene::WCScene(WebCore::ProcessIdentifier webProcessIdentifier)
+WCScene::WCScene(WebCore::ProcessIdentifier webProcessIdentifier, bool usesOffscreenRendering)
     : m_webProcessIdentifier(webProcessIdentifier)
+    , m_usesOffscreenRendering(usesOffscreenRendering)
 {
 }
 
@@ -75,10 +76,10 @@ WCScene::~WCScene()
     m_textureMapper = nullptr;
 }
 
-void WCScene::update(WCUpateInfo&& update)
+std::optional<UpdateInfo> WCScene::update(WCUpateInfo&& update)
 {
     if (!m_context->makeContextCurrent())
-        return;
+        return std::nullopt;
 
     for (auto id : update.addedLayers) {
         auto layer = makeUnique<Layer>();
@@ -200,12 +201,29 @@ void WCScene::update(WCUpateInfo&& update)
     WebCore::IntSize windowSize = expandedIntSize(rootLayer->size());
     glViewport(0, 0, windowSize.width(), windowSize.height());
 
-    m_textureMapper->beginPainting();
+    m_textureMapper->beginPainting(m_usesOffscreenRendering ? WebCore::TextureMapper::PaintingMirrored : 0);
     rootLayer->paint(*m_textureMapper);
     m_fpsCounter.updateFPSAndDisplay(*m_textureMapper);
     m_textureMapper->endPainting();
 
-    m_context->swapBuffers();
+    std::optional<UpdateInfo> result;
+    if (m_usesOffscreenRendering) {
+        auto bitmap = ShareableBitmap::createShareable(windowSize, { });
+        glReadPixels(0, 0, windowSize.width(), windowSize.height(), GL_BGRA_EXT, GL_UNSIGNED_BYTE, bitmap->data());
+        ShareableBitmap::Handle handle;
+        if (bitmap->createHandle(handle)) {
+            result.emplace();
+            result->viewSize = windowSize;
+            result->deviceScaleFactor = 1;
+            result->updateScaleFactor = 1;
+            WebCore::IntRect viewport = { { }, windowSize };
+            result->updateRectBounds = viewport;
+            result->updateRects.append(viewport);
+            result->bitmapHandle = WTFMove(handle);
+        }
+    } else
+        m_context->swapBuffers();
+    return result;
 }
 
 } // namespace WebKit

@@ -127,7 +127,7 @@ const TestFeatures& TestOptions::defaults()
 #if ENABLE(GPU_PROCESS)
             { "UseGPUProcessForDOMRenderingEnabled", false },
 #endif
-#if ENABLE(GPU_PROCESS) && ENABLE(WEBGL)
+#if ENABLE(GPU_PROCESS) && ENABLE(WEBGL) && !PLATFORM(WIN)
             { "UseGPUProcessForWebGLEnabled", false },
 #endif
         };

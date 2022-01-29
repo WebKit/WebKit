@@ -1,3 +1,76 @@
+2022-01-28  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo] WebKitTestRunner should support pixel dump for accelerated compositing mode
+        https://bugs.webkit.org/show_bug.cgi?id=215041
+
+        Reviewed by Don Olmstead.
+
+        Windows WebKitTestRunner is using WM_PRINT message to get the
+        widonws content for the pixel dump support. However, in the
+        accelerated compositing mode, the compositor in the GPU process
+        directly renders to the HWND of UI process.
+
+        This change added the offscreen rendering mode for the compositor.
+        In this mode, the rendering results of the compositor are captured
+        by using glReadPixels in GPU process, and transferred it to UI
+        process via the non-AC mode code path.
+
+        Added WKViewSetUsesOffscreenRendering API to enable the offscreen
+        rendering mode.
+
+        * GPUProcess/GPUConnectionToWebProcess.cpp:
+        (WebKit::GPUConnectionToWebProcess::createWCLayerTreeHost):
+        * GPUProcess/GPUConnectionToWebProcess.h:
+        * GPUProcess/GPUConnectionToWebProcess.messages.in:
+        * GPUProcess/graphics/wc/RemoteWCLayerTreeHost.cpp:
+        (WebKit::RemoteWCLayerTreeHost::create):
+        (WebKit::RemoteWCLayerTreeHost::RemoteWCLayerTreeHost):
+        (WebKit::RemoteWCLayerTreeHost::update):
+        * GPUProcess/graphics/wc/RemoteWCLayerTreeHost.h:
+        * GPUProcess/graphics/wc/RemoteWCLayerTreeHost.messages.in:
+        * GPUProcess/graphics/wc/WCScene.cpp:
+        (WebKit::WCScene::WCScene):
+        (WebKit::WCScene::update):
+        * GPUProcess/graphics/wc/WCScene.h:
+        * PlatformWin.cmake:
+        * Shared/WebPageCreationParameters.cpp:
+        (WebKit::WebPageCreationParameters::encode const):
+        (WebKit::WebPageCreationParameters::decode):
+        * Shared/WebPageCreationParameters.h:
+        * UIProcess/API/C/win/WKView.cpp:
+        (WKViewSetUsesOffscreenRendering):
+        * UIProcess/API/C/win/WKView.h:
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::creationParameters):
+        * UIProcess/wc/DrawingAreaProxyWC.cpp:
+        (WebKit::DrawingAreaProxyWC::dispatchAfterEnsuringDrawing):
+        * UIProcess/wc/DrawingAreaProxyWC.h:
+        * UIProcess/win/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::usesOffscreenRendering const):
+        * UIProcess/win/PageClientImpl.h:
+        * UIProcess/win/WebView.cpp:
+        (WebKit::WebView::setUsesOffscreenRendering):
+        (WebKit::WebView::usesOffscreenRendering const):
+        * UIProcess/win/WebView.h:
+        * WebProcess/GPU/graphics/wc/RemoteWCLayerTreeHostProxy.cpp:
+        (WebKit::RemoteWCLayerTreeHostProxy::RemoteWCLayerTreeHostProxy):
+        (WebKit::RemoteWCLayerTreeHostProxy::ensureGPUProcessConnection):
+        (WebKit::RemoteWCLayerTreeHostProxy::disconnectGpuProcessIfNeeded):
+        (WebKit::RemoteWCLayerTreeHostProxy::gpuProcessConnectionDidClose):
+        (WebKit::RemoteWCLayerTreeHostProxy::update):
+        (WebKit::RemoteWCLayerTreeHostProxy::didUpdate): Deleted.
+        * WebProcess/GPU/graphics/wc/RemoteWCLayerTreeHostProxy.h:
+        * WebProcess/GPU/graphics/wc/RemoteWCLayerTreeHostProxy.messages.in: Removed.
+        * WebProcess/WebPage/wc/DrawingAreaWC.cpp:
+        (WebKit::DrawingAreaWC::DrawingAreaWC):
+        (WebKit::DrawingAreaWC::setNeedsDisplay):
+        (WebKit::DrawingAreaWC::setNeedsDisplayInRect):
+        (WebKit::DrawingAreaWC::forceRepaintAsync):
+        (WebKit::DrawingAreaWC::sendUpdateAC):
+        (WebKit::DrawingAreaWC::didUpdate):
+        * WebProcess/WebPage/wc/DrawingAreaWC.h:
+
 2022-01-28  Nikolaos Mouchtaris  <nmouchtaris@apple.com>
 
         Implement CSS overscroll-behavior for iOS

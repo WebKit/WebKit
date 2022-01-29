@@ -638,6 +638,10 @@ public:
 #if ENABLE(DATA_DETECTION)
     virtual void handleClickForDataDetectionResult(const WebCore::DataDetectorElementInfo&, const WebCore::IntPoint&) { }
 #endif
+
+#if USE(GRAPHICS_LAYER_WC)
+    virtual bool usesOffscreenRendering() const = 0;
+#endif
 };
 
 } // namespace WebKit

@@ -1,3 +1,15 @@
+2022-01-28  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo] WebKitTestRunner should support pixel dump for accelerated compositing mode
+        https://bugs.webkit.org/show_bug.cgi?id=215041
+
+        Reviewed by Don Olmstead.
+
+        * WebKitTestRunner/TestOptions.cpp:
+        (WTR::TestOptions::defaults):
+        * WebKitTestRunner/win/PlatformWebViewWin.cpp:
+        (WTR::PlatformWebView::PlatformWebView):
+
 2022-01-28  Aditya Keerthi  <akeerthi@apple.com>
 
         Add SPI to retrieve the rect of a found text range

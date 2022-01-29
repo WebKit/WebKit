@@ -147,8 +147,6 @@ list(APPEND WebKit_INCLUDE_DIRECTORIES
 
 list(APPEND WebKit_MESSAGES_IN_FILES
     GPUProcess/graphics/wc/RemoteWCLayerTreeHost
-
-    WebProcess/GPU/graphics/wc/RemoteWCLayerTreeHostProxy
 )
 
 set(WebKitCommonIncludeDirectories ${WebKit_INCLUDE_DIRECTORIES})

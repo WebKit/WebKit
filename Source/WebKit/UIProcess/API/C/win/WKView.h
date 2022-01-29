@@ -41,6 +41,7 @@ WK_EXPORT WKPageRef WKViewGetPage(WKViewRef view);
 WK_EXPORT void WKViewSetParentWindow(WKViewRef view, HWND parentWindow);
 WK_EXPORT void WKViewWindowAncestryDidChange(WKViewRef view);
 WK_EXPORT void WKViewSetIsInWindow(WKViewRef view, bool isInWindow);
+WK_EXPORT void WKViewSetUsesOffscreenRendering(WKViewRef view, bool enabled);
 WK_EXPORT void WKViewSetScrollOffsetOnNextResize(WKViewRef view, WKSize scrollOffset);
 
 #ifdef __cplusplus

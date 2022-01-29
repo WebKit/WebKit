@@ -43,7 +43,7 @@ using namespace WebCore;
 
 DrawingAreaWC::DrawingAreaWC(WebPage& webPage, const WebPageCreationParameters& parameters)
     : DrawingArea(DrawingAreaType::WC, parameters.drawingAreaIdentifier, webPage)
-    , m_remoteWCLayerTreeHostProxy(makeUnique<RemoteWCLayerTreeHostProxy>(webPage, *this))
+    , m_remoteWCLayerTreeHostProxy(makeUnique<RemoteWCLayerTreeHostProxy>(webPage, parameters.usesOffscreenRendering))
     , m_layerFactory(*this)
     , m_rootLayer(GraphicsLayer::create(graphicsLayerFactory(), this->m_rootLayerClient))
     , m_updateRenderingTimer(*this, &DrawingAreaWC::updateRendering)
@@ -121,6 +121,10 @@ void DrawingAreaWC::updateGeometry(uint64_t backingStoreStateID, IntSize viewSiz
 
 void DrawingAreaWC::setNeedsDisplay()
 {
+    if (isCompositingMode()) {
+        triggerRenderingUpdate();
+        return;
+    }
     m_dirtyRegion = { };
     m_scrollRect = { };
     m_scrollOffset = { };
@@ -131,7 +135,9 @@ void DrawingAreaWC::setNeedsDisplayInRect(const IntRect& rect)
 {
     if (isCompositingMode())
         return;
-    m_dirtyRegion.unite(rect);
+    IntRect dirtyRect = rect;
+    dirtyRect.intersect(m_webPage.bounds());
+    m_dirtyRegion.unite(dirtyRect);
     triggerRenderingUpdate();
 }
 
@@ -163,6 +169,12 @@ void DrawingAreaWC::scroll(const IntRect& scrollRect, const IntSize& scrollDelta
     m_scrollRect = scrollRect;
     m_scrollOffset += scrollDelta;
     triggerRenderingUpdate();
+}
+
+void DrawingAreaWC::forceRepaintAsync(WebPage&, CompletionHandler<void()>&& completionHandler)
+{
+    m_forceRepaintCompletionHandler = WTFMove(completionHandler);
+    setNeedsDisplay();
 }
 
 void DrawingAreaWC::triggerRenderingUpdate()
@@ -233,12 +245,18 @@ void DrawingAreaWC::sendUpdateAC()
 
     m_updateInfo.rootLayer = m_rootLayer->primaryLayerID();
 
-    m_commitQueue->dispatch([this, weakThis = WeakPtr(*this), updateInfo = std::exchange(m_updateInfo, { })]() mutable {
+    m_commitQueue->dispatch([this, weakThis = WeakPtr(*this), stateID = m_backingStoreStateID, updateInfo = std::exchange(m_updateInfo, { })]() mutable {
         flushLayerImageBuffers(updateInfo);
-        RunLoop::main().dispatch([this, weakThis = WTFMove(weakThis), updateInfo = WTFMove(updateInfo)]() mutable {
+        RunLoop::main().dispatch([this, weakThis = WTFMove(weakThis), stateID, updateInfo = WTFMove(updateInfo)]() mutable {
             if (!weakThis)
                 return;
-            m_remoteWCLayerTreeHostProxy->update(WTFMove(updateInfo));
+            m_remoteWCLayerTreeHostProxy->update(WTFMove(updateInfo), [this, stateID](std::optional<UpdateInfo> updateInfo) {
+                if (updateInfo && stateID == m_backingStoreStateID) {
+                    send(Messages::DrawingAreaProxy::Update(m_backingStoreStateID, WTFMove(*updateInfo)));
+                    return;
+                }
+                didUpdate();
+            });
         });
     });
 }
@@ -346,7 +364,8 @@ void DrawingAreaWC::didUpdate()
     if (m_hasDeferredRenderingUpdate) {
         m_hasDeferredRenderingUpdate = false;
         triggerRenderingUpdate();
-    }
+    } else if (m_forceRepaintCompletionHandler)
+        m_forceRepaintCompletionHandler();
 }
 
 } // namespace WebKit

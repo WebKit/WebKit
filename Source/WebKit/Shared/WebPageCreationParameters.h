@@ -196,6 +196,9 @@ struct WebPageCreationParameters {
 #if PLATFORM(WIN)
     uint64_t nativeWindowHandle;
 #endif
+#if USE(GRAPHICS_LAYER_WC)
+    bool usesOffscreenRendering { false };
+#endif
     bool shouldScaleViewToFitDocument;
 
     WebCore::UserInterfaceLayoutDirection userInterfaceLayoutDirection;

@@ -59,6 +59,11 @@ void DrawingAreaProxyWC::sizeDidChange()
     send(Messages::DrawingArea::UpdateGeometry(m_currentBackingStoreStateID, m_size));
 }
 
+void DrawingAreaProxyWC::dispatchAfterEnsuringDrawing(WTF::Function<void(CallbackBase::Error)>&& completionHandler)
+{
+    completionHandler(CallbackBase::Error::None);
+}
+
 void DrawingAreaProxyWC::update(uint64_t backingStoreStateID, const UpdateInfo& updateInfo)
 {
     if (backingStoreStateID == m_currentBackingStoreStateID)

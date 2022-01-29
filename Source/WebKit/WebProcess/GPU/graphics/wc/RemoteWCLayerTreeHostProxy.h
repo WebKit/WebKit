@@ -30,6 +30,7 @@
 #include "GPUProcessConnection.h"
 #include "MessageReceiver.h"
 #include "MessageSender.h"
+#include "UpdateInfo.h"
 #include "WCLayerTreeHostIdentifier.h"
 
 namespace WebKit {
@@ -37,22 +38,14 @@ namespace WebKit {
 struct WCUpateInfo;
 
 class RemoteWCLayerTreeHostProxy
-    : private IPC::MessageReceiver
-    , private IPC::MessageSender
+    : private IPC::MessageSender
     , private GPUProcessConnection::Client {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    class Client {
-    public:
-        virtual void didUpdate() = 0;
-    };
-
-    RemoteWCLayerTreeHostProxy(WebPage&, Client&);
+    RemoteWCLayerTreeHostProxy(WebPage&, bool usesOffscreenRendering);
     ~RemoteWCLayerTreeHostProxy();
 
-    void update(WCUpateInfo&&);
-
-    void didUpdate();
+    void update(WCUpateInfo&&, CompletionHandler<void(std::optional<WebKit::UpdateInfo>)>&&);
 
 private:
     WCLayerTreeHostIdentifier wcLayerTreeHostIdentifier() const { return m_wcLayerTreeHostIdentifier; };
@@ -62,9 +55,6 @@ private:
     // GPUProcessConnection::Client
     void gpuProcessConnectionDidClose(GPUProcessConnection&) final;
 
-    // IPC::MessageReceiver
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
-
     // IPC::MessageSender
     IPC::Connection* messageSenderConnection() const override;
     uint64_t messageSenderDestinationID() const override;
@@ -72,7 +62,7 @@ private:
     WeakPtr<GPUProcessConnection> m_gpuProcessConnection;
     WCLayerTreeHostIdentifier m_wcLayerTreeHostIdentifier { WCLayerTreeHostIdentifier::generate() };
     WebPage& m_page;
-    Client& m_client;
+    bool m_usesOffscreenRendering { false };
 };
 
 } // namespace WebKit

@@ -342,6 +342,11 @@ void PageClientImpl::didSameDocumentNavigationForMainFrame(SameDocumentNavigatio
     notImplemented();
 }
 
+bool PageClientImpl::usesOffscreenRendering() const
+{
+    return m_view.usesOffscreenRendering();
+}
+
 void PageClientImpl::didChangeBackgroundColor()
 {
     notImplemented();

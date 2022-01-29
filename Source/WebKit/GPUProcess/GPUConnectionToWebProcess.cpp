@@ -359,9 +359,9 @@ void GPUConnectionToWebProcess::configureLoggingChannel(const String& channelNam
 }
 
 #if USE(GRAPHICS_LAYER_WC)
-void GPUConnectionToWebProcess::createWCLayerTreeHost(WebKit::WCLayerTreeHostIdentifier identifier, uint64_t nativeWindow)
+void GPUConnectionToWebProcess::createWCLayerTreeHost(WebKit::WCLayerTreeHostIdentifier identifier, uint64_t nativeWindow, bool usesOffscreenRendering)
 {
-    auto addResult = m_remoteWCLayerTreeHostMap.add(identifier, RemoteWCLayerTreeHost::create(*this, WTFMove(identifier), nativeWindow));
+    auto addResult = m_remoteWCLayerTreeHostMap.add(identifier, RemoteWCLayerTreeHost::create(*this, WTFMove(identifier), nativeWindow, usesOffscreenRendering));
     ASSERT_UNUSED(addResult, addResult.isNewEntry);
 }
 

@@ -32,26 +32,25 @@
 #include "GPUProcess.h"
 #include "RemoteGraphicsContextGL.h"
 #include "RemoteWCLayerTreeHostMessages.h"
-#include "RemoteWCLayerTreeHostProxyMessages.h"
 #include "StreamConnectionWorkQueue.h"
 #include "WCScene.h"
 #include "WCUpateInfo.h"
 
 namespace WebKit {
 
-std::unique_ptr<RemoteWCLayerTreeHost> RemoteWCLayerTreeHost::create(GPUConnectionToWebProcess& connectionToWebProcess, WebKit::WCLayerTreeHostIdentifier identifier, uint64_t nativeWindow)
+std::unique_ptr<RemoteWCLayerTreeHost> RemoteWCLayerTreeHost::create(GPUConnectionToWebProcess& connectionToWebProcess, WebKit::WCLayerTreeHostIdentifier identifier, uint64_t nativeWindow, bool usesOffscreenRendering)
 {
-    return makeUnique<RemoteWCLayerTreeHost>(connectionToWebProcess, identifier, nativeWindow);
+    return makeUnique<RemoteWCLayerTreeHost>(connectionToWebProcess, identifier, nativeWindow, usesOffscreenRendering);
 }
 
-RemoteWCLayerTreeHost::RemoteWCLayerTreeHost(GPUConnectionToWebProcess& connectionToWebProcess, WebKit::WCLayerTreeHostIdentifier identifier, uint64_t nativeWindow)
+RemoteWCLayerTreeHost::RemoteWCLayerTreeHost(GPUConnectionToWebProcess& connectionToWebProcess, WebKit::WCLayerTreeHostIdentifier identifier, uint64_t nativeWindow, bool usesOffscreenRendering)
     : m_connectionToWebProcess(connectionToWebProcess)
     , m_webProcessIdentifier(connectionToWebProcess.webProcessIdentifier())
     , m_identifier(identifier)
     , m_sharedSceneContextHolder(connectionToWebProcess.gpuProcess().sharedSceneContext().ensureHolderForWindow(nativeWindow))
 {
     m_connectionToWebProcess->messageReceiverMap().addMessageReceiver(Messages::RemoteWCLayerTreeHost::messageReceiverName(), m_identifier.toUInt64(), *this);
-    m_scene = makeUnique<WCScene>(m_webProcessIdentifier);
+    m_scene = makeUnique<WCScene>(m_webProcessIdentifier, usesOffscreenRendering);
     remoteGraphicsContextGLStreamWorkQueue().dispatch([scene = m_scene.get(), sceneContextHolder = m_sharedSceneContextHolder.get(), nativeWindow] {
         if (!sceneContextHolder->context)
             sceneContextHolder->context.emplace(nativeWindow);
@@ -81,14 +80,14 @@ uint64_t RemoteWCLayerTreeHost::messageSenderDestinationID() const
     return m_identifier.toUInt64();
 }
 
-void RemoteWCLayerTreeHost::update(WCUpateInfo&& update)
+void RemoteWCLayerTreeHost::update(WCUpateInfo&& update, CompletionHandler<void(std::optional<WebKit::UpdateInfo>)>&& completionHandler)
 {
-    remoteGraphicsContextGLStreamWorkQueue().dispatch([this, weakThis = WeakPtr(*this), scene = m_scene.get(), update = WTFMove(update)]() mutable {
-        scene->update(WTFMove(update));
-        RunLoop::main().dispatch([this, weakThis = WTFMove(weakThis)] {
+    remoteGraphicsContextGLStreamWorkQueue().dispatch([this, weakThis = WeakPtr(*this), scene = m_scene.get(), update = WTFMove(update), completionHandler = WTFMove(completionHandler)]() mutable {
+        auto updateInfo = scene->update(WTFMove(update));
+        RunLoop::main().dispatch([this, weakThis = WTFMove(weakThis), updateInfo = WTFMove(updateInfo), completionHandler = WTFMove(completionHandler)]() mutable {
             if (!weakThis)
                 return;
-            send(Messages::RemoteWCLayerTreeHostProxy::DidUpdate());
+            completionHandler(WTFMove(updateInfo));
         });
     });
 }

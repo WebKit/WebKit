@@ -8351,6 +8351,9 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
 #if PLATFORM(WIN)
     parameters.nativeWindowHandle = reinterpret_cast<uint64_t>(viewWidget());
 #endif
+#if USE(GRAPHICS_LAYER_WC)
+    parameters.usesOffscreenRendering = pageClient().usesOffscreenRendering();
+#endif
 
     for (auto& iterator : m_urlSchemeHandlersByScheme)
         parameters.urlSchemeHandlers.set(iterator.key, iterator.value->identifier());

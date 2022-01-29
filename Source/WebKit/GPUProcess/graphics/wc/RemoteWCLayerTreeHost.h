@@ -36,17 +36,18 @@
 
 namespace WebKit {
 class GPUConnectionToWebProcess;
+class UpdateInfo;
 class WCScene;
 struct WCUpateInfo;
 
 class RemoteWCLayerTreeHost : public IPC::MessageReceiver, private IPC::MessageSender {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static std::unique_ptr<RemoteWCLayerTreeHost> create(GPUConnectionToWebProcess&, WebKit::WCLayerTreeHostIdentifier, uint64_t nativeWindow);
-    RemoteWCLayerTreeHost(GPUConnectionToWebProcess&, WebKit::WCLayerTreeHostIdentifier, uint64_t nativeWindow);
+    static std::unique_ptr<RemoteWCLayerTreeHost> create(GPUConnectionToWebProcess&, WebKit::WCLayerTreeHostIdentifier, uint64_t nativeWindow, bool usesOffscreenRendering);
+    RemoteWCLayerTreeHost(GPUConnectionToWebProcess&, WebKit::WCLayerTreeHostIdentifier, uint64_t nativeWindow, bool usesOffscreenRendering);
     ~RemoteWCLayerTreeHost();
     // message handlers
-    void update(WCUpateInfo&&);
+    void update(WCUpateInfo&&, CompletionHandler<void(std::optional<WebKit::UpdateInfo>)>&&);
 
 private:
     // IPC::MessageReceiver

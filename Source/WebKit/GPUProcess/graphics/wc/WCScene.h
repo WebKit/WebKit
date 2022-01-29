@@ -27,6 +27,7 @@
 
 #if USE(GRAPHICS_LAYER_WC)
 
+#include "UpdateInfo.h"
 #include <WebCore/ProcessIdentifier.h>
 #include <WebCore/TextureMapperFPSCounter.h>
 #include <wtf/Forward.h>
@@ -47,10 +48,10 @@ struct WCUpateInfo;
 class WCScene {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    WCScene(WebCore::ProcessIdentifier);
+    WCScene(WebCore::ProcessIdentifier, bool usesOffscreenRendering);
     ~WCScene();
     void initialize(WCSceneContext&);
-    void update(WCUpateInfo&&);
+    std::optional<UpdateInfo> update(WCUpateInfo&&);
 
 private:
     struct Layer;
@@ -61,6 +62,7 @@ private:
     std::unique_ptr<WebCore::TextureMapper> m_textureMapper;
     WebCore::TextureMapperFPSCounter m_fpsCounter;
     LayerMap m_layers;
+    bool m_usesOffscreenRendering;
 };
 
 } // namespace WebKit

@@ -937,4 +937,14 @@ void WebView::setToolTip(const String& toolTip)
     ::SendMessage(m_toolTipWindow, TTM_ACTIVATE, !toolTip.isEmpty(), 0);
 }
 
+void WebView::setUsesOffscreenRendering(bool enabled)
+{
+    m_usesOffscreenRendering = enabled;
+}
+
+bool WebView::usesOffscreenRendering() const
+{
+    return m_usesOffscreenRendering;
+}
+
 } // namespace WebKit

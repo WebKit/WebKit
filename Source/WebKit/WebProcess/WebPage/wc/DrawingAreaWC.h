@@ -36,8 +36,7 @@ namespace WebKit {
 
 class DrawingAreaWC final
     : public DrawingArea
-    , public GraphicsLayerWC::Observer
-    , public RemoteWCLayerTreeHostProxy::Client {
+    , public GraphicsLayerWC::Observer {
 public:
     DrawingAreaWC(WebPage&, const WebPageCreationParameters&);
     ~DrawingAreaWC() override;
@@ -48,7 +47,7 @@ private:
     void setNeedsDisplay() override;
     void setNeedsDisplayInRect(const WebCore::IntRect&) override;
     void scroll(const WebCore::IntRect& scrollRect, const WebCore::IntSize& scrollDelta) override;
-    void forceRepaintAsync(WebPage&, CompletionHandler<void()>&&) override { }
+    void forceRepaintAsync(WebPage&, CompletionHandler<void()>&&) override;
     void triggerRenderingUpdate() override;
     void didChangeViewportAttributes(WebCore::ViewportAttributes&&) override { }
     void deviceOrPageScaleFactorChanged() override { }
@@ -59,13 +58,12 @@ private:
     void attachViewOverlayGraphicsLayer(WebCore::GraphicsLayer*) override;
     void updatePreferences(const WebPreferencesStore&) override;
     bool shouldUseTiledBackingForFrameView(const WebCore::FrameView&) const override;
+    void didUpdate() override;
     // GraphicsLayerWC::Observer
     void graphicsLayerAdded(GraphicsLayerWC&) override;
     void graphicsLayerRemoved(GraphicsLayerWC&) override;
     void commitLayerUpateInfo(WCLayerUpateInfo&&) override;
     RefPtr<WebCore::ImageBuffer> createImageBuffer(WebCore::FloatSize) override;
-    // RemoteWCLayerTreeHostProxy::Client
-    void didUpdate() override;
 
     bool isCompositingMode();
     void updateRendering();
@@ -91,6 +89,7 @@ private:
     WebCore::Region m_dirtyRegion;
     WebCore::IntRect m_scrollRect;
     WebCore::IntSize m_scrollOffset;
+    CompletionHandler<void()> m_forceRepaintCompletionHandler;
 };
 
 } // namespace WebKit
