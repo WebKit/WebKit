@@ -1578,3 +1578,4 @@ webkit.org/b/231918 imported/w3c/web-platform-tests/html/semantics/interactive-e
 
 fast/scrolling/rtl-scrollbars-alternate-iframe-body-dir-attr-does-not-update-scrollbar-placement.html [ ImageOnlyFailure ]
 
+webkit.org/b/235733 [ BigSur+ arm64 Release ] editing/execCommand/insert-newline-in-quoted-content-crash.html [ Skip ]

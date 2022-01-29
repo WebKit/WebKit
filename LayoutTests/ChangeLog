@@ -1,3 +1,12 @@
+2022-01-28  Robert Jenner  <Jenner@apple.com>
+
+        [ BigSur+ Release wk1 arm64 ] Bots are flaky exiting testing after 500 layout-test failures (235733)
+        https://bugs.webkit.org/show_bug.cgi?id=235733
+
+        Uneviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations: Skipping test for mac BigSur and later wk1 arm64 Release because it intermittently causes many tests to fail.
+
 2022-01-28  Alexey Shvayka  <ashvayka@apple.com>
 
         Remove showModalDialog-specific logic from JSDOMWindow::getOwnPropertySlot()
