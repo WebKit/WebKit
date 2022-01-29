@@ -1651,7 +1651,9 @@ static bool recompositeChangeRequiresGeometryUpdate(const RenderStyle& oldStyle,
         || oldStyle.offsetPosition() != newStyle.offsetPosition()
         || oldStyle.offsetDistance() != newStyle.offsetDistance()
         || oldStyle.offsetRotate() != newStyle.offsetRotate()
-        || !arePointingToEqualData(oldStyle.clipPath(), newStyle.clipPath());
+        || !arePointingToEqualData(oldStyle.clipPath(), newStyle.clipPath())
+        || oldStyle.overscrollBehaviorX() != newStyle.overscrollBehaviorX()
+        || oldStyle.overscrollBehaviorY() != newStyle.overscrollBehaviorY();
 }
 
 void RenderLayerCompositor::layerStyleChanged(StyleDifference diff, RenderLayer& layer, const RenderStyle* oldStyle)
@@ -3944,6 +3946,11 @@ void RenderLayerCompositor::rootOrBodyStyleChanged(RenderElement& renderer, cons
     bool hadFixedBackground = oldStyle && oldStyle->hasEntirelyFixedBackground();
     if (hadFixedBackground != renderer.style().hasEntirelyFixedBackground())
         rootLayerConfigurationChanged();
+    
+    if (oldStyle && (oldStyle->overscrollBehaviorX() != renderer.style().overscrollBehaviorX() || oldStyle->overscrollBehaviorY() != renderer.style().overscrollBehaviorY())) {
+        if (auto* layer = m_renderView.layer())
+            layer->setNeedsCompositingGeometryUpdate();
+    }
 }
 
 void RenderLayerCompositor::rootBackgroundColorOrTransparencyChanged()

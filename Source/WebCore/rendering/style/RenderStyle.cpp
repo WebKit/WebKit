@@ -1189,7 +1189,9 @@ bool RenderStyle::changeRequiresRecompositeLayer(const RenderStyle& other, Optio
             || m_rareNonInheritedData->backfaceVisibility != other.m_rareNonInheritedData->backfaceVisibility
             || m_rareNonInheritedData->perspective != other.m_rareNonInheritedData->perspective
             || m_rareNonInheritedData->perspectiveOriginX != other.m_rareNonInheritedData->perspectiveOriginX
-            || m_rareNonInheritedData->perspectiveOriginY != other.m_rareNonInheritedData->perspectiveOriginY)
+            || m_rareNonInheritedData->perspectiveOriginY != other.m_rareNonInheritedData->perspectiveOriginY
+            || m_rareNonInheritedData->overscrollBehaviorX != other.m_rareNonInheritedData->overscrollBehaviorX
+            || m_rareNonInheritedData->overscrollBehaviorY != other.m_rareNonInheritedData->overscrollBehaviorY)
             return true;
     }
 

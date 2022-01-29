@@ -31,6 +31,7 @@
 #include "EventNames.h"
 #include "Logging.h"
 #include "PlatformWheelEvent.h"
+#include "ScrollingEffectsController.h"
 #include "ScrollingStateFrameScrollingNode.h"
 #include "ScrollingStateTree.h"
 #include "ScrollingTreeFrameScrollingNode.h"
@@ -201,19 +202,27 @@ WheelEventHandlingResult ScrollingTree::handleWheelEvent(const PlatformWheelEven
 
 WheelEventHandlingResult ScrollingTree::handleWheelEventWithNode(const PlatformWheelEvent& wheelEvent, OptionSet<WheelEventProcessingSteps> processingSteps, ScrollingTreeNode* node, EventTargeting eventTargeting)
 {
+    auto adjustedWheelEvent = wheelEvent;
     while (node) {
         if (is<ScrollingTreeScrollingNode>(*node)) {
             auto& scrollingNode = downcast<ScrollingTreeScrollingNode>(*node);
-            auto result = scrollingNode.handleWheelEvent(wheelEvent, eventTargeting);
+            auto result = scrollingNode.handleWheelEvent(adjustedWheelEvent, eventTargeting);
 
             if (result.wasHandled) {
-                m_latchingController.nodeDidHandleEvent(scrollingNode.scrollingNodeID(), processingSteps, wheelEvent, m_allowLatching);
-                m_gestureState.nodeDidHandleEvent(scrollingNode.scrollingNodeID(), wheelEvent);
+                m_latchingController.nodeDidHandleEvent(scrollingNode.scrollingNodeID(), processingSteps, adjustedWheelEvent, m_allowLatching);
+                m_gestureState.nodeDidHandleEvent(scrollingNode.scrollingNodeID(), adjustedWheelEvent);
                 return result;
             }
 
             if (result.needsMainThreadProcessing() || eventTargeting != EventTargeting::Propagate)
                 return result;
+            
+            if (scrollingNode.shouldBlockScrollPropagation(adjustedWheelEvent.delta())) {
+                m_latchingController.nodeDidHandleEvent(scrollingNode.scrollingNodeID(), processingSteps, adjustedWheelEvent, m_allowLatching);
+                m_gestureState.nodeDidHandleEvent(scrollingNode.scrollingNodeID(), adjustedWheelEvent);
+                return WheelEventHandlingResult::handled();
+            }
+            adjustedWheelEvent = scrollingNode.eventForPropagation(adjustedWheelEvent);
         }
 
         if (is<ScrollingTreeOverflowScrollProxyNode>(*node)) {
