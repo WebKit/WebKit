@@ -1,3 +1,10 @@
+2022-01-28  Diego Pino Garcia  <dpino@igalia.com>
+
+        [WPE] Unreviewed, fix non-unified build after r288758
+        https://bugs.webkit.org/show_bug.cgi?id=235853
+
+        * wasm/WasmBranchHintsSectionParser.cpp:
+
 2022-01-28  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Enable wasm branch hinting

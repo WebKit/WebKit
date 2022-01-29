@@ -40,6 +40,7 @@
 #include "AudioParamMap.h"
 #include "AudioUtilities.h"
 #include "AudioWorklet.h"
+#include "AudioWorkletGlobalScope.h"
 #include "AudioWorkletMessagingProxy.h"
 #include "AudioWorkletNodeOptions.h"
 #include "AudioWorkletProcessor.h"

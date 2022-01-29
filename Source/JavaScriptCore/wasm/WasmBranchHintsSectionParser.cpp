@@ -23,9 +23,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "config.h"
+
 #if ENABLE(WEBASSEMBLY)
 
-#include "config.h"
 #include "WasmBranchHintsSectionParser.h"
 
 namespace JSC {
