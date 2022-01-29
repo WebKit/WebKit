@@ -340,12 +340,14 @@ TEST(WebKit, FindTextInImageOverlay)
 @interface TestSearchAggregator : NSObject <_UITextSearchAggregator>
 
 @property (readonly) NSUInteger count;
+@property (nonatomic, readonly) NSArray<UITextRange *> *foundRanges;
 
 - (instancetype)initWithCompletionHandler:(dispatch_block_t)completionHandler;
 
 @end
 
 @implementation TestSearchAggregator {
+    RetainPtr<NSMutableArray<UITextRange *>> _foundRanges;
     BlockPtr<void()> _completionHandler;
 }
 
@@ -354,7 +356,7 @@ TEST(WebKit, FindTextInImageOverlay)
     if (!(self = [super init]))
         return nil;
 
-    _count = 0;
+    _foundRanges = adoptNS([[NSMutableArray alloc] init]);
     _completionHandler = makeBlockPtr(completionHandler);
 
     return self;
@@ -362,13 +364,23 @@ TEST(WebKit, FindTextInImageOverlay)
 
 - (void)foundRange:(UITextRange *)range forSearchString:(NSString *)string inDocument:(_UITextSearchDocumentIdentifier)document
 {
-    _count++;
+    [_foundRanges addObject:range];
 }
 
 - (void)finishedSearching
 {
     if (_completionHandler)
         _completionHandler();
+}
+
+- (NSArray<UITextRange *>*)foundRanges
+{
+    return _foundRanges.get();
+}
+
+- (NSUInteger)count
+{
+    return [_foundRanges count];
 }
 
 @end
@@ -388,9 +400,25 @@ static void testPerformTextSearchWithQueryStringInWebView(WKWebView *webView, NS
     EXPECT_EQ([aggregator count], expectedMatches);
 }
 
+static RetainPtr<NSArray<UITextRange *>> textRangesForQueryString(WKWebView *webView, NSString *query)
+{
+    __block bool finishedSearching = false;
+    auto aggregator = adoptNS([[TestSearchAggregator alloc] initWithCompletionHandler:^{
+        finishedSearching = true;
+    }]);
+
+    // FIXME: (rdar://86140914) Use _UITextSearchOptions directly when the symbol is exported.
+    auto options = adoptNS([[TestTextSearchOptions alloc] init]);
+    [webView performTextSearchWithQueryString:query usingOptions:(_UITextSearchOptions *)options.get() resultAggregator:aggregator.get()];
+
+    TestWebKitAPI::Util::run(&finishedSearching);
+
+    return adoptNS([[aggregator foundRanges] copy]);
+}
+
 TEST(WebKit, FindInPage)
 {
-    RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 200, 200)]);
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 200, 200)]);
 
     NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"lots-of-text" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
     [webView loadRequest:request];
@@ -402,7 +430,7 @@ TEST(WebKit, FindInPage)
 
 TEST(WebKit, FindInPageCaseInsensitive)
 {
-    RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 200, 200)]);
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 200, 200)]);
 
     NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"lots-of-text" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
     [webView loadRequest:request];
@@ -417,7 +445,7 @@ TEST(WebKit, FindInPageCaseInsensitive)
 
 TEST(WebKit, FindInPageStartsWith)
 {
-    RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 200, 200)]);
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 200, 200)]);
 
     NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"lots-of-text" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
     [webView loadRequest:request];
@@ -436,7 +464,7 @@ TEST(WebKit, FindInPageStartsWith)
 
 TEST(WebKit, FindInPageFullWord)
 {
-    RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 200, 200)]);
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 200, 200)]);
 
     NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"lots-of-text" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
     [webView loadRequest:request];
@@ -454,7 +482,7 @@ TEST(WebKit, FindInPageFullWord)
 
 TEST(WebKit, FindInteraction)
 {
-    RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 200, 200)]);
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 200, 200)]);
 
     EXPECT_NULL([webView _findInteraction]);
 
@@ -463,6 +491,38 @@ TEST(WebKit, FindInteraction)
 
     [webView _setFindInteractionEnabled:NO];
     EXPECT_NULL([webView _findInteraction]);
+}
+
+TEST(WebKit, RequestRectForFoundTextRange)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+    [webView synchronouslyLoadHTMLString:@"<iframe srcdoc='<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Tellus in metus vulputate eu scelerisque felis imperdiet. Mi quis hendrerit dolor magna eget est lorem ipsum dolor. In cursus turpis massa tincidunt dui ut ornare. Sapien et ligula ullamcorper malesuada. Maecenas volutpat blandit aliquam etiam erat. Turpis egestas integer eget aliquet nibh praesent tristique. Ipsum dolor sit amet consectetur adipiscing. Tellus cras adipiscing enim eu turpis egestas pretium aenean pharetra. Sem fringilla ut morbi tincidunt augue interdum velit euismod. Habitant morbi tristique senectus et netus. Aenean euismod elementum nisi quis. Facilisi nullam vehicula ipsum a. Elementum facilisis leo vel fringilla. Molestie nunc non blandit massa enim. Orci ac auctor augue mauris. Pellentesque pulvinar pellentesque habitant morbi tristique senectus et. Magnis dis parturient montes nascetur ridiculus mus mauris vitae. Id leo in vitae turpis massa sed. Netus et malesuada fames ac turpis egestas sed tempus. Morbi quis commodo odio aenean sed adipiscing diam donec. Sit amet purus gravida quis blandit turpis. Odio euismod lacinia at quis risus sed vulputate. Varius duis at consectetur lorem donec massa. Sit amet consectetur adipiscing elit pellentesque habitant. Feugiat in fermentum posuere urna nec tincidunt praesent.</p>'></iframe>"];
+
+    auto ranges = textRangesForQueryString(webView.get(), @"Sapien");
+
+    __block bool done = false;
+    [webView _requestRectForFoundTextRange:[ranges firstObject] completionHandler:^(CGRect rect) {
+        EXPECT_TRUE(CGRectEqualToRect(rect, CGRectMake(252, 146, 44, 19)));
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    ranges = textRangesForQueryString(webView.get(), @"fermentum");
+
+    done = false;
+    [webView _requestRectForFoundTextRange:[ranges firstObject] completionHandler:^(CGRect rect) {
+        EXPECT_TRUE(CGRectEqualToRect(rect, CGRectMake(229, 646, 72, 19)));
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    [webView scrollRangeToVisible:[ranges firstObject] inDocument:nil];
+    done = false;
+    [webView _requestRectForFoundTextRange:[ranges firstObject] completionHandler:^(CGRect rect) {
+        EXPECT_TRUE(CGRectEqualToRect(rect, CGRectMake(229, 104, 72, 19)));
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
 }
 
 #endif // HAVE(UIFINDINTERACTION)

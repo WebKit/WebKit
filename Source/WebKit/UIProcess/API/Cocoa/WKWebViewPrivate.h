@@ -445,6 +445,8 @@ for this property.
 #if __has_include(<UIKit/_UIFindInteraction.h>)
 @property (nonatomic, readonly) _UIFindInteraction *_findInteraction WK_API_AVAILABLE(ios(WK_IOS_TBA));
 @property (nonatomic, readwrite, setter=_setFindInteractionEnabled:) BOOL _findInteractionEnabled WK_API_AVAILABLE(ios(WK_IOS_TBA));
+
+- (void)_requestRectForFoundTextRange:(UITextRange *)ranges completionHandler:(void (^)(CGRect))completionHandler WK_API_AVAILABLE(ios(WK_IOS_TBA));
 #endif
 
 #endif

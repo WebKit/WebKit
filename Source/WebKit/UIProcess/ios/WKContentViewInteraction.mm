@@ -10073,6 +10073,18 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
     return [self offsetFromPosition:from toPosition:toPosition];
 }
 
+- (void)requestRectForFoundTextRange:(UITextRange *)range completionHandler:(void (^)(CGRect))completionHandler
+{
+    if (auto* foundTextRange = dynamic_objc_cast<WKFoundTextRange>(range)) {
+        _page->requestRectForFoundTextRange([foundTextRange webFoundTextRange], [completionHandler = makeBlockPtr(completionHandler)] (WebCore::FloatRect rect) {
+            completionHandler(rect);
+        });
+        return;
+    }
+
+    completionHandler(CGRectZero);
+}
+
 #endif // HAVE(UIFINDINTERACTION)
 
 #if ENABLE(IMAGE_ANALYSIS)

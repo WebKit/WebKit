@@ -62,6 +62,8 @@ public:
     void didBeginTextSearchOperation();
     void didEndTextSearchOperation();
 
+    void requestRectForFoundTextRange(const WebFoundTextRange&, CompletionHandler<void(WebCore::FloatRect)>&&);
+
 private:
     // PageOverlay::Client.
     void willMoveToPage(WebCore::PageOverlay&, WebCore::Page*) override;

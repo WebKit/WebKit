@@ -172,6 +172,18 @@ void WebFoundTextRangeController::didEndTextSearchOperation()
     m_findPageOverlay = nullptr;
 }
 
+void WebFoundTextRangeController::requestRectForFoundTextRange(const WebFoundTextRange& range, CompletionHandler<void(WebCore::FloatRect)>&& completionHandler)
+{
+    auto simpleRange = simpleRangeFromFoundTextRange(range);
+    if (!simpleRange) {
+        completionHandler({ });
+        return;
+    }
+
+    auto* frameView = simpleRange->startContainer().document().frame()->view();
+    completionHandler(frameView->contentsToRootView(unionRect(WebCore::RenderObject::absoluteTextRects(*simpleRange))));
+}
+
 void WebFoundTextRangeController::willMoveToPage(WebCore::PageOverlay&, WebCore::Page* page)
 {
     if (page)

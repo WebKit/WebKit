@@ -1766,6 +1766,8 @@ private:
     void didBeginTextSearchOperation();
     void didEndTextSearchOperation();
 
+    void requestRectForFoundTextRange(const WebFoundTextRange&, CompletionHandler<void(WebCore::FloatRect)>&&);
+
 #if USE(COORDINATED_GRAPHICS)
     void sendViewportAttributesChanged(const WebCore::ViewportArguments&);
 #endif

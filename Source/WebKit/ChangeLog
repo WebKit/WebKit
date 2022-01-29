@@ -1,3 +1,35 @@
+2022-01-28  Aditya Keerthi  <akeerthi@apple.com>
+
+        Add SPI to retrieve the rect of a found text range
+        https://bugs.webkit.org/show_bug.cgi?id=235830
+        rdar://88193004
+
+        Reviewed by Wenson Hsieh.
+
+        Clients of found text ranges need a way to determine their position
+        in the web view. An asynchronous SPI is provided to support this need.
+        This information is not encoded in the text range itself, as the
+        position can change due to scrolling in sub-scrollable regions.
+        Consequently, the position must be obtained by communicating with the
+        WebProcess.
+
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/API/ios/WKWebViewIOS.mm:
+        (-[WKWebView _requestRectForFoundTextRange:completionHandler:]):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::requestRectForFoundTextRange):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView requestRectForFoundTextRange:completionHandler:]):
+        * WebProcess/WebPage/WebFoundTextRangeController.cpp:
+        (WebKit::WebFoundTextRangeController::requestRectForFoundTextRange):
+        * WebProcess/WebPage/WebFoundTextRangeController.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::requestRectForFoundTextRange):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2022-01-28  Brent Fulgham  <bfulgham@apple.com>
 
         Update CaptivePortal entitlements to support full GigaCage

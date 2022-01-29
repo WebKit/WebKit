@@ -1,3 +1,23 @@
+2022-01-28  Aditya Keerthi  <akeerthi@apple.com>
+
+        Add SPI to retrieve the rect of a found text range
+        https://bugs.webkit.org/show_bug.cgi?id=235830
+        rdar://88193004
+
+        Reviewed by Wenson Hsieh.
+
+        Added a test to verify the API works as expected.
+
+        The test uses an <iframe> to verify behavior for scrolled
+        <iframe>s.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/FindInPage.mm:
+        (-[TestSearchAggregator initWithCompletionHandler:]):
+        (-[TestSearchAggregator foundRange:forSearchString:inDocument:]):
+        (-[TestSearchAggregator foundRanges]):
+        (-[TestSearchAggregator count]):
+        (TEST):
+
 2022-01-28  Elliott Williams  <emw@apple.com>
 
         [XCBuild] Small corrections to build-webkit and Makefile for workspace builds

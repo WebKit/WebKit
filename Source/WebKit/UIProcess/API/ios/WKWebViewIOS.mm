@@ -3553,6 +3553,11 @@ static std::optional<WebCore::ViewportArguments> viewportArgumentsFromDictionary
     [_contentView didEndTextSearchOperation];
 }
 
+- (void)_requestRectForFoundTextRange:(UITextRange *)ranges completionHandler:(void (^)(CGRect rect))completionHandler
+{
+    [_contentView requestRectForFoundTextRange:ranges completionHandler:completionHandler];
+}
+
 #endif // HAVE(UIFINDINTERACTION)
 
 @end // WKWebView (WKPrivateIOS)
