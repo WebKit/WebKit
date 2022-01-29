@@ -1,5 +1,36 @@
 2022-01-28  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r287844. rdar://problem/87262730
+
+    [MacCatalyst] Add syscalls from iOS sandbox
+    https://bugs.webkit.org/show_bug.cgi?id=234970
+    <rdar://problem/87262730>
+    
+    Reviewed by Darin Adler.
+    
+    Add syscalls from iOS sandbox that are not in the MacCatalyst sandbox, since these are potentially
+    still needed on MacCatalyst.
+    
+    * WebProcess/com.apple.WebProcess.sb.in:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@287844 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-01-10  Per Arne Vollan  <pvollan@apple.com>
+
+            [MacCatalyst] Add syscalls from iOS sandbox
+            https://bugs.webkit.org/show_bug.cgi?id=234970
+            <rdar://problem/87262730>
+
+            Reviewed by Darin Adler.
+
+            Add syscalls from iOS sandbox that are not in the MacCatalyst sandbox, since these are potentially
+            still needed on MacCatalyst.
+
+            * WebProcess/com.apple.WebProcess.sb.in:
+
+2022-01-28  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r288591. rdar://problem/87850345
 
     [macOS][WP] Allow mach extension to service
