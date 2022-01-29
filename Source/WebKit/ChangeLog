@@ -1,3 +1,15 @@
+2022-01-28  Nikolaos Mouchtaris  <nmouchtaris@apple.com>
+
+        Implement CSS overscroll-behavior for iOS
+        https://bugs.webkit.org/show_bug.cgi?id=233788
+
+        Reviewed by Simon Fraser.
+
+        Add setting of ScrollView parameters based on overscroll-behavior values.
+
+        * UIProcess/RemoteLayerTree/ios/ScrollingTreeScrollingNodeDelegateIOS.mm:
+        (WebKit::ScrollingTreeScrollingNodeDelegateIOS::commitStateAfterChildren):
+
 2022-01-28  Per Arne Vollan  <pvollan@apple.com>
 
         [macOS][WP] Temporarily add syscall to sandbox
