@@ -114,9 +114,6 @@
     [NotEnumerable, Conditional=IOS_GESTURE_EVENTS] attribute EventHandler ongestureend;
     [NotEnumerable, Conditional=IOS_GESTURE_EVENTS] attribute EventHandler ongesturestart;
 
-    // Non-standard: This has been dropped from the HTML specification and by other browsers.
-    [Custom] any showModalDialog(DOMString url, optional any dialogArgs, optional DOMString featureArgs);
-
     // Non-standard: should probably deprecate this (https://bugs.webkit.org/show_bug.cgi?id=79653).
     // Blink already deprecated it (https://bugs.chromium.org/p/chromium/issues/detail?id=437569).
     CSSRuleList getMatchedCSSRules(optional Element? element = null, optional DOMString? pseudoElement = null);

@@ -208,20 +208,9 @@ bool JSDOMWindow::getOwnPropertySlot(JSObject* object, JSGlobalObject* lexicalGl
         slot.setWatchpointSet(*thisObject->m_windowCloseWatchpoints);
 
     // (2) Regular own properties.
-    PropertySlot slotCopy = slot;
-    if (Base::getOwnPropertySlot(thisObject, lexicalGlobalObject, propertyName, slot)) {
-        auto* frame = thisObject->wrapped().frame();
-
-        // Detect when we're getting the property 'showModalDialog', this is disabled, and has its original value.
-        bool isShowModalDialogAndShouldHide = propertyName == static_cast<JSVMClientData*>(lexicalGlobalObject->vm().clientData)->builtinNames().showModalDialogPublicName()
-            && (!frame || !DOMWindow::canShowModalDialog(*frame))
-            && slot.isValue() && isHostFunction(slot.getValue(lexicalGlobalObject, propertyName), s_info.staticPropHashTable->entry(propertyName)->function());
-        // Unless we're in the showModalDialog special case, we're done.
-        if (!isShowModalDialogAndShouldHide)
-            return true;
-        slot = slotCopy;
-
-    } else if (UNLIKELY(slot.isVMInquiry() && slot.isTaintedByOpaqueObject()))
+    if (Base::getOwnPropertySlot(thisObject, lexicalGlobalObject, propertyName, slot))
+        return true;
+    if (UNLIKELY(slot.isVMInquiry() && slot.isTaintedByOpaqueObject()))
         return false;
 
 #if ENABLE(USER_MESSAGE_HANDLERS)
@@ -499,26 +488,60 @@ inline JSValue DialogHandler::returnValue() const
     return slot.getValue(&m_globalObject, identifier);
 }
 
-JSValue JSDOMWindow::showModalDialog(JSGlobalObject& lexicalGlobalObject, CallFrame& callFrame)
+static JSC_DECLARE_HOST_FUNCTION(showModalDialog);
+
+JSC_DEFINE_CUSTOM_GETTER(showModalDialogGetter, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName propertyName))
 {
+    VM& vm = lexicalGlobalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    auto* thisObject = castThisValue<JSDOMWindow>(*lexicalGlobalObject, JSValue::decode(thisValue));
+    if (UNLIKELY(!thisObject))
+        return throwVMDOMAttributeGetterTypeError(lexicalGlobalObject, scope, JSDOMWindow::info(), propertyName);
+
+    if (auto* frame = thisObject->wrapped().frame()) {
+        if (DOMWindow::canShowModalDialog(*frame)) {
+            auto* jsFunction = JSFunction::create(vm, lexicalGlobalObject, 1, "showModalDialog"_s, showModalDialog);
+            thisObject->putDirect(vm, propertyName, jsFunction);
+            return JSValue::encode(jsFunction);
+        }
+    }
+
+    return JSValue::encode(jsUndefined());
+}
+
+JSC_DEFINE_HOST_FUNCTION(showModalDialog, (JSGlobalObject* lexicalGlobalObjectPtr, CallFrame* callFramePtr))
+{
+    auto& lexicalGlobalObject = *lexicalGlobalObjectPtr;
+    auto& callFrame = *callFramePtr;
+
     VM& vm = lexicalGlobalObject.vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
+    auto* thisObject = IDLOperation<JSDOMWindow>::cast(lexicalGlobalObject, callFrame);
+    if (UNLIKELY(!thisObject))
+        return throwThisTypeError(lexicalGlobalObject, scope, "Window"_s, "showModalDialog"_s);
+
+    bool shouldAllowAccess = BindingSecurity::shouldAllowAccessToDOMWindow(lexicalGlobalObjectPtr, thisObject->wrapped(), ThrowSecurityError);
+    EXCEPTION_ASSERT_UNUSED(scope, !scope.exception() || !shouldAllowAccess);
+    if (!shouldAllowAccess)
+        return JSValue::encode(jsUndefined());
+
     if (UNLIKELY(callFrame.argumentCount() < 1))
-        return throwException(&lexicalGlobalObject, scope, createNotEnoughArgumentsError(&lexicalGlobalObject));
+        return throwVMException(&lexicalGlobalObject, scope, createNotEnoughArgumentsError(&lexicalGlobalObject));
 
     String urlString = convert<IDLNullable<IDLDOMString>>(lexicalGlobalObject, callFrame.argument(0));
-    RETURN_IF_EXCEPTION(scope, JSValue());
+    RETURN_IF_EXCEPTION(scope, { });
     String dialogFeaturesString = convert<IDLNullable<IDLDOMString>>(lexicalGlobalObject, callFrame.argument(2));
-    RETURN_IF_EXCEPTION(scope, JSValue());
+    RETURN_IF_EXCEPTION(scope, { });
 
     DialogHandler handler(lexicalGlobalObject, callFrame);
 
-    wrapped().showModalDialog(urlString, dialogFeaturesString, activeDOMWindow(lexicalGlobalObject), firstDOMWindow(lexicalGlobalObject), [&handler](DOMWindow& dialog) {
+    thisObject->wrapped().showModalDialog(urlString, dialogFeaturesString, activeDOMWindow(lexicalGlobalObject), firstDOMWindow(lexicalGlobalObject), [&handler](DOMWindow& dialog) {
         handler.dialogCreated(dialog);
     });
 
-    return handler.returnValue();
+    return JSValue::encode(handler.returnValue());
 }
 
 JSValue JSDOMWindow::queueMicrotask(JSGlobalObject& lexicalGlobalObject, CallFrame& callFrame)

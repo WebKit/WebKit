@@ -54,4 +54,6 @@ inline JSDOMWindow* mainWorldGlobalObject(Frame* frame)
     return frame ? &mainWorldGlobalObject(*frame) : nullptr;
 }
 
+JSC_DECLARE_CUSTOM_GETTER(showModalDialogGetter);
+
 } // namespace WebCore
