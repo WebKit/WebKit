@@ -28,6 +28,7 @@
 #include "Gate.h"
 #include "Opcode.h"
 #include "OptionsList.h"
+#include "SecureARM64EHashPins.h"
 #include <wtf/WTFConfig.h>
 
 namespace JSC {
@@ -98,6 +99,10 @@ struct Config {
 
 #if CPU(ARM64E) && ENABLE(PTRTAG_DEBUGGING)
     WTF::PtrTagLookup ptrTagLookupRecord;
+#endif
+
+#if CPU(ARM64E) && ENABLE(JIT)
+    SecureARM64EHashPins arm64eHashPins;
 #endif
 };
 

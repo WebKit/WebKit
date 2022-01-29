@@ -3879,7 +3879,6 @@ Expected<std::unique_ptr<InternalFunction>, String> parseAndCompileAir(Compilati
 {
     auto result = makeUnique<InternalFunction>();
 
-    compilationContext.embedderEntrypointJIT = makeUnique<CCallHelpers>();
     compilationContext.wasmEntrypointJIT = makeUnique<CCallHelpers>();
 
     compilationContext.procedure = makeUnique<B3::Procedure>();

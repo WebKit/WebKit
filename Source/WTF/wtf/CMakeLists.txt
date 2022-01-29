@@ -110,6 +110,7 @@ set(WTF_PUBLIC_HEADERS
     InterferenceGraph.h
     IsoMalloc.h
     IsoMallocInlines.h
+    IterationStatus.h
     IteratorAdaptors.h
     IteratorRange.h
     JSONValues.h

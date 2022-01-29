@@ -3142,7 +3142,6 @@ Expected<std::unique_ptr<InternalFunction>, String> parseAndCompile(CompilationC
 {
     auto result = makeUnique<InternalFunction>();
 
-    compilationContext.embedderEntrypointJIT = makeUnique<CCallHelpers>();
     compilationContext.wasmEntrypointJIT = makeUnique<CCallHelpers>();
     compilationContext.procedure = makeUnique<Procedure>();
 
@@ -3150,7 +3149,6 @@ Expected<std::unique_ptr<InternalFunction>, String> parseAndCompile(CompilationC
     if (shouldDumpIRFor(functionIndex + info.importFunctionCount()))
         procedure.setShouldDumpIR();
 
-    compilationContext.wasmEntrypointJIT = makeUnique<CCallHelpers>();
 
     if (Options::useSamplingProfiler()) {
         // FIXME: We should do this based on VM relevant info.
