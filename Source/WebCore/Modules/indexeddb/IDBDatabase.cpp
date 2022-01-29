@@ -28,7 +28,6 @@
 
 #include "DOMStringList.h"
 #include "EventNames.h"
-#include "EventQueue.h"
 #include "IDBConnectionProxy.h"
 #include "IDBConnectionToServer.h"
 #include "IDBIndex.h"

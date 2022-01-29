@@ -33,7 +33,6 @@
 #include "EventDispatcher.h"
 #include "EventLoop.h"
 #include "EventNames.h"
-#include "EventQueue.h"
 #include "IDBCursorWithValue.h"
 #include "IDBDatabase.h"
 #include "IDBError.h"

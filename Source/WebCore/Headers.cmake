@@ -652,7 +652,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     dom/EventModifierInit.h
     dom/EventNames.h
     dom/EventOptions.h
-    dom/EventQueue.h
     dom/EventTarget.h
     dom/EventTargetConcrete.h
     dom/Exception.h
