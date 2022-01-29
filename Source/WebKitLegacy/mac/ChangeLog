@@ -1,3 +1,41 @@
+2022-01-28  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r288766. rdar://problem/88207448
+
+    Catalyst builds for WebCore and WebKitLegacy don't create proper symlinks for builds with system content path
+    https://bugs.webkit.org/show_bug.cgi?id=235839
+    
+    Reviewed by Saam Barati.
+    
+    Source/WebCore:
+    
+    Fixed ALTERNATE_ROOT_PATH to have a proper path for Catalyst builds, but not for normal macOS builds
+    since they are under WebKit.framework.
+    
+    * Configurations/WebCore.xcconfig:
+    
+    Source/WebKitLegacy/mac:
+    
+    Fixed ALTERNATE_ROOT_PATH and OUTPUT_ALTERNATE_ROOT_PATH to have proper paths for Catalyst builds,
+    but not for normal macOS builds since they are under WebKit.framework.
+    
+    * Configurations/WebKitLegacy.xcconfig:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@288766 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-01-28  Michael Saboff  <msaboff@apple.com>
+
+            Catalyst builds for WebCore and WebKitLegacy don't create proper symlinks for builds with system content path
+            https://bugs.webkit.org/show_bug.cgi?id=235839
+
+            Reviewed by Saam Barati.
+
+            Fixed ALTERNATE_ROOT_PATH and OUTPUT_ALTERNATE_ROOT_PATH to have proper paths for Catalyst builds,
+            but not for normal macOS builds since they are under WebKit.framework.
+
+            * Configurations/WebKitLegacy.xcconfig:
+
 2022-01-11  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r287884. rdar://problem/87206692
