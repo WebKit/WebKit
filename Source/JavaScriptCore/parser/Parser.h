@@ -23,7 +23,6 @@
 #pragma once
 
 #include "ExecutableInfo.h"
-#include "IterationStatus.h"
 #include "Lexer.h"
 #include "ModuleScopeData.h"
 #include "Nodes.h"
@@ -38,6 +37,7 @@
 #include "VariableEnvironment.h"
 #include <wtf/FixedVector.h>
 #include <wtf/Forward.h>
+#include <wtf/IterationStatus.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/RefPtr.h>
 

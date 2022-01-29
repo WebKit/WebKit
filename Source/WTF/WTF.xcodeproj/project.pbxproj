@@ -418,6 +418,7 @@
 		51F1752A1F3D486000C74950 /* PersistentEncoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PersistentEncoder.h; sourceTree = "<group>"; };
 		521CC6B324A277C2004377D6 /* TranslatedProcess.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TranslatedProcess.cpp; sourceTree = "<group>"; };
 		526AEC911F6B4E5C00695F5D /* NoTailCalls.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NoTailCalls.h; sourceTree = "<group>"; };
+		5295B00427920C54006D746A /* IterationStatus.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IterationStatus.h; sourceTree = "<group>"; };
 		52B228C12458DC8200753D91 /* ICUHelpers.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ICUHelpers.h; sourceTree = "<group>"; };
 		530A63481FA3E3A00026A545 /* Scripts */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Scripts; sourceTree = "<group>"; };
 		5311BD511EA71CAD00525281 /* Signals.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Signals.cpp; sourceTree = "<group>"; };
@@ -1128,6 +1129,7 @@
 				E33667492722550900259122 /* Int128.cpp */,
 				F6D67D3226F90142006E0349 /* Int128.h */,
 				33FD4811265CB38000ABE4F4 /* InterferenceGraph.h */,
+				5295B00427920C54006D746A /* IterationStatus.h */,
 				0F7EB85B1FA8FF4100F1ABCB /* IsoMalloc.h */,
 				0F7EB85C1FA8FF4200F1ABCB /* IsoMallocInlines.h */,
 				7CDD7FF7186D291E007433CD /* IteratorAdaptors.h */,

@@ -24,13 +24,13 @@
 #include "CellAttributes.h"
 #include "DestructionMode.h"
 #include "HeapCell.h"
-#include "IterationStatus.h"
 #include "WeakSet.h"
 #include <algorithm>
 #include <wtf/Atomics.h>
 #include <wtf/Bitmap.h>
 #include <wtf/CountingLock.h>
 #include <wtf/HashFunctions.h>
+#include <wtf/IterationStatus.h>
 #include <wtf/PageBlock.h>
 #include <wtf/StdLibExtras.h>
 
