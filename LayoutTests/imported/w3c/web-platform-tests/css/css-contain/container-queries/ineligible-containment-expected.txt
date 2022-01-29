@@ -3,6 +3,6 @@ Test1
 Test1
 
 
-PASS Container ineligible for containment
-FAIL Changing containment eligibility invalidates style assert_equals: expected "rgb(255, 0, 0)" but got "rgb(0, 128, 0)"
+FAIL Container ineligible for containment assert_equals: expected "rgb(0, 128, 0)" but got "rgb(255, 0, 0)"
+FAIL Changing containment eligibility invalidates style assert_equals: expected "rgb(0, 128, 0)" but got "rgb(255, 0, 0)"
 

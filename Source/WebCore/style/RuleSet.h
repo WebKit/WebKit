@@ -115,8 +115,9 @@ private:
     RuleSet();
 
     using CascadeLayerIdentifier = unsigned;
+    using ContainerQueryIdentifier = unsigned;
 
-    void addRule(RuleData&&, CascadeLayerIdentifier);
+    void addRule(RuleData&&, CascadeLayerIdentifier, ContainerQueryIdentifier);
 
     struct ResolverMutatingRule {
         Ref<StyleRuleBase> rule;
@@ -140,6 +141,11 @@ private:
     CascadeLayer& cascadeLayerForIdentifier(CascadeLayerIdentifier identifier) { return m_cascadeLayers[identifier - 1]; }
     const CascadeLayer& cascadeLayerForIdentifier(CascadeLayerIdentifier identifier) const { return m_cascadeLayers[identifier - 1]; }
     CascadeLayerPriority cascadeLayerPriorityForIdentifier(CascadeLayerIdentifier) const;
+
+    struct ContainerQueryAndParent {
+        ContainerQuery query;
+        ContainerQueryIdentifier parent;
+    };
 
     struct DynamicMediaQueryRules {
         Vector<Ref<const MediaQuerySet>> mediaQuerySets;
@@ -181,6 +187,9 @@ private:
     Vector<CascadeLayerIdentifier> m_cascadeLayerIdentifierForRulePosition;
 
     Vector<ResolverMutatingRule> m_resolverMutatingRulesInLayers;
+
+    Vector<ContainerQueryAndParent> m_containerQueries;
+    Vector<ContainerQueryIdentifier> m_containerQueryIdentifierForRulePosition;
 
     bool m_hasHostPseudoClassRulesMatchingInShadowTree { false };
     bool m_hasViewportDependentMediaQueries { false };

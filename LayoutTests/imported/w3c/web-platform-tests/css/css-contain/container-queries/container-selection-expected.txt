@@ -1,27 +1,27 @@
 
-FAIL size(width: 16px) for .size > .inline > span assert_equals: expected "true" but got ""
-FAIL size(height: 16px) for .inline > .size > span assert_equals: expected "true" but got ""
-FAIL size(width: 16px) for .inline > .size > span assert_equals: expected "true" but got ""
-PASS size(height) for .size > .inline > span
-FAIL type(inline-size) size(width: 16px) for .inline > .size > span assert_equals: expected "true" but got ""
-FAIL type(inline-size) size(width: 16px) for .size > .inline > span assert_equals: expected "true" but got ""
-FAIL type(size) size(height: 16px) for .inline > .size > span assert_equals: expected "true" but got ""
-FAIL type(size) size(height: 32px) for .size > .inline > span assert_equals: expected "true" but got ""
-PASS type(size) size(height) for .inline > .inline > span
-FAIL name(a) size(width: 32px) for .a-size > .b-size > span assert_equals: expected "true" but got ""
-FAIL name(b) size(width: 16px) for .a-size > .b-size > span assert_equals: expected "true" but got ""
-PASS name(c) size(width) for .a-size > .b-size > span
-FAIL name(a) size(width: 16px) for .a-size > .a-size > span assert_equals: expected "true" but got ""
-FAIL a size(width: 32px) for .a-size > .b-size > span assert_equals: expected "true" but got ""
-FAIL b size(width: 16px) for .a-size > .b-size > span assert_equals: expected "true" but got ""
-PASS c size(width) for .a-size > .b-size > span
-FAIL a size(width: 16px) for .a-size > .a-size > span assert_equals: expected "true" but got ""
-FAIL a size(width: 32px) for .a-size > .a > span assert_equals: expected "true" but got ""
-FAIL name(a) type(inline-size) size(width: 8px) for .a-size > .b-size > .a-inline > span assert_equals: expected "true" but got ""
-FAIL name(b) type(inline-size) size(width: 16px) for .a-size > .b-size > .a-inline > span assert_equals: expected "true" but got ""
-FAIL name(a) type(size) size(width: 32px) for .a-size > .b-size > .a-inline > span assert_equals: expected "true" but got ""
-FAIL name(b) type(size) size(width: 16px) for .a-size > .b-size > .a-inline > span assert_equals: expected "true" but got ""
+PASS size(width: 16px) for .size > .inline > span
+PASS size(height: 16px) for .inline > .size > span
+PASS size(width: 16px) for .inline > .size > span
+FAIL size(height) for .size > .inline > span assert_equals: expected "" but got "true"
+PASS type(inline-size) size(width: 16px) for .inline > .size > span
+PASS type(inline-size) size(width: 16px) for .size > .inline > span
+PASS type(size) size(height: 16px) for .inline > .size > span
+PASS type(size) size(height: 32px) for .size > .inline > span
+FAIL type(size) size(height) for .inline > .inline > span assert_equals: expected "" but got "true"
+PASS name(a) size(width: 32px) for .a-size > .b-size > span
+PASS name(b) size(width: 16px) for .a-size > .b-size > span
+FAIL name(c) size(width) for .a-size > .b-size > span assert_equals: expected "" but got "true"
+PASS name(a) size(width: 16px) for .a-size > .a-size > span
+PASS a size(width: 32px) for .a-size > .b-size > span
+PASS b size(width: 16px) for .a-size > .b-size > span
+FAIL c size(width) for .a-size > .b-size > span assert_equals: expected "" but got "true"
+PASS a size(width: 16px) for .a-size > .a-size > span
+PASS a size(width: 32px) for .a-size > .a > span
+PASS name(a) type(inline-size) size(width: 8px) for .a-size > .b-size > .a-inline > span
+PASS name(b) type(inline-size) size(width: 16px) for .a-size > .b-size > .a-inline > span
+PASS name(a) type(size) size(width: 32px) for .a-size > .b-size > .a-inline > span
+PASS name(b) type(size) size(width: 16px) for .a-size > .b-size > .a-inline > span
 PASS name(a) type(size) size(width) for .a-inline > .b-size
-FAIL type(inline-size) name(a) size(width: 8px) for .a-size > .b-size > .a-inline > span assert_equals: expected "true" but got ""
-FAIL type(size) name(a) size(height: 32px) for .a-size > .b-size > .a-inline > span assert_equals: expected "true" but got ""
+PASS type(inline-size) name(a) size(width: 8px) for .a-size > .b-size > .a-inline > span
+PASS type(size) name(a) size(height: 32px) for .a-size > .b-size > .a-inline > span
 

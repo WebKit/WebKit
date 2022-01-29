@@ -1,4 +1,4 @@
 
-PASS #dialog initially sized by #containing-block
-FAIL #dialog sized by viewport assert_equals: expected "rgb(0, 128, 0)" but got "rgb(255, 0, 0)"
+FAIL #dialog initially sized by #containing-block assert_equals: expected "rgb(255, 0, 0)" but got "rgb(0, 128, 0)"
+PASS #dialog sized by viewport
 

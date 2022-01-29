@@ -1,4 +1,4 @@
 Green
 
-FAIL Container Queries - Style Change Event for transitions assert_equals: @container queries supported expected "rgb(255, 0, 0)" but got "rgb(0, 128, 0)"
+PASS Container Queries - Style Change Event for transitions
 

@@ -1,12 +1,12 @@
 First-line
 First-line
 
-FAIL Originating element container for ::before assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
-FAIL Originating element container for ::after assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
-FAIL Originating element container for ::marker assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
-FAIL Originating element container for ::first-line assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
-FAIL Originating element container for ::first-letter assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
-FAIL Originating element container for outer ::first-line assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
-FAIL Originating element container for outer ::first-letter assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
-FAIL Originating element container for ::backdrop assert_equals: ::backdrop rendered expected "rgb(0, 128, 0)" but got "rgb(0, 255, 0)"
+PASS Originating element container for ::before
+PASS Originating element container for ::after
+PASS Originating element container for ::marker
+PASS Originating element container for ::first-line
+PASS Originating element container for ::first-letter
+PASS Originating element container for outer ::first-line
+PASS Originating element container for outer ::first-letter
+FAIL Originating element container for ::backdrop assert_equals: ::backdrop not rendered expected "rgb(0, 255, 0)" but got "rgb(0, 128, 0)"
 

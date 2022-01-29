@@ -1,5 +1,5 @@
 
-PASS Dialogs initially not matching for container queries
-PASS Dialogs still not matching after showModal
-FAIL @container queries start matching assert_equals: expected "rgb(0, 255, 0)" but got "rgb(255, 0, 0)"
+FAIL Dialogs initially not matching for container queries assert_equals: expected "rgb(255, 0, 0)" but got "rgb(0, 255, 0)"
+FAIL Dialogs still not matching after showModal assert_equals: expected "rgb(255, 0, 0)" but got "rgb(0, 255, 0)"
+PASS @container queries start matching
 

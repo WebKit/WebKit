@@ -1,10 +1,10 @@
 
-PASS em relative before change
-PASS rem relative before change
-PASS ex relative before change
-PASS ch relative before change
-FAIL em relative after change assert_equals: expected "rgb(0, 128, 0)" but got "rgb(255, 0, 0)"
-FAIL rem relative after change assert_equals: expected "rgb(0, 128, 0)" but got "rgb(255, 0, 0)"
-FAIL ex relative after change assert_equals: expected "rgb(0, 128, 0)" but got "rgb(255, 0, 0)"
-FAIL ch relative after change assert_equals: expected "rgb(0, 128, 0)" but got "rgb(255, 0, 0)"
+FAIL em relative before change assert_equals: expected "rgb(255, 0, 0)" but got "rgb(0, 128, 0)"
+FAIL rem relative before change assert_equals: expected "rgb(255, 0, 0)" but got "rgb(0, 128, 0)"
+FAIL ex relative before change assert_equals: expected "rgb(255, 0, 0)" but got "rgb(0, 128, 0)"
+FAIL ch relative before change assert_equals: expected "rgb(255, 0, 0)" but got "rgb(0, 128, 0)"
+PASS em relative after change
+PASS rem relative after change
+PASS ex relative after change
+PASS ch relative after change
 

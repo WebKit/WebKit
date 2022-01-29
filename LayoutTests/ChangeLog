@@ -1,3 +1,12 @@
+2022-01-28  Antti Koivisto  <antti@apple.com>
+
+        [CSS container Queries] Include container queries in RuleSets
+        https://bugs.webkit.org/show_bug.cgi?id=235763
+
+        Reviewed by Simon Fraser.
+
+        * TestExpectations:
+
 2022-01-28  Myles C. Maxfield  <mmaxfield@apple.com>
 
         REGRESSION(r281687): Space widths have synthetic bold applied to them in the fast text codepath but not the complex text codepath

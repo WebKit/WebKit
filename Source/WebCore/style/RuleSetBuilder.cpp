@@ -109,6 +109,18 @@ void RuleSetBuilder::addChildRules(const Vector<RefPtr<StyleRuleBase>>& rules)
             m_mediaQueryCollector.pop(&mediaRule.mediaQueries());
             continue;
         }
+        if (is<StyleRuleContainer>(*rule)) {
+            auto& containerRule = downcast<StyleRuleContainer>(*rule);
+            auto previousContainerQueryIdentifier = m_currentContainerQueryIdentifier;
+            if (m_ruleSet) {
+                m_ruleSet->m_containerQueries.append({ containerRule.query(), previousContainerQueryIdentifier });
+                m_currentContainerQueryIdentifier = m_ruleSet->m_containerQueries.size();
+            }
+            addChildRules(containerRule.childRules());
+            if (m_ruleSet)
+                m_currentContainerQueryIdentifier = previousContainerQueryIdentifier;
+            continue;
+        }
         if (is<StyleRuleLayer>(*rule)) {
             disallowDynamicMediaQueryEvaluationIfNeeded();
 
@@ -175,7 +187,7 @@ void RuleSetBuilder::addStyleRule(const StyleRule& rule)
         RuleData ruleData(rule, selectorIndex, selectorListIndex, m_ruleSet->ruleCount());
         m_mediaQueryCollector.addRuleIfNeeded(ruleData);
 
-        m_ruleSet->addRule(WTFMove(ruleData), m_currentCascadeLayerIdentifier);
+        m_ruleSet->addRule(WTFMove(ruleData), m_currentCascadeLayerIdentifier, m_currentContainerQueryIdentifier);
 
         ++selectorListIndex;
     }

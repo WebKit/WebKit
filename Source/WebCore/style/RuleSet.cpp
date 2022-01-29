@@ -88,10 +88,10 @@ static bool isHostSelectorMatchingInShadowTree(const CSSSelector& startSelector)
 void RuleSet::addRule(const StyleRule& rule, unsigned selectorIndex, unsigned selectorListIndex)
 {
     RuleData ruleData(rule, selectorIndex, selectorListIndex, m_ruleCount);
-    addRule(WTFMove(ruleData), 0);
+    addRule(WTFMove(ruleData), 0, 0);
 }
 
-void RuleSet::addRule(RuleData&& ruleData, CascadeLayerIdentifier cascadeLayerIdentifier)
+void RuleSet::addRule(RuleData&& ruleData, CascadeLayerIdentifier cascadeLayerIdentifier, ContainerQueryIdentifier containerQueryIdentifier)
 {
     ASSERT(ruleData.position() == m_ruleCount);
 
@@ -102,6 +102,13 @@ void RuleSet::addRule(RuleData&& ruleData, CascadeLayerIdentifier cascadeLayerId
         m_cascadeLayerIdentifierForRulePosition.grow(m_ruleCount);
         std::fill(m_cascadeLayerIdentifierForRulePosition.begin() + oldSize, m_cascadeLayerIdentifierForRulePosition.end(), 0);
         m_cascadeLayerIdentifierForRulePosition.last() = cascadeLayerIdentifier;
+    }
+
+    if (containerQueryIdentifier) {
+        auto oldSize = m_containerQueryIdentifierForRulePosition.size();
+        m_containerQueryIdentifierForRulePosition.grow(m_ruleCount);
+        std::fill(m_containerQueryIdentifierForRulePosition.begin() + oldSize, m_containerQueryIdentifierForRulePosition.end(), 0);
+        m_containerQueryIdentifierForRulePosition.last() = containerQueryIdentifier;
     }
 
     m_features.collectFeatures(ruleData);
@@ -408,6 +415,8 @@ void RuleSet::shrinkToFit()
 
     m_cascadeLayers.shrinkToFit();
     m_cascadeLayerIdentifierForRulePosition.shrinkToFit();
+    m_containerQueries.shrinkToFit();
+    m_containerQueryIdentifierForRulePosition.shrinkToFit();
     m_resolverMutatingRulesInLayers.shrinkToFit();
 }
 

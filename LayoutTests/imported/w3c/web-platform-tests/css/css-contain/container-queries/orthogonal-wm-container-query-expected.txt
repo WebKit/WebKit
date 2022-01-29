@@ -1,5 +1,5 @@
 XX
 
-PASS Initial non-orthogonal width
-FAIL Orthogonal width assert_equals: expected 50 but got 100
+FAIL Initial non-orthogonal width assert_equals: expected 400 but got 50
+PASS Orthogonal width
 
