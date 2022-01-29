@@ -1,3 +1,20 @@
+2022-01-29  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        Capturing WebGL canvas through peer connection shows the image flipped
+        https://bugs.webkit.org/show_bug.cgi?id=235600
+        <rdar://problem/88043325>
+
+        Reviewed by Dean Jackson.
+
+        Test sending WebGL image through a peer connection to a local video
+        and assert that the image is as drawn.
+
+        * platform/glib/TestExpectations:
+        * webrtc/canvas-to-peer-connection-expected.txt: Added.
+        * webrtc/canvas-to-peer-connection.html: Added.
+        * webrtc/routines.js:
+        * webrtc/video-replace-track.html:
+
 2022-01-28  Antoine Quint  <graouts@webkit.org>
 
         [WPT] Update CSS animation tests

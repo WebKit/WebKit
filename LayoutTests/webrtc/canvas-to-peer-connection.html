@@ -1,0 +1,112 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<script src ="routines.js"></script>
+<style type="text/css">
+video { width: 40px; }
+canvas { width: 40px; }
+</style>
+</head>
+<body>
+<div id="debuge"></div>
+<script>
+"use strict";
+
+function with2DContext(subcase, canvas, patternNumber)
+{
+    drawCanvasTestPattern2D(canvas, patternNumber);
+}
+
+function withWebGL(subcase, canvas, patternNumber)
+{
+    drawCanvasTestPatternWebGL(canvas, patternNumber);
+}
+
+async function createLocalPeerConnectionStream(stream)
+{
+    return new Promise((resolve, reject) => {
+        createConnections((firstConnection) => {
+            firstConnection.addTrack(stream.getVideoTracks()[0], stream);
+        }, (secondConnection) => {
+            secondConnection.ontrack = (trackEvent) => {
+                assert_true(trackEvent.track instanceof MediaStreamTrack);
+                assert_true(trackEvent.receiver instanceof RTCRtpReceiver);
+                assert_true(Array.isArray(trackEvent.streams), "Array.isArray() should return true");
+                assert_true(Object.isFrozen(trackEvent.streams), "Object.isFrozen() should return true");
+                resolve(trackEvent.streams[0]);
+            };
+        });
+    });
+}
+
+function waitForVideoFrame(video)
+{
+    return new Promise((resolve) => {
+        video.requestVideoFrameCallback((now, metadata) => {
+            resolve(now, metadata);
+        });
+    });
+}
+
+const width = 500;
+const height = 500;
+
+async function testCanvasToPeerConnection(t, subcase)
+{
+    const debuge = document.getElementById("debuge");
+    const canvas = document.createElement("canvas");
+    canvas.width = width;
+    canvas.height = height;
+    debuge.appendChild(canvas);
+    t.add_cleanup(async () => debuge.removeChild(canvas));
+    const frameRate = 60;
+    const localStream = await createLocalPeerConnectionStream(canvas.captureStream());
+    t.add_cleanup(async () => closeConnections());
+    const video = document.createElement("video");
+    video.autoplay = true;
+    video.controls = false;
+    debuge.appendChild(video);
+    t.add_cleanup(async () => debuge.removeChild(video));
+    video.srcObject = localStream;
+    // FIXME: Currently we don't know which frames are skipped.
+    // Draw until video size changes and then try to clear subsequent enqueued
+    // frames.
+    const id = setInterval(() => { subcase.draw(subcase, canvas, 1)}, 100);
+    await waitForVideoSize(video, canvas.width, canvas.height);
+    clearInterval(id);
+    for (let i = 0; i < 20; ++i) {
+        subcase.draw(subcase, canvas, 1);
+        await waitForVideoFrame(video);
+        assertImageSourceContainsCanvasTestPattern(video, 1, "base case");
+    }
+    // Try to clear the video frame queue.
+    await waitFor(100);
+
+    for (let i = 0; i < 25; ++i) {
+        subcase.draw(subcase, canvas, i);
+        await waitForVideoFrame(video);
+        assertImageSourceContainsCanvasTestPattern(video, i, `iteration: ${i}`);
+    }
+}
+
+const subcases = [];
+// FIXME: Tthis should be filled when 2D context supports HTMLCanvasElement.captureStream().
+// subcases.push({draw: with2DContext});
+subcases.push({draw: withWebGL});
+
+function testDescription(subcase) {
+    return Object.keys(subcase).map((k) => `${k}: ${typeof subcase[k] === "function" ? subcase[k].name : subcase[k]}`).join(",");
+}
+
+function createCanvasToPeerConnectionTests(slice, slices) {
+    const sliceSize = Math.floor(subcases.length / slices);
+    const first = sliceSize * slice;
+    for (const subcase of subcases.slice(first, first + sliceSize))
+        promise_test(async t => { await testCanvasToPeerConnection(t, subcase); }, testDescription(subcase));
+}
+createCanvasToPeerConnectionTests(0, 1);
+</script>
+</body>
+</html>

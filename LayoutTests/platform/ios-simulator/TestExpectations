@@ -41,6 +41,8 @@ imported/w3c/web-platform-tests/fetch/api/abort/general.any.worker.html [ Pass F
 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/history-traversal/persisted-user-state-restoration/scroll-restoration-fragment-scrolling-cross-origin.html [ Failure ]
 imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-setLocalDescription-offer.html [ Failure ]
 
+webkit.org/b/235765 webrtc/canvas-to-peer-connection.html [ Failure ]
+
 # Simulator doesn't support WebAssembly.
 imported/w3c/web-platform-tests/wasm/wasm_stream_instantiate_test.html  [ Skip ]
 imported/w3c/web-platform-tests/wasm/wasm_stream_compile_test.html  [ Skip ]

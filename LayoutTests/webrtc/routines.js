@@ -298,6 +298,13 @@ function setH264HighCodec(sdp)
     }).join('\r\n');
 }
 
+const testColors = {
+    white: [ 255, 255, 255, 255 ],
+    yellow: [ 255, 255, 0, 255 ],
+    cyan: [ 0, 255, 255, 255 ],
+    lightGreen: [ 0, 128, 0, 255 ],
+};
+
 // Sets the camera image orientation if running on test runner.
 // angle: orientation angle of the camera image in degrees
 function setMockCameraImageOrientation(angle, videoSize) {
@@ -340,18 +347,84 @@ function assertImageDataContainsMockCameraImage(imageData, angle, desc)
         return n;
     }
 
-    const white = [ 255, 255, 255, 255 ];
     const whitePoint = rotatePoint([ 0.04, 0.7 ]);
-    const yellow = [ 255, 255, 0, 255 ];
     const yellowPoint = rotatePoint([ 0.08, 0.7 ]);
-    const cyan = [ 0, 255, 255, 255 ];
     const cyanPoint = rotatePoint([ 0.12, 0.7 ]);
-    const lightGreen = [ 0, 128, 0, 255 ];
     const lightGreenPoint = rotatePoint([ 0.16, 0.7 ]);
 
     let err = 11;
-    assert_array_approx_equals(getImageDataPixel(imageData, whitePoint), white, err, "white rect not found " + desc);
-    assert_array_approx_equals(getImageDataPixel(imageData, yellowPoint), yellow, err, "yellow rect not found" + desc);
-    assert_array_approx_equals(getImageDataPixel(imageData, cyanPoint), cyan, err, "cyan rect not found " + desc);
-    assert_array_approx_equals(getImageDataPixel(imageData, lightGreenPoint), lightGreen, err, "light green rect not found " + desc);
+    assert_array_approx_equals(getImageDataPixel(imageData, whitePoint), testColors.white, err, "white rect not found " + desc);
+    assert_array_approx_equals(getImageDataPixel(imageData, yellowPoint), testColors.yellow, err, "yellow rect not found" + desc);
+    assert_array_approx_equals(getImageDataPixel(imageData, cyanPoint), testColors.cyan, err, "cyan rect not found " + desc);
+    assert_array_approx_equals(getImageDataPixel(imageData, lightGreenPoint), testColors.lightGreen, err, "light green rect not found " + desc);
+}
+
+// Draws a canvas test pattern with WebGL.
+// Can be checked with `assertImageSourceContainsCanvasTestPattern()`.
+// Pattern is four colors, it can detect flips and rotations.
+// `patternNumber` can be used in to test multiple subsequent frames (pass in frame number).
+// Pattern is four boxes with color cycled based on patternNumber % 4.
+function drawCanvasTestPatternWebGL(canvas, patternNumber)
+{
+    patternNumber = patternNumber || 0;
+    const gl = canvas.getContext("webgl", { depth: false, stencil: false, antialias: false });
+    gl.enable(gl.SCISSOR_TEST);
+    const boxSize = [ canvas.width, canvas.height ];
+    const boxes = [
+        [0.0, 0.5, 0.5, 1.0],
+        [0.5, 0.5, 1.0, 1.0],
+        [0.5, 0.0, 1.0, 0.5],
+        [0.0, 0.0, 0.5, 0.5],
+    ];
+    const boxColors = Object.values(testColors);
+    for (let n = 0; n < 4; ++n) {
+        const i = (n + patternNumber) % boxes.length;
+        const color = boxColors[i];
+        const box = boxes[n];
+        gl.scissor(box[0] * boxSize[0], box[1] * boxSize[1], box[2] * boxSize[0], box[3] * boxSize[1]);
+        gl.clearColor(color[0] / 255., color[1] / 255, color[2] / 255., color[3] / 255.);
+        gl.clear(gl.COLOR_BUFFER_BIT);
+    }
+}
+
+function assertImageSourceContainsCanvasTestPattern(imageSource, patternNumber, desc)
+{
+    patternNumber = patternNumber || 0;
+    desc = desc || "";
+    const verifyWidth = 300;
+    // FIXME: canvas-to-peer-connection on Catalina-WK2 would fail with 0 -> 8 and 255 -> 240 for some reason.
+    // https://bugs.webkit.org/show_bug.cgi?id=235708
+    const err = 25;
+    let imageSourceSize;
+    let imageSourceHeight;
+    if (imageSource instanceof HTMLVideoElement)
+        imageSourceSize = [imageSource.videoWidth, imageSource.videoHeight];
+    else
+        imageSourceSize = [imageSource.width, imageSource.height];
+
+    const canvas = document.createElement("canvas");
+    const debuge = document.getElementById("debuge");
+    if (debuge)
+        debuge.appendChild(canvas);
+
+    canvas.width = verifyWidth;
+    canvas.height = (verifyWidth / imageSourceSize[0]) * imageSourceSize[1];
+    const ctx = canvas.getContext("2d");
+    ctx.drawImage(imageSource, 0, 0, canvas.width, canvas.height);
+    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    const pointColors = Object.values(testColors);
+    const points = [
+        [ 0.1, 0.1 ],
+        [ 0.9, 0.1 ],
+        [ 0.9, 0.9 ],
+        [ 0.1, 0.9 ],
+    ];
+    for (let n = 0; n < 4; ++n) {
+        let i = (n + patternNumber) % points.length;
+        let color = pointColors[i];
+        let point = points[n];
+        assert_array_approx_equals(getImageDataPixel(imageData, point), color, err, `rect ${color.join(",")} at ${point.join(",")} not found ${desc}`);
+    }
+    if (debuge)
+        debuge.removeChild(canvas);
 }

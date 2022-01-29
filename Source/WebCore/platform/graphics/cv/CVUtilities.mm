@@ -27,6 +27,7 @@
 #import "CVUtilities.h"
 
 #import "ColorSpaceCG.h"
+#import "IOSurface.h"
 #import <wtf/StdLibExtras.h>
 #import <wtf/cf/TypeCastsCF.h>
 #import "CoreVideoSoftLink.h"
@@ -130,6 +131,13 @@ RetainPtr<CGColorSpaceRef> createCGColorSpaceForCVPixelBuffer(CVPixelBufferRef b
     // correctly with any particular fallback color space we choose, so we
     // choose sRGB for ease.
     return sRGBColorSpaceRef();
+}
+
+void setOwnershipIdentityForCVPixelBuffer(CVPixelBufferRef pixelBuffer, const ProcessIdentity& owner)
+{
+    auto surface = CVPixelBufferGetIOSurface(pixelBuffer);
+    ASSERT(surface);
+    IOSurface::setOwnershipIdentity(surface, owner);
 }
 
 }

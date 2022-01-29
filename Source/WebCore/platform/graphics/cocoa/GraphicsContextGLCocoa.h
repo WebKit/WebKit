@@ -30,19 +30,25 @@
 #include "GraphicsContextGLANGLE.h"
 #include "IOSurface.h"
 
-#if ENABLE(VIDEO)
-namespace WebCore {
-class GraphicsContextGLCVCocoa;
-}
-#endif
-
 #if PLATFORM(MAC)
 #include "ScopedHighPerformanceGPURequest.h"
+#endif
+
+#if ENABLE(MEDIA_STREAM)
+#include <memory>
 #endif
 
 namespace WebCore {
 
 class ProcessIdentity;
+
+#if ENABLE(VIDEO)
+class GraphicsContextGLCVCocoa;
+#endif
+
+#if ENABLE(MEDIA_STREAM)
+class ImageRotationSessionVT;
+#endif
 
 class WEBCORE_EXPORT GraphicsContextGLCocoa : public GraphicsContextGLANGLE {
 public:
@@ -90,6 +96,9 @@ protected:
 #if PLATFORM(MAC)
     bool m_switchesGPUOnDisplayReconfiguration { false };
     ScopedHighPerformanceGPURequest m_highPerformanceGPURequest;
+#endif
+#if ENABLE(MEDIA_STREAM)
+    std::unique_ptr<ImageRotationSessionVT> m_mediaSampleRotationSession;
 #endif
     friend class GraphicsContextGLCVCocoa;
 };
