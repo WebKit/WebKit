@@ -1,3 +1,20 @@
+2022-01-29  Ben Nham  <nham@apple.com>
+
+        Add web push message decryption routines
+        https://bugs.webkit.org/show_bug.cgi?id=233903
+
+        Reviewed by Brady Eidson.
+
+        Somehow the unit tests were left out of the original patch that was landed. Adding them back
+        in this patch.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebCore/PushMessageCrypto.cpp: Added.
+        (TestWebKitAPI::mustBase64URLDecode):
+        (TestWebKitAPI::makeAES128GCMClientKeys):
+        (TestWebKitAPI::TEST):
+        (TestWebKitAPI::makeAESGCMClientKeys):
+
 2022-01-28  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [WinCairo] WebKitTestRunner should support pixel dump for accelerated compositing mode
