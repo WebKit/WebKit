@@ -1,3 +1,14 @@
+2022-01-30  Arcady Goldmints-Orlov  <agoldmints@igalia.com>
+
+        [GLIB] Update Test expectations and baselines. Unreviewed test gardening.
+        https://bugs.webkit.org/show_bug.cgi?id=235826
+
+        * platform/glib/tables/mozilla/bugs/adforce_imgis_com-expected.txt: Renamed from LayoutTests/platform/wpe/tables/mozilla/bugs/adforce_imgis_com-expected.txt.
+        * platform/gtk/accessibility/math-multiscript-attributes-expected.txt:
+        * platform/gtk/css2.1/t1508-c527-font-08-b-expected.txt: Added.
+        * platform/gtk/css2.1/t1508-c527-font-10-c-expected.txt:
+        * platform/wpe/accessibility/math-multiscript-attributes-expected.txt:
+
 2022-01-30  Alan Bujtas  <zalan@apple.com>
 
         (REGRESSION)[IFC][RTL] wpt/css/css-text/white-space/trailing-space-and-text-alignment-rtl-003.html
