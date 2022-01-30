@@ -549,7 +549,12 @@ LineBuilder::InlineItemRange LineBuilder::close(const InlineItemRange& needsLayo
                 m_line.removeHangingGlyphs();
         }
     }
-    auto horizontalAlignment = root().style().textAlign();
+
+    auto& rootStyle = root().style();
+    // On each line, reset the embedding level of any sequence of whitespace characters at the end of the line
+    // to the paragraph embedding level
+    m_line.resetBidiLevelForTrailingWhitespace(rootStyle.isLeftToRightDirection() ? UBIDI_LTR : UBIDI_RTL);
+    auto horizontalAlignment = rootStyle.textAlign();
     auto runsExpandHorizontally = horizontalAlignment == TextAlignMode::Justify && !isLastLine;
     if (runsExpandHorizontally)
         m_line.applyRunExpansion(horizontalAvailableSpace);

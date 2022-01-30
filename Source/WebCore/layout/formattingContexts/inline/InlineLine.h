@@ -66,6 +66,7 @@ public:
     enum class ShouldApplyTrailingWhiteSpaceFollowedByBRQuirk { No, Yes };
     void removeTrailingTrimmableContent(ShouldApplyTrailingWhiteSpaceFollowedByBRQuirk);
     void removeHangingGlyphs();
+    void resetBidiLevelForTrailingWhitespace(UBiDiLevel rootBidiLevel);
     void applyRunExpansion(InlineLayoutUnit horizontalAvailableSpace);
 
     struct Run {
@@ -108,6 +109,7 @@ public:
 
         bool hasTrailingWhitespace() const { return m_trailingWhitespace.has_value(); }
         InlineLayoutUnit trailingWhitespaceWidth() const { return m_trailingWhitespace ? m_trailingWhitespace->width : 0.f; }
+        bool isWhitespaceOnly() const { return hasTrailingWhitespace() && m_trailingWhitespace->length == m_textContent->length; }
 
         bool shouldTrailingWhitespaceHang() const;
         TextDirection inlineDirection() const;
@@ -130,6 +132,7 @@ public:
         void shrinkHorizontally(InlineLayoutUnit width) { m_logicalWidth -= width; }
         void setExpansion(InlineDisplay::Box::Expansion expansion) { m_expansion = expansion; }
         void setNeedsHyphen(InlineLayoutUnit hyphenLogicalWidth);
+        void setBidiLevel(UBiDiLevel bidiLevel) { m_bidiLevel = bidiLevel; }
 
         struct TrailingWhitespace {
             enum class Type {
@@ -139,11 +142,14 @@ public:
             };
             Type type { Type::NotCollapsible };
             InlineLayoutUnit width { 0 };
+            size_t length { 0 };
         };
         bool hasCollapsibleTrailingWhitespace() const { return m_trailingWhitespace && (m_trailingWhitespace->type == TrailingWhitespace::Type::Collapsible || hasCollapsedTrailingWhitespace()); }
         bool hasCollapsedTrailingWhitespace() const { return m_trailingWhitespace && m_trailingWhitespace->type == TrailingWhitespace::Type::Collapsed; }
         static std::optional<TrailingWhitespace::Type> trailingWhitespaceType(const InlineTextItem&);
         InlineLayoutUnit removeTrailingWhitespace();
+
+        std::optional<Run> detachTrailingWhitespace();
 
         bool hasTrailingLetterSpacing() const;
         InlineLayoutUnit trailingLetterSpacing() const;
