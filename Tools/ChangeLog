@@ -1,3 +1,13 @@
+2022-01-30  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] GstStructure to JSON serialization
+        https://bugs.webkit.org/show_bug.cgi?id=235760
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        * TestWebKitAPI/Tests/WebCore/gstreamer/GStreamerTest.cpp:
+        (TestWebKitAPI::TEST_F):
+
 2022-01-29  Ben Nham  <nham@apple.com>
 
         Add web push message decryption routines

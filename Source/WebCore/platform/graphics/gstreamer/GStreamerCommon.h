@@ -319,6 +319,8 @@ GstBuffer* gstBufferNewWrappedFast(void* data, size_t length);
 GstElement* makeGStreamerElement(const char* factoryName, const char* name);
 GstElement* makeGStreamerBin(const char* description, bool ghostUnlinkedPads);
 
+String gstStructureToJSONString(const GstStructure*);
+
 }
 
 #ifndef GST_BUFFER_DTS_OR_PTS

@@ -538,6 +538,77 @@ GstElement* makeGStreamerBin(const char* description, bool ghostUnlinkedPads)
     return bin;
 }
 
+static RefPtr<JSON::Value> gstStructureToJSON(const GstStructure*);
+
+static std::optional<RefPtr<JSON::Value>> gstStructureValueToJSON(const GValue* value)
+{
+    if (GST_VALUE_HOLDS_STRUCTURE(value))
+        return gstStructureToJSON(gst_value_get_structure(value));
+
+    if (GST_VALUE_HOLDS_ARRAY(value)) {
+        unsigned size = gst_value_array_get_size(value);
+        auto array = JSON::Array::create();
+        for (unsigned i = 0; i < size; i++) {
+            if (auto innerJson = gstStructureValueToJSON(gst_value_array_get_value(value, i)))
+                array->pushValue(innerJson->releaseNonNull());
+        }
+        return array->asArray()->asValue();
+    }
+    auto valueType = G_VALUE_TYPE(value);
+    if (valueType == G_TYPE_BOOLEAN)
+        return JSON::Value::create(g_value_get_boolean(value))->asValue();
+
+    if (valueType == G_TYPE_INT)
+        return JSON::Value::create(g_value_get_int(value))->asValue();
+
+    if (valueType == G_TYPE_UINT)
+        return JSON::Value::create(static_cast<int>(g_value_get_uint(value)))->asValue();
+
+    if (valueType == G_TYPE_DOUBLE)
+        return JSON::Value::create(g_value_get_double(value))->asValue();
+
+    if (valueType == G_TYPE_FLOAT)
+        return JSON::Value::create(static_cast<double>(g_value_get_float(value)))->asValue();
+
+    // FIXME: bigint support missing in JSON.
+    if (valueType == G_TYPE_UINT64)
+        return JSON::Value::create(static_cast<int>(g_value_get_uint64(value)))->asValue();
+
+    if (valueType == G_TYPE_STRING)
+        return JSON::Value::create(makeString(g_value_get_string(value)))->asValue();
+
+    GST_WARNING("Unhandled GValue type: %s", G_VALUE_TYPE_NAME(value));
+    return { };
+}
+
+static gboolean parseGstStructureValue(GQuark fieldId, const GValue* value, gpointer userData)
+{
+    if (auto jsonValue = gstStructureValueToJSON(value)) {
+        auto* object = reinterpret_cast<JSON::Object*>(userData);
+        object->setValue(g_quark_to_string(fieldId), jsonValue->releaseNonNull());
+    }
+    return TRUE;
+}
+
+static RefPtr<JSON::Value> gstStructureToJSON(const GstStructure* structure)
+{
+    auto jsonObject = JSON::Object::create();
+    auto resultValue = jsonObject->asObject();
+    if (!resultValue)
+        return nullptr;
+
+    gst_structure_foreach(structure, parseGstStructureValue, resultValue.get());
+    return resultValue;
+}
+
+String gstStructureToJSONString(const GstStructure* structure)
+{
+    auto value = gstStructureToJSON(structure);
+    if (!value)
+        return { };
+    return value->toJSONString();
+}
+
 }
 
 #endif // USE(GSTREAMER)
