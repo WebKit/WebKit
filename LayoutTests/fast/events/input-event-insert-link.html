@@ -8,10 +8,7 @@
     <script type="text/javascript">
         description("This test verifies that input events of inputType 'insertLink' are dispatched when automatically replacing text with a link.");
         if (window.internals)
-        {
-            internals.settings.setInputEventsEnabled(true);
             internals.setAutomaticLinkDetectionEnabled(true);
-        }
 
         document.getElementById("editable").focus();
         document.execCommand("insertText", true, "www.apple.com ");

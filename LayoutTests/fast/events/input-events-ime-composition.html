@@ -7,8 +7,6 @@
     <input id="editable" contenteditable onbeforeinput=logInputEvent(event) oninput=logInputEvent(event)></input>
     <script type="text/javascript">
         description("To manually test this, insert text via IME and observe the resulting debug messages.");
-        if (window.internals)
-            internals.settings.setInputEventsEnabled(true);
 
         editable.addEventListener("compositionend", logCompositionEvent);
         editable.focus();

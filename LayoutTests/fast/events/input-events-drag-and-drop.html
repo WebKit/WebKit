@@ -25,10 +25,8 @@
     <div id="output"></div>
     <script type="text/javascript">
         let write = s => output.innerHTML += s + "<br>";
-        if (window.internals && window.testRunner) {
-            internals.settings.setInputEventsEnabled(true);
+        if (window.internals && window.testRunner)
             testRunner.dumpAsText();
-        }
 
         source.focus();
         document.execCommand("selectAll");

@@ -1,3 +1,41 @@
+2022-01-30  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Delete runtime preference for enabling input events
+        https://bugs.webkit.org/show_bug.cgi?id=235864
+
+        Reviewed by Wenson Hsieh.
+
+        Updated the tests.
+
+        * fast/events/before-input-delete-empty-list-target-ranges.html:
+        * fast/events/before-input-delete-text-target-ranges.html:
+        * fast/events/before-input-events-different-start-end-elements.html:
+        * fast/events/before-input-events-prevent-block-text-direction.html:
+        * fast/events/before-input-events-prevent-default-in-textfield.html:
+        * fast/events/before-input-events-prevent-default.html:
+        * fast/events/before-input-events-prevent-drag-and-drop.html:
+        * fast/events/before-input-events-prevent-insert-composition.html:
+        * fast/events/before-input-events-prevent-recomposition.html:
+        * fast/events/before-input-prevent-biu.html:
+        * fast/events/before-input-prevent-cut.html:
+        * fast/events/before-input-prevent-paste.html:
+        * fast/events/before-input-prevent-typing.html:
+        * fast/events/before-input-prevent-undo.html:
+        * fast/events/before-input-replace-text-target-ranges.html:
+        * fast/events/input-event-insert-link.html:
+        * fast/events/input-events-drag-and-drop.html:
+        * fast/events/input-events-fired-when-typing.html:
+        * fast/events/input-events-forecolor-data.html:
+        * fast/events/input-events-ime-composition.html:
+        * fast/events/input-events-ime-recomposition.html:
+        * fast/events/input-events-insert-by-drop.html:
+        * fast/events/input-events-paste-data.html:
+        * fast/events/input-events-paste-rich-datatransfer.html:
+        * fast/events/input-events-selection-forecolor-data.html:
+        * fast/events/input-events-spell-checking-datatransfer.html:
+        * fast/events/input-events-typing-data.html:
+        * fast/events/ios/input-events-fired-when-typing-in-contenteditable.html:
+
 2022-01-30  Arcady Goldmints-Orlov  <agoldmints@igalia.com>
 
         [GLIB] Update Test expectations and baselines. Unreviewed test gardening.

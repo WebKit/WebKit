@@ -139,9 +139,6 @@ namespace WebCore {
 
 static bool dispatchBeforeInputEvent(Element& element, const AtomString& inputType, const String& data = { }, RefPtr<DataTransfer>&& dataTransfer = nullptr, const Vector<RefPtr<StaticRange>>& targetRanges = { }, Event::IsCancelable cancelable = Event::IsCancelable::Yes)
 {
-    if (!element.document().settings().inputEventsEnabled())
-        return true;
-
     auto event = InputEvent::create(eventNames().beforeinputEvent, inputType, cancelable, element.document().windowProxy(), data, WTFMove(dataTransfer), targetRanges, 0);
     element.dispatchEvent(event);
     return !event->defaultPrevented();
@@ -149,15 +146,12 @@ static bool dispatchBeforeInputEvent(Element& element, const AtomString& inputTy
 
 static void dispatchInputEvent(Element& element, const AtomString& inputType, const String& data = { }, RefPtr<DataTransfer>&& dataTransfer = nullptr, const Vector<RefPtr<StaticRange>>& targetRanges = { })
 {
-    if (element.document().settings().inputEventsEnabled()) {
-        // FIXME: We should not be dispatching to the scoped queue here. Normally, input events are dispatched in CompositeEditCommand::apply after the end of the scope,
-        // but TypingCommands are special in that existing TypingCommands that are applied again fire input events *from within* the scope by calling typingAddedToOpenCommand.
-        // Instead, TypingCommands should always dispatch events synchronously after the end of the scoped queue in CompositeEditCommand::apply. To work around this for the
-        // time being, just revert back to calling dispatchScopedEvent.
-        element.dispatchScopedEvent(InputEvent::create(eventNames().inputEvent, inputType, Event::IsCancelable::No,
-            element.document().windowProxy(), data, WTFMove(dataTransfer), targetRanges, 0));
-    } else
-        element.dispatchInputEvent();
+    // FIXME: We should not be dispatching to the scoped queue here. Normally, input events are dispatched in CompositeEditCommand::apply after the end of the scope,
+    // but TypingCommands are special in that existing TypingCommands that are applied again fire input events *from within* the scope by calling typingAddedToOpenCommand.
+    // Instead, TypingCommands should always dispatch events synchronously after the end of the scoped queue in CompositeEditCommand::apply. To work around this for the
+    // time being, just revert back to calling dispatchScopedEvent.
+    element.dispatchScopedEvent(InputEvent::create(eventNames().inputEvent, inputType, Event::IsCancelable::No,
+        element.document().windowProxy(), data, WTFMove(dataTransfer), targetRanges, 0));
 }
 
 static String inputEventDataForEditingStyleAndAction(const StyleProperties* style, EditAction action)
