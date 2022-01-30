@@ -1,3 +1,13 @@
+2022-01-30  Alan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Do not break content at an inline box boundary
+        https://bugs.webkit.org/show_bug.cgi?id=235868
+
+        Reviewed by Antti Koivisto.
+
+        * fast/inline/nested-inline-box-with-word-break-expected.html: Added.
+        * fast/inline/nested-inline-box-with-word-break.html: Added.
+
 2022-01-29  Alexey Shvayka  <ashvayka@apple.com>
 
         [WebIDL] Add a sensible error message for a primitive non-null EventListener
