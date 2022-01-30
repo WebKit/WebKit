@@ -1,3 +1,15 @@
+2022-01-29  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Delete runtime preference for enabling request animation frame
+        https://bugs.webkit.org/show_bug.cgi?id=235866
+
+        Reviewed by Darin Adler.
+
+        * WebView/WebPreferences.mm:
+        (-[WebPreferences requestAnimationFrameEnabled]):
+        (-[WebPreferences setRequestAnimationFrameEnabled:]):
+        * WebView/WebPreferencesPrivate.h:
+
 2022-01-28  Michael Saboff  <msaboff@apple.com>
 
         Catalyst builds for WebCore and WebKitLegacy don't create proper symlinks for builds with system content path

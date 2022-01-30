@@ -1770,16 +1770,6 @@ PunchOutWhiteBackgroundsInDarkMode:
     WebCore:
       default: false
 
-RequestAnimationFrameEnabled:
-  type: bool
-  defaultValue:
-    WebKitLegacy:
-      default: true
-    WebKit:
-      default: true
-    WebCore:
-      default: true
-
 RequiresPageVisibilityToPlayAudio:
   type: bool
   defaultValue:

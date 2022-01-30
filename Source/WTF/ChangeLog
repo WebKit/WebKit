@@ -1,3 +1,12 @@
+2022-01-29  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Delete runtime preference for enabling request animation frame
+        https://bugs.webkit.org/show_bug.cgi?id=235866
+
+        Reviewed by Darin Adler.
+
+        * Scripts/Preferences/WebPreferences.yaml:
+
 2022-01-28  Chris Dumez  <cdumez@apple.com>
 
         ASSERTION FAILED: m_processCallback in WebCore::AudioWorkletProcessor::process

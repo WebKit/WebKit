@@ -943,16 +943,6 @@ static WebCore::EditableLinkBehavior toEditableLinkBehavior(_WKEditableLinkBehav
     return _preferences->acceleratedCompositingEnabled();
 }
 
-- (void)_setRequestAnimationFrameEnabled:(BOOL)enabled
-{
-    _preferences->setRequestAnimationFrameEnabled(enabled);
-}
-
-- (BOOL)_requestAnimationFrameEnabled
-{
-    return _preferences->requestAnimationFrameEnabled();
-}
-
 - (BOOL)_remotePlaybackEnabled
 {
     return _preferences->remotePlaybackEnabled();
@@ -1632,6 +1622,15 @@ static WebCore::EditableLinkBehavior toEditableLinkBehavior(_WKEditableLinkBehav
 @end
 
 @implementation WKPreferences (WKPrivateDeprecated)
+
+- (void)_setRequestAnimationFrameEnabled:(BOOL)enabled
+{
+}
+
+- (BOOL)_requestAnimationFrameEnabled
+{
+    return YES;
+}
 
 #if !TARGET_OS_IPHONE
 

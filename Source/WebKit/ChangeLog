@@ -1,3 +1,19 @@
+2022-01-29  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Delete runtime preference for enabling request animation frame
+        https://bugs.webkit.org/show_bug.cgi?id=235866
+
+        Reviewed by Darin Adler.
+
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetRequestAnimationFrameEnabled):
+        (WKPreferencesGetRequestAnimationFrameEnabled):
+        * UIProcess/API/C/WKPreferencesRefPrivate.h:
+        * UIProcess/API/Cocoa/WKPreferences.mm:
+        (-[WKPreferences _setRequestAnimationFrameEnabled:]):
+        (-[WKPreferences _requestAnimationFrameEnabled]):
+        * UIProcess/API/Cocoa/WKPreferencesPrivate.h:
+
 2022-01-28  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [WinCairo] WebKitTestRunner should support pixel dump for accelerated compositing mode

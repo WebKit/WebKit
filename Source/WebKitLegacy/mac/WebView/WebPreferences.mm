@@ -2351,16 +2351,6 @@ static RetainPtr<NSString>& classIBCreatorID()
     return [self _boolValueForKey:WebKitShouldRespectImageOrientationKey];
 }
 
-- (BOOL)requestAnimationFrameEnabled
-{
-    return [self _boolValueForKey:WebKitRequestAnimationFrameEnabledPreferenceKey];
-}
-
-- (void)setRequestAnimationFrameEnabled:(BOOL)enabled
-{
-    [self _setBoolValue:enabled forKey:WebKitRequestAnimationFrameEnabledPreferenceKey];
-}
-
 - (void)setIncrementalRenderingSuppressionTimeoutInSeconds:(NSTimeInterval)timeout
 {
     [self _setFloatValue:timeout forKey:WebKitIncrementalRenderingSuppressionTimeoutInSecondsKey];
@@ -3383,6 +3373,15 @@ static RetainPtr<NSString>& classIBCreatorID()
 - (BOOL)userTimingEnabled
 {
     return YES;
+}
+
+- (BOOL)requestAnimationFrameEnabled
+{
+    return YES;
+}
+
+- (void)setRequestAnimationFrameEnabled:(BOOL)enabled
+{
 }
 
 - (void)setResourceTimingEnabled:(BOOL)flag

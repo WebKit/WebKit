@@ -974,14 +974,13 @@ bool WKPreferencesGetShouldRespectImageOrientation(WKPreferencesRef preferencesR
     return toImpl(preferencesRef)->shouldRespectImageOrientation();
 }
 
-void WKPreferencesSetRequestAnimationFrameEnabled(WKPreferencesRef preferencesRef, bool flag)
+void WKPreferencesSetRequestAnimationFrameEnabled(WKPreferencesRef, bool)
 {
-    toImpl(preferencesRef)->setRequestAnimationFrameEnabled(flag);
 }
 
-bool WKPreferencesGetRequestAnimationFrameEnabled(WKPreferencesRef preferencesRef)
+bool WKPreferencesGetRequestAnimationFrameEnabled(WKPreferencesRef)
 {
-    return toImpl(preferencesRef)->requestAnimationFrameEnabled();
+    return true;
 }
 
 void WKPreferencesSetStorageBlockingPolicy(WKPreferencesRef preferencesRef, WKStorageBlockingPolicy policy)

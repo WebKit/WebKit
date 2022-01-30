@@ -197,7 +197,6 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification WEBKIT_DEPR
 @property (nonatomic) BOOL shouldDisplayTextDescriptions;
 @property (nonatomic) BOOL notificationsEnabled;
 @property (nonatomic) BOOL shouldRespectImageOrientation;
-@property (nonatomic) BOOL requestAnimationFrameEnabled;
 @property (nonatomic) NSTimeInterval incrementalRenderingSuppressionTimeoutInSeconds;
 @property (nonatomic, readonly) NSTimeInterval _backForwardCacheExpirationInterval;
 @property (nonatomic) BOOL diagnosticLoggingEnabled;
@@ -364,6 +363,7 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification WEBKIT_DEPR
 
 @property (nonatomic) BOOL subpixelCSSOMElementMetricsEnabled;
 @property (nonatomic) BOOL userTimingEnabled;
+@property (nonatomic) BOOL requestAnimationFrameEnabled;
 @property (nonatomic) BOOL resourceTimingEnabled;
 @property (nonatomic, getter=cssShadowPartsEnabled) BOOL CSSShadowPartsEnabled;
 @property (nonatomic) BOOL isSecureContextAttributeEnabled;

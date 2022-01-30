@@ -322,8 +322,6 @@ void WebPreferences::initializeDefaultSettings()
     CFDictionaryAddValue(defaults.get(), CFSTR(WebKitMediaPlaybackRequiresUserGesturePreferenceKey), kCFBooleanFalse);
     CFDictionaryAddValue(defaults.get(), CFSTR(WebKitMediaPlaybackAllowsInlinePreferenceKey), kCFBooleanTrue);
 
-    CFDictionaryAddValue(defaults.get(), CFSTR(WebKitRequestAnimationFrameEnabledPreferenceKey), kCFBooleanTrue);
-
     CFDictionaryAddValue(defaults.get(), CFSTR(WebKitFullScreenEnabledPreferenceKey), kCFBooleanFalse);
 
     CFDictionaryAddValue(defaults.get(), CFSTR(WebKitRequestAnimationFrameEnabledPreferenceKey), kCFBooleanFalse);
@@ -2006,9 +2004,8 @@ HRESULT WebPreferences::setShouldDisplayTextDescriptions(BOOL enabled)
 #endif
 }
 
-HRESULT WebPreferences::setRequestAnimationFrameEnabled(BOOL enabled)
+HRESULT WebPreferences::setRequestAnimationFrameEnabled(BOOL)
 {
-    setBoolValue(WebKitRequestAnimationFrameEnabledPreferenceKey, enabled);
     return S_OK;
 }
 
@@ -2016,7 +2013,7 @@ HRESULT WebPreferences::requestAnimationFrameEnabled(_Out_ BOOL* enabled)
 {
     if (!enabled)
         return E_POINTER;
-    *enabled = boolValueForKey(WebKitRequestAnimationFrameEnabledPreferenceKey);
+    *enabled = true;
     return S_OK;
 }
 

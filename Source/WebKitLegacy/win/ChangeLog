@@ -1,3 +1,18 @@
+2022-01-29  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Delete runtime preference for enabling request animation frame
+        https://bugs.webkit.org/show_bug.cgi?id=235866
+
+        Reviewed by Darin Adler.
+
+        * WebPreferences.cpp:
+        (WebPreferences::initializeDefaultSettings):
+        (WebPreferences::setRequestAnimationFrameEnabled):
+        (WebPreferences::requestAnimationFrameEnabled):
+        * WebPreferences.h:
+        * WebView.cpp:
+        (WebView::notifyPreferencesChanged):
+
 2022-01-25  Aditya Keerthi  <akeerthi@apple.com>
 
         Disable input-security CSS property
