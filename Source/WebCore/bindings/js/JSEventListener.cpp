@@ -66,14 +66,6 @@ Ref<JSEventListener> JSEventListener::create(JSC::JSObject& listener, JSC::JSObj
     return adoptRef(*new JSEventListener(&listener, &wrapper, isAttribute, world));
 }
 
-RefPtr<JSEventListener> JSEventListener::create(JSC::JSValue listener, JSC::JSObject& wrapper, bool isAttribute, DOMWrapperWorld& world)
-{
-    if (UNLIKELY(!listener.isObject()))
-        return nullptr;
-
-    return adoptRef(*new JSEventListener(asObject(listener), &wrapper, isAttribute, world));
-}
-
 JSObject* JSEventListener::initializeJSFunction(ScriptExecutionContext&) const
 {
     return nullptr;

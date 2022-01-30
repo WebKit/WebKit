@@ -1745,7 +1745,7 @@ sub GetArgumentExceptionFunction
     my $visibleInterfaceName = $codeGenerator->GetVisibleInterfaceName($interface);
     my $typeName = GetTypeNameForDisplayInException($argument->type);
 
-    if ($codeGenerator->IsCallbackInterface($argument->type)) {
+    if ($codeGenerator->IsCallbackInterface($argument->type) || $argument->type->name eq "EventListener") {
         return "throwArgumentMustBeObjectError(lexicalGlobalObject, scope, ${argumentIndex}, \"${name}\", \"${visibleInterfaceName}\", ${quotedFunctionName});";
     }
 

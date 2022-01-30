@@ -1,3 +1,13 @@
+2022-01-29  Alexey Shvayka  <ashvayka@apple.com>
+
+        [WebIDL] Add a sensible error message for a primitive non-null EventListener
+        https://bugs.webkit.org/show_bug.cgi?id=235863
+
+        Reviewed by Darin Adler.
+
+        * fast/events/event-listener-not-an-object-expected.txt: Added.
+        * fast/events/event-listener-not-an-object.html: Added.
+
 2022-01-29  Patrick Griffis  <pgriffis@igalia.com>
 
         CSP: Properly block image content in object elements
