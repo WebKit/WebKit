@@ -69,6 +69,10 @@ DEFAULT_SCCACHE_SCHEDULER='https://sccache.igalia.com'
 # in our SDK build definitions please don't forget to update the version here as well.
 SDK_BRANCH = "21.08"
 
+WEBKIT_SDK_FLATPAK_REPO_URL = "https://software.igalia.com/flatpak-refs/webkit-sdk.flatpakrepo"
+WEBKIT_SDK_GPG_PUBKEY_URL = "https://software.igalia.com/flatpak-refs/webkit-sdk-pubkey.gpg"
+WEBKIT_SDK_REPO_URL = "https://software.igalia.com/webkit-sdk-repo/"
+
 is_colored_output_supported = False
 try:
     import curses
@@ -128,7 +132,7 @@ class Console:
         cls.colored_message_if_supported(Colors.WARNING, str_format, *args)
 
 
-def run_sanitized(command, gather_output=False, ignore_stderr=False, env=None):
+def run_sanitized(command, gather_output=False, ignore_stderr=False, env=None, **kwargs):
     """ Runs a command in a santized environment and optionally returns decoded output or raises
         subprocess.CalledProcessError
     """
@@ -144,7 +148,8 @@ def run_sanitized(command, gather_output=False, ignore_stderr=False, env=None):
         pass
 
     _log.debug("Running %s", " ".join(command))
-    keywords = dict(env=sanitized_env)
+    keywords = kwargs
+    keywords['env'] = sanitized_env
     if gather_output:
         if ignore_stderr:
             with open(os.devnull, 'w') as devnull:
@@ -154,7 +159,12 @@ def run_sanitized(command, gather_output=False, ignore_stderr=False, env=None):
         return output.strip().decode('utf-8')
     else:
         keywords["stdout"] = sys.stdout
-        return subprocess.check_call(command, **keywords)
+        if ignore_stderr:
+            with open(os.devnull, 'w') as devnull:
+                keywords["stderr"] = devnull
+                return subprocess.check_call(command, **keywords)
+        else:
+            return subprocess.check_call(command, **keywords)
 
 
 def check_flatpak(verbose=True):
@@ -196,7 +206,6 @@ class FlatpakObject:
     def flatpak(self, command, *args, **kwargs):
         comment = kwargs.pop("comment", None)
         gather_output = kwargs.get("gather_output", False)
-        ignore_stderr = kwargs.get("ignore_stderr", False)
         if comment:
             Console.message(comment)
 
@@ -211,8 +220,7 @@ class FlatpakObject:
 
         command.extend(args)
 
-        _log.debug("Executing %s" % ' '.join(command))
-        return run_sanitized(command, gather_output=gather_output, ignore_stderr=ignore_stderr)
+        return run_sanitized(command, **kwargs)
 
     def version(self, ref_id):
         try:
@@ -227,6 +235,21 @@ class FlatpakObject:
             if tokens[0].strip().lower() == "version":
                 return tokens[1].strip()
         return ""
+
+    def flatpak_update(self):
+        remote = "webkit-sdk"
+        try:
+            self.flatpak("remote-ls", remote, gather_output=True)
+        except subprocess.CalledProcessError as error:
+            if error.output.lower().find("key expired"):
+                Console.message("WebKit SDK GPG key expired, synchronizing with remote")
+                with tempfile.NamedTemporaryFile() as tmpfile:
+                    fd = urlopen(WEBKIT_SDK_GPG_PUBKEY_URL)
+                    tmpfile.write(fd.read())
+                    tmpfile.flush()
+                    self.flatpak("remote-modify", "--gpg-import=" + tmpfile.name, remote)
+
+        self.flatpak("update", comment="Updating Flatpak environment")
 
 class FlatpakPackages(FlatpakObject):
 
@@ -392,14 +415,6 @@ class FlatpakPackage(FlatpakObject):
         comment = "Installing from " + self.repo.name + " " + self.name + " " + self.arch + " " + branch
         self.flatpak(*args, comment=comment)
         self.repo.repos.packages.update()
-
-    def update(self):
-        if not self.is_installed(self.branch):
-            return self.install()
-
-        comment = "Updating %s" % self.name
-        self.flatpak("update", self.name, self.branch, comment=comment)
-
 
 @contextmanager
 def disable_signals(signals=[signal.SIGINT, signal.SIGTERM, signal.SIGHUP]):
@@ -604,8 +619,8 @@ class WebkitFlatpak:
         return True
 
     def _reset_repository(self):
-        url = "https://software.igalia.com/webkit-sdk-repo/"
-        repo_file = "https://software.igalia.com/flatpak-refs/webkit-sdk.flatpakrepo"
+        url = WEBKIT_SDK_REPO_URL
+        repo_file = WEBKIT_SDK_FLATPAK_REPO_URL
         if self.user_repo:
             url = "file://%s" % self.user_repo
             repo_file = None
@@ -702,8 +717,12 @@ class WebkitFlatpak:
         return command and "build-jsc" in os.path.basename(command)
 
     def host_path_to_sandbox_path(self, host_path):
-        # For now this supports only files in the WebKit path
+        # For now this supports only files in the /app/webkit path
         return host_path.replace(self.source_root, self.sandbox_source_root)
+
+    def sandbox_path_to_host_path(self, sandbox_path):
+        # For now this supports only files in the /app/webkit path
+        return sandbox_path.replace(self.sandbox_source_root, self.source_root)
 
     @staticmethod
     def get_user_runtime_dir():
@@ -1008,10 +1027,10 @@ class WebkitFlatpak:
             return 0
 
         if self.update:
-            repo = self.sdk_repo
-            version_before_update = repo.version("org.webkit.Sdk")
-            repo.flatpak("update", comment="Updating Flatpak %s environment" % self.build_type)
-            regenerate_toolchains = (repo.version("org.webkit.Sdk") != version_before_update) or not self.check_toolchains_generated()
+            flatpak_wrapper = FlatpakObject(True)
+            version_before_update = flatpak_wrapper.version("org.webkit.Sdk")
+            flatpak_wrapper.flatpak_update()
+            regenerate_toolchains = (flatpak_wrapper.version("org.webkit.Sdk") != version_before_update) or not self.check_toolchains_generated()
 
             # If we have an out-of-date package, simply remove the entire flatpak directory and start over.
             for package in self._get_dependency_packages():
@@ -1125,7 +1144,7 @@ class WebkitFlatpak:
                 config = json.load(config_fd)
                 if 'icecc_version' in config:
                     for compiler in config['icecc_version']:
-                        if os.path.isfile(config['icecc_version'][compiler]):
+                        if os.path.isfile(self.sandbox_path_to_host_path(config['icecc_version'][compiler])):
                             found_toolchains += 1
         return found_toolchains > 1
 
