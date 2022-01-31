@@ -1946,6 +1946,7 @@
         SYS_kdebug_trace_string ;; Needed for performance sampling, see <rdar://problem/48829655>.
         SYS_kevent_id
         SYS_kevent_qos
+        SYS_kqueue ;; See <rdar://problem/88241768>. Remove after <rdar://56634240> is resolved.
         SYS_kqueue_workloop_ctl ;; <rdar://problem/50999499>
         SYS_listxattr
         SYS_lseek

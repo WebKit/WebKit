@@ -1,3 +1,13 @@
+2022-01-31  Per Arne Vollan  <pvollan@apple.com>
+
+        [macOS][WP] Add required syscall
+        https://bugs.webkit.org/show_bug.cgi?id=235901
+        <rdar://88241768>
+
+        Reviewed by Brent Fulgham.
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2022-01-31  Aditya Keerthi  <akeerthi@apple.com>
 
         [iOS] SharePlay is shown prominently for system-provided Share Sheets
