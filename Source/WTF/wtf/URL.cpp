@@ -30,6 +30,7 @@
 #include "URLParser.h"
 #include <stdio.h>
 #include <unicode/uidna.h>
+#include <wtf/FileSystem.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/Lock.h>
@@ -246,7 +247,7 @@ String URL::fileSystemPath() const
 
     auto result = decodeEscapeSequencesFromParsedURL(path());
 #if PLATFORM(WIN)
-    result = fileSystemRepresentation(result);
+    result = FileSystem::fileSystemRepresentation(result);
 #endif
     return result;
 }
