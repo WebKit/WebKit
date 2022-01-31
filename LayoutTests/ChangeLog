@@ -1,3 +1,12 @@
+2022-01-31  Robert Jenner  <Jenner@apple.com>
+
+        WindowServer returned not alive with context:,unresponsive work processor(s)
+        rdar://problem/86037417
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations: Temporarily disabling this test.
+
 2022-01-31  Ryosuke Niwa  <rniwa@webkit.org>
 
         Delete runtime flag for subresource integrity
